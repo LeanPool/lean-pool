@@ -40,10 +40,10 @@ theorem frame_translation (a : Space) (F : L2 →L[ℝ] L2) (v : solenoidalSpace
   translateOperator_translation a F (v : L2)
 
 theorem frameAdjoint_translation (a : Space) (F : L2 →L[ℝ] L2) (f : L2) :
-    ((translateOperator a F).comp solenoidalSpace.subtypeL).adjoint (𝕜 := ℝ)
-        (E := solenoidalSpace) (F := L2) (translation a f) =
-      solenoidalTranslation a ((F.comp solenoidalSpace.subtypeL).adjoint (𝕜 := ℝ)
-        (E := solenoidalSpace) (F := L2) f) := by
+    adjoint (𝕜 := ℝ) (E := solenoidalSpace) (F := L2)
+        ((translateOperator a F).comp solenoidalSpace.subtypeL :) (translation a f) =
+      solenoidalTranslation a (adjoint (𝕜 := ℝ) (E := solenoidalSpace) (F := L2)
+        (F.comp solenoidalSpace.subtypeL :) f) := by
   apply eq_of_translated_inner a
   intro v
   exact (adjoint_inner_left ((translateOperator a F).comp solenoidalSpace.subtypeL)
@@ -92,7 +92,7 @@ def acceleration (F F₁ : L2 →L[ℝ] L2) (c : ℝ) (hc : 0 < c)
     (hF : ∀ v : solenoidalSpace, c*‖v‖^2 ≤ ‖(F.comp solenoidalSpace.subtypeL) v‖^2)
     (v : solenoidalSpace) (f : L2) : solenoidalSpace :=
   gramInverse (F.comp solenoidalSpace.subtypeL) c hc hF
-    ((F.comp solenoidalSpace.subtypeL).adjoint (𝕜 := ℝ) (E := solenoidalSpace) (F := L2)
+    (adjoint (𝕜 := ℝ) (E := solenoidalSpace) (F := L2) (F.comp solenoidalSpace.subtypeL :)
       (f-(2 : ℝ) • F₁ (v : L2)))
 
 /-- Simultaneously translating all data gives the actual translated acceleration. -/

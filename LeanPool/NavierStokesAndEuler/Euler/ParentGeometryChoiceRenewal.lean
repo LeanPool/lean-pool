@@ -60,7 +60,7 @@ variable (CM CH K error : ℝ) (hCM : 0 ≤ CM) (hK : 1 ≤ K) (he : 0 ≤ error
     ‖fderiv ℝ (S.velocityIncrement T t) 0 -
       (G.primaryAmplitude hball * deriv (profile G.δ)
         (k * ⟪m, S.evolution.inverse.normalized t 0⟫_ℝ)) •
-        rankOne ℝ (EulerPacketForwardFactorization.canonicalVelocity
+        rankOne ℝ (E := Space) (F := Space) (EulerPacketForwardFactorization.canonicalVelocity
           (A.transverseData m hm J support hSupport) G.initialCoordinate t
               (S.evolution.inverse.normalized t 0))
           ((A.transverseData m hm J support hSupport).normal.field t
@@ -103,7 +103,7 @@ theorem forwardTargetRenewal_constants : (Q).G=K ∧ (Q).error=error := ⟨rfl,r
 include hTime hCM hK he hMK hHK hM hH hδ hsource in
 theorem forwardTargetRenewal_remainder (hT : tNext ≤ N.T) :
     ‖(DNext).M.field ((DNext).clamp tNext) 0-(Geo).M (Geo).center tNext -
-      G.hchild • rankOne ℝ (unit ((Geo).w (Geo).center tNext))
+      G.hchild • rankOne ℝ (E := Space) (F := Space) (unit ((Geo).w (Geo).center tNext))
         (unit ((Geo).r (Geo).center tNext))‖ ≤ error := by
   have H := forwardTargetRenewal_matches S T hTime m hm J support hSupport
     mNext hmNext JNext supportNext hSupportNext G hball CM CH K error
@@ -163,7 +163,7 @@ variable (CM CH K error : ℝ) (hCM : 0 ≤ CM) (hK : 1 ≤ K) (he : 0 ≤ error
     ‖fderiv ℝ (S.velocityIncrement T t) 0 -
       (G.primaryAmplitude hball * deriv (profile G.δ)
         (k * ⟪m, S.evolution.inverse.normalized t 0⟫_ℝ)) •
-        rankOne ℝ (EulerPacketPrimaryFactorization.canonicalVelocity
+        rankOne ℝ (E := Space) (F := Space) (EulerPacketPrimaryFactorization.canonicalVelocity
           s hs hsT H G.terminal hcut t (S.evolution.inverse.normalized t 0))
           ((A.transverseData m hm J support hSupport).normal.field t
               (S.evolution.inverse.normalized t 0))‖ ≤ error)
@@ -205,7 +205,7 @@ theorem joinedTargetRenewal_constants : (Q).G=K ∧ (Q).error=error := ⟨rfl,rf
 include hTime hCM hK he hMK hHK hM hH hδ hsource in
 theorem joinedTargetRenewal_remainder (hT : tNext ≤ N.T) :
     ‖(DNext).M.field ((DNext).clamp tNext) 0-(Geo).M (Geo).center tNext -
-      G.hchild • rankOne ℝ (unit ((Geo).w (Geo).center tNext))
+      G.hchild • rankOne ℝ (E := Space) (F := Space) (unit ((Geo).w (Geo).center tNext))
         (unit ((Geo).r (Geo).center tNext))‖ ≤ error := by
   have E := joinedTargetRenewal_matches S T hTime m hm J support hSupport
     mNext hmNext JNext supportNext hSupportNext s hs hsT H G hball hcut CM CH K error

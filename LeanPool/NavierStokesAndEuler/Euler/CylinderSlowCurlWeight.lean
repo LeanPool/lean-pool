@@ -46,7 +46,8 @@ local instance instCylinderSlowCurlWeight3 : NormedAddCommGroup C(K,LiftL2 P) :=
 local instance instCylinderSlowCurlWeight4 : NormedSpace ℝ C(K,LiftL2 P) := inferInstance
 
 variable (g : C(K, ℝ)) (G : C(K, Space →ᵇ Space →L[ℝ] Space))
-  (p : C(K, LiftL2 P)) (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
+  (p : C(K, LiftL2 P))
+  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p))
 
 include hp in
 theorem term_weight (i : Fin 3) : term P G (weight g p) i = weight g (term P G p i) := by
@@ -71,11 +72,13 @@ theorem normalized_path_block_bound (hg : ∀ t, 0 < g t)
     (q : ℕ) (Rc C R D : ℝ) (hRc : 0 ≤ Rc) (hC : 0 ≤ C) (hD : 0 ≤ D)
     (hR : sobolevCoefficientRadius (Fin 4) Rc ≤ R)
     (hbG : ∀ n a, ‖iteratedFDeriv ℝ n (translateCoefficientPath G) a‖ ≤ C * majorant Rc 0 n)
-    (d : ℕ) (hbp : ∀ n, block standardDirection q
-      (fun a : LiftTangent => pathTranslate P a (normalize g hg p)) n 0 ≤ D*majorant R d n)
+    (d : ℕ) (hbp : ∀ n, block standardDirection q (fun a : LiftTangent =>
+      pathTranslate (K := K) (V := Vector3) P a (normalize g hg p : C(K, CylinderL2 P _))) n 0 ≤
+        D*majorant R d n)
     (n : ℕ) :
-    block standardDirection q
-      (fun a : LiftTangent => pathTranslate P a (normalize g hg (path P G p))) n 0 ≤
+    block standardDirection q (fun a : LiftTangent =>
+      pathTranslate (K := K) (V := Vector3) P a
+        (normalize g hg (path P G p) : C(K, CylinderL2 P _))) n 0 ≤
       (9*sobolevCoefficientAmplitude (Fin 4) q Rc C*D)*majorant R (d+1) n := by
   rw [← path_normalize P g G p hp hg]
   exact path_block_bound P G hG (normalize g hg p)
@@ -89,8 +92,10 @@ variable (P : ℝ) [Fact (0 < P)] (T : ℝ)
   (g : C(Icc (0 : ℝ) T, ℝ)) (hg : ∀ t, 0 < g t)
   (G G₁ : C(Icc (0 : ℝ) T, Space →ᵇ Space →L[ℝ] Space))
   (p f : C(Icc (0 : ℝ) T, LiftL2 P))
-  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
-  (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a f))
+  (hp : ContDiff ℝ ∞ (fun a : LiftTangent =>
+    pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a p))
+  (hf : ContDiff ℝ ∞ (fun a : LiftTangent =>
+    pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a f))
 
 include hp hf in
 /-- This is C_t/g, so no derivative or extremum of the profile is needed. -/
@@ -156,8 +161,10 @@ variable (P : ℝ) [Fact (0 < P)] (T : ℝ)
   (hB : ContDiff ℝ ∞ (translateCoefficientPath B))
   (hB₁ : ContDiff ℝ ∞ (translateCoefficientPath B₁))
   (p f : C(Icc (0 : ℝ) T, LiftL2 P))
-  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
-  (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a f))
+  (hp : ContDiff ℝ ∞ (fun a : LiftTangent =>
+    pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a p))
+  (hf : ContDiff ℝ ∞ (fun a : LiftTangent =>
+    pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a f))
 
 /-- Cache the standard `NormedAddCommGroup (LiftL2 P)` instance to shorten typeclass synthesis. -/
 local instance instCylinderPotentialTimeWeight1 : NormedAddCommGroup (LiftL2 P) := inferInstance
@@ -223,13 +230,17 @@ theorem normalized_potentialDerivative_block_bound
     (hbB : ∀ n a, ‖iteratedFDeriv ℝ n (translateCoefficientPath B) a‖ ≤ C * majorant Rc 0 n)
     (hbB₁ : ∀ n a, ‖iteratedFDeriv ℝ n (translateCoefficientPath B₁) a‖ ≤ C * majorant Rc 0 n)
     (d : ℕ)
-    (hbp : ∀ n, block directions q
-      (fun a : LiftTangent => pathTranslate P a (normalize g hg p)) n 0 ≤ D*majorant R d n)
-    (hbf : ∀ n, block directions q
-      (fun a : LiftTangent => pathTranslate P a (normalize g hg f)) n 0 ≤ D*majorant R d n)
+    (hbp : ∀ n, block directions q (fun a : LiftTangent =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a
+        (normalize g hg p : C(Icc (0 : ℝ) T, CylinderL2 P _))) n 0 ≤ D*majorant R d n)
+    (hbf : ∀ n, block directions q (fun a : LiftTangent =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a
+        (normalize g hg f : C(Icc (0 : ℝ) T, CylinderL2 P _))) n 0 ≤ D*majorant R d n)
     (n : ℕ) :
     block directions q (fun a : LiftTangent =>
-      pathTranslate P a (normalize g hg (potentialDerivative P T B B₁ p f))) n 0 ≤
+      pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a
+        (normalize g hg (potentialDerivative P T B B₁ p f) :
+          C(Icc (0 : ℝ) T, CylinderL2 P _))) n 0 ≤
       (6*sobolevCoefficientAmplitude ι q Rc C*(P*D))*majorant R d n := by
   rw [potentialDerivative_normalize]
   exact potentialDerivative_block_bound P T B B₁ hB hB₁

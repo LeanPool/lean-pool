@@ -55,21 +55,21 @@ def reassembly (n : ℕ) :
   ((coordinates (E := E) (V := V) n).toLinearMap.leftInverse).toContinuousLinearMap
 
 private theorem reassembly_coordinates (n : ℕ) (A : E [×n]→L[ℝ] V) :
-    reassembly n (coordinates n A) = A :=
+    reassembly (E := E) (V := V) n (coordinates (E := E) (V := V) n A) = A :=
   LinearMap.leftInverse_apply_of_inj
     (LinearMap.ker_eq_bot.mpr (coordinates_injective n)) A
 
 /-- Tensor path, bundling `toFun`, `continuous_toFun`. -/
 def tensorPath (n : ℕ) (A : E [×n]→L[ℝ] C(K, V)) : C(K, E [×n]→L[ℝ] V) where
-  toFun t := reassembly n (fun w => A (fun i => Module.finBasis ℝ E (w i)) t)
+  toFun t := reassembly (E := E) (V := V) n (fun w => A (fun i => Module.finBasis ℝ E (w i)) t)
   continuous_toFun := (reassembly (E := E) (V := V) n).continuous.comp
     (continuous_pi (fun w => (A (fun i => Module.finBasis ℝ E (w i))).continuous))
 
 omit [CompactSpace K] in
 theorem tensorPath_eq (n : ℕ) (A : E [×n]→L[ℝ] C(K, V)) (t : K) :
     tensorPath n A t = (ContinuousMap.evalCLM ℝ t).compContinuousMultilinearMap A := by
-  change reassembly n
-    (coordinates n ((ContinuousMap.evalCLM ℝ t).compContinuousMultilinearMap A)) = _
+  change reassembly (E := E) (V := V) n (coordinates (E := E) (V := V) n
+    ((ContinuousMap.evalCLM ℝ t).compContinuousMultilinearMap A)) = _
   exact reassembly_coordinates n _
 
 omit [CompactSpace K] in
@@ -115,11 +115,12 @@ def tensorPathMap (n : ℕ) :
       simpa only [one_mul] using tensorPath_norm_le n A)
 
 @[simp] theorem tensorPathMap_apply (n : ℕ) (A : E [×n]→L[ℝ] C(K, V))
-    (t : K) (v : Fin n → E) : tensorPathMap n A t v = A v t := tensorPath_apply n A t v
+    (t : K) (v : Fin n → E) : tensorPathMap (K := K) (E := E) (V := V) n A t v = A v t :=
+  tensorPath_apply n A t v
 
 theorem tensorPath_iteratedFDeriv (f : E → C(K, V)) (hf : ContDiff ℝ ∞ f)
     (n : ℕ) (x : E) (t : K) :
-    tensorPathMap n (iteratedFDeriv ℝ n f x) t =
+    tensorPathMap (K := K) (E := E) (V := V) n (iteratedFDeriv ℝ n f x) t =
       iteratedFDeriv ℝ n (fun y => f y t) x := by
   change tensorPath n (iteratedFDeriv ℝ n f x) t = _
   rw [tensorPath_eq]

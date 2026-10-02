@@ -280,7 +280,8 @@ def coefficientFamily (a : LiftTangent) :
   liftedOperatorPath period Ω hΩ T (translateCoefficientPath B a.1)
 
 /-- Its homogeneous evolution is constructed, not assumed. -/
-def evolutionFamily (a : LiftTangent) : Evolution T hT (coefficientFamily period T Ω hΩ B a) :=
+def evolutionFamily (a : LiftTangent) :
+    Evolution T hT (coefficientFamily (V := V) period T Ω hΩ B a) :=
   constructedEvolution period Ω hΩ T hT (translateCoefficientPath B a.1)
 
 /-- The genuine profile-normalized forced solution in this fixed space. -/
@@ -294,11 +295,12 @@ include hB in
 /-- Actual coefficient and data regularity give actual smoothness of the solved family. -/
 theorem solutionFamily_contDiff (g : C(Icc (0 : ℝ) T, ℝ)) (hg : ∀ t, 0 < g t)
     (f : C(Icc (0 : ℝ) T, CylinderL2 period V)) (a₀ : CylinderL2 period V)
-    (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate period a f))
-    (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent => translate period a a₀)) :
+    (hf : ContDiff ℝ ∞ (fun a : LiftTangent =>
+      pathTranslate (K := Icc (0 : ℝ) T) (V := V) period a f))
+    (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent => translate (V := V) period a a₀)) :
     ContDiff ℝ ∞ (solutionFamily period T hT Ω hΩ B g hg f a₀) :=
-  weightedSolution_contDiff T hT (coefficientFamily period T Ω hΩ B) (evolutionFamily period T hT Ω
-      hΩ B)
+  weightedSolution_contDiff T hT (coefficientFamily (V := V) period T Ω hΩ B)
+    (evolutionFamily period T hT Ω hΩ B)
     g hg (translatedForcing period Ω hΩ f) (translatedData period Ω hΩ a₀)
     (mixedCoefficient_contDiff period Ω hΩ T B hB)
     (translatedForcing_contDiff period Ω hΩ f hf) (translatedData_contDiff period Ω hΩ a₀ ha₀)
@@ -346,7 +348,8 @@ theorem source_solution_contDiff
     (f : C(Icc (0 : ℝ) T, Supported period V K hK)) (a₀ : Supported period V K hK)
     (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := V) period a
       (includePath (K := Icc (0 : ℝ) T) (V := V) period K hK f)))
-    (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent => translate period a (a₀ : CylinderL2 period V))) :
+    (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent =>
+      translate (V := V) period a (a₀ : CylinderL2 period V))) :
     ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := V) period a
       (includePath (K := Icc (0 : ℝ) T) (V := V) period K hK
         ((constructedEvolution period K hK T hT B).weightedSolution g hg f a₀))) := by

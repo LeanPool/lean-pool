@@ -187,11 +187,12 @@ theorem adjoint_bound (A : P → U →L[ℝ] E) (hA : ContDiff ℝ ∞ A)
     (R C : ℝ) (hR : 0 ≤ R) (hC : 0 ≤ C) (d : ℕ)
     (hb : ∀ n x, ‖iteratedFDeriv ℝ n A x‖ ≤ C * majorant R d n)
     (n : ℕ) (x : P) :
-    ‖iteratedFDeriv ℝ n (fun y => (A y).adjoint) x‖ ≤ C * majorant R d n := by
+    ‖iteratedFDeriv ℝ n (fun y => adjoint (𝕜 := ℝ) (E := U) (F := E) (A y)) x‖ ≤
+      C * majorant R d n := by
   have hL : ‖realAdjoint (U := U) (E := E)‖ ≤ 1 := by
     apply opNorm_le_bound _ zero_le_one
     intro a
-    change ‖a.adjoint‖ ≤ 1 * ‖a‖
+    change ‖adjoint (𝕜 := ℝ) (E := U) (F := E) a‖ ≤ 1 * ‖a‖
     simp only [LinearIsometryEquiv.norm_map, one_mul, le_refl]
   exact contraction_bound (P := P) (E := U →L[ℝ] E) (F := E →L[ℝ] U)
     (realAdjoint (U := U) (E := E)) hL A hA R C hR hC d hb n x

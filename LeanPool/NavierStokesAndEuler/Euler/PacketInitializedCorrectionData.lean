@@ -549,7 +549,8 @@ theorem joinedPacket_normal_bound (N : ℕ) (hN : 1 ≤ N) (k : ℝ) (hk : 4 ≤
         ((a 1).high (t,(x,θ))))=0 := by
     intro t x θ
     have h := hprimaryTangent t x θ
-    change inner ℝ ((D.FInv.field (D.clamp t) x).adjoint D.m₀) (primary.high (t,(x,θ)))=0 at h
+    change inner ℝ (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space)
+      (D.FInv.field (D.clamp t) x) D.m₀) (primary.high (t,(x,θ)))=0 at h
     rw [ContinuousLinearMap.adjoint_inner_left] at h
     change inner ℝ D.m₀ (D.FInv.field (D.clamp t) x ((a 1).high (t,(x,θ))))=0
     simpa only [a,joinedSourceProfiles,profiles_one] using h

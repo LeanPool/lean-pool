@@ -67,8 +67,8 @@ theorem pathMap_block_le (A : Space →L[ℝ] Space) (p : C(K, LiftL2 P))
       (fun b : LiftTangent => pathTranslate (K := K) (V := Vector3) P b p) n a))
 
 variable (B : Space →L[ℝ] Space →L[ℝ] Space) (p q : C(K, LiftL2 P))
-  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
-  (hq : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a q))
+  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p))
+  (hq : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a q))
 
 /-- The field word radius is unchanged by an arbitrary fixed bounded bilinear vector map. -/
 theorem bilinearProductPath_majorant (R A C : ℝ) (hR : 0 ≤ R) (hA : 0 ≤ A) (hC : 0 ≤ C)

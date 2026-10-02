@@ -80,7 +80,9 @@ theorem scaledVelocity_firstTwo_hasDerivWithinAt (B M : Space →L[ℝ] Space)
     {m v r w : ℝ → Space} {s₀ t₀ a ε τ : ℝ} {S U : Set ℝ}
     (ha : a ≠ 0) (hε : ε ≠ 0) (hs₀ : s₀ ≠ 0)
     (hmap : MapsTo (physicalTime t₀ a ε) U S)
-    (hm : HasDerivWithinAt m (-B.adjoint (m (physicalTime t₀ a ε τ))) S (physicalTime t₀ a ε τ))
+    (hm : HasDerivWithinAt m
+      (-ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) B
+        (m (physicalTime t₀ a ε τ))) S (physicalTime t₀ a ε τ))
     (hv : HasDerivWithinAt v (-B (v (physicalTime t₀ a ε τ)) +
       (2 * ⟪m (physicalTime t₀ a ε τ), B (v (physicalTime t₀ a ε τ))⟫_ℝ /
         ‖m (physicalTime t₀ a ε τ)‖ ^ 2) • m (physicalTime t₀ a ε τ)) S (physicalTime t₀ a ε τ))

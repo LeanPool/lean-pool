@@ -42,7 +42,8 @@ theorem normalized_add_path : ((G.add H).normalized hT g hg).path =
 
 theorem normalized_sub_path : ((G.sub H).normalized hT g hg).path =
     ((G.normalized hT g hg).sub (H.normalized hT g hg)).path := by
-  change normalize g hg (G.path + -H.path) = normalize g hg G.path + -normalize g hg H.path
+  change normalize (E := LiftL2 P) g hg (G.path + -H.path) =
+    normalize (E := LiftL2 P) g hg G.path + -normalize (E := LiftL2 P) g hg H.path
   rw [map_add,map_neg]
 
 theorem normalized_neg_path : (G.neg.normalized hT g hg).path = (G.normalized hT g hg).neg.path :=
@@ -105,14 +106,19 @@ theorem wordBound_normalized_finsetSum {ι : Type*} (s : Finset ι) (f : ι → 
 theorem WordBound.angleMean {q d : ℕ} {R A : ℝ} (hG : G.WordBound q R A d) :
     G.angleMean.WordBound q R A d := by
   intro n
-  have he : (fun a : LiftTangent => pathTranslate P a G.angleMean.path) =
-      (pathAverage P) ∘ (fun a : LiftTangent => pathTranslate P a G.path) :=
+  have he : (fun a : LiftTangent =>
+        pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a G.angleMean.path) =
+      (pathAverage (K := Icc (0 : ℝ) T) (V := Vector3) P) ∘
+        (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a G.path) :=
     funext (fun a => (pathAverage_translation P a G.path).symm)
   rw [he]
-  have h := block_comp_clm_le standardDirection q (pathAverage P)
-    (fun a : LiftTangent => pathTranslate P a G.path) G.orbit n 0
+  have h := block_comp_clm_le standardDirection q
+    (pathAverage (K := Icc (0 : ℝ) T) (V := Vector3) P)
+    (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a G.path)
+    G.orbit n 0
   have hb := h.trans (mul_le_mul_of_nonneg_right (pathAverage_norm P)
-    (block_nonneg standardDirection q (fun a : LiftTangent => pathTranslate P a G.path) n 0))
+    (block_nonneg standardDirection q
+      (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a G.path) n 0))
   simpa only [one_mul] using hb.trans (by simpa only [one_mul] using hG n)
 
 variable (G g hg)

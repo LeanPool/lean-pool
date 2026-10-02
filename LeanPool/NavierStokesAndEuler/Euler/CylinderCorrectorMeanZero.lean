@@ -46,8 +46,8 @@ local instance instCylinderCorrectorMeanZero4 : NormedSpace ℝ C(K,LiftL2 P) :=
 
 omit [CompactSpace K] in
 theorem pathAverage_primitive (p : C(K, LiftL2 P)) :
-    pathAverage (K := K) (V := Vector3) P (pathPrimitive P p) =
-      pathPrimitive P (pathAverage (K := K) (V := Vector3) P p) := by
+    pathAverage (K := K) (V := Vector3) P (pathPrimitive (K := K) P p) =
+      pathPrimitive (K := K) P (pathAverage (K := K) (V := Vector3) P p) := by
   apply ContinuousMap.ext
   intro t
   exact average_primitive P (p t)
@@ -56,7 +56,8 @@ theorem derivativePath_zero (i : Fin 4) : derivativePath P (0 : C(K,LiftL2 P)) i
   simp only [derivativePath, wordPath, map_zero, wordDerivative, iteratedFDeriv_one_apply,
     fderiv_const_apply, zero_apply]
 
-variable (p : C(K, LiftL2 P)) (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
+variable (p : C(K, LiftL2 P))
+  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p))
 
 include hp in
 theorem pathAverage_derivativePath (i : Fin 4) :

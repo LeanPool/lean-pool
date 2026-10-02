@@ -77,7 +77,8 @@ theorem fieldFDeriv_zero_outside (hSc : IsClosed S) (f : LiftDomain P → Space)
   simpa only [fieldFDeriv, fderiv_const_apply] using he.fderiv_eq (𝕜 := ℝ)
 
 variable {K : Type*} [TopologicalSpace K] [CompactSpace K]
-  (p : C(K, LiftL2 P)) (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
+  (p : C(K, LiftL2 P))
+  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p))
 
 include hp in
 theorem pointField_zero_outside (hSc : IsClosed S)

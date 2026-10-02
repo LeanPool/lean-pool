@@ -29,11 +29,11 @@ abbrev Matrix := Space →L[ℝ] Space
 
 /-- Shear term, given by `(amp*slope) • rankOne ℝ w r`. -/
 def shearTerm (amp slope : ℝ) (r w : Space) : Matrix :=
-  (amp*slope) • rankOne ℝ w r
+  (amp*slope) • rankOne ℝ (E := Space) (F := Space) w r
 
 /-- Pressure term, given by `(-2*amp*⟪r,M w⟫_ℝ*slope/‖r‖^2) • rankOne ℝ r r`. -/
 def pressureTerm (amp slope : ℝ) (M : Matrix) (r w : Space) : Matrix :=
-  (-2*amp*⟪r,M w⟫_ℝ*slope/‖r‖^2) • rankOne ℝ r r
+  (-2*amp*⟪r,M w⟫_ℝ*slope/‖r‖^2) • rankOne ℝ (E := Space) (F := Space) r r
 
 theorem profile_deriv_abs (δ : ℝ) (hδ : 0 < δ) (hδ1 : δ ≤ 1) (θ : ℝ) :
     |deriv (profile δ) θ| ≤ δ⁻¹ := by

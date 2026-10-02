@@ -81,8 +81,8 @@ noncomputable def flipLinear : C(Icc a b, P →L[ℝ] E) →ₗ[ℝ] P →ₗ[�
   map_smul' := by intros; ext v t; rfl
 
 theorem norm_flipLinear_le (g : C(Icc a b, P →L[ℝ] E)) (v : P) :
-    ‖flipLinear g v‖ ≤ ‖g‖ * ‖v‖ := by
-  apply (ContinuousMap.norm_le (flipLinear g v)
+    ‖flipLinear (P := P) (E := E) (a := a) (b := b) g v‖ ≤ ‖g‖ * ‖v‖ := by
+  apply (ContinuousMap.norm_le (flipLinear (P := P) (E := E) (a := a) (b := b) g v)
     (mul_nonneg (norm_nonneg g) (norm_nonneg v))).mpr
   intro t
   exact ((g t).le_opNorm v).trans
@@ -97,7 +97,7 @@ noncomputable def flipPath : C(Icc a b, P →L[ℝ] E) →L[ℝ] P →L[ℝ] C(I
       simpa only [one_mul] using norm_flipLinear_le g v)
 
 theorem flipPath_apply (g : C(Icc a b, P →L[ℝ] E)) (v : P) (t : Icc a b) :
-    flipPath (P := P) (E := E) g v t = g t v := rfl
+    flipPath (P := P) (E := E) (a := a) (b := b) g v t = g t v := rfl
 
 /-- The key uniform differentiability theorem. Joint continuity of the actual
 slice derivative supplies a common remainder estimate for every time point. -/
@@ -108,7 +108,7 @@ theorem hasFDerivAt_pathFamily {U : Set P} (hU : IsOpen U)
     (hderiv : ∀ p ∈ U, ∀ t : Icc a b, HasFDerivAt (fun q => F (q, t)) (G (p, t)) p)
     {p : P} (hp : p ∈ U) :
     HasFDerivAt (pathFamily (a := a) (b := b) F)
-      (flipPath (P := P) (E := E) (pathFamily (a := a) (b := b) G p)) p := by
+      (flipPath (P := P) (E := E) (a := a) (b := b) (pathFamily (a := a) (b := b) G p)) p := by
   rw [hasFDerivAt_iff_isLittleO_nhds_zero]
   apply isLittleO_iff.mpr
   intro ε hε
@@ -184,8 +184,8 @@ theorem contDiffOn_pathFamily_nat (U : Set P) (V : Set ℝ)
     have hDc : ContinuousOn (parameterDerivative F) (U ×ˢ Icc a b) :=
       hD.continuousOn.mono (Set.prod_mono Subset.rfl hI)
     have hd : ∀ p ∈ U, HasFDerivAt (pathFamily (a := a) (b := b) F)
-        (flipPath (P := P) (E := W) (pathFamily (a := a) (b := b) (parameterDerivative F) p)) p :=
-            by
+        (flipPath (P := P) (E := W) (a := a) (b := b)
+          (pathFamily (a := a) (b := b) (parameterDerivative F) p)) p := by
       intro p hp
       apply hasFDerivAt_pathFamily hU F (parameterDerivative F) hFc hDc _ hp
       intro q hq t
@@ -260,7 +260,7 @@ theorem contDiffOn_odeFamily_of_joint (U : Set P) (V : Set ℝ)
     (hA : ContDiffOn ℝ ∞ A (U ×ˢ V)) (hx₀ : ContDiffOn ℝ ∞ x₀ U)
     (hf : ContDiffOn ℝ ∞ f (U ×ˢ V)) :
     ContDiffOn ℝ ∞ (odeFamily hab A x₀ f) U :=
-  ParametricODE.contDiffOn_solution_family hab (pathFamily A) x₀ (pathFamily f)
+  ParametricODE.contDiffOn_solution_family (E := E) hab (pathFamily A) x₀ (pathFamily f)
     (contDiffOn_pathFamily_of_joint U V hU hV hI A hA) hx₀
     (contDiffOn_pathFamily_of_joint U V hU hV hI f hf)
 
@@ -268,7 +268,7 @@ omit [NormedAddCommGroup P] [NormedSpace ℝ P] in
 theorem odeFamily_initial (A : P × ℝ → E →L[ℝ] E) (x₀ : P → E)
     (f : P × ℝ → E) (p : P) :
     odeFamily hab A x₀ f p ⟨a, le_rfl, hab⟩ = x₀ p :=
-  ParametricODE.solution_initial hab (pathFamily A p) (x₀ p) (pathFamily f p)
+  ParametricODE.solution_initial (E := E) hab (pathFamily A p) (x₀ p) (pathFamily f p)
 
 omit [NormedSpace ℝ P] in
 /-- The smooth path family satisfies the ODE with the originally supplied
@@ -283,7 +283,8 @@ theorem odeFamily_hasDerivWithinAt (U : Set P) (V : Set ℝ)
   have hfc := slice_continuous (hf.mono (Set.prod_mono Subset.rfl hI)) hp
   unfold odeFamily
   simpa only [pathFamily_apply A p hAc, pathFamily_apply f p hfc] using
-    ParametricODE.solution_hasDerivWithinAt hab (pathFamily A p) (x₀ p) (pathFamily f p) t
+    ParametricODE.solution_hasDerivWithinAt (E := E) hab (pathFamily A p) (x₀ p)
+      (pathFamily f p) t
 
 end ODE
 

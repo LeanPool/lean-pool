@@ -101,7 +101,7 @@ theorem physical_euler_momentum_of_flow
       (2 : ℝ) • A.symm (DF (1, 0) (z (spaceTimeGraph k m (t, x)))) +
       Dz (0, (κ • z (spaceTimeGraph k m (t, x)), ⟪m, z (spaceTimeGraph k m (t, x))⟫_ℝ)) +
       κ • A.symm (DF (0, z (spaceTimeGraph k m (t, x))) (z (spaceTimeGraph k m (t, x)))) +
-      A.symm (A.symm.toContinuousLinearMap.adjoint P) = 0) :
+      A.symm (adjoint (𝕜 := ℝ) (E := E) (F := E) A.symm.toContinuousLinearMap P) = 0) :
     momentumResidual (fun q => u q+physicalVelocity κ k m F z Y q)
       (fun q => p q+physicalPressure Q Y q) (t,X (t,x)) = 0 := by
   have hXt : HasDerivAt (fun s => X (s,x)) (u (t,X (t,x))) t := by

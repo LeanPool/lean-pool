@@ -42,8 +42,8 @@ theorem scalar_angle (t : Icc (0 : ℝ) D.T) (x : Space) (θ : ℝ) :
       (-(2*⟪D.normal.field t x,D.M.field t x (vector D Y (t,(x,θ)))⟫_ℝ)/
         ‖D.normal.field t x‖^2) θ := by
   let G := forcing (P := P) D
-  have hforce : pointField P (includePath P D.support D.support_measurable G.path)
-      G.path_orbit t (x,(θ : AddCircle P)) = 0 := (G.raw_eq t x θ).symm
+  have hforce : pointField P (includePath (K := Icc (0 : ℝ) D.T) (V := Vector3) P D.support
+      D.support_measurable G.path) G.path_orbit t (x,(θ : AddCircle P)) = 0 := (G.raw_eq t x θ).symm
   have hp := pressureField_angle P D.support D.support_measurable D.support_compact
     D.T D.T_pos.le D.frame D.frameDerivative D.frameLower D.frameLower_pos D.frame_lower
     G.path Y.value G.path_orbit Y.orbit D.M D.normal D.normalLower D.normalLower_pos D.normal_lower

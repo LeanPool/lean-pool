@@ -161,8 +161,8 @@ theorem physical_parent_compression (B M E : Space →L[ℝ] Space) (h : ℝ) (m
     (hmv : ⟪m (physicalTime t₀ a ε τ), v (physicalTime t₀ a ε τ)⟫_ℝ = 0)
     (hD : 0 < rayDenominator ε (scaledRay m v r s₀ t₀ a ε τ 0)
       (scaledRay m v r s₀ t₀ a ε τ 1) (scaledRay m v r s₀ t₀ a ε τ 2))
-    (hparent : M = B + h • rankOne ℝ (unit (v (physicalTime t₀ a ε τ)))
-      (unit (m (physicalTime t₀ a ε τ))) + E) :
+    (hparent : M = B + h • rankOne ℝ (E := Space) (F := Space)
+      (unit (v (physicalTime t₀ a ε τ))) (unit (m (physicalTime t₀ a ε τ))) + E) :
     let R := scaledRay m v r s₀ t₀ a ε τ
     normalizedCoupling M (r (physicalTime t₀ a ε τ)) (r (physicalTime t₀ a ε τ)) ≤
       h*ε*R 1*R 0/rayDenominator ε (R 0) (R 1) (R 2)+3*(‖B‖+‖E‖) := by
@@ -180,8 +180,8 @@ theorem physical_target_compression (B M E : Space →L[ℝ] Space) (h : ℝ) (m
     {s₀ t₀ a ε τ β Θ K e : ℝ} (hs₀ : s₀ ≠ 0) (hε : 0 < ε)
     (hm : m (physicalTime t₀ a ε τ) ≠ 0) (hv : v (physicalTime t₀ a ε τ) ≠ 0)
     (hmv : ⟪m (physicalTime t₀ a ε τ), v (physicalTime t₀ a ε τ)⟫_ℝ = 0)
-    (hparent : M = B + h • rankOne ℝ (unit (v (physicalTime t₀ a ε τ)))
-      (unit (m (physicalTime t₀ a ε τ))) + E)
+    (hparent : M = B + h • rankOne ℝ (E := Space) (F := Space)
+      (unit (v (physicalTime t₀ a ε τ))) (unit (m (physicalTime t₀ a ε τ))) + E)
     (hβ : 0 < β) (hβupper : β ≤ 1) (hτ : 0 < τ) (hτΘ : τ ≤ Θ)
     (hΘ : 1 ≤ Θ) (hK : 1 ≤ K) (he : 0 ≤ e) (hεe : ε ≤ e) (hh : 0 ≤ h)
     (hsmall : 1000000 * K * e * Θ ^ 40 ≤ 1) (hscale : 1 ≤ β * τ ^ 2)

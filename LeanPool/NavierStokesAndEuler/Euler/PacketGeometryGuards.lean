@@ -34,7 +34,8 @@ theorem physical_shear_motion_bound
     (hsmall : 16 * (ε * Θ * (4 * G) ^ 2 + d) ≤ 1)
     (hmap : MapsTo (physicalTime t₀ a ε) (Icc 0 Θ) S)
     (hBd : ∀ t ∈ S, HasDerivWithinAt B (B₁ t) S t)
-    (hmd : ∀ t ∈ S, HasDerivWithinAt m (-(B t).adjoint (m t)) S t)
+    (hmd : ∀ t ∈ S, HasDerivWithinAt m
+      (-adjoint (𝕜 := ℝ) (E := Space) (F := Space) (B t) (m t)) S t)
     (hvd : ∀ t ∈ S, HasDerivWithinAt v (-(B t) (v t) +
       (2 * ⟪m t, (B t) (v t)⟫_ℝ / ‖m t‖ ^ 2) • m t) S t)
     (hm0 : ∀ t ∈ S, m t ≠ 0) (hv0 : ∀ t ∈ S, v t ≠ 0)

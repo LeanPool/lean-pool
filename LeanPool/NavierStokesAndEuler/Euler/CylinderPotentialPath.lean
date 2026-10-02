@@ -88,7 +88,7 @@ def pathPrimitive : C(K,LiftL2 P) →L[ℝ] C(K,LiftL2 P) :=
 
 omit [CompactSpace K] in
 @[simp] theorem pathPrimitive_apply (u : C(K, LiftL2 P)) (t : K) :
-    pathPrimitive P u t = primitive P (u t) := rfl
+    pathPrimitive (K := K) P u t = primitive P (u t) := rfl
 
 theorem pathPrimitive_norm : ‖pathPrimitive (K := K) P‖ ≤ P := by
   have hP : 0 ≤ P := le_of_lt (Fact.out : 0 < P)
@@ -103,7 +103,8 @@ theorem pathPrimitive_norm : ‖pathPrimitive (K := K) P‖ ≤ P := by
 -/
 theorem pathPrimitive_block_bound (directions : ι → X) (q : ℕ)
     (f : X → C(K, LiftL2 P)) (hf : ContDiff ℝ ∞ f) (n : ℕ) (x : X) :
-    block directions q (fun y => pathPrimitive P (f y)) n x ≤ P*block directions q f n x := by
+    block directions q (fun y => pathPrimitive (K := K) P (f y)) n x ≤
+      P*block directions q f n x := by
   have h := block_comp_clm_le (E := C(K,LiftL2 P)) (F := C(K,LiftL2 P))
     directions q (pathPrimitive (K := K) P) f hf n x
   have hn : ‖pathPrimitive (K := K) P‖ ≤ P := pathPrimitive_norm P
@@ -112,7 +113,7 @@ theorem pathPrimitive_block_bound (directions : ι → X) (q : ℕ)
 theorem pathPrimitive_block_majorant (directions : ι → X) (q : ℕ)
     (f : X → C(K, LiftL2 P)) (hf : ContDiff ℝ ∞ f) (R C : ℝ) (d : ℕ)
     (hb : ∀ n x, block directions q f n x ≤ C * majorant R d n) (n : ℕ) (x : X) :
-    block directions q (fun y => pathPrimitive P (f y)) n x ≤ (P*C)*majorant R d n :=
+    block directions q (fun y => pathPrimitive (K := K) P (f y)) n x ≤ (P*C)*majorant R d n :=
   (pathPrimitive_block_bound P directions q f hf n x).trans
     ((mul_le_mul_of_nonneg_left (hb n x) (le_of_lt (Fact.out : 0 < P))).trans_eq
       (mul_assoc P C _).symm)
@@ -184,8 +185,10 @@ theorem pointField_primitive_formula (p : C(K, LiftL2 P))
 section Time
 
 variable (T : ℝ) (hT : 0 ≤ T) (p f : C(Icc (0 : ℝ) T, LiftL2 P))
-  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
-  (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a f))
+  (hp : ContDiff ℝ ∞ (fun a : LiftTangent =>
+    pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a p))
+  (hf : ContDiff ℝ ∞ (fun a : LiftTangent =>
+    pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a f))
   (hd : ∀ t : Icc (0 : ℝ) T, HasDerivWithinAt (extendPath T hT p) (f t) (Icc (0 : ℝ) T) t)
 
 include hd in
@@ -237,7 +240,8 @@ variable (P : ℝ) [Fact (0 < P)]
   {K : Type*} [TopologicalSpace K] [CompactSpace K]
   (B : C(K, Space →ᵇ Space →L[ℝ] Space))
   (hB : ContDiff ℝ ∞ (translateCoefficientPath B))
-  (p : C(K, LiftL2 P)) (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
+  (p : C(K, LiftL2 P))
+  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p))
 
 /-- Potential path, given by `fullMultiplierMap P B (pathPrimitive P p)`. -/
 def potentialPath : C(K,LiftL2 P) :=

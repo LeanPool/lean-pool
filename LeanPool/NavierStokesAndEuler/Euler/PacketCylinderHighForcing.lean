@@ -45,8 +45,8 @@ omit [CompactSpace K] in
   rfl
 
 variable (p q : C(K, LiftL2 P))
-  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
-  (hq : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a q))
+  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p))
+  (hq : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a q))
 
 theorem scalarProductPath_supported_left (L : Space →L[ℝ] ℝ) (hL : ‖L‖ ≤ 1)
     (hs : ∀ t, p t ∈ Supported P Space S hS) (t : K) :

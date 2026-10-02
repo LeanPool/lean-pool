@@ -174,9 +174,10 @@ theorem endpointVelocity_hasDerivWithinAt (Y : CylinderL2 P U) (t : Icc (0 : ℝ
 or strong derivative among the data. -/
 theorem endpoint_projected_equation (Y : CylinderL2 P U) (t : Icc (0 : ℝ) T) :
     gram (D.frame P t) (D.endpointAcceleration P Y t) =
-      (D.frame P t).adjoint (-(2 : ℝ) • D.frameDerivative P t (D.endpointCoordinate P Y t)) := by
+      adjoint (𝕜 := ℝ) (E := CylinderL2 P U) (F := CylinderL2 P E) (D.frame P t)
+        (-(2 : ℝ) • D.frameDerivative P t (D.endpointCoordinate P Y t)) := by
   change gram (D.frame P t) ((-2 : ℝ) • gramInverse (D.frame P t) D.lower D.lower_pos
-    (D.frame_lower P t) ((D.frame P t).adjoint
+    (D.frame_lower P t) (adjoint (𝕜 := ℝ) (E := CylinderL2 P U) (F := CylinderL2 P E) (D.frame P t)
       (D.frameDerivative P t (D.endpointCoordinate P Y t)))) = _
   rw [map_smul,gram_inverse_apply,map_smul]
 

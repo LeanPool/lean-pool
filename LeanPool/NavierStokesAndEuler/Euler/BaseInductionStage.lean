@@ -100,7 +100,8 @@ theorem homogeneousSourceErrors_of_global (ev ep : ℝ)
     (herr : ∀ (t : Icc (0 : ℝ) A.T) (x : Space),
       ‖fderiv ℝ (A.normalizedPacketVelocity m hm J support hSupport B residual k E.inverse t) x -
         ((δ * hchild) * deriv (profile δ) (k * ⟪m, E.inverse.normalized t x⟫_ℝ)) •
-          rankOne ℝ (canonicalVelocity (A.transverseData m hm J support hSupport) ξ t
+          rankOne ℝ (E := Space) (F := Space)
+            (canonicalVelocity (A.transverseData m hm J support hSupport) ξ t
               (E.inverse.normalized t x))
             ((A.transverseData m hm J support hSupport).normal.field t (E.inverse.normalized t x))‖
                 < ev ∧
@@ -110,7 +111,8 @@ theorem homogeneousSourceErrors_of_global (ev ep : ℝ)
             (δ * hchild) t
             (E.inverse.normalized t x) *
  deriv (profile δ) (k * ⟪m, E.inverse.normalized t x⟫_ℝ)) •
-          rankOne ℝ ((A.transverseData m hm J support hSupport).normal.field t
+          rankOne ℝ (E := Space) (F := Space)
+            ((A.transverseData m hm J support hSupport).normal.field t
               (E.inverse.normalized t x))
             ((A.transverseData m hm J support hSupport).normal.field t (E.inverse.normalized t x))‖
                 < ep) :
@@ -787,7 +789,8 @@ theorem center_error (t : Icc (0 : ℝ) T) :
       ((δ*hchild)*deriv (profile δ)
         (k*⟪firstNormal,(packetBaseState β hβ ell hell hell1 T hT hTB).evolution.inverse.normalized
             t 0⟫_ℝ)) •
-        rankOne ℝ (canonicalVelocity (firstPacketData β hβ ell hell hell1 T hT hTB) firstCoordinate
+        rankOne ℝ (E := Space) (F := Space)
+          (canonicalVelocity (firstPacketData β hβ ell hell hell1 T hT hTB) firstCoordinate
             t
           ((packetBaseState β hβ ell hell hell1 T hT hTB).evolution.inverse.normalized t 0))
           ((firstPacketData β hβ ell hell hell1 T hT hTB).normal.field t

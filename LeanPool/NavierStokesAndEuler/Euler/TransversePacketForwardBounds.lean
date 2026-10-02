@@ -140,8 +140,9 @@ variable (directions : ι → LiftTangent) (hd : ∀ i, ‖directions i‖ ≤ 1
   (Ω : Set Space) (hΩ : MeasurableSet Ω) (hSc : IsCompact S) (hΩo : IsOpen Ω) (hsub : S ⊆ Ω)
   (hΩball : ∀ x ∈ Ω, ‖x‖ ≤ (1 / 2 : ℝ))
   (hg₀ : g ⟨0, le_rfl, hT⟩ = 1)
-  (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a (includePath P S hS f)))
-  (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent => translate P a (a₀ : CylinderL2 P U)))
+  (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a
+    (includePath (K := Icc (0 : ℝ) T) (V := E) P S hS f)))
+  (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent => translate (V := U) P a (a₀ : CylinderL2 P U)))
   (C A D Rc C₀ C₁ Ri R : ℝ)
   (hC : 0 ≤ C) (hA : 0 ≤ A) (hD : 0 ≤ D) (hRc : 0 ≤ Rc) (hC₀ : 0 ≤ C₀) (hC₁ : 0 ≤ C₁)
   (hRi : 2 * gramCost c C₀ 1 * (Rc + 1) ≤ Ri)
@@ -155,9 +156,11 @@ variable (directions : ι → LiftTangent) (hd : ∀ i, ‖directions i‖ ≤ 1
       ((fundamentalPath T hT (sourceGenerator Q Q₁ c hc hQ)).backward s x)‖ ≤ C * g t / g s)
   (d : ℕ)
   (hforce : ∀ n, block directions q
-    (fun a : LiftTangent => pathTranslate P a (includePath P S hS f)) n 0 ≤ D * majorant R d n)
+    (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := E) P a
+      (includePath (K := Icc (0 : ℝ) T) (V := E) P S hS f)) n 0 ≤ D * majorant R d n)
   (hinitial : ∀ n, block directions q
-    (fun a : LiftTangent => translate P a (a₀ : CylinderL2 P U)) n 0 ≤ A * majorant R d n)
+    (fun a : LiftTangent => translate (V := U) P a (a₀ : CylinderL2 P U)) n 0 ≤
+      A * majorant R d n)
 
 include hd hΩ hSc hΩo hsub hΩball hg₀ hf ha₀ hC hA hD hRc hC₀ hC₁ hRi hbQ hbQ₁ hRforcing hR hH3
     hforce hinitial
@@ -302,11 +305,13 @@ variable
         (sourceGenerator D.frame D.frameDerivative D.frameLower D.frameLower_pos
             D.frame_lower)).backward s x)‖ ≤ C * g t / g s)
   (d : ℕ)
-  (hforce : ∀ n, block directions q (fun a => pathTranslate P a
-    (normalize g hg (includePath P D.support D.support_measurable G.path))) n 0 ≤ Cf * majorant R d
-        n)
+  (hforce : ∀ n, block directions q
+    (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
+      (normalize (K := Icc (0 : ℝ) D.T) (E := CylinderL2 P Space) g hg
+        (includePath (K := Icc (0 : ℝ) D.T) (V := Space) P D.support D.support_measurable
+          G.path))) n 0 ≤ Cf * majorant R d n)
   (hinitial : ∀ n, block directions q
-    (fun a => translate P a (I.value : CylinderL2 P U)) n 0 ≤ A * majorant R d n)
+    (fun a => translate (V := U) P a (I.value : CylinderL2 P U)) n 0 ≤ A * majorant R d n)
 
 include hdir hΩ hΩo hsub hΩball hg0 hC hA hCf hRc hC₀ hC₁ hRi hbF hbF₁ hRforcing hR hH3 hforce
     hinitial

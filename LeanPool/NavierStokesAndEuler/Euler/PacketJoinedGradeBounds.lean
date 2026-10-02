@@ -70,8 +70,10 @@ variable {P : ℝ} [Fact (0 < P)]
   (L : Budget D τ hτ hτT B ι q) {raw : VectorField} (G : Forcing P D raw)
   (directions : ι → LiftTangent) (hdir : ∀ i, ‖directions i‖ ≤ 1)
   (d : ℕ)
-  (hforce : ∀ n, block directions q (fun a => pathTranslate P a
-    (normalize L.fullProfile L.fullProfile_pos (HistoryData.forcingPath G))) n 0 ≤ majorant L.R d n)
+  (hforce : ∀ n, block directions q (fun a =>
+    pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
+      (normalize (E := CylinderL2 P Space) L.fullProfile L.fullProfile_pos
+        (HistoryData.forcingPath G))) n 0 ≤ majorant L.R d n)
 
 include hforce
 
@@ -258,10 +260,12 @@ variable {P : ℝ} [Fact (0 < P)]
   (q : ℕ) (Rc C R A : ℝ) (hRc : 0 ≤ Rc) (hC : 0 ≤ C) (hA : 0 ≤ A)
   (hR : sobolevCoefficientRadius (Fin 4) Rc ≤ R) (d : ℕ)
   (hbA : ∀ n, block standardDirection q
-    (fun a : LiftTangent => pathTranslate P a (normalize g hg (velocityPath τ hτ hτT B G))) n 0 ≤
+    (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
+      (normalize (E := CylinderL2 P Vector3) g hg (velocityPath τ hτ hτT B G))) n 0 ≤
       A * majorant R d n)
   (hbAt : ∀ n, block standardDirection q
-    (fun a : LiftTangent => pathTranslate P a (normalize g hg (derivativePath τ hτ hτT B G))) n 0 ≤
+    (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
+      (normalize (E := CylinderL2 P Vector3) g hg (derivativePath τ hτ hτT B G))) n 0 ≤
       A * majorant R d n)
   (hbK : ∀ n a, ‖iteratedFDeriv ℝ n (translateCoefficientPath D.potentialCoefficientPath) a‖ ≤
     C * majorant Rc 0 n)
@@ -481,10 +485,10 @@ variable {P : ℝ} [Fact (0 < P)]
   (L : Budget D τ hτ hτT B ι q) {raw : VectorField} (G : Forcing P D raw)
   (directions : ι → LiftTangent) (hdir : ∀ i, ‖directions i‖ ≤ 1)
   (A : ℝ) (hA : 0 ≤ A) (d : ℕ)
-  (hforce : ∀ n, block directions q (fun a => pathTranslate P a
-    (normalize L.fullProfile L.fullProfile_pos (HistoryData.forcingPath G))) n 0 ≤ A * majorant L.R
-        d
-        n)
+  (hforce : ∀ n, block directions q (fun a =>
+    pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
+      (normalize (E := CylinderL2 P Space) L.fullProfile L.fullProfile_pos
+        (HistoryData.forcingPath G))) n 0 ≤ A * majorant L.R d n)
 
 include hdir hA hforce
 
@@ -550,10 +554,10 @@ def correctorAmplitude : ℝ := 27*N.blockAmplitude^2*(P*L.commonCost)
 def correctorTimeAmplitude : ℝ := 108*N.blockAmplitude^2*(P*L.commonCost)
 
 variable {raw : VectorField} (G : Forcing P D raw) (A : ℝ) (hA : 0 ≤ A) (d : ℕ)
-  (hforce : ∀ n, block standardDirection q (fun a => pathTranslate P a
-    (normalize L.fullProfile L.fullProfile_pos (HistoryData.forcingPath G))) n 0 ≤ A * majorant L.R
-        d
-        n)
+  (hforce : ∀ n, block standardDirection q (fun a =>
+    pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
+      (normalize (E := CylinderL2 P Space) L.fullProfile L.fullProfile_pos
+        (HistoryData.forcingPath G))) n 0 ≤ A * majorant L.R d n)
 
 include hA hforce
 

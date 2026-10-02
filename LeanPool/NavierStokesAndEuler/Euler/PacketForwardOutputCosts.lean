@@ -92,7 +92,8 @@ theorem forwardInitializedVelocity_global_gradient_error (N : ℕ) (hN : 1 ≤ N
     ‖fderiv ℝ (fun y => forwardInitializedVelocity M D δ hδ ξ hs α N k⁻¹
       (t,(Y y,k*⟪D.m₀,Y y⟫_ℝ))) x -
       (α*deriv (profile δ) (k*⟪D.m₀,Y x⟫_ℝ)) •
-        rankOne ℝ (canonicalVelocity D ξ t (Y x)) (D.normal.field t (Y x))‖ ≤
+        rankOne ℝ (E := Space) (F := Space) (canonicalVelocity D ξ t (Y x))
+          (D.normal.field t (Y x))‖ ≤
       forwardInitializedGlobalShearCost L.R S.H0 NB.C/k := by
   have hk0 : 0 < k := by linarith
   have hr0 : 0 ≤ L.R := zero_le_one.trans L.radius_one
@@ -155,7 +156,8 @@ theorem forwardInitializedExactPhysicalVelocity_global_gradient_error
     ‖fderiv ℝ (forwardInitializedExactPhysicalVelocity M D hTime δ hδ ξ hs α
       Cagree N hN k hk Q t Y) x -
       (α*deriv (profile δ) (k*⟪D.m₀,Y x⟫_ℝ)) •
-        rankOne ℝ (canonicalVelocity D ξ t (Y x)) (D.normal.field t (Y x))‖ ≤
+        rankOne ℝ (E := Space) (F := Space) (canonicalVelocity D ξ t (Y x))
+          (D.normal.field t (Y x))‖ ≤
       forwardInitializedGlobalShearCost L.R S.H0 NB.C/k +
         ‖fderiv ℝ (fun y => k⁻¹ • D.F.field t (Y y)
           (Q.pointField period t (cylinderGraph period k D.m₀ (Y y)))) x‖ := by

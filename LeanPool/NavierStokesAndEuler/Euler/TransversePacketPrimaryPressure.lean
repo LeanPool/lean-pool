@@ -249,7 +249,7 @@ variable (hSym : ∀ x, -x ∈ D.support ↔ x ∈ D.support)
   (hF : ∀ t x, D.F.field t (-x) = D.F.field t x)
   (hM : ∀ t x, D.M.field t (-x) = D.M.field t x)
   (hH : ∀ t x, B.H.field t (-x) = B.H.field t x)
-  (hY : reflection P (Y.value : CylinderL2 P U) = -(Y.value : CylinderL2 P U))
+  (hY : reflection (V := U) P (Y.value : CylinderL2 P U) = -(Y.value : CylinderL2 P U))
 
 include hSym hF hM hH hY
 

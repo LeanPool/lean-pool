@@ -58,7 +58,8 @@ variable (J : W →L[ℝ] W) (R : W →L[ℝ] X)
 /-- The full physical form is a smooth polynomial in its genuine coefficient operators. -/
 theorem meanOperator_contDiff {n : ℕ∞ω} (hH : ContDiff ℝ n H) (hC : ContDiff ℝ n C) :
     ContDiff ℝ n (fun p => meanOperator J R (H p) (C p)) :=
-  (contDiff_const.sub (contDiff_const.clm_comp (hH.clm_comp contDiff_const))).add
+  ((contDiff_const (𝕜 := ℝ) (F := W →L[ℝ] W)).sub
+      (contDiff_const.clm_comp (hH.clm_comp contDiff_const))).add
     (contDiff_const.clm_comp (hC.clm_comp contDiff_const))
 
 /-- A polynomial amplitude for the original kinetic, potential, and boundary form. -/
@@ -154,7 +155,8 @@ theorem pullbackMeanForcing_bound (f : P → W) (hD : ContDiff ℝ ∞ D) (hf : 
     (hDb : ∀ n x, ‖iteratedFDeriv ℝ n D x‖ ≤ CD * majorant r 0 n)
     (hfb : ∀ n x, ‖iteratedFDeriv ℝ n f x‖ ≤ CF * majorant r d n)
     (n : ℕ) (x : P) :
-    ‖iteratedFDeriv ℝ n (fun p => -((J.comp (D p)).adjoint (f p))) x‖ ≤
+    ‖iteratedFDeriv ℝ n
+        (fun p => -(adjoint (𝕜 := ℝ) (E := V) (F := W) (J.comp (D p) :) (f p))) x‖ ≤
       (3*(‖J‖*CD)*CF) * majorant r d n := by
   have hK : ContDiff ℝ ∞ (fun p => J.comp (D p)) :=
     (show ContDiff ℝ ∞ (fun _ : P => J) from contDiff_const).clm_comp hD

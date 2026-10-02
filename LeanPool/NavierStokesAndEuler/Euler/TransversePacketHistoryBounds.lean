@@ -275,7 +275,8 @@ variable {P : ℝ} [Fact (0 < P)]
     (accelerationBlockAmplitude ι q Rc C₀ C₁ Cf 1) *
  (sobolevCoefficientRadius ι Rc + 1) ≤ R)
   (hT1 : D.T ≤ 1) (d : ℕ)
-  (hforce : ∀ n, block directions q (fun a => pathTranslate P a (forcingPath G)) n 0 ≤ Cf * majorant
+  (hforce : ∀ n, block directions q (fun a =>
+    pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a (forcingPath G)) n 0 ≤ Cf * majorant
       R d n)
 
 include hdir hRc hC₀ hC₁ hCH hCf hbF hbF₁ hbH hRweak hRstrong hT1 hforce

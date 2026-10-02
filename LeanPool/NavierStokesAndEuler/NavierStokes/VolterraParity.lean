@@ -895,14 +895,15 @@ def coefficientAction {R : ℝ} : CoefficientPath R →L[ℂ] Path R →L[ℂ] P
       simpa only [one_mul] using norm_coefficientActionValue_le A f)
 
 theorem coefficientAction_apply {R : ℝ} (A : CoefficientPath R) (f : Path R)
-    (ξ : Icc (0 : ℝ) R) : coefficientAction A f ξ = A ξ (f ξ) := rfl
+    (ξ : Icc (0 : ℝ) R) : coefficientAction (R := R) A f ξ = A ξ (f ξ) := rfl
 
 /-- Path letter, defined pointwise by `pathInverse hR c (if b then coefficientAction (A₁ z)
 (deriv F z) else coefficientAction (A₀ z) (F z))`. -/
 def pathLetter {R : ℝ} (hR : 0 ≤ R) (c : Fin 6 → ℕ)
     (A₀ A₁ : ℂ → CoefficientPath R) (b : Bool) (F : ℂ → Path R) : ℂ → Path R :=
   fun z => pathInverse hR c
-    (if b then coefficientAction (A₁ z) (deriv F z) else coefficientAction (A₀ z) (F z))
+    (if b then coefficientAction (R := R) (A₁ z) (deriv F z)
+      else coefficientAction (R := R) (A₀ z) (F z))
 
 /-- Path word as an element of `w, F => pathLetter hR c A₀ A₁ b (pathWord hR c A₀ A₁ w F)`. -/
 def pathWord {R : ℝ} (hR : 0 ≤ R) (c : Fin 6 → ℕ)
@@ -955,7 +956,8 @@ def rawField {R : ℝ} (hR : 0 ≤ R) (F : ℂ → Path R) : VolterraAnalyticBou
 r)).toLinearMap`. -/
 def rawCoefficient {R : ℝ} (hR : 0 ≤ R) (A : ℂ → CoefficientPath R) :
     VolterraAnalyticBounds.Coeff :=
-  fun r z => LinearMap.toMatrix' (A z (projIcc 0 R hR r)).toLinearMap
+  fun r z => LinearMap.toMatrix' (R := ℂ) (m := Fin 6) (n := Fin 6)
+    (A z (projIcc 0 R hR r)).toLinearMap
 
 theorem rawCoefficient_mulVec {R : ℝ} (hR : 0 ≤ R) (A : ℂ → CoefficientPath R)
     (r : ℝ) (z : ℂ) (v : Vec) :
@@ -1135,7 +1137,7 @@ theorem pathLetter_add {R : ℝ} (hR : 0 ≤ R) (c : Fin 6 → ℕ)
       pathLetter hR c A₀ A₁ b F z + pathLetter hR c A₀ A₁ b G z := by
   cases b <;> simp only [pathLetter, Bool.false_eq_true, ite_false, ite_true, Pi.add_apply]
   · simp only [map_add]
-  · change pathInverse hR c (coefficientAction (A₁ z) (deriv (fun w => F w + G w) z)) = _
+  · change pathInverse hR c (coefficientAction (R := R) (A₁ z) (deriv (fun w => F w + G w) z)) = _
     rw [deriv_fun_add hF hG]
     simp only [map_add]
 
@@ -1316,13 +1318,15 @@ theorem solutionSeries_deriv_hasSum {z : ℂ} (hz : z ∈ Metric.ball center ρ)
 particular, convergence is not merely convergence of unrelated scalar bounds. -/
 theorem solutionSeries_equation {z : ℂ} (hz : z ∈ Metric.ball center ρ) :
     solutionSeries hR A₀ A₁ F z = F z + pathInverse hR VolterraAnalyticBounds.exponent
-      (coefficientAction (A₀ z) (solutionSeries hR A₀ A₁ F z) +
-        coefficientAction (A₁ z) (deriv (solutionSeries hR A₀ A₁ F) z)) := by
+      (coefficientAction (R := R) (A₀ z) (solutionSeries hR A₀ A₁ F z) +
+        coefficientAction (R := R) (A₁ z) (deriv (solutionSeries hR A₀ A₁ F) z)) := by
   have hs := solutionSeries_hasSum hR hU hA₀ hA₁ hF hDisk hgap hB hM hshape hbA₀ hbA₁ hbF
     (Metric.ball_subset_closedBall hz)
   have hd := solutionSeries_deriv_hasSum hR hU hA₀ hA₁ hF hDisk hgap hB hM hshape hbA₀ hbA₁ hbF hz
-  let L₀ := (pathInverse hR VolterraAnalyticBounds.exponent).comp (coefficientAction (A₀ z))
-  let L₁ := (pathInverse hR VolterraAnalyticBounds.exponent).comp (coefficientAction (A₁ z))
+  let L₀ := (pathInverse hR VolterraAnalyticBounds.exponent).comp
+    (coefficientAction (R := R) (A₀ z))
+  let L₁ := (pathInverse hR VolterraAnalyticBounds.exponent).comp
+    (coefficientAction (R := R) (A₁ z))
   have hsum := (hs.mapL L₀).add (hd.mapL L₁)
   have hshift : HasSum (fun k => layer hR VolterraAnalyticBounds.exponent A₀ A₁ F (k + 1) z)
       (L₀ (solutionSeries hR A₀ A₁ F z) + L₁ (deriv (solutionSeries hR A₀ A₁ F) z)) := by
@@ -1354,8 +1358,8 @@ theorem integralSolution_spec {R : ℝ} (hR : 0 ≤ R)
     DifferentiableOn ℂ (integralSolution hR A₀ A₁ f) (Metric.ball center ρ) ∧
       ∀ z ∈ Metric.ball center ρ,
         integralSolution hR A₀ A₁ f z = pathInverse hR VolterraAnalyticBounds.exponent
-          (f z + (coefficientAction (A₀ z) (integralSolution hR A₀ A₁ f z) +
-            coefficientAction (A₁ z) (deriv (integralSolution hR A₀ A₁ f) z))) := by
+          (f z + (coefficientAction (R := R) (A₀ z) (integralSolution hR A₀ A₁ f z) +
+            coefficientAction (R := R) (A₁ z) (deriv (integralSolution hR A₀ A₁ f) z))) := by
   obtain ⟨K₀, hK₀⟩ := (isCompact_closedBall center σ).exists_bound_of_continuousOn
     (f := A₀) (hA₀.continuousOn.mono hDisk)
   obtain ⟨K₁, hK₁⟩ := (isCompact_closedBall center σ).exists_bound_of_continuousOn
@@ -1388,7 +1392,7 @@ theorem integralSolution_spec {R : ℝ} (hR : 0 ≤ R)
 /-- Rhs path, given by `f z + (coefficientAction (A₀ z) (W z) + coefficientAction (A₁ z) (deriv
 W z))`. -/
 def rhsPath {R : ℝ} (A₀ A₁ : ℂ → CoefficientPath R) (f W : ℂ → Path R) (z : ℂ) : Path R :=
-  f z + (coefficientAction (A₀ z) (W z) + coefficientAction (A₁ z) (deriv W z))
+  f z + (coefficientAction (R := R) (A₀ z) (W z) + coefficientAction (R := R) (A₁ z) (deriv W z))
 
 /-- An actual radial function extending the solved path. Its definition
 uses the regular integral even at the axis and beyond the path interval. -/
@@ -1562,7 +1566,7 @@ theorem homogeneous_layer_eq {R : ℝ} (hR : 0 ≤ R)
     (hU : IsOpen U) (hA₀ : DifferentiableOn ℂ A₀ U) (hA₁ : DifferentiableOn ℂ A₁ U)
     (hV : DifferentiableOn ℂ V U)
     (heq : ∀ z ∈ U, V z = pathInverse hR VolterraAnalyticBounds.exponent
-      (coefficientAction (A₀ z) (V z) + coefficientAction (A₁ z) (deriv V z)))
+      (coefficientAction (R := R) (A₀ z) (V z) + coefficientAction (R := R) (A₁ z) (deriv V z)))
     (k : ℕ) {z : ℂ} (hz : z ∈ U) :
     layer hR VolterraAnalyticBounds.exponent A₀ A₁ V k z = V z := by
   induction k generalizing z with
@@ -1587,7 +1591,7 @@ theorem homogeneous_zero_on_closedDisk {R : ℝ} (hR : 0 ≤ R)
     (hbA₁ : VolterraAnalyticBounds.MatrixBound (rawCoefficient hR A₁) R center σ M)
     (hbV : ∀ z ∈ Metric.closedBall center σ, ‖V z‖ ≤ B)
     (heq : ∀ z ∈ U, V z = pathInverse hR VolterraAnalyticBounds.exponent
-      (coefficientAction (A₀ z) (V z) + coefficientAction (A₁ z) (deriv V z)))
+      (coefficientAction (R := R) (A₀ z) (V z) + coefficientAction (R := R) (A₁ z) (deriv V z)))
     {z : ℂ} (hz : z ∈ Metric.closedBall center ρ) : V z = 0 := by
   have hzU := hDisk (Metric.closedBall_subset_closedBall hgap.le hz)
   have hs := VolterraAnalyticBounds.summable_wordLayers (B := B) (mul_nonneg hM hR)
@@ -1605,7 +1609,7 @@ theorem homogeneous_solution_zero {R : ℝ} (hR : 0 ≤ R)
     (hV : DifferentiableOn ℂ V U)
     (hshape : VolterraAnalyticBounds.DerivativeShape (rawCoefficient hR A₁))
     (heq : ∀ z ∈ U, V z = pathInverse hR VolterraAnalyticBounds.exponent
-      (coefficientAction (A₀ z) (V z) + coefficientAction (A₁ z) (deriv V z))) :
+      (coefficientAction (R := R) (A₀ z) (V z) + coefficientAction (R := R) (A₁ z) (deriv V z))) :
     ∀ z ∈ U, V z = 0 := by
   intro z hz
   obtain ⟨δ, hδ, hδU⟩ := Metric.mem_nhds_iff.mp (hU.mem_nhds hz)
@@ -1646,8 +1650,8 @@ theorem integral_solution_unique {R : ℝ} (hR : 0 ≤ R)
     exact deriv_fun_sub (hW₀.differentiableAt (hU.mem_nhds hz))
       (hW₁.differentiableAt (hU.mem_nhds hz))
   have heq : ∀ z ∈ U, (W₀ - W₁) z = pathInverse hR VolterraAnalyticBounds.exponent
-      (coefficientAction (A₀ z) ((W₀ - W₁) z) +
-        coefficientAction (A₁ z) (deriv (W₀ - W₁) z)) := by
+      (coefficientAction (R := R) (A₀ z) ((W₀ - W₁) z) +
+        coefficientAction (R := R) (A₁ z) (deriv (W₀ - W₁) z)) := by
     intro z hz
     have hs := congrArg₂ (fun u v : Path R => u - v) (heq₀ z hz) (heq₁ z hz)
     rw [← map_sub] at hs
@@ -1982,13 +1986,13 @@ noncomputable def sideRestriction {R : ℝ} {E : Type*}
 noncomputable def signedRestriction {R : ℝ} {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℂ E] (hR : 0 ≤ R) (b : Bool) :
     SymmetricPath R E →L[ℂ] C(Icc (0 : ℝ) R, E) :=
-  (if b then (-1 : ℂ) else 1) • sideRestriction hR b
+  (if b then (-1 : ℂ) else 1) • sideRestriction (E := E) hR b
 
 /-- Side data, defined pointwise by `signedRestriction hR b (F z)`. -/
 noncomputable def sideData {R : ℝ} {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℂ E] (hR : 0 ≤ R) (b : Bool)
     (F : ℂ → SymmetricPath R E) : ℂ → C(Icc (0 : ℝ) R, E) :=
-  fun z => signedRestriction hR b (F z)
+  fun z => signedRestriction (E := E) hR b (F z)
 
 @[simp] theorem sideData_false {R : ℝ} {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℂ E] (hR : 0 ≤ R)
@@ -2017,7 +2021,8 @@ noncomputable def symmetricRawField {R : ℝ} (hR : 0 ≤ R)
 (by linarith) r)).toLinearMap`. -/
 noncomputable def symmetricRawCoefficient {R : ℝ} (hR : 0 ≤ R)
     (A : ℂ → SymmetricCoefficientPath R) : Coeff :=
-  fun r z => LinearMap.toMatrix' (A z (projIcc (-R) R (by linarith) r)).toLinearMap
+  fun r z => LinearMap.toMatrix' (R := ℂ) (m := Fin 6) (n := Fin 6)
+    (A z (projIcc (-R) R (by linarith) r)).toLinearMap
 
 theorem sideRawField_pos {R : ℝ} (hR : 0 ≤ R)
     (F : ℂ → SymmetricPath R Vec) {r : ℝ} (hr : r ∈ Icc 0 R) (z : ℂ) :

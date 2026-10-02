@@ -133,7 +133,7 @@ theorem truncate_weighted_derivative_le (ψ : SchwartzMap Space ℂ) {R : ℝ}
 /-- The cutoff error vanishes locally inside the plateau and is small outside it. -/
 theorem truncate_error_weighted_le (ψ : SchwartzMap Space ℂ) {R : ℝ}
     (hR : 0 < R) (hRone : 1 ≤ R) (k m : ℕ) (x : Space) :
-    ‖x‖ ^ k * ‖iteratedFDeriv ℝ m (truncate ψ R hR - ψ) x‖ ≤
+    ‖x‖ ^ k * ‖iteratedFDeriv ℝ m (truncate ψ R hR - ψ : SchwartzMap Space ℂ) x‖ ≤
       errorTailBound ψ k m / R := by
   change ‖x‖ ^ k *
     ‖iteratedFDeriv ℝ m (fun y => truncate ψ R hR y - ψ y) x‖ ≤ _

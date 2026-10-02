@@ -54,7 +54,8 @@ def linearPart (M : Space →L[ℝ] Space) : VectorJet →ₗ[ℝ] Space where
 
 /-- Slow pressure, bundling `toFun`, `map_add`, `map_smul`. -/
 def slowPressure (FInv : Space →L[ℝ] Space) : ScalarJet →ₗ[ℝ] Space where
-  toFun J := FInv.adjoint ((toDual ℝ Space).symm (J.2.comp spatialInjection))
+  toFun J := ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) FInv
+    ((toDual ℝ Space).symm (J.2.comp spatialInjection))
   map_add' J K := by simp [ContinuousLinearMap.add_comp]
   map_smul' c J := by simp [ContinuousLinearMap.smul_comp]
 
@@ -134,7 +135,8 @@ theorem momentumResidual_formula (κ : ℝ) (FInv M : Space →L[ℝ] Space) (m 
     (u : Domain → Space) (p : Domain → ℝ) (z : Domain) :
     momentumResidual κ FInv M m u p z =
       fderiv ℝ u z timeDirection + M (u z) +
-      FInv.adjoint ((toDual ℝ Space).symm ((fderiv ℝ p z).comp spatialInjection)) +
+      ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) FInv
+        ((toDual ℝ Space).symm ((fderiv ℝ p z).comp spatialInjection)) +
       κ⁻¹ • (fderiv ℝ p z angleDirection • m) +
       fderiv ℝ u z (spatialInjection (FInv (u z))) +
       κ⁻¹ • (⟪m, u z⟫_ℝ • fderiv ℝ u z angleDirection) := rfl

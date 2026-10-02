@@ -499,7 +499,8 @@ theorem solution_translation_gevrey
     (n : ℕ) (x : Space) :
     ‖iteratedFDeriv ℝ n (fun a : Space => timeSolenoidalTranslation T a
       (coerciveInverse (fixedMeanOperator T hT F F₁ H M0 A L) c hc hcoercive
-        (-adjoint (𝕜 := ℝ) (fixedMeanPrimitive T hT F F₁) f))) x‖ ≤ majorant R (d+1) n := by
+        (-adjoint (𝕜 := ℝ) (F := TimeLp T L2) (fixedMeanPrimitive T hT F F₁) f))) x‖ ≤
+      majorant R (d+1) n := by
   have hRcR : Rc ≤ R := (radius_bounds hRc hM hR).2
   have hR0 : 0 ≤ R := hRc.trans hRcR
   have hFbr (k a) : ‖iteratedFDeriv ℝ k (fun b : Space => translatePath T b F) a‖ ≤ CF*majorant R 0
@@ -615,7 +616,8 @@ theorem forcingOperator_bound {P : Type*} [NormedAddCommGroup P] [NormedSpace �
     (hFb : ∀ n x, ‖iteratedFDeriv ℝ n F x‖ ≤ CF * majorant Rc 0 n)
     (hF₁b : ∀ n x, ‖iteratedFDeriv ℝ n F₁ x‖ ≤ CF₁ * majorant Rc 0 n)
     (n : ℕ) (x : P) :
-    ‖iteratedFDeriv ℝ n (fun y => -adjoint (𝕜 := ℝ) (fixedMeanPrimitive T hT (F y) (F₁ y))) x‖ ≤
+    ‖iteratedFDeriv ℝ n (fun y => -adjoint (𝕜 := ℝ) (F := TimeLp T L2)
+      (fixedMeanPrimitive T hT (F y) (F₁ y))) x‖ ≤
       (T*(T*CF₁+CF))*majorant Rc 0 n := by
   have hD := contDiff_fixedMeanDerivative T hT F F₁ hF hF₁
   have hJ := contDiff_fixedMeanPrimitive T hT F F₁ hF hF₁
@@ -677,7 +679,8 @@ theorem solution_translation_block_gevrey
     (n : ℕ) (x : Space) :
     block directions q (fun a : Space => timeSolenoidalTranslation T a
       (coerciveInverse (fixedMeanOperator T hT F F₁ H M0 A L) c hc hcoercive
-        (-adjoint (𝕜 := ℝ) (fixedMeanPrimitive T hT F F₁) f))) n x ≤ majorant R (d+1) n := by
+        (-adjoint (𝕜 := ℝ) (F := TimeLp T L2) (fixedMeanPrimitive T hT F F₁) f))) n x ≤
+      majorant R (d+1) n := by
   let O := fun a : Space => translatedMeanOperator T hT a F F₁ H M0 A L
   let J := fun a : Space => -adjoint (𝕜 := ℝ) (E := TimeLp T solenoidalSpace)
     (F := TimeLp T L2) (translatedMeanPrimitive T hT a F F₁)
@@ -2497,7 +2500,7 @@ theorem spatialEmbeddingPath_norm : ‖spatialEmbeddingPath P T‖ ≤ sqrt P :=
     (mul_le_mul_of_nonneg_left (p.norm_coe_le_norm t) (sqrt_nonneg P))
 
 theorem pathMean_spatialEmbeddingPath (p : C(Icc (0 : ℝ) T, L2)) :
-    pathMean P (spatialEmbeddingPath P T p) = p := by
+    pathMean (K := Icc (0 : ℝ) T) (V := Vector3) P (spatialEmbeddingPath P T p) = p := by
   apply ContinuousMap.ext
   intro t
   exact mean_embedding P (p t)
@@ -2506,11 +2509,13 @@ theorem spatialEmbeddingPath_block_le (p : C(Icc (0 : ℝ) T, L2))
     (hp : ContDiff ℝ ∞ (fun a : Space => pathTranslation T a p))
     (q n : ℕ) (a : LiftTangent) :
     block standardDirection q
-      (fun b : LiftTangent => pathTranslate P b (spatialEmbeddingPath P T p)) n a ≤
+      (fun b : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P b
+        (spatialEmbeddingPath P T p)) n a ≤
       sqrt P*block spatialDirection q (fun b : Space => pathTranslation T b p) n a.1 := by
   let f := fun b : Space => pathTranslation T b p
   let fstMap : LiftTangent →L[ℝ] Space := fst ℝ Space ℝ
-  have he : (fun b : LiftTangent => pathTranslate P b (spatialEmbeddingPath P T p)) =
+  have he : (fun b : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P b
+      (spatialEmbeddingPath P T p)) =
       (spatialEmbeddingPath P T) ∘ (f ∘ fstMap) :=
     funext (fun b => spatialEmbeddingPath_translation P T p b)
   refine (congrArg (fun g : LiftTangent → C(Icc (0 : ℝ) T,LiftL2 P) =>
@@ -2527,13 +2532,18 @@ theorem ordinaryPath_block_le (p : C(Icc (0 : ℝ) T, L2))
     (q n : ℕ) (a : Space) :
     block spatialDirection q (fun b : Space => pathTranslation T b p) n a ≤
       (P⁻¹*sqrt P)*block standardDirection q
-        (fun b : LiftTangent => pathTranslate P b (spatialEmbeddingPath P T p)) n (a,0) := by
+        (fun b : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P b
+          (spatialEmbeddingPath P T p)) n (a,0) := by
   let f := fun b : Space => pathTranslation T b p
   let fstMap : LiftTangent →L[ℝ] Space := fst ℝ Space ℝ
-  let g := fun b : LiftTangent => pathTranslate P b (spatialEmbeddingPath P T p)
-  have he : (fun b : LiftTangent => pathMean P (g b)) = f ∘ fstMap := by
+  let g := fun b : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P b
+    (spatialEmbeddingPath P T p)
+  have he : (fun b : LiftTangent => pathMean (K := Icc (0 : ℝ) T) (V := Vector3) P (g b)) =
+      f ∘ fstMap := by
     funext b
-    change pathMean P (pathTranslate P b (spatialEmbeddingPath P T p)) = f (fstMap b)
+    change pathMean (K := Icc (0 : ℝ) T) (V := Vector3) P
+      (pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P b (spatialEmbeddingPath P T p)) =
+        f (fstMap b)
     rw [spatialEmbeddingPath_translation, pathMean_spatialEmbeddingPath]
     rfl
   have hh := pathMean_block_bound P standardDirection q g (spatialEmbeddingPath_orbit P T p hp) n
@@ -2545,7 +2555,8 @@ theorem ordinaryPath_majorant (p : C(Icc (0 : ℝ) T, L2))
     (hp : ContDiff ℝ ∞ (fun a : Space => pathTranslation T a p))
     (q : ℕ) (R A : ℝ) (d : ℕ)
     (hb : ∀ n, block standardDirection q
-      (fun b : LiftTangent => pathTranslate P b (spatialEmbeddingPath P T p)) n 0 ≤ A*majorant R d
+      (fun b : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P b
+        (spatialEmbeddingPath P T p)) n 0 ≤ A*majorant R d
           n)
     (n : ℕ) (a : Space) :
     block spatialDirection q (fun b : Space => pathTranslation T b p) n a ≤
@@ -2562,7 +2573,8 @@ theorem spatialEmbeddingPath_majorant (p : C(Icc (0 : ℝ) T, L2))
     (hb : ∀ n a, block spatialDirection q (fun b : Space => pathTranslation T b p) n a ≤
       A*majorant R d n) (n : ℕ) :
     block standardDirection q
-      (fun b : LiftTangent => pathTranslate P b (spatialEmbeddingPath P T p)) n 0 ≤
+      (fun b : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P b
+        (spatialEmbeddingPath P T p)) n 0 ≤
       (sqrt P*A)*majorant R d n := by
   exact (spatialEmbeddingPath_block_le P T p hp q n 0).trans
     ((mul_le_mul_of_nonneg_left (hb n 0) (sqrt_nonneg P)).trans_eq (by ring))

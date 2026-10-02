@@ -40,7 +40,8 @@ def angularDerivative (q : LiftTangent → ℝ) (z : LiftTangent) : ℝ :=
 
 theorem spatialGradient_contDiff {q : LiftTangent → ℝ} (hq : ContDiff ℝ ∞ q) :
     ContDiff ℝ ∞ (spatialGradient q) :=
-  (toDual ℝ Space).symm.toContinuousLinearMap.contDiff.comp
+  (LinearMap.toContinuousLinearMap (𝕜 := ℝ) (E := StrongDual ℝ Space) (F' := Space)
+    (toDual ℝ Space).symm.toLinearEquiv.toLinearMap).contDiff.comp
     ((contDiff_infty_iff_fderiv.mp hq).2.clm_comp contDiff_const)
 
 theorem angularDerivative_contDiff {q : LiftTangent → ℝ} (hq : ContDiff ℝ ∞ q) :

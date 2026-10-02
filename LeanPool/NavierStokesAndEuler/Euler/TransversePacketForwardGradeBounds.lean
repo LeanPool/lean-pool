@@ -179,10 +179,12 @@ variable {P : ℝ} [Fact (0 < P)]
   {raw : VectorField} (G : Forcing P D raw) (I : InitialData P D)
   (directions : ι → LiftTangent) (hdir : ∀ i, ‖directions i‖ ≤ 1)
   (A : ℝ) (hA : 0 ≤ A) (d : ℕ)
-  (hforce : ∀ n, block directions q (fun a => pathTranslate P a
-    (normalize L.g L.positive (HistoryData.forcingPath G))) n 0 ≤ A * majorant L.R d n)
-  (hinitial : ∀ n, block directions q (fun a => translate P a (I.value : CylinderL2 P U)) n 0 ≤
-    A * majorant L.R d n)
+  (hforce : ∀ n, block directions q
+    (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
+      (normalize (E := CylinderL2 P Space) L.g L.positive (HistoryData.forcingPath G))) n 0 ≤
+        A * majorant L.R d n)
+  (hinitial : ∀ n, block directions q
+    (fun a => translate (V := U) P a (I.value : CylinderL2 P U)) n 0 ≤ A * majorant L.R d n)
 
 include hdir hA hforce hinitial
 
@@ -275,10 +277,12 @@ variable {P : ℝ} [Fact (0 < P)]
   (q : ℕ) (Rc C R A : ℝ) (hRc : 0 ≤ Rc) (hC : 0 ≤ C) (hA : 0 ≤ A)
   (hR : sobolevCoefficientRadius (Fin 4) Rc ≤ R) (d : ℕ)
   (hbA : ∀ n, block standardDirection q
-    (fun a : LiftTangent => pathTranslate P a (normalize g hg (G.fullVelocityPath I))) n 0 ≤
+    (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
+      (normalize (E := CylinderL2 P Space) g hg (G.fullVelocityPath I))) n 0 ≤
       A * majorant R d n)
   (hbAt : ∀ n, block standardDirection q
-    (fun a : LiftTangent => pathTranslate P a (normalize g hg (G.fullDerivativePath I))) n 0 ≤
+    (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
+      (normalize (E := CylinderL2 P Space) g hg (G.fullDerivativePath I))) n 0 ≤
       A * majorant R d n)
   (hbK : ∀ n a, ‖iteratedFDeriv ℝ n (translateCoefficientPath D.potentialCoefficientPath) a‖ ≤
     C * majorant Rc 0 n)
@@ -485,10 +489,12 @@ def correctorTimeAmplitude : ℝ := 108*N.blockAmplitude^2*(P*L.commonCost)
 
 variable {raw : VectorField} (G : Forcing P D raw) (I : InitialData P D)
   (A : ℝ) (hA : 0 ≤ A) (d : ℕ)
-  (hforce : ∀ n, block standardDirection q (fun a => pathTranslate P a
-    (normalize L.g L.positive (HistoryData.forcingPath G))) n 0 ≤ A * majorant L.R d n)
+  (hforce : ∀ n, block standardDirection q
+    (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
+      (normalize (E := CylinderL2 P Space) L.g L.positive (HistoryData.forcingPath G))) n 0 ≤
+        A * majorant L.R d n)
   (hinitial : ∀ n, block standardDirection q
-    (fun a => translate P a (I.value : CylinderL2 P U)) n 0 ≤ A * majorant L.R d n)
+    (fun a => translate (V := U) P a (I.value : CylinderL2 P U)) n 0 ≤ A * majorant L.R d n)
 
 include hA hforce hinitial
 
@@ -637,10 +643,12 @@ structure GradeGuards (C : ℝ) : Prop where
 variable (C : ℝ) (W : GradeGuards (P := P) L N C)
   {raw : VectorField} (G : Forcing P D raw) (I : InitialData P D)
   (c : ℝ) (hc : 0 < c) (d e : ℕ) (hroom : d + 3 ≤ e)
-  (hforce : ∀ n, block standardDirection 6 (fun a => pathTranslate P a
-    (normalize L.g L.positive (HistoryData.forcingPath G))) n 0 ≤ (c * C) * majorant L.R d n)
+  (hforce : ∀ n, block standardDirection 6
+    (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
+      (normalize (E := CylinderL2 P Space) L.g L.positive (HistoryData.forcingPath G))) n 0 ≤
+        (c * C) * majorant L.R d n)
   (hinitial : ∀ n, block standardDirection 6
-    (fun a => translate P a (I.value : CylinderL2 P U)) n 0 ≤ (c * C) * majorant L.R d n)
+    (fun a => translate (V := U) P a (I.value : CylinderL2 P U)) n 0 ≤ (c * C) * majorant L.R d n)
 
 include W hc hroom hforce hinitial
 

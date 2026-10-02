@@ -30,8 +30,8 @@ open scoped ContDiff
 
 variable (P : ℝ) [Fact (0 < P)] {K : Type*} [TopologicalSpace K] [CompactSpace K]
   (L : Space →L[ℝ] ℝ) (hL : ‖L‖ ≤ 1) (p q : C(K, LiftL2 P))
-  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
-  (hq : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a q))
+  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p))
+  (hq : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a q))
   (i : Fin 4)
 
 /-- The continuous L² path for one factor times an actual spatial or angular derivative. -/
@@ -103,8 +103,8 @@ theorem spatial_advection_components (D : LiftTangent →L[ℝ] Space) (u : Spac
 
 variable (P : ℝ) [Fact (0 < P)] {K : Type*} [TopologicalSpace K] [CompactSpace K]
   (p q : C(K, LiftL2 P))
-  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
-  (hq : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a q))
+  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p))
+  (hq : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a q))
 
 /-- The actual path representing p·∇q, where the derivative is spatial and the angle is retained. -/
 def advectionPath : C(K,LiftL2 P) :=

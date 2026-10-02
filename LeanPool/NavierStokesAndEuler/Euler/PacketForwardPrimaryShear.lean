@@ -61,7 +61,8 @@ theorem global_gradient (a k : ℝ) (hk : k ≠ 0)
     fderiv ℝ (fun y => k⁻¹ • vector D (initialData D δ hδ (a • ξ) hs)
       (t,(Y y,k*⟪D.m₀,Y y⟫_ℝ))) x =
       (a*deriv (profile δ) (k*⟪D.m₀,Y x⟫_ℝ)) •
-        rankOne ℝ (canonicalVelocity D ξ t (Y x)) (D.normal.field t (Y x)) +
+        rankOne ℝ (E := Space) (F := Space) (canonicalVelocity D ξ t (Y x))
+          (D.normal.field t (Y x)) +
       slowGraphDerivative (fun z => vector D (initialData D δ hδ (a • ξ) hs) (t,z))
         k D.m₀ Y (D.FInv.field t (Y x)) x := by
   have hq := (((forcing D).vectorField (initialData D δ hδ (a • ξ) hs)).raw_smooth t).differentiable
@@ -86,7 +87,8 @@ theorem global_gradient_bound (a k : ℝ) (hk : 0 < k)
     ‖fderiv ℝ (fun y => k⁻¹ • vector D (initialData D δ hδ (a • ξ) hs)
       (t,(Y y,k*⟪D.m₀,Y y⟫_ℝ))) x -
       (a*deriv (profile δ) (k*⟪D.m₀,Y x⟫_ℝ)) •
-        rankOne ℝ (canonicalVelocity D ξ t (Y x)) (D.normal.field t (Y x))‖ ≤
+        rankOne ℝ (E := Space) (F := Space) (canonicalVelocity D ξ t (Y x))
+          (D.normal.field t (Y x))‖ ≤
       (‖coordinateEquiv.symm.toContinuousLinearMap‖*(sobolevEmbeddingConstant period 3*A*R)*C)/k :=
           by
   rw [global_gradient D δ hδ ξ hs a k hk.ne' t Y x hY,add_sub_cancel_left]
@@ -158,7 +160,7 @@ theorem physicalPressure_hessian (a k : ℝ) (hk : k ≠ 0) (t : Icc (0 : ℝ) D
     (Y : Space → Space) (hY : ∀ x, HasFDerivAt Y (D.FInv.field t (Y x)) x) (x : Space) :
     fderiv ℝ (gradient (physicalPressure D δ hδ ξ hs a k t Y)) x =
       (pressureCoefficient D ξ a t (Y x) * deriv (profile δ) (k*⟪D.m₀,Y x⟫_ℝ)) •
-        rankOne ℝ (D.normal.field t (Y x)) (D.normal.field t (Y x)) +
+        rankOne ℝ (E := Space) (F := Space) (D.normal.field t (Y x)) (D.normal.field t (Y x)) +
       hessianRemainder D δ hδ ξ hs a k t Y x := by
   let q : LiftTangent → ℝ := fun z => scalar D (initialData D δ hδ (a • ξ) hs) (t,z)
   have hq : ContDiff ℝ ∞ q := pressure_smooth D _ t
@@ -179,7 +181,8 @@ theorem physicalPressure_hessian_of_inverse (a k : ℝ) (hk : k ≠ 0)
     (t : Icc (0 : ℝ) D.T) (x : Space) :
     fderiv ℝ (gradient (physicalPressure D δ hδ ξ hs a k t (Y t))) x =
       (pressureCoefficient D ξ a t (Y t x) * deriv (profile δ) (k*⟪D.m₀,Y t x⟫_ℝ)) •
-        rankOne ℝ (D.normal.field t (Y t x)) (D.normal.field t (Y t x)) +
+        rankOne ℝ (E := Space) (F := Space) (D.normal.field t (Y t x))
+          (D.normal.field t (Y t x)) +
       hessianRemainder D δ hδ ξ hs a k t (Y t) x :=
   physicalPressure_hessian D δ hδ ξ hs a k hk t (Y t)
     (continuousInverse_hasFDerivAt D X Y hX hXY hY t) x

@@ -34,7 +34,7 @@ variable (G : Parent)
 
 /-- Source normal, given by `(G.inverse.realField G.T G.T_pos.le t 0).adjoint m`. -/
 def sourceNormal (m : Space) (t : ℝ) : Space :=
-  (G.inverse.realField G.T G.T_pos.le t 0).adjoint m
+  adjoint (𝕜 := ℝ) (E := Space) (F := Space) (G.inverse.realField G.T G.T_pos.le t 0 :) m
 
 theorem sourceNormal_apply (m : Space) (t : Icc (0 : ℝ) G.T) :
     G.sourceNormal m t =

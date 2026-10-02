@@ -34,7 +34,7 @@ theorem constantPath_orbit_contDiff (Y : CylinderL2 P V)
     (hY : ContDiff ℝ ∞ (fun a : LiftTangent => translate (V := V) P a Y)) :
     ContDiff ℝ ∞ (fun a : LiftTangent =>
       pathTranslate (K := K) (V := V) P a (ContinuousMap.const K Y)) := by
-  convert (ContinuousLinearMap.const ℝ K).contDiff.comp hY using 1
+  convert (ContinuousLinearMap.const ℝ (M := CylinderL2 P V) K).contDiff.comp hY using 1
   funext a
   apply ContinuousMap.ext
   intro t
@@ -57,7 +57,7 @@ variable (P : ℝ) [Fact (0 < P)] {T : ℝ} {U E : Type*}
 variable (hQ : ContDiff ℝ ∞ (translateCoefficientPath D.Q))
   (hQ₁ : ContDiff ℝ ∞ (translateCoefficientPath D.Q₁))
   (hH : ContDiff ℝ ∞ (translateCoefficientPath D.H))
-  (Y : CylinderL2 P U) (hY : ContDiff ℝ ∞ (fun a : LiftTangent => translate P a Y))
+  (Y : CylinderL2 P U) (hY : ContDiff ℝ ∞ (fun a : LiftTangent => translate (V := U) P a Y))
 
 omit [CompleteSpace U] [CompleteSpace E] in
 include hY in

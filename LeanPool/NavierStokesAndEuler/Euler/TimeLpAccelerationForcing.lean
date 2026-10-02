@@ -46,7 +46,7 @@ variable {P U E : Type*} [NormedAddCommGroup P] [NormedSpace ℝ P]
 def forcing (T : ℝ) (hT : 0 ≤ T)
     (Q Q₁ : P → C(Icc (0 : ℝ) T, U →L[ℝ] E))
     (f : P → TimeLp T E) (v : P → TimeLp T U) (x : P) : TimeLp T U :=
-  (timeMultiplier T hT (Q x)).adjoint
+  adjoint (𝕜 := ℝ) (E := TimeLp T U) (F := TimeLp T E) (timeMultiplier T hT (Q x))
     (f x - (2 : ℝ) • timeMultiplier T hT (Q₁ x) (v x))
 
 /-- The actual strong forcing is smoothly parameterized whenever its inputs are. -/
@@ -90,11 +90,13 @@ theorem forcing_bound (T : ℝ) (hT : 0 ≤ T)
   have hr : ContDiff ℝ ∞ r := hf.sub (hw.const_smul (2 : ℝ))
   have hbr := sub_bound f (fun y => (2 : ℝ) • w y) hf (hw.const_smul (2 : ℝ))
     R F (6*C₁*V) d hbf hb2w
-  have hAdj : ContDiff ℝ ∞ (fun y => (timeMultiplier T hT (Q y)).adjoint) :=
+  have hAdj : ContDiff ℝ ∞ (fun y =>
+      adjoint (𝕜 := ℝ) (E := TimeLp T U) (F := TimeLp T E) (timeMultiplier T hT (Q y))) :=
     (realAdjoint (U := TimeLp T U) (E := TimeLp T E)).contDiff.comp (contDiff_timeMultiplier T hT Q
         hQ)
   have h := clm_apply_bound
-    (fun y => (timeMultiplier T hT (Q y)).adjoint) r hAdj hr R C₀ (F+6*C₁*V)
+    (fun y => adjoint (𝕜 := ℝ) (E := TimeLp T U) (F := TimeLp T E) (timeMultiplier T hT (Q y)))
+    r hAdj hr R C₀ (F+6*C₁*V)
     hR hC₀ (by positivity) 0 d
     (adjoint_bound (fun y => timeMultiplier T hT (Q y)) (contDiff_timeMultiplier T hT Q hQ)
       R C₀ hR hC₀ 0 (timeMultiplier_bound T hT Q hQ R C₀ hR hC₀ 0 hbQ)) hbr n x

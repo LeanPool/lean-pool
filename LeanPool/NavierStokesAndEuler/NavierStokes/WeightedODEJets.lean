@@ -230,8 +230,8 @@ theorem directional_product {U : Set P} (hU : IsOpen U)
       (E := Coefficient a b E) (F := Curve a b E →L[ℝ] Curve a b E)
       (coefficientAction (E := E))
   have hlin : HasFDerivAt
-      (fun q => coefficientAction (E := E) (A q))
-      ((coefficientAction (E := E)).comp (fderiv ℝ A p)) p :=
+      (fun q => coefficientAction (E := E) (a := a) (b := b) (A q))
+      ((coefficientAction (E := E) (a := a) (b := b)).comp (fderiv ℝ A p)) p :=
     HasFDerivAt.comp (𝕜 := ℝ) (E := P) (F := Coefficient a b E)
       (G := Curve a b E →L[ℝ] Curve a b E) p hmap hdA.hasFDerivAt
   have h := congrArg (fun M : P →L[ℝ] Curve a b E => M v)
@@ -362,29 +362,30 @@ theorem jet_solution_eq_solution (hab : a ≤ b) {U : Set P} (hU : IsOpen U)
   have hAu : ContDiffOn ℝ ∞ (fun q => applyCoefficient (A q) (u q)) U :=
     (hcoeff.comp_contDiffOn hA).clm_apply hu
   have hright : EqOn u
-      (fun q => constantCurve (x₀ q) + integrator hab (applyCoefficient (A q) (u q) + f q)) U :=
+      (fun q => constantCurve (E := E) (a := a) (b := b) (x₀ q) +
+        integrator (E := E) hab (applyCoefficient (A q) (u q) + f q)) U :=
     fun q _ => solution_integralEquation hab (A q) (x₀ q) (f q)
-  have hC : ContDiffOn ℝ ∞ (fun q => (constantCurve (a := a) (b := b)) (x₀ q)) U :=
+  have hC : ContDiffOn ℝ ∞ (fun q => (constantCurve (E := E) (a := a) (b := b)) (x₀ q)) U :=
     (constantCurve (E := E)).contDiff.comp_contDiffOn hx₀
   have hI : ContDiffOn ℝ ∞
-      (fun q => integrator hab (applyCoefficient (A q) (u q) + f q)) U :=
+      (fun q => integrator (E := E) hab (applyCoefficient (A q) (u q) + f q)) U :=
     (integrator (E := E) hab).contDiff.comp_contDiffOn (hAu.add hf)
-  have hj : jet u l p = constantCurve (jet x₀ l p) +
-      integrator hab (applyCoefficient (A p) (jet u l p) + jetSource A f u l p) := by
+  have hj : jet u l p = constantCurve (E := E) (a := a) (b := b) (jet x₀ l p) +
+      integrator (E := E) hab (applyCoefficient (A p) (jet u l p) + jetSource A f u l p) := by
     calc
       jet u l p = jet
-          (fun q => constantCurve (x₀ q) + integrator hab (applyCoefficient (A q) (u q) + f q)) l p
-              :=
+          (fun q => constantCurve (E := E) (a := a) (b := b) (x₀ q) +
+            integrator (E := E) hab (applyCoefficient (A q) (u q) + f q)) l p :=
         jet_congr hU hright l hp
-      _ = jet (fun q => constantCurve (x₀ q)) l p +
-          jet (fun q => integrator hab (applyCoefficient (A q) (u q) + f q)) l p :=
+      _ = jet (fun q => constantCurve (E := E) (a := a) (b := b) (x₀ q)) l p +
+          jet (fun q => integrator (E := E) hab (applyCoefficient (A q) (u q) + f q)) l p :=
         jet_add hU hC hI l hp
-      _ = constantCurve (jet x₀ l p) +
-          integrator hab (jet (fun q => applyCoefficient (A q) (u q) + f q) l p) := by
+      _ = constantCurve (E := E) (a := a) (b := b) (jet x₀ l p) +
+          integrator (E := E) hab (jet (fun q => applyCoefficient (A q) (u q) + f q) l p) := by
         rw [jet_clm hU hx₀ (constantCurve (E := E)) l hp,
           jet_clm hU (hAu.add hf) (integrator (E := E) hab) l hp]
-      _ = constantCurve (jet x₀ l p) +
-          integrator hab (applyCoefficient (A p) (jet u l p) + jetSource A f u l p) := by
+      _ = constantCurve (E := E) (a := a) (b := b) (jet x₀ l p) +
+          integrator (E := E) hab (applyCoefficient (A p) (jet u l p) + jetSource A f u l p) := by
         rw [jet_add hU hAu hf l hp]
         dsimp only
         rw [jet_product hU hA hu l hp, productJet_split]
@@ -392,12 +393,14 @@ theorem jet_solution_eq_solution (hab : a ≤ b) {U : Set P} (hU : IsOpen U)
         unfold jetSource
         abel
   change jet u l p = (equationOperator hab (A p)).inverse
-    (constantCurve (jet x₀ l p) + integrator hab (jetSource A f u l p))
+    (constantCurve (E := E) (a := a) (b := b) (jet x₀ l p) +
+      integrator (E := E) hab (jetSource A f u l p))
   symm
   apply (equationOperator_isInvertible hab (A p)).inverse_apply_eq.mpr
-  change constantCurve (jet x₀ l p) + integrator hab (jetSource A f u l p) =
-    jet u l p - integrator hab (applyCoefficient (A p) (jet u l p))
-  rw [(integrator hab).map_add] at hj
+  change constantCurve (E := E) (a := a) (b := b) (jet x₀ l p) +
+      integrator (E := E) hab (jetSource A f u l p) =
+    jet u l p - integrator (E := E) hab (applyCoefficient (A p) (jet u l p))
+  rw [(integrator (E := E) hab).map_add] at hj
   exact (eq_sub_iff_add_eq.mpr (by simpa only [add_assoc, add_comm, add_left_comm] using hj.symm))
 
 /-- The time derivative of each actual parameter jet is its triangular
@@ -407,7 +410,7 @@ theorem jet_solution_hasDerivWithinAt (hab : a ≤ b) {U : Set P} (hU : IsOpen U
     (hA : ContDiffOn ℝ ∞ A U) (hx₀ : ContDiffOn ℝ ∞ x₀ U)
     (hf : ContDiffOn ℝ ∞ f U) (l : List P) {p : P} (hp : p ∈ U) (t : Icc a b) :
     let u := fun q => solution hab (A q) (x₀ q) (f q)
-    HasDerivWithinAt (extend hab (jet u l p))
+    HasDerivWithinAt (ParametricODE.extend hab (jet u l p))
       (A p t (jet u l p t) + jetSource A f u l p t) (Icc a b) t := by
   dsimp only
   rw [jet_solution_eq_solution hab hU A x₀ f hA hx₀ hf l hp]
@@ -436,32 +439,33 @@ theorem norm_solution_le_envelope (hab : a ≤ b)
     ‖solution hab A x₀ f t‖ ≤ C * (X + (b - a) * F₀) * W t := by
   let u : Curve a b H := solution hab A x₀ f
   have hode (s : ℝ) (hs : s ∈ Ico a b) :
-      HasDerivWithinAt (extend hab u)
-        (extend hab A s (extend hab u s) + extend hab f s) (Ici s) s := by
+      HasDerivWithinAt (ParametricODE.extend hab u)
+        (ParametricODE.extend hab A s (ParametricODE.extend hab u s) +
+          ParametricODE.extend hab f s) (Ici s) s := by
     have hscc := Ico_subset_Icc_self hs
     have hh := (solution_hasDerivWithinAt hab A x₀ f ⟨s, hscc⟩).mono_of_mem_nhdsWithin
       (Icc_mem_nhdsGE_of_mem hs)
     simpa only [u, ParametricODE.extend, projIcc_of_mem hab hscc] using hh
   have he (s : ℝ) (hs : s ∈ Ico a b) (x : H) :
-      ⟪x, extend hab A s x⟫_ℝ ≤ (rate s + μ) * ‖x‖ ^ 2 := by
+      ⟪x, ParametricODE.extend hab A s x⟫_ℝ ≤ (rate s + μ) * ‖x‖ ^ 2 := by
     simpa only [ParametricODE.extend, projIcc_of_mem hab (Ico_subset_Icc_self hs)]
       using henergy ⟨s, Ico_subset_Icc_self hs⟩ x
-  have hbase := ViscousPropagator.norm_le_envelope_mul_integral_on (extend hab A)
+  have hbase := ViscousPropagator.norm_le_envelope_mul_integral_on (ParametricODE.extend hab A)
     rate W hμ hW hdW (continuous_extend hab u).continuousOn
     (continuous_extend hab f).continuousOn hode he
-  have hua : extend hab u a = x₀ := by
+  have hua : ParametricODE.extend hab u a = x₀ := by
     simpa only [ParametricODE.extend, projIcc_of_mem hab (show a ∈ Icc a b from ⟨le_rfl, hab⟩)]
       using solution_initial hab A x₀ f
-  have hstart : ‖extend hab u a‖ / W a ≤ X := by
+  have hstart : ‖ParametricODE.extend hab u a‖ / W a ≤ X := by
     rw [hua]
     exact (div_le_iff₀ (hW a)).mpr hx₀
   have hcW : Continuous W := continuous_iff_continuousAt.mpr fun s => (hdW s).continuousAt
-  have hcq : Continuous (fun s => ‖extend hab f s‖ / W s) :=
+  have hcq : Continuous (fun s => ‖ParametricODE.extend hab f s‖ / W s) :=
     (continuous_extend hab f).norm.div hcW (fun s => ne_of_gt (hW s))
-  have hint : (∫ s in a..(t : ℝ), ‖extend hab f s‖ / W s) ≤ (b - a) * F₀ := by
+  have hint : (∫ s in a..(t : ℝ), ‖ParametricODE.extend hab f s‖ / W s) ≤ (b - a) * F₀ := by
     have hm := intervalIntegral.integral_mono_on (μ := volume) t.2.1
       (hcq.intervalIntegrable a t) (continuous_const.intervalIntegrable a t)
-      (show ∀ s ∈ Icc a (t : ℝ), ‖extend hab f s‖ / W s ≤ F₀ from by
+      (show ∀ s ∈ Icc a (t : ℝ), ‖ParametricODE.extend hab f s‖ / W s ≤ F₀ from by
         intro s hs
         have hscc : s ∈ Icc a b := ⟨hs.1, hs.2.trans t.2.2⟩
         apply (div_le_iff₀ (hW s)).mpr
@@ -475,7 +479,8 @@ theorem norm_solution_le_envelope (hab : a ≤ b)
   have hnonneg : 0 ≤ X + (b - a) * F₀ := add_nonneg hX (mul_nonneg (sub_nonneg.mpr hab) hF)
   calc
     ‖solution hab A x₀ f t‖ ≤ Real.exp (μ * ((t : ℝ) - a)) * W t *
-        (‖extend hab u a‖ / W a + ∫ s in a..(t : ℝ), ‖extend hab f s‖ / W s) := by
+        (‖ParametricODE.extend hab u a‖ / W a +
+          ∫ s in a..(t : ℝ), ‖ParametricODE.extend hab f s‖ / W s) := by
       simpa only [extend_coe, u] using hbase t t.2
     _ ≤ Real.exp (μ * ((t : ℝ) - a)) * W t * (X + (b - a) * F₀) :=
       mul_le_mul_of_nonneg_left (add_le_add hstart hint)

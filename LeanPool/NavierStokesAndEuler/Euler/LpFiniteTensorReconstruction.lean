@@ -89,7 +89,8 @@ def tensorReassembly (n : ℕ) :
 
 @[simp] theorem tensorReassembly_coordinates (n : ℕ) (A : Space [×n]→L[ℝ] V) :
     tensorReassembly (V := V) n (tensorCoordinates (V := V) n A) = A :=
-  LinearMap.leftInverse_apply_of_inj (LinearMap.ker_eq_bot.mpr (tensorCoordinates_injective n)) A
+  LinearMap.leftInverse_apply_of_inj
+    (LinearMap.ker_eq_bot.mpr (tensorCoordinates_injective (V := V) n)) A
 
 /-- Reconstruction is a genuine bounded map on the finite tuple of L² classes. -/
 def tensorLpReassembly (μ : Measure X) (n : ℕ) :

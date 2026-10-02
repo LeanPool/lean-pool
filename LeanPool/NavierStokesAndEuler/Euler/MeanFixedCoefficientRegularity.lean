@@ -129,12 +129,13 @@ theorem contDiff_fixedMeanOperator
     (hM0 : ContDiff ℝ n M0) (hA : ContDiff ℝ n A) :
     ContDiff ℝ n (fun p => fixedMeanOperator T hT (F p) (F₁ p) (H p) (M0 p) (A p) L) := by
   have hD := contDiff_fixedMeanDerivative T hT F F₁ hF hF₁
-  have hDadj : ContDiff ℝ n (fun p => (fixedMeanDerivative T hT (F p) (F₁ p)).adjoint) :=
+  have hDadj : ContDiff ℝ n (fun p => adjoint (𝕜 := ℝ) (E := TimeLp T solenoidalSpace)
+      (F := TimeLp T L2) (fixedMeanDerivative T hT (F p) (F₁ p))) :=
     (realAdjoint (U := TimeLp T solenoidalSpace) (E := TimeLp T L2)).contDiff.comp hD
   have hHC := contDiff_timeMultiplier T hT H hH
   have hC : ContDiff ℝ n (fun p => M0 p+L • A p) := hM0.add (hA.const_smul L)
   have hbase : ContDiff ℝ n (fun p =>
-      meanOperator (primitiveTimeLp T hT) (initialTrace T hT)
+      meanOperator (primitiveTimeLp (E := L2) T hT) (initialTrace (E := L2) T hT)
         (timeMultiplier T hT (H p)) (M0 p+L • A p)) := by
     exact (contDiff_const.sub (contDiff_const.clm_comp (hHC.clm_comp contDiff_const))).add
       (contDiff_const.clm_comp (hC.clm_comp contDiff_const))

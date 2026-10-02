@@ -41,9 +41,9 @@ variable (P : ℝ) [Fact (0 < P)] {T : ℝ} {U E : Type*}
   {D : Coefficients T U E} {ι : Type*} [Fintype ι] {q : ℕ}
   (L : EndpointBudget D ι q) (directions : ι → LiftTangent)
   (hdir : ∀ i, ‖directions i‖ ≤ 1)
-  (Y : CylinderL2 P U) (hY : ContDiff ℝ ∞ (fun a : LiftTangent => translate P a Y))
-  (d : ℕ) (hYb : ∀ n, block directions q (fun a : LiftTangent => translate P a Y) n 0 ≤ majorant
-      L.R d n)
+  (Y : CylinderL2 P U) (hY : ContDiff ℝ ∞ (fun a : LiftTangent => translate (V := U) P a Y))
+  (d : ℕ) (hYb : ∀ n, block directions q (fun a : LiftTangent => translate (V := U) P a Y) n 0 ≤
+      majorant L.R d n)
 
 include hY hYb in
 omit [CompleteSpace U] [CompleteSpace E] in

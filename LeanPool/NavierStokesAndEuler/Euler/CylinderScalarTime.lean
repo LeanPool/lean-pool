@@ -26,7 +26,7 @@ open scoped ContDiff
 variable (P : ℝ) [Fact (0 < P)]
   {K : Type*} [TopologicalSpace K] [CompactSpace K]
   (p : C(K, CylinderL2 P ℝ))
-  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
+  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := ℝ) P a p))
 
 /-- A fixed norm-one embedding lets the existing bounded H3 evaluation recover
 the genuine scalar field without making a new representative choice. -/

@@ -89,17 +89,17 @@ theorem tensor_norm_sq_le_coordinate_energy (n : ℕ)
       ∑ w : Fin n → Fin 3, ∑ j : Fin 3,
         (A (fun i => direction (w i)) j) ^ 2 := by
   have hnorm : ‖A‖ ≤ ‖tensorReassembly (V := Space) n‖ *
-      ‖tensorCoordinates n A‖ := by
+      ‖tensorCoordinates (V := Space) n A‖ := by
     simpa only [tensorReassembly_coordinates] using
-      (tensorReassembly (V := Space) n).le_opNorm (tensorCoordinates n A)
+      (tensorReassembly (V := Space) n).le_opNorm (tensorCoordinates (V := Space) n A)
   have hsq : ‖A‖ ^ 2 ≤ ‖tensorReassembly (V := Space) n‖ ^ 2 *
-      ‖tensorCoordinates n A‖ ^ 2 := by
+      ‖tensorCoordinates (V := Space) n A‖ ^ 2 := by
     simpa only [mul_pow] using
       (sq_le_sq₀ (norm_nonneg A)
         (mul_nonneg (norm_nonneg (tensorReassembly (V := Space) n))
-          (norm_nonneg (tensorCoordinates n A)))).mpr hnorm
+          (norm_nonneg (tensorCoordinates (V := Space) n A)))).mpr hnorm
   exact hsq.trans (mul_le_mul_of_nonneg_left
-    (tuple_norm_sq_le_coordinate_energy (tensorCoordinates n A)) (sq_nonneg _))
+    (tuple_norm_sq_le_coordinate_energy (tensorCoordinates (V := Space) n A)) (sq_nonneg _))
 
 end EulerComparatorRecovery
 
@@ -128,7 +128,8 @@ theorem iteratedFDeriv_coordinate_word (n : ℕ) (w : Fin n → Fin 3)
   | zero => simp [wordDerivative]
   | succ n ih =>
     have hd : DifferentiableAt ℝ (iteratedFDeriv ℝ n h) x :=
-      ((hh.iteratedFDeriv_right (m := ∞) (by simp)).differentiable (by simp)).differentiableAt
+      ((hh.iteratedFDeriv_right (m := ∞) (i := n) (by simp)).differentiable
+        (by simp)).differentiableAt
     rw [hd.iteratedFDeriv_succ_apply_left']
     have he : (fun y => iteratedFDeriv ℝ n h y
         (Fin.tail (fun i => direction (w i)))) = wordDerivative (List.ofFn (Fin.tail w)) h := by
@@ -167,7 +168,8 @@ theorem iteratedFDeriv_memLp_of_curl_compact (u : Space → Space)
     (hu : ContDiff ℝ ∞ u) (hL2 : MemLp u 2 volume)
     (hdiv : ∀ x, divergence u x = 0) (hc : HasCompactSupport (vectorCurl u))
     (n : ℕ) : MemLp (iteratedFDeriv ℝ n u) 2 volume := by
-  have ht : MemLp (fun x => tensorCoordinates n (iteratedFDeriv ℝ n u x)) 2 volume := by
+  have ht : MemLp (fun x => tensorCoordinates (V := Space) n (iteratedFDeriv ℝ n u x)) 2
+      volume := by
     apply MemLp.of_eval
     intro w
     exact iteratedFDeriv_coordinate_memLp u hu hL2 hdiv hc n w

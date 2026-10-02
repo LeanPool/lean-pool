@@ -31,8 +31,10 @@ variable (P : ℝ) [Fact (0 < P)] (T : ℝ) (hT : 0 ≤ T)
   (hG : ContDiff ℝ ∞ (translateCoefficientPath G))
   (hG₁ : ContDiff ℝ ∞ (translateCoefficientPath G₁))
   (p f : C(Icc (0 : ℝ) T, LiftL2 P))
-  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
-  (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a f))
+  (hp : ContDiff ℝ ∞ (fun a : LiftTangent =>
+    pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a p))
+  (hf : ContDiff ℝ ∞ (fun a : LiftTangent =>
+    pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a f))
 
 /-- Derivative, given by `path P G₁ p + path P G f`. -/
 def derivative : C(Icc (0 : ℝ) T,LiftL2 P) := path P G₁ p + path P G f

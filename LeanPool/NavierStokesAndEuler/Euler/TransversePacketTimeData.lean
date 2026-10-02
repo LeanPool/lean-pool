@@ -372,12 +372,12 @@ local instance instSourcePotentialTimeCoefficient24 : NormedSpace ℝ C(K,Potent
 
 /-- Time normal path, constructed using `pathCompositionMap`. -/
 def timeNormalPath (N : C(K, NormalField)) (Q₁ : C(K, Space →ᵇ ℝ →L[ℝ] Space)) : C(K,NormalField) :=
-  pathCompositionMap (E := ℝ) (F := ℝ) (U := Space)
-    (pathCompositionMap (E := Space) (F := ℝ) (U := ℝ)
-      N (pathAdjointMap (U := Space) (E := ℝ) N))
-    (pathAdjointMap (U := ℝ) (E := Space) Q₁) -
-      (2 : ℝ) • pathCompositionMap (E := ℝ) (F := ℝ) (U := Space)
-        (pathCompositionMap (E := Space) (F := ℝ) (U := ℝ) N Q₁) N
+  pathCompositionMap (α := Space) (K := K) (E := ℝ) (F := ℝ) (U := Space)
+    (pathCompositionMap (α := Space) (K := K) (E := Space) (F := ℝ) (U := ℝ)
+      N (pathAdjointMap (α := Space) (K := K) (U := Space) (E := ℝ) N))
+    (pathAdjointMap (α := Space) (K := K) (U := ℝ) (E := Space) Q₁) -
+      (2 : ℝ) • pathCompositionMap (α := Space) (K := K) (E := ℝ) (F := ℝ) (U := Space)
+        (pathCompositionMap (α := Space) (K := K) (E := Space) (F := ℝ) (U := ℝ) N Q₁) N
 
 theorem timeNormalPath_apply (N : C(K, NormalField)) (Q₁ : C(K, Space →ᵇ ℝ →L[ℝ] Space))
     (t : K) (y : Space) : timeNormalPath N Q₁ t y = normalTimeMap (N t y) (Q₁ t y) := rfl
@@ -402,14 +402,15 @@ theorem timeNormalPath_contDiff : ContDiff ℝ ∞ (fun a => timeNormalPath (N a
   have hNa := (pathAdjointMap (α := Space) (K := K) (U := Space) (E := ℝ)).contDiff.comp hN
   have hQa := (pathAdjointMap (α := Space) (K := K) (U := ℝ) (E := Space)).contDiff.comp hQ₁
   have hNN := pathComposition_contDiff N
-    (fun x => pathAdjointMap (U := Space) (E := ℝ) (N x)) hN hNa
+    (fun x => pathAdjointMap (α := Space) (K := K) (U := Space) (E := ℝ) (N x)) hN hNa
   have hNQ := pathComposition_contDiff N Q₁ hN hQ₁
   have hA := pathComposition_contDiff (E := ℝ) (F := ℝ) (U := Space)
-    (fun x => pathCompositionMap (E := Space) (F := ℝ) (U := ℝ)
-      (N x) (pathAdjointMap (U := Space) (E := ℝ) (N x)))
-    (fun x => pathAdjointMap (U := ℝ) (E := Space) (Q₁ x)) hNN hQa
+    (fun x => pathCompositionMap (α := Space) (K := K) (E := Space) (F := ℝ) (U := ℝ)
+      (N x) (pathAdjointMap (α := Space) (K := K) (U := Space) (E := ℝ) (N x)))
+    (fun x => pathAdjointMap (α := Space) (K := K) (U := ℝ) (E := Space) (Q₁ x)) hNN hQa
   have hB := pathComposition_contDiff (E := ℝ) (F := ℝ) (U := Space)
-    (fun x => pathCompositionMap (E := Space) (F := ℝ) (U := ℝ) (N x) (Q₁ x)) N hNQ hN
+    (fun x => pathCompositionMap (α := Space) (K := K) (E := Space) (F := ℝ) (U := ℝ)
+      (N x) (Q₁ x)) N hNQ hN
   exact hA.sub (hB.const_smul (2 : ℝ))
 
 include hN hQ₁ in
@@ -420,17 +421,17 @@ theorem timeNormalPath_bound (R C D : ℝ) (hR : 0 ≤ R) (hC : 0 ≤ C) (hD : 0
     ‖iteratedFDeriv ℝ n (fun x => timeNormalPath (N x) (Q₁ x)) a‖ ≤
       (27*C^2*D)*majorant R 0 n := by
   let A : X → C(K,NormalField) := fun x =>
-    pathCompositionMap (E := ℝ) (F := ℝ) (U := Space)
-      (pathCompositionMap (E := Space) (F := ℝ) (U := ℝ)
-        (N x) (pathAdjointMap (U := Space) (E := ℝ) (N x)))
-      (pathAdjointMap (U := ℝ) (E := Space) (Q₁ x))
+    pathCompositionMap (α := Space) (K := K) (E := ℝ) (F := ℝ) (U := Space)
+      (pathCompositionMap (α := Space) (K := K) (E := Space) (F := ℝ) (U := ℝ)
+        (N x) (pathAdjointMap (α := Space) (K := K) (U := Space) (E := ℝ) (N x)))
+      (pathAdjointMap (α := Space) (K := K) (U := ℝ) (E := Space) (Q₁ x))
   let B : X → C(K,NormalField) := fun x =>
-    pathCompositionMap (E := ℝ) (F := ℝ) (U := Space)
-      (pathCompositionMap (E := Space) (F := ℝ) (U := ℝ) (N x) (Q₁ x)) (N x)
+    pathCompositionMap (α := Space) (K := K) (E := ℝ) (F := ℝ) (U := Space)
+      (pathCompositionMap (α := Space) (K := K) (E := Space) (F := ℝ) (U := ℝ) (N x) (Q₁ x)) (N x)
   have hNa := (pathAdjointMap (α := Space) (K := K) (U := Space) (E := ℝ)).contDiff.comp hN
   have hQa := (pathAdjointMap (α := Space) (K := K) (U := ℝ) (E := Space)).contDiff.comp hQ₁
   have hNN := pathComposition_contDiff N
-    (fun x => pathAdjointMap (U := Space) (E := ℝ) (N x)) hN hNa
+    (fun x => pathAdjointMap (α := Space) (K := K) (U := Space) (E := ℝ) (N x)) hN hNa
   have hNQ := pathComposition_contDiff N Q₁ hN hQ₁
   have hA : ContDiff ℝ ∞ A := pathComposition_contDiff _ _ hNN hQa
   have hB : ContDiff ℝ ∞ B := pathComposition_contDiff _ _ hNQ hN
@@ -438,7 +439,8 @@ theorem timeNormalPath_bound (R C D : ℝ) (hR : 0 ≤ R) (hC : 0 ≤ C) (hD : 0
     pathAdjointMap_norm N hN R C hR hC 0 hbN
   have hbQa := contraction_bound (pathAdjointMap (α := Space) (K := K) (U := ℝ) (E := Space))
     pathAdjointMap_norm Q₁ hQ₁ R D hR hD 0 hbQ₁
-  have hbNN := pathComposition_bound N (fun x => pathAdjointMap (U := Space) (E := ℝ) (N x)) hN hNa
+  have hbNN := pathComposition_bound N
+    (fun x => pathAdjointMap (α := Space) (K := K) (U := Space) (E := ℝ) (N x)) hN hNa
     R C C hR hC hC 0 0 hbN hbNa
   have hbNQ := pathComposition_bound N Q₁ hN hQ₁ R C D hR hC hD 0 0 hbN hbQ₁
   have hbA : ∀ j x, ‖iteratedFDeriv ℝ j A x‖ ≤ (3*(3*C*C)*D)*majorant R 0 j :=

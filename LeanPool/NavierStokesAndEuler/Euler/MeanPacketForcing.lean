@@ -269,11 +269,13 @@ def forcingFamily (T : ℝ) (A : ℝ → SmoothL2Field V)
 theorem forcingFamily_value_eq (T : ℝ) (A : ℝ → SmoothL2Field V)
     (hA : ∀ n, MemLp (fun t => (A t).jetLp n) 2 (timeMeasure T))
     (f : TimeLp T (L2Space V)) (hf : f =ᵐ[timeMeasure T] fun t => (A t).toLp) (a : Space) :
-    (forcingFamily T A hA).value a = timeLiftIsometry T (translation a) f := by
+    (forcingFamily T A hA).value a =
+      (timeLiftIsometry T (translation a) : TimeLp T (L2Space V) →ₗᵢ[ℝ] _) f := by
   apply Lp.ext
   filter_upwards [(forcingFamily T A hA).value_ae a,
-    timeLift_ae T (translation a).toContinuousLinearMap f, hf] with t hv ht he
-  change (forcingFamily T A hA).value a t = timeLift T (translation a).toContinuousLinearMap f t
+    timeLift_ae T (translation (V := V) a).toContinuousLinearMap f, hf] with t hv ht he
+  change (forcingFamily T A hA).value a t =
+    timeLift T (translation (V := V) a).toContinuousLinearMap f t
   rw [hv, ht, he]
   rfl
 

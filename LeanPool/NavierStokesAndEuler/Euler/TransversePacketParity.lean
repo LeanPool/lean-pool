@@ -127,7 +127,7 @@ variable (P : ℝ) [Fact (0 < P)]
   (S : Set Space) (hS : MeasurableSet S) (hSym : ∀ x, -x ∈ S ↔ x ∈ S)
   (T : ℝ) (hT : 0 ≤ T) (B : C(Icc (0 : ℝ) T, Space →ᵇ V →L[ℝ] V))
   (hB : ∀ t x, B t (-x) = B t x)
-  (U : Evolution T hT (liftedOperatorPath P S hS T B))
+  (U : Evolution T hT (liftedOperatorPath (V := V) P S hS T B))
 
 include hB in
 theorem solution_reflection (f : C(Icc (0 : ℝ) T, Supported P V S hS)) (a₀ : Supported P V S hS) :
@@ -217,8 +217,8 @@ variable (P : ℝ) [Fact (0 < P)]
   (hE : ∀ t x, Q.field t (-x) = Q.field t x)
   (hE₁ : ∀ t x, Q₁.field t (-x) = Q₁.field t x)
   (f : C(Icc (0 : ℝ) T, Supported P E S hS)) (a₀ : Supported P U S hS)
-  (hf : ∀ t, reflection P (f t : CylinderL2 P E) = -(f t : CylinderL2 P E))
-  (ha₀ : reflection P (a₀ : CylinderL2 P U) = -(a₀ : CylinderL2 P U))
+  (hf : ∀ t, reflection (V := E) P (f t : CylinderL2 P E) = -(f t : CylinderL2 P E))
+  (ha₀ : reflection (V := U) P (a₀ : CylinderL2 P U) = -(a₀ : CylinderL2 P U))
 
 include hE hf in
 theorem projectedForcing_reflection_neg (t : Icc (0 : ℝ) T) :
@@ -354,7 +354,7 @@ variable (hSym : ∀ x, -x ∈ D.support ↔ x ∈ D.support)
   (hF : ∀ t x, D.F.field t (-x) = D.F.field t x)
   (hM : ∀ t x, D.M.field t (-x) = D.M.field t x)
   (hraw : ∀ (t : Icc (0 : ℝ) D.T) x θ, raw (t, (-x, -θ)) = -raw (t, (x, θ)))
-  (hinit : reflection P (I.value : CylinderL2 P U) = -(I.value : CylinderL2 P U))
+  (hinit : reflection (V := U) P (I.value : CylinderL2 P U) = -(I.value : CylinderL2 P U))
 
 include hSym hF hM hraw hinit in
 theorem velocityPath_reflection_neg (t : Icc (0 : ℝ) D.T) :

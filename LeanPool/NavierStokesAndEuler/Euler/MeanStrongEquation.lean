@@ -69,8 +69,10 @@ theorem initial_momentum_cancellation (F₀ F₁ M0 A : L2 →L[ℝ] L2) (L : �
     (hF₀ : F₀ = ContinuousLinearMap.id ℝ L2) (hF₁ : F₁ = M0)
     (z v : solenoidalSpace) (hAz : A (z : L2) ∈ solenoidalSpace)
     (hm : gram (F₀.comp solenoidalSpace.subtypeL) v +
-      (F₀.comp solenoidalSpace.subtypeL).adjoint (F₁ (z : L2)) =
-      (F₀.comp solenoidalSpace.subtypeL).adjoint ((M0 + L • A) (z : L2))) :
+      adjoint (𝕜 := ℝ) (E := solenoidalSpace) (F := L2) (F₀.comp solenoidalSpace.subtypeL :)
+        (F₁ (z : L2)) =
+      adjoint (𝕜 := ℝ) (E := solenoidalSpace) (F := L2) (F₀.comp solenoidalSpace.subtypeL :)
+        ((M0 + L • A) (z : L2))) :
     (v : L2) = L • A (z : L2) := by
   subst F₀ F₁
   have hm' : v + solenoidalSpace.orthogonalProjectionOnto (M0 (z : L2)) =
@@ -92,7 +94,8 @@ theorem initial_momentum_cancellation (F₀ F₁ M0 A : L2 →L[ℝ] L2) (L : �
 theorem ordinary_projected_equation (F F₁ : L2 →L[ℝ] L2) (f : L2)
     (a v : solenoidalSpace)
     (h : gram (F.comp solenoidalSpace.subtypeL) a =
-      (F.comp solenoidalSpace.subtypeL).adjoint (f - (2 : ℝ) • F₁ (v : L2))) :
+      adjoint (𝕜 := ℝ) (E := solenoidalSpace) (F := L2) (F.comp solenoidalSpace.subtypeL :)
+        (f - (2 : ℝ) • F₁ (v : L2))) :
     solenoidalProjection (adjoint (𝕜 := ℝ) (E := L2) (F := L2) F (F (a : L2))) =
       solenoidalProjection (adjoint (𝕜 := ℝ) (E := L2) (F := L2) F (f-(2 : ℝ) • F₁ (v : L2))) := by
   have he := congrArg (fun w : solenoidalSpace => (w : L2)) h

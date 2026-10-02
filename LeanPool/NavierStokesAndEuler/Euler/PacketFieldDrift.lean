@@ -137,7 +137,8 @@ variable {P T : ℝ} [Fact (0 < P)] {raw : VectorField}
 theorem toFieldTower_word_eq (G : Field P T raw) (s n : ℕ) (hn : n ≤ s)
     (w : Fin n → Fin 4) (t : Icc (0 : ℝ) T) :
     (toJet P (G.toFieldTower.realization s t)).word w =
-      wordDerivative standardDirection (fun a : LiftTangent => translate P a (G.path t)) w 0 := by
+      wordDerivative standardDirection
+        (fun a : LiftTangent => translate (V := Vector3) P a (G.path t)) w 0 := by
   rw [toJet_word P _ hn]
   exact sobolev_coordinate P s (G.path t) (path_evaluation_smooth P G.path G.orbit t)
     ⟨⟨n,by omega⟩,w⟩
@@ -147,13 +148,15 @@ theorem toFieldTower_word_map (G : Field P T raw) (L : Space →L[ℝ] Space)
     (toJet P ((G.map L).toFieldTower.realization s t)).word w =
       L.compLpL 2 (liftMeasure P) ((toJet P (G.toFieldTower.realization s t)).word w) := by
   rw [(G.map L).toFieldTower_word_eq s n hn w t,G.toFieldTower_word_eq s n hn w t]
-  have he : (fun a : LiftTangent => translate P a ((G.map L).path t)) =
-      (EulerCylinderConstantMap.map P L) ∘ (fun a : LiftTangent => translate P a (G.path t)) := by
+  have he : (fun a : LiftTangent => translate (V := Vector3) P a ((G.map L).path t)) =
+      (EulerCylinderConstantMap.map (E := Space) (F := Space) P L) ∘
+        (fun a : LiftTangent => translate (V := Vector3) P a (G.path t)) := by
     funext a
     exact (EulerCylinderConstantMap.map_translation P L a (G.path t)).symm
   rw [he]
-  exact wordDerivative_comp_clm standardDirection (EulerCylinderConstantMap.map P L)
-    (fun a : LiftTangent => translate P a (G.path t))
+  exact wordDerivative_comp_clm standardDirection
+    (EulerCylinderConstantMap.map (E := Space) (F := Space) P L)
+    (fun a : LiftTangent => translate (V := Vector3) P a (G.path t))
     (path_evaluation_smooth P G.path G.orbit t) w 0
 
 end EulerPacketCylinderField.Field

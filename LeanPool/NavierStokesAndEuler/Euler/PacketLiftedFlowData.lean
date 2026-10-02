@@ -449,8 +449,9 @@ theorem Budget.physical_gradient_hessian_of_weighted (k ρ Cw d : ℝ)
   · have hscale : k*A.κ=1 := by rw [hκ]; exact mul_inv_cancel₀ hk0.ne'
     rw [Q.physicalPotential_hessian_norm D P X Y hX hXY hY k hscale t x,hκ,hm]
     apply absorb _ _ _ hcp
-    change ‖iteratedFDeriv ℝ 1 (fun y => k⁻¹ • (D.FInv.field t (Y t y)).adjoint
-      (Q.pointPressure P t (cylinderGraph P k D.m₀ (Y t y)))) x‖ ≤ _ at hpr
+    change ‖iteratedFDeriv ℝ 1 (fun y => k⁻¹ •
+      ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) (D.FInv.field t (Y t y))
+        (Q.pointPressure P t (cylinderGraph P k D.m₀ (Y t y)))) x‖ ≤ _ at hpr
     simpa only [pow_one] using hpr
 
 end EulerAllOrderDriftCorrection
@@ -537,7 +538,8 @@ theorem initializedVelocity_global_gradient_error (N : ℕ) (hN : 1 ≤ N)
     ‖fderiv ℝ (fun y => initializedVelocity M D τ hτ hτT B δ hδ ξ hs α N k⁻¹
       (t,(Y y,k*⟪D.m₀,Y y⟫_ℝ))) x -
       (α*deriv (profile δ) (k*⟪D.m₀,Y x⟫_ℝ)) •
-        rankOne ℝ (canonicalVelocity τ hτ hτT B ξ hs t (Y x)) (D.normal.field t (Y x))‖ ≤
+        rankOne ℝ (E := Space) (F := Space) (canonicalVelocity τ hτ hτT B ξ hs t (Y x))
+          (D.normal.field t (Y x))‖ ≤
       initializedGlobalShearCost L.R S.H0 NB.C/k := by
   have hk0 : 0 < k := by linarith
   have hr0 : 0 ≤ L.R := zero_le_one.trans L.radius_bounds.1
@@ -599,7 +601,8 @@ theorem initializedExactPhysicalVelocity_global_gradient_error
     ‖fderiv ℝ (initializedExactPhysicalVelocity M D hTime τ hτ hτT B δ hδ ξ hs α
       Cagree N hN k hk Q t Y) x -
       (α*deriv (profile δ) (k*⟪D.m₀,Y x⟫_ℝ)) •
-        rankOne ℝ (canonicalVelocity τ hτ hτT B ξ hs t (Y x)) (D.normal.field t (Y x))‖ ≤
+        rankOne ℝ (E := Space) (F := Space) (canonicalVelocity τ hτ hτT B ξ hs t (Y x))
+          (D.normal.field t (Y x))‖ ≤
       initializedGlobalShearCost L.R S.H0 NB.C/k +
         ‖fderiv ℝ (fun y => k⁻¹ • D.F.field t (Y y)
           (Q.pointField period t (cylinderGraph period k D.m₀ (Y y)))) x‖ := by

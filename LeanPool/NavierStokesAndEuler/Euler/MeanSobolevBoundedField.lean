@@ -119,7 +119,7 @@ variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V] [FiniteDimension
 
 /-- Coordinate, given by `((Module.finBasis ℝ V).coord i).toContinuousLinearMap`. -/
 def coordinate (i : Fin (Module.finrank ℝ V)) : V →L[ℝ] ℝ :=
-  ((Module.finBasis ℝ V).coord i).toContinuousLinearMap
+  (LinearMap.toContinuousLinearMap : (V →ₗ[ℝ] ℝ) ≃ₗ[ℝ] V →L[ℝ] ℝ) ((Module.finBasis ℝ V).coord i)
 
 /-- Coordinate vector, given by `(ContinuousLinearMap.id ℝ ℝ).smulRight (Module.finBasis ℝ V
 i)`. -/

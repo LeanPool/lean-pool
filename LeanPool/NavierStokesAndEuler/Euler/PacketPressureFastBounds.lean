@@ -100,7 +100,8 @@ variable (D) {raw : VectorField} (G : Field P D.T raw)
 x⟫_ℝ)))`. -/
 def physicalCovector (_G : Field P D.T raw) (k : ℝ) (Y : Icc (0 : ℝ) D.T → Space → Space)
     (t : Icc (0 : ℝ) D.T) (x : Space) : Space :=
-  (D.FInv.field t (Y t x)).adjoint (raw (t,(Y t x,k*⟪D.m₀,Y t x⟫_ℝ)))
+  adjoint (𝕜 := ℝ) (E := Space) (F := Space) (D.FInv.field t (Y t x))
+    (raw (t,(Y t x,k*⟪D.m₀,Y t x⟫_ℝ)))
 
 theorem physicalCovector_error_bound (R A : ℝ) (hR : 0 ≤ R) (hA : 0 ≤ A)
     (k : ℝ) (hk : 1 ≤ k) (hG : G.WordBound 6 R (A / k ^ 2) 0)

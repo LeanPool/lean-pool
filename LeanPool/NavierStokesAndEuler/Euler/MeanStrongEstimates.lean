@@ -53,12 +53,13 @@ theorem meanVelocityMap_ae (T : ℝ) (hT : 0 ≤ T)
     (meanVelocityMap T hT FInv F₁ u : ℝ → L2) =ᵐ[timeMeasure T]
       fun t => u t - extendPath T hT F₁ t (extendPath T hT FInv t (realPrimitive T u t)) := by
   filter_upwards [Lp.coeFn_sub u
-      (timeMultiplier T hT F₁ (timeMultiplier T hT FInv (primitiveTimeLp T hT u))),
-    timeMultiplier_ae T hT F₁ (timeMultiplier T hT FInv (primitiveTimeLp T hT u)),
-    timeMultiplier_ae T hT FInv (primitiveTimeLp T hT u), primitiveTimeLp_ae T hT u]
+      (timeMultiplier T hT F₁ (timeMultiplier T hT FInv (primitiveTimeLp (E := L2) T hT u))),
+    timeMultiplier_ae T hT F₁ (timeMultiplier T hT FInv (primitiveTimeLp (E := L2) T hT u)),
+    timeMultiplier_ae T hT FInv (primitiveTimeLp (E := L2) T hT u), primitiveTimeLp_ae T hT u]
     with t hsub hF₁ hInv hp
   simp only [Pi.sub_apply] at hsub
-  change (u-timeMultiplier T hT F₁ (timeMultiplier T hT FInv (primitiveTimeLp T hT u))) t = _
+  change (u-timeMultiplier T hT F₁
+    (timeMultiplier T hT FInv (primitiveTimeLp (E := L2) T hT u))) t = _
   rw [hsub, hF₁, hInv, hp]
 
 /-- A quantitative bound for the actual linear velocity formula. -/
@@ -66,18 +67,20 @@ theorem meanVelocityMap_apply_norm (T : ℝ) (hT : 0 ≤ T)
     (FInv F₁ : C(Icc (0 : ℝ) T, L2 →L[ℝ] L2)) (u : TimeLp T L2) :
     ‖meanVelocityMap T hT FInv F₁ u‖ ≤
       (1+‖F₁‖*‖FInv‖*Real.sqrt (T^2/2))*‖u‖ := by
-  have hp : ‖primitiveTimeLp T hT u‖ ≤ Real.sqrt (T^2/2)*‖u‖ := by
+  have hp : ‖primitiveTimeLp (E := L2) T hT u‖ ≤ Real.sqrt (T^2/2)*‖u‖ := by
     apply (sq_le_sq₀ (norm_nonneg _) (mul_nonneg (Real.sqrt_nonneg _) (norm_nonneg _))).1
     calc
       _ ≤ (T^2/2)*‖u‖^2 := primitiveTimeLp_norm_sq_le T hT u
       _ = _ := by rw [mul_pow, Real.sq_sqrt (by positivity)]
-  change ‖u-timeMultiplier T hT F₁ (timeMultiplier T hT FInv (primitiveTimeLp T hT u))‖ ≤ _
+  change ‖u-timeMultiplier T hT F₁
+    (timeMultiplier T hT FInv (primitiveTimeLp (E := L2) T hT u))‖ ≤ _
   calc
-    _ ≤ ‖u‖+‖timeMultiplier T hT F₁ (timeMultiplier T hT FInv (primitiveTimeLp T hT u))‖ :=
+    _ ≤ ‖u‖+‖timeMultiplier T hT F₁
+        (timeMultiplier T hT FInv (primitiveTimeLp (E := L2) T hT u))‖ :=
       norm_sub_le _ _
-    _ ≤ ‖u‖+‖F₁‖*‖timeMultiplier T hT FInv (primitiveTimeLp T hT u)‖ :=
+    _ ≤ ‖u‖+‖F₁‖*‖timeMultiplier T hT FInv (primitiveTimeLp (E := L2) T hT u)‖ :=
       add_le_add le_rfl (timeApply_bound T hT F₁ _)
-    _ ≤ ‖u‖+‖F₁‖*(‖FInv‖*‖primitiveTimeLp T hT u‖) := by
+    _ ≤ ‖u‖+‖F₁‖*(‖FInv‖*‖primitiveTimeLp (E := L2) T hT u‖) := by
       gcongr
       exact timeApply_bound T hT FInv _
     _ ≤ ‖u‖+‖F₁‖*(‖FInv‖*(Real.sqrt (T^2/2)*‖u‖)) := by
@@ -202,8 +205,8 @@ theorem gram_equation_of_ordinary (F F₁ : L2 →L[ℝ] L2) (f : L2) (a v : sol
       solenoidalProjection
         (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := L2) (F := L2) F (f - (2 : ℝ) • F₁ (v : L2)))) :
     gram (F.comp solenoidalSpace.subtypeL) a =
-      (F.comp solenoidalSpace.subtypeL).adjoint (𝕜 := ℝ) (E := solenoidalSpace) (F := L2)
-        (f-(2 : ℝ) • F₁ (v : L2)) := by
+      ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := solenoidalSpace) (F := L2)
+        (F.comp solenoidalSpace.subtypeL :) (f-(2 : ℝ) • F₁ (v : L2)) := by
   apply Subtype.ext
   simpa only [gram, adjoint_comp, Submodule.adjoint_subtypeL, comp_apply,
     Submodule.subtypeL_apply, Submodule.coe_orthogonalProjectionOnto_apply,

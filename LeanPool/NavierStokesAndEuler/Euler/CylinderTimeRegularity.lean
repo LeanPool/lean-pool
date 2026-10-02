@@ -81,8 +81,10 @@ theorem pointField_ae (p : C(K, LiftL2 period))
 section Derivative
 
 variable (T : ℝ) (hT : 0 ≤ T) (p f : C(Icc (0 : ℝ) T, LiftL2 period))
-  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate period a p))
-  (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate period a f))
+  (hp : ContDiff ℝ ∞ (fun a : LiftTangent =>
+    pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) period a p))
+  (hf : ContDiff ℝ ∞ (fun a : LiftTangent =>
+    pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) period a f))
   (hd : ∀ t : Icc (0 : ℝ) T, HasDerivWithinAt (extendPath T hT p) (f t) (Icc (0 : ℝ) T) t)
 
 include hd in

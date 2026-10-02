@@ -51,7 +51,8 @@ theorem physical_matrix_errors
     (hsmall : 16 * (ε * Θ * (4 * G) ^ 2 + d) ≤ 1)
     (hmap : MapsTo (physicalTime t₀ a ε) (Icc 0 Θ) S)
     (hBd : ∀ t ∈ S, HasDerivWithinAt B (B₁ t) S t)
-    (hmd : ∀ t ∈ S, HasDerivWithinAt m (-(B t).adjoint (m t)) S t)
+    (hmd : ∀ t ∈ S, HasDerivWithinAt m
+      (-adjoint (𝕜 := ℝ) (E := Space) (F := Space) (B t) (m t)) S t)
     (hvd : ∀ t ∈ S, HasDerivWithinAt v (-(B t) (v t) +
       (2 * ⟪m t, (B t) (v t)⟫_ℝ / ‖m t‖ ^ 2) • m t) S t)
     (hm0 : ∀ t ∈ S, m t ≠ 0) (hv0 : ∀ t ∈ S, v t ≠ 0)
@@ -59,7 +60,7 @@ theorem physical_matrix_errors
     (hB : ∀ t ∈ S, ‖B t‖ ≤ G) (hB₁ : ∀ t ∈ S, ‖B₁ t‖ ≤ G ^ 2)
     (hE : ∀ t ∈ S, ‖E t‖ ≤ d)
     (hparent : ∀ t ∈ S, M t = B t +
-      primaryShear c m v t • rankOne ℝ (unit (v t)) (unit (m t)) + E t)
+      primaryShear c m v t • rankOne ℝ (E := Space) (F := Space) (unit (v t)) (unit (m t)) + E t)
     (hb0 : rescaledFrame B m v t₀ a ε 0 0 1 = a)
     (hk0 : rescaledFrame B m v t₀ a ε 0 2 1 = a * β)
     (hh0 : rescaledShear c m v t₀ a ε 0 = a / ε ^ 2) :

@@ -253,7 +253,8 @@ theorem forward_initial_frame (x : Space) :
 
 theorem forward_initial_normal (x : Space) :
     P.forwardData.normal.field ⟨0,le_rfl,A.T_pos.le⟩ x=P.crossDirection := by
-  change (A.inverse.field A.zeroTime x).adjoint P.crossDirection=P.crossDirection
+  change ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space)
+    (A.inverse.field A.zeroTime x) P.crossDirection=P.crossDirection
   have h : A.inverse.field A.zeroTime x=ContinuousLinearMap.id ℝ Space := by
     apply ContinuousLinearMap.ext
     intro v
@@ -288,12 +289,14 @@ theorem pressure_smooth {A : Parent} (E : Evolution A) (t : Icc (0 : ℝ) A.T) :
   apply contDiff_infty_iff_fderiv.mpr
   refine ⟨fun x => E.pressure_differentiable t x, ?_⟩
   have he : fderiv ℝ (fun x => E.pressure (t,x)) =
-      (toDual ℝ Space).toContinuousLinearMap ∘ E.force t := by
+      LinearMap.toContinuousLinearMap (𝕜 := ℝ) (E := Space) (F' := StrongDual ℝ Space)
+        (toDual ℝ Space).toLinearEquiv.toLinearMap ∘ E.force t := by
     funext x
     change fderiv ℝ (fun y => E.pressure (t,y)) x=(toDual ℝ Space) (E.force t x)
     rw [← toDual_gradient,E.pressure_gradient]
   rw [he]
-  exact (toDual ℝ Space).toContinuousLinearMap.contDiff.comp (E.force_smooth t)
+  exact (LinearMap.toContinuousLinearMap (𝕜 := ℝ) (E := Space) (F' := StrongDual ℝ Space)
+    (toDual ℝ Space).toLinearEquiv.toLinearMap).contDiff.comp (E.force_smooth t)
 
 end EulerParentPacketFrames.Evolution
 
@@ -410,7 +413,7 @@ def joinedHistory (hn : n ≠ 0) :
   (P.restrictedFrame.activation_parameters (P.time_pos hn) P.time_lt_nextHorizon).2.2.2.2.1
 
 theorem joined_history_strain (hn : n ≠ 0) :
-    ‖EulerTransverseSourceCoefficientPath.pathEvaluation 0
+    ‖EulerTransverseSourceCoefficientPath.pathEvaluation (V := Space →L[ℝ] Space) 0
       ((P.joinedData hn).initial P.time (P.time_pos hn) P.time_lt_nextHorizon.le).M.field‖ ≤
       gradientConstant*previousShear S.J S.X n := by
   apply (ContinuousMap.norm_le _ (mul_nonneg gradient_nonneg

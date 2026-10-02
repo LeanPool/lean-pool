@@ -98,7 +98,8 @@ theorem vector_mean_zero (t : ℝ) (x : Space) :
     D.T D.T_pos.le D.frame D.frameDerivative D.frameLower D.frameLower_pos D.frame_lower
     G.path I.value G.mean_zero I.mean_zero (D.clamp t)
   exact (pointField_mean_zero_iff P
-    (includePath P D.support D.support_measurable (G.velocityPath I))
+    (includePath (K := Icc (0 : ℝ) D.T) (V := Vector3) P D.support D.support_measurable
+      (G.velocityPath I))
     (G.velocityPath_orbit I) (D.clamp t)).mp hz x
 
 theorem vector_spatial_smooth (t : ℝ) :

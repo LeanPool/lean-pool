@@ -64,8 +64,8 @@ variable {P : ℝ} [Fact (0 < P)]
   (H : Budget L) (Y : InitialData P D)
   (directions : ι → LiftTangent) (hdir : ∀ i, ‖directions i‖ ≤ 1)
   (d : ℕ)
-  (hYb : ∀ n, block directions q (fun a => translate P a (Y.value : CylinderL2 P U)) n 0 ≤
-    majorant L.R d n)
+  (hYb : ∀ n, block directions q
+    (fun a => translate (V := U) P a (Y.value : CylinderL2 P U)) n 0 ≤ majorant L.R d n)
 
 include H hdir hYb
 
@@ -266,7 +266,8 @@ theorem initial_amplitude_bound
       hsZ A hA
       (fun a => by
         rw [hrestore]
-        exact ((pathTranslate (V := V) P a) ∘L normalize g hg).map_smul A (S Z))
+        exact ((pathTranslate (K := Icc (0 : ℝ) D.T) (V := V) P a) ∘L
+          normalize (E := CylinderL2 P V) g hg).map_smul A (S Z))
       R C e n 0 (hunit Z hZ n)
     exact hr.trans_eq (by ring)
 
@@ -304,8 +305,8 @@ variable {P : ℝ} [Fact (0 < P)]
   (H : Budget L) (Y : InitialData P D)
   (directions : ι → LiftTangent) (hdir : ∀ i, ‖directions i‖ ≤ 1)
   (A : ℝ) (hA : 0 ≤ A) (d : ℕ)
-  (hYb : ∀ n, block directions q (fun a => translate P a (Y.value : CylinderL2 P U)) n 0 ≤
-    A * majorant L.R d n)
+  (hYb : ∀ n, block directions q
+    (fun a => translate (V := U) P a (Y.value : CylinderL2 P U)) n 0 ≤ A * majorant L.R d n)
 
 include hdir hA hYb
 
@@ -359,10 +360,12 @@ variable {P : ℝ} [Fact (0 < P)]
   (q : ℕ) (Rc C R A : ℝ) (hRc : 0 ≤ Rc) (hC : 0 ≤ C) (hA : 0 ≤ A)
   (hR : sobolevCoefficientRadius (Fin 4) Rc ≤ R) (d : ℕ)
   (hbA : ∀ n, block standardDirection q
-    (fun a : LiftTangent => pathTranslate P a (normalize g hg (velocityPath τ hτ hτT B Y))) n 0 ≤
+    (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
+      (normalize (E := CylinderL2 P Vector3) g hg (velocityPath τ hτ hτT B Y))) n 0 ≤
       A * majorant R d n)
   (hbAt : ∀ n, block standardDirection q
-    (fun a : LiftTangent => pathTranslate P a (normalize g hg (derivativePath τ hτ hτT B Y))) n 0 ≤
+    (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
+      (normalize (E := CylinderL2 P Vector3) g hg (derivativePath τ hτ hτT B Y))) n 0 ≤
       A * majorant R d n)
   (hbK : ∀ n a, ‖iteratedFDeriv ℝ n (translateCoefficientPath
       (K := Icc (0 : ℝ) D.T) (V := Space →L[ℝ] Space) D.potentialCoefficientPath) a‖ ≤
@@ -537,8 +540,8 @@ theorem correctorTimeAmplitude_nonneg : 0 ≤ H.correctorTimeAmplitude (P := P) 
   positivity
 
 variable (Y : InitialData P D) (A : ℝ) (hA : 0 ≤ A) (d : ℕ)
-  (hYb : ∀ n, block standardDirection q (fun a => translate P a (Y.value : CylinderL2 P U)) n 0 ≤
-    A * majorant L.R d n)
+  (hYb : ∀ n, block standardDirection q
+    (fun a => translate (V := U) P a (Y.value : CylinderL2 P U)) n 0 ≤ A * majorant L.R d n)
 
 include hA hYb
 
@@ -700,8 +703,9 @@ structure GradeGuards : Prop where
   pressureGradient : 3*H.pressureAmplitude (P := P) N*C ≤ L.R
 
 variable (W : GradeGuards (P := P) H N C) (Y : InitialData P D) (α : ℝ) (hα : 0 < α)
-  (hYb : ∀ n, block standardDirection 6 (fun a => translate P a (Y.value : CylinderL2 P U)) n 0 ≤
-    (α * C) * majorant L.R 0 n)
+  (hYb : ∀ n, block standardDirection 6
+    (fun a => translate (V := U) P a (Y.value : CylinderL2 P U)) n 0 ≤
+      (α * C) * majorant L.R 0 n)
 
 include W hYb hα
 

@@ -42,7 +42,8 @@ theorem graph_vector_hasFDerivAt (q : LiftTangent → Space) (k : ℝ) (hk : k �
     (m : Space) (Y : Space → Space) (J : Space →L[ℝ] Space) (x : Space)
     (hY : HasFDerivAt Y J x) (hq : DifferentiableAt ℝ q (graphMap k m (Y x))) :
     HasFDerivAt (fun y => k⁻¹ • q (graphMap k m (Y y)))
-      (rankOne ℝ (fderiv ℝ q (graphMap k m (Y x)) (0,1)) (J.adjoint m) +
+      (rankOne ℝ (E := Space) (F := Space) (fderiv ℝ q (graphMap k m (Y x)) (0,1))
+          (adjoint (𝕜 := ℝ) (E := Space) (F := Space) J m) +
         slowGraphDerivative q k m Y J x) x := by
   have hg : HasFDerivAt (fun y => graphMap k m (Y y)) ((graphMap k m).comp J) x :=
     (graphMap k m).hasFDerivAt.comp x hY
@@ -100,7 +101,8 @@ theorem scaled_terminal_global_gradient (a k : ℝ) (hk : k ≠ 0)
     fderiv ℝ (fun y => k⁻¹ • vector τ hτ hτT B (initialData D δ hδ (a • ξ) hs)
       (t,(Y y,k*⟪D.m₀,Y y⟫_ℝ))) x =
       (a*deriv (profile δ) (k*⟪D.m₀,Y x⟫_ℝ)) •
-        rankOne ℝ (canonicalVelocity τ hτ hτT B ξ hs t (Y x)) (D.normal.field t (Y x)) +
+        rankOne ℝ (E := Space) (F := Space) (canonicalVelocity τ hτ hτT B ξ hs t (Y x))
+          (D.normal.field t (Y x)) +
       slowGraphDerivative (fun z => vector τ hτ hτT B (initialData D δ hδ (a • ξ) hs) (t,z))
         k D.m₀ Y (D.FInv.field t (Y x)) x := by
   have hq := ((vectorField τ hτ hτT B (initialData D δ hδ (a • ξ) hs)).raw_smooth t).differentiable
@@ -126,7 +128,8 @@ theorem scaled_terminal_global_gradient_bound (a k : ℝ) (hk : 0 < k)
     ‖fderiv ℝ (fun y => k⁻¹ • vector τ hτ hτT B (initialData D δ hδ (a • ξ) hs)
       (t,(Y y,k*⟪D.m₀,Y y⟫_ℝ))) x -
       (a*deriv (profile δ) (k*⟪D.m₀,Y x⟫_ℝ)) •
-        rankOne ℝ (canonicalVelocity τ hτ hτT B ξ hs t (Y x)) (D.normal.field t (Y x))‖ ≤
+        rankOne ℝ (E := Space) (F := Space) (canonicalVelocity τ hτ hτT B ξ hs t (Y x))
+          (D.normal.field t (Y x))‖ ≤
       (‖coordinateEquiv.symm.toContinuousLinearMap‖*(sobolevEmbeddingConstant period 3*A*R)*C)/k :=
           by
   rw [scaled_terminal_global_gradient τ hτ hτT B δ hδ ξ hs a k hk.ne' t Y x hY,

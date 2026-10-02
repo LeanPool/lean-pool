@@ -80,7 +80,8 @@ def fixedEndpointCorrection (L : V →L[ℝ] TimeLp T E) :
   (coerciveInverse (fixedFrameOperator T hT Q Q₁ H) (fixedCoercivity T Q Q₁ c)
     (fixedCoercivity_pos T hT Q Q₁ c hc)
     (fixedFrameOperator_coercive T hT Q Q₁ H c hc hQ hd K hK hH hsmall)).comp
-      ((fixedFrameDerivative T hT Q Q₁).adjoint.comp ((energyOperator T hT H).comp L))
+      ((adjoint (𝕜 := ℝ) (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E)
+        (fixedFrameDerivative T hT Q Q₁)).comp ((energyOperator T hT H).comp L))
 
 /-- Fixed endpoint derivative, given by `L - (fixedFrameDerivative T hT Q Q₁).comp
 (fixedEndpointCorrection T hT Q Q₁ H c hc hQ hd K hK hH hsmall L)`. -/
@@ -99,7 +100,8 @@ theorem fixedEndpointCorrection_equation (L : V →L[ℝ] TimeLp T E) (Y : V)
     (coerciveInverse (fixedFrameOperator T hT Q Q₁ H) (fixedCoercivity T Q Q₁ c)
       (fixedCoercivity_pos T hT Q Q₁ c hc)
       (fixedFrameOperator_coercive T hT Q Q₁ H c hc hQ hd K hK hH hsmall)
-      ((fixedFrameDerivative T hT Q Q₁).adjoint (energyOperator T hT H (L Y)))), v⟫_ℝ = _
+      (adjoint (𝕜 := ℝ) (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E)
+        (fixedFrameDerivative T hT Q Q₁) (energyOperator T hT H (L Y)))), v⟫_ℝ = _
   rw [operator_inverse_apply, adjoint_inner_left]
 
 theorem fixedEndpointDerivative_orthogonal (L : V →L[ℝ] TimeLp T E) (Y : V)
@@ -277,9 +279,9 @@ theorem affineTrial_primitive
     (hA : ∀ t : Icc (0 : ℝ) T,
       HasDerivWithinAt (extendPath T hT A) (A₁ t) (Icc (0 : ℝ) T) t)
     (ξT : U) (t : Icc (0 : ℝ) T) :
-    initialPrimitive T hT (affineTrial T hT A A₁ ξT) t =
+    initialPrimitive (E := E) T hT (affineTrial T hT A A₁ ξT) t =
       A t (((t : ℝ) / T) • ξT) := by
-  change initialPrimitive T hT
+  change initialPrimitive (E := E) T hT
     (initialProductDerivative T hT A A₁ (constantFieldOperator T hT (T⁻¹ • ξT))) t = _
   rw [initialPrimitive_initialProductDerivative T hT A A₁ hA,
     initialPrimitive_constantFieldOperator, smul_smul, div_eq_mul_inv]
@@ -288,7 +290,7 @@ theorem affineTrial_terminal (hTpos : 0 < T)
     (hA : ∀ t : Icc (0 : ℝ) T,
       HasDerivWithinAt (extendPath T hT A) (A₁ t) (Icc (0 : ℝ) T) t)
     (ξT : U) :
-    initialPrimitive T hT (affineTrial T hT A A₁ ξT) ⟨T, hT, le_rfl⟩ =
+    initialPrimitive (E := E) T hT (affineTrial T hT A A₁ ξT) ⟨T, hT, le_rfl⟩ =
       A ⟨T, hT, le_rfl⟩ ξT := by
   rw [affineTrial_primitive T hT A A₁ hA, div_self hTpos.ne', one_smul]
 
@@ -297,7 +299,7 @@ theorem affineTrial_tangent
       HasDerivWithinAt (extendPath T hT A) (A₁ t) (Icc (0 : ℝ) T) t)
     (m : Icc (0 : ℝ) T → E) (hm : ∀ t v, ⟪m t, A t v⟫_ℝ = 0)
     (ξT : U) (t : Icc (0 : ℝ) T) :
-    ⟪m t, initialPrimitive T hT (affineTrial T hT A A₁ ξT) t⟫_ℝ = 0 := by
+    ⟪m t, initialPrimitive (E := E) T hT (affineTrial T hT A A₁ ξT) t⟫_ℝ = 0 := by
   rw [affineTrial_primitive T hT A A₁ hA]
   exact hm t _
 

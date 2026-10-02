@@ -32,7 +32,7 @@ variable {G : Parent} (L : LabelData G)
 omit [CompleteSpace U] in
 theorem source_normal_initial (x : Space) :
     (G.transverseData m hm R S hS).normal.field G.zeroTime x=m := by
-  change (G.inverse.field G.zeroTime x).adjoint m=m
+  change adjoint (𝕜 := ℝ) (E := Space) (F := Space) (G.inverse.field G.zeroTime x) m=m
   have hi : G.inverse.field G.zeroTime x=ContinuousLinearMap.id ℝ Space := by
     apply ContinuousLinearMap.ext
     exact G.inverse_initial x

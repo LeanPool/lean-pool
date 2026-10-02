@@ -29,7 +29,7 @@ variable (P : ℝ) [Fact (0 < P)] {T : ℝ} {U E : Type*}
   (hQ : ∀ t x, D.Q t (-x) = D.Q t x)
   (hQ₁ : ∀ t x, D.Q₁ t (-x) = D.Q₁ t x)
   (hH : ∀ t x, D.H t (-x) = D.H t x)
-  (Y : CylinderL2 P U) (hY : reflection P Y = -Y)
+  (Y : CylinderL2 P U) (hY : reflection (V := U) P Y = -Y)
 
 include hQ₁ hY in
 omit [CompleteSpace U] [CompleteSpace E] in

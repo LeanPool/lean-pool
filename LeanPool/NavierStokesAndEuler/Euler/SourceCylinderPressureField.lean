@@ -123,8 +123,11 @@ variable (period : ℝ) [Fact (0 < period)]
   (Q Q₁ : SmoothCoefficientPath (Icc (0 : ℝ) T) (U →L[ℝ] E))
   (c : ℝ) (hc : 0 < c) (hQ : ∀ t x v, c * ‖v‖ ^ 2 ≤ ‖Q.field t x v‖ ^ 2)
   (f : C(Icc (0 : ℝ) T, Supported period E S hS)) (a₀ : Supported period U S hS)
-  (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate period a (includePath period S hS f)))
-  (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent => translate period a (a₀ : CylinderL2 period U)))
+  (hf : ContDiff ℝ ∞ (fun a : LiftTangent =>
+    pathTranslate (K := Icc (0 : ℝ) T) (V := E) period a
+      (includePath (K := Icc (0 : ℝ) T) (V := E) period S hS f)))
+  (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent =>
+    translate (V := U) period a (a₀ : CylinderL2 period U)))
 
 include hSc hf ha₀
 
@@ -211,8 +214,11 @@ variable (period : ℝ) [Fact (0 < period)]
   (Q Q₁ : SmoothCoefficientPath (Icc (0 : ℝ) T) (U →L[ℝ] Space))
   (c : ℝ) (hc : 0 < c) (hQ : ∀ t x v, c * ‖v‖ ^ 2 ≤ ‖Q.field t x v‖ ^ 2)
   (f : C(Icc (0 : ℝ) T, Supported period Space S hS)) (a₀ : Supported period U S hS)
-  (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate period a (includePath period S hS f)))
-  (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent => translate period a (a₀ : CylinderL2 period U)))
+  (hf : ContDiff ℝ ∞ (fun a : LiftTangent =>
+    pathTranslate (K := Icc (0 : ℝ) T) (V := Space) period a
+      (includePath (K := Icc (0 : ℝ) T) (V := Space) period S hS f)))
+  (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent =>
+    translate (V := U) period a (a₀ : CylinderL2 period U)))
 
 /-- The actual physical field, reconstructed from the solved L² class. -/
 def field (t : Icc (0 : ℝ) T) (x : LiftDomain period) : Space :=
@@ -329,8 +335,11 @@ variable (period : ℝ) [Fact (0 < period)]
   (Q Q₁ : SmoothCoefficientPath (Icc (0 : ℝ) T) (U →L[ℝ] Space))
   (c : ℝ) (hc : 0 < c) (hQ : ∀ t x v, c * ‖v‖ ^ 2 ≤ ‖Q.field t x v‖ ^ 2)
   (f : C(Icc (0 : ℝ) T, Supported period Space S hS)) (a₀ : Supported period U S hS)
-  (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate period a (includePath period S hS f)))
-  (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent => translate period a (a₀ : CylinderL2 period U)))
+  (hf : ContDiff ℝ ∞ (fun a : LiftTangent =>
+    pathTranslate (K := Icc (0 : ℝ) T) (V := Space) period a
+      (includePath (K := Icc (0 : ℝ) T) (V := Space) period S hS f)))
+  (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent =>
+    translate (V := U) period a (a₀ : CylinderL2 period U)))
   (M : SmoothCoefficientPath (Icc (0 : ℝ) T) (Space →L[ℝ] Space))
   (m : SmoothCoefficientPath (Icc (0 : ℝ) T) Space)
 
@@ -618,8 +627,11 @@ variable (P : ℝ) [Fact (0 < P)]
   (Q Q₁ : SmoothCoefficientPath (Icc (0 : ℝ) T) (U →L[ℝ] Space))
   (c : ℝ) (hc : 0 < c) (hQ : ∀ t x v, c * ‖v‖ ^ 2 ≤ ‖Q.field t x v‖ ^ 2)
   (f : C(Icc (0 : ℝ) T, Supported P Space S hS)) (a₀ : Supported P U S hS)
-  (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a (includePath P S hS f)))
-  (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent => translate P a (a₀ : CylinderL2 P U)))
+  (hf : ContDiff ℝ ∞ (fun a : LiftTangent =>
+    pathTranslate (K := Icc (0 : ℝ) T) (V := Space) P a
+      (includePath (K := Icc (0 : ℝ) T) (V := Space) P S hS f)))
+  (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent =>
+    translate (V := U) P a (a₀ : CylinderL2 P U)))
   (M : SmoothCoefficientPath (Icc (0 : ℝ) T) (Space →L[ℝ] Space))
   (m : SmoothCoefficientPath (Icc (0 : ℝ) T) Space)
   (cm : ℝ) (hcm : 0 < cm) (hm : ∀ t x, cm ≤ ‖m.field t x‖ ^ 2)
@@ -723,13 +735,16 @@ variable (P : ℝ) [Fact (0 < P)]
   (Q Q₁ : SmoothCoefficientPath (Icc (0 : ℝ) T) (U →L[ℝ] Space))
   (c : ℝ) (hc : 0 < c) (hQ : ∀ t x v, c * ‖v‖ ^ 2 ≤ ‖Q.field t x v‖ ^ 2)
   (f : C(Icc (0 : ℝ) T, Supported P Space S hS)) (a₀ : Supported P U S hS)
-  (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a (includePath P S hS f)))
-  (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent => translate P a (a₀ : CylinderL2 P U)))
+  (hf : ContDiff ℝ ∞ (fun a : LiftTangent =>
+    pathTranslate (K := Icc (0 : ℝ) T) (V := Space) P a
+      (includePath (K := Icc (0 : ℝ) T) (V := Space) P S hS f)))
+  (ha₀ : ContDiff ℝ ∞ (fun a : LiftTangent =>
+    translate (V := U) P a (a₀ : CylinderL2 P U)))
   (M : SmoothCoefficientPath (Icc (0 : ℝ) T) (Space →L[ℝ] Space))
   (m : SmoothCoefficientPath (Icc (0 : ℝ) T) Space)
   (cm : ℝ) (hcm : 0 < cm) (hm : ∀ t x, cm ≤ ‖m.field t x‖ ^ 2)
-  (hf₀ : ∀ t, average P (f t : CylinderL2 P Space) = 0)
-  (ha₀zero : average P (a₀ : CylinderL2 P U) = 0)
+  (hf₀ : ∀ t, average (V := Space) P (f t : CylinderL2 P Space) = 0)
+  (ha₀zero : average (V := U) P (a₀ : CylinderL2 P U) = 0)
 
 /-- The literal normalized periodic pressure for the actual forward solution. -/
 def pressureField (t : Icc (0 : ℝ) T) : LiftDomain P → ℝ :=

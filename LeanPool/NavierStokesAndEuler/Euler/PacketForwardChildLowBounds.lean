@@ -35,7 +35,7 @@ theorem forwardPressureTerm_eq_coefficient (t : Icc (0 : ℝ) D.T) (x : Space) :
     pressureTerm a slope (D.M.field t x) (D.normal.field t x)
       (canonicalVelocity D ξ t x) =
     (EulerPacketForwardShear.pressureCoefficient D ξ a t x*slope) •
-      rankOne ℝ (D.normal.field t x) (D.normal.field t x) := by
+      rankOne ℝ (E := Space) (F := Space) (D.normal.field t x) (D.normal.field t x) := by
   unfold pressureTerm EulerPacketForwardShear.pressureCoefficient
   congr 1
   ring
@@ -93,7 +93,8 @@ theorem forwardSourceErrors_of_global (ev ep : ℝ)
     (herr : ∀ (t : Icc (0 : ℝ) A.T) (x : Space),
       ‖fderiv ℝ (A.normalizedPacketVelocity m hm J support hSupport B residual k E.inverse t) x -
         (G.primaryAmplitude hball * deriv (profile G.δ) (k * ⟪m, E.inverse.normalized t x⟫_ℝ)) •
-          rankOne ℝ (canonicalVelocity (A.transverseData m hm J support hSupport)
+          rankOne ℝ (E := Space) (F := Space)
+            (canonicalVelocity (A.transverseData m hm J support hSupport)
               G.initialCoordinate t (E.inverse.normalized t x))
             ((A.transverseData m hm J support hSupport).normal.field t (E.inverse.normalized t x))‖
                 < ev ∧
@@ -103,7 +104,8 @@ theorem forwardSourceErrors_of_global (ev ep : ℝ)
             G.initialCoordinate (G.primaryAmplitude hball) t
             (E.inverse.normalized t x) *
  deriv (profile G.δ) (k * ⟪m, E.inverse.normalized t x⟫_ℝ)) •
-          rankOne ℝ ((A.transverseData m hm J support hSupport).normal.field t
+          rankOne ℝ (E := Space) (F := Space)
+            ((A.transverseData m hm J support hSupport).normal.field t
               (E.inverse.normalized t x))
             ((A.transverseData m hm J support hSupport).normal.field t (E.inverse.normalized t x))‖
                 < ep) :

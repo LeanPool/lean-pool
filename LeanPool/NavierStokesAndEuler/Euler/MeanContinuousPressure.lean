@@ -71,7 +71,8 @@ spatial L² projection and no abstract replacement of the solenoidal space. -/
 theorem meanMomentum_ae (u : TimeLp T L2) :
     (fun t => ((momentum T hT (solenoidalFrame T F) u t : solenoidalSpace) : L2))
       =ᵐ[timeMeasure T]
-      fun t => solenoidalProjection ((extendPath T hT F t).adjoint (u t)) := by
+      fun t => solenoidalProjection (adjoint (𝕜 := ℝ) (E := L2) (F := L2)
+        (extendPath (Y := L2 →L[ℝ] L2) T hT F t) (u t)) := by
   filter_upwards [momentum_ae T hT (solenoidalFrame T F) u] with t ht
   rw [ht]
   change ((adjoint (𝕜 := ℝ) (E := solenoidalSpace) (F := L2)

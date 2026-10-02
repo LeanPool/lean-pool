@@ -80,7 +80,7 @@ local instance instCylinderAngleAverageEvolution6 : NormedSpace ℝ (C(K,Support
 
 /-- Supported path average, given by `(supportedAverage P S hS).compLeftContinuous ℝ K`. -/
 def supportedPathAverage : C(K,Supported P V S hS) →L[ℝ] C(K,Supported P V S hS) :=
-  (supportedAverage P S hS).compLeftContinuous ℝ K
+  (supportedAverage (V := V) P S hS).compLeftContinuous ℝ K
 
 omit [CompactSpace K] in
 @[simp] theorem supportedPathAverage_apply (p : C(K, Supported P V S hS)) (t : K) :
@@ -106,7 +106,7 @@ section Evolution
 variable {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [CompleteSpace V]
   (S : Set Space) (hS : MeasurableSet S) (T : ℝ) (hT : 0 ≤ T)
   (B : C(Icc (0 : ℝ) T, Space →ᵇ V →L[ℝ] V))
-  (U : Evolution T hT (liftedOperatorPath P S hS T B))
+  (U : Evolution T hT (liftedOperatorPath (V := V) P S hS T B))
 
 /-- Averaging the genuine forced solution equals solving with averaged data. -/
 theorem solution_average (f : C(Icc (0 : ℝ) T, Supported P V S hS)) (a₀ : Supported P V S hS) :

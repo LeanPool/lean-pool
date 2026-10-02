@@ -60,10 +60,10 @@ theorem join_translation (a : LiftTangent) :
       join S τ hτ0 hτS (pathTranslate (K := Icc (0 : ℝ) τ) (V := V) P a u)
         (pathTranslate (K := Icc (0 : ℝ) (S - τ)) (V := V) P a v)
         (congrArg (translate (V := V) P a) hm) :=
-  join_map S τ hτ0 hτS u v hm (translate P a).toContinuousLinearMap
+  join_map S τ hτ0 hτS u v hm (translate (V := V) P a).toContinuousLinearMap
 
-variable (hu : ContDiff ℝ ∞ (fun a => pathTranslate P a u))
-  (hv : ContDiff ℝ ∞ (fun a => pathTranslate P a v))
+variable (hu : ContDiff ℝ ∞ (fun a => pathTranslate (K := Icc (0 : ℝ) τ) (V := V) P a u))
+  (hv : ContDiff ℝ ∞ (fun a => pathTranslate (K := Icc (0 : ℝ) (S - τ)) (V := V) P a v))
 
 include hu hv in
 theorem join_orbit_contDiff :

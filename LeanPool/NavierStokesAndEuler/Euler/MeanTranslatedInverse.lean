@@ -75,7 +75,7 @@ def translatedMeanInverse (a : Space) : TimeLp T solenoidalSpace →L[ℝ] TimeL
 /-- The actual translated forcing-to-coordinate-derivative solver. -/
 def translatedMeanSolver (a : Space) : TimeLp T L2 →L[ℝ] TimeLp T solenoidalSpace :=
   (translatedMeanInverse T hT F F₁ H M0 A L c hc hcoercive a).comp
-    (-(translatedMeanPrimitive T hT a F F₁).adjoint)
+    (-(adjoint (𝕜 := ℝ) (F := TimeLp T L2) (translatedMeanPrimitive T hT a F F₁)))
 
 /-- The coercive inverse commutes with simultaneous translation of all coefficients. -/
 theorem translatedMeanInverse_covariance (a : Space) (g : TimeLp T solenoidalSpace) :
@@ -99,7 +99,7 @@ theorem translatedMeanSolver_covariance (a : Space) (f : TimeLp T L2) :
     translatedMeanSolver T hT F F₁ H M0 A L c hc hcoercive a (timeTranslation T a f) =
       timeSolenoidalTranslation T a
         (coerciveInverse (fixedMeanOperator T hT F F₁ H M0 A L) c hc hcoercive
-          (-(fixedMeanPrimitive T hT F F₁).adjoint f)) := by
+          (-(adjoint (𝕜 := ℝ) (F := TimeLp T L2) (fixedMeanPrimitive T hT F F₁) f))) := by
   have hforce := (congrArg (fun z : TimeLp T solenoidalSpace => -z)
     (fixedMeanPrimitive_adjoint_translate T hT a F F₁ f)).trans
       ((timeSolenoidalTranslation T a).map_neg _).symm
@@ -120,7 +120,7 @@ theorem solution_translation_contDiff (f : TimeLp T L2) {n : ℕ∞ω}
     (hf : ContDiff ℝ n (fun a : Space => timeTranslation T a f)) :
     ContDiff ℝ n (fun a : Space => timeSolenoidalTranslation T a
       (coerciveInverse (fixedMeanOperator T hT F F₁ H M0 A L) c hc hcoercive
-        (-(fixedMeanPrimitive T hT F F₁).adjoint f))) := by
+        (-(adjoint (𝕜 := ℝ) (F := TimeLp T L2) (fixedMeanPrimitive T hT F F₁) f)))) := by
   have hAdj := (realAdjoint (U := TimeLp T solenoidalSpace) (E := TimeLp T L2)).contDiff.comp hJ
   have hsol := contDiff_coerciveSolution_variable
     (fun a : Space => translatedMeanOperator T hT a F F₁ H M0 A L) (fun _ => c) (fun _ => hc)

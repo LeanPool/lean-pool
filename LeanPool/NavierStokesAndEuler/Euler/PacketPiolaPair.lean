@@ -272,13 +272,14 @@ theorem adjoint_apply_coordinate (A : Space →L[ℝ] Space) (q : Space) (i : Fi
 
 /-- Pull back a Euclidean covector field by the actual derivative of the coordinate map. -/
 def pullbackCovector (Ξ Q : Space → Space) (x : Space) : Space :=
-  (fderiv ℝ Ξ x).adjoint (Q x)
+  adjoint (𝕜 := ℝ) (E := Space) (F := Space) (fderiv ℝ Ξ x :) (Q x)
 
 /-- Symmetric second derivatives remove the entire derivative-of-Jacobian term from curl. -/
 theorem curl_pullbackCovector (Ξ Q : Space → Space) (hΞ : ContDiff ℝ 2 Ξ)
     (x : Space) (hQ : DifferentiableAt ℝ Q x) :
     vectorCurl (pullbackCovector Ξ Q) x =
-      curlMatrix ((fderiv ℝ Ξ x).adjoint.comp (fderiv ℝ Q x)) := by
+      curlMatrix ((adjoint (𝕜 := ℝ) (E := Space) (F := Space) (fderiv ℝ Ξ x :)).comp
+        (fderiv ℝ Q x)) := by
   have hD : DifferentiableAt ℝ (fderiv ℝ Ξ) x :=
     ((hΞ.fderiv_right (m := 1) le_rfl).differentiable one_ne_zero).differentiableAt
   have hA : HasFDerivAt (fun y => adjoint (𝕜 := ℝ) (E := Space) (F := Space) (fderiv ℝ Ξ y))
@@ -375,14 +376,15 @@ def coveringCurl (κ : ℝ) (m : Space) (q : LiftTangent → Space)
 /-- Covering pullback covector, given by `(fderiv ℝ Ξ z.1).adjoint (q z)`. -/
 def coveringPullbackCovector (Ξ : Space → Space) (q : LiftTangent → Space)
     (z : LiftTangent) : Space :=
-  (fderiv ℝ Ξ z.1).adjoint (q z)
+  ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) (fderiv ℝ Ξ z.1 :) (q z)
 
 /-- Cancellation of the actual Hessian in all constant lifted directions. -/
 theorem coveringCurl_pullback (κ : ℝ) (m : Space) (Ξ : Space → Space)
     (q : LiftTangent → Space) (hΞ : ContDiff ℝ 2 Ξ) (z : LiftTangent)
     (hq : DifferentiableAt ℝ q z) :
     coveringCurl κ m (coveringPullbackCovector Ξ q) z =
-      curlMatrix ((fderiv ℝ Ξ z.1).adjoint.comp
+      curlMatrix ((ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space)
+        (fderiv ℝ Ξ z.1 :)).comp
         ((fderiv ℝ q z).comp (EulerGraphPullback.liftedDirection κ m))) := by
   have hD : DifferentiableAt ℝ (fderiv ℝ Ξ) z.1 :=
     ((hΞ.fderiv_right (m := 1) le_rfl).differentiable one_ne_zero).differentiableAt
@@ -438,7 +440,7 @@ variable (period : ℝ)
 /-- Lifted pullback covector, given by `(fderiv ℝ Ξ x.1).adjoint (Q x)`. -/
 def liftedPullbackCovector (Ξ : Space → Space) (Q : LiftDomain period → Space)
     (x : LiftDomain period) : Space :=
-  (fderiv ℝ Ξ x.1).adjoint (Q x)
+  ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) (fderiv ℝ Ξ x.1 :) (Q x)
 
 /-- Transformed lifted curl, given by `curlMatrix ((fieldFDeriv period Q x).comp
 ((EulerGraphPullback.liftedDirection κ m).comp (F x.1).symm.toContinuousLinearMap))`. -/

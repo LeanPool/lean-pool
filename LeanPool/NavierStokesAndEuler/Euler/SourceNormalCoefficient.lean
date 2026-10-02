@@ -61,11 +61,12 @@ theorem normalFunctional_apply (t : K) (x : Space) (v : E) :
     normalFunctional m c hc hm t x v = ⟪m.field t x,v⟫_ℝ / ‖m.field t x‖^2 := by
   have hn : ‖m.field t x‖^2 ≠ 0 := ne_of_gt (hc.trans_le (hm t x))
   have he := gram_inverse_apply ((normalColumn m).field t x) c hc (normalColumn_lower m c hm t x)
-    (((normalColumn m).field t x).adjoint v)
-  change ((normalColumn m).field t x).adjoint
+    (adjoint (𝕜 := ℝ) (E := ℝ) (F := E) ((normalColumn m).field t x) v)
+  change adjoint (𝕜 := ℝ) (E := ℝ) (F := E) ((normalColumn m).field t x)
     ((normalColumn m).field t x (normalFunctional m c hc hm t x v)) =
-      ((normalColumn m).field t x).adjoint v at he
-  have hadj : ((normalColumn m).field t x).adjoint = innerSL ℝ (m.field t x) :=
+      adjoint (𝕜 := ℝ) (E := ℝ) (F := E) ((normalColumn m).field t x) v at he
+  have hadj : adjoint (𝕜 := ℝ) (E := ℝ) (F := E) ((normalColumn m).field t x) =
+      innerSL ℝ (m.field t x) :=
     adjoint_toSpanSingleton (m.field t x)
   rw [hadj] at he
   change ⟪m.field t x,(normalFunctional m c hc hm t x v) • m.field t x⟫_ℝ =

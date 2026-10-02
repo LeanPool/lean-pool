@@ -45,7 +45,8 @@ variable {U E : Type*}
 /-- The genuine Bochner Gram operator, formed from the actual frame multiplier. -/
 def gramOperator (T : ℝ) (hT : 0 ≤ T) (Q : C(Icc (0 : ℝ) T, U →L[ℝ] E)) :
     TimeLp T U →L[ℝ] TimeLp T U :=
-  (timeMultiplier T hT Q).adjoint.comp (timeMultiplier T hT Q)
+  (adjoint (𝕜 := ℝ) (E := TimeLp T U) (F := TimeLp T E) (timeMultiplier T hT Q)).comp
+    (timeMultiplier T hT Q)
 
 /-- The pointwise lower frame bound gives coercivity on the actual time-L² space. -/
 theorem gramOperator_coercive (T : ℝ) (hT : 0 ≤ T)
@@ -74,7 +75,8 @@ def gramSolver (T : ℝ) (hT : 0 ≤ T)
 theorem gramOperator_ae (T : ℝ) (hT : 0 ≤ T)
     (Q : C(Icc (0 : ℝ) T, U →L[ℝ] E)) (u : TimeLp T U) :
     ∀ᵐ t ∂timeMeasure T, gramOperator T hT Q u t =
-      (Q (projIcc 0 T hT t)).adjoint (Q (projIcc 0 T hT t) (u t)) := by
+      adjoint (𝕜 := ℝ) (E := U) (F := E) (Q (projIcc 0 T hT t))
+        (Q (projIcc 0 T hT t) (u t)) := by
   simp only [gramOperator, comp_apply, timeMultiplier_adjoint]
   filter_upwards [timeMultiplier_ae T hT (adjointPath T Q) (timeMultiplier T hT Q u),
     timeMultiplier_ae T hT Q u] with t hA hQ
@@ -126,7 +128,8 @@ theorem gramOperator_bound (T : ℝ) (hT : 0 ≤ T)
   let M := fun y => timeMultiplier T hT (Q y)
   have hM : ContDiff ℝ ∞ M := contDiff_timeMultiplier T hT Q hQ
   have hb := timeMultiplier_bound T hT Q hQ R C hR hC 0 hbQ
-  have h := clm_comp_bound (fun y => (M y).adjoint) M
+  have h := clm_comp_bound
+    (fun y => adjoint (𝕜 := ℝ) (E := TimeLp T U) (F := TimeLp T E) (M y)) M
     ((realAdjoint (U := TimeLp T U) (E := TimeLp T E)).contDiff.comp hM) hM
     R C C hR hC hC 0 0 (adjoint_bound M hM R C hR hC 0 hb) hb n x
   have he : 3*C*C = 3*C^2 := by ring

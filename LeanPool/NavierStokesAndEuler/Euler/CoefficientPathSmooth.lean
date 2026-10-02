@@ -144,18 +144,19 @@ variable (P : ℝ) [Fact (0 < P)]
   (hA : ContDiff ℝ ∞ (translateCoefficientPath A))
 
 theorem smoothCoefficient_operator (t : K) :
-    (smoothCoefficient P A hA t).operator = fullOperatorMap P (A t) := by
+    (smoothCoefficient P A hA t).operator = fullOperatorMap (E := Space) (F := Space) P (A t) := by
   apply ContinuousLinearMap.ext
   intro f
   apply Lp.ext
   filter_upwards [(smoothCoefficient P A hA t).operator_ae f,
-    EulerLpOperatorField.full_ae (liftMeasure P) (EulerLpCylinderTranslation.fieldLift P (A t)) f]
+    EulerLpOperatorField.full_ae (liftMeasure P)
+      (EulerLpCylinderTranslation.fieldLift (W := Space →L[ℝ] Space) P (A t)) f]
     with x h₁ h₂
   exact h₁.trans h₂.symm
 
 theorem smoothCoefficient_operator_continuous :
     Continuous (fun t => (smoothCoefficient P A hA t).operator) := by
   simp_rw [smoothCoefficient_operator]
-  exact (fullOperatorMap P).continuous.comp A.continuous
+  exact (fullOperatorMap (E := Space) (F := Space) P).continuous.comp A.continuous
 
 end EulerCoefficientPath

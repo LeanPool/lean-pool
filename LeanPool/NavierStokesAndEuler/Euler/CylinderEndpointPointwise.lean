@@ -46,7 +46,7 @@ variable (P : ℝ) [Fact (0 < P)] {U : Type*}
   (J : U →L[ℝ] Space) (L : Space →L[ℝ] U)
   {K : Type*} [TopologicalSpace K] [CompactSpace K]
   (p : C(K, CylinderL2 P U))
-  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
+  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := U) P a p))
 
 /-- Point field, given by `L (EulerCylinderSmoothOrbit.pointField P (pathMap P J p)
 (pathMap_orbit_contDiff P J p hp) t x)`. -/
@@ -92,8 +92,8 @@ section Time
 
 variable (T : ℝ) (hT : 0 ≤ T)
   (p q : C(Icc (0 : ℝ) T, CylinderL2 P U))
-  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
-  (hq : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a q))
+  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := U) P a p))
+  (hq : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := U) P a q))
   (hd : ∀ t : Icc (0 : ℝ) T,
     HasDerivWithinAt (extendPath T hT p) (q t) (Icc (0 : ℝ) T) t)
 
@@ -142,7 +142,7 @@ theorem integral_translate (p : C(Icc (0 : ℝ) T, CylinderL2 P V)) (a : LiftTan
       pathTranslate (K := Icc (0 : ℝ) T) (V := V) P a (integral (E := CylinderL2 P V) T hT p) := by
   apply ContinuousMap.ext
   intro t
-  exact (translate P a).intervalIntegral_comp_comm (extendPath T hT p)
+  exact (translate (V := V) P a).intervalIntegral_comp_comm (extendPath T hT p)
 
 theorem integral_orbit_contDiff (p : C(Icc (0 : ℝ) T, CylinderL2 P V))
     (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := V) P a p)) :
@@ -195,7 +195,7 @@ variable (P : ℝ) [Fact (0 < P)] {T : ℝ} {U : Type*}
   (hQ : ContDiff ℝ ∞ (translateCoefficientPath D.Q))
   (hQ₁ : ContDiff ℝ ∞ (translateCoefficientPath D.Q₁))
   (hH : ContDiff ℝ ∞ (translateCoefficientPath D.H))
-  (Y : CylinderL2 P U) (hY : ContDiff ℝ ∞ (fun a : LiftTangent => translate P a Y))
+  (Y : CylinderL2 P U) (hY : ContDiff ℝ ∞ (fun a : LiftTangent => translate (V := U) P a Y))
 
 include hQ hQ₁ hH hY in
 theorem endpointDisplacement_orbit_contDiff :

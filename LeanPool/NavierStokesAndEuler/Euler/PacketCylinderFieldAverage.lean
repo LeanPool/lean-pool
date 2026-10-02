@@ -76,7 +76,8 @@ theorem rawMean_continuous : Continuous (rawMean P f) := by
     (continuous_id.prodMk continuous_const)
 
 theorem average_ae_rawMean :
-    (average P (value P u) : LiftDomain P → Space) =ᵐ[liftMeasure P] fun z => rawMean P f z.1 := by
+    (average (V := Vector3) P (value P u) : LiftDomain P → Space) =ᵐ[liftMeasure P]
+      fun z => rawMean P f z.1 := by
   have he (z : LiftDomain P) : representative P (sobolevAverage P 3 u) z = rawMean P f z.1 := by
     obtain ⟨θ,hθ⟩ := QuotientAddGroup.mk_surjective z.2
     have hz : z=(z.1,(θ : AddCircle P)) := by
@@ -90,22 +91,23 @@ theorem average_ae_rawMean :
 
 theorem rawMean_memLp : MemLp (rawMean P f) 2 (volume : Measure Space) := by
   apply continuous_memLp_of_lift P (rawMean P f) (rawMean_continuous P u f hf hrep)
-  exact (memLp_congr_ae (average_ae_rawMean P u f hf hrep)).mp (Lp.memLp (average P (value P u)))
+  exact (memLp_congr_ae (average_ae_rawMean P u f hf hrep)).mp
+    (Lp.memLp (average (V := Vector3) P (value P u)))
 
 /-- The actual ordinary-space L² mean has the normalized integral as its representative. -/
 theorem mean_ae_rawMean :
-    (mean P (value P u) : Space → Space) =ᵐ[volume] rawMean P f := by
+    (mean (V := Vector3) P (value P u) : Space → Space) =ᵐ[volume] rawMean P f := by
   let v : SpatialL2 Space := (rawMean_memLp P u f hf hrep).toLp (rawMean P f)
   have hv : (v : Space → Space) =ᵐ[volume] rawMean P f :=
     (rawMean_memLp P u f hf hrep).coeFn_toLp
-  have he : embedding P v = average P (value P u) := by
+  have he : embedding (V := Space) P v = average (V := Vector3) P (value P u) := by
     apply Lp.ext
     filter_upwards [lift_ae P v,
       (Measure.quasiMeasurePreserving_fst (μ := (volume : Measure Space))
         (ν := (volume : Measure (AddCircle P)))).ae hv,
       average_ae_rawMean P u f hf hrep] with z hl hm ha
     exact hl.trans (hm.trans ha.symm)
-  have hm : mean P (value P u) = v := by
+  have hm : mean (V := Vector3) P (value P u) = v := by
     rw [← mean_average P (value P u), ← he, mean_embedding]
   rw [hm]
   exact hv
@@ -134,7 +136,8 @@ open scoped ContDiff
 
 variable (P : ℝ) [Fact (0 < P)]
   {K : Type*} [TopologicalSpace K] [CompactSpace K]
-  (p : C(K, LiftL2 P)) (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
+  (p : C(K, LiftL2 P))
+  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p))
 
 include hp
 
@@ -189,7 +192,8 @@ open scoped ContDiff
 
 variable (D : Data) (P : ℝ) [Fact (0 < P)]
   (p : C(Icc (0 : ℝ) D.T, LiftL2 P))
-  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
+  (hp : ContDiff ℝ ∞ (fun a : LiftTangent =>
+    pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a p))
 
 /-- The literal normalized integral of the actual cylinder representative. -/
 def angularMeanRaw : VectorField := fun z =>

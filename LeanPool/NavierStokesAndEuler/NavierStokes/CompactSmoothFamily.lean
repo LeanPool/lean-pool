@@ -81,8 +81,8 @@ noncomputable def flipLinear (K : Set Z) :
 
 omit [NormedSpace ℝ Z] in
 theorem norm_flipLinear_le (K : Set Z) [CompactSpace K]
-    (g : C(K, P →L[ℝ] E)) (v : P) : ‖flipLinear K g v‖ ≤ ‖g‖ * ‖v‖ := by
-  apply (ContinuousMap.norm_le (flipLinear K g v)
+    (g : C(K, P →L[ℝ] E)) (v : P) : ‖flipLinear (P := P) (E := E) K g v‖ ≤ ‖g‖ * ‖v‖ := by
+  apply (ContinuousMap.norm_le (flipLinear (P := P) (E := E) K g v)
     (mul_nonneg (norm_nonneg g) (norm_nonneg v))).mpr
   intro z
   exact ((g z).le_opNorm v).trans

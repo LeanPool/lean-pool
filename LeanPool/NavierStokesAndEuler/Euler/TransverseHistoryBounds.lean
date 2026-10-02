@@ -309,7 +309,7 @@ theorem fixedAffineEndpoint_norm_le (d a r : ℝ)
       (affineTrial T hT Q Q₁)‖ ≤ (1+d^2*(2*r^2)*a) * (affineCost T*d) := by
   have hb : 0 ≤ affineCost T := by unfold affineCost; positivity
   exact EulerCoerciveEndpointBounds.endpointOperator_norm_le
-    (fixedFrameDerivative T hT Q Q₁)
+    (fixedFrameDerivative (U := U) (E := E) T hT Q Q₁)
     (fixedInverse T hT Q Q₁ H c hc hQ hd K hK hH hsmall)
     (energyOperator T hT H) (affineTrial T hT Q Q₁)
     d (2*r^2) a (affineCost T*d)
@@ -330,7 +330,7 @@ theorem fixedAffineEndpoint_sub_norm_le (d a r : ℝ)
         (derivativeDistance T Q Q₁ P P₁) (T^2*‖H-G‖) := by
   have hB0 : 0 ≤ affineCost T := by unfold affineCost; positivity
   have h := EulerCoerciveEndpointBounds.endpointOperator_sub_norm_le
-    (fixedFrameDerivative T hT Q Q₁) (fixedFrameDerivative T hT P P₁)
+    (fixedFrameDerivative (U := U) (E := E) T hT Q Q₁) (fixedFrameDerivative T hT P P₁)
     (fixedInverse T hT Q Q₁ H c hc hQ hd K hK hH hsmall)
     (fixedInverse T hT P P₁ G c hc hP hp K hK hG hsmall)
     (energyOperator T hT H) (energyOperator T hT G)
@@ -573,8 +573,8 @@ theorem generatorTrace_sub_norm_le (hTpos : 0 < T)
 
 theorem continuousMultiplier_sub_norm_le
     (Q P : C(Icc (0 : ℝ) T, U →L[ℝ] E)) : ‖multiplier Q - multiplier P‖ ≤ ‖Q-P‖ := by
-  change ‖EulerContinuousPathCalculus.coefficientMap Q -
-    EulerContinuousPathCalculus.coefficientMap P‖ ≤ _
+  change ‖EulerContinuousPathCalculus.coefficientMap (K := Icc (0 : ℝ) T) (E := U) (F := E) Q -
+    EulerContinuousPathCalculus.coefficientMap (K := Icc (0 : ℝ) T) (E := U) (F := E) P‖ ≤ _
   rw [← map_sub]
   exact multiplier_norm (Q-P)
 
@@ -586,7 +586,7 @@ theorem transportedTrace_norm_le (hTpos : 0 < T)
   have hq := (show 0 ≤ ‖Q‖ by positivity).trans hQ
   have htrace := generatorTrace_norm_le T hT hTpos B b hB
   have ht0 := (show 0 ≤ ‖generatorTrace T hT B‖ by positivity).trans htrace
-  have hs := (opNorm_comp_le (generatorTrace T hT B) S).trans
+  have hs := (opNorm_comp_le (generatorTrace (U := U) T hT B) S).trans
     (mul_le_mul htrace hS (norm_nonneg _) ht0)
   exact ((opNorm_comp_le _ _).trans (mul_le_mul ((multiplier_norm Q).trans hQ) hs
     (norm_nonneg _) hq)).trans_eq (by ring)
@@ -606,9 +606,10 @@ theorem transportedTrace_sub_norm_le (hTpos : 0 < T)
   have hδt := (generatorTrace_sub_norm_le T hT hTpos B B').trans
     (mul_le_mul_of_nonneg_left hδb (by positivity))
   have hδt0 := (show 0 ≤ ‖generatorTrace T hT B - generatorTrace T hT B'‖ by positivity).trans hδt
-  have hs := (opNorm_comp_le (generatorTrace T hT B) S).trans
+  have hs := (opNorm_comp_le (generatorTrace (U := U) T hT B) S).trans
     (mul_le_mul htrace hS (norm_nonneg _) ht0)
-  have hds := (norm_comp_sub_le (generatorTrace T hT B) (generatorTrace T hT B') S S').trans
+  have hds := (norm_comp_sub_le (generatorTrace (U := U) T hT B)
+    (generatorTrace T hT B') S S').trans
     (add_le_add (mul_le_mul hδt hS (norm_nonneg _) hδt0)
       (mul_le_mul htrace' hδs (norm_nonneg _) ht0))
   have hδq0 := (show 0 ≤ ‖Q-P‖ by positivity).trans hδq
@@ -673,7 +674,8 @@ theorem coordinateSlope_norm_le (d a r : ℝ)
     (coordinateSlope T hT Q Q₁ H c hc hQ hd K hK hH hsmall ξ)
   rw [coordinateSlope_product T hT Q Q₁ H c hc hQ hd K hK hH hsmall] at hinv
   have he := (le_opNorm
-    (fixedEndpointDerivative T hT Q Q₁ H c hc hQ hd K hK hH hsmall (affineTrial T hT Q Q₁)) ξ).trans
+    (fixedEndpointDerivative (E := E) (V := U) T hT Q Q₁ H c hc hQ hd K hK hH hsmall
+      (affineTrial T hT Q Q₁)) ξ).trans
       (mul_le_mul_of_nonneg_right
         (fixedAffineEndpoint_norm_le T hT Q Q₁ H c hc hQ hd K hK hH hsmall d a r hD hA hr)
         (norm_nonneg ξ))
@@ -712,7 +714,8 @@ theorem coordinateSlope_sub_norm_le (d a r : ℝ)
     (fixedEndpointDerivative T hT Q Q₁ H c hc hQ hd K hK hH hsmall (affineTrial T hT Q Q₁) -
      fixedEndpointDerivative T hT P P₁ G c hc hP hp K hK hG hsmall (affineTrial T hT P P₁)) ξ).trans
     (mul_le_mul_of_nonneg_right hδend (norm_nonneg ξ))
-  have hprev := (le_opNorm (coordinateSlope T hT P P₁ G c hc hP hp K hK hG hsmall) ξ).trans
+  have hprev := (le_opNorm
+    (coordinateSlope (U := U) T hT P P₁ G c hc hP hp K hK hG hsmall) ξ).trans
     (mul_le_mul_of_nonneg_right
       (coordinateSlope_norm_le T hT P P₁ G c hc hP hp K hK hG hsmall d a r hD' hA' hr')
           (norm_nonneg ξ))

@@ -91,7 +91,7 @@ theorem exists_local_analytic_solver [CompleteSpace E]
     ∃ (g : RepairData E → E) (U : Set (RepairData E)),
       IsOpen U ∧ base B A ∈ U ∧ ContDiffOn ℝ ⊤ g U ∧ g (base B A) = 0 ∧
       ∀ z ∈ U, z.1.1 (g z) + z.1.2 (g z) (g z) = z.2 := by
-  have hF : ContDiffAt ℝ ⊤ forward (base B A) := forward_contDiff.contDiffAt
+  have hF : ContDiffAt ℝ ⊤ forward (base B A) := (forward_contDiff (E := E)).contDiffAt
   have hDF := forward_hasFDerivAt B A
   let inv : RepairData E → RepairData E := hF.localInverse hDF (by simp)
   have hcont : ContDiffAt ℝ ⊤ inv (base B A) := by
@@ -100,7 +100,8 @@ theorem exists_local_analytic_solver [CompleteSpace E]
     simpa only [forward_base] using hF.localInverse_apply_image hDF (by simp)
   have hinv : ∀ᶠ z in 𝓝 (base B A), forward (inv z) = z := by
     have h := HasStrictFDerivAt.eventually_right_inverse
-      (f' := (ContinuousLinearEquiv.refl ℝ (QuadraticCoefficients E)).prodCongr B)
+      (f' := (ContinuousLinearEquiv.refl ℝ (QuadraticCoefficients E)).prodCongr
+        (M₃ := E) (M₄ := E) B)
       (hF.hasStrictFDerivAt' hDF (by simp))
     change ∀ᶠ z in 𝓝 (forward (base B A)), forward (inv z) = z at h
     simpa only [forward_base] using h

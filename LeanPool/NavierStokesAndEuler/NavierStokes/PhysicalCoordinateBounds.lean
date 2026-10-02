@@ -126,8 +126,9 @@ theorem inverseDifferential_contDiffAt {a : ℝ} {y : Point}
   have hn : ContDiffAt ℝ ∞ (fun y : Point => 2 * y.2.2 * y.1 ^ a) y :=
     (contDiffAt_const.mul contDiffAt_snd.snd).mul
       (contDiffAt_fst.rpow_const_of_ne hy.ne')
-  exact (contDiffAt_const.clm_comp (((hm.inv hs).smul contDiffAt_const).add
-    ((hn.div hm hs).smul contDiffAt_const))).add contDiffAt_const
+  exact ((contDiffAt_const (𝕜 := ℝ) (F := ℝ →L[ℝ] Point)).clm_comp
+    (((hm.inv hs).smul contDiffAt_const).add
+      ((hn.div hm hs).smul (contDiffAt_const (𝕜 := ℝ) (F := Point →L[ℝ] ℝ))))).add contDiffAt_const
 
 /-- Actual inverse jets, computed by recursively differentiating through
 the inverse Jacobian. This definition assumes no derivative estimates. -/

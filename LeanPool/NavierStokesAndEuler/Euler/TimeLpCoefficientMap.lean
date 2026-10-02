@@ -76,7 +76,7 @@ def coefficientLinear : C(Icc (0 : ℝ) T, E →L[ℝ] F) →ₗ[ℝ] (TimeLp T 
 /-- The coefficient map is bounded for the actual uniform and operator norms. -/
 def coefficientMap : C(Icc (0 : ℝ) T, E →L[ℝ] F) →L[ℝ] (TimeLp T E →L[ℝ] TimeLp T F) where
   toLinearMap := coefficientLinear T hT
-  cont := AddMonoidHomClass.continuous_of_bound (coefficientLinear T hT) 1 (fun A => by
+  cont := AddMonoidHomClass.continuous_of_bound (coefficientLinear (F := F) T hT) 1 (fun A => by
     change ‖timeMultiplier T hT A‖ ≤ (1 : ℝ) * ‖A‖
     simpa only [one_mul] using timeMultiplier_norm (E := E) (F := F) T hT A)
 
@@ -86,7 +86,8 @@ theorem hasDerivAt_timeMultiplier
     (A₁ : C(Icc (0 : ℝ) T, E →L[ℝ] F)) (x : ℝ)
     (hA : HasDerivAt A A₁ x) :
     HasDerivAt (fun r => timeMultiplier T hT (A r)) (timeMultiplier T hT A₁) x := by
-  change HasDerivAt ((coefficientMap T hT) ∘ A) (coefficientMap T hT A₁) x
+  change HasDerivAt ((coefficientMap (E := E) (F := F) T hT) ∘ A)
+    (coefficientMap (E := E) (F := F) T hT A₁) x
   exact HasFDerivAt.comp_hasDerivAt
     (F := C(Icc (0 : ℝ) T, E →L[ℝ] F)) (E := TimeLp T E →L[ℝ] TimeLp T F) x
     (coefficientMap (E := E) (F := F) T hT).hasFDerivAt hA
@@ -95,7 +96,7 @@ theorem hasDerivAt_timeMultiplier
 theorem contDiff_timeMultiplier {P : Type*} [NormedAddCommGroup P] [NormedSpace ℝ P]
     (A : P → C(Icc (0 : ℝ) T, E →L[ℝ] F)) {n : ℕ∞ω} (hA : ContDiff ℝ n A) :
     ContDiff ℝ n (fun x => timeMultiplier T hT (A x)) := by
-  change ContDiff ℝ n ((coefficientMap T hT) ∘ A)
+  change ContDiff ℝ n ((coefficientMap (E := E) (F := F) T hT) ∘ A)
   exact ContDiff.comp
     (g := coefficientMap (E := E) (F := F) T hT) (f := A)
     (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := n)

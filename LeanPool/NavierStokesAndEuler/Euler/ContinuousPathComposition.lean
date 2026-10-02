@@ -106,7 +106,8 @@ theorem compositionLift_norm : ‖compositionLift (K := K) (U := U) (E := E) (F 
 
 /-- Literal pointwise composition of two continuous coefficient paths. -/
 def compose (A : C(K, E →L[ℝ] F)) (B : C(K, U →L[ℝ] E)) : C(K,U →L[ℝ] F) :=
-  multiplier (compositionLift (K := K) (E := E) (F := F) A) B
+  multiplier (K := K) (E := U →L[ℝ] E) (F := U →L[ℝ] F)
+    (compositionLift (K := K) (U := U) (E := E) (F := F) A) B
 
 @[simp] theorem compose_apply (A : C(K, E →L[ℝ] F)) (B : C(K, U →L[ℝ] E)) (t : K) :
     compose A B t = (A t).comp (B t) := rfl

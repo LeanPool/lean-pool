@@ -35,7 +35,7 @@ omit [CompactSpace K] [NormedSpace ℝ E] in
 @[simp] theorem mapPath_apply {V W : Type u}
     [NormedAddCommGroup V] [NormedSpace ℝ V] [NormedAddCommGroup W] [NormedSpace ℝ W]
     (L : V →L[ℝ] W) (A : C(K, E →ᵇ V)) (t : K) (x : E) :
-    mapPath L A t x = L (A t x) := rfl
+    mapPath (K := K) (E := E) L A t x = L (A t x) := rfl
 
 section Constant
 
@@ -103,7 +103,7 @@ local instance instSmoothTimeFieldBilinear10 (n : ℕ) : NormedSpace ℝ (E →�
 /-- Bilinear path as an element of `C(K,E →ᵇ Z)`. -/
 def bilinearPath (B : V →L[ℝ] W →L[ℝ] Z)
     (A : SmoothTimeField K E V) (C : SmoothTimeField K E W) : C(K,E →ᵇ Z) :=
-  ⟨fun t => bilinearMap B (A.field t) (C.field t),
+  ⟨fun t => bilinearMap (α := E) B (A.field t) (C.field t),
     ((bilinearMap (α := E) B).continuous.comp A.field.continuous).clm_apply C.field.continuous⟩
 
 @[simp] theorem bilinearPath_apply (B : V →L[ℝ] W →L[ℝ] Z)
@@ -114,7 +114,7 @@ def bilinearPath (B : V →L[ℝ] W →L[ℝ] Z)
 Z).symm.toContinuousLinearEquiv.toContinuousLinearMap J`. -/
 def uncurryRightPath (n : ℕ) (J : C(K, E →ᵇ (E [×n]→L[ℝ] (E →L[ℝ] Z)))) :
     C(K,E →ᵇ (E [×(n+1)]→L[ℝ] Z)) :=
-  mapPath (continuousMultilinearCurryRightEquiv' ℝ n E
+  mapPath (K := K) (E := E) (continuousMultilinearCurryRightEquiv' ℝ n E
       Z).symm.toContinuousLinearEquiv.toContinuousLinearMap J
 
 omit [CompactSpace K] in
@@ -128,7 +128,7 @@ theorem exists_bilinear_jet (B : V →L[ℝ] W →L[ℝ] Z)
       J t x = iteratedFDeriv ℝ n (fun y => B (A.field t y) (C.field t y)) x := by
   induction n generalizing V W Z with
   | zero =>
-    refine ⟨mapPath (continuousMultilinearCurryFin0 ℝ E
+    refine ⟨mapPath (K := K) (E := E) (continuousMultilinearCurryFin0 ℝ E
         Z).symm.toContinuousLinearEquiv.toContinuousLinearMap
       (bilinearPath B A C), ?_⟩
     intro t x

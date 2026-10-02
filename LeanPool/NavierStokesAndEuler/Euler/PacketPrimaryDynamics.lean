@@ -131,7 +131,8 @@ variable {U : Type*} [NormedAddCommGroup U] [InnerProductSpace ℝ U] [CompleteS
 omit [CompleteSpace U] in
 theorem canonicalNormal_equation (t : Icc (0 : ℝ) D.T) (x : Space) :
     HasDerivWithinAt (fun s => D.normal.field (D.clamp s) x)
-      (-(D.M.field t x).adjoint (D.normal.field t x)) (Icc (0 : ℝ) D.T) t := by
+      (-ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) (D.M.field t x)
+        (D.normal.field t x)) (Icc (0 : ℝ) D.T) t := by
   simpa only [extendPath,Data.clamp,projIcc_of_mem D.T_pos.le t.property,
     Data.normalDerivative_apply] using D.normal_hasDerivWithinAt t t.property x
 

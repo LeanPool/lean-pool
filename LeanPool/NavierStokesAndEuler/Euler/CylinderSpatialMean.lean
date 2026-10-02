@@ -27,17 +27,17 @@ variable (P : ℝ) [Fact (0 < P)]
 
 omit [CompleteSpace V] in
 theorem embedding_translate (a : LiftTangent) (u : SpatialL2 V) :
-    translate (V := V) P a (embedding P u) =
-      embedding P (EulerLpTranslation.translation (V := V) a.1 u) := by
+    translate (V := V) P a (embedding (V := V) P u) =
+      embedding (V := V) P (EulerLpTranslation.translation (V := V) a.1 u) := by
   apply Lp.ext
-  filter_upwards [translate_ae P a (embedding P u),
+  filter_upwards [translate_ae P a (embedding (V := V) P u),
     (measurePreserving_translation P (coveringMap P a)).quasiMeasurePreserving.ae (lift_ae P u),
     lift_ae P (EulerLpTranslation.translation (V := V) a.1 u),
     (Measure.quasiMeasurePreserving_fst (μ := (volume : Measure Space))
       (ν := (volume : Measure (AddCircle P)))).ae (EulerLpTranslation.translation_ae a.1 u)]
       with z ht hu he hs
-  change (translate (V := V) P a (embedding P u)) z =
-    (embedding P (EulerLpTranslation.translation (V := V) a.1 u)) z
+  change (translate (V := V) P a (embedding (V := V) P u)) z =
+    (embedding (V := V) P (EulerLpTranslation.translation (V := V) a.1 u)) z
   rw [ht]
   simp only [embedding_apply]
   rw [hu, he, hs]
@@ -47,7 +47,7 @@ theorem embedding_translate (a : LiftTangent) (u : SpatialL2 V) :
 def mean : CylinderL2 P V →L[ℝ] SpatialL2 V := P⁻¹ • (embedding P).adjoint
 
 @[simp] theorem mean_apply (u : CylinderL2 P V) :
-    mean P u =
+    mean (V := V) P u =
       P⁻¹ • adjoint (𝕜 := ℝ) (E := SpatialL2 V) (F := CylinderL2 P V) (embedding P) u := rfl
 
 theorem mean_norm : ‖mean (V := V) P‖ ≤ P⁻¹*Real.sqrt P := by
@@ -57,7 +57,8 @@ theorem mean_norm : ‖mean (V := V) P‖ ≤ P⁻¹*Real.sqrt P := by
     LinearIsometryEquiv.norm_map]
   exact mul_le_mul_of_nonneg_left (embedding_norm P) (inv_nonneg.mpr (le_of_lt (Fact.out : 0 < P)))
 
-theorem mean_embedding (u : SpatialL2 V) : mean P (embedding P u) = u := by
+theorem mean_embedding (u : SpatialL2 V) :
+    mean (V := V) P (embedding (V := V) P u) = u := by
   apply ext_inner_right ℝ
   intro v
   rw [mean_apply, real_inner_smul_left, ContinuousLinearMap.adjoint_inner_left, embedding_inner,
@@ -81,25 +82,28 @@ theorem spatial_translation_inner (a : Space) (u v : SpatialL2 V) :
 
 /-- The bounded mean commutes with actual spatial translations and removes angular translations. -/
 theorem mean_translate (a : LiftTangent) (u : CylinderL2 P V) :
-    mean P (translate (V := V) P a u) =
-      EulerLpTranslation.translation (V := V) a.1 (mean P u) := by
+    mean (V := V) P (translate (V := V) P a u) =
+      EulerLpTranslation.translation (V := V) a.1 (mean (V := V) P u) := by
   apply ext_inner_right ℝ
   intro v
   rw [mean_apply, real_inner_smul_left, ContinuousLinearMap.adjoint_inner_left,
     cylinder_translation_inner, embedding_translate, spatial_translation_inner]
-  change P⁻¹*inner ℝ u (embedding P (EulerLpTranslation.translation (V := V) (-a.1) v)) =
+  change P⁻¹*inner ℝ u
+      (embedding (V := V) P (EulerLpTranslation.translation (V := V) (-a.1) v)) =
     inner ℝ (P⁻¹ • adjoint (𝕜 := ℝ) (E := SpatialL2 V) (F := CylinderL2 P V) (embedding P) u)
       (EulerLpTranslation.translation (V := V) (-a.1) v)
   rw [real_inner_smul_left, ContinuousLinearMap.adjoint_inner_left]
 
 /-- Averaging over the angular translations does not change the actual spatial mean. -/
-theorem mean_average (u : CylinderL2 P V) : mean P (average P u) = mean P u := by
-  change mean P (P⁻¹ • (∫ s in (0 : ℝ)..P, angleCurve P u s)) = _
+theorem mean_average (u : CylinderL2 P V) :
+    mean (V := V) P (average (V := V) P u) = mean (V := V) P u := by
+  change mean (V := V) P (P⁻¹ • (∫ s in (0 : ℝ)..P, angleCurve P u s)) = _
   rw [map_smul, ← (mean (V := V) P).intervalIntegral_comp_comm
     ((angleCurve_continuous P u).intervalIntegrable 0 P)]
-  have he : (fun s : ℝ => mean P (angleCurve P u s)) = fun _ : ℝ => mean P u := by
+  have he : (fun s : ℝ => mean (V := V) P (angleCurve P u s)) =
+      fun _ : ℝ => mean (V := V) P u := by
     funext s
-    change mean P (translate (V := V) P (0,s) u) = _
+    change mean (V := V) P (translate (V := V) P (0,s) u) = _
     rw [mean_translate, EulerLpTranslation.translation_zero]
   rw [he, intervalIntegral.integral_const]
   simp only [sub_zero, smul_smul, inv_mul_cancel₀ (ne_of_gt (Fact.out : 0 < P)), one_smul]

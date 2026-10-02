@@ -336,7 +336,7 @@ theorem scaled_word {C R : ℝ} (hG : G.WordBound 6 R C 0) (ε : ℝ) (hε : 0 �
 theorem residual_word {C R : ℝ} (hG : G.WordBound 6 R C 0)
     (hC : 0 ≤ C) (hR : 0 ≤ R) (ε : ℝ) (hε : 0 ≤ ε) :
     (residual G ε).WordBound 6 R (9*productBlockConstant P*(ε*C)*(ε*C)) 1 :=
-  (scaled_word G hG ε hε).spatialTransport (scaled_word G hG ε hε) hR
+  (scaled_word G hG ε hε).spatialTransport (e := 0) (scaled_word G hG ε hε) hR
     (mul_nonneg hε hC) (mul_nonneg hε hC)
 
 theorem residual_weighted {C R : ℝ} (hG : G.WordBound 6 R C 0)
@@ -648,23 +648,23 @@ variable (P T : ℝ) [Fact (0 < P)] (u : SmoothL2Field Space)
 
 /-- Spatial orbit, given by `EulerLpTranslation.translation a.1 u.toLp`. -/
 def spatialOrbit (a : LiftTangent) : Lp Space 2 (volume : Measure Space) :=
-  EulerLpTranslation.translation a.1 u.toLp
+  EulerLpTranslation.translation (V := Space) a.1 u.toLp
 
 theorem spatialOrbit_smooth : ContDiff ℝ ∞ (spatialOrbit u) :=
   u.translation_contDiff.comp contDiff_fst
 
-theorem embeddedOrbit_smooth : ContDiff ℝ ∞ (fun a : LiftTangent => translate P a (embedding P
-    u.toLp)) := by
-  have he : (fun a : LiftTangent => translate P a (embedding P u.toLp)) =
-      (embedding P) ∘ spatialOrbit u := by
+theorem embeddedOrbit_smooth : ContDiff ℝ ∞ (fun a : LiftTangent =>
+    translate (V := Space) P a (embedding (V := Space) P u.toLp)) := by
+  have he : (fun a : LiftTangent => translate (V := Space) P a (embedding (V := Space) P u.toLp)) =
+      (embedding (V := Space) P) ∘ spatialOrbit u := by
     funext a
     exact embedding_translate P a u.toLp
   rw [he]
-  exact (embedding P).contDiff.comp (spatialOrbit_smooth u)
+  exact (embedding (V := Space) P).contDiff.comp (spatialOrbit_smooth u)
 
 /-- Field, constructed using `Field.ofLifted`. -/
 def field : Field P T (fun z => u.field z.2.1) :=
-  Field.ofLifted (ContinuousMap.const (Icc (0 : ℝ) T) (embedding P u.toLp))
+  Field.ofLifted (ContinuousMap.const (Icc (0 : ℝ) T) (embedding (V := Vector3) P u.toLp))
     (constantPath_orbit_contDiff P _ (embeddedOrbit_smooth P u))
     (fun _ z => u.field z.1)
     (fun _ => u.smooth.continuous.comp continuous_fst)
@@ -672,17 +672,18 @@ def field : Field P T (fun z => u.field z.2.1) :=
     (fun _ _ _ => rfl)
 
 @[simp] theorem field_path :
-    (field P T u).path=ContinuousMap.const (Icc (0 : ℝ) T) (embedding P u.toLp) := rfl
+    (field P T u).path =
+      ContinuousMap.const (Icc (0 : ℝ) T) (embedding (V := Space) P u.toLp) := rfl
 
 theorem field_time (hT : 0 ≤ T) : TimeDerivative hT (field P T u) (Field.zero P T) := by
   intro t
-  change HasDerivWithinAt (fun _ : ℝ => embedding P u.toLp) 0 (Icc (0 : ℝ) T) t
+  change HasDerivWithinAt (fun _ : ℝ => embedding (V := Space) P u.toLp) 0 (Icc (0 : ℝ) T) t
   exact hasDerivWithinAt_const _ _ _
 
 theorem field_divergence (κ : ℝ) (m : Space)
     (hu : ∀ x, EulerSmoothLimit.divergence u.field x = 0) (t : Icc (0 : ℝ) T) :
     (field P T u).path t ∈ divergenceFreeSpace P κ m := by
-  apply mem_of_classical P κ m (embedding P u.toLp) (fun z => u.field z.1)
+  apply mem_of_classical P κ m (embedding (V := Vector3) P u.toLp) (fun z => u.field z.1)
     (embedding_representative P u.toLp u.field u.toLp_ae)
   · intro z
     exact u.smooth.comp (contDiff_const.add contDiff_fst)
@@ -691,16 +692,19 @@ theorem field_divergence (κ : ℝ) (m : Space)
 theorem spatialOrbit_derivative_norm (n : ℕ) (a : LiftTangent) :
     ‖iteratedFDeriv ℝ n (spatialOrbit u) a‖ ≤ ‖u.jetLp n‖ := by
   let L := ContinuousLinearMap.fst ℝ Space ℝ
-  have he : spatialOrbit u=(fun b : Space => EulerLpTranslation.translation b u.toLp) ∘ L := rfl
+  have he : spatialOrbit u =
+      (fun b : Space => EulerLpTranslation.translation (V := Space) b u.toLp) ∘ L := rfl
   rw [he,L.iteratedFDeriv_comp_right u.translation_contDiff a (by simp)]
   apply (ContinuousMultilinearMap.norm_compContinuousLinearMap_le _ _).trans
   calc
-    _ ≤ ‖iteratedFDeriv ℝ n (fun b : Space => EulerLpTranslation.translation b u.toLp) a.1‖*
+    _ ≤ ‖iteratedFDeriv ℝ n
+          (fun b : Space => EulerLpTranslation.translation (V := Space) b u.toLp) a.1‖*
         ∏ _i : Fin n, (1 : ℝ) := by
       apply mul_le_mul_of_nonneg_left _ (norm_nonneg _)
       exact Finset.prod_le_prod₀ (fun _ _ => norm_nonneg L)
         (fun _ _ => ContinuousLinearMap.norm_fst_le ℝ Space ℝ)
-    _ = ‖iteratedFDeriv ℝ n (fun b : Space => EulerLpTranslation.translation b u.toLp) a.1‖ := by
+    _ = ‖iteratedFDeriv ℝ n
+          (fun b : Space => EulerLpTranslation.translation (V := Space) b u.toLp) a.1‖ := by
       simp only [Finset.prod_const_one,mul_one]
     _ ≤ ‖u.jetLp n‖ := u.norm_iteratedFDeriv_translation_le n a.1
 
@@ -724,9 +728,9 @@ theorem field_wordBound (q : ℕ) (C R : ℝ) (hC : 0 ≤ C) (hR : 0 ≤ R)
       (block_nonneg standardDirection q (spatialOrbit u) n 0))).trans hh
   intro n
   have hc := constantPath_block_le (K := Icc (0 : ℝ) T) P standardDirection q
-    (embedding P u.toLp) (embeddedOrbit_smooth P u) n 0
-  have he : (fun a : LiftTangent => translate P a (embedding P u.toLp)) =
-      (embedding P) ∘ spatialOrbit u := by
+    (embedding (V := Space) P u.toLp) (embeddedOrbit_smooth P u) n 0
+  have he : (fun a : LiftTangent => translate (V := Space) P a (embedding (V := Space) P u.toLp)) =
+      (embedding (V := Space) P) ∘ spatialOrbit u := by
     funext a
     exact embedding_translate P a u.toLp
   have hc' := hc.trans_eq (congrArg (fun f => block standardDirection q f n 0) he)
@@ -2609,11 +2613,13 @@ theorem parityData (ε : ℝ) : ParityData P (input G ε) where
     simp only [neg_zero]
   approximation t := by
     have h := ((G.smul ε).reflectionOdd_of_raw (hodd.smul ε)) t
-    change -EulerCylinderFieldReflection.reflection P ((G.smul ε).path t)=(G.smul ε).path t
+    change -EulerCylinderFieldReflection.reflection (V := Vector3) P ((G.smul ε).path t) =
+      (G.smul ε).path t
     rw [h,neg_neg]
   residual t := by
     have h := ((residual G ε).reflectionOdd_of_raw (residual_odd G hodd ε)) t
-    change -EulerCylinderFieldReflection.reflection P ((residual G ε).path t)=(residual G ε).path t
+    change -EulerCylinderFieldReflection.reflection (V := Vector3) P ((residual G ε).path t) =
+      (residual G ε).path t
     rw [h,neg_neg]
 
 end EulerSmallCorrection

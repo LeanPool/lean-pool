@@ -32,7 +32,7 @@ theorem activation_normal_le (hτ : 0 < τ) (hτT : τ < D.T) :
       ⟪P.B τ (unit (P.m τ)),unit (P.m τ)⟫_ℝ+P.error := by
   let t : Icc (0 : ℝ) D.T := ⟨τ,hτ.le,hτT.le⟩
   let E := D.M.field t 0-P.B τ -
-    P.shear • rankOne ℝ (unit (P.v τ)) (unit (P.m τ))
+    P.shear • rankOne ℝ (E := Space) (F := Space) (unit (P.v τ)) (unit (P.m τ))
   have hn : ‖unit (P.m τ)‖=1 := unit_norm (P.ray_nonzero τ ⟨le_rfl,hτT.le⟩)
   have ht : ⟪unit (P.v τ),unit (P.m τ)⟫_ℝ=0 := by
     rw [real_inner_comm]
@@ -135,7 +135,9 @@ def geometryGuardsOfStage
       ((G.transverseData m hm R S hS).deformationEquiv ⟨τ, hτ.le, hτT.le⟩ 0)
       (EulerPacketCrossProduct.cross (unit (P.m τ)) (unit (P.v τ))))
     (hlayer : 1 ≤ previousShear J X n * τ)
-    (hstrain : ‖EulerTransverseSourceCoefficientPath.pathEvaluation 0
+    (hstrain : ‖EulerTransverseSourceCoefficientPath.pathEvaluation
+      (K := Icc (0 : ℝ) ((G.transverseData m hm R S hS).initial τ hτ hτT.le).T)
+      (V := Space →L[ℝ] Space) 0
       ((G.transverseData m hm R S hS).initial τ hτ hτT.le).M.field‖ ≤ CM * previousShear J X n)
     (hhessian : ‖(G.historyOn H m hm R S hS τ hτ hτT).coefficients.labelHessian 0‖ ≤
       CH * (previousShear J X n) ^ 2)
@@ -257,7 +259,9 @@ def geometryGuardsOfStage
     history_symmetric := fun t => G.initial_history_symmetric p hp hacc m hm R S hS H
       τ hτ hτT.le t 0,
     history_layer := by simpa only [hshear] using hlayer,
-    history_strain := fun t => ((EulerTransverseSourceCoefficientPath.pathEvaluation 0
+    history_strain := fun t => ((EulerTransverseSourceCoefficientPath.pathEvaluation
+      (K := Icc (0 : ℝ) ((G.transverseData m hm R S hS).initial τ hτ hτT.le).T)
+      (V := Space →L[ℝ] Space) 0
       ((G.transverseData m hm R S hS).initial τ hτ hτT.le).M.field).norm_coe_le_norm t).trans
       (by simpa only [hshear] using hstrain),
     history_hessian := by simpa only [hshear] using hhessian,

@@ -37,7 +37,8 @@ def freezePath (t : K) : C(K,E) →L[ℝ] C(K,E) :=
   (ContinuousLinearMap.const ℝ K).comp (ContinuousMap.evalCLM ℝ t)
 
 omit [CompactSpace K] in
-@[simp] theorem freezePath_apply (t s : K) (p : C(K, E)) : freezePath t p s = p t := rfl
+@[simp] theorem freezePath_apply (t s : K) (p : C(K, E)) :
+    freezePath (E := E) t p s = p t := rfl
 
 theorem freezePath_norm (t : K) : ‖freezePath (E := E) t‖ ≤ 1 := by
   apply ContinuousLinearMap.opNorm_le_bound _ zero_le_one
@@ -59,8 +60,10 @@ variable {P T : ℝ} [Fact (0 < P)] {raw : VectorField}
 
 theorem freezePath_translate (t : Icc (0 : ℝ) T) (p : C(Icc (0 : ℝ) T, LiftL2 P))
     (a : LiftTangent) :
-    pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a (freezePath t p) =
-      freezePath t (pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a p) := by
+    pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a
+        (freezePath (E := CylinderL2 P Vector3) t p) =
+      freezePath (E := CylinderL2 P Vector3) t
+        (pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a p) := by
   apply ContinuousMap.ext
   intro s
   rfl
@@ -68,10 +71,13 @@ theorem freezePath_translate (t : Icc (0 : ℝ) T) (p : C(Icc (0 : ℝ) T, LiftL
 /-- Freeze, constructed using `ofLifted`. -/
 def freeze (G : Field P T raw) (t : Icc (0 : ℝ) T) :
     Field P T (fun z => raw (t,z.2)) :=
-  ofLifted (freezePath t G.path)
+  ofLifted (freezePath (E := LiftL2 P) t G.path)
     (by
-      have he : (fun a : LiftTangent => pathTranslate P a (freezePath t G.path)) =
-          freezePath t ∘ (fun a : LiftTangent => pathTranslate P a G.path) :=
+      have he : (fun a : LiftTangent =>
+            pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a
+              (freezePath (E := CylinderL2 P Vector3) t G.path)) =
+          freezePath (E := CylinderL2 P Vector3) t ∘ (fun a : LiftTangent =>
+            pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a G.path) :=
         funext (freezePath_translate t G.path)
       rw [he]
       exact (freezePath t).contDiff.comp G.orbit)
@@ -82,7 +88,7 @@ def freeze (G : Field P T raw) (t : Icc (0 : ℝ) T) :
     (fun _ x θ => G.raw_eq t x θ)
 
 @[simp] theorem freeze_path (G : Field P T raw) (t : Icc (0 : ℝ) T) :
-    (G.freeze t).path = freezePath t G.path := rfl
+    (G.freeze t).path = freezePath (E := LiftL2 P) t G.path := rfl
 
 theorem WordBound.freeze {G : Field P T raw} {q d : ℕ} {R A : ℝ}
     (hG : G.WordBound q R A d) (t : Icc (0 : ℝ) T) :
@@ -90,7 +96,7 @@ theorem WordBound.freeze {G : Field P T raw} {q d : ℕ} {R A : ℝ}
   intro n
   have he : (fun a : LiftTangent =>
       pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a (G.freeze t).path) =
-      freezePath t ∘ (fun a : LiftTangent =>
+      freezePath (E := LiftL2 P) t ∘ (fun a : LiftTangent =>
         pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a G.path) :=
     funext (freezePath_translate t G.path)
   rw [he]

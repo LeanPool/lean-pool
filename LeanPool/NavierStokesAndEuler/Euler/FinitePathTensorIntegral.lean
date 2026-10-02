@@ -29,7 +29,8 @@ variable {E V : Type*}
 
 theorem tensorPath_const {K : Type*} [TopologicalSpace K] [CompactSpace K]
     (n : ℕ) (A : E [×n]→L[ℝ] V) :
-    tensorPathMap n ((ContinuousLinearMap.const ℝ K).compContinuousMultilinearMap A) =
+    tensorPathMap (K := K) (E := E) (V := V) n
+        ((ContinuousLinearMap.const ℝ K).compContinuousMultilinearMap A) =
       (ContinuousLinearMap.const ℝ K) A := by
   apply ContinuousMap.ext
   intro t
@@ -40,8 +41,10 @@ theorem tensorPath_const {K : Type*} [TopologicalSpace K] [CompactSpace K]
 
 theorem tensorPath_integral (T : ℝ) (hT : 0 ≤ T) (n : ℕ)
     (A : E [×n]→L[ℝ] C(Icc (0 : ℝ) T, V)) :
-    tensorPathMap n ((integral T hT).compContinuousMultilinearMap A) =
-      integral T hT (tensorPathMap n A) := by
+    tensorPathMap (K := Icc (0 : ℝ) T) (E := E) (V := V) n
+        ((integral T hT).compContinuousMultilinearMap A) =
+      integral (E := E [×n]→L[ℝ] V) T hT
+        (tensorPathMap (K := Icc (0 : ℝ) T) (E := E) (V := V) n A) := by
   apply ContinuousMap.ext
   intro t
   apply ContinuousMultilinearMap.ext
@@ -50,14 +53,18 @@ theorem tensorPath_integral (T : ℝ) (hT : 0 ≤ T) (n : ℕ)
   let ev : (E [×n]→L[ℝ] V) →L[ℝ] V :=
     (ContinuousLinearMap.id ℝ (E [×n]→L[ℝ] V)).flipMultilinear v
   change (∫ s in (0 : ℝ)..(t : ℝ), extendPath T hT (A v) s) =
-    ev (∫ s in (0 : ℝ)..(t : ℝ), extendPath T hT (tensorPathMap n A) s)
+    ev (∫ s in (0 : ℝ)..(t : ℝ),
+      extendPath T hT (tensorPathMap (K := Icc (0 : ℝ) T) (E := E) (V := V) n A) s)
   have he : extendPath T hT (A v) =
-      fun s => ev (extendPath T hT (tensorPathMap n A) s) := by
+      fun s => ev (extendPath T hT
+        (tensorPathMap (K := Icc (0 : ℝ) T) (E := E) (V := V) n A) s) := by
     funext s
-    change A v (projIcc 0 T hT s) = tensorPathMap n A (projIcc 0 T hT s) v
+    change A v (projIcc 0 T hT s) =
+      tensorPathMap (K := Icc (0 : ℝ) T) (E := E) (V := V) n A (projIcc 0 T hT s) v
     rw [tensorPathMap_apply]
   rw [he]
   exact ev.intervalIntegral_comp_comm
-    ((extendPath_continuous T hT (tensorPathMap n A)).intervalIntegrable 0 t)
+    ((extendPath_continuous T hT
+      (tensorPathMap (K := Icc (0 : ℝ) T) (E := E) (V := V) n A)).intervalIntegrable 0 t)
 
 end EulerFinitePathTensor

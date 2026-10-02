@@ -81,7 +81,8 @@ theorem normalMatrix_bound (Rc C : ℝ)
     intro x
     rfl
   rw [he]
-  exact (mapped_derivative_le (mapCoefficientPath (K := Icc (0 : ℝ) T) normalComponentMap)
+  exact (mapped_derivative_le (mapCoefficientPath (K := Icc (0 : ℝ) T) (V := Space)
+      (W := Space →L[ℝ] Space) normalComponentMap)
     ((mapCoefficientPath_norm_le normalComponentMap).trans normalComponentMap_norm)
     _ N.orbit n a).trans (hN n a)
 
@@ -100,7 +101,7 @@ theorem adjoint_bound (Rc C : ℝ)
   have hA : ‖A‖ ≤ 1 := by
     apply opNorm_le_bound _ zero_le_one
     intro v
-    change ‖v.adjoint‖ ≤ 1*‖v‖
+    change ‖ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) v‖ ≤ 1*‖v‖
     rw [LinearIsometryEquiv.norm_map,one_mul]
   have he : translateCoefficientPath K.adjoint.path =
       (mapCoefficientPath (K := Icc (0 : ℝ) T) A) ∘ translateCoefficientPath K.path := by
@@ -112,7 +113,7 @@ theorem adjoint_bound (Rc C : ℝ)
     rfl
   rw [he]
   have hm := mapped_derivative_le
-    (mapCoefficientPath (K := Icc (0 : ℝ) T) A)
+    (mapCoefficientPath (K := Icc (0 : ℝ) T) (V := Space →L[ℝ] Space) (W := Space →L[ℝ] Space) A)
     ((mapCoefficientPath_norm_le A).trans hA)
     (translateCoefficientPath K.path) K.orbit n a
   exact hm.trans (hK n a)

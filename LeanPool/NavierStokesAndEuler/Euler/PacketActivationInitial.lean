@@ -120,7 +120,8 @@ theorem endpointDerivative_eq_of_trial_terminal
       endpointDerivative T hT m H K hK hH hsmall L₂ := by
   apply ContinuousLinearMap.ext
   intro Y
-  exact stationaryPart_eq_of_sub_mem (transverseDerivatives T hT m) (energyOperator T hT H)
+  exact stationaryPart_eq_of_sub_mem (transverseDerivatives (E := E) T hT m)
+    (energyOperator T hT H)
     (1 / 2) (by norm_num) (energyOperator_coercive T hT H K hK hH hsmall) (L₁ Y) (L₂ Y)
     (sub_mem_transverse_of_terminal T hT m (L₁ Y) (L₂ Y) (hL₁ Y) (hL₂ Y) (hterminal Y))
 
@@ -296,9 +297,12 @@ theorem select_history_coordinate
       ⟪B.coefficients.labelVelocity 0 ξ ⟨D.T,D.T_pos.le,le_rfl⟩,R p⟫_ℝ ≤ 0 ∧
       ‖ξ‖ ≤ (8*(activationConstant CM CH+1)*D.inverseBound)/h := by
   let C := B.coefficients
-  let m : C(Icc (0 : ℝ) D.T,Space) := pathEvaluation 0 D.normal.field
-  let m₁ : C(Icc (0 : ℝ) D.T,Space) := pathEvaluation 0 D.normalDerivative
-  let M : C(Icc (0 : ℝ) D.T,Space →L[ℝ] Space) := pathEvaluation 0 D.M.field
+  let m : C(Icc (0 : ℝ) D.T,Space) :=
+    pathEvaluation (K := Icc (0 : ℝ) D.T) (V := Space) 0 D.normal.field
+  let m₁ : C(Icc (0 : ℝ) D.T,Space) :=
+    pathEvaluation (K := Icc (0 : ℝ) D.T) (V := Space) 0 D.normalDerivative
+  let M : C(Icc (0 : ℝ) D.T,Space →L[ℝ] Space) :=
+    pathEvaluation (K := Icc (0 : ℝ) D.T) (V := Space →L[ℝ] Space) 0 D.M.field
   have hne : ∀ t, m t ≠ 0 := fun t => HistoryData.normal_ne_zero t 0
   have hdm : ∀ t : Icc (0 : ℝ) D.T,
       HasDerivWithinAt (extendPath D.T D.T_pos.le m) (m₁ t) (Icc (0 : ℝ) D.T) t := by
@@ -458,11 +462,17 @@ theorem select_physical_history_coordinate
   let q' : P := ⟨q,Submodule.mem_orthogonal_singleton_iff_inner_right.mpr hqm⟩
   have hR : ∀ Y : P, ⟪D.normal.field ⟨D.T,D.T_pos.le,le_rfl⟩ 0,R Y⟫_ℝ=0 :=
     fun Y => Submodule.mem_orthogonal_singleton_iff_inner_right.mp Y.property
-  have he : ‖terminalPerturbation D.T D.T_pos.le R (pathEvaluation 0 D.M.field) p' q' h‖ ≤ ε*h :=
-    (terminalPerturbation_norm_le D.T D.T_pos.le R (pathEvaluation 0 D.M.field) p' q' h).trans hB
-  have hc : ⟪terminalPerturbation D.T D.T_pos.le R (pathEvaluation 0 D.M.field) p' q' h p',p'⟫_ℝ <
-      0 := by
-    rw [terminalPerturbation_diagonal D.T D.T_pos.le R (pathEvaluation 0 D.M.field) p' q' h hpq]
+  have he : ‖terminalPerturbation D.T D.T_pos.le R
+      (pathEvaluation (K := Icc (0 : ℝ) D.T) (V := Space →L[ℝ] Space) 0 D.M.field) p' q' h‖ ≤
+        ε*h :=
+    (terminalPerturbation_norm_le D.T D.T_pos.le R
+      (pathEvaluation (K := Icc (0 : ℝ) D.T) (V := Space →L[ℝ] Space) 0 D.M.field)
+        p' q' h).trans hB
+  have hc : ⟪terminalPerturbation D.T D.T_pos.le R
+      (pathEvaluation (K := Icc (0 : ℝ) D.T) (V := Space →L[ℝ] Space) 0 D.M.field) p' q' h p',
+        p'⟫_ℝ < 0 := by
+    rw [terminalPerturbation_diagonal D.T D.T_pos.le R
+      (pathEvaluation (K := Icc (0 : ℝ) D.T) (V := Space →L[ℝ] Space) 0 D.M.field) p' q' h hpq]
     exact hBpp
   exact select_history_coordinate B R hR hHs h CM CH ε hh hLayer hCM hCH hε hM hHnorm
     p' q' hp hq hpq hεsmall he hc

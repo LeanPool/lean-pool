@@ -30,7 +30,7 @@ section Path
 
 variable {K : Type*} [TopologicalSpace K] [CompactSpace K]
   (p : C(K, CylinderL2 P ℝ))
-  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
+  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := ℝ) P a p))
 
 /-- Scalar gradient path, given by `∑ i : Fin 3, pathMap P (gradientComponent i) (derivativePath
 P (pathMap P scalarEmbed p) i.succ)`. -/
@@ -111,7 +111,7 @@ end Path
 section Field
 
 variable {T : ℝ} (raw : ScalarField) (p : C(Icc (0 : ℝ) T, CylinderL2 P ℝ))
-  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
+  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := ℝ) P a p))
   (he : ∀ (t : Icc (0 : ℝ) T) x θ,
     raw (t, (x, θ)) = scalarPointField P p hp t (x, (θ : AddCircle P)))
 

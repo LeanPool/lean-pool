@@ -107,7 +107,8 @@ def sourceCoordinateSolver : TimeLp T L2 →L[ℝ] TimeLp T solenoidalSpace :=
     (sourceFixedCoercivity_pos T hT F F₁ FInv)
     (sourceFixedForm_coercive T hT ℓ hℓ F F₁ H M0 FInv Be Bc L r hBe hBc hL hr hrquarter
       hext hcore hInv hF K hK hF0 hH hsmall)).comp
-    (-(fixedMeanPrimitive T hT (operatorPath T F.field) (operatorPath T F₁.field)).adjoint)
+    (-adjoint (𝕜 := ℝ) (F := TimeLp T L2)
+      (fixedMeanPrimitive T hT (operatorPath T F.field) (operatorPath T F₁.field)))
 
 /-- The new fixed representation is exactly the original actual source solver in coordinates. -/
 theorem sourceCoordinateSolver_eq_mean

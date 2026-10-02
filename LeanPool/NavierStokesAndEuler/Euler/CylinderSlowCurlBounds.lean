@@ -71,7 +71,8 @@ local instance instCylinderSlowCurlBounds12 : NormedSpace ℝ C(K,LiftL2 P) := i
 variable
   (G : C(K, Space →ᵇ Space →L[ℝ] Space))
   (hG : ContDiff ℝ ∞ (translateCoefficientPath G))
-  (p : C(K, LiftL2 P)) (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
+  (p : C(K, LiftL2 P))
+  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p))
 
 
 include hG hp in

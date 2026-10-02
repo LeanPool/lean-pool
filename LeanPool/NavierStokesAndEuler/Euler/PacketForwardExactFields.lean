@@ -227,7 +227,8 @@ theorem forwardInitializedExactPhysicalPressure_gradient
     (continuousInverse_hasFDerivAt D X Y hX hXY hY t x)
     ((S.graphPotential_smooth k hkk t).differentiable (by simp) (Y t x)),
     S.graphPotential_gradient k hkk t (Y t x),map_smul]
-  change k⁻¹ • (D.FInv.field t (Y t x)).adjoint
+  change k⁻¹ • ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space)
+    (D.FInv.field t (Y t x))
     (S.pressure.pointField t (cylinderGraph period k D.m₀ (Y t x))) = _
   rw [hpressure,hactual,map_add,smul_add,
     Q.physicalPotential_gradient D period X Y hX hXY hY k hkk t x,

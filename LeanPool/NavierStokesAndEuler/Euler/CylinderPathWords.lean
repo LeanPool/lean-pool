@@ -38,7 +38,7 @@ def wordPath (p : C(K, LiftL2 P)) {n : ℕ} (w : Fin n → Fin 4) : C(K,LiftL2 P
     (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p) w 0
 
 variable (p : C(K, LiftL2 P))
-  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a p))
+  (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p))
 
 include hp in
 theorem wordPath_apply {n : ℕ} (w : Fin n → Fin 4) (t : K) :
@@ -151,8 +151,10 @@ theorem derivativePath_majorant (i : Fin 4) (q : ℕ) (R D : ℝ) (d : ℕ)
   simpa only [majorant, show n+1+d=n+(d+1) by omega] using h
 
 variable (T : ℝ) (hT : 0 ≤ T) (u f : C(Icc (0 : ℝ) T, LiftL2 P))
-  (hu : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a u))
-  (hf : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate P a f))
+  (hu : ContDiff ℝ ∞ (fun a : LiftTangent =>
+    pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a u))
+  (hf : ContDiff ℝ ∞ (fun a : LiftTangent =>
+    pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a f))
   (hd : ∀ t : Icc (0 : ℝ) T, HasDerivWithinAt (extendPath T hT u) (f t) (Icc (0 : ℝ) T) t)
 
 include hu hf hd in
