@@ -37,6 +37,8 @@ variable (K C S N : Type*)
   [FiniteDimensional (RatFunc C) N] [IsGalois (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
+/-- The algebra structure from `C` to `N` used in the exact constant extension intermediate
+    frobenius twist hasse bound construction. -/
 local instance intermediateHasseBaseConstantAlgebra : Algebra C N :=
   bridgeBaseConstantAlgebra C N
 
@@ -54,6 +56,8 @@ variable (L : Type*) [Field L]
   [Algebra L N] [IsScalarTower (RatFunc C) L N]
   [FiniteDimensional L N] [IsGalois L N]
 
+/-- The algebra structure from `C` to `L` used in the exact constant extension intermediate
+    frobenius twist hasse bound construction. -/
 local instance intermediateHasseConstantAlgebra : Algebra C L :=
   RingHom.toAlgebra ((algebraMap (RatFunc C) L).comp
     (algebraMap C (RatFunc C)))
@@ -137,7 +141,7 @@ theorem intermediateFrobeniusTwistFieldRationalPlaceCount_eq_rationalBase
   let : SMul (RatFunc C) Fᵣ := Algebra.toSMul
   let : Module (RatFunc C) Fᵣ := Algebra.toModule
   let e :=
-    intermediateFrobeniusTwistField_algEquiv_rationalBaseFrobeniusTwistField
+    intermediateFrobeniusTwistFieldAlgEquivRationalBaseFrobeniusTwistField
       C S N hExact L g
   let : FiniteDimensional (RatFunc C) Fᵣ :=
     Module.Finite.equiv (e.toLinearEquiv : Fₗ ≃ₗ[RatFunc C] Fᵣ)

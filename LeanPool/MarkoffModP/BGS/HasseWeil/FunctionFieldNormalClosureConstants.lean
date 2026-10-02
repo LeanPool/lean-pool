@@ -154,6 +154,8 @@ theorem functionFieldNormalClosureConstantField_isExact :
         (FunctionFieldNormalClosure K L)) :=
   algebraicClosure.algebraicClosure_eq_bot K (FunctionFieldNormalClosure K L)
 
+/-- The module structure of `(FunctionFieldNormalClosureConstantField K L)` over `K` used in
+    the function field normal closure constants construction. -/
 local instance normalClosureConstantModule :
     Module K (FunctionFieldNormalClosureConstantField K L) := Algebra.toModule
 

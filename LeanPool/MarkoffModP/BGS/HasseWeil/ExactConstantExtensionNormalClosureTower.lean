@@ -37,13 +37,16 @@ open scoped Polynomial TensorProduct
 
 namespace BGS.HasseWeil
 
-noncomputable section CountOneBridge
+noncomputable
+section CountOneBridge
 open BGS.CorvajaZannier
 variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Fintype C] [Finite S]
   [Algebra (RatFunc C) N] [FiniteDimensional (RatFunc C) N]
   [Algebra.IsSeparable (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
+/-- The algebra structure from `C` to `N` used in the exact constant extension normal
+    closure tower construction. -/
 local instance normalClosureTowerBaseConstantAlgebra : Algebra C N :=
   bridgeBaseConstantAlgebra C N
 local instance normalClosureTowerBaseConstantTower :
@@ -104,7 +107,8 @@ private theorem finite_of_injective_field_tower
     (IsScalarTower.toAlgHom B M N).injective
 
 
-noncomputable section
+noncomputable
+section
 
 
 variable (K F : Type*) [Field K] [Field F]
@@ -244,11 +248,17 @@ variable (hExact : algebraicClosure K F =
   (functionFieldNormalClosureConstantBaseToOriginalCompositum
     K F hExact).toAlgebra
 
+/-- The scalar action of `(FunctionFieldNormalClosureConstantBase K F)` on
+    `(FunctionFieldNormalClosureOriginalCompositum K F hExact)` used in the exact constant
+    extension normal closure tower construction. -/
 local instance constantBaseOriginalCompositumSmul :
     SMul (FunctionFieldNormalClosureConstantBase K F)
       (FunctionFieldNormalClosureOriginalCompositum K F hExact) :=
   (functionFieldNormalClosureConstantBaseOriginalCompositumAlgebra K F hExact).toSMul
 
+/-- The module structure of `(FunctionFieldNormalClosureOriginalCompositum K F hExact)` over
+    `(FunctionFieldNormalClosureConstantBase K F)` used in the exact constant extension
+    normal closure tower construction. -/
 local instance constantBaseOriginalCompositumModule :
     Module (FunctionFieldNormalClosureConstantBase K F)
       (FunctionFieldNormalClosureOriginalCompositum K F hExact) :=
@@ -305,7 +315,8 @@ end OriginalCompositum
 
 end
 
-noncomputable section
+noncomputable
+section
 
 section CanonicalNormalClosureTower
 
@@ -316,6 +327,8 @@ variable (K F : Type*) [Field K] [Field F]
   [FiniteDimensional (RatFunc K) F]
   [Algebra.IsSeparable (RatFunc K) F]
 
+/-- The algebra structure from `K` to `F` used in the exact constant extension normal
+    closure tower construction. -/
 local instance canonicalOriginalConstantAlgebra : Algebra K F :=
   functionFieldCanonicalConstantAlgebra K F
 
@@ -412,6 +425,8 @@ section ConstantExtension
 variable (S : Type*) [Field S]
   [Algebra (FunctionFieldNormalClosureConstantField K F) S]
 
+/-- The module structure of `S` over `(FunctionFieldNormalClosureConstantField K F)` used in
+    the exact constant extension normal closure tower construction. -/
 local instance normalClosureConstantExtensionModule :
     Module (FunctionFieldNormalClosureConstantField K F) S :=
   Algebra.toModule

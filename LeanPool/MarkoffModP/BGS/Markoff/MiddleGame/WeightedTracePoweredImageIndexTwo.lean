@@ -108,7 +108,7 @@ private theorem weightedTraceSupportDeterminant :
 /-- The exact support determinant gives powered-image index at most two for
 every prime-to-characteristic pair of powers. -/
 theorem weightedTraceTorusClosure_poweredImageIndex_le_two
-    {p : ℕ} [Fact p.Prime] [CharP K p]
+    {p : ℕ} [CharP K p]
     (alpha beta : K)
     (hadmissible : WeightedTraceCurveIsCorvajaZannierAdmissible alpha beta)
     (m n : ℕ) (hm : 0 < m) (hn : 0 < n)

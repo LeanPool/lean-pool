@@ -68,13 +68,19 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [IsGalois (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
+/-- The algebra structure from `C` to `N` used in the constant extension rational place
+    construction. -/
 local instance exactRationalBaseConstantAlgebra : Algebra C N :=
   bridgeBaseConstantAlgebra C N
 
+/-- The algebra structure from `C[X]` to `N` used in the constant extension rational place
+    construction. -/
 local instance (priority := 10000) exactRationalBasePolynomialAlgebra :
     Algebra C[X] N :=
   bridgeBasePolynomialAlgebra C N
 
+/-- The algebra structure from `S[X]` to `(ExactConstantExtension C N S)` used in the
+    constant extension rational place construction. -/
 local instance (priority := 10000) exactRationalTargetPolynomialAlgebra :
     Algebra S[X] (ExactConstantExtension C N S) :=
   bridgeTargetPolynomialAlgebra C S N

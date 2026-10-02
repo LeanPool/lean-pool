@@ -46,27 +46,39 @@ variable (K E L : Type*) [Field K] [Field E] [Field L]
   [FiniteDimensional (RatFunc E) L]
   [Algebra.IsSeparable (RatFunc E) L]
 
+/-- The algebra structure from `K[X]` to `E[X]` used in the constant field finite place
+    degree construction. -/
 local instance degreePolynomialCoefficientAlgebra : Algebra K[X] E[X] :=
   (Polynomial.mapRingHom (algebraMap K E)).toAlgebra
 
+/-- The algebra structure from `K[X]` to `L` used in the constant field finite place degree
+    construction. -/
 local instance degreeBasePolynomialAlgebra : Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))
 
+/-- The algebra structure from `E[X]` to `L` used in the constant field finite place degree
+    construction. -/
 local instance degreeExtensionPolynomialAlgebra : Algebra E[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc E) L).comp
     (algebraMap E[X] (RatFunc E)))
 
+/-- The algebra structure from `K` to `(RatFuncFiniteIntegralClosure K L)` used in the
+    constant field finite place degree construction. -/
 local instance degreeBaseFiniteClosureConstantAlgebra :
     Algebra K (RatFuncFiniteIntegralClosure K L) :=
   RingHom.toAlgebra ((algebraMap K[X]
     (RatFuncFiniteIntegralClosure K L)).comp (algebraMap K K[X]))
 
+/-- The algebra structure from `E` to `(RatFuncFiniteIntegralClosure E L)` used in the
+    constant field finite place degree construction. -/
 local instance degreeExtensionFiniteClosureConstantAlgebra :
     Algebra E (RatFuncFiniteIntegralClosure E L) :=
   RingHom.toAlgebra ((algebraMap E[X]
     (RatFuncFiniteIntegralClosure E L)).comp (algebraMap E E[X]))
 
+/-- The algebra structure from `K` to `(RatFuncFiniteIntegralClosure E L)` used in the
+    constant field finite place degree construction. -/
 local instance degreeExtensionFiniteClosureBaseConstantAlgebra :
     Algebra K (RatFuncFiniteIntegralClosure E L) :=
   RingHom.toAlgebra ((algebraMap E

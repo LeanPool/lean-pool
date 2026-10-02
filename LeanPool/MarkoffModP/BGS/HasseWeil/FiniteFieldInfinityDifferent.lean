@@ -42,19 +42,29 @@ attribute [local instance] FractionRing.liftAlgebra
 variable (C S : Type*) [Field C] [Field S]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
+/-- Decidable equality on `C` used in the finite field infinity different construction. -/
 local instance finiteFieldInfinityDifferentDecidableEqC : DecidableEq C :=
   Classical.decEq C
+/-- Decidable equality on `S` used in the finite field infinity different construction. -/
 local instance finiteFieldInfinityDifferentDecidableEqS : DecidableEq S :=
   Classical.decEq S
+/-- Decidable equality on `(RatFunc C)` used in the finite field infinity different
+    construction. -/
 local instance finiteFieldInfinityDifferentDecidableEqRatFuncC :
     DecidableEq (RatFunc C) := Classical.decEq (RatFunc C)
+/-- Decidable equality on `(RatFunc S)` used in the finite field infinity different
+    construction. -/
 local instance finiteFieldInfinityDifferentDecidableEqRatFuncS :
     DecidableEq (RatFunc S) := Classical.decEq (RatFunc S)
 
+/-- The algebra structure from `C[X]` to `S[X]` used in the finite field infinity different
+    construction. -/
 local instance finiteFieldInfinityDifferentCoefficientPolynomialAlgebra :
     Algebra C[X] S[X] :=
   Polynomial.algebra C S
 
+/-- The algebra structure from `S[X]` to `(RatFuncInfinityIntegers S)` used in the finite
+    field infinity different construction. -/
 local instance finiteFieldInfinityDifferentReciprocalPolynomialAlgebra :
     Algebra S[X] (RatFuncInfinityIntegers S) :=
   ratFuncInfinityReciprocalPolynomialAlgebra S
@@ -166,14 +176,19 @@ theorem ratFuncInfinityIntegers_isLocalization_coefficientPrimeCompl :
 
 section Corollaries
 
+/-- The algebra structure from `C[X]` to `(RatFuncInfinityIntegers C)` used in the finite
+    field infinity different construction. -/
 local instance finiteFieldInfinityDifferentBaseReciprocalPolynomialAlgebra :
     Algebra C[X] (RatFuncInfinityIntegers C) :=
   ratFuncInfinityReciprocalPolynomialAlgebra C
 
+/-- The algebra structure from `(RatFuncInfinityIntegers C)` to `(RatFuncInfinityIntegers
+    S)` used in the finite field infinity different construction. -/
 local instance finiteFieldInfinityDifferentCoefficientAlgebra :
     Algebra (RatFuncInfinityIntegers C) (RatFuncInfinityIntegers S) :=
   RingHom.toAlgebra (ratFuncInfinityIntegersRingHom C S)
 
+/-- The base polynomial algebra on the finite extension used for the infinity different. -/
 local instance (priority := low)
     finiteFieldInfinityDifferentBasePolynomialExtensionAlgebra :
     Algebra C[X] (RatFuncInfinityIntegers S) :=

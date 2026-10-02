@@ -28,7 +28,7 @@ noncomputable section
 /-- Normalized punctured points whose first two coordinates are both
 nonparabolic and have rotation order below `bound`. -/
 def normalizedPuncturedMarkoffPointsWithSmallNonparabolicFirstTwoRotationOrders
-    (p : ℕ) [Fact p.Prime] [Invertible (3 : ZMod p)] (bound : ℕ) :
+    (p : ℕ) [Fact p.Prime] (bound : ℕ) :
     Finset ↥(normalizedPuncturedSurface (ZMod p)) := by
   classical
   exact Finset.univ.filter fun x =>
@@ -38,7 +38,7 @@ def normalizedPuncturedMarkoffPointsWithSmallNonparabolicFirstTwoRotationOrders
 
 @[simp]
 theorem mem_normalizedPuncturedMarkoffPointsWithSmallNonparabolicFirstTwoRotationOrders_iff
-    {p : ℕ} [Fact p.Prime] [Invertible (3 : ZMod p)] {bound : ℕ}
+    {p : ℕ} [Fact p.Prime] {bound : ℕ}
     {x : ↥(normalizedPuncturedSurface (ZMod p))} :
     x ∈
         normalizedPuncturedMarkoffPointsWithSmallNonparabolicFirstTwoRotationOrders

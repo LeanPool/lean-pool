@@ -53,6 +53,7 @@ theorem natDegree_uniqueAlgEquiv_fin_one
     rw [hmEq]
     exact MvPolynomial.mem_support_iff.mp hm
 
+/-- The polynomial obtained by specializing the first variable when its degree is zero. -/
 def secondPolynomialOfFirstDegreeZero
     (f : MvPolynomial (Fin 2) R) : Polynomial R :=
   MvPolynomial.uniqueAlgEquiv R (Fin 1)

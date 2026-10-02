@@ -162,9 +162,9 @@ theorem formallyEtale_derivation_preserves
 the local branch at every unramified prime. -/
 theorem dedekindLocal_formallyEtale_of_isUnramifiedAt
     {A B : Type*} [CommRing A] [CommRing B]
-    [IsDedekindDomain A] [IsDedekindDomain B]
+    [IsDedekindDomain A]
     [Algebra A B] [Module.IsTorsionFree A B] [Module.Finite A B]
-    (p : Ideal A) (Q : Ideal B) [p.IsPrime] [Q.IsPrime] [Q.LiesOver p]
+    (p : Ideal A) (Q : Ideal B) [p.IsPrime] [Q.IsPrime]
     [Algebra (Localization.AtPrime p) (Localization.AtPrime Q)]
     [IsScalarTower A (Localization.AtPrime p) (Localization.AtPrime Q)]
     [Algebra.IsUnramifiedAt A Q] :
@@ -184,7 +184,7 @@ theorem dedekindLocal_formallyEtale_of_not_dvd_different
     [IsDedekindDomain A] [IsDedekindDomain B]
     [Algebra A B] [Module.IsTorsionFree A B] [Module.Finite A B]
     [Algebra.IsSeparable (FractionRing A) (FractionRing B)]
-    (p : Ideal A) (Q : Ideal B) [p.IsPrime] [Q.IsPrime] [Q.LiesOver p]
+    (p : Ideal A) (Q : Ideal B) [p.IsPrime] [Q.IsPrime]
     [Algebra (Localization.AtPrime p) (Localization.AtPrime Q)]
     [IsScalarTower A (Localization.AtPrime p) (Localization.AtPrime Q)]
     (hQ : ¬ Q ∣ differentIdeal A B) :
@@ -199,9 +199,9 @@ an unramified local branch of a finite torsion-free Dedekind extension. -/
 theorem dedekindLocal_derivation_preserves_of_isUnramifiedAt
     {A B C U : Type*}
     [CommRing A] [CommRing B] [CommRing C] [CommRing U]
-    [IsDedekindDomain A] [IsDedekindDomain B]
+    [IsDedekindDomain A]
     [Algebra A B] [Module.IsTorsionFree A B] [Module.Finite A B]
-    (p : Ideal A) (Q : Ideal B) [p.IsPrime] [Q.IsPrime] [Q.LiesOver p]
+    (p : Ideal A) (Q : Ideal B) [p.IsPrime] [Q.IsPrime]
     [Algebra (Localization.AtPrime p) (Localization.AtPrime Q)]
     [IsScalarTower A (Localization.AtPrime p) (Localization.AtPrime Q)]
     [Algebra C (Localization.AtPrime p)]
@@ -210,7 +210,6 @@ theorem dedekindLocal_derivation_preserves_of_isUnramifiedAt
     [Algebra (Localization.AtPrime p) U]
     [Algebra (Localization.AtPrime Q) U]
     [IsScalarTower C (Localization.AtPrime p) (Localization.AtPrime Q)]
-    [IsScalarTower C (Localization.AtPrime p) U]
     [IsScalarTower C (Localization.AtPrime Q) U]
     [IsScalarTower (Localization.AtPrime p) (Localization.AtPrime Q) U]
     [Algebra.IsUnramifiedAt A Q]
@@ -240,7 +239,7 @@ theorem dedekindLocal_derivation_preserves_of_not_dvd_different
     [IsDedekindDomain A] [IsDedekindDomain B]
     [Algebra A B] [Module.IsTorsionFree A B] [Module.Finite A B]
     [Algebra.IsSeparable (FractionRing A) (FractionRing B)]
-    (p : Ideal A) (Q : Ideal B) [p.IsPrime] [Q.IsPrime] [Q.LiesOver p]
+    (p : Ideal A) (Q : Ideal B) [p.IsPrime] [Q.IsPrime]
     [Algebra (Localization.AtPrime p) (Localization.AtPrime Q)]
     [IsScalarTower A (Localization.AtPrime p) (Localization.AtPrime Q)]
     [Algebra C (Localization.AtPrime p)]
@@ -249,7 +248,6 @@ theorem dedekindLocal_derivation_preserves_of_not_dvd_different
     [Algebra (Localization.AtPrime p) U]
     [Algebra (Localization.AtPrime Q) U]
     [IsScalarTower C (Localization.AtPrime p) (Localization.AtPrime Q)]
-    [IsScalarTower C (Localization.AtPrime p) U]
     [IsScalarTower C (Localization.AtPrime Q) U]
     [IsScalarTower (Localization.AtPrime p) (Localization.AtPrime Q) U]
     (hQ : ¬ Q ∣ differentIdeal A B)

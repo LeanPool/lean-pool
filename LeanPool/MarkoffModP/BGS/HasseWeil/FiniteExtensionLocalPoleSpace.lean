@@ -31,6 +31,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K` to `L` used in the finite extension local pole space
+    construction. -/
 local instance localPoleConstantAlgebra : Algebra K L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K (RatFunc K)))
@@ -135,7 +137,6 @@ def finiteExtensionAwayRegularSpace
         finiteExtensionPrincipalDivisor_algebraMap_constant K L c hc]
       simpa using horders v hv
 
-@[simp]
 theorem mem_finiteExtensionAwayRegularSpace_iff
     (P : FiniteExtensionPlace K L) (x : L) :
     x ∈ finiteExtensionAwayRegularSpace K L P ↔

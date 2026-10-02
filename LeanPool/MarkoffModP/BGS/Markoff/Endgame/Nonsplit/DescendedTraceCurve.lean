@@ -32,7 +32,9 @@ variable (p : ℕ) [Fact p.Prime]
 local notation "F" => ZMod
 local notation "E" => quadraticFiniteField
 
+/-- Finiteness of the quadratic extension field used for the descended trace curve. -/
 noncomputable local instance : Fintype (E p) := Fintype.ofFinite (E p)
+/-- Classical equality on the norm-one torus for the descended trace curve. -/
 noncomputable local instance : DecidableEq (quadraticNormOneTorus p) := Classical.decEq _
 
 /-- Apply the quadratic field trace coefficientwise to a polynomial. -/

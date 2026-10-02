@@ -249,6 +249,9 @@ local instance infinityBaseFaithfulSMulExtensionFractionRing :
     algebraMap (RatFunc K) L (y : RatFunc K)
   exact hL
 
+/-- The algebra structure from `(FractionRing (RatFuncInfinityIntegers K))` to
+    `(FractionRing (RatFuncInfinityIntegralClosure K L))` used in the infinity place
+    construction. -/
 local instance infinityFractionRingAlgebra :
     Algebra (FractionRing (RatFuncInfinityIntegers K))
       (FractionRing (RatFuncInfinityIntegralClosure K L)) :=

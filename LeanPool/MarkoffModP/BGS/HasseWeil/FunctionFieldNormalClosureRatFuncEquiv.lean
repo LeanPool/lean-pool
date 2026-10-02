@@ -50,6 +50,9 @@ variable (K L : Type*) [Field K] [Field L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `(FunctionFieldNormalClosureConstantField K L)` to `(RatFunc
+    (FunctionFieldNormalClosureConstantField K L))` used in the function field normal
+    closure rat func equiv construction. -/
 local instance functionFieldNormalClosureConstantFieldRatFuncAlgebra :
     Algebra (FunctionFieldNormalClosureConstantField K L)
       (RatFunc (FunctionFieldNormalClosureConstantField K L)) :=

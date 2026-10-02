@@ -36,7 +36,7 @@ abbrev AffineBivariatePoint
 /-- The number of affine zeros of a bivariate polynomial over a finite
 coefficient ring. -/
 def affineBivariatePointCount
-    {F : Type*} [CommRing F] [Finite F]
+    {F : Type*} [CommRing F]
     (f : MvPolynomial (Fin 2) F) : ℕ :=
   Nat.card (AffineBivariatePoint f)
 

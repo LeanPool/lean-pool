@@ -237,6 +237,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K[X]` to `L` used in the plane curve finite different bound
+    construction. -/
 local instance (priority := 10) finiteDifferentBoundPolynomialAlgebra :
     Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp

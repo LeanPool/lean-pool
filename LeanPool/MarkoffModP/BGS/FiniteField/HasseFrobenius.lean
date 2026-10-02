@@ -29,6 +29,7 @@ open Polynomial
 
 variable {F : Type*} [Field F]
 
+/-- Decidable equality on `(AlgebraicClosure F)` used in the hasse frobenius construction. -/
 local instance algebraicClosureDecidableEq :
     DecidableEq (AlgebraicClosure F) := Classical.decEq _
 
@@ -183,8 +184,7 @@ section FrobeniusEndomorphism
 variable {u v : F} [(legendreWeierstrassCurve u v).IsElliptic]
 
 /-- The coordinate Frobenius as an endomorphism of the algebraic-closure point group. -/
-def legendrePointFrobeniusHom (u v : F)
-    [(legendreWeierstrassCurve u v).IsElliptic] :
+def legendrePointFrobeniusHom (u v : F) :
     (legendreAffineOverClosure u v).Point →+
       (legendreAffineOverClosure u v).Point :=
   WeierstrassCurve.Affine.Point.map
@@ -193,14 +193,13 @@ def legendrePointFrobeniusHom (u v : F)
 
 @[simp]
 theorem legendrePointFrobeniusHom_apply (u v : F)
-    [(legendreWeierstrassCurve u v).IsElliptic]
     (P : (legendreAffineOverClosure u v).Point) :
     legendrePointFrobeniusHom u v P = legendrePointFrobenius u v P := by
   cases P <;> rfl
 
 /-- The group endomorphism `Frob - 1`. -/
 def legendreFrobeniusMinusIdentityHom (u v : F)
-    [(legendreWeierstrassCurve u v).IsElliptic] :
+:
     (legendreAffineOverClosure u v).Point →+
       (legendreAffineOverClosure u v).Point :=
   legendrePointFrobeniusHom u v - AddMonoidHom.id _
@@ -216,15 +215,14 @@ def legendreFrobeniusTrace (u v : F) : ℤ :=
 The remaining geometric wall is to construct an isogeny-degree theory strong enough to compute
 the degree of this endomorphism as `frobeniusNormForm q t t 2 = 4q - t²`. -/
 def legendreHasseWitnessEndomorphism (u v : F)
-    [(legendreWeierstrassCurve u v).IsElliptic] :
+:
     (legendreAffineOverClosure u v).Point →+
       (legendreAffineOverClosure u v).Point :=
   legendreFrobeniusTrace u v • AddMonoidHom.id _ -
     (2 : ℤ) • legendrePointFrobeniusHom u v
 
 /-- The rational-point fixed subtype is literally the kernel of `Frob - 1`. -/
-def legendreFrobeniusFixedEquivKernel (u v : F)
-    [(legendreWeierstrassCurve u v).IsElliptic] :
+def legendreFrobeniusFixedEquivKernel (u v : F) :
     {P : (legendreAffineOverClosure u v).Point // legendrePointFrobenius u v P = P} ≃
       (legendreFrobeniusMinusIdentityHom u v).ker where
   toFun P := ⟨P.1, by
@@ -238,16 +236,14 @@ def legendreFrobeniusFixedEquivKernel (u v : F)
   right_inv P := Subtype.ext rfl
 
 /-- Rational points are equivalent to the kernel of `Frob - 1`. -/
-def legendreRationalPointEquivFrobeniusKernel (u v : F)
-    [(legendreWeierstrassCurve u v).IsElliptic] :
+def legendreRationalPointEquivFrobeniusKernel (u v : F) :
     (legendreWeierstrassCurve u v).toAffine.Point ≃
       (legendreFrobeniusMinusIdentityHom u v).ker :=
   (legendreRationalPointEquivFrobeniusFixed u v).trans
     (legendreFrobeniusFixedEquivKernel u v)
 
 /-- The point cardinality is the kernel cardinality of `Frob - 1`. -/
-theorem legendre_point_card_eq_frobeniusMinusIdentity_ker_card (u v : F)
-    [(legendreWeierstrassCurve u v).IsElliptic] :
+theorem legendre_point_card_eq_frobeniusMinusIdentity_ker_card (u v : F) :
     Nat.card (legendreWeierstrassCurve u v).toAffine.Point =
       Nat.card (legendreFrobeniusMinusIdentityHom u v).ker :=
   Nat.card_congr (legendreRationalPointEquivFrobeniusKernel u v)

@@ -98,7 +98,7 @@ theorem puncturedMarkoffTransitiveAt_of_jointSquareEnvelope_frontier
           maximalCoordinateRotationOrder z.1 →
       SameNormalizedComponent
         (normalizedSurfaceOfPunctured (puncturedNormalizationEquiv (ZMod p) c)) z) :
-    PuncturedMarkoffTransitiveAt p Fact.out := by
+    PuncturedMarkoffTransitiveAt p := by
   apply puncturedMarkoffTransitiveAt_of_maximalDivisor_frontier
     p hpThree c
   · intro d hd hpLow
@@ -138,7 +138,7 @@ theorem puncturedMarkoffTransitiveAt_of_jointMaximalDivisorBounds
           maximalCoordinateRotationOrder z.1 →
       SameNormalizedComponent
         (normalizedSurfaceOfPunctured (puncturedNormalizationEquiv (ZMod p) c)) z) :
-    PuncturedMarkoffTransitiveAt p Fact.out := by
+    PuncturedMarkoffTransitiveAt p := by
   apply puncturedMarkoffTransitiveAt_of_jointSquareEnvelope_frontier
     p hpThree c (fun d ↦ central d ^ 2 + 3 * productEnvelope d)
   · intro d

@@ -31,10 +31,13 @@ section CyclicTraceCover
 variable {G T : Type*} [Group G] [Fintype G] [DecidableEq G]
   [DecidableEq T] [IsCyclic G]
 
+/-- The trace values covered by cyclic elements whose orders divide a maximal divisor below
+    the bound. -/
 def maximalDivisorTraceCover (trace : G → T) (bound : ℕ) : Finset T :=
   (maximalDivisorsBelow (Fintype.card G) bound).biUnion fun m =>
     (elementsWithPowOne G m).image trace
 
+omit [IsCyclic G] in
 theorem boundedOrderTraceSet_subset_maximalDivisorTraceCover
     (trace : G → T) (bound : ℕ) :
     boundedOrderTraceSet trace bound ⊆

@@ -31,6 +31,7 @@ universe u
 
 variable {K : Type u} [Field K]
 
+/-- The regular multiplicative action of the affine normalization ring on itself. -/
 local instance affineNormalizationSelfAction (alpha beta : K) (d e : ℕ) :
     DistribMulAction (WeightedSplitTraceAffineNormalizationRing alpha beta d e)
       (WeightedSplitTraceAffineNormalizationRing alpha beta d e) :=
@@ -63,19 +64,18 @@ def weightedSplitTraceLaurentNormalizationRingHom (alpha beta : K) (d e : ℕ) :
 
 /-- Inverse of the comparison between the localized affine normalization and normalized Laurent
 ring. -/
-def weightedSplitTraceAffineOpenInverseRingHom_of_irreducible
+def weightedSplitTraceAffineOpenInverseRingHomOfIrreducible
     (alpha beta : K) (d e : ℕ) (hd : 0 < d) (he : 0 < e) (hbeta : beta ≠ 0)
     (h : Irreducible (splitTraceCoverPolynomial alpha beta d e)) :
     WeightedSplitTraceLaurentNormalizationRing alpha beta d e →+*
       WeightedSplitTraceAffineNormalizationLaurentOpenRing alpha beta d e :=
-  (weightedSplitTraceAffineNormalizationLaurentOpenEquiv_of_irreducible
+  (weightedSplitTraceAffineNormalizationLaurentOpenEquivOfIrreducible
     alpha beta d e hd he hbeta h).symm.toRingHom
 
 /-- Before applying the integral-closure comparison, the two routes from the affine chart to the
 localized affine normalization are equal by the scalar-tower law. -/
 theorem weightedSplitTraceRawPrincipalOpenSquare
-    (alpha beta : K) (d e : ℕ)
-    [IsDomain (WeightedSplitTraceAffineCoordinateRing alpha beta d e)] :
+    (alpha beta : K) (d e : ℕ) :
     (integralClosureAwayMap
         (weightedSplitTraceAffineCoordinateProduct alpha beta d e)).comp
         (weightedSplitTraceAffineLaurentRingHom alpha beta d e) =
@@ -97,18 +97,18 @@ theorem weightedSplitTraceAffineNormalizationRingSquare
     (h : Irreducible (splitTraceCoverPolynomial alpha beta d e)) :
     (weightedSplitTraceAffineNormalizationAwayRingHom alpha beta d e).comp
         (weightedSplitTraceAffineNormalizationRingHom alpha beta d e) =
-      (weightedSplitTraceAffineOpenInverseRingHom_of_irreducible
+      (weightedSplitTraceAffineOpenInverseRingHomOfIrreducible
           alpha beta d e hd he hbeta h).comp
         ((weightedSplitTraceLaurentNormalizationRingHom alpha beta d e).comp
           (weightedSplitTraceAffineLaurentRingHom alpha beta d e)) := by
   let : IsDomain (WeightedSplitTraceAffineCoordinateRing alpha beta d e) :=
     weightedSplitTraceAffineCoordinateRing_isDomain alpha beta d e h
-  let E := weightedSplitTraceAffineNormalizationLaurentOpenEquiv_of_irreducible
+  let E := weightedSplitTraceAffineNormalizationLaurentOpenEquivOfIrreducible
     alpha beta d e hd he hbeta h
   apply DFunLike.ext _ _
   intro r
   apply E.injective
-  dsimp only [weightedSplitTraceAffineOpenInverseRingHom_of_irreducible]
+  dsimp only [weightedSplitTraceAffineOpenInverseRingHomOfIrreducible]
   change E (((weightedSplitTraceAffineNormalizationAwayRingHom alpha beta d e).comp
       (weightedSplitTraceAffineNormalizationRingHom alpha beta d e)) r) =
     E (E.symm (((weightedSplitTraceLaurentNormalizationRingHom alpha beta d e).comp
@@ -142,7 +142,7 @@ theorem weightedSplitTraceAffineNormalizationSquare
     (h : Irreducible (splitTraceCoverPolynomial alpha beta d e)) :
     weightedSplitTraceAffineNormalizationLaurentOpenImmersion alpha beta d e ≫
         weightedSplitTraceAffineIntegralClosureToCurve alpha beta d e =
-      (weightedSplitTraceAffineNormalizationLaurentOpenSchemeIso_of_irreducible
+      (weightedSplitTraceAffineNormalizationLaurentOpenSchemeIsoOfIrreducible
           alpha beta d e hd he hbeta h).inv ≫
         weightedSplitTraceLaurentNormalizationToCurve alpha beta d e ≫
         weightedSplitTraceLaurentCurveOpenImmersion alpha beta d e := by
@@ -152,7 +152,7 @@ theorem weightedSplitTraceAffineNormalizationSquare
       Spec.map (CommRingCat.ofHom
         (weightedSplitTraceAffineNormalizationRingHom alpha beta d e)) =
     Spec.map (CommRingCat.ofHom
-        (weightedSplitTraceAffineOpenInverseRingHom_of_irreducible
+        (weightedSplitTraceAffineOpenInverseRingHomOfIrreducible
           alpha beta d e hd he hbeta h)) ≫
       Spec.map (CommRingCat.ofHom
         (weightedSplitTraceLaurentNormalizationRingHom alpha beta d e)) ≫
@@ -163,15 +163,13 @@ theorem weightedSplitTraceAffineNormalizationSquare
     (weightedSplitTraceAffineNormalizationAwayRingHom alpha beta d e)
     (weightedSplitTraceAffineLaurentRingHom alpha beta d e)
     (weightedSplitTraceLaurentNormalizationRingHom alpha beta d e)
-    (weightedSplitTraceAffineOpenInverseRingHom_of_irreducible
+    (weightedSplitTraceAffineOpenInverseRingHomOfIrreducible
       alpha beta d e hd he hbeta h)
     (weightedSplitTraceAffineNormalizationRingSquare alpha beta d e hd he hbeta h)
 
 /-- First-coordinate inversion commutes with the raw-to-normalized Laurent ring map. -/
 theorem weightedSplitTraceLeftLaurentNormalizationRingSquare
-    (alpha beta : K) (d e : ℕ)
-    [IsDomain (WeightedSplitTraceLaurentCoordinateRing alpha beta d e)]
-    [IsDomain (WeightedSplitTraceLaurentCoordinateRing beta alpha d e)] :
+    (alpha beta : K) (d e : ℕ) :
     (weightedSplitTraceLeftInversionLaurentNormalizationEquiv alpha beta d e).toRingHom.comp
         (weightedSplitTraceLaurentNormalizationRingHom alpha beta d e) =
       (weightedSplitTraceLaurentNormalizationRingHom alpha beta d e).comp
@@ -181,9 +179,7 @@ theorem weightedSplitTraceLeftLaurentNormalizationRingSquare
 
 /-- Second-coordinate inversion commutes with the raw-to-normalized Laurent ring maps. -/
 theorem weightedSplitTraceRightLaurentNormalizationRingSquare
-    (alpha beta : K) (d e : ℕ)
-    [IsDomain (WeightedSplitTraceLaurentCoordinateRing alpha beta d e)]
-    [IsDomain (WeightedSplitTraceLaurentCoordinateRing beta alpha d e)] :
+    (alpha beta : K) (d e : ℕ) :
     (weightedSplitTraceRightInversionLaurentNormalizationEquiv alpha beta d e).toRingHom.comp
         (weightedSplitTraceLaurentNormalizationRingHom beta alpha d e) =
       (weightedSplitTraceLaurentNormalizationRingHom alpha beta d e).comp
@@ -194,9 +190,7 @@ theorem weightedSplitTraceRightLaurentNormalizationRingSquare
 /-- Scheme-level naturality of first-coordinate inversion. -/
 @[reassoc]
 theorem weightedSplitTraceLeftLaurentNormalizationSquare
-    (alpha beta : K) (d e : ℕ)
-    [IsDomain (WeightedSplitTraceLaurentCoordinateRing alpha beta d e)]
-    [IsDomain (WeightedSplitTraceLaurentCoordinateRing beta alpha d e)] :
+    (alpha beta : K) (d e : ℕ) :
     (weightedSplitTraceLeftInversionLaurentNormalizationSchemeIso alpha beta d e).hom ≫
         weightedSplitTraceLaurentNormalizationToCurve alpha beta d e =
       weightedSplitTraceLaurentNormalizationToCurve alpha beta d e ≫
@@ -220,9 +214,7 @@ theorem weightedSplitTraceLeftLaurentNormalizationSquare
 /-- Scheme-level naturality of second-coordinate inversion. -/
 @[reassoc]
 theorem weightedSplitTraceRightLaurentNormalizationSquare
-    (alpha beta : K) (d e : ℕ)
-    [IsDomain (WeightedSplitTraceLaurentCoordinateRing alpha beta d e)]
-    [IsDomain (WeightedSplitTraceLaurentCoordinateRing beta alpha d e)] :
+    (alpha beta : K) (d e : ℕ) :
     (weightedSplitTraceRightInversionLaurentNormalizationSchemeIso alpha beta d e).hom ≫
         weightedSplitTraceLaurentNormalizationToCurve beta alpha d e =
       weightedSplitTraceLaurentNormalizationToCurve alpha beta d e ≫
@@ -246,9 +238,7 @@ theorem weightedSplitTraceRightLaurentNormalizationSquare
 /-- Inverse form of second-coordinate naturality, oriented for the swapped affine charts. -/
 @[reassoc]
 theorem weightedSplitTraceRightLaurentNormalizationInverseSquare
-    (alpha beta : K) (d e : ℕ)
-    [IsDomain (WeightedSplitTraceLaurentCoordinateRing alpha beta d e)]
-    [IsDomain (WeightedSplitTraceLaurentCoordinateRing beta alpha d e)] :
+    (alpha beta : K) (d e : ℕ) :
     (weightedSplitTraceRightInversionLaurentNormalizationSchemeIso alpha beta d e).inv ≫
         weightedSplitTraceLaurentNormalizationToCurve alpha beta d e ≫
         (weightedSplitTraceRightInversionLaurentCurveSchemeIso alpha beta d e).hom =
@@ -264,7 +254,7 @@ theorem weightedSplitTraceFirstInvertedNormalizationSquare
     (hswap : Irreducible (splitTraceCoverPolynomial beta alpha d e)) :
     weightedSplitTraceAffineNormalizationLaurentOpenImmersion alpha beta d e ≫
         weightedSplitTraceAffineIntegralClosureToCurve alpha beta d e =
-      ((weightedSplitTraceAffineNormalizationLaurentOpenSchemeIso_of_irreducible
+      ((weightedSplitTraceAffineNormalizationLaurentOpenSchemeIsoOfIrreducible
           alpha beta d e hd he hbeta h).symm.trans
         (weightedSplitTraceLeftInversionLaurentNormalizationSchemeIso alpha beta d e)).hom ≫
         weightedSplitTraceLaurentNormalizationToCurve alpha beta d e ≫
@@ -275,7 +265,7 @@ theorem weightedSplitTraceFirstInvertedNormalizationSquare
   let : IsDomain (WeightedSplitTraceLaurentCoordinateRing beta alpha d e) :=
     weightedSplitTraceLaurentCoordinateRing_isDomain beta alpha d e hd he halpha hswap
   calc
-    _ = (weightedSplitTraceAffineNormalizationLaurentOpenSchemeIso_of_irreducible
+    _ = (weightedSplitTraceAffineNormalizationLaurentOpenSchemeIsoOfIrreducible
           alpha beta d e hd he hbeta h).inv ≫
         weightedSplitTraceLaurentNormalizationToCurve alpha beta d e ≫
         weightedSplitTraceLaurentCurveOpenImmersion alpha beta d e :=
@@ -293,7 +283,7 @@ theorem weightedSplitTraceSecondInvertedNormalizationSquare
     (hswap : Irreducible (splitTraceCoverPolynomial beta alpha d e)) :
     weightedSplitTraceAffineNormalizationLaurentOpenImmersion beta alpha d e ≫
         weightedSplitTraceAffineIntegralClosureToCurve beta alpha d e =
-      ((weightedSplitTraceAffineNormalizationLaurentOpenSchemeIso_of_irreducible
+      ((weightedSplitTraceAffineNormalizationLaurentOpenSchemeIsoOfIrreducible
           beta alpha d e hd he halpha hswap).symm.trans
         (weightedSplitTraceRightInversionLaurentNormalizationSchemeIso alpha beta d e).symm).hom ≫
         weightedSplitTraceLaurentNormalizationToCurve alpha beta d e ≫
@@ -304,7 +294,7 @@ theorem weightedSplitTraceSecondInvertedNormalizationSquare
   let : IsDomain (WeightedSplitTraceLaurentCoordinateRing beta alpha d e) :=
     weightedSplitTraceLaurentCoordinateRing_isDomain beta alpha d e hd he halpha hswap
   calc
-    _ = (weightedSplitTraceAffineNormalizationLaurentOpenSchemeIso_of_irreducible
+    _ = (weightedSplitTraceAffineNormalizationLaurentOpenSchemeIsoOfIrreducible
           beta alpha d e hd he halpha hswap).inv ≫
         weightedSplitTraceLaurentNormalizationToCurve beta alpha d e ≫
         weightedSplitTraceLaurentCurveOpenImmersion beta alpha d e :=
@@ -321,7 +311,7 @@ theorem weightedSplitTraceBothInvertedNormalizationSquare
     (hswap : Irreducible (splitTraceCoverPolynomial beta alpha d e)) :
     weightedSplitTraceAffineNormalizationLaurentOpenImmersion beta alpha d e ≫
         weightedSplitTraceAffineIntegralClosureToCurve beta alpha d e =
-      (((weightedSplitTraceAffineNormalizationLaurentOpenSchemeIso_of_irreducible
+      (((weightedSplitTraceAffineNormalizationLaurentOpenSchemeIsoOfIrreducible
           beta alpha d e hd he halpha hswap).symm.trans
         (weightedSplitTraceRightInversionLaurentNormalizationSchemeIso alpha beta d e).symm).trans
         (weightedSplitTraceLeftInversionLaurentNormalizationSchemeIso alpha beta d e)).hom ≫
@@ -334,7 +324,7 @@ theorem weightedSplitTraceBothInvertedNormalizationSquare
   let : IsDomain (WeightedSplitTraceLaurentCoordinateRing beta alpha d e) :=
     weightedSplitTraceLaurentCoordinateRing_isDomain beta alpha d e hd he halpha hswap
   calc
-    _ = (weightedSplitTraceAffineNormalizationLaurentOpenSchemeIso_of_irreducible
+    _ = (weightedSplitTraceAffineNormalizationLaurentOpenSchemeIsoOfIrreducible
           beta alpha d e hd he halpha hswap).inv ≫
         weightedSplitTraceLaurentNormalizationToCurve beta alpha d e ≫
         weightedSplitTraceLaurentCurveOpenImmersion beta alpha d e :=

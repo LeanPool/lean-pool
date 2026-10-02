@@ -34,6 +34,8 @@ variable (C N : Type*) [Field C] [Fintype C] [DecidableEq C]
   [FiniteDimensional (RatFunc C) N]
   [Algebra.IsSeparable (RatFunc C) N]
 
+/-- The algebra structure from `C` to `N` used in the finite extension zeta degree index one
+    from all counts construction. -/
 local instance selectedExtensionBaseConstantAlgebra : Algebra C N :=
   RingHom.toAlgebra ((algebraMap (RatFunc C) N).comp
     (algebraMap C (RatFunc C)))

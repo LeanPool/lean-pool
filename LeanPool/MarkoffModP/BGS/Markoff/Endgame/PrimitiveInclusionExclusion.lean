@@ -235,7 +235,6 @@ theorem moebius_sum_powerTraceRangeSolutions_card_eq_traceExactOrderSolutions_ca
 
 /-- Swapping the two coordinates preserves a power-range trace equation. -/
 def powerTraceRangeSolutionsSwapEquiv
-    [Finite G] [Finite H]
     (leftTrace : G → T) (rightTrace : H → T) (leftExponent rightExponent : ℕ) :
     powerTraceRangeSolutions leftTrace rightTrace leftExponent rightExponent ≃
       powerTraceRangeSolutions rightTrace leftTrace rightExponent leftExponent where
@@ -245,7 +244,6 @@ def powerTraceRangeSolutionsSwapEquiv
   right_inv z := by rfl
 
 theorem natCard_powerTraceRangeSolutions_swap
-    [Finite G] [Finite H]
     (leftTrace : G → T) (rightTrace : H → T) (leftExponent rightExponent : ℕ) :
     Nat.card (powerTraceRangeSolutions leftTrace rightTrace leftExponent rightExponent) =
       Nat.card (powerTraceRangeSolutions rightTrace leftTrace rightExponent leftExponent) :=

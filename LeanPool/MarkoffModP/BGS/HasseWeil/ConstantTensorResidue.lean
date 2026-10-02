@@ -45,6 +45,8 @@ variable (C R S : Type*)
   [CommRing C] [CommRing R] [CommRing S]
   [Algebra C R] [Algebra C S]
 
+/-- The algebra structure from `R` to `(ConstantTensorRing C R S)` used in the constant
+    tensor residue construction. -/
 local instance constantTensorRingAlgebra :
     Algebra R (ConstantTensorRing C R S) :=
   Algebra.TensorProduct.rightAlgebra
@@ -123,6 +125,8 @@ variable (C R S : Type*)
   [Field C] [CommRing R] [Field S]
   [Algebra C R] [Algebra C S]
 
+/-- The algebra structure from `R` to `(ConstantTensorRing C R S)` used in the constant
+    tensor residue construction. -/
 local instance finiteConstantTensorRingAlgebra :
     Algebra R (ConstantTensorRing C R S) :=
   Algebra.TensorProduct.rightAlgebra

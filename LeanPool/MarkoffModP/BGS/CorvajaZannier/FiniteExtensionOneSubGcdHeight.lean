@@ -33,6 +33,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
 
 attribute [local instance] Classical.decEq
 
+/-- The algebra structure from `K[X]` to `L` used in the finite extension one sub gcd height
+    construction. -/
 local instance (priority := 10) oneSubGcdPolynomialAlgebra : Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))

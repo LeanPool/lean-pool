@@ -42,16 +42,21 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Algebra.IsSeparable (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
+/-- Classical equality on the enlarged constants for the total different-degree calculation. -/
 local instance (priority := 10000)
     exactConstantTotalDifferentConstantsDecidableEq
-    (K : Type*) [Field K] : DecidableEq K :=
+    (K : Type*) : DecidableEq K :=
   infinityBridgeDecidableEqConstants K
 
+/-- Classical equality on rational functions over the enlarged constants for the total
+    different degree. -/
 local instance (priority := 10001)
     exactConstantTotalDifferentRatFuncDecidableEq
     (K : Type*) [Field K] : DecidableEq (RatFunc K) :=
   infinityBridgeDecidableEqRatFuncConstants K
 
+/-- The algebra structure from `C` to `N` used in the exact constant extension total
+    different degree construction. -/
 local instance exactConstantTotalDifferentBaseConstantAlgebra : Algebra C N :=
   bridgeBaseConstantAlgebra C N
 
@@ -59,6 +64,7 @@ local instance exactConstantTotalDifferentBaseConstantTower :
     IsScalarTower C (RatFunc C) N :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The polynomial algebra on the base extension field used to compare different degrees. -/
 local instance (priority := 10)
     exactConstantTotalDifferentBasePolynomialAlgebra : Algebra C[X] N :=
   RingHom.toAlgebra ((algebraMap (RatFunc C) N).comp

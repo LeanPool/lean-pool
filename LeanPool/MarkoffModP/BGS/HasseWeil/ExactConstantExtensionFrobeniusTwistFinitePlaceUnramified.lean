@@ -40,6 +40,8 @@ variable (C N S : Type*) [Field C] [Fintype C]
   [Field S] [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
   [Finite S] [DecidableEq S] [DecidableEq (RatFunc S)]
 
+/-- The algebra structure from `C` to `N` used in the exact constant extension frobenius
+    twist finite place unramified construction. -/
 local instance unramifiedConstantAlgebra : Algebra C N :=
   bridgeBaseConstantAlgebra C N
 
@@ -64,7 +66,7 @@ private theorem exactConstantExtensionFrobeniusTwist_zpow_includeLeft
     let : Algebra (RatFunc C) (ExactConstantExtension C N S) :=
       exactConstantExtensionBaseAlgebra C (RatFunc C) N S
     ((exactConstantExtensionFrobeniusTwist
-        C (RatFunc C) N S hExact g) ^ k)
+        C (RatFunc C) N S g) ^ k)
         (Algebra.TensorProduct.includeLeft
           (R := C) (S := C) (A := S) (B := N) s) =
       Algebra.TensorProduct.includeLeft
@@ -112,9 +114,9 @@ theorem exactConstantExtensionFrobeniusTwistOverFixedField_zpowers_eq_top
   let : FiniteDimensional (RatFunc C) T :=
     finiteDimensional_exactConstantExtension_over_baseRatFunc C S N hExact
   let sigma := exactConstantExtensionFrobeniusTwist
-    C (RatFunc C) N S hExact g
+    C (RatFunc C) N S g
   let H := exactConstantExtensionFrobeniusTwistSubgroup
-    C (RatFunc C) N S hExact g
+    C (RatFunc C) N S g
   let e := IntermediateField.subgroupEquivAlgEquiv H
   let u : H := ⟨sigma, Subgroup.mem_zpowers sigma⟩
   change Subgroup.zpowers (e u) = ⊤
@@ -212,7 +214,7 @@ theorem rationalFinitePlace_lift_degree_eq_finrank_of_finrank_dvd_degree
     [FiniteDimensional (RatFunc K) T]
     [Algebra.IsSeparable (RatFunc K) T]
     [Algebra M T] [IsScalarTower (RatFunc K) M T]
-    [FiniteDimensional M T] [IsGalois M T]
+    [IsGalois M T]
     (hdegree : ∀ Q : FiniteExtensionFinitePlace K T,
       Module.finrank M T ∣ finiteExtensionPlaceDegree K T (.inl Q))
     (P : FiniteExtensionRationalFinitePlace K M)
@@ -312,17 +314,13 @@ theorem finitePlaceGalSmul_eq_of_apply_eq
     (K M₁ M₂ T : Type*) [Field K]
     [Field M₁] [Algebra (RatFunc K) M₁]
     [FiniteDimensional (RatFunc K) M₁]
-    [Algebra.IsSeparable (RatFunc K) M₁]
     [Field M₂] [Algebra (RatFunc K) M₂]
     [FiniteDimensional (RatFunc K) M₂]
-    [Algebra.IsSeparable (RatFunc K) M₂]
     [Field T] [Algebra (RatFunc K) T]
-    [FiniteDimensional (RatFunc K) T]
-    [Algebra.IsSeparable (RatFunc K) T]
     [Algebra M₁ T] [IsScalarTower (RatFunc K) M₁ T]
-    [FiniteDimensional M₁ T] [IsGalois M₁ T]
+    [IsGalois M₁ T]
     [Algebra M₂ T] [IsScalarTower (RatFunc K) M₂ T]
-    [FiniteDimensional M₂ T] [IsGalois M₂ T]
+    [IsGalois M₂ T]
     (g₁ : T ≃ₐ[M₁] T) (g₂ : T ≃ₐ[M₂] T)
     (happly : ∀ x : T, g₁ x = g₂ x)
     (Q : FiniteExtensionFinitePlace K T) :
@@ -518,9 +516,9 @@ theorem frobeniusTwistField_finitePlace_ramificationIdx_eq_one
     · intro htau
       rw [Subgroup.mem_bot]
       let sigma := exactConstantExtensionFrobeniusTwist
-        C (RatFunc C) N S hExact g
+        C (RatFunc C) N S g
       let H := exactConstantExtensionFrobeniusTwistSubgroup
-        C (RatFunc C) N S hExact g
+        C (RatFunc C) N S g
       let e := IntermediateField.subgroupEquivAlgEquiv H
       let h : H := e.symm tau
       have he_apply (z : H) (x : T) : e z x = z.1 x := by
@@ -764,7 +762,7 @@ theorem exactConstantExtensionFrobeniusTwist_finitePlaceGalSmul_eq_overFixedFiel
             C N S hExact g) Q =
         finitePlaceGalSmul C (RatFunc C) (ExactConstantExtension C N S)
           (exactConstantExtensionFrobeniusTwist
-            C (RatFunc C) N S hExact g) Q := by
+            C (RatFunc C) N S g) Q := by
   let T := ExactConstantExtension C N S
   let : Field T := exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) T :=
@@ -862,7 +860,7 @@ theorem frobeniusTwistField_ambientFixed_finitePlace_under_degree_eq_one
           Module.finrank C S →
         finitePlaceGalSmul C (RatFunc C) (ExactConstantExtension C N S)
             (exactConstantExtensionFrobeniusTwist
-              C (RatFunc C) N S hExact g) Q = Q →
+              C (RatFunc C) N S g) Q = Q →
           finiteExtensionPlaceDegree C F
             (.inl (finitePlaceUnder C F
               (ExactConstantExtension C N S) Q)) = 1 := by
@@ -879,7 +877,7 @@ theorem frobeniusTwistField_ambientFixed_finitePlace_under_degree_eq_one
 /-- Rational finite places of the Frobenius-twist field are exactly the
 degree-`[S : C]` top finite places fixed by the ambient Frobenius twist. -/
 noncomputable def
-    frobeniusTwistField_rationalFinitePlace_equiv_ambientFixedFinitePlace
+    frobeniusTwistFieldRationalFinitePlaceEquivAmbientFixedFinitePlace
     [IsGalois (RatFunc C) N]
     (hExact : algebraicClosure C N =
       (⊥ : IntermediateField C N))
@@ -933,7 +931,7 @@ noncomputable def
             Module.finrank C S ∧
           finitePlaceGalSmul C (RatFunc C) (ExactConstantExtension C N S)
             (exactConstantExtensionFrobeniusTwist
-              C (RatFunc C) N S hExact g) Q = Q} := by
+              C (RatFunc C) N S g) Q = Q} := by
   let T := ExactConstantExtension C N S
   let : Field T := exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) T :=
@@ -994,7 +992,7 @@ noncomputable def
         finiteExtensionPlaceDegree C T (.inl Q) = Module.finrank C S ∧
           finitePlaceGalSmul C (RatFunc C) T
             (exactConstantExtensionFrobeniusTwist
-              C (RatFunc C) N S hExact g) Q = Q} :=
+              C (RatFunc C) N S g) Q = Q} :=
     { toFun := fun Q => ⟨Q.1,
         Q.2.1.trans hfinrank,
         (exactConstantExtensionFrobeniusTwist_finitePlaceGalSmul_eq_overFixedField

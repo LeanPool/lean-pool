@@ -22,6 +22,7 @@ namespace BGS.Markoff
 
 open BGS.NumberTheory
 
+/-- The combined number of maximal divisors below the bound for the two torus orders. -/
 def maximalDivisorCountSum (p bound : ℕ) : ℕ :=
   (maximalDivisorsBelow (p - 1) bound).card +
     (maximalDivisorsBelow (p + 1) bound).card

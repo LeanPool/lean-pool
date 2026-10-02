@@ -301,17 +301,14 @@ theorem infinityPlaceGalSmul_eq_of_apply_eq
     [DecidableEq (RatFunc K)]
     [Field M₁] [Algebra (RatFunc K) M₁]
     [FiniteDimensional (RatFunc K) M₁]
-    [Algebra.IsSeparable (RatFunc K) M₁]
     [Field M₂] [Algebra (RatFunc K) M₂]
     [FiniteDimensional (RatFunc K) M₂]
-    [Algebra.IsSeparable (RatFunc K) M₂]
     [Field T] [Algebra (RatFunc K) T]
     [FiniteDimensional (RatFunc K) T]
-    [Algebra.IsSeparable (RatFunc K) T]
     [Algebra M₁ T] [IsScalarTower (RatFunc K) M₁ T]
-    [FiniteDimensional M₁ T] [IsGalois M₁ T]
+    [IsGalois M₁ T]
     [Algebra M₂ T] [IsScalarTower (RatFunc K) M₂ T]
-    [FiniteDimensional M₂ T] [IsGalois M₂ T]
+    [IsGalois M₂ T]
     (g₁ : T ≃ₐ[M₁] T) (g₂ : T ≃ₐ[M₂] T)
     (happly : ∀ x : T, g₁ x = g₂ x)
     (Q : FiniteExtensionInfinityPlace K T) :
@@ -454,6 +451,8 @@ variable (C N S : Type*) [Field C] [Fintype C]
   [Field S] [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
   [Finite S] [DecidableEq S] [DecidableEq (RatFunc S)]
 
+/-- The algebra structure from `C` to `N` used in the exact constant extension frobenius
+    twist infinity place descent construction. -/
 local instance twistInfinityConstantAlgebra : Algebra C N :=
   bridgeBaseConstantAlgebra C N
 
@@ -549,7 +548,7 @@ private theorem exactConstantExtensionFrobeniusTwist_zpow_includeLeft_infinity
     letI : Algebra (RatFunc C) (ExactConstantExtension C N S) :=
       exactConstantExtensionBaseAlgebra C (RatFunc C) N S
     ((exactConstantExtensionFrobeniusTwist
-        C (RatFunc C) N S hExact g) ^ k)
+        C (RatFunc C) N S g) ^ k)
         (Algebra.TensorProduct.includeLeft
           (R := C) (S := C) (A := S) (B := N) s) =
       Algebra.TensorProduct.includeLeft
@@ -689,9 +688,9 @@ theorem frobeniusTwistField_infinityPlace_ramificationIdx_eq_one
     · intro htau
       rw [Subgroup.mem_bot]
       let sigma := exactConstantExtensionFrobeniusTwist
-        C (RatFunc C) N S hExact g
+        C (RatFunc C) N S g
       let H := exactConstantExtensionFrobeniusTwistSubgroup
-        C (RatFunc C) N S hExact g
+        C (RatFunc C) N S g
       let e := IntermediateField.subgroupEquivAlgEquiv H
       let h : H := e.symm tau
       have he_apply (z : H) (x : T) : e z x = z.1 x := by

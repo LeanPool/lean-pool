@@ -34,6 +34,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K` to `(RatFuncInfinityIntegers K)` used in the plane curve
+    infinity complement construction. -/
 local instance infinityComplementConstantAlgebra :
     Algebra K (RatFuncInfinityIntegers K) :=
   (ratFuncInfinityConstantRingHom K).toAlgebra

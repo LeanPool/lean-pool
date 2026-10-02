@@ -29,10 +29,6 @@ open BGS.CorvajaZannier
 private theorem finitePlaceUnder_trans_of_fields
     (C L F T : Type*) [Field C] [Field L] [Field F] [Field T]
     [Algebra (RatFunc C) L] [Algebra (RatFunc C) F] [Algebra (RatFunc C) T]
-    [FiniteDimensional (RatFunc C) L] [FiniteDimensional (RatFunc C) F]
-    [FiniteDimensional (RatFunc C) T]
-    [Algebra.IsSeparable (RatFunc C) L] [Algebra.IsSeparable (RatFunc C) F]
-    [Algebra.IsSeparable (RatFunc C) T]
     [Algebra L F] [Algebra F T] [Algebra L T]
     [IsScalarTower (RatFunc C) L F] [IsScalarTower (RatFunc C) L T]
     [IsScalarTower (RatFunc C) F T] [IsScalarTower L F T]
@@ -74,6 +70,8 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Algebra.IsSeparable (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
+/-- The algebra structure from `C` to `N` used in the exact constant extension intermediate
+    frobenius twist finite place average construction. -/
 local instance intermediateAverageTopConstantAlgebra : Algebra C N :=
   bridgeBaseConstantAlgebra C N
 
@@ -81,6 +79,8 @@ local instance intermediateAverageTopConstantTower :
     IsScalarTower C (RatFunc C) N :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `S[X]` to `(ExactConstantExtension C N S)` used in the exact
+    constant extension intermediate frobenius twist finite place average construction. -/
 local instance intermediateAverageTargetPolynomialAlgebra :
     Algebra S[X] (ExactConstantExtension C N S) :=
   bridgeTargetPolynomialAlgebra C S N
@@ -96,6 +96,8 @@ variable (L : Type*) [Field L]
   [Algebra L N] [IsScalarTower (RatFunc C) L N]
   [FiniteDimensional L N] [IsGalois L N]
 
+/-- The algebra structure from `C` to `L` used in the exact constant extension intermediate
+    frobenius twist finite place average construction. -/
 local instance intermediateAverageBaseConstantAlgebra : Algebra C L :=
   RingHom.toAlgebra ((algebraMap (RatFunc C) L).comp
     (algebraMap C (RatFunc C)))
@@ -108,6 +110,8 @@ local instance intermediateAverageConstantTower : IsScalarTower C L N := by
       (algebraMap (RatFunc C) L (algebraMap C (RatFunc C) c))
   exact IsScalarTower.algebraMap_apply (RatFunc C) L N _
 
+/-- A finite enumeration of `(FiniteExtensionRationalFinitePlace C L)` used in the exact
+    constant extension intermediate frobenius twist finite place average construction. -/
 local instance intermediateAverageRationalFinitePlaceFintype :
     Fintype (FiniteExtensionRationalFinitePlace C L) := Fintype.ofFinite _
 
@@ -371,8 +375,8 @@ noncomputable def intermediateFrobeniusTwistOverFixedField
   letI : FiniteDimensional L T :=
     finiteDimensional_exactConstantExtension_over_intermediateBase
       C S N L hExact
-  let sigma := exactConstantExtensionFrobeniusTwist C L N S hExact g
-  let H := exactConstantExtensionFrobeniusTwistSubgroup C L N S hExact g
+  let sigma := exactConstantExtensionFrobeniusTwist C L N S g
+  let H := exactConstantExtensionFrobeniusTwistSubgroup C L N S g
   exact IntermediateField.subgroupEquivAlgEquiv H
     ⟨sigma, Subgroup.mem_zpowers sigma⟩
 
@@ -388,12 +392,12 @@ theorem intermediateFrobeniusTwistOverFixedField_apply
     letI : Algebra L (ExactConstantExtension C N S) :=
       exactConstantExtensionBaseAlgebra C L N S
     intermediateFrobeniusTwistOverFixedField C S N hExact L g x =
-      exactConstantExtensionFrobeniusTwist C L N S hExact g x := by
+      exactConstantExtensionFrobeniusTwist C L N S g x := by
   let T := ExactConstantExtension C N S
   let : Field T := exactConstantExtensionField C N S hExact
   let : Algebra L T := exactConstantExtensionBaseAlgebra C L N S
   change (exactConstantExtensionFrobeniusTwist
-    C L N S hExact g).toEquiv x = _
+    C L N S g).toEquiv x = _
   rfl
 
 omit [Finite S] [DecidableEq C] [DecidableEq S] [DecidableEq (RatFunc C)]
@@ -418,8 +422,8 @@ theorem intermediateFrobeniusTwistOverFixedField_zpowers_eq_top
   let : FiniteDimensional L T :=
     finiteDimensional_exactConstantExtension_over_intermediateBase
       C S N L hExact
-  let sigma := exactConstantExtensionFrobeniusTwist C L N S hExact g
-  let H := exactConstantExtensionFrobeniusTwistSubgroup C L N S hExact g
+  let sigma := exactConstantExtensionFrobeniusTwist C L N S g
+  let H := exactConstantExtensionFrobeniusTwistSubgroup C L N S g
   let e := IntermediateField.subgroupEquivAlgEquiv H
   let u : H := ⟨sigma, Subgroup.mem_zpowers sigma⟩
   change Subgroup.zpowers (e u) = ⊤
@@ -440,23 +444,19 @@ omit [FiniteDimensional (RatFunc C) L]
   [Algebra.IsSeparable (RatFunc C) N]
   [FiniteDimensional L N] [IsGalois L N] in
 omit [Finite S] [DecidableEq C] [DecidableEq S] [DecidableEq (RatFunc C)]
-  [DecidableEq (RatFunc S)] in
+  [DecidableEq (RatFunc S)] [FiniteDimensional C S] in
 /-- A power of the generic intermediate-base twist acts on the enlarged
 constants by the same power of finite-field Frobenius. -/
 private theorem intermediateFrobeniusTwist_zpow_includeLeft
     (g : N ≃ₐ[L] N) (k : ℤ) (s : S) :
-    letI : Field (ExactConstantExtension C N S) :=
-      exactConstantExtensionField C N S hExact
     letI : Algebra L (ExactConstantExtension C N S) :=
       exactConstantExtensionBaseAlgebra C L N S
-    ((exactConstantExtensionFrobeniusTwist C L N S hExact g) ^ k)
+    ((exactConstantExtensionFrobeniusTwist C L N S g) ^ k)
         (Algebra.TensorProduct.includeLeft
           (R := C) (S := C) (A := S) (B := N) s) =
       Algebra.TensorProduct.includeLeft
         (R := C) (S := C) (A := S) (B := N)
         (((FiniteField.frobeniusAlgEquivOfAlgebraic C S) ^ k) s) := by
-  let : Field (ExactConstantExtension C N S) :=
-    exactConstantExtensionField C N S hExact
   let : Algebra L (ExactConstantExtension C N S) :=
     exactConstantExtensionBaseAlgebra C L N S
   change
@@ -576,8 +576,8 @@ theorem intermediateFrobeniusTwistField_finitePlace_ramificationIdx_eq_one
     constructor
     · intro htau
       rw [Subgroup.mem_bot]
-      let sigma := exactConstantExtensionFrobeniusTwist C L N S hExact g
-      let H := exactConstantExtensionFrobeniusTwistSubgroup C L N S hExact g
+      let sigma := exactConstantExtensionFrobeniusTwist C L N S g
+      let H := exactConstantExtensionFrobeniusTwistSubgroup C L N S g
       let e := IntermediateField.subgroupEquivAlgEquiv H
       let h : H := e.symm tau
       have he_apply (z : H) (x : T) : e z x = z.1 x := by
@@ -614,7 +614,7 @@ theorem intermediateFrobeniusTwistField_finitePlace_ramificationIdx_eq_one
             _ = Algebra.TensorProduct.includeLeft
                 (R := C) (S := C) (A := S) (B := N) ((frob ^ k) s) :=
               intermediateFrobeniusTwist_zpow_includeLeft
-                C S N hExact L g k s
+                C S N L g k s
             _ = ((algebraMap S A ((frob ^ k) s) : A) : T) :=
               (exactConstantExtensionFiniteIntegralClosure_algebraMap_val
                 C N S hExact ((frob ^ k) s)).symm
@@ -1024,7 +1024,7 @@ theorem intermediate_exactConstantExtensionFrobeniusFiberEquiv_apply_val
       exactConstantExtensionBaseAlgebra C L N S
     ((exactConstantExtensionFrobeniusFiberEquiv
         C L N S hExact) g).1 =
-      exactConstantExtensionFrobeniusTwist C L N S hExact g := by
+      exactConstantExtensionFrobeniusTwist C L N S g := by
   let : Field (ExactConstantExtension C N S) :=
     exactConstantExtensionField C N S hExact
   let : Algebra L (ExactConstantExtension C N S) :=
@@ -1056,7 +1056,7 @@ abbrev IntermediateFrobeniusTwistFinitePlaceFiberFixedBy
   letI : IsGalois L T := exactConstantExtension_isGalois C L N S hExact
   @MulAction.fixedBy (T ≃ₐ[L] T) (FinitePlaceUnderFiber C L T P.1) _
     (finitePlaceUnderFiberGalAction C L T P.1)
-    (exactConstantExtensionFrobeniusTwist C L N S hExact g)
+    (exactConstantExtensionFrobeniusTwist C L N S g)
 
 omit [DecidableEq S] [DecidableEq (RatFunc S)] in
 /-- Above one rational finite place of `L`, summing fixed top places over all
@@ -1128,7 +1128,7 @@ theorem sum_card_finitePlaceUnderFiber_fixedBy_intermediateFrobeniusTwist_eq_car
 /-- Rational finite places of an intermediate-base twist field are exactly
 the degree-`[S : C]` top finite places fixed by its ambient Frobenius twist. -/
 noncomputable def
-    intermediateFrobeniusTwistField_rationalFinitePlace_equiv_ambientFixedFinitePlace
+    intermediateFrobeniusTwistFieldRationalFinitePlaceEquivAmbientFixedFinitePlace
     (g : N ≃ₐ[L] N)
     (hdiv : Nat.card (N ≃ₐ[L] N) ∣ Module.finrank C S) :
     let T := ExactConstantExtension C N S
@@ -1177,7 +1177,7 @@ noncomputable def
       {Q : FiniteExtensionFinitePlace C T //
         finiteExtensionPlaceDegree C T (.inl Q) = Module.finrank C S ∧
           finitePlaceGalSmul C L T
-            (exactConstantExtensionFrobeniusTwist C L N S hExact g) Q = Q} := by
+            (exactConstantExtensionFrobeniusTwist C L N S g) Q = Q} := by
   let T := ExactConstantExtension C N S
   letI : Field T := exactConstantExtensionField C N S hExact
   letI : Algebra (RatFunc C) T :=
@@ -1235,7 +1235,7 @@ noncomputable def
       C N S hExact Q
   let sigmaF := intermediateFrobeniusTwistOverFixedField
     C S N hExact L g
-  let sigmaL := exactConstantExtensionFrobeniusTwist C L N S hExact g
+  let sigmaL := exactConstantExtensionFrobeniusTwist C L N S g
   let eFixed := rationalFinitePlaceEquivGeneratorFixedPlace
     C F T hdegree sigmaF
       (intermediateFrobeniusTwistOverFixedField_zpowers_eq_top
@@ -1263,7 +1263,8 @@ noncomputable def
 
 omit [Finite S] [DecidableEq S] [DecidableEq (RatFunc S)] [FiniteDimensional L N]
   [IsGalois L N] in
-omit [DecidableEq C] [DecidableEq (RatFunc C)] in
+omit [DecidableEq C] [DecidableEq (RatFunc C)]
+  [FiniteDimensional (RatFunc C) L] [Algebra.IsSeparable (RatFunc C) L] in
 /-- Restriction through an intermediate Frobenius-twist field agrees with
 direct restriction to `L`. -/
 theorem finitePlaceUnder_intermediateFrobeniusTwist_under
@@ -1316,7 +1317,7 @@ theorem finitePlaceUnder_intermediateFrobeniusTwist_under
 disjoint union, over rational finite places of `L`, of fixed top places in
 the corresponding restriction fiber. -/
 noncomputable def
-    intermediateFrobeniusTwistField_rationalFinitePlace_equiv_sigma_fiberFixedBy
+    intermediateFrobeniusTwistFieldRationalFinitePlaceEquivSigmaFiberFixedBy
     (hdiv : Nat.card (N ≃ₐ[L] N) ∣ Module.finrank C S)
     (g : N ≃ₐ[L] N) :
     let T := ExactConstantExtension C N S
@@ -1381,7 +1382,7 @@ noncomputable def
       C L N S hExact g hdiv
   let sigmaF := intermediateFrobeniusTwistOverFixedField
     C S N hExact L g
-  let sigmaL := exactConstantExtensionFrobeniusTwist C L N S hExact g
+  let sigmaL := exactConstantExtensionFrobeniusTwist C L N S g
   let AmbientFixed :=
     {Q : FiniteExtensionFinitePlace C T //
       finiteExtensionPlaceDegree C T (.inl Q) = Module.finrank C S ∧
@@ -1448,7 +1449,7 @@ noncomputable def
   let eSigma : SigmaFixed ≃ AmbientFixed :=
     Equiv.ofBijective toAmbient ⟨hInjective, hSurjective⟩
   exact
-    (intermediateFrobeniusTwistField_rationalFinitePlace_equiv_ambientFixedFinitePlace
+    (intermediateFrobeniusTwistFieldRationalFinitePlaceEquivAmbientFixedFinitePlace
       C S N hExact L g hdiv).trans eSigma.symm
 
 /-- The rational finite-place count of one intermediate-base Frobenius-twist
@@ -1528,7 +1529,7 @@ theorem intermediateFrobeniusTwistFieldRationalFinitePlaceCount_eq_sum_fiberFixe
       C L N S hExact g
   change Nat.card (FiniteExtensionRationalFinitePlace C F) = _
   rw [Nat.card_congr
-    (intermediateFrobeniusTwistField_rationalFinitePlace_equiv_sigma_fiberFixedBy
+    (intermediateFrobeniusTwistFieldRationalFinitePlaceEquivSigmaFiberFixedBy
       C S N hExact L hdiv g), Nat.card_sigma]
 
 omit [DecidableEq S] [DecidableEq (RatFunc S)] in
@@ -1580,22 +1581,19 @@ theorem sum_intermediateFrobeniusTwistFieldRationalFinitePlaceCount_eq_card_galo
 omit [Finite S] [DecidableEq C] [DecidableEq S] [DecidableEq (RatFunc C)]
   [DecidableEq (RatFunc S)] [FiniteDimensional (RatFunc C) N]
   [Algebra.IsSeparable (RatFunc C) N] [FiniteDimensional (RatFunc C) L]
-  [Algebra.IsSeparable (RatFunc C) L] [FiniteDimensional L N] [IsGalois L N] in
+  [Algebra.IsSeparable (RatFunc C) L] [FiniteDimensional L N] [IsGalois L N]
+  [FiniteDimensional C S] in
 /-- Viewing an intermediate-base Frobenius twist over `C(X)` does not change
 its underlying automorphism of the exact constant extension. -/
 theorem exactConstantExtensionFrobeniusTwist_restrictScalars_apply
     (g : N ≃ₐ[L] N) (x : ExactConstantExtension C N S) :
-    letI : Field (ExactConstantExtension C N S) :=
-      exactConstantExtensionField C N S hExact
     letI : Algebra (RatFunc C) (ExactConstantExtension C N S) :=
       exactConstantExtensionBaseAlgebra C (RatFunc C) N S
     letI : Algebra L (ExactConstantExtension C N S) :=
       exactConstantExtensionBaseAlgebra C L N S
-    exactConstantExtensionFrobeniusTwist C (RatFunc C) N S hExact
+    exactConstantExtensionFrobeniusTwist C (RatFunc C) N S
         (g.restrictScalars (RatFunc C)) x =
-      exactConstantExtensionFrobeniusTwist C L N S hExact g x := by
-  let : Field (ExactConstantExtension C N S) :=
-    exactConstantExtensionField C N S hExact
+      exactConstantExtensionFrobeniusTwist C L N S g x := by
   let : Algebra (RatFunc C) (ExactConstantExtension C N S) :=
     exactConstantExtensionBaseAlgebra C (RatFunc C) N S
   let : SMul (RatFunc C) (ExactConstantExtension C N S) := Algebra.toSMul
@@ -1617,12 +1615,11 @@ theorem exactConstantExtensionFrobeniusTwist_restrictScalars_apply
 omit [Finite S] [DecidableEq C] [DecidableEq S] [DecidableEq (RatFunc C)]
   [DecidableEq (RatFunc S)] [FiniteDimensional (RatFunc C) N]
   [Algebra.IsSeparable (RatFunc C) N] [FiniteDimensional (RatFunc C) L]
-  [Algebra.IsSeparable (RatFunc C) L] [FiniteDimensional L N] [IsGalois L N] in
+  [Algebra.IsSeparable (RatFunc C) L] [FiniteDimensional L N] [IsGalois L N]
+  [FiniteDimensional C S] in
 /-- Equality of the two twists as `C(X)`-automorphisms. -/
 theorem exactConstantExtensionFrobeniusTwist_restrictScalars
     (g : N ≃ₐ[L] N) :
-    letI : Field (ExactConstantExtension C N S) :=
-      exactConstantExtensionField C N S hExact
     letI : Algebra (RatFunc C) (ExactConstantExtension C N S) :=
       exactConstantExtensionBaseAlgebra C (RatFunc C) N S
     letI : Algebra L (ExactConstantExtension C N S) :=
@@ -1633,12 +1630,10 @@ theorem exactConstantExtensionFrobeniusTwist_restrictScalars
     letI : Module L (ExactConstantExtension C N S) := Algebra.toModule
     letI : IsScalarTower (RatFunc C) L (ExactConstantExtension C N S) :=
       exactConstantExtensionIntermediate_ratFuncBaseTower C S N L
-    (exactConstantExtensionFrobeniusTwist C L N S hExact g).restrictScalars
+    (exactConstantExtensionFrobeniusTwist C L N S g).restrictScalars
         (RatFunc C) =
-      exactConstantExtensionFrobeniusTwist C (RatFunc C) N S hExact
+      exactConstantExtensionFrobeniusTwist C (RatFunc C) N S
         (g.restrictScalars (RatFunc C)) := by
-  let : Field (ExactConstantExtension C N S) :=
-    exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) (ExactConstantExtension C N S) :=
     exactConstantExtensionBaseAlgebra C (RatFunc C) N S
   let : Algebra L (ExactConstantExtension C N S) :=
@@ -1651,12 +1646,12 @@ theorem exactConstantExtensionFrobeniusTwist_restrictScalars
     exactConstantExtensionIntermediate_ratFuncBaseTower C S N L
   ext x
   exact (exactConstantExtensionFrobeniusTwist_restrictScalars_apply
-    C S N hExact L g x).symm
+    C S N L g x).symm
 
 /-- The fixed field constructed over `L` is the same function field as the
 rational-base twist attached to `g.restrictScalars C(X)`. -/
 noncomputable def
-    intermediateFrobeniusTwistField_algEquiv_rationalBaseFrobeniusTwistField
+    intermediateFrobeniusTwistFieldAlgEquivRationalBaseFrobeniusTwistField
     (g : N ≃ₐ[L] N) :
     let T := ExactConstantExtension C N S
     letI : Field T := exactConstantExtensionField C N S hExact
@@ -1689,9 +1684,9 @@ noncomputable def
   letI : Module L T := Algebra.toModule
   letI : IsScalarTower (RatFunc C) L T :=
     exactConstantExtensionIntermediate_ratFuncBaseTower C S N L
-  let sigmaₗ := exactConstantExtensionFrobeniusTwist C L N S hExact g
+  let sigmaₗ := exactConstantExtensionFrobeniusTwist C L N S g
   let sigmaᵣ := exactConstantExtensionFrobeniusTwist
-    C (RatFunc C) N S hExact (g.restrictScalars (RatFunc C))
+    C (RatFunc C) N S (g.restrictScalars (RatFunc C))
   let Fₗ := exactConstantExtensionFrobeniusTwistField C L N S hExact g
   let Fᵣ := exactConstantExtensionFrobeniusTwistField
     C (RatFunc C) N S hExact (g.restrictScalars (RatFunc C))
@@ -1702,7 +1697,7 @@ noncomputable def
     SubalgebraClass.toAlgebra Fᵣ.toSubalgebra
   have hsigma : sigmaₗ.restrictScalars (RatFunc C) = sigmaᵣ :=
     exactConstantExtensionFrobeniusTwist_restrictScalars
-      C S N hExact L g
+      C S N L g
   have hto (x : Fₗ) : (x.1 : T) ∈ Fᵣ := by
     change x.1 ∈ IntermediateField.fixedField (Subgroup.zpowers sigmaᵣ)
     rw [IntermediateField.mem_fixedField_iff]

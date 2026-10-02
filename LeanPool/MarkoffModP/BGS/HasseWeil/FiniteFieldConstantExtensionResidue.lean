@@ -39,6 +39,8 @@ variable (C S N : Type*) [Field C] [Field S] [Algebra C S]
   [Fintype C] [Finite S]
   [CommRing N] [Algebra C[X] N]
 
+/-- The algebra structure from `C` to `N` used in the finite field constant extension
+    residue construction. -/
 local instance constantExtensionResidueBaseConstantAlgebra : Algebra C N :=
   RingHom.toAlgebra ((algebraMap C[X] N).comp (algebraMap C C[X]))
 
@@ -46,20 +48,28 @@ local instance constantExtensionResidueBaseConstantPolynomialTower :
     IsScalarTower C C[X] N :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `C[X]` to `S[X]` used in the finite field constant extension
+    residue construction. -/
 local instance constantExtensionResidueCoefficientPolynomialAlgebra :
     Algebra C[X] S[X] :=
   Polynomial.algebra C S
 
+/-- The algebra structure from `C` to `(integralClosure C[X] N)` used in the finite field
+    constant extension residue construction. -/
 local instance constantExtensionResidueOldNormalizationConstantAlgebra :
     Algebra C (integralClosure C[X] N) :=
   RingHom.toAlgebra
     ((algebraMap C[X] (integralClosure C[X] N)).comp
       (algebraMap C C[X]))
 
+/-- The algebra structure from `S[X]` to `(S ⊗[C] N)` used in the finite field constant
+    extension residue construction. -/
 local instance constantExtensionResidueTargetPolynomialAlgebra :
     Algebra S[X] (S ⊗[C] N) :=
   polynomialTensorCancelTargetPolynomialExtensionAlgebra C S N
 
+/-- The algebra structure from `S` to `(S ⊗[C] N)` used in the finite field constant
+    extension residue construction. -/
 local instance constantExtensionResidueTargetConstantAlgebra :
     Algebra S (S ⊗[C] N) :=
   Algebra.TensorProduct.leftAlgebra
@@ -74,12 +84,16 @@ local instance constantExtensionResidueTargetConstantPolynomialTower :
         (polynomialTensorCancelEvaluationPoint C S N) (Polynomial.C s)
     simp)
 
+/-- The algebra structure from `S` to `(integralClosure S[X] (S ⊗[C] N))` used in the finite
+    field constant extension residue construction. -/
 local instance constantExtensionResidueTargetNormalizationConstantAlgebra :
     Algebra S (integralClosure S[X] (S ⊗[C] N)) :=
   RingHom.toAlgebra
     ((algebraMap S[X] (integralClosure S[X] (S ⊗[C] N))).comp
       (algebraMap S S[X]))
 
+/-- The algebra structure from `C` to `(integralClosure S[X] (S ⊗[C] N))` used in the finite
+    field constant extension residue construction. -/
 local instance constantExtensionResidueTargetNormalizationBaseAlgebra :
     Algebra C (integralClosure S[X] (S ⊗[C] N)) :=
   RingHom.toAlgebra

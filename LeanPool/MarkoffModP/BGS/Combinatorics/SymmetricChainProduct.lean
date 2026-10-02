@@ -25,6 +25,7 @@ namespace SymmetricChainDecomposition
 
 variable {P : Type*} [PartialOrder P] {rank : P → ℕ} {total : ℕ}
 
+/-- A chain key for the product of a symmetric chain decomposition with a finite chain. -/
 abbrev productKey
     (decomposition : SymmetricChainDecomposition P rank total)
     (a : ℕ) : Type :=
@@ -39,11 +40,13 @@ instance productKeyFintype
   unfold productKey
   infer_instance
 
+/-- The length of the product chain indexed by a key. -/
 abbrev productLength
     (decomposition : SymmetricChainDecomposition P rank total)
     (a : ℕ) (key : decomposition.productKey a) : ℕ :=
   gridChainLength (decomposition.length key.1) a key.2
 
+/-- The initial rank of the product chain indexed by a key. -/
 def productStart
     (decomposition : SymmetricChainDecomposition P rank total)
     (key : decomposition.productKey a) : ℕ :=
@@ -71,6 +74,7 @@ def productEquiv
         Fin (gridChainLength
           (decomposition.length key) a rectangleKey + 1))).symm
 
+/-- The symmetric chain decomposition obtained by adjoining a finite chain. -/
 def productWithChain
     (decomposition : SymmetricChainDecomposition P rank total)
     (a : ℕ) :
@@ -158,6 +162,7 @@ def productWithChain
     dsimp [productStart, productLength, gridChainLength]
     omega
 
+/-- The symmetric chain decomposition of the one-point order. -/
 def punit :
     SymmetricChainDecomposition PUnit (fun _ ↦ 0) 0 where
   Key := PUnit

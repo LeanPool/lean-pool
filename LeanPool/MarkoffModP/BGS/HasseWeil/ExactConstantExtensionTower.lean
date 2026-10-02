@@ -30,7 +30,8 @@ open scoped Polynomial TensorProduct
 
 namespace BGS.HasseWeil
 
-noncomputable section
+noncomputable
+section
 
 
 variable (C M N S : Type*) [Field C] [Field M] [Field N] [Field S]
@@ -328,7 +329,8 @@ end Galois
 
 end
 
-noncomputable section
+noncomputable
+section
 
 section RatFuncCompatibility
 

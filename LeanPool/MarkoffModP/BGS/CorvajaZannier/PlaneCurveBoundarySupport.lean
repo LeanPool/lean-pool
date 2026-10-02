@@ -38,7 +38,8 @@ namespace BGS.CorvajaZannier
 
 universe u v
 
-noncomputable section
+noncomputable
+section
 
 
 attribute [local instance high] Module.Free.of_divisionRing
@@ -48,6 +49,8 @@ variable (L : Type v) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K[X]` to `L` used in the plane curve boundary support
+    construction. -/
 local instance (priority := 10) probePolynomialAlgebra : Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))
@@ -55,6 +58,8 @@ local instance (priority := 10) probePolynomialAlgebra : Algebra K[X] L :=
 local instance probePolynomialScalarTower : IsScalarTower K[X] (RatFunc K) L :=
   .of_algebraMap_eq' rfl
 
+/-- The algebra structure from `K` to `(RatFuncFiniteIntegralClosure K L)` used in the plane
+    curve boundary support construction. -/
 local instance probeFiniteConstantAlgebra :
     Algebra K (RatFuncFiniteIntegralClosure K L) :=
   RingHom.toAlgebra ((algebraMap K[X] (RatFuncFiniteIntegralClosure K L)).comp
@@ -64,6 +69,8 @@ local instance probeFiniteConstantTower :
     IsScalarTower K K[X] (RatFuncFiniteIntegralClosure K L) :=
   .of_algebraMap_eq' rfl
 
+/-- The algebra structure from `K` to `(RatFuncInfinityIntegers K)` used in the plane curve
+    boundary support construction. -/
 local instance probeInfinityConstantAlgebra :
     Algebra K (RatFuncInfinityIntegers K) :=
   (ratFuncInfinityConstantRingHom K).toAlgebra
@@ -72,6 +79,8 @@ local instance probeInfinityConstantTower :
     IsScalarTower K (RatFuncInfinityIntegers K) (RatFunc K) :=
   .of_algebraMap_eq' rfl
 
+/-- The algebra structure from `K` to `(RatFuncInfinityIntegralClosure K L)` used in the
+    plane curve boundary support construction. -/
 local instance probeInfinityClosureConstantAlgebra :
     Algebra K (RatFuncInfinityIntegralClosure K L) :=
   RingHom.toAlgebra
@@ -859,7 +868,8 @@ private theorem positiveDegree_le_in_secondModel [Finite K]
 
 end
 
-noncomputable section
+noncomputable
+section
 
 section PlaneBoundaryProbe
 

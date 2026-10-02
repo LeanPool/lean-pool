@@ -28,7 +28,8 @@ theorem proves the complete degree estimate available below that boundary.
 
 namespace BGS.HasseWeil
 
-noncomputable section
+noncomputable
+section
 
 open BGS.CorvajaZannier
 open scoped Polynomial
@@ -39,6 +40,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K` to `L` used in the finite extension canonical different
+    genus bound construction. -/
 local instance canonicalGenusConstantAlgebra : Algebra K L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K (RatFunc K)))
@@ -47,6 +50,8 @@ local instance canonicalGenusConstantTower :
     IsScalarTower K (RatFunc K) L :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `K[X]` to `L` used in the finite extension canonical
+    different genus bound construction. -/
 local instance (priority := 10) canonicalGenusPolynomialAlgebra :
     Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
@@ -93,7 +98,8 @@ theorem finiteExtension_genus_le_budget_of_canonicalDifferent_isCanonical
 
 end
 
-noncomputable section
+noncomputable
+section
 
 open BGS.CorvajaZannier
 

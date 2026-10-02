@@ -50,6 +50,8 @@ variable (C N S : Type*) [Field C] [Fintype C]
   [Field S] [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
   [Finite S] [DecidableEq S] [DecidableEq (RatFunc S)]
 
+/-- The algebra structure from `C` to `N` used in the exact constant extension frobenius
+    twist finite place bridge construction. -/
 local instance twistBridgeConstantAlgebra : Algebra C N :=
   bridgeBaseConstantAlgebra C N
 
@@ -203,9 +205,9 @@ noncomputable def exactConstantExtensionFrobeniusTwistOverFixedField
   letI : FiniteDimensional (RatFunc C) T :=
     finiteDimensional_exactConstantExtension_over_baseRatFunc C S N hExact
   let sigma := exactConstantExtensionFrobeniusTwist
-    C (RatFunc C) N S hExact g
+    C (RatFunc C) N S g
   let H := exactConstantExtensionFrobeniusTwistSubgroup
-    C (RatFunc C) N S hExact g
+    C (RatFunc C) N S g
   exact IntermediateField.subgroupEquivAlgEquiv H
     ⟨sigma, Subgroup.mem_zpowers sigma⟩
 
@@ -224,16 +226,16 @@ theorem exactConstantExtensionFrobeniusTwistOverFixedField_apply
     exactConstantExtensionFrobeniusTwistOverFixedField
         C N S hExact g x =
       exactConstantExtensionFrobeniusTwist
-        C (RatFunc C) N S hExact g x := by
+        C (RatFunc C) N S g x := by
   let T := ExactConstantExtension C N S
   let : Field T := exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) T :=
     exactConstantExtensionBaseAlgebra C (RatFunc C) N S
   change
     (exactConstantExtensionFrobeniusTwist
-      C (RatFunc C) N S hExact g).toEquiv x =
+      C (RatFunc C) N S g).toEquiv x =
       exactConstantExtensionFrobeniusTwist
-        C (RatFunc C) N S hExact g x
+        C (RatFunc C) N S g x
   rfl
 
 omit [DecidableEq S] [DecidableEq (RatFunc S)] in

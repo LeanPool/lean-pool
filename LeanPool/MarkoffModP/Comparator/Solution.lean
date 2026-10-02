@@ -19,12 +19,15 @@ restated here to expose the explicit large-prime surjectivity theorem.
 
 namespace Challenge
 
+/-- Markoff triples over the natural numbers used by the comparison problem. -/
 abbrev MarkoffNat :=
   {⟨x, y, z⟩ : ℕ × ℕ × ℕ | x ^ 2 + y ^ 2 + z ^ 2 = 3 * x * y * z}
 
+/-- Markoff triples modulo the specified natural number. -/
 abbrev MarkoffModp (p : ℕ) :=
   {⟨x, y, z⟩ : ZMod p × ZMod p × ZMod p | x ^ 2 + y ^ 2 + z ^ 2 = 3 * x * y * z}
 
+/-- Reduction of a natural-number Markoff triple modulo the specified modulus. -/
 abbrev markoffNatToModp (p : ℕ) : MarkoffNat → MarkoffModp p :=
   fun ⟨⟨x, y, z⟩, h⟩ ↦ ⟨⟨x, y, z⟩, by simpa using congrArg (fun n : ℕ ↦ (n : ZMod p)) h⟩
 

@@ -259,6 +259,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K[X]` to `L` used in the finite extension affine ideal
+    divisor construction. -/
 local instance (priority := 10) affineDivisorPolynomialAlgebra :
     Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
@@ -272,6 +274,8 @@ local instance affineDivisorFiniteClosureModuleFinite :
     Module.Finite K[X] (RatFuncFiniteIntegralClosure K L) :=
   Module.IsNoetherian.finite K[X] (RatFuncFiniteIntegralClosure K L)
 
+/-- The algebra structure from `K` to `(RatFuncFiniteIntegralClosure K L)` used in the
+    finite extension affine ideal divisor construction. -/
 local instance affineDivisorFiniteClosureConstantAlgebra :
     Algebra K (RatFuncFiniteIntegralClosure K L) :=
   RingHom.toAlgebra
@@ -460,7 +464,7 @@ def finiteExtensionAffineIdealsOfDegreeEquivEffectiveFiniteDivisorsOfDegree
 
 /-- Effective finite divisors of a fixed degree form a finite type, transported
 from the already-finite type of affine ideals of that degree. -/
-noncomputable instance finiteExtensionEffectiveFiniteDivisorsOfDegree_fintype
+noncomputable instance finiteExtensionEffectiveFiniteDivisorsOfDegreeFintype
     (n : ℕ) :
     Fintype {D : FiniteExtensionFinitePlace K L →₀ ℕ //
       finiteExtensionEffectiveFiniteDivisorDegree K L D = n} :=

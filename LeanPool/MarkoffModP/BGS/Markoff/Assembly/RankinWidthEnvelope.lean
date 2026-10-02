@@ -57,6 +57,7 @@ def RankinWidthExcludesFailure
   rankinWidthJointFailureSquare width rootCap profile ^ 2 <
     (64 * profile.jointLowerNeighborProduct : Nat)
 
+/-- An executable check of one leaf of the Rankin width envelope. -/
 def rankinWidthLeafCheck
     (width rootCap cutoff : Nat) (profile : RankinNeighborProfile) : Bool :=
   decide

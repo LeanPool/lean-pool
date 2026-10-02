@@ -39,17 +39,29 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Algebra (RatFunc C) N] [Algebra C S]
   [FiniteDimensional C S] [IsGalois C S]
 
+/-- Decidable equality on `C` used in the exact constant extension infinity normalization
+    construction. -/
 local instance infinityDecidableEqBase : DecidableEq C := Classical.decEq C
+/-- Decidable equality on `(RatFunc C)` used in the exact constant extension infinity
+    normalization construction. -/
 local instance infinityDecidableEqRatFuncBase : DecidableEq (RatFunc C) :=
   Classical.decEq (RatFunc C)
+/-- Decidable equality on `S` used in the exact constant extension infinity normalization
+    construction. -/
 local instance infinityDecidableEqConstants : DecidableEq S := Classical.decEq S
+/-- Decidable equality on `(RatFunc S)` used in the exact constant extension infinity
+    normalization construction. -/
 local instance infinityDecidableEqRatFuncConstants : DecidableEq (RatFunc S) :=
   Classical.decEq (RatFunc S)
 
+/-- The algebra structure from `C` to `N` used in the exact constant extension infinity
+    normalization construction. -/
 local instance infinityConstantAlgebra : Algebra C N :=
   RingHom.toAlgebra ((algebraMap (RatFunc C) N).comp
     (algebraMap C (RatFunc C)))
 
+/-- The algebra structure from `C[X]` to `N` used in the exact constant extension infinity
+    normalization construction. -/
 local instance infinityReciprocalPolynomialAlgebra : Algebra C[X] N :=
   ratFuncExtensionReciprocalPolynomialAlgebra C N
 
@@ -64,6 +76,8 @@ local instance infinityReciprocalPolynomialTower :
     rw [reciprocalPolynomialRingHom_coe]
     simp)
 
+/-- The algebra structure from `C` to `(integralClosure C[X] N)` used in the exact constant
+    extension infinity normalization construction. -/
 local instance infinityReciprocalNormalizationConstantAlgebra :
     Algebra C (integralClosure C[X] N) :=
   RingHom.toAlgebra
@@ -74,6 +88,8 @@ local instance infinityReciprocalNormalizationPolynomialTower :
     IsScalarTower C C[X] (integralClosure C[X] N) :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `C[X]` to `S[X]` used in the exact constant extension
+    infinity normalization construction. -/
 local instance infinityCoefficientPolynomialAlgebra : Algebra C[X] S[X] :=
   Polynomial.algebra C S
 

@@ -49,7 +49,7 @@ variable {K : Type*} [Field K]
 /-- An ordinary-derivative Wronskian whose rows and columns have an arbitrary
 common finite index type.  The function `ε` specifies the derivative order of
 each row. -/
-def indexedLaurentSeriesWronskian {ι : Type*} [Fintype ι]
+def indexedLaurentSeriesWronskian {ι : Type*}
     (ε : ι → ℕ) (f : ι → LaurentSeries K) :
     Matrix ι ι (LaurentSeries K) :=
   fun i j => ((LaurentSeries.derivative K)^[ε i]) (f j)

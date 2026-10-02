@@ -173,7 +173,6 @@ theorem markoffFunctor_obj (R : CommSemiRingCat.{u}) :
     markoffFunctor.obj R = SemiringMarkoffSurface R :=
   rfl
 
-@[simp]
 theorem markoffFunctor_map {R S : CommSemiRingCat.{u}} (f : R ⟶ S)
     (x : SemiringMarkoffSurface R) :
     markoffFunctor.map f x = SemiringMarkoffSurface.map f.hom x :=
@@ -228,27 +227,22 @@ theorem markoffReduction_eq_markoffFunctor_map (p : ℕ) (x : SemiringMarkoffSur
       markoffFunctor.map (CommSemiRingCat.ofHom (Nat.castRingHom (ZMod p))) x :=
   rfl
 
-@[simp]
 theorem markoffReduction_x1 (p : ℕ) (x : SemiringMarkoffSurface ℕ) :
     (markoffReduction p x).1.x1 = (x.1.x1 : ZMod p) :=
   rfl
 
-@[simp]
 theorem markoffReduction_x2 (p : ℕ) (x : SemiringMarkoffSurface ℕ) :
     (markoffReduction p x).1.x2 = (x.1.x2 : ZMod p) :=
   rfl
 
-@[simp]
 theorem markoffReduction_x3 (p : ℕ) (x : SemiringMarkoffSurface ℕ) :
     (markoffReduction p x).1.x3 = (x.1.x3 : ZMod p) :=
   rfl
 
-@[simp]
 theorem markoffReduction_origin (p : ℕ) :
     markoffReduction p (semiringSurfaceOrigin ℕ) = semiringSurfaceOrigin (ZMod p) :=
   SemiringMarkoffSurface.map_origin _
 
-@[simp]
 theorem markoffReduction_root (p : ℕ) :
     markoffReduction p (semiringSurfaceRoot ℕ) = semiringSurfaceRoot (ZMod p) :=
   SemiringMarkoffSurface.map_root _

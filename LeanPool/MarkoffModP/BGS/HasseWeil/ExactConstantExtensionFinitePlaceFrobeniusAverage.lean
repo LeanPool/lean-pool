@@ -62,6 +62,8 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Algebra.IsSeparable (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
+/-- The algebra structure from `C` to `N` used in the exact constant extension finite place
+    frobenius average construction. -/
 local instance averageBaseConstantAlgebra : Algebra C N :=
   bridgeBaseConstantAlgebra C N
 
@@ -69,6 +71,8 @@ local instance averageBaseConstantTower :
     IsScalarTower C (RatFunc C) N :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `S[X]` to `(ExactConstantExtension C N S)` used in the exact
+    constant extension finite place frobenius average construction. -/
 local instance averageTargetPolynomialAlgebra :
     Algebra S[X] (ExactConstantExtension C N S) :=
   bridgeTargetPolynomialAlgebra C S N
@@ -84,6 +88,8 @@ variable (L : Type*) [Field L]
   [Algebra L N] [IsScalarTower (RatFunc C) L N]
   [FiniteDimensional L N] [IsGalois L N]
 
+/-- The algebra structure from `C` to `L` used in the exact constant extension finite place
+    frobenius average construction. -/
 local instance averageIntermediateConstantAlgebra : Algebra C L :=
   RingHom.toAlgebra ((algebraMap (RatFunc C) L).comp
     (algebraMap C (RatFunc C)))

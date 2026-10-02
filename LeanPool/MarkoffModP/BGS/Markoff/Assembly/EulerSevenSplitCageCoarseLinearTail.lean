@@ -45,7 +45,7 @@ theorem
       SameNormalizedComponent
         (normalizedSurfaceOfPunctured
           (puncturedNormalizationEquiv (ZMod p) c)) z) :
-    PuncturedMarkoffTransitiveAt p Fact.out := by
+    PuncturedMarkoffTransitiveAt p := by
   apply
     puncturedMarkoffTransitiveAt_of_splitCage_eulerSevenPairedMaximalDivisor_complement_frontier
       p hpSeven c hbase hhalfThreshold

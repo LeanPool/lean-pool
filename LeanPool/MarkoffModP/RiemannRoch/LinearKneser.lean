@@ -42,7 +42,7 @@ variable (k K : Type*) [Field k] [Field K] [Algebra k K]
 /-- If a finite-dimensional subspace `A` containing `1` has dimension bigger than one, some
 nonzero `e ∈ B` makes the Dyson intersection `A ∩ B e⁻¹` proper. -/
 theorem exists_dyson_step (A B : Submodule k K)
-    [FiniteDimensional k A] [FiniteDimensional k B]
+    [FiniteDimensional k B]
     (hA1 : (1 : K) ∈ A) (hB1 : (1 : K) ∈ B) (hAdim : 1 < Module.finrank k A) :
     ∃ e : K, e ∈ B ∧ e ≠ 0 ∧
       A ⊓ Submodule.comap (LinearMap.mulRight k e) B ≠ A := by

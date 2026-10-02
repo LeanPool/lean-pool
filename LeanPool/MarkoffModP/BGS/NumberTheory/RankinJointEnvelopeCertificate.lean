@@ -85,24 +85,29 @@ def jointEnvelopeFailureSquare (profile : RankinNeighborProfile) : ℚ :=
   ((profile.jointEnvelopeWitnessCap : ℚ) * profile.rootCap *
     (2 * profile.jointCoarseEulerProductProduct)) ^ 2
 
+/-- The side-erased failure square is below the proposed cutoff threshold. -/
 def JointEnvelopeClosesCutoff
     (profile : RankinNeighborProfile) (cutoff : ℕ) : Prop :=
   profile.jointEnvelopeFailureSquare < (8 * (cutoff + 1) : ℕ)
 
+/-- The side-erased product bound rules out the failure obstruction. -/
 def JointEnvelopeExcludesFailure
     (profile : RankinNeighborProfile) : Prop :=
   profile.jointEnvelopeFailureSquare ^ 2 <
     (64 * profile.jointLowerNeighborProduct : ℕ)
 
+/-- The Boolean check of the side-erased envelope validity condition. -/
 def jointEnvelopeValidCheck (profile : RankinNeighborProfile) : Bool :=
   decide (profile.jointEnvelopeWitnessCap ≤ profile.rootCap ^ 12)
 
+/-- The Boolean check that a side-erased envelope closes the cutoff. -/
 def jointEnvelopeClosesCutoffCheck
     (profile : RankinNeighborProfile) (cutoff : ℕ) : Bool :=
   decide
     (profile.jointEnvelopeFailureSquare <
       ((8 * (cutoff + 1) : ℕ) : ℚ))
 
+/-- The Boolean check that a side-erased envelope excludes failure. -/
 def jointEnvelopeExcludesFailureCheck
     (profile : RankinNeighborProfile) : Bool :=
   decide
@@ -116,6 +121,7 @@ def JointEnvelopeLeafValid
     (profile.JointEnvelopeClosesCutoff cutoff ∨
       profile.JointEnvelopeExcludesFailure)
 
+/-- The Boolean check of a complete side-erased envelope leaf. -/
 def jointEnvelopeLeafCheck
     (profile : RankinNeighborProfile) (cutoff : ℕ) : Bool :=
   profile.check && profile.jointEnvelopeValidCheck &&

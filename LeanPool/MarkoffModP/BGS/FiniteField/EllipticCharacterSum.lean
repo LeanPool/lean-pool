@@ -154,7 +154,7 @@ theorem ellipticCubicCharacterSum_sq_le_four_mul_card_iff_point_card_hasse
 /-- The exact Legendre-family Hasse target.  It is retained only as an
 explicit premise for the optional incidence-diameter route. -/
 def LegendrePointCardHasseBound (F : Type*)
-    [Field F] [Fintype F] [DecidableEq F] : Prop :=
+    [Field F] [Fintype F] : Prop :=
   ∀ {u v : F}, u ≠ 0 → v ≠ 0 → u ≠ v →
     ((Nat.card (legendreWeierstrassCurve u v).toAffine.Point : ℤ) -
       Fintype.card F - 1) ^ 2 ≤ 4 * (Fintype.card F : ℤ)

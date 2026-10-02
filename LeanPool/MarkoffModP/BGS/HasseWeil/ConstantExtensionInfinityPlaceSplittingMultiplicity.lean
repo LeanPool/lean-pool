@@ -41,21 +41,32 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Algebra.IsSeparable (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
+/-- Decidable equality on `C` used in the constant extension infinity place splitting
+    multiplicity construction. -/
 local instance (priority := 10000) infinitySplittingDecidableEqBase :
     DecidableEq C := infinityBridgeDecidableEqConstants C
 
+/-- Decidable equality on `(RatFunc C)` used in the constant extension infinity place
+    splitting multiplicity construction. -/
 local instance (priority := 10000) infinitySplittingDecidableEqRatFuncBase :
     DecidableEq (RatFunc C) := infinityBridgeDecidableEqRatFuncConstants C
 
+/-- Decidable equality on `S` used in the constant extension infinity place splitting
+    multiplicity construction. -/
 local instance (priority := 10000) infinitySplittingDecidableEqConstants :
     DecidableEq S := infinityBridgeDecidableEqConstants S
 
+/-- Decidable equality on `(RatFunc S)` used in the constant extension infinity place
+    splitting multiplicity construction. -/
 local instance (priority := 10000) infinitySplittingDecidableEqRatFuncConstants :
     DecidableEq (RatFunc S) := infinityBridgeDecidableEqRatFuncConstants S
 
+/-- The constant-field algebra on the original function field for the infinity splitting
+    calculation. -/
 @[reducible] local instance infinitySplittingBaseConstantAlgebra : Algebra C N :=
   infinityConstantAlgebra C N
 
+/-- The algebra of reciprocal polynomials on the original function field. -/
 @[reducible] local instance infinitySplittingBaseReciprocalPolynomialAlgebra :
     Algebra C[X] N :=
   infinityReciprocalPolynomialAlgebra C N
@@ -68,6 +79,8 @@ local instance infinitySplittingBaseRatFuncTower :
     IsScalarTower C (RatFunc C) N :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `C` to `(integralClosure C[X] N)` used in the constant
+    extension infinity place splitting multiplicity construction. -/
 local instance infinitySplittingOldNormalizationConstantAlgebra :
     Algebra C (integralClosure C[X] N) :=
   RingHom.toAlgebra
@@ -78,13 +91,19 @@ local instance infinitySplittingOldNormalizationConstantPolynomialTower :
     IsScalarTower C C[X] (integralClosure C[X] N) :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `C[X]` to `S[X]` used in the constant extension infinity
+    place splitting multiplicity construction. -/
 local instance infinitySplittingCoefficientPolynomialAlgebra :
     Algebra C[X] S[X] :=
   Polynomial.algebra C S
 
+/-- The scalar action of `C[X]` on `S[X]` used in the constant extension infinity place
+    splitting multiplicity construction. -/
 local instance infinitySplittingCoefficientPolynomialSMul :
     SMul C[X] S[X] := Algebra.toSMul
 
+/-- The module structure of `S[X]` over `C[X]` used in the constant extension infinity place
+    splitting multiplicity construction. -/
 local instance infinitySplittingCoefficientPolynomialModule :
     Module C[X] S[X] := Algebra.toModule
 
@@ -107,28 +126,38 @@ variable (hExact : algebraicClosure C N =
       (R := C) (A := S) (B := N)).toRingHom.comp
         (algebraMap C[X] N))
 
+/-- The polynomial algebra over the original constants on the exact constant extension. -/
 @[reducible] local instance infinitySplittingExactCPolynomialAlgebra :
     Algebra C[X] (ExactConstantExtension C N S) :=
   exactConstantExtensionCReciprocalPolynomialAlgebra C S N
 
+/-- The polynomial algebra over the enlarged constants on the exact constant extension. -/
 @[reducible] local instance infinitySplittingExactSPolynomialAlgebra :
     Algebra S[X] (ExactConstantExtension C N S) :=
   polynomialTensorCancelTargetPolynomialExtensionAlgebra C S N
 
+/-- The scalar action of `C[X]` on `(ExactConstantExtension C N S)` used in the constant
+    extension infinity place splitting multiplicity construction. -/
 local instance infinitySplittingExactCPolynomialSMul :
     SMul C[X] (ExactConstantExtension C N S) := Algebra.toSMul
 
+/-- The module structure of `(ExactConstantExtension C N S)` over `C[X]` used in the
+    constant extension infinity place splitting multiplicity construction. -/
 local instance infinitySplittingExactCPolynomialModule :
     Module C[X] (ExactConstantExtension C N S) := Algebra.toModule
 
+/-- The scalar action of `S[X]` on `(ExactConstantExtension C N S)` used in the constant
+    extension infinity place splitting multiplicity construction. -/
 local instance infinitySplittingExactSPolynomialSMul :
     SMul S[X] (ExactConstantExtension C N S) := Algebra.toSMul
 
+/-- The enlarged-constant polynomial algebra on the presented extension field. -/
 @[reducible] local instance infinitySplittingPresentedSPolynomialAlgebra :
     Algebra S[X] (TensorProduct C S (integralClosure C[X] N)) :=
   polynomialTensorCancelTargetPolynomialExtensionAlgebra C S
     (integralClosure C[X] N)
 
+/-- The original-constant polynomial algebra on the presented extension field. -/
 @[reducible] local instance infinitySplittingPresentedCPolynomialAlgebra :
     Algebra C[X] (TensorProduct C S (integralClosure C[X] N)) :=
   RingHom.toAlgebra
@@ -136,9 +165,13 @@ local instance infinitySplittingExactSPolynomialSMul :
       (R := C) (A := S) (B := integralClosure C[X] N)).toRingHom.comp
         (algebraMap C[X] (integralClosure C[X] N)))
 
+/-- The scalar action of `S[X]` on `(TensorProduct C S (integralClosure C[X] N))` used in
+    the constant extension infinity place splitting multiplicity construction. -/
 local instance infinitySplittingPresentedSPolynomialSMul :
     SMul S[X] (TensorProduct C S (integralClosure C[X] N)) := Algebra.toSMul
 
+/-- The scalar action of `C[X]` on `(TensorProduct C S (integralClosure C[X] N))` used in
+    the constant extension infinity place splitting multiplicity construction. -/
 local instance infinitySplittingPresentedCPolynomialSMul :
     SMul C[X] (TensorProduct C S (integralClosure C[X] N)) := Algebra.toSMul
 
@@ -1122,26 +1155,36 @@ private theorem
       congrArg (exactConstantExtensionFunctionAutHom C N N S) huOne
     _ = 1 := map_one (exactConstantExtensionFunctionAutHom C N N S)
 
+/-- The rational function algebra over the reciprocal polynomial ring at infinity. -/
 @[reducible] local instance infinitySplittingInfinityBaseRatFuncAlgebra :
     Algebra (RatFuncInfinityIntegers C) (RatFunc C) :=
   RingHom.toAlgebra
     (SubringClass.subtype ((RatFunc.inftyValuation C).integer))
 
+/-- The scalar action of `(RatFuncInfinityIntegers C)` on `(RatFunc C)` used in the constant
+    extension infinity place splitting multiplicity construction. -/
 local instance infinitySplittingInfinityBaseRatFuncSMul :
     SMul (RatFuncInfinityIntegers C) (RatFunc C) := Algebra.toSMul
 
+/-- The module structure of `(RatFunc C)` over `(RatFuncInfinityIntegers C)` used in the
+    constant extension infinity place splitting multiplicity construction. -/
 local instance infinitySplittingInfinityBaseRatFuncModule :
     Module (RatFuncInfinityIntegers C) (RatFunc C) := Algebra.toModule
 
+/-- The extension-field algebra over the reciprocal polynomial ring at infinity. -/
 @[reducible] local instance infinitySplittingInfinityBaseNAlgebra :
     Algebra (RatFuncInfinityIntegers C) N :=
   RingHom.toAlgebra
     ((algebraMap (RatFunc C) N).comp
       (algebraMap (RatFuncInfinityIntegers C) (RatFunc C)))
 
+/-- The scalar action of `(RatFuncInfinityIntegers C)` on `N` used in the constant extension
+    infinity place splitting multiplicity construction. -/
 local instance infinitySplittingInfinityBaseNSMul :
     SMul (RatFuncInfinityIntegers C) N := Algebra.toSMul
 
+/-- The module structure of `N` over `(RatFuncInfinityIntegers C)` used in the constant
+    extension infinity place splitting multiplicity construction. -/
 local instance infinitySplittingInfinityBaseNModule :
     Module (RatFuncInfinityIntegers C) N := Algebra.toModule
 

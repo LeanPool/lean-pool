@@ -45,10 +45,14 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Algebra.IsSeparable (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
+/-- The algebra structure from `C` to `N` used in the constant extension finite place bridge
+    construction. -/
 local instance bridgeBaseConstantAlgebra : Algebra C N :=
   RingHom.toAlgebra ((algebraMap (RatFunc C) N).comp
     (algebraMap C (RatFunc C)))
 
+/-- The algebra structure from `C[X]` to `N` used in the constant extension finite place
+    bridge construction. -/
 local instance (priority := 10000) bridgeBasePolynomialAlgebra : Algebra C[X] N :=
   ratFuncInducedPolynomialAlgebra C N
 
@@ -58,14 +62,20 @@ local instance bridgeBaseConstantPolynomialTower :
     ext c
     rfl)
 
+/-- The algebra structure from `S[X]` to `(ExactConstantExtension C N S)` used in the
+    constant extension finite place bridge construction. -/
 local instance (priority := 10000) bridgeTargetPolynomialAlgebra :
     Algebra S[X] (ExactConstantExtension C N S) :=
   constantExtensionTensorPolynomialAlgebra C S N
 
+/-- The algebra structure from `S[X]` to `(S ⊗[C] integralClosure C[X] N)` used in the
+    constant extension finite place bridge construction. -/
 local instance (priority := 10000) bridgeTensorNormalizationPolynomialAlgebra :
     Algebra S[X] (S ⊗[C] integralClosure C[X] N) :=
   constantExtensionNormalizationTensorPolynomialAlgebra C S N
 
+/-- The algebra structure from `S` to `(integralClosure S[X] (ExactConstantExtension C N
+    S))` used in the constant extension finite place bridge construction. -/
 local instance bridgeUpstairsConstantAlgebra :
     Algebra S
       (integralClosure S[X] (ExactConstantExtension C N S)) :=

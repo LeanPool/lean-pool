@@ -220,7 +220,7 @@ theorem finrank_poweredImageOverFirst_le_supportDet_of_nonzero_natCast
 
 /-- Prime-to-characteristic powers satisfy the exact-support index bound. -/
 theorem finrank_poweredImageOverFirst_le_supportDet
-    {p : ℕ} [Fact p.Prime]
+    {p : ℕ}
     {K : Type*} [Field K] [CharP K p]
     {f : MvPolynomial (Fin 2) K}
     (habsolute : Irreducible

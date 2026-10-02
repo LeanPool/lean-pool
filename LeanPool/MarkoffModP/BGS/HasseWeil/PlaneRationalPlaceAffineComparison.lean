@@ -38,7 +38,8 @@ open scoped Polynomial BigOperators
 
 namespace BGS.HasseWeil
 
-noncomputable section
+noncomputable
+section
 
 open BGS.CorvajaZannier Polynomial
 
@@ -84,7 +85,8 @@ def ratFuncRationalFinitePlaceEquiv : RatFuncRationalFinitePlace K ≃ K where
 end
 
 
-noncomputable section
+noncomputable
+section
 
 open BGS.CorvajaZannier Polynomial
 
@@ -143,7 +145,8 @@ theorem secondCoordinateAffineExceptionalBase_card_le
 end
 
 
-noncomputable section
+noncomputable
+section
 
 open BGS.CorvajaZannier IsDedekindDomain
 
@@ -153,6 +156,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
   [DecidableEq (RatFunc K)]
 
+/-- The algebra structure from `K[X]` to `L` used in the plane rational place affine
+    comparison construction. -/
 local instance (priority := 10) rationalComparisonPolynomialAlgebra :
     Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
@@ -188,6 +193,8 @@ local instance rationalComparisonFiniteClosureFractionRing :
   IsIntegralClosure.isFractionRing_of_finite_extension K[X] (RatFunc K) L
     (RatFuncFiniteIntegralClosure K L)
 
+/-- The algebra structure from `K` to `L` used in the plane rational place affine comparison
+    construction. -/
 local instance rationalComparisonConstantAlgebra : Algebra K L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K (RatFunc K)))
@@ -196,6 +203,8 @@ local instance rationalComparisonConstantScalarTower :
     IsScalarTower K (RatFunc K) L :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `K` to `(RatFuncFiniteIntegralClosure K L)` used in the plane
+    rational place affine comparison construction. -/
 local instance rationalComparisonFiniteClosureConstantAlgebra :
     Algebra K (RatFuncFiniteIntegralClosure K L) :=
   RingHom.toAlgebra ((algebraMap K[X]
@@ -514,7 +523,8 @@ theorem rationalFinitePlaceBaseCoordinate_residue
 end
 
 
-noncomputable section
+noncomputable
+section
 
 open BGS.CorvajaZannier IsDedekindDomain Polynomial
 
@@ -1448,7 +1458,7 @@ theorem planeCurveGoodRationalFinitePlace_valuationSubring_eq_dominating
   obtain ⟨φ, hφE, hcenter⟩ :=
     exists_planeCurveGoodRationalFinitePlace_centeredCoordinateRingHom
       hf hpartialSecond Q
-  let eCenter := affinePlaneCurvePoint_residueAlgEquiv K z
+  let eCenter := affinePlaneCurvePointResidueAlgEquiv K z
   let : Finite m.asIdeal.ResidueField :=
     Finite.of_injective eCenter eCenter.injective
   let r0 : A := planeCurveCoordinate f 0 - algebraMap K A z.1.1

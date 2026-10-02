@@ -47,7 +47,7 @@ first coordinate of the plane curve. -/
       ratFuncSpecialization (planeCurveFunction f 0) hx z :=
   rfl
 
-@[simp] theorem planeCurveFirstCoordinateRatFuncAlgebra_X
+theorem planeCurveFirstCoordinateRatFuncAlgebra_X
     (f : MvPolynomial (Fin 2) K) [IsDomain (PlaneCurveCoordinateRing f)]
     (hx : Transcendental K (planeCurveFunction f 0)) :
     letI := planeCurveFirstCoordinateRatFuncAlgebra f hx

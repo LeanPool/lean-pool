@@ -129,6 +129,8 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Algebra.IsSeparable (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
+/-- The algebra structure from `C` to `N` used in the constant extension place splitting
+    multiplicity construction. -/
 local instance splittingBaseConstantAlgebra : Algebra C N :=
   bridgeBaseConstantAlgebra C N
 
@@ -136,9 +138,13 @@ local instance splittingBaseConstantTower :
     IsScalarTower C (RatFunc C) N :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `C[X]` to `N` used in the constant extension place splitting
+    multiplicity construction. -/
 local instance splittingBasePolynomialAlgebra : Algebra C[X] N :=
   bridgeBasePolynomialAlgebra C N
 
+/-- The algebra structure from `S[X]` to `(ExactConstantExtension C N S)` used in the
+    constant extension place splitting multiplicity construction. -/
 local instance splittingTargetPolynomialAlgebra :
     Algebra S[X] (ExactConstantExtension C N S) :=
   bridgeTargetPolynomialAlgebra C S N
@@ -601,15 +607,21 @@ theorem exactConstantExtensionPresentedFinitePlaceFiber_natCard_eq_gcd
 
 section InfinityConstantEmbedding
 
+/-- The algebra structure from `C` to `(RatFuncInfinityIntegers C)` used in the constant
+    extension place splitting multiplicity construction. -/
 local instance splittingInfinityBaseConstantAlgebra :
     Algebra C (RatFuncInfinityIntegers C) :=
   (ratFuncInfinityConstantRingHom C).toAlgebra
 
+/-- The algebra structure from `(RatFuncInfinityIntegers C)` to `(RatFunc C)` used in the
+    constant extension place splitting multiplicity construction. -/
 local instance splittingInfinityBaseRatFuncAlgebra :
     Algebra (RatFuncInfinityIntegers C) (RatFunc C) :=
   RingHom.toAlgebra
     (SubringClass.subtype ((RatFunc.inftyValuation C).integer))
 
+/-- The algebra from the infinity valuation ring to the exact constant extension, using its
+    chosen field and rational function structures. -/
 local instance splittingInfinityExactBaseAlgebra :
     letI : Field (ExactConstantExtension C N S) :=
       exactConstantExtensionField C N S hExact

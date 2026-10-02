@@ -145,16 +145,20 @@ variable (p : ℕ) [Fact p.Prime]
 local notation "F" => ZMod
 local notation "E" => quadraticFiniteField
 
+/-- The numerator factor in the extended Cayley parametrization. -/
 def extendedCayleyNumeratorFactor : Polynomial (E p) :=
   X - C (quadraticNonbaseElement p ^ p)
 
+/-- The denominator factor in the extended Cayley parametrization. -/
 def extendedCayleyDenominatorFactor : Polynomial (E p) :=
   X - C (quadraticNonbaseElement p)
 
+/-- The seeded numerator polynomial obtained from the extended Cayley factor. -/
 def extendedSeededCayleyNumerator (s : (E p)ˣ) (d : ℕ) : Polynomial (E p) :=
   C (s : E p) * extendedCayleyNumeratorFactor p ^ (2 * d) +
     C ((s : E p) ^ p) * extendedCayleyDenominatorFactor p ^ (2 * d)
 
+/-- The norm factor in the extended Cayley parametrization. -/
 def extendedCayleyNormFactor : Polynomial (E p) :=
   extendedCayleyNumeratorFactor p * extendedCayleyDenominatorFactor p
 

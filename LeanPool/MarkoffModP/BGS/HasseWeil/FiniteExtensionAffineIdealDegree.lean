@@ -68,6 +68,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K[X]` to `L` used in the finite extension affine ideal
+    degree construction. -/
 local instance (priority := 10) affineIdealPolynomialAlgebra :
     Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
@@ -81,6 +83,8 @@ local instance affineIdealClosureModuleFinite :
     Module.Finite K[X] (RatFuncFiniteIntegralClosure K L) :=
   Module.IsNoetherian.finite K[X] (RatFuncFiniteIntegralClosure K L)
 
+/-- The algebra structure from `K` to `(RatFuncFiniteIntegralClosure K L)` used in the
+    finite extension affine ideal degree construction. -/
 local instance affineIdealClosureConstantAlgebra :
     Algebra K (RatFuncFiniteIntegralClosure K L) :=
   RingHom.toAlgebra ((algebraMap K[X]
@@ -201,7 +205,7 @@ theorem finite_setOf_finiteExtensionAffineIdealDegree_eq [Finite K] (n : ℕ) :
   · exact Ring.HasFiniteQuotients.finite_cardQuot_le _
 
 /-- A finite indexing type for nonzero affine ideals of degree `n`. -/
-noncomputable instance finiteExtensionAffineIdealsOfDegree_fintype (n : ℕ) :
+noncomputable instance finiteExtensionAffineIdealsOfDegreeFintype (n : ℕ) :
     Fintype {I : FiniteExtensionAffineIdeal K L //
       finiteExtensionAffineIdealDegree K L I = n} :=
   (finite_setOf_finiteExtensionAffineIdealDegree_eq K L n).fintype

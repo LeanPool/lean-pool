@@ -216,17 +216,25 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
 -- The infinity bridge fixes classical decidable equality locally.  Reusing
 -- the same definitions keeps its dependent place types definitionally equal
 -- to the exhaustive place types in this file.
+/-- Decidable equality on `(RatFunc C)` used in the constant extension closed place count
+    construction. -/
 local instance (priority := 10000) closedPlaceRatFuncBaseDecidableEq :
     DecidableEq (RatFunc C) :=
   infinityBridgeDecidableEqRatFuncConstants C
 
+/-- Decidable equality on `(RatFunc S)` used in the constant extension closed place count
+    construction. -/
 local instance (priority := 10000) closedPlaceRatFuncConstantsDecidableEq :
     DecidableEq (RatFunc S) :=
   infinityBridgeDecidableEqRatFuncConstants S
 
+/-- The algebra structure from `C` to `N` used in the constant extension closed place count
+    construction. -/
 local instance closedPlaceBaseConstantAlgebra : Algebra C N :=
   bridgeBaseConstantAlgebra C N
 
+/-- The algebra structure from `S[X]` to `(ExactConstantExtension C N S)` used in the
+    constant extension closed place count construction. -/
 local instance closedPlaceTargetPolynomialAlgebra :
     Algebra S[X] (ExactConstantExtension C N S) :=
   bridgeTargetPolynomialAlgebra C S N

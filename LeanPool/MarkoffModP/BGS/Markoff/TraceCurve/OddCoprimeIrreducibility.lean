@@ -71,7 +71,6 @@ theorem splitTracePowerSubstitution_X_one :
       MvPolynomial.X 1 ^ e := by
   simp [splitTracePowerSubstitution]
 
-@[simp]
 theorem splitTracePowerSubstitution_C (c : K) :
     splitTracePowerSubstitution (K := K) e d (MvPolynomial.C c) =
       MvPolynomial.C c := by

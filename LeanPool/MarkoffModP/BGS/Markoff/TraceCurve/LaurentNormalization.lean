@@ -172,6 +172,7 @@ def integralClosureAwayMap (f : R) :
 restriction on the original principal open.  Keeping the square in the data prevents the
 normalization chart transition from being used without its compatibility with the raw chart. -/
 structure IntegralClosureAwayComparison (f : R) where
+  /-- The equivalence from the Laurent normalization ring to its explicit presentation. -/
   equiv :
     Localization.Away (algebraMap R (integralClosure R (FractionRing R)) f) ≃+*
       integralClosure (Localization.Away f) (FractionRing (Localization.Away f))
@@ -338,7 +339,7 @@ theorem weightedSplitTraceLaurentCoordinateRing_isDomain
 /-- The normalized Laurent overlap is the principal open of the affine normalization obtained by
 inverting the original coordinate product.  Both the affine-domain and nonempty-open hypotheses
 are discharged from irreducibility and positivity. -/
-def weightedSplitTraceAffineNormalizationLaurentOpenEquiv_of_irreducible
+def weightedSplitTraceAffineNormalizationLaurentOpenEquivOfIrreducible
     (alpha beta : K) (d e : ℕ) (hd : 0 < d) (he : 0 < e) (hbeta : beta ≠ 0)
     (h : Irreducible (splitTraceCoverPolynomial alpha beta d e)) :
     Localization.Away
@@ -354,7 +355,7 @@ def weightedSplitTraceAffineNormalizationLaurentOpenEquiv_of_irreducible
       alpha beta d e hd he hbeta h)
 
 /-- Scheme-level form of the normalized principal-open comparison. -/
-def weightedSplitTraceAffineNormalizationLaurentOpenSchemeIso_of_irreducible
+def weightedSplitTraceAffineNormalizationLaurentOpenSchemeIsoOfIrreducible
     (alpha beta : K) (d e : ℕ) (hd : 0 < d) (he : 0 < e) (hbeta : beta ≠ 0)
     (h : Irreducible (splitTraceCoverPolynomial alpha beta d e)) :
     Spec (CommRingCat.of (WeightedSplitTraceLaurentNormalizationRing alpha beta d e)) ≅
@@ -363,7 +364,7 @@ def weightedSplitTraceAffineNormalizationLaurentOpenSchemeIso_of_irreducible
           (WeightedSplitTraceAffineNormalizationRing alpha beta d e)
           (weightedSplitTraceAffineCoordinateProduct alpha beta d e)))) :=
   BGS.specIsoOfRingEquiv
-    (weightedSplitTraceAffineNormalizationLaurentOpenEquiv_of_irreducible
+    (weightedSplitTraceAffineNormalizationLaurentOpenEquivOfIrreducible
       alpha beta d e hd he hbeta h)
 
 variable (alpha beta : K) (d e : ℕ)

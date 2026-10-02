@@ -42,6 +42,8 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [IsGalois (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
+/-- The algebra structure from `C` to `N` used in the exact constant extension intermediate
+    frobenius twist rational place average construction. -/
 local instance intermediateRationalAverageBaseConstantAlgebra : Algebra C N :=
   bridgeBaseConstantAlgebra C N
 
@@ -59,6 +61,8 @@ variable (L : Type*) [Field L]
   [Algebra L N] [IsScalarTower (RatFunc C) L N]
   [FiniteDimensional L N] [IsGalois L N]
 
+/-- The algebra structure from `C` to `L` used in the exact constant extension intermediate
+    frobenius twist rational place average construction. -/
 local instance intermediateRationalAverageConstantAlgebra : Algebra C L :=
   RingHom.toAlgebra ((algebraMap (RatFunc C) L).comp
     (algebraMap C (RatFunc C)))

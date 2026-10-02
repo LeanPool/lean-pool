@@ -24,7 +24,9 @@ namespace BGS.NumberTheory
 
 /-- One claimed prime power `prime ^ exponent`. -/
 structure PrimePowerFactor where
+  /-- The prime underlying this prime-power factor. -/
   prime : ℕ
+  /-- The exponent of the prime in this factor. -/
   exponent : ℕ
   deriving DecidableEq, Repr
 

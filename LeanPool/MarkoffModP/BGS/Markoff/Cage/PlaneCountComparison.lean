@@ -349,19 +349,23 @@ theorem cagePulledRootPair_diagonal_card_comparison
   rw [hid, abs_neg, abs_of_nonneg (Int.natCast_nonneg _)]
   exact_mod_cast hbad
 
+/-- A point on the off-diagonal plane curve used in the cage count. -/
 abbrev CageOffDiagonalPlanePoint (p : Nat) [Fact p.Prime]
     (xi eta : ZMod p) (d : Nat) :=
   ↥(BGS.External.affinePlaneCurveZeros (ZMod p)
     (cageOffDiagonalPlanePolynomial xi eta d))
 
+/-- The condition that both coordinates of an off-diagonal plane point are nonzero. -/
 def IsGoodOffDiagonalPlanePoint {p : Nat} [Fact p.Prime]
     {xi eta : ZMod p} {d : Nat} (z : CageOffDiagonalPlanePoint p xi eta d) : Prop :=
   z.1.1 ≠ 0 ∧ z.1.2 ≠ 0
 
+/-- The condition that the two pulled roots have nonzero sum. -/
 def IsGoodOffDiagonalPulledPair {p : Nat} [Fact p.Prime]
     {xi eta : ZMod p} {d : Nat} (z : CagePulledRootPair p xi eta d) : Prop :=
   z.firstRoot + z.secondRoot ≠ 0
 
+/-- The map from a good pulled root pair to its off-diagonal plane point. -/
 def goodOffDiagonalPulledToPlane
     (p : Nat) [Fact p.Prime] (hpTwo : p ≠ 2)
     (xi eta : ZMod p) (d : Nat) :
@@ -443,6 +447,7 @@ lemma goodOffDiagonalPulledToPlane_bijective
     · exact hsum
     · rfl
 
+/-- The equivalence between good pulled pairs and good off-diagonal plane points. -/
 def goodOffDiagonalPulledEquivPlane
     (p : Nat) [Fact p.Prime] (hpTwo : p ≠ 2)
     (xi eta : ZMod p) (d : Nat) :
@@ -475,6 +480,7 @@ private lemma powerRootCount_le
   exact (rootCount_le_natDegree f hf).trans_eq (by
     simpa [f] using (natDegree_X_pow_sub_C (R := K) (n := n) (r := 1)))
 
+/-- An embedding of bad pulled pairs into the exceptional plane-point set. -/
 def badOffDiagonalPulledEmbedding
     (p : Nat) [Fact p.Prime] (_hpTwo : p ≠ 2)
     (xi eta : ZMod p) {d : Nat} (_hd : 0 < d)
@@ -546,6 +552,7 @@ lemma badOffDiagonalPulled_card_le
     simpa using hsum
   omega
 
+/-- The specialized off-diagonal plane polynomial when its parameter is zero. -/
 def cageOffDiagonalZeroParameterPolynomial
     {K : Type*} [Field K] (xi eta : K) (d : Nat) : K[X] :=
   (X ^ 2 - C ((cagePulledRadicand xi d).eval 0 +
@@ -588,6 +595,7 @@ lemma cageOffDiagonalZeroParameterPolynomial_ne_zero
       simpa only [natDegree_C] using hpos)).monic
   exact hmonic.ne_zero
 
+/-- An embedding of bad off-diagonal plane points into the exceptional set. -/
 def badOffDiagonalPlaneEmbedding
     (p : Nat) [Fact p.Prime] (xi eta : ZMod p) {d : Nat}
     (hoffDiagonal : xi ^ 2 ≠ eta ^ 2) :

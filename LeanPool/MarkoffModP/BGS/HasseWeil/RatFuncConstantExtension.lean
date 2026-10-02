@@ -37,6 +37,8 @@ noncomputable section
 
 variable (K S : Type*) [Field K] [Field S] [Algebra K S]
 
+/-- The algebra structure from `K[X]` to `S[X]` used in the rat func constant extension
+    construction. -/
 local instance polynomialCoefficientAlgebra : Algebra K[X] S[X] :=
   (Polynomial.mapRingHom (algebraMap K S)).toAlgebra
 
@@ -89,6 +91,8 @@ theorem ratFuncCoefficientAlgHom_algebraMap (p : K[X]) :
     Algebra (RatFunc K) (RatFunc S) :=
   (ratFuncCoefficientAlgHom K S).toAlgebra
 
+/-- The algebra structure from `(RatFunc K)` to `(RatFunc S)` used in the rat func constant
+    extension construction. -/
 local instance ratFuncCoefficientAlgebraInstance :
     Algebra (RatFunc K) (RatFunc S) :=
   ratFuncCoefficientAlgebra K S
@@ -104,6 +108,7 @@ local instance ratFuncConstantLocalizationIsDomain :
       simpa only [Algebra.algebraMapSubmonoid] using
         algebraMapSubmonoid_le_nonZeroDivisors_of_faithfulSMul S[X] le_rfl)
 
+/-- The algebra structure on the localization used to extend rational-function constants. -/
 noncomputable local instance ratFuncConstantLocalizationAlgebra :
     Algebra (RatFunc K) (RatFuncConstantLocalization K S) :=
   (IsLocalization.map (RatFuncConstantLocalization K S)
@@ -152,6 +157,7 @@ local instance ratFuncConstantLocalizationFinite [FiniteDimensional K S] :
     Module.Finite (RatFunc K) (RatFuncConstantLocalization K S) :=
   Module.Finite.of_isLocalization K[X] S[X] K[X]⁰
 
+/-- The field structure on that localization. -/
 noncomputable local instance ratFuncConstantLocalizationField
     [FiniteDimensional K S] : Field (RatFuncConstantLocalization K S) :=
   (IsField.of_isDomain_of_finite (RatFunc K)
@@ -163,8 +169,7 @@ private theorem ratFuncConstantLocalizationSubmonoid_le :
     algebraMapSubmonoid_le_nonZeroDivisors_of_faithfulSMul S[X] le_rfl
 
 /-- Map the localization at nonzero base polynomials into the rational function field. -/
-noncomputable def ratFuncConstantLocalizationToRatFunc
-    [FiniteDimensional K S] :
+noncomputable def ratFuncConstantLocalizationToRatFunc :
     RatFuncConstantLocalization K S →+* RatFunc S :=
   IsLocalization.map
     (M := Submonoid.map (algebraMap K[X] S[X]) K[X]⁰)
@@ -173,7 +178,7 @@ noncomputable def ratFuncConstantLocalizationToRatFunc
       exact ratFuncConstantLocalizationSubmonoid_le K S)
 
 private theorem ratFuncConstantLocalizationToRatFunc_algebraMap
-    [FiniteDimensional K S] (p : S[X]) :
+    (p : S[X]) :
     ratFuncConstantLocalizationToRatFunc K S
         (algebraMap S[X] (RatFuncConstantLocalization K S) p) =
       algebraMap S[X] (RatFunc S) p := by

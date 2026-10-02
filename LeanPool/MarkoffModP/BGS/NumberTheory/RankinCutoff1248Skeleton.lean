@@ -22,14 +22,20 @@ target cutoff satisfies it, including the strong global product budget
 
 namespace BGS.NumberTheory
 
+/-- The powers of two and ordered odd exponents in a candidate pair of neighboring
+    factorizations. -/
 structure RankinExponentSkeleton where
+  /-- The exponent of two in the proposed factorization of the lower neighbor. -/
   minusTwoExponent : ℕ
+  /-- The exponent of two in the proposed factorization of the upper neighbor. -/
   plusTwoExponent : ℕ
+  /-- The exponents of the odd prime-power factors in global prime order. -/
   oddExponents : List ℕ
   deriving DecidableEq, Repr
 
 namespace RankinExponentSkeleton
 
+/-- Attach positional prime caps and a root cap to an exponent skeleton. -/
 def toProfile (skeleton : RankinExponentSkeleton)
     (table : RankinPositionalCapTable) (rootCap : ℕ) :
     RankinNeighborProfile :=
@@ -37,12 +43,15 @@ def toProfile (skeleton : RankinExponentSkeleton)
     skeleton.minusTwoExponent skeleton.plusTwoExponent
     skeleton.oddExponents rootCap
 
+/-- Exactly one neighboring factorization has two-adic exponent one and the other has
+    exponent at least two. -/
 def TwoFactorizationShape (skeleton : RankinExponentSkeleton) : Prop :=
   (skeleton.minusTwoExponent = 1 ∧
       2 ≤ skeleton.plusTwoExponent) ∨
     (skeleton.plusTwoExponent = 1 ∧
       2 ≤ skeleton.minusTwoExponent)
 
+/-- The Boolean check of the neighboring two-adic factorization shape. -/
 def twoFactorizationShapeCheck
     (skeleton : RankinExponentSkeleton) : Bool :=
   (decide (skeleton.minusTwoExponent = 1) &&
@@ -56,9 +65,11 @@ def twoFactorizationShapeCheck
       skeleton.TwoFactorizationShape := by
   simp [twoFactorizationShapeCheck, TwoFactorizationShape]
 
+/-- Every odd exponent in the skeleton is positive. -/
 def OddExponentsPositive (skeleton : RankinExponentSkeleton) : Prop :=
   ∀ exponent ∈ skeleton.oddExponents, 0 < exponent
 
+/-- The Boolean check that every odd exponent is positive. -/
 def oddExponentsPositiveCheck (skeleton : RankinExponentSkeleton) : Bool :=
   skeleton.oddExponents.all fun exponent => decide (0 < exponent)
 
@@ -68,6 +79,7 @@ def oddExponentsPositiveCheck (skeleton : RankinExponentSkeleton) : Bool :=
       skeleton.OddExponentsPositive := by
   simp [oddExponentsPositiveCheck, OddExponentsPositive]
 
+/-- The skeleton satisfies the two-adic shape, positivity, slot limit, and product budget. -/
 def Admissible (skeleton : RankinExponentSkeleton)
     (table : RankinPositionalCapTable)
     (slotBound productBound : ℕ) : Prop :=
@@ -76,6 +88,7 @@ def Admissible (skeleton : RankinExponentSkeleton)
     skeleton.oddExponents.length < slotBound ∧
     (skeleton.toProfile table 1).jointLowerNeighborProduct < productBound
 
+/-- The Boolean check of all admissibility conditions on an exponent skeleton. -/
 def admissibleCheck (skeleton : RankinExponentSkeleton)
     (table : RankinPositionalCapTable)
     (slotBound productBound : ℕ) : Bool :=
@@ -95,6 +108,8 @@ def admissibleCheck (skeleton : RankinExponentSkeleton)
 
 end RankinExponentSkeleton
 
+/-- The exponent skeleton extracted from the factorizations of the two neighbors of a
+    natural number. -/
 def actualRankinExponentSkeleton (p : ℕ) : RankinExponentSkeleton where
   minusTwoExponent := (p - 1).factorization 2
   plusTwoExponent := (p + 1).factorization 2

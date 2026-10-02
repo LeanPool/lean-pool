@@ -40,6 +40,8 @@ private noncomputable def coefficientPolynomialAlgHom :
     C[X] →ₐ[C] S[X] :=
   Polynomial.mapAlgHom (Algebra.ofId C S)
 
+/-- The algebra structure from `C[X]` to `S[X]` used in the polynomial tensor cancel
+    construction. -/
 local instance coefficientPolynomialAlgebra : Algebra C[X] S[X] :=
   Polynomial.algebra C S
 
@@ -67,6 +69,8 @@ noncomputable def polynomialTensorCancelTargetPolynomialAlgebra :
     Algebra C[X] (TensorProduct C S A) :=
   (constantTensorPolynomialAlgHom C S A).toAlgebra
 
+/-- The algebra structure from `C[X]` to `((TensorProduct C S A))` used in the polynomial
+    tensor cancel construction. -/
 local instance constantTensorPolynomialAlgebra :
     Algebra C[X] ((TensorProduct C S A)) :=
   polynomialTensorCancelTargetPolynomialAlgebra C S A
@@ -79,6 +83,8 @@ noncomputable def polynomialTensorCancelTargetPolynomialExtensionAlgebra :
   (Polynomial.aeval
     (polynomialTensorCancelEvaluationPoint C S A)).toAlgebra
 
+/-- The algebra structure from `S[X]` to `((TensorProduct C S A))` used in the polynomial
+    tensor cancel construction. -/
 local instance constantTensorPolynomialExtensionAlgebra :
     Algebra S[X] ((TensorProduct C S A)) :=
   polynomialTensorCancelTargetPolynomialExtensionAlgebra C S A

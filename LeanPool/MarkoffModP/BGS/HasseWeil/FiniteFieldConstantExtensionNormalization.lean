@@ -35,6 +35,8 @@ noncomputable section
 variable (C S N : Type*) [Field C] [Field S] [Algebra C S]
   [CommRing N] [Algebra C[X] N]
 
+/-- The algebra structure from `C` to `N` used in the finite field constant extension
+    normalization construction. -/
 local instance normalizationBaseConstantAlgebra : Algebra C N :=
   RingHom.toAlgebra ((algebraMap C[X] N).comp (algebraMap C C[X]))
 
@@ -42,6 +44,8 @@ local instance normalizationBaseConstantPolynomialTower :
     IsScalarTower C C[X] N :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `C[X]` to `S[X]` used in the finite field constant extension
+    normalization construction. -/
 local instance normalizationCoefficientPolynomialAlgebra :
     Algebra C[X] S[X] :=
   Polynomial.algebra C S
@@ -62,14 +66,20 @@ noncomputable def constantExtensionNormalizationTensorPolynomialAlgebra :
   polynomialTensorCancelTargetPolynomialExtensionAlgebra C S
     (integralClosure C[X] N)
 
+/-- The algebra structure from `S[X]` to `(S ⊗[C] N)` used in the finite field constant
+    extension normalization construction. -/
 local instance normalizationTargetPolynomialAlgebra :
     Algebra S[X] (S ⊗[C] N) :=
   constantExtensionTensorPolynomialAlgebra C S N
 
+/-- The algebra structure from `S[X]` to `(S ⊗[C] integralClosure C[X] N)` used in the
+    finite field constant extension normalization construction. -/
 local instance normalizationSourcePolynomialAlgebra :
     Algebra S[X] (S ⊗[C] integralClosure C[X] N) :=
   constantExtensionNormalizationTensorPolynomialAlgebra C S N
 
+/-- The algebra structure from `S` to `(S ⊗[C] N)` used in the finite field constant
+    extension normalization construction. -/
 local instance normalizationTargetConstantAlgebra : Algebra S (S ⊗[C] N) :=
   Algebra.TensorProduct.leftAlgebra
 
@@ -83,6 +93,8 @@ local instance normalizationTargetConstantPolynomialTower :
         (polynomialTensorCancelEvaluationPoint C S N) (Polynomial.C s)
     simp)
 
+/-- The algebra structure from `S` to `(integralClosure S[X] (S ⊗[C] N))` used in the finite
+    field constant extension normalization construction. -/
 local instance normalizationTargetIntegralClosureConstantAlgebra :
     Algebra S (integralClosure S[X] (S ⊗[C] N)) :=
   RingHom.toAlgebra

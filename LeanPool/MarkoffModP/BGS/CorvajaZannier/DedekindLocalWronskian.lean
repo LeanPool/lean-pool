@@ -107,7 +107,7 @@ variable {C : Type*} [Field C] [Algebra C R] [Algebra C L]
 /-- An indexed ordinary-derivation Wronskian over the fraction field.  The
 function `ε` records the derivative order assigned to each row. -/
 def indexedDedekindLocalWronskian
-    {ι : Type*} [Fintype ι] (D : Derivation C L L)
+    {ι : Type*} (D : Derivation C L L)
     (ε : ι → ℕ) (f : ι → L) : Matrix ι ι L :=
   fun i j ↦ ((D : L → L)^[ε i]) (f j)
 

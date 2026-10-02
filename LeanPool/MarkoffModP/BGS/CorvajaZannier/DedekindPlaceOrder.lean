@@ -298,8 +298,7 @@ theorem finitePlaceOrderTop_derivation_ge_sub_one_of_preserves
 /-- The normalized-uniformizer version retained for callers that naturally
 construct a local derivative. -/
 theorem finitePlaceOrderTop_derivation_ge_sub_one
-    {C : Type*} [Field C] [Algebra C R] [Algebra C L]
-    [IsScalarTower C R L]
+    {C : Type*} [Field C] [Algebra C L]
     (v : HeightOneSpectrum R) (π : R) (hπ : Irreducible π)
     (hπIdeal : v.asIdeal = Ideal.span {π})
     (D : Derivation C L L)
@@ -349,8 +348,7 @@ theorem finitePlaceOrderTop_derivation_iterate_ge_sub_nat_of_preserves
 /-- The iterated normalized-uniformizer version retained for compatibility
 with the local Wronskian API. -/
 theorem finitePlaceOrderTop_derivation_iterate_ge_sub_nat
-    {C : Type*} [Field C] [Algebra C R] [Algebra C L]
-    [IsScalarTower C R L]
+    {C : Type*} [Field C] [Algebra C L]
     (v : HeightOneSpectrum R) (π : R) (hπ : Irreducible π)
     (hπIdeal : v.asIdeal = Ideal.span {π})
     (D : Derivation C L L)

@@ -37,7 +37,8 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Algebra (RatFunc C) N] [FiniteDimensional (RatFunc C) N]
   [Algebra.IsSeparable (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
-local instance : Algebra C N := bridgeBaseConstantAlgebra C N
+/-- The constant-field algebra on `N` used in the genus bridge. -/
+local instance genusBridgeConstantAlgebra : Algebra C N := bridgeBaseConstantAlgebra C N
 local instance : IsScalarTower C (RatFunc C) N := IsScalarTower.of_algebraMap_eq' rfl
 
 omit [Fintype C] in
@@ -68,6 +69,8 @@ variable (K F : Type*) [Field K] [Fintype K] [DecidableEq K]
   [FiniteDimensional (RatFunc K) F]
   [Algebra.IsSeparable (RatFunc K) F]
 
+/-- The algebra structure from `K` to `F` used in the finite extension hasse weil
+    construction. -/
 local instance finiteExtensionHasseBaseConstantAlgebra : Algebra K F :=
   bridgeBaseConstantAlgebra K F
 
@@ -75,19 +78,27 @@ local instance finiteExtensionHasseBaseConstantTower :
     IsScalarTower K (RatFunc K) F :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- A finite enumeration of `(FunctionFieldNormalClosureConstantField K F)` used in the
+    finite extension hasse weil construction. -/
 local instance finiteExtensionHasseNormalClosureConstantFintype :
     Fintype (FunctionFieldNormalClosureConstantField K F) :=
   Fintype.ofFinite _
 
+/-- The algebra structure from `K` to `(FunctionFieldNormalClosureConstantField K F)` used
+    in the finite extension hasse weil construction. -/
 local instance finiteExtensionHasseNormalClosureConstantAlgebra :
     Algebra K (FunctionFieldNormalClosureConstantField K F) :=
   SubalgebraClass.toAlgebra
     (algebraicClosure K (FunctionFieldNormalClosure K F))
 
+/-- The scalar action of `K` on `(FunctionFieldNormalClosureConstantField K F)` used in the
+    finite extension hasse weil construction. -/
 local instance finiteExtensionHasseNormalClosureConstantSmul :
     SMul K (FunctionFieldNormalClosureConstantField K F) :=
   Algebra.toSMul
 
+/-- The module structure of `(FunctionFieldNormalClosureConstantField K F)` over `K` used in
+    the finite extension hasse weil construction. -/
 local instance finiteExtensionHasseNormalClosureConstantModule :
     Module K (FunctionFieldNormalClosureConstantField K F) :=
   Algebra.toModule
@@ -103,19 +114,28 @@ local instance finiteExtensionHasseNormalClosureConstantIsGalois [Finite K] :
     IsGalois K (FunctionFieldNormalClosureConstantField K F) :=
   functionFieldConstantField_isGalois K (FunctionFieldNormalClosure K F)
 
+/-- Decidable equality on `(FunctionFieldNormalClosureConstantField K F)` used in the finite
+    extension hasse weil construction. -/
 local instance finiteExtensionHasseNormalClosureConstantDecidableEq :
     DecidableEq (FunctionFieldNormalClosureConstantField K F) :=
   Classical.decEq _
 
+/-- Decidable equality on `(RatFunc (FunctionFieldNormalClosureConstantField K F))` used in
+    the finite extension hasse weil construction. -/
 local instance finiteExtensionHasseNormalClosureRatFuncDecidableEq :
     DecidableEq (RatFunc (FunctionFieldNormalClosureConstantField K F)) :=
   Classical.decEq _
 
+/-- The scalar action of `(RatFunc (FunctionFieldNormalClosureConstantField K F))` on
+    `(FunctionFieldNormalClosure K F)` used in the finite extension hasse weil construction. -/
 local instance finiteExtensionHasseNormalClosureRatFuncSmul :
     SMul (RatFunc (FunctionFieldNormalClosureConstantField K F))
       (FunctionFieldNormalClosure K F) :=
   Algebra.toSMul
 
+/-- The module structure of `(FunctionFieldNormalClosure K F)` over `(RatFunc
+    (FunctionFieldNormalClosureConstantField K F))` used in the finite extension hasse weil
+    construction. -/
 local instance finiteExtensionHasseNormalClosureRatFuncModule :
     Module (RatFunc (FunctionFieldNormalClosureConstantField K F))
       (FunctionFieldNormalClosure K F) :=
@@ -136,6 +156,8 @@ local instance finiteExtensionHasseNormalClosureFiniteDimensional :
       (FunctionFieldNormalClosure K F) :=
   functionFieldNormalClosure_finiteDimensional_over_constantRatFunc K F
 
+/-- The algebra structure from `(FunctionFieldNormalClosureConstantField K F)` to
+    `(FunctionFieldNormalClosure K F)` used in the finite extension hasse weil construction. -/
 local instance finiteExtensionHasseNormalClosureCanonicalConstantAlgebra :
     Algebra (FunctionFieldNormalClosureConstantField K F)
       (FunctionFieldNormalClosure K F) :=

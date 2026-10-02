@@ -41,6 +41,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K` to `(RatFuncInfinityIntegers K)` used in the finite
+    extension canonical auxiliary infinity place construction. -/
 local instance infinityAuxiliaryBaseConstantAlgebra :
     Algebra K (RatFuncInfinityIntegers K) :=
   (ratFuncInfinityConstantRingHom K).toAlgebra
@@ -82,6 +84,8 @@ local instance infinityAuxiliaryIntegralClosureIsFractionRing :
     (RatFuncInfinityIntegers K) (RatFunc K) L
       (RatFuncInfinityIntegralClosure K L)
 
+/-- The algebra structure from `K` to `(RatFuncInfinityIntegralClosure K L)` used in the
+    finite extension canonical auxiliary infinity place construction. -/
 local instance infinityAuxiliaryIntegralClosureConstantAlgebra :
     Algebra K (RatFuncInfinityIntegralClosure K L) :=
   RingHom.toAlgebra
@@ -106,6 +110,9 @@ local instance infinityAuxiliaryBaseFaithfulSmulFractionRing :
   apply (algebraMap (RatFunc K) L).injective
   exact hL
 
+/-- The algebra structure from `(FractionRing (RatFuncInfinityIntegers K))` to
+    `(FractionRing (RatFuncInfinityIntegralClosure K L))` used in the finite extension
+    canonical auxiliary infinity place construction. -/
 local instance infinityAuxiliaryFractionRingAlgebra :
     Algebra (FractionRing (RatFuncInfinityIntegers K))
       (FractionRing (RatFuncInfinityIntegralClosure K L)) :=
@@ -142,6 +149,7 @@ section InfinityLocalOrder
 
 variable {K L}
 
+/-- The map from the localization at an infinity place into the extension field. -/
 noncomputable def finiteExtensionInfinityPlaceLocalizationToField
     (P : FiniteExtensionInfinityPlace K L) :
     FiniteExtensionInfinityPlaceLocalRing K L P →+* L :=
@@ -164,6 +172,8 @@ omit [DecidableEq K] in
       algebraMap (RatFuncInfinityIntegralClosure K L) L := by
   exact IsLocalization.lift_comp _
 
+/-- The algebra structure on the localized infinity-place ring induced by its map to the
+    field. -/
 @[reducible] noncomputable def finiteExtensionInfinityPlaceLocalAlgebra
     (P : FiniteExtensionInfinityPlace K L) :
     Algebra (FiniteExtensionInfinityPlaceLocalRing K L P) L :=
@@ -199,6 +209,7 @@ theorem finiteExtensionInfinityPlaceLocalIsFractionRing
       (FiniteExtensionInfinityPlaceLocalRing K L P) L
   exact hFraction
 
+/-- The extended local order at an infinity place of the finite extension. -/
 noncomputable def finiteExtensionInfinityPlaceLocalOrderTop
     (P : FiniteExtensionInfinityPlace K L) (x : L) : WithTop ℤ := by
   let _ := finiteExtensionInfinityPlaceLocalAlgebra
@@ -215,6 +226,7 @@ noncomputable def finiteExtensionInfinityPlaceLocalOrderTop
     (IsDiscreteValuationRing.maximalIdeal
       (FiniteExtensionInfinityPlaceLocalRing K L P)) x
 
+/-- The integer-valued local order at an infinity place of the finite extension. -/
 noncomputable def finiteExtensionInfinityPlaceLocalOrder
     (P : FiniteExtensionInfinityPlace K L) (x : L) : ℤ := by
   let _ := finiteExtensionInfinityPlaceLocalAlgebra
@@ -351,7 +363,7 @@ theorem finiteExtensionInfinityPlace_local_preserves_of_global_preserves
 The reciprocal-parameter derivations are explicit inputs: `Es` preserves the
 infinity valuation ring and `D = -s² Es` after restricting constants. -/
 theorem exists_finiteExtensionInfinityPlace_canonicalDifferent_scaling_certificate
-    [Algebra K L] [IsScalarTower K (RatFunc K) L]
+    [Algebra K L]
     [IsScalarTower K (RatFuncInfinityIntegers K) L]
     [IsScalarTower K (RatFuncInfinityIntegralClosure K L) L]
     [IsScalarTower (RatFuncInfinityIntegers K)
@@ -543,7 +555,7 @@ section InfinityGlobalOrderHelpers
 variable {K L}
 
 omit [DecidableEq K] in
-@[simp] theorem finiteExtensionPrincipalDivisor_inr_eq_infinityPlaceOrder
+theorem finiteExtensionPrincipalDivisor_inr_eq_infinityPlaceOrder
     (x : L) (P : FiniteExtensionInfinityPlace K L) :
     finiteExtensionPrincipalDivisor K L x (.inr P) =
       finitePlaceOrder (primeOverHeightOne (ratFuncInfinityPlace K) P) x := by

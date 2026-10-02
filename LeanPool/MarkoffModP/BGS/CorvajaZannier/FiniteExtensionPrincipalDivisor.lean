@@ -41,6 +41,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K[X]` to `L` used in the finite extension principal divisor
+    construction. -/
 local instance (priority := 10) principalDivisorPolynomialAlgebra : Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))
@@ -92,6 +94,7 @@ local instance principalDivisorInfinityIntegralClosureIsDedekindDomain :
   IsIntegralClosure.isDedekindDomain (RatFuncInfinityIntegers K) (RatFunc K) L
     (RatFuncInfinityIntegralClosure K L)
 
+/-- Finite places over a base place correspond to prime ideals lying above its ideal. -/
 def finitePlaceFiberEquivPrimesOver (p : HeightOneSpectrum K[X]) :
     {q : HeightOneSpectrum (RatFuncFiniteIntegralClosure K L) //
       HeightOneSpectrum.under K[X] q = p} ≃
@@ -110,16 +113,22 @@ def finitePlaceFiberEquivPrimesOver (p : HeightOneSpectrum K[X]) :
     apply Subtype.ext
     rfl
 
+/-- Finite places of the extension, represented by height-one primes of its finite integral
+    closure. -/
 abbrev FiniteExtensionFinitePlace :=
   HeightOneSpectrum (RatFuncFiniteIntegralClosure K L)
 
+/-- Infinity places of the extension, represented by primes over the base infinity place. -/
 abbrev FiniteExtensionInfinityPlace :=
   (ratFuncInfinityPlace K).asIdeal.primesOver
     (RatFuncInfinityIntegralClosure K L)
 
+/-- The disjoint union of finite and infinity places of the extension. -/
 abbrev FiniteExtensionPlace :=
   FiniteExtensionFinitePlace K L ⊕ FiniteExtensionInfinityPlace K L
 
+/-- A finite enumeration of `(FiniteExtensionInfinityPlace K L)` used in the finite
+    extension principal divisor construction. -/
 local instance principalDivisorInfinityPlaceFintype :
     Fintype (FiniteExtensionInfinityPlace K L) :=
   Set.Finite.fintype
@@ -127,6 +136,7 @@ local instance principalDivisorInfinityPlaceFintype :
       (ratFuncInfinityPlace K).asIdeal
       (RatFuncInfinityIntegralClosure K L))
 
+/-- The finite-place part of the principal divisor of an extension-field element. -/
 def finiteExtensionFinitePrincipalDivisor (x : L) :
     FiniteExtensionFinitePlace K L →₀ ℤ :=
   finitePrincipalDivisor
@@ -140,6 +150,7 @@ omit [DecidableEq K] [DecidableEq (RatFunc K)] in
         ((ratFuncFiniteIntegralClosureFractionRingEquiv K L).symm x) := by
   simp [finiteExtensionFinitePrincipalDivisor]
 
+/-- The infinity-place part of the principal divisor of an extension-field element. -/
 def finiteExtensionInfinityPrincipalDivisor (x : L) :
     FiniteExtensionInfinityPlace K L →₀ ℤ :=
   Finsupp.equivFunOnFinite.symm (fun P =>
@@ -154,6 +165,7 @@ omit [DecidableEq K] in
         ((ratFuncInfinityIntegralClosureFractionRingEquiv K L).symm x) := by
   simp [finiteExtensionInfinityPrincipalDivisor]
 
+/-- The principal divisor on all finite and infinity places of the extension. -/
 def finiteExtensionPrincipalDivisor (x : L) :
     FiniteExtensionPlace K L →₀ ℤ :=
   (finiteExtensionFinitePrincipalDivisor K L x).sumElim
@@ -177,6 +189,7 @@ omit [DecidableEq K] in
   classical
   simp [finiteExtensionPrincipalDivisor]
 
+/-- The finite-place principal divisor weighted by residue degrees. -/
 def finiteExtensionFiniteResidueWeightedDivisor (x : L) :
     FiniteExtensionFinitePlace K L →₀ ℤ :=
   (finiteExtensionFinitePrincipalDivisor K L x).sum (fun q n =>
@@ -210,6 +223,8 @@ omit [DecidableEq K] [DecidableEq (RatFunc K)] in
         exact hq hb
       simp [hbq]
 
+/-- The finite-place principal divisor pushed down to base places with residue-degree
+    weights. -/
 def finiteExtensionFiniteDivisorBelow (x : L) :
     HeightOneSpectrum K[X] →₀ ℤ :=
   (finiteExtensionFiniteResidueWeightedDivisor K L x).mapDomain
@@ -481,6 +496,8 @@ section Families
 
 variable {A : Type*} [Fintype A]
 
+/-- Decidable equality on `(FiniteExtensionPlace K L)` used in the finite extension
+    principal divisor construction. -/
 local instance familyPlaceDecidableEq : DecidableEq (FiniteExtensionPlace K L) :=
   Classical.decEq _
 
@@ -492,6 +509,7 @@ def finiteExtensionFamilySupport (f : A → L) :
   exact Finset.univ.biUnion (fun a =>
     (finiteExtensionPrincipalDivisor K L (f a)).support)
 
+/-- A finite or infinity place appearing in the principal divisor of a member of a family. -/
 abbrev FiniteExtensionFamilyPlace (f : A → L) :=
   {v : FiniteExtensionPlace K L // v ∈ finiteExtensionFamilySupport K L f}
 
@@ -815,6 +833,8 @@ section AlgebraicallyClosedProbe
 
 variable [IsAlgClosed K]
 
+/-- The algebra structure from `K` to `(RatFuncFiniteIntegralClosure K L)` used in the
+    finite extension principal divisor construction. -/
 local instance finiteIntegralClosureConstantAlgebra :
     Algebra K (RatFuncFiniteIntegralClosure K L) :=
   RingHom.toAlgebra ((algebraMap K[X] (RatFuncFiniteIntegralClosure K L)).comp
@@ -824,6 +844,7 @@ local instance finiteIntegralClosureConstantTower :
     IsScalarTower K K[X] (RatFuncFiniteIntegralClosure K L) :=
   .of_algebraMap_eq' rfl
 
+/-- The residue-field equivalence at a finite place of the rational function field. -/
 noncomputable def ratFuncFinitePlaceResidueEquiv (p : HeightOneSpectrum K[X]) :
     p.asIdeal.ResidueField ≃ₐ[K] K := by
   let r := finitePlaceNormalizedPrime p

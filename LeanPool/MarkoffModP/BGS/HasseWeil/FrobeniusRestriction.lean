@@ -59,18 +59,15 @@ theorem powCardLinearMap_apply (n : ℕ) (x : A) :
     powCardLinearMap K A n x = x ^ (Fintype.card K ^ n) := by
   simp [powCardLinearMap]
 
-@[simp]
 theorem powCardLinearMap_add (n : ℕ) (x y : A) :
     powCardLinearMap K A n (x + y) =
       powCardLinearMap K A n x + powCardLinearMap K A n y := by
   exact map_add (powCardLinearMap K A n) x y
 
-@[simp]
 theorem powCardLinearMap_smul (n : ℕ) (c : K) (x : A) :
     powCardLinearMap K A n (c • x) = c • powCardLinearMap K A n x := by
   exact map_smul (powCardLinearMap K A n) c x
 
-@[simp]
 theorem powCardLinearMap_mul (n : ℕ) (x y : A) :
     powCardLinearMap K A n (x * y) =
       powCardLinearMap K A n x * powCardLinearMap K A n y := by
@@ -131,6 +128,7 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K` to `L` used in the frobenius restriction construction. -/
 local instance frobeniusRestrictionConstantAlgebra : Algebra K L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K (RatFunc K)))

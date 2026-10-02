@@ -37,8 +37,12 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- A finite enumeration of `K` used in the finite extension total different effective
+    divisor construction. -/
 local instance totalDifferentFintype : Fintype K := Fintype.ofFinite K
 
+/-- The algebra structure from `K[X]` to `L` used in the finite extension total different
+    effective divisor construction. -/
 local instance (priority := 10) totalDifferentPolynomialAlgebra : Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))
@@ -90,6 +94,8 @@ local instance totalDifferentInfinityIntegralClosureIsDedekindDomain :
     (RatFuncInfinityIntegers K) (RatFunc K) L
       (RatFuncInfinityIntegralClosure K L)
 
+/-- A finite enumeration of `(FiniteExtensionInfinityPlace K L)` used in the finite
+    extension total different effective divisor construction. -/
 local instance totalDifferentInfinityPlaceFintype :
     Fintype (FiniteExtensionInfinityPlace K L) :=
   Set.Finite.fintype

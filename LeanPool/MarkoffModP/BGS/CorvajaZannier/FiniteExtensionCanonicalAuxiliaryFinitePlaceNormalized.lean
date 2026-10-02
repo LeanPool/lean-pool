@@ -34,6 +34,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 variable {p : ℕ} [Fact p.Prime] [CharP K p] [CharP L p]
 
+/-- The algebra structure from `K[X]` to `L` used in the finite extension canonical
+    auxiliary finite place normalized construction. -/
 local instance (priority := 10) normalizedCasesPolynomialAlgebra :
     Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp

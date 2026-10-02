@@ -37,8 +37,7 @@ noncomputable section
 This is a lightweight internal proof boundary, not an external assumption.  The selected BGS path
 constructs it with `corvajaZannierWeightedTraceBound`. -/
 def WeightedTraceTorsionIntersectionBound
-    (p : ℕ) [Fact p.Prime]
-    (E : Type*) [Field E] [Fintype E] [CharP E p] : Prop :=
+    (p : ℕ) (E : Type*) [Field E] [Fintype E] : Prop :=
   ∀ (alpha beta : E) (leftOrder rightOrder : ℕ),
     WeightedTraceCurveIsCorvajaZannierAdmissible alpha beta →
       0 < leftOrder →

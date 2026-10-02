@@ -35,6 +35,7 @@ variable (L : Type*) [Field L] [Algebra (RatFunc S) L]
   [FiniteDimensional (RatFunc S) L]
   [Algebra.IsSeparable (RatFunc S) L]
 
+/-- The algebra structure from `S[X]` to `L` used in the square field residue construction. -/
 local instance (priority := 10) squareFieldResiduePolynomialAlgebra :
     Algebra S[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc S) L).comp
@@ -44,6 +45,8 @@ local instance squareFieldResiduePolynomialScalarTower :
     IsScalarTower S[X] (RatFunc S) L :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `S` to `(RatFuncFiniteIntegralClosure S L)` used in the
+    square field residue construction. -/
 local instance squareFieldResidueFiniteConstantAlgebra :
     Algebra S (RatFuncFiniteIntegralClosure S L) :=
   RingHom.toAlgebra ((algebraMap S[X]

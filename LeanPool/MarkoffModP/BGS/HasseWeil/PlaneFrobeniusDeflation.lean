@@ -46,7 +46,7 @@ def planeFirstInflateHom (p : ℕ) :
     MvPolynomial (Fin 2) R →ₐ[R] MvPolynomial (Fin 2) R :=
   bind₁ (planeFirstInflateSubstitution R p)
 
-@[simp] theorem planeFirstInflateHom_C (p : ℕ) (r : R) :
+theorem planeFirstInflateHom_C (p : ℕ) (r : R) :
     planeFirstInflateHom R p (C r) = C r := by
   simp [planeFirstInflateHom]
 

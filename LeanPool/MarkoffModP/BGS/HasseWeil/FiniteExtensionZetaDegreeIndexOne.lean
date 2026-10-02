@@ -40,6 +40,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K` to `L` used in the finite extension zeta degree index one
+    construction. -/
 local instance degreeIndexOneAutomaticConstantAlgebra : Algebra K L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K (RatFunc K)))
@@ -71,6 +73,8 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Algebra.IsSeparable (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
+/-- The algebra structure from `C` to `N` used in the finite extension zeta degree index one
+    construction. -/
 local instance degreeIndexOneBaseConstantAlgebra : Algebra C N :=
   RingHom.toAlgebra ((algebraMap (RatFunc C) N).comp
     (algebraMap C (RatFunc C)))

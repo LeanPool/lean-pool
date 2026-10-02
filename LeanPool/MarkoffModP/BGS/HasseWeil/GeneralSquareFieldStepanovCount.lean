@@ -44,6 +44,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc S) L]
   [FiniteDimensional (RatFunc S) L]
   [Algebra.IsSeparable (RatFunc S) L]
 
+/-- The algebra structure from `S` to `L` used in the general square field stepanov count
+    construction. -/
 local instance generalSquareFieldConstantAlgebra : Algebra S L :=
   RingHom.toAlgebra ((algebraMap (RatFunc S) L).comp
     (algebraMap S (RatFunc S)))
@@ -52,6 +54,8 @@ local instance generalSquareFieldConstantTower :
     IsScalarTower S (RatFunc S) L :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `(RatFuncInfinityIntegers S)` to `L` used in the general
+    square field stepanov count construction. -/
 local instance generalSquareFieldInfinityAlgebra :
     Algebra (RatFuncInfinityIntegers S) L :=
   Algebra.ofSubsemiring (RatFuncInfinityIntegers S)

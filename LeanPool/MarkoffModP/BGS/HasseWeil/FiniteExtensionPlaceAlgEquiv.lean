@@ -67,11 +67,15 @@ variable (K L M : Type*) [Field K] [DecidableEq K]
   [Algebra.IsSeparable (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) M]
 
+/-- The algebra structure from `K[X]` to `L` used in the finite extension place alg equiv
+    construction. -/
 local instance (priority := 10) finiteAlgEquivPolynomialAlgebraLeft :
     Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))
 
+/-- The algebra structure from `K[X]` to `M` used in the finite extension place alg equiv
+    construction. -/
 local instance (priority := 10) finiteAlgEquivPolynomialAlgebraRight :
     Algebra K[X] M :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) M).comp
@@ -87,11 +91,15 @@ local instance finiteAlgEquivPolynomialTowerRight :
   IsScalarTower.of_algebraMap_eq'
     (R := K[X]) (S := RatFunc K) (A := M) rfl
 
+/-- The algebra structure from `(RatFuncInfinityIntegers K)` to `L` used in the finite
+    extension place alg equiv construction. -/
 local instance (priority := 10) finiteAlgEquivInfinityAlgebraLeft :
     Algebra (RatFuncInfinityIntegers K) L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap (RatFuncInfinityIntegers K) (RatFunc K)))
 
+/-- The algebra structure from `(RatFuncInfinityIntegers K)` to `M` used in the finite
+    extension place alg equiv construction. -/
 local instance (priority := 10) finiteAlgEquivInfinityAlgebraRight :
     Algebra (RatFuncInfinityIntegers K) M :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) M).comp
@@ -107,6 +115,8 @@ local instance finiteAlgEquivInfinityTowerRight :
   IsScalarTower.of_algebraMap_eq'
     (R := RatFuncInfinityIntegers K) (S := RatFunc K) (A := M) rfl
 
+/-- The algebra structure from `K` to `(RatFuncInfinityIntegers K)` used in the finite
+    extension place alg equiv construction. -/
 local instance finiteAlgEquivInfinityConstantAlgebra :
     Algebra K (RatFuncInfinityIntegers K) :=
   (ratFuncInfinityConstantRingHom K).toAlgebra
@@ -142,11 +152,15 @@ local instance finiteAlgEquivInfinityClosureTorsionFreeRight :
       (RatFuncInfinityIntegralClosure K M) :=
   IsIntegralClosure.isTorsionFree (RatFuncInfinityIntegers K) M
 
+/-- The algebra structure from `K` to `(RatFuncFiniteIntegralClosure K L)` used in the
+    finite extension place alg equiv construction. -/
 local instance finiteAlgEquivFiniteClosureConstantAlgebraLeft :
     Algebra K (RatFuncFiniteIntegralClosure K L) :=
   RingHom.toAlgebra ((algebraMap K[X]
     (RatFuncFiniteIntegralClosure K L)).comp (algebraMap K K[X]))
 
+/-- The algebra structure from `K` to `(RatFuncFiniteIntegralClosure K M)` used in the
+    finite extension place alg equiv construction. -/
 local instance finiteAlgEquivFiniteClosureConstantAlgebraRight :
     Algebra K (RatFuncFiniteIntegralClosure K M) :=
   RingHom.toAlgebra ((algebraMap K[X]
@@ -162,12 +176,16 @@ local instance finiteAlgEquivFiniteClosureConstantTowerRight :
   IsScalarTower.of_algebraMap_eq'
     (R := K) (S := K[X]) (A := RatFuncFiniteIntegralClosure K M) rfl
 
+/-- The algebra structure from `K` to `(RatFuncInfinityIntegralClosure K L)` used in the
+    finite extension place alg equiv construction. -/
 local instance finiteAlgEquivInfinityClosureConstantAlgebraLeft :
     Algebra K (RatFuncInfinityIntegralClosure K L) :=
   RingHom.toAlgebra ((algebraMap (RatFuncInfinityIntegers K)
     (RatFuncInfinityIntegralClosure K L)).comp
       (algebraMap K (RatFuncInfinityIntegers K)))
 
+/-- The algebra structure from `K` to `(RatFuncInfinityIntegralClosure K M)` used in the
+    finite extension place alg equiv construction. -/
 local instance finiteAlgEquivInfinityClosureConstantAlgebraRight :
     Algebra K (RatFuncInfinityIntegralClosure K M) :=
   RingHom.toAlgebra ((algebraMap (RatFuncInfinityIntegers K)

@@ -32,6 +32,8 @@ variable (C S N : Type*) [Field C] [Fintype C]
   [FiniteDimensional (RatFunc C) N]
   [Algebra.IsSeparable (RatFunc C) N]
 
+/-- The algebra structure from `C` to `N` used in the exact constant extension rational
+    place count construction. -/
 local instance rationalCountBaseConstantAlgebra : Algebra C N :=
   bridgeBaseConstantAlgebra C N
 

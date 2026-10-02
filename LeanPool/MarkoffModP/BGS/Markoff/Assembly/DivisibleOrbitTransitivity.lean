@@ -30,7 +30,7 @@ theorem puncturedMarkoffTransitiveAt_of_small_orbitComplement_and_orbitCard_dvd
     (hsmall : orbitComplementCard x < p)
     (hdiv : ∀ y : PuncturedMarkoffSurface (ZMod p),
       p ∣ (puncturedGammaOrbit y).ncard) :
-    PuncturedMarkoffTransitiveAt p Fact.out := by
+    PuncturedMarkoffTransitiveAt p := by
   intro a b
   have hxAll : ∀ y : PuncturedMarkoffSurface (ZMod p),
       SamePuncturedComponent x y := by
@@ -62,7 +62,7 @@ theorem puncturedMarkoffTransitiveAt_of_small_orbitComplement_and_orbitCard_dvd
 /-- A `p^epsilon` giant-orbit bound with `epsilon < 1` has complement strictly smaller than `p`. -/
 theorem exists_orbitComplementCard_lt_prime_of_hasGiantOrbitAt
     (p : ℕ) (hp : p.Prime) (epsilon : ℝ) (hepsilon : epsilon < 1)
-    (hgiant : HasGiantOrbitAt p hp epsilon) :
+    (hgiant : HasGiantOrbitAt p epsilon) :
     letI : Fact p.Prime := ⟨hp⟩
     ∃ x : PuncturedMarkoffSurface (ZMod p), orbitComplementCard x < p := by
   let : Fact p.Prime := ⟨hp⟩
@@ -79,11 +79,11 @@ theorem exists_orbitComplementCard_lt_prime_of_hasGiantOrbitAt
 punctured finite-field transitivity at the given prime. -/
 theorem puncturedMarkoffTransitiveAt_of_hasGiantOrbitAt_and_orbitCard_dvd
     (p : ℕ) (hp : p.Prime) (epsilon : ℝ) (hepsilon : epsilon < 1)
-    (hgiant : HasGiantOrbitAt p hp epsilon)
+    (hgiant : HasGiantOrbitAt p epsilon)
     (hdiv : letI : Fact p.Prime := ⟨hp⟩
       ∀ y : PuncturedMarkoffSurface (ZMod p),
         p ∣ (puncturedGammaOrbit y).ncard) :
-    PuncturedMarkoffTransitiveAt p hp := by
+    PuncturedMarkoffTransitiveAt p := by
   let : Fact p.Prime := ⟨hp⟩
   obtain ⟨x, hx⟩ :=
     exists_orbitComplementCard_lt_prime_of_hasGiantOrbitAt
@@ -94,14 +94,14 @@ theorem puncturedMarkoffTransitiveAt_of_hasGiantOrbitAt_and_orbitCard_dvd
 divisibility for primes larger than three, gives eventual punctured finite-field transitivity. -/
 theorem eventually_puncturedMarkoffTransitiveAt_of_giantOrbit_and_orbitCard_dvd
     (epsilon : ℝ) (hepsilon : epsilon < 1)
-    (hgiant : ∃ p0 : ℕ, ∀ (p : ℕ) (hp : p.Prime), p0 ≤ p →
-      HasGiantOrbitAt p hp epsilon)
+    (hgiant : ∃ p0 : ℕ, ∀ (p : ℕ) (_prime : p.Prime), p0 ≤ p →
+      HasGiantOrbitAt p epsilon)
     (hdiv : ∀ (p : ℕ) (hp : p.Prime), 3 < p →
       letI : Fact p.Prime := ⟨hp⟩
       ∀ y : PuncturedMarkoffSurface (ZMod p),
         p ∣ (puncturedGammaOrbit y).ncard) :
-    ∃ p0 : ℕ, ∀ (p : ℕ) (hp : p.Prime), p0 ≤ p →
-      PuncturedMarkoffTransitiveAt p hp := by
+    ∃ p0 : ℕ, ∀ (p : ℕ) (_prime : p.Prime), p0 ≤ p →
+      PuncturedMarkoffTransitiveAt p := by
   obtain ⟨p0, hp0⟩ := hgiant
   refine ⟨max p0 4, fun p hp hple => ?_⟩
   have hp0le : p0 ≤ p := (Nat.le_max_left p0 4).trans hple
@@ -113,10 +113,10 @@ theorem eventually_puncturedMarkoffTransitiveAt_of_giantOrbit_and_orbitCard_dvd
 giant-orbit estimate with exponent below one into eventual punctured finite-field transitivity. -/
 theorem eventually_puncturedMarkoffTransitiveAt_of_giantOrbit
     (epsilon : ℝ) (hepsilon : epsilon < 1)
-    (hgiant : ∃ p0 : ℕ, ∀ (p : ℕ) (hp : p.Prime), p0 ≤ p →
-      HasGiantOrbitAt p hp epsilon) :
-    ∃ p0 : ℕ, ∀ (p : ℕ) (hp : p.Prime), p0 ≤ p →
-      PuncturedMarkoffTransitiveAt p hp := by
+    (hgiant : ∃ p0 : ℕ, ∀ (p : ℕ) (_prime : p.Prime), p0 ≤ p →
+      HasGiantOrbitAt p epsilon) :
+    ∃ p0 : ℕ, ∀ (p : ℕ) (_prime : p.Prime), p0 ≤ p →
+      PuncturedMarkoffTransitiveAt p := by
   apply eventually_puncturedMarkoffTransitiveAt_of_giantOrbit_and_orbitCard_dvd
     epsilon hepsilon hgiant
   intro p hp hpThree

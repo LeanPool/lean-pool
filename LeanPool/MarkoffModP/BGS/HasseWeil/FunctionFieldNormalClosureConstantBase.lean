@@ -67,10 +67,16 @@ constant field. -/
       (FunctionFieldNormalClosureConstantBase K L) :=
   (functionFieldNormalClosureConstantToBase K L).toAlgebra
 
+/-- The scalar action of `(FunctionFieldNormalClosureConstantField K L)` on
+    `(FunctionFieldNormalClosureConstantBase K L)` used in the function field normal closure
+    constant base construction. -/
 local instance normalClosureConstantBaseSMul :
     SMul (FunctionFieldNormalClosureConstantField K L)
       (FunctionFieldNormalClosureConstantBase K L) := Algebra.toSMul
 
+/-- The module structure of `(FunctionFieldNormalClosureConstantBase K L)` over
+    `(FunctionFieldNormalClosureConstantField K L)` used in the function field normal
+    closure constant base construction. -/
 local instance normalClosureConstantBaseModule :
     Module (FunctionFieldNormalClosureConstantField K L)
       (FunctionFieldNormalClosureConstantBase K L) := Algebra.toModule

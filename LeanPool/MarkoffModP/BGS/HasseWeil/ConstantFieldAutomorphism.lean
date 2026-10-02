@@ -40,6 +40,7 @@ section Tensor
 variable (K E L : Type*) [Field K] [Field E] [CommRing L]
   [Algebra K E] [Algebra K L]
 
+/-- An automorphism of the constant field acting on the left factor of a tensor product. -/
 noncomputable def tensorConstantAlgEquiv (σ : E ≃ₐ[K] E) :
     E ⊗[K] L ≃ₐ[K] E ⊗[K] L :=
   Algebra.TensorProduct.congr σ (AlgEquiv.refl : L ≃ₐ[K] L)
@@ -49,13 +50,13 @@ theorem tensorConstantAlgEquiv_tmul (σ : E ≃ₐ[K] E) (e : E) (x : L) :
     tensorConstantAlgEquiv K E L σ (e ⊗ₜ[K] x) = σ e ⊗ₜ[K] x := by
   rfl
 
-@[simp]
 theorem tensorConstantAlgEquiv_includeRight (σ : E ≃ₐ[K] E) (x : L) :
     tensorConstantAlgEquiv K E L σ
         (Algebra.TensorProduct.includeRight (R := K) (A := E) (B := L) x) =
       Algebra.TensorProduct.includeRight (R := K) (A := E) (B := L) x := by
   simp [Algebra.TensorProduct.includeRight_apply]
 
+/-- The homomorphism sending a constant-field automorphism to its tensor-product action. -/
 noncomputable def tensorConstantAutHom :
     (E ≃ₐ[K] E) →* (E ⊗[K] L ≃ₐ[K] E ⊗[K] L) where
   toFun := tensorConstantAlgEquiv K E L
@@ -98,12 +99,15 @@ variable (K E : Type*) [Field K] [Field E] [Algebra K E]
   (hfE : Irreducible (MvPolynomial.map (algebraMap K E) f))
   [Algebra.IsAlgebraic K E]
 
+/-- A constant-field automorphism transported to the base-changed plane-curve function field. -/
 noncomputable def planeCurveConstantAlgEquiv (σ : E ≃ₐ[K] E) :
     PlaneCurveFunctionField (MvPolynomial.map (algebraMap K E) f) ≃ₐ[K]
       PlaneCurveFunctionField (MvPolynomial.map (algebraMap K E) f) := by
   let φ := (planeCurveFunctionFieldBaseChangeAlgEquiv K E f hf hfE).restrictScalars K
   exact φ.symm.trans ((tensorConstantAlgEquiv K E (PlaneCurveFunctionField f) σ).trans φ)
 
+/-- The embedding of the original plane-curve function field into its constant-field base
+    change. -/
 noncomputable def planeCurveFunctionFieldBaseChangeAlgHom :
     PlaneCurveFunctionField f →ₐ[K]
       PlaneCurveFunctionField (MvPolynomial.map (algebraMap K E) f) :=
@@ -142,6 +146,8 @@ theorem planeCurveConstantAlgEquiv_algebraMap
   rw [tensorConstantAlgEquiv_tmul]
   exact planeCurveFunctionFieldBaseChangeAlgEquiv_tmul_one K E f hf hfE (σ e)
 
+/-- The action of constant-field automorphisms on the base-changed plane-curve function
+    field. -/
 noncomputable def planeCurveConstantAutHom :
     (E ≃ₐ[K] E) →*
       (PlaneCurveFunctionField (MvPolynomial.map (algebraMap K E) f) ≃ₐ[K]
@@ -260,6 +266,7 @@ noncomputable def planeCurveConstantAlgEquivOverBase (σ : E ≃ₐ[K] E) :
           planeCurveFunctionFieldBaseChangeAlgHom K E f hf hfE x
         exact planeCurveConstantAlgEquiv_baseChange K E f hf hfE σ x }
 
+/-- The constant-field automorphism action viewed over the embedded original function field. -/
 noncomputable def planeCurveConstantAutOverBaseHom :
     letI := planeCurveFunctionFieldBaseChangeAlgebra K E f hf hfE
     (E ≃ₐ[K] E) →*

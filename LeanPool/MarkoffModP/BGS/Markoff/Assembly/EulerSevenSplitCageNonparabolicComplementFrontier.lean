@@ -47,7 +47,7 @@ theorem
       SameNormalizedComponent
         (normalizedSurfaceOfPunctured
           (puncturedNormalizationEquiv (ZMod p) c)) z) :
-    PuncturedMarkoffTransitiveAt p Fact.out := by
+    PuncturedMarkoffTransitiveAt p := by
   have hbaseSign :
       ∀ s : EvenSign, SamePuncturedComponent c (s • c) :=
     samePuncturedComponent_evenSign_smul_of_splitCageBase

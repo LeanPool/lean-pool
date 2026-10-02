@@ -48,6 +48,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K[X]` to `L` used in the finite extension exceptional
+    support construction. -/
 local instance (priority := 10) exceptionalSupportPolynomialAlgebra : Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))
@@ -277,6 +279,8 @@ private theorem weightedSupportDegree_le_positive_add_negative
     have hone : 1 ≤ (-D i).toNat := by omega
     simpa using Nat.mul_le_mul_right (weight i) hone
 
+/-- Decidable equality on `(FiniteExtensionPlace K L)` used in the finite extension
+    exceptional support construction. -/
 local instance exceptionalSupportPlaceDecidableEq :
     DecidableEq (FiniteExtensionPlace K L) := Classical.decEq _
 
@@ -308,11 +312,11 @@ theorem finiteExtensionPrincipalDivisor_supportDegree_le_two_mul_height
     _ = _ := by omega
 
 private def finsuppWeightedNegativeDegree
-    {ι : Type*} [DecidableEq ι] (D : ι →₀ ℤ) (weight : ι → ℕ) : ℕ :=
+    {ι : Type*} (D : ι →₀ ℤ) (weight : ι → ℕ) : ℕ :=
   ∑ i ∈ D.support, (-D i).toNat * weight i
 
 private theorem finsuppWeightedNegativeDegree_eq_filter
-    {ι : Type*} [DecidableEq ι] (D : ι →₀ ℤ) (weight : ι → ℕ) :
+    {ι : Type*} (D : ι →₀ ℤ) (weight : ι → ℕ) :
     finsuppWeightedNegativeDegree D weight =
       ∑ i ∈ D.support.filter (fun i => D i < 0),
         (-D i).toNat * weight i := by
@@ -358,20 +362,22 @@ private theorem finsuppWeightedPositiveDegree_eq_filter
     _ = _ := by simp
 
 private theorem finsuppWeightedNegativeDegree_eq_sum_of_support_subset
-    {ι : Type*} [DecidableEq ι] (D : ι →₀ ℤ) (weight : ι → ℕ)
+    {ι : Type*} (D : ι →₀ ℤ) (weight : ι → ℕ)
     (s : Finset ι) (hs : D.support ⊆ s) :
     finsuppWeightedNegativeDegree D weight =
       ∑ i ∈ s, (-D i).toNat * weight i := by
+  classical
   apply Finset.sum_subset hs
   intro i _ hi
   have hzero : D i = 0 := Finsupp.notMem_support_iff.mp hi
   simp [hzero]
 
 private theorem finsuppWeightedNegativeDegree_add_le
-    {ι : Type*} [DecidableEq ι] (D E : ι →₀ ℤ) (weight : ι → ℕ) :
+    {ι : Type*} (D E : ι →₀ ℤ) (weight : ι → ℕ) :
     finsuppWeightedNegativeDegree (D + E) weight ≤
       finsuppWeightedNegativeDegree D weight +
         finsuppWeightedNegativeDegree E weight := by
+  classical
   let s := D.support ∪ E.support
   rw [finsuppWeightedNegativeDegree_eq_sum_of_support_subset
       (D + E) weight s Finsupp.support_add,

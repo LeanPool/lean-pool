@@ -117,7 +117,7 @@ theorem one_third_mul_log_rpow_le_of_prime_le_twenty_pow_cube
 the absolute constant `1 / 3`. -/
 theorem everyOrbitLargeAt_one_third
     (p : ℕ) (hp : p.Prime) (hpFive : 5 ≤ p) :
-    EveryOrbitLargeAt p hp (1 / 3 : ℝ) := by
+    EveryOrbitLargeAt p (1 / 3 : ℝ) := by
   let : Fact p.Prime := ⟨hp⟩
   intro x
   exact one_third_mul_log_rpow_le_of_prime_le_twenty_pow_cube
@@ -128,7 +128,7 @@ theorem everyOrbitLargeAt_one_third
 is completely formalized. -/
 theorem theoremOne_everyOrbitLarge :
     ∃ c : ℝ, 0 < c ∧
-      ∃ p0 : ℕ, ∀ (p : ℕ) (hp : p.Prime), p0 ≤ p → EveryOrbitLargeAt p hp c := by
+      ∃ p0 : ℕ, ∀ (p : ℕ) (_prime : p.Prime), p0 ≤ p → EveryOrbitLargeAt p c := by
   refine ⟨1 / 3, by norm_num, 5, ?_⟩
   intro p hp hpFive
   exact everyOrbitLargeAt_one_third p hp hpFive
@@ -138,7 +138,7 @@ giant-orbit conjunct. -/
 theorem theoremOneStatement_of_eventually_hasGiantOrbit
     (hgiant :
       ∀ epsilon : ℝ, 0 < epsilon →
-        ∃ p0 : ℕ, ∀ (p : ℕ) (hp : p.Prime), p0 ≤ p → HasGiantOrbitAt p hp epsilon) :
+        ∃ p0 : ℕ, ∀ (p : ℕ) (_prime : p.Prime), p0 ≤ p → HasGiantOrbitAt p epsilon) :
     TheoremOneStatement :=
   ⟨hgiant, theoremOne_everyOrbitLarge⟩
 

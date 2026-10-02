@@ -37,6 +37,8 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [IsGalois (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
+/-- The algebra structure from `C` to `N` used in the exact constant extension frobenius
+    twist bounded error construction. -/
 local instance boundedErrorBaseConstantAlgebra : Algebra C N :=
   bridgeBaseConstantAlgebra C N
 

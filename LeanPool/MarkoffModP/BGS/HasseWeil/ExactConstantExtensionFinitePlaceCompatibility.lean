@@ -53,9 +53,13 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Algebra.IsSeparable (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
+/-- The algebra structure from `C` to `N` used in the exact constant extension finite place
+    compatibility construction. -/
 local instance compatibilityBaseConstantAlgebra : Algebra C N :=
   bridgeBaseConstantAlgebra C N
 
+/-- The algebra structure from `C[X]` to `N` used in the exact constant extension finite
+    place compatibility construction. -/
 local instance compatibilityBasePolynomialAlgebra : Algebra C[X] N :=
   bridgeBasePolynomialAlgebra C N
 
@@ -67,22 +71,32 @@ local instance compatibilityBaseConstantPolynomialTower :
     IsScalarTower C C[X] N :=
   bridgeBaseConstantPolynomialTower C N
 
+/-- The algebra structure from `C[X]` to `S[X]` used in the exact constant extension finite
+    place compatibility construction. -/
 local instance compatibilityPolynomialCoefficientAlgebra :
     Algebra C[X] S[X] :=
   (Polynomial.mapRingHom (algebraMap C S)).toAlgebra
 
+/-- The algebra structure from `(RatFunc C)` to `(RatFunc S)` used in the exact constant
+    extension finite place compatibility construction. -/
 local instance compatibilityRatFuncCoefficientAlgebra :
     Algebra (RatFunc C) (RatFunc S) :=
   ratFuncCoefficientAlgebra C S
 
+/-- The algebra structure from `S[X]` to `(ExactConstantExtension C N S)` used in the exact
+    constant extension finite place compatibility construction. -/
 local instance compatibilityTargetPolynomialAlgebra :
     Algebra S[X] (ExactConstantExtension C N S) :=
   bridgeTargetPolynomialAlgebra C S N
 
+/-- The algebra structure from `S[X]` to `(S ⊗[C] integralClosure C[X] N)` used in the exact
+    constant extension finite place compatibility construction. -/
 local instance compatibilityTensorNormalizationPolynomialAlgebra :
     Algebra S[X] (S ⊗[C] integralClosure C[X] N) :=
   bridgeTensorNormalizationPolynomialAlgebra C S N
 
+/-- The algebra structure from `C` to `(integralClosure C[X] N)` used in the exact constant
+    extension finite place compatibility construction. -/
 local instance compatibilityOldNormalizationConstantAlgebra :
     Algebra C (integralClosure C[X] N) :=
   RingHom.toAlgebra
@@ -213,7 +227,6 @@ noncomputable def exactConstantExtensionCompatibleBaseFinitePlace
 
 omit [DecidableEq C] [DecidableEq S] [DecidableEq (RatFunc C)] [DecidableEq (RatFunc S)]
   [FiniteDimensional (RatFunc C) N] [Algebra.IsSeparable (RatFunc C) N] in
-@[simp]
 theorem exactConstantExtensionCompatibleBaseFinitePlace_baseChange
     (q : IsDedekindDomain.HeightOneSpectrum
       (integralClosure S[X] (ExactConstantExtension C N S))) :
@@ -728,6 +741,8 @@ variable (L : Type*) [Field L]
   [Algebra L N] [IsScalarTower (RatFunc C) L N]
   [FiniteDimensional L N] [IsGalois L N]
 
+/-- The algebra structure from `C` to `L` used in the exact constant extension finite place
+    compatibility construction. -/
 local instance compatibilityIntermediateConstantAlgebra : Algebra C L :=
   RingHom.toAlgebra ((algebraMap (RatFunc C) L).comp
     (algebraMap C (RatFunc C)))

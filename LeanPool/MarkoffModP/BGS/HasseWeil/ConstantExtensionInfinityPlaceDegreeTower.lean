@@ -87,23 +87,33 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Algebra.IsSeparable (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
+/-- Decidable equality on `C` used in the constant extension infinity place degree tower
+    construction. -/
 local instance (priority := 10000) infinityDegreeTowerDecidableEqBase :
     DecidableEq C :=
   infinityBridgeDecidableEqConstants C
 
+/-- Decidable equality on `(RatFunc C)` used in the constant extension infinity place degree
+    tower construction. -/
 local instance (priority := 10000) infinityDegreeTowerDecidableEqRatFuncBase :
     DecidableEq (RatFunc C) :=
   infinityBridgeDecidableEqRatFuncConstants C
 
+/-- Decidable equality on `S` used in the constant extension infinity place degree tower
+    construction. -/
 local instance (priority := 10000) infinityDegreeTowerDecidableEqConstants :
     DecidableEq S :=
   infinityBridgeDecidableEqConstants S
 
+/-- Classical equality on rational functions over the extended constants for the
+    infinity-place tower. -/
 local instance (priority := 10000)
     infinityDegreeTowerDecidableEqRatFuncConstants :
     DecidableEq (RatFunc S) :=
   infinityBridgeDecidableEqRatFuncConstants S
 
+/-- The constant-field algebra on the base rational function field in the infinity-place
+    tower. -/
 @[reducible] local instance infinityDegreeTowerBaseConstantAlgebra :
     Algebra C N :=
   infinityConstantAlgebra C N

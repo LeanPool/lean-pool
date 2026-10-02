@@ -71,7 +71,7 @@ theorem
       s • x ∈ puncturedComponentComplementFinset p c ↔
         x ∈ puncturedComponentComplementFinset p c)
     (hfour : 4 ∣ (puncturedComponentComplementFinset p c).card) :
-    PuncturedMarkoffTransitiveAt p Fact.out := by
+    PuncturedMarkoffTransitiveAt p := by
   classical
   have hpTwo : p ≠ 2 := by omega
   let : Fintype (quadraticFiniteField p) := Fintype.ofFinite _

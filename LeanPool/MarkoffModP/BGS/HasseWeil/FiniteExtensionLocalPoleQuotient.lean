@@ -37,6 +37,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K` to `L` used in the finite extension local pole quotient
+    construction. -/
 local instance localQuotientConstantAlgebra : Algebra K L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K (RatFunc K)))
@@ -46,6 +48,8 @@ local instance localQuotientConstantTower : IsScalarTower K (RatFunc K) L :=
 
 section FinitePlace
 
+/-- The algebra structure from `K[X]` to `L` used in the finite extension local pole
+    quotient construction. -/
 local instance (priority := 10) localQuotientPolynomialAlgebra : Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))
@@ -53,6 +57,8 @@ local instance (priority := 10) localQuotientPolynomialAlgebra : Algebra K[X] L 
 local instance localQuotientPolynomialTower : IsScalarTower K[X] (RatFunc K) L :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `K` to `(RatFuncFiniteIntegralClosure K L)` used in the
+    finite extension local pole quotient construction. -/
 local instance localQuotientFiniteClosureConstantAlgebra :
     Algebra K (RatFuncFiniteIntegralClosure K L) :=
   RingHom.toAlgebra
@@ -233,10 +239,14 @@ end FinitePlace
 
 section InfinityPlace
 
+/-- The algebra structure from `K` to `(RatFuncInfinityIntegers K)` used in the finite
+    extension local pole quotient construction. -/
 local instance localQuotientInfinityConstantAlgebra :
     Algebra K (RatFuncInfinityIntegers K) :=
   (ratFuncInfinityConstantRingHom K).toAlgebra
 
+/-- The algebra structure from `K` to `(RatFuncInfinityIntegralClosure K L)` used in the
+    finite extension local pole quotient construction. -/
 local instance localQuotientInfinityClosureConstantAlgebra :
     Algebra K (RatFuncInfinityIntegralClosure K L) :=
   RingHom.toAlgebra

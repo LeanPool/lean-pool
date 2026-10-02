@@ -116,7 +116,7 @@ theorem finrank_poweredImageOverFirst_le_twice_bidegree_of_nonzero_natCast
 /-- Prime-to-characteristic powers satisfy the exact Corvaja--Zannier
 source-to-powered-image index bound. -/
 theorem finrank_poweredImageOverFirst_le_twice_bidegree
-    {p : ℕ} [Fact p.Prime]
+    {p : ℕ}
     {K : Type*} [Field K] [CharP K p]
     {f : MvPolynomial (Fin 2) K}
     (habsolute : Irreducible

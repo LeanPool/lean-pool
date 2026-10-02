@@ -171,6 +171,7 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K` to `L` used in the one point pole semigroup construction. -/
 local instance onePointPoleSemigroupConstantAlgebra : Algebra K L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K (RatFunc K)))
@@ -206,7 +207,6 @@ def onePointPoleOrderSemigroup
 
 omit [Fintype K] in
 omit [DecidableEq K] in
-@[simp]
 theorem mem_onePointPoleOrderSemigroup_iff
     (P : FiniteExtensionPlace K L) (n : ℕ) :
     n ∈ onePointPoleOrderSemigroup K L P ↔

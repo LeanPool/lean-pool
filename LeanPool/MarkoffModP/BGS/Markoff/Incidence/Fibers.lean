@@ -54,7 +54,8 @@ def IncidenceAux (a b y lambda mu : F) : Prop :=
 open MvPolynomial
 open scoped TensorProduct
 
-noncomputable section
+noncomputable
+section
 
 /-- The first equation of the auxiliary curve, with variables `(y, lambda, mu)`. -/
 def incidenceAuxPolynomial1 {K : Type u} [Field K] (a : K) :
@@ -81,14 +82,12 @@ def IncidenceAuxGeometricallyIntegral {K : Type u} [Field K] (a b : K) : Prop :=
 
 end
 
-@[simp]
 theorem eval_incidenceAuxPolynomial1_vec
     {K : Type u} [Field K] (a y lambda mu : K) :
     aeval ![y, lambda, mu] (incidenceAuxPolynomial1 a) =
       (9 * a ^ 2 - 4) * y ^ 2 - lambda ^ 2 - 4 * a ^ 2 := by
   simp [incidenceAuxPolynomial1]
 
-@[simp]
 theorem eval_incidenceAuxPolynomial2_vec
     {K : Type u} [Field K] (b y lambda mu : K) :
     aeval ![y, lambda, mu] (incidenceAuxPolynomial2 b) =
@@ -102,7 +101,8 @@ theorem incidenceAux_iff_aeval_eq_zero
     IncidenceAux a b y lambda mu ↔
       aeval ![y, lambda, mu] (incidenceAuxPolynomial1 a) = 0 ∧
         aeval ![y, lambda, mu] (incidenceAuxPolynomial2 b) = 0 := by
-  simp [IncidenceAux, sub_eq_zero]
+  simp [IncidenceAux, eval_incidenceAuxPolynomial1_vec,
+    eval_incidenceAuxPolynomial2_vec, sub_eq_zero]
 
 /-- A chosen root of the quadratic defining the intersection of two coordinate fibers. -/
 def conicRoot (a y discriminantRoot : F) : F :=

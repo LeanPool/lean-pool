@@ -107,6 +107,7 @@ inverted. -/
 abbrev PlaneCurvePartialYLocalization (f : MvPolynomial (Fin 2) K) :=
   Localization.Away (planeCurvePartialY f)
 
+/-- The local presentation obtained by inverting the second partial derivative. -/
 def planeCurvePartialYLocalizationPreSubmersivePresentation
     (f : MvPolynomial (Fin 2) K) :
     Algebra.PreSubmersivePresentation
@@ -114,6 +115,7 @@ def planeCurvePartialYLocalizationPreSubmersivePresentation
   Algebra.PreSubmersivePresentation.localizationAway
     (PlaneCurvePartialYLocalization f) (planeCurvePartialY f)
 
+/-- The composite presentation from the plane curve to that localization. -/
 def planeCurvePartialYCompositePresentation (f : MvPolynomial (Fin 2) K) :
     Algebra.PreSubmersivePresentation K (PlaneCurvePartialYLocalization f)
       (Unit ⊕ Fin 2) (Unit ⊕ Unit) :=
@@ -740,6 +742,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 variable [DecidableEq (RatFunc K)]
 
+/-- The algebra structure from `K[X]` to `L` used in the plane smooth point normalization
+    construction. -/
 local instance (priority := 10) planeSmoothPolynomialAlgebra : Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))
@@ -748,6 +752,8 @@ local instance planeSmoothPolynomialScalarTower :
     IsScalarTower K[X] (RatFunc K) L :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `K` to `(RatFuncFiniteIntegralClosure K L)` used in the plane
+    smooth point normalization construction. -/
 local instance planeSmoothFiniteConstantAlgebra :
     Algebra K (RatFuncFiniteIntegralClosure K L) :=
   RingHom.toAlgebra ((algebraMap K[X]
@@ -893,7 +899,7 @@ theorem squareExtensionClosedPointExhaustiveFinitePlace_residue_squareFrobenius_
 
 /-- Evaluation identifies the residue field at a rational affine point with
 the ground field. -/
-noncomputable def affinePlaneCurvePoint_residueAlgEquiv
+noncomputable def affinePlaneCurvePointResidueAlgEquiv
     {f : MvPolynomial (Fin 2) K} (z : AffinePlaneCurvePoint f) :
     (affinePlaneCurvePointMaximalIdeal f z).asIdeal.ResidueField ≃ₐ[K] K := by
   let A := PlaneCurveCoordinateRing f
@@ -978,7 +984,7 @@ theorem affinePointExhaustiveFinitePlace_degree_eq_one_of_partialY
   let : Algebra K R :=
     RingHom.toAlgebra ((algebraMap B R).comp (algebraMap K B))
   let : IsScalarTower K B R := IsScalarTower.of_algebraMap_eq' rfl
-  let eCenter := affinePlaneCurvePoint_residueAlgEquiv K z
+  let eCenter := affinePlaneCurvePointResidueAlgEquiv K z
   let : Finite m.asIdeal.ResidueField :=
     Finite.of_injective eCenter eCenter.injective
   let r0 : A := planeCurveCoordinate f 0 - algebraMap K A z.1.1

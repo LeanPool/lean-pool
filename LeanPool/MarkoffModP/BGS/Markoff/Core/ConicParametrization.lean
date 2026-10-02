@@ -281,7 +281,7 @@ theorem splitRotationCycle_card_eq_rotationOrder
 /-- Consequently a finite split fiber with nonzero trace has exactly one fewer point than the
 base field. -/
 theorem splitFiber_card
-    [Finite F] (w : Fˣ) (hw : (w : F) ^ 2 ≠ 1)
+    (w : Fˣ) (hw : (w : F) ^ 2 ≠ 1)
     (htrace : splitTorusTrace w ≠ 0) :
     Nat.card ↑(normalizedFiber1 (splitTorusTrace w)) = Nat.card F - 1 := by
   rw [← Nat.card_units]

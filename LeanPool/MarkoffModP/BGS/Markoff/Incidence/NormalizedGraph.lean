@@ -665,8 +665,7 @@ theorem normalizedExceptionalIncidenceBridge_mod_one
 
 /-- A full-surface fiber bridge.  This does not yet remove the normalized origin from
 intersection witnesses, so it is intentionally not called the punctured incidence graph. -/
-def NormalizedFullSurfaceFiberBridgeAt (p : ℕ) (hp : p.Prime) : Prop :=
-  letI : Fact p.Prime := ⟨hp⟩
+def NormalizedFullSurfaceFiberBridgeAt (p : ℕ) : Prop :=
   ∀ (axis other : NormalizedCoordinateAxis) (u v : ZMod p),
     (normalizedFiberAt axis u).Nonempty →
     (normalizedFiberAt other v).Nonempty →
@@ -680,8 +679,8 @@ The proof combines the transported admissible bridge with the separately proved 
 parabolic line geometry. -/
 theorem normalizedFullSurfaceFiberBridge_mod_one
     (hHasse : ZModLegendrePointCardHasseBound) :
-    ∃ p0 : ℕ, ∀ (p : ℕ) (hp : p.Prime), p0 ≤ p → p % 4 = 1 →
-      NormalizedFullSurfaceFiberBridgeAt p hp := by
+    ∃ p0 : ℕ, ∀ (p : ℕ) (_prime : p.Prime), p0 ≤ p → p % 4 = 1 →
+      NormalizedFullSurfaceFiberBridgeAt p := by
   obtain ⟨p0, hadmissible⟩ := normalizedAdmissibleGraphBridge_mod_one hHasse
   refine ⟨p0, ?_⟩
   intro p hp hpLarge hmod

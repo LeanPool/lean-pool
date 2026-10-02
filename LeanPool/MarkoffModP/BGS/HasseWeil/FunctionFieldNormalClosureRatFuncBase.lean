@@ -33,10 +33,16 @@ variable (K L : Type*) [Field K] [Field L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The scalar action of `(FunctionFieldNormalClosureConstantField K L)` on
+    `(FunctionFieldNormalClosureConstantBase K L)` used in the function field normal closure
+    rat func base construction. -/
 local instance ratFuncBaseConstantSMul :
     SMul (FunctionFieldNormalClosureConstantField K L)
       (FunctionFieldNormalClosureConstantBase K L) := Algebra.toSMul
 
+/-- The module structure of `(FunctionFieldNormalClosureConstantBase K L)` over
+    `(FunctionFieldNormalClosureConstantField K L)` used in the function field normal
+    closure rat func base construction. -/
 local instance ratFuncBaseConstantModule :
     Module (FunctionFieldNormalClosureConstantField K L)
       (FunctionFieldNormalClosureConstantBase K L) := Algebra.toModule

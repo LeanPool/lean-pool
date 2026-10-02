@@ -39,6 +39,8 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Algebra.IsSeparable (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
+/-- The algebra structure from `C` to `N` used in the constant extension closed place
+    splitting formula construction. -/
 local instance splittingFormulaBaseConstantAlgebra : Algebra C N :=
   bridgeBaseConstantAlgebra C N
 
@@ -46,6 +48,8 @@ local instance splittingFormulaBaseConstantTower :
     IsScalarTower C (RatFunc C) N :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `S[X]` to `(ExactConstantExtension C N S)` used in the
+    constant extension closed place splitting formula construction. -/
 local instance splittingFormulaTargetPolynomialAlgebra :
     Algebra S[X] (ExactConstantExtension C N S) :=
   bridgeTargetPolynomialAlgebra C S N
@@ -186,14 +190,20 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Algebra.IsSeparable (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
+/-- Decidable equality on `(RatFunc C)` used in the constant extension closed place
+    splitting formula construction. -/
 local instance (priority := 10000) splittingFormulaBaseRatFuncDecidableEq :
     DecidableEq (RatFunc C) :=
   closedPlaceRatFuncBaseDecidableEq C
 
+/-- Decidable equality on `(RatFunc S)` used in the constant extension closed place
+    splitting formula construction. -/
 local instance (priority := 10000) splittingFormulaTargetRatFuncDecidableEq :
     DecidableEq (RatFunc S) :=
   closedPlaceRatFuncConstantsDecidableEq S
 
+/-- The algebra structure from `C` to `N` used in the constant extension closed place
+    splitting formula construction. -/
 local instance splittingFormulaInfinityBaseConstantAlgebra : Algebra C N :=
   bridgeBaseConstantAlgebra C N
 
@@ -201,6 +211,8 @@ local instance splittingFormulaInfinityBaseConstantTower :
     IsScalarTower C (RatFunc C) N :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `C[X]` to `N` used in the constant extension closed place
+    splitting formula construction. -/
 local instance splittingFormulaBaseReciprocalPolynomialAlgebra :
     Algebra C[X] N :=
   infinityBridgeBaseReciprocalPolynomialAlgebra C N
@@ -209,6 +221,8 @@ local instance splittingFormulaBaseReciprocalConstantTower :
     IsScalarTower C C[X] N :=
   infinityBridgeBaseConstantPolynomialTower C N
 
+/-- The algebra structure from `C` to `(integralClosure C[X] N)` used in the constant
+    extension closed place splitting formula construction. -/
 local instance splittingFormulaOldNormalizationConstantAlgebra :
     Algebra C (integralClosure C[X] N) :=
   infinityBridgeOldNormalizationConstantAlgebra C N
@@ -217,6 +231,8 @@ local instance splittingFormulaOldNormalizationConstantTower :
     IsScalarTower C C[X] (integralClosure C[X] N) :=
   infinityBridgeOldNormalizationConstantPolynomialTower C N
 
+/-- The algebra structure from `S[X]` to `(S ⊗[C] integralClosure C[X] N)` used in the
+    constant extension closed place splitting formula construction. -/
 local instance splittingFormulaTensorReciprocalPolynomialAlgebra :
     Algebra S[X] (S ⊗[C] integralClosure C[X] N) :=
   infinityBridgeTensorPolynomialAlgebra C S N
@@ -439,14 +455,20 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Algebra.IsSeparable (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
+/-- Decidable equality on `(RatFunc C)` used in the constant extension closed place
+    splitting formula construction. -/
 local instance (priority := 10000) globalPresentationBaseRatFuncDecidableEq :
     DecidableEq (RatFunc C) :=
   closedPlaceRatFuncBaseDecidableEq C
 
+/-- Decidable equality on `(RatFunc S)` used in the constant extension closed place
+    splitting formula construction. -/
 local instance (priority := 10000) globalPresentationTargetRatFuncDecidableEq :
     DecidableEq (RatFunc S) :=
   closedPlaceRatFuncConstantsDecidableEq S
 
+/-- The algebra structure from `C` to `N` used in the constant extension closed place
+    splitting formula construction. -/
 local instance globalPresentationBaseConstantAlgebra : Algebra C N :=
   bridgeBaseConstantAlgebra C N
 
@@ -454,6 +476,8 @@ local instance globalPresentationBaseConstantTower :
     IsScalarTower C (RatFunc C) N :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `S[X]` to `(ExactConstantExtension C N S)` used in the
+    constant extension closed place splitting formula construction. -/
 local instance globalPresentationTargetPolynomialAlgebra :
     Algebra S[X] (ExactConstantExtension C N S) :=
   bridgeTargetPolynomialAlgebra C S N

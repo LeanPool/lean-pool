@@ -32,6 +32,8 @@ open Multiplicative WithZero IsDedekindDomain
 variable (K : Type*) [Field K] [DecidableEq K]
   [DecidableEq (RatFunc K)]
 
+/-- The algebra structure from `K` to `(RatFuncInfinityIntegers K)` used in the finite
+    extension canonical global normalized automatic construction. -/
 local instance automaticInfinityConstantAlgebra :
     Algebra K (RatFuncInfinityIntegers K) :=
   (ratFuncInfinityConstantRingHom K).toAlgebra
@@ -40,6 +42,7 @@ local instance automaticInfinityConstantTower :
     IsScalarTower K (RatFuncInfinityIntegers K) (RatFunc K) :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The derivation on rational functions used to normalize the auxiliary construction. -/
 noncomputable def probeRatFuncDerivation :
     Derivation K (RatFunc K) (RatFunc K) := by
   letI : IsScalarTower K K[X] (RatFunc K) :=
@@ -177,6 +180,7 @@ theorem probeRatFuncDerivation_intDegree_le_sub_one
   simp only [N] at hdegree ⊢
   omega
 
+/-- The derivation of reciprocal rational functions used at infinity. -/
 noncomputable def probeRatFuncReciprocalDerivation :
     Derivation K (RatFunc K) (RatFunc K) :=
   (-RatFunc.X ^ 2 : RatFunc K) • probeRatFuncDerivation K
@@ -258,6 +262,7 @@ theorem probeRatFuncReciprocalDerivation_mem_infinityIntegers
   exact probeRatFuncReciprocalDerivation_intDegree_nonpositive_of_negative
     K (y : RatFunc K) hyDegree
 
+/-- The derivation induced on the infinity-place integer ring. -/
 noncomputable def probeInfinityRingDerivation :
     Derivation K (RatFuncInfinityIntegers K)
       (RatFuncInfinityIntegers K) where
@@ -302,6 +307,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
 variable {p : ℕ} [Fact p.Prime] [CharP K p] [CharP L p]
   [PerfectField K]
 
+/-- The algebra structure from `K` to `L` used in the finite extension canonical global
+    normalized automatic construction. -/
 local instance probeConstantAlgebraL : Algebra K L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K (RatFunc K)))
@@ -315,6 +322,8 @@ local instance probeInfinityConstantLTower :
   IsScalarTower.of_algebraMap_eq'
     (R := K) (S := RatFuncInfinityIntegers K) (A := L) rfl
 
+/-- The algebra structure from `K` to `(RatFuncInfinityIntegralClosure K L)` used in the
+    finite extension canonical global normalized automatic construction. -/
 local instance automaticInfinityClosureConstantAlgebra :
     Algebra K (RatFuncInfinityIntegralClosure K L) :=
   RingHom.toAlgebra
@@ -374,6 +383,8 @@ local instance probeInfinityClosureIsFractionRing :
     (RatFuncInfinityIntegers K) (RatFunc K) L
       (RatFuncInfinityIntegralClosure K L)
 
+/-- The algebra structure from `K[X]` to `L` used in the finite extension canonical global
+    normalized automatic construction. -/
 local instance (priority := 10) probePolynomialLAlgebra : Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))
@@ -387,6 +398,8 @@ local instance probePolynomialConstantLTower :
     IsScalarTower K K[X] L :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `K` to `(frobeniusSubfield L p)` used in the finite extension
+    canonical global normalized automatic construction. -/
 local instance probeFrobeniusConstantAlgebra :
     Algebra K (frobeniusSubfield L p) :=
   (perfectConstantsToFrobeniusSubfield
@@ -446,6 +459,7 @@ theorem probe_normalizedDerivation_comp_ratFunc
       probeRatFuncDerivation_algebraMap K f]
   rw [IsScalarTower.algebraMap_apply K[X] (RatFunc K) L]
 
+/-- The reciprocal derivation transported to the ambient extension field. -/
 noncomputable def probeAmbientReciprocalDerivation
     (D : Derivation (frobeniusSubfield L p) L L) :
     Derivation K L L :=

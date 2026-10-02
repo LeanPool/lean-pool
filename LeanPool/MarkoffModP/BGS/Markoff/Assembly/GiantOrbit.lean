@@ -72,7 +72,7 @@ private theorem exists_fullOrderBaseUnit (p : ℕ) [Fact p.Prime] :
 /-- For every sufficiently large prime, an explicit split conic point supplies a
 punctured base point in the selected cage. -/
 theorem exists_normalizedPunctured_splitCagePoint
-    (p : ℕ) [Fact p.Prime] [Invertible (3 : ZMod p)] (hpSeven : 7 ≤ p) :
+    (p : ℕ) [Fact p.Prime] (hpSeven : 7 ≤ p) :
     ∃ x : ↥(normalizedPuncturedSurface (ZMod p)),
       IsInSplitCage p (normalizedSurfaceOfPunctured x) := by
   obtain ⟨u, huOrder⟩ := exists_fullOrderBaseUnit p
@@ -168,8 +168,8 @@ theorem eventually_hasGiantOrbit_of_specializedEstimates
     (hNonsplitWeil : SeededNonsplitTraceWeilBoundAssumption nonsplitCoefficient)
     (cageCoefficient : ℕ) (hCageEstimate : CageWitnessPointEstimate cageCoefficient) :
     ∀ epsilon : ℝ, 0 < epsilon →
-      ∃ p0 : ℕ, ∀ (p : ℕ) (hpPrime : p.Prime), p0 ≤ p →
-        HasGiantOrbitAt p hpPrime epsilon := by
+      ∃ p0 : ℕ, ∀ (p : ℕ) (_prime : p.Prime), p0 ≤ p →
+        HasGiantOrbitAt p epsilon := by
   intro epsilon hEpsilon
   let δ : ℝ := min (epsilon / 10) (1 / 4)
   have hδ : 0 < δ := by

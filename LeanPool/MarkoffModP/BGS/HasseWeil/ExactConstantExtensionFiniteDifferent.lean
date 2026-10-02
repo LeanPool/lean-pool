@@ -45,11 +45,11 @@ theorem finiteDifferentCanonicalRatFuncPolynomialFractionRing
 
 @[reducible] private noncomputable def
     finiteDifferentCanonicalFractionRingAlgebra
-    (R : Type*) [CommRing R] [IsDomain R] :
+    (R : Type*) [CommRing R] :
     Algebra R (FractionRing R) := inferInstance
 
 private theorem finiteDifferentCanonicalFractionRing
-    (R : Type*) [CommRing R] [IsDomain R] :
+    (R : Type*) [CommRing R] :
     letI := finiteDifferentCanonicalFractionRingAlgebra R
     IsFractionRing R (FractionRing R) := by
   let := finiteDifferentCanonicalFractionRingAlgebra R
@@ -80,7 +80,6 @@ private theorem different_eq_map_of_disjoint_fields
     [IsScalarTower A F₂ L] [IsScalarTower A R₂ F₂]
     [IsScalarTower R₁ F₁ L] [IsScalarTower R₂ F₂ L]
     [Algebra.IsSeparable K F₂] [Algebra.IsSeparable F₁ L]
-    [IsLocalization (Algebra.algebraMapSubmonoid R₂ (nonZeroDivisors A)) F₂]
     (hdisjoint : F₁.LinearDisjoint F₂) (hsup : F₁ ⊔ F₂ = ⊤)
     (hcoprime : IsCoprime
       ((differentIdeal A R₁).map (algebraMap R₁ B))
@@ -166,7 +165,7 @@ theorem different_eq_map_of_linearlyDisjoint_fieldRanges
     [FiniteDimensional K K₂] [FiniteDimensional K L] [Algebra.IsSeparable K L]
     [Module.Finite A R₁] [Module.Finite A R₂] [Module.Free A R₂]
     [Module.IsTorsionFree A R₁] [Module.IsTorsionFree A R₂]
-    [Module.IsTorsionFree R₁ L] [Module.IsTorsionFree R₂ L]
+    [Module.IsTorsionFree R₂ L]
     [Module.IsTorsionFree R₁ B]
     [IsIntegralClosure R₂ A K₂] [IsIntegralClosure B R₁ L]
     (hdisjoint : (IsScalarTower.toAlgHom K K₁ L).fieldRange.LinearDisjoint
@@ -248,10 +247,14 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Algebra.IsSeparable (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
+/-- The algebra structure from `C` to `N` used in the exact constant extension finite
+    different construction. -/
 local instance finiteDifferentBaseConstantAlgebra : Algebra C N :=
   RingHom.toAlgebra ((algebraMap (RatFunc C) N).comp
     (algebraMap C (RatFunc C)))
 
+/-- The algebra structure from `C[X]` to `N` used in the exact constant extension finite
+    different construction. -/
 local instance finiteDifferentBasePolynomialAlgebra : Algebra C[X] N :=
   ratFuncInducedPolynomialAlgebra C N
 
@@ -259,13 +262,19 @@ local instance finiteDifferentBaseConstantPolynomialTower :
     IsScalarTower C C[X] N :=
   IsScalarTower.of_algebraMap_eq' (by ext c; rfl)
 
+/-- The algebra structure from `C[X]` to `S[X]` used in the exact constant extension finite
+    different construction. -/
 local instance finiteDifferentCoefficientPolynomialAlgebra :
     Algebra C[X] S[X] := Polynomial.algebra C S
 
+/-- The algebra structure from `S[X]` to `(ExactConstantExtension C N S)` used in the exact
+    constant extension finite different construction. -/
 local instance finiteDifferentTargetPolynomialAlgebra :
     Algebra S[X] (ExactConstantExtension C N S) :=
   constantExtensionTensorPolynomialAlgebra C S N
 
+/-- The algebra structure from `S[X]` to `(S ⊗[C] integralClosure C[X] N)` used in the exact
+    constant extension finite different construction. -/
 local instance finiteDifferentTensorNormalizationPolynomialAlgebra :
     Algebra S[X] (S ⊗[C] integralClosure C[X] N) :=
   constantExtensionNormalizationTensorPolynomialAlgebra C S N

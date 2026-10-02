@@ -39,7 +39,7 @@ variable {k V W₁ W₂ : Type*} [Field k]
 /-- Rank-nullity produces an auxiliary vector killed by `second` but not by
 the injective map `first`. -/
 theorem exists_auxiliary_of_finrank_lt
-    [FiniteDimensional k V] [FiniteDimensional k W₂]
+    [FiniteDimensional k W₂]
     (first : V →ₗ[k] W₁) (second : V →ₗ[k] W₂)
     (hfirst : Function.Injective first)
     (hdim : Module.finrank k W₂ < Module.finrank k V) :
@@ -60,7 +60,7 @@ theorem tensor_finrank_gt_of_bounds
     {A B W : Type*}
     [AddCommGroup A] [Module k A] [FiniteDimensional k A]
     [AddCommGroup B] [Module k B] [FiniteDimensional k B]
-    [AddCommGroup W] [Module k W] [FiniteDimensional k W]
+    [AddCommGroup W] [Module k W]
     {a b targetBound : ℕ}
     (hA : a ≤ Module.finrank k A)
     (hB : b ≤ Module.finrank k B)
@@ -76,6 +76,7 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K` to `L` used in the stepanov linear algebra construction. -/
 local instance stepanovLinearAlgebraConstantAlgebra : Algebra K L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K (RatFunc K)))
@@ -93,7 +94,7 @@ order of the first restriction at each selected place. -/
 theorem card_le_mul_placeDegree_of_stepanov_restrictions
     {V W : Type*} [AddCommGroup V] [Module K V]
     [AddCommGroup W] [Module K W]
-    [FiniteDimensional K V] [FiniteDimensional K W]
+    [FiniteDimensional K W]
     {ι : Type*} [Fintype ι]
     (P : FiniteExtensionPlace K L) (n : ℕ)
     (first : V →ₗ[K] L) (second : V →ₗ[K] W)
@@ -116,7 +117,7 @@ theorem card_le_mul_placeDegree_of_stepanov_restrictions
 theorem card_le_of_stepanov_restrictions_degree_one
     {V W : Type*} [AddCommGroup V] [Module K V]
     [AddCommGroup W] [Module K W]
-    [FiniteDimensional K V] [FiniteDimensional K W]
+    [FiniteDimensional K W]
     {ι : Type*} [Fintype ι]
     (P : FiniteExtensionPlace K L) (n : ℕ)
     (first : V →ₗ[K] L) (second : V →ₗ[K] W)

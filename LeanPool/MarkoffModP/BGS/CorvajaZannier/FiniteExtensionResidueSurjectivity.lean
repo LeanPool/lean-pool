@@ -35,6 +35,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K[X]` to `L` used in the finite extension residue
+    surjectivity construction. -/
 local instance (priority := 10) residuePolynomialAlgebra : Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))
@@ -59,6 +61,8 @@ local instance residueFiniteIntegralClosureIsTorsionFree :
     Module.IsTorsionFree K[X] (RatFuncFiniteIntegralClosure K L) :=
   IsIntegralClosure.isTorsionFree K[X] L
 
+/-- The algebra structure from `K` to `(RatFuncFiniteIntegralClosure K L)` used in the
+    finite extension residue surjectivity construction. -/
 local instance residueFiniteIntegralClosureConstantAlgebra :
     Algebra K (RatFuncFiniteIntegralClosure K L) :=
   RingHom.toAlgebra ((algebraMap K[X]
@@ -68,6 +72,8 @@ local instance residueFiniteIntegralClosureConstantTower :
     IsScalarTower K K[X] (RatFuncFiniteIntegralClosure K L) :=
   .of_algebraMap_eq' rfl
 
+/-- The algebra structure from `K` to `(RatFuncInfinityIntegers K)` used in the finite
+    extension residue surjectivity construction. -/
 local instance residueInfinityConstantAlgebra :
     Algebra K (RatFuncInfinityIntegers K) :=
   (ratFuncInfinityConstantRingHom K).toAlgebra
@@ -87,6 +93,8 @@ local instance residueInfinityIntegralClosureIsIntegral :
       (RatFuncInfinityIntegralClosure K L) :=
   IsIntegralClosure.isIntegral_algebra (RatFuncInfinityIntegers K) L
 
+/-- The algebra structure from `K` to `(RatFuncInfinityIntegralClosure K L)` used in the
+    finite extension residue surjectivity construction. -/
 local instance residueInfinityIntegralClosureConstantAlgebra :
     Algebra K (RatFuncInfinityIntegralClosure K L) :=
   RingHom.toAlgebra

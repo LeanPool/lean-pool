@@ -87,7 +87,7 @@ theorem mem_elementsWithPowOne_iff {m : ℕ} {g : G} :
 /-- Low-order elements in a cyclic group are covered by roots-of-unity sets
 indexed by maximal divisors. -/
 theorem elementsOfOrderLessThan_subset_maximalDivisorCover
-    [IsCyclic G] (bound : ℕ) :
+    (bound : ℕ) :
     (Finset.univ.filter fun g : G => orderOf g < bound) ⊆
       (maximalDivisorsBelow (Fintype.card G) bound).biUnion
         (elementsWithPowOne G) := by

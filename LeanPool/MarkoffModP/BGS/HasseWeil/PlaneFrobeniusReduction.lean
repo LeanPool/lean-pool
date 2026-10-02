@@ -120,6 +120,7 @@ section FiniteField
 
 variable (K : Type*) [Field K] [Fintype K] [DecidableEq K]
 
+/-- The affine equivalence swapping the two plane coordinates at the zero fiber. -/
 def planeSwapAffineZeroEquiv (f : MvPolynomial (Fin 2) K) :
     {z // z ∈ BGS.External.affinePlaneCurveZeros K
       (planeSwapAlgEquiv K f)} ≃

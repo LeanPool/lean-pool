@@ -71,7 +71,7 @@ theorem puncturedMarkoffTransitiveAt_of_maximalDivisor_frontier
           maximalCoordinateRotationOrder z.1 →
       SameNormalizedComponent
         (normalizedSurfaceOfPunctured (puncturedNormalizationEquiv (ZMod p) c)) z) :
-    PuncturedMarkoffTransitiveAt p Fact.out := by
+    PuncturedMarkoffTransitiveAt p := by
   classical
   have hpTwo : p ≠ 2 := by omega
   let : Fintype (quadraticFiniteField p) := Fintype.ofFinite _

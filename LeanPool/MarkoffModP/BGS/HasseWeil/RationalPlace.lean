@@ -75,6 +75,7 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
   [DecidableEq (RatFunc K)]
 
+/-- The algebra structure from `K[X]` to `L` used in the rational place construction. -/
 local instance (priority := 10) rationalPlacePolynomialAlgebra : Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))

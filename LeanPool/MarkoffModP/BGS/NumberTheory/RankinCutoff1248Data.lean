@@ -23,6 +23,7 @@ without changing the support argument.
 
 namespace BGS.NumberTheory
 
+/-- The generated positional cap table used for the cutoff at 1248. -/
 def rankinCutoff1248CapTable : RankinPositionalCapTable where
   precision := 1000000
   oddPrimeFloors :=

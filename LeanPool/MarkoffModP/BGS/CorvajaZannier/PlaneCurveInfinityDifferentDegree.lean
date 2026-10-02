@@ -156,6 +156,9 @@ local instance infinityDifferentIntegralClosureIsFractionRing :
     (RatFuncInfinityIntegers K) (RatFunc K) L
       (RatFuncInfinityIntegralClosure K L)
 
+/-- A finite enumeration of `((ratFuncInfinityPlace K).asIdeal.primesOver
+    (RatFuncInfinityIntegralClosure K L))` used in the plane curve infinity different degree
+    construction. -/
 local instance infinityDifferentPlaceFintype :
     Fintype ((ratFuncInfinityPlace K).asIdeal.primesOver
       (RatFuncInfinityIntegralClosure K L)) :=

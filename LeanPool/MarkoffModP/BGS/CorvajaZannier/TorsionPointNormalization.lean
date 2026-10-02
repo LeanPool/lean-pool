@@ -193,8 +193,7 @@ variable [IsDomain (PlaneCurveCoordinateRing f)]
 
 /-- The affine normalization of the plane-curve coordinate ring inside its
 fraction field. -/
-abbrev PlaneCurveNormalization (f : MvPolynomial (Fin 2) K)
-    [IsDomain (PlaneCurveCoordinateRing f)] :=
+abbrev PlaneCurveNormalization (f : MvPolynomial (Fin 2) K) :=
   integralClosure (PlaneCurveCoordinateRing f) (PlaneCurveFunctionField f)
 
 /-- Choose one normalization branch above an affine maximal ideal.  Lying over

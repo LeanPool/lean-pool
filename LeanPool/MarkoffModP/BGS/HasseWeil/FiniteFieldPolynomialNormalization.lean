@@ -33,6 +33,8 @@ noncomputable section
 variable (C S N : Type*) [Field C] [Field S] [Algebra C S]
   [CommRing N] [Algebra C[X] N]
 
+/-- The algebra structure from `C[X]` to `S[X]` used in the finite field polynomial
+    normalization construction. -/
 local instance finiteFieldNormalizationPolynomialCoefficientAlgebra :
     Algebra C[X] S[X] :=
   Polynomial.algebra C S

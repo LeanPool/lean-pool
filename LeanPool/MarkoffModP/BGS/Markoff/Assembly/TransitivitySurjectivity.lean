@@ -232,7 +232,7 @@ theorem surfaceRoot_ne_surfaceOrigin (R : Type*) [CommRing R] [Nontrivial R] :
 
 /-- Finite-field transitivity implies surjectivity of reduction from natural-number solutions. -/
 theorem markoffReduction_surjective_of_puncturedMarkoffTransitiveAt
-    (p : ℕ) (hp : p.Prime) (htransitive : PuncturedMarkoffTransitiveAt p hp) :
+    (p : ℕ) (hp : p.Prime) (htransitive : PuncturedMarkoffTransitiveAt p) :
     Function.Surjective (markoffReduction p) := by
   let : Fact p.Prime := ⟨hp⟩
   change ∀ x y : PuncturedMarkoffSurface (ZMod p),
@@ -263,7 +263,7 @@ theorem markoffReduction_surjective_of_puncturedMarkoffTransitiveAt
 connectivity of nonzero natural Markoff solutions is the essential input in this direction. -/
 theorem puncturedMarkoffTransitiveAt_of_markoffReduction_surjective
     (p : ℕ) (hp : p.Prime) (hsurjective : Function.Surjective (markoffReduction p)) :
-    PuncturedMarkoffTransitiveAt p hp := by
+    PuncturedMarkoffTransitiveAt p := by
   let : Fact p.Prime := ⟨hp⟩
   change ∀ x y : PuncturedMarkoffSurface (ZMod p),
     ∃ g : Gamma (ZMod p), g • x = y
@@ -311,7 +311,7 @@ theorem puncturedMarkoffTransitiveAt_of_markoffReduction_surjective
 statement used by the BGS dynamical proof. -/
 theorem puncturedMarkoffTransitiveAt_iff_markoffReduction_surjective
     (p : ℕ) (hp : p.Prime) :
-    PuncturedMarkoffTransitiveAt p hp ↔ Function.Surjective (markoffReduction p) :=
+    PuncturedMarkoffTransitiveAt p ↔ Function.Surjective (markoffReduction p) :=
   ⟨markoffReduction_surjective_of_puncturedMarkoffTransitiveAt p hp,
     puncturedMarkoffTransitiveAt_of_markoffReduction_surjective p hp⟩
 
@@ -319,7 +319,7 @@ theorem puncturedMarkoffTransitiveAt_iff_markoffReduction_surjective
 approximation.  Natural Markoff connectivity is the essential input from right to left. -/
 theorem puncturedMarkoffTransitiveAt_iff_strongApproximationAt
     (p : ℕ) (hp : p.Prime) :
-    PuncturedMarkoffTransitiveAt p hp ↔ StrongApproximationAt p :=
+    PuncturedMarkoffTransitiveAt p ↔ StrongApproximationAt p :=
   (puncturedMarkoffTransitiveAt_iff_markoffReduction_surjective p hp).trans
     (strongApproximationAt_iff_markoffReduction_surjective p).symm
 

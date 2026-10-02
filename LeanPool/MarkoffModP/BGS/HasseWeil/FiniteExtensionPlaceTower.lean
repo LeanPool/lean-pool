@@ -45,10 +45,14 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
   [Algebra M L] [IsScalarTower (RatFunc K) M L]
 
+/-- The algebra structure from `K[X]` to `M` used in the finite extension place tower
+    construction. -/
 local instance (priority := 10) finitePlaceTowerPolynomialAlgebraM : Algebra K[X] M :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) M).comp
     (algebraMap K[X] (RatFunc K)))
 
+/-- The algebra structure from `K[X]` to `L` used in the finite extension place tower
+    construction. -/
 local instance (priority := 10) finitePlaceTowerPolynomialAlgebraL : Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))
@@ -75,6 +79,9 @@ def finiteIntegralClosureMap :
       RatFuncFiniteIntegralClosure K L :=
   (IsScalarTower.toAlgHom K[X] M L).mapIntegralClosure
 
+/-- The algebra structure from `(RatFuncFiniteIntegralClosure K M)` to
+    `(RatFuncFiniteIntegralClosure K L)` used in the finite extension place tower
+    construction. -/
 local instance finitePlaceTowerIntegralClosureAlgebra :
     Algebra (RatFuncFiniteIntegralClosure K M)
       (RatFuncFiniteIntegralClosure K L) :=
@@ -217,6 +224,9 @@ def infinityIntegralClosureMap :
       RatFuncInfinityIntegralClosure K L :=
   (IsScalarTower.toAlgHom (RatFuncInfinityIntegers K) M L).mapIntegralClosure
 
+/-- The algebra structure from `(RatFuncInfinityIntegralClosure K M)` to
+    `(RatFuncInfinityIntegralClosure K L)` used in the finite extension place tower
+    construction. -/
 local instance infinityPlaceTowerIntegralClosureAlgebra :
     Algebra (RatFuncInfinityIntegralClosure K M)
       (RatFuncInfinityIntegralClosure K L) :=

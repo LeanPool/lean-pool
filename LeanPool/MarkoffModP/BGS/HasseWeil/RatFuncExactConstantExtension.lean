@@ -43,6 +43,8 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Algebra (RatFunc C) N] [Algebra C S]
   [FiniteDimensional C S] [IsGalois C S]
 
+/-- The algebra structure from `C` to `N` used in the rat func exact constant extension
+    construction. -/
 local instance constantAlgebra : Algebra C N :=
   RingHom.toAlgebra ((algebraMap (RatFunc C) N).comp
     (algebraMap C (RatFunc C)))
@@ -57,13 +59,19 @@ private theorem canonicalRatFuncFractionRing :
   let := canonicalRatFuncPolynomialAlgebra C
   infer_instance
 
+/-- The algebra structure from `C[X]` to `N` used in the rat func exact constant extension
+    construction. -/
 local instance polynomialAlgebra : Algebra C[X] N :=
   RingHom.toAlgebra ((algebraMap (RatFunc C) N).comp
     (algebraMap C[X] (RatFunc C)))
 
+/-- The algebra structure from `C[X]` to `S[X]` used in the rat func exact constant
+    extension construction. -/
 local instance ratFuncCoefficientPolynomialAlgebra : Algebra C[X] S[X] :=
   Polynomial.algebra C S
 
+/-- The module structure of `S[X]` over `C[X]` used in the rat func exact constant extension
+    construction. -/
 local instance coefficientPolynomialModule : Module C[X] S[X] :=
   Algebra.toModule
 
@@ -87,6 +95,8 @@ private theorem polynomialAlgebraMap_injective :
   exact (algebraMap (RatFunc C) N).injective.comp
     (RatFunc.algebraMap_injective C)
 
+/-- The algebra structure from `S[X]` to `(ExactConstantExtension C N S)` used in the rat
+    func exact constant extension construction. -/
 local instance targetPolynomialAlgebra :
     Algebra S[X] (ExactConstantExtension C N S) :=
   polynomialTensorCancelTargetPolynomialExtensionAlgebra C S N

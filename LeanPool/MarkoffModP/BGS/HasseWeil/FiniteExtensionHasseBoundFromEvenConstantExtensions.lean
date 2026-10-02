@@ -95,6 +95,8 @@ variable (C N : Type*) [Field C] [Fintype C]
   [FiniteDimensional (RatFunc C) N]
   [Algebra.IsSeparable (RatFunc C) N]
 
+/-- The algebra structure from `C` to `N` used in the finite extension hasse bound from even
+    constant extensions construction. -/
 local instance evenConstantExtensionBaseConstantAlgebra : Algebra C N :=
   bridgeBaseConstantAlgebra C N
 

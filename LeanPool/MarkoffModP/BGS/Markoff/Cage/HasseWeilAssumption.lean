@@ -27,7 +27,7 @@ noncomputable section
 
 /-- The selected cage core consists of split-maximal normalized traces.  This is sufficient for
 Theorem 1 because the endgame constructed in this repository always reaches order `p - 1`. -/
-def IsSplitMaximalTrace (p : ℕ) [Fact p.Prime] (t : ZMod p) : Prop :=
+def IsSplitMaximalTrace (p : ℕ) (t : ZMod p) : Prop :=
   rotationOrder t = p - 1
 
 /-- Choose an axis different from both prescribed axes. -/
@@ -71,7 +71,7 @@ def CageMiddleTraceRelation
 
 /-- A pair of actual intersection witnesses over a common middle trace. -/
 def CageMiddleWitnessPair
-    (p : ℕ) [Fact p.Prime]
+    (p : ℕ)
     (axis other : NormalizedCoordinateAxis) (xi eta : ZMod p) :=
   {z : NormalizedPoint (ZMod p) × NormalizedPoint (ZMod p) //
     z.1 ∈ normalizedFiberAt axis xi ∧
@@ -81,7 +81,7 @@ def CageMiddleWitnessPair
 
 /-- The common middle coordinate of a witness pair. -/
 def cageMiddleWitnessTrace
-    {p : ℕ} [Fact p.Prime]
+    {p : ℕ}
     {axis other : NormalizedCoordinateAxis} {xi eta : ZMod p}
     (z : CageMiddleWitnessPair p axis other xi eta) : ZMod p :=
   normalizedCoordinateAt (cageBridgeAxis axis other) z.1.1

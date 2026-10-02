@@ -310,6 +310,7 @@ theorem twelve_lt_auxiliaryTripleCount
   dsimp [BGS.FiniteField.ellipticCubicCharacterSum] at htrace
   omega
 
+omit [DecidableEq F] in
 /-- Hasse's bound for the explicit elliptic model yields an auxiliary point away from any three
 forbidden first coordinates. -/
 theorem exists_auxiliary_triple_away_from_three

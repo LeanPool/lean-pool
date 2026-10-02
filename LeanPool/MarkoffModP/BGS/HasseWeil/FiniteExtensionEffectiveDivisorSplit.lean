@@ -267,7 +267,7 @@ theorem finiteExtensionEffectiveInfinityDivisor_apply_le_degree
       (fun _ _ => Nat.zero_le _) P)
 
 /-- Effective infinity divisors of a fixed degree form a finite type. -/
-noncomputable instance finiteExtensionEffectiveInfinityDivisorsOfDegree_fintype
+noncomputable instance finiteExtensionEffectiveInfinityDivisorsOfDegreeFintype
     (n : ℕ) :
     Fintype {D : FiniteExtensionEffectiveInfinityDivisor K L //
       finiteExtensionEffectiveInfinityDivisorDegree K L D = n} := by
@@ -363,7 +363,7 @@ def finiteExtensionEffectiveDivisorSplitFiberEquiv (n : ℕ) (m : Fin (n + 1)) :
   right_inv D := by
     apply Prod.ext <;> apply Subtype.ext <;> rfl
 
-noncomputable instance finiteExtensionEffectiveDivisorSplitFiber_fintype
+noncomputable instance finiteExtensionEffectiveDivisorSplitFiberFintype
     (n : ℕ) (m : Fin (n + 1)) :
     Fintype {D : (FiniteExtensionFinitePlace K L →₀ ℕ) ×
         FiniteExtensionEffectiveInfinityDivisor K L //
@@ -373,7 +373,7 @@ noncomputable instance finiteExtensionEffectiveDivisorSplitFiber_fintype
     (finiteExtensionEffectiveDivisorSplitFiberEquiv K L n m).symm
 
 /-- Effective exhaustive divisors of fixed degree form a finite type. -/
-noncomputable instance finiteExtensionEffectiveDivisorsOfDegree_fintype
+noncomputable instance finiteExtensionEffectiveDivisorsOfDegreeFintype
     (n : ℕ) :
     Fintype {D : FiniteExtensionEffectiveDivisor K L //
       finiteExtensionEffectiveDivisorDegree K L D = n} :=

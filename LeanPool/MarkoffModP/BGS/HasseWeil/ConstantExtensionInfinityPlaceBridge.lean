@@ -69,13 +69,19 @@ private theorem canonicalRatFunc_div_surjective (z : RatFunc K) :
   obtain ⟨p, q, hq, h⟩ := IsFractionRing.div_surjective K[X] z
   exact ⟨p, q, nonZeroDivisors.ne_zero hq, h.symm⟩
 
+/-- The algebra structure from `K[X]` to `(RatFunc K)` used in the constant extension
+    infinity place bridge construction. -/
 local instance reciprocalRatFuncPolynomialAlgebra :
     Algebra K[X] (RatFunc K) :=
   ratFuncExtensionReciprocalPolynomialAlgebra K (RatFunc K)
 
+/-- The scalar action of `K[X]` on `(RatFunc K)` used in the constant extension infinity
+    place bridge construction. -/
 local instance reciprocalRatFuncPolynomialSMul : SMul K[X] (RatFunc K) :=
   Algebra.toSMul
 
+/-- The module structure of `(RatFunc K)` over `K[X]` used in the constant extension
+    infinity place bridge construction. -/
 local instance reciprocalRatFuncPolynomialModule : Module K[X] (RatFunc K) :=
   Algebra.toModule
 
@@ -366,17 +372,29 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Algebra.IsSeparable (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
+/-- Decidable equality on `C` used in the constant extension infinity place bridge
+    construction. -/
 local instance infinityBridgeDecidableEqBase : DecidableEq C := Classical.decEq C
+/-- Decidable equality on `S` used in the constant extension infinity place bridge
+    construction. -/
 local instance infinityBridgeDecidableEqConstants : DecidableEq S := Classical.decEq S
+/-- Decidable equality on `(RatFunc C)` used in the constant extension infinity place bridge
+    construction. -/
 local instance infinityBridgeDecidableEqRatFuncBase : DecidableEq (RatFunc C) :=
   Classical.decEq (RatFunc C)
+/-- Decidable equality on `(RatFunc S)` used in the constant extension infinity place bridge
+    construction. -/
 local instance infinityBridgeDecidableEqRatFuncConstants : DecidableEq (RatFunc S) :=
   Classical.decEq (RatFunc S)
 
+/-- The algebra structure from `C` to `N` used in the constant extension infinity place
+    bridge construction. -/
 local instance infinityBridgeBaseConstantAlgebra : Algebra C N :=
   RingHom.toAlgebra ((algebraMap (RatFunc C) N).comp
     (algebraMap C (RatFunc C)))
 
+/-- The algebra structure from `C[X]` to `N` used in the constant extension infinity place
+    bridge construction. -/
 local instance infinityBridgeBaseReciprocalPolynomialAlgebra : Algebra C[X] N :=
   ratFuncExtensionReciprocalPolynomialAlgebra C N
 
@@ -391,6 +409,8 @@ local instance infinityBridgeBaseConstantPolynomialTower :
     rw [reciprocalPolynomialRingHom_coe]
     simp)
 
+/-- The algebra structure from `C` to `(integralClosure C[X] N)` used in the constant
+    extension infinity place bridge construction. -/
 local instance infinityBridgeOldNormalizationConstantAlgebra :
     Algebra C (integralClosure C[X] N) :=
   RingHom.toAlgebra
@@ -401,15 +421,21 @@ local instance infinityBridgeOldNormalizationConstantPolynomialTower :
     IsScalarTower C C[X] (integralClosure C[X] N) :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `S[X]` to `(S ⊗[C] integralClosure C[X] N)` used in the
+    constant extension infinity place bridge construction. -/
 local instance infinityBridgeTensorPolynomialAlgebra :
     Algebra S[X] (S ⊗[C] integralClosure C[X] N) :=
   polynomialTensorCancelTargetPolynomialExtensionAlgebra C S
     (integralClosure C[X] N)
 
+/-- The algebra structure from `S` to `(S ⊗[C] integralClosure C[X] N)` used in the constant
+    extension infinity place bridge construction. -/
 local instance infinityBridgeTensorConstantAlgebra :
     Algebra S (S ⊗[C] integralClosure C[X] N) :=
   Algebra.TensorProduct.leftAlgebra
 
+/-- The algebra structure from `(integralClosure C[X] N)` to `(S ⊗[C] integralClosure C[X]
+    N)` used in the constant extension infinity place bridge construction. -/
 local instance infinityBridgeTensorOldNormalizationAlgebra :
     Algebra (integralClosure C[X] N)
       (S ⊗[C] integralClosure C[X] N) :=
@@ -462,10 +488,14 @@ theorem exactConstantExtensionInfinityDownstairsIdeal_under
   rw [hqOrigin]
   exact SetLike.ext_iff.mp (coefficientPolynomial_under_span_X C S) r
 
+/-- The algebra structure from `C[X]` to `(RatFuncInfinityIntegers C)` used in the constant
+    extension infinity place bridge construction. -/
 local instance infinityBridgeBaseInfinityPolynomialAlgebra :
     Algebra C[X] (RatFuncInfinityIntegers C) :=
   ratFuncInfinityReciprocalPolynomialAlgebra C
 
+/-- The algebra structure from `C` to `(RatFuncInfinityIntegers C)` used in the constant
+    extension infinity place bridge construction. -/
 local instance infinityBridgeBaseInfinityConstantAlgebra :
     Algebra C (RatFuncInfinityIntegers C) :=
   (ratFuncInfinityConstantRingHom C).toAlgebra
@@ -480,10 +510,15 @@ local instance infinityBridgeBaseInfinityLocalization :
       (RatFuncInfinityIntegers C) :=
   ratFuncInfinityIntegers_isLocalization_reciprocal C
 
+/-- The algebra structure from `(integralClosure C[X] N)` to
+    `(RatFuncInfinityIntegralClosure C N)` used in the constant extension infinity place
+    bridge construction. -/
 local instance infinityBridgeOldNormalizationInfinityAlgebra :
     Algebra (integralClosure C[X] N) (RatFuncInfinityIntegralClosure C N) :=
   ratFuncInfinityReciprocalIntegralClosureAlgebra C N
 
+/-- The scalar action of `(integralClosure C[X] N)` on `(RatFuncInfinityIntegralClosure C
+    N)` used in the constant extension infinity place bridge construction. -/
 local instance infinityBridgeOldNormalizationInfinitySMul :
     SMul (integralClosure C[X] N) (RatFuncInfinityIntegralClosure C N) :=
   Algebra.toSMul
@@ -495,6 +530,8 @@ local instance infinityBridgeOldNormalizationInfinityLocalization :
       (RatFuncInfinityIntegralClosure C N) :=
   ratFuncInfinityIntegralClosure_isLocalization_reciprocal C N
 
+/-- The algebra structure from `C[X]` to `(RatFuncInfinityIntegralClosure C N)` used in the
+    constant extension infinity place bridge construction. -/
 local instance infinityBridgeBasePolynomialInfinityAlgebra :
     Algebra C[X] (RatFuncInfinityIntegralClosure C N) :=
   RingHom.toAlgebra
@@ -502,6 +539,8 @@ local instance infinityBridgeBasePolynomialInfinityAlgebra :
       (RatFuncInfinityIntegralClosure C N)).comp
         (algebraMap C[X] (RatFuncInfinityIntegers C)))
 
+/-- The algebra structure from `C` to `(RatFuncInfinityIntegralClosure C N)` used in the
+    constant extension infinity place bridge construction. -/
 local instance infinityBridgeInfinityConstantAlgebra :
     Algebra C (RatFuncInfinityIntegralClosure C N) :=
   RingHom.toAlgebra

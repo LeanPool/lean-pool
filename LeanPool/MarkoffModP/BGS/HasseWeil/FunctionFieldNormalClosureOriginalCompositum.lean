@@ -30,7 +30,8 @@ open scoped Polynomial TensorProduct
 
 namespace BGS.HasseWeil
 
-noncomputable section
+noncomputable
+section
 
 
 variable (K F : Type*) [Field K] [Field F]
@@ -41,9 +42,13 @@ variable (K F : Type*) [Field K] [Field F]
   [FiniteDimensional (RatFunc K) F]
   [Algebra.IsSeparable (RatFunc K) F]
 
+/-- The scalar action of `K` on `(FunctionFieldNormalClosure K F)` used in the function
+    field normal closure original compositum construction. -/
 local instance originalCompositumNormalClosureSMul :
     SMul K (FunctionFieldNormalClosure K F) := Algebra.toSMul
 
+/-- The module structure of `(FunctionFieldNormalClosure K F)` over `K` used in the function
+    field normal closure original compositum construction. -/
 local instance originalCompositumNormalClosureModule :
     Module K (FunctionFieldNormalClosure K F) := Algebra.toModule
 
@@ -51,16 +56,26 @@ local instance originalCompositumNormalClosureSelfTower :
     IsScalarTower K K (FunctionFieldNormalClosure K F) :=
   ⟨fun x y z => (smul_smul x y z).symm⟩
 
+/-- The scalar action of `K` on `(FunctionFieldNormalClosureConstantField K F)` used in the
+    function field normal closure original compositum construction. -/
 local instance originalCompositumBaseConstantSMul :
     SMul K (FunctionFieldNormalClosureConstantField K F) := Algebra.toSMul
 
+/-- The module structure of `(FunctionFieldNormalClosureConstantField K F)` over `K` used in
+    the function field normal closure original compositum construction. -/
 local instance originalCompositumBaseConstantModule :
     Module K (FunctionFieldNormalClosureConstantField K F) := Algebra.toModule
 
+/-- The scalar action of `(FunctionFieldNormalClosureConstantField K F)` on
+    `(FunctionFieldNormalClosureConstantBase K F)` used in the function field normal closure
+    original compositum construction. -/
 local instance originalCompositumConstantBaseSMul :
     SMul (FunctionFieldNormalClosureConstantField K F)
       (FunctionFieldNormalClosureConstantBase K F) := Algebra.toSMul
 
+/-- The module structure of `(FunctionFieldNormalClosureConstantBase K F)` over
+    `(FunctionFieldNormalClosureConstantField K F)` used in the function field normal
+    closure original compositum construction. -/
 local instance originalCompositumConstantBaseModule :
     Module (FunctionFieldNormalClosureConstantField K F)
       (FunctionFieldNormalClosureConstantBase K F) := Algebra.toModule
@@ -154,11 +169,13 @@ noncomputable def functionFieldNormalClosureConstantToOriginalCompositum
       (FunctionFieldNormalClosureOriginalCompositum K F hExact) :=
   (functionFieldNormalClosureConstantToOriginalCompositum K F hExact).toAlgebra
 
+/-- The constant-field scalar action on the original compositum. -/
 local instance originalCompositumConstantSMul
     (hExact : algebraicClosure K F = (⊥ : IntermediateField K F)) :
     SMul (FunctionFieldNormalClosureConstantField K F)
       (FunctionFieldNormalClosureOriginalCompositum K F hExact) := Algebra.toSMul
 
+/-- The corresponding module structure on the original compositum. -/
 local instance originalCompositumConstantModule
     (hExact : algebraicClosure K F = (⊥ : IntermediateField K F)) :
     Module (FunctionFieldNormalClosureConstantField K F)
@@ -392,7 +409,8 @@ theorem functionFieldNormalClosureOriginalCompositumConstantField_isExact
 
 end
 
-noncomputable section
+noncomputable
+section
 
 section CanonicalConstantPresentation
 

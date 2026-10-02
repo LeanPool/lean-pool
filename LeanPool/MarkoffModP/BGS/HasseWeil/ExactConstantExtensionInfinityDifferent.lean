@@ -36,12 +36,18 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Algebra.IsSeparable (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
+/-- The algebra structure from `C` to `N` used in the exact constant extension infinity
+    different construction. -/
 local instance exactConstantExtensionInfinityDifferentBaseConstantAlgebra : Algebra C N :=
   RingHom.toAlgebra ((algebraMap (RatFunc C) N).comp
     (algebraMap C (RatFunc C)))
 
+/-- Decidable equality on `(RatFunc C)` used in the exact constant extension infinity
+    different construction. -/
 local instance exactConstantExtensionInfinityDifferentDecidableEqBaseRatFunc :
     DecidableEq (RatFunc C) := Classical.decEq _
+/-- Decidable equality on `(RatFunc S)` used in the exact constant extension infinity
+    different construction. -/
 local instance exactConstantExtensionInfinityDifferentDecidableEqExtendedRatFunc :
     DecidableEq (RatFunc S) := Classical.decEq _
 
@@ -49,8 +55,7 @@ variable (hExact : algebraicClosure C N =
   (⊥ : IntermediateField C N))
 
 /-- The ambient constant-extension embedding restricts to the infinity integral closures. -/
-noncomputable def exactConstantExtensionInfinityDifferentNormalizationRingHom
-    [Fintype C] [Finite S] :
+noncomputable def exactConstantExtensionInfinityDifferentNormalizationRingHom :
     let L := ExactConstantExtension C N S
     let : Field L := exactConstantExtensionField C N S hExact
     let : Algebra (RatFunc C) L :=
@@ -147,8 +152,7 @@ noncomputable def exactConstantExtensionInfinityDifferentNormalizationRingHom
 after exact constant extension through the canonical embedding of the
 original function field. -/
 @[reducible] noncomputable def
-    exactConstantExtensionInfinityNormalizationAlgebra
-    [Fintype C] [Finite S] :
+    exactConstantExtensionInfinityNormalizationAlgebra :
     let L := ExactConstantExtension C N S
     let : Field L := exactConstantExtensionField C N S hExact
     let : Algebra (RatFunc C) L :=
@@ -174,7 +178,6 @@ omit [FiniteDimensional (RatFunc C) N]
 /-- The infinity-normalization algebra map is the ambient embedding of the
 original function field into the exact constant extension. -/
 theorem exactConstantExtensionInfinityNormalizationAlgebra_coe
-    [Fintype C] [Finite S]
     (x :
       let L := ExactConstantExtension C N S
       let : Field L := exactConstantExtensionField C N S hExact
@@ -217,8 +220,7 @@ theorem exactConstantExtensionInfinityNormalizationAlgebra_coe
 /-- Changing the infinity coefficient valuation ring from `C` to `S` does
 not change the integral closure inside an exact constant extension.  The
 underlying ring equivalence is the identity on the ambient function field. -/
-noncomputable def exactConstantExtensionInfinityNormalizationBaseChangeRingEquiv
-    [Fintype C] [Finite S] :
+noncomputable def exactConstantExtensionInfinityNormalizationBaseChangeRingEquiv :
     let L := ExactConstantExtension C N S
     let : Field L := exactConstantExtensionField C N S hExact
     let : Algebra (RatFunc C) L :=
@@ -271,7 +273,6 @@ omit [FiniteDimensional (RatFunc C) N] [Algebra.IsSeparable (RatFunc C) N] in
 /-- The infinity-normalization base-change equivalence preserves the ambient
 function-field element. -/
 theorem exactConstantExtensionInfinityNormalizationBaseChangeRingEquiv_coe
-    [Fintype C] [Finite S]
     (x :
       let L := ExactConstantExtension C N S
       let : Field L := exactConstantExtensionField C N S hExact
@@ -292,8 +293,7 @@ theorem exactConstantExtensionInfinityNormalizationBaseChangeRingEquiv_coe
 
 /-- In an exact finite constant extension, the infinity different of the
 extended normalization is the extension of the original infinity different. -/
-theorem exactConstantExtension_infinityDifferent_eq_map
-    [Fintype C] [Finite S] :
+theorem exactConstantExtension_infinityDifferent_eq_map :
     let L := ExactConstantExtension C N S
     let A := RatFuncInfinityIntegers C
     let R₁ := RatFuncInfinityIntegers S

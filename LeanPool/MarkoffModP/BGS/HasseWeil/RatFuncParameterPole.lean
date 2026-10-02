@@ -43,6 +43,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K[X]` to `L` used in the rat func parameter pole
+    construction. -/
 local instance (priority := 10) ratFuncParameterPolynomialAlgebra :
     Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
@@ -101,6 +103,8 @@ local instance ratFuncParameterInfinityIntegralClosureIsFractionRing :
     (RatFuncInfinityIntegers K) (RatFunc K) L
       (RatFuncInfinityIntegralClosure K L)
 
+/-- A finite enumeration of `(FiniteExtensionInfinityPlace K L)` used in the rat func
+    parameter pole construction. -/
 local instance ratFuncParameterInfinityPlaceFintype :
     Fintype (FiniteExtensionInfinityPlace K L) :=
   Set.Finite.fintype

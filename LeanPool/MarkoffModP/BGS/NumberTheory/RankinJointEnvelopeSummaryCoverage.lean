@@ -43,6 +43,7 @@ def Dominates (summary : RankinJointEnvelopeSummary)
   actual.jointEnvelopeFailureSquare <= summary.failureSquareUpper /\
     summary.lowerNeighborProductFloor <= actual.jointLowerNeighborProduct
 
+/-- The Boolean check that a compressed envelope summary dominates a profile. -/
 def dominatesCheck (summary : RankinJointEnvelopeSummary)
     (actual : RankinNeighborProfile) : Bool :=
   decide
@@ -59,10 +60,12 @@ def ExcludesFailure (summary : RankinJointEnvelopeSummary) : Prop :=
   summary.failureSquareUpper ^ 2 <
     (64 * summary.lowerNeighborProductFloor : Nat)
 
+/-- A compressed envelope summary is a valid leaf at the given cutoff. -/
 def LeafValid
     (summary : RankinJointEnvelopeSummary) (cutoff : Nat) : Prop :=
   summary.ClosesCutoff cutoff \/ summary.ExcludesFailure
 
+/-- The Boolean check of a compressed envelope summary leaf. -/
 def leafCheck
     (summary : RankinJointEnvelopeSummary) (cutoff : Nat) : Bool :=
   decide
@@ -134,6 +137,7 @@ theorem jointEnvelope_leaf_of_dominates
 
 end RankinJointEnvelopeSummary
 
+/-- Every generated compressed envelope summary satisfies its leaf condition. -/
 def allRankinJointEnvelopeSummariesValid
     (cutoff : Nat) : List RankinJointEnvelopeSummary -> Prop
   | [] => True
@@ -141,6 +145,7 @@ def allRankinJointEnvelopeSummariesValid
       summary.LeafValid cutoff /\
         allRankinJointEnvelopeSummariesValid cutoff summaries
 
+/-- The Boolean check that all compressed envelope summaries are valid. -/
 def allRankinJointEnvelopeSummariesCheck
     (cutoff : Nat) : List RankinJointEnvelopeSummary -> Bool
   | [] => true
@@ -176,15 +181,19 @@ private theorem summaryLeafValid_of_all_of_mem
 
 /-- Pure scalar data for a compressed domination cover. -/
 structure RankinJointEnvelopeSummaryCertificate where
+  /-- The cutoff certified by the compressed envelope summaries. -/
   cutoff : Nat
+  /-- The finite list of compressed summaries used by the certificate. -/
   summaries : List RankinJointEnvelopeSummary
   deriving DecidableEq, Repr
 
 namespace RankinJointEnvelopeSummaryCertificate
 
+/-- All compressed summaries in the certificate satisfy their leaf conditions. -/
 def LeavesValid (cert : RankinJointEnvelopeSummaryCertificate) : Prop :=
   allRankinJointEnvelopeSummariesValid cert.cutoff cert.summaries
 
+/-- The Boolean check of the compressed-summary certificate. -/
 def check (cert : RankinJointEnvelopeSummaryCertificate) : Bool :=
   allRankinJointEnvelopeSummariesCheck cert.cutoff cert.summaries
 

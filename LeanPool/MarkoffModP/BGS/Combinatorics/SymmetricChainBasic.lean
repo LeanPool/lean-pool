@@ -29,10 +29,15 @@ namespace BGS.Combinatorics
 /-- An explicit symmetric-chain decomposition of a ranked partial order. -/
 structure SymmetricChainDecomposition
     (P : Type*) [PartialOrder P] (rank : P → ℕ) (total : ℕ) where
+  /-- The finite type indexing the chains of the decomposition. -/
   Key : Type
+  /-- Finiteness of the chain index type. -/
   [keyFintype : Fintype Key]
+  /-- The rank at which each chain begins. -/
   start : Key → ℕ
+  /-- The number of steps from the first to the last point of each chain. -/
   length : Key → ℕ
+  /-- An equivalence identifying each point with a chain key and a position on that chain. -/
   equiv : P ≃ Σ key : Key, Fin (length key + 1)
   rank_decode :
     ∀ point : Σ key : Key, Fin (length key + 1),

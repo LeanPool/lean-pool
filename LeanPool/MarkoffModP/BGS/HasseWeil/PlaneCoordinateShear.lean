@@ -32,7 +32,8 @@ namespace BGS.HasseWeil
 
 open MvPolynomial
 
-noncomputable section
+noncomputable
+section
 
 section VanishingPartials
 
@@ -136,9 +137,11 @@ def planeYUnShearSubstitution : Fin 2 → MvPolynomial (Fin 2) R :=
 @[simp] theorem planeYShearSubstitution_one :
     planeYShearSubstitution R 1 = X 0 + X 1 := rfl
 
+/-- The algebra map substituting the sum of the two coordinates for the second coordinate. -/
 def planeYShearHom : MvPolynomial (Fin 2) R →ₐ[R] MvPolynomial (Fin 2) R :=
   bind₁ (planeYShearSubstitution R)
 
+/-- The algebra map undoing the shear of the second coordinate. -/
 def planeYUnShearHom : MvPolynomial (Fin 2) R →ₐ[R] MvPolynomial (Fin 2) R :=
   bind₁ (planeYUnShearSubstitution R)
 
@@ -171,7 +174,7 @@ def planeYShearPointEquiv : R × R ≃ R × R where
   left_inv := by rintro ⟨x, y⟩; simp
   right_inv := by rintro ⟨x, y⟩; simp
 
-@[simp] theorem eval_planeYShearAlgEquiv
+theorem eval_planeYShearAlgEquiv
     (f : MvPolynomial (Fin 2) R) (z : R × R) :
     eval ![z.1, z.2] (planeYShearAlgEquiv R f) =
       eval ![(planeYShearPointEquiv R z).1, (planeYShearPointEquiv R z).2] f := by
@@ -260,9 +263,11 @@ def planeXUnShearSubstitution : Fin 2 → MvPolynomial (Fin 2) R :=
 @[simp] theorem planeXShearSubstitution_one :
     planeXShearSubstitution R 1 = X 1 := rfl
 
+/-- The algebra map shearing the first coordinate by the second. -/
 def planeXShearHom : MvPolynomial (Fin 2) R →ₐ[R] MvPolynomial (Fin 2) R :=
   bind₁ (planeXShearSubstitution R)
 
+/-- The algebra map undoing the shear of the first coordinate. -/
 def planeXUnShearHom : MvPolynomial (Fin 2) R →ₐ[R] MvPolynomial (Fin 2) R :=
   bind₁ (planeXUnShearSubstitution R)
 
@@ -295,7 +300,7 @@ def planeXShearPointEquiv : R × R ≃ R × R where
   left_inv := by rintro ⟨x, y⟩; simp
   right_inv := by rintro ⟨x, y⟩; simp
 
-@[simp] theorem eval_planeXShearAlgEquiv
+theorem eval_planeXShearAlgEquiv
     (f : MvPolynomial (Fin 2) R) (z : R × R) :
     eval ![z.1, z.2] (planeXShearAlgEquiv R f) =
       eval ![(planeXShearPointEquiv R z).1, (planeXShearPointEquiv R z).2] f := by

@@ -42,6 +42,8 @@ variable (K N : Type*) [Field K] [Field N]
   [FiniteDimensional (RatFunc K) N]
   [Algebra.IsSeparable (RatFunc K) N]
 
+/-- The algebra structure from `K` to `N` used in the function field constant field
+    construction. -/
 local instance functionFieldConstantAlgebra : Algebra K N :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) N).comp
     (algebraMap K (RatFunc K)))
@@ -50,6 +52,8 @@ local instance functionFieldConstantRatFuncTower :
     IsScalarTower K (RatFunc K) N :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `K[X]` to `N` used in the function field constant field
+    construction. -/
 local instance (priority := 10) functionFieldConstantPolynomialAlgebra :
     Algebra K[X] N :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) N).comp
@@ -67,6 +71,8 @@ local instance functionFieldConstantPolynomialTorsionFreeTop :
     Module.IsTorsionFree K[X] N :=
   Module.IsTorsionFree.trans_faithfulSMul K[X] (RatFunc K) N
 
+/-- The algebra structure from `K` to `(RatFuncFiniteIntegralClosure K N)` used in the
+    function field constant field construction. -/
 local instance functionFieldConstantFiniteClosureAlgebra :
     Algebra K (RatFuncFiniteIntegralClosure K N) :=
   RingHom.toAlgebra ((algebraMap K[X]

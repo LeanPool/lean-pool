@@ -50,6 +50,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K` to `L` used in the finite extension canonical different
+    canonicality criterion construction. -/
 local instance canonicalCriterionConstantAlgebra : Algebra K L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K (RatFunc K)))
@@ -58,6 +60,8 @@ local instance canonicalCriterionConstantTower :
     IsScalarTower K (RatFunc K) L :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `K[X]` to `L` used in the finite extension canonical
+    different canonicality criterion construction. -/
 local instance (priority := 10) canonicalCriterionPolynomialAlgebra :
     Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp

@@ -19,23 +19,30 @@ mathematical validity predicates.
 
 namespace BGS.NumberTheory
 
+/-- A rational weight bound associated with a lower bound on an odd prime. -/
 structure RationalPrimeWeightCap where
+  /-- The lower bound on primes to which this weight cap applies. -/
   lowerPrime : ℕ
+  /-- The numerator of the rational weight cap. -/
   numerator : ℕ
+  /-- The denominator of the rational weight cap. -/
   denominator : ℕ
   deriving DecidableEq, Repr
 
 namespace RationalPrimeWeightCap
 
+/-- The rational value of the numerator and denominator stored in a weight cap. -/
 def weight (cap : RationalPrimeWeightCap) : ℚ :=
   cap.numerator / cap.denominator
 
+/-- The weight cap has positive data and satisfies its twelfth-power prime bound. -/
 def Valid (cap : RationalPrimeWeightCap) : Prop :=
   0 < cap.lowerPrime ∧
   0 < cap.numerator ∧
   0 < cap.denominator ∧
   cap.denominator ^ 12 ≤ cap.lowerPrime * cap.numerator ^ 12
 
+/-- The Boolean check of a rational prime-weight cap. -/
 def check (cap : RationalPrimeWeightCap) : Bool :=
   decide (0 < cap.lowerPrime) &&
   decide (0 < cap.numerator) &&
@@ -79,19 +86,24 @@ inductive NeighborSide where
 
 /-- One globally ordered odd-prime slot in a joint factorization profile. -/
 structure RankinOddFactor where
+  /-- Which neighboring factorization contains this odd prime-power factor. -/
   side : NeighborSide
+  /-- The exponent of this odd prime-power factor. -/
   exponent : ℕ
+  /-- The rational weight cap attached to the factor's prime. -/
   weightCap : RationalPrimeWeightCap
   deriving DecidableEq, Repr
 
 namespace RankinOddFactor
 
+/-- The factor has a positive exponent and a valid odd-prime weight cap. -/
 def Valid (factor : RankinOddFactor) : Prop :=
   0 < factor.exponent ∧
   factor.weightCap.Valid ∧
   factor.weightCap.lowerPrime.Prime ∧
   3 ≤ factor.weightCap.lowerPrime
 
+/-- The Boolean check of one odd-prime factor. -/
 def check (factor : RankinOddFactor) : Bool :=
   decide (0 < factor.exponent) &&
   factor.weightCap.check &&
@@ -104,11 +116,13 @@ def check (factor : RankinOddFactor) : Bool :=
 
 end RankinOddFactor
 
+/-- Every odd-prime factor in the list is valid. -/
 def allRankinOddFactorsValid : List RankinOddFactor → Prop
   | [] => True
   | factor :: factors =>
       factor.Valid ∧ allRankinOddFactorsValid factors
 
+/-- The Boolean check that every odd-prime factor is valid. -/
 def allRankinOddFactorsCheck : List RankinOddFactor → Bool
   | [] => true
   | factor :: factors =>
@@ -123,11 +137,13 @@ def allRankinOddFactorsCheck : List RankinOddFactor → Bool
   | cons factor factors ih =>
       simp [allRankinOddFactorsCheck, allRankinOddFactorsValid, ih]
 
+/-- The lower prime bounds of the odd factors increase strictly along the list. -/
 def rankinOddFloorsStrictlyIncreasing
     (factors : List RankinOddFactor) : Prop :=
   factors.Pairwise fun left right =>
     left.weightCap.lowerPrime < right.weightCap.lowerPrime
 
+/-- The Boolean check that the odd-prime lower bounds increase strictly. -/
 def rankinOddFloorsStrictlyIncreasingCheck :
     List RankinOddFactor → Bool
   | [] => true
@@ -152,34 +168,44 @@ def rankinOddFloorsStrictlyIncreasingCheck :
 /-- The two-adic data and globally sorted odd support of a possible pair
 `p - 1`, `p + 1`. -/
 structure RankinNeighborProfile where
+  /-- The exponent of two in the lower neighboring factorization. -/
   minusTwoExponent : ℕ
+  /-- The exponent of two in the upper neighboring factorization. -/
   plusTwoExponent : ℕ
+  /-- The rational weight cap applied to the prime two. -/
   twoWeightCap : RationalPrimeWeightCap
+  /-- The odd prime-power factors from both neighboring factorizations. -/
   oddFactors : List RankinOddFactor
+  /-- The root bound used to certify the Rankin obstruction. -/
   rootCap : ℕ
   deriving DecidableEq, Repr
 
 namespace RankinNeighborProfile
 
+/-- The power of two assigned to the selected neighboring side. -/
 def twoExponent
     (profile : RankinNeighborProfile) : NeighborSide → ℕ
   | .minus => profile.minusTwoExponent
   | .plus => profile.plusTwoExponent
 
+/-- The divisor count contributed by odd prime powers on the selected side. -/
 def oddDivisorCount : NeighborSide → List RankinOddFactor → ℕ
   | _, [] => 1
   | side, factor :: factors =>
       (if factor.side = side then factor.exponent + 1 else 1) *
         oddDivisorCount side factors
 
+/-- The divisor count for the selected neighboring factorization. -/
 def divisorCount
     (profile : RankinNeighborProfile) (side : NeighborSide) : ℕ :=
   (profile.twoExponent side + 1) *
     oddDivisorCount side profile.oddFactors
 
+/-- The sum of the divisor counts for both neighboring factorizations. -/
 def jointDivisorCount (profile : RankinNeighborProfile) : ℕ :=
   profile.divisorCount .minus + profile.divisorCount .plus
 
+/-- The coarse Euler product contributed by odd factors on the selected side. -/
 def oddCoarseEulerProduct :
     NeighborSide → List RankinOddFactor → ℚ
   | _, [] => 1
@@ -190,12 +216,14 @@ def oddCoarseEulerProduct :
         else 1) *
         oddCoarseEulerProduct side factors
 
+/-- The coarse Euler product for the selected neighboring factorization. -/
 def coarseEulerProduct
     (profile : RankinNeighborProfile) (side : NeighborSide) : ℚ :=
   coarseRankinPrimePowerFactor (profile.twoExponent side)
       profile.twoWeightCap.weight *
     oddCoarseEulerProduct side profile.oddFactors
 
+/-- The sum of the coarse Euler products for both neighboring factorizations. -/
 def jointCoarseEulerProduct (profile : RankinNeighborProfile) : ℚ :=
   profile.coarseEulerProduct .minus +
     profile.coarseEulerProduct .plus
@@ -218,6 +246,7 @@ def lowerNeighborProduct
   2 ^ profile.twoExponent side *
     oddLowerNeighborProduct side profile.oddFactors
 
+/-- The witness bound computed from the combined divisor count. -/
 def witnessCap (profile : RankinNeighborProfile) : ℕ :=
   189 * profile.jointDivisorCount ^ 3
 
@@ -240,6 +269,7 @@ def failureSquare (profile : RankinNeighborProfile) : ℚ :=
   ((profile.witnessCap : ℚ) * profile.rootCap *
     profile.jointCoarseEulerProduct) ^ 2
 
+/-- The profile's failure square lies below the proposed cutoff threshold. -/
 def ClosesCutoff
     (profile : RankinNeighborProfile) (cutoff : ℕ) : Prop :=
   profile.failureSquare < (8 * (cutoff + 1) : ℕ)
@@ -255,6 +285,7 @@ def ExcludesFailure (profile : RankinNeighborProfile) : Prop :=
       (64 * (profile.lowerNeighborProduct .minus *
         profile.lowerNeighborProduct .plus) : ℕ)
 
+/-- The Boolean check of the structural and arithmetic validity of a profile. -/
 def check (profile : RankinNeighborProfile) : Bool :=
   (decide
       ((profile.minusTwoExponent = 1 ∧
@@ -268,6 +299,7 @@ def check (profile : RankinNeighborProfile) : Bool :=
     decide (0 < profile.rootCap) &&
     decide (profile.witnessCap ≤ profile.rootCap ^ 12)
 
+/-- The Boolean check that a profile closes the proposed cutoff. -/
 def closesCutoffCheck
     (profile : RankinNeighborProfile) (cutoff : ℕ) : Bool :=
   decide
@@ -275,6 +307,7 @@ def closesCutoffCheck
         profile.jointCoarseEulerProduct) ^ 2) <
       ((8 * (cutoff + 1) : ℕ) : ℚ))
 
+/-- The Boolean check that a profile excludes the failure obstruction. -/
 def excludesFailureCheck (profile : RankinNeighborProfile) : Bool :=
   decide
     (profile.failureSquare <

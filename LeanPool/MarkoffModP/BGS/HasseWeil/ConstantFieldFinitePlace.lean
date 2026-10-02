@@ -71,14 +71,20 @@ theorem integralClosureRingEquivOfIntegralTower_coe
 variable (K E L : Type*) [Field K] [Field E] [Field L]
   [Algebra K E] [Algebra (RatFunc K) L] [Algebra (RatFunc E) L]
 
+/-- The algebra structure from `K[X]` to `E[X]` used in the constant field finite place
+    construction. -/
 local instance constantFieldFinitePolynomialCoefficientAlgebra :
     Algebra K[X] E[X] :=
   (Polynomial.mapRingHom (algebraMap K E)).toAlgebra
 
+/-- The algebra structure from `K[X]` to `L` used in the constant field finite place
+    construction. -/
 local instance finiteBasePolynomialAlgebra : Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))
 
+/-- The algebra structure from `E[X]` to `L` used in the constant field finite place
+    construction. -/
 local instance finiteExtensionPolynomialAlgebra : Algebra E[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc E) L).comp
     (algebraMap E[X] (RatFunc E)))

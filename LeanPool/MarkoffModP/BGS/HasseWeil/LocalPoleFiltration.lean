@@ -214,8 +214,7 @@ noncomputable def localPoleQuotientEquivResidueField
 theorem localPoleQuotient_finrank
     (π : R) (hπ : π ≠ 0)
     (hπIdeal : (IsDiscreteValuationRing.maximalIdeal R).asIdeal =
-      Ideal.span {π}) (n : ℕ)
-    [Module.Finite K (IsLocalRing.ResidueField R)] :
+      Ideal.span {π}) (n : ℕ) :
     Module.finrank K
         (localPoleSpace (K := K) (L := L) π (n + 1) ⧸
           Submodule.comap

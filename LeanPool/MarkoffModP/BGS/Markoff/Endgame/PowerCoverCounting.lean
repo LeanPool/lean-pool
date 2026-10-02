@@ -65,7 +65,7 @@ def powerTraceCoverEquivSigmaFibers
     rfl
 
 theorem natCard_powerMapFiber_eq_ker
-    [Finite G] (d : ℕ) (x : (powMonoidHom d : G →* G).range) :
+    (d : ℕ) (x : (powMonoidHom d : G →* G).range) :
     Nat.card ((powMonoidHom d : G →* G) ⁻¹' {x.1} : Set G) =
       Nat.card (powMonoidHom d : G →* G).ker := by
   obtain ⟨a, ha⟩ := x.2

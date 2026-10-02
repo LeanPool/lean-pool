@@ -64,6 +64,8 @@ section Constants
 
 variable [Algebra K F] [IsScalarTower K (RatFunc K) F]
 
+/-- The algebra structure from `K` to `(FunctionFieldNormalClosureOriginalField K F)` used
+    in the function field normal closure original field construction. -/
 local instance originalFieldImageConstantAlgebra :
     Algebra K (FunctionFieldNormalClosureOriginalField K F) :=
   RingHom.toAlgebra

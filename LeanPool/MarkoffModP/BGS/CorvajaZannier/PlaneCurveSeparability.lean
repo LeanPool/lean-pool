@@ -396,6 +396,7 @@ abbrev SecondCoordinateSubfield
     (f : MvPolynomial (Fin 2) K) [IsDomain (PlaneCurveCoordinateRing f)] :=
   IntermediateField.adjoin K ({planeCurveFunction f 1} : Set (PlaneCurveFunctionField f))
 
+/-- The second coordinate viewed in the coefficient subfield of the plane curve. -/
 def secondCoordinateInSubfield
     (f : MvPolynomial (Fin 2) K) [IsDomain (PlaneCurveCoordinateRing f)] :
     SecondCoordinateSubfield f :=
@@ -427,6 +428,7 @@ theorem polynomialInFirstVariablePresentation_ne_zero
   apply (MvPolynomial.optionEquivLeft K {i : Fin 2 // i ≠ 0}).injective
   simpa [polynomialInFirstVariablePresentation] using hzero
 
+/-- Evaluation of a coefficient polynomial at the second coordinate. -/
 def secondCoordinateCoefficientEval
     (f : MvPolynomial (Fin 2) K) [IsDomain (PlaneCurveCoordinateRing f)] :
     MvPolynomial {i : Fin 2 // i ≠ 0} K →+* SecondCoordinateSubfield f :=

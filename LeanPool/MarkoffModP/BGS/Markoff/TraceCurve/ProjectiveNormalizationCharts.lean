@@ -76,7 +76,7 @@ instance weightedSplitTraceAffineNormalizationLaurentOpenImmersion_isOpen
   infer_instance
 
 /-- First-coordinate inversion on the concrete principal-open normalization chart. -/
-def weightedSplitTraceLeftAffineNormalizationOpenEquiv_of_irreducible
+def weightedSplitTraceLeftAffineNormalizationOpenEquivOfIrreducible
     (alpha beta : K) (d e : ℕ) (hd : 0 < d) (he : 0 < e)
     (hbeta : beta ≠ 0)
     (h : Irreducible (splitTraceCoverPolynomial alpha beta d e)) :
@@ -85,11 +85,11 @@ def weightedSplitTraceLeftAffineNormalizationOpenEquiv_of_irreducible
   letI : IsDomain (WeightedSplitTraceLaurentCoordinateRing alpha beta d e) :=
     weightedSplitTraceLaurentCoordinateRing_isDomain alpha beta d e hd he hbeta h
   exact conjugatedLeftNormalizationOpenEquiv alpha beta d e
-    (weightedSplitTraceAffineNormalizationLaurentOpenEquiv_of_irreducible
+    (weightedSplitTraceAffineNormalizationLaurentOpenEquivOfIrreducible
       alpha beta d e hd he hbeta h)
 
 /-- Second-coordinate inversion between the two concrete principal-open normalization charts. -/
-def weightedSplitTraceRightAffineNormalizationOpenEquiv_of_irreducible
+def weightedSplitTraceRightAffineNormalizationOpenEquivOfIrreducible
     (alpha beta : K) (d e : ℕ) (hd : 0 < d) (he : 0 < e)
     (halpha : alpha ≠ 0) (hbeta : beta ≠ 0)
     (h : Irreducible (splitTraceCoverPolynomial alpha beta d e))
@@ -101,24 +101,24 @@ def weightedSplitTraceRightAffineNormalizationOpenEquiv_of_irreducible
   letI : IsDomain (WeightedSplitTraceLaurentCoordinateRing beta alpha d e) :=
     weightedSplitTraceLaurentCoordinateRing_isDomain beta alpha d e hd he halpha hswap
   exact conjugatedRightNormalizationOpenEquiv alpha beta d e
-    (weightedSplitTraceAffineNormalizationLaurentOpenEquiv_of_irreducible
+    (weightedSplitTraceAffineNormalizationLaurentOpenEquivOfIrreducible
       alpha beta d e hd he hbeta h)
-    (weightedSplitTraceAffineNormalizationLaurentOpenEquiv_of_irreducible
+    (weightedSplitTraceAffineNormalizationLaurentOpenEquivOfIrreducible
       beta alpha d e hd he halpha hswap)
 
 /-- Scheme automorphism of the concrete overlap induced by first-coordinate inversion. -/
-def weightedSplitTraceLeftAffineNormalizationOpenSchemeIso_of_irreducible
+def weightedSplitTraceLeftAffineNormalizationOpenSchemeIsoOfIrreducible
     (alpha beta : K) (d e : ℕ) (hd : 0 < d) (he : 0 < e)
     (hbeta : beta ≠ 0)
     (h : Irreducible (splitTraceCoverPolynomial alpha beta d e)) :
     weightedSplitTraceAffineNormalizationLaurentOpenSpec alpha beta d e ≅
     weightedSplitTraceAffineNormalizationLaurentOpenSpec alpha beta d e :=
   BGS.specIsoOfRingEquiv
-    (weightedSplitTraceLeftAffineNormalizationOpenEquiv_of_irreducible
+    (weightedSplitTraceLeftAffineNormalizationOpenEquivOfIrreducible
       alpha beta d e hd he hbeta h)
 
 /-- Contravariant scheme isomorphism of concrete overlaps induced by second-coordinate inversion. -/
-def weightedSplitTraceRightAffineNormalizationOpenSchemeIso_of_irreducible
+def weightedSplitTraceRightAffineNormalizationOpenSchemeIsoOfIrreducible
     (alpha beta : K) (d e : ℕ) (hd : 0 < d) (he : 0 < e)
     (halpha : alpha ≠ 0) (hbeta : beta ≠ 0)
     (h : Irreducible (splitTraceCoverPolynomial alpha beta d e))
@@ -126,7 +126,7 @@ def weightedSplitTraceRightAffineNormalizationOpenSchemeIso_of_irreducible
     weightedSplitTraceAffineNormalizationLaurentOpenSpec alpha beta d e ≅
       weightedSplitTraceAffineNormalizationLaurentOpenSpec beta alpha d e :=
   BGS.specIsoOfRingEquiv
-    (weightedSplitTraceRightAffineNormalizationOpenEquiv_of_irreducible
+    (weightedSplitTraceRightAffineNormalizationOpenEquivOfIrreducible
       alpha beta d e hd he halpha hbeta h hswap)
 
 /-- The affine normalization scheme used by each of the four standard charts.  Inverting the
@@ -180,9 +180,9 @@ def weightedSplitTraceNormalizationChartOpenIsoCommon
     weightedSplitTraceLaurentCoordinateRing_isDomain alpha beta d e hd he hbeta h
   letI : IsDomain (WeightedSplitTraceLaurentCoordinateRing beta alpha d e) :=
     weightedSplitTraceLaurentCoordinateRing_isDomain beta alpha d e hd he halpha hswap
-  let openA := weightedSplitTraceAffineNormalizationLaurentOpenSchemeIso_of_irreducible
+  let openA := weightedSplitTraceAffineNormalizationLaurentOpenSchemeIsoOfIrreducible
     alpha beta d e hd he hbeta h
-  let openB := weightedSplitTraceAffineNormalizationLaurentOpenSchemeIso_of_irreducible
+  let openB := weightedSplitTraceAffineNormalizationLaurentOpenSchemeIsoOfIrreducible
     beta alpha d e hd he halpha hswap
   let left := weightedSplitTraceLeftInversionLaurentNormalizationSchemeIso alpha beta d e
   let right := weightedSplitTraceRightInversionLaurentNormalizationSchemeIso alpha beta d e

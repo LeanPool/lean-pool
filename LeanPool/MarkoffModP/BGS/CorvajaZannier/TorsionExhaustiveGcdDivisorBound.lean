@@ -356,6 +356,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `(Polynomial K)` to `L` used in the torsion exhaustive gcd
+    divisor bound construction. -/
 local instance (priority := 10) exhaustiveGcdPolynomialAlgebra :
     Algebra (Polynomial K) L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp

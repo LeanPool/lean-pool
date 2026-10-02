@@ -70,8 +70,8 @@ theorem theoremTwoStatement_of_eventually_strongApproximationAt
 eventual punctured finite-field transitivity. -/
 theorem eventually_puncturedMarkoffTransitiveAt_of_theoremOneStatement
     (hOne : TheoremOneStatement) :
-    ∃ p0 : ℕ, ∀ (p : ℕ) (hp : p.Prime), p0 ≤ p →
-      PuncturedMarkoffTransitiveAt p hp := by
+    ∃ p0 : ℕ, ∀ (p : ℕ) (_prime : p.Prime), p0 ≤ p →
+      PuncturedMarkoffTransitiveAt p := by
   exact eventually_puncturedMarkoffTransitiveAt_of_giantOrbit
     (1 / 2 : ℝ) (by norm_num) (hOne.1 (1 / 2 : ℝ) (by norm_num))
 

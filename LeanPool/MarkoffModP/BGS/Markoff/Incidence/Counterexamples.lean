@@ -19,11 +19,13 @@ the exact admissible auxiliary-point statement used by its diameter-two argument
 
 namespace BGS.Markoff
 
-local instance {p : ℕ} [Fact p.Prime] (a : ZMod p) :
+/-- Decidability of the admissible-coordinate condition over a prime field. -/
+local instance {p : ℕ} (a : ZMod p) :
     Decidable (IsAdmissibleCoordinate a) := by
   unfold IsAdmissibleCoordinate
   infer_instance
 
+/-- Decidability of the auxiliary incidence condition over a field with decidable equality. -/
 local instance {K : Type*} [Field K] [DecidableEq K] (a b y lambda mu : K) :
     Decidable (IncidenceAux a b y lambda mu) := by
   unfold IncidenceAux

@@ -36,6 +36,8 @@ variable (C N S : Type*) [Field C] [Fintype C]
   [Field S] [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
   [Finite S] [DecidableEq S] [DecidableEq (RatFunc S)]
 
+/-- The algebra structure from `C` to `N` used in the exact constant extension frobenius
+    twist infinity place equivalence construction. -/
 local instance twistInfinityEquivalenceConstantAlgebra : Algebra C N :=
   bridgeBaseConstantAlgebra C N
 
@@ -241,7 +243,7 @@ theorem exactConstantExtensionFrobeniusTwist_infinityPlaceGalSmul_eq_overFixedFi
             C N S hExact g) Q =
         infinityPlaceGalSmul C (RatFunc C) (ExactConstantExtension C N S)
           (exactConstantExtensionFrobeniusTwist
-            C (RatFunc C) N S hExact g) Q := by
+            C (RatFunc C) N S g) Q := by
   let : DecidableEq C := infinityBridgeDecidableEqConstants C
   let : DecidableEq (RatFunc C) :=
     infinityBridgeDecidableEqRatFuncConstants C
@@ -359,7 +361,7 @@ theorem frobeniusTwistField_ambientFixed_infinityPlace_under_degree_eq_one
           Module.finrank C S →
         infinityPlaceGalSmul C (RatFunc C) (ExactConstantExtension C N S)
             (exactConstantExtensionFrobeniusTwist
-              C (RatFunc C) N S hExact g) Q = Q →
+              C (RatFunc C) N S g) Q = Q →
           finiteExtensionPlaceDegree C F
             (.inr (infinityPlaceUnder C F
               (ExactConstantExtension C N S) Q)) = 1 := by
@@ -377,7 +379,7 @@ theorem frobeniusTwistField_ambientFixed_infinityPlace_under_degree_eq_one
 /-- Rational infinity places of the Frobenius-twist field are exactly the
 degree-`[S : C]` top infinity places fixed by the ambient Frobenius twist. -/
 noncomputable def
-    frobeniusTwistField_rationalInfinityPlace_equiv_ambientFixedInfinityPlace
+    frobeniusTwistFieldRationalInfinityPlaceEquivAmbientFixedInfinityPlace
     [IsGalois (RatFunc C) N]
     (hdiv : Nat.card (N ≃ₐ[RatFunc C] N) ∣ Module.finrank C S) :
     let : DecidableEq C := infinityBridgeDecidableEqConstants C
@@ -440,7 +442,7 @@ noncomputable def
             Module.finrank C S ∧
           infinityPlaceGalSmul C (RatFunc C) (ExactConstantExtension C N S)
             (exactConstantExtensionFrobeniusTwist
-              C (RatFunc C) N S hExact g) Q = Q} := by
+              C (RatFunc C) N S g) Q = Q} := by
   intro model0 model1 model2 model3 model4 model5 model6 model7 model8 model9 model10 model11
     model12 F model14 model15 model16 model17 model18 model19 model20 model21 model22 model23
     model24 model25 model26 model27 model28
@@ -470,7 +472,7 @@ noncomputable def
         finiteExtensionPlaceDegree C T (.inr Q) = Module.finrank C S ∧
           infinityPlaceGalSmul C (RatFunc C) T
             (exactConstantExtensionFrobeniusTwist
-              C (RatFunc C) N S hExact g) Q = Q} :=
+              C (RatFunc C) N S g) Q = Q} :=
     { toFun := fun Q => ⟨Q.1,
         Q.2.1.trans hfinrank,
         (exactConstantExtensionFrobeniusTwist_infinityPlaceGalSmul_eq_overFixedField

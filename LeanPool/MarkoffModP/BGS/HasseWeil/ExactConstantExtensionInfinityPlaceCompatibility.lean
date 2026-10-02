@@ -37,15 +37,21 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
   [Fintype C] [Finite S]
 
+/-- The algebra structure from `C` to `N` used in the exact constant extension infinity
+    place compatibility construction. -/
 local instance infinityPlaceCompatibilityBaseConstantAlgebra : Algebra C N :=
   infinityConstantAlgebra C N
 
+/-- The algebra structure from `C[X]` to `N` used in the exact constant extension infinity
+    place compatibility construction. -/
 local instance infinityPlaceCompatibilityBaseReciprocalPolynomialAlgebra :
     Algebra C[X] N := infinityReciprocalPolynomialAlgebra C N
 
 local instance infinityPlaceCompatibilityBaseConstantReciprocalTower :
     IsScalarTower C C[X] N := infinityReciprocalPolynomialTower C N
 
+/-- The algebra structure from `C` to `(integralClosure C[X] N)` used in the exact constant
+    extension infinity place compatibility construction. -/
 local instance infinityPlaceCompatibilityOldNormalizationConstantAlgebra :
     Algebra C (integralClosure C[X] N) :=
   RingHom.toAlgebra
@@ -57,26 +63,37 @@ local instance
     IsScalarTower C C[X] (integralClosure C[X] N) :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `C[X]` to `S[X]` used in the exact constant extension
+    infinity place compatibility construction. -/
 local instance infinityPlaceCompatibilityCoefficientPolynomialAlgebra :
     Algebra C[X] S[X] := Polynomial.algebra C S
 
+/-- The scalar action of `C[X]` on `S[X]` used in the exact constant extension infinity
+    place compatibility construction. -/
 local instance infinityPlaceCompatibilityCoefficientPolynomialSMul :
     SMul C[X] S[X] := Algebra.toSMul
 
+/-- The module structure of `S[X]` over `C[X]` used in the exact constant extension infinity
+    place compatibility construction. -/
 local instance infinityPlaceCompatibilityCoefficientPolynomialModule :
     Module C[X] S[X] := Algebra.toModule
 
+/-- Classical equality on base rational functions in the infinity-place comparison. -/
 local instance (priority := 10000)
     infinityPlaceCompatibilityDecidableEqBaseRatFunc :
     DecidableEq (RatFunc C) := infinityBridgeDecidableEqRatFuncConstants C
 
+/-- Classical equality on rational functions over the enlarged constants in that comparison. -/
 local instance (priority := 10000)
     infinityPlaceCompatibilityDecidableEqExtendedRatFunc :
     DecidableEq (RatFunc S) := infinityBridgeDecidableEqRatFuncConstants S
 
+/-- Decidable equality on `C` used in the exact constant extension infinity place
+    compatibility construction. -/
 local instance (priority := 10000) infinityPlaceCompatibilityDecidableEqBase :
     DecidableEq C := infinityBridgeDecidableEqConstants C
 
+/-- Classical equality on the enlarged constants in the infinity-place comparison. -/
 local instance (priority := 10000)
     infinityPlaceCompatibilityDecidableEqExtended :
     DecidableEq S := infinityBridgeDecidableEqConstants S

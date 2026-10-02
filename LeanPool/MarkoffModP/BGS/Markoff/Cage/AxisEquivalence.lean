@@ -144,7 +144,7 @@ theorem cageSecondPointCanonical_mem
 The two points are permuted independently and their common bridge coordinate
 becomes the common third coordinate. -/
 def cageMiddleWitnessToCanonical
-    (p : ℕ) [Fact p.Prime]
+    (p : ℕ)
     (axis other : NormalizedCoordinateAxis) (xi eta : ZMod p) :
     CageMiddleWitnessPair p axis other xi eta →
       CageMiddleWitnessPair p .first .second xi eta := fun z => by

@@ -20,9 +20,11 @@ be assembled from standard equivalence combinators.
 
 namespace BGS.Combinatorics
 
+/-- The possible symmetric chain keys in a finite rectangular grid. -/
 abbrev gridChainKey (m n : ℕ) :=
   Fin (min m n + 1)
 
+/-- The length of the rectangular grid chain indexed by a key. -/
 abbrev gridChainLength (m n : ℕ) (key : gridChainKey m n) :=
   m + n - 2 * key
 

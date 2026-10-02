@@ -100,10 +100,12 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
   [Algebra M L] [IsScalarTower (RatFunc K) M L]
 
+/-- The algebra structure from `K[X]` to `M` used in the finite branch locus construction. -/
 local instance (priority := 10) branchPolynomialAlgebraM : Algebra K[X] M :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) M).comp
     (algebraMap K[X] (RatFunc K)))
 
+/-- The algebra structure from `K[X]` to `L` used in the finite branch locus construction. -/
 local instance (priority := 10) branchPolynomialAlgebraL : Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))
@@ -121,6 +123,8 @@ local instance branchPolynomialFieldTower : IsScalarTower K[X] M L :=
         (algebraMap (RatFunc K) M (algebraMap K[X] (RatFunc K) x))
     exact IsScalarTower.algebraMap_apply (RatFunc K) M L _
 
+/-- The algebra structure from `(RatFuncFiniteIntegralClosure K M)` to
+    `(RatFuncFiniteIntegralClosure K L)` used in the finite branch locus construction. -/
 local instance branchFiniteClosureAlgebra :
     Algebra (RatFuncFiniteIntegralClosure K M)
       (RatFuncFiniteIntegralClosure K L) :=
@@ -236,6 +240,8 @@ local instance branchFiniteFractionRingSeparable :
     (FractionRing.algEquiv (RatFuncFiniteIntegralClosure K M) M).symm
     (FractionRing.algEquiv (RatFuncFiniteIntegralClosure K L) L).symm z
 
+/-- The algebra structure from `(RatFuncInfinityIntegralClosure K M)` to
+    `(RatFuncInfinityIntegralClosure K L)` used in the finite branch locus construction. -/
 local instance branchInfinityClosureAlgebra :
     Algebra (RatFuncInfinityIntegralClosure K M)
       (RatFuncInfinityIntegralClosure K L) :=
@@ -257,6 +263,8 @@ local instance branchInfinityIntermediateDedekind :
   IsIntegralClosure.isDedekindDomain (RatFuncInfinityIntegers K)
     (RatFunc K) M (RatFuncInfinityIntegralClosure K M)
 
+/-- A finite enumeration of `(FiniteExtensionInfinityPlace K M)` used in the finite branch
+    locus construction. -/
 local instance branchInfinityPlaceFintype :
     Fintype (FiniteExtensionInfinityPlace K M) :=
   Set.Finite.fintype

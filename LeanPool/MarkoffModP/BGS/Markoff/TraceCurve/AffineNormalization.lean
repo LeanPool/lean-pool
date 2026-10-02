@@ -49,8 +49,7 @@ theorem weightedSplitTraceAffineCoordinateRing_isDomain
 
 /-- The generic-point morphism from the fraction field to the irreducible affine curve. -/
 def weightedSplitTraceAffineGenericPointMorphism
-    (alpha beta : K) (d e : ℕ)
-    [IsDomain (WeightedSplitTraceAffineCoordinateRing alpha beta d e)] :
+    (alpha beta : K) (d e : ℕ) :
     Spec (CommRingCat.of
       (FractionRing (WeightedSplitTraceAffineCoordinateRing alpha beta d e))) ⟶
       Spec (CommRingCat.of (WeightedSplitTraceAffineCoordinateRing alpha beta d e)) :=
@@ -58,75 +57,81 @@ def weightedSplitTraceAffineGenericPointMorphism
     (algebraMap (WeightedSplitTraceAffineCoordinateRing alpha beta d e)
       (FractionRing (WeightedSplitTraceAffineCoordinateRing alpha beta d e))))
 
-/-- The relative normalization of the affine trace cover inside its fraction field. -/
+/-- The relative normalization of the affine trace cover inside its fraction ring. -/
 def weightedSplitTraceAffineNormalization
-    (alpha beta : K) (d e : ℕ)
-    (h : Irreducible (splitTraceCoverPolynomial alpha beta d e)) : Scheme := by
-  letI : IsDomain (WeightedSplitTraceAffineCoordinateRing alpha beta d e) :=
-    weightedSplitTraceAffineCoordinateRing_isDomain alpha beta d e h
-  exact (weightedSplitTraceAffineGenericPointMorphism alpha beta d e).normalization
+    (alpha beta : K) (d e : ℕ) : Scheme :=
+  (weightedSplitTraceAffineGenericPointMorphism alpha beta d e).normalization
 
 /-- The integral morphism from the affine normalization to the original affine curve. -/
 def weightedSplitTraceAffineNormalizationToCurve
-    (alpha beta : K) (d e : ℕ)
-    (h : Irreducible (splitTraceCoverPolynomial alpha beta d e)) :
-    weightedSplitTraceAffineNormalization alpha beta d e h ⟶
+    (alpha beta : K) (d e : ℕ) :
+    weightedSplitTraceAffineNormalization alpha beta d e ⟶
       Spec (CommRingCat.of
-        (WeightedSplitTraceAffineCoordinateRing alpha beta d e)) := by
-  letI : IsDomain (WeightedSplitTraceAffineCoordinateRing alpha beta d e) :=
-    weightedSplitTraceAffineCoordinateRing_isDomain alpha beta d e h
-  exact (weightedSplitTraceAffineGenericPointMorphism alpha beta d e).fromNormalization
+        (WeightedSplitTraceAffineCoordinateRing alpha beta d e)) :=
+  (weightedSplitTraceAffineGenericPointMorphism alpha beta d e).fromNormalization
 
 instance weightedSplitTraceAffineNormalizationToCurve_isIntegral
-    (alpha beta : K) (d e : ℕ)
-    (h : Irreducible (splitTraceCoverPolynomial alpha beta d e)) :
-    IsIntegralHom (weightedSplitTraceAffineNormalizationToCurve alpha beta d e h) := by
+    (alpha beta : K) (d e : ℕ) :
+    IsIntegralHom (weightedSplitTraceAffineNormalizationToCurve alpha beta d e) := by
   dsimp [weightedSplitTraceAffineNormalizationToCurve,
     weightedSplitTraceAffineNormalization]
   infer_instance
 
-instance weightedSplitTraceAffineNormalization_isIntegral
+theorem weightedSplitTraceAffineNormalization_isIntegral
     (alpha beta : K) (d e : ℕ)
     (h : Irreducible (splitTraceCoverPolynomial alpha beta d e)) :
-    IsIntegral (weightedSplitTraceAffineNormalization alpha beta d e h) := by
+    IsIntegral (weightedSplitTraceAffineNormalization alpha beta d e) := by
   let : IsDomain (WeightedSplitTraceAffineCoordinateRing alpha beta d e) :=
     weightedSplitTraceAffineCoordinateRing_isDomain alpha beta d e h
   dsimp [weightedSplitTraceAffineNormalization]
   infer_instance
 
-instance weightedSplitTraceAffineNormalization_isReduced
+theorem weightedSplitTraceAffineNormalization_isReduced
     (alpha beta : K) (d e : ℕ)
     (h : Irreducible (splitTraceCoverPolynomial alpha beta d e)) :
-    IsReduced (weightedSplitTraceAffineNormalization alpha beta d e h) := by
+    IsReduced (weightedSplitTraceAffineNormalization alpha beta d e) := by
   let : IsDomain (WeightedSplitTraceAffineCoordinateRing alpha beta d e) :=
     weightedSplitTraceAffineCoordinateRing_isDomain alpha beta d e h
   dsimp [weightedSplitTraceAffineNormalization]
   infer_instance
 
-/-- The actual geometric affine normalization in the paper's positive-exponent range, obtained by
-combining absolute irreducibility with the relative-normalization construction. -/
+/-- The affine normalization after extending the coefficient field to an algebraic closure. -/
 def weightedSplitTraceGeometricAffineNormalization
+    (alpha beta : K) (d e : ℕ) : Scheme := by
+  let phi : K →+* AlgebraicClosure K := algebraMap K (AlgebraicClosure K)
+  exact weightedSplitTraceAffineNormalization (phi alpha) (phi beta) d e
+
+/-- In the paper's positive-exponent range, the geometric affine normalization is integral. -/
+theorem weightedSplitTraceGeometricAffineNormalization_isIntegral
     (alpha beta : K) (halpha : alpha ≠ 0) (hbeta : beta ≠ 0)
     (hnondegenerate : alpha * beta ≠ 1)
-    (d e : ℕ) (hd : 0 < d) (he : 0 < e) (heChar : (e : K) ≠ 0) : Scheme := by
+    (d e : ℕ) (hd : 0 < d) (he : 0 < e) (heChar : (e : K) ≠ 0) :
+    IsIntegral (weightedSplitTraceGeometricAffineNormalization alpha beta d e) := by
   let phi : K →+* AlgebraicClosure K := algebraMap K (AlgebraicClosure K)
   have hirred := splitTraceCoverPolynomial_absolutelyIrreducible_of_positiveExponents
     alpha beta halpha hbeta hnondegenerate e d he hd heChar
   rw [map_splitTraceCoverPolynomial phi alpha beta d e] at hirred
-  exact weightedSplitTraceAffineNormalization (phi alpha) (phi beta) d e hirred
+  exact weightedSplitTraceAffineNormalization_isIntegral (phi alpha) (phi beta) d e hirred
 
 /-- The two affine normalizations needed for all four standard charts of the biprojective closure.
 The first-coordinate inversion preserves the weights, while the second-coordinate inversion swaps
 them.  This pair is not yet a glued projective scheme. -/
 def weightedSplitTraceGeometricChartNormalizations
+    (alpha beta : K) (d e : ℕ) : Scheme × Scheme :=
+  (weightedSplitTraceGeometricAffineNormalization alpha beta d e,
+    weightedSplitTraceGeometricAffineNormalization beta alpha d e)
+
+/-- Both standard affine normalizations are integral in the positive-exponent range. -/
+theorem weightedSplitTraceGeometricChartNormalizations_isIntegral
     (alpha beta : K) (halpha : alpha ≠ 0) (hbeta : beta ≠ 0)
     (hnondegenerate : alpha * beta ≠ 1)
     (d e : ℕ) (hd : 0 < d) (he : 0 < e) (heChar : (e : K) ≠ 0) :
-    Scheme × Scheme :=
-  (weightedSplitTraceGeometricAffineNormalization alpha beta halpha hbeta
+    IsIntegral (weightedSplitTraceGeometricChartNormalizations alpha beta d e).1 ∧
+      IsIntegral (weightedSplitTraceGeometricChartNormalizations alpha beta d e).2 := by
+  exact ⟨weightedSplitTraceGeometricAffineNormalization_isIntegral alpha beta halpha hbeta
       hnondegenerate d e hd he heChar,
-    weightedSplitTraceGeometricAffineNormalization beta alpha hbeta halpha
-      (by simpa [mul_comm] using hnondegenerate) d e hd he heChar)
+    weightedSplitTraceGeometricAffineNormalization_isIntegral beta alpha hbeta halpha
+      (by simpa only [mul_comm] using hnondegenerate) d e hd he heChar⟩
 
 end
 

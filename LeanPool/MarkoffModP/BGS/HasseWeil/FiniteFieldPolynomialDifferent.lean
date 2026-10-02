@@ -38,6 +38,8 @@ noncomputable section
 variable (C S : Type*) [Field C] [Field S]
   [Algebra C S] [FiniteDimensional C S] [Algebra.IsSeparable C S]
 
+/-- The algebra structure from `C[X]` to `S[X]` used in the finite field polynomial
+    different construction. -/
 local instance differentCoefficientPolynomialAlgebra : Algebra C[X] S[X] :=
   Polynomial.algebra C S
 

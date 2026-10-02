@@ -35,6 +35,7 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K` to `L` used in the riemann space constants construction. -/
 local instance regularConstantAlgebra : Algebra K L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K (RatFunc K)))
@@ -77,7 +78,6 @@ def finiteExtensionRegularSubalgebra : Subalgebra K L where
     exact algebraMap_mem_finiteExtensionRiemannSpace_of_effective
       K L (D := 0) (by simp) c
 
-@[simp]
 theorem mem_finiteExtensionRegularSubalgebra {x : L} :
     x ∈ finiteExtensionRegularSubalgebra K L ↔
       x ∈ finiteExtensionRiemannSpace K L 0 := Iff.rfl

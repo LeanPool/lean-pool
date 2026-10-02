@@ -46,6 +46,8 @@ variable (K C N S : Type*)
   [Field S] [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
   [Finite S]
 
+/-- The algebra structure from `C` to `N` used in the exact constant extension frobenius
+    twist stepanov upper construction. -/
 local instance twistStepanovBaseConstantAlgebra : Algebra C N :=
   bridgeBaseConstantAlgebra C N
 
@@ -53,9 +55,11 @@ local instance twistStepanovBaseConstantTower :
     IsScalarTower C (RatFunc C) N :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- Classical equality on the Frobenius-twisted constant field for the Stepanov bound. -/
 local instance (priority := 10000) twistStepanovFieldDecidableEq
-    (F : Type*) [Field F] : DecidableEq F := Classical.decEq _
+    (F : Type*) : DecidableEq F := Classical.decEq _
 
+/-- Classical equality on its rational function field for the Stepanov bound. -/
 local instance (priority := 10001) twistStepanovRatFuncDecidableEq
     (F : Type*) [Field F] : DecidableEq (RatFunc F) := Classical.decEq _
 

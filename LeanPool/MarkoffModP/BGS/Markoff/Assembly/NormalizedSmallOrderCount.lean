@@ -23,7 +23,7 @@ namespace BGS.Markoff
 
 /-- Normalized Markoff points whose first two matrix rotation orders are below `bound`. -/
 noncomputable def normalizedMarkoffPointsWithSmallFirstTwoRotationOrders
-    (p : ℕ) [Fact p.Prime] [Invertible (3 : ZMod p)] (bound : ℕ) :
+    (p : ℕ) [Fact p.Prime] (bound : ℕ) :
     Finset (NormalizedPoint (ZMod p)) := by
   classical
   exact Finset.univ.filter fun x =>
@@ -31,7 +31,7 @@ noncomputable def normalizedMarkoffPointsWithSmallFirstTwoRotationOrders
 
 @[simp]
 theorem mem_normalizedMarkoffPointsWithSmallFirstTwoRotationOrders_iff
-    {p : ℕ} [Fact p.Prime] [Invertible (3 : ZMod p)] {bound : ℕ}
+    {p : ℕ} [Fact p.Prime] {bound : ℕ}
     {x : NormalizedPoint (ZMod p)} :
     x ∈ normalizedMarkoffPointsWithSmallFirstTwoRotationOrders p bound ↔
       IsNormalizedMarkoff x ∧ rotationOrder x.u1 < bound ∧ rotationOrder x.u2 < bound := by

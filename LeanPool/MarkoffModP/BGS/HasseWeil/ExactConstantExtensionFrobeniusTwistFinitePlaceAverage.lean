@@ -41,10 +41,8 @@ statement `finitePlaceUnder_under`, both sides live in the normalized
 finite-place model of `K(X)`. -/
 theorem finitePlaceUnder_ratFunc_under
     (K M L : Type*) [Field K] [Field M] [Field L]
-    [Algebra (RatFunc K) M] [FiniteDimensional (RatFunc K) M]
-    [Algebra.IsSeparable (RatFunc K) M]
-    [Algebra (RatFunc K) L] [FiniteDimensional (RatFunc K) L]
-    [Algebra.IsSeparable (RatFunc K) L]
+    [Algebra (RatFunc K) M]
+    [Algebra (RatFunc K) L]
     [Algebra M L] [IsScalarTower (RatFunc K) M L]
     (Q : FiniteExtensionFinitePlace K L) :
     finitePlaceUnder K (RatFunc K) M (finitePlaceUnder K M L Q) =
@@ -84,9 +82,13 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [IsGalois (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
+/-- A finite enumeration of `(RatFuncRationalFinitePlace C)` used in the exact constant
+    extension frobenius twist finite place average construction. -/
 local instance finiteAverageRatFuncRationalFinitePlaceFintype :
     Fintype (RatFuncRationalFinitePlace C) := Fintype.ofFinite _
 
+/-- The algebra structure from `C` to `N` used in the exact constant extension frobenius
+    twist finite place average construction. -/
 local instance finiteAverageBaseConstantAlgebra : Algebra C N :=
   bridgeBaseConstantAlgebra C N
 
@@ -94,10 +96,14 @@ local instance finiteAverageBaseConstantTower :
     IsScalarTower C (RatFunc C) N :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `S[X]` to `(ExactConstantExtension C N S)` used in the exact
+    constant extension frobenius twist finite place average construction. -/
 local instance finiteAverageTargetPolynomialAlgebra :
     Algebra S[X] (ExactConstantExtension C N S) :=
   bridgeTargetPolynomialAlgebra C S N
 
+/-- The algebra structure from `C` to `(RatFuncFiniteIntegralClosure C (RatFunc C))` used in
+    the exact constant extension frobenius twist finite place average construction. -/
 local instance finiteAverageRatFuncClosureConstantAlgebra :
     Algebra C (RatFuncFiniteIntegralClosure C (RatFunc C)) :=
   RingHom.toAlgebra
@@ -444,7 +450,7 @@ theorem exactConstantExtensionFrobeniusFiberEquiv_apply_val
     ((exactConstantExtensionFrobeniusFiberEquiv
         C (RatFunc C) N S hExact) g).1 =
       exactConstantExtensionFrobeniusTwist
-        C (RatFunc C) N S hExact g := by
+        C (RatFunc C) N S g := by
   let : Field (ExactConstantExtension C N S) :=
     exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) (ExactConstantExtension C N S) :=
@@ -487,7 +493,7 @@ theorem sum_card_finitePlaceUnderFiber_fixedBy_frobeniusTwist_eq_card_galois
         (FinitePlaceUnderFiber C (RatFunc C)
           (ExactConstantExtension C N S) P₀.1)
         (exactConstantExtensionFrobeniusTwist
-          C (RatFunc C) N S hExact g))) =
+          C (RatFunc C) N S g))) =
       Nat.card (N ≃ₐ[RatFunc C] N) := by
   let T := ExactConstantExtension C N S
   let : Field T := exactConstantExtensionField C N S hExact
@@ -530,7 +536,7 @@ theorem sum_card_finitePlaceUnderFiber_fixedBy_frobeniusTwist_eq_card_galois
         Nat.card (MulAction.fixedBy
           (FinitePlaceUnderFiber C (RatFunc C) T P₀.1)
           (exactConstantExtensionFrobeniusTwist
-            C (RatFunc C) N S hExact g))) =
+            C (RatFunc C) N S g))) =
         ∑ g : N ≃ₐ[RatFunc C] N,
           Nat.card (MulAction.fixedBy
             (FinitePlaceUnderFiber C (RatFunc C) T P₀.1) (e g).1) := by
@@ -582,7 +588,7 @@ abbrev FrobeniusTwistFinitePlaceFiberFixedBy
     (finitePlaceUnderFiberGalAction C (RatFunc C)
       (ExactConstantExtension C N S) P₀.1)
     (exactConstantExtensionFrobeniusTwist
-      C (RatFunc C) N S hExact g)
+      C (RatFunc C) N S g)
 
 /-- A sigma-family value map is injective when fibers are injective and their indices
 can be recovered injectively from the values. -/
@@ -603,7 +609,7 @@ theorem sigma_value_injective
 union, over rational finite places of `C(X)`, of the ambient fixed top places
 in the corresponding restriction fiber. -/
 noncomputable def
-    frobeniusTwistField_rationalFinitePlace_equiv_sigma_fiberFixedBy
+    frobeniusTwistFieldRationalFinitePlaceEquivSigmaFiberFixedBy
     (hdiv : Nat.card (N ≃ₐ[RatFunc C] N) ∣ Module.finrank C S)
     (g : N ≃ₐ[RatFunc C] N) :
     let : Field (ExactConstantExtension C N S) :=
@@ -654,7 +660,7 @@ noncomputable def
     model13 model14 model15 model16 model17 model18 model19 model20
   let T := ExactConstantExtension C N S
   let sigma := exactConstantExtensionFrobeniusTwist
-    C (RatFunc C) N S hExact g
+    C (RatFunc C) N S g
   let baseEquiv := ratFuncRationalFinitePlaceEquivFiniteExtension C
   have hDegreeDiv : Module.finrank (RatFunc C) N ∣ Module.finrank C S := by
     rw [← IsGalois.card_aut_eq_finrank]
@@ -716,7 +722,7 @@ noncomputable def
     rfl
   let eSigma : SigmaFixed ≃ AmbientFixed :=
     Equiv.ofBijective toAmbient ⟨hInjective, hSurjective⟩
-  exact (frobeniusTwistField_rationalFinitePlace_equiv_ambientFixedFinitePlace
+  exact (frobeniusTwistFieldRationalFinitePlaceEquivAmbientFixedFinitePlace
     C N S hExact g hdiv).trans eSigma.symm
 
 /-- The number of rational finite places of the fixed field attached to one
@@ -799,7 +805,7 @@ theorem frobeniusTwistFieldRationalFinitePlaceCount_eq_sum_fiberFixedBy
       C (RatFunc C) N S hExact g
   change Nat.card (FiniteExtensionRationalFinitePlace C F) = _
   rw [Nat.card_congr
-    (frobeniusTwistField_rationalFinitePlace_equiv_sigma_fiberFixedBy
+    (frobeniusTwistFieldRationalFinitePlaceEquivSigmaFiberFixedBy
       C S N hExact hdiv g), Nat.card_sigma]
 
 omit [DecidableEq S] [DecidableEq (RatFunc S)] in

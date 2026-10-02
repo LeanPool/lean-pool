@@ -171,6 +171,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K[X]` to `L` used in the finite extension canonical
+    different local maximality construction. -/
 local instance (priority := 10) detectionPolynomialAlgebra : Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))
@@ -723,6 +725,8 @@ theorem finiteExtensionFiberCotrace_detects_not_le
 
 section
 
+/-- The algebra structure from `K` to `L` used in the finite extension canonical different
+    local maximality construction. -/
 local instance detectionConstantAlgebra : Algebra K L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K (RatFunc K)))

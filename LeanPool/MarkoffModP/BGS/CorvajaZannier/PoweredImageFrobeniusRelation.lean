@@ -35,6 +35,7 @@ noncomputable section
 variable {K A B : Type*} [Field K] [CommRing A] [CommRing B]
   [Algebra K A] [Algebra K B]
 
+/-- The algebra homomorphism evaluating a bivariate polynomial at two chosen elements. -/
 noncomputable def bivariateEvalAlgHom (u v : A) :
     Polynomial (Polynomial K) →ₐ[K] A :=
   Polynomial.eval₂AlgHom (Polynomial.aeval u) v (fun _ ↦ Commute.all _ _)
@@ -210,6 +211,7 @@ theorem poweredCoordinateImageRelation_quotient_embeds_source
   change φL P = 0
   rw [← hcomp, AlgHom.comp_apply, hP, map_zero]
 
+/-- Base change equivalence for iterated polynomial rings. -/
 noncomputable def iteratedPolynomialBaseChangeEquiv
     (E : Type*) [Field E] [Algebra K E] :
     E ⊗[K] Polynomial (Polynomial K) ≃ₐ[E]
@@ -260,6 +262,7 @@ theorem iteratedPolynomialBaseChangeEquiv_tmul_one
   rw [one_smul]
   exact bivariateEquiv_map_commutes E g
 
+/-- The equivalence between a bivariate quotient and its multivariate presentation. -/
 noncomputable def bivariateQuotientEquivMvPolynomial
     (g : Polynomial (Polynomial K)) :
     (Polynomial (Polynomial K) ⧸ Ideal.span {g}) ≃ₐ[K]
@@ -303,6 +306,7 @@ theorem tensorProduct_isDomain_of_embedding
   · exact hΦ.noZeroDivisors Φ (map_zero Φ) (map_mul Φ)
   · exact domain_nontrivial Φ (map_zero Φ) (map_one Φ)
 
+/-- The base change equivalence for the coordinate ring of the plane curve. -/
 noncomputable def planeCurveCoordinateRingBaseChangeEquiv
     (E : Type*) [Field E] [Algebra K E]
     (f : MvPolynomial (Fin 2) K) :
@@ -457,6 +461,7 @@ theorem evalBivariate_map_mapRingHom
 
 variable {p : ℕ} [Fact p.Prime] [CharP K p] [PerfectField K]
 
+/-- The relation between powered coordinates and the Frobenius image. -/
 noncomputable def poweredCoordinateFrobeniusImageRelation
     {f : MvPolynomial (Fin 2) K}
     (hf : Irreducible f) (hpartialSecond : MvPolynomial.pderiv 1 f ≠ 0)

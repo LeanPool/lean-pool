@@ -90,6 +90,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K` to `L` used in the plane affine hasse weil from zeta
+    construction. -/
 local instance affineHasseZetaConstantAlgebra : Algebra K L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K (RatFunc K)))
@@ -139,7 +141,7 @@ end FunctionFieldZeta
 /-- The rational-place count of a separating plane model, with all
 projection-dependent instances packaged into a stable natural number. -/
 def separatingPlaneCurveRationalPlaceCount
-    {K : Type*} [Field K] [Fintype K] [DecidableEq K]
+    {K : Type*} [Field K] [DecidableEq K]
     (f : MvPolynomial (Fin 2) K) (hf : Irreducible f)
     (hpartialSecond : MvPolynomial.pderiv 1 f ≠ 0) : ℕ :=
   letI := planeCurveCoordinateRing_isDomain hf

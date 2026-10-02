@@ -70,7 +70,7 @@ theorem puncturedMarkoffTransitiveAt_of_maximalOrbit_frontier
       (p : ℝ) ^ (5 / 6 : ℝ) ≤ maximalCoordinateRotationOrder z.1 →
       SameNormalizedComponent
         (normalizedSurfaceOfPunctured (puncturedNormalizationEquiv (ZMod p) c)) z) :
-    PuncturedMarkoffTransitiveAt p Fact.out := by
+    PuncturedMarkoffTransitiveAt p := by
   classical
   have hpTwo : p ≠ 2 := by omega
   let : Fintype (quadraticFiniteField p) := Fintype.ofFinite _
@@ -215,7 +215,7 @@ pointwise explicit endgame theorems. -/
 theorem puncturedMarkoffTransitiveAt_of_explicitCutoff
     (p : ℕ) (hpPrime : p.Prime)
     (hp : explicitStrongApproximationCutoff ≤ p) :
-    PuncturedMarkoffTransitiveAt p hpPrime := by
+    PuncturedMarkoffTransitiveAt p := by
   let : Fact p.Prime := ⟨hpPrime⟩
   have hpSeven : 7 ≤ p := explicitCutoff_seven_le_for_assembly hp
   have hpThree : 3 < p := by omega
@@ -257,7 +257,7 @@ theorem puncturedMarkoffTransitiveAt_of_concreteExplicitBound
     (p : ℕ) (hpPrime : p.Prime)
     (hp : (2 ^ 9 * (48 ^ 3 + 1) ^ 18 *
       (2 ^ 9 * (9 ^ 9) ^ (2 ^ 9)) ^ 8 + 1) ≤ p) :
-    PuncturedMarkoffTransitiveAt p hpPrime := by
+    PuncturedMarkoffTransitiveAt p := by
   apply puncturedMarkoffTransitiveAt_of_explicitCutoff p hpPrime
   simpa only [explicitStrongApproximationCutoff_eq,
     explicitDivisorMomentConstant_eq] using hp
@@ -286,7 +286,7 @@ replaced by the fully formalized elementary tenth-moment divisor bound. -/
 theorem puncturedMarkoffTransitiveAt_of_preliminaryCutoff
     (p : ℕ) (hpPrime : p.Prime)
     (hp : preliminaryStrongApproximationCutoff ≤ p) :
-    PuncturedMarkoffTransitiveAt p hpPrime := by
+    PuncturedMarkoffTransitiveAt p := by
   let : Fact p.Prime := ⟨hpPrime⟩
   have hpSeven : 7 ≤ p := preliminaryCutoff_seven_le_for_assembly hp
   have hpThree : 3 < p := by omega
@@ -325,7 +325,7 @@ theorem puncturedMarkoffTransitiveAt_of_preliminaryCutoff
 theorem puncturedMarkoffTransitiveAt_of_concretePreliminaryBound
     (p : ℕ) (hpPrime : p.Prime)
     (hp : (2 ^ 1833 * (48 ^ 3 + 1) ^ 10 + 1) ≤ p) :
-    PuncturedMarkoffTransitiveAt p hpPrime := by
+    PuncturedMarkoffTransitiveAt p := by
   apply puncturedMarkoffTransitiveAt_of_preliminaryCutoff p hpPrime
   simpa only [preliminaryStrongApproximationCutoff_eq] using hp
 end

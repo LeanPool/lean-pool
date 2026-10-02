@@ -29,7 +29,7 @@ theorem complementaryExponent_pos
   exact Nat.div_pos (Nat.le_of_dvd Nat.card_pos (orderOf_dvd_natCard w)) (orderOf_pos w)
 
 theorem complementaryExponent_dvd_natCard
-    {G : Type*} [Group G] [Finite G] (w : G) :
+    {G : Type*} [Group G] (w : G) :
     Nat.card G / orderOf w ∣ Nat.card G :=
   Nat.div_dvd_of_dvd (orderOf_dvd_natCard w)
 

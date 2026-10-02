@@ -29,9 +29,11 @@ open scoped BigOperators PowerSeries
 
 noncomputable section
 
+/-- The negative logarithmic derivative of a formal power series. -/
 def negativeXLogDerivative (f : PowerSeries ℂ) : PowerSeries ℂ :=
   -PowerSeries.X * PowerSeries.derivative (R := ℂ) f * f⁻¹
 
+/-- The linear formal power-series factor associated with a complex coefficient. -/
 def linearPowerSeriesFactor (a : ℂ) : PowerSeries ℂ :=
   1 - PowerSeries.C a * PowerSeries.X
 

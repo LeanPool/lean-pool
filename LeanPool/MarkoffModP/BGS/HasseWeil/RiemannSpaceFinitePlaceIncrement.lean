@@ -41,6 +41,7 @@ variable {K R L : Type*} [Field K] [CommRing R]
 variable (T : Submodule K L) (a : L)
 variable (hregular : ∀ x : T, ∃ r : R, a * x.1 = algebraMap R L r)
 
+/-- A normalized lift of a finite-place residue class into the local ring. -/
 noncomputable def localNormalizedLift (x : T) : R :=
   Classical.choose (hregular x)
 
@@ -76,11 +77,13 @@ theorem localNormalizedLift_smul (c : K) (x : T) :
   rw [Algebra.smul_def, Algebra.smul_def]
   ring
 
+/-- The linear map sending a residue class to its normalized local lift. -/
 noncomputable def localNormalizedLiftLinearMap : T →ₗ[K] R where
   toFun := localNormalizedLift T a hregular
   map_add' := localNormalizedLift_add T a hregular
   map_smul' := localNormalizedLift_smul T a hregular
 
+/-- The linear map extracting the leading residue of a local element. -/
 noncomputable def localLeadingResidueLinearMap :
     T →ₗ[K] IsLocalRing.ResidueField R :=
   (Ideal.Quotient.mkₐ K (IsLocalRing.maximalIdeal R)).toLinearMap.comp
@@ -111,9 +114,9 @@ end LocalLift
 /-- A normalized lift has zero residue exactly when its local order is positive. -/
 theorem localNormalizedLift_mem_maximalIdeal_iff
     {K R L : Type*} [Field K] [CommRing R]
-  [IsDedekindDomain R] [IsDiscreteValuationRing R]
-  [Field L] [Algebra K R] [Algebra R L] [Algebra K L]
-  [IsScalarTower K R L] [IsFractionRing R L]
+    [IsDedekindDomain R] [IsDiscreteValuationRing R]
+    [Field L] [Algebra R L] [Algebra K L]
+    [IsFractionRing R L]
     (T : Submodule K L) (a : L)
     (hregular : ∀ x : T, ∃ r : R, a * x.1 = algebraMap R L r) (x : T) :
     localNormalizedLift T a hregular x ∈ IsLocalRing.maximalIdeal R ↔
@@ -145,6 +148,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K` to `L` used in the riemann space finite place increment
+    construction. -/
 local instance upperConstantAlgebra : Algebra K L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K (RatFunc K)))
@@ -152,6 +157,8 @@ local instance upperConstantAlgebra : Algebra K L :=
 local instance upperConstantTower : IsScalarTower K (RatFunc K) L :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `K[X]` to `L` used in the riemann space finite place
+    increment construction. -/
 local instance (priority := 10) upperPolynomialAlgebra : Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))
@@ -159,6 +166,8 @@ local instance (priority := 10) upperPolynomialAlgebra : Algebra K[X] L :=
 local instance upperPolynomialTower : IsScalarTower K[X] (RatFunc K) L :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `K` to `(RatFuncFiniteIntegralClosure K L)` used in the
+    riemann space finite place increment construction. -/
 local instance upperFiniteClosureConstantAlgebra :
     Algebra K (RatFuncFiniteIntegralClosure K L) :=
   RingHom.toAlgebra

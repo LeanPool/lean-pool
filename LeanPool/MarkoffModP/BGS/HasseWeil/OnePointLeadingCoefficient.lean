@@ -48,7 +48,7 @@ private theorem constantResidue_surjective_of_ideal_eq
   simpa [e] using hc
 
 @[reducible] private noncomputable def canonicalFractionRingAlgebra
-    (A : Type*) [CommRing A] [IsDomain A] :
+    (A : Type*) [CommRing A] :
     Algebra A (FractionRing A) := inferInstance
 
 section LocalizationResidue
@@ -113,6 +113,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K[X]` to `L` used in the one point leading coefficient
+    construction. -/
 local instance (priority := 10) onePointPolynomialAlgebra : Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))
@@ -121,6 +123,8 @@ local instance onePointPolynomialScalarTower :
     IsScalarTower K[X] (RatFunc K) L :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `K` to `(RatFuncFiniteIntegralClosure K L)` used in the one
+    point leading coefficient construction. -/
 local instance onePointFiniteConstantAlgebra :
     Algebra K (RatFuncFiniteIntegralClosure K L) :=
   RingHom.toAlgebra ((algebraMap K[X]
@@ -130,6 +134,8 @@ local instance onePointFiniteConstantTower :
     IsScalarTower K K[X] (RatFuncFiniteIntegralClosure K L) :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `K` to `(RatFuncInfinityIntegers K)` used in the one point
+    leading coefficient construction. -/
 local instance onePointInfinityConstantAlgebra :
     Algebra K (RatFuncInfinityIntegers K) :=
   (ratFuncInfinityConstantRingHom K).toAlgebra
@@ -138,6 +144,8 @@ local instance onePointInfinityConstantTower :
     IsScalarTower K (RatFuncInfinityIntegers K) (RatFunc K) :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `K` to `(RatFuncInfinityIntegralClosure K L)` used in the one
+    point leading coefficient construction. -/
 local instance onePointInfinityClosureConstantAlgebra :
     Algebra K (RatFuncInfinityIntegralClosure K L) :=
   RingHom.toAlgebra
@@ -369,6 +377,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K` to `L` used in the one point leading coefficient
+    construction. -/
 local instance onePointCancellationConstantAlgebra : Algebra K L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K (RatFunc K)))
@@ -377,6 +387,8 @@ local instance onePointCancellationConstantTower :
     IsScalarTower K (RatFunc K) L :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `K[X]` to `L` used in the one point leading coefficient
+    construction. -/
 local instance (priority := 10) onePointCancellationPolynomialAlgebra :
     Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
@@ -386,15 +398,21 @@ local instance onePointCancellationPolynomialTower :
     IsScalarTower K[X] (RatFunc K) L :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `K` to `(RatFuncFiniteIntegralClosure K L)` used in the one
+    point leading coefficient construction. -/
 local instance onePointCancellationFiniteConstantAlgebra :
     Algebra K (RatFuncFiniteIntegralClosure K L) :=
   RingHom.toAlgebra ((algebraMap K[X]
     (RatFuncFiniteIntegralClosure K L)).comp (algebraMap K K[X]))
 
+/-- The algebra structure from `K` to `(RatFuncInfinityIntegers K)` used in the one point
+    leading coefficient construction. -/
 local instance onePointCancellationInfinityBaseConstantAlgebra :
     Algebra K (RatFuncInfinityIntegers K) :=
   (ratFuncInfinityConstantRingHom K).toAlgebra
 
+/-- The algebra structure from `K` to `(RatFuncInfinityIntegralClosure K L)` used in the one
+    point leading coefficient construction. -/
 local instance onePointCancellationInfinityConstantAlgebra :
     Algebra K (RatFuncInfinityIntegralClosure K L) :=
   RingHom.toAlgebra

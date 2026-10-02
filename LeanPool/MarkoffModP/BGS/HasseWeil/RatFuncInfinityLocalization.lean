@@ -38,6 +38,7 @@ open BGS.CorvajaZannier
 
 variable (K : Type*) [Field K] [DecidableEq K] [DecidableEq (RatFunc K)]
 
+/-- The constant-field algebra on the infinity valuation ring of rational functions. -/
 local instance : Algebra K (RatFuncInfinityIntegers K) :=
   (ratFuncInfinityConstantRingHom K).toAlgebra
 
@@ -54,6 +55,8 @@ noncomputable def ratFuncInfinityReciprocalPolynomialAlgebra :
     Algebra K[X] (RatFuncInfinityIntegers K) :=
   (reciprocalPolynomialRingHom K).toAlgebra
 
+/-- The algebra structure from `K[X]` to `(RatFuncInfinityIntegers K)` used in the rat func
+    infinity localization construction. -/
 local instance reciprocalPolynomialAlgebra :
     Algebra K[X] (RatFuncInfinityIntegers K) :=
   ratFuncInfinityReciprocalPolynomialAlgebra K
@@ -299,10 +302,14 @@ section Extension
 
 variable (N : Type*) [Field N] [Algebra (RatFunc K) N]
 
+/-- The algebra structure from `K` to `(RatFuncInfinityIntegers K)` used in the rat func
+    infinity localization construction. -/
 local instance infinityLocalizationConstantAlgebra :
     Algebra K (RatFuncInfinityIntegers K) :=
   (ratFuncInfinityConstantRingHom K).toAlgebra
 
+/-- The algebra structure from `K[X]` to `(RatFuncInfinityIntegers K)` used in the rat func
+    infinity localization construction. -/
 local instance infinityLocalizationReciprocalPolynomialAlgebra :
     Algebra K[X] (RatFuncInfinityIntegers K) :=
   ratFuncInfinityReciprocalPolynomialAlgebra K
@@ -320,6 +327,8 @@ noncomputable def ratFuncExtensionReciprocalPolynomialAlgebra :
     ((algebraMap (RatFuncInfinityIntegers K) N).comp
       (reciprocalPolynomialRingHom K))
 
+/-- The algebra structure from `K[X]` to `N` used in the rat func infinity localization
+    construction. -/
 local instance infinityLocalizationExtensionPolynomialAlgebra :
     Algebra K[X] N :=
   ratFuncExtensionReciprocalPolynomialAlgebra K N
@@ -374,6 +383,8 @@ local instance infinityLocalizationExtensionSelf :
   fieldSelf_isLocalization N _
     (extensionReciprocalPrimeCompl_maps_nonzero K N)
 
+/-- The algebra structure from `K[X]` to `(RatFuncInfinityIntegralClosure K N)` used in the
+    rat func infinity localization construction. -/
 local instance reciprocalPolynomialInfinityIntegralClosureAlgebra :
     Algebra K[X] (RatFuncInfinityIntegralClosure K N) :=
   RingHom.toAlgebra
@@ -405,6 +416,9 @@ noncomputable def ratFuncInfinityReciprocalIntegralClosureAlgebra :
       (RatFuncInfinityIntegralClosure K N) :=
   (reciprocalIntegralClosureToInfinityAlgHom K N).toAlgebra
 
+/-- The algebra structure from `(integralClosure K[X] N)` to
+    `(RatFuncInfinityIntegralClosure K N)` used in the rat func infinity localization
+    construction. -/
 local instance reciprocalIntegralClosureInfinityAlgebra :
     Algebra (integralClosure K[X] N)
       (RatFuncInfinityIntegralClosure K N) :=

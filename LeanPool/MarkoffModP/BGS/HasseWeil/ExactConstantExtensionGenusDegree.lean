@@ -39,15 +39,24 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- A finite enumeration of `K` used in the exact constant extension genus degree
+    construction. -/
 local instance genusDegreeFintype : Fintype K := Fintype.ofFinite K
+/-- Decidable equality on `K` used in the exact constant extension genus degree construction. -/
 local instance genusDegreeDecidableEq : DecidableEq K := Classical.decEq K
+/-- Decidable equality on `(RatFunc K)` used in the exact constant extension genus degree
+    construction. -/
 local instance genusDegreeRatFuncDecidableEq : DecidableEq (RatFunc K) :=
   Classical.decEq (RatFunc K)
+/-- The algebra structure from `K` to `L` used in the exact constant extension genus degree
+    construction. -/
 local instance genusDegreeConstantAlgebra : Algebra K L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K (RatFunc K)))
 local instance genusDegreeConstantTower : IsScalarTower K (RatFunc K) L :=
   IsScalarTower.of_algebraMap_eq' rfl
+/-- The algebra structure from `K[X]` to `L` used in the exact constant extension genus
+    degree construction. -/
 local instance (priority := 10) genusDegreePolynomialAlgebra : Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))
@@ -97,10 +106,17 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
   [Algebra K[X] L] [IsScalarTower K[X] (RatFunc K) L]
 
+/-- A finite enumeration of `K` used in the exact constant extension genus degree
+    construction. -/
 local instance compatibleGenusDegreeFintype : Fintype K := Fintype.ofFinite K
+/-- Decidable equality on `K` used in the exact constant extension genus degree construction. -/
 local instance compatibleGenusDegreeDecidableEq : DecidableEq K := Classical.decEq K
+/-- Decidable equality on `(RatFunc K)` used in the exact constant extension genus degree
+    construction. -/
 local instance compatibleGenusDegreeRatFuncDecidableEq : DecidableEq (RatFunc K) :=
   Classical.decEq (RatFunc K)
+/-- The algebra structure from `K` to `L` used in the exact constant extension genus degree
+    construction. -/
 local instance compatibleGenusDegreeConstantAlgebra : Algebra K L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K (RatFunc K)))
@@ -136,6 +152,8 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Algebra (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
+/-- The algebra structure from `C` to `N` used in the exact constant extension genus degree
+    construction. -/
 local instance exactConstantExtensionGenusConstantAlgebra : Algebra C N :=
   RingHom.toAlgebra ((algebraMap (RatFunc C) N).comp
     (algebraMap C (RatFunc C)))
@@ -212,6 +230,8 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Algebra (RatFunc C) N] [FiniteDimensional (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
+/-- The algebra structure from `C` to `N` used in the exact constant extension genus degree
+    construction. -/
 local instance exactConstantExtensionDegreeConstantAlgebra : Algebra C N :=
   RingHom.toAlgebra ((algebraMap (RatFunc C) N).comp
     (algebraMap C (RatFunc C)))

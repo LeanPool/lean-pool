@@ -20,7 +20,7 @@ namespace BGS.Markoff
 noncomputable section
 
 /-- Membership in the selected split cage core. -/
-def IsInSplitCage (p : ℕ) [Fact p.Prime]
+def IsInSplitCage (p : ℕ)
     (x : NormalizedMarkoffSurface (ZMod p)) : Prop :=
   ∃ axis : NormalizedCoordinateAxis,
     IsSplitMaximalTrace p (normalizedCoordinateAt axis x.1)

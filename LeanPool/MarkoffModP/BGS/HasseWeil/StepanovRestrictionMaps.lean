@@ -44,6 +44,7 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K` to `L` used in the stepanov restriction maps construction. -/
 local instance stepanovRestrictionConstantAlgebra : Algebra K L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K (RatFunc K)))
@@ -274,7 +275,6 @@ theorem onePointStepanovFirstCodRestrictionMap_injective_of_linearIndependent
 omit [Fintype K] [DecidableEq K] [DecidableEq (RatFunc K)] in
 /-- The coefficient space has dimension equal to the cardinality of its
 finite product index. -/
-@[simp]
 theorem onePointStepanovCoefficientSpace_finrank
     {α β : Type*} [Fintype α] [Fintype β] :
     Module.finrank K (α × β →₀ K) =

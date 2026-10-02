@@ -173,7 +173,7 @@ theorem exists_exactOrderRootSum_obstruction_of_not_puncturedTransitive
       SameNormalizedComponent
         (normalizedSurfaceOfPunctured (puncturedNormalizationEquiv (ZMod p) c)) z)
     (hfour : 4 ∣ (puncturedComponentComplementFinset p c).card)
-    (hnotTransitive : ¬ PuncturedMarkoffTransitiveAt p Fact.out) :
+    (hnotTransitive : ¬ PuncturedMarkoffTransitiveAt p) :
     ∃ d : ℕ,
       0 < d ∧
       (d : ℝ) < (p : ℝ) ^ (5 / 6 : ℝ) ∧

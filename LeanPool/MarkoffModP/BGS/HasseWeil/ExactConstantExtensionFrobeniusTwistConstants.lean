@@ -88,10 +88,10 @@ theorem exactConstantExtensionFrobeniusTwistField_algebraicClosure_eq_bot
     rw [← hTopExact]
     exact mem_algebraicClosure_iff.mpr hzST
   obtain ⟨s, hs⟩ := IntermediateField.mem_bot.mp hzBotS
-  let τ := exactConstantExtensionFrobeniusTwist C L N S hExact g
+  let τ := exactConstantExtensionFrobeniusTwist C L N S g
   have hzFix : τ (z : T) = (z : T) := by
     apply (IntermediateField.mem_fixedField_iff
-      (exactConstantExtensionFrobeniusTwistSubgroup C L N S hExact g)
+      (exactConstantExtensionFrobeniusTwistSubgroup C L N S g)
       (z : T)).mp z.property
     exact Subgroup.mem_zpowers τ
   have hsFix : FiniteField.frobeniusAlgEquivOfAlgebraic C S s = s := by

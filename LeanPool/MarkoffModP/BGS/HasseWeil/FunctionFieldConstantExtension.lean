@@ -113,6 +113,7 @@ local instance tensorFractionIsDomain : IsDomain (TensorFraction K E A) := by
   exact (tensorFractionLocalizationEquiv K E A).toMulEquiv.isDomain_iff.mpr
     inferInstance
 
+/-- The fraction-field structure on the tensor product after algebraic constant extension. -/
 noncomputable local instance tensorFractionField [Algebra.IsAlgebraic K E] :
     Field (TensorFraction K E A) :=
   (Algebra.TensorProduct.isField_of_isAlgebraic K E (FractionRing A)

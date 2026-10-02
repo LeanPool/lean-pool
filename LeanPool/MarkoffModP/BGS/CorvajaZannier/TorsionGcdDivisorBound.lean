@@ -34,13 +34,10 @@ variable [IsDomain (PlaneCurveCoordinateRing f)]
 /-- Choose a branch in an arbitrary Dedekind integral-closure model above the
 maximal ideal defined by a torsion point. -/
 def liftedTorsionPointNormalizationBranch
-    {B : Type*} [CommRing B] [IsDedekindDomain B]
+    {B : Type*} [CommRing B]
     [Algebra (PlaneCurveCoordinateRing f) B]
-    [Algebra B (PlaneCurveFunctionField f)]
-    [IsScalarTower (PlaneCurveCoordinateRing f) B (PlaneCurveFunctionField f)]
     [Algebra.IsIntegral (PlaneCurveCoordinateRing f) B]
     [FaithfulSMul (PlaneCurveCoordinateRing f) B]
-    [IsIntegralClosure B (PlaneCurveCoordinateRing f) (PlaneCurveFunctionField f)]
     (firstOrder secondOrder : ℕ)
     (z : TorusCurveTorsionPoint f firstOrder secondOrder) :
     MaximalSpectrum B := by
@@ -50,13 +47,10 @@ def liftedTorsionPointNormalizationBranch
 
 omit [IsDomain (PlaneCurveCoordinateRing f)] in
 theorem liftedTorsionPointNormalizationBranch_liesOver
-    {B : Type*} [CommRing B] [IsDedekindDomain B]
+    {B : Type*} [CommRing B]
     [Algebra (PlaneCurveCoordinateRing f) B]
-    [Algebra B (PlaneCurveFunctionField f)]
-    [IsScalarTower (PlaneCurveCoordinateRing f) B (PlaneCurveFunctionField f)]
     [Algebra.IsIntegral (PlaneCurveCoordinateRing f) B]
     [FaithfulSMul (PlaneCurveCoordinateRing f) B]
-    [IsIntegralClosure B (PlaneCurveCoordinateRing f) (PlaneCurveFunctionField f)]
     (firstOrder secondOrder : ℕ)
     (z : TorusCurveTorsionPoint f firstOrder secondOrder) :
     (liftedTorsionPointNormalizationBranch (f := f) (B := B)
@@ -70,13 +64,10 @@ omit [IsDomain (PlaneCurveCoordinateRing f)] in
 /-- Chosen branches above distinct torsion points are distinct because their
 contractions to the affine coordinate ring are distinct. -/
 theorem liftedTorsionPointNormalizationBranch_injective
-    {B : Type*} [CommRing B] [IsDedekindDomain B]
+    {B : Type*} [CommRing B]
     [Algebra (PlaneCurveCoordinateRing f) B]
-    [Algebra B (PlaneCurveFunctionField f)]
-    [IsScalarTower (PlaneCurveCoordinateRing f) B (PlaneCurveFunctionField f)]
     [Algebra.IsIntegral (PlaneCurveCoordinateRing f) B]
     [FaithfulSMul (PlaneCurveCoordinateRing f) B]
-    [IsIntegralClosure B (PlaneCurveCoordinateRing f) (PlaneCurveFunctionField f)]
     (firstOrder secondOrder : ℕ) :
     Function.Injective
       (liftedTorsionPointNormalizationBranch (f := f) (B := B)

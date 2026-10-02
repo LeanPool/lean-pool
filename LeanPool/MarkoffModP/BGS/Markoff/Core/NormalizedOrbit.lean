@@ -234,7 +234,6 @@ theorem normalizedSwap23Surface_eq_transport
     exact congrArg Subtype.val ((normalizationSurfaceEquiv R).apply_symm_apply x)]
 
 /-- The transported first coordinate transposition is the normalized swap. -/
-@[simp]
 theorem gammaSwap12_smul_normalizedSurface
     {R : Type u} [CommRing R] [Invertible (3 : R)]
     (x : NormalizedMarkoffSurface R) :
@@ -247,7 +246,6 @@ theorem gammaSwap12_smul_normalizedSurface
   exact (normalizedSwap12Surface_eq_transport x).symm
 
 /-- The transported second coordinate transposition is the normalized swap. -/
-@[simp]
 theorem gammaSwap23_smul_normalizedSurface
     {R : Type u} [CommRing R] [Invertible (3 : R)]
     (x : NormalizedMarkoffSurface R) :
@@ -302,7 +300,6 @@ theorem normalizedRotate1Surface_eq_transport
     exact congrArg Subtype.val ((normalizationSurfaceEquiv R).apply_symm_apply x)]
 
 /-- The transported explicit rotation element acts by normalized rotation. -/
-@[simp]
 theorem gammaRotate1_smul_normalizedSurface
     {R : Type u} [CommRing R] [Invertible (3 : R)]
     (x : NormalizedMarkoffSurface R) :

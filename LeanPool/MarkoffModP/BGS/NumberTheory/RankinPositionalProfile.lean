@@ -37,6 +37,7 @@ def rankinCapNumerator (precision floor : ℕ) : ℕ :=
   Nat.nthRoot 12
       (precision ^ 12 ⌈/⌉ floor) + 1
 
+/-- A rational prime-weight cap derived from a lower prime bound and numerical precision. -/
 def rationalPrimeWeightCapForFloor
     (precision floor : ℕ) : RationalPrimeWeightCap where
   lowerPrime := floor

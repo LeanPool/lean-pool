@@ -41,6 +41,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K` to `L` used in the finite extension riemann roch
+    construction. -/
 local instance riemannRochConstantAlgebra : Algebra K L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K (RatFunc K)))
@@ -48,6 +50,8 @@ local instance riemannRochConstantAlgebra : Algebra K L :=
 local instance riemannRochConstantRatFuncTower : IsScalarTower K (RatFunc K) L :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `K[X]` to `L` used in the finite extension riemann roch
+    construction. -/
 local instance (priority := 10) riemannRochPolynomialAlgebra : Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))
@@ -59,6 +63,8 @@ local instance riemannRochPolynomialRatFuncTower :
 local instance riemannRochConstantPolynomialTower : IsScalarTower K K[X] L :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The algebra structure from `K` to `(RatFuncInfinityIntegers K)` used in the finite
+    extension riemann roch construction. -/
 local instance riemannRochInfinityBaseConstantAlgebra :
     Algebra K (RatFuncInfinityIntegers K) :=
   (ratFuncInfinityConstantRingHom K).toAlgebra
@@ -96,6 +102,8 @@ local instance riemannRochInfinityClosureIsFractionRing :
     (RatFuncInfinityIntegers K) (RatFunc K) L
     (RatFuncInfinityIntegralClosure K L)
 
+/-- The algebra structure from `K` to `(RatFuncInfinityIntegralClosure K L)` used in the
+    finite extension riemann roch construction. -/
 local instance riemannRochInfinityClosureConstantAlgebra :
     Algebra K (RatFuncInfinityIntegralClosure K L) :=
   RingHom.toAlgebra
@@ -248,6 +256,7 @@ def finiteExtensionPlaceEquivChart :
   Equiv.sumCongr (Equiv.refl _)
     (finiteExtensionInfinityPlaceEquivChart K L)
 
+/-- The residue-field equivalence for the finite quotient in Riemann–Roch. -/
 noncomputable def finiteExtensionFiniteQuotientResidueAlgEquiv
     (q : FiniteExtensionFinitePlace K L) :
     (RatFuncFiniteIntegralClosure K L ⧸ q.asIdeal) ≃ₐ[K]
@@ -259,6 +268,7 @@ noncomputable def finiteExtensionFiniteQuotientResidueAlgEquiv
       q.asIdeal.ResidueField)
     (Ideal.bijective_algebraMap_quotient_residueField q.asIdeal)
 
+/-- The residue-field equivalence for the infinity quotient in Riemann–Roch. -/
 noncomputable def finiteExtensionInfinityQuotientResidueAlgEquiv
     (q : HeightOneSpectrum (MarkoffRiemannRoch.FunctionField.Chart.infiniteIntegers K L)) :
     (MarkoffRiemannRoch.FunctionField.Chart.infiniteIntegers K L ⧸ q.asIdeal) ≃ₐ[K]
@@ -270,6 +280,7 @@ noncomputable def finiteExtensionInfinityQuotientResidueAlgEquiv
       q.asIdeal.ResidueField)
     (Ideal.bijective_algebraMap_quotient_residueField q.asIdeal)
 
+/-- The residue-field equivalence at infinity used in the Riemann–Roch comparison. -/
 noncomputable def finiteExtensionInfinityResidueAlgEquiv
     (P : FiniteExtensionInfinityPlace K L) :
     P.1.ResidueField ≃ₐ[K]

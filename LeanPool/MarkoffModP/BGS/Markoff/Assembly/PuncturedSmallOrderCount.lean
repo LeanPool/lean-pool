@@ -23,7 +23,7 @@ namespace BGS.Markoff
 
 /-- The canonical small-order set, restricted to the normalized punctured surface. -/
 noncomputable def normalizedPuncturedMarkoffPointsWithSmallFirstTwoRotationOrders
-    (p : ℕ) [Fact p.Prime] [Invertible (3 : ZMod p)] (bound : ℕ) :
+    (p : ℕ) [Fact p.Prime] (bound : ℕ) :
     Finset ↑(normalizedPuncturedSurface (ZMod p)) := by
   classical
   exact Finset.univ.filter fun x =>
@@ -31,7 +31,7 @@ noncomputable def normalizedPuncturedMarkoffPointsWithSmallFirstTwoRotationOrder
 
 @[simp]
 theorem mem_normalizedPuncturedMarkoffPointsWithSmallFirstTwoRotationOrders_iff
-    {p : ℕ} [Fact p.Prime] [Invertible (3 : ZMod p)] {bound : ℕ}
+    {p : ℕ} [Fact p.Prime] {bound : ℕ}
     {x : ↑(normalizedPuncturedSurface (ZMod p))} :
     x ∈ normalizedPuncturedMarkoffPointsWithSmallFirstTwoRotationOrders p bound ↔
       rotationOrder x.1.u1 < bound ∧ rotationOrder x.1.u2 < bound := by
@@ -41,7 +41,7 @@ theorem mem_normalizedPuncturedMarkoffPointsWithSmallFirstTwoRotationOrders_iff
 /-- Forgetting the puncture proof embeds the normalized punctured small-order set in the
 canonical normalized small-order set. -/
 theorem normalizedPuncturedSmallOrderValues_subset
-    {p : ℕ} [Fact p.Prime] [Invertible (3 : ZMod p)] (bound : ℕ) :
+    {p : ℕ} [Fact p.Prime] (bound : ℕ) :
     (normalizedPuncturedMarkoffPointsWithSmallFirstTwoRotationOrders p bound).map
         ⟨Subtype.val, Subtype.val_injective⟩ ⊆
       normalizedMarkoffPointsWithSmallFirstTwoRotationOrders p bound := by
@@ -55,7 +55,7 @@ theorem normalizedPuncturedSmallOrderValues_subset
 ambient small-order set with the normalized origin erased.  Thus the puncture is exposed rather
 than silently discarded during transport. -/
 theorem normalizedPuncturedSmallOrderValues_eq_erase_origin
-    {p : ℕ} [Fact p.Prime] [Invertible (3 : ZMod p)] (bound : ℕ) :
+    {p : ℕ} [Fact p.Prime] (bound : ℕ) :
     (normalizedPuncturedMarkoffPointsWithSmallFirstTwoRotationOrders p bound).map
         ⟨Subtype.val, Subtype.val_injective⟩ =
       (normalizedMarkoffPointsWithSmallFirstTwoRotationOrders p bound).erase normalizedOrigin := by
@@ -83,7 +83,7 @@ theorem normalizedPuncturedSmallOrderValues_eq_erase_origin
 
 /-- Removing the normalized origin cannot enlarge the canonical small-order set. -/
 theorem normalizedPuncturedMarkoffPointsWithSmallFirstTwoRotationOrders_card_le_ambient
-    {p : ℕ} [Fact p.Prime] [Invertible (3 : ZMod p)] (bound : ℕ) :
+    {p : ℕ} [Fact p.Prime] (bound : ℕ) :
     (normalizedPuncturedMarkoffPointsWithSmallFirstTwoRotationOrders p bound).card ≤
       (normalizedMarkoffPointsWithSmallFirstTwoRotationOrders p bound).card := by
   classical

@@ -119,8 +119,6 @@ omit [Fintype K] in
 degree of its place to the total divisor degree. -/
 theorem finiteExtensionPlaceDegree_le_divisorDegree_of_effective_of_pos
     (L : Type*) [Field L] [Algebra (RatFunc K) L]
-    [FiniteDimensional (RatFunc K) L]
-    [Algebra.IsSeparable (RatFunc K) L]
     (D : FiniteExtensionDivisor K L)
     (hD : ∀ v, 0 ≤ D v) {P : FiniteExtensionPlace K L}
     (hP : 0 < D P) :

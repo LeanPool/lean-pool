@@ -40,6 +40,8 @@ noncomputable def ratFuncInfinityConstantRingHom :
     · change RatFunc.inftyValuation K (RatFunc.C c) ≤ 1
       rw [RatFunc.inftyValuation.C (F := K) hc])
 
+/-- The algebra structure from `K` to `(RatFuncInfinityIntegers K)` used in the infinity
+    inertia degree construction. -/
 local instance ratFuncInfinityConstantAlgebra :
     Algebra K (RatFuncInfinityIntegers K) :=
   (ratFuncInfinityConstantRingHom K).toAlgebra

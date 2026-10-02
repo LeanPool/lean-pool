@@ -158,6 +158,7 @@ counts of `p - 1` and `p + 1`. -/
     {n : ℕ // n = 2 ^ 9 * (9 ^ 9) ^ (2 ^ 9)} :=
   ⟨2 ^ 9 * (9 ^ 9) ^ (2 ^ 9), rfl⟩
 
+/-- The explicit constant bounding the divisor moment in the numerical argument. -/
 def explicitDivisorMomentConstant : ℕ :=
   explicitDivisorMomentConstantData.1
 

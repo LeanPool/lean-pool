@@ -34,6 +34,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K[X]` to `L` used in the finite extension canonical
+    different divisor construction. -/
 local instance (priority := 10) canonicalDifferentPolynomialAlgebra : Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))
@@ -75,6 +77,9 @@ local instance canonicalDifferentFiniteBaseFaithfulSmulFractionRing :
     (FractionRing (RatFuncFiniteIntegralClosure K L)) hxy
   exact FunctionField.ringOfIntegers.algebraMap_injective K L hS
 
+/-- The algebra structure from `(FractionRing K[X])` to `(FractionRing
+    (RatFuncFiniteIntegralClosure K L))` used in the finite extension canonical different
+    divisor construction. -/
 local instance canonicalDifferentFiniteFractionRingAlgebra :
     Algebra (FractionRing K[X])
       (FractionRing (RatFuncFiniteIntegralClosure K L)) :=
@@ -125,6 +130,8 @@ local instance canonicalDifferentInfinityIntegralClosureIsFractionRing :
     (RatFuncInfinityIntegers K) (RatFunc K) L
       (RatFuncInfinityIntegralClosure K L)
 
+/-- A finite enumeration of `(FiniteExtensionInfinityPlace K L)` used in the finite
+    extension canonical different divisor construction. -/
 local instance canonicalDifferentInfinityPlaceFintype :
     Fintype (FiniteExtensionInfinityPlace K L) :=
   Set.Finite.fintype

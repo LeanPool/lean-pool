@@ -41,6 +41,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K[X]` to `L` used in the finite extension exhaustive product
+    formula construction. -/
 local instance (priority := 10) polynomialAlgebra : Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))
@@ -56,8 +58,10 @@ local instance polynomialScalarTower : IsScalarTower K[X] (RatFunc K) L :=
       algebraMap (RatFunc K) L (algebraMap K[X] (RatFunc K) r) by rfl]
     ring⟩
 
+/-- The integral closure of the polynomial ring inside the finite extension. -/
 abbrev RatFuncFiniteIntegralClosure := FunctionField.ringOfIntegers K L
 
+/-- The equivalence between the fraction field of polynomials and rational functions. -/
 noncomputable def ratFuncFiniteFractionRingEquiv :
     FractionRing K[X] ≃ₐ[K[X]] RatFunc K :=
   FractionRing.algEquiv K[X] (RatFunc K)
@@ -94,6 +98,8 @@ theorem ratFuncFiniteFractionRing_order_eq
   change finitePlaceOrder v x = finitePlaceOrder v (e x)
   omega
 
+/-- The equivalence between the fraction field of the finite integral closure and the
+    extension field. -/
 noncomputable def ratFuncFiniteIntegralClosureFractionRingEquiv :
     FractionRing (RatFuncFiniteIntegralClosure K L) ≃ₐ[RatFuncFiniteIntegralClosure K L] L :=
   FractionRing.algEquiv (RatFuncFiniteIntegralClosure K L) L
@@ -121,6 +127,9 @@ local instance finiteBaseFaithfulSMulExtensionFractionRing :
     (FractionRing (RatFuncFiniteIntegralClosure K L)) hxy
   exact FunctionField.ringOfIntegers.algebraMap_injective K L hS
 
+/-- The algebra structure from `(FractionRing K[X])` to `(FractionRing
+    (RatFuncFiniteIntegralClosure K L))` used in the finite extension exhaustive product
+    formula construction. -/
 local instance finiteFractionRingAlgebra :
     Algebra (FractionRing K[X])
       (FractionRing (RatFuncFiniteIntegralClosure K L)) :=
@@ -155,6 +164,8 @@ local instance infinityIntegralClosureIsFractionRing' :
     (RatFuncInfinityIntegers K) (RatFunc K) L
     (RatFuncInfinityIntegralClosure K L)
 
+/-- The equivalence between the fraction field of the infinity integral closure and the
+    extension field. -/
 noncomputable def ratFuncInfinityIntegralClosureFractionRingEquiv :
     FractionRing (RatFuncInfinityIntegralClosure K L) ≃ₐ[RatFuncInfinityIntegralClosure K L] L :=
   FractionRing.algEquiv (RatFuncInfinityIntegralClosure K L) L
@@ -173,6 +184,9 @@ local instance infinityBaseFaithfulSMulExtensionFractionRing' :
     algebraMap (RatFunc K) L (y : RatFunc K)
   exact hL
 
+/-- The algebra structure from `(FractionRing (RatFuncInfinityIntegers K))` to
+    `(FractionRing (RatFuncInfinityIntegralClosure K L))` used in the finite extension
+    exhaustive product formula construction. -/
 local instance infinityFractionRingAlgebra' :
     Algebra (FractionRing (RatFuncInfinityIntegers K))
       (FractionRing (RatFuncInfinityIntegralClosure K L)) :=

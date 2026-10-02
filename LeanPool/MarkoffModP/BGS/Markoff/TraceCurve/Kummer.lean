@@ -413,9 +413,11 @@ def splitTraceXiKummerPolynomial (sigma : K) (e d : ℕ) :
 abbrev SplitTraceBaseFunctionField (K : Type*) [Field K] (sigma : K) :=
   AdjoinRoot (splitTraceBaseKummerPolynomial sigma)
 
+/-- The function field of the split trace curve expressed using the eta coordinate. -/
 abbrev SplitTraceEtaFunctionField (K : Type*) [Field K] (sigma : K) (e : ℕ) :=
   AdjoinRoot (splitTraceEtaKummerPolynomial sigma e)
 
+/-- The function field of the split trace curve expressed using the xi coordinate. -/
 abbrev SplitTraceXiFunctionField (K : Type*) [Field K] (sigma : K) (e d : ℕ) :=
   AdjoinRoot (splitTraceXiKummerPolynomial sigma e d)
 

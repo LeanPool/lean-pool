@@ -149,16 +149,20 @@ private theorem primeFloorLadderValidFrom_getD
 /-- Literal data used to generate all rational prime-weight caps in a
 positional search. -/
 structure RankinPositionalCapTable where
+  /-- The numerical precision used to construct each rational prime-weight cap. -/
   precision : ℕ
+  /-- The ordered lower bounds for the odd primes at each positional slot. -/
   oddPrimeFloors : List ℕ
   deriving DecidableEq, Repr
 
 namespace RankinPositionalCapTable
 
+/-- The table has positive precision and a valid ordered ladder of odd prime floors. -/
 def Valid (table : RankinPositionalCapTable) : Prop :=
   0 < table.precision ∧
     primeFloorLadderValidFrom 0 table.oddPrimeFloors
 
+/-- The Boolean check of the positional cap table. -/
 def check (table : RankinPositionalCapTable) : Bool :=
   decide (0 < table.precision) &&
     primeFloorLadderCheckFrom 0 table.oddPrimeFloors
@@ -167,9 +171,11 @@ def check (table : RankinPositionalCapTable) : Bool :=
     table.check = true ↔ table.Valid := by
   simp [check, Valid]
 
+/-- The rational weight cap for the prime two. -/
 def twoCap (table : RankinPositionalCapTable) : RationalPrimeWeightCap :=
   rationalPrimeWeightCapForFloor table.precision 2
 
+/-- The rational weight cap at an indexed odd-prime slot. -/
 def oddCapAt (table : RankinPositionalCapTable)
     (index : ℕ) : RationalPrimeWeightCap :=
   rationalPrimeWeightCapForFloor table.precision

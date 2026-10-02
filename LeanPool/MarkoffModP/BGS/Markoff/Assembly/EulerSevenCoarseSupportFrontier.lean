@@ -38,7 +38,7 @@ theorem
       maximalDivisorCountSum p (d + 1) ^ 2 ≤ squareEnvelope d)
     (hcubic : ∀ d : ℕ,
       35721 * squareEnvelope d ^ 4 < 8 * p) :
-    PuncturedMarkoffTransitiveAt p Fact.out := by
+    PuncturedMarkoffTransitiveAt p := by
   have hpSeven : 7 ≤ p := seven_le_of_twoPow756_lt hpSupport
   obtain ⟨baseNormalized, hbaseCage⟩ :=
     exists_normalizedPunctured_splitCagePoint p hpSeven

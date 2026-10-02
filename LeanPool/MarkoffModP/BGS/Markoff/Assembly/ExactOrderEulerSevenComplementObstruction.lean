@@ -240,7 +240,7 @@ theorem
       (d : ℝ) < (p : ℝ) ^ (5 / 6 : ℝ) →
       24 * (middleGameMaximalOrders p d).card * d < p)
     (hfour : 4 ∣ (puncturedComponentComplementFinset p c).card)
-    (hnotTransitive : ¬ PuncturedMarkoffTransitiveAt p Fact.out) :
+    (hnotTransitive : ¬ PuncturedMarkoffTransitiveAt p) :
     ∃ d : ℕ,
       0 < d ∧
       (d : ℝ) < (p : ℝ) ^ (5 / 6 : ℝ) ∧

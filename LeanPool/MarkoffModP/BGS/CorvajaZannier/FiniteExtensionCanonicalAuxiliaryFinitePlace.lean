@@ -35,6 +35,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 variable {C : Type*} [Field C] [Algebra C L]
 
+/-- The algebra structure from `K[X]` to `L` used in the finite extension canonical
+    auxiliary finite place construction. -/
 local instance (priority := 10) finiteCanonicalCasesPolynomialAlgebra :
     Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp

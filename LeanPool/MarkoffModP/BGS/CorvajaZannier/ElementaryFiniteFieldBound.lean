@@ -67,7 +67,7 @@ branch of the Corvaja--Zannier numerical maximum follows from the elementary
 finite-group cardinality bound. -/
 theorem torusCurveTorsionIntersection_le_corvajaZannierBound_of_smallChar
     (p : ℕ) [Fact p.Prime]
-    (K : Type*) [Field K] [Fintype K] [DecidableEq K] [CharP K p]
+    (K : Type*) [Field K] [Fintype K] [DecidableEq K]
     (f : MvPolynomial (Fin 2) K)
     (firstDegree secondDegree firstOrder secondOrder : ℕ)
     (hfirstOrder : 0 < firstOrder) (hsecondOrder : 0 < secondOrder)

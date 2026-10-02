@@ -48,7 +48,7 @@ theorem dedekindLocal_ambientDerivation_preserves_of_not_dvd_different
     [IsDedekindDomain A] [IsDedekindDomain B]
     [Algebra A B] [Module.IsTorsionFree A B] [Module.Finite A B]
     [Algebra.IsSeparable (FractionRing A) (FractionRing B)]
-    (p : Ideal A) (Q : Ideal B) [p.IsPrime] [Q.IsPrime] [Q.LiesOver p]
+    (p : Ideal A) (Q : Ideal B) [p.IsPrime] [Q.IsPrime]
     [Algebra (Localization.AtPrime p) (Localization.AtPrime Q)]
     [IsScalarTower A (Localization.AtPrime p) (Localization.AtPrime Q)]
     [Algebra C (Localization.AtPrime p)]
@@ -57,7 +57,6 @@ theorem dedekindLocal_ambientDerivation_preserves_of_not_dvd_different
     [Algebra (Localization.AtPrime p) U]
     [Algebra (Localization.AtPrime Q) U]
     [IsScalarTower C (Localization.AtPrime p) (Localization.AtPrime Q)]
-    [IsScalarTower C (Localization.AtPrime p) U]
     [IsScalarTower C (Localization.AtPrime Q) U]
     [IsScalarTower (Localization.AtPrime p) (Localization.AtPrime Q) U]
     (hQ : ¬ Q ∣ differentIdeal A B)
@@ -80,6 +79,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K[X]` to `L` used in the plane curve auxiliary finite place
+    construction. -/
 local instance (priority := 10) auxiliaryFinitePlacePolynomialAlgebra :
     Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
@@ -116,10 +117,12 @@ place infrastructure. -/
 abbrev PlaneCurveExtensionFinitePlace :=
   HeightOneSpectrum (FunctionField.ringOfIntegers K L)
 
+/-- The base local ring at a finite place of the extension. -/
 abbrev FiniteExtensionFinitePlaceBaseLocalRing
     (q : PlaneCurveExtensionFinitePlace K L) :=
   Localization.AtPrime (HeightOneSpectrum.under K[X] q).asIdeal
 
+/-- The corresponding local ring of the extension at that finite place. -/
 abbrev FiniteExtensionFinitePlaceLocalRing
     (q : PlaneCurveExtensionFinitePlace K L) :=
   Localization.AtPrime q.asIdeal

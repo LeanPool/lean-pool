@@ -31,8 +31,10 @@ section
 
 variable (p : ℕ) [Fact p.Prime]
 
+/-- Finiteness of the quadratic extension field used in the nonsplit parametrization. -/
 noncomputable local instance : Fintype (quadraticFiniteField p) :=
   Fintype.ofFinite (quadraticFiniteField p)
+/-- A finite enumeration of nonidentity points of the norm-one torus. -/
 noncomputable local instance : Fintype {w : quadraticNormOneTorus p // w ≠ 1} :=
   Fintype.ofFinite _
 

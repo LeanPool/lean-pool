@@ -96,7 +96,6 @@ theorem heightOneSpectrumEquivOfAlgEquiv_under
 /-- The same contraction result when the equivalence is over a smaller
 coefficient ring and compatibility with the base algebra maps is supplied
 separately. -/
-@[simp]
 theorem heightOneSpectrumEquivOfAlgEquiv_under_of_algebraMap_eq
     (e : A ≃ₐ[C] B)
     (h : e.toRingHom.comp (algebraMap R A) = algebraMap R B)
@@ -188,14 +187,20 @@ open BGS.CorvajaZannier
 variable (S T A : Type*) [Field S] [Field T] [CommRing A]
   [Algebra (RatFunc S) T]
 
+/-- The algebra structure from `S[X]` to `T` used in the finite place normalization
+    transport construction. -/
 local instance finitePlacePolynomialTopAlgebra : Algebra S[X] T :=
   ratFuncInducedPolynomialAlgebra S T
 
 variable [Algebra S[X] A]
 
+/-- The algebra structure from `S` to `A` used in the finite place normalization transport
+    construction. -/
 local instance finitePlaceSourceConstantAlgebra : Algebra S A :=
   RingHom.toAlgebra ((algebraMap S[X] A).comp (algebraMap S S[X]))
 
+/-- The algebra structure from `S` to `(RatFuncFiniteIntegralClosure S T)` used in the
+    finite place normalization transport construction. -/
 local instance finitePlaceTargetConstantAlgebra :
     Algebra S (RatFuncFiniteIntegralClosure S T) :=
   RingHom.toAlgebra ((algebraMap S[X]

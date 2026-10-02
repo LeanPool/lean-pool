@@ -23,6 +23,7 @@ namespace BGS.Markoff
 
 open BGS.NumberTheory
 
+/-- The maximal orders below the current order used by the middle-game cover. -/
 def middleGameMaximalOrders (p currentOrder : ℕ) : Finset ℕ :=
   maximalDivisorsBelow (p - 1) (currentOrder + 1) ∪
     maximalDivisorsBelow (p + 1) (currentOrder + 1)

@@ -47,7 +47,6 @@ def ratFuncFiniteBaseRingEquivChart :
     (FunctionField.ringOfIntegers K (RatFunc K))).toRingEquiv
 
 omit [Fintype K] [DecidableEq K] [DecidableEq (RatFunc K)] in
-@[simp]
 theorem ratFuncFiniteBaseRingEquivChart_algebraMap
     (r : K[X]) :
     algebraMap (FunctionField.ringOfIntegers K (RatFunc K))
@@ -68,7 +67,6 @@ def ratFuncInfinityBaseRingEquivChart :
       (MarkoffRiemannRoch.FunctionField.Chart.infiniteIntegers K (RatFunc K))).toRingEquiv
 
 omit [Fintype K] [DecidableEq K] in
-@[simp]
 theorem ratFuncInfinityBaseRingEquivChart_algebraMap
     (r : RatFuncInfinityIntegers K) :
     algebraMap (MarkoffRiemannRoch.FunctionField.Chart.infiniteIntegers K (RatFunc K))
@@ -98,6 +96,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc K) L]
   [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L]
 
+/-- The algebra structure from `K[X]` to `L` used in the finite extension canonical
+    different cotrace construction. -/
 local instance (priority := 10) cotracePolynomialAlgebra : Algebra K[X] L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K[X] (RatFunc K)))
@@ -554,6 +554,8 @@ theorem finiteExtensionUnderPlaceChart_section
 
 section
 
+/-- The algebra structure from `K` to `L` used in the finite extension canonical different
+    cotrace construction. -/
 local instance cotraceConstantAlgebra : Algebra K L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K (RatFunc K)))
@@ -676,7 +678,8 @@ def ratFuncInfinityPlaceChart :
 
 section
 
-local instance : Algebra K L :=
+/-- The constant-field algebra on `L` induced by its rational-function-field algebra. -/
+local instance finiteExtensionCotraceConstantAlgebra : Algebra K L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K (RatFunc K)))
 
@@ -836,7 +839,9 @@ theorem finiteExtensionFiberTraceRaw_mem_placeValuationSubring_of_not_bad
 
 section
 
-local instance : Algebra K L :=
+/-- The constant-field algebra on the extension field used for the fiber trace
+    construction. -/
+local instance finiteExtensionFiberTraceConstantAlgebra : Algebra K L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K (RatFunc K)))
 
@@ -1270,7 +1275,8 @@ theorem finiteExtensionFiberTrace_mem_ratFuncCanonicalInfinityAdeleFilt
 
 section
 
-local instance : Algebra K L :=
+/-- The constant-field algebra on the extension field used for the local cotrace comparison. -/
+local instance finiteExtensionLocalCotraceConstantAlgebra : Algebra K L :=
   RingHom.toAlgebra ((algebraMap (RatFunc K) L).comp
     (algebraMap K (RatFunc K)))
 

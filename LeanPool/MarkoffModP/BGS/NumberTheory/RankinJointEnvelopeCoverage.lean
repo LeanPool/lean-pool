@@ -38,6 +38,7 @@ def JointEnvelopeDominates
     major.jointLowerNeighborProduct ≤
       actual.jointLowerNeighborProduct
 
+/-- The Boolean check that one side-erased envelope dominates another profile. -/
 def jointEnvelopeDominatesCheck
     (major actual : RankinNeighborProfile) : Bool :=
   decide
@@ -110,6 +111,7 @@ theorem jointEnvelope_leaf_of_dominates
 
 end RankinNeighborProfile
 
+/-- Every generated side-erased envelope leaf satisfies its validity predicate. -/
 def allRankinJointEnvelopeLeavesValid
     (cutoff : ℕ) : List RankinNeighborProfile → Prop
   | [] => True
@@ -117,6 +119,7 @@ def allRankinJointEnvelopeLeavesValid
       profile.JointEnvelopeLeafValid cutoff ∧
         allRankinJointEnvelopeLeavesValid cutoff profiles
 
+/-- The Boolean check that all generated envelope leaves are valid. -/
 def allRankinJointEnvelopeLeavesCheck
     (cutoff : ℕ) : List RankinNeighborProfile → Bool
   | [] => true
@@ -154,15 +157,19 @@ private theorem jointEnvelopeLeafValid_of_all_of_mem
 proof fields: the list is checked by reduction, and exhaustiveness is proved
 separately through `Covers`. -/
 structure RankinJointEnvelopeFiniteCertificate where
+  /-- The cutoff certified by this finite list of envelope profiles. -/
   cutoff : ℕ
+  /-- The finite list of profiles used by the domination certificate. -/
   profiles : List RankinNeighborProfile
   deriving DecidableEq, Repr
 
 namespace RankinJointEnvelopeFiniteCertificate
 
+/-- All profiles in the certificate are valid envelope leaves at its cutoff. -/
 def LeavesValid (cert : RankinJointEnvelopeFiniteCertificate) : Prop :=
   allRankinJointEnvelopeLeavesValid cert.cutoff cert.profiles
 
+/-- The Boolean check of the certificate's envelope leaves. -/
 def check (cert : RankinJointEnvelopeFiniteCertificate) : Bool :=
   allRankinJointEnvelopeLeavesCheck cert.cutoff cert.profiles
 

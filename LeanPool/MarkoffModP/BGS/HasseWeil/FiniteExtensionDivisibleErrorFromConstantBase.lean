@@ -37,6 +37,8 @@ variable (K C F : Type*)
   [FiniteDimensional (RatFunc K) F]
   [Algebra.IsSeparable (RatFunc K) F]
 
+/-- The algebra structure from `K` to `F` used in the finite extension divisible error from
+    constant base construction. -/
 local instance divisibleErrorBaseConstantAlgebra : Algebra K F :=
   bridgeBaseConstantAlgebra K F
 

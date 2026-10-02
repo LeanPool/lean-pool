@@ -37,6 +37,7 @@ variable {K : Type*} [Field K]
 def weightedSplitTraceRelationFamily (alpha beta : K) (d e : ℕ) (_ : Unit) :
     MvPolynomial (Fin 2) K := splitTraceCoverPolynomial alpha beta d e
 
+/-- The affine presentation of the weighted split-trace coordinate ring. -/
 def weightedSplitTraceAffinePresentationEquiv (alpha beta : K) (d e : ℕ) :
     (MvPolynomial (Fin 2) K ⧸ Ideal.span (Set.range
       (weightedSplitTraceRelationFamily alpha beta d e))) ≃ₐ[K]
@@ -46,6 +47,7 @@ def weightedSplitTraceAffinePresentationEquiv (alpha beta : K) (d e : ℕ) :
     ext p
     simp [weightedSplitTraceRelationFamily, eq_comm])
 
+/-- The preliminary submersive presentation on the first affine chart. -/
 def weightedSplitTraceAffineXPreSubmersivePresentation (alpha beta : K) (d e : ℕ) :
     Algebra.PreSubmersivePresentation K
       (WeightedSplitTraceAffineCoordinateRing alpha beta d e) (Fin 2) Unit :=
@@ -67,6 +69,7 @@ noncomputable instance weightedSplitTraceLaurentFinitePresentation (alpha beta :
     (WeightedSplitTraceAffineCoordinateRing alpha beta d e)
     (WeightedSplitTraceLaurentCoordinateRing alpha beta d e)
 
+/-- The first partial derivative of the weighted split-trace relation. -/
 def weightedSplitTraceAffinePartialX (alpha beta : K) (d e : ℕ) :
     WeightedSplitTraceAffineCoordinateRing alpha beta d e :=
   Ideal.Quotient.mk _
@@ -133,9 +136,11 @@ theorem weightedSplitTraceAffinePartialX_mapsToLaurent
   symm
   exact weightedSplitTraceLaurentEval_eq_algebraMap_mk alpha beta d e _
 
+/-- The localization obtained by inverting the first partial derivative. -/
 abbrev WeightedSplitTracePartialXLocalization (alpha beta : K) (d e : ℕ) :=
   Localization.Away (weightedSplitTraceLaurentPartialX alpha beta d e)
 
+/-- The preliminary presentation for the product of the two trace coordinates. -/
 def weightedSplitTraceCoordinateProductPreSubmersivePresentation
     (alpha beta : K) (d e : ℕ) :
     Algebra.PreSubmersivePresentation
@@ -145,6 +150,7 @@ def weightedSplitTraceCoordinateProductPreSubmersivePresentation
     (WeightedSplitTraceLaurentCoordinateRing alpha beta d e)
     (weightedSplitTraceAffineCoordinateProduct alpha beta d e)
 
+/-- The preliminary presentation after localizing at the first Laurent coordinate. -/
 def weightedSplitTraceLaurentXPreSubmersivePresentation (alpha beta : K) (d e : ℕ) :
     Algebra.PreSubmersivePresentation K
       (WeightedSplitTraceLaurentCoordinateRing alpha beta d e)
@@ -152,6 +158,7 @@ def weightedSplitTraceLaurentXPreSubmersivePresentation (alpha beta : K) (d e : 
   (weightedSplitTraceCoordinateProductPreSubmersivePresentation alpha beta d e).comp
     (weightedSplitTraceAffineXPreSubmersivePresentation alpha beta d e)
 
+/-- The preliminary presentation after also inverting the first partial derivative. -/
 def weightedSplitTracePartialXLocalizationPreSubmersivePresentation
     (alpha beta : K) (d e : ℕ) :
     Algebra.PreSubmersivePresentation
@@ -161,6 +168,7 @@ def weightedSplitTracePartialXLocalizationPreSubmersivePresentation
     (WeightedSplitTracePartialXLocalization alpha beta d e)
     (weightedSplitTraceLaurentPartialX alpha beta d e)
 
+/-- The composite presentation on the first partial-derivative chart. -/
 def weightedSplitTracePartialXCompositePresentation
     (alpha beta : K) (d e : ℕ) :
     Algebra.PreSubmersivePresentation K
@@ -208,6 +216,7 @@ theorem weightedSplitTracePartialXCompositePresentation_jacobian_isUnit
     exact hP₀.mul hQxy
   exact hP₁.mul hQx
 
+/-- The submersive presentation on the first partial-derivative chart. -/
 def weightedSplitTracePartialXSubmersivePresentation
     (alpha beta : K) (d e : ℕ) :
     Algebra.SubmersivePresentation K
@@ -290,6 +299,7 @@ def weightedSplitTraceLaurentYPreSubmersivePresentation
   (weightedSplitTraceCoordinateProductPreSubmersivePresentation alpha beta d e).comp
     (weightedSplitTraceAffineYPreSubmersivePresentation alpha beta d e)
 
+/-- The preliminary presentation after localizing at the second partial derivative. -/
 def weightedSplitTracePartialYLocalizationPreSubmersivePresentation
     (alpha beta : K) (d e : ℕ) :
     Algebra.PreSubmersivePresentation
@@ -299,6 +309,7 @@ def weightedSplitTracePartialYLocalizationPreSubmersivePresentation
     (WeightedSplitTracePartialYLocalization alpha beta d e)
     (weightedSplitTraceLaurentPartialY alpha beta d e)
 
+/-- The composite presentation on the second partial-derivative chart. -/
 def weightedSplitTracePartialYCompositePresentation
     (alpha beta : K) (d e : ℕ) :
     Algebra.PreSubmersivePresentation K
@@ -346,6 +357,7 @@ theorem weightedSplitTracePartialYCompositePresentation_jacobian_isUnit
     exact hP₀.mul hQxy
   exact hP₁.mul hQy
 
+/-- The submersive presentation on the second partial-derivative chart. -/
 def weightedSplitTracePartialYSubmersivePresentation
     (alpha beta : K) (d e : ℕ) :
     Algebra.SubmersivePresentation K

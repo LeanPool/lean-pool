@@ -65,16 +65,22 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Algebra.IsSeparable (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
+/-- Classical equality on the enlarged constant field for the different-coefficient
+    calculation. -/
 local instance (priority := 10000)
     exactConstantDifferentCoefficientConstantsDecidableEq
-    (K : Type*) [Field K] : DecidableEq K :=
+    (K : Type*) : DecidableEq K :=
   infinityBridgeDecidableEqConstants K
 
+/-- Classical equality on rational functions over the enlarged constants for the different
+    coefficient. -/
 local instance (priority := 10001)
     exactConstantDifferentCoefficientRatFuncDecidableEq
     (K : Type*) [Field K] : DecidableEq (RatFunc K) :=
   infinityBridgeDecidableEqRatFuncConstants K
 
+/-- The algebra structure from `C` to `N` used in the exact constant extension different
+    coefficient construction. -/
 local instance exactConstantDifferentCoefficientBaseConstantAlgebra :
     Algebra C N :=
   bridgeBaseConstantAlgebra C N
@@ -85,11 +91,11 @@ local instance exactConstantDifferentCoefficientBaseConstantTower :
 
 @[reducible] private noncomputable def
     exactConstantDifferentCoefficientCanonicalFractionRingAlgebra
-    (R : Type*) [CommRing R] [IsDomain R] :
+    (R : Type*) [CommRing R] :
     Algebra R (FractionRing R) := inferInstance
 
 private theorem exactConstantDifferentCoefficientCanonicalFractionRing
-    (R : Type*) [CommRing R] [IsDomain R] :
+    (R : Type*) [CommRing R] :
     letI := exactConstantDifferentCoefficientCanonicalFractionRingAlgebra R
     IsFractionRing R (FractionRing R) := by
   let := exactConstantDifferentCoefficientCanonicalFractionRingAlgebra R
@@ -139,9 +145,8 @@ private theorem finiteNormalization_multiplicity_map_eq
     (idealMapMulEquiv e.toRingEquiv)
 
 private theorem finiteNormalization_differentIdeal_eq_map
-    {k T : Type*} [Field k] [Finite k] [Field T]
-    [Algebra (RatFunc k) T] [FiniteDimensional (RatFunc k) T]
-    [Algebra.IsSeparable (RatFunc k) T]
+    {k T : Type*} [Field k] [Field T]
+    [Algebra (RatFunc k) T]
     (a : Algebra k[X] T)
     (h : ratFuncInducedPolynomialAlgebra k T = a)
     (hDedekind : letI := a

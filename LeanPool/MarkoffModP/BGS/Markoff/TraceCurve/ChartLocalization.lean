@@ -30,25 +30,31 @@ noncomputable section
 
 variable {K : Type*} [Field K]
 
+/-- The first coordinate in the weighted split-trace affine chart. -/
 def weightedSplitTraceAffineX (alpha beta : K) (d e : ℕ) :
     WeightedSplitTraceAffineCoordinateRing alpha beta d e :=
   Ideal.Quotient.mk _ (MvPolynomial.X 0)
 
+/-- The second coordinate in the weighted split-trace affine chart. -/
 def weightedSplitTraceAffineY (alpha beta : K) (d e : ℕ) :
     WeightedSplitTraceAffineCoordinateRing alpha beta d e :=
   Ideal.Quotient.mk _ (MvPolynomial.X 1)
 
+/-- The product of the two distinguished affine chart coordinates. -/
 def weightedSplitTraceAffineCoordinateProduct (alpha beta : K) (d e : ℕ) :
     WeightedSplitTraceAffineCoordinateRing alpha beta d e :=
   weightedSplitTraceAffineX alpha beta d e * weightedSplitTraceAffineY alpha beta d e
 
+/-- The Laurent localization of the weighted split-trace coordinate ring. -/
 abbrev WeightedSplitTraceLaurentCoordinateRing (alpha beta : K) (d e : ℕ) :=
   Localization.Away (weightedSplitTraceAffineCoordinateProduct alpha beta d e)
 
+/-- The first coordinate in the localized Laurent chart. -/
 def weightedSplitTraceLaurentX (alpha beta : K) (d e : ℕ) :
     WeightedSplitTraceLaurentCoordinateRing alpha beta d e :=
   algebraMap _ _ (weightedSplitTraceAffineX alpha beta d e)
 
+/-- The second coordinate in the localized Laurent chart. -/
 def weightedSplitTraceLaurentY (alpha beta : K) (d e : ℕ) :
     WeightedSplitTraceLaurentCoordinateRing alpha beta d e :=
   algebraMap _ _ (weightedSplitTraceAffineY alpha beta d e)
@@ -72,10 +78,12 @@ theorem weightedSplitTraceLaurentY_isUnit (alpha beta : K) (d e : ℕ) :
   ((Commute.all _ _).isUnit_mul_iff.mp
     (weightedSplitTraceLaurentCoordinateProduct_isUnit alpha beta d e)).2
 
+/-- The first Laurent chart coordinate viewed as a unit. -/
 def weightedSplitTraceLaurentXUnit (alpha beta : K) (d e : ℕ) :
     (WeightedSplitTraceLaurentCoordinateRing alpha beta d e)ˣ :=
   (weightedSplitTraceLaurentX_isUnit alpha beta d e).unit
 
+/-- The second Laurent chart coordinate viewed as a unit. -/
 def weightedSplitTraceLaurentYUnit (alpha beta : K) (d e : ℕ) :
     (WeightedSplitTraceLaurentCoordinateRing alpha beta d e)ˣ :=
   (weightedSplitTraceLaurentY_isUnit alpha beta d e).unit
@@ -94,10 +102,12 @@ theorem weightedSplitTraceLaurentYUnit_val (alpha beta : K) (d e : ℕ) :
       weightedSplitTraceLaurentY alpha beta d e :=
   (weightedSplitTraceLaurentY_isUnit alpha beta d e).unit_spec
 
+/-- The inverse of the first Laurent chart coordinate. -/
 def weightedSplitTraceLaurentXInverse (alpha beta : K) (d e : ℕ) :
     WeightedSplitTraceLaurentCoordinateRing alpha beta d e :=
   ↑(weightedSplitTraceLaurentXUnit alpha beta d e)⁻¹
 
+/-- The inverse of the second Laurent chart coordinate. -/
 def weightedSplitTraceLaurentYInverse (alpha beta : K) (d e : ℕ) :
     WeightedSplitTraceLaurentCoordinateRing alpha beta d e :=
   ↑(weightedSplitTraceLaurentYUnit alpha beta d e)⁻¹
@@ -189,6 +199,7 @@ theorem weightedSplitTraceLeftInverseDefiningRelation (alpha beta : K) (d e : �
               weightedSplitTraceLaurentY alpha beta d e ^ e * hcancelTwo
     _ = 0 := by rw [weightedSplitTraceLaurentDefiningRelation, mul_zero]
 
+/-- The polynomial map encoding inversion of the first trace coordinate. -/
 def weightedSplitTraceLeftInversionPolynomialMap (alpha beta : K) (d e : ℕ) :
     MvPolynomial (Fin 2) K →ₐ[K] WeightedSplitTraceLaurentCoordinateRing alpha beta d e :=
   MvPolynomial.aeval
@@ -201,6 +212,7 @@ theorem weightedSplitTraceLeftInversionPolynomialMap_relation (alpha beta : K) (
     splitTraceCoverPolynomial] using
     weightedSplitTraceLeftInverseDefiningRelation alpha beta d e
 
+/-- The induced inversion map on the affine chart. -/
 def weightedSplitTraceLeftInversionAffineMap (alpha beta : K) (d e : ℕ) :
     WeightedSplitTraceAffineCoordinateRing alpha beta d e →ₐ[K]
       WeightedSplitTraceLaurentCoordinateRing alpha beta d e := by
@@ -245,6 +257,7 @@ theorem weightedSplitTraceLeftInversionAffineMap_coordinateProduct_isUnit
     (Units.isUnit (weightedSplitTraceLaurentXUnit alpha beta d e)⁻¹).mul
       (weightedSplitTraceLaurentY_isUnit alpha beta d e)
 
+/-- The induced inversion map on the Laurent chart. -/
 def weightedSplitTraceLeftInversionLaurentMap (alpha beta : K) (d e : ℕ) :
     WeightedSplitTraceLaurentCoordinateRing alpha beta d e →ₐ[K]
       WeightedSplitTraceLaurentCoordinateRing alpha beta d e :=
@@ -333,6 +346,7 @@ theorem weightedSplitTraceLeftInversionLaurentMap_involutive (alpha beta : K) (d
       weightedSplitTraceLaurentY alpha beta d e
     rw [weightedSplitTraceLeftInversionLaurentMap_y, weightedSplitTraceLeftInversionLaurentMap_y]
 
+/-- The Laurent chart equivalence induced by inversion of the first coordinate. -/
 def weightedSplitTraceLeftInversionLaurentEquiv (alpha beta : K) (d e : ℕ) :
     WeightedSplitTraceLaurentCoordinateRing alpha beta d e ≃ₐ[K]
       WeightedSplitTraceLaurentCoordinateRing alpha beta d e :=

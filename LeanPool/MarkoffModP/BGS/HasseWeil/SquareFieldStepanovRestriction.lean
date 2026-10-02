@@ -74,6 +74,8 @@ variable (L : Type*) [Field L] [Algebra (RatFunc S) L]
   [FiniteDimensional (RatFunc S) L]
   [Algebra.IsSeparable (RatFunc S) L]
 
+/-- The algebra structure from `S` to `L` used in the square field stepanov restriction
+    construction. -/
 local instance squareFieldRestrictionConstantAlgebra : Algebra S L :=
   RingHom.toAlgebra ((algebraMap (RatFunc S) L).comp
     (algebraMap S (RatFunc S)))

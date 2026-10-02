@@ -40,7 +40,7 @@ open scoped BigOperators nonZeroDivisors Polynomial
 noncomputable section
 
 private theorem exists_dominatingPlace_of_nonzero_nonunit
-    {A P E : Type*} [CommRing A] [IsDomain A] [CommRing P] [Field E]
+    {A P E : Type*} [CommRing A] [CommRing P] [Field E]
     [Algebra A E] [IsFractionRing A E] [Algebra P E]
     [IsDedekindDomain (integralClosure P E)] [IsFractionRing (integralClosure P E) E]
     (m : MaximalSpectrum A)
@@ -69,7 +69,7 @@ private theorem exists_dominatingPlace_of_nonzero_nonunit
     valuationSubringAt_dominatingIntegralClosurePlace_eq m hbase hne hV⟩
 
 private theorem exists_dominatingPlace_of_base_element
-    {A P E : Type*} [CommRing A] [IsDomain A] [CommRing P] [Field E]
+    {A P E : Type*} [CommRing A] [CommRing P] [Field E]
     [Algebra A E] [IsFractionRing A E] [Algebra P E]
     [IsDedekindDomain (integralClosure P E)] [IsFractionRing (integralClosure P E) E]
     (m : MaximalSpectrum A)
@@ -93,7 +93,7 @@ private theorem exists_dominatingPlace_of_base_element
   exact algebraMap_mem_dominatingValuationSubring_nonunits_of_mem m r hr
 
 private theorem residue_finrank_le_of_dominating_valuation
-    {K A E : Type*} [Field K] [CommRing A] [IsDomain A] [Field E]
+    {K A E : Type*} [Field K] [CommRing A] [Field E]
     [Algebra K A] [Algebra K E] [Algebra A E] [IsScalarTower K A E]
     [IsFractionRing A E] (m : MaximalSpectrum A) (R : ValuationSubring E)
     [Algebra K R]
@@ -408,7 +408,7 @@ private theorem residue_finrank_le_finitePlace_degree
     [Field E] [Algebra (RatFunc K) E] [FiniteDimensional (RatFunc K) E]
     [Algebra.IsSeparable (RatFunc K) E] [Algebra K E]
     [IsScalarTower K (RatFunc K) E]
-    [CommRing A] [IsDomain A] [Algebra K A] [Algebra A E]
+    [CommRing A] [Algebra K A] [Algebra A E]
     [IsScalarTower K A E] [IsFractionRing A E]
     [IsDedekindDomain (RatFuncFiniteIntegralClosure K E)]
     [IsFractionRing (RatFuncFiniteIntegralClosure K E) E]

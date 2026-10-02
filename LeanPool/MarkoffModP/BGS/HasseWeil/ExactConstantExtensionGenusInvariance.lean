@@ -34,16 +34,15 @@ variable (C S N : Type*) [Field C] [Field S] [Field N]
   [Algebra.IsSeparable (RatFunc C) N]
   [Algebra C S] [FiniteDimensional C S] [IsGalois C S]
 
-local instance (priority := 10000)
-    exactConstantGenusInvarianceConstantsDecidableEq
-    (K : Type*) [Field K] : DecidableEq K :=
-  infinityBridgeDecidableEqConstants K
-
+/-- Classical equality on rational functions over the enlarged constants for genus
+    invariance. -/
 local instance (priority := 10001)
     exactConstantGenusInvarianceRatFuncDecidableEq
     (K : Type*) [Field K] : DecidableEq (RatFunc K) :=
   infinityBridgeDecidableEqRatFuncConstants K
 
+/-- The algebra structure from `C` to `N` used in the exact constant extension genus
+    invariance construction. -/
 local instance exactConstantGenusInvarianceBaseConstantAlgebra : Algebra C N :=
   bridgeBaseConstantAlgebra C N
 
@@ -51,6 +50,7 @@ local instance exactConstantGenusInvarianceBaseConstantTower :
     IsScalarTower C (RatFunc C) N :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The polynomial algebra on the original extension field used to compare genera. -/
 local instance (priority := 10)
     exactConstantGenusInvarianceBasePolynomialAlgebra : Algebra C[X] N :=
   RingHom.toAlgebra ((algebraMap (RatFunc C) N).comp
@@ -69,6 +69,8 @@ pointwise total-different multiplicity compatibility is known. -/
 theorem exactConstantExtension_chart_genus_eq_of_presentedMultiplicity
     (hExact : algebraicClosure C N =
       (⊥ : IntermediateField C N)) :
+    letI : DecidableEq C := infinityBridgeDecidableEqConstants C
+    letI : DecidableEq S := infinityBridgeDecidableEqConstants S
     let E := ExactConstantExtension C N S
     letI : Field E := exactConstantExtensionField C N S hExact
     letI : Algebra (RatFunc C) E :=
@@ -145,6 +147,8 @@ theorem exactConstantExtension_chart_genus_eq_of_presentedMultiplicity
       MarkoffRiemannRoch.FunctionField.Chart.genus S E =
         MarkoffRiemannRoch.FunctionField.Chart.genus C N := by
   dsimp only
+  let : DecidableEq C := infinityBridgeDecidableEqConstants C
+  let : DecidableEq S := infinityBridgeDecidableEqConstants S
   let E := ExactConstantExtension C N S
   let : Field E := exactConstantExtensionField C N S hExact
   let : Algebra (RatFunc C) (RatFunc S) :=
