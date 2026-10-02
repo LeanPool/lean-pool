@@ -76,7 +76,7 @@ def explicitBetheOptimizerColumnPotential {m : ℕ}
     explicitBetheOptimizerGradient A 0 0)
 
 theorem HasApproximateLogKKT.mono
-    {ι : Type*} [Fintype ι] {ε ε' τ : ℝ}
+    {ι : Type*} {ε ε' τ : ℝ}
     {A X : Matrix ι ι ℝ} {R C : ι → ℝ}
     (h : HasApproximateLogKKT ε τ A X R C) (hε : ε ≤ ε') :
     HasApproximateLogKKT ε' τ A X R C := by
