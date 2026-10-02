@@ -102,7 +102,7 @@ theorem singularChainSimplicialModule_δ_generator (R : Type) [CommRing R] (Z : 
 /-- The **cochain coboundary** `δ = d^p : C^p(Z; R) → C^{p+1}(Z; R)`, the
 differential of the singular cochain complex. By construction it is
 precomposition with the singular chain boundary. -/
-noncomputable def cochainCoboundary (R : Type) [CommRing R] (Z : TopCat.{0}) (p : ℕ)
+@[expose] noncomputable def cochainCoboundary (R : Type) [CommRing R] (Z : TopCat.{0}) (p : ℕ)
     (φ : singularCochainGroup R Z p) : singularCochainGroup R Z (p + 1) :=
   (((singularCochainComplexFunctor R (ModuleCat.of R R)).obj (Opposite.op Z)).d p (p + 1)).hom φ
 

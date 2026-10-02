@@ -46,7 +46,7 @@ variable {n : ℕ}
 normalized equal‑area weight `EMP.normalizedWeight K s.pts hn s.injective_pts`, bundled as a
 `ConvexPartition K n`. Covering comes from `PowerDiagram.iUnion_bodyCellSet`; null overlap of
 distinct pieces comes from `PowerDiagram.bodyCellSet_inter_null` via `Config` site injectivity. -/
-noncomputable def EMP.powerPartition
+@[expose] noncomputable def EMP.powerPartition
     (K : Geometry.ConvexBody Plane) (s : Config n) (hn : 0 < n)
     (hK : 0 < K.area) : ConvexPartition K n where
   piece i := EMP.powerPartitionPiece K s hn hK i

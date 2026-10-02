@@ -118,7 +118,7 @@ variable (o : SphereOrientation)
 /-- The integer **degree** of a self-map of `Sphere n`, read off the supplied
 top-homology identification `o.iso n`. Honest and unconditional once a
 `SphereOrientation` is provided. -/
-def degree {n : ℕ} (f : C(Sphere n, Sphere n)) : ℤ :=
+@[expose] def degree {n : ℕ} (f : C(Sphere n, Sphere n)) : ℤ :=
   degreeOfIso (o.iso n) f
 
 /-- The degree of the identity map is `1`. -/

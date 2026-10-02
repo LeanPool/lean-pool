@@ -66,7 +66,7 @@ theorem det_ambientNeg (n : ℕ) :
 /-- Transport a continuous self-map of the raw sphere model `Sphere n` to a
 self-morphism of Mathlib's categorical sphere `TopCat.sphere n`, by conjugating
 with the bridge isomorphism `topCatSphereIso`. -/
-def toTopCatSphereSelfMap {n : ℕ} (f : C(Sphere n, Sphere n)) :
+@[expose] def toTopCatSphereSelfMap {n : ℕ} (f : C(Sphere n, Sphere n)) :
     TopCat.sphere.{0} n ⟶ TopCat.sphere.{0} n :=
   (topCatSphereIso n).hom ≫ TopCat.ofHom f ≫ (topCatSphereIso n).inv
 
@@ -89,7 +89,7 @@ theorem toTopCatSphereSelfMap_comp {n : ℕ} (f g : C(Sphere n, Sphere n)) :
 /-- The endomorphism of `Hₙ(TopCat.sphere n; ℤ)` induced by a continuous self-map
 of `Sphere n`, through the model transport and the integral singular homology
 functor. -/
-def inducedOnTopHomology {n : ℕ} (f : C(Sphere n, Sphere n)) :
+@[expose] def inducedOnTopHomology {n : ℕ} (f : C(Sphere n, Sphere n)) :
     End ((singularHomologyℤ n).obj (TopCat.sphere.{0} n)) :=
   (singularHomologyℤ n).map (toTopCatSphereSelfMap f)
 
@@ -173,7 +173,7 @@ theorem degreeRingEquivOfIso_apply (M : ModuleCat.{0} ℤ)
 /-- The integer **degree of `f` relative to a chosen isomorphism**
 `e : Hₙ(Sⁿ; ℤ) ≅ ℤ`. Later modules supply a canonical positive-dimensional
 isomorphism and expose an unconditional orientation-based degree. -/
-def degreeOfIso {n : ℕ}
+@[expose] def degreeOfIso {n : ℕ}
     (e : (singularHomologyℤ n).obj (TopCat.sphere.{0} n) ≅ ModuleCat.of ℤ ℤ)
     (f : C(Sphere n, Sphere n)) : ℤ :=
   degreeRingHomOfIso _ e (inducedOnTopHomology f)

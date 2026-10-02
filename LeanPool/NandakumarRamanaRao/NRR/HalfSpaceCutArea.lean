@@ -27,12 +27,12 @@ open scoped RealInnerProductSpace
 namespace NRR.Geometry.ConvexBody
 
 /-- **Lower cut area**: the real-valued Lebesgue measure of `K ∩ {x | ⟪u, x⟫ ≤ c}`. -/
-noncomputable def cutAreaLower
+@[expose] noncomputable def cutAreaLower
     (K : ConvexBody Plane) (u : Plane) (c : ℝ) : ℝ :=
   (volume ((K : Set Plane) ∩ Geometry.lowerClosedHalfspace u c)).toReal
 
 /-- **Upper cut area**: the real-valued Lebesgue measure of `K ∩ {x | c ≤ ⟪u, x⟫}`. -/
-noncomputable def cutAreaUpper
+@[expose] noncomputable def cutAreaUpper
     (K : ConvexBody Plane) (u : Plane) (c : ℝ) : ℝ :=
   (volume ((K : Set Plane) ∩ Geometry.upperClosedHalfspace u c)).toReal
 

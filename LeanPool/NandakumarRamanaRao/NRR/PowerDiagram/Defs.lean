@@ -39,7 +39,7 @@ variable {n : ℕ}
   ‖x - s i‖ ^ 2 - w i
 
 /-- **Power cell** of site `i`: the points closer (in power distance) to `i` than to any `j`. -/
-noncomputable def cell (s : Fin n → E2) (w : Fin n → ℝ) (i : Fin n) : Set E2 :=
+@[expose] noncomputable def cell (s : Fin n → E2) (w : Fin n → ℝ) (i : Fin n) : Set E2 :=
   {x | ∀ j, powerDist s w i x ≤ powerDist s w j x}
 
 end NRR.PowerDiagram

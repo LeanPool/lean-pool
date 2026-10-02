@@ -33,7 +33,7 @@ open SphereOddDegree
 open SphereOddDegree.AffineBarycentricSubdivision
 
 /-- Top cells of the recursive cone triangulation of `Delta d x I`. -/
-def Cell : Nat → Type
+@[expose] def Cell : Nat → Type
   | 0 => Unit ⊕ Equiv.Perm (Fin 1)
   | d + 1 =>
       Unit ⊕ (Equiv.Perm (Fin (d + 2)) ⊕ (Fin (d + 2) × Cell d))
@@ -61,7 +61,7 @@ def upperCell : (d : Nat) → Equiv.Perm (Fin (d + 1)) → Cell d
   | _ + 1, pi => Sum.inr (Sum.inl pi)
 
 /-- A cell coned from a recursively triangulated side face. -/
-def sideCell (d : Nat) (k : Fin (d + 2)) (q : Cell d) : Cell (d + 1) :=
+@[expose] def sideCell (d : Nat) (k : Fin (d + 2)) (q : Cell d) : Cell (d + 1) :=
   Sum.inr (Sum.inr (k, q))
 
 /-- The central cone point. -/
@@ -80,7 +80,7 @@ noncomputable def upperBoundaryVertex
   (prefixBarycenter d pi i, ⟨1, by norm_num⟩)
 
 /-- Embed a point of a lower-dimensional cylinder into the side opposite `k`. -/
-noncomputable def sidePoint
+@[expose] noncomputable def sidePoint
     (d : Nat) (k : Fin (d + 2))
     (z : Delta d × Set.Icc (0 : Real) 1) :
     Delta (d + 1) × Set.Icc (0 : Real) 1 :=
@@ -110,7 +110,7 @@ noncomputable def sidePoint
   exact (Fin.succAbove_ne k i (Finset.mem_filter.mp hi).2).elim
 
 /-- Ordered vertices of a recursive cylinder cell. -/
-noncomputable def vertex :
+@[expose] noncomputable def vertex :
     (d : Nat) → Cell d → Fin (d + 2) → Delta d × Set.Icc (0 : Real) 1
   | 0, q, i =>
       Fin.cases (apex 0)
@@ -148,7 +148,7 @@ noncomputable def vertex :
   rfl
 
 /-- Spatial barycentric interpolation of a recursive cylinder cell. -/
-noncomputable def spatialPoint
+@[expose] noncomputable def spatialPoint
     (d : Nat) (q : Cell d) (w : Delta (d + 1)) : Delta d :=
   ⟨fun c => ∑ i : Fin (d + 2), w i * (vertex d q i).1 c, by
     constructor
@@ -172,7 +172,7 @@ noncomputable def spatialPoint
         _ = 1 := SphereOddDegree.FiniteSimplex.sum_eq_one w⟩
 
 /-- Time barycentric interpolation of a recursive cylinder cell. -/
-noncomputable def timePoint
+@[expose] noncomputable def timePoint
     (d : Nat) (q : Cell d) (w : Delta (d + 1)) : Set.Icc (0 : Real) 1 :=
   ⟨∑ i : Fin (d + 2), w i * (vertex d q i).2.1, by
     constructor
@@ -188,7 +188,7 @@ noncomputable def timePoint
         _ = 1 := by simp [SphereOddDegree.FiniteSimplex.sum_eq_one w]⟩
 
 /-- Affine chart of one recursive one-step cylinder cell. -/
-noncomputable def chart
+@[expose] noncomputable def chart
     (d : Nat) (q : Cell d) (w : Delta (d + 1)) :
     Delta d × Set.Icc (0 : Real) 1 :=
   (spatialPoint d q w, timePoint d q w)
@@ -576,7 +576,7 @@ namespace Oriented
 open SphereOddDegree.AffineBarycentricSubdivision
 
 /-- Integral orientation coefficient of a recursive cylinder top cell. -/
-def coefficientInt : (d : Nat) → Cell d → Int
+@[expose] def coefficientInt : (d : Nat) → Cell d → Int
   | 0, Sum.inl _ => -1
   | 0, Sum.inr pi => Equiv.Perm.sign pi
   | _d + 1, Sum.inl _ => -1
@@ -585,7 +585,7 @@ def coefficientInt : (d : Nat) → Cell d → Int
       -((-1 : Int) ^ k.1) * coefficientInt d q
 
 /-- Orientation coefficient with values in an arbitrary commutative ring. -/
-noncomputable def coefficient
+@[expose] noncomputable def coefficient
     (R : Type) [CommRing R] : (d : Nat) → Cell d → R
   | 0, Sum.inl _ => -1
   | 0, Sum.inr pi => permSignCoeff R pi

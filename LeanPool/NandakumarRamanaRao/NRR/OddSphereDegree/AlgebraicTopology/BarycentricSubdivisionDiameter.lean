@@ -95,7 +95,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 /-- One barycentric subdivision step applied to a vertex tuple `V`, ordered by the
 permutation `π`. The `k`-th new vertex is the barycenter of the first `k+1`
 old vertices in the order `π`. -/
-noncomputable def stepVertices (n : ℕ) (V : Fin (n + 1) → E)
+@[expose] noncomputable def stepVertices (n : ℕ) (V : Fin (n + 1) → E)
     (π : Equiv.Perm (Fin (n + 1))) : Fin (n + 1) → E :=
   fun k => ((k.val + 1 : ℝ))⁻¹ • ∑ j ∈ Finset.Iic k, V (π j)
 
@@ -232,7 +232,7 @@ end Normed
 
 /-- The tuple of `n+1` standard basis vertices of `Δⁿ`, as points of
 `Fin (n+1) → ℝ`. -/
-noncomputable def stdVerts (n : ℕ) : Fin (n + 1) → (Fin (n + 1) → ℝ) :=
+@[expose] noncomputable def stdVerts (n : ℕ) : Fin (n + 1) → (Fin (n + 1) → ℝ) :=
   fun k => Pi.single k 1
 
 /-

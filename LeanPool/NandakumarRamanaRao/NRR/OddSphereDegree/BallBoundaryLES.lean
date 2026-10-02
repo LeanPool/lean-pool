@@ -37,7 +37,7 @@ singular homology, by the library's unconditional homotopy invariance. The two
 maps are the homologies of `e.toFun` and `e.invFun`; the round-trip identities
 hold because `e.invFun ∘ e.toFun` (resp. `e.toFun ∘ e.invFun`) is homotopic to the
 identity. -/
-noncomputable def singularHomologyℤIsoOfHomotopyEquivSpace (k : ℕ)
+@[expose] noncomputable def singularHomologyℤIsoOfHomotopyEquivSpace (k : ℕ)
     {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
     (e : ContinuousMap.HomotopyEquiv X Y) :
     (singularHomologyℤ k).obj (TopCat.of X) ≅ (singularHomologyℤ k).obj (TopCat.of Y) where

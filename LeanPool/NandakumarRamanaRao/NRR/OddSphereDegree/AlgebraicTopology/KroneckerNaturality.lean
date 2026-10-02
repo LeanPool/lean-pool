@@ -61,7 +61,7 @@ noncomputable def homologyPushZMod2 (f : X ⟶ Y) (n : ℕ) :
 
 /-- The dual / precomposition map
 `Hom(Hₙ(Y; F₂), F₂) ⟶ Hom(Hₙ(X; F₂), F₂)` of the homology pushforward. -/
-noncomputable def homologyDualMap (f : X ⟶ Y) (n : ℕ) :
+@[expose] noncomputable def homologyDualMap (f : X ⟶ Y) (n : ℕ) :
     homologyDualZMod2 Y n ⟶ homologyDualZMod2 X n :=
   ModuleCat.ofHom (LinearMap.lcomp (ZMod 2) (ZMod 2) (homologyPushZMod2 f n).hom)
 

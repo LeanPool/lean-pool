@@ -20,7 +20,7 @@ namespace SphereOddDegree
 
 variable {R : Type} [CommRing R] {X : TopCat.{0}}
 /-- The chain projection that retains exactly the singular generators satisfying a predicate. -/
-noncomputable def keepHom (R : Type) [CommRing R] (X : TopCat.{0}) {n : ℕ}
+@[expose] noncomputable def keepHom (R : Type) [CommRing R] (X : TopCat.{0}) {n : ℕ}
     (P : singularSimplices X n → Prop) [DecidablePred P] :
     singularChainGroup R X n ⟶ singularChainGroup R X n :=
   Sigma.desc fun σ =>

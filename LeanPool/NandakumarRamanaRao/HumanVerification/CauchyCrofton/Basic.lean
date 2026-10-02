@@ -39,11 +39,11 @@ abbrev Point2 := NRR.HumanExport.Plane
 abbrev Body := NRR.Geometry.ConvexBody Point2
 
 /-- Hausdorff perimeter: the one-dimensional Hausdorff measure of the topological boundary. -/
-def hPerimeter (K : Body) : ENNReal :=
+@[expose] def hPerimeter (K : Body) : ENNReal :=
   (μH[1] : Measure Point2) (frontier (K : Set Point2))
 
 /-- The project's real-valued Cauchy perimeter, coerced to `ℝ≥0∞`. -/
-def cPerimeter (K : Body) : ENNReal :=
+@[expose] def cPerimeter (K : Body) : ENNReal :=
   ENNReal.ofReal (NRR.Geometry.ConvexBody.perimeter K)
 
 theorem hPerimeter_def (K : Body) :

@@ -59,7 +59,7 @@ both equal‑area for the sites `s` in `K` and normalized (`∑ i, w i = 0`), ob
 `Classical.choice` from the existence theorem `EMP.exists_normalized_equalArea_weight`
 (the existing existence theorem). By `EMP.normalized_equalArea_weight_subsingleton` this choice is
 in fact unique. -/
-noncomputable def EMP.normalizedWeight
+@[expose] noncomputable def EMP.normalizedWeight
     (K : Geometry.ConvexBody Plane) (s : Fin n → Plane)
     (hn : 0 < n) (hs : Function.Injective s) : Fin n → ℝ :=
   (Classical.choice (EMP.exists_normalized_equalArea_weight K s hn hs)).val

@@ -50,7 +50,7 @@ namespace ConvexFigureModel
 variable {α : Type} [ConvexFigureModel α]
 
 /-- Convert any model value into the convex-body type used by NRR. -/
-def toBody (F : α) : NRR.Geometry.ConvexBody Plane where
+@[expose] def toBody (F : α) : NRR.Geometry.ConvexBody Plane where
   carrier := ConvexFigureModel.carrier F
   convex' := ConvexFigureModel.isConvex F
   isCompact' := ConvexFigureModel.isCompact F

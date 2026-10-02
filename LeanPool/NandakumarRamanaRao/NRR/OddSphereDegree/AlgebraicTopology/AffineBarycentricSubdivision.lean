@@ -48,7 +48,7 @@ abbrev Delta (n : ℕ) := ↑(SphereOddDegree.finiteSimplex ℝ (Fin (n + 1)))
 
 /-- The `k`-prefix vertex map associated to a permutation of the vertices of
 `Δ^n`. It sends `0,...,k` into `Fin (n+1)` by the permuted order `π`. -/
-def prefixVertex (n : ℕ) (π : Equiv.Perm (Fin (n + 1))) (k : Fin (n + 1)) :
+@[expose] def prefixVertex (n : ℕ) (π : Equiv.Perm (Fin (n + 1))) (k : Fin (n + 1)) :
     Fin (k.val + 1) → Fin (n + 1) :=
   fun i => π ⟨i.val, by
     have hi : i.val < k.val + 1 := i.isLt

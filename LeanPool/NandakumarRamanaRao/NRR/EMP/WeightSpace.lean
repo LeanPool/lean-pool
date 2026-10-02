@@ -53,7 +53,7 @@ namespace EMP
 
 /-- **Normalized weights.** The affine normalization `∑ i, w i = 0`, used to remove the
 additive‑constant freedom in the weights. -/
-def WeightNormalized (w : Fin n → ℝ) : Prop :=
+@[expose] def WeightNormalized (w : Fin n → ℝ) : Prop :=
   EMP.weightSum w = 0
 
 /-- **Weight mean.** The arithmetic mean `(∑ i, w i) / n` of a weight vector. -/

@@ -37,7 +37,7 @@ noncomputable section
 namespace HumanVerification.CauchyCrofton
 
 /-- The uniform angle system with `M` directions. -/
-def uniformAngles (M : ℕ) (hM : 5 ≤ M) : AngleSystem where
+@[expose] def uniformAngles (M : ℕ) (hM : 5 ≤ M) : AngleSystem where
   m := M
   θ := fun j => (j : ℝ) * (2 * Real.pi / M)
   strictMono := by

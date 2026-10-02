@@ -62,7 +62,7 @@ variable {α : Type*} [TopologicalSpace α]
 /-- A family of convex bodies `K : α → ConvexBody E` is a *width continuous family* if the map
 `(t, u) ↦ w_{K_t}(u)` is (jointly) continuous. This is the width-function analogue of
 `SupportFunctionContinuousFamily`. -/
-def WidthContinuousFamily (K : α → ConvexBody E) : Prop :=
+@[expose] def WidthContinuousFamily (K : α → ConvexBody E) : Prop :=
   Continuous fun p : α × E => widthFunction (K p.1) p.2
 
 /-- **Evaluation.** Unfolding the predicate: joint continuity of `(t, u) ↦ w_{K_t}(u)`. -/

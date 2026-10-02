@@ -194,7 +194,7 @@ theorem cochainCup_smul_right {R : Type} [CommRing R] {Z : TopCat.{0}} (p q : �
 
 /-- The pullback `f^*` of a singular `p`-cochain along a continuous map
 `f : X ⟶ Y`, i.e. precomposition with the induced singular chain map. -/
-noncomputable def cochainPullback {R : Type} [CommRing R] {X Y : TopCat.{0}}
+@[expose] noncomputable def cochainPullback {R : Type} [CommRing R] {X Y : TopCat.{0}}
     (f : X ⟶ Y) (p : ℕ) (φ : singularCochainGroup R Y p) : singularCochainGroup R X p :=
   (((singularCochainComplexFunctor R (ModuleCat.of R R)).map f.op).f p).hom φ
 
