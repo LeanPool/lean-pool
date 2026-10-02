@@ -184,7 +184,7 @@ private theorem diagonal_quadratic_le_mul_dotProduct
     dotProduct q (Matrix.mulVec (Matrix.diagonal r) q) ≤ C * dotProduct q q := by
   classical
   unfold dotProduct
-  simp [Matrix.mulVec, diagonal_dotProduct]
+  simp only [Matrix.mulVec, diagonal_dotProduct]
   rw [Finset.mul_sum]
   refine Finset.sum_le_sum ?_
   intro α _hα
@@ -198,7 +198,7 @@ private theorem mul_dotProduct_le_diagonal_quadratic
     C * dotProduct q q ≤ dotProduct q (Matrix.mulVec (Matrix.diagonal r) q) := by
   classical
   unfold dotProduct
-  simp [Matrix.mulVec, diagonal_dotProduct]
+  simp only [Matrix.mulVec, diagonal_dotProduct]
   rw [Finset.mul_sum]
   refine Finset.sum_le_sum ?_
   intro α _hα
@@ -229,7 +229,9 @@ theorem isSymm_diagonal_mul_fullBlockMat_mul_diagonal
     (Matrix.diagonal r * M * Matrix.diagonal r).IsSymm := by
   rw [Matrix.IsSymm]
   ext α β
-  simp [Matrix.transpose_apply, Matrix.mul_apply, Matrix.diagonal]
+  simp only [Matrix.diagonal, Matrix.transpose_apply, Matrix.mul_apply, Matrix.of_apply,
+    ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte, mul_ite,
+    mul_zero, Finset.sum_ite_eq']
   have h := hM.apply α β
   rw [h]
   ring

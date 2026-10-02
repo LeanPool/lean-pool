@@ -193,8 +193,9 @@ private theorem fullBlockMatrixProbe_diagonal_dot
       r α * s α := by
   cases α with
   | inl i =>
-      simp [fullBlockMatrixProbe, ofFullBlockVec, Matrix.mulVec, Matrix.diagonal,
-        blockVecDot]
+      simp only [blockVecDot, fullBlockMatrixProbe, ofFullBlockVec, Matrix.mulVec,
+        Matrix.diagonal, Matrix.of_apply, dotProduct_single, Sum.inl.injEq,
+        mul_one, reduceCtorEq, ↓reduceIte]
       have hmain :
           vecDot (fun j : Fin d => if j = i then r (Sum.inl j) else 0)
               (fun j : Fin d => if j = i then s (Sum.inl j) else 0) =
@@ -207,8 +208,9 @@ private theorem fullBlockMatrixProbe_diagonal_dot
       rw [hmain]
       simp [vecDot]
   | inr i =>
-      simp [fullBlockMatrixProbe, ofFullBlockVec, Matrix.mulVec, Matrix.diagonal,
-        blockVecDot]
+      simp only [blockVecDot, fullBlockMatrixProbe, ofFullBlockVec, Matrix.mulVec,
+        Matrix.diagonal, Matrix.of_apply, dotProduct_single, reduceCtorEq,
+        ↓reduceIte, mul_one, Sum.inr.injEq]
       have hmain :
           vecDot (fun j : Fin d => if j = i then r (Sum.inr j) else 0)
               (fun j : Fin d => if j = i then s (Sum.inr j) else 0) =
@@ -265,8 +267,11 @@ private theorem normalized_reflect_trace_eq_theta_trace
   intro D T θ
   classical
   unfold Ch02.fullBlockTrace
-  simp [D, T, θ, Ch04.scalarFullBlockInvSqrtDiag, scalarFullBlockSqrtDiag,
-    blockReflect, toFullBlockMat, Matrix.mul_apply, Matrix.diagonal]
+  simp only [Matrix.diagonal, scalarFullBlockSqrtDiag, blockReflect,
+    Matrix.mul_apply, Matrix.of_apply, toFullBlockMat, ite_mul, zero_mul,
+    Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte, mul_ite, mul_zero,
+    Finset.sum_ite_eq', Fintype.sum_sum_type, Ch04.scalarFullBlockInvSqrtDiag,
+    T, θ, D]
   have hsqrtb_sq : √b * √b = b := by simpa [sq] using Real.sq_sqrt hb.le
   have hsqrtc_sq : √c * √c = c := by simpa [sq] using Real.sq_sqrt hc.le
   have hsqrtb_ne : √b ≠ 0 := ne_of_gt ((Real.sqrt_pos).2 hb)
