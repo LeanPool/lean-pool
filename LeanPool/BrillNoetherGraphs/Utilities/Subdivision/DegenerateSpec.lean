@@ -675,6 +675,7 @@ theorem bnExists_toSpec_iff (hpos : ∀ e : Fin p, 0 < d.length e) (r deg : ℤ)
 
 /-- Push arbitrary core weights to contracted core classes.  A class carries
 the sum of its members' weights and subdivision-interior vertices carry zero. -/
+@[expose]
 def coreClassDivisor (weight : Fin n → ℤ) : CFDiv d.graph
   | Sum.inl c => ∑ v ∈ Finset.univ.filter (fun v : Fin n => d.rep v = c.val),
       weight v

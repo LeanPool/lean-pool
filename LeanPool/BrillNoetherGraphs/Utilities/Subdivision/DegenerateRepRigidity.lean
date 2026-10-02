@@ -328,6 +328,7 @@ that is, by exactly the `rep` a census-facing producer builds
 
 No `¬ IsLoopy` hypothesis is needed: `rep_loopless` is inherited from `d`
 through `rep_eq_of_compFold_eq`. -/
+@[expose]
 def censusFace (d : DegSpec n p) (hForest : IsForest d.core d.zeroSlotSet) :
     DegSpec n p where
   core := d.core

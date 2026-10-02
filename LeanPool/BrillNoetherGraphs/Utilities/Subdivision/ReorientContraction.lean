@@ -43,6 +43,7 @@ open Utilities.Certificate.ContractionForestCensusGeneral
 variable {n p n' p' : ℕ}
 
 /-- Reverse a chosen set of slots of a core. -/
+@[expose]
 def Core.reorient (core : ExplicitPotential.Core n p) (rev : Fin p → Bool) :
     ExplicitPotential.Core n p where
   tail := fun e => if rev e then core.head e else core.tail e

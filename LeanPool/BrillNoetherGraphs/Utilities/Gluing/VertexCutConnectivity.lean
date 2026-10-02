@@ -139,6 +139,7 @@ theorem graph_connected_left_of_connected
     exact heq.symm ▸ hpositive
 
 /-- The same cut with its two factors exchanged. -/
+@[expose]
 def swap : OneVertexCut K where
   left := cut.right
   right := cut.left

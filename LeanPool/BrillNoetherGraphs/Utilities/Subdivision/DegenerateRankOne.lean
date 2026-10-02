@@ -367,6 +367,7 @@ end Face
 of its members' chips, and every interior vertex carries none.
 
 This is the shape change forced by non-injectivity of `coreVertex`. -/
+@[expose]
 def degenerateDivisor (certificate : CertificateData m n p)
     (d : Utilities.Certificate.DegenerateSpec.DegSpec n p) : CFDiv d.graph :=
   d.coreClassDivisor certificate.divisor

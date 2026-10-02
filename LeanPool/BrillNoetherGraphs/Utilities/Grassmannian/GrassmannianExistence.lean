@@ -26,6 +26,7 @@ namespace Utilities
 a witness.  The second mark is retained because it belongs to the
 transmission presentation, although the Grassmannian locus depends only on
 the first mark up to existence. -/
+@[expose]
 def GrassmannianTransmissionExistence
     (G : CFGraph) (u v : G.V) : Prop :=
   ∀ lambda : YoungDiagram,

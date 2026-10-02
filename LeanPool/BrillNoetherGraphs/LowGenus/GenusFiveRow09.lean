@@ -88,6 +88,7 @@ Passing the identically-zero mark through `ConfigurationMarkedRow` recovers
 exactly that, and buys the whole residual-effectivity wrapper unchanged. -/
 
 /-- The zero mark: no slot of row 09 carries an interior chip. -/
+@[expose]
 def noMark : Fin 12 → ℕ := fun _ => 0
 
 @[simp] theorem noMark_apply (e : Fin 12) : noMark e = 0 := rfl

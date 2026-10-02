@@ -105,6 +105,7 @@ variable (certificate : ExplicitPotential.CertificateData m n p) (code : Code m 
 
 /-- Typed path position on the contracted subdivision, decoded from a
 cone-certified affine position. -/
+@[expose]
 def decodeDegeneratePosition {degree : ℤ}
     (hValid : certificate.ValidClosed degree)
     (hBounds : code.BoundsCertified certificate)

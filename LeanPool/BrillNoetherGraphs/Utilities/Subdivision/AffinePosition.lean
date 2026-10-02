@@ -170,6 +170,7 @@ theorem coordinate_le_segmentNat
   · exact code.rawOffset_le_segmentNat certificate point hValid hBounds hCone
 
 /-- Typed path position decoded from a cone-certified affine position. -/
+@[expose]
 def decodePosition (certificate : ExplicitPotential.CertificateData m n p)
     (code : Code m p) (point : Fin m → ℤ) (core_nonempty : 0 < n)
     {degree : ℤ} (hValid : certificate.Valid degree)

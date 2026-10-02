@@ -231,6 +231,7 @@ theorem prin_interiorVertex_eq_slopeDifference
 
 /-- The script whose value at path position `k` of slot `edge` is
 `value edge k`, and `potential v` at the core vertex `v`. -/
+@[expose]
 def slotValueScript (potential : Fin n → ℤ) (value : Fin p → ℕ → ℤ) :
     firingScript spec.graph
   | Sum.inl vertex => potential vertex

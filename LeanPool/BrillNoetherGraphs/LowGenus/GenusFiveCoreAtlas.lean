@@ -36,12 +36,14 @@ open Certificate.ExplicitPotential
 abbrev Core := Certificate.ExplicitPotential.Core 8 12
 
 /-- Number of half-edge incidences at a vertex of a loopless ordered core. -/
+@[expose]
 def incidenceDegree (core : Core) (vertex : Fin 8) : Nat :=
   ∑ edge : Fin 12,
     ((if core.tail edge = vertex then 1 else 0) +
       (if core.head edge = vertex then 1 else 0))
 
 /-- Every vertex has exactly three incident half-edges in the ordered core. -/
+@[expose]
 def Trivalent (core : Core) : Prop :=
   ∀ vertex : Fin 8, incidenceDegree core vertex = 3
 

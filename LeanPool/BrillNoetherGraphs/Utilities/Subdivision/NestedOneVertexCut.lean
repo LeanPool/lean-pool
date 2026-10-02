@@ -127,6 +127,7 @@ theorem restrictRight_graph_connected_factors
     (first.graph_connected_right_of_connected hK)
 
 /-- Flatten the two subtype layers of the restricted left factor. -/
+@[expose]
 def restrictRightLeftVertex (hLeft : second.left ⊆ first.right)
     (vertex : (first.restrictRight second hLeft).leftGraph.V) :
     second.leftGraph.V :=

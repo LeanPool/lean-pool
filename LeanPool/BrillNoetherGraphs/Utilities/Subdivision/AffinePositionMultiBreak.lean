@@ -450,6 +450,7 @@ open Utilities.Certificate.SubdivisionGraph.Spec
 /-- Scan a break list left to right, keeping the value of the last entry
 whose start index is at most `k`.  `initial` is the slope in force before the
 list begins. -/
+@[expose]
 def breakSlopeFrom (initial : ℤ) : List (ℕ × ℤ) → ℕ → ℤ
   | [], _ => initial
   | entry :: rest, k =>

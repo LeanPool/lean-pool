@@ -40,6 +40,7 @@ def FiniteTransmissionPerm (tau : AspPerm) : Prop :=
 
 /-- Every finite-length ASP transmission problem allowed by the genus has a
 witness on the twice-marked graph `(G,u,v)`. -/
+@[expose]
 def TransmissionExistence (G : CFGraph) (u v : G.V) : Prop :=
   forall tau : AspPerm,
     FiniteTransmissionPerm tau ->

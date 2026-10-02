@@ -67,6 +67,7 @@ noncomputable def stepEquivEdges (spec : Spec n p) :
 variable (spec : Spec n p) (hlen : ∀ e : Fin p, spec.length e = 1)
 
 /-- With all lengths one there are no interior vertices. -/
+@[expose]
 def unitVertexEquiv : Fin n ≃ spec.Vertex where
   toFun := spec.coreVertex
   invFun := Sum.elim id fun y => absurd y.2.isLt (by have := hlen y.1; omega)

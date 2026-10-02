@@ -35,6 +35,7 @@ end Utilities.MarkedGraph
 
 namespace Bananas
 /-- Reassociate a bridge followed by a vertex wedge without changing the graph. -/
+@[expose]
 noncomputable def bridgeWedgeAssocIso (M N K : MarkedGraph.{u}) :
     CFGraphIso ((M.bridge N).wedge K).graph (M.bridge (N.wedge K)).graph := by
   change CFGraphIso

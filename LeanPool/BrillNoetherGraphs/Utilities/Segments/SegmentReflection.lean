@@ -29,6 +29,7 @@ open Certificate
 open Certificate.SubdivisionGraph
 
 /-- The path position symmetric to `position` under reversal of the slot. -/
+@[expose]
 def symmetricPosition {n p : ℕ} (spec : SubdivisionGraph.Spec n p)
     (edge : Fin p) (position : spec.PathPosition edge) :
     spec.PathPosition edge :=

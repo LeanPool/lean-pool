@@ -100,6 +100,7 @@ inverse function by hand.  At a concrete core all four hypotheses are
 This is the public successor of the retired
 `Certificate/CoreAutomorphismOrbit.lean`'s `mkCoreSymmetry`, which was
 specialized to eight-vertex, twelve-slot cores. -/
+@[expose]
 noncomputable def ofMaps (core : ExplicitPotential.Core n p)
     (vertexMap : Fin n → Fin n) (slotMap : Fin p → Fin p) (reversed : Fin p → Bool)
     (hVertex : ∀ i j : Fin n, vertexMap i = vertexMap j → i = j)
@@ -144,6 +145,7 @@ closed-orthant orbit and chamber arguments.
 forward and backward, reduces.  **Use it whenever the symmetry will be fed to
 `reindexLength`**; `reindexLength_ofInverses` below is the one-line regression
 test that the reduction is really there. -/
+@[expose]
 def ofInverses (core : ExplicitPotential.Core n p)
     (vertexMap vertexInv : Fin n → Fin n) (slotMap slotInv : Fin p → Fin p)
     (reversed : Fin p → Bool)

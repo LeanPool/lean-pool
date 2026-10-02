@@ -78,6 +78,7 @@ variable {n p : ℕ} (spec : Spec n p) (N : ℕ) (hN : 0 < N)
 
 /-- The fine vertex at fine offset `N * k` of slot `edge`, for a coarse path
 position `k`. -/
+@[expose]
 def scaledPosition (edge : Fin p) (position : spec.PathPosition edge) :
     (spec.scale N hN).PathPosition edge :=
   ⟨N * position.val, by
@@ -95,6 +96,7 @@ def scaledPosition (edge : Fin p) (position : spec.PathPosition edge) :
 /-- The embedding of the coarse vertices into the fine graph: core vertices go
 to core vertices, and the interior vertex at coarse offset `j + 1` of a slot
 goes to fine offset `N * (j + 1)`. -/
+@[expose]
 def fineOf : spec.Vertex → (spec.scale N hN).Vertex
   | Sum.inl vertex => Sum.inl vertex
   | Sum.inr ⟨edge, offset⟩ =>

@@ -100,6 +100,7 @@ variable (s : Spec n p) (d : Data s.core nA pA nB pB)
 
 /-- The left factor retains its own vertices and its five (in the application)
 internal slots, with the original subdivision lengths. -/
+@[expose]
 def leftSpec : Spec nA pA where
   core := d.leftCore
   length e := s.length (d.slots (.inl (.inl e)))
@@ -109,6 +110,7 @@ def leftSpec : Spec nA pA where
   length_pos e := s.length_pos _
 
 /-- The corresponding right factor. -/
+@[expose]
 def rightSpec : Spec nB pB where
   core := d.rightCore
   length e := s.length (d.slots (.inl (.inr e)))
@@ -126,6 +128,7 @@ def rightSpec : Spec nB pB where
 
 /-- Embed the left factor's subdivision vertices into the full subdivision, preserving core
 vertices and interior slot coordinates. -/
+@[expose]
 def left : (d.leftSpec s).Vertex → s.Vertex
   | .inl a => s.coreVertex (d.vertices (.inl a))
   | .inr ⟨e, k⟩ => s.interiorVertex (d.slots (.inl (.inl e))) k

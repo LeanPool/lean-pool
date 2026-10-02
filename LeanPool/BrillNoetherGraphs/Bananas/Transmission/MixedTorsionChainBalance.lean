@@ -224,6 +224,7 @@ For the original order `F :: next :: rest`, this is the chain whose factor
 order is `reverse (F :: next :: rest)` and whose factor marks are all swapped.
 Its right mark is therefore the original left mark of `F`, namely the vertex
 at which this suffix is attached to the left half of the chain. -/
+@[expose]
 def reversedMarkedChain
     (F : KGeneralChainFactor) : List KGeneralChainFactor → MarkedGraph
   | [] => F.swapMarks.marked

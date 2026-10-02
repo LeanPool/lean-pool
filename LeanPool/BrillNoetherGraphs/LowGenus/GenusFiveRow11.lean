@@ -111,6 +111,7 @@ def spareChip : Fin 8 → Fin 8
   | _ => 0
 
 /-- The cube read as four AR configuration-2 pictures. -/
+@[expose]
 def row11Config : ConfigTwo where
   core := row11Core
   chipOne := 0
@@ -144,6 +145,7 @@ def row11Config : ConfigTwo where
       ring
 
 /-- One chip on the selected bipartition class. -/
+@[expose]
 def cubeDivisor (d : DegSpec 8 12) : CFDiv d.graph :=
   fourChipDivisor (d.coreVertex 0) (d.coreVertex 3)
     (d.coreVertex 5) (d.coreVertex 6)

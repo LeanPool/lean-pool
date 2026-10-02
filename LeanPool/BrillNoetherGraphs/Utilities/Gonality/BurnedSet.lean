@@ -61,6 +61,7 @@ noncomputable def maximalLegal (G : CFGraph) (D : CFDiv G) (q : G.V) :
 
 /-- The burned set of `(G, D, q)`: the complement of the maximal legal set.
 This is what Dhar's burning algorithm computes. -/
+@[expose]
 noncomputable def burned (G : CFGraph) (D : CFDiv G) (q : G.V) : Finset G.V :=
   (maximalLegal G D q)ᶜ
 

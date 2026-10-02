@@ -114,6 +114,7 @@ theorem core_head_edgeEquiv (occurrence : G.edges) :
   simp
 
 /-- Every edge occurrence receives length one. -/
+@[expose]
 def unitLength : Fin G.edges.card → ℕ := fun _slot => 1
 
 @[simp] theorem unitLength_apply (slot : Fin G.edges.card) :
@@ -165,6 +166,7 @@ theorem noInterior (interior : (spec G).Interior) : False := by
   exact Fin.elim0 interior.2
 
 /-- The original vertices are exactly all vertices of the unit subdivision. -/
+@[expose]
 noncomputable def graphVertexEquiv : G.V ≃ (spec G).graph.V where
   toFun vertex := (spec G).coreVertex (vertexEquiv G vertex)
   invFun vertex :=

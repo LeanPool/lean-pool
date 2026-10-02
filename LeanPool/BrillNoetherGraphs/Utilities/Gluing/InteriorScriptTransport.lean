@@ -65,6 +65,7 @@ variable {G : CFGraph.{u}}
 
 /-- `v` is **interior** to `A` when every ambient edge at `v` has its other end
 in `A`.  A script supported on interior vertices cannot be felt outside `A`. -/
+@[expose]
 def Interior (G : CFGraph.{u}) (A : Finset G.V) (v : G.V) : Prop :=
   ∀ w : G.V, w ∉ A → numEdges G v w = 0
 

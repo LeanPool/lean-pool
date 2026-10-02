@@ -65,6 +65,7 @@ def leftSlotCount (c : CoreVertexCut.Data core) : ℕ :=
   c.leftSlots.card
 
 /-- Executable number of ordered core slots in the complementary side. -/
+@[expose]
 def rightSlotCount (c : CoreVertexCut.Data core) : ℕ :=
   c.rightSlots.card
 

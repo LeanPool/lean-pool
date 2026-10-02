@@ -376,6 +376,7 @@ def leafCone (m : ℕ) (core : ExplicitPotential.Core n p) (w : Witness) :
         [leafLowerForm m core w a e, leafUpperForm m core w a e]))
 
 /-- The explicit-potential certificate a single-block leaf denotes. -/
+@[expose]
 def leafCertificate (m : ℕ) (core : ExplicitPotential.Core n p) (w : Witness) :
     ExplicitPotential.CertificateData m n p where
   core := core

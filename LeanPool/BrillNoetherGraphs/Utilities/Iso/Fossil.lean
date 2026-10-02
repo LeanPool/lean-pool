@@ -303,6 +303,7 @@ theorem fossilContraction_valid (G : CFGraph.{u}) :
 
 /-- Push a divisor to the fossil by summing its coefficients over each
 linear-equivalence class of vertices. -/
+@[expose]
 noncomputable def fossilPushforward (G : CFGraph.{u}) (D : CFDiv G) :
     CFDiv (fossil G) :=
   (fossilContraction G).pushDiv D
@@ -394,6 +395,7 @@ noncomputable def fossilLift (G : CFGraph.{u})
   exact (divisor_eq_sum_smul_oneChip D).symm
 
 /-- Pull a fossil firing script back to the original graph. -/
+@[expose]
 noncomputable def fossilPullScript (G : CFGraph.{u})
     (tau : firingScript (fossil G)) : firingScript G :=
   (fossilContraction G).pullScript tau

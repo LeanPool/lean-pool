@@ -348,6 +348,7 @@ lemma inv_set_inverse (u v : ℤ) :
     exact ⟨u_lt_v, τv_lt_τu⟩
 
 /-- The map sending an inversion pair `(i,j)` to the reversed image pair `(τ j,τ i)`. -/
+@[expose]
 def revMap : ℤ × ℤ → ℤ × ℤ := fun ⟨i, j⟩ => ⟨τ j, τ i⟩
 
 /-- The slipface associated to an ASP permutation is defined by

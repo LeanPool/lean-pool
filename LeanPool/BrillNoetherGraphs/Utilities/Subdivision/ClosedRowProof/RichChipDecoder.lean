@@ -158,6 +158,7 @@ endpoint accounting. -/
 
 /-- Push the raw core coefficient list to the quotient core of a degenerate
 subdivision; interior vertices receive no core coefficient. -/
+@[expose]
 def richCoreDivisor
     (d : Utilities.Certificate.DegenerateSpec.DegSpec n p) (w : RichWitness) :
     CFDiv d.graph

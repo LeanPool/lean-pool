@@ -152,6 +152,7 @@ theorem chip_ne_center {chip center : Fin 8} (hChip : cfg.IsChip chip)
 variable (d : DegSpec 8 12)
 
 /-- One chip on each of the four displayed vertices. -/
+@[expose]
 def divisor : CFDiv d.graph :=
   fourChipDivisor (d.coreVertex cfg.chipOne) (d.coreVertex cfg.chipTwo)
     (d.coreVertex cfg.chipThree) (d.coreVertex cfg.chipFour)

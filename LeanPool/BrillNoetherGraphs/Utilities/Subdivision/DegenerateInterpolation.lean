@@ -254,6 +254,7 @@ consumer-facing difference is the trichotomy: `pathVertex_zero`,
 collapsed slot the first two coincide. -/
 
 /-- The path position at a numerical offset known not to pass the head. -/
+@[expose]
 def pathPosition (e : Fin p) (offset : ℕ) (hOffset : offset ≤ d.length e) :
     d.PathPosition e := ⟨offset, by omega⟩
 

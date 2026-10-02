@@ -289,6 +289,7 @@ lemma winnable_sub_one_chip_iff_of_qReduced {q : H.V} {D : CFDiv H}
 /-! ## Scripts, twists and displacements -/
 
 /-- The `m`-th seam twist `C + m • α` of the base divisor `C`. -/
+@[expose]
 def seamTwist (C : CFDiv H) (x y : H.V) (m : ℤ) : CFDiv H :=
   C + m • seamDivisor x y
 

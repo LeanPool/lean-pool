@@ -350,6 +350,7 @@ obligation beyond the census data. -/
 /-- Turn evaluated affine segment lengths and a checked idempotent contraction representative
 into a degenerate subdivision specification, retaining the supplied looplessness and
 forest-count guarantees. -/
+@[expose]
 def degenerateSpec (certificate : CertificateData m n p)
     (point : Fin m → ℤ) (core_nonempty : 0 < n)
     (rep : Fin n → Fin n)
