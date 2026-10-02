@@ -214,6 +214,7 @@ public import LeanPool.RamanujanNagell.Imports
 public import LeanPool.RamanujanTauMissesPrimes.Imports
 public import LeanPool.RearrangementNumber.Imports
 public import LeanPool.Redhill.Imports
+public import LeanPool.RegtsSevenster.Imports
 public import LeanPool.RellichKondrachov.Imports
 public import LeanPool.RiemannMappingTheorem.Imports
 public import LeanPool.RiemannRochFunctionFields.Imports
