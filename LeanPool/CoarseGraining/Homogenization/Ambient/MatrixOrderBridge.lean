@@ -77,3 +77,5 @@ theorem matLoewnerLE_inv_of_posDef
   exact matLoewnerLE_of_matrixOrder_of_posSemidef hB.inv.posSemidef hA.inv.posSemidef hInv_order
 
 end
+
+end Homogenization

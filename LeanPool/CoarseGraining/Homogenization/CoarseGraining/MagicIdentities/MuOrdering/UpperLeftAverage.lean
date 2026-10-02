@@ -231,3 +231,5 @@ theorem bCoarse_le_averagedSymmPartPlusCorrection_of_isEllipticFieldOn_of_isOpen
       hvol compat hA hS hK hSigma
 
 end
+
+end Homogenization

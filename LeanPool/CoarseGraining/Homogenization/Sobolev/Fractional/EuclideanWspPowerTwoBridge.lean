@@ -191,3 +191,5 @@ theorem exists_centeredCubeEuclideanPowerFullENorm_two_equivalence
     exact add_le_two_mul_l2Combination A B
 
 end
+
+end Homogenization

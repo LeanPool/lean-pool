@@ -380,3 +380,5 @@ theorem deGiorgi_one_sided_core {d : ℕ} (hd : 3 ≤ d) :
     have hTeq : {x | m₀ + K < w₁.toFun x} ∩ axisCube z L = T := by
       rw [hT_def]; ext x; exact ⟨fun h => ⟨h.2, h.1⟩, fun h => ⟨h.2, h.1⟩⟩
     rw [hTeq]; exact hT0
+
+end Homogenization

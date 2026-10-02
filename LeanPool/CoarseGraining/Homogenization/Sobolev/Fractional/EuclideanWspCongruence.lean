@@ -88,3 +88,5 @@ theorem cubeEuclideanWspFullENorm_congr_ae {d : ℕ} {Q : TriadicCube d}
     cubeEuclideanWspESeminorm_congr_ae hFG]
 
 end
+
+end Homogenization

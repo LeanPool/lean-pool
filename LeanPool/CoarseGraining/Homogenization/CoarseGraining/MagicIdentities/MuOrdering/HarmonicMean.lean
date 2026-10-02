@@ -243,3 +243,5 @@ theorem harmonicMeanSymmPart_le_sigmaStarCoarse_of_isEllipticFieldOn_of_isOpenBo
       hvol compat
 
 end
+
+end Homogenization

@@ -215,3 +215,5 @@ theorem translateByInt_rescaleCoeffField_eq_rescaleCoeffField_translateByInt
   change a (triadicDilateVec n (x + intVecToRealVec z)) i j =
     a (triadicDilateVec n x + intVecToRealVec (triadicScaleIntShift n z)) i j
   rw [hvec]
+
+end Homogenization

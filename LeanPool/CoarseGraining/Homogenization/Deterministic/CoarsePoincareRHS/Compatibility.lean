@@ -15,3 +15,7 @@ public import LeanPool.CoarseGraining.Homogenization.Deterministic.CoarsePoincar
 namespace Homogenization
 
 noncomputable section
+
+end
+
+end Homogenization
