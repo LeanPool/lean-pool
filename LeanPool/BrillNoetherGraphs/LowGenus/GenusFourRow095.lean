@@ -44,6 +44,7 @@ open WindowProfile
 /-- The ordered nine-slot presentation of the catalog's loopless Core 095.
 Keeping the concrete cardinalities visible makes subsequent `Fin` arithmetic
 small and transparent. -/
+@[expose]
 def core : ExplicitPotential.Core 6 9 where
   tail := ![0, 0, 0, 1, 1, 1, 2, 2, 2]
   head := ![4, 5, 5, 3, 4, 5, 3, 3, 4]
@@ -104,6 +105,7 @@ def q (_hNorm : length 0 ≤ length 5) : (Spec length hLength).Vertex :=
 the three displayed divisors.  Its endpoint divisor is
 `a + b - c - q`.
 -/
+@[expose]
 def abProfile (hNorm : length 0 ≤ length 5) :
     WindowProfile.Data (Spec length hLength) where
   coreValue := fun vertex =>

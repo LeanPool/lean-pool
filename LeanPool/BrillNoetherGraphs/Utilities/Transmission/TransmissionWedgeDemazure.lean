@@ -89,6 +89,7 @@ def BoundedDemazureFactorization (tau : AspPerm) (gG gH : ℤ) : Prop :=
 wedge gluing.  It is isolated here because `Demazure.Submodular` proves the
 min-plus product formula but does not provide this length-budgeted
 factorization theorem. -/
+@[expose]
 def HasBoundedDemazureFactorizations (gG gH : ℤ) : Prop :=
   ∀ tau : AspPerm, FiniteTransmissionPerm tau ->
     ((invSet tau).ncard : ℤ) ≤ gG + gH ->

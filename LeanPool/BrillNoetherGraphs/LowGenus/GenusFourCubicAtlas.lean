@@ -44,6 +44,7 @@ catalog from which these six terminal loopless cubic rows were extracted. -/
 
 /-- The six-vertex cubic core for genus-four atlas row 095, with oriented slots `0→4, 0→5, 0→5,
 1→3, 1→4, 1→5, 2→3, 2→3, 2→4` in index order. -/
+@[expose]
 def row095Core : Core 6 9 where
   tail := ![0, 0, 0, 1, 1, 1, 2, 2, 2]
   head := ![4, 5, 5, 3, 4, 5, 3, 3, 4]

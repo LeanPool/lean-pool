@@ -104,6 +104,7 @@ theorem slope_divergence {length position j : ℕ}
 
 /-- Extend the plateau potential by zero over every core vertex and every
 other subdivision slot. -/
+@[expose]
 def script {n p : ℕ} (spec : SubdivisionGraph.Spec n p)
     (edge : Fin p) (position : spec.PathPosition edge) :
     firingScript spec.graph

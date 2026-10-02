@@ -360,6 +360,7 @@ at most $\lfloor (g+3)/2 \rfloor$.
 This is an open problem, posed by Baker in
 [Specialization of linear systems from curves to graphs](https://doi.org/10.2140/ant.2008.2.613),
 Conjecture 3.10(1). -/
+@[expose]
 def gonalityConjecture {G : CFGraph} (h_conn : graphConnected G) : Prop :=
   gonality h_conn ≤ (CFGraph.genus G + 3) / 2
 

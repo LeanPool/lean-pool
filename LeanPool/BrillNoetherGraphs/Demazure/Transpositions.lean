@@ -23,6 +23,7 @@ namespace Transpositions
 
 /-- A set of integers contains no consecutive pair. This asymmetric formulation
 is enough on `ℤ`: applying it to `n - 1` rules out `n - 1, n`. -/
+@[expose]
 def NoConsecutive (S : Set ℤ) : Prop :=
   ∀ n : ℤ, n ∈ S → n + 1 ∉ S
 
@@ -35,6 +36,7 @@ private lemma noConsecutive_singleton (n : ℤ) : NoConsecutive ({n} : Set ℤ) 
 
 /-- The underlying function of $\sigma_S$: swap $n$ with $n + 1$ for every
 $n \in S$, and fix all other integers. -/
+@[expose]
 noncomputable def sigmaFun (S : Set ℤ) (n : ℤ) : ℤ :=
   open Classical in
   if n ∈ S then n + 1 else if n - 1 ∈ S then n - 1 else n

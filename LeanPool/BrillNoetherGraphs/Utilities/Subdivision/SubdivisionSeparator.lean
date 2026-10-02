@@ -158,6 +158,7 @@ def IsInteriorPosition (edge : Fin p) (position : spec.PathPosition edge) :
   0 < position.val ∧ position.val < spec.length edge
 
 /-- Interior-vertex coordinate represented by an internal path position. -/
+@[expose]
 def interiorOffsetOfPosition (edge : Fin p)
     (position : spec.PathPosition edge)
     (hInterior : spec.IsInteriorPosition edge position) :

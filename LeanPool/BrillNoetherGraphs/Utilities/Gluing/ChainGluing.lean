@@ -76,6 +76,7 @@ def wedge (M N : MarkedGraph.{u}) : MarkedGraph.{u} where
 /-- The left-associated iterated vertex gluing of a chain, growing to the
 right.  `chain M []` is `M`, and each further factor is glued onto the
 accumulated right mark. -/
+@[expose]
 def chain (M : MarkedGraph.{u}) : List MarkedGraph.{u} → MarkedGraph.{u}
   | [] => M
   | N :: rest => chain (M.wedge N) rest

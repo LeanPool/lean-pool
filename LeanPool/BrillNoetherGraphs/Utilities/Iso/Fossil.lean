@@ -44,6 +44,7 @@ universe u
 
 /-- Two vertices belong to the same fossil class when their one-chip
 divisors are linearly equivalent. -/
+@[expose]
 def chipEquivalent (G : CFGraph.{u}) (v w : G.V) : Prop :=
   linearEquiv G (oneChip v) (oneChip w)
 

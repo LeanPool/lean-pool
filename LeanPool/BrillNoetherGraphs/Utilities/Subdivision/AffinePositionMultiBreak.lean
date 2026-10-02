@@ -635,6 +635,7 @@ def checkBounds (certificate : ExplicitPotential.CertificateData m n p)
 
 /-- The concrete per-slot break list obtained by evaluating every affine
 break position at a length point. -/
+@[expose]
 def breaks (certificate : ExplicitPotential.CertificateData m n p)
     (script : SlopeScript m p b) (point : Fin m → ℤ) (edge : Fin p) :
     List (ℕ × ℤ) :=

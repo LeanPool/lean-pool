@@ -92,6 +92,7 @@ theorem edgeAt_fst_ne_snd (slot : Fin G.edges.card) :
   exact G.loopless tail hMember
 
 /-- The ordered loopless core having one slot for every edge occurrence. -/
+@[expose]
 noncomputable def core :
     ExplicitPotential.Core (Fintype.card G.V) G.edges.card where
   tail slot := vertexEquiv G (edgeAt G slot).1
@@ -121,6 +122,7 @@ def unitLength : Fin G.edges.card → ℕ := fun _slot => 1
     unitLength G slot = 1 := rfl
 
 /-- The unit-length subdivision presentation of an arbitrary `CFGraph`. -/
+@[expose]
 noncomputable def spec :
     SubdivisionGraph.Spec (Fintype.card G.V) G.edges.card where
   core := core G
@@ -136,6 +138,7 @@ noncomputable def spec :
     (spec G).length slot = 1 := rfl
 
 /-- With unit lengths, a unit step is exactly an original edge occurrence. -/
+@[expose]
 noncomputable def stepEquiv : (spec G).Step ≃ G.edges where
   toFun step := edgeOccurrence G step.1
   invFun occurrence :=

@@ -223,6 +223,7 @@ def potential (f : firingScript (d.leftSpec s).graph)
 
 /-- Slot values assembled from the two factor scripts, the supplied first-connector profile, and
 a constant value at the second left pole on the other connector. -/
+@[expose]
 def values (f : firingScript (d.leftSpec s).graph)
     (g : firingScript (d.rightSpec s).graph) (h : ℕ → ℤ) (e : Fin p) (k : ℕ) : ℤ :=
   match d.slots.symm e with

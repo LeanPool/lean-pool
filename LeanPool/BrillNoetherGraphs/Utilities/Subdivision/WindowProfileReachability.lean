@@ -30,6 +30,7 @@ open SubdivisionGraph
 variable {n p : ℕ} {spec : SubdivisionGraph.Spec n p}
 
 /-- The signed sum of the start and stop endpoint divisors of a profile. -/
+@[expose]
 def endpointDivisors (data : Data spec) : CFDiv spec.graph :=
   ∑ edge : Fin p,
     data.slope edge •

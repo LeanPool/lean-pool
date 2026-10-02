@@ -34,6 +34,7 @@ namespace CoreVertexCut.Data
 variable {n p : ℕ} {core : ExplicitPotential.Core n p}
 
 /-- A core edge occurrence lies wholly in the named side. -/
+@[expose]
 def LeftSlot (c : CoreVertexCut.Data core) (edge : Fin p) : Prop :=
   core.tail edge ∈ c.left ∧ core.head edge ∈ c.left
 
@@ -43,6 +44,7 @@ instance leftSlotDecidable (c : CoreVertexCut.Data core) (edge : Fin p) :
   infer_instance
 
 /-- A core edge occurrence lies wholly in the derived complementary side. -/
+@[expose]
 def RightSlot (c : CoreVertexCut.Data core) (edge : Fin p) : Prop :=
   core.tail edge ∈ c.right ∧ core.head edge ∈ c.right
 
