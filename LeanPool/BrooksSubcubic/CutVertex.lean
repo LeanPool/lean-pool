@@ -24,6 +24,7 @@ namespace BrooksSubcubic
 variable {V : Type*} [Fintype V]
 
 /-- `x` is a cut vertex of `G` when deleting it disconnects `G`. -/
+@[expose]
 def IsCutVertex (G : SimpleGraph V) (x : V) : Prop :=
   ¬ (G.induce ({x}ᶜ : Set V)).Connected
 
