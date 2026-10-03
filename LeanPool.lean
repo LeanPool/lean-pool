@@ -151,6 +151,7 @@ public import LeanPool.LeanStationaryHarmonicMaps.Imports
 public import LeanPool.LehmerE10.Imports
 public import LeanPool.Lentil.Imports
 public import LeanPool.LiCriterion.Imports
+public import LeanPool.ListEdgeColoringComplete.Imports
 public import LeanPool.LocalComplexGeometry.Imports
 public import LeanPool.LongGapsBetweenPrimes.Imports
 public import LeanPool.LowDimSolvClassification.Imports
