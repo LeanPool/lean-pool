@@ -586,6 +586,7 @@ theorem finiteDimensional_indFibre_odd
 
 /-- **The fibre functor into super vector spaces**: embed, take the
 fibre over the splitting algebra, and base change to the ℂ-point. -/
+@[expose]
 noncomputable def deligneFibre
     [SmallCategory C] [MonoidalCategory C] [SymmetricCategory C] [Abelian C]
     [MonoidalPreadditive C] [CategoryTheory.Linear ℂ (Ind C)]

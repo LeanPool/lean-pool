@@ -250,6 +250,7 @@ attribute [local instance] hasBinaryBiproducts_of_finite_biproducts
 
 /-- An object is *split* by `R` when its free module is a mixed
 sum: a sum of copies of the unit and of the odd line. -/
+@[expose]
 def IsSplit [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [HasFiniteBiproducts D]
     (L : OddLine D) (R : D) [MonObj R] (Y : D) : Prop :=

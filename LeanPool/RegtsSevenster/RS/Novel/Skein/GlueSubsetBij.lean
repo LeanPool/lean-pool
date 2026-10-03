@@ -300,6 +300,7 @@ variable {W : Fragment α} {i j : α}
 image under `Subtype.val`, together with both boundary flags `i`
 and `j` iff the Bool `b` is true (the closed-off circle-edge
 participates). -/
+@[expose]
 noncomputable def liftSubsetClosed
     (s' : Finset (SurvivingFlag W i j)) (b : Bool) :
     Finset W.Flag :=

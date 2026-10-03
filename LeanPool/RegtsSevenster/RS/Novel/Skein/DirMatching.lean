@@ -1141,6 +1141,7 @@ theorem rot_rot_of_interface (h : Alternating M N) {i j : α}
 
 /-- The contracted partner map: the partners of the two identified
 points are matched to one another. -/
+@[expose]
 def contractEdge [DecidableEq α] (M : DirMatching α) (i j : α)
     (x : α) : α :=
   if M.edge x = i then M.edge j
@@ -1211,6 +1212,7 @@ two identified points must carry opposite directions, which is what
 makes the contracted directions consistent — RS21's requirement that
 the two Eulerian orientations induce an Eulerian orientation of the
 glued subset. -/
+@[expose]
 def contract [DecidableEq α] (M : DirMatching α) {i j : α} (hij : i ≠ j)
     (hopen : M.edge i ≠ j) (hdir : M.tail j = !M.tail i) :
     DirMatching (Surviving i j) where

@@ -52,6 +52,7 @@ theorem blockPerm_mul (n : ℕ) {k : ℕ}
   simp [blockPerm]
 
 /-- The block-permutation monoid homomorphism. -/
+@[expose]
 noncomputable def blockPermHom (n k : ℕ) :
     Equiv.Perm (Fin k) →* Equiv.Perm (Fin (n * k)) where
   toFun := blockPerm n

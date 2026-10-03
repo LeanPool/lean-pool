@@ -53,6 +53,7 @@ noncomputable instance EdgeOddColouring.instFintype {W : Fragment α}
 
 /-- The colouring restricted to the edges with an end at a vertex —
 the ones the vertex product reads. -/
+@[expose]
 noncomputable def EdgeOddColouring.core {W : Fragment α}
     {F : EdgeSubset W} {ℓ : ℕ}
     (φ : F.EdgeOddColouring ℓ) : F.CoreOddColouring ℓ :=
@@ -69,6 +70,7 @@ theorem EdgeOddColouring.pairing {W : Fragment α}
 
 /-- **The boundary constraint** `φ ∼ χ₁`: at a used label the
 colouring agrees with the state. -/
+@[expose]
 def edgeOddBoundaryMatch {W : Fragment α}
     {k ℓ : ℕ} (F : EdgeSubset W)
     (st : GenBoundaryState k ℓ α) (φ : F.EdgeOddColouring ℓ) :
