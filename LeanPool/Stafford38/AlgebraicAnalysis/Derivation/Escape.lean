@@ -47,6 +47,7 @@ variable {E S : Type*} [DivisionRing E] [Ring S]
 The orientation is the one used in the escape argument:
 `adₓ(w) = w x - x w`.
 -/
+@[expose]
 def commutator (x : S) : S →+ S where
   toFun w := w * x - x * w
   map_zero' := by simp

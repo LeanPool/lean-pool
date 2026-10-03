@@ -99,6 +99,7 @@ private theorem drop_denominator (r : ℕ) (p : ℤ) :
   rfl
 
 /-- The page differential, formed by applying `f` to a representative. -/
+@[expose]
 def drop (r : ℕ) (p : ℤ) :
     K.SourcePage r p →ₗ[k] K.TargetPage r (p + r) :=
   Submodule.mapQ _ _ (K.restrictedDrop r p) (by exact K.drop_denominator r p)

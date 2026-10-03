@@ -24,6 +24,7 @@ namespace AlgebraicAnalysis.FreeSummandInduction
 variable {R : Type*} [Ring R]
 
 /-- The harmless zero-factor equivalence used at the start of an iteration. -/
+@[expose]
 def emptyFactorEquiv (M : Type*) [AddCommGroup M] [Module R M] :
     M ≃ₗ[R] M × (Fin 0 → R) :=
   { toFun := fun m ↦ (m, fun i ↦ Fin.elim0 i)

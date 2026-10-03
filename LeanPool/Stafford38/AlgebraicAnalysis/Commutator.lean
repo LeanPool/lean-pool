@@ -31,6 +31,7 @@ section
 variable {A : Type*} [Ring A]
 
 /-- The ring commutator, with the written multiplication order retained. -/
+@[expose]
 def ringCommutator (u v : A) : A := u * v - v * u
 
 @[simp]

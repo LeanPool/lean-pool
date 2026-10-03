@@ -34,6 +34,7 @@ variable (S : Submonoid R) (f : U →ₗ[R] V)
 
 /-- The localization of an `R`-linear map, regarded as a map over the
 localized ring. -/
+@[expose]
 noncomputable def localizedMap : LocalizedModule S U →ₗ[Localization S]
     LocalizedModule S V :=
   (LocalizedModule.map S f).extendScalarsOfIsLocalization S (Localization S)

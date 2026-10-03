@@ -54,6 +54,7 @@ def rangeEnd (C F : V →ₗ[k] V) (hF : F.comp C = C.comp F) :
   F.restrict (mapsTo_range_of_comp_comm C F hF)
 
 /-- Exactness makes the map induced by `C` from the quotient to its range an equivalence. -/
+@[expose]
 def quotientToRangeEquiv (C : V →ₗ[k] V) (hExact : LinearMap.ker C = LinearMap.range C) :
     (V ⧸ LinearMap.range C) ≃ₗ[k] LinearMap.range C := by
   let cbar : (V ⧸ LinearMap.range C) →ₗ[k] LinearMap.range C :=

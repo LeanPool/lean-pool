@@ -1014,6 +1014,7 @@ theorem commutator_iterate_eval_monomial
   by_cases hjn : j ≤ n <;> simp [hjn]
 
 /-- Evaluation of a normal polynomial in an ambient Ore ring. -/
+@[expose]
 def eval (p : Polynomial B) : A :=
   p.sum (fun i b => O.embed b * O.x ^ i)
 
@@ -1040,6 +1041,7 @@ lemma eval_add (p q : Polynomial B) :
     rw [map_add, add_mul]
 
 /-- The additive evaluation homomorphism. -/
+@[expose]
 def evalAddHom : Polynomial B →+ A where
   toFun := eval D O
   map_zero' := eval_zero D O

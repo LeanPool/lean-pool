@@ -34,6 +34,7 @@ namespace Stafford38.Geometry.LaneC
 variable {k K : Type u} [Field k] [Field K] [Algebra k K]
 
 /-- The coefficient-field inclusion with codomain restricted to the valuation ring. -/
+@[expose]
 def coeffHom (E : IntermediateField k K) (V : ValuationSubring K)
     (hEV : ∀ z : E, (z : K) ∈ V.toSubring) : E →+* V.toSubring :=
   RingHom.codRestrict (IntermediateField.val E).toRingHom V.toSubring hEV

@@ -82,11 +82,13 @@ variable {D : Type*} [Ring D] {x p : D}
 def euler (x p : D) : D := x * p
 
 /-- `(E + 1)(E + 2) ⋯ (E + n)`. -/
+@[expose]
 def rising (E : D) : ℕ → D
   | 0 => 1
   | (n + 1) => rising E n * (E + ((n : D) + 1))
 
 /-- `E (E - 1) ⋯ (E - (n-1))`. -/
+@[expose]
 def falling (E : D) : ℕ → D
   | 0 => 1
   | (n + 1) => falling E n * (E - (n : D))
@@ -204,11 +206,13 @@ lemma commute_aeval_euler {a E : D} (h : a * E = E * a) (f : k[X]) :
       exact (c1.mul_right (hc.pow_right m)).eq
 
 /-- The rising factorial as a polynomial. -/
+@[expose]
 noncomputable def risingPoly (k : Type*) [CommRing k] : ℕ → k[X]
   | 0 => 1
   | (n + 1) => risingPoly k n * (X + Polynomial.C ((n : k) + 1))
 
 /-- The falling factorial as a polynomial. -/
+@[expose]
 noncomputable def fallingPoly (k : Type*) [CommRing k] : ℕ → k[X]
   | 0 => 1
   | (n + 1) => fallingPoly k n * (X - Polynomial.C (n : k))
@@ -254,6 +258,7 @@ def potentialSum (x : D) : List (D × ℕ) → D
   | (t :: ts) => t.1 * x ^ t.2 + potentialSum x ts
 
 /-- `∏ⱼ C(X + nⱼ)`, one shift of the corner polynomial per potential term. -/
+@[expose]
 noncomputable def shiftedProd (C : k[X]) : List (D × ℕ) → k[X]
   | [] => 1
   | (t :: ts) => C.comp (X + Polynomial.C ((t.2 : ℕ) : k)) * shiftedProd C ts

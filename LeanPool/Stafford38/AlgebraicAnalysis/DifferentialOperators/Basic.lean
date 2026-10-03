@@ -28,6 +28,7 @@ variable {k R : Type*} [CommRing k] [CommRing R] [Algebra k R]
 abbrev End := Module.End k R
 
 /-- Multiplication by an element of `R`, as a `k`-linear endomorphism. -/
+@[expose]
 def multiplication (a : R) : End (k := k) (R := R) :=
   LinearMap.mulLeft k a
 
@@ -36,6 +37,7 @@ theorem multiplication_apply (a x : R) :
     multiplication (k := k) a x = a * x := rfl
 
 /-- The commutator of an endomorphism with multiplication by `a`. -/
+@[expose]
 def commutator (P : End (k := k) (R := R)) (a : R) : End (k := k) (R := R) :=
   P * multiplication (k := k) a - multiplication (k := k) a * P
 
