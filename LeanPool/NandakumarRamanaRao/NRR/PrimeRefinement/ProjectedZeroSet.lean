@@ -32,6 +32,7 @@ variable {K : Geometry.ConvexBody Plane} {A : ℝ}
 namespace PrimeConfigurationModel
 
 /-- Projection of the simultaneous child-zero locus to the parent-body/parameter cylinder. -/
+@[expose]
 def projectedAllChildrenZeroSet
     (M : PrimeConfigurationModel hp)
     (hA : 0 < A)
