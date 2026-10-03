@@ -375,6 +375,7 @@ def coverPoint (s : CoverVertexSlot hp C) : CylinderPoint p :=
   s.1 • C.slotPoint s.2
 
 /-- Equality of geometric cylinder points identifies duplicate local occurrences. -/
+@[expose]
 noncomputable def coverVertexSetoid : Setoid (CoverVertexSlot hp C) where
   r a b := coverPoint hp C a = coverPoint hp C b
   iseqv := ⟨fun _ => rfl, fun h => h.symm, fun h₁ h₂ => h₁.trans h₂⟩
@@ -389,6 +390,7 @@ noncomputable instance globalVertexDecidableEq : DecidableEq (GlobalVertex hp C)
   Classical.decEq _
 
 /-- Left multiplication on the symmetry decoration. -/
+@[expose]
 def actCoverVertex
     (g : PrimeSymmetry p) (s : CoverVertexSlot hp C) : CoverVertexSlot hp C :=
   (g * s.1, s.2)
