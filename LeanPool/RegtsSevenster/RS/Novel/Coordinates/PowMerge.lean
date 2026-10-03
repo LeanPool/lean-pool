@@ -25,6 +25,7 @@ open CategoryTheory MonoidalCategory
 open Functor.LaxMonoidal Functor.OplaxMonoidal
 
 /-- The block merge of monoidal powers. -/
+@[expose]
 noncomputable def powMerge (V : SuperVect) :
     (a b : ℕ) → (superPow V a ⊗ superPow V b ⟶
       superPow V (a + b))

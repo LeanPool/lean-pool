@@ -30,6 +30,7 @@ variable {R : ℕ} (f : EdgeRankParameter R)
 variable (P : DelignePackage (SkeinObj f))
 
 /-- The assembled star vector of a degree list. -/
+@[expose]
 noncomputable def omegaStarVec :
     (ds : List ℕ) → (P.ω.obj (SkeinObj.mk ds.sum)).even
   | [] => omegaVec f P (𝟙 (SkeinObj.mk 0))

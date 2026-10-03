@@ -69,6 +69,7 @@ theorem Q_natDegree_le (r : ℚ) (n : ℕ) : (Q r n).natDegree ≤ 3*n := by
   simpa [Q] using Polynomial.natDegree_det_X_add_C_le (B n) (A r n)
 
 /-- Primitive integral normalization of the determinant polynomial, with zero preserved. -/
+@[expose]
 def primitiveQ (r : ℚ) (n : ℕ) : ℤ[X] :=
   if Q r n = 0 then 0 else
     (IsLocalization.integerNormalization (nonZeroDivisors ℤ) (Q r n)).primPart

@@ -293,6 +293,7 @@ instance colourZeroOddEmpty (k ℓ : ℕ) :
 
 /-- The base of the recursion: the zeroth power is the colouring
 model of zero positions. -/
+@[expose]
 noncomputable def colourPowerZero (k ℓ : ℕ) :
     SuperLinearEquiv SuperVect.tensorUnit (colourPower k ℓ 0) :=
   ⟨(LinearEquiv.funUnique
