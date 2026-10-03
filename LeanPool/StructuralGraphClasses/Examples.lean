@@ -6,6 +6,8 @@ Authors: Juan Pablo Traverso Gianini
 module
 
 public import LeanPool.StructuralGraphClasses.CotreeCompleteness
+public import LeanPool.StructuralGraphClasses.InducedPathFour
+public import LeanPool.StructuralGraphClasses.SplitExtension
 
 /-!
 # Regression examples for structural graph classes
@@ -19,10 +21,7 @@ neighborhood property from accidentally becoming an assumption of split membersh
 namespace SimpleGraph.StructuralGraphClasses
 
 /-- The path with vertices `0, 1, 2, 3` in their natural order. -/
-def pathFour : SimpleGraph (Fin 4) where
-  Adj i j := i.val + 1 = j.val ∨ j.val + 1 = i.val
-  symm.symm _ _ h := h.symm
-  loopless.irrefl i := by omega
+abbrev pathFour : SimpleGraph (Fin 4) := pathGraph 4
 
 /-- The middle vertices are a clique and the endpoints form an independent set. -/
 def pathFourSplitPartition : pathFour.SplitPartition where
@@ -32,12 +31,12 @@ def pathFourSplitPartition : pathFour.SplitPartition where
     intro u hu v hv hne
     have hne' : u.val ≠ v.val := fun he => hne (Fin.ext he)
     simp only [Set.mem_ofPred_eq] at hu hv
-    change u.val + 1 = v.val ∨ v.val + 1 = u.val
+    rw [pathGraph_adj]
     omega
   isIndepSet := by
     intro u hu v hv hne
     simp only [Set.mem_ofPred_eq] at hu hv
-    change ¬(u.val + 1 = v.val ∨ v.val + 1 = u.val)
+    rw [pathGraph_adj]
     omega
   disjoint := by
     apply Set.disjoint_left.mpr
@@ -56,8 +55,9 @@ theorem pathFour_isSplit : pathFour.IsSplit := ⟨pathFourSplitPartition⟩
 /-- The four vertices themselves witness failure of `P₄` exclusion. -/
 theorem pathFour_not_isP4Free : ¬pathFour.IsP4Free := by
   intro h
-  exact h 0 1 2 3 (by simp [pathFour]) (by simp [pathFour]) (by simp [pathFour])
-    (by simp [pathFour]) (by simp [pathFour]) (by simp [pathFour])
+  exact h 0 1 2 3 (by simp [pathGraph_adj]) (by simp [pathGraph_adj])
+    (by simp [pathGraph_adj]) (by simp [pathGraph_adj]) (by simp [pathGraph_adj])
+    (by simp [pathGraph_adj])
 
 /-- A split graph need not be threshold. -/
 theorem pathFour_not_isThreshold : ¬pathFour.IsThreshold := by
@@ -85,5 +85,23 @@ theorem empty_has_cotreeRepresentation :
 theorem complete_has_cotreeRepresentation (n : ℕ) :
     Nonempty (CotreeRepresentation (⊤ : SimpleGraph (Fin n))) :=
   isCograph_top.nonempty_cotreeRepresentation
+
+/-- Cograph membership alone does not imply split membership. -/
+theorem twoK2_isCograph :
+    ((⊤ : SimpleGraph (Fin 2)) ⊕g (⊤ : SimpleGraph (Fin 2))).IsCograph :=
+  (isCograph_top (V := Fin 2)).sum (isCograph_top (V := Fin 2))
+
+/-- A finite cotree representation need not certify split membership. -/
+theorem twoK2_has_cotree_and_not_isSplit :
+    Nonempty (CotreeRepresentation
+      ((⊤ : SimpleGraph (Fin 2)) ⊕g (⊤ : SimpleGraph (Fin 2)))) ∧
+      ¬((⊤ : SimpleGraph (Fin 2)) ⊕g (⊤ : SimpleGraph (Fin 2))).IsSplit :=
+  ⟨twoK2_isCograph.nonempty_cotreeRepresentation, not_isSplit_twoK2⟩
+
+/-- The four-cycle and five-cycle cannot belong to the threshold class. -/
+theorem cycles_four_five_not_isThreshold :
+    ¬(cycleGraph 4).IsThreshold ∧ ¬(cycleGraph 5).IsThreshold :=
+  ⟨fun h => not_isSplit_cycleGraph_four (isThreshold_iff_isSplit_and_isP4Free.mp h).1,
+    fun h => not_isSplit_cycleGraph_five (isThreshold_iff_isSplit_and_isP4Free.mp h).1⟩
 
 end SimpleGraph.StructuralGraphClasses

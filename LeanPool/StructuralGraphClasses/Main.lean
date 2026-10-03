@@ -8,6 +8,9 @@ module
 public import LeanPool.StructuralGraphClasses.ChordalBridge
 public import LeanPool.StructuralGraphClasses.CotreeCompleteness
 public import LeanPool.StructuralGraphClasses.Examples
+public import LeanPool.StructuralGraphClasses.SplitObstructions
+public import LeanPool.StructuralGraphClasses.NativeInterfaces
+public import LeanPool.StructuralGraphClasses.SplitExtension
 
 /-!
 # Structural graph classes
