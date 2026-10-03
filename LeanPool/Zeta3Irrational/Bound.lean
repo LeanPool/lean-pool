@@ -48,31 +48,24 @@ lemma bound (x y z : ℝ) (x0 : 0 < x) (x1 : x < 1) (y0 : 0 < y) (y1 : y < 1)
     (z0 : 0 < z) (z1 : z < 1) :
     x * (1 -x) * y * (1 - y) * z * (1 - z) /
       ((1 - (1 - z) * x) * (1 - y * z)) < (1 / 30 : ℝ) := by
-  have := mul_pos x0 z0
-  have h1 : 2 * √(1 - x) * √(x * z) ≤ 1 - (1 - z) * x := by apply bound_aux <;> assumption
+  have h1 := bound_aux x z x0 x1 z0 z1
   have h2 : 2 * √(1 - y) * √((1 - z) * y) ≤ 1 - y * z := by
-    convert bound_aux y (1 - z) y0 y1 (by linarith) (by linarith) using 2
+    convert bound_aux y (1 - z) y0 y1 (sub_pos.mpr z1) (sub_lt_self 1 z0) using 2
     · rw [mul_comm]
     · ring
-  rw [← sub_pos] at x1 y1 z1
-  have : y * z < 1 := by nlinarith
-  have : 0 < √(1 - x) := Real.sqrt_pos_of_pos x1
-  have : 0 < √(x * z) := Real.sqrt_pos_of_pos (by linarith)
-  have : 0 < 1 - y * z := by linarith
-  have : 0 ≤ x.sqrt * (1 - x).sqrt := nonneg (by assumption) (by linarith)
-  have : 0 ≤ y.sqrt * (1 - y).sqrt := nonneg (by assumption) (by linarith)
+  have hx : 0 < 1 - x := sub_pos.mpr x1
+  have hy : 0 < 1 - y := sub_pos.mpr y1
+  have hz : 0 < 1 - z := sub_pos.mpr z1
+  have hden : 0 ≤ 1 - (1 - z) * x :=
+    (by positivity : 0 ≤ 2 * √(1 - x) * √(x * z)).trans h1
   calc
-    _ ≤ x * (1 -x) * y * (1 - y) * z * (1 - z) / (2 * √(1 - x) * √(x * z) * (1 - y * z)) := by
-      refine div_le_div₀ (by positivity) (le_refl _) (by positivity) ?_
-      simp_all
-    _ ≤ x * (1 -x) * y * (1 - y) * z * (1 - z) /
+    _ ≤ x * (1 - x) * y * (1 - y) * z * (1 - z) /
         (2 * √(1 - x) * √(x * z) * 2 * √(1 - y) * √((1 - z) * y)) := by
       refine div_le_div₀ (by positivity) (le_refl _) (by positivity) ?_
-      rw [mul_assoc, mul_assoc]
-      rw [mul_assoc] at h2
-      exact mul_le_mul_of_nonneg_left h2 (le_of_lt <| by positivity)
+      simpa only [mul_assoc] using
+        mul_le_mul h1 h2 (by positivity) hden
     _ = √x * √(1 -x) * (√y * √(1 - y)) * (√z * √(1 - z)) / 4 := by
-      rw [Real.sqrt_mul (le_of_lt x0) z, Real.sqrt_mul (by linarith : 0 ≤ 1 - z) y]
+      rw [Real.sqrt_mul (le_of_lt x0) z, Real.sqrt_mul hz.le y]
       calc _
         _ =
             ((x * (1 - x)) * (y * (1 - y)) * (z * (1 - z))) /
@@ -86,9 +79,9 @@ lemma bound (x y z : ℝ) (x0 : 0 < x) (x1 : x < 1) (y0 : 0 < y) (y1 : y < 1)
           simpa only [Real.div_sqrt] using (by ring)
     _ ≤ (1 / 2) * (1 / 2) * (1 / 2) / 4 := by
       gcongr
-      · exact max_value x0 (sub_pos.mp x1)
-      · exact max_value y0 (sub_pos.mp y1)
-      · exact max_value z0 (sub_pos.mp z1)
+      · exact max_value x0 x1
+      · exact max_value y0 y1
+      · exact max_value z0 z1
     _ < (1 / 30 : ℝ) := by norm_num
 
 lemma bound_aux' (x y z : ℝ) (x0 : 0 < x) (_ : x < 1) (y0 : 0 < y) (_ : y < 1)
@@ -96,37 +89,6 @@ lemma bound_aux' (x y z : ℝ) (x0 : 0 < x) (_ : x < 1) (y0 : 0 < y) (_ : y < 1)
     2 * √(1 - z) * √(x * y * z) ≤ 1 - (1 - x * y) * z := by
   nlinarith only [sq_nonneg (√(1 - z) - √(x * y * z)),
     Real.sq_sqrt (sub_pos.mpr z1).le, Real.sq_sqrt (mul_pos (mul_pos x0 y0) z0).le]
-
-lemma bound' (x y z : ℝ) (x0 : 0 < x) (x1 : x < 1) (y0 : 0 < y) (y1 : y < 1)
-    (z0 : 0 < z) (z1 : z < 1) :
-    x * (1 - x) * y * (1 - y) * z * (1 - z) / (1 - (1 - x * y) * z) < (1 / 24 : ℝ) := by
-  rw [← sub_pos] at x1 y1 z1
-  have hx_nonneg : 0 ≤ x.sqrt * (1 - x) := mul_nonneg (Real.sqrt_nonneg _) x1.le
-  have hy_nonneg : 0 ≤ y.sqrt * (1 - y) := mul_nonneg (Real.sqrt_nonneg _) y1.le
-  calc
-    _ ≤ x * (1 -x) * y * (1 - y) * z * (1 - z) / (2 * √(1 - z) * √(x * y * z)) := by
-      refine div_le_div₀ (by positivity) (le_refl _) (by positivity) ?_
-      apply bound_aux' <;> linarith
-    _ = √x * (1 - x) * (√y * (1 - y)) * (√z * √(1 - z)) / 2 := by
-      rw [Real.sqrt_mul (by positivity : 0 ≤ x * y) z, Real.sqrt_mul (le_of_lt x0) y]
-      calc _
-        _ =
-            ((x * (1 - x)) * (y * (1 - y)) * (z * (1 - z))) /
-              (2 * √x * √y * (√z * √(1 - z))) := by
-          ring
-        _ =
-            (x / √x) * (1 - x) * (y / √y) * (1 - y) *
-              (z / √z) * ((1 - z) / √(1 - z)) / 2 := by
-          ring
-        _ = _ := by
-          simpa only [Real.div_sqrt] using (by ring)
-    _ ≤ (2 / 5) * (2 / 5) * (1 / 2) / 2 := by
-      gcongr
-      · exact max_value' x0 (sub_pos.mp x1)
-      · exact max_value' y0 (sub_pos.mp y1)
-      · exact max_value z0 (sub_pos.mp z1)
-    _ < (1 / 24 : ℝ) := by
-      norm_num
 
 lemma bound'' (x y z : ℝ) (x0 : 0 < x) (x1 : x < 1) (y0 : 0 < y) (y1 : y < 1)
     (z0 : 0 < z) (z1 : z < 1) :
@@ -194,5 +156,10 @@ lemma bound'' (x y z : ℝ) (x0 : 0 < x) (x1 : x < 1) (y0 : 0 < y) (y1 : y < 1)
       field_simp [(by positivity : 0 < 1 + s).ne']
     _ ≤ (2 / 11 : ℝ) ^ 2 := hratio_sq_le
     _ < (1 / 30 : ℝ) := by norm_num
+
+lemma bound' (x y z : ℝ) (x0 : 0 < x) (x1 : x < 1) (y0 : 0 < y) (y1 : y < 1)
+    (z0 : 0 < z) (z1 : z < 1) :
+    x * (1 - x) * y * (1 - y) * z * (1 - z) / (1 - (1 - x * y) * z) < (1 / 24 : ℝ) := by
+  exact (bound'' x y z x0 x1 y0 y1 z0 z1).trans (by norm_num)
 
 end LeanPool.Zeta3Irrational

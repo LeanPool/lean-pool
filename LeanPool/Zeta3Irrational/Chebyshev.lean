@@ -172,12 +172,11 @@ private lemma floor_div_bounds {y : ℝ} (hy : 0 ≤ y) {k : ℕ} (hk : 1 ≤ k)
   have hdivnn : 0 ≤ y / k := div_nonneg hy hk'.le
   refine ⟨Nat.le_floor ?_, ?_⟩
   · push_cast
-    have := Nat.floor_le hdivnn
-    calc ((k : ℝ) * ⌊y / k⌋₊) = k * (y / k) - k * (y / k - ⌊y / k⌋₊) := by ring
-      _ ≤ k * (y / k) := by nlinarith [Nat.floor_le hdivnn]
-      _ = y := mul_div_cancel₀ _ hk'.ne'
+    exact (mul_le_mul_of_nonneg_left (Nat.floor_le hdivnn) hk'.le).trans_eq
+      (mul_div_cancel₀ _ hk'.ne')
   · have hlt : y / k < ⌊y / k⌋₊ + 1 := Nat.lt_floor_add_one (y / k)
-    have hy_lt : y < (k : ℝ) * (⌊y / k⌋₊ + 1) := by linarith [(div_lt_iff₀ hk').mp hlt]
+    have hy_lt : y < (k : ℝ) * (⌊y / k⌋₊ + 1) := by
+      simpa only [mul_comm] using (div_lt_iff₀ hk').mp hlt
     have : (⌊y⌋₊ : ℝ) < (k : ℝ) * (⌊y / k⌋₊ + 1) := (Nat.floor_le hy).trans_lt hy_lt
     exact_mod_cast this
 
@@ -276,9 +275,9 @@ lemma a_simpl : a = (7 / 15) * Real.log 2 + (3 / 10) * Real.log 3 + (1 / 6) * Re
 
 theorem a_bound : a ∈ Set.Icc 0.92129 0.92130 := by
   norm_num [ChebyshevAux.a_simpl]
-  constructor <;>
-    nlinarith [Real.log_two_gt_d9, Real.log_two_lt_d9, Real.log_three_gt_d9,
-      Real.log_three_lt_d9, Real.log_five_gt_d9, Real.log_five_lt_d9]
+  constructor
+  · linarith only [Real.log_two_gt_d9, Real.log_three_gt_d9, Real.log_five_gt_d9]
+  · linarith only [Real.log_two_lt_d9, Real.log_three_lt_d9, Real.log_five_lt_d9]
 
 /-- The error term in Stirling's integral approximation for `T x`. -/
 noncomputable def e (x : ℝ) : ℝ :=
@@ -327,7 +326,7 @@ lemma Finsupp.abs_sum_le (A : Type*) (ν : A →₀ ℝ) (g : A → ℝ → ℝ)
 private lemma log_30_gt : (3.401197 : ℝ) < log 30 := by
   have h30 : log (30 : ℝ) = log 2 + log 3 + log 5 := by
     rw [show (30 : ℝ) = (2 * 3) * 5 by norm_num, log_mul, log_mul] <;> norm_num
-  nlinarith [Real.log_two_gt_d9, Real.log_three_gt_d9, Real.log_five_gt_d9]
+  linarith only [h30, Real.log_two_gt_d9, Real.log_three_gt_d9, Real.log_five_gt_d9]
 
 theorem U_bound (x : ℝ) (hx : 30 ≤ x) : |U x - a * x| ≤ 5 * log x - 5 := by
   have hxpos : 0 < x := lt_of_lt_of_le (by norm_num) hx
@@ -477,12 +476,12 @@ theorem psi_upper_coarse (x : ℝ) (hx : 30 ≤ x) :
       have hnonneg : 0 ≤ a * x * (1 / 6) ^ n := by
         have ha_nonneg : 0 ≤ a := by linarith [a_bound.1]
         positivity
-      have htail6 : 6 * (x / 6 ^ n) ≤ 180 := by nlinarith
+      have htail6 : 6 * (x / 6 ^ n) ≤ 180 := by linarith only [h_tail]
       have hmain :
           a * x * (1 - (1 / 6 : ℝ) ^ n) / (1 - 1 / 6) ≤ 6 * a * x / 5 := by
         norm_num
-        nlinarith
-      nlinarith
+        linarith only [hnonneg]
+      linarith only [htail6, hmain]
 
 theorem eventually_psi_le_mul :
     ∀ᶠ x : ℝ in atTop, ψ x ≤ (113 / 100 : ℝ) * x := by
