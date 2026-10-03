@@ -221,6 +221,45 @@ private lemma component_of_delete_pair_contains_separator
       (p := b) (q := a) (d := d) (s := y) (hnocut a) hd' hy' hdy' hm'
 
 omit [Fintype V] in
+/-- The prefix ending at the earlier neighbour avoids the later neighbour. -/
+private lemma reachable_avoiding_later_neighbor [DecidableEq V] (G : SimpleGraph V)
+    {x y a r b : V} (hxa : G.Adj x a) (hxr : G.Adj x r) (har : a ≠ r)
+    (hry : r ≠ y) (hab : a ≠ b) (hrb : r ≠ b) (hxb : x ≠ b) (hyb : y ≠ b)
+    (w : (G.induce ({b}ᶜ : Set V)).Walk ⟨y, hyb⟩ ⟨x, hxb⟩)
+    (ham : (⟨a, hab⟩ : ↥({b}ᶜ : Set V)) ∈ w.support)
+    (hrm : (⟨r, hrb⟩ : ↥({b}ᶜ : Set V)) ∈ w.support)
+    (hord : (w.takeUntil ⟨a, hab⟩ ham).length < (w.takeUntil ⟨r, hrb⟩ hrm).length) :
+    (G.induce (({r, b} : Set V)ᶜ)).Reachable
+      ⟨x, by simp [hxr.ne, hxb]⟩ ⟨y, by simp [hry.symm, hyb]⟩ := by
+  classical
+  let hprefix := w.takeUntil ⟨a, hab⟩ ham
+  have hprefix_avoid_r : ∀ z ∈ hprefix.support, z.val ≠ r := by
+    intro z hz hzr
+    have hz_eq : z = (⟨r, hrb⟩ : ↥({b}ᶜ : Set V)) := Subtype.ext hzr
+    subst z
+    have hle : ((w.takeUntil ⟨a, hab⟩ ham).takeUntil ⟨r, hrb⟩
+        (show ⟨r, hrb⟩ ∈ (w.takeUntil ⟨a, hab⟩ ham).support by
+          simpa only [hprefix] using hz)).length ≤
+        (w.takeUntil ⟨a, hab⟩ ham).length :=
+      SimpleGraph.Walk.length_takeUntil_le_length _ _
+    rw [w.takeUntil_takeUntil ham] at hle
+    exact (Nat.not_lt_of_ge hle) hord
+  have hp_mem : ∀ z ∈ hprefix.support, z.val ∈ (({r, b} : Set V)ᶜ) := by
+    intro z hz
+    simp only [Set.mem_compl_iff, Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
+    exact ⟨hprefix_avoid_r z hz, z.property⟩
+  let pg := hprefix.map (Embedding.induce ({b}ᶜ : Set V)).toHom
+  let pi := pg.induce (({r, b} : Set V)ᶜ) (by
+    intro z hz
+    rw [SimpleGraph.Walk.support_map] at hz
+    obtain ⟨z', hz', rfl⟩ := List.mem_map.mp hz
+    exact hp_mem z' hz')
+  have hxa' : (G.induce (({r, b} : Set V)ᶜ)).Adj
+      ⟨x, by simp [hxr.ne, hxb]⟩ ⟨a, by simp [har, hab]⟩ := by
+    simpa using hxa
+  exact hxa'.reachable.trans ⟨pi.reverse⟩
+
+omit [Fintype V] in
 private lemma parallel_neighbors_not_both_separating
     (G : SimpleGraph V)
     {x y a r b : V}
@@ -245,37 +284,8 @@ private lemma parallel_neighbors_not_both_separating
   · by_cases hrm : (⟨r, hrb⟩ : ↥({b}ᶜ : Set V)) ∈ w.support
     · by_cases hord : w.support.idxOf ⟨a, hab⟩ < w.support.idxOf ⟨r, hrb⟩
       · right
-        let hprefix := w.takeUntil ⟨a, hab⟩ ham
-        have hprefix_avoid_r : ∀ z ∈ hprefix.support, z.val ≠ r := by
-          intro z hz hzr
-          have hz_eq : z = (⟨r, hrb⟩ : ↥({b}ᶜ : Set V)) := Subtype.ext hzr
-          subst z
-          have hle : ((w.takeUntil ⟨a, hab⟩ ham).takeUntil ⟨r, hrb⟩
-              (show ⟨r, hrb⟩ ∈ (w.takeUntil ⟨a, hab⟩ ham).support by
-                simpa only [hprefix] using hz)).length ≤
-              (w.takeUntil ⟨a, hab⟩ ham).length :=
-            SimpleGraph.Walk.length_takeUntil_le_length _ _
-          rw [w.takeUntil_takeUntil ham, w.length_takeUntil hrm,
-            w.length_takeUntil ham] at hle
-          exact (Nat.not_lt_of_ge hle) hord
-        have hp_mem : ∀ z ∈ hprefix.support, z.val ∈ (({r, b} : Set V)ᶜ) := by
-          intro z hz
-          simp only [Set.mem_compl_iff, Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
-          exact ⟨hprefix_avoid_r z hz, z.property⟩
-        let pg := hprefix.map (Embedding.induce ({b}ᶜ : Set V)).toHom
-        let pi := pg.induce (({r, b} : Set V)ᶜ) (by
-          intro z hz
-          rw [SimpleGraph.Walk.support_map] at hz
-          obtain ⟨z', hz', rfl⟩ := List.mem_map.mp hz
-          exact hp_mem z' hz')
-        have hxa' : (G.induce (({r, b} : Set V)ᶜ)).Adj
-            ⟨x, by simp [hxr.ne, hxb]⟩ ⟨a, by simp [har, hab]⟩ := by
-          simpa using hxa
-        exact hxa'.reachable.trans (by
-          have : (G.induce (({r, b} : Set V)ᶜ)).Reachable
-              ⟨a, by simp [har, hab]⟩ ⟨y, by simp [hry.symm, hyb]⟩ := by
-            exact ⟨pi.reverse⟩
-          exact this)
+        exact reachable_avoiding_later_neighbor G hxa hxr har hry hab hrb hxb hyb w ham hrm
+          (by simpa only [w.length_takeUntil ham, w.length_takeUntil hrm] using hord)
       · left
         have hord' : w.support.idxOf ⟨r, hrb⟩ < w.support.idxOf ⟨a, hab⟩ := by
           have hne : w.support.idxOf ⟨r, hrb⟩ ≠ w.support.idxOf ⟨a, hab⟩ := by
@@ -283,37 +293,8 @@ private lemma parallel_neighbors_not_both_separating
             have := (List.idxOf_inj hrm).mp heq
             exact har (Subtype.ext_iff.mp this).symm
           omega
-        let hprefix := w.takeUntil ⟨r, hrb⟩ hrm
-        have hprefix_avoid_a : ∀ z ∈ hprefix.support, z.val ≠ a := by
-          intro z hz hza
-          have hz_eq : z = (⟨a, hab⟩ : ↥({b}ᶜ : Set V)) := Subtype.ext hza
-          subst z
-          have hle : ((w.takeUntil ⟨r, hrb⟩ hrm).takeUntil ⟨a, hab⟩
-              (show ⟨a, hab⟩ ∈ (w.takeUntil ⟨r, hrb⟩ hrm).support by
-                simpa only [hprefix] using hz)).length ≤
-              (w.takeUntil ⟨r, hrb⟩ hrm).length :=
-            SimpleGraph.Walk.length_takeUntil_le_length _ _
-          rw [w.takeUntil_takeUntil hrm, w.length_takeUntil ham,
-            w.length_takeUntil hrm] at hle
-          exact (Nat.not_lt_of_ge hle) hord'
-        have hp_mem : ∀ z ∈ hprefix.support, z.val ∈ (({a, b} : Set V)ᶜ) := by
-          intro z hz
-          simp only [Set.mem_compl_iff, Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
-          exact ⟨hprefix_avoid_a z hz, z.property⟩
-        let pg := hprefix.map (Embedding.induce ({b}ᶜ : Set V)).toHom
-        let pi := pg.induce (({a, b} : Set V)ᶜ) (by
-          intro z hz
-          rw [SimpleGraph.Walk.support_map] at hz
-          obtain ⟨z', hz', rfl⟩ := List.mem_map.mp hz
-          exact hp_mem z' hz')
-        have hxr' : (G.induce (({a, b} : Set V)ᶜ)).Adj
-            ⟨x, by simp [hxa.ne, hxb]⟩ ⟨r, by simp [har.symm, hrb]⟩ := by
-          simpa using hxr
-        exact hxr'.reachable.trans (by
-          have : (G.induce (({a, b} : Set V)ᶜ)).Reachable
-              ⟨r, by simp [har.symm, hrb]⟩ ⟨y, by simp [hay.symm, hyb]⟩ := by
-            exact ⟨pi.reverse⟩
-          exact this)
+        exact reachable_avoiding_later_neighbor G hxr hxa har.symm hay hrb hab hxb hyb
+          w hrm ham (by simpa only [w.length_takeUntil hrm, w.length_takeUntil ham] using hord')
     · right
       have havoidr : ∀ z ∈ w.support, z.val ∈ (({r, b} : Set V)ᶜ) := by
         intro z hz
