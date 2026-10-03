@@ -191,6 +191,7 @@ theorem childMap_zeroFree
   exact ⟨x, hx⟩
 
 /-- The child map as a bundled zero-free equivariant map. -/
+@[expose]
 noncomputable def childZeroFreeMap
     {K : Geometry.ConvexBody Plane} {A : Real}
     (hp : Nat.Prime p) (hA : 0 < A)

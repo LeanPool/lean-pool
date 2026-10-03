@@ -268,6 +268,7 @@ noncomputable instance genericityIndexDecidableEq
     (hp : Nat.Prime p) (N L : Nat) : DecidableEq (GenericityIndex hp N L) := inferInstance
 
 /-- The combined finite polynomial family used by the generic perturbation theorem. -/
+@[expose]
 noncomputable def genericityPolynomial
     (hp : Nat.Prime p) (N L : Nat) :
     GenericityIndex hp N L → PolynomialRing hp N L

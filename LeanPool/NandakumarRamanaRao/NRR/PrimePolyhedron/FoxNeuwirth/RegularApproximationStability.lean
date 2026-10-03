@@ -33,6 +33,7 @@ variable {p : Nat}
 /-- The sampled affine map has no positive-ray intersection on the boundary of any refined top
 simplex.  Equivalently, every positive deviation-zero barycentric point is in the relative
 interior. -/
+@[expose]
 def PositiveRaySkeletonFree
     (hp : Nat.Prime p) (N : Nat) (F : ContinuousCoordinateMap p) : Prop :=
   ∀ (q : TopCell hp N) (w : StandardSimplex (p - 1)),
@@ -83,6 +84,7 @@ end StableRegularApproximation
 
 /-- Finite-PL endpoint comparison proposition.  This proposition requires boundary-transverse
 endpoint approximations. -/
+@[expose]
 def StableHomotopyInvarianceTheorem : Prop :=
   ∀ {p : Nat} (hp : Nat.Prime p)
     (F₀ F₁ : EquivariantCoordinateHomotopy.ZeroFreeMap hp)

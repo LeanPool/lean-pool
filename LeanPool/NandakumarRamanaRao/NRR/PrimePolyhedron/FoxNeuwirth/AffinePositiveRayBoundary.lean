@@ -124,16 +124,19 @@ noncomputable def facetIndex
   else 0
 
 /-- The affine simplex avoids the full origin. -/
+@[expose]
 def AvoidsOrigin (V : VertexMap p) : Prop :=
   ∀ w : StandardSimplex p, affineValue V w ≠ 0
 
 /-- Facet transversality. -/
+@[expose]
 def FacetRegular (hp : Nat.Prime p) (V : VertexMap p) : Prop :=
   ∀ k : Fin (p + 1), facetDeterminant hp V k ≠ 0
 
 /-- The deviation-zero affine line does not meet a codimension-two face of the simplex.  This is
 the general-position condition needed to rule out a ray endpoint at the intersection of
 two facets.  Facet regularity alone does not imply this condition. -/
+@[expose]
 def AvoidsCodimTwoDeviationZero (hp : Nat.Prime p) (V : VertexMap p) : Prop :=
   ∀ (w : StandardSimplex p) (i j : Fin (p + 1)), i ≠ j →
     (∀ r : Fin (p - 1), deviation hp (affineValue V w) r = 0) →
@@ -141,6 +144,7 @@ def AvoidsCodimTwoDeviationZero (hp : Nat.Prime p) (V : VertexMap p) : Prop :=
 
 /-- Positive-ray-relative codimension-two avoidance.  Degenerate deviation-zero points with
 negative mean are irrelevant to the open positive ray and are intentionally permitted. -/
+@[expose]
 def AvoidsPositiveRayCodimTwo (hp : Nat.Prime p) (V : VertexMap p) : Prop :=
   ∀ (w : StandardSimplex p) (i j : Fin (p + 1)), i ≠ j →
     (∀ r : Fin (p - 1), deviation hp (affineValue V w) r = 0) →
