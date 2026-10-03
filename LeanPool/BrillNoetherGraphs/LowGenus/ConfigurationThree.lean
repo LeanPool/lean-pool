@@ -69,6 +69,7 @@ variable {n p : ℕ}
 /-! ## Unordered incidence -/
 
 /-- The slot `e` joins `u` and `v`, in either orientation. -/
+@[expose]
 def Ends (core : Core n p) (e : Fin p) (u v : Fin n) : Prop :=
   (core.tail e = u ∧ core.head e = v) ∨ (core.tail e = v ∧ core.head e = u)
 
@@ -343,6 +344,7 @@ theorem endpointPair_arm (d : DegSpec n p) (potential : Fin n → ℤ)
 
 /-- Membership in a displayed four-chip set.  Spelled out so that the fields
 of `ConfigThree` can refer to it. -/
+@[expose]
 def IsChipOf (a b c e v : Fin n) : Prop := v = a ∨ v = b ∨ v = c ∨ v = e
 
 instance (a b c e v : Fin n) : Decidable (IsChipOf a b c e v) := by

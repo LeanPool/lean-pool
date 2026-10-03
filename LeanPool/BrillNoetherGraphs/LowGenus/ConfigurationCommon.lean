@@ -95,6 +95,7 @@ theorem lastStep_neg_nonpos {L k : ℕ} (hk : 0 < k) (hkL : k ≤ L) :
 /-! ### The one-class potential -/
 
 /-- Negative height on one contracted class and zero on all other classes. -/
+@[expose]
 def centerPotential (d : DegSpec n p) (center : Fin n) (height : ℕ)
     (v : Fin n) : ℤ :=
   if d.rep v = d.rep center then -(height : ℤ) else 0
@@ -117,6 +118,7 @@ theorem centerPotential_eq_of_singleton
 /-! ### Endpoint bookkeeping -/
 
 /-- The per-source-core endpoint contribution used by the class-sum formula. -/
+@[expose]
 def endpointContribution (d : DegSpec n p) (potential : Fin n → ℤ)
     (v : Fin n) : ℤ :=
   ∑ e : Fin p,

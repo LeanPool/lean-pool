@@ -34,6 +34,7 @@ public section
 namespace Utilities
 
 /-- The genus-four geometric heart of the Atanasov--Ranganathan theorem. -/
+@[expose]
 def GenusFourRankOneExistence : Prop :=
   ∀ (G : CFGraph.{0}), graphConnected G → CFGraph.genus G = 4 → BNExists G 1 3
 

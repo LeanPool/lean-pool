@@ -108,6 +108,7 @@ def sub (left right : AffineForm m) : AffineForm m where
     left.coefficient coordinate - right.coefficient coordinate
 
 /-- The strict-integral positivity row `form(point) - 1 >= 0`. -/
+@[expose]
 def positive (form : AffineForm m) : AffineForm m where
   fixedValue := form.fixedValue - 1
   coefficient := form.coefficient

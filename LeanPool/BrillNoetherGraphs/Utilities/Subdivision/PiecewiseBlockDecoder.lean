@@ -51,6 +51,7 @@ variable {L : ℕ} (b : FiniteBlockEnds L)
 /-- A nonempty weakly ordered list whose final endpoint is `L` automatically
 covers every unit step below `L`: the final block is always a possible owner.
 This is the form produced directly by the W1 checks of a rich row leaf. -/
+@[expose]
 def ofOrderedLast (ends : List ℕ) (hNonempty : 0 < ends.length)
     (hLast : ends.getD (ends.length - 1) L = L)
     (hOrdered : ∀ i : ℕ, ends.getD i L ≤ ends.getD (i + 1) L) :

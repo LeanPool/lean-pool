@@ -44,6 +44,7 @@ variable {G : CFGraph}
 
 /-- The degree-four divisor used by the genus-five pictures.  Repeated chip
 positions are allowed, as required by AR's seventh family. -/
+@[expose]
 def fourChipDivisor (first second third fourth : G.V) : CFDiv G :=
   oneChip first + oneChip second + oneChip third + oneChip fourth
 

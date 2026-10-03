@@ -198,6 +198,7 @@ def wedgeRightVertex (G : CFGraph.{u}) (H : CFGraph.{v})
   fun b => if h : b = y then Sum.inl x else Sum.inr ⟨b, h⟩
 
 /-- Identify `x` and `y` in the disjoint union of two graphs. -/
+@[expose]
 def vertexWedge (G : CFGraph.{u}) (H : CFGraph.{v})
     (x : G.V) (y : H.V) : CFGraph.{max u v} where
   V := Sum G.V {b : H.V // b ≠ y}

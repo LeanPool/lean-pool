@@ -180,6 +180,7 @@ structure Block where
   hi : ℤ
 
 /-- The out-of-range block: every check on it fails. -/
+@[expose]
 def Block.dflt : Block := ⟨[], [], 1, 0⟩
 
 /-- The firing script attached to one anchor: a potential at each core vertex,

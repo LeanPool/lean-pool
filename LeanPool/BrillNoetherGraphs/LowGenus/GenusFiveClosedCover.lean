@@ -53,6 +53,7 @@ theorem degSpec_ext
   rfl
 
 /-- The affine coordinate reading the length of slot `edge`. -/
+@[expose]
 def coordinateForm (edge : Fin p) : ExplicitPotential.AffineForm p where
   fixedValue := 0
   coefficient := fun coordinate => if coordinate = edge then 1 else 0

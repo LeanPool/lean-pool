@@ -159,10 +159,12 @@ def w3Checks (w : RichWitness) (_core : ExplicitPotential.Core n p) : Bool :=
 W1 makes the named points weakly increasing from `0`, such a point evaluates
 to `0` at every parameter value, so any collapsed run through it sits on the
 tail core vertex, where W5 — not W4 — accounts for it. -/
+@[expose]
 def tailConfined (w : RichWitness) (a e i : ℕ) : Bool :=
   formEq (w.point a e i) []
 
 /-- The head-side mirror of `tailConfined`. -/
+@[expose]
 def headConfined (w : RichWitness) (a e j : ℕ) : Bool :=
   formEq (w.point a e j) (coordForm e)
 

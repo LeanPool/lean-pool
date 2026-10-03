@@ -148,6 +148,7 @@ theorem validClosed_iff_valid_of_strict {certificate : CertificateData m n p}
 /-! ## Executable checker -/
 
 /-- Proof-free check of the relaxed segment row. -/
+@[expose]
 def checkSegmentRowClosed (certificate : CertificateData m n p) (edge : Fin p) :
     Bool :=
   AffineCover.AffineForm.equal
@@ -164,6 +165,7 @@ def checkSegmentRowClosed (certificate : CertificateData m n p) (edge : Fin p) :
   simp [checkSegmentRowClosed, SegmentRowClosed, or_assoc]
 
 /-- Executable closed-orthant validity checker. -/
+@[expose]
 def checkClosed (certificate : CertificateData m n p) (degree : ℤ) : Bool :=
   (allFin fun edge : Fin p =>
     decide (certificate.core.tail edge ≠ certificate.core.head edge)) &&

@@ -96,6 +96,7 @@ instance : Zero (AffineForm m) where
 this avoids asking `Decidable` to construct an equality proof between two
 function-valued coefficient fields while a large generated certificate is
 being reduced by the kernel. -/
+@[expose]
 def equal (left right : AffineForm m) : Bool :=
   decide (left.fixedValue = right.fixedValue) &&
     allFin fun coordinate =>
@@ -122,6 +123,7 @@ def equal (left right : AffineForm m) : Bool :=
     simp [equal]
 
 /-- Proof-free list membership for integral affine forms. -/
+@[expose]
 def mem (form : AffineForm m) (forms : List (AffineForm m)) : Bool :=
   forms.any fun candidate => equal form candidate
 
