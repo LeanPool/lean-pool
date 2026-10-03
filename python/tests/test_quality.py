@@ -5,10 +5,13 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import patch
 
+import pytest
+
 from lean_pool.quality import (
     _axiom_audit_missing,
     _axiom_audit_resolved,
     _Declaration,
+    _parse_axiom_output,
     _parse_declarations,
     _parse_option_audit_output,
     _project_card,
@@ -854,3 +857,59 @@ def test_quality_check_rejects_malformed_github_repo(tmp_path: Path) -> None:
     errors = run_checks(tmp_path, skip_lean_axioms=True)
 
     assert any("github_repo" in error.message for error in errors)
+
+
+@pytest.mark.parametrize("proof", ["sorry", "by sorry", "by admit", "⟨sorry, trivial⟩"])
+def test_quality_check_rejects_unproved_terms(tmp_path: Path, proof: str) -> None:
+    """Completed projects reject proof holes in every source form."""
+    _write_minimal_repo(tmp_path, f"theorem unfinished : True := {proof}\n")
+    errors = run_checks(tmp_path, skip_lean_axioms=True)
+    assert any(
+        error.message in {"sorry is forbidden", "admit is forbidden"}
+        for error in errors
+    )
+
+
+def test_axiom_audit_rejects_sorry_axiom(tmp_path: Path) -> None:
+    """A compiled proof hole fails even when textual checks cannot see it."""
+    declaration = _Declaration(
+        "unfinished", tmp_path / "LeanPool/Basic.lean", 7, "theorem"
+    )
+    errors = _parse_axiom_output(
+        tmp_path,
+        [declaration],
+        "'unfinished' depends on axioms: [propext, sorryAx]\n",
+    )
+    assert len(errors) == 1
+    assert "unallowlisted axioms: sorryAx" in errors[0].message
+
+
+@pytest.mark.parametrize("name", ["unfinished", "unfinished.eq_def"])
+def test_environment_audit_rejects_proof_holes(tmp_path: Path, name: str) -> None:
+    """Generated companions cannot hide a compiled proof hole."""
+    errors = _parse_option_audit_output(
+        tmp_path,
+        f"LEANPOOL_OPTION_AUDIT|LeanPool.Basic|{name}|references "
+        "forbidden axiom-injecting constants: sorryAx\n"
+        "LEANPOOL_OPTION_AUDIT_COMPLETE\n",
+        "",
+    )
+    assert len(errors) == 1
+    assert "sorryAx" in errors[0].message
+
+
+@pytest.mark.parametrize("extra", ["", ",\n sorryAx", ",\n customAxiom"])
+def test_axiom_audit_reads_wrapped_lists(tmp_path: Path, extra: str) -> None:
+    """Lean's wrapped axiom output preserves both safe and forbidden findings."""
+    declaration = _Declaration(
+        "Widget.long_theorem_name", tmp_path / "LeanPool/Widget.lean", 7, "theorem"
+    )
+    errors = _parse_axiom_output(
+        tmp_path,
+        [declaration],
+        "'Widget.long_theorem_name' depends on axioms: [propext,\n"
+        f" Classical.choice,\n Quot.sound{extra}]\n",
+    )
+    assert bool(errors) == bool(extra)
+    if extra:
+        assert extra.split()[-1] in errors[0].message
