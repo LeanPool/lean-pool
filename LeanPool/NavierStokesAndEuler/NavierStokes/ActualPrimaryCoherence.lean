@@ -604,8 +604,7 @@ theorem absoluteNormal_ne (j : Fin 2) (L : Label B N0) {x : Absolute}
     (hx : x ∈ positiveRadialAbsolute) : absoluteNormal j L x ≠ 0 := by
   have hd := (absolutePhase_angular j L).directional_eq
     (((absolutePhase_smooth j L).contDiffAt (positiveRadialAbsolute_open.mem_nhds
-        hx)).differentiableAt (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+        hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
   have hc : absoluteNormal j L x 1 =
       (PrimaryGeometryAssembly.angularMode certificate modulation (choice B N0).prepared j L : ℝ) /
           x.1.1.1 := by
@@ -1469,8 +1468,8 @@ theorem chart_radial_aux_derivative (B n : ℕ) {x : ChartPoint} (hx : x.1.1 ≠
     fderiv ℝ ((PrimaryResidualClass.directions (commonContext B)).radialField n) x v = 0 := by
   rw [chart_radial_curve]
   change fderiv ℝ (chartRadialCurve n ∘ chartRadiusLinear) x v = 0
-  rw [fderiv_comp x ((chartRadialCurve_smoothAt n hx).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+  rw [fderiv_comp x ((chartRadialCurve_smoothAt n hx).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
     chartRadiusLinear.differentiableAt, ContinuousLinearMap.fderiv]
   change fderiv ℝ (chartRadialCurve n) x.1.1 v.1.1 = 0
   rw [hv,map_zero]
@@ -1622,8 +1621,8 @@ theorem piece_full_divergence (U : LocalSignedRequest.SlowRegion (2 * h))
         ((piece U j L).exactCoefficients.amplitude n) y i)) x = 0
   rw [PrimaryResidualClass.divergence_map PrimaryResidualClass.realProjection _ _ _ _
     (fun i => ((contDiffOn_pi.mp (piece_complexVelocity_smooth U j L n) i).contDiffAt
-      (positiveRadialChart_open.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])),
+      (positiveRadialChart_open.mem_nhds hx)).differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero)),
     piece_complex_divergence U j L n hx, map_zero]
 
 /-- The absolute free lift evaluated on the actual physical cylindrical graph. -/

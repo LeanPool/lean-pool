@@ -113,8 +113,8 @@ theorem vectorCurl_memLp (f : Space → Space) (hf : ContDiff ℝ ∞ f)
     contDiff_curl _ ((contDiff_piLp 2).mp hf)
   exact hdm.of_le_mul hc.continuous.aestronglyMeasurable_of_secondCountable
     (Filter.Eventually.of_forall fun x =>
-      norm_vectorCurl_le f x ((hf.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-          ENat.top_ne_zero, not_false_eq_true])).differentiableAt))
+      norm_vectorCurl_le f x ((hf.differentiable
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).differentiableAt))
 
 /-- The actual L² cutoff-curl estimate, retaining the two Hölder terms. -/
 theorem cutoff_curl_lpNorm_le (ψ : Space → ℝ) (φ : Space → Space)
@@ -143,10 +143,8 @@ theorem cutoff_curl_lpNorm_le (ψ : Space → ℝ) (φ : Space → Space)
     lpNorm (vectorCurl (fun x => ψ x • φ x)) 2 volume ≤
         lpNorm (fun x => 6 * (a x + b x)) 2 volume :=
       lpNorm_mono_real hg (fun x => norm_cutoff_curl_le ψ φ x
-        ((hψ.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-            not_false_eq_true])).differentiableAt)
-        ((hφ.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-            not_false_eq_true])).differentiableAt))
+        ((hψ.differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).differentiableAt)
+        ((hφ.differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).differentiableAt))
     _ = 6 * lpNorm (a + b) 2 volume := by
       simpa only [Nat.cast_ofNat, Pi.add_apply] using lpNorm_fun_natCast_mul 6 (a + b) 2 volume
     _ ≤ 6 * (lpNorm a 2 volume + lpNorm b 2 volume) :=

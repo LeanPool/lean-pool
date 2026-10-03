@@ -352,8 +352,8 @@ theorem linear_identity (n : ℕ) (p : D × ℝ) (hp : p.1 ∈ s.domain) :
     (fun i => CurlClassBounds.class_component hf i) n hp
   have hcut := LinearWaveBounds.principal_cutoff h.coefficients ψ 0 n hp
     (((h.cutoff.smooth n).contDiffAt
-      ((HarmonicWaveInteraction.productStrip s).isOpen_domain.mem_nhds hp)).differentiableAt (by
-          simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+      ((HarmonicWaveInteraction.productStrip s).isOpen_domain.mem_nhds hp)).differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
   have hzero : ψ n p • a.principal (HarmonicWaveInteraction.productStrip s) (directions c) n p = 0
       := by
     by_cases hψ : ψ n p = 0
@@ -626,11 +626,11 @@ theorem linear_field_re (n : ℕ) (p : D × ℝ) (hp : p.1 ∈ s.domain) (i : Fi
     (h.raw_velocity_smooth n)
     (fun j => (((Complex.reCLM.contDiff.comp_contDiffOn
       ((h.base_smooth n j).comp contDiffOn_fst (fun _ hx => hx))).contDiffAt
-        ((HarmonicWaveInteraction.productStrip s).isOpen_domain.mem_nhds hp)).differentiableAt (by
-            simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])))
+        ((HarmonicWaveInteraction.productStrip s).isOpen_domain.mem_nhds hp)).differentiableAt
+            (WithTop.coe_ne_zero.2 ENat.top_ne_zero)))
     (((h.raw_pressure_smooth n).contDiffAt
-      ((HarmonicWaveInteraction.productStrip s).isOpen_domain.mem_nhds hp)).differentiableAt (by
-          simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) hp i
+      ((HarmonicWaveInteraction.productStrip s).isOpen_domain.mem_nhds hp)).differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) hp i
   have hbase' : LinearWaveResidual.realLift (fun (y : D × ℝ) j => (HarmonicResidual.contextBase c n
       y.1 j).re) =
       fun y => HarmonicResidual.contextBase c n y.1 := by
@@ -675,8 +675,8 @@ theorem full_primary_divergence (n : ℕ) (p : D × ℝ) (hp : p.1 ∈ s.domain)
     rfl
   rw [he, divergence_map realProjection _ _ _ _ (fun i =>
     ((h.raw_velocity_smooth n i).contDiffAt
-      ((HarmonicWaveInteraction.productStrip s).isOpen_domain.mem_nhds hp)).differentiableAt (by
-          simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))]
+      ((HarmonicWaveInteraction.productStrip s).isOpen_domain.mem_nhds hp)).differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero))]
   have hd := h.corrected_divergence n p hp
   rw [h.matching.radius, directions_radial, directions_axial s c h.matching.epsilon] at hd
   change cylindricalDivergence _ _ HarmonicResidual.angularDirection _ _ p = 0 at hd
@@ -1158,11 +1158,9 @@ theorem defect_formula (P : PrimaryPulseBounds.PhaseConstruction U)
         (PhaseCalculus.slowZ (P.phase.F n) (χ n x).1)
         (PhaseCalculus.slowZ (P.phase.G n) (χ n x).1) := by
   have hF := ((P.baseF.smooth n).contDiffAt ((U.isOpen n).mem_nhds (hmap n hx))).differentiableAt
-      (by
-      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hG := ((P.baseG.smooth n).contDiffAt ((U.isOpen n).mem_nhds (hmap n hx))).differentiableAt
-      (by
-      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hm := material_pullback (χ n) (s.epsilon n) (P.phase.p n) (P.phase.pz n) (P.phase.x0 n)
     (b n) (P.phase.F n) (P.phase.G n) (d.radialField n) (fun _ => d.angular)
     (d.axialField s n) (d.fastField n) (fun _ => d.slow)

@@ -87,8 +87,8 @@ theorem fastHessianRemainder_bound (a : ScalarField)
       Nat.cast_one, one_pow, mul_one] using NB.normal_bound 1 t (Y x)
   have hnder : fderiv ℝ (transportedNormal D.m₀ (fun y => D.FInv.field t (Y y))) x =
       (fderiv ℝ (D.normal.field t : Space → Space) (Y x)).comp (D.FInv.field t (Y x)) :=
-    (((D.normal.smooth t).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true]) (Y x)).hasFDerivAt.comp x hY).fderiv
+    (((D.normal.smooth t).differentiable
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero) (Y x)).hasFDerivAt.comp x hY).fderiv
   have hnD : ‖fderiv ℝ (transportedNormal D.m₀ (fun y => D.FInv.field t (Y y))) x‖ ≤
       (NB.C*NB.Rc)*NB.C := by
     rw [hnder]

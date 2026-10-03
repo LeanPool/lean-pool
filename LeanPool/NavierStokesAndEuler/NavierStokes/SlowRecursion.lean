@@ -682,15 +682,13 @@ theorem xProfile_vector_eq {R : ℝ} (hR : 0 < R) {U : Set ℂ} (hU : IsOpen U)
       realTrace W r eta 4 := by
     have hd := hasDerivAt_squareProfile
       ((xProfile_contDiffAt hR hU hW hparity 0 (by
-          norm_num) hr hr0 heta).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-              ENat.top_ne_zero, not_false_eq_true]))
+          norm_num) hr hr0 heta).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
     exact hd.deriv.symm.trans ((hrecovery 0 (by norm_num)).deriv_eq.trans hfirst.1)
   have hfive : 2 * r * SimilarityProfile.partialX (xProfile W 1) (r ^ 2, eta) =
       realTrace W r eta 5 := by
     have hd := hasDerivAt_squareProfile
       ((xProfile_contDiffAt hR hU hW hparity 1 (by
-          norm_num) hr hr0 heta).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-              ENat.top_ne_zero, not_false_eq_true]))
+          norm_num) hr hr0 heta).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
     exact hd.deriv.symm.trans ((hrecovery 1 (by norm_num)).deriv_eq.trans hfirst.2)
   funext i
   fin_cases i
@@ -845,10 +843,9 @@ theorem positiveSolution_extends_order {R T : ℝ} (hR : 0 < R) (hRT : R < T)
       (actualJet (u' n) (r ^ 2, eta)) (actualJet k (r ^ 2, eta)) := by
     simp only [beta', u', Function.update_self, newBeta]
   have hresult := (profileSystem_iff_positiveOrder hr0 hn phi' u' beta' k p omegaQuotient
-    hphi hu ((hnew 2 (by decide)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true]))
-    ((hnew 3 (by decide)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])) hbet).mp hsUpdated
+    hphi hu ((hnew 2 (by decide)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
+    ((hnew 3 (by decide)).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) hbet).mp hsUpdated
   simpa only [ExtendsPositiveOrder, hrX] using hresult
 
 end PositiveOrder
@@ -2239,8 +2236,7 @@ theorem parameterDerivative_value {R : ℝ} (hR : 0 < R) {U : Set ℂ} (hU : IsO
   have hr := sqrt_mem hR ⟨hX.1.le, hX.2⟩
   have hdC := ((F.2.holomorphic _ hr).differentiableAt (hU.mem_nhds heta)).hasDerivAt
   have hdR := PositiveAxisSystem.hasDerivAt_parameterProfile
-    ((profile_contDiffAt hR hU F hX heta).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+    ((profile_contDiffAt hR hU F hX heta).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
   apply Complex.ext
   · exact hdC.real_of_complex.deriv.symm.trans hdR.deriv
   · exact parameterDerivative_real hU F hr heta
@@ -2788,9 +2784,8 @@ theorem step_expanded {R S : ℝ} {U : Set ℂ} {h : ℝ} (c : Domain R U h)
   have hout := (PositiveAxisSystem.profileSystem_iff_expanded hr0 _ _
     ((hsm 0).of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2))
     ((hsm 1).of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2))
-    ((hsm 2).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-        not_false_eq_true])) ((hsm 3).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))).mp he'
+    ((hsm 2).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) ((hsm 3).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero))).mp he'
   simp only [hrX] at hout ⊢
   exact hout
 

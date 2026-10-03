@@ -1119,8 +1119,7 @@ theorem coefficient_partialX {f : Plane → ℂ} (hf : ContDiff ℝ ∞ f)
     funext y
     apply unitCoeff_of_hasDerivAt hk
     · intro x
-      exact hasDerivAt_slice ((hf.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-          ENat.top_ne_zero, not_false_eq_true])) (x, y))
+      exact hasDerivAt_slice ((hf.differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) (x, y))
     · exact (partialX_smooth hf).continuous.comp (continuous_id.prodMk continuous_const)
     · simpa using hp (0, y) (1, 0)
   unfold coefficient

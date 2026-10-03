@@ -2133,17 +2133,16 @@ theorem divergence_curl_zero {U : Set D} {R : D → ℝ} {Vr Vθ Vz : D → D}
   have hDr i := HarmonicCalculus.contDiffOn_along G.isOpen G.radial_smooth (hBi i)
   have hDθ i := HarmonicCalculus.contDiffOn_along G.isOpen G.angular_smooth (hBi i)
   have hDz i := HarmonicCalculus.contDiffOn_along G.isOpen G.axial_smooth (hBi i)
-  have db i := ((hBi i).contDiffAt (G.isOpen.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
-  have dr i := ((hDr i).contDiffAt (G.isOpen.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
-  have dθ i := ((hDθ i).contDiffAt (G.isOpen.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
-  have dz i := ((hDz i).contDiffAt (G.isOpen.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have db i := ((hBi i).contDiffAt (G.isOpen.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have dr i := ((hDr i).contDiffAt (G.isOpen.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have dθ i := ((hDθ i).contDiffAt (G.isOpen.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have dz i := ((hDz i).contDiffAt (G.isOpen.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have dinv := ((G.radius_smooth.inv G.radius_ne).contDiffAt
-    (G.isOpen.mem_nhds hx)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])
+    (G.isOpen.mem_nhds hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   change DifferentiableAt ℝ (fun y => (R y)⁻¹) x at dinv
   have dR := (G.radius_smooth.contDiffAt (G.isOpen.mem_nhds hx)).differentiableAt (by simp only [
       ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
@@ -2222,12 +2221,12 @@ theorem explicitGraph_geometry {U : Set (ℝ × A)} (hU : IsOpen U)
     rw [ContinuousLinearMap.fderiv]
     rfl
   · intro x hx
-    rw [radialField_aux_derivative v θ ((hK x hx).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))]
+    rw [radialField_aux_derivative v θ ((hK x hx).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero))]
     simp only [fderiv_fun_const, Pi.zero_apply, zero_apply]
   · intro x hx
-    rw [radialField_aux_derivative v z ((hK x hx).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))]
+    rw [radialField_aux_derivative v z ((hK x hx).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero))]
     simp only [fderiv_fun_const, Pi.zero_apply, zero_apply]
   · intro x hx
     simp only [fderiv_fun_const, Pi.zero_apply, zero_apply]
@@ -2318,10 +2317,10 @@ theorem cylindricalCurl_vectorPotential {U : Set D} {R : D → ℝ} {Vr Vθ Vz :
       HarmonicCalculus.vectorMode K Φ (realizedCoefficient K R Vr Vθ Vz Φ a) x := by
   have hB : ContDiffOn ℝ ∞ (coefficient R Vr Vθ Vz Φ a) U :=
     normalCoefficient_contDiffOn (phaseNormal_contDiffOn G hΦ) ha hn
-  have db i := ((contDiffOn_pi.mp hB i).contDiffAt (G.isOpen.mem_nhds hx)).differentiableAt (by
-      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
-  have dΦ := (hΦ.contDiffAt (G.isOpen.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have db i := ((contDiffOn_pi.mp hB i).contDiffAt (G.isOpen.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have dΦ := (hΦ.contDiffAt (G.isOpen.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hcross := normalCross_normalCoefficient (hn x hx) (ht x hx)
   rw [vectorPotential, cylindricalCurl_vectorMode R Vr Vθ Vz K
     (B := fun y => inverseCarrier K • coefficient R Vr Vθ Vz Φ a y) dΦ

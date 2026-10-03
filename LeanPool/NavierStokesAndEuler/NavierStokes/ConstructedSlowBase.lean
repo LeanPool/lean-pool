@@ -145,8 +145,8 @@ theorem heatPressure_partialS (C : ℝ) {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
   TerminalStress.canonicalPressure_partialS (a := p.2.1 / 2) (by linarith only [hs])
     (heatCoefficient_sq_integrable C hh hh1 ht (by positivity))
     (heatCoefficient_sq_continuous C hh ht (by positivity))
-    ((heatPressure_smoothAt C hh hh1 ht hs).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+    ((heatPressure_smoothAt C hh hh1 ht hs).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
 
 theorem heatCoefficient_residual_zero (C : ℝ) {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {p : PhysicalPoint} (ht : p.1 < 1) (hs : 0 < p.2.1) :
@@ -180,8 +180,8 @@ theorem heat_navierStokesResidual_zero (C : ℝ) {h : ℝ} (hh : 0 < h) (hh1 : h
   unfold heatVelocity heatPressureField
   rw [TerminalStress.pureSwirl_navierStokesResidual
     ((heatCoefficient_smoothAt C hh ht hs).of_le (nat_le_infty 2))
-    ((heatPressure_smoothAt C hh hh1 ht hs).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])),
+    ((heatPressure_smoothAt C hh hh1 ht hs).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)),
     heatPressure_partialS C hh hh1 ht hs, heatPressure_partialZ C hh hh1 ht hs,
     heatCoefficient_residual_zero C hh hh1 ht hs]
   simp only [AxisymmetricResidual.pack, Fin.isValue, sub_self, mul_zero, zero_smul, add_zero]
@@ -285,12 +285,10 @@ theorem exterior_velocity_eq_leading {a : ℕ → ℕ} (ha : StrictMono a) {h C 
   have hp : p ∈ exteriorDomain h R := hz
   have hH : DifferentiableAt ℝ (streamFactor a h C d) p :=
     (physicalProfile_smoothAt ha hh hh1 (bundleComponent_smooth hds C 0) _ hp.1).differentiableAt
-        (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hK : DifferentiableAt ℝ (swirlPotential a h C d) p :=
     (physicalProfile_smoothAt ha hh hh1 (bundleComponent_smooth hds C 1) _ hp.1).differentiableAt
-        (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have he := exterior_stream_germ (a := a) (C := C) hh hh1 hR hd hp
   have h0 := he.self_of_nhds
   have hS : AxisymmetricFields.partialS (streamFactor a h C d) p = 0 := by
@@ -858,8 +856,8 @@ theorem average_radial_identity {U : SlowBorelBase.Inner → ℝ} (hU : ContDiff
   have hf : HasFDerivAt (fun y : SlowBorelBase.Inner => y.1) (ContinuousLinearMap.fst ℝ ℝ ℝ) w :=
     hasFDerivAt_fst
   have hd := hf.fun_mul
-    ((SlowBorelBase.average_smooth hU).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])).differentiableAt.hasFDerivAt
+    ((SlowBorelBase.average_smooth hU).differentiable
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).differentiableAt.hasFDerivAt
   have hi := congrFun (SlowBorelBase.partialX_primitive hU) w
   rw [he] at hi
   unfold SimilarityProfile.partialX at hi ⊢
@@ -1004,12 +1002,12 @@ theorem prefixVelocity_eq_profiles {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
       SlowExpansionResidual.slowVelocity J h C (profiles h d) (t, x) := by
   have hH := (SlowBorelBase.physicalUncutPrefix_smoothAt hh hh1
     (SlowBorelBase.bundleComponent_smooth hd C 0) (-CoordinateAlgebra.A h) J
-    (p := AxisymmetricFields.profilePoint t x) ht).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+    (p := AxisymmetricFields.profilePoint t x) ht).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hK := (SlowBorelBase.physicalUncutPrefix_smoothAt hh hh1
     (SlowBorelBase.bundleComponent_smooth hd C 1) (1 / 2 - CoordinateAlgebra.A h) J
-    (p := AxisymmetricFields.profilePoint t x) ht).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+    (p := AxisymmetricFields.profilePoint t x) ht).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   change DifferentiableAt ℝ (BaseResidual.prefixStream J h C d)
     (AxisymmetricFields.profilePoint t x) at hH
   change DifferentiableAt ℝ (BaseResidual.prefixSwirl J h C d)
@@ -1234,8 +1232,8 @@ theorem finiteIdentities_of_coefficients {h C : ℝ} (hh : 0 < h) (hh1 : h < 1 /
       (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2))
     (fun n _ => (hm.toVelocityMatches.axial_contDiffAt hd n hw).of_le
       (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2))
-    (fun n _ => (hm.pressure_contDiffAt hd n hw).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+    (fun n _ => (hm.pressure_contDiffAt hd n hw).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
     (fun n _ => hp n _ hw)
 
 end NavierStokes.BasePrefixIdentity

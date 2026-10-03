@@ -94,8 +94,8 @@ theorem inverseCoordinates_slope_pos {a : ℝ} (ha : 0 < a) (ha1 : a < 1) {p : P
 theorem inverseCoordinates_hasFDerivAt {a : ℝ} (ha : 0 < a) (ha1 : a < 1) {p : Point}
     (hp : p ∈ positiveTime) :
     HasFDerivAt (inverseCoordinates a) (inverseDifferential a (inverseCoordinates a p)) p := by
-  have hq := ((coordinateQ_smooth ha ha1 (p := (p.1, p.2.2)) hp).differentiableAt (by
-      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])).hasFDerivAt
+  have hq := ((coordinateQ_smooth ha ha1 (p := (p.1, p.2.2)) hp).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).hasFDerivAt
   have hm : HasFDerivAt (fun p : Point => (p.1, p.2.2))
       ((ContinuousLinearMap.fst ℝ ℝ (ℝ × ℝ)).prod
         ((ContinuousLinearMap.snd ℝ ℝ ℝ).comp (ContinuousLinearMap.snd ℝ ℝ (ℝ × ℝ)))) p :=
@@ -169,10 +169,10 @@ theorem iteratedFDeriv_comp_inverse {a : ℝ} (ha : 0 < a) (ha1 : a < 1)
         (show inverseCoordinates a p ∈ positiveTime from hq))) n
     change (continuousMultilinearCurryLeftEquiv ℝ (fun _ : Fin (n + 1) => Point) ℝ).symm
       (fderiv ℝ (iteratedFDeriv ℝ n (g ∘ inverseCoordinates a)) p) = _
-    simp only [heq.fderiv_eq, fderiv_comp p (hj.differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
-      ((inverseCoordinates_contDiffAt ha ha1 hp).differentiableAt (by simp only [ne_eq,
-          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])),
+    simp only [heq.fderiv_eq, fderiv_comp p (hj.differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
+      ((inverseCoordinates_contDiffAt ha ha1 hp).differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero)),
       (inverseCoordinates_hasFDerivAt ha ha1 hp).fderiv]
     rfl
 

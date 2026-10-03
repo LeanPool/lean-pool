@@ -403,8 +403,8 @@ theorem norm_iteratedFDeriv_inverseMap
     ‖iteratedFDeriv ℝ (n+1) Y x‖ ≤
       C * (inverseMapRadius C R)^n * (n.factorial : ℝ)^2 := by
   exact norm_iteratedFDeriv_of_fderiv_eq_comp Y A hY hA
-    (fderiv_eq_inverse_field X Y A hX (hY.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])) hXY hleft)
+    (fderiv_eq_inverse_field X Y A hX (hY.differentiable
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) hXY hleft)
     C R hC hR hAjet n x
 
 /-- Pullback by a map satisfying the actual inverse differential equation

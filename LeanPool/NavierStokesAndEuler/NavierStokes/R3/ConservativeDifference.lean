@@ -66,10 +66,8 @@ theorem partial_mul {f g : Space → ℝ} (hf : ContDiff ℝ ∞ f)
     spatialPartial i (fun y => f y * g y) x =
       f x * spatialPartial i g x + g x * spatialPartial i f x := by
   unfold spatialPartial
-  rw [fderiv_fun_mul (hf.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true]) x)
-    (hg.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-        not_false_eq_true]) x)]
+  rw [fderiv_fun_mul (hf.differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero) x)
+    (hg.differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero) x)]
   rfl
 
 theorem partial_sub {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
@@ -78,10 +76,8 @@ theorem partial_sub {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
     spatialPartial i (fun y => f y - g y) x =
       spatialPartial i f x - spatialPartial i g x := by
   unfold spatialPartial
-  rw [fderiv_fun_sub (hf.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true]) x)
-    (hg.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-        not_false_eq_true]) x)]
+  rw [fderiv_fun_sub (hf.differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero) x)
+    (hg.differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero) x)]
   rfl
 
 theorem partial_component {f : Space → Space} (hf : ContDiff ℝ ∞ f)
@@ -324,8 +320,8 @@ theorem partial_partial_eq_fderiv {f : Space → ℝ} (hf : ContDiff ℝ ∞ f)
     (i j : Fin 3) (x : Space) :
     spatialPartial i (spatialPartial j f) x =
       fderiv ℝ (fderiv ℝ f) x (coordinateVector i) (coordinateVector j) := by
-  have hdf := (hf.fderiv_right infty_add_one_le).differentiable (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) x
+  have hdf := (hf.fderiv_right infty_add_one_le).differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero) x
   change fderiv ℝ (fun y => fderiv ℝ f y (coordinateVector j)) x (coordinateVector i) = _
   rw [fderiv_clm_apply hdf (differentiableAt_const (coordinateVector j))]
   simp only [fderiv_fun_const, Pi.zero_apply, ContinuousLinearMap.comp_zero, zero_add,
@@ -344,8 +340,7 @@ theorem partial_sum {f : Fin 3 → Space → ℝ}
     spatialPartial k (fun y => ∑ i : Fin 3, f i y) x =
       ∑ i : Fin 3, spatialPartial k (f i) x := by
   unfold spatialPartial
-  rw [fderiv_fun_sum (fun i _ => (hf i).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true]) x)]
+  rw [fderiv_fun_sum (fun i _ => (hf i).differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero) x)]
   simp only [sum_apply]
 
 theorem partial_scalarLaplacian {f : Space → ℝ} (hf : ContDiff ℝ ∞ f)

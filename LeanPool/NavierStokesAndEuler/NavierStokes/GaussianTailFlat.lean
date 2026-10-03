@@ -104,8 +104,8 @@ theorem slotCutoff_contDiff (L : ℝ) : ContDiff ℝ ∞ (slotCutoff L) :=
 
 theorem slotCutoff_deriv (L v : ℝ) :
     deriv (slotCutoff L) v = L⁻¹ * deriv profile (v / L) := by
-  have hp := (profile_contDiff.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true])).differentiableAt.hasDerivAt
+  have hp := (profile_contDiff.differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).differentiableAt.hasDerivAt
     (x := v / L)
   have hh := hp.comp v ((hasDerivAt_id v).div_const L)
   unfold slotCutoff
@@ -546,8 +546,8 @@ theorem cutoff_directional {s : StripData D} (g : SlotFamily s) (n : ℕ) (x w :
     (hw : g.linear n w = (g.length n)⁻¹) :
     fderiv ℝ (g.cutoff n) x w =
       (g.length n)⁻¹ * deriv profile (g.coordinate n x) := by
-  have hp := (profile_contDiff.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true])).differentiableAt.hasDerivAt
+  have hp := (profile_contDiff.differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).differentiableAt.hasDerivAt
     (x := g.coordinate n x)
   have hθ : HasFDerivAt (g.coordinate n) (g.linear n) x :=
     (g.linear n).hasFDerivAt.const_add (g.offset n)

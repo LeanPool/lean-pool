@@ -118,8 +118,8 @@ omit [Fact (0 < period)] in
 theorem liftedGradient_reflected (κ : ℝ) (m : Vector3) (φ : LiftDomain period → ℝ)
     (hφ : ∀ x, ContDiff ℝ ∞ (localLift period φ x)) (x : LiftDomain period) :
     liftedGradient period κ m (reflectedTest period φ) x = -liftedGradient period κ m φ (-x) := by
-  have hd := ((hφ (-x)).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true]) (0 : LiftTangent)).hasFDerivAt
+  have hd := ((hφ (-x)).differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero) (0 : LiftTangent)).hasFDerivAt
   have hn := (hasFDerivAt_id (𝕜 := ℝ) (0 : LiftTangent)).neg
   have hd0 : HasFDerivAt (localLift period φ (-x)) (fderiv ℝ (localLift period φ (-x)) 0)
       ((-id) (0 : LiftTangent)) := by simpa only [Pi.neg_apply, id_eq, neg_zero] using hd

@@ -504,8 +504,8 @@ theorem cutVelocity_product_rule (A : VelocityField) (t : ℝ) (x : Space)
     cutVelocity A (t, x) = spatialCutoff x • SpatialCurl.spatialCurl A (t, x) +
       SpatialCurl.curlLinear ((fderiv ℝ spatialCutoff x).smulRight (A (t, x))) := by
   change SpatialCurl.curlLinear (fderiv ℝ (fun y => spatialCutoff y • A (t, y)) x) = _
-  rw [fderiv_fun_smul (spatialCutoff_contDiff.differentiable (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) x) hA, map_add,
+  rw [fderiv_fun_smul (spatialCutoff_contDiff.differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero) x) hA, map_add,
     map_smul]
   rfl
 
@@ -709,7 +709,7 @@ theorem localizedVelocity_eq_curl {A : VelocityField} {times : Set ℝ}
     localizedVelocity A (t, x) = SpatialCurl.spatialCurl (localizedPotential A) (t, x) := by
   have hd : DifferentiableAt ℝ (fun y => periodicPotential A (t, y)) x :=
     (SpatialCurl.contDiff_spatialSlice (periodicPotential_smoothOn hA) ht).differentiable
-      (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) x
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero) x
   change SmoothCutoffs.timeSwitch t •
       SpatialCurl.curlLinear (fderiv ℝ (fun y => periodicPotential A (t, y)) x) =
     SpatialCurl.curlLinear

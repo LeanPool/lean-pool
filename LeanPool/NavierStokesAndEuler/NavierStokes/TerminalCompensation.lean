@@ -791,11 +791,9 @@ theorem exists_uniform_parameter_compensation (P : Patch) (lam : ℝ) (hlam : 0 
     exact ((hspec (d η) hm).2.1).trans
       (by simpa only [B, mul_assoc] using mul_le_mul_of_nonneg_left (hd_bound η hη).1 hC₀.le)
   have hdif : DifferentiableAt ℝ d η :=
-    (hd.contDiffAt (hU.mem_nhds hηU)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])
+    (hd.contDiffAt (hU.mem_nhds hηU)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hcdif : DifferentiableAt ℝ c η :=
-    (hc.contDiffAt (hV.mem_nhds hηV)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])
+    (hc.contDiffAt (hV.mem_nhds hηV)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hcderiv : ‖deriv c η‖ ≤ B * ‖v‖ := by
     apply (composed_solver_deriv_bound hg (fun w hw => (hspec w hw).2.2.1) hdif hm).trans
     simpa only [B, mul_assoc] using mul_le_mul_of_nonneg_left (hd_bound η hη).2 hC₀.le
@@ -825,8 +823,7 @@ theorem exists_uniform_parameter_compensation (P : Patch) (lam : ℝ) (hlam : 0 
     refine ⟨hmul₀.trans (mul_le_mul_of_nonneg_right hDBC (norm_nonneg v)),
       hmul₁.trans (mul_le_mul_of_nonneg_right hDBC (norm_nonneg v)), ?_⟩
     have hadif : DifferentiableAt ℝ a η :=
-      (ha.contDiffAt (hU.mem_nhds hηU)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-          ENat.top_ne_zero, not_false_eq_true])
+      (ha.contDiffAt (hU.mem_nhds hηU)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
     have hfdif : DifferentiableAt ℝ (fun θ => correction P (c θ) x) η :=
       (correctionCLM P x).differentiableAt.comp η hcdif
     rw [(hadif.hasDerivAt.fun_mul hfdif.hasDerivAt).deriv]

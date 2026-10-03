@@ -1951,8 +1951,8 @@ theorem periodicPhase_differentiableAt (l : SlotColoring.Label) (gap : ℕ)
     (hG : DifferentiableAt ℝ G (x.1.1, x.1.2.1)) :
     DifferentiableAt ℝ (periodicPhase sys l gap epsilon p pz x0 F G) x := by
   have hc := (PeriodicPhaseAssembly.periodicClock_contDiff
-    (slotGeometry sys vectors_det l gap) (clockWindow sys l.1)).differentiable (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+    (slotGeometry sys vectors_det l gap) (clockWindow sys l.1)).differentiable
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hchi : DifferentiableAt ℝ (fun y : Cylinder =>
       ((y.1.1, y.1.2.1), (y.2, PeriodicPhaseAssembly.periodicClock
         (slotGeometry sys vectors_det l gap) (clockWindow sys l.1).cutoff y.1.2.2))) x := by
@@ -1993,10 +1993,8 @@ theorem periodicPhase_normal_germ (hh : 0 ≤ h) {l : SlotColoring.Label} (hl : 
           gap) k) y := by
     simp only [HarmonicCalculus.phaseNormal, hyr, hyt, hyz]
   exact he.trans (nativePhase_normal sys l gap i hQ p pz x0 F G k theta
-    ((hF.contDiffAt (hS.mem_nhds hy)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true]))
-    ((hG.contDiffAt (hS.mem_nhds hy)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])))
+    ((hF.contDiffAt (hS.mem_nhds hy)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
+    ((hG.contDiffAt (hS.mem_nhds hy)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)))
 
 theorem phase_normal_view_germ (hh : 0 ≤ h) {l : SlotColoring.Label} (hl : 4 ≤ l.1)
     (i gap : ℕ) {Q Qr : ℝ} (hQ : 0 < Q) (hQr : 0 < Qr)
@@ -2026,10 +2024,10 @@ theorem phase_normal_view_germ (hh : 0 ≤ h) {l : SlotColoring.Label} (hl : 4 �
     (hS.preimage ((slowChange h Q Qr).continuous.comp
       (continuous_fst.fst.prodMk continuous_fst.snd.fst))).mem_nhds hxS
   filter_upwards [hp.eventually hn, hR, hslow] with y hyN hyR hyS
-  have hFd := (hF.contDiffAt (hS.mem_nhds hyS)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
-  have hGd := (hG.contDiffAt (hS.mem_nhds hyS)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have hFd := (hF.contDiffAt (hS.mem_nhds hyS)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have hGd := (hG.contDiffAt (hS.mem_nhds hyS)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hd := periodicPhase_differentiableAt sys l 0 (Qr ^ h) p pz x0 F G
     (x := changeMap y) hFd hGd
   exact (PhysicalParticularWave.phaseNormal_chartChange hQ hQr h i gap K Kr hyR hd).trans

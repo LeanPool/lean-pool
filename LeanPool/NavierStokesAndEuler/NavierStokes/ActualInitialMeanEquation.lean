@@ -313,8 +313,7 @@ theorem scaled_base_divergence (B n : ℕ) {x : Full} (hx : x ∈ ActualBaseResi
     simpa only [ActualBaseResidual.cylinderPoint, AxisymmetricResidual.pack_zero] using
       mul_pos (Real.sqrt_pos.2 (ChartScales.Q_pos n)) hx.1
   have hda := (ha.contDiffAt (BaseResidual.past_isOpen.mem_nhds ⟨ht, mem_univ _⟩)).differentiableAt
-      (by
-      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hmem :
       ((ActualBaseResidual.cylinderPoint h (ChartScales.Q n) x).1,
         CylindricalResidual.chart (ActualBaseResidual.cylinderPoint h (ChartScales.Q n) x).2) ∈
@@ -323,8 +322,8 @@ theorem scaled_base_divergence (B n : ℕ) {x : Full} (hx : x ∈ ActualBaseResi
       ((ActualBaseResidual.cylinderPoint h (ChartScales.Q n) x).1,
         CylindricalResidual.chart (ActualBaseResidual.cylinderPoint h (ChartScales.Q n) x).2) :=
     ((FinalSlowBase.velocity_smooth certificate modulation upper B).contDiffAt
-    (BaseResidual.past_isOpen.mem_nhds hmem)).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+    (BaseResidual.past_isOpen.mem_nhds hmem)).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hv : componentDivergence LinearWaveResidual.coordinateRadius
       (LinearWaveResidual.spaceDirection 0) (LinearWaveResidual.spaceDirection 1)
       (LinearWaveResidual.spaceDirection 2) (fun z i => a z i)
@@ -414,8 +413,8 @@ theorem seed_oscillation_divergence (B N0 n : ℕ) {x : Full}
   rw [componentDivergence_sum _ _ _ _ _ (fun l _ i =>
     ((contDiffOn_pi.mp (ActualPrimaryCoherence.piece_velocity_smooth standardRegion l.2 l.1 n)
         i).contDiffAt
-      (ActualPrimaryCoherence.positiveChart_open.mem_nhds (strip_time hx.1))).differentiableAt (by
-          simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))]
+      (ActualPrimaryCoherence.positiveChart_open.mem_nhds (strip_time hx.1))).differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero))]
   exact Finset.sum_eq_zero (fun l _ => piece_divergence l n ⟨strip_radius hx.1, strip_time hx.1⟩)
 
 theorem primary_oscillation (B N0 : ℕ) :
@@ -459,11 +458,9 @@ theorem primary_fullDivergence (B N0 n : ℕ) {x : Full}
     (a := LiftedMeanResidual.baseLift (commonContext B) n)
     (b := (ActualInitialCoherence.seed B N0).oscillation n)
     (fun i => ((hb i).contDiffAt ((LiftedMeanResidual.cylinder_open strip.isOpen_domain).mem_nhds
-        hx)).differentiableAt (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+        hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
     (fun i => ((hw i).contDiffAt ((LiftedMeanResidual.cylinder_open strip.isOpen_domain).mem_nhds
-        hx)).differentiableAt (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))]
+        hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))]
   exact (congrArg₂ (fun a b : ℝ => a + b) (base_divergence B n hx)
     (seed_oscillation_divergence B N0 n hx)).trans (zero_add 0)
 
@@ -491,15 +488,13 @@ theorem initialized_fullDivergence (B N0 n : ℕ) {x : Full}
     (TorusInverse.vector .temporal) (common_graphOperators B) n (strip_to_slow hx.1)
     (strip_radius hx.1).ne' x.2
     (fun i => ((hp n i).contDiffAt ((LiftedMeanResidual.cylinder_open strip.isOpen_domain).mem_nhds
-        hx)).differentiableAt (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+        hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
   have hr := rankStage_fullDivergence_local (ActualInitialCoherence.rank_geometry_of_primitive B _
     (ActualInitialCoherence.temporal_primitive B N0)) commonGauge_length ((0,1),0) ((1,0),0)
     (TorusInverse.vector .temporal) (common_graphOperators B) n (strip_to_slow hx.1)
     (strip_radius hx.1).ne' x.2
     (fun i => ((ht n i).contDiffAt ((LiftedMeanResidual.cylinder_open strip.isOpen_domain).mem_nhds
-        hx)).differentiableAt (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+        hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
   exact hr.trans (hm.trans (primary_fullDivergence B N0 n hx))
 
 /-! ## Literal angular harmonics and the retained errors -/

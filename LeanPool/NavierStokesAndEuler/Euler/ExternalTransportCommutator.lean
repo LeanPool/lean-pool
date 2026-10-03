@@ -407,8 +407,8 @@ theorem fieldDerivative_sub (a : LiftTangent) (f g : LiftDomain period → F)
     fieldDerivative period a (f-g) = fieldDerivative period a f-fieldDerivative period a g := by
   funext x
   have h := (((hf x).differentiable (by
-      simp)) 0).hasFDerivAt.sub (((hg x).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-          ENat.top_ne_zero, not_false_eq_true])) 0).hasFDerivAt
+      simp)) 0).hasFDerivAt.sub (((hg x).differentiable
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) 0).hasFDerivAt
   exact congrArg (fun A : LiftTangent →L[ℝ] F => A a) h.fderiv
 
 omit [Fact (0 < period)] in

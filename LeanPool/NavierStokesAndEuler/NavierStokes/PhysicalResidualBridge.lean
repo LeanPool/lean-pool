@@ -68,16 +68,14 @@ theorem along_twice_scaled_pull {Ω : Set E} {U : Set F} {Γ : E → F}
       (fun y => (c * k) * along W f (Γ y)) Ω := by
     intro y hy
     exact along_scaled_pull c k
-      ((hΓ.contDiffAt (hΩ.mem_nhds hy)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-          ENat.top_ne_zero, not_false_eq_true]))
-      ((hf.contDiffAt (hU.mem_nhds (hmap hy))).differentiableAt (by simp only [ne_eq,
-          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) (hV y hy)
+      ((hΓ.contDiffAt (hΩ.mem_nhds hy)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
+      ((hf.contDiffAt (hU.mem_nhds (hmap hy))).differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) (hV y hy)
   rw [along_congr hΩ he hx]
   rw [along_scaled_pull (c * k) k
-    ((hΓ.contDiffAt (hΩ.mem_nhds hx)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true]))
+    ((hΓ.contDiffAt (hΩ.mem_nhds hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
     (((contDiffOn_along hU hW hf).contDiffAt (hU.mem_nhds (hmap hx))).differentiableAt
-      (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) (hV x hx)]
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) (hV x hx)]
   ring
 
 /-- Differential data used by the generic pullback calculation below.  The
@@ -150,10 +148,10 @@ theorem graphResidual_eq_cylindrical {U : Set SpaceTime}
       fun i => CylindricalResidual.cylindricalResidual a p t q i := by
   have hAc (i : Fin 3) : ContDiffOn ℝ ∞ (fun z => a z i) U :=
     (AxisymmetricFields.projection i).contDiff.comp_contDiffOn ha
-  have had := (ha.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
-  have hpd := (hp.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have had := (ha.contDiffAt (hU.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have hpd := (hp.contDiffAt (hU.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have has : ContDiffAt ℝ 2 (fun y : Space => a (t, y)) q :=
     ((ha.contDiffAt (hU.mem_nhds hx)).comp q (contDiffAt_const.prodMk contDiffAt_id)).of_le
       (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)
@@ -162,8 +160,8 @@ theorem graphResidual_eq_cylindrical {U : Set SpaceTime}
       along (LinearWaveResidual.spaceDirection i) (fun z => a z j) (t, q) =
       CylindricalResidual.dCoord i (fun y => a (t, y)) q j := by
     rw [LinearWaveResidual.along_space_slice
-      (((hAc j).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))]
+      (((hAc j).contDiffAt (hU.mem_nhds hx)).differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero))]
     exact CylindricalResidual.dCoord_map (AxisymmetricFields.projection j) hasd i
   have hLap (j : Fin 3) : cylindricalLaplacian LinearWaveResidual.coordinateRadius
       (LinearWaveResidual.spaceDirection 0) (LinearWaveResidual.spaceDirection 1)
@@ -589,10 +587,9 @@ theorem twice_along_add {U : Set E} (hU : IsOpen U) {V : E → E}
   have he : EqOn (along V (fun y => f y + g y))
       (fun y => along V f y + along V g y) U := by
     intro y hy
-    exact along_add V ((hf.contDiffAt (hU.mem_nhds hy)).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
-      ((hg.contDiffAt (hU.mem_nhds hy)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-          ENat.top_ne_zero, not_false_eq_true]))
+    exact along_add V ((hf.contDiffAt (hU.mem_nhds hy)).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
+      ((hg.contDiffAt (hU.mem_nhds hy)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
   rw [along_congr hU he hx]
   exact along_add V
     (((contDiffOn_along hU hV hf).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [
@@ -608,10 +605,10 @@ theorem laplacian_add {U : Set E} (hU : IsOpen U) (R : E → ℝ) {Vr Vθ Vz : E
       cylindricalLaplacian R Vr Vθ Vz f x + cylindricalLaplacian R Vr Vθ Vz g x := by
   simp only [cylindricalLaplacian, twice_along_add hU hr hf hg hx,
     twice_along_add hU hθ hf hg hx, twice_along_add hU hz hf hg hx,
-    along_add Vr ((hf.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
-      ((hg.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-          ENat.top_ne_zero, not_false_eq_true])), smul_eq_mul]
+    along_add Vr ((hf.contDiffAt (hU.mem_nhds hx)).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
+      ((hg.contDiffAt (hU.mem_nhds hx)).differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero)), smul_eq_mul]
   ring
 
 theorem graphResidual_add {U : Set E} (hU : IsOpen U) (ε : ℝ) (R : E → ℝ)
@@ -627,16 +624,12 @@ theorem graphResidual_add {U : Set E} (hU : IsOpen U) (ε : ℝ) (R : E → ℝ)
       LinearWaveResidual.realComponentLinearResidual ε R Vr Vθ Vz Vt B a p x i +
       LinearWaveResidual.realTransport R Vr Vθ Vz a a x i := by
   have hfirst (V : E → E) (j : Fin 3) := along_add V
-    (((hB j).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
-    (((ha j).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+    (((hB j).contDiffAt (hU.mem_nhds hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
+    (((ha j).contDiffAt (hU.mem_nhds hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
   have hLap (j : Fin 3) := laplacian_add hU R hr hθ hz (hB j) (ha j) hx
   have hP (V : E → E) := along_add V
-    ((hp₀.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true]))
-    ((hp.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true]))
+    ((hp₀.contDiffAt (hU.mem_nhds hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
+    ((hp.contDiffAt (hU.mem_nhds hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
   fin_cases i <;>
     simp only [graphResidual, Fin.zero_eta, Fin.isValue, hfirst, LinearWaveResidual.realTransport,
         LinearWaveResidual.realAngularGenerator, neg_add_rev, Matrix.cons_val_zero,
@@ -682,15 +675,14 @@ theorem complexIncrement_eq {U : Set E} (hU : IsOpen U) (ε : ℝ) (R : E → �
     Complex.ofRealCLM.contDiff.comp_contDiffOn (ha j)
   have hpC : DifferentiableAt ℝ (fun y => (p y : ℂ)) x :=
     Complex.ofRealCLM.differentiableAt.comp x
-      ((hp.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-          ENat.top_ne_zero, not_false_eq_true]))
+      ((hp.contDiffAt (hU.mem_nhds hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
   have hl := congrFun (LinearWaveResidual.realMap_linearResidual Complex.reCLM ε R Vt
     hU hr hθ hz haC
-    (fun j => ((hB j).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) hpC hx) i
+    (fun j => ((hB j).contDiffAt (hU.mem_nhds hx)).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) hpC hx) i
   have ht := transport_realLift R Vr Vθ Vz
-    (fun j => ((ha j).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) i
+    (fun j => ((ha j).contDiffAt (hU.mem_nhds hx)).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) i
   simp only [complexIncrement, Complex.add_re, ht]
   have h := congrArg
     (fun z : ℝ => z + LinearWaveResidual.realTransport R Vr Vθ Vz a a x i) hl

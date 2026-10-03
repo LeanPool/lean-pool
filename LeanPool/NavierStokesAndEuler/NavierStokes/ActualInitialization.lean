@@ -1021,8 +1021,7 @@ theorem phase_slice_derivative {B N0 : ℕ} (l : Index B N0) (n : ℕ)
   have hd := ((phase_smooth_full l n).contDiffAt
     ((HarmonicResidual.liftDomain_open strip.isOpen_domain).mem_nhds
       (show (x, 0) ∈ HarmonicResidual.liftDomain strip.domain from ⟨hx,
-          trivial⟩))).differentiableAt (by
-          simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+          trivial⟩))).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have he := (hd.hasFDerivAt.comp x (inclusion (D := Point)).hasFDerivAt).fderiv
   exact congrArg (fun L : Point →L[ℝ] ℝ => L v) he
 
@@ -1069,8 +1068,7 @@ theorem angularMode_from_normal {B N0 : ℕ} (l : Index B N0) (n : ℕ)
     (((phase_smooth_full l n).contDiffAt
       ((HarmonicResidual.liftDomain_open strip.isOpen_domain).mem_nhds
         (show (x, 0) ∈ HarmonicResidual.liftDomain strip.domain from ⟨hx,
-            trivial⟩))).differentiableAt (by
-            simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+            trivial⟩))).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
   have hn : fullNormal l n (x,0) 1 =
       ((angularMode l n : ℝ) / (primaryPiece l).coefficients.frequency n) / x.1 := by
     have hc := congrArg (fun a : ℝ => a / x.1) hd

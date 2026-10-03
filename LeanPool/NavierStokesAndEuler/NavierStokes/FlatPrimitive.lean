@@ -182,8 +182,7 @@ theorem primitive_sourceCoefficient {c : ℝ} (hc : 0 < c) (j : ℕ)
       (integrand c j (sourceCoefficient c j a) u) u := by
     intro u
     convert! (scale_hasDerivAt hc j u).mul
-      ((ha.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-          not_false_eq_true]) u).hasDerivAt) using 1
+      ((ha.differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero) u).hasDerivAt) using 1
     simp only [integrand, sourceCoefficient, scale]
     ring
   have hcont := integrand_continuous hc j (sourceCoefficient_contDiff c j ha).continuous

@@ -1261,8 +1261,8 @@ theorem partialEta_hasDerivAt {f : Field} {w : ℝ × ℝ} (hf : DifferentiableA
 theorem xProfile_partialEta {S : Set ℝ} (hS : IsOpen S) (f : EvenProfile S)
     {w : ℝ × ℝ} (hX : 0 < w.1) (heta : w.2 ∈ S) :
     SimilarityProfile.partialEta (xProfile f) w = xProfile (etaDerivative hS f) w :=
-  (partialEta_hasDerivAt ((xProfile_contDiffAt hS f hX heta).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))).unique
+  (partialEta_hasDerivAt ((xProfile_contDiffAt hS f hX heta).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero))).unique
     (parameter_derivative hS f.smooth heta (Real.sqrt (2 * w.1)))
 
 theorem xProfile_partialX {S : Set ℝ} (hS : IsOpen S) (f : EvenProfile S)
@@ -1285,8 +1285,8 @@ theorem xProfile_partialX {S : Set ℝ} (hS : IsOpen S) (f : EvenProfile S)
     rw [smul_eq_mul]
     field_simp
   rw [he] at hc
-  exact (partialX_hasDerivAt ((xProfile_contDiffAt hS f hX heta).differentiableAt (by
-      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))).unique hc
+  exact (partialX_hasDerivAt ((xProfile_contDiffAt hS f hX heta).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero))).unique hc
 
 theorem xProfile_partialX_germ {S : Set ℝ} (hS : IsOpen S) (f : EvenProfile S)
     {w : ℝ × ℝ} (hX : 0 < w.1) (heta : w.2 ∈ S) :
@@ -1591,11 +1591,9 @@ theorem local_parameterMass {n : ℕ} (hn : 0 < n) {R eta : ℝ} (hR : 0 < R)
   rw [PositiveOrderMoments.massHistory_parameterPartial_on s.domain.isOpen (profiles s
       n).axial.smooth heta] at hd
   have hu := partialEta_hasDerivAt ((local_profile_smoothAt L n 1 (w := (R ^ 2 / 2, eta)) hX hxr
-      heta).differentiableAt (by
-      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+      heta).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
   have hk := partialEta_hasDerivAt ((local_profile_smoothAt L n 2 (w := (R ^ 2 / 2, eta)) hX hxr
-      heta).differentiableAt (by
-      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+      heta).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
   have he : (fun t => PositiveOrderMoments.massHistory (profiles s n).axial (R, t)) =ᶠ[𝓝 eta]
       fun t => R ^ 2 / 2 * (SlowRecursion.profile (A.coefficients n 1) (R ^ 2 / 2, t) +
         SlowRecursion.profile (A.coefficients n 2) (R ^ 2 / 2, t)) := by
@@ -1888,8 +1886,7 @@ theorem betaFromU_x_divergence {S : Set ℝ} {h : ℝ} (d : Domain S h) (lam : �
   change R * xDerivative d.isOpen b (R, w.2) = ProfileHistories.radialPartial b (R, w.2) at hx
   rw [← hx, radialZ_eq_axialOp d _ u (w := (R, w.2)) heta, hR2] at he
   rw [AxisSourceRegularity.partialX_axisFactor ((xProfile_contDiffAt d.isOpen b hX
-      heta).differentiableAt (by
-      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])),
+      heta).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)),
     xProfile_partialX d.isOpen b hX heta, ← xProfile_axialOp d _ u hX heta]
   change b (R, w.2) + w.1 * xDerivative d.isOpen b (R, w.2) +
     axialOp d (-PositiveAxisSystem.a h + lam) u (R, w.2) = 0

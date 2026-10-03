@@ -481,11 +481,9 @@ theorem native_normal {U : PhaseJetBounds.Domain ℕ PhaseCalculus.Slow}
     (PrimaryMaterialDefect.coefficients P b χ amplitude pressure frequency).normal s d n x =
       P.phase.normal n ((χ n x).1, (χ n x).2.2) := by
   have hF := ((P.baseF.smooth n).contDiffAt ((U.isOpen n).mem_nhds (hmap n hx))).differentiableAt
-      (by
-      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hG := ((P.baseG.smooth n).contDiffAt ((U.isOpen n).mem_nhds (hmap n hx))).differentiableAt
-      (by
-      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hphase : PrimaryMaterialDefect.pulledPhase P χ n =
       PhaseCalculus.phase (s.epsilon n) (P.phase.p n) (P.phase.pz n) (P.phase.x0 n)
         (P.phase.F n) (P.phase.G n) ∘ χ n := by
@@ -612,12 +610,12 @@ theorem native_background_bounds {U : PhaseJetBounds.Domain ℕ PhaseCalculus.Sl
           ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
   · intro n x hx
     exact native_slow_auxiliary hχ P.phase.F n hx
-      (((P.baseF.smooth n).contDiffAt ((U.isOpen n).mem_nhds (hslowmap n hx))).differentiableAt (by
-          simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+      (((P.baseF.smooth n).contDiffAt ((U.isOpen n).mem_nhds (hslowmap n hx))).differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
   · intro n x hx
     exact native_slow_auxiliary hχ P.phase.G n hx
-      (((P.baseG.smooth n).contDiffAt ((U.isOpen n).mem_nhds (hslowmap n hx))).differentiableAt (by
-          simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+      (((P.baseG.smooth n).contDiffAt ((U.isOpen n).mem_nhds (hslowmap n hx))).differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
   · intro i
     exact PrimaryPulseBounds.polynomial_memClass s
       (hnormal.clm (PiLp.proj 2 (fun _ : Fin 3 => ℝ) i))
@@ -704,11 +702,9 @@ theorem native_frame_action {U : PhaseJetBounds.Domain ℕ PhaseCalculus.Slow}
         ((PrimaryMaterialDefect.coefficients P b χ 0 0 frequency).axialBase n)
         (d.radialField n) x v := by
   have hF := ((P.baseF.smooth n).contDiffAt ((U.isOpen n).mem_nhds (hmap n hx))).differentiableAt
-      (by
-      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hG := ((P.baseG.smooth n).contDiffAt ((U.isOpen n).mem_nhds (hmap n hx))).differentiableAt
-      (by
-      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hFr := native_slow_derivative hχ P.phase.F n hx hF
   have hGr := native_slow_derivative hχ P.phase.G n hx hG
   simp only [PrimaryPulseBounds.PhaseConstruction.frame, PhaseJetBounds.PhaseFamily.frameData,
@@ -2477,11 +2473,9 @@ theorem meanBar_fluxBalance_on (hV : IsOpen V) (o : Operators (PressureStream.Li
     meanBar_radialDiv_on hV o hradius hprofile T hT hpT c n hx] at hbars
   rw [hbars]
   have hDR := ((liftedTorusAverage_contDiffOn hV (hR n)).contDiffAt
-    ((slowDomain_open hV).mem_nhds hx)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])
+    ((slowDomain_open hV).mem_nhds hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hDT := ((liftedTorusAverage_contDiffOn hV (hT n)).contDiffAt
-    ((slowDomain_open hV).mem_nhds hx)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])
+    ((slowDomain_open hV).mem_nhds hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hd := fderiv_fun_sub hDR hDT
   change fderiv ℝ (meanBar R n - meanBar T n) x = _ at hd
   simp only [Operators.radialDiv, Operators.dr, graphDerivative,

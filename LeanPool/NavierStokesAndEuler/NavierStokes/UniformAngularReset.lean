@@ -590,8 +590,8 @@ theorem modifiedE_hasDerivAt (lam e0 y0 : ℝ) (c : Coeff) (y : ℝ) :
     HasDerivAt (modifiedE lam e0 y0 c)
       (baseE lam e0 y * (-1 / 2 - lam) * (1 + relative c (y - y0)) +
         baseE lam e0 y * deriv (relative c) (y - y0)) y := by
-  have hr := (((relative_contDiff c).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true])).differentiableAt.hasDerivAt).comp y
+  have hr := (((relative_contDiff c).differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).differentiableAt.hasDerivAt).comp y
     ((hasDerivAt_id y).sub_const y0)
   convert! (baseE_hasDerivAt lam e0 y).mul (hr.const_add 1) using 1
   simp only [id_eq, comp_apply, mul_one]
@@ -1237,22 +1237,19 @@ theorem exists_smooth_solver_on_ball [FiniteDimensional ℝ E] [CompleteSpace E]
       exact quadraticMap_hasFDerivAt B A (g d)
     have hq : ContDiffAt ℝ ∞ (quadraticMap B A) (g d) :=
       (quadraticMap_contDiff B A).contDiffAt
-    let inv : E → E := hq.localInverse hderiv (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])
+    let inv : E → E := hq.localInverse hderiv (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
     have hqd : quadraticMap B A (g d) = d := (hspec d hd).1.2
     have hinvsm : ContDiffAt ℝ ∞ inv d := by
-      simpa only [hqd] using hq.to_localInverse hderiv (by simp only [ne_eq, WithTop.coe_eq_zero,
-          ENat.top_ne_zero, not_false_eq_true])
+      simpa only [hqd] using hq.to_localInverse hderiv (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
     have hinv0 : inv d = g d := by
-      simpa only [hqd] using hq.localInverse_apply_image hderiv (by simp only [ne_eq,
-          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+      simpa only [hqd] using hq.localInverse_apply_image hderiv
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
     have hinvr : ∀ᶠ x in 𝓝 d, ‖inv x‖ < r :=
       hinvsm.continuousAt.norm.eventually
         (eventually_lt_nhds (by simpa only [hinv0] using hinterior d hd))
     have hinveq : ∀ᶠ x in 𝓝 d, quadraticMap B A (inv x) = x := by
       have h := HasStrictFDerivAt.eventually_right_inverse (f' := D)
-        (hq.hasStrictFDerivAt' hderiv (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-            not_false_eq_true]))
+        (hq.hasStrictFDerivAt' hderiv (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
       change ∀ᶠ x in 𝓝 (quadraticMap B A (g d)), quadraticMap B A (inv x) = x at h
       simpa only [hqd] using h
     have hgeq : g =ᶠ[𝓝 d] inv := by
@@ -1933,10 +1930,10 @@ theorem exists_scheduled_reset :
       _ = _ := by ring
   · intro eta
     have hcD : HasDerivAt c (deriv c (normalizedDebt d eta)) (normalizedDebt d eta) :=
-      ((hc.contDiffAt (isOpen_Ioo.mem_nhds (hδ eta))).differentiableAt (by simp only [ne_eq,
-          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])).hasDerivAt
-    have hdD := ((normalizedDebt_contDiff d).differentiable (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) eta).hasDerivAt
+      ((hc.contDiffAt (isOpen_Ioo.mem_nhds (hδ eta))).differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).hasDerivAt
+    have hdD := ((normalizedDebt_contDiff d).differentiable
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero) eta).hasDerivAt
     have hchain := hcD.scomp eta hdD
     change HasDerivAt a _ eta at hchain
     rw [hchain.deriv, norm_smul, Real.norm_eq_abs]

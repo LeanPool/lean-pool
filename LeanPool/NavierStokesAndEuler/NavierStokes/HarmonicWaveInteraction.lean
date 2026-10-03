@@ -494,16 +494,13 @@ theorem residualBlock_mean_update_class {s : StripData D} {κ α H : ℝ} {P : �
   apply residualBlock_axisymmetric_alias_update c s₀ s₁ h he b G A₀ A₁ hA n
   · intro t
     exact ((tripleField_smooth hbase n t).contDiffAt (s.isOpen_domain.mem_nhds
-        hx)).differentiableAt (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+        hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   · intro t
     exact ((tripleField_smooth hmean n t).contDiffAt (s.isOpen_domain.mem_nhds
-        hx)).differentiableAt (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+        hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   · intro t
     exact ((tripleField_smooth hh.smooth n t).contDiffAt (s.isOpen_domain.mem_nhds
-        hx)).differentiableAt (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+        hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   · exact hj
 
 /-- Residual difference block, bundling `velocity`, `pressure`, `frequency`, `phase` and the
@@ -876,8 +873,7 @@ theorem lifted_amplitude_angularIndependent {s : StripData D} {κ α : ℝ} {P :
   rcases p with ⟨x, θ⟩
   have hs := class_lift (blockAmplitude_class hb hj i)
   have hd := ((hs.smooth n).contDiffAt ((productStrip s).isOpen_domain.mem_nhds
-      hp)).differentiableAt (by
-      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+      hp)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   change DifferentiableAt ℝ (fun q : D × ℝ => amplitude b j n q.1 i) (x, θ) at hd
   change along HarmonicResidual.angularDirection (fun q => amplitude b j n q.1 i) (x, θ) = 0
   rw [HarmonicResidual.along_angularDirection hd]
@@ -1000,11 +996,11 @@ theorem orderedKernel_raw_class {s : StripData D} {κ α β : ℝ} {P : ℕ → 
   intro n x hx
   exact (orderedKernel_eq_fullCoefficient c ho hR a (amplitude a j) (amplitude b l)
     l n hx (hk n)
-    (((hΦ n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+    (((hΦ n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
     (fun r => ((((blockAmplitude_class hb hl r).smooth n).contDiffAt
-      (s.isOpen_domain.mem_nhds hx)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-          ENat.top_ne_zero, not_false_eq_true]))) i).symm
+      (s.isOpen_domain.mem_nhds hx)).differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero))) i).symm
 
 /-- Oscillatory input blocks have no stored velocity at harmonic zero. -/
 def ZeroMode (b : CorrectionState.HarmonicBlock D) : Prop :=
@@ -1433,10 +1429,10 @@ theorem nonlinear_update_with_mean {U : Set D} (hU : IsOpen U)
     (HarmonicResidual.constantVector (B + M)) a b p q
     (fun r => HarmonicResidual.smoothCoefficients_constant ((hB r).add (hM r))) ha hb hp hq hx j i
   have hm := linear_mean_difference g k Φ kp B M b q
-    (fun r => ((hB r).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
-    (fun r => ((hM r).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) j i
+    (fun r => ((hB r).contDiffAt (hU.mem_nhds hx)).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
+    (fun r => ((hM r).contDiffAt (hU.mem_nhds hx)).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) j i
   linear_combination hn + hm
 
 /-- Linear coefficients as an element of `HarmonicResidual.BlockCoefficients D`. -/

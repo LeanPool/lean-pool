@@ -878,8 +878,8 @@ theorem hasDerivAt_slowSum_X {a : ℕ → ℕ} (ha : StrictMono a) (h : ℝ)
   have hd : ∀ j, HasDerivAt (fun x => f j (x, eta))
       (SimilarityProfile.partialX (f j) (X, eta)) X := by
     intro j
-    exact ((hf j).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-        not_false_eq_true])).differentiableAt.hasFDerivAt.comp_hasDerivAt X
+    exact ((hf j).differentiable
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).differentiableAt.hasFDerivAt.comp_hasDerivAt X
       ((hasDerivAt_id X).prodMk (hasDerivAt_const X eta))
   have ht := (hd 0).add (HasDerivAt.fun_sum (fun j (_ : j ∈ Finset.range N) =>
     (hd j).const_mul (coefficientWeight a h q j)))
@@ -913,8 +913,8 @@ theorem partialS_physicalProfile {a : ℕ → ℕ} (ha : StrictMono a) {h : ℝ}
     (hf : ∀ j, ContDiff ℝ ∞ (f j)) (b : ℝ) {p : Chart} (hp : p.1 < 1) :
     AxisymmetricFields.partialS (physicalProfile a h b f) p =
       physicalProfile a h (b - 1) (fun j => SimilarityProfile.partialX (f j)) p := by
-  have hd := ((physicalProfile_smoothAt ha hh hh1 hf b hp).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])).hasFDerivAt
+  have hd := ((physicalProfile_smoothAt ha hh hh1 hf b hp).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).hasFDerivAt
   have hc := hd.comp_hasDerivAt (F := Chart) p.2.1 ((hasDerivAt_const p.2.1 p.1).prodMk
     ((hasDerivAt_id p.2.1).prodMk (hasDerivAt_const p.2.1 p.2.2)))
   exact hc.unique (hasDerivAt_physicalProfile_s ha hh hh1 hf b hp)
@@ -1391,12 +1391,11 @@ theorem baseVelocity_axial {a : ℕ → ℕ} (ha : StrictMono a) {h : ℝ}
       physicalProfile a h (-CoordinateAlgebra.A h) d.axial (AxisymmetricFields.profilePoint t x) :=
           by
   have hH := (physicalProfile_smoothAt ha hh hh1 (bundleComponent_smooth hd C 0)
-    (-CoordinateAlgebra.A h) (p := AxisymmetricFields.profilePoint t x) ht).differentiableAt (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+    (-CoordinateAlgebra.A h) (p := AxisymmetricFields.profilePoint t x) ht).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hK := (physicalProfile_smoothAt ha hh hh1 (bundleComponent_smooth hd C 1)
     (1 / 2 - CoordinateAlgebra.A h) (p := AxisymmetricFields.profilePoint t x) ht).differentiableAt
-        (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   change DifferentiableAt ℝ (streamFactor a h C d) (AxisymmetricFields.profilePoint t x) at hH
   change DifferentiableAt ℝ (swirlPotential a h C d) (AxisymmetricFields.profilePoint t x) at hK
   rw [baseVelocity, AxisymmetricFields.velocity_two _ _ _ _ hH hK]
@@ -1407,8 +1406,8 @@ theorem partialX_swirl_primitive {f : Inner → ℝ} (hf : ContDiff ℝ ∞ f) (
       (fun w => -C⁻¹ * f w) := by
   funext w
   unfold SimilarityProfile.partialX
-  rw [fderiv_const_mul ((primitive_smooth hf).differentiable (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])).differentiableAt]
+  rw [fderiv_const_mul ((primitive_smooth hf).differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).differentiableAt]
   change -C⁻¹ * SimilarityProfile.partialX (ProfileHistories.primitive f) w = _
   rw [partialX_primitive hf]
 
@@ -1642,12 +1641,10 @@ theorem baseVelocity_angularMoment {a : ℕ → ℕ} (ha : StrictMono a) {h : �
           (AxisymmetricFields.profilePoint t x) := by
   have hH : DifferentiableAt ℝ (streamFactor a h C d) (AxisymmetricFields.profilePoint t x) :=
     (physicalProfile_smoothAt ha hh hh1 (bundleComponent_smooth hd C 0)
-      (-CoordinateAlgebra.A h) ht).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-          ENat.top_ne_zero, not_false_eq_true])
+      (-CoordinateAlgebra.A h) ht).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hK : DifferentiableAt ℝ (swirlPotential a h C d) (AxisymmetricFields.profilePoint t x) :=
     (physicalProfile_smoothAt ha hh hh1 (bundleComponent_smooth hd C 1)
-      (1 / 2 - CoordinateAlgebra.A h) ht).differentiableAt (by simp only [ne_eq,
-          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+      (1 / 2 - CoordinateAlgebra.A h) ht).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   rw [baseVelocity, AxisymmetricFields.velocity_zero _ _ _ _ hH hK,
     AxisymmetricFields.velocity_one _ _ _ _ hH hK,
     partialS_swirlPotential ha hh hh1 hd C ht]

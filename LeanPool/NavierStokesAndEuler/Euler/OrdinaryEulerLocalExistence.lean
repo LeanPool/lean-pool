@@ -362,8 +362,7 @@ theorem advection_add_right (A B C : SmoothL2Field Space) :
   have he : (addField B C).field=B.field+C.field := rfl
   simp only [advectionField_field,addField_field,he,
     fderiv_add (B.smooth.differentiable (by
-        simp) x) (C.smooth.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-            ENat.top_ne_zero, not_false_eq_true]) x),add_apply]
+        simp) x) (C.smooth.differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero) x),add_apply]
 
 theorem advection_smul_left (c : ℝ) (A B : SmoothL2Field Space) :
     advectionField (scaleField c A) B=scaleField c (advectionField A B) := by
@@ -1035,8 +1034,8 @@ theorem projected_difference_energy (A B : SmoothL2Field Space)
     funext x
     have hw : W.field=B.field-A.field := funext (fieldSub_field B A)
     simp only [fieldSub_field,projectedRhs_field,differenceRhs_field,hw,P]
-    rw [fderiv_sub (B.smooth.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true]) x) (A.smooth.differentiable (by simp only [
+    rw [fderiv_sub (B.smooth.differentiable
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero) x) (A.smooth.differentiable (by simp only [
         ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) x)]
     simp only [Pi.sub_apply,sub_apply,map_sub]
     abel_nf

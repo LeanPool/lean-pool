@@ -55,8 +55,8 @@ theorem cutoff_derivative_bound : ∃ M : ℝ, 0 ≤ M ∧
   have hM0 : 0 ≤ M := (norm_nonneg _).trans (hM 0)
   refine ⟨M, hM0, ?_⟩
   intro n x
-  have hder := ((hs.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true])) (cutoffScale n • x)).hasFDerivAt.comp x
+  have hder := ((hs.differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) (cutoffScale n • x)).hasFDerivAt.comp x
     ((hasFDerivAt_id x).const_smul (cutoffScale n))
   change HasFDerivAt (cutoff n)
     ((fderiv ℝ (spatialBump : Space → ℝ) (cutoffScale n • x)).comp
@@ -90,8 +90,8 @@ theorem cutoffField_compact (f : Space → V) (n : ℕ) : HasCompactSupport (cut
 theorem cutoffField_fderiv (f : Space → V) (hf : ContDiff ℝ ∞ f) (n : ℕ) (x : Space) :
     fderiv ℝ (cutoffField f n) x = cutoff n x • fderiv ℝ f x +
       (fderiv ℝ (cutoff n) x).smulRight (f x) :=
-  fderiv_fun_smul ((cutoff_smooth n).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true]) x) (hf.differentiable (by simp only [
+  fderiv_fun_smul ((cutoff_smooth n).differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero) x) (hf.differentiable (by simp only [
       ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) x)
 
 theorem cutoffField_tendsto (f : Space → V) (x : Space) :

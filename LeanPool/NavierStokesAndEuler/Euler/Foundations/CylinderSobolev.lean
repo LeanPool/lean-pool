@@ -107,8 +107,8 @@ theorem euclideanLift_fieldDerivative (f : LiftDomain period → F)
     (x : LiftDomain period) :
     euclideanLift period (fieldDerivative period (coordinateEquiv v) f) x z =
       fderiv ℝ (euclideanLift period f x) z v := by
-  have hchain := ((hf x).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true]) (coordinateEquiv z)).hasFDerivAt.comp z
+  have hchain := ((hf x).differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero) (coordinateEquiv z)).hasFDerivAt.comp z
     coordinateEquiv.hasFDerivAt
   rw [euclideanLift, localFieldLift_fieldDerivative]
   change fderiv ℝ (localFieldLift period f x) (coordinateEquiv z) (coordinateEquiv v) = _

@@ -1366,8 +1366,7 @@ theorem real_linearResidual_sum {E ι : Type} [NormedAddCommGroup E] [NormedSpac
   have hps : ContDiffOn ℝ ∞ (fun y => (∑ l ∈ J, p l) y) U := by
     simpa only [Finset.sum_apply] using ContDiffOn.sum hp
   have he := LinearWaveResidual.realMap_linearResidual Complex.reCLM ε R Vt hU hr hθ hz hs hB
-    ((hps.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])) hx
+    ((hps.contDiffAt (hU.mem_nhds hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) hx
   rw [HarmonicResidual.Actual.linearResidual_sum J hU ε R Vt hr hθ hz
     (LinearWaveResidual.realLift B) v p hv hp hx] at he
   simpa only [Finset.sum_apply, Complex.reCLM_apply, Complex.re_sum] using he.symm
@@ -2134,8 +2133,7 @@ theorem divergence_zero (n : ℕ) {x : (P × ℝ) × Plane} (hx : x ∈ D.strip.
   apply real_divergence_sum_zero (modes N)
   · intro j hj i
     exact ((D.wave_smooth C j hj n i).contDiffAt (D.strip.isOpen_domain.mem_nhds
-        hx)).differentiableAt (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+        hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   · intro j hj
     exact (C j hj).common_divergence_zero n hx
 
@@ -2163,17 +2161,13 @@ theorem real_cancellation (hpos : 0 < N)
       (D.background.axialBase n) y i) (angleShuffle (P := P) x) :=
     LinearWaveResidual.differentiableAt_base
       (((C0.background.cylindrical n).radius_smooth.contDiffAt (D.strip.isOpen_domain.mem_nhds
-          hx)).differentiableAt (by
-          simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+          hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
       (((C0.base_bounds.radial_base.smooth n).contDiffAt (D.strip.isOpen_domain.mem_nhds
-          hx)).differentiableAt (by
-          simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+          hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
       (((C0.base_bounds.frequency_base.smooth n).contDiffAt (D.strip.isOpen_domain.mem_nhds
-          hx)).differentiableAt (by
-          simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+          hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
       (((C0.base_bounds.axial_base.smooth n).contDiffAt (D.strip.isOpen_domain.mem_nhds
-          hx)).differentiableAt (by
-          simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) i
+          hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) i
   have he := real_linearResidual_sum (modes N) D.strip.isOpen_domain (D.strip.epsilon n)
     (D.background.radius n)
     (LinearWaveResidual.timeDirection (D.strip.epsilon n) (D.directions.fastField n) (fun _ =>

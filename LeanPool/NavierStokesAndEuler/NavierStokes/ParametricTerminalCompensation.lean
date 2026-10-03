@@ -102,11 +102,10 @@ theorem amplitudeDebt_variable_bounds {S : Set ℝ} (huniq : UniqueDiffOn ℝ S)
       ‖derivWithin (fun θ => amplitudeDebt (a θ) (v θ)) S η‖ ≤
         D * (‖v η‖ + ‖derivWithin v S η‖) := by
   have hF : DifferentiableWithinAt ℝ (fun θ => amplitudeFactors (a θ)) S η :=
-    ((amplitudeFactors_contDiffOn ha hpos) η hη).differentiableWithinAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+    ((amplitudeFactors_contDiffOn ha hpos) η hη).differentiableWithinAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hv' : DifferentiableWithinAt ℝ v S η :=
-    (hv η hη).differentiableWithinAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-        not_false_eq_true])
+    (hv η hη).differentiableWithinAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   constructor
   · dsimp only [amplitudeDebt]
     rw [norm_neg]
@@ -311,8 +310,7 @@ theorem scaled_family_ratio_bounds (q : ℝ) (hq : 0 < q)
     exact (hnorm _).trans
       (by simpa only [mul_div_assoc] using mul_le_mul_of_nonneg_left (hbound K hK η hη).1 hC.le)
   · rw [radiusRatio_derivWithin q (huniq η hη)
-      (((hreg K hK) η hη).differentiableWithinAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-          ENat.top_ne_zero, not_false_eq_true]))]
+      (((hreg K hK) η hη).differentiableWithinAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))]
     exact (hnorm _).trans
       (by simpa only [mul_div_assoc] using mul_le_mul_of_nonneg_left (hbound K hK η hη).2 hC.le)
 

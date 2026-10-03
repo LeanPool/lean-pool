@@ -179,8 +179,8 @@ theorem dfast_angleIndependent (d : LinearWaveBounds.GraphDirections (D × ℝ))
   let L : D × ℝ →L[ℝ] D := ContinuousLinearMap.fst ℝ D ℝ
   have hq : ContDiff ℝ ∞ q := (hψ n).comp (contDiff_id.prodMk contDiff_const)
   have he : ψ n = q ∘ L := funext (fun p => hψa n p.1 p.2)
-  have hd (t : ℝ) := (((hq.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true])) x).hasFDerivAt).comp (x, t) L.hasFDerivAt
+  have hd (t : ℝ) := (((hq.differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) x).hasFDerivAt).comp (x, t) L.hasFDerivAt
   simp only [LinearWaveBounds.GraphDirections.Dfast, LinearWaveBounds.GraphDirections.fastField,
     HarmonicCalculus.along, he, (hd θ).fderiv, (hd 0).fderiv]
 

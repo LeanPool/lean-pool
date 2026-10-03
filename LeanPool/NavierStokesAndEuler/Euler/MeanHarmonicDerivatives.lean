@@ -29,8 +29,8 @@ theorem partialDerivative_sum (f : Fin 3 → Space → ℝ)
       ∑ i : Fin 3, partialDerivative (f i) j x := by
   unfold partialDerivative
   rw [(HasFDerivAt.fun_sum (fun i (_ : i ∈ (Finset.univ : Finset (Fin 3))) =>
-    (((hf i).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-        not_false_eq_true])).differentiableAt).hasFDerivAt)).fderiv]
+    (((hf i).differentiable
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).differentiableAt).hasFDerivAt)).fderiv]
   simp only [sum_apply]
 
 theorem laplacian_partialDerivative (f : Space → ℝ) (hf : ContDiff ℝ ∞ f)

@@ -113,8 +113,8 @@ theorem curlTensor_test_ae (f : Test) :
     curlTensor (testGradient f) =ᵐ[volume] vectorCurl (f : Space → Space) := by
   filter_upwards [curlTensor_ae (testGradient f),
     ae_all_iff.mpr (fun i => derivativeColumn_ae f i)] with x hc hd
-  rw [hc, vectorCurl_eq_matrix _ x ((f.smooth.differentiable (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])).differentiableAt)]
+  rw [hc, vectorCurl_eq_matrix _ x ((f.smooth.differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).differentiableAt)]
   ext i
   change (derivativeColumn f (i+1) x) (i+2) - (derivativeColumn f (i+2) x) (i+1) = _
   rw [hd, hd]
@@ -181,10 +181,8 @@ theorem directional_integration_by_parts (f g : Test) (i : Fin 3) :
     (f := (f : Space → Space)) (g := (g : Space → Space))
     (test_inner_integrable (partialTest f i) g)
     (test_inner_integrable f (partialTest g i)) (test_inner_integrable f g)
-    (fun x _ => (f.smooth.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])).differentiableAt)
-    (fun x _ => (g.smooth.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])).differentiableAt)
+    (fun x _ => (f.smooth.differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).differentiableAt)
+    (fun x _ => (g.smooth.differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).differentiableAt)
   change (∫ x, ⟪(f : Space → Space) x, vectorPartial (g : Space → Space) i x⟫_ℝ) =
     -∫ x, ⟪vectorPartial (f : Space → Space) i x, (g : Space → Space) x⟫_ℝ at h
   linarith
@@ -233,10 +231,8 @@ theorem scalar_partial_ibp (f g : Space → ℝ) (hf : ContDiff ℝ ∞ f)
         i).continuous).integrable_of_hasCompactSupport
       hfc.mul_right)
     ((hf.continuous.mul hg.continuous).integrable_of_hasCompactSupport hgc.mul_left)
-    (fun x _ => (hf.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-        not_false_eq_true])).differentiableAt)
-    (fun x _ => (hg.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-        not_false_eq_true])).differentiableAt)
+    (fun x _ => (hf.differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).differentiableAt)
+    (fun x _ => (hg.differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).differentiableAt)
   change (∫ x, f x * partialDerivative g i x) = -∫ x, partialDerivative f i x * g x at h
   linarith
 

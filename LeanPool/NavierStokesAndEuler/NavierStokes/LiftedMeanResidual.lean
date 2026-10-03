@@ -743,16 +743,16 @@ theorem nonlinearResidual_realLift {U : Set D} {R : D → ℝ} {Vr Vz Vt : D →
     Complex.ofRealCLM.contDiff.comp_contDiffOn (ha j)
   have hpC : ContDiffOn ℝ ∞ (fun y => (p y : ℂ)) (cylinder U) :=
     Complex.ofRealCLM.contDiff.comp_contDiffOn hp
-  have db j := ((hB j).contDiffAt (ho.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
-  have da j := ((ha j).contDiffAt (ho.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have db j := ((hB j).contDiffAt (ho.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have da j := ((ha j).contDiffAt (ho.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hl := congrFun (LinearWaveResidual.realMap_linearResidual Complex.reCLM ε (liftScalar R)
     (liftDirection Vt) (B := B) (a := LinearWaveResidual.realLift a) (p := fun y => (p y : ℂ))
     (Vθ := angularDirection)
     ho (liftDirection_smooth G.radial_smooth) contDiffOn_const (liftDirection_smooth G.axial_smooth)
-    haC db ((hpC.contDiffAt (ho.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) hx) i
+    haC db ((hpC.contDiffAt (ho.mem_nhds hx)).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) hx) i
   have ht := WaveInteractionBounds.transport_realLift (liftScalar R) (liftDirection Vr)
     angularDirection (liftDirection Vz) a da i
   simp only [nonlinearResidual, Pi.add_apply, Complex.add_re, ht, Complex.ofReal_re,
@@ -818,10 +818,10 @@ theorem avg_realNonlinearResidual {U : Set D} {R : D → ℝ} {Vr Vz Vt : D → 
           angularDirection (liftDirection Vz) a y i) (cylinder U) := by
     intro y hy
     exact realNonlinearResidual_conservative ε _ _ _ _ _ p
-      (fun j => ((hB j).contDiffAt (hu.mem_nhds hy)).differentiableAt (by simp only [ne_eq,
-          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
-      (fun j => ((ha j).contDiffAt (hu.mem_nhds hy)).differentiableAt (by simp only [ne_eq,
-          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+      (fun j => ((hB j).contDiffAt (hu.mem_nhds hy)).differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
+      (fun j => ((ha j).contDiffAt (hu.mem_nhds hy)).differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
       (hBd y hy) (had y hy) i
   rw [avg_congr he hx, avg_sub ((ht.add hc).add hg) (constant_mul_continuous ε hl),
     avg_add (ht.add hc) hg, avg_add ht hc, avg_const_mul,
@@ -983,11 +983,9 @@ theorem MeanHypotheses.perturbation_divergence {U : Set D} {c : CorrectionState.
   have hd := H.total_divergence n p hp
   rw [totalVelocity_eq, realDivergence_add _ _ _ _
     (fun i => ((H.baseLift_smooth n i).contDiffAt ((cylinder_open H.isOpen).mem_nhds
-        hp)).differentiableAt (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+        hp)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
     (fun i => ((H.perturbation_smooth n i).contDiffAt ((cylinder_open H.isOpen).mem_nhds
-        hp)).differentiableAt (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])),
+        hp)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)),
     H.base_divergence n p hp, zero_add] at hd
   exact hd
 
@@ -1277,11 +1275,9 @@ theorem MeanHypotheses.nonlinearField_continuous {U : Set D} {c : CorrectionStat
     rw [H.nonlinearField_eq_real n hp i]
     exact realNonlinearResidual_conservative _ _ _ _ _ _ _
       (fun j => ((H.baseLift_smooth n j).contDiffAt ((cylinder_open H.isOpen).mem_nhds
-          hp)).differentiableAt (by
-          simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+          hp)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
       (fun j => ((H.perturbation_smooth n j).contDiffAt ((cylinder_open H.isOpen).mem_nhds
-          hp)).differentiableAt (by
-          simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+          hp)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
       (H.base_divergence n (x, θ) hp) (H.perturbation_divergence n hp) i
   rw [he]
   exact ((ht.add hc).add hg).sub (constant_mul_continuous (c.operators.epsilon n) hl)

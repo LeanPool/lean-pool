@@ -648,8 +648,7 @@ theorem iteratedAlong_wave {U : Set E} (hU : IsOpen U)
     exact along_wave V k Φ _ ((hΦ.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [
         ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
       (fun j hj => ((iteratedCoefficients_contDiffOn hU hV hΦ k hc n j hj).contDiffAt
-        (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-            ENat.top_ne_zero, not_false_eq_true]))
+        (hU.mem_nhds hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
 
 end Derivatives
 

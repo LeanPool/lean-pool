@@ -42,8 +42,8 @@ theorem norm_linearization_remainder_le {E : Type*} [NormedAddCommGroup E] [Norm
     (f : Space → E) (hf : ContDiff ℝ ∞ f) (M : ℝ) (hM : 0 ≤ M)
     (hD₂ : ∀ x, ‖fderiv ℝ (fderiv ℝ f) x‖ ≤ M) (x v : Space) :
     ‖f (x+v) - f x - fderiv ℝ f x v‖ ≤ M * ‖v‖ ^ 2 := by
-  have hdf := (hf.fderiv_right (m := ∞) (by simp)).differentiable (by
-    simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have hdf := (hf.fderiv_right (m := ∞) (by simp)).differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hdifference (y : Space) := Convex.norm_image_sub_le_of_norm_fderiv_le
       (𝕜 := ℝ) (f := fderiv ℝ f) (s := Set.univ) (fun z _ => hdf z) (fun z _ => hD₂ z)
       (convex_univ : Convex ℝ (Set.univ : Set Space)) (Set.mem_univ x) (Set.mem_univ y)
@@ -54,8 +54,8 @@ theorem norm_linearization_remainder_le {E : Type*} [NormedAddCommGroup E] [Norm
   have H := Convex.norm_image_sub_le_of_norm_fderiv_le'
     (𝕜 := ℝ) (f := f) (s := Metric.closedBall x ‖v‖) (C := M * ‖v‖)
     (φ := fderiv ℝ f x) (x := x) (y := x+v)
-    (fun y _ => (hf.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-        not_false_eq_true])) y) hbound (convex_closedBall x ‖v‖)
+    (fun y _ => (hf.differentiable
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) y) hbound (convex_closedBall x ‖v‖)
     (by simp) (by simp only [Metric.mem_closedBall, dist_eq_norm, add_sub_cancel_left, Std.le_refl])
   simpa only [add_sub_cancel_left, pow_two, mul_assoc] using H
 
@@ -89,8 +89,8 @@ theorem Cutoff.directional_fderiv (χ : Cutoff) (a x : Space) :
   intro v
   change (fderiv ℝ (fun y => fderiv ℝ χ.field y a) x) v = _
   have hd : DifferentiableAt ℝ (fderiv ℝ χ.field) x :=
-    ((χ.smooth.fderiv_right (m := ∞) (by simp)).differentiable (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) x
+    ((χ.smooth.fderiv_right (m := ∞) (by simp)).differentiable
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) x
   rw [fderiv_clm_apply hd (differentiableAt_const a)]
   simpa only [fderiv_fun_const, Pi.zero_apply, ContinuousLinearMap.comp_zero, zero_add,
       ContinuousLinearMap.flip_apply] using χ.smooth.contDiffAt.isSymmSndFDerivAt (by simp only [
@@ -152,10 +152,8 @@ theorem Cutoff.differenceError_fderiv (χ : Cutoff) (a : Space) (h : ℝ) (x : S
         fderiv ℝ (fderiv ℝ χ.field) x a := by
   change fderiv ℝ ((χ.differenceQuotient a h).field - (χ.directional a).field) x = _
   rw [fderiv_sub (f := (χ.differenceQuotient a h).field) (g := (χ.directional a).field)
-    ((χ.differenceQuotient a h).smooth.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true]) x)
-    ((χ.directional a).smooth.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true]) x),
+    ((χ.differenceQuotient a h).smooth.differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero) x)
+    ((χ.directional a).smooth.differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero) x),
     differenceQuotient_fderiv, Cutoff.directional_fderiv]
 
 /-- The cutoff difference quotient converges in precisely the norm controlling the boundary

@@ -62,8 +62,8 @@ theorem pointwise_translation_hasDerivAt (a : LiftTangent)
     (f : LiftDomain period → Vector3) (hf : ∀ x, ContDiff ℝ ∞ (localFieldLift period f x))
     (x : LiftDomain period) :
     HasDerivAt (fun t => f (x + translationPath period a t)) (fieldDerivative period a f x) 0 := by
-  have hF := (((hf x).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true])) ((0 : ℝ) • a)).hasFDerivAt
+  have hF := (((hf x).differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) ((0 : ℝ) • a)).hasFDerivAt
   have h := hF.comp_hasDerivAt (0 : ℝ) ((hasDerivAt_id (0 : ℝ)).smul_const a)
   convert! h using 1
   simp only [fieldDerivative, zero_smul, one_smul]

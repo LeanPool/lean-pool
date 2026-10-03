@@ -325,8 +325,8 @@ theorem complexPotential_differentiableAt (G : ScaledGraph) {z : SpaceTime}
     (hr : G.radialScale * z.2 0 ≠ 0) {B : Cylinder → ComplexVector}
     (hB : ∀ i, DifferentiableAt ℝ (fun y => B y i) (G.map z)) (c : ℝ) (i : Fin 3) :
     DifferentiableAt ℝ (fun y => complexPotential G c B y i) z :=
-  ((hB i).comp z ((G.map_smoothAt hr).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true]))).const_mul (c : ℂ)
+  ((hB i).comp z ((G.map_smoothAt hr).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero))).const_mul (c : ℂ)
 
 theorem physical_curl (G : ScaledGraph) (hl : 0 < G.radialScale)
     {B : Cylinder → ComplexVector} {t : ℝ} {q : Space} (hr : 0 < q 0)
@@ -348,8 +348,8 @@ theorem physical_curl (G : ScaledGraph) (hl : 0 < G.radialScale)
     (R := PhysicalResidualBridge.ScaledGraph.radius) (x := (t, q))
     (Sr := LinearWaveResidual.spaceDirection 0) (Sθ := LinearWaveResidual.spaceDirection 1)
     (Sz := LinearWaveResidual.spaceDirection 2) hl.ne' hr.ne'
-    ((G.map_smoothAt hr').differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])) (G.map_radial hr')
+    ((G.map_smoothAt hr').differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) (G.map_radial hr')
     (G.map_angular hr') (G.map_axial hr') rfl hB (c : ℂ)]
   simp only [Pi.smul_apply, smul_eq_mul, Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im,
       mul_zero, sub_zero, Complex.mul_im, zero_mul, add_zero]
@@ -461,8 +461,8 @@ theorem radialCurve_smoothAt (G : ScaledGraph) {r : ℝ} (hr : r ≠ 0) :
 theorem radial_aux_derivative (G : ScaledGraph) {x : Cylinder} (hx : x.1.1 ≠ 0)
     (v : Cylinder) (hv : v.1.1 = 0) : fderiv ℝ G.radial x v = 0 := by
   change fderiv ℝ (radialCurve G ∘ radiusCLM) x v = 0
-  rw [fderiv_comp x ((G.radialCurve_smoothAt hx).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+  rw [fderiv_comp x ((G.radialCurve_smoothAt hx).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
     radiusCLM.differentiableAt, ContinuousLinearMap.fderiv]
   change fderiv ℝ (radialCurve G) x.1.1 v.1.1 = 0
   rw [hv, map_zero]
@@ -558,8 +558,8 @@ theorem commonGraph_vectorPotential_pull {Q : ℝ} (hQ : 0 < Q) (h : ℝ) (k : �
     (R := PhysicalResidualBridge.ScaledGraph.radius) (x := x)
     (Sr := LinearWaveResidual.spaceDirection 0) (Sθ := LinearWaveResidual.spaceDirection 1)
     (Sz := LinearWaveResidual.spaceDirection 2) hl.ne' hr.ne' hK (div_ne_zero hL hK) hKL
-    ((G.map_smoothAt hr').differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])) (G.map_radial hr') (G.map_angular hr')
+    ((G.map_smoothAt hr').differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) (G.map_radial hr') (G.map_angular hr')
     (G.map_axial hr') rfl hΦ a G.velocityScale
   rw [commonGraph_potentialScale hQ] at he
   exact he
@@ -612,8 +612,7 @@ theorem referencePotential_eq_on {Q : ℝ} (hQ : 0 < Q) (h : ℝ) (k : ℕ)
     (b := fun y => Q ^ (-CoordinateAlgebra.A h) • a ((commonGraph Q h k).map y)) he (hamplitude z
         hz)]
   exact commonGraph_vectorPotential_pull hQ h k hK hL hz.1
-    ((hΦ.contDiffAt (hU.mem_nhds hz.2)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])) a
+    ((hΦ.contDiffAt (hU.mem_nhds hz.2)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) a
 
 /-- One Cartesian reference potential supplies every compatible band's
 actual corrected wave. Amplitude and phase compatibility are primitive
@@ -831,8 +830,7 @@ theorem cartesianPotential_curl {a : ℝ} (ha : 0 < a) (j : PolarCharts.Index)
   have hBc : ContDiffAt ℝ ∞ B (polarCoordinates a j (z.1, CylindricalResidual.chart z.2)) := by
     rw [polarCoordinates_forward ha j hz]
     exact hB
-  have hd : DifferentiableAt ℝ B z := hB.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true])
+  have hd : DifferentiableAt ℝ B z := hB.differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hdi k : DifferentiableAt ℝ (fun w => B w k) z := (differentiableAt_pi.mp hd) k
   rw [curl_of_representation ((cartesianPotential_smoothAt ha j hBc).differentiableAt (by simp))
     (realVector_differentiableAt hdi) hz.1.ne' (cartesianPotential_forward_germ ha j B hz)]

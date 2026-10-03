@@ -202,8 +202,8 @@ theorem tailShapeDeriv_contDiff (d : TailData) : ContDiff ℝ ∞ (tailShapeDeri
 
 theorem tailShape_hasDerivAt (d : TailData) (t : ℝ) :
     HasDerivAt (tailShape d) (tailShapeDeriv d t) t := by
-  have hs := (sigma_contDiff.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true]) ((t - 1) / 2)).hasDerivAt
+  have hs := (sigma_contDiff.differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero) ((t - 1) / 2)).hasDerivAt
   have hm := (hs.comp t (((hasDerivAt_id t).sub_const 1).div_const 2)).const_mul d.rho
   convert! hm.const_add (1 - d.rho) using 1; simp only [tailShapeDeriv, one_div]; ring
 
@@ -951,8 +951,7 @@ theorem flattened_hasDerivAt (d : TailData) (eta : ℝ) {y : ℝ}
       (flattened d (y, eta) * (flatteningSlope d y eta - 1 / 2)) y := by
   have hbase := (radialAmplitude_hasDerivAt d.core.P d.core.dropLength d.core.lam y).mul_const
       (shape eta)
-  have hs := (sigma_contDiff.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true])
+  have hs := (sigma_contDiff.differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
     ((y - d.core.endpoint) / flattenLength)).hasDerivAt
   have hstep := hs.comp y (((hasDerivAt_id y).sub_const d.core.endpoint).div_const flattenLength)
   have hf := (hstep.mul_const (logShape eta - Real.log 2)).exp

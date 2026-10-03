@@ -268,8 +268,7 @@ theorem background_normal (l : Label B N0) (n : ℕ) {z : Native}
   have hΦ := ((ActualPrimaryCoherence.chart_phase_smooth l.1 l.2 n).contDiffAt
     (ActualPrimaryCoherence.positiveRadialChart_open.mem_nhds
       (show nativeToFull z ∈ ActualPrimaryCoherence.positiveRadialChart from
-          ⟨hR,hT⟩))).differentiableAt (by
-          simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+          ⟨hR,hT⟩))).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   rw [native_strip_eq]
   have he := ParticularWaveBounds.phaseNormal_reindex nativeToFull
     ((ActualPrimary.chartCoefficients l.1 l.2).radius n)
@@ -646,20 +645,20 @@ theorem geometryAt_reindex (e : E ≃ₗᵢ[ℝ] F) {R : F → ℝ} {Vr Vθ Vz :
       ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))]
     exact G.axial_radius
   · simp only [ParticularWaveBounds.reindexVector,
-      reindex_vector_derivative e (G.radial_smooth.differentiableAt (by simp only [ne_eq,
-          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])),
-      reindex_vector_derivative e (G.angular_smooth.differentiableAt (by simp only [ne_eq,
-          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])), G.radial_angular]
+      reindex_vector_derivative e (G.radial_smooth.differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero)),
+      reindex_vector_derivative e (G.angular_smooth.differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero)), G.radial_angular]
   · simp only [ParticularWaveBounds.reindexVector,
-      reindex_vector_derivative e (G.radial_smooth.differentiableAt (by simp only [ne_eq,
-          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])),
-      reindex_vector_derivative e (G.axial_smooth.differentiableAt (by simp only [ne_eq,
-          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])), G.radial_axial]
+      reindex_vector_derivative e (G.radial_smooth.differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero)),
+      reindex_vector_derivative e (G.axial_smooth.differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero)), G.radial_axial]
   · simp only [ParticularWaveBounds.reindexVector,
-      reindex_vector_derivative e (G.angular_smooth.differentiableAt (by simp only [ne_eq,
-          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])),
-      reindex_vector_derivative e (G.axial_smooth.differentiableAt (by simp only [ne_eq,
-          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])), G.angular_axial]
+      reindex_vector_derivative e (G.angular_smooth.differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero)),
+      reindex_vector_derivative e (G.axial_smooth.differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero)), G.angular_axial]
 
 theorem geometryAt_of_cylindrical {Ω : Set F} {R : F → ℝ} {Vr Vθ Vz : F → F} {z : F}
     (G : CurlClassBounds.CylindricalGeometry Ω R Vr Vθ Vz) (hz : z ∈ Ω) :
@@ -838,12 +837,11 @@ theorem rawJets_at {x : CycleState (Label B N0)} (H : PreservesCarriers x)
       (fun m => (data x l j).cutoff m k) n z := by
   obtain ⟨hb,hF,hG⟩ := native_base_smoothAt x l j n hR hT
   exact ⟨native_radialProfile_smoothAt hR, data_phase_smoothAt H l j n hR hT,
-    contDiffAt_fst.fst.fst, hb.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true]), hF.differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]),
-    hG.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-        not_false_eq_true]), ha, hpres.differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]),
+    contDiffAt_fst.fst.fst, hb.differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero), hF.differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero),
+    hG.differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero), ha, hpres.differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero),
     (native_cutoff_smooth x l j n k).contDiffAt, hR.ne', native_normal_ne H l j n k hi hR hT hp ht
         hc⟩
 
@@ -1674,8 +1672,7 @@ theorem context_linear_sum {x : CycleState (Label B N0)} (Hc : PreservesCarriers
       ((actualWave x l j).pressure n) (angleShuffle y)) hv hp
     (fun i => ((contextRealBase_smooth hB n i).contDiffAt
       ((HarmonicResidual.liftDomain_open associatedStrip.isOpen_domain).mem_nhds
-          ⟨hz,trivial⟩)).differentiableAt (by
-          simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+          ⟨hz,trivial⟩)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
     ⟨hz,trivial⟩
   rw [← complexBase_eq_realLift] at he
   rw [he]
@@ -1716,8 +1713,7 @@ theorem full_divergence_zero {x : CycleState (Label B N0)} (Hc : PreservesCarrie
   · intro j hj i
     exact ((wave_smooth Hc j ((mem_modes N j).mp hj).1 (Hs j hj) l (S j hj) n i).contDiffAt
       ((HarmonicResidual.liftDomain_open associatedStrip.isOpen_domain).mem_nhds
-          ⟨hz,trivial⟩)).differentiableAt (by
-          simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+          ⟨hz,trivial⟩)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   · intro j hj
     rw [(parameters x l).native_context_divergence associatedStrip (assembly x l).context
         (associated_frame_match l)]

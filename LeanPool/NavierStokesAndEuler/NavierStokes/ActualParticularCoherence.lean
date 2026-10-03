@@ -759,8 +759,7 @@ theorem reference_cutoff_differentiable (D : AssemblyData Parameter) (j : ℤ)
   change DifferentiableAt ℝ (fun y : WaveSpace =>
     D.reference.cutoff (D.reference.geometry.coordinates copy y.2)) x
   exact ((hcutoff.comp (D.reference.geometry.coordinates_contDiff copy)).comp
-    contDiff_snd).contDiffAt.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])
+    contDiff_snd).contDiffAt.differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
 
 /-- A nonzero actual directional derivative is supported in any closed
 set supporting the original cutoff. -/
@@ -2173,8 +2172,8 @@ theorem gaussian_band (x : CorrectionStep.CycleState (Label B N0)) (l : Label B 
   · exact copy_cutoff_band x l j n m k hi hm
   · exact bandMap_fast B n m z
   · intro copy
-    exact (copy_cutoff_smooth x l j m copy).contDiffAt.differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+    exact (copy_cutoff_smooth x l j m copy).contDiffAt.differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   · intro copy hne
     have hd := GaussianErrorNaturality.fast_cutoff_transport (bandMap n m).toContinuousLinearMap
       (ActualParticularStageControls.directions (B := B)) (ActualParticularStageControls.directions
@@ -2182,8 +2181,8 @@ theorem gaussian_band (x : CorrectionStep.CycleState (Label B N0)) (l : Label B 
       (copyData x l j) (copyData x l j) n m
       (clockWeight h (ChartScales.Q n) (ChartScales.Q m)) copy z
       (copy_cutoff_band x l j n m k hi hm copy) (bandMap_fast B n m z)
-      ((copy_cutoff_smooth x l j m copy).contDiffAt.differentiableAt (by simp only [ne_eq,
-          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+      ((copy_cutoff_smooth x l j m copy).contDiffAt.differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
     have hdn : (ActualParticularStageControls.directions (B := B)).Dfast
         (fun n => (copyData x l j).cutoff n copy) n z ≠ 0 := by
       rw [hd]

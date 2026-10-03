@@ -186,8 +186,7 @@ theorem fderiv_apply_derivative {f : Space → ℝ} (hf : ContDiff ℝ ∞ f)
     fderiv ℝ (fun y => fderiv ℝ f y b) x a =
       fderiv ℝ (fderiv ℝ f) x a b := by
   have hd : DifferentiableAt ℝ (fderiv ℝ f) x :=
-    (hf.fderiv_right (m := ∞) (by simp)).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true]) x
+    (hf.fderiv_right (m := ∞) (by simp)).differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero) x
   simpa only [fderiv_fun_const, Pi.zero_apply, ContinuousLinearMap.comp_zero, zero_add,
       ContinuousLinearMap.flip_apply] using congrArg (fun A : Space →L[ℝ] ℝ => A a)
     (fderiv_clm_apply hd (differentiableAt_const b))

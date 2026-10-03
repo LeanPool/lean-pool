@@ -2716,12 +2716,12 @@ theorem amplitude_derivative_identity (d : OutgoingTail.TailData) (eta : ℝ)
       with t ht
     exact amplitude_energy_equation d t ht.le
   have hz : deriv F eta = 0 := by rw [he.deriv_eq]; exact deriv_const _ _
-  have hA := ((amplitude_contDiff d).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true]) eta).hasDerivAt
-  have hb := ((linearTerm_contDiff d.core).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true]) eta).hasDerivAt
-  have hcc := ((constantTerm_contDiff d).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true]) eta).hasDerivAt
+  have hA := ((amplitude_contDiff d).differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero) eta).hasDerivAt
+  have hb := ((linearTerm_contDiff d.core).differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero) eta).hasDerivAt
+  have hcc := ((constantTerm_contDiff d).differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero) eta).hasDerivAt
   have hd := (((hA.pow 2).const_mul (quadraticCoefficient d.core)).add (hb.mul hA)).add hcc
   change HasDerivAt F _ eta at hd
   rw [hd.deriv] at hz
@@ -2958,8 +2958,8 @@ theorem constantTerm_hasDerivAt (d : OutgoingTail.TailData) (eta : ℝ) :
   have hd := (((((etaPolynomial_hasDerivAt eta).pow 2).const_mul
     (constantCorrection d.core + normalizedPrefixAxial d.core)).sub_const
       RadialSchedule.pulseEnergyDebt).sub_const (normalizedPrefixAngular d.core)).sub
-        (((normalizedTail_contDiff d).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-            ENat.top_ne_zero, not_false_eq_true]) eta).hasDerivAt)
+        (((normalizedTail_contDiff d).differentiable
+            (WithTop.coe_ne_zero.2 ENat.top_ne_zero) eta).hasDerivAt)
   convert! hd using 1
   ring
 

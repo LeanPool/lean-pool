@@ -120,11 +120,11 @@ theorem radialIntegrand_parameterDerivative
   have hin : HasFDerivAt (fun y : Space => (y, t))
       (ContinuousLinearMap.inl ℝ Space ℝ) x :=
     (hasFDerivAt_id (𝕜 := ℝ) x).prodMk (hasFDerivAt_const (𝕜 := ℝ) t x)
-  have hpartial := ((hf.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true])) (x, t)).hasFDerivAt.comp
+  have hpartial := ((hf.differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) (x, t)).hasFDerivAt.comp
     (f := fun y : Space => (y, t)) x hin
-  have hscaled := (((hu.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true])) (t • x)).hasFDerivAt.comp x
+  have hscaled := (((hu.differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) (t • x)).hasFDerivAt.comp x
     ((hasFDerivAt_id (𝕜 := ℝ) x).const_smul t)).const_smul t
   have he : t • ((fderiv ℝ u (t • x)).comp (t • ContinuousLinearMap.id ℝ Space)) =
       t ^ 2 • fderiv ℝ u (t • x) := by
@@ -174,8 +174,8 @@ theorem radialAverage_radial_identity
     (radialDerivative_continuous u hu x).clm_apply continuous_const
   have htime (t : ℝ) : HasDerivAt (fun r : ℝ => r ^ 2 • u (r • x))
       ((2 * t) • u (t • x) + t ^ 2 • fderiv ℝ u (t • x) x) t := by
-    have hspace := ((hu.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-        not_false_eq_true])) (t • x)).hasFDerivAt.comp_hasDerivAt
+    have hspace := ((hu.differentiable
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) (t • x)).hasFDerivAt.comp_hasDerivAt
       (f := fun y => id y • x) t ((hasDerivAt_id t).smul_const x)
     refine (((hasDerivAt_id t).pow 2).smul hspace).congr_deriv ?_
     simp only [Pi.pow_apply, id_eq, one_smul, Nat.cast_ofNat, Nat.add_one_sub_one, pow_one, mul_one,
@@ -224,8 +224,7 @@ theorem curl_radialPotential (u : Space → Space) (hu : ContDiff ℝ ∞ u)
     (hdiv : ∀ x, divergence u x = 0) (x : Space) :
     curl (radialPotential u) x = u x := by
   rw [radialPotential, curl_negativeCrossPotential _
-    ((radialAverage_smooth u hu).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])),
+    ((radialAverage_smooth u hu).differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero)),
     divergence_radialAverage u hu hdiv, zero_smul, sub_zero]
   exact radialAverage_radial_identity u hu x
 
@@ -317,10 +316,10 @@ theorem potentialTruncation_error_bound
   have he (i : Fin 3) : (potentialTruncation u χ x - χ x • u x) i =
       partialDerivative χ (i + 1) x * radialPotential u (i + 2) x -
       partialDerivative χ (i + 2) x * radialPotential u (i + 1) x := by
-    simp only [potentialTruncation, curl_mul_apply χ _ (hχ.differentiable (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
-      (fun j => (radialPotential_smooth u hu j).differentiable (by simp only [ne_eq,
-          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])),
+    simp only [potentialTruncation, curl_mul_apply χ _ (hχ.differentiable
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
+      (fun j => (radialPotential_smooth u hu j).differentiable
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero)),
       curl_radialPotential u hu hdiv, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul]
     ring
   have hp (i j : Fin 3) :
@@ -412,8 +411,8 @@ theorem scaledCutoff_derivative_position_bound
     (χ : Space → ℝ) (hχ : ContDiff ℝ ∞ χ) (C : ℝ)
     (hC : ∀ x, ‖fderiv ℝ χ x‖ * ‖x‖ ≤ C) (R : ℝ) (x : Space) :
     ‖fderiv ℝ (scaledCutoff χ R) x‖ * ‖x‖ ≤ C := by
-  have hd := ((hχ.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true])) (R⁻¹ • x)).hasFDerivAt.comp x
+  have hd := ((hχ.differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) (R⁻¹ • x)).hasFDerivAt.comp x
     ((hasFDerivAt_id x).const_smul R⁻¹)
   have he : (fderiv ℝ χ (R⁻¹ • x)).comp (R⁻¹ • ContinuousLinearMap.id ℝ Space) =
       R⁻¹ • fderiv ℝ χ (R⁻¹ • x) := by

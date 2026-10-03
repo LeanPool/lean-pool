@@ -90,8 +90,8 @@ theorem WordBound.raw_physical_fderiv_le (hG : G.WordBound q R A 0) (hq : 3 ≤ 
     (x : Space) (hY : DifferentiableAt ℝ Y x) :
     ‖fderiv ℝ (fun y : Space => raw (t,(Y y,k*inner ℝ m (Y y)))) x‖ ≤
       (frequencyFactor k m*(sobolevEmbeddingConstant P 3*A*R))*‖fderiv ℝ Y x‖ := by
-  have hg := (G.raw_graph_contDiff t k m).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true]) (Y x)
+  have hg := (G.raw_graph_contDiff t k m).differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero) (Y x)
   change ‖fderiv ℝ ((fun y : Space => raw (t,(y,k*inner ℝ m y))) ∘ Y) x‖ ≤ _
   rw [fderiv_comp x hg hY]
   exact (ContinuousLinearMap.opNorm_comp_le _ _).trans

@@ -69,8 +69,7 @@ theorem localFDeriv_continuous (f : LiftDomain period → W)
     funext z
     exact fderiv_localFieldLift_cover period f z
   rw [heq]
-  exact (hf 0).continuous_fderiv (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true])
+  exact (hf 0).continuous_fderiv (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
 
 end Fields
 
@@ -164,10 +163,10 @@ theorem metricEnergy_fderiv (K : LiftDomain period → Vector3 →L[ℝ] Vector3
       ⟪K x (e x), fderiv ℝ (localFieldLift period e x) 0 v⟫_ℝ +
         (1 / 2 : ℝ) *
           ⟪(fderiv ℝ (localFieldLift period K x) 0 v) (e x), e x⟫_ℝ := by
-  have hdK := ((hK x).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true])).differentiableAt.hasFDerivAt (x := 0)
-  have hde := ((he x).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true])).differentiableAt.hasFDerivAt (x := 0)
+  have hdK := ((hK x).differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).differentiableAt.hasFDerivAt (x := 0)
+  have hde := ((he x).differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).differentiableAt.hasFDerivAt (x := 0)
   have hd := (((hdK.clm_apply hde).inner ℝ hde).const_mul (1 / 2 : ℝ)).fderiv
   have heq := congrArg (fun L : LiftTangent →L[ℝ] ℝ => L v) hd
   dsimp only [localFieldLift, Prod.fst_zero, Prod.snd_zero, QuotientAddGroup.mk_zero] at heq

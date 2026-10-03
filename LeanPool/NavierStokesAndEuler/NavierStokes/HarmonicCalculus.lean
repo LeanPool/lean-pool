@@ -425,22 +425,21 @@ theorem along_along_mode {U : Set E} {V : E → E} (κ : ℝ)
   have hb : ContDiffOn ℝ ∞ b U := hDa.add ((contDiffOn_const.mul hDc).mul ha)
   have hfirst : EqOn (along V (mode κ Φ a)) (mode κ Φ b) U := by
     intro y hy
-    exact along_mode V κ ((hΦ.contDiffAt (hU.mem_nhds hy)).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
-      ((ha.contDiffAt (hU.mem_nhds hy)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-          ENat.top_ne_zero, not_false_eq_true]))
-  have da := (ha.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
-  have dDa := (hDa.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
-  have dΦ := (hΦ.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
-  have dDΦ := (hDΦ.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
-  have dDc := (hDc.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
-  have db := (hb.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+    exact along_mode V κ ((hΦ.contDiffAt (hU.mem_nhds hy)).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
+      ((ha.contDiffAt (hU.mem_nhds hy)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
+  have da := (ha.contDiffAt (hU.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have dDa := (hDa.contDiffAt (hU.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have dΦ := (hΦ.contDiffAt (hU.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have dDΦ := (hDΦ.contDiffAt (hU.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have dDc := (hDc.contDiffAt (hU.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have db := (hb.contDiffAt (hU.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   rw [along_congr hU hfirst hx, along_mode V κ dΦ db]
   have hDb : along V b x = along V (along V a) x +
       phaseFactor κ * Complex.ofReal (along V (along V Φ) x) * a x +
@@ -501,10 +500,10 @@ theorem cylindricalLaplacian_mode {U : Set E} (R : E → ℝ)
         (phaseFactor κ * Complex.ofReal (cylindricalLaplacian R Vr Vθ Vz Φ x) -
           (κ : ℂ) ^ 2 * Complex.ofReal (phaseSquare R Vr Vθ Vz Φ x)) * a x) *
         carrier κ Φ x := by
-  have da := (ha.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
-  have dΦ := (hΦ.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have da := (ha.contDiffAt (hU.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have dΦ := (hΦ.contDiffAt (hU.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   unfold cylindricalLaplacian
   rw [along_along_mode κ hU hr hΦ ha hx, along_along_mode κ hU hθ hΦ ha hx,
     along_along_mode κ hU hz hΦ ha hx, along_mode Vr κ dΦ da]
@@ -634,10 +633,10 @@ theorem cylindricalVectorLaplacian_vectorMode {U : Set E} (R : E → ℝ)
           (κ : ℂ) ^ 2 * Complex.ofReal (‖phaseNormal R Vr Vθ Vz Φ x‖ ^ 2)) * a x i +
         2 * phaseFactor κ * Complex.ofReal (phaseNormal R Vr Vθ Vz Φ x 1 / R x) *
           angularGenerator (a x) i) * carrier κ Φ x := by
-  have dΦ := (hΦ.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
-  have da i := ((ha i).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have dΦ := (hΦ.contDiffAt (hU.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have da i := ((ha i).contDiffAt (hU.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hL i := cylindricalLaplacian_mode_normal R κ hU hr hθ hz hΦ (ha i) hx
   have hD (i : Fin 3) : along Vθ (fun y => a y i * carrier κ Φ y) x =
       (along Vθ (fun y => a y i) x +

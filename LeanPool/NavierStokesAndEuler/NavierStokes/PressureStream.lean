@@ -513,8 +513,8 @@ theorem streamGamma_eq_desired_sub_alias {d a b M : ℝ} (ha : 0 < a) (hab : a <
   rw [show divideRadius (divideRadius (RadialPullback.physicalCompact d a b M v
       (weightedSource γd))) p =
       divideRadius (RadialPullback.physicalCompact d a b M v (weightedSource γd)) p / p.1 from rfl]
-  rw [graphDr_divideRadius _ _ (hH.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true]) p) hr, graphDr_eq_physical,
+  rw [graphDr_divideRadius _ _ (hH.differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero) p) hr, graphDr_eq_physical,
     RadialPullback.physicalGraphDeriv_physicalCompact ha hab hd (weightedSource_contDiff hγ)
       (weightedSource_supported hs) M v p hp]
   unfold weightedSource
@@ -529,8 +529,7 @@ theorem reconstructed_divergence_zero_of_ne {d a b M : ℝ} (ha : 0 < a) (hab : 
   stream_divergence_zero v w
     ((streamPotential_contDiff ha hab hd v hγ hs).contDiffAt.of_le
       (ENat.natCast_lt_of_coe_top_le_withTop le_rfl 2).le)
-    ((physicalSpeed_smooth d M hp).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])) hp
+    ((physicalSpeed_smooth d M hp).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) hp
 
 end Stream
 

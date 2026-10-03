@@ -509,8 +509,8 @@ theorem same_label_raw_bound {s : StripData D} {P : ℕ → D → ℝ} {α β κ
     intro n x hx
     have hp := ((hΦ n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by simp only [
         ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
-    have hd j := (((ha j).smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+    have hd j := (((ha j).smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
     dsimp only
     rw [switched_longitudinal _ _ _ _ (ν n) (ξ n) (hν n) hp hd (haθ n 1 x hx) (hdiv n x hx)]
   exact (strippedTransport_class G hκ ha hb i).add hp
@@ -857,15 +857,14 @@ theorem real_modes_identity {s : StripData D} {P : ℕ → D → ℝ} {β κ : �
           carrier (ν n - ξ n) (Φ n) x).re) / 2 := by
   have hp := ((hΦ n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by simp only [
       ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
-  have hbd j := (((hb j).smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by
-      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have hbd j := (((hb j).smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hbc := conjugate_wave hb
-  have hbcd j := (((hbc j).smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by
-      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have hbcd j := (((hbc j).smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hmode j : DifferentiableAt ℝ (fun y => vectorMode (ξ n) (Φ n) (b n) y j) x :=
     ((contDiffOn_mode (ξ n) (hΦ n) ((hb j).smooth n)).contDiffAt
-      (s.isOpen_domain.mem_nhds hx)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-          ENat.top_ne_zero, not_false_eq_true])
+      (s.isOpen_domain.mem_nhds hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   rw [transport_real_parts _ _ _ _ _ hmode]
   have hc : (fun y j => star (vectorMode (ξ n) (Φ n) (b n) y j)) =
       vectorMode (-(ξ n)) (Φ n) (conjugateFamily b n) := by
@@ -1229,10 +1228,10 @@ theorem same_label_curl_interaction {s : StripData D} {P : ℕ → D → ℝ} {�
   intro n x hx
   funext i
   exact same_label_identity G Φ ν ξ a b hbθ n hx
-    (((hΦ n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
-    (fun j => (((hb j).smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) i
+    (((hΦ n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
+    (fun j => (((hb j).smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) i
 
 end
 

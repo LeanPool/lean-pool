@@ -93,9 +93,9 @@ theorem directional_add {U : Set P} (hU : IsOpen U) {f g : P → E}
   have hdf := (hf p hp).contDiffAt (hU.mem_nhds hp)
   have hdg := (hg p hp).contDiffAt (hU.mem_nhds hp)
   exact congrArg (fun L : P →L[ℝ] E => L v)
-    (fderiv_fun_add (hdf.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])) (hdg.differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])))
+    (fderiv_fun_add (hdf.differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) (hdg.differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)))
 
 theorem jet_add {U : Set P} (hU : IsOpen U) {f g : P → E}
     (hf : ContDiffOn ℝ ∞ f U) (hg : ContDiffOn ℝ ∞ g U) (l : List P) :
@@ -110,8 +110,8 @@ theorem directional_clm {U : Set P} (hU : IsOpen U) {f : P → E}
     (hf : ContDiffOn ℝ ∞ f U) (L : E →L[ℝ] F) (v : P) :
     EqOn (directional (fun p => L (f p)) v) (fun p => L (directional f v p)) U := by
   intro p hp
-  have hdf := ((hf p hp).contDiffAt (hU.mem_nhds hp)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have hdf := ((hf p hp).contDiffAt (hU.mem_nhds hp)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   exact congrArg (fun M : P →L[ℝ] F => M v) (L.hasFDerivAt.comp p hdf.hasFDerivAt).fderiv
 
 theorem jet_clm {U : Set P} (hU : IsOpen U) {f : P → E}
@@ -228,10 +228,10 @@ theorem directional_product {U : Set P} (hU : IsOpen U)
       (fun p => applyCoefficient (directional A v p) (u p) +
         applyCoefficient (A p) (directional u v p)) U := by
   intro p hp
-  have hdA := ((hA p hp).contDiffAt (hU.mem_nhds hp)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
-  have hdu := ((hu p hp).contDiffAt (hU.mem_nhds hp)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have hdA := ((hA p hp).contDiffAt (hU.mem_nhds hp)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have hdu := ((hu p hp).contDiffAt (hU.mem_nhds hp)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hmap : HasFDerivAt (coefficientAction (E := E) (a := a) (b := b))
       (coefficientAction (E := E)) (A p) :=
     ContinuousLinearMap.hasFDerivAt (𝕜 := ℝ)

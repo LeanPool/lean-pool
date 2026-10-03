@@ -682,10 +682,9 @@ theorem principal_add_curl (h : InputBounds s P α κ d a) {β : ℝ}
     (a.addAmplitude f).principal s d n x =
       a.principal s d n x + a.principalVelocity s d f n x := by
   have haD i := (((h.amplitude i).smooth n).contDiffAt (s.isOpen_domain.mem_nhds
-      hx)).differentiableAt (by
-      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
-  have hfD i := (((hf i).smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by
-      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+      hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have hfD i := (((hf i).smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   ext i
   change LinearWaveResidual.principal _ _ _ _ _ _ _ _ _ _ (fun y => a.amplitude n y + f n y) _ x i
       = _
@@ -751,10 +750,10 @@ theorem harmonicResidual_eq {s : StripData D} {P : ℕ → D → ℝ} {α κ : �
     (hg.phase_smooth n) (fun i => (h.amplitude i).smooth n)
     (((h.radius.smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by simp only [
         ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
-    (((h.b_unweighted.smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
-    (((h.frequency_base.smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+    (((h.b_unweighted.smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
+    (((h.frequency_base.smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
     (((h.axial_base.smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by simp))
     (hg.radius_nonzero n x hx) (hg.radial_radius n x hx) (hg.base_angular n x hx)
     (hg.amplitude_angular n) hpθ
@@ -849,8 +848,7 @@ theorem principal_cutoff {s : StripData D} {P : ℕ → D → ℝ} {α κ : ℝ}
       ψ n x • (a.principal s d n x + source n x) + excludedSlotError d ψ a.amplitude source n x :=
           by
   have haD i := (((h.amplitude i).smooth n).contDiffAt (s.isOpen_domain.mem_nhds
-      hx)).differentiableAt (by
-      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+      hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hψC : DifferentiableAt ℝ (fun y => (ψ n y : ℂ)) x :=
     (Complex.ofRealCLM.hasFDerivAt.comp x hψ.hasFDerivAt).differentiableAt
   have hD (i : Fin 3) :
@@ -893,8 +891,8 @@ theorem corrected_coefficient_eq_good_add_excluded {s : StripData D}
       a.goodCoefficient s d ψ f n x + excludedSlotError d ψ a.amplitude source n x := by
   have hp := (h.with_cutoff hψ).principal_add_curl hf n hx
   have hc := principal_cutoff_of_solve h ψ source n hx
-    (((hψ.smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) hsolve
+    (((hψ.smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) hsolve
   have he : (a.withCutoff ψ).principalVelocity s d f n x = a.principalVelocity s d f n x := rfl
   rw [hp, he, WaveCoefficients.goodCoefficient, ← hc]
   abel

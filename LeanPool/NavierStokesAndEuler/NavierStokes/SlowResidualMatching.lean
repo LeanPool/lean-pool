@@ -428,8 +428,8 @@ theorem primitive_stress_radial_identity {S : Set ℝ} (hS : IsOpen S)
     (m : ℝ) * w.1 ^ (m - 1) * SlowStressSupport.stress m F w +
       w.1 ^ m * partialX (SlowStressSupport.stress m F) w = -F w := by
   have ht := LeadingStress.partialX_hasDerivAt
-    ((primitive_stress_smoothAt hS hF m hR heta).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+    ((primitive_stress_smoothAt hS hF m hR heta).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
   have hp := ((hasDerivAt_id w.1).fun_pow m).fun_mul ht
   have he := hp.unique (SlowStressSupport.stress_weighted_hasDerivAt hS hF m hR heta)
   simpa only [id_eq, mul_one, Prod.eta] using he
@@ -482,8 +482,7 @@ theorem thetaStress_identity {S : Set ℝ} (hS : IsOpen S) (h C : ℝ)
   rw [thetaDensity, hw] at hi
   unfold thetaStress
   rw [partialX_fromRadius hX ((primitive_stress_smoothAt hS hF 2
-    (w := (r, w.2)) hr heta).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true]))]
+    (w := (r, w.2)) hr heta).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))]
   change r * (partialX (SlowStressSupport.stress 2 (thetaDensity h C f n)) (r, w.2) / r) +
       2 * SlowStressSupport.stress 2 (thetaDensity h C f n) (r, w.2) / r =
         -(r / C * angularCoefficient h f n w)
@@ -507,8 +506,7 @@ theorem zStress_identity {S : Set ℝ} (hS : IsOpen S) (h : ℝ)
   rw [zDensity, hw] at hi
   unfold zStress
   rw [partialX_fromRadius hX ((primitive_stress_smoothAt hS hF 1
-    (w := (r, w.2)) hr heta).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true]))]
+    (w := (r, w.2)) hr heta).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))]
   change r * (partialX (SlowStressSupport.stress 1 (zDensity h f n)) (r, w.2) / r) +
       SlowStressSupport.stress 1 (zDensity h f n) (r, w.2) / r = -axialCoefficient h f n w
   apply mul_right_injective₀ hr.ne'
@@ -578,8 +576,8 @@ theorem physicalZStress_divergence {S : Set ℝ} (hS : IsOpen S)
           (fun n => axialCoefficient h f n (SimilarityProfile.inner h p)) := by
   have hX := LeadingStress.inner_X_pos hh hh1 hp hs
   have hd : ∀ n ≤ N, DifferentiableAt ℝ (zStress h f n) (SimilarityProfile.inner h p) :=
-    fun n hn => (zStress_smoothAt hS h f n (hF n hn) hX heta).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+    fun n hn => (zStress_smoothAt hS h f n (hF n hn) hX heta).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   unfold physicalZStress finiteProfile
   rw [radialDivergence_sum _ _ _ _ (fun n hn => SimilarityProfile.pullback_differentiableAt
     hh hh1 hp (hd n (Nat.le_of_lt_succ (Finset.mem_range.mp hn))))]
@@ -677,8 +675,8 @@ theorem navierStokesResidual_eq_stress_add_truncation {S : Set ℝ} (hS : IsOpen
 
 theorem toRadius_differentiableAt {f : InnerProfile} {w : InnerPoint}
     (hf : DifferentiableAt ℝ f (radiusPoint w)) : DifferentiableAt ℝ (toRadius f) w :=
-  hf.comp w (radiusPoint_smooth.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true])).differentiableAt
+  hf.comp w (radiusPoint_smooth.differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).differentiableAt
 
 theorem toRadius_contDiffAt_two {f : InnerProfile} {w : InnerPoint}
     (hf : ContDiffAt ℝ 2 f (radiusPoint w)) : ContDiffAt ℝ 2 (toRadius f) w :=
@@ -1422,8 +1420,8 @@ theorem zDensity_eq_axialDensity {S : Set ℝ} (hS : IsOpen S)
       have hw' : w = (0, w.2) := by ext <;> simp only [hR]
       rw [hw']
       exact partialX_toRadius_zero (((hu j hj).contDiffAt (x := (0, w.2))
-        ((isOpen_univ.prod hS).mem_nhds ⟨mem_univ _, hw.2⟩)).differentiableAt (by simp only [ne_eq,
-            WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+        ((isOpen_univ.prod hS).mem_nhds ⟨mem_univ _, hw.2⟩)).differentiableAt
+            (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
     simp only [zDensity, hR, zero_mul, SlowStressSupport.axialWeighted, add_zero, zero_add,
         sub_zero, hdz n le_rfl]
     symm

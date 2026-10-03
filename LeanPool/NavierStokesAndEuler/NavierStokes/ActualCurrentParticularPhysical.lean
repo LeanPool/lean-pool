@@ -783,10 +783,10 @@ theorem nativePotential_curl_of_invariant
   exact ClosedNativeWaveIdentities.cylindricalCurl_vectorPotential_of_differentiable _ _ _ _ hfreq
     ((hphi.contDiffAt (ActualWaveRegularityData.particularPositive_open.mem_nhds
         hz)).differentiableAt
-      (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
     (fun i => (contDiffAt_pi.mp (hnormal.contDiffAt (nativeDomain_open.mem_nhds hz.1))
         i).differentiableAt
-      (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
     (native_normal_ne hx (l.2,l.1) j n hz) ht
 
 /-! ## Curl in genuine Cartesian coordinates -/
@@ -886,8 +886,7 @@ theorem localPotentialMode_curl_transport (x : CycleState (Label B N0)) (l : Lab
   have hr := localPotentialMode_forward_germ x l j hf n ha i hz
   have hc := PhysicalCurlCovariance.ScaledGraph.physical_curl G hl hz.1 hB
     ((ChartScales.Q n) ^ (-CorrectionInitialization.ActualPrimary.h))
-    (hA.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-        not_false_eq_true])) hr k
+    (hA.differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) hr k
   rw [nativeCurl_reindex x l j n] at hc
   have hscale : (ChartScales.Q n) ^ (-CorrectionInitialization.ActualPrimary.h) * G.radialScale =
       (ChartScales.Q n) ^ (-CoordinateAlgebra.A CorrectionInitialization.ActualPrimary.h) := by

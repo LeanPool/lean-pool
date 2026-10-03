@@ -655,11 +655,9 @@ theorem native_base_differentiable (j : Fin 2) (L : Label B N0) (n : ℕ)
       DifferentiableAt ℝ ((phases B N0 j).phase.G L) (copyPoint j L n k x).1 := by
   rw [phase_frequency, phase_axial]
   exact ⟨(ActualPrimaryCoherence.frequencySlow_smoothAt B _ (copyPoint_radius_pos j L n k hR)
-      (copyPoint_time_pos j L n k hT)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-          ENat.top_ne_zero, not_false_eq_true]),
+      (copyPoint_time_pos j L n k hT)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero),
     (ActualPrimaryCoherence.axialSlow_smoothAt B _ (copyPoint_time_pos j L n k
-        hT)).differentiableAt (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])⟩
+        hT)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)⟩
 
 /-- Normal scale, given by `((ChartScales.carrier h (BaseChartJets.cellBand L) : ℝ) /
 (ChartScales.carrier h n : ℝ)) * radialScale L n`. -/
@@ -1180,18 +1178,14 @@ theorem exactOn (U : LocalSignedRequest.SlowRegion (2 * h))
   · intro x _
     exact differentiableAt_fst.fst
   · intro x hx
-    exact (base_smooth j L n hx).1.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])
+    exact (base_smooth j L n hx).1.differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   · intro x hx
-    exact (base_smooth j L n hx).2.1.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])
+    exact (base_smooth j L n hx).2.1.differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   · intro x hx
-    exact (base_smooth j L n hx).2.2.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])
+    exact (base_smooth j L n hx).2.2.differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   · intro x hx
     exact (hp.contDiffAt (ActualPrimaryCoherence.positiveRadialChart_open.mem_nhds
-        hx)).differentiableAt (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+        hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   · intro x hx
     exact hx.1.ne'
   · intro x hx
@@ -1212,8 +1206,7 @@ theorem exactOn (U : LocalSignedRequest.SlowRegion (2 * h))
   · obtain ⟨m,hm⟩ := ha.phase n
     exact ⟨m, fun x hx => hm.directional_eq
       ((hΦ.contDiffAt (ActualPrimaryCoherence.positiveRadialChart_open.mem_nhds
-          hx)).differentiableAt (by
-          simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))⟩
+          hx)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))⟩
   · intro x hx
     exact (ha.corrected_pressure (BaseContextAssembly.nativeStrip nominal U) (commonContext B)
         n).along_zero x
@@ -1233,8 +1226,8 @@ theorem linearResidual_eq (U : LocalSignedRequest.SlowRegion (2 * h))
   have hA : ∀ i, DifferentiableAt ℝ (fun y => a.amplitude n y i) x := fun i =>
     (((contDiffOn_pi.mp (amplitude_smooth j L n)) i).contDiffAt
       (ActualPrimaryCoherence.positiveRadialChart_open.mem_nhds hx)).differentiableAt (by simp)
-  have hψ : DifferentiableAt ℝ (ψ n) x := (cutoff_smooth j L n).differentiable (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) x
+  have hψ : DifferentiableAt ℝ (ψ n) x := (cutoff_smooth j L n).differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero) x
   have hf : ∀ i, DifferentiableAt ℝ (fun y => f n y i) x := fun i =>
     (((contDiffOn_pi.mp (curl_smooth U j L n)) i).contDiffAt
       (ActualPrimaryCoherence.positiveRadialChart_open.mem_nhds hx)).differentiableAt (by simp)

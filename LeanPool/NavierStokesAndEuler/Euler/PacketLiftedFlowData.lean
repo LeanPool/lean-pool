@@ -562,15 +562,13 @@ theorem initializedVelocity_global_gradient_error (N : ℕ) (hN : 1 ≤ N)
         mul_le_mul_of_nonneg_left hinv (div_nonneg (abs_nonneg _) hk0.le)
       _ = _ := by ring
   have hp := (((vectorField τ hτ hτT B (initialData D δ hδ (α • ξ) hs)).smul k⁻¹).raw_graph_contDiff
-    t k D.m₀).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-        not_false_eq_true]) (Y x)
+    t k D.m₀).differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero) (Y x)
   have hpd : DifferentiableAt ℝ (fun y => k⁻¹ • vector τ hτ hτT B (initialData D δ hδ (α • ξ) hs)
       (t,(Y y,k*⟪D.m₀,Y y⟫_ℝ))) x := by
     simpa only [Function.comp_def,Pi.smul_apply] using hp.comp x hY.differentiableAt
   have hr := ((initializedPrimaryRemainderField M D hTime τ hτ hτT B δ hδ ξ hs α N hN
       k⁻¹).raw_graph_contDiff
-    t k D.m₀).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-        not_false_eq_true]) (Y x)
+    t k D.m₀).differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero) (Y x)
   have hrd : DifferentiableAt ℝ (fun y => initializedPrimaryRemainder M D τ hτ hτT B δ hδ ξ hs α N
       k⁻¹
       (t,(Y y,k*⟪D.m₀,Y y⟫_ℝ))) x := by

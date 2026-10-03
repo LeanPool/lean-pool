@@ -212,7 +212,7 @@ theorem differentiable_time_slice {v : VelocityField}
   have h : ContDiffAt ℝ ∞ v (t, x) :=
     hv.contDiffAt (prod_mem_nhds (Ici_mem_nhds ht) Filter.univ_mem)
   exact (h.comp t (contDiffAt_id.prodMk contDiffAt_const)).differentiableAt
-    (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+    (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
 
 /-- The original project conventions for a global viscosity-one solution. -/
 structure GlobalSolutionOne (f : VelocityField) (v : VelocityField) (p : PressureField) : Prop where

@@ -69,8 +69,7 @@ theorem sigma_le_one (x : ℝ) : sigma x ≤ 1 := by
 theorem edge_monotone : Monotone (FlatCutoff.edge 1) := by
   apply monotone_of_deriv_nonneg
     ((FlatCutoff.edge_contDiff (by norm_num : (0 : ℝ) < 1) :
-      ContDiff ℝ ∞ _).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-          not_false_eq_true]))
+      ContDiff ℝ ∞ _).differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
   intro x
   rw [(FlatPrimitive.edge_hasDerivAt (by norm_num : (0 : ℝ) < 1) x).deriv]
   by_cases hx : 0 < x

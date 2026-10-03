@@ -65,13 +65,12 @@ theorem taperSecond_factorization (d : TailData) (x : ℝ) :
       (FlatCutoff.edge 4 x / x ^ 6) * taperSecondFactor d x := by
   let W : ℝ → ℝ := fun u => FlatCutoff.edge 4 u / u ^ 3
   have hW : ContDiff ℝ ∞ W := FlatCutoff.edge_div_pow_contDiff (by norm_num) 3
-  have hL := ((tailShapeDeriv_contDiff d).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true]) (3 - x)).hasDerivAt.comp x
+  have hL := ((tailShapeDeriv_contDiff d).differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero) (3 - x)).hasDerivAt.comp x
     ((hasDerivAt_id x).const_sub 3)
-  have hR := ((hW.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true]) x).hasDerivAt).mul
-    ((taperSlopeFactor_contDiff d).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true]) x).hasDerivAt
+  have hR := ((hW.differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero) x).hasDerivAt).mul
+    ((taperSlopeFactor_contDiff d).differentiable
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero) x).hasDerivAt
   have he : (fun u => tailShapeDeriv d (3 - u)) = fun u => W u * taperSlopeFactor d u :=
     funext (tailShapeDeriv_factorization d)
   change HasDerivAt (fun u => tailShapeDeriv d (3 - u))
@@ -457,8 +456,8 @@ theorem physicalChi_hasDerivAt_z (d : TailData) {p : PhysicalPoint} (ht : p.1 < 
     HasDerivAt (fun z => physicalChi d (p.1, (p.2.1, z)))
       (-(q d.h p ^ (-2 * CoordinateAlgebra.D d.h) * beta d (eta d.h p))) p.2.2 := by
   have hq := q_pos d.h_pos d.h_lt_half ht
-  have hχ := ((profileChi_contDiff d).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true]) (eta d.h p)).hasDerivAt.comp p.2.2
+  have hχ := ((profileChi_contDiff d).differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero) (eta d.h p)).hasDerivAt.comp p.2.2
     (eta_hasDerivAt_z d.h_pos d.h_lt_half ht)
   have hm := ((q_hasDerivAt_z d.h_pos d.h_lt_half ht).rpow_const
     (p := -CoordinateAlgebra.D d.h) (Or.inl hq.ne')).mul hχ
@@ -504,8 +503,7 @@ theorem physicalTaper_second_z (d : TailData) (y0 : ℝ) {p : PhysicalPoint}
     funext z
     exact (physicalTaper_hasDerivAt_z d y0 (p := (p.1, (p.2.1, z))) ht hs).deriv
   rw [he]
-  have hh := ((tailShapeDeriv_contDiff d).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true])
+  have hh := ((tailShapeDeriv_contDiff d).differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
     (Real.log (X d.h p) - y0)).hasDerivAt.comp p.2.2
       ((TerminalPressure.logX_hasDerivAt_z d.h_pos d.h_lt_half ht hs).sub_const y0)
   have hd := (physicalChi_hasDerivAt_z d ht).fun_neg.fun_mul hh

@@ -1513,8 +1513,7 @@ theorem copySolve_principal (t : TangentData P ProblemStatement.Space) (g : Geom
           by
   have hu : DifferentiableAt ℝ (t.linearData.copySolve g hab k) (p, Y) :=
     (t.linearData.copySolve_contDiffAt g hab hU k hA hB hf (p := (p, Y)) hp heta).differentiableAt
-        (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hd := along_copySolve t.linearData g hab hU k hA hB hf hp Y heta
   simp only [TangentData.linearData, negativeTangentProjection_apply,
     ← sub_eq_add_neg, TangentODE.projectedOperator_apply] at hd
@@ -2393,12 +2392,10 @@ theorem complexCopy_principal (t : TangentData P ProblemStatement.Space)
         (shear_at_constant R F G Vr (copyVelocity (imagData t source) g hab copy) (p, Y)))
   have hur : DifferentiableAt ℝ ((realData t source).linearData.copySolve g hab copy) (p, Y) :=
     ((realData t source).linearData.copySolve_contDiffAt g hab hU copy hA hB hfr (p := (p, Y)) hp
-        heta).differentiableAt (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+        heta).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hui : DifferentiableAt ℝ ((imagData t source).linearData.copySolve g hab copy) (p, Y) :=
     ((imagData t source).linearData.copySolve_contDiffAt g hab hU copy hA hB hfi (p := (p, Y)) hp
-        heta).differentiableAt (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+        heta).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hvr := copyVelocity_component_differentiable (realData t source) g hab copy (p := (p, Y)) hur
   have hvi := copyVelocity_component_differentiable (imagData t source) g hab copy (p := (p, Y)) hui
   have hc := principal_parts_cancel ε frequency R F G Φ Vr Vθ Vz
@@ -2605,10 +2602,10 @@ theorem complexCopyCoefficients_principal_of_modal
     ∀ n x, x ∈ s.domain →
       (complexCopyCoefficients base t source g copy L hL).principal s dirs n x = -source n x := by
   intro n x hx
-  have hur := ((hr.contDiffOn hL n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by
-      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
-  have hui := ((hi.contDiffOn hL n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by
-      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have hur := ((hr.contDiffOn hL n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have hui := ((hi.contDiffOn hL n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hh := complexCopy_principal_of_path (t n) (source n) (g n) (hL n).le (copy n)
     (hr.bridge n).ambient_coefficient (hr.bridge n).ambient_forcing (hi.bridge n).ambient_forcing
     (s.epsilon n) (base.frequency n) (hfrequency n) (base.radius n) (base.frequencyBase n)

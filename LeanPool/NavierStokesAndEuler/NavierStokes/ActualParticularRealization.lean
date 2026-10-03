@@ -885,11 +885,10 @@ theorem bandVelocity_eq_reference {x : Cylinder} (hx : x ∈ bandDomain D h Q Qr
     (velocityWeight h Q Qr) hK (div_ne_zero hKr hK)
     (mul_div_cancel₀ (referenceFrequency D j) hK)
     (fun y hy => ((liftPhase_smooth D C).contDiffAt ((referenceDomain_open D).mem_nhds
-        hy.2.1)).differentiableAt (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+        hy.2.1)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
     hx (fun k => ((contDiffOn_pi.mp (liftCoefficient_smooth D H C) k).contDiffAt
-      ((referenceDomain_open D).mem_nhds hx.2.1)).differentiableAt (by simp only [ne_eq,
-          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+      ((referenceDomain_open D).mem_nhds hx.2.1)).differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
   change vectorMode K (bandPhase D h Q Qr gap K j) _ x = _
   have hv := congrArg (fun v : ComplexVector =>
     fun k => v k * carrier K (bandPhase D h Q Qr gap K j) x) ha

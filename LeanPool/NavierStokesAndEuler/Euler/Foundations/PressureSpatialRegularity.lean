@@ -155,7 +155,7 @@ theorem directionalDerivative_line_lipschitz
     intro s
     have hdf := (((hf.fderiv_right (m := ∞)
       (by simp only [ENat.coe_top_add_one, le_refl])).differentiable
-      (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
       (s • a)).hasFDerivAt
     have hline := hdf.comp_hasDerivAt s ((hasDerivAt_id s).smul_const a)
     simpa only [id_eq, Function.comp_apply, one_smul, ContinuousLinearMap.map_zero, add_zero]

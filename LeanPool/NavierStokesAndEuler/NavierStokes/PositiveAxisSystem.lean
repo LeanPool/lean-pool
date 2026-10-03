@@ -723,11 +723,10 @@ theorem averageDefect_smooth (Ω : ProfileHistories.RadialDomain) {u : InnerProf
 theorem averageDefect_radial (Ω : ProfileHistories.RadialDomain) {u : InnerProfile}
     (hu : ContDiffOn ℝ ∞ u Ω.carrier) {w : InnerPoint} (hw : w ∈ Ω.carrier) :
     w.1 * (partialX u w + partialX (averageDefect u) w) + averageDefect u w = 0 := by
-  have hua := (hu.contDiffAt (Ω.isOpen.mem_nhds hw)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have hua := (hu.contDiffAt (Ω.isOpen.mem_nhds hw)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have haa := ((ProfileHistories.average_smooth Ω hu).contDiffAt
-    (Ω.isOpen.mem_nhds hw)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])
+    (Ω.isOpen.mem_nhds hw)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hdx : partialX (averageDefect u) w =
       partialX (ProfileHistories.average u) w - partialX u w := by
     change (fderiv ℝ (fun v => ProfileHistories.average u v - u v) w) (1, 0) = _
@@ -756,11 +755,10 @@ theorem betaValue_averageDefect (Ω : ProfileHistories.RadialDomain) {u : InnerP
     (hw : w ∈ Ω.carrier) (hX : w.1 ≠ 0) :
     betaValue h lam w.2 (actualJet u w) (actualJet (averageDefect u) w) =
       SlowDivergence.radialFlux h lam u w / w.1 := by
-  have hua := (hu.contDiffAt (Ω.isOpen.mem_nhds hw)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have hua := (hu.contDiffAt (Ω.isOpen.mem_nhds hw)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have haa := ((ProfileHistories.average_smooth Ω hu).contDiffAt
-    (Ω.isOpen.mem_nhds hw)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])
+    (Ω.isOpen.mem_nhds hw)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hde : partialEta (averageDefect u) w =
       partialEta (ProfileHistories.average u) w - partialEta u w := by
     change (fderiv ℝ (fun v => ProfileHistories.average u v - u v) w) (0, 1) = _

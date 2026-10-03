@@ -295,10 +295,8 @@ theorem divergence_weighted {χ : Space → ℝ} {v : Space → Space}
         χ x * spatialPartial i v x i + spatialPartial i χ x * v x i := by
     change (EuclideanSpace.proj i)
       (fderiv ℝ (fun y => χ y • v y) x (coordinateVector i)) = _
-    rw [fderiv_fun_smul (hχ.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true]) x)
-      (hv.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-          not_false_eq_true]) x)]
+    rw [fderiv_fun_smul (hχ.differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero) x)
+      (hv.differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero) x)]
     simp only [_root_.add_apply, _root_.smul_apply,
       ContinuousLinearMap.smulRight_apply, map_add, map_smul, smul_eq_mul,
       spatialPartial]

@@ -66,18 +66,12 @@ theorem along_along_mode_at {V : D → D} (κ : ℝ)
   have hfirst : along V (mode κ Φ a) =ᶠ[𝓝 x] mode κ Φ b := by
     filter_upwards [eventually_differentiableAt hΦ, eventually_differentiableAt ha] with y hpy hay
     exact along_mode V κ hpy hay
-  have da := ha.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true])
-  have dDa := hDa.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true])
-  have dΦ := hΦ.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true])
-  have dDΦ := hDΦ.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true])
-  have dDc := hDc.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true])
-  have db := hb.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true])
+  have da := ha.differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have dDa := hDa.differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have dΦ := hΦ.differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have dDΦ := hDΦ.differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have dDc := hDc.differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have db := hb.differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   rw [along_germ V hfirst, along_mode V κ dΦ db]
   have hDb : along V b x = along V (along V a) x +
       phaseFactor κ * Complex.ofReal (along V (along V Φ) x) * a x +
@@ -105,9 +99,9 @@ theorem cylindricalLaplacian_mode_at (R : D → ℝ) {Vr Vθ Vz : D → D} (κ :
   unfold cylindricalLaplacian
   rw [along_along_mode_at κ hr hΦ ha, along_along_mode_at κ hθ hΦ ha,
     along_along_mode_at κ hz hΦ ha,
-    along_mode Vr κ (hΦ.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])) (ha.differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))]
+    along_mode Vr κ (hΦ.differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) (ha.differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero))]
   simp only [phaseCross, phaseSquare, Complex.real_smul, smul_eq_mul,
     Complex.ofReal_add, Complex.ofReal_mul, Complex.ofReal_pow]
   ring
@@ -148,10 +142,8 @@ theorem cylindricalVectorLaplacian_mode_at (R : D → ℝ) {Vr Vθ Vz : D → D}
           (κ : ℂ) ^ 2 * Complex.ofReal (‖phaseNormal R Vr Vθ Vz Φ x‖ ^ 2)) * a x i +
         2 * phaseFactor κ * Complex.ofReal (phaseNormal R Vr Vθ Vz Φ x 1 / R x) *
           angularGenerator (a x) i) * carrier κ Φ x := by
-  have dΦ := hΦ.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true])
-  have da i := (ha i).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true])
+  have dΦ := hΦ.differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have da i := (ha i).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hL i := cylindricalLaplacian_mode_at R κ hr hθ hz hΦ (ha i)
   have hD (i : Fin 3) : along Vθ (fun y => a y i * carrier κ Φ y) x =
       (along Vθ (fun y => a y i) x +
@@ -223,10 +215,8 @@ theorem linearResidual_mode_split_at (ε κ : ℝ) (R b F G : D → ℝ)
       (LinearWaveResidual.complexBase R b F G) (vectorMode κ Φ a) (mode κ Φ p) x = fun i =>
       (LinearWaveResidual.principal ε κ R F G Vr Vθ Vz Vf Φ a p x i +
         LinearWaveResidual.remainder ε κ R b F G Vr Vθ Vz Vf Vs Φ a p x i) * carrier κ Φ x := by
-  have dΦ := hΦ.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true])
-  have da i := (ha i).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true])
+  have dΦ := hΦ.differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have da i := (ha i).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hadv := LinearWaveResidual.linearAdvection_mode R b F G Vr Vθ Vz κ hR hb hF hG hRx hDr
     hBθ dΦ da (fun i => (haθ i).self_of_nhds)
   have hlap := vectorLaplacian_mode_split_at R κ hr hθ hz hΦ ha haθ hΦθ
@@ -372,8 +362,8 @@ theorem cylindricalCurl_vectorPotential_at {K : ℝ} (hK : K ≠ 0)
   have hB := normalCoefficient_contDiffAt (phaseNormal_contDiffAt hR hRn hr hθ hz hΦ) ha hn
   exact cylindricalCurl_vectorPotential_of_differentiable R Vr Vθ Vz hK
     (hΦ.differentiableAt (by
-        simp)) (fun i => (contDiffAt_pi.mp hB i).differentiableAt (by simp only [ne_eq,
-            WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) hn ht
+        simp)) (fun i => (contDiffAt_pi.mp hB i).differentiableAt
+            (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) hn ht
 
 theorem cylindricalCurl_vectorPotential_germ {K : ℝ} (hK : K ≠ 0)
     {R : D → ℝ} {Vr Vθ Vz : D → D} {Φ : D → ℝ} {a : D → ComplexVector} {x : D}
@@ -409,25 +399,20 @@ theorem divergence_curl_zero_at {R : D → ℝ} {Vr Vθ Vz : D → D} {x : D}
     (G : GeometryAt R Vr Vθ Vz x) {B : D → ComplexVector} (hB : ContDiffAt ℝ ∞ B x) :
     cylindricalDivergence R Vr Vθ Vz (cylindricalCurl R Vr Vθ Vz B) x = 0 := by
   have hBi := contDiffAt_pi.mp hB
-  have db i := (hBi i).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true])
-  have dr i := (contDiffAt_along G.radial_smooth (hBi i)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
-  have dθ i := (contDiffAt_along G.angular_smooth (hBi i)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
-  have dz i := (contDiffAt_along G.axial_smooth (hBi i)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
-  have dinv := (G.radius_smooth.inv G.radius_ne).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have db i := (hBi i).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have dr i := (contDiffAt_along G.radial_smooth (hBi i)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have dθ i := (contDiffAt_along G.angular_smooth (hBi i)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have dz i := (contDiffAt_along G.axial_smooth (hBi i)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have dinv := (G.radius_smooth.inv G.radius_ne).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   change DifferentiableAt ℝ (fun y => (R y)⁻¹) x at dinv
-  have dR := G.radius_smooth.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true])
-  have dVr := G.radial_smooth.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true])
-  have dVθ := G.angular_smooth.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true])
-  have dVz := G.axial_smooth.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true])
+  have dR := G.radius_smooth.differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have dVr := G.radial_smooth.differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have dVθ := G.angular_smooth.differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
+  have dVz := G.axial_smooth.differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have crθ i := along_commute (hBi i) dVr dVθ G.radial_angular
   have crz i := along_commute (hBi i) dVr dVz G.radial_axial
   have cθz i := along_commute (hBi i) dVθ dVz G.angular_axial
@@ -633,12 +618,12 @@ theorem corrected_exact (g : AngularData a s d ψ n)
   have hpres : CopyAngularInvariance.Invariant d.angular ((a.corrected s d ψ).pressure n) :=
     g.cutoff.map₂ g.pressure (fun r p => (r : ℂ) * p)
   refine ⟨h.radial_profile, h.phase, contDiffAt_pi.mp h.corrected_amplitude,
-    h.radius.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-        not_false_eq_true]), h.radial_base, h.frequency_base, h.axial_base,
+    h.radius.differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero), h.radial_base, h.frequency_base, h.axial_base,
     ?_, h.radius_ne, hDr, ?_, ?_, ?_, hpres.along_zero x⟩
   · exact ((Complex.ofRealCLM.hasFDerivAt.comp x
-      (h.cutoff.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-          not_false_eq_true])).hasFDerivAt).differentiableAt).mul h.pressure
+      (h.cutoff.differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).hasFDerivAt).differentiableAt).mul h.pressure
   · intro j
     exact ((CopyAngularInvariance.base_invariant g.radius g.radial_base
       g.frequency_base g.axial_base).component j).along_zero x
@@ -655,12 +640,11 @@ theorem cancellation (g : AngularData a s d ψ n)
         carrier (a.frequency n) (a.phase n) x) :=
   harmonicResidual_eq_good_add_excluded_at a s d ψ ((a.withCutoff ψ).curlCorrection s d)
     source n x (h.corrected_exact g hDr)
-    (fun j => (contDiffAt_pi.mp h.amplitude j).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
-    (h.cutoff.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-        not_false_eq_true]))
-    (fun j => (contDiffAt_pi.mp h.curlCorrection j).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) hsolve
+    (fun j => (contDiffAt_pi.mp h.amplitude j).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
+    (h.cutoff.differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
+    (fun j => (contDiffAt_pi.mp h.curlCorrection j).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) hsolve
 
 end RawJetsAt
 
@@ -677,15 +661,11 @@ theorem rawJets_of_localInput
     (hR : a.background.radius n x ≠ 0) (hN : a.background.normal s d n x ≠ 0) :
     RawJetsAt (a.raw i) s d (fun n => a.cutoff n i) n x :=
   ⟨h.radial_profile.smooth n i x hx hi, hΦ, h.radius.smooth n i x hx hi,
-    (h.radial_base.smooth n i x hx hi).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true]),
-    (h.frequency_base.smooth n i x hx hi).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]),
-    (h.axial_base.smooth n i x hx hi).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true]),
+    (h.radial_base.smooth n i x hx hi).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero),
+    (h.frequency_base.smooth n i x hx hi).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero),
+    (h.axial_base.smooth n i x hx hi).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero),
     contDiffAt_pi.mpr (fun j => (h.amplitude j).smooth n i x hx hi),
-    (h.pressure.smooth n i x hx hi).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true]),
+    (h.pressure.smooth n i x hx hi).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero),
     hψ.smooth n i x hx hi, hR, hN⟩
 
 theorem native_cancellation_of_principal

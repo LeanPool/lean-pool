@@ -77,12 +77,11 @@ theorem fderiv_coordinate (f : Space → Space) (x : Space)
 theorem divergence_curl (ψ : Fin 3 → Space → ℝ)
     (hψ : ∀ i, ContDiff ℝ ∞ (ψ i)) (x : Space) : divergence (curl ψ) x = 0 := by
   have hc : DifferentiableAt ℝ (curl ψ) x :=
-    ((contDiff_curl ψ hψ).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])).differentiableAt
+    ((contDiff_curl ψ hψ).differentiable (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).differentiableAt
   have hp (f : Space → ℝ) (hf : ContDiff ℝ ∞ f) (i : Fin 3) :
       DifferentiableAt ℝ (partialDerivative f i) x :=
-    ((contDiff_partialDerivative f hf i).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])).differentiableAt
+    ((contDiff_partialDerivative f hf i).differentiable
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).differentiableAt
   have he (i : Fin 3) : (fderiv ℝ (curl ψ) x (EuclideanSpace.single i 1)) i =
       partialDerivative (partialDerivative (ψ (i + 2)) (i + 1)) i x -
         partialDerivative (partialDerivative (ψ (i + 1)) (i + 2)) i x := by
@@ -250,8 +249,8 @@ theorem compact_solenoidal_extension (L : Space →L[ℝ] Space)
     tsupport_curl_subset ψ _ Metric.isClosed_closedBall hsupport,
     divergence_curl ψ hψ, ?_, ?_⟩
   · intro x
-    apply odd_curl_of_even ψ (fun i => (hψ i).differentiable (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+    apply odd_curl_of_even ψ (fun i => (hψ i).differentiable
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
     intro i y
     dsimp only [ψ]
     rw [χ.neg, linearPotential_even]

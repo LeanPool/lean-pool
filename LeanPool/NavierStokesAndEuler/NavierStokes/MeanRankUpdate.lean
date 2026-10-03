@@ -2019,8 +2019,8 @@ theorem slow_streamGamma_eq_desired_slice {lo hi power M : ℝ}
   have hΨg := PressureStream.streamPotential_contDiff (M := M) hlo horder hp ((0 : E), v)
     (slowLift_contDiff hg) (slowLift_supported hgs)
   let u := PressureStream.radialVector (PressureStream.physicalSpeed power M) ((0 : E), v) p
-  have hDr := fderiv_apply_eq_of_line_eq u hΨ (hΨg.differentiable (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) p) (fun t => by
+  have hDr := fderiv_apply_eq_of_line_eq u hΨ (hΨg.differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero) p) (fun t => by
     apply slow_streamPotential_congr_slice lo hi power M v (f := f) (g := g) (p + t • u)
     intro r
     simp only [PressureStream.radialVector, Prod.smul_mk, smul_zero, smul_eq_mul, mul_one,
@@ -2102,11 +2102,10 @@ theorem actual_rank_stream_identities (s : WeightedClasses.StripData ChartPoint)
     hΨ.of_le (ENat.natCast_lt_of_coe_top_le_withTop le_rfl 2).le
   have hr : p.1 ≠ 0 := (hlo.trans_le (hR p hps).1).ne'
   refine ⟨actualChartAxial_eq_desired hlam hB ha hab hp hlo horder hqlo hleft hright
-    (v n) (d n) (hq p hps) (hΨ.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])), ?_⟩
+    (v n) (d n) (hq p hps) (hΨ.differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)), ?_⟩
   exact PressureStream.stream_divergence_zero ((0 : PressureStream.Plane), v n) w
-    hΨ2 ((PressureStream.physicalSpeed_smooth power (M n) hr).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) hr
+    hΨ2 ((PressureStream.physicalSpeed_smooth power (M n) hr).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) hr
 
 end ActualChartIdentities
 

@@ -63,8 +63,8 @@ noncomputable def slowProjection : Lift S →L[ℝ] (ℝ × S) where
 theorem pullback_derivative {f : Lift S → ℝ} (hf : ContDiff ℝ ∞ f)
     (x v : ((ℝ × S) × ℝ) × ℝ) :
     fderiv ℝ (f ∘ unshuffle) x v = fderiv ℝ f (unshuffle x) (unshuffle v) := by
-  rw [((hf.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true]) _).hasFDerivAt.comp x unshuffle.hasFDerivAt).fderiv]
+  rw [((hf.differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero) _).hasFDerivAt.comp x unshuffle.hasFDerivAt).fderiv]
   rfl
 
 theorem pullback_periodic {f : Lift S → ℝ} (hp : PressureStream.TorusPeriodicLift f) :
@@ -138,8 +138,8 @@ theorem average_derivative {f : Lift S → ℝ} (hf : ContDiff ℝ ∞ f)
     average_torusDerivative hf hp v.2.2 (x.1, x.2.1), add_zero]
   have hbar : MeanMomentBounds.liftedTorusAverage f =
       PressureStream.torusAverage f ∘ slowProjection := rfl
-  rw [hbar, (((PressureStream.torusAverage_contDiff hf).differentiable (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) _).hasFDerivAt.comp
+  rw [hbar, (((PressureStream.torusAverage_contDiff hf).differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero) _).hasFDerivAt.comp
     x slowProjection.hasFDerivAt).fderiv]
   rfl
 
@@ -226,8 +226,8 @@ theorem radialDiv_sub (o : MeanIncrementBounds.Operators (Lift S)) (c : ℝ)
     (hg : ∀ n, ContDiff ℝ ∞ (g n)) :
     o.radialDiv c (f - g) = o.radialDiv c f - o.radialDiv c g := by
   funext n x
-  have hd := fderiv_fun_sub ((hf n).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true]) x) ((hg n).differentiable (by simp) x)
+  have hd := fderiv_fun_sub ((hf n).differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero) x) ((hg n).differentiable (by simp) x)
   change fderiv ℝ (f n - g n) x = _ at hd
   simp only [MeanIncrementBounds.Operators.radialDiv, MeanIncrementBounds.Operators.dr,
     WeightedClasses.graphDerivative, Pi.add_apply, Pi.sub_apply, hd,
@@ -416,8 +416,8 @@ theorem radialPartial_smooth {F : ℝ × S → ℝ} (hF : ContDiff ℝ ∞ F) :
 
 theorem radialPartial_eq_deriv {F : ℝ × S → ℝ} (hF : ContDiff ℝ ∞ F) (R : ℝ) (s : S) :
     radialPartial F (R, s) = deriv (fun q => F (q, s)) R := by
-  have hd := ((hF.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true])) (R, s)).hasFDerivAt.comp_hasDerivAt (F := ℝ × S) R
+  have hd := ((hF.differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) (R, s)).hasFDerivAt.comp_hasDerivAt (F := ℝ × S) R
     ((hasDerivAt_id R).prodMk (hasDerivAt_const R s))
   exact hd.deriv.symm
 
@@ -431,8 +431,8 @@ theorem radialPartial_twice_eq_deriv {F : ℝ × S → ℝ} (hF : ContDiff ℝ �
 theorem fderiv_liftSlow {F : ℕ → ℝ × S → ℝ} (hF : ∀ n, ContDiff ℝ ∞ (F n))
     (n : ℕ) (x v : Lift S) :
     fderiv ℝ (liftSlow F n) x v = fderiv ℝ (F n) (x.1, x.2.1) (v.1, v.2.1) := by
-  have hd := (((hF n).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true])) (x.1, x.2.1)).hasFDerivAt.comp x
+  have hd := (((hF n).differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) (x.1, x.2.1)).hasFDerivAt.comp x
     AuxiliaryAverage.slowProjection.hasFDerivAt
   rw [show liftSlow F n = F n ∘ AuxiliaryAverage.slowProjection from rfl, hd.fderiv]
   rfl
@@ -471,8 +471,8 @@ theorem parameterPartial_const_mul {F : ℝ × S → ℝ} (hF : ContDiff ℝ ∞
       fun x => c * IntegratedMeanBalances.parameterPartial v F x := by
   funext x
   unfold IntegratedMeanBalances.parameterPartial
-  rw [(((hF.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true])) x).hasFDerivAt.const_mul c).fderiv]
+  rw [(((hF.differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) x).hasFDerivAt.const_mul c).fderiv]
   rfl
 
 theorem native_radialDiv_lift (r : ReconstructionData) (ε fast : ℕ → ℝ) (z t : S)
@@ -1145,8 +1145,8 @@ theorem fderiv_parameterLift {f : S → ℝ} (hf : ContDiff ℝ ∞ f)
     (p : S × PressureStream.Plane) (z : S) :
     fderiv ℝ (fun y : S × PressureStream.Plane => f y.1) p (z, 0) = fderiv ℝ f p.1 z := by
   change fderiv ℝ (f ∘ Prod.fst) p (z, 0) = _
-  rw [(((hf.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-      not_false_eq_true])) p.1).hasFDerivAt.comp p hasFDerivAt_fst).fderiv]
+  rw [(((hf.differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) p.1).hasFDerivAt.comp p hasFDerivAt_fst).fderiv]
   rfl
 
 /-- The hypothesis is a bound on the actual slow debt. The residual moment
@@ -1398,8 +1398,8 @@ theorem similarity_pressureCoefficient_fderiv {h d a b M : ℝ} (hab : a < b) (i
     filter_upwards [continuousAt_fst.eventually (Ioi_mem_nhds hs)] with t ht
     exact similarity_pressureCoefficient hab index hc hc1 n ht
   rw [he.fderiv_eq]
-  have hd := ((SimilarityCoordinates.coordinateQ_smooth hc hc1 hs).differentiableAt (by
-      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])).hasFDerivAt
+  have hd := ((SimilarityCoordinates.coordinateQ_smooth hc hc1 hs).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).hasFDerivAt
   rw [(hd.const_mul (basePressureCoefficient a b hab)).fderiv]
   change basePressureCoefficient a b hab * fderiv ℝ (SimilarityCoordinates.coordinateQ (2 * h)) s v
       = _
@@ -1933,8 +1933,7 @@ theorem q_pressureCoefficient_fderiv {coord : ℝ} (U : SlowRegion coord)
     exact q_pressureCoefficient U g hg n ht
   rw [he.fderiv_eq]
   have hd := ((SimilarityCoordinates.coordinateQ_smooth U.coord_pos U.coord_lt_one
-    (U.time_pos s hs)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-        not_false_eq_true])).hasFDerivAt
+    (U.time_pos s hs)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).hasFDerivAt
   rw [(hd.const_mul (basePressureCoefficient g.radial.inner g.radial.outer
     g.radial.inner_lt_outer)).fderiv]
   change basePressureCoefficient _ _ _ * fderiv ℝ (SimilarityCoordinates.coordinateQ coord) s v = _
@@ -1986,13 +1985,12 @@ theorem axialDebtPotential_fderiv {coord : ℝ} (U : SlowRegion coord)
   have hJ : ContDiffOn ℝ ∞ (CorrectionState.axialDefect c u n) U.carrier :=
     (hZ.radialMoment_smooth ha g.radial.inner_lt_outer 1 n).sub
       ((hf.radialMoment_smooth ha g.radial.inner_lt_outer 2 n).const_smul (1 / 2 : ℝ))
-  have hp := ((hP.contDiffAt (U.isOpen.mem_nhds hs)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])).hasFDerivAt
-  have hj := ((hJ.contDiffAt (U.isOpen.mem_nhds hs)).differentiableAt (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])).hasFDerivAt
+  have hp := ((hP.contDiffAt (U.isOpen.mem_nhds hs)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).hasFDerivAt
+  have hj := ((hJ.contDiffAt (U.isOpen.mem_nhds hs)).differentiableAt
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).hasFDerivAt
   have hc := (((pressureCoefficient_smooth U g hg n).contDiffAt
-    (U.isOpen.mem_nhds hs)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])).hasFDerivAt
+    (U.isOpen.mem_nhds hs)).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)).hasFDerivAt
   change fderiv ℝ (fun s => CorrectionState.axialDefect c u n s +
     pressureCoefficient g n s * CorrectionState.pressureDefect c u n s) s v = _
   rw [(hj.fun_add (hc.fun_mul hp)).fderiv]

@@ -651,8 +651,7 @@ theorem scaled_residual {Q : ℝ} (hQ : 0 < Q) (k : ℕ) {x : Full} (hx : x ∈ 
       mul_pos (Real.sqrt_pos.2 hQ) hx.1
   have hns := CylindricalResidual.navierStokesResidual_cylindrical
     (huv.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2))
-    (hpv.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
-        not_false_eq_true])) hr
+    (hpv.differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) hr
   have hf := congrArg (CylindricalResidual.frame (-x.2)) hns
   simp only [cylinderPoint, AxisymmetricResidual.pack_one,
     CylindricalResidual.frame_inverse] at hf
@@ -678,15 +677,14 @@ theorem actual_velocity_components {t : ℝ} (ht : t < 1) (q : Space) :
       (AxisymmetricFields.profilePoint t z) :=
     (SlowBorelBase.physicalProfile_smoothAt ha hh hh1
       (SlowBorelBase.bundleComponent_smooth hd W.axis.normalization 0)
-      (-CoordinateAlgebra.A F.data.h) ht).differentiableAt (by simp only [ne_eq,
-          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+      (-CoordinateAlgebra.A F.data.h) ht).differentiableAt (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hK (z : Space) : DifferentiableAt ℝ
       (SlowBorelBase.swirlPotential a F.data.h W.axis.normalization d)
       (AxisymmetricFields.profilePoint t z) :=
     (SlowBorelBase.physicalProfile_smoothAt ha hh hh1
       (SlowBorelBase.bundleComponent_smooth hd W.axis.normalization 1)
-      (1 / 2 - CoordinateAlgebra.A F.data.h) ht).differentiableAt (by simp only [ne_eq,
-          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+      (1 / 2 - CoordinateAlgebra.A F.data.h) ht).differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   change CylindricalResidual.frame (-(q 1))
       (AxisymmetricFields.velocity _ _ (t, CylindricalResidual.chart q)) =
     AxisymmetricFields.velocity _ _ (t, AxisymmetricResidual.pack (q 0) 0 (q 2))
@@ -778,14 +776,14 @@ theorem stressAtScale_eq_virtualDivergence (index : ℕ → ℕ) (n : ℕ) {x : 
     (SlowBorelBase.physicalProfile_smoothAt (FinalSlowBase.scales_strictMono H v upper B)
       F.data.h_pos F.data.h_lt_half (SlowBorelBase.bundleComponent_smooth
         (FinalSlowBase.coefficients_smooth H v) W.axis.normalization 3)
-      (-CoordinateAlgebra.A F.data.h - 1 / 2) ht).differentiableAt (by simp only [ne_eq,
-          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+      (-CoordinateAlgebra.A F.data.h - 1 / 2) ht).differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hz : DifferentiableAt ℝ Sz (profileAtScale F.data.h Q x.1) :=
     (SlowBorelBase.physicalProfile_smoothAt (FinalSlowBase.scales_strictMono H v upper B)
       F.data.h_pos F.data.h_lt_half (SlowBorelBase.bundleComponent_smooth
         (FinalSlowBase.coefficients_smooth H v) W.axis.normalization 4)
-      (-CoordinateAlgebra.A F.data.h - 1 / 2) ht).differentiableAt (by simp only [ne_eq,
-          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+      (-CoordinateAlgebra.A F.data.h - 1 / 2) ht).differentiableAt
+          (WithTop.coe_ne_zero.2 ENat.top_ne_zero)
   have hθeq : c.virtualTheta n =ᶠ[𝓝 x.1]
       (fun y => Q ^ (2 * CoordinateAlgebra.A F.data.h) * Sθ (profileAtScale F.data.h Q y)) := by
     filter_upwards [(isOpen_lt continuous_const (continuous_fst : Continuous (fun y : Point =>

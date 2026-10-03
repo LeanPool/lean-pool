@@ -153,8 +153,8 @@ noncomputable def resetDensityEta (d : TailData) (c : ℝ → Coeff) (eta y : �
 theorem resetDensity_hasDerivAt (d : TailData) {c : ℝ → Coeff}
     (hc : ContDiff ℝ ∞ c) (eta y : ℝ) :
     HasDerivAt (fun q => resetDensity d c q y) (resetDensityEta d c eta y) eta := by
-  have hr := relative_coeff_hasDerivAt ((hc.differentiable (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) eta).hasDerivAt)
+  have hr := relative_coeff_hasDerivAt ((hc.differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero) eta).hasDerivAt)
     (y - correctionCenter d)
   have hd := (((hr.const_add 1).pow 2).sub_const 1).const_mul
     (Real.exp y * (baseE d.core.lam (referenceAmplitude d) y) ^ 2)
@@ -380,8 +380,8 @@ theorem normalizedResetEnergy_hasDerivAt (d : TailData) {c : ℝ → Coeff}
     HasDerivAt (normalizedResetEnergy d c)
       (d.core.lam * deriv (resetEnergy d c) eta / (pulseNormalization d * shape eta ^ 2) +
         (4 * eta / (1 + eta ^ 2)) * normalizedResetEnergy d c eta) eta := by
-  have hE := ((resetEnergy_contDiff d hc).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true]) eta).hasDerivAt
+  have hE := ((resetEnergy_contDiff d hc).differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero) eta).hasDerivAt
   have hp : HasDerivAt (fun q : ℝ => (1 + q ^ 2) ^ 2) (4 * eta * (1 + eta ^ 2)) eta := by
     convert! (((hasDerivAt_id eta).fun_pow 2).const_add 1).fun_pow 2 using 1
     simp only [id_eq]
@@ -765,12 +765,12 @@ theorem amplitude_derivative_identity (d : TailData) {c : ℝ → Coeff}
       with t ht
     exact amplitude_energy_equation d c t ht.le
   have hz : deriv F eta = 0 := by rw [he.deriv_eq]; exact deriv_const _ _
-  have hA := ((amplitude_contDiff d hc).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true]) eta).hasDerivAt
-  have hb := ((PulseAmplitude.linearTerm_contDiff d.core).differentiable (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) eta).hasDerivAt
-  have hcc := ((constantTerm_contDiff d hc).differentiable (by simp only [ne_eq,
-      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) eta).hasDerivAt
+  have hA := ((amplitude_contDiff d hc).differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero) eta).hasDerivAt
+  have hb := ((PulseAmplitude.linearTerm_contDiff d.core).differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero) eta).hasDerivAt
+  have hcc := ((constantTerm_contDiff d hc).differentiable
+      (WithTop.coe_ne_zero.2 ENat.top_ne_zero) eta).hasDerivAt
   have hd := (((hA.pow 2).const_mul (PulseAmplitude.quadraticCoefficient d.core)).add (hb.mul
       hA)).add hcc
   change HasDerivAt F _ eta at hd
@@ -789,8 +789,8 @@ theorem coefficient_derivative_bounds (d : TailData) {c : ℝ → Coeff}
   refine ⟨hb.1, ?_⟩
   have hd := (((PulseAmplitude.constantTerm_contDiff d).differentiable (by
       simp) eta).hasDerivAt).sub
-    (((energyShift_contDiff d hc).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true]) eta).hasDerivAt)
+    (((energyShift_contDiff d hc).differentiable
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero) eta).hasDerivAt)
   change HasDerivAt (constantTerm d c) _ eta at hd
   rw [hd.deriv]
   have ha := abs_sub (deriv (PulseAmplitude.constantTerm d) eta) (deriv (energyShift d c) eta)

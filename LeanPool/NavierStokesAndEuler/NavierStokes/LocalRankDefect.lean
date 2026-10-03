@@ -708,8 +708,8 @@ theorem axial_exact {a b : ℝ} (ha : 0 < a) (hab : a < b) (hU : IsOpen U)
     (rankDesired_slice_smooth r c u n p.2.1)
     (hg.desired_slice_support n hp (hleft n _ hp) (hright n _ hp))
     (hg.desired_mass_zero n hp)
-    ((hF.contDiffAt ((PhysicalMeanDomain.slowDomain_open hU).mem_nhds hp)).differentiableAt (by
-        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+    ((hF.contDiffAt ((PhysicalMeanDomain.slowDomain_open hU).mem_nhds hp)).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
   simpa only [VariableGaugeMean.rankIncrementState, PressureStream.streamGamma,
       PressureStream.graphDr,
     PressureStream.divideRadius, he.fderiv_eq, he.self_of_nhds] using h
@@ -802,8 +802,8 @@ theorem divergence_zero {a b : ℝ} (ha : 0 < a) (hab : a < b) (hU : IsOpen U)
     ((PhysicalMeanDomain.slowDomain_open hU).mem_nhds hp)
   exact PressureStream.stream_divergence_zero _ _
     (hpot.of_le (ENat.natCast_lt_of_coe_top_le_withTop le_rfl 2).le)
-    ((PressureStream.physicalSpeed_smooth _ _ hr).differentiableAt (by simp only [ne_eq,
-        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) hr
+    ((PressureStream.physicalSpeed_smooth _ _ hr).differentiableAt
+        (WithTop.coe_ne_zero.2 ENat.top_ne_zero)) hr
 
 theorem fiveRows {a b : ℝ} (ha : 0 < a) (hab : a < b) (hU : IsOpen U)
     (hleft : ∀ n x, x ∈ U → a ≤ r.length n x * r.inner)
