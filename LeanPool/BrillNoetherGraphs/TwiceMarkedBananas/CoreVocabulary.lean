@@ -340,6 +340,7 @@ def stepRight (α : Fin (g + 1)) (offset : Fin (B.length α)) : B.Vertex :=
   else B.interiorVertex α ⟨offset.val, by have := offset.isLt; omega⟩
 
 /-- The ordered pair emitted by one unit step. -/
+@[expose]
 def unitEdge (step : B.Step) : B.Vertex × B.Vertex :=
   (B.stepLeft step.1 step.2, B.stepRight step.1 step.2)
 

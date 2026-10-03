@@ -49,6 +49,7 @@ This intentionally follows `rpfcheck.c`'s W3 scan: a chip belongs to the
 when zero-length blocks make two named forms equal.  In particular index zero
 is the tail, not a named interior point, so it never receives a chip.  W3
 separately ensures that every chip has such a matching interior point. -/
+@[expose]
 def chipAt (w : RichWitness) (a e i : ℕ) : ℤ :=
   if i == 0 then 0 else
     w.chips.foldl (fun z c =>
@@ -229,6 +230,7 @@ def w5MultChecks (w : RichWitness) (core : ExplicitPotential.Core n p)
   simp [w5MultChecks, ExplicitPotential.allFin_eq_true_iff]
 
 /-- W5: all conservative core residuals are effective. -/
+@[expose]
 def w5Checks (w : RichWitness) (core : ExplicitPotential.Core n p) : Bool :=
   ExplicitPotential.allFin (fun a : Fin n => ExplicitPotential.allFin fun v : Fin n =>
     decide (0 ≤ w.w5Residual core a.val v.val))

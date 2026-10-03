@@ -186,6 +186,7 @@ theorem sum_five (g : Fin p → ℤ) {a b c u v : Fin p}
 
 /-- The two endpoint terms one core slot contributes at one core vertex.
 This is literally the summand of `ConfigurationCommon.endpointContribution`. -/
+@[expose]
 def slotTerm (d : DegSpec n p) (potential : Fin n → ℤ) (e : Fin p)
     (v : Fin n) : ℤ :=
   (if d.core.tail e = v then

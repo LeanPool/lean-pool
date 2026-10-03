@@ -27,6 +27,7 @@ namespace Banana
 variable {g : ℕ} (B : Banana g)
 
 /-- Replace every labelled strand by a path of its specified length. -/
+@[expose]
 def graph : CFGraph where
   V := B.Vertex
   instNonempty := ⟨B.coreVertex 0⟩
