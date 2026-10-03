@@ -297,6 +297,7 @@ def normalFormAddEquiv (D : OreDivisionDerivation B) :
     ⟨normalForm_injective D, normalForm_surjective D⟩
 
 /-- The canonical coefficient embedding. -/
+@[expose]
 def normalCoefficient (D : OreDivisionDerivation B) : B →+* NormalOre D :=
   coefficientLeft.codRestrict (faithfulRange D) fun b => by
     exact ⟨C b, faithful_eval_C D b⟩

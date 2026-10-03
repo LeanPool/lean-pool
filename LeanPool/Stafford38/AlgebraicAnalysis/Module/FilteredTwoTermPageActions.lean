@@ -171,6 +171,7 @@ private theorem targetRestricted_denominator (r : ℕ) (p : ℤ) :
   exact P.maps_boundaries r p hx
 
 /-- The operator induced on a target page. -/
+@[expose]
 def targetMap (r : ℕ) (p : ℤ) :
     K.TargetPage r p →ₗ[k] K.TargetPage r (p - d) :=
   Submodule.mapQ _ _ (P.targetRestricted p)

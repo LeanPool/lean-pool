@@ -198,6 +198,7 @@ argument below proves the form-preserving A₂ map is an automorphism. -/
 
 /-- The generating relation equating each generator commutator with the corresponding scalar
 form entry. -/
+@[expose]
 def freeWeylRelation (omega : Matrix ι ι k)
     (a b : FreeAlgebra k ι) : Prop :=
   ∃ i j,

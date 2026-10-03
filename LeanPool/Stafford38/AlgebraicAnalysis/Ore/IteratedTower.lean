@@ -55,6 +55,7 @@ def PairwiseCommutes : List (Derivation B) → Prop
       (∀ E ∈ Ds, Commutes D E) ∧ PairwiseCommutes Ds
 
 /-- Commutation of one derivation with every member of a list. -/
+@[expose]
 def CommutesWith (D : Derivation B) : List (Derivation B) → Prop
   | Es => ∀ E ∈ Es, Commutes D E
 
