@@ -80,6 +80,7 @@ open Guarding
 /-! ## The divisor -/
 
 /-- The hub `3` together with the near end of each of the three bananas. -/
+@[expose]
 def IsChipVertex (v : Fin 8) : Prop :=
   v = 0 ∨ v = 3 ∨ v = 4 ∨ v = 7
 
