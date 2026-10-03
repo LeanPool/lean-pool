@@ -22,38 +22,37 @@ noncomputable section
 def JointSmoothBootstrap.flowTimeVelocityN
     (b : ℝ → Vec 2 → Vec 2) (X : ℝ → Vec 2 → ℝ → Vec 2)
     (p : ℝ × Vec 2 × ℝ) : Vec 2 :=
-  b p.1 (X p.1 p.2.1 p.2.2)
+  JointC1.flowTimeVelocity b X p
 
 /-- Spatial Jacobian in the arbitrary-order joint smoothness bootstrap. -/
 def JointSmoothBootstrap.flowSpatialJacobianN
     (X : ℝ → Vec 2 → ℝ → Vec 2) (p : ℝ × Vec 2 × ℝ) :
     Vec 2 →L[ℝ] Vec 2 :=
-  fderiv ℝ (fun y => X p.1 y p.2.2) p.2.1
+  JointC1.flowSpatialDerivativeAt X p
 
 /-- Starting-time velocity in the arbitrary-order joint smoothness bootstrap. -/
 def JointSmoothBootstrap.flowStartVelocityN
     (b : ℝ → Vec 2 → Vec 2) (X : ℝ → Vec 2 → ℝ → Vec 2)
     (p : ℝ × Vec 2 × ℝ) : Vec 2 :=
-  -(JointSmoothBootstrap.flowSpatialJacobianN X p (b p.2.2 p.2.1))
+  JointC1.flowStartVelocity b X p
 
 /-- Starting-time differential in the arbitrary-order joint smoothness bootstrap. -/
 def JointSmoothBootstrap.flowStartCLMN
     (b : ℝ → Vec 2 → Vec 2) (X : ℝ → Vec 2 → ℝ → Vec 2)
     (p : ℝ × Vec 2 × ℝ) : ℝ →L[ℝ] Vec 2 :=
-  ContinuousLinearMap.toSpanSingleton ℝ (JointSmoothBootstrap.flowStartVelocityN b X p)
+  JointC1.flowStartDerivativeCLM b X p
 
 /-- Position and starting-time differential in the arbitrary-order joint smoothness bootstrap. -/
 def JointSmoothBootstrap.flowParameterDerivativeN
     (b : ℝ → Vec 2 → Vec 2) (X : ℝ → Vec 2 → ℝ → Vec 2)
     (p : ℝ × Vec 2 × ℝ) : (Vec 2 × ℝ) →L[ℝ] Vec 2 :=
-  (JointSmoothBootstrap.flowSpatialJacobianN X p).coprod (JointSmoothBootstrap.flowStartCLMN b X p)
+  JointC1.flowPairDerivativeAt b X p
 
 /-- Full joint differential in the arbitrary-order joint smoothness bootstrap. -/
 def JointSmoothBootstrap.flowJointDerivativeN
     (b : ℝ → Vec 2 → Vec 2) (X : ℝ → Vec 2 → ℝ → Vec 2)
     (p : ℝ × Vec 2 × ℝ) : (ℝ × Vec 2 × ℝ) →L[ℝ] Vec 2 :=
-  (ContinuousLinearMap.toSpanSingleton ℝ (JointSmoothBootstrap.flowTimeVelocityN b X p)).coprod
-    (JointSmoothBootstrap.flowParameterDerivativeN b X p)
+  JointC1.flowJointDerivativeAt b X p
 
 end
 

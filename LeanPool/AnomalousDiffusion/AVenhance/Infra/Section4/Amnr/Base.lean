@@ -5,6 +5,8 @@ Authors: Scott Armstrong and Vlad Vicol
 -/
 module
 
+public import LeanPool.AnomalousDiffusion.AVenhance.Infra.AmnrDirectional
+
 public import LeanPool.AnomalousDiffusion.AVenhance.Statements.Section4.Amnr
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section3.ExplicitBounds.CutoffMemory
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section3.ExplicitBounds.MatrixBounds
@@ -20,11 +22,6 @@ public import Mathlib.Analysis.Calculus.FDeriv.Measurable
 noncomputable section
 open Homogenization MeasureTheory
 namespace AVenhance.Infra.Section4
-
-/-- Material differentiation in the coordinates used by the recurrence. -/
-def amnrMaterial (b : ℝ → Vec 2 → Vec 2) (f : ℝ → Vec 2 → ℝ)
-    (t : ℝ) (x : Vec 2) : ℝ :=
-  deriv (fun s => f s x) t + vecDot (b t x) (AVenhance.spaceGrad (f t) x)
 
 /-- A cutoff-flow average with a freely chosen factor in each summand. -/
 def amnrFlowAverageGen {β : ℝ} (I : AVenhance.Ingredients β)

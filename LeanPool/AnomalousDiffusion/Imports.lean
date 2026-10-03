@@ -7,6 +7,7 @@ module  -- shake: keep-all --deprecated_module: ignore
 
 -- Generated project imports; run `lake exe mk_all`.
 public import LeanPool.AnomalousDiffusion
+public import LeanPool.AnomalousDiffusion.AVenhance.Infra.AmnrDirectional
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Classical.Commutator
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Classical.Drift
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Classical.FamilyEnergy

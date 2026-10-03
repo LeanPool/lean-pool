@@ -69,10 +69,7 @@ def JointC1.flowJointDerivativeAt
 def flowJointDerivativeFormula
     (b : ℝ → Vec 2 → Vec 2) (X : ℝ → Vec 2 → ℝ → Vec 2)
     (p : ℝ × Vec 2 × ℝ) : (ℝ × Vec 2 × ℝ) →L[ℝ] Vec 2 :=
-  (ContinuousLinearMap.toSpanSingleton ℝ (b p.1 (X p.1 p.2.1 p.2.2))).coprod
-    ((fderiv ℝ (fun y => X p.1 y p.2.2) p.2.1).coprod
-      (ContinuousLinearMap.toSpanSingleton ℝ
-        (-((fderiv ℝ (fun y => X p.1 y p.2.2) p.2.1) (b p.2.2 p.2.1)))))
+  JointC1.flowJointDerivativeAt b X p
 
 theorem JointC1.flowStartDerivativeCLM_continuous
     {b : ℝ → Vec 2 → Vec 2} (hb : SmoothPeriodicField b)

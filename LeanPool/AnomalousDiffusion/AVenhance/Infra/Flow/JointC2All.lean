@@ -23,38 +23,37 @@ noncomputable section
 def JointC2All.flowJacobianC1
     (X : ℝ → Vec 2 → ℝ → Vec 2) (p : ℝ × Vec 2 × ℝ) :
     Vec 2 →L[ℝ] Vec 2 :=
-  fderiv ℝ (fun y => X p.1 y p.2.2) p.2.1
+  JointC1.flowSpatialDerivativeAt X p
 
 /-- Observation-time velocity used in the joint C² bootstrap. -/
 def JointC2All.flowTimeVelocityC1
     (b : ℝ → Vec 2 → Vec 2) (X : ℝ → Vec 2 → ℝ → Vec 2)
     (p : ℝ × Vec 2 × ℝ) : Vec 2 :=
-  b p.1 (X p.1 p.2.1 p.2.2)
+  JointC1.flowTimeVelocity b X p
 
 /-- Starting-time velocity used in the joint C² bootstrap. -/
 def JointC2All.flowStartVelocityC1
     (b : ℝ → Vec 2 → Vec 2) (X : ℝ → Vec 2 → ℝ → Vec 2)
     (p : ℝ × Vec 2 × ℝ) : Vec 2 :=
-  -(JointC2All.flowJacobianC1 X p (b p.2.2 p.2.1))
+  JointC1.flowStartVelocity b X p
 
 /-- Continuous linear starting-time differential used in the joint C² bootstrap. -/
 def JointC2All.flowStartCLMC1
     (b : ℝ → Vec 2 → Vec 2) (X : ℝ → Vec 2 → ℝ → Vec 2)
     (p : ℝ × Vec 2 × ℝ) : ℝ →L[ℝ] Vec 2 :=
-  ContinuousLinearMap.toSpanSingleton ℝ (JointC2All.flowStartVelocityC1 b X p)
+  JointC1.flowStartDerivativeCLM b X p
 
 /-- Position and starting-time differential used in the joint C² bootstrap. -/
 def JointC2All.flowParameterDerivativeC1
     (b : ℝ → Vec 2 → Vec 2) (X : ℝ → Vec 2 → ℝ → Vec 2)
     (p : ℝ × Vec 2 × ℝ) : (Vec 2 × ℝ) →L[ℝ] Vec 2 :=
-  (JointC2All.flowJacobianC1 X p).coprod (JointC2All.flowStartCLMC1 b X p)
+  JointC1.flowPairDerivativeAt b X p
 
 /-- Full joint differential used in the joint C² bootstrap. -/
 def JointC2All.flowJointDerivativeC1
     (b : ℝ → Vec 2 → Vec 2) (X : ℝ → Vec 2 → ℝ → Vec 2)
     (p : ℝ × Vec 2 × ℝ) : (ℝ × Vec 2 × ℝ) →L[ℝ] Vec 2 :=
-  (ContinuousLinearMap.toSpanSingleton ℝ (JointC2All.flowTimeVelocityC1 b X p)).coprod
-    (JointC2All.flowParameterDerivativeC1 b X p)
+  JointC1.flowJointDerivativeAt b X p
 
 theorem JointC2All.flowJacobianC1_contDiff
     {b : ℝ → Vec 2 → Vec 2} (hb : SmoothPeriodicField b)

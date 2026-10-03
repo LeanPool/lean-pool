@@ -68,7 +68,7 @@ theorem Kmat_add_sMatPlus_eq_coarseFluxPlus (hΦ : IsStreamSeq I Φ) (m : ℕ) (
   have h3 := tsum_hatXiML_smul_eq_sum I m hm t (fun l =>
     κm • I.flowGrad hΦ m l t x + (I.flowGrad hΦ m l t x).transpose *
         (I.Kmat κm m t - κm • (1 : Matrix (Fin 2) (Fin 2) ℝ)) * I.flowGrad hΦ m l t x)
-  unfold sMatPlus coarseFluxPlus
+  unfold sMatPlus Ingredients.sMat coarseFluxPlus
   rw [h1, h2, h3]
   have hK : I.Kmat κm m t = ∑ l ∈ S, I.hatXiML m l t • I.Kmat κm m t := by
     rw [← Finset.sum_smul, hw, one_smul]

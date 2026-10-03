@@ -69,7 +69,7 @@ theorem amnrBasePlus_qMNR_sum (hΦ : IsStreamSeq I Φ) (m : ℕ) (hm : 1 ≤ m) 
           ((I.qMNR κm m n 0 t).mulVec ((I.flowGrad hΦ m l t x).mulVec (spaceGrad (T t) x)))) i) :=
               by
     intro n
-    simp only [amnrBasePlus]
+    simp only [amnrBasePlus, Ingredients.Amnr]
     simp only [hflow]
     have hgen : ∀ (j k : Fin 2), (-I.LMN κm m n t * ∑ l ∈ S, I.hatXiML m l t *
         (I.flowGrad hΦ m l t x j i * ∑ p : Fin 2, I.flowGrad hΦ m l t x k p *

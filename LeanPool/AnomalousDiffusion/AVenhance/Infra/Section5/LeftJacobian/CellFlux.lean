@@ -141,7 +141,7 @@ theorem normie3Sel_eq (hΦ : IsStreamSeq I Φ) (m : ℕ) (hm : 1 ≤ m) (κm : �
     intro q hq
     by_contra hxi
     exact hq (hf q (not_not.mp hxi))
-  unfold normie3Sel normie3Plus
+  unfold normie3Sel normie3Plus normie3
   rw [← Summable.tsum_sub]
   · apply tsum_congr
     intro q

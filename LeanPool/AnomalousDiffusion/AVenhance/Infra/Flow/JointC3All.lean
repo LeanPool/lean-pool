@@ -25,7 +25,7 @@ noncomputable section
 def JointC3All.flowSpatialJacobianJointC2
     (X : ℝ → Vec 2 → ℝ → Vec 2) (p : ℝ × Vec 2 × ℝ) :
     Vec 2 →L[ℝ] Vec 2 :=
-  fderiv ℝ (fun y => X p.1 y p.2.2) p.2.1
+  JointC1.flowSpatialDerivativeAt X p
 
 /-- The spatial Jacobian is jointly C² in target time, initial point, and
 start time. Reference-time factorization reduces the claim locally to a
@@ -106,32 +106,31 @@ theorem flow_spatialFDeriv_contDiff_two_all
 def JointC3All.flowTimeVelocityC2
     (b : ℝ → Vec 2 → Vec 2) (X : ℝ → Vec 2 → ℝ → Vec 2)
     (p : ℝ × Vec 2 × ℝ) : Vec 2 :=
-  b p.1 (X p.1 p.2.1 p.2.2)
+  JointC1.flowTimeVelocity b X p
 
 /-- Starting-time velocity used in the joint C³ bootstrap. -/
 def JointC3All.flowStartVelocityC2
     (b : ℝ → Vec 2 → Vec 2) (X : ℝ → Vec 2 → ℝ → Vec 2)
     (p : ℝ × Vec 2 × ℝ) : Vec 2 :=
-  -(JointC3All.flowSpatialJacobianJointC2 X p (b p.2.2 p.2.1))
+  JointC1.flowStartVelocity b X p
 
 /-- Continuous linear starting-time differential used in the joint C³ bootstrap. -/
 def JointC3All.flowStartCLMC2
     (b : ℝ → Vec 2 → Vec 2) (X : ℝ → Vec 2 → ℝ → Vec 2)
     (p : ℝ × Vec 2 × ℝ) : ℝ →L[ℝ] Vec 2 :=
-  ContinuousLinearMap.toSpanSingleton ℝ (JointC3All.flowStartVelocityC2 b X p)
+  JointC1.flowStartDerivativeCLM b X p
 
 /-- Position and starting-time differential used in the joint C³ bootstrap. -/
 def JointC3All.flowParameterDerivativeC2
     (b : ℝ → Vec 2 → Vec 2) (X : ℝ → Vec 2 → ℝ → Vec 2)
     (p : ℝ × Vec 2 × ℝ) : (Vec 2 × ℝ) →L[ℝ] Vec 2 :=
-  (JointC3All.flowSpatialJacobianJointC2 X p).coprod (JointC3All.flowStartCLMC2 b X p)
+  JointC1.flowPairDerivativeAt b X p
 
 /-- Full joint differential used in the joint C³ bootstrap. -/
 def JointC3All.flowJointDerivativeC2
     (b : ℝ → Vec 2 → Vec 2) (X : ℝ → Vec 2 → ℝ → Vec 2)
     (p : ℝ × Vec 2 × ℝ) : (ℝ × Vec 2 × ℝ) →L[ℝ] Vec 2 :=
-  (ContinuousLinearMap.toSpanSingleton ℝ (JointC3All.flowTimeVelocityC2 b X p)).coprod
-    (JointC3All.flowParameterDerivativeC2 b X p)
+  JointC1.flowJointDerivativeAt b X p
 
 /-- Joint C³ regularity of a smooth periodic flow in target time, initial
 position, and start time. -/

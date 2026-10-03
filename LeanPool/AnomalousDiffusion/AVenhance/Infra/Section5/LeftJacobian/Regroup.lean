@@ -119,7 +119,9 @@ theorem twistie4Plus_eq (hΦ : IsStreamSeq I Φ) (m : ℕ) (hm : 1 ≤ m) (κm :
         ∑' k : {k : ℤ // Odd k}, I.xiMK m k t *
           frob (correctorDefectMatrix I hΦ m k.1 t κm x)
             (gradG I hΦ m T (lIdx β I.Λ m k.1) t x) := by
-  unfold twistie4Plus
+  change -vecDiv (fun y => ∑' k : {k : ℤ // Odd k},
+    I.xiMK m k t • (correctorDefectMatrix I hΦ m k t κm y).mulVec
+      (G I hΦ m T (lIdx β I.Λ m k) t y)) x = _
   rw [vecDiv_selected_matrix_vec I m hm t
     (fun k y => correctorDefectMatrix I hΦ m k t κm y)
     (fun k y => G I hΦ m T (lIdx β I.Λ m k) t y) x
@@ -148,7 +150,9 @@ theorem twistie5Plus_eq (hΦ : IsStreamSeq I Φ) (m : ℕ) (hm : 1 ≤ m) (κm :
         ∑' k : {k : ℤ // Odd k}, I.xiMK m k t *
           frob (correctorPushforwardMatrix I hΦ m k.1 t κm x)
             (gradG I hΦ m T (lIdx β I.Λ m k.1) t x) := by
-  unfold twistie5Plus
+  change -vecDiv (fun y => ∑' k : {k : ℤ // Odd k},
+    I.xiMK m k t • (correctorPushforwardMatrix I hΦ m k t κm y).mulVec
+      (G I hΦ m T (lIdx β I.Λ m k) t y)) x = _
   rw [vecDiv_selected_matrix_vec I m hm t
     (fun k y => correctorPushforwardMatrix I hΦ m k t κm y)
     (fun k y => G I hΦ m T (lIdx β I.Λ m k) t y) x

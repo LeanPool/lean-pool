@@ -5,48 +5,51 @@ Authors: Scott Armstrong and Vlad Vicol
 -/
 module
 
-public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section4.CoarseCoeff.Form
-public import LeanPool.AnomalousDiffusion.AVenhance.Infra.AmnrDirectional
+public import LeanPool.AnomalousDiffusion.AVenhance.Statements.Roots.SpaceGrad
 public import Mathlib.Analysis.Calculus.FDeriv.Measurable
 public import Mathlib.Analysis.Calculus.ContDiff.Operations
 
-/-! The coarse-coefficient interface for the shared directional calculus. -/
+/-! Shared tensor-independent spatial/material directional calculus. -/
 
 @[expose] public section
 
 noncomputable section
 open Homogenization MeasureTheory
-namespace AVenhance.Infra.Section4.IterateCalculus
+namespace AVenhance.Infra.Section4
 
 /-! The mixed calculus below keeps spatial and material operations ordered. -/
 
 /-- Scalar material operator. This calculus does not depend on a corrector tensor. -/
 def amnrMaterial (b : ℝ → Vec 2 → Vec 2) (f : ℝ → Vec 2 → ℝ)
     (t : ℝ) (x : Vec 2) : ℝ :=
-  _root_.AVenhance.Infra.Section4.amnrMaterial b f t x
+  deriv (fun s => f s x) t + vecDot (b t x) (AVenhance.spaceGrad (f t) x)
 
 /-- Space-time coordinate carrier used only to express the differential operators. -/
-abbrev AmnrSpace :=
-  _root_.AVenhance.Infra.Section4.AmnrSpace
+abbrev AmnrSpace := ℝ × Vec 2
 
 /-- `none` is the material direction; `some i` is the i-th spatial direction. -/
 def amnrDirection (b : AmnrSpace → Vec 2) (d : Option (Fin 2)) (z : AmnrSpace) : AmnrSpace :=
-  _root_.AVenhance.Infra.Section4.amnrDirection b d z
+  match d with
+  | none => (1, b z)
+  | some i => (0, basisVec i)
 
 /-- A directional differential operator on the actual space-time function. -/
 def amnrOp (b : AmnrSpace → Vec 2) (d : Option (Fin 2))
-    (f : AmnrSpace → ℝ) (z : AmnrSpace) : ℝ :=
-  _root_.AVenhance.Infra.Section4.amnrOp b d f z
+    (f : AmnrSpace → ℝ) (z : AmnrSpace) : ℝ := fderiv ℝ f z (amnrDirection b d z)
 
 /-- Ordered differential words, with the outermost operator at the head. -/
 def amnrWord (b : AmnrSpace → Vec 2) : List (Option (Fin 2)) →
-    (AmnrSpace → ℝ) → AmnrSpace → ℝ :=
-  _root_.AVenhance.Infra.Section4.amnrWord b
+    (AmnrSpace → ℝ) → AmnrSpace → ℝ
+  | [], f => f
+  | d :: w, f => amnrOp b d (amnrWord b w f)
 
-theorem DirectionalCalculus.amnrDirection_contDiffOn {b : AmnrSpace → Vec 2} {U : Set AmnrSpace}
+/-- Smoothness of each spatial or material direction. -/
+theorem Calculus.amnrDirection_contDiffOn {b : AmnrSpace → Vec 2} {U : Set AmnrSpace}
     {n : ℕ} (hb : ContDiffOn ℝ n b U) (d : Option (Fin 2)) :
     ContDiffOn ℝ n (amnrDirection b d) U := by
-  exact _root_.AVenhance.Infra.Section4.Calculus.amnrDirection_contDiffOn hb d
+  cases d with
+  | none => exact contDiffOn_const.prodMk hb
+  | some i => exact contDiffOn_const
 
 /-- Every word consumes exactly one ordinary derivative per letter. -/
 theorem amnrWord_contDiffOn {b : AmnrSpace → Vec 2} {U : Set AmnrSpace}
@@ -54,26 +57,63 @@ theorem amnrWord_contDiffOn {b : AmnrSpace → Vec 2} {U : Set AmnrSpace}
     {f : AmnrSpace → ℝ} (hf : ContDiffOn ℝ N f U)
     (w : List (Option (Fin 2))) {n : ℕ} (hn : n + w.length ≤ N) :
     ContDiffOn ℝ n (amnrWord b w f) U := by
-  exact _root_.AVenhance.Infra.Section4.amnrWord_contDiffOn hU hb hf w hn
+  induction w generalizing n with
+  | nil => exact hf.of_le (by exact_mod_cast hn)
+  | cons d w ih =>
+    have hlen : (n + 1) + w.length ≤ N := by simp only [List.length_cons] at hn; omega
+    have hw := ih hlen
+    have hd := hw.fderiv_of_isOpen hU (show (n : WithTop ℕ∞) + 1 ≤ (n + 1 : ℕ) by norm_cast)
+    have hdir := Calculus.amnrDirection_contDiffOn (hb.of_le (by exact_mod_cast (by
+        omega : n ≤ N))) d
+    exact hd.clm_apply hdir
 
 /-- Directional Leibniz rule, with no quantitative hypothesis. -/
 theorem amnrOp_mul {b : AmnrSpace → Vec 2} (d : Option (Fin 2))
     {f g : AmnrSpace → ℝ} {z : AmnrSpace}
     (hf : DifferentiableAt ℝ f z) (hg : DifferentiableAt ℝ g z) :
     amnrOp b d (f * g) z = amnrOp b d f z * g z + f z * amnrOp b d g z := by
-  exact _root_.AVenhance.Infra.Section4.amnrOp_mul d hf hg
+  unfold amnrOp
+  rw [fderiv_mul hf hg]
+  simp only [add_apply, smul_apply, smul_eq_mul]
+  ring
 
 /-- Directional differentiation commutes with finite sums of differentiable functions. -/
 theorem amnrOp_sum {ι : Type*} (S : Finset ι) {b : AmnrSpace → Vec 2}
     (d : Option (Fin 2)) (f : ι → AmnrSpace → ℝ) (z : AmnrSpace)
     (hf : ∀ i ∈ S, DifferentiableAt ℝ (f i) z) :
     amnrOp b d (∑ i ∈ S, f i) z = ∑ i ∈ S, amnrOp b d (f i) z := by
-  exact _root_.AVenhance.Infra.Section4.amnrOp_sum S d f z hf
+  unfold amnrOp
+  rw [fderiv_sum hf]
+  simp only [sum_apply]
 
+/-- The joint directional operator is precisely the material operator. -/
 theorem amnrOp_material {b : AmnrSpace → Vec 2} {f : AmnrSpace → ℝ}
     {z : AmnrSpace} (hf : DifferentiableAt ℝ f z) :
     amnrOp b none f z = amnrMaterial (fun t x => b (t, x))
       (fun t x => f (t, x)) z.1 z.2 := by
-  exact _root_.AVenhance.Infra.Section4.amnrOp_material hf
+  have ht := (hf.hasFDerivAt.comp z.1 (hasFDerivAt_prodMk_left (𝕜 := ℝ) z.1 z.2)).hasDerivAt.deriv
+  have hx := (hf.hasFDerivAt.comp z.2 (hasFDerivAt_prodMk_right (𝕜 := ℝ) z.1 z.2)).fderiv
+  have hvec : b z = ∑ i : Fin 2, b z i • basisVec i := by
+    funext i
+    simp [basisVec_apply]
+  unfold amnrOp amnrDirection amnrMaterial AVenhance.spaceGrad vecDot
+  change fderiv ℝ f z (1, b z) = deriv (f ∘ fun s => (s, z.2)) z.1 +
+    ∑ i : Fin 2, b z i * fderiv ℝ (f ∘ fun y => (z.1, y)) z.2 (basisVec i)
+  rw [ht]
+  have hsplit : (1, b z) = ((1, 0) : AmnrSpace) + (0, b z) := by ext <;> simp
+  rw [hsplit, map_add]
+  congr 1
+  conv_lhs => rw [hvec]
+  have hpair : ((0, ∑ i : Fin 2, b z i • basisVec i) : AmnrSpace) =
+      ∑ i : Fin 2, b z i • ((0, basisVec i) : AmnrSpace) := by
+    apply Prod.ext
+    · simp
+    · funext i
+      fin_cases i <;> simp [basisVec_apply]
+  rw [hpair, map_sum]
+  apply Finset.sum_congr rfl
+  intro i _
+  rw [map_smul, hx]
+  rfl
 
-end AVenhance.Infra.Section4.IterateCalculus
+end AVenhance.Infra.Section4
