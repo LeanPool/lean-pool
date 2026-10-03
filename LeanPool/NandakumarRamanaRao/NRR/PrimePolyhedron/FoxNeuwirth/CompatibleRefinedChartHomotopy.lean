@@ -195,6 +195,7 @@ noncomputable def baseOriginalPLMap
     simpa using h
 
 /-- The same original PL interpolation represented on a further subdivision. -/
+@[expose]
 noncomputable def originalPLMap
     (hp : Nat.Prime p)
     {F : ContinuousCoordinateMap p}
