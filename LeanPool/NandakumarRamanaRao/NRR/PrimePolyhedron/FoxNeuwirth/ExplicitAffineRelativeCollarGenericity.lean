@@ -482,6 +482,7 @@ noncomputable def localParameter
     (localVertexMap hp C a q).value i j = a (localParameter hp C q i j) := rfl
 
 /-- A coordinate witness for a uniform lower bound on every local affine value. -/
+@[expose]
 def LocalAffineCoordinateNormMargin
     (a : Assignment hp C) (m : Real) : Prop :=
   ∀ (q : C.Cell) (w : StandardSimplex p),
