@@ -178,7 +178,7 @@ theorem TraceEuclideanFlowBound.traceFree_quadratic_le
         _ ≤ |a| * |(z 0) ^ 2 - (z 1) ^ 2| +
               2 * (B - |a|) * |z 0| * |z 1| := by
           have hxy' : 0 ≤ |z 0| * |z 1| := mul_nonneg (abs_nonneg _) (abs_nonneg _)
-          nlinarith [mul_le_mul_of_nonneg_right hbc hxy']
+          nlinarith only [mul_le_mul_of_nonneg_right hbc hxy']
     by_cases hxy : (z 0) ^ 2 ≤ (z 1) ^ 2
     · have hxy' : |z 0| ≤ |z 1| := by
         apply (sq_le_sq₀ hx hy).1
@@ -189,7 +189,8 @@ theorem TraceEuclideanFlowBound.traceFree_quadratic_le
               (|a| * ((z 1) ^ 2 - (z 0) ^ 2) +
                 2 * (B - |a|) * |z 0| * |z 1|) =
             (B - |a|) * (|z 1| - |z 0|) ^ 2 + 2 * |a| * (z 0) ^ 2 := by
-        nlinarith [sq_abs (z 0), sq_abs (z 1), sq_nonneg (|z 1| - |z 0|)]
+        rw [← sq_abs (z 0), ← sq_abs (z 1)]
+        ring
       have hnonneg : 0 ≤ (B - |a|) * (|z 1| - |z 0|) ^ 2 +
           2 * |a| * (z 0) ^ 2 := by positivity
       nlinarith only [hquadUpper, hfactor, hnonneg]
@@ -197,20 +198,21 @@ theorem TraceEuclideanFlowBound.traceFree_quadratic_le
         apply (sq_le_sq₀ hy hx).1
         have hxy'' : (z 1) ^ 2 ≤ (z 0) ^ 2 := le_of_not_ge hxy
         simpa only [sq_abs] using hxy''
-      have hxy'' : (z 1) ^ 2 ≤ (z 0) ^ 2 := by nlinarith [sq_abs (z 0), sq_abs (z 1)]
+      have hxy'' : (z 1) ^ 2 ≤ (z 0) ^ 2 := le_of_not_ge hxy
       rw [abs_of_nonneg (sub_nonneg.mpr hxy'')] at hquadUpper
       have hfactor :
           B * ((z 0) ^ 2 + (z 1) ^ 2) -
               (|a| * ((z 0) ^ 2 - (z 1) ^ 2) +
                 2 * (B - |a|) * |z 0| * |z 1|) =
             (B - |a|) * (|z 0| - |z 1|) ^ 2 + 2 * |a| * (z 1) ^ 2 := by
-        nlinarith [sq_abs (z 0), sq_abs (z 1), sq_nonneg (|z 0| - |z 1|)]
+        rw [← sq_abs (z 0), ← sq_abs (z 1)]
+        ring
       have hnonneg : 0 ≤ (B - |a|) * (|z 0| - |z 1|) ^ 2 +
           2 * |a| * (z 1) ^ 2 := by positivity
       nlinarith only [hquadUpper, hfactor, hnonneg]
   simp only [vecDot, vecNormSq, Fin.sum_univ_two]
   rw [hcoords, hcoord1]
-  nlinarith [hquad]
+  nlinarith only [hquad]
 
 /-- The divergence-free differential of a two-dimensional vector field has
 Euclidean logarithmic norm bounded by its operator norm on `Vec 2`. -/

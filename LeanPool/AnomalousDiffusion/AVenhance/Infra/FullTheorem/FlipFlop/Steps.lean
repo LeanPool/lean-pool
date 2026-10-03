@@ -126,12 +126,15 @@ theorem inner_step {β C₀ C : ℝ} (I : Ingredients β) (hz : I.Czeta ≤ C₀
       rw [← sq]
       exact pow_le_pow_left₀ hk.le hkU 2
     have h2 : k * k ≤ C ^ 2 * (E ^ (2 * β) * E ^ (2 * gamma β)) := by
-      rw [hFF]; nlinarith [h1]
+      rw [hFF]
+      simpa only [mul_pow] using h1
     have h3 : C ^ 2 * (E ^ (2 * β) * E ^ (2 * gamma β)) ≤ C ^ 2 * (E ^ (2 * β) * e) := by
       gcongr
     have h4 : k * k ≤ S * k * (C ^ 2 * e) := by
-      rw [hSk]; nlinarith [h2, h3]
-    have : k * k ≤ k * (S * (C ^ 2 * e)) := by nlinarith [h4]
+      rw [hSk]
+      nlinarith only [h2, h3]
+    have : k * k ≤ k * (S * (C ^ 2 * e)) := by
+      simpa only [mul_assoc, mul_left_comm, mul_comm] using h4
     exact le_of_mul_le_mul_left this hk
   -- relative error
   set K := I.KhomScalar k (m + 1) with hK

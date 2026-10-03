@@ -362,7 +362,8 @@ theorem transportE22_shifted_sum_le_three_halves (n : ℕ) :
     have hncast : (81 : ℝ) ≤ n := by exact_mod_cast hn81
     have hroot : 9 ≤ Real.sqrt n := by
       apply (Real.le_sqrt (by norm_num) (by positivity)).2
-      nlinarith
+      norm_num only
+      exact hncast
     have hcrossBound : 2 * (∑ k ∈ rangeN, cross k) ≤ 1 / 3 := by
       have hrec : (∑ k ∈ rangeN, recA k) +
           (∑ k ∈ rangeN, recB k) ≤ (3 / 2 : ℝ) * Real.sqrt n := by
@@ -380,12 +381,11 @@ theorem transportE22_shifted_sum_le_three_halves (n : ℕ) :
         _ = 3 * Real.sqrt n / (n + 3 : ℝ) := by ring
         _ ≤ 1 / 3 := by
           rw [div_le_iff₀ hden]
-          have hsq : 0 ≤ (Real.sqrt n - 9) ^ 2 := sq_nonneg _
           have hprod : 0 ≤ Real.sqrt n * (Real.sqrt n - 9) :=
-            mul_nonneg (Real.sqrt_nonneg _) (by linarith)
+            mul_nonneg (Real.sqrt_nonneg _) (sub_nonneg.mpr hroot)
           have hnnonneg : 0 ≤ (n : ℝ) := by positivity
           have hsquare : (Real.sqrt n) ^ 2 = n := Real.sq_sqrt hnnonneg
-          nlinarith [hsquare, hroot, hsq, hprod]
+          nlinarith only [hsquare, hprod]
     have hterm (k : ℕ) (hk : k ∈ rangeN) :
         (n + 1 : ℝ) ^ 2 /
             (((n - k + 1 : ℕ) : ℝ) ^ 2 * (k + 2 : ℝ) ^ 2) ≤

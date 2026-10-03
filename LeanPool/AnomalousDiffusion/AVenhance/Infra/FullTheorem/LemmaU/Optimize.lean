@@ -48,9 +48,12 @@ theorem optimize_core {u v B S X K : ℝ} (hu0 : 0 < u) (hu1 : u ≤ 1) (hv0 : 0
       _ = u ^ 2 * v ^ 6 := by ring
   have hv2 : 0 < v ^ 2 := by positivity
   have hv4 : 0 < v ^ 4 := by positivity
-  have hu2 : u ^ 2 ≤ 1 := by nlinarith
-  have hu4 : u ^ 4 ≤ u ^ 2 := by nlinarith [sq_nonneg u]
-  have hv2le : v ^ 2 ≤ 1 := by nlinarith
+  have hu2 : u ^ 2 ≤ 1 := pow_le_one₀ hu0.le hu1
+  have hu4 : u ^ 4 ≤ u ^ 2 := by
+    calc u ^ 4 = u ^ 2 * u ^ 2 := by ring
+         _ ≤ 1 * u ^ 2 := mul_le_mul_of_nonneg_right hu2 (sq_nonneg u)
+         _ = u ^ 2 := one_mul _
+  have hv2le : v ^ 2 ≤ 1 := pow_le_one₀ hv0.le hv1
   -- pieces
   have p1 : u ^ 4 * (80 * v ^ 4 * K ^ 2) ≤ 320 * (u ^ 2 / v ^ 2) := by
     have : u ^ 4 * (80 * v ^ 4 * K ^ 2) ≤ u ^ 4 * (80 * v ^ 4 * (4 / (u ^ 2 * v ^ 6))) := by
@@ -75,7 +78,7 @@ theorem optimize_core {u v B S X K : ℝ} (hu0 : 0 < u) (hu1 : u ≤ 1) (hv0 : 0
         _ = u ^ 2 := by ring
     calc (1 / 9) * (1 / K ^ 2) ≤ (1 / 9) * (u ^ 2 * v ^ 6) := by gcongr
       _ ≤ 1 * (u ^ 2 * v ^ 6) := by gcongr; norm_num
-      _ ≤ u ^ 2 / v ^ 4 := by linarith
+      _ ≤ u ^ 2 / v ^ 4 := by linarith only [h6]
   have p4 : B ^ 2 / (36 * (v ^ 4) ^ 2 * K ^ 2) ≤ B ^ 2 * (u ^ 2 / v ^ 4) := by
     have e1 : B ^ 2 / (36 * (v ^ 4) ^ 2 * K ^ 2) =
         B ^ 2 / (36 * (v ^ 4) ^ 2) * (1 / K ^ 2) := by field_simp
@@ -85,8 +88,8 @@ theorem optimize_core {u v B S X K : ℝ} (hu0 : 0 < u) (hu1 : u ≤ 1) (hv0 : 0
     have h2 : B ^ 2 / (36 * (v ^ 4) ^ 2) * (u ^ 2 * v ^ 6) =
         B ^ 2 * (u ^ 2 / v ^ 4) * (v ^ 2 / 36) := by field_simp
     have h3 : B ^ 2 * (u ^ 2 / v ^ 4) * (v ^ 2 / 36) ≤ B ^ 2 * (u ^ 2 / v ^ 4) * 1 := by
-      gcongr; linarith
-    linarith
+      gcongr; linarith only [hv2le]
+    linarith only [h1, h2, h3]
   -- combine
   have hsum : u ^ 4 * (80 * v ^ 4 * K ^ 2 + B ^ 2 / v ^ 4) + 1 / (9 * K ^ 2) +
       B ^ 2 / (36 * (v ^ 4) ^ 2 * K ^ 2) ≤
@@ -95,8 +98,9 @@ theorem optimize_core {u v B S X K : ℝ} (hu0 : 0 < u) (hu1 : u ≤ 1) (hv0 : 0
     have : u ^ 4 * (80 * v ^ 4 * K ^ 2 + B ^ 2 / v ^ 4) =
         u ^ 4 * (80 * v ^ 4 * K ^ 2) + u ^ 4 * (B ^ 2 / v ^ 4) := by ring
     rw [this]
-    nlinarith [p1, p2, p3, p4, e]
-  have hcoef : (320 * v ^ 2 + 1 + 2 * B ^ 2) ≤ 400 * (1 + B) ^ 2 := by nlinarith
+    nlinarith only [p1, p2, p3, p4, e]
+  have hcoef : (320 * v ^ 2 + 1 + 2 * B ^ 2) ≤ 400 * (1 + B) ^ 2 := by
+    nlinarith only [hv2le, hB, sq_nonneg B]
   have hpos : 0 ≤ u ^ 2 / v ^ 4 := by positivity
   calc X ≤ S ^ 2 * (u ^ 4 * (80 * v ^ 4 * K ^ 2 + B ^ 2 / v ^ 4) + 1 / (9 * K ^ 2) +
       B ^ 2 / (36 * (v ^ 4) ^ 2 * K ^ 2)) := hX

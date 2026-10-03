@@ -594,7 +594,7 @@ theorem e44_initialTrace_of_A3_A5_data
     dsimp [q]
     ring
   have hcoefficient : 2 ^ 22 ≤ c * A ^ 2 / 4 := by
-    nlinarith [hA5scale]
+    nlinarith only [hA5scale]
   have hνK : 2 ^ 22 * e ^ (β - 2) ≤ ν * K ^ 2 := by
     have hbase : c * e ^ q * (A / (2 * r)) ^ 2 ≤ ν * K ^ 2 :=
       mul_le_mul hνlow hKlowSquare (by positivity) (by positivity)
@@ -617,7 +617,10 @@ theorem e44_initialTrace_of_A3_A5_data
   have hmax : max 1 B ≤ ν * K ^ 2 := by
     apply max_le
     · calc
-        (1 : ℝ) ≤ 2 ^ 22 * e ^ (β - 2) := by nlinarith [hpowGeOne]
+        (1 : ℝ) ≤ 2 ^ 22 * e ^ (β - 2) := by
+          have hscale := mul_le_mul_of_nonneg_right
+            (by norm_num : (1 : ℝ) ≤ 2 ^ 22) (zero_le_one.trans hpowGeOne)
+          exact hpowGeOne.trans (by simpa only [one_mul] using hscale)
         _ ≤ ν * K ^ 2 := hνK
     · exact hBbound
   have hφ : IsAdmissibleStream (fun s y => Φ (m - 1) s y) :=

@@ -902,47 +902,46 @@ theorem ThetaHonestRecursion.theta_word_energy_bound_of_A3
     exact hbound
   have hXbound : X ≤ 4 * A + 4 * B := by
     by_contra hnot
-    have hlt : 4 * A + 4 * B < X := by linarith
+    have hlt : 4 * A + 4 * B < X := lt_of_not_ge hnot
     have hA_nonneg : 0 ≤ A := Real.sqrt_nonneg _
     have hXnonneg : 0 ≤ X := by dsimp [X]; positivity
-    have hXpos : 0 < X := by linarith [hBnonneg, hA_nonneg]
+    have hXpos : 0 < X := by linarith only [hlt, hBnonneg, hA_nonneg]
     have hprod : 4 * A * X < X * (X - 4 * B) := by
-      have hlt' : 4 * A < X - 4 * B := by linarith
+      have hlt' : 4 * A < X - 4 * B := by linarith only [hlt]
       have := mul_lt_mul_of_pos_left hlt' hXpos
-      nlinarith
+      nlinarith only [this]
     have hprod2 : 16 * A ^ 2 ≤ 4 * A * X := by
-      have hAX : 4 * A ≤ X := by linarith
+      have hAX : 4 * A ≤ X := by linarith only [hlt, hBnonneg]
       have := mul_le_mul_of_nonneg_left hAX (by positivity : 0 ≤ 4 * A)
-      nlinarith
+      nlinarith only [this]
     have hXsq : X ^ 2 = S := by
       dsimp [X]
       exact Real.sq_sqrt hSnonneg
     have hA2 : A ^ 2 = S₀ := by
       dsimp [A]
       exact Real.sq_sqrt hS₀nonneg
-    nlinarith
+    nlinarith only [hSup, hXsq, hA2, hprod, hprod2, sq_nonneg A]
   have hYsq : Y ^ 2 = κ * G := by
     dsimp [Y]
     rw [mul_pow, Real.sq_sqrt hκ.le, Real.sq_sqrt hGnonneg]
   have hYbound : Y ≤ A + 3 * B := by
     by_contra hnot
-    have hlt : A + 3 * B < Y := by linarith
+    have hlt : A + 3 * B < Y := lt_of_not_ge hnot
     have hnonneg : 0 ≤ A + 3 * B := by positivity
     have hsq : (A + 3 * B) ^ 2 < Y ^ 2 := by
-      have hpos : 0 < Y + (A + 3 * B) := by linarith
-      have := mul_pos (by linarith : 0 < Y - (A + 3 * B)) hpos
-      nlinarith
+      exact (sq_lt_sq₀ hnonneg (hnonneg.trans hlt.le)).2 hlt
     have hA2 : A ^ 2 = S₀ := by
       dsimp [A]
       exact Real.sq_sqrt hS₀nonneg
     have hYboundSq : Y ^ 2 ≤ A ^ 2 + 8 * B ^ 2 := by
       rw [hYsq, hA2]
       exact hGbound
-    nlinarith [sq_nonneg B]
+    nlinarith only [hsq, hYboundSq, sq_nonneg B,
+      mul_nonneg (Real.sqrt_nonneg S₀) hBnonneg]
   have hlevelBound : X + Y ≤ 8 * (A + B) := by
     have hA_nonneg : 0 ≤ A := Real.sqrt_nonneg _
     have hsum := add_le_add hXbound hYbound
-    nlinarith
+    linarith only [hsum, hBnonneg, hA_nonneg]
   have hfinal := calc
       X + Y ≤ 8 * (A + B) := hlevelBound
       _ ≤ 8 * (N * ((w.length.factorial : ℝ) / R ^ w.length) + B) := by

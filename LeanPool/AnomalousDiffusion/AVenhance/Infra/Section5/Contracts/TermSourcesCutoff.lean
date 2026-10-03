@@ -154,7 +154,8 @@ theorem cutoff1Source_contract (β C₀ A : ℝ) (hA : 0 ≤ A) :
       _ ≤ _ := by
           have : 0 ≤ Real.sqrt K * Real.sqrt κm * Real.sqrt κp * (2 * (M * x ^ delta β)) := by
             positivity
-          nlinarith [mul_le_mul_of_nonneg_right hCxi this, Real.pi_pos]
+          exact mul_le_mul_of_nonneg_right
+            (mul_le_mul_of_nonneg_left hCxi (by positivity : 0 ≤ 64 * Real.pi)) this
   have hsp : 0 < Real.sqrt κp := Real.sqrt_pos.2 hκp'
   have hpi : 0 < Real.pi := Real.pi_pos
   calc (2 * Real.pi)⁻¹ * P * Real.sqrt (spaceTimeGradNormSq
