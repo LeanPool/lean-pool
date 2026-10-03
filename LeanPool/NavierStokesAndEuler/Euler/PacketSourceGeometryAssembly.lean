@@ -414,12 +414,13 @@ theorem neighbor_components :
   have ht := A.terminalBound_nonneg
   have hc := historyLabelDifferenceCost_nonneg H
   have hn := norm_nonneg (D.M.derivative.field)
-  have hr : 0 ≤ 3*‖D.normal.derivative.field‖/(P.rayScale hτ hτT*P.epsilon) := by positivity
-  have hv : 0 ≤ 2*historyLabelDifferenceCost H*P.terminalBound A.CM A.CH/P.epsilon := by positivity
+  have hr : 0 ≤ 3*‖D.normal.derivative.field‖/(P.rayScale hτ hτT*P.epsilon) :=
+    div_nonneg (mul_nonneg zero_le_three (norm_nonneg _)) (mul_pos hs he).le
+  have hv : 0 ≤ 2*historyLabelDifferenceCost H*P.terminalBound A.CM A.CH/P.epsilon :=
+    div_nonneg (mul_nonneg (mul_nonneg zero_le_two hc) ht) he.le
   unfold ParentFrame.neighborCost
-  constructor
-  · linarith only [hr,hv]
-  constructor <;> linarith only [hn,hr,hv]
+  exact ⟨by linear_combination hr + hv, by linear_combination hn + hv,
+    by linear_combination hn + hr⟩
 
 omit [CompleteSpace U] in
 theorem radius_cost_le_error : P.neighborCost hτ hτT H A.CM A.CH*A.radius ≤

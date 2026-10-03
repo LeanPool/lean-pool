@@ -57,8 +57,7 @@ theorem scalar_angle (t : Icc (0 : ℝ) D.T) (x : Space) (θ : ℝ) :
     rw [hforce]
     simp only [inner_zero_right,zero_sub,EulerPacketForwardPrimary.vector,
       Forcing.vector,Data.clamp_coe,G]
-  convert! hp.congr_deriv hn using 1
-  funext s
+  refine (hp.congr_deriv hn).congr_of_eventuallyEq (Filter.Eventually.of_forall fun s => ?_)
   simp only [EulerPacketForwardPrimary.scalar,Forcing.scalar,Data.clamp_coe,G]
 
 theorem vector_homogeneous_time (t : Icc (0 : ℝ) D.T) (x : Space) (θ : ℝ) :

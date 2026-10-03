@@ -76,11 +76,8 @@ generator. -/
 theorem mixedCoefficient_contDiff :
     ContDiff ℝ ∞ (fun a : LiftTangent => liftedOperatorPath period S hS T (translateCoefficientPath
         B a.1)) :=
-  (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := ∞)
-    (E := C(Icc (0 : ℝ) T,Space →ᵇ V →L[ℝ] V))
-    (F := C(Icc (0 : ℝ) T,Supported period V S hS →L[ℝ] Supported period V S hS))
-    (liftedOperatorPathMap period S hS T)).comp
-      (hB.comp (ContinuousLinearMap.fst ℝ Space ℝ).contDiff)
+  (hB.comp (ContinuousLinearMap.fst ℝ Space ℝ).contDiff).continuousLinearMap_comp
+    (liftedOperatorPathMap (V := V) period S hS T)
 
 include hB in
 /-- All actual mixed coefficient derivatives retain the real bounded-field derivative bound. -/

@@ -83,13 +83,17 @@ theorem velocityDerivative_weight_eq :
       (normalizedCoordinates P T hT S hS Q Q₁ c hc hQ g hg f a₀) g))
 
 theorem normalized_full_velocityDerivative_eq :
-    normalize (K := Icc (0 : ℝ) T) (E := CylinderL2 P E) g hg
+    EulerContinuousTimeWeight.normalize (K := Icc (0 : ℝ) T) (E := CylinderL2 P E) g hg
         (includePath (K := Icc (0 : ℝ) T) (V := E) P S hS
           (velocityDerivative P S hS T hT Q Q₁ c hc hQ
             (weight (K := Icc (0 : ℝ) T) (E := Supported P E S hS) g f) a₀)) =
       includePath (K := Icc (0 : ℝ) T) (V := E) P S hS
-        (normalizedVelocityDerivative P S hS T hT Q Q₁ c hc hQ f a₀ g hg) := by
-  rw [velocityDerivative_weight_eq,include_weight,normalize_weight]
+        (normalizedVelocityDerivative P S hS T hT Q Q₁ c hc hQ f a₀ g hg) :=
+  (congrArg (fun u => EulerContinuousTimeWeight.normalize (K := Icc (0 : ℝ) T)
+      (E := CylinderL2 P E) g hg (includePath (K := Icc (0 : ℝ) T) (V := E) P S hS u))
+    (velocityDerivative_weight_eq P S hS T hT Q Q₁ c hc hQ f a₀ g hg)).trans
+    (normalize_weight g hg (includePath (K := Icc (0 : ℝ) T) (V := E) P S hS
+      (normalizedVelocityDerivative P S hS T hT Q Q₁ c hc hQ f a₀ g hg)))
 
 end EulerSourceCylinderEquation
 
@@ -173,10 +177,11 @@ theorem coordinate_forward_block_bound (n : ℕ) :
     block directions q (fun a : LiftTangent => pathTranslate (K := Icc (0 : ℝ) T) (V := U) P a
       (includePath (K := Icc (0 : ℝ) T) (V := U) P S hS
         (normalizedCoordinates P T hT S hS Q Q₁ c hc hQ g hg f a₀))) n 0 ≤ majorant R (d+1) n := by
-  obtain ⟨hi,-⟩ := EulerTransverseForwardCoefficientGevrey.inverseRadius_bounds c C₀ Rc Ri hc hRc
-      hRi
+  have hi := (EulerTransverseForwardCoefficientGevrey.inverseRadius_bounds c C₀ Rc Ri hc hRc
+      hRi).1
   have hcost : 0 ≤ forcingCost ι q Ri C₀ := mul_nonneg (by norm_num)
-    (sobolevCoefficientAmplitude_nonneg q (4*Ri) (3*Ri*C₀) (by positivity) (by positivity))
+    (sobolevCoefficientAmplitude_nonneg q (4*Ri) (3*Ri*C₀) (mul_nonneg zero_le_four hi)
+      (mul_nonneg (mul_nonneg zero_le_three hi) hC₀))
   exact source_forward_block_bound P directions hd q T hT Q Q₁ c hc hQ Ω S hΩ hS hSc hΩo hsub hΩball
     g hg hg₀ (projectedForcing P S hS Q c hc hQ f) a₀
     (projectedForcing_contDiff P S hS Q c hc hQ f hf) ha₀
@@ -205,7 +210,7 @@ theorem derivative_forward_block_bound (hRone : 1 ≤ R) (n : ℕ) :
     (normalizedCoordinates P T hT S hS Q Q₁ c hc hQ g hg f a₀) directions hd q hf
     (normalizedCoordinates_contDiff P T hT S hS Q Q₁ c hc hQ g hg f a₀ hSc hf ha₀)
     Rc C₀ C₁ Ri R D 1 hRc hC₀ hC₁ hD zero_le_one hRi hRforcing hbQ hbQ₁
-    (d+1) hforce' (fun j => by simpa only [one_mul] using hub j) n
+    (d+1) hforce' (fun j => (hub j).trans_eq (one_mul _).symm) n
 
 end EulerSourceCylinderForwardSobolev
 

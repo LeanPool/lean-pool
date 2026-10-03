@@ -185,11 +185,12 @@ theorem glue_ordinary_mild {q : ℕ} (ν : ℝ) (hν : 0 ≤ ν) (a b : ℝ) (ha
     have hrestart := inhomogeneous_restart_shifted period ν hν (a+b) (add_nonneg ha hb) f u₀ a r ha
         hr.1
     have hs := shifted_source_integral period ν a b (a+b) hb (add_nonneg ha hb) f f2 r hr hF2
-    rw [← hua,hs,htval] at hrestart
     calc
       _ = extendPath b hb v r := glueFunction_right a b ha hb u v hmatch t.val hat
       _ = v ⟨r,hr⟩ := congrArg v (projIcc_of_mem hb hr)
       _ = heatFlow period q ν r (u ⟨a,ha,le_rfl⟩)+duhamel period ν b hb f2 r := hsolv _
-      _ = _ := hrestart.symm
+      _ = _ := (congrArg₂ (· + ·) (congrArg (heatFlow period q ν r) hua) hs.symm).trans
+        (hrestart.symm.trans (congrArg (fun s => heatFlow period q ν s u₀ +
+          duhamel period ν (a+b) (add_nonneg ha hb) f s) htval))
 
 end EulerDuhamelPasting

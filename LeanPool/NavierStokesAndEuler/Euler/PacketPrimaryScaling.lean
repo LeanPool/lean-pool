@@ -86,7 +86,7 @@ theorem fullWave_physical_hasFDerivAt (α k : ℝ) (hk : k ≠ 0)
         (D.normal.field t 0)) (X 0) := by
   have he : (Y ∘ X) = id := funext hleft
   have hdY := EulerLagrangian.derivative_pullback_inverse Y X (D.deformationEquiv t 0) 0 hX hY
-  rw [he,fderiv_id,id_comp] at hdY
+  simp only [he, fderiv_id, id_comp] at hdY
   have hy : HasFDerivAt Y (D.deformationEquiv t 0).symm.toContinuousLinearMap (X 0) :=
     hdY ▸ hY.hasFDerivAt
   have hp : HasFDerivAt (fullWave τ hτ hτT B δ hδ ξ hs α k t)
@@ -94,7 +94,7 @@ theorem fullWave_physical_hasFDerivAt (α k : ℝ) (hk : k ≠ 0)
         (envelopedVelocity τ hτ hτT B δ hδ ξ hs t 0) D.m₀) (Y (X 0)) := by
     rw [hleft]
     exact fullWave_hasFDerivAt τ hτ hτT B δ hδ ξ hs α k hk t
-  convert! hp.comp (X 0) hy using 1
+  refine (hp.comp (X 0) hy).congr_fderiv (Eq.symm ?_)
   apply ContinuousLinearMap.ext
   intro v
   simp only [smul_apply,comp_apply,rankOne_apply]

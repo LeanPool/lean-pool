@@ -269,13 +269,7 @@ theorem gradient_continuous (U : Evolution T hT) (x : Space) :
       (Space →ᵇ (Space →L[ℝ] Space)) →L[ℝ] (Space →L[ℝ] Space)).continuous.comp
     (continuous_finiteField (fun t => (U.velocity t).derivative)
       (continuous_jetLp_derivative U.velocity U.velocity_continuous))
-  have he : (fun t => fderiv ℝ (U.velocity t).field x) =
-      fun t => (BoundedContinuousFunction.evalCLM ℝ x)
-        (finiteField ((U.velocity t).derivative)) := by
-    funext t
-    exact (finiteField_apply ((U.velocity t).derivative) x).symm
-  rw [he]
-  exact h
+  exact h.congr fun t => finiteField_apply ((U.velocity t).derivative) x
 
 theorem eventually_h3_bound (U : Evolution T hT) (V : ℕ → Evolution T hT)
     (ε : ℕ → ℝ) (hε : ∀ n, 0 < ε n) (hlim : Tendsto ε atTop (𝓝 0))

@@ -102,8 +102,7 @@ theorem coordinate_equation (f : C(Icc (0 : ℝ) T, E)) (a₀ : V) (t : Icc (0 :
       (adjoint (𝕜 := ℝ) (E := V) (F := E) (Q t)
         (Q₁ t (coordinates T hT Q Q₁ c hc hQ U f a₀ t))) +
       gramInverse (Q t) c hc (hQ t) (adjoint (𝕜 := ℝ) (E := V) (F := E) (Q t) (f t))) = _
-  rw [map_add, map_smul, gram_inverse_apply, gram_inverse_apply, map_sub, map_smul]
-  module
+  simp only [neg_smul, map_smul, gram_inverse_apply, map_sub, neg_add_eq_sub]
 
 /-- Physical velocity is tangent at every time because it lies in the frame range. -/
 theorem velocity_tangent (m : Icc (0 : ℝ) T → E)

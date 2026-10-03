@@ -49,6 +49,8 @@ theorem norm_jetLp_le_wordSum (A : SmoothL2Field Space) (n : ℕ) :
     rw [show H w = fun x => ‖wordDerivative direction A.field w x‖ from rfl,
       eLpNorm_norm _ (hm w).aestronglyMeasurable]
     rw [← eLpNorm_congr_ae (ha w),Lp.norm_def]
+  have : SecondCountableTopologyEither Space (Space [×n]→L[ℝ] Space) :=
+    secondCountableTopologyEither_of_left _ _
   have hb := (finite_domination volume (univ : Finset (Fin n → Fin 3)) (iteratedFDeriv ℝ n A.field)
     ((A.smooth.continuous_iteratedFDeriv (m := n) (by simp)).aestronglyMeasurable)
     H (fun w _ => (hm w).norm) (fun x => tensor_le_wordSum A.field n x)).2

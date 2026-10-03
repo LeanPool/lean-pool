@@ -94,10 +94,7 @@ theorem operator_intertwines (a : Space) (S Ω : Set Space) (hS : MeasurableSet 
     translation_ae a (u : L2Space V), translation_ae a (full volume A (u : L2Space V)),
     (measurePreserving_add_right (volume : Measure Space) a).quasiMeasurePreserving.ae
       (full_ae volume A (u : L2Space V))] with x hl hu hr ha
-  change (full volume (translatedField A a) (translation (V := V) a (u : L2Space V))) x =
-    (translation (V := V) a (full volume A (u : L2Space V))) x
-  rw [hl, hu, hr, ha]
-  rfl
+  exact hl.trans ((congrArg (translatedField A a x) hu).trans (ha.symm.trans hr.symm))
 
 /-- Compactly supported data have a qualitative translation neighborhood
 inside any prescribed larger open support region. -/

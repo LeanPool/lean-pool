@@ -162,8 +162,8 @@ theorem velocity_test_pairing_hasDerivAt
       hud.hasFDerivAt.comp_hasDerivAt (F := ℝ × ℝ³) r
         ((hasDerivAt_id r).prodMk (hasDerivAt_const r x))
   let J : Set ℝ := Icc (t₀ / 2) (t₀ + 1)
-  have hJ : J ∈ 𝓝 t₀ := Icc_mem_nhds (by linarith) (by linarith)
-  have hJpos : ∀ r ∈ J, 0 < r := by intro r hr; dsimp [J] at hr; linarith [hr.1]
+  have hJ : J ∈ 𝓝 t₀ := Icc_mem_nhds (half_lt_self ht₀) (lt_add_one t₀)
+  have hJpos : ∀ r ∈ J, 0 < r := fun r hr => (half_pos ht₀).trans_le hr.1
   let F : ℝ → ℝ³ → ℝ := fun r x => inner ℝ (φ x) (v x r)
   let G : ℝ → ℝ³ → ℝ := fun r x => inner ℝ (φ x) (C r x)
   have hG : ContinuousOn (Function.uncurry G) (J ×ˢ tsupport φ) := by

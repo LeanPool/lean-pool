@@ -173,11 +173,12 @@ theorem radialAverage_radial_identity
     have hspace := ((hu.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
         not_false_eq_true])) (t • x)).hasFDerivAt.comp_hasDerivAt
       (f := fun y => id y • x) t ((hasDerivAt_id t).smul_const x)
-    convert! ((hasDerivAt_id t).pow 2).smul hspace using 1
+    refine (((hasDerivAt_id t).pow 2).smul hspace).congr_deriv ?_
     simp only [Pi.pow_apply, id_eq, one_smul, Nat.cast_ofNat, Nat.add_one_sub_one, pow_one, mul_one,
         Function.comp_apply, add_comm]
-  have hv2 : Continuous (fun t : ℝ => (2 * t) • u (t • x)) := by
-    fun_prop
+  have hv2 : Continuous (fun t : ℝ => (2 * t) • u (t • x)) :=
+    (continuous_const.mul continuous_id).smul
+      (hu.continuous.comp (continuous_id.smul continuous_const))
   have hd2 : Continuous (fun t : ℝ => t ^ 2 • fderiv ℝ u (t • x) x) := by
     simpa only [smul_apply] using hd
   have hcont : Continuous (fun t : ℝ =>
@@ -377,7 +378,7 @@ theorem potentialTruncation_energy_bound
       2 * ‖u x‖ ^ 2 + 288 * C ^ 2 * ‖radialAverage u x‖ ^ 2 := by
     have hh := pow_le_pow_left₀ (norm_nonneg _) (potentialTruncation_norm_bound
       u hu hdiv χ hχ C hχbound hderiv x) 2
-    nlinarith only [hh, sq_nonneg (‖u x‖ - 12 * C * ‖radialAverage u x‖)]
+    linear_combination hh + sq_nonneg (‖u x‖ - 12 * C * ‖radialAverage u x‖)
   refine ⟨hw, ?_⟩
   calc
     (∫ x : Space, ‖potentialTruncation u χ x‖ ^ 2) ≤
@@ -388,7 +389,8 @@ theorem potentialTruncation_energy_bound
       rw [integral_add (hui.const_mul 2) (hBi.const_mul (288 * C ^ 2)),
         integral_const_mul, integral_const_mul]
     _ ≤ (2 + 1152 * C ^ 2) * (∫ x : Space, ‖u x‖ ^ 2) := by
-      nlinarith only [hBE, mul_le_mul_of_nonneg_left hBE (by positivity : 0 ≤ 288 * C ^ 2)]
+      linear_combination mul_le_mul_of_nonneg_left hBE
+        (mul_nonneg (by norm_num : (0 : ℝ) ≤ 288) (sq_nonneg C))
 
 /-- A fixed bump is dilated, so its weighted derivative bound is independent
 of the truncation radius. -/

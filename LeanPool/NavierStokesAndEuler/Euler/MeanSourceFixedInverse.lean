@@ -120,8 +120,8 @@ theorem sourceCoordinateSolver_eq_mean
       (sourceMeanSolver T hT ℓ hℓ M0.field M0.field.continuous.aestronglyMeasurable
         ‖M0.field‖₊ M0.field.norm_coe_le_norm Be Bc L r hBe hBc hL hr hrquarter hext hcore
         FInv (operatorPath T H.field) K hK hF0 (operatorPath_quadratic_upper T H.field K hH) hsmall
-            f) :=
-  fixedMeanSolver_eq_mean T hT (operatorPath T F.field) (operatorPath T F₁.field)
+            f) := by
+  apply fixedMeanSolver_eq_mean T hT (operatorPath T F.field) (operatorPath T F₁.field)
     (operatorPath T H.field) (multiplier M0.field) (boundaryOperator (scaledCutoff ℓ hℓ)) L
     FInv hInv hF K (effectiveNegativeBound Be Bc r) hK
     (effectiveNegativeBound_nonneg Be Bc r hBe hBc hr) hF0

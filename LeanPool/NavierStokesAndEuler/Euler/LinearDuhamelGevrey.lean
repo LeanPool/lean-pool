@@ -155,13 +155,11 @@ theorem weightedSolution_contDiff {n : ℕ∞ω} (hB : ContDiff ℝ n B)
     ContDiff ℝ n (fun x => (U x).weightedSolution g hg (f x) (a₀ x)) := by
   have hw : ContDiff ℝ n (fun x => weight (E := E) g (f x)) := by
     change ContDiff ℝ n ((weight (E := E) g) ∘ f)
-    exact (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := n)
-      (E := C(Icc (0 : ℝ) T,E)) (F := C(Icc (0 : ℝ) T,E)) (weight g)).comp hf
+    exact (weight (E := E) g).contDiff.comp hf
   have hs := solution_contDiff T hT B U (fun x => weight (E := E) g (f x)) a₀ hB hw ha₀
   change ContDiff ℝ n ((normalize (E := E) g hg) ∘
     (fun x => (U x).solution (weight (E := E) g (f x)) (a₀ x)))
-  exact (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := n)
-    (E := C(Icc (0 : ℝ) T,E)) (F := C(Icc (0 : ℝ) T,E)) (normalize g hg)).comp hs
+  exact (normalize (E := E) g hg).contDiff.comp hs
 
 /-- The exact differentiated ODE yields a triangular estimate in the fixed
 profile norm, with the same homogeneous and Green operators at every order. -/
@@ -190,7 +188,9 @@ theorem weightedSolution_derivative_recurrence
     ((U x).weightedInitial g hg) ((U x).weightedForcing g hg) hfreeze n
   exact hr.trans (add_le_add
     (mul_le_mul_of_nonneg_right ((U x).weightedInitial_norm g hg hg₀ C hC (hU x)) (norm_nonneg _))
-    (mul_le_mul_of_nonneg_right ((U x).weightedForcing_norm g hg hg₀ C hC (hU x)) (by positivity)))
+    (mul_le_mul_of_nonneg_right ((U x).weightedForcing_norm g hg hg₀ C hC (hU x))
+      (add_nonneg (norm_nonneg _) (Finset.sum_nonneg fun _ _ =>
+        mul_nonneg (mul_nonneg (Nat.cast_nonneg _) (norm_nonneg _)) (norm_nonneg _)))))
 
 /-- The fixed polynomial amplitude controlling the differentiated forward solve. -/
 def forwardCost (T C A D CB : ℝ) : ℝ := 1 + C*A + C*T*(D+CB)

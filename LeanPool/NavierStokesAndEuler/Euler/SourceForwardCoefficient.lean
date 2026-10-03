@@ -223,7 +223,7 @@ theorem gramPath_contDiff (A : P → C(K, α →ᵇ U →L[ℝ] E)) {n : ℕ∞�
     ContDiff ℝ n (fun a => gramPath (A a)) :=
   pathComposition_contDiff
     (fun a => pathAdjointMap (α := α) (K := K) (U := U) (E := E) (A a)) A
-    ((pathAdjointMap (α := α) (K := K) (U := U) (E := E)).contDiff.comp hA :) hA
+    (hA.continuousLinearMap_comp (pathAdjointMap (α := α) (K := K) (U := U) (E := E))) hA
 
 /-- The constant identity coefficient path. -/
 def identityPath : C(K, α →ᵇ U →L[ℝ] U) :=
@@ -392,7 +392,7 @@ theorem gramPath_bound (Q : P → C(K, α →ᵇ U →L[ℝ] E)) (hQ : ContDiff 
     (R C : ℝ) (hR : 0 ≤ R) (hC : 0 ≤ C)
     (hbQ : ∀ n x, ‖iteratedFDeriv ℝ n Q x‖ ≤ C * majorant R 0 n) (n : ℕ) (x : P) :
     ‖iteratedFDeriv ℝ n (fun y => gramPath (Q y)) x‖ ≤ (3*C^2)*majorant R 0 n := by
-  have hAdj := (pathAdjointMap (α := α) (K := K) (U := U) (E := E)).contDiff.comp hQ
+  have hAdj := hQ.continuousLinearMap_comp (pathAdjointMap (α := α) (K := K) (U := U) (E := E))
   have hAdjBound := contraction_bound (pathAdjointMap (α := α) (K := K) (U := U) (E := E))
     (pathAdjointMap_norm (α := α) (K := K) (U := U) (E := E)) Q hQ R C hR hC 0 hbQ
   have h := pathComposition_bound
@@ -607,7 +607,7 @@ theorem leftInversePath_contDiff (c : ℝ) (hc : 0 < c) (Q : P → C(K, α →�
     (hQ : ∀ y t x v, c * ‖v‖ ^ 2 ≤ ‖Q y t x v‖ ^ 2) {n : ℕ∞ω} (hQr : ContDiff ℝ n Q) :
     ContDiff ℝ n (fun y => leftInversePath c hc (Q y) (hQ y)) :=
   (pathComposition_contDiff _ _ (inversePath_contDiff c hc Q hQ hQr)
-    ((pathAdjointMap (α := α) (K := K) (U := U) (E := E)).contDiff.comp hQr) :)
+    (hQr.continuousLinearMap_comp (pathAdjointMap (α := α) (K := K) (U := U) (E := E))) :)
 
 /-- Genuine parameter regularity of the actual source generator. -/
 theorem generatorPath_contDiff (c : ℝ) (hc : 0 < c) (Q Q₁ : P → C(K, α →ᵇ U →L[ℝ] E))
@@ -638,7 +638,8 @@ theorem leftInversePath_bound (n : ℕ) (x : P) :
   exact pathComposition_bound (fun y => inversePath c hc (Q y) (hQ y))
     (fun y => pathAdjointMap (α := α) (K := K) (U := U) (E := E) (Q y))
     (inversePath_contDiff c hc Q hQ hQr)
-    ((pathAdjointMap (α := α) (K := K) (U := U) (E := E)).contDiff.comp hQr :) (4*Ri) Ri C₀ hrad
+    (hQr.continuousLinearMap_comp (pathAdjointMap (α := α) (K := K) (U := U) (E := E)))
+    (4*Ri) Ri C₀ hrad
         hi hC₀ 0 0
     (EulerBoundedFieldGramInverse.inversePath_coefficient_bound Q c hc hQ hQr Rc C₀ hRc hC₀ hbQ Ri
         hi hRi)

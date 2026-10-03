@@ -190,7 +190,7 @@ theorem adjointMultiplier_intertwines (A : U →L[ℝ] V) (B : E →L[ℝ] F)
   apply ext_inner_right ℝ
   intro v
   have key := timeMultiplier_intertwines T hT _ _ R Q hRQ v
-  rw [← timeLift_adjoint, ← timeLift_adjoint] at key
+  simp only [← timeLift_adjoint] at key
   exact (adjoint_inner_left _ v _).trans <| (adjoint_inner_right _ f _).symm.trans <|
     (congrArg (inner ℝ f) key.symm).trans <|
       (adjoint_inner_left _ _ f).symm.trans (adjoint_inner_right _ _ v)
@@ -224,7 +224,7 @@ theorem gramSolver_intertwines (A : U →L[ℝ] V) (B : E →L[ℝ] F)
   change gramOperator T hT R (timeLift T A (gramSolver T hT Q c hc hQ f)) =
     timeLift T A (gramOperator T hT Q (coerciveInverse (gramOperator (U := U) (E := E) T hT Q) c hc
       (gramOperator_coercive T hT Q c hQ) f)) at he
-  rw [operator_inverse_apply] at he
+  simp only [operator_inverse_apply] at he
   have hi := inverse_operator_apply (gramOperator (U := V) (E := F) T hT R) d hd
     (gramOperator_coercive T hT R d hR) (timeLift T A (gramSolver T hT Q c hc hQ f))
   rw [he] at hi
@@ -365,8 +365,12 @@ theorem acceleration_intertwines (A : U →L[ℝ] V) (B : E →L[ℝ] F)
         (adjoint (𝕜 := ℝ) (E := V) (F := F) R (B f-(2 : ℝ) • R₁ (A v))) =
       A (gramInverse Q c hc hQ
         (adjoint (𝕜 := ℝ) (E := U) (F := E) Q (f-(2 : ℝ) • Q₁ v))) := by
-  rw [hforward₁,← map_smul,← map_sub,adjoint_intertwines A B Q R hback,
-    gramInverse_intertwines A B Q R c hc hQ d hd hR hforward hback]
+  have h : B f - (2 : ℝ) • R₁ (A v) = B (f - (2 : ℝ) • Q₁ v) := by
+    rw [hforward₁, B.map_sub, B.map_smul]
+  exact (congrArg (fun x => gramInverse R d hd hR x)
+    ((congrArg (fun x => adjoint (𝕜 := ℝ) (E := V) (F := F) R x) h).trans
+      (adjoint_intertwines A B Q R hback _))).trans
+    (gramInverse_intertwines A B Q R c hc hQ d hd hR hforward hback _)
 
 end EulerGramNaturality
 
@@ -439,8 +443,8 @@ theorem velocityPath_intertwines (f : TimeLp T (CylinderL2 P E)) (t : Icc (0 : �
 theorem continuousVelocity_intertwines (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) (t : Icc (0 : ℝ) T) :
     G.velocityPath P (pathLp T G.time_pos.le (B.compLeftContinuous ℝ (Icc (0 : ℝ) T) f)) t =
       A (D.velocityPath P (pathLp T D.time_pos.le f) t) := by
-  rw [pathLp_timeLift]
-  exact D.velocityPath_intertwines P G A B hQ hQ₁ hback hback₁ hH _ t
+  exact (congrArg (fun z => G.velocityPath P z t) (pathLp_timeLift T G.time_pos.le B f)).trans
+    (D.velocityPath_intertwines P G A B hQ hQ₁ hback hback₁ hH _ t)
 
 theorem accelerationPath_intertwines (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) (t : Icc (0 : ℝ) T) :
     G.accelerationPath P (B.compLeftContinuous ℝ (Icc (0 : ℝ) T) f) t =
@@ -459,19 +463,17 @@ theorem accelerationPath_intertwines (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) (t
 theorem physicalVelocity_intertwines (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) (t : Icc (0 : ℝ) T) :
     G.physicalVelocity P (B.compLeftContinuous ℝ (Icc (0 : ℝ) T) f) t =
       B (D.physicalVelocity P f t) := by
-  change G.frame P t
-    (G.velocityPath P (pathLp T G.time_pos.le (B.compLeftContinuous ℝ (Icc (0 : ℝ) T) f)) t) = _
-  simp only [continuousVelocity_intertwines P D G A B hQ hQ₁ hback hback₁ hH, hQ]
-  rfl
+  exact (congrArg (G.frame P t)
+    (continuousVelocity_intertwines P D G A B hQ hQ₁ hback hback₁ hH f t)).trans (hQ t _)
 
 theorem physicalDerivative_intertwines (f : C(Icc (0 : ℝ) T, CylinderL2 P E)) (t : Icc (0 : ℝ) T) :
     G.physicalDerivative P (B.compLeftContinuous ℝ (Icc (0 : ℝ) T) f) t =
       B (D.physicalDerivative P f t) := by
-  change G.frameDerivative P t
-      (G.velocityPath P (pathLp T G.time_pos.le (B.compLeftContinuous ℝ (Icc (0 : ℝ) T) f)) t) +
-    G.frame P t (G.accelerationPath P (B.compLeftContinuous ℝ (Icc (0 : ℝ) T) f) t) = _
-  simp only [continuousVelocity_intertwines P D G A B hQ hQ₁ hback hback₁ hH,
-    accelerationPath_intertwines P D G A B hQ hQ₁ hback hback₁ hH, hQ₁, hQ, ← B.map_add]
-  rfl
+  exact (congrArg₂ (· + ·)
+    ((congrArg (G.frameDerivative P t)
+      (continuousVelocity_intertwines P D G A B hQ hQ₁ hback hback₁ hH f t)).trans (hQ₁ t _))
+    ((congrArg (G.frame P t)
+      (accelerationPath_intertwines P D G A B hQ hQ₁ hback hback₁ hH f t)).trans (hQ t _))).trans
+    (B.map_add _ _).symm
 
 end EulerCylinderDirichlet.Coefficients

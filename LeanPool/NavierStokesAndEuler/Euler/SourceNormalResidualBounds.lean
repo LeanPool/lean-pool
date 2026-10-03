@@ -58,7 +58,7 @@ theorem normalResidualPath_contDiff
     ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := ℝ) period a
       (normalResidualPath period N M f v)) := by
   apply product_orbit_contDiff period N hN
-  simpa only [map_sub,map_smul] using
+  simpa only [ContinuousLinearMap.map_sub, ContinuousLinearMap.map_smul] using
     hf.sub ((product_orbit_contDiff period M hM v hv).const_smul (2 : ℝ))
 
 /-- Both multiplications and the subtraction preserve exactly the input external radius. -/
@@ -93,7 +93,8 @@ theorem normalResidualPath_block_bound
     product_orbit_block_bound period M hM directions hd q v hv Rc CM R Dv hRc hCM hDv hR hbM d hbv j
   have hres : ContDiff ℝ ∞ (fun a : LiftTangent =>
       pathTranslate (K := K) (V := E) period a (f - (2 : ℝ) • w)) := by
-    simpa only [map_sub,map_smul] using hf.sub (hw.const_smul (2 : ℝ))
+    simpa only [ContinuousLinearMap.map_sub, ContinuousLinearMap.map_smul] using
+      hf.sub (hw.const_smul (2 : ℝ))
   have hresb (j : ℕ) : block directions q (fun a : LiftTangent =>
       pathTranslate (K := K) (V := E) period a (f - (2 : ℝ) • w)) j 0 ≤
       (Df+6*sobolevCoefficientAmplitude ι q Rc CM*Dv)*majorant R d j := by
@@ -101,7 +102,7 @@ theorem normalResidualPath_block_bound
         (fun a => pathTranslate (K := K) (V := E) period a f -
           (2 : ℝ) • pathTranslate (K := K) (V := E) period a w) := by
       funext a
-      simp only [map_sub,map_smul]
+      simp only [ContinuousLinearMap.map_sub, ContinuousLinearMap.map_smul]
     rw [he]
     have hs := block_smul_le directions q (2 : ℝ)
       (fun a : LiftTangent => pathTranslate (K := K) (V := E) period a w) hw j 0
@@ -189,15 +190,15 @@ theorem sourceResidual_block_bound
     block directions q (fun a : LiftTangent =>
       pathTranslate (K := K) (V := ℝ) P a (sourceResidual P M m cm hcm hm f v)) n 0 ≤
       pressureCost ι q Ri Cm CM Df Dv*majorant R d n := by
-  obtain ⟨hi,hbase⟩ := inverseRadius_bounds cm Cm Rc Ri hcm hRc hRi
-  have hMr (j : ℕ) (a : Space) :
-      ‖iteratedFDeriv ℝ j (translateCoefficientPath M.field) a‖ ≤ CM*majorant (4*Ri) 0 j :=
+  have hb := inverseRadius_bounds cm Cm Rc Ri hcm hRc hRi
+  have hMr := fun (j : ℕ) (a : Space) =>
     (M.norm_iteratedFDeriv_translation_le j _ (mul_nonneg hCM (majorant_nonneg Rc hRc 0 j)) (hbM j)
         a).trans
-      (mul_le_mul_of_nonneg_left (majorant_radius_mono Rc (4*Ri) hRc hbase 0 j) hCM)
+      (mul_le_mul_of_nonneg_left (majorant_radius_mono Rc (4*Ri) hRc hb.2 0 j) hCM)
+  have h4 : 0 ≤ 4*Ri := mul_nonneg (by norm_num) hb.1
   exact normalResidualPath_block_bound P (normalFunctional m cm hcm hm) M.field f v directions hd q
     (normalFunctional_translation_contDiff m cm hcm hm) M.translation_contDiff hf hv
-    (4*Ri) (3*Ri*Cm) CM R Df Dv (by positivity) (by positivity) hCM hDf hDv hR
+    (4*Ri) (3*Ri*Cm) CM R Df Dv h4 (mul_nonneg (mul_nonneg (by norm_num) hb.1) hCm) hCM hDf hDv hR
     (normalFunctional_translation_bound m cm hcm hm Rc Cm Ri hRc hCm hRi hbm) hMr d hbf hbv n
 
 /-- The actual normalized angular pressure costs only the period, and preserves

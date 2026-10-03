@@ -246,8 +246,14 @@ theorem historySizeRatio_envelope :
     ring
   rw [hEq]
   unfold envelope formula
-  gcongr
-  all_goals positivity [A.CH_nonneg]
+  have ha : 0 ≤ 8*(5+64*A.CM^2+2*A.CH) :=
+    mul_nonneg (by norm_num) (add_nonneg (add_nonneg (by norm_num)
+      (mul_nonneg (by norm_num) (sq_nonneg _))) (mul_nonneg (by norm_num) A.CH_nonneg))
+  have hb := mul_nonneg ha (sq_nonneg (1+3*frameAmplitude L.K^2))
+  have h₁ := mul_le_mul (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ hInv0 hInv 2) ha)
+    hRay hRay0 hb
+  exact mul_le_mul_of_nonneg_right (mul_le_mul h₁ hHist hHist0
+    (mul_nonneg hb (add_nonneg zero_le_one hf0))) hHi
 
 theorem historySizeRatio_polynomial :
     A.historySizeCost/(P.rayScale hτ hτT) ≤

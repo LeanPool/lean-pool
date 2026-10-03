@@ -125,9 +125,7 @@ omit [CompactSpace K] in
     curlCoefficientPath (K := K) i G t y = curlCoefficient i (G t y) := rfl
 
 theorem curlCoefficientPath_norm (i : Fin 3) : ‖curlCoefficientPath (K := K) i‖ ≤ 1 := by
-  apply opNorm_le_bound _ zero_le_one
-  intro G
-  rw [one_mul]
+  refine opNorm_le_bound _ zero_le_one fun G => le_of_le_of_eq ?_ (one_mul ‖G‖).symm
   apply (ContinuousMap.norm_le _ (norm_nonneg G)).mpr
   intro t
   apply (BoundedContinuousFunction.norm_le (norm_nonneg G)).mpr

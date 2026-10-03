@@ -413,9 +413,10 @@ theorem weightedSolution_block_gevrey_at
   let CF := forwardSobolevAmplitude ι q T C CB Rc
   let DF := C*A+C*T*D
   let M := forwardSobolevCost ι q T C A D CB Rc
-  have hfrozen : 0 ≤ frozenAmplitude T C CB := by unfold frozenAmplitude; positivity
+  have hfrozen : 0 ≤ frozenAmplitude T C CB :=
+    add_nonneg zero_le_one (mul_nonneg (mul_nonneg (mul_nonneg zero_le_two hC) hT) hCB)
   have hCF : 0 ≤ CF := sobolevCoefficientAmplitude_nonneg q Rc (frozenAmplitude T C CB) hRc hfrozen
-  have hDF : 0 ≤ DF := by dsimp [DF]; positivity
+  have hDF : 0 ≤ DF := add_nonneg (mul_nonneg hC hA) (mul_nonneg (mul_nonneg hC hT) hD)
   have hcost : 0 ≤ sobolevInverseCost 1 CF q := sobolevInverseCost_nonneg 1 CF zero_le_one hCF q
   have hMeq : M = 1+sobolevInverseCost 1 CF q*(CF+DF) := by
     dsimp only [M, forwardSobolevCost, CF, DF]

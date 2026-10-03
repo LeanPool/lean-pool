@@ -56,8 +56,8 @@ theorem forcing_contDiff (T : ℝ) (hT : 0 ≤ T)
     (hQ : ContDiff ℝ n Q) (hQ₁ : ContDiff ℝ n Q₁)
     (hf : ContDiff ℝ n f) (hv : ContDiff ℝ n v) :
     ContDiff ℝ n (forcing T hT Q Q₁ f v) :=
-  ((realAdjoint (U := TimeLp T U) (E := TimeLp T E)).contDiff.comp
-    (contDiff_timeMultiplier T hT Q hQ)).clm_apply
+  ((contDiff_timeMultiplier T hT Q hQ).continuousLinearMap_comp
+    (realAdjoint (U := TimeLp T U) (E := TimeLp T E))).clm_apply
     (hf.sub (((contDiff_timeMultiplier T hT Q₁ hQ₁).clm_apply hv).const_smul (2 : ℝ)))
 
 /-- One fixed polynomial amplitude controls all genuine forcing derivatives. -/
@@ -91,8 +91,8 @@ theorem forcing_bound (T : ℝ) (hT : 0 ≤ T)
   have hr : ContDiff ℝ ∞ r := hf.sub (hw.const_smul (2 : ℝ))
   have hbr := sub_bound f (fun y => (2 : ℝ) • w y) hf (hw.const_smul (2 : ℝ))
     R F (6*C₁*V) d hbf hb2w
-  have hAdj := (realAdjoint (U := TimeLp T U) (E := TimeLp T E)).contDiff.comp
-    (contDiff_timeMultiplier T hT Q hQ)
+  have hAdj := (contDiff_timeMultiplier T hT Q hQ).continuousLinearMap_comp
+    (realAdjoint (U := TimeLp T U) (E := TimeLp T E))
   have h := clm_apply_bound
     (fun y => adjoint (𝕜 := ℝ) (E := TimeLp T U) (F := TimeLp T E) (timeMultiplier T hT (Q y)))
     r hAdj hr R C₀ (F+6*C₁*V)

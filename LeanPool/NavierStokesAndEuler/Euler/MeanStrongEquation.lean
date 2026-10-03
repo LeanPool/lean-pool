@@ -75,17 +75,12 @@ theorem initial_momentum_cancellation (F₀ F₁ M0 A : L2 →L[ℝ] L2) (L : �
         ((M0 + L • A) (z : L2))) :
     (v : L2) = L • A (z : L2) := by
   subst F₀ F₁
-  have hm' : v + solenoidalSpace.orthogonalProjectionOnto (M0 (z : L2)) =
-      solenoidalSpace.orthogonalProjectionOnto ((M0+L • A) (z : L2)) := by
-    simpa only [id_comp, gram, Submodule.adjoint_subtypeL, comp_apply,
-      Submodule.subtypeL_apply, Submodule.orthogonalProjectionOnto_mem_subspace_eq_self] using hm
-  simp only [add_apply, smul_apply, map_add, map_smul] at hm'
-  have hv : v = L • solenoidalSpace.orthogonalProjectionOnto (A (z : L2)) := by
-    apply add_left_cancel (a := solenoidalSpace.orthogonalProjectionOnto (M0 (z : L2)))
-    exact (add_comm _ _).trans hm'
-  have hproj : (solenoidalSpace.orthogonalProjectionOnto (A (z : L2)) : L2) = A (z : L2) :=
-    congrArg (fun w : solenoidalSpace => (w : L2))
-      (solenoidalSpace.orthogonalProjectionOnto_mem_subspace_eq_self ⟨A (z : L2), hAz⟩)
+  simp only [id_comp, gram, Submodule.adjoint_subtypeL, comp_apply, Submodule.subtypeL_apply,
+    Submodule.orthogonalProjectionOnto_mem_subspace_eq_self, add_apply, smul_apply, map_add,
+    map_smul] at hm
+  have hv := add_left_cancel ((add_comm _ _).symm.trans hm)
+  have hproj := congrArg (fun w : solenoidalSpace => (w : L2))
+    (solenoidalSpace.orthogonalProjectionOnto_mem_subspace_eq_self ⟨A (z : L2), hAz⟩)
   have he := congrArg (fun w : solenoidalSpace => (w : L2)) hv
   change (v : L2) = L • (solenoidalSpace.orthogonalProjectionOnto (A (z : L2)) : L2) at he
   exact he.trans (congrArg (fun x : L2 => L • x) hproj)

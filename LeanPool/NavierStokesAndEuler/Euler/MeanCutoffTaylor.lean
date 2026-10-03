@@ -42,12 +42,10 @@ theorem norm_linearization_remainder_le {E : Type*} [NormedAddCommGroup E] [Norm
     (f : Space → E) (hf : ContDiff ℝ ∞ f) (M : ℝ) (hM : 0 ≤ M)
     (hD₂ : ∀ x, ‖fderiv ℝ (fderiv ℝ f) x‖ ≤ M) (x v : Space) :
     ‖f (x+v) - f x - fderiv ℝ f x v‖ ≤ M * ‖v‖ ^ 2 := by
-  have hdf : Differentiable ℝ (fderiv ℝ f) :=
-    (hf.fderiv_right (m := ∞) (by simp)).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true])
-  have hdifference (y : Space) : ‖fderiv ℝ f y - fderiv ℝ f x‖ ≤ M * ‖y-x‖ :=
-    Convex.norm_image_sub_le_of_norm_fderiv_le
-      (𝕜 := ℝ) (s := Set.univ) (fun z _ => hdf z) (fun z _ => hD₂ z)
+  have hdf := (hf.fderiv_right (m := ∞) (by simp)).differentiable (by
+    simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have hdifference (y : Space) := Convex.norm_image_sub_le_of_norm_fderiv_le
+      (𝕜 := ℝ) (f := fderiv ℝ f) (s := Set.univ) (fun z _ => hdf z) (fun z _ => hD₂ z)
       (convex_univ : Convex ℝ (Set.univ : Set Space)) (Set.mem_univ x) (Set.mem_univ y)
   have hbound (y : Space) (hy : y ∈ Metric.closedBall x ‖v‖) :
       ‖fderiv ℝ f y - fderiv ℝ f x‖ ≤ M * ‖v‖ := by

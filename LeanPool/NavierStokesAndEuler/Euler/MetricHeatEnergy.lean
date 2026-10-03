@@ -70,7 +70,6 @@ theorem metric_product_hasDerivAt (K : SmoothCoefficient period) (a : LiftTangen
     funext t
     exact (coefficientOperator_translation period (translationPath period a t) K.coefficient
       K.measurable K.bound K.norm_bound f).symm
-  rw [hcov] at hprod
   have hop0 : coefficientOperator
       (translatedCoefficient period (translationPath period a 0) K.coefficient)
       (translatedCoefficient_measurable period (translationPath period a 0) K.coefficient
@@ -87,10 +86,11 @@ theorem metric_product_hasDerivAt (K : SmoothCoefficient period) (a : LiftTangen
       K.operator_ae u] with x hx hy
     rw [hx, hy]
     simp only [translatedCoefficient, translationPath_zero, add_zero]
-  rw [hop0] at hprod
-  simp only [translationPath_zero, translation_zero] at hprod
-  convert hprod using 1
-  first | rfl | exact add_comm _ _
+  rw [← hcov]
+  refine hprod.congr_deriv ?_
+  rw [hop0]
+  simp only [translationPath_zero, translation_zero]
+  exact add_comm _ _
 
 /-- Exact metric integration by parts for one genuine second translation derivative. -/
 theorem metric_second_derivative_identity (K : SmoothCoefficient period) (a : LiftTangent)

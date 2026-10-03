@@ -92,7 +92,7 @@ theorem translatedMeanInverse_covariance (a : Space) (g : TimeLp T solenoidalSpa
     (coerciveInverse (fixedMeanOperator T hT F F₁ H M0 A L) c hc hcoercive g)).trans
     (congrArg (timeSolenoidalTranslation T a)
       (operator_inverse_apply (fixedMeanOperator T hT F F₁ H M0 A L) c hc hcoercive g))
-  exact hl.trans hr.symm
+  exact (hl.trans hr.symm :)
 
 /-- The translated actual solve is the spatial orbit of the original solve. -/
 theorem translatedMeanSolver_covariance (a : Space) (f : TimeLp T L2) :

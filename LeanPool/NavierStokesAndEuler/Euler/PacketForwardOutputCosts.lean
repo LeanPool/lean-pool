@@ -102,23 +102,15 @@ theorem forwardInitializedVelocity_global_gradient_error (N : ℕ) (hN : 1 ≤ N
     simpa only [norm_iteratedFDeriv_zero, majorant, add_zero, pow_zero, Nat.factorial_zero,
         Nat.cast_one, one_pow, mul_one] using NB.inverse_bound 0 t (Y x)
   have hprimary := EulerPacketForwardShear.global_gradient_bound D δ hδ ξ hs α k hk0
-    (4*L.R) (fixedVelocityGradeCost L.R S.H0 1) NB.C (by positivity) hc0 NB.C_nonneg
+    (4*L.R) (fixedVelocityGradeCost L.R S.H0 1) NB.C (mul_nonneg (by norm_num) hr0) hc0
+    NB.C_nonneg
     (forwardInitializedPrimary_global_bound M D hTime δ hδ ξ hs α
       L NB W LM WM BC hRc hcost hδ1 hα hR WP S hgrowth) t Y x hY hinv
   have htail := forwardInitializedPrimaryRemainder_physical_fderiv_inv M D hTime δ hδ ξ hs α
     L NB W LM WM BC hRc hcost hδ1 hα hR WP S hgrowth N hN k hk hbase t Y x hY.differentiableAt
   rw [hY.fderiv] at htail
-  have htail' : ‖fderiv ℝ (fun y => forwardInitializedPrimaryRemainder M D δ hδ ξ hs α N k⁻¹
-      (t,(Y y,k*⟪D.m₀,Y y⟫_ℝ))) x‖ ≤ |forwardInitializedRemainderDerivativeCost L.R S.H0| *NB.C/k
-          := by
-    apply htail.trans
-    calc
-      _ ≤ (|forwardInitializedRemainderDerivativeCost L.R S.H0|/k)*‖D.FInv.field t (Y x)‖ :=
-        mul_le_mul_of_nonneg_right (div_le_div_of_nonneg_right (le_abs_self _) hk0.le) (norm_nonneg
-            _)
-      _ ≤ (|forwardInitializedRemainderDerivativeCost L.R S.H0|/k)*NB.C :=
-        mul_le_mul_of_nonneg_left hinv (by positivity)
-      _ = _ := by ring
+  have htail' := htail.trans ((mul_le_mul (div_le_div_of_nonneg_right (le_abs_self _) hk0.le)
+    hinv (norm_nonneg _) (div_nonneg (abs_nonneg _) hk0.le)).trans_eq (div_mul_eq_mul_div _ _ _))
   have hp := ((((forcing D).vectorField (initialData D δ hδ (α • ξ) hs)).smul
       k⁻¹).raw_graph_contDiff
     t k D.m₀).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
@@ -142,9 +134,7 @@ theorem forwardInitializedVelocity_global_gradient_error (N : ℕ) (hN : 1 ≤ N
     funext y
     dsimp only [forwardInitializedPrimaryRemainder,Pi.add_apply,Pi.sub_apply,Pi.smul_apply]
     abel
-  rw [he,fderiv_add hpd hrd]
-  have ha : ∀ A E R : Space →L[ℝ] Space, A+E-R=(A-R)+E := by intros; abel
-  rw [ha]
+  simp only [he, fderiv_add hpd hrd, add_sub_right_comm]
   exact (norm_add_le _ _).trans ((add_le_add hprimary htail').trans_eq (by
     unfold forwardInitializedGlobalShearCost
     ring))

@@ -54,10 +54,9 @@ variable (P : ℝ) [Fact (0 < P)] {T : ℝ} {U E : Type*}
   [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
   (D : Coefficients T U E)
 
-variable (hQ : ContDiff ℝ ∞ (translateCoefficientPath D.Q))
-  (hQ₁ : ContDiff ℝ ∞ (translateCoefficientPath D.Q₁))
-  (hH : ContDiff ℝ ∞ (translateCoefficientPath D.H))
-  (Y : CylinderL2 P U) (hY : ContDiff ℝ ∞ (fun a : LiftTangent => translate (V := U) P a Y))
+section
+
+variable (Y : CylinderL2 P U) (hY : ContDiff ℝ ∞ (fun a : LiftTangent => translate (V := U) P a Y))
 
 omit [CompleteSpace U] [CompleteSpace E] in
 include hY in
@@ -67,6 +66,13 @@ theorem endpointConstant_orbit_contDiff :
         (ContinuousMap.const (Icc (0 : ℝ) T) (T⁻¹ • Y))) := by
   apply constantPath_orbit_contDiff
   simpa only [map_smul] using hY.const_smul T⁻¹
+
+end
+
+variable (hQ : ContDiff ℝ ∞ (translateCoefficientPath D.Q))
+  (hQ₁ : ContDiff ℝ ∞ (translateCoefficientPath D.Q₁))
+  (hH : ContDiff ℝ ∞ (translateCoefficientPath D.H))
+  (Y : CylinderL2 P U) (hY : ContDiff ℝ ∞ (fun a : LiftTangent => translate (V := U) P a Y))
 
 omit [CompleteSpace U] [CompleteSpace E] in
 include hQ₁ hY in

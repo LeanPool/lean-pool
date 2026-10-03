@@ -128,7 +128,9 @@ theorem leaf_bounds (K : ℝ) (hK : 0 ≤ K) :
   have hi : EulerPacketParentNormalBudget.inverseRadius (coefficientRadius K)
       (frameAmplitude K) (gradientAmplitude K) ≤ normalInverse K := by
     unfold normalInverse EulerPacketParentNormalBudget.inverseRadius
-    gcongr
+    exact mul_le_mul_of_nonneg_left (add_le_add hr le_rfl) (mul_nonneg zero_le_two
+      (add_nonneg zero_le_one (mul_nonneg (sq_nonneg _)
+        (add_nonneg (mul_nonneg zero_le_three (sq_nonneg _)) zero_le_two))))
   have hn : EulerPacketParentNormalBudget.radius (coefficientRadius K)
       (frameAmplitude K) (gradientAmplitude K) ≤ normalRadius K := by
     unfold normalRadius EulerPacketParentNormalBudget.radius
@@ -139,7 +141,9 @@ theorem leaf_bounds (K : ℝ) (hK : 0 ≤ K) :
   have hj : EulerPacketParentTransverseCosts.inverseRadius (coefficientRadius K)
       (frameAmplitude K) ≤ transverseInverse K := by
     unfold transverseInverse EulerPacketParentTransverseCosts.inverseRadius
-    gcongr
+    exact mul_le_mul_of_nonneg_left (add_le_add hr le_rfl) (mul_nonneg zero_le_two
+      (add_nonneg zero_le_one (mul_nonneg hC
+        (add_nonneg (mul_nonneg zero_le_three (sq_nonneg _)) zero_le_two))))
   unfold leafEnvelope
   refine ⟨?_,?_,?_,?_,?_,?_,?_,?_,?_,?_,?_⟩ <;> linarith only [hG, hF, hR, hH, hA, hI, hN, hC, hJ,
       hV, hr, hi, hn, hj]

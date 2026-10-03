@@ -95,7 +95,7 @@ theorem initialMomentum_weak
   simp only [productDerivative, add_apply, comp_apply, inner_add_right] at ht
   simp only [momentum, initialMomentumForcing, sub_apply, comp_apply,
     inner_sub_left, adjoint_inner_left]
-  linarith only [ht]
+  linear_combination ht
 
 /-- A bounded linear map giving the terminal value of the actual momentum. -/
 def terminalMomentum : TimeLp T E →L[ℝ] U :=
@@ -489,8 +489,8 @@ theorem dirichletToNeumann_eq_terminal_velocity (hTpos : 0 < T)
   have hR : ⟪m ⟨T, hT, le_rfl⟩, R Z⟫_ℝ = 0 := by
     rw [← hLT Z]
     exact hL Z ⟨T, hT, le_rfl⟩
-  obtain ⟨z, hz⟩ := hRange ⟨T, hT, le_rfl⟩ (R Z) hR
   have hrec : Q ⟨T, hT, le_rfl⟩ (terminalCoordinates T hT Q c hc hQ R Z) = R Z := by
+    obtain ⟨z, hz⟩ := hRange ⟨T, hT, le_rfl⟩ (R Z) hR
     change Q ⟨T, hT, le_rfl⟩
       (frameLeftInverse (Q ⟨T, hT, le_rfl⟩) c hc (hQ ⟨T, hT, le_rfl⟩) (R Z)) = R Z
     rw [← hz, frameLeftInverse_apply]

@@ -195,9 +195,12 @@ theorem activation_parameters :
 direction, with the same strictly positive ray scale used by Guards. -/
 theorem activation_ray :
     (P.activationData hτ hτT).normal.field ⟨τ,hτ.le,hτT.le⟩ 0 =
-      P.rayScale hτ hτT • P.crossDirection :=
-  activationDirection_transport
+      P.rayScale hτ hτT • P.crossDirection := by
+  have h := activationDirection_transport
     ((A.transverseData m hm R S hS).deformationEquiv ⟨τ,hτ.le,hτT.le⟩ 0) P.crossDirection
+  rw [Data.deformationEquiv_symm_coe] at h
+  rw [EulerTransverseBoundedFrame.normalCoefficient_apply]
+  exact h
 
 theorem activation_scaled_ray :
     0 < P.rayScale hτ hτT ∧

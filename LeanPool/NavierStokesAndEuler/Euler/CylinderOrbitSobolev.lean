@@ -41,16 +41,13 @@ theorem iteratedFDeriv_orbitDerivative (u : LiftL2 period) (hu : SmoothOrbit per
   let F : LiftTangent → LiftL2 period := fun b => translate (V := Vector3) period b u
   have h := (ContinuousLinearMap.apply ℝ (LiftL2 period) v).iteratedFDeriv_comp_left
     (hu.fderiv_right (m := ∞) (by simp)).contDiffAt (x := a) (i := n) (by simp)
-  have he := congrArg (fun G => G m) h
-  change iteratedFDeriv ℝ n (fun b => fderiv ℝ F b v) a m =
-    iteratedFDeriv ℝ n (fderiv ℝ F) a m v at he
   have horbit : (fun b : LiftTangent =>
       translate (V := Vector3) period b (orbitDerivative period u v)) =
       fun b : LiftTangent => fderiv ℝ F b v := funext (fun b => orbitDerivative_translation period
           u hu v b)
-  rw [horbit,he,iteratedFDeriv_succ_apply_right]
-  simp only [Fin.init_snoc,Fin.snoc_last]
-  rfl
+  rw [horbit]
+  simp only [iteratedFDeriv_succ_apply_right, Fin.init_snoc, Fin.snoc_last]
+  exact congrArg (fun G => G m) h
 
 /-- Each actual strong jet word is its ordered mixed derivative in the true L² orbit. -/
 theorem spatialJet_word (n q : ℕ) (hn : n ≤ q) (u : LiftL2 period)

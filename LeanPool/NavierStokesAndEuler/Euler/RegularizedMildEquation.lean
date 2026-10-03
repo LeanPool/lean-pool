@@ -39,10 +39,12 @@ theorem derivative_heat {q : ℕ} (i : Fin 4) (v : ℝ≥0) (u : SobolevSpace pe
 theorem laplacian_heat {q : ℕ} (v : ℝ≥0) (u : SobolevSpace period (q + 2)) :
     laplacianOperator period q (heatOperator period (q+2) v u) =
       heatOperator period q v (laplacianOperator period q u) := by
-  rw [laplacianOperator_apply, laplacianOperator_apply, map_sum]
-  apply Finset.sum_congr rfl
-  intro i _
-  rw [derivative_heat, derivative_heat]
+  exact (laplacianOperator_apply period _).trans <|
+    (Finset.sum_congr rfl fun i _ =>
+      (congrArg (derivativeOperator period q i) (derivative_heat period i v u)).trans
+        (derivative_heat period i v _)).trans
+    ((map_sum (heatOperator period q v) _ _).symm.trans
+      (congrArg (heatOperator period q v) (laplacianOperator_apply period u).symm))
 
 end EulerSobolevLaplacian
 

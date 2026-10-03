@@ -64,8 +64,7 @@ theorem fixedFrameOperator_inner (u v : zeroTraceDerivatives (U := U) T hT) :
     (fixedFrameDerivative T hT Q Q₁)
     (dirichletOperator (V := TimeLp T E) (W := TimeLp T E) (primitiveTimeLp (E := E) T hT)
       (timeMultiplier (E := E) (F := E) T hT H) (fixedFrameDerivative T hT Q Q₁ u)), v⟫_ℝ = _
-  rw [adjoint_inner_left, dirichletOperator_inner]
-  rfl
+  exact (adjoint_inner_left _ _ _).trans (dirichletOperator_inner _ _ _ _)
 
 variable (c : ℝ) (hc : 0 < c) (hQ : ∀ t x, c * ‖x‖ ^ 2 ≤ ‖Q t x‖ ^ 2)
   (hd : ∀ t : Icc (0 : ℝ) T,
@@ -100,13 +99,9 @@ theorem fixedFrameOperator_coercive (v : zeroTraceDerivatives (U := U) T hT) :
       ring
     _ ≤ (1/2 : ℝ) * ‖fixedFrameDerivative T hT Q Q₁ v‖^2 :=
       mul_le_mul_of_nonneg_left hlow (by norm_num)
-    _ ≤ ⟪fixedFrameOperator T hT Q Q₁ H v, v⟫_ℝ := by
-      change _ ≤ ⟪adjoint (𝕜 := ℝ) (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E)
-        (fixedFrameDerivative T hT Q Q₁)
-        (dirichletOperator (V := TimeLp T E) (W := TimeLp T E) (primitiveTimeLp (E := E) T hT)
-          (timeMultiplier (E := E) (F := E) T hT H) (fixedFrameDerivative T hT Q Q₁ v)), v⟫_ℝ
-      rw [adjoint_inner_left]
-      exact hphys
+    _ ≤ ⟪fixedFrameOperator T hT Q Q₁ H v, v⟫_ℝ :=
+      hphys.trans_eq ((dirichletOperator_inner _ _ _ _).trans
+        (fixedFrameOperator_inner T hT Q Q₁ H v v).symm)
 
 /-- The genuine fixed-space inverse, constructed from the transported coercive form. -/
 def fixedFrameSolver : TimeLp T E →L[ℝ] zeroTraceDerivatives (U := U) T hT :=
@@ -140,7 +135,9 @@ theorem fixedFrameSolver_unique (f : TimeLp T E) (u : zeroTraceDerivatives (U :=
   simp only [coerciveEquiv_apply]
   apply ext_inner_right ℝ
   intro v
-  rw [fixedFrameOperator_inner, hu, fixedFrameOperator_inner, fixedFrameSolver_weak]
+  exact ((fixedFrameOperator_inner T hT Q Q₁ H u v).trans (hu v)).trans
+    ((fixedFrameOperator_inner T hT Q Q₁ H _ v).trans
+      (fixedFrameSolver_weak T hT Q Q₁ H c hc hQ hd K hK hH hsmall f v)).symm
 
 /-- The new fixed-space inverse is exactly the coordinates of the original
 physical transverse solve, rather than a separate unconnected construction. -/

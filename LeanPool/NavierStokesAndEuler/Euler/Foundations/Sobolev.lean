@@ -63,14 +63,12 @@ theorem fourier_L1_le_sobolevNorm (d : ℕ) (s : ℝ) (hs : (d : ℝ) < 2 * s)
       (schwartzFourier f : Domain d → F) := by
     ext ξ
     simp only [Pi.smul_apply', weightedFourier_apply, smul_smul, besselWeight_neg_mul, one_smul]
+  have hmem := (weightedFourier d s f).memLp 2 volume
   have hh := eLpNorm_smul_le_mul_eLpNorm (p := 2) (q := 2) (r := 1)
-    (reciprocal_weight_memLp d s hs).aestronglyMeasurable
-    ((weightedFourier d s f).memLp 2 volume).aestronglyMeasurable
+    (reciprocal_weight_memLp d s hs).aestronglyMeasurable hmem.aestronglyMeasurable
   rw [hid] at hh
-  have hfin : eLpNorm (besselWeight d (-s)) 2 volume *
-      eLpNorm (weightedFourier d s f) 2 volume ≠ ⊤ :=
-    ENNReal.mul_ne_top (reciprocal_weight_memLp d s hs).eLpNorm_ne_top
-      ((weightedFourier d s f).memLp 2 volume).eLpNorm_ne_top
+  have hfin := ENNReal.mul_ne_top (reciprocal_weight_memLp d s hs).eLpNorm_ne_top
+    hmem.eLpNorm_ne_top
   have h := ENNReal.toReal_mono hfin hh
   simpa only [SchwartzMap.norm_toLp, embeddingConstant, reciprocalWeightLp,
     Lp.norm_toLp, sobolevNorm, ENNReal.toReal_mul] using h
@@ -97,10 +95,10 @@ theorem fourier_lineDeriv_norm_le (d : ℕ) (f : 𝓢(Domain d, F)) (m ξ : Doma
   have hc : ‖(2 * Real.pi * Complex.I : ℂ)‖ = 2 * Real.pi := by
     simp only [Complex.norm_mul, Complex.norm_ofNat, Complex.norm_real, Real.norm_eq_abs,
         Real.abs_pi, Complex.norm_I, mul_one]
-  rw [he, norm_smul, norm_smul, hc]
+  simp only [he, norm_smul, hc]
   have hi := norm_inner_le_norm (𝕜 := ℝ) ξ m
-  nlinarith [mul_le_mul_of_nonneg_left
-    (mul_le_mul_of_nonneg_right hi (norm_nonneg (𝓕 f ξ))) (show 0 ≤ 2 * Real.pi by positivity)]
+  exact (mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right hi (norm_nonneg (𝓕 f ξ)))
+    Real.two_pi_pos.le).trans_eq (by ring)
 
 omit [CompleteSpace F] in
 theorem weightedFourier_lineDeriv_norm_le (d : ℕ) (s : ℝ)

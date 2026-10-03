@@ -229,14 +229,14 @@ theorem radial_sub_norm (x y : E) : ‖radial x-radial y‖ ≤ 2*‖x-y‖ := b
   have ha1 : (1+‖x‖)⁻¹ ≤ 1 := (inv_le_one₀ hx).mpr (by linarith [norm_nonneg x])
   have he : (1+‖x‖)⁻¹-(1+‖y‖)⁻¹ =
       ((1+‖x‖)⁻¹*(‖y‖-‖x‖))*(1+‖y‖)⁻¹ := by
-    field_simp
+    rw [inv_sub_inv hx.ne' hy.ne', div_eq_mul_inv, mul_inv]
     ring
   have hv : radial x-radial y = (1+‖x‖)⁻¹ • (x-y) +
       ((1+‖x‖)⁻¹*(‖y‖-‖x‖)) • radial y := by
     calc
       _ = (1+‖x‖)⁻¹ • (x-y)+((1+‖x‖)⁻¹-(1+‖y‖)⁻¹) • y := by
         dsimp only [radial]
-        module
+        rw [smul_sub, sub_smul, sub_add_sub_cancel]
       _ = _ := by rw [he,radial,smul_smul]
   have hd : |‖y‖-‖x‖| ≤ ‖x-y‖ := by
     simpa only [norm_sub_rev] using abs_norm_sub_norm_le y x
@@ -252,7 +252,7 @@ theorem radial_sub_norm (x y : E) : ‖radial x-radial y‖ ≤ 2*‖x-y‖ := b
         mul_le_mul (mul_le_mul_of_nonneg_left hd ha) (radial_norm y)
           (norm_nonneg _) (mul_nonneg ha (norm_nonneg _))
       _ ≤ _ := by simpa only [mul_one] using h1
-  linarith
+  exact (add_le_add h1 h2).trans_eq (two_mul _).symm
 
 theorem radial_lipschitz : LipschitzWith 2 (radial : E → E) :=
   lipschitzWith_iff_norm_sub_le.mpr radial_sub_norm
@@ -310,7 +310,7 @@ theorem exists_global_quadratic (B : E →L[ℝ] E →L[ℝ] E)
     have he := is_const_of_deriv_eq_zero (fun s => (hd s).differentiableAt)
       (fun s => (hd s).deriv) t 0
     rw [hv0] at he
-    nlinarith [norm_nonneg (v t),norm_nonneg x]
+    exact (pow_left_inj₀ (norm_nonneg _) (norm_nonneg _) two_ne_zero).mp he
   let c := (1+‖x‖)^2
   refine ⟨fun t => v (c*t),by simpa only [mul_zero] using hv0,?_,fun t => hn (c*t)⟩
   intro t
@@ -779,16 +779,14 @@ theorem mollify_error (n : ℕ) (A : EulerLpTranslation.SmoothL2Field Space) :
   · simpa only [integral_mul_const,kernel_integral,one_mul] using h
   apply Eventually.of_forall
   intro y
-  rw [norm_smul,Real.norm_eq_abs,abs_of_nonneg (kernel_nonneg n y)]
+  have hk := kernel_nonneg n y
   by_cases hy : kernel n y=0
-  · simp only [hy,zero_mul,le_refl]
-  apply mul_le_mul_of_nonneg_left _ (kernel_nonneg n y)
-  apply (translation_increment A (-y)).trans
-  rw [norm_neg,mul_comm (2*cutoffScale n)]
-  apply mul_le_mul_of_nonneg_left _ (norm_nonneg _)
+  · simp only [hy,zero_smul,norm_zero,zero_mul,le_refl]
   have hs : y ∈ Function.support ((bump n).normed volume) := hy
   rw [(bump n).support_normed_eq,Metric.mem_ball,dist_zero_right] at hs
-  exact hs.le
+  refine (norm_smul_of_nonneg hk _).trans_le (mul_le_mul_of_nonneg_left ?_ hk)
+  exact (translation_increment A (-y)).trans ((mul_le_mul_of_nonneg_left
+    ((norm_neg y).trans_le hs.le) (norm_nonneg _)).trans_eq (mul_comm _ _))
 
 end EulerOrdinaryMollifier
 

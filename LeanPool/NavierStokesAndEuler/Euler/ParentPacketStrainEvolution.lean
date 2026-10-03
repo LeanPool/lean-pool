@@ -55,9 +55,7 @@ theorem inverse_time : SmoothTimeField.TimeDerivative G.T G.T_pos.le G.inverse G
     exact G.inverse_left (projIcc 0 G.T G.T_pos.le s) x v
   rw [he] at hd
   simp only [SmoothTimeField.realField_apply] at hd
-  have hz : (J.field t x).comp (G.frame.field t x) +
-      (G.inverse.field t x).comp (G.first.field t x)=0 :=
-    (hd.derivWithin (uniqueDiffOn_Icc G.T_pos t t.property)).symm.trans
+  have hz := (hd.derivWithin (uniqueDiffOn_Icc G.T_pos t t.property)).symm.trans
       ((hasDerivWithinAt_const (t : ℝ) (Icc (0 : ℝ) G.T)
         (ContinuousLinearMap.id ℝ Space)).derivWithin
           (uniqueDiffOn_Icc G.T_pos t t.property))

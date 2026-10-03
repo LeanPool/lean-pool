@@ -142,11 +142,11 @@ theorem velocityPath_reflection_neg (t : Icc (0 : ℝ) D.T) :
     reflection (V := Vector3) P (velocityPath τ hτ hτT B G t) = -velocityPath τ hτ hτT B G t := by
   apply join_mem D.T τ hτ.le hτT.le _ _ (velocity_match τ hτ hτT B G)
     {u | reflection (V := Vector3) P u = -u} _ _ t
-  · exact B.velocityPath_reflection_neg (G.initial τ hτ hτT.le)
+  · apply B.velocityPath_reflection_neg (G.initial τ hτ hτT.le)
       (fun s x => hF (initialInclusion D.T τ hτT.le s) x)
       (fun s x => hM (initialInclusion D.T τ hτT.le s) x) hH
       (fun s x θ => hraw (initialInclusion D.T τ hτT.le s) x θ)
-  · exact futureVelocity_reflection_neg τ hτ hτT B G hSym hF hM hH hraw
+  · apply futureVelocity_reflection_neg τ hτ hτT B G hSym hF hM hH hraw
 
 theorem vector_odd (t : Icc (0 : ℝ) D.T) (x : Space) (θ : ℝ) :
     vector τ hτ hτT B G (t,(-x,-θ)) = -vector τ hτ hτT B G (t,(x,θ)) :=

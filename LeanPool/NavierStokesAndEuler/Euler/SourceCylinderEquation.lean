@@ -41,7 +41,7 @@ variable (period : ℝ) [Fact (0 < period)]
   [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
   (S : Set Space) (hS : MeasurableSet S) (T : ℝ) (hT : 0 ≤ T)
   (Q Q₁ : SmoothCoefficientPath (Icc (0 : ℝ) T) (U →L[ℝ] E))
-  (c : ℝ) (hc : 0 < c) (hQ : ∀ t x v, c * ‖v‖ ^ 2 ≤ ‖Q.field t x v‖ ^ 2)
+  (c : ℝ) (hc : 0 < c) (hQ : ∀ t x v, c * ‖v‖ ^ (2 : ℕ) ≤ ‖Q.field t x v‖ ^ (2 : ℕ))
   (f : C(Icc (0 : ℝ) T, Supported period E S hS)) (a₀ : Supported period U S hS)
 
 /-- Cache the standard `NormedAddCommGroup (Supported period U S hS)` instance to shorten
@@ -88,7 +88,7 @@ def velocityDerivative : C(Icc (0 : ℝ) T,Supported period E S hS) :=
 
 /-- The coordinate equation has its true derivative on the closed time interval. -/
 theorem coordinates_hasDerivWithinAt (t : Icc (0 : ℝ) T) :
-    HasDerivWithinAt (extendPath T hT (coordinates period S hS T hT Q Q₁ c hc hQ f a₀))
+    HasDerivWithinAt (extendPath T hT (coordinates (U := U) period S hS T hT Q Q₁ c hc hQ f a₀))
       (coordinateDerivative period S hS T hT Q Q₁ c hc hQ f a₀ t) (Icc (0 : ℝ) T) t := by
   have hd := (evolution period T hT Q Q₁ c hc hQ S hS).solution_derivative
     (projectedForcing period S hS Q c hc hQ f) a₀ t
@@ -100,7 +100,7 @@ theorem coordinates_hasDerivWithinAt (t : Icc (0 : ℝ) T) :
     (liftedOperatorPath period S hS T (sourceGenerator Q Q₁ c hc hQ) t
       (coordinates period S hS T hT Q Q₁ c hc hQ f a₀ t) +
       projectedForcing period S hS Q c hc hQ f t) (Icc (0 : ℝ) T) t at hd
-  rw [← hB] at hd
+  simp only [← hB] at hd
   apply hd.congr_of_mem _ t.property
   intro s hs
   simp only [extendPath,projIcc_of_mem hT hs]
@@ -112,7 +112,7 @@ theorem velocity_hasDerivWithinAt
       HasDerivWithinAt (fun s => extendPath T hT Q.field s x)
         (extendPath T hT Q₁.field t x) (Icc (0 : ℝ) T) t)
     (t : Icc (0 : ℝ) T) :
-    HasDerivWithinAt (extendPath T hT (velocity period S hS T hT Q Q₁ c hc hQ f a₀))
+    HasDerivWithinAt (extendPath T hT (velocity (E := E) period S hS T hT Q Q₁ c hc hQ f a₀))
       (velocityDerivative period S hS T hT Q Q₁ c hc hQ f a₀ t) (Icc (0 : ℝ) T) t :=
   supportedProduct_hasDerivWithinAt period S hS T hT Q.field Q₁.field hQt
     (coordinates period S hS T hT Q Q₁ c hc hQ f a₀)
@@ -122,7 +122,7 @@ theorem velocity_hasDerivWithinAt
 /-- The pointwise algebra of the projected source equation: the Gram operator undoes the
 Gram inverse in the generator and in the projected forcing. -/
 theorem gram_generator_forcing_apply (A A₁ : U →L[ℝ] E) (r : ℝ) (hr : 0 < r)
-    (hA : ∀ v, r * ‖v‖ ^ 2 ≤ ‖A v‖ ^ 2) (w : U) (y : E) :
+    (hA : ∀ v, r * ‖v‖ ^ (2 : ℕ) ≤ ‖A v‖ ^ (2 : ℕ)) (w : U) (y : E) :
     gram A ((-2 : ℝ) • gramInverse A r hr hA
         (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := U) (F := E) A (A₁ w)) +
       gramInverse A r hr hA (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := U) (F := E) A y)) =
@@ -190,11 +190,11 @@ theorem velocity_balance_ae
         M t x.1 ((velocity period S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 period E) x) +
         ((⟪m t x.1,(f t : CylinderL2 period E) x⟫_ℝ - 2*⟪m t x.1,
           M t x.1 ((velocity period S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 period E) x)⟫_ℝ) /
-            ‖m t x.1‖^2) • m t x.1 = (f t : CylinderL2 period E) x := by
+            ‖m t x.1‖ ^ (2 : ℕ)) • m t x.1 = (f t : CylinderL2 period E) x := by
   filter_upwards [coordinate_equation_ae period S hS T hT Q Q₁ c hc hQ f a₀ t,
     velocity_ae period S hS T hT Q Q₁ c hc hQ f a₀ t,
     velocityDerivative_ae period S hS T hT Q Q₁ c hc hQ f a₀ t] with x he hv hd
-  rw [hv,hd]
+  simp only [hv, hd]
   exact physical_velocity_balance (Q.field t x.1) (Q₁.field t x.1) (M t x.1) (m t x.1)
     (hm t x.1) (hTangent t x.1) (hRange t x.1) (hFlow t x.1) _ _ _ he
 

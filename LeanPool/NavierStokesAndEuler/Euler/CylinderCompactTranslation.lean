@@ -127,8 +127,7 @@ theorem hasFDerivAt_zero (A : CompactField P V) :
   obtain ⟨M,hM,hM0,hb⟩ := A.increment_bound
   refine hasFDerivAt_of_dominated (liftMeasure P)
     (fun a : LiftTangent => translate (V := V) P a A.toLp)
-    (fun a x => A.field (x+coveringMap P a)) ?_ A.derivative.toLp ?_ M hM (Eventually.of_forall
-        hM0) ?_
+    (fun a x => A.field (x+coveringMap P a)) ?_ _ ?_ M hM (Eventually.of_forall hM0) ?_
   · intro a
     filter_upwards [translate_ae P a A.toLp,
       (measurePreserving_translation P (coveringMap P a)).quasiMeasurePreserving.ae A.toLp_ae]

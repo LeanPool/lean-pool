@@ -213,7 +213,7 @@ theorem mixedBoundaryOperator_iteratedFDeriv_le (χ ψ : Cutoff) (n : ℕ) (a : 
       (cutoffCurl_contDiff χ) (weakPotential_contDiff ψ) a (n := n) (by simp)
       (by
         convert ContinuousLinearMap.norm_compL_le ℝ L2 homogeneousSpace L2 using 1)
-  exact h
+  apply h
 
 /-- Factorial estimates follow from the genuine operator family, at every order and parameter. -/
 theorem mixedBoundaryOperator_gevrey (χ ψ : Cutoff) (Rχ Rψ Rc Cχ Cψ : ℝ)
@@ -859,11 +859,11 @@ theorem sourceCoordinateSolver_translation_gevrey
         simpa only [translateOperator_boundary] using h).trans
     exact mul_le_mul_of_nonneg_left (majorant_radius_mono 1024 Rc (by norm_num) hRc 0 k)
       scaledBoundaryOperatorAmplitude_nonneg
-  exact solution_translation_gevrey T hT (operatorPath T F.field) (operatorPath T F₁.field)
+  have hco := sourceFixedForm_coercive T hT ℓ hℓ F F₁ H M0 FInv Be Bc L r hBe hBc hL hr hrquarter
+    hext hcore hInv hF K hK hF0 hH hsmall
+  apply solution_translation_gevrey T hT (operatorPath T F.field) (operatorPath T F₁.field)
     (operatorPath T H.field) (multiplier M0.field) (boundaryOperator (scaledCutoff ℓ hℓ)) L
-    (sourceFixedCoercivity T F F₁ FInv) (sourceFixedCoercivity_pos T hT F F₁ FInv)
-    (sourceFixedForm_coercive T hT ℓ hℓ F F₁ H M0 FInv Be Bc L r hBe hBc hL hr hrquarter
-      hext hcore hInv hF K hK hF0 hH hsmall)
+    (sourceFixedCoercivity T F F₁ FInv) (sourceFixedCoercivity_pos T hT F F₁ FInv) hco
     hFr hF₁r hHr hMr hAr f hf Rc R M CF CF₁ CH CM scaledBoundaryOperatorAmplitude Cf
     hRc0 hCF hCF₁ hCH hCM scaledBoundaryOperatorAmplitude_nonneg hCf hM hMC hMD hR
     (translatedPath_bound T F Rc CF hRc0 hCF hFb)
@@ -982,12 +982,12 @@ theorem sourceCoordinateSolver_translation_block_gevrey
         simpa only [translateOperator_boundary] using h).trans
     exact mul_le_mul_of_nonneg_left (majorant_radius_mono 1024 Rc (by norm_num) hRc 0 k)
       scaledBoundaryOperatorAmplitude_nonneg
-  exact solution_translation_block_gevrey directions hd q T hT (operatorPath T F.field)
+  have hco := sourceFixedForm_coercive T hT ℓ hℓ F F₁ H M0 FInv Be Bc L r hBe hBc hL hr hrquarter
+    hext hcore hInv hF K hK hF0 hH hsmall
+  apply solution_translation_block_gevrey directions hd q T hT (operatorPath T F.field)
       (operatorPath T F₁.field)
     (operatorPath T H.field) (multiplier M0.field) (boundaryOperator (scaledCutoff ℓ hℓ)) L
-    (sourceFixedCoercivity T F F₁ FInv) (sourceFixedCoercivity_pos T hT F F₁ FInv)
-    (sourceFixedForm_coercive T hT ℓ hℓ F F₁ H M0 FInv Be Bc L r hBe hBc hL hr hrquarter
-      hext hcore hInv hF K hK hF0 hH hsmall)
+    (sourceFixedCoercivity T F F₁ FInv) (sourceFixedCoercivity_pos T hT F F₁ FInv) hco
     hFr hF₁r hHr hMr hAr f hf Rc R M CF CF₁ CH CM scaledBoundaryOperatorAmplitude Cf
     hRc0 hCF hCF₁ hCH hCM scaledBoundaryOperatorAmplitude_nonneg hCf hM hMC hMD hR
     (translatedPath_bound T F Rc CF hRc0 hCF hFb)
@@ -1302,18 +1302,17 @@ theorem meanAcceleration_translation_block_gevrey
     block directions q (fun b : Space =>
       timeSolenoidalTranslation T b (meanAcceleration T hT F F₁ c hc hLower v f)) n a ≤
         majorant R (d+1) n := by
-  let Q := fun b : Space => solenoidalFrame T (translatePath T b F)
-  let Q₁ := fun b : Space => solenoidalFrame T (translatePath T b F₁)
-  have hQ : ContDiff ℝ ∞ Q := contDiff_solenoidalFrame T (fun b => translatePath T b F) hF
-  have hQ₁ : ContDiff ℝ ∞ Q₁ := contDiff_solenoidalFrame T (fun b => translatePath T b F₁) hF₁
-  have hbQ : ∀ k b, ‖iteratedFDeriv ℝ k Q b‖ ≤ CF*majorant Rc 0 k :=
-    solenoidalFrame_bound T (fun b => translatePath T b F) hF Rc CF hRc hCF 0 hFb
-  have hbQ₁ : ∀ k b, ‖iteratedFDeriv ℝ k Q₁ b‖ ≤ CF₁*majorant Rc 0 k :=
-    solenoidalFrame_bound T (fun b => translatePath T b F₁) hF₁ Rc CF₁ hRc hCF₁ 0 hF₁b
-  have hs := solution_block_bound directions hd q T hT Q Q₁ c hc
+  have hs := solution_block_bound directions hd q T hT
+    (fun b : Space => solenoidalFrame T (translatePath T b F))
+    (fun b : Space => solenoidalFrame T (translatePath T b F₁)) c hc
     (translatedFrame_lower T F c hLower) (fun b => timeTranslation T b f)
-    (fun b => timeSolenoidalTranslation T b v) hQ hQ₁ hf hv
-    Rc R CF CF₁ Cf Cv hRc hRcR hCF hCF₁ hCf hCv hstrong hbQ hbQ₁ d hfb hvb n a
+    (fun b => timeSolenoidalTranslation T b v)
+    (contDiff_solenoidalFrame T (fun b => translatePath T b F) hF)
+    (contDiff_solenoidalFrame T (fun b => translatePath T b F₁) hF₁) hf hv
+    Rc R CF CF₁ Cf Cv hRc hRcR hCF hCF₁ hCf hCv hstrong
+    (solenoidalFrame_bound T (fun b => translatePath T b F) hF Rc CF hRc hCF 0 hFb)
+    (solenoidalFrame_bound T (fun b => translatePath T b F₁) hF₁ Rc CF₁ hRc hCF₁ 0 hF₁b)
+    d hfb hvb n a
   exact (congrArg (fun g : Space → TimeLp T solenoidalSpace => block directions q g n a)
     (meanAcceleration_orbit_eq T hT F F₁ c hc hLower v f)).trans_le hs
 
@@ -2070,7 +2069,7 @@ theorem normalized_bounds (directions : ι → Space) (hd : ∀ i, ‖directions
     D.T D.T_pos.le D.ℓ D.ℓ_pos D.ℓ_le_one D.F D.F₁ D.H D.M0 D.opInv
     D.Be D.Bc D.L D.r D.Be_nonneg D.Bc_nonneg D.L_lower D.r_nonneg D.r_le_quarter
     D.exterior_lower D.core_lower D.opInv_left D.opF_time D.opInv_right
-    D.K D.K_nonneg D.opInv_initial D.curvature_upper D.small G.lp G.solution G.lp_orbit
+    D.K D.K_nonneg D.opInv_initial D.curvature_upper D.small G.lp (G.solution :) G.lp_orbit
     E.Rc R E.M E.CF E.CF₁ E.CH E.CM E.Cf E.radius_lower E.CF_nonneg E.CF₁_nonneg
     E.CH_nonneg E.CM_nonneg E.Cf_nonneg E.inverse_cost_lower E.operator_budget E.forcing_budget
     E.radius_budget E.frame_bound E.frame_derivative_bound E.curvature_bound E.initial_strain_bound
@@ -2080,13 +2079,13 @@ theorem normalized_bounds (directions : ι → Space) (hd : ∀ i, ‖directions
     D.T D.T_pos.le D.ℓ D.ℓ_pos D.ℓ_le_one D.F D.F₁ D.H D.M0 D.opInv
     D.Be D.Bc D.L D.r D.Be_nonneg D.Bc_nonneg D.L_lower D.r_nonneg D.r_le_quarter
     D.exterior_lower D.core_lower D.opInv_left D.opF_time D.opInv_right
-    D.K D.K_nonneg D.opInv_initial D.curvature_upper D.small G.lp G.solution G.lp_orbit
+    D.K D.K_nonneg D.opInv_initial D.curvature_upper D.small G.lp (G.solution :) G.lp_orbit
     E.Rc R E.M E.CF E.CF₁ E.CH E.CM E.Cf E.radius_lower E.CF_nonneg E.CF₁_nonneg
     E.CH_nonneg E.CM_nonneg E.Cf_nonneg E.inverse_cost_lower E.operator_budget E.forcing_budget
     E.radius_budget E.frame_bound E.frame_derivative_bound E.curvature_bound E.initial_strain_bound
     d hfb E.acceleration_budget E.continuous_acceleration_budget D.T_pos
     G.path G.path_orbit hfCb
-  exact ⟨ht.1, ht.2.1, hp.2⟩
+  apply And.intro ht.1 (And.intro ht.2.1 hp.2)
 
 end SobolevData
 end EulerMeanPacketProvider

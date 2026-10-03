@@ -118,9 +118,9 @@ theorem velocityLp_h1 (hTpos : 0 < T) (f : TimeLp T E) :
     with t hdt het hvt hat
   dsimp only [extendPath] at het
   have hi := congrArg (gramInverse (Q (projIcc 0 T hT t)) c hc (hQ (projIcc 0 T hT t))) het
-  rw [inverse_gram_apply] at hi
+  simp only [inverse_gram_apply] at hi
   change (velocityLp T hT Q Q₁ H c hc hQ hd K hK hH hsmall f) t = v t at hvt
-  rw [← hvt,← hat] at hi
+  simp only [← hvt,← hat] at hi
   rw [← hi]
   exact hdt
 

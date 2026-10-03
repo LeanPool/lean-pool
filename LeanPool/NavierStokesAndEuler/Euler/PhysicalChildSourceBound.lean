@@ -646,20 +646,24 @@ theorem data_field_bounds_explicit (G : Data P T) (k : ℝ)
   have ht0 := G.time_nonneg
   have hac0 := G.accelerationAmplitude_nonneg
   have hg0 := graphFactor_nonneg k m
+  have hi0 : 0 ≤ ell⁻¹ := inv_nonneg.mpr hell.le
+  have hvr0 : 0 ≤ ell⁻¹*(4*G.velocityRadius*graphFactor k m) :=
+    mul_nonneg hi0 (mul_nonneg (mul_nonneg zero_le_four hv0) hg0)
   refine ⟨?_,?_,?_⟩
   · apply (G.displacementField_bound k m ell hell hell1 t).mono
-    · positivity
-    · positivity
+    · exact mul_nonneg (mul_nonneg (Real.sqrt_nonneg _) (mul_nonneg ht0 hc0))
+        (add_nonneg zero_le_one hv0)
+    · exact hvr0
     · simpa only [hC,hvr] using hn.1
     · simpa only [hvr,hgf] using hn.2.2.2.1
   · apply (G.velocityField_bound k m ell hell hell1 t).mono
-    · positivity
-    · positivity
+    · exact mul_nonneg (mul_nonneg (Real.sqrt_nonneg _) hc0) (add_nonneg zero_le_one hv0)
+    · exact hvr0
     · simpa only [hC,hvr] using hn.2.1
     · simpa only [hvr,hgf] using hn.2.2.2.1
   · apply (G.accelerationField_bound k m ell hell hell1 t).mono
-    · positivity
-    · positivity
+    · exact mul_nonneg (mul_nonneg (Real.sqrt_nonneg _) hac0) (add_nonneg zero_le_one ha0)
+    · exact mul_nonneg hi0 (mul_nonneg (mul_nonneg zero_le_four ha0) hg0)
     · simpa only [haa,har] using hn.2.2.1
     · simpa only [har,hgf] using hn.2.2.2.2
 
@@ -746,14 +750,17 @@ theorem normalized_approximation_bound (Rc C : ℝ) (hRc : 0 ≤ Rc) (hC : 0 ≤
       ((3*sobolevCoefficientAmplitude (Fin 4) 6 Rc C)*(C₁+C₂+1)) 0 := by
   have hk0 : 0 ≤ k := by linarith only [hk]
   have hi : 0 ≤ k⁻¹ := inv_nonneg.mpr hk0
-  have hA : 0 ≤ k⁻¹*C₁+(k⁻¹)^2*C₂+2*B*(k⁻¹*B)^3 := by positivity
+  have hA : 0 ≤ k⁻¹*C₁+(k⁻¹)^2*C₂+2*B*(k⁻¹*B)^3 :=
+    add_nonneg (add_nonneg (mul_nonneg hi hC₁) (mul_nonneg (pow_nonneg hi 2) hC₂))
+      (mul_nonneg (mul_nonneg zero_le_two hB0) (pow_nonneg (mul_nonneg hi hB0) 3))
   have h := (hG.multiply K Rc C hRc hC hA hKR hK).smul k
   rw [abs_of_nonneg hk0] at h
   have hc : 0 ≤ 3*sobolevCoefficientAmplitude (Fin 4) 6 Rc C :=
     mul_nonneg (by norm_num) (sobolevCoefficientAmplitude_nonneg 6 Rc C hRc hC)
   have hb4 := fourth_power_le_frequency k B (by linarith only [hk]) hB0 hB
-  have hs := mul_le_mul_of_nonneg_left (normalized_low_high_le k B C₁ C₂ (by linarith) hC₂ hb4) hc
-  exact h.mono_amplitude hR (by simpa only [mul_assoc,mul_left_comm,mul_comm] using hs)
+  have hs := mul_le_mul_of_nonneg_left
+    (normalized_low_high_le k B C₁ C₂ (by linarith only [hk]) hC₂ hb4) hc
+  exact h.mono_amplitude hR ((mul_left_comm _ _ _).trans_le hs)
 
 end EulerPacketCylinderField.MatrixCoefficient
 

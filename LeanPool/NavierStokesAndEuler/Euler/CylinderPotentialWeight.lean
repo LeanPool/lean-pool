@@ -96,7 +96,8 @@ theorem potentialPath_weight :
     potentialPath P B (weight (E := LiftL2 P) g p) =
       weight (E := LiftL2 P) g (potentialPath P B p) := by
   unfold potentialPath
-  rw [pathPrimitive_weight, fullMultiplier_weight]
+  exact (congrArg (fullMultiplierMap (K := K) (E := Space) (F := Space) P B)
+    (pathPrimitive_weight P g p)).trans (fullMultiplier_weight P g _ B)
 
 theorem potentialPath_normalize (hg : ∀ t, 0 < g t) :
     potentialPath P B (normalize (E := LiftL2 P) g hg p) =

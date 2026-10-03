@@ -159,6 +159,11 @@ theorem Budget.liftedPacketDerivativeCoefficient_memLp (H : Field P T raw_t)
       ((B.timeDerivativeTower P).pointField_smooth t) n
       (H.toFieldTower.coverTensor_memLp n t) ((B.timeDerivativeTower P).coverTensor_memLp n t))
 
+theorem Budget.liftedPacketDerivativeCoefficient_eq_lift (H : Field P T raw_t) :
+    B.liftedPacketDerivativeCoefficient P H =
+      lift (H.toSmoothTimeField.add (B.correctionDerivativeCoefficient P)) A.κ A.direction :=
+  rfl
+
 theorem Budget.liftedPacketDerivativeCoefficient_jet_bound (H : Field P T raw_t)
     (R ρ Ch Ce : ℝ) (hκ : |A.κ| ≤ 1) (hm : ‖A.direction‖ ≤ 1)
     (hR : 0 ≤ R) (hρ : 0 < ρ) (hCh : 0 ≤ Ch) (hCe : 0 ≤ Ce)
@@ -172,26 +177,18 @@ theorem Budget.liftedPacketDerivativeCoefficient_jet_bound (H : Field P T raw_t)
     (time_envelope_mono (mul_nonneg hK hCh) (mul_nonneg (norm_nonneg _) hR)
       (mul_le_mul_of_nonneg_right (liftedInputConstant_embedding_le P) hCh)
       (liftedInputRadius_packet R ρ hR hρ) n)
-  have he : ‖(B.correctionDerivativeCoefficient P).jet n‖ ≤
-      (liftedInputConstant P*Ce)*(liftedInputRadius R ρ)^n*(n.factorial : ℝ)^2 :=
-    ((B.timeDerivativeTower P).toSmoothTimeField_jet_weighted n ρ Ce hρ hCe (hE n)).trans
-      (time_envelope_mono (mul_nonneg hK hCe) (mul_nonneg (norm_nonneg _) (inv_nonneg.mpr hρ.le))
-        (mul_le_mul_of_nonneg_right (liftedInputConstant_embedding_le P) hCe)
-        (liftedInputRadius_error R ρ hR) n)
+  have he := ((B.timeDerivativeTower P).toSmoothTimeField_jet_weighted n ρ Ce hρ hCe (hE n)).trans
+    (time_envelope_mono (mul_nonneg hK hCe) (mul_nonneg (norm_nonneg _) (inv_nonneg.mpr hρ.le))
+      (mul_le_mul_of_nonneg_right (liftedInputConstant_embedding_le P) hCe)
+      (liftedInputRadius_error R ρ hR) n)
   have hsum := (H.toSmoothTimeField.add_jet_norm_le (B.correctionDerivativeCoefficient P) n).trans
     (add_le_add hh he)
-  have hfull := lift_jet_norm_le_full
-    (H.toSmoothTimeField.add (B.correctionDerivativeCoefficient P)) A.κ A.direction n
-  change ‖(lift (H.toSmoothTimeField.add (B.correctionDerivativeCoefficient P)) A.κ
-      A.direction).jet n‖ ≤ _
-  apply hfull.trans
-  calc
-    _ ≤ 2*‖(H.toSmoothTimeField.add (B.correctionDerivativeCoefficient P)).jet n‖ :=
-      mul_le_mul_of_nonneg_right (by linarith) (norm_nonneg _)
-    _ ≤ 2*((liftedInputConstant P*Ch)*(liftedInputRadius R ρ)^n*(n.factorial : ℝ)^2 +
-        (liftedInputConstant P*Ce)*(liftedInputRadius R ρ)^n*(n.factorial : ℝ)^2) :=
-      mul_le_mul_of_nonneg_left hsum (by norm_num)
-    _ = _ := by ring
+  have h2 : |A.κ| + ‖A.direction‖ ≤ 2 := (add_le_add hκ hm).trans_eq one_add_one_eq_two
+  rw [B.liftedPacketDerivativeCoefficient_eq_lift P H]
+  exact (lift_jet_norm_le_full
+    (H.toSmoothTimeField.add (B.correctionDerivativeCoefficient P)) A.κ A.direction n).trans
+    ((mul_le_mul_of_nonneg_right h2 (norm_nonneg _)).trans
+      ((mul_le_mul_of_nonneg_left hsum zero_le_two).trans_eq (by ring)))
 
 theorem Budget.liftedPacketDerivativeCoefficient_L2_bound (H : Field P T raw_t)
     (R ρ Ch Ce : ℝ) (hκ : |A.κ| ≤ 1) (hm : ‖A.direction‖ ≤ 1)
@@ -541,14 +538,14 @@ theorem initializedVelocity_global_gradient_error (N : ℕ) (hN : 1 ≤ N)
         rankOne ℝ (E := Space) (F := Space) (canonicalVelocity τ hτ hτT B ξ hs t (Y x))
           (D.normal.field t (Y x))‖ ≤
       initializedGlobalShearCost L.R S.H0 NB.C/k := by
-  have hk0 : 0 < k := by linarith
+  have hk0 : 0 < k := zero_lt_four.trans_le hk
   have hr0 : 0 ≤ L.R := zero_le_one.trans L.radius_bounds.1
   have hc0 := fixedVelocityGradeCost_nonneg L.R S.H0 hr0 1
   have hinv : ‖D.FInv.field t (Y x)‖ ≤ NB.C := by
     simpa only [norm_iteratedFDeriv_zero, majorant, add_zero, pow_zero, Nat.factorial_zero,
         Nat.cast_one, one_pow, mul_one] using NB.inverse_bound 0 t (Y x)
   have hprimary := scaled_terminal_global_gradient_bound τ hτ hτT B δ hδ ξ hs α k hk0
-    (4*L.R) (fixedVelocityGradeCost L.R S.H0 1) NB.C (by positivity) hc0 NB.C_nonneg
+    (4*L.R) (fixedVelocityGradeCost L.R S.H0 1) NB.C (mul_nonneg zero_le_four hr0) hc0 NB.C_nonneg
     (initializedPrimary_global_bound M D hTime τ hτ hτT B δ hδ ξ hs α
       L H NB W LM WM BC hRc hcost hδ1 hα hR WP S hgrowth) t Y x hY hinv
   have htail := initializedPrimaryRemainder_physical_fderiv_inv M D hTime τ hτ hτT B δ hδ ξ hs α
@@ -562,7 +559,7 @@ theorem initializedVelocity_global_gradient_error (N : ℕ) (hN : 1 ≤ N)
         mul_le_mul_of_nonneg_right (div_le_div_of_nonneg_right (le_abs_self _) hk0.le) (norm_nonneg
             _)
       _ ≤ (|initializedRemainderDerivativeCost L.R S.H0|/k)*NB.C :=
-        mul_le_mul_of_nonneg_left hinv (by positivity)
+        mul_le_mul_of_nonneg_left hinv (div_nonneg (abs_nonneg _) hk0.le)
       _ = _ := by ring
   have hp := (((vectorField τ hτ hτT B (initialData D δ hδ (α • ξ) hs)).smul k⁻¹).raw_graph_contDiff
     t k D.m₀).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
@@ -587,9 +584,7 @@ theorem initializedVelocity_global_gradient_error (N : ℕ) (hN : 1 ≤ N)
     funext y
     dsimp only [initializedPrimaryRemainder,Pi.add_apply,Pi.sub_apply,Pi.smul_apply]
     abel
-  rw [he,fderiv_add hpd hrd]
-  have ha : ∀ A E R : Space →L[ℝ] Space, A+E-R=(A-R)+E := by intros; abel
-  rw [ha]
+  simp only [he, fderiv_add hpd hrd, add_sub_right_comm]
   exact (norm_add_le _ _).trans ((add_le_add hprimary htail').trans_eq (by
     unfold initializedGlobalShearCost
     ring))
@@ -724,9 +719,11 @@ theorem extraEnvelope_power (X : ℝ) (hX : 1 ≤ X) : extraEnvelope X ≤ extra
   rw [← extraPolynomial_eval]
   exact (le_abs_self _).trans (eval_bound extraPolynomial X hX)
 
+theorem coordinateCost_nonneg : 0 ≤ coordinateCost := norm_nonneg _
+
 theorem physicalEnvelope_nonneg (X S : ℝ) (hX : 0 ≤ X) (hS : 0 ≤ S) :
     0 ≤ physicalEnvelope X S := by
-  have hc : 0 ≤ coordinateCost := norm_nonneg _
+  have hc := coordinateCost_nonneg
   unfold physicalEnvelope
   positivity
 
@@ -735,28 +732,41 @@ theorem extra_components (X : ℝ) (hX : 0 ≤ X) :
     velocityInputEnvelope X ≤ extraEnvelope X ∧ errorInputEnvelope X ≤ extraEnvelope X ∧
     timeInputEnvelope X ≤ extraEnvelope X ∧ weightedErrorEnvelope X ≤ extraEnvelope X ∧
     shearEnvelope X ≤ extraEnvelope X ∧ hessianEnvelope X ≤ extraEnvelope X := by
-  have hc : 0 ≤ coordinateCost := norm_nonneg _
+  have hc := coordinateCost_nonneg
   have he := sobolevEmbeddingConstant_nonneg period 3
   have hl := zero_le_one.trans (liftedInputConstant_one_le period)
   have ho := zero_le_one.trans (output_components period X hX).1
-  have hi : 0 ≤ inverseRadiusEnvelope X := by unfold inverseRadiusEnvelope; positivity
-  have hr : 0 ≤ radiusEnvelope X := by unfold radiusEnvelope; positivity
+  have h4 : (0 : ℝ) ≤ 4 := zero_le_four
+  have h4X := mul_nonneg h4 hX
+  have h9X := mul_nonneg (Nat.ofNat_nonneg 9 : (0 : ℝ) ≤ 9) hX
+  have hi : 0 ≤ inverseRadiusEnvelope X := add_nonneg (add_nonneg (add_nonneg zero_le_one
+    (mul_nonneg (Nat.ofNat_nonneg 8) hX)) (mul_nonneg h4 (sq_nonneg X))) hX
+  have hr : 0 ≤ radiusEnvelope X :=
+    add_nonneg zero_le_one (mul_nonneg hc (add_nonneg h4X (mul_nonneg h4 hi)))
   have hv := velocity_nonneg X X X hX hX
   have hn := normal_nonneg X X X hX hX
-  have hvi : 0 ≤ velocityInputEnvelope X := by unfold velocityInputEnvelope; positivity
-  have hei : 0 ≤ errorInputEnvelope X := by unfold errorInputEnvelope; positivity
+  have hvi : 0 ≤ velocityInputEnvelope X := mul_nonneg hl (add_nonneg hv hn)
+  have hei : 0 ≤ errorInputEnvelope X := mul_nonneg (mul_nonneg zero_le_two hl) ho
   have ha1 := fixedVelocityGradeCost_nonneg X X hX 1
   have ha2 := fixedVelocityGradeCost_nonneg X X hX 2
   have hb := EulerPacketRadiusPolynomial.normalEnvelope_nonneg X hX
-  have ht : 0 ≤ timeEnvelope X := by unfold timeEnvelope; positivity
-  have hti : 0 ≤ timeInputEnvelope X := by unfold timeInputEnvelope; positivity
-  have hpp1 := physicalEnvelope_nonneg X (4*X) hX (by positivity)
-  have hpp2 := physicalEnvelope_nonneg X (4*inverseRadiusEnvelope X) hX (by positivity)
-  have hw : 0 ≤ weightedErrorEnvelope X := by unfold weightedErrorEnvelope; positivity
-  have hsh : 0 ≤ shearEnvelope X := by unfold shearEnvelope; positivity
-  have hhe : 0 ≤ hessianEnvelope X := by unfold hessianEnvelope; positivity
+  have ht : 0 ≤ timeEnvelope X := mul_nonneg (mul_nonneg (Nat.ofNat_nonneg 6) hb)
+    (add_nonneg (add_nonneg ha1 ha2) zero_le_one)
+  have hti : 0 ≤ timeInputEnvelope X := mul_nonneg (mul_nonneg zero_le_two hl) (add_nonneg ht ho)
+  have hpp1 := physicalEnvelope_nonneg X (4*X) hX h4X
+  have hpp2 := physicalEnvelope_nonneg X (4*inverseRadiusEnvelope X) hX (mul_nonneg h4 hi)
+  have hw : 0 ≤ weightedErrorEnvelope X :=
+    mul_nonneg (mul_nonneg (mul_nonneg (add_nonneg zero_le_one h9X) hpp2) he) ho
+  have hsh : 0 ≤ shearEnvelope X :=
+    add_nonneg (mul_nonneg (mul_nonneg hc (mul_nonneg (mul_nonneg he ha1) h4X)) hX)
+      (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (Nat.ofNat_nonneg 8) hc) he) hX)
+        (add_nonneg ha2 zero_le_two)) hX)
+  have hhe : 0 ≤ hessianEnvelope X :=
+    add_nonneg (mul_nonneg (mul_nonneg (mul_nonneg he ha1) (sq_nonneg X))
+        (add_nonneg hX (mul_nonneg hc h4X)))
+      (mul_nonneg (mul_nonneg (mul_nonneg h9X hpp1) he) (add_nonneg ha2 zero_le_two))
   unfold extraEnvelope
-  refine ⟨?_,?_,?_,?_,?_,?_,?_,?_⟩ <;> linarith
+  refine ⟨?_,?_,?_,?_,?_,?_,?_,?_⟩ <;> linarith only [ho, hr, hvi, hei, hti, hw, hsh, hhe]
 
 theorem gradeCost_mono (R H X : ℝ) (hR : 0 ≤ R) (hH : 0 ≤ H)
     (hRX : R ≤ X) (hHX : H ≤ X) (n : ℕ) :
@@ -772,19 +782,35 @@ theorem physicalFixedCost_one_le (R C S X Y : ℝ) (hR : 0 ≤ R) (hC : 0 ≤ C)
     (hRX : R ≤ X) (hCX : C ≤ X) (hSY : S ≤ Y) :
     physicalFixedCost D R C S 1 ≤ physicalEnvelope X Y := by
   have hX := hR.trans hRX
-  have hY := hS.trans hSY
-  have hc : 0 ≤ coordinateCost := norm_nonneg _
+  have h2c := mul_nonneg coordinateCost_nonneg zero_le_two
+  have hC2 := pow_le_pow_left₀ hC hCX 2
+  have h18 : (0 : ℝ) ≤ 18 := Nat.ofNat_nonneg 18
+  have h9 : (0 : ℝ) ≤ 9 := Nat.ofNat_nonneg 9
+  have hA0 : 0 ≤ 1 + 18 * C ^ 2 * R :=
+    add_nonneg zero_le_one (mul_nonneg (mul_nonneg h18 (sq_nonneg C)) hR)
+  have hA : 1 + 18 * C ^ 2 * R ≤ 1 + 18 * X ^ 2 * X :=
+    add_le_add le_rfl (mul_le_mul (mul_le_mul_of_nonneg_left hC2 h18) hRX hR
+      (mul_nonneg h18 (sq_nonneg X)))
+  have hB0 : 0 ≤ 9 * C ^ 2 * (R + coordinateCost * 2 * S) + 2 :=
+    add_nonneg (mul_nonneg (mul_nonneg h9 (sq_nonneg C)) (add_nonneg hR (mul_nonneg h2c hS)))
+      zero_le_two
+  have hB : 9 * C ^ 2 * (R + coordinateCost * 2 * S) + 2 ≤
+      9 * X ^ 2 * (X + coordinateCost * 2 * Y) + 2 :=
+    add_le_add (mul_le_mul (mul_le_mul_of_nonneg_left hC2 h9)
+      (add_le_add hRX (mul_le_mul_of_nonneg_left hSY h2c))
+      (add_nonneg hR (mul_nonneg h2c hS)) (mul_nonneg h9 (sq_nonneg X))) le_rfl
   simp only [physicalFixedCost,physicalRadiusCost,sourceInverseRadius,physicalEnvelope,
-    coordinateCost,D.m₀_unit,Nat.factorial_one,Nat.cast_one,pow_one,one_pow,mul_one]
+    D.m₀_unit,Nat.factorial_one,Nat.cast_one,pow_one,one_pow,mul_one]
   norm_num only
-  gcongr
+  exact mul_le_mul (mul_le_mul_of_nonneg_left hCX zero_le_three)
+    (mul_le_mul hA hB hB0 (hA0.trans hA)) (mul_nonneg hA0 hB0) (mul_nonneg zero_le_three hX)
 
 theorem shearCost_le (R H C X : ℝ) (hR : 0 ≤ R) (hH : 0 ≤ H) (hC : 0 ≤ C)
     (hRX : R ≤ X) (hHX : H ≤ X) (hCX : C ≤ X) :
     initializedGlobalShearCost R H C ≤ shearEnvelope X := by
   have hX := hR.trans hRX
   have he := sobolevEmbeddingConstant_nonneg period 3
-  have hc : 0 ≤ coordinateCost := norm_nonneg _
+  have hc := coordinateCost_nonneg
   have ha1 := gradeCost_mono R H X hR hH hRX hHX 1
   have ha2 := gradeCost_mono R H X hR hH hRX hHX 2
   have hg1 := fixedVelocityGradeCost_nonneg R H hR 1
@@ -815,7 +841,7 @@ theorem hessianCost_le {q : ℕ} {R₀ : ℝ}
     initializedPressureHessianCost N R H Rc C ≤ hessianEnvelope X := by
   have hX := hR.trans hRX
   have he := sobolevEmbeddingConstant_nonneg period 3
-  have hc : 0 ≤ coordinateCost := norm_nonneg _
+  have hc := coordinateCost_nonneg
   have ha1 := gradeCost_mono R H X hR hH hRX hHX 1
   have ha2 := gradeCost_mono R H X hR hH hRX hHX 2
   have hg1 := fixedVelocityGradeCost_nonneg R H hR 1

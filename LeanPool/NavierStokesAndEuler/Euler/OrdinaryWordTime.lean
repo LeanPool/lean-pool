@@ -43,11 +43,10 @@ def ordinaryWordOperator {n : ℕ} (w : Fin n → Fin 3) :
 theorem ordinaryWordOperator_apply (A : SmoothL2Field Space) {n : ℕ} (w : Fin n → Fin 3) :
     ordinaryWordOperator w (ordinarySobolev n A.toLp A.translation_contDiff) =
       (wordField A w).toLp := by
-  change ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := EulerMeanSolenoidal.L2) (F := LiftL2 1)
-    ordinaryLift.toContinuousLinearMap
-    ((ordinarySobolev n A.toLp A.translation_contDiff).val
-      ⟨⟨n,Nat.lt_succ_self n⟩,fun i => (w i).succ⟩)=_
-  erw [ordinarySobolev_coordinate]
+  refine (congrArg (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := EulerMeanSolenoidal.L2)
+    (F := LiftL2 1) ordinaryLift.toContinuousLinearMap)
+    (ordinarySobolev_coordinate n A.toLp A.translation_contDiff
+      ⟨⟨n,Nat.lt_succ_self n⟩,fun i => (w i).succ⟩)).trans ?_
   have he (u : EulerMeanSolenoidal.L2) :
       ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := EulerMeanSolenoidal.L2) (F := LiftL2 1)
         ordinaryLift.toContinuousLinearMap (ordinaryLift u)=u :=

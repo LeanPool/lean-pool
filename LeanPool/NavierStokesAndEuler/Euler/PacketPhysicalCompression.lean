@@ -65,7 +65,7 @@ theorem target_compression_order40
     rw [abs_mul, abs_mul, abs_of_pos hβ, abs_of_pos ht]
     norm_num only [abs_neg, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 2)]
     have hh := mul_le_mul_of_nonneg_right hβupper ht.le
-    have hΘ2 : Θ ≤ Θ ^ 2 := by nlinarith only [hΘ]
+    have hΘ2 : Θ ≤ Θ ^ 2 := le_self_pow₀ hΘ two_ne_zero
     linarith only [hh, htΘ, hΘ2]
   have hQabs : |Q| ≤ 3 * Θ ^ 2 := by
     have hh := abs_add_le (Q + 2 * β * t) (-2 * β * t)
@@ -84,10 +84,9 @@ theorem target_compression_order40
     change ρ ≤ 1 / 2 at hρsmall
     dsimp [ρ] at hρsmall
     linarith only [hh, hρsmall, hscale]
-  have hDpos : 0 < rayDenominator ε P Q N := by
-    unfold rayDenominator
-    have hh : 0 < P ^ 2 := sq_pos_of_pos hPpos
-    positivity
+  have hDpos : 0 < rayDenominator ε P Q N :=
+    add_pos_of_pos_of_nonneg (add_pos_of_pos_of_nonneg (sq_pos_of_pos hPpos)
+      (mul_nonneg (sq_nonneg ε) (sq_nonneg Q))) (sq_nonneg N)
   exact ⟨hDpos, perturbed_target_compression hβ ht hε hH hscale hρ hρsmall hρQ hP hQ hN hεQ⟩
 
 /-- The full parent matrix has strictly negative target-ray compression

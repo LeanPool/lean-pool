@@ -103,17 +103,14 @@ def tensorPathLinear (n : ℕ) :
     intro t
     apply ContinuousMultilinearMap.ext
     intro v
-    simp only [tensorPath_apply, smul_apply,
-      ContinuousMap.smul_apply, RingHom.id_apply]
+    exact (tensorPath_apply n _ t v).trans (congrArg (c • ·) (tensorPath_apply n A t v)).symm
 
 /-- Tensor path map, bundling `toLinearMap`, `cont`, `1`. -/
 def tensorPathMap (n : ℕ) :
     (E [×n]→L[ℝ] C(K,V)) →L[ℝ] C(K, E [×n]→L[ℝ] V) where
   toLinearMap := tensorPathLinear n
   cont := AddMonoidHomClass.continuous_of_bound (tensorPathLinear (K := K) (E := E) (V := V) n)
-    1 (fun A => by
-      change ‖tensorPath n A‖ ≤ 1 * ‖A‖
-      simpa only [one_mul] using tensorPath_norm_le n A)
+    1 (fun A => by exact (tensorPath_norm_le n A).trans_eq (one_mul _).symm)
 
 @[simp] theorem tensorPathMap_apply (n : ℕ) (A : E [×n]→L[ℝ] C(K, V))
     (t : K) (v : Fin n → E) : tensorPathMap (K := K) (E := E) (V := V) n A t v = A v t :=

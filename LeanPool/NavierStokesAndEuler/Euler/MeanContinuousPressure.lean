@@ -74,11 +74,9 @@ theorem meanMomentum_ae (u : TimeLp T L2) :
       fun t => solenoidalProjection (adjoint (𝕜 := ℝ) (E := L2) (F := L2)
         (extendPath (Y := L2 →L[ℝ] L2) T hT F t) (u t)) := by
   filter_upwards [momentum_ae T hT (solenoidalFrame T F) u] with t ht
-  rw [ht]
-  change ((adjoint (𝕜 := ℝ) (E := solenoidalSpace) (F := L2)
-    (solenoidalFrame T F (projIcc 0 T hT t)) (u t) : solenoidalSpace) : L2) = _
-  exact congrArg (fun A : L2 →L[ℝ] solenoidalSpace => (A (u t) : L2))
-    (solenoidalFrame_adjoint T F (projIcc 0 T hT t))
+  exact (congrArg Subtype.val ht).trans
+    (congrArg (fun A : L2 →L[ℝ] solenoidalSpace => (A (u t) : L2))
+      (solenoidalFrame_adjoint T F (projIcc 0 T hT t)))
 
 /-- The exact mean variational identity determines the weak derivative of its
 actual projected momentum after the trace-zero test restriction. -/

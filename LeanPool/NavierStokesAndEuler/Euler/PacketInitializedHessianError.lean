@@ -112,8 +112,8 @@ theorem initializedPressure_gradient_decomposition (N : ℕ) (k : ℝ) (hk : k �
         (t,(Y x,k*⟪D.m₀,Y x⟫_ℝ)) := by
     dsimp only [initializedCovectorRemainder,covectorRemainder,Pi.sub_apply,Pi.smul_apply]
     abel
-  rw [hv,map_add,map_smul]
-  simp only [fastForce,transportedNormal,graphMap_apply,angularPressure,
+  rw [hv]
+  simp only [map_add,fastForce,transportedNormal,graphMap_apply,angularPressure,
     initializedAngularPressure,map_smul,h1]
 
 variable

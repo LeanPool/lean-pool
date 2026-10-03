@@ -78,7 +78,7 @@ theorem pathAverage_potentialPath (B : C(K, Space →ᵇ Space →L[ℝ] Space))
     pathAverage (K := K) (V := Vector3) P (potentialPath P B p) =
       potentialPath P B (pathAverage (K := K) (V := Vector3) P p) := by
   unfold potentialPath
-  rw [pathAverage_fullMultiplier, pathAverage_primitive]
+  exact (pathAverage_fullMultiplier P _ _).trans (congrArg _ (pathAverage_primitive P _))
 
 theorem potentialPath_mean_zero (B : C(K, Space →ᵇ Space →L[ℝ] Space))
     (hz : pathAverage (K := K) (V := Vector3) P p = 0) :

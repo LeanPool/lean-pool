@@ -169,16 +169,16 @@ theorem physical_ideal_size_comparison_order40 (m v r w : ℝ → Space)
       ‖r (physicalTime t₀ a ε τ)‖*‖w (physicalTime t₀ a ε τ)‖ ≤ 8*s₀*idealPrimarySize σ Z τ := by
   have hτ0 : 0 ≤ τ := by linarith only [hτ]
   have hΘ0 : 0 ≤ Θ := by linarith only [hΘ]
-  have hσ2 : σ^2 ≤ 1 := by nlinarith only [hσ, hσsmall]
+  have hσ2 : σ^2 ≤ 1 := pow_le_one₀ hσ.le (hσsmall.trans (by norm_num))
   have hτ2 : τ^2 ≤ Θ^2 := (sq_le_sq₀ hτ0 hΘ0).mpr hτΘ
-  have hP₀ : |σ^2*τ^2| ≤ Θ^2 := by
-    rw [abs_of_nonneg (mul_nonneg (sq_nonneg σ) (sq_nonneg τ))]
-    exact (mul_le_mul_of_nonneg_right hσ2 (sq_nonneg τ)).trans (by simpa using hτ2)
+  have hP₀ : |σ^2*τ^2| ≤ Θ^2 :=
+    (abs_of_nonneg (mul_nonneg (sq_nonneg σ) (sq_nonneg τ))).trans_le
+      ((mul_le_mul_of_nonneg_right hσ2 (sq_nonneg τ)).trans ((one_mul _).trans_le hτ2))
   have hQ₀ : |-2*σ^2*τ| ≤ 2*Θ^2 := by
-    rw [abs_mul, abs_mul, abs_of_nonneg (sq_nonneg σ), abs_of_nonneg hτ0]
-    norm_num only [abs_neg, abs_of_nonneg (by norm_num : (0:ℝ) ≤ 2)]
     have hh := mul_le_mul_of_nonneg_right hσ2 hτ0
-    linarith only [hh, hτΘ, sq_nonneg (Θ-1), hΘ]
+    have hΘ2 := le_self_pow₀ hΘ two_ne_zero
+    have hn := mul_nonneg (sq_nonneg σ) hτ0
+    exact abs_le.mpr ⟨by linarith only [hh, hτΘ, hΘ2], by linarith only [hn, hΘ2, hΘ]⟩
   have hzpos := equation30_global_positive hσ hσsmall hZ hfluxZ hZ0 hZ₁0 τ hτ0
   have hslope := equation30_primary_logderivative_bound hσ hσsmall hZ hfluxZ hZ0 hZ₁0 τ hτ
   have hr₀ : |-Z₁ τ/Z τ| ≤ 4 := by simpa only [neg_div, abs_neg] using hslope
@@ -186,7 +186,7 @@ theorem physical_ideal_size_comparison_order40 (m v r w : ℝ → Space)
       ≤ 10*(K*e*Θ^29) := by simpa only [neg_div, sub_neg_eq_add] using hratio
   obtain ⟨hl, hu⟩ := physical_size_comparison_order40 m v r w hs₀ hε hm hv hmv hrw
     hΘ hK he hεe hsmall hP₀ hQ₀ hr₀ hzpos hP hQ hN hVrel hr'
-  constructor <;> dsimp only [idealPrimarySize] <;> linarith only [hl, hu]
+  exact ⟨(congrArg (· / 4) (mul_assoc _ _ _)).symm.trans_le hl, hu.trans_eq (mul_assoc _ _ _)⟩
 
 /-- Every controlled neighboring primary before target is bounded by a
 fixed multiple of the center's actual target size.  All comparisons use

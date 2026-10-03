@@ -93,11 +93,8 @@ theorem include_supportedPathAverage (p : C(K, Supported P V S hS)) :
       pathAverage (K := K) (V := V) P (includePath (K := K) (V := V) P S hS p) := rfl
 
 theorem supportedPathAverage_norm : ‖supportedPathAverage (K := K) (V := V) P S hS‖ ≤ 1 := by
-  apply opNorm_le_bound _ zero_le_one
-  intro p
-  rw [one_mul]
-  apply (ContinuousMap.norm_le _ (norm_nonneg p)).mpr
-  intro t
+  refine (supportedPathAverage (K := K) (V := V) P S hS).opNorm_le_bound zero_le_one
+    fun p => ((ContinuousMap.norm_le _ (norm_nonneg p)).mpr fun t => ?_).trans_eq (one_mul _).symm
   exact (averageIntegral_norm P (p t : CylinderL2 P V)).trans (p.norm_coe_le_norm t)
 
 end Paths
@@ -179,7 +176,7 @@ theorem projectedForcing_average_zero
     average (V := U) P (projectedForcing P S hS Q c hc hQ f t : CylinderL2 P U) = 0 := by
   change average (V := U) P (fullOperatorMap (E := E) (F := U) P (sourceForcing Q c hc hQ t)
     (f t : CylinderL2 P E)) = 0
-  rw [average_fullOperator, hf t, map_zero]
+  simp only [average_fullOperator, hf t, ContinuousLinearMap.map_zero]
 
 /-- The real Gram-projected Duhamel coordinate solution has zero angular mean. -/
 theorem coordinates_average_zero
@@ -198,8 +195,8 @@ theorem velocity_average_zero
     average (V := E) P (velocity P S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 P E) = 0 := by
   change average (V := E) P (fullOperatorMap (E := U) (F := E) P (Q.field t)
     (coordinates P S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 P U)) = 0
-  rw [average_fullOperator, coordinates_average_zero P S hS T hT Q Q₁ c hc hQ f a₀ hf ha₀ t,
-    map_zero]
+  simp only [average_fullOperator,
+    coordinates_average_zero P S hS T hT Q Q₁ c hc hQ f a₀ hf ha₀ t, ContinuousLinearMap.map_zero]
 
 theorem coordinateDerivative_average_zero
     (hf : ∀ t, average (V := E) P (f t : CylinderL2 P E) = 0)
@@ -209,9 +206,9 @@ theorem coordinateDerivative_average_zero
   change average (V := U) P (fullOperatorMap (E := U) (F := U) P (sourceGenerator Q Q₁ c hc hQ t)
       (coordinates P S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 P U) +
     fullOperatorMap (E := E) (F := U) P (sourceForcing Q c hc hQ t) (f t : CylinderL2 P E)) = 0
-  rw [map_add, average_fullOperator, average_fullOperator,
+  simp only [ContinuousLinearMap.map_add, average_fullOperator,
     coordinates_average_zero P S hS T hT Q Q₁ c hc hQ f a₀ hf ha₀ t, hf t,
-    map_zero, map_zero, add_zero]
+    ContinuousLinearMap.map_zero, add_zero]
 
 /-- The actual within-time derivative also has zero mean, as follows from its equation. -/
 theorem velocityDerivative_average_zero
@@ -223,9 +220,9 @@ theorem velocityDerivative_average_zero
       (coordinates P S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 P U) +
     fullOperatorMap (E := U) (F := E) P (Q.field t)
       (coordinateDerivative P S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 P U)) = 0
-  rw [map_add, average_fullOperator, average_fullOperator,
+  simp only [ContinuousLinearMap.map_add, average_fullOperator,
     coordinates_average_zero P S hS T hT Q Q₁ c hc hQ f a₀ hf ha₀ t,
     coordinateDerivative_average_zero P S hS T hT Q Q₁ c hc hQ f a₀ hf ha₀ t,
-    map_zero, map_zero, add_zero]
+    ContinuousLinearMap.map_zero, add_zero]
 
 end EulerSourceCylinderEquation

@@ -179,9 +179,7 @@ private theorem contDiff_value_nat_aux (n : ℕ) :
     rw [Nat.cast_add, Nat.cast_one, contDiff_succ_iff_fderiv]
     refine ⟨fun a => (A.hasFDerivAt_value a).differentiableAt, by simp, ?_⟩
     rw [A.fderiv_value]
-    exact (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := (n : WithTop ℕ∞))
-      (E := Lp (P →L[ℝ] V) 2 μ) (F := P →L[ℝ] Lp V 2 μ)
-      (derivativeBundling μ)).comp (ih (P →L[ℝ] V) A.derivative)
+    exact (derivativeBundling (P := P) (V := V) μ).contDiff.comp (ih (P →L[ℝ] V) A.derivative)
 
 /-- Genuine smoothness in the full L² norm, not merely pointwise in the measured variable. -/
 theorem contDiff_value (A : SmoothFamily μ P V) : ContDiff ℝ ∞ A.value :=
@@ -205,14 +203,11 @@ private theorem norm_iteratedFDeriv_value_aux (n : ℕ) :
   | succ n ih =>
     intro V _ _ A a
     rw [← norm_iteratedFDeriv_fderiv, A.fderiv_value]
-    have h := ContinuousLinearMap.norm_iteratedFDeriv_comp_left (𝕜 := ℝ) (E := P)
-      (F := Lp (P →L[ℝ] V) 2 μ) (G := P →L[ℝ] Lp V 2 μ)
-      (derivativeBundling μ) (A.derivative.contDiff_value.contDiffAt (x := a)) (n := n) (by simp)
-    have hi := ih (P →L[ℝ] V) A.derivative a
-    rw [show A.derivative.bound n = A.bound (n+1) from rfl] at hi
+    have h := (derivativeBundling (P := P) (V := V) μ).norm_iteratedFDeriv_comp_left
+      (A.derivative.contDiff_value.contDiffAt (x := a)) (n := n) (by simp)
     exact h.trans ((mul_le_mul_of_nonneg_right
       (derivativeBundling_norm_le_one (P := P) (V := V) μ) (norm_nonneg _)).trans
-      (by simpa only [one_mul] using hi))
+      ((one_mul _).trans_le (ih (P →L[ℝ] V) A.derivative a)))
 
 /-- Each true L² derivative inherits its original fiberwise L² majorant with constant one. -/
 theorem norm_iteratedFDeriv_value_le (A : SmoothFamily μ P V) (n : ℕ) (a : P) :

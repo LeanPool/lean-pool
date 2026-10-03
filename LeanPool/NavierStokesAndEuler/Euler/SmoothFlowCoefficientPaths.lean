@@ -70,12 +70,8 @@ def spatialDerivative (x : E) : C(Icc (0 : ℝ) T,E →L[ℝ] V) :=
     ℝ (Icc (0 : ℝ) T)) (jetFamily T f 1 x)
 
 theorem spatialDerivative_contDiff (hf : ContDiff ℝ ∞ f) :
-    ContDiff ℝ ∞ (spatialDerivative T f) := by
-  exact (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := ∞)
-    (E := C(Icc (0 : ℝ) T,E [×1]→L[ℝ] V)) (F := C(Icc (0 : ℝ) T,E →L[ℝ] V))
-    ((continuousMultilinearCurryFin1 ℝ E
-        V).toContinuousLinearEquiv.toContinuousLinearMap.compLeftContinuous
-      ℝ (Icc (0 : ℝ) T))).comp (jetFamily_contDiff T f hf 1)
+    ContDiff ℝ ∞ (spatialDerivative T f) :=
+  (jetFamily_contDiff T f hf 1).continuousLinearMap_comp _
 
 theorem spatialDerivative_apply (hf : ContDiff ℝ ∞ f) (x : E) (t : Icc (0 : ℝ) T) :
     spatialDerivative T f x t = fderiv ℝ (fun y => f y t) x := by

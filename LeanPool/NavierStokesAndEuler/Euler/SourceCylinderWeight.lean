@@ -67,12 +67,16 @@ theorem velocity_weight_eq :
 /-- Therefore the proved fixed-radius bound is literally the normalized
 full-cylinder orbit of the actual physical solution. -/
 theorem normalized_full_velocity_eq :
-    normalize (E := CylinderL2 period E) g hg
+    EulerContinuousTimeWeight.normalize (E := CylinderL2 period E) g hg
         (includePath (K := Icc (0 : ℝ) T) (V := E) period S hS
           (velocity period S hS T hT Q Q₁ c hc hQ
             (weight (E := Supported period E S hS) g f) a₀)) =
       includePath (K := Icc (0 : ℝ) T) (V := E) period S hS
         (normalizedVelocity period T hT S hS Q Q₁ c hc hQ g hg f a₀) := by
-  rw [velocity_weight_eq,include_weight,normalize_weight]
+  exact (congrArg (fun x => EulerContinuousTimeWeight.normalize (E := CylinderL2 period E) g hg
+      (includePath (K := Icc (0 : ℝ) T) (V := E) period S hS x))
+      (velocity_weight_eq period S hS T hT Q Q₁ c hc hQ g hg f a₀)).trans
+    ((congrArg (EulerContinuousTimeWeight.normalize (E := CylinderL2 period E) g hg)
+      (include_weight period S hS g _)).trans (normalize_weight g hg _))
 
 end EulerSourceCylinderEquation

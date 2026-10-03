@@ -168,12 +168,10 @@ omit [CompleteSpace V] in
 /-- The actual cylinder coefficient varies smoothly with all four covering parameters. -/
 theorem mixedOperator_contDiff (B : SmoothCoefficientPath (Icc (0 : ℝ) T) (V →L[ℝ] V)) :
     ContDiff ℝ ∞ (fun a : LiftTangent => liftedOperatorPath period S hS T
-      (translateCoefficientPath B.field a.1)) := by
-  exact (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := ∞)
-    (E := C(Icc (0 : ℝ) T,Space →ᵇ V →L[ℝ] V))
-    (F := C(Icc (0 : ℝ) T,Supported period V S hS →L[ℝ] Supported period V S hS))
-    (liftedOperatorPathMap period S hS T)).comp
-      (B.translation_contDiff.comp (ContinuousLinearMap.fst ℝ Space ℝ).contDiff)
+      (translateCoefficientPath B.field a.1)) :=
+  (B.translation_contDiff.comp
+    (ContinuousLinearMap.fst ℝ Space ℝ).contDiff).continuousLinearMap_comp
+      (liftedOperatorPathMap (V := V) period S hS T)
 
 omit [CompleteSpace V] in
 /-- Mixed coefficient jets obey the original spatial tensor bound, with constant one. -/
@@ -220,14 +218,8 @@ theorem constructedEvolution_propagator_norm
           t/g s)
     (t s : Icc (0 : ℝ) T) (hst : s ≤ t) :
     ‖(constructedEvolution period S hS T hT B).propagator t s‖ ≤ C*g t/g s := by
-  change ‖(operator (liftMeasure period) (spatialSet period S) (spatialSet_measurable period S hS)
-      (fieldLift (W := V →L[ℝ] V) period ((fundamentalPath T hT B).forward t))).comp
-    (operator (liftMeasure period) (spatialSet period S) (spatialSet_measurable period S hS)
-      (fieldLift (W := V →L[ℝ] V) period ((fundamentalPath T hT B).backward s)))‖ ≤ _
-  rw [← operator_mul]
-  exact operator_norm_le (liftMeasure period) (spatialSet period S) (spatialSet_measurable period S
-      hS)
-    _ (C*g t/g s) (div_nonneg (mul_nonneg hC (hg t).le) (hg s).le)
-    (fun x hx => hprop t s hst x.1 hx)
+  refine liftEvolution_propagator_norm (liftMeasure period) (spatialSet period S)
+    (spatialSet_measurable period S hS) T hT _ _ _ _ _ _ g hg C hC ?_ t s hst
+  exact fun t s hst x hx => hprop t s hst x.1 hx
 
 end EulerLpCylinderCoefficients

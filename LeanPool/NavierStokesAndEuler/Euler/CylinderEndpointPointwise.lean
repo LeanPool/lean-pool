@@ -267,7 +267,7 @@ theorem endpointPointDisplacement_initial (x : LiftDomain P) :
     (D.endpointDisplacement_orbit_contDiff P hQ hQ₁ hH Y hY) hL
     ⟨0,le_rfl,D.time_pos.le⟩ (fun _ => (0 : U)) continuous_const
     (by rw [D.endpointDisplacement_initial P Y]; exact Lp.coeFn_zero U 2 (liftMeasure P))
-  exact congrFun he x
+  apply congrFun he x
 
 include hL in
 theorem endpointPointDisplacement_terminal (f : LiftDomain P → U) (hf : Continuous f)
@@ -277,7 +277,7 @@ theorem endpointPointDisplacement_terminal (f : LiftDomain P → U) (hf : Contin
     (D.endpointDisplacement_orbit_contDiff P hQ hQ₁ hH Y hY) hL
     ⟨T,D.time_pos.le,le_rfl⟩ f hf
     (by rw [D.endpointDisplacement_terminal P Y]; exact hrep)
-  exact congrFun he x
+  apply congrFun he x
 
 include hL in
 theorem endpointPoint_projected_equation (x : LiftDomain P) (t : Icc (0 : ℝ) T) :

@@ -202,10 +202,10 @@ theorem weighted_solution_translation_eventually
       (fun a => pathTranslate (K := Icc (0 : ℝ) T) (V := V) period a
         (includePath (K := Icc (0 : ℝ) T) (V := V) period K hK
           (U.weightedSolution g hg f a₀))) := by
-  obtain ⟨δ,hδ,hmargin⟩ := compact_support_mixed_margin K Ω hKc hΩo hsub
-  filter_upwards [Metric.ball_mem_nhds (0 : LiftTangent) hδ] with a ha
+  refine (compact_support_mixed_margin K Ω hKc hΩo hsub).elim fun δ hδ => ?_
+  filter_upwards [Metric.ball_mem_nhds (0 : LiftTangent) hδ.1] with a ha
   exact weighted_solution_translation period T hT K Ω hK hΩ B U a
-    (hmargin a (by simpa only [Metric.mem_ball, dist_zero_right] using ha)) (W a) g hg f a₀
+    (hδ.2 a (by simpa only [Metric.mem_ball, dist_zero_right] using ha)) (W a) g hg f a₀
 
 end EulerLpCylinderSolutionTranslation
 
@@ -316,9 +316,9 @@ theorem evolutionFamily_propagator_zero
     apply ContinuousMap.ext
     intro r
     exact translated_zero (B r)
-  change ‖(constructedEvolution period Ω hΩ T hT (translateCoefficientPath B 0)).propagator t s‖ ≤ _
-  rw [hz]
-  exact constructedEvolution_propagator_norm period Ω hΩ T hT B g hg C hC hprop t s hst
+  have h := constructedEvolution_propagator_norm period Ω hΩ T hT B g hg C hC hprop t s hst
+  rw [← hz] at h
+  exact h
 
 /-- The locally translated family equals the actual cylinder L² mixed translation orbit
 of the actual normalized source solution. -/

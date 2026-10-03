@@ -731,9 +731,8 @@ theorem inviscid_correction_odd {q : ℕ} (hq : 6 ≤ q) (T : ℝ) (hT : 0 ≤ T
     (hud : ∀ t, value period (u t) ∈ divergenceFreeSpace period D.κ D.direction) :
     ∀ t, oddReflection period (q+1) (u t) = u t := by
   let v := (oddReflection period (q+1)).compLeftContinuous ℝ (Icc (0 : ℝ) T) u
-  have hv0 : v ⟨0,le_rfl,hT⟩ = 0 := by
-    change oddReflection period (q+1) (u ⟨0,le_rfl,hT⟩) = 0
-    rw [hi, map_zero]
+  have hv0 : v ⟨0,le_rfl,hT⟩ = 0 :=
+    (congrArg (oddReflection period (q+1)) hi).trans (oddReflection period (q+1)).map_zero
   have hv : ∀ t (ht : t ∈ Ioo 0 T),
       HasDerivAt (fun r => value period (extendPath T hT v r))
         (value period ((D.coefficients period hq).apply ⟨t,ht.1.le,ht.2.le⟩ (v
@@ -745,12 +744,10 @@ theorem inviscid_correction_odd {q : ℕ} (hq : 6 ≤ q) (T : ℝ) (hT : 0 ≤ T
     have he := congrArg (value period (q := q))
       (correction_source_oddReflection period hq D τ (hG τ) (hL τ) (hQ τ) (hzOdd τ) (hrOdd τ) (u τ))
     rw [value_oddReflection] at he
-    convert! hd using 1
-    · funext r
-      change value period (oddReflection period (q+1) (u (projIcc 0 T hT r))) =
-        -reflection period (value period (u (projIcc 0 T hT r)))
-      exact value_oddReflection period _
-    · exact he.symm
+    refine (hd.congr_deriv he).congr_of_eventuallyEq (Filter.Eventually.of_forall fun r => ?_)
+    change value period (oddReflection period (q+1) (u (projIcc 0 T hT r))) =
+      -reflection period (value period (u (projIcc 0 T hT r)))
+    exact value_oddReflection period _
   have hvd : ∀ t, value period (v t) ∈ divergenceFreeSpace period D.κ D.direction := by
     intro t
     exact oddReflection_divergenceFree period D.κ D.direction (u t) (hud t)

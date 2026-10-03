@@ -84,19 +84,26 @@ theorem parentDifferenceEnvelope_mono
   have hC10 := hC1.trans hC1'
   have hCH0 := hCH.trans hCH'
   have hR0 := hR.trans hR'
+  have hg0 : 0 ≤ gramInverseEnvelope C := sq_nonneg _
+  have hg : gramInverseEnvelope C ≤ gramInverseEnvelope C' :=
+    pow_le_pow_left₀ (add_nonneg (mul_nonneg zero_le_three (sq_nonneg C)) zero_le_one)
+      (add_le_add_left (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ hC hC' 2) zero_le_three) 1) 2
+  have hg0' := hg0.trans hg
+  have h2g := mul_nonneg (zero_le_two (α := ℝ)) (sq_nonneg (gramInverseEnvelope C'))
   unfold parentDifferenceEnvelope
-  apply differenceEnvelope_mono hTi (by unfold gramInverseEnvelope; positivity) hC hC1
-    (by positivity) (by positivity) (transportEnvelope_nonneg C C1 hC hC1)
+  apply differenceEnvelope_mono hTi hg0 hC hC1
+    (add_nonneg hC1 hC) (add_nonneg zero_le_one hCH) (transportEnvelope_nonneg C C1 hC hC1)
     (mul_nonneg hC hR) (mul_nonneg hC1 hR) (mul_nonneg hCH hR)
   · exact hTi'
-  · unfold gramInverseEnvelope
-    gcongr
+  · exact hg
   · exact hC'
   · exact hC1'
   · exact add_le_add hC1' hC'
   · exact add_le_add (le_refl (1 : ℝ)) hCH'
-  · unfold transportEnvelope gramInverseEnvelope
-    gcongr
+  · exact add_le_add (add_le_add_right (add_le_add (mul_le_mul (mul_le_mul
+      (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ hg0 hg 2) zero_le_two)
+      (pow_le_pow_left₀ hC hC' 2) (sq_nonneg C) h2g) hC1' hC1
+      (mul_nonneg h2g (sq_nonneg C'))) (mul_le_mul hg hC1' hC1 hg0')) 1) (mul_le_mul hg hC' hC hg0')
   · exact mul_le_mul hC' hR' hR hC0
   · exact mul_le_mul hC1' hR' hR hC10
   · exact mul_le_mul hCH' hR' hR hCH0

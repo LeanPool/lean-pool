@@ -119,8 +119,7 @@ def derivativeBundling : C(K,Space →L[ℝ] V) →L[ℝ] (Space →L[ℝ] C(K,V
 theorem derivativeBundling_norm_le_one : ‖derivativeBundling (K := K) (V := V)‖ ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one
   intro D
-  change ‖derivativeMap D‖ ≤ 1*‖D‖
-  simpa only [one_mul] using derivativeMap_norm_le D
+  exact (derivativeMap_norm_le D).trans_eq (one_mul _).symm
 
 end Bundling
 
@@ -270,9 +269,7 @@ private theorem contDiff_field_aux (n : ℕ) :
     rw [Nat.cast_add, Nat.cast_one, contDiff_succ_iff_fderiv]
     refine ⟨fun a => (A.hasFDerivAt_field a).differentiableAt, by simp, ?_⟩
     rw [A.fderiv_field]
-    exact (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := (n : ℕ∞ω))
-      (E := C(K,Space →L[ℝ] V)) (F := Space →L[ℝ] C(K,V))
-      (derivativeBundling (K := K) (V := V))).comp (ih (Space →L[ℝ] V) A.derivative)
+    exact (derivativeBundling (K := K) (V := V)).contDiff.comp (ih (Space →L[ℝ] V) A.derivative)
 
 /-- All ordinary pointwise derivatives produce genuine uniform-path smoothness. -/
 theorem contDiff_field (A : SpatialFamily K V) : ContDiff ℝ ∞ A.field :=

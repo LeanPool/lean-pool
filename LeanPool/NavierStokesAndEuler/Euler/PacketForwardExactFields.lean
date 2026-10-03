@@ -237,7 +237,9 @@ theorem forwardInitializedExactPhysicalPressure_gradient
   congr 1
   simp only [coordinatePressure,covector,angularPressure,Pi.add_apply,Pi.smul_apply,
     map_add,map_smul,smul_add,smul_smul]
-  match_scalars <;> field_simp
+  match_scalars
+  · exact inv_mul_cancel₀ hk0
+  · rw [pow_two, ← mul_assoc, ← mul_assoc, inv_mul_cancel₀ hk0, one_mul]
 
 include hX hXY hY in
 theorem forwardInitializedExactPhysicalPressure_hessian

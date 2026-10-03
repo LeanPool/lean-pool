@@ -132,7 +132,7 @@ theorem historyWave_physical_hasFDerivAt (α k : ℝ) (hk : k ≠ 0)
   let tg : Icc (0 : ℝ) D.T := ⟨t,t.property.1,t.property.2.trans hτT.le⟩
   have he : (Y ∘ X) = id := funext hleft
   have hdY := EulerLagrangian.derivative_pullback_inverse Y X (D.deformationEquiv tg 0) 0 hX hY
-  rw [he,fderiv_id,id_comp] at hdY
+  simp only [he,fderiv_id,id_comp] at hdY
   have hy : HasFDerivAt Y (D.deformationEquiv tg 0).symm.toContinuousLinearMap (X 0) :=
     hdY ▸ hY.hasFDerivAt
   have hp : HasFDerivAt (historyWave τ hτ hτT B δ hδ ξ hs α k t)
@@ -140,12 +140,10 @@ theorem historyWave_physical_hasFDerivAt (α k : ℝ) (hk : k ≠ 0)
         (B.coefficients.labelVelocity 0 ξ t) D.m₀) (Y (X 0)) := by
     rw [hleft]
     exact historyWave_hasFDerivAt τ hτ hτT B δ hδ ξ hs α k hk t
-  convert! hp.comp (X 0) hy using 1
-  apply ContinuousLinearMap.ext
-  intro v
+  refine (hp.comp (X 0) hy).congr_fderiv (ContinuousLinearMap.ext fun v => ?_)
   simp only [smul_apply,comp_apply,rankOne_apply]
   congr 2
-  exact (D.FInv.field tg 0).adjoint_inner_left v D.m₀
+  exact ((D.FInv.field tg 0).adjoint_inner_left v D.m₀).symm
 
 theorem historyWave_physical_norm (α k : ℝ) (hα : 0 ≤ α) (hk : k ≠ 0)
     (t : Icc (0 : ℝ) τ) (X Y : Space → Space)

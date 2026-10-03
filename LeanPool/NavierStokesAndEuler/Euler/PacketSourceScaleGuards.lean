@@ -39,7 +39,7 @@ theorem source_activation_ode_guards {j x β : ℝ}
     0 < 1 / (j ^ 2 * x) ∧ 1 / (j ^ 2 * x) ≤ 1 / 2 := by
   have hxp : 0 < x := by linarith only [hx]
   have hjp : 0 < j := by linarith only [hj]
-  have hβ : 0 < β := by nlinarith only [hβx, sq_nonneg x]
+  have hβ : 0 < β := pos_of_mul_pos_left (one_half_pos.trans_le hβx) (sq_nonneg x)
   have hx64 : 64 ≤ x ^ 2 := by nlinarith only [hx]
   have hm := mul_le_mul_of_nonneg_left hx64 hβ.le
   have hβsmall : β ≤ 1 / 16 := by linarith only [hm, hβx₂]
@@ -56,9 +56,7 @@ theorem source_activation_ode_guards {j x β : ℝ}
   norm_num only [mul_one, sqrt_one, div_one] at htime
   have htUp : (j ^ 2 * x) / sqrt β ≤ 2 * j ^ 2 * x ^ 2 := by linarith only [htime.2]
   have hy : 0 < 1 / (j ^ 2 * x) := by positivity
-  have hy₂ : 1 / (j ^ 2 * x) ≤ 1 / 2 := by
-    apply (div_le_iff₀ (by positivity : 0 < j ^ 2 * x)).2
-    linarith only [hX]
+  have hy₂ : 1 / (j ^ 2 * x) ≤ 1 / 2 := one_div_le_one_div_of_le two_pos hX
   exact ⟨hβ, hβsmall, hσ, hσsmall, htLow, htUp, hy, hy₂⟩
 
 /-- The source polynomial horizon contains the target activation time. -/

@@ -73,10 +73,10 @@ theorem labelVelocity_exists_ne_zero (x : Space) (ξ : U) (hξ : ξ ≠ 0) :
   have hv : ∀ t : Icc (0 : ℝ) T, D.labelCoordinate x ξ t = 0 := by
     intro t
     have h := D.labelFrame_lower x t (D.labelCoordinate x ξ t)
-    change D.lower*‖D.labelCoordinate x ξ t‖^2 ≤ ‖D.labelVelocity x ξ t‖^2 at h
-    rw [hn t,norm_zero,zero_pow (by decide : 2 ≠ 0)] at h
-    have hs : ‖D.labelCoordinate x ξ t‖^2 ≤ 0 := nonpos_of_mul_nonpos_right h D.lower_pos
-    exact norm_eq_zero.mp (by nlinarith only [hs, norm_nonneg (D.labelCoordinate x ξ t)])
+    have h0 : ‖D.labelVelocity x ξ t‖ ^ 2 = 0 := by rw [hn t, norm_zero, zero_pow two_ne_zero]
+    have hs : ‖D.labelCoordinate x ξ t‖^2 ≤ 0 :=
+      nonpos_of_mul_nonpos_right (h.trans_eq h0) D.lower_pos
+    exact norm_eq_zero.mp ((pow_eq_zero_iff two_ne_zero).mp (le_antisymm hs (sq_nonneg _)))
   let z := EulerFixedEndpointClassical.displacement T D.time_pos.le (D.labelFrame x)
       (D.labelFrameDerivative x)
     (D.labelHessian x) D.lower D.lower_pos (D.labelFrame_lower x) (D.labelFrame_derivative x)
@@ -90,9 +90,7 @@ theorem labelVelocity_exists_ne_zero (x : Space) (ξ : U) (hξ : ξ ≠ 0) :
       (D.labelFrame_derivative x) D.potential D.potential_nonneg (D.labelHessian_upper x) D.small
       (D.labelFrameSecond x) D.time_pos (D.labelFrame_second_derivative x) (D.labelFrame_equation x)
       ξ ⟨t,ht⟩
-    change HasDerivWithinAt (extendPath T D.time_pos.le z) (D.labelCoordinate x ξ ⟨t,ht⟩)
-      (Icc (0 : ℝ) T) t at h
-    rwa [hv] at h
+    exact h.congr_deriv (hv ⟨t,ht⟩)
   have he : extendPath T D.time_pos.le z T = extendPath T D.time_pos.le z 0 := by
     have h := Convex.norm_image_sub_le_of_norm_hasDerivWithin_le (C := 0) hd
       (fun r hr => by simp) (convex_Icc (0 : ℝ) T)

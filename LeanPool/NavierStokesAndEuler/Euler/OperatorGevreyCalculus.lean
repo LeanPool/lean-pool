@@ -150,11 +150,9 @@ theorem clm_comp_const_right_bound (A : P → F →L[ℝ] G) (B : E →L[ℝ] F)
     (hb : ∀ n x, ‖iteratedFDeriv ℝ n A x‖ ≤ C * majorant R d n)
     (n : ℕ) (x : P) :
     ‖iteratedFDeriv ℝ n (fun y => (A y).comp B) x‖ ≤ (‖B‖*C) * majorant R d n := by
-  let L : (F →L[ℝ] G) →L[ℝ] (E →L[ℝ] G) := (compL ℝ E F G).flip B
-  have hL : ‖L‖ ≤ ‖B‖ := by
-    apply opNorm_le_bound _ (norm_nonneg B)
-    intro a
-    exact (opNorm_comp_le a B).trans_eq (mul_comm _ _)
+  let L := (compL ℝ E F G).flip B
+  have hL := opNorm_le_bound L (norm_nonneg B)
+    (fun a => (opNorm_comp_le a B).trans_eq (mul_comm _ _))
   exact (linear_bound L A hA R C d hb n x).trans
     (mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right hL hC) (majorant_nonneg R hR d n))
 
@@ -164,11 +162,8 @@ theorem clm_comp_const_left_bound (A : F →L[ℝ] G) (B : P → E →L[ℝ] F)
     (hb : ∀ n x, ‖iteratedFDeriv ℝ n B x‖ ≤ C * majorant R d n)
     (n : ℕ) (x : P) :
     ‖iteratedFDeriv ℝ n (fun y => A.comp (B y)) x‖ ≤ (‖A‖*C) * majorant R d n := by
-  let L : (E →L[ℝ] F) →L[ℝ] (E →L[ℝ] G) := compL ℝ E F G A
-  have hL : ‖L‖ ≤ ‖A‖ := by
-    apply opNorm_le_bound _ (norm_nonneg A)
-    intro b
-    exact opNorm_comp_le A b
+  let L := compL ℝ E F G A
+  have hL := opNorm_le_bound L (norm_nonneg A) (fun b => opNorm_comp_le A b)
   exact (linear_bound L B hB R C d hb n x).trans
     (mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right hL hC) (majorant_nonneg R hR d n))
 

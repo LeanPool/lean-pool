@@ -177,18 +177,15 @@ omit [CompleteSpace U] in
 theorem sourceError_bound (x : Space) (hx : ‖x‖ ≤ G.radius)
     (t : ℝ) (ht : t ∈ Icc (0 : ℝ) D.T) : ‖P.sourceError x t‖ ≤ P.forwardError G.radius := by
   have hd := EulerPacketActivationHistory.coefficient_difference D.M (D.clamp t) x 0
-  rw [sub_zero] at hd
   have hr := P.remainder_bound t ht
-  calc
-    ‖P.sourceError x t‖ = ‖(sourceMatrix D x t-sourceMatrix D 0 t)+P.sourceError 0 t‖ := by
-      congr 1
-      unfold ParentFrame.sourceError
-      module
-    _ ≤ ‖sourceMatrix D x t-sourceMatrix D 0 t‖+‖P.sourceError 0 t‖ := norm_add_le _ _
-    _ ≤ ‖D.M.derivative.field‖*‖x‖+P.error := add_le_add hd hr
-    _ ≤ ‖D.M.derivative.field‖*G.radius+P.error :=
-      add_le_add (mul_le_mul_of_nonneg_left hx (norm_nonneg _)) le_rfl
-    _ = P.forwardError G.radius := by unfold ParentFrame.forwardError; ring
+  have he : P.sourceError x t = (sourceMatrix D x t-sourceMatrix D 0 t)+P.sourceError 0 t := by
+    unfold ParentFrame.sourceError
+    module
+  rw [he]
+  refine (norm_add_le _ _).trans ((add_le_add ((hd.trans_eq (by rw [sub_zero])).trans
+    (mul_le_mul_of_nonneg_left hx (norm_nonneg _))) hr).trans_eq ?_)
+  unfold ParentFrame.forwardError
+  ring
 
 end ForwardGuards
 end EulerPacketSourceGeometry

@@ -102,9 +102,11 @@ theorem correctionForcing_metric {s : ℕ} (hs : 6 ≤ s) {A : SmoothCoefficient
   have hlf := lossConstant_nonneg period hM0
   have hlin : 0 ≤ sourceConstant B M*(productConstant period 3*B1+A0+2*A2*productConstant period
       3*B0) +
-      transportConstant period B M*B0 := by positivity
-  have hquad : 0 ≤ sourceConstant B M*A2*productConstant period 3+transportConstant period B M := by
-      positivity
+      transportConstant period B M*B0 :=
+    add_nonneg (mul_nonneg hsf (add_nonneg (add_nonneg (mul_nonneg hP hb1) ha0)
+      (mul_nonneg (mul_nonneg (mul_nonneg zero_le_two hA2) hP) hb0))) (mul_nonneg htf hb0)
+  have hquad : 0 ≤ sourceConstant B M*A2*productConstant period 3+transportConstant period B M :=
+    add_nonneg (mul_nonneg (mul_nonneg hsf hA2) hP) htf
   exact metric_polynomial_conversion (sourceConstant B M)
     (sourceConstant B M*(productConstant period 3*B1+A0+2*A2*productConstant period
         3*B0)+transportConstant period B M*B0)
@@ -218,7 +220,10 @@ def forcingBoundPath {q : ℕ} (N : ℕ) (hN : N + 6 ≤ q + 1) (T : ℝ)
   refine ⟨fun t => forcingPolynomial period B M B0 B1 A0 A2 residual cM Rc (R t) (X t) (Y t), ?_⟩
   have hi : Continuous (fun t => (R t)⁻¹) := R.continuous.inv₀ (fun t => (hR t).ne')
   unfold forcingPolynomial
-  fun_prop
+  exact ((continuous_const.add (continuous_const.mul X.continuous)).add
+    (continuous_const.mul (X.continuous.pow 2))).add
+    ((((continuous_const.mul (hi.add continuous_const)).mul continuous_const).mul
+      (continuous_const.add X.continuous)).mul Y.continuous)
 
 /-- The actual constructed full-order Bochner forcing obeys the continuous spatial majorant almost
 everywhere. -/

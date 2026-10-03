@@ -247,16 +247,13 @@ theorem derivativeField_smooth (t : Icc (0 : ℝ) T) (x : LiftDomain period) :
 theorem field_ae (t : Icc (0 : ℝ) T) :
     (velocity period S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 period Space) =ᵐ[liftMeasure period]
       field period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ t :=
-  pointField_ae period (includePath (K := Icc (0 : ℝ) T) (V := Vector3) period S hS
-      (velocity period S hS T hT Q Q₁ c hc hQ f a₀))
-    (velocity_contDiff period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀) t
+  pointField_ae period _ (velocity_contDiff period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀) t
 
 theorem derivativeField_ae (t : Icc (0 : ℝ) T) :
     (velocityDerivative period S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 period Space)
         =ᵐ[liftMeasure period]
       derivativeField period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ t :=
-  pointField_ae period (includePath (K := Icc (0 : ℝ) T) (V := Vector3) period S hS
-      (velocityDerivative period S hS T hT Q Q₁ c hc hQ f a₀))
+  pointField_ae period _
     (velocityDerivative_contDiff period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀) t
 
 theorem field_tsupport_subset (t : Icc (0 : ℝ) T) :
@@ -284,8 +281,7 @@ theorem fullVelocity_hasDerivWithinAt
       (includePath (K := Icc (0 : ℝ) T) (V := Space) period S hS
         (velocityDerivative period S hS T hT Q Q₁ c hc hQ f a₀) t)
       (Icc (0 : ℝ) T) t := by
-  let L : Supported period Space S hS →L[ℝ] LiftL2 period := (Supported period Space S hS).subtypeL
-  exact L.hasFDerivAt.comp_hasDerivWithinAt (t : ℝ)
+  exact (Supported period Space S hS).subtypeL.hasFDerivAt.comp_hasDerivWithinAt (t : ℝ)
     (velocity_hasDerivWithinAt period S hS T hT Q Q₁ c hc hQ f a₀ hQt t)
 
 /-- No global time extension is assumed: the true time derivative holds within
@@ -298,11 +294,7 @@ theorem field_hasDerivWithinAt
     HasDerivWithinAt (fun s => field period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ (projIcc 0 T hT
         s) x)
       (derivativeField period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ t x) (Icc (0 : ℝ) T) t :=
-  pointField_hasDerivWithinAt period T hT
-    (includePath (K := Icc (0 : ℝ) T) (V := Vector3) period S hS
-      (velocity period S hS T hT Q Q₁ c hc hQ f a₀))
-    (includePath (K := Icc (0 : ℝ) T) (V := Vector3) period S hS
-      (velocityDerivative period S hS T hT Q Q₁ c hc hQ f a₀))
+  pointField_hasDerivWithinAt period T hT _ _
     (velocity_contDiff period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀)
     (velocityDerivative_contDiff period S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀)
     (fullVelocity_hasDerivWithinAt period S hS T hT Q Q₁ c hc hQ f a₀ hQt) t x
@@ -378,9 +370,8 @@ theorem normalResidual_smooth (hm : ∀ t x, m.field t x ≠ 0)
   have h := ((hm'.inner ℝ hF).sub ((contDiff_const (c := (2 : ℝ))).mul
     (hm'.inner ℝ (hM.clm_apply hA)))).div (hm'.inner ℝ hm') hd
   convert h using 1
-  first
-    | rfl
-    | (funext z; simp only [localFieldLift,normalResidual,real_inner_self_eq_norm_sq,Pi.div_apply])
+  funext z
+  simp only [localFieldLift,normalResidual,real_inner_self_eq_norm_sq,Pi.div_apply]
 
 /-- Pointwise tangency follows from the actual frame representation and continuity. -/
 theorem field_tangent
@@ -841,8 +832,8 @@ theorem field_pressure_equation
         hf₀ ha₀zero t (y,(s : AddCircle P))) θ • m.field t y =
       pointField P (includePath (K := Icc (0 : ℝ) T) (V := Vector3) P S hS f) hf t
         (y,(θ : AddCircle P)) := by
-  rw [(pressureField_angle P S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ M m cm hcm hm hf₀ ha₀zero t y
-      θ).deriv]
+  simp only [(pressureField_angle P S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ M m cm hcm hm hf₀ ha₀zero
+      t y θ).deriv]
   exact field_balance P S hS hSc T hT Q Q₁ c hc hQ f a₀ hf ha₀ M m
     (normal_ne_zero_of_lower T m cm hcm hm) hTangent hRange hFlow t (y,(θ : AddCircle P))
 

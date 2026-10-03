@@ -126,17 +126,9 @@ omit [CompactSpace K] in
 theorem tensorPath_eq (n : ℕ) (A : E [×n]→L[ℝ] C(K, X →ᵇ V)) (t : K) (x : X) :
     tensorPath n A t x = (BoundedContinuousFunction.evalCLM ℝ x).compContinuousMultilinearMap
       ((ContinuousMap.evalCLM ℝ t).compContinuousMultilinearMap A) := by
-  change reassembly (E := E) (V := V) n (tupleBounded (X := X) (V := V)
-    (ι := Fin n → Fin (Module.finrank ℝ E)) _ x) = _
-  have he : tupleBounded (X := X) (V := V) (ι := Fin n → Fin (Module.finrank ℝ E))
-        (fun w => A (fun i => Module.finBasis ℝ E (w i)) t) x =
-      coordinates (E := E) (V := V) n
-        ((BoundedContinuousFunction.evalCLM ℝ x).compContinuousMultilinearMap
-          ((ContinuousMap.evalCLM ℝ t).compContinuousMultilinearMap A)) := by
-    funext w
-    rw [tupleBounded_apply]
-    rfl
-  rw [he, reassembly_coordinates]
+  refine Eq.trans (congrArg (reassembly (E := E) (V := V) n) ?_) (reassembly_coordinates n _)
+  funext w
+  exact tupleBounded_apply _ x w
 
 omit [CompactSpace K] in
 @[simp] theorem tensorPath_apply (n : ℕ) (A : E [×n]→L[ℝ] C(K, X →ᵇ V))

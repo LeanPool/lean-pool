@@ -186,21 +186,16 @@ theorem zero_of_energy_equation (T : ℝ) (hT : 0 ≤ T) (hTpos : 0 < T)
     rw [energyOperator_inner,hinitial,hparts]
     rw [inner_add_left] at horth
     linarith only [horth]
-  have hnorm := energyOperator_coercive T hT H K hK hH hsmall pu
-  rw [henergy] at hnorm
+  have hnorm := (energyOperator_coercive T hT H K hK hH hsmall pu).trans_eq henergy
   have hpu : pu = 0 := by
     apply norm_eq_zero.mp
-    have hsq : ‖pu‖ ^ 2 ≤ 0 := by linarith only [hnorm]
+    have hsq : ‖pu‖ ^ 2 ≤ 0 :=
+      le_of_mul_le_mul_left (hnorm.trans_eq (mul_zero _).symm) (by norm_num)
     exact (pow_eq_zero_iff two_ne_zero).mp (le_antisymm hsq (sq_nonneg _))
-  have hpzero : p = 0 := by
-    rw [← primitive_eq_path T hT p u hp hzero]
-    change initialPrimitive (E := E) T hT pu = 0
-    rw [hpu,map_zero]
-  refine ⟨hpzero,?_⟩
-  apply pathLp_injective T hT hTpos
-  change pu = pathLp T hT 0
-  rw [hpu]
-  exact ((pathLpOperator T hT).map_zero).symm
+  have hpzero : p = 0 := (primitive_eq_path T hT p u hp hzero).symm.trans
+    ((congrArg (initialPrimitive (E := E) T hT) hpu).trans
+      (initialPrimitive (E := E) T hT).map_zero)
+  exact ⟨hpzero, pathLp_injective T hT hTpos (hpu.trans ((pathLpOperator T hT).map_zero).symm)⟩
 
 end EulerTimeEndpointEnergyUniqueness
 

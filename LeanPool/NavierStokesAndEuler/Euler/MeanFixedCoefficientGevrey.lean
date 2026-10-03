@@ -78,37 +78,26 @@ theorem meanOperator_bound (hH : ContDiff ℝ ∞ H) (hC : ContDiff ℝ ∞ C)
     ‖iteratedFDeriv ℝ n (fun p => meanOperator J R (H p) (C p)) x‖ ≤
       baseAmplitude J R CH CC * majorant r 0 n := by
   have hHJ := clm_comp_const_right_bound H J hH r CH hr hCH 0 hHb
-  have hJHJ : ∀ k y,
-      ‖iteratedFDeriv ℝ k
-          (fun p => (adjoint (𝕜 := ℝ) (E := W) (F := W) J).comp ((H p).comp J)) y‖ ≤
-        (‖J‖^2*CH) * majorant r 0 k := by
-    intro k y
-    have h := clm_comp_const_left_bound (adjoint (𝕜 := ℝ) (E := W) (F := W) J)
-      (fun p => (H p).comp J)
-      (hH.clm_comp contDiff_const) r (‖J‖*CH) hr (mul_nonneg (norm_nonneg _) hCH) 0 hHJ k y
-    simpa only [LinearIsometryEquiv.norm_map, pow_two, mul_assoc] using h
+  have hJHJ := clm_comp_const_left_bound (adjoint (𝕜 := ℝ) (E := W) (F := W) J)
+    (fun p => (H p).comp J)
+    (hH.clm_comp contDiff_const) r (‖J‖*CH) hr (mul_nonneg (norm_nonneg _) hCH) 0 hHJ
   have hCR := clm_comp_const_right_bound C R hC r CC hr hCC 0 hCb
-  have hRCR : ∀ k y,
-      ‖iteratedFDeriv ℝ k
-          (fun p => (adjoint (𝕜 := ℝ) (E := W) (F := X) R).comp ((C p).comp R)) y‖ ≤
-        (‖R‖^2*CC) * majorant r 0 k := by
-    intro k y
-    have h := clm_comp_const_left_bound (adjoint (𝕜 := ℝ) (E := W) (F := X) R)
-      (fun p => (C p).comp R)
-      (hC.clm_comp contDiff_const) r (‖R‖*CC) hr (mul_nonneg (norm_nonneg _) hCC) 0 hCR k y
-    simpa only [LinearIsometryEquiv.norm_map, pow_two, mul_assoc] using h
+  have hRCR := clm_comp_const_left_bound (adjoint (𝕜 := ℝ) (E := W) (F := X) R)
+    (fun p => (C p).comp R)
+    (hC.clm_comp contDiff_const) r (‖R‖*CC) hr (mul_nonneg (norm_nonneg _) hCC) 0 hCR
   have hId := const_bound (P := P) (ContinuousLinearMap.id ℝ W) r 1 hr (norm_id_le :
       ‖ContinuousLinearMap.id ℝ W‖ ≤ 1)
   have hsub := sub_bound (fun _ : P => ContinuousLinearMap.id ℝ W)
     (fun p => (adjoint (𝕜 := ℝ) (E := W) (F := W) J).comp ((H p).comp J)) contDiff_const
-    (contDiff_const.clm_comp (hH.clm_comp contDiff_const)) r 1 (‖J‖^2*CH) 0 hId hJHJ
-  exact add_bound
+    (contDiff_const.clm_comp (hH.clm_comp contDiff_const)) r 1 _ 0 hId hJHJ
+  refine (add_bound
     (fun p => ContinuousLinearMap.id ℝ W-
       (adjoint (𝕜 := ℝ) (E := W) (F := W) J).comp ((H p).comp J))
     (fun p => (adjoint (𝕜 := ℝ) (E := W) (F := X) R).comp ((C p).comp R))
     (contDiff_const.sub (contDiff_const.clm_comp (hH.clm_comp contDiff_const)))
     (contDiff_const.clm_comp (hC.clm_comp contDiff_const))
-    r (1+‖J‖^2*CH) (‖R‖^2*CC) 0 hsub hRCR n x
+    r _ _ 0 hsub hRCR n x).trans_eq ?_
+  simp only [LinearIsometryEquiv.norm_map, baseAmplitude, pow_two, mul_assoc]
 
 variable (D : P → V →L[ℝ] W)
 
@@ -132,18 +121,15 @@ theorem pullbackMeanOperator_bound
   have hB := meanOperator_contDiff J R H C hH hC
   have hBb := meanOperator_bound J R H C hH hC r CH CC hr hCH hCC hHb hCb
   have hB0 := baseAmplitude_nonneg J R CH CC hCH hCC
-  have hBD : ∀ k y,
-      ‖iteratedFDeriv ℝ k (fun p => (meanOperator J R (H p) (C p)).comp (D p)) y‖ ≤
-        (3*baseAmplitude J R CH CC*CD) * majorant r 0 k := by
-    intro k y
-    simpa only [Nat.zero_add] using clm_comp_bound
+  have hBD := clm_comp_bound
       (fun p => meanOperator J R (H p) (C p)) D hB hD r (baseAmplitude J R CH CC) CD
-      hr hB0 hCD 0 0 hBb hDb k y
+      hr hB0 hCD 0 0 hBb hDb
   have hDa := (realAdjoint (U := V) (E := W)).contDiff.comp hD
   have hDab := adjoint_bound D hD r CD hr hCD 0 hDb
   have h := clm_comp_bound (fun p => adjoint (𝕜 := ℝ) (E := V) (F := W) (D p))
     (fun p => (meanOperator J R (H p) (C p)).comp (D p)) hDa (hB.clm_comp hD)
-    r CD (3*baseAmplitude J R CH CC*CD) hr hCD (by positivity) 0 0 hDab hBD n x
+    r CD (3*baseAmplitude J R CH CC*CD) hr hCD (mul_nonneg (mul_nonneg zero_le_three hB0) hCD)
+    0 (0+0) hDab hBD n x
   calc
     _ ≤ (3*CD*(3*baseAmplitude J R CH CC*CD)) * majorant r 0 n := by
       simpa only [transportedOperator, Nat.zero_add] using h
@@ -336,10 +322,11 @@ theorem fixedMeanForcing_bound (f : P → TimeLp T L2)
     (fun p => fixedMeanDerivative T hT (F p) (F₁ p)) f
     (contDiff_fixedMeanDerivative T hT F F₁ hF hF₁) hf r (T*CF₁+CF) Cf hr hD0 hCf d
     (fixedMeanDerivative_bound T hT F F₁ hF hF₁ r CF CF₁ hr hCF hCF₁ 0 hFb hF₁b) hfb n x
-  exact hb.trans (mul_le_mul_of_nonneg_right
+  exact (hb.trans (mul_le_mul_of_nonneg_right
     (mul_le_mul_of_nonneg_right
       (mul_le_mul_of_nonneg_left
-        (mul_le_mul_of_nonneg_right (primitive_norm_le_time (E := L2) T hT) hD0) (by norm_num)) hCf)
-    (majorant_nonneg r hr d n))
+        (mul_le_mul_of_nonneg_right (primitive_norm_le_time (E := L2) T hT) hD0)
+          zero_le_three) hCf)
+    (majorant_nonneg r hr d n)) :)
 
 end EulerMeanFixedCoefficientGevrey

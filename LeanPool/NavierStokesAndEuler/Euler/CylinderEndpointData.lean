@@ -123,8 +123,8 @@ theorem endpointCoordinate_ae (Y : CylinderL2 P U) :
     D.potential D.potential_nonneg (D.hessian_upper P) D.small D.time_pos Y
   unfold endpointSlope
   filter_upwards [ha,ae_restrict_mem measurableSet_Icc] with t ht hmem
-  rw [ht, extendPath, projIcc_of_mem D.time_pos.le hmem]
-  exact (D.endpointCoordinate_eq P Y ⟨t,hmem⟩).symm
+  exact (ht.trans ((D.endpointCoordinate_eq P Y ⟨t,hmem⟩).symm.trans
+    (congrArg (D.endpointCoordinate P Y) (projIcc_of_mem D.time_pos.le hmem).symm)) :)
 
 theorem endpointDisplacement_hasDerivWithinAt (Y : CylinderL2 P U) (t : Icc (0 : ℝ) T) :
     HasDerivWithinAt (extendPath T D.time_pos.le (D.endpointDisplacement P Y))

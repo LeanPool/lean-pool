@@ -102,10 +102,8 @@ theorem affineVelocity_hasDerivWithinAt (Y : U) (t : Icc (0 : ℝ) T) :
     ((hd t).clm_apply (hasDerivWithinAt_const (t : ℝ) (Icc (0 : ℝ) T) (T⁻¹ • Y)))
   have he : Q₂ t ((t : ℝ) • (T⁻¹ • Y))+extendPath T hT Q₁ t (T⁻¹ • Y) +
       (Q₁ t (T⁻¹ • Y)+extendPath T hT Q t 0) = affineAcceleration T Q₁ Q₂ Y t := by
-    simp only [extendPath,projIcc_of_mem hT t.property,map_zero,add_zero]
-    change Q₂ t ((t : ℝ) • (T⁻¹ • Y))+Q₁ t (T⁻¹ • Y)+Q₁ t (T⁻¹ • Y) =
-      Q₂ t ((t : ℝ) • (T⁻¹ • Y))+(2 : ℝ) • Q₁ t (T⁻¹ • Y)
-    module
+    simp only [extendPath,projIcc_val hT t,map_zero,add_zero]
+    exact (add_assoc _ _ _).trans (congrArg (_ + ·) (two_smul ℝ _).symm)
   apply (h.congr_deriv he).congr_of_mem _ t.property
   intro s hs
   simp only [Pi.add_apply,extendPath,projIcc_of_mem hT hs]
@@ -126,13 +124,11 @@ theorem affineAcceleration_add_potential (Y : U) :
       with t ha hq hH hi hf hm
   have hp := affineTrial_primitive T hT Q Q₁ hd Y ⟨t,hm⟩
   change initialRealPrimitive T (affineTrial T hT Q Q₁ Y) t = Q ⟨t,hm⟩ ((t/T) • Y) at hp
-  rw [ha,Pi.add_apply,hq,hH,hi,hf,hp]
-  simp only [extendPath,projIcc_of_mem hT hm]
-  change Q₂ ⟨t,hm⟩ (t • (T⁻¹ • Y))+(2 : ℝ) • Q₁ ⟨t,hm⟩ (T⁻¹ • Y) +
-    H ⟨t,hm⟩ (Q ⟨t,hm⟩ ((t/T) • Y)) = (2 : ℝ) • Q₁ ⟨t,hm⟩ (T⁻¹ • Y)
+  simp only [ha,Pi.add_apply,hq,hH,hi,hf,hp,extendPath,projIcc_of_mem hT hm]
+  change Q₂ ⟨t,hm⟩ (t • (T⁻¹ • Y)) + _ + _ = _
   rw [hframe]
   simp only [neg_apply,comp_apply,div_eq_mul_inv,smul_smul]
-  module
+  exact neg_add_cancel_comm _ _
 
 include hd hd₁ hframe in
 /-- The exact affine energy pairing, obtained by genuine integration by parts. -/
@@ -220,8 +216,8 @@ theorem endpointSlope_eq_const_sub (Y : CylinderL2 P U) :
       D.velocityLp P (pathLp T D.time_pos.le (D.endpointForcing P Y)) := by
   change constantFieldOperator T D.time_pos.le (T⁻¹ • Y) -
     (D.endpointCorrection P Y : TimeLp T (CylinderL2 P U)) = _
-  rw [D.endpointCorrection_eq_forced P Y]
-  rfl
+  exact congrArg (constantFieldOperator T D.time_pos.le (T⁻¹ • Y) - ·)
+    (congrArg Subtype.val (D.endpointCorrection_eq_forced P Y))
 
 theorem endpointDisplacement_eq_affine_sub (Y : CylinderL2 P U) (t : Icc (0 : ℝ) T) :
     D.endpointDisplacement P Y t = (t : ℝ) • (T⁻¹ • Y) -
@@ -291,8 +287,7 @@ theorem endpointVelocity_eq_forced (Y : CylinderL2 P U) :
   change D.frame P t (D.endpointCoordinate P Y t) =
     D.frame P t (T⁻¹ • Y)-D.frame P t
       (D.velocityPath P (pathLp T D.time_pos.le (D.endpointForcing P Y)) t)
-  rw [D.endpointCoordinate_eq_const_sub P Y t]
-  exact map_sub _ _ _
+  exact (congrArg (D.frame P t) (D.endpointCoordinate_eq_const_sub P Y t)).trans (map_sub _ _ _)
 
 theorem endpointDerivative_eq_forced (Y : CylinderL2 P U) :
     D.endpointDerivative P Y =
@@ -305,8 +300,8 @@ theorem endpointDerivative_eq_forced (Y : CylinderL2 P U) :
     D.frameDerivative P t (T⁻¹ • Y)-(D.frameDerivative P t
       (D.velocityPath P (pathLp T D.time_pos.le (D.endpointForcing P Y)) t) +
         D.frame P t (D.accelerationPath P (D.endpointForcing P Y) t))
-  rw [D.endpointCoordinate_eq_const_sub P Y t,D.endpointAcceleration_eq_forced P Y]
-  simp only [ContinuousMap.neg_apply,map_sub,map_neg]
+  simp only [D.endpointCoordinate_eq_const_sub P Y t,D.endpointAcceleration_eq_forced P Y,
+    ContinuousMap.neg_apply,map_sub,map_neg]
   abel
 
 end EulerCylinderDirichlet.Coefficients

@@ -175,7 +175,8 @@ theorem solution_unique (f : C(Icc (0 : ℝ) T, E)) (a₀ : E) (a : ℝ → E)
       ((ha ⟨s,hs⟩).sub (U.solution_derivative f a₀ ⟨s,hs⟩))
     convert hd using 1
     simp only [neg_apply, comp_apply, extendPath, projIcc_of_mem hT hs,
-      Pi.sub_apply, map_sub, map_add, solution, ContinuousMap.coe_mk]
+      Pi.sub_apply, ContinuousLinearMap.map_sub, ContinuousLinearMap.map_add, solution,
+      ContinuousMap.coe_mk]
     abel
   have hconst : q t = q 0 := by
     have hbound := Convex.norm_image_sub_le_of_norm_hasDerivWithin_le (C := 0) hq
@@ -184,13 +185,13 @@ theorem solution_unique (f : C(Icc (0 : ℝ) T, E)) (a₀ : E) (a : ℝ → E)
     simpa only [zero_mul, norm_le_zero_iff, sub_eq_zero] using hbound
   have hq₀ : q 0 = 0 := by
     change extendPath T hT U.backward 0 (a 0 - U.solution f a₀ ⟨0,le_rfl,hT⟩) = 0
-    rw [h₀, U.solution_initial, sub_self, map_zero]
+    rw [h₀, U.solution_initial, sub_self, ContinuousLinearMap.map_zero]
   have hqt : U.backward t (a t - U.solution f a₀ t) = 0 := by
     simpa only [q, w, extendPath, projIcc_of_mem hT t.property, solution, ContinuousMap.coe_mk]
         using hconst.trans hq₀
   have hr := congrArg (U.forward t) hqt
   change ((U.forward t).comp (U.backward t)) (a t - U.solution f a₀ t) = U.forward t 0 at hr
-  rw [U.forward_backward, id_apply, map_zero, sub_eq_zero] at hr
+  rw [U.forward_backward, id_apply, ContinuousLinearMap.map_zero, sub_eq_zero] at hr
   exact hr
 
 /-- A relative homogeneous propagator bound yields the forced bound with the

@@ -89,7 +89,8 @@ theorem scalar_integration_by_parts_test (a : LiftTangent) (f ψ : LiftDomain pe
       ‖fieldDerivative period a (spatialCutoff period n) x‖ ≤ M * ‖a‖ := by
     calc
       _ ≤ M * cutoffScale n * ‖a‖ := hMb n x a
-      _ ≤ M * 1 * ‖a‖ := by gcongr; exact cutoffScale_le_one n
+      _ ≤ M * 1 * ‖a‖ := mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_left (cutoffScale_le_one n) hM.le) (norm_nonneg a)
       _ = _ := by ring
   have hFm (n : ℕ) : AEStronglyMeasurable (F n) (liftMeasure period) :=
     ((smoothField_continuous period _ (fieldDerivative_smooth period a _ (hs n))).mul
@@ -113,7 +114,9 @@ theorem scalar_integration_by_parts_test (a : LiftTangent) (f ψ : LiftDomain pe
         simpa only [norm_mul] using norm_add_le
           (fieldDerivative period a (spatialCutoff period n) x * (f x * ψ x))
           (spatialCutoff period n x * (Df x * ψ x))
-      _ ≤ (M * ‖a‖) * ‖f x * ψ x‖ + 1 * ‖Df x * ψ x‖ := by gcongr; exact hDc n x
+      _ ≤ (M * ‖a‖) * ‖f x * ψ x‖ + 1 * ‖Df x * ψ x‖ :=
+        add_le_add (mul_le_mul_of_nonneg_right (hDc n x) (norm_nonneg _))
+          (mul_le_mul_of_nonneg_right hcn (norm_nonneg _))
       _ = _ := by ring
   have hFl : ∀ᵐ x ∂liftMeasure period, Filter.Tendsto (fun n => F n x) Filter.atTop (𝓝 (Df x * ψ
       x)) := by

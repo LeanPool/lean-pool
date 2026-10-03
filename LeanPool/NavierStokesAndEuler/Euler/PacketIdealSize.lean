@@ -55,8 +55,8 @@ theorem equation30_polynomial_size_monotone {σ : ℝ} {Z Z₁ : ℝ → ℝ}
     have ht0 := hs.trans hst
     have hz := hpre ⟨hs, hst.trans ht⟩ ⟨ht0, ht⟩ hst
     have hpow : s^2 ≤ t^2 := (sq_le_sq₀ hs ht0).mpr hst
-    have hcoef : 1+σ^2*s^2 ≤ 1+σ^2*t^2 := by
-      nlinarith only [mul_le_mul_of_nonneg_left hpow (sq_nonneg σ)]
+    have hcoef : 1+σ^2*s^2 ≤ 1+σ^2*t^2 :=
+      add_le_add_right (mul_le_mul_of_nonneg_left hpow (sq_nonneg σ)) 1
     exact (mul_le_mul_of_nonneg_left hz (by positivity)).trans
       (mul_le_mul_of_nonneg_right hcoef (hpos t ht0).le)
   have hpostW : ∀ s t, 1/σ ≤ s → s ≤ t → (1+σ^2*s^2)*Z s ≤ (1+σ^2*t^2)*Z t := by
@@ -65,8 +65,8 @@ theorem equation30_polynomial_size_monotone {σ : ℝ} {Z Z₁ : ℝ → ℝ}
     have ht := hs.trans hst
     have ht0 := hs0.le.trans hst
     have hz := hpost hs ht hst
-    have hss : 1 ≤ σ*s := by have hh := (div_le_iff₀ hσ).mp hs; nlinarith only [hh]
-    have hst' : 1 ≤ σ*t := by have hh := (div_le_iff₀ hσ).mp ht; nlinarith only [hh]
+    have hss : 1 ≤ σ*s := ((div_le_iff₀ hσ).mp hs).trans_eq (mul_comm s σ)
+    have hst' : 1 ≤ σ*t := ((div_le_iff₀ hσ).mp ht).trans_eq (mul_comm t σ)
     have hproduct : 1 ≤ (σ*s)*(σ*t) := by
       simpa only [one_mul] using mul_le_mul hss hst' zero_le_one (le_trans zero_le_one hss)
     have hpositive : 0 ≤ (t-s)*(σ^2*s*t-1) :=
@@ -75,7 +75,7 @@ theorem equation30_polynomial_size_monotone {σ : ℝ} {Z Z₁ : ℝ → ℝ}
     have h1 := mul_le_mul_of_nonneg_left hz (show 0 ≤ 1+σ^2*s^2 by positivity)
     have h2 := mul_le_mul_of_nonneg_right hcoef (hpos t ht0).le
     apply (mul_le_mul_iff_right₀ hs0).mp
-    nlinarith only [h1, h2]
+    linarith only [h1, h2]
   intro s hs t _ht hst
   by_cases htpre : t ≤ 1/σ
   · exact hpreW s t hs hst htpre

@@ -2348,8 +2348,7 @@ theorem displacement_memLp_and_bound (n : ℕ) (t : Icc (0 : ℝ) I.T) :
     MemLp (iteratedFDeriv ℝ n (I.displacement.field t : Space → Space)) 2 volume ∧
       (eLpNorm (iteratedFDeriv ℝ n (I.displacement.field t : Space → Space)) 2 volume).toReal ≤
         I.T*L.C*L.velocityRadius^n*(n.factorial : ℝ)^2 := by
-  let f : ℝ × Space → Space [×n]→L[ℝ] Space :=
-    fun p => extendPath I.T I.T_pos.le (I.velocity.jet n) p.1 p.2
+  let f := fun p : ℝ × Space => extendPath I.T I.T_pos.le (I.velocity.jet n) p.1 p.2
   have hc : Continuous f := by
     have ht := extendPath_continuous I.T I.T_pos.le (I.velocity.jet n)
     dsimp only [f]

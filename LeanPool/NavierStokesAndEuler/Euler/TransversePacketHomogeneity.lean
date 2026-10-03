@@ -53,8 +53,8 @@ theorem accelerationPath_smul : D.accelerationPath P (a • f) = a • D.acceler
   apply ContinuousMap.ext
   intro t
   have hv : D.velocityPath P (pathLp T D.time_pos.le (a • f)) t =
-      a • D.velocityPath P (pathLp T D.time_pos.le f) t := by
-    rw [D.continuousVelocity_smul P a f, ContinuousMap.smul_apply]
+      a • D.velocityPath P (pathLp T D.time_pos.le f) t :=
+    (DFunLike.congr_fun (D.continuousVelocity_smul P a f) t).trans (ContinuousMap.smul_apply _ _ _)
   exact apply_sub_two_smul_of_eq_smul
     (gramInverse (D.frame P t) D.lower D.lower_pos (D.frame_lower P t))
     (adjoint (𝕜 := ℝ) (E := CylinderL2 P U) (F := CylinderL2 P E) (D.frame P t))
@@ -65,7 +65,7 @@ theorem physicalVelocity_smul : D.physicalVelocity P (a • f) = a • D.physica
   intro t
   change D.frame P t (D.velocityPath P (pathLp T D.time_pos.le (a • f)) t) =
     a • D.frame P t (D.velocityPath P (pathLp T D.time_pos.le f) t)
-  rw [D.continuousVelocity_smul P a f,ContinuousMap.smul_apply,map_smul]
+  simp only [D.continuousVelocity_smul P a f, ContinuousMap.smul_apply, map_smul]
 
 theorem physicalDerivative_smul : D.physicalDerivative P (a • f) = a • D.physicalDerivative P f :=
     by
@@ -75,8 +75,8 @@ theorem physicalDerivative_smul : D.physicalDerivative P (a • f) = a • D.phy
     D.frame P t (D.accelerationPath P (a • f) t) =
     a • (D.frameDerivative P t (D.velocityPath P (pathLp T D.time_pos.le f) t) +
       D.frame P t (D.accelerationPath P f t))
-  rw [D.continuousVelocity_smul P a f,D.accelerationPath_smul P a f]
-  simp only [ContinuousMap.smul_apply,map_smul,smul_add]
+  simp only [D.continuousVelocity_smul P a f, D.accelerationPath_smul P a f,
+    ContinuousMap.smul_apply, map_smul, smul_add]
 
 end EulerCylinderDirichlet.Coefficients
 

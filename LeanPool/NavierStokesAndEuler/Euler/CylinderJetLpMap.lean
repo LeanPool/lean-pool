@@ -57,7 +57,7 @@ theorem tensor_map_norm_le (L : V →L[ℝ] W) (f : LiftDomain P → V)
   have h : ‖hM.toLp (tensor P (fun x => L (f x)) n)‖ ≤ ‖L‖ * ‖hLp.toLp (tensor P f n)‖ := by
     apply Lp.norm_le_mul_norm_of_ae_le_mul
     filter_upwards [hM.coeFn_toLp, hLp.coeFn_toLp] with q hq hq'
-    rw [hq, hq', tensor_map P L f hf n]
+    simp only [hq, hq', tensor_map P L f hf n q]
     exact L.norm_compContinuousMultilinearMap_le _
   simpa only [Lp.norm_toLp] using h
 

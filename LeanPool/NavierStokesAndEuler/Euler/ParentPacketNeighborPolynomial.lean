@@ -138,7 +138,7 @@ variable {U : Type} [NormedAddCommGroup U] [InnerProductSpace ℝ U]
 
 theorem epsilon_inv_le_twice_shear (ha : 1 / 2 ≤ P.a) (hH : 1 ≤ P.shear) :
     P.epsilon⁻¹ ≤ 2*P.shear := by
-  have ha0 : 0 < P.a := by linarith only [ha]
+  have ha0 : 0 < P.a := (by norm_num : (0 : ℝ) < 1 / 2).trans_le ha
   have hH0 : 0 ≤ P.shear := zero_le_one.trans hH
   rw [epsilon,← Real.sqrt_inv,inv_div]
   calc
@@ -192,14 +192,7 @@ theorem neighborScaleCost_envelope :
     ((D.activationRayScale_bounds ⟨τ,hτ.le,hτT.le⟩ _ hn).2.2).trans hFnorm
   have hHistory := (L.initialHistoryDifferenceScaleCost_bound m hm R S hS H τ hτ hτT
     Ti hτ1 hTi).trans (labelHistoryEnvelope_power L.K Ti hK hTi0)
-  have hHistory0 : 0 ≤ L.initialHistoryDifferenceScaleCost m hm R S hS H τ hτ hτT := by
-    have h0 := historyLabelDifferenceCost_nonneg (G.historyOn H m hm R S hS τ hτ hτT)
-    have hb := L.initial_history_derivative_scale m hm R S hS H τ hτ hτT
-    have hell := G.ell_pos
-    nlinarith only [h0,hb,hell]
   have hR := coefficientRadius_nonneg L.K
-  have hV := gradientAmplitude_nonneg L.K
-  have hRayPos := Guards.rayScale_pos hτ hτT P
   have hHistConst := labelHistoryConstant_pos
   have heq : L.neighborScaleCost m hm R S hS H τ hτ hτT P CM CH =
       L.strainDifferenceCost+3*L.normalDifferenceCost*(P.rayScale hτ hτT)⁻¹*P.epsilon⁻¹ +
@@ -215,7 +208,20 @@ theorem neighborScaleCost_envelope :
         3*(9*(frameAmplitude L.K)^2*coefficientRadius L.K)*(1+frameAmplitude L.K)*P.epsilon⁻¹ +
         16*(labelHistoryConstant*(1+L.K+Ti)^labelHistoryPower) *
           (5+64*CM^2+2*CH)*(1+3*(frameAmplitude L.K)^2)*P.shear⁻¹*P.epsilon⁻¹ := by
-      gcongr
+      have hEi := inv_nonneg.mpr heps.le
+      have hc5 : 0 ≤ 5+64*CM^2+2*CH := add_nonneg
+        (add_nonneg (by norm_num) (mul_nonneg (by norm_num) (sq_nonneg CM)))
+        (mul_nonneg zero_le_two hCH)
+      have hlab := mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_left hHistory (by norm_num : (0 : ℝ) ≤ 16)) hc5
+      have hlab0 : 0 ≤ 16*(labelHistoryConstant*(1+L.K+Ti)^labelHistoryPower)*(5+64*CM^2+2*CH) :=
+        mul_nonneg (mul_nonneg (by norm_num) (mul_nonneg hHistConst.le
+          (pow_nonneg (add_nonneg (add_nonneg zero_le_one hK) hTi0) _))) hc5
+      refine add_le_add (add_le_add le_rfl (mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_left hray (mul_nonneg zero_le_three
+          (mul_nonneg (mul_nonneg (by norm_num : (0 : ℝ) ≤ 9) (sq_nonneg _)) hR))) hEi)) ?_
+      exact mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right
+        (mul_le_mul hlab hInv hInv0.le hlab0) (inv_nonneg.mpr hshear.le)) hEi
     _ = _ := by ring
 
 include hτ1 hTi hCM hCH hshear heps in
@@ -247,23 +253,26 @@ theorem neighborScaleCost_low_polynomial (ha : 1 / 2 ≤ P.a) (hH : 1 ≤ P.shea
   have hK : 0 ≤ L.K := zero_le_one.trans L.K_one
   have hTi0 : 0 ≤ Ti := (inv_pos.mpr hτ).le.trans hTi
   have hHp : 0 < P.shear := zero_lt_one.trans_le hH
-  have ha0 : 0 < P.a := by linarith only [ha]
+  have ha0 : 0 < P.a := (by norm_num : (0 : ℝ) < 1 / 2).trans_le ha
   have hEp : 0 < P.epsilon := Real.sqrt_pos.mpr (div_pos ha0 hHp)
   have hEi := P.epsilon_inv_le_twice_shear ha hH
   have hHi : P.shear⁻¹ ≤ 1 := inv_le_one_of_one_le₀ hH
   have hbase : 1 ≤ 1+L.K+Ti+P.shear := by linarith only [hK,hTi0,hH]
   have hab : 1+L.K+Ti+P.epsilon⁻¹+P.shear⁻¹+CM+CH ≤
       2*(1+CM+CH)*(1+L.K+Ti+P.shear) := by
-    have hc := mul_le_mul_of_nonneg_left hbase (show 0 ≤ CM+CH by positivity)
-    nlinarith only [hEi,hHi,hK,hTi0,hc,hCM,hCH]
-  have hA0 : 0 ≤ 1+L.K+Ti+P.epsilon⁻¹+P.shear⁻¹+CM+CH := by positivity
+    have hc := mul_le_mul_of_nonneg_left hbase (add_nonneg hCM hCH)
+    linear_combination hEi + hHi + 2 * hc + hK + hTi0 + hCM + hCH
+  have hA0 : 0 ≤ 1+L.K+Ti+P.epsilon⁻¹+P.shear⁻¹+CM+CH :=
+    add_nonneg (add_nonneg (add_nonneg (add_nonneg (add_nonneg (add_nonneg zero_le_one hK) hTi0)
+      (inv_nonneg.mpr hEp.le)) (inv_nonneg.mpr hHp.le)) hCM) hCH
   have hC := EulerParentNeighborCost.constant_pos
   calc
     _ ≤ EulerParentNeighborCost.boundConstant *
         (1+L.K+Ti+P.epsilon⁻¹+P.shear⁻¹+CM+CH)^EulerParentNeighborCost.degree :=
       L.neighborScaleCost_polynomial m hm R S hS H τ hτ hτT P Ti CM CH hτ1 hTi hCM hCH hHp hEp
     _ ≤ EulerParentNeighborCost.boundConstant *
-        (2*(1+CM+CH)*(1+L.K+Ti+P.shear))^EulerParentNeighborCost.degree := by gcongr
+        (2*(1+CM+CH)*(1+L.K+Ti+P.shear))^EulerParentNeighborCost.degree :=
+      mul_le_mul_of_nonneg_left (pow_le_pow_left₀ hA0 hab _) hC.le
     _ = _ := by rw [mul_pow]; ring
 
 include hτ1 hTi hCM hCH in
@@ -272,7 +281,7 @@ theorem source_neighbor_low_polynomial (ha : 1 / 2 ≤ P.a) (hH : 1 ≤ P.shear)
       ((EulerParentNeighborCost.boundConstant*(2*(1+CM+CH))^EulerParentNeighborCost.degree) *
         (1+L.K+Ti+P.shear)^EulerParentNeighborCost.degree)*G.ell := by
   have hHp : 0 < P.shear := zero_lt_one.trans_le hH
-  have ha0 : 0 < P.a := by linarith only [ha]
+  have ha0 : 0 < P.a := (by norm_num : (0 : ℝ) < 1 / 2).trans_le ha
   have hEp : 0 < P.epsilon := Real.sqrt_pos.mpr (div_pos ha0 hHp)
   exact (L.source_neighbor_scale m hm R S hS H τ hτ hτT P CM CH hCM hCH hHp hEp).trans
     (mul_le_mul_of_nonneg_right

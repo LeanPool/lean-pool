@@ -85,7 +85,7 @@ theorem momentumForcing_ae (H : C(Icc (0 : ℝ) T, E →L[ℝ] E))
     timeMultiplier_ae T hT H (primitiveTimeLp T hT u),
     primitiveTimeLp_ae T hT u] with t hadd hsub hq₁ hq hqf hHu hJu
   simp only [Pi.add_apply, Pi.sub_apply] at hadd hsub
-  rw [hadd, hsub, hq₁, hq, hqf, hHu, hJu]
+  simp only [hadd, hsub, hq₁, hq, hqf, hHu, hJu]
 
 /-- Every zero-endpoint coordinate test gives a genuine admissible physical test. -/
 theorem productDerivative_mem_transverse
@@ -118,7 +118,7 @@ theorem momentum_weak_of_product_tests
   simp only [productDerivative, add_apply, comp_apply, inner_add_right] at htest
   simp only [momentum, momentumForcing, inner_add_left, inner_sub_left,
     adjoint_inner_left]
-  linarith only [htest]
+  linear_combination htest
 
 /-- The variational equation determines the weak derivative of actual momentum. -/
 theorem momentum_weak

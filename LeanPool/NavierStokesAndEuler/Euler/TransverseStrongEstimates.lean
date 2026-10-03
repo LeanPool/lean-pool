@@ -47,10 +47,9 @@ theorem gramInversePath_norm : ‖gramInversePath T Q c hc hQ‖ ≤ c⁻¹ := b
 /-- The Gram derivative is controlled by the actual frame and frame derivative norms. -/
 theorem gramDerivativePath_norm :
     ‖gramDerivativePath T Q Q₁‖ ≤ 2 * ‖Q‖ * ‖Q₁‖ := by
-  apply (ContinuousMap.norm_le _ (by positivity)).2
+  apply (ContinuousMap.norm_le _
+    (mul_nonneg (mul_nonneg zero_le_two (norm_nonneg _)) (norm_nonneg _))).2
   intro t
-  change ‖(adjoint (𝕜 := ℝ) (E := U) (F := E) (Q₁ t)).comp (Q t) +
-    (adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t)).comp (Q₁ t)‖ ≤ _
   calc
     _ ≤ ‖(adjoint (𝕜 := ℝ) (E := U) (F := E) (Q₁ t)).comp (Q t)‖ +
         ‖(adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t)).comp (Q₁ t)‖ := norm_add_le _ _
@@ -59,18 +58,17 @@ theorem gramDerivativePath_norm :
       add_le_add (opNorm_comp_le _ _) (opNorm_comp_le _ _)
     _ = ‖Q₁ t‖ * ‖Q t‖ + ‖Q t‖ * ‖Q₁ t‖ := by
       simp only [LinearIsometryEquiv.norm_map]
-    _ ≤ ‖Q₁‖ * ‖Q‖ + ‖Q‖ * ‖Q₁‖ := by
-      gcongr
-      · exact Q₁.norm_coe_le_norm t
-      · exact Q.norm_coe_le_norm t
-      · exact Q.norm_coe_le_norm t
-      · exact Q₁.norm_coe_le_norm t
+    _ ≤ ‖Q₁‖ * ‖Q‖ + ‖Q‖ * ‖Q₁‖ :=
+      add_le_add
+        (mul_le_mul (Q₁.norm_coe_le_norm t) (Q.norm_coe_le_norm t) (norm_nonneg _) (norm_nonneg _))
+        (mul_le_mul (Q.norm_coe_le_norm t) (Q₁.norm_coe_le_norm t) (norm_nonneg _) (norm_nonneg _))
     _ = _ := by ring
 
 /-- The derivative of the inverse pays two inverse factors and one coefficient derivative. -/
 theorem gramInverseDerivativePath_norm :
     ‖gramInverseDerivativePath T Q Q₁ c hc hQ‖ ≤ 2 * (c⁻¹)^2 * ‖Q‖ * ‖Q₁‖ := by
-  apply (ContinuousMap.norm_le _ (by positivity)).2
+  apply (ContinuousMap.norm_le _ (mul_nonneg
+    (mul_nonneg (mul_nonneg zero_le_two (sq_nonneg _)) (norm_nonneg _)) (norm_nonneg _))).2
   intro t
   change ‖-(gramInversePath T Q c hc hQ t).comp
     ((gramDerivativePath T Q Q₁ t).comp (gramInversePath T Q c hc hQ t))‖ ≤ _
@@ -81,11 +79,11 @@ theorem gramInverseDerivativePath_norm :
       (opNorm_comp_le _ _).trans
         (mul_le_mul_of_nonneg_left (opNorm_comp_le _ _) (norm_nonneg _))
     _ ≤ c⁻¹ * ((2 * ‖Q‖ * ‖Q₁‖) * c⁻¹) := by
-      gcongr
-      · exact gramInverse_norm (Q t) c hc (hQ t)
-      · exact ((gramDerivativePath T Q Q₁).norm_coe_le_norm t).trans
-          (gramDerivativePath_norm T Q Q₁)
-      · exact gramInverse_norm (Q t) c hc (hQ t)
+      have hinv := gramInverse_norm (Q t) c hc (hQ t)
+      have hder := ((gramDerivativePath T Q Q₁).norm_coe_le_norm t).trans
+        (gramDerivativePath_norm T Q Q₁)
+      exact mul_le_mul hinv (mul_le_mul hder hinv (norm_nonneg _) ((norm_nonneg _).trans hder))
+        (mul_nonneg (norm_nonneg _) (norm_nonneg _)) (inv_nonneg.mpr hc.le)
     _ = _ := by ring
 
 /-- Recovering coordinates has one inverse factor. -/
@@ -106,11 +104,10 @@ theorem frameLeftInversePath_norm :
 theorem frameLeftInverseDerivativePath_norm :
     ‖frameLeftInverseDerivativePath T Q Q₁ c hc hQ‖ ≤
       2 * (c⁻¹)^2 * ‖Q‖^2 * ‖Q₁‖ + c⁻¹ * ‖Q₁‖ := by
-  apply (ContinuousMap.norm_le _ (by positivity)).2
+  apply (ContinuousMap.norm_le _ (add_nonneg
+    (mul_nonneg (mul_nonneg (mul_nonneg zero_le_two (sq_nonneg _)) (sq_nonneg _)) (norm_nonneg _))
+    (mul_nonneg (inv_nonneg.mpr hc.le) (norm_nonneg _)))).2
   intro t
-  change ‖(gramInverseDerivativePath T Q Q₁ c hc hQ t).comp
-      (adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t)) +
-    (gramInversePath T Q c hc hQ t).comp (adjoint (𝕜 := ℝ) (E := U) (F := E) (Q₁ t))‖ ≤ _
   calc
     _ ≤ ‖(gramInverseDerivativePath T Q Q₁ c hc hQ t).comp
           (adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t))‖ +
@@ -124,12 +121,12 @@ theorem frameLeftInverseDerivativePath_norm :
         ‖gramInversePath T Q c hc hQ t‖ * ‖Q₁ t‖ := by
       simp only [LinearIsometryEquiv.norm_map]
     _ ≤ (2 * (c⁻¹)^2 * ‖Q‖ * ‖Q₁‖) * ‖Q‖ + c⁻¹ * ‖Q₁‖ := by
-      gcongr
-      · exact ((gramInverseDerivativePath T Q Q₁ c hc hQ).norm_coe_le_norm t).trans
-          (gramInverseDerivativePath_norm T Q Q₁ c hc hQ)
-      · exact Q.norm_coe_le_norm t
-      · exact gramInverse_norm (Q t) c hc (hQ t)
-      · exact Q₁.norm_coe_le_norm t
+      have h₁ := ((gramInverseDerivativePath T Q Q₁ c hc hQ).norm_coe_le_norm t).trans
+        (gramInverseDerivativePath_norm T Q Q₁ c hc hQ)
+      exact add_le_add
+        (mul_le_mul h₁ (Q.norm_coe_le_norm t) (norm_nonneg _) ((norm_nonneg _).trans h₁))
+        (mul_le_mul (gramInverse_norm (Q t) c hc (hQ t)) (Q₁.norm_coe_le_norm t)
+          (norm_nonneg _) (inv_nonneg.mpr hc.le))
     _ = _ := by ring
 
 /-- Explicit polynomial bound for the actual coordinate derivative. -/
@@ -178,7 +175,7 @@ theorem acceleration_eq_inverse (hT : 0 ≤ T) (v a : TimeLp T U) (f : TimeLp T 
   change a t = (timeMultiplier T hT (gramInversePath T Q c hc hQ) (momentum T hT Q r)) t
   change r t = f t - ((2 : ℝ) • timeMultiplier T hT Q₁ v) t at hr
   change ((2 : ℝ) • timeMultiplier T hT Q₁ v) t = (2 : ℝ) • (timeMultiplier T hT Q₁ v) t at hs
-  rw [hB, hp, hr, hs, hQ₁]
+  simp only [hB, hp, hr, hs, hQ₁]
   have hinv := congrArg (gramInverse (Q (projIcc 0 T hT t)) c hc (hQ (projIcc 0 T hT t))) ht
   dsimp only [extendPath] at hinv
   rw [inverse_gram_apply] at hinv

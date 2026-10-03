@@ -74,6 +74,7 @@ theorem normLp_le_sum {ι : Type*} [Fintype ι] (d : ℕ) (f : 𝓢(Domain d, F)
     (g : ι → 𝓢(Domain d, F)) (C : ℝ) (hC : 0 ≤ C)
     (h : ∀ x, ‖f x‖ ≤ C * ∑ i, ‖g i x‖) :
     ‖(f.toLp 2 :)‖ ≤ C * ∑ i, ‖((g i).toLp 2 :)‖ := by
+  have : SecondCountableTopologyEither (Domain d) F := secondCountableTopologyEither_of_left _ _
   have hs : ∀ᵐ x ∂(volume : Measure (Domain d)), ∀ i, normLp d (g i) x = ‖g i x‖ :=
     Filter.eventually_all.2 (fun i => coe_normLp d (g i))
   have hb : ‖f.toLp 2 volume‖ ≤ C * ‖∑ i, normLp d (g i)‖ := by
@@ -258,6 +259,7 @@ theorem localize_pureDerivative_L2_le (n : ℕ) (i : Fin 3) (f : Domain 3 → F)
     (hf : ContDiff ℝ ∞ f) (hfL2 : ∀ j ≤ n, MemLp (iteratedFDeriv ℝ j f) 2 volume) (x : Domain 3) :
     ‖((pureDerivative 3 n (EuclideanSpace.single i 1) (localize f hf x)).toLp 2 :)‖ ≤
       (unitBumpCoefficient n : ℝ) * tensorSobolevNorm n f := by
+  have : SecondCountableTopologyEither (Domain 3) F := secondCountableTopologyEither_of_left _ _
   have hq := derivativeMagnitude_memLp n f hfL2
   have htrans := measurePreserving_add_left (volume : Measure (Domain 3)) x
   have hqt : MemLp (fun z => derivativeMagnitude n f (x+z)) 2 volume := hq.comp_measurePreserving
@@ -338,8 +340,7 @@ omit [CompleteSpace F] in
 theorem coordinateDerivative_tensor_bound (j : ℕ) (i : Fin 3) (f : Domain 3 → F)
     (hf : ContDiff ℝ ∞ f) (x : Domain 3) :
     ‖iteratedFDeriv ℝ j (coordinateDerivative i f) x‖ ≤ ‖iteratedFDeriv ℝ (j+1) f x‖ := by
-  let L : (Domain 3 →L[ℝ] F) →L[ℝ] F :=
-    ContinuousLinearMap.apply (E := Domain 3) ℝ F (EuclideanSpace.single i 1)
+  let L := ContinuousLinearMap.apply (E := Domain 3) ℝ F (EuclideanSpace.single i 1)
   have hL : ‖L‖ ≤ 1 := by
     apply L.opNorm_le_bound (by norm_num)
     intro A
@@ -349,11 +350,8 @@ theorem coordinateDerivative_tensor_bound (j : ℕ) (i : Fin 3) (f : Domain 3 �
   have hA := L.norm_iteratedFDeriv_comp_left (x := x)
     (hf.fderiv_right (by simp : (∞ : ℕ∞ω) + 1 ≤ (∞ : ℕ∞ω))).contDiffAt
     (by simp : (j : ℕ∞ω) ≤ (∞ : ℕ∞ω))
-  change ‖iteratedFDeriv ℝ j (coordinateDerivative i f) x‖ ≤ _ at hA
-  have hB := mul_le_mul_of_nonneg_right hL (norm_nonneg (iteratedFDeriv ℝ j (fderiv ℝ f) x))
-  rw [one_mul, norm_iteratedFDeriv_fderiv] at hB
-  rw [norm_iteratedFDeriv_fderiv] at hA
-  exact hA.trans hB
+  exact hA.trans ((mul_le_of_le_one_left (norm_nonneg _) hL).trans_eq
+    norm_iteratedFDeriv_fderiv)
 
 /-- A continuous map out of a second-countable space is a.e. strongly measurable. Asking for
 second countability of the domain keeps instance search away from the codomain. -/

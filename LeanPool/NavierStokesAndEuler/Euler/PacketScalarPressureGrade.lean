@@ -51,23 +51,24 @@ theorem scalarEmbeddingField_normalized_bound (hT : 0 ≤ T)
     (q : ℕ) (R A : ℝ) (d : ℕ)
     (hb : ∀ n, block standardDirection q
       (fun a => pathTranslate (K := Icc (0 : ℝ) T) (V := ℝ) P a
-        (normalize (E := CylinderL2 P ℝ) g hg p)) n 0 ≤
+        (EulerContinuousTimeWeight.normalize (E := CylinderL2 P ℝ) g hg p)) n 0 ≤
         A * majorant R d n) :
     ((scalarEmbeddingField raw p hp he).normalized hT g hg).WordBound q R A d := by
-  have hc : normalize (E := CylinderL2 P Space) g hg
+  have hc : EulerContinuousTimeWeight.normalize (E := CylinderL2 P Space) g hg
         (pathMap (K := Icc (0 : ℝ) T) P scalarEmbed p) =
-      pathMap (K := Icc (0 : ℝ) T) P scalarEmbed (normalize (E := CylinderL2 P ℝ) g hg p) := by
+      pathMap (K := Icc (0 : ℝ) T) P scalarEmbed
+        (EulerContinuousTimeWeight.normalize (E := CylinderL2 P ℝ) g hg p) := by
     apply ContinuousMap.ext
     intro t
     exact ((map P scalarEmbed).map_smul _ _).symm
   intro n
   change block standardDirection q
     (fun a => pathTranslate (K := Icc (0 : ℝ) T) (V := Space) P a
-      (normalize (E := CylinderL2 P Space) g hg
+      (EulerContinuousTimeWeight.normalize (E := CylinderL2 P Space) g hg
         (pathMap (K := Icc (0 : ℝ) T) P scalarEmbed p))) n 0 ≤ _
   rw [hc]
   have hh := pathMap_block_bound P standardDirection q scalarEmbed
-    (normalize (E := CylinderL2 P ℝ) g hg p)
+    (EulerContinuousTimeWeight.normalize (E := CylinderL2 P ℝ) g hg p)
     (scalarWeightedOrbit p hp (reciprocal g hg)) n 0
   simpa only [scalarEmbed_norm,one_mul] using hh.trans
     (mul_le_mul_of_nonneg_left (hb n) (norm_nonneg scalarEmbed))

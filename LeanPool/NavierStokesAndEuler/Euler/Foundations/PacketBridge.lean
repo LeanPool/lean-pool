@@ -198,12 +198,13 @@ theorem continuousOn_velocity_rhs
     exact ((hP.mul hU).add (hQ.mul hV)).neg.div hN hNne
   have hD : ContinuousOn (fun t => rayDenominator ε (P t) (Q t) (N t)) I := by
     unfold rayDenominator
-    fun_prop
+    exact ((hP.pow 2).add (continuousOn_const.mul (hQ.pow 2))).add (hN.pow 2)
   have hDne : ∀ t ∈ I, rayDenominator ε (P t) (Q t) (N t) ≠ 0 := by
     intro t ht
     have hn : 0 < N t ^ 2 := sq_pos_of_ne_zero (hNne t ht)
     unfold rayDenominator
-    positivity
+    exact (add_pos_of_nonneg_of_pos (add_nonneg (sq_nonneg _)
+      (mul_nonneg (sq_nonneg _) (sq_nonneg _))) hn).ne'
   have hJ : ContinuousOn (fun t => velocityNumerator (A t) (P t) (Q t) (N t)
       (U t) (V t) (velocityThird (P t) (Q t) (N t) (U t) (V t))) I := by
     unfold velocityNumerator

@@ -68,6 +68,10 @@ theorem gradientEnergy_continuous : Continuous (gradientEnergy period) := by
   exact (((valueOperator period 0).continuous.comp (derivativeOperator period 0
       i).continuous).norm).pow 2
 
+theorem value_sum {ι : Type*} (s : Finset ι) (f : ι → SobolevSpace period 0) :
+    value period (∑ i ∈ s, f i) = ∑ i ∈ s, value period (f i) :=
+  map_sum (valueOperator period 0) f s
+
 /-- Genuine strong-derivative integration by parts identifies the full gradient pairing with the
 Laplacian. -/
 theorem gradient_pairing (u : SobolevSpace period 2) (v : SobolevSpace period 1) :
@@ -85,10 +89,8 @@ theorem gradient_pairing (u : SobolevSpace period 2) (v : SobolevSpace period 1)
       (derivativeOperator_hasDerivAt period i (derivativeOperator period 1 i u))
       (derivativeOperator_hasDerivAt period i v)
     linarith
-  rw [← laplacianOperator_value period u, laplacianOperator_apply]
-  change _ = -⟪(valueOperator period 0) (∑ i : Fin 4, _), value period v⟫_ℝ
-  simp only [map_sum, sum_inner, hi, Finset.sum_neg_distrib]
-  rfl
+  rw [← laplacianOperator_value period u, laplacianOperator_apply, value_sum]
+  simp only [sum_inner, hi, Finset.sum_neg_distrib]
 
 /-- Actual L² time derivatives of the first spatial derivatives determine the gradient-energy
 derivative. -/

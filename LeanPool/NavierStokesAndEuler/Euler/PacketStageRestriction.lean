@@ -291,17 +291,15 @@ theorem restrictedFrame_horizon :
 theorem restricted_strain_bound (t : Icc (0 : ℝ) P.restrictedParent.T) (x : Space) :
     ‖P.restrictedParent.strain.field t x‖ ≤
       EulerPacketLowConstants.gradientConstant*previousShear S.J S.X n := by
-  rw [show P.restrictedParent.strain.field t x=P.parent.strain.field
-    (initialInclusion P.parent.T P.nextHorizon P.nextHorizon_le t) x from
-      P.parent.restrictTime_strain P.nextHorizon P.nextHorizon_pos P.nextHorizon_le t x]
+  unfold restrictedParent
+  rw [P.parent.restrictTime_strain P.nextHorizon P.nextHorizon_pos P.nextHorizon_le t x]
   exact P.strain_bound _ _
 
 theorem restricted_curvature_bound (t : Icc (0 : ℝ) P.restrictedParent.T) (x : Space) :
     ‖P.restrictedParent.curvature.field t x‖ ≤
       EulerPacketLowConstants.hessianConstant*previousShear S.J S.X n*olderShear S.J S.X n := by
-  rw [show P.restrictedParent.curvature.field t x=P.parent.curvature.field
-    (initialInclusion P.parent.T P.nextHorizon P.nextHorizon_le t) x from
-      P.parent.restrictTime_curvature P.nextHorizon P.nextHorizon_pos P.nextHorizon_le t x]
+  unfold restrictedParent
+  rw [P.parent.restrictTime_curvature P.nextHorizon P.nextHorizon_pos P.nextHorizon_le t x]
   exact P.curvature_bound _ _
 
 end EulerPacketInduction.Stage

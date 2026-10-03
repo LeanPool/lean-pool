@@ -359,9 +359,9 @@ theorem Budget.liftedPacketCoefficient_L2_bound (G : Field P T raw)
       _ = _ := by rw [hκ, abs_of_pos (inv_pos.mpr hk0)]; ring
   have hcoef' : |A.κ| * C0+Cn/k+(|A.κ| + ‖A.direction‖)*Ce ≤
       liftedInputConstant P*((C0+Cn)/k+2*Ce) :=
-    hcoef.trans (by
-      have hn : 0 ≤ (C0+Cn)/k+2*Ce := by positivity
-      simpa only [one_mul] using mul_le_mul_of_nonneg_right (liftedInputConstant_one_le P) hn)
+    hcoef.trans (le_mul_of_one_le_left
+      (add_nonneg (div_nonneg (add_nonneg hC0 hCn) hk0.le) (mul_nonneg zero_le_two hCe))
+      (liftedInputConstant_one_le P))
   apply hb.trans
   calc
     _ = (|A.κ| * C0+Cn/k+(|A.κ| + ‖A.direction‖)*Ce) *

@@ -157,9 +157,8 @@ theorem velocity_match : pastVelocity τ hτ hτT B G ⟨τ,hτ.le,le_rfl⟩ =
     intro x
     apply ContinuousLinearMap.ext
     intro v
-    change D.F.field ⟨τ,hτ.le,hτT.le⟩ x (D.R v : Space) =
-      D.F.field ⟨τ+0,by linarith,by linarith⟩ x (D.R v : Space)
-    simp only [add_zero]
+    rw [Data.initial_frame_apply, Data.tail_frame_apply]
+    exact congrArg (fun s => D.frame.field s x v) (Subtype.ext (add_zero τ).symm)
   rw [show pastVelocity τ hτ hτT B G = B.velocityPath (G.initial τ hτ hτT.le) from rfl,
     show futureVelocity τ hτ hτT B G =
       includePath (K := Icc (0 : ℝ) (D.T-τ)) (V := Space) P D.support D.support_measurable
@@ -168,7 +167,7 @@ theorem velocity_match : pastVelocity τ hτ hτT B G ⟨τ,hτ.le,le_rfl⟩ =
     (⟨τ,hτ.le,le_rfl⟩ : Icc (0 : ℝ) τ)).trans (Eq.trans ?_
       (forward_velocityPath_apply (G.tail τ hτ.le hτT) (forwardInitial τ hτ hτT B G)
         (⟨0,le_rfl,(sub_pos.mpr hτT).le⟩ : Icc (0 : ℝ) (D.T-τ))).symm)
-  rw [hQ]
+  simp only [hQ]
   refine congrArg _ ?_
   erw [EulerSourceCylinderEquation.coordinates_initial]
   rfl

@@ -88,20 +88,14 @@ theorem hasDerivAt_timeMultiplier
     HasDerivAt (fun r => timeMultiplier T hT (A r)) (timeMultiplier T hT A₁) x := by
   change HasDerivAt ((coefficientMap (E := E) (F := F) T hT) ∘ A)
     (coefficientMap (E := E) (F := F) T hT A₁) x
-  exact HasFDerivAt.comp_hasDerivAt
-    (F := C(Icc (0 : ℝ) T, E →L[ℝ] F)) (E := TimeLp T E →L[ℝ] TimeLp T F) x
-    (coefficientMap (E := E) (F := F) T hT).hasFDerivAt hA
+  exact (coefficientMap (E := E) (F := F) T hT).hasFDerivAt.comp_hasDerivAt x hA
 
 /-- Every order of actual coefficient regularity passes to operator norm regularity. -/
 theorem contDiff_timeMultiplier {P : Type*} [NormedAddCommGroup P] [NormedSpace ℝ P]
     (A : P → C(Icc (0 : ℝ) T, E →L[ℝ] F)) {n : ℕ∞ω} (hA : ContDiff ℝ n A) :
     ContDiff ℝ n (fun x => timeMultiplier T hT (A x)) := by
   change ContDiff ℝ n ((coefficientMap (E := E) (F := F) T hT) ∘ A)
-  exact ContDiff.comp
-    (g := coefficientMap (E := E) (F := F) T hT) (f := A)
-    (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := n)
-      (E := C(Icc (0 : ℝ) T, E →L[ℝ] F)) (F := TimeLp T E →L[ℝ] TimeLp T F)
-      (coefficientMap (E := E) (F := F) T hT)) hA
+  exact (coefficientMap (E := E) (F := F) T hT).contDiff.comp hA
 
 /-- Differentiating the actual frame H¹ transport with respect to an external parameter. -/
 theorem hasDerivAt_productDerivative

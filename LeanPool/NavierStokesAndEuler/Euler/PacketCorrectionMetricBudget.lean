@@ -76,22 +76,7 @@ theorem inverseMetric_field_hasDerivWithinAt (t : ℝ) (ht : t ∈ Icc (0 : ℝ)
     (fun s => extendPath D.T D.T_pos.le D.F.field s x)
     (extendPath D.T D.T_pos.le D.F₁.field t x)
     (Icc (0 : ℝ) D.T) t (D.frame_time t ht x)
-  have hvalue : (fun s => extendPath D.T D.T_pos.le (inverseMetricCoefficient D).path s x) =
-      fun s => (adjoint (𝕜 := ℝ) (E := Space) (F := Space)
-        (extendPath D.T D.T_pos.le D.F.field s x)).comp
-        (extendPath D.T D.T_pos.le D.F.field s x) := by
-    funext s
-    exact inverseMetricCoefficient_apply D (projIcc 0 D.T D.T_pos.le s) x
-  have hderivative : extendPath D.T D.T_pos.le (inverseMetricTimeCoefficient D).path t x =
-      (adjoint (𝕜 := ℝ) (E := Space) (F := Space)
-        (extendPath D.T D.T_pos.le D.F₁.field t x)).comp
-          (extendPath D.T D.T_pos.le D.F.field t x) +
-        (adjoint (𝕜 := ℝ) (E := Space) (F := Space)
-          (extendPath D.T D.T_pos.le D.F.field t x)).comp
-          (extendPath D.T D.T_pos.le D.F₁.field t x) :=
-    inverseMetricTimeCoefficient_apply D (projIcc 0 D.T D.T_pos.le t) x
-  rw [hvalue,hderivative]
-  exact h
+  apply h
 
 variable (P : ℝ) [Fact (0 < P)]
 

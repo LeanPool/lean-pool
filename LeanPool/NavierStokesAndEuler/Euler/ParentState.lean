@@ -440,9 +440,7 @@ theorem compositionTensorLp_norm_le :
         omega)).aestronglyMeasurable.norm hmp,
       eLpNorm_norm _ (hLp i (by omega)).aestronglyMeasurable]
   simp_rw [hc] at hB
-  have hAB : eLpNorm (iteratedFDeriv ℝ n (g ∘ f)) 2 volume ≤
-      (β : ℝ≥0∞)*∑ i : Fin (n+1), eLpNorm (iteratedFDeriv ℝ i.val g) 2 volume := by
-    exact hA.trans (mul_le_mul le_rfl hB (by positivity) (by positivity))
+  have hAB := hA.trans (mul_le_mul le_rfl hB (by positivity) (by positivity))
   have hfin : (β : ℝ≥0∞)*∑ i : Fin (n+1),
       eLpNorm (iteratedFDeriv ℝ i.val g) 2 volume ≠ ⊤ :=
     ENNReal.mul_ne_top ENNReal.coe_ne_top
@@ -1069,6 +1067,15 @@ theorem forwardCorrectionParity (N : ℕ) (hN : 1 ≤ N) (k : ℝ) (hk : 4 ≤ k
     δ hδ ξ hs α (O.meanEvenData H) hSym O.frame_even O.strain_even
     (A.sourceAgreement m hm R S hS H) N hN k hk
 
+omit O hSym [CompleteSpace U] in
+theorem historyOn_field (τ : ℝ) (hτ : 0 < τ) (hτT : τ < A.T) (t : Icc (0 : ℝ) τ) :
+    (A.historyOn H m hm R S hS τ hτ hτT).H.field t =
+      A.curvature.field (initialInclusion A.T τ hτT.le t) := by
+  dsimp only [Parent.historyOn, EulerTransversePacketProvider.HistoryData.initial,
+    Parent.historyData, Parent.transverseData_T, EulerMeanCoefficients.SmoothCoefficientPath.comp,
+    SmoothTimeField.toSmoothCoefficientPath, ContinuousMap.comp_apply]
+  rfl
+
 theorem joinedCorrectionParity (τ : ℝ) (hτ : 0 < τ) (hτT : τ < A.T)
     (N : ℕ) (hN : 1 ≤ N) (k : ℝ) (hk : 4 ≤ k) :
     ParityData period
@@ -1080,9 +1087,8 @@ theorem joinedCorrectionParity (τ : ℝ) (hτ : 0 < τ) (hτT : τ < A.T)
     (O.meanEvenData H) hSym O.frame_even O.strain_even
     _ (A.sourceAgreement m hm R S hS H) N hN k hk
   intro t x
-  exact (O.curvature_even (initialInclusion A.T τ hτT.le t) x :
-    (A.curvature.field (initialInclusion A.T τ hτT.le t) : Space → Space →L[ℝ] Space) (-x) =
-      (A.curvature.field (initialInclusion A.T τ hτT.le t) : Space → Space →L[ℝ] Space) x)
+  rw [historyOn_field H m hm R S hS τ hτ hτT t]
+  exact O.curvature_even _ x
 
 omit hSym [CompleteSpace U] in
 theorem childOfPacket {P : ℝ} [Fact (0 < P)] {C : EulerAllOrderCorrectionData.Data P A.T}

@@ -95,9 +95,8 @@ theorem potentialMultiplier_hasDerivWithinAt (s : Set ℝ) (t : ℝ)
   have hInv := hnorm.inv (pow_ne_zero 2 (norm_ne_zero_iff.mpr hnz))
   have hcross : HasDerivWithinAt (fun r => crossLeft (m r)) (crossLeft mt) s t :=
     crossOperator.hasFDerivAt.comp_hasDerivWithinAt t hm
-  have h := hInv.neg.smul hcross
-  simpa only [potentialMultiplier, potentialMultiplierDerivative, Pi.neg_apply,
-    Pi.inv_apply, Pi.smul_def', Pi.neg_def, neg_div, neg_neg, sub_eq_add_neg, neg_smul, add_comm]
-        using h
+  exact (hInv.neg.smul hcross).congr_deriv
+    (by rw [potentialMultiplierDerivative, neg_div, neg_neg, Pi.neg_apply, Pi.inv_apply, neg_smul,
+      neg_add_eq_sub])
 
 end EulerPacketCrossProduct

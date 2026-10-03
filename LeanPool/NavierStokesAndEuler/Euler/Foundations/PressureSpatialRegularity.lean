@@ -315,10 +315,7 @@ theorem liftedPressure_unique (κ : ℝ) (m : Vector3)
     apply (coerciveEquiv (projectedOperator S G) c hc
       (projectedOperator_coercive S G c hG)).injective
     simp only [coerciveEquiv_apply]
-    change S.orthogonalProjectionOnto (G p) =
-      S.orthogonalProjectionOnto (G (pressureSolver S G c hc hG f : LiftL2 period))
-    rw [pressureSolver_equation]
-    exact Subtype.ext heq
+    exact (Subtype.ext heq).trans (pressureSolver_equation S G c hc hG f).symm
   exact congrArg Subtype.val hsub
 
 theorem liftedPressure_translation (κ : ℝ) (m : Vector3) (a : LiftDomain period)

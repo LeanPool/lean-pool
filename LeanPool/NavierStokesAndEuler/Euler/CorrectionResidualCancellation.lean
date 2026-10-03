@@ -66,7 +66,8 @@ theorem residual_cancellation {q : ℕ} {T : Type*} [TopologicalSpace T]
         coefficientSobolevOperator period (D.metric.jet t) (D.pressure period hq t e)) =
       -nonlinearity period D hq t (D.approximation t+e) -
         coefficientSobolevOperator period (D.metric.jet t) (pa+D.pressure period hq t e) := by
-  rw [rawSource_eq_residual_increment period D hq t e,map_add]
+  simp only [rawSource_eq_residual_increment period D hq t e,
+    (coefficientSobolevOperator period (D.metric.jet t)).map_add]
   abel
 
 /-- The actual continuous corrected path is the prescribed approximation plus the constructed error.

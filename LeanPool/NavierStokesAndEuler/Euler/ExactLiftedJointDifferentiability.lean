@@ -165,9 +165,8 @@ theorem rawVelocity_hasFDerivAt (t : ℝ) (ht : t ∈ Ioo 0 T) (z : LiftTangent)
         extendPath T hT.le (S.velocity.realization 3) := by
       funext r
       exact S.velocity.restrict_realization (by omega : 3 ≤ 6) _
-    change HasDerivAt (fun r => restrictOperator P (by omega : 3 ≤ 6)
-      (extendPath T hT.le (S.velocity.realization 6) r)) u' t at h
-    rwa [he] at h
+    rw [← he]
+    apply h
   have hv : pointEvaluation P (coveringMap P z) u' =
       S.pointTimeDerivative ⟨t,ht.1.le,ht.2.le⟩ (coveringMap P z) := by
     have h := (pointEvaluation P (coveringMap P z)).hasFDerivAt.comp_hasDerivAt t hd

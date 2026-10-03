@@ -108,9 +108,8 @@ theorem vector_spatial_smooth (t : ℝ) :
       D.frame D.frameDerivative D.frameLower D.frameLower_pos D.frame_lower G.path I.value
       G.path_orbit I.orbit (D.clamp t) 0
   convert h using 1
-  first
-    | rfl
-    | (funext y; simp only [vector,localFieldLift,Prod.fst_zero,Prod.snd_zero,zero_add])
+  funext y
+  simp only [vector,localFieldLift,Prod.fst_zero,Prod.snd_zero,zero_add]
 
 theorem vectorDerivative_spatial_smooth (t : ℝ) :
     ContDiff ℝ ∞ (fun y : Space × ℝ => G.vectorDerivative I (t,y)) := by
@@ -118,9 +117,8 @@ theorem vectorDerivative_spatial_smooth (t : ℝ) :
       D.frame D.frameDerivative D.frameLower D.frameLower_pos D.frame_lower G.path I.value
       G.path_orbit I.orbit (D.clamp t) 0
   convert h using 1
-  first
-    | rfl
-    | (funext y; simp only [vectorDerivative,localFieldLift,Prod.fst_zero,Prod.snd_zero,zero_add])
+  funext y
+  simp only [vectorDerivative,localFieldLift,Prod.fst_zero,Prod.snd_zero,zero_add]
 
 theorem scalar_spatial_smooth (t : ℝ) :
     ContDiff ℝ ∞ (fun y : Space × ℝ => G.scalar I (t,y)) := by
@@ -129,9 +127,8 @@ theorem scalar_spatial_smooth (t : ℝ) :
       G.path_orbit I.orbit D.M D.normal D.normalLower D.normalLower_pos D.normal_lower
       G.mean_zero I.mean_zero (D.clamp t) 0
   convert h using 1
-  first
-    | rfl
-    | (funext y; simp only [scalar,localFieldLift,Prod.fst_zero,Prod.snd_zero,zero_add])
+  funext y
+  simp only [scalar,localFieldLift,Prod.fst_zero,Prod.snd_zero,zero_add]
 
 theorem vector_zero_outside (t : ℝ) (x : Space) (hx : x ∉ D.support) (θ : ℝ) :
     G.vector I (t,(x,θ)) = 0 := by

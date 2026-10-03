@@ -177,14 +177,13 @@ theorem fixedMeanSolver_weak (f : TimeLp T L2) (v : TimeLp T solenoidalSpace) :
       ⟪timeMultiplier T hT H (fixedMeanPrimitive T hT F F₁ u), fixedMeanPrimitive T hT F F₁ v⟫_ℝ +
       ⟪(M0+L • A) (fixedMeanTrace T hT F F₁ u), fixedMeanTrace T hT F F₁ v⟫_ℝ =
       -⟪f, fixedMeanPrimitive T hT F F₁ v⟫_ℝ := by
-  exact (fixedMeanOperator_inner T hT F F₁ H M0 A L
-    (fixedMeanSolver T hT F F₁ H M0 A L FInv hInv hF K B hK hB hFInv₀ hH hboundary hsmall f)
-        v).symm.trans
-    (coercive_forcing_inner (fixedMeanOperator T hT F F₁ H M0 A L)
-      (fixedMeanPrimitive T hT F F₁) (fixedMeanCoercivity T F F₁ FInv)
-      (fixedMeanCoercivity_pos T hT F F₁ FInv)
-      (fixedMeanOperator_coercive T hT F F₁ H M0 A L FInv hInv hF K B hK hB hFInv₀ hH hboundary
-          hsmall) f v)
+  intro u
+  refine (fixedMeanOperator_inner T hT F F₁ H M0 A L u v).symm.trans ?_
+  apply coercive_forcing_inner (fixedMeanOperator T hT F F₁ H M0 A L)
+    (fixedMeanPrimitive T hT F F₁) (fixedMeanCoercivity T F F₁ FInv)
+    (fixedMeanCoercivity_pos T hT F F₁ FInv)
+    (fixedMeanOperator_coercive T hT F F₁ H M0 A L FInv hInv hF K B hK hB hFInv₀ hH hboundary
+        hsmall) f v
 
 /-- Uniqueness is on the same fixed Hilbert space. -/
 theorem fixedMeanSolver_unique (f : TimeLp T L2) (u : TimeLp T solenoidalSpace)

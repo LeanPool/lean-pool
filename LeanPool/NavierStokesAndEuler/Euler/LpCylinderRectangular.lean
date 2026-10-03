@@ -129,8 +129,8 @@ def supportedMap : (α →ᵇ E →L[ℝ] F) →L[ℝ]
 theorem supportedMap_norm : ‖supportedMap (E := E) (F := F) μ S hS‖ ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one
   intro A
-  simpa only [one_mul,supportedMap_apply] using
-    supported_norm μ S hS A ‖A‖ (norm_nonneg _) (fun x _ => A.norm_coe_le_norm x)
+  exact (supported_norm μ S hS A ‖A‖ (norm_nonneg _) (fun x _ => A.norm_coe_le_norm x)).trans_eq
+    (one_mul _).symm
 
 variable {K : Type*} [TopologicalSpace K] [CompactSpace K]
 

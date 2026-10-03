@@ -264,9 +264,7 @@ theorem weightedCommutator_drift_bound {s : ℕ} (hs : 6 ≤ s) (N : ℕ) (hN : 
   intro n
   obtain ⟨f,hf,hfs,hfL⟩ := smoothApprox_representative_all period n u
   obtain ⟨g,hg,hgs,hgL⟩ := smoothApprox_representative_all period n v
-  change weightedCommutatorNorm period hs N hN ρ L hL (U n) (V n) ≤
-    productConstant period 3 * ρ⁻¹ * weightedDriftNorm period 6 N ρ (velocityMap L) (U n) *
-        weightedLoss period 6 N ρ (V n)
+  dsimp only [Function.comp_apply]
   rw [weightedDriftNorm_eq_classical period 6 N (by omega) ρ (velocityMap L) (U n) f hf hfs]
   exact weightedCommutator_drift_smooth period hs N hN ρ hρ L hL (U n) (V n) f g hf hg hfs hgs hfL
       hgL
@@ -318,10 +316,7 @@ theorem transportPressure_shifted_drift {s : ℕ} (hs : 6 ≤ s) {A : SmoothCoef
   intro n
   obtain ⟨f,hf,hfs,hfL⟩ := smoothApprox_representative_all period n u
   obtain ⟨g,hg,hgs,hgL⟩ := smoothApprox_representative_all period n v
-  change shiftedPressureNorm period N ρ (transportPressure period hs K κ m c hc hpos L hL (U n) (V
-      n)) ≤
-    (4*M*productConstant period 3) * weightedDriftNorm period 6 (N+1) ρ (velocityMap L) (U n) *
-        weightedLoss period 6 (N+1) ρ (V n)
+  dsimp only [Function.comp_apply]
   rw [weightedDriftNorm_eq_classical period 6 (N+1) (by omega) ρ (velocityMap L) (U n) f hf hfs]
   exact transportPressure_shifted_drift_smooth period hs K κ m c hc hpos N hN ρ Rc M hρ hRc hM
       hbase hsmall hcoeff
@@ -470,7 +465,7 @@ theorem correctionForcing_bound {s : ℕ} (hs : 6 ≤ s) {A : SmoothCoefficient 
   change externalPressureNorm period K N ρ p0 + basePressureNorm period K0 N hN ρ p0 ≤ _ at hp0
   change externalPressureNorm period K N ρ p1 ≤ _ at hp1e
   change basePressureNorm period K0 N hN ρ p1 ≤ _ at hp1b
-  nlinarith only [h, hp0, hp1e, hp1b]
+  linarith only [h, hp0, hp1e, hp1b]
 
 /-- Uniform fixed-base constants preserve the separate drift norm. -/
 theorem correctionForcing_uniform_bound {s : ℕ} (hs : 6 ≤ s) {A : SmoothCoefficient period}
@@ -802,8 +797,11 @@ def forcingMajorant {q : ℕ} {T : ℝ} {hq : 6 ≤ q + 1}
     S.full.residual K.c S.full.Rc (R t) (X t) (Y t), ?_⟩
   have hi : Continuous (fun t => (R t)⁻¹) :=
     R.continuous.inv₀ (fun t => (S.full.radius_pos t).ne')
+  have hX := X.continuous
   unfold EulerDriftEnergyConstants.forcingPolynomial
-  fun_prop
+  exact ((continuous_const.add (continuous_const.mul hX)).add (continuous_const.mul (hX.pow 2))).add
+    (((continuous_const.mul (hi.add continuous_const)).mul (continuous_const.add hX)).mul
+      Y.continuous)
 
 /-- The genuine scalar majorant retains full velocity only in terms with no derivative loss. -/
 def correctionRhs {q : ℕ} {T : ℝ} {hq : 6 ≤ q + 1}
@@ -1125,12 +1123,8 @@ theorem correction_mild_bootstrap {q : ℕ} (hq : 6 ≤ q) (T : ℝ) (hT : 0 ≤
       (loss_nonneg period S.full hN K e τ) S.full.residual_pos.le
       (add_nonneg (inv_nonneg.mpr (S.full.radius_pos τ).le) S.full.Rc_nonneg) S.drift_nonneg
     have hh := h.trans h'
-    change A (projIcc 0 T hT t) ≤ C*(X (projIcc 0 T hT t) +
-      (X (projIcc 0 T hT t))^2+S.full.residual) +
-      ((-2*C*(S.drift+Δ))/(ρ0-2*C*(S.drift+Δ)*t)+C*((ρ0-2*C*(S.drift+Δ)*t)⁻¹+S.full.Rc) *
-        (S.drift+X (projIcc 0 T hT t)))*Y (projIcc 0 T hT t)
-    rw [projIcc_of_mem hT ⟨ht.1,ht.2.le⟩]
-    simpa only [hR τ,hRdot τ] using hh
+    have hp : projIcc 0 T hT t = τ := projIcc_of_mem hT ⟨ht.1,ht.2.le⟩
+    simpa only [extendPath, hp, hR τ, hRdot τ] using hh
   have hclosed := close_integral_energy_estimate (extendPath T hT X) (extendPath T hT A)
       (extendPath T hT Y)
     C S.drift Δ S.full.residual ρ0 T S.full.Rc hCp S.drift_nonneg hΔ hΔ1 S.full.residual_pos hρ0 hT

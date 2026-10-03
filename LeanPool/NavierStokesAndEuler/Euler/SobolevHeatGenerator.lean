@@ -231,8 +231,8 @@ theorem hasDerivAt_apply (A : ℝ → E →L[ℝ] F) (u : ℝ → E) (t : ℝ) (
     HasDerivAt (fun s => A s (u s)) (A t u' + a') t := by
   apply hasDerivAt_iff_tendsto_slope.mpr
   have hfirst : Tendsto (fun s => A s (slope u t s)) (𝓝[≠] t) (𝓝 (A t u')) :=
-    hc.tendsto.comp ((show Tendsto (fun r : ℝ => r) (𝓝[≠] t) (𝓝 t) from
-        nhdsWithin_le_nhds).prodMk_nhds hu.tendsto_slope)
+    (hc.tendsto.comp ((show Tendsto (fun r : ℝ => r) (𝓝[≠] t) (𝓝 t) from
+        nhdsWithin_le_nhds).prodMk_nhds hu.tendsto_slope) :)
   exact (hfirst.add ha.tendsto_slope).congr'
     (Filter.Eventually.of_forall (fun s => (slope_apply A u t s).symm))
 
@@ -243,9 +243,9 @@ theorem hasDerivWithinAt_apply (A : ℝ → E →L[ℝ] F) (u : ℝ → E) (t : 
     HasDerivWithinAt (fun r => A r (u r)) (A t u' + a') s t := by
   apply hasDerivWithinAt_iff_tendsto_slope.mpr
   have hfirst : Tendsto (fun r => A r (slope u t r)) (𝓝[s \ {t}] t) (𝓝 (A t u')) :=
-    hc.tendsto.comp ((show Tendsto (fun r : ℝ => r) (𝓝[s \ {t}] t) (𝓝 t) from
+    (hc.tendsto.comp ((show Tendsto (fun r : ℝ => r) (𝓝[s \ {t}] t) (𝓝 t) from
         nhdsWithin_le_nhds).prodMk_nhds
-      (hasDerivWithinAt_iff_tendsto_slope.mp hu))
+      (hasDerivWithinAt_iff_tendsto_slope.mp hu)) :)
   exact (hfirst.add (hasDerivWithinAt_iff_tendsto_slope.mp ha)).congr'
     (Filter.Eventually.of_forall (fun r => (slope_apply A u t r).symm))
 

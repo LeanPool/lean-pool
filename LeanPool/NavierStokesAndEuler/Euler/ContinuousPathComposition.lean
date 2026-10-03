@@ -101,8 +101,9 @@ def compositionLift : C(K,E →L[ℝ] F) →L[ℝ] C(K,(U →L[ℝ] E) →L[ℝ]
   (compL ℝ U E F).compLeftContinuous ℝ K
 
 include U E F in
-theorem compositionLift_norm : ‖compositionLift (K := K) (U := U) (E := E) (F := F)‖ ≤ 1 :=
-  (postcomposition_norm (K := K) (compL ℝ U E F)).trans (norm_compL_le ℝ U E F)
+theorem compositionLift_norm : ‖compositionLift (K := K) (U := U) (E := E) (F := F)‖ ≤ 1 := by
+  have h := (postcomposition_norm (K := K) (compL ℝ U E F)).trans (norm_compL_le ℝ U E F)
+  exact h
 
 /-- Literal pointwise composition of two continuous coefficient paths. -/
 def compose (A : C(K, E →L[ℝ] F)) (B : C(K, U →L[ℝ] E)) : C(K,U →L[ℝ] F) :=
@@ -118,9 +119,7 @@ variable {P : Type*} [NormedAddCommGroup P] [NormedSpace ℝ P]
 theorem contDiff_compose (A : P → C(K, E →L[ℝ] F)) (B : P → C(K, U →L[ℝ] E))
     {n : ℕ∞ω} (hA : ContDiff ℝ n A) (hB : ContDiff ℝ n B) :
     ContDiff ℝ n (fun x => compose (A x) (B x)) := by
-  have hLift : ContDiff ℝ n
-      (fun x => compositionLift (K := K) (U := U) (E := E) (F := F) (A x)) :=
-    (compositionLift (K := K) (U := U) (E := E) (F := F)).contDiff.comp hA
+  have hLift := hA.continuousLinearMap_comp (compositionLift (K := K) (U := U) (E := E) (F := F))
   exact contDiff_apply _ B hLift hB
 
 /-- Pointwise composition has the same fixed factorial product constant. -/
@@ -132,9 +131,7 @@ theorem compose_bound (A : P → C(K, E →L[ℝ] F)) (B : P → C(K, U →L[ℝ
     (n : ℕ) (x : P) :
     ‖iteratedFDeriv ℝ n (fun y => compose (A y) (B y)) x‖ ≤
       (3*C*D)*majorant R (c+d) n := by
-  have hLift : ContDiff ℝ ∞
-      (fun x => compositionLift (K := K) (U := U) (E := E) (F := F) (A x)) :=
-    (compositionLift (K := K) (U := U) (E := E) (F := F)).contDiff.comp hA
+  have hLift := hA.continuousLinearMap_comp (compositionLift (K := K) (U := U) (E := E) (F := F))
   have hbLift := contraction_bound (compositionLift (K := K) (U := U) (E := E) (F := F))
     compositionLift_norm A hA R C hR hC c hbA
   exact apply_bound _ B hLift hB R C D hR hC hD c d hbLift hbB n x

@@ -142,15 +142,10 @@ omit [CompleteSpace U] in
 theorem label_transportCost_le (x : Space) :
     transportCost D.T (B.coefficients.labelFrame x) (B.coefficients.labelFrameDerivative x)
       D.frameLower ≤ historyTransportCost (D := D) := by
-  have hq := coefficient_label_norm D.frame x
-  have hq₁ := coefficient_label_norm D.frameDerivative x
   unfold transportCost historyTransportCost
-  change 1+((2*(D.frameLower⁻¹)^2*‖pathEvaluation x D.frame.field‖^2 *
-      ‖pathEvaluation x D.frameDerivative.field‖+
-      D.frameLower⁻¹*‖pathEvaluation x D.frameDerivative.field‖)*D.T +
-      D.frameLower⁻¹*‖pathEvaluation x D.frame.field‖) ≤ _
   exact transport_polynomial_mono (inv_nonneg.mpr D.frameLower_pos.le) D.T_pos.le
-    (norm_nonneg _) (norm_nonneg _) hq hq₁
+    (norm_nonneg _) (norm_nonneg _) (coefficient_label_norm D.frame x)
+    (coefficient_label_norm D.frameDerivative x)
 
 omit [CompleteSpace U] in
 theorem label_derivative_size (x : Space) :
@@ -180,7 +175,7 @@ theorem historyLabelDifferenceCost_nonneg : 0 ≤ historyLabelDifferenceCost B :
 
 theorem labelVelocity_norm (x : Space) :
     ‖B.coefficients.labelVelocity x‖ ≤ historyLabelSizeCost B := by
-  exact historyVelocity_norm_le D.T D.T_pos.le
+  exact (historyVelocity_norm_le D.T D.T_pos.le
     (B.coefficients.labelFrame x) (B.coefficients.labelFrameDerivative x)
     (B.coefficients.labelHessian x) D.frameLower D.frameLower_pos
     (B.coefficients.labelFrame_lower x) (B.coefficients.labelFrame_derivative x)
@@ -189,7 +184,7 @@ theorem labelVelocity_norm (x : Space) :
     (D.T*‖D.frameDerivative.field‖+‖D.frame.field‖) (1+D.T^2*‖B.H.field‖)
     (historyTransportCost (D := D)) (coefficient_label_norm D.frame x)
     (coefficient_label_norm D.frameDerivative x) (label_derivative_size B x)
-    (label_energy_size B x) (label_transportCost_le B x)
+    (label_energy_size B x) (label_transportCost_le B x) :)
 
 theorem labelVelocity_difference (x y : Space) :
     ‖B.coefficients.labelVelocity x-B.coefficients.labelVelocity y‖ ≤

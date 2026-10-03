@@ -74,7 +74,7 @@ def endpointOperator (D : S →L[ℝ] E) (R : S →L[ℝ] S) (A : E →L[ℝ] E)
 
 theorem correctionOperator_norm_le (D : S →L[ℝ] E) (R : S →L[ℝ] S) (A : E →L[ℝ] E)
     (d r a : ℝ) (hd : ‖D‖ ≤ d) (hr : ‖R‖ ≤ r) (ha : ‖A‖ ≤ a) :
-    ‖correctionOperator D R A‖ ≤ d ^ 2 * r * a := by
+    ‖correctionOperator D R A‖ ≤ d ^ (2 : ℕ) * r * a := by
   have hd0 := (norm_nonneg D).trans hd
   have hr0 := (norm_nonneg R).trans hr
   have ha0 := (norm_nonneg A).trans ha
@@ -94,7 +94,7 @@ theorem correctionOperator_sub_norm_le
     (ha : ‖A‖ ≤ a) (_ha' : ‖A'‖ ≤ a)
     (hδd : ‖D - D'‖ ≤ δd) (hδr : ‖R - R'‖ ≤ δr) (hδa : ‖A - A'‖ ≤ δa) :
     ‖correctionOperator D R A - correctionOperator D' R' A'‖ ≤
-      2 * d * r * a * δd + d ^ 2 * a * δr + d ^ 2 * r * δa := by
+      2 * d * r * a * δd + d ^ (2 : ℕ) * a * δr + d ^ (2 : ℕ) * r * δa := by
   have hd0 := (norm_nonneg D).trans hd
   have hr0 := (norm_nonneg R).trans hr
   have ha0 := (norm_nonneg A).trans ha
@@ -129,7 +129,7 @@ theorem correctionOperator_sub_norm_le
 theorem endpointOperator_norm_le (D : S →L[ℝ] E) (R : S →L[ℝ] S) (A : E →L[ℝ] E)
     (L : V →L[ℝ] E) (d r a l : ℝ)
     (hd : ‖D‖ ≤ d) (hr : ‖R‖ ≤ r) (ha : ‖A‖ ≤ a) (hl : ‖L‖ ≤ l) :
-    ‖endpointOperator D R A L‖ ≤ (1 + d ^ 2 * r * a) * l := by
+    ‖endpointOperator D R A L‖ ≤ (1 + d ^ (2 : ℕ) * r * a) * l := by
   have hs := correctionOperator_norm_le D R A d r a hd hr ha
   have hs0 := (norm_nonneg _).trans hs
   apply ((norm_sub_le _ _).trans (add_le_add hl ((opNorm_comp_le _ _).trans
@@ -144,8 +144,8 @@ theorem endpointOperator_sub_norm_le
     (hδd : ‖D - D'‖ ≤ δd) (hδr : ‖R - R'‖ ≤ δr)
     (hδa : ‖A - A'‖ ≤ δa) (hδl : ‖L - L'‖ ≤ δl) :
     ‖endpointOperator D R A L - endpointOperator D' R' A' L'‖ ≤
-      (1 + d ^ 2 * r * a) * δl +
-        (2 * d * r * a * δd + d ^ 2 * a * δr + d ^ 2 * r * δa) * l := by
+      (1 + d ^ (2 : ℕ) * r * a) * δl +
+        (2 * d * r * a * δd + d ^ (2 : ℕ) * a * δr + d ^ (2 : ℕ) * r * δa) * l := by
   have hs := correctionOperator_norm_le D' R' A' d r a hd' hr' ha'
   have hs0 := (norm_nonneg _).trans hs
   have hds := correctionOperator_sub_norm_le D D' R R' A A' d r a δd δr δa
@@ -170,7 +170,7 @@ theorem formOperator_sub_norm_le
     (D D' : S →L[ℝ] E) (A A' : E →L[ℝ] E) (d a δd δa : ℝ)
     (hd : ‖D‖ ≤ d) (hd' : ‖D'‖ ≤ d) (ha : ‖A‖ ≤ a) (ha' : ‖A'‖ ≤ a)
     (hδd : ‖D - D'‖ ≤ δd) (hδa : ‖A - A'‖ ≤ δa) :
-    ‖formOperator D A - formOperator D' A'‖ ≤ 2 * d * a * δd + d ^ 2 * δa := by
+    ‖formOperator D A - formOperator D' A'‖ ≤ 2 * d * a * δd + d ^ (2 : ℕ) * δa := by
   have had : ‖adjoint (𝕜 := ℝ) (E := S) (F := E) D -
       adjoint (𝕜 := ℝ) (E := S) (F := E) D'‖ ≤ δd := (norm_adjoint_sub D D').trans_le hδd
   have h := correctionOperator_sub_norm_le (adjoint (𝕜 := ℝ) (E := S) (F := E) D)
@@ -220,11 +220,11 @@ variable {U E : Type*}
 variable (T : ℝ) (hT : 0 ≤ T)
   (Q Q₁ : C(Icc (0 : ℝ) T, U →L[ℝ] E))
   (H : C(Icc (0 : ℝ) T, E →L[ℝ] E))
-  (c : ℝ) (hc : 0 < c) (hQ : ∀ t v, c * ‖v‖ ^ 2 ≤ ‖Q t v‖ ^ 2)
+  (c : ℝ) (hc : 0 < c) (hQ : ∀ t v, c * ‖v‖ ^ (2 : ℕ) ≤ ‖Q t v‖ ^ (2 : ℕ))
   (hd : ∀ t : Icc (0 : ℝ) T,
     HasDerivWithinAt (extendPath T hT Q) (Q₁ t) (Icc (0 : ℝ) T) t)
-  (K : ℝ) (hK : 0 ≤ K) (hH : ∀ t v, ⟪H t v, v⟫_ℝ ≤ K * ‖v‖ ^ 2)
-  (hsmall : K * (T ^ 2 / 2) ≤ 1 / 2)
+  (K : ℝ) (hK : 0 ≤ K) (hH : ∀ t v, ⟪H t v, v⟫_ℝ ≤ K * ‖v‖ ^ (2 : ℕ))
+  (hsmall : K * (T ^ (2 : ℕ) / 2) ≤ 1 / 2)
 
 /-- An abbreviation of the actual fixed-coordinate inverse, with its proved coercivity. -/
 def fixedInverse : zeroTraceDerivatives (U := U) T hT →L[ℝ] zeroTraceDerivatives (U := U) T hT :=
@@ -233,7 +233,7 @@ def fixedInverse : zeroTraceDerivatives (U := U) T hT →L[ℝ] zeroTraceDerivat
     (fixedFrameOperator_coercive T hT Q Q₁ H c hc hQ hd K hK hH hsmall)
 
 theorem fixedInverse_norm_le (r : ℝ) (hr : transportCost T Q Q₁ c ≤ r) :
-    ‖fixedInverse T hT Q Q₁ H c hc hQ hd K hK hH hsmall‖ ≤ 2 * r ^ 2 := by
+    ‖fixedInverse T hT Q Q₁ H c hc hQ hd K hK hH hsmall‖ ≤ 2 * r ^ (2 : ℕ) := by
   apply (coerciveInverse_norm_le _ _ _ _).trans
   have he : (fixedCoercivity T Q Q₁ c)⁻¹ = 2 * (transportCost T Q Q₁ c) ^ 2 := by
     simp only [fixedCoercivity, inv_div, inv_pow, div_inv_eq_mul]
@@ -243,10 +243,10 @@ theorem fixedInverse_norm_le (r : ℝ) (hr : transportCost T Q Q₁ c ≤ r) :
 
 variable (P P₁ : C(Icc (0 : ℝ) T, U →L[ℝ] E))
   (G : C(Icc (0 : ℝ) T, E →L[ℝ] E))
-  (hP : ∀ t v, c * ‖v‖ ^ 2 ≤ ‖P t v‖ ^ 2)
+  (hP : ∀ t v, c * ‖v‖ ^ (2 : ℕ) ≤ ‖P t v‖ ^ (2 : ℕ))
   (hp : ∀ t : Icc (0 : ℝ) T,
     HasDerivWithinAt (extendPath T hT P) (P₁ t) (Icc (0 : ℝ) T) t)
-  (hG : ∀ t v, ⟪G t v, v⟫_ℝ ≤ K * ‖v‖ ^ 2)
+  (hG : ∀ t v, ⟪G t v, v⟫_ℝ ≤ K * ‖v‖ ^ (2 : ℕ))
 
 /-- The literal coefficient distance for differentiating moving-frame paths. -/
 def derivativeDistance : ℝ := T * ‖Q₁-P₁‖ + ‖Q-P‖
@@ -259,9 +259,9 @@ theorem derivativeDistance_nonneg : 0 ≤ derivativeDistance T Q Q₁ P P₁ := 
 
 theorem fixedFrameOperator_sub_norm_le (d a : ℝ)
     (hD : T * ‖Q₁‖ + ‖Q‖ ≤ d) (hD' : T * ‖P₁‖ + ‖P‖ ≤ d)
-    (hA : 1 + T ^ 2 * ‖H‖ ≤ a) (hA' : 1 + T ^ 2 * ‖G‖ ≤ a) :
+    (hA : 1 + T ^ (2 : ℕ) * ‖H‖ ≤ a) (hA' : 1 + T ^ (2 : ℕ) * ‖G‖ ≤ a) :
     ‖fixedFrameOperator T hT Q Q₁ H - fixedFrameOperator T hT P P₁ G‖ ≤
-      2 * d * a * derivativeDistance T Q Q₁ P P₁ + d ^ 2 * (T ^ 2 * ‖H-G‖) :=
+      2 * d * a * derivativeDistance T Q Q₁ P P₁ + d ^ (2 : ℕ) * (T ^ (2 : ℕ) * ‖H-G‖) :=
   formOperator_sub_norm_le _ _ _ _ d a _ _
     ((fixedFrameDerivative_norm_le T hT Q Q₁).trans hD)
     ((fixedFrameDerivative_norm_le T hT P P₁).trans hD')
@@ -272,12 +272,12 @@ theorem fixedFrameOperator_sub_norm_le (d a : ℝ)
 
 theorem fixedInverse_sub_norm_le (d a r : ℝ)
     (hD : T * ‖Q₁‖ + ‖Q‖ ≤ d) (hD' : T * ‖P₁‖ + ‖P‖ ≤ d)
-    (hA : 1 + T ^ 2 * ‖H‖ ≤ a) (hA' : 1 + T ^ 2 * ‖G‖ ≤ a)
+    (hA : 1 + T ^ (2 : ℕ) * ‖H‖ ≤ a) (hA' : 1 + T ^ (2 : ℕ) * ‖G‖ ≤ a)
     (hr : transportCost T Q Q₁ c ≤ r) (hr' : transportCost T P P₁ c ≤ r) :
     ‖fixedInverse T hT Q Q₁ H c hc hQ hd K hK hH hsmall -
       fixedInverse T hT P P₁ G c hc hP hp K hK hG hsmall‖ ≤
-      (2 * r ^ 2) ^ 2 *
-        (2 * d * a * derivativeDistance T Q Q₁ P P₁ + d ^ 2 * (T ^ 2 * ‖H-G‖)) := by
+      (2 * r ^ (2 : ℕ)) ^ (2 : ℕ) *
+        (2 * d * a * derivativeDistance T Q Q₁ P P₁ + d ^ (2 : ℕ) * (T ^ (2 : ℕ) * ‖H-G‖)) := by
   let R := fixedInverse T hT Q Q₁ H c hc hQ hd K hK hH hsmall
   let S := fixedInverse T hT P P₁ G c hc hP hp K hK hG hsmall
   let A := fixedFrameOperator T hT Q Q₁ H
@@ -299,41 +299,30 @@ def endpointDifferenceCost (d i a δd δa : ℝ) : ℝ :=
     (d ^ 3 * i + d ^ 5 * i ^ 2 * a) * δa
 
 theorem fixedAffineEndpoint_norm_le (d a r : ℝ)
-    (hD : T * ‖Q₁‖ + ‖Q‖ ≤ d) (hA : 1 + T ^ 2 * ‖H‖ ≤ a)
+    (hD : T * ‖Q₁‖ + ‖Q‖ ≤ d) (hA : 1 + T ^ (2 : ℕ) * ‖H‖ ≤ a)
     (hr : transportCost T Q Q₁ c ≤ r) :
     ‖fixedEndpointDerivative T hT Q Q₁ H c hc hQ hd K hK hH hsmall
-      (affineTrial T hT Q Q₁)‖ ≤ (1+d^2*(2*r^2)*a) * (affineCost T*d) := by
-  have hb : 0 ≤ affineCost T := by unfold affineCost; positivity
-  exact EulerCoerciveEndpointBounds.endpointOperator_norm_le
-    (fixedFrameDerivative (U := U) (E := E) T hT Q Q₁)
-    (fixedInverse T hT Q Q₁ H c hc hQ hd K hK hH hsmall)
-    (energyOperator T hT H) (affineTrial T hT Q Q₁)
-    d (2*r^2) a (affineCost T*d)
+      (affineTrial T hT Q Q₁)‖ ≤ (1+d ^ (2 : ℕ)*(2*r ^ (2 : ℕ))*a) * (affineCost T*d) := by
+  have hb : 0 ≤ affineCost T := mul_nonneg (add_nonneg zero_le_one hT) (abs_nonneg _)
+  apply (EulerCoerciveEndpointBounds.endpointOperator_norm_le _ _ _ _ _ _ _ _
     ((fixedFrameDerivative_norm_le T hT Q Q₁).trans hD)
     (fixedInverse_norm_le T hT Q Q₁ H c hc hQ hd K hK hH hsmall r hr)
     ((energyOperator_norm_le T hT H).trans hA)
-    ((affineTrial_norm_le T hT Q Q₁).trans (mul_le_mul_of_nonneg_left hD hb))
+    ((affineTrial_norm_le T hT Q Q₁).trans (mul_le_mul_of_nonneg_left hD hb)) :)
 
 theorem fixedAffineEndpoint_sub_norm_le (d a r : ℝ)
     (hD : T * ‖Q₁‖ + ‖Q‖ ≤ d) (hD' : T * ‖P₁‖ + ‖P‖ ≤ d)
-    (hA : 1 + T ^ 2 * ‖H‖ ≤ a) (hA' : 1 + T ^ 2 * ‖G‖ ≤ a)
+    (hA : 1 + T ^ (2 : ℕ) * ‖H‖ ≤ a) (hA' : 1 + T ^ (2 : ℕ) * ‖G‖ ≤ a)
     (hr : transportCost T Q Q₁ c ≤ r) (hr' : transportCost T P P₁ c ≤ r) :
     ‖fixedEndpointDerivative T hT Q Q₁ H c hc hQ hd K hK hH hsmall
         (affineTrial T hT Q Q₁) -
       fixedEndpointDerivative T hT P P₁ G c hc hP hp K hK hG hsmall
         (affineTrial T hT P P₁)‖ ≤
-      affineCost T * endpointDifferenceCost d (2*r^2) a
-        (derivativeDistance T Q Q₁ P P₁) (T^2*‖H-G‖) := by
+      affineCost T * endpointDifferenceCost d (2*r ^ (2 : ℕ)) a
+        (derivativeDistance T Q Q₁ P P₁) (T ^ (2 : ℕ)*‖H-G‖) := by
   have hB0 : 0 ≤ affineCost T := mul_nonneg (add_nonneg zero_le_one hT) (abs_nonneg _)
   have h := EulerCoerciveEndpointBounds.endpointOperator_sub_norm_le
-    (fixedFrameDerivative (U := U) (E := E) T hT Q Q₁) (fixedFrameDerivative T hT P P₁)
-    (fixedInverse T hT Q Q₁ H c hc hQ hd K hK hH hsmall)
-    (fixedInverse T hT P P₁ G c hc hP hp K hK hG hsmall)
-    (energyOperator T hT H) (energyOperator T hT G)
-    (affineTrial T hT Q Q₁) (affineTrial T hT P P₁)
-    d (2*r^2) a (affineCost T*d) (derivativeDistance T Q Q₁ P P₁)
-    ((2*r^2)^2*(2*d*a*derivativeDistance T Q Q₁ P P₁+d^2*(T^2*‖H-G‖)))
-    (T^2*‖H-G‖) (affineCost T*derivativeDistance T Q Q₁ P P₁)
+    _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
     ((fixedFrameDerivative_norm_le T hT Q Q₁).trans hD)
     ((fixedFrameDerivative_norm_le T hT P P₁).trans hD')
     (fixedInverse_norm_le T hT Q Q₁ H c hc hQ hd K hK hH hsmall r hr)
@@ -347,7 +336,7 @@ theorem fixedAffineEndpoint_sub_norm_le (d a r : ℝ)
     (energyOperator_sub_norm_le T hT H G)
     (affineTrial_sub_norm_le T hT Q Q₁ P P₁)
   apply h.trans_eq
-  unfold endpointDifferenceCost
+  unfold endpointDifferenceCost derivativeDistance
   ring
 
 variable (m n : Icc (0 : ℝ) T → E)
@@ -359,13 +348,13 @@ include c hc hQ hd hP hp hm hn hRange hRange' in
 /-- A genuine neighboring-label bound on the physical endpoint solutions. -/
 theorem affineEndpoint_sub_norm_le (d a r : ℝ)
     (hD : T * ‖Q₁‖ + ‖Q‖ ≤ d) (hD' : T * ‖P₁‖ + ‖P‖ ≤ d)
-    (hA : 1 + T ^ 2 * ‖H‖ ≤ a) (hA' : 1 + T ^ 2 * ‖G‖ ≤ a)
+    (hA : 1 + T ^ (2 : ℕ) * ‖H‖ ≤ a) (hA' : 1 + T ^ (2 : ℕ) * ‖G‖ ≤ a)
     (hr : transportCost T Q Q₁ c ≤ r) (hr' : transportCost T P P₁ c ≤ r) :
     ‖endpointDerivative T hT m H K hK hH hsmall (affineTrial T hT Q Q₁) -
       endpointDerivative T hT n G K hK hG hsmall (affineTrial T hT P P₁)‖ ≤
-      affineCost T * endpointDifferenceCost d (2*r^2) a
-        (derivativeDistance T Q Q₁ P P₁) (T^2*‖H-G‖) := by
-  rw [← fixedEndpointDerivative_eq_endpoint T hT Q Q₁ H c hc hQ hd K hK hH hsmall
+      affineCost T * endpointDifferenceCost d (2*r ^ (2 : ℕ)) a
+        (derivativeDistance T Q Q₁ P P₁) (T ^ (2 : ℕ)*‖H-G‖) := by
+  simp only [← fixedEndpointDerivative_eq_endpoint T hT Q Q₁ H c hc hQ hd K hK hH hsmall
     m hm hRange, ← fixedEndpointDerivative_eq_endpoint T hT P P₁ G c hc hP hp K hK hG hsmall
     n hn hRange']
   exact fixedAffineEndpoint_sub_norm_le T hT Q Q₁ H c hc hQ hd K hK hH hsmall
@@ -409,10 +398,10 @@ theorem gram_sub_norm_le (A B : U →L[ℝ] E) (q : ℝ)
     (mul_le_mul_of_nonneg_right hB (norm_nonneg _))).trans_eq (by ring)
 
 theorem gramInverse_sub_norm_le (A B : U →L[ℝ] E) (c : ℝ) (hc : 0 < c)
-    (hA : ∀ u, c * ‖u‖ ^ 2 ≤ ‖A u‖ ^ 2) (hB : ∀ u, c * ‖u‖ ^ 2 ≤ ‖B u‖ ^ 2)
+    (hA : ∀ u, c * ‖u‖ ^ (2 : ℕ) ≤ ‖A u‖ ^ (2 : ℕ)) (hB : ∀ u, c * ‖u‖ ^ (2 : ℕ) ≤ ‖B u‖ ^ (2 : ℕ))
     (q : ℝ) (hAn : ‖A‖ ≤ q) (hBn : ‖B‖ ≤ q) :
     ‖gramInverse A c hc hA - gramInverse B c hc hB‖ ≤
-      2 * (c⁻¹)^2 * q * ‖A-B‖ := by
+      2 * (c⁻¹) ^ (2 : ℕ) * q * ‖A-B‖ := by
   have hh := coerciveInverse_norm_sub_le (gram A) (gram B) c c hc hc
     (gram_coercive A c hA) (gram_coercive B c hB)
   have hgram : ‖gram B-gram A‖ ≤ 2*q*‖A-B‖ :=
@@ -421,8 +410,8 @@ theorem gramInverse_sub_norm_le (A B : U →L[ℝ] E) (c : ℝ) (hc : 0 < c)
 
 variable (T : ℝ) (Q Q₁ P P₁ : C(Icc (0 : ℝ) T, U →L[ℝ] E))
   (c : ℝ) (hc : 0 < c)
-  (hQ : ∀ t u, c * ‖u‖ ^ 2 ≤ ‖Q t u‖ ^ 2)
-  (hP : ∀ t u, c * ‖u‖ ^ 2 ≤ ‖P t u‖ ^ 2)
+  (hQ : ∀ t u, c * ‖u‖ ^ (2 : ℕ) ≤ ‖Q t u‖ ^ (2 : ℕ))
+  (hP : ∀ t u, c * ‖u‖ ^ (2 : ℕ) ≤ ‖P t u‖ ^ (2 : ℕ))
 
 theorem generator_norm_le (q r : ℝ) (hQn : ‖Q‖ ≤ q) (hQ₁n : ‖Q₁‖ ≤ r) :
     ‖generator T Q Q₁ c hc hQ‖ ≤ 2 * c⁻¹ * q * r := by
@@ -432,7 +421,7 @@ theorem generator_norm_le (q r : ℝ) (hQn : ‖Q‖ ≤ q) (hQ₁n : ‖Q₁‖
   intro t
   change ‖(-2 : ℝ) • (gramInverse (Q t) c hc (hQ t)).comp
     ((adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t)).comp (Q₁ t))‖ ≤ _
-  rw [norm_smul]
+  simp only [norm_smul]
   norm_num only [Real.norm_eq_abs]
   have hprod : ‖(adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t)).comp (Q₁ t)‖ ≤ q*r := by
     apply (opNorm_comp_le _ _).trans
@@ -495,7 +484,7 @@ theorem generator_sub_norm_le (q r : ℝ)
       ((adjoint (𝕜 := ℝ) (E := U) (F := E) (Q t)).comp (Q₁ t)) -
     (-2 : ℝ) • (gramInverse (P t) c hc (hP t)).comp
       ((adjoint (𝕜 := ℝ) (E := U) (F := E) (P t)).comp (P₁ t))‖ ≤ _
-  rw [← smul_sub, norm_smul]
+  simp only [← smul_sub, norm_smul]
   norm_num only [Real.norm_eq_abs]
   exact (mul_le_mul_of_nonneg_left htotal (by norm_num)).trans_eq
     (by unfold generatorDifferenceCost; ring)
@@ -559,12 +548,7 @@ theorem generatorTrace_norm_le (hTpos : 0 < T)
 theorem generatorTrace_sub_norm_le (hTpos : 0 < T)
     (B B' : C(Icc (0 : ℝ) T, U →L[ℝ] U)) :
     ‖generatorTrace T hT B - generatorTrace T hT B'‖ ≤ 2*(1+T)*‖B-B'‖ := by
-  have he : generatorTrace T hT B - generatorTrace T hT B' =
-      (derivativePart T hT).comp (timeMultiplier T hT B-timeMultiplier T hT B') := by
-    unfold generatorTrace
-    rw [comp_sub]
-    abel
-  rw [he]
+  refine (congrArg norm ((add_sub_add_left_eq_sub _ _ _).trans (comp_sub _ _ _).symm)).trans_le ?_
   apply ((opNorm_comp_le _ _).trans (mul_le_mul
     (derivativePart_norm_le (E := U) T hTpos)
     (EulerTransverseEndpointBounds.multiplier_sub_norm_le T hT B B')
@@ -648,11 +632,11 @@ variable {U E : Type*}
 variable (T : ℝ) (hT : 0 ≤ T)
   (Q Q₁ : C(Icc (0 : ℝ) T, U →L[ℝ] E))
   (H : C(Icc (0 : ℝ) T, E →L[ℝ] E))
-  (c : ℝ) (hc : 0 < c) (hQ : ∀ t v, c * ‖v‖ ^ 2 ≤ ‖Q t v‖ ^ 2)
+  (c : ℝ) (hc : 0 < c) (hQ : ∀ t v, c * ‖v‖ ^ (2 : ℕ) ≤ ‖Q t v‖ ^ (2 : ℕ))
   (hd : ∀ t : Icc (0 : ℝ) T,
     HasDerivWithinAt (extendPath T hT Q) (Q₁ t) (Icc (0 : ℝ) T) t)
-  (K : ℝ) (hK : 0 ≤ K) (hH : ∀ t v, ⟪H t v, v⟫_ℝ ≤ K * ‖v‖ ^ 2)
-  (hsmall : K * (T ^ 2 / 2) ≤ 1 / 2)
+  (K : ℝ) (hK : 0 ≤ K) (hH : ∀ t v, ⟪H t v, v⟫_ℝ ≤ K * ‖v‖ ^ (2 : ℕ))
+  (hsmall : K * (T ^ (2 : ℕ) / 2) ≤ 1 / 2)
 
 /-- Slope cost, given by `r * (1+d^2*(2*r^2)*a) * (affineCost T*d)`. -/
 def slopeCost (T d a r : ℝ) : ℝ := r * (1+d^2*(2*r^2)*a) * (affineCost T*d)
@@ -663,31 +647,34 @@ def slopeDifferenceCost (T d a r δd δa : ℝ) : ℝ :=
   r * (affineCost T * endpointDifferenceCost d (2*r^2) a δd δa + δd * slopeCost T d a r)
 
 theorem coordinateSlope_norm_le (d a r : ℝ)
-    (hD : T * ‖Q₁‖ + ‖Q‖ ≤ d) (hA : 1 + T ^ 2 * ‖H‖ ≤ a)
+    (hD : T * ‖Q₁‖ + ‖Q‖ ≤ d) (hA : 1 + T ^ (2 : ℕ) * ‖H‖ ≤ a)
     (hr : transportCost T Q Q₁ c ≤ r) :
     ‖coordinateSlope T hT Q Q₁ H c hc hQ hd K hK hH hsmall‖ ≤ slopeCost T d a r := by
   have hd0 : 0 ≤ d := (show 0 ≤ T*‖Q₁‖+‖Q‖ by positivity).trans hD
   have ha0 : 0 ≤ a := (show 0 ≤ 1+T^2*‖H‖ by positivity).trans hA
   have hr0 := (transportCost_pos T hT Q Q₁ c hc).le.trans hr
-  apply opNorm_le_bound _ (by unfold slopeCost affineCost; positivity)
+  apply opNorm_le_bound _ (mul_nonneg (mul_nonneg hr0 (add_nonneg zero_le_one
+    (mul_nonneg (mul_nonneg (sq_nonneg d) (mul_nonneg zero_le_two (sq_nonneg r))) ha0)))
+    (mul_nonneg (mul_nonneg (add_nonneg zero_le_one hT) (abs_nonneg _)) hd0) :
+      0 ≤ slopeCost T d a r)
   intro ξ
   have hinv := norm_le_initialProductDerivative T hT Q Q₁ c hc hQ hd
     (coordinateSlope T hT Q Q₁ H c hc hQ hd K hK hH hsmall ξ)
-  rw [coordinateSlope_product T hT Q Q₁ H c hc hQ hd K hK hH hsmall] at hinv
+  simp only [coordinateSlope_product T hT Q Q₁ H c hc hQ hd K hK hH hsmall] at hinv
   have he := (le_opNorm
     (fixedEndpointDerivative (E := E) (V := U) T hT Q Q₁ H c hc hQ hd K hK hH hsmall
       (affineTrial T hT Q Q₁)) ξ).trans
       (mul_le_mul_of_nonneg_right
         (fixedAffineEndpoint_norm_le T hT Q Q₁ H c hc hQ hd K hK hH hsmall d a r hD hA hr)
         (norm_nonneg ξ))
-  exact hinv.trans ((mul_le_mul hr he (norm_nonneg _) hr0).trans_eq (by unfold slopeCost; ring))
+  exact hinv.trans ((mul_le_mul hr he (norm_nonneg _) hr0).trans_eq (by ring))
 
 variable (P P₁ : C(Icc (0 : ℝ) T, U →L[ℝ] E))
   (G : C(Icc (0 : ℝ) T, E →L[ℝ] E))
-  (hP : ∀ t v, c * ‖v‖ ^ 2 ≤ ‖P t v‖ ^ 2)
+  (hP : ∀ t v, c * ‖v‖ ^ (2 : ℕ) ≤ ‖P t v‖ ^ (2 : ℕ))
   (hp : ∀ t : Icc (0 : ℝ) T,
     HasDerivWithinAt (extendPath T hT P) (P₁ t) (Icc (0 : ℝ) T) t)
-  (hG : ∀ t v, ⟪G t v, v⟫_ℝ ≤ K * ‖v‖ ^ 2)
+  (hG : ∀ t v, ⟪G t v, v⟫_ℝ ≤ K * ‖v‖ ^ (2 : ℕ))
 
 theorem slopeDifferenceCost_nonneg {T d a r δd δa : ℝ} (hT : 0 ≤ T) (hd : 0 ≤ d) (ha : 0 ≤ a)
     (hr : 0 ≤ r) (hδd : 0 ≤ δd) (hδa : 0 ≤ δa) : 0 ≤ slopeDifferenceCost T d a r δd δa := by
@@ -696,11 +683,11 @@ theorem slopeDifferenceCost_nonneg {T d a r δd δa : ℝ} (hT : 0 ≤ T) (hd : 
 
 theorem coordinateSlope_sub_norm_le (d a r : ℝ)
     (hD : T * ‖Q₁‖ + ‖Q‖ ≤ d) (hD' : T * ‖P₁‖ + ‖P‖ ≤ d)
-    (hA : 1 + T ^ 2 * ‖H‖ ≤ a) (hA' : 1 + T ^ 2 * ‖G‖ ≤ a)
+    (hA : 1 + T ^ (2 : ℕ) * ‖H‖ ≤ a) (hA' : 1 + T ^ (2 : ℕ) * ‖G‖ ≤ a)
     (hr : transportCost T Q Q₁ c ≤ r) (hr' : transportCost T P P₁ c ≤ r) :
     ‖coordinateSlope T hT Q Q₁ H c hc hQ hd K hK hH hsmall -
       coordinateSlope T hT P P₁ G c hc hP hp K hK hG hsmall‖ ≤
-      slopeDifferenceCost T d a r (derivativeDistance T Q Q₁ P P₁) (T^2*‖H-G‖) := by
+      slopeDifferenceCost T d a r (derivativeDistance T Q Q₁ P P₁) (T ^ (2 : ℕ)*‖H-G‖) := by
   have hd0 : 0 ≤ d := (add_nonneg (mul_nonneg hT (norm_nonneg Q₁)) (norm_nonneg Q)).trans hD
   have ha0 : 0 ≤ a := (add_nonneg zero_le_one (mul_nonneg (sq_nonneg T) (norm_nonneg H))).trans hA
   have hr0 := (transportCost_pos T hT Q Q₁ c hc).le.trans hr
@@ -711,7 +698,7 @@ theorem coordinateSlope_sub_norm_le (d a r : ℝ)
   have hinv := norm_sub_le_initialProductDerivative T hT Q Q₁ c hc hQ hd P P₁
     (coordinateSlope T hT Q Q₁ H c hc hQ hd K hK hH hsmall ξ)
     (coordinateSlope T hT P P₁ G c hc hP hp K hK hG hsmall ξ)
-  rw [coordinateSlope_product T hT Q Q₁ H c hc hQ hd K hK hH hsmall,
+  simp only [coordinateSlope_product T hT Q Q₁ H c hc hQ hd K hK hH hsmall,
     coordinateSlope_product T hT P P₁ G c hc hP hp K hK hG hsmall] at hinv
   have hδend := fixedAffineEndpoint_sub_norm_le T hT Q Q₁ H c hc hQ hd K hK hH hsmall
     P P₁ G hP hp hG d a r hD hD' hA hA' hr hr'
@@ -741,14 +728,14 @@ def historyDifferenceCost (T c q q₁ d a r δq δq₁ δH : ℝ) : ℝ :=
 
 theorem historyVelocity_norm_le (hTpos : 0 < T) (q q₁ d a r : ℝ)
     (hQn : ‖Q‖ ≤ q) (hQ₁n : ‖Q₁‖ ≤ q₁)
-    (hD : T * ‖Q₁‖ + ‖Q‖ ≤ d) (hA : 1 + T ^ 2 * ‖H‖ ≤ a)
+    (hD : T * ‖Q₁‖ + ‖Q‖ ≤ d) (hA : 1 + T ^ (2 : ℕ) * ‖H‖ ≤ a)
     (hr : transportCost T Q Q₁ c ≤ r) :
     ‖historyVelocity T hT Q Q₁ H c hc hQ hd K hK hH hsmall‖ ≤ historyCost T c q q₁ d a r := by
-  exact transportedTrace_norm_le T hT hTpos Q (generator T Q Q₁ c hc hQ)
+  apply (transportedTrace_norm_le T hT hTpos Q (generator T Q Q₁ c hc hQ)
     (coordinateSlope T hT Q Q₁ H c hc hQ hd K hK hH hsmall)
-    q (2*c⁻¹*q*q₁) (slopeCost T d a r) hQn
+    _ _ _ hQn
     (generator_norm_le T Q Q₁ c hc hQ q q₁ hQn hQ₁n)
-    (coordinateSlope_norm_le T hT Q Q₁ H c hc hQ hd K hK hH hsmall d a r hD hA hr)
+    (coordinateSlope_norm_le T hT Q Q₁ H c hc hQ hd K hK hH hsmall d a r hD hA hr) :)
 
 /-- The primary history has a polynomial, uniform-in-time coefficient
 sensitivity.  In particular coefficient Lipschitz bounds give the source's
@@ -756,23 +743,21 @@ physical-label Lipschitz bound with the same fixed terminal coordinate. -/
 theorem historyVelocity_sub_norm_le (hTpos : 0 < T) (q q₁ d a r : ℝ)
     (hQn : ‖Q‖ ≤ q) (hPn : ‖P‖ ≤ q) (hQ₁n : ‖Q₁‖ ≤ q₁) (hP₁n : ‖P₁‖ ≤ q₁)
     (hD : T * ‖Q₁‖ + ‖Q‖ ≤ d) (hD' : T * ‖P₁‖ + ‖P‖ ≤ d)
-    (hA : 1 + T ^ 2 * ‖H‖ ≤ a) (hA' : 1 + T ^ 2 * ‖G‖ ≤ a)
+    (hA : 1 + T ^ (2 : ℕ) * ‖H‖ ≤ a) (hA' : 1 + T ^ (2 : ℕ) * ‖G‖ ≤ a)
     (hr : transportCost T Q Q₁ c ≤ r) (hr' : transportCost T P P₁ c ≤ r) :
     ‖historyVelocity T hT Q Q₁ H c hc hQ hd K hK hH hsmall -
       historyVelocity T hT P P₁ G c hc hP hp K hK hG hsmall‖ ≤
       historyDifferenceCost T c q q₁ d a r ‖Q-P‖ ‖Q₁-P₁‖ ‖H-G‖ := by
-  exact transportedTrace_sub_norm_le T hT hTpos Q P
+  apply (transportedTrace_sub_norm_le T hT hTpos Q P
     (generator T Q Q₁ c hc hQ) (generator T P P₁ c hc hP)
     (coordinateSlope T hT Q Q₁ H c hc hQ hd K hK hH hsmall)
     (coordinateSlope T hT P P₁ G c hc hP hp K hK hG hsmall)
-    q (2*c⁻¹*q*q₁) (slopeCost T d a r) ‖Q-P‖
-    (generatorDifferenceCost c q q₁ ‖Q-P‖ ‖Q₁-P₁‖)
-    (slopeDifferenceCost T d a r (derivativeDistance T Q Q₁ P P₁) (T^2*‖H-G‖))
+    _ _ _ _ _ _
     hPn (generator_norm_le T Q Q₁ c hc hQ q q₁ hQn hQ₁n)
     (generator_norm_le T P P₁ c hc hP q q₁ hPn hP₁n)
     (coordinateSlope_norm_le T hT Q Q₁ H c hc hQ hd K hK hH hsmall d a r hD hA hr)
     le_rfl (generator_sub_norm_le T Q Q₁ P P₁ c hc hQ hP q q₁ hQn hPn hQ₁n hP₁n)
     (coordinateSlope_sub_norm_le T hT Q Q₁ H c hc hQ hd K hK hH hsmall
-      P P₁ G hP hp hG d a r hD hD' hA hA' hr hr')
+      P P₁ G hP hp hG d a r hD hD' hA hA' hr hr') :)
 
 end EulerTransverseHistoryBounds

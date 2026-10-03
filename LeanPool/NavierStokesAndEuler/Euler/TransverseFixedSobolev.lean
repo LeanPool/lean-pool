@@ -126,8 +126,7 @@ theorem fixedFramePrimitive_bound (T : ℝ) (hT : 0 ≤ T)
     (n : ℕ) (x : P) :
     ‖iteratedFDeriv ℝ n (fun y => fixedFramePrimitive T hT (Q y) (Q₁ y)) x‖ ≤
       (T * derivativeCost T C₀ C₁) * majorant R 0 n := by
-  have hb := clm_comp_const_left_bound (primitiveTimeLp (E := E) T hT)
-    (fun y => fixedFrameDerivative (U := U) (E := E) T hT (Q y) (Q₁ y))
+  have hb := clm_comp_const_left_bound (primitiveTimeLp (E := E) T hT) _
     (contDiff_fixedFrameDerivative T hT Q Q₁ hQ hQ₁)
     R (derivativeCost T C₀ C₁) hR (derivativeCost_nonneg hT hC₀ hC₁) 0
     (fixedFrameDerivative_bound T hT Q Q₁ hQ hQ₁ R C₀ C₁ hR hC₀ hC₁ hbQ hbQ₁) n x
@@ -436,7 +435,7 @@ theorem transverseVelocity_gevrey
   have hM := solveCost_one_le T C₀ C₁ CH c hT hC₀ hC₁ hCH
   have hRcR : Rc ≤ R := (radius_bounds hRc hM hR).2
   have hR0 : 0 ≤ R := hRc.trans hRcR
-  have hbQR (j : ℕ) (y : P) : ‖iteratedFDeriv ℝ j Q y‖ ≤ C₀*majorant R 0 j :=
+  have hbQR (j : ℕ) (y : P) :=
     (hbQ j y).trans (mul_le_mul_of_nonneg_left (majorant_radius_mono Rc R hRc hRcR 0 j) hC₀)
   have h := clm_apply_bound (fun y => timeMultiplier (E := U) (F := E) T hT (Q y)) v
     (contDiff_timeMultiplier T hT Q hQ) hv R C₀ 1 hR0 hC₀ zero_le_one 0 (d+1)
@@ -600,15 +599,13 @@ theorem velocityLp_block_gevrey (f : X → TimeLp T E) (hf : ContDiff ℝ ∞ f)
     (hfb : ∀ n x, block directions q f n x ≤ Cf * majorant R d n) (n : ℕ) (x : X) :
     block directions q (fun y => EulerTransverseFixedEvolution.velocityLp T hT (Q y) (Q₁ y) (H y)
       c hc (hLower y) (hd y) K hK (hPotential y) hsmall (f y)) n x ≤ majorant R (d+1) n := by
-  let v := fun y => fixedFrameSolver T hT (Q y) (Q₁ y) (H y)
-    c hc (hLower y) (hd y) K hK (hPotential y) hsmall (f y)
-  have hv : ContDiff ℝ ∞ v := contDiff_fixedFrameSolution T hT Q Q₁ H c hc hLower hd
+  have hv := contDiff_fixedFrameSolution T hT Q Q₁ H c hc hLower hd
     K hK hPotential hsmall hQ hQ₁ hH f hf
   have hb := solver_block_gevrey directions hdir q T hT Q Q₁ H c hc hLower hd K hK hPotential hsmall
     hQ hQ₁ hH Rc C₀ C₁ CH Cf R hRc hC₀ hC₁ hCH hCf hbQ hbQ₁ hbH hR f hf d hfb n x
-  have h := block_comp_clm_le directions q (zeroTraceDerivatives (U := U) T hT).subtypeL v hv n x
+  have h := block_comp_clm_le directions q (zeroTraceDerivatives (U := U) T hT).subtypeL _ hv n x
   apply h.trans
   exact (mul_le_mul_of_nonneg_right (zeroTraceDerivatives (U := U) T hT).norm_subtypeL_le
-    (block_nonneg directions q v n x)).trans (by simpa only [one_mul] using hb)
+    (block_nonneg directions q _ n x)).trans (by simpa only [one_mul] using hb)
 
 end EulerTransverseFixedSobolev

@@ -155,8 +155,7 @@ theorem fixedEndpointDerivative_eq_endpoint (L : V →L[ℝ] TimeLp T E) :
     have h₁ := fixedEndpointDerivative_sub_mem T hT Q Q₁ H c hc hQ hd K hK hH hsmall m hm L Y
     have h₂ := endpointDerivative_sub_mem T hT m H K hK hH hsmall L Y
     have hh := (transverseDerivatives T hT m).sub_mem h₁ h₂
-    have he : (u - L Y) - (w - L Y) = u - w := by abel
-    exact he ▸ hh
+    exact sub_sub_sub_cancel_right u w (L Y) ▸ hh
   let d : transverseDerivatives T hT m := ⟨u - w, hdiff⟩
   have hu : ⟪energyOperator T hT H u, (d : TimeLp T E)⟫_ℝ = 0 :=
     fixedEndpointDerivative_physical_orthogonal T hT Q Q₁ H c hc hQ hd K hK hH hsmall m hm hRange L
@@ -166,11 +165,11 @@ theorem fixedEndpointDerivative_eq_endpoint (L : V →L[ℝ] TimeLp T E) :
     exact endpointDerivative_weak T hT m H K hK hH hsmall L Y d
   have hz : ⟪energyOperator T hT H (u - w), u - w⟫_ℝ = 0 := by
     change ⟪energyOperator T hT H (u - w), (d : TimeLp T E)⟫_ℝ = 0
-    rw [map_sub, inner_sub_left, hu, hw, sub_zero]
-  have hc' := energyOperator_coercive T hT H K hK hH hsmall (u - w)
-  rw [hz] at hc'
-  have hn : ‖u - w‖ = 0 := by nlinarith only [hc', norm_nonneg (u - w)]
-  exact sub_eq_zero.mp (norm_eq_zero.mp hn)
+    simp only [map_sub, inner_sub_left, hu, hw, sub_zero]
+  have hc' := (energyOperator_coercive T hT H K hK hH hsmall (u - w)).trans_eq hz
+  have hsq : ‖u - w‖ ^ 2 = 0 := le_antisymm (nonpos_of_mul_nonpos_right hc' one_half_pos)
+    (sq_nonneg _)
+  exact sub_eq_zero.mp (norm_eq_zero.mp ((pow_eq_zero_iff two_ne_zero).mp hsq))
 
 end EulerTransverseFixedEndpoint
 

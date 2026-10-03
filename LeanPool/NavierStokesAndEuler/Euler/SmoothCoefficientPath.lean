@@ -142,9 +142,9 @@ theorem translation_hasFDerivAt (A : SmoothCoefficientPath K V) (a : Space) :
   apply translateCoefficientPath_hasFDerivAt A.field A.derivative.field A.smooth
     A.derivativeField_eq ‖A.jet 2‖ (norm_nonneg (A.jet 2))
   intro t x
-  rw [← norm_iteratedFDeriv_one (𝕜 := ℝ) (E := Space) (F := Space →L[ℝ] V),
-    norm_iteratedFDeriv_fderiv, ← A.jet_eq]
-  exact ((A.jet 2 t).norm_coe_le_norm x).trans ((A.jet 2).norm_coe_le_norm t)
+  exact ((norm_iteratedFDeriv_one (𝕜 := ℝ) (fderiv ℝ (A.field t : Space → V)) (x := x)).symm.trans
+    (norm_iteratedFDeriv_fderiv.trans (congrArg norm (A.jet_eq 2 t x).symm))).trans_le
+    (((A.jet 2 t).norm_coe_le_norm x).trans ((A.jet 2).norm_coe_le_norm t))
 
 theorem translation_fderiv (A : SmoothCoefficientPath K V) :
     fderiv ℝ (translateCoefficientPath (K := K) (V := V) A.field) =

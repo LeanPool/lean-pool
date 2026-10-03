@@ -144,7 +144,8 @@ theorem scaled_terminal_global_gradient_bound (a k : ℝ) (hk : 0 < k)
         ‖D.FInv.field t (Y x)‖ := hn
     _ ≤ |k⁻¹| * (‖coordinateEquiv.symm.toContinuousLinearMap‖*
         (sobolevEmbeddingConstant period 3*A*R)) * C :=
-      mul_le_mul (mul_le_mul_of_nonneg_left hd (abs_nonneg _)) hJ (norm_nonneg _) (by positivity)
+      mul_le_mul (mul_le_mul_of_nonneg_left hd (abs_nonneg _)) hJ (norm_nonneg _)
+        (mul_nonneg (abs_nonneg _) (mul_nonneg (norm_nonneg _) (mul_nonneg (mul_nonneg hb hA) hR)))
     _ = _ := by rw [abs_of_pos (inv_pos.mpr hk)]; ring
 
 end EulerPacketPrimaryShear

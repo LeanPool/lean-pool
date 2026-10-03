@@ -147,10 +147,10 @@ theorem exactForwardPacket_good_low_bounds
   · exact hCM
   · exact hCH
   · rw [he.1,add_sub_cancel_left]
-    exact herr'.1
+    apply herr'.1
   · rw [he.2,add_sub_cancel_left]
-    exact herr'.2
-  · exact G.good_primary_flux hball t ht y
+    apply herr'.2
+  · apply G.good_primary_flux hball t ht y
   · exact hupper
 
 include hk hδ hδ1 in
@@ -185,9 +185,9 @@ theorem exactForwardPacket_early_low_bounds
   · exact hCM
   · exact hCH
   · rw [he.1,add_sub_cancel_left]
-    exact herr'.1
+    apply herr'.1
   · rw [he.2,add_sub_cancel_left]
-    exact herr'.2
+    apply herr'.2
   · exact hupper
 
 include hk hδ hδ1 in

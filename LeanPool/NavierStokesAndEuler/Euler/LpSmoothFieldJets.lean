@@ -82,6 +82,6 @@ theorem iteratedFDeriv_translation_eq (A : SmoothL2Field V) (n : ℕ) (a : Space
     translation_ae a (A.jetLp n),
     (measurePreserving_add_right (volume : Measure Space) a).quasiMeasurePreserving.ae
       (A.jetLp_ae n)] with x hd hm ht hj
-  rw [hd, hm, ht, hj]
+  exact hd.trans (hm.trans (DFunLike.congr_fun (ht.trans hj) v)).symm
 
 end EulerLpTranslation.SmoothL2Field

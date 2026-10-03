@@ -116,13 +116,14 @@ theorem coordinateRhs_block_bound
     block directions q (fun b : LiftTangent => pathTranslate (K := K) (V := U) P b
       (includePath (K := K) (V := U) P S hS (coordinateRhs P S hS Q Q₁ c hc hQ f a))) n 0 ≤
       coordinateCost ι q Ri C₀ C₁ Df Da*majorant R d n := by
-  obtain ⟨hi,-⟩ := inverseRadius_bounds c C₀ Rc Ri hc hRc hRi
+  have hi := (inverseRadius_bounds c C₀ Rc Ri hc hRc hRi).1
   let B := sourceGenerator Q Q₁ c hc hQ
   have hB := sourceGenerator_translation_contDiff Q Q₁ c hc hQ
   have hbB := sourceGenerator_translation_bound Q Q₁ c hc hQ Rc C₀ C₁ Ri hRc hC₀ hC₁ hRi hbQ hbQ₁
   have hfirst := product_orbit_block_bound P B hB directions hd q
     (includePath (K := K) (V := U) P S hS a) ha
-    (4*Ri) (18*Ri*C₀*C₁) R Da (by positivity) (by positivity) hDa hR hbB d hba n
+    (4*Ri) (18*Ri*C₀*C₁) R Da (mul_nonneg (by norm_num) hi)
+    (mul_nonneg (mul_nonneg (mul_nonneg (by norm_num) hi) hC₀) hC₁) hDa hR hbB d hba n
   have hsecond := projectedForcing_block_bound P S hS Q c hc hQ directions hd q f hf
     Rc C₀ Ri R Df hRc hC₀ hDf hRi hR hbQ d hbf n
   have hsum := block_add_le directions q _ _

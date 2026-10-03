@@ -96,10 +96,7 @@ theorem exists_strong (hTpos : 0 < T) (f : TimeLp T E) :
     hTpos H u f (physicalDerivative_range T hT Q Q₁ H c hc hQ hd K hK hH hsmall f)
     hframe (momentum_weak T hT Q Q₁ H c hc hQ hd K hK hH hsmall f)
   refine ⟨v,hv,?_,hder,heq⟩
-  change (coordinateDerivative T hT Q Q₁ c hc hQ
-    (physicalDerivative T hT Q Q₁ H c hc hQ hd K hK hH hsmall f) : ℝ → U) =ᵐ[timeMeasure T] v
-        at hrep
-  rw [coordinateDerivative_eq T hT Q Q₁ H c hc hQ hd K hK hH hsmall f] at hrep
+  rw [← coordinateDerivative_eq T hT Q Q₁ H c hc hQ hd K hK hH hsmall f]
   exact hrep
 
 end EulerTransverseFixedStrong

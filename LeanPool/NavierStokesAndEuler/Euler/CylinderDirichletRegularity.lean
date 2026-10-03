@@ -85,23 +85,26 @@ local instance instCylinderDirichletRegularity12 : NormedSpace ℝ C(Icc (0 : �
     →L[ℝ] CylinderL2 P E) :=
     inferInstance
 
+theorem fullPathMap_comp_contDiff {X Y : Type*} [NormedAddCommGroup X] [InnerProductSpace ℝ X]
+    [NormedAddCommGroup Y] [InnerProductSpace ℝ Y]
+    {g : LiftTangent → C(Icc (0 : ℝ) T, Space →ᵇ (X →L[ℝ] Y))} (hg : ContDiff ℝ ∞ g) :
+    ContDiff ℝ ∞ (fun a => fullPathMap (K := Icc (0 : ℝ) T) (E := X) (F := Y) P (g a)) :=
+  (fullPathMap (K := Icc (0 : ℝ) T) (E := X) (F := Y) P).contDiff.comp hg
+
 omit [CompleteSpace U] [CompleteSpace E] in
 theorem frameOrbit_contDiff (hQ : ContDiff ℝ ∞ (translateCoefficientPath D.Q)) :
     ContDiff ℝ ∞ (fun a : LiftTangent => (D.shifted a.1).frame P) :=
-  (fullPathMap (K := Icc (0 : ℝ) T) (E := U) (F := E) P).contDiff.comp
-    (hQ.comp contDiff_fst)
+  fullPathMap_comp_contDiff P (hQ.comp contDiff_fst)
 
 omit [CompleteSpace U] [CompleteSpace E] in
 theorem frameDerivativeOrbit_contDiff (hQ₁ : ContDiff ℝ ∞ (translateCoefficientPath D.Q₁)) :
     ContDiff ℝ ∞ (fun a : LiftTangent => (D.shifted a.1).frameDerivative P) :=
-  (fullPathMap (K := Icc (0 : ℝ) T) (E := U) (F := E) P).contDiff.comp
-    (hQ₁.comp contDiff_fst)
+  fullPathMap_comp_contDiff P (hQ₁.comp contDiff_fst)
 
 omit [CompleteSpace U] [CompleteSpace E] in
 theorem hessianOrbit_contDiff (hH : ContDiff ℝ ∞ (translateCoefficientPath D.H)) :
     ContDiff ℝ ∞ (fun a : LiftTangent => (D.shifted a.1).hessian P) :=
-  (fullPathMap (K := Icc (0 : ℝ) T) (E := E) (F := E) P).contDiff.comp
-    (hH.comp contDiff_fst)
+  fullPathMap_comp_contDiff P (hH.comp contDiff_fst)
 
 theorem accelerationLp_translation (a : LiftTangent) (f : TimeLp T (CylinderL2 P E)) :
     (D.shifted a.1).accelerationLp P

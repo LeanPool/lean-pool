@@ -157,18 +157,19 @@ theorem exists_global_gevrey_correction {q : ℕ} (hq : 6 ≤ q) (S : ℝ) (hS :
       ‖e‖ ≤ metricAmplification K.c*(Δ/2)/weight (min (ρ0/2) 1) N := by
   let δ := min (ρ0/2) 1
   let M := metricAmplification K.c*(Δ/2)/weight δ N
-  have hδ : 0 < δ := lt_min (by positivity) zero_lt_one
+  have hδ : 0 < δ := lt_min (half_pos hρ0) zero_lt_one
   have hδ1 : δ ≤ 1 := min_le_right _ _
   have ha : 0 ≤ metricAmplification K.c :=
     (by norm_num : (0 : ℝ) ≤ 1).trans (metricAmplification_one_le K.c_pos)
-  have hM : 0 ≤ M := div_nonneg (mul_nonneg ha (by positivity)) (weight_pos hδ N).le
+  have hM : 0 ≤ M := div_nonneg (mul_nonneg ha (half_pos hΔ).le) (weight_pos hδ N).le
   have hCp : 0 < C := (combinedConstant_pos period B.full K).trans_le hC
-  have hcoef : 0 ≤ 2*C*(B.drift+Δ) := by have := B.drift_nonneg; positivity
+  have hcoef : 0 ≤ 2*C*(B.drift+Δ) :=
+    mul_nonneg (mul_nonneg zero_le_two hCp.le) (add_nonneg B.drift_nonneg hΔ.le)
   have hrad (t : Icc (0 : ℝ) S) : δ ≤ R t := by
     rw [hR t]
     apply (min_le_left (ρ0/2) 1).trans
     have hm := mul_le_mul_of_nonneg_left t.property.2 hcoef
-    linarith only [hq, hN, hNfull, hdecay, hm]
+    linarith only [hdecay, hm]
   have hbound : ∀ (T : ℝ) (hT : 0 ≤ T) (hTS : T ≤ S)
       (e : C(Icc (0 : ℝ) T,SobolevSpace period (q+1))),
       (∀ t, e t = quadraticDuhamel period ν hν hT hTS
@@ -178,8 +179,8 @@ theorem exists_global_gevrey_correction {q : ℕ} (hq : 6 ≤ q) (S : ℝ) (hS :
         D KG KL KQ hGq hLq hQq hG
       N hN R B K C Δ ρ0 hC hΔ hΔ1 hρ0 hdecay hscale hsmall hR ν hν hν1 hz T hT hTS e hsol
     apply norm_le_of_energy_bound period N hN hNfull T (R.comp (timeInclusion hTS))
-      ((K.operatorPath period).comp (timeInclusion hTS)) e K.c δ (Δ/2) K.c_pos hδ hδ1 (by
-          positivity)
+      ((K.operatorPath period).comp (timeInclusion hTS)) e K.c δ (Δ/2) K.c_pos hδ hδ1
+      (half_pos hΔ).le
       (fun t => hrad (timeInclusion hTS t)) (fun t => K.operator_coercive period (timeInclusion hTS
           t))
     intro t

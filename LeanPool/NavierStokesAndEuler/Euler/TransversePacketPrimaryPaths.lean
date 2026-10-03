@@ -164,8 +164,8 @@ theorem zeroForcing_balance_ae (D : Data U) (I : InitialData P D) (t : Icc (0 : 
     (HistoryData.normal_ne_zero (D := D)) D.frame_tangent D.frame_range D.frame_strain t
   have h0 : ((zeroForcing (P := P) D).path t : LiftL2 P) = 0 := rfl
   filter_upwards [hh,Lp.coeFn_zero Space 2 (liftMeasure P)] with x hx hz
-  rw [h0,hz] at hx
-  simpa only [Pi.zero_apply,inner_zero_right,zero_sub] using hx
+  simp only [h0,hz,Pi.zero_apply,inner_zero_right,zero_sub] at hx
+  apply hx
 
 theorem futureVelocity_apply (t : Icc (0 : ℝ) (D.T - τ)) :
     futureVelocity τ hτ hτT B Y t =

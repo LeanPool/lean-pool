@@ -80,9 +80,10 @@ theorem partial_correction_bootstrap {q : ℕ} (hq : 6 ≤ q) (S : ℝ) (hS : 0 
   have hr := B.residual_pos
   have hdecayT : 2*C*(B.B0+Δ)*T ≤ ρ0/2 :=
     (mul_le_mul_of_nonneg_left hTS (by positivity : 0 ≤ 2*C*(B.B0+Δ))).trans hdecay
-  have hsmallT : 2*B.residual*Real.exp (3*C*T) ≤ Δ/2 := by
-    apply le_trans _ hsmall
-    gcongr
+  have hsmallT : 2*B.residual*Real.exp (3*C*T) ≤ Δ/2 :=
+    (mul_le_mul_of_nonneg_left (Real.exp_le_exp.mpr
+      (mul_le_mul_of_nonneg_left hTS (mul_nonneg zero_le_three hCp.le)))
+      (mul_nonneg zero_le_two hr.le)).trans hsmall
   have he := correction_mild_divergenceFree period hq ν hν hT hTS
     (lowerData period D KG KL KQ hGq hLq hQq) e hsol
   have hL : lowerData period Dt (fun t => KG (f t)) (fun t => KL (f t)) (fun i t => KQ i (f t))
@@ -170,7 +171,7 @@ theorem exists_global_gevrey_correction {q : ℕ} (hq : 6 ≤ q) (S : ℝ) (hS :
     rw [hR t]
     apply (min_le_left (ρ0/2) 1).trans
     have hm := mul_le_mul_of_nonneg_left t.property.2 hcoef
-    linarith only [hq, hN, hNfull, hdecay, hm]
+    linarith only [hdecay, hm]
   have hbound : ∀ (T : ℝ) (hT : 0 ≤ T) (hTS : T ≤ S)
       (e : C(Icc (0 : ℝ) T,SobolevSpace period (q+1))),
       (∀ t, e t = quadraticDuhamel period ν hν hT hTS

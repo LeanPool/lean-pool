@@ -96,14 +96,10 @@ theorem global_gradient_bound (a k : ℝ) (hk : 0 < k)
     (fun z => vector D (initialData D δ hδ (a • ξ) hs) (t,z))
     k D.m₀ Y (D.FInv.field t (Y x)) x
   have hb := sobolevEmbeddingConstant_nonneg period 3
-  calc
-    _ ≤ |k⁻¹| * ‖fderiv ℝ (fun z => vector D
-          (initialData D δ hδ (a • ξ) hs) (t,z)) (graphMap k D.m₀ (Y x))‖ *
-        ‖D.FInv.field t (Y x)‖ := hn
-    _ ≤ |k⁻¹| * (‖coordinateEquiv.symm.toContinuousLinearMap‖*
-        (sobolevEmbeddingConstant period 3*A*R)) * C :=
-      mul_le_mul (mul_le_mul_of_nonneg_left hd (abs_nonneg _)) hJ (norm_nonneg _) (by positivity)
-    _ = _ := by rw [abs_of_pos (inv_pos.mpr hk)]; ring
+  refine hn.trans ((mul_le_mul (mul_le_mul_of_nonneg_left hd (abs_nonneg _)) hJ (norm_nonneg _)
+    (mul_nonneg (abs_nonneg _)
+      (mul_nonneg (norm_nonneg _) (mul_nonneg (mul_nonneg hb hA) hR)))).trans_eq ?_)
+  rw [abs_of_pos (inv_pos.mpr hk)]; ring
 
 /-- Pressure coefficient, given by `-(2*a*⟪D.normal.field t x,D.M.field t x (canonicalVelocity D
 ξ t x)⟫_ℝ)/ ‖D.normal.field t x‖^2`. -/

@@ -72,7 +72,7 @@ theorem product_norm_le (J : TimeLp T U →L[ℝ] TimeLp T U) (hJ : ‖J‖ ≤ 
     (A A₁ : C(Icc (0 : ℝ) T, U →L[ℝ] E)) :
     ‖(timeMultiplier T hT A₁).comp J + timeMultiplier T hT A‖ ≤ T * ‖A₁‖ + ‖A‖ := by
   apply ((norm_add_le _ _).trans (add_le_add ((opNorm_comp_le _ _).trans
-    (mul_le_mul (timeMultiplier_norm T hT A₁) hJ (by positivity) (by positivity)))
+    (mul_le_mul (timeMultiplier_norm T hT A₁) hJ (norm_nonneg _) (norm_nonneg _)))
       (timeMultiplier_norm T hT A))).trans_eq
   ring
 
@@ -92,7 +92,7 @@ theorem product_sub_norm_le (J : TimeLp T U →L[ℝ] TimeLp T U) (hJ : ‖J‖ 
     abel
   rw [he]
   apply ((norm_add_le _ _).trans (add_le_add ((opNorm_comp_le _ _).trans
-    (mul_le_mul (multiplier_sub_norm_le T hT A₁ B₁) hJ (by positivity) (by positivity)))
+    (mul_le_mul (multiplier_sub_norm_le T hT A₁ B₁) hJ (norm_nonneg _) (norm_nonneg _)))
       (multiplier_sub_norm_le T hT A B))).trans_eq
   ring
 
@@ -103,7 +103,7 @@ theorem fixedFrameDerivative_norm_le (A A₁ : C(Icc (0 : ℝ) T, U →L[ℝ] E)
   have h := mul_le_mul
     (product_norm_le T hT (primitiveTimeLp T hT) (primitive_norm_le_time T hT) A A₁)
     (zeroTraceDerivatives (U := U) T hT).norm_subtypeL_le
-    (by positivity) (by positivity)
+    (norm_nonneg _) (add_nonneg (mul_nonneg hT (norm_nonneg _)) (norm_nonneg _))
   simpa only [mul_one, productDerivative] using h
 
 omit [CompleteSpace U] [CompleteSpace E] in
@@ -165,39 +165,33 @@ theorem energyOperator_sub_norm_le (H H' : C(Icc (0 : ℝ) T, E →L[ℝ] E)) :
 /-- The affine coordinate trial costs a fixed polynomial in time and its reciprocal. -/
 def affineCost (T : ℝ) : ℝ := (1+T) * |T⁻¹|
 
+omit [CompleteSpace U] in
+theorem constantScale_norm_le :
+    ‖(constantFieldOperator (E := U) T hT).comp (T⁻¹ • ContinuousLinearMap.id ℝ U)‖ ≤
+      affineCost T :=
+  (opNorm_comp_le _ _).trans (mul_le_mul (constantFieldOperator_norm_le T hT)
+    ((norm_smul_le _ _).trans (mul_le_of_le_one_right (abs_nonneg _) norm_id_le))
+    (norm_nonneg _) (add_nonneg zero_le_one hT))
+
 omit [CompleteSpace U] [CompleteSpace E] in
 theorem affineTrial_norm_le (A A₁ : C(Icc (0 : ℝ) T, U →L[ℝ] E)) :
     ‖affineTrial T hT A A₁‖ ≤ affineCost T * (T * ‖A₁‖ + ‖A‖) := by
-  have hconst : ‖(constantFieldOperator T hT).comp (T⁻¹ • ContinuousLinearMap.id ℝ U)‖ ≤
-      affineCost T := by
-    have hscale : ‖T⁻¹ • ContinuousLinearMap.id ℝ U‖ ≤ |T⁻¹| := by
-      rw [norm_smul, Real.norm_eq_abs]
-      simpa only [mul_one] using mul_le_mul_of_nonneg_left (norm_id_le (𝕜 := ℝ) (E := U))
-          (abs_nonneg T⁻¹)
-    exact (opNorm_comp_le _ _).trans
-      (mul_le_mul (constantFieldOperator_norm_le T hT) hscale (norm_nonneg _) (by linarith))
+  have hconst := constantScale_norm_le (U := U) T hT
   apply ((opNorm_comp_le _ _).trans (mul_le_mul
     (product_norm_le T hT _ (initialPrimitive_norm_le_time T hT) A A₁)
-    hconst (norm_nonneg _) (by positivity))).trans_eq
+    hconst (norm_nonneg _) (add_nonneg (mul_nonneg hT (norm_nonneg _)) (norm_nonneg _)))).trans_eq
   ring
 
 omit [CompleteSpace U] [CompleteSpace E] in
 theorem affineTrial_sub_norm_le (A A₁ B B₁ : C(Icc (0 : ℝ) T, U →L[ℝ] E)) :
     ‖affineTrial T hT A A₁ - affineTrial T hT B B₁‖ ≤
       affineCost T * (T * ‖A₁-B₁‖ + ‖A-B‖) := by
-  have hconst : ‖(constantFieldOperator T hT).comp (T⁻¹ • ContinuousLinearMap.id ℝ U)‖ ≤
-      affineCost T := by
-    have hscale : ‖T⁻¹ • ContinuousLinearMap.id ℝ U‖ ≤ |T⁻¹| := by
-      rw [norm_smul, Real.norm_eq_abs]
-      simpa only [mul_one] using mul_le_mul_of_nonneg_left (norm_id_le (𝕜 := ℝ) (E := U))
-          (abs_nonneg T⁻¹)
-    exact (opNorm_comp_le _ _).trans
-      (mul_le_mul (constantFieldOperator_norm_le T hT) hscale (norm_nonneg _) (by linarith))
+  have hconst := constantScale_norm_le (U := U) T hT
   unfold affineTrial
   rw [← sub_comp]
   apply ((opNorm_comp_le _ _).trans (mul_le_mul
     (product_sub_norm_le T hT _ (initialPrimitive_norm_le_time T hT) A A₁ B B₁)
-    hconst (norm_nonneg _) (by positivity))).trans_eq
+    hconst (norm_nonneg _) (add_nonneg (mul_nonneg hT (norm_nonneg _)) (norm_nonneg _)))).trans_eq
   ring
 
 end EulerTransverseEndpointBounds

@@ -88,18 +88,11 @@ theorem tensor_norm_sq_le_coordinate_energy (n : ℕ)
     ‖A‖ ^ 2 ≤ ‖tensorReassembly (V := Space) n‖ ^ 2 *
       ∑ w : Fin n → Fin 3, ∑ j : Fin 3,
         (A (fun i => direction (w i)) j) ^ 2 := by
-  have hnorm : ‖A‖ ≤ ‖tensorReassembly (V := Space) n‖ *
-      ‖tensorCoordinates (V := Space) n A‖ := by
-    simpa only [tensorReassembly_coordinates] using
-      (tensorReassembly (V := Space) n).le_opNorm (tensorCoordinates (V := Space) n A)
-  have hsq : ‖A‖ ^ 2 ≤ ‖tensorReassembly (V := Space) n‖ ^ 2 *
-      ‖tensorCoordinates (V := Space) n A‖ ^ 2 := by
-    simpa only [mul_pow] using
-      (sq_le_sq₀ (norm_nonneg A)
-        (mul_nonneg (norm_nonneg (tensorReassembly (V := Space) n))
-          (norm_nonneg (tensorCoordinates (V := Space) n A)))).mpr hnorm
-  exact hsq.trans (mul_le_mul_of_nonneg_left
-    (tuple_norm_sq_le_coordinate_energy (tensorCoordinates (V := Space) n A)) (sq_nonneg _))
+  have hnorm := (tensorReassembly (V := Space) n).le_opNorm (tensorCoordinates (V := Space) n A)
+  rw [tensorReassembly_coordinates] at hnorm
+  exact ((pow_le_pow_left₀ (norm_nonneg A) hnorm 2).trans_eq (mul_pow _ _ 2)).trans
+    (mul_le_mul_of_nonneg_left
+      (tuple_norm_sq_le_coordinate_energy (tensorCoordinates (V := Space) n A)) (sq_nonneg _))
 
 end EulerComparatorRecovery
 
@@ -203,19 +196,13 @@ theorem tensor_integral_norm_sq_le_coordinate_energy (n : ℕ)
   have hsum (w : Fin n → Fin 3) : Integrable
       (fun x => ∑ j : Fin 3, (F x (fun i => direction (w i)) j) ^ 2) :=
     integrable_finsetSum Finset.univ (fun j _ => hcoord w j)
-  calc
-    (∫ x, ‖F x‖ ^ 2) ≤ ∫ x, ‖tensorReassembly (V := Space) n‖ ^ 2 *
-        ∑ w : Fin n → Fin 3, ∑ j : Fin 3,
-          (F x (fun i => direction (w i)) j) ^ 2 :=
-      integral_mono ((memLp_two_iff_integrable_sq_norm hF.aestronglyMeasurable).mp hF)
-        ((integrable_finsetSum Finset.univ (fun w _ => hsum w)).const_mul _)
-        (fun x => tensor_norm_sq_le_coordinate_energy n (F x))
-    _ = _ := by
-      rw [integral_const_mul, integral_finsetSum Finset.univ (fun w _ => hsum w)]
-      congr 1
-      apply Finset.sum_congr rfl
-      intro w _
-      exact integral_finsetSum Finset.univ (fun j _ => hcoord w j)
+  have hmono := integral_mono ((memLp_two_iff_integrable_sq_norm hF.aestronglyMeasurable).mp hF)
+    ((integrable_finsetSum Finset.univ (fun w _ => hsum w)).const_mul _)
+    (fun x => tensor_norm_sq_le_coordinate_energy n (F x))
+  refine hmono.trans_eq ?_
+  rw [integral_const_mul, integral_finsetSum Finset.univ (fun w _ => hsum w)]
+  exact congrArg (_ * ·) (Finset.sum_congr rfl fun w _ =>
+    integral_finsetSum Finset.univ (fun j _ => hcoord w j))
 
 /-- The L² class of a smooth field's tensor has exactly its ordinary integral
 energy, so quantitative recovery applies to the development's norm. -/

@@ -120,37 +120,39 @@ theorem coupling_quotient_error
   have hJscaled : |J / P₀ - J₀ / P₀| ≤ dJ / P₀ := by
     rw [← sub_div, abs_div, abs_of_pos hP₀]
     exact div_le_div_of_nonneg_right hJE hP₀.le
-  have hJsmall : dJ / P₀ ≤ 1 / 4 := (div_le_iff₀ hP₀).mpr (by linarith only [hJEsmall])
+  have hJsmall : dJ / P₀ ≤ 1 / 4 :=
+    (div_le_iff₀ hP₀).mpr (hJEsmall.trans_eq (one_div_mul_eq_div 4 P₀).symm)
   have hJlower : 1 / 4 ≤ J / P₀ := by
     have hh := (abs_le.mp hJscaled).1
-    linarith only [hh, hJ₀, hJsmall]
+    linear_combination hh + hJ₀ + hJsmall
   have hden : 1 / 4 ≤ (J / P₀) * sqrt E := by
     have hh := mul_le_mul hJlower hrootE (by norm_num : (0 : ℝ) ≤ 1)
-      (by linarith only [hJlower] : 0 ≤ J / P₀)
-    linarith only [hh]
-  have hJ₀abs : |J₀ / P₀| ≤ 2 := by rw [abs_of_nonneg (by linarith : 0 ≤ J₀ / P₀)]; exact hJ₀upper
+      ((by norm_num : (0 : ℝ) ≤ 1 / 4).trans hJlower)
+    exact (mul_one (1 / 4 : ℝ)).symm.trans_le hh
+  have hJ₀abs : |J₀ / P₀| ≤ 2 :=
+    (abs_of_nonneg ((by norm_num : (0 : ℝ) ≤ 1 / 2).trans hJ₀)).trans_le hJ₀upper
   have hdenDiff : |(J / P₀) * sqrt E - J₀ / P₀| ≤ 2 * (dJ / P₀) + 2 * dE := by
     have hh := abs_product_difference hJscaled hrootEE hJ₀abs
       (show |sqrt E| ≤ 2 by rw [abs_of_nonneg (sqrt_nonneg E)]; exact hrootE2)
     simpa only [mul_one, mul_comm (dJ / P₀) 2] using hh
   have hdiff := quotient_error_half_denominator hden hJ₀ hSE hS₀ hdenDiff
-  have hJpos : 0 < J := by
-    have hh : 0 < J / P₀ := by linarith only [hJlower]
-    exact (div_pos_iff_of_pos_right hP₀).mp hh
-  have hid : P₀ * S / (J * sqrt E) = S / ((J / P₀) * sqrt E) := by field_simp
+  have hJpos : 0 < J :=
+    (div_pos_iff_of_pos_right hP₀).mp ((by norm_num : (0 : ℝ) < 1 / 4).trans_le hJlower)
+  have hid : P₀ * S / (J * sqrt E) = S / ((J / P₀) * sqrt E) := by
+    rw [div_mul_eq_mul_div, div_div_eq_mul_div, mul_comm S]
   rw [hid]
   have ht := abs_add_le (S / ((J / P₀) * sqrt E) - S₀ / (J₀ / P₀)) (S₀ / (J₀ / P₀) - 1)
   have hsum : S / ((J / P₀) * sqrt E) - S₀ / (J₀ / P₀) + (S₀ / (J₀ / P₀) - 1) =
       S / ((J / P₀) * sqrt E) - 1 := by ring
   rw [hsum] at ht
-  linarith only [ht, hdiff, hideal]
+  linear_combination ht + hdiff + hideal
 
 /-- Absolute bounds for the ideal inversion-coordinate frame quantities. -/
 theorem ideal_frame_absolute_bounds
     {ε y z : ℝ} (hε : 0 ≤ ε) (hεsmall : ε ≤ 1 / 4)
     (hy : 0 ≤ y) (hysmall : y ≤ 1 / 2) (hz : 0 ≤ z) (hzupper : z ≤ 4) :
     idealFrameDenominator ε y z ≤ 2 ∧ |idealFrameNumerator ε y z| ≤ 20 := by
-  have hy2 : y ^ 2 ≤ 1 / 4 := by nlinarith only [hy, hysmall]
+  have hy2 : y ^ 2 ≤ 1 / 4 := (pow_le_pow_left₀ hy hysmall 2).trans_eq (by norm_num)
   have hy3 : y ^ 3 ≤ 1 / 8 := by
     have hh := pow_le_pow_left₀ hy hysmall 3
     norm_num at hh
@@ -159,30 +161,27 @@ theorem ideal_frame_absolute_bounds
     have hh := pow_le_pow_left₀ hy hysmall 4
     norm_num at hh
     exact hh
-  have hz2 : z ^ 2 ≤ 16 := by nlinarith only [hz, hzupper]
-  have hε2 : ε ^ 2 ≤ 1 / 16 := by nlinarith only [hε, hεsmall]
-  have hT : ε ^ 2 * y ^ 2 ≤ 1 / 64 := by
-    have hh := mul_le_mul hε2 hy2 (sq_nonneg y) (by norm_num : (0 : ℝ) ≤ 1 / 16)
-    linarith only [hh]
-  have hZ : (1 + y ^ 4) * z ^ 2 ≤ 17 := by
-    have hh := mul_le_mul (show 1 + y ^ 4 ≤ 17 / 16 by linarith only [hy4]) hz2
-      (sq_nonneg z) (by norm_num : (0 : ℝ) ≤ 17 / 16)
-    linarith only [hh]
-  have hεz : ε * z ≤ 1 := by
-    have hh := mul_le_mul hεsmall hzupper hz (by norm_num : (0 : ℝ) ≤ 1 / 4)
-    linarith only [hh]
+  have hz2 : z ^ 2 ≤ 16 := (pow_le_pow_left₀ hz hzupper 2).trans_eq (by norm_num)
+  have hε2 : ε ^ 2 ≤ 1 / 16 := (pow_le_pow_left₀ hε hεsmall 2).trans_eq (by norm_num)
+  have hT : ε ^ 2 * y ^ 2 ≤ 1 / 64 :=
+    (mul_le_mul hε2 hy2 (sq_nonneg y) (by norm_num)).trans_eq (by norm_num)
+  have hy4' : 1 + y ^ 4 ≤ 17 / 16 := (add_le_add le_rfl hy4).trans_eq (by norm_num)
+  have hZ : (1 + y ^ 4) * z ^ 2 ≤ 17 :=
+    (mul_le_mul hy4' hz2 (sq_nonneg z) (by norm_num)).trans_eq (by norm_num)
+  have hεz : ε * z ≤ 1 := (mul_le_mul hεsmall hzupper hz (by norm_num)).trans_eq (by norm_num)
   have hU : 2 * ε * z * y ^ 3 ≤ 1 / 4 := by
-    have hh := mul_le_mul hεz hy3 (pow_nonneg hy 3) (by norm_num : (0 : ℝ) ≤ 1)
-    linarith only [hh]
+    have hh := mul_le_mul hεz hy3 (pow_nonneg hy 3) zero_le_one
+    linear_combination 2 * hh
   have hT0 : 0 ≤ ε ^ 2 * y ^ 2 := mul_nonneg (sq_nonneg ε) (sq_nonneg y)
-  have hZ0 : 0 ≤ (1 + y ^ 4) * z ^ 2 := by positivity
-  have hU0 : 0 ≤ 2 * ε * z * y ^ 3 := by positivity
+  have hZ0 : 0 ≤ (1 + y ^ 4) * z ^ 2 :=
+    mul_nonneg (add_nonneg zero_le_one (pow_nonneg hy 4)) (sq_nonneg z)
+  have hU0 : 0 ≤ 2 * ε * z * y ^ 3 :=
+    mul_nonneg (mul_nonneg (mul_nonneg zero_le_two hε) hz) (pow_nonneg hy 3)
   constructor
   · unfold idealFrameDenominator
-    linarith only [hT0, hU]
+    linear_combination hT0 + hU
   · unfold idealFrameNumerator
-    apply abs_le.mpr
-    constructor <;> linarith only [hT0, hZ0, hU0, hT, hZ, hU]
+    exact abs_le.mpr ⟨by linear_combination hZ0 + hT0 + hU, by linear_combination hZ + hT + hU0⟩
 
 theorem target_sqrt_identity {y : ℝ} (hy : y ≠ 0) :
     sqrt (1 + (y⁻¹) ^ 4) = sqrt (1 + y ^ 4) / y ^ 2 := by
@@ -267,44 +266,45 @@ theorem perturbed_target_compression
   have hPb := abs_le.mp hP
   have hQb := abs_le.mp hQ
   have hNb := abs_le.mp hN
-  have hPlower : β * t ^ 2 / 2 ≤ P := by linarith only [hPb, hρsmall, hscale]
-  have hPupper : P ≤ 3 / 2 * (β * t ^ 2) := by linarith only [hPb, hρsmall, hscale]
-  have hPpos : 0 < P := by linarith only [hPlower, hscale]
-  have hQupper : Q ≤ -β * t := by linarith only [hQb, hρQ]
-  have hNabs : |N| ≤ 3 / 2 := by
-    apply abs_le.mpr
-    constructor <;> linarith only [hNb, hρsmall]
+  have hPlower : β * t ^ 2 / 2 ≤ P := by linear_combination hPb.1 + hρsmall + 1 / 2 * hscale
+  have hPupper : P ≤ 3 / 2 * (β * t ^ 2) := by
+    linear_combination hPb.2 + hρsmall + 1 / 2 * hscale
+  have hPpos : 0 < P := (half_pos (zero_lt_one.trans_le hscale)).trans_le hPlower
+  have hQupper : Q ≤ -β * t := by linear_combination hQb.2 + hρQ
+  have hNabs : |N| ≤ 3 / 2 :=
+    abs_le.mpr ⟨by linear_combination hNb.1 + hρsmall, by linear_combination hNb.2 + hρsmall⟩
   have hPabs : |P| ≤ 3 / 2 * (β * t ^ 2) := by rwa [abs_of_pos hPpos]
   have hPsq : P ^ 2 ≤ 9 / 4 * (β * t ^ 2) ^ 2 := by
-    have hh := (sq_le_sq₀ (abs_nonneg P) (by positivity : 0 ≤ 3 / 2 * (β * t ^ 2))).mpr hPabs
+    have hh := (sq_le_sq₀ (abs_nonneg P)
+      (mul_nonneg (by norm_num) (zero_le_one.trans hscale) : 0 ≤ 3 / 2 * (β * t ^ 2))).mpr hPabs
     rw [sq_abs] at hh
-    linarith only [hh]
+    exact hh.trans_eq (by ring)
   have hNsq : N ^ 2 ≤ 9 / 4 := by
     have hh := (sq_le_sq₀ (abs_nonneg N) (by norm_num : (0 : ℝ) ≤ 3 / 2)).mpr hNabs
     rw [sq_abs] at hh
-    linarith only [hh]
+    exact hh.trans_eq (by norm_num)
   have hεQsq : ε ^ 2 * Q ^ 2 ≤ 1 / 4 := by
     have hh := (sq_le_sq₀ (abs_nonneg (ε * Q)) (by norm_num : (0 : ℝ) ≤ 1 / 2)).mpr hεQ
-    rw [sq_abs] at hh
-    linarith only [hh]
-  have hscale2 : 1 ≤ (β * t ^ 2) ^ 2 := by nlinarith only [hscale]
+    rw [sq_abs, mul_pow] at hh
+    exact hh.trans_eq (by norm_num)
+  have hscale2 : 1 ≤ (β * t ^ 2) ^ 2 := one_le_pow₀ hscale
   have hDupper : rayDenominator ε P Q N ≤ 5 * β ^ 2 * t ^ 4 := by
     unfold rayDenominator
-    linarith only [hPsq, hNsq, hεQsq, hscale2]
+    linear_combination hPsq + hNsq + hεQsq + 11 / 4 * hscale2
   have hDpos : 0 < rayDenominator ε P Q N := by
     unfold rayDenominator
-    have hh : 0 < P ^ 2 := sq_pos_of_pos hPpos
-    positivity
+    exact add_pos_of_pos_of_nonneg (add_pos_of_pos_of_nonneg (sq_pos_of_pos hPpos)
+      (mul_nonneg (sq_nonneg ε) (sq_nonneg Q))) (sq_nonneg N)
   have hQP : Q * P ≤ -(β ^ 2 * t ^ 3) / 2 := by
     have h₁ := mul_le_mul_of_nonneg_right hQupper hPpos.le
     have h₂ := mul_le_mul_of_nonneg_left hPlower (mul_nonneg hβ.le ht.le)
-    linarith only [h₁, h₂]
+    linear_combination h₁ + h₂
   have hHε : 0 ≤ H * ε := mul_nonneg hH hε
   have hnum := mul_le_mul_of_nonneg_left hQP hHε
-  have hnumtime := mul_le_mul_of_nonneg_right hnum (by positivity : 0 ≤ 10 * t)
+  have hnumtime := mul_le_mul_of_nonneg_right hnum (mul_nonneg (by norm_num) ht.le : 0 ≤ 10 * t)
   have hden := mul_le_mul_of_nonneg_left hDupper hHε
-  apply (div_le_div_iff₀ hDpos (by positivity : 0 < 10 * t)).mpr
-  linarith only [hnumtime, hden]
+  apply (div_le_div_iff₀ hDpos (mul_pos (by norm_num) ht : 0 < 10 * t)).mpr
+  linear_combination hnumtime + hden
 
 /-- The coordinate quadratic form of a real three-by-three matrix. -/
 def quadraticForm3 (B : Fin 3 → Fin 3 → ℝ) (p q n : ℝ) : ℝ :=

@@ -257,21 +257,20 @@ theorem weighted_pde_energy_subinterval_limit {α β : Type*} [Fintype α] [Fint
     (fun r hr => hz r (hsubo hr)) (fun r hr => hzB r (hsubo hr))
     (fun i j r hr => heq n i j r (hsubo hr))
     (fun i => (hAint i).mono_set hsub) (fun i => (hFint n i).mono_set hsub)
-  rw [hXdef n t ⟨h0s.trans hst, htT⟩, hXdef n s ⟨h0s, hst.trans htT⟩] at h
   have hevalt : extendPath T hT (X n) t = X n ⟨t, h0s.trans hst, htT⟩ :=
     congrArg (X n) (projIcc_of_mem hT ⟨h0s.trans hst, htT⟩)
   have hevals : extendPath T hT (X n) s = X n ⟨s, h0s, hst.trans htT⟩ :=
     congrArg (X n) (projIcc_of_mem hT ⟨h0s, hst.trans htT⟩)
-  rw [hevalt, hevals] at h
   have hi := integral_eq_three_subinterval_paths T hT s t hst a b d (X n) (Y n) (Z n)
     (fun r => viscousGrowthCoefficient period (K r) (K' r) κ m c ν (B r) *
       weightedMetricSum (ρ r) order (K r).operator (fun i j => value period (e n i j r)) +
       (ρ' r / ρ r) * weightedMetricLoss (ρ r) order (K r).operator (fun i j => value period (e n i
           j r)) +
       (((K r).bound : ℝ) / c) * weightedForcingSum (ρ r) order (fun i j => forcing n i j r))
-    (fun r hr => by rw [ha r (hsub hr), hb r (hsub hr), hd r (hsub hr),
+    (fun r hr => by simp only [ha r (hsub hr), hb r (hsub hr), hd r (hsub hr),
       hXdef n r (hsub hr), hYdef n r (hsub hr), hZdef n r (hsub hr)])
-  rw [hi] at h
+  simp only [hXdef n t ⟨h0s.trans hst, htT⟩, hXdef n s ⟨h0s, hst.trans htT⟩, hevalt, hevals,
+    hi] at h
   rw [← subinterval_inner_eq, subinterval_path_inner T hT s t h0s hst htT]
   exact h
 

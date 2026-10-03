@@ -44,16 +44,12 @@ theorem balance_ae (t : Icc (0 : ℝ) D.T) :
     rw [hv,hd]
     exact past_balance_ae τ hτ hτT B Y th
   · let tr : Icc τ D.T := ⟨t,(not_le.mp ht).le,t.property.2⟩
-    let tf : Icc (0 : ℝ) (D.T-τ) :=
-      ⟨(t : ℝ)-τ,sub_nonneg.mpr tr.property.1,sub_le_sub_right t.property.2 τ⟩
-    have hv : velocityPath τ hτ hτT B Y t = futureVelocity τ hτ hτT B Y tf :=
-      velocityPath_right τ hτ hτT B Y tr
-    have hd : derivativePath τ hτ hτT B Y t = futureDerivative τ hτ hτT B Y tf :=
-      derivativePath_right τ hτ hτT B Y tr
-    have hidx : tailInclusion D.T τ hτ.le tf = t := by
-      apply Subtype.ext
-      change τ+((t : ℝ)-τ) = (t : ℝ)
-      ring
+    obtain ⟨tf, hv, hd, hidx⟩ : ∃ tf : Icc (0 : ℝ) (D.T-τ),
+        velocityPath τ hτ hτT B Y t = futureVelocity τ hτ hτT B Y tf ∧
+        derivativePath τ hτ hτT B Y t = futureDerivative τ hτ hτT B Y tf ∧
+        tailInclusion D.T τ hτ.le tf = t :=
+      ⟨_, velocityPath_right τ hτ hτT B Y tr, derivativePath_right τ hτ hτT B Y tr,
+        Subtype.ext (add_sub_cancel τ (t : ℝ))⟩
     have hM : (D.tail τ hτ.le hτT).M.field tf = D.M.field t := by
       change D.M.field (tailInclusion D.T τ hτ.le tf) = D.M.field t
       rw [hidx]

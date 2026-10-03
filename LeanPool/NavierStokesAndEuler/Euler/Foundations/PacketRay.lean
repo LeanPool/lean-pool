@@ -433,8 +433,12 @@ theorem scaled_ray_entry_identity
   intro i j
   fin_cases i <;> fin_cases j <;>
     simp only [show (⟨2, by decide⟩ : Fin 3) = 2 from rfl] <;>
-    norm_num [scaledRayEntry, parentEntry, frameSkew, rayScale, normalizedRayEntry,
-      Fin.ext_iff] <;>
+    simp only [scaledRayEntry, rayScale, Fin.zero_eta, Fin.isValue, zero_ne_one, ↓reduceIte,
+      ne_eq, one_ne_zero, not_false_eq_true, div_self, mul_one, parentEntry, and_true, add_zero,
+      frameSkew, Fin.ext_iff, Nat.reduceAdd, Fin.coe_ofNat_eq_mod, Nat.zero_mod, Nat.mod_succ,
+      OfNat.zero_ne_ofNat, sub_zero, neg_mul, normalizedRayEntry, Fin.mk_one, div_one, and_self,
+      sub_neg_eq_add, Nat.one_mod, OfNat.ofNat_ne_one, one_div, add_sub_cancel_left, neg_inj,
+      and_false, OfNat.one_ne_ofNat, OfNat.ofNat_ne_zero] <;>
     field_simp <;> ring
 
 /-- Each scaled matrix entry is close to the triangular ideal matrix when
@@ -645,7 +649,10 @@ theorem scaled_velocity_entry_identity
   intro i j
   fin_cases i <;> fin_cases j <;>
     simp only [show (⟨2, by decide⟩ : Fin 3) = 2 from rfl] <;>
-    norm_num [scaledVelocityEntry, parentEntry, normalizedVelocityEntry, Fin.ext_iff] <;>
+    simp only [scaledVelocityEntry, Fin.zero_eta, Fin.isValue, zero_ne_one, ↓reduceIte, one_mul,
+      parentEntry, and_true, add_zero, normalizedVelocityEntry, Fin.mk_one, mul_one, one_ne_zero,
+      and_self, Fin.ext_iff, Fin.coe_ofNat_eq_mod, Nat.mod_succ, Nat.one_mod, OfNat.ofNat_ne_one,
+      Nat.zero_mod, OfNat.ofNat_ne_zero, and_false] <;>
     field_simp
   all_goals ring
 
@@ -733,7 +740,9 @@ theorem velocity_numerator_error
   have hrow0 := hrow 0
   have hrow1 := hrow 1
   have hrow2 := hrow 2
-  norm_num [idealVelocityEntry, Fin.ext_iff] at hrow0 hrow1 hrow2
+  simp only [Fin.isValue, idealVelocityEntry, zero_ne_one, and_false, and_true, or_self,
+    ↓reduceIte, Fin.reduceEq, and_self, sub_zero, one_ne_zero, or_false, or_true]
+    at hrow0 hrow1 hrow2
   have hJnear : |velocityNumerator A P Q N U V W - (P * V + Q * U + N * β * V)| ≤
       49 * e * Θ ^ 4 * (|U| + |V|) := by
     let r0 := A 0 0 * U + (A 0 1 - 1) * V + A 0 2 * W
@@ -749,9 +758,9 @@ theorem velocity_numerator_error
       simp only [abs_mul] at ht0 ht1
       dsimp [r0, r1, r2] at *
       linarith only [h0, h1, h2, ht0, ht1]
-    have hs : |P| + |Q| + |N| ≤ 7 * Θ ^ 2 := by linarith
+    have hs : |P| + |Q| + |N| ≤ 7 * Θ ^ 2 := by linarith only [hp, hq, hn, hΘ2]
     have hm := mul_le_mul_of_nonneg_right hs
-      (by positivity : 0 ≤ 7 * e * Θ ^ 2 * (|U| + |V|))
+      (mul_nonneg (mul_nonneg (mul_nonneg (by norm_num : (0 : ℝ) ≤ 7) he) (sq_nonneg Θ)) hL)
     have hid : velocityNumerator A P Q N U V W - (P * V + Q * U + N * β * V) =
         P * r0 + Q * r1 + N * r2 := by unfold velocityNumerator r0 r1 r2; ring
     rw [hid]
@@ -761,10 +770,11 @@ theorem velocity_numerator_error
     have hNb : |(N - 1) * β| ≤ ρ := by
       rw [abs_mul]
       exact (mul_le_mul hN hβ (abs_nonneg _) hρ).trans_eq (mul_one ρ)
-    have hv : |P - P₀ + (N - 1) * β| ≤ 2 * ρ := by linarith [abs_add_le (P - P₀) ((N - 1) * β)]
-    have hu : |Q - Q₀| ≤ 2 * ρ := by linarith
+    have hv : |P - P₀ + (N - 1) * β| ≤ 2 * ρ := by
+      linarith only [abs_add_le (P - P₀) ((N - 1) * β), hP, hNb]
+    have hu : |Q - Q₀| ≤ 2 * ρ := by linarith only [hQ, hρ]
     have hh := three_term_bound (p := V) (q := U) (n := (0 : ℝ)) hv hu
-      (show |(0 : ℝ)| ≤ 2 * ρ by simpa using (show 0 ≤ 2 * ρ by positivity))
+      (abs_zero.trans_le (mul_nonneg zero_le_two hρ))
     have hid : P * V + Q * U + N * β * V - ((P₀ + β) * V + Q₀ * U) =
         (P - P₀ + (N - 1) * β) * V + (Q - Q₀) * U + 0 * 0 := by ring
     rw [hid]

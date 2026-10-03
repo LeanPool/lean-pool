@@ -111,12 +111,13 @@ theorem euler_residual_of_pullback
   have htime : HasDerivAt (fun s => w (s,X (s,x))) (DG (1,0)) t := by
     have he : (fun s => w (s,X (s,x))) = fun s => G (s,x) := funext (fun s => hwX s x)
     rw [he]
-    exact hG.comp_hasDerivAt t ((hasDerivAt_id t).prodMk (hasDerivAt_const t x))
-  have hspace := hw.comp x ((hasFDerivAt_const t x).prodMk hXspace)
+    exact hG.comp_hasDerivAt (f := fun s => (s, x)) t
+      ((hasDerivAt_id t).prodMk (hasDerivAt_const t x))
+  have hspace := hw.comp (f := fun y => (t, X (t, y))) x ((hasFDerivAt_const t x).prodMk hXspace)
   have he : (fun y => w (t,X (t,y))) = fun y => G (t,y) := funext (hwX t)
   change HasFDerivAt (fun y => w (t,X (t,y))) _ x at hspace
   rw [he] at hspace
-  have hgs := hG.comp x (hasFDerivAt_prodMk_right t x)
+  have hgs := hG.comp (f := fun y => (t, y)) x (hasFDerivAt_prodMk_right t x)
   have hadv : Dw (0,G (t,x)) = DG (0,A.symm (G (t,x))) := by
     have h := congrArg (fun L : E →L[ℝ] E => L (A.symm (G (t,x)))) (hspace.unique hgs)
     simpa only [comp_apply,prod_apply,zero_apply,ContinuousLinearEquiv.coe_coe,
@@ -127,7 +128,7 @@ theorem euler_residual_of_pullback
     have h := gradient_pullback_inverse (fun y => q (t,y)) (fun y => X (t,y)) A x hXspace hq
     have heq : (fun y => q (t,X (t,y))) = fun y => Q (t,y) := funext hqX
     simpa only [Function.comp_def,heq] using h
-  rw [euler_perturbation_along_flow u w p q (fun s => X (s,x)) t Du Dw (DG (1,0))
+  simp only [euler_perturbation_along_flow u w p q (fun s => X (s,x)) t Du Dw (DG (1,0))
     hXtime hu hw htime hp hq hparent,hwX t x,hadv,hpress]
 
 /-- Inverse coordinates, given by `(q.1,Y q)`. -/
@@ -193,9 +194,9 @@ theorem physical_euler_momentum
     (fderiv ℝ G (t,x)) hXtime hXspace hu hw.hasFDerivAt hG.differentiableAt.hasFDerivAt hp hq
     (fun s y => by simp only [physicalVelocity,inverseCoordinates,hleft]; rfl)
     (fun y => by simp only [physicalPressure,inverseCoordinates,hleft]) hparent
-  rw [hstrain,hQgradient] at hphys
-  have he := graph_residual_identity κ k hκ m F z (t,x) DF Dz hF hz A hA P
-  rw [hlift,map_zero,smul_zero] at he
+  simp only [hstrain,hQgradient] at hphys
+  have he := (graph_residual_identity κ k hκ m F z (t,x) DF Dz hF hz A hA P).trans
+    ((congrArg (fun v => κ • A v) hlift).trans ((congrArg (κ • ·) A.map_zero).trans (smul_zero κ)))
   exact hphys.trans he
 
 end EulerPacketPhysicalTransform

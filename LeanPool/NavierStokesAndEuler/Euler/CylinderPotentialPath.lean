@@ -239,7 +239,7 @@ open scoped ContDiff BoundedContinuousFunction
 variable (P : ℝ) [Fact (0 < P)]
   {K : Type*} [TopologicalSpace K] [CompactSpace K]
   (B : C(K, Space →ᵇ Space →L[ℝ] Space))
-  (hB : ContDiff ℝ ∞ (translateCoefficientPath B))
+  (hB : ContDiff ℝ ∞ (translateCoefficientPath (K := K) (V := Space →L[ℝ] Space) B))
   (p : C(K, LiftL2 P))
   (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p))
 
@@ -326,7 +326,8 @@ theorem potentialPath_block_bound {ι : Type*} [Fintype ι]
     (directions : ι → LiftTangent) (hd : ∀ i, ‖directions i‖ ≤ 1) (q : ℕ)
     (Rc C R D : ℝ) (hRc : 0 ≤ Rc) (hC : 0 ≤ C) (hD : 0 ≤ D)
     (hR : sobolevCoefficientRadius ι Rc ≤ R)
-    (hbB : ∀ n a, ‖iteratedFDeriv ℝ n (translateCoefficientPath B) a‖ ≤ C * majorant Rc 0 n)
+    (hbB : ∀ n a, ‖iteratedFDeriv ℝ n (translateCoefficientPath (K := K) (V := Space →L[ℝ] Space)
+      B) a‖ ≤ C * majorant Rc 0 n)
     (d : ℕ) (hbp : ∀ n, block directions q
       (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p) n 0 ≤
       D*majorant R d n) (n : ℕ) :

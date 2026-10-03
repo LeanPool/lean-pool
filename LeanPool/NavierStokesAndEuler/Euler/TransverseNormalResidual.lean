@@ -71,9 +71,10 @@ theorem physical_velocity_balance (Q Q₁ : U →L[ℝ] E) (M : E →L[ℝ] E)
   let r := f - (Q₁ v + Q a) - M (Q v)
   have hQr : adjoint (𝕜 := ℝ) (E := U) (F := E) Q r = 0 := by
     dsimp only [r]
-    rw [hflow] at heq ⊢
-    simp only [gram, comp_apply, map_sub, map_add, map_smul] at heq ⊢
-    linear_combination (norm := module) -heq
+    simp only [hflow, gram, comp_apply, ContinuousLinearMap.map_sub, ContinuousLinearMap.map_add,
+      ContinuousLinearMap.map_smul] at heq ⊢
+    rw [heq, two_smul]
+    abel
   have hr := eq_normal_of_adjoint_zero Q m r hm hRange hQr
   have hco : normalCoefficient m r = (⟪m, f⟫_ℝ - 2 * ⟪m, M (Q v)⟫_ℝ) / ‖m‖^2 := by
     simp only [normalCoefficient, r, inner_sub_right, inner_add_right, hTangent,
@@ -84,6 +85,6 @@ theorem physical_velocity_balance (Q Q₁ : U →L[ℝ] E) (M : E →L[ℝ] E)
     (Q₁ v + Q a) + M (Q v) +
         ((⟪m, f⟫_ℝ - 2 * ⟪m, M (Q v)⟫_ℝ) / ‖m‖^2) • m =
         (Q₁ v + Q a) + M (Q v) + r := by rw [hr]
-    _ = f := by dsimp only [r]; abel
+    _ = f := by dsimp only [r]; rw [sub_sub, add_sub_cancel]
 
 end EulerTransverseNormalResidual

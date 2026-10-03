@@ -127,11 +127,11 @@ theorem full_adjoint (A : α →ᵇ E →L[ℝ] F) :
   intro u
   apply ext_inner_right ℝ
   intro v
-  rw [adjoint_inner_left,L2.inner_def,L2.inner_def]
+  simp only [adjoint_inner_left, L2.inner_def]
   apply integral_congr_ae
   filter_upwards [full_ae μ A v,
     full_ae μ (adjointMap (α := α) (U := E) (E := F) A) u] with x ha hadj
-  rw [ha,hadj,adjointMap_apply,adjoint_inner_left]
+  simp only [ha, hadj, adjointMap_apply, adjoint_inner_left]
 
 end Hilbert
 
@@ -153,7 +153,7 @@ theorem cutoffOperator_adjoint :
   intro u
   apply ext_inner_right ℝ
   intro v
-  rw [adjoint_inner_left,L2.inner_def,L2.inner_def]
+  simp only [adjoint_inner_left, L2.inner_def]
   apply integral_congr_ae
   filter_upwards [cutoff_ae μ S hS v,cutoff_ae μ S hS u] with x hv hu
   change ⟪u x,cutoff μ S hS v x⟫_ℝ = ⟪cutoff μ S hS u x,v x⟫_ℝ

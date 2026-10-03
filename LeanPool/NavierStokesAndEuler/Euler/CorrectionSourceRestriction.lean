@@ -37,9 +37,10 @@ theorem truncate_transport {q : ℕ} (hq : 6 ≤ q)
           (q+1) v) := by
   have h := restrict_asymmetricTransport period (by omega : 6 ≤ q+1) hq (by omega : q ≤ q+1)
     L hL (truncateOperator period (q+1) u) v
-  rw [asymmetricTransport_eq period (by omega : 6 ≤ q+1) L hL u v] at h
-  exact h.trans (asymmetricTransport_eq period hq L hL
-    (truncateOperator period (q+1) u) (truncateOperator period (q+1) v))
+  apply ((congrArg (restrictOperator period (by omega : q ≤ q+1))
+    (asymmetricTransport_eq period (by omega : 6 ≤ q+1) L hL u v)).symm.trans h).trans
+    (asymmetricTransport_eq period hq L hL
+      (truncateOperator period (q+1) u) (truncateOperator period (q+1) v))
 
 /-- Restricting the literal nonlinear raw source gives the raw source of the actual lower data. -/
 theorem truncate_rawSource {q : ℕ} (hq : 6 ≤ q) {T : ℝ}

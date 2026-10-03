@@ -554,7 +554,7 @@ theorem exists_firstPacketChoice (hδ1 : δ ≤ 1) (hh : 0 < hchild)
   · rw [A.normalizedPacketVelocity_forwardInitialized H firstNormal firstNormal_unit
       firstFrame support compact δ hδ firstCoordinate (subset_refl _) (δ*hchild)
       (truncation k) hn k hk.four Q S.evolution.inverse t]
-    exact (herror t x).1
+    apply (herror t x).1
   · rw [A.normalizedPacketPressure_forwardInitialized H firstNormal firstNormal_unit
       firstFrame support compact δ hδ firstCoordinate (subset_refl _) (δ*hchild)
       (truncation k) hn k hk.four Q S.evolution.inverse t]
@@ -563,7 +563,7 @@ theorem exists_firstPacketChoice (hδ1 : δ ≤ 1) (hh : 0 < hchild)
       erw [forwardPressureTerm_eq_coefficient
         (D := A.transverseData firstNormal firstNormal_unit firstFrame support compact)
         firstCoordinate]
-    exact (herror t x).2
+    apply (herror t x).2
 
 namespace FirstPacketChoice
 

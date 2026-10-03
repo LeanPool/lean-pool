@@ -55,8 +55,8 @@ theorem projected_negative_split {s : ℕ} {A : SmoothCoefficient period}
   let P := pressureSobolevOperator period K κ m c hc hpos
   let G := coefficientSobolevOperator period K
   change -(T+F-G (P (T+F))) = -(T+F-G (P F)-G (P T))
-  rw [map_add P T F, map_add G (P T) (P F)]
-  abel
+  have h : G (P (T+F)) = G (P T) + G (P F) := (congrArg G (P.map_add T F)).trans (G.map_add _ _)
+  exact (congrArg (fun x => -(T+F-x)) h).trans (by abel)
 
 /-- The signed actual pressure is the negative sum of the two genuine component pressure solves. -/
 theorem pressure_negative_split {s : ℕ} {A : SmoothCoefficient period}

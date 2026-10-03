@@ -472,7 +472,8 @@ theorem joinedResidual_normalized_bound (A : VectorField) (π : ScalarField)
     hRc hcost S α hα hgrowth
     (primaryProfile (joinedSourceOperators P M D τ hτ hτT B) A π) hp hpBudget rfl htan
     N hN k X hk hbase hcoef hX hNX
-  exact h.of_path_eq _ rfl
+  refine h.of_path_eq _ ?_
+  rfl
 
 end EulerPacketCylinderField
 
