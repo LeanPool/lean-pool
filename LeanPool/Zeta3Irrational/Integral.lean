@@ -781,16 +781,19 @@ lemma J_ENN_rr (r : ℕ) : JENN r r = ENNReal.ofReal
 lemma fun_of_J_nonneg (r s : ℕ) (x : ℝ × ℝ) (hx : x ∈ Set.Ioo 0 1 ×ˢ Set.Ioo 0 1) :
     0 ≤ -Real.log (x.1 * x.2) / (1 - x.1 * x.2) * x.1 ^ r * x.2 ^ s := by
   simp only [Set.mem_prod, Set.mem_Ioo] at hx
+  have hxy : x.1 * x.2 ≤ 1 :=
+    (mul_le_mul_of_nonneg_right hx.1.2.le hx.2.1.le).trans
+      (by simpa only [one_mul] using hx.2.2.le)
   apply mul_nonneg
   · apply mul_nonneg
     · rw [div_nonneg_iff]
       left
       constructor
       · simp only [Left.nonneg_neg_iff]
-        apply Real.log_nonpos <;> nlinarith
-      · nlinarith
-    · apply pow_nonneg (by linarith)
-  · apply pow_nonneg (by linarith)
+        exact Real.log_nonpos (mul_nonneg hx.1.1.le hx.2.1.le) hxy
+      · exact sub_nonneg.mpr hxy
+    · exact pow_nonneg hx.1.1.le r
+  · exact pow_nonneg hx.2.1.le s
 
 lemma integrableOn_J_rr (r : ℕ) : MeasureTheory.IntegrableOn
     (fun x ↦ -Real.log (x.1 * x.2) / (1 - x.1 * x.2) * x.1 ^ r * x.2 ^ r)
@@ -824,10 +827,14 @@ lemma integrableOn_J_rr (r : ℕ) : MeasureTheory.IntegrableOn
         rw [ENNReal.ofReal_eq_ofReal_iff]
         · congr 3
           · simp only [abs_eq_neg_self]
-            apply Real.log_nonpos <;> nlinarith
-          · simp only [abs_eq_self, sub_nonneg]; nlinarith
-          · simp only [abs_eq_self]; nlinarith
-          · simp only [abs_eq_self]; nlinarith
+            exact Real.log_nonpos (mul_nonneg hx.1.1.le hx.2.1.le)
+              ((mul_le_mul_of_nonneg_right hx.1.2.le hx.2.1.le).trans
+                (by simpa only [one_mul] using hx.2.2.le))
+          · simp only [abs_eq_self, sub_nonneg]
+            exact (mul_le_mul_of_nonneg_right hx.1.2.le hx.2.1.le).trans
+              (by simpa only [one_mul] using hx.2.2.le)
+          · simp only [abs_eq_self]; exact hx.1.1.le
+          · simp only [abs_eq_self]; exact hx.2.1.le
         · positivity
         · exact fun_of_J_nonneg r r x hx
       · simp only [hx, ↓reduceIte]
@@ -1013,10 +1020,14 @@ lemma integrableOn_J_rs' (r s : ℕ) (h : r > s) : MeasureTheory.IntegrableOn
         rw [ENNReal.ofReal_eq_ofReal_iff]
         · congr 3
           · simp only [abs_eq_neg_self]
-            apply Real.log_nonpos <;> nlinarith
-          · simp only [abs_eq_self, sub_nonneg]; nlinarith
-          · simp only [abs_eq_self]; nlinarith
-          · simp only [abs_eq_self]; nlinarith
+            exact Real.log_nonpos (mul_nonneg hx.1.1.le hx.2.1.le)
+              ((mul_le_mul_of_nonneg_right hx.1.2.le hx.2.1.le).trans
+                (by simpa only [one_mul] using hx.2.2.le))
+          · simp only [abs_eq_self, sub_nonneg]
+            exact (mul_le_mul_of_nonneg_right hx.1.2.le hx.2.1.le).trans
+              (by simpa only [one_mul] using hx.2.2.le)
+          · simp only [abs_eq_self]; exact hx.1.1.le
+          · simp only [abs_eq_self]; exact hx.2.1.le
         · positivity
         · exact fun_of_J_nonneg r s x hx
       · simp only [hx, ↓reduceIte]
