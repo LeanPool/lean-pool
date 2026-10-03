@@ -6,7 +6,7 @@ Authors: Juan Pablo Traverso Gianini
 module
 
 public import LeanPool.StructuralGraphClasses.ChordalBridge
-public import LeanPool.StructuralGraphClasses.Cotree
+public import LeanPool.StructuralGraphClasses.CotreeCompleteness
 public import LeanPool.StructuralGraphClasses.Examples
 
 /-!

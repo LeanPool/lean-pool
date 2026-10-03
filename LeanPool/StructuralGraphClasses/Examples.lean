@@ -5,7 +5,7 @@ Authors: Juan Pablo Traverso Gianini
 -/
 module
 
-public import LeanPool.StructuralGraphClasses.Cotree
+public import LeanPool.StructuralGraphClasses.CotreeCompleteness
 
 /-!
 # Regression examples for structural graph classes
@@ -69,5 +69,21 @@ theorem pathFour_not_hasNestedNeighborhoods :
     ¬pathFourSplitPartition.HasNestedNeighborhoods := by
   intro h
   exact pathFour_not_isP4Free (pathFourSplitPartition.isP4Free_of_hasNestedNeighborhoods h)
+
+/-- The four-vertex path cannot have a cotree representation. -/
+theorem pathFour_not_nonempty_cotreeRepresentation :
+    ¬Nonempty (CotreeRepresentation pathFour) := by
+  rintro ⟨R⟩
+  exact pathFour_not_isP4Free R.isCograph
+
+/-- The empty graph on an empty vertex type is covered by completeness. -/
+theorem empty_has_cotreeRepresentation :
+    Nonempty (CotreeRepresentation (⊥ : SimpleGraph (Fin 0))) :=
+  isCograph_bot.nonempty_cotreeRepresentation
+
+/-- Complete finite graphs, including the empty one, have cotrees. -/
+theorem complete_has_cotreeRepresentation (n : ℕ) :
+    Nonempty (CotreeRepresentation (⊤ : SimpleGraph (Fin n))) :=
+  isCograph_top.nonempty_cotreeRepresentation
 
 end SimpleGraph.StructuralGraphClasses

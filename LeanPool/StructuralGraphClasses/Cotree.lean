@@ -26,6 +26,29 @@ variable {V W : Type*} {G : SimpleGraph V} {H : SimpleGraph W}
 /-- Cographs are graphs with no induced four-vertex path. -/
 def IsCograph (G : SimpleGraph V) : Prop := G.IsP4Free
 
+/-- Cograph membership is closed under complementation. -/
+theorem IsCograph.compl (h : G.IsCograph) : Gᶜ.IsCograph := IsP4Free.compl h
+
+/-- Cograph membership pulls back along vertex maps. -/
+theorem IsCograph.comap (h : G.IsCograph) (f : W → V) : (G.comap f).IsCograph :=
+  IsP4Free.comap h f
+
+/-- Every induced subgraph of a cograph is a cograph. -/
+theorem IsCograph.induce (h : G.IsCograph) (s : Set V) : (G.induce s).IsCograph :=
+  IsP4Free.induce h s
+
+/-- Graph isomorphisms preserve cograph membership. -/
+theorem Iso.isCograph_iff (f : G ≃g H) : G.IsCograph ↔ H.IsCograph := f.isP4Free_iff
+
+/-- Empty graphs are cographs. -/
+theorem isCograph_bot : (⊥ : SimpleGraph V).IsCograph := by
+  intro a b c d hab
+  exact False.elim hab
+
+/-- Complete graphs are cographs. -/
+theorem isCograph_top : (⊤ : SimpleGraph V).IsCograph := by
+  simpa using (isCograph_bot (V := V)).compl
+
 /-- Disjoint union preserves exclusion of induced `P₄`. -/
 theorem IsP4Free.sum (hG : G.IsP4Free) (hH : H.IsP4Free) : (G ⊕g H).IsP4Free := by
   rintro (a | a) (b | b) (c | c) (d | d) hab hbc hcd hac had hbd <;>
