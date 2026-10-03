@@ -34,6 +34,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/AsymptoticTrianglePacking https://github.com/jtraverso/erdos-81-chordal-clique-partitions
   LeanPool/BKARForestFormula         https://github.com/scottnarmstrong/bkarforestformula
   LeanPool/BannaiBannaiStanton       https://github.com/AntoineduFresne/Bannai-Bannai-Stanton_Theorem
+  LeanPool/BeckFialaMatrix           https://github.com/jtraverso/lean-pool
   LeanPool/Besicovitch               https://github.com/CoolRmal/Besicovitchs-1-2
   LeanPool/BicausalOT                https://github.com/maxwellapexlab/bicausalot-palomar
   LeanPool/BlockSpectralSensitivity  https://github.com/Timeroot/BS_Lam
@@ -253,6 +254,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Wallace                   https://github.com/vo-rodrigues/wallace-problem-zfc-paper
   LeanPool/WhiteheadTheorem          https://github.com/jzxia/WhiteheadTheorem
   LeanPool/ZFLean                    https://github.com/VTrelat/ZFLean
+  LeanPool/Zeta32                    https://github.com/dtq1997/zeta2-zeta3-linear-independence
   LeanPool/Zeta3Irrational           https://github.com/ahhwuhu/zeta_3_irrational
   LeanPool/Zeta5Irrational           https://github.com/mo271/Zeta5
   LeanPool/ZetaZeros                 https://github.com/AxiomMath/ZetaZeros
