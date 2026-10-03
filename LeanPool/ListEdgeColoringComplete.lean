@@ -11,7 +11,7 @@ public import LeanPool.ListEdgeColoringComplete.Main
 /-!
 # Häggkvist–Janssen list edge colouring of complete graphs
 
-Source: doi:10.1017/S0963548397002927, url:https://github.com/jtraverso/haggkvist-janssen/tree/37a2884b2a5377ee96a4b17aabc799ccd5a17208
+Source: doi:10.1017/S0963548397002927, url:https://github.com/jtraverso/haggkvist-janssen/tree/26d7b2ee0e14813f0e42c3f8628d6b216327c8df
 Authors: Juan Pablo Traverso Gianini
 Status: verified
 Main declarations: `LeanPool.ListEdgeColoringComplete.exists_listEdgeColoring_complete`
