@@ -222,6 +222,7 @@ def pm (i : ℕ) : ℕ := if i < 6 then 0 else (i - 6) / 10 + 1
 /-- Cell `k` of piece `i`. -/
 def pk (i : ℕ) : ℕ := if i < 6 then i + 4 else (i - 6) % 10
 /-- Left endpoint (in `u = 1/x`) of piece `i`; piece `0` starts at `3/7` inside cell `4`. -/
+@[expose]
 def ub (i : ℕ) : ℚ := if i = 0 then 3/7 else (pm i : ℚ) + alphaQ (pk i)
 /-- Coefficients of piece `i`: `psiL x = pa i + pb i · x − 25/(4x)`. -/
 def pa (i : ℕ) : ℚ := cellA (pk i) (pm i)

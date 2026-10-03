@@ -18,23 +18,31 @@ namespace Zeta32
 noncomputable section
 
 /-- The rational polynomial with roots `-1`, …, `-m`. -/
+@[expose]
 def D (m : ℕ) : ℚ[X] := ∏ j ∈ Finset.Icc 1 m, (X + C (j : ℚ))
 /-- Numerator of the rational function used to construct the polynomial family. -/
+@[expose]
 def numerator (n k : ℕ) : ℚ[X] := X^k * (D n)^4
 /-- Polynomial quotient of the numerator by the denominator polynomial. -/
+@[expose]
 def polynomialPart (n k : ℕ) : ℚ[X] := numerator n k /ₘ D (5*n)
 /-- Residue coefficient at the simple pole indexed by `j`. -/
+@[expose]
 def residue (n k j : ℕ) : ℚ :=
   (numerator n k).eval (-(j : ℚ)) /
     ∏ l ∈ (Finset.Icc 1 (5*n)).erase j, ((l : ℚ)-(j : ℚ))
 /-- Bernoulli moment of the polynomial functional at rational parameter `r`. -/
+@[expose]
 def moment (r : ℚ) (e : ℕ) : ℚ :=
   ((e+1 : ℕ) : ℚ) * bernoulli' e + 2*r*bernoulli' (e+1)
 /-- Finite generalized harmonic sum of order `e` through index `j`. -/
+@[expose]
 def H (e j : ℕ) : ℚ := ∑ a ∈ Finset.Icc 1 j, 1 / (a : ℚ)^e
 /-- Constant contribution of the pole indexed by `j` to the moment functional. -/
+@[expose]
 def beta (r : ℚ) (j : ℕ) : ℚ := 2*r - 2*j*H 3 j + 2*r*j*H 2 j
 /-- Linear extension of the Bernoulli moments to a polynomial. -/
+@[expose]
 def polynomialMoment (r : ℚ) (p : ℚ[X]) : ℚ := p.sum fun e a => a * moment r e
 /-- Coefficient of the target zeta value in the rational-function moment. -/
 def slope (n k : ℕ) : ℚ := ∑ j ∈ Finset.Icc 1 (5*n), residue n k j * (2*j)
@@ -104,12 +112,16 @@ theorem primitiveQ_proportional (r : ℚ) (n : ℕ) :
   nlinarith [hco]
 
 /-- Factorial quotient used to normalize the rational-function determinant. -/
+@[expose]
 def Sn (n : ℕ) : ℚ := ((5*n).factorial : ℚ) / ((n.factorial : ℚ)^4)
 /-- Product of squared factorials used to normalize the Hankel determinant. -/
+@[expose]
 def Fn (n : ℕ) : ℚ := ∏ i ∈ Finset.range (3*n), ((i.factorial : ℚ))^2
 /-- Positive scalar converting the determinant to its arithmetic normalization. -/
+@[expose]
 def scale (n : ℕ) : ℚ := Sn n ^ (3*n) / Fn n
 /-- The determinant polynomial after multiplication by the arithmetic normalization. -/
+@[expose]
 def Qtilde (r : ℚ) (n : ℕ) : ℚ[X] := C (scale n) * Q r n
 
 theorem Sn_pos (n : ℕ) : 0 < Sn n := by
@@ -125,6 +137,7 @@ theorem scale_pos (n : ℕ) : 0 < scale n := by
   exact div_pos (pow_pos (Sn_pos n) _) (Fn_pos n)
 
 /-- Negative minimum valuation among the nonzero coefficients of the normalized polynomial. -/
+@[expose]
 def cost (r : ℚ) (n p : ℕ) : ℝ := -sInf
   {v : ℝ | ∃ k, (Qtilde r n).coeff k ≠ 0 ∧
     v = (padicValRat p ((Qtilde r n).coeff k) : ℝ)}

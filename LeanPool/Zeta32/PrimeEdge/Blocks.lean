@@ -18,10 +18,13 @@ public section
 namespace Zeta32.PrimeEdge
 
 /-- `V⁰(u^e r_L)`, `e = 0, …, 4`. -/
+@[expose]
 def lowMoment : Fin 5 → ℚ := ![1565/648, -15575/648, 101261/648, -545255/648, 2649929/648]
 /-- `V⁰(u^e r_H)`, `e = 0, …, 2`. -/
+@[expose]
 def highMoment : Fin 3 → ℚ := ![-115/8, 481/8, -1731/8]
 /-- `V⁰(u^e r_0)`, `e = 0, …, 6`. -/
+@[expose]
 def zeroMoment : Fin 7 → ℚ :=
   ![1/1296, 7/648, 1565/648, -15575/648, 101261/648, -545255/648, 2649929/648]
 

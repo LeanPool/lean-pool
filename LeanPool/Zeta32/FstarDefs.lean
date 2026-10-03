@@ -18,16 +18,19 @@ namespace Zeta32
 noncomputable section
 
 /-- `W(x) = (2/3)(πx − 2(x·atan(1/x) + log(1+x²)/2) + (x·atan(5/x) + 5·log(1+x²/25)/2)/2)`. -/
+@[expose]
 def Wt (x : ℝ) : ℝ :=
   (2/3) * (Real.pi * x - 2 * (x * Real.arctan (1/x) + Real.log (1 + x^2) / 2)
     + (x * Real.arctan (5/x) + 5 * Real.log (1 + x^2/25) / 2) / 2)
 
 /-- `G(c,x) = log((√(c²+a²) + √(a²−x²)) / (√(c²+a²) − √(a²−x²)))`. -/
+@[expose]
 def Gfun (a c x : ℝ) : ℝ :=
   Real.log ((Real.sqrt (c^2 + a^2) + Real.sqrt (a^2 - x^2)) / (Real.sqrt (c^2 + a^2) - Real.sqrt
     (a^2 - x^2)))
 
 /-- `ρ_a(x)`, g = (1/3, 5/3, 4/3) on (0,1), [1,5), [5,∞). -/
+@[expose]
 def rhoA (a x : ℝ) : ℝ :=
   ((1/3) * (Gfun a 0 x - Gfun a 1 x) + (5/3) * (Gfun a 1 x - Gfun a 5 x) + (4/3) * Gfun a 5 x) /
     (4 * Real.pi)
@@ -53,6 +56,7 @@ def FstarInput : Prop :=
     9 * (3/2 - Real.log 3) + (9/2) * (ellA a - 2 * ∫ x in (0:ℝ)..a, Wt x * rhoA a x) ≤ -6
 
 /-- Rational lower endpoint for the equilibrium-support parameter. -/
+@[expose]
 def aMinus : ℝ := 93331/50000
 /-- Rational upper endpoint for the equilibrium-support parameter. -/
 def aPlus : ℝ := 186663/100000

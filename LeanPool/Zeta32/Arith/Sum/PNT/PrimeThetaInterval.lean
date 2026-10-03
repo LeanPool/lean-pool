@@ -22,6 +22,7 @@ noncomputable section
 export Zeta5Irrational (cPrime)
 
 /-- Sum of prime logarithms over the integer indices in the interval `(a, b]`. -/
+@[expose]
 def logSum (a b : ℝ) : ℝ := ∑ k ∈ Finset.Ioc ⌊a⌋₊ ⌊b⌋₊, cPrime k
 
 lemma theta_eq_sum_cPrime (t : ℝ) :

@@ -40,9 +40,11 @@ def IA (a : ℝ) : ℝ := ID (rhoA a) a
 def gtil (c : ℝ) : ℝ := if c < 1 then 1/3 else if c < 5 then 5/3 else 4/3
 
 /-- `u_c = √(c² + a²)`. -/
+@[expose]
 def uC (a c : ℝ) : ℝ := √(c^2 + a^2)
 
 /-- The component density `ρ_c` of GLOBAL-INTEGRAL-v1 (9). -/
+@[expose]
 def rhoC (a c t : ℝ) : ℝ := c * √(a^2 - t^2) / (2 * π * uC a c * (t^2 + c^2))
 
 /-- Potential of the component `ρ_c`. -/
