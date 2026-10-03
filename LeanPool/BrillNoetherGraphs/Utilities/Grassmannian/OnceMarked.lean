@@ -81,6 +81,7 @@ def onceMarkedCorners (lambda : YoungDiagram) : List Corner :=
 
 /-- The `i`th part of a Young diagram, extended by zero beyond its positive
 row list. -/
+@[expose]
 def onceMarkedPart (lambda : YoungDiagram) (i : ℕ) : ℕ :=
   lambda.rowLens.getD i 0
 

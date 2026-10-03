@@ -268,6 +268,7 @@ namespace Chip
 variable {spec N}
 
 /-- The fine position of a chip: offset `N * step + offset` along its slot. -/
+@[expose]
 def finePosition (c : spec.Chip N) : (spec.scale N hN).PathPosition c.edge :=
   ⟨N * c.step + c.offset, by
     have h1 : N * (c.step + 1) ≤ N * spec.length c.edge :=
@@ -300,6 +301,7 @@ def distance (c : spec.Chip N) : ℕ :=
 /-- The signed rounding cost: positive when rounding right, negative when
 rounding left.  Adding it to the fine height at the right end of the step
 plays the role of moving the chip. -/
+@[expose]
 def signedCost (c : spec.Chip N) : ℤ :=
   if c.toRight then (N : ℤ) - (c.offset : ℤ) else -(c.offset : ℤ)
 
@@ -370,6 +372,7 @@ def fineValue (σ : firingScript (spec.scale N hN).graph) (edge : Fin p) (j : �
   else 0
 
 /-- The fine slope across fine step `j` of slot `edge`. -/
+@[expose]
 def fineSlope (σ : firingScript (spec.scale N hN).graph) (edge : Fin p) (j : ℕ) : ℤ :=
   spec.fineValue N hN σ edge (j + 1) - spec.fineValue N hN σ edge j
 
@@ -391,6 +394,7 @@ def roundedScript (κ : Fin N) (σ : firingScript (spec.scale N hN).graph) :
 
 /-- The coarse slope of the rounded script across coarse step `k` of slot
 `edge`. -/
+@[expose]
 def roundedSlope (κ : Fin N) (σ : firingScript (spec.scale N hN).graph)
     (edge : Fin p) (k : ℕ) : ℤ :=
   round N κ (spec.fineValue N hN σ edge (N * (k + 1))) -

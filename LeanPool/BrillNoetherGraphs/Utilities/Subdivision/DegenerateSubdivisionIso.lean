@@ -80,12 +80,14 @@ def stepOffsetEquiv (e : Fin p) :
     (finCongr (r.length_eq e))
 
 /-- The vertex equivalence induced by a closed-face relabeling. -/
+@[expose]
 def vertexEquiv : source.Vertex ≃ target.Vertex :=
   Equiv.sumCongr r.classEquiv
     (Equiv.sigmaCongr r.slotEquiv
       (fun e => interiorEquiv source target r e))
 
 /-- The unit-step occurrence equivalence induced by a closed-face relabeling. -/
+@[expose]
 def stepEquiv : source.Step ≃ target.Step :=
   Equiv.sigmaCongr r.slotEquiv (fun e =>
     stepOffsetEquiv source target r e)

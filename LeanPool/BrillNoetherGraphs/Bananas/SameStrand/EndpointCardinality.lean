@@ -27,6 +27,7 @@ namespace Bananas
 open Utilities
 
 /-- Encode an unordered endpoint pair by its minimum and one more than its maximum. -/
+@[expose]
 noncomputable def endpointPairEmbedding (g : ℕ) : Sym2 (Fin g) → ℤ × ℤ :=
   Sym2.lift ⟨(fun (a b : Fin g) => (((min a.val b.val : ℕ) : ℤ),
     ((max a.val b.val + 1 : ℕ) : ℤ))), by

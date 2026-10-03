@@ -146,6 +146,7 @@ def stepRight (e : Fin p) (o : Fin (d.length e)) : d.Vertex :=
   else d.interiorVertex e ⟨o.val, by have := o.isLt; omega⟩
 
 /-- The ordered endpoint pair of a unit-step occurrence in the degenerate subdivision. -/
+@[expose]
 def unitEdge (s : d.Step) : d.Vertex × d.Vertex :=
   (d.stepLeft s.1 s.2, d.stepRight s.1 s.2)
 

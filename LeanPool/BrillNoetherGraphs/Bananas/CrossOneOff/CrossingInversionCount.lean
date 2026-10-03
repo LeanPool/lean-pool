@@ -25,6 +25,7 @@ open Utilities
 
 /-- Normalize an ordinary inversion by translating its first coordinate into
 the fundamental interval `[0, k)`. -/
+@[expose]
 def normalizeInversionFirst (k : ℕ) (p : ℤ × ℤ) : ℤ × ℤ :=
   (p.1 % k, p.2 - (p.1 / k) * k)
 

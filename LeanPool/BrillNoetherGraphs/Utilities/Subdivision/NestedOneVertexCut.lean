@@ -162,6 +162,7 @@ theorem restrictRightLeftVertex_bijective
 /-- Flatten the left factor of a restricted cut back to the second cut's
 original left factor.  This removes the two layers of induced-subgraph
 subtypes without changing any edge multiplicity. -/
+@[expose]
 noncomputable def restrictRightLeftIso
     (hLeft : second.left ⊆ first.right) :
     CFGraphIso (first.restrictRight second hLeft).leftGraph second.leftGraph where

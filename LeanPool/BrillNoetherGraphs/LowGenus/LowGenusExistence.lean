@@ -38,6 +38,7 @@ def GenusFourRankOneExistence : Prop :=
   ∀ (G : CFGraph.{0}), graphConnected G → CFGraph.genus G = 4 → BNExists G 1 3
 
 /-- The genus-five geometric heart of the Atanasov--Ranganathan theorem. -/
+@[expose]
 def GenusFiveRankOneExistence : Prop :=
   ∀ (G : CFGraph.{0}), graphConnected G → CFGraph.genus G = 5 → BNExists G 1 4
 

@@ -47,6 +47,7 @@ variable {n p : ℕ}
 
 /-- **The slot correspondence.**  The edge multiset of a subdivision, viewed as
 a type, enumerates the unit steps — compatibly with `unitEdge`. -/
+@[expose]
 noncomputable def stepEquivEdges (spec : Spec n p) :
     spec.Step ≃ (spec.graph.edges : Type) := by
   classical

@@ -269,6 +269,7 @@ theorem segment_positive_of_valid
   omega
 
 /-- The natural-number segment length decoded from an integral point. -/
+@[expose]
 def segmentNat (certificate : CertificateData m n p)
     (point : Fin m → ℤ) (edge : Fin p) : ℕ :=
   ((certificate.segment edge).eval point).toNat

@@ -87,6 +87,7 @@ def rampScript (spec : SubdivisionGraph.Spec n p) (pot : Fin n → ℤ)
   spec.slotValueScript pot (rampValue spec pot sgn lo t)
 
 /-- Unit-step slopes of a ramp script. -/
+@[expose]
 def rampSlope (sgn : Fin p → ℤ) (lo : Fin p → ℕ) (t : ℕ) :
     Fin p → ℕ → ℤ :=
   fun edge k => if lo edge ≤ k ∧ k < lo edge + t then sgn edge else 0

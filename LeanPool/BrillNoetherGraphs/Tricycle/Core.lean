@@ -74,21 +74,27 @@ theorem tricycleCore_connected : tricycleCore.Connected := by
 def centre : Fin 7 := 0
 
 /-- The transition vertices `vᵢ⁻`. -/
+@[expose]
 def vMinus : Fin 3 → Fin 7 := ![1, 3, 5]
 
 /-- The transition vertices `vᵢ⁺`. -/
+@[expose]
 def vPlus : Fin 3 → Fin 7 := ![2, 4, 6]
 
 /-- The spoke slot `v₀ — vᵢ⁻`. -/
+@[expose]
 def spokeMinus : Fin 3 → Fin 15 := ![0, 2, 4]
 
 /-- The spoke slot `v₀ — vᵢ⁺`. -/
+@[expose]
 def spokePlus : Fin 3 → Fin 15 := ![1, 3, 5]
 
 /-- The two parallel slots of the cycle `Cᵢ`. -/
+@[expose]
 def cycleSlot : Fin 3 → Fin 2 → Fin 15 := ![![6, 7], ![8, 9], ![10, 11]]
 
 /-- The transition slot leaving `vᵢ⁺`. -/
+@[expose]
 def transitionSlot : Fin 3 → Fin 15 := ![12, 13, 14]
 
 /-- The six spoke slots. -/

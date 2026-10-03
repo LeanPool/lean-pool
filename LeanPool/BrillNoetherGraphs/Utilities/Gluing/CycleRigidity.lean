@@ -178,6 +178,7 @@ theorem core_connected : core.Connected := by
   exact core.connectedCheck_eq_true_iff.mp (by decide)
 
 /-- Two positive subdivided paths with common endpoints. -/
+@[expose]
 def spec (length : Fin 2 → ℕ) (hLength : ∀ edge, 0 < length edge) :
     SubdivisionGraph.Spec 2 2 where
   core := core

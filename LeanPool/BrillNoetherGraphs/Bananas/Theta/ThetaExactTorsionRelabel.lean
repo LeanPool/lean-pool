@@ -48,6 +48,7 @@ def thetaNormalizedBanana (B : Banana 2) (alpha beta : Fin 3) : Banana 2 :=
   specReindex B (Equiv.refl (Fin 2)) (thetaNormalizeSlots alpha beta) (by omega)
 
 /-- The relabeling identifying a theta banana with the normalization of its two chosen strands. -/
+@[expose]
 def thetaNormalizationRelabeling (B : Banana 2) (alpha beta : Fin 3) :
     B.Relabeling (thetaNormalizedBanana B alpha beta) :=
   specReindexRelabeling B (Equiv.refl (Fin 2))

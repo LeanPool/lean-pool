@@ -44,6 +44,7 @@ Theorem 3.9.  The first two clauses are exchanged by globally swapping the
 two multivalent vertices.  The latter two clauses are the correction: a
 midpoint on a length-two strand is exceptional against every interior mark on
 a distinct strand, not only a near-endpoint mark. -/
+@[expose]
 def NSMForBananaInteriorException {g : ℕ} (B : Banana g)
     (α β : Fin (g + 1)) (i : B.PathPosition α) (j : B.PathPosition β) : Prop :=
   α ≠ β ∧

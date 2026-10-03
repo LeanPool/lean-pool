@@ -51,6 +51,7 @@ def row095Core : Core 6 9 where
 
 /-- The six-vertex cubic core for genus-four atlas row 096, with oriented slots `0→4, 0→5, 0→5,
 1→3, 1→4, 1→4, 2→3, 2→3, 2→5` in index order. -/
+@[expose]
 def row096Core : Core 6 9 where
   tail := ![0, 0, 0, 1, 1, 1, 2, 2, 2]
   head := ![4, 5, 5, 3, 4, 4, 3, 3, 5]

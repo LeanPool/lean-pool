@@ -30,6 +30,7 @@ coordinate in the fundamental period.  The proof of Lemma 4.10 sums the
 inversion rows in precisely this normalization.  We retain the original
 `kInversions` definition (which normalizes the first coordinate) for the
 public K-general-transmission contract. -/
+@[expose]
 def kInversionsBySecond (k : ℕ) (τ : ℤ → ℤ) : Set (ℤ × ℤ) :=
   {p | p.1 < p.2 ∧ τ p.1 > τ p.2 ∧ 0 ≤ p.2 ∧ p.2 < k}
 

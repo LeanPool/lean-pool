@@ -373,6 +373,7 @@ theorem le_sum_of_member {F : Fin n → ℤ} (r u : Fin n)
 
 /-- The script whose value at path position `k` of slot `edge` is
 `value edge k`, and `potential (rep v)` at the class of the core vertex `v`. -/
+@[expose]
 def slotValueScript (potential : Fin n → ℤ) (value : Fin p → ℕ → ℤ) :
     firingScript d.graph
   | Sum.inl c => potential c.val

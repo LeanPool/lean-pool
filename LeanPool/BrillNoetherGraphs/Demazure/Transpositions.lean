@@ -645,6 +645,7 @@ theorem asp_residual_sigma_sf (S : Set ℤ) (hS : NoConsecutive S)
 
 /-- The subset of $S$ where right multiplication by $\sigma_S$ should increase the
 permutation in Bruhat order. -/
+@[expose]
 def risingSet (α : AspPerm) (S : Set ℤ) : Set ℤ :=
   {n : ℤ | n ∈ S ∧ α n < α (n + 1)}
 

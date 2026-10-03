@@ -487,6 +487,7 @@ theorem entryOf_rowsOf {n deg : ℕ} {M : ℕ → ℕ → ℕ} (h : Conditions n
 
 /-- The unordered vertex-pair multiplicity table of an ordered core, as a
 total function on `ℕ`. -/
+@[expose]
 def matrixOf {n p : ℕ} (core : Core n p) (i j : ℕ) : ℕ :=
   if hi : i < n then
     if hj : j < n then core.pairMultiplicity ⟨i, hi⟩ ⟨j, hj⟩ else 0

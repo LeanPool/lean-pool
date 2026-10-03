@@ -207,6 +207,7 @@ theorem splitEdgeCount_eq_edgeCount_add_loopCount :
   omega
 
 /-- Cyclomatic genus of the loopless split incidence data. -/
+@[expose]
 def splitTopologicalGenus : ℤ :=
   (core.splitEdgeCount : ℤ) - (n + core.loopCount : ℕ) + 1
 

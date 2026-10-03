@@ -34,6 +34,7 @@ open Utilities.Certificate.SubdivisionGraph.Spec
 
 /-- The divisor attached in Proposition 2.14 to coordinates represented by
 positions on their respective strands. -/
+@[expose]
 def bananaPositionCoordinateDivisor {g : ℕ} (B : Banana g)
     (p : ∀ alpha : Fin (g + 1), B.PathPosition alpha) : CFDiv B.graph :=
   ∑ alpha : Fin (g + 1),
@@ -49,6 +50,7 @@ def bananaPositionCoordinates {g : ℕ} (B : Banana g)
 /-- The paper's three conditions for its preferred coordinate representatives.
 The bounds `0 ≤ a_alpha ≤ n_alpha` are built into `PathPosition`; the two
 remaining clauses are recorded literally. -/
+@[expose]
 def IsPaperReducedPositionCoordinates {g : ℕ} (B : Banana g)
     (p : ∀ alpha : Fin (g + 1), B.PathPosition alpha) : Prop :=
   (∃ alpha, (p alpha).val = 0) ∧

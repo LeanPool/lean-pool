@@ -194,6 +194,7 @@ def scaleOneRelabeling {n p : ℕ} (spec : Spec n p) :
 
 See the module docstring for why this is neither `metricGonality` nor
 `stableGonality`. -/
+@[expose]
 noncomputable def regularSubdivisionGonality {n p : ℕ} (spec : Spec n p) : ℕ :=
   sInf {d : ℕ | ∃ (k : ℕ) (hk : 0 < k), divisorialGonality (spec.scale k hk).graph = d}
 

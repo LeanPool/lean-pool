@@ -200,6 +200,7 @@ noncomputable def eEquiv : BigE C ≃ Fin (3 * (p - n)) :=
   Fintype.equivFinOfCardEq (card_bigE C hDeg)
 
 /-- The centipede expansion datum. -/
+@[expose]
 noncomputable def data : ExpansionData n p (2 * (p - n)) (3 * (p - n)) where
   bigCore :=
     { tail := fun e => vEquiv C hDeg (bigTail C hDeg ((eEquiv C hDeg).symm e))

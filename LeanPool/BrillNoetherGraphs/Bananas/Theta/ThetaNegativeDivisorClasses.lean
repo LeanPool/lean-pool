@@ -50,6 +50,7 @@ def divisorClass (G : CFGraph) (D : CFDiv G) : DivisorClass G :=
 
 /-- Classes which possess a representative with negative marked rank
 difference.  This is literally the paper's set `{[D] : Δ(D) < 0}`. -/
+@[expose]
 def negativeRankDeltaClasses (M : TwiceMarked) : Set (DivisorClass M.graph) :=
   {c | ∃ D : CFDiv M.graph, divisorClass M.graph D = c ∧ rankDelta M D < 0}
 

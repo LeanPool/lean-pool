@@ -79,12 +79,14 @@ noncomputable def cut (marker : Fin core.loopCount)
 
 /-- The base graph remaining on the right side of the cut after separating the selected loop
 marker. -/
+@[expose]
 noncomputable def base (marker : Fin core.loopCount)
     (hCore : spec.core = split.splitCore)
     (hCompatible : PseudocoreSplitGlue.Compatible split) : CFGraph :=
   (cut split spec marker hCore hCompatible).rightGraph
 
 /-- The left factor isolated by the selected loop-marker cut. -/
+@[expose]
 noncomputable def factor (marker : Fin core.loopCount)
     (hCore : spec.core = split.splitCore)
     (hCompatible : PseudocoreSplitGlue.Compatible split) : CFGraph :=
