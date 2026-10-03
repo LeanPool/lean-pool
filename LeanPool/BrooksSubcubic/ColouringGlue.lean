@@ -23,8 +23,8 @@ namespace BrooksSubcubic
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- **Glue lemma at a cut vertex.** If `A ∪ B = V`, `A ∩ B = {x}` (encoded by `x ∈ A`, `x ∈ B`
-and the no-cross hypothesis), no `G`-edge joins `A∖{x}` to `B∖{x}`, and both induced subgraphs
+/-- **Glue lemma at a cut vertex.** If A and B cover V, x belongs to both,
+no G-edge joins A∖{x} to B∖{x}, and both induced subgraphs
 `G[A]`, `G[B]` are 3-colourable, then `G` is 3-colourable. Proof: pick colourings `cA, cB`;
 recolour `B` by the transposition `swap (cB x) (cA x)` so both agree at `x`; glue with `A` taking
 priority. Every edge lies inside `A` or inside `B` — a cross edge would violate the no-cross

@@ -5,6 +5,7 @@ Authors: Juan Pablo Traverso Gianini
 -/
 module
 
+public import Mathlib.Combinatorics.SimpleGraph.DeleteEdges
 public import Mathlib.Tactic.NormNum
 
 public import LeanPool.BrooksSubcubic.CutColouring
@@ -28,13 +29,19 @@ namespace BrooksSubcubic
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-- `G` with all edges incident to `v₀` removed (same vertex set). -/
-def deleteStar (G : SimpleGraph V) (v₀ : V) : SimpleGraph V where
-  Adj x y := G.Adj x y ∧ x ≠ v₀ ∧ y ≠ v₀
-  symm := ⟨fun _ _ ⟨h, hx, hy⟩ => ⟨h.symm, hy, hx⟩⟩
-  loopless := by refine ⟨fun x h => ?_⟩; exact h.1.ne rfl
+def deleteStar (G : SimpleGraph V) (v₀ : V) : SimpleGraph V :=
+  G.deleteIncidenceSet v₀
 
+omit [Fintype V] [DecidableEq V] in
+/-- Adjacency in the graph with the edges at v₀ removed. -/
+theorem deleteStar_adj (G : SimpleGraph V) (v₀ x y : V) :
+    (deleteStar G v₀).Adj x y ↔ G.Adj x y ∧ x ≠ v₀ ∧ y ≠ v₀ :=
+  SimpleGraph.deleteIncidenceSet_adj
+
+omit [Fintype V] in
 instance (G : SimpleGraph V) [DecidableRel G.Adj] (v₀ : V) :
-    DecidableRel (deleteStar G v₀).Adj := by intro x y; unfold deleteStar; infer_instance
+    DecidableRel (deleteStar G v₀).Adj := fun x y =>
+  decidable_of_iff (G.Adj x y ∧ x ≠ v₀ ∧ y ≠ v₀) (deleteStar_adj G v₀ x y).symm
 
 /-- Neighbours of `x ≠ v₀` in `deleteStar G v₀` are exactly `N_G(x)` with `v₀` erased. -/
 theorem deleteStar_neighborFinset (G : SimpleGraph V) [DecidableRel G.Adj] (v₀ x : V)
@@ -42,7 +49,7 @@ theorem deleteStar_neighborFinset (G : SimpleGraph V) [DecidableRel G.Adj] (v₀
     (deleteStar G v₀).neighborFinset x = (G.neighborFinset x).erase v₀ := by
   classical
   ext w
-  simp only [SimpleGraph.mem_neighborFinset, Finset.mem_erase]
+  simp only [SimpleGraph.mem_neighborFinset, deleteStar_adj, Finset.mem_erase]
   constructor
   · rintro ⟨hadj, _, hw⟩; exact ⟨hw, hadj⟩
   · rintro ⟨hw, hadj⟩; exact ⟨hadj, hx, hw⟩
@@ -118,7 +125,7 @@ theorem exists_brooks_rank_of_descent (G : SimpleGraph V) [DecidableRel G.Adj] (
             exact he_inj (hex.symm.trans hey)
   have hbcard : ((deleteStar G v₀).neighborFinset b).filter (fun w => rank w < rank b) = ∅ := by
     rw [Finset.filter_eq_empty_iff]; intro w hw
-    rw [SimpleGraph.mem_neighborFinset] at hw
+    rw [SimpleGraph.mem_neighborFinset, deleteStar_adj] at hw
     have hwa : w ≠ a := by rintro rfl; exact hnadj hw.1.symm
     rw [hrb]; intro hlt
     by_cases hwb : w = b
@@ -136,7 +143,7 @@ theorem exists_brooks_rank_of_descent (G : SimpleGraph V) [DecidableRel G.Adj] (
         · rw [huv]
           have hemp : (deleteStar G v₀).neighborFinset v₀ = ∅ := by
             rw [Finset.eq_empty_iff_forall_notMem]; intro w hw
-            rw [SimpleGraph.mem_neighborFinset] at hw; exact hw.2.1 rfl
+            rw [SimpleGraph.mem_neighborFinset, deleteStar_adj] at hw; exact hw.2.1 rfl
           rw [hemp]; simp
         · rw [deleteStar_neighborFinset G v₀ u huv]
           by_cases hun : G.Adj v₀ u
@@ -278,11 +285,11 @@ theorem colorable_of_good_triple (G : SimpleGraph V) [DecidableRel G.Adj] (v₀ 
       exact hcol₀ (Finset.mem_image.mpr
         ⟨x, by rw [SimpleGraph.mem_neighborFinset]; exact hxy.symm, heq⟩)
     · rw [Function.update_of_ne hxv, Function.update_of_ne hyv]
-      exact hproper x y ⟨hxy, hxv, hyv⟩
+      exact hproper x y ((deleteStar_adj G v₀ x y).mpr ⟨hxy, hxv, hyv⟩)
 
 omit [DecidableEq V] in
-/-- **B (reduction, non-2-connected case).** If no good triple exists (equivalently `G` is not
-2-connected — a bridged/cut-vertex cubic graph), `G` is still 3-colourable by a cut-vertex/block
+/-- **B (reduction, non-2-connected case).** A connected cubic K₄-free graph with no good
+triple has a cut vertex and is three-colourable by a cut-vertex/block
 reduction. The mechanical and structural halves are fully proved by hand:
 `colorable_of_cut_partition` (each component-plus-`x` has `x` at degree `< 3`, so the non-regular
 case colours it, and `colorable_glue_at_vertex` merges at `x`), with Lovász cut-existence providing

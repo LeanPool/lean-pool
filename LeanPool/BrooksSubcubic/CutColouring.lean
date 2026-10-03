@@ -107,18 +107,7 @@ theorem colorable_of_cut_partition (G : SimpleGraph V) [DecidableRel G.Adj]
   have hApiece : (G.induce ((A : Finset V) : Set V)).Colorable 3 := by
     apply connected_colorable_three_of_exists_degree_lt _ hAconn
     · intro v
-      have h1 : ((G.induce ((A : Finset V) : Set V)).neighborFinset v).image Subtype.val
-          ⊆ G.neighborFinset v.val := by
-        intro z hz; rw [Finset.mem_image] at hz; obtain ⟨y, hy, rfl⟩ := hz
-        rw [mem_neighborFinset] at hy ⊢
-        simpa [SimpleGraph.induce, SimpleGraph.comap] using hy
-      calc (G.induce ((A : Finset V) : Set V)).degree v
-          = ((G.induce ((A : Finset V) : Set V)).neighborFinset v).card :=
-            ((G.induce _).card_neighborFinset_eq_degree v).symm
-        _ = (((G.induce ((A : Finset V) : Set V)).neighborFinset v).image Subtype.val).card :=
-            (Finset.card_image_of_injective _ Subtype.val_injective).symm
-        _ ≤ (G.neighborFinset v.val).card := Finset.card_le_card h1
-        _ = 3 := by rw [G.card_neighborFinset_eq_degree, hreg v.val]
+      exact (induce_degree_le G (A : Set V) v).trans (le_of_eq (hreg v.val))
     · -- x has degree < 3 in G[A] : misses its B₀-neighbour bz
       have hxmem : x ∈ ((A : Finset V) : Set V) := by simp [hA]
       refine ⟨⟨x, hxmem⟩, ?_⟩
@@ -150,18 +139,7 @@ theorem colorable_of_cut_partition (G : SimpleGraph V) [DecidableRel G.Adj]
   have hBpiece : (G.induce ((B : Finset V) : Set V)).Colorable 3 := by
     apply connected_colorable_three_of_exists_degree_lt _ hBconn
     · intro v
-      have h1 : ((G.induce ((B : Finset V) : Set V)).neighborFinset v).image Subtype.val
-          ⊆ G.neighborFinset v.val := by
-        intro z hz; rw [Finset.mem_image] at hz; obtain ⟨y, hy, rfl⟩ := hz
-        rw [mem_neighborFinset] at hy ⊢
-        simpa [SimpleGraph.induce, SimpleGraph.comap] using hy
-      calc (G.induce ((B : Finset V) : Set V)).degree v
-          = ((G.induce ((B : Finset V) : Set V)).neighborFinset v).card :=
-            ((G.induce _).card_neighborFinset_eq_degree v).symm
-        _ = (((G.induce ((B : Finset V) : Set V)).neighborFinset v).image Subtype.val).card :=
-            (Finset.card_image_of_injective _ Subtype.val_injective).symm
-        _ ≤ (G.neighborFinset v.val).card := Finset.card_le_card h1
-        _ = 3 := by rw [G.card_neighborFinset_eq_degree, hreg v.val]
+      exact (induce_degree_le G (B : Set V) v).trans (le_of_eq (hreg v.val))
     · have hxmem : x ∈ ((B : Finset V) : Set V) := by simp [hB]
       refine ⟨⟨x, hxmem⟩, ?_⟩
       have haznotB : az ∉ B := by

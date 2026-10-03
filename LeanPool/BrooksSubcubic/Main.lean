@@ -37,16 +37,7 @@ theorem brooks_cubic (G : SimpleGraph V) [DecidableRel G.Adj]
   have hemb : H ↪g G := SimpleGraph.Embedding.induce c.supp
   have hdeg : ∀ v, H.degree v ≤ 3 := by
     intro v
-    have hinj : Function.Injective (fun x : c => x.val) := Subtype.val_injective
-    have himg : Finset.card (H.neighborFinset v) =
-        Finset.card ((H.neighborFinset v).map ⟨(fun x : c => x.val), hinj⟩) := by simp
-    rw [SimpleGraph.degree, himg]
-    apply (Finset.card_le_card ?_).trans ((G.degree_le_maxDegree v.val).trans hΔ)
-    intro x hx
-    simp only [Finset.mem_map] at hx ⊢
-    obtain ⟨y, hy, rfl⟩ := hx
-    rw [SimpleGraph.mem_neighborFinset]
-    exact c.toSimpleGraph_hom.map_adj (by simpa only [SimpleGraph.mem_neighborFinset] using hy)
+    exact (induce_degree_le G c.supp v).trans ((G.degree_le_maxDegree v.val).trans hΔ)
   have hfree : H.CliqueFree 4 := hK4.comap ⟨hemb.toCopy⟩
   by_cases hlow : ∃ v, H.degree v < 3
   · exact connected_colorable_three_of_exists_degree_lt H hconn hdeg hlow
