@@ -389,6 +389,7 @@ section Colimit
 
 /-- **The local splitting algebra**: the colimit of the chain of
 symmetric powers along multiplication by the point. -/
+@[expose]
 noncomputable def splitAlgebra
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
@@ -398,6 +399,7 @@ noncomputable def splitAlgebra
   chainColimit (splitStage Y) (splitDelta Y pt)
 
 /-- The unit of the local splitting algebra: the included seed. -/
+@[expose]
 noncomputable def splitAlgebraUnit
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

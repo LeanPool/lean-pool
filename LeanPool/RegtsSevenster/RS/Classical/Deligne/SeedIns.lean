@@ -839,6 +839,7 @@ private theorem tensor_whiskerL [Category.{v} D] [MonoidalCategory D]
 
 /-- **The raw pair product**: both entries enter and multiply
 into the diagonal stage two levels up. -/
+@[expose]
 noncomputable def chainPairRaw
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

@@ -654,6 +654,7 @@ end Complement
 section Retract
 
 /-- The kernel inclusion of the complement, as a module map. -/
+@[expose]
 noncomputable def splitComplIncl
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasCoequalizers D] (A : D)
@@ -670,6 +671,7 @@ noncomputable def splitComplIncl
     exact splitComplAct_ι A B φ v w d hv hw)
 
 /-- The projection onto the complement, as a module map. -/
+@[expose]
 noncomputable def splitComplProjMod
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasCoequalizers D] (A : D)

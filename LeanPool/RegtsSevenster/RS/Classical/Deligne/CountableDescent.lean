@@ -261,7 +261,7 @@ noncomputable def towerIdx
   | n + 1 => nextStage A (towerIdx A i₀ n)
 
 /-- The rungs of the generated tower, as objects of `C`. -/
-@[reducible] noncomputable def towerObj
+@[expose, reducible] noncomputable def towerObj
     [SmallCategory C] [MonoidalCategory C] (A : Ind C) [MonObj A]
     (i₀ : A.presentation.I)
     (n : ℕ) : C :=
@@ -510,6 +510,7 @@ section ImageTower
 variable {C : Type v}
 
 /-- The rungs of the image tower. -/
+@[expose]
 noncomputable def imageRung
     [SmallCategory C] [MonoidalCategory C] [Abelian C] (A : Ind C)
     [MonObj A] (i₀ : A.presentation.I)

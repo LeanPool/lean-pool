@@ -258,6 +258,7 @@ theorem cSquare : RepairSquare cKappa 0 1 2 3 cV :=
 
 /-- The separated, path-canonical orientation: both chains enter
 the vertex through their low-label ends. -/
+@[expose]
 def cO : cKappa.Orientation where
   isOut := ![false, true, true, false, false, false, false, false]
   match_flip := fun f hf => by

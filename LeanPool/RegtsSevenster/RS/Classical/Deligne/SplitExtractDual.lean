@@ -791,6 +791,7 @@ section RetractDual
 
 /-- The kernel inclusion of the dual complement, as a module
 map. -/
+@[expose]
 noncomputable def splitComplInclDual
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasCoequalizers D] (A : D)
@@ -808,6 +809,7 @@ noncomputable def splitComplInclDual
     (by exact splitComplActDual_ι A B φ v w d hv hw)
 
 /-- The projection onto the dual complement, as a module map. -/
+@[expose]
 noncomputable def splitComplProjModDual
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasCoequalizers D] (A : D)

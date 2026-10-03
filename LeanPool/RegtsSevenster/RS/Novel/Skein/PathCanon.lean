@@ -172,6 +172,7 @@ end EdgeSubset
 /-- **The corrected independence interface**: the constrained
 summand at the open circuit count is independent of the choice of
 relative transition system and *path-canonical* orientation. -/
+@[expose]
 def ThroughIndependenceC : Prop :=
   ∀ {α : Type} [LinearOrder α] {W : Fragment α} (F : EdgeSubset W)
     {k ℓ : ℕ} (h : MixedFunctional k ℓ)

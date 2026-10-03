@@ -1582,6 +1582,7 @@ variable {F : EdgeSubset W}
 /-- The walk from `c` reaches `a` with internal pairings: the
 same-component configuration of the non-separated move (both the
 same-circuit and the same-chain reversal sub-cases). -/
+@[expose]
 def WalkReach (κ : F.RelTransitionSystem) (c a : W.Flag) : Prop :=
   ∃ m : ℕ, 1 ≤ m ∧
     (∀ j, j < m →

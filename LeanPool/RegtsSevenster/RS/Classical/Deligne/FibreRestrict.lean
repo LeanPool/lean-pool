@@ -34,6 +34,7 @@ variable {D : Type u}
 /-- **The algebra splits the image of a functor**: every object in
 the image becomes a mixed sum of copies of the unit and of the odd
 line after base change. -/
+@[expose]
 def SplitsOn [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [HasFiniteBiproducts D] (L : OddLine D) (R : D)
     [MonObj R] {C : Type u₂} [Category.{v₂} C] (F : C ⥤ D) : Prop :=
