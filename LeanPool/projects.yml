@@ -12567,9 +12567,7 @@ projects:
     status: verified
     provenance: AI
     main_declarations:
-      - SimpleGraph.isChordal_iff_nonempty_cliqueTree
       - SimpleGraph.isChordal_iff_nonempty_subtreeRepresentation
-      - SimpleGraph.IsChordal.treewidth_succ_eq_cliqueNum
     main_results:
       - declaration: SimpleGraph.IsChordal.exists_isPEO
         informal: Every finite chordal graph admits a perfect elimination order.

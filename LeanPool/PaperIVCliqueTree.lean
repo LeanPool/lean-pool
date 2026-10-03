@@ -22,7 +22,7 @@ public import LeanPool.PaperIVCliqueTree.TreewidthExact
 Source: url:https://github.com/jtraverso/erdos-81-chordal-clique-partitions
 Authors: Juan Pablo Traverso Gianini
 Status: verified
-Main declarations: `SimpleGraph.isChordal_iff_nonempty_cliqueTree`, `SimpleGraph.isChordal_iff_nonempty_subtreeRepresentation`, `SimpleGraph.IsChordal.treewidth_succ_eq_cliqueNum`
+Main declarations: `SimpleGraph.isChordal_iff_nonempty_subtreeRepresentation`
 Tags: graph-theory, chordal-graphs, clique-trees, perfect-elimination-orders, separators
 MSC: 05C75
 -/
