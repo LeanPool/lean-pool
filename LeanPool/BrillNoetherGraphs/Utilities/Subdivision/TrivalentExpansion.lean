@@ -131,11 +131,13 @@ def headEnd (j : Fin p) : slotEnds C (C.head j) :=
   ⟨(j, true), by simp [mem_slotEnds]⟩
 
 /-- Tail endpoint of an expansion slot. -/
+@[expose]
 noncomputable def bigTail : BigE C → BigV C
   | Sum.inl x => ⟨x.1, ⟨x.2.val, by have := x.2.isLt; omega⟩⟩
   | Sum.inr j => ⟨C.tail j, legOf C hDeg (C.tail j) (tailEnd C j)⟩
 
 /-- Head endpoint of an expansion slot. -/
+@[expose]
 noncomputable def bigHead : BigE C → BigV C
   | Sum.inl x => ⟨x.1, ⟨x.2.val + 1, by have := x.2.isLt; omega⟩⟩
   | Sum.inr j => ⟨C.head j, legOf C hDeg (C.head j) (headEnd C j)⟩

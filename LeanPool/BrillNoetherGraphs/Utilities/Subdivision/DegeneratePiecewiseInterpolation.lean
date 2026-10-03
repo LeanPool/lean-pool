@@ -45,6 +45,7 @@ def blockStart (blockEnd : Fin p → ℕ → ℕ) (e : Fin p) (block : ℕ) : �
   if block = 0 then 0 else blockEnd e (block - 1)
 
 /-- The canonical slope at a unit step, selected from its containing block. -/
+@[expose]
 def blockSlope (blockAt blockEnd : Fin p → ℕ → ℕ) (blockRise : Fin p → ℕ → ℤ)
     (e : Fin p) (k : ℕ) : ℤ :=
   let block := blockAt e k

@@ -34,12 +34,14 @@ variable {n p : ℕ} {core : ExplicitPotential.Core n p}
 
 /-- The three finite factor alternatives consumed by the genus-four wedge
 theorems.  The two-regular condition is required only on a genus-one side. -/
+@[expose]
 def GenusFourRankOneAlternatives (c : CoreVertexCut.Data core) : Prop :=
   (c.leftGenus = 2 ∧ c.rightGenus = 2) ∨
     (c.leftGenus = 3 ∧ c.RightTwoRegular ∧ c.rightGenus = 1) ∨
     (c.LeftTwoRegular ∧ c.leftGenus = 1 ∧ c.rightGenus = 3)
 
 /-- Exact mathematical conditions for the genus-four cut argument. -/
+@[expose]
 def GenusFourRankOneConditions (c : CoreVertexCut.Data core) : Prop :=
   c.Valid ∧ core.Connected ∧ c.GenusFourRankOneAlternatives
 

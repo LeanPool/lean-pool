@@ -79,9 +79,11 @@ theorem class_nonempty : Nonempty d.Class :=
   ⟨⟨d.rep ⟨0, d.core_nonempty⟩, d.rep_idem _⟩⟩
 
 /-- Number of contracted core classes. -/
+@[expose]
 def classCard : ℕ := Fintype.card d.Class
 
 /-- Number of surviving slots. -/
+@[expose]
 def slotCard : ℕ := Fintype.card d.PositiveSlot
 
 /-- An indexing of the contracted classes.  Any bijection will do; the

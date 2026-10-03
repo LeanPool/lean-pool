@@ -70,6 +70,7 @@ def ofOrderedLast (ends : List ℕ) (hNonempty : 0 < ends.length)
 def endAt (i : ℕ) : ℕ := b.ends.getD i L
 
 /-- The left endpoint of a block. -/
+@[expose]
 def startAt (i : ℕ) : ℕ := if i = 0 then 0 else b.endAt (i - 1)
 
 /-- The first (finite) block ending strictly after `k`; its arbitrary value

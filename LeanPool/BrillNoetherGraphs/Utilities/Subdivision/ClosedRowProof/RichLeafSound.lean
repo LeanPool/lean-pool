@@ -467,6 +467,7 @@ blocks) need no special case: they simply enlarge the run.
 
 /-- The chip sum used by W4, written in the same `List.range`/`foldl` form as
 the executable checker. -/
+@[expose]
 def w4ChipSum (chip : ℕ → ℤ) (i j : ℕ) : ℤ :=
   (List.range (j + 1 - i)).foldl (fun z t => z + chip (i + t)) 0
 

@@ -33,10 +33,12 @@ namespace RichWitness
 variable {m n p : ℕ}
 
 /-- The right end of block `i - 1`; index zero is the tail of the slot. -/
+@[expose]
 def point (w : RichWitness) (a e i : ℕ) : Form :=
   if i = 0 then [] else (w.block a e (i - 1)).endForm
 
 /-- The length of block `i`, as a form. -/
+@[expose]
 def blockLength (w : RichWitness) (a e i : ℕ) : Form :=
   subForm (w.block a e i).endForm (w.point a e i)
 
@@ -83,14 +85,17 @@ def headCandidate (w : RichWitness) (a e s : ℕ) : ℤ :=
 This is public because the closed-face soundness proof uses the elementary
 fact that it is bounded above by every candidate represented by a collapsed
 endpoint prefix/suffix. -/
+@[expose]
 def minOver (f : ℕ → ℤ) (bound : ℕ) : ℤ :=
   (List.range bound).foldl (fun z i => min z (f (i + 1))) (f 0)
 
 /-- The conservative W5 contribution of a slot at its tail. -/
+@[expose]
 def tailContribution (w : RichWitness) (a e : ℕ) : ℤ :=
   minOver (w.tailCandidate a e) ((w.plan a).headSlack.getD e 0)
 
 /-- The conservative W5 contribution of a slot at its head. -/
+@[expose]
 def headContribution (w : RichWitness) (a e : ℕ) : ℤ :=
   minOver (w.headCandidate a e) ((w.plan a).tailSlack.getD e 0)
 
@@ -101,10 +106,12 @@ def w4Residual (w : RichWitness) (a e i j : ℕ) : ℤ :=
     (w.block a e j).lo - (w.block a e (i - 1)).hi
 
 /-- The strict-integer certificate that a form is positive. -/
+@[expose]
 def positiveCheck (c : Cert) (Γ : Context) (f : Form) : Bool :=
   c.check Γ (subForm f [1])
 
 /-- W1: block order, final endpoint, and endpoint-slack discipline. -/
+@[expose]
 def w1Checks (w : RichWitness) (_core : ExplicitPotential.Core n p) (Γ : Context) : Bool :=
   ExplicitPotential.allFin (fun a : Fin n => ExplicitPotential.allFin fun e : Fin p =>
     let bs := w.blockList a.val e.val
@@ -124,6 +131,7 @@ def w1Checks (w : RichWitness) (_core : ExplicitPotential.Core n p) (Γ : Contex
 
 /-- W2: each block is realizable by convex interpolation and the block rises
 close the potential around every slot. -/
+@[expose]
 def w2Checks (w : RichWitness) (core : ExplicitPotential.Core n p) (Γ : Context) : Bool :=
   ExplicitPotential.allFin (fun a : Fin n => ExplicitPotential.allFin fun e : Fin p =>
     let k := (w.blockList a.val e.val).length
@@ -137,6 +145,7 @@ def w2Checks (w : RichWitness) (core : ExplicitPotential.Core n p) (Γ : Context
       (subForm (w.pot a.val (core.head e).val) (w.pot a.val (core.tail e).val)))
 
 /-- W3: each chip is on this slot's syntactically named interior point. -/
+@[expose]
 def w3Checks (w : RichWitness) (_core : ExplicitPotential.Core n p) : Bool :=
   w.chips.all (fun c => decide (c.1 < p)) &&
   ExplicitPotential.allFin (fun a : Fin n => ExplicitPotential.allFin fun e : Fin p =>
@@ -170,6 +179,7 @@ the *declared* endpoint slack.  That is unsound: `α` bounds how many named
 points **may** slide onto the tail, not how many **do**, so a run starting at
 `i ≤ α` can collapse at a strictly interior vertex whose residual then goes
 unchecked.  See the accompanying analysis. -/
+@[expose]
 def w4Checks (w : RichWitness) (_core : ExplicitPotential.Core n p) (Γ : Context) : Bool :=
   ExplicitPotential.allFin (fun a : Fin n => ExplicitPotential.allFin fun e : Fin p =>
     let k := (w.blockList a.val e.val).length

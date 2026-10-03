@@ -72,6 +72,7 @@ theorem Core.reorient_loopless {core : ExplicitPotential.Core n p}
     exact h e
 
 /-- The same subdivision, with a chosen set of slots read backwards. -/
+@[expose]
 def reorientSpec (s : SubdivisionGraph.Spec n p)
     (rev : Fin p → Bool) : SubdivisionGraph.Spec n p where
   core := Core.reorient s.core rev

@@ -270,6 +270,7 @@ The only face hypotheses are the two intrinsic graph checks: the zero set is
 a forest and its contraction creates no surviving loop.  Consequently one
 proof covers the positive subdivision and every honest nonloopy forest face,
 with no arbitrary representative map in the authoring interface. -/
+@[expose]
 def ClosedSubdivisionDharConstruction {n p : ℕ}
     (core : Certificate.ExplicitPotential.Core n p)
     (core_nonempty : 0 < n) : Prop :=

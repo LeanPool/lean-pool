@@ -91,6 +91,7 @@ theorem dot_eq_sum_range (l r : List ℤ) :
 
 /-- A `List ℤ` form, read as an `AffineForm m`: the head is the constant and
 entry `i + 1` is the coefficient of coordinate `i`. -/
+@[expose]
 def toAffineForm (m : ℕ) (g : Form) : ExplicitPotential.AffineForm m where
   fixedValue := g.getD 0 0
   coefficient := fun i => g.getD (i.val + 1) 0
@@ -293,6 +294,7 @@ def pot (a v : ℕ) : Form := (w.plan a).potential.getD v []
 def blockList (a e : ℕ) : List Block := (w.plan a).blocks.getD e []
 /-- Read a specified interpolation block, using the default block with inconsistent slope bounds
 for a missing entry. -/
+@[expose]
 def block (a e i : ℕ) : Block := (w.blockList a e).getD i Block.dflt
 /-- Read an anchor’s receipts for a slot and block, falling back to the default rich block
 certificate. -/
@@ -449,6 +451,7 @@ This is where the soundness hazard of `RESULTS.md` §9 is discharged: the
 `rep_loopless` field below is supplied by `hNotLoopy` and by nothing else. -/
 
 /-- The vanishing set of a length vector. -/
+@[expose]
 def zeroSet {p : ℕ} (ℓ : Fin p → ℕ) : Finset (Fin p) :=
   Finset.univ.filter (fun e => ℓ e = 0)
 
@@ -458,6 +461,7 @@ def zeroSet {p : ℕ} (ℓ : Fin p → ℕ) : Finset (Fin p) :=
 `hForest` is genus preservation and `hNotLoopy` is looplessness of the
 contracted core — which is exactly what the strong-separator step needs, and
 is why `DegSpec.strongSeparatorCertificate` can be hypothesis-free. -/
+@[expose]
 def censusSpec (core : ExplicitPotential.Core n p) (hn : 0 < n) (ℓ : Fin p → ℕ)
     (hForest : IsForest core (zeroSet ℓ))
     (hNotLoopy : ¬ IsLoopy core (zeroSet ℓ)) :
