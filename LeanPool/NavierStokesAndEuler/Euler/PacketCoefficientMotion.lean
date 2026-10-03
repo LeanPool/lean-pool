@@ -55,7 +55,7 @@ theorem normalized_motion_errors_within
     if i = 0 ∧ j = 1 then b' t else if i = 2 ∧ j = 1 then k' t else B t i j
   have hBeq : ∀ t ∈ Icc 0 Θ, ∀ i j, B' t i j = B t i j := by
     intro t ht i j
-    dsimp [B']
+    dsimp only [Fin.isValue, B']
     split_ifs with hb hk
     · rcases hb with ⟨rfl, rfl⟩
       exact hbeq ht

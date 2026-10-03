@@ -99,7 +99,8 @@ theorem forwardInitializedVelocity_global_gradient_error (N : ℕ) (hN : 1 ≤ N
   have hr0 : 0 ≤ L.R := zero_le_one.trans L.radius_one
   have hc0 := fixedVelocityGradeCost_nonneg L.R S.H0 hr0 1
   have hinv : ‖D.FInv.field t (Y x)‖ ≤ NB.C := by
-    simpa [majorant] using NB.inverse_bound 0 t (Y x)
+    simpa only [norm_iteratedFDeriv_zero, majorant, add_zero, pow_zero, Nat.factorial_zero,
+        Nat.cast_one, one_pow, mul_one] using NB.inverse_bound 0 t (Y x)
   have hprimary := EulerPacketForwardShear.global_gradient_bound D δ hδ ξ hs α k hk0
     (4*L.R) (fixedVelocityGradeCost L.R S.H0 1) NB.C (by positivity) hc0 NB.C_nonneg
     (forwardInitializedPrimary_global_bound M D hTime δ hδ ξ hs α
@@ -120,13 +121,15 @@ theorem forwardInitializedVelocity_global_gradient_error (N : ℕ) (hN : 1 ≤ N
       _ = _ := by ring
   have hp := ((((forcing D).vectorField (initialData D δ hδ (α • ξ) hs)).smul
       k⁻¹).raw_graph_contDiff
-    t k D.m₀).differentiable (by simp) (Y x)
+    t k D.m₀).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+        not_false_eq_true]) (Y x)
   have hpd : DifferentiableAt ℝ (fun y => k⁻¹ • vector D (initialData D δ hδ (α • ξ) hs)
       (t,(Y y,k*⟪D.m₀,Y y⟫_ℝ))) x := by
     simpa only [Function.comp_def,Pi.smul_apply] using hp.comp x hY.differentiableAt
   have hr := ((forwardInitializedPrimaryRemainderField M D hTime δ hδ ξ hs α N hN
       k⁻¹).raw_graph_contDiff
-    t k D.m₀).differentiable (by simp) (Y x)
+    t k D.m₀).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+        not_false_eq_true]) (Y x)
   have hrd : DifferentiableAt ℝ (fun y => forwardInitializedPrimaryRemainder M D δ hδ ξ hs α N k⁻¹
       (t,(Y y,k*⟪D.m₀,Y y⟫_ℝ))) x := by
     simpa only [Function.comp_def] using hr.comp x hY.differentiableAt

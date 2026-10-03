@@ -56,11 +56,11 @@ theorem finite_sobolev_viscous_energy {ι : Type*} [Fintype ι] {q : ℕ} (hq : 
   let β := transportEnergyConstant period (K t) κ m B
   let C := heatEnergyConstant period (K t) c
   have hβ : 0 ≤ β := by
-    dsimp [β, transportEnergyConstant]
+    dsimp only [transportEnergyConstant, β]
     exact mul_nonneg (mul_nonneg (by norm_num) (NNReal.coe_nonneg _))
       (mul_nonneg (add_nonneg (abs_nonneg _) (norm_nonneg _)) (NNReal.coe_nonneg _))
   have hC : 0 ≤ C := by
-    dsimp [C, heatEnergyConstant]
+    dsimp only [heatEnergyConstant, C]
     exact div_nonneg (mul_nonneg zero_le_two (sq_nonneg _)) (sq_nonneg _)
   have hcoer : ∀ u, c ^ 2 * ‖u‖ ^ 2 ≤ ⟪(K t).operator u, u⟫_ℝ :=
     coefficientOperator_coercive (K t).coefficient (K t).measurable
@@ -85,7 +85,7 @@ theorem finite_sobolev_viscous_energy {ι : Type*} [Fintype ι] {q : ℕ} (hq : 
     have h := metric_heat_bound period (K t) (value period (e i t)) (toJet period (e i t)) c hc hpos
     have hd : 0 ≤ ∑ j : Fin 4, ‖(toJet period (e i t)).word (fun _ : Fin 1 => j)‖ ^ 2 :=
       Finset.sum_nonneg (fun j _ => sq_nonneg _)
-    dsimp [C, heatEnergyConstant]
+    dsimp only [heatEnergyConstant, C]
     linarith only [h, mul_nonneg (sq_nonneg c) hd]
   have h := family_regularized_energy_evolution (fun s => (K s).operator) (fun i s => value period
       (e i s))

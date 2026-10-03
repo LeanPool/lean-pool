@@ -51,7 +51,7 @@ theorem coordinateQ_le_upperScale {a : ℝ} (ha : 0 < a) (ha1 : a < 1)
     have hpower : coordinateQ a p ^ (1 - a) < 2 * p.2 ^ 2 := by
       apply (mul_lt_mul_iff_left₀ hqa).mp
       rw [mul_comm (coordinateQ a p ^ (1 - a)), hprod]
-      dsimp [forwardScalar] at he
+      dsimp only [forwardScalar] at he
       nlinarith only [he, hsmall]
     have hbound := Real.rpow_le_rpow
       (Real.rpow_nonneg hq.le (1 - a)) hpower.le (inv_pos.mpr hd).le
@@ -65,7 +65,8 @@ theorem upperScale_continuous {a : ℝ} (ha1 : a < 1) : Continuous (upperScale a
 
 @[simp] theorem upperScale_origin {a : ℝ} (ha1 : a < 1) :
     upperScale a (0, 0) = 0 := by
-  simp [upperScale, Real.zero_rpow (inv_pos.mpr (sub_pos.mpr ha1)).ne']
+  simp only [upperScale, mul_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow,
+      Real.zero_rpow (inv_pos.mpr (sub_pos.mpr ha1)).ne', add_zero]
 
 /-- Joint approach; neither a fixed axial coordinate nor a prescribed path
 is required. Positive time is required eventually. -/
@@ -97,7 +98,7 @@ theorem physical_q_tendsto_zero {α : Type*} {l : Filter α}
     (hbefore : ∀ᶠ i in l, (p i).1 < 1) :
     Tendsto (fun i => SimilarityProfile.q h (p i)) l (𝓝 0) := by
   refine coordinateQ_tendsto_zero (by linarith only [hh]) (by linarith only [hh1]) ?_ hz ?_
-  · simpa using (tendsto_const_nhds :
+  · simpa only [sub_self] using (tendsto_const_nhds :
       Tendsto (fun _ : α => (1 : ℝ)) l (𝓝 1)).sub ht
   · exact hbefore.mono (fun _ hi => sub_pos.mpr hi)
 
@@ -112,7 +113,7 @@ theorem jet_tendsto_zero {D V : Type*} [NormedAddCommGroup D] [NormedSpace ℝ D
   obtain ⟨C, _, hbound⟩ := hjet
   apply tendsto_zero_iff_norm_tendsto_zero.mpr
   apply squeeze_zero' (Eventually.of_forall (fun _ => norm_nonneg _)) _
-    (show Tendsto (fun x => C * q x) l (𝓝 0) by simpa using hq.const_mul C)
+    (show Tendsto (fun x => C * q x) l (𝓝 0) by simpa only [mul_zero] using hq.const_mul C)
   exact hbound.mono (fun x hx => by simpa only [Real.rpow_one] using hx)
 
 end NavierStokes.SimilarityApproach

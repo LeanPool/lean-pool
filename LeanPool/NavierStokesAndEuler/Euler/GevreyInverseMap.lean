@@ -93,7 +93,7 @@ lemma predecessorFactorialProduct_extendLeft (c : OrderedFinpartition n) :
     (Nat.factorial (Fin.cons (α := fun _ => ℕ) 1 c.partSize i - 1) : ℝ)) =
       ∏ i : Fin c.length, ((c.partSize i - 1).factorial : ℝ)
   rw [Fin.prod_univ_succ]
-  simp
+  simp only [Fin.cons_zero, tsub_self, Nat.factorial_zero, Nat.cast_one, Fin.cons_succ, one_mul]
 
 lemma predecessorFactorialProduct_extendMiddle (c : OrderedFinpartition n)
     (i : Fin c.length) :
@@ -111,9 +111,9 @@ lemma predecessorFactorialProduct_extendMiddle (c : OrderedFinpartition n)
     · subst j
       simp only [Function.update_self, Nat.add_sub_cancel, ite_true]
       exact_mod_cast (Nat.mul_factorial_pred (c.partSize_pos i).ne').symm
-    · simp [h]
+    · simp only [ne_eq, h, not_false_eq_true, Function.update_of_ne, ↓reduceIte, one_mul]
   rw [he, Finset.prod_mul_distrib]
-  simp
+  simp only [Finset.prod_ite_eq', Finset.mem_univ, ↓reduceIte]
 
 lemma predecessorPartitionWeight_extendLeft (x : ℝ) (c : OrderedFinpartition n) :
     predecessorPartitionWeight x c.extendLeft =
@@ -171,8 +171,11 @@ theorem predecessorPartitionSum_le (n : ℕ) (hn : 0 < n)
   obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hn.ne'
   induction m with
   | zero =>
-    simp [predecessorPartitionSum, predecessorPartitionWeight,
-      predecessorFactorialProduct, OrderedFinpartition.default_eq]
+    simp only [predecessorPartitionSum, Nat.succ_eq_add_one, Nat.reduceAdd, Finset.univ_unique,
+        OrderedFinpartition.default_eq, predecessorPartitionWeight, predecessorFactorialProduct,
+        Finset.sum_singleton, OrderedFinpartition.atomic_length, pow_one, Nat.factorial_one,
+        Nat.cast_one, OrderedFinpartition.atomic_partSize, tsub_self, Nat.factorial_zero,
+        Finset.prod_const_one, mul_one, one_pow, zero_add, Std.le_refl]
   | succ m ih =>
     calc
       _ ≤ ((m+1 : ℕ) + 1 : ℝ)^2 * predecessorPartitionSum (m+1) x :=
@@ -295,7 +298,7 @@ theorem norm_iteratedFDeriv_of_fderiv_eq_comp
   have hCL : 0 ≤ C/L := div_nonneg hC hL.le
   have hhalf : (C/L)*R ≤ 1/2 := by
     rw [div_mul_eq_mul_div, div_le_iff₀ hL]
-    dsimp [L, inverseMapRadius]
+    dsimp only [inverseMapRadius, L]
     linarith only
   change ‖iteratedFDeriv ℝ (n+1) Y x‖ ≤ C * L^n * (n.factorial : ℝ)^2
   induction n using Nat.strong_induction_on generalizing x with
@@ -366,7 +369,7 @@ theorem contDiff_of_fderiv_eq_comp
   | succ n ih =>
     rw [Nat.cast_add, Nat.cast_one]
     apply contDiff_succ_iff_fderiv.2
-    refine ⟨hY, by simp, ?_⟩
+    refine ⟨hY, by simp only [WithTop.natCast_ne_top, IsEmpty.forall_iff], ?_⟩
     rw [show fderiv ℝ Y = A ∘ Y from funext hDY]
     exact (hA.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl _)).comp ih
 
@@ -400,7 +403,8 @@ theorem norm_iteratedFDeriv_inverseMap
     ‖iteratedFDeriv ℝ (n+1) Y x‖ ≤
       C * (inverseMapRadius C R)^n * (n.factorial : ℝ)^2 := by
   exact norm_iteratedFDeriv_of_fderiv_eq_comp Y A hY hA
-    (fderiv_eq_inverse_field X Y A hX (hY.differentiable (by simp)) hXY hleft)
+    (fderiv_eq_inverse_field X Y A hX (hY.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true])) hXY hleft)
     C R hC hR hAjet n x
 
 /-- Pullback by a map satisfying the actual inverse differential equation

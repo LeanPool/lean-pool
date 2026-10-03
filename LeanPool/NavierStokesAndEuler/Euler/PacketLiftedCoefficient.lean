@@ -106,7 +106,10 @@ private theorem tupleBounded_apply {ι : Type*} [Fintype ι]
     (u : ι → (X →ᵇ V)) (x : X) (i : ι) :
     tupleBounded (X := X) (V := V) (ι := ι) u x i = u i x := by
   classical
-  simp [tupleBounded]
+  simp only [tupleBounded, sum_apply, ContinuousLinearMap.comp_apply,
+      ContinuousLinearMap.proj_apply, BoundedContinuousFunction.coe_sum, Finset.sum_apply,
+      ContinuousLinearMap.compLeftContinuousBounded_apply, ContinuousLinearMap.single_apply,
+      Finset.sum_pi_single, Finset.mem_univ, ↓reduceIte]
 
 /-- Tensor path, bundling `toFun`, `continuous_toFun`. -/
 def tensorPath (n : ℕ) (A : E [×n]→L[ℝ] C(K, X →ᵇ V)) :
@@ -221,11 +224,13 @@ theorem tensorPath_iteratedFDeriv (f : E → C(K, X →ᵇ V)) (hf : ContDiff �
   change tensorPath n (iteratedFDeriv ℝ n f a) t x = _
   rw [tensorPath_eq]
   have ht := (ContinuousMap.evalCLM ℝ (M := X →ᵇ V) t).iteratedFDeriv_comp_left (x := a)
-    hf.contDiffAt (show (n : ℕ∞) ≤ ∞ by simp)
+    hf.contDiffAt (show (n : ℕ∞) ≤ ∞ by simp only [WithTop.coe_natCast, WithTop.le_coe_top, ne_eq,
+        WithTop.natCast_ne_top, not_false_eq_true])
   rw [← ht]
   exact ((BoundedContinuousFunction.evalCLM ℝ (β := V) x).iteratedFDeriv_comp_left
     ((ContinuousMap.evalCLM ℝ (M := X →ᵇ V) t).contDiff.comp hf).contDiffAt
-    (show (n : ℕ∞) ≤ ∞ by simp)).symm
+    (show (n : ℕ∞) ≤ ∞ by simp only [WithTop.coe_natCast, WithTop.le_coe_top, ne_eq,
+        WithTop.natCast_ne_top, not_false_eq_true])).symm
 
 end EulerContinuousBoundedTensor
 

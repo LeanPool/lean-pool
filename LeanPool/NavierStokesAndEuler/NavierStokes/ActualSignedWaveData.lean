@@ -539,7 +539,8 @@ theorem selection_other_label {E : Type*} [Zero E]
     (I : ActualSignedPhysicalData.SourceIndex) (n : ℕ) (y : Native) (hI : I.1.1 ≠ L) :
     selection g ⟨L, I⟩ n y = 0 := by
   classical
-  by_cases hL : L ∈ ActualSignedExterior.labels B N0 <;> simp [selection, hL, hI]
+  by_cases hL : L ∈ ActualSignedExterior.labels B N0 <;> simp only [selection, hL, ↓reduceDIte, hI,
+      Int.cast_ofNat_Int, Int.reduceNeg, false_and, ↓reduceIte]
 
 theorem selection_active_function {E : Type*} [Zero E]
     (g : (Label B N0 × Copy) → ℕ → Native → E) (I : SourceIndex) (n : ℕ)
@@ -559,7 +560,8 @@ theorem selection_zero_function {E : Type*} [Zero E]
   funext y
   rcases hz with hL | hI
   · simp only [selection, dite_eq_right hL]
-  · by_cases hL : I.1 ∈ ActualSignedExterior.labels B N0 <;> simp [selection, hL, hI]
+  · by_cases hL : I.1 ∈ ActualSignedExterior.labels B N0 <;> simp only [selection, hL, ↓reduceDIte,
+      Int.cast_ofNat_Int, Int.reduceNeg, hI, ↓reduceIte]
 
 theorem selection_uniform {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {α : ℝ} {g : (Label B N0 × Copy) → ℕ → Native → E}
@@ -856,7 +858,8 @@ theorem gate_amplitude_ne_zero_iff (f : CopyFamily H K) (k : K) (I : WaveIndex H
     (x : LiftPoint) :
     (gate f).amplitude k I x ≠ 0 ↔ x ∈ liftPast ∧ f.amplitude k I x ≠ 0 := by
   classical
-  by_cases hx : x ∈ liftPast <;> simp [gate, hx]
+  by_cases hx : x ∈ liftPast <;> simp only [gate, hx, ↓reduceIte, ne_eq, true_and,
+      not_true_eq_false, false_and]
 
 theorem gate_amplitude_germ (f : CopyFamily H K) (k : K) (I : WaveIndex H)
     {x : LiftPoint} (hx : x ∈ liftPast) :
@@ -1280,9 +1283,9 @@ theorem potential_support (i : Fin 3) :
       simpa only [potentialCopies, PositiveTimeCopyFamily.gate,
         ActualSignedPhysicalData.potentialFamily, extendedCarrier, dite_eq_left hL] using
         angular_integer sys f G ⟨L.val, L.property, hL⟩ k
-    · exact ⟨0, by simp [potentialCopies, PositiveTimeCopyFamily.gate,
-        ActualSignedPhysicalData.potentialFamily, extendedCarrier, hL,
-        ActualSignedPhysicalData.carrier]⟩
+    · exact ⟨0, by simp only [potentialCopies, PositiveTimeCopyFamily.gate, potentialFamily,
+        extendedCarrier, ActualSignedPhysicalData.carrier, Fin.isValue, Int.cast_ofNat_Int,
+        Int.reduceNeg, PhysicalGraphBounds.liftXY_apply, hL, ↓reduceDIte, mul_zero, Int.cast_zero]⟩
   geometry_support k I w hw := by
     obtain ⟨hpast, hraw⟩ := (PositiveTimeCopyFamily.gate_amplitude_ne_zero_iff
       (ActualSignedPhysicalData.potentialFamily sys hh f i) k I _).mp hw
@@ -1324,9 +1327,9 @@ theorem pressure_support :
       simpa only [pressureCopies, PositiveTimeCopyFamily.gate,
         ActualSignedPhysicalData.pressureFamily, extendedCarrier, dite_eq_left hL] using
         angular_integer sys f G ⟨L.val, L.property, hL⟩ k
-    · exact ⟨0, by simp [pressureCopies, PositiveTimeCopyFamily.gate,
-        ActualSignedPhysicalData.pressureFamily, extendedCarrier, hL,
-        ActualSignedPhysicalData.carrier]⟩
+    · exact ⟨0, by simp only [pressureCopies, PositiveTimeCopyFamily.gate, pressureFamily,
+        extendedCarrier, ActualSignedPhysicalData.carrier, Fin.isValue, Int.cast_ofNat_Int,
+        Int.reduceNeg, hL, ↓reduceDIte, mul_zero, Int.cast_zero]⟩
   geometry_support k I w hw := by
     obtain ⟨hpast, hraw⟩ := (PositiveTimeCopyFamily.gate_amplitude_ne_zero_iff
       (ActualSignedPhysicalData.pressureFamily sys hh f) k I _).mp hw
@@ -1474,7 +1477,8 @@ noncomputable def identitySourceChart {N : ℕ} {K I : Type}
     intro k J x hx j hj hjm
     simp only [pow_zero, mul_one]
     exact (PhysicalGraphBounds.norm_positive_jet_linear_le
-      (ContinuousLinearMap.id ℝ LiftPoint) x hj).trans (by simp)
+      (ContinuousLinearMap.id ℝ LiftPoint) x hj).trans (by simp only [ContinuousLinearMap.norm_id,
+          Std.le_refl])
   amplitude_eq k J x hx :=
     (PositiveTimeCopyFamily.gate_amplitude_eq f k J hx.2).trans (he k J x)
   contains k J z _ _ _ _ hz := by
@@ -2528,9 +2532,9 @@ theorem potential_frequencies (i : Fin 3) (k : TorusInverse.Frequency) (L : Band
       (singleton_frequencies_of_states s M) k L
   · rw [DependentSignedPhysicalFamily.Family.copyAt_inactive _ _ hL]
     have hP := zero_le_one.trans (ActualPhaseJetBounds.one_le_phaseSize (B := B) (N0 := N0))
-    exact ⟨by simpa [DependentSignedPhysicalFamily.zeroCopies] using hP,
-      by simpa [DependentSignedPhysicalFamily.zeroCopies] using hP,
-      by simpa [DependentSignedPhysicalFamily.zeroCopies] using hP⟩
+    exact ⟨by simpa only [DependentSignedPhysicalFamily.zeroCopies, Fin.isValue, abs_zero] using hP,
+      by simpa only [DependentSignedPhysicalFamily.zeroCopies, Fin.isValue, abs_zero] using hP,
+      by simpa only [DependentSignedPhysicalFamily.zeroCopies, Fin.isValue, abs_zero] using hP⟩
 
 theorem pressure_frequencies (k : TorusInverse.Frequency) (L : BandLabel) :
     |((pressureCopies s).carrier k L).angular| ≤ ActualPhaseJetBounds.phaseSize B N0 ∧
@@ -2551,9 +2555,9 @@ theorem pressure_frequencies (k : TorusInverse.Frequency) (L : BandLabel) :
       (singleton_frequencies_of_states s M) k L
   · rw [DependentSignedPhysicalFamily.Family.copyAt_inactive _ _ hL]
     have hP := zero_le_one.trans (ActualPhaseJetBounds.one_le_phaseSize (B := B) (N0 := N0))
-    exact ⟨by simpa [DependentSignedPhysicalFamily.zeroCopies] using hP,
-      by simpa [DependentSignedPhysicalFamily.zeroCopies] using hP,
-      by simpa [DependentSignedPhysicalFamily.zeroCopies] using hP⟩
+    exact ⟨by simpa only [DependentSignedPhysicalFamily.zeroCopies, Fin.isValue, abs_zero] using hP,
+      by simpa only [DependentSignedPhysicalFamily.zeroCopies, Fin.isValue, abs_zero] using hP,
+      by simpa only [DependentSignedPhysicalFamily.zeroCopies, Fin.isValue, abs_zero] using hP⟩
 
 /-! ## The jointly indexed Cartesian sources -/
 

@@ -88,8 +88,9 @@ theorem translation_support (A : CompactField P V) :
     (continuous_fst.sub ((coveringMap_isOpenQuotient P).continuous.comp continuous_snd))
   refine ⟨K,hK,?_,?_⟩
   · intro x hx
-    refine ⟨(x,0),⟨hx,by simp⟩,?_⟩
-    simp [coveringMap]
+    refine ⟨(x,0),⟨hx,by simp only [Metric.mem_closedBall, dist_self, zero_le_one]⟩,?_⟩
+    simp only [coveringMap, Prod.fst_zero, Prod.snd_zero, QuotientAddGroup.mk_zero, sub_eq_self,
+        Prod.mk_eq_zero, and_self]
   · intro a ha x hx
     by_contra hn
     apply hx
@@ -110,7 +111,8 @@ theorem increment_bound (A : CompactField P V) :
   · rw [Set.indicator_of_mem hx]
     have hh := Convex.norm_image_sub_le_of_norm_fderiv_le
       (𝕜 := ℝ) (f := localFieldLift P A.field x) (s := Set.univ)
-      (fun b _ => (A.smooth x).differentiable (by simp) b) (fun b _ => hb x b)
+      (fun b _ => (A.smooth x).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+          ENat.top_ne_zero, not_false_eq_true]) b) (fun b _ => hb x b)
       (convex_univ : Convex ℝ (Set.univ : Set LiftTangent)) (Set.mem_univ 0) (Set.mem_univ a)
     change ‖A.field (x.1+a.1,x.2+(a.2 : AddCircle P))-A.field x‖ ≤ C*‖a‖
     simpa only [localFieldLift,Prod.fst_zero,Prod.snd_zero,AddCircle.coe_zero,
@@ -134,7 +136,8 @@ theorem hasFDerivAt_zero (A : CompactField P V) :
     exact ht.trans hx
   · filter_upwards [A.derivative.toLp_ae] with x hx
     rw [hx]
-    exact ((A.smooth x).differentiable (by simp) 0).hasFDerivAt
+    exact ((A.smooth x).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+        not_false_eq_true]) 0).hasFDerivAt
   · filter_upwards [Metric.ball_mem_nhds (0 : LiftTangent) zero_lt_one] with a ha
     apply Eventually.of_forall
     intro x
@@ -178,7 +181,8 @@ private theorem translation_contDiff_aux (n : ℕ) :
   | succ n ih =>
     intro V _ _ A
     rw [Nat.cast_add,Nat.cast_one,contDiff_succ_iff_fderiv]
-    refine ⟨fun a => (A.translation_hasFDerivAt a).differentiableAt,by simp,?_⟩
+    refine ⟨fun a => (A.translation_hasFDerivAt a).differentiableAt,by simp only [
+        WithTop.natCast_ne_top, IsEmpty.forall_iff],?_⟩
     rw [A.translation_fderiv]
     exact (derivativeBundling (P := LiftTangent) (V := V) (liftMeasure P)).contDiff.comp
       (ih (LiftTangent →L[ℝ] V) A.derivative)

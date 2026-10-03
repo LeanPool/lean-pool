@@ -52,11 +52,13 @@ uniform bounds for all mixed parameter derivatives of a given order. -/
 def UnitWord (l : List P) : Prop := ∀ v ∈ l, ‖v‖ ≤ 1
 
 omit [NormedSpace ℝ P] in
-@[simp] theorem unitWord_nil : UnitWord ([] : List P) := by simp [UnitWord]
+@[simp] theorem unitWord_nil : UnitWord ([] : List P) := by simp only [UnitWord, List.not_mem_nil,
+    IsEmpty.forall_iff, implies_true]
 
 omit [NormedSpace ℝ P] in
 @[simp] theorem unitWord_cons (v : P) (l : List P) :
-    UnitWord (v :: l) ↔ ‖v‖ ≤ 1 ∧ UnitWord l := by simp [UnitWord]
+    UnitWord (v :: l) ↔ ‖v‖ ≤ 1 ∧ UnitWord l := by simp only [UnitWord, List.mem_cons,
+        forall_eq_or_imp]
 
 theorem contDiffOn_directional {U : Set P} (hU : IsOpen U) {f : P → E}
     (hf : ContDiffOn ℝ ∞ f U) (v : P) :
@@ -91,7 +93,9 @@ theorem directional_add {U : Set P} (hU : IsOpen U) {f g : P → E}
   have hdf := (hf p hp).contDiffAt (hU.mem_nhds hp)
   have hdg := (hg p hp).contDiffAt (hU.mem_nhds hp)
   exact congrArg (fun L : P →L[ℝ] E => L v)
-    (fderiv_fun_add (hdf.differentiableAt (by simp)) (hdg.differentiableAt (by simp)))
+    (fderiv_fun_add (hdf.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true])) (hdg.differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])))
 
 theorem jet_add {U : Set P} (hU : IsOpen U) {f g : P → E}
     (hf : ContDiffOn ℝ ∞ f U) (hg : ContDiffOn ℝ ∞ g U) (l : List P) :
@@ -106,7 +110,8 @@ theorem directional_clm {U : Set P} (hU : IsOpen U) {f : P → E}
     (hf : ContDiffOn ℝ ∞ f U) (L : E →L[ℝ] F) (v : P) :
     EqOn (directional (fun p => L (f p)) v) (fun p => L (directional f v p)) U := by
   intro p hp
-  have hdf := ((hf p hp).contDiffAt (hU.mem_nhds hp)).differentiableAt (by simp)
+  have hdf := ((hf p hp).contDiffAt (hU.mem_nhds hp)).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   exact congrArg (fun M : P →L[ℝ] F => M v) (L.hasFDerivAt.comp p hdf.hasFDerivAt).fderiv
 
 theorem jet_clm {U : Set P} (hU : IsOpen U) {f : P → E}
@@ -124,7 +129,8 @@ theorem jet_ofFn_reverse {U : Set P} (hU : IsOpen U) {f : P → E}
     (hf : ContDiffOn ℝ ∞ f U) (n : ℕ) (v : Fin n → P) {p : P} (hp : p ∈ U) :
     jet f (List.ofFn v).reverse p = iteratedFDeriv ℝ n f p v := by
   induction n generalizing f with
-  | zero => simp [jet]
+  | zero => simp only [jet, List.ofFn_zero, List.reverse_nil, List.foldl_nil,
+      iteratedFDeriv_zero_apply]
   | succ n ih =>
     rw [List.ofFn_succ', List.concat_eq_append, List.reverse_concat, jet_cons]
     rw [ih (contDiffOn_directional hU hf (v (Fin.last n))) (fun i => v i.castSucc)]
@@ -161,14 +167,14 @@ theorem multilinear_norm_le_of_unit {n : ℕ} (T : P [×n]→L[ℝ] E)
   let w : Fin n → P := fun i => ‖v i‖⁻¹ • v i
   have hw (i : Fin n) : ‖w i‖ ≤ 1 := by
     by_cases hz : v i = 0
-    · simp [w, hz]
-    · simp [w, norm_smul,
-        inv_mul_cancel₀ (norm_ne_zero_iff.mpr hz)]
+    · simp only [hz, norm_zero, inv_zero, smul_zero, zero_le_one, w]
+    · simp only [norm_smul, norm_inv, norm_norm, inv_mul_cancel₀ (norm_ne_zero_iff.mpr hz),
+        Std.le_refl, w]
   have hv : (fun i => ‖v i‖ • w i) = v := by
     funext i
     by_cases hz : v i = 0
-    · simp [w, hz]
-    · simp [w, smul_smul, mul_inv_cancel₀ (norm_ne_zero_iff.mpr hz)]
+    · simp only [hz, norm_zero, inv_zero, smul_zero, w]
+    · simp only [smul_smul, mul_inv_cancel₀ (norm_ne_zero_iff.mpr hz), one_smul, w]
   have hp : 0 ≤ ∏ i, ‖v i‖ := Finset.prod_nonneg (fun i _ => norm_nonneg _)
   calc
     ‖T v‖ = ‖(∏ i, ‖v i‖) • T w‖ := by rw [← T.map_smul_univ, hv]
@@ -207,7 +213,7 @@ theorem productJet_split (A : P → Coefficient a b E) (u : P → Curve a b E)
     (l : List P) (p : P) :
     productJet A u l p = applyCoefficient (A p) (jet u l p) + crossJet A u l p := by
   induction l generalizing A u with
-  | nil => simp [productJet, crossJet]
+  | nil => simp only [productJet, jet_nil, crossJet, add_zero]
   | cons v l ih =>
     change productJet (directional A v) u l p + productJet A (directional u v) l p =
       applyCoefficient (A p) (jet (directional u v) l p) +
@@ -222,8 +228,10 @@ theorem directional_product {U : Set P} (hU : IsOpen U)
       (fun p => applyCoefficient (directional A v p) (u p) +
         applyCoefficient (A p) (directional u v p)) U := by
   intro p hp
-  have hdA := ((hA p hp).contDiffAt (hU.mem_nhds hp)).differentiableAt (by simp)
-  have hdu := ((hu p hp).contDiffAt (hU.mem_nhds hp)).differentiableAt (by simp)
+  have hdA := ((hA p hp).contDiffAt (hU.mem_nhds hp)).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have hdu := ((hu p hp).contDiffAt (hU.mem_nhds hp)).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hmap : HasFDerivAt (coefficientAction (E := E) (a := a) (b := b))
       (coefficientAction (E := E)) (A p) :=
     ContinuousLinearMap.hasFDerivAt (𝕜 := ℝ)
@@ -316,7 +324,8 @@ theorem norm_crossJet_le
     (hl : UnitWord l) :
     ‖crossJet A u l p t‖ ≤ (2 : ℝ) ^ l.length * M * B := by
   induction l generalizing A u with
-  | nil => simpa [crossJet] using mul_nonneg hM hB
+  | nil => simpa only [crossJet, ContinuousMap.zero_apply, norm_zero, List.length_nil, pow_zero,
+      one_mul] using mul_nonneg hM hB
   | cons v l ih =>
     obtain ⟨hv, hl⟩ := unitWord_cons v l |>.mp hl
     have hDA (k : List P) (hk : k.length ≤ l.length) (hku : UnitWord k) :
@@ -530,8 +539,8 @@ theorem norm_jet_solution_le (hab : a ≤ b) {U : Set P} (hU : IsOpen U)
         have hk0 : k = [] := List.length_eq_zero_iff.mp hk
         subst k
         have hh := norm_solution_le_envelope hab (A p) (x₀ p) (f p) rate W hμ hW hdW
-          henergy hC hX hF (hxj [] (by simp) unitWord_nil)
-          (hfj [] (by simp) unitWord_nil) s
+          henergy hC hX hF (hxj [] (by simp only [List.length_nil, zero_le]) unitWord_nil)
+          (hfj [] (by simp only [List.length_nil, zero_le]) unitWord_nil) s
         simpa only [jet_nil, pow_zero, mul_one, B₀, L, u] using hh
       | succ n =>
         have hlower (r : List P) (hr : r.length < k.length) (hru : UnitWord r)
@@ -557,7 +566,7 @@ theorem norm_jet_solution_le (hab : a ≤ b) {U : Set P} (hU : IsOpen U)
               exact add_le_add_right (mul_le_mul_of_nonneg_right
                 (mul_le_mul_of_nonneg_right hpow hM)
                 (mul_nonneg (mul_nonneg hB (pow_nonneg hQ0 _)) (hW z).le)) _
-            _ = (F₀ + K * B₀ * Q ^ n) * W z := by dsimp [K]; ring
+            _ = (F₀ + K * B₀ * Q ^ n) * W z := by dsimp only [K]; ring
         have hforce0 : 0 ≤ F₀ + K * B₀ * Q ^ n :=
           add_nonneg hF (mul_nonneg (mul_nonneg hK hB) (pow_nonneg hQ0 n))
         have hh := norm_solution_le_envelope hab (A p) (jet x₀ k p) (jetSource A f u k p)
@@ -566,9 +575,9 @@ theorem norm_jet_solution_le (hab : a ≤ b) {U : Set P} (hU : IsOpen U)
           simpa only [mul_one] using mul_le_mul_of_nonneg_left (one_le_pow₀ hQ) hB
         have hamp : C * (X + L * (F₀ + K * B₀ * Q ^ n)) ≤ B₀ * Q ^ (n + 1) := by
           calc
-            _ = B₀ + (C * L * K) * (B₀ * Q ^ n) := by dsimp [B₀]; ring
+            _ = B₀ + (C * L * K) * (B₀ * Q ^ n) := by dsimp only [B₀]; ring
             _ ≤ B₀ * Q ^ n + (C * L * K) * (B₀ * Q ^ n) := add_le_add_left hBpow _
-            _ = B₀ * Q ^ (n + 1) := by rw [pow_succ]; dsimp [Q]; ring
+            _ = B₀ * Q ^ (n + 1) := by rw [pow_succ]; dsimp only [Q]; ring
         calc
           ‖jet u k p s‖ = ‖solution hab (A p) (jet x₀ k p) (jetSource A f u k p) s‖ := by
             rw [jet_solution_eq_solution hab hU A x₀ f hA hx₀ hf k hp]
@@ -591,30 +600,30 @@ theorem amplitude_le_polynomial {S K w L : ℝ} (hS : 1 ≤ S) (hK : 1 ≤ K)
   have hK0 : 0 ≤ K := zero_le_one.trans hK
   have hT : 1 ≤ T := one_le_pow₀ hS
   have hT0 : 0 ≤ T := zero_le_one.trans hT
-  have hD0 : 0 ≤ D := by dsimp [D]; positivity
-  have hB0 : 0 ≤ B := by dsimp [B]; positivity
-  have hQ0 : 0 ≤ Q := by dsimp [Q]; positivity
+  have hD0 : 0 ≤ D := by dsimp only [D]; positivity
+  have hB0 : 0 ≤ B := by dsimp only [B]; positivity
+  have hQ0 : 0 ≤ Q := by dsimp only [Q]; positivity
   have hKS : 1 ≤ K * S := one_le_mul_of_one_le_of_one_le hK hS
   have htwopow : (2 : ℝ) ≤ (2 : ℝ) ^ (N + 1) := by
     simpa only [pow_one] using pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2)
       (show 1 ≤ N + 1 by omega)
   have hbase : B ≤ w * D * T := by
     calc
-      B = (w * K ^ 2 * S ^ m) * (1 + L) := by dsimp [B]; ring
+      B = (w * K ^ 2 * S ^ m) * (1 + L) := by dsimp only [B]; ring
       _ ≤ (w * K ^ 2 * S ^ m) * (2 * K * S) :=
         mul_le_mul_of_nonneg_left (by linarith) (by positivity)
-      _ = w * (2 * K ^ 3) * T := by dsimp [T]; rw [pow_succ]; ring
-      _ ≤ w * D * T := by dsimp [D]; gcongr
+      _ = w * (2 * K ^ 3) * T := by dsimp only [T]; rw [pow_succ]; ring
+      _ ≤ w * D * T := by dsimp only [D]; gcongr
   have hprod : 1 ≤ (2 : ℝ) ^ N * K ^ 3 * T :=
     one_le_mul_of_one_le_of_one_le
       (one_le_mul_of_one_le_of_one_le (one_le_pow₀ (by norm_num : (1 : ℝ) ≤ 2))
         (one_le_pow₀ hK)) hT
   have hstep : Q ≤ D * T := by
     calc
-      Q ≤ 1 + K * (K * S) * ((2 : ℝ) ^ N * (K * S ^ m)) := by dsimp [Q]; gcongr
-      _ = 1 + (2 : ℝ) ^ N * K ^ 3 * T := by dsimp [T]; rw [pow_succ]; ring
+      Q ≤ 1 + K * (K * S) * ((2 : ℝ) ^ N * (K * S ^ m)) := by dsimp only [Q]; gcongr
+      _ = 1 + (2 : ℝ) ^ N * K ^ 3 * T := by dsimp only [T]; rw [pow_succ]; ring
       _ ≤ 2 * ((2 : ℝ) ^ N * K ^ 3 * T) := by linarith
-      _ = D * T := by dsimp [D]; rw [pow_succ]; ring
+      _ = D * T := by dsimp only [D]; rw [pow_succ]; ring
   calc
     B * Q ^ n ≤ (w * D * T) * (D * T) ^ n :=
       mul_le_mul hbase (pow_le_pow_left₀ hQ0 hstep n) (pow_nonneg hQ0 _) (by positivity)
@@ -622,7 +631,7 @@ theorem amplitude_le_polynomial {S K w L : ℝ} (hS : 1 ≤ S) (hK : 1 ≤ K)
       rw [mul_pow]
       simp only [pow_succ]
       ring
-    _ = w * D ^ (n + 1) * S ^ ((m + 1) * (n + 1)) := by dsimp [T]; rw [pow_mul]
+    _ = w * D ^ (n + 1) * S ^ ((m + 1) * (n + 1)) := by dsimp only [T]; rw [pow_mul]
 
 /-- An error of order `1/S` on a slot of length at most `d*S` has a uniform
 exponential factor, independent of `S`. -/

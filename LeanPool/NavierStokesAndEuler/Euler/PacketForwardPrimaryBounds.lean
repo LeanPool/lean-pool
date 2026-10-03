@@ -107,7 +107,9 @@ theorem forwardPrimary_profile_budget (O : Operators) (hcorrector : O.curlCorrec
   apply L.primary_profile_budget N _ W (initialData D δ hδ (α • ξ) hs) α hα _ O hcorrector S hgrowth
   intro n
   have hh := initialData_common_radius D δ hδ (α • ξ) hs standardDirection
-    (fun i => by cases i using Fin.cases <;> simp [Prod.norm_def]) 6 hδ1 L.R hR n
+    (fun i => by cases i using Fin.cases <;> simp only [Fin.isValue, standardDirection_zero,
+        Prod.norm_def, norm_zero, norm_one, zero_le_one, sup_of_le_right, Std.le_refl,
+        standardDirection_succ, PiLp.norm_single, sup_of_le_left]) 6 hδ1 L.R hR n
   simpa only [norm_smul,Real.norm_eq_abs,abs_of_pos hα,mul_assoc,mul_left_comm,mul_comm] using hh
 
 end EulerPacketTerminalDatum

@@ -861,7 +861,7 @@ theorem chartPoint_position (n : ℕ) (w : SpaceTime) :
   have hQ := (ChartScales.Q_pos n).ne'
   have hp (a : ℝ) : ChartScales.Q n ^ a * ChartScales.Q n ^ (-a) = 1 := by
     rw [← Real.rpow_add (ChartScales.Q_pos n)]
-    simp
+    simp only [add_neg_cancel, Real.rpow_zero]
   funext i
   fin_cases i
   · change Real.sqrt (ChartScales.Q n) *
@@ -892,8 +892,9 @@ theorem nativeMask_physicalBox (L : CorrectionInitialization.ActualPrimary.Label
       ChartScales.Q (BaseChartJets.cellBand L) ^ SlotColoring.axisExponent (CoordinateAlgebra.D h)
           i *
         PrimaryRepresentatives.position p i := by
-    fin_cases i <;> simp [position, PrimaryRepresentatives.position,
-      SlotColoring.axisExponent, Real.sqrt_eq_rpow]
+    fin_cases i <;> simp only [position, Real.sqrt_eq_rpow, one_div, Fin.zero_eta, Fin.isValue,
+        Matrix.cons_val_zero, SlotColoring.axisExponent, PrimaryRepresentatives.position,
+        Fin.mk_one, Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val, Real.rpow_one]
   change |position L p i - SlotColoring.width (CoordinateAlgebra.D h) i
       (BaseChartJets.cellBand L) * (((PrimaryGeometryAssembly.label nominal L).2 i : ℤ) : ℝ)| ≤
     2 * SlotColoring.width (CoordinateAlgebra.D h) i (BaseChartJets.cellBand L)
@@ -1015,7 +1016,8 @@ end Summation
 theorem modes_card (N : ℕ) : (ParticularWaveAssembly.modes N).card = 2 * N := by
   classical
   unfold ParticularWaveAssembly.modes
-  rw [Finset.card_erase_of_mem (by simp), Int.card_Icc]
+  rw [Finset.card_erase_of_mem (by simp only [Finset.mem_Icc, Left.neg_nonpos_iff, Nat.cast_nonneg,
+      and_self]), Int.card_Icc]
   omega
 
 section ActualSums

@@ -58,7 +58,8 @@ theorem polynomial_over_growth_summable (J : ℕ) (hJ : 1 ≤ J) (x : ℕ → �
         ((((J + n : ℕ) : ℝ))⁻¹) ^ 2) atTop (𝓝 0) := by
     have h := (((tendsto_const_nhds (x := (1 : ℝ))).add (stage_inv_tendsto_zero J)).pow A).mul
       ((stage_inv_tendsto_zero J).pow 2)
-    simpa using h
+    simpa only [Nat.cast_add, inv_pow, add_zero, one_pow, ne_eq, OfNat.ofNat_ne_zero,
+        not_false_eq_true, zero_pow, mul_zero] using h
   apply summable_of_ratio_test_tendsto_lt_one (l := 0) (by norm_num)
   · exact Eventually.of_forall fun n => ne_of_gt (div_pos (pow_pos (hjp n) _) (hxp n))
   · apply hlim.congr'
@@ -173,7 +174,7 @@ theorem polynomial_log_over_growth_tendsto_zero (J : ℕ) (hJ : 1 ≤ J) (x : �
     Tendsto (fun n => ((J + n : ℕ) : ℝ) ^ A * Real.log (x n) / x n) atTop (𝓝 0) := by
   have hs := polynomial_log_over_growth_summable J hJ x hx0 hx A
   have hn : Tendsto (fun n => -(((J + n : ℕ) : ℝ) ^ A * |Real.log (x n)| / x n))
-      atTop (𝓝 0) := by simpa using hs.tendsto_atTop_zero.neg
+      atTop (𝓝 0) := by simpa only [Nat.cast_add, neg_zero] using hs.tendsto_atTop_zero.neg
   apply tendsto_of_tendsto_of_tendsto_of_le_of_le hn hs.tendsto_atTop_zero
   · intro n
     have hxp := quadratic_growth_pos J hJ x hx0 hx n
@@ -270,7 +271,7 @@ theorem log_sum_exp_bounds {ι : Type*} [Fintype ι] [Nonempty ι]
           apply Finset.sum_le_sum
           intro i _hi
           exact Real.exp_monotone (Finset.single_le_sum (fun j _ => ha j) (Finset.mem_univ i))
-        _ = _ := by simp
+        _ = _ := by simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
     calc
       _ ≤ Real.log ((Fintype.card ι : ℝ) * Real.exp (∑ i, a i)) := Real.log_le_log hpos hs
       _ = _ := by rw [Real.log_mul hcard.ne' (Real.exp_ne_zero _), Real.log_exp]
@@ -283,7 +284,7 @@ theorem log_sum_exp_mul_tendsto_zero {ι : Type*} [Fintype ι] [Nonempty ι]
     Tendsto (fun n => Real.log (∑ i, Real.exp (a i n)) * r n) atTop (𝓝 0) := by
   classical
   have hs : Tendsto (fun n => ∑ i, a i n * r n) atTop (𝓝 0) := by
-    simpa using tendsto_finsetSum Finset.univ (fun i _ => halim i)
+    simpa only [Finset.sum_const_zero] using tendsto_finsetSum Finset.univ (fun i _ => halim i)
   have hu : Tendsto (fun n => (Real.log (Fintype.card ι : ℝ) + ∑ i, a i n) * r n)
       atTop (𝓝 0) := by
     have h := (hrlim.const_mul (Real.log (Fintype.card ι : ℝ))).add hs
@@ -338,7 +339,8 @@ theorem sourceParameterExponent_nonneg (J : ℕ) (hJ : 2 ≤ J)
   have hprod : 1 ≤ ((J + n : ℕ) : ℝ) ^ 2 * x n :=
     one_le_mul_of_one_le_of_one_le (one_le_pow₀ hj) hxn
   fin_cases i
-  · simpa [sourceParameterExponent] using Real.log_nonneg hCbase
+  · simpa only [sourceParameterExponent, Nat.succ_eq_add_one, Nat.reduceAdd, Nat.cast_add,
+      Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero, ge_iff_le] using Real.log_nonneg hCbase
   · simp only [sourceParameterExponent, Nat.succ_eq_add_one, Nat.reduceAdd, Nat.cast_add,
       Fin.mk_one, Fin.isValue,
       Matrix.cons_val_one, Matrix.cons_val_zero, ge_iff_le]
@@ -359,8 +361,10 @@ theorem sourceParameterExponent_nonneg (J : ℕ) (hJ : 2 ≤ J)
       Fin.reduceFinMk,
       Matrix.cons_val, ge_iff_le]
     positivity
-  · simpa [sourceParameterExponent] using Real.log_nonneg hprod
-  · simpa [sourceParameterExponent] using Real.log_nonneg hxn
+  · simpa only [sourceParameterExponent, Nat.succ_eq_add_one, Nat.reduceAdd, Nat.cast_add,
+      Fin.reduceFinMk, Matrix.cons_val, ge_iff_le] using Real.log_nonneg hprod
+  · simpa only [sourceParameterExponent, Nat.succ_eq_add_one, Nat.reduceAdd, Nat.cast_add,
+      Fin.reduceFinMk, Matrix.cons_val, ge_iff_le] using Real.log_nonneg hxn
 
 /-- Every explicitly defined parameter term is negligible on the logarithmic frequency scale. -/
 theorem sourceParameterExponent_relative_tendsto_zero (J : ℕ) (hJ : 2 ≤ J)
@@ -376,7 +380,8 @@ theorem sourceParameterExponent_relative_tendsto_zero (J : ℕ) (hJ : 2 ≤ J)
     exact_mod_cast (show 0 < J + n by omega)
   have hlx := polynomial_log_over_growth_tendsto_zero J hJ1 x hx0 hx 2
   fin_cases i
-  · simpa [sourceParameterExponent] using
+  · simpa only [sourceParameterExponent, Nat.succ_eq_add_one, Nat.reduceAdd, Nat.cast_add,
+      Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero, mul_zero] using
       ((polynomial_over_growth_summable J hJ1 x hx0 hx 2).tendsto_atTop_zero.const_mul (Real.log
           Cbase))
   · have h := (stage_sq_div_predecessor_power_tendsto_zero J hJ 4 (by omega)).const_mul Cstar
@@ -437,7 +442,7 @@ theorem sourceParameterExponent_relative_tendsto_zero (J : ℕ) (hJ : 2 ≤ J)
     simp only [Nat.cast_add, sourceParameterExponent, Nat.succ_eq_add_one, Nat.reduceAdd,
         Fin.reduceFinMk,
       Matrix.cons_val]
-    have hjp' : (0 : ℝ) < (J : ℝ) + n := by simpa using hjp n
+    have hjp' : (0 : ℝ) < (J : ℝ) + n := by simpa only [Nat.cast_add] using hjp n
     rw [Real.log_mul (pow_ne_zero _ hjp'.ne') (hxp n).ne', Real.log_pow]
     push_cast
     ring
@@ -462,9 +467,12 @@ theorem sourceParameterAggregate_eq (J : ℕ) (hJ : 1 ≤ J) (Cbase Cstar : ℝ)
       ((J + n : ℕ) : ℝ) ^ 2 * x n + x n := by
   have hj : (0 : ℝ) < (J + n : ℕ) := by exact_mod_cast (show 0 < J + n by omega)
   have hprod : 0 < ((J + n : ℕ) : ℝ) ^ 2 * x n := mul_pos (pow_pos hj _) (hxp n)
-  have hprod' : 0 < ((J : ℝ) + n) ^ 2 * x n := by simpa using hprod
-  simp [sourceParameterAggregate, sourceParameterExponent, Fin.sum_univ_succ,
-    Real.exp_log hCbase, Real.exp_log (hxp n), Real.exp_log hprod']
+  have hprod' : 0 < ((J : ℝ) + n) ^ 2 * x n := by simpa only [Nat.cast_add] using hprod
+  simp only [sourceParameterAggregate, sourceParameterExponent, Nat.succ_eq_add_one, Nat.reduceAdd,
+      Nat.cast_add, Fin.sum_univ_succ, Fin.isValue, Matrix.cons_val_zero, Real.exp_log hCbase,
+      Matrix.cons_val_succ, Real.exp_log hprod', Finset.univ_unique, Fin.default_eq_zero,
+      Matrix.cons_val_fin_one, Real.exp_log (hxp n), Finset.sum_const, Finset.card_singleton,
+      one_smul]
   ring
 
 /--

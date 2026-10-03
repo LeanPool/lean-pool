@@ -90,7 +90,8 @@ theorem WordBound.slice_word_le (hG : G.WordBound q R A d)
       (f := fun j => wordSum standardDirection (fun a : LiftTangent =>
           pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a G.path)
           (n+j) 0)
-      (fun j _ => wordSum_nonneg _ _ _ _) (show 0 ∈ range (q+1) by simp)
+      (fun j _ => wordSum_nonneg _ _ _ _) (show 0 ∈ range (q+1) by simp only [Finset.mem_range,
+          lt_add_iff_pos_left, Order.lt_add_one_iff, zero_le])
     simpa only [Nat.add_zero] using h
   exact he.trans (hb.trans (hG n))
 

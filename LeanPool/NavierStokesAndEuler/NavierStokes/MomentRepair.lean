@@ -50,7 +50,8 @@ omit [DecidableEq ι] in
 theorem moments_synthesize (L : ι → V →ₗ[ℝ] ℝ) (b : ι → V) (c : ι → ℝ) :
     moments L (synthesize b c) = (momentMatrix L b).mulVec c := by
   ext i
-  simp [moments, synthesize, momentMatrix, Matrix.mulVec, dotProduct, mul_comm]
+  simp only [moments, synthesize, map_sum, map_smul, smul_eq_mul, Matrix.mulVec, dotProduct,
+      momentMatrix, mul_comm]
 
 /-- Coefficients obtained using the actual matrix inverse. -/
 def coefficients (B : Matrix ι ι ℝ) (d : ι → ℝ) : ι → ℝ := B⁻¹.mulVec d
@@ -81,11 +82,12 @@ theorem repair_exact (L : ι → V →ₗ[ℝ] ℝ) (b : ι → V)
   rw [map_add]
   change L i u + moments L (synthesize b _) i = target i
   rw [hi]
-  simp [moments]
+  simp only [Pi.sub_apply, moments, add_sub_cancel]
 
 theorem repair_unchanged_when_exact (L : ι → V →ₗ[ℝ] ℝ) (b : ι → V) (u : V) :
     repair L b u (moments L u) = u := by
-  simp [repair, coefficients, synthesize]
+  simp only [repair, synthesize, coefficients, sub_self, Matrix.mulVec_zero, Pi.zero_apply,
+      zero_smul, Finset.sum_const_zero, add_zero]
 
 /-- An arbitrary correction attaining the target has the computed coefficients. -/
 theorem repair_coefficients_unique (L : ι → V →ₗ[ℝ] ℝ) (b : ι → V)
@@ -118,7 +120,8 @@ variable {ι X : Type*} [Fintype ι] [DecidableEq ι]
 theorem repair_eq_of_profiles_zero (L : ι → (X → ℝ) →ₗ[ℝ] ℝ) (b : ι → X → ℝ)
     (u : X → ℝ) (target : ι → ℝ) (x : X) (hb : ∀ j, b j x = 0) :
     repair L b u target x = u x := by
-  simp [repair, synthesize, Finset.sum_apply, hb]
+  simp only [repair, synthesize, Pi.add_apply, Finset.sum_apply, Pi.smul_apply, hb, smul_eq_mul,
+      mul_zero, Finset.sum_const_zero, add_zero]
 
 /-- A common support set is preserved by finite moment repair. -/
 theorem repair_support_subset (L : ι → (X → ℝ) →ₗ[ℝ] ℝ) (b : ι → X → ℝ)
@@ -132,7 +135,7 @@ theorem repair_support_subset (L : ι → (X → ℝ) →ₗ[ℝ] ℝ) (b : ι �
     by_contra h
     exact hxs (hb j h)
   have h := repair_eq_of_profiles_zero L b u target x hzero
-  exact hx (by simpa using sub_eq_zero.mpr h)
+  exact hx (by simpa only [Pi.sub_apply] using sub_eq_zero.mpr h)
 
 end Support
 
@@ -142,7 +145,8 @@ def twoPointMatrix (x₁ x₂ w₁ w₂ : ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
 
 theorem twoPointMatrix_det (x₁ x₂ w₁ w₂ : ℝ) :
     (twoPointMatrix x₁ x₂ w₁ w₂).det = w₁ * w₂ * (x₂ - x₁) := by
-  simp [twoPointMatrix, Matrix.det_fin_two]
+  simp only [twoPointMatrix, Matrix.det_fin_two, Fin.isValue, Matrix.of_apply, Matrix.cons_val',
+      Matrix.cons_val_zero, Matrix.cons_val_fin_one, Matrix.cons_val_one]
   ring
 
 /-- Ordered nodes and positive weights genuinely imply nonsingularity in two rows. -/

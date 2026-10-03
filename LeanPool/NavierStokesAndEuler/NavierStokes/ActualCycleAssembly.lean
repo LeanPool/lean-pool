@@ -76,7 +76,8 @@ theorem oscillation_zero_of_inputSupport
   have hcoeff (j : ℤ) : HarmonicResidual.realCoefficients (b.velocity n i) j x = 0 := by
     by_cases hj : j = 0
     · subst j
-      simp [HarmonicResidual.realCoefficients_apply, hzero n i]
+      simp only [HarmonicResidual.realCoefficients_apply, hzero n i, Pi.zero_apply, neg_zero,
+          map_zero, add_zero, mul_zero]
     · exact hs.velocity n i j hj x hx hn
   have hfield : HarmonicFields.field (HarmonicResidual.realCoefficients (b.velocity n i))
       (b.frequency n) (b.phase n) (b.angularFrequency n) (x, θ) = 0 := by
@@ -254,9 +255,11 @@ theorem block_inputSupport_of_zero
     (g := fun _ _ => 0) hv hp (fun _ _ _ _ => rfl)
   refine ⟨hh.velocity, hh.pressure, ?_, ?_⟩
   · intro n i j hj x hx hn
-    simp [HarmonicResidual.realCoefficients_apply]
+    simp only [Pi.zero_apply, HarmonicResidual.realCoefficients_apply, AddMonoidAlgebra.coeff_zero,
+        Finsupp.coe_zero, map_zero, add_zero, mul_zero]
   · intro n i j hj x hx hn
-    simp [HarmonicResidual.realCoefficients_apply]
+    simp only [Pi.zero_apply, HarmonicResidual.realCoefficients_apply, AddMonoidAlgebra.coeff_zero,
+        Finsupp.coe_zero, map_zero, add_zero, mul_zero]
 
 theorem tangent_inputSupport (l : Index B N0) (s : StripData Point)
     (request : ℕ → Point × ℝ → SignedWaveUpdate.Vec2) :
@@ -933,7 +936,8 @@ theorem particular_inputSupport_of_factorization (s : StripData Point) (N : ℕ)
     (fun n z hz hk => (hfactor n (cycleAssoc z).1 hz (cycleAssoc z).2).mpr hk)
   refine ⟨hout.velocity, hout.pressure, hout.gaussian, ?_⟩
   intro n i j hj z hz hn
-  simp [HarmonicResidual.realCoefficients_apply]
+  simp only [Pi.zero_apply, HarmonicResidual.realCoefficients_apply, AddMonoidAlgebra.coeff_zero,
+      Finsupp.coe_zero, map_zero, add_zero, mul_zero]
 
 end FactorizedCarrier
 

@@ -234,7 +234,7 @@ structure ReferenceCone (F : ℝ) (g : Plane) : Prop where
 
 theorem ReferenceCone.shear_ne_zero {F : ℝ} {g : Plane} (h : ReferenceCone F g) : g ≠ 0 := by
   intro hg
-  simpa [hg] using h.theta_neg
+  simpa only [Fin.isValue, hg, PiLp.zero_apply, lt_self_iff_false] using h.theta_neg
 
 /-- The manuscript's shear coordinates give the primitive reference cone
 from `a > 0` and `a²+b² > 2a`. -/
@@ -271,7 +271,7 @@ theorem transverseDirection_inner_shear (g : Plane) :
   ring
 
 theorem normalDirection_theta (g : Plane) : normalDirection g 0 = g 0 / ‖g‖ := by
-  simp [normalDirection, div_eq_mul_inv, mul_comm]
+  simp only [Fin.isValue, normalDirection, PiLp.smul_apply, smul_eq_mul, mul_comm, div_eq_mul_inv]
 
 theorem coupling_eq (F : ℝ) (g : Plane) : coupling F g = (2 * F * g 0) / ‖g‖ := by
   rw [coupling, normalDirection_theta]
@@ -398,15 +398,21 @@ theorem compact_parameter_bounds {K : Set Slow} (hK : IsCompact K)
       ((hB q hq).trans (le_max_right _ _))
   have hgq : 0 < ‖g q‖ := norm_pos_iff.mpr (hc q hq).shear_ne_zero
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · simpa [parameterScalars, abs_of_pos (hR q hq)] using hb 0
-  · simpa [parameterScalars] using hb 1
-  · simpa [parameterScalars] using hb 2
-  · simpa [parameterScalars, abs_of_pos (hc q hq).lambda0_pos] using hb 3
-  · simpa [parameterScalars] using hb 4
-  · simpa [parameterScalars, abs_of_pos (inv_pos.mpr (hR q hq))] using hb 5
-  · simpa [parameterScalars, abs_of_pos (inv_pos.mpr hgq)] using hb 6
-  · simpa [parameterScalars, abs_of_pos (inv_pos.mpr (hc q hq).lambda0_pos)] using hb 7
-  · simpa [parameterScalars, abs_inv] using hb 8
+  · simpa only [le_max_iff, parameterScalars, Fin.isValue, Matrix.cons_val_zero,
+      abs_of_pos (hR q hq)] using hb 0
+  · simpa only [le_max_iff, parameterScalars, Fin.isValue, Matrix.cons_val_one,
+      Matrix.cons_val_zero] using hb 1
+  · simpa only [le_max_iff, parameterScalars, Fin.isValue, Matrix.cons_val, abs_norm] using hb 2
+  · simpa only [le_max_iff, parameterScalars, Fin.isValue, Matrix.cons_val,
+      abs_of_pos (hc q hq).lambda0_pos] using hb 3
+  · simpa only [le_max_iff, parameterScalars, Fin.isValue, Matrix.cons_val] using hb 4
+  · simpa only [le_max_iff, parameterScalars, Fin.isValue, Matrix.cons_val,
+      abs_of_pos (inv_pos.mpr (hR q hq))] using hb 5
+  · simpa only [le_max_iff, parameterScalars, Fin.isValue, Matrix.cons_val,
+      abs_of_pos (inv_pos.mpr hgq)] using hb 6
+  · simpa only [le_max_iff, parameterScalars, Fin.isValue, Matrix.cons_val,
+      abs_of_pos (inv_pos.mpr (hc q hq).lambda0_pos)] using hb 7
+  · simpa only [le_max_iff, parameterScalars, Fin.isValue, Matrix.cons_val, abs_inv] using hb 8
 
 private theorem reciprocal_lower {M x : ℝ} (hM : 0 < M) (hx : 0 < x) (h : x⁻¹ ≤ M) :
     M⁻¹ ≤ x := by
@@ -535,7 +541,9 @@ theorem normalizedSlow_coordinates (D : ℝ) (n : ℕ) (x : Position) :
     normalizedSlow D n x =
       (x 0 / ChartScales.Q n ^ (1 / 2 : ℝ), (x 1 / ChartScales.Q n ^ D, x 2 / ChartScales.Q n)) :=
           by
-  simp [normalizedSlow, slow, SquaredPartition.slowCoordinates, SlotColoring.axisExponent]
+  simp only [normalizedSlow, slow, SquaredPartition.slowCoordinates, Fin.isValue,
+      SlotColoring.axisExponent, one_div, Matrix.cons_val_zero, Matrix.cons_val_one,
+      Matrix.cons_val, Real.rpow_one]
 
 /-- The physical similarity equation and the actual dyadic mask put every
 active point into the same compact reference set, independent of its label. -/
@@ -608,7 +616,7 @@ theorem exists_slopeRatio_gt {r : ℝ} (hr : 0 ≤ r) (hr1 : r < 1) :
   let u := (Real.sqrt (1 - r ^ 2))⁻¹
   have hu : 0 < u := inv_pos.mpr (Real.sqrt_pos.mpr hsq)
   have hp : u ^ 2 * (1 - r ^ 2) = 1 := by
-    dsimp [u]
+    dsimp only [u]
     rw [inv_pow, Real.sq_sqrt hsq.le, inv_mul_cancel₀ hsq.ne']
   have hroot : 0 < Real.sqrt (1 + u ^ 2) := Real.sqrt_pos.mpr (by positivity)
   have hsquare : (r * Real.sqrt (1 + u ^ 2)) ^ 2 < u ^ 2 := by
@@ -650,7 +658,7 @@ theorem compact_target_choice {K : Set Slow} (hK : IsCompact K)
     (continuousOn_const.fun_sub (targetRatio_continuousOn hF hg hT hc ht))
     (fun q hq => sub_pos.mpr (ht q hq).ratio_lt_one)
   let r := 1 - min e (1 / 2)
-  have hr : 0 ≤ r := by dsimp [r]; linarith only [min_le_right e (1 / 2 : ℝ)]
+  have hr : 0 ≤ r := by dsimp only [r]; linarith only [min_le_right e (1 / 2 : ℝ)]
   have hr1 : r < 1 := by dsimp [r]; linarith only [he, lt_min he (by norm_num : (0 : ℝ) < 1 / 2)]
   obtain ⟨u, hu, hur⟩ := exists_slopeRatio_gt hr hr1
   let η := min d ((slopeRatio u - r) / 2)
@@ -659,7 +667,7 @@ theorem compact_target_choice {K : Set Slow} (hK : IsCompact K)
   have hηd : η ≤ d := min_le_left _ _
   have hηr : η ≤ (slopeRatio u - r) / 2 := min_le_right _ _
   have hratio : targetRatio (F q) (g q) (T q) ≤ r := by
-    dsimp [r]
+    dsimp only [r]
     linarith only [heb, hq, heb q hq, min_le_left e (1 / 2 : ℝ)]
   refine ⟨by linarith only [hηd, hdb, hq, hdb q hq], ?_⟩
   calc

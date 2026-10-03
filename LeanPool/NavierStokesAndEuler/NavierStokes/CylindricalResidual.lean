@@ -64,7 +64,8 @@ theorem frame_apply (θ : ℝ) (v : Space) :
       pack_zero, pack_one, pack_two, smul_eq_mul, mul_neg, mul_zero, add_zero, zero_add] <;> ring
 
 theorem connection_apply (v : Space) : connection v = pack (-v 1) (v 0) 0 := by
-  simp [connection, packDerivative_apply]
+  simp only [connection, Fin.isValue, packDerivative_apply, neg_apply,
+      AxisymmetricFields.projection_apply, zero_apply]
 
 theorem frame_connection (θ : ℝ) :
     (frame θ).comp connection = -Real.sin θ • horizontal + Real.cos θ • connection := by
@@ -80,11 +81,14 @@ theorem frame_connection (θ : ℝ) :
 theorem frame_inverse (θ : ℝ) (v : Space) : frame (-θ) (frame θ v) = v := by
   ext i
   fin_cases i
-  · simp [frame_apply, Real.cos_neg, Real.sin_neg]
+  · simp only [frame_apply, Fin.isValue, Real.cos_neg, pack_zero, Real.sin_neg, pack_one, neg_mul,
+      sub_neg_eq_add, pack_two, Fin.zero_eta]
     linear_combination (v 0) * Real.cos_sq_add_sin_sq θ
-  · simp [frame_apply, Real.cos_neg, Real.sin_neg]
+  · simp only [frame_apply, Fin.isValue, Real.cos_neg, pack_zero, Real.sin_neg, pack_one, neg_mul,
+      sub_neg_eq_add, pack_two, Fin.mk_one]
     linear_combination (v 1) * Real.cos_sq_add_sin_sq θ
-  · simp [frame_apply]
+  · simp only [frame_apply, Fin.isValue, Real.cos_neg, pack_zero, Real.sin_neg, pack_one, neg_mul,
+      sub_neg_eq_add, pack_two, Fin.reduceFinMk]
 
 theorem frame_inverse' (θ : ℝ) (v : Space) : frame θ (frame (-θ) v) = v := by
   simpa only [neg_neg] using frame_inverse (-θ) v
@@ -96,7 +100,8 @@ noncomputable def chartJacobian (q : Space) : Space →L[ℝ] Space :=
 
 theorem chartJacobian_apply (q v : Space) :
     chartJacobian q v = frame (q 1) (pack (v 0) (q 0 * v 1) (v 2)) := by
-  simp [chartJacobian, packDerivative_apply]
+  simp only [chartJacobian, Fin.isValue, ContinuousLinearMap.comp_apply, packDerivative_apply,
+      AxisymmetricFields.projection_apply, smul_apply, smul_eq_mul]
 
 theorem hasFDerivAt_chart (q : Space) : HasFDerivAt chart (chartJacobian q) q := by
   have h0 := (projection 0).hasFDerivAt (x := q)
@@ -173,7 +178,8 @@ theorem chartJacobian_chartVector (q v : Space) (hr : q 0 ≠ 0) :
   have hpack : pack ((chartVector q v) 0) (q 0 * (chartVector q v) 1)
       ((chartVector q v) 2) = frame (-(q 1)) v := by
     ext i
-    fin_cases i <;> simp [chartVector, hr, mul_div_cancel₀]
+    fin_cases i <;> simp only [chartVector, Fin.isValue, pack_zero, pack_one, ne_eq, hr,
+        not_false_eq_true, mul_div_cancel₀, pack_two, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk]
   rw [hpack, frame_inverse']
 
 /-- Exact first-order bridge from ordinary Cartesian derivatives. -/
@@ -194,7 +200,8 @@ theorem dCoord_dCoord {f : Space → E} {q : Space}
     (hf.fderiv_right (m := 1) (by norm_num)).differentiableAt (by norm_num)
   unfold dCoord hessian
   rw [fderiv_clm_apply hD (differentiableAt_const _)]
-  simp
+  simp only [fderiv_fun_const, Pi.zero_apply, ContinuousLinearMap.comp_zero, zero_add,
+      ContinuousLinearMap.flip_apply]
 
 theorem second_chain {f : Space → E} {g : Space → Space} {q : Space}
     (hf : ContDiffAt ℝ 2 f (g q)) (hg : ContDiffAt ℝ 2 g q) (i : Fin 3) :
@@ -220,18 +227,23 @@ theorem second_chain {f : Space → E} {g : Space → Space} {q : Space}
 
 theorem dCoord_chart_zero (q : Space) :
     dCoord 0 chart q = pack (Real.cos (q 1)) (Real.sin (q 1)) 0 := by
-  simp [dCoord, (hasFDerivAt_chart q).fderiv, chartJacobian_apply, frame_apply,
-    coordinateVector]
+  simp only [dCoord, (hasFDerivAt_chart q).fderiv, coordinateVector, Fin.isValue,
+      chartJacobian_apply, PiLp.single_eq_same, ne_eq, one_ne_zero, not_false_eq_true,
+      PiLp.single_eq_of_ne, mul_zero, Fin.reduceEq, frame_apply, pack_zero, mul_one, pack_one,
+      sub_zero, add_zero, pack_two]
 
 theorem dCoord_chart_one (q : Space) :
     dCoord 1 chart q = pack (-(q 0) * Real.sin (q 1)) (q 0 * Real.cos (q 1)) 0 := by
-  simp [dCoord, (hasFDerivAt_chart q).fderiv, chartJacobian_apply, frame_apply,
-    coordinateVector]
+  simp only [dCoord, (hasFDerivAt_chart q).fderiv, coordinateVector, Fin.isValue,
+      chartJacobian_apply, ne_eq, zero_ne_one, not_false_eq_true, PiLp.single_eq_of_ne,
+      PiLp.single_eq_same, mul_one, Fin.reduceEq, frame_apply, pack_zero, mul_zero, pack_one,
+      zero_sub, zero_add, pack_two, neg_mul]
   ring_nf
 
 theorem dCoord_chart_two (q : Space) : dCoord 2 chart q = coordinateVector 2 := by
-  simp [dCoord, (hasFDerivAt_chart q).fderiv, chartJacobian_apply, frame_apply,
-    coordinateVector, pack]
+  simp only [dCoord, (hasFDerivAt_chart q).fderiv, coordinateVector, Fin.isValue,
+      chartJacobian_apply, pack, ne_eq, Fin.reduceEq, not_false_eq_true, PiLp.single_eq_of_ne,
+      zero_smul, mul_zero, add_zero, PiLp.single_eq_same, one_smul, zero_add, frame_apply, sub_self]
 
 theorem dCoord_dCoord_chart_zero (q : Space) : dCoord 0 (dCoord 0 chart) q = 0 := by
   rw [show dCoord 0 chart = fun y => pack (Real.cos (y 1)) (Real.sin (y 1)) 0 from
@@ -241,7 +253,9 @@ theorem dCoord_dCoord_chart_zero (q : Space) : dCoord 0 (dCoord 0 chart) q = 0 :
   have hz : HasFDerivAt (fun _ : Space => (0 : ℝ)) 0 q := hasFDerivAt_const (𝕜 := ℝ) 0 q
   unfold dCoord
   rw [(hasFDerivAt_pack h1.cos h1.sin hz).fderiv]
-  simp [packDerivative_apply, coordinateVector, pack]
+  simp only [Fin.isValue, neg_smul, coordinateVector, packDerivative_apply, pack, neg_apply,
+      smul_apply, AxisymmetricFields.projection_apply, ne_eq, one_ne_zero, not_false_eq_true,
+      PiLp.single_eq_of_ne, smul_eq_mul, mul_zero, neg_zero, zero_smul, add_zero, zero_apply]
 
 theorem dCoord_dCoord_chart_one (q : Space) :
     dCoord 1 (dCoord 1 chart) q = -(q 0) • dCoord 0 chart q := by
@@ -267,7 +281,7 @@ theorem dCoord_dCoord_chart_one (q : Space) :
 
 theorem dCoord_dCoord_chart_two (q : Space) : dCoord 2 (dCoord 2 chart) q = 0 := by
   rw [show dCoord 2 chart = fun _ => coordinateVector 2 from funext dCoord_chart_two]
-  simp [dCoord]
+  simp only [dCoord, Fin.isValue, fderiv_fun_const, Pi.zero_apply, zero_apply]
 
 theorem dCoord_pullback {f : Space → E} {q : Space}
     (hf : DifferentiableAt ℝ f (chart q)) (i : Fin 3) :
@@ -331,7 +345,9 @@ theorem fderiv_encode {w : Space → Space} {q : Space}
       frame (q 1) (fderiv ℝ w q v + v 1 • connection (w q)) := by
   unfold encode
   rw [((hasFDerivAt_frameField q).clm_apply hw.hasFDerivAt).fderiv]
-  simp [map_add, map_smul]
+  simp only [Fin.isValue, add_apply, ContinuousLinearMap.comp_apply, ContinuousLinearMap.flip_apply,
+      ContinuousLinearMap.smulRight_apply, AxisymmetricFields.projection_apply, smul_apply, map_add,
+      map_smul]
 
 theorem dCoord_encode {w : Space → Space} {q : Space}
     (hw : DifferentiableAt ℝ w q) (i : Fin 3) :
@@ -415,7 +431,7 @@ theorem cartesianLaplacian_components {f : Space → Space} {q : Space}
 theorem fderiv_pack (f : Space → E) (q : Space) (a b c : ℝ) :
     fderiv ℝ f q (pack a b c) =
       a • dCoord 0 f q + b • dCoord 1 f q + c • dCoord 2 f q := by
-  simp [pack, dCoord]
+  simp only [pack, Fin.isValue, map_add, map_smul, dCoord]
 
 /-- Cartesian directional differentiation, resolved in the cylindrical frame. -/
 theorem cartesianDerivative_components {f : Space → Space} {q : Space}
@@ -472,7 +488,11 @@ theorem cartesianDivergence_components {f : Space → Space} {q : Space}
   unfold euclideanDivergence
   rw [trace_rotation _ (q 1)]
   simp_rw [cartesianDerivative_components hf hr]
-  simp [Fin.sum_univ_three, vectorDivergence, coordinateVector, connection_apply]
+  simp only [coordinateVector, Fin.isValue, PiLp.single_apply, ite_smul, one_smul, zero_smul,
+      connection_apply, smul_add, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, Fin.sum_univ_three,
+      ↓reduceIte, one_ne_zero, zero_div, zero_mul, pack_zero, mul_neg, neg_zero, add_zero,
+      Fin.reduceEq, PiLp.zero_apply, zero_ne_one, one_div, pack_one, zero_add, pack_two, mul_zero,
+      vectorDivergence, add_left_inj]
   ring
 
 /-- Euclidean gradient, given by `∑ i : Fin 3, dCoord i f x • coordinateVector i`. -/
@@ -576,37 +596,43 @@ theorem vectorAdvection_radial (w : Space → Space) (q : Space) :
     vectorAdvection w q 0 =
       w q 0 * dCoord 0 w q 0 + w q 1 / q 0 * dCoord 1 w q 0 +
         w q 2 * dCoord 2 w q 0 - (w q 1) ^ 2 / q 0 := by
-  simp [vectorAdvection, connection_apply]
+  simp only [Fin.isValue, vectorAdvection, connection_apply, smul_add, PiLp.add_apply,
+      PiLp.smul_apply, smul_eq_mul, pack_zero, mul_neg]
   ring
 
 theorem vectorAdvection_angular (w : Space → Space) (q : Space) :
     vectorAdvection w q 1 =
       w q 0 * dCoord 0 w q 1 + w q 1 / q 0 * dCoord 1 w q 1 +
         w q 2 * dCoord 2 w q 1 + w q 0 * w q 1 / q 0 := by
-  simp [vectorAdvection, connection_apply]
+  simp only [Fin.isValue, vectorAdvection, connection_apply, smul_add, PiLp.add_apply,
+      PiLp.smul_apply, smul_eq_mul, pack_one]
   ring
 
 theorem vectorAdvection_axial (w : Space → Space) (q : Space) :
     vectorAdvection w q 2 =
       w q 0 * dCoord 0 w q 2 + w q 1 / q 0 * dCoord 1 w q 2 +
         w q 2 * dCoord 2 w q 2 := by
-  simp [vectorAdvection, connection_apply]
+  simp only [Fin.isValue, vectorAdvection, connection_apply, smul_add, PiLp.add_apply,
+      PiLp.smul_apply, smul_eq_mul, pack_two, mul_zero, add_zero]
 
 theorem vectorLaplacian_radial (w : Space → Space) (q : Space) :
     vectorLaplacian w q 0 = scalarLaplacian w q 0 -
       w q 0 / (q 0) ^ 2 - 2 * dCoord 1 w q 1 / (q 0) ^ 2 := by
-  simp [vectorLaplacian, connection_apply]
+  simp only [Fin.isValue, vectorLaplacian, connection_apply, pack_one, pack_zero, PiLp.add_apply,
+      PiLp.smul_apply, smul_eq_mul, mul_neg]
   ring
 
 theorem vectorLaplacian_angular (w : Space → Space) (q : Space) :
     vectorLaplacian w q 1 = scalarLaplacian w q 1 -
       w q 1 / (q 0) ^ 2 + 2 * dCoord 1 w q 0 / (q 0) ^ 2 := by
-  simp [vectorLaplacian, connection_apply]
+  simp only [Fin.isValue, vectorLaplacian, connection_apply, pack_one, pack_zero, PiLp.add_apply,
+      PiLp.smul_apply, smul_eq_mul, mul_neg]
   ring
 
 theorem vectorLaplacian_axial (w : Space → Space) (q : Space) :
     vectorLaplacian w q 2 = scalarLaplacian w q 2 := by
-  simp [vectorLaplacian, connection_apply]
+  simp only [Fin.isValue, vectorLaplacian, connection_apply, pack_one, pack_zero, PiLp.add_apply,
+      PiLp.smul_apply, pack_two, smul_eq_mul, mul_zero, add_zero]
 
 theorem dCoord_eventuallyEq {f g : Space → E} {q : Space}
     (h : f =ᶠ[𝓝 q] g) (i : Fin 3) : dCoord i f =ᶠ[𝓝 q] dCoord i g := by

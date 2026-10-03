@@ -66,7 +66,7 @@ theorem realPrimitive_continuous (T : ℝ) (u : TimeLp T E) :
 
 /-- The terminal condition holds by construction. -/
 @[simp] theorem realPrimitive_terminal (T : ℝ) (u : TimeLp T E) :
-    realPrimitive T u T = 0 := by simp [realPrimitive]
+    realPrimitive T u T = 0 := by simp only [realPrimitive, intervalIntegral.integral_same]
 
 /-- All increments are the literal Bochner integrals of the zero-extended derivative. -/
 theorem realPrimitive_increment (T : ℝ) (u : TimeLp T E) (s t : ℝ) :
@@ -111,7 +111,8 @@ theorem integral_sq_le_length_mul (g : ℝ → ℝ) {a b : ℝ} (hab : a ≤ b)
     (hg2 : IntervalIntegrable (fun t => (g t) ^ 2) volume a b) :
     (∫ t in a..b, g t)^2 ≤ (b-a)*(∫ t in a..b, (g t)^2) := by
   rcases hab.eq_or_lt with rfl | hab
-  · simp
+  · simp only [intervalIntegral.integral_same, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
+      zero_pow, sub_self, mul_zero, Std.le_refl]
   let c := (∫ t in a..b, g t)/(b-a)
   have hn := intervalIntegral.integral_nonneg (μ := volume) hab.le
     (fun t _ => sq_nonneg (g t-c))
@@ -151,7 +152,8 @@ theorem zeroExtension_norm_sq_integral (T : ℝ) (u : TimeLp T E) :
       rw [← integral_indicator measurableSet_Icc]
       apply integral_congr_ae
       filter_upwards with t
-      by_cases ht : t ∈ Icc (0 : ℝ) T <;> simp [zeroExtension, ht]
+      by_cases ht : t ∈ Icc (0 : ℝ) T <;> simp only [zeroExtension, ht, indicator_of_mem,
+          not_false_eq_true, indicator_of_notMem, norm_zero, ne_eq, OfNat.ofNat_ne_zero, zero_pow]
     _ = ‖u‖^2 := (norm_sq_eq_integral T u).symm
 
 /-- The sharp terminal trace bound at every time, with the global derivative energy. -/
@@ -207,8 +209,9 @@ theorem zeroExtension_add_ae (T : ℝ) (u v : TimeLp T E) :
   have h := (ae_eq_restrict_iff_indicator_ae_eq measurableSet_Icc).mp (Lp.coeFn_add u v)
   filter_upwards [h] with t ht
   by_cases hm : t ∈ Icc (0 : ℝ) T
-  · simpa [zeroExtension, hm] using ht
-  · simp [zeroExtension, hm]
+  · simpa only [zeroExtension, AddSubgroup.coe_add, hm, indicator_of_mem, Pi.add_apply] using ht
+  · simp only [zeroExtension, AddSubgroup.coe_add, hm, not_false_eq_true, indicator_of_notMem,
+      add_zero]
 
 /-- The zero extension respects real scalar multiplication almost everywhere. -/
 theorem zeroExtension_smul_ae (T : ℝ) (a : ℝ) (u : TimeLp T E) :
@@ -216,8 +219,8 @@ theorem zeroExtension_smul_ae (T : ℝ) (a : ℝ) (u : TimeLp T E) :
   have h := (ae_eq_restrict_iff_indicator_ae_eq measurableSet_Icc).mp (Lp.coeFn_smul a u)
   filter_upwards [h] with t ht
   by_cases hm : t ∈ Icc (0 : ℝ) T
-  · simpa [zeroExtension, hm] using ht
-  · simp [zeroExtension, hm]
+  · simpa only [zeroExtension, hm, indicator_of_mem, Pi.smul_apply] using ht
+  · simp only [zeroExtension, hm, not_false_eq_true, indicator_of_notMem, smul_zero]
 
 /-- The primitive path respects addition of genuine L² equivalence classes. -/
 theorem primitivePath_add (T : ℝ) (u v : TimeLp T E) :

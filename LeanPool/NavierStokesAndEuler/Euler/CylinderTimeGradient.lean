@@ -39,14 +39,18 @@ def fromCoordinates : (Fin 4 → Space) →L[ℝ] (LiftTangent →L[ℝ] Space) 
 
 theorem fromCoordinates_apply (u : Fin 4 → Space) (v : LiftTangent) :
     fromCoordinates u v = ∑ i : Fin 4, (coordinateEquiv.symm v i) • u i := by
-  simp [fromCoordinates, tangentCoordinate]
+  simp only [fromCoordinates, tangentCoordinate, sum_apply, comp_apply, proj_apply,
+      smulRightL_apply_apply, smulRight_apply, ContinuousLinearEquiv.coe_coe,
+      coordinateEquiv_symm_apply, Nat.reduceAdd, PiLp.proj_apply]
 
 theorem tangent_sum_coordinates (v : LiftTangent) :
     (∑ i : Fin 4, (coordinateEquiv.symm v i) • standardDirection i) = v := by
   have he : (∑ i : Fin 4, (coordinateEquiv.symm v i) • EuclideanSpace.single i (1 : ℝ)) =
       coordinateEquiv.symm v := by
     ext i
-    simp [Pi.single_apply, mul_ite]
+    simp only [coordinateEquiv_symm_apply, Nat.reduceAdd, WithLp.ofLp_sum, WithLp.ofLp_smul,
+        PiLp.ofLp_single, Finset.sum_apply, Pi.smul_apply, Pi.single_apply, smul_eq_mul, mul_ite,
+        mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte]
   change (∑ i : Fin 4, (coordinateEquiv.symm v i) • coordinateEquiv (EuclideanSpace.single i (1 :
       ℝ))) = v
   simp_rw [← map_smul]

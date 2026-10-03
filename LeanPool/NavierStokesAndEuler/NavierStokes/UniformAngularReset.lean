@@ -57,12 +57,12 @@ theorem template_contDiff : ContDiff ℝ ∞ template :=
 theorem template_at_zero : template 0 = 1 := by
   have h := LocalizedMomentRepair.bump_at_center (-3 / 10) (3 / 10)
   norm_num at h
-  simpa [template, neg_div] using h
+  simpa only [template, neg_div] using h
 
 theorem template_support : support template ⊆ Icc (-3 / 20 : ℝ) (3 / 20) := by
   have h := LocalizedMomentRepair.bump_support_subset (-3 / 10) (3 / 10) (by norm_num)
   norm_num [LocalizedMomentRepair.innerLower, LocalizedMomentRepair.innerUpper] at h
-  simpa [template, neg_div] using h
+  simpa only [template, neg_div, support_subset_iff, ne_eq, mem_Icc] using h
 
 theorem template_hasCompactSupport : HasCompactSupport template :=
   HasCompactSupport.of_support_subset_isCompact isCompact_Icc template_support
@@ -88,9 +88,9 @@ theorem bump_hasCompactSupport (j : Fin 2) : HasCompactSupport (bump j) :=
 
 theorem bumps_disjoint (y : ℝ) : bump 0 y * bump 1 y = 0 := by
   by_cases h0 : bump 0 y = 0
-  · simp [h0]
+  · simp only [Fin.isValue, h0, zero_mul]
   by_cases h1 : bump 1 y = 0
-  · simp [h1]
+  · simp only [Fin.isValue, h1, mul_zero]
   have hs0 := bump_support 0 h0
   have hs1 := bump_support 1 h1
   norm_num at hs0 hs1
@@ -119,7 +119,8 @@ theorem moment_pos (s : ℝ) : 0 < moment s := by
     template_hasCompactSupport.mul_left
   · intro y
     exact mul_nonneg (Real.exp_pos _).le (LocalizedMomentRepair.bump_nonneg _ _ _)
-  · exact (show Real.exp (s * 0) * template 0 ≠ 0 by simp [template_at_zero])
+  · exact (show Real.exp (s * 0) * template 0 ≠ 0 by simp only [mul_zero, Real.exp_zero,
+      template_at_zero, mul_one, ne_eq, one_ne_zero, not_false_eq_true])
 
 /-- Translation multiplies an exponential bump moment by its exact exponential factor. -/
 theorem bump_moment (s : ℝ) (j : Fin 2) :
@@ -149,7 +150,8 @@ def linearMatrix (lam : ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
 theorem linearMatrix_det (lam : ℝ) :
     (linearMatrix lam).det = 2 * moment (angularSlope lam) * moment (pressureSlope lam) *
       (Real.exp (2 * pressureSlope lam) - Real.exp (2 * angularSlope lam)) := by
-  simp [linearMatrix, Matrix.det_fin_two]
+  simp only [linearMatrix, Matrix.det_fin_two, Fin.isValue, Matrix.of_apply, Matrix.cons_val',
+      Matrix.cons_val_zero, Matrix.cons_val_fin_one, Matrix.cons_val_one]
   ring
 
 theorem linearMatrix_det_ne_zero (lam : ℝ) (hlam : 0 < lam) :
@@ -186,7 +188,8 @@ theorem relative_contDiff (c : Coeff) : ContDiff ℝ ∞ (relative c) :=
 theorem relative_support (c : Coeff) : support (relative c) ⊆ Icc (-3 / 20 : ℝ) (43 / 20) := by
   intro y hy
   by_cases h0 : bump 0 y = 0
-  · have h1 : bump 1 y ≠ 0 := by intro h1; exact hy (by simp [relative, h0, h1])
+  · have h1 : bump 1 y ≠ 0 := by intro h1; exact hy (by simp only [relative, Fin.isValue, h0,
+      mul_zero, h1, add_zero])
     have hs := bump_support 1 h1
     norm_num at hs
     constructor <;> linarith only [hs, hs.1, hs.2]
@@ -208,19 +211,29 @@ def quadraticBilin (lam : ℝ) : Coeff →ₗ[ℝ] Coeff →ₗ[ℝ] Coeff where
     { toFun := fun d => ![0, quadraticMoment lam 0 * c 0 * d 0 + quadraticMoment lam 1 * c 1 * d 1]
       map_add' := fun d e => by
         ext i
-        fin_cases i <;> simp [Pi.add_apply]
+        fin_cases i <;> simp only [Fin.isValue, Pi.add_apply, Nat.succ_eq_add_one, Nat.reduceAdd,
+            Fin.zero_eta, Matrix.cons_val_zero, add_zero, Fin.mk_one, Matrix.cons_val_one,
+            Matrix.cons_val_fin_one]
         ring
       map_smul' := fun r d => by
         ext i
-        fin_cases i <;> simp [Pi.smul_apply, smul_eq_mul]
+        fin_cases i <;> simp only [Fin.isValue, Pi.smul_apply, smul_eq_mul, Nat.succ_eq_add_one,
+            Nat.reduceAdd, Fin.zero_eta, Matrix.cons_val_zero, RingHom.id_apply, mul_zero,
+            Fin.mk_one, Matrix.cons_val_one, Matrix.cons_val_fin_one]
         ring }
   map_add' c d := by
     ext e i
-    fin_cases i <;> simp [Pi.add_apply]
+    fin_cases i <;> simp only [Fin.isValue, Pi.add_apply, Fin.zero_eta, LinearMap.coe_comp,
+        LinearMap.coe_mk, AddHom.coe_mk, LinearMap.coe_single, comp_apply, Matrix.cons_val_zero,
+        LinearMap.coe_add, Nat.succ_eq_add_one, Nat.reduceAdd, add_zero, Fin.mk_one,
+        Matrix.cons_val_one, Matrix.cons_val_fin_one]
     ring
   map_smul' r c := by
     ext e i
-    fin_cases i <;> simp [Pi.smul_apply, smul_eq_mul]
+    fin_cases i <;> simp only [Fin.isValue, Pi.smul_apply, smul_eq_mul, Fin.zero_eta,
+        LinearMap.coe_comp, LinearMap.coe_mk, AddHom.coe_mk, LinearMap.coe_single, comp_apply,
+        Matrix.cons_val_zero, RingHom.id_apply, LinearMap.coe_smul, Nat.succ_eq_add_one,
+        Nat.reduceAdd, mul_zero, Fin.mk_one, Matrix.cons_val_one, Matrix.cons_val_fin_one]
     ring
 
 /-- Quadratic continuous linear map, constructed using `LinearMap.toContinuousLinearMap`. -/
@@ -257,7 +270,7 @@ theorem relative_moment (s : ℝ) (c : Coeff) :
       (fun y => c 0 * (Real.exp (s * y) * bump 0 y) +
         c 1 * (Real.exp (s * y) * bump 1 y)) := by
     funext y
-    dsimp [relative]
+    dsimp only [relative, Fin.isValue]
     ring
   rw [hf, integral_add ((weighted_bump_integrable s 0).const_mul _)
     ((weighted_bump_integrable s 1).const_mul _), integral_const_mul, integral_const_mul,
@@ -270,7 +283,7 @@ theorem relative_square (c : Coeff) (y : ℝ) :
     (relative c y) ^ 2 = (c 0) ^ 2 * (bump 0 y) ^ 2 + (c 1) ^ 2 * (bump 1 y) ^ 2 := by
   calc
     _ = (c 0) ^ 2 * (bump 0 y) ^ 2 + (c 1) ^ 2 * (bump 1 y) ^ 2 +
-        2 * c 0 * c 1 * (bump 0 y * bump 1 y) := by dsimp [relative]; ring
+        2 * c 0 * c 1 * (bump 0 y * bump 1 y) := by dsimp only [relative, Fin.isValue]; ring
     _ = _ := by rw [bumps_disjoint]; ring
 
 theorem relative_square_moment (lam : ℝ) (c : Coeff) :
@@ -284,7 +297,7 @@ theorem relative_square_moment (lam : ℝ) (c : Coeff) :
     ring
   rw [hf, integral_add ((weighted_bump_sq_integrable _ 0).const_mul _)
     ((weighted_bump_sq_integrable _ 1).const_mul _), integral_const_mul, integral_const_mul]
-  dsimp [quadraticMoment]
+  dsimp only [Fin.isValue, quadraticMoment]
   ring
 
 theorem pressure_change_integrable (lam : ℝ) (c : Coeff) :
@@ -315,7 +328,10 @@ theorem moment_map_identity (lam : ℝ) (hlam : 0 < lam) (c : Coeff) :
         ∫ y, Real.exp (pressureSlope lam * y) * ((1 + relative c y) ^ 2 - 1)] := by
   rw [linearEquiv_apply, quadraticCLM_apply, relative_moment, pressure_change_moment]
   ext i
-  fin_cases i <;> simp [linearMatrix, dotProduct, Fin.sum_univ_two]
+  fin_cases i <;> simp only [linearMatrix, Matrix.cons_mulVec, dotProduct, Fin.sum_univ_two,
+      Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one,
+      Matrix.empty_mulVec, Nat.succ_eq_add_one, Nat.reduceAdd, Fin.zero_eta, Pi.add_apply, add_zero,
+      Fin.mk_one]
   ring
 
 /-- Debt, given by `![δ, 0]`. -/
@@ -331,7 +347,9 @@ theorem debt_contDiff : ContDiff ℝ ∞ debt := by
 theorem debt_norm_le (δ : ℝ) : ‖debt δ‖ ≤ |δ| := by
   apply (pi_norm_le_iff_of_nonneg (abs_nonneg δ)).mpr
   intro i
-  fin_cases i <;> simp [debt]
+  fin_cases i <;> simp only [debt, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero,
+      Real.norm_eq_abs, Std.le_refl, Fin.mk_one, Matrix.cons_val_one, Matrix.cons_val_fin_one,
+      norm_zero, abs_nonneg]
 
 /-- A smooth small branch is obtained from the proved actual moment derivative,
 not from an assumed solution or matrix rank. -/
@@ -346,7 +364,9 @@ theorem exists_normalized_branch (lam : ℝ) (hlam : 0 < lam) :
     SmoothMomentRepair.exists_smooth_parameter_branch (E := Coeff) (P := ℝ) 0
       (fun _ => (linearEquiv lam hlam).toContinuousLinearMap)
       (fun _ => quadraticCLM lam) debt contDiff_const contDiff_const debt_contDiff
-      (linearEquiv lam hlam) rfl (by ext i; fin_cases i <;> simp [debt])
+      (linearEquiv lam hlam) rfl (by ext i; fin_cases i <;> simp only [debt, Fin.zero_eta,
+          Fin.isValue, Matrix.cons_val_zero, Pi.zero_apply, Fin.mk_one, Matrix.cons_val_one,
+          Matrix.cons_val_fin_one])
   obtain ⟨ε, hε, hεU⟩ := Metric.mem_nhds_iff.mp (hU.mem_nhds h0)
   have hsub : Ioo (-ε) ε ⊆ U := by
     intro δ hδ
@@ -363,8 +383,10 @@ theorem exists_normalized_branch (lam : ℝ) (hlam : 0 < lam) :
 
 theorem relative_deriv (c : Coeff) (y : ℝ) :
     deriv (relative c) y = c 0 * deriv (bump 0) y + c 1 * deriv (bump 1) y := by
-  have h0 := (bump_contDiff 0).differentiable (by simp : (∞ : WithTop ℕ∞) ≠ 0)
-  have h1 := (bump_contDiff 1).differentiable (by simp : (∞ : WithTop ℕ∞) ≠ 0)
+  have h0 := (bump_contDiff 0).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true] : (∞ : WithTop ℕ∞) ≠ 0)
+  have h1 := (bump_contDiff 1).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true] : (∞ : WithTop ℕ∞) ≠ 0)
   unfold relative
   rw [deriv_fun_add (h0.differentiableAt.const_mul _) (h1.differentiableAt.const_mul _),
     deriv_const_mul _ h0.differentiableAt, deriv_const_mul _ h1.differentiableAt]
@@ -463,7 +485,7 @@ theorem exists_resetBranch (lam : ℝ) (hlam : 0 < lam) : Nonempty (ResetBranch 
     intro δ hδ
     apply ((heq δ (hsub hδ)).2.2).trans
     apply mul_le_mul_of_nonneg_right _ (abs_nonneg δ)
-    dsimp [L]
+    dsimp only [L]
     nlinarith only [hDK]
   refine ⟨{
     coefficients := c
@@ -480,7 +502,7 @@ theorem exists_resetBranch (lam : ℝ) (hlam : 0 < lam) : Nonempty (ResetBranch 
     small_jets := ?_ }⟩
   · intro δ hδ y
     have hn := (heq δ (hsub hδ)).2.2
-    have hL' : D * K ≤ L := by dsimp [L]; nlinarith only [hK]
+    have hL' : D * K ≤ L := by dsimp only [L]; nlinarith only [hK]
     have hbound : D * ‖c δ‖ ≤ L * |δ| :=
       (mul_le_mul_of_nonneg_left hn hD.le).trans
         (by simpa only [mul_assoc] using mul_le_mul_of_nonneg_right hL' (abs_nonneg δ))
@@ -536,7 +558,7 @@ theorem modifiedE_sub_support (lam e0 y0 : ℝ) (c : Coeff) :
   intro y hy
   have hn : relative c (y - y0) ≠ 0 := by
     intro hz
-    exact hy (by simp [modifiedE, hz])
+    exact hy (by simp only [Pi.sub_apply, modifiedE, hz, add_zero, mul_one, sub_self])
   have hs := relative_support c hn
   constructor <;> linarith only [hs, hs.1, hs.2]
 
@@ -561,17 +583,18 @@ theorem modifiedE_unchanged (lam e0 y0 : ℝ) (c : Coeff) {y : ℝ}
 theorem baseE_hasDerivAt (lam e0 y : ℝ) :
     HasDerivAt (baseE lam e0) (baseE lam e0 y * (-1 / 2 - lam)) y := by
   convert! (((hasDerivAt_id y).const_mul (-1 / 2 - lam)).exp).const_mul e0 using 1
-  simp [baseE]
+  simp only [baseE, id_eq, mul_one]
   ring
 
 theorem modifiedE_hasDerivAt (lam e0 y0 : ℝ) (c : Coeff) (y : ℝ) :
     HasDerivAt (modifiedE lam e0 y0 c)
       (baseE lam e0 y * (-1 / 2 - lam) * (1 + relative c (y - y0)) +
         baseE lam e0 y * deriv (relative c) (y - y0)) y := by
-  have hr := (((relative_contDiff c).differentiable (by simp)).differentiableAt.hasDerivAt).comp y
+  have hr := (((relative_contDiff c).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true])).differentiableAt.hasDerivAt).comp y
     ((hasDerivAt_id y).sub_const y0)
   convert! (baseE_hasDerivAt lam e0 y).mul (hr.const_add 1) using 1
-  simp
+  simp only [id_eq, comp_apply, mul_one]
 
 theorem modifiedE_logSlope (lam e0 y0 : ℝ) (c : Coeff) (y : ℝ) (he0 : e0 ≠ 0)
     (hpos : 1 + relative c (y - y0) ≠ 0) :
@@ -827,10 +850,10 @@ theorem ResetBranch.exact_endpoint_moment {lam : ℝ} (B : ResetBranch lam)
   rw [B.angular δ hδ] at hi
   have hs : angularScale lam e0 X0 y0 ≠ 0 := (angularScale_pos lam e0 X0 y0 he0 hX).ne'
   have hd : angularScale lam e0 X0 y0 * δ = Itarget - prefixI lam e0 X0 a b Iprior := by
-    dsimp [δ]
+    dsimp only [δ]
     field_simp
   rw [hd] at hi
-  dsimp [prefixI] at hi
+  dsimp only [prefixI] at hi
   linarith only [hi]
 
 /-! ## Smooth dependence on the angular parameter -/
@@ -900,7 +923,7 @@ theorem continuous_moment : Continuous moment := by
       (template_contDiff.continuous.comp continuous_snd)).continuousOn
   · intro s y _ hy
     have hz : template y = 0 := Classical.byContradiction (fun hn => hy (template_support hn))
-    simp [hz]
+    simp only [hz, mul_zero]
 
 theorem continuous_quadraticMoment (j : Fin 2) : Continuous (fun lam => quadraticMoment lam j) := by
   apply continuousOn_univ.mp
@@ -911,7 +934,7 @@ theorem continuous_quadraticMoment (j : Fin 2) : Continuous (fun lam => quadrati
       continuous_snd)).mul (((bump_contDiff j).continuous.comp continuous_snd).pow 2)).continuousOn
   · intro lam y _ hy
     have hz : bump j y = 0 := Classical.byContradiction (fun hn => hy (bump_support j hn))
-    simp [hz]
+    simp only [hz, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, mul_zero]
 
 /-- Linear continuous linear map, constructed using `LinearMap.toContinuousLinearMap`. -/
 def linearCLM (lam : ℝ) : Coeff →L[ℝ] Coeff :=
@@ -947,7 +970,8 @@ theorem continuous_linearCLM : Continuous linearCLM := by
     apply continuous_pi
     intro j
     fin_cases i <;> fin_cases j <;>
-      dsimp [linearMatrix, angularSlope, pressureSlope]
+      dsimp only [Fin.zero_eta, Fin.isValue, linearMatrix, angularSlope, pressureSlope,
+          Matrix.of_apply, Matrix.cons_val_zero, Fin.mk_one, Matrix.cons_val_one]
     · exact continuous_moment.comp (continuous_const.sub continuous_id)
     · exact (Real.continuous_exp.comp (continuous_const.mul (continuous_const.sub
         continuous_id))).mul
@@ -967,19 +991,29 @@ def quadraticCoefficientsBilin (q : Coeff) : Coeff →ₗ[ℝ] Coeff →ₗ[ℝ]
     { toFun := fun d => ![0, q 0 * c 0 * d 0 + q 1 * c 1 * d 1]
       map_add' := fun d e => by
         ext i
-        fin_cases i <;> simp [Pi.add_apply]
+        fin_cases i <;> simp only [Fin.isValue, Pi.add_apply, Nat.succ_eq_add_one, Nat.reduceAdd,
+            Fin.zero_eta, Matrix.cons_val_zero, add_zero, Fin.mk_one, Matrix.cons_val_one,
+            Matrix.cons_val_fin_one]
         ring
       map_smul' := fun r d => by
         ext i
-        fin_cases i <;> simp [Pi.smul_apply, smul_eq_mul]
+        fin_cases i <;> simp only [Fin.isValue, Pi.smul_apply, smul_eq_mul, Nat.succ_eq_add_one,
+            Nat.reduceAdd, Fin.zero_eta, Matrix.cons_val_zero, RingHom.id_apply, mul_zero,
+            Fin.mk_one, Matrix.cons_val_one, Matrix.cons_val_fin_one]
         ring }
   map_add' c d := by
     ext e i
-    fin_cases i <;> simp [Pi.add_apply]
+    fin_cases i <;> simp only [Fin.isValue, Pi.add_apply, Fin.zero_eta, LinearMap.coe_comp,
+        LinearMap.coe_mk, AddHom.coe_mk, LinearMap.coe_single, comp_apply, Matrix.cons_val_zero,
+        LinearMap.coe_add, Nat.succ_eq_add_one, Nat.reduceAdd, add_zero, Fin.mk_one,
+        Matrix.cons_val_one, Matrix.cons_val_fin_one]
     ring
   map_smul' r c := by
     ext e i
-    fin_cases i <;> simp [Pi.smul_apply, smul_eq_mul]
+    fin_cases i <;> simp only [Fin.isValue, Pi.smul_apply, smul_eq_mul, Fin.zero_eta,
+        LinearMap.coe_comp, LinearMap.coe_mk, AddHom.coe_mk, LinearMap.coe_single, comp_apply,
+        Matrix.cons_val_zero, RingHom.id_apply, LinearMap.coe_smul, Nat.succ_eq_add_one,
+        Nat.reduceAdd, mul_zero, Fin.mk_one, Matrix.cons_val_one, Matrix.cons_val_fin_one]
     ring
 
 /-- Quadratic coefficient map, bundling `toFun`, `map_add`, `map_smul`. -/
@@ -1156,7 +1190,7 @@ theorem exists_smooth_solver_on_ball [FiniteDimensional ℝ E] [CompleteSpace E]
   classical
   let ε : ℝ := r / (4 * β)
   have hε : 0 < ε := div_pos hr (by positivity)
-  have hεeq : 2 * β * ε = r / 2 := by dsimp [ε]; field_simp ; ring
+  have hεeq : 2 * β * ε = r / 2 := by dsimp only [ε]; field_simp ; ring
   have hex : ∀ d : Metric.ball (0 : E) ε, ∃! c : E,
       ‖c‖ ≤ r ∧ quadraticMap B A c = d := by
     intro d
@@ -1185,7 +1219,7 @@ theorem exists_smooth_solver_on_ball [FiniteDimensional ℝ E] [CompleteSpace E]
     have hz : quadraticMap B A 0 = 0 := by
       rw [quadraticMap, B.map_zero, A.map_zero, zero_apply, add_zero]
     simpa only [sub_zero] using quadratic_solution_distance B A β K r hβ.le hK hinv hA hsmall
-      (g d) 0 d 0 (hspec d hd).1.1 (by simpa using hr.le) (hspec d hd).1.2 hz
+      (g d) 0 d 0 (hspec d hd).1.1 (by simpa only [norm_zero] using hr.le) (hspec d hd).1.2 hz
   have hinterior : ∀ d ∈ Metric.ball (0 : E) ε, ‖g d‖ < r := by
     intro d hd
     have hd' : ‖d‖ < ε := by simpa only [Metric.mem_ball, dist_zero_right] using hd
@@ -1200,18 +1234,22 @@ theorem exists_smooth_solver_on_ball [FiniteDimensional ℝ E] [CompleteSpace E]
       exact quadraticMap_hasFDerivAt B A (g d)
     have hq : ContDiffAt ℝ ∞ (quadraticMap B A) (g d) :=
       (quadraticMap_contDiff B A).contDiffAt
-    let inv : E → E := hq.localInverse hderiv (by simp)
+    let inv : E → E := hq.localInverse hderiv (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true])
     have hqd : quadraticMap B A (g d) = d := (hspec d hd).1.2
     have hinvsm : ContDiffAt ℝ ∞ inv d := by
-      simpa only [hqd] using hq.to_localInverse hderiv (by simp)
+      simpa only [hqd] using hq.to_localInverse hderiv (by simp only [ne_eq, WithTop.coe_eq_zero,
+          ENat.top_ne_zero, not_false_eq_true])
     have hinv0 : inv d = g d := by
-      simpa only [hqd] using hq.localInverse_apply_image hderiv (by simp)
+      simpa only [hqd] using hq.localInverse_apply_image hderiv (by simp only [ne_eq,
+          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
     have hinvr : ∀ᶠ x in 𝓝 d, ‖inv x‖ < r :=
       hinvsm.continuousAt.norm.eventually
         (eventually_lt_nhds (by simpa only [hinv0] using hinterior d hd))
     have hinveq : ∀ᶠ x in 𝓝 d, quadraticMap B A (inv x) = x := by
       have h := HasStrictFDerivAt.eventually_right_inverse (f' := D)
-        (hq.hasStrictFDerivAt' hderiv (by simp))
+        (hq.hasStrictFDerivAt' hderiv (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+            not_false_eq_true]))
       change ∀ᶠ x in 𝓝 (quadraticMap B A (g d)), quadraticMap B A (inv x) = x at h
       simpa only [hqd] using h
     have hgeq : g =ᶠ[𝓝 d] inv := by
@@ -1230,7 +1268,11 @@ theorem actual_moment_map (lam : ℝ) (c : Coeff) :
         ∫ y, Real.exp (pressureSlope lam * y) * ((1 + relative c y) ^ 2 - 1)] := by
   rw [quadraticCLM_apply, relative_moment, pressure_change_moment]
   ext i
-  fin_cases i <;> simp [linearCLM, linearMatrix, dotProduct, Fin.sum_univ_two]
+  fin_cases i <;> simp only [linearCLM, linearMatrix, LinearMap.coe_toContinuousLinearMap',
+      LinearMap.coe_mk, AddHom.coe_mk, Matrix.cons_mulVec, dotProduct, Fin.sum_univ_two,
+      Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one,
+      Matrix.empty_mulVec, Nat.succ_eq_add_one, Nat.reduceAdd, Fin.zero_eta, Pi.add_apply, add_zero,
+      Fin.mk_one]
   ring
 
 /-- A single radius and a single bound work for the actual two-bump system for
@@ -1249,12 +1291,12 @@ theorem uniform_reset_branch :
   let r : ℝ := 1 / (4 * β * K)
   let ε : ℝ := r / (4 * β)
   let L : ℝ := (1 + D) * (2 * β)
-  have hr : 0 < r := by dsimp [r]; positivity
+  have hr : 0 < r := by dsimp only [r]; positivity
   have hε : 0 < ε := div_pos hr (by positivity)
   have hL : 0 < L := mul_pos (by linarith only [hD]) (by positivity)
-  have hLbase : 2 * β ≤ L := by dsimp [L]; nlinarith only [hβ, hD]
-  have hLD : D * (2 * β) ≤ L := by dsimp [L]; nlinarith only [hβ]
-  have hsmall : 4 * β * K * r ≤ 1 := by dsimp [r]; field_simp ; rfl
+  have hLbase : 2 * β ≤ L := by dsimp only [L]; nlinarith only [hβ, hD]
+  have hLD : D * (2 * β) ≤ L := by dsimp only [L]; nlinarith only [hβ]
+  have hsmall : 4 * β * K * r ≤ 1 := by dsimp only [r]; field_simp ; rfl
   refine ⟨ε, L, hε, hL, ?_⟩
   intro lam hlam
   let B := linearEquivNonneg lam hlam.1
@@ -1284,7 +1326,9 @@ theorem uniform_reset_branch :
   have hclip : ∀ δ ∈ Ioo (-ε) ε, ∀ η ∈ Ioo (-ε) ε,
       ‖c δ - c η‖ ≤ (2 * β) * |δ - η| := by
     intro δ hδ η hη
-    have hs : debt δ - debt η = debt (δ - η) := by ext i; fin_cases i <;> simp [debt]
+    have hs : debt δ - debt η = debt (δ - η) := by ext i; fin_cases i <;> simp only [debt,
+        Fin.zero_eta, Fin.isValue, Pi.sub_apply, Matrix.cons_val_zero, Fin.mk_one,
+        Matrix.cons_val_one, Matrix.cons_val_fin_one, sub_self]
     apply (hglip (debt δ) (hd δ hδ) (debt η) (hd η hη)).trans
     rw [hs]
     exact mul_le_mul_of_nonneg_left (debt_norm_le _) (by positivity)
@@ -1324,7 +1368,8 @@ theorem baseWeight_pos (d : TailData) (y : ℝ) : 0 < baseWeight d y :=
   mul_pos (Real.exp_pos _) (mul_pos d.core.P_pos (Real.exp_pos _))
 
 theorem baseWeight_zero (d : TailData) : baseWeight d 0 = d.core.P := by
-  simp [baseWeight, radialAmplitude, logAmplitude, OutgoingSchedule.primitive]
+  simp only [baseWeight, mul_zero, zero_div, Real.exp_zero, radialAmplitude, logAmplitude,
+      primitive, one_div, intervalIntegral.integral_same, mul_one, one_mul]
 
 theorem core_slope_lower (d : TailData) (y : ℝ) :
     -d.core.lam ≤ slope d.core.dropLength d.core.lam y := by
@@ -1340,7 +1385,7 @@ theorem baseWeight_hasDerivAt (d : TailData) (y : ℝ) :
       (baseWeight d y * (1 + slope d.core.dropLength d.core.lam y)) y := by
   have he := (((hasDerivAt_id y).const_mul (3 : ℝ)).div_const 2).exp
   convert! he.mul (radialAmplitude_hasDerivAt d.core.P d.core.dropLength d.core.lam y) using 1
-  dsimp [baseWeight]
+  dsimp only [baseWeight, id_eq]
   ring
 
 theorem baseHistory_hasDerivAt (d : TailData) (y : ℝ) :
@@ -1376,7 +1421,7 @@ theorem baseHistory_le (d : TailData) {y : ℝ} (hy : 0 ≤ y) :
     apply (le_div_iff₀ hk).mpr
     nlinarith only [hk, d.core.P_pos, d.core.lam_pos]
   have h := hmono hy
-  dsimp [f] at h hzero
+  dsimp only [f] at h hzero
   linarith only [hzero, h]
 
 /-- Flatten shape, constructed using `Real.exp`. -/
@@ -1480,7 +1525,7 @@ def etaRate (d : TailData) (eta y : ℝ) : ℝ :=
 theorem logShape_hasDerivAt (eta : ℝ) :
     HasDerivAt logShape (2 * eta / (1 + eta ^ 2)) eta := by
   convert! (((hasDerivAt_id eta).pow 2).const_add 1).log (by positivity : 1 + eta ^ 2 ≠ 0) using 1
-  simp []
+  simp only [Nat.cast_ofNat, id_eq, Nat.add_one_sub_one, pow_one, mul_one, Pi.pow_apply]
 
 theorem logShape_deriv_bound (eta : ℝ) : |2 * eta / (1 + eta ^ 2)| ≤ 1 := by
   rw [abs_div, abs_mul, abs_of_pos (by
@@ -1511,7 +1556,7 @@ theorem flatWeight_eta_hasDerivAt (d : TailData) (eta y : ℝ) :
   · funext p
     exact flatWeight_eq d p y
   · rw [flatWeight_eq]
-    dsimp [flattenShape, etaRate]
+    dsimp only [flattenShape, etaRate]
     ring
 
 theorem flatWeight_eta_bound (d : TailData) (eta y : ℝ) :
@@ -1738,7 +1783,8 @@ theorem finalAngular_before_release (d : TailData) (eta : ℝ) {y : ℝ}
   have hrel : y - d.releaseStart ≤ 0 := by linarith only [hy]
   have htail : y - tailStart d ≤ 1 := by linarith only [hy, tailStart_gt_release d]
   have hden : 1 - d.rho ≠ 0 := by linarith only [d.rho_lt_half]
-  simp [finalAngular, releaseAdjustment_early d hrel, tailShape_early d htail, hden]
+  simp only [finalAngular, releaseAdjustment_early d hrel, Real.exp_zero, mul_one,
+      tailShape_early d htail, ne_eq, hden, not_false_eq_true, div_self]
 
 /-- The angular history of the actual unedited full outgoing profile, divided
 by its common harmless factor `sqrt 2`. -/
@@ -1759,7 +1805,7 @@ theorem fullHistory_eq_flat (d : TailData) (eta : ℝ) {y : ℝ}
 
 theorem first_center_after_flatten (d : TailData) : d.flattenEnd ≤ d.releaseStart - 3 := by
   have h := uniformWait_gt_twentyseven d
-  dsimp [TailData.releaseStart]
+  dsimp only [TailData.releaseStart]
   linarith only [h]
 
 /-- Identification with the literal endpoint discrepancy and first-center
@@ -1781,7 +1827,7 @@ theorem normalizedDebt_eq_actual (d : TailData) (eta : ℝ) :
     rw [baseWeight_hold d ((coreEndpoint_ge_hold d).trans (flattenEnd_gt_core d).le)
       (first_center_after_flatten d)]
     congr 2
-    dsimp [TailData.releaseStart]
+    dsimp only [TailData.releaseStart]
     ring
   rw [hconst, hcenter]
   unfold normalizedDebt flatRatio decayFactor
@@ -1807,7 +1853,7 @@ theorem actual_debt_tends_to_zero (ε : ℝ) (hε : 0 < ε) :
     ∃ lam0 : ℝ, 0 < lam0 ∧ ∀ d : TailData, d.core.lam < lam0 → ∀ eta : ℝ,
       |normalizedDebt d eta| < ε ∧ |deriv (normalizedDebt d) eta| < ε := by
   let C : ℝ := 3 * Real.exp 3
-  have hC : 0 < C := by dsimp [C]; positivity
+  have hC : 0 < C := by dsimp only [C]; positivity
   refine ⟨min (1 / 15) (ε / C), lt_min (by norm_num) (div_pos hε hC), ?_⟩
   intro d hd eta
   have hsmall : d.core.lam ≤ 1 / 15 := (lt_of_lt_of_le hd (min_le_left _ _)).le
@@ -1843,7 +1889,7 @@ theorem exists_scheduled_reset :
       Nonempty (ResetWitness d K) := by
   obtain ⟨ε, L, hε, hL, hsolve⟩ := uniform_reset_branch
   let C : ℝ := 3 * Real.exp 3
-  have hC : 0 < C := by dsimp [C]; positivity
+  have hC : 0 < C := by dsimp only [C]; positivity
   let lam0 : ℝ := min (1 / 15) (min (ε / C) (1 / (4 * L * C)))
   have hlam0 : 0 < lam0 := lt_min (by norm_num) (lt_min (div_pos hε hC) (by positivity))
   refine ⟨lam0, L * C, hlam0, mul_pos hL hC, ?_⟩
@@ -1884,8 +1930,10 @@ theorem exists_scheduled_reset :
       _ = _ := by ring
   · intro eta
     have hcD : HasDerivAt c (deriv c (normalizedDebt d eta)) (normalizedDebt d eta) :=
-      ((hc.contDiffAt (isOpen_Ioo.mem_nhds (hδ eta))).differentiableAt (by simp)).hasDerivAt
-    have hdD := ((normalizedDebt_contDiff d).differentiable (by simp) eta).hasDerivAt
+      ((hc.contDiffAt (isOpen_Ioo.mem_nhds (hδ eta))).differentiableAt (by simp only [ne_eq,
+          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])).hasDerivAt
+    have hdD := ((normalizedDebt_contDiff d).differentiable (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) eta).hasDerivAt
     have hchain := hcD.scomp eta hdD
     change HasDerivAt a _ eta at hchain
     rw [hchain.deriv, norm_smul, Real.norm_eq_abs]
@@ -1933,7 +1981,7 @@ theorem reference_matches (d : TailData) {y : ℝ} (hy : d.flattenEnd ≤ y) :
 
 theorem last_four_after_flatten (d : TailData) : d.flattenEnd < d.releaseStart - 4 := by
   have h := uniformWait_gt_twentyseven d
-  dsimp [TailData.releaseStart]
+  dsimp only [TailData.releaseStart]
   linarith only [h]
 
 theorem original_matches_reference (d : TailData) (eta : ℝ) {y : ℝ}
@@ -1964,7 +2012,7 @@ theorem relative_zero_outside (d : TailData) (c : Coeff) {y : ℝ}
   intro hn
   have hs := relative_support c hn
   apply hy
-  dsimp [correctionCenter] at hs
+  dsimp only [correctionCenter] at hs
   constructor <;> linarith only [hs, hs.1, hs.2]
 
 /-- The actual complete outgoing angular field after the two relative bumps. -/
@@ -1980,7 +2028,7 @@ theorem correctedAngular_contDiff (d : TailData) (c : ℝ → Coeff) (hc : ContD
 theorem correctedAngular_unchanged (d : TailData) (c : ℝ → Coeff) (eta : ℝ) {y : ℝ}
     (hy : y ∉ Ioo (d.releaseStart - 4) d.releaseStart) :
     correctedAngular d c (y, eta) = finalAngular d (y, eta) := by
-  simp [correctedAngular, relative_zero_outside d (c eta) hy]
+  simp only [correctedAngular, relative_zero_outside d (c eta) hy, add_zero, mul_one]
 
 theorem corrected_matches_reference (d : TailData) (c : ℝ → Coeff) (eta : ℝ) {y : ℝ}
     (hy : y ∈ Ioo (d.releaseStart - 4) d.releaseStart) :
@@ -1996,7 +2044,7 @@ theorem corrected_difference_reference (d : TailData) (c : ℝ → Coeff) (eta y
   by_cases hy : y ∈ Ioo (d.releaseStart - 4) d.releaseStart
   · rw [corrected_matches_reference d c eta hy, original_matches_reference d eta ⟨hy.1.le, hy.2.le⟩]
   · rw [correctedAngular_unchanged d c eta hy]
-    simp [modifiedE, relative_zero_outside d (c eta) hy]
+    simp only [sub_self, modifiedE, relative_zero_outside d (c eta) hy, add_zero, mul_one]
 
 theorem corrected_pressure_reference (d : TailData) (c : ℝ → Coeff) (eta y : ℝ) :
     (correctedAngular d c (y, eta)) ^ 2 - (finalAngular d (y, eta)) ^ 2 =
@@ -2005,7 +2053,7 @@ theorem corrected_pressure_reference (d : TailData) (c : ℝ → Coeff) (eta y :
   by_cases hy : y ∈ Ioo (d.releaseStart - 4) d.releaseStart
   · rw [corrected_matches_reference d c eta hy, original_matches_reference d eta ⟨hy.1.le, hy.2.le⟩]
   · rw [correctedAngular_unchanged d c eta hy]
-    simp [modifiedE, relative_zero_outside d (c eta) hy]
+    simp only [sub_self, modifiedE, relative_zero_outside d (c eta) hy, add_zero, mul_one]
 
 namespace ResetWitness
 
@@ -2144,7 +2192,8 @@ theorem physical_endpoint (eta : ℝ) :
     Real.sqrt 2 * correctedHistory d w.coefficients eta =
       (Real.exp d.releaseStart * Real.sqrt (2 * Real.exp d.releaseStart) *
         correctedAngular d w.coefficients (d.releaseStart, eta)) / (1 - d.core.lam) := by
-  have hout : d.releaseStart ∉ Ioo (d.releaseStart - 4) d.releaseStart := by simp
+  have hout : d.releaseStart ∉ Ioo (d.releaseStart - 4) d.releaseStart := by simp only [mem_Ioo,
+      sub_lt_self_iff, Nat.ofNat_pos, lt_self_iff_false, and_false, not_false_eq_true]
   rw [w.exact_endpoint eta, correctedAngular_unchanged d w.coefficients eta hout,
     finalAngular_uniform_wait d eta (releaseStart_gt_flattenEnd d).le le_rfl,
     Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 2), AngularMomentReset.sqrt_exp_half]

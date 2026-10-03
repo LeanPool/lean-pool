@@ -95,7 +95,7 @@ theorem inverseCoordinates_hasFDerivAt {a : ℝ} (ha : 0 < a) (ha1 : a < 1) {p :
     (hp : p ∈ positiveTime) :
     HasFDerivAt (inverseCoordinates a) (inverseDifferential a (inverseCoordinates a p)) p := by
   have hq := ((coordinateQ_smooth ha ha1 (p := (p.1, p.2.2)) hp).differentiableAt (by
-      simp)).hasFDerivAt
+      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])).hasFDerivAt
   have hm : HasFDerivAt (fun p : Point => (p.1, p.2.2))
       ((ContinuousLinearMap.fst ℝ ℝ (ℝ × ℝ)).prod
         ((ContinuousLinearMap.snd ℝ ℝ ℝ).comp (ContinuousLinearMap.snd ℝ ℝ (ℝ × ℝ)))) p :=
@@ -170,8 +170,10 @@ theorem iteratedFDeriv_comp_inverse {a : ℝ} (ha : 0 < a) (ha1 : a < 1)
     change (continuousMultilinearCurryLeftEquiv ℝ (fun _ : Fin (n + 1) => Point) ℝ).symm
       (fderiv ℝ (iteratedFDeriv ℝ n (g ∘ inverseCoordinates a)) p) = _
     rw [heq.fderiv_eq]
-    rw [fderiv_comp p (hj.differentiableAt (by simp))
-      ((inverseCoordinates_contDiffAt ha ha1 hp).differentiableAt (by simp)),
+    rw [fderiv_comp p (hj.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true]))
+      ((inverseCoordinates_contDiffAt ha ha1 hp).differentiableAt (by simp only [ne_eq,
+          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])),
       (inverseCoordinates_hasFDerivAt ha ha1 hp).fderiv]
     rfl
 
@@ -215,7 +217,8 @@ noncomputable def dilation (a r : ℝ) : Point →L[ℝ] Point :=
 
 theorem dilation_inv_cancel {r : ℝ} (hr : 0 < r) (a : ℝ) (p : Point) :
     dilation a r (dilation a r⁻¹ p) = p := by
-  ext <;> simp [dilation_apply, Real.inv_rpow hr.le, hr.ne', (Real.rpow_pos_of_pos hr (D a)).ne']
+  ext <;> simp only [dilation_apply, Real.inv_rpow hr.le, ne_eq, hr.ne', not_false_eq_true,
+      mul_inv_cancel_left₀, (Real.rpow_pos_of_pos hr (D a)).ne', Prod.mk.eta]
 
 theorem dilation_positive {r : ℝ} (hr : 0 < r) (a : ℝ) {p : Point}
     (hp : p ∈ positiveTime) : dilation a r p ∈ positiveTime := mul_pos hr hp
@@ -224,12 +227,12 @@ theorem forwardScalar_dilation {r q : ℝ} (hr : 0 < r) (hq : 0 < q) (a z : ℝ)
     forwardScalar a (r ^ D a * z) (r * q) = r * forwardScalar a z q := by
   have hscale : (r ^ D a) ^ 2 * r ^ a = r := by
     rw [← Real.rpow_mul_natCast hr.le, ← Real.rpow_add hr]
-    have he : D a * (2 : ℕ) + a = 1 := by dsimp [D]; ring
+    have he : D a * (2 : ℕ) + a = 1 := by dsimp only [D, Nat.cast_ofNat]; ring
     rw [he, Real.rpow_one]
   rw [forwardScalar, Real.mul_rpow hr.le hq.le, mul_pow]
   calc
     _ = r * q - ((r ^ D a) ^ 2 * r ^ a) * (z ^ 2 * q ^ a) := by ring
-    _ = _ := by rw [hscale]; dsimp [forwardScalar]; ring
+    _ = _ := by rw [hscale]; dsimp only [forwardScalar]; ring
 
 theorem qCoord_dilation {a r : ℝ} (ha : 0 < a) (ha1 : a < 1) (hr : 0 < r)
     {p : Point} (hp : p ∈ positiveTime) : qCoord a (dilation a r p) = r * qCoord a p := by
@@ -306,7 +309,7 @@ theorem scaleFactor_pos (a qbig : ℝ) : 0 < scaleFactor a qbig :=
 
 theorem norm_inverse_dilation_le {a q qbig : ℝ} (ha : 0 < a) (hq : 0 < q)
     (hqb : q ≤ qbig) : ‖dilation a q⁻¹‖ ≤ scaleFactor a qbig / q := by
-  have he : 0 ≤ 1 - D a := by dsimp [D]; linarith only [ha]
+  have he : 0 ≤ 1 - D a := by dsimp only [D]; linarith only [ha]
   have hpow : q ^ (1 - D a) ≤ scaleFactor a qbig :=
     (Real.rpow_le_rpow hq.le hqb he).trans (le_max_right _ _)
   have hfirst : q⁻¹ ≤ scaleFactor a qbig / q := by
@@ -373,7 +376,8 @@ theorem homogeneous_derivative_bound {a b : ℝ} (ha : 0 < a) (ha1 : a < 1)
       mul_le_mul_of_nonneg_left
         (ContinuousMultilinearMap.norm_compContinuousLinearMap_le _ _)
         (Real.rpow_pos_of_pos hq b).le
-    _ = q ^ b * (‖iteratedFDeriv ℝ n F (L p)‖ * ‖L‖ ^ n) := by simp
+    _ = q ^ b * (‖iteratedFDeriv ℝ n F (L p)‖ * ‖L‖ ^ n) := by simp only [Finset.prod_const,
+        Finset.card_univ, Fintype.card_fin]
     _ ≤ q ^ b * (K * (scaleFactor a qbig / q) ^ n) :=
       mul_le_mul_of_nonneg_left (mul_le_mul hjet hLn (by positivity) hK.le)
         (Real.rpow_pos_of_pos hq b).le
@@ -472,7 +476,7 @@ theorem timeShift_eq (p : Point) :
   · change 1 - p.1 = 1 + -p.1
     ring
   · change p.2 = (0 : ℝ × ℝ) + p.2
-    simp
+    simp only [zero_add]
 
 theorem norm_iteratedFDeriv_timeShift (F : Point → ℝ) (n : ℕ) (p : Point) :
     ‖iteratedFDeriv ℝ n (F ∘ timeShift) p‖ = ‖iteratedFDeriv ℝ n F (timeShift p)‖ := by

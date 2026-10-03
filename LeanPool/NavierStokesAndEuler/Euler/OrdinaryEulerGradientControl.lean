@@ -176,7 +176,9 @@ theorem scalar_secondWord_product_gradient (A : SmoothL2Field Space) (K N : ℝ)
 theorem norm_le_sum_coordinates (x : Space) : ‖x‖ ≤ ∑ i : Fin 3, ‖x i‖ := by
   have hx : (∑ i : Fin 3, x i • axis i)=x := by
     ext j
-    simp [axis,Pi.single_apply,mul_ite]
+    simp only [axis, WithLp.ofLp_sum, WithLp.ofLp_smul, PiLp.ofLp_single, Finset.sum_apply,
+        Pi.smul_apply, Pi.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero, sum_ite_eq,
+        mem_univ, ↓reduceIte]
   calc
     _ = ‖∑ i : Fin 3, x i • axis i‖ := congrArg norm hx.symm
     _ ≤ ∑ i : Fin 3, ‖x i • axis i‖ := norm_sum_le _ _
@@ -375,7 +377,8 @@ theorem h3_energy_gradient (A P : SmoothL2Field Space) (K : ℝ)
       _ ≤ ∑ _w : Fin n → Fin 3, 27*(2 : ℝ)^n*K*wordEnergy 3 A :=
         sum_le_sum (fun w _ => eulerRhs_word_gradient A P K hK hdiv hA hP
           (by have := mem_range.mp hn; omega) w)
-      _ = _ := by simp
+      _ = _ := by simp only [sum_const, card_univ, Fintype.card_pi, Fintype.card_fin, prod_const,
+          nsmul_eq_mul, Nat.cast_pow, Nat.cast_ofNat]
   have hp (n : ℕ) : (3 : ℝ)^n*(27*(2 : ℝ)^n*K*wordEnergy 3 A) =
       (6 : ℝ)^n*(27*K*wordEnergy 3 A) := by
     rw [show (6 : ℝ)=3*2 by norm_num,mul_pow]

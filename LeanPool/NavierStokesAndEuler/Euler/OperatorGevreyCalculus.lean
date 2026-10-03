@@ -63,7 +63,8 @@ theorem linear_bound (L : E →L[ℝ] F) (f : P → E) (hf : ContDiff ℝ ∞ f)
     (hb : ∀ n x, ‖iteratedFDeriv ℝ n f x‖ ≤ A * majorant R d n)
     (n : ℕ) (x : P) :
     ‖iteratedFDeriv ℝ n (fun y => L (f y)) x‖ ≤ (‖L‖*A) * majorant R d n := by
-  exact (L.norm_iteratedFDeriv_comp_left hf.contDiffAt (by simp)).trans
+  exact (L.norm_iteratedFDeriv_comp_left hf.contDiffAt (by simp only [WithTop.le_coe_top, ne_eq,
+      WithTop.natCast_ne_top, not_false_eq_true])).trans
     (by simpa only [mul_assoc] using mul_le_mul_of_nonneg_left (hb n x) (norm_nonneg L))
 
 /-- A linear contraction does not enlarge a factorial multiplier constant. -/
@@ -91,8 +92,9 @@ theorem bilinear_bound (B : E →L[ℝ] F →L[ℝ] G) (hB : ‖B‖ ≤ 1)
     (fun k => ‖iteratedFDeriv ℝ k f x‖) (fun k => ‖iteratedFDeriv ℝ k g x‖)
     (fun k => by simpa only [abs_norm] using hb k x)
     (fun k => by simpa only [abs_norm] using hc k x) n
-  exact (B.norm_iteratedFDeriv_le_of_bilinear_of_le_one hf hg x (by simp) hB).trans
-    ((le_abs_self _).trans (by simpa using hp))
+  exact (B.norm_iteratedFDeriv_le_of_bilinear_of_le_one hf hg x (by simp only [WithTop.le_coe_top,
+      ne_eq, WithTop.natCast_ne_top, not_false_eq_true]) hB).trans
+    ((le_abs_self _).trans (by simpa only using hp))
 
 /-- Actual operator application has the shifted factorial product bound. -/
 theorem clm_apply_bound (A : P → E →L[ℝ] F) (u : P → E)
@@ -125,7 +127,8 @@ theorem add_bound (f g : P → E) (hf : ContDiff ℝ ∞ f) (hg : ContDiff ℝ �
     (hb : ∀ n x, ‖iteratedFDeriv ℝ n g x‖ ≤ B * majorant R d n)
     (n : ℕ) (x : P) :
     ‖iteratedFDeriv ℝ n (fun y => f y + g y) x‖ ≤ (A+B) * majorant R d n := by
-  rw [fun_iteratedFDeriv_add_apply (hf.contDiffAt.of_le (by simp)) (hg.contDiffAt.of_le (by simp))]
+  rw [fun_iteratedFDeriv_add_apply (hf.contDiffAt.of_le (by simp only [WithTop.le_coe_top, ne_eq,
+      WithTop.natCast_ne_top, not_false_eq_true])) (hg.contDiffAt.of_le (by simp))]
   exact (norm_add_le _ _).trans (by simpa only [add_mul] using add_le_add (ha n x) (hb n x))
 
 /-- Subtracting actual jets adds the multiplier constants. -/
@@ -136,7 +139,9 @@ theorem sub_bound (f g : P → E) (hf : ContDiff ℝ ∞ f) (hg : ContDiff ℝ �
     (n : ℕ) (x : P) :
     ‖iteratedFDeriv ℝ n (fun y => f y - g y) x‖ ≤ (A+B) * majorant R d n := by
   change ‖iteratedFDeriv ℝ n (f-g) x‖ ≤ _
-  rw [iteratedFDeriv_sub_apply (hf.contDiffAt.of_le (by simp)) (hg.contDiffAt.of_le (by simp))]
+  rw [iteratedFDeriv_sub_apply (hf.contDiffAt.of_le (by simp only [WithTop.le_coe_top, ne_eq,
+      WithTop.natCast_ne_top, not_false_eq_true])) (hg.contDiffAt.of_le (by simp only [
+      WithTop.le_coe_top, ne_eq, WithTop.natCast_ne_top, not_false_eq_true]))]
   exact (norm_sub_le _ _).trans (by simpa only [add_mul] using add_le_add (ha n x) (hb n x))
 
 /-- Composition with a fixed operator on the right costs its operator norm. -/

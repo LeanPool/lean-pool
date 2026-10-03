@@ -50,7 +50,7 @@ theorem class_congr {s : StripData D} {w : ℕ → D → ℝ} {α : ℝ}
 
 theorem class_neg {s : StripData D} {w : ℕ → D → ℝ} {α : ℝ} {f : ℕ → D → E}
     (hf : MemClass s w α f) : MemClass s w α (fun n x => -f n x) := by
-  simpa using hf.map (-ContinuousLinearMap.id ℝ E)
+  simpa only [neg_apply, ContinuousLinearMap.id_apply] using hf.map (-ContinuousLinearMap.id ℝ E)
 
 theorem class_sub {s : StripData D} {w : ℕ → D → ℝ} {α : ℝ} {f g : ℕ → D → E}
     (hf : MemClass s w α f) (hg : MemClass s w α g) :
@@ -188,7 +188,7 @@ theorem Dr_base_mem {s : StripData D} {w : ℕ → D → ℝ} {α : ℝ}
     MemClass s w α (d.Dr f) := by
   apply class_congr (hf.directional d.radial)
   intro n x hx
-  simp [Dr, radialField, along, haux n x hx]
+  simp only [Dr, along, radialField, map_add, map_smul, haux n x hx, smul_zero, add_zero]
 
 end GraphDirections
 
@@ -354,7 +354,10 @@ theorem component_classes {s : StripData D} {w : ℕ → D → ℝ} {α : ℝ}
   apply class_congr hh
   intro n x _
   ext i
-  fin_cases i <;> simp [insertComponent, Fin.sum_univ_three]
+  fin_cases i <;> simp only [insertComponent, ContinuousLinearMap.coe_pi', Fin.zero_eta,
+      Fin.isValue, Finset.sum_apply, Fin.sum_univ_three, ↓reduceIte, ContinuousLinearMap.id_apply,
+      zero_ne_one, zero_apply, add_zero, Fin.reduceEq, Fin.mk_one, one_ne_zero, zero_add,
+      Fin.reduceFinMk]
 
 theorem angular_classes {s : StripData D} {w : ℕ → D → ℝ} {α : ℝ}
     {f : ℕ → D → ComplexVector} (hf : ∀ i, MemClass s w α (fun n x => f n x i)) :
@@ -362,7 +365,8 @@ theorem angular_classes {s : StripData D} {w : ℕ → D → ℝ} {α : ℝ}
   intro i
   fin_cases i
   · simpa [angularGenerator] using class_neg (hf 1)
-  · simpa [angularGenerator] using hf 0
+  · simpa only [angularGenerator, Fin.isValue, Fin.mk_one, Matrix.cons_val_one,
+      Matrix.cons_val_zero] using hf 0
   · simpa [angularGenerator] using (MemClass.zero (α := α) (E := ℂ) (hf 0).weight_nonneg)
 
 namespace InputBounds
@@ -383,8 +387,9 @@ theorem base_components (h : InputBounds s P α κ d a) (i : Fin 3) :
           i) := by
   fin_cases i
   · simpa [LinearWaveResidual.base] using h.b_unweighted.mono_exponent (by norm_num : (0 : ℝ) ≤ 1)
-  · simpa [LinearWaveResidual.base] using unweighted_mul h.radius h.frequency_base
-  · simpa [LinearWaveResidual.base] using h.axial_base
+  · simpa only [LinearWaveResidual.base, Fin.mk_one, Fin.isValue, Matrix.cons_val_one,
+      Matrix.cons_val_zero, add_zero] using unweighted_mul h.radius h.frequency_base
+  · simpa only [LinearWaveResidual.base, Fin.reduceFinMk, Matrix.cons_val] using h.axial_base
 
 theorem slowTransport_mem (h : InputBounds s P α κ d a) (i : Fin 3) :
     WaveClass s P (α + 1 / 2 - 3 * κ) (fun n x =>
@@ -423,9 +428,13 @@ theorem baseDerivativeRemainder_mem (h : InputBounds s P α κ d a) (i : Fin 3) 
       j))).mono_exponent
     (show α + 1 / 2 - 3 * κ ≤ α + (0 + 1) by linarith [h.loss_nonneg])
   fin_cases i
-  · simpa [LinearWaveResidual.baseDerivativeRemainder, GraphDirections.Dr, GraphDirections.Dz]
+  · simpa only [one_div, LinearWaveResidual.baseDerivativeRemainder, Nat.succ_eq_add_one,
+      Nat.reduceAdd, Fin.isValue, Fin.zero_eta, Matrix.cons_val_zero, GraphDirections.Dr,
+      GraphDirections.Dz]
       using h0.add (hz 0)
-  · simpa [LinearWaveResidual.baseDerivativeRemainder, GraphDirections.Dz, div_eq_mul_inv]
+  · simpa only [div_eq_mul_inv, one_mul, LinearWaveResidual.baseDerivativeRemainder,
+      Nat.succ_eq_add_one, Nat.reduceAdd, Fin.isValue, Fin.mk_one, Matrix.cons_val_one,
+      Matrix.cons_val_zero, Complex.ofReal_mul, Complex.ofReal_inv, GraphDirections.Dz]
       using h1.add (hz 1)
   · simpa [LinearWaveResidual.baseDerivativeRemainder, GraphDirections.Dz] using hz 2
 
@@ -438,7 +447,8 @@ theorem pressureGradient_mem (h : InputBounds s P α κ d a) (i : Fin 3) :
       (show α + 1 / 2 - 3 * κ ≤ (α + 1 / 2) - κ by linarith [h.loss_nonneg])
     simp only [one_div, Fin.zero_eta, Fin.isValue] at hh ⊢
     exact hh
-  · simpa [LinearWaveResidual.strippedPressureGradient] using
+  · simpa only [one_div, LinearWaveResidual.strippedPressureGradient, Fin.mk_one, Fin.isValue,
+      Matrix.cons_val_one, Matrix.cons_val_zero] using
       (MemClass.zero (α := α + 1 / 2 - 3 * κ) (E := ℂ) (h.amplitude 0).weight_nonneg)
   · have hh := (d.Dz_mem h.pressure).mono_exponent
       (show α + 1 / 2 - 3 * κ ≤ (α + 1 / 2) + 1 by linarith [h.loss_nonneg])
@@ -541,14 +551,17 @@ theorem shear_mem (h : InputBounds s P α κ d a) {β : ℝ} {f : ℕ → D → 
       simpa only [zero_add] using unweighted_mul h.radius hFr
     exact (constant_real_mul h.frequency_base 2).add hprod
   fin_cases i
-  · simpa [LinearWaveResidual.shear, mul_assoc] using
+  · simpa only [LinearWaveResidual.shear, neg_mul, Fin.isValue, mul_assoc, Complex.ofReal_add,
+      Complex.ofReal_mul, Complex.ofReal_ofNat, Fin.zero_eta, Matrix.cons_val_zero, zero_add] using
       constant_complex_mul (real_mul_complex h.frequency_base (hf 1)) (-2)
   · have h := real_mul_complex htheta (hf 0)
     simp only [LinearWaveResidual.shear,
       GraphDirections.Dr, Complex.ofReal_add, Complex.ofReal_mul, Complex.ofReal_ofNat, zero_add]
           at h ⊢
     exact h
-  · simpa [LinearWaveResidual.shear, GraphDirections.Dr] using real_mul_complex hGr (hf 0)
+  · simpa only [LinearWaveResidual.shear, neg_mul, Fin.isValue, Complex.ofReal_add,
+      Complex.ofReal_mul, Complex.ofReal_ofNat, Fin.reduceFinMk, Matrix.cons_val, zero_add,
+      GraphDirections.Dr] using real_mul_complex hGr (hf 0)
 
 /-- The velocity principal operator has no negative epsilon exponent:
 the fast derivative is stripped and `epsilon * frequency²` has order zero. -/
@@ -658,9 +671,9 @@ theorem principal_add_curl (h : InputBounds s P α κ d a) {β : ℝ}
       a.principal s d n x + a.principalVelocity s d f n x := by
   have haD i := (((h.amplitude i).smooth n).contDiffAt (s.isOpen_domain.mem_nhds
       hx)).differentiableAt (by
-      simp)
+      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hfD i := (((hf i).smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by
-      simp)
+      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   ext i
   change LinearWaveResidual.principal _ _ _ _ _ _ _ _ _ _ (fun y => a.amplitude n y + f n y) _ x i
       = _
@@ -669,9 +682,11 @@ theorem principal_add_curl (h : InputBounds s P α κ d a) {β : ℝ}
       along (d.fastField n) (fun y => a.amplitude n y i) x +
       along (d.fastField n) (fun y => f n y i) x from along_add _ (haD i) (hfD i)]
   fin_cases i <;>
-    simp [WaveCoefficients.principal, WaveCoefficients.principalVelocity,
-        LinearWaveResidual.principal,
-      WaveCoefficients.addAmplitude, LinearWaveResidual.shear, Pi.add_apply] <;> ring
+    simp only [Fin.zero_eta, Fin.isValue, LinearWaveResidual.shear, WaveCoefficients.addAmplitude,
+        neg_mul, Pi.add_apply, Complex.ofReal_add, Complex.ofReal_mul, Complex.ofReal_ofNat,
+        Matrix.cons_val_zero, Complex.ofReal_pow, WaveCoefficients.principal,
+        WaveCoefficients.principalVelocity, LinearWaveResidual.principal, mul_zero, add_zero,
+        Fin.mk_one, Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val] <;> ring
 
 /-- After the actual principal equation is solved for the tangent coefficient,
 the corrected coefficient's remaining source has the claimed class. -/
@@ -722,11 +737,12 @@ theorem harmonicResidual_eq {s : StripData D} {P : ℕ → D → ℝ} {α κ : �
     (a.radius n) (a.radialBase n) (a.frequencyBase n) (a.axialBase n)
     (d.fastField n) (fun _ => d.slow) s.isOpen_domain hr contDiffOn_const contDiffOn_const
     (hg.phase_smooth n) (fun i => (h.amplitude i).smooth n)
-    (((h.radius.smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by simp))
+    (((h.radius.smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by simp only [
+        ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
     (((h.b_unweighted.smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by
-        simp))
+        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
     (((h.frequency_base.smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by
-        simp))
+        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
     (((h.axial_base.smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by simp))
     (hg.radius_nonzero n x hx) (hg.radial_radius n x hx) (hg.base_angular n x hx)
     (hg.amplitude_angular n) hpθ
@@ -822,7 +838,7 @@ theorem principal_cutoff {s : StripData D} {P : ℕ → D → ℝ} {α κ : ℝ}
           by
   have haD i := (((h.amplitude i).smooth n).contDiffAt (s.isOpen_domain.mem_nhds
       hx)).differentiableAt (by
-      simp)
+      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hψC : DifferentiableAt ℝ (fun y => (ψ n y : ℂ)) x :=
     (Complex.ofRealCLM.hasFDerivAt.comp x hψ.hasFDerivAt).differentiableAt
   have hD (i : Fin 3) :
@@ -848,7 +864,7 @@ theorem principal_cutoff_of_solve {s : StripData D} {P : ℕ → D → ℝ} {α 
     (a.withCutoff ψ).principal s d n x + source n x = excludedSlotError d ψ a.amplitude source n x
         := by
   rw [principal_cutoff h ψ source n hx hψ, hsolve]
-  simp
+  simp only [neg_add_cancel, smul_zero, zero_add]
 
 /-- The entire stripped source, with both cutoff tails still present as an
 explicit additive field. The curl correction is supplied to the actual operator. -/
@@ -863,7 +879,8 @@ theorem corrected_coefficient_eq_good_add_excluded {s : StripData D}
       a.goodCoefficient s d ψ f n x + excludedSlotError d ψ a.amplitude source n x := by
   have hp := (h.with_cutoff hψ).principal_add_curl hf n hx
   have hc := principal_cutoff_of_solve h ψ source n hx
-    (((hψ.smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by simp)) hsolve
+    (((hψ.smooth n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) hsolve
   have he : (a.withCutoff ψ).principalVelocity s d f n x = a.principalVelocity s d f n x := rfl
   rw [hp, he, WaveCoefficients.goodCoefficient, ← hc]
   abel

@@ -162,7 +162,7 @@ theorem copySum_support (K : Cells D I) (n : ℕ) (f : I → D → E)
     support (copySum f) ⊆ ⋃ i, K.carrier n i := by
   intro x hx
   by_contra hn
-  have hz := copySum_zero_germ K n f hs (by simpa using hn)
+  have hz := copySum_zero_germ K n f hs (by simpa only [mem_iUnion, not_exists] using hn)
   exact hx hz.self_of_nhds
 
 omit [NormedSpace ℝ D] [NormedSpace ℝ E] in
@@ -328,18 +328,20 @@ theorem nativeCell_locallyFinite (g : Geometry) {K : Set Plane} (hK : IsCompact 
   classical
   let κ : Plane → ℝ := K.indicator (fun _ => 1)
   have hκ : HasCompactSupport κ :=
-    HasCompactSupport.intro' (K := K) hK hK.isClosed (fun z hz => by simp [κ, hz])
+    HasCompactSupport.intro' (K := K) hK hK.isClosed (fun z hz => by simp only [hz,
+        not_false_eq_true, indicator_of_notMem, κ])
   intro z
   obtain ⟨s, hs⟩ := g.finite_copy_cutoffs hκ (‖z.2‖ + 1)
   refine ⟨{y : P × Plane | ‖y.2‖ < ‖z.2‖ + 1},
-    (isOpen_lt continuous_snd.norm continuous_const).mem_nhds (by simp), ?_⟩
+    (isOpen_lt continuous_snd.norm continuous_const).mem_nhds (by simp only [mem_ofPred_eq,
+        lt_add_iff_pos_right, zero_lt_one]), ?_⟩
   apply s.finite_toSet.subset
   intro k hk
   obtain ⟨y, hy, hnorm⟩ := hk
   by_contra hnot
   have hh := hs y.2 hnorm.le k hnot
   change g.coordinates k y.2 ∈ K at hy
-  simp [κ, hy] at hh
+  simp only [hy, indicator_of_mem, one_ne_zero, κ] at hh
 
 /-- Native cells, bundling `carrier`, `closed`, `locallyFinite`, `unique`. -/
 noncomputable def nativeCells (g : ℕ → Geometry) (K : ℕ → Set Plane)
@@ -398,8 +400,10 @@ private theorem bilinear_jet_at (L : E →L[ℝ] F →L[ℝ] G)
     (hbu : ∀ k ≤ m, ‖iteratedFDeriv ℝ k u x‖ ≤ A)
     (hbv : ∀ k ≤ m, ‖iteratedFDeriv ℝ k v x‖ ≤ B) :
     ‖iteratedFDeriv ℝ j (fun y => L (u y) (v y)) x‖ ≤ ‖L‖ * (2 : ℝ) ^ m * A * B := by
-  obtain ⟨U, hU, huU⟩ := hu.contDiffOn (finite_le_infty j) (by simp)
-  obtain ⟨V, hV, hvV⟩ := hv.contDiffOn (finite_le_infty j) (by simp)
+  obtain ⟨U, hU, huU⟩ := hu.contDiffOn (finite_le_infty j) (by simp only [ENat.natCast_ne_coe_top,
+      WithTop.coe_ne_top, imp_self])
+  obtain ⟨V, hV, hvV⟩ := hv.contDiffOn (finite_le_infty j) (by simp only [ENat.natCast_ne_coe_top,
+      WithTop.coe_ne_top, imp_self])
   obtain ⟨O, hOsub, hO, hxO⟩ := mem_nhds_iff.mp (inter_mem hU hV)
   have hle := JetBounds.norm_iteratedFDeriv_bilinear_le_on L hO
     (huU.mono (hOsub.trans inter_subset_left))
@@ -475,7 +479,8 @@ theorem add (hf : LocalJets s w α K f) (hg : LocalJets s w α K g)
 
 theorem fderiv (hf : LocalJets s w α K f) :
     LocalJets s w α K (fun n i => _root_.fderiv ℝ (f n i)) := by
-  refine ⟨fun n i x hx hi => (hf.smooth n i x hx hi).fderiv_right (by simp), ?_⟩
+  refine ⟨fun n i x hx hi => (hf.smooth n i x hx hi).fderiv_right (by simp only [
+      ENat.coe_top_add_one, Std.le_refl]), ?_⟩
   intro m
   obtain ⟨C, hC, p, hb⟩ := hf.bounds (m + 1)
   refine ⟨C, hC, p, ?_⟩
@@ -517,7 +522,7 @@ theorem band_smul {r : ℕ → ℝ} (hf : LocalJets s w α K f)
     LocalJets s w α K (fun n i x => r n • f n i x) := by
   have hc : UnweightedClass s 0 (fun n (_ : D) => r n) := by
     have h := (unweighted_const s (1 : ℝ)).band_smul hr
-    simpa using h
+    simpa only [add_zero, smul_eq_mul, mul_one] using h
   exact (LocalJets.of_memClass hc).smul hf hw
 
 end LocalJets
@@ -704,7 +709,7 @@ theorem divergence_germ {a b : D → ComplexVector} {x : D}
   simp only [cylindricalDivergence, hr, hθ, hz, hy]
 
 @[simp] theorem normalCoefficient_zero (N : RealVector) : normalCoefficient N 0 = 0 := by
-  simp [normalCoefficient, normalCross]
+  simp only [normalCoefficient, normalCross, map_zero, smul_zero]
 
 @[simp] theorem coefficient_zero (R Φ : D → ℝ) (Vr Vθ Vz : D → D) :
     coefficient R Vr Vθ Vz Φ (fun _ => 0) = fun _ => 0 := by
@@ -714,7 +719,9 @@ theorem divergence_germ {a b : D → ComplexVector} {x : D}
 @[simp] theorem cylindricalCurl_zero (R : D → ℝ) (Vr Vθ Vz : D → D) :
     cylindricalCurl R Vr Vθ Vz (fun _ => 0) = fun _ => 0 := by
   funext x i
-  fin_cases i <;> simp [cylindricalCurl, along]
+  fin_cases i <;> simp only [cylindricalCurl, along, Pi.zero_apply, fderiv_fun_const, zero_apply,
+      smul_zero, sub_self, add_zero, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero, Fin.mk_one,
+      Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val]
 
 @[simp] theorem curlRemainder_zero (K : ℝ) (R : D → ℝ) (Vr Vθ Vz : D → D) :
     curlRemainder K R Vr Vθ Vz (fun _ => 0) = fun _ => 0 := by
@@ -729,37 +736,49 @@ theorem divergence_germ {a b : D → ComplexVector} {x : D}
 @[simp] theorem vectorPotential_zero (K : ℝ) (R Φ : D → ℝ) (Vr Vθ Vz : D → D) :
     vectorPotential K R Vr Vθ Vz Φ (fun _ => 0) = fun _ => 0 := by
   funext x i
-  simp [vectorPotential, coefficient_zero, vectorMode, mode]
+  simp only [vectorPotential, vectorMode, mode, coefficient_zero, Pi.smul_apply, Pi.zero_apply,
+      smul_eq_mul, mul_zero, zero_mul]
 
 @[simp] theorem principal_zero (ε K : ℝ) (R F G Φ : D → ℝ) (Vr Vθ Vz Vf : D → D) :
     LinearWaveResidual.principal ε K R F G Vr Vθ Vz Vf Φ
       (fun _ => 0) (fun _ => 0) = fun _ => 0 := by
   funext x i
-  fin_cases i <;> simp [LinearWaveResidual.principal, shear, along]
+  fin_cases i <;> simp only [LinearWaveResidual.principal, along, Pi.zero_apply, fderiv_fun_const,
+      zero_apply, shear, neg_mul, mul_zero, Complex.ofReal_add, Complex.ofReal_mul,
+      Complex.ofReal_ofNat, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero, add_zero,
+      Complex.ofReal_pow, Fin.mk_one, Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val]
 
 @[simp] theorem along_zero (V : D → D) :
     along V (fun _ : D => (0 : ℂ)) = fun _ => 0 := by
   funext x
-  simp [along]
+  simp only [along, fderiv_fun_const, Pi.zero_apply, zero_apply]
 
 @[simp] theorem remainder_zero (ε K : ℝ) (R B F G Φ : D → ℝ) (Vr Vθ Vz Vf Vs : D → D) :
     LinearWaveResidual.remainder ε K R B F G Vr Vθ Vz Vf Vs Φ
       (fun _ => 0) (fun _ => 0) = fun _ => 0 := by
   funext x i
-  fin_cases i <;> simp [LinearWaveResidual.remainder, slowTransport, baseDerivativeRemainder,
-    strippedPressureGradient, viscousRemainder, angularGenerator, along_zero, along]
+  fin_cases i <;> simp only [remainder, slowTransport, along, Pi.zero_apply, fderiv_fun_const,
+      zero_apply, mul_zero, add_zero, baseDerivativeRemainder, Nat.succ_eq_add_one, Nat.reduceAdd,
+      zero_mul, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero, strippedPressureGradient,
+      viscousRemainder, along_zero, smul_zero, angularGenerator, neg_zero, Matrix.cons_val_one,
+      Complex.ofReal_add, Complex.ofReal_div, sub_self, Fin.mk_one, Fin.reduceFinMk,
+      Matrix.cons_val]
 
 @[simp] theorem linearResidual_zero (ε : ℝ) (R : D → ℝ) (Vr Vθ Vz Vt : D → D)
     (B : D → ComplexVector) :
     linearResidual ε R Vr Vθ Vz Vt B (fun _ => 0) (fun _ => 0) = fun _ => 0 := by
   funext x i
-  fin_cases i <;> simp [linearResidual, transport, gradient, cylindricalVectorLaplacian,
-    cylindricalLaplacian, angularGenerator, along_zero, along]
+  fin_cases i <;> simp only [linearResidual, along, Pi.zero_apply, fderiv_fun_const, zero_apply,
+      transport, Fin.isValue, mul_zero, angularGenerator, neg_zero, Fin.zero_eta,
+      Matrix.cons_val_zero, add_zero, zero_mul, zero_div, gradient, smul_zero,
+      cylindricalVectorLaplacian, cylindricalLaplacian, along_zero, Matrix.cons_val_one, sub_self,
+      Fin.mk_one, Fin.reduceFinMk, Matrix.cons_val]
 
 @[simp] theorem cylindricalDivergence_zero (R : D → ℝ) (Vr Vθ Vz : D → D) :
     cylindricalDivergence R Vr Vθ Vz (fun _ => 0) = fun _ => 0 := by
   funext x
-  simp [cylindricalDivergence, along]
+  simp only [cylindricalDivergence, along, Pi.zero_apply, fderiv_fun_const, zero_apply, smul_zero,
+      add_zero]
 
 end DifferentialGerms
 
@@ -855,7 +874,7 @@ theorem common_amplitude_germ (K : Cells D I)
   intro j y hy
   apply hs n j
   intro he
-  exact hy (by simp [localized, raw, WaveCoefficients.withCutoff, he])
+  exact hy (by simp only [localized, WaveCoefficients.withCutoff, raw, he, zero_smul])
 
 omit [NormedSpace ℝ D] in
 theorem common_pressure_germ (K : Cells D I)
@@ -866,7 +885,8 @@ theorem common_pressure_germ (K : Cells D I)
   intro j y hy
   apply hs n j
   intro he
-  exact hy (by simp [localized, raw, WaveCoefficients.withCutoff, he])
+  exact hy (by simp only [localized, WaveCoefficients.withCutoff, raw, he, Complex.ofReal_zero,
+      zero_mul])
 
 theorem commonCorrected_amplitude_germ (K : Cells D I)
     (hs : ∀ n i, support (a.cutoff n i) ⊆ K.carrier n i)
@@ -901,7 +921,7 @@ theorem localized_amplitude_support (K : Cells D I)
   intro x hx
   apply hs n i
   intro hz
-  exact hx (by simp [localized, raw, WaveCoefficients.withCutoff, hz])
+  exact hx (by simp only [localized, WaveCoefficients.withCutoff, raw, hz, zero_smul])
 
 omit [NormedSpace ℝ D] in
 theorem localized_pressure_support (K : Cells D I)
@@ -910,7 +930,8 @@ theorem localized_pressure_support (K : Cells D I)
   intro x hx
   apply hs n i
   intro hz
-  exact hx (by simp [localized, raw, WaveCoefficients.withCutoff, hz])
+  exact hx (by simp only [localized, WaveCoefficients.withCutoff, raw, hz, Complex.ofReal_zero,
+      zero_mul])
 
 omit [NormedSpace ℝ D] in
 theorem localized_zero_germs {n : ℕ} {i : I} {x : D}
@@ -918,7 +939,8 @@ theorem localized_zero_germs {n : ℕ} {i : I} {x : D}
     (a.localized i).amplitude n =ᶠ[𝓝 x] (fun _ => 0) ∧
       (a.localized i).pressure n =ᶠ[𝓝 x] (fun _ => 0) := by
   constructor <;> filter_upwards [hψ] with y hy <;>
-    simp [localized, raw, WaveCoefficients.withCutoff, hy]
+    simp only [localized, WaveCoefficients.withCutoff, raw, hy, zero_smul, Complex.ofReal_zero,
+        zero_mul]
 
 theorem localized_correction_zero_germ (s : StripData D) (d : GraphDirections D)
     {n : ℕ} {i : I} {x : D} (hψ : a.cutoff n i =ᶠ[𝓝 x] fun _ => 0) :
@@ -967,7 +989,7 @@ theorem localTail_zero_germ (d : GraphDirections D)
   filter_upwards [hD] with y hy
   change along (d.fastField n) (a.cutoff n i) y • _ = 0
   rw [hy]
-  simp [HarmonicCalculus.along]
+  simp only [along, fderiv_fun_const, Pi.zero_apply, zero_apply, zero_smul]
 
 theorem localGood_support (K : Cells D I)
     (hs : ∀ n i, support (a.cutoff n i) ⊆ K.carrier n i)
@@ -1172,7 +1194,7 @@ theorem globalGaussian_class_with_complement (K : Cells D I)
 theorem globalGaussian_of_source_zero (d : GraphDirections D)
     (hf : a.source = fun _ _ => 0) : a.globalGaussian d = a.globalTail d := by
   funext n x
-  simp [globalGaussian, hf]
+  simp only [globalGaussian, hf, smul_zero, add_zero]
 
 theorem globalGood_support (K : Cells D I)
     (hs : ∀ n i, support (a.cutoff n i) ⊆ K.carrier n i)
@@ -1318,7 +1340,8 @@ theorem localGaussian_wave_jets {s : StripData D} (d : GraphDirections D)
       (fun n i => d.Dfast (fun n => a.cutoff n i) n) := by
     convert! hdir using 1
     funext n i x
-    simp [GraphDirections.Dfast, GraphDirections.fastField, HarmonicCalculus.along]
+    simp only [GraphDirections.Dfast, along, GraphDirections.fastField, map_smul, smul_eq_mul,
+        ContinuousLinearMap.apply_apply]
   have hconst : LocalJets s (fun _ _ => 1) 0 K (fun _ _ (_ : D) => (1 : ℝ)) :=
     LocalJets.of_memClass (unweighted_const s 1)
   have hneg := hψ.map (-ContinuousLinearMap.id ℝ ℝ)
@@ -1334,7 +1357,7 @@ theorem localGaussian_zero_of_cutoff_one (d : GraphDirections D)
   filter_upwards [hψ, hD] with y hψy hDy
   change along (d.fastField n) (a.cutoff n i) y • _ + (1 - a.cutoff n i y) • _ = 0
   rw [hDy, hψy]
-  simp [along]
+  simp only [along, fderiv_fun_const, Pi.zero_apply, zero_apply, zero_smul, sub_self, add_zero]
 
 theorem localGaussian_zero_of_fields (d : GraphDirections D)
     {n : ℕ} {i : I} {x : D}
@@ -1444,7 +1467,7 @@ theorem common_realizes_curl (K : Cells D I)
     rw [(vectorMode_germ (a.commonCorrected_zero_germ K hs s d hn)
       (a.background.frequency n) (a.background.phase n)).self_of_nhds]
     ext i
-    simp [cylindricalCurl_zero, HarmonicCalculus.vectorMode, HarmonicCalculus.mode]
+    simp only [cylindricalCurl_zero, Pi.zero_apply, vectorMode, mode, zero_mul]
 
 /-- A local differential identity is transported through full neighborhood
 germs, so the support boundary contributes no extra divergence. -/

@@ -38,7 +38,7 @@ noncomputable def timeDirection (ε : ℝ) (Vf Vs : E → E) (x : E) : E :=
 
 theorem along_timeDirection (ε : ℝ) (Vf Vs : E → E) (f : E → ℂ) (x : E) :
     along (timeDirection ε Vf Vs) f x = along Vf f x - (ε : ℂ) * along Vs f x := by
-  simp [along, timeDirection, map_sub, map_smul, Complex.real_smul]
+  simp only [along, timeDirection, map_sub, map_smul, Complex.real_smul]
 
 theorem along_mul_real (V : E → E) {f g : E → ℝ} {x : E}
     (hf : DifferentiableAt ℝ f x) (hg : DifferentiableAt ℝ g x) :
@@ -162,8 +162,10 @@ theorem gradient_mode (R : E → ℝ) (Vr Vθ Vz : E → E) (κ : ℝ)
         phaseFactor κ * Complex.ofReal (phaseNormal R Vr Vθ Vz Φ x i) * p x) * carrier κ Φ x := by
   ext i
   fin_cases i <;>
-    simp [gradient, strippedPressureGradient, phaseNormal, along_mode _ κ hΦ hp,
-      hpθ, Complex.real_smul, div_eq_mul_inv]
+    simp only [gradient, along_mode _ κ hΦ hp, hpθ, zero_add, Complex.real_smul, Complex.ofReal_inv,
+        Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero, strippedPressureGradient, phaseNormal,
+        div_eq_mul_inv, Fin.mk_one, Matrix.cons_val_one, Complex.ofReal_mul, Fin.reduceFinMk,
+        Matrix.cons_val]
   all_goals ring
 
 /-- The two linear advection terms produce `K` and exactly the displayed
@@ -227,7 +229,10 @@ theorem vectorLaplacian_mode_split {U : Set E} (R : E → ℝ)
     cylindricalVectorLaplacian_angular_independent R Vr Vθ Vz hU haθ hx,
     cylindricalLaplacian_phase R Vr Vθ Vz hU hΦθ hx]
   ext i
-  simp [viscousRemainder, phaseCross, haθ i hx, phaseNormal]
+  simp only [Complex.real_smul, Complex.ofReal_inv, Complex.ofReal_pow, phaseCross, haθ i hx,
+      mul_zero, add_zero, Fin.isValue, phaseNormal, Matrix.cons_val_zero, Matrix.cons_val,
+      Complex.ofReal_add, Complex.ofReal_div, Matrix.cons_val_one, viscousRemainder,
+      mul_eq_mul_right_iff, carrier_ne_zero, or_false]
   ring
 
 /-- Full identity (31) for the actual amplitude supplied to the linear
@@ -249,8 +254,10 @@ theorem linearResidual_mode_split {U : Set E} (ε κ : ℝ) (R b F G : E → ℝ
       (vectorMode κ Φ a) (mode κ Φ p) x = fun i =>
       (principal ε κ R F G Vr Vθ Vz Vf Φ a p x i +
         remainder ε κ R b F G Vr Vθ Vz Vf Vs Φ a p x i) * carrier κ Φ x := by
-  have dΦ := (hΦ.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp)
-  have da i := ((ha i).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp)
+  have dΦ := (hΦ.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have da i := ((ha i).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hadv := linearAdvection_mode R b F G Vr Vθ Vz κ hR hb hF hG hRx hDr hBθ dΦ da
     (fun i => haθ i hx)
   have hlap := vectorLaplacian_mode_split R κ hU hr hθ hz hΦ ha haθ hΦθ hx
@@ -277,7 +284,7 @@ theorem linearResidual_mode_split {U : Set E} (ε κ : ℝ) (R b F G : E → ℝ
 prefactor, for example `c = Q^(1+h)` multiplying `Nabs`. -/
 theorem along_scaled_direction (c : ℝ) (V : E → E) (f : E → ℂ) (x : E) :
     along (fun y => c • V y) f x = (c : ℂ) * along V f x := by
-  simp [along, map_smul, Complex.real_smul]
+  simp only [along, map_smul, Complex.real_smul]
 
 /-- The material defect used in the residual is the actual backward-time
 material derivative already computed in `PhaseCalculus`. -/
@@ -359,7 +366,7 @@ theorem projectedPressure_force (κ : ℝ) (Vf : E → E)
   have hc : phaseFactor κ * (Complex.I / (κ : ℂ)) = -1 := by
     unfold phaseFactor
     field_simp [hk]
-    simp []
+    simp only [Complex.I_sq]
   unfold projectedPressure
   calc
     _ = (phaseFactor κ * (Complex.I / (κ : ℂ))) * Complex.ofReal (n x i) *
@@ -435,10 +442,12 @@ theorem along_along_map (L : F₁ →L[ℝ] F₂) {U : Set E} {V : E → E}
     along V (along V (fun y => L (f y))) x = L (along V (along V f) x) := by
   have he : EqOn (along V (fun y => L (f y))) (fun y => L (along V f y)) U := by
     intro y hy
-    exact along_map L V ((hf.contDiffAt (hU.mem_nhds hy)).differentiableAt (by simp))
+    exact along_map L V ((hf.contDiffAt (hU.mem_nhds hy)).differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
   rw [along_congr hU he hx]
   exact along_map L V
-    (((contDiffOn_along hU hV hf).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp))
+    (((contDiffOn_along hU hV hf).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [
+        ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
 
 theorem cylindricalLaplacian_map (L : F₁ →L[ℝ] F₂) {U : Set E} (R : E → ℝ)
     {Vr Vθ Vz : E → E} {f : E → F₁} {x : E} (hU : IsOpen U)
@@ -448,7 +457,8 @@ theorem cylindricalLaplacian_map (L : F₁ →L[ℝ] F₂) {U : Set E} (R : E �
       L (cylindricalLaplacian R Vr Vθ Vz f x) := by
   simp only [cylindricalLaplacian, along_along_map L hU hr hf hx,
     along_along_map L hU hθ hf hx, along_along_map L hU hz hf hx,
-    along_map L Vr ((hf.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp)),
+    along_map L Vr ((hf.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])),
     map_add, map_smul]
 
 end LinearMaps
@@ -511,7 +521,8 @@ theorem realMap_linearResidual {U : Set E} (L : ℂ →L[ℝ] ℝ) (ε : ℝ) (R
     (fun i => L (linearResidual ε R Vr Vθ Vz Vt (realLift B) a p x i)) =
       realComponentLinearResidual ε R Vr Vθ Vz Vt B
         (fun y i => L (a y i)) (fun y => L (p y)) x := by
-  have da i := ((ha i).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp)
+  have da i := ((ha i).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hD (V : E → E) (i : Fin 3) := along_map L V (da i)
   have hDB (V : E → E) (i : Fin 3) := along_ofReal V (hB i)
   have hLap i := cylindricalLaplacian_map L R hU hr hθ hz (ha i) hx
@@ -649,12 +660,14 @@ theorem along_space_space_slice {U : Set SpaceTime} {f : SpaceTime → W} {t : �
     along (spaceDirection i) (along (spaceDirection i) f) (t, q) =
       CylindricalResidual.dCoord i (CylindricalResidual.dCoord i (fun y => f (t, y))) q := by
   have hd := contDiffOn_along hU (show ContDiffOn ℝ ∞ (spaceDirection i) U from contDiffOn_const) hf
-  rw [along_space_slice ((hd.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp))]
+  rw [along_space_slice ((hd.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))]
   apply CylindricalResidual.dCoord_congr
   have hn : {y : Space | (t, y) ∈ U} ∈ 𝓝 q :=
     (continuous_const.prodMk continuous_id).continuousAt.preimage_mem_nhds (hU.mem_nhds hx)
   filter_upwards [hn] with y hy
-  exact along_space_slice ((hf.contDiffAt (hU.mem_nhds hy)).differentiableAt (by simp)) i
+  exact along_space_slice ((hf.contDiffAt (hU.mem_nhds hy)).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) i
 
 theorem laplacian_space_slice {U : Set SpaceTime} {f : SpaceTime → W} {t : ℝ} {q : Space}
     (hU : IsOpen U) (hf : ContDiffOn ℝ ∞ f U) (hx : (t, q) ∈ U) :
@@ -663,7 +676,8 @@ theorem laplacian_space_slice {U : Set SpaceTime} {f : SpaceTime → W} {t : ℝ
   unfold cylindricalLaplacian CylindricalResidual.scalarLaplacian coordinateRadius
   rw [along_space_space_slice hU hf hx 0, along_space_space_slice hU hf hx 1,
     along_space_space_slice hU hf hx 2,
-    along_space_slice ((hf.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp)) 0]
+    along_space_slice ((hf.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) 0]
 
 end Slices
 
@@ -681,9 +695,12 @@ theorem realComponentLinearResidual_eq_cylindrical {U : Set SpaceTime} (ε : ℝ
     (AxisymmetricFields.projection i).contDiff.comp_contDiffOn ha
   have hBc (i : Fin 3) : ContDiffOn ℝ ∞ (fun z => B z i) U :=
     (AxisymmetricFields.projection i).contDiff.comp_contDiffOn hB
-  have had := (ha.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp)
-  have hbd := (hB.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp)
-  have hpd := (hp.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp)
+  have had := (ha.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have hbd := (hB.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have hpd := (hp.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have has : ContDiffAt ℝ 2 (fun y : Space => a (t, y)) q :=
     ((ha.contDiffAt (hU.mem_nhds hx)).comp q (contDiffAt_const.prodMk contDiffAt_id)).of_le
       (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)
@@ -692,11 +709,13 @@ theorem realComponentLinearResidual_eq_cylindrical {U : Set SpaceTime} (ε : ℝ
     hbd.comp q ((differentiableAt_const t).prodMk differentiableAt_id)
   have hAfirst (i j : Fin 3) : along (spaceDirection i) (fun z => a z j) (t, q) =
       CylindricalResidual.dCoord i (fun y => a (t, y)) q j := by
-    rw [along_space_slice (((hAc j).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp))]
+    rw [along_space_slice (((hAc j).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [
+        ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))]
     exact CylindricalResidual.dCoord_map (AxisymmetricFields.projection j) hasd i
   have hBfirst (i j : Fin 3) : along (spaceDirection i) (fun z => B z j) (t, q) =
       CylindricalResidual.dCoord i (fun y => B (t, y)) q j := by
-    rw [along_space_slice (((hBc j).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp))]
+    rw [along_space_slice (((hBc j).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [
+        ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))]
     exact CylindricalResidual.dCoord_map (AxisymmetricFields.projection j) hbsd i
   have hLap (j : Fin 3) : cylindricalLaplacian coordinateRadius
       (spaceDirection 0) (spaceDirection 1) (spaceDirection 2) (fun z => a z j) (t, q) =

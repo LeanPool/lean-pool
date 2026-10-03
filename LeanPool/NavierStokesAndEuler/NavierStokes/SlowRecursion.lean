@@ -175,7 +175,9 @@ theorem matrixPath_shape {R : ℝ} (hR : 0 ≤ R) {A : Coeff}
   · simp only [symmetricRawCoefficient, matrixPath, CompactSmoothFamily.family,
       dite_eq_left hc, ContinuousMap.coe_mk, matrixOperator_toMatrix]
     exact hA _ z i j hij
-  · simp [symmetricRawCoefficient, matrixPath, CompactSmoothFamily.family, hc]
+  · simp only [symmetricRawCoefficient, matrixPath, CompactSmoothFamily.family, hc, ↓reduceDIte,
+      ContinuousMap.zero_apply, ContinuousLinearMap.toLinearMap_zero, LinearMap.toMatrix'_apply,
+      LinearMap.zero_apply, Pi.zero_apply]
 
 theorem scaled_mem_symmetricInterval {R r t : ℝ} (hr : r ∈ Icc (-R) R)
     (ht : t ∈ Icc (0 : ℝ) 1) : t * r ∈ Icc (-R) R := by
@@ -595,7 +597,8 @@ theorem positiveSolution_real_system {R T : ℝ} (hR : 0 < R) (hRT : R < T)
   have hW := positiveSolution_spec hR.le hRT hU (lam : ℂ) (C : ℂ) hF
   have hdata := ((hF.system hU (lam : ℂ) (C : ℂ)).restrict hRT.le).smooth
   intro r hr hr0 eta heta
-  have hr' : r ∈ radialDomain R := by simpa [radialDomain, Real.ball_eq_Ioo] using hr
+  have hr' : r ∈ radialDomain R := by simpa only [radialDomain, Real.ball_eq_Ioo, zero_sub,
+      zero_add, mem_Ioo] using hr
   apply realTrace_solves_system h lam C r eta (realBase G (r ^ 2, eta))
     (realSource G (r ^ 2, eta)) W
   · intro i
@@ -620,10 +623,17 @@ theorem matrixRHS_first_rows {K : Type*} [Field K] (h lam C r eta : K)
   constructor
   · change dotProduct (![0, 0, 0, 0, 1, 0] : Fin 6 → K) w +
       dotProduct (![0, 0, 0, 0, 0, 0] : Fin 6 → K) v + 0 = w 4
-    simp [dotProduct, Fin.sum_univ_succ]
+    simp only [dotProduct, Nat.succ_eq_add_one, Nat.reduceAdd, Fin.sum_univ_succ, Fin.isValue,
+        Matrix.cons_val_zero, zero_mul, Matrix.cons_val_succ, Fin.succ_zero_eq_one,
+        Fin.succ_one_eq_two, Fin.reduceSucc, one_mul, Finset.univ_unique, Fin.default_eq_zero,
+        Matrix.cons_val_fin_one, Finset.sum_const_zero, add_zero, zero_add]
   · change dotProduct (![0, 0, 0, 0, 0, 1] : Fin 6 → K) w +
       dotProduct (![0, 0, 0, 0, 0, 0] : Fin 6 → K) v + 0 = w 5
-    simp [dotProduct, Fin.sum_univ_succ]
+    simp only [dotProduct, Nat.succ_eq_add_one, Nat.reduceAdd, Fin.sum_univ_succ, Fin.isValue,
+        Matrix.cons_val_zero, zero_mul, Matrix.cons_val_succ, Fin.succ_zero_eq_one,
+        Fin.succ_one_eq_two, Fin.reduceSucc, Finset.univ_unique, Fin.default_eq_zero,
+        Matrix.cons_val_fin_one, one_mul, Finset.sum_singleton, zero_add, Finset.sum_const_zero,
+        add_zero]
 
 theorem RealSixSystem.first_derivative {R : ℝ} {J : Set ℝ} {h lam C : ℝ}
     {G : RealCoefficientData} {w : RealField} (hw : RealSixSystem R J h lam C G w)
@@ -634,8 +644,10 @@ theorem RealSixSystem.first_derivative {R : ℝ} {J : Set ℝ} {h lam C : ℝ}
     (realBase G (r ^ 2, eta)) (realSource G (r ^ 2, eta))
     (w r eta) (fun j => deriv (fun v => w r v j) eta)
   constructor
-  · simpa [PositiveAxisSystem.diagonal, hrows.1] using hw r hr hr0 eta heta 0
-  · simpa [PositiveAxisSystem.diagonal, hrows.2] using hw r hr hr0 eta heta 1
+  · simpa only [Fin.isValue, PositiveAxisSystem.diagonal, Matrix.cons_val_zero, zero_div, zero_mul,
+      add_zero, hrows.1] using hw r hr hr0 eta heta 0
+  · simpa only [Fin.isValue, PositiveAxisSystem.diagonal, Matrix.cons_val_one, Matrix.cons_val_zero,
+      zero_div, zero_mul, add_zero, hrows.2] using hw r hr hr0 eta heta 1
 
 theorem xProfile_contDiffAt {R : ℝ} (hR : 0 < R) {U : Set ℂ} (hU : IsOpen U)
     {W : VolterraAnalyticBounds.Field}
@@ -670,13 +682,15 @@ theorem xProfile_vector_eq {R : ℝ} (hR : 0 < R) {U : Set ℂ} (hU : IsOpen U)
       realTrace W r eta 4 := by
     have hd := hasDerivAt_squareProfile
       ((xProfile_contDiffAt hR hU hW hparity 0 (by
-          norm_num) hr hr0 heta).differentiableAt (by simp))
+          norm_num) hr hr0 heta).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+              ENat.top_ne_zero, not_false_eq_true]))
     exact hd.deriv.symm.trans ((hrecovery 0 (by norm_num)).deriv_eq.trans hfirst.1)
   have hfive : 2 * r * SimilarityProfile.partialX (xProfile W 1) (r ^ 2, eta) =
       realTrace W r eta 5 := by
     have hd := hasDerivAt_squareProfile
       ((xProfile_contDiffAt hR hU hW hparity 1 (by
-          norm_num) hr hr0 heta).differentiableAt (by simp))
+          norm_num) hr hr0 heta).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+              ENat.top_ne_zero, not_false_eq_true]))
     exact hd.deriv.symm.trans ((hrecovery 1 (by norm_num)).deriv_eq.trans hfirst.2)
   funext i
   fin_cases i
@@ -805,7 +819,7 @@ theorem positiveSolution_extends_order {R T : ℝ} (hR : 0 < R) (hRT : R < T)
     constructor
     · linarith [Real.sqrt_nonneg X]
     · have hsq := Real.sq_sqrt hX.1.le
-      dsimp [r]
+      dsimp only [r]
       nlinarith [Real.sqrt_nonneg X, hX.2]
   have hrX : r ^ 2 = X := Real.sq_sqrt hX.1.le
   have hWsm := positiveSolution_jointly_smooth hR.le hRT hU ((slowPower h n : ℝ) : ℂ) (C : ℂ) hF
@@ -835,8 +849,10 @@ theorem positiveSolution_extends_order {R T : ℝ} (hR : 0 < R) (hRT : R < T)
       (actualJet (u' n) (r ^ 2, eta)) (actualJet k (r ^ 2, eta)) := by
     simp only [beta', u', Function.update_self, newBeta]
   have hresult := (profileSystem_iff_positiveOrder hr0 hn phi' u' beta' k p omegaQuotient
-    hphi hu ((hnew 2 (by decide)).differentiableAt (by simp))
-    ((hnew 3 (by decide)).differentiableAt (by simp)) hbet).mp hsUpdated
+    hphi hu ((hnew 2 (by decide)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true]))
+    ((hnew 3 (by decide)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true])) hbet).mp hsUpdated
   simpa only [ExtendsPositiveOrder, hrX] using hresult
 
 end PositiveOrder
@@ -1005,7 +1021,7 @@ theorem partialX_axisFactor {v : InnerProfile} {w : InnerPoint}
     partialX (axisFactor v) w = v w + w.1 * partialX v w := by
   change (fderiv ℝ (fun y : InnerPoint => y.1 * v y) w) (1, 0) = _
   rw [(hasFDerivAt_fst.fun_mul hv.hasFDerivAt).fderiv]
-  simp [partialX]
+  simp only [add_apply, smul_apply, smul_eq_mul, ContinuousLinearMap.coe_fst', mul_one, partialX]
   ring
 
 theorem partialEta_axisFactor {v : InnerProfile} {w : InnerPoint}
@@ -1013,7 +1029,8 @@ theorem partialEta_axisFactor {v : InnerProfile} {w : InnerPoint}
     partialEta (axisFactor v) w = w.1 * partialEta v w := by
   change (fderiv ℝ (fun y : InnerPoint => y.1 * v y) w) (0, 1) = _
   rw [(hasFDerivAt_fst.fun_mul hv.hasFDerivAt).fderiv]
-  simp [partialEta]
+  simp only [add_apply, smul_apply, smul_eq_mul, ContinuousLinearMap.coe_fst', mul_zero, add_zero,
+      partialEta]
 
 /-- Factoring out X shifts the similarity exponent by one. -/
 theorem T_axisFactor (h b : ℝ) {v : InnerProfile} {w : InnerPoint}
@@ -1047,7 +1064,7 @@ theorem partialXX_axisFactor {v : InnerProfile} {w : InnerPoint}
   rw [heq.fderiv_eq,
     ((hv.differentiableAt (by norm_num)).hasFDerivAt.fun_add
       (hasFDerivAt_fst.fun_mul hx.hasFDerivAt)).fderiv]
-  simp [partialX]
+  simp only [partialX, add_apply, smul_apply, smul_eq_mul, ContinuousLinearMap.coe_fst', mul_one]
   ring
 
 /-- Z2, given by `Z h (b - D h) (Z h b v)`. -/
@@ -1074,7 +1091,7 @@ theorem radial_advection_axisFactor {vi vj : InnerProfile} {w : InnerPoint}
   rw [partialX_axisFactor hvj]
   unfold axisFactor
   by_cases hX : w.1 = 0
-  · simp [hX]
+  · simp only [hX, zero_mul, add_zero, mul_zero, div_zero, sub_zero]
   · field_simp [hX]
     ring
 
@@ -1114,7 +1131,7 @@ theorem shiftedAxial_axisFactor (h : ℝ) (v : ℕ → InnerProfile) (k : ℕ) (
     (hv : ∀ j, j ≤ k → ContDiffAt ℝ 2 (v j) w) (hL : L h w.2 ≠ 0) :
     shiftedAxial h (fun j => axisFactor (v j)) k w = w.1 * shiftedAxialFactor h v k w := by
   cases k with
-  | zero => simp [shiftedAxial, shiftedAxialFactor]
+  | zero => simp only [shiftedAxial, shiftedAxialFactor, mul_zero]
   | succ k => exact Z2_axisFactor h (slowOrder h k) (hv k (Nat.le_succ k)) hL
 
 /-- Every term in the actual finite Ω_k source has the factor X. -/
@@ -1147,11 +1164,11 @@ theorem omega_quotient_eq (h : ℝ) (U v : ℕ → InnerProfile) (k : ℕ) (w : 
 
 theorem partialX_smooth {v : InnerProfile} {w : InnerPoint}
     (hv : ContDiffAt ℝ ∞ v w) : ContDiffAt ℝ ∞ (partialX v) w :=
-  partialX_smoothAt hv (by simp)
+  partialX_smoothAt hv (by simp only [ENat.coe_top_add_one, Std.le_refl])
 
 theorem partialEta_smooth {v : InnerProfile} {w : InnerPoint}
     (hv : ContDiffAt ℝ ∞ v w) : ContDiffAt ℝ ∞ (partialEta v) w :=
-  partialEta_smoothAt hv (by simp)
+  partialEta_smoothAt hv (by simp only [ENat.coe_top_add_one, Std.le_refl])
 
 theorem T_smooth (h b : ℝ) {v : InnerProfile} {w : InnerPoint}
     (hv : ContDiffAt ℝ ∞ v w) (hL : L h w.2 ≠ 0) : ContDiffAt ℝ ∞ (T h b v) w := by
@@ -1513,18 +1530,24 @@ noncomputable def complexifyJet (j : Jet2 ℝ) : Jet2 ℂ where
 /-- The first-order jet time formula commutes with the real inclusion. -/
 theorem jetT_ofReal (h b X e : ℝ) (j : Jet2 ℝ) :
     ((jetT h b X e j : ℝ) : ℂ) = jetT (h : ℂ) (b : ℂ) (X : ℂ) (e : ℂ) (complexifyJet j) := by
-  simp [jetT, jetL, complexifyJet]
+  simp only [jetT, neg_mul, one_div, jetL, Complex.ofReal_div, Complex.ofReal_add,
+      Complex.ofReal_neg, Complex.ofReal_mul, Complex.ofReal_sub, Complex.ofReal_inv,
+      Complex.ofReal_ofNat, Complex.ofReal_one, Complex.ofReal_pow, complexifyJet]
 
 /-- The first-order jet axial formula commutes with the real inclusion. -/
 theorem jetZ_ofReal (h b X e : ℝ) (j : Jet2 ℝ) :
     ((jetZ h b X e j : ℝ) : ℂ) = jetZ (h : ℂ) (b : ℂ) (X : ℂ) (e : ℂ) (complexifyJet j) := by
-  simp [jetZ, jetZNumerator, jetL, complexifyJet]
+  simp only [jetZ, jetZNumerator, jetL, Complex.ofReal_div, Complex.ofReal_sub, Complex.ofReal_add,
+      Complex.ofReal_mul, Complex.ofReal_ofNat, Complex.ofReal_one, Complex.ofReal_pow,
+      complexifyJet]
 
 /-- The second-order jet axial formula commutes with the real inclusion. -/
 theorem jetZ2_ofReal (h b X e : ℝ) (j : Jet2 ℝ) :
     ((jetZ2 h b X e j : ℝ) : ℂ) = jetZ2 (h : ℂ) (b : ℂ) (X : ℂ) (e : ℂ) (complexifyJet j) := by
-  simp [jetZ2, jetZ, jetZE, jetZX, jetZNumerator, jetZNumeratorX,
-    jetZNumeratorE, jetL, complexifyJet]
+  simp only [jetZ2, one_div, jetZ, jetZNumerator, jetL, jetZE, jetZNumeratorE, jetZX,
+      jetZNumeratorX, Complex.ofReal_div, Complex.ofReal_sub, Complex.ofReal_add,
+      Complex.ofReal_mul, Complex.ofReal_ofNat, Complex.ofReal_inv, Complex.ofReal_one,
+      Complex.ofReal_pow, complexifyJet]
 
 /-- The holomorphic algebra uses the exact real source formula on real inputs. -/
 theorem jetOmegaDivX_ofReal (h X e : ℝ) (U : ℕ → ℝ) (v : ℕ → Jet2 ℝ) (k : ℕ) :
@@ -1659,7 +1682,9 @@ theorem jetLowerPressureSource_ofReal (h C X e : ℝ) (φ U : ℕ → ℝ)
       jetLowerPressureSource (h : ℂ) (C : ℂ) (X : ℂ) (e : ℂ)
         (fun j => (φ j : ℂ)) (fun j => (U j : ℂ))
         (fun j => complexifyJet (v j)) n := by
-  cases n <;> simp [jetLowerPressureSource, jetPreviousOmega, jetOmegaDivX_ofReal]
+  cases n <;> simp only [jetLowerPressureSource, inv_pow, jetPreviousOmega, zero_div, sub_zero,
+      Complex.ofReal_mul, Complex.ofReal_inv, Complex.ofReal_pow, Complex.ofReal_sum,
+      Complex.ofReal_sub, Complex.ofReal_div, jetOmegaDivX_ofReal, Complex.ofReal_ofNat]
 
 theorem lowerPressureSource_complex_formula (h C : ℝ) (φ U v : ℕ → InnerProfile)
     (n : ℕ) (w : InnerPoint)
@@ -1984,7 +2009,8 @@ noncomputable def inverse {R : ℝ} {U : Set ℂ} (F : AxisFunction R U)
     smooth := F.2.smooth.inv hF
     holomorphic := fun r hr => (F.2.holomorphic r hr).inv (fun z hz => hF (r, z) ⟨hr, hz⟩)
     even := fun z hz r hr => congrArg Inv.inv (F.2.even z hz r hr)
-    real := fun r hr eta heta => by simp [Complex.inv_im, F.2.real r hr eta heta] }⟩
+    real := fun r hr eta heta => by simp only [Complex.inv_im, F.2.real r hr eta heta, neg_zero,
+        zero_div] }⟩
 
 theorem im_iteratedDeriv_zero {S : Set ℝ} (hS : IsOpen S) {f : ℝ → ℂ}
     (hf : ContDiffOn ℝ ∞ f S) (hreal : ∀ x ∈ S, (f x).im = 0)
@@ -2041,7 +2067,7 @@ theorem radialJet_one_real {R : ℝ} {U : Set ℂ} (F : AxisFunction R U)
         have ht' : t ∈ Icc (0 : ℝ) 1 := by simpa only [uIcc_of_le zero_le_one] using ht
         exact im_iteratedDeriv_zero isOpen_Ioo hf
           (fun s hs => F.2.real s hs eta heta) (scaled_mem_open hr ht') 2
-      _ = 0 := by simp
+      _ = 0 := by simp only [intervalIntegral.integral_zero]
   rw [hz, smul_zero]
 
 /-- Radial derivative as an element of `AxisFunction R U`. -/
@@ -2090,7 +2116,11 @@ theorem hasDerivAt_conjugate {f : ℂ → ℂ} {d z : ℂ}
   change HasFDerivAt _ ((1 : ℂ →L[ℂ] ℂ).smulRight (starRingEnd ℂ d)) z
   apply hasFDerivAt_of_restrictScalars ℝ hh
   ext v
-  simp [J, map_mul]
+  simp only [ContinuousLinearMap.coe_restrictScalars', ContinuousLinearMap.smulRight_apply,
+      one_apply_eq_self, smul_eq_mul, ContinuousLinearMap.comp_apply, ContinuousLinearEquiv.coe_coe,
+      ContinuousAlgEquiv.coeCLE_apply, Complex.conjCAE_apply,
+      ContinuousLinearMap.toSpanSingleton_apply, map_mul, RingHomCompTriple.comp_apply,
+      RingHom.id_apply, J]
 
 /-- Reflection gives a holomorphic extension of the actual real trace. -/
 noncomputable def realSymmetrization (F : Raw) (p : ℝ × ℂ) : ℂ :=
@@ -2098,7 +2128,9 @@ noncomputable def realSymmetrization (F : Raw) (p : ℝ × ℂ) : ℂ :=
 
 theorem realSymmetrization_real (F : Raw) (r eta : ℝ) :
     realSymmetrization F (r, (eta : ℂ)) = ((F (r, (eta : ℂ))).re : ℂ) := by
-  apply Complex.ext <;> simp [realSymmetrization]
+  apply Complex.ext <;> simp only [realSymmetrization, Complex.conj_ofReal, Complex.div_ofNat_re,
+      Complex.add_re, Complex.conj_re, add_self_div_two, Complex.ofReal_re, Complex.div_ofNat_im,
+      Complex.add_im, Complex.conj_im, add_neg_cancel, zero_div, Complex.ofReal_im]
 
 /-- Symmetrize as an element of `AxisFunction R U`. -/
 noncomputable def symmetrize {R : ℝ} {U : Set ℂ} (hU : IsOpen U)
@@ -2124,7 +2156,7 @@ noncomputable def symmetrize {R : ℝ} {U : Set ℂ} (hU : IsOpen U)
         (hU.mem_nhds (hconj z hz))).hasDerivAt).differentiableAt.differentiableWithinAt
     even := by
       intro z hz r hr
-      dsimp [realSymmetrization]
+      dsimp only [realSymmetrization]
       rw [he z hz r hr, he _ (hconj z hz) r hr]
     real := by
       intro r _ eta _
@@ -2211,7 +2243,8 @@ theorem parameterDerivative_value {R : ℝ} (hR : 0 < R) {U : Set ℂ} (hU : IsO
   have hr := sqrt_mem hR ⟨hX.1.le, hX.2⟩
   have hdC := ((F.2.holomorphic _ hr).differentiableAt (hU.mem_nhds heta)).hasDerivAt
   have hdR := PositiveAxisSystem.hasDerivAt_parameterProfile
-    ((profile_contDiffAt hR hU F hX heta).differentiableAt (by simp))
+    ((profile_contDiffAt hR hU F hX heta).differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
   apply Complex.ext
   · exact hdC.real_of_complex.deriv.symm.trans hdR.deriv
   · exact parameterDerivative_real hU F hr heta
@@ -2274,7 +2307,9 @@ noncomputable def denominatorFunction (R : ℝ) (U : Set ℂ) (h : ℝ) : AxisFu
 
 theorem denominatorFunction_apply (R : ℝ) (U : Set ℂ) (h : ℝ) (p : ℝ × ℂ) :
     denominatorFunction R U h p = PositiveAxisSystem.ell (h : ℂ) p.2 := by
-  simp [denominatorFunction, parameter, realConstant, PositiveAxisSystem.ell]
+  simp only [denominatorFunction, realConstant, map_mul, parameter, sub_apply, one_apply, mul_apply,
+      SubalgebraClass.coe_algebraMap, Pi.algebraMap_apply, Complex.coe_algebraMap,
+      Complex.ofReal_ofNat, SubmonoidClass.coe_pow, Pi.pow_apply, PositiveAxisSystem.ell]
 
 /-- Inverse denominator, given by `inverse (denominatorFunction R U h) (fun p hp => by rw
 [denominatorFunction_apply] exact c.denominator p.2 hp.2)`. -/
@@ -2357,7 +2392,8 @@ theorem axialOperator_value {R : ℝ} {U : Set ℂ} {h : ℝ} (c : Domain R U h)
     SimilarityProfile.Z, CoordinateAlgebra.axialCoeff, CoordinateAlgebra.L,
     PositiveAxisSystem.ell, Complex.ofReal_add, Complex.ofReal_sub,
     Complex.ofReal_mul, Complex.ofReal_ofNat, div_eq_mul_inv]
-  simp [CoordinateAlgebra.d]
+  simp only [CoordinateAlgebra.d, Complex.ofReal_sub, Complex.ofReal_one, Complex.ofReal_pow,
+      Complex.ofReal_inv, Complex.ofReal_mul, Complex.ofReal_ofNat]
 
 theorem axialOperator_germ {R : ℝ} {U : Set ℂ} {h : ℝ} (c : Domain R U h)
     (b : ℝ) (F : AxisFunction R U) {X eta : ℝ} (hX : X ∈ Ioo (0 : ℝ) (R ^ 2))
@@ -2382,7 +2418,7 @@ theorem axialOperator_twice_value {R : ℝ} {U : Set ℂ} {h : ℝ} (c : Domain 
     complexProfile (∑ i ∈ s, F i) p = ∑ i ∈ s, complexProfile (F i) p := by
   classical
   induction s using Finset.induction_on with
-  | empty => simp
+  | empty => simp only [Finset.sum_empty, complexProfile_zero]
   | @insert a s ha ih => simp only [Finset.sum_insert ha, complexProfile_add, ih]
 
 /-- Prior diffusion, with branches according to `n = 0`. -/
@@ -2398,7 +2434,8 @@ theorem priorDiffusion_value {R : ℝ} {U : Set ℂ} {h : ℝ} (c : Domain R U h
     complexProfile (priorDiffusion c b F n) (X, (eta : ℂ)) =
       (PositiveAxisSystem.precedingDiffusion h b (fun j => profile (F j)) n (X, eta) : ℂ) := by
   by_cases hn : n = 0
-  · simp [priorDiffusion, PositiveAxisSystem.precedingDiffusion, hn]
+  · simp only [priorDiffusion, hn, ↓reduceIte, complexProfile_zero,
+      PositiveAxisSystem.precedingDiffusion, Complex.ofReal_zero]
   · simp only [priorDiffusion, PositiveAxisSystem.precedingDiffusion, ite_eq_right hn]
     exact axialOperator_twice_value c _ _ _ hX heta
 
@@ -2755,7 +2792,9 @@ theorem step_expanded {R S : ℝ} {U : Set ℂ} {h : ℝ} (c : Domain R U h)
   have hout := (PositiveAxisSystem.profileSystem_iff_expanded hr0 _ _
     ((hsm 0).of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2))
     ((hsm 1).of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2))
-    ((hsm 2).differentiableAt (by simp)) ((hsm 3).differentiableAt (by simp))).mp he'
+    ((hsm 2).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+        not_false_eq_true])) ((hsm 3).differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))).mp he'
   simp only [hrX] at hout ⊢
   exact hout
 
@@ -3033,7 +3072,8 @@ theorem sequence_axis_zero {core buffer : ℝ} {U : Set ℂ} {h : ℝ}
 theorem domain_real_denominator {R : ℝ} {U : Set ℂ} {h : ℝ} (c : Domain R U h)
     {eta : ℝ} (heta : (eta : ℂ) ∈ U) : SimilarityProfile.L h eta ≠ 0 := by
   have he : ((SimilarityProfile.L h eta : ℝ) : ℂ) = PositiveAxisSystem.ell (h : ℂ) (eta : ℂ) := by
-    simp [SimilarityProfile.L, CoordinateAlgebra.L, PositiveAxisSystem.ell]
+    simp only [SimilarityProfile.L, CoordinateAlgebra.L, Complex.ofReal_sub, Complex.ofReal_one,
+        Complex.ofReal_mul, Complex.ofReal_ofNat, Complex.ofReal_pow, PositiveAxisSystem.ell]
   intro hh
   apply c.denominator (eta : ℂ) heta
   rw [← he, hh, Complex.ofReal_zero]
@@ -3107,7 +3147,8 @@ theorem sequence_average {core buffer : ℝ} {U : Set ℂ} {h : ℝ}
       change (sequence c hcore hbuffer C base n 2 (Real.sqrt 0, (eta : ℂ))).re = 0
       rw [Real.sqrt_zero, sequence_axis_zero c hcore hbuffer C base hn 2 heta]
       rfl
-    simp [ProfileHistories.average, hk]
+    simp only [ProfileHistories.average, Fin.isValue, mul_zero, intervalIntegral.integral_const,
+        sub_zero, smul_eq_mul, one_mul, hk, add_zero]
   · exact average_from_equation hcore c.open_set _ _ heta ⟨lt_of_le_of_ne hX.1 (Ne.symm hz), hX.2⟩
       (fun Y hY => (sequence_positive_order c hcore hbuffer C base hn hY heta).1)
 

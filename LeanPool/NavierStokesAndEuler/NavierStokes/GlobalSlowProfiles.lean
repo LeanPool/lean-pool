@@ -108,7 +108,7 @@ theorem slice_smooth {S : Set ℝ} {f : Field} (hf : Smooth S f)
     (f : ι → EvenProfile S) (w : ℝ × ℝ) : (∑ i ∈ s, f i) w = ∑ i ∈ s, f i w := by
   classical
   induction s using Finset.induction_on with
-  | empty => simp
+  | empty => simp only [Finset.sum_empty, zero_apply]
   | @insert a s ha ih => simp only [Finset.sum_insert ha, add_apply, ih]
 
 /-- Bound constant, given by `algebraMap ℝ (EvenProfile S) c`. -/
@@ -184,11 +184,11 @@ theorem coreCutoff_smooth (inner stop : ℝ) : ContDiff ℝ ∞ (coreCutoff inne
 
 theorem coreCutoff_one {inner stop : ℝ} (his : inner < stop) {w : ℝ × ℝ}
     (hw : w.1 ^ 2 / 2 ≤ inner) : coreCutoff inner stop w = 1 := by
-  simp [coreCutoff, TransportPrimitive.cutoff_zero his hw]
+  simp only [coreCutoff, TransportPrimitive.cutoff_zero his hw, sub_zero]
 
 theorem coreCutoff_zero {inner stop : ℝ} (his : inner < stop) {w : ℝ × ℝ}
     (hw : stop ≤ w.1 ^ 2 / 2) : coreCutoff inner stop w = 0 := by
-  simp [coreCutoff, TransportPrimitive.cutoff_one his hw]
+  simp only [coreCutoff, TransportPrimitive.cutoff_one his hw, sub_self]
 
 /-- A normalized mass average.  There is no division by the radius. -/
 noncomputable def massAverage {S : Set ℝ} (hS : IsOpen S) (f : EvenProfile S) :
@@ -352,7 +352,7 @@ theorem actual_pressureGradient {S : Set ℝ} (C : ℝ) (phi : ℕ → EvenProfi
     rw [Finset.mul_sum]
     apply Finset.sum_congr rfl
     intro ij _
-    dsimp [angularField]
+    dsimp only [angularField]
     ring
   change ((∑ i ∈ Finset.range (n + 1),
     angularField C (phi i) w * angularField C (phi (n - i)) w) - w.1 ^ 2 / 2 * omega w) / w.1 = _
@@ -362,7 +362,8 @@ theorem actual_pressureGradient {S : Set ℝ} (C : ℝ) (phi : ℕ → EvenProfi
     simp only [sum_apply, mul_apply]
   simp only [pressureSource, sub_apply, mul_apply, constant_apply, hv]
   by_cases hR : w.1 = 0
-  · simp [hR]
+  · simp only [hR, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, zero_div, zero_mul,
+      sub_self, div_zero, one_div]
   · field_simp [hR]
 
 theorem pressureFromSource_eq_pressureHistory {S : Set ℝ} (hS : IsOpen S) (C : ℝ)
@@ -466,7 +467,8 @@ noncomputable def phiCorrection {S : Set ℝ} (_hS : IsOpen S) {a b : ℝ} (ha :
   · intro w hw
     by_cases hR : w.1 = 0
     · have hn : ∀ᶠ p : ℝ × ℝ in 𝓝 w, |p.1| < a :=
-        (isOpen_lt continuous_fst.abs continuous_const).mem_nhds (by simpa [hR] using ha)
+        (isOpen_lt continuous_fst.abs continuous_const).mem_nhds (by simpa only [mem_ofPred_eq, hR,
+            abs_zero] using ha)
       have he : (fun p : ℝ × ℝ => C * (f p - f (-p.1, p.2)) / p.1) =ᶠ[𝓝 w]
           fun _ => (0 : ℝ) := by
         filter_upwards [hn] with p hp
@@ -474,7 +476,7 @@ noncomputable def phiCorrection {S : Set ℝ} (_hS : IsOpen S) {a b : ℝ} (ha :
           intro hh; linarith only [hp, hh, (abs_lt.mp hp).2, hh.1])
         have h2 := patch_zero hs (eta := p.2) (R := -p.1) (by
           intro hh; linarith only [hp, hh, (abs_lt.mp hp).1, hh.1])
-        simp [h1, h2]
+        simp only [h1, h2, sub_self, mul_zero, zero_div]
       exact ((contDiffAt_const : ContDiffAt ℝ ∞ (fun _ : ℝ × ℝ => (0 : ℝ)) w).congr_of_eventuallyEq
           he).contDiffWithinAt
     · have hfr := hf.comp (s := region S) (contDiffOn_fst.neg.prodMk contDiffOn_snd)
@@ -502,7 +504,7 @@ theorem phiCorrection_angular_nonneg {S : Set ℝ} (hS : IsOpen S) {a b : ℝ} (
   rcases hR.eq_or_lt with he | he
   · subst R
     have h0 := patch_zero hs (R := 0) (eta := eta) (by intro hh; linarith only [ha, hh, hh.1])
-    simp [h0]
+    simp only [zero_div, h0, mul_zero, div_zero]
   · field_simp [hC, he.ne']
 
 theorem evenCorrection_inner {S : Set ℝ} {a b : ℝ} {f : Field} (hf : Smooth S f)
@@ -523,7 +525,7 @@ theorem phiCorrection_inner {S : Set ℝ} (hS : IsOpen S) {a b : ℝ} (ha : 0 < 
   have hn := patch_zero hs (R := -R) (eta := eta) (by
     intro hh; linarith only [hR, hh, (abs_le.mp hR).1, hh.1])
   change C * (f (R, eta) - f (-R, eta)) / R = _
-  simp [hz, hn]
+  simp only [hz, hn, sub_self, mul_zero, zero_div]
 
 /-- Exterior: an abbreviation for `SlowStressSupport.exterior`. -/
 abbrev Exterior := SlowStressSupport.exterior
@@ -554,8 +556,11 @@ theorem exterior_axialOp {S : Set ℝ} {h : ℝ} (d : Domain S h) (b : ℝ)
     (f : EvenProfile S) {B : ℝ} (hB : 0 < B) (hf : Exterior B S f) :
     Exterior B S (axialOp d b f) := by
   intro eta heta R hR
-  simp [axialOp, hf eta heta R hR, exterior_xDerivative d.isOpen f hB hf eta heta R hR,
-    exterior_etaDerivative d.isOpen f hf eta heta R hR]
+  simp only [axialOp, mul_apply, sub_apply, add_apply, constant_apply, hf eta heta R hR, mul_zero,
+      one_apply, SubmonoidClass.coe_pow, Pi.pow_apply,
+      exterior_etaDerivative d.isOpen f hf eta heta R hR, add_zero,
+      exterior_xDerivative d.isOpen f hB hf eta heta R hR, sub_self, inverseDenominator_apply,
+      zero_mul]
 
 theorem exterior_axialOp2 {S : Set ℝ} {h : ℝ} (d : Domain S h) (b : ℝ)
     (f : EvenProfile S) {B : ℝ} (hB : 0 < B) (hf : Exterior B S f) :
@@ -576,7 +581,8 @@ theorem exterior_omegaDivX {S : Set ℝ} {h : ℝ} (d : Domain S h)
     intro ij hij
     have hi := (AxisSourceRegularity.antidiagonal_indices_le hij).1
     have hj := (AxisSourceRegularity.antidiagonal_indices_le hij).2
-    simp [hb _ hi eta heta R hR, exterior_axialOp d _ _ hB (hb _ hj) eta heta R hR]
+    simp only [one_div, add_apply, mul_apply, hb _ hi eta heta R hR, constant_apply, zero_mul,
+        exterior_axialOp d _ _ hB (hb _ hj) eta heta R hR, mul_zero, add_zero]
   have hshift : shiftedAxial d beta k (R, eta) = 0 := by
     cases k with
     | zero => rfl
@@ -607,9 +613,10 @@ theorem exterior_pressureSource {S : Set ℝ} (C : ℝ) (phi : ℕ → EvenProfi
     have hin : i ≤ n := Nat.lt_succ_iff.mp (Finset.mem_range.mp hi)
     by_cases hi0 : i = 0
     · subst i
-      simp [hp n hn le_rfl eta heta R hR]
-    · simp [hp i (Nat.pos_of_ne_zero hi0) hin eta heta R hR]
-  simp [pressureSource, hs, ho eta heta R hR]
+      simp only [tsub_zero, mul_apply, hp n hn le_rfl eta heta R hR, mul_zero]
+    · simp only [mul_apply, hp i (Nat.pos_of_ne_zero hi0) hin eta heta R hR, zero_mul]
+  simp only [pressureSource, one_div, sub_apply, mul_apply, constant_apply, hs, mul_zero,
+      ho eta heta R hR, sub_self]
 
 theorem exterior_evenCorrection {S : Set ℝ} {a b B : ℝ} (ha : 0 < a) (hab : a < b)
     (hbB : b ≤ B) {f : Field} (hf : Smooth S f) (hs : PatchSupport a b f) :
@@ -627,7 +634,7 @@ theorem exterior_phiCorrection {S : Set ℝ} (hS : IsOpen S) {a b B : ℝ}
   have hn := patch_zero hs (R := -R) (eta := eta) (by intro hh; linarith only [ha, hab, hbB, hR, hh,
       hh.1])
   change C * (f (R, eta) - f (-R, eta)) / R = 0
-  simp [hz, hn]
+  simp only [hz, hn, sub_self, mul_zero, zero_div]
 
 theorem moments_congr_positive {n : ℕ}
     {u e u' e' : PositiveOrderMoments.History} {omega omega' : ℝ → ℝ}
@@ -888,13 +895,13 @@ theorem exists_step {S : Set ℝ} {h C : ℝ} (s : Scheme S h C) {n : ℕ} (hn :
   let o := previousSource s n previous
   have hu : ∀ j ≤ n, Exterior s.B S (u j) := by
     intro j _
-    dsimp [u, previousAxial]
+    dsimp only [previousAxial, u]
     split_ifs with hj
     · exact (previous j hj).axial_exterior
     · exact s.seedAxial_exterior n
   have hp : ∀ j, 0 < j → j ≤ n → Exterior s.B S (p j) := by
     intro j hj0 _
-    dsimp [p, previousPhi]
+    dsimp only [previousPhi, p]
     split_ifs with hj
     · exact (previous j hj).phi_exterior hj0
     · exact s.seedPhi_exterior n
@@ -903,10 +910,10 @@ theorem exists_step {S : Set ℝ} {h C : ℝ} (s : Scheme S h C) {n : ℕ} (hn :
     intro j hj
     simpa only [previousBeta, dite_eq_left hj] using (previous j hj).beta_exterior
   have hu0 : u 0 = s.base.axial := by
-    dsimp [u, previousAxial]
+    dsimp only [previousAxial, u]
     rw [dite_eq_left hn, (previous 0 hn).zero_data rfl]
   have hp0 : p 0 = s.base.phi := by
-    dsimp [p, previousPhi]
+    dsimp only [previousPhi, p]
     rw [dite_eq_left hn, (previous 0 hn).zero_data rfl]
   obtain ⟨un, pn, hui, hpi, hue, hpe, huo, hpo, hm⟩ := exists_repaired_order s.domain.isOpen
     s.nonzero_scale s.lam_pos s.a_pos s.a_lt_b s.b_le_B hn u p o s.amplitude
@@ -1254,7 +1261,8 @@ theorem partialEta_hasDerivAt {f : Field} {w : ℝ × ℝ} (hf : DifferentiableA
 theorem xProfile_partialEta {S : Set ℝ} (hS : IsOpen S) (f : EvenProfile S)
     {w : ℝ × ℝ} (hX : 0 < w.1) (heta : w.2 ∈ S) :
     SimilarityProfile.partialEta (xProfile f) w = xProfile (etaDerivative hS f) w :=
-  (partialEta_hasDerivAt ((xProfile_contDiffAt hS f hX heta).differentiableAt (by simp))).unique
+  (partialEta_hasDerivAt ((xProfile_contDiffAt hS f hX heta).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))).unique
     (parameter_derivative hS f.smooth heta (Real.sqrt (2 * w.1)))
 
 theorem xProfile_partialX {S : Set ℝ} (hS : IsOpen S) (f : EvenProfile S)
@@ -1267,7 +1275,7 @@ theorem xProfile_partialX {S : Set ℝ} (hS : IsOpen S) (f : EvenProfile S)
   have hs : HasDerivAt (fun X : ℝ => Real.sqrt (2 * X)) (1 / R) w.1 := by
     convert! (Real.hasDerivAt_sqrt (ne_of_gt (mul_pos (by norm_num) hX))).scomp w.1
       ((hasDerivAt_id w.1).const_mul 2) using 1
-    dsimp [R]
+    dsimp only [smul_eq_mul, R]
     field_simp
   have hc := hd.scomp w.1 hs
   have hx := radius_mul_xDerivative hS f heta R
@@ -1278,7 +1286,7 @@ theorem xProfile_partialX {S : Set ℝ} (hS : IsOpen S) (f : EvenProfile S)
     field_simp
   rw [he] at hc
   exact (partialX_hasDerivAt ((xProfile_contDiffAt hS f hX heta).differentiableAt (by
-      simp))).unique hc
+      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))).unique hc
 
 theorem xProfile_partialX_germ {S : Set ℝ} (hS : IsOpen S) (f : EvenProfile S)
     {w : ℝ × ℝ} (hX : 0 < w.1) (heta : w.2 ∈ S) :
@@ -1584,10 +1592,10 @@ theorem local_parameterMass {n : ℕ} (hn : 0 < n) {R eta : ℝ} (hR : 0 < R)
       n).axial.smooth heta] at hd
   have hu := partialEta_hasDerivAt ((local_profile_smoothAt L n 1 (w := (R ^ 2 / 2, eta)) hX hxr
       heta).differentiableAt (by
-      simp))
+      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
   have hk := partialEta_hasDerivAt ((local_profile_smoothAt L n 2 (w := (R ^ 2 / 2, eta)) hX hxr
       heta).differentiableAt (by
-      simp))
+      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
   have he : (fun t => PositiveOrderMoments.massHistory (profiles s n).axial (R, t)) =ᶠ[𝓝 eta]
       fun t => R ^ 2 / 2 * (SlowRecursion.profile (A.coefficients n 1) (R ^ 2 / 2, t) +
         SlowRecursion.profile (A.coefficients n 2) (R ^ 2 / 2, t)) := by
@@ -1642,7 +1650,8 @@ theorem localExtension_germ (n : ℕ) (i : Fin 5) {w : ℝ × ℝ}
 
 theorem localExtension_axis {n : ℕ} (hn : 0 < n) (i : Fin 5) {eta : ℝ} (heta : eta ∈ S) :
     localExtension L n i (0, eta) = 0 := by
-  rw [localExtension_radial L n i le_rfl (by simpa using L.inner_pos.le)]
+  rw [localExtension_radial L n i le_rfl (by simpa only [ne_eq, OfNat.ofNat_ne_zero,
+      not_false_eq_true, zero_pow, zero_div] using L.inner_pos.le)]
   simp only [zero_pow (by norm_num : 2 ≠ 0), zero_div, SlowRecursion.profile, Real.sqrt_zero]
   rw [A.zero_axis n hn i _ (L.parameter_embedding eta heta)]
   rfl
@@ -1675,7 +1684,8 @@ theorem profiles_x_inner_beta {n : ℕ} (hn : 0 < n) {w : ℝ × ℝ}
     have hw : w = (0, w.2) := Prod.ext h0 rfl
     rw [hw]
     simpa only [xProfile, mul_zero, Real.sqrt_zero, zero_pow (by norm_num : 2 ≠ 0), zero_div] using
-      he.trans (localExtension_radial L n 4 le_rfl (by simpa using L.inner_pos.le))
+      he.trans (localExtension_radial L n 4 le_rfl (by simpa only [ne_eq, OfNat.ofNat_ne_zero,
+          not_false_eq_true, zero_pow, zero_div] using L.inner_pos.le))
   · have hp : 0 < w.1 := lt_of_le_of_ne hX (Ne.symm h0)
     have hr : 0 < Real.sqrt (2 * w.1) := Real.sqrt_pos.mpr (mul_pos (by norm_num) hp)
     change (profiles s n).beta (Real.sqrt (2 * w.1), w.2) = _
@@ -1865,7 +1875,7 @@ theorem betaFromU_x_divergence {S : Set ℝ} {h : ℝ} (d : Domain S h) (lam : �
   let R := Real.sqrt (2 * w.1)
   have hR : R ≠ 0 := (Real.sqrt_pos.mpr (mul_pos (by norm_num) hX)).ne'
   have hR2 : R ^ 2 / 2 = w.1 := by
-    dsimp [R]; rw [Real.sq_sqrt (mul_pos (by norm_num) hX).le]; ring
+    dsimp only [R]; rw [Real.sq_sqrt (mul_pos (by norm_num) hX).le]; ring
   have hb := ProfileHistories.radialPartial_hasDerivAt (PositiveOrderMoments.parameterDomain S
       d.isOpen)
     b.smooth (p := (R, w.2)) ⟨mem_univ _, heta⟩
@@ -1879,7 +1889,7 @@ theorem betaFromU_x_divergence {S : Set ℝ} {h : ℝ} (d : Domain S h) (lam : �
   rw [← hx, radialZ_eq_axialOp d _ u (w := (R, w.2)) heta, hR2] at he
   rw [AxisSourceRegularity.partialX_axisFactor ((xProfile_contDiffAt d.isOpen b hX
       heta).differentiableAt (by
-      simp)),
+      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])),
     xProfile_partialX d.isOpen b hX heta, ← xProfile_axialOp d _ u hX heta]
   change b (R, w.2) + w.1 * xDerivative d.isOpen b (R, w.2) +
     axialOp d (-PositiveAxisSystem.a h + lam) u (R, w.2) = 0
@@ -1953,10 +1963,13 @@ theorem profiles_inner_eq {S : Set ℝ} {h C rho inner : ℝ} {U : Set ℂ}
     xProfile (component (profiles s n) i) w = SlowRecursion.profile (A.coefficients n (localIndex
         i)) w := by
   fin_cases i
-  · simpa [component, localIndex] using profiles_x_inner_phi L hn hX hi.le
+  · simpa only [component, Nat.succ_eq_add_one, Nat.reduceAdd, Fin.zero_eta, Fin.isValue,
+      Matrix.cons_val_zero, localIndex] using profiles_x_inner_phi L hn hX hi.le
   · simpa [component, localIndex] using profiles_x_inner_axial L hn hX hi.le
-  · simpa [component, localIndex] using profiles_x_inner_beta L hn hX hi.le heta
-  · simpa [component, localIndex] using profiles_x_inner_pressure L B0 hn hX hi heta
+  · simpa only [component, Nat.succ_eq_add_one, Nat.reduceAdd, Fin.reduceFinMk, Matrix.cons_val,
+      localIndex, Fin.isValue] using profiles_x_inner_beta L hn hX hi.le heta
+  · simpa only [component, Nat.succ_eq_add_one, Nat.reduceAdd, Fin.reduceFinMk, Matrix.cons_val,
+      localIndex, Fin.isValue] using profiles_x_inner_pressure L B0 hn hX hi heta
 
 theorem profiles_axis_zero {S : Set ℝ} {h C rho inner : ℝ} {U : Set ℂ}
     {base : Fin 5 → SimilarityProfile.InnerProfile} {s : Scheme S h C}

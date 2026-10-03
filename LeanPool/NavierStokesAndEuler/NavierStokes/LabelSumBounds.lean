@@ -86,7 +86,8 @@ theorem zero (hw : ∀ l n x, x ∈ s.domain → 0 ≤ w l n x) :
   intro m
   refine ⟨0, le_rfl, 0, ?_⟩
   intro l n x hx j hj
-  simp [majorant]
+  simp only [iteratedFDeriv_fun_zero, Pi.zero_apply, norm_zero, majorant, zero_mul, pow_zero,
+      mul_one, Std.le_refl]
 
 theorem congr (hf : UniformClass s w α f) (hfg : ∀ l n, EqOn (f l n) (g l n) s.domain) :
     UniformClass s w α g := by
@@ -447,7 +448,7 @@ theorem uniform_angularProduct {s : StripData D} {P : ι → ℕ → D → ℝ} 
   apply Finset.sum_subset (hF l n)
   intro j _ hj
   rw [Finsupp.notMem_support_iff.mp hj]
-  simp
+  simp only [Pi.zero_apply, zero_mul]
 
 /-- Real projection includes the conjugate harmonics. Angular integration
 is evaluated before taking slow derivatives, so no phase derivative or
@@ -1204,7 +1205,8 @@ theorem uniformClass_of_polynomialJets {s : StripData D}
     (hdom : ∀ n l, s.domain ⊆ V.carrier (n, l)) :
     UniformClass s (fun _ _ _ => 1) 0 (fun l n => a (n, l)) :=
   uniformClass_of_envelopeJets (PrimaryPulseBounds.EnvelopeJets.of_polynomial ha)
-    hK hscale hdom (fun _ _ _ _ => zero_le_one) (by intro l n x hx; simp)
+    hK hscale hdom (fun _ _ _ _ => zero_le_one) (by intro l n x hx; simp only [Real.rpow_zero,
+        mul_one, Std.le_refl])
 
 theorem slotSet_isCompact (h r : ℝ) (vr vt : TorusInverse.Plane) (l : SlotColoring.Label) :
     IsCompact (PartitionedCovariance.slotSet h r vr vt l) := by

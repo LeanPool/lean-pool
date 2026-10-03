@@ -59,13 +59,15 @@ theorem spatialVelocityMap_norm : ‖spatialVelocityMap‖ ≤ 3 := by
       exact ((coordinate 3 i).le_opNorm z).trans
         ((mul_le_mul_of_nonneg_right (coordinate_norm_le 3 i) (norm_nonneg z)).trans_eq
           (one_mul _))
-    _ = 3*‖z‖ := by simp
+    _ = 3*‖z‖ := by simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
+        Nat.cast_ofNat]
 
 theorem normalVelocityMap_norm : ‖normalVelocityMap‖ ≤ 1 := by
   calc
     ‖normalVelocityMap‖ ≤ ‖toSpanSingleton ℝ (EuclideanSpace.single (0 : Fin 4) (1 : ℝ))‖*
         ‖scalarProject‖ := opNorm_comp_le _ _
-    _ = 1 := by simp [norm_toSpanSingleton,scalarProject_norm]
+    _ = 1 := by simp only [Fin.isValue, norm_toSpanSingleton, PiLp.norm_single, norm_one,
+        scalarProject_norm, mul_one]
 
 theorem velocityMap_split (κ : ℝ) (m : Space) :
     velocityMap (velocityComponents κ m) =
@@ -74,10 +76,15 @@ theorem velocityMap_split (κ : ℝ) (m : Space) :
   intro v
   ext i
   refine Fin.cases ?_ (fun j => ?_) i
-  · simp [velocityMap_apply,velocityComponents,spatialVelocityMap,normalVelocityMap,
-      toSpanSingleton_apply]
-  · simp [velocityMap_apply,velocityComponents,spatialVelocityMap,normalVelocityMap,
-      toSpanSingleton_apply]
+  · simp only [velocityComponents, Fin.isValue, velocityMap_apply, Fin.cons_zero, coe_innerSL_apply,
+      spatialVelocityMap, normalVelocityMap, add_apply, smul_apply, comp_apply,
+      normalComponentMap_apply, project_embed, toSpanSingleton_apply, PiLp.add_apply,
+      PiLp.smul_apply, zero_apply, smul_eq_mul, mul_zero, PiLp.single_eq_same, mul_one, zero_add]
+  · simp only [velocityComponents, velocityMap_apply, Fin.cons_succ, smul_apply, smul_eq_mul,
+      spatialVelocityMap, normalVelocityMap, Fin.isValue, add_apply, comp_apply,
+      normalComponentMap_apply, project_embed, toSpanSingleton_apply, PiLp.add_apply,
+      PiLp.smul_apply, ne_eq, Fin.succ_ne_zero, not_false_eq_true, PiLp.single_eq_of_ne, mul_zero,
+      add_zero]
 
 variable (P : ℝ) [Fact (0 < P)]
 

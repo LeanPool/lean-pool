@@ -52,7 +52,8 @@ theorem parameterClamp_smooth : ContDiff ℝ ∞ parameterClamp :=
     ((contDiff_const.mul ((contDiff_id.pow 2).sub contDiff_const)).sub contDiff_const)))
 
 theorem parameterClamp_eq {eta : ℝ} (h : eta ^ 2 ≤ 21 / 20) : parameterClamp eta = eta := by
-  simp [parameterClamp, OutgoingSchedule.sigma_zero (by linarith : 20 * (eta ^ 2 - 1) - 1 ≤ 0)]
+  simp only [parameterClamp, OutgoingSchedule.sigma_zero (by linarith : 20 * (eta ^ 2 - 1) - 1 ≤ 0),
+      sub_zero, mul_one]
 
 theorem parameterClamp_mem (eta : ℝ) : parameterClamp eta ∈ ReferencePath.parameterInterval := by
   have hs0 := OutgoingSchedule.sigma_nonneg (20 * (eta ^ 2 - 1) - 1)
@@ -97,14 +98,15 @@ theorem radialClamp_mem {scale : ℝ} (hscale : 0 < scale) (X : ℝ) :
   have hs0 := OutgoingSchedule.sigma_nonneg (scale * X + 2)
   have hs1 := OutgoingSchedule.sigma_le_one (scale * X + 2)
   by_cases h : scale * X + 2 ≤ 0
-  · simp [radialClamp, OutgoingSchedule.sigma_zero h]
+  · simp only [radialClamp, OutgoingSchedule.sigma_zero h, mul_zero, Left.neg_neg_iff,
+      Nat.ofNat_pos]
   · by_cases hX : 0 ≤ X
     · rw [radialClamp_eq hscale hX]
       linarith only [h, mul_nonneg hscale.le hX]
     · have hXn : X ≤ 0 := (lt_of_not_ge hX).le
       have hm : scale * X ≤ scale * X * OutgoingSchedule.sigma (scale * X + 2) := by
         nlinarith only [hs1, hscale, hXn, mul_nonpos_of_nonneg_of_nonpos hscale.le hXn]
-      dsimp [radialClamp]
+      dsimp only [radialClamp]
       linarith only [h, hm]
 
 /-- Strip, given by `{p | -20 < scale * p.1 ∧ p.2 ∈ ReferencePath.parameterInterval}`. -/
@@ -211,7 +213,10 @@ theorem resetVector_jet_bound {R r b : ℝ} (hR : 0 ≤ R) (hr : 0 < r) (hrb : r
     ‖iteratedFDeriv ℝ n (resetVector R r b u f Gi A) eta‖ ≤
       ShapeTransition.resetDebtJetSize n R r b u f Gi A eta := by
   convert! vector_jet_le_sum (resetVector_smooth hR hr hrb hu hf hGi hA) n eta using 1
-  simp [resetVector, ShapeTransition.resetDebtJetSize, Fin.sum_univ_succ, add_assoc]
+  simp only [ShapeTransition.resetDebtJetSize, add_assoc, resetVector, Fin.sum_univ_succ,
+      Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_succ, Finset.univ_unique,
+      Fin.default_eq_zero, Matrix.cons_val_fin_one, Finset.sum_const, Finset.card_singleton,
+      one_smul]
 
 theorem resetVector_congr {R r b eta : ℝ} (hr : 0 ≤ r)
     {u₁ u₂ f₁ f₂ : Field} {Gi₁ Gi₂ A : ℝ → ℝ}
@@ -722,8 +727,8 @@ theorem exists_ordered_matching_threshold (F : OutgoingProfile.Profile) (N : ℕ
   have hd : 0 < delta := driftBudget_pos q hrho
   have hd1 : delta ≤ 1 := driftBudget_le_one q rho
   let eps := delta / 3
-  have heps : 0 < eps := by dsimp [eps]; positivity
-  have heps1 : eps ≤ 1 := by dsimp [eps]; linarith only [hd1]
+  have heps : 0 < eps := by dsimp only [eps]; positivity
+  have heps1 : eps ≤ 1 := by dsimp only [eps]; linarith only [hd1]
   refine ⟨eps, heps, heps1, ?_⟩
   intro j hjbound hj prep
   obtain ⟨D, hD, hDb⟩ := TransitionRamp.finite_majorant
@@ -789,7 +794,7 @@ theorem exists_ordered_matching_threshold (F : OutgoingProfile.Profile) (N : ℕ
     apply hh.trans
     change ReferenceJetBounds.jetConstant prep.inputs.coefficients 0 n / Λ + eps + |j| ≤ delta
     have hjb : |j| ≤ delta / 3 := hjbound
-    dsimp [eps]
+    dsimp only [eps]
     linarith only [hjb, hcoef, hn, hcoef n hn]
   refine ⟨hcsep, normalized_debt_small_of_budgets c q hsj (zero_le_one.trans hB)
     (zero_le_one.trans hK) hBJ hqJ hrho hC1 hcsep.le hcp hdef, ?_⟩

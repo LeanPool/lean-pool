@@ -114,7 +114,7 @@ theorem sum_squareDecay_le (n : ℕ) :
       have hn : (0 : ℝ) ≤ n := by positivity
       have htel := reciprocal_square_telescope ((n : ℝ) + 2) (by linarith only)
       have hid : squareDecay (n + 1) = 1 / ((n : ℝ) + 2) ^ 2 := by
-        simp [squareDecay, Nat.cast_add, Nat.cast_one]
+        simp only [squareDecay, Nat.cast_add, Nat.cast_one, one_div, inv_inj]
         ring
       rw [hid]
       push_cast
@@ -699,22 +699,23 @@ theorem continuous_jet_joint (I : Window) (w : ℕ → ℕ → ℝ) (n m : ℕ) 
         (continuous_const.prodMk (I.continuous_project.comp continuous_snd))))
 
 @[simp] theorem jet_zero (I : Window) (w : ℕ → ℕ → ℝ) (n m : ℕ) (x : ℝ) :
-    jet I w 0 n m x = 0 := by simp [jet]
+    jet I w 0 n m x = 0 := by simp only [jet, BoundedContinuousFunction.coe_zero, Pi.zero_apply,
+        mul_zero]
 
 @[simp] theorem jet_add (I : Window) (w : ℕ → ℕ → ℝ) (A B : RawJets I)
     (n m : ℕ) (x : ℝ) :
     jet I w (A + B) n m x = jet I w A n m x + jet I w B n m x := by
-  simp [jet, mul_add]
+  simp only [jet, BoundedContinuousFunction.coe_add, Pi.add_apply, mul_add]
 
 @[simp] theorem jet_sub (I : Window) (w : ℕ → ℕ → ℝ) (A B : RawJets I)
     (n m : ℕ) (x : ℝ) :
     jet I w (A - B) n m x = jet I w A n m x - jet I w B n m x := by
-  simp [jet, mul_sub]
+  simp only [jet, BoundedContinuousFunction.coe_sub, Pi.sub_apply, mul_sub]
 
 @[simp] theorem jet_smul (I : Window) (w : ℕ → ℕ → ℝ) (c : ℝ) (A : RawJets I)
     (n m : ℕ) (x : ℝ) :
     jet I w (c • A) n m x = c * jet I w A n m x := by
-  simp [jet]
+  simp only [jet, BoundedContinuousFunction.coe_smul, smul_eq_mul]
   ring
 
 /-- Compatibility is an actual FTC identity for every successive pair of
@@ -729,7 +730,7 @@ def compatibleSubmodule (I : Window) (w : ℕ → ℕ → ℝ) : Submodule ℝ (
   carrier := {A | Compatible I w A}
   zero_mem' := by
     intro n m x hx
-    simp
+    simp only [jet_zero, intervalIntegral.integral_zero, add_zero]
   add_mem' := by
     intro A B hA hB n m x hx
     simp only [jet_add]
@@ -796,7 +797,7 @@ theorem iteratedDerivWithin_jet (I : Window) (w : ℕ → ℕ → ℝ)
     (A : CoefficientSpace I w) (n q m : ℕ) {x : ℝ} (hx : x ∈ I.interval) :
     iteratedDerivWithin m (jet I w A.1 n q) I.interval x = jet I w A.1 n (q + m) x := by
   induction m generalizing x with
-  | zero => simp
+  | zero => simp only [iteratedDerivWithin_zero, add_zero]
   | succ m ih =>
     rw [iteratedDerivWithin_succ,
       derivWithin_congr (fun y hy => ih hy) (ih hx), derivWithin_jet I w A n (q + m) hx]

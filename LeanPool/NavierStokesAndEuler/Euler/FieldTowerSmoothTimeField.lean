@@ -96,7 +96,10 @@ theorem tupleBounded_apply {j : Type*} [Fintype j]
     (u : j → (X →ᵇ V)) (x : X) (i : j) :
     tupleBounded (X := X) (V := V) (j := j) u x i = u i x := by
   classical
-  simp [tupleBounded]
+  simp only [tupleBounded, sum_apply, ContinuousLinearMap.comp_apply,
+      ContinuousLinearMap.proj_apply, BoundedContinuousFunction.coe_sum, Finset.sum_apply,
+      ContinuousLinearMap.compLeftContinuousBounded_apply, ContinuousLinearMap.single_apply,
+      Finset.sum_pi_single, Finset.mem_univ, ↓reduceIte]
 
 /-- Coordinate path, bundling `toFun`, `continuous_toFun`. -/
 def coordinatePath (b : Module.Basis ι ℝ E) (n : ℕ)

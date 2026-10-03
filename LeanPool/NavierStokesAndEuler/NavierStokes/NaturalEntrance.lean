@@ -103,7 +103,8 @@ theorem chi_zero_imp_H_zero (h j : ℝ) {σ η : ℝ} (hσ : 0 < σ)
 
 theorem gradient_zero_of_chi_zero (h j : ℝ) {σ η : ℝ} (hσ : 0 < σ)
     (hchi : NaturalAxisData.chi h j σ η = 0) : realGradient h j σ η = 0 := by
-  simp [realGradient, chi_zero_imp_H_zero h j hσ hchi]
+  simp only [realGradient, chi_zero_imp_H_zero h j hσ hchi, mul_zero, ne_eq, OfNat.ofNat_ne_zero,
+      not_false_eq_true, zero_pow, zero_add, zero_div]
 
 /-- A large second coordinate yields a strict cone-size margin uniformly
 over every positive first coordinate. -/
@@ -138,7 +139,7 @@ theorem compact_absorption {K : Type*} [TopologicalSpace K] [CompactSpace K]
   obtain ⟨s, hs⟩ := isCompact_univ.elim_finite_subcover U hU hcover
   let M : ℝ := 1 + ∑ a ∈ s, |a|
   have hsum : 0 ≤ ∑ a ∈ s, |a| := Finset.sum_nonneg (fun _ _ => abs_nonneg _)
-  refine ⟨M, by dsimp [M]; linarith only [hsum], ?_⟩
+  refine ⟨M, by dsimp only [M]; linarith only [hsum], ?_⟩
   intro Λ hΛ p
   have hc : ∃ a ∈ s, b < a * χ p + R p := by
     simpa only [U, mem_iUnion, Set.mem_ofPred_eq, exists_prop] using hs (mem_univ p)
@@ -146,7 +147,7 @@ theorem compact_absorption {K : Type*} [TopologicalSpace K] [CompactSpace K]
   have ham : a ≤ M := by
     have hterm : |a| ≤ ∑ a ∈ s, |a| :=
       Finset.single_le_sum (fun _ _ => abs_nonneg _) ha
-    dsimp [M]
+    dsimp only [M]
     linarith only [hterm, le_abs_self a]
   exact hpa.trans_le (add_le_add_left
     (mul_le_mul_of_nonneg_right (ham.trans hΛ) (hnonneg p)) _)
@@ -290,12 +291,18 @@ theorem sourceJets_sub_bound {ε : ℝ} (hε : 0 < ε) (x y : CoefficientPair ε
   apply (pi_norm_le_iff_of_nonneg (mul_nonneg (sourceJetConstant_pos hε).le hN)).mpr
   intro i
   fin_cases i
-  · simpa [sourceJets] using hb x.1 y.1 0 0 hfst hc0
-  · simpa [sourceJets] using hb x.1 y.1 1 0 hfst hc1
-  · simpa [sourceJets] using hb x.1 y.1 0 1 hfst hc2
-  · simpa [sourceJets] using hb x.2 y.2 0 0 hsnd hc0
-  · simpa [sourceJets] using hb _ _ 0 0 havg hc0
-  · simpa [sourceJets] using hb _ _ 0 1 havg hc2
+  · simpa only [sourceJets, Fin.zero_eta, Fin.isValue, Pi.sub_apply, Matrix.cons_val_zero,
+      Real.norm_eq_abs] using hb x.1 y.1 0 0 hfst hc0
+  · simpa only [sourceJets, Fin.mk_one, Fin.isValue, Pi.sub_apply, Matrix.cons_val_one,
+      Matrix.cons_val_zero, Real.norm_eq_abs] using hb x.1 y.1 1 0 hfst hc1
+  · simpa only [sourceJets, Fin.reduceFinMk, Pi.sub_apply, Fin.isValue, Matrix.cons_val,
+      Real.norm_eq_abs] using hb x.1 y.1 0 1 hfst hc2
+  · simpa only [sourceJets, Fin.reduceFinMk, Pi.sub_apply, Fin.isValue, Matrix.cons_val,
+      Real.norm_eq_abs] using hb x.2 y.2 0 0 hsnd hc0
+  · simpa only [sourceJets, Fin.reduceFinMk, Pi.sub_apply, Fin.isValue, Matrix.cons_val,
+      Real.norm_eq_abs] using hb _ _ 0 0 havg hc0
+  · simpa only [sourceJets, Fin.reduceFinMk, Pi.sub_apply, Fin.isValue, Matrix.cons_val,
+      Real.norm_eq_abs] using hb _ _ 0 1 havg hc2
 
 theorem sourceJets_continuous {ε : ℝ} (hε : 0 < ε) (x : CoefficientPair ε) :
     Continuous (fun p : entranceSet => sourceJets hε x p) := by
@@ -308,10 +315,10 @@ theorem sourceJets_continuous {ε : ℝ} (hε : 0 < ε) (x : CoefficientPair ε)
   apply continuous_pi
   intro i
   fin_cases i
-  · simpa [sourceJets] using hm x.1 0 0
+  · simpa only [sourceJets, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero] using hm x.1 0 0
   · simpa [sourceJets] using hm x.1 1 0
-  · simpa [sourceJets] using hm x.1 0 1
-  · simpa [sourceJets] using hm x.2 0 0
+  · simpa only [sourceJets, Fin.reduceFinMk, Matrix.cons_val] using hm x.1 0 1
+  · simpa only [sourceJets, Fin.reduceFinMk, Matrix.cons_val] using hm x.2 0 0
   · simpa [sourceJets] using hm (AxisOperators.average window hε x.2) 0 0
   · simpa [sourceJets] using hm (AxisOperators.average window hε x.2) 0 1
 
@@ -397,7 +404,7 @@ theorem reference_phiY_zero {h j σ : ℝ} {P0 : ℝ → ℝ} (v : CoefficientFa
   rw [v.value .chi hη]
   change deriv (AxisSeries.profile (NaturalAxisData.chi h j σ p.val.2)) p.val.1 = 0
   rw [hchi, AxisSeries.deriv_profile]
-  simp
+  simp only [zero_div, neg_zero, zero_mul]
 
 theorem referenceRemainder_continuous {h j σ : ℝ} {P0 : ℝ → ℝ}
     (v : CoefficientFamily h j σ P0) (hσ : 0 < σ) : Continuous (referenceRemainder v) := by
@@ -479,11 +486,11 @@ theorem sourceRemainder_uniform_limit {h j σ : ℝ} {P0 : ℝ → ℝ}
   let J := sourceJetConstant v.epsilon
   have hJ : 0 < J := sourceJetConstant_pos v.epsilon_pos
   let M := 1 + (1 + J * K) / δ
-  have hM : 0 < M := by dsimp [M]; positivity
+  have hM : 0 < M := by dsimp only [M]; positivity
   refine ⟨M, hM, ?_⟩
   intro Λ hΛ x hx p
   have hΛpos : 0 < Λ := hM.trans_le hΛ
-  have hratio : (1 + J * K) / δ < Λ := by dsimp [M] at hΛ; linarith only [hΛ]
+  have hratio : (1 + J * K) / δ < Λ := by dsimp only [M] at hΛ; linarith only [hΛ]
   have hmul := (div_lt_iff₀ hδ).mp hratio
   have htime : |1 / Λ| < δ := by
     rw [abs_of_pos (one_div_pos.mpr hΛpos), div_lt_iff₀ hΛpos]
@@ -689,10 +696,11 @@ theorem regularInverse_one_constant {ε : ℝ} (hε : 0 < ε)
     AxisCoefficientSpace.coefficient window (AxisWeightEstimates.weight ε) J n η) = _
   rw [tsum_eq_single 1]
   · rw [show (1 : ℕ) = 0 + 1 by omega, hsucc]
-    simp [inputValue, AxisWeightEstimates.radialDivisor]
+    simp only [zero_add, pow_one, AxisWeightEstimates.radialDivisor, CharP.cast_eq_zero,
+        Nat.cast_one, mul_one, div_one, inputValue]
   · intro n hn
     cases n with
-    | zero => simp [hzero]
+    | zero => simp only [pow_zero, hzero, mul_zero]
     | succ n =>
       rw [hsucc]
       have hn0 : n ≠ 0 := by omega
@@ -738,7 +746,7 @@ theorem reference_u_derivative {h j σ : ℝ} {P0 : ℝ → ℝ}
   rw [heq]
   convert! (((hasDerivAt_id p.1).mul_const (NaturalAxisData.Z h j P0 p.2)).div_const
     (2 * NaturalAxisData.L h p.2)).neg.deriv using 1
-  simp [neg_div]
+  simp only [neg_div, one_mul]
 
 theorem coefficient_phi_lower {h j σ Λ K : ℝ} {P0 : ℝ → ℝ}
     (v : CoefficientFamily h j σ P0) (hσ : 0 < σ) (hK : 0 ≤ K)

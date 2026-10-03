@@ -115,7 +115,8 @@ theorem laplacianOperator_bound {q : ℕ} (u : SobolevSpace period (q + 2)) :
   calc
     _ ≤ ∑ _i : Fin 4, ‖u‖ := Finset.sum_le_sum fun i _ =>
       (derivativeOperator_bound period i _).trans (derivativeOperator_bound period i u)
-    _ = _ := by simp
+    _ = _ := by simp only [← ClosedSubmodule.norm_coe, Finset.sum_const, Finset.card_univ,
+        Fintype.card_fin, nsmul_eq_mul, Nat.cast_ofNat]
 
 /-- The actual Laplacian commutes with every coordinate derivative. -/
 theorem laplacian_derivative {q : ℕ} (i : Fin 4) (u : SobolevSpace period (q + 3)) :

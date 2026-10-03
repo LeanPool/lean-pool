@@ -95,7 +95,7 @@ theorem kernel_hasDerivAt_z (a : ℝ) (n : ℕ) {z v : ℝ} (hz : 0 ≤ z) (hv :
     rw [show a + ((n + 1 : ℕ) : ℝ) - 1 = (a + (n : ℝ) - 1) + 1 by push_cast; ring,
       Real.rpow_add_one hv.ne']
   convert! hd.const_mul (Real.exp (-v) * v ^ (a + (n : ℝ) - 1)) using 1
-  dsimp [kernel]
+  dsimp only [kernel, id_eq]
   rw [hvpow]
   have he : 1 - a - ((n + 1 : ℕ) : ℝ) = (1 - a - (n : ℝ)) - 1 := by push_cast; ring
   rw [he]
@@ -134,7 +134,8 @@ theorem profile_pos {a z : ℝ} (ha : 1 < a) (hz : 0 ≤ z) : 0 < profile a z :=
 
 theorem profile_zero {a : ℝ} (ha : 1 < a) : profile a 0 = 1 := by
   rw [profile, moment_zero ha]
-  simp [(Real.Gamma_pos_of_pos (zero_lt_one.trans ha)).ne']
+  simp only [CharP.cast_eq_zero, add_zero, ne_eq,
+      (Real.Gamma_pos_of_pos (zero_lt_one.trans ha)).ne', not_false_eq_true, inv_mul_cancel₀]
 
 theorem profile_le_one {a z : ℝ} (ha : 1 < a) (hz : 0 ≤ z) : profile a z ≤ 1 := by
   have h := mul_le_mul_of_nonneg_left (moment_le_gamma ha 0 hz)
@@ -202,7 +203,8 @@ theorem moment_hasDerivWithinAt {a z : ℝ} (ha : 1 < a) (n : ℕ) (hz : 0 ≤ z
     · exact self_mem_nhdsWithin
     · have hc : ContinuousWithinAt
           (fun z => (1 - a - (n : ℝ)) * moment a (n + 1) z) (Ioi 0) 0 :=
-        ((continuousOn_const.mul (moment_continuousOn ha (n + 1))) 0 (by simp)).mono
+        ((continuousOn_const.mul (moment_continuousOn ha (n + 1))) 0 (by simp only [mem_Ici,
+            Std.le_refl])).mono
           Ioi_subset_Ici_self
       apply hc.congr'
       filter_upwards [self_mem_nhdsWithin] with y hy
@@ -222,13 +224,13 @@ theorem profileJet_hasDerivWithinAt {a z : ℝ} (ha : 1 < a) (n : ℕ) (hz : 0 �
     HasDerivWithinAt (profileJet a n) (profileJet a (n + 1) z) (Ici 0) z := by
   convert! (moment_hasDerivWithinAt ha n hz).const_mul
     ((Real.Gamma a)⁻¹ * derivativeCoeff a n) using 1
-  dsimp [profileJet, derivativeCoeff]
+  dsimp only [profileJet, derivativeCoeff]
   ring
 
 theorem iteratedDerivWithin_profile {a : ℝ} (ha : 1 < a) (n : ℕ) {z : ℝ} (hz : 0 ≤ z) :
     iteratedDerivWithin n (profile a) (Ici 0) z = profileJet a n z := by
   induction n generalizing z with
-  | zero => simp [profileJet, derivativeCoeff, profile]
+  | zero => simp only [iteratedDerivWithin_zero, profile, profileJet, derivativeCoeff, mul_one]
   | succ n ih =>
       rw [iteratedDerivWithin_succ]
       exact ((profileJet_hasDerivWithinAt ha n hz).congr_of_mem
@@ -302,7 +304,8 @@ theorem boundaryTerm_hasDerivAt (a : ℝ) {z v : ℝ} (hz : 0 ≤ z) (hv : 0 < v
   ring
 
 theorem boundaryTerm_zero {a : ℝ} (ha : 1 < a) (z : ℝ) : boundaryTerm a z 0 = 0 := by
-  simp [boundaryTerm, Real.zero_rpow (ne_of_gt (zero_lt_one.trans ha))]
+  simp only [boundaryTerm, neg_zero, Real.exp_zero,
+      Real.zero_rpow (ne_of_gt (zero_lt_one.trans ha)), mul_zero, add_zero, Real.one_rpow, mul_one]
 
 theorem boundaryTerm_continuous_zero {a : ℝ} (ha : 1 < a) (z : ℝ) :
     ContinuousWithinAt (boundaryTerm a z) (Ici 0) 0 := by
@@ -310,7 +313,8 @@ theorem boundaryTerm_continuous_zero {a : ℝ} (ha : 1 < a) (z : ℝ) :
     continuousAt_id.rpow_const (Or.inr (zero_lt_one.trans ha).le)
   have hb : ContinuousAt (fun v : ℝ => (1 + z * v) ^ (-a)) 0 :=
     (continuousAt_const.add (continuousAt_const.mul continuousAt_id)).rpow_const
-      (Or.inl (by simp))
+      (Or.inl (by simp only [Pi.add_apply, Pi.mul_apply, id_eq, mul_zero, add_zero, ne_eq,
+          one_ne_zero, not_false_eq_true]))
   have he : ContinuousAt (fun v : ℝ => Real.exp (-v)) 0 :=
     (Real.continuous_exp.comp continuous_neg).continuousAt
   exact ((he.fun_mul hp).fun_mul hb).continuousWithinAt
@@ -419,18 +423,18 @@ theorem profile_hasDerivWithinAt {a z : ℝ} (ha : 1 < a) (hz : 0 ≤ z) :
     HasDerivWithinAt (profile a) (profileJet a 1 z) (Ici 0) z := by
   have he : profileJet a 0 = profile a := by
     funext x
-    simp [profileJet, derivativeCoeff, profile]
+    simp only [profileJet, derivativeCoeff, mul_one, profile]
   simpa only [he, Nat.zero_add] using profileJet_hasDerivWithinAt ha 0 hz
 
 theorem profile_derivWithin {a z : ℝ} (ha : 1 < a) (hz : 0 ≤ z) :
     derivWithin (profile a) (Ici 0) z =
       (Real.Gamma a)⁻¹ * (1 - a) * moment a 1 z := by
-  simpa [profileJet, derivativeCoeff] using
+  simpa only [profileJet, derivativeCoeff, CharP.cast_eq_zero, sub_zero, one_mul] using
     (profile_hasDerivWithinAt ha hz).derivWithin ((uniqueDiffOn_Ici 0) z hz)
 
 theorem profile_deriv {a z : ℝ} (ha : 1 < a) (hz : 0 < z) :
     deriv (profile a) z = (Real.Gamma a)⁻¹ * (1 - a) * moment a 1 z := by
-  simpa [profileJet, derivativeCoeff] using
+  simpa only [profileJet, derivativeCoeff, CharP.cast_eq_zero, sub_zero, one_mul] using
     ((profile_hasDerivWithinAt ha hz.le).hasDerivAt (Ici_mem_nhds hz)).deriv
 
 theorem profile_derivWithin_neg {a z : ℝ} (ha : 1 < a) (hz : 0 ≤ z) :
@@ -604,7 +608,8 @@ def radialSecond (a τ r : ℝ) : ℝ :=
 theorem radiusSquared_hasDerivAt (r : ℝ) :
     HasDerivAt (fun r : ℝ => r ^ 2 / 2) r r := by
   convert! ((hasDerivAt_id r).pow 2).div_const 2 using 1
-  simp
+  simp only [Nat.cast_ofNat, id_eq, Nat.add_one_sub_one, pow_one, mul_one, ne_eq,
+      OfNat.ofNat_ne_zero, not_false_eq_true, mul_div_cancel_left₀]
 
 theorem radialProfile_hasDerivAt_radius {a τ r : ℝ} (ha : 1 < a) (hτ : 0 < τ) (hr : 0 < r) :
     HasDerivAt (radialProfile a τ) (radialFirst a τ r) r := by

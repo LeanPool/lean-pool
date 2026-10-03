@@ -290,7 +290,7 @@ def Budget.physicalFlowData (G : Field P T raw) (H : Field P T raw_t)
   have hrt := (liftedInputRadius_pos Rt ρ hRt hρ)
   have hK : 0 ≤ liftedInputConstant P := zero_le_one.trans (liftedInputConstant_one_le P)
   have hamp : 0 ≤ physicalInputSize P k C0 Cn Ev := by
-    dsimp [physicalInputSize]
+    dsimp only [physicalInputSize]
     positivity
   have hamp1 : 0 ≤ 2*liftedInputConstant P*(Ch+Et) := by positivity
   have hκ1 : |A.κ| ≤ 1 := by
@@ -439,7 +439,7 @@ theorem Budget.physical_gradient_hessian_of_weighted (k ρ Cw d : ℝ)
     apply hvc.trans
     apply (mul_le_mul_of_nonneg_right
       (mul_le_mul_of_nonneg_right hcH (mul_nonneg hCpt hd)) hk0.le).trans_eq
-    dsimp [weightedPhysicalGradientCost,H,Cpt]
+    dsimp only [weightedPhysicalGradientCost, H, Cpt]
     ring
   constructor
   · apply absorb _ _ _ hcv
@@ -545,7 +545,8 @@ theorem initializedVelocity_global_gradient_error (N : ℕ) (hN : 1 ≤ N)
   have hr0 : 0 ≤ L.R := zero_le_one.trans L.radius_bounds.1
   have hc0 := fixedVelocityGradeCost_nonneg L.R S.H0 hr0 1
   have hinv : ‖D.FInv.field t (Y x)‖ ≤ NB.C := by
-    simpa [majorant] using NB.inverse_bound 0 t (Y x)
+    simpa only [norm_iteratedFDeriv_zero, majorant, add_zero, pow_zero, Nat.factorial_zero,
+        Nat.cast_one, one_pow, mul_one] using NB.inverse_bound 0 t (Y x)
   have hprimary := scaled_terminal_global_gradient_bound τ hτ hτT B δ hδ ξ hs α k hk0
     (4*L.R) (fixedVelocityGradeCost L.R S.H0 1) NB.C (by positivity) hc0 NB.C_nonneg
     (initializedPrimary_global_bound M D hTime τ hτ hτT B δ hδ ξ hs α
@@ -564,13 +565,15 @@ theorem initializedVelocity_global_gradient_error (N : ℕ) (hN : 1 ≤ N)
         mul_le_mul_of_nonneg_left hinv (by positivity)
       _ = _ := by ring
   have hp := (((vectorField τ hτ hτT B (initialData D δ hδ (α • ξ) hs)).smul k⁻¹).raw_graph_contDiff
-    t k D.m₀).differentiable (by simp) (Y x)
+    t k D.m₀).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+        not_false_eq_true]) (Y x)
   have hpd : DifferentiableAt ℝ (fun y => k⁻¹ • vector τ hτ hτT B (initialData D δ hδ (α • ξ) hs)
       (t,(Y y,k*⟪D.m₀,Y y⟫_ℝ))) x := by
     simpa only [Function.comp_def,Pi.smul_apply] using hp.comp x hY.differentiableAt
   have hr := ((initializedPrimaryRemainderField M D hTime τ hτ hτT B δ hδ ξ hs α N hN
       k⁻¹).raw_graph_contDiff
-    t k D.m₀).differentiable (by simp) (Y x)
+    t k D.m₀).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+        not_false_eq_true]) (Y x)
   have hrd : DifferentiableAt ℝ (fun y => initializedPrimaryRemainder M D τ hτ hτT B δ hδ ξ hs α N
       k⁻¹
       (t,(Y y,k*⟪D.m₀,Y y⟫_ℝ))) x := by

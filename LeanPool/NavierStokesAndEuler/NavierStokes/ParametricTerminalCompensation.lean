@@ -56,22 +56,23 @@ theorem compact_amplitude_within_bounds {S : Set ℝ} (hS : IsCompact S)
       |a η| ≤ D ∧ |derivWithin a S η| ≤ D := by
   have hF := amplitudeFactors_contDiffOn ha hpos
   have hFd : ContDiffOn ℝ ∞ (derivWithin (fun θ => amplitudeFactors (a θ)) S) S :=
-    hF.derivWithin huniq (by simp)
-  have had : ContDiffOn ℝ ∞ (derivWithin a S) S := ha.derivWithin huniq (by simp)
+    hF.derivWithin huniq (by simp only [ENat.coe_top_add_one, Std.le_refl])
+  have had : ContDiffOn ℝ ∞ (derivWithin a S) S := ha.derivWithin huniq (by simp only [
+      ENat.coe_top_add_one, Std.le_refl])
   obtain ⟨B₀, hb₀⟩ := hS.exists_bound_of_continuousOn hF.continuousOn
   obtain ⟨B₁, hb₁⟩ := hS.exists_bound_of_continuousOn hFd.continuousOn
   obtain ⟨B₂, hb₂⟩ := hS.exists_bound_of_continuousOn ha.continuousOn
   obtain ⟨B₃, hb₃⟩ := hS.exists_bound_of_continuousOn had.continuousOn
   let D : ℝ := 1 + |B₀| + |B₁| + |B₂| + |B₃|
   have hD₀ : B₀ ≤ D := by
-      dsimp [D]; linarith only [le_abs_self B₀, abs_nonneg B₁, abs_nonneg B₂, abs_nonneg B₃]
+      dsimp only [D]; linarith only [le_abs_self B₀, abs_nonneg B₁, abs_nonneg B₂, abs_nonneg B₃]
   have hD₁ : B₁ ≤ D := by
-      dsimp [D]; linarith only [le_abs_self B₁, abs_nonneg B₀, abs_nonneg B₂, abs_nonneg B₃]
+      dsimp only [D]; linarith only [le_abs_self B₁, abs_nonneg B₀, abs_nonneg B₂, abs_nonneg B₃]
   have hD₂ : B₂ ≤ D := by
-      dsimp [D]; linarith only [le_abs_self B₂, abs_nonneg B₀, abs_nonneg B₁, abs_nonneg B₃]
+      dsimp only [D]; linarith only [le_abs_self B₂, abs_nonneg B₀, abs_nonneg B₁, abs_nonneg B₃]
   have hD₃ : B₃ ≤ D := by
-      dsimp [D]; linarith only [le_abs_self B₃, abs_nonneg B₀, abs_nonneg B₁, abs_nonneg B₂]
-  refine ⟨D, by dsimp [D]; positivity, fun η hη => ⟨(hb₀ η hη).trans hD₀,
+      dsimp only [D]; linarith only [le_abs_self B₃, abs_nonneg B₀, abs_nonneg B₁, abs_nonneg B₂]
+  refine ⟨D, by dsimp only [D]; positivity, fun η hη => ⟨(hb₀ η hη).trans hD₀,
     (hb₁ η hη).trans hD₁, ?_, ?_⟩⟩
   · exact (hb₂ η hη).trans hD₂
   · exact (hb₃ η hη).trans hD₃
@@ -101,11 +102,13 @@ theorem amplitudeDebt_variable_bounds {S : Set ℝ} (huniq : UniqueDiffOn ℝ S)
       ‖derivWithin (fun θ => amplitudeDebt (a θ) (v θ)) S η‖ ≤
         D * (‖v η‖ + ‖derivWithin v S η‖) := by
   have hF : DifferentiableWithinAt ℝ (fun θ => amplitudeFactors (a θ)) S η :=
-    ((amplitudeFactors_contDiffOn ha hpos) η hη).differentiableWithinAt (by simp)
+    ((amplitudeFactors_contDiffOn ha hpos) η hη).differentiableWithinAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hv' : DifferentiableWithinAt ℝ v S η :=
-    (hv η hη).differentiableWithinAt (by simp)
+    (hv η hη).differentiableWithinAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+        not_false_eq_true])
   constructor
-  · dsimp [amplitudeDebt]
+  · dsimp only [amplitudeDebt]
     rw [norm_neg]
     exact (norm_mul_le _ _).trans (mul_le_mul_of_nonneg_right (hD η hη).1 (norm_nonneg _))
   · rw [amplitudeDebt_variable_derivWithin (huniq η hη) hF hv', norm_neg]
@@ -187,8 +190,10 @@ theorem exists_variable_compensation (P : Patch) (lam : ℝ) (hlam : 0 ≤ lam)
   have hval : ‖c η‖ ≤ B * ‖v η‖ := by
     exact ((hspec (d η) hm).2.1).trans
       (by simpa only [B, mul_assoc] using mul_le_mul_of_nonneg_left (hd_bound η hη).1 hC₀.le)
-  have hdif : DifferentiableWithinAt ℝ d S η := (hd η hη).differentiableWithinAt (by simp)
-  have hcdif : DifferentiableWithinAt ℝ c S η := (hc η hη).differentiableWithinAt (by simp)
+  have hdif : DifferentiableWithinAt ℝ d S η := (hd η hη).differentiableWithinAt (by simp only [
+      ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have hcdif : DifferentiableWithinAt ℝ c S η := (hc η hη).differentiableWithinAt (by simp only [
+      ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hcderiv : ‖derivWithin c S η‖ ≤ B * N := by
     apply (composed_solver_derivWithin_bound hg (fun w hw => (hspec w hw).2.2.1)
       (huniq η hη) hdif hm).trans
@@ -219,7 +224,8 @@ theorem exists_variable_compensation (P : Patch) (lam : ℝ) (hlam : 0 ≤ lam)
       (mul_le_mul_of_nonneg_right hDBC (norm_nonneg _)).trans
         (mul_le_mul_of_nonneg_left hvN hC.le)
     refine ⟨hmul₀.trans hsize, hmul₁.trans hsize, ?_⟩
-    have hadif : DifferentiableWithinAt ℝ a S η := (ha η hη).differentiableWithinAt (by simp)
+    have hadif : DifferentiableWithinAt ℝ a S η := (ha η hη).differentiableWithinAt (by simp only [
+        ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
     have hfd : HasDerivWithinAt (fun θ => correction P (c θ) x)
         (correction P (derivWithin c S η) x) S η :=
       (correctionCLM P x).hasFDerivAt.comp_hasDerivWithinAt η hcdif.hasDerivWithinAt
@@ -234,7 +240,7 @@ theorem exists_variable_compensation (P : Patch) (lam : ℝ) (hlam : 0 ≤ lam)
       _ ≤ D * (B * N) + D * ((J * B) * N) := by
         apply add_le_add_left
         exact mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hvN hB.le) hD.le
-      _ = T * N := by dsimp [T]; ring
+      _ = T * N := by dsimp only [T]; ring
       _ ≤ C * N := mul_le_mul_of_nonneg_right hTC hN
   · intro x hx
     exact mul_pos (hpos η hη) (((hspec (d η) hm).2.2.2 x).2 hx)
@@ -245,10 +251,14 @@ noncomputable def radiusRatioCLM (q : ℝ) : Coeff →L[ℝ] Coeff :=
     { toFun := fun v => ![v 0, v 1 / q, v 2 / (q * Real.sqrt q)]
       map_add' := fun u v => by
         ext i
-        fin_cases i <;> simp [Pi.add_apply, add_div]
+        fin_cases i <;> simp only [Fin.isValue, Pi.add_apply, add_div, Nat.succ_eq_add_one,
+            Nat.reduceAdd, Fin.zero_eta, Matrix.cons_val_zero, Fin.mk_one, Matrix.cons_val_one,
+            Fin.reduceFinMk, Matrix.cons_val]
       map_smul' := fun r v => by
         ext i
-        fin_cases i <;> simp [Pi.smul_apply, smul_eq_mul, mul_div_assoc] }
+        fin_cases i <;> simp only [Fin.isValue, Pi.smul_apply, smul_eq_mul, mul_div_assoc,
+            Nat.succ_eq_add_one, Nat.reduceAdd, Fin.zero_eta, Matrix.cons_val_zero,
+            RingHom.id_apply, Fin.mk_one, Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val] }
 
 theorem scaledDebt_radiusRatio (q K : ℝ) (hq : 0 < q) (d : Coeff) :
     scaledDebt (q * K) d = radiusRatioCLM q (scaledDebt K d) := by
@@ -284,8 +294,8 @@ theorem scaled_family_ratio_bounds (q : ℝ) (hq : 0 < q)
         ‖derivWithin (fun θ => scaledDebt (q * K) (d K θ)) S η‖ ≤ Bq / K := by
   let L : Coeff →L[ℝ] Coeff := radiusRatioCLM q
   let C : ℝ := ‖L‖ + 1
-  have hC : 0 < C := by dsimp [C]; positivity
-  have hLC : ‖L‖ ≤ C := by dsimp [C]; linarith only
+  have hC : 0 < C := by dsimp only [C]; positivity
+  have hLC : ‖L‖ ≤ C := by dsimp only [C]; linarith only
   refine ⟨C * B, mul_pos hC hB, ?_⟩
   intro K hK
   have heq : (fun η => scaledDebt (q * K) (d K η)) =
@@ -301,7 +311,8 @@ theorem scaled_family_ratio_bounds (q : ℝ) (hq : 0 < q)
     exact (hnorm _).trans
       (by simpa only [mul_div_assoc] using mul_le_mul_of_nonneg_left (hbound K hK η hη).1 hC.le)
   · rw [radiusRatio_derivWithin q (huniq η hη)
-      (((hreg K hK) η hη).differentiableWithinAt (by simp))]
+      (((hreg K hK) η hη).differentiableWithinAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+          ENat.top_ne_zero, not_false_eq_true]))]
     exact (hnorm _).trans
       (by simpa only [mul_div_assoc] using mul_le_mul_of_nonneg_left (hbound K hK η hη).2 hC.le)
 

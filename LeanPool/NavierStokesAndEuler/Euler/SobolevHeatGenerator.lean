@@ -101,7 +101,7 @@ theorem realLineHeat_hasDerivAt_moment (a : LiftTangent) (f g : LiftL2 period)
   have hbound : ∀ x s : ℝ, s ∈ Set.Ioi (t/2) → ‖F' s x‖ ≤ B x := by
     intro x s hs
     have hspos : 0 < s := hhalf.trans hs
-    dsimp [F', B]
+    dsimp only [Real.norm_eq_abs, F', B]
     rw [norm_smul, lineOrbit_norm, Real.norm_eq_abs, abs_div,
       abs_of_pos (mul_pos (by norm_num) (Real.sqrt_pos.mpr hspos))]
     exact mul_le_mul_of_nonneg_right
@@ -610,7 +610,8 @@ theorem laplacianEvaluation_bound {q : ℕ} (hq : 2 ≤ q) (u : SobolevSpace per
   calc
     _ ≤ ∑ _i : Fin 4, ‖u‖ := Finset.sum_le_sum fun i _ =>
       word_norm_le period u ⟨⟨2, Nat.lt_succ_of_le hq⟩, fun _ : Fin 2 => i⟩
-    _ = _ := by simp
+    _ = _ := by simp only [← ClosedSubmodule.norm_coe, Finset.sum_const, Finset.card_univ,
+        Fintype.card_fin, nsmul_eq_mul, Nat.cast_ofNat]
 
 /-- Bounded Laplacian evaluation agrees exactly with the existing genuine strong-jet Laplacian. -/
 theorem laplacianEvaluation_eq_jet {q : ℕ} (hq : 2 ≤ q) (u : SobolevSpace period q) :

@@ -84,8 +84,10 @@ theorem selected_kinematics (F : PhaseConstruction D) (i : ι)
   apply PrimaryODE.FrameData.ofNormalLocal_kinematics
   · intro v _
     exact PhaseCalculus.hasDerivAt_phaseNormal_slot _ _ _ _ _ _ _ _ _ (F.epsilon_ne i)
-      (((F.baseF.smooth i).contDiffAt ((D.isOpen i).mem_nhds hp)).differentiableAt (by simp))
-      (((F.baseG.smooth i).contDiffAt ((D.isOpen i).mem_nhds hp)).differentiableAt (by simp))
+      (((F.baseF.smooth i).contDiffAt ((D.isOpen i).mem_nhds hp)).differentiableAt (by simp only [
+          ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+      (((F.baseG.smooth i).contDiffAt ((D.isOpen i).mem_nhds hp)).differentiableAt (by simp only [
+          ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
   · intro v hv
     exact norm_pos_iff.mp (F.b_pos.trans_le (htail i (p,v) ⟨hp,F.interval i hv⟩))
   · intro v _
@@ -117,8 +119,11 @@ theorem frame_coefficient_jets_bounded
   apply hh.congr
   intro i z _
   ext w k
-  fin_cases k <;> simp [PrimaryODE.FrameData.coefficient, PrimaryODE.FrameData.damping,
-    GrowingMode.modalOperator]
+  fin_cases k <;> simp only [GrowingMode.modalOperator, Fin.isValue, sub_self, zero_add, one_mul,
+      zero_mul, add_zero, neg_zero, add_apply, smul_apply, LinearMap.coe_toContinuousLinearMap',
+      LinearMap.coe_mk, AddHom.coe_mk, Fin.zero_eta, PiLp.add_apply, PiLp.smul_apply,
+      Matrix.cons_val_zero, smul_eq_mul, mul_zero, PrimaryODE.FrameData.coefficient,
+      PrimaryODE.FrameData.damping, Fin.mk_one, Matrix.cons_val_one, Matrix.cons_val_fin_one]
 
 end SelectedFrame
 
@@ -338,11 +343,11 @@ theorem frame_input_jets
     hW hsep hA hgeometry hf N
   let B := Cc + Cp + C0 + C1
   let q := mc + mp + m0 + m1
-  have hB : 0 ≤ B := by dsimp [B]; linarith only [hCc, hCp, hC0, hC1]
-  have hbc : Cc ≤ B := by dsimp [B]; linarith only [hCp, hC0, hC1]
-  have hbp : Cp ≤ B := by dsimp [B]; linarith only [hCc, hC0, hC1]
-  have hb0 : C0 ≤ B := by dsimp [B]; linarith only [hCc, hCp, hC1]
-  have hb1 : C1 ≤ B := by dsimp [B]; linarith only [hCc, hCp, hC0]
+  have hB : 0 ≤ B := by dsimp only [B]; linarith only [hCc, hCp, hC0, hC1]
+  have hbc : Cc ≤ B := by dsimp only [B]; linarith only [hCp, hC0, hC1]
+  have hbp : Cp ≤ B := by dsimp only [B]; linarith only [hCc, hC0, hC1]
+  have hb0 : C0 ≤ B := by dsimp only [B]; linarith only [hCc, hCp, hC1]
+  have hb1 : C1 ≤ B := by dsimp only [B]; linarith only [hCc, hCp, hC0]
   let C := B + 2^N * B * Cs
   have hP : 0 ≤ 2^N * B * Cs := mul_nonneg (mul_nonneg (pow_nonneg zero_le_two N) hB) hCs
   have hC : 0 ≤ C := add_nonneg hB hP
@@ -362,20 +367,20 @@ theorem frame_input_jets
       ‖iteratedFDeriv ℝ i (fun z => (d (l,n)).coefficient (harmonic l) (frameArgument χ z))
         (x,v)‖ ≤ B*s.growth n x.1^q :=
     (hCcj (l,n) i hi (x,v) hz).trans (raise_polynomial_bound
-      (zero_le_one.trans hCc) hbc hS0 hSG hG (by dsimp [q]; omega))
+      (zero_le_one.trans hCc) hbc hS0 hSG hG (by dsimp only [q]; omega))
   have hpj (i : ℕ) (hi : i ≤ N) :
       ‖iteratedFDeriv ℝ i (fun z => frameForcingLinear (d (l,n)) (frameArgument χ z))
         (x,v)‖ ≤ B*s.growth n x.1^q :=
     (hCpj (l,n) i hi (x,v) hz).trans (raise_polynomial_bound
-      (zero_le_one.trans hCp) hbp hS0 hSG hG (by dsimp [q]; omega))
+      (zero_le_one.trans hCp) hbp hS0 hSG hG (by dsimp only [q]; omega))
   have hsynth (i : Fin 2) :
       ‖iteratedFDeriv ℝ j (fun z => synthesisColumn (d (l,n)) i (frameArgument χ z))
         (x,v)‖ ≤ B*s.growth n x.1^q := by
     fin_cases i
     · exact (hC0j (l,n) j hjN (x,v) hz).trans (raise_polynomial_bound
-        (zero_le_one.trans hC0) hb0 hS0 hSG hG (by dsimp [q]; omega))
+        (zero_le_one.trans hC0) hb0 hS0 hSG hG (by dsimp only [q]; omega))
     · exact (hC1j (l,n) j hjN (x,v) hz).trans (raise_polynomial_bound
-        (zero_le_one.trans hC1) hb1 hS0 hSG hG (by dsimp [q]; omega))
+        (zero_le_one.trans hC1) hb1 hS0 hSG hG (by dsimp only [q]; omega))
   have hra : B*s.growth n x.1^q ≤ C*s.growth n x.1^(q+ms) :=
     raise_polynomial_bound hB hBC hG0 le_rfl hG (Nat.le_add_right _ _)
   refine ⟨(hcj j hjN).trans hra, ?_, fun i => (hsynth i).trans hra⟩
@@ -473,7 +478,7 @@ theorem uniform_parameter_pull {s : StripData P} {w : Label → ℕ → P → �
     _ ≤ majorant s (w l) α C m n (L x)*(‖L‖+1)^N :=
       mul_le_mul (hb l n (L x) hx j hj) hpow (pow_nonneg (norm_nonneg _) _)
         (majorant_nonneg _ _ _ hC _ _ _ (hf.weight_nonneg l n (L x) hx))
-    _ = _ := by dsimp [majorant, CommonCoverClass.parameterStrip, StripData.growth]; ring
+    _ = _ := by dsimp only [majorant, StripData.growth, CommonCoverClass.parameterStrip]; ring
 
 /-- The actual three residual coefficients form one uniformly bounded
 source vector.  No property of the inverse is assumed here. -/
@@ -490,7 +495,10 @@ theorem residualSource_uniform
   apply ((hc 0).add (hc 1) |>.add (hc 2)).congr
   intro l n x hx
   funext i
-  fin_cases i <;> simp [ParticularWaveAssembly.residualSource]
+  fin_cases i <;> simp only [Fin.isValue, ContinuousLinearMap.single_apply, Fin.zero_eta,
+      Pi.add_apply, Pi.single_eq_same, ne_eq, zero_ne_one, not_false_eq_true, Pi.single_eq_of_ne,
+      add_zero, Fin.reduceEq, ParticularWaveAssembly.residualSource, Fin.mk_one, one_ne_zero,
+      zero_add, Fin.reduceFinMk]
 
 /-- Angle strip, given by `CommonCoverClass.parameterStrip s (ContinuousLinearMap.fst ℝ P ℝ)`. -/
 noncomputable def angleStrip (s : StripData P) : StripData (P × ℝ) :=
@@ -553,7 +561,8 @@ theorem finite_harmonic_uniform
       ∀ j ∈ H, ∀ l n x, x ∈ s.domain → ∀ k ≤ N,
         ‖iteratedFDeriv ℝ k (f j l n) x‖ ≤ majorant s (w l) α C m n x := by
     induction H using Finset.induction_on with
-    | empty => exact ⟨0,le_rfl,0,by simp⟩
+    | empty => exact ⟨0,le_rfl,0,by simp only [Finset.notMem_empty, IsEmpty.forall_iff,
+        implies_true]⟩
     | @insert j H hj ih =>
         obtain ⟨A,hA,a,ha⟩ := (hf j (Finset.mem_insert_self _ _)).bounds N
         obtain ⟨B,hB,b,hb⟩ := ih (fun k hk => hf k (Finset.mem_insert_of_mem hk))
@@ -656,8 +665,8 @@ noncomputable def referenceControl
       (fun l n => referenceP (F.lam (l,n)) (F.u (l,n)) (F.L (l,n)))
       (phasePatch s F χ g r) := by
   let K := F.M + Real.exp ((F.E+4*F.C)*F.M) + A + 1
-  have hKM : F.M ≤ K := by dsimp [K]; linarith only [hA, Real.exp_pos ((F.E+4*F.C)*F.M)]
-  have hKA : A ≤ K := by dsimp [K]; linarith only [F.one_le_M, Real.exp_pos ((F.E+4*F.C)*F.M)]
+  have hKM : F.M ≤ K := by dsimp only [K]; linarith only [hA, Real.exp_pos ((F.E+4*F.C)*F.M)]
+  have hKA : A ≤ K := by dsimp only [K]; linarith only [F.one_le_M, Real.exp_pos ((F.E+4*F.C)*F.M)]
   have hK : 1 ≤ K := F.one_le_M.trans hKM
   have hnonneg : 0 ≤ F.E+4*F.C := by linarith only [F.C_nonneg, F.E_nonneg]
   have hlength (l : Label) (n : ℕ) : F.L (l,n) ≤ F.M*D.scale (l,n) := by
@@ -720,7 +729,7 @@ noncomputable def referenceControl
           mul_le_mul_of_nonneg_left (hlength l n) hμ
         _ = _ := by field_simp
     apply (Real.exp_le_exp.mpr he).trans
-    dsimp [K]
+    dsimp only [K]
     linarith only [hA, F.one_le_M]
   · intro l n k x hx hcell v hv z
     rw [copyFrame_coefficient, frameArgument_apply]
@@ -932,7 +941,10 @@ theorem transported_coefficient (d : PrimaryODE.FrameData P) (φ : Q → P)
   simp only [PrimaryODE.FrameData.coefficient,h11,h12,h21,h22,PrimaryODE.FrameData.damping]
   ext x i
   fin_cases i <;>
-    simp [transportedFrame, GrowingMode.modalOperator] <;> ring
+    simp only [GrowingMode.modalOperator, Fin.isValue, transportedFrame,
+        LinearMap.coe_toContinuousLinearMap', LinearMap.coe_mk, AddHom.coe_mk, Fin.zero_eta,
+        Matrix.cons_val_zero, smul_apply, PiLp.smul_apply, smul_eq_mul, Fin.mk_one,
+        Matrix.cons_val_one, Matrix.cons_val_fin_one] <;> ring
 
 theorem transported_energy {ι : Type*} {D : PhaseJetBounds.Domain ι PhaseCalculus.Slow}
     (F : PhaseConstruction D) (i : ι) (φ : Q → PhaseCalculus.Slow)
@@ -1041,9 +1053,8 @@ theorem frameTangentData_transport
         PrimaryCopyBridge.baseOperator_apply, MovingFrameODE.baseAction, MovingFrameODE.pack,
         PrimaryCopyBridge.nativePoint, CopySolveCompatibility.nativeTimeMap] <;> ring
   · funext z
-    simp [ transportedFrame,
-      PrimaryODE.FrameData.damping, PrimaryCopyBridge.nativePoint,
-          CopySolveCompatibility.nativeTimeMap]
+    simp only [PrimaryODE.FrameData.damping, transportedFrame, PrimaryCopyBridge.nativePoint,
+        CopySolveCompatibility.nativeTimeMap]
     ring
 
 end ClockTransport
@@ -1058,8 +1069,9 @@ theorem separated_transport {g : Geometry} {r L rate : ℝ}
   rintro Y ⟨z,hz,rfl⟩
   refine ⟨(z.1,rate*z.2), ⟨hz.1, mul_nonneg hrate.le hz.2.1, ?_⟩, ?_⟩
   · simpa only [mul_comm] using (le_div_iff₀ hrate).mp hz.2.2
-  · simp [CopySolveCompatibility.transportGeometry, CopySolveCompatibility.refineGeometry,
-      CopySolveCompatibility.timeGeometry, CommonCoverClass.scaledBasis_apply]
+  · simp only [CopySolveCompatibility.transportGeometry, CopySolveCompatibility.refineGeometry,
+      CopySolveCompatibility.timeGeometry, CommonCoverClass.scaledBasis_apply, add_left_inj,
+      left_eq_add, EmbeddingLike.map_eq_zero_iff, Prod.mk_eq_zero, and_self]
 
 section TransportedSelectedInputs
 
@@ -1334,10 +1346,10 @@ noncomputable def scaledControl
   let K := Lc + Real.exp ((F.E+4*F.C)*F.M) + C + 1
   have hLc : 0 ≤ Lc := div_nonneg (mul_nonneg (zero_le_one.trans F.one_le_M)
     (zero_le_one.trans hB)) clock.lower_pos.le
-  have hK : 1 ≤ K := by dsimp [K]; linarith only [hC, hLc, Real.exp_pos ((F.E+4*F.C)*F.M)]
-  have hCK : C ≤ K := by dsimp [K]; linarith only [hLc, Real.exp_pos ((F.E+4*F.C)*F.M)]
-  have hLK : Lc ≤ K := by dsimp [K]; linarith only [hC, Real.exp_pos ((F.E+4*F.C)*F.M)]
-  have heK : Real.exp ((F.E+4*F.C)*F.M) ≤ K := by dsimp [K]; linarith only [hC, hLc]
+  have hK : 1 ≤ K := by dsimp only [K]; linarith only [hC, hLc, Real.exp_pos ((F.E+4*F.C)*F.M)]
+  have hCK : C ≤ K := by dsimp only [K]; linarith only [hLc, Real.exp_pos ((F.E+4*F.C)*F.M)]
+  have hLK : Lc ≤ K := by dsimp only [K]; linarith only [hC, Real.exp_pos ((F.E+4*F.C)*F.M)]
+  have heK : Real.exp ((F.E+4*F.C)*F.M) ≤ K := by dsimp only [K]; linarith only [hC, hLc]
   have hd := frame_jets s F φ clock normal hA hB hφ hscale
   have hcopy (l : Label) (n : ℕ) (k : Frequency) :
       (PrimaryCopyBridge.copyFrame (nativeFrame (frame F φ clock normal (l,n)) χ) (g l n)
@@ -1415,7 +1427,7 @@ noncomputable def scaledControl
         ((hlength l n).trans (mul_le_mul_of_nonneg_left (hscale (l,n)) (zero_le_one.trans
             F.one_le_M)))
         clock.lower_pos.le
-      _ = Lc*s.slow n := by dsimp [Lc]; ring
+      _ = Lc*s.slow n := by dsimp only [Lc]; ring
       _ ≤ K*s.slow n := mul_le_mul_of_nonneg_right hLK (zero_le_one.trans (s.one_le_slow n))
   · intro l n
     change Real.exp ((clock.value l n*((F.E+4*F.C)/D.scale (l,n)))*(F.L (l,n)/clock.value l n)) ≤ K
@@ -1629,17 +1641,17 @@ theorem geometry_cost (clock : ActualSignedControl.PositiveScale Label)
     rw [abs_of_pos (inv_pos.mpr (clock.value_pos l n))]
     exact inv_anti₀ clock.lower_pos (clock.bounds l n).1
   have hU1 : (1+|(clock.value l n)⁻¹|)*H ≤ U := by
-    dsimp [U,geometryFactor,H]
+    dsimp only [geometryFactor, H, U]
     linarith only [coveringBound_pos budget,
       mul_nonneg (coveringBound_pos budget).le (zero_le_one.trans clock.upper_one),
       mul_nonneg (coveringBound_pos budget).le (sub_nonneg.mpr hinv)]
   have hU2 : H*(1+|clock.value l n|) ≤ U := by
-    dsimp [U,geometryFactor,H]
+    dsimp only [geometryFactor, H, U]
     linarith only [coveringBound_pos budget,
       mul_nonneg (coveringBound_pos budget).le (inv_pos.mpr clock.lower_pos).le,
       mul_nonneg (coveringBound_pos budget).le (sub_nonneg.mpr hrate)]
   have hcoord : ‖G.coordinateLinear‖ ≤ U*‖g.coordinateLinear‖ := by
-    dsimp [G]
+    dsimp only [G]
     rw [coordinateLinear_transport]
     calc
       _ ≤ ‖((TorusAverages.transverseChart (clock.value l n) (clock.value_pos l n).ne').symm :
@@ -1653,7 +1665,7 @@ theorem geometry_cost (clock : ActualSignedControl.PositiveScale Label)
       _ = ((1+|(clock.value l n)⁻¹|)*H)*‖g.coordinateLinear‖ := by ring
       _ ≤ U*‖g.coordinateLinear‖ := mul_le_mul_of_nonneg_right hU1 (norm_nonneg _)
   have hpoint : ‖G.pointLinear‖ ≤ U*‖g.pointLinear‖ := by
-    dsimp [G]
+    dsimp only [G]
     rw [pointLinear_transport]
     calc
       _ ≤ ‖((coverPower gap).symm : Plane →L[ℝ] Plane)‖ *

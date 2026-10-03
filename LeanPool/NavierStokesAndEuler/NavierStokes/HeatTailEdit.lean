@@ -65,7 +65,7 @@ theorem switch_zero {K X : ℝ} (hK : 0 < K) (hX : 0 < X) (hXK : X ≤ K) :
 
 theorem switch_one {K X : ℝ} (h : 3 / 10 ≤ Real.log (X / K)) : switch K X = 1 := by
   apply OutgoingSchedule.sigma_one
-  exact (le_div_iff₀ (by norm_num : (0 : ℝ) < 3 / 10)).mpr (by simpa using h)
+  exact (le_div_iff₀ (by norm_num : (0 : ℝ) < 3 / 10)).mpr (by simpa only [one_mul] using h)
 
 theorem edit_before (E : ℝ → ℝ) (h ν : ℝ) {K X : ℝ}
     (hK : 0 < K) (hX : 0 < X) (hXK : X ≤ K) : edit E h ν K X = E X := by
@@ -84,7 +84,7 @@ theorem multiplier_bounds {h ν K X : ℝ} (hh : 0 < h) (hν : 0 ≤ ν) (hX : 0
   have hs := switch_bounds K X
   have hp := mul_nonneg (sub_nonneg.mpr hs.2) (sub_nonneg.mpr hH1)
   have hn := mul_nonpos_of_nonneg_of_nonpos hs.1 (sub_nonpos.mpr hH1)
-  dsimp [multiplier]
+  dsimp only [multiplier]
   constructor <;> nlinarith only [hH, hp, hn]
 
 theorem edit_pos {E : ℝ → ℝ} {h ν K X : ℝ} (hh : 0 < h) (hν : 0 ≤ ν)

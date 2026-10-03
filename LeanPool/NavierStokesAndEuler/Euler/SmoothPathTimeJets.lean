@@ -44,7 +44,8 @@ theorem jetFamily_contDiff (n : ℕ) : ContDiff ℝ ∞ (jetFamily T f n) := by
   exact (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := ∞)
     (E := E [×n]→L[ℝ] C(Icc (0 : ℝ) T,V))
     (F := C(Icc (0 : ℝ) T,E [×n]→L[ℝ] V)) (tensorPathMap n)).comp
-    (hf.iteratedFDeriv_right (by simp))
+    (hf.iteratedFDeriv_right (by simp only [WithTop.le_coe_top, ne_eq, WithTop.add_eq_top,
+        WithTop.coe_ne_top, WithTop.natCast_ne_top, or_self, not_false_eq_true]))
 
 include hf in
 theorem jetFamily_apply (n : ℕ) (x : E) (t : Icc (0 : ℝ) T) :
@@ -77,9 +78,13 @@ theorem jetFamily_integral (n : ℕ) (x : E) :
   have hJq : ContDiff ℝ ∞ (J ∘ q) := J.contDiff.comp hq
   have hD := congrArg (fun g : E → C(Icc (0 : ℝ) T,V) => iteratedFDeriv ℝ n g x) hfun
   have hs := iteratedFDeriv_add_apply (i := n) (x := x)
-    (hKf.contDiffAt.of_le (by simp)) (hJq.contDiffAt.of_le (by simp))
-  have hK := K.iteratedFDeriv_comp_left (x := x) hf.contDiffAt (by simp : (n : ℕ∞) ≤ ∞)
-  have hJ := J.iteratedFDeriv_comp_left (x := x) hq.contDiffAt (by simp : (n : ℕ∞) ≤ ∞)
+    (hKf.contDiffAt.of_le (by simp only [WithTop.le_coe_top, ne_eq, WithTop.natCast_ne_top,
+        not_false_eq_true])) (hJq.contDiffAt.of_le (by simp only [WithTop.le_coe_top, ne_eq,
+        WithTop.natCast_ne_top, not_false_eq_true]))
+  have hK := K.iteratedFDeriv_comp_left (x := x) hf.contDiffAt (by simp only [WithTop.coe_natCast,
+      WithTop.le_coe_top, ne_eq, WithTop.natCast_ne_top, not_false_eq_true] : (n : ℕ∞) ≤ ∞)
+  have hJ := J.iteratedFDeriv_comp_left (x := x) hq.contDiffAt (by simp only [WithTop.coe_natCast,
+      WithTop.le_coe_top, ne_eq, WithTop.natCast_ne_top, not_false_eq_true] : (n : ℕ∞) ≤ ∞)
   have hjets := hD.trans (hs.trans (congrArg₂ (fun A B : E [×n]→L[ℝ] C(Icc (0 : ℝ) T,V) => A+B) hK
       hJ))
   have hp := (congrArg (tensorPathMap (K := Icc (0 : ℝ) T) (E := E) (V := V) n) hjets).trans

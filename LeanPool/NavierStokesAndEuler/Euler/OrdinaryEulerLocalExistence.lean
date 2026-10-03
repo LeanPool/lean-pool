@@ -235,7 +235,7 @@ theorem radial_sub_norm (x y : E) : ‖radial x-radial y‖ ≤ 2*‖x-y‖ := b
       ((1+‖x‖)⁻¹*(‖y‖-‖x‖)) • radial y := by
     calc
       _ = (1+‖x‖)⁻¹ • (x-y)+((1+‖x‖)⁻¹-(1+‖y‖)⁻¹) • y := by
-        dsimp [radial]
+        dsimp only [radial]
         module
       _ = _ := by rw [he,radial,smul_smul]
   have hd : |‖y‖-‖x‖| ≤ ‖x-y‖ := by
@@ -320,7 +320,7 @@ theorem exists_global_quadratic (B : E →L[ℝ] E →L[ℝ] E)
   have he : c • normalized B (v (c*t))=B (v (c*t)) (v (c*t)) := by
     rw [normalized_eq,hn,smul_smul]
     have hp : c*((1+‖x‖)⁻¹)^2=1 := by
-      dsimp [c]
+      dsimp only [c]
       field_simp
     rw [hp,one_smul]
   simpa only [he,Function.comp_def] using h
@@ -362,7 +362,8 @@ theorem advection_add_right (A B C : SmoothL2Field Space) :
   have he : (addField B C).field=B.field+C.field := rfl
   simp only [advectionField_field,addField_field,he,
     fderiv_add (B.smooth.differentiable (by
-        simp) x) (C.smooth.differentiable (by simp) x),add_apply]
+        simp) x) (C.smooth.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+            ENat.top_ne_zero, not_false_eq_true]) x),add_apply]
 
 theorem advection_smul_left (c : ℝ) (A B : SmoothL2Field Space) :
     advectionField (scaleField c A) B=scaleField c (advectionField A B) := by
@@ -410,7 +411,7 @@ theorem advectionLinear_bound (u v : L2) :
   rw [← (S.field v).derivative.norm_jetLp_zero,(S.field v).norm_derivative_jetLp]
   apply (mul_le_mul_of_nonneg_left (S.field_jet_norm v 1)
     (mul_nonneg S.pointwiseCost_nonneg (norm_nonneg u))).trans_eq
-  dsimp [advectionCost]
+  dsimp only [advectionCost]
   ring
 
 /-- Advection, given by `S.advectionLinear.mkContinuous₂ S.advectionCost
@@ -1036,7 +1037,9 @@ theorem projected_difference_energy (A B : SmoothL2Field Space)
     funext x
     have hw : W.field=B.field-A.field := funext (fieldSub_field B A)
     simp only [fieldSub_field,projectedRhs_field,differenceRhs_field,hw,P]
-    rw [fderiv_sub (B.smooth.differentiable (by simp) x) (A.smooth.differentiable (by simp) x)]
+    rw [fderiv_sub (B.smooth.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true]) x) (A.smooth.differentiable (by simp only [
+        ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) x)]
     simp only [Pi.sub_apply,sub_apply,map_sub]
     abel_nf
   have hd : ∀ x, divergence (addField A W).field x=0 := by
@@ -1064,7 +1067,7 @@ theorem perturbed_difference_energy (A B : SmoothL2Field Space)
     2*⟪B.toLp-A.toLp,RB-RA⟫_ℝ ≤ (2*K+1)*‖B.toLp-A.toLp‖^2+(ea+eb)^2 := by
   let W := B.toLp-A.toLp
   let e := (RB-(projectedRhs B).toLp)-(RA-(projectedRhs A).toLp)
-  have he : RB-RA=((projectedRhs B).toLp-(projectedRhs A).toLp)+e := by dsimp [e]; abel
+  have he : RB-RA=((projectedRhs B).toLp-(projectedRhs A).toLp)+e := by dsimp only [e]; abel
   have hn : ‖e‖ ≤ ea+eb := by
     exact (norm_sub_le _ _).trans ((add_le_add hb ha).trans_eq (add_comm eb ea))
   have he0 : 0 ≤ ea+eb := (norm_nonneg e).trans hn
@@ -1074,7 +1077,7 @@ theorem perturbed_difference_energy (A B : SmoothL2Field Space)
     linarith [sq_nonneg (‖W‖-(ea+eb))]
   rw [he,inner_add_right,mul_add]
   exact (add_le_add (projected_difference_energy A B hA hB K hK) hpair).trans_eq (by
-      dsimp [W]; ring)
+      dsimp only [W]; ring)
 
 theorem forced_linear_zero_bound (T C E : ℝ) (hC : 1 ≤ C)
     (X X' : ℝ → ℝ) (hX : ContinuousOn X (Icc 0 T)) (hX0 : X 0 = 0)
@@ -1130,7 +1133,7 @@ theorem regularized_l2_comparison {T : ℝ} {hT : 0 ≤ T} {j k : ℕ}
   let E := (regularizerError j+regularizerError k)*regularizationCost M
   have hM : 0 ≤ M := wordBound_nonneg (hU ⟨0,le_rfl,hT⟩)
   have hG : 0 ≤ G := mul_nonneg (mul_nonneg (by norm_num) smoothEmbeddingConstant_nonneg) hM
-  have hC : 1 ≤ C := by dsimp [C]; linarith
+  have hC : 1 ≤ C := by dsimp only [C]; linarith
   have hE : 0 ≤ E := mul_nonneg (add_nonneg (regularizerError_nonneg j) (regularizerError_nonneg k))
     (regularizationCost_nonneg M)
   let X (r : ℝ) := ‖(V.velocity (projIcc 0 T hT r)).toLp-(U.velocity (projIcc 0 T hT r)).toLp‖^2
@@ -1167,7 +1170,7 @@ theorem regularized_l2_comparison {T : ℝ} {hT : 0 ≤ T} {j k : ℕ}
     (add_nonneg (regularizerError_nonneg j) (regularizerError_nonneg k))
     (regularizedComparisonCost_nonneg T M))).mpr
   intro t
-  exact (hnorm t).trans_eq (by dsimp [E,C,G,regularizedComparisonCost]; ring)
+  exact (hnorm t).trans_eq (by dsimp only [regularizedComparisonCost, E, C, G]; ring)
 
 theorem regularized_cauchy {T : ℝ} {hT : 0 ≤ T}
     (U : ∀ n, RegularizedEvolution (regularizer n) T hT)
@@ -1236,7 +1239,7 @@ theorem quadratic_energy_bound (T C : ℝ) (hT : 0 ≤ T)
   have hfn (r : ℝ) (hr : r ∈ Icc 0 T) : 0 ≤ f' r := by
     have hdv : X' r/(1+X r)^2 ≤ C := (div_le_iff₀ (sq_pos_of_pos (hp r hr))).mpr (by
       simpa only [mul_comm C] using hb r hr)
-    dsimp [f']
+    dsimp only [f']
     rw [neg_div]
     linarith
   have hm : MonotoneOn f (Icc 0 T) :=
@@ -1244,7 +1247,7 @@ theorem quadratic_energy_bound (T C : ℝ) (hT : 0 ≤ T)
       (fun r hr => (hfd r (interior_subset hr)).mono interior_subset)
       (fun r hr => hfn r (interior_subset hr))
   have hmono := hm hz ht ht.1
-  dsimp [f] at hmono
+  dsimp only [f] at hmono
   have hCt : C*t ≤ (1+X 0)⁻¹/2 :=
     (mul_le_mul_of_nonneg_left ht.2 hC).trans hsmall
   have hi : (1 : ℝ)/(2*(1+X 0)) ≤ 1/(1+X t) := by

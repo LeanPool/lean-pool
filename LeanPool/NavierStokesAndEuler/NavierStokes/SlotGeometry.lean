@@ -43,7 +43,8 @@ def cover : Plane →L[ℝ] Plane :=
 
 @[simp] theorem cover_apply (x : Plane) :
     cover x = (3 * x.1 + x.2, x.1 + 5 * x.2) := by
-  simp [cover]
+  simp only [cover, ContinuousLinearMap.prod_apply, add_apply, smul_apply,
+      ContinuousLinearMap.coe_fst', nsmul_eq_mul, Nat.cast_ofNat, ContinuousLinearMap.coe_snd']
 
 theorem cover_injective : Function.Injective cover := by
   intro x y h
@@ -54,7 +55,7 @@ theorem cover_injective : Function.Injective cover := by
 
 theorem cover_pow_injective (n : ℕ) : Function.Injective (cover ^ n : Plane →L[ℝ] Plane) := by
   induction n with
-  | zero => simpa using Function.injective_id
+  | zero => simpa only [pow_zero, FunLike.coe_one_eq_id] using Function.injective_id
   | succ n ih =>
       intro x y h
       rw [pow_succ', _root_.mul_apply_eq_comp, _root_.mul_apply_eq_comp] at h
@@ -76,7 +77,7 @@ theorem norm_cover_le (x : Plane) : ‖cover x‖ ≤ 6 * ‖x‖ := by
 theorem norm_cover_pow_le (n : ℕ) (x : Plane) :
     ‖(cover ^ n) x‖ ≤ (6 : ℝ) ^ n * ‖x‖ := by
   induction n with
-  | zero => simp
+  | zero => simp only [pow_zero, one_apply_eq_self, one_mul, Std.le_refl]
   | succ n ih =>
       rw [pow_succ', _root_.mul_apply_eq_comp, pow_succ']
       calc
@@ -87,10 +88,10 @@ theorem norm_cover_pow_le (n : ℕ) (x : Plane) :
 theorem cover_pow_positive (n : ℕ) (x : Plane) (hx : 0 < x.1) (hy : 0 ≤ x.2) :
     0 < ((cover ^ n) x).1 ∧ 0 ≤ ((cover ^ n) x).2 := by
   induction n with
-  | zero => simpa using And.intro hx hy
+  | zero => simpa only [pow_zero, one_apply_eq_self] using And.intro hx hy
   | succ n ih =>
       rw [pow_succ', _root_.mul_apply_eq_comp, cover_apply]
-      dsimp
+      dsimp only
       constructor <;> linarith only [ih, ih.1, ih.2]
 
 theorem cover_pow_second_positive {n : ℕ} (hn : 0 < n) (x : Plane)
@@ -98,7 +99,7 @@ theorem cover_pow_second_positive {n : ℕ} (hn : 0 < n) (x : Plane)
   obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hn)
   have hp := cover_pow_positive k x hx hy
   rw [pow_succ', _root_.mul_apply_eq_comp, cover_apply]
-  dsimp
+  dsimp only
   linarith only [hp, hp.1, hp.2]
 
 /-- Denominator, given by `((m : ℝ) + 1) * (6 : ℝ) ^ D`. -/
@@ -115,7 +116,8 @@ def center (m D : ℕ) (i : Fin m) : Plane :=
 theorem center_rational (m D : ℕ) (i : Fin m) :
     ∃ a b : ℚ, center m D i = ((a : ℝ), (b : ℝ)) := by
   refine ⟨((i.val : ℚ) + 1) / (((m : ℚ) + 1) * 6 ^ D), 0, ?_⟩
-  simp [center, denominator]
+  simp only [center, denominator, Rat.cast_div, Rat.cast_add, Rat.cast_natCast, Rat.cast_one,
+      Rat.cast_mul, Rat.cast_pow, Rat.cast_ofNat, Rat.cast_zero]
 
 theorem center_first_pos (m D : ℕ) (i : Fin m) : 0 < (center m D i).1 := by
   exact div_pos (by positivity) (denominator_pos m D)
@@ -130,7 +132,7 @@ theorem scaled_center_lt_one (m D : ℕ) (i : Fin m) :
   rw [center_norm]
   have heq : (6 : ℝ) ^ D * (center m D i).1 = ((i.val : ℝ) + 1) / ((m : ℝ) + 1) := by
     unfold center denominator
-    dsimp
+    dsimp only
     field_simp
   rw [heq]
   apply (div_lt_one (by positivity : 0 < (m : ℝ) + 1)).mpr
@@ -169,8 +171,8 @@ theorem lattice_norm_lt_one {x : Plane} (hx : x ∈ lattice) (hn : ‖x‖ < 1) 
     have := abs_lt.mp this
     omega
   apply Prod.ext
-  · simpa [ha0] using ha.symm
-  · simpa [hb0] using hb.symm
+  · simpa only [Prod.fst_zero, ha0, Int.cast_zero] using ha.symm
+  · simpa only [Prod.snd_zero, hb0, Int.cast_zero] using hb.symm
 
 theorem torusEq_of_unit_square {x y : Plane} (hxy : torusEq x y)
     (hx1 : 0 ≤ x.1) (hx2 : 0 ≤ x.2) (hy1 : 0 ≤ y.1) (hy2 : 0 ≤ y.2)
@@ -200,7 +202,7 @@ theorem centers_avoid_covering (m D : ℕ) (i j : Fin m) (n : ℕ) (hn : n ≤ D
   intro h
   have hi := cover_pow_positive n (center m D i) (center_first_pos m D i) le_rfl
   have hj : ‖center m D j‖ < 1 := by
-    simpa using cover_center_norm_lt_one m D j 0 (Nat.zero_le D)
+    simpa only [pow_zero, one_apply_eq_self] using cover_center_norm_lt_one m D j 0 (Nat.zero_le D)
   have heq := torusEq_of_unit_square h hi.1.le hi.2 (center_first_pos m D j).le le_rfl
     (cover_center_norm_lt_one m D i n hn) hj
   rcases hij with hpos | hne
@@ -209,7 +211,7 @@ theorem centers_avoid_covering (m D : ℕ) (i j : Fin m) (n : ℕ) (hn : n ≤ D
     exact (lt_irrefl 0) hp
   · by_cases hn0 : n = 0
     · subst n
-      exact hne (center_injective m D (by simpa using heq))
+      exact hne (center_injective m D (by simpa only [pow_zero, one_apply_eq_self] using heq))
     · have hp := cover_pow_second_positive (Nat.pos_of_ne_zero hn0)
         (center m D i) (center_first_pos m D i) le_rfl
       rw [heq] at hp
@@ -259,7 +261,8 @@ private theorem zero_mem_safeOffsets (m D : ℕ) : (0 : Plane × Plane) ∈ safe
   constructor
   · apply mem_iInter.mpr
     intro n
-    simp [injectiveOffsets]
+    simp only [injectiveOffsets, pow_apply_eq_iterate, iterate_map_sub, mem_ofPred_eq,
+        Prod.fst_zero, iterate_map_zero, Prod.snd_zero, sub_self, norm_zero, zero_lt_one]
   · apply mem_iInter.mpr
     intro n
     apply mem_iInter.mpr
@@ -320,16 +323,16 @@ theorem exists_common_radius (m D : ℕ) :
     exact cover_pow_injective n (sub_eq_zero.mp (lattice_norm_lt_one hxy hi))
 
 theorem torusEq_refl (x : Plane) : torusEq x x := by
-  refine ⟨⟨0, ?_⟩, ⟨0, ?_⟩⟩ <;> simp
+  refine ⟨⟨0, ?_⟩, ⟨0, ?_⟩⟩ <;> simp only [Int.cast_zero, sub_self, Prod.fst_zero, Prod.snd_zero]
 
 theorem torusEq_symm {x y : Plane} (h : torusEq x y) : torusEq y x := by
   rcases h with ⟨⟨a, ha⟩, ⟨b, hb⟩⟩
   refine ⟨⟨-a, ?_⟩, ⟨-b, ?_⟩⟩
   · push_cast
-    dsimp at ha ⊢
+    dsimp only [Prod.fst_sub] at ha ⊢
     linarith only [ha]
   · push_cast
-    dsimp at hb ⊢
+    dsimp only [Prod.snd_sub] at hb ⊢
     linarith only [hb]
 
 theorem torusEq_trans {x y z : Plane} (hxy : torusEq x y) (hyz : torusEq y z) :
@@ -338,10 +341,10 @@ theorem torusEq_trans {x y z : Plane} (hxy : torusEq x y) (hyz : torusEq y z) :
   rcases hyz with ⟨⟨c, hc⟩, ⟨d, hd⟩⟩
   refine ⟨⟨a + c, ?_⟩, ⟨b + d, ?_⟩⟩
   · push_cast
-    dsimp at ha hc ⊢
+    dsimp only [Prod.fst_sub] at ha hc ⊢
     linarith only [ha, hc]
   · push_cast
-    dsimp at hb hd ⊢
+    dsimp only [Prod.snd_sub] at hb hd ⊢
     linarith only [hb, hd]
 
 /-- The covering preserves the integer lattice and therefore torus equality. -/
@@ -360,7 +363,7 @@ theorem cover_torusEq {x y : Plane} (h : torusEq x y) : torusEq (cover x) (cover
 theorem cover_pow_torusEq (n : ℕ) {x y : Plane} (h : torusEq x y) :
     torusEq ((cover ^ n) x) ((cover ^ n) y) := by
   induction n with
-  | zero => simpa using h
+  | zero => simpa only [pow_zero, one_apply_eq_self] using h
   | succ n ih =>
       rw [pow_succ', _root_.mul_apply_eq_comp, _root_.mul_apply_eq_comp]
       exact cover_torusEq ih

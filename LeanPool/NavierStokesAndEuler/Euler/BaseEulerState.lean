@@ -144,20 +144,22 @@ def jet (A : Space →L[ℝ] Space) :
   | q+1 => .succ (fun _ => coefficient P 0) (fun _ => jet 0 q)
       (fun i _ => by
         change (0 : Space →L[ℝ] Space)=(fderiv ℝ (fun _ : LiftTangent => A) 0) (standardDirection i)
-        simp)
+        simp only [fderiv_fun_const, Pi.zero_apply, zero_apply])
 
 omit [Fact (0 < P)] in
 theorem jet_boundLevel (A : Space →L[ℝ] Space) (q r : ℕ) :
     boundLevel P (jet P A q) r = if r=0 then ‖A‖ else 0 := by
   induction q generalizing A r with
-  | zero => cases r <;> simp [jet,boundLevel,coefficient]
+  | zero => cases r <;> simp only [coefficient, jet, boundLevel, coe_nnnorm, ↓reduceIte,
+      Nat.add_eq_zero_iff, one_ne_zero, and_false]
   | succ q ih =>
     cases r with
-    | zero => simp [jet, boundLevel, coefficient]
+    | zero => simp only [coefficient, jet, boundLevel, coe_nnnorm, ↓reduceIte]
     | succ r =>
       simp only [jet]
       rw [boundLevel]
-      simp [ih]
+      simp only [ih, norm_zero, ite_self, Finset.sum_const_zero, Nat.add_eq_zero_iff, one_ne_zero,
+          and_false, ↓reduceIte]
 
 omit [Fact (0 < P)] in
 theorem jet_zero_coefficientBlock (q b n : ℕ) :
@@ -432,10 +434,10 @@ def scale (C R E : ℝ) (hC : 0 ≤ C) (hR : 0 ≤ R) (hE : 0 < E) : Scale P C R
   let v := min 1 (min a (min b (min c d)))
   have hG := growth_pos P
   have hr := initialRadius_pos R hR
-  have ha : 0 < a := by dsimp [a]; positivity
-  have hb : 0 < b := by dsimp [b]; positivity
-  have hc : 0 < c := by dsimp [c]; positivity
-  have hd : 0 < d := by dsimp [d]; positivity
+  have ha : 0 < a := by dsimp only [a]; positivity
+  have hb : 0 < b := by dsimp only [b]; positivity
+  have hc : 0 < c := by dsimp only [c]; positivity
+  have hd : 0 < d := by dsimp only [d]; positivity
   have hv : 0 < v := lt_min zero_lt_one (lt_min ha (lt_min hb (lt_min hc hd)))
   have h1 : v ≤ 1 := min_le_left _ _
   have h2 : v ≤ a := (min_le_right _ _).trans (min_le_left _ _)
@@ -567,7 +569,7 @@ def driftBudget (q : ℕ) (hq : 6 ≤ q) :
   drift_bound t := by
     have hh := weightedDriftNorm_velocityMap_le P 6 (q-4) (S.radius P t)
       (S.radius_positive P hC hR t) (velocityComponents 1 (0 : Space))
-      (velocityComponents_norm 1 (0 : Space) (by norm_num) (by simp))
+      (velocityComponents_norm 1 (0 : Space) (by norm_num) (by simp only [norm_zero, zero_le_one]))
       ((G.smul S.value).toFieldTower.realization (((q+1)+1)+1) t)
     have hb := (scaled_word G hG S.value S.positive.le).toFieldTower_weightedNorm_le_two
       hR (mul_nonneg S.positive.le hC) (((q+1)+1)+1) (q-4) (by omega)
@@ -694,7 +696,8 @@ theorem spatialOrbit_derivative_norm (n : ℕ) (a : LiftTangent) :
   let L := ContinuousLinearMap.fst ℝ Space ℝ
   have he : spatialOrbit u =
       (fun b : Space => EulerLpTranslation.translation (V := Space) b u.toLp) ∘ L := rfl
-  rw [he,L.iteratedFDeriv_comp_right u.translation_contDiff a (by simp)]
+  rw [he,L.iteratedFDeriv_comp_right u.translation_contDiff a (by simp only [WithTop.le_coe_top,
+      ne_eq, WithTop.natCast_ne_top, not_false_eq_true])]
   apply (ContinuousMultilinearMap.norm_compContinuousLinearMap_le _ _).trans
   calc
     _ ≤ ‖iteratedFDeriv ℝ n
@@ -721,7 +724,9 @@ theorem field_wordBound (q : ℕ) (C R : ℝ) (hC : 0 ≤ C) (hR : 0 ≤ R)
       sobolevCoefficientAmplitude (Fin 4) q R C*majorant (sobolevCoefficientRadius (Fin 4) R) 0 n
           := by
     have hh := coefficientBlock_of_tensor_bound standardDirection
-      (fun i => by cases i using Fin.cases <;> simp [Prod.norm_def]) q (spatialOrbit u)
+      (fun i => by cases i using Fin.cases <;> simp only [Fin.isValue, standardDirection_zero,
+          Prod.norm_def, norm_zero, norm_one, zero_le_one, sup_of_le_right, Std.le_refl,
+          standardDirection_succ, PiLp.norm_single, sup_of_le_left]) q (spatialOrbit u)
       hF R C hR hC hFb n 0
     have hp : (1 : ℝ) ≤ (2 : ℝ)^q := one_le_pow₀ (by norm_num)
     exact ((one_mul _).symm.trans_le (mul_le_mul_of_nonneg_right hp
@@ -1015,7 +1020,8 @@ theorem momentum (t : ℝ) (ht : t ∈ Ioo 0 T) (x : Space) :
   simp only [data,tower,coefficient,zero_apply,smul_zero,Finset.sum_const_zero,
     add_zero,transportDirection,one_smul,inner_zero_left,id_apply] at h
   have hd : (1,(velocity S (t,x),0)) =
-      ((1,0) : ℝ × LiftTangent)+(0,(velocity S (t,x),0)) := by simp
+      ((1,0) : ℝ × LiftTangent)+(0,(velocity S (t,x),0)) := by simp only [Prod.mk_add_mk, add_zero,
+          zero_add]
   rw [hd,map_add]
   exact h
 
@@ -1235,7 +1241,7 @@ theorem localMomentum (t : ℝ) (ht : t ∈ Ioo (0 : ℝ) (amplitude P C R hC hR
     (EulerConstantEuler.velocity_hasFDerivAt (exactPacket P u C R hC hR hu hdiv) _ hs
         x).differentiableAt
     ((EulerConstantEuler.pressure_smooth (exactPacket P u C R hC hR hu hdiv) _).differentiable (by
-        simp) x)
+        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) x)
     (EulerConstantEuler.momentum (exactPacket P u C R hC hR hu hdiv) _ hs x)
 
 theorem localVelocity_differentiableAt (t : ℝ)
@@ -1253,7 +1259,7 @@ theorem localVelocity_divergence (t : ℝ) (x : Space) :
   have hd := EulerTimeRescaling.spatial_derivative (amplitude P C R hC hR)
     (EulerConstantEuler.velocity (exactPacket P u C R hC hR hu hdiv)) t x
     ((EulerConstantEuler.velocity_smooth (exactPacket P u C R hC hR hu hdiv) _).differentiable (by
-        simp) x)
+        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) x)
   change (∑ i : Fin 3, (fderiv ℝ (fun y => EulerTimeRescaling.velocity (amplitude P C R hC hR)
     (EulerConstantEuler.velocity (exactPacket P u C R hC hR hu hdiv)) (t,y)) x
       (EuclideanSpace.single i 1)) i)=0
@@ -1292,7 +1298,7 @@ theorem localPressure_gradient (t : ℝ) (x : Space) :
   have h := EulerTimeRescaling.pressure_gradient (amplitude P C R hC hR)
     (EulerConstantEuler.pressure (exactPacket P u C R hC hR hu hdiv)) (t,x)
     ((EulerConstantEuler.pressure_smooth (exactPacket P u C R hC hR hu hdiv) _).differentiable (by
-        simp) x)
+        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) x)
   erw [EulerConstantEuler.pressure_gradient] at h
   exact h
 
@@ -1549,7 +1555,7 @@ theorem retainedRadius_small (R : ℝ) (hR : 0 ≤ R) :
   have h := EulerSmallCorrection.initialRadius_mul _ (mixedRadius_nonneg R hR)
   have hn := mul_nonneg (EulerSmallCorrection.initialRadius_pos _ (mixedRadius_nonneg R hR)).le
     (mixedRadius_nonneg R hR)
-  dsimp [retainedRadius]
+  dsimp only [retainedRadius]
   linarith only [h]
 
 theorem baseErrorFactor_nonneg : 0 ≤ baseErrorFactor :=
@@ -2283,7 +2289,7 @@ theorem velocityRadius_nonneg : 0 ≤ L.velocityRadius := by
   have hr := I.R_pos
   have ht := I.T_pos
   have hs := L.S_nonneg
-  dsimp [velocityRadius,flowRadius]
+  dsimp only [velocityRadius, flowRadius]
   positivity
 
 /-- Velocity field, constructed using `SmoothL2Field.composeField`. -/
@@ -2346,7 +2352,7 @@ theorem displacement_memLp_and_bound (n : ℕ) (t : Icc (0 : ℝ) I.T) :
     fun p => extendPath I.T I.T_pos.le (I.velocity.jet n) p.1 p.2
   have hc : Continuous f := by
     have ht := extendPath_continuous I.T I.T_pos.le (I.velocity.jet n)
-    dsimp [f]
+    dsimp only [f]
     fun_prop
   have hb : ∀ s : ℝ, MemLp (fun x => f (s,x)) 2 volume ∧
       (eLpNorm (fun x => f (s,x)) 2 volume).toReal ≤
@@ -2393,7 +2399,7 @@ theorem accelerationSourceRadius_nonneg : 0 ≤ L.accelerationSourceRadius := by
   have hr := I.R_pos
   have hs := L.S_nonneg
   have hs₁ := L.S₁_nonneg
-  dsimp [accelerationSourceRadius]
+  dsimp only [accelerationSourceRadius]
   positivity
 
 theorem field_derivative_bound (t : Icc (0 : ℝ) I.T) :
@@ -2403,7 +2409,7 @@ theorem field_derivative_bound (t : Icc (0 : ℝ) I.T) :
     fun n x => field_jet_bound I.T I.field I.B I.R I.bound n t x
   exact (h.derivative I.B_nonneg I.R_pos.le).mono (mul_nonneg I.B_nonneg I.R_pos.le)
     (mul_nonneg (by norm_num) I.R_pos.le) le_rfl
-    (by dsimp [accelerationSourceRadius]; linarith only [L.S_nonneg, L.S₁_nonneg])
+    (by dsimp only [accelerationSourceRadius]; linarith only [L.S_nonneg, L.S₁_nonneg])
 
 /-- Acceleration product, constructed using `SmoothL2Field.productField`. -/
 def accelerationProduct (t : Icc (0 : ℝ) I.T) : SmoothL2Field Space :=
@@ -2412,7 +2418,7 @@ def accelerationProduct (t : Icc (0 : ℝ) I.T) : SmoothL2Field Space :=
     (I.B*I.R) L.C L.accelerationSourceRadius (mul_nonneg I.B_nonneg I.R_pos.le) L.C_nonneg
     L.accelerationSourceRadius_nonneg (L.field_derivative_bound t)
     ((L.velocity_bound t).mono L.C_nonneg L.S_nonneg le_rfl
-      (by dsimp [accelerationSourceRadius]; linarith only [I.R_pos, L.S₁_nonneg]))
+      (by dsimp only [accelerationSourceRadius]; linarith only [I.R_pos, L.S₁_nonneg]))
 
 /-- Acceleration source, given by `SmoothL2Field.addField (L.derivative t)
 (L.accelerationProduct t)`. -/
@@ -2427,14 +2433,14 @@ theorem accelerationAmplitude_nonneg : 0 ≤ L.accelerationAmplitude := by
   have hr := I.R_pos
   have hc := L.C_nonneg
   have hc₁ := L.C₁_nonneg
-  dsimp [accelerationAmplitude]
+  dsimp only [accelerationAmplitude]
   positivity
 
 theorem accelerationSource_bound (t : Icc (0 : ℝ) I.T) :
     (L.accelerationSource t).HasJetBound L.accelerationAmplitude L.accelerationSourceRadius := by
   apply SmoothL2Field.HasJetBound.add
   · exact (L.derivative_bound t).mono L.C₁_nonneg L.S₁_nonneg le_rfl
-      (by dsimp [accelerationSourceRadius]; linarith only [I.R_pos, L.S_nonneg])
+      (by dsimp only [accelerationSourceRadius]; linarith only [I.R_pos, L.S_nonneg])
   · exact SmoothL2Field.productField_bound _ _ _ _ _ _ _ _ _ _ _
 
 /-- Acceleration radius, given by `flowRadius I.B I.R I.T L.accelerationSourceRadius`. -/
@@ -2445,7 +2451,7 @@ theorem accelerationRadius_nonneg : 0 ≤ L.accelerationRadius := by
   have hr := I.R_pos
   have ht := I.T_pos
   have hs := L.accelerationSourceRadius_nonneg
-  dsimp [accelerationRadius,flowRadius]
+  dsimp only [accelerationRadius, flowRadius]
   positivity
 
 /-- Acceleration field, constructed using `SmoothL2Field.composeField`. -/
@@ -2516,7 +2522,7 @@ private theorem costs_nonneg :
 
 theorem labelCost_one : 1 ≤ L.labelCost := by
   obtain ⟨h1,h2,h3,h4,h5⟩ := L.costs_nonneg
-  dsimp [labelCost]
+  dsimp only [labelCost]
   linarith only [h1, h2, h3, h4, h5]
 
 theorem displacement_labelBound (t : Icc (0 : ℝ) I.T) :
@@ -2525,16 +2531,16 @@ theorem displacement_labelBound (t : Icc (0 : ℝ) I.T) :
   apply SmoothL2Field.hasLabelBound_of_jet_bound (L.displacementField t)
     (I.T*L.C) L.velocityRadius L.labelCost (mul_nonneg I.T_pos.le L.C_nonneg)
     L.velocityRadius_nonneg (L.displacementField_bound t)
-  · dsimp [labelCost]; linarith only [h2, h3, h4, h5]
-  · dsimp [labelCost]; linarith only [h1, h2, h3, h5]
+  · dsimp only [labelCost]; linarith only [h2, h3, h4, h5]
+  · dsimp only [labelCost]; linarith only [h1, h2, h3, h5]
 
 theorem velocity_labelBound (t : Icc (0 : ℝ) I.T) :
     HasLabelBound L.labelCost (L.velocityField t) := by
   obtain ⟨h1,h2,h3,h4,h5⟩ := L.costs_nonneg
   apply SmoothL2Field.hasLabelBound_of_jet_bound (L.velocityField t)
     L.C L.velocityRadius L.labelCost L.C_nonneg L.velocityRadius_nonneg (L.velocityField_bound t)
-  · dsimp [labelCost]; linarith only [h1, h3, h4, h5]
-  · dsimp [labelCost]; linarith only [h1, h2, h3, h5]
+  · dsimp only [labelCost]; linarith only [h1, h3, h4, h5]
+  · dsimp only [labelCost]; linarith only [h1, h2, h3, h5]
 
 theorem acceleration_labelBound (t : Icc (0 : ℝ) I.T) :
     HasLabelBound L.labelCost (L.accelerationField t) := by
@@ -2542,8 +2548,8 @@ theorem acceleration_labelBound (t : Icc (0 : ℝ) I.T) :
   apply SmoothL2Field.hasLabelBound_of_jet_bound (L.accelerationField t)
     L.accelerationAmplitude L.accelerationRadius L.labelCost L.accelerationAmplitude_nonneg
     L.accelerationRadius_nonneg (L.accelerationField_bound t)
-  · dsimp [labelCost]; linarith only [h1, h2, h4, h5]
-  · dsimp [labelCost]; linarith only [h1, h2, h3, h4]
+  · dsimp only [labelCost]; linarith only [h1, h2, h4, h5]
+  · dsimp only [labelCost]; linarith only [h1, h2, h3, h4]
 
 /-- Label data, bundling `K`, `K_one`, `displacement`, `velocity` and the required compatibility
 proofs. -/
@@ -2601,7 +2607,8 @@ theorem residual_odd (ε : ℝ) :
   change (fderiv ℝ (fun y => (ε • raw) (t,y)) (-x,-θ)) ((ε • raw) (t,(-x,-θ)),0) =
     -((fderiv ℝ (fun y => (ε • raw) (t,y)) (x,θ)) ((ε • raw) (t,(x,θ)),0))
   rw [(G.smul ε).raw_fderiv_even_of_odd hs t x θ,hs t x θ]
-  have he : (-(ε • raw) (t,(x,θ)),(0 : ℝ)) = -((ε • raw) (t,(x,θ)),(0 : ℝ)) := by simp
+  have he : (-(ε • raw) (t,(x,θ)),(0 : ℝ)) = -((ε • raw) (t,(x,θ)),(0 : ℝ)) := by simp only [
+      Pi.smul_apply, Prod.neg_mk, neg_zero]
   rw [he,map_neg]
 
 include hodd in
@@ -2964,7 +2971,8 @@ def baseEvolution : Evolution (baseParent P u C R hC hR hu hdiv ell hell hell1) 
   velocity_differentiable t ht x := localVelocity_differentiableAt P u C R hC hR hu hdiv t
     ⟨ht.1,ht.2.trans_le (baseTime_le P C R hC hR)⟩ x
   pressure_differentiable t x :=
-    (localPressure_smooth P u C R hC hR hu hdiv t).differentiable (by simp) x
+    (localPressure_smooth P u C R hC hR hu hdiv t).differentiable (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) x
   pressure_gradient t x := localPressure_gradient P u C R hC hR hu hdiv t x
   momentum_zero t ht x := localMomentum P u C R hC hR hu hdiv t
     ⟨ht.1,ht.2.trans_le (baseTime_le P C R hC hR)⟩ x
@@ -3095,7 +3103,10 @@ def linear (β : ℝ) : Space →L[ℝ] Space :=
 
 theorem linear_trace (β : ℝ) : LinearMap.trace ℝ Space (linear β).toLinearMap=0 := by
   rw [← coordinateTrace_eq_linearTrace]
-  simp [coordinateTrace,Fin.sum_univ_three,linear_apply,PiLp.smul_apply]
+  simp only [coordinateTrace, Fin.sum_univ_three, Fin.isValue, add_apply, comp_apply, apply_apply,
+      linear_apply, ne_eq, one_ne_zero, not_false_eq_true, PiLp.single_eq_of_ne, smul_add,
+      zero_smul, add_zero, PiLp.proj_apply, PiLp.zero_apply, PiLp.single_eq_same, one_smul,
+      PiLp.add_apply, PiLp.smul_apply, Fin.reduceEq, smul_eq_mul, mul_zero]
 
 theorem linear_norm (β : ℝ) : ‖linear β‖ ≤ 1+|β| := by
   apply opNorm_le_bound _ (by positivity)
@@ -3104,14 +3115,14 @@ theorem linear_norm (β : ℝ) : ‖linear β‖ ≤ 1+|β| := by
   have hv : ‖(EuclideanSpace.single 0 1 : Space)+β • EuclideanSpace.single 2 1‖ ≤ 1+|β| := by
     apply (norm_add_le _ _).trans
     rw [norm_smul,Real.norm_eq_abs]
-    simp
+    simp only [Fin.isValue, PiLp.norm_single, norm_one, mul_one, Std.le_refl]
   exact (mul_le_mul (PiLp.norm_apply_le x 1) hv (norm_nonneg _) (norm_nonneg x)).trans_eq (mul_comm
       _ _)
 
 theorem linear_q (β : ℝ) :
     linear β (EuclideanSpace.single 1 1)=EuclideanSpace.single 0 1+β • EuclideanSpace.single 2 1 :=
         by
-  simp [linear_apply]
+  simp only [Fin.isValue, linear_apply, PiLp.single_eq_same, smul_add, one_smul]
 
 end EulerBaseDatum
 
@@ -3146,8 +3157,9 @@ theorem product_bound_at (f g : E → ℝ) (hf : ContDiff ℝ ∞ f) (hg : ContD
     (fun k => ‖iteratedFDeriv ℝ k f x‖) (fun k => ‖iteratedFDeriv ℝ k g x‖)
     (fun k => by simpa only [abs_norm] using hb₁ k)
     (fun k => by simpa only [abs_norm] using hb₂ k) n
-  exact (norm_iteratedFDeriv_mul_le hf hg x (by simp)).trans
-    ((le_abs_self _).trans (by simpa using hp))
+  exact (norm_iteratedFDeriv_mul_le hf hg x (by simp only [WithTop.le_coe_top, ne_eq,
+      WithTop.natCast_ne_top, not_false_eq_true])).trans
+    ((le_abs_self _).trans (by simpa only [add_zero] using hp))
 
 theorem majorant_one_le (R : ℝ) (hR : 1 ≤ R) (n : ℕ) : 1 ≤ majorant R 0 n := by
   have hf : (1 : ℝ) ≤ n.factorial := by exact_mod_cast Nat.succ_le_of_lt (Nat.factorial_pos n)
@@ -3288,14 +3300,17 @@ theorem linearPotential_bound (L : Space →L[ℝ] Space) (i : Fin 3)
     convert h using 1
     ring
   have hfg : ‖iteratedFDeriv ℝ n (f-g) x‖ ≤ (24*‖L‖)*majorant 256 0 n := by
-    rw [iteratedFDeriv_sub_apply ((hs (i+1) (i+2)).contDiffAt.of_le (by simp))
-      ((hs (i+2) (i+1)).contDiffAt.of_le (by simp))]
+    rw [iteratedFDeriv_sub_apply ((hs (i+1) (i+2)).contDiffAt.of_le (by simp only [
+        WithTop.le_coe_top, ne_eq, WithTop.natCast_ne_top, not_false_eq_true]))
+      ((hs (i+2) (i+1)).contDiffAt.of_le (by simp only [WithTop.le_coe_top, ne_eq,
+          WithTop.natCast_ne_top, not_false_eq_true]))]
     exact (norm_sub_le _ _).trans ((add_le_add (hp (i+1) (i+2)) (hp (i+2) (i+1))).trans_eq (by
         ring))
   change ‖iteratedFDeriv ℝ n ((-1/3 : ℝ) • (f-g)) x‖ ≤ _
   have hfgsm : ContDiff ℝ ∞ (f-g) := (hs (i+1) (i+2)).sub (hs (i+2) (i+1))
   rw [iteratedFDeriv_const_smul_apply (a := (-1/3 : ℝ)) (f := f-g)
-    (hfgsm.contDiffAt.of_le (by simp)),norm_smul]
+    (hfgsm.contDiffAt.of_le (by simp only [WithTop.le_coe_top, ne_eq, WithTop.natCast_ne_top,
+        not_false_eq_true])),norm_smul]
   exact (mul_le_mul_of_nonneg_right (by norm_num : ‖(-1/3 : ℝ)‖ ≤ 1)
     (norm_nonneg _)).trans (by simpa only [one_mul] using hfg)
 
@@ -3325,7 +3340,10 @@ def vectorPotential (L : Space →L[ℝ] Space) (x : Space) : Space :=
 
 @[simp] theorem vectorPotential_apply (L : Space →L[ℝ] Space) (x : Space) (i : Fin 3) :
     vectorPotential L x i=potential L i x := by
-  fin_cases i <;> simp [vectorPotential,Fin.sum_univ_three]
+  fin_cases i <;> simp only [Fin.zero_eta, Fin.isValue, vectorPotential, Fin.sum_univ_three,
+      PiLp.add_apply, PiLp.smul_apply, PiLp.single_eq_same, smul_eq_mul, mul_one, ne_eq,
+      zero_ne_one, not_false_eq_true, PiLp.single_eq_of_ne, mul_zero, add_zero, Fin.reduceEq,
+      Fin.mk_one, one_ne_zero, zero_add, Fin.reduceFinMk]
 
 theorem vectorPotential_smooth (L : Space →L[ℝ] Space) : ContDiff ℝ ∞ (vectorPotential L) :=
   ContDiff.sum (fun i _ => (potential_smooth L i).smul contDiff_const)
@@ -3339,7 +3357,7 @@ theorem coordinateEmbedding_norm (i : Fin 3) : ‖coordinateEmbedding i‖ ≤ 1
   apply opNorm_le_bound _ zero_le_one
   intro x
   change ‖x • (EuclideanSpace.single i 1 : Space)‖ ≤ 1*‖x‖
-  simp [norm_smul]
+  simp only [norm_smul, Real.norm_eq_abs, PiLp.norm_single, norm_one, mul_one, one_mul, Std.le_refl]
 
 theorem vectorPotential_bound (L : Space →L[ℝ] Space) (n : ℕ) (x : Space) :
     ‖iteratedFDeriv ℝ n (vectorPotential L) x‖ ≤ (3*potentialAmplitude L)*majorant 256 0 n := by
@@ -3349,7 +3367,8 @@ theorem vectorPotential_bound (L : Space →L[ℝ] Space) (n : ℕ) (x : Space) 
     (potential_smooth L i).smul contDiff_const
   rw [iteratedFDeriv_fun_sum_apply
     (f := fun i y => potential L i y • (EuclideanSpace.single i 1 : Space))
-    (u := Finset.univ) (fun i _ => (hs i).contDiffAt.of_le (by simp))]
+    (u := Finset.univ) (fun i _ => (hs i).contDiffAt.of_le (by simp only [WithTop.le_coe_top, ne_eq,
+        WithTop.natCast_ne_top, not_false_eq_true]))]
   apply (norm_sum_le _ _).trans
   calc
     _ ≤ ∑ _i : Fin 3, potentialAmplitude L*majorant 256 0 n := by
@@ -3358,13 +3377,15 @@ theorem vectorPotential_bound (L : Space →L[ℝ] Space) (n : ℕ) (x : Space) 
       exact contraction_bound (coordinateEmbedding i) (coordinateEmbedding_norm i)
         (potential L i) (potential_smooth L i) 256 (potentialAmplitude L)
         (by norm_num) (potentialAmplitude_nonneg L) 0 (potential_bound L i) n x
-    _ = _ := by simp; ring
+    _ = _ := by simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
+        Nat.cast_ofNat]; ring
 
 theorem velocity_eq_curlOperator (L : Space →L[ℝ] Space) :
     velocity L = fun x => curlOperator (fderiv ℝ (vectorPotential L) x) := by
   funext x
   rw [curlOperator_apply,← vectorCurl_eq_matrix _ x
-    ((vectorPotential_smooth L).differentiable (by simp) x)]
+    ((vectorPotential_smooth L).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true]) x)]
   have he : (fun i x => vectorPotential L x i)=potential L := by
     funext i y
     exact vectorPotential_apply L y i
@@ -3390,7 +3411,8 @@ theorem velocity_sup_bound (L : Space →L[ℝ] Space) : HasSupBound (velocity L
   rw [velocity_eq_curlOperator]
   intro n x
   have h := linear_bound curlOperator (fderiv ℝ (vectorPotential L))
-    ((vectorPotential_smooth L).fderiv_right (m := ∞) (by simp))
+    ((vectorPotential_smooth L).fderiv_right (m := ∞) (by simp only [ENat.coe_top_add_one,
+        Std.le_refl]))
     1024 (3*potentialAmplitude L*256) 0 (fun j y => by
       simpa only [majorant,Nat.add_zero,mul_assoc,show 4*(256 : ℝ)=1024 by
           norm_num] using hd j y) n x
@@ -3500,7 +3522,8 @@ theorem field_uniform_Hq (β : ℝ) (hβ : |β| ≤ 1) (q n : ℕ) :
       (field (linear β)).translation_contDiff n ≤
         sobolevCoefficientAmplitude (Fin 3) q 1024 uniformL2Amplitude *
           (sobolevCoefficientRadius (Fin 3) 1024)^n*(n.factorial : ℝ)^2 :=
-  SmoothL2Field.classicalBlockSize_of_jet_bound direction (by intro i; simp [direction]) q
+  SmoothL2Field.classicalBlockSize_of_jet_bound direction (by intro i; simp only [direction,
+      PiLp.norm_single, norm_one, Std.le_refl]) q
     (field (linear β)) uniformL2Amplitude 1024 uniformL2Amplitude_nonneg (by norm_num)
     (field_uniform_jet β hβ) n
 
@@ -3511,7 +3534,7 @@ theorem beta_bound (x₀ : ℝ) (hx : 1 ≤ x₀) : |(x₀^2)⁻¹| ≤ 1 := by
 
 theorem initial_gradient (x₀ : ℝ) :
     fderiv ℝ (field (linear ((x₀^2)⁻¹))).field 0=linear ((x₀^2)⁻¹) :=
-  velocity_fderiv_plateau _ (linear_trace _) 0 (by simp)
+  velocity_fderiv_plateau _ (linear_trace _) 0 (by simp only [norm_zero, zero_lt_one])
 
 end EulerBaseDatum
 
@@ -3594,7 +3617,7 @@ theorem solution_initial_gradient :
       ⟨0,le_rfl,solutionTime_pos.le⟩ : Space → Space)=velocity (linear β) :=
     funext (solution_initial_velocity β hβ ell hell hell1)
   rw [he]
-  exact velocity_fderiv_plateau _ (linear_trace β) 0 (by simp)
+  exact velocity_fderiv_plateau _ (linear_trace β) 0 (by simp only [norm_zero, zero_lt_one])
 
 theorem solution_initial_support :
     tsupport ((solutionParent β hβ ell hell hell1).velocity.field
@@ -3860,12 +3883,14 @@ theorem initial_pressure_numerator (t : Icc (0 : ℝ) initialTime)
           ((initialParent β hβ ell hell hell1).transverseData
             (EuclideanSpace.single 0 1) (by simp) R S hS) ξ t x)⟫_ℝ := by
   have hξnorm : ‖ξ‖=1 := by
-    have hn : ‖(R ξ : Space)‖=1 := by rw [hξ]; simp
+    have hn : ‖(R ξ : Space)‖=1 := by rw [hξ]; simp only [Fin.isValue, PiLp.norm_single, norm_one]
     exact (R.norm_map ξ).symm.trans hn
   apply source_numerator_pos (initialLabelData β hβ ell hell hell1)
     (EuclideanSpace.single 0 1) (by simp) R S hS ξ hξnorm x _ _ _ t
   · rw [initialStrain_plateau β hβ ell hell hell1 x hx,hξ,linear_q]
-    simp [EuclideanSpace.inner_single_left,PiLp.add_apply,PiLp.smul_apply]
+    simp only [Fin.isValue, EuclideanSpace.inner_single_left, conj_trivial, PiLp.add_apply,
+        PiLp.single_eq_same, PiLp.smul_apply, ne_eq, Fin.reduceEq, not_false_eq_true,
+        PiLp.single_eq_of_ne, smul_eq_mul, mul_zero, add_zero, mul_one]
   · exact initialTime_small.1.trans (by norm_num)
   · exact initialTime_small.2.trans (by norm_num)
 

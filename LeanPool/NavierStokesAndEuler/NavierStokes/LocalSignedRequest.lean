@@ -147,8 +147,8 @@ theorem localize_supported {a b : ℝ} {U : Set S} {c : S → ℝ}
     (hcs : tsupport c ⊆ U) {f : PressureStream.Lift S → V} (hs : SupportedOn a b U f) :
     RadialAlias.RadiallySupported a b (localize c f) := by
   intro p hp
-  have hc : c p.2.1 ≠ 0 := by intro hz; exact hp (by simp [localize, hz])
-  have hf : f p ≠ 0 := by intro hz; exact hp (by simp [localize, hz])
+  have hc : c p.2.1 ≠ 0 := by intro hz; exact hp (by simp only [localize, hz, zero_smul])
+  have hf : f p ≠ 0 := by intro hz; exact hp (by simp only [localize, hz, smul_zero])
   exact hs p (hcs (subset_tsupport c hc)) hf
 
 omit [NormedSpace ℝ S] in
@@ -157,7 +157,7 @@ theorem localize_periodic {U : Set S} {c : S → ℝ}
     PressureStream.TorusPeriodicLift (localize c f) := by
   intro r s Y k
   by_cases hc : c s = 0
-  · simp [localize, hc]
+  · simp only [localize, hc, smul_eq_mul, zero_mul]
   · simp only [localize, hp r s (hcs (subset_tsupport c hc)) Y k]
 
 theorem exists_fiber_localization [FiniteDimensional ℝ S]
@@ -172,7 +172,7 @@ theorem exists_fiber_localization [FiniteDimensional ℝ S]
   have hcs : tsupport c ⊆ U := by
     rw [c.tsupport_eq]
     intro t ht
-    exact hball ((Metric.closedBall_subset_ball (by dsimp [c]; linarith only [hρ])) ht)
+    exact hball ((Metric.closedBall_subset_ball (by dsimp only [c]; linarith only [hρ])) ht)
   refine ⟨c, c.contDiff, hcs, localize_smooth hU c.contDiff hcs hf, ?_⟩
   filter_upwards [c.eventuallyEq_one] with t ht
   intro r Y
@@ -202,21 +202,24 @@ theorem pastIntegral_freeze (M : ℝ) (v : PressureStream.Plane) (f : PressureSt
     TransportPrimitive.pastIntegral M (0, v) (freezeSlow p.2.1 f) p =
         TransportPrimitive.pastIntegral M (0, v) f p := by
   rcases p with ⟨r, s, Y⟩
-  simp [TransportPrimitive.pastIntegral, TransportPrimitive.shift, freezeSlow]
+  simp only [TransportPrimitive.pastIntegral, freezeSlow, TransportPrimitive.shift, Prod.smul_mk,
+      smul_zero, Prod.mk_add_mk, add_zero]
 
 theorem totalIntegral_freeze (M : ℝ) (v : PressureStream.Plane) (f : PressureStream.Lift S → V)
     (p : PressureStream.Lift S) :
     TransportPrimitive.totalIntegral M (0, v) (freezeSlow p.2.1 f) p =
         TransportPrimitive.totalIntegral M (0, v) f p := by
   rcases p with ⟨r, s, Y⟩
-  simp [TransportPrimitive.totalIntegral, TransportPrimitive.shift, freezeSlow]
+  simp only [TransportPrimitive.totalIntegral, freezeSlow, TransportPrimitive.shift, Prod.smul_mk,
+      smul_zero, Prod.mk_add_mk, add_zero]
 
 theorem futureIntegral_freeze (M : ℝ) (v : PressureStream.Plane) (f : PressureStream.Lift S → V)
     (p : PressureStream.Lift S) :
     TransportPrimitive.futureIntegral M (0, v) (freezeSlow p.2.1 f) p =
         TransportPrimitive.futureIntegral M (0, v) f p := by
   rcases p with ⟨r, s, Y⟩
-  simp [TransportPrimitive.futureIntegral, TransportPrimitive.shift, freezeSlow]
+  simp only [TransportPrimitive.futureIntegral, freezeSlow, TransportPrimitive.shift, Prod.smul_mk,
+      smul_zero, Prod.mk_add_mk, add_zero]
 
 /-! ## Weighted estimates on one slow fiber -/
 
@@ -552,16 +555,16 @@ omit [CompleteSpace V] in
 theorem physicalCompact_fiberLocal (d a b M : ℝ) (v : PressureStream.Plane) :
     FiberLocal (V := V) (physicalCompact d a b M ((0 : S), v)) := by
   intro f g s he r Y
-  simp [physicalCompact, pullback, Function.comp_apply, TransportPrimitive.compactIntegral,
-    TransportPrimitive.pastIntegral, TransportPrimitive.totalIntegral, normalizeSource,
-    liftChart, TransportPrimitive.shift, he]
+  simp only [physicalCompact, pullback, comp_apply, TransportPrimitive.compactIntegral,
+      TransportPrimitive.pastIntegral, normalizeSource, TransportPrimitive.shift, liftChart,
+      Prod.smul_mk, smul_zero, Prod.mk_add_mk, add_zero, he, TransportPrimitive.totalIntegral]
 
 omit [CompleteSpace V] in
 theorem physicalAlias_fiberLocal (d a b M : ℝ) (v : PressureStream.Plane) :
     FiberLocal (V := V) (physicalAlias d a b M ((0 : S), v)) := by
   intro f g s he r Y
-  simp [physicalAlias, TransportPrimitive.totalIntegral, normalizeSource,
-    liftChart, TransportPrimitive.shift, he]
+  simp only [physicalAlias, TransportPrimitive.totalIntegral, normalizeSource,
+      TransportPrimitive.shift, liftChart, Prod.smul_mk, smul_zero, Prod.mk_add_mk, add_zero, he]
 
 omit [NormedAddCommGroup S] [NormedSpace ℝ S] in
 theorem weightedSource_fiberLocal :
@@ -1182,7 +1185,7 @@ theorem SupportedOn.sub {a b : ℝ} {U : Set S} {f g : PressureStream.Lift S →
     SupportedOn a b U (fun p => f p - g p) := by
   intro p hp hn
   by_cases hz : f p = 0
-  · exact hg p hp (fun hz' => hn (by simp [hz, hz']))
+  · exact hg p hp (fun hz' => hn (by simp only [hz, hz', sub_self]))
   · exact hf p hp hz
 
 /-- The local pressure is the same linear integral operator used globally. -/
@@ -1248,8 +1251,10 @@ theorem normalizedSlowDomain_open {coord : ℝ} (hc : 0 < coord) (hc1 : coord < 
       continuous_const.prodMk (continuous_id.prodMk continuous_const))
   convert! h using 1
   ext s
-  simp [normalizedSlowDomain, MeanRankUpdate.normalizedDomain, chartQ_eq_slow,
-    PhysicalCoordinateBounds.positiveTime, MeanRankUpdate.chartInput_apply]
+  simp only [normalizedSlowDomain, Prod.mk.eta, mem_Ioo, mem_ofPred_eq,
+      MeanRankUpdate.normalizedDomain, PhysicalCoordinateBounds.positiveTime,
+      MeanRankUpdate.chartInput_apply, chartQ_eq_slow, preimage_ofPred_eq, Left.neg_neg_iff,
+      zero_lt_one, and_self, and_true]
 
 theorem normalizedDomain_eq (coord qlo qhi rlo rhi : ℝ) :
     MeanRankUpdate.normalizedDomain coord qlo qhi rlo rhi =
@@ -1329,7 +1334,7 @@ theorem meanClass_temporalInverse {a b cL cR : ℝ}
   change ‖iteratedFDeriv ℝ j (TemporalMeanUpdate.temporalInverse (localize c (f n))) p‖ ≤ K * B
       at ho
   rw [(temporalInverse_fiberLocal.germ he).jet_eq j p.1 p.2.2] at ho
-  exact ho.trans_eq (by dsimp [B, majorant]; ring)
+  exact ho.trans_eq (by dsimp only [majorant, B]; ring)
 
 omit [FiniteDimensional ℝ S] in
 omit [NormedAddCommGroup S] [NormedSpace ℝ S] in
@@ -1635,7 +1640,7 @@ theorem meanClass_divideRadius {a b cL cR : ℝ}
   apply MeanRankUpdate.meanClass_congr_on
     (meanClass_radialMultiply ha hcL hcR ε L hε hεone hL U hU hclass hφ)
   intro n p hp
-  dsimp [PressureStream.divideRadius, φ]
+  dsimp only [PressureStream.divideRadius, φ]
   rw [positiveRadius_eq_self (show 0 < a / 4 by positivity) (by linarith only [ha, hp, hp.1.1])]
   simp only [div_eq_mul_inv, mul_comm]
 
@@ -1724,7 +1729,8 @@ theorem stream_divergence_zero_on {a b d M : ℝ}
     ((slowDomain_open hU).mem_nhds hp)
   exact PressureStream.stream_divergence_zero ((0 : S), v) w
     (hpot.of_le (ENat.natCast_lt_of_coe_top_le_withTop le_rfl 2).le)
-    ((PressureStream.physicalSpeed_smooth d M hr).differentiableAt (by simp)) hr
+    ((PressureStream.physicalSpeed_smooth d M hr).differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) hr
 
 end FinalStreamClasses
 
@@ -1919,7 +1925,7 @@ theorem class_comp {s : StripData D} {t : StripData E} {w : ℕ → D → ℝ}
     (fun i hi him => by
       rw [iteratedFDerivWithin_of_isOpen i t.isOpen_domain hx]
       exact (hBj i hi (him.trans hj) x hx).trans
-        (by simpa using pow_le_pow_right₀ hB hi))
+        (by simpa only [pow_one] using pow_le_pow_right₀ hB hi))
   rw [iteratedFDerivWithin_of_isOpen j t.isOpen_domain hx] at hbound
   calc
     ‖iteratedFDeriv ℝ j (fun x => f n (Φ x)) x‖ ≤
@@ -2194,8 +2200,9 @@ theorem compact_fiberLocal (χ : ℝ → ℝ) (M : ℝ) (v : Plane) :
       (TransportPrimitive.compactIntegral χ M ((0 : S), v) :
         (PressureStream.Lift S → ℝ) → PressureStream.Lift S → ℝ) := by
   intro f g s he r Y
-  simp [TransportPrimitive.compactIntegral, TransportPrimitive.pastIntegral,
-    TransportPrimitive.totalIntegral, TransportPrimitive.shift, he]
+  simp only [TransportPrimitive.compactIntegral, TransportPrimitive.pastIntegral,
+      TransportPrimitive.shift, Prod.smul_mk, smul_zero, Prod.mk_add_mk, add_zero, he,
+      TransportPrimitive.totalIntegral, smul_eq_mul]
 
 theorem compact_contDiffOn {a b M : ℝ} {χ : ℝ → ℝ} (hχ : ContDiff ℝ ∞ χ)
     (v : Plane) {U : Set S} (hU : IsOpen U) {f : PressureStream.Lift S → ℝ}
@@ -2255,10 +2262,10 @@ theorem sigma_fiberLocal (P : SignedStressPrimitive.Patch) (e : ℕ) :
       (SignedStressPrimitive.sigma P e :
         (PressureStream.Lift S → ℝ) → PressureStream.Lift S → ℝ) := by
   intro f g s he r Y
-  simp [SignedStressPrimitive.sigma, SignedStressPrimitive.primitive,
-    SignedStressPrimitive.weightedSource, TransportPrimitive.compactIntegral,
-    TransportPrimitive.pastIntegral, TransportPrimitive.totalIntegral,
-    TransportPrimitive.shift, he]
+  simp only [SignedStressPrimitive.sigma, SignedStressPrimitive.primitive,
+      TransportPrimitive.compactIntegral, TransportPrimitive.pastIntegral,
+      SignedStressPrimitive.weightedSource, TransportPrimitive.shift, zero_mul, smul_zero,
+      Prod.mk_add_mk, add_zero, he, TransportPrimitive.totalIntegral, smul_eq_mul, neg_mul]
 
 theorem sigma_contDiffOn (P : SignedStressPrimitive.Patch) (e : ℕ)
     {U : Set S} (hU : IsOpen U) {f : PressureStream.Lift S → ℝ}
@@ -2474,7 +2481,8 @@ theorem normalizedRequest_class {coord : ℝ} (U : SlowRegion coord)
     (movingStripData U P.a P.b cL cR P.a_pos hcL hcR ε L hε hεone hL) (-1)
   intro i
   fin_cases i
-  · simpa [normalizedRequest, requestedStress, Real.rpow_neg_one, sub_eq_add_neg] using
+  · simpa only [sub_eq_add_neg, normalizedRequest, requestedStress, Fin.zero_eta, Fin.isValue,
+      Pi.smul_apply, Matrix.cons_val_zero, smul_eq_mul, Real.rpow_neg_one] using
       h1.band_smul hscale
   · simpa [normalizedRequest, requestedStress, Real.rpow_neg_one, sub_eq_add_neg] using
       h2.band_smul hscale
@@ -2525,9 +2533,10 @@ theorem sigma_fiber_congr (P : SignedStressPrimitive.Patch) (e : ℕ)
     {f : ℝ × S → ℝ} {g : ℝ × T → ℝ} {s : S} {t : T}
     (he : ∀ r, f (r, s) = g (r, t)) (r : ℝ) :
     SignedStressPrimitive.sigma P e f (r, s) = SignedStressPrimitive.sigma P e g (r, t) := by
-  simp [SignedStressPrimitive.sigma, SignedStressPrimitive.primitive,
-    SignedStressPrimitive.weightedSource, TransportPrimitive.compactIntegral,
-    TransportPrimitive.pastIntegral, TransportPrimitive.totalIntegral, TransportPrimitive.shift, he]
+  simp only [SignedStressPrimitive.sigma, SignedStressPrimitive.primitive,
+      TransportPrimitive.compactIntegral, TransportPrimitive.pastIntegral,
+      SignedStressPrimitive.weightedSource, TransportPrimitive.shift, zero_mul, smul_zero,
+      Prod.mk_add_mk, add_zero, he, TransportPrimitive.totalIntegral, smul_eq_mul, neg_mul]
 
 theorem sigma_fiber_mul (P : SignedStressPrimitive.Patch) (e : ℕ) (u : ℝ)
     {f : ℝ × S → ℝ} {g : ℝ × T → ℝ} {s : S} {t : T}
@@ -2875,7 +2884,8 @@ theorem physicalBump_improvedClass_of_moment {coord : ℝ} (U : SlowRegion coord
   simp only [SignedStressPrimitive.physicalBump, hmoment n x.2.1 hx.1,
     Real.rpow_one, smul_eq_mul, Pi.mul_apply]
   rw [fderiv_slowLift (D n) x v
-    (((hD n).contDiffAt (U.isOpen.mem_nhds hx.1)).differentiableAt (by simp))]
+    (((hD n).contDiffAt (U.isOpen.mem_nhds hx.1)).differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))]
   change _ = ε n * _
   ring
 

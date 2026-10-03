@@ -264,7 +264,9 @@ theorem WordBound.multiply (hG : G.WordBound q R A d)
       C * majorant Rc 0 n) :
     (K.multiply G).WordBound q R (3*sobolevCoefficientAmplitude (Fin 4) q Rc C*A) d :=
   product_orbit_block_bound P K.path K.orbit standardDirection
-    (fun i => by cases i using Fin.cases <;> simp [Prod.norm_def]) q
+    (fun i => by cases i using Fin.cases <;> simp only [Fin.isValue, standardDirection_zero,
+        Prod.norm_def, norm_zero, norm_one, zero_le_one, sup_of_le_right, Std.le_refl,
+        standardDirection_succ, PiLp.norm_single, sup_of_le_left]) q
     G.path G.orbit Rc C R A hRc hC hA hR hK d hG
 
 end EulerPacketCylinderField.Field

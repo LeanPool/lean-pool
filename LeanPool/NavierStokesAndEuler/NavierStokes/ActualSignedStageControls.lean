@@ -157,7 +157,8 @@ theorem coefficientScale_pos (l : SignedLabel B N0) (n : ℕ) :
 theorem nativePoint_slow_auxiliary (l : SignedLabel B N0) (n : ℕ) (k : Frequency)
     (x : FullPoint) (v : Plane) (t : ℝ) :
     (nativePoint l n k (x + t • ((0, (0, v)), 0))).1 = (nativePoint l n k x).1 := by
-  simp [nativePoint, ActualPrimary.nativeSlow, ActualPrimary.toAbsolute]
+  simp only [nativePoint, ActualPrimary.nativeSlow, ActualPrimary.toAbsolute, Prod.smul_mk,
+      smul_eq_mul, mul_zero, smul_zero, Prod.fst_add, add_zero, Prod.snd_add, map_add, map_smul]
 
 theorem nativePoint_angle (l : SignedLabel B N0) (n : ℕ) (k : Frequency)
     (x : FullPoint) (t : ℝ) :
@@ -405,7 +406,7 @@ theorem native_phase_jets (U : LocalSignedRequest.SlowRegion (2 * ActualPrimary.
   let r := min (ActualPrimary.phases B N0 0).r (ActualPrimary.phases B N0 1).r
   have hM0 := (ActualPrimary.phases B N0 0).one_le_M
   have hM1 := (ActualPrimary.phases B N0 1).one_le_M
-  have hM : 1 ≤ M := by dsimp [M]; linarith only [hM0, hM1]
+  have hM : 1 ≤ M := by dsimp only [Fin.isValue, M]; linarith only [hM0, hM1]
   have hMj (j : Fin 2) : (ActualPrimary.phases B N0 j).M ≤ M := by
     fin_cases j <;> dsimp [M] <;> linarith only [hM1, hM0]
   have hr : 0 < r := lt_min (ActualPrimary.phases B N0 0).r_pos (ActualPrimary.phases B N0 1).r_pos

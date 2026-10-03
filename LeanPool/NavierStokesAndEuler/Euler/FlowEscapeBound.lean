@@ -43,7 +43,7 @@ theorem norm_integral_sq_le_action
     ‖∫ t, V t ∂μ‖ ^ 2 ≤ μ.real univ * (∫ t, ‖V t‖ ^ 2 ∂μ) := by
   have hp : (2 : ℝ).HolderConjugate 2 := by norm_num [Real.holderConjugate_iff]
   have hn : MemLp (fun t => ‖V t‖) (ENNReal.ofReal (2 : ℝ)) μ := by
-    simpa using hV.norm
+    simpa only [ENNReal.ofReal_ofNat] using hV.norm
   have ho : MemLp (fun _ : α => (1 : ℝ)) (ENNReal.ofReal (2 : ℝ)) μ := memLp_const 1
   have h := integral_mul_le_Lp_mul_Lq_of_nonneg hp
     (Eventually.of_forall (fun t => norm_nonneg (V t)))
@@ -103,7 +103,7 @@ theorem curve_escape_sq_le_action
       (Eventually.of_forall (fun t => sq_nonneg ‖V t‖)) hi
   calc
     (R - K) ^ 2 ≤ ‖X s - X 0‖ ^ 2 := hsq
-    _ ≤ s * (∫ t in Icc 0 s, ‖V t‖ ^ 2) := by simpa using hd
+    _ ≤ s * (∫ t in Icc 0 s, ‖V t‖ ^ 2) := by simpa only [sub_zero] using hd
     _ ≤ T * (∫ t in Icc 0 T, ‖V t‖ ^ 2) :=
       mul_le_mul hs.2 hi_mono (integral_nonneg (fun t => sq_nonneg ‖V t‖)) hT
 
@@ -162,7 +162,8 @@ theorem escape_measure_le_of_action
     (haenergy : (∫ x, action x ∂μ) ≤ T * energy)
     (hescape : ∀ x ∈ S, (R - K) ^ 2 ≤ T * action x) :
     μ.real S ≤ energy * T ^ 2 / (R - K) ^ 2 := by
-  have : IsFiniteMeasure (μ.restrict S) := ⟨by simpa using hfinite.lt_top⟩
+  have : IsFiniteMeasure (μ.restrict S) := ⟨by simpa only [MeasurableSet.univ,
+      Measure.restrict_apply, univ_inter] using hfinite.lt_top⟩
   have hb : (R - K) ^ 2 * μ.real S ≤ T * (∫ x, action x ∂μ) := by
     calc
       (R - K) ^ 2 * μ.real S = ∫ _ in S, (R - K) ^ 2 ∂μ := by

@@ -174,7 +174,7 @@ def intColor (z : ℤ) : Fin 5 :=
 theorem intColor_eq_of_close {z w : ℤ} (hc : intColor z = intColor w)
     (hd : |z - w| ≤ 4) : z = w := by
   have hv := congrArg Fin.val hc
-  dsimp [intColor] at hv
+  dsimp only [intColor] at hv
   have hz0 := Int.emod_nonneg z (by norm_num : (5 : ℤ) ≠ 0)
   have hw0 := Int.emod_nonneg w (by norm_num : (5 : ℤ) ≠ 0)
   have hdiff := abs_le.mp hd
@@ -323,7 +323,8 @@ theorem candidates_card_le (D : ℝ) (L : Label) :
       Finset.card_biUnion_le
     _ ≤ ∑ _m ∈ Finset.Icc (L.1 - 4) (L.1 + 4), (2 * indexRadius D + 1) ^ 3 * 2 :=
       Finset.sum_le_sum (fun m _ => candidatesAtLevel_card_le D L m)
-    _ = (Finset.Icc (L.1 - 4) (L.1 + 4)).card * ((2 * indexRadius D + 1) ^ 3 * 2) := by simp
+    _ = (Finset.Icc (L.1 - 4) (L.1 + 4)).card * ((2 * indexRadius D + 1) ^ 3 * 2) := by simp only [
+        Finset.sum_const, Nat.card_Icc, smul_eq_mul]
     _ ≤ 9 * ((2 * indexRadius D + 1) ^ 3 * 2) := Nat.mul_le_mul_right _ hlevels
     _ = degreeBound D := by unfold degreeBound; ring
 
@@ -473,7 +474,7 @@ theorem nativeArgument_nonneg (h : ℝ) (hh : 0 ≤ h) {n : ℕ} (hn : 4 ≤ n) 
         Real.rpow_le_rpow_of_exponent_le (by norm_num) (by nlinarith only [hh])
   have hratio : 1 ≤ dyadicQ n ^ (-1 - h) / (n : ℝ) ^ 2 := by
     apply (le_div_iff₀ (pow_pos hn' 2)).mpr
-    simpa using hq
+    simpa only [one_mul] using hq
   exact div_nonneg (Real.log_nonneg hratio) log_coverGrowth_pos.le
 
 theorem nativeIndex_eq_integer_floor (h : ℝ) (hh : 0 ≤ h) {n : ℕ} (hn : 4 ≤ n) :
@@ -662,7 +663,7 @@ theorem timeCoefficient_bounds (h : ℝ) (hh : 0 ≤ h) {n : ℕ} (hn : 4 ≤ n)
     rw [target_times_Q] at hu'
     have hdiv : (1 / S n) / Tg ≤ timeCoefficient h n := by
       apply (div_le_iff₀ Tg_pos).mpr
-      simpa [timeCoefficient, mul_assoc, mul_comm, mul_left_comm] using hu'
+      simpa only [one_div, timeCoefficient, mul_comm, mul_left_comm] using hu'
     simpa only [div_div, mul_comm] using hdiv
   · have hl' := mul_le_mul_of_nonneg_right hl hQ
     simpa only [target_times_Q, timeCoefficient] using hl'
@@ -700,7 +701,7 @@ private theorem one_div_TS_rpow {n : ℕ} (hn : 1 ≤ n) :
     (1 / (Tg * S n)) ^ rho = S n ^ (-rho) / Lambda := by
   rw [Real.div_rpow zero_le_one (mul_pos Tg_pos (S_pos hn)).le, Real.one_rpow,
     Real.mul_rpow Tg_pos.le (S_pos hn).le, Tg_rpow_rho, Real.rpow_neg (S_pos hn).le]
-  simp [div_eq_mul_inv, mul_comm]
+  simp only [div_eq_mul_inv, mul_inv_rev, mul_comm, one_mul]
 
 /-- The full `M_i` comparison in (25), obtained from the actual native index. -/
 theorem radialCoefficient_bounds (h : ℝ) (hh : 0 ≤ h) {n : ℕ} (hn : 4 ≤ n) :
@@ -732,8 +733,8 @@ theorem radialCoefficient_inv_upper (h : ℝ) (hh : 0 ≤ h) {n : ℕ} (hn : 4 �
       (Real.rpow_pos_of_pos (S_pos (by omega)) _)) Lambda_pos
   have hi := one_div_le_one_div_of_le hpos hl
   have hS : 0 < S n := S_pos (by omega)
-  simpa [Real.rpow_neg (epsilon_pos h n).le, Real.rpow_neg hS.le,
-    div_eq_mul_inv, mul_assoc, mul_comm, mul_left_comm] using hi
+  simpa only [mul_comm, mul_left_comm, ge_iff_le, div_eq_mul_inv, one_mul,
+      Real.rpow_neg (epsilon_pos h n).le, Real.rpow_neg hS.le, mul_inv_rev, inv_inv] using hi
 
 theorem timeCoefficient_inv_lower (h : ℝ) (hh : 0 ≤ h) {n : ℕ} (hn : 4 ≤ n) :
     S n ≤ (timeCoefficient h n)⁻¹ := by

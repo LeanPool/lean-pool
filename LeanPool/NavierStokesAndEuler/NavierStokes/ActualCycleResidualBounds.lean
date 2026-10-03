@@ -372,7 +372,7 @@ theorem actual_slow_le : ∃ C : ℝ, 1 ≤ C ∧ ∃ p : ℕ,
   intro n hn
   have hS := PhysicalGraphBounds.S_ge_one (show 1 ≤ n by omega)
   change max 1 (ChartScales.S n) ≤ 1 * ChartScales.S n ^ 1
-  simp [max_eq_right hS]
+  simp only [max_eq_right hS, pow_one, one_mul, Std.le_refl]
 
 theorem actual_epsilon (n : ℕ) :
     ActualInitialization.geometry.strip.epsilon n = ChartScales.epsilon ActualPrimary.h n := rfl
@@ -486,7 +486,7 @@ theorem meanGood_eq_reduced_sub (n : ℕ) {z : Point}
   rw [meanGoodResidual_at _ _ n z i
     (H.baseAngular n z (ActualInitialization.geometry.strip_subset hz) i)
     (H.representation.gaussian_angularContinuous n z i) (ha n z i), H.gaussianMean, ham]
-  simp
+  simp only [Pi.zero_apply, sub_zero]
 
 /-- The missing radial component is derived from the measured pressure
 debt, the literal reconstructed pressure and the current compact alias. -/
@@ -781,7 +781,8 @@ theorem realization_native_smooth {h : ℝ} {N : ℕ} {gap : ℕ → ℕ} {U : S
   have hcomp := hs.comp PhysicalResidualTZ.swapCylinder.contDiff.contDiffOn
     (show MapsTo PhysicalResidualTZ.swapCylinder U V from fun z hz => by
       change PhysicalResidualTZ.swapCylinder (PhysicalResidualTZ.swapCylinder z) ∈ U
-      simpa using hz)
+      simpa only [PhysicalResidualTZ.swapCylinder_apply, PhysicalResidualTZ.swapSlow_apply,
+          Prod.mk.eta] using hz)
   apply hcomp.congr
   intro z hz
   ext i
@@ -991,7 +992,8 @@ theorem gaussian_coeff_zero_off (l : Index B N0) (n : ℕ) (z : Point)
     (gaussianModes x l).velocity n i j z = 0 := by
   by_cases hj : j = 0
   · subst j
-    simp [gaussianModes, HarmonicResidual.nonconstant]
+    simp only [gaussianModes, HarmonicResidual.nonconstant, AddMonoidAlgebra.coeff_erase,
+        Finsupp.erase_same, Pi.zero_apply]
   · have he := ((H.inputSupport l).gaussian n i) j hj z hz hn
     rw [HarmonicResidual.realCoefficients_eq_self (H.realCoefficients.gaussian l n i)] at he
     simpa only [gaussianModes, HarmonicResidual.nonconstant, AddMonoidAlgebra.coeff_erase,

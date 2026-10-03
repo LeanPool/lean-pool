@@ -96,7 +96,8 @@ theorem pressureTerm_quadratic (amp slope : ℝ) (M : Matrix) (r w z : Space) :
 theorem normal_projection_quadratic_le (r z : Space) :
     ⟪r,z⟫_ℝ^2/‖r‖^2 ≤ ‖z‖^2 := by
   by_cases hr : r=0
-  · simp [hr]
+  · simp only [hr, inner_zero_left, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow,
+      norm_zero, div_zero, norm_nonneg, pow_succ_nonneg]
   have hn : 0 < ‖r‖^2 := sq_pos_of_pos (norm_pos_iff.mpr hr)
   have h := norm_inner_le_norm (𝕜 := ℝ) r z
   have hsq := pow_le_pow_left₀ (norm_nonneg ⟪r,z⟫_ℝ) h 2

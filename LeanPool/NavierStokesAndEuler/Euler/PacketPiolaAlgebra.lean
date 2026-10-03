@@ -50,7 +50,9 @@ theorem operatorMatrix_apply (A : Space →L[ℝ] Space) (x : Space) (i : Fin 3)
     (A x) i = (operatorMatrix A).mulVec (WithLp.ofLp x) i := by
   have hx : (∑ j : Fin 3, x j • EuclideanSpace.single j (1 : ℝ)) = x := by
     ext j
-    simp [Pi.single_apply, mul_ite]
+    simp only [WithLp.ofLp_sum, WithLp.ofLp_smul, PiLp.ofLp_single, Finset.sum_apply, Pi.smul_apply,
+        Pi.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq,
+        Finset.mem_univ, ↓reduceIte]
   calc
     (A x) i = (A (∑ j : Fin 3, x j • EuclideanSpace.single j (1 : ℝ))) i := by rw [hx]
     _ = (operatorMatrix A).mulVec (WithLp.ofLp x) i := by
@@ -67,7 +69,7 @@ theorem operatorMatrix_comp (A B : Space →L[ℝ] Space) :
 
 theorem operatorMatrix_id : operatorMatrix (ContinuousLinearMap.id ℝ Space) = 1 := by
   ext i j
-  simp [operatorMatrix, Matrix.one_apply]
+  simp only [operatorMatrix, ContinuousLinearMap.id_apply, PiLp.single_apply, Matrix.one_apply]
 
 theorem operatorMatrix_adjoint (A : Space →L[ℝ] Space) :
     operatorMatrix (ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) A) =
@@ -86,7 +88,8 @@ theorem operatorMatrix_inverse (F : Space ≃L[ℝ] Space) :
     operatorMatrix F.toContinuousLinearMap * operatorMatrix F.symm.toContinuousLinearMap = 1 := by
   rw [← operatorMatrix_comp]
   have he : F.toContinuousLinearMap.comp F.symm.toContinuousLinearMap =
-      ContinuousLinearMap.id ℝ Space := by ext x; simp
+      ContinuousLinearMap.id ℝ Space := by ext x; simp only [
+          ContinuousLinearEquiv.coe_comp_coe_symm, ContinuousLinearMap.id_apply]
   rw [he, operatorMatrix_id]
 
 theorem adjugate_operatorMatrix (F : Space ≃L[ℝ] Space)
@@ -134,7 +137,8 @@ theorem curlMatrix_piola (F : Space ≃L[ℝ] Space)
   have h := curlMatrix_congruence F hdet (B.comp F.symm.toContinuousLinearMap)
   have he : (B.comp F.symm.toContinuousLinearMap).comp F.toContinuousLinearMap = B := by
     ext x
-    simp
+    simp only [ContinuousLinearMap.comp_apply, ContinuousLinearEquiv.coe_coe,
+        ContinuousLinearEquiv.symm_apply_apply]
   rw [he] at h
   exact h
 

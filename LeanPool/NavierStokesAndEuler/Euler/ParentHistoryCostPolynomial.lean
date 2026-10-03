@@ -54,9 +54,11 @@ theorem labelHistoryPolynomial_eval (P : ℝ) :
     labelHistoryPolynomial.eval P =
       parentDifferenceEnvelope P (frameAmplitude P) (gradientAmplitude P)
         (27*(frameAmplitude P)^2*gradientAmplitude P) (1024+4*P) := by
-  simp [labelHistoryPolynomial,parentDifferenceEnvelope,differenceEnvelope,
-    slopeDifferenceEnvelope,slopeEnvelope,generatorDifferenceEnvelope,endpointDifferenceCost,
-    gramInverseEnvelope,transportEnvelope,frameAmplitude,gradientAmplitude]
+  simp only [labelHistoryPolynomial, Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_one,
+      Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X, Polynomial.eval_ofNat,
+      parentDifferenceEnvelope, differenceEnvelope, frameAmplitude, gradientAmplitude,
+      gramInverseEnvelope, slopeEnvelope, transportEnvelope, generatorDifferenceEnvelope,
+      slopeDifferenceEnvelope, endpointDifferenceCost]
 
 /-- Label history constant, given by `coefficientCost labelHistoryPolynomial`. -/
 def labelHistoryConstant : ℝ := coefficientCost labelHistoryPolynomial
@@ -68,10 +70,10 @@ theorem labelHistoryConstant_pos : 0 < labelHistoryConstant := coefficientCost_p
 theorem labelHistoryEnvelope_power (K Ti : ℝ) (hK : 0 ≤ K) (hTi : 0 ≤ Ti) :
     labelHistoryEnvelope K Ti ≤ labelHistoryConstant*(1+K+Ti)^labelHistoryPower := by
   let P := 1+K+Ti
-  have hP : 1 ≤ P := by dsimp [P]; linarith only [hK, hTi]
+  have hP : 1 ≤ P := by dsimp only [P]; linarith only [hK, hTi]
   have hP0 : 0 ≤ P := zero_le_one.trans hP
-  have hKP : K ≤ P := by dsimp [P]; linarith only [hTi]
-  have hTiP : Ti ≤ P := by dsimp [P]; linarith only [hK]
+  have hKP : K ≤ P := by dsimp only [P]; linarith only [hTi]
+  have hTiP : Ti ≤ P := by dsimp only [P]; linarith only [hK]
   have hE := embeddingCost_nonneg
   have hF0 := frameAmplitude_nonneg K
   have hV0 := gradientAmplitude_nonneg K

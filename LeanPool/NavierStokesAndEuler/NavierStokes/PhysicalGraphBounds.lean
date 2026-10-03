@@ -66,7 +66,8 @@ theorem rotate_contDiff (j : Index) : ContDiff ℝ ∞ (rotate j) := by
   unfold rotate
   fin_cases j
   · exact (contDiff_id : ContDiff ℝ ∞ (fun p : Plane => p))
-  · simpa [rotate] using
+  · simpa only [Nat.succ_eq_add_one, Nat.reduceAdd, Prod.mk.eta, Fin.mk_one, Fin.isValue,
+      Matrix.cons_val_one, Matrix.cons_val_zero] using
       (contDiff_snd.prodMk contDiff_fst.neg : ContDiff ℝ ∞ (fun p : Plane => (p.2, -p.1)))
   · simpa [rotate] using
       (contDiff_fst.neg.prodMk contDiff_snd.neg : ContDiff ℝ ∞ (fun p : Plane => (-p.1, -p.2)))
@@ -74,17 +75,25 @@ theorem rotate_contDiff (j : Index) : ContDiff ℝ ∞ (rotate j) := by
       (contDiff_snd.neg.prodMk contDiff_fst : ContDiff ℝ ∞ (fun p : Plane => (-p.2, p.1)))
 
 theorem unrotate_rotate (j : Index) (p : Plane) : unrotate j (rotate j p) = p := by
-  fin_cases j <;> simp [rotate, unrotate]
+  fin_cases j <;> simp only [unrotate, Nat.succ_eq_add_one, Nat.reduceAdd, rotate, Prod.mk.eta,
+      Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero, Fin.mk_one, Matrix.cons_val_one, neg_neg,
+      Fin.reduceFinMk, Matrix.cons_val]
 
 theorem rotate_unrotate (j : Index) (p : Plane) : rotate j (unrotate j p) = p := by
-  fin_cases j <;> simp [rotate, unrotate]
+  fin_cases j <;> simp only [rotate, Nat.succ_eq_add_one, Nat.reduceAdd, unrotate, Prod.mk.eta,
+      Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero, Fin.mk_one, Matrix.cons_val_one, neg_neg,
+      Fin.reduceFinMk, Matrix.cons_val]
 
 theorem norm_rotate (j : Index) (p : Plane) : ‖rotate j p‖ = ‖p‖ := by
-  fin_cases j <;> simp [rotate, Prod.norm_def, max_comm]
+  fin_cases j <;> simp only [rotate, Nat.succ_eq_add_one, Nat.reduceAdd, Prod.mk.eta, Fin.zero_eta,
+      Fin.isValue, Matrix.cons_val_zero, Prod.norm_def, Real.norm_eq_abs, Fin.mk_one,
+      Matrix.cons_val_one, norm_neg, max_comm, Fin.reduceFinMk, Matrix.cons_val]
 
 theorem rotate_sum_sq (j : Index) (p : Plane) :
     (rotate j p).1 ^ 2 + (rotate j p).2 ^ 2 = p.1 ^ 2 + p.2 ^ 2 := by
-  fin_cases j <;> simp [rotate] <;> ring
+  fin_cases j <;> simp only [rotate, Nat.succ_eq_add_one, Nat.reduceAdd, Prod.mk.eta, Fin.zero_eta,
+      Fin.isValue, Matrix.cons_val_zero, Fin.mk_one, Matrix.cons_val_one, even_two, Even.neg_pow,
+      Fin.reduceFinMk, Matrix.cons_val] <;> ring
 
 /-- Radius, given by `Real.sqrt (p.1 ^ 2 + p.2 ^ 2)`. -/
 noncomputable def radius (p : Plane) : ℝ := Real.sqrt (p.1 ^ 2 + p.2 ^ 2)
@@ -141,7 +150,11 @@ theorem radius_polar (r θ : ℝ) : radius (polar (r, θ)) = |r| := by
 theorem polar_add_offset (j : Index) (r θ : ℝ) :
     polar (r, θ + offset j) = unrotate j (polar (r, θ)) := by
   fin_cases j <;> ext <;>
-    simp [polar, offset, unrotate, Real.cos_add, Real.sin_add]
+    simp only [polar, offset, Nat.succ_eq_add_one, Nat.reduceAdd, Fin.zero_eta, Fin.isValue,
+        Matrix.cons_val_zero, add_zero, unrotate, Fin.mk_one, Matrix.cons_val_one, Real.cos_add,
+        Real.cos_pi_div_two, mul_zero, Real.sin_pi_div_two, mul_one, zero_sub, mul_neg,
+        Real.sin_add, zero_add, Fin.reduceFinMk, Matrix.cons_val, Real.cos_pi, Real.sin_pi,
+        sub_zero, sub_self, sub_neg_eq_add]
 
 /-- Base chart, given by `(radius p, Real.arctan (p.2 / p.1))`. -/
 noncomputable def baseChart (p : Plane) : Plane :=
@@ -186,7 +199,7 @@ theorem localChart_polar (j : Index) {r θ : ℝ} (hr : 0 < r)
     conv_lhs => arg 2; arg 1; arg 2; rw [show θ = (θ - offset j) + offset j by ring]
     rw [polar_add_offset, rotate_unrotate]
   rw [localChart, hrot, baseChart_polar hr hθ]
-  simp
+  simp only [sub_add_cancel]
 
 theorem localChart_contDiffAt (j : Index) {p : Plane} (hp : 0 < (rotate j p).1) :
     ContDiffAt ℝ ∞ (localChart j) p := by
@@ -228,11 +241,15 @@ theorem exists_rotate_fst_ge {a : ℝ} {p : Plane} (hp : a ≤ ‖p‖) :
     simpa only [Prod.norm_def, Real.norm_eq_abs, le_max_iff] using hp
   rcases hh with hx | hy
   · by_cases hp : 0 ≤ p.1
-    · exact ⟨0, by simpa [rotate, abs_of_nonneg hp] using hx⟩
-    · exact ⟨2, by simpa [rotate, abs_of_neg (lt_of_not_ge hp)] using hx⟩
+    · exact ⟨0, by simpa only [rotate, Nat.succ_eq_add_one, Nat.reduceAdd, Prod.mk.eta, Fin.isValue,
+        Matrix.cons_val_zero, abs_of_nonneg hp] using hx⟩
+    · exact ⟨2, by simpa only [rotate, Nat.succ_eq_add_one, Nat.reduceAdd, Prod.mk.eta, Fin.isValue,
+        Matrix.cons_val, abs_of_neg (lt_of_not_ge hp)] using hx⟩
   · by_cases hp : 0 ≤ p.2
-    · exact ⟨1, by simpa [rotate, abs_of_nonneg hp] using hy⟩
-    · exact ⟨3, by simpa [rotate, abs_of_neg (lt_of_not_ge hp)] using hy⟩
+    · exact ⟨1, by simpa only [rotate, Nat.succ_eq_add_one, Nat.reduceAdd, Prod.mk.eta, Fin.isValue,
+        Matrix.cons_val_one, Matrix.cons_val_zero, abs_of_nonneg hp] using hy⟩
+    · exact ⟨3, by simpa only [rotate, Nat.succ_eq_add_one, Nat.reduceAdd, Prod.mk.eta, Fin.isValue,
+        Matrix.cons_val, abs_of_neg (lt_of_not_ge hp)] using hy⟩
 
 theorem annulus_covered {a b : ℝ} (ha : 0 < a) {p : Plane} (hp : p ∈ annulus a b) :
     ∃ j : Index, p ∈ sector a b j := by
@@ -298,7 +315,7 @@ theorem polar_chart {a : ℝ} (ha : 0 < a) (j : Index) {p : Plane}
     (hp : p ∈ chartDomain a j) : polar (chart a j p) = p := by
   rw [chart_eq_localChart ha j hp]
   apply polar_localChart
-  dsimp [chartDomain] at hp
+  dsimp only [chartDomain, mem_ofPred_eq] at hp
   linarith only [ha, hp]
 
 theorem chart_polar {a : ℝ} (ha : 0 < a) (j : Index) {r θ : ℝ}
@@ -312,7 +329,7 @@ theorem chart_jet_eq_localChart {a : ℝ} (ha : 0 < a) (j : Index) {p : Plane}
     (hp : p ∈ chartDomain a j) (k : ℕ) :
     iteratedFDeriv ℝ k (chart a j) p = iteratedFDeriv ℝ k (localChart j) p := by
   have he := chart_eventuallyEq_localChart ha j hp
-  have he' : chart a j =ᶠ[𝓝[univ] p] localChart j := by simpa using he
+  have he' : chart a j =ᶠ[𝓝[univ] p] localChart j := by simpa only [nhdsWithin_univ] using he
   simpa only [iteratedFDerivWithin_univ] using
     he'.iteratedFDerivWithin_eq he.eq_of_nhds k
 
@@ -410,7 +427,9 @@ theorem physicalChart_finiteJets_uniform {a : ℝ} (ha : 0 < a) (b : ℝ) (m : �
   exact h.trans ((mul_le_mul_of_nonneg_left hs (by linarith only [hC])).trans_eq (by rw [he]))
 
 theorem rotate_smul (j : Index) (c : ℝ) (p : Plane) : rotate j (c • p) = c • rotate j p := by
-  fin_cases j <;> ext <;> simp [rotate, mul_neg]
+  fin_cases j <;> ext <;> simp only [rotate, Nat.succ_eq_add_one, Nat.reduceAdd, Prod.smul_fst,
+      smul_eq_mul, Prod.smul_snd, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero, Prod.mk.eta,
+      Fin.mk_one, Matrix.cons_val_one, Prod.smul_mk, mul_neg, Fin.reduceFinMk, Matrix.cons_val]
 
 theorem radius_smul {c : ℝ} (hc : 0 < c) (p : Plane) : radius (c • p) = c * radius p := by
   simp only [radius, Prod.smul_fst, Prod.smul_snd, smul_eq_mul]
@@ -500,7 +519,7 @@ theorem chart_periodic_jets_agree {V : Type*} [NormedAddCommGroup V] [NormedSpac
     (i j : Index) {p : Plane} (hi : p ∈ chartDomain a i) (hj : p ∈ chartDomain a j) (k : ℕ) :
     iteratedFDeriv ℝ k (f ∘ chart a i) p = iteratedFDeriv ℝ k (f ∘ chart a j) p := by
   have he := chart_periodic_eventuallyEq ha f hf i j hi hj
-  have he' : f ∘ chart a i =ᶠ[𝓝[univ] p] f ∘ chart a j := by simpa using he
+  have he' : f ∘ chart a i =ᶠ[𝓝[univ] p] f ∘ chart a j := by simpa only [nhdsWithin_univ] using he
   simpa only [iteratedFDerivWithin_univ] using
     he'.iteratedFDerivWithin_eq he.eq_of_nhds k
 
@@ -534,19 +553,21 @@ noncomputable def timeDirection : Plane := (Real.sqrt 2 - 1, 1)
 
 theorem cover_radialDirection :
     SlotGeometry.cover radialDirection = ChartScales.Lambda • radialDirection := by
-  ext <;> simp [SlotGeometry.cover_apply, radialDirection, ChartScales.Lambda] <;>
+  ext <;> simp only [radialDirection, SlotGeometry.cover_apply, mul_one, ChartScales.Lambda,
+      Prod.smul_mk, smul_eq_mul] <;>
     linarith [Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
 
 theorem cover_timeDirection :
     SlotGeometry.cover timeDirection = ChartScales.Tg • timeDirection := by
-  ext <;> simp [SlotGeometry.cover_apply, timeDirection, ChartScales.Tg, SlotColoring.coverGrowth]
+  ext <;> simp only [timeDirection, SlotGeometry.cover_apply, mul_one, ChartScales.Tg,
+      SlotColoring.coverGrowth, Prod.smul_mk, smul_eq_mul]
       <;>
     linarith [Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
 
 theorem cover_pow_radialDirection (i : ℕ) :
     (SlotGeometry.cover ^ i) radialDirection = ChartScales.Lambda ^ i • radialDirection := by
   induction i with
-  | zero => simp
+  | zero => simp only [pow_zero, one_apply_eq_self, one_smul]
   | succ i hi =>
       rw [pow_succ', _root_.mul_apply_eq_comp, hi, map_smul, cover_radialDirection,
         smul_smul, pow_succ]
@@ -554,7 +575,7 @@ theorem cover_pow_radialDirection (i : ℕ) :
 theorem cover_pow_timeDirection (i : ℕ) :
     (SlotGeometry.cover ^ i) timeDirection = ChartScales.Tg ^ i • timeDirection := by
   induction i with
-  | zero => simp
+  | zero => simp only [pow_zero, one_apply_eq_self, one_smul]
   | succ i hi =>
       rw [pow_succ', _root_.mul_apply_eq_comp, hi, map_smul, cover_timeDirection,
         smul_smul, pow_succ]
@@ -812,7 +833,7 @@ theorem scaledRadial_ne_zero {n : ℕ} {p : SpaceTime} (hp : scaledRadial n p �
     radialProjection p ≠ 0 := by
   intro hz
   apply hp
-  simp [scaledRadial, hz]
+  simp only [scaledRadial, one_div, smul_apply, hz, smul_zero]
 
 /-- The bound is uniform in the dyadic band and contains no stage index.
 The compact annulus supplies constants; all powers come from the actual
@@ -917,7 +938,8 @@ noncomputable def chartLinear (h : ℝ) (n : ℕ) : SpaceTime →L[ℝ] ChartPoi
       (ChartScales.Q n ^ (-(1 / 2 : ℝ)) * p.2 0,
         (ChartScales.Q n ^ (-(1 / 2 : ℝ)) * p.2 1,
           ChartScales.Q n ^ (-CoordinateAlgebra.D h) * p.2 2))) := by
-  simp [chartLinear, smul_eq_mul]
+  simp only [chartLinear, neg_smul, one_div, Fin.isValue, ContinuousLinearMap.prod_apply, neg_apply,
+      smul_apply, ContinuousLinearMap.coe_fst', smul_eq_mul, coordinateProjection_apply, neg_mul]
 
 /-- Physical chart, given by `chartLinear h n p + (ChartScales.Q n ^ (-1 : ℝ), 0)`. -/
 noncomputable def physicalChart (h : ℝ) (n : ℕ) (p : SpaceTime) : ChartPoint :=
@@ -1047,7 +1069,7 @@ theorem graphRestriction_jet_bound {E : Type*} [NormedAddCommGroup E] [NormedSpa
         have := Nat.cast_nonneg (α := ℝ) m
         linarith)
     simpa only [Real.rpow_zero] using he
-  have hD : 1 ≤ D := by dsimp [D]; nlinarith
+  have hD : 1 ≤ D := by dsimp only [D]; nlinarith
   have hj := norm_iteratedFDerivWithin_comp_le hF.contDiffOn (physicalLift_smooth h n)
     (nat_le_infty m) uniqueDiffOn_univ hU.uniqueDiffOn (mapsTo_univ _ _) hx
     (C := B) (D := D)
@@ -1058,7 +1080,7 @@ theorem graphRestriction_jet_bound {E : Type*} [NormedAddCommGroup E] [NormedSpa
         simpa only [pow_one] using (pow_le_pow_right₀ hD hk)))
   rw [iteratedFDerivWithin_of_isOpen m hU hx] at hj
   apply hj.trans_eq
-  dsimp [D]
+  dsimp only [D]
   rw [mul_pow, ← Real.rpow_mul_natCast (ChartScales.Q_pos n).le]
   have he : -((m : ℝ) + 2) * (m : ℝ) = -graphLoss m := by unfold graphLoss; ring
   rw [he]
@@ -1070,7 +1092,8 @@ noncomputable def etaCoordinate : Plane →L[ℝ] ℝ :=
     ((Real.sqrt 2 - 1) • ContinuousLinearMap.fst ℝ ℝ ℝ + ContinuousLinearMap.snd ℝ ℝ ℝ)
 
 theorem etaCoordinate_radial : etaCoordinate radialDirection = 0 := by
-  simp [etaCoordinate, radialDirection, smul_eq_mul]
+  simp only [etaCoordinate, smul_add, radialDirection, add_apply, smul_apply,
+      ContinuousLinearMap.coe_fst', smul_eq_mul, mul_one, ContinuousLinearMap.coe_snd']
   ring
 
 theorem etaCoordinate_time : etaCoordinate timeDirection = 1 := by
@@ -1123,7 +1146,7 @@ theorem slotTime_derivative (h : ℝ) (n : ℕ) (center : Plane) (r0 : ℝ)
 
 theorem slotTime_spatial_derivative (h : ℝ) (n : ℕ) (center : Plane) (r0 : ℝ)
     (p : SpaceTime) (v : Space) : fderiv ℝ (slotTime h n center r0) p (0, v) = 0 := by
-  simp [slotTime_derivative]
+  simp only [slotTime_derivative, mul_zero]
 
 /-- Exact integer rounding gives a uniform upper carrier power. -/
 theorem carrier_upper {h : ℝ} (hh : 0 ≤ h) (n : ℕ) :
@@ -1164,13 +1187,13 @@ theorem hasDerivAt_character (c t : ℝ) :
     HasDerivAt (character c) (phaseFactor c * character c t) t := by
   have hd := (Complex.ofRealCLM.hasDerivAt (x := t)).const_mul (phaseFactor c)
   convert! hd.cexp using 1
-  simp [character, phaseFactor]
+  simp only [phaseFactor, character, Complex.ofRealCLM_apply, Complex.ofReal_one, mul_one]
   ring
 
 theorem iteratedDeriv_character (c : ℝ) (m : ℕ) :
     iteratedDeriv m (character c) = fun t => phaseFactor c ^ m * character c t := by
   induction m with
-  | zero => simp
+  | zero => simp only [iteratedDeriv_zero, pow_zero, one_mul]
   | succ m hm =>
       rw [iteratedDeriv_succ, hm]
       funext t
@@ -1182,7 +1205,8 @@ theorem iteratedDeriv_character (c : ℝ) (m : ℕ) :
 theorem norm_character_jet (c : ℝ) (m : ℕ) (t : ℝ) :
     ‖iteratedFDeriv ℝ m (character c) t‖ = |c| ^ m := by
   rw [norm_iteratedFDeriv_eq_norm_iteratedDeriv, iteratedDeriv_character]
-  simp [norm_character, phaseFactor, norm_pow, Complex.norm_I, Complex.norm_real, Real.norm_eq_abs]
+  simp only [phaseFactor, Complex.norm_mul, norm_pow, Complex.norm_real, Real.norm_eq_abs,
+      Complex.norm_I, mul_one, norm_character]
 
 /-- Stage harmonics change the multiplicative constant, never the power loss. -/
 theorem rounded_carrier_jet_bound {h : ℝ} (hh : 0 ≤ h) (n m : ℕ)
@@ -1290,7 +1314,7 @@ theorem carrier_graph_jet_bound {h a b : ℝ} (hh : 0 ≤ h) (hh1 : h ≤ 1 / 2)
     _ hb (fun i hi => pointwise_product_jet_bound hA hwsm (physicalLift h n p)
       hi hP hMB hAb hw)
   apply hphysical.trans_eq
-  dsimp [M]
+  dsimp only [M]
   rw [mul_pow, ← Real.rpow_mul_natCast hq.le]
   rw [show -h / 2 * (m : ℝ) = -(h * (m : ℝ) / 2) by ring]
   have he : ChartScales.Q n ^ (-(h * (m : ℝ) / 2)) * ChartScales.Q n ^ (-graphLoss m) =
@@ -1326,7 +1350,7 @@ theorem slow_power_absorption (a : ℝ) : ∃ C : ℝ, 0 < C ∧ ∀ n : ℕ,
     ChartScales.S n ^ a ≤ C * ChartScales.Q n ^ (-1 : ℝ) := by
   have ht := ChartScales.slow_power_epsilon_tendsto_zero (h := 1) (by norm_num) a 1 (by norm_num)
   have ht' : Filter.Tendsto (fun n => ChartScales.S n ^ a * ChartScales.Q n)
-      Filter.atTop (nhds 0) := by simpa [ChartScales.epsilon] using ht
+      Filter.atTop (nhds 0) := by simpa only [ChartScales.epsilon, Real.rpow_one] using ht
   obtain ⟨C, hC, hCb⟩ := (Metric.isBounded_range_of_tendsto _ ht').exists_pos_norm_le
   refine ⟨C, hC, ?_⟩
   intro n
@@ -1599,7 +1623,9 @@ noncomputable def embedPolar : Plane →L[ℝ] Slot :=
 theorem norm_embedPolar_le : ‖embedPolar‖ ≤ 1 := by
   refine ContinuousLinearMap.opNorm_le_bound _ zero_le_one ?_
   intro y
-  simp [embedPolar, Prod.norm_def, Real.norm_eq_abs, abs_nonneg]
+  simp only [embedPolar, ContinuousLinearMap.prod_apply, ContinuousLinearMap.coe_fst', zero_apply,
+      ContinuousLinearMap.coe_snd', Prod.norm_def, Real.norm_eq_abs, norm_zero, abs_nonneg,
+      sup_of_le_left, one_mul, Std.le_refl]
 
 /-- Slot linear as an element of `LiftPoint →L[ℝ] Slot`. -/
 noncomputable def slotLinear (ci : ℝ) : LiftPoint →L[ℝ] Slot :=
@@ -1621,7 +1647,10 @@ theorem slotMap_formula (κ : Plane → Plane) (ci : ℝ) (center : Plane) (r0 :
       (((κ (liftXY y)).1, (y.1.2.2.2, y.1.1)),
         ((κ (liftXY y)).2, (etaCoordinate (y.2 - center) + r0) / ci)) := by
   simp only [slotMap, embedPolar, slotLinear, slotConstant]
-  ext <;> simp [liftZT, map_sub, div_eq_mul_inv]
+  ext <;> simp only [liftXY_apply, ContinuousLinearMap.prod_apply, ContinuousLinearMap.coe_fst',
+      zero_apply, ContinuousLinearMap.coe_snd', liftZT, ContinuousLinearMap.smul_comp,
+      ContinuousLinearMap.comp_apply, smul_apply, smul_eq_mul, Prod.mk_add_mk, add_zero, zero_add,
+      div_eq_mul_inv, map_sub]
   ring
 
 theorem slotMap_smooth {κ : Plane → Plane} (hκ : ContDiff ℝ ∞ κ)
@@ -1693,11 +1722,12 @@ theorem slotMap_physical (κ : Plane → Plane) (h : ℝ) (n : ℕ)
        ((κ (scaledRadial n p)).2, slotTime h n center r0 p)) := by
   rw [slotMap_formula]
   have hxy : liftXY (physicalLift h n p) = scaledRadial n p := by
-    simp [liftXY_apply, physicalLift, physicalChart, chartLinear_apply, scaledRadial,
-      radialProjection_apply, smul_eq_mul]
+    simp only [physicalLift, physicalChart, chartLinear_apply, neg_mul, Fin.isValue, one_div,
+        Prod.mk_add_mk, add_zero, liftXY_apply, scaledRadial, smul_apply, radialProjection_apply,
+        Prod.smul_mk, smul_eq_mul]
   rw [hxy]
-  ext <;> simp [physicalLift, physicalChart, chartLinear_apply, slotTime,
-    Real.rpow_neg_one, div_eq_mul_inv]
+  ext <;> simp only [physicalLift, physicalChart, chartLinear_apply, Real.rpow_neg_one, neg_mul,
+      Fin.isValue, div_eq_mul_inv, one_mul, Prod.mk_add_mk, add_zero, map_sub, slotTime]
   ring
 
 /-- Composition of (26) with the actual native slot map. This is the phase
@@ -1751,7 +1781,7 @@ theorem Q_inv_ge_one (n : ℕ) : 1 ≤ ChartScales.Q n ^ (-1 : ℝ) := by
 theorem epsilon_inv_le {h : ℝ} (hh : h ≤ 1) (n : ℕ) :
     (ChartScales.epsilon h n)⁻¹ ≤ ChartScales.Q n ^ (-1 : ℝ) := by
   have he : (ChartScales.epsilon h n)⁻¹ = ChartScales.Q n ^ (-h) := by
-    simp [ChartScales.epsilon, Real.rpow_neg (ChartScales.Q_pos n).le]
+    simp only [ChartScales.epsilon, Real.rpow_neg (ChartScales.Q_pos n).le]
   rw [he]
   exact Real.rpow_le_rpow_of_exponent_ge (ChartScales.Q_pos n) (ChartScales.Q_le_one n) (by
       linarith only [hh])
@@ -1814,7 +1844,7 @@ theorem liftedPhase_power_bound {h K Z r0 P B d : ℝ}
         simpa only [norm_iteratedFDeriv_zero] using hκb 0 (Nat.zero_le _)
     apply (slotMap_norm_bound κ _ center r0 y (zero_le_one.trans hK) hZ
       (mul_nonneg (mul_nonneg (mul_nonneg zero_le_two hr0) hTg.le) hS0.le) hκ0 hz hv).trans
-    dsimp [M0]
+    dsimp only [M0]
     nlinarith only [hK, hZ, hS]
   have hlin : |p| + |pz / ChartScales.epsilon h n| + |x0| ≤
       3 * P * ChartScales.Q n ^ (-1 : ℝ) := by
@@ -1830,7 +1860,7 @@ theorem liftedPhase_power_bound {h K Z r0 P B d : ℝ}
   have hD : K + 1 + |(ChartScales.timeCoefficient h n)⁻¹| * ‖etaCoordinate‖ ≤
       D0 * ChartScales.S n := by
     have he := mul_le_mul_of_nonneg_right hci (norm_nonneg etaCoordinate)
-    dsimp [D0]
+    dsimp only [D0]
     nlinarith only [he, hK, hS]
   have he := liftedPhase_jet_bound hκ h n center r0 p pz x0 hF hG y m
     (zero_le_one.trans hK) hM (zero_le_one.trans hbase) hκb hpoint hFb hGb i hi
@@ -1887,7 +1917,7 @@ theorem liftedPhase_power_bound {h K Z r0 P B d : ℝ}
           ChartScales.Q n ^ (-1 : ℝ)) * (D0 * ChartScales.S n) ^ m := hmajor
     _ = C0 * ChartScales.S n ^ (d + (m : ℝ) + 1) * ChartScales.Q n ^ (-1 : ℝ) := by
       rw [mul_pow]
-      dsimp [C0]
+      dsimp only [C0]
       calc
         _ = ((m.factorial : ℝ) * (3 + (2 : ℝ) ^ (m + 1)) * P * M0 * B * D0 ^ m) *
             (ChartScales.S n * ChartScales.S n ^ d * ChartScales.S n ^ m) * ChartScales.Q n ^ (-1 :
@@ -1992,8 +2022,9 @@ theorem physical_polar_chart_available {a b : ℝ} (ha : 0 < a) (m : ℕ) :
 
 theorem liftXY_physicalLift (h : ℝ) (n : ℕ) (p : SpaceTime) :
     liftXY (physicalLift h n p) = scaledRadial n p := by
-  simp [liftXY_apply, physicalLift, physicalChart, chartLinear_apply, scaledRadial,
-    radialProjection_apply, smul_eq_mul]
+  simp only [physicalLift, physicalChart, chartLinear_apply, neg_mul, Fin.isValue, one_div,
+      Prod.mk_add_mk, add_zero, liftXY_apply, scaledRadial, smul_apply, radialProjection_apply,
+      Prod.smul_mk, smul_eq_mul]
 
 theorem liftedPhase_smooth {κ : Plane → Plane} (hκ : ContDiff ℝ ∞ κ)
     (h : ℝ) (n : ℕ) (center : Plane) (r0 p pz x0 : ℝ) {F G : Slow → ℝ}

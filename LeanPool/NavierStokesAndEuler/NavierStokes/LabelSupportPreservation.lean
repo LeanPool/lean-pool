@@ -294,10 +294,12 @@ theorem signed_raw_zero_of_mask (n : ℕ) (i : I) (x : D) (hm : mask i n x = 0) 
         column).amplitude n i x = 0 ∧
     (signedCopyData base s d matrix target request mask fundamental normalMotion action cutoff
         column).pressure n i x = 0 := by
-  simp [signedCopyData, SignedWaveUpdate.coefficients,
-    SignedWaveUpdate.homogeneousCoefficients, SignedWaveUpdate.signedVector,
-        SignedWaveUpdate.signedScalar,
-    hm, ParticularWaveBounds.projectedPressure, TangentProjection.pressureCoefficient]
+  simp only [signedCopyData, SignedWaveUpdate.coefficients,
+      SignedWaveUpdate.homogeneousCoefficients, SignedWaveUpdate.signedVector,
+      SignedWaveUpdate.signedScalar, map_smul, hm, mul_zero, zero_smul, projectedPressure,
+      TangentProjection.pressureCoefficient, inner_zero_right, sub_self, add_zero,
+      inner_self_eq_norm_sq_to_K, RCLike.ofReal_real_eq_id, id_eq, zero_div, Complex.ofReal_zero,
+      and_self]
 
 theorem signed_zero_germs_of_mask_germs (K : Cells D I)
     (hcutoff : ∀ n i, support (cutoff i n) ⊆ K.carrier n i)
@@ -353,7 +355,7 @@ theorem pair_input_support {U K : Set D} (j : ℤ) {f : D → ℂ}
     NonzeroSupportedOn U K (realCoefficients (conjugatePair j f)) := by
   apply NonzeroSupportedOn.realProjection
   intro m hm x hx hn
-  simp [ParticularWaveAssembly.pair_apply, hf x hx hn]
+  simp only [ParticularWaveAssembly.pair_apply, hf x hx hn, zero_div, ite_self, map_zero, add_zero]
 
 omit [NormedAddCommGroup D] [NormedSpace ℝ D] in
 /-- A coefficient assembly needs only the literal amplitude values at
@@ -380,7 +382,8 @@ theorem modeBlock_inputSupport {U : Set D} {K : ℕ → Set D}
     intro x hx hn
     simp only [hg n x hx hn, Pi.zero_apply]
   · intro n i m hm x hx hn
-    simp [realCoefficients_apply]
+    simp only [Pi.zero_apply, realCoefficients_apply, AddMonoidAlgebra.coeff_zero, Finsupp.coe_zero,
+        map_zero, add_zero, mul_zero]
 
 omit [NormedAddCommGroup D] [NormedSpace ℝ D] in
 /-- The actual carrier-retaining update preserves the very same support
@@ -421,7 +424,8 @@ theorem real_supported_sum {ι : Type} {U K : Set D} (L : Finset ι)
   induction L using Finset.induction_on with
   | empty =>
       intro j hj x hx hn
-      simp [realCoefficients_apply]
+      simp only [Finset.sum_empty, realCoefficients_apply, AddMonoidAlgebra.coeff_zero,
+          Finsupp.coe_zero, Pi.zero_apply, map_zero, add_zero, mul_zero]
   | @insert l L hl ih =>
       rw [Finset.sum_insert hl, realCoefficients_add]
       exact (hf l (Finset.mem_insert_self _ _)).add
@@ -443,7 +447,8 @@ theorem inputSupport_sumBlock {ι : Type} {U : Set D} {K : ℕ → Set D}
   · intro n i
     exact real_supported_sum L (fun l => gaussians l n i) (fun l hl => (hs l hl).gaussian n i)
   · intro n i m hm x hx hn
-    simp [realCoefficients_apply]
+    simp only [Pi.zero_apply, realCoefficients_apply, AddMonoidAlgebra.coeff_zero, Finsupp.coe_zero,
+        map_zero, add_zero, mul_zero]
 
 omit [NormedAddCommGroup D] [NormedSpace ℝ D] in
 theorem assembledBlock_inputSupport {U : Set D} {K : ℕ → Set D}

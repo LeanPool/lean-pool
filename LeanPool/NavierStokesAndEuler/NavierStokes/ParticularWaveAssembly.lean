@@ -69,9 +69,9 @@ theorem signed_pairs_reconstruct {D : Type} (c : Coefficients D) (N : ℕ)
     rw [AddMonoidAlgebra.coeff_sum, Finsupp.finsetSum_apply, Finset.sum_apply]
     simp only [pair_apply, Finset.sum_add_distrib]
     congr 1
-    · simp []
+    · simp only [Finset.sum_ite_eq, mem_modes, ne_eq]
     · rw [← map_sum]
-      simp []
+      simp only [Finset.sum_ite_eq, mem_modes, ne_eq, neg_eq_zero, Int.natAbs_neg]
   rw [he]
   simp only [neg_mem_modes]
   by_cases hm : m ∈ modes N
@@ -79,7 +79,7 @@ theorem signed_pairs_reconstruct {D : Type} (c : Coefficients D) (N : ℕ)
     ring
   · have hz : c m = 0 := by
       by_cases hm0 : m = 0
-      · simpa [hm0] using h0
+      · simpa only [hm0] using h0
       · apply Finsupp.notMem_support_iff.mp
         intro hs
         exact hm ((mem_modes N m).mpr ⟨hm0, hN m hs⟩)
@@ -710,7 +710,7 @@ noncomputable def angleLift {E : Type} (f : P × Plane → E) : (P × ℝ) × Pl
 theorem angleLift_invariant {E : Type} (f : P × Plane → E) :
     Invariant (((0 : P), (1 : ℝ)), (0 : Plane)) (angleLift f) := by
   rintro ⟨⟨p,θ⟩,Y⟩ t
-  simp [angleLift]
+  simp only [angleLift, Prod.smul_mk, smul_zero, smul_eq_mul, mul_one, Prod.mk_add_mk, add_zero]
 
 /-- Angle tangent, bundling `normal`, `normalDot`, `action`, `damping` and the required
 compatibility proofs. -/
@@ -747,7 +747,9 @@ theorem angleShuffle_apply (x : P × Plane) (θ : ℝ) :
 theorem invariant_angleShuffle {E : Type} {f : (P × ℝ) × Plane → E}
     (hf : Invariant (((0 : P), (1 : ℝ)), (0 : Plane)) f) (x : P × Plane) (θ : ℝ) :
     f (angleShuffle (P := P) (x,θ)) = f (angleShuffle (P := P) (x,0)) := by
-  simpa [angleShuffle] using hf (angleShuffle (P := P) (x,0)) θ
+  simpa only [angleShuffle, LinearIsometryEquiv.coe_mk, LinearEquiv.coe_mk, LinearMap.coe_mk,
+      AddHom.coe_mk, Prod.smul_mk, smul_zero, smul_eq_mul, mul_one, Prod.mk_add_mk, add_zero,
+      zero_add] using hf (angleShuffle (P := P) (x,0)) θ
 
 end AngularConstruction
 
@@ -851,7 +853,8 @@ open CommonCoverSolve TorusInverse TorusAverages ParticularWaveBounds
 theorem native_coordinate_image (g : Geometry) (k : Frequency) (Y : Plane) :
     g.center + g.basis (g.coordinates k Y) = latticePoint (-k) + coverPower g.gap Y := by
   simp only [Geometry.coordinates, ContinuousLinearEquiv.apply_symm_apply]
-  have hn : latticePoint (-k) = -latticePoint k := by ext <;> simp [latticePoint]
+  have hn : latticePoint (-k) = -latticePoint k := by ext <;> simp only [latticePoint, Prod.fst_neg,
+      Int.cast_neg, Prod.snd_neg, Prod.neg_mk]
   rw [hn]
   abel
 
@@ -1363,7 +1366,8 @@ theorem real_linearResidual_sum {E ι : Type} [NormedAddCommGroup E] [NormedSpac
   have hps : ContDiffOn ℝ ∞ (fun y => (∑ l ∈ J, p l) y) U := by
     simpa only [Finset.sum_apply] using ContDiffOn.sum hp
   have he := LinearWaveResidual.realMap_linearResidual Complex.reCLM ε R Vt hU hr hθ hz hs hB
-    ((hps.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp)) hx
+    ((hps.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true])) hx
   rw [HarmonicResidual.Actual.linearResidual_sum J hU ε R Vt hr hθ hz
     (LinearWaveResidual.realLift B) v p hv hp hx] at he
   simpa only [Finset.sum_apply, Complex.reCLM_apply, Complex.re_sum] using he.symm
@@ -2131,7 +2135,7 @@ theorem divergence_zero (n : ℕ) {x : (P × ℝ) × Plane} (hx : x ∈ D.strip.
   · intro j hj i
     exact ((D.wave_smooth C j hj n i).contDiffAt (D.strip.isOpen_domain.mem_nhds
         hx)).differentiableAt (by
-        simp)
+        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   · intro j hj
     exact (C j hj).common_divergence_zero n hx
 
@@ -2160,16 +2164,16 @@ theorem real_cancellation (hpos : 0 < N)
     LinearWaveResidual.differentiableAt_base
       (((C0.background.cylindrical n).radius_smooth.contDiffAt (D.strip.isOpen_domain.mem_nhds
           hx)).differentiableAt (by
-          simp))
+          simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
       (((C0.base_bounds.radial_base.smooth n).contDiffAt (D.strip.isOpen_domain.mem_nhds
           hx)).differentiableAt (by
-          simp))
+          simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
       (((C0.base_bounds.frequency_base.smooth n).contDiffAt (D.strip.isOpen_domain.mem_nhds
           hx)).differentiableAt (by
-          simp))
+          simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
       (((C0.base_bounds.axial_base.smooth n).contDiffAt (D.strip.isOpen_domain.mem_nhds
           hx)).differentiableAt (by
-          simp)) i
+          simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) i
   have he := real_linearResidual_sum (modes N) D.strip.isOpen_domain (D.strip.epsilon n)
     (D.background.radius n)
     (LinearWaveResidual.timeDirection (D.strip.epsilon n) (D.directions.fastField n) (fun _ =>

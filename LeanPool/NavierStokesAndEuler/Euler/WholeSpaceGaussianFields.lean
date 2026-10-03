@@ -74,7 +74,8 @@ theorem scaledAverage_eq {t : ℝ} (ht : 0 < t) (f : Space → V) (x : Space) :
     simpa only [Real.sq_sqrt ht.le] using kernel_sq_smul hc y
   have h := Measure.integral_comp_smul_of_nonneg (volume : Measure Space)
     (fun y : Space => kernel t y • f (x+y)) (Real.sqrt t) (hR := hc.le)
-  have hdim : Module.finrank ℝ Space = 3 := by simp [Space]
+  have hdim : Module.finrank ℝ Space = 3 := by simp only [Space, finrank_euclideanSpace,
+      Fintype.card_fin]
   simp only [he, mul_smul, integral_smul, hdim] at h
   change (Real.sqrt t ^ 3)⁻¹ • scaledAverage t f x =
     (Real.sqrt t ^ 3)⁻¹ • average t f x at h
@@ -170,7 +171,8 @@ theorem secondAverage_directional_bound {t : ℝ} (ht : 0 < t)
       simpa only [he] using norm_sum_le Finset.univ (fun i : Fin 3 => average t (wordField A (w
           i)).field x)
     _ ≤ ∑ _i : Fin 3, t^(-(3:ℝ)/4)*‖A.jetLp 3‖ := Finset.sum_le_sum (fun i _ => h i)
-    _ = _ := by simp; ring
+    _ = _ := by simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
+        Nat.cast_ofNat]; ring
 
 section Bounded
 

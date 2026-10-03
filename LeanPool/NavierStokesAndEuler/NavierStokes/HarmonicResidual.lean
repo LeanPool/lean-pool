@@ -157,11 +157,13 @@ theorem field_differentiate {U : Set D} (hU : IsOpen U) {c : Coefficients D}
   rcases p with ⟨x, θ⟩
   have hd := ((field_smoothOn hc hΦ k kp).contDiffAt ((liftDomain_open hU).mem_nhds
       hp)).differentiableAt (by
-      simp)
+      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   rw [along_liftDirection hd]
   exact (along_field_slow V k Φ kp c θ
-    ((hΦ.contDiffAt (hU.mem_nhds hp.1)).differentiableAt (by simp))
-    (fun j _ => ((hc j).contDiffAt (hU.mem_nhds hp.1)).differentiableAt (by simp))).symm
+    ((hΦ.contDiffAt (hU.mem_nhds hp.1)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true]))
+    (fun j _ => ((hc j).contDiffAt (hU.mem_nhds hp.1)).differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))).symm
 
 theorem field_angularDifferentiate {U : Set D} (hU : IsOpen U) {c : Coefficients D}
     (hc : SmoothCoefficients U c) {Φ : D → ℝ} (hΦ : ContDiffOn ℝ ∞ Φ U)
@@ -170,7 +172,7 @@ theorem field_angularDifferentiate {U : Set D} (hU : IsOpen U) {c : Coefficients
   rcases p with ⟨x, θ⟩
   have hd := ((field_smoothOn hc hΦ k kp).contDiffAt ((liftDomain_open hU).mem_nhds
       hp)).differentiableAt (by
-      simp)
+      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   rw [along_angularDirection hd]
   exact (field_hasDerivAt_angle c k Φ kp x θ).deriv.symm
 
@@ -199,7 +201,9 @@ omit [NormedAddCommGroup D] [NormedSpace ℝ D] in
     (kp : ℤ) (p : D × ℝ) :
     vectorField (rotate a) k Φ kp p = angularGenerator (vectorField a k Φ kp p) := by
   ext i
-  fin_cases i <;> simp [vectorField, rotate, angularGenerator]
+  fin_cases i <;> simp only [vectorField, rotate, Fin.isValue, Fin.zero_eta, Matrix.cons_val_zero,
+      field_neg, angularGenerator, Fin.mk_one, Matrix.cons_val_one, Fin.reduceFinMk,
+      Matrix.cons_val, field_zero]
 
 /-- Scalar laplacian, constructed using `differentiate`. -/
 noncomputable def scalarLaplacian (g : Frame D) (k : ℝ) (Φ : D → ℝ) (kp : ℤ)
@@ -328,9 +332,10 @@ theorem field_gradient {U : Set D} (hU : IsOpen U) (g : Frame D)
       LinearWaveResidual.gradient (fun q => g.radius q.1) (liftDirection g.radial)
         angularDirection (liftDirection g.axial) (field c k Φ kp) p := by
   ext i
-  fin_cases i <;> simp [gradient, vectorField, LinearWaveResidual.gradient,
-    HarmonicFields.field_mul, field_differentiate hU hc hΦ _ k kp hp,
-    field_angularDifferentiate hU hc hΦ k kp hp, Complex.real_smul]
+  fin_cases i <;> simp only [vectorField, gradient, Complex.ofReal_inv, Fin.zero_eta, Fin.isValue,
+      Matrix.cons_val_zero, field_differentiate hU hc hΦ _ k kp hp, LinearWaveResidual.gradient,
+      Complex.real_smul, Fin.mk_one, Matrix.cons_val_one, field_mul, field_constant,
+      field_angularDifferentiate hU hc hΦ k kp hp, Fin.reduceFinMk, Matrix.cons_val]
 
 theorem field_linearResidual {U : Set D} (hU : IsOpen U) (g : Frame D)
     (hr : ContDiffOn ℝ ∞ g.radial U) (hz : ContDiffOn ℝ ∞ g.axial U)
@@ -380,7 +385,8 @@ theorem field_nonlinearResidual {U : Set D} (hU : IsOpen U) (g : Frame D)
 omit [NormedAddCommGroup D] [NormedSpace ℝ D] in
 theorem band_zero (N : ℕ) : BandLimited (0 : Coefficients D) N := by
   intro j hj
-  simp at hj
+  simp only [Finsupp.mem_support_iff, AddMonoidAlgebra.coeff_zero, Finsupp.coe_zero, Pi.zero_apply,
+      ne_eq, not_true_eq_false] at hj
 
 omit [NormedAddCommGroup D] [NormedSpace ℝ D] in
 theorem band_neg {c : Coefficients D} {N : ℕ} (hc : BandLimited c N) :
@@ -481,7 +487,7 @@ theorem band_conjugateReverse {c : Coefficients D} {N : ℕ} (hc : BandLimited c
     have he : c (-j) = 0 := Finsupp.notMem_support_iff.mp hh
     apply (Finsupp.mem_support_iff.mp hj)
     ext x
-    simp [he]
+    simp only [conjugateReverse_apply, he, Pi.zero_apply, map_zero]
   simpa only [Int.natAbs_neg] using hc (-j) hj'
 
 /-- Canonical real projection, with exactly the conjugate negative harmonics. -/
@@ -499,14 +505,15 @@ theorem realCoefficients_conjugate (c : Coefficients D) :
     ConjugateSymmetric (realCoefficients c) := by
   intro j x
   have htwo : conj (2 : ℂ) = (2 : ℂ) := Complex.conj_ofReal 2
-  simp [realCoefficients_apply, map_mul, map_add, htwo, add_comm]
+  simp only [realCoefficients_apply, neg_neg, add_comm, map_mul, map_inv₀, htwo, map_add,
+      RingHomCompTriple.comp_apply, RingHom.id_apply]
 
 omit [NormedAddCommGroup D] [NormedSpace ℝ D] in
 theorem realCoefficients_eq_self {c : Coefficients D} (hc : ConjugateSymmetric c) :
     realCoefficients c = c := by
   ext j x
   rw [realCoefficients_apply, hc j x]
-  simp
+  simp only [RingHomCompTriple.comp_apply, RingHom.id_apply]
   ring
 
 omit [NormedAddCommGroup D] [NormedSpace ℝ D] in
@@ -548,7 +555,7 @@ theorem extract_field (c : Coefficients D) (k : ℝ) (Φ : D → ℝ)
   rw [angularMean_field _ k Φ hkp x]
   change (c * AddMonoidAlgebra.single (-j) (fun _ : D => (1 : ℂ))).coeff 0 x = _
   rw [AddMonoidAlgebra.coeff_mul_single_apply]
-  simp
+  simp only [neg_neg, zero_add, Pi.mul_apply, mul_one]
 
 omit [NormedAddCommGroup D] [NormedSpace ℝ D] in
 /-- For a nonzero angular frequency the coefficients are uniquely determined by the field. -/
@@ -567,9 +574,10 @@ theorem nonconstant_eq_sub (c : Coefficients D) :
   change c.erase 0 j x = c j x - Finsupp.single 0 (c 0) j x
   by_cases hj : j = 0
   · subst j
-    simp []
-  · simp [ Finsupp.erase_ne hj,
-      hj]
+    simp only [AddMonoidAlgebra.coeff_erase, Finsupp.erase_same, Pi.zero_apply,
+        Finsupp.single_eq_same, sub_self]
+  · simp only [AddMonoidAlgebra.coeff_erase, Finsupp.erase_ne hj, ne_eq, hj, not_false_eq_true,
+      Finsupp.single_eq_of_ne, Pi.zero_apply, sub_zero]
 
 omit [NormedAddCommGroup D] [NormedSpace ℝ D] in
 theorem field_nonconstant (c : Coefficients D) (k : ℝ) (Φ : D → ℝ)
@@ -582,15 +590,17 @@ theorem angularMean_nonconstant (c : Coefficients D) (k : ℝ) (Φ : D → ℝ)
     {kp : ℤ} (hkp : kp ≠ 0) (x : D) :
     angularMean (fun θ => field (nonconstant c) k Φ kp (x, θ)) = 0 := by
   rw [angularMean_field _ k Φ hkp x]
-  simp [nonconstant]
+  simp only [nonconstant, AddMonoidAlgebra.coeff_erase, Finsupp.erase_same, Pi.zero_apply]
 
 omit [NormedAddCommGroup D] [NormedSpace ℝ D] in
 theorem nonconstant_conjugate {c : Coefficients D} (hc : ConjugateSymmetric c) :
     ConjugateSymmetric (nonconstant c) := by
   intro j x
   by_cases hj : j = 0
-  · simp [nonconstant, hj]
-  · simp [nonconstant, Finsupp.erase_ne hj, Finsupp.erase_ne (neg_ne_zero.mpr hj), hc j x]
+  · simp only [nonconstant, AddMonoidAlgebra.coeff_erase, hj, neg_zero, Finsupp.erase_same,
+      Pi.zero_apply, map_zero]
+  · simp only [nonconstant, AddMonoidAlgebra.coeff_erase, Finsupp.erase_ne (neg_ne_zero.mpr hj),
+      hc j x, Finsupp.erase_ne hj]
 
 omit [NormedAddCommGroup D] [NormedSpace ℝ D] in
 theorem band_nonconstant {c : Coefficients D} {N : ℕ} (hc : BandLimited c N) :
@@ -617,7 +627,9 @@ namespace Actual
 theorem angularGenerator_add (a b : ComplexVector) :
     angularGenerator (a + b) = angularGenerator a + angularGenerator b := by
   ext i
-  fin_cases i <;> simp [angularGenerator]
+  fin_cases i <;> simp only [angularGenerator, Fin.isValue, Pi.add_apply, neg_add_rev, Fin.zero_eta,
+      Matrix.cons_val_zero, Fin.mk_one, Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val,
+      add_zero]
   abel
 
 theorem transport_add_left (R : D → ℝ) (Vr Vθ Vz : D → D)
@@ -648,12 +660,16 @@ theorem twiceAlong_add {U : Set D} (hU : IsOpen U) {V : D → D}
     along V (along V (f + g)) x = along V (along V f) x + along V (along V g) x := by
   have heq : EqOn (along V (f + g)) (along V f + along V g) U := by
     intro y hy
-    exact along_add V ((hf.contDiffAt (hU.mem_nhds hy)).differentiableAt (by simp))
-      ((hg.contDiffAt (hU.mem_nhds hy)).differentiableAt (by simp))
+    exact along_add V ((hf.contDiffAt (hU.mem_nhds hy)).differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+      ((hg.contDiffAt (hU.mem_nhds hy)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+          ENat.top_ne_zero, not_false_eq_true]))
   rw [along_congr hU heq hx]
   exact along_add V
-    (((contDiffOn_along hU hV hf).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp))
-    (((contDiffOn_along hU hV hg).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp))
+    (((contDiffOn_along hU hV hf).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [
+        ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+    (((contDiffOn_along hU hV hg).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [
+        ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
 
 theorem cylindricalLaplacian_add {U : Set D} (hU : IsOpen U) (R : D → ℝ)
     {Vr Vθ Vz : D → D} (hr : ContDiffOn ℝ ∞ Vr U)
@@ -662,8 +678,10 @@ theorem cylindricalLaplacian_add {U : Set D} (hU : IsOpen U) (R : D → ℝ)
     {x : D} (hx : x ∈ U) :
     cylindricalLaplacian R Vr Vθ Vz (f + g) x =
       cylindricalLaplacian R Vr Vθ Vz f x + cylindricalLaplacian R Vr Vθ Vz g x := by
-  have df := (hf.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp)
-  have dg := (hg.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp)
+  have df := (hf.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have dg := (hg.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hfirst : along Vr (f + g) x = along Vr f x + along Vr g x := along_add Vr df dg
   simp only [cylindricalLaplacian, twiceAlong_add hU hr hf hg hx,
     twiceAlong_add hU hθ hf hg hx, twiceAlong_add hU hz hf hg hx,
@@ -685,8 +703,10 @@ theorem cylindricalVectorLaplacian_add {U : Set D} (hU : IsOpen U) (R : D → �
         cylindricalLaplacian R Vr Vθ Vz (fun y => b y i) x :=
     cylindricalLaplacian_add hU R hr hθ hz (ha i) (hb i) hx
   have hD i := along_add Vθ
-    (((ha i).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp))
-    (((hb i).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp))
+    (((ha i).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+    (((hb i).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
   ext i
   fin_cases i <;>
     simp [cylindricalVectorLaplacian, angularGenerator, hL 0, hL 1, hL 2,
@@ -699,7 +719,9 @@ theorem gradient_add (R : D → ℝ) (Vr Vθ Vz : D → D)
           + LinearWaveResidual.gradient R Vr Vθ Vz q x := by
   have hd (V : D → D) : along V (p + q) x = along V p x + along V q x := along_add V hp hq
   ext i
-  fin_cases i <;> simp [LinearWaveResidual.gradient, hd, smul_add]
+  fin_cases i <;> simp only [LinearWaveResidual.gradient, hd, smul_add, Complex.real_smul,
+      Complex.ofReal_inv, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero, Pi.add_apply, Fin.mk_one,
+      Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val]
 
 theorem linearResidual_add {U : Set D} (hU : IsOpen U) (ε : ℝ) (R : D → ℝ)
     {Vr Vθ Vz : D → D} (Vt : D → D) (hr : ContDiffOn ℝ ∞ Vr U)
@@ -712,10 +734,14 @@ theorem linearResidual_add {U : Set D} (hU : IsOpen U) (ε : ℝ) (R : D → ℝ
     LinearWaveResidual.linearResidual ε R Vr Vθ Vz Vt B (a + b) (p + q) x =
       LinearWaveResidual.linearResidual ε R Vr Vθ Vz Vt B a p x + LinearWaveResidual.linearResidual
           ε R Vr Vθ Vz Vt B b q x := by
-  have da i := ((ha i).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp)
-  have db i := ((hb i).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp)
-  have dp := (hp.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp)
-  have dq := (hq.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp)
+  have da i := ((ha i).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have db i := ((hb i).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have dp := (hp.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have dq := (hq.contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hL := cylindricalVectorLaplacian_add hU R hr hθ hz ha hb hx
   ext i
   simp only [LinearWaveResidual.linearResidual, Pi.add_apply, along_add _ (da i) (db i),
@@ -744,8 +770,10 @@ theorem nonlinearResidual_add_sub {U : Set D} (hU : IsOpen U) (ε : ℝ) (R : D 
           Vθ Vz a b x +
         LinearWaveResidual.transport R Vr Vθ Vz b a x + LinearWaveResidual.transport R Vr Vθ Vz b b
             x := by
-  have da i := ((ha i).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp)
-  have db i := ((hb i).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp)
+  have da i := ((ha i).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have db i := ((hb i).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   rw [nonlinearResidual, linearResidual_add hU ε R Vt hr hθ hz B a b p q ha hb hp hq hx,
     transport_add_left, transport_add_right R Vr Vθ Vz a a b da db,
     transport_add_right R Vr Vθ Vz b a b da db, nonlinearResidual]
@@ -757,7 +785,8 @@ theorem transport_zero_of_disjoint (R : D → ℝ) (Vr Vθ Vz : D → D)
     LinearWaveResidual.transport R Vr Vθ Vz u v x = 0 := by
   by_cases hu : u x = 0
   · ext i
-    simp [LinearWaveResidual.transport, hu]
+    simp only [LinearWaveResidual.transport, Fin.isValue, hu, Pi.zero_apply, zero_mul, zero_div,
+        add_zero]
   · have hux : x ∈ tsupport u := subset_closure (by simpa only [Function.mem_support] using hu)
     have hvx : x ∉ tsupport v := fun hx => Set.disjoint_left.mp hd hux hx
     have he : v =ᶠ[𝓝 x] 0 := notMem_tsupport_iff_eventuallyEq.mp hvx
@@ -767,7 +796,9 @@ theorem transport_zero_of_disjoint (R : D → ℝ) (Vr Vθ Vz : D → D)
         he.mono (fun _ hy => congrFun hy i)
       simp only [along, hei.fderiv_eq, fderiv_fun_const, Pi.zero_apply, _root_.zero_apply]
     ext i
-    fin_cases i <;> simp [LinearWaveResidual.transport, hv, hvd, angularGenerator]
+    fin_cases i <;> simp only [LinearWaveResidual.transport, Fin.isValue, Fin.zero_eta, hvd,
+        mul_zero, angularGenerator, hv, Pi.zero_apply, neg_zero, Matrix.cons_val_zero, add_zero,
+        Fin.mk_one, Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val]
 
 theorem transport_sum_left {ι : Type*} (s : Finset ι) (R : D → ℝ) (Vr Vθ Vz : D → D)
     (u : ι → D → ComplexVector) (v : D → ComplexVector) (x : D) :
@@ -777,7 +808,8 @@ theorem transport_sum_left {ι : Type*} (s : Finset ι) (R : D → ℝ) (Vr Vθ 
   induction s using Finset.induction_on with
   | empty =>
       ext i
-      simp [LinearWaveResidual.transport]
+      simp only [LinearWaveResidual.transport, Fin.isValue, Finset.sum_apply, Finset.sum_empty,
+          zero_mul, zero_div, add_zero]
   | @insert l s hl ih =>
       rw [Finset.sum_insert hl, Finset.sum_insert hl, transport_add_left, ih]
 
@@ -790,7 +822,10 @@ theorem transport_sum_right {ι : Type*} (s : Finset ι) (R : D → ℝ) (Vr Vθ
   induction s using Finset.induction_on with
   | empty =>
       ext i
-      fin_cases i <;> simp [LinearWaveResidual.transport, along, angularGenerator]
+      fin_cases i <;> simp only [LinearWaveResidual.transport, Fin.isValue, along, Fin.zero_eta,
+          Finset.sum_apply, Finset.sum_empty, fderiv_fun_const, Pi.zero_apply, zero_apply, mul_zero,
+          angularGenerator, neg_zero, Matrix.cons_val_zero, add_zero, Fin.mk_one,
+          Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val]
   | @insert l s hl ih =>
       rw [Finset.sum_insert hl, Finset.sum_insert hl]
       have hlv := hv l (Finset.mem_insert_self l s)
@@ -859,7 +894,8 @@ theorem nonlinearResidual_sum {ι : Type*} (s : Finset ι) {U : Set D} (hU : IsO
   unfold nonlinearResidual
   rw [linearResidual_sum s hU ε R Vt hr hθ hz B u p hu hp hx,
     transport_sum_self s R Vr Vθ Vz u (fun l hl i =>
-      ((hu l hl i).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp)) hdisj,
+      ((hu l hl i).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
+          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])) hdisj,
     Finset.sum_add_distrib]
 
 theorem linearResidual_base_add (ε : ℝ) (R : D → ℝ) (Vr Vθ Vz Vt : D → D)
@@ -889,8 +925,10 @@ theorem nonlinearResidual_mean_add {U : Set D} (hU : IsOpen U)
       nonlinearResidual ε R Vr Vθ Vz Vt (B + M) a q x := by
   have he := nonlinearResidual_add_sub hU ε R Vt hr hθ hz B M a p q hM ha hp hq hx
   have hb := linearResidual_base_add ε R Vr Vθ Vz Vt B M a q
-    (fun i => ((hB i).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp))
-    (fun i => ((hM i).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp))
+    (fun i => ((hB i).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+    (fun i => ((hM i).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
   have hb' : nonlinearResidual ε R Vr Vθ Vz Vt (B + M) a q x =
       LinearWaveResidual.linearResidual ε R Vr Vθ Vz Vt B a q x +
       LinearWaveResidual.transport R Vr Vθ Vz M a x +
@@ -1002,12 +1040,13 @@ theorem band_zero_eq_constant {c : Coefficients D} (hc : BandLimited c 0) :
   ext j x
   change c j x = Finsupp.single 0 (c 0) j x
   by_cases hj : j = 0
-  · simp [hj]
+  · simp only [hj, Finsupp.single_eq_same]
   · have hnj : j ∉ c.support := by
       intro h
       have hz : j.natAbs = 0 := Nat.eq_zero_of_le_zero (hc j h)
       exact hj (Int.natAbs_eq_zero.mp hz)
-    simp [Finsupp.notMem_support_iff.mp hnj, hj]
+    simp only [Finsupp.notMem_support_iff.mp hnj, Pi.zero_apply, ne_eq, hj, not_false_eq_true,
+        Finsupp.single_eq_of_ne]
 
 omit [NormedAddCommGroup D] [NormedSpace ℝ D] in
 theorem field_band_zero {c : Coefficients D} (hc : BandLimited c 0)
@@ -1500,8 +1539,10 @@ theorem BlockRepresentation.perturbation {ι : Type*} {labels : ℕ → Finset �
       ∑ l ∈ labels n, (ofBlock (blocks l) (gaussian l) (aliasError l) n).wave := by
   ext x i
   fin_cases i <;>
-    simp [statePerturbation, stateMean, Finset.sum_apply, ofBlock_wave, hrep.velocity,
-      Complex.ofReal_sum, Complex.ofReal_add]
+    simp only [statePerturbation, Fin.isValue, hrep.velocity, Complex.ofReal_add,
+        Complex.ofReal_sum, Fin.zero_eta, Matrix.cons_val_zero, stateMean, Pi.add_apply,
+        Nat.succ_eq_add_one, Nat.reduceAdd, Finset.sum_apply, ofBlock_wave, Fin.mk_one,
+        Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val]
 
 omit [NormedAddCommGroup D] [NormedSpace ℝ D] in
 theorem BlockRepresentation.pressureField {ι : Type*} {labels : ℕ → Finset ι}
@@ -1511,8 +1552,8 @@ theorem BlockRepresentation.pressureField {ι : Type*} {labels : ℕ → Finset 
     statePressure s n = (fun x => (s.pressure n x.1 : ℂ)) +
       ∑ l ∈ labels n, (ofBlock (blocks l) (gaussian l) (aliasError l) n).pressureField := by
   ext x
-  simp [statePressure, CorrectionState.State.totalPressureIncrement, Finset.sum_apply,
-    ofBlock_pressure, hrep.pressure, Complex.ofReal_sum, Complex.ofReal_add]
+  simp only [statePressure, CorrectionState.State.totalPressureIncrement, hrep.pressure,
+      Complex.ofReal_add, Complex.ofReal_sum, Pi.add_apply, Finset.sum_apply, ofBlock_pressure]
 
 /-- The fixed base error cancels literally; Gaussian and alias errors stay additive. -/
 theorem BlockRepresentation.goodResidual_eq {ι : Type*} {labels : ℕ → Finset ι}

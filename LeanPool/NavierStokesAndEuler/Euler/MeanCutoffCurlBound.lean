@@ -42,7 +42,7 @@ theorem homogeneous_sobolev (f : Space → Space)
     lpNorm f 6 volume ≤ (sobolevConstant : ℝ) * lpNorm (fderiv ℝ f) 2 volume :=
   by
   have h := NavierStokesAndEuler.SobolevThreeDimensional.toReal_eLpNorm_six_le_of_hasCompactSupport
-    (hf.of_le (by simp)) hfc
+    (hf.of_le (by simp only [WithTop.le_coe_top, ne_eq, WithTop.one_ne_top, not_false_eq_true])) hfc
   simpa only [sobolevConstant,
     NavierStokesAndEuler.SobolevThreeDimensional.sobolevConstant,
     toReal_eLpNorm] using h
@@ -51,11 +51,12 @@ theorem homogeneous_sobolev (f : Space → Space)
 theorem norm_le_sum_coordinates (v : Space) : ‖v‖ ≤ ∑ i : Fin 3, ‖v i‖ := by
   have hv : (∑ i : Fin 3, EuclideanSpace.single i (v i)) = v := by
     ext j
-    simp
+    simp only [WithLp.ofLp_sum, PiLp.ofLp_single, Finset.sum_apply, Finset.sum_pi_single,
+        Finset.mem_univ, ↓reduceIte]
   calc
     ‖v‖ = ‖∑ i : Fin 3, EuclideanSpace.single i (v i)‖ := by rw [hv]
     _ ≤ ∑ i : Fin 3, ‖EuclideanSpace.single i (v i)‖ := norm_sum_le _ _
-    _ = ∑ i : Fin 3, ‖v i‖ := by simp
+    _ = ∑ i : Fin 3, ‖v i‖ := by simp only [PiLp.norm_single, Real.norm_eq_abs]
 
 /-- The coordinate definition of curl is bounded by six times the full derivative norm. -/
 theorem norm_vectorCurl_le (f : Space → Space) (x : Space)
@@ -72,7 +73,8 @@ theorem norm_vectorCurl_le (f : Space → Space) (x : Space)
       apply Finset.sum_le_sum
       intro i _
       exact (norm_sub_le _ _).trans (by linarith [hc (i+2) (i+1), hc (i+1) (i+2)])
-    _ = 6 * ‖fderiv ℝ f x‖ := by simp; ring
+    _ = 6 * ‖fderiv ℝ f x‖ := by simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin,
+        nsmul_eq_mul, Nat.cast_ofNat]; ring
 
 /-- The actual cutoff product rule gives the pointwise bound used in the dual estimate. -/
 theorem norm_cutoff_curl_le (ψ : Space → ℝ) (φ : Space → Space) (x : Space)
@@ -104,13 +106,15 @@ theorem lpNorm_norm_mul_le {E F : Type*} [NormedAddCommGroup E] [NormedAddCommGr
 /-- Smooth compactly supported vector fields have square-integrable actual curl. -/
 theorem vectorCurl_memLp (f : Space → Space) (hf : ContDiff ℝ ∞ f)
     (hfc : HasCompactSupport f) : MemLp (vectorCurl f) 2 volume := by
-  have hd : Continuous (fderiv ℝ f) := (hf.fderiv_right (m := ∞) (by simp)).continuous
+  have hd : Continuous (fderiv ℝ f) := (hf.fderiv_right (m := ∞) (by simp only [
+      ENat.coe_top_add_one, Std.le_refl])).continuous
   have hdm : MemLp (fderiv ℝ f) 2 volume := hd.memLp_of_hasCompactSupport (hfc.fderiv ℝ)
   have hc : ContDiff ℝ ∞ (vectorCurl f) :=
     contDiff_curl _ ((contDiff_piLp 2).mp hf)
   exact hdm.of_le_mul hc.continuous.aestronglyMeasurable_of_secondCountable
     (Filter.Eventually.of_forall fun x =>
-      norm_vectorCurl_le f x ((hf.differentiable (by simp)).differentiableAt))
+      norm_vectorCurl_le f x ((hf.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+          ENat.top_ne_zero, not_false_eq_true])).differentiableAt))
 
 /-- The actual L² cutoff-curl estimate, retaining the two Hölder terms. -/
 theorem cutoff_curl_lpNorm_le (ψ : Space → ℝ) (φ : Space → Space)
@@ -139,8 +143,10 @@ theorem cutoff_curl_lpNorm_le (ψ : Space → ℝ) (φ : Space → Space)
     lpNorm (vectorCurl (fun x => ψ x • φ x)) 2 volume ≤
         lpNorm (fun x => 6 * (a x + b x)) 2 volume :=
       lpNorm_mono_real hg (fun x => norm_cutoff_curl_le ψ φ x
-        ((hψ.differentiable (by simp)).differentiableAt)
-        ((hφ.differentiable (by simp)).differentiableAt))
+        ((hψ.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+            not_false_eq_true])).differentiableAt)
+        ((hφ.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+            not_false_eq_true])).differentiableAt))
     _ = 6 * lpNorm (a + b) 2 volume := by
       simpa only [Nat.cast_ofNat, Pi.add_apply] using lpNorm_fun_natCast_mul 6 (a + b) 2 volume
     _ ≤ 6 * (lpNorm a 2 volume + lpNorm b 2 volume) :=
@@ -166,7 +172,8 @@ theorem norm_gradient_eq_fderiv (ψ : Space → ℝ) (x : Space) :
 /-- The L³ cutoff derivative norm can equivalently be written using its actual gradient. -/
 theorem lpNorm_gradient_eq_fderiv (ψ : Space → ℝ) (hψ : ContDiff ℝ ∞ ψ) :
     lpNorm (gradient ψ) 3 volume = lpNorm (fderiv ℝ ψ) 3 volume := by
-  have hd : Continuous (fderiv ℝ ψ) := (hψ.fderiv_right (m := ∞) (by simp)).continuous
+  have hd : Continuous (fderiv ℝ ψ) := (hψ.fderiv_right (m := ∞) (by simp only [
+      ENat.coe_top_add_one, Std.le_refl])).continuous
   have hg : Continuous (gradient ψ) := (InnerProductSpace.toDual ℝ Space).symm.continuous.comp hd
   rw [← lpNorm_norm hg.aestronglyMeasurable, ← lpNorm_norm hd.aestronglyMeasurable]
   congr 1

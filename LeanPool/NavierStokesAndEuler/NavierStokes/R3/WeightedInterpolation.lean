@@ -74,11 +74,11 @@ theorem eLpNorm_le_rpow_mul
           (Real.rpow_nonneg (norm_nonneg _) _))] using hx
     _ ≤ eLpNorm' (fun x => ‖f x‖ ^ a) (p.toReal / a) volume *
         eLpNorm' (fun x => ‖g x‖ ^ b) (q.toReal / b) volume := by
-      simpa using eLpNorm'_le_eLpNorm'_mul_eLpNorm'
+      simpa only [ENNReal.coe_one, one_mul] using eLpNorm'_le_eLpNorm'_mul_eLpNorm'
         (hf.norm.aemeasurable.pow_const a).aestronglyMeasurable
         (hg.norm.aemeasurable.pow_const b).aestronglyMeasurable
         (fun x y : ℝ => x * y) 1
-        (Filter.Eventually.of_forall fun x => by simp [nnnorm_mul])
+        (Filter.Eventually.of_forall fun x => by simp only [nnnorm_mul, one_mul, Std.le_refl])
         hr hra hab
     _ = eLpNorm' f p.toReal volume ^ a * eLpNorm' g q.toReal volume ^ b := by
       rw [eLpNorm'_norm_rpow _ _ _ ha, eLpNorm'_norm_rpow _ _ _ hb,
@@ -142,7 +142,7 @@ theorem norm_weight_pow_eq {φ : ℝ} (hφ : 0 ≤ φ) (w : E) (k : ℕ) :
     Real.mul_rpow (pow_nonneg hφ 4) (norm_nonneg w), pow_four_rpow hφ]
   have hw : ‖w‖ ^ (1 - (k : ℝ) / 4) * ‖w‖ ^ ((k : ℝ) / 4) = ‖w‖ := by
     rw [← Real.rpow_add' (norm_nonneg w) (by ring_nf; exact one_ne_zero)]
-    simp
+    simp only [sub_add_cancel, Real.rpow_one]
   calc
     φ ^ k * ‖w‖ = φ ^ k *
         (‖w‖ ^ (1 - (k : ℝ) / 4) * ‖w‖ ^ ((k : ℝ) / 4)) := by rw [hw]
@@ -165,8 +165,8 @@ theorem cutoff_interpolation
           comparisonLpNorm 6 (fun x => (φ x ^ 4) • w x) ^ ((k : ℝ) / 4) := by
   apply memLp_and_lpNorm_le_rpow_mul hw hweighted ((hφm.pow k).smul hw.aestronglyMeasurable)
       (by norm_num) (by norm_num) hr ha hb
-  · simpa using hra
-  · simpa using hab
+  · simpa only [ENNReal.toReal_ofNat] using hra
+  · simpa only [one_div, ENNReal.toReal_ofNat, inv_div] using hab
   · exact Filter.Eventually.of_forall fun x => (norm_weight_pow_eq (hφ x) (w x) k).le
 
 /-- `φ w` belongs to `L^(12/5)` with the exact endpoint interpolation bound. -/
@@ -292,8 +292,10 @@ theorem divergence_weighted {χ : Space → ℝ} {v : Space → Space}
         χ x * spatialPartial i v x i + spatialPartial i χ x * v x i := by
     change (EuclideanSpace.proj i)
       (fderiv ℝ (fun y => χ y • v y) x (coordinateVector i)) = _
-    rw [fderiv_fun_smul (hχ.differentiable (by simp) x)
-      (hv.differentiable (by simp) x)]
+    rw [fderiv_fun_smul (hχ.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true]) x)
+      (hv.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+          not_false_eq_true]) x)]
     simp only [_root_.add_apply, _root_.smul_apply,
       ContinuousLinearMap.smulRight_apply, map_add, map_smul, smul_eq_mul,
       spatialPartial]
@@ -453,7 +455,7 @@ theorem uniformFiniteEnergy_sub {times : Set ℝ} {u v : VelocityField}
   have hdiff := l2Sq_sub_le
     ((squareIntegrableAtTime_iff_memLp (hu_meas t ht)).1 hu_sq)
     ((squareIntegrableAtTime_iff_memLp (hv_meas t ht)).1 hv_sq)
-  dsimp [kineticEnergy, l2Sq] at hu_bound hv_bound hdiff ⊢
+  dsimp only [l2Sq, kineticEnergy] at hu_bound hv_bound hdiff ⊢
   linarith
 
 /-- The preceding result applies to fields jointly continuous on the slab. -/
@@ -476,7 +478,7 @@ theorem uniformFiniteEnergy_l2Sq_bound {times : Set ℝ} {u : VelocityField}
   intro t ht
   obtain ⟨hint, hbound⟩ := hu t ht
   refine ⟨hint, ?_⟩
-  dsimp [kineticEnergy, l2Sq] at hbound ⊢
+  dsimp only [kineticEnergy, l2Sq] at hbound ⊢
   linarith
 
 /-- Every component product is dominated by the Euclidean squared norm. -/

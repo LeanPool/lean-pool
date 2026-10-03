@@ -61,10 +61,13 @@ theorem taperSecond_factorization (d : TailData) (x : ℝ) :
       (FlatCutoff.edge 4 x / x ^ 6) * taperSecondFactor d x := by
   let W : ℝ → ℝ := fun u => FlatCutoff.edge 4 u / u ^ 3
   have hW : ContDiff ℝ ∞ W := FlatCutoff.edge_div_pow_contDiff (by norm_num) 3
-  have hL := ((tailShapeDeriv_contDiff d).differentiable (by simp) (3 - x)).hasDerivAt.comp x
+  have hL := ((tailShapeDeriv_contDiff d).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true]) (3 - x)).hasDerivAt.comp x
     ((hasDerivAt_id x).const_sub 3)
-  have hR := ((hW.differentiable (by simp) x).hasDerivAt).mul
-    ((taperSlopeFactor_contDiff d).differentiable (by simp) x).hasDerivAt
+  have hR := ((hW.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+      not_false_eq_true]) x).hasDerivAt).mul
+    ((taperSlopeFactor_contDiff d).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true]) x).hasDerivAt
   have he : (fun u => tailShapeDeriv d (3 - u)) = fun u => W u * taperSlopeFactor d u :=
     funext (tailShapeDeriv_factorization d)
   change HasDerivAt (fun u => tailShapeDeriv d (3 - u))
@@ -80,7 +83,8 @@ theorem taperSecond_factorization (d : TailData) (x : ℝ) :
         (by norm_num : (0 : ℝ) < 4) 3 1)
       simpa only [norm_iteratedFDeriv_eq_norm_iteratedDeriv, iteratedDeriv_one,
         norm_zero] using ht
-    have hW0 : W 0 = 0 := by simp [W]
+    have hW0 : W 0 = 0 := by simp only [FlatCutoff.edge_zero, ne_eq, OfNat.ofNat_ne_zero,
+        not_false_eq_true, zero_pow, div_zero, W]
     simp only [hz, hW0, zero_mul, add_zero] at hh
     simp only [FlatCutoff.edge_zero, zero_pow (by norm_num : 6 ≠ 0), div_zero, zero_mul]
     linarith only [hh]
@@ -126,7 +130,8 @@ theorem profileSource_factorization (C : ℝ) (d : TailData) (y0 : ℝ) (y : ℝ
   rw [profileSource, taperSecond_factorization, tailShapeDeriv_factorization]
   unfold sourceFactor
   by_cases hx : y.2 = 0
-  · simp [hx]
+  · simp only [hx, FlatCutoff.edge_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow,
+      div_zero, zero_mul, mul_zero, add_zero, neg_mul, mul_neg, neg_zero]
   · field_simp [hx]
 
 theorem profileSource_contDiff (C : ℝ) (d : TailData) (y0 : ℝ) :
@@ -172,7 +177,8 @@ theorem stressFactor_contDiff (C : ℝ) (d : TailData) (y0 : ℝ) :
 
 theorem profileRadius_eq (y0 x : ℝ) :
     profileRadius y0 x = profileRadius y0 0 * Real.exp (-x / 2) := by
-  simp [profileRadius]
+  simp only [profileRadius, Nat.ofNat_nonneg, Real.sqrt_mul, neg_zero, zero_div, Real.exp_zero,
+      mul_one]
 
 theorem profileRadius_edgeCoordinate (y0 : ℝ) {R : ℝ} (hR : 0 < R) :
     profileRadius y0 (edgeCoordinate (profileRadius y0 0) R) = R := by
@@ -197,7 +203,8 @@ theorem radialSource_weight (C : ℝ) (d : TailData) (y0 η : ℝ) {R : ℝ} (hR
   simp only [radialFlatDensity, FlatPrimitive.integrand, primitiveCoefficient,
     profileRadius_edgeCoordinate y0 hR]
   by_cases hx : edgeCoordinate (profileRadius y0 0) R = 0
-  · simp [hx]
+  · simp only [hx, FlatCutoff.edge_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow,
+      div_zero, zero_mul, mul_zero]
   · field_simp [hR.ne', hx]
 
 theorem radialSource_weight_integrable (C : ℝ) (d : TailData) (y0 η : ℝ)
@@ -238,7 +245,8 @@ theorem profileStress_factorization (C : ℝ) (d : TailData) (y0 : ℝ) (y : ℝ
   rw [profileStress_eq_primitive, ParametricFlatFactor.primitive_eq_scale_mul_factor]
   unfold FlatPrimitive.scale stressFactor
   by_cases hx : y.2 = 0
-  · simp [hx]
+  · simp only [hx, FlatCutoff.edge_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow,
+      div_zero, mul_zero, zero_mul, zero_div]
   · field_simp [hx, (profileRadius_pos y0 y.2).ne']
 
 theorem profileStress_contDiff (C : ℝ) (d : TailData) (y0 : ℝ) :
@@ -367,7 +375,7 @@ theorem stressX_zero_outside (C : ℝ) (d : TailData) (y0 : ℝ)
     {X : ℝ} (hX : Real.exp (y0 + 3) ≤ X) (η : ℝ) : stressX C d y0 (X, η) = 0 := by
   have hl := Real.log_le_log (Real.exp_pos (y0 + 3)) hX
   rw [Real.log_exp] at hl
-  exact profileStress_zero_of_nonpos C d y0 (by dsimp [xChart]; linarith only [hl])
+  exact profileStress_zero_of_nonpos C d y0 (by dsimp only [xChart]; linarith only [hl])
 
 theorem edge_mono_positive {c x y : ℝ} (hc : 0 ≤ c) (hx : 0 < x) (hxy : x ≤ y) :
     FlatCutoff.edge c x ≤ FlatCutoff.edge c y := by
@@ -445,7 +453,8 @@ theorem physicalChi_hasDerivAt_z (d : TailData) {p : PhysicalPoint} (ht : p.1 < 
     HasDerivAt (fun z => physicalChi d (p.1, (p.2.1, z)))
       (-(q d.h p ^ (-2 * CoordinateAlgebra.D d.h) * beta d (eta d.h p))) p.2.2 := by
   have hq := q_pos d.h_pos d.h_lt_half ht
-  have hχ := ((profileChi_contDiff d).differentiable (by simp) (eta d.h p)).hasDerivAt.comp p.2.2
+  have hχ := ((profileChi_contDiff d).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true]) (eta d.h p)).hasDerivAt.comp p.2.2
     (eta_hasDerivAt_z d.h_pos d.h_lt_half ht)
   have hm := ((q_hasDerivAt_z d.h_pos d.h_lt_half ht).rpow_const
     (p := -CoordinateAlgebra.D d.h) (Or.inl hq.ne')).mul hχ
@@ -491,7 +500,8 @@ theorem physicalTaper_second_z (d : TailData) (y0 : ℝ) {p : PhysicalPoint}
     funext z
     exact (physicalTaper_hasDerivAt_z d y0 (p := (p.1, (p.2.1, z))) ht hs).deriv
   rw [he]
-  have hh := ((tailShapeDeriv_contDiff d).differentiable (by simp)
+  have hh := ((tailShapeDeriv_contDiff d).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true])
     (Real.log (X d.h p) - y0)).hasDerivAt.comp p.2.2
       ((TerminalPressure.logX_hasDerivAt_z d.h_pos d.h_lt_half ht hs).sub_const y0)
   have hd := (physicalChi_hasDerivAt_z d ht).fun_neg.fun_mul hh
@@ -625,7 +635,7 @@ theorem physicalSource_radial_scaled (C : ℝ) (d : TailData) (y0 : ℝ)
     physicalSource C d y0 (radiusPoint t r z) =
       physicalScale d t z ^ (-CoordinateAlgebra.A d.h - 1 + 2 * d.h) *
         radialSource C d y0 (physicalEta d t z) (r / Real.sqrt (physicalScale d t z)) := by
-  rw [physicalSource_scaled C d y0 ht (by dsimp [radiusPoint]; positivity)]
+  rw [physicalSource_scaled C d y0 ht (by dsimp only [radiusPoint]; positivity)]
   unfold radialSource
   rw [edgeCoordinate_eq_log y0 (div_pos hr (Real.sqrt_pos.mpr (physicalScale_pos d ht))),
     scaledRadius_identity (physicalScale_pos d ht)]
@@ -718,7 +728,7 @@ theorem stressX_edge_jets (C : ℝ) (d : TailData) (y0 η : ℝ) (n : ℕ) :
   have hw : w ∈ {w : ℝ × ℝ | 0 < w.1} := Real.exp_pos _
   obtain ⟨D, hD, hchart⟩ := compact_jets_bound_on hS (xChart_contDiffOn y0)
     (isCompact_singleton (x := w)) (singleton_subset_iff.mpr hw) n
-  have he : xChart y0 w = (η, 0) := by simp [xChart, w]
+  have he : xChart y0 w = (η, 0) := by simp only [xChart, Real.log_exp, sub_self, w]
   have hc := norm_iteratedFDerivWithin_comp_le (profileStress_contDiff C d y0).contDiffOn
     (xChart_contDiffOn y0) (EdgeWeightJets.nat_le_infty n) uniqueDiffOn_univ hS.uniqueDiffOn
     (mapsTo_univ _ _) hw (C := 0) (D := D)

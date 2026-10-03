@@ -779,9 +779,11 @@ theorem modelMatrix_column (c u : ℝ) (K : Plane) (i j : Fin 2) :
     modelMatrix c u K i j =
       c * Real.sqrt (1 + u ^ 2) * MovingFrameODE.quarterTurn K i - phaseSign j * u * K i := by
   fin_cases j <;>
-    simp [modelMatrix, basisMatrix, Matrix.mul_apply, Fin.sum_univ_two,
-      PulseCovariance.signedModel, PulseCovariance.modelDirection, PulseCovariance.signedSlopes,
-      PulseCovariance.radiusProfile, phaseSign] <;> ring
+    simp only [modelMatrix, Fin.zero_eta, Fin.isValue, Matrix.mul_apply, basisMatrix,
+        PulseCovariance.signedModel, PulseCovariance.modelDirection, PulseCovariance.radiusProfile,
+        PulseCovariance.signedSlopes, cons_val_zero, ite_mul, Fin.sum_univ_two, ↓reduceIte,
+        one_ne_zero, cons_val_one, cons_val_fin_one, mul_neg, phaseSign, one_mul, Fin.mk_one,
+        even_two, Even.neg_pow, neg_neg, neg_mul, sub_neg_eq_add] <;> ring
 
 theorem basisMatrix_target (K T : Plane) (hK : ‖K‖ = 1) :
     (basisMatrix K).mulVec (Covariance.target (modelNormal K T) (modelTransverse K T)) =
@@ -889,7 +891,8 @@ noncomputable def modelVector (c s : ℝ) (K : Plane) : Plane :=
 theorem modelVector_column (c u : ℝ) (K : Plane) (j i : Fin 2) :
     modelVector c (phaseSign j * u) K i = modelMatrix c u K i j := by
   have hs : (phaseSign j * u) ^ 2 = u ^ 2 := by
-    fin_cases j <;> simp [phaseSign]
+    fin_cases j <;> simp only [phaseSign, Fin.zero_eta, Fin.isValue, ↓reduceIte, one_mul,
+        Fin.mk_one, one_ne_zero, neg_mul, even_two, Even.neg_pow]
   rw [modelMatrix_column]
   simp only [modelVector, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, hs]
   ring
@@ -1072,7 +1075,7 @@ theorem primary_ratio_error (i : ι) {p : Slow} (hp : p ∈ D.carrier i)
   have herrors := error_constants_nonneg (u := u) hM
   have hprimary := PrimaryODE.primary_bounds hlength.le (a.frame i)
     (fun z => PrimaryPulseBounds.referenceP (a.lam i) u (a.length i) z.2)
-    hA hp hgap herrors.2.1 herrors.2.2 hS hcone (by simpa using hslotL)
+    hA hp hgap herrors.2.1 herrors.2.2 hS hcone (by simpa only [sub_zero] using hslotL)
     (ViscousPropagator.referenceViscosity (a.lam i) u (a.length i))
     (fun t ht => by rw [hc.eigenvalue t ht]; exact hg t ht)
     hc.errors hc.viscosity hP hPeq v hv

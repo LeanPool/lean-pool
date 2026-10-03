@@ -223,7 +223,7 @@ theorem unweighted {f : ι → D → E} (hf : PolynomialJets V.toDomain f) :
     c.index c.linear c.shift K (fun _ _ _ _ => zero_le_one) c.maps c.growth_one c.linear_one
     c.growthDegree c.linearDegree c.growth_bound c.linear_bound
   intro l n i x hx hi
-  simp
+  simp only [Real.rpow_zero, mul_one, Std.le_refl]
 
 theorem weighted {f : ι → D → E} (hf : NativeJets V ζ f) :
     UniformLocalJets s (fun _ _ x => s.zeta x) 0 K (c.pull f) := by
@@ -1483,7 +1483,8 @@ theorem copyPoint_affine (l : SlotColoring.Label) (chart common : ℕ)
     copyPoint sys hdet l chart common k x =
       copyLinear sys hdet l chart common x + copyPoint sys hdet l chart common k 0 := by
   apply Prod.ext
-  · simp [copyPoint, copyLinear]
+  · simp only [copyPoint, slowChange_apply, one_div, copyLinear, ContinuousLinearMap.coe_prodMap',
+      Prod.fst_zero, mul_zero, Prod.snd_zero, Prod.fst_add, Prod.map_fst, Prod.mk_add_mk, add_zero]
   · change (slotGeometry sys hdet l (ChartScales.nativeIndex h l.1 - common)).coordinates k x.2 =
       (slotGeometry sys hdet l (ChartScales.nativeIndex h l.1 - common)).coordinateLinear x.2 +
         (slotGeometry sys hdet l (ChartScales.nativeIndex h l.1 - common)).coordinates k 0
@@ -1790,15 +1791,16 @@ noncomputable def temporalVector : Plane := TorusInverse.vector .temporal
 
 theorem vectors_det : radialVector.1 * temporalVector.2 - radialVector.2 * temporalVector.1 ≠ 0 :=
     by
-  dsimp [radialVector, temporalVector, TorusInverse.vector]
+  dsimp only [radialVector, TorusInverse.vector, temporalVector, ne_eq]
   nlinarith [sq_nonneg (Real.sqrt 2 - 1)]
 
 /-- Slot linear, bundling `toFun`, `map_add`, `map_smul`, `cont`. -/
 noncomputable def slotLinear (g : CommonCoverSolve.Geometry) : Cylinder →L[ℝ] PhaseCalculus.Slot
     where
   toFun x := ((x.1.1, x.1.2.1), (x.2, (g.coordinateLinear x.1.2.2).2))
-  map_add' x y := by ext <;> simp
-  map_smul' c x := by ext <;> simp
+  map_add' x y := by ext <;> simp only [Prod.fst_add, Prod.mk_add_mk, Prod.snd_add, map_add]
+  map_smul' c x := by ext <;> simp only [Prod.smul_fst, smul_eq_mul, RingHom.id_apply, Prod.smul_mk,
+      Prod.smul_snd, map_smul]
   cont := (continuous_fst.fst.prodMk continuous_fst.snd.fst).prodMk
     (continuous_snd.prodMk ((g.coordinateLinear.continuous.comp continuous_fst.snd.snd).snd))
 
@@ -1811,9 +1813,11 @@ theorem slotCoordinates_affine (g : CommonCoverSolve.Geometry) (k : TorusInverse
     slotCoordinates g k = fun x => slotLinear g x + ((0, 0), (0, (g.coordinates k 0).2)) := by
   funext x
   apply Prod.ext
-  · simp [slotCoordinates, slotLinear]
+  · simp only [slotCoordinates, slotLinear, ContinuousLinearMap.coe_mk', LinearMap.coe_mk,
+      AddHom.coe_mk, Prod.mk_add_mk, add_zero]
   · apply Prod.ext
-    · simp [slotCoordinates, slotLinear]
+    · simp only [slotCoordinates, slotLinear, ContinuousLinearMap.coe_mk', LinearMap.coe_mk,
+        AddHom.coe_mk, Prod.mk_add_mk, add_zero]
     · change (g.coordinates k x.1.2.2).2 =
         (g.coordinateLinear x.1.2.2).2 + (g.coordinates k 0).2
       rw [g.coordinates_eq_affine]
@@ -1836,13 +1840,13 @@ theorem slot_coordinate_radial (l : SlotColoring.Label) (gap : ℕ) :
   let g := slotGeometry sys vectors_det l gap
   have hb : g.basis (1, 0) = radialVector := by
     rw [slotGeometry_basis]
-    simp
+    simp only [one_smul, mul_zero, zero_smul, add_zero]
   have he : g.basis.symm radialVector = (1, 0) := (g.basis.symm_apply_eq).mpr hb.symm
   change g.basis.symm (CommonCoverSolve.coverPower gap radialVector) = _
   rw [show CommonCoverSolve.coverPower gap radialVector = ChartScales.Lambda ^ gap • radialVector
       from
     CommonBaseContext.coverPower_radial gap, map_smul, he]
-  simp
+  simp only [Prod.smul_mk, smul_eq_mul, mul_one, mul_zero]
 
 theorem slot_coordinates_radial (l : SlotColoring.Label) (gap i : ℕ) (Q : ℝ) (x : Cylinder) :
     slotLinear (slotGeometry sys vectors_det l gap)
@@ -1850,18 +1854,19 @@ theorem slot_coordinates_radial (l : SlotColoring.Label) (gap i : ℕ) (Q : ℝ)
   change ((1, (0, 0)), (0, ((slotGeometry sys vectors_det l gap).coordinateLinear
     ((_ * _) • radialVector)).2)) = _
   rw [map_smul, slot_coordinate_radial]
-  simp [PhaseCalculus.eR]
+  simp only [Prod.smul_mk, smul_eq_mul, mul_zero, PhaseCalculus.eR]
 
 theorem slot_coordinates_angular (g : CommonCoverSolve.Geometry) (x : Cylinder) :
     slotLinear g (PhysicalResidualBridge.ScaledGraph.angular x) = PhaseCalculus.eTheta := by
   change ((0, (0, 0)), (1, (g.coordinateLinear 0).2)) = _
-  simp [PhaseCalculus.eTheta]
+  simp only [map_zero, Prod.snd_zero, PhaseCalculus.eTheta]
 
 theorem slot_coordinates_axial (g : CommonCoverSolve.Geometry) (Q h : ℝ) (i : ℕ) (x : Cylinder) :
     slotLinear g ((PhysicalResidualBridge.commonGraph Q h i).axial x) =
       Q ^ h • PhaseCalculus.eZ := by
   change ((0, (Q ^ h, 0)), (0, (g.coordinateLinear 0).2)) = _
-  simp [PhaseCalculus.eZ]
+  simp only [map_zero, Prod.snd_zero, PhaseCalculus.eZ, Prod.smul_mk, smul_eq_mul, mul_zero,
+      mul_one]
 
 /-- Periodic phase, constructed using `PhaseCalculus.phase`. -/
 noncomputable def periodicPhase (l : SlotColoring.Label) (gap : ℕ)
@@ -1901,8 +1906,10 @@ private theorem normal_pullback {X : Type} [NormedAddCommGroup X] [NormedSpace �
   have hd := fderiv_comp x
     (PrimaryMaterialDefect.differentiableAt_phase epsilon p pz x0 F G (chi x) hF hG) hchi
   ext i
-  fin_cases i <;> simp [HarmonicCalculus.phaseNormal, PhaseCalculus.phaseNormal,
-    HarmonicCalculus.along, hd, hr, ht, hz]
+  fin_cases i <;> simp only [HarmonicCalculus.phaseNormal, HarmonicCalculus.along, hd,
+      ContinuousLinearMap.comp_apply, hr, ht, hz, map_smul, smul_eq_mul, Fin.zero_eta, Fin.isValue,
+      Matrix.cons_val_zero, PhaseCalculus.phaseNormal, Fin.mk_one, Matrix.cons_val_one,
+      Fin.reduceFinMk, Matrix.cons_val]
 
 theorem nativePhase_normal (l : SlotColoring.Label) (gap i : ℕ) {Q : ℝ} (hQ : 0 < Q)
     (p pz x0 : ℝ) (F G : Slow → ℝ) (k : TorusInverse.Frequency) (theta : ℝ)
@@ -1942,7 +1949,8 @@ theorem periodicPhase_differentiableAt (l : SlotColoring.Label) (gap : ℕ)
     (hG : DifferentiableAt ℝ G (x.1.1, x.1.2.1)) :
     DifferentiableAt ℝ (periodicPhase sys l gap epsilon p pz x0 F G) x := by
   have hc := (PeriodicPhaseAssembly.periodicClock_contDiff
-    (slotGeometry sys vectors_det l gap) (clockWindow sys l.1)).differentiable (by simp)
+    (slotGeometry sys vectors_det l gap) (clockWindow sys l.1)).differentiable (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hchi : DifferentiableAt ℝ (fun y : Cylinder =>
       ((y.1.1, y.1.2.1), (y.2, PeriodicPhaseAssembly.periodicClock
         (slotGeometry sys vectors_det l gap) (clockWindow sys l.1).cutoff y.1.2.2))) x :=
@@ -1983,8 +1991,10 @@ theorem periodicPhase_normal_germ (hh : 0 ≤ h) {l : SlotColoring.Label} (hl : 
           gap) k) y := by
     simp only [HarmonicCalculus.phaseNormal, hyr, hyt, hyz]
   exact he.trans (nativePhase_normal sys l gap i hQ p pz x0 F G k theta
-    ((hF.contDiffAt (hS.mem_nhds hy)).differentiableAt (by simp))
-    ((hG.contDiffAt (hS.mem_nhds hy)).differentiableAt (by simp)))
+    ((hF.contDiffAt (hS.mem_nhds hy)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true]))
+    ((hG.contDiffAt (hS.mem_nhds hy)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true])))
 
 theorem phase_normal_view_germ (hh : 0 ≤ h) {l : SlotColoring.Label} (hl : 4 ≤ l.1)
     (i gap : ℕ) {Q Qr : ℝ} (hQ : 0 < Q) (hQr : 0 < Qr)
@@ -2014,8 +2024,10 @@ theorem phase_normal_view_germ (hh : 0 ≤ h) {l : SlotColoring.Label} (hl : 4 �
     (hS.preimage ((slowChange h Q Qr).continuous.comp
       (continuous_fst.fst.prodMk continuous_fst.snd.fst))).mem_nhds hxS
   filter_upwards [hp.eventually hn, hR, hslow] with y hyN hyR hyS
-  have hFd := (hF.contDiffAt (hS.mem_nhds hyS)).differentiableAt (by simp)
-  have hGd := (hG.contDiffAt (hS.mem_nhds hyS)).differentiableAt (by simp)
+  have hFd := (hF.contDiffAt (hS.mem_nhds hyS)).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
+  have hGd := (hG.contDiffAt (hS.mem_nhds hyS)).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hd := periodicPhase_differentiableAt sys l 0 (Qr ^ h) p pz x0 F G
     (x := changeMap y) hFd hGd
   exact (PhysicalParticularWave.phaseNormal_chartChange hQ hQr h i gap K Kr hyR hd).trans
@@ -2032,7 +2044,8 @@ variable {D h : ℝ} {vr vt : Plane}
 theorem slotGeometry_refine (l : SlotColoring.Label) (gap : ℕ) :
     CopySolveCompatibility.refineGeometry (slotGeometry sys hdet l 0) gap =
       slotGeometry sys hdet l gap := by
-  simp [CopySolveCompatibility.refineGeometry, slotGeometry, CommonCoverClass.bandGeometry]
+  simp only [CopySolveCompatibility.refineGeometry, slotGeometry, CommonCoverClass.bandGeometry,
+      zero_add]
 
 theorem slot_coordinates_from_zero (l : SlotColoring.Label) (gap : ℕ)
     (k : TorusInverse.Frequency) (Y : Plane) :

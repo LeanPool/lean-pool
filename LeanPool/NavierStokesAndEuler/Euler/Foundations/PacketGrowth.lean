@@ -40,7 +40,7 @@ private theorem eventually_nonneg_right
     filter_upwards [hslope, self_mem_nhdsWithin] with y hy hxy
     rw [slope_def_field, ← hx] at hy
     have : 0 < y - x := sub_pos.mpr hxy
-    simpa using ((div_pos_iff_of_pos_right this).mp hy).le
+    simpa only [ge_iff_le, sub_zero] using ((div_pos_iff_of_pos_right this).mp hy).le
   · exact ((hd.continuousAt.eventually (Ioi_mem_nhds hx)).filter_mono
       nhdsWithin_le_nhds).mono fun _ hy => hy.le
 
@@ -64,7 +64,7 @@ theorem pair_nonneg_of_strict_boundary
     have hc : IsClosed {p : ℝ × ℝ | 0 ≤ p.1 ∧ 0 ≤ p.2} :=
       (isClosed_le continuous_const continuous_fst).inter
         (isClosed_le continuous_const continuous_snd)
-    simpa [s, inter_comm] using
+    simpa only [inter_comm, preimage_ofPred_eq] using
       hpair.preimage_isClosed_of_isClosed isClosed_Icc hc
   apply hs.Icc_subset_of_forall_exists_gt ⟨hf0, hg0⟩
   intro t ht y hy
@@ -94,13 +94,13 @@ theorem cooperative_nonneg_of_bounded
         ((K + 1) * ε * exp ((K + 1) * t)) t := by
       intro t
       apply ((((hasDerivAt_id t).const_mul (K + 1)).exp).const_mul ε).congr_deriv
-      dsimp
+      dsimp only [id_eq]
       ring
     apply pair_nonneg_of_strict_boundary
       (fun t ht => (hf t ht).add (hed t))
       (fun t ht => (hg t ht).add (hed t))
-    · simpa using add_nonneg hf0 hε.le
-    · simpa using add_nonneg hg0 hε.le
+    · simpa only [Pi.add_apply, mul_zero, exp_zero, mul_one] using add_nonneg hf0 hε.le
+    · simpa only [Pi.add_apply, mul_zero, exp_zero, mul_one] using add_nonneg hg0 hε.le
     · intro t ht hft hgt
       dsimp only [Pi.add_apply] at hft hgt ⊢
       have hti : t ∈ Icc 0 T := Ico_subset_Icc_self ht
@@ -163,12 +163,13 @@ theorem cosh_lower_of_flux_system
   have hcd : ∀ t : ℝ, HasDerivAt (fun s => cosh (s / √2))
       (sinh (t / √2) / √2) t := by
     intro t
-    convert (((hasDerivAt_id t).div_const (√2 : ℝ)).cosh) using 1 <;> simp [div_eq_mul_inv]
+    convert (((hasDerivAt_id t).div_const (√2 : ℝ)).cosh) using 1 <;> simp only [div_eq_mul_inv,
+        id_eq, one_mul]
   have hsd : ∀ t : ℝ, HasDerivAt (fun s => √2 * sinh (s / √2))
       (cosh (t / √2)) t := by
     intro t
     apply ((((hasDerivAt_id t).div_const (√2 : ℝ)).sinh).const_mul (√2 : ℝ)).congr_deriv
-    dsimp
+    dsimp only [id_eq]
     field_simp
   have hcompare := cooperative_nonneg
     (f := fun t => V t - cosh (t / √2))
@@ -178,7 +179,7 @@ theorem cosh_lower_of_flux_system
     (a := fun t => 1 / D t) (b := c)
     (fun t ht => (hV t ht).sub (hcd t))
     (fun t ht => (hF t ht).sub (hsd t))
-    (by simp [hV0]) (by simpa using hF0)
+    (by simp [hV0]) (by simpa only [zero_div, sinh_zero, mul_zero, sub_zero] using hF0)
     (fun t ht => by
       have hdt := hD t ht
       have hdpos : 0 < D t := lt_of_lt_of_le zero_lt_one hdt.1
@@ -235,7 +236,8 @@ theorem equation30_cosh_lower
     field_simp
   · exact hflux
   · exact hV0
-  · simpa using hV₁0
+  · simpa only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, mul_zero, add_zero,
+      one_mul] using hV₁0
   · intro t ht
     obtain ⟨hl, hu⟩ := hcoeff t ht
     constructor
@@ -336,7 +338,7 @@ theorem flux_lower_initial
     (a := fun t => 1 / D t) (b := c)
     (fun t ht => (hV t ht).sub_const (V 0))
     (fun t ht => (hF t ht).sub_const (F 0))
-    (by simp) (by simp) hD hc
+    (by simp only [sub_self, Std.le_refl]) (by simp only [sub_self, Std.le_refl]) hD hc
     (fun t ht => by
       have hp := mul_nonneg (hD t ht).1 hF0
       simp only [div_eq_mul_inv] at hp ⊢
@@ -374,7 +376,7 @@ theorem inversion_positive
       apply (((hflux (1 - t) (hmirror t ht)).comp t
         ((hasDerivAt_id t).const_sub 1)).neg).congr_deriv
       ring)
-    (by simpa using hf1.le)
+    (by simpa only [sub_zero] using hf1.le)
     (by norm_num; linarith only [hf₁1])
     (fun t ht => by
       have hdpos : 0 < 1 + (1 - t) ^ 4 := by positivity
@@ -413,7 +415,7 @@ theorem riccati_upper_bound
       exact ((hasDerivAt_id t).mul (hl t ht)).continuousAt.continuousWithinAt
     · intro t ht
       convert! ((hasDerivAt_id t).mul (hl t (Ico_subset_Icc_self ht))).hasDerivWithinAt using 1
-      simp
+      simp only [one_mul, id_eq]
     · norm_num
     · intro t
       simpa using ((hasDerivAt_id t).const_mul 2).const_add 1
@@ -446,7 +448,7 @@ theorem equation30_second_derivative
   have hD : HasDerivAt (fun s : ℝ => 1 + (β * s ^ 2) ^ 2)
       (4 * β ^ 2 * t ^ 3) t := by
     apply (((((hasDerivAt_id t).fun_pow 2).const_mul β).fun_pow 2).const_add 1).congr_deriv
-    dsimp
+    dsimp only [Nat.cast_ofNat, id_eq, Nat.add_one_sub_one]
     ring
   have hDne : ∀ s : ℝ, 1 + (β * s ^ 2) ^ 2 ≠ 0 := fun _ => ne_of_gt (by positivity)
   have hq := hflux.div hD (hDne t)
@@ -478,7 +480,7 @@ theorem equation30_log_derivative_upper
     have hVne : V t ≠ 0 := ne_of_gt (hp t ht).1
     have hDne : 1 + (β * t ^ 2) ^ 2 ≠ 0 := ne_of_gt (by positivity)
     apply ((equation30_second_derivative (hflux t ht)).div (hV t ht) hVne).congr_deriv
-    dsimp [dl]
+    dsimp only [dl]
     field_simp
   apply riccati_upper_bound hd
   intro t ht
@@ -494,7 +496,7 @@ theorem equation30_log_derivative_upper
   have hcoef : 0 ≤ 4 * β ^ 2 * t ^ 3 / (1 + (β * t ^ 2) ^ 2) :=
     div_nonneg (mul_nonneg (mul_nonneg (by norm_num) (sq_nonneg β)) (pow_nonneg ht0 3)) hDpos.le
   have hlog : 0 ≤ V₁ t / V t := div_nonneg (hp t hti).2 (hp t hti).1.le
-  dsimp [dl]
+  dsimp only [dl]
   linarith only [hquot, hcoef, hlog, mul_nonneg hcoef hlog]
 
 /-- A coarse Riccati upper barrier for the inverted equation. -/
@@ -532,7 +534,7 @@ theorem riccati_tracking
       (-6 * exp (-t)) t := by
     intro t
     apply (((hasDerivAt_id t).neg.exp.const_mul 6).add_const (48 * ε)).congr_deriv
-    dsimp
+    dsimp only [Pi.neg_apply, id_eq]
     ring
   have hBpos : ∀ t : ℝ, 0 ≤ 6 * exp (-t) + 48 * ε := by
     intro t
@@ -614,17 +616,17 @@ noncomputable def riccatiRootDeriv (ε t : ℝ) : ℝ :=
 theorem hasDerivAt_riccatiRoot (ε t : ℝ) :
     HasDerivAt (riccatiRoot ε) (riccatiRootDeriv ε t) t := by
   have hy : HasDerivAt (fun s : ℝ => 1 - ε * s) (-ε) t := by
-    simpa using ((hasDerivAt_id t).const_mul ε).const_sub 1
+    simpa only [id_eq, mul_one] using ((hasDerivAt_id t).const_mul ε).const_sub 1
   have hdne : 1 + (1 - ε * t) ^ 4 ≠ 0 := ne_of_gt (by positivity)
   have hqpos : 0 < 2 / (1 + (1 - ε * t) ^ 4) := by positivity
   have hq : HasDerivAt (fun s => 2 / (1 + (1 - ε * s) ^ 4))
       (8 * ε * (1 - ε * t) ^ 3 / (1 + (1 - ε * t) ^ 4) ^ 2) t := by
     apply ((hasDerivAt_const t (2 : ℝ)).div ((hy.fun_pow 4).const_add 1) hdne).congr_deriv
-    dsimp
+    dsimp only [Nat.cast_ofNat, Nat.add_one_sub_one]
     field_simp
     ring
   apply (hq.sqrt (ne_of_gt hqpos)).congr_deriv
-  dsimp [riccatiRootDeriv, riccatiRoot]
+  dsimp only [riccatiRootDeriv, riccatiRoot]
   field_simp [hdne, ne_of_gt (sqrt_pos.mpr hqpos)]
   ring
 
@@ -632,7 +634,7 @@ theorem riccatiRoot_bounds {ε t : ℝ}
     (hy : 0 ≤ 1 - ε * t ∧ 1 - ε * t ≤ 1) :
     1 ≤ riccatiRoot ε t ∧ riccatiRoot ε t ≤ 2 := by
   have hy4 : (1 - ε * t) ^ 4 ≤ 1 := by
-    simpa using pow_le_pow_left₀ hy.1 hy.2 4
+    simpa only [one_pow] using pow_le_pow_left₀ hy.1 hy.2 4
   have hdpos : 0 < 1 + (1 - ε * t) ^ 4 := by positivity
   have hdge : 1 ≤ 1 + (1 - ε * t) ^ 4 := by
     have : 0 ≤ (1 - ε * t) ^ 4 := by positivity
@@ -653,7 +655,7 @@ theorem riccatiRootDeriv_bounds {ε t : ℝ} (hε : 0 ≤ ε)
   have hμ := riccatiRoot_bounds hy
   have hy0 := hy.1
   have hy3 : (1 - ε * t) ^ 3 ≤ 1 := by
-    simpa using pow_le_pow_left₀ hy.1 hy.2 3
+    simpa only [one_pow] using pow_le_pow_left₀ hy.1 hy.2 3
   have hdge : 1 ≤ 1 + (1 - ε * t) ^ 4 := by
     have : 0 ≤ (1 - ε * t) ^ 4 := by positivity
     linarith only [this]
@@ -797,12 +799,12 @@ theorem hasDerivAt_inverted_logderivative
     HasDerivAt (fun s => -ε * f₁ (1 - ε * s) / f (1 - ε * s))
       (invertedRiccati ε t (-ε * f₁ (1 - ε * t) / f (1 - ε * t))) t := by
   have hy : HasDerivAt (fun s : ℝ => 1 - ε * s) (-ε) t := by
-    simpa using ((hasDerivAt_id t).const_mul ε).const_sub 1
+    simpa only [id_eq, mul_one] using ((hasDerivAt_id t).const_mul ε).const_sub 1
   have hDne : 1 + (1 - ε * t) ^ 4 ≠ 0 := ne_of_gt (by positivity)
   have hd := (((inversion_second_derivative hflux).comp (h := fun s : ℝ => 1 - ε * s) t
     hy).const_mul (-ε)).div (hf.comp (h := fun s : ℝ => 1 - ε * s) t hy) hfpos
   apply hd.congr_deriv
-  dsimp [invertedRiccati]
+  dsimp only [Function.comp_apply, invertedRiccati]
   field_simp
   ring
 
@@ -846,7 +848,7 @@ theorem inversion_riccati_error
     apply div_nonneg _ hpt.2.1.le
     exact mul_nonneg_of_nonpos_of_nonpos (neg_nonpos.mpr hε.le) hpt.2.2.le
   have herr := inverted_riccati_squared_error hε hεsmall hscale hz
-    (by simpa using hinit) hznonneg
+    (by simpa only [mul_zero, sub_zero, neg_mul] using hinit) hznonneg
   intro y hy
   have hy1 : y ≤ 1 := by linarith only [hε, hεsmall, hy, hy.2]
   have ht : (1 - y) / ε ∈ Icc 0 ((1 - a) / ε) := by
@@ -888,12 +890,13 @@ theorem invertedScalar_equations
   have hDne : 1 + (ε ^ 2 * (y⁻¹ / ε) ^ 2) ^ 2 ≠ 0 := ne_of_gt (by positivity)
   constructor
   · apply (h0.div (hasDerivAt_id y) hy).congr_deriv
-    dsimp [invertedScalarDeriv]
+    dsimp only [id_eq, Function.comp_apply, invertedScalarDeriv]
     field_simp
     ring
   · apply (h4.mul ((h0.neg.div h2 (pow_ne_zero 2 hy)).sub
       (h1.div h3 (mul_ne_zero hε (pow_ne_zero 3 hy))))).congr_deriv
-    dsimp [invertedScalar]
+    dsimp only [Nat.cast_ofNat, id_eq, Nat.add_one_sub_one, Pi.sub_apply, Pi.div_apply,
+        Pi.neg_apply, Function.comp_apply, invertedScalar]
     field_simp
     ring
 
@@ -918,7 +921,7 @@ theorem invertedScalar_initial_bound
   have hl := equation30_log_derivative_upper (sq_nonneg ε) hβsmall hT hscale
     hV hflux hV0 hV₁0 (1 / ε) ⟨by positivity, le_rfl⟩
   have hVne : V (1 / ε) ≠ 0 := ne_of_gt hp.1
-  dsimp [invertedScalar, invertedScalarDeriv]
+  dsimp only [invertedScalar, invertedScalarDeriv]
   simp only [inv_one, one_pow, div_one, mul_one, neg_mul]
   refine ⟨hp.1, ?_, ?_⟩
   · have hquot : 0 ≤ V₁ (1 / ε) / ε := div_nonneg hp.2 hε.le
@@ -1083,8 +1086,9 @@ theorem equation30_post_inversion_lower
   have hy1 : 1 / x ≤ 1 := (div_le_one hxpos).mpr hx
   have hp := invertedScalar_positive hε hεsmall hV hflux hV0 hV₁0 (1 / x) hypos hy1
   have hid : invertedScalar ε V (1 / x) = x * V (x / ε) := by
-    simp [invertedScalar, one_div, div_inv_eq_mul, mul_comm]
-  have hid1 : invertedScalar ε V 1 = V (1 / ε) := by simp [invertedScalar]
+    simp only [invertedScalar, one_div, inv_inv, div_inv_eq_mul, mul_comm]
+  have hid1 : invertedScalar ε V 1 = V (1 / ε) := by simp only [invertedScalar, inv_one, one_div,
+      div_one]
   rw [hid, hid1] at hp
   constructor
   · apply (div_le_iff₀ hxpos).mpr
@@ -1165,10 +1169,11 @@ theorem equation30_zero_slope_prefix_upper
       (fun t ht => ((hU t ht).add (hfluxU t ht)).continuousAt.continuousWithinAt)
       (fun t ht => ((hU t (Ico_subset_Icc_self ht)).add
         (hfluxU t (Ico_subset_Icc_self ht))).hasDerivWithinAt)
-      (by simp [hU0, hU₁0])
+      (by simp only [hU0, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, mul_zero,
+          add_zero, hU₁0, exp_zero, Std.le_refl])
       (fun t => by
         apply (((hasDerivAt_id t).const_mul 3).exp).congr_deriv
-        dsimp
+        dsimp only [id_eq]
         ring)
     intro t ht hboundary
     have hti := Ico_subset_Icc_self ht
@@ -1486,7 +1491,7 @@ theorem equation30_zero_slope_logderivative_bound
       (fun t ht => (hd t ht).continuousAt.continuousWithinAt)
       (fun t ht => (hd t (Ico_subset_Icc_self ht)).hasDerivWithinAt)
       (B := fun _ => 2) (B' := fun _ => 0)
-      (by simp [hU0, hU₁0]) (fun t => hasDerivAt_const t 2)
+      (by simp only [hU₁0, hU0, div_one, Nat.ofNat_nonneg]) (fun t => hasDerivAt_const t 2)
       (fun t ht hboundary => by
         have ht0 := ht.1
         have hDge : 1 ≤ 1 + (ε ^ 2 * t ^ 2) ^ 2 := le_add_of_nonneg_right (sq_nonneg _)
@@ -1644,7 +1649,7 @@ theorem relative_propagator_bound
       _ = |v₁ a| + |u₁ a / u a| * |v a| := by rw [abs_mul]
       _ ≤ |v₁ a| + 2 * |v a| :=
         add_le_add le_rfl (mul_le_mul_of_nonneg_right (hlog a haI) (abs_nonneg (v a)))
-      _ ≤ 2 * N := by dsimp [N]; linarith only [abs_nonneg (v₁ a)]
+      _ ≤ 2 * N := by dsimp only [N]; linarith only [abs_nonneg (v₁ a)]
   have hΘ0 : 0 ≤ Θ := le_trans zero_le_one hΘ
   have hpow78 : Θ ^ 7 ≤ Θ ^ 8 := pow_le_pow_right₀ hΘ (by norm_num)
   have hpow68 : Θ ^ 6 ≤ Θ ^ 8 := pow_le_pow_right₀ hΘ (by norm_num)
@@ -1767,7 +1772,7 @@ theorem inverted_riccati_le_four
     have hy0 : 0 ≤ 1 - ε * t := by linarith only [hscale, hprod]
     have hy1 : 1 - ε * t ≤ 1 := by linarith only [hprod0]
     have hy3 : (1 - ε * t) ^ 3 ≤ 1 := by
-      simpa using pow_le_pow_left₀ hy0 hy1 3
+      simpa only [one_pow] using pow_le_pow_left₀ hy0 hy1 3
     have hDpos : 0 < 1 + (1 - ε * t) ^ 4 := by positivity
     apply (div_le_iff₀ hDpos).mpr
     have hm := mul_le_mul_of_nonneg_left hy3 (show 0 ≤ 4 * ε by positivity)
@@ -1802,7 +1807,8 @@ theorem inversion_riccati_range
     exact hasDerivAt_inverted_logderivative hεne
       (ne_of_gt (hp (1 - ε * t) (hmirror t ht)).2.1)
       (hf _ (hmirror t ht)) (hflux _ (hmirror t ht))
-  have hbound := inverted_riccati_le_four hε hεsmall hscale hz (by simpa using hinit)
+  have hbound := inverted_riccati_le_four hε hεsmall hscale hz (by simpa only [mul_zero, sub_zero,
+      neg_mul] using hinit)
   intro y hy
   have ht : (1 - y) / ε ∈ Icc 0 ((1 - a) / ε) :=
     ⟨div_nonneg (sub_nonneg.mpr hy.2) hε.le,

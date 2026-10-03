@@ -45,7 +45,7 @@ theorem radial_average_eq_quadratic (u : Space → Space) (hu : Continuous u) (x
       ∫ r in (0 : ℝ)..1, (2 * r ^ 3) • u (r ^ 2 • x) := by
   have hd (r : ℝ) : HasDerivAt (fun t : ℝ => t ^ 2) (2 * r) r := by
     convert! (hasDerivAt_id r).pow 2 using 1
-    simp
+    simp only [Nat.cast_ofNat, id_eq, Nat.add_one_sub_one, pow_one, mul_one]
   have h := intervalIntegral.integral_deriv_smul_comp
     (a := (0 : ℝ)) (b := 1) (f := fun r : ℝ => r ^ 2) (f' := fun r => 2 * r)
     (g := fun t => t • u (t • x)) (fun r _ => hd r)
@@ -84,7 +84,7 @@ theorem quadratic_radial_action (u : Space → Space) (hu : Continuous u)
   have hm : AEStronglyMeasurable (fun rx : ℝ × Space => ‖W rx.1 rx.2‖ ^ 2)
       (ν.prod volume) := by
     have hc : Continuous (fun rx : ℝ × Space => ‖W rx.1 rx.2‖ ^ 2) := by
-      dsimp [W]
+      dsimp only [W]
       fun_prop
     exact hc.aestronglyMeasurable
   have hE : Integrable (fun x : Space => ‖u x‖ ^ 2) :=
@@ -100,7 +100,7 @@ theorem quadratic_radial_action (u : Space → Space) (hu : Continuous u)
     apply (integrable_prod_iff hm).mpr
     constructor
     · filter_upwards [ae_restrict_mem measurableSet_Ioc] with r hr
-      dsimp [W]
+      dsimp only [W]
       simp_rw [norm_smul, mul_pow]
       exact (hE.comp_smul (pow_ne_zero 2 (ne_of_gt hr.1))).const_mul _
     · simpa only [norm_pow, norm_norm] using houter
@@ -110,21 +110,23 @@ theorem quadratic_radial_action (u : Space → Space) (hu : Continuous u)
         ∫ r, (∫ x : Space, ‖W r x‖ ^ 2) ∂ν := (integral_integral_swap hprod).symm
     _ = ∫ _ : ℝ, 4 * (∫ x : Space, ‖u x‖ ^ 2) ∂ν := integral_congr_ae henergy
     _ = 4 * (∫ x : Space, ‖u x‖ ^ 2) := by
-      simp [ν]
+      simp only [integral_const, MeasurableSet.univ, measureReal_restrict_apply, univ_inter,
+          Real.volume_real_Ioc, sub_zero, zero_le_one, sup_of_le_left, smul_eq_mul, one_mul, ν]
 
 /-- Pointwise Cauchy--Schwarz for the regularized radial parametrization. -/
 theorem radial_average_sq_le_action (u : Space → Space) (hu : Continuous u) (x : Space) :
     ‖∫ t in (0 : ℝ)..1, t • u (t • x)‖ ^ 2 ≤
       ∫ r in Ioc (0 : ℝ) 1, ‖(2 * r ^ 3) • u (r ^ 2 • x)‖ ^ 2 := by
   let W : ℝ → Space := fun r => (2 * r ^ 3) • u (r ^ 2 • x)
-  have hW : Continuous W := by dsimp [W]; fun_prop
+  have hW : Continuous W := by dsimp only [W]; fun_prop
   have hmem : MemLp W 2 (volume.restrict (Ioc (0 : ℝ) 1)) := by
     apply (memLp_two_iff_integrable_sq_norm hW.aestronglyMeasurable).mpr
     exact ((hW.norm.pow 2).integrableOn_Icc).mono_set Ioc_subset_Icc_self
   have h := norm_integral_sq_le_action (volume.restrict (Ioc (0 : ℝ) 1)) W hmem
   rw [radial_average_eq_quadratic u hu x,
     intervalIntegral.integral_of_le (by norm_num : (0 : ℝ) ≤ 1)]
-  simpa [W] using h
+  simpa only [ge_iff_le, MeasurableSet.univ, measureReal_restrict_apply, univ_inter,
+      Real.volume_real_Ioc, sub_zero, zero_le_one, sup_of_le_left, one_mul] using h
 
 /-- The radial homotopy average preserves L², with operator norm at most two. -/
 theorem radial_average_memLp_and_energy (u : Space → Space) (hu : Continuous u)

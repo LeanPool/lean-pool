@@ -441,8 +441,10 @@ theorem sumNorm_restrict_le_weighted {s q : ℕ} (hq : q ≤ s) (N : ℕ) (ρ : 
   have hsum := Finset.single_le_sum (s := Finset.range (N+1))
     (fun n _ => mul_nonneg (weight_pos hρ n).le (show 0 ≤ blockNorm period (toJet period u) q n
         from blockNorm_nonneg _))
-    (show 0 ∈ Finset.range (N+1) by simp)
-  simpa [weight, weightedNorm] using hsum
+    (show 0 ∈ Finset.range (N+1) by simp only [Finset.mem_range, lt_add_iff_pos_left,
+        Order.lt_add_one_iff, zero_le])
+  simpa only [weightedNorm, weight, ge_iff_le, pow_zero, Nat.factorial_zero, Nat.cast_one, one_pow,
+      ne_eq, one_ne_zero, not_false_eq_true, div_self, one_mul] using hsum
 
 /-- Exact external-word expansion of the actual Gevrey Sobolev sum. -/
 theorem weighted_word_sums {s : ℕ} (q N : ℕ) (hN : N + q ≤ s) (ρ : ℝ) (u : SobolevSpace period s) :

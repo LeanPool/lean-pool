@@ -56,11 +56,11 @@ theorem solution_gevrey
   intro k
   let S : ℝ := ∑ j ∈ range k, (k.choose (j+1) : ℝ)*Rc^(j+1) *
     ((j+1).factorial : ℝ)^2*‖iteratedFDeriv ℝ (k-(j+1)) u x‖
-  have hS : 0 ≤ S := by dsimp [S]; positivity
+  have hS : 0 ≤ S := by dsimp only [S]; positivity
   have hsum : (∑ j ∈ range k,
       (k.choose (j+1) : ℝ)*‖iteratedFDeriv ℝ (j+1) A x‖*
         ‖iteratedFDeriv ℝ (k-(j+1)) u x‖) ≤ C*S := by
-    dsimp [S]
+    dsimp only [S]
     rw [mul_sum]
     apply sum_le_sum
     intro j _

@@ -65,8 +65,10 @@ theorem timeKernel_continuous (t : ℝ) : Continuous (timeKernel t) := by
 theorem timeKernel_second_sum (t : ℝ) (y : Space) :
     timeKernel t y = (1/4:ℝ) * ∑ i : Fin 3,
       secondKernel t (EuclideanSpace.single i 1) (EuclideanSpace.single i 1) y := by
-  simp [timeKernel, secondKernel, EuclideanSpace.inner_single_right,
-    EuclideanSpace.real_norm_sq_eq, Fin.sum_univ_three]
+  simp only [timeKernel, inv_pow, EuclideanSpace.real_norm_sq_eq, Fin.sum_univ_three, Fin.isValue,
+      one_div, secondKernel, EuclideanSpace.inner_single_right, conj_trivial, one_mul,
+      inner_self_eq_norm_sq_to_K, PiLp.norm_single, norm_one, RCLike.ofReal_real_eq_id, id_eq,
+      one_pow, mul_one]
   ring
 
 theorem timeKernel_bound {t : ℝ} (ht : 0 < t) (y : Space) :

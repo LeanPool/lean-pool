@@ -108,7 +108,10 @@ theorem pressureAlias_vector_mem {s : StripData (PressureStream.Lift S)} {β : �
   have hm := hf.map (ContinuousLinearMap.single ℝ (fun _ : Fin 3 => ℝ) 0)
   convert! hm using 1
   funext n z i
-  fin_cases i <;> simp [pressureAliasState]
+  fin_cases i <;> simp only [pressureAliasState, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero,
+      ContinuousLinearMap.single_apply, Pi.single_eq_same, Fin.mk_one, Matrix.cons_val_one, ne_eq,
+      one_ne_zero, not_false_eq_true, Pi.single_eq_of_ne, Fin.reduceFinMk, Matrix.cons_val,
+      Fin.reduceEq]
 
 theorem temporalAlias_vector_mem {s : StripData (PressureStream.Lift S)} {β : ℝ}
     (g : GaugeData S) (h : ℝ) (index : ℕ → ℕ)
@@ -119,7 +122,9 @@ theorem temporalAlias_vector_mem {s : StripData (PressureStream.Lift S)} {β : �
   have hm := hf.map (ContinuousLinearMap.single ℝ (fun _ : Fin 3 => ℝ) 2)
   convert! hm using 1
   funext n z i
-  fin_cases i <;> simp [temporalAliasState]
+  fin_cases i <;> simp only [temporalAliasState, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero,
+      Matrix.cons_val, ContinuousLinearMap.single_apply, ne_eq, Fin.reduceEq, not_false_eq_true,
+      Pi.single_eq_of_ne, Fin.mk_one, Matrix.cons_val_one, Fin.reduceFinMk, Pi.single_eq_same]
 
 theorem pressureAlias_angle_mem {s : StripData (PressureStream.Lift S)} {β : ℝ}
     (g : GaugeData S) (c : CorrectionState.Context (PressureStream.Lift S))

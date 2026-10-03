@@ -71,7 +71,7 @@ theorem knownJet_bound (O : Operators) (hp : 2 ≤ p) (hR : 1 ≤ R)
       have hj := (J.value_eq t x θ).symm
       change J.raw (t,(x,θ)) = _ at hj
       rw [hj]
-      simp [knownJets,history,velocityJet,show 0 < p by omega]
+      simp only [knownJets, history, show 0 < p by omega, ↓reduceIte, velocityJet, Prod.fst_zero]
     exact (Field.wordBound_of_zero J.field hz 6 R (highShift 0)).mono_amplitude
       (zero_le_one.trans hR) (by norm_num : (0 : ℝ) ≤ 3*S.H0^(2*0))
   · have hi : 1 ≤ i := by omega
@@ -391,12 +391,12 @@ theorem tail_linear_bound (hTime : 0 < T) (hN : 1 ≤ N) (hR : 1 ≤ R)
       (by simpa only [Field.WordBound,Field.normalized_path,Nat.add_sub_cancel] using hC)
       (by
           simpa only [Field.WordBound,Field.normalized_path,Nat.add_sub_cancel] using hCtB) hRc (by
-              simp)
+              simp only [add_tsub_cancel_right, Scales.high_apply, Std.le_refl, implies_true])
     have hQ := BC.previousPressure_bound hTime S (N+1) (S.high N) (S.high_pos N)
       (a N).highPressure pressure
       (by
           simpa only [Field.WordBound,Field.normalized_path,Nat.add_sub_cancel] using hpB) hRc (by
-              simp)
+              simp only [add_tsub_cancel_right, Scales.high_apply, Std.le_refl, implies_true])
     have hL' := hL.remove_profile hTime.le (S.high N) (S.high_pos N)
       (S.H0^(2*N)) (pow_nonneg S.H0_pos.le _) (S.high_le_coarse N hN)
     have hQ' := hQ.remove_profile hTime.le (S.high N) (S.high_pos N)

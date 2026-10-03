@@ -52,7 +52,7 @@ theorem slope_bounds (c : Parameters) (y : ℝ) :
   have h3 := sigma_le_one (y - (c.dropLength + 1))
   have ha := mul_nonneg c.lam_pos.le h2
   have hb := mul_nonneg c.lam_pos.le (sub_nonneg.mpr h3)
-  dsimp [OutgoingSchedule.slope]
+  dsimp only [OutgoingSchedule.slope]
   constructor <;> linarith only [h1, hb, h0, ha]
 
 theorem logAmplitude_bounds (c : Parameters) {y : ℝ} (hy : 0 ≤ y) :
@@ -70,11 +70,13 @@ theorem logAmplitude_bounds (c : Parameters) {y : ℝ} (hy : 0 ≤ y) :
   · have h := intervalIntegral.integral_mono_on (μ := volume) hy
       (continuous_const.intervalIntegrable 0 y) (hc.intervalIntegrable 0 y)
       (fun t _ => hl t)
-    simpa [logAmplitude, primitive] using h
+    simpa only [logAmplitude, primitive, one_div, ge_iff_le, intervalIntegral.integral_neg,
+        intervalIntegral.integral_const, sub_zero, smul_eq_mul, mul_one] using h
   · have h := intervalIntegral.integral_mono_on (μ := volume) hy
       (hc.intervalIntegrable 0 y) (continuous_const.intervalIntegrable 0 y)
       (fun t _ => hu t)
-    simpa [logAmplitude, primitive] using h
+    simpa only [logAmplitude, primitive, one_div, ge_iff_le, intervalIntegral.integral_const,
+        sub_zero, smul_eq_mul, mul_one] using h
 
 theorem radialAmplitude_bounds (c : Parameters) {y : ℝ} (hy : 0 ≤ y) :
     c.P * Real.exp (-y) ≤ radialAmplitude c.P c.dropLength c.lam y ∧
@@ -92,7 +94,7 @@ theorem integral_stops {g : ℝ → ℝ} (hg : Continuous g) {a b : ℝ}
         apply intervalIntegral.integral_congr
         intro t ht
         exact hz t (uIcc_of_le hab ▸ ht).1
-      _ = 0 := by simp
+      _ = 0 := by simp only [intervalIntegral.integral_zero]
   have h := intervalIntegral.integral_add_adjacent_intervals (μ := volume)
     (hg.intervalIntegrable 0 a) (hg.intervalIntegrable a b)
   rw [hzero, add_zero] at h
@@ -100,7 +102,7 @@ theorem integral_stops {g : ℝ → ℝ} (hg : Continuous g) {a b : ℝ}
 
 theorem dropEnd_le_pulseStart (c : Parameters) : Real.exp c.m ≤ c.pulseStart := by
   have h := c.pulseStart_ge_hold
-  dsimp [Parameters.holdStart, Parameters.dropLength] at h
+  dsimp only [Parameters.holdStart, Parameters.dropLength] at h
   linarith only [h]
 
 theorem prefixM_fixed_interval (c : Parameters) :
@@ -194,7 +196,7 @@ theorem prefixJ_bounds (c : Parameters) :
   constructor
   · have hP := c.P_pos
     exact add_nonneg (by positivity) hpos
-  · dsimp [K]
+  · dsimp only [K]
       at hup
     linarith only [hup]
 
@@ -224,7 +226,8 @@ theorem pulseAmplitude_split (c : Parameters) :
     pulseAmplitude c = holdAmplitude c * Real.exp (-(1 / 2 + c.lam) * c.wait) := by
   have h := radialAmplitude_hold (P := c.P) (lam := c.lam) c.dropLength_pos.le
     (show c.dropLength + 2 ≤ c.holdStart from le_rfl) c.pulseStart_ge_hold
-  simpa [pulseAmplitude, holdAmplitude, Parameters.pulseStart] using h
+  simpa only [pulseAmplitude, Parameters.pulseStart, holdAmplitude, one_div, neg_add_rev,
+      add_sub_cancel_left] using h
 
 /-- Hold scale, with branches according to `i = 0`. -/
 noncomputable def holdScale (c : Parameters) (i : Fin 2) : ℝ :=
@@ -246,7 +249,7 @@ theorem holdScale_lower (c : Parameters) (i : Fin 2) :
   have he := (radialAmplitude_bounds c c.holdStart_pos.le).1
   change c.P * Real.exp (-c.holdStart) ≤ holdAmplitude c at he
   have hexp : Real.exp c.holdStart * Real.exp (-c.holdStart) = 1 := by
-    rw [← Real.exp_add]; simp
+    rw [← Real.exp_add]; simp only [add_neg_cancel, Real.exp_zero]
   fin_cases i
   · norm_num [scaleFloor, holdScale]
     calc
@@ -267,7 +270,7 @@ theorem holdScale_lower (c : Parameters) (i : Fin 2) :
             Real.exp (-(Real.exp c.m + 12) / 2) := by
           rw [← Real.exp_add]
           congr 1
-          dsimp [Parameters.holdStart, Parameters.dropLength]
+          dsimp only [Parameters.holdStart, Parameters.dropLength]
           ring
         rw [← hex]
         ring_nf; norm_num
@@ -329,7 +332,7 @@ theorem pulseAmplitude_small (c : Parameters)
     linarith only [hprod]
   have h := mul_le_mul hhold hdec (Real.exp_pos _).le
     (mul_nonneg c.P_pos.le (Real.exp_pos _).le)
-  convert! h using 1; dsimp [Parameters.holdStart, Parameters.dropLength]; congr 2; ring_nf
+  convert! h using 1; dsimp only [Parameters.holdStart, Parameters.dropLength]; congr 2; ring_nf
 
 /-- Prefix numerator bound, with branches according to `i = 0`. -/
 noncomputable def prefixNumeratorBound (P m : ℝ) (i : Fin 2) : ℝ :=
@@ -395,14 +398,15 @@ theorem parameterPolynomial_bound {eta : ℝ} (heta : |eta| ≤ 1) :
     |parameterPolynomial eta| ≤ 2 := by
   have hs : eta ^ 2 ≤ 1 := by
     have h := sq_le_sq₀ (abs_nonneg eta) (by norm_num : (0 : ℝ) ≤ 1) |>.mpr heta
-    simpa using h
+    simpa only [sq_le_one_iff_abs_le_one, ge_iff_le, sq_abs, one_pow] using h
   rw [parameterPolynomial, abs_mul, abs_of_nonneg (by positivity : 0 ≤ 1 + eta ^ 2)]
   nlinarith only [heta, hs, abs_nonneg eta]
 
 theorem parameterPolynomial_hasDerivAt (eta : ℝ) :
     HasDerivAt parameterPolynomial (1 + 3 * eta ^ 2) eta := by
   convert! (hasDerivAt_id eta).mul ((hasDerivAt_const eta (1 : ℝ)).add
-    ((hasDerivAt_id eta).pow 2)) using 1; dsimp [parameterPolynomial]; ring
+    ((hasDerivAt_id eta).pow 2)) using 1; dsimp only [Pi.add_apply, Pi.pow_apply, id_eq,
+        Nat.cast_ofNat, Nat.add_one_sub_one]; ring
 
 theorem parameterPolynomial_derivative_bound {eta : ℝ} (heta : |eta| ≤ 1) :
     |deriv parameterPolynomial eta| ≤ 4 := by
@@ -410,7 +414,7 @@ theorem parameterPolynomial_derivative_bound {eta : ℝ} (heta : |eta| ≤ 1) :
     abs_of_nonneg (by positivity : 0 ≤ 1 + 3 * eta ^ 2)]
   have hs : eta ^ 2 ≤ 1 := by
     have h := sq_le_sq₀ (abs_nonneg eta) (by norm_num : (0 : ℝ) ≤ 1) |>.mpr heta
-    simpa using h
+    simpa only [sq_le_one_iff_abs_le_one, ge_iff_le, sq_abs, one_pow] using h
   linarith only [hs]
 
 theorem normalized_mass_prefix (c : Parameters) (amp : ℝ → ℝ) (eta : ℝ) :
@@ -572,13 +576,13 @@ theorem rowMoment_bounds {a : ℝ} (ha : -1 ≤ a) (ha' : a ≤ 0) :
   · have h := integral_mono (hm.const_mul (Real.exp (-1))) (rowMoment_integrable a)
       (fun x => show Real.exp (-1) * radialTemplate x ≤ x ^ a * radialTemplate x from by
         by_cases hx : radialTemplate x = 0
-        · simp [hx]
+        · simp only [hx, mul_zero, Std.le_refl]
         · exact mul_le_mul_of_nonneg_right (hp x hx).1 (radialTemplate_nonneg x))
     simpa only [integral_const_mul, rowFloor, templateMass, rowMoment] using h
   · have h := integral_mono (rowMoment_integrable a) (hm.const_mul (Real.exp 1))
       (fun x => show x ^ a * radialTemplate x ≤ Real.exp 1 * radialTemplate x from by
         by_cases hx : radialTemplate x = 0
-        · simp [hx]
+        · simp only [hx, mul_zero, Std.le_refl]
         · exact mul_le_mul_of_nonneg_right (hp x hx).2 (radialTemplate_nonneg x))
     simpa only [integral_const_mul, templateMass, rowMoment] using h
 
@@ -590,10 +594,10 @@ theorem power_bump_integral_scale (a : ℝ) {k l u : ℝ}
   have hcomp : (fun x => g (k * x)) =
       (fun x : ℝ => k ^ a * (x ^ a * LocalizedMomentRepair.bump l u x)) := by
     funext x
-    dsimp [g]
+    dsimp only [g]
     rw [bump_scale hk.ne']
     by_cases hb : LocalizedMomentRepair.bump l u x = 0
-    · simp [hb]
+    · simp only [hb, mul_zero]
     · have hx := LocalizedMomentRepair.bump_tsupport_subset_open l u hlu (subset_closure hb)
       rw [Real.mul_rpow hk.le (hl.trans hx.1).le]
       ring
@@ -612,7 +616,7 @@ theorem actual_matrix_entry (c : Parameters) (i j : Fin 2) :
     power_bump_integral_scale (c.exponents i) (Real.exp_pos _) templateLower_pos
         templateLower_lt_upper]
   rw [Real.rpow_def_of_pos (Real.exp_pos _), Real.log_exp, ← Real.exp_add]
-  dsimp [rowMoment, radialTemplate, beta]
+  dsimp only [rowMoment, radialTemplate, beta]
   rw [mul_comm]
   congr 2
   ring
@@ -752,8 +756,9 @@ theorem normalized_inverse_entry_bound (c : Parameters) (i j : Fin 2) :
   have he : |e 0| + |e 1| = 1 := by fin_cases j <;> norm_num [e, Pi.single_apply]
   rw [he, mul_one] at hb
   have hc : MomentRepair.coefficients (normalizedMatrix c) e i = (normalizedMatrix c)⁻¹ i j := by
-    fin_cases j <;> simp [MomentRepair.coefficients, Matrix.mulVec, dotProduct,
-      e, Pi.single_apply]
+    fin_cases j <;> simp only [MomentRepair.coefficients, Matrix.mulVec, dotProduct, Fin.zero_eta,
+        Fin.isValue, Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
+        Finset.mem_univ, ↓reduceIte, e, Fin.mk_one]
   simpa only [hc] using hb
 
 theorem normalized_inverse_norm_bound (c : Parameters) :
@@ -857,7 +862,7 @@ theorem center_gap_bound (c : Parameters) (hsmall : c.lam ≤ 1 / 120) (i : Fin 
   have he : beta c i * (center c 0 - 11 / c.lam) =
       (beta c i * (2 - 3 * c.lam)) / c.lam := by
     simp only [center, Parameters.pulseLength]
-    field_simp [c.lam_pos.ne']; ring_nf; simp
+    field_simp [c.lam_pos.ne']; ring_nf; simp only [↓reduceIte]
   rw [he]
   convert! hdiv using 1; ring
 
@@ -947,12 +952,12 @@ theorem affineDebt_normalized_bound (c : Parameters) (hsmall : c.lam ≤ 1 / 120
     apply (le_div_iff₀ c.lam_pos).mpr
     have hp := prefixBound_pos c.P_pos c.m i
     have hm := mainBound_pos
-    dsimp [debtBound]
+    dsimp only [debtBound]
     nlinarith only [hp, hm, hsmall, c.lam_lt]
   have hD1 : 11 * mainBound / c.lam ≤ debtBound c.P c.m i / c.lam := by
     apply div_le_div_of_nonneg_right _ c.lam_pos.le
     have hp := prefixBound_pos c.P_pos c.m i
-    dsimp [debtBound]
+    dsimp only [debtBound]
     linarith only [hp]
   have hp := (normalized_prefixCoefficient_bound c hsmall i).trans
     (mul_le_mul_of_nonneg_right hD0 (Real.exp_pos _).le)
@@ -1354,7 +1359,7 @@ theorem paper_prefix_bounds (P m : ℝ) (hP : 0 < P) (hm : 0 < m) :
   let C := P * Real.exp (Real.exp m + 12) + 4 * prefixBound P m 0
   have hb := prefixBound_pos hP m 0
   have he : 0 < P * Real.exp (Real.exp m + 12) := mul_pos hP (Real.exp_pos _)
-  refine ⟨C, by dsimp [C]; positivity, ?_⟩
+  refine ⟨C, by dsimp only [Fin.isValue, C]; positivity, ?_⟩
   intro lam hlam hsmall
   let c := paperParameters P m lam hP hm hlam (by linarith only [hlam, hsmall])
   change pulseAmplitude c ≤ C * lam ^ 30 ∧ _
@@ -1364,19 +1369,19 @@ theorem paper_prefix_bounds (P m : ℝ) (hP : 0 < P) (hm : 0 < m) :
   · have h := pulseAmplitude_small c hwait
     refine h.trans ?_
     apply mul_le_mul_of_nonneg_right _ (pow_nonneg hlam.le _)
-    dsimp [C, c, paperParameters]
+    dsimp only [paperParameters, Fin.isValue, c, C]
     linarith only [hb]
   · intro amp eta heta
     constructor
     · refine (normalized_mass_prefix_small c hwait hl amp heta).trans ?_
       apply mul_le_mul_of_nonneg_right _ (pow_nonneg hlam.le _)
       change 2 * prefixBound P m 0 ≤ C
-      dsimp [C]
+      dsimp only [Fin.isValue, C]
       linarith only [hb, he]
     · refine (normalized_mass_prefix_derivative_small c hwait hl amp heta).trans ?_
       apply mul_le_mul_of_nonneg_right _ (pow_nonneg hlam.le _)
       change 4 * prefixBound P m 0 ≤ C
-      dsimp [C]
+      dsimp only [Fin.isValue, C]
       linarith only [he]
 
 /-- For every fixed radial derivative order there is a single constant independent
@@ -1457,7 +1462,8 @@ theorem log_shape_hasDerivAt (η : ℝ) :
   have hp : 1 + η ^ 2 ≠ 0 := by positivity
   have hd := (((hasDerivAt_id η).pow 2).const_add 1).log hp
   convert! hd.neg using 1
-  simp [logShapeDerivative]
+  simp only [logShapeDerivative, Nat.cast_ofNat, id_eq, Nat.add_one_sub_one, pow_one, mul_one,
+      Pi.pow_apply]
 
 /-- Ideal source as an element of `ℝ`. -/
 def idealSource (h η : ℝ) : ℝ :=
@@ -1576,7 +1582,7 @@ theorem two_moment_reset {r₁ r₂ : ℝ} (hgap : r₂ ≠ r₁) (debt₁ debt�
     let b := (debt₁ - debt₂) / (r₂ - r₁)
     let a := -debt₁ - r₁ * b
     debt₁ + a + r₁ * b = 0 ∧ debt₂ + a + r₂ * b = 0 := by
-  dsimp
+  dsimp only
   constructor
   · ring
   · field_simp [sub_ne_zero.mpr hgap]
@@ -1644,7 +1650,7 @@ def lagSolution (a c q₀ y : ℝ) : ℝ :=
   c / a + (q₀ - c / a) * Real.exp (-a * y)
 
 theorem lag_solution_initial (a c q₀ : ℝ) : lagSolution a c q₀ 0 = q₀ := by
-  simp [lagSolution]
+  simp only [lagSolution, mul_zero, Real.exp_zero, mul_one, add_sub_cancel]
 
 theorem lag_solution_hasDerivAt (a c q₀ y : ℝ) :
     HasDerivAt (lagSolution a c q₀)
@@ -1712,7 +1718,7 @@ theorem pulseRamp_lower {z : ℝ} (hz : 1 / 50 ≤ z) : z - 1 / 50 ≤ pulseRamp
         apply sigma_one
         have ht' := (uIcc_of_le hz ▸ ht).1
         linarith only [ht']
-      _ = _ := by simp
+      _ = _ := by simp only [one_div, intervalIntegral.integral_const, smul_eq_mul, mul_one]
   simpa only [he, pulseRamp, primitive] using hi
 
 theorem mainPulse_nonneg {z : ℝ} (hz : 0 ≤ z) : 0 ≤ mainPulse z :=
@@ -1727,7 +1733,8 @@ theorem mainPulse_le {z : ℝ} (hz : 0 ≤ z) : mainPulse z ≤ z := by
 
 theorem mainPulse_lower {z : ℝ} (hz : 1 / 50 ≤ z) (hz' : z ≤ 10) :
     z - 1 / 50 ≤ mainPulse z := by
-  simpa [mainPulse, sigma_zero (by linarith only [hz'] : z - 10 ≤ 0)] using pulseRamp_lower hz
+  simpa only [one_div, mainPulse, sigma_zero (by linarith only [hz'] : z - 10 ≤ 0), sub_zero,
+      mul_one, tsub_le_iff_right] using pulseRamp_lower hz
 
 /-- Pulse constant, given by `∫ z in (0 : ℝ)..13, Real.exp (-2 * z) * mainPulse z ^ 2`. -/
 def pulseConstant : ℝ := ∫ z in (0 : ℝ)..13, Real.exp (-2 * z) * mainPulse z ^ 2
@@ -1766,7 +1773,7 @@ theorem pulseConstant_upper : pulseConstant ≤ 1 / 4 := by
       (pow_le_pow_left₀ (mainPulse_nonneg hz.1) (mainPulse_le hz.1) 2) (Real.exp_pos _).le)
   have hi := weightedSquare_integral 0 0 13
   norm_num [weightedSquarePrimitive] at hi
-  dsimp [pulseConstant]
+  dsimp only [pulseConstant]
   have he := (Real.exp_pos (-26 : ℝ)).le
   simp only [id_eq, neg_mul] at *
   linarith only [hi, he, hm]
@@ -2058,7 +2065,8 @@ theorem prefix_weight_bound (c : Parameters) {y : ℝ} (hy : 0 ≤ y) (hy' : y �
 theorem initial_weight_bound (c : Parameters) :
     c.P ^ 2 ≤ normalization c * Real.exp (2 * c.lam * c.pulseStart) := by
   have h := prefix_weight_bound c (y := 0) le_rfl c.pulseStart_pos.le
-  simpa [coreEnergyWeight, radialAmplitude, logAmplitude, primitive] using h
+  simpa only [ge_iff_le, coreEnergyWeight, Real.exp_zero, radialAmplitude, logAmplitude, primitive,
+      one_div, intervalIntegral.integral_same, mul_one, one_mul] using h
 
 /-- Prefix axial energy, given by `16 + ∫ y in (0 : ℝ)..c.pulseStart, Real.exp y *
 dropCoefficient c.m y ^ 2`. -/
@@ -2092,7 +2100,7 @@ theorem prefixAxialEnergy_bound (c : Parameters) :
   have hL : 0 ≤ L := (Real.exp_pos _).le
   have hLB : L ≤ c.pulseStart := by
     have h := c.pulseStart_ge_hold
-    dsimp [Parameters.holdStart, Parameters.dropLength, L] at *
+    dsimp only [Parameters.holdStart, Parameters.dropLength, L] at *
     linarith only [h]
   have hc : Continuous (fun y => Real.exp y * dropCoefficient c.m y ^ 2) :=
     Real.continuous_exp.mul ((dropCoefficient_contDiff c.m_pos).continuous.pow 2)
@@ -2104,7 +2112,7 @@ theorem prefixAxialEnergy_bound (c : Parameters) :
         change Real.exp y * dropCoefficient c.m y ^ 2 = 0
         rw [dropCoefficient_late c.m_pos ((uIcc_of_le hLB ▸ hy).1)]
         ring
-      _ = 0 := by simp
+      _ = 0 := by simp only [intervalIntegral.integral_zero]
   have hs := intervalIntegral.integral_add_adjacent_intervals (μ := volume)
     (hc.intervalIntegrable 0 L) (hc.intervalIntegrable L c.pulseStart)
   have hm := intervalIntegral.integral_mono_on (μ := volume) (g := fun y => 16 * Real.exp y)
@@ -2568,11 +2576,11 @@ theorem normalizedPrefix_bound (c : Parameters)
     simp only [Parameters.pulseStart, Parameters.holdStart, Parameters.dropLength, hwait]
     ring
   let F := 16 * Real.exp (Real.exp c.m) / c.P ^ 2 + 5 / 12 + (Real.exp c.m + 12) / 2 + 30
-  have hF : 0 ≤ F := by dsimp [F]; positivity
+  have hF : 0 ≤ F := by dsimp only [F]; positivity
   have hfac : 16 * Real.exp (Real.exp c.m) / c.P ^ 2 + 5 / 12 + c.pulseStart / 2 ≤
       F * (1 + Real.log (1 / c.lam)) := by
     rw [hb]
-    dsimp [F]
+    dsimp only [F]
     linarith [mul_nonneg (show 0 ≤ 16 * Real.exp (Real.exp c.m) / c.P ^ 2 +
       5 / 12 + (Real.exp c.m + 12) / 2 by positivity) (log_inverse_nonneg c)]
   calc
@@ -2589,7 +2597,7 @@ theorem normalizedPrefix_bound (c : Parameters)
           (by norm_num)) (div_nonneg c.pulseStart_pos.le (by norm_num))
       · exact mul_nonneg c.lam_pos.le (Real.exp_pos _).le
     _ = prefixBoundConstant c.P c.m * logarithmicRate c.lam := by
-      dsimp [prefixBoundConstant, logarithmicRate, F]
+      dsimp only [prefixBoundConstant, logarithmicRate, F]
       ring
 
 theorem normalizedTail_nonneg (d : OutgoingTail.TailData) (eta : ℝ) : 0 ≤ normalizedTail d eta := by
@@ -2628,11 +2636,11 @@ theorem weighted_square_bound (c : Parameters) (f : ℝ → ℝ) (hf : Continuou
       have hs : f y ^ 2 ≤ M ^ 2 := by
         simpa only [sq_abs] using (sq_le_sq₀ (abs_nonneg _) hM).mpr (hbound y)
       exact (mul_le_mul_of_nonneg_right (pulseWeight_le_one c hy.1) (sq_nonneg _)).trans
-        (by simpa using hs))
+        (by simpa only [one_mul] using hs))
   simp only [intervalIntegral.integral_const, sub_zero, smul_eq_mul] at hi
   have hmul := mul_le_mul_of_nonneg_left hi c.lam_pos.le
   have hL : c.lam * c.pulseLength = 13 := by
-    dsimp [Parameters.pulseLength]
+    dsimp only [Parameters.pulseLength]
     field_simp [c.lam_pos.ne']
   refine ⟨mul_nonneg c.lam_pos.le hn, ?_⟩
   nlinarith only [hmul, hL]
@@ -2649,13 +2657,13 @@ theorem weighted_product_bound (c : Parameters) (f g : ℝ → ℝ)
       calc
         pulseWeight c y * |f y| * |g y| ≤ 1 * M * M := by
           exact mul_le_mul (mul_le_mul (pulseWeight_le_one c hy0) (hf y)
-            (abs_nonneg _) (by norm_num)) (hg y) (abs_nonneg _) (by simpa using hM)
+            (abs_nonneg _) (by norm_num)) (hg y) (abs_nonneg _) (by simpa only [one_mul] using hM)
         _ = M ^ 2 := by ring)
   simp only [Real.norm_eq_abs, sub_zero, abs_of_nonneg c.pulseLength_pos.le] at hi
   rw [abs_mul, abs_of_pos c.lam_pos]
   have hmul := mul_le_mul_of_nonneg_left hi c.lam_pos.le
   have hL : c.lam * c.pulseLength = 13 := by
-    dsimp [Parameters.pulseLength]
+    dsimp only [Parameters.pulseLength]
     field_simp [c.lam_pos.ne']
   nlinarith only [hmul, hL]
 
@@ -2708,9 +2716,12 @@ theorem amplitude_derivative_identity (d : OutgoingTail.TailData) (eta : ℝ)
       with t ht
     exact amplitude_energy_equation d t ht.le
   have hz : deriv F eta = 0 := by rw [he.deriv_eq]; exact deriv_const _ _
-  have hA := ((amplitude_contDiff d).differentiable (by simp) eta).hasDerivAt
-  have hb := ((linearTerm_contDiff d.core).differentiable (by simp) eta).hasDerivAt
-  have hcc := ((constantTerm_contDiff d).differentiable (by simp) eta).hasDerivAt
+  have hA := ((amplitude_contDiff d).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true]) eta).hasDerivAt
+  have hb := ((linearTerm_contDiff d.core).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true]) eta).hasDerivAt
+  have hcc := ((constantTerm_contDiff d).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true]) eta).hasDerivAt
   have hd := (((hA.pow 2).const_mul (quadraticCoefficient d.core)).add (hb.mul hA)).add hcc
   change HasDerivAt F _ eta at hd
   rw [hd.deriv] at hz
@@ -2803,7 +2814,7 @@ theorem correctionEnergy_bounds (c : Parameters) (hsmall : c.lam ≤ 1 / 120) :
   have hlarge : 26 * M ^ 2 ≤ correctionEnergyConstant c.P c.m * c.lam := by
     have he := mul_le_mul_of_nonneg_left (exp_inverse_bound c.lam_pos)
       (sq_nonneg (OutgoingPulseBounds.correctionJetBound c.P c.m 0))
-    dsimp [M, correctionEnergyConstant]
+    dsimp only [correctionEnergyConstant, M]
     linarith only [he]
   have hq : 13 * M ^ 2 ≤ 26 * M ^ 2 := by linarith only [hb0, sq_nonneg M]
   refine ⟨hb1.1, hb1.2.trans (hq.trans hlarge), ?_, hb0.1, hb0.2.trans (hq.trans hlarge)⟩
@@ -2947,7 +2958,8 @@ theorem constantTerm_hasDerivAt (d : OutgoingTail.TailData) (eta : ℝ) :
   have hd := (((((etaPolynomial_hasDerivAt eta).pow 2).const_mul
     (constantCorrection d.core + normalizedPrefixAxial d.core)).sub_const
       RadialSchedule.pulseEnergyDebt).sub_const (normalizedPrefixAngular d.core)).sub
-        (((normalizedTail_contDiff d).differentiable (by simp) eta).hasDerivAt)
+        (((normalizedTail_contDiff d).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+            ENat.top_ne_zero, not_false_eq_true]) eta).hasDerivAt)
   convert! hd using 1
   ring
 
@@ -3025,7 +3037,7 @@ theorem logarithmicRate_tendsto_zero : Tendsto logarithmicRate (𝓝[>] (0 : ℝ
   · funext x
     simp only [logarithmicRate, one_div, Real.log_inv]
     ring
-  · simp
+  · simp only [sub_self]
 
 theorem exists_rate_threshold (C : ℝ) :
     ∃ delta : ℝ, 0 < delta ∧ ∀ lam : ℝ, 0 < lam → lam < delta →

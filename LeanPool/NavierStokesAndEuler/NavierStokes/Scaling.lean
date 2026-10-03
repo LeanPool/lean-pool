@@ -179,10 +179,10 @@ theorem wave_length_bounds {Q h : ℝ} (hQ : 0 < Q) (hε : Q ^ h ≤ 1) :
         ring
       _ ≤ radialLength Q * (1 / (carrierFrequency (Q ^ h) : ℝ)) :=
         mul_le_mul_of_nonneg_left hl hr
-      _ = waveLength Q h := by simp [waveLength, div_eq_mul_inv]
+      _ = waveLength Q h := by simp only [div_eq_mul_inv, one_mul, waveLength]
   · calc
       waveLength Q h = radialLength Q * (1 / (carrierFrequency (Q ^ h) : ℝ)) := by
-        simp [waveLength, div_eq_mul_inv]
+        simp only [waveLength, div_eq_mul_inv, one_mul]
       _ ≤ radialLength Q * Real.sqrt (Q ^ h) := mul_le_mul_of_nonneg_left hu hr
       _ = Q ^ (1 / 2 + h / 2) := wave_length_power hQ h
 
@@ -234,6 +234,6 @@ theorem wave_reynolds_bounds {Q h envelope : ℝ} (hQ : 0 < Q)
 /-- The scaling computation does not imply a lower bound at envelope zeros. -/
 theorem wave_reynolds_zero_envelope (Q h : ℝ) :
     reynolds (waveVelocity Q h 0) (waveLength Q h) = 0 := by
-  simp [reynolds, waveVelocity]
+  simp only [reynolds, waveVelocity, mul_zero, zero_mul]
 
 end NavierStokes.Scaling

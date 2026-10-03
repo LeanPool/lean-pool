@@ -113,20 +113,20 @@ theorem gradient_logarithmic_envelope (t : Icc (0 : ℝ) T) :
   let e := logEnergyBase (U.velocity ⟨0,le_rfl,hT⟩)
   let d := b+e+gradientEnergyConstant
   let z := 1+U.gradientIntegral t
-  have hb : 0 ≤ b := by dsimp [b]; positivity
+  have hb : 0 ≤ b := by dsimp only [b]; positivity
   have he : 0 ≤ e := (logEnergyBase_pos _).le
   have hk := gradientEnergyConstant_nonneg
   have hg := U.gradientIntegral_nonneg t
   have hd : 0 ≤ d := add_nonneg (add_nonneg hb he) hk
-  have hbd : b ≤ d := by dsimp [d]; linarith only [hT, he, hk]
-  have hed : e ≤ d := by dsimp [d]; linarith only [hT, hb, hk]
-  have hkd : gradientEnergyConstant ≤ d := by dsimp [d]; linarith only [hT, hb, he]
-  have hz : 1 ≤ z := by dsimp [z]; linarith only [hT, hg]
+  have hbd : b ≤ d := by dsimp only [d]; linarith only [hT, he, hk]
+  have hed : e ≤ d := by dsimp only [d]; linarith only [hT, hb, hk]
+  have hkd : gradientEnergyConstant ≤ d := by dsimp only [d]; linarith only [hT, hb, he]
+  have hz : 1 ≤ z := by dsimp only [z]; linarith only [hT, hg]
   have hbz : b ≤ d*z := hbd.trans (by simpa only [mul_one] using mul_le_mul_of_nonneg_left hz hd)
   have hez : e+gradientEnergyConstant*U.gradientIntegral t ≤ d*z := by
     calc
       _ ≤ d+d*U.gradientIntegral t := add_le_add hed (mul_le_mul_of_nonneg_right hkd hg)
-      _ = _ := by dsimp [z]; ring
+      _ = _ := by dsimp only [z]; ring
   have hfirst : U.gradientNormPath t ≤ C*(b+W t*(e+gradientEnergyConstant*U.gradientIntegral t)) :=
       by
     have h := hlog t

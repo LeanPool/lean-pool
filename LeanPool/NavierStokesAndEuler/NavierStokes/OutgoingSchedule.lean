@@ -52,7 +52,7 @@ theorem sigma_contDiff : ContDiff ℝ ∞ sigma :=
     (fun x => (sigma_denom_pos x).ne')
 
 theorem sigma_zero {x : ℝ} (hx : x ≤ 0) : sigma x = 0 := by
-  simp [sigma, FlatCutoff.edge_of_nonpos 1 hx]
+  simp only [sigma, FlatCutoff.edge_of_nonpos 1 hx, zero_add, zero_div]
 
 theorem sigma_one {x : ℝ} (hx : 1 ≤ x) : sigma x = 1 := by
   unfold sigma
@@ -69,13 +69,15 @@ theorem sigma_le_one (x : ℝ) : sigma x ≤ 1 := by
 theorem edge_monotone : Monotone (FlatCutoff.edge 1) := by
   apply monotone_of_deriv_nonneg
     ((FlatCutoff.edge_contDiff (by norm_num : (0 : ℝ) < 1) :
-      ContDiff ℝ ∞ _).differentiable (by simp))
+      ContDiff ℝ ∞ _).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+          not_false_eq_true]))
   intro x
   rw [(FlatPrimitive.edge_hasDerivAt (by norm_num : (0 : ℝ) < 1) x).deriv]
   by_cases hx : 0 < x
   · exact div_nonneg (mul_nonneg (by norm_num) (FlatCutoff.edge_nonneg 1 x))
       (pow_nonneg hx.le 3)
-  · simp [FlatCutoff.edge_of_nonpos 1 (le_of_not_gt hx)]
+  · simp only [mul_one, FlatCutoff.edge_of_nonpos 1 (le_of_not_gt hx), mul_zero, zero_div,
+      Std.le_refl]
 
 theorem sigma_monotone : Monotone sigma := by
   intro x y hxy
@@ -111,7 +113,7 @@ theorem primitive_increment {g : ℝ → ℝ} (hg : Continuous g) (a b c : ℝ)
   have hi : (∫ t in a..b, g t) = (b - a) * c := by
     calc
       _ = ∫ _t in a..b, c := intervalIntegral.integral_congr hc
-      _ = _ := by simp
+      _ = _ := by simp only [intervalIntegral.integral_const, smul_eq_mul]
   have h := intervalIntegral.integral_add_adjacent_intervals (μ := volume)
     (hg.intervalIntegrable 0 a) (hg.intervalIntegrable a b)
   simpa only [primitive, hi] using h.symm
@@ -126,16 +128,18 @@ theorem slope_contDiff (dropLength lam : ℝ) : ContDiff ℝ ∞ (slope dropLeng
 
 theorem slope_ideal {dropLength lam y : ℝ} (hd : 0 ≤ dropLength) (hy : y ≤ 0) :
     slope dropLength lam y = 3 / 5 := by
-  simp [slope, sigma_zero hy, sigma_zero (by linarith only [hd, hy] : y - (dropLength + 1) ≤ 0)]
+  simp only [slope, sigma_zero hy, sub_zero, mul_one,
+      sigma_zero (by linarith only [hd, hy] : y - (dropLength + 1) ≤ 0), mul_zero]
 
 theorem slope_drop {dropLength lam y : ℝ} (hy : 1 ≤ y) (hy' : y ≤ dropLength + 1) :
     slope dropLength lam y = 0 := by
-  simp [slope, sigma_one hy, sigma_zero (by linarith only [hy'] : y - (dropLength + 1) ≤ 0)]
+  simp only [slope, sigma_one hy, sub_self, mul_zero,
+      sigma_zero (by linarith only [hy'] : y - (dropLength + 1) ≤ 0)]
 
 theorem slope_hold {dropLength lam y : ℝ} (hd : 0 ≤ dropLength)
     (hy : dropLength + 2 ≤ y) : slope dropLength lam y = -lam := by
-  simp [slope, sigma_one (by linarith only [hd, hy] : 1 ≤ y),
-    sigma_one (by linarith only [hy] : 1 ≤ y - (dropLength + 1))]
+  simp only [slope, sigma_one (by linarith only [hd, hy] : 1 ≤ y), sub_self, mul_zero,
+      sigma_one (by linarith only [hy] : 1 ≤ y - (dropLength + 1)), mul_one, zero_sub]
 
 /-- Log amplitude, given by `primitive (fun y => slope dropLength lam y - 1 / 2)`. -/
 def logAmplitude (dropLength lam : ℝ) : ℝ → ℝ :=
@@ -190,7 +194,8 @@ theorem logAmplitude_ideal {dropLength lam y : ℝ} (hd : 0 ≤ dropLength) (hy 
   have h := primitive_increment
     (g := fun y => slope dropLength lam y - 1 / 2)
     ((slope_contDiff dropLength lam).continuous.sub continuous_const) 0 y (1 / 10) ?_
-  · simpa [logAmplitude, primitive, div_eq_mul_inv] using h
+  · simpa only [logAmplitude, primitive, div_eq_mul_inv, one_mul, intervalIntegral.integral_same,
+      sub_zero, zero_add] using h
   · intro t ht
     have ht0 : t ≤ 0 := (uIcc_of_ge hy ▸ ht).2
     rw [slope_ideal hd ht0]
@@ -225,14 +230,14 @@ def dropCoefficient (m y : ℝ) : ℝ :=
   if y ≤ 1 then 4 else 4 * (1 - sigma (Real.log y / m))
 
 theorem dropCoefficient_early (m : ℝ) {y : ℝ} (hy : y ≤ 1) :
-    dropCoefficient m y = 4 := by simp [dropCoefficient, hy]
+    dropCoefficient m y = 4 := by simp only [dropCoefficient, hy, ↓reduceIte]
 
 theorem dropCoefficient_eq {m y : ℝ} (hm : 0 < m) (hy : 0 < y) :
     dropCoefficient m y = 4 * (1 - sigma (Real.log y / m)) := by
   by_cases hy1 : y ≤ 1
   · have hs := sigma_zero (div_nonpos_of_nonpos_of_nonneg (Real.log_nonpos hy.le hy1) hm.le)
-    simp [dropCoefficient, hy1, hs]
-  · simp [dropCoefficient, hy1]
+    simp only [dropCoefficient, hy1, ↓reduceIte, hs, sub_zero, mul_one]
+  · simp only [dropCoefficient, hy1, ↓reduceIte]
 
 theorem dropCoefficient_contDiff {m : ℝ} (hm : 0 < m) :
     ContDiff ℝ ∞ (dropCoefficient m) := by
@@ -260,7 +265,7 @@ theorem dropCoefficient_late {m y : ℝ} (hm : 0 < m) (hy : Real.exp m ≤ y) :
 theorem dropCoefficient_bounds (m y : ℝ) :
     0 ≤ dropCoefficient m y ∧ dropCoefficient m y ≤ 4 := by
   by_cases hy : y ≤ 1
-  · simp [dropCoefficient, hy]
+  · simp only [dropCoefficient, hy, ↓reduceIte, Nat.ofNat_nonneg, Std.le_refl, and_self]
   · have hlo := sigma_nonneg (Real.log y / m)
     have hhi := sigma_le_one (Real.log y / m)
     simp only [dropCoefficient, ite_eq_right hy]
@@ -297,13 +302,13 @@ theorem pulseRamp_zero {z : ℝ} (hz : z ≤ 0) : pulseRamp z = 0 := by
       apply sigma_zero
       have ht0 : t ≤ 0 := (uIcc_of_ge hz ▸ ht).2
       linarith only [ht0]
-    _ = 0 := by simp
+    _ = 0 := by simp only [intervalIntegral.integral_zero]
 
 theorem mainPulse_zero_left {z : ℝ} (hz : z ≤ 0) : mainPulse z = 0 := by
-  simp [mainPulse, pulseRamp_zero hz]
+  simp only [mainPulse, pulseRamp_zero hz, zero_mul]
 
 theorem mainPulse_zero_right {z : ℝ} (hz : 11 ≤ z) : mainPulse z = 0 := by
-  simp [mainPulse, sigma_one (by linarith only [hz] : 1 ≤ z - 10)]
+  simp only [mainPulse, sigma_one (by linarith only [hz] : 1 ≤ z - 10), sub_self, mul_zero]
 
 /-- Only finite real parameters and their elementary inequalities are input. -/
 structure Parameters where
@@ -335,15 +340,15 @@ def pulseLength (c : Parameters) : ℝ := 13 / c.lam
 def endpoint (c : Parameters) : ℝ := c.pulseStart + c.pulseLength
 
 theorem dropLength_pos (c : Parameters) : 0 < c.dropLength := by
-  dsimp [dropLength]
+  dsimp only [dropLength]
   positivity
 
 theorem holdStart_pos (c : Parameters) : 0 < c.holdStart := by
-  dsimp [holdStart]
+  dsimp only [holdStart]
   linarith only [c.dropLength_pos]
 
 theorem pulseStart_ge_hold (c : Parameters) : c.holdStart ≤ c.pulseStart := by
-  dsimp [pulseStart]
+  dsimp only [pulseStart]
   linarith only [c.wait_gt]
 
 theorem pulseStart_pos (c : Parameters) : 0 < c.pulseStart :=
@@ -402,7 +407,7 @@ theorem main_end_lt_lower (c : Parameters) (i : Fin 2) :
   have hgap : (63 / 20 : ℝ) * c.lam < 2 := by nlinarith only [c.lam_lt]
   have hgap' := (lt_div_iff₀ c.lam_pos).mpr hgap
   have hid : 13 / c.lam - 11 / c.lam = 2 / c.lam := by ring
-  dsimp [lower, pulseLength]
+  dsimp only [pulseLength, Fin.isValue]
   fin_cases i <;> norm_num <;> linarith only [hgap', hid]
 
 end Parameters
@@ -551,29 +556,30 @@ theorem axial_contDiff (c : Parameters) {amp : ℝ → ℝ}
 
 theorem axial_before_pulse (c : Parameters) (amp : ℝ → ℝ) (eta : ℝ) {y : ℝ}
     (hy : y ≤ c.pulseStart) : axial c amp (y, eta) = dropCoefficient c.m y * eta := by
-  simp [axial, initialAxial, pulseRatio_zero_early c amp eta (by linarith : y - c.pulseStart ≤ 0)]
+  simp only [axial, initialAxial,
+      pulseRatio_zero_early c amp eta (by linarith : y - c.pulseStart ≤ 0), mul_zero, add_zero]
 
 theorem axial_shaped_wait (c : Parameters) (amp : ℝ → ℝ) (eta : ℝ) {y : ℝ}
     (hy : c.holdStart ≤ y) (hy' : y ≤ c.pulseStart) : axial c amp (y, eta) = 0 := by
   rw [axial_before_pulse c amp eta hy', dropCoefficient_late c.m_pos]
   · ring
-  · dsimp [Parameters.holdStart, Parameters.dropLength]
+  · dsimp only [Parameters.holdStart, Parameters.dropLength]
       at hy
     linarith only [hy]
 
 theorem axial_after_pulse (c : Parameters) (amp : ℝ → ℝ) (eta : ℝ) {y : ℝ}
     (hy : c.endpoint ≤ y) : axial c amp (y, eta) = 0 := by
   have hlate : c.pulseLength ≤ y - c.pulseStart := by
-    dsimp [Parameters.endpoint] at hy
+    dsimp only [Parameters.endpoint] at hy
     linarith only [hy]
   have hdrop : Real.exp c.m ≤ y := by
     have hB := c.pulseStart_ge_hold
     have hL := c.pulseLength_pos
-    dsimp [Parameters.endpoint] at hy
-    dsimp [Parameters.holdStart, Parameters.dropLength] at hB
+    dsimp only [Parameters.endpoint] at hy
+    dsimp only [Parameters.holdStart, Parameters.dropLength] at hB
     linarith only [hy, hB, hL]
-  simp [axial, initialAxial, pulseRatio_zero_late c amp eta hlate,
-    dropCoefficient_late c.m_pos hdrop]
+  simp only [axial, initialAxial, dropCoefficient_late c.m_pos hdrop, zero_mul,
+      pulseRatio_zero_late c amp eta hlate, mul_zero, add_zero]
 
 theorem angular_shaped_wait (c : Parameters) (eta : ℝ) {y : ℝ}
     (hy : c.holdStart ≤ y) :
@@ -592,7 +598,7 @@ def radialPulse (c : Parameters) (amp : ℝ → ℝ) (eta x : ℝ) : ℝ :=
 
 theorem radialPulse_exp (c : Parameters) (amp : ℝ → ℝ) (eta y : ℝ) :
     radialPulse c amp eta (Real.exp y) = pulseRatio c amp (y, eta) := by
-  simp [radialPulse, pulseRatio]
+  simp only [radialPulse, Real.log_exp, pulseRatio]
 
 theorem radialPulse_continuousOn (c : Parameters) (amp : ℝ → ℝ) (eta : ℝ) :
     ContinuousOn (radialPulse c amp eta) (Ioi 0) := by
@@ -611,7 +617,7 @@ theorem correction_interval_exact (c : Parameters) (amp : ℝ → ℝ) (eta : �
   · intro x hx
     have hc : correction c amp eta x ≠ 0 := by
       intro hzero
-      exact hx (by simp [hzero])
+      exact hx (by simp only [hzero, mul_zero])
     have hs := (LocalizedMomentRepair.repair_tsupport_subset_open
       c.exponents c.lower c.upper (debt c amp eta) c.lower_lt_upper)
       (subset_tsupport _ hc)
@@ -623,7 +629,7 @@ theorem pulse_moment_exact (c : Parameters) (amp : ℝ → ℝ) (eta : ℝ) (i :
       x ^ c.exponents i * radialPulse c amp eta x) =
         -(prefixCoefficient c i * eta * (1 + eta ^ 2)) := by
   have hle : 1 ≤ Real.exp c.pulseLength := by
-    simpa using Real.exp_le_exp.mpr c.pulseLength_pos.le
+    simpa only [Real.one_le_exp_iff, Real.exp_zero] using Real.exp_le_exp.mpr c.pulseLength_pos.le
   have hpos : ∀ x ∈ Icc (1 : ℝ) (Real.exp c.pulseLength), x ≠ 0 := by
     intro x hx
     linarith only [hx, hx.1]
@@ -692,7 +698,7 @@ theorem exp_weight_substitution {R : ℝ → ℝ} (hR : ContinuousOn R (Ioi 0))
   have hsub := intervalIntegral.integral_comp_mul_deriv'
     (a := B) (b := B + L) (f := fun y : ℝ => Real.exp (y - B))
     (f' := fun y : ℝ => Real.exp (y - B)) (g := fun x : ℝ => x ^ a * R x)
-    (fun y _ => by simpa using ((hasDerivAt_id y).sub_const B).exp)
+    (fun y _ => by simpa only [id_eq, mul_one] using ((hasDerivAt_id y).sub_const B).exp)
     ((Real.continuous_exp.comp (continuous_id.sub continuous_const)).continuousOn)
     (hpow.mul (hR.mono (fun x hx => hpos x hx)))
   calc
@@ -704,7 +710,7 @@ theorem exp_weight_substitution {R : ℝ → ℝ} (hR : ContinuousOn R (Ioi 0))
       simp only [Function.comp_apply, Real.rpow_def_of_pos (Real.exp_pos _), Real.log_exp]
       rw [show (a + 1) * (y - B) = (y - B) * a + (y - B) by ring, Real.exp_add]
       ring
-    _ = _ := by simpa using hsub
+    _ = _ := by simpa only [comp_apply, sub_self, Real.exp_zero, add_sub_cancel_left] using hsub
 
 theorem axial_radial_contDiff (c : Parameters) (amp : ℝ → ℝ) (eta : ℝ) :
     ContDiff ℝ ∞ (fun y => axial c amp (y, eta)) := by
@@ -735,9 +741,10 @@ theorem axial_pulse (c : Parameters) (amp : ℝ → ℝ) (eta : ℝ) {y : ℝ}
       radialPulse c amp eta (Real.exp (y - c.pulseStart)) := by
   have hdrop : Real.exp c.m ≤ y := by
     have hb := c.pulseStart_ge_hold
-    dsimp [Parameters.holdStart, Parameters.dropLength] at hb
+    dsimp only [Parameters.holdStart, Parameters.dropLength] at hb
     linarith only [hy, hb]
-  simp [axial, initialAxial, dropCoefficient_late c.m_pos hdrop, radialPulse_exp]
+  simp only [axial, initialAxial, dropCoefficient_late c.m_pos hdrop, zero_mul, zero_add,
+      radialPulse_exp]
 
 theorem mass_integrand_pulse (c : Parameters) (amp : ℝ → ℝ) (eta : ℝ) {y : ℝ}
     (hy : c.pulseStart ≤ y) :
@@ -831,7 +838,7 @@ theorem axial_reserved_band (c : Parameters) (amp : ℝ → ℝ) (eta y : ℝ)
     (hy : c.pulseStart - 25 ≤ y) (hy' : y ≤ c.pulseStart - 3) :
     axial c amp (y, eta) = 0 := by
   apply axial_shaped_wait c amp eta
-  · dsimp [Parameters.pulseStart] at hy
+  · dsimp only [Parameters.pulseStart] at hy
     linarith only [hy, c.wait_gt]
   · linarith only [hy']
 
@@ -845,7 +852,7 @@ theorem correction_zero_on_main_pulse (c : Parameters) (amp : ℝ → ℝ) (eta 
 theorem pulseRatio_on_main_pulse (c : Parameters) (amp : ℝ → ℝ) (eta : ℝ)
     {y : ℝ} (hy : y ≤ 11 / c.lam) :
     pulseRatio c amp (y, eta) = amp eta * mainPulse (c.lam * y) := by
-  simp [pulseRatio, correction_zero_on_main_pulse c amp eta hy]
+  simp only [pulseRatio, correction_zero_on_main_pulse c amp eta hy, add_zero]
 
 theorem axial_ideal (c : Parameters) (amp : ℝ → ℝ) (eta : ℝ) {y : ℝ} (hy : y ≤ 0) :
     axial c amp (y, eta) = 4 * eta := by
@@ -858,7 +865,7 @@ theorem axial_drop (c : Parameters) (amp : ℝ → ℝ) (eta : ℝ) {t : ℝ}
       4 * (1 - sigma (Real.log (1 + t) / c.m)) * eta := by
   have hB := c.pulseStart_ge_hold
   have hy : 1 + t ≤ c.pulseStart := by
-    dsimp [Parameters.holdStart] at hB
+    dsimp only [Parameters.holdStart] at hB
     linarith only [ht', hB]
   rw [axial_before_pulse c amp eta hy, dropCoefficient_eq c.m_pos (by linarith only [ht])]
 
@@ -880,7 +887,8 @@ theorem radialAmplitude_drop {dropLength lam y P : ℝ}
     ring
 
 theorem ideal_mass_prefix_integral (eta : ℝ) :
-    (∫ _x in (0 : ℝ)..1, 4 * eta) = 4 * eta := by simp
+    (∫ _x in (0 : ℝ)..1, 4 * eta) = 4 * eta := by simp only [intervalIntegral.integral_const_mul,
+        intervalIntegral.integral_const, sub_zero, smul_eq_mul, one_mul]
 
 theorem ideal_angular_prefix_integral (P eta : ℝ) :
     (∫ x in (0 : ℝ)..1, (4 * eta * Real.sqrt 2 * P * shape eta) * x ^ (3 / 5 : ℝ)) =
@@ -910,7 +918,7 @@ theorem massMoment_endpoint (c : Parameters) (amp : ℝ → ℝ) (eta : ℝ) :
         dsimp only
         apply mass_integrand_pulse c amp eta
         exact (uIcc_of_le (show c.pulseStart ≤ c.endpoint by
-          dsimp [Parameters.endpoint]; linarith only [c.pulseLength_pos]) ▸ ht).1
+          dsimp only [Parameters.endpoint]; linarith only [c.pulseLength_pos]) ▸ ht).1
       _ = _ := by
         rw [intervalIntegral.integral_const_mul,
           exp_weight_substitution (radialPulse_continuousOn c amp eta)]
@@ -952,7 +960,7 @@ theorem angularMoment_endpoint (c : Parameters) (amp : ℝ → ℝ) (eta : ℝ) 
         dsimp only
         apply angular_integrand_pulse c amp eta
         exact (uIcc_of_le (show c.pulseStart ≤ c.endpoint by
-          dsimp [Parameters.endpoint]; linarith only [c.pulseLength_pos]) ▸ ht).1
+          dsimp only [Parameters.endpoint]; linarith only [c.pulseLength_pos]) ▸ ht).1
       _ = _ := by
         rw [intervalIntegral.integral_const_mul,
           exp_weight_substitution (radialPulse_continuousOn c amp eta)]
@@ -984,7 +992,7 @@ theorem massMoment_after_pulse (c : Parameters) (amp : ℝ → ℝ) (eta : ℝ) 
         intro t ht
         dsimp only
         rw [axial_after_pulse c amp eta ((uIcc_of_le hy ▸ ht).1), mul_zero]
-      _ = 0 := by simp
+      _ = 0 := by simp only [intervalIntegral.integral_zero]
   have hsplit := intervalIntegral.integral_add_adjacent_intervals (μ := volume)
     (hF.intervalIntegrable 0 c.endpoint) (hF.intervalIntegrable c.endpoint y)
   calc
@@ -1012,7 +1020,7 @@ theorem angularMoment_after_pulse (c : Parameters) (amp : ℝ → ℝ) (eta : �
         intro t ht
         dsimp only
         rw [axial_after_pulse c amp eta ((uIcc_of_le hy ▸ ht).1), mul_zero]
-      _ = 0 := by simp
+      _ = 0 := by simp only [intervalIntegral.integral_zero]
   have hsplit := intervalIntegral.integral_add_adjacent_intervals (μ := volume)
     (hF.intervalIntegrable 0 c.endpoint) (hF.intervalIntegrable c.endpoint y)
   calc

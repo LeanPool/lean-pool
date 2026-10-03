@@ -58,17 +58,18 @@ def lattice (n : Lattice) : Space :=
 
 @[simp] theorem lattice_zero : lattice 0 = 0 := by
   ext i
-  simp [lattice]
+  simp only [lattice, Pi.zero_apply, Int.cast_zero, WithLp.equiv_symm_apply, PiLp.zero_apply]
 
 @[simp] theorem lattice_add (m n : Lattice) :
     lattice (m + n) = lattice m + lattice n := by
   ext i
-  simp [lattice]
+  simp only [lattice, Pi.add_apply, Int.cast_add, WithLp.equiv_symm_apply, PiLp.add_apply]
 
 @[simp] theorem lattice_single (i : Fin 3) :
     lattice (Pi.single i 1) = coordinateVector i := by
   ext j
-  simp [lattice, coordinateVector, Pi.single_apply]
+  simp only [lattice, Pi.single_apply, Int.cast_ite, Int.cast_one, Int.cast_zero,
+      WithLp.equiv_symm_apply, coordinateVector, PiLp.single_apply]
 
 variable {V : Type*} [NormedAddCommGroup V]
 
@@ -96,7 +97,7 @@ def latticeBoxFinset (N : ℕ) : Finset Lattice := (finite_latticeBox N).toFinse
 
 @[simp] theorem mem_latticeBoxFinset (N : ℕ) (n : Lattice) :
     n ∈ latticeBoxFinset N ↔ n ∈ latticeBox N := by
-  simp [latticeBoxFinset]
+  simp only [latticeBoxFinset, Finite.mem_toFinset]
 
 /-- Only a finite lattice box can contribute on a bounded spatial region. -/
 theorem mem_latticeBox_of_translate_ne_zero {r R : ℝ} {f : SpaceTime → V}
@@ -130,7 +131,8 @@ theorem exists_local_latticeBox {r : ℝ} {f : SpaceTime → V}
   obtain ⟨N, hN⟩ := exists_nat_gt (‖z.2‖ + 1 + r)
   refine ⟨N, ?_⟩
   have hU : {w : SpaceTime | ‖w.2‖ < ‖z.2‖ + 1} ∈ 𝓝 z :=
-    (isOpen_lt (continuous_norm.comp continuous_snd) continuous_const).mem_nhds (by simp)
+    (isOpen_lt (continuous_norm.comp continuous_snd) continuous_const).mem_nhds (by simp only [
+        Function.comp_apply, mem_ofPred_eq, lt_add_iff_pos_right, zero_lt_one])
   filter_upwards [hU] with w hw n hn
   by_contra hne
   exact hn ((mem_latticeBoxFinset N n).mpr
@@ -147,7 +149,7 @@ theorem locallyFinite_support_translate {r : ℝ} {f : SpaceTime → V}
   intro n hn
   obtain ⟨w, hw, hzero⟩ := hn
   by_contra hnot
-  exact hw (hzero n (by simpa using hnot))
+  exact hw (hzero n (by simpa only [mem_latticeBoxFinset] using hnot))
 
 /-- The series is genuinely summable at every spacetime point. -/
 theorem summable_translate {r : ℝ} {f : SpaceTime → V}
@@ -243,7 +245,7 @@ theorem translate_eq_zero_on_innerCube {r : ℝ} {f : SpaceTime → V}
   apply hn
   funext i
   have hi : |x i - (n i : ℝ)| ≤ r := by
-    simpa [translate, lattice] using hf (t, x - lattice n) hne i
+    simpa only [lattice, WithLp.equiv_symm_apply, PiLp.sub_apply] using hf (t, x - lattice n) hne i
   have hni : |(n i : ℝ)| < 1 := by
     calc
       |(n i : ℝ)| = |x i - (x i - (n i : ℝ))| := by ring_nf
@@ -508,7 +510,8 @@ theorem cutVelocity_product_rule (A : VelocityField) (t : ℝ) (x : Space)
     cutVelocity A (t, x) = spatialCutoff x • SpatialCurl.spatialCurl A (t, x) +
       SpatialCurl.curlLinear ((fderiv ℝ spatialCutoff x).smulRight (A (t, x))) := by
   change SpatialCurl.curlLinear (fderiv ℝ (fun y => spatialCutoff y • A (t, y)) x) = _
-  rw [fderiv_fun_smul (spatialCutoff_contDiff.differentiable (by simp) x) hA, map_add,
+  rw [fderiv_fun_smul (spatialCutoff_contDiff.differentiable (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) x) hA, map_add,
     map_smul]
   rfl
 
@@ -543,7 +546,8 @@ theorem periodicPotential_smoothOn {A : VelocityField} {times : Set ℝ}
 theorem periodicVelocity_smoothOn {A : VelocityField} {times : Set ℝ}
     (hA : ContDiffOn ℝ ∞ A (times ×ˢ (univ : Set Space))) :
     ContDiffOn ℝ ∞ (periodicVelocity A) (times ×ˢ (univ : Set Space)) :=
-  SpatialCurl.contDiffOn_spatialCurl (periodicPotential_smoothOn hA) (by simp)
+  SpatialCurl.contDiffOn_spatialCurl (periodicPotential_smoothOn hA) (by simp only [
+      ENat.coe_top_add_one, Std.le_refl])
 
 theorem periodicPressure_smoothOn {p : PressureField} {times : Set ℝ}
     (hp : ContDiffOn ℝ ∞ p (times ×ˢ (univ : Set Space))) :
@@ -711,7 +715,7 @@ theorem localizedVelocity_eq_curl {A : VelocityField} {times : Set ℝ}
     localizedVelocity A (t, x) = SpatialCurl.spatialCurl (localizedPotential A) (t, x) := by
   have hd : DifferentiableAt ℝ (fun y => periodicPotential A (t, y)) x :=
     (SpatialCurl.contDiff_spatialSlice (periodicPotential_smoothOn hA) ht).differentiable
-      (by simp) x
+      (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) x
   change SmoothCutoffs.timeSwitch t •
       SpatialCurl.curlLinear (fderiv ℝ (fun y => periodicPotential A (t, y)) x) =
     SpatialCurl.curlLinear

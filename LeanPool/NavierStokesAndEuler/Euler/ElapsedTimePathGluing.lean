@@ -215,11 +215,14 @@ def glueOperator (S τ : ℝ) (hτ0 : 0 ≤ τ) (hτS : τ ≤ S) :
      map_add' := by
        intro u v
        ext t
-       by_cases ht : (t : ℝ) ≤ τ <;> simp [gluePath, glue, ht]
+       by_cases ht : (t : ℝ) ≤ τ <;> simp only [gluePath, glue, Submodule.coe_add, Prod.fst_add,
+           ContinuousMap.add_apply, Prod.snd_add, ContinuousMap.coe_mk, ht, ↓reduceIte]
      map_smul' := by
        intro c u
        ext t
-       by_cases ht : (t : ℝ) ≤ τ <;> simp [gluePath, glue, ht] } :
+       by_cases ht : (t : ℝ) ≤ τ <;> simp only [gluePath, glue, SetLike.val_smul, Prod.smul_fst,
+           ContinuousMap.coe_smul, Pi.smul_apply, Prod.smul_snd, ContinuousMap.coe_mk, ht,
+           ↓reduceIte, RingHom.id_apply] } :
       Matching (E := E) S τ hτ0 hτS →ₗ[ℝ] C(Icc (0 : ℝ) S,E)).mkContinuous
     1 (fun u => by
       change ‖gluePath S τ hτ0 hτS u‖ ≤ 1 * ‖u‖

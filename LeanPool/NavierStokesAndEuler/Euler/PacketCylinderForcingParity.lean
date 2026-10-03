@@ -51,7 +51,8 @@ theorem PrefixOdd.knownJet_value_odd (H : PrefixOdd T p a) (hp : 1 ≤ p) (i : �
   by_cases hi : i < p
   · by_cases hz : i = 0
     · subst i
-      simp [knownJets,history,velocityJet,show (0 : ℕ) < p by omega]
+      simp only [knownJets, history, show (0 : ℕ) < p by omega, ↓reduceIte, velocityJet,
+          Prod.fst_zero, neg_zero]
     · simp only [knownJets,history,hi,ite_true,velocityJet,hz,ite_false]
       change (a i).high (t,(-x,-θ)) + (a i).mean (t,(-x,-θ)) +
         (a (i-1)).corrector (t,(-x,-θ)) =

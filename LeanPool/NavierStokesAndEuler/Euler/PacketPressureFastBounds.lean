@@ -87,7 +87,8 @@ theorem fastHessianRemainder_bound (a : ScalarField)
       Nat.cast_one, one_pow, mul_one] using NB.normal_bound 1 t (Y x)
   have hnder : fderiv ℝ (transportedNormal D.m₀ (fun y => D.FInv.field t (Y y))) x =
       (fderiv ℝ (D.normal.field t : Space → Space) (Y x)).comp (D.FInv.field t (Y x)) :=
-    (((D.normal.smooth t).differentiable (by simp) (Y x)).hasFDerivAt.comp x hY).fderiv
+    (((D.normal.smooth t).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true]) (Y x)).hasFDerivAt.comp x hY).fderiv
   have hnD : ‖fderiv ℝ (transportedNormal D.m₀ (fun y => D.FInv.field t (Y y))) x‖ ≤
       (NB.C*NB.Rc)*NB.C := by
     rw [hnder]
@@ -129,7 +130,7 @@ theorem physicalCovector_error_bound (R A : ℝ) (hR : 0 ≤ R) (hA : 0 ≤ A)
       ‖iteratedFieldDerivative P w (G.toFieldTower.pointField t) z‖) ≤
       (sobolevEmbeddingConstant P 3*(A/k^2))*R^n*(n.factorial : ℝ)^2 := by
     intro n s z
-    simpa [majorant,mul_assoc] using hG.pointField_wordSum_le (by norm_num) s n z
+    simpa only [mul_assoc, majorant, add_zero] using hG.pointField_wordSum_le (by norm_num) s n z
   have h := physicalPressureForce_power_bound D P 1 k G.toFieldTower.pointField
     G.toFieldTower.pointField_smooth Rc C (sobolevEmbeddingConstant P 3*(A/k^2)) R
     hRc hC (mul_nonneg (sobolevEmbeddingConstant_nonneg P 3) (div_nonneg hA (sq_nonneg k)))
@@ -194,7 +195,9 @@ theorem covectorGrade_bound (i : ℕ) :
               by
         intro t x θ
         rw [ha]
-        simp [pressureGradient,angularPressure,pressureJet_zero]
+        simp only [zero_meanPressure, zero_highPressure, Pi.add_apply, pressureGradient,
+            pressureJet_zero, Prod.snd_zero, ContinuousLinearMap.zero_comp, map_zero,
+            angularPressure, zero_apply, zero_smul, add_zero]
       exact (Field.wordBound_of_zero ((K 0 hj).mean.add (K 0 hj).angular) hz 6 R (highShift
           0)).mono_amplitude
         (zero_le_one.trans hR) (by norm_num)
@@ -212,7 +215,8 @@ theorem covectorGrade_bound (i : ℕ) :
     by_cases hj0 : j=0
     · subst j
       exact (Field.wordBound_of_zero (G 0 hj).pressure
-        (fun _ _ _ => by rw [ha]; simp [pressureGradient,pressureJet_zero])
+        (fun _ _ _ => by rw [ha]; simp only [pressureGradient, zero_highPressure, pressureJet_zero,
+            Prod.snd_zero, ContinuousLinearMap.zero_comp, map_zero])
         6 R (highShift 0)).mono_amplitude (zero_le_one.trans hR) (by norm_num)
     · exact (hG j hj (by omega)).pressure_unnormalized (by omega)
 
@@ -221,7 +225,9 @@ theorem covectorGrades_zero : covectorGrades N m a 0=0 := by
   apply assemble_zero
   rw [ha]
   funext z
-  simp [pressureGradient,angularPressure,pressureJet_zero]
+  simp only [zero_meanPressure, zero_highPressure, Pi.add_apply, pressureGradient, pressureJet_zero,
+      Prod.snd_zero, ContinuousLinearMap.zero_comp, map_zero, angularPressure, zero_apply,
+      zero_smul, add_zero, Pi.zero_apply]
 
 include ha in
 theorem covectorGrades_one (hN : 1 ≤ N) (hm : (a 1).meanPressure = 0) :
@@ -229,7 +235,8 @@ theorem covectorGrades_one (hN : 1 ≤ N) (hm : (a 1).meanPressure = 0) :
   rw [covectorGrades,assemble_interior N 1 le_rfl hN]
   simp only [Nat.sub_self,hm,ha]
   funext z
-  simp [pressureGradient,angularPressure,pressureJet_zero]
+  simp only [zero_highPressure, Pi.add_apply, pressureGradient, pressureJet_zero, Prod.snd_zero,
+      ContinuousLinearMap.zero_comp, map_zero, angularPressure, zero_add, add_zero]
 
 /-- Covector remainder, given by `fieldSum (N+1) κ (covectorGrades N m a)-κ • angularPressure m
 (a 1).highPressure`. -/

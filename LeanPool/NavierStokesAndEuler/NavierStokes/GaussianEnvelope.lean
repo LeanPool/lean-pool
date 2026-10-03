@@ -78,7 +78,7 @@ theorem reference_characteristic_equation {a b lam s : ℝ} (hdisc : lam ^ 2 = a
 /-- Reversing the sign of the slot parameter does not change the growth. -/
 theorem netGrowth_even (lam u s : ℝ) :
     netGrowth lam u (-s) = netGrowth lam u s := by
-  simp [netGrowth]
+  simp only [netGrowth, even_two, Even.neg_pow]
 
 /-- The prescribed damping exactly cancels growth at the threshold. -/
 theorem netGrowth_at_threshold (lam u : ℝ) : netGrowth lam u u = 0 := by
@@ -316,7 +316,7 @@ theorem gaussian_envelope_bounds {D : Set ℝ} {rate : ℝ → ℝ}
 
 @[simp] theorem envelope_at_midpoint (rate : ℝ → ℝ) (midpoint : ℝ) :
     envelope rate midpoint midpoint = 1 := by
-  simp [envelope]
+  simp only [envelope, intervalIntegral.integral_same, Real.exp_zero]
 
 theorem envelope_pos (rate : ℝ → ℝ) (midpoint time : ℝ) :
     0 < envelope rate midpoint time := Real.exp_pos _
@@ -347,7 +347,8 @@ noncomputable def referenceSlope (lam u s : ℝ) : ℝ :=
 theorem hasDerivAt_netGrowth (lam u s : ℝ) :
     HasDerivAt (PulseGrowth.netGrowth lam u) (referenceSlope lam u s) s := by
   have hp : HasDerivAt (fun x : ℝ => 1 + x ^ 2) (2 * s) s := by
-    simpa using ((hasDerivAt_id s).pow 2).const_add 1
+    simpa only [hasDerivAt_const_add_iff, Pi.pow_apply, id_eq, Nat.cast_ofNat, Nat.add_one_sub_one,
+        pow_one, mul_one] using ((hasDerivAt_id s).pow 2).const_add 1
   have hr := hp.sqrt (ne_of_gt (PulseGrowth.one_add_sq_pos s))
   have hd := ((hasDerivAt_const s lam).div hr (ne_of_gt (PulseGrowth.radius_pos s))).sub
     ((hp.const_mul lam).div_const ((1 + u ^ 2) * Real.sqrt (1 + u ^ 2)))
@@ -423,7 +424,7 @@ theorem hasDerivAt_referenceRate (lam u ell time : ℝ) :
   have hs : HasDerivAt (PulseGrowth.slotMagnitude u ell) (u / ell) time := by
     change HasDerivAt (fun x : ℝ => u / 2 + u * x / ell) (u / ell) time
     convert! (((hasDerivAt_id time).const_mul u).div_const ell).const_add (u / 2) using 1
-    simp
+    simp only [mul_one]
   exact (hasDerivAt_netGrowth lam u (PulseGrowth.slotMagnitude u ell time)).comp time hs
 
 theorem slotMagnitude_mem_interval {u ell time : ℝ} (hu : 0 ≤ u) (hell : 0 < ell)

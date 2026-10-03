@@ -59,9 +59,11 @@ theorem partialDerivative_comm (f : Space → ℝ) (hf : ContDiff ℝ 2 f)
       fderiv ℝ (fderiv ℝ f) x (EuclideanSpace.single b 1) (EuclideanSpace.single a 1) := by
     unfold partialDerivative
     rw [fderiv_clm_apply hd (differentiableAt_const _)]
-    simp
+    simp only [fderiv_fun_const, Pi.zero_apply, ContinuousLinearMap.comp_zero, zero_add,
+        ContinuousLinearMap.flip_apply]
   rw [he, he]
-  exact (hf.contDiffAt.isSymmSndFDerivAt (n := 2) (by simp)).eq _ _
+  exact (hf.contDiffAt.isSymmSndFDerivAt (n := 2) (by simp only [
+      minSmoothness_of_isRCLikeNormedField, Std.le_refl])).eq _ _
 
 theorem fderiv_coordinate (f : Space → Space) (x : Space)
     (hf : DifferentiableAt ℝ f x) (i : Fin 3) (v : Space) :
@@ -75,10 +77,12 @@ theorem fderiv_coordinate (f : Space → Space) (x : Space)
 theorem divergence_curl (ψ : Fin 3 → Space → ℝ)
     (hψ : ∀ i, ContDiff ℝ ∞ (ψ i)) (x : Space) : divergence (curl ψ) x = 0 := by
   have hc : DifferentiableAt ℝ (curl ψ) x :=
-    ((contDiff_curl ψ hψ).differentiable (by simp)).differentiableAt
+    ((contDiff_curl ψ hψ).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true])).differentiableAt
   have hp (f : Space → ℝ) (hf : ContDiff ℝ ∞ f) (i : Fin 3) :
       DifferentiableAt ℝ (partialDerivative f i) x :=
-    ((contDiff_partialDerivative f hf i).differentiable (by simp)).differentiableAt
+    ((contDiff_partialDerivative f hf i).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true])).differentiableAt
   have he (i : Fin 3) : (fderiv ℝ (curl ψ) x (EuclideanSpace.single i 1)) i =
       partialDerivative (partialDerivative (ψ (i + 2)) (i + 1)) i x -
         partialDerivative (partialDerivative (ψ (i + 1)) (i + 2)) i x := by
@@ -99,9 +103,12 @@ theorem divergence_curl (ψ : Fin 3 → Space → ℝ)
     partialDerivative (partialDerivative (ψ 2) 0) 1 x) +
     (partialDerivative (partialDerivative (ψ 1) 0) 2 x -
     partialDerivative (partialDerivative (ψ 0) 1) 2 x) = 0
-  rw [partialDerivative_comm (ψ 2) ((hψ 2).of_le (by simp)) 1 0 x,
-    partialDerivative_comm (ψ 0) ((hψ 0).of_le (by simp)) 2 1 x,
-    partialDerivative_comm (ψ 1) ((hψ 1).of_le (by simp)) 0 2 x]
+  rw [partialDerivative_comm (ψ 2) ((hψ 2).of_le (by simp only [WithTop.le_coe_top, ne_eq,
+      WithTop.ofNat_ne_top, not_false_eq_true])) 1 0 x,
+    partialDerivative_comm (ψ 0) ((hψ 0).of_le (by simp only [WithTop.le_coe_top, ne_eq,
+        WithTop.ofNat_ne_top, not_false_eq_true])) 2 1 x,
+    partialDerivative_comm (ψ 1) ((hψ 1).of_le (by simp only [WithTop.le_coe_top, ne_eq,
+        WithTop.ofNat_ne_top, not_false_eq_true])) 0 2 x]
   ring
 
 theorem tsupport_curl_subset (ψ : Fin 3 → Space → ℝ) (K : Set Space)
@@ -114,8 +121,8 @@ theorem tsupport_curl_subset (ψ : Fin 3 → Space → ℝ) (K : Set Space)
     ext i
     have h₁ : x ∉ tsupport (ψ (i + 2)) := fun h => hnot (hψ _ h)
     have h₂ : x ∉ tsupport (ψ (i + 1)) := fun h => hnot (hψ _ h)
-    simp [curl_apply, partialDerivative, fderiv_of_notMem_tsupport ℝ h₁,
-      fderiv_of_notMem_tsupport ℝ h₂]
+    simp only [curl_apply, partialDerivative, Fin.isValue, fderiv_of_notMem_tsupport ℝ h₁,
+        zero_apply, fderiv_of_notMem_tsupport ℝ h₂, sub_self, PiLp.zero_apply]
   exact hx hzero
 
 theorem hasCompactSupport_curl (ψ : Fin 3 → Space → ℝ) (K : Set Space)
@@ -157,7 +164,7 @@ theorem contDiff_linearPotential (L : Space →L[ℝ] Space) (i : Fin 3) :
 
 theorem linearPotential_even (L : Space →L[ℝ] Space) (i : Fin 3) (x : Space) :
     linearPotential L i (-x) = linearPotential L i x := by
-  simp [linearPotential, map_neg, PiLp.neg_apply]
+  simp only [linearPotential, Fin.isValue, PiLp.neg_apply, map_neg, mul_neg, neg_mul, neg_neg]
 
 theorem partialDerivative_linearPotential (L : Space →L[ℝ] Space) (i j : Fin 3)
     (x : Space) :
@@ -243,9 +250,10 @@ theorem compact_solenoidal_extension (L : Space →L[ℝ] Space)
     tsupport_curl_subset ψ _ Metric.isClosed_closedBall hsupport,
     divergence_curl ψ hψ, ?_, ?_⟩
   · intro x
-    apply odd_curl_of_even ψ (fun i => (hψ i).differentiable (by simp))
+    apply odd_curl_of_even ψ (fun i => (hψ i).differentiable (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
     intro i y
-    dsimp [ψ]
+    dsimp only [ψ]
     rw [χ.neg, linearPotential_even]
   · intro x hx
     have hχ : (χ : Space → ℝ) =ᶠ[nhds x] 1 := χ.eventuallyEq_one_of_mem_ball hx

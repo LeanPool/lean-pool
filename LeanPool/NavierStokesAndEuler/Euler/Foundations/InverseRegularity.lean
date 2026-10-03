@@ -49,7 +49,8 @@ theorem iterated_operator_leibniz {R : Type*} [Ring R] (D T : R) (n : ℕ) :
     D ^ n * T = ∑ l ∈ Finset.range (n + 1),
       n.choose l • (iteratedRingCommutator D T l * D ^ (n - l)) := by
   induction n with
-  | zero => simp [iteratedRingCommutator]
+  | zero => simp only [pow_zero, one_mul, zero_add, Finset.range_one, zero_tsub, mul_one,
+      nsmul_eq_mul, Finset.sum_singleton, Nat.choose_self, Nat.cast_one, iteratedRingCommutator]
   | succ n ih =>
     rw [pow_succ', mul_assoc, ih, Finset.mul_sum,
       Finset.sum_choose_succ_nsmul (fun l r => iteratedRingCommutator D T l * D ^ r) n,

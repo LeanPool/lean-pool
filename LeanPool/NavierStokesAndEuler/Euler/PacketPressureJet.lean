@@ -51,15 +51,20 @@ theorem slicedJet_time (s : Set ℝ) (f : Domain → E) (z : Domain) :
     (slicedJet s f z).2 timeDirection=derivWithin (fun t => f (t,z.2)) s z.1 := by
   change (1 : ℝ) • derivWithin (fun t => f (t,z.2)) s z.1 +
     (fderiv ℝ (fun y => f (z.1,y)) z.2) (0 : SpatialDomain)=_
-  simp
+  simp only [one_smul, map_zero, add_zero]
 
 theorem slicedJet_space (s : Set ℝ) (f : Domain → E) (z : Domain) (v : Space) :
     (slicedJet s f z).2 (spatialInjection v)=fderiv ℝ (fun y => f (z.1,y)) z.2 (v,0) := by
-  simp [slicedJet, joinDerivative, spatialInjection]
+  simp only [slicedJet, joinDerivative, spatialInjection, ContinuousLinearMap.prod_apply,
+      zero_apply, ContinuousLinearMap.id_apply, add_apply, ContinuousLinearMap.smulRight_apply,
+      ContinuousLinearMap.coe_fst', zero_smul, ContinuousLinearMap.comp_apply,
+      ContinuousLinearMap.coe_snd', zero_add]
 
 theorem slicedJet_angle (s : Set ℝ) (f : Domain → E) (z : Domain) :
     (slicedJet s f z).2 angleDirection=fderiv ℝ (fun y => f (z.1,y)) z.2 (0,1) := by
-  simp [slicedJet, joinDerivative, angleDirection]
+  simp only [slicedJet, joinDerivative, angleDirection, add_apply,
+      ContinuousLinearMap.smulRight_apply, ContinuousLinearMap.coe_fst', zero_smul,
+      ContinuousLinearMap.comp_apply, ContinuousLinearMap.coe_snd', zero_add]
 
 /-- The time entry is the derivative furnished by the actual interval evolution. -/
 theorem slicedJet_time_eq (s : Set ℝ) (f : Domain → E) (z : Domain) (v : E)
@@ -125,11 +130,14 @@ def pressureJet (p : Domain → ℝ) (z : Domain) : ScalarJet :=
 
 theorem pressureJet_space (p : Domain → ℝ) (z : Domain) (v : EulerSmoothLimit.Space) :
     (pressureJet p z).2 (spatialInjection v)=fderiv ℝ (fun y => p (z.1,y)) z.2 (v,0) := by
-  simp [pressureJet, joinDerivative, spatialInjection]
+  simp only [pressureJet, joinDerivative, ContinuousLinearMap.smulRight_zero, zero_add,
+      spatialInjection, ContinuousLinearMap.prod_apply, zero_apply, ContinuousLinearMap.id_apply,
+      ContinuousLinearMap.comp_apply, ContinuousLinearMap.coe_snd']
 
 theorem pressureJet_angle (p : Domain → ℝ) (z : Domain) :
     (pressureJet p z).2 angleDirection=fderiv ℝ (fun y => p (z.1,y)) z.2 (0,1) := by
-  simp [pressureJet, joinDerivative, angleDirection]
+  simp only [pressureJet, joinDerivative, ContinuousLinearMap.smulRight_zero, zero_add,
+      angleDirection, ContinuousLinearMap.comp_apply, ContinuousLinearMap.coe_snd']
 
 theorem pressureJet_fieldSum (M : ℕ) (κ : ℝ) (p : ℕ → Domain → ℝ) (z : Domain)
     (hp : ∀ n ≤ M, DifferentiableAt ℝ (fun y => p n (z.1, y)) z.2) :

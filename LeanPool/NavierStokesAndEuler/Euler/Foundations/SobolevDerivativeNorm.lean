@@ -26,11 +26,12 @@ open scoped SchwartzMap ENNReal ContDiff LineDeriv
 theorem norm_le_sum_coordinates (d : ℕ) (ξ : Domain d) : ‖ξ‖ ≤ ∑ i, ‖ξ i‖ := by
   have he : (∑ i : Fin d, EuclideanSpace.single i (ξ i)) = ξ := by
     ext j
-    simp
+    simp only [WithLp.ofLp_sum, PiLp.ofLp_single, Finset.sum_apply, Finset.sum_pi_single,
+        Finset.mem_univ, ↓reduceIte]
   calc
     ‖ξ‖ = ‖∑ i : Fin d, EuclideanSpace.single i (ξ i)‖ := by rw [he]
     _ ≤ ∑ i : Fin d, ‖EuclideanSpace.single i (ξ i)‖ := norm_sum_le _ _
-    _ = _ := by simp
+    _ = _ := by simp only [PiLp.norm_single, Real.norm_eq_abs]
 
 /-- The operator norm of a derivative tensor is bounded by the sum of its coordinate entries. -/
 theorem multilinear_norm_le_coordinate_sum {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
@@ -41,7 +42,9 @@ theorem multilinear_norm_le_coordinate_sum {F : Type*} [NormedAddCommGroup F] [N
   intro m
   have hm (j : Fin n) : (∑ i : Fin d, (m j i) • EuclideanSpace.single i (1 : ℝ)) = m j := by
     ext i
-    simp [Pi.single_apply, mul_ite]
+    simp only [WithLp.ofLp_sum, WithLp.ofLp_smul, PiLp.ofLp_single, Finset.sum_apply, Pi.smul_apply,
+        Pi.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq,
+        Finset.mem_univ, ↓reduceIte]
   have hexpand : T m = ∑ w : Fin n → Fin d,
       T (fun j => (m j (w j)) • EuclideanSpace.single (w j) (1 : ℝ)) := by
     change T.toMultilinearMap m = ∑ w : Fin n → Fin d,

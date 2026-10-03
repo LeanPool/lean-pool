@@ -190,7 +190,8 @@ theorem angularSum_divergence (hh : 0 < h) (hh1 : h < 1 / 2)
       (fun _ hx => PhysicalWaveSum.physicalQ_pos hh hh1 hx.1) (x := w) ⟨ht, hq⟩
   · rw [DirectAngularDiagonal.divergence_congr
       (angularSum_zero_germ hh hh1 D ha0 ham hgap ht (le_of_not_gt hq))]
-    simp [spatialDivergence, spatialDerivative]
+    simp only [spatialDivergence, spatialDerivative, fderiv_fun_const, Pi.zero_apply, zero_apply,
+        PiLp.zero_apply, Finset.sum_const_zero]
 
 /-- Multiplication by the existing axisymmetric spatial cutoff preserves
 divergence of the same local-data diagonal on every preterminal point. -/
@@ -209,6 +210,7 @@ theorem spatialCut_angularSum_divergence (hh : 0 < h) (hh1 : h < 1 / 2)
       (fun _ hx => PhysicalWaveSum.physicalQ_pos hh hh1 hx.1) (x := (t, x)) ⟨ht, hq⟩
   · rw [DirectAngularDiagonal.divergence_congr (spatialCut_zero_germ
       (angularSum_zero_germ hh hh1 D ha0 ham hgap (w := (t, x)) ht (le_of_not_gt hq)))]
-    simp [spatialDivergence, spatialDerivative]
+    simp only [spatialDivergence, spatialDerivative, fderiv_fun_const, Pi.zero_apply, zero_apply,
+        PiLp.zero_apply, Finset.sum_const_zero]
 
 end NavierStokes.LocalAngularDiagonal

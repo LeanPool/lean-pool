@@ -86,7 +86,7 @@ theorem metric_product_hasDerivAt (K : SmoothCoefficient period) (a : LiftTangen
       K.bound (fun x => K.norm_bound (x + translationPath period a 0)) u,
       K.operator_ae u] with x hx hy
     rw [hx, hy]
-    simp [translatedCoefficient]
+    simp only [translatedCoefficient, translationPath_zero, add_zero]
   rw [hop0] at hprod
   simp only [translationPath_zero, translation_zero] at hprod
   convert hprod using 1
@@ -145,7 +145,9 @@ theorem metric_second_derivative_bound (K : SmoothCoefficient period) (a : LiftT
 
 /-- Every standard angular or spatial cylinder coordinate vector has norm one. -/
 theorem standardDirection_norm (i : Fin 4) : ‖standardDirection i‖ = 1 := by
-  cases i using Fin.cases <;> simp [Prod.norm_def]
+  cases i using Fin.cases <;> simp only [Fin.isValue, standardDirection_zero, Prod.norm_def,
+      norm_zero, norm_one, zero_le_one, sup_of_le_right, standardDirection_succ, PiLp.norm_single,
+      sup_of_le_left]
 
 /-- The actual cylinder Laplacian assembled from strong second coordinate derivatives. -/
 def jetLaplacian {f : LiftL2 period} (J : SpatialJet period standardDirection 2 f) : LiftL2 period

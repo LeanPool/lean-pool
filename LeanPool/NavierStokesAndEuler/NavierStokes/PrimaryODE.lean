@@ -156,13 +156,15 @@ noncomputable def normalMotion (z : Q × ℝ) : Space :=
 @[simp] theorem forcing_zero (z : Q × ℝ) : d.forcing (fun _ => 0) z = 0 := by
   ext i
   have hz : MovingFrameODE.tail (0 : Space) = 0 := by ext i; fin_cases i <;> rfl
-  fin_cases i <;> simp [forcing, forceX, forceY, hz]
+  fin_cases i <;> simp only [forcing, forceX, Fin.isValue, PiLp.zero_apply, hz, inner_zero_right,
+      mul_zero, sub_self, neg_zero, zero_div, forceY, add_zero, Fin.zero_eta, Matrix.cons_val_zero,
+      Fin.mk_one, Matrix.cons_val_one, Matrix.cons_val_fin_one]
 
 @[simp] theorem forcing_zero_function : d.forcing (fun _ => 0) = (fun _ => 0) :=
   funext d.forcing_zero
 
 @[simp] theorem damping_one (z : Q × ℝ) : d.damping 1 z = d.viscosity z := by
-  simp [damping]
+  simp only [damping, Int.cast_one, one_pow, one_mul]
 
 theorem ambient_tangent (z : Q × ℝ) (w : State) :
     ⟪d.normal z, d.ambient z w⟫_ℝ = 0 :=
@@ -360,7 +362,11 @@ private theorem modalOperator_expansion (lam damping e11 e12 e21 e22 : ℝ) :
       e21 • GrowingMode.modalOperator 0 0 0 0 1 0 +
       (-lam - damping + e22) • GrowingMode.modalOperator 0 0 0 0 0 1 := by
   ext z i
-  fin_cases i <;> simp [GrowingMode.modalOperator]
+  fin_cases i <;> simp only [GrowingMode.modalOperator, Fin.isValue,
+      LinearMap.coe_toContinuousLinearMap', LinearMap.coe_mk, AddHom.coe_mk, Fin.zero_eta,
+      Matrix.cons_val_zero, sub_self, zero_add, one_mul, zero_mul, add_zero, neg_zero, add_apply,
+      smul_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, mul_zero, Fin.mk_one,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one]
 
 theorem FrameData.SmoothOn.coefficient {d : FrameData Q} {Ω : Set (Q × ℝ)}
     (h : d.SmoothOn Ω) (j : ℤ) : ContDiffOn ℝ ∞ (d.coefficient j) Ω := by
@@ -1232,7 +1238,7 @@ noncomputable def localFrame (n : Space) : Frame := by
 
 theorem localFrame_eq {n : Space} (hn : MovingFrameODE.tail n ≠ 0) :
     localFrame n = MovingFrameODE.normalFrame n hn := by
-  simp [localFrame, hn]
+  simp only [localFrame, ne_eq, hn, not_false_eq_true, ↓reduceDIte]
 
 /-- The actual phase-derived coefficients require nonvanishing only on the
 chart where they are used. -/

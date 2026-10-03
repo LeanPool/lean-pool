@@ -38,7 +38,7 @@ theorem coefficientBlock_zero_le {s : ℕ} {A : SmoothCoefficient period}
   calc
     _ = 64 * ∑ r ∈ Finset.range 7, boundLevel period K r := by norm_num [coefficientBlock]
     _ ≤ 64 * ∑ _r ∈ Finset.range 7, L := hh
-    _ = _ := by simp; ring
+    _ = _ := by simp only [Finset.sum_const, Finset.card_range, nsmul_eq_mul, Nat.cast_ofNat]; ring
 
 omit [Fact (0 < period)] in
 /-- The finite weighted coefficient sum is bounded by its base block and a geometric tail. -/
@@ -77,7 +77,8 @@ theorem baseCoefficientSum_le {A : SmoothCoefficient period}
     (hL : ∀ r ≤ 6, boundLevel period K r ≤ L) : baseCoefficientSum period K ≤ 6*L := by
   have h := Finset.sum_le_sum (s := Finset.range 6) (fun r hr => hL (r+1) (by
       have := Finset.mem_range.mp hr; omega))
-  simpa [baseCoefficientSum] using h
+  simpa only [baseCoefficientSum, ge_iff_le, Finset.sum_const, Finset.card_range, nsmul_eq_mul,
+      Nat.cast_ofNat] using h
 
 omit [Fact (0 < period)] in
 /-- One explicit polynomial bounds every coercive inverse at base order at most six. -/

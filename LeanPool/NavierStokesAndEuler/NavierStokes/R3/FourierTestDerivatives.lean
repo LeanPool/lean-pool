@@ -50,8 +50,10 @@ def laplacianCLM : ComplexTest →L[ℂ] ComplexTest :=
     laplacianCLM ψ x =
       ∑ i : Fin 3, NavierStokes.SolutionDifference.spatialPartial i
         (fun y => NavierStokes.SolutionDifference.spatialPartial i (ψ : Space → ℂ) y) x := by
-  simp [laplacianCLM, Fin.sum_univ_succ, partialCLM,
-    NavierStokes.SolutionDifference.spatialPartial, SchwartzMap.lineDerivOp_apply_eq_fderiv]
+  simp only [laplacianCLM, partialCLM, Fin.sum_univ_succ, Fin.isValue, Fin.succ_zero_eq_one,
+      Finset.univ_unique, Fin.default_eq_zero, Finset.sum_singleton, Fin.succ_one_eq_two, add_apply,
+      ContinuousLinearMap.comp_apply, LineDeriv.lineDerivOpCLM_apply,
+      SchwartzMap.lineDerivOp_apply_eq_fderiv, NavierStokes.SolutionDifference.spatialPartial]
   rfl
 
 /-- Fourier transform of a coordinate derivative. -/
@@ -74,7 +76,7 @@ theorem fourier_partialCLM_apply (i : Fin 3) (ψ : ComplexTest) (ξ : Space) :
     Complex.ofReal_eq_zero, Real.pi_ne_zero, OfNat.ofNat_ne_zero]
   left
   change inner ℝ ξ (EuclideanSpace.single i 1) = ξ i
-  simpa using! (EuclideanSpace.inner_single_right i (1 : ℝ) ξ)
+  simpa only [conj_trivial, one_mul] using! (EuclideanSpace.inner_single_right i (1 : ℝ) ξ)
 
 /-- The ordinary Laplacian has Fourier multiplier `-4π²‖ξ‖²`. -/
 theorem fourier_laplacianCLM_apply (ψ : ComplexTest) (ξ : Space) :
@@ -84,16 +86,20 @@ theorem fourier_laplacianCLM_apply (ψ : ComplexTest) (ξ : Space) :
   have hF (f : ComplexTest) :
       EulerSobolev.schwartzFourier f = FourierTransform.fourierCLE ℂ ComplexTest f := rfl
   have hnorm : ‖ξ‖ ^ 2 = (ξ 0) ^ 2 + (ξ 1) ^ 2 + (ξ 2) ^ 2 := by
-    simp [PiLp.norm_sq_eq_of_L2, Fin.sum_univ_succ, Real.norm_eq_abs, sq_abs, add_assoc]
+    simp only [PiLp.norm_sq_eq_of_L2, Real.norm_eq_abs, sq_abs, Fin.sum_univ_succ, Fin.isValue,
+        Fin.succ_zero_eq_one, Finset.univ_unique, Fin.default_eq_zero, Finset.sum_singleton,
+        Fin.succ_one_eq_two, add_assoc]
   have hsplit : laplacianCLM ψ = partialCLM 0 (partialCLM 0 ψ) +
       (partialCLM 1 (partialCLM 1 ψ) + partialCLM 2 (partialCLM 2 ψ)) := by
-    simp [laplacianCLM, Fin.sum_univ_succ]
+    simp only [laplacianCLM, Fin.sum_univ_succ, Fin.isValue, Fin.succ_zero_eq_one,
+        Finset.univ_unique, Fin.default_eq_zero, Finset.sum_singleton, Fin.succ_one_eq_two,
+        add_apply, ContinuousLinearMap.comp_apply]
   simp only [hF, hsplit, map_add, add_apply]
   simp only [← hF, fourier_partialCLM_apply]
   rw [hnorm]
   push_cast
   ring_nf
-  simp [Complex.I_sq]
+  simp only [Complex.I_sq, mul_neg, mul_one, Fin.isValue, neg_mul]
   ring
 
 end NavierStokesR3.HarmonicTestFunctionals

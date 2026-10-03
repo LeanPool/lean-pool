@@ -88,7 +88,7 @@ theorem entrance_lt_cap {lo : ℝ} (hlo : NominalConeAssembly.activeLeft W < lo)
   apply lt_min hlo
   apply lt_min
   · nlinarith only [H, ha, ht]
-  · dsimp [analyticEnd]
+  · dsimp only [analyticEnd]
     nlinarith only [ha, hr]
 
 theorem window_order {lo : ℝ} (hlo : NominalConeAssembly.activeLeft W < lo) :
@@ -96,7 +96,7 @@ theorem window_order {lo : ℝ} (hlo : NominalConeAssembly.activeLeft W < lo) :
     zeroEnd W H lo < cutoffInner W H lo ∧
     cutoffInner W H lo < cutoffStop W H lo ∧ cutoffStop W H lo < windowCap W H lo := by
   have hm := entrance_lt_cap W H hlo
-  dsimp [zeroEnd, cutoffInner, cutoffStop]
+  dsimp only [zeroEnd, cutoffInner, cutoffStop]
   constructor <;> [skip; constructor] <;> [skip; skip; constructor] <;> linarith only [H, hm]
 
 theorem cutoffStop_lt_lo {lo : ℝ} (hlo : NominalConeAssembly.activeLeft W < lo) :
@@ -134,7 +134,7 @@ theorem analyticEnd_lt_patch :
     (mul_nonneg (by
         norm_num) (ReservedPatches.left_pos F W.controls.radius W.controls.radius_pos
             .positive).le)]
-  dsimp [analyticEnd, NominalConeAssembly.activeLeft]
+  dsimp only [analyticEnd, NominalConeAssembly.activeLeft]
   linarith only [hb]
 
 theorem cutoffStop_lt_radius {lo : ℝ} (hlo : NominalConeAssembly.activeLeft W < lo) :
@@ -424,7 +424,8 @@ theorem positive_densities_zero {n : ℕ} (hn : 0 < n) {R eta : ℝ}
     SlowResidualMatching.zDensity F.data.h (asSlowProfiles (scheme W H Q M hlo)) n (R, eta) = 0 :=
         by
   by_cases hR0 : R = 0
-  · simp [SlowResidualMatching.thetaDensity, SlowResidualMatching.zDensity, hR0]
+  · simp only [SlowResidualMatching.thetaDensity, hR0, ne_eq, OfNat.ofNat_ne_zero,
+      not_false_eq_true, zero_pow, zero_div, zero_mul, SlowResidualMatching.zDensity, and_self]
   · have hs : R ^ 2 ≤ 2 * zeroEnd W H lo := by
       calc
         R ^ 2 ≤ (Real.sqrt (2 * zeroEnd W H lo)) ^ 2 := (sq_le_sq₀ hR.1 (Real.sqrt_nonneg _)).2 hR.2
@@ -1406,17 +1407,17 @@ theorem normalizedCoordinates_eq (h : ℝ) (p : Slow) :
 theorem normalizedCoordinates_smoothAt {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {p : Slow} (hT : 0 < p.2.2) : ContDiffAt ℝ ∞ (normalizedCoordinates h) p :=
   (SlowBorelBase.physicalChart_smoothAt hh hh1 (show (physicalInput p).1 < 1 by
-    dsimp [physicalInput]; linarith only [hT])).comp p physicalInput_smooth.contDiffAt
+    dsimp only [physicalInput]; linarith only [hT])).comp p physicalInput_smooth.contDiffAt
 
 theorem normalizedCoordinates_q_pos {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {p : Slow} (hT : 0 < p.2.2) : 0 < (normalizedCoordinates h p).1 :=
   SlowBorelBase.physicalChart_positive hh hh1 (show (physicalInput p).1 < 1 by
-    dsimp [physicalInput]; linarith only [hT])
+    dsimp only [physicalInput]; linarith only [hT])
 
 theorem normalizedCoordinates_eta {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {p : Slow} (hT : 0 < p.2.2) : |(normalizedCoordinates h p).2.2| < 1 :=
   PhysicalCoordinateBounds.physicalEta_abs_lt_one (by linarith only [hh]) (by linarith only [hh1])
-    (show (physicalInput p).1 < 1 by dsimp [physicalInput]; linarith only [hT])
+    (show (physicalInput p).1 < 1 by dsimp only [physicalInput]; linarith only [hT])
 
 /-- These are only pointwise geometric restrictions on the actual chart,
 not coordinate-derivative or base-field estimates. -/
@@ -1493,13 +1494,13 @@ theorem normalizedCoordinates_polynomial {ι : Type*} {D : Domain ι Slow}
       (isCompact_closedBall (0 : Slow) M) (subset_univ _) N
     let A := 1 + ∑ j ∈ Finset.range (N + 1), C j * qlo ^ (-(j : ℝ))
     have hA : 0 < A := by
-      dsimp [A]
+      dsimp only [A]
       exact add_pos_of_pos_of_nonneg zero_lt_one (Finset.sum_nonneg (fun j _ =>
         mul_nonneg (hC j).le (Real.rpow_nonneg hqlo.le _)))
     refine ⟨(N.factorial : ℝ) * A * B ^ N, by positivity, ?_⟩
     intro i p hp
     have hT := H.time i p hp
-    have hphys : (physicalInput p).1 < 1 := by dsimp [physicalInput]; linarith only [hT]
+    have hphys : (physicalInput p).1 < 1 := by dsimp only [physicalInput]; linarith only [hT]
     have hq := normalizedCoordinates_q_pos hh hh1 hT
     have houter (j : ℕ) (hj : j ≤ N) :
         ‖iteratedFDeriv ℝ j (SlowBorelBase.physicalChart h) (physicalInput p)‖ ≤ A := by
@@ -1731,11 +1732,11 @@ theorem Estimates.localBaseBounds {ι : Type*} {D : Domain ι Slow} {Q : ι → 
   obtain ⟨BF, hBF, hBFj⟩ := polynomial_unit_bound H.leading_frequency 2
   obtain ⟨BG, hBG, hBGj⟩ := polynomial_unit_bound H.leading_axial 2
   let K := CF + CG + BF + BG + 1
-  have hK : 1 ≤ K := by dsimp [K]; linarith only [hCF, hCG, hBF, hBG]
-  have hCFK : CF ≤ K := by dsimp [K]; linarith only [hCG, hBF, hBG]
-  have hCGK : CG ≤ K := by dsimp [K]; linarith only [hCF, hBF, hBG]
-  have hBFK : BF ≤ K := by dsimp [K]; linarith only [hCF, hCG, hBG]
-  have hBGK : BG ≤ K := by dsimp [K]; linarith only [hCF, hCG, hBF]
+  have hK : 1 ≤ K := by dsimp only [K]; linarith only [hCF, hCG, hBF, hBG]
+  have hCFK : CF ≤ K := by dsimp only [K]; linarith only [hCG, hBF, hBG]
+  have hCGK : CG ≤ K := by dsimp only [K]; linarith only [hCF, hBF, hBG]
+  have hBFK : BF ≤ K := by dsimp only [K]; linarith only [hCF, hCG, hBG]
+  have hBGK : BG ≤ K := by dsimp only [K]; linarith only [hCF, hCG, hBF]
   refine ⟨2 * K, by linarith only [hCF, hCG, hBF, hBG], fun i => ?_⟩
   have hsquare : (Q i ^ h) ^ 2 = Q i ^ (2 * h) := by
     rw [← Real.rpow_mul_natCast (hQ i).le]
@@ -1753,14 +1754,20 @@ theorem Estimates.localBaseBounds {ι : Type*} {D : Domain ι Slow} {Q : ι → 
   have hG0 (x : Slow) (hx : x ∈ D.carrier i) :=
     (H.leading_axial.smooth i).contDiffAt ((D.isOpen i).mem_nhds hx)
   apply BasePhaseGeometry.localBase_of_normalized_error (zero_le_one.trans hK) hsmall (hconvex i)
-    (fun x hx => (hF x hx).differentiableAt (by simp))
-    (fun x hx => (hG x hx).differentiableAt (by simp))
-    (fun x hx => (hF0 x hx).differentiableAt (by simp))
-    (fun x hx => (hG0 x hx).differentiableAt (by simp))
+    (fun x hx => (hF x hx).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true]))
+    (fun x hx => (hG x hx).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true]))
+    (fun x hx => (hF0 x hx).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true]))
+    (fun x hx => (hG0 x hx).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true]))
     (fun x hx => ((hF0 x hx).fderiv_right (show (∞ : WithTop ℕ∞) + 1 ≤ ∞ by
-        simp)).differentiableAt (by simp))
+        simp)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+            not_false_eq_true]))
     (fun x hx => ((hG0 x hx).fderiv_right (show (∞ : WithTop ℕ∞) + 1 ≤ ∞ by
-        simp)).differentiableAt (by simp))
+        simp)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+            not_false_eq_true]))
   · intro x hx
     rw [norm_fderiv_eq_jet_one]
     exact (hBFj i 1 (by norm_num) x hx).trans hBFK
@@ -1780,14 +1787,18 @@ theorem Estimates.localBaseBounds {ι : Type*} {D : Domain ι Slow} {Q : ι → 
     exact he.trans (mul_le_mul_of_nonneg_right hCFK (Real.rpow_nonneg (hQ i).le _))
   · intro x hx
     have he := hEF i x hx 1 le_rfl
-    rw [← norm_fderiv_eq_jet_one, fderiv_fun_sub ((hF x hx).differentiableAt (by simp))
-      ((hF0 x hx).differentiableAt (by simp))] at he
+    rw [← norm_fderiv_eq_jet_one, fderiv_fun_sub ((hF x hx).differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+      ((hF0 x hx).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+          not_false_eq_true]))] at he
     rw [hsquare]
     exact he.trans (mul_le_mul_of_nonneg_right hCFK (Real.rpow_nonneg (hQ i).le _))
   · intro x hx
     have he := hEG i x hx 1 le_rfl
-    rw [← norm_fderiv_eq_jet_one, fderiv_fun_sub ((hG x hx).differentiableAt (by simp))
-      ((hG0 x hx).differentiableAt (by simp))] at he
+    rw [← norm_fderiv_eq_jet_one, fderiv_fun_sub ((hG x hx).differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
+      ((hG0 x hx).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+          not_false_eq_true]))] at he
     rw [hsquare]
     exact he.trans (mul_le_mul_of_nonneg_right hCGK (Real.rpow_nonneg (hQ i).le _))
 
@@ -1820,7 +1831,7 @@ theorem physicalChart_band {h Q : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     SlowBorelBase.physicalChart h
       (SimilarityHomogeneity.physicalScale h Q (physicalInput p)) =
       SlowBorelBase.scaleMap Q (normalizedCoordinates h p) := by
-  have hp : (physicalInput p).1 < 1 := by dsimp [physicalInput]; linarith only [hT]
+  have hp : (physicalInput p).1 < 1 := by dsimp only [physicalInput]; linarith only [hT]
   simp only [SlowBorelBase.physicalChart_eq, SimilarityHomogeneity.q_physicalScale hh hh1 hQ hp,
     SimilarityHomogeneity.inner_physicalScale hh hh1 hQ hp,
     SlowBorelBase.scaleMap_apply, normalizedCoordinates]
@@ -1829,7 +1840,7 @@ theorem physicalChart_band {h Q : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
 theorem normalized_power {Q rho A : ℝ} (hQ : 0 < Q) (hrho : 0 < rho) :
     Q ^ A * (Q * rho) ^ (-A) = rho ^ (-A) := by
   rw [Real.mul_rpow hQ.le hrho.le, ← mul_assoc, ← Real.rpow_add hQ]
-  simp
+  simp only [add_neg_cancel, Real.rpow_zero, one_mul]
 
 /-- The leading angular frequency retains the `1/R` factor; simplifying it
 uses the actual relation `X=R²/(2*rho)`. -/
@@ -2204,7 +2215,9 @@ theorem stress_inner_normal (F τ p₁ p₂ a c : ℝ) (ha : a ≠ 0) :
   calc
     _ = -(τ * F / ‖F • !₂[-a, -c]‖) *
         (a * p₁ + c * p₂ - a ^ 2 - c ^ 2) := by
-      simp [PrimaryRepresentatives.normalDirection, PiLp.inner_apply, Fin.sum_univ_two]
+      simp only [PrimaryRepresentatives.normalDirection, PiLp.inner_apply, PiLp.smul_apply,
+          smul_eq_mul, RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, Fin.isValue,
+          Matrix.cons_val_zero, mul_neg, neg_mul, Matrix.cons_val_one, Matrix.cons_val_fin_one]
       ring
     _ = _ := by rw [← he]; ring
 
@@ -2216,8 +2229,12 @@ theorem stress_inner_transverse (F τ p₁ p₂ a c : ℝ) (ha : a ≠ 0) :
     field_simp
   calc
     _ = (τ * F / ‖F • !₂[-a, -c]‖) * (a * p₂ - c * p₁) := by
-      simp [PrimaryRepresentatives.transverseDirection, PrimaryRepresentatives.normalDirection,
-        MovingFrameODE.quarterTurn, PiLp.inner_apply, Fin.sum_univ_two]
+      simp only [PrimaryRepresentatives.transverseDirection, MovingFrameODE.quarterTurn,
+          Fin.isValue, PrimaryRepresentatives.normalDirection, map_smul,
+          LinearMap.coe_toContinuousLinearMap', LinearMap.coe_mk, AddHom.coe_mk,
+          Matrix.cons_val_one, Matrix.cons_val_fin_one, neg_neg, Matrix.cons_val_zero,
+          inner_neg_right, PiLp.inner_apply, PiLp.smul_apply, smul_eq_mul, RCLike.inner_apply,
+          conj_trivial, Fin.sum_univ_two, mul_neg, neg_mul, neg_add_rev]
       ring
     _ = _ := by rw [← he]; ring
 
@@ -2278,12 +2295,17 @@ theorem targetCone_of_signedShear {F a c : ℝ} (hF : 0 < F) (ha : 0 < a)
     div_pos hF (norm_pos_iff.mpr hr.shear_ne_zero)
   have hN : ⟪T, PrimaryRepresentatives.normalDirection (F • !₂[-a, -c])⟫_ℝ =
       -(F / ‖F • !₂[-a, -c]‖) * (a * T 0 + c * T 1) := by
-    simp [PrimaryRepresentatives.normalDirection, PiLp.inner_apply, Fin.sum_univ_two]
+    simp only [PrimaryRepresentatives.normalDirection, PiLp.inner_apply, PiLp.smul_apply,
+        smul_eq_mul, RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, Fin.isValue,
+        Matrix.cons_val_zero, mul_neg, neg_mul, Matrix.cons_val_one, Matrix.cons_val_fin_one]
     ring
   have hK : ⟪T, PrimaryRepresentatives.transverseDirection (F • !₂[-a, -c])⟫_ℝ =
       (F / ‖F • !₂[-a, -c]‖) * (a * T 1 - c * T 0) := by
-    simp [PrimaryRepresentatives.transverseDirection, PrimaryRepresentatives.normalDirection,
-      MovingFrameODE.quarterTurn, PiLp.inner_apply, Fin.sum_univ_two]
+    simp only [PrimaryRepresentatives.transverseDirection, MovingFrameODE.quarterTurn, Fin.isValue,
+        PrimaryRepresentatives.normalDirection, map_smul, LinearMap.coe_toContinuousLinearMap',
+        LinearMap.coe_mk, AddHom.coe_mk, Matrix.cons_val_one, Matrix.cons_val_fin_one, neg_neg,
+        Matrix.cons_val_zero, inner_neg_right, PiLp.inner_apply, PiLp.smul_apply, smul_eq_mul,
+        RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, mul_neg, neg_mul, neg_add_rev]
     ring
   have habs : |PrimaryRepresentatives.c0 F (F • !₂[-a, -c]) * (a * T 1 - c * T 0)| <
       a * T 0 + c * T 1 :=
@@ -2393,7 +2415,8 @@ private theorem radial_composition_hasDerivAt {f : Point → ℝ} {rho eta R : �
       (R / rho * SimilarityProfile.partialX f ((R ^ 2 / 2) / rho, eta)) R := by
   have hx : HasDerivAt (fun r : ℝ => (r ^ 2 / 2) / rho) (R / rho) R := by
     convert! (((hasDerivAt_id R).pow 2).div_const 2).div_const rho using 1
-    simp
+    simp only [Nat.cast_ofNat, id_eq, Nat.add_one_sub_one, pow_one, mul_one, ne_eq,
+        OfNat.ofNat_ne_zero, not_false_eq_true, mul_div_cancel_left₀]
   convert! (LeadingStress.partialX_hasDerivAt hf).comp R hx using 1
   ring
 
@@ -2437,7 +2460,8 @@ theorem leadingFrequency_slowR {h C : ℝ} {d : SlowBorelBase.Coefficients}
   change (BaseChartJets.normalizedCoordinates h p).2 =
     ((p.1 ^ 2 / 2) / (BaseChartJets.normalizedCoordinates h p).1,
       (BaseChartJets.normalizedCoordinates h p).2.2) at hp
-  have hf := (hd.phi 0).differentiable (by simp) (BaseChartJets.normalizedCoordinates h p).2
+  have hf := (hd.phi 0).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+      not_false_eq_true]) (BaseChartJets.normalizedCoordinates h p).2
   rw [hp] at hf
   have hr := (radial_composition_hasDerivAt hf).const_mul
     ((BaseChartJets.normalizedCoordinates h p).1 ^ (-CoordinateAlgebra.A h - 1 / 2) / C)
@@ -2463,7 +2487,8 @@ theorem leadingAxial_slowR {h : ℝ} {d : SlowBorelBase.Coefficients}
   change (BaseChartJets.normalizedCoordinates h p).2 =
     ((p.1 ^ 2 / 2) / (BaseChartJets.normalizedCoordinates h p).1,
       (BaseChartJets.normalizedCoordinates h p).2.2) at hp
-  have hf := (hd.axial 0).differentiable (by simp) (BaseChartJets.normalizedCoordinates h p).2
+  have hf := (hd.axial 0).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true]) (BaseChartJets.normalizedCoordinates h p).2
   rw [hp] at hf
   have hr := (radial_composition_hasDerivAt hf).const_mul
     ((BaseChartJets.normalizedCoordinates h p).1 ^ (-CoordinateAlgebra.A h))
@@ -2476,7 +2501,7 @@ theorem leadingAxial_slowR {h : ℝ} {d : SlowBorelBase.Coefficients}
   rw [← hp] at hr
   rw [← he] at hr
   exact (slowR_hasDerivAt ((leadingAxial_smoothAt hh hh1 hd hT).differentiableAt
-    (by simp))).unique hr
+    (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))).unique hr
 
 theorem normalized_X_eq (h : ℝ) (p : Slow) :
     (BaseChartJets.normalizedCoordinates h p).2.1 =
@@ -2534,14 +2559,18 @@ theorem leading_shear_eq_profile {D : RadialDomain} (P : Profiles D)
   have hX : 0 < w.1 := normalized_X_pos hh hh1 hT hR
   have hphi0 : d.phi 0 w = C * P.f w := hphi.eq_of_nhds
   have hfx := LeadingStress.partialX_hasDerivAt
-    ((P.f_smooth.contDiffAt (D.isOpen.mem_nhds hp)).differentiableAt (by simp))
+    ((P.f_smooth.contDiffAt (D.isOpen.mem_nhds hp)).differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
   have hux := LeadingStress.partialX_hasDerivAt
-    ((P.U_smooth.contDiffAt (D.isOpen.mem_nhds hp)).differentiableAt (by simp))
+    ((P.U_smooth.contDiffAt (D.isOpen.mem_nhds hp)).differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
   have hphiX : SimilarityProfile.partialX (d.phi 0) w = C * SimilarityProfile.partialX P.f w :=
-    (LeadingStress.partialX_hasDerivAt ((hd.phi 0).differentiable (by simp) w)).unique
+    (LeadingStress.partialX_hasDerivAt ((hd.phi 0).differentiable (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) w)).unique
       ((hfx.const_mul C).congr_of_eventuallyEq hphi)
   have hUX : SimilarityProfile.partialX (d.axial 0) w = SimilarityProfile.partialX P.U w :=
-    (LeadingStress.partialX_hasDerivAt ((hd.axial 0).differentiable (by simp) w)).unique
+    (LeadingStress.partialX_hasDerivAt ((hd.axial 0).differentiable (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) w)).unique
       (hux.congr_of_eventuallyEq hU)
   have hF : BaseChartJets.leadingFrequency h C d p =
       rho ^ (-CoordinateAlgebra.A h - 1 / 2) * P.f w := by

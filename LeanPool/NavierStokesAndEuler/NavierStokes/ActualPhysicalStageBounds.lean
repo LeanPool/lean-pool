@@ -143,10 +143,10 @@ theorem finiteRate_negative_power {D : Type} [NormedAddCommGroup D] [NormedSpace
   let C := 1 + D + a ^ p + a⁻¹
   have hap : 0 ≤ a ^ p := Real.rpow_nonneg ha.le _
   have hai : 0 ≤ a⁻¹ := inv_nonneg.mpr ha.le
-  have hC : 1 ≤ C := by dsimp [C]; linarith only [hD, hap, hai]
-  have hDC : D ≤ C := by dsimp [C]; linarith only [hap, hai]
-  have hpC : a ^ p ≤ C := by dsimp [C]; linarith only [hD, hai]
-  have hiC : a⁻¹ ≤ C := by dsimp [C]; linarith only [hD, hap]
+  have hC : 1 ≤ C := by dsimp only [C]; linarith only [hD, hap, hai]
+  have hDC : D ≤ C := by dsimp only [C]; linarith only [hap, hai]
+  have hpC : a ^ p ≤ C := by dsimp only [C]; linarith only [hD, hai]
+  have hiC : a⁻¹ ≤ C := by dsimp only [C]; linarith only [hD, hap]
   have hU : IsOpen {z | 0 < f z} := isOpen_lt continuous_const hf.continuous
   refine ⟨WeightedQuotients.orderBound p m * C ^ (2 * m + 1), by
     exact mul_nonneg (WeightedQuotients.orderBound_nonneg p m) (pow_nonneg (zero_le_one.trans hC)
@@ -273,7 +273,7 @@ theorem heatModelCoefficient_eq (C h : ℝ) {z : SpaceTime}
     heatModelCoefficient C h z =
       BaseExterior.heatCoefficient C h (AxisymmetricFields.profilePoint z.1 z.2) := by
   have hr : heatRatio z = 2 * (1 - z.1) / physicalEnergy z := by
-    simp [heatRatio, heatTime, Real.rpow_neg_one, div_eq_mul_inv]
+    simp only [heatRatio, heatTime, Real.rpow_neg_one, div_eq_mul_inv]
   have hnonneg : 0 ≤ heatRatio z := by
     rw [hr]
     exact div_nonneg (mul_nonneg (by norm_num) (sub_nonneg.mpr ht.le)) hs.le
@@ -405,9 +405,15 @@ theorem leadingVelocity_eq (h C : ℝ) (d : Coefficients) (z : SpaceTime) :
         (fun _ => 0) z := by
   ext i
   fin_cases i <;>
-    simp [leadingVelocity, AxisymmetricResidual.velocity, AxisymmetricResidual.componentX,
-      AxisymmetricResidual.componentY, AxisymmetricResidual.lift, AxisymmetricResidual.pack,
-      BaseExterior.leadingAngular, cartesianMonomial, angularVector, coordinateVector, Fin.ext_iff]
+    simp only [leadingVelocity, cartesianMonomial, one_div, angularVector, Fin.isValue,
+        coordinateVector, neg_smul, smul_add, smul_neg, Fin.zero_eta, PiLp.add_apply,
+        PiLp.neg_apply, PiLp.smul_apply, PiLp.single_eq_same, smul_eq_mul, mul_one, ne_eq,
+        zero_ne_one, not_false_eq_true, PiLp.single_eq_of_ne, mul_zero, add_zero,
+        AxisymmetricResidual.velocity, AxisymmetricResidual.pack, AxisymmetricResidual.componentX,
+        AxisymmetricResidual.lift, BaseExterior.leadingAngular, zero_add,
+        AxisymmetricResidual.componentY, sub_zero, zero_smul, neg_inj, Fin.mk_one, one_ne_zero,
+        neg_zero, Fin.reduceFinMk, Fin.ext_iff, Fin.coe_ofNat_eq_mod, Nat.mod_succ, Nat.zero_mod,
+        OfNat.ofNat_ne_zero, Nat.one_mod, OfNat.ofNat_ne_one]
           <;> ring
 
 theorem leadingVelocity_rate {l : Filter SpaceTime} {h C lo hi : ℝ}
@@ -676,7 +682,7 @@ theorem nonemptyPrefix_jetRate {l : Filter D} {q : D → ℝ} {A : ℕ → D →
   | zero =>
     have he : DiagonalJetBounds.uncutPrefix A (0 + 1) = A 0 := by
       funext x
-      simp [DiagonalJetBounds.uncutPrefix]
+      simp only [DiagonalJetBounds.uncutPrefix, zero_add, Finset.range_one, Finset.sum_singleton]
     rw [he]
     exact hzero
   | succ J ih =>
@@ -736,7 +742,7 @@ theorem mixed_background {l : Filter SpaceTime} {q : SpaceTime → ℝ}
       (SpatialCurl.spatialCurl (DiagonalJetBounds.uncutPrefix A (J + 1))) U := by
     intro x hx
     exact (SpatialCurl.contDiffAt_spatialCurl (hsA.contDiffAt (hU.mem_nhds hx))
-      (by simp)).contDiffWithinAt
+      (by simp only [ENat.coe_top_add_one, Std.le_refl])).contDiffWithinAt
   exact hc.add hb hU hlU hsCurl hsB
 
 /-- Stage velocity, defined pointwise by `SpatialCurl.spatialCurl (A j) x + B j x`. -/
@@ -747,10 +753,10 @@ theorem uncutVelocity_zero (A B : ℕ → VelocityField) :
     MixedDiagonalResidual.uncutVelocity A B 0 = stageVelocity A B 0 := by
   have hA : DiagonalJetBounds.uncutPrefix A (0 + 1) = A 0 := by
     funext x
-    simp [DiagonalJetBounds.uncutPrefix]
+    simp only [DiagonalJetBounds.uncutPrefix, zero_add, Finset.range_one, Finset.sum_singleton]
   have hB : DiagonalJetBounds.uncutPrefix B (0 + 1) = B 0 := by
     funext x
-    simp [DiagonalJetBounds.uncutPrefix]
+    simp only [DiagonalJetBounds.uncutPrefix, zero_add, Finset.range_one, Finset.sum_singleton]
   funext x
   change SpatialCurl.spatialCurl (DiagonalJetBounds.uncutPrefix A (0 + 1)) x +
     DiagonalJetBounds.uncutPrefix B (0 + 1) x =
@@ -763,7 +769,8 @@ theorem uncutVelocity_eq_stagePrefix {U : Set SpaceTime} (hU : IsOpen U)
       (DiagonalJetBounds.uncutPrefix (stageVelocity A B) (J + 1)) U := by
   intro x hx
   have hcurl := PhysicalParticularWave.spatialCurl_finset_sum (Finset.range (J + 1)) A
-    (fun j _ => (hA j).contDiffAt (hU.mem_nhds hx) |>.differentiableAt (by simp))
+    (fun j _ => (hA j).contDiffAt (hU.mem_nhds hx) |>.differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
   change SpatialCurl.spatialCurl (fun w => ∑ i ∈ Finset.range (J + 1), A i w) x +
     (∑ i ∈ Finset.range (J + 1), B i x) =
     ∑ i ∈ Finset.range (J + 1), (SpatialCurl.spatialCurl (A i) x + B i x)
@@ -797,7 +804,7 @@ theorem mixed_background_from_initial {l : Filter SpaceTime} {q : SpaceTime → 
   have hcurl (j : ℕ) : ContDiffOn ℝ ∞ (SpatialCurl.spatialCurl (A j)) U := by
     intro x hx
     exact (SpatialCurl.contDiffAt_spatialCurl ((hA j).contDiffAt (hU.mem_nhds hx))
-      (by simp)).contDiffWithinAt
+      (by simp only [ENat.coe_top_add_one, Std.le_refl])).contDiffWithinAt
   have hstage (j : ℕ) : ContDiffOn ℝ ∞ (stageVelocity A B j) U :=
     (hcurl j).add (hB j)
   have hinit : JetRate l q (stageVelocity A B 0) m
@@ -879,7 +886,7 @@ theorem spatialCurl_smoothOn {U : Set SpaceTime} (hU : IsOpen U)
     ContDiffOn ℝ ∞ (SpatialCurl.spatialCurl A) U := by
   intro w hw
   exact (SpatialCurl.contDiffAt_spatialCurl (hA.contDiffAt (hU.mem_nhds hw))
-    (by simp)).contDiffWithinAt
+    (by simp only [ENat.coe_top_add_one, Std.le_refl])).contDiffWithinAt
 
 section NativeInitialization
 

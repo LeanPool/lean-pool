@@ -63,9 +63,10 @@ theorem precedingDiffusion_eq_previous (h b : ℝ) (f : ℕ → InnerProfile)
     PositiveAxisSystem.precedingDiffusion h b f n w =
       previous (fun j => Z2 h (b + slowOrder h j) (f j) w) n := by
   cases n with
-  | zero => simp [PositiveAxisSystem.precedingDiffusion, previous]
-  | succ n => simp [PositiveAxisSystem.precedingDiffusion, previous, Z2,
-      PositiveAxisSystem.slowPower, slowOrder, PositiveAxisSystem.dScale, CoordinateAlgebra.D]
+  | zero => simp only [PositiveAxisSystem.precedingDiffusion, ↓reduceIte, previous]
+  | succ n => simp only [PositiveAxisSystem.precedingDiffusion, Nat.add_eq_zero_iff, one_ne_zero,
+      and_false, ↓reduceIte, PositiveAxisSystem.slowPower, add_tsub_cancel_right,
+      PositiveAxisSystem.dScale, one_div, previous, Z2, slowOrder, CoordinateAlgebra.D]
 
 theorem angular_convection_ofBeta (h : ℝ) (phi axial beta pressure : ℕ → InnerProfile)
     (n : ℕ) {w : InnerPoint} (hX : w.1 ≠ 0) :
@@ -152,7 +153,7 @@ theorem previousOmega_ofBeta (h : ℝ) (phi axial beta pressure : ℕ → InnerP
     previous (fun j => omegaCoefficient h (ofBeta phi axial beta pressure) j w) n /
         w.1 = AxisSourceRegularity.previousOmegaDivX h axial beta n w := by
   cases n with
-  | zero => simp [previous, AxisSourceRegularity.previousOmegaDivX]
+  | zero => simp only [previous, zero_div, AxisSourceRegularity.previousOmegaDivX]
   | succ n =>
     simp only [previous_succ, AxisSourceRegularity.previousOmegaDivX]
     rw [omegaCoefficient_eq_omega]
@@ -427,7 +428,8 @@ theorem primitive_stress_radial_identity {S : Set ℝ} (hS : IsOpen S)
     (m : ℝ) * w.1 ^ (m - 1) * SlowStressSupport.stress m F w +
       w.1 ^ m * partialX (SlowStressSupport.stress m F) w = -F w := by
   have ht := LeadingStress.partialX_hasDerivAt
-    ((primitive_stress_smoothAt hS hF m hR heta).differentiableAt (by simp))
+    ((primitive_stress_smoothAt hS hF m hR heta).differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
   have hp := ((hasDerivAt_id w.1).fun_pow m).fun_mul ht
   have he := hp.unique (SlowStressSupport.stress_weighted_hasDerivAt hS hF m hR heta)
   simpa only [id_eq, mul_one, Prod.eta] using he
@@ -473,13 +475,15 @@ theorem thetaStress_identity {S : Set ℝ} (hS : IsOpen S) (h C : ℝ)
   have hr : 0 < r := Real.sqrt_pos.2 (by positivity)
   have hr2 : r ^ 2 = 2 * w.1 := Real.sq_sqrt (by positivity)
   have hw : radiusPoint (r, w.2) = w := by
-    ext <;> simp [radiusPoint, hr2]
+    ext <;> simp only [radiusPoint, hr2, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
+        mul_div_cancel_left₀, Prod.mk.eta]
   have hi := primitive_stress_radial_identity hS hF 2 (w := (r, w.2)) hr heta
   norm_num only [Nat.cast_ofNat, Nat.reduceSub, pow_one] at hi
   rw [thetaDensity, hw] at hi
   unfold thetaStress
   rw [partialX_fromRadius hX ((primitive_stress_smoothAt hS hF 2
-    (w := (r, w.2)) hr heta).differentiableAt (by simp))]
+    (w := (r, w.2)) hr heta).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true]))]
   change r * (partialX (SlowStressSupport.stress 2 (thetaDensity h C f n)) (r, w.2) / r) +
       2 * SlowStressSupport.stress 2 (thetaDensity h C f n) (r, w.2) / r =
         -(r / C * angularCoefficient h f n w)
@@ -496,13 +500,15 @@ theorem zStress_identity {S : Set ℝ} (hS : IsOpen S) (h : ℝ)
   let r := Real.sqrt (2 * w.1)
   have hr : 0 < r := Real.sqrt_pos.2 (by positivity)
   have hr2 : r ^ 2 = 2 * w.1 := Real.sq_sqrt (by positivity)
-  have hw : radiusPoint (r, w.2) = w := by ext <;> simp [radiusPoint, hr2]
+  have hw : radiusPoint (r, w.2) = w := by ext <;> simp only [radiusPoint, hr2, ne_eq,
+      OfNat.ofNat_ne_zero, not_false_eq_true, mul_div_cancel_left₀, Prod.mk.eta]
   have hi := primitive_stress_radial_identity hS hF 1 (w := (r, w.2)) hr heta
   norm_num only [Nat.cast_one, Nat.reduceSub, pow_zero, pow_one, one_mul] at hi
   rw [zDensity, hw] at hi
   unfold zStress
   rw [partialX_fromRadius hX ((primitive_stress_smoothAt hS hF 1
-    (w := (r, w.2)) hr heta).differentiableAt (by simp))]
+    (w := (r, w.2)) hr heta).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true]))]
   change r * (partialX (SlowStressSupport.stress 1 (zDensity h f n)) (r, w.2) / r) +
       SlowStressSupport.stress 1 (zDensity h f n) (r, w.2) / r = -axialCoefficient h f n w
   apply mul_right_injective₀ hr.ne'
@@ -539,7 +545,8 @@ theorem physicalThetaStress_divergence {S : Set ℝ} (hS : IsOpen S)
           (fun n => angularCoefficient h f n (SimilarityProfile.inner h p))) := by
   have hX := LeadingStress.inner_X_pos hh hh1 hp hs
   have hd : ∀ n ≤ N, DifferentiableAt ℝ (thetaStress h C f n) (SimilarityProfile.inner h p) :=
-    fun n hn => (thetaStress_smoothAt hS h C f n (hF n hn) hX heta).differentiableAt (by simp)
+    fun n hn => (thetaStress_smoothAt hS h C f n (hF n hn) hX heta).differentiableAt (by simp only [
+        ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   unfold physicalThetaStress finiteProfile
   rw [radialDivergence_sum _ _ _ _ (fun n hn => SimilarityProfile.pullback_differentiableAt
     hh hh1 hp (hd n (Nat.le_of_lt_succ (Finset.mem_range.mp hn))))]
@@ -571,7 +578,8 @@ theorem physicalZStress_divergence {S : Set ℝ} (hS : IsOpen S)
           (fun n => axialCoefficient h f n (SimilarityProfile.inner h p)) := by
   have hX := LeadingStress.inner_X_pos hh hh1 hp hs
   have hd : ∀ n ≤ N, DifferentiableAt ℝ (zStress h f n) (SimilarityProfile.inner h p) :=
-    fun n hn => (zStress_smoothAt hS h f n (hF n hn) hX heta).differentiableAt (by simp)
+    fun n hn => (zStress_smoothAt hS h f n (hF n hn) hX heta).differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   unfold physicalZStress finiteProfile
   rw [radialDivergence_sum _ _ _ _ (fun n hn => SimilarityProfile.pullback_differentiableAt
     hh hh1 hp (hd n (Nat.le_of_lt_succ (Finset.mem_range.mp hn))))]
@@ -663,12 +671,14 @@ theorem navierStokesResidual_eq_stress_add_truncation {S : Set ℝ} (hS : IsOpen
     dsimp only
     rw [finiteSeries_eq_zero _ _ _ _ _ hpressure]
     ext i
-    fin_cases i <;> simp [AxisymmetricResidual.pack]
+    fin_cases i <;> simp only [AxisymmetricResidual.pack, Fin.isValue, mul_zero, zero_div,
+        zero_smul, add_zero, Fin.zero_eta, PiLp.zero_apply, Fin.mk_one, Fin.reduceFinMk]
   rw [he, add_zero]
 
 theorem toRadius_differentiableAt {f : InnerProfile} {w : InnerPoint}
     (hf : DifferentiableAt ℝ f (radiusPoint w)) : DifferentiableAt ℝ (toRadius f) w :=
-  hf.comp w (radiusPoint_smooth.differentiable (by simp)).differentiableAt
+  hf.comp w (radiusPoint_smooth.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true])).differentiableAt
 
 theorem toRadius_contDiffAt_two {f : InnerProfile} {w : InnerPoint}
     (hf : ContDiffAt ℝ 2 f (radiusPoint w)) : ContDiffAt ℝ 2 (toRadius f) w :=
@@ -680,7 +690,8 @@ theorem partialX_toRadius {f : InnerProfile} {w : InnerPoint}
     partialX (toRadius f) w = w.1 * partialX f (radiusPoint w) := by
   have hs : HasDerivAt (fun r : ℝ => r ^ 2 / 2) w.1 w.1 := by
     convert! ((hasDerivAt_id w.1).pow 2).div_const 2 using 1
-    simp
+    simp only [Nat.cast_ofNat, id_eq, Nat.add_one_sub_one, pow_one, mul_one, ne_eq,
+        OfNat.ofNat_ne_zero, not_false_eq_true, mul_div_cancel_left₀]
   have hd := hf.hasFDerivAt.comp_hasDerivAt (F := InnerPoint) w.1
     (hs.prodMk (hasDerivAt_const w.1 w.2))
   have he := (LeadingStress.partialX_hasDerivAt (toRadius_differentiableAt hf)).unique hd
@@ -884,7 +895,8 @@ noncomputable def transportTerm (N : ℕ) (h e α : ℝ)
 
 theorem mem_transportIndices_some (N : ℕ) (ij : ℕ × ℕ) :
     some ij ∈ transportIndices N ↔ ij ∈ pairs N ∧ N < ij.1 + ij.2 := by
-  simp [transportIndices]
+  simp only [transportIndices, Finset.mem_insert, reduceCtorEq, Finset.mem_image, Finset.mem_filter,
+      Option.some.injEq, exists_eq_right, false_or]
 
 /-- This equality is an identity of actual functions, suitable for taking
 any fixed number of derivatives in q and the inner variables. -/
@@ -893,7 +905,8 @@ theorem transportTail_eq_finite_monomials (N : ℕ) (q h e α : ℝ)
     transportTail N q h e α v u f w =
       ∑ i ∈ transportIndices N, q ^ transportPower N h e i * transportTerm N h e α v u f i w := by
   unfold transportIndices
-  rw [Finset.sum_insert (by simp), Finset.sum_image]
+  rw [Finset.sum_insert (by simp only [Finset.mem_image, Finset.mem_filter, reduceCtorEq, and_false,
+      exists_const, not_false_eq_true]), Finset.sum_image]
   · simp only [transportPower, transportTerm]
     change _ = _ + pairTail N (fun n => q ^ (e - 1 + slowOrder h n))
       (transportKernel h e α v u f w)
@@ -1018,7 +1031,8 @@ theorem pressureTail_eq_finite_monomials (N : ℕ) (q h C : ℝ)
   simp only [pressurePower, pressureTerm]
   rw [← transportTail_eq_finite_monomials]
   unfold transportIndices
-  rw [Finset.sum_insert (by simp), Finset.sum_image (fun _ _ _ _ he => Option.some.inj he)]
+  rw [Finset.sum_insert (by simp only [Finset.mem_image, Finset.mem_filter, reduceCtorEq, and_false,
+      exists_const, not_false_eq_true]), Finset.sum_image (fun _ _ _ _ he => Option.some.inj he)]
   simp only []
   unfold pressureTail pairTail
   rw [Finset.mul_sum]
@@ -1040,12 +1054,16 @@ theorem pressurePower_lower {h : ℝ} (hh : 0 ≤ h) (N : ℕ)
     pressureExponent h + slowOrder h (N + 1) ≤ pressurePower N h i := by
   cases i with
   | inl i =>
-    have hi' : i ∈ transportIndices N := by simpa [pressureIndices] using hi
+    have hi' : i ∈ transportIndices N := by simpa only [pressureIndices, Finset.mem_union,
+        Finset.mem_image, Sum.inl.injEq, exists_eq_right, reduceCtorEq, and_false, exists_const,
+        or_false] using hi
     refine le_trans ?_ (transportPower_lower hh N 0 hi')
     unfold pressureExponent CoordinateAlgebra.A
     linarith only [hh]
   | inr i =>
-    have hi' : i ∈ transportIndices N := by simpa [pressureIndices] using hi
+    have hi' : i ∈ transportIndices N := by simpa only [pressureIndices, Finset.mem_union,
+        Finset.mem_image, reduceCtorEq, and_false, exists_const, Sum.inr.injEq, exists_eq_right,
+        false_or] using hi
     cases i with
     | none => exact le_rfl
     | some ij =>
@@ -1061,10 +1079,14 @@ theorem pressureTerm_smoothOn {O : Set InnerPoint} (hO : IsOpen O)
     ContDiffOn ℝ ∞ (pressureTerm N h C f i) O := by
   cases i with
   | inl i =>
-    have hi' : i ∈ transportIndices N := by simpa [pressureIndices] using hi
+    have hi' : i ∈ transportIndices N := by simpa only [pressureIndices, Finset.mem_union,
+        Finset.mem_image, Sum.inl.injEq, exists_eq_right, reduceCtorEq, and_false, exists_const,
+        or_false] using hi
     exact transportTerm_smoothOn hO N h 0 (-(1/2)) f.flux f.axial f.flux hv hu hv hX hL hi'
   | inr i =>
-    have hi' : i ∈ transportIndices N := by simpa [pressureIndices] using hi
+    have hi' : i ∈ transportIndices N := by simpa only [pressureIndices, Finset.mem_union,
+        Finset.mem_image, reduceCtorEq, and_false, exists_const, Sum.inr.injEq, exists_eq_right,
+        false_or] using hi
     cases i with
     | none =>
       intro w hw
@@ -1132,7 +1154,7 @@ theorem finite_monomial_inner_jet_bound {ι : Type*} (s : Finset ι)
   let C := 1 + ∑ i ∈ s, D i
   have hC : 0 < C := by
     have := Finset.sum_nonneg (fun i (_ : i ∈ s) => hDn i)
-    dsimp [C]
+    dsimp only [C]
     linarith only [this]
   refine ⟨C, hC, fun q hq hq1 w hw => ?_⟩
   have hwO := hKO hw
@@ -1160,7 +1182,7 @@ theorem finite_monomial_inner_jet_bound {ι : Type*} (s : Finset ι)
           (Real.rpow_le_rpow_of_exponent_ge hq hq1 (hb i hi)) (hDn i)
         _ = _ := mul_comm _ _
     _ = (∑ i ∈ s, D i) * q ^ bmin := (Finset.sum_mul _ _ _).symm
-    _ ≤ C * q ^ bmin := mul_le_mul_of_nonneg_right (by dsimp [C]; linarith only)
+    _ ≤ C * q ^ bmin := mul_le_mul_of_nonneg_right (by dsimp only [C]; linarith only)
       (Real.rpow_nonneg hq.le _)
 
 theorem transportTail_inner_jet_bound {O K : Set InnerPoint} (hO : IsOpen O)
@@ -1344,7 +1366,7 @@ theorem partialX_toRadius_zero {f : InnerProfile} {eta : ℝ}
     (hf : DifferentiableAt ℝ (toRadius f) (0, eta)) : partialX (toRadius f) (0, eta) = 0 := by
   have he : Function.Even (fun R => toRadius f (R, eta)) := by
     intro R
-    simp [toRadius, radiusPoint]
+    simp only [toRadius, radiusPoint, even_two, Even.neg_pow]
   exact (LeadingStress.partialX_hasDerivAt hf).deriv.symm.trans
     (EvenSmoothDescent.deriv_zero_of_even he)
 
@@ -1369,7 +1391,9 @@ theorem thetaDensity_eq_angularDensity {S : Set ℝ} (hS : IsOpen S)
   intro w hw
   rw [← SlowStressSupport.angularWeighted_eq_density hS hv hu he h hw.2 (hdiv w hw.2)]
   by_cases hR : w.1 = 0
-  · simp [thetaDensity, SlowStressSupport.angularWeighted, swirlRadius, hR]
+  · simp only [thetaDensity, hR, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, zero_div,
+      zero_mul, SlowStressSupport.angularWeighted, swirlRadius, mul_zero, add_zero,
+      Finset.sum_const_zero, sub_self]
   · exact (angularWeighted_eq_thetaDensity h C hC f hn hR (hf w hw.2 hR) (hL w.2 hw.2)).symm
 
 theorem zDensity_eq_axialDensity {S : Set ℝ} (hS : IsOpen S)
@@ -1395,10 +1419,11 @@ theorem zDensity_eq_axialDensity {S : Set ℝ} (hS : IsOpen S)
   by_cases hR : w.1 = 0
   · have hdz : ∀ j ≤ n, SlowStressSupport.dr (toRadius (f.axial j)) w = 0 := by
       intro j hj
-      have hw' : w = (0, w.2) := by ext <;> simp [hR]
+      have hw' : w = (0, w.2) := by ext <;> simp only [hR]
       rw [hw']
       exact partialX_toRadius_zero (((hu j hj).contDiffAt (x := (0, w.2))
-        ((isOpen_univ.prod hS).mem_nhds ⟨mem_univ _, hw.2⟩)).differentiableAt (by simp))
+        ((isOpen_univ.prod hS).mem_nhds ⟨mem_univ _, hw.2⟩)).differentiableAt (by simp only [ne_eq,
+            WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
     simp only [zDensity, hR, zero_mul, SlowStressSupport.axialWeighted, add_zero, zero_add,
         sub_zero, hdz n le_rfl]
     symm
@@ -1451,7 +1476,7 @@ theorem inner_smoothAt_of_radial {S : Set ℝ} (hS : IsOpen S) {F E : InnerProfi
   have hval := hFE (Real.sqrt (2 * y.1)) hyR y.2 hy.2
   have hpoint : (Real.sqrt (2 * y.1) ^ 2 / 2, y.2) = y := by
     rw [hr2]
-    ext <;> simp
+    ext <;> simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, mul_div_cancel_left₀]
   rw [hpoint] at hval
   exact hval.symm
 
@@ -1474,7 +1499,7 @@ theorem axialOp2_radial_eq_Z2 {S : Set ℝ} (hS : IsOpen S) (h b : ℝ)
   rw [axialOp2_congr_germ h b he]
   exact axialOp2_toRadius h b
     ((inner_smoothAt_of_radial hS hF hFE (w := radiusPoint w)
-      (by dsimp [radiusPoint]; positivity) heta).of_le
+      (by dsimp only [radiusPoint]; positivity) heta).of_le
         (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)) hL
 
 theorem deriv_deriv_pullback_z {h b : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
@@ -1513,12 +1538,13 @@ theorem normalized_axial_viscosity {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
   have hqp : SimilarityProfile.q h p = 1 := hq
   have hep : SimilarityProfile.eta h p = eta := he
   have hip : SimilarityProfile.inner h p = radiusPoint (R, eta) := by
-    ext <;> simp [SimilarityProfile.inner, SimilarityProfile.X, hqp, hep, radiusPoint, p]
+    ext <;> simp only [SimilarityProfile.inner, SimilarityProfile.X, hqp, div_one, hep, radiusPoint,
+        p]
   have hL : CoordinateAlgebra.L h eta ≠ 0 := by
     have hl := (SimilarityProfile.L_pos hh hh1 (p := p) ht).ne'
     rwa [hep] at hl
   have hE := inner_smoothAt_of_radial isOpen_Ioo hF hFE
-    (w := radiusPoint (R, eta)) (by dsimp [radiusPoint]; positivity) heta
+    (w := radiusPoint (R, eta)) (by dsimp only [radiusPoint]; positivity) heta
   have hE2 : ContDiffAt ℝ 2 E (SimilarityProfile.inner h p) := by
     rw [hip]
     exact hE.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)

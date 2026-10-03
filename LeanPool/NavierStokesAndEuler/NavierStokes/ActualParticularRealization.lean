@@ -495,8 +495,10 @@ theorem block_pressure_physical
             (z.1, CylindricalResidual.chart z.2) := by
   by_cases hN : N = 0
   · subst N
-    simp [block, CorrectionStep.ParticularParameters.updateBlock, assembledBlock_pressure_value,
-      modes, labelPressure]
+    simp only [block, CorrectionStep.ParticularParameters.updateBlock,
+        assembledBlock_pressure_value, modes, CharP.cast_eq_zero, neg_zero, Finset.Icc_self,
+        Finset.erase_singleton, Complex.mul_re, Finset.sum_sub_distrib, Finset.sum_empty, sub_self,
+        labelPressure, mul_zero]
   have hm : ∃ j, j ∈ modes N := by
     refine ⟨1, ?_⟩
     simp only [modes, Finset.mem_erase, ne_eq, one_ne_zero, not_false_eq_true,
@@ -577,7 +579,7 @@ theorem cycle_velocity_cylindrical {z : SpaceTime}
   change (ChartScales.Q n) ^ (-CoordinateAlgebra.A h) *
     ((ChartScales.Q n) ^ CoordinateAlgebra.A h * _) = _
   rw [← mul_assoc, ← Real.rpow_add (ChartScales.Q_pos n)]
-  simp
+  simp only [neg_add_cancel, Real.rpow_zero, Fin.isValue, one_mul]
 
 include H hn hr T C hstrip hcover Href hU R hdelta in
 /-- Cartesian realization of the literal stored finite harmonic block,
@@ -627,7 +629,7 @@ theorem cycle_pressure_realization {z : SpaceTime} (hz : 0 < z.2 0)
   have hexp : -CoordinateAlgebra.A h * (2 : ℝ) + 2 * CoordinateAlgebra.A h = 0 := by ring
   norm_num only [Nat.cast_ofNat]
   rw [hexp]
-  simp
+  simp only [Real.rpow_zero, one_mul]
 
 end CyclePhysical
 
@@ -884,9 +886,10 @@ theorem bandVelocity_eq_reference {x : Cylinder} (hx : x ∈ bandDomain D h Q Qr
     (show K * (referenceFrequency D j / K) = referenceFrequency D j by field_simp)
     (fun y hy => ((liftPhase_smooth D C).contDiffAt ((referenceDomain_open D).mem_nhds
         hy.2.1)).differentiableAt (by
-        simp))
+        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
     hx (fun k => ((contDiffOn_pi.mp (liftCoefficient_smooth D H C) k).contDiffAt
-      ((referenceDomain_open D).mem_nhds hx.2.1)).differentiableAt (by simp))
+      ((referenceDomain_open D).mem_nhds hx.2.1)).differentiableAt (by simp only [ne_eq,
+          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
   change vectorMode K (bandPhase D h Q Qr gap K j) _ x = _
   have hv := congrArg (fun v : ComplexVector =>
     fun k => v k * carrier K (bandPhase D h Q Qr gap K j) x) ha

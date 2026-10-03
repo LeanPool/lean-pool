@@ -186,12 +186,12 @@ theorem joinedSource_mean_initial_support (p : ℕ) (θ : ℝ) :
   · subst p
     simp only [joinedSourceProfiles,profiles_zero]
     change tsupport (fun _ : Space => (0 : Space)) ⊆ _
-    simp
+    simp only [tsupport_fun_zero, empty_subset]
   by_cases hp1 : p=1
   · subst p
     simp only [joinedSourceProfiles,profiles_one,hm]
     change tsupport (fun _ : Space => (0 : Space)) ⊆ _
-    simp
+    simp only [tsupport_fun_zero, empty_subset]
   have hp : 2 ≤ p := by omega
   let h : Nonempty (EulerMeanPacketProvider.Forcing M
       (meanForce (joinedSourceOperators P M D τ hτ hτT B) p
@@ -234,12 +234,12 @@ theorem source_mean_initial_support (p : ℕ) (θ : ℝ) :
   · subst p
     simp only [sourceProfiles,profiles_zero]
     change tsupport (fun _ : Space => (0 : Space)) ⊆ _
-    simp
+    simp only [tsupport_fun_zero, empty_subset]
   by_cases hp1 : p=1
   · subst p
     simp only [sourceProfiles,profiles_one]
     change tsupport (fun _ : Space => (0 : Space)) ⊆ _
-    simp
+    simp only [tsupport_fun_zero, empty_subset]
   have hp : 2 ≤ p := by omega
   let h : Nonempty (EulerMeanPacketProvider.Forcing M
       (meanForce (sourceOperators P M D I) p (sourceProfiles P M D I Iprimary))) :=

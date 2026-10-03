@@ -49,16 +49,16 @@ theorem profile_mem_Icc (v : ℝ) : profile v ∈ Icc (0 : ℝ) 1 :=
 
 theorem profile_one {v : ℝ} (hv : |v - 1 / 2| ≤ 1 / 5) : profile v = 1 := by
   apply profileBump.one_of_mem_closedBall
-  simpa [Metric.mem_closedBall, Real.dist_eq, profileBump] using hv
+  simpa only [one_div, profileBump, Metric.mem_closedBall, Real.dist_eq] using hv
 
 theorem profile_zero {v : ℝ} (hv : 1 / 3 ≤ |v - 1 / 2|) : profile v = 0 := by
   apply profileBump.zero_of_le_dist
-  simpa [Real.dist_eq, profileBump] using hv
+  simpa only [profileBump, one_div, Real.dist_eq] using hv
 
 theorem profile_eventually_one {v : ℝ} (hv : |v - 1 / 2| < 1 / 5) :
     profile =ᶠ[𝓝 v] fun _ => 1 := by
   apply profileBump.eventuallyEq_one_of_mem_ball
-  simpa [Metric.mem_ball, Real.dist_eq, profileBump] using hv
+  simpa only [one_div, profileBump, Metric.mem_ball, Real.dist_eq] using hv
 
 theorem profile_eventually_zero {v : ℝ} (hv : 1 / 3 < |v - 1 / 2|) :
     profile =ᶠ[𝓝 v] fun _ => 0 := by
@@ -104,11 +104,12 @@ theorem slotCutoff_contDiff (L : ℝ) : ContDiff ℝ ∞ (slotCutoff L) :=
 
 theorem slotCutoff_deriv (L v : ℝ) :
     deriv (slotCutoff L) v = L⁻¹ * deriv profile (v / L) := by
-  have hp := (profile_contDiff.differentiable (by simp)).differentiableAt.hasDerivAt
+  have hp := (profile_contDiff.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true])).differentiableAt.hasDerivAt
     (x := v / L)
   have hh := hp.comp v ((hasDerivAt_id v).div_const L)
   unfold slotCutoff
-  simpa [Function.comp_def, div_eq_mul_inv, mul_comm] using hh.deriv
+  simpa only [div_eq_mul_inv, id_eq, comp_def, mul_comm, mul_one] using hh.deriv
 
 theorem slot_normalized_distance {L : ℝ} (hL : 0 < L) (v : ℝ) :
     |v / L - 1 / 2| = |v - L / 2| / L := by
@@ -140,7 +141,8 @@ theorem slotCutoff_deriv_support {L v : ℝ} (hL : 0 < L)
   have hd : deriv profile (v / L) ≠ 0 := by
     intro hz
     exact hv (by rw [slotCutoff_deriv, hz, mul_zero])
-  have hh := profile_iteratedDeriv_support 0 (by simpa using hd)
+  have hh := profile_iteratedDeriv_support 0 (by simpa only [zero_add, iteratedDeriv_one,
+      mem_support, ne_eq] using hd)
   change 1 / 5 ≤ |v / L - 1 / 2| ∧ |v / L - 1 / 2| ≤ 1 / 3 at hh
   rw [slot_normalized_distance hL] at hh
   constructor
@@ -179,7 +181,7 @@ theorem reference_envelope_off_plateau {lam u L v : ℝ}
 /-- The square root of the actual flat edge is another member of that family. -/
 theorem sqrt_edge (c x : ℝ) : Real.sqrt (FlatCutoff.edge c x) = FlatCutoff.edge (c / 2) x := by
   by_cases hx : x ≤ 0
-  · simp [FlatCutoff.edge_of_nonpos _ hx]
+  · simp only [FlatCutoff.edge_of_nonpos _ hx, Real.sqrt_zero]
   · rw [FlatCutoff.edge_of_pos _ (lt_of_not_ge hx),
       FlatCutoff.edge_of_pos _ (lt_of_not_ge hx)]
     rw [← Real.exp_half]
@@ -246,20 +248,20 @@ theorem gaussian_beats_Q_power {c : ℝ} (hc : 0 < c) (p : ℕ) (N : ℝ) :
   let A : ℝ := N * Real.log 2
   let K : ℝ := A ^ 2 / (2 * c)
   let B : ℝ := ((p.factorial : ℝ) / (c / 2) ^ p) * Real.exp (c / 2)
-  refine ⟨B * Real.exp K, by dsimp [B]; positivity, ?_⟩
+  refine ⟨B * Real.exp K, by dsimp only [B]; positivity, ?_⟩
   intro n
   have hlin : A * (n : ℝ) ≤ c / 2 * (n : ℝ) ^ 2 + K := by
     have hs := sq_nonneg (c * (n : ℝ) - A)
     have hc2 : 0 < 2 * c := by positivity
     suffices A * (n : ℝ) - c / 2 * (n : ℝ) ^ 2 ≤ K by linarith only [this]
-    dsimp [K]
+    dsimp only [K]
     apply (le_div_iff₀ hc2).2
     linarith only [hs]
   have hexp : Real.exp (-c * ChartScales.S n) ≤
       Real.exp (-(c / 2) * ChartScales.S n) * Real.exp K * ChartScales.Q n ^ N := by
     rw [Q_rpow_eq_exp, ← Real.exp_add, ← Real.exp_add]
     apply Real.exp_le_exp.2
-    dsimp [ChartScales.S, A] at *
+    dsimp only [ChartScales.S, A] at *
     linarith only [hlin]
   calc
     _ ≤ (1 + ChartScales.S n) ^ p *
@@ -420,9 +422,9 @@ theorem cutoffError_eventually_zero (L : ℝ) {θ : D → ℝ} (u f : D → E) {
   have hprofile := (profile_eventually_one hx).comp_tendsto hθ
   have hderiv := (profile_eventually_one hx).deriv.comp_tendsto hθ
   filter_upwards [hprofile, hderiv] with y hy hdy
-  have hy' : profile (θ y) = 1 := by simpa using hy
-  have hdy' : deriv profile (θ y) = 0 := by simpa using hdy
-  simp [cutoffError, hy', hdy']
+  have hy' : profile (θ y) = 1 := by simpa only [comp_apply] using hy
+  have hdy' : deriv profile (θ y) = 0 := by simpa only [comp_apply, deriv_const'] using hdy
+  simp only [cutoffError, hdy', mul_zero, zero_smul, hy', sub_self, add_zero]
 
 theorem cutoffError_jet_zero_on_plateau (L : ℝ) {θ : D → ℝ} (u f : D → E) {x : D}
     (hθ : ContinuousAt θ x) (hx : |θ x - 1 / 2| < 1 / 5) (j : ℕ) :
@@ -544,14 +546,16 @@ theorem cutoff_directional {s : StripData D} (g : SlotFamily s) (n : ℕ) (x w :
     (hw : g.linear n w = (g.length n)⁻¹) :
     fderiv ℝ (g.cutoff n) x w =
       (g.length n)⁻¹ * deriv profile (g.coordinate n x) := by
-  have hp := (profile_contDiff.differentiable (by simp)).differentiableAt.hasDerivAt
+  have hp := (profile_contDiff.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+      ENat.top_ne_zero, not_false_eq_true])).differentiableAt.hasDerivAt
     (x := g.coordinate n x)
   have hθ : HasFDerivAt (g.coordinate n) (g.linear n) x :=
     (g.linear n).hasFDerivAt.const_add (g.offset n)
   have hd := hp.hasFDerivAt.comp x hθ
   have he := congrArg (fun A : D →L[ℝ] ℝ => A w) hd.fderiv
   unfold cutoff
-  simpa [hw, mul_comm, Function.comp_def] using he
+  simpa only [mul_comm, comp_def, ContinuousLinearMap.comp_apply, hw,
+      ContinuousLinearMap.toSpanSingleton_apply, smul_eq_mul] using he
 
 theorem error_eq_directional {s : StripData D} (g : SlotFamily s) (u f : ℕ → D → E)
     (n : ℕ) (x w : D) (hw : g.linear n w = (g.length n)⁻¹) :
@@ -826,7 +830,7 @@ theorem error_contDiff_of_slot {s : StripData D} (g : SlotFamily s) {u f : ℕ �
       filter_upwards [hp, hd] with y hpy hdy
       have hp' : profile (g.coordinate n y) = 0 := hpy
       have hd' : deriv profile (g.coordinate n y) = 0 := by simpa using hdy
-      simp [error, cutoffError, hp', hd']
+      simp only [error, cutoffError, hd', mul_zero, zero_smul, hp', sub_zero, one_smul, zero_add]
     exact (hf n).contDiffAt.congr_of_eventuallyEq he
 
 open PhysicalGraphBounds ProblemStatement
@@ -992,16 +996,16 @@ theorem derivativeError_jet_support {s : StripData D} (g : SlotFamily s)
     have hcomp := hv.comp_tendsto (g.coordinate_contDiff n).continuous.continuousAt
     filter_upwards [hcomp] with y hy
     have hy' : deriv profile (g.coordinate n y) = 0 := hy
-    simp [derivativeError, hy']
+    simp only [derivativeError, hy', mul_zero, zero_smul]
   constructor
   · by_contra ht
     apply hzero
     filter_upwards [(profile_eventually_one (lt_of_not_ge ht)).deriv] with y hy
-    simpa using hy
+    simpa only [deriv_const'] using hy
   · by_contra ht
     apply hzero
     filter_upwards [(profile_eventually_zero (lt_of_not_ge ht)).deriv] with y hy
-    simpa using hy
+    simpa only [deriv_const'] using hy
 
 /-- Both transition collars, with the exact normalized slot endpoints. This
 holds for every actual parameter jet, without any regularity needed of `u`
@@ -1035,7 +1039,7 @@ theorem omittedSource_jet_support {s : StripData D} (g : SlotFamily s)
     (g.coordinate_contDiff n).continuous.continuousAt
   filter_upwards [hcomp] with y hy
   have hy' : profile (g.coordinate n y) = 1 := hy
-  simp [omittedSource, hy']
+  simp only [omittedSource, hy', sub_self, zero_smul]
 
 theorem derivativeError_gaussian_bound {s : StripData D} (g : SlotFamily s)
     (edges : FlatEdges s) (scales : BandScaleControl s)

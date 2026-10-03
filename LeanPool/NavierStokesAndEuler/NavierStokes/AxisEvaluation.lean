@@ -60,7 +60,8 @@ def profile (I : Window) (ε : ℝ) (A : AxisSpace I ε) (p : ℝ × ℝ) : ℝ 
 theorem mixedSeries_zero (I : Window) (ε : ℝ) (A : AxisSpace I ε) :
     mixedSeries I ε A 0 0 = profile I ε A := by
   funext p
-  simp [mixedSeries, profile, term, polynomialJet, coefficient]
+  simp only [mixedSeries, term, polynomialJet, Nat.descFactorial_zero, Nat.cast_one, tsub_zero,
+      one_mul, profile, coefficient]
 
 /-- A deliberately simple polynomial-geometric majorant. -/
 def majorant (ε C R : ℝ) (k m n : ℕ) : ℝ :=
@@ -197,7 +198,8 @@ theorem term_hasFDerivAt (I : Window) (ε : ℝ) (A : AxisSpace I ε) (k m n : �
   convert! hy.mul hη using 1
   apply ContinuousLinearMap.ext
   intro v
-  simp [linearForm, term]
+  simp only [linearForm, term, add_apply, smul_apply, ContinuousLinearMap.coe_fst', smul_eq_mul,
+      ContinuousLinearMap.coe_snd', Function.comp_apply]
   ring
 
 theorem linearForm_tsum {u v : ℕ → ℝ} (hu : Summable u) (hv : Summable v) :
@@ -277,7 +279,9 @@ theorem mixedSeries_hasDerivAt_Y (I : Window) {ε : ℝ} (hε : 0 < ε)
     HasDerivAt (fun y => mixedSeries I ε A k m (y, η))
       (mixedSeries I ε A (k + 1) m (Y, η)) Y := by
   have hd := mixedSeries_hasFDerivAt I hε A k m (p := (Y, η)) ⟨hY, hη⟩
-  simpa [linearForm, Function.comp_def] using hd.comp_hasDerivAt (F := ℝ × ℝ)
+  simpa only [id_eq, Function.comp_def, linearForm, add_apply, smul_apply,
+      ContinuousLinearMap.coe_fst', smul_eq_mul, mul_one, ContinuousLinearMap.coe_snd', mul_zero,
+      add_zero] using hd.comp_hasDerivAt (F := ℝ × ℝ)
     (f := fun x : ℝ => (id x, η)) Y ((hasDerivAt_id Y).prodMk (hasDerivAt_const Y η))
 
 theorem mixedSeries_hasDerivAt_eta (I : Window) {ε : ℝ} (hε : 0 < ε)
@@ -295,7 +299,7 @@ theorem iteratedDeriv_Y (I : Window) {ε : ℝ} (hε : 0 < ε)
     iteratedDeriv r (fun y => mixedSeries I ε A k m (y, η)) Y =
       mixedSeries I ε A (k + r) m (Y, η) := by
   induction r generalizing Y with
-  | zero => simp
+  | zero => simp only [iteratedDeriv_zero, add_zero]
   | succ r ih =>
       rw [iteratedDeriv_succ]
       have heq : (iteratedDeriv r (fun y => mixedSeries I ε A k m (y, η))) =ᶠ[𝓝 Y]
@@ -311,7 +315,7 @@ theorem iteratedDeriv_eta (I : Window) {ε : ℝ} (hε : 0 < ε)
     iteratedDeriv r (fun x => mixedSeries I ε A k m (Y, x)) η =
       mixedSeries I ε A k (m + r) (Y, η) := by
   induction r generalizing η with
-  | zero => simp
+  | zero => simp only [iteratedDeriv_zero, add_zero]
   | succ r ih =>
       rw [iteratedDeriv_succ]
       have heq : (iteratedDeriv r (fun x => mixedSeries I ε A k m (Y, x))) =ᶠ[𝓝 η]
@@ -486,7 +490,7 @@ def enlargedUnitWindow (δ : ℝ) (hδ : 0 < δ) : Window where
 theorem unitInterval_in_enlargedWindow {δ : ℝ} (hδ : 0 < δ) :
     Icc (-1 : ℝ) 1 ⊆ Ioo (enlargedUnitWindow δ hδ).left (enlargedUnitWindow δ hδ).right := by
   intro x hx
-  constructor <;> dsimp [enlargedUnitWindow] <;> linarith [hx.1, hx.2]
+  constructor <;> dsimp only [enlargedUnitWindow] <;> linarith [hx.1, hx.2]
 
 /-- In particular both endpoints of the target interval `[-1,1]` have
 ordinary open-neighborhood smoothness; no endpoint extension is assumed. -/

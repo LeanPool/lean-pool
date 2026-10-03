@@ -77,8 +77,12 @@ theorem slowDerivative_coordinates (D : LiftTangent →L[ℝ] Space) (G : Space 
     apply Prod.ext
     · change (∑ i : Fin 3, ⟪EuclideanSpace.single i 1,G v⟫_ℝ • EuclideanSpace.single i 1) = G v
       ext j
-      simp [EuclideanSpace.inner_single_left, Pi.single_apply]
-    · simp [Fin.sum_univ_succ]
+      simp only [EuclideanSpace.inner_single_left, conj_trivial, one_mul, WithLp.ofLp_sum,
+          WithLp.ofLp_smul, PiLp.ofLp_single, Finset.sum_apply, Pi.smul_apply, Pi.single_apply,
+          smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte]
+    · simp only [Prod.smul_mk, smul_eq_mul, mul_zero, Fin.sum_univ_succ, Fin.isValue,
+        Fin.succ_zero_eq_one, Finset.univ_unique, Fin.default_eq_zero, Finset.sum_singleton,
+        Fin.succ_one_eq_two, Prod.mk_add_mk, add_zero]
   apply ContinuousLinearMap.ext
   intro v
   change D (G v,0) = ∑ i : Fin 3,
@@ -163,7 +167,8 @@ theorem curlCoefficientPath_bound (i : Fin 3) (G : C(K, Space →ᵇ Space →L[
   have he := funext (curlCoefficientPath_translation (K := K) i G)
   rw [he]
   have h := (curlCoefficientPath (K := K) i).norm_iteratedFDeriv_comp_left
-    (hG.contDiffAt (x := a)) (n := n) (by simp)
+    (hG.contDiffAt (x := a)) (n := n) (by simp only [WithTop.le_coe_top, ne_eq,
+        WithTop.natCast_ne_top, not_false_eq_true])
   exact h.trans ((mul_le_mul_of_nonneg_right (curlCoefficientPath_norm (K := K) i)
       (norm_nonneg _)).trans ((one_mul _).trans_le (hb a)))
 

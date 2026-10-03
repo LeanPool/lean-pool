@@ -59,7 +59,7 @@ theorem pathLp_bound (T : ℝ) (hT : 0 ≤ T) (f : C(Icc (0 : ℝ) T, E)) :
     filter_upwards [pathLp_ae T hT f] with t ht
     rw [ht]
     exact extendPath_norm_le T hT f t
-  simpa using hh
+  simpa only [one_div, ge_iff_le, ENNReal.toReal_ofNat] using hh
 
 /-- The actual path embedding preserves subtraction. -/
 theorem pathLp_sub (T : ℝ) (hT : 0 ≤ T) (f g : C(Icc (0 : ℝ) T, E)) :

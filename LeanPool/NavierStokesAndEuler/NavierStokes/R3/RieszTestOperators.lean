@@ -136,7 +136,8 @@ private theorem cutoff_energy_le_of_pairing_bound {f : Space → ℂ}
             change f x * conj ((χ x : ℂ) * f x) = _
             rw [map_mul, Complex.conj_ofReal]
             ring
-          _ = _ := by simp [Complex.mul_conj, Complex.normSq_eq_norm_sq]
+          _ = _ := by simp only [Complex.mul_conj, Complex.normSq_eq_norm_sq, Complex.ofReal_pow,
+              Complex.ofReal_mul]
       _ = _ := by simp only [integral_complex_ofReal]
   have hbound : (∫ x : Space, χ x * ‖f x‖ ^ 2) ≤
       Real.sqrt C * Real.sqrt (∫ x : Space, χ x * ‖f x‖ ^ 2) := by
@@ -370,7 +371,8 @@ private theorem memLp_partial_norm_sum (i j : Fin 3) (ψ : ComplexTest) :
 theorem memLp_fderiv_rieszTest (i j : Fin 3) (ψ : ComplexTest) :
     MemLp (fderiv ℝ (rieszTest i j ψ)) 2 volume := by
   have hC1 : ContDiff ℝ 1 (rieszTest i j ψ) :=
-    (contDiff_rieszTest i j ψ).of_le (by simp)
+    (contDiff_rieszTest i j ψ).of_le (by simp only [WithTop.le_coe_top, ne_eq, WithTop.one_ne_top,
+        not_false_eq_true])
   refine (memLp_partial_norm_sum i j ψ).mono'
     (hC1.continuous_fderiv (by simp)).aestronglyMeasurable ?_
   filter_upwards with x
@@ -416,11 +418,13 @@ theorem lpNorm_two_fderiv_rieszTest_le (i j : Fin 3) (ψ : ComplexTest) :
     _ ≤ ∑ _k : Fin 3, comparisonLpNorm 2 (fderiv ℝ (fun y => ψ y)) := by
       exact Finset.sum_le_sum fun k _ =>
         LpNormTools.lpNorm_mono_of_norm_le hDψ (hcol k)
-    _ = 3 * comparisonLpNorm 2 (fderiv ℝ (fun y => ψ y)) := by simp
+    _ = 3 * comparisonLpNorm 2 (fderiv ℝ (fun y => ψ y)) := by simp only [Finset.sum_const,
+        Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, Nat.cast_ofNat]
 
 theorem memLp_rieszTest_six (i j : Fin 3) (ψ : ComplexTest) :
     MemLp (rieszTest i j ψ) 6 volume :=
-  smooth_memLp_six ((contDiff_rieszTest i j ψ).of_le (by simp))
+  smooth_memLp_six ((contDiff_rieszTest i j ψ).of_le (by simp only [WithTop.le_coe_top, ne_eq,
+      WithTop.one_ne_top, not_false_eq_true]))
     (memLp_rieszTest i j ψ) (memLp_fderiv_rieszTest i j ψ)
 
 /-- The homogeneous `L⁶` estimate needed in the pressure flux. Both the output
@@ -430,7 +434,8 @@ theorem lpNorm_six_rieszTest_le (i j : Fin 3) (ψ : ComplexTest) :
       3 * (eLpNormLESNormFDerivOfEqInnerConst (volume : Measure Space) 2 : ℝ) *
         comparisonLpNorm 2 (fderiv ℝ (fun y => ψ y)) := by
   have h := smooth_eLpNorm_six_toReal_le
-    ((contDiff_rieszTest i j ψ).of_le (by simp))
+    ((contDiff_rieszTest i j ψ).of_le (by simp only [WithTop.le_coe_top, ne_eq, WithTop.one_ne_top,
+        not_false_eq_true]))
     (memLp_rieszTest i j ψ) (memLp_fderiv_rieszTest i j ψ)
   change comparisonLpNorm 6 (rieszTest i j ψ) ≤
     (eLpNormLESNormFDerivOfEqInnerConst (volume : Measure Space) 2 : ℝ) *
@@ -481,7 +486,8 @@ theorem laplacian_rieszTest (i j : Fin 3) (ψ : ComplexTest) (x : Space) :
       -Comparison.partialD i (Comparison.partialD j (fun y => ψ y)) x := by
   have hLap : laplacianCLM ψ =
       ∑ k : Fin 3, partialTest k (partialTest k ψ) := by
-    simp [laplacianCLM, partialCLM, partialTest, Fin.sum_univ_three]
+    simp only [laplacianCLM, partialCLM, Fin.sum_univ_three, Fin.isValue, add_apply,
+        ContinuousLinearMap.comp_apply, LineDeriv.lineDerivOpCLM_apply, partialTest]
   calc
     _ = ∑ k : Fin 3, rieszTest i j (partialTest k (partialTest k ψ)) x := by
       apply Finset.sum_congr rfl

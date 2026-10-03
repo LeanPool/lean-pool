@@ -53,7 +53,7 @@ theorem cutoff_one_of_abs_le {x : ℝ} (hx : |x| ≤ 1 / 2) : cutoff x = 1 := by
 
 theorem cutoff_zero_of_one_le_abs {x : ℝ} (hx : 1 ≤ |x|) : cutoff x = 0 := by
   apply cutoffBump.zero_of_le_dist
-  simpa [Real.dist_eq, cutoffBump] using hx
+  simpa only [cutoffBump, one_div, dist_zero_right, Real.norm_eq_abs] using hx
 
 theorem cutoff_zero_of_one_le {x : ℝ} (hx : 1 ≤ x) : cutoff x = 0 :=
   cutoff_zero_of_one_le_abs (hx.trans (le_abs_self x))
@@ -62,13 +62,15 @@ theorem cutoff_support : support cutoff = Ioo (-1 : ℝ) 1 := by
   change support (cutoffBump : ℝ → ℝ) = _
   rw [cutoffBump.support_eq]
   ext x
-  simp [Metric.mem_ball, cutoffBump, abs_lt]
+  simp only [cutoffBump, one_div, Metric.mem_ball, dist_zero_right, Real.norm_eq_abs, abs_lt,
+      mem_Ioo]
 
 theorem cutoff_tsupport : tsupport cutoff = Icc (-1 : ℝ) 1 := by
   change tsupport (cutoffBump : ℝ → ℝ) = _
   rw [cutoffBump.tsupport_eq]
   ext x
-  simp [Metric.mem_closedBall, cutoffBump, abs_le]
+  simp only [cutoffBump, one_div, Metric.mem_closedBall, dist_zero_right, Real.norm_eq_abs, abs_le,
+      mem_Icc]
 
 theorem cutoff_hasCompactSupport : HasCompactSupport cutoff :=
   cutoffBump.hasCompactSupport
@@ -76,7 +78,7 @@ theorem cutoff_hasCompactSupport : HasCompactSupport cutoff :=
 theorem cutoff_eventually_one {x : ℝ} (hx : |x| < 1 / 2) :
     cutoff =ᶠ[𝓝 x] (fun _ => 1) := by
   apply cutoffBump.eventuallyEq_one_of_mem_ball
-  simpa [Metric.mem_ball, cutoffBump] using hx
+  simpa only [cutoffBump, one_div, Metric.mem_ball, dist_zero_right, Real.norm_eq_abs] using hx
 
 theorem cutoff_eventually_zero {x : ℝ} (hx : 1 < |x|) :
     cutoff =ᶠ[𝓝 x] (fun _ => 0) := by
@@ -93,11 +95,11 @@ theorem iteratedDeriv_const_succ (n : ℕ) (c : ℝ) :
   induction n with
   | zero =>
       ext x
-      simp [iteratedDeriv_succ]
+      simp only [zero_add, iteratedDeriv_succ, iteratedDeriv_zero, deriv_const']
   | succ n ih =>
       rw [iteratedDeriv_succ, ih]
       ext x
-      simp
+      simp only [deriv_const']
 
 theorem cutoff_iteratedDeriv_zero_inside (n : ℕ) {x : ℝ} (hx : |x| < 1 / 2) :
     iteratedDeriv (n + 1) cutoff x = 0 := by
@@ -127,7 +129,7 @@ theorem cutoff_iteratedDeriv_tsupport (n : ℕ) :
 theorem cutoff_iteratedDeriv_hasCompactSupport (n : ℕ) :
     HasCompactSupport (iteratedDeriv n cutoff) := by
   induction n with
-  | zero => simpa using cutoff_hasCompactSupport
+  | zero => simpa only [iteratedDeriv_zero] using cutoff_hasCompactSupport
   | succ n ih =>
       rw [iteratedDeriv_succ]
       exact ih.deriv
@@ -181,14 +183,14 @@ theorem scaledCutoff_eventually_zero {a q : ℝ} (hq : 1 < |a * q|) :
 
 theorem scaledCutoff_eventually_one_at_zero (a : ℝ) :
     scaledCutoff a =ᶠ[𝓝 0] (fun _ => 1) :=
-  scaledCutoff_eventually_one (by simp)
+  scaledCutoff_eventually_one (by simp only [mul_zero, abs_zero, one_div, inv_pos, Nat.ofNat_pos])
 
 /-- Every finite list of stage cutoffs has a common plateau around zero. -/
 theorem finite_scaledCutoffs_eventually_one {ι : Type*} (s : Finset ι) (a : ι → ℝ) :
     ∀ᶠ q in 𝓝 0, ∀ i ∈ s, scaledCutoff (a i) q = 1 := by
   classical
   induction s using Finset.induction_on with
-  | empty => simp
+  | empty => simp only [Finset.notMem_empty, IsEmpty.forall_iff, implies_true, eventually_true]
   | @insert i s hi ih =>
       filter_upwards [ih, scaledCutoff_eventually_one_at_zero (a i)] with q hq hqi
       intro j hj
@@ -227,7 +229,7 @@ theorem scaledCutoff_iteratedDeriv_support (a : ℝ) (n : ℕ) :
   apply cutoff_iteratedDeriv_support n
   change iteratedDeriv (n + 1) cutoff (a * q) ≠ 0
   intro hz
-  exact hq (by simp [hz])
+  exact hq (by simp only [hz, mul_zero])
 
 /-- Powers of the scale on derivative support are bounded by powers of `q⁻¹`. -/
 theorem scale_power_bound {a q : ℝ} (ha : 0 ≤ a) (hq : 0 < q) (n b : ℕ)
@@ -268,16 +270,16 @@ theorem timeSwitch_zero_of_abs_le {t : ℝ} (ht : |t| ≤ 3 / 8) : timeSwitch t 
   have hs : |(4 / 3 : ℝ) * t| ≤ 1 / 2 := by
     rw [abs_mul, abs_of_pos (by norm_num : (0 : ℝ) < 4 / 3)]
     linarith only [ht]
-  simp [timeSwitch, scaledCutoff_one_of_abs_le hs]
+  simp only [timeSwitch, scaledCutoff_one_of_abs_le hs, sub_self]
 
 theorem timeSwitch_one_of_three_quarters_le {t : ℝ} (ht : 3 / 4 ≤ t) :
     timeSwitch t = 1 := by
   have hs : (1 : ℝ) ≤ (4 / 3) * t := by linarith only [ht]
-  simp [timeSwitch, scaledCutoff, cutoff_zero_of_one_le hs]
+  simp only [timeSwitch, scaledCutoff, cutoff_zero_of_one_le hs, sub_zero]
 
 theorem timeSwitch_eventually_zero : timeSwitch =ᶠ[𝓝 0] (fun _ => 0) := by
   filter_upwards [scaledCutoff_eventually_one_at_zero (4 / 3)] with t ht
-  simp [timeSwitch, ht]
+  simp only [timeSwitch, ht, sub_self]
 
 theorem timeSwitch_eventually_one {t : ℝ} (ht : 3 / 4 < t) :
     timeSwitch =ᶠ[𝓝 t] (fun _ => 1) := by
@@ -285,7 +287,7 @@ theorem timeSwitch_eventually_one {t : ℝ} (ht : 3 / 4 < t) :
     have hprod : (1 : ℝ) < (4 / 3) * t := by linarith only [ht]
     exact hprod.trans_le (le_abs_self _)
   filter_upwards [scaledCutoff_eventually_zero hs] with s hs
-  simp [timeSwitch, hs]
+  simp only [timeSwitch, hs, sub_zero]
 
 theorem timeSwitch_iteratedDeriv_at_zero (n : ℕ) :
     iteratedDeriv (n + 1) timeSwitch 0 = 0 := by
@@ -311,7 +313,7 @@ theorem timeSwitch_iteratedDeriv_support_nonneg (n : ℕ) {t : ℝ} (ht : 0 ≤ 
     intro hz
     apply hs
     rw [timeSwitch_iteratedDeriv_formula, hz]
-    simp
+    simp only [mul_zero, neg_zero]
   have hb := cutoff_iteratedDeriv_support n hcut
   change 1 / 2 ≤ |(4 / 3 : ℝ) * t| ∧ |(4 / 3 : ℝ) * t| ≤ 1 at hb
   rw [abs_of_nonneg (by positivity : (0 : ℝ) ≤ (4 / 3) * t)] at hb

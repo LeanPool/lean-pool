@@ -73,8 +73,9 @@ theorem scaledVelocity_initial_difference_le {m v x y : ℝ → Space}
     (hε : 0 < ε) (hε1 : ε ≤ 1) (hxy : ‖x t₀ - y t₀‖ ≤ D) :
     |scaledVelocity m v x t₀ a ε 0 0-scaledVelocity m v y t₀ a ε 0 0| +
       |scaledVelocity m v x t₀ a ε 0 1-scaledVelocity m v y t₀ a ε 0 1| ≤ 2*D/ε := by
-  simpa [scaledVelocity, movingVelocity, physicalTime, normalizedFrame, frame,
-    velocityScale, Fin.ext_iff] using
+  simpa only [scaledVelocity, movingVelocity, normalizedFrame, frame, physicalTime, mul_zero,
+      add_zero, Fin.isValue, Matrix.cons_val_zero, velocityScale, zero_ne_one, ↓reduceIte,
+      Matrix.cons_val_one, div_one] using
       frame_pair_difference_le (unit_norm hm0) (unit_norm hv0) hε hε1 hxy
 
 theorem scaled_inner_difference_le {p x y : Space} {b D : ℝ}
@@ -102,8 +103,10 @@ theorem scaledRay_initial_difference_le {m v x y : ℝ → Space} {s₀ t₀ a �
   have hall := add_le_add (add_le_add (hpn.trans hden) hqn) (hnn.trans hden)
   have hthree : D/(s₀*ε)+D/(s₀*ε)+D/(s₀*ε) = 3*D/(s₀*ε) := by ring
   rw [hthree] at hall
-  simpa [norm3, scaledRay, movingRay, physicalTime, normalizedFrame, frame, rayScale,
-    Fin.ext_iff] using hall
+  simpa only [norm3, scaledRay, movingRay, normalizedFrame, frame, physicalTime, mul_zero, add_zero,
+      Fin.isValue, Matrix.cons_val_zero, rayScale, zero_ne_one, ↓reduceIte, mul_one,
+      Matrix.cons_val_one, Matrix.cons_val, Fin.ext_iff, Fin.coe_ofNat_eq_mod, Nat.mod_succ,
+      Nat.one_mod, OfNat.ofNat_ne_one, ge_iff_le] using hall
 
 /-- A physical initial-ray error around the chosen normal becomes the
 source's scaled ray error with the fixed factor `(s₀ ε)⁻¹`. -/
@@ -117,7 +120,8 @@ theorem scaledRay_initial_error {m v r : ℝ → Space} {s₀ t₀ a ε D : ℝ}
   have hi : scaledRay m v r₀ s₀ t₀ a ε 0 = ![0,0,1] :=
     scaledRay_initial (ne_of_gt hs₀) hm0 hv0 hmv rfl
   have h := scaledRay_initial_difference_le (a := a) hs₀ hm0 hv0 hmv hε hε1 (y := r₀) hr
-  simpa [hi] using h
+  simpa only [Fin.isValue, ge_iff_le, hi, Nat.succ_eq_add_one, Nat.reduceAdd, Matrix.cons_val_zero,
+      sub_zero, Matrix.cons_val_one, Matrix.cons_val] using h
 
 variable {U : Type*} [NormedAddCommGroup U] [InnerProductSpace ℝ U] [CompleteSpace U]
 
@@ -271,7 +275,8 @@ theorem activation_coupling_match (B : ℝ → Space →L[ℝ] Space)
     (m v : ℝ → Space) (t₀ ε : ℝ) :
     let a := normalizedCoupling (B t₀) (m t₀) (v t₀)
     rescaledFrame B m v t₀ a ε 0 0 1 = a := by
-  simp [rescaledFrame,physicalTime,frameMatrix,frame,normalizedCoupling]
+  simp only [rescaledFrame, frameMatrix, frame, physicalTime, normalizedCoupling, mul_zero,
+      add_zero, Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one]
 
 theorem activation_tilt_match (B : ℝ → Space →L[ℝ] Space)
     (m v : ℝ → Space) (t₀ ε : ℝ)

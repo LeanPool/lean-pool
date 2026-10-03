@@ -50,7 +50,7 @@ lemma sum_partSize_succ_sq_le (c : OrderedFinpartition n) :
           mul_nonneg (sub_nonneg.mpr hi) (show 0 ≤ (c.partSize i : ℝ) + 1 by positivity)]
     _ = ((n : ℝ) + 1) * ((n : ℝ) + c.length) := by
       rw [← Finset.mul_sum, Finset.sum_add_distrib, sum_partSize_real]
-      simp
+      simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, mul_one]
     _ ≤ _ := by nlinarith only [hl]
 
 /-- Factorial product, given by `∏ i, ((c.partSize i).factorial : ℝ)`. -/
@@ -76,7 +76,7 @@ lemma factorialProduct_extendLeft (c : OrderedFinpartition n) :
     (Nat.factorial (Fin.cons (α := fun _ => ℕ) 1 c.partSize i) : ℝ)) =
     ∏ i : Fin c.length, ((c.partSize i).factorial : ℝ)
   rw [Fin.prod_univ_succ]
-  simp
+  simp only [Fin.cons_zero, Nat.factorial_one, Nat.cast_one, Fin.cons_succ, one_mul]
 
 lemma factorialProduct_extendMiddle (c : OrderedFinpartition n) (i : Fin c.length) :
     factorialProduct (c.extendMiddle i) =
@@ -91,10 +91,11 @@ lemma factorialProduct_extendMiddle (c : OrderedFinpartition n) (i : Fin c.lengt
     funext j
     by_cases h : j = i
     · subst j
-      simp [Nat.factorial_succ]
-    · simp [h]
+      simp only [Function.update_self, Nat.factorial_succ, Nat.cast_mul, Nat.cast_add, Nat.cast_one,
+          ↓reduceIte]
+    · simp only [ne_eq, h, not_false_eq_true, Function.update_of_ne, ↓reduceIte, one_mul]
   rw [he, Finset.prod_mul_distrib]
-  simp
+  simp only [Finset.prod_ite_eq', Finset.mem_univ, ↓reduceIte]
 
 lemma partitionWeight_extendLeft (x : ℝ) (c : OrderedFinpartition n) :
     partitionWeight x c.extendLeft =
@@ -144,8 +145,11 @@ theorem partitionSum_le (n : ℕ) (x : ℝ) (hx : 0 ≤ x) :
     partitionSum n x ≤ (x+2)^n * (n.factorial : ℝ)^2 := by
   induction n with
   | zero =>
-    simp [partitionSum, partitionWeight, factorialProduct,
-      OrderedFinpartition.default_eq]
+    simp only [partitionSum, Finset.univ_unique, OrderedFinpartition.default_eq, partitionWeight,
+        factorialProduct, Finset.sum_singleton, OrderedFinpartition.atomic_length, pow_zero,
+        Nat.factorial_zero, Nat.cast_one, Fin.isEmpty_iff, Finset.univ_eq_empty,
+        OrderedFinpartition.atomic_partSize, Nat.factorial_one, Finset.prod_const_one, mul_one,
+        one_pow, Std.le_refl]
   | succ n ih =>
     calc
       _ ≤ ((n : ℝ) + 1)^2 * (x+2) * partitionSum n x :=

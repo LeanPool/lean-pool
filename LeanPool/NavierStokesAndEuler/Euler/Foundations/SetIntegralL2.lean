@@ -38,8 +38,8 @@ theorem setIntegralL2_apply (s : Set X) (hs : MeasurableSet s) (hμs : μ s ≠ 
           x hx
       rw [hx]
       by_cases hxs : x ∈ s
-      · simp [hxs]
-      · simp [hxs]
+      · simp only [hxs, Set.indicator_of_mem, ContinuousLinearMap.lsmul_apply, one_smul]
+      · simp only [hxs, not_false_eq_true, Set.indicator_of_notMem, map_zero, zero_apply]
     _ = _ := integral_indicator hs
 
 /-- Bochner averaging of L² elements commutes with integration on every finite-measure set. -/
@@ -60,7 +60,8 @@ variable (period : ℝ) [Fact (0 < period)]
 omit [Fact (0 < period)] in
 theorem euclideanCover_neg (y : Domain 4) : euclideanCover period (-y) = -euclideanCover period y
     := by
-  simp [euclideanCover, coveringMap, map_neg]
+  simp only [euclideanCover, Function.comp_apply, coveringMap, map_neg, coordinateEquiv_apply,
+      Fin.isValue, Prod.neg_mk, QuotientAddGroup.mk_neg]
 
 /-- The Bochner L² mollifier and the classical convolution have the same iterated finite-set
 integrals. -/

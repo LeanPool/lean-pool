@@ -40,7 +40,8 @@ def coordinateInsertion (i j : Fin 3) : Space →L[ℝ] Space :=
 theorem coordinateInsertion_norm_le (i j : Fin 3) : ‖coordinateInsertion i j‖ ≤ 1 := by
   apply ContinuousLinearMap.opNorm_le_bound _ (by norm_num)
   intro v
-  simpa [coordinateInsertion, ContinuousLinearMap.smulRight_apply, norm_smul] using
+  simpa only [coordinateInsertion, ContinuousLinearMap.smulRight_apply, PiLp.proj_apply, norm_smul,
+      Real.norm_eq_abs, PiLp.norm_single, norm_one, mul_one, one_mul] using
       PiLp.norm_apply_le v j
 
 /-- Coordinate L², given by `(coordinateInsertion i j).compLpL 2 volume`. -/
@@ -80,7 +81,8 @@ theorem curlTensor_norm_le (G : GradientTensor) : ‖curlTensor G‖ ≤ 6 * ‖
       have h1 := (coordinateL2_apply_norm_le i (i+2) (G (i+1))).trans (PiLp.norm_apply_le G (i+1))
       have h2 := (coordinateL2_apply_norm_le i (i+1) (G (i+2))).trans (PiLp.norm_apply_le G (i+2))
       exact (norm_sub_le _ _).trans (by linarith)
-    _ = 6 * ‖G‖ := by simp; ring
+    _ = 6 * ‖G‖ := by simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
+        Nat.cast_ofNat]; ring
 
 theorem curlTensor_ae (G : GradientTensor) :
     curlTensor G =ᵐ[volume] fun x => WithLp.toLp 2 (fun i : Fin 3 =>
@@ -101,14 +103,18 @@ theorem curlTensor_ae (G : GradientTensor) :
   rw [hs]
   simp_rw [hp]
   ext j
-  fin_cases j <;> simp [Fin.sum_univ_three]
+  fin_cases j <;> simp only [Fin.isValue, Fin.sum_univ_three, zero_add, Fin.reduceAdd, Fin.zero_eta,
+      PiLp.add_apply, PiLp.smul_apply, PiLp.single_eq_same, smul_eq_mul, mul_one, ne_eq,
+      zero_ne_one, not_false_eq_true, PiLp.single_eq_of_ne, mul_zero, add_zero, Fin.reduceEq,
+      Fin.mk_one, one_ne_zero, Fin.reduceFinMk]
 
 /-- On genuine test gradients the tensor operator is exactly the ordinary classical curl. -/
 theorem curlTensor_test_ae (f : Test) :
     curlTensor (testGradient f) =ᵐ[volume] vectorCurl (f : Space → Space) := by
   filter_upwards [curlTensor_ae (testGradient f),
     ae_all_iff.mpr (fun i => derivativeColumn_ae f i)] with x hc hd
-  rw [hc, vectorCurl_eq_matrix _ x ((f.smooth.differentiable (by simp)).differentiableAt)]
+  rw [hc, vectorCurl_eq_matrix _ x ((f.smooth.differentiable (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])).differentiableAt)]
   ext i
   change (derivativeColumn f (i+1) x) (i+2) - (derivativeColumn f (i+2) x) (i+1) = _
   rw [hd, hd]
@@ -175,8 +181,10 @@ theorem directional_integration_by_parts (f g : Test) (i : Fin 3) :
     (f := (f : Space → Space)) (g := (g : Space → Space))
     (test_inner_integrable (partialTest f i) g)
     (test_inner_integrable f (partialTest g i)) (test_inner_integrable f g)
-    (fun x _ => (f.smooth.differentiable (by simp)).differentiableAt)
-    (fun x _ => (g.smooth.differentiable (by simp)).differentiableAt)
+    (fun x _ => (f.smooth.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true])).differentiableAt)
+    (fun x _ => (g.smooth.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true])).differentiableAt)
   change (∫ x, ⟪(f : Space → Space) x, vectorPartial (g : Space → Space) i x⟫_ℝ) =
     -∫ x, ⟪vectorPartial (f : Space → Space) i x, (g : Space → Space) x⟫_ℝ at h
   linarith
@@ -225,8 +233,10 @@ theorem scalar_partial_ibp (f g : Space → ℝ) (hf : ContDiff ℝ ∞ f)
         i).continuous).integrable_of_hasCompactSupport
       hfc.mul_right)
     ((hf.continuous.mul hg.continuous).integrable_of_hasCompactSupport hgc.mul_left)
-    (fun x _ => (hf.differentiable (by simp)).differentiableAt)
-    (fun x _ => (hg.differentiable (by simp)).differentiableAt)
+    (fun x _ => (hf.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+        not_false_eq_true])).differentiableAt)
+    (fun x _ => (hg.differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+        not_false_eq_true])).differentiableAt)
   change (∫ x, f x * partialDerivative g i x) = -∫ x, partialDerivative f i x * g x at h
   linarith
 

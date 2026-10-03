@@ -55,7 +55,10 @@ theorem partition_factorial_le {n : ℕ} (c : OrderedFinpartition n) :
   | zero =>
       have hc : c = default := Subsingleton.elim _ _
       subst c
-      simp [OrderedFinpartition.default_eq, factorialProduct]
+      simp only [OrderedFinpartition.default_eq, OrderedFinpartition.atomic_length,
+          Nat.factorial_zero, Nat.cast_one, factorialProduct, Fin.isEmpty_iff, Finset.univ_eq_empty,
+          OrderedFinpartition.atomic_partSize, Nat.factorial_one, Finset.prod_const_one, mul_one,
+          Std.le_refl]
   | succ n ih =>
       obtain ⟨⟨d,o⟩,rfl⟩ := (OrderedFinpartition.extendEquiv n).surjective c
       cases o with
@@ -72,7 +75,7 @@ theorem partition_factorial_le {n : ℕ} (c : OrderedFinpartition n) :
             _ ≤ ((n : ℝ)+1) * (n.factorial : ℝ) :=
               mul_le_mul hl (ih d)
                 (mul_nonneg (Nat.cast_nonneg _) (factorialProduct_nonneg d)) (by positivity)
-            _ = _ := by simp [Nat.factorial_succ]
+            _ = _ := by simp only [Nat.factorial_succ, Nat.cast_mul, Nat.cast_add, Nat.cast_one]
       | some i =>
           simp only [OrderedFinpartition.extendEquiv_apply,
             OrderedFinpartition.extend_some, OrderedFinpartition.extendMiddle_length,
@@ -85,13 +88,13 @@ theorem partition_factorial_le {n : ℕ} (c : OrderedFinpartition n) :
             _ ≤ ((n : ℝ)+1) * (n.factorial : ℝ) :=
               mul_le_mul hl (ih d)
                 (mul_nonneg (Nat.cast_nonneg _) (factorialProduct_nonneg d)) (by positivity)
-            _ = _ := by simp [Nat.factorial_succ]
+            _ = _ := by simp only [Nat.factorial_succ, Nat.cast_mul, Nat.cast_add, Nat.cast_one]
 
 theorem polynomial_iteratedDeriv (p : ℝ[X]) (n : ℕ) (x : ℝ) :
     iteratedDeriv n (fun y => p.eval y) x =
       (Polynomial.derivative^[n] p).eval x := by
   induction n generalizing x with
-  | zero => simp
+  | zero => simp only [iteratedDeriv_zero, Function.iterate_zero, id_eq]
   | succ n ih =>
       rw [iteratedDeriv_succ]
       have he : iteratedDeriv n (fun y => p.eval y) =
@@ -102,7 +105,7 @@ theorem polynomial_iteratedDeriv_zero (p : ℝ[X]) (n : ℕ) :
     iteratedDeriv n (fun y => p.eval y) 0 = (n.factorial : ℝ)*p.coeff n := by
   rw [polynomial_iteratedDeriv, ← Polynomial.coeff_zero_eq_eval_zero,
     Polynomial.coeff_iterate_derivative]
-  simp [Nat.descFactorial_self]
+  simp only [zero_add, Nat.descFactorial_self, nsmul_eq_mul]
 
 theorem polynomial_contDiff (p : ℝ[X]) :
     ContDiff ℝ ∞ (fun y : ℝ => p.eval y) := by
@@ -126,7 +129,7 @@ theorem comp_coefficient (p q : ℝ[X]) (hp : p.coeff 0 = 0) (n : ℕ) :
   have he : (fun y => (q.comp p).eval y) =
       (fun y => q.eval y) ∘ (fun y => p.eval y) := by
     funext y
-    simp
+    simp only [Polynomial.eval_comp, Function.comp_apply]
   rw [← he, hp0] at hc
   simpa only [polynomial_iteratedDeriv_zero] using hc
 
@@ -136,15 +139,17 @@ def jetPolynomial (N : ℕ) (a : ℕ → ℝ) : ℝ[X] :=
 
 theorem jetPolynomial_coeff (N : ℕ) (a : ℕ → ℝ) (j : ℕ) :
     (jetPolynomial N a).coeff j = if j ∈ Finset.Icc 1 N then a j else 0 := by
-  simp [jetPolynomial, Polynomial.coeff_monomial]
+  simp only [jetPolynomial, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial,
+      Finset.sum_ite_eq', Finset.mem_Icc]
 
 @[simp] theorem jetPolynomial_zero (N : ℕ) (a : ℕ → ℝ) :
     (jetPolynomial N a).coeff 0 = 0 := by
-  simp [jetPolynomial_coeff]
+  simp only [jetPolynomial_coeff, Finset.mem_Icc, nonpos_iff_eq_zero, one_ne_zero, zero_le,
+      and_true, ↓reduceIte]
 
 theorem jetPolynomial_coeff_of_mem (N : ℕ) (a : ℕ → ℝ) (j : ℕ)
     (hj : j ∈ Finset.Icc 1 N) : (jetPolynomial N a).coeff j = a j := by
-  simp [jetPolynomial_coeff, hj]
+  simp only [jetPolynomial_coeff, hj, ↓reduceIte]
 
 theorem jetPolynomial_eval (N : ℕ) (a : ℕ → ℝ) (x : ℝ) :
     (jetPolynomial N a).eval x = ∑ j ∈ Finset.Icc 1 N, a j*x^j := by
@@ -457,7 +462,8 @@ theorem rational_integral_bootstrap (f : ℝ → ℝ) (T B R : ℝ)
       hrate.intervalIntegrable_of_Icc ht.1
     have hm := intervalIntegral.integral_mono_on ht.1 hi intervalIntegrable_const
       (fun s hs => rationalRate_le B R ((4*R)⁻¹) (f s) hB (hhalf s hs))
-    have hc : (∫ s in (0 : ℝ)..t, B) = B*t := by simp [mul_comm]
+    have hc : (∫ s in (0 : ℝ)..t, B) = B*t := by simp only [intervalIntegral.integral_const,
+        sub_zero, smul_eq_mul, mul_comm]
     exact (hineq t ht hhalf).trans (hm.trans_eq hc)
   intro t ht
   refine ⟨hb t ht,?_⟩
@@ -523,7 +529,7 @@ theorem norm_iteratedFDeriv_id_le (n : ℕ) (hn : 0 < n) (x : E) :
       funext y
       exact fderiv_id
     rw [Nat.succ_eq_add_one, ite_eq_right hm1, ← norm_iteratedFDeriv_fderiv]
-    simp [hid, iteratedFDeriv_const_of_ne hm]
+    simp only [hid, iteratedFDeriv_const_of_ne hm, Pi.zero_apply, norm_zero, Std.le_refl]
 
 theorem derivativeSum_id_le (N : ℕ) (z : ℝ) (x : E) (hz : 0 ≤ z) :
     derivativeSum (id : E → E) N z x ≤ z := by

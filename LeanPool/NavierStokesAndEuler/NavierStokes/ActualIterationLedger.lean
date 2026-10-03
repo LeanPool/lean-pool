@@ -59,7 +59,7 @@ theorem sigma_strictMono : StrictMono sigma := by
   linarith only [hk]
 
 @[simp] theorem inputSigma_succ (j : ℕ) : inputSigma (j + 1) = sigma j := by
-  simp [inputSigma]
+  simp only [inputSigma, add_tsub_cancel_right]
 
 theorem inputSigma_formula {j : ℕ} (hj : 1 ≤ j) :
     inputSigma j = 1 / 10 + (j : ℝ) / 10 := by
@@ -72,7 +72,8 @@ theorem inputSigma_index {j : ℕ} (hj : 1 ≤ j) : inputSigma j + 1 / 10 = sigm
 
 theorem inputSigma_admissible (j : ℕ) : 1 / 5 ≤ inputSigma j := sigma_admissible _
 
-@[simp] theorem gain_zero (h : ℝ) : gain h 0 = 0 := by simp [gain]
+@[simp] theorem gain_zero (h : ℝ) : gain h 0 = 0 := by simp only [gain, CharP.cast_eq_zero,
+    mul_zero, zero_div]
 
 theorem gain_succ (h : ℝ) (j : ℕ) : gain h (j + 1) = gain h j + h / 10 := by
   simp only [gain, Nat.cast_add, Nat.cast_one]

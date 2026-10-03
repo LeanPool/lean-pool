@@ -127,10 +127,12 @@ theorem rawVelocity_hasDerivAt_on_slot (j : Fin 2) (L : Label B N0) {x : Native}
           ‖(phases B N0 j).phase.normal L (phasePoint L x)‖^2)) x.2.2 := by
   by_cases hm : spatialMask L x.1 = 0
   · have hz (t : ℝ) : rawVelocity j L (x.1,(x.2.1,t)) = 0 := by
-      simp [rawVelocity, PartitionedCovariance.amplitude, hm]
+      simp only [rawVelocity, PartitionedCovariance.amplitude, hm, zero_mul, mul_zero, zero_smul]
     have hz' : rawVelocity j L x = 0 := by simpa only [Prod.mk.eta] using hz x.2.2
     simp only [hz, map_zero]
-    simpa [TangentProjection.projectedRhs, TangentProjection.tangentProj] using
+    simpa only [TangentProjection.projectedRhs, neg_zero, inner_zero_right, sub_self,
+        inner_self_eq_norm_sq_to_K, RCLike.ofReal_real_eq_id, id_eq, zero_div, zero_smul, add_zero,
+        smul_zero, TangentProjection.tangentProj] using
       hasDerivAt_const x.2.2 (0 : Space)
   · simpa only [frame_viscosity] using
       rawVelocity_hasDerivAt j L (spatialMask_carrier L hT hm) ht
@@ -187,7 +189,9 @@ theorem attachedVelocity_hasDerivAt (j : Fin 2) (L : Label B N0) {x : Native}
       WaveEdgeExtension.nativeExtension_outside nominal _ hr
     have hz' : attachedRawVelocity j L x = 0 := by simpa only [Prod.mk.eta] using hz x.2.2
     simp only [hz, map_zero]
-    simpa [TangentProjection.projectedRhs, TangentProjection.tangentProj] using
+    simpa only [TangentProjection.projectedRhs, neg_zero, inner_zero_right, sub_self,
+        inner_self_eq_norm_sq_to_K, RCLike.ofReal_real_eq_id, id_eq, zero_div, zero_smul, add_zero,
+        smul_zero, TangentProjection.tangentProj] using
       hasDerivAt_const x.2.2 (0 : Space)
 
 theorem attachedPressure_eq (j : Fin 2) (L : Label B N0) {x : Native}
@@ -209,7 +213,9 @@ theorem attachedPressure_eq (j : Fin 2) (L : Label B N0) {x : Native}
     rfl
   · simp only [attachedRawPressure, attachedRawVelocity,
       WaveEdgeExtension.nativeExtension_outside nominal _ hr, map_zero]
-    simp [TangentProjection.pressureCoefficient]
+    simp only [TangentProjection.pressureCoefficient, inner_zero_right, sub_self, add_zero,
+        inner_self_eq_norm_sq_to_K, RCLike.ofReal_real_eq_id, id_eq, zero_div, Complex.ofReal_zero,
+        mul_zero, Complex.ofReal_natCast]
 
 end NativeDynamics
 
@@ -232,8 +238,9 @@ theorem geometry_temporal (j : Fin 2) (L : Label B N0) :
     change (TorusAverages.slotChart radialVector temporalVector vectors_det)
       ((TorusAverages.transverseChart (ChartScales.timeCoefficient h n)
         (ChartScales.timeCoefficient_pos h n).ne') (0, (ChartScales.timeCoefficient h n)⁻¹)) = _
-    simp [TorusAverages.transverseChart_apply, TorusAverages.slotChart_apply,
-      (ChartScales.timeCoefficient_pos h n).ne']
+    simp only [TorusAverages.transverseChart_apply, ne_eq,
+        (ChartScales.timeCoefficient_pos h n).ne', not_false_eq_true, mul_inv_cancel₀,
+        TorusAverages.slotChart_apply, zero_smul, one_smul, zero_add]
   have he : g.basis.symm temporalVector = (0, (ChartScales.timeCoefficient h n)⁻¹) :=
     (g.basis.symm_apply_eq).mpr hb.symm
   change g.basis.symm (CommonCoverSolve.coverPower (ChartScales.nativeIndex h n) temporalVector) = _
@@ -241,18 +248,19 @@ theorem geometry_temporal (j : Fin 2) (L : Label B N0) :
       ChartScales.Tg ^ ChartScales.nativeIndex h n • temporalVector from
         CommonBaseContext.coverPower_temporal _, map_smul, he]
   simp only [Prod.smul_mk, smul_eq_mul]
-  ext <;> simp [ChartScales.timeCoefficient, mul_inv_rev, n,
-    ne_of_gt (pow_pos ChartScales.Tg_pos (ChartScales.nativeIndex h (BaseChartJets.cellBand L))),
-    mul_left_comm]
+  ext <;> simp only [mul_zero, n, ChartScales.timeCoefficient, mul_inv_rev, mul_left_comm, ne_eq,
+      ne_of_gt (pow_pos ChartScales.Tg_pos (ChartScales.nativeIndex h (BaseChartJets.cellBand L))),
+      not_false_eq_true, mul_inv_cancel₀, mul_one]
 
 /-- Absolute native linear, bundling `toFun`, `map_add`, `map_smul`, `cont`. -/
 noncomputable def absoluteNativeLinear (j : Fin 2) (L : Label B N0) :
     ActualPrimaryCoherence.Absolute →L[ℝ] Native where
   toFun x := (nativeSlow L x.1, (geometry j L).coordinateLinear x.1.2)
   map_add' x y := by
-    ext <;> simp [nativeSlow, add_div, map_add]
+    ext <;> simp only [nativeSlow, Prod.fst_add, add_div, Prod.snd_add, Prod.mk_add_mk, map_add]
   map_smul' c x := by
-    ext <;> simp [nativeSlow, mul_div_assoc, map_smul]
+    ext <;> simp only [nativeSlow, Prod.smul_fst, smul_eq_mul, mul_div_assoc, Prod.smul_snd,
+        RingHom.id_apply, Prod.smul_mk, map_smul]
   cont := ((nativeSlow_smooth L).continuous.comp continuous_fst).prodMk
     ((geometry j L).coordinateLinear.continuous.comp continuous_fst.snd)
 
@@ -271,7 +279,9 @@ theorem copyPoint_affine (j : Fin 2) (L : Label B N0) (n : ℕ)
     (k : TorusInverse.Frequency) (x : FullPoint) :
     copyPoint j L n k x = copyLinear j L n x + (0,(geometry j L).coordinates k 0) := by
   apply Prod.ext
-  · simp [copyPoint, copyLinear, absoluteNativeLinear]
+  · simp only [copyPoint, copyLinear, absoluteNativeLinear, ContinuousLinearMap.comp_apply,
+      ContinuousLinearEquiv.coe_coe, ActualPrimaryCoherence.absoluteChart_apply,
+      ContinuousLinearMap.coe_mk', LinearMap.coe_mk, AddHom.coe_mk, Prod.mk_add_mk, add_zero]
   · change (geometry j L).coordinates k _ = _ + _
     rw [CommonCoverSolve.Geometry.coordinates_eq_affine, add_comm]
     rfl
@@ -313,7 +323,8 @@ theorem copyLinear_fast (j : Fin 2) (L : Label B N0) (n : ℕ) (x : FullPoint) :
   change ChartScales.Q n ^ (1+h) •
     (nativeSlow L ((0,(0,0)),temporalVector), (geometry j L).coordinateLinear temporalVector) = _
   rw [geometry_temporal]
-  simp [nativeSlow, clockScale, div_eq_mul_inv]
+  simp only [nativeSlow, div_eq_mul_inv, zero_mul, Prod.smul_mk, smul_eq_mul, mul_zero, clockScale,
+      Prod.mk.injEq, Prod.mk_eq_zero, and_self]
 
 theorem copyPoint_fast_line (j : Fin 2) (L : Label B N0) (n : ℕ)
     (k : TorusInverse.Frequency) (x : FullPoint) (t : ℝ) :
@@ -322,7 +333,8 @@ theorem copyPoint_fast_line (j : Fin 2) (L : Label B N0) (n : ℕ)
         ((copyPoint j L n k x).2.1, (copyPoint j L n k x).2.2+t*clockScale L n)) := by
   rw [copyPoint_affine, map_add, map_smul, copyLinear_fast]
   rw [copyPoint_affine]
-  ext <;> simp
+  ext <;> simp only [Prod.smul_mk, smul_zero, smul_eq_mul, mul_zero, Prod.fst_add, add_zero,
+      Prod.snd_add]
   all_goals ring
 
 /-- Slot linear as an element of `FullPoint →L[ℝ] PhaseCalculus.Slot`. -/
@@ -354,7 +366,8 @@ theorem slotLinear_radial (j : Fin 2) (L : Label B N0) (n : ℕ) (x : FullPoint)
   have he := ActualPrimaryCoherence.absoluteChart_radial B n x
   rw [slotLinear_apply]
   have hz : ((PrimaryResidualClass.directions (commonContext B)).radialField n x).2 = 0 := by
-    simp [LinearWaveBounds.GraphDirections.radialField, PrimaryResidualClass.directions]
+    simp only [LinearWaveBounds.GraphDirections.radialField, PrimaryResidualClass.directions,
+        Prod.smul_mk, smul_eq_mul, mul_zero, Prod.mk_add_mk, add_zero]
   rw [hz]
   change ((absoluteNativeLinear j L (ActualPrimaryCoherence.absoluteChart n
       ((PrimaryResidualClass.directions (commonContext B)).radialField n x))).1,
@@ -369,7 +382,8 @@ theorem slotLinear_radial (j : Fin 2) (L : Label B N0) (n : ℕ) (x : FullPoint)
       (RadialPullback.radialJacobian (ChartScales.radialExponent h) (toAbsolute n x.1).1.1 •
           radialVector)).2)) = _
   rw [map_smul, geometry_radial]
-  simp [nativeSlow, radialScale, PhaseCalculus.eR, div_eq_mul_inv]
+  simp only [nativeSlow, div_eq_mul_inv, one_mul, zero_mul, Prod.smul_mk, smul_eq_mul, mul_zero,
+      radialScale, PhaseCalculus.eR, mul_one]
 
 theorem slotLinear_angular (j : Fin 2) (L : Label B N0) (n : ℕ) (x : FullPoint) :
     slotLinear j L n (PrimaryResidualClass.directions (commonContext B)).angular =
@@ -380,8 +394,9 @@ theorem slotLinear_angular (j : Fin 2) (L : Label B N0) (n : ℕ) (x : FullPoint
     (1,(absoluteNativeLinear j L (ActualPrimaryCoherence.absoluteChart n
       (PrimaryResidualClass.directions (commonContext B)).angular)).2.2)) = _
   rw [he]
-  simp [absoluteNativeLinear, ActualPrimaryCoherence.absoluteAngular, nativeSlow,
-      PhaseCalculus.eTheta]
+  simp only [absoluteNativeLinear, nativeSlow, ActualPrimaryCoherence.absoluteAngular,
+      ContinuousLinearMap.coe_mk', LinearMap.coe_mk, AddHom.coe_mk, Prod.fst_zero, zero_div,
+      Prod.snd_zero, map_zero, PhaseCalculus.eTheta]
 
 theorem radialScale_epsilon (L : Label B N0) (n : ℕ) :
     radialScale L n * ChartScales.epsilon h (BaseChartJets.cellBand L) =
@@ -404,7 +419,8 @@ theorem slotLinear_axial (j : Fin 2) (L : Label B N0) (n : ℕ)
   have hz : ((PrimaryResidualClass.directions (commonContext B)).axialField
       (HarmonicWaveInteraction.productStrip (BaseContextAssembly.nativeStrip nominal U)) n x).2 = 0
           := by
-    simp [LinearWaveBounds.GraphDirections.axialField, PrimaryResidualClass.directions]
+    simp only [LinearWaveBounds.GraphDirections.axialField, PrimaryResidualClass.directions,
+        Prod.smul_mk, smul_eq_mul, mul_zero]
   rw [hz]
   change ((absoluteNativeLinear j L (ActualPrimaryCoherence.absoluteChart n
       ((PrimaryResidualClass.directions (commonContext B)).axialField
@@ -414,13 +430,14 @@ theorem slotLinear_axial (j : Fin 2) (L : Label B N0) (n : ℕ)
         (HarmonicWaveInteraction.productStrip (BaseContextAssembly.nativeStrip nominal U)) n
             x))).2.2)) = _
   rw [he, map_smul, radialScale_epsilon]
-  simp [absoluteNativeLinear, ActualPrimaryCoherence.absoluteAxial, nativeSlow,
-    PhaseCalculus.eZ, div_eq_mul_inv]
+  simp only [absoluteNativeLinear, nativeSlow, div_eq_mul_inv, ActualPrimaryCoherence.absoluteAxial,
+      ContinuousLinearMap.coe_mk', LinearMap.coe_mk, AddHom.coe_mk, zero_mul, one_mul, map_zero,
+      Prod.smul_mk, smul_eq_mul, mul_zero, smul_zero, Prod.snd_zero, PhaseCalculus.eZ, mul_one]
 
 theorem slotPoint_radius (j : Fin 2) (L : Label B N0) (n : ℕ)
     (k : TorusInverse.Frequency) (x : FullPoint) :
     (slotPoint j L n k x).1.1 = radialScale L n * x.1.1 := by
-  simp [slotPoint, copyPoint, nativeSlow, toAbsolute, radialScale]
+  simp only [slotPoint, copyPoint, nativeSlow, toAbsolute, radialScale]
   ring
 
 theorem copyPoint_time_pos (j : Fin 2) (L : Label B N0) (n : ℕ)
@@ -442,13 +459,13 @@ theorem along_copy {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
       (clockScale L n) 0 := by
     simpa using ((hasDerivAt_id (0 : ℝ)).mul_const (clockScale L n)).const_add
       (copyPoint j L n k x).2.2
-  have hp := hd.scomp_of_eq (0 : ℝ) ht (by simp)
+  have hp := hd.scomp_of_eq (0 : ℝ) ht (by simp only [zero_mul, add_zero])
   have hl : HasDerivAt (fun t : ℝ => x+t •
       (PrimaryResidualClass.directions (commonContext B)).fastField n x)
       ((PrimaryResidualClass.directions (commonContext B)).fastField n x) 0 := by
-    simpa using ((hasDerivAt_id (0 : ℝ)).smul_const
+    simpa only [hasDerivAt_const_add_iff, id_eq, one_smul] using ((hasDerivAt_id (0 : ℝ)).smul_const
       ((PrimaryResidualClass.directions (commonContext B)).fastField n x)).const_add x
-  have hh := hf.hasFDerivAt.comp_hasDerivAt_of_eq (0 : ℝ) hl (by simp)
+  have hh := hf.hasFDerivAt.comp_hasDerivAt_of_eq (0 : ℝ) hl (by simp only [zero_smul, add_zero])
   simp only [Function.comp_def, copyPoint_fast_line] at hh hp
   exact hh.unique hp
 
@@ -636,10 +653,11 @@ theorem native_base_differentiable (j : Fin 2) (L : Label B N0) (n : ℕ)
       DifferentiableAt ℝ ((phases B N0 j).phase.G L) (copyPoint j L n k x).1 := by
   rw [phase_frequency, phase_axial]
   exact ⟨(ActualPrimaryCoherence.frequencySlow_smoothAt B _ (copyPoint_radius_pos j L n k hR)
-      (copyPoint_time_pos j L n k hT)).differentiableAt (by simp),
+      (copyPoint_time_pos j L n k hT)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+          ENat.top_ne_zero, not_false_eq_true]),
     (ActualPrimaryCoherence.axialSlow_smoothAt B _ (copyPoint_time_pos j L n k
         hT)).differentiableAt (by
-        simp)⟩
+        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])⟩
 
 /-- Normal scale, given by `((ChartScales.carrier h (BaseChartJets.cellBand L) : ℝ) /
 (ChartScales.carrier h n : ℝ)) * radialScale L n`. -/
@@ -774,11 +792,15 @@ theorem copy_shear_function (j : Fin 2) (L : Label B N0) (n : ℕ)
   have hrad : (chartCoefficients j L).radius n x = x.1.1 := rfl
   ext i
   fin_cases i <;>
-    simp [hrad, PrimaryCopyBridge.baseOperator_apply, MovingFrameODE.baseAction,
-      PhaseJetBounds.PhaseFamily.shear, PhaseEstimates.shearVector,
-      MovingFrameODE.pack, MovingFrameODE.tail, MovingFrameODE.unitTheta,
-      CurlClassBounds.complexify_apply, phasePoint, hr, Complex.ofReal_mul,
-      Complex.ofReal_add, Complex.ofReal_neg] <;> ring
+    simp only [Complex.ofReal_mul, neg_mul, Fin.isValue, Pi.smul_apply,
+        CurlClassBounds.complexify_apply, Complex.real_smul, hrad, Complex.ofReal_add,
+        Complex.ofReal_ofNat, Nat.succ_eq_add_one, Nat.reduceAdd, Fin.zero_eta,
+        Matrix.cons_val_zero, PhaseJetBounds.PhaseFamily.shear, PhaseEstimates.shearVector,
+        phasePoint, hr, PrimaryCopyBridge.baseOperator_apply, MovingFrameODE.baseAction,
+        MovingFrameODE.pack, MovingFrameODE.tail, MovingFrameODE.unitTheta, smul_add,
+        PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, mul_one, Matrix.cons_val_one,
+        Matrix.cons_val_fin_one, mul_zero, zero_add, Complex.ofReal_neg, smul_neg, neg_inj,
+        Fin.mk_one, Fin.reduceFinMk, Matrix.cons_val] <;> ring
 
 theorem copy_shear (j : Fin 2) (L : Label B N0) (n : ℕ)
     (k : TorusInverse.Frequency) {x : FullPoint} (hR : 0 < x.1.1) (hT : 0 < x.1.2.1.1) :
@@ -876,10 +898,10 @@ theorem copyVelocity_ode (j : Fin 2) (L : Label B N0) (n : ℕ)
   have hline : HasDerivAt
       (fun t : ℝ => x+t • (PrimaryResidualClass.directions (commonContext B)).fastField n x)
       ((PrimaryResidualClass.directions (commonContext B)).fastField n x) 0 := by
-    simpa using ((hasDerivAt_id (0 : ℝ)).smul_const
+    simpa only [hasDerivAt_const_add_iff, id_eq, one_smul] using ((hasDerivAt_id (0 : ℝ)).smul_const
       ((PrimaryResidualClass.directions (commonContext B)).fastField n x)).const_add x
   have hh := (copyVelocity_differentiable j L n k hT).hasFDerivAt.comp_hasDerivAt_of_eq
-    (0 : ℝ) hline (by simp)
+    (0 : ℝ) hline (by simp only [zero_smul, add_zero])
   simp only [Function.comp_def, copyVelocity, copyPoint_fast_line] at hh
   simp only [Function.comp_def, z] at hd'
   have he := hh.unique hd'
@@ -1011,7 +1033,7 @@ theorem principal_zero_on_cutoff (j : Fin 2) (L : Label B N0) (n : ℕ)
       ((PrimaryResidualClass.directions (commonContext B)).axialField
         (HarmonicWaveInteraction.productStrip (BaseContextAssembly.nativeStrip nominal U)) n)
       ((PrimaryResidualClass.directions (commonContext B)).fastField n)).eq_of_nhds
-    exact he.trans (by simp [])
+    exact he.trans (by simp only [PeriodizedWaveBounds.principal_zero])
 
 end ScaledDynamics
 
@@ -1155,24 +1177,29 @@ theorem exactOn (U : LocalSignedRequest.SlowRegion (2 * h))
   · intro x _
     exact differentiableAt_fst.fst
   · intro x hx
-    exact (base_smooth j L n hx).1.differentiableAt (by simp)
+    exact (base_smooth j L n hx).1.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true])
   · intro x hx
-    exact (base_smooth j L n hx).2.1.differentiableAt (by simp)
+    exact (base_smooth j L n hx).2.1.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true])
   · intro x hx
-    exact (base_smooth j L n hx).2.2.differentiableAt (by simp)
+    exact (base_smooth j L n hx).2.2.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true])
   · intro x hx
     exact (hp.contDiffAt (ActualPrimaryCoherence.positiveRadialChart_open.mem_nhds
         hx)).differentiableAt (by
-        simp)
+        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   · intro x hx
     exact hx.1.ne'
   · intro x hx
     change fderiv ℝ (fun y : FullPoint => y.1.1) x
       ((PrimaryResidualClass.directions (commonContext B)).radialField n x) = 1
     rw [((hasFDerivAt_fst (𝕜 := ℝ) (E := LocalSignedRequest.Point) (F := ℝ)).fst (x := x)).fderiv]
-    simp [LinearWaveBounds.GraphDirections.radialField, PrimaryResidualClass.directions,
-      commonContext, CommonBaseContext.context, CommonBaseContext.operators,
-      CorrectionState.graphOperators, CommonBaseContext.reconstruction]
+    simp only [LinearWaveBounds.GraphDirections.radialField, PrimaryResidualClass.directions,
+        commonContext, CommonBaseContext.context, CommonBaseContext.operators,
+        CorrectionState.graphOperators, CommonBaseContext.reconstruction, Prod.smul_mk, smul_eq_mul,
+        mul_zero, smul_zero, Prod.mk_add_mk, add_zero, zero_add, ContinuousLinearMap.comp_apply,
+        ContinuousLinearMap.coe_fst']
   · intro x hx i
     exact ((CopyAngularInvariance.base_invariant (ha.radius n) (ha.radialBase n)
       (ha.frequencyBase n) (ha.axialBase n)).component i).along_zero x
@@ -1183,7 +1210,7 @@ theorem exactOn (U : LocalSignedRequest.SlowRegion (2 * h))
     exact ⟨m, fun x hx => hm.directional_eq
       ((hΦ.contDiffAt (ActualPrimaryCoherence.positiveRadialChart_open.mem_nhds
           hx)).differentiableAt (by
-          simp))⟩
+          simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))⟩
   · intro x hx
     exact (ha.corrected_pressure (BaseContextAssembly.nativeStrip nominal U) (commonContext B)
         n).along_zero x
@@ -1203,7 +1230,8 @@ theorem linearResidual_eq (U : LocalSignedRequest.SlowRegion (2 * h))
   have hA : ∀ i, DifferentiableAt ℝ (fun y => a.amplitude n y i) x := fun i =>
     (((contDiffOn_pi.mp (amplitude_smooth j L n)) i).contDiffAt
       (ActualPrimaryCoherence.positiveRadialChart_open.mem_nhds hx)).differentiableAt (by simp)
-  have hψ : DifferentiableAt ℝ (ψ n) x := (cutoff_smooth j L n).differentiable (by simp) x
+  have hψ : DifferentiableAt ℝ (ψ n) x := (cutoff_smooth j L n).differentiable (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]) x
   have hf : ∀ i, DifferentiableAt ℝ (fun y => f n y i) x := fun i =>
     (((contDiffOn_pi.mp (curl_smooth U j L n)) i).contDiffAt
       (ActualPrimaryCoherence.positiveRadialChart_open.mem_nhds hx)).differentiableAt (by simp)

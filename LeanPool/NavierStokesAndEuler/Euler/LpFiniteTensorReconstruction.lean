@@ -52,7 +52,7 @@ theorem tupleLp_ae (u : ι → Lp V 2 μ) :
   rw [he, hsum]
   simp only [hx]
   ext j
-  simp [L]
+  simp only [single_apply, Finset.sum_apply, Finset.sum_pi_single, Finset.mem_univ, ↓reduceIte, L]
 
 end Tuple
 

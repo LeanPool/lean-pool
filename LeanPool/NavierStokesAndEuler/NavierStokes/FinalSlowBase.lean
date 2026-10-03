@@ -453,7 +453,8 @@ theorem exists_terminal_exterior_neighborhood {h R : ℝ}
   have hxU : (1, x) ∈ U := by
     constructor
     · linarith only [hs]
-    · simpa [SimilarityCoordinates.forwardScalar, hx] using hb
+    · simpa only [sub_self, SimilarityCoordinates.forwardScalar, Fin.isValue, hx, ne_eq,
+        OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, zero_mul, sub_zero] using hb
   refine ⟨U, hU, hxU, ?_, ?_⟩
   · intro z hz
     exact (half_pos hs).trans hz.1
@@ -1126,9 +1127,11 @@ theorem stressForce_zero_right (upper : ℝ) (B : ℕ) {z : ProblemStatement.Spa
   have ht0 := htheta.self_of_nhds
   have ha0 := haxial.self_of_nhds
   have htd : SimilarityProfile.partialS theta p = 0 := by
-    simp [SimilarityProfile.partialS, htheta.fderiv_eq]
+    simp only [SimilarityProfile.partialS, htheta.fderiv_eq, fderiv_fun_const, Pi.zero_apply,
+        _root_.zero_apply]
   have had : SimilarityProfile.partialS axial p = 0 := by
-    simp [SimilarityProfile.partialS, haxial.fderiv_eq]
+    simp only [SimilarityProfile.partialS, haxial.fderiv_eq, fderiv_fun_const, Pi.zero_apply,
+        _root_.zero_apply]
   change BaseResidual.stressForce theta axial z = 0
   simp only [BaseResidual.stressForce, SlowResidualMatching.tangentialStressForce,
     LeadingStress.radialDivergence]
@@ -1136,7 +1139,8 @@ theorem stressForce_zero_right (upper : ℝ) (B : ℕ) {z : ProblemStatement.Spa
     (_ * (Real.sqrt (2 * p.2.1) * SimilarityProfile.partialS theta p + 2 * theta p / _))
     (_ * (Real.sqrt (2 * p.2.1) * SimilarityProfile.partialS theta p + 2 * theta p / _))
     (-(Real.sqrt (2 * p.2.1) * SimilarityProfile.partialS axial p + 1 * axial p / _)) = _
-  simp [ht0, ha0, htd, had, AxisymmetricResidual.pack]
+  simp only [AxisymmetricResidual.pack, Fin.isValue, Nat.ofNat_nonneg, Real.sqrt_mul, htd, mul_zero,
+      ht0, zero_div, add_zero, zero_smul, had, ha0, neg_zero]
 
 theorem stressForce_exterior_germ (upper : ℝ) (B : ℕ) {z : ProblemStatement.SpaceTime}
     (ht : z.1 < 1) (hX : NominalConeAssembly.activeRight W < (cartesianChart F.data.h z).2.1) :

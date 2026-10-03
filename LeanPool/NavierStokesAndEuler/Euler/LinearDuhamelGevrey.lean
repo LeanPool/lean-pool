@@ -65,26 +65,34 @@ theorem derivative_recurrence
   have hfreeze : u = (H ∘ a) + (K ∘ q) := funext heq
   have hzero : ‖iteratedFDeriv ℝ 0 C x‖ = 0 := by
     rw [norm_iteratedFDeriv_zero]
-    simp [C]
+    simp only [sub_self, norm_zero, C]
   have hpositive (j : ℕ) : iteratedFDeriv ℝ (j+1) C x = iteratedFDeriv ℝ (j+1) B x := by
     have hCB : C = B - fun _ => B x := rfl
-    rw [hCB, iteratedFDeriv_sub_apply (hB.contDiffAt.of_le (by simp)) contDiffAt_const]
+    rw [hCB, iteratedFDeriv_sub_apply (hB.contDiffAt.of_le (by simp only [Nat.cast_add,
+        Nat.cast_one, WithTop.le_coe_top, ne_eq, WithTop.add_eq_top, WithTop.natCast_ne_top,
+        WithTop.one_ne_top, or_self, not_false_eq_true])) contDiffAt_const]
     simp only [iteratedFDeriv_succ_const, Pi.zero_apply, sub_zero]
-  have hprod := norm_iteratedFDeriv_clm_apply hC hu x (n := n) (by simp)
+  have hprod := norm_iteratedFDeriv_clm_apply hC hu x (n := n) (by simp only [WithTop.le_coe_top,
+      ne_eq, WithTop.natCast_ne_top, not_false_eq_true])
   rw [sum_range_succ'] at hprod
   simp only [hzero, mul_zero, zero_mul, add_zero, hpositive] at hprod
   have hqnorm : ‖iteratedFDeriv ℝ n q x‖ ≤
       ‖iteratedFDeriv ℝ n f x‖ + ‖iteratedFDeriv ℝ n p x‖ := by
     change ‖iteratedFDeriv ℝ n (f+p) x‖ ≤ _
-    rw [iteratedFDeriv_add_apply (hf.contDiffAt.of_le (by simp)) (hp.contDiffAt.of_le (by simp))]
+    rw [iteratedFDeriv_add_apply (hf.contDiffAt.of_le (by simp only [WithTop.le_coe_top, ne_eq,
+        WithTop.natCast_ne_top, not_false_eq_true])) (hp.contDiffAt.of_le (by simp))]
     exact norm_add_le _ _
-  have hH := H.norm_iteratedFDeriv_comp_left (x := x) ha.contDiffAt (n := n) (by simp)
-  have hK := K.norm_iteratedFDeriv_comp_left (x := x) hq.contDiffAt (n := n) (by simp)
+  have hH := H.norm_iteratedFDeriv_comp_left (x := x) ha.contDiffAt (n := n) (by simp only [
+      WithTop.le_coe_top, ne_eq, WithTop.natCast_ne_top, not_false_eq_true])
+  have hK := K.norm_iteratedFDeriv_comp_left (x := x) hq.contDiffAt (n := n) (by simp only [
+      WithTop.le_coe_top, ne_eq, WithTop.natCast_ne_top, not_false_eq_true])
   have hsum : ‖iteratedFDeriv ℝ n u x‖ ≤
       ‖iteratedFDeriv ℝ n (H ∘ a) x‖ + ‖iteratedFDeriv ℝ n (K ∘ q) x‖ := by
     conv_lhs => rw [hfreeze]
-    rw [iteratedFDeriv_add_apply ((H.contDiff.comp ha).contDiffAt.of_le (by simp))
-      ((K.contDiff.comp hq).contDiffAt.of_le (by simp))]
+    rw [iteratedFDeriv_add_apply ((H.contDiff.comp ha).contDiffAt.of_le (by simp only [
+        WithTop.le_coe_top, ne_eq, WithTop.natCast_ne_top, not_false_eq_true]))
+      ((K.contDiff.comp hq).contDiffAt.of_le (by simp only [WithTop.le_coe_top, ne_eq,
+          WithTop.natCast_ne_top, not_false_eq_true]))]
     exact norm_add_le _ _
   exact hsum.trans (add_le_add hH (hK.trans (mul_le_mul_of_nonneg_left
     (hqnorm.trans (add_le_add le_rfl hprod)) (norm_nonneg K))))
@@ -206,15 +214,15 @@ theorem weightedSolution_gevrey
   let M := forwardCost T C A D CB
   have hCT : 0 ≤ C*T := mul_nonneg hC hT
   have hM : 1 ≤ M := by
-    dsimp [M,forwardCost]
+    dsimp only [forwardCost, M]
     linarith only [mul_nonneg hC hA, mul_nonneg hCT (add_nonneg hD hCB)]
   have hR0 : 0 ≤ R := le_trans
     (mul_nonneg (mul_nonneg (by norm_num) (le_trans zero_le_one hM)) (by linarith only [hRc])) hR
   have htop : C*A + C*T*D ≤ M := by
-    dsimp [M,forwardCost]
+    dsimp only [forwardCost, M]
     linarith only [mul_nonneg hCT hCB]
   have hcoef : C*T*CB ≤ M := by
-    dsimp [M,forwardCost]
+    dsimp only [forwardCost, M]
     linarith only [mul_nonneg hC hA, mul_nonneg hCT hD]
   apply triangular_inverse_majorant M Rc R hM hRc hR d
     (fun k => majorant R d k) (fun k => ‖iteratedFDeriv ℝ k u x‖) (fun _ => le_rfl) _ n
@@ -231,13 +239,15 @@ theorem weightedSolution_gevrey
       (𝕜 := ℝ) (E := P) (F := C(Icc (0 : ℝ) T,E →L[ℝ] E))
       (G := C(Icc (0 : ℝ) T,E) →L[ℝ] C(Icc (0 : ℝ) T,E))
       (coefficientMap (K := Icc (0 : ℝ) T) (E := E) (F := E))
-      (x := x) hB.contDiffAt (n := j+1) (by simp)
+      (x := x) hB.contDiffAt (n := j+1) (by simp only [Nat.cast_add, Nat.cast_one,
+          WithTop.le_coe_top, ne_eq, WithTop.add_eq_top, WithTop.natCast_ne_top, WithTop.one_ne_top,
+          or_self, not_false_eq_true])
     exact hl.trans ((mul_le_mul_of_nonneg_right coefficientMap_norm (norm_nonneg _)).trans
       (by simpa only [one_mul] using hcoeff j x))
   have hsum : (∑ j ∈ Finset.range k, (k.choose (j+1) : ℝ) *
       ‖iteratedFDeriv ℝ (j+1) (fun y => multiplier (B y)) x‖ *
       ‖iteratedFDeriv ℝ (k-(j+1)) u x‖) ≤ CB*S := by
-    dsimp [S]
+    dsimp only [S]
     rw [mul_sum]
     apply sum_le_sum
     intro j _

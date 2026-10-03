@@ -158,8 +158,9 @@ theorem unit_period_negative {V : Type*} {times : Set ℝ} {g : SpaceTime → V}
 /-- The residual definition reduces to zero for zero velocity and pressure. -/
 @[simp] theorem zero_residual (t : ℝ) (x : Space) :
     navierStokesResidual (fun _ => 0) (fun _ => 0) t x = 0 := by
-  simp [navierStokesResidual, temporalDerivative, advection, spatialLaplacian,
-    spatialDerivative, pressureGradient]
+  simp only [navierStokesResidual, temporalDerivative, fderiv_fun_const, Pi.zero_apply, zero_apply,
+      advection, spatialDerivative, add_zero, spatialLaplacian, Finset.sum_const_zero, sub_self,
+      pressureGradient, zero_smul]
 
 /-- The zero force satisfies the explicit support condition. -/
 theorem zero_force_time_support : CompactFutureTimeSupport (fun _ => 0) := by

@@ -40,11 +40,11 @@ theorem delta_mul_rpow_tendsto_zero (p : ℝ) :
       (_root_.tendsto_rpow_atTop (by norm_num [theta] : 0 < theta/2))
   apply h.congr'
   filter_upwards [eventually_gt_atTop (0 : ℝ)] with k hk
-  dsimp [Function.comp_def, delta]
+  dsimp only [Function.comp_apply, delta]
   rw [sqrt_expansion_eq k hk.le, ← Real.rpow_mul hk.le]
   have hp : theta/2*(p/(theta/2))=p := by field_simp [theta]
   rw [hp]
-  simp
+  simp only [neg_mul, one_mul]
 
 /-- Any fixed source multiplier is eventually smaller than an arbitrary
 fixed inverse power of the frequency. -/
@@ -52,7 +52,7 @@ theorem correction_eventually_lt_inverse_power (C p : ℝ) :
     ∀ᶠ k : ℝ in atTop, C*delta (expansion k) < k^(-p) := by
   have h := (delta_mul_rpow_tendsto_zero p).const_mul C
   have hsmall : ∀ᶠ k : ℝ in atTop, C*(k^p*delta (expansion k)) < 1 :=
-    h.eventually (Iio_mem_nhds (by simp : C*0 < (1 : ℝ)))
+    h.eventually (Iio_mem_nhds (by simp only [mul_zero, zero_lt_one] : C*0 < (1 : ℝ)))
   filter_upwards [hsmall,eventually_gt_atTop (0 : ℝ)] with k he hk
   rw [Real.rpow_neg hk.le]
   rw [← one_div]

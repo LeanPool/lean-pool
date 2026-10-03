@@ -125,10 +125,12 @@ theorem iteratedFDeriv_coordinate_word (n : ℕ) (w : Fin n → Fin 3)
     iteratedFDeriv ℝ n h x (fun i => direction (w i)) =
       wordDerivative (List.ofFn w) h x := by
   induction n generalizing x with
-  | zero => simp [wordDerivative]
+  | zero => simp only [iteratedFDeriv_zero_apply, List.ofFn_zero, wordDerivative]
   | succ n ih =>
     have hd : DifferentiableAt ℝ (iteratedFDeriv ℝ n h) x :=
-      ((hh.iteratedFDeriv_right (m := ∞) (i := n) (by simp)).differentiable
+      ((hh.iteratedFDeriv_right (m := ∞) (i := n) (by simp only [WithTop.le_coe_top, ne_eq,
+          WithTop.add_eq_top, WithTop.coe_ne_top, WithTop.natCast_ne_top, or_self,
+          not_false_eq_true])).differentiable
         (by simp)).differentiableAt
     rw [hd.iteratedFDeriv_succ_apply_left']
     have he : (fun y => iteratedFDeriv ℝ n h y
@@ -143,7 +145,8 @@ theorem iteratedFDeriv_component (n : ℕ) (u : Space → Space)
     (hu : ContDiff ℝ ∞ u) (x : Space) (m : Fin n → Space) (j : Fin 3) :
     iteratedFDeriv ℝ n (fun y => u y j) x m = (iteratedFDeriv ℝ n u x m) j := by
   have he := (EuclideanSpace.proj j : Space →L[ℝ] ℝ).iteratedFDeriv_comp_left
-    (hu.contDiffAt (x := x)) (i := n) (by simp)
+    (hu.contDiffAt (x := x)) (i := n) (by simp only [WithTop.le_coe_top, ne_eq,
+        WithTop.natCast_ne_top, not_false_eq_true])
   exact congrArg (fun A : Space [×n]→L[ℝ] ℝ => A m) he
 
 /-- Every coordinate evaluation of the Fréchet tensor is in L². -/
@@ -345,7 +348,8 @@ theorem uniform_energy_of_compact_support
     funext x
     by_cases hx : x ∈ K
     · simp only [indicator_of_mem hx]
-    · simp [indicator_of_notMem hx, hsupport t ht x hx]
+    · simp only [hsupport t ht x hx, norm_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
+        zero_pow, indicator_of_notMem hx]
   rw [hind, integral_indicator hK.measurableSet]
   apply (le_abs_self _).trans
   rw [← Real.norm_eq_abs]

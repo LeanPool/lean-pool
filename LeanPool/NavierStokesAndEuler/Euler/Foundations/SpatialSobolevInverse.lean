@@ -115,7 +115,7 @@ theorem derivative_operator_eq (A B : SmoothCoefficient period) (a : LiftTangent
       (fun x => translatedCoefficientDerivative_bound period a A.coefficient A.firstBound
         A.norm_first x) f, B.operator_ae f] with x hx hy
   rw [hx, hy, hB]
-  simp [translatedCoefficientDerivative, fieldDerivative]
+  simp only [translatedCoefficientDerivative, zero_smul, fieldDerivative]
 
 theorem operator_translation_hasDerivAt (A : SmoothCoefficient period) (a : LiftTangent) :
     HasDerivAt (fun t => coefficientOperator
@@ -169,7 +169,7 @@ theorem product_hasDerivAt (A B : SmoothCoefficient period) (a : LiftTangent)
       A.bound (fun x => A.norm_bound (x + translationPath period a 0)) u,
       A.operator_ae u] with x hx hy
     rw [hx, hy]
-    simp [translatedCoefficient]
+    simp only [translatedCoefficient, translationPath_zero, add_zero]
   simp only [A.derivative_operator_eq B a hB, hcov, hop0] at hprod
   simp only [translationPath_zero, translation_zero] at hprod
   exact hprod.congr_deriv (add_comm _ _)
@@ -265,7 +265,7 @@ def add {n : ℕ} {f g : LiftL2 period}
   | .succ df Jd hJ, .succ dg Kd hK =>
     .succ (fun i => df i + dg i) (fun i => (Jd i).add (Kd i)) (fun i => by
       convert (hJ i).add (hK i) using 1
-      first | rfl | (funext t; simp))
+      first | rfl | (funext t; simp only [map_add, Pi.add_apply]))
 
 /-- Subtraction preserves the actual strong derivatives recorded in a spatial jet. -/
 def sub {n : ℕ} {f g : LiftL2 period}
@@ -276,7 +276,7 @@ def sub {n : ℕ} {f g : LiftL2 period}
   | .succ df Jd hJ, .succ dg Kd hK =>
     .succ (fun i => df i - dg i) (fun i => (Jd i).sub (Kd i)) (fun i => by
       convert (hJ i).sub (hK i) using 1
-      first | rfl | (funext t; simp))
+      first | rfl | (funext t; simp only [map_sub, Pi.sub_apply]))
 
 theorem add_norm_le {n : ℕ} {f g : LiftL2 period}
     (J : SpatialJet period directions n f) (K : SpatialJet period directions n g) :
@@ -553,7 +553,8 @@ theorem word_hasDerivAt {s n : ℕ} {f : LiftL2 period}
   | zero =>
     cases J with
     | zero => omega
-    | succ df lower hd => simpa using hd i
+    | succ df lower hd => simpa only [word_zero, Nat.reduceAdd, word_succ, Fin.reduceLast,
+        Fin.isValue, Fin.cons_zero] using hd i
   | succ n ih =>
     cases J with
     | zero => omega
@@ -573,7 +574,7 @@ def wordSnocEquiv (n : ℕ) : (Fin (n + 1) → Fin 4) ≃ Fin 4 × (Fin n → Fi
   toFun w := (w (Fin.last n), Fin.init w)
   invFun v := Fin.snoc v.2 v.1
   left_inv w := Fin.snoc_init_self w
-  right_inv v := by simp
+  right_inv v := by simp only [Fin.snoc_last, Fin.init_snoc, Prod.mk.eta]
 
 /-- The sum over words of positive length is the sum over final directions and initial words. -/
 theorem sum_word_succ {s n : ℕ} {f : LiftL2 period} (df : Fin 4 → LiftL2 period)
@@ -594,7 +595,8 @@ theorem sobolevNorm_eq_sum_words {s : ℕ} {f : LiftL2 period}
     (J : SpatialJet period directions s f) :
     J.sobolevNorm = ∑ n ∈ Finset.range (s + 1), ∑ w : Fin n → Fin 4, ‖J.word w‖ := by
   induction s generalizing f with
-  | zero => cases J; simp [sobolevNorm]
+  | zero => cases J; simp only [sobolevNorm, zero_add, Finset.range_one, Finset.sum_singleton,
+      Finset.univ_unique, word_zero, Finset.sum_const, Finset.card_singleton, one_smul]
   | succ s ih =>
     cases J with
     | succ df lower hd =>

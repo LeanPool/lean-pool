@@ -168,7 +168,7 @@ theorem first_five_weighted_terms_eq_quartic (χ Y : ℝ) :
 def leadingAxial (Z L Y : ℝ) : ℝ := -Y * Z / (2 * L)
 
 theorem leadingAxial_zero (Z L : ℝ) : leadingAxial Z L 0 = 0 := by
-  simp [leadingAxial]
+  simp only [leadingAxial, neg_zero, zero_mul, zero_div]
 
 theorem hasDerivAt_leadingAxial (Z L Y : ℝ) :
     HasDerivAt (leadingAxial Z L) (-Z / (2 * L)) Y := by
@@ -230,7 +230,8 @@ theorem term_norm_le (k n : ℕ) (t R : ℝ) (hR : 0 ≤ R) (ht : |t| ≤ R) :
   calc
     ‖term k n t‖ = |t| ^ n /
         ((n.factorial : ℝ) * ((n + k).factorial : ℝ)) := by
-      simp [term, Real.norm_eq_abs]
+      simp only [term, norm_div, norm_pow, norm_neg, Real.norm_eq_abs, norm_mul,
+          RCLike.norm_natCast]
     _ ≤ R ^ n / ((n.factorial : ℝ) * ((n + k).factorial : ℝ)) := by
       gcongr
     _ ≤ R ^ n / (n.factorial : ℝ) := by
@@ -276,9 +277,9 @@ theorem bessel_eq_constant_add_tail (k : ℕ) (t : ℝ) :
 theorem hasDerivAt_bessel (k : ℕ) (t : ℝ) :
     HasDerivAt (bessel k) (-bessel (k + 1) t) t := by
   let R : ℝ := |t| + 1
-  have hR : 0 < R := by dsimp [R]; positivity
+  have hR : 0 < R := by dsimp only [R]; positivity
   have ht : t ∈ Ioo (-R) R := by
-    dsimp [R]
+    dsimp only [R]
     constructor
     · linarith only [neg_abs_le t]
     · linarith only [le_abs_self t]
@@ -365,7 +366,8 @@ theorem bessel_ode (k : ℕ) (t : ℝ) :
 
 theorem bessel_zero (k : ℕ) : bessel k 0 = 1 / (k.factorial : ℝ) := by
   rw [bessel_eq_constant_add_tail]
-  simp [term]
+  simp only [one_div, term, neg_zero, ne_eq, Nat.add_eq_zero_iff, one_ne_zero, and_false,
+      not_false_eq_true, zero_pow, zero_div, tsum_zero, add_zero]
 
 /-- The leading regular angular profile in the manuscript's scaled radius. -/
 def profile (χ Y : ℝ) : ℝ := bessel 1 ((χ / 2) * Y)
@@ -380,7 +382,8 @@ theorem profile_eq_tsum (χ Y : ℝ) :
   ring
 
 theorem profile_zero (χ : ℝ) : profile χ 0 = 1 := by
-  simp [profile, bessel_zero]
+  simp only [profile, mul_zero, bessel_zero, Nat.factorial_one, Nat.cast_one, ne_eq, one_ne_zero,
+      not_false_eq_true, div_self]
 
 theorem hasDerivAt_profile (χ Y : ℝ) :
     HasDerivAt (profile χ) (-(χ / 2) * bessel 2 ((χ / 2) * Y)) Y := by
@@ -517,10 +520,11 @@ theorem alternating_tail_nonneg (k j : ℕ) (hj : 1 ≤ j)
       ((summable_nat_add_iff (f := fun n : ℕ => ‖term k n (-t)‖) j).mpr
         (summable_norm_term k (-t)))
     intro n
-    simp
+    simp only [norm_mul, norm_pow, norm_neg, norm_one, one_pow, Real.norm_eq_abs, one_mul,
+        Std.le_refl]
   have hb := Antitone.alternating_series_le_tendsto hs.hasSum.tendsto_sum_nat
     (magnitude_tail_antitone k j hj t ht0 ht) 0
-  simpa using hb
+  simpa only [ge_iff_le, mul_zero, Finset.range_zero, Finset.sum_empty] using hb
 
 /-- Every odd-length truncation with at least one term is an upper bound
 on the actual series on this interval. -/
@@ -545,7 +549,9 @@ theorem bessel_le_odd_partial_sum (k j : ℕ) (hj : 1 ≤ j) (hodd : Odd j)
 theorem bessel_one_le_one (t : ℝ) (ht0 : 0 ≤ t) (ht : t ≤ 4) :
     bessel 1 t ≤ 1 := by
   have h := bessel_le_odd_partial_sum 1 1 (by norm_num) (by norm_num) t ht0 ht
-  simpa [Finset.sum_range_succ, term] using h
+  simpa only [ge_iff_le, Finset.range_one, term, Finset.sum_singleton, pow_zero, Nat.factorial_zero,
+      Nat.cast_one, zero_add, Nat.factorial_one, mul_one, ne_eq, one_ne_zero, not_false_eq_true,
+      div_self] using h
 
 /-- The quartic upper bound controls the actual factorial-square series. -/
 theorem bessel_zero_lt_neg_eighteen_hundredths

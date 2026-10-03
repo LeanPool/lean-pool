@@ -157,7 +157,10 @@ theorem absoluteCancelledTimeKernel_le {K : ℝ → Space → ℝ}
     absoluteCancelledTimeKernel K φ x y ≤
       (C * max (2 * L) 1) * (‖x - y‖ ^ (-3 : ℝ) * min (‖x - y‖ / R) 1) := by
   by_cases hxy : x = y
-  · simp [absoluteCancelledTimeKernel, hxy, cutoffSquareDifference_self]
+  · simp only [absoluteCancelledTimeKernel, hxy, sub_self, cutoffSquareDifference_self, mul_zero,
+      abs_zero, integral_zero, norm_zero, Real.rpow_neg_ofNat, Int.reduceNeg, zpow_neg, zpow_ofNat,
+      ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, inv_zero, zero_div, zero_le_one,
+      inf_of_le_left, Std.le_refl]
   have hc : 0 ≤ C * ‖x - y‖ ^ (-3 : ℝ) := by positivity
   calc
     absoluteCancelledTimeKernel K φ x y =
@@ -283,8 +286,9 @@ theorem partial_heatKernel {s : ℝ} (hs : 0 < s) (i : Fin 3) (z : Space) :
     partialD i (heatKernel s) z = -(z i / (2 * s)) * heatKernel s z := by
   unfold partialD NavierStokes.SolutionDifference.spatialPartial
   rw [(hasFDerivAt_heatKernel hs z).fderiv]
-  simp [NavierStokes.ProblemStatement.coordinateVector,
-    EuclideanSpace.inner_single_right]
+  simp only [neg_smul, NavierStokes.ProblemStatement.coordinateVector, neg_apply, smul_apply,
+      coe_innerSL_apply, EuclideanSpace.inner_single_right, conj_trivial, one_mul, smul_eq_mul,
+      neg_mul, neg_inj]
   ring
 
 theorem differentiable_heatKernel {s : ℝ} (hs : 0 < s) :
@@ -307,8 +311,8 @@ theorem heatKernelSecond_eq_partial {s : ℝ} (hs : 0 < s)
     convert! (innerSL ℝ (NavierStokes.ProblemStatement.coordinateVector j)).hasFDerivAt
       (x := z) using 1
     ext x
-    simp [NavierStokes.ProblemStatement.coordinateVector,
-      EuclideanSpace.inner_single_left]
+    simp only [NavierStokes.ProblemStatement.coordinateVector, coe_innerSL_apply,
+        EuclideanSpace.inner_single_left, conj_trivial, one_mul]
   have hg : HasFDerivAt (fun x : Space => -(x j / (2 * s)))
       ((-((2 * s)⁻¹)) • innerSL ℝ (NavierStokes.ProblemStatement.coordinateVector j)) z := by
     convert! hc.const_mul (-((2 * s)⁻¹)) using 1

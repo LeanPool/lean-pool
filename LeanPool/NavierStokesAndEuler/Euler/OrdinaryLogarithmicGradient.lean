@@ -75,7 +75,7 @@ theorem derivative_high_remainder (A : SmoothL2Field V) (j : Fin 3) (x : Space)
     rw [(hd t ht).deriv, norm_smul, Real.norm_of_nonneg (by norm_num : (0:ℝ) ≤ 1/4)]
     have h := mul_le_mul_of_nonneg_left (secondAverage_directional_bound ht.1 A j x)
       (by norm_num : (0:ℝ) ≤ 1/4)
-    exact h.trans_eq (by dsimp [B]; ring)
+    exact h.trans_eq (by dsimp only [B]; ring)
   have hbi : IntervalIntegrable B volume 0 ε :=
     ((intervalIntegral.intervalIntegrable_rpow' (by norm_num : (-1:ℝ) < -(3:ℝ)/4)).const_mul
       (3/4:ℝ)).mul_const ‖A.jetLp 3‖
@@ -171,7 +171,7 @@ theorem derivative_elliptic_middle (A G H : SmoothL2Field ℝ) (a b j : Fin 3)
     (fun t ht => (hd t ht).differentiableAt.differentiableWithinAt)
     (Eventually.of_forall hb) hbi
   have he : (∫ t in ε..(1:ℝ), B t) = middleCost*W*(-Real.log ε) := by
-    dsimp [B]
+    dsimp only [B]
     rw [intervalIntegral.integral_mul_const, intervalIntegral.integral_const_mul,
       integral_inv_of_pos hε (by norm_num)]
     simp only [one_div, Real.log_inv]
@@ -238,7 +238,7 @@ theorem optimize (X c L W H : ℝ) (hc : 0 ≤ c) (hL : 0 ≤ L) (hH : 0 ≤ H)
   let A := exp 1+H
   have hE : 1 < exp (1 : ℝ) := by
     simpa only [exp_zero] using exp_lt_exp.mpr (by norm_num : (0 : ℝ) < 1)
-  have hA1 : 1 < A := by dsimp [A]; linarith only [hH, hE]
+  have hA1 : 1 < A := by dsimp only [A]; linarith only [hH, hE]
   have hA0 : 0 < A := zero_lt_one.trans hA1
   have hl : 0 < log A := log_pos hA1
   let ε := exp (-4*log A)
@@ -248,7 +248,7 @@ theorem optimize (X c L W H : ℝ) (hc : 0 ≤ c) (hL : 0 ≤ L) (hH : 0 ≤ H)
     simpa only [ε,exp_zero] using exp_lt_exp.mpr hneg
   have heLog : -log ε=4*log A := by simp only [ε,log_exp]; ring
   have hePow : ε^(1/4 : ℝ)=A⁻¹ := by
-    dsimp [ε]
+    dsimp only [ε]
     rw [rpow_def_of_pos (exp_pos _),log_exp,
       show (-4*log A)*(1/4 : ℝ) = -log A by ring,exp_neg,exp_log hA0]
   have hHA : H ≤ A := le_add_of_nonneg_left (exp_pos 1).le
@@ -365,7 +365,7 @@ theorem logarithmic_gradient_bound (A : SmoothL2Field Space)
     (Real.one_le_exp (by norm_num : (0:ℝ) ≤ 1)).trans (le_add_of_nonneg_right hH0)
   have hlog : 0 ≤ Real.log (Real.exp 1+tensorNorm 3 A) := Real.log_nonneg harg
   let K : ℝ := 4*splitCost*(1+‖A.toLp‖+W*Real.log (Real.exp 1+tensorNorm 3 A))
-  have hK : 0 ≤ K := by dsimp [K]; positivity [splitCost_nonneg]
+  have hK : 0 ≤ K := by dsimp only [K]; positivity [splitCost_nonneg]
   have hcomponent (i : Fin 3) (y : Space) :
       ‖(componentField (vorticityField A) i).field y‖ ≤ W := by
     rw [componentField_apply]
@@ -384,7 +384,7 @@ theorem logarithmic_gradient_bound (A : SmoothL2Field Space)
     apply mul_le_mul_of_nonneg_left _ (mul_nonneg (by norm_num) splitCost_nonneg)
     linarith only [componentField_toLp_norm A j]
   have h := operator_norm_le_of_entries (fderiv ℝ A.field x) K hK hentries
-  exact h.trans_eq (by unfold logarithmicGradientConstant; dsimp [K]; ring)
+  exact h.trans_eq (by unfold logarithmicGradientConstant; dsimp only [K]; ring)
 
 /-- This form discharges the entire logarithmic-estimate hypothesis of
 the ordinary Euler continuation theorem. -/

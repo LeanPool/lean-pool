@@ -307,15 +307,22 @@ theorem jetSystem_iff_expanded {h lam C r eta : K} (hr : r ≠ 0)
       simp_all
     ext i
     fin_cases i
-    · simp [radialJetVector, diagonal, jetVector]
-    · simp [radialJetVector, diagonal, jetVector]
-    · simpa [radialJetVector, diagonal, jetVector] using (average_row_iff hr _ _ _).mpr hk
-    · simp [radialJetVector, diagonal, jetVector, hp]
-    · simpa [radialJetVector, diagonal, jetVector] using
+    · simp only [radialJetVector, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero, diagonal,
+        zero_div, jetVector, zero_mul, add_zero, Nat.succ_eq_add_one, Nat.reduceAdd, neg_mul]
+    · simp only [radialJetVector, Fin.mk_one, Fin.isValue, Matrix.cons_val_one,
+        Matrix.cons_val_zero, diagonal, zero_div, jetVector, zero_mul, add_zero,
+        Nat.succ_eq_add_one, Nat.reduceAdd, neg_mul]
+    · simpa only [radialJetVector, Fin.reduceFinMk, Matrix.cons_val, diagonal, jetVector,
+        Nat.succ_eq_add_one, Nat.reduceAdd, neg_mul] using (average_row_iff hr _ _ _).mpr hk
+    · simp only [radialJetVector, hp, Fin.reduceFinMk, Matrix.cons_val, diagonal, zero_div,
+        jetVector, zero_mul, add_zero, Nat.succ_eq_add_one, Nat.reduceAdd, neg_mul]
+    · simpa only [radialJetVector, Fin.reduceFinMk, Matrix.cons_val, diagonal, jetVector,
+        Nat.succ_eq_add_one, Nat.reduceAdd, neg_mul] using
         (second_row_iff hr phi.radial phi.radial2 (angularRHS h lam eta (r ^ 2) b s phi u k) 3).mpr
           (by convert! hphi using 1; norm_num)
     · rw [hpjet]
-      simpa [radialJetVector, diagonal, jetVector] using
+      simpa only [radialJetVector, Fin.reduceFinMk, Matrix.cons_val, diagonal, one_div, jetVector,
+          Nat.succ_eq_add_one, Nat.reduceAdd, neg_mul] using
         (second_row_iff hr u.radial u.radial2 (axialRHS h lam eta (r ^ 2) b s phi u k p) 1).mpr
           (by convert! hu using 1; norm_num)
 
@@ -520,7 +527,8 @@ theorem hasDerivAt_squareProfile {f : InnerProfile} {r eta : ℝ}
   have hc := hf.hasFDerivAt.comp_hasDerivAt r
     (((hasDerivAt_id r).pow 2).prodMk (hasDerivAt_const r eta))
   convert! hc using 1
-  simp [fderiv_inner_apply]
+  simp only [Nat.cast_ofNat, id_eq, Nat.add_one_sub_one, pow_one, mul_one, fderiv_inner_apply,
+      mul_zero, add_zero]
   ring
 
 theorem hasDerivAt_parameterProfile {f : InnerProfile} {X eta : ℝ}
@@ -528,7 +536,7 @@ theorem hasDerivAt_parameterProfile {f : InnerProfile} {X eta : ℝ}
     HasDerivAt (fun z => f (X, z)) (partialEta f (X, eta)) eta := by
   have hc := hf.hasFDerivAt.comp_hasDerivAt eta
     ((hasDerivAt_const eta X).prodMk (hasDerivAt_id eta))
-  simpa [fderiv_inner_apply, Function.comp_def] using hc
+  simpa only [Function.comp_def, fderiv_inner_apply, mul_zero, mul_one, zero_add] using hc
 
 theorem hasDerivAt_squareProfile_radial {f : InnerProfile} {r eta : ℝ}
     (hf : ContDiffAt ℝ 2 f (r ^ 2, eta)) :
@@ -620,7 +628,8 @@ theorem precedingDiffusion_congr (h power : ℝ) {F G : ℕ → InnerProfile} {n
     precedingDiffusion h power F n = precedingDiffusion h power G n := by
   cases n with
   | zero => rfl
-  | succ k => simp [precedingDiffusion, hFG k (Nat.lt_succ_self k)]
+  | succ k => simp only [precedingDiffusion, Nat.add_eq_zero_iff, one_ne_zero, and_false,
+      ↓reduceIte, add_tsub_cancel_right, hFG k (Nat.lt_succ_self k)]
 
 /-- Fully specified source from lower-order profile jets and a supplied
 regular representative of the preceding `Ω/X`. -/
@@ -710,9 +719,11 @@ theorem averageDefect_smooth (Ω : ProfileHistories.RadialDomain) {u : InnerProf
 theorem averageDefect_radial (Ω : ProfileHistories.RadialDomain) {u : InnerProfile}
     (hu : ContDiffOn ℝ ∞ u Ω.carrier) {w : InnerPoint} (hw : w ∈ Ω.carrier) :
     w.1 * (partialX u w + partialX (averageDefect u) w) + averageDefect u w = 0 := by
-  have hua := (hu.contDiffAt (Ω.isOpen.mem_nhds hw)).differentiableAt (by simp)
+  have hua := (hu.contDiffAt (Ω.isOpen.mem_nhds hw)).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have haa := ((ProfileHistories.average_smooth Ω hu).contDiffAt
-    (Ω.isOpen.mem_nhds hw)).differentiableAt (by simp)
+    (Ω.isOpen.mem_nhds hw)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true])
   have hdx : partialX (averageDefect u) w =
       partialX (ProfileHistories.average u) w - partialX u w := by
     change (fderiv ℝ (fun v => ProfileHistories.average u v - u v) w) (1, 0) = _
@@ -741,9 +752,11 @@ theorem betaValue_averageDefect (Ω : ProfileHistories.RadialDomain) {u : InnerP
     (hw : w ∈ Ω.carrier) (hX : w.1 ≠ 0) :
     betaValue h lam w.2 (actualJet u w) (actualJet (averageDefect u) w) =
       SlowDivergence.radialFlux h lam u w / w.1 := by
-  have hua := (hu.contDiffAt (Ω.isOpen.mem_nhds hw)).differentiableAt (by simp)
+  have hua := (hu.contDiffAt (Ω.isOpen.mem_nhds hw)).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have haa := ((ProfileHistories.average_smooth Ω hu).contDiffAt
-    (Ω.isOpen.mem_nhds hw)).differentiableAt (by simp)
+    (Ω.isOpen.mem_nhds hw)).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+        ENat.top_ne_zero, not_false_eq_true])
   have hde : partialEta (averageDefect u) w =
       partialEta (ProfileHistories.average u) w - partialEta u w := by
     change (fderiv ℝ (fun v => ProfileHistories.average u v - u v) w) (0, 1) = _
@@ -774,7 +787,7 @@ theorem averageDefect_unique (Ω : ProfileHistories.RadialDomain) {u k : InnerPr
     {w : InnerPoint} (hw : w ∈ Ω.carrier) : k w = averageDefect u w := by
   by_cases hX : w.1 = 0
   · have hk0 := hrow w hw
-    have hw0 : w = (0, w.2) := by ext <;> simp [hX]
+    have hw0 : w = (0, w.2) := by ext <;> simp only [hX]
     rw [hw0] at hk0 ⊢
     simpa [averageDefect, ProfileHistories.average_at_axis] using hk0
   have hd : ∀ x ∈ uIcc (0 : ℝ) w.1,
@@ -872,7 +885,10 @@ theorem sourceField_parity (h C : ℂ) (F : CoefficientData) :
     ForcingParity (sourceField h C F) := by
   intro r z i
   simp only [sourceField, neg_sq, Complex.ofReal_neg]
-  fin_cases i <;> simp [forcing, paritySign]
+  fin_cases i <;> simp only [forcing, mul_neg, neg_mul, even_two, Even.neg_pow, Fin.zero_eta,
+      Fin.isValue, Matrix.cons_val_zero, paritySign, Nat.ofNat_pos, ↓reduceIte, mul_zero,
+      Fin.mk_one, Matrix.cons_val_one, Nat.one_lt_ofNat, Fin.reduceFinMk, Matrix.cons_val,
+      Nat.reduceLT, Nat.lt_add_one, one_mul, lt_self_iff_false, neg_neg]
 
 private theorem data_square_contDiffAt {n : WithTop ℕ∞} {F : CoefficientData}
     {w : ℝ × ℂ} (hF : ∀ i, ContDiffAt ℝ n (F i) (w.1 ^ 2, w.2)) (i : Fin 11) :
@@ -1207,7 +1223,11 @@ theorem forcing_ofReal (h C r eta : ℝ) (s : SourceJet ℝ) :
       fun i => ((forcing h C r eta s i : ℝ) : ℂ) := by
   ext i
   fin_cases i <;>
-    simp [forcing, complexSource, pressureSource, inverseSquare, ell]
+    simp only [forcing, pressureSource, inverseSquare, complexSource, ell, Fin.zero_eta,
+        Fin.isValue, Matrix.cons_val_zero, Complex.ofReal_zero, Fin.mk_one, Matrix.cons_val_one,
+        Fin.reduceFinMk, Matrix.cons_val, Complex.ofReal_mul, Complex.ofReal_ofNat,
+        Complex.ofReal_sub, Complex.ofReal_inv, Complex.ofReal_pow, Complex.ofReal_div,
+        Complex.ofReal_one]
 
 theorem diagonal_ofReal (i : Fin 6) :
     (diagonal i : ℂ) = ((diagonal i : ℝ) : ℂ) := by
@@ -1220,7 +1240,8 @@ theorem matrixRHS_realPart (h lam C r eta : ℝ) (b : BaseJet ℝ) (s : SourceJe
       (complexBase b) (complexSource s) w v i).re =
     matrixRHS h lam C r eta b s (fun j => (w j).re) (fun j => (v j).re) i := by
   simp only [matrixRHS, A0_ofReal, A1_ofReal, forcing_ofReal, Pi.add_apply, Complex.add_re]
-  simp [Matrix.mulVec, dotProduct, Matrix.map, Complex.mul_re]
+  simp only [Matrix.mulVec, dotProduct, Matrix.map, Matrix.of_apply, Complex.re_sum, Complex.mul_re,
+      Complex.ofReal_re, Complex.ofReal_im, zero_mul, sub_zero]
 
 /-- Real trace, given by `(W r (eta : ℂ) i).re`. -/
 noncomputable def realTrace (W : Field) (r eta : ℝ) (i : Fin 6) : ℝ :=

@@ -91,7 +91,7 @@ omit [CompactSpace K] in
       ZeroHom.toFun_eq_coe,
     AddMonoidHom.toZeroHom_coe, ContinuousMap.coe_sum, Finset.sum_apply]
   change (∑ j : ι, Pi.single j (p j t) i) = p i t
-  simp [Pi.single_apply]
+  simp only [Pi.single_apply, Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte]
 
 end Paths
 end EulerHilbertProductSubspace

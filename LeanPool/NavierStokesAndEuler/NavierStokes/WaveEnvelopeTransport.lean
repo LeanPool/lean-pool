@@ -47,7 +47,8 @@ theorem native_coordinate_lattice (g : Geometry) (k : Frequency) (Y : Plane) :
     g.center + g.basis (g.coordinates k Y) =
       TorusAverages.latticePoint (-k) + coverPower g.gap Y := by
   have hneg : TorusAverages.latticePoint (-k) = -TorusAverages.latticePoint k := by
-    ext <;> simp [TorusAverages.latticePoint]
+    ext <;> simp only [TorusAverages.latticePoint, Prod.fst_neg, Int.cast_neg, Prod.snd_neg,
+        Prod.neg_mk]
   rw [Geometry.coordinates, ContinuousLinearEquiv.apply_symm_apply, hneg]
   abel
 
@@ -192,7 +193,7 @@ theorem separated_bandGeometry (B : Plane ≃L[ℝ] Plane) (h : ℝ) (n gap : �
       center + scaledBasis B _ _ z
     rw [scaledBasis_apply, add_assoc, ← map_add]
     congr 2
-    ext <;> simp
+    ext <;> simp only [Prod.mk_add_mk, zero_add, add_sub_cancel]
 
 theorem exists_separated_native_rectangle (B : Plane ≃L[ℝ] Plane) :
     ∃ r : ℝ, 0 < r ∧ ∀ h : ℝ, ∀ n gap : ℕ, ∀ center : Plane,
@@ -200,7 +201,7 @@ theorem exists_separated_native_rectangle (B : Plane ≃L[ℝ] Plane) :
   let M := ‖(B : Plane →L[ℝ] Plane)‖
   let r := 1 / (8 * (M + 1))
   have hM : 0 ≤ M := norm_nonneg _
-  have hr : 0 < r := by dsimp [r]; positivity
+  have hr : 0 < r := by dsimp only [r]; positivity
   refine ⟨r, hr, fun h n gap center => separated_bandGeometry B h n gap center
     (R := 2 * r) (by linarith only [hr]) (by linarith only [hr]) ?_⟩
   change M * (2 * (1 / (8 * (M + 1)))) < 1 / 2
@@ -232,18 +233,20 @@ theorem copyCell_locallyFinite (g : Geometry) (r L : ℝ) :
   let κ : Plane → ℝ := (rectangle r L).indicator (fun _ => 1)
   have hκ : HasCompactSupport κ :=
     HasCompactSupport.intro' (K := rectangle r L) (isCompact_Icc.prod isCompact_Icc)
-      (isClosed_Icc.prod isClosed_Icc) (fun z hz => by simp [κ, hz])
+      (isClosed_Icc.prod isClosed_Icc) (fun z hz => by simp only [hz, not_false_eq_true,
+          indicator_of_notMem, κ])
   intro z
   obtain ⟨s, hs⟩ := g.finite_copy_cutoffs hκ (‖z.2‖ + 1)
   refine ⟨{y : P × Plane | ‖y.2‖ < ‖z.2‖ + 1},
-    (isOpen_lt continuous_snd.norm continuous_const).mem_nhds (by simp), ?_⟩
+    (isOpen_lt continuous_snd.norm continuous_const).mem_nhds (by simp only [mem_ofPred_eq,
+        lt_add_iff_pos_right, zero_lt_one]), ?_⟩
   apply s.finite_toSet.subset
   intro k hk
   obtain ⟨y, hy, hnorm⟩ := hk
   by_contra hnot
   have hh := hs y.2 hnorm.le k hnot
   change g.coordinates k y.2 ∈ rectangle r L at hy
-  simp [κ, hy] at hh
+  simp only [hy, indicator_of_mem, one_ne_zero, κ] at hh
 
 /-- Coefficients may differ in every native copy. This is an actual sum
 of common-cover fields, with no substitution of a native-periodic source. -/
@@ -351,7 +354,8 @@ theorem grouped_waveClass (s : StripData P) (g : ℕ → Geometry) (r L : ℕ �
     · obtain ⟨k, hk⟩ := hk
       exact ((hFs n k).contDiffAt ((sourceStrip s).isOpen_domain.mem_nhds hz)).congr_of_eventuallyEq
         (grouped_eventually_eq_copy (hsep n) (F n) (hFsupport n) hk) |>.contDiffWithinAt
-    · have hn : ∀ k, z ∉ copyCell (g n) (r n) (L n) k := by simpa using hk
+    · have hn : ∀ k, z ∉ copyCell (g n) (r n) (L n) k := by simpa only [Prod.forall, Prod.exists,
+        not_exists] using hk
       exact (contDiffAt_const.congr_of_eventuallyEq
         (grouped_eventually_zero (F n) (hFsupport n) hn)).contDiffWithinAt
   · intro N
@@ -367,7 +371,8 @@ theorem grouped_waveClass (s : StripData P) (g : ℕ → Geometry) (r L : ℕ �
           (Real.sqrt (s.zeta z.1) * copyEnvelope (g n) (r n) (L n) (W n) z.2)
       rw [copyEnvelope_eq_copy (hsep n) (W n) hk]
       nlinarith only [hh]
-    · have hn : ∀ k, z ∉ copyCell (g n) (r n) (L n) k := by simpa using hk
+    · have hn : ∀ k, z ∉ copyCell (g n) (r n) (L n) k := by simpa only [Prod.forall, Prod.exists,
+        not_exists] using hk
       rw [jet_congr (grouped_eventually_zero (F n) (hFsupport n) hn) j,
         iteratedFDeriv_fun_zero, Pi.zero_apply, norm_zero]
       exact majorant_nonneg _ _ _ hC _ _ _

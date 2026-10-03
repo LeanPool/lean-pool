@@ -89,7 +89,9 @@ theorem path_block_bound (q : ℕ) (Rc C R D : ℝ)
       pathTranslate (K := K) (V := Vector3) P a (path P G p)) n 0 ≤
       (9*sobolevCoefficientAmplitude (Fin 4) q Rc C*D)*majorant R (d+1) n := by
   have hdirections (i : Fin 4) : ‖standardDirection i‖ ≤ 1 := by
-    cases i using Fin.cases <;> simp [Prod.norm_def]
+    cases i using Fin.cases <;> simp only [Fin.isValue, standardDirection_zero, Prod.norm_def,
+        norm_zero, norm_one, zero_le_one, sup_of_le_right, Std.le_refl, standardDirection_succ,
+        PiLp.norm_single, sup_of_le_left]
   have ht (i : Fin 3) :
       block standardDirection q (fun a : LiftTangent =>
         pathTranslate (K := K) (V := Vector3) P a (term P G p i)) n 0 ≤
@@ -107,7 +109,8 @@ theorem path_block_bound (q : ℕ) (Rc C R D : ℝ)
   have he : (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a (path P G p)) =
       f 0+(f 1+f 2) := by
     funext a
-    simp [path, Fin.sum_univ_succ, f]
+    simp only [path, Fin.sum_univ_succ, Fin.isValue, Fin.succ_zero_eq_one, Finset.univ_unique,
+        Fin.default_eq_zero, Finset.sum_singleton, Fin.succ_one_eq_two, map_add, Pi.add_apply, f]
   rw [he]
   have h₀ := term_orbit P G hG p hp 0
   have h₁ := term_orbit P G hG p hp 1

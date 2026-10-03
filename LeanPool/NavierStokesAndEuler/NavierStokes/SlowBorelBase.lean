@@ -122,18 +122,19 @@ theorem template_jet_bound_by_joint {f : Inner → V} (hf : ContDiff ℝ ∞ f)
   have hG : ContDiff ℝ ∞ G := (jointTemplate_smooth hf b).comp (contDiff_id.add contDiff_const)
   have he : template c b f = G ∘ L := by
     funext z
-    simp [G, L, jointTemplate, template]
+    simp only [template, jointTemplate, Prod.fst_add, Prod.snd_add, add_zero, comp_apply,
+        ContinuousLinearMap.inr_apply, zero_add, G, L]
   rw [he, L.iteratedFDeriv_comp_right hG y
     (ENat.natCast_le_of_coe_top_le_withTop le_rfl m)]
   have hshift : iteratedFDeriv ℝ m G (L y) =
       iteratedFDeriv ℝ m (jointTemplate b f) (c, y) := by
     dsimp only [G]
     rw [iteratedFDeriv_comp_add_right]
-    simp [L]
+    simp only [ContinuousLinearMap.inr_apply, Prod.mk_add_mk, zero_add, add_zero, L]
   calc
     _ ≤ ‖iteratedFDeriv ℝ m G (L y)‖ * ∏ _ : Fin m, ‖L‖ :=
       ContinuousMultilinearMap.norm_compContinuousLinearMap_le _ _
-    _ = _ := by rw [hshift]; simp [L]
+    _ = _ := by rw [hshift]; simp only [Finset.prod_const, Finset.card_univ, Fintype.card_fin, L]
 
 /-- A compactness bound for actual normalized derivatives, uniform in every
 active cutoff scale c∈[0,1]. No stage derivative estimate is supplied. -/
@@ -148,13 +149,13 @@ theorem exists_template_jet_bound {f : Inner → V} (hf : ContDiff ℝ ∞ f)
       (ENat.natCast_le_of_coe_top_le_withTop le_rfl m)
   obtain ⟨D, hD⟩ := hc.exists_bound_of_continuousOn hj.continuousOn
   let C := max (D * ‖ContinuousLinearMap.inr ℝ ℝ Chart‖ ^ m) 0 + 1
-  refine ⟨C, by dsimp [C]; positivity, ?_⟩
+  refine ⟨C, by dsimp only [C]; positivity, ?_⟩
   intro c hc w hw
   refine (template_jet_bound_by_joint hf c b m (1, w)).trans ?_
   have hb := mul_le_mul_of_nonneg_right (hD (c, (1, w)) ⟨hc, rfl, hw⟩)
     (pow_nonneg (norm_nonneg (ContinuousLinearMap.inr ℝ ℝ Chart)) m)
   exact hb.trans (by
-      dsimp [C]; linarith only [le_max_left (D * ‖ContinuousLinearMap.inr ℝ ℝ Chart‖ ^ m) 0])
+      dsimp only [C]; linarith only [le_max_left (D * ‖ContinuousLinearMap.inr ℝ ℝ Chart‖ ^ m) 0])
 
 /-- Jets in the chart obtained by freezing the scale at the evaluation point
 and replacing q by q·s. The inner variables are left unscaled. -/
@@ -180,7 +181,8 @@ theorem powerStage_germ (c b : ℝ) (f : Inner → V) {q : ℝ}
     (hq : 0 < q) (w : Inner) :
     powerStage c b f =ᶠ[𝓝 (q, w)]
       (fun y => q ^ b • template (c * q) b f (scaleMap q⁻¹ y)) := by
-  have hinv : scaleMap q⁻¹ (q, w) = (1, w) := by simp [hq.ne']
+  have hinv : scaleMap q⁻¹ (q, w) = (1, w) := by simp only [scaleMap_apply, ne_eq, hq.ne',
+      not_false_eq_true, inv_mul_cancel₀]
   have ht : Tendsto (scaleMap q⁻¹) (𝓝 (q, w)) (𝓝 (1, w)) := by
     rw [← hinv]
     exact (scaleMap q⁻¹).continuous.continuousAt
@@ -221,13 +223,15 @@ theorem powerStage_jet_bound {f : Inner → V} (hf : ContDiff ℝ ∞ f)
     Real.norm_of_nonneg (Real.rpow_nonneg hq.le b),
     L.iteratedFDeriv_comp_right ht (q, w) hm]
   have hL : ‖L‖ ≤ q⁻¹ := SpatialBorelExtension.norm_timeScale_le ((one_le_inv₀ hq).2 hq1)
-  have hLp : L (q, w) = (1, w) := by simp [L, hq.ne']
+  have hLp : L (q, w) = (1, w) := by simp only [scaleMap_apply, ne_eq, hq.ne', not_false_eq_true,
+      inv_mul_cancel₀, L]
   rw [hLp]
   calc
     _ ≤ q ^ b * (‖iteratedFDeriv ℝ m (template (c * q) b f) (1, w)‖ *
         ∏ _ : Fin m, ‖L‖) := mul_le_mul_of_nonneg_left
       (ContinuousMultilinearMap.norm_compContinuousLinearMap_le _ _) (Real.rpow_nonneg hq.le b)
-    _ = q ^ b * (‖iteratedFDeriv ℝ m (template (c * q) b f) (1, w)‖ * ‖L‖ ^ m) := by simp
+    _ = q ^ b * (‖iteratedFDeriv ℝ m (template (c * q) b f) (1, w)‖ * ‖L‖ ^ m) := by simp only [
+        Finset.prod_const, Finset.card_univ, Fintype.card_fin]
     _ ≤ q ^ b * (C * (q⁻¹) ^ m) := mul_le_mul_of_nonneg_left
       (mul_le_mul hb (pow_le_pow_left₀ (norm_nonneg _) hL m)
         (pow_nonneg (norm_nonneg _) m) hC) (Real.rpow_nonneg hq.le b)
@@ -255,7 +259,7 @@ theorem powerStage_jet_zero (c b : ℝ) (f : Inner → V) {q : ℝ}
 theorem powerStage_blown_zero (c b : ℝ) (f : Inner → V) {q : ℝ}
     (hcq : 1 < c * q) (w : Inner) (m : ℕ) :
     blownJet m (powerStage c b f) (q, w) = 0 := by
-  have hmap : scaleMap q (1, w) = (q, w) := by simp
+  have hmap : scaleMap q (1, w) = (q, w) := by simp only [scaleMap_apply, mul_one]
   have ht : Tendsto (scaleMap q) (𝓝 (1, w)) (𝓝 (q, w)) := by
     rw [← hmap]
     exact (scaleMap q).continuous.continuousAt
@@ -294,7 +298,8 @@ noncomputable def uncutPrefix (h : ℝ) (f : ℕ → Inner → V) (J : ℕ) (y :
 @[simp] theorem slowStage_zero (a : ℕ → ℕ) (h : ℝ) (f : ℕ → Inner → V) :
     slowStage a h f 0 = 0 := by
   funext y
-  simp [slowStage, SolenoidalDiagonal.cutStage, positiveCoefficient]
+  simp only [slowStage, SolenoidalDiagonal.cutStage, positiveCoefficient, ↓reduceIte, smul_zero,
+      Pi.zero_apply]
 
 theorem slowStage_eq {j : ℕ} (hj : j ≠ 0) (a : ℕ → ℕ) (h : ℝ)
     (f : ℕ → Inner → V) : slowStage a h f j = powerStage (a j) (2 * h * j) (f j) := by
@@ -434,7 +439,7 @@ theorem blown_tail_bound {a : ℕ → ℕ} {h : ℝ} (hh : 0 < h)
     (J m : ℕ) (hm : m ≤ J + 3) :
     ‖blownJet m (fun y => slowSum a h f y - cutPrefix a h f J y) (q, w)‖ ≤
       (1 / 2 : ℝ) ^ J * q ^ (h * (J + 1)) := by
-  have hmap : scaleMap q (1, w) = (q, w) := by simp
+  have hmap : scaleMap q (1, w) = (q, w) := by simp only [scaleMap_apply, mul_one]
   have ht : Tendsto (scaleMap q) (𝓝 (1, w)) (𝓝 (q, w)) := by
     rw [← hmap]
     exact (scaleMap q).continuous.continuousAt
@@ -512,7 +517,7 @@ theorem exists_blown_uncut_tail {a : ℕ → ℕ} {h : ℝ} (hh : 0 < h)
   have hq1 : q ≤ 1 := (hsmall.trans_le (min_le_right _ _)).le
   have hp := hprefix (q, w) (by simpa only [abs_of_pos hq] using
     (hsmall.trans_le (min_le_left _ _)))
-  have hmap : scaleMap q (1, w) = (q, w) := by simp
+  have hmap : scaleMap q (1, w) = (q, w) := by simp only [scaleMap_apply, mul_one]
   have ht : Tendsto (scaleMap q) (𝓝 (1, w)) (𝓝 (q, w)) := by
     rw [← hmap]
     exact (scaleMap q).continuous.continuousAt
@@ -538,7 +543,8 @@ theorem exists_stage_blown_power_bound {f : ℕ → Inner → V}
   refine ⟨C, hC, fun q hq w hw => ?_⟩
   by_cases hj : j = 0
   · subst j
-    simp [blownJet, slowStage_zero, Function.comp_def, hC.le]
+    simp only [blownJet, slowStage_zero, comp_def, Pi.zero_apply, iteratedFDeriv_fun_zero,
+        norm_zero, CharP.cast_eq_zero, mul_zero, Real.rpow_zero, mul_one, hC.le]
   rw [slowStage_eq hj]
   by_cases hactive : (a j : ℝ) * q ≤ 1
   · exact powerStage_blown_bound (hf j) (a j) (2 * h * j) hq w m
@@ -624,7 +630,7 @@ theorem normalized_correction_bound {a : ℕ → ℕ} {h : ℝ} (hh : 0 < h)
       _ = D * q ^ (2 * h) := by rw [Finset.sum_mul]
   have hT : ‖blownJet m (fun y => positiveSum a h f y - P y) (q, w)‖ ≤
       (1 / 2 : ℝ) ^ J * q ^ (2 * h) := by
-    have hb := blown_tail_bound hh hf ha hq hq1 hw J m (by dsimp [J]; omega)
+    have hb := blown_tail_bound hh hf ha hq hq1 hw J m (by dsimp only [J]; omega)
     have he : (fun y => slowSum a h f y - cutPrefix a h f J y) =
         (fun y => positiveSum a h f y - P y) := by
       funext y
@@ -636,7 +642,7 @@ theorem normalized_correction_bound {a : ℕ → ℕ} {h : ℝ} (hh : 0 < h)
     nlinarith only [hh, hJ]
   have he : (fun y => slowSum a h f y - f 0 y.2) = positiveSum a h f := by
     funext y
-    simp [slowSum]
+    simp only [slowSum, add_sub_cancel_left]
   rw [he]
   exact (norm_blownJet_le_sub_add (positiveSum_smoothAt ha.strictMono hf h hq) hs m).trans
     ((add_le_add hT hP).trans_eq (by ring))
@@ -727,14 +733,14 @@ theorem physicalChart_finite_bound {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
   choose C hC hb using fun i => physicalChart_jet_bound hh hh1 lo hi i
   let D := 1 + ∑ i ∈ Finset.range (n + 1), C i
   have hD : 1 ≤ D := by
-    dsimp [D]
+    dsimp only [D]
     exact le_add_of_nonneg_right (Finset.sum_nonneg (fun i _ => (hC i).le))
   refine ⟨D, hD, fun p hp hq1 hX i hi hin => ?_⟩
   have hq := physicalChart_positive hh hh1 hp
   have hCi : C i ≤ D := by
     have hsum := Finset.single_le_sum (fun j _ => (hC j).le)
       (Finset.mem_range.mpr (Nat.lt_succ_of_le hin))
-    dsimp [D]
+    dsimp only [D]
     linarith only [hh, hh1, hsum]
   have hDp : D ≤ D ^ i := by
     simpa only [pow_one] using pow_le_pow_right₀ hD hi
@@ -782,7 +788,7 @@ theorem exists_physical_uncut_tail {a : ℕ → ℕ} {h : ℝ}
   obtain ⟨D, hD, hDb⟩ := physicalChart_finite_bound hh hh1 lo hi m
   let C := (m.factorial : ℝ) * (1 / 2 : ℝ) ^ J * D ^ m
   refine ⟨J, hJmin, hJm, min δ 1, C, lt_min hδ (by norm_num), ?_, ?_⟩
-  · dsimp [C]
+  · dsimp only [C]
     have hDpos : 0 < D := lt_of_lt_of_le zero_lt_one hD
     positivity
   intro p hp hsmall hX
@@ -802,10 +808,10 @@ theorem exists_physical_uncut_tail {a : ℕ → ℕ} {h : ℝ}
     (fun i hi => hb i hi _ hq (hsmall.trans_le (min_le_left _ _)) _ hw)
     (hDb p hp hq1 hX)
   refine hbound.trans_eq ?_
-  dsimp [C]
+  dsimp only [C]
   rw [Real.rpow_add hq, Real.rpow_natCast, div_pow]
   have hqn : (physicalChart h p).1 ^ m ≠ 0 := pow_ne_zero m hq.ne'
-  field_simp [hq.ne', hqn]; simp [← mul_pow]
+  field_simp [hq.ne', hqn]; simp only [← mul_pow]
   congr 1
   field_simp
 
@@ -856,7 +862,7 @@ theorem slowSum_finite_at_scale {a : ℕ → ℕ} (ha : StrictMono a) (h : ℝ)
   intro j hj
   by_cases hz : j = 0
   · subst j
-    simp [coefficientWeight]
+    simp only [slowStage_zero, Pi.zero_apply, coefficientWeight, ↓reduceIte, zero_mul]
   · simp only [slowStage, SolenoidalDiagonal.cutStage, positiveCoefficient, coefficientWeight,
       hz, ite_false, powerCoefficient, smul_eq_mul]
     ring
@@ -872,7 +878,8 @@ theorem hasDerivAt_slowSum_X {a : ℕ → ℕ} (ha : StrictMono a) (h : ℝ)
   have hd : ∀ j, HasDerivAt (fun x => f j (x, eta))
       (SimilarityProfile.partialX (f j) (X, eta)) X := by
     intro j
-    exact ((hf j).differentiable (by simp)).differentiableAt.hasFDerivAt.comp_hasDerivAt X
+    exact ((hf j).differentiable (by simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero,
+        not_false_eq_true])).differentiableAt.hasFDerivAt.comp_hasDerivAt X
       ((hasDerivAt_id X).prodMk (hasDerivAt_const X eta))
   have ht := (hd 0).add (HasDerivAt.fun_sum (fun j (_ : j ∈ Finset.range N) =>
     (hd j).const_mul (coefficientWeight a h q j)))
@@ -906,7 +913,8 @@ theorem partialS_physicalProfile {a : ℕ → ℕ} (ha : StrictMono a) {h : ℝ}
     (hf : ∀ j, ContDiff ℝ ∞ (f j)) (b : ℝ) {p : Chart} (hp : p.1 < 1) :
     AxisymmetricFields.partialS (physicalProfile a h b f) p =
       physicalProfile a h (b - 1) (fun j => SimilarityProfile.partialX (f j)) p := by
-  have hd := ((physicalProfile_smoothAt ha hh hh1 hf b hp).differentiableAt (by simp)).hasFDerivAt
+  have hd := ((physicalProfile_smoothAt ha hh hh1 hf b hp).differentiableAt (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])).hasFDerivAt
   have hc := hd.comp_hasDerivAt (F := Chart) p.2.1 ((hasDerivAt_const p.2.1 p.1).prodMk
     ((hasDerivAt_id p.2.1).prodMk (hasDerivAt_const p.2.1 p.2.2)))
   exact hc.unique (hasDerivAt_physicalProfile_s ha hh hh1 hf b hp)
@@ -1009,7 +1017,7 @@ theorem powered_physical_tail_of_chart_bound {a : ℕ → ℕ} {h : ℝ}
         rw [← Real.rpow_natCast q (m - i), ← Real.rpow_add hq, ← Real.rpow_sub hq]
         congr 1
         rw [Nat.cast_sub him]
-        dsimp [S]
+        dsimp only [S]
         ring
       dsimp only [K]
       calc
@@ -1074,9 +1082,9 @@ theorem slowStage_map (L : V →L[ℝ] W) (a : ℕ → ℕ) (h : ℝ)
   funext y
   by_cases hj : j = 0
   · subst j
-    simp
-  · simp [slowStage, SolenoidalDiagonal.cutStage, positiveCoefficient, hj,
-      powerCoefficient]
+    simp only [slowStage_zero, Pi.zero_apply, comp_apply, map_zero]
+  · simp only [slowStage, SolenoidalDiagonal.cutStage, positiveCoefficient, hj, ↓reduceIte,
+      powerCoefficient, comp_apply, map_smul]
 
 theorem slowSum_map (L : V →L[ℝ] W) {a : ℕ → ℕ} (ha : StrictMono a)
     (h : ℝ) (f : ℕ → Inner → V) {y : Chart} (hy : 0 < y.1) :
@@ -1245,7 +1253,8 @@ theorem baseVelocity_smooth {a : ℕ → ℕ} (ha : StrictMono a) {h : ℝ}
     ContDiffOn ℝ ∞ (baseVelocity a h C d) (Iio 1 ×ˢ (univ : Set ProblemStatement.Space)) :=
   AxisymmetricFields.contDiffOn_velocity
     (physicalProfile_smoothOn ha hh hh1 (bundleComponent_smooth hd C 0) _)
-    (physicalProfile_smoothOn ha hh hh1 (bundleComponent_smooth hd C 1) _) (by simp)
+    (physicalProfile_smoothOn ha hh hh1 (bundleComponent_smooth hd C 1) _) (by simp only [
+        ENat.coe_top_add_one, Std.le_refl])
 
 /-- Exact Cartesian incompressibility, including the axis, follows from the
 actual curl of the asymptotically summed potentials. -/
@@ -1280,7 +1289,9 @@ theorem uncutPrefix_eq_sum (h : ℝ) (f : ℕ → Inner → V) (J : ℕ) (y : Ch
     uncutPrefix h f J y =
       ∑ j ∈ Finset.range (J + 1), powerCoefficient (2 * h * j) (f j) y := by
   induction J with
-  | zero => simp [uncutPrefix, positiveCoefficient, powerCoefficient]
+  | zero => simp only [uncutPrefix, zero_add, Finset.range_one, positiveCoefficient,
+      Finset.sum_singleton, ↓reduceIte, add_zero, powerCoefficient, CharP.cast_eq_zero, mul_zero,
+      Real.rpow_zero, one_smul]
   | succ J ih =>
       change f 0 y.2 + ∑ j ∈ Finset.range ((J + 1) + 1), positiveCoefficient h f j y = _
       rw [Finset.sum_range_succ, ← add_assoc]
@@ -1367,7 +1378,8 @@ theorem partialS_radial_mul {H : Chart → ℝ} {p : Chart} (hH : Differentiable
     (hasFDerivAt_fst).comp p hasFDerivAt_snd
   unfold AxisymmetricFields.partialS
   rw [(hs.fun_mul hH.hasFDerivAt).fderiv]
-  simp
+  simp only [add_apply, smul_apply, smul_eq_mul, ContinuousLinearMap.comp_apply,
+      ContinuousLinearMap.coe_snd', ContinuousLinearMap.coe_fst', mul_one]
   ring
 
 /-- The actual axial component is the direct cut sum of the axial profiles;
@@ -1380,11 +1392,11 @@ theorem baseVelocity_axial {a : ℕ → ℕ} (ha : StrictMono a) {h : ℝ}
           by
   have hH := (physicalProfile_smoothAt ha hh hh1 (bundleComponent_smooth hd C 0)
     (-CoordinateAlgebra.A h) (p := AxisymmetricFields.profilePoint t x) ht).differentiableAt (by
-        simp)
+        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hK := (physicalProfile_smoothAt ha hh hh1 (bundleComponent_smooth hd C 1)
     (1 / 2 - CoordinateAlgebra.A h) (p := AxisymmetricFields.profilePoint t x) ht).differentiableAt
         (by
-        simp)
+        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   change DifferentiableAt ℝ (streamFactor a h C d) (AxisymmetricFields.profilePoint t x) at hH
   change DifferentiableAt ℝ (swirlPotential a h C d) (AxisymmetricFields.profilePoint t x) at hK
   rw [baseVelocity, AxisymmetricFields.velocity_two _ _ _ _ hH hK]
@@ -1395,7 +1407,8 @@ theorem partialX_swirl_primitive {f : Inner → ℝ} (hf : ContDiff ℝ ∞ f) (
       (fun w => -C⁻¹ * f w) := by
   funext w
   unfold SimilarityProfile.partialX
-  rw [fderiv_const_mul ((primitive_smooth hf).differentiable (by simp)).differentiableAt]
+  rw [fderiv_const_mul ((primitive_smooth hf).differentiable (by simp only [ne_eq,
+      WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])).differentiableAt]
   change -C⁻¹ * SimilarityProfile.partialX (ProfileHistories.primitive f) w = _
   rw [partialX_primitive hf]
 
@@ -1449,13 +1462,13 @@ theorem compact_map_finite_bound {E : Type} [NormedAddCommGroup E] [NormedSpace 
     (subset_univ K) i
   let D := 1 + ∑ i ∈ Finset.range (M + 1), C i
   have hD : 1 ≤ D := by
-    dsimp [D]
+    dsimp only [D]
     exact le_add_of_nonneg_right (Finset.sum_nonneg (fun i _ => (zero_le_one.trans (hC i))))
   refine ⟨D, hD, fun x hx i hi hiM => ?_⟩
   have hCi : C i ≤ D := by
     have hs := Finset.single_le_sum (fun j (_ : j ∈ Finset.range (M + 1)) =>
       zero_le_one.trans (hC j)) (Finset.mem_range.mpr (Nat.lt_succ_of_le hiM))
-    dsimp [D]
+    dsimp only [D]
     linarith only [hs]
   refine (hCb i x hx).trans (hCi.trans ?_)
   simpa only [pow_one] using pow_le_pow_right₀ hD hi
@@ -1497,7 +1510,7 @@ theorem exists_cartesian_profile_tail {a : ℕ → ℕ} {h : ℝ}
   obtain ⟨D, hD, hDb⟩ := compact_map_finite_bound hG hK m
   let B := (m.factorial : ℝ) * C * D ^ m
   have hDpos : 0 < D := lt_of_lt_of_le zero_lt_one hD
-  refine ⟨J, hJmin, hJm, δ, B, hδ, by dsimp [B]; positivity, ?_⟩
+  refine ⟨J, hJmin, hJm, δ, B, hδ, by dsimp only [B]; positivity, ?_⟩
   intro z hz hzt hq hX
   let F : Chart → V := fun p => physicalProfile a h b f p - physicalUncutPrefix h b f J p
   have hU : IsOpen {p : Chart | p.1 < 1} := isOpen_lt continuous_fst continuous_const
@@ -1518,7 +1531,7 @@ theorem exists_cartesian_profile_tail {a : ℕ → ℕ} {h : ℝ}
       rw [iteratedFDerivWithin_of_isOpen i hS hzt]
       exact hDb z hz i hi him)
   rw [iteratedFDerivWithin_of_isOpen m hS hzt] at hc
-  exact hc.trans_eq (by dsimp [B]; ring)
+  exact hc.trans_eq (by dsimp only [B]; ring)
 
 end CartesianTails
 
@@ -1548,7 +1561,7 @@ theorem normalized_correction_smul_inner {a : ℕ → ℕ} {h : ℝ} (hh : 0 < h
     have hAi := zero_le_one.trans (hA i)
     have hBi := (hB (m - i)).le
     positivity
-  refine ⟨C, by dsimp [C]; linarith only [hsum], ?_⟩
+  refine ⟨C, by dsimp only [C]; linarith only [hsum], ?_⟩
   intro q hq hq1 w hw
   let F : Chart → V := fun y => slowSum a h f y - f 0 y.2
   have hFs {y : Chart} (hy : 0 < y.1) : ContDiffAt ℝ ∞ F y :=
@@ -1575,7 +1588,7 @@ theorem normalized_correction_smul_inner {a : ℕ → ℕ} {h : ℝ} (hh : 0 < h
       ring
     _ = (∑ i ∈ Finset.range (m + 1), (m.choose i : ℝ) * A i * B (m - i)) * q ^ (2 * h) :=
       (Finset.sum_mul _ _ _).symm
-    _ ≤ C * q ^ (2 * h) := mul_le_mul_of_nonneg_right (by dsimp [C]; linarith only)
+    _ ≤ C * q ^ (2 * h) := mul_le_mul_of_nonneg_right (by dsimp only [C]; linarith only)
       (Real.rpow_nonneg hq.le _)
 
 /-- Normalized swirl, given by `Real.sqrt (2 * y.2.1) / C * slowSum a h d.phi y`. -/
@@ -1631,10 +1644,12 @@ theorem baseVelocity_angularMoment {a : ℕ → ℕ} (ha : StrictMono a) {h : �
           (AxisymmetricFields.profilePoint t x) := by
   have hH : DifferentiableAt ℝ (streamFactor a h C d) (AxisymmetricFields.profilePoint t x) :=
     (physicalProfile_smoothAt ha hh hh1 (bundleComponent_smooth hd C 0)
-      (-CoordinateAlgebra.A h) ht).differentiableAt (by simp)
+      (-CoordinateAlgebra.A h) ht).differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
+          ENat.top_ne_zero, not_false_eq_true])
   have hK : DifferentiableAt ℝ (swirlPotential a h C d) (AxisymmetricFields.profilePoint t x) :=
     (physicalProfile_smoothAt ha hh hh1 (bundleComponent_smooth hd C 1)
-      (1 / 2 - CoordinateAlgebra.A h) ht).differentiableAt (by simp)
+      (1 / 2 - CoordinateAlgebra.A h) ht).differentiableAt (by simp only [ne_eq,
+          WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   rw [baseVelocity, AxisymmetricFields.velocity_zero _ _ _ _ hH hK,
     AxisymmetricFields.velocity_one _ _ _ _ hH hK,
     partialS_swirlPotential ha hh hh1 hd C ht]

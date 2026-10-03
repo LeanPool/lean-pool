@@ -87,7 +87,8 @@ theorem translated_mem (c : ℂ) {ρ σ : ℝ} (hgap : ρ < σ)
   calc
     dist (z.1 + circleMap 0 (σ - ρ) θ) c ≤
       dist (z.1 + circleMap 0 (σ - ρ) θ) z.1 + dist z.1 c := dist_triangle _ _ _
-    _ = ‖circleMap 0 (σ - ρ) θ‖ + dist z.1 c := by simp [dist_eq_norm]
+    _ = ‖circleMap 0 (σ - ρ) θ‖ + dist z.1 c := by simp only [dist_eq_norm, add_sub_cancel_left,
+        norm_circleMap_zero]
     _ ≤ ‖circleMap 0 (σ - ρ) θ‖ + ρ := add_le_add_right z.2 _
     _ = σ := by rw [norm_circleMap_zero, abs_of_pos (sub_pos.mpr hgap)]; ring
 
@@ -104,7 +105,7 @@ theorem continuous_weight {δ : ℝ} (hδ : 0 < δ) : Continuous (weight δ) :=
   continuous_const.div (continuous_circleMap 0 δ) (offset_ne_zero hδ)
 
 theorem norm_weight {δ : ℝ} (hδ : 0 < δ) (θ : ℝ) : ‖weight δ θ‖ = δ⁻¹ := by
-  simp [weight, norm_circleMap_zero, abs_of_pos hδ, one_div]
+  simp only [weight, Complex.norm_div, norm_I, norm_circleMap_zero, abs_of_pos hδ, one_div]
 
 /-- Integrand, given by `weight (σ - ρ) θ • f.comp (sample c hgap θ)`. -/
 def integrand (c : ℂ) {ρ σ : ℝ} (hgap : ρ < σ)
@@ -164,7 +165,8 @@ theorem norm_cauchyMap_le (c : ℂ) {ρ σ : ℝ} (hgap : ρ < σ)
     (a := 0) (b := 2 * Real.pi)
     (fun θ _ => norm_integrand_le c hgap f θ)
   have hnorm : ‖(2 * Real.pi * I : ℂ)⁻¹‖ = (2 * Real.pi)⁻¹ := by
-    simp [norm_inv, Complex.norm_real, Real.norm_eq_abs, abs_of_pos Real.pi_pos]
+    simp only [mul_inv_rev, inv_I, neg_mul, norm_neg, Complex.norm_mul, norm_I, norm_inv, norm_real,
+        Real.norm_eq_abs, abs_of_pos Real.pi_pos, norm_ofNat, one_mul]
   rw [cauchyMap, norm_smul, hnorm]
   calc
     (2 * Real.pi)⁻¹ * ‖∫ θ : ℝ in (0)..(2 * Real.pi), integrand c hgap f θ‖ ≤
@@ -225,7 +227,8 @@ theorem circle_kernel_identity {δ : ℝ} (hδ : 0 < δ) (z : ℂ) (θ : ℝ) (v
     weight δ θ • v = deriv (circleMap z δ) θ •
       ((circleMap z δ θ - z) ^ (-2 : ℤ) • v) := by
   rw [deriv_circleMap, smul_smul]
-  have hsub : circleMap z δ θ - z = circleMap 0 δ θ := by simp [circleMap]
+  have hsub : circleMap z δ θ - z = circleMap 0 δ θ := by simp only [circleMap, add_sub_cancel_left,
+      zero_add]
   rw [hsub]
   congr 1
   rw [weight, zpow_neg, zpow_two]
@@ -239,7 +242,8 @@ theorem derivativeCLM_apply_of_eq (c : ℂ) {ρ σ : ℝ} (hgap : ρ < σ)
     derivativeCLM (E := E) c hgap f z = deriv F z := by
   have hci := DiffContOnCl.deriv_eq_smul_circleIntegral
     (sub_pos.mpr hgap) (hF.mono (ball_subset_outer c z))
-  have hfactor : (2 * (Real.pi : ℂ) * I) ≠ 0 := by simp [Real.pi_ne_zero]
+  have hfactor : (2 * (Real.pi : ℂ) * I) ≠ 0 := by simp only [ne_eq, mul_eq_zero,
+      OfNat.ofNat_ne_zero, ofReal_eq_zero, Real.pi_ne_zero, or_self, I_ne_zero, not_false_eq_true]
   have hder : deriv F z = (2 * (Real.pi : ℂ) * I)⁻¹ •
       ∮ w in C(z, σ - ρ), (1 / (w - z) ^ 2) • F w := by
     rw [hci, inv_smul_smul₀ hfactor]
@@ -252,7 +256,7 @@ theorem derivativeCLM_apply_of_eq (c : ℂ) {ρ σ : ℝ} (hgap : ρ < σ)
   rw [hvalues]
   change weight (σ - ρ) θ • F ((z : ℂ) + circleMap 0 (σ - ρ) θ) = _
   have hpoint : (z : ℂ) + circleMap 0 (σ - ρ) θ = circleMap z (σ - ρ) θ := by
-    simp [circleMap]
+    simp only [circleMap, ofReal_sub, zero_add]
   rw [hpoint]
   simpa only [zpow_neg, zpow_two, pow_two, one_div] using
     circle_kernel_identity (sub_pos.mpr hgap) z θ (F (circleMap z (σ - ρ) θ))

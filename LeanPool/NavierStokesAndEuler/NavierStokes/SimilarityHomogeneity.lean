@@ -280,18 +280,19 @@ theorem chartToPhysical_transition {h Q Q' : ℝ} (hQ : 0 < Q) (hQ' : 0 < Q')
     congr 1
     field_simp
   apply Prod.ext
-  · dsimp [chartToPhysical, chartTransition]
+  · dsimp only [chartToPhysical, chartTransition]
     field_simp
   · apply Prod.ext
-    · dsimp [chartToPhysical, chartTransition]
+    · dsimp only [chartTransition, chartToPhysical]
       rw [mul_pow, hs]
       field_simp
-    · dsimp [chartToPhysical, chartTransition]
+    · dsimp only [chartTransition, chartToPhysical]
       rw [← mul_assoc, hz]
 
 theorem chartTransition_refl {Q : ℝ} (hQ : 0 < Q) (h : ℝ) (p : ChartPoint) :
     chartTransition h Q Q p = p := by
-  simp [chartTransition, hQ.ne']
+  simp only [chartTransition, ne_eq, hQ.ne', not_false_eq_true, div_self, one_div, Real.one_rpow,
+      one_mul, Prod.mk.eta]
 
 theorem chartTransition_comp {h Q Q' Q'' : ℝ}
     (hQ : 0 < Q) (hQ' : 0 < Q') (hQ'' : 0 < Q'') (p : ChartPoint) :
@@ -301,12 +302,12 @@ theorem chartTransition_comp {h Q Q' Q'' : ℝ}
   have hpow (a : ℝ) : (Q' / Q'') ^ a * (Q / Q') ^ a = (Q / Q'') ^ a := by
     rw [← Real.mul_rpow (div_pos hQ' hQ'').le (div_pos hQ hQ').le, hr]
   apply Prod.ext
-  · dsimp [chartTransition]
+  · dsimp only [chartTransition]
     rw [← mul_assoc, hpow]
   · apply Prod.ext
-    · dsimp [chartTransition]
+    · dsimp only [chartTransition]
       rw [← mul_assoc, hpow]
-    · dsimp [chartTransition]
+    · dsimp only [chartTransition]
       rw [← mul_assoc, hr]
 
 theorem chartTransition_inverse {h Q Q' : ℝ} (hQ : 0 < Q) (hQ' : 0 < Q')

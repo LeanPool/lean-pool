@@ -48,11 +48,13 @@ def crossOperatorLinear : Space →ₗ[ℝ] (Space →L[ℝ] Space) where
   map_add' a b := by
     apply ContinuousLinearMap.ext
     intro v
-    simp [crossLeft_apply, cross, map_add]
+    simp only [crossLeft_apply, cross, ofLp_add, map_add, LinearMap.add_apply, toLp_add,
+        _root_.add_apply]
   map_smul' r a := by
     apply ContinuousLinearMap.ext
     intro v
-    simp [crossLeft_apply, cross, map_smul]
+    simp only [crossLeft_apply, cross, ofLp_smul, map_smul, LinearMap.smul_apply, toLp_smul,
+        RingHom.id_apply, _root_.smul_apply]
 
 /-- Cross operator, given by `crossOperatorLinear.mkContinuous 1 (fun a => by change ‖crossLeft
 a‖ ≤ 1*‖a‖ simpa only [one_mul] using crossLeft_norm_le a)`. -/

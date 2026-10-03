@@ -147,7 +147,7 @@ theorem rescale_jet_bound {A : Q × ℝ → E} {U : Set (Q × ℝ)}
     have hh := PhaseJetBounds.norm_jet_comp_linear hU hA (timeLinear σ) hz i
     apply hh.trans
     have hn : ‖timeLinear (Q := Q) σ‖ ^ i ≤ 1 := by
-      simpa using pow_le_pow_left₀ (norm_nonneg (timeLinear (Q := Q) σ))
+      simpa only [one_pow] using pow_le_pow_left₀ (norm_nonneg (timeLinear (Q := Q) σ))
         (timeLinear_norm_le (Q := Q) hσ) i
     exact (mul_le_mul (hjet i hi) hn (pow_nonneg (norm_nonneg _) i) hC).trans_eq (mul_one C)
 
@@ -232,7 +232,7 @@ theorem homogeneous_joint_jet_bound
       (show |t| ≤ K * S by rw [abs_of_nonneg ht.1]; exact ht.2.trans hslot) hk
       (fun i hi => hjets i hi _ (hinside σ))
     have hconst : (2 : ℝ) ^ N * K ^ 2 ≤ K' := by
-      dsimp [K', rescaleConstant]
+      dsimp only [rescaleConstant, K']
       linarith only [hK]
     calc
       _ ≤ (2 : ℝ) ^ N * (K * S) * (K * S ^ m) := by
@@ -351,7 +351,7 @@ theorem EnvelopeJets.comp {f : ι → F → G} {w : ι → F → ℝ}
     exact ha i _ (hmap i hx) a (haj.trans hj)
   · rw [iteratedFDerivWithin_of_isOpen a (D.isOpen i) hx]
     exact (hb i a (haj.trans hj) x hx).trans
-      (by simpa using pow_le_pow_right₀ hC ha1)
+      (by simpa only [pow_one] using pow_le_pow_right₀ hC ha1)
 
 end EnvelopeCalculus
 
@@ -479,9 +479,9 @@ theorem homogeneous_family_envelope_jets
   intro N
   obtain ⟨C, hC, m, hm⟩ := hA.bound N
   let K := C + K₀ + 1
-  have hK : 1 ≤ K := by dsimp [K]; linarith only [hK₀, hC]
-  have hCK : C ≤ K := by dsimp [K]; linarith only [hK₀]
-  have hK₀K : K₀ ≤ K := by dsimp [K]; linarith only [hC]
+  have hK : 1 ≤ K := by dsimp only [K]; linarith only [hK₀, hC]
+  have hCK : C ≤ K := by dsimp only [K]; linarith only [hK₀]
+  have hK₀K : K₀ ≤ K := by dsimp only [K]; linarith only [hC]
   let B := (2 : ℝ) ^ (N + 1) * rescaleConstant N K ^ 3
   have hB : 1 ≤ B := one_le_mul_of_one_le_of_one_le (one_le_pow₀ (by norm_num))
     (one_le_pow₀ (hK.trans (le_rescaleConstant N K)))
@@ -639,7 +639,7 @@ theorem fundamental_envelope_jets
       (fun i => fundamental (d i) (lam i) (u i) (L i)) := by
   let μ := fun i => (B + 4 * C) / D.scale i
   let K := M + Real.exp ((B + 4 * C) * M) + 1
-  have hK : 1 ≤ K := by dsimp [K]; linarith only [hM, Real.exp_pos ((B + 4 * C) * M)]
+  have hK : 1 ≤ K := by dsimp only [K]; linarith only [hM, Real.exp_pos ((B + 4 * C) * M)]
   have hμ (i) : 0 ≤ μ i := div_nonneg (by positivity) (zero_le_one.trans (D.one_le_scale i))
   apply homogeneous_family_envelope_jets D V hV L μ hL hI (fun i => (d i).coefficient 1)
     (hd.coefficient 1) (fun i => referenceP (lam i) (u i) (L i))
@@ -649,16 +649,16 @@ theorem fundamental_envelope_jets
   · intro i
     apply (hslot i).trans
     apply mul_le_mul_of_nonneg_right _ (zero_le_one.trans (D.one_le_scale i))
-    dsimp [K]
+    dsimp only [K]
     linarith only [Real.exp_pos ((B + 4 * C) * M)]
   · intro i
     have hS : 0 < D.scale i := zero_lt_one.trans_le (D.one_le_scale i)
     have hμL : μ i * L i ≤ (B + 4 * C) * M := by
       calc
         _ ≤ μ i * (M * D.scale i) := mul_le_mul_of_nonneg_left (hslot i) (hμ i)
-        _ = _ := by dsimp [μ]; field_simp
+        _ = _ := by dsimp only [μ]; field_simp
     apply (Real.exp_le_exp.mpr hμL).trans
-    dsimp [K]
+    dsimp only [K]
     linarith only [hM]
   · intro i p hp v hv x
     have he := (d i).energy_bound (p, v) (by norm_num : (1 : ℤ) ≠ 0)
@@ -683,7 +683,9 @@ theorem fundamental_eq_primary {d : PrimaryODE.FrameData Q} {lam u L : ℝ} (hL 
     JointODE.actualSolution, PrimaryODE.FrameData.forcing_zero_function]
   congr 2
   ext k
-  fin_cases k <;> simp [PrimaryODE.primarySeed, positiveSeed]
+  fin_cases k <;> simp only [PrimaryODE.primarySeed, Fin.zero_eta, Fin.isValue,
+      Matrix.cons_val_zero, positiveSeed, PiLp.smul_apply, smul_eq_mul, mul_one, Fin.mk_one,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one, mul_zero]
 
 end ActualFundamental
 
@@ -745,8 +747,10 @@ theorem ambient_eq_synthesis (d : PrimaryODE.FrameData Q) (z : Q × ℝ) (w : St
     d.ambient z w = w 0 • synthesisColumn d 0 z + w 1 • synthesisColumn d 1 z := by
   ext i
   fin_cases i <;>
-    simp [PrimaryODE.FrameData.ambient, MovingFrameODE.tangent, MovingFrameODE.pack,
-        synthesisColumn] <;> ring
+    simp only [PrimaryODE.FrameData.ambient, MovingFrameODE.tangent, MovingFrameODE.pack,
+        Fin.isValue, neg_mul, neg_smul, PiLp.add_apply, PiLp.neg_apply, PiLp.smul_apply,
+        smul_eq_mul, Fin.zero_eta, Matrix.cons_val_zero, synthesisColumn, ↓reduceIte, one_ne_zero,
+        mul_one, Fin.mk_one, Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val] <;> ring
 
 theorem synthesisColumn_polynomial {D : PhaseJetBounds.Domain ι (Q × ℝ)}
     {d : ι → PrimaryODE.FrameData Q} (hd : PhaseJetBounds.FrameJets D d) (j : Fin 2) :
@@ -761,7 +765,7 @@ theorem synthesisColumn_polynomial {D : PhaseJetBounds.Domain ι (Q × ℝ)}
     intro i x hx
     change MovingFrameODE.pack 1 ((-(d i).rho x) • (d i).frame x 0 -
       (d i).eigenvector x • (d i).frame x 1) = synthesisColumn (d i) 1 x
-    simp [synthesisColumn, sub_eq_add_neg, neg_smul]
+    simp only [Fin.isValue, neg_smul, sub_eq_add_neg, synthesisColumn, one_ne_zero, ↓reduceIte]
 
 end GeometrySynthesis
 
@@ -1274,7 +1278,8 @@ theorem actualColumn_normalization
     apply hχ
     intro hz
     apply hs
-    simp [g, hz]
+    simp only [Fin.isValue, hz, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, zero_mul,
+        g]
   unfold PulseCovariance.actualColumn
   calc
     _ = ci * ∫ s : ℝ, g (s / L) := by
@@ -1284,7 +1289,7 @@ theorem actualColumn_normalization
       rw [Measure.integral_comp_div, abs_of_pos hL, smul_eq_mul]
     _ = _ := by
       rw [← intervalIntegral.integral_eq_integral_of_support_subset hsupp]
-      dsimp [g]
+      dsimp only [Fin.isValue, g]
       ring
 
 omit [NormedAddCommGroup Q] [NormedSpace ℝ Q] in
@@ -1354,7 +1359,7 @@ theorem EnvelopeJets.mono_weight {D : PhaseJetBounds.Domain ι E}
 
 private theorem jet_eq_of_eventuallyEq {f g : E → F} {x : E}
     (h : f =ᶠ[𝓝 x] g) (j : ℕ) : iteratedFDeriv ℝ j f x = iteratedFDeriv ℝ j g x := by
-  have h' : f =ᶠ[𝓝[univ] x] g := by simpa using h
+  have h' : f =ᶠ[𝓝[univ] x] g := by simpa only [nhdsWithin_univ] using h
   simpa only [iteratedFDerivWithin_univ] using h'.iteratedFDerivWithin_eq h.eq_of_nhds j
 
 /-- A compactly contained cutoff extends the actual slot solution with all

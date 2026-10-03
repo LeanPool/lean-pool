@@ -106,7 +106,10 @@ noncomputable def copySource {P : Type} (f : P × Plane → Space)
 theorem ambient_zero {P : Type} (d : PrimaryODE.FrameData P) (z : P × ℝ) :
     d.ambient z 0 = 0 := by
   ext i
-  fin_cases i <;> simp [PrimaryODE.FrameData.ambient, MovingFrameODE.tangent, MovingFrameODE.pack]
+  fin_cases i <;> simp only [PrimaryODE.FrameData.ambient, MovingFrameODE.tangent,
+      MovingFrameODE.pack, Fin.isValue, PiLp.zero_apply, add_zero, mul_zero, zero_smul, sub_self,
+      Fin.zero_eta, Matrix.cons_val_zero, Fin.mk_one, Matrix.cons_val_one, Fin.reduceFinMk,
+      Matrix.cons_val]
 
 /-! ## The native tangent data can be built directly from the frame -/
 
@@ -379,15 +382,20 @@ noncomputable def baseOperatorFamily : (ℝ × State) →L[ℝ] (Space →L[ℝ]
       intro z w
       ext x i
       fin_cases i <;>
-        simp [baseOperator_apply, MovingFrameODE.baseAction, MovingFrameODE.pack,
-            MovingFrameODE.tail] <;>
+        simp only [Prod.fst_add, Prod.snd_add, baseOperator_apply, MovingFrameODE.baseAction,
+            MovingFrameODE.pack, Fin.isValue, neg_mul, MovingFrameODE.tail, Matrix.cons_val_zero,
+            smul_add, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, Fin.zero_eta, add_apply,
+            Fin.mk_one, Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val] <;>
         ring
     map_smul' := by
       intro c z
       ext x i
       fin_cases i <;>
-        simp [baseOperator_apply, MovingFrameODE.baseAction, MovingFrameODE.pack,
-            MovingFrameODE.tail] <;>
+        simp only [Prod.smul_fst, smul_eq_mul, Prod.smul_snd, baseOperator_apply,
+            MovingFrameODE.baseAction, MovingFrameODE.pack, Fin.isValue, neg_mul,
+            MovingFrameODE.tail, Matrix.cons_val_zero, smul_add, PiLp.add_apply, PiLp.smul_apply,
+            Fin.zero_eta, RingHom.id_apply, smul_apply, mul_neg, neg_inj, Fin.mk_one,
+            Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val] <;>
         ring }
 
 @[simp] theorem baseOperatorFamily_apply (z : ℝ × State) :
@@ -684,7 +692,7 @@ theorem forced_joint_jet_bound
       (show |t| ≤ K * S by rw [abs_of_nonneg ht.1]; exact ht.2.trans hslot) hk
       (fun i hi => hjets i hi _ (hinside σ))
     have hconst : (2 : ℝ) ^ N * K ^ 2 ≤ K' := by
-      dsimp [K', rescaleConstant]
+      dsimp only [rescaleConstant, K']
       linarith only [hK]
     calc
       _ ≤ (2 : ℝ) ^ N * (K * S) * (K * S ^ m) := by
@@ -712,7 +720,7 @@ theorem forced_joint_jet_bound
       (show |t| ≤ K * S by rw [abs_of_nonneg ht.1]; exact ht.2.trans hslot) hk
       (fun i hi => hfjets i hi _ (hinside σ))
     have hconst : (2 : ℝ) ^ N * K ^ 2 ≤ K' := by
-      dsimp [K', rescaleConstant]
+      dsimp only [rescaleConstant, K']
       linarith only [hK]
     calc
       _ ≤ (2 : ℝ) ^ N * (K * S) * (w * K * S ^ m * P ((σ : ℝ) * t)) := by
@@ -776,10 +784,10 @@ theorem forced_family_envelope_jets
   obtain ⟨C, hC, m, hm⟩ := hA.bound N
   obtain ⟨C', hC', m', hm'⟩ := hf.bound N
   let K := C + C' + K₀ + 1
-  have hK : 1 ≤ K := by dsimp [K]; linarith
-  have hCK : C ≤ K := by dsimp [K]; linarith
-  have hC'K : C' ≤ K := by dsimp [K]; linarith
-  have hK₀K : K₀ ≤ K := by dsimp [K]; linarith
+  have hK : 1 ≤ K := by dsimp only [K]; linarith
+  have hCK : C ≤ K := by dsimp only [K]; linarith
+  have hC'K : C' ≤ K := by dsimp only [K]; linarith
+  have hK₀K : K₀ ≤ K := by dsimp only [K]; linarith
   let B := (2 : ℝ) ^ (N + 1) * rescaleConstant N K ^ 3
   have hB : 1 ≤ B := one_le_mul_of_one_le_of_one_le (one_le_pow₀ (by norm_num))
     (one_le_pow₀ (hK.trans (le_rescaleConstant N K)))
@@ -1085,9 +1093,9 @@ theorem copySolve_waveClass
   intro N
   obtain ⟨C, hC, m, hm⟩ := hinput N
   let K := C + K₀ + 1
-  have hK : 1 ≤ K := by dsimp [K]; linarith
-  have hCK : C ≤ K := by dsimp [K]; linarith
-  have hK₀K : K₀ ≤ K := by dsimp [K]; linarith
+  have hK : 1 ≤ K := by dsimp only [K]; linarith
+  have hCK : C ≤ K := by dsimp only [K]; linarith
+  have hK₀K : K₀ ≤ K := by dsimp only [K]; linarith
   let B := (2 : ℝ) ^ (N + 1) * rescaleConstant N K ^ 3
   have hB' : 1 ≤ B := one_le_mul_of_one_le_of_one_le (one_le_pow₀ (by norm_num))
     (one_le_pow₀ (hK.trans (le_rescaleConstant N K)))
@@ -1459,7 +1467,9 @@ noncomputable def copyVelocity (t : TangentData P ProblemStatement.Space) (g : G
 
 theorem normalDot_complexify (N a : ProblemStatement.Space) :
     normalDot N (CurlClassBounds.complexify a) = (⟪N, a⟫_ℝ : ℂ) := by
-  simp [normalDot, PiLp.inner_apply, Fin.sum_univ_three, mul_comm]
+  simp only [normalDot, Fin.isValue, CurlClassBounds.complexify_apply, PiLp.inner_apply,
+      RCLike.inner_apply, conj_trivial, mul_comm, Fin.sum_univ_three, Complex.ofReal_add,
+      Complex.ofReal_mul]
 
 /-- Tangency is propagated by the constructed ODE, then transferred to
 the complex coefficient used in the harmonic field. -/
@@ -1503,7 +1513,7 @@ theorem copySolve_principal (t : TangentData P ProblemStatement.Space) (g : Geom
   have hu : DifferentiableAt ℝ (t.linearData.copySolve g hab k) (p, Y) :=
     (t.linearData.copySolve_contDiffAt g hab hU k hA hB hf (p := (p, Y)) hp heta).differentiableAt
         (by
-        simp)
+        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hd := along_copySolve t.linearData g hab hU k hA hB hf hp Y heta
   simp only [TangentData.linearData, negativeTangentProjection_apply,
     ← sub_eq_add_neg, TangentODE.projectedOperator_apply] at hd
@@ -1599,7 +1609,10 @@ theorem forcing_eq_columns (d : FrameData Q) (f : Q × ℝ → PrimaryODE.Space)
         := by
   have hsum : (∑ i : Fin 3, f z i • ProblemStatement.coordinateVector i) = f z := by
     ext j
-    fin_cases j <;> simp [ProblemStatement.coordinateVector, Fin.sum_univ_three]
+    fin_cases j <;> simp only [ProblemStatement.coordinateVector, Fin.sum_univ_three, Fin.isValue,
+        Fin.zero_eta, PiLp.add_apply, PiLp.smul_apply, PiLp.single_eq_same, smul_eq_mul, mul_one,
+        ne_eq, zero_ne_one, not_false_eq_true, PiLp.single_eq_of_ne, mul_zero, add_zero,
+        Fin.reduceEq, Fin.mk_one, one_ne_zero, zero_add, Fin.reduceFinMk]
   have hh := congrArg (frameForcingLinear d z) hsum
   simp only [map_sum, map_smul, frameForcingLinear_apply] at hh
   exact hh.symm
@@ -1650,7 +1663,7 @@ theorem forced_modal_family_envelope_jets
       (fun i z => solution (hL i).le (d i) harmonic (fun _ => 0) (f i) z.1 z.2) := by
   let μ := fun i => (E + 4 * C) / D.scale i
   let K' := K + Real.exp ((E + 4 * C) * K) + 1
-  have hKK' : K ≤ K' := by dsimp [K']; linarith [Real.exp_pos ((E + 4 * C) * K)]
+  have hKK' : K ≤ K' := by dsimp only [K']; linarith [Real.exp_pos ((E + 4 * C) * K)]
   have hK' : 1 ≤ K' := hK.trans hKK'
   have hμ : ∀ i, 0 ≤ μ i := fun i => div_nonneg (by
       positivity) (zero_le_one.trans (D.one_le_scale i))
@@ -1659,11 +1672,11 @@ theorem forced_modal_family_envelope_jets
     have hs : 0 < D.scale i := lt_of_lt_of_le zero_lt_one (D.one_le_scale i)
     have hr : L i / D.scale i ≤ K := (div_le_iff₀ hs).mpr (by simpa only [mul_comm] using hslot i)
     have hh : μ i * L i ≤ (E + 4 * C) * K := by
-      dsimp [μ]
+      dsimp only [μ]
       calc
         _ = (E + 4 * C) * (L i / D.scale i) := by ring
         _ ≤ _ := mul_le_mul_of_nonneg_left hr (by positivity)
-    exact (Real.exp_le_exp.mpr hh).trans (by dsimp [K']; linarith)
+    exact (Real.exp_le_exp.mpr hh).trans (by dsimp only [K']; linarith)
   have henergy : ∀ i p, p ∈ D.carrier i → ∀ v ∈ Icc 0 (L i), ∀ x : PrimaryODE.State,
       ⟪x, (d i).coefficient harmonic (p, v) x⟫_ℝ ≤ (rate i v + μ i) * ‖x‖ ^ 2 := by
     intro i p hp v hv x
@@ -1997,9 +2010,9 @@ theorem ModalCopyControl.waveClass {s : StripData (P × Plane)} {α : ℝ}
   intro N
   obtain ⟨C, hC, m, hm⟩ := h.input_jets N
   let K := C + h.boundConstant + 1
-  have hK : 1 ≤ K := by dsimp [K]; linarith [h.constant_ge_one]
-  have hCK : C ≤ K := by dsimp [K]; linarith [h.constant_ge_one]
-  have hK₀K : h.boundConstant ≤ K := by dsimp [K]; linarith
+  have hK : 1 ≤ K := by dsimp only [K]; linarith [h.constant_ge_one]
+  have hCK : C ≤ K := by dsimp only [K]; linarith [h.constant_ge_one]
+  have hK₀K : h.boundConstant ≤ K := by dsimp only [K]; linarith
   let B := (2 : ℝ) ^ (N + 1) * rescaleConstant N K ^ 3
   have hB : 1 ≤ B := one_le_mul_of_one_le_of_one_le (one_le_pow₀ (by norm_num))
     (one_le_pow₀ (hK.trans (le_rescaleConstant N K)))
@@ -2181,15 +2194,25 @@ open CommonCoverSolve TorusInverse HarmonicCalculus WeightedClasses
 noncomputable def realPart : ComplexVector →L[ℝ] ProblemStatement.Space :=
   LinearMap.toContinuousLinearMap {
     toFun := fun a => !₂[(a 0).re, (a 1).re, (a 2).re]
-    map_add' := by intro a b; ext i; fin_cases i <;> simp
-    map_smul' := by intro c a; ext i; fin_cases i <;> simp }
+    map_add' := by intro a b; ext i; fin_cases i <;> simp only [Fin.isValue, Pi.add_apply,
+        Complex.add_re, Fin.zero_eta, Matrix.cons_val_zero, PiLp.add_apply, Fin.mk_one,
+        Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val]
+    map_smul' := by intro c a; ext i; fin_cases i <;> simp only [Fin.isValue, Pi.smul_apply,
+        Complex.real_smul, Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, zero_mul, sub_zero,
+        Fin.zero_eta, Matrix.cons_val_zero, RingHom.id_apply, PiLp.smul_apply, smul_eq_mul,
+        Fin.mk_one, Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val] }
 
 /-- Imag part, constructed using `LinearMap.toContinuousLinearMap`. -/
 noncomputable def imagPart : ComplexVector →L[ℝ] ProblemStatement.Space :=
   LinearMap.toContinuousLinearMap {
     toFun := fun a => !₂[(a 0).im, (a 1).im, (a 2).im]
-    map_add' := by intro a b; ext i; fin_cases i <;> simp
-    map_smul' := by intro c a; ext i; fin_cases i <;> simp }
+    map_add' := by intro a b; ext i; fin_cases i <;> simp only [Fin.isValue, Pi.add_apply,
+        Complex.add_im, Fin.zero_eta, Matrix.cons_val_zero, PiLp.add_apply, Fin.mk_one,
+        Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val]
+    map_smul' := by intro c a; ext i; fin_cases i <;> simp only [Fin.isValue, Pi.smul_apply,
+        Complex.real_smul, Complex.mul_im, Complex.ofReal_re, Complex.ofReal_im, zero_mul, add_zero,
+        Fin.zero_eta, Matrix.cons_val_zero, RingHom.id_apply, PiLp.smul_apply, smul_eq_mul,
+        Fin.mk_one, Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val] }
 
 @[simp] theorem realPart_apply (a : ComplexVector) (i : Fin 3) : realPart a i = (a i).re := by
     fin_cases i <;> rfl
@@ -2306,7 +2329,10 @@ theorem principal_add_smul (ε frequency : ℝ) (R F G Φ : E → ℝ) (Vr Vθ V
     rw [along_add Vf (ha i) hcb, along_const_mul Vf c (hb i)]
   simp only [LinearWaveResidual.principal, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
   rw [hd]
-  fin_cases i <;> simp [LinearWaveResidual.shear] <;> ring
+  fin_cases i <;> simp only [Fin.zero_eta, Fin.isValue, LinearWaveResidual.shear, neg_mul,
+      Pi.add_apply, Pi.smul_apply, smul_eq_mul, Complex.ofReal_add, Complex.ofReal_mul,
+      Complex.ofReal_ofNat, Matrix.cons_val_zero, Complex.ofReal_pow, Fin.mk_one,
+      Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val] <;> ring
 
 private theorem principal_parts_cancel (ε frequency : ℝ) (R F G Φ : E → ℝ)
     (Vr Vθ Vz Vf : E → E) (a b : E → ComplexVector) (p q : E → ℂ)
@@ -2364,11 +2390,11 @@ theorem complexCopy_principal (t : TangentData P ProblemStatement.Space)
   have hur : DifferentiableAt ℝ ((realData t source).linearData.copySolve g hab copy) (p, Y) :=
     ((realData t source).linearData.copySolve_contDiffAt g hab hU copy hA hB hfr (p := (p, Y)) hp
         heta).differentiableAt (by
-        simp)
+        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hui : DifferentiableAt ℝ ((imagData t source).linearData.copySolve g hab copy) (p, Y) :=
     ((imagData t source).linearData.copySolve_contDiffAt g hab hU copy hA hB hfi (p := (p, Y)) hp
         heta).differentiableAt (by
-        simp)
+        simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hvr := copyVelocity_component_differentiable (realData t source) g hab copy (p := (p, Y)) hur
   have hvi := copyVelocity_component_differentiable (imagData t source) g hab copy (p := (p, Y)) hui
   have hc := principal_parts_cancel ε frequency R F G Φ Vr Vθ Vz
@@ -2576,9 +2602,9 @@ theorem complexCopyCoefficients_principal_of_modal
       (complexCopyCoefficients base t source g copy L hL).principal s dirs n x = -source n x := by
   intro n x hx
   have hur := ((hr.contDiffOn hL n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by
-      simp)
+      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hui := ((hi.contDiffOn hL n).contDiffAt (s.isOpen_domain.mem_nhds hx)).differentiableAt (by
-      simp)
+      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hh := complexCopy_principal_of_path (t n) (source n) (g n) (hL n).le (copy n)
     (hr.bridge n).ambient_coefficient (hr.bridge n).ambient_forcing (hi.bridge n).ambient_forcing
     (s.epsilon n) (base.frequency n) (hfrequency n) (base.radius n) (base.frequencyBase n)
@@ -2997,7 +3023,7 @@ theorem realData_conjugate (t : TangentData P ProblemStatement.Space) (f : P × 
   have he : (fun p => realPart (conjugateSource f p)) = fun p => realPart (f p) := by
     funext p
     ext i
-    simp [conjugateSource]
+    simp only [realPart_apply, conjugateSource, RCLike.star_def, Complex.conj_re]
   unfold realData
   rw [he]
 
@@ -3008,7 +3034,8 @@ theorem imagData_conjugate (t : TangentData P ProblemStatement.Space) (f : P × 
   have he : (fun p => imagPart (conjugateSource f p)) = fun p => (-1 : ℝ) • imagPart (f p) := by
     funext p
     ext i
-    simp [conjugateSource]
+    simp only [imagPart_apply, conjugateSource, RCLike.star_def, Complex.conj_im, neg_smul,
+        one_smul, PiLp.neg_apply]
   unfold imagData scaleTangentSource
   rw [he]
 
@@ -3021,7 +3048,10 @@ theorem complexCopyVelocity_conjugate (t : TangentData P ProblemStatement.Space)
       fun i => star (complexCopyVelocity t f g hab k p i) := by
   rw [complexCopyVelocity, realData_conjugate, imagData_conjugate, copyVelocity_scaleSource]
   ext i
-  simp [complexCopyVelocity, copyVelocity]
+  simp only [copyVelocity, neg_smul, one_smul, smul_neg, Pi.add_apply,
+      CurlClassBounds.complexify_apply, Pi.neg_apply, Pi.smul_apply, smul_eq_mul,
+      complexCopyVelocity, star_add, RCLike.star_def, Complex.conj_ofReal, star_mul',
+      Complex.conj_I, neg_mul]
 
 omit [NormedAddCommGroup P] [NormedSpace ℝ P] in
 /-- The sign change of the harmonic frequency is essential to pressure
@@ -3032,7 +3062,8 @@ theorem complexCopyPressure_conjugate (t : TangentData P ProblemStatement.Space)
     complexCopyPressure t (conjugateSource f) g hab k (-frequency) p =
       star (complexCopyPressure t f g hab k frequency p) := by
   rw [complexCopyPressure, realData_conjugate, imagData_conjugate, copyPressure_scaleSource]
-  simp [complexCopyPressure, copyPressure]
+  simp only [copyPressure, Complex.ofReal_neg, neg_smul, one_smul, mul_neg, complexCopyPressure,
+      star_add, star_div₀, star_mul', RCLike.star_def, Complex.conj_I, Complex.conj_ofReal, neg_mul]
   ring
 
 omit [NormedAddCommGroup P] [NormedSpace ℝ P] in
@@ -3065,7 +3096,9 @@ theorem copyPressure_zero_of_path (t : TangentData P ProblemStatement.Space) (g 
     (hf : ∀ v ∈ Icc a b, t.source (p, g.path k Y v) = 0)
     (hcurrent : t.source (p, Y) = 0) : copyPressure t g hab k frequency (p, Y) = 0 := by
   have hu := t.linearData.copySolve_zero_of_source_zero g hab k p Y hf
-  simp [copyPressure, copyPressureReal, hu, hcurrent, TangentProjection.pressureCoefficient]
+  simp only [copyPressure, copyPressureReal, TangentProjection.pressureCoefficient, hu, map_zero,
+      inner_zero_right, sub_self, hcurrent, add_zero, inner_self_eq_norm_sq_to_K,
+      RCLike.ofReal_real_eq_id, id_eq, zero_div, Complex.ofReal_zero, mul_zero]
 
 omit [NormedSpace ℝ P] in
 omit [NormedAddCommGroup P] in
@@ -3286,7 +3319,8 @@ theorem along_reindex (e : E ≃ₗᵢ[ℝ] F) (V : F → F) {f : F → H} {x : 
   dsimp only [Function.comp_def] at hd
   unfold along reindexVector
   rw [hd]
-  simp
+  simp only [ContinuousLinearMap.comp_apply, ContinuousLinearEquiv.coe_coe,
+      LinearIsometryEquiv.coe_toContinuousLinearEquiv, LinearIsometryEquiv.apply_symm_apply]
 
 theorem phaseNormal_reindex (e : E ≃ₗᵢ[ℝ] F) (R : F → ℝ) (Vr Vθ Vz : F → F)
     {Φ : F → ℝ} {x : E} (hΦ : DifferentiableAt ℝ Φ (e x)) :

@@ -121,7 +121,7 @@ theorem coordinate_image {x : ℝ} (hx : 0 < x) : coordinate x '' Ioi 0 = Ioo 0 
       · exact mul_pos (sq_pos_of_pos hx) (sq_pos_of_pos hu.1)
     refine ⟨t, ht, ?_⟩
     have ha : 1 + x ^ 2 * t = (x / u) ^ 2 := by
-      dsimp [t]
+      dsimp only [t]
       field_simp [hx.ne', hu.1.ne']; ring
     have hd : denominator x t = x / u := by
       rw [denominator, ha, Real.sqrt_sq (div_nonneg hx.le hu.1.le)]
@@ -134,7 +134,7 @@ theorem edge_coordinate (c : ℝ) {x t : ℝ} (hx : 0 < x) (ht : 0 ≤ t) :
   congr 1
   calc
     -c / coordinate x t ^ 2 = (-c / x ^ 2) * denominator x t ^ 2 := by
-      dsimp [coordinate]
+      dsimp only [coordinate]
       field_simp
     _ = (-c / x ^ 2) * (1 + x ^ 2 * t) := by rw [denominator_sq x ht]
     _ = -c / x ^ 2 + -c * t := by field_simp; ring
@@ -147,7 +147,7 @@ theorem transformed_integrand (c : ℝ) (j : ℕ) (b : ℝ → ℝ)
   have hd : 0 < denominator x t := denominator_pos x ht
   rw [abs_neg, abs_of_pos (div_pos (pow_pos hx 3) (mul_pos (by norm_num) (pow_pos hd 3)))]
   simp only [integrand, scale, kernel, edge_coordinate c hx ht]
-  dsimp [coordinate]
+  dsimp only [coordinate]
   rw [div_pow]
   field_simp
 
@@ -181,7 +181,9 @@ theorem factor_eq_normalized_primitive (c : ℝ) (j : ℕ) (b : ℝ → ℝ)
 
 theorem kernel_at_zero (c : ℝ) (j : ℕ) (b : ℝ → ℝ) (t : ℝ) :
     kernel c j b 0 t = (b 0 / 2) * Real.exp (-c * t) := by
-  simp [kernel, denominator, coordinate]
+  simp only [kernel, one_div, neg_mul, denominator, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
+      zero_pow, zero_mul, add_zero, Real.sqrt_one, one_pow, one_ne_zero, div_self, mul_one,
+      coordinate, div_one]
   ring
 
 /-- The transformed integral has the predicted endpoint value directly,
@@ -190,7 +192,7 @@ theorem factor_at_zero {c : ℝ} (hc : 0 < c) (j : ℕ) (b : ℝ → ℝ) :
     factor c j b 0 = b 0 / (2 * c) := by
   simp only [factor, kernel_at_zero]
   rw [integral_const_mul, integral_exp_mul_Ioi (neg_lt_zero.mpr hc) 0]
-  simp
+  simp only [mul_zero, Real.exp_zero, neg_div_neg_eq, one_div]
   ring
 
 /-- Every fixed polynomial majorant is integrable against the decaying
@@ -292,7 +294,7 @@ theorem exists_smooth_factor {c : ℝ} (hc : 0 < c) (j : ℕ) {b : ℝ → ℝ}
   intro x hx
   rcases eq_or_lt_of_le hx with hzero | hpos
   · subst x
-    simp
+    simp only [primitive_zero, scale_zero, zero_mul]
   · exact primitive_eq_scale_mul_factor c j b hpos
 
 theorem integral_exp_eq_primitive (c : ℝ) (j : ℕ) (b : ℝ → ℝ)

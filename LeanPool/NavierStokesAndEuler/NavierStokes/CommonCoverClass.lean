@@ -153,18 +153,19 @@ noncomputable def sourceLinear (P : Type) [NormedAddCommGroup P] [NormedSpace �
 theorem nativeArgument_affine (g : CCS) (k : Frequency) (w : Joint P) :
     nativeArgument g k w = nativeArgument g k 0 + nativeLinear P g w := by
   simp only [nativeArgument, g.coordinates_eq_affine k w.1.2, nativeLinear_apply]
-  ext <;> simp
+  ext <;> simp only [Prod.fst_zero, Prod.snd_zero, Prod.mk_add_mk, zero_add, Prod.fst_add]
 
 theorem sourceArgument_affine (g : CCS) (k : Frequency) (w : Joint P) :
     sourceArgument g k w = sourceArgument g k 0 + sourceLinear P g w := by
   have ha : ((g.coordinates k w.1.2).1, w.2) =
       ((g.coordinates k 0).1, 0) + ((g.coordinateLinear w.1.2).1, w.2) := by
     rw [g.coordinates_eq_affine k w.1.2]
-    ext <;> simp
+    ext <;> simp only [Prod.fst_add, Prod.mk_add_mk, zero_add]
   simp only [sourceArgument, CommonCoverSolve.Geometry.path, ha, g.point_add,
     sourceLinear_apply, CommonCoverSolve.Geometry.pointLinear,
     ContinuousLinearMap.comp_apply, ContinuousLinearEquiv.coe_coe]
-  ext <;> simp
+  ext <;> simp only [Prod.fst_zero, Prod.snd_zero, Prod.mk_add_mk, zero_add, Prod.fst_add,
+      Prod.snd_add]
 
 theorem nativeArgument_smooth (g : CCS) (k : Frequency) :
     ContDiff ℝ ∞ (nativeArgument (P := P) g k) := by
@@ -287,7 +288,7 @@ theorem scaledBasis_transverse (B : Plane ≃L[ℝ] Plane) (ci : ℝ) (hci : ci 
     scaledBasis B ci hci (0, 1) = ci • B (0, 1) := by
   rw [scaledBasis_apply, ← map_smul]
   congr 1
-  ext <;> simp
+  ext <;> simp only [Prod.smul_mk, smul_eq_mul, mul_zero, mul_one]
 
 theorem norm_transverseChart_le {ci : ℝ} (hci : ci ≠ 0) (habs : |ci| ≤ 1) :
     ‖(TorusAverages.transverseChart ci hci : Plane →L[ℝ] Plane)‖ ≤ 1 := by
@@ -447,7 +448,7 @@ noncomputable def currentLinear (P : Type) [NormedAddCommGroup P] [NormedSpace �
 theorem currentArgument_affine (g : CCS) (k : Frequency) (p : P × Plane) :
     currentArgument g k p = currentArgument g k 0 + currentLinear P g p := by
   simp only [currentArgument, g.coordinates_eq_affine k p.2, currentLinear_apply]
-  ext <;> simp
+  ext <;> simp only [Prod.snd_zero, Prod.mk_add_mk, zero_add, Prod.snd_add]
 
 theorem currentArgument_smooth (g : CCS) (k : Frequency) :
     ContDiff ℝ ∞ (currentArgument (P := P) g k) := by
@@ -632,7 +633,7 @@ theorem bandRatio_mul_scale (a : ℝ) (n m : ℕ) :
     _ = (ChartScales.Q n ^ a * ChartScales.Q n ^ (-a)) / ChartScales.Q m ^ a := by ring
     _ = (ChartScales.Q m ^ a)⁻¹ := by
       rw [← Real.rpow_add (ChartScales.Q_pos n)]
-      simp
+      simp only [add_neg_cancel, Real.rpow_zero, one_div]
     _ = ChartScales.Q m ^ (-a) := (Real.rpow_neg (ChartScales.Q_pos m).le a).symm
 
 theorem bandRatio_mul_power (a : ℝ) (n m : ℕ) :
@@ -921,12 +922,15 @@ theorem memClass_sourceArgument (s : WeightedClasses.StripData P)
     rw [hpres]
     rfl
   have heps (n : ℕ) : (sourceStrip s).epsilon n ^ α ≤ 1 * (jointStrip s).epsilon n ^ α := by
-    simp [sourceStrip, jointStrip, parameterStrip]
+    simp only [sourceStrip, parameterStrip, ContinuousLinearMap.coe_fst', jointStrip,
+        ContinuousLinearMap.comp_apply, one_mul, Std.le_refl]
   have hgrowth (n : ℕ) (x : Joint P) (_hx : x ∈ (jointStrip s).domain) :
       (sourceStrip s).growth n (sourceArgument (g n) (copy n) 0 + sourceLinear P (g n) x) ≤
         1 * (jointStrip s).growth n x ^ 1 := by
     rw [hpres]
-    simp [sourceStrip, jointStrip, parameterStrip, WeightedClasses.StripData.growth, sourceArgument]
+    simp only [WeightedClasses.StripData.growth, sourceStrip, parameterStrip,
+        ContinuousLinearMap.coe_fst', sourceArgument, jointStrip, ContinuousLinearMap.comp_apply,
+        pow_one, one_mul, Std.le_refl]
   have hlinear (n : ℕ) (x : Joint P) (_hx : x ∈ (jointStrip s).domain) :
       ‖sourceLinear P (g n)‖ ≤ bandArgumentCost B D * (jointStrip s).growth n x ^ 1 := by
     rw [pow_one]
@@ -1339,11 +1343,11 @@ noncomputable def nativeBasis : Plane ≃L[ℝ] Plane :=
 
 theorem nativeBasis_radial : nativeBasis (1, 0) = PhysicalGraphBounds.radialDirection := by
   rw [nativeBasis, TorusAverages.slotChart_apply]
-  simp
+  simp only [one_smul, zero_smul, add_zero]
 
 theorem nativeBasis_temporal : nativeBasis (0, 1) = PhysicalGraphBounds.timeDirection := by
   rw [nativeBasis, TorusAverages.slotChart_apply]
-  simp
+  simp only [zero_smul, one_smul, zero_add]
 
 /-- The exact manuscript path, with the actual `c_i` and `v_t`. -/
 theorem native_band_path (h : ℝ) (n gap : ℕ) (center : Plane) (k : Frequency)
