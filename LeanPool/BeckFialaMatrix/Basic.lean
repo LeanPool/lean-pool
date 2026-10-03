@@ -402,4 +402,3 @@ theorem zero_bound_counterexample :
   simp at this
 
 end BeckFialaMatrix
-
