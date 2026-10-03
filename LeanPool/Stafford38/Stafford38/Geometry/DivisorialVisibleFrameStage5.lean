@@ -24,6 +24,7 @@ universe u
 namespace Stafford38.Geometry.DivisorialVisibleFrameStage5
 
 /-- The coefficient-field inclusion restricted to the chosen valuation ring. -/
+@[expose]
 def coeffHom {k K : Type u} [Field k] [Field K] [Algebra k K]
     (E : IntermediateField k K) (V : ValuationSubring K)
     (hEV : ∀ z : E, (z : K) ∈ V.toSubring) : E →+* V.toSubring :=

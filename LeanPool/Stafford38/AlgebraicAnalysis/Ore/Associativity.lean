@@ -211,6 +211,7 @@ theorem rightMul_assoc_of_ring
 /-! ## The concrete associative Ore ring -/
 
 /-- The image of the faithful normal-form representation. -/
+@[expose]
 def faithfulRange (D : OreDivisionDerivation B) :
     Subring (AddMonoid.End (Polynomial B)) where
   carrier := Set.range (OreAmbient.eval D (faithfulAmbient D))
