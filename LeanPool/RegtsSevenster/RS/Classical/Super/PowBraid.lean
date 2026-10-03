@@ -27,6 +27,7 @@ open CategoryTheory MonoidalCategory
 
 /-- The top adjacent braiding on a monoidal power: braid the last
 two factors through the associator. -/
+@[expose]
 noncomputable def topBraid (V : SuperVect) (m : ℕ) :
     superPow V (m + 2) ⟶ superPow V (m + 2) :=
   (α_ (superPow V m) V V).hom ≫
@@ -35,6 +36,7 @@ noncomputable def topBraid (V : SuperVect) (m : ℕ) :
 
 /-- The adjacent braiding at position `i`: swap the factors at
 zero-based positions `i` and `i + 1`. -/
+@[expose]
 noncomputable def powBraid (V : SuperVect) :
     (n : ℕ) → (i : ℕ) → i + 2 ≤ n →
       (superPow V n ⟶ superPow V n)

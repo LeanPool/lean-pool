@@ -24,6 +24,7 @@ public section
 namespace RS
 
 /-- The circle value of a parameter. -/
+@[expose]
 noncomputable def circleVal {R : ℕ} (f : EdgeRankParameter R) : ℂ :=
   f.val (circlesClosed 1)
 

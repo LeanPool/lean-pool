@@ -26,6 +26,7 @@ open CategoryTheory Functor.LaxMonoidal Functor.OplaxMonoidal
 open MonoidalCategory
 
 /-- The even component of a tensor of even vectors. -/
+@[expose]
 def evenPair {V W : SuperVect} (v : V.even) (w : W.even) :
     (SuperVect.tensorObj V W).even := (v ⊗ₜ[ℂ] w, 0)
 

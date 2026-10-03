@@ -37,6 +37,7 @@ variable (e' : P.ω.obj (SkeinObj.mk 1) ⟶ stdSuperPair k ℓ)
 
 /-- The model transport: iterated strand identifications
 assembled left-nested through the structure maps. -/
+@[expose]
 noncomputable def stdToOmega :
     (m : ℕ) → (superPow (stdSuperPair k ℓ) m ⟶
       P.ω.obj (SkeinObj.mk m))
