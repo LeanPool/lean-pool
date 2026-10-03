@@ -415,6 +415,7 @@ open SuperCommAlgebra.Mod
 
 /-- **The fibre functor over an algebra**: base change to the
 algebra followed by realization. -/
+@[expose]
 noncomputable def fibreOver
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [Linear ℂ D]

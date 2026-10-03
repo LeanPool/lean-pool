@@ -78,6 +78,7 @@ variable {W : Fragment α} {F : EdgeSubset W}
 
 /-- Re-pair a matching function at four flags: `a ↦ c`, `c ↦ a`,
 `b ↦ d`, `d ↦ b`, leaving every other flag to `m`. -/
+@[expose]
 def repairFun (m : W.Flag → W.Flag) (a b c d : W.Flag) :
     W.Flag → W.Flag := fun f =>
   if f = a then c else if f = c then a else
@@ -217,6 +218,7 @@ square (`a ↔ b`, `c ↔ d` matched, all four distinct, all at vertex
 `v`), the transition system matching `a ↔ c` and `b ↔ d` instead,
 keeping every other matched pair.  The result is a system over the
 *same* edge subset `F`. -/
+@[expose]
 def repair (κ : F.RelTransitionSystem) (a b c d : W.Flag)
     (v : W.Vertex) (h : RepairSquare κ a b c d v) :
     F.RelTransitionSystem where

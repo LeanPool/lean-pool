@@ -576,6 +576,7 @@ def outPermEquiv (s : ℕ) {t : ℕ} (σ : Equiv.Perm (Fin t)) :
     ((Equiv.sumCongr (Equiv.refl (Fin s)) σ).trans finSumFinEquiv)
 
 /-- Permuting the first `t` labels of `Fin (t + u)`. -/
+@[expose]
 def inPermEquiv {t : ℕ} (σ : Equiv.Perm (Fin t)) (u : ℕ) :
     Fin (t + u) ≃ Fin (t + u) :=
   finSumFinEquiv.symm.trans

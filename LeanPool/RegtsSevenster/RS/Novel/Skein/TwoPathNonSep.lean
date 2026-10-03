@@ -39,6 +39,7 @@ namespace RS
 open scoped Classical in
 /-- Apply the odd-partner involution to the (odd) state entries at
 two labels, leaving all other labels untouched. -/
+@[expose]
 noncomputable def stateOddFlip {k ℓ : ℕ} {α : Type}
     (st : GenBoundaryState k ℓ α) (i₁ i₂ : α) :
     GenBoundaryState k ℓ α :=

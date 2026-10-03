@@ -29,6 +29,7 @@ noncomputable def circlesClosed (c : ℕ) : ClosedFragment :=
 
 /-- The natural dimension of the connection-map range. It agrees
 with connection rank whenever the range is finite-dimensional. -/
+@[expose]
 noncomputable def connectionRank (f : ClosedFragment → ℂ) (t : ℕ) : ℕ :=
   Module.finrank ℂ (LinearMap.range (connectionMap f t))
 

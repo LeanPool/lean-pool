@@ -156,6 +156,7 @@ noncomputable def chainBGrι
 
 /-- **The unit of the graded splitting algebra**: the unit of the
 balanced algebra, in degree zero. -/
+@[expose]
 noncomputable def chainBGrUnit
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
@@ -1564,7 +1565,7 @@ theorem chainBGrMul_unit
 /-- **The graded splitting algebra is a monoid object**: the
 degree-zero unit and the graded multiplication satisfy the
 monoid laws. -/
-@[reducible]
+@[expose, reducible]
 noncomputable def chainBGrMonObj
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

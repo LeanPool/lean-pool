@@ -51,6 +51,7 @@ noncomputable def tensorLeftMod
 
 /-- The cover map of the twist shuffle: the middle-four
 interchange followed by the projection under the twists. -/
+@[expose]
 noncomputable def twistShuffleCover
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D] (A : D) [MonObj A] (V : D) (W : D) (R : Mod D A)

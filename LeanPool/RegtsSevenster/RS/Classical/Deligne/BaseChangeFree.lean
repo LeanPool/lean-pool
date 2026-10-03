@@ -338,6 +338,7 @@ lemma freeAct_baseChangeFreeInv
 /-- **Base change of a free module**: the base change along `φ` of
 the free `A`-module on `V` is the free `B`-module on `V`, as an
 isomorphism of `B`-modules. -/
+@[expose]
 noncomputable def baseChangeFreeIso
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D] (A : D) [MonObj A] (B : D) [MonObj B]

@@ -31,6 +31,7 @@ variable {D : Type u}
 
 /-- The double twist transport: object and module isomorphisms
 together. -/
+@[expose]
 noncomputable def tensorLeftModMapIso
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D] (A : D)
     [MonObj A]
@@ -43,6 +44,7 @@ noncomputable def tensorLeftModMapIso
 section Powers
 
 /-- The bottom power module is the module. -/
+@[expose]
 noncomputable def modPowModZeroIso
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]
@@ -58,6 +60,7 @@ noncomputable def modPowModZeroIso
 
 /-- The merge of adjacent power modules, as a module
 isomorphism. -/
+@[expose]
 noncomputable def powMergeModIso
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D]

@@ -92,6 +92,7 @@ theorem splitCoevalCoreDual_splitEval
 /-- **The dual coevaluation**: the copair element with its
 primal factor pushed into the algebra, multiplied against the
 algebra. -/
+@[expose]
 noncomputable def splitCoevalDual
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D] (A : D) [MonObj A] [IsCommMonObj A] {M : Mod D A}

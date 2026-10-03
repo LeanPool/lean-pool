@@ -224,6 +224,7 @@ theorem baseChangeAct_splitEval
 /-- **The coevaluation**: the copair element with its dual
 factor pushed into the algebra, multiplied against the
 algebra. -/
+@[expose]
 noncomputable def splitCoeval
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [HasCoequalizers D] (A : D) [MonObj A] [IsCommMonObj A] {M : Mod D A}

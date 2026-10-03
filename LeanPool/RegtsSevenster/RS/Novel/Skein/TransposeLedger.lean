@@ -342,6 +342,7 @@ theorem cThroughProduct :
 
 /-- The edge colours: edge `{0,4}` gets `0`, `{1,5}` gets `1`,
 `{3,6}` gets `2`, `{2,7}` gets `3`. -/
+@[expose]
 def cColour : Fin 8 → Fin (2 * 4) := ![0, 1, 3, 2, 0, 1, 2, 3]
 
 /-- The pinned core odd colouring. -/

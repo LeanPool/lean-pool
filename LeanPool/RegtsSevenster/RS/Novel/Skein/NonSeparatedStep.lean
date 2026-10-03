@@ -1920,6 +1920,7 @@ square preserves the circuit-count parity — the segment reversal
 maps the two traversal orbits of the affected component onto two
 orbits of the same sizes (Δ = 0 on circuits; chains carry no
 periodic flags).  Proved in `OrbitParities.lean`. -/
+@[expose]
 def NonSeparatedSegmentParity : Prop :=
   ∀ {α : Type} {W : Fragment α} {F : EdgeSubset W}
     {κ : F.RelTransitionSystem} {a b c d : W.Flag} {v : W.Vertex}
@@ -1932,6 +1933,7 @@ def NonSeparatedSegmentParity : Prop :=
 `c`-edge lies on a circuit not carrying `a` flips the count parity
 — the splice merges the circuit into `a`'s component (Δ = −1).
 Proved in `OrbitParities.lean`. -/
+@[expose]
 def NonSeparatedMergeParity : Prop :=
   ∀ {α : Type} {W : Fragment α} {F : EdgeSubset W}
     {κ : F.RelTransitionSystem} {a b c d : W.Flag} {v : W.Vertex}

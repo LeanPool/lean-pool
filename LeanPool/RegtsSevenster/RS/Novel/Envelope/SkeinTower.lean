@@ -282,6 +282,7 @@ the tensor extension, and the dimension bound from the Hom-space
 rank bound.  The growth constant is `R ^ 2` because the tower's
 bound is `A ^ n` while the Hom-space bound is `R ^ (2n)`; its square
 root, which is what the threshold `2e√A` reads, is `R`. -/
+@[expose]
 noncomputable def skeinPermTower :
     PermTower (skeinEnd f) ((R : ℝ) ^ 2) where
   rep := skeinRep f

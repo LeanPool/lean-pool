@@ -58,6 +58,7 @@ theorem freeRegTwist_act
 /-- **The free module is a twisted regular module**: the free
 module on `V` is the twist by `V` of the regular module, through
 the braiding carrying the algebra past the generator. -/
+@[expose]
 noncomputable def freeRegTwistIso
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D] (A : D)
     [MonObj A]

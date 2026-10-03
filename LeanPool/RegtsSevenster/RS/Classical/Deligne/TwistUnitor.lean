@@ -62,6 +62,7 @@ theorem actAcross_unit
 
 /-- **The unit twist collapses**: twisting a module by the tensor
 unit is the left unitor, as a module isomorphism. -/
+@[expose]
 noncomputable def tensorLeftUnitMod
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D] (A : D)
     [MonObj A]
