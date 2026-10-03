@@ -48,6 +48,7 @@ to a chain whose accumulated genus is `g`.
 
 For factors `F₂, ..., Fℓ` and `g = g₁`, this unfolds to
 `g₁ + g₂ < k₂`, `g₁ + g₂ + g₃ < k₃`, and so on. -/
+@[expose]
 def ChainPrefixBudget : ℤ → List KGeneralChainFactor → Prop
   | _, [] => True
   | g, F :: rest =>

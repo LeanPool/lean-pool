@@ -298,6 +298,7 @@ theorem unitEdge_stepEquiv (step : source.Step) :
 
 /-- The resulting vertex equivalence is a graph isomorphism in the precise
 Laplacian sense used by the certificate checker. -/
+@[expose]
 def laplacianEquiv : LaplacianEquiv source.graph target.graph :=
   OneEdgeSplitRefinement.laplacianEquivOfUnorientedUnitSteps source target
     (vertexEquiv source target relabeling) (stepEquiv source target relabeling)

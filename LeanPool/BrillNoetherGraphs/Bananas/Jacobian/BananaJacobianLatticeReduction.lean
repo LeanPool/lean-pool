@@ -146,6 +146,7 @@ theorem exists_nonnegative_zero_mod_displayedRelations {g : ℕ}
 
 /-- The displayed relation comparing arbitrary strands `alpha` and `beta`.
 It is the difference of the paper's two generators based at strand zero. -/
+@[expose]
 def bananaPairwiseLengthRelation {g : ℕ} (B : Banana g)
     (alpha beta : Fin (g + 1)) : Fin (g + 1) → ℤ :=
   (B.length alpha : ℤ) • bananaCoordinateBasis alpha -

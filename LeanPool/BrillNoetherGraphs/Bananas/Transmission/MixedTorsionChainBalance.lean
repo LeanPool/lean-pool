@@ -35,6 +35,7 @@ open Utilities
 /-! ## Reversing a chain factor -/
 
 /-- Reverse the orientation of a twice-marked chain factor. -/
+@[expose]
 def KGeneralChainFactor.swapMarks (F : KGeneralChainFactor) :
     KGeneralChainFactor where
   marked := {

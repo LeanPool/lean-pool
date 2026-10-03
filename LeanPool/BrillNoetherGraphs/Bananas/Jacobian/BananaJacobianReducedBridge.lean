@@ -29,6 +29,7 @@ open Utilities.Certificate SubdivisionGraph
 open Utilities.Certificate.SubdivisionGraph.Spec
 
 /-- The decidable numerical form of being an interior normalized position. -/
+@[expose]
 def IsPaperInteriorCoordinate {g : ℕ} (B : Banana g)
     (p : ∀ alpha : Fin (g + 1), B.PathPosition alpha)
     (alpha : Fin (g + 1)) : Prop :=
@@ -56,6 +57,7 @@ def paperCoordinateRightCoefficient {g : ℕ} (B : Banana g)
     if (p alpha).val = B.length alpha then 1 else 0
 
 /-- The semibreak part of the paper coordinate divisor. -/
+@[expose]
 noncomputable def paperCoordinateSemibreak {g : ℕ} (B : Banana g)
     (p : ∀ alpha : Fin (g + 1), B.PathPosition alpha) : CFDiv B.graph :=
   semibreakDivisor B (paperCoordinateChips B p)
