@@ -22,6 +22,9 @@ namespace SimpleGraph.StructuralGraphClasses
 
 variable {V W : Type*} {G : SimpleGraph V} {H : SimpleGraph W}
 
+example (R : CotreeRepresentation G) (s : Set V) :
+    Nonempty (CotreeRepresentation (G.induce s)) := ⟨R.induce s⟩
+
 example : (ThresholdSequence.universal (.isolated .empty)).graph.IsThreshold :=
   (ThresholdSequence.universal (.isolated .empty)).partition.isThreshold
 

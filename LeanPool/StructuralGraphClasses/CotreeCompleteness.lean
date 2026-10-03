@@ -89,12 +89,13 @@ noncomputable def IsCograph.cotreeRepresentation {V : Type*} [Finite V]
     {G : SimpleGraph V} (h : G.IsCograph) : CotreeRepresentation G :=
   Classical.choice h.nonempty_cotreeRepresentation
 
-/-- An induced restriction of a finite represented cograph has a cotree too.
+/-- An induced restriction of a represented cograph has a cotree too.
 This interface uses completeness, rather than asserting that its cotree is a
 particular pruning of the original certificate. -/
-noncomputable def CotreeRepresentation.induce {V : Type*} [Finite V]
+noncomputable def CotreeRepresentation.induce {V : Type*}
     {G : SimpleGraph V} (R : CotreeRepresentation G) (s : Set V) :
-    CotreeRepresentation (G.induce s) :=
-  (R.isCograph.induce s).cotreeRepresentation
+    CotreeRepresentation (G.induce s) := by
+  letI : Finite V := Finite.of_surjective R.iso R.iso.surjective
+  exact (R.isCograph.induce s).cotreeRepresentation
 
 end SimpleGraph
