@@ -12500,9 +12500,9 @@ projects:
       authors:
         - R. L. Brooks
       doi: 10.1017/S030500410002168X
-      url: https://github.com/jtraverso/lean-pool/blob/66caffc3dbae5a766a96a3980f5ddd7f4b2bef6f/LeanPool/BrooksSubcubic/Main.lean
+      url: https://github.com/jtraverso/lean-pool/blob/aced439fd4161d118bf167a1e8d10553f28913fe/LeanPool/BrooksSubcubic/Main.lean
       github_repo: jtraverso/lean-pool
-      commit: 66caffc3dbae5a766a96a3980f5ddd7f4b2bef6f
+      commit: aced439fd4161d118bf167a1e8d10553f28913fe
     license: Apache-2.0
     status: verified
     provenance: AI

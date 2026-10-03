@@ -10,7 +10,7 @@ public import LeanPool.BrooksSubcubic.Main
 /-!
 # Brooks' theorem for subcubic graphs
 
-Source: doi:10.1017/S030500410002168X, url:https://github.com/jtraverso/lean-pool/blob/66caffc3dbae5a766a96a3980f5ddd7f4b2bef6f/LeanPool/BrooksSubcubic/Main.lean
+Source: doi:10.1017/S030500410002168X, url:https://github.com/jtraverso/lean-pool/blob/aced439fd4161d118bf167a1e8d10553f28913fe/LeanPool/BrooksSubcubic/Main.lean
 Authors: Juan Pablo Traverso Gianini
 Status: verified
 Main declarations: `BrooksSubcubic.brooks_cubic`
