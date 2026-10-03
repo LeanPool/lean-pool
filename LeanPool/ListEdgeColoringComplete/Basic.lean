@@ -15,15 +15,17 @@ with explicit bounds in the supporting lemmas. The combinatorial certificate
 is developed separately from the polynomial and graph-colouring interfaces.
 -/
 
-@[expose] public section
+public section
 
 namespace LeanPool.ListEdgeColoringComplete
 
 /-- Target total outdegree at an actual edge of the complete graph. -/
+@[expose]
 def targetDegree (n i j : ℕ) : ℕ :=
   if n - 1 ≤ i + j then n - 1 else n - 2
 
 /-- Rank excluded from the extended star at vertex `i`. -/
+@[expose]
 def blockedRank (n i : ℕ) : ℕ :=
   if i < n / 2 then n - 2 - i else n - 1 - i + n / 2
 

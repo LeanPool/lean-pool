@@ -24,7 +24,7 @@ at actual edges are transported back. Graphs with at most one vertex have no edg
 are handled separately.
 -/
 
-@[expose] public section
+public section
 
 namespace LeanPool.ListEdgeColoringComplete
 

@@ -45,7 +45,7 @@ The article is the source of the theorem and certificate construction; the direc
 rank-and-polynomial proof here is not a line-by-line formalization of its proof.
 -/
 
-@[expose] public section
+public section
 
 namespace LeanPool.ListEdgeColoringComplete
 
