@@ -287,6 +287,7 @@ def ChargedKnownParameterRun (algorithm : DeterministicExactPairAlgorithm d)
 
 /-- Upper half of the current known-parameter proposition.  `Cp` occurs
 after `p` and before dimension and instance data. -/
+@[expose]
 noncomputable def KnownParameterAboveTwoUpperStatement : Prop :=
   ∀ (p : ℝ), 2 < p → ∃ Cp : ℝ, 0 < Cp ∧
     ∀ (d : ℕ) (eps L R : ℝ), 0 < eps → 0 < L → 0 < R →

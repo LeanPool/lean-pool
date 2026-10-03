@@ -89,6 +89,7 @@ theorem controllerPath_append (G Ma Da : ℝ)
       exact hlast current report hcOld hrOld
 
 /-- A report has complete guards, valid trial certificates, and the required local cost bound. -/
+@[expose]
 def ValidReport (data : RuntimeData d)
     (inst : PositiveInstance data.input.p d data.input.x0)
     (visit : ControllerVisit) (report : TrialReport d) : Prop :=

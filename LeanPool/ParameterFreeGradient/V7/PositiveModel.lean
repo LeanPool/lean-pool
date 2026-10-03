@@ -63,10 +63,12 @@ noncomputable def PositiveInstance.fstar (inst : PositiveInstance p d x0) : ℝ 
   sInf (inst.oracle.value '' MinimizerSet inst.oracle)
 
 /-- The gradient-accuracy condition number `L * R / eps`. -/
+@[expose]
 noncomputable def conditionNumber (inst : PositiveInstance p d x0) (eps : ℝ) : ℝ :=
   inst.L * inst.R / eps
 
 /-- The condition number truncated below at one. -/
+@[expose]
 noncomputable def conditionBar (inst : PositiveInstance p d x0) (eps : ℝ) : ℝ :=
   max 1 (conditionNumber inst eps)
 
