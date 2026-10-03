@@ -146,6 +146,7 @@ def Holds (form : AffineForm m) (point : Fin m → ℤ) : Prop :=
 
 If `a(x) >= 0` fails and `a(x)` is integral, then `a(x) <= -1`, equivalently
 `-a(x)-1 >= 0`. -/
+@[expose]
 def violation (form : AffineForm m) : AffineForm m where
   fixedValue := -form.fixedValue - 1
   coefficient := fun i => -form.coefficient i
@@ -215,6 +216,7 @@ namespace FarkasData
 variable {m : ℕ}
 
 /-- Look up an affine row, returning the zero form when the index is out of range. -/
+@[expose]
 def rowAt (rows : List (AffineForm m)) (index : ℕ) : AffineForm m :=
   rows.getD index 0
 
@@ -239,6 +241,7 @@ def Valid (data : FarkasData) (rows : List (AffineForm m)) : Prop :=
 
 /-- Whether every sparse multiplier is integral.  External emitters may always
 clear denominators within one homogeneous Farkas contradiction. -/
+@[expose]
 def integralWeights (data : FarkasData) : Bool :=
   data.terms.all fun term => decide (term.weight.den = 1)
 
@@ -248,12 +251,14 @@ def integralWeights (data : FarkasData) : Bool :=
   simp [integralWeights, List.all_eq_true]
 
 /-- Integer coefficient sum used by the kernel-reduction fast path. -/
+@[expose]
 def coefficientSumInt (data : FarkasData)
     (rows : List (AffineForm m)) (coordinate : Fin m) : ℤ :=
   (data.terms.map fun term =>
     term.weight.num * (rowAt rows term.row).coefficient coordinate).sum
 
 /-- Integer constant sum used by the kernel-reduction fast path. -/
+@[expose]
 def constantSumInt (data : FarkasData) (rows : List (AffineForm m)) : ℤ :=
   (data.terms.map fun term =>
     term.weight.num * (rowAt rows term.row).fixedValue).sum
@@ -261,6 +266,7 @@ def constantSumInt (data : FarkasData) (rows : List (AffineForm m)) : ℤ :=
 /-- Proof-free arithmetic replay for a leaf whose multipliers have denominator
 one.  Unlike rational multiplication and addition, these integer operations
 are transparent to ordinary kernel reduction. -/
+@[expose]
 def integralCheck (data : FarkasData)
     (rows : List (AffineForm m)) : Bool :=
   (data.terms.all fun term =>
@@ -408,6 +414,7 @@ private theorem rationalCheck_eq_true_iff (data : FarkasData)
 /-- Executable exact checker for a Farkas leaf.  Integral multipliers take a
 kernel-transparent fast path; arbitrary rationals retain the original exact
 checker. -/
+@[expose]
 def check (data : FarkasData) (rows : List (AffineForm m)) : Bool :=
   match data.integralWeights with
   | true => data.integralCheck rows

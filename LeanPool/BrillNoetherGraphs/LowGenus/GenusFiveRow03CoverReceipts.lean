@@ -22,6 +22,7 @@ open Utilities
 
 /-- Farkas receipt entries 0 through 127 for the row-03 cover: sparse rational combinations of
 active inequalities used to certify cell inclusion or exclude a branch. -/
+@[expose]
 def farkasReceipts0 : List Certificate.AffineCover.FarkasData :=
   [
     { terms :=
@@ -284,6 +285,7 @@ def farkasReceipts0 : List Certificate.AffineCover.FarkasData :=
 
 /-- Farkas receipt entries 128 through 255 for the row-03 cover: sparse rational combinations of
 active inequalities used to certify cell inclusion or exclude a branch. -/
+@[expose]
 def farkasReceipts1 : List Certificate.AffineCover.FarkasData :=
   [
     { terms :=
@@ -554,6 +556,7 @@ def farkasReceipts1 : List Certificate.AffineCover.FarkasData :=
 
 /-- Farkas receipt entries 256 through 383 for the row-03 cover: sparse rational combinations of
 active inequalities used to certify cell inclusion or exclude a branch. -/
+@[expose]
 def farkasReceipts2 : List Certificate.AffineCover.FarkasData :=
   [
     { terms :=
@@ -837,6 +840,7 @@ def farkasReceipts2 : List Certificate.AffineCover.FarkasData :=
 
 /-- Farkas receipt entries 384 through 511 for the row-03 cover: sparse rational combinations of
 active inequalities used to certify cell inclusion or exclude a branch. -/
+@[expose]
 def farkasReceipts3 : List Certificate.AffineCover.FarkasData :=
   [
     { terms :=
@@ -1120,6 +1124,7 @@ def farkasReceipts3 : List Certificate.AffineCover.FarkasData :=
 
 /-- Farkas receipt entries 512 through 639 for the row-03 cover: sparse rational combinations of
 active inequalities used to certify cell inclusion or exclude a branch. -/
+@[expose]
 def farkasReceipts4 : List Certificate.AffineCover.FarkasData :=
   [
     { terms :=
@@ -1406,6 +1411,7 @@ def farkasReceipts4 : List Certificate.AffineCover.FarkasData :=
 
 /-- Farkas receipt entries 640 through 767 for the row-03 cover: sparse rational combinations of
 active inequalities used to certify cell inclusion or exclude a branch. -/
+@[expose]
 def farkasReceipts5 : List Certificate.AffineCover.FarkasData :=
   [
     { terms :=
@@ -1765,6 +1771,7 @@ def farkasReceipts6 : List Certificate.AffineCover.FarkasData :=
   ]
 
 /-- The concatenated Farkas receipt table indexed by the compact row-03 cover tree. -/
+@[expose]
 def farkasReceipts : List Certificate.AffineCover.FarkasData :=
   farkasReceipts0 ++ farkasReceipts1 ++ farkasReceipts2 ++ farkasReceipts3 ++ farkasReceipts4 ++
   farkasReceipts5 ++ farkasReceipts6

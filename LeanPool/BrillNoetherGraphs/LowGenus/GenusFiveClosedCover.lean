@@ -170,6 +170,7 @@ namespace CellTree
 
 /-- The affine cone attached to a cell index, defaulting to the empty constraint list for an
 invalid index. -/
+@[expose]
 def coneAt {core : ExplicitPotential.Core n p}
     (cells : List (CoordinateCell core)) (index : ℕ) :
     List (ExplicitPotential.AffineForm p) :=
