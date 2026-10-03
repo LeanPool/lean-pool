@@ -48,6 +48,7 @@ def Commutes (D E : Derivation B) : Prop :=
   ∀ b : B, D (E b) = E (D b)
 
 /-- Pairwise commutation for a finite ordered family. -/
+@[expose]
 def PairwiseCommutes : List (Derivation B) → Prop
   | [] => True
   | D :: Ds =>
@@ -99,6 +100,7 @@ structure TowerBuild (Ds : List (Derivation B))
     Commutes (B := carrier) (extend D hD) (extend E hE)
 
 /-- Recursively construct the finite commuting derivation-Ore tower. -/
+@[expose]
 def build : (Ds : List (Derivation B)) →
     (hDs : PairwiseCommutes Ds) → TowerBuild Ds hDs
   | [], _ =>

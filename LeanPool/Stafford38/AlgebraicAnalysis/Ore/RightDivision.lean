@@ -647,14 +647,17 @@ theorem pow_mul (b : B) (n : ℕ) :
       rw [hsecond]
 
 /-- A single coefficient moved through a power of the Ore variable. -/
+@[expose]
 def reverseTerm (b : B) (i j : ℕ) : A :=
   O.x ^ j * O.embed ((D^[i]) b)
 
 /-- A signed term for the reverse normal-order expansion. -/
+@[expose]
 def reverseSignedTerm (b : B) (i j : ℕ) : A :=
   (-1 : A) ^ i * reverseTerm D O b i j
 
 /-- The reverse normal-order expansion of `x^n * embed b`. -/
+@[expose]
 def reverseExpansion (b : B) (n : ℕ) : A :=
   ∑ ij ∈ Finset.HasAntidiagonal.antidiagonal n,
     n.choose ij.1 • reverseSignedTerm D O b ij.1 ij.2

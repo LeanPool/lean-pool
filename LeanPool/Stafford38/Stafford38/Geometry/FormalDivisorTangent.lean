@@ -173,6 +173,7 @@ abbrev FormalTangentColumn (κ : Type*) := Unit ⊕ (κ ⊕ Unit)
 
 /-- Assemble the position, divisor-tangent, and normalized transverse columns
 without making any rank assertion. -/
+@[expose]
 def formalTangentMatrix
     {ι : Type v} {κ : Type w}
     (q : ι → PowerSeries k) (Z : Matrix ι κ (PowerSeries k))

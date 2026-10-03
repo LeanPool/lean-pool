@@ -93,6 +93,7 @@ private theorem totalDrop_apply_component (r : ℕ) (p : ℤ)
 
 
 /-- The componentwise successor map on the total source page. -/
+@[expose]
 noncomputable def sourceTotalSuccMap (r : ℕ) :
     K.SourceTotal (r + 1) →ₗ[k] K.SourceTotal r :=
   DirectSum.lmap (fun p =>
@@ -151,6 +152,7 @@ private theorem targetReindex_totalDrop (r : ℕ) (x : K.SourceTotal r) :
   exact K.totalDrop_apply_component r p x
 
 /-- The componentwise quotient map on the total target page. -/
+@[expose]
 def targetTotalSuccMap (r : ℕ) :
     K.TargetTotal r →ₗ[k] K.TargetTotal (r + 1) :=
   DirectSum.lmap (K.targetSuccMap r)

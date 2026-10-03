@@ -40,6 +40,7 @@ universe u v
 variable {k : Type u} [Field k]
 
 /-- The coordinate row selecting `axis`. -/
+@[expose]
 def axisRow {ι : Type*} [DecidableEq ι] (axis : ι) : ι → k :=
   fun i => if i = axis then 1 else 0
 

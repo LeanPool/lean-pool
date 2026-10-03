@@ -40,6 +40,7 @@ private abbrev targetDenominator (r : ℕ) (p : ℤ) :
   (K.boundaries r p).comap (K.G p).subtype
 
 /-- Include cycles surviving the next page into the current cycle numerator. -/
+@[expose]
 def sourceSuccInclusion (r : ℕ) (p : ℤ) :
     K.cycles (r + 1) p →ₗ[k] K.cycles r p :=
   Submodule.inclusion (K.cycles_succ_le r p)
@@ -51,6 +52,7 @@ private theorem sourceSuccInclusion_denominator (r : ℕ) (p : ℤ) :
   exact hx
 
 /-- The map from the next source page to the current source page. -/
+@[expose]
 def sourceSuccMap (r : ℕ) (p : ℤ) :
     K.SourcePage (r + 1) p →ₗ[k] K.SourcePage r p :=
   Submodule.mapQ _ _ (K.sourceSuccInclusion r p)
@@ -73,6 +75,7 @@ private theorem drop_sourceSuccMap_eq_zero (r : ℕ) (p : ℤ)
     (K.sourceSuccInclusion r p z) z.property
 
 /-- The canonical map from the next source page into the kernel of `d_r`. -/
+@[expose]
 def sourceSuccKernelMap (r : ℕ) (p : ℤ) :
     K.SourcePage (r + 1) p →ₗ[k] LinearMap.ker (K.drop r p) :=
   (K.sourceSuccMap r p).codRestrict (LinearMap.ker (K.drop r p))
@@ -112,6 +115,7 @@ private theorem sourceSuccKernelMap_surjective (r : ℕ) (p : ℤ) :
 
 /-- On the source, the next page is the kernel of the current page
 differential. -/
+@[expose]
 noncomputable def sourceSuccEquivKerDrop (r : ℕ) (p : ℤ) :
     K.SourcePage (r + 1) p ≃ₗ[k] LinearMap.ker (K.drop r p) :=
   LinearEquiv.ofBijective (K.sourceSuccKernelMap r p)
@@ -120,6 +124,7 @@ noncomputable def sourceSuccEquivKerDrop (r : ℕ) (p : ℤ) :
         K.sourceSuccKernelMap_surjective r p⟩)
 
 /-- The quotient map from a target page to its successor page. -/
+@[expose]
 def targetSuccMap (r : ℕ) (p : ℤ) :
     K.TargetPage r p →ₗ[k] K.TargetPage (r + 1) p :=
   Submodule.mapQ _ _ LinearMap.id (by
