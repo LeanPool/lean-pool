@@ -330,6 +330,7 @@ structure AboveTrialWitness (p : ℝ) (d : ℕ) where
 
 /-- Source carrier for `prop:abovetrial` (A01--A12), with the current
 `p/(p+2)` exponent and endpoint reuse. -/
+@[expose]
 noncomputable def AboveTrialStatement : Prop :=
   ∀ (p : ℝ), 2 < p → ∃ Cp : ℝ,
     0 < Cp ∧ ∀ (d : ℕ)

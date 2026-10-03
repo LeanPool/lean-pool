@@ -99,6 +99,7 @@ lemma xi_step_spec (P : PrefixParameters p d T) (t : ℕ) :
     resistingSign_spec (query P t (sigma P t))
 
 /-- The final scaled smooth oracle obtained from the last partial resisting objective. -/
+@[expose]
 noncomputable def completedOracle (P : PrefixParameters p d T) : PairOracle d :=
   { value := fun x => P.beta *
       (P.kernel.smooth P.chi (partialH P (T - 1))).value x
