@@ -356,6 +356,7 @@ end EndpointIdentifiedRelativeAffineCollar
 /-- Existence proposition for the genuine relative affine collar.  In contrast with the previous
 raw interface, this proposition cannot be inhabited by an empty cell family or by a collar whose
 horizontal boundary is unrelated to the supplied Fox--Neuwirth subdivision levels. -/
+@[expose]
 def RelativeAffineCollarExists
     (hp : Nat.Prime p) (N₀ N₁ M L : Nat) : Prop :=
   Nonempty (EndpointIdentifiedRelativeAffineCollar hp N₀ N₁ M L)

@@ -280,6 +280,7 @@ end FoxNeuwirthRelativeAffineCollar
 
 /-- Canonical identification of the `p` facet vertices with the vertex index type used by a
 `(p - 1)`-simplex.  Keeping this transport named prevents repeated dependent casts. -/
+@[expose]
 def refinedVertexEquiv (hp : Nat.Prime p) :
     Fin p ≃ Fin (p - 1 + 1) :=
   augmentedRowEquiv hp

@@ -61,6 +61,7 @@ def mapVertexSignature
     ((AffinePositiveRayBoundary.VertexMap.facetIndexEquiv hp).symm i)))
 
 /-- Prime translation of an affine facet map. -/
+@[expose]
 def translateFacetMap
     (p : Nat) (g : PrimeSymmetry p)
     (tau : Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) :
@@ -235,6 +236,7 @@ theorem lower_add_upper_add_side
     · simp [hl, hu]
 
 /-- Expanded occurrence pairing for an arbitrary facet-map weight. -/
+@[expose]
 noncomputable def occurrencePairing
     (hp : Nat.Prime p) (N L : Nat)
     (W : (Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) → ZMod p) : ZMod p :=

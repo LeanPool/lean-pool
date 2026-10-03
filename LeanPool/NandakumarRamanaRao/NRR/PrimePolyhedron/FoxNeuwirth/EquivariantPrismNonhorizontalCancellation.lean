@@ -1255,6 +1255,7 @@ def translateFacetMap
   rfl
 
 /-- Ordered cylinder vertices of one actual facet occurrence. -/
+@[expose]
 noncomputable def occurrencePointSignature
     (hp : Nat.Prime p) (N L : Nat) (o : FacetOccurrence hp N L) :
     Fin p -> CylinderPoint p :=

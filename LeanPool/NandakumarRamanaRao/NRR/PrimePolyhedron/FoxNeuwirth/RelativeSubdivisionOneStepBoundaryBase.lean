@@ -100,6 +100,7 @@ theorem basePairing_eq_endpoint_add_side
   by_cases h : IsEndpointCell hp q.2 <;> simp [h]
 
 /-- The lower endpoint contribution of the cone-base chain. -/
+@[expose]
 noncomputable def lowerEndpointPairing
     (hp : Nat.Prime p) (N : Nat)
     (W : (RelativeSubdivisionOneStepCells.cellSystem hp N).Facet → ZMod p) : ZMod p :=
@@ -107,6 +108,7 @@ noncomputable def lowerEndpointPairing
     RefinedAffineMap.coefficient hp N q * W (RelativeSubdivisionOneStepEndpoints.lowerFacet hp N q)
 
 /-- The upper endpoint contribution of the cone-base chain. -/
+@[expose]
 noncomputable def upperEndpointPairing
     (hp : Nat.Prime p) (N : Nat)
     (W : (RelativeSubdivisionOneStepCells.cellSystem hp N).Facet → ZMod p) : ZMod p :=

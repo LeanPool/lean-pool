@@ -45,6 +45,7 @@ namespace MixedFaceCase
 
 /-- Predicate selecting precisely the `p` movable scalar-orbit parameters of
 one retained local vertex. -/
+@[expose]
 def IsSelectedVectorParameter
     (κ : MixedFaceCase hp C) (q : MovableParameter hp C) : Prop :=
   q ∈ Set.range (κ.vectorParameter hp C)

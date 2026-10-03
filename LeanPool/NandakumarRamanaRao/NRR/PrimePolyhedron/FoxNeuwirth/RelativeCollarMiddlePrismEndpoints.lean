@@ -50,6 +50,7 @@ open RefinedAffineMap
 variable {p : Nat}
 
 /-- Split a combined-level top cell into its level-`N` prefix and length-`L` refinement tail. -/
+@[expose]
 noncomputable def splitTopCellEquiv
     (hp : Nat.Prime p) (N L : Nat) :
     TopCell hp (N + L) ≃ TopCell hp N × RefinementWord p L where
