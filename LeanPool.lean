@@ -109,6 +109,7 @@ public import LeanPool.GapCVP.Imports
 public import LeanPool.GaussianMomentsCounterexamples.Imports
 public import LeanPool.GoemansFlow.Imports
 public import LeanPool.GranvilleMoore.Imports
+public import LeanPool.GraphColouringMatching.Imports
 public import LeanPool.GrothendieckVanishing.Imports
 public import LeanPool.HSDInteriorPointLP.Imports
 public import LeanPool.HadwigerNelsonBounds.Imports
@@ -149,6 +150,7 @@ public import LeanPool.LeanStationaryHarmonicMaps.Imports
 public import LeanPool.LehmerE10.Imports
 public import LeanPool.Lentil.Imports
 public import LeanPool.LiCriterion.Imports
+public import LeanPool.ListEdgeColoringComplete.Imports
 public import LeanPool.LocalComplexGeometry.Imports
 public import LeanPool.LongGapsBetweenPrimes.Imports
 public import LeanPool.LowDimSolvClassification.Imports
@@ -246,6 +248,7 @@ public import LeanPool.SingularModuli.Imports
 public import LeanPool.SpectralPositivity.Imports
 public import LeanPool.SpectralTheory.Imports
 public import LeanPool.SpherePacking.Imports
+public import LeanPool.Stafford38.Imports
 public import LeanPool.StallingsFolding.Imports
 public import LeanPool.SteinhausThreeGap.Imports
 public import LeanPool.SumDifferenceExponent.Imports
