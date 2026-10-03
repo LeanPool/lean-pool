@@ -222,6 +222,7 @@ noncomputable def liftBoundaryRefinementWord
       (fun r => extendSpatialPermutation (eta r.succ))
 
 /-- Facet omitted by a canonical endpoint occurrence. -/
+@[expose]
 def endpointOmittedPrime
     (L : Nat) (j : Fin (p + 1)) : Fin (p + 1) :=
   match L with

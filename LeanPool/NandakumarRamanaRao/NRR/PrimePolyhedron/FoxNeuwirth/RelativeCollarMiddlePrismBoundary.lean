@@ -811,6 +811,7 @@ theorem upperBoundaryCoefficient_zero_of_not_upper
 
 /-- The common-level staircase prism, with its boundary understood pointwise on prime-orbit facets.
 -/
+@[expose]
 noncomputable def collar
     (hp : Nat.Prime p) (N L : Nat) :
     FoxNeuwirthRelativeAffineCollar hp (N + L) (N + L) (N + L) L where

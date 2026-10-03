@@ -47,6 +47,7 @@ noncomputable def baseOccurrence
   (q, 0)
 
 /-- Pairing of all cone-base facets against an arbitrary quotient-facet weight. -/
+@[expose]
 noncomputable def basePairing
     (hp : Nat.Prime p) (N : Nat)
     (W : (RelativeSubdivisionOneStepCells.cellSystem hp N).Facet → ZMod p) : ZMod p :=
@@ -55,6 +56,7 @@ noncomputable def basePairing
       W ((RelativeSubdivisionOneStepCells.cellSystem hp N).facetClass (baseOccurrence hp N q))
 
 /-- A local base cell belongs to one of the two external horizontal boundaries. -/
+@[expose]
 def IsEndpointCell
     (hp : Nat.Prime p) (q : RelativeSubdivisionCylinderCombinatorics.Cell (p - 1)) : Prop :=
   q = RelativeSubdivisionCylinderCombinatorics.lowerCell (p - 1) ∨

@@ -1554,10 +1554,12 @@ theorem nonhorizontalMapWeight_smul
 
 /-- Transport from the ambient prime-cardinality index to the face index of a
 `(p - 2)`-simplex. -/
+@[expose]
 def orbitFacetEquiv (hp : Nat.Prime p) : Fin p ≃ Fin (p - 2 + 2) :=
   finCongr (by have := hp.two_le; omega)
 
 /-- The face index corresponding to a labelled facet of a prime orbit. -/
+@[expose]
 noncomputable def orbitFacetIndex (hp : Nat.Prime p) (k : Fin p) : Fin (p - 2 + 2) :=
   orbitFacetEquiv hp k
 

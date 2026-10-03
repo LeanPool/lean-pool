@@ -485,6 +485,7 @@ def IsFrozenVertex (x : GlobalVertex hp C) : Prop :=
   simp [IsFrozenVertex, IsHorizontalPoint]
 
 /-- Frozen status is well-defined on diagonal parameter orbits. -/
+@[expose]
 noncomputable def IsFrozenParameter : Parameter hp C → Prop :=
   Quotient.lift
     (fun s : ScalarSite hp C => IsFrozenVertex hp C s.1)
