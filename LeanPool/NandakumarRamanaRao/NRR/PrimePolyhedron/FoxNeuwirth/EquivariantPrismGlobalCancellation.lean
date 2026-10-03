@@ -493,6 +493,7 @@ noncomputable instance (hp : Nat.Prime p) (N L : Nat) :
 
 /-- Ordered global vertices of one induced prism facet.  Equality of signatures means equality as
 an ordered sampled facet, which is the correct relation for oriented boundary cancellation. -/
+@[expose]
 noncomputable def facetSignature
     (hp : Nat.Prime p) (N L : Nat)
     (o : FacetOccurrence hp N L) : Fin p → GlobalVertex hp N L :=
@@ -720,18 +721,21 @@ theorem Result.signature_weighted_boundary_sum_eq_zero
 /-! ## Horizontal and nonhorizontal decomposition -/
 
 /-- Time coordinate of one vertex in an ordered global facet signature. -/
+@[expose]
 noncomputable def signatureTime
     (hp : Nat.Prime p) (N L : Nat)
     (s : FacetSignature hp N L) (i : Fin p) : Real :=
   (globalPoint hp N L (s i)).time.1
 
 /-- A facet signature lies in the lower horizontal layer. -/
+@[expose]
 def IsLowerHorizontal
     (hp : Nat.Prime p) (N L : Nat)
     (s : FacetSignature hp N L) : Prop :=
   ∀ i : Fin p, signatureTime hp N L s i = 0
 
 /-- A facet signature lies in the upper horizontal layer. -/
+@[expose]
 def IsUpperHorizontal
     (hp : Nat.Prime p) (N L : Nat)
     (s : FacetSignature hp N L) : Prop :=

@@ -67,6 +67,7 @@ noncomputable def topRepresentative (q : TopOrbit (G := G) C) : C.TopCell :=
   Quotient.out q
 
 /-- Canonical facet representative selected by `Quotient.out`. -/
+@[expose]
 noncomputable def facetRepresentative (q : FacetOrbit (G := G) C) : C.Facet :=
   Quotient.out q
 

@@ -132,6 +132,7 @@ noncomputable def coverPoint
 
 /-- Two decorated local slots represent the same global sampled vertex when their cylinder points
 are equal. -/
+@[expose]
 noncomputable def coverVertexSetoid
     (hp : Nat.Prime p) (N L : Nat) : Setoid (CoverVertexSlot hp N L) where
   r a b := coverPoint hp N L a = coverPoint hp N L b
@@ -206,6 +207,7 @@ noncomputable def globalPoint
   exact coverPoint_actCoverVertex hp N L g s
 
 /-- The global sampled vertex represented by an undecorated local slot. -/
+@[expose]
 noncomputable def sampleVertex
     (hp : Nat.Prime p) (N L : Nat) (s : VertexSlot hp N L) : GlobalVertex hp N L :=
   Quotient.mk _ ((1 : PrimeSymmetry p), s)

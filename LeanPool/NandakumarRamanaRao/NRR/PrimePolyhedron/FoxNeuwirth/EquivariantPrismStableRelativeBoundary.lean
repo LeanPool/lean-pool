@@ -475,6 +475,7 @@ theorem endpointInterpolant_regular
 
 /-- Strong skeleton transversality: no deviation-zero point lies on the boundary of a refined top
 simplex, without imposing a sign condition on the common coordinate mean. -/
+@[expose]
 def DeviationSkeletonFree
     (hp : Nat.Prime p) (N : Nat) (F : ContinuousCoordinateMap p) : Prop :=
   ∀ (q : TopCell hp N) (w : StandardSimplex (p - 1)),

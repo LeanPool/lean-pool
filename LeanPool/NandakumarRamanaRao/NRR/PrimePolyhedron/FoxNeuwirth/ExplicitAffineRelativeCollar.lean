@@ -57,6 +57,7 @@ open AffinePositiveRayBoundary
 variable {p : Nat}
 
 /-- A cylinder point belongs to one of the two fixed horizontal boundary layers. -/
+@[expose]
 def IsHorizontalPoint (z : CylinderPoint p) : Prop :=
   z.time.1 = 0 ∨ z.time.1 = 1
 
@@ -133,6 +134,7 @@ def facetSignature (o : C.FacetOccurrence) : Fin p → CylinderPoint p :=
 geometric signature is the simultaneous prime translate of the other.  This is the facet-orbit
 relation required by the Fox--Neuwirth orbit cycle: spatial side faces cancel after passage to the
 prime quotient, not necessarily as identical facets of the chosen top-cell representatives. -/
+@[expose]
 noncomputable def facetSetoid : Setoid C.FacetOccurrence where
   r a b := ∃ g : PrimeSymmetry p,
     (fun i => g • C.facetSignature a i) = C.facetSignature b
@@ -161,6 +163,7 @@ noncomputable instance facetFintype : Fintype C.Facet := Fintype.ofFinite _
 noncomputable instance facetDecidableEq : DecidableEq C.Facet := Classical.decEq _
 
 /-- Quotient facet represented by a local occurrence. -/
+@[expose]
 noncomputable def facetClass (o : C.FacetOccurrence) : C.Facet :=
   Quotient.mk _ o
 

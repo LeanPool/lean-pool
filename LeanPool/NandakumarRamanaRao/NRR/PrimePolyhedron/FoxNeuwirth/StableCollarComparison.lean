@@ -90,6 +90,7 @@ end StableCollar
 /-- Proposition asserting that every pair of stable endpoint approximations admits a finite
 boundary-fixed generic collar.  This is the relative-triangulation existence statement used with the
 finite Stokes theorem. -/
+@[expose]
 def StableCollarExistenceTheorem : Prop :=
   ∀ {p : Nat} (hp : Nat.Prime p)
     (F₀ F₁ : ZeroFreeMap hp)

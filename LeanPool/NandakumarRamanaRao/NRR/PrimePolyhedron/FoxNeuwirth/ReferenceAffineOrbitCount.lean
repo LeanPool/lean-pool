@@ -1494,6 +1494,7 @@ theorem coveringTopCell_eq (hp : Nat.Prime p) :
   omega
 
 /-- Canonical top-orbit representative, cast to the dimension `p - 1` used by the reference map. -/
+@[expose]
 noncomputable def topRepr
     (hp : Nat.Prime p) (q : PrimeOrbitCycle.TopOrbit hp) : Simplex p (p - 1) :=
   (coveringTopCell_eq hp) ▸ PrimeOrbitCycle.topRepresentative hp q
