@@ -404,6 +404,7 @@ structure Flow (Net : Network N) where
   conserved : ∀ u, u ≠ Net.s → u ≠ Net.t → ∑ v, f u v = 0
 
 /-- The value of a flow: net flow out of the source. -/
+@[expose]
 def Flow.value {Net : Network N} (F : Flow Net) : ℝ := ∑ v, F.f Net.s v
 
 /-- An s–t cut: a set of nodes containing the source but not the sink. -/
