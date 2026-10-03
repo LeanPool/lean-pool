@@ -8,6 +8,7 @@ module
 public import LeanPool.StructuralGraphClasses.Examples
 public import LeanPool.StructuralGraphClasses.NativeInterfaces
 public import LeanPool.StructuralGraphClasses.ForbiddenCharacterization
+public import LeanPool.StructuralGraphClasses.OperationsExamples
 
 /-!
 # Structural graph classes

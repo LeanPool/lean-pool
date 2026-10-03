@@ -80,6 +80,54 @@ def CotreeRepresentation.mapIso (R : CotreeRepresentation G) (f : G ≃g H) :
   cotree := R.cotree
   iso := R.iso.trans f
 
+/-- Build a disjoint-union representation directly from the supplied cotrees. -/
+def CotreeRepresentation.sum (L : CotreeRepresentation G) (R : CotreeRepresentation H) :
+    CotreeRepresentation (G ⊕g H) where
+  cotree := .union L.cotree R.cotree
+  iso := Iso.sumCongr L.iso R.iso
+
+/-- Build a join representation directly from the supplied cotrees. -/
+def CotreeRepresentation.graphJoin (L : CotreeRepresentation G) (R : CotreeRepresentation H) :
+    CotreeRepresentation (SimpleGraph.graphJoin G H) where
+  cotree := .join L.cotree R.cotree
+  iso := (Iso.sumCongr L.iso.complement R.iso.complement).complement
+
+/-- Joining preserves adjacency within the left child. -/
+@[simp] theorem graphJoin_adj_inl (a b : V) :
+    (graphJoin G H).Adj (Sum.inl a) (Sum.inl b) ↔ G.Adj a b := by
+  by_cases h : a = b
+  · subst b
+    simp
+  · simp [graphJoin, compl_adj, sum_adj, h]
+
+/-- Joining preserves adjacency within the right child. -/
+@[simp] theorem graphJoin_adj_inr (a b : W) :
+    (graphJoin G H).Adj (Sum.inr a) (Sum.inr b) ↔ H.Adj a b := by
+  by_cases h : a = b
+  · subst b
+    simp
+  · simp [graphJoin, compl_adj, sum_adj, h]
+
+/-- Every left vertex is adjacent to every right vertex in a join. -/
+@[simp] theorem graphJoin_adj_inl_inr (a : V) (b : W) :
+    (graphJoin G H).Adj (Sum.inl a) (Sum.inr b) := by
+  simp [graphJoin, compl_adj, sum_adj]
+
+/-- Every right vertex is adjacent to every left vertex in a join. -/
+@[simp] theorem graphJoin_adj_inr_inl (a : W) (b : V) :
+    (graphJoin G H).Adj (Sum.inr a) (Sum.inl b) := by
+  simp [graphJoin, compl_adj, sum_adj]
+
+/-- The union constructor retains its two supplied cotrees. -/
+@[simp] theorem CotreeRepresentation.sum_cotree
+    (L : CotreeRepresentation G) (R : CotreeRepresentation H) :
+    (L.sum R).cotree = .union L.cotree R.cotree := rfl
+
+/-- The join constructor retains its two supplied cotrees. -/
+@[simp] theorem CotreeRepresentation.graphJoin_cotree
+    (L : CotreeRepresentation G) (R : CotreeRepresentation H) :
+    (L.graphJoin R).cotree = .join L.cotree R.cotree := rfl
+
 /-- An empty vertex type has the empty cotree representation. -/
 def CotreeRepresentation.ofIsEmpty [IsEmpty V] (G : SimpleGraph V) :
     CotreeRepresentation G where
