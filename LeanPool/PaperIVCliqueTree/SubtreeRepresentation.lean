@@ -5,7 +5,8 @@ Authors: Juan Pablo Traverso Giannini
 -/
 module
 
-public import LeanPool.PaperIVCliqueTree.TreewidthExact
+public import LeanPool.PaperIVCliqueTree.TreeDecomposition
+public import LeanPool.PaperIVCliqueTree.Characterization
 
 /-!
 # Subtree representations of chordal graphs
@@ -13,6 +14,8 @@ public import LeanPool.PaperIVCliqueTree.TreewidthExact
 This module provides the chordal-to-subtree direction of Gavril's classical
 characterization. It does not assert the converse for arbitrary families.
 The empty connector joins components without changing vertex occurrences.
+This constructor uses one extra host node; it does not claim a minimal or
+maximal-clique-indexed host tree.
 -/
 
 @[expose] public section

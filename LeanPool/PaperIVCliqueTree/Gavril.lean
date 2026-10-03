@@ -6,6 +6,7 @@ Authors: Juan Pablo Traverso Giannini
 module
 
 public import LeanPool.PaperIVCliqueTree.SubtreeRepresentation
+public import LeanPool.PaperIVCliqueTree.SubtreeHelly
 
 /-!
 # Gavril's characterization of finite chordal graphs
@@ -13,6 +14,10 @@ public import LeanPool.PaperIVCliqueTree.SubtreeRepresentation
 For the converse, prune leaves of the host tree until some represented subtree
 is a singleton. Its vertex is simplicial. Repeating this argument on any finite
 subfamily gives a perfect elimination order through the existing PEO engine.
+
+The theorem formalized here is F. Gavril, "The intersection graphs of subtrees
+in trees are exactly the chordal graphs", JCT B 16 (1974), 47–56,
+doi:10.1016/0095-8956(74)90094-X. No recognition algorithm or runtime bound is claimed.
 -/
 
 @[expose] public section
