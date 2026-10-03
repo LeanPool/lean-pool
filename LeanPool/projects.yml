@@ -1,4 +1,60 @@
 projects:
+  - slug: zeta2-zeta3-linear-independence
+    title: Linear independence of 1, zeta(2), and zeta(3)
+    summary: >-
+      Proves that 1, the Riemann zeta function at 2, and its value at 3 are
+      linearly independent over the rationals, using integer polynomial
+      approximation, p-adic coefficient bounds, prime-edge nonvanishing,
+      and logarithmic potential energy estimates for Hankel determinants.
+      Includes reusable irrationality criteria, contour integration,
+      Andreief identities, Newton-basis valuation bounds, and energy
+      inequalities for finite measures. The cited source is the completed
+      Lean proof; independent novelty of the informal argument is not claimed.
+    branch: analytic number theory
+    entry_module: LeanPool.Zeta32
+    authors:
+      - Qian Tang
+    source:
+      title: Linear independence of 1, zeta(2), and zeta(3), Lean formalization
+      url: https://github.com/dtq1997/zeta2-zeta3-linear-independence/tree/669c92bf7a3728e0de9ad80c373bc29fb5ca3d58
+      github_repo: dtq1997/zeta2-zeta3-linear-independence
+      commit: 669c92bf7a3728e0de9ad80c373bc29fb5ca3d58
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+      - Zeta32.one_zeta_two_zeta_three_linearIndependent
+    main_results:
+      - declaration: Zeta32.one_zeta_two_zeta_three_linearIndependent
+        informal: >-
+          The three complex numbers 1, riemannZeta 2, and riemannZeta 3
+          are linearly independent over the rational numbers.
+        source_ref: >-
+          Upstream Zeta32/Final.lean and Solution.lean at the pinned commit.
+          First public proof release: 2026-09-30 03:47:38 UTC,
+          commit ec4fcb5617126b0a861f9e0c16f95425b32d4638.
+          The upstream README and NOTICE disclose substantial AI assistance.
+          The polynomial argument is credited upstream to Fauzan;
+          this card cites the Lean artifact, not a separately verified paper.
+      - declaration: Zeta32Acceptance.one_zeta_two_zeta_three_linearIndependent_series
+        informal: >-
+          For rational a, b, and c, if a plus b times the real sum of
+          1/(k+1)^2 plus c times the real sum of 1/(k+1)^3 is zero,
+          then all three coefficients are zero; both sums range over
+          natural numbers k.
+      - declaration: Zeta32.zeta3_sub_rat_mul_zeta2_irrational
+        informal: >-
+          For every rational r, the real series for zeta(3) minus r
+          times the real series for zeta(2) is irrational.
+    tags:
+      - zeta-values
+      - irrationality
+      - linear-independence
+      - p-adic-valuations
+      - potential-theory
+    msc:
+      - 11J72
+      - 11M06
   - slug: parallel-postulate
     title: Independence of Playfair's axiom via Euclidean and Klein models
     summary: >-
@@ -10455,6 +10511,46 @@ projects:
       - "05C70"
       - "05C35"
 
+  - slug: dross-fractional-triangle-decomposition
+    title: Dross's fractional triangle decomposition theorem
+    summary: >-
+      Formalizes the exact nine-tenths minimum-degree threshold for fractional
+      triangle decomposition of finite graphs. The proof uses a finite
+      max-flow/min-cut argument and induction that peels high-degree triangles.
+    branch: extremal graph theory and fractional decompositions
+    entry_module: LeanPool.DrossFractionalTriangleDecomposition
+    authors:
+      - Juan Pablo Traverso Gianini
+      - Aristotle
+    source:
+      title: Fractional Triangle Decompositions in Graphs with Large Minimum Degree
+      authors:
+        - François Dross
+      doi: 10.1137/15M1014310
+      url: https://github.com/jtraverso/erdos-81-chordal-clique-partitions/tree/dec9f4750c2261681e376f2f67db9eda16a4eca0/preprints/PAPER_III/05_formalization/lean_v1.4_freeze/Ax2
+      github_repo: jtraverso/erdos-81-chordal-clique-partitions
+      commit: dec9f4750c2261681e376f2f67db9eda16a4eca0
+      license_grant: https://github.com/jtraverso/erdos-81-chordal-clique-partitions/blob/dec9f4750c2261681e376f2f67db9eda16a4eca0/LEAN_SOURCE_APACHE_2_0_GRANT.md
+    license: Apache-2.0
+    status: verified
+    provenance: mix
+    main_declarations:
+      - LeanPool.DrossFractionalTriangleDecomposition.dross_fractional_flow_exact
+    main_results:
+      - declaration: LeanPool.DrossFractionalTriangleDecomposition.dross_fractional_flow_exact
+        informal: >-
+          Every finite graph whose minimum degree is at least nine tenths
+          of its number of vertices has a fractional triangle decomposition:
+          nonnegative triangle weights sum to one at each edge.
+        source_ref: Dross (2016), fractional triangle decomposition theorem.
+    tags:
+      - extremal-graph-theory
+      - fractional-decomposition
+      - max-flow-min-cut
+    msc:
+      - "05C70"
+      - "05C35"
+
   - slug: caffarelli-kohn-nirenberg
     title: Caffarelli–Kohn–Nirenberg partial regularity
     summary: >-
@@ -12261,3 +12357,347 @@ projects:
       - 46B42
       - 46A40
       - 46A19
+  - slug: sendov-conjecture
+    title: Sendov's conjecture and the Phelps–Rodriguez conjecture
+    summary: >-
+      Proves Sendov's conjecture in full generality: if every zero of a complex polynomial of
+      degree at least two lies in the closed unit disk, then every zero has a critical point
+      within distance one. Also proves the Phelps–Rodriguez strengthening, with strict
+      inequality unless the zero lies on the unit circle and the polynomial is a scalar
+      multiple of z^n - a^n, and recovers Rubinstein's boundary theorem. Formalizes Tao's
+      digestion of Lech Mazur's proof: the problem is reduced to a numerical inequality in the
+      degree and one real parameter, settled by exact rational Bernstein certificates for
+      degrees up to one hundred and by an analytic large-degree reduction beyond. Includes the
+      top case of Maclaurin's inequality and multiset AM–GM, a defect inequality on the closed
+      unit disk, a sharp bound on log(sinh h / h), kernel-checked polynomial certificate
+      infrastructure, and a packed-exponentiation bridge for exact moment integrals.
+    branch: complex analysis
+    entry_module: LeanPool.Sendov
+    authors:
+      - Terence Tao
+    source:
+      title: Sendov's conjecture in Lean
+      url: https://github.com/teorth/sendov/tree/1ddea92d89f951a0a7cbbffa6c267cf7e6640b1d
+      github_repo: teorth/sendov
+      commit: 1ddea92d89f951a0a7cbbffa6c267cf7e6640b1d
+      announcement_url: https://terrytao.wordpress.com/2026/08/12/a-digestion-of-the-proof-of-sendovs-conjecture/
+      announced_at: '2026-08-12T23:10:54Z'
+      mathematical_source: >-
+        T. Tao, A digestion of the proof of Sendov's conjecture, blog post, 12 August 2026,
+        digesting Lech Mazur's AI-assisted proof; the boundary case follows Q. Tang and
+        T. Zhang, arXiv:2508.10341, equation (5.1) and Remark 5.1.
+      prior_formalization: >-
+        Lech Mazur's earlier Lean formalization of Sendov's conjecture at ProofAtlas
+        (https://www.proofatlas.ai/formalizations/sendov-conjecture/), which the upstream
+        README credits with priority for both the proof and the first formalization. The
+        present development shares no code with it and additionally states the
+        Phelps–Rodriguez equality classification.
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    provenance_note: >-
+      The upstream README states that essentially all Lean source was written by Claude Opus 5
+      in Claude Code under the direction and review of Terence Tao, who set the targets,
+      supplied the informal proof and staged plans, and made the mathematical decisions.
+    main_declarations:
+      - Sendov.sendov
+      - Sendov.phelps_rodriguez
+    main_results:
+      - declaration: Sendov.sendov
+        informal: >-
+          For every natural number n at least two and every complex polynomial p of degree n
+          all of whose roots have norm at most one, every root a of p admits a root of the
+          derivative of p within distance at most one of a.
+        source_ref: >-
+          Sendov's conjecture (1962); Tao's blog post of 12 August 2026, Conjecture 1, following
+          Mazur's proof; upstream Sendov/Conjecture.lean. First publicly announced
+          2026-08-12 23:10:54 UTC in that post, with the Lean repository completed the same day.
+      - declaration: Sendov.phelps_rodriguez
+        informal: >-
+          Under the same hypotheses, either some root of the derivative lies at distance
+          strictly less than one from a, or a has norm one and p equals a nonzero scalar
+          multiple of X^n - a^n.
+        source_ref: >-
+          Phelps–Rodriguez conjecture; Tao's blog post, Conjecture 2; upstream
+          Sendov/Conjecture.lean. The equality case is Rubinstein's 1968 theorem.
+      - declaration: SendovConjecture.sendov
+        informal: >-
+          The same statement in the Mathlib-only form of the upstream statement of record:
+          for every complex polynomial p of degree at least two such that every complex w
+          with p(w) = 0 has norm at most one, every zero a of p admits a root of the
+          derivative within distance at most one of a.
+        source_ref: Upstream Solution.lean, the declaration checked by the upstream comparator setup.
+      - declaration: Sendov.rubinstein_one
+        informal: >-
+          If a polynomial of degree n at least two with all roots in the closed unit disk
+          vanishes at one, then either its derivative has a root within distance strictly less
+          than one of the point one, or the polynomial equals its leading coefficient times
+          X^n - 1.
+        source_ref: >-
+          Rubinstein's theorem; Tang–Zhang arXiv:2508.10341, equation (5.1) and Remark 5.1,
+          run to equality; upstream Sendov/Boundary.lean.
+      - declaration: Sendov.stat_lt_one
+        informal: >-
+          For every degree n at least five and every real parameter alpha between zero and
+          seventeen satisfying the feasibility constraint c^2 ≤ A, the quantity R n alpha of
+          the blog post's equation stat is strictly less than one.
+        source_ref: >-
+          Equation (stat) of Tao's blog post; degrees five to one hundred by Bernstein
+          certificates (upstream Sendov/FiniteRange), degrees at least 101 by the analytic
+          reduction (upstream Sendov/LargeDegree).
+      - declaration: Multiset.esymm_card_pred_le
+        informal: >-
+          For a nonempty multiset of nonnegative reals of cardinality m, the (m-1)-st
+          elementary symmetric function is at most m times the (m-1)-st power of the mean.
+        source_ref: Maclaurin's inequality, top case; upstream Sendov/Analytic/Maclaurin.lean.
+      - declaration: Multiset.prod_le_mean_pow
+        informal: >-
+          The product of a multiset of nonnegative reals is at most the mean raised to the
+          cardinality.
+        source_ref: Multiset AM–GM inequality; upstream Sendov/Analytic/Maclaurin.lean.
+      - declaration: Sendov.defect
+        informal: >-
+          For a multiset of complex numbers in the closed unit disk, the product of the norms
+          times the sum of the norms of 1/z minus the conjugate of z is at most one minus the
+          square of that product.
+        source_ref: The defect lemma; upstream Sendov/Analytic/Defect.lean.
+      - declaration: Sendov.log_sinh_div_le
+        informal: >-
+          For every positive real h, the logarithm of sinh h divided by h is at most the
+          square root of h^2 + 9 minus three.
+        source_ref: Upstream Sendov/Common/Sinh.lean; the crux of the beta-bound step.
+      - declaration: Sendov.pev_pos_of_bern
+        informal: >-
+          If the Bernstein expansion of an integer coefficient list on an interval from zero
+          to p/q equals p^d times a polynomial P and every Bernstein coefficient is positive,
+          then P is positive on that interval.
+        source_ref: >-
+          Lean Pool port infrastructure replacing the upstream per-certificate ring identities;
+          LeanPool/Sendov/FiniteRange/Certificate.lean.
+    tags:
+      - sendov-conjecture
+      - polynomial-zeros
+      - critical-points
+      - bernstein-certificates
+    msc:
+      - 30C15
+      - 30C10
+      - 12D10
+  - slug: brooks-subcubic
+    title: Brooks' theorem for subcubic graphs
+    summary: >-
+      Proves that every finite simple graph of maximum degree at most three
+      with no four-clique admits a three-colouring, without a connectedness
+      assumption. Includes controlled greedy colouring, colouring across cut
+      vertices, and a good-triple argument for cubic components. This is the
+      subcubic case of Brooks' theorem, not the general-degree theorem.
+    branch: graph theory
+    entry_module: LeanPool.BrooksSubcubic
+    authors:
+      - Juan Pablo Traverso Gianini
+    source:
+      title: On colouring the nodes of a network
+      authors:
+        - R. L. Brooks
+      doi: 10.1017/S030500410002168X
+      url: https://github.com/jtraverso/lean-pool/blob/aced439fd4161d118bf167a1e8d10553f28913fe/LeanPool/BrooksSubcubic/Main.lean
+      github_repo: jtraverso/lean-pool
+      commit: aced439fd4161d118bf167a1e8d10553f28913fe
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+      - BrooksSubcubic.brooks_cubic
+    main_results:
+      - declaration: BrooksSubcubic.brooks_cubic
+        informal: >-
+          Every finite simple graph with maximum degree at most three and no
+          clique on four vertices is three-colourable. The graph may be disconnected.
+        source_ref: >-
+          The subcubic specialization of Brooks' 1941 colouring theorem;
+          the linked Apache-2.0 Lean source proves exactly this specialization.
+    tags:
+      - graph-theory
+      - vertex-colouring
+      - brooks-theorem
+      - subcubic-graphs
+    msc:
+      - 05C15
+  - slug: vizing-equitable-edge-colouring
+    title: Vizing's theorem and equitable edge colourings
+    summary: >-
+      Proves the maximum-degree-plus-one edge-colouring bound for finite simple
+      graphs by fans and Kempe exchanges. A separate component-swapping argument
+      equitably rebalances any finite proper edge colouring on its original
+      palette. Together they give equitable proper edge colourings on any
+      palette of at least maximum degree plus one colours, with every class
+      bounded by the ceiling of the average class size. Extracted from the
+      published Paper IV formalization; these are classical colouring results,
+      not a claim to new mathematics or to the paper's clique-partition bound.
+    branch: graph theory
+    entry_module: LeanPool.Vizing
+    authors:
+      - Juan Pablo Traverso Gianini
+    source:
+      title: Vizing and equitable edge-colouring modules in the published Paper IV freeze
+      authors:
+        - Juan Pablo Traverso Gianini
+      url: https://github.com/jtraverso/erdos-81-chordal-clique-partitions
+      github_repo: jtraverso/erdos-81-chordal-clique-partitions
+      commit: ff2019f56a50cf300a6531c9f8d4a8fb1a541e3d
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+      - LeanPool.Vizing.exists_equitable_edge_colouring
+    main_results:
+      - declaration: LeanPool.Vizing.lineGraph_colorable
+        informal: >-
+          The line graph of a finite simple graph G is colourable with
+          maximum degree of G plus one colours.
+        source_ref: Vizing's theorem for finite simple graphs; Vizing (1964).
+      - declaration: SimpleGraph.lineGraph_chromaticNumber_le_maxDegree_succ
+        informal: >-
+          The chromatic number of the line graph of a finite simple graph G
+          is at most maximum degree of G plus one.
+      - declaration: LeanPool.Vizing.Equitable.exists_equitable_colouring
+        informal: >-
+          Every proper edge colouring of a finite simple graph with a finite
+          palette admits a proper recolouring on the same palette in which
+          any two colour classes differ in size by at most one.
+      - declaration: LeanPool.Vizing.exists_equitable_edge_colouring
+        informal: >-
+          For every finite simple graph G and natural c at least maximum
+          degree of G plus one, there is an equitable proper edge colouring
+          with c colours; each colour class has at most ceiling(|E(G)|/c) edges.
+    tags:
+      - graph-theory
+      - edge-colouring
+      - vizing-theorem
+      - equitable-colouring
+      - kempe-chains
+    msc:
+      - 05C15
+  - slug: paper-iv-clique-trees
+    title: Clique trees and separators of chordal graphs
+    summary: >-
+      Develops rooted clique forests with the running-intersection property, constructs
+      them from perfect elimination orders of finite chordal graphs, characterizes
+      chordality by their existence, and obtains maximal-clique, separator, and
+      counting results. Also characterizes chordality under retained-clique gluing
+      of induced pieces, with exact vertex and edge inclusion-exclusion identities.
+      The original library was extracted as a reusable byproduct of the published Paper IV
+      formalization of the chordal-graph case of Erdős problem #81; this library
+      is not by itself a proof of that paper's partition bound.
+    branch: graph theory
+    entry_module: LeanPool.PaperIVCliqueTree
+    authors:
+      - Juan Pablo Traverso Gianini
+    source:
+      title: 'Clique partitions with rooted simplicial defect: quantitative stability and sharp eventual bounds'
+      authors:
+        - Juan Pablo Traverso Gianini
+      url: https://github.com/jtraverso/erdos-81-chordal-clique-partitions
+      github_repo: jtraverso/erdos-81-chordal-clique-partitions
+      commit: ff2019f56a50cf300a6531c9f8d4a8fb1a541e3d
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+      - SimpleGraph.isChordal_iff_nonempty_cliqueTree
+    main_results:
+      - declaration: SimpleGraph.IsChordal.exists_isPEO
+        informal: Every finite chordal graph admits a perfect elimination order.
+      - declaration: SimpleGraph.isChordal_iff_nonempty_cliqueTree
+        informal: A finite graph is chordal if and only if it has a rooted clique tree.
+      - declaration: SimpleGraph.IsChordal.exists_maximalCliqueTree_card_le
+        informal: >-
+          A nonempty finite chordal graph has a clique tree whose distinct bags are
+          precisely its maximal cliques, with no more bags than vertices.
+      - declaration: SimpleGraph.CliqueTree.exists_parent_eq_of_isMinimalSeparator
+        informal: >-
+          In a clique tree, each minimal separator of two reachable vertices is
+          the intersection of two adjacent bags.
+      - declaration: SimpleGraph.CliqueTree.card_eq_sum_card_bag_sub_sum_card_inter
+        informal: >-
+          The total bag size minus the total parent-child bag intersection size
+          equals the number of graph vertices.
+      - declaration: SimpleGraph.CliqueGluing.isChordal_iff
+        informal: >-
+          If two induced pieces cover a finite graph, their overlap is a clique,
+          and no edge joins their exclusive parts, the graph is chordal exactly
+          when both pieces are chordal. Overlap edges are retained.
+        source_ref: >-
+          New Lean Pool extension proved here using the existing Dirac and
+          simplicial-elimination interfaces; not a claim from the frozen paper.
+      - declaration: SimpleGraph.CliqueGluing.card_vertices_add_overlap
+        informal: >-
+          The vertex count of the graph plus the overlap size equals the sum
+          of the vertex counts of the two covering pieces.
+        source_ref: New Lean Pool extension; finite-set inclusion-exclusion.
+      - declaration: SimpleGraph.CliqueGluing.card_edges_add_choose_overlap
+        informal: >-
+          The graph edge count plus the number of pairs in the retained clique
+          overlap equals the sum of the induced pieces' edge counts.
+        source_ref: New Lean Pool extension; induced-edge inclusion-exclusion.
+    tags:
+      - graph-theory
+      - chordal-graphs
+      - clique-trees
+      - perfect-elimination-orders
+      - separators
+    msc:
+      - 05C75
+  - slug: beck-fiala-matrix
+    title: Strict Beck–Fiala rounding for incidence matrices
+    summary: >-
+      Proves the rational integer-making form of Beck–Fiala rounding for finite
+      zero-one incidence matrices with column degree bounded by a positive t.
+      Every row has discrepancy strictly less than t, and initially integral
+      coordinates are preserved. Includes the necessity of the positive-bound
+      hypothesis. This is distinct from the Komlós discrepancy bound and from
+      the non-strict hyperedge-selection rounding used in triangle packing.
+    branch: discrepancy theory
+    entry_module: LeanPool.BeckFialaMatrix
+    authors:
+      - Juan Pablo Traverso Gianini
+    source:
+      title: '"Integer-making" theorems'
+      authors:
+        - József Beck
+        - Tibor Fiala
+      doi: 10.1016/0166-218X(81)90022-6
+      url: https://github.com/jtraverso/lean-pool/blob/523a4ae71168258f9142d70bccf650a140355650/LeanPool/BeckFialaMatrix/Basic.lean
+      github_repo: jtraverso/lean-pool
+      commit: 523a4ae71168258f9142d70bccf650a140355650
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+      - BeckFialaMatrix.exists_rounding
+    main_results:
+      - declaration: BeckFialaMatrix.exists_rounding
+        informal: >-
+          Given a finite zero-one integer matrix with at most t ones per column,
+          t at least one, and a rational vector in the unit cube, there is a
+          zero-one integer vector whose discrepancy in every row is strictly
+          less than t.
+        source_ref: Rational unit-cube integer-making form with the stated strict discrepancy bound.
+      - declaration: BeckFialaMatrix.exists_rounding_preserving_integral
+        informal: >-
+          The strict rounding can additionally be chosen to leave every initially
+          integral coordinate unchanged.
+        source_ref: Strengthened conclusion of the floating-coordinate proof in the pinned source.
+      - declaration: BeckFialaMatrix.zero_bound_counterexample
+        informal: >-
+          The same universally quantified strict rounding claim without the
+          assumption t at least one is false, already for a one-by-one zero matrix
+          with t equal to zero.
+        source_ref: Boundary-condition witness in the pinned formalization.
+    tags:
+      - discrepancy-theory
+      - beck-fiala
+      - integer-rounding
+      - incidence-matrices
+    msc:
+      - 05D40
