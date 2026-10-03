@@ -786,6 +786,7 @@ theorem piecewise_balance_of_total_rises {n p : ℕ}
 
 /-- The canonical piecewise interpolation data for one rich anchor on the
 census face selected by the current length vector. -/
+@[expose]
 noncomputable def richCensusPiecewiseData (w : RichWitness)
     (core : ExplicitPotential.Core n p) (Γ : Context) (x : List ℤ)
     (hW1 : w.w1Checks core Γ = true) (hW2 : w.w2Checks core Γ = true)
@@ -825,6 +826,7 @@ noncomputable def richCensusPiecewiseData (w : RichWitness)
         omega)
 
 /-- The firing script denoted by the decoded rich block data. -/
+@[expose]
 noncomputable def richCensusPiecewiseScript (w : RichWitness)
     (core : ExplicitPotential.Core n p) (Γ : Context) (x : List ℤ)
     (hW1 : w.w1Checks core Γ = true) (hW2 : w.w2Checks core Γ = true)

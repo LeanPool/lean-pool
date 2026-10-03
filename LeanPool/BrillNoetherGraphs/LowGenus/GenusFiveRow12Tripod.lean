@@ -40,6 +40,7 @@ open GenusFiveCoreAtlas
 open ConfigurationTwo
 
 /-- The two configuration-2 centers, as a decidable table. -/
+@[expose]
 def isCenter : Fin 8 → Bool
   | 0 | 1 => true
   | _ => false

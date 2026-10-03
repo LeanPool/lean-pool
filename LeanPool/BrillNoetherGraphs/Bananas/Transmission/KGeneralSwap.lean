@@ -30,6 +30,7 @@ open Utilities
 
 /-- The inverse of a bijection, kept at the raw-function level used by
 `IsTransmissionPermutation`. -/
+@[expose]
 noncomputable def rawInverse (tau : ℤ → ℤ) : ℤ → ℤ :=
   Function.invFun tau
 

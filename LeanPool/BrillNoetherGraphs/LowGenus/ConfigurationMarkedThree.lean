@@ -433,6 +433,7 @@ structure PairLedger where
   tail_eq_one_of_full : ∀ {L hu hv : ℕ}, 0 < L → hu = hv + L → tail L hu hv = 1
 
 /-- The slot read from its tail. -/
+@[expose]
 def fwd : PairLedger where
   tail := tailContribution
   tail_nonneg h hUpper := tailContribution_nonneg h hUpper
@@ -442,6 +443,7 @@ def fwd : PairLedger where
   tail_eq_one_of_full h hFull := tailContribution_eq_one_of_full h hFull
 
 /-- The same slot read from its head. -/
+@[expose]
 def rev : PairLedger where
   tail L hu hv := headContribution L hv hu
   tail_nonneg h hUpper := headContribution_nonneg h hUpper

@@ -356,6 +356,7 @@ def CorrectedBananaSimpleException {g : ℕ} (B : Banana g)
   (α ≠ β ∧ B.length α = 2 ∧ i.val = 1)
 
 /-- Corrected midpoint exception in high genus. -/
+@[expose]
 def CorrectedMidpointException {g : ℕ} (B : Banana g)
     (α β : Fin (g + 1)) (i : B.PathPosition α) (j : B.PathPosition β) : Prop :=
   α ≠ β ∧ 2 * i.val = B.length α ∧ 2 * j.val = B.length β ∧
@@ -576,27 +577,33 @@ whose image is at least `m`. -/
 def northwestSet (τ : ℤ → ℤ) (m n : ℤ) : Set ℤ := { k : ℤ | k < n ∧ m ≤ τ k }
 
 /-- Set-theoretic inverse of an integer function. -/
+@[expose]
 noncomputable def rawInverse (τ : ℤ → ℤ) : ℤ → ℤ :=
   Function.invFun τ
 
 /-- Conjugation by negation. -/
+@[expose]
 def rawAffineReflection (τ : ℤ → ℤ) : ℤ → ℤ :=
   fun n => -τ (-n)
 
 /-- Reflected inverse used when swapping marks. -/
+@[expose]
 noncomputable def swapTransmissionPermutation (τ : ℤ → ℤ) : ℤ → ℤ :=
   rawAffineReflection (rawInverse τ)
 
 /-- Riemann--Roch dual divisor with both marks restored. -/
+@[expose]
 def transmissionDualDivisor {G : CFGraph} (u v : G.V) (D : CFDiv G) : CFDiv G :=
   canonicalDivisor G - D + oneChip u + oneChip v
 
 /-- Sign-changing inversions and their number. -/
+@[expose]
 def sciSet (τ : ℤ → ℤ) : Set (ℤ × ℤ) :=
   { p | p.1 < p.2 ∧ 0 < τ p.1 ∧ τ p.2 ≤ 0 }
 
 /-- The natural cardinality of inversion pairs crossing zero in the images: the earlier image is
 positive and the later image is nonpositive. -/
+@[expose]
 noncomputable def sci (τ : ℤ → ℤ) : ℕ := (sciSet τ).ncard
 
 /-- Mark-preserving and mark-swapping graph automorphisms. -/
@@ -633,15 +640,18 @@ def HasInversionLowerBound (M : TwiceMarked) (k q : ℕ) : Prop :=
       (kInversions k τ).Finite ∧ q ≤ kInversionCount k τ
 
 /-- Arithmetic functions used by the one-off and cross-one-off blocks. -/
+@[expose]
 def crossOneOffCutoff (g n : ℕ) : ℕ := g + g / (n - 1)
 
 /-- The cross one-off length condition requiring `n₀` to be at least `g + 1 + g / (n₁ - 1)`,
 with natural-number division. -/
+@[expose]
 def CrossOneOffLongEnough (g n₀ n₁ : ℕ) : Prop :=
   g + 1 + g / (n₁ - 1) ≤ n₀
 
 /-- The one-off row value at index `b`, computed separately for residues zero, `n - 1`, and all
 remaining residues modulo `n`. -/
+@[expose]
 def oneOffRow (g n b : ℕ) : ℕ :=
   if b % n = 0 then b / n
   else if b % n = n - 1 then g + b / n + 1
@@ -649,6 +659,7 @@ def oneOffRow (g n b : ℕ) : ℕ :=
 
 /-- The cross one-off row value at index `b`, with its extra unit in the zero-residue and
 interior-residue cases. -/
+@[expose]
 def crossOneOffRow (g n b : ℕ) : ℕ :=
   if b % n = 0 then b / n + 1
   else if b % n = n - 1 then g + b / n + 1
@@ -656,6 +667,7 @@ def crossOneOffRow (g n b : ℕ) : ℕ :=
 
 /-- The corrected forced-count formula: `choose g 2` at period two, and `choose (g - 1) 2 + g /
 (n - 1)` otherwise. -/
+@[expose]
 def correctedCrossOneOffForcedCount (g n : ℕ) : ℕ :=
   if n = 2 then Nat.choose g 2
   else Nat.choose (g - 1) 2 + g / (n - 1)

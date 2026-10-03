@@ -170,6 +170,7 @@ theorem twoEdgeCutCondition_of_connected_vertexDegree_two
 namespace TwoPathCycle
 
 /-- The ordered core with two parallel slots from vertex `0` to vertex `1`. -/
+@[expose]
 def core : ExplicitPotential.Core 2 2 where
   tail := fun _ => 0
   head := fun _ => 1

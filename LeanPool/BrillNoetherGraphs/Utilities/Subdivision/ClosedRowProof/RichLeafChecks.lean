@@ -239,6 +239,7 @@ def w5Checks (w : RichWitness) (core : ExplicitPotential.Core n p) : Bool :=
 /-- The executable W1--W5 checker for a rich multi-block leaf.  Structural
 row conditions and degree are included here so that this is directly usable as
 the replacement leaf predicate by the tree layer. -/
+@[expose]
 def richLeafChecks (w : RichWitness) (_m : ℕ) (core : ExplicitPotential.Core n p)
     (Γ : Context) (degree : ℤ) : Bool :=
   ExplicitPotential.allFin (fun e : Fin p => decide (core.tail e ≠ core.head e)) &&

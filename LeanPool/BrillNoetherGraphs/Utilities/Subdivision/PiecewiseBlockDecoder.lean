@@ -381,6 +381,7 @@ variable {n p : ℕ} (d : DegSpec n p)
 /-- Decode one finite endpoint list per slot into the selector portion of a
 `PiecewiseData`.  Endpoint rises and the endpoint balance are supplied by the
 rich leaf separately. -/
+@[expose]
 def decodePiecewiseData (potential : Fin n → ℤ)
     (blocks : (e : Fin p) → FiniteBlockEnds (d.length e))
     (rises : Fin p → ℕ → ℤ)
