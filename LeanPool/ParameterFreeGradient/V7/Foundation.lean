@@ -83,6 +83,7 @@ instance data.  Objective information reaches it only through `query`. -/
 abbrev RuntimeMethodFamily := (d : ℕ) → O3.FirstOrderMethod d
 
 /-- A finite-fuel execution of the underlying method produces the specified result and trace. -/
+@[expose]
 def Executes (method : O3.FirstOrderMethod d) (input : MethodInput d)
     (oracle : PairOracle d) (run : PairRunResult d) : Prop :=
   ∃ (fuel : ℕ) (oldRun : O3.RunResult d),

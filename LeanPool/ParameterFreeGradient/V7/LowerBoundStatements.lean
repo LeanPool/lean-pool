@@ -341,6 +341,7 @@ noncomputable def KnownParameterAboveTwoLowerStatement : Prop :=
 
 /-- Source carrier for `prop:pgtwo-optimality` (U11--U12, A01--A13,
 L01--L09).  The upper and lower halves remain separately inspectable. -/
+@[expose]
 noncomputable def KnownParameterAboveTwoOptimalityStatement : Prop :=
   KnownParameterAboveTwoUpperStatement ∧ KnownParameterAboveTwoLowerStatement
 

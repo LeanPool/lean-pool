@@ -45,6 +45,7 @@ structure RuntimeData (d : ℕ) where
   anchorTrace : List (Observation d)
 
 /-- The accepted anchor smoothness estimate. -/
+@[expose]
 noncomputable def RuntimeData.Ma (data : RuntimeData d) : ℝ :=
   (2 : ℝ) ^ data.anchorEpoch * data.input.M0
 
