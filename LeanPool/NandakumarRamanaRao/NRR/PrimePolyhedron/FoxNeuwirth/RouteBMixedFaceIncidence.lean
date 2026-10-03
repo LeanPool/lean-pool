@@ -98,6 +98,7 @@ def mixedFaceBadSet
 /-- A positive-ray incidence on a codimension-two face has a positive movable
 witness when at least one retained vertex with positive barycentric weight has a
 movable local scalar parameter. -/
+@[expose]
 def HasPositiveMovableWitness
     (q : C.Cell) (w : StandardSimplex p)
     (i j : Fin (p + 1)) : Prop :=

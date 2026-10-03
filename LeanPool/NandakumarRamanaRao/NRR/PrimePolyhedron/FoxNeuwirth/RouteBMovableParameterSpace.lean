@@ -38,6 +38,7 @@ variable (C : RelativeAffineCellSystem hp N₀ N₁ M L)
 abbrev MovableParameterSpace := MovableParameter hp C → Real
 
 /-- Movable coordinates extracted from a full assignment. -/
+@[expose]
 noncomputable def baseMovableParameters
     (base : Assignment hp C) : MovableParameterSpace hp C :=
   movableRestriction hp C base

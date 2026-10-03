@@ -93,6 +93,7 @@ def RequiresMovableGenericityWitness
   | Sum.inr _ => True
 
 /-- Restrict a full assignment to its movable parameter subtype. -/
+@[expose]
 noncomputable def movableRestriction
     (base : Assignment hp C) : MovableParameter hp C → Real :=
   fun q => base q.1
