@@ -5,6 +5,8 @@ Authors: Scott Armstrong and Vlad Vicol
 -/
 module
 
+public import LeanPool.AnomalousDiffusion.AVenhance.Infra.SpatialSecondDerivatives
+
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section4.ThetaPeriodicity
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Torus.Basic
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Torus.Fourier
@@ -198,39 +200,7 @@ theorem ThetaEnergy.theta_mixed_partial_commute {f : Vec 2 → ℝ}
     (hf : ContDiff ℝ (⊤ : ℕ∞) f) (x : Vec 2) :
     AVenhance.spaceGrad (fun y => AVenhance.spaceGrad f y 0) x 1 =
       AVenhance.spaceGrad (fun y => AVenhance.spaceGrad f y 1) x 0 := by
-  have hAt := hf.contDiffAt (x := x)
-  have hC2 : ContDiffAt ℝ 2 f x := hAt.of_le (by norm_num)
-  have hsymm := hC2.isSymmSndFDerivAt (by simp)
-  have hc : DifferentiableAt ℝ (fderiv ℝ f) x := by
-    have hCderiv : ContDiffAt ℝ 1 (fderiv ℝ f) x :=
-      hAt.fderiv_right (m := 1) (by simp)
-    exact hCderiv.differentiableAt (by norm_num)
-  have hu0 : DifferentiableAt ℝ (fun _ : Vec 2 => basisVec (0 : Fin 2)) x :=
-    differentiableAt_const (basisVec (0 : Fin 2))
-  have hu1 : DifferentiableAt ℝ (fun _ : Vec 2 => basisVec (1 : Fin 2)) x :=
-    differentiableAt_const (basisVec (1 : Fin 2))
-  have hderiv0 : fderiv ℝ (fun y => fderiv ℝ f y (basisVec (0 : Fin 2))) x =
-      (fderiv ℝ (fderiv ℝ f) x).flip (basisVec (0 : Fin 2)) := by
-    have h := fderiv_clm_apply hc hu0
-    simpa using h
-  have hderiv1 : fderiv ℝ (fun y => fderiv ℝ f y (basisVec (1 : Fin 2))) x =
-      (fderiv ℝ (fderiv ℝ f) x).flip (basisVec (1 : Fin 2)) := by
-    have h := fderiv_clm_apply hc hu1
-    simpa using h
-  have hleft : AVenhance.spaceGrad
-      (fun y => AVenhance.spaceGrad f y 0) x 1 =
-      fderiv ℝ (fderiv ℝ f) x (basisVec 1) (basisVec 0) := by
-    change fderiv ℝ (fun y => fderiv ℝ f y (basisVec 0)) x (basisVec 1) = _
-    rw [hderiv0]
-    rfl
-  have hright : AVenhance.spaceGrad
-      (fun y => AVenhance.spaceGrad f y 1) x 0 =
-      fderiv ℝ (fderiv ℝ f) x (basisVec 0) (basisVec 1) := by
-    change fderiv ℝ (fun y => fderiv ℝ f y (basisVec 1)) x (basisVec 0) = _
-    rw [hderiv1]
-    rfl
-  rw [hleft, hright]
-  exact hsymm (basisVec 1) (basisVec 0)
+  exact AVenhance.Infra.SpatialSecondDerivatives.coordinate_derivatives_commute hf 0 1 x
 
 theorem ThetaEnergy.theta_spaceGrad_mul {f g : Vec 2 → ℝ} {x : Vec 2} (i : Fin 2)
     (hf : DifferentiableAt ℝ f x) (hg : DifferentiableAt ℝ g x) :

@@ -5,6 +5,8 @@ Authors: Scott Armstrong and Vlad Vicol
 -/
 module
 
+public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section5.RelativeError.ATensorHmComponents
+
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section4.HmBounds
 
 /-! Positive-time Hmr gradient source reductions. Differentiation is needed
@@ -40,72 +42,7 @@ theorem relative_initial_hmr_gradient_spatial_sum {β : ℝ}
             (fun y => AVenhance.spaceGrad
               (fun x => I.Amnr hΦ m κ n T r t x i j k) y i) x p *
             I.qMNR κ m n (r + 1) t j k := by
-  classical
-  have hfun : (fun y : Vec 2 => I.Hmr hΦ m κ T r t y) =
-      fun y => ∑ i : Fin 2, ∑ n ∈ Finset.range (AVenhance.Nstar β),
-        ∑ j : Fin 2, ∑ k : Fin 2,
-          AVenhance.spaceGrad
-            (fun x => I.Amnr hΦ m κ n T r t x i j k) y i *
-              I.qMNR κ m n (r + 1) t j k := by
-    funext y
-    exact hmr_eq_spatial_derivative_sum I hΦ m κ T r t y
-      (fun n hn i j k => hD1 n hn i j k y)
-  have hKDiff (i : Fin 2) (n : ℕ)
-      (hn : n ∈ Finset.range (AVenhance.Nstar β)) (j k : Fin 2) :
-      DifferentiableAt ℝ (fun y : Vec 2 =>
-        AVenhance.spaceGrad
-          (fun x => I.Amnr hΦ m κ n T r t x i j k) y i *
-            I.qMNR κ m n (r + 1) t j k) x :=
-    (hD2 n hn i j k x).mul_const _
-  have hJDiff (i : Fin 2) (n : ℕ)
-      (hn : n ∈ Finset.range (AVenhance.Nstar β)) (j : Fin 2) :
-      DifferentiableAt ℝ (fun y : Vec 2 =>
-        ∑ k : Fin 2,
-          AVenhance.spaceGrad
-            (fun x => I.Amnr hΦ m κ n T r t x i j k) y i *
-              I.qMNR κ m n (r + 1) t j k) x := by
-    apply DifferentiableAt.fun_sum
-    intro k _
-    exact hKDiff i n hn j k
-  have hNDiff (i : Fin 2) (n : ℕ)
-      (hn : n ∈ Finset.range (AVenhance.Nstar β)) :
-      DifferentiableAt ℝ (fun y : Vec 2 =>
-        ∑ j : Fin 2, ∑ k : Fin 2,
-          AVenhance.spaceGrad
-            (fun x => I.Amnr hΦ m κ n T r t x i j k) y i *
-              I.qMNR κ m n (r + 1) t j k) x := by
-    apply DifferentiableAt.fun_sum
-    intro j _
-    exact hJDiff i n hn j
-  have hIDiff (i : Fin 2) :
-      DifferentiableAt ℝ (fun y : Vec 2 =>
-        ∑ n ∈ Finset.range (AVenhance.Nstar β),
-          ∑ j : Fin 2, ∑ k : Fin 2,
-            AVenhance.spaceGrad
-              (fun x => I.Amnr hΦ m κ n T r t x i j k) y i *
-                I.qMNR κ m n (r + 1) t j k) x := by
-    apply DifferentiableAt.fun_sum
-    intro n hn
-    exact hNDiff i n hn
-  change fderiv ℝ (fun y => I.Hmr hΦ m κ T r t y) x
-      (Homogenization.basisVec p) = _
-  rw [hfun]
-  rw [fderiv_fun_sum (fun i _ => hIDiff i), sum_apply]
-  apply Finset.sum_congr rfl
-  intro i _
-  rw [fderiv_fun_sum (hNDiff i), sum_apply]
-  apply Finset.sum_congr rfl
-  intro n hn
-  rw [fderiv_fun_sum (fun j _ => hJDiff i n hn j), sum_apply]
-  apply Finset.sum_congr rfl
-  intro j _
-  rw [fderiv_fun_sum (fun k _ => hKDiff i n hn j k), sum_apply]
-  apply Finset.sum_congr rfl
-  intro k _
-  rw [fderiv_mul_const (hD2 n hn i j k x)
-    (I.qMNR κ m n (r + 1) t j k)]
-  simp [AVenhance.spaceGrad]
-  ring
+  exact hmr_spaceGrad_eq_second_spatial_derivative_sum_at I hΦ m κ T r t hD1 hD2 x p
 
 theorem relative_initial_hmr_gradient_components_L2 {β C₀ A : ℝ}
     (I : AVenhance.Ingredients β)

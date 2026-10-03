@@ -304,7 +304,8 @@ theorem theta_classical_differentiated_energy_pairing
   have hbOpen : ContDiffOn ℝ (⊤ : ℕ∞)
       (Function.uncurry (AVenhance.streamVel φ))
           ThetaDifferentiatedEnergy.thetaEnergyPositiveDomain := by
-    simpa [ThetaDifferentiatedEnergy.thetaEnergyPositiveDomain, classicalPositiveTimeDomain] using
+    simpa [ThetaDifferentiatedEnergy.thetaEnergyPositiveDomain, classicalPositiveTimeDomain,
+      AVenhance.Infra.Classical.classicalPositiveTimeDomain] using
       theta_streamVel_joint_contDiffOn hφ
   have huOpen : ContDiffOn ℝ (⊤ : ℕ∞) (Function.uncurry u)
       ThetaDifferentiatedEnergy.thetaEnergyPositiveDomain := by

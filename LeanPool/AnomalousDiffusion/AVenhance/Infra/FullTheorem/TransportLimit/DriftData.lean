@@ -69,30 +69,8 @@ theorem DriftHyp.bound_timeCube {b : ℝ → Vec 2 → Vec 2} (h : DriftHyp b) :
 theorem spaceGrad_spacetime_continuous {φ : ℝ → Vec 2 → ℝ}
     (hφ : ContDiff ℝ (⊤ : ℕ∞) (fun p : ℝ × Vec 2 => φ p.1 p.2)) :
     Continuous (fun p : ℝ × Vec 2 => spaceGrad (φ p.1) p.2) := by
-  apply continuous_pi
-  intro i
-  have hFderiv : Continuous (fderiv ℝ (fun p : ℝ × Vec 2 => φ p.1 p.2)) :=
-    hφ.continuous_fderiv (by simp)
-  have hcont : Continuous (fun p : ℝ × Vec 2 =>
-      (fderiv ℝ (fun q : ℝ × Vec 2 => φ q.1 q.2) p) (0, basisVec i)) :=
-    hFderiv.clm_apply continuous_const
-  have heq (p : ℝ × Vec 2) :
-      spaceGrad (φ p.1) p.2 i =
-        (fderiv ℝ (fun q : ℝ × Vec 2 => φ q.1 q.2) p) (0, basisVec i) := by
-    let F : ℝ × Vec 2 → ℝ := fun q => φ q.1 q.2
-    have houter : HasFDerivAt F (fderiv ℝ F (p.1, p.2)) (p.1, p.2) :=
-      (hφ.differentiable (by simp) (p.1, p.2)).hasFDerivAt
-    have hline : HasFDerivAt (fun x : Vec 2 => (p.1, x))
-        (ContinuousLinearMap.inr ℝ ℝ (Vec 2)) p.2 :=
-      hasFDerivAt_prodMk_right p.1 p.2
-    have hcomp := HasFDerivAt.comp p.2 houter hline
-    have hlineEval : ContinuousLinearMap.inr ℝ ℝ (Vec 2) (basisVec i) = (0, basisVec i) := by
-      simp [ContinuousLinearMap.inr]
-    change fderiv ℝ (F ∘ fun x : Vec 2 => (p.1, x)) p.2 (basisVec i) = _
-    rw [hcomp.fderiv]
-    simp [ContinuousLinearMap.comp_apply, hlineEval]
-    rfl
-  exact hcont.congr fun p => (heq p).symm
+  exact AVenhance.Infra.Parabolic.WeakUniqueness.WeakAlgebra.weakSpacetimeSpatialGradient_continuous
+    hφ
 
 /-- Coordinatewise bound for the spatial gradient of a test function on the cell. -/
 theorem grad_bound {φ : ℝ → Vec 2 → ℝ} (hφ : IsTestFunction φ) :

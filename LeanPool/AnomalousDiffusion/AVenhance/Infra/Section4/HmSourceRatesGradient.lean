@@ -145,7 +145,8 @@ theorem HmSourceRatesGradient.iterate_gradient_magnitude_eLpNorm_le
         _ = ENNReal.ofReal (B + B) := by rw [← ENNReal.ofReal_add hB hB]
         _ = _ := by congr 1; ring
 
-private theorem hm_Gbar_gradient_rate_onA7_Qnorm1 :
+/-- Combine the gradient and Hessian rows in the Piola majorant. -/
+theorem HmSourceRatesGradient.hessian_gradient_majorant_eLpNorm_le :
   ∀ (β D : ℝ), (1 : ℝ) ≤ D →
   let F : ℝ := (↑(Nstar β) : ℝ) * (↑((2 : ℕ) * Nstar β).factorial : ℝ);
   let Czero : ℝ := (2 : ℝ) * ((1 : ℝ) + F / (4 : ℝ));
@@ -229,7 +230,8 @@ private theorem hm_Gbar_gradient_rate_onA7_Qnorm1 :
           (2 ^ 20 / epsilon β I.Λ (m - 1)) * Bzero) := by
       rw [← ENNReal.ofReal_add (by positivity) (by positivity)]
 
-private theorem hm_Gbar_gradient_rate_onA7_targetReal2 :
+/-- Absorb the inverse spatial scale into the fractional majorant rate. -/
+theorem HmSourceRatesGradient.hessian_gradient_majorant_scale_bound :
   ∀ (β D : ℝ),
   let F : ℝ := (↑(Nstar β) : ℝ) * (↑((2 : ℕ) * Nstar β).factorial : ℝ);
   let Czero : ℝ := (2 : ℝ) * ((1 : ℝ) + F / (4 : ℝ));
@@ -456,12 +458,14 @@ private theorem hm_Gbar_gradient_rate_onA7_conclusion4 :
     rw [hfun, eLpNorm_const_smul, Real.enorm_of_nonneg hc]
   have hQnorm : eLpNorm Q 2 μ ≤ ENNReal.ofReal
       (16 * Bword + (2 ^ 20 / epsilon β I.Λ (m - 1)) * Bzero) := by
-    exact @hm_Gbar_gradient_rate_onA7_Qnorm1 β D hD I κ M θ₀ m T hε hκprev hroot0 hsumRoots hscale
+    exact @HmSourceRatesGradient.hessian_gradient_majorant_eLpNorm_le β D hD I κ M θ₀ m T
+      hε hκprev hroot0 hsumRoots hscale
   have htargetReal : 16 * Bword +
       (2 ^ 20 / epsilon β I.Λ (m - 1)) * Bzero ≤
       Cgrad * Real.sqrt (l2NormSq θ₀) * invRoot *
         epsilon β I.Λ (m - 1) ^ q := by
-    exact @hm_Gbar_gradient_rate_onA7_targetReal2 β D I κ M θ₀ m hκprev hεinvRate
+    exact @HmSourceRatesGradient.hessian_gradient_majorant_scale_bound β D I κ M θ₀ m
+      hκprev hεinvRate
   have hfinal : eLpNorm
       (fun z : ℝ × Vec 2 => gradMatrix (Gbar I hΦ m Tn z.1) z.2 i j) 2 μ ≤
       ENNReal.ofReal (Cgrad * Real.sqrt (l2NormSq θ₀) * invRoot *

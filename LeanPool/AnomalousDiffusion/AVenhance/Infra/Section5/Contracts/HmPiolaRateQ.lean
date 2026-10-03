@@ -33,18 +33,7 @@ open AVenhance.Infra.Section5.RelativeError
 
 theorem HmPiolaRateQ.hmPiola_sqrt_vecNormSq_le_abs_coordinates (v : Vec 2) :
     Real.sqrt (vecNormSq v) ≤ |v 0| + |v 1| := by
-  have hsum : vecNormSq v ≤ (|v 0| + |v 1|) ^ 2 := by
-    unfold vecNormSq vecDot
-    simp only [Fin.sum_univ_two]
-    calc
-      v 0 * v 0 + v 1 * v 1 = v 0 ^ 2 + v 1 ^ 2 := by ring
-      _ = |v 0| ^ 2 + |v 1| ^ 2 := by rw [sq_abs, sq_abs]
-      _ ≤ (|v 0| + |v 1|) ^ 2 := by
-        nlinarith [mul_nonneg (abs_nonneg (v 0)) (abs_nonneg (v 1))]
-  calc
-    Real.sqrt (vecNormSq v) ≤ Real.sqrt ((|v 0| + |v 1|) ^ 2) :=
-      Real.sqrt_le_sqrt hsum
-    _ = |v 0| + |v 1| := Real.sqrt_sq (add_nonneg (abs_nonneg _) (abs_nonneg _))
+  exact HmSourceRatesGradient.sqrt_vecNormSq_le_abs_coordinates v
 
 /-- The Euclidean magnitude of a spatial gradient has the `L²` bound supplied
 by its vector energy. The two coordinate estimates are summed without
@@ -59,89 +48,7 @@ theorem HmPiolaRateQ.hmPiola_iterate_gradient_magnitude_eLpNorm_le
     eLpNorm (fun z : ℝ × Vec 2 => Real.sqrt (vecNormSq
       (spaceGrad (iterateSpatialWord w (u z.1)) z.2))) 2
       (volume.restrict timeCube) ≤ ENNReal.ofReal (2 * B) := by
-  let g : ℝ × Vec 2 → Vec 2 := fun z =>
-    spaceGrad (iterateSpatialWord w (u z.1)) z.2
-  let μ : Measure (ℝ × Vec 2) := volume.restrict timeCube
-  have hgCont : ContinuousOn g (Set.Ici (0 : ℝ) ×ˢ Set.univ) := by
-    dsimp [g]
-    exact (iterate_word_gradient_smooth_up_to_initial hu w).continuousOn
-  have hset : MeasurableSet
-      (Set.Ici (0 : ℝ) ×ˢ (Set.univ : Set (Vec 2))) :=
-    measurableSet_Ici.prod MeasurableSet.univ
-  have hsubset : timeCube ⊆ Set.Ici (0 : ℝ) ×ˢ (Set.univ : Set (Vec 2)) := by
-    intro z hz
-    exact ⟨hz.1.1.le, Set.mem_univ _⟩
-  have hac : μ ≪ volume.restrict (Set.Ici (0 : ℝ) ×ˢ (Set.univ : Set (Vec 2))) :=
-    (Measure.restrict_mono_set volume hsubset).absolutelyContinuous
-  have hcoordCont (j : Fin 2) :
-      ContinuousOn (fun z => g z j) (Set.Ici (0 : ℝ) ×ˢ Set.univ) :=
-    (continuous_apply j).comp_continuousOn hgCont
-  have hcoordMeas (j : Fin 2) : AEStronglyMeasurable (fun z => g z j) μ :=
-    ((hcoordCont j).aestronglyMeasurable hset (μ := volume)).mono_ac hac
-  have hrootCont : ContinuousOn (fun z => Real.sqrt (vecNormSq (g z)))
-      (Set.Ici (0 : ℝ) ×ˢ Set.univ) := by
-    have hnormsq : ContinuousOn (fun z => vecNormSq (g z))
-        (Set.Ici (0 : ℝ) ×ˢ Set.univ) := by
-      unfold vecNormSq vecDot
-      exact continuousOn_finsetSum Finset.univ (fun i _ =>
-        ((continuous_apply i).comp_continuousOn hgCont).mul
-          ((continuous_apply i).comp_continuousOn hgCont))
-    exact Real.continuous_sqrt.continuousOn.comp hnormsq
-      (fun _ _ => vecNormSq_nonneg _)
-  have hrootMeas : AEStronglyMeasurable
-      (fun z => Real.sqrt (vecNormSq (g z))) μ :=
-    (hrootCont.aestronglyMeasurable hset (μ := volume)).mono_ac hac
-  have hint : Integrable (fun z => vecNormSq (g z)) μ := by
-    change IntegrableOn (fun z : ℝ × Vec 2 =>
-      vecNormSq (spaceGrad (iterateSpatialWord w (u z.1)) z.2)) timeCube
-    exact iterate_word_gradient_energy_integrable hu w
-  have henergy : (∫ z, vecNormSq (g z) ∂μ) ≤ B ^ 2 := by
-    have henergyRoot : Real.sqrt (∫ z, vecNormSq (g z) ∂μ) ≤ B := by
-      simpa [μ, spaceTimeGradNormSq, g] using hBenergy
-    have hintNonneg : 0 ≤ ∫ z, vecNormSq (g z) ∂μ :=
-      integral_nonneg (fun z => vecNormSq_nonneg (g z))
-    calc
-      _ = (Real.sqrt (∫ z, vecNormSq (g z) ∂μ)) ^ 2 :=
-        (Real.sq_sqrt hintNonneg).symm
-      _ ≤ B ^ 2 := by
-        let s := Real.sqrt (∫ z, vecNormSq (g z) ∂μ)
-        have hs : 0 ≤ s := by dsimp [s]; positivity
-        have hprod : 0 ≤ (B - s) * (B + s) :=
-          mul_nonneg (sub_nonneg.mpr (show s ≤ B by exact henergyRoot))
-            (add_nonneg hB hs)
-        dsimp [s] at hprod
-        nlinarith
-  have hcoordBound (j : Fin 2) :
-      eLpNorm (fun z => g z j) 2 μ ≤ ENNReal.ofReal B := by
-    exact amnr_coordinate_eLpNorm_two_le_of_dissipation j
-      (hcoordMeas j) hint hB henergy
-  have hpoint (z : ℝ × Vec 2) :
-      ‖Real.sqrt (vecNormSq (g z))‖ ≤ ‖|g z 0| + |g z 1|‖ := by
-    rw [Real.norm_eq_abs, Real.norm_eq_abs,
-      abs_of_nonneg (Real.sqrt_nonneg _),
-      abs_of_nonneg (add_nonneg (abs_nonneg _) (abs_nonneg _))]
-    exact HmPiolaRateQ.hmPiola_sqrt_vecNormSq_le_abs_coordinates (g z)
-  have hmono := eLpNorm_mono_ae hrootMeas
-    (Filter.Eventually.of_forall hpoint) (p := 2)
-  have hnorm0 : eLpNorm (fun z => |g z 0|) 2 μ = eLpNorm (fun z => g z 0) 2 μ := by
-    simpa only [Real.norm_eq_abs] using eLpNorm_norm (fun z => g z 0) (hcoordMeas 0)
-  have hnorm1 : eLpNorm (fun z => |g z 1|) 2 μ = eLpNorm (fun z => g z 1) 2 μ := by
-    simpa only [Real.norm_eq_abs] using eLpNorm_norm (fun z => g z 1) (hcoordMeas 1)
-  have hsum :
-      eLpNorm (fun z : ℝ × Vec 2 => |g z 0| + |g z 1|) 2 μ ≤
-        eLpNorm (fun z => |g z 0|) 2 μ + eLpNorm (fun z => |g z 1|) 2 μ :=
-    eLpNorm_add_le (by norm_num : (1 : ENNReal) ≤ 2)
-  have hsumBound : eLpNorm (fun z : ℝ × Vec 2 => |g z 0| + |g z 1|) 2 μ ≤
-      ENNReal.ofReal B + ENNReal.ofReal B := by
-    rw [hnorm0, hnorm1] at hsum
-    exact hsum.trans (add_le_add (hcoordBound 0) (hcoordBound 1))
-  calc
-    _ ≤ eLpNorm (fun z : ℝ × Vec 2 => |g z 0| + |g z 1|) 2 μ := hmono
-    _ ≤ ENNReal.ofReal B + ENNReal.ofReal B := hsumBound
-    _ = ENNReal.ofReal (2 * B) := by
-      calc
-        _ = ENNReal.ofReal (B + B) := by rw [← ENNReal.ofReal_add hB hB]
-        _ = _ := by congr 1; ring
+  exact HmSourceRatesGradient.iterate_gradient_magnitude_eLpNorm_le hu w hB hBenergy
 
 /-- Active flow bounds (stream-function estimates) for every stream sequence: on the support of
 `ξ̂_{m,l}(t)`, `F_l` and `∇Y_l` are bounded by `2` and the second flow derivative by
@@ -161,144 +68,6 @@ theorem hmPiola_active_flow_bounds {β : ℝ} (I : Ingredients β)
     stream_regularity_bounds_of_increment_bounds hΦ hjoint.2.1
   obtain ⟨Cmat, hCmat, hflow, _hmaterial⟩ := hjoint.2.2
   exact hm_Gbar_active_flow_bounds hΦ hflow hreg hm (t := t) l hl
-
-private theorem hmPiolaQ_eLpNorm_rate_onA7_Qnorm1 :
-  ∀ (β D : ℝ), (1 : ℝ) ≤ D →
-  let F : ℝ := (↑(Nstar β) : ℝ) * (↑((2 : ℕ) * Nstar β).factorial : ℝ);
-  let Czero : ℝ := (2 : ℝ) * ((1 : ℝ) + F / (4 : ℝ));
-  let Cword : ℝ := (2 : ℝ) * (4 : ℝ) ^ Nstar β * (↑((2 : ℕ) * Nstar β).factorial : ℝ) * ((4 : ℝ)
-    * D ^ (3 : ℕ));
-  ∀ (I : Ingredients β) (κ : ℝ) (M : ℕ) (θ₀ : Vec (2 : ℕ) → ℝ) (m : ℕ) (T : ℕ → ℝ → Vec (2 : ℕ)
-    → ℝ), (0 : ℝ) < epsilon β I.Λ (m - (1 : ℕ)) → (0 : ℝ) < I.kappaSeq κ M (m - (1 : ℕ)) →
-  let q : ℝ := (-1 : ℝ) - gamma β / (2 : ℝ);
-  let invRoot : ℝ := (√(I.kappaSeq κ M (m - (1 : ℕ))))⁻¹;
-  let θsize : ℝ := √(l2NormSq θ₀);
-  let Bzero : ℝ := Czero * θsize * invRoot;
-  let Bword : ℝ := Cword * θsize * invRoot * epsilon β I.Λ (m - (1 : ℕ)) ^ q;
-  let μ : Measure (ℝ × Vec (2 : ℕ)) := volume.restrict timeCube;
-  let Tn : ℝ → Vec (2 : ℕ) → ℝ := T (Nstar β);
-  let r0 : ℝ × Vec (2 : ℕ) → ℝ := fun (z : ℝ × Vec (2 : ℕ)) => √(vecNormSq (spaceGrad (Tn z.1)
-    z.2));
-  let r1 : ℝ × Vec (2 : ℕ) → ℝ := fun (z : ℝ × Vec (2 : ℕ)) => √(vecNormSq (spaceGrad
-    (iterateSpatialWord [(0 : Fin (2 : ℕ))] (Tn z.1)) z.2));
-  let r2 : ℝ × Vec (2 : ℕ) → ℝ := fun (z : ℝ × Vec (2 : ℕ)) => √(vecNormSq (spaceGrad
-    (iterateSpatialWord [(1 : Fin (2 : ℕ))] (Tn z.1)) z.2));
-  eLpNorm r0 (2 : ENNReal) μ ≤ ENNReal.ofReal ((2 : ℝ) * Bzero) →
-  let Q : ℝ × Vec (2 : ℕ) → ℝ := fun (z : ℝ × Vec (2 : ℕ)) => (4 : ℝ) * (r1 z + r2 z) + (2 : ℝ)
-    ^ (19 : ℕ) / epsilon β I.Λ (m - (1 : ℕ)) * r0 z;
-  eLpNorm (fun (z : ℝ × Vec (2 : ℕ)) => r1 z + r2 z) (2 : ENNReal) μ ≤ ENNReal.ofReal ((2 : ℝ) *
-    Bword) + ENNReal.ofReal ((2 : ℝ) * Bword) → (∀ (c : ℝ), (0 : ℝ) ≤ c → ∀ (f : ℝ × Vec (2 : ℕ)
-    → ℝ), eLpNorm (fun (z : ℝ × Vec (2 : ℕ)) => c * f z) (2 : ENNReal) μ = ENNReal.ofReal c *
-    eLpNorm f (2 : ENNReal) μ) → eLpNorm Q (2 : ENNReal) μ ≤ ENNReal.ofReal ((16 : ℝ) * Bword +
-    (2 : ℝ) ^ (20 : ℕ) / epsilon β I.Λ (m - (1 : ℕ)) * Bzero)
-    := by
-  intro β D hD F Czero Cword I κ M θ₀ m T hε hκprev q invRoot θsize Bzero Bword μ Tn r0 r1 r2
-      hroot0 Q hsumRoots hscale
-  have hsumBound : eLpNorm (fun z => r1 z + r2 z) 2 μ ≤
-      ENNReal.ofReal (4 * Bword) := by
-    calc
-      _ ≤ ENNReal.ofReal (2 * Bword) + ENNReal.ofReal (2 * Bword) := hsumRoots
-      _ = ENNReal.ofReal (4 * Bword) := by
-        rw [← ENNReal.ofReal_add (by positivity : 0 ≤ 2 * Bword)
-          (by positivity : 0 ≤ 2 * Bword)]
-        congr 1; ring
-  have hfirst := (hscale 4 (by norm_num) (fun z => r1 z + r2 z)).symm
-  have hlast := hscale (2 ^ 19 / epsilon β I.Λ (m - 1)) (by positivity) r0
-  have hparts :
-      eLpNorm (fun z : ℝ × Vec 2 =>
-        4 * (r1 z + r2 z) + (2 ^ 19 / epsilon β I.Λ (m - 1)) * r0 z) 2 μ ≤
-        eLpNorm (fun z => 4 * (r1 z + r2 z)) 2 μ +
-          eLpNorm (fun z => (2 ^ 19 / epsilon β I.Λ (m - 1)) * r0 z) 2 μ :=
-    eLpNorm_add_le (by norm_num : (1 : ENNReal) ≤ 2)
-  have hfirstBound : eLpNorm (fun z : ℝ × Vec 2 => 4 * (r1 z + r2 z)) 2 μ ≤
-      ENNReal.ofReal (16 * Bword) := by
-    rw [← hfirst]
-    calc
-      _ ≤ ENNReal.ofReal 4 * ENNReal.ofReal (4 * Bword) :=
-        mul_le_mul_of_nonneg_left hsumBound (by positivity)
-      _ = ENNReal.ofReal (16 * Bword) := by
-        rw [← ENNReal.ofReal_mul (by norm_num : 0 ≤ (4 : ℝ))]
-        congr 1
-        ring
-  have hlastBound : eLpNorm (fun z : ℝ × Vec 2 =>
-      (2 ^ 19 / epsilon β I.Λ (m - 1)) * r0 z) 2 μ ≤
-      ENNReal.ofReal ((2 ^ 20 / epsilon β I.Λ (m - 1)) * Bzero) := by
-    rw [hlast]
-    calc
-      _ ≤ ENNReal.ofReal (2 ^ 19 / epsilon β I.Λ (m - 1)) *
-            ENNReal.ofReal (2 * Bzero) :=
-        mul_le_mul_of_nonneg_left hroot0 (by positivity)
-      _ = ENNReal.ofReal ((2 ^ 20 / epsilon β I.Λ (m - 1)) * Bzero) := by
-        rw [← ENNReal.ofReal_mul
-          (by positivity : 0 ≤ 2 ^ 19 / epsilon β I.Λ (m - 1))]
-        congr 1
-        ring
-  calc
-    _ = eLpNorm (fun z : ℝ × Vec 2 =>
-        4 * (r1 z + r2 z) + (2 ^ 19 / epsilon β I.Λ (m - 1)) * r0 z) 2 μ := by
-      rfl
-    _ ≤ eLpNorm (fun z : ℝ × Vec 2 => 4 * (r1 z + r2 z)) 2 μ +
-          eLpNorm (fun z => (2 ^ 19 / epsilon β I.Λ (m - 1)) * r0 z) 2 μ := hparts
-    _ ≤ ENNReal.ofReal (16 * Bword) +
-          ENNReal.ofReal ((2 ^ 20 / epsilon β I.Λ (m - 1)) * Bzero) :=
-      add_le_add hfirstBound hlastBound
-    _ = ENNReal.ofReal (16 * Bword +
-          (2 ^ 20 / epsilon β I.Λ (m - 1)) * Bzero) := by
-      rw [← ENNReal.ofReal_add (by positivity) (by positivity)]
-
-private theorem hmPiolaQ_eLpNorm_rate_onA7_targetReal2 :
-  ∀ (β D : ℝ),
-  let F : ℝ := (↑(Nstar β) : ℝ) * (↑((2 : ℕ) * Nstar β).factorial : ℝ);
-  let Czero : ℝ := (2 : ℝ) * ((1 : ℝ) + F / (4 : ℝ));
-  let Cword : ℝ := (2 : ℝ) * (4 : ℝ) ^ Nstar β * (↑((2 : ℕ) * Nstar β).factorial : ℝ) * ((4 : ℝ)
-    * D ^ (3 : ℕ));
-  let Cgrad : ℝ := (16 : ℝ) * Cword + (2 : ℝ) ^ (20 : ℕ) * Czero;
-  ∀ (I : Ingredients β) (κ : ℝ) (M : ℕ) (θ₀ : Vec (2 : ℕ) → ℝ) (m : ℕ), (0 : ℝ) < I.kappaSeq κ M
-    (m - (1 : ℕ)) →
-  let q : ℝ := (-1 : ℝ) - gamma β / (2 : ℝ);
-  let invRoot : ℝ := (√(I.kappaSeq κ M (m - (1 : ℕ))))⁻¹;
-  let θsize : ℝ := √(l2NormSq θ₀);
-  let Bzero : ℝ := Czero * θsize * invRoot;
-  let Bword : ℝ := Cword * θsize * invRoot * epsilon β I.Λ (m - (1 : ℕ)) ^ q;
-  (epsilon β I.Λ (m - (1 : ℕ)))⁻¹ ≤ epsilon β I.Λ (m - (1 : ℕ)) ^ q → (16 : ℝ) * Bword + (2 : ℝ)
-    ^ (20 : ℕ) / epsilon β I.Λ (m - (1 : ℕ)) * Bzero ≤ Cgrad * √(l2NormSq θ₀) * invRoot *
-    epsilon β I.Λ (m - (1 : ℕ)) ^ q
-    := by
-  intro β D F Czero Cword Cgrad I κ M θ₀ m hκprev q invRoot θsize Bzero Bword hεinvRate
-  have hX : 0 ≤ Real.sqrt (l2NormSq θ₀) * invRoot := by positivity
-  have hcoeff : 16 * Cword * epsilon β I.Λ (m - 1) ^ q +
-      2 ^ 20 * Czero * (epsilon β I.Λ (m - 1))⁻¹ ≤
-      Cgrad * epsilon β I.Λ (m - 1) ^ q := by
-    calc
-      _ ≤ 16 * Cword * epsilon β I.Λ (m - 1) ^ q +
-          2 ^ 20 * Czero * epsilon β I.Λ (m - 1) ^ q := by
-        exact add_le_add le_rfl (mul_le_mul_of_nonneg_left hεinvRate
-          (by positivity))
-      _ = Cgrad * epsilon β I.Λ (m - 1) ^ q := by dsimp [Cgrad]; ring
-  dsimp [Bword, Bzero, θsize, invRoot]
-  have heq :
-      16 * (Cword * Real.sqrt (l2NormSq θ₀) *
-          (Real.sqrt (I.kappaSeq κ M (m - 1)))⁻¹ *
-          epsilon β I.Λ (m - 1) ^ q) +
-        (2 ^ 20 / epsilon β I.Λ (m - 1)) *
-          (Czero * Real.sqrt (l2NormSq θ₀) *
-            (Real.sqrt (I.kappaSeq κ M (m - 1)))⁻¹) =
-      (16 * Cword * epsilon β I.Λ (m - 1) ^ q +
-        2 ^ 20 * Czero * (epsilon β I.Λ (m - 1))⁻¹) *
-        (Real.sqrt (l2NormSq θ₀) *
-          (Real.sqrt (I.kappaSeq κ M (m - 1)))⁻¹) := by ring
-  calc
-    _ = (16 * Cword * epsilon β I.Λ (m - 1) ^ q +
-        2 ^ 20 * Czero * (epsilon β I.Λ (m - 1))⁻¹) *
-        (Real.sqrt (l2NormSq θ₀) *
-          (Real.sqrt (I.kappaSeq κ M (m - 1)))⁻¹) := heq
-    _ ≤ (Cgrad * epsilon β I.Λ (m - 1) ^ q) *
-        (Real.sqrt (l2NormSq θ₀) *
-          (Real.sqrt (I.kappaSeq κ M (m - 1)))⁻¹) :=
-      mul_le_mul_of_nonneg_right hcoeff hX
-    _ = Cgrad * Real.sqrt (l2NormSq θ₀) *
-        (Real.sqrt (I.kappaSeq κ M (m - 1)))⁻¹ *
-        epsilon β I.Λ (m - 1) ^ q := by ring
 
 /-- The spacetime `L²` rate of the majorant `hmPiolaQ`: all thresholds and amplitudes
 are chosen before the ingredients and data. -/
@@ -461,12 +230,14 @@ theorem hmPiolaQ_eLpNorm_rate_onA7 (β Ccut : ℝ) :
     rw [hfun, eLpNorm_const_smul, Real.enorm_of_nonneg hc]
   have hQnorm : eLpNorm Q 2 μ ≤ ENNReal.ofReal
       (16 * Bword + (2 ^ 20 / epsilon β I.Λ (m - 1)) * Bzero) := by
-    exact @hmPiolaQ_eLpNorm_rate_onA7_Qnorm1 β D hD I κ M θ₀ m T hε hκprev hroot0 hsumRoots hscale
+    exact @HmSourceRatesGradient.hessian_gradient_majorant_eLpNorm_le β D hD I κ M θ₀ m T
+      hε hκprev hroot0 hsumRoots hscale
   have htargetReal : 16 * Bword +
       (2 ^ 20 / epsilon β I.Λ (m - 1)) * Bzero ≤
       Cgrad * Real.sqrt (l2NormSq θ₀) * invRoot *
         epsilon β I.Λ (m - 1) ^ q := by
-    exact @hmPiolaQ_eLpNorm_rate_onA7_targetReal2 β D I κ M θ₀ m hκprev hεinvRate
+    exact @HmSourceRatesGradient.hessian_gradient_majorant_scale_bound β D I κ M θ₀ m
+      hκprev hεinvRate
   have hfinal : eLpNorm
       (fun z : ℝ × Vec 2 => hmPiolaQ (epsilon β I.Λ (m - 1)) Tn z.1 z.2) 2 μ ≤
       ENNReal.ofReal (Cgrad * Real.sqrt (l2NormSq θ₀) * invRoot *

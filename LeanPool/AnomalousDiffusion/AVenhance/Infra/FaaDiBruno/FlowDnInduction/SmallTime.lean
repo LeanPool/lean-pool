@@ -57,37 +57,7 @@ theorem SmallTime.flowDnReverseFlow_isFlow
 
 theorem SmallTime.flowDn_snorm_neg_eq {n : ℕ} {R : ℝ} (f : Vec 2 → Vec 2) :
     snorm (fun x => -f x) n R = snorm f n R := by
-  have hpartial (I : Fin n → Fin 2) :
-      partialSup n (fun x => -f x) I = partialSup n f I := by
-    unfold partialSup
-    rw [eLpNormEssSup_eq_essSup_enorm, eLpNormEssSup_eq_essSup_enorm]
-    apply essSup_congr_ae
-    filter_upwards with x
-    have h : orderedPartial n (fun x => -f x) x I = -orderedPartial n f x I := by
-      change iteratedFDeriv ℝ n
-        (fun z : VecOne 2 => -f ((vecOneEquiv 2) z)) (WithLp.toLp 1 x)
-          (fun j => coordinateVectorOne 2 (I j)) =
-        -iteratedFDeriv ℝ n
-          (fun z : VecOne 2 => f ((vecOneEquiv 2) z)) (WithLp.toLp 1 x)
-            (fun j => coordinateVectorOne 2 (I j))
-      rw [show (fun z : VecOne 2 => -f ((vecOneEquiv 2) z)) =
-        -(fun z : VecOne 2 => f ((vecOneEquiv 2) z)) by rfl, iteratedFDeriv_neg]
-      rfl
-    rw [h]
-    simp
-  have hderiv : derivativeSup n (fun x => -f x) = derivativeSup n f := by
-    unfold derivativeSup
-    apply le_antisymm
-    · apply iSup_le
-      intro I
-      rw [hpartial I]
-      exact le_iSup_of_le I le_rfl
-    · apply iSup_le
-      intro I
-      rw [← hpartial I]
-      exact le_iSup_of_le I le_rfl
-  unfold snorm
-  rw [hderiv]
+  exact TransportODEApplications.snorm_neg_eq f
 
 /-- The signed-time version of the paper's all-order flow seminorm estimate.
 Time reversal preserves both the field hypotheses and the exact coefficient. -/

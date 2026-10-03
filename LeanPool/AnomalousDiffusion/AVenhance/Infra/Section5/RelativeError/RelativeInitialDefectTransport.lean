@@ -5,6 +5,8 @@ Authors: Scott Armstrong and Vlad Vicol
 -/
 module
 
+public import LeanPool.AnomalousDiffusion.AVenhance.Infra.ScalarEnergySup
+
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Ergodic.Flow
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Ergodic.HMinusOneErgodicCore
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Torus.FrozenBridge
@@ -355,34 +357,6 @@ theorem hm_transport_cell_sup_le_of_continuous
     (hFTC : ∀ t ∈ cell, f t ^ 2 ≤ 2 * L * D * H)
     (hH : ∃ t₀ ∈ cell, H = f t₀ ∧ ∀ t ∈ cell, f t ≤ f t₀) :
     ∀ t ∈ cell, f t ≤ 2 * L * D := by
-  obtain ⟨t₀, ht₀, hHval, hmax⟩ := hH
-  have hHnonneg : 0 ≤ H := by rw [hHval]; exact hnonneg t₀ ht₀
-  have hupper : ∀ t ∈ cell, f t ≤ H := by
-    intro t ht
-    rw [hHval]
-    exact hmax t ht
-  by_cases hHzero : H = 0
-  · intro t ht
-    have hle := hupper t ht
-    have hge := hnonneg t ht
-    rw [hHzero] at hle
-    have hzero : f t = 0 := le_antisymm hle hge
-    rw [hzero]
-    nlinarith [hLD]
-  · have hHpos : 0 < H := lt_of_le_of_ne hHnonneg (Ne.symm hHzero)
-    have hHFTC : H ^ 2 ≤ 2 * L * D * H := by
-      rw [hHval]
-      have h := hFTC t₀ ht₀
-      rw [hHval] at h
-      exact h
-    have habsorb : H ≤ 2 * L * D := by
-      have hdiv := div_le_div_of_nonneg_right hHFTC (le_of_lt hHpos)
-      have hleft : H ^ 2 / H = H := by field_simp [hHpos.ne']
-      have hright : (2 * L * D * H) / H = 2 * L * D := by
-        field_simp [hHpos.ne']
-      rw [hleft, hright] at hdiv
-      exact hdiv
-    intro t ht
-    exact (hupper t ht).trans habsorb
+  exact AVenhance.Infra.ScalarEnergySup.cell_sup_le_of_quadratic_bound hnonneg hLD hFTC hH
 
 end AVenhance.Infra.Section5.RelativeError.Transport

@@ -34,42 +34,7 @@ theorem Section2FlowRegularityCore.derivativeSup_postCLM_le
     (hL : ‖L‖ ≤ 1) :
     FaaDiBruno.derivativeSup n (fun x => L (f x)) ≤
       FaaDiBruno.derivativeSup n f := by
-  classical
-  have hpartial (I : Fin n → Fin 2) (x : Vec 2) :
-      FaaDiBruno.orderedPartial n (fun y => L (f y)) x I =
-        L (FaaDiBruno.orderedPartial n f x I) := by
-    let z : FaaDiBruno.VecOne 2 := WithLp.toLp 1 x
-    have hcomp := L.iteratedFDeriv_comp_left
-      (f := FaaDiBruno.liftVecOne f)
-      (FaaDiBruno.contDiff_liftVecOne hf).contDiffAt
-      (i := n) le_rfl (x := z)
-    have hcomp' :
-        iteratedFDeriv ℝ n (FaaDiBruno.liftVecOne (fun y => L (f y))) z =
-          L.compContinuousMultilinearMap
-            (iteratedFDeriv ℝ n (FaaDiBruno.liftVecOne f) z) := by
-      simpa [FaaDiBruno.liftVecOne, Function.comp_def, z] using hcomp
-    have heval := congrArg
-      (fun D => D (fun j => FaaDiBruno.coordinateVectorOne 2 (I j))) hcomp'
-    simpa [FaaDiBruno.orderedPartial, z] using heval
-  unfold FaaDiBruno.derivativeSup
-  refine iSup_le fun I => ?_
-  calc
-    FaaDiBruno.partialSup n (fun x => L (f x)) I ≤
-        FaaDiBruno.partialSup n f I := by
-      unfold FaaDiBruno.partialSup
-      apply eLpNormEssSup_mono_enorm_ae
-      filter_upwards with x
-      rw [hpartial I x]
-      have hnorm : ‖L (FaaDiBruno.orderedPartial n f x I)‖ ≤
-          ‖FaaDiBruno.orderedPartial n f x I‖ := by
-        calc
-          ‖L (FaaDiBruno.orderedPartial n f x I)‖ ≤
-              ‖L‖ * ‖FaaDiBruno.orderedPartial n f x I‖ := L.le_opNorm _
-          _ ≤ 1 * ‖FaaDiBruno.orderedPartial n f x I‖ :=
-            mul_le_mul_of_nonneg_right hL (norm_nonneg _)
-          _ = ‖FaaDiBruno.orderedPartial n f x I‖ := by ring
-      simpa [Real.enorm_eq_ofReal_abs] using ENNReal.ofReal_le_ofReal hnorm
-    _ ≤ FaaDiBruno.derivativeSup n f := le_iSup_of_le I le_rfl
+  exact AppB2FieldBounds.derivativeSup_postCLM_le L f hf hL
 
 theorem Section2FlowRegularityCore.snorm_postCLM_le
     {n : ℕ} {R : ℝ} {F G : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]

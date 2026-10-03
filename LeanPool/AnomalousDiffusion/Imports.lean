@@ -399,6 +399,8 @@ public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Parabolic.WeakUniquene
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Parabolic.WeakUniqueness.WeakProjectionConvergence
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Parabolic.WeakUniqueness.WeakUniquenessTheorem
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Parabolic.WeakUniqueness.ZeroDataEnergy
+public import LeanPool.AnomalousDiffusion.AVenhance.Infra.PeriodicTimeEnergy
+public import LeanPool.AnomalousDiffusion.AVenhance.Infra.ScalarEnergySup
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section3.ActiveModeFlux
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section3.Approx
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section3.BoundedParabolicUniqueness
@@ -1413,12 +1415,14 @@ public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section5.TransportCalc
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section5.TransportIdentities
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section5.WeakEnergyIdentity
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Shear.OneDimensional
+public import LeanPool.AnomalousDiffusion.AVenhance.Infra.SpatialSecondDerivatives
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Torus.Basic
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Torus.Calculus
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Torus.Fourier
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Torus.FourierCalculus
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Torus.FrozenBridge
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Torus.Slicing
+public import LeanPool.AnomalousDiffusion.AVenhance.Infra.VectorL2Triangle
 public import LeanPool.AnomalousDiffusion.AVenhance.Proofs.Construction.ExistsIsStreamSeq
 public import LeanPool.AnomalousDiffusion.AVenhance.Proofs.Construction.LimitFieldRegular
 public import LeanPool.AnomalousDiffusion.AVenhance.Proofs.Construction.StreamRegularity

@@ -5,6 +5,8 @@ Authors: Scott Armstrong and Vlad Vicol
 -/
 module
 
+public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section5.Integration.BigBoundRegularityMeans
+
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section5.Integration.BigBound
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section5.Terms.R46IteratesRegularity
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section5.ResidualPointwiseConstructor
@@ -863,35 +865,7 @@ theorem vecDiv_scalar_mul {q : Vec 2 → ℝ} {F : Vec 2 → Vec 2} {x : Vec 2}
     (hq : ContDiff ℝ (⊤ : ℕ∞) q) (hF : ContDiff ℝ (⊤ : ℕ∞) F) :
     vecDiv (fun y => q y • F y) x =
       vecDot (spaceGrad q x) (F x) + q x * vecDiv F x := by
-  have hqDiff := hq.differentiable (by simp) x
-  unfold vecDiv vecDot
-  have hterm (i : Fin 2) :
-      spaceGrad (fun y => q y • F y i) x i =
-        spaceGrad q x i * F x i + q x * spaceGrad (fun y => F y i) x i := by
-    change fderiv ℝ (fun y => q y * F y i) x (basisVec i) = _
-    have hFi : ContDiff ℝ (⊤ : ℕ∞) (fun y => F y i) :=
-      contDiff_pi.mp hF i
-    have hmul := fderiv_mul hqDiff (hFi.differentiable (by simp) x)
-    have hfun : (fun y => q y * F y i) = q * (fun y => F y i) := by
-      funext y
-      rfl
-    have hmul' : fderiv ℝ (fun y => q y * F y i) x =
-        q x • fderiv ℝ (fun y => F y i) x +
-          F x i • fderiv ℝ q x := by
-      rw [hfun, hmul]
-    rw [hmul']
-    simp [spaceGrad, smul_eq_mul]
-    ring
-  calc
-    (∑ i : Fin 2, spaceGrad (fun y => q y • F y i) x i) =
-        ∑ i : Fin 2, (spaceGrad q x i * F x i +
-          q x * spaceGrad (fun y => F y i) x i) := by
-            apply Finset.sum_congr rfl
-            intro i hi
-            exact hterm i
-    _ = (∑ i : Fin 2, spaceGrad q x i * F x i) +
-        q x * ∑ i : Fin 2, spaceGrad (fun y => F y i) x i := by
-          rw [Finset.sum_add_distrib, Finset.mul_sum]
+  exact BigBoundRegularityMeans.vecDiv_scalar_mul hq hF
 
 theorem BigBoundRegularity.flowGradK_contDiff_infty {β : ℝ} (I : Ingredients β)
     {Φ : ℕ → ℝ → Vec 2 → ℝ} (hΦ : IsStreamSeq I Φ)
@@ -1197,22 +1171,7 @@ theorem BigBoundRegularity.meanZeroOn_finite_weighted_divergence
     (hFper : ∀ i ∈ U, IsZ2Periodic (F i)) :
     MeanZeroOn unitCube (fun x => vecDiv (fun y =>
       ∑ i ∈ U, c i • F i y) x) := by
-  classical
-  have hWsm : ContDiff ℝ (⊤ : ℕ∞) (fun y => ∑ i ∈ U, c i • F i y) := by
-    apply ContDiff.sum
-    intro i hi
-    exact (contDiff_const : ContDiff ℝ (⊤ : ℕ∞) (fun _ : Vec 2 => c i)).smul
-      (hFsm i hi)
-  have hWper : IsZ2Periodic (fun y => ∑ i ∈ U, c i • F i y) := by
-    intro z x
-    funext j
-    change (∑ i ∈ U, c i • F i (x + latticeShift z)) j =
-      (∑ i ∈ U, c i • F i x) j
-    simp only [Finset.sum_apply, Pi.smul_apply]
-    apply Finset.sum_congr rfl
-    intro i hi
-    exact congrArg (fun v : Vec 2 => c i • v j) (hFper i hi z x)
-  exact meanZeroOn_vecDiv_of_contDiff_periodic hWsm hWper
+  exact BigBoundRegularityMeans.meanZeroOn_finite_weighted_divergence U c F hFsm hFper
 
 theorem BigBoundRegularity.meanZeroOn_weighted_grad_pairing
     {ι : Type*} (U : Finset ι) (c : ι → ℝ)
@@ -1224,39 +1183,7 @@ theorem BigBoundRegularity.meanZeroOn_weighted_grad_pairing
     (hPdiv : ∀ i ∈ U, ∀ x, vecDiv (P i) x = 0) :
     MeanZeroOn unitCube (fun x => ∑ i ∈ U,
       c i * vecDot (spaceGrad (q i) x) (P i x)) := by
-  classical
-  let F : ι → Vec 2 → Vec 2 := fun i x => q i x • P i x
-  have hFsm (i : ι) (hi : i ∈ U) : ContDiff ℝ (⊤ : ℕ∞) (F i) :=
-    (hqsm i hi).smul (hPsm i hi)
-  have hFper (i : ι) (hi : i ∈ U) : IsZ2Periodic (F i) := by
-    intro z x
-    change q i (x + latticeShift z) • P i (x + latticeShift z) = _
-    rw [hqper i hi z x, hPper i hi z x]
-  have hsum := BigBoundRegularity.meanZeroOn_finite_weighted_divergence U c F hFsm hFper
-  have hdiv (i : ι) (hi : i ∈ U) (x : Vec 2) :
-      vecDiv (F i) x = vecDot (spaceGrad (q i) x) (P i x) := by
-    change vecDiv (fun y => q i y • P i y) x = _
-    rw [vecDiv_scalar_mul (hqsm i hi) (hPsm i hi), hPdiv i hi x]
-    simp
-  have hderiv (i : ι) (hi : i ∈ U) (x : Vec 2) :
-      HasFDerivAt (F i) (fderiv ℝ (F i) x) x :=
-    ((hFsm i hi).differentiable (by simp) x).hasFDerivAt
-  have hpoint (x : Vec 2) :
-      vecDiv (fun y => ∑ i ∈ U, c i • F i y) x =
-        ∑ i ∈ U, c i * vecDot (spaceGrad (q i) x) (P i x) := by
-    rw [Infra.Section5.vecDiv_finite_weighted_sum U c F x
-      (fun i hi => hderiv i hi x)]
-    apply Finset.sum_congr rfl
-    intro i hi
-    rw [hdiv i hi x]
-  unfold MeanZeroOn at hsum ⊢
-  have hfun : (fun x => ∑ i ∈ U,
-      c i * vecDot (spaceGrad (q i) x) (P i x)) =
-      fun x => vecDiv (fun y => ∑ i ∈ U, c i • F i y) x := by
-    funext x
-    exact (hpoint x).symm
-  rw [hfun]
-  exact hsum
+  exact BigBoundRegularityMeans.meanZeroOn_weighted_grad_pairing U c q P hqsm hqper hPsm hPper hPdiv
 
 variable {β : ℝ} (I : Ingredients β)
 variable {Φ : ℕ → ℝ → Vec 2 → ℝ}

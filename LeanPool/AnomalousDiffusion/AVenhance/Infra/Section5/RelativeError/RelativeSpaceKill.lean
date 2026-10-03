@@ -5,6 +5,8 @@ Authors: Scott Armstrong and Vlad Vicol
 -/
 module
 
+public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section5.LeftToShow.Assembly.SpaceKill
+
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section5.LeftToShow.SpaceErgodic
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section5.LeftToShow.Scales
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section5.ClassicalRegularity
@@ -65,45 +67,7 @@ theorem space_kill_scalar (A K q γ g P W : ℝ) (hA : 0 < A) (hK : 1 ≤ K) (hq
       0 ≤ B → B ≤ K * ε ^ (-γ) → e ^ (-g) / (A * K) ≤ rN → 0 ≤ θ2 →
       κ * (4 * 512 * (A * e ^ (-P) * θ2) * (2 * B + 2 * B ^ 2) * W * Real.exp (-rN / 1024)) ≤
         C' * e ^ (500 : ℝ) * θ2 := by
-  have hK0 : 0 < K := by linarith only [hK]
-  have hAK : 0 < A * K := mul_pos hA hK0
-  have hqγ : 0 ≤ q * γ := mul_nonneg hq hγ
-  obtain ⟨K', hK'pos, hK'⟩ := exp_neg_rpow_le_rpow hg (by positivity : 0 < 1024 * (A * K))
-    (by positivity : 0 ≤ 500 + P + 2 * (q * γ))
-  have h2g : (1 : ℝ) ≤ 2 ^ γ := Real.one_le_rpow (by norm_num) hγ
-  refine ⟨K * (2048 * A) * (4 * (K * 2 ^ γ) ^ 2) * W * K', by positivity, ?_⟩
-  intro e ε κ B rN θ2 he he1 hε hκ hκK hB hBb hrN hθ
-  have hEge : 1 ≤ e ^ (-(q * γ)) :=
-    Real.one_le_rpow_of_pos_of_le_one_of_nonpos he he1 (by linarith only [hqγ])
-  set E := e ^ (-(q * γ)) with hE
-  have hBE : B ≤ K * (2 ^ γ * E) :=
-    hBb.trans (mul_le_mul_of_nonneg_left (RelativeSpaceKill.rpow_half_neg_le he hγ hε) hK0.le)
-  have hb1 : 1 ≤ K * (2 ^ γ * E) := by
-    calc (1 : ℝ) = 1 * (1 * 1) := by norm_num
-      _ ≤ K * (2 ^ γ * E) := by gcongr
-  have hBsum : 2 * B + 2 * B ^ 2 ≤ 4 * (K * 2 ^ γ) ^ 2 * E ^ 2 := by
-    refine (RelativeSpaceKill.two_mul_add_le hB hBE hb1).trans (le_of_eq ?_)
-    ring
-  have hexp : Real.exp (-rN / 1024) ≤ K' * e ^ (500 + P + 2 * (q * γ)) := by
-    refine le_trans (Real.exp_le_exp.2 ?_) (hK' e he he1)
-    have : e ^ (-g) / (1024 * (A * K)) ≤ rN / 1024 := by
-      rw [div_le_iff₀ (by positivity)]
-      calc e ^ (-g) = (e ^ (-g) / (A * K)) * (A * K) := by field_simp
-        _ ≤ rN * (A * K) := by gcongr
-        _ = rN / 1024 * (1024 * (A * K)) := by ring
-    linarith only [this]
-  have hcomb := RelativeSpaceKill.rpow_exponents_combine he P (q * γ)
-  have hu : 0 ≤ e ^ (-P) := Real.rpow_nonneg he.le _
-  have hw : 0 ≤ e ^ (500 + P + 2 * (q * γ)) := Real.rpow_nonneg he.le _
-  have hEn : 0 ≤ E := by linarith only [hEge]
-  have hexpn : 0 ≤ Real.exp (-rN / 1024) := (Real.exp_pos _).le
-  calc κ * (4 * 512 * (A * e ^ (-P) * θ2) * (2 * B + 2 * B ^ 2) * W * Real.exp (-rN / 1024))
-      ≤ K * (4 * 512 * (A * e ^ (-P) * θ2) * (4 * (K * 2 ^ γ) ^ 2 * E ^ 2) * W *
-          (K' * e ^ (500 + P + 2 * (q * γ)))) := by
-        gcongr
-    _ = (K * (2048 * A) * (4 * (K * 2 ^ γ) ^ 2) * W * K') *
-          (e ^ (-P) * E ^ 2 * e ^ (500 + P + 2 * (q * γ))) * θ2 := by ring
-    _ = _ := by rw [hcomb]
+  exact AVenhance.Infra.Section5.LeftToShow.space_kill_scalar A K q γ g P W hA hK hq hγ hg hP hW
 
 /-- `r N ≥ ε_{m-1}^{-(q-1-γ/2)}/(AK)` from `ε_m ≤ K ε_{m-1}^q`. -/
 theorem RelativeSpaceKill.rN_lower {e ε A K q γ : ℝ} (he : 0 < e) (hε : 0 < ε) (hA : 0 < A)
