@@ -415,6 +415,7 @@ structure Cut (Net : Network N) where
   ht : Net.t ∉ S
 
 /-- The capacity of a cut: total capacity of edges leaving `S`. -/
+@[expose]
 def Cut.capacity {Net : Network N} (C : Cut Net) : ℝ :=
   ∑ u ∈ C.S, ∑ v ∈ (Finset.univ \ C.S), Net.cap u v
 

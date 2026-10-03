@@ -33,6 +33,7 @@ def connectorBag : Option ι → Finset V
   | some i => T.bag i
 
 /-- The subtree induced by bags containing a fixed vertex. -/
+@[expose]
 def vertexBagGraph (v : V) : SimpleGraph {x : Option ι // v ∈ T.connectorBag x} :=
   T.connectorGraph.induce {x | v ∈ T.connectorBag x}
 
