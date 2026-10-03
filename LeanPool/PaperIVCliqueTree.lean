@@ -16,6 +16,7 @@ public import LeanPool.PaperIVCliqueTree.Maximal
 public import LeanPool.PaperIVCliqueTree.MaximalBridge
 public import LeanPool.PaperIVCliqueTree.PEO
 public import LeanPool.PaperIVCliqueTree.Separator
+public import LeanPool.PaperIVCliqueTree.TreeDecomposition
 
 /-!
 # Clique trees and separators of chordal graphs
