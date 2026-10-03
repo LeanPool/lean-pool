@@ -172,6 +172,7 @@ noncomputable def toExactRelativeStableCollarData
 end ExactRelativeStableCollarGeneralPositionData
 
 /-- Existence proposition for the geometric construction. -/
+@[expose]
 def ExactRelativeStableCollarConstructionTheorem : Prop :=
   ∀ {p : Nat} (hp : Nat.Prime p)
     (F₀ F₁ : ZeroFreeMap hp)
