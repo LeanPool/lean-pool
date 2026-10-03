@@ -596,19 +596,14 @@ lemma reflect_term_on_term [has_decidable_range ϕ] (hϕ : is_injective ϕ) (t :
     simp [reflect_term_var, lift_term_at]
       -- func f applied to ts: reflect_term (on_term (apps (func f)
         -- ts)) m = (apps (func f) ts) ↑' 1 # m
-
   · have hf : ϕ.on_function f ∈ Set.range (ϕ.on_function) := Set.mem_range_self f
     simp only [on_term_apps, on_term, reflect_term_apps_pos hf, lift_term_at_apps]
     congr 1
-    ·
-      -- preterm.func (Classical.choose hf) = preterm.func f (modulo lift which is identity on func)
-
-      simp only [lift_term_at]
+    -- preterm.func (Classical.choose hf) = preterm.func f (modulo lift which is identity on func)
+    · simp only [lift_term_at]
       exact congrArg preterm.func (hϕ.on_function (Classical.choose_spec hf))
-    ·
-      -- DVec.map (fun t => reflect_term t m) (DVec.map on_term ts) = DVec.map (· ↑' 1 # m) ts
-
-      rw [DVec.map_map]
+    -- DVec.map (fun t => reflect_term t m) (DVec.map on_term ts) = DVec.map (· ↑' 1 # m) ts
+    · rw [DVec.map_map]
       apply DVec.map_congr_pmem
       intro t hmem
       exact ih_ts t hmem
@@ -622,11 +617,9 @@ lemma reflect_term_lift_at [has_decidable_range ϕ] (_hϕ : is_injective ϕ) {n 
       (fun t => ϕ.reflect_term (t ↑' n # m) (m' + n) = ϕ.reflect_term t m' ↑' n # m)
       (fun k => ?_) (fun f ts ih_ts => ?_) t
   · -- var k: ((&k) ↑' n # m) reflected at (m'+n) = reflected (&k) at m' lifted n at m
-
     simp only [reflect_term_var, lift_term_at]
     split_ifs <;> simp_all [] <;> omega
   · -- func f applied to ts: by_cases on f ∈ range
-
     by_cases hf : f ∈ Set.range ϕ.on_function
     · simp only [lift_term_at_apps, reflect_term_apps_pos hf, lift_term_at, DVec.map_map,
         ]
@@ -661,12 +654,10 @@ lemma reflect_term_subst [has_decidable_range ϕ] (hϕ : is_injective ϕ) (n m :
         ite_eq_right (by omega : ¬(m + n + 1 ≤ k)), subst_term_var_lt _ hk]
         -- k = n: reflect_term (s ↑' n # 0) (m+n) = subst_term (&n ↑' 1 #
             -- (m+n+1)) (reflect_term s m) n
-
     · simp only [hk, subst_term_var_eq, reflect_term_var, lift_term_at,
         ite_eq_right (by omega : ¬(m + n + 1 ≤ n)), subst_term_var_eq]
       exact reflect_term_lift hϕ s
     · -- k > n
-
       have hk1 : 1 ≤ k := Nat.one_le_of_lt hk
       by_cases h₂' : m + n + 1 ≤ k
       · -- k ≥ m+n+1: both sides = &k
@@ -1007,18 +998,15 @@ noncomputable def generalize_constant {Γ : Set (formula L)} (c : L.constants)
     ⟨fun {_} _f => Classical.propDecidable _, fun {_} _R => Classical.propDecidable _⟩
       -- c is not in the range of ψ.on_function (since filter language
         -- excludes it)
-
   have hc : c ∉ Set.range (ψ.on_function (n := 0)) :=
     by
     rintro
       ⟨c', hc'⟩
           -- c'.val = c, but c'.2 says Sum.inl ⟨0, c'.val⟩ ≠ Sum.inl ⟨0, c⟩
-
     exact
       c'.2
         (congrArg (Sum.inl ∘ Sigma.mk 0) hc')
           -- f lifts back to the filtered language
-
   have hf' : symbols_in_formula f ⊆ {s | p s} := by intro s hs hps; subst hps; exact hf hs
   obtain ⟨f₀, hf₀⟩ := find_formula_filter_symbols p f hf'
   subst hf₀
@@ -1032,7 +1020,6 @@ noncomputable def generalize_constant {Γ : Set (formula L)} (c : L.constants)
       ⟨(find_formula_filter_symbols p f' hf'sym).1,
         (find_formula_filter_symbols p f' hf'sym).2⟩
         -- Build Γ₀ as preimage of Γ under ψ.on_formula
-
   let Γ₀ := ψ.on_formula ⁻¹' Γ
   have hΓ₀ : ψ.on_formula '' Γ₀ = Γ :=
     image_preimage_eq_of_subset_image (t := Γ₀)
@@ -1041,7 +1028,6 @@ noncomputable def generalize_constant {Γ : Set (formula L)} (c : L.constants)
         exact ⟨f₁, show ψ.on_formula f₁ ∈ Γ by rw [hf₁]; exact hf', hf₁⟩)
         -- Rewrite goal: lift_formula1 '' Γ ⊢ ψ.on_formula f₀
           -- as ψ.on_formula '' (lift_formula1 '' Γ₀) ⊢ ψ.on_formula f₀
-
   have comm :
     ∀ (g : formula (filter_symbols p)),
       lift_formula1 (ψ.on_formula g) = ψ.on_formula (lift_formula1 g) :=
@@ -1049,7 +1035,6 @@ noncomputable def generalize_constant {Γ : Set (formula L)} (c : L.constants)
   conv_lhs => rw [← hΓ₀]
   rw [Set.image_image, Set.image_congr' comm, ← Set.image_image]
     -- Apply ψ.on_prf: suffices lift_formula1 '' Γ₀ ⊢ f₀
-
   apply ψ.on_prf
   have H' : ψ.on_formula '' Γ₀ ⊢ (ψ.on_formula f₀) [preterm.func c // 0]f := by rwa [hΓ₀]
   have step := reflect_prf_gen hψ 0 H'
@@ -1335,7 +1320,6 @@ lemma is_consistent_finite_witness_extension {T : SentTheory L} (hT : T.is_consi
         ⊥'
           -- hs1 : (insert ψ' Γ).fst ⊢' ⊥'
                 -- Get: Γ ⊢ ψ' ⟹ ⊥, ie Γ ⊢ ¬ψ'
-
     have hneg : Γ.fst ⊢' (∼ψ'.fst) :=
       by
       change Γ.fst ⊢' (ψ'.fst ⟹ ⊥')
@@ -1349,7 +1333,6 @@ lemma is_consistent_finite_witness_extension {T : SentTheory L} (hT : T.is_consi
         (ϕ.on_bounded_formula (h ψ))
           -- Re-cast hneg as a proof of subst0_bounded_formula nhψ
                 -- (bd_const (g ψ))
-
     have hneg' : Γ ⊢ₛ' subst0_bounded_formula nhψ (bd_const (g ψ)) :=
       by
       change Γ.fst ⊢' (subst0_bounded_formula nhψ (bd_const (g ψ))).fst
@@ -1372,31 +1355,25 @@ lemma is_consistent_finite_witness_extension {T : SentTheory L} (hT : T.is_consi
       Sum.inl
         ⟨0, g ψ⟩
           -- Show c ∉ ⋃₀ (symbols_in_formula '' Γ.fst)
-
     have hΓ_no_c : c ∉ ⋃₀ (symbols_in_formula '' Γ.fst) :=
       by
       rintro ⟨X, hX, hcX⟩
       rcases hX with
         ⟨f', hf', rfl⟩
           -- f' ∈ Γ.fst means f' = (some sentence in Γ).fst
-
       rcases hf' with ⟨σ, hσ, rfl⟩
       rcases hσ with hσ_T | hσ_img
       · -- σ ∈ Theory_induced T = ϕ.on_sentence '' T
-
         rcases hσ_T with
           ⟨τ, _hτ, rfl⟩
             -- σ.fst = (ϕ.on_sentence τ).fst = ϕ.on_formula τ.fst
-
         simp only [on_sentence_fst] at hcX
         exact ϕ.not_mem_function_in_formula_on_formula (hg' ψ) τ.fst hcX
       · -- σ in image
-
         rcases hσ_img with
           ⟨φ, hφ, rfl⟩
             -- σ = subst0_bounded_formula (ϕ.on_bounded_formula (h φ))
                       -- (bd_const (g φ))
-
         simp only [subst0_bounded_formula_fst] at hcX
         have hsubset :=
           symbols_in_formula_subst (ϕ.on_bounded_formula (h φ)).fst
@@ -1406,11 +1383,9 @@ lemma is_consistent_finite_witness_extension {T : SentTheory L} (hT : T.is_consi
         rcases hcX' with hL | hR
         · -- c ∈ symbols_in_formula (ϕ.on_bounded_formula (h φ)).fst
                       -- Recall c = Sum.inl ⟨0, g ψ⟩; use hg' ψ
-
           rw [on_bounded_formula_fst] at hL
           exact ϕ.not_mem_function_in_formula_on_formula (hg' ψ) _ hL
         · -- c = Sum.inl ⟨0, g φ⟩, which means g ψ = g φ, hence ψ = φ
-
           have : (⟨0, g ψ⟩ : Σ l, L'.functions l) = ⟨0, g φ⟩ := Sum.inl.inj hR
           have hgeq : g ψ = g φ := eq_of_heq (Sigma.mk.inj this).2
           have hpsi : ψ = φ := hg hgeq
@@ -1429,14 +1404,12 @@ lemma is_consistent_finite_witness_extension {T : SentTheory L} (hT : T.is_consi
                 -- which contradicts bd_ex (h ψ) being provable from T (lifted to
                 -- ϕ.Theory_induced T ⊆ Γ)
                 -- Get ϕ-image of hT' ψ
-
     have hT'_img : (ϕ.Theory_induced T) ⊢ₛ' ϕ.on_sentence (bd_ex (h ψ)) := by
       exact
         hT' ψ |>.map
           (fun pf => ϕ.on_sprf pf)
             -- ϕ.on_sentence (bd_ex (h ψ)) = bd_ex (ϕ.on_bounded_formula (h
                   -- ψ))
-
     have hex_eq : ϕ.on_sentence (bd_ex (h ψ)) = bd_ex (ϕ.on_bounded_formula (h ψ)) :=
       by
       apply bounded_preformula.eq
@@ -1451,7 +1424,6 @@ lemma is_consistent_finite_witness_extension {T : SentTheory L} (hT : T.is_consi
           (fun pf => weakening (Set.image_mono hsub) pf)
             -- bd_ex φ = bd_not (bd_all (bd_not φ)), so:
                   -- bd_ex (ϕ.on_bounded_formula (h ψ)) = bd_not (bd_all nhψ)
-
     have hex_def : bd_ex (ϕ.on_bounded_formula (h ψ)) = bd_not (bd_all nhψ) := rfl
     rw [hex_def] at hex
     change Γ.fst ⊢' (⊥' : formula L')
@@ -1475,7 +1447,6 @@ lemma is_consistent_extend {T : SentTheory L} (hT : T.is_consistent) (hϕ : ϕ.i
       _
         -- Auxiliary lemma: consistency for any finite subset of
           -- witnesses.
-
   have lem := is_consistent_finite_witness_extension hT hϕ h hT' g hg hg'
   intro H
   have H' :
@@ -1487,7 +1458,6 @@ lemma is_consistent_extend {T : SentTheory L} (hT : T.is_consistent) (hϕ : ϕ.i
   rcases theory_proof_compactness H' with
     ⟨T₀, h₀, hT₀⟩
       -- Decompose T₀ ⊆ T_ind ∪ image
-
   have hT₀' :
     (↑T₀ : Set (sentence L')) ⊆
       ϕ.Theory_induced T ∪
@@ -1502,7 +1472,6 @@ lemma is_consistent_extend {T : SentTheory L} (hT : T.is_consistent) (hϕ : ϕ.i
     hs₀.trans
       (Set.sdiff_subset)
         -- Pull back s₀ through the image map
-
   rw [show
       ((fun f => subst0_bounded_formula (ϕ.on_bounded_formula (h f)) (bd_const (g f))) ''
             Set.univ : Set (sentence L')) =
@@ -1525,7 +1494,6 @@ lemma is_consistent_extend {T : SentTheory L} (hT : T.is_consistent) (hϕ : ϕ.i
   rcases this with hl | hr
   · refine ⟨σ, Or.inl (ht₀ hl), rfl⟩
   · -- σ ∈ s₀; pull back via hs₀'_img
-
     have hσ_in :
       σ ∈
         (↑(s₀'.image (fun f =>

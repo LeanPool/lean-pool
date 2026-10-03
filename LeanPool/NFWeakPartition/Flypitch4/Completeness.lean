@@ -56,7 +56,6 @@ lemma completeness_for_inconsistent_theories (T : SentTheory L) (ψ : sentence L
   · intro
       _
         -- T is inconsistent means T ⊢ₛ' bd_falsum
-
     have h_prov : T ⊢ₛ' (bd_falsum : sentence L) :=
       by
       simp only [SentTheory.is_consistent, not_not] at h_inconsis
@@ -78,12 +77,10 @@ theorem model_existence (T : SentTheory L) :
         (completion_of_henkinization_is_henkin hT)
     let M : Structure L := Lhom.reduct (henkin_language_canonical_map 0) M'
     refine ⟨M, ?_, ?_⟩
-    ·
-      -- nonemptiness: term_model' T = Quotient (closed_term L) (term_setoid T) is nonempty
-            -- We get a constant from has_enough_constants: use bd_const c as
-            -- a witness
-
-      rw [show M.carrier = M'.carrier from Lhom.reduct_coe M']
+    -- nonemptiness: term_model' T = Quotient (closed_term L) (term_setoid T) is nonempty
+    -- We get a constant from has_enough_constants: use bd_const c as
+    -- a witness
+    · rw [show M.carrier = M'.carrier from Lhom.reduct_coe M']
       change Nonempty (term_model' (completion_of_henkinization hT))
       obtain ⟨C, _⟩ := completion_of_henkinization_is_henkin hT
       exact ⟨@Quotient.mk'' _ (term_setoid _) (bd_const (C bd_falsum))⟩
@@ -125,13 +122,11 @@ theorem completeness (T : SentTheory L) (ψ : sentence L) : (T ⊢ₛ' ψ) ↔ s
       all_realize_sentence_of_subset H_sat
         (Set.subset_insert _ _)
           -- M satisfies ψ (from the semantic entailment hypothesis)
-
     have H_ψ : M ⊨ₘ ψ := H H_nonempty H_T
     have H_nψ : M ⊨ₘ (bd_not ψ : sentence L) :=
       H_sat
         (Set.mem_insert _ _)
           -- Contradiction: ψ and ¬ψ both hold
-
     simp only [realize_sentence_not] at H_nψ
     exact H_nψ H_ψ
 
@@ -151,12 +146,10 @@ theorem compactness {T : SentTheory L} {f : sentence L} :
   · rintro
       ⟨Γ, hΓ, hΓ_sub⟩
           -- hΓ : Γ ⊢ₛ' f; convert to ssatisfied using completeness
-
     exact ⟨Γ, (completeness (Γ : Set (sentence L)) f).mp hΓ, hΓ_sub⟩
   · rintro
       ⟨Γ, hΓ, hΓ_sub⟩
           -- hΓ : ssatisfied Γ f; convert to ⊢ₛ' using completeness
-
     exact ⟨Γ, (completeness (Γ : Set (sentence L)) f).mpr hΓ, hΓ_sub⟩
 
 end Fol

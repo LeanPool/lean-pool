@@ -53,7 +53,6 @@ bd_falsum -/
 lemma snot_and_self'' {T : SentTheory L} {ψ : sentence L} (H₁ : T ⊢ₛ' ψ)
     (H₂ : T ⊢ₛ' bd_not ψ) : T ⊢ₛ' bd_falsum :=
   -- bd_not ψ = bd_imp ψ bd_falsum, so (bd_not ψ).fst = ψ.fst ⟹ ⊥'
-
   impE' _ H₂ H₁
 
 /-- sfalsumE: from T ⊢ₛ' bd_falsum derive T ⊢ₛ' ψ (ex falso) -/
@@ -195,7 +194,6 @@ lemma consis_limit {T : SentTheory L} {hT : T.is_consistent} (Ts : Set (Theory_o
             ⟨Tf, hTf, ⟨s, hst, rfl⟩⟩
               -- Key: ∃ T_max ∈ Ts, (Γ : Set (formula L)) ⊆ T_max.val.fst
                   -- By Finset.induction on Γ, merging witnesses using the chain
-
     have key :
       ∀ (S : Finset (formula L)),
         (∀ f ∈ (S : Set (formula L)),
@@ -228,7 +226,6 @@ lemma consis_limit {T : SentTheory L} {hT : T.is_consistent} (Ts : Set (Theory_o
                 exact ⟨s', T_prev.property.1 hs', rfl⟩
               · exact hs_sub hg'⟩
         · -- a ∈ Tf.fst; merge T_prev and Tf using the chain
-
           rcases eq_or_ne T_prev Tf with rfl | hne_TPTf
           · -- T_prev = Tf
             exact
@@ -239,7 +236,6 @@ lemma consis_limit {T : SentTheory L} {hT : T.is_consistent} (Ts : Set (Theory_o
                 · exact haTf
                 · exact hs_sub hg'⟩
           · -- T_prev ≠ Tf: use chain to compare
-
             rcases h_chain hT_prev hTf hne_TPTf with h | h
             · -- Theory_over_subset T_prev Tf: Tf is bigger
               exact

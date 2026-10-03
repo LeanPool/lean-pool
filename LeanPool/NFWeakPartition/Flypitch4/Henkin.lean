@@ -173,12 +173,10 @@ private lemma henkin_witness_tautology {L : Language.{u}} (T : SentTheory L)
     ⟨?_⟩
       -- Goal: T.fst ⊢ (bd_ex (bd_imp (bd_ex f).cast1 f)).fst
         -- = ∃' ((∃' f.fst) ⟹ f.fst)  (since cast1.fst = .fst)
-
   change T.fst ⊢ ∃'((bd_ex f).cast1.fst ⟹ f.fst)
   apply prf.falsumE
   apply prf.impE (∃'f.fst)
   · -- Goal: insert ¬∃' ... ⊢ (∃' f.fst) ⟹ ⊥'
-
     apply prf.impI
     apply prf.impE _ axm2
     apply exE axm1
@@ -187,12 +185,10 @@ private lemma henkin_witness_tautology {L : Language.{u}} (T : SentTheory L)
       -- Now we need: ⊢ (bd_ex f).cast1.fst ⟹ f.fst
           -- (bd_ex f).cast1.fst = (bd_ex f).fst, so this is (∃' f.fst) ⟹
           -- f.fst
-
     rw [bounded_preformula.cast1_fst]
     apply prf.impI
     exact axm2
   · -- Goal: insert (∼∃' ...) T.fst ⊢ ∃' f.fst
-
     apply prf.falsumE
     apply prf.impE _ axm2
     apply
@@ -200,7 +196,6 @@ private lemma henkin_witness_tautology {L : Language.{u}} (T : SentTheory L)
         &0
             -- Goal: ... ⊢ ((bd_ex f).cast1.fst ⟹ f.fst)[&0 // 0]f
                 -- = (bd_ex f).cast1.fst[&0/0] ⟹ f.fst[&0/0]
-
     apply prf.impI
     apply exfalso
     apply prf.impE _ axm2
@@ -215,7 +210,6 @@ lemma is_consistent_henkin_theory_step {L : Language.{u}} {T : SentTheory L}
     (hT : T.is_consistent) : (henkin_theory_step T).is_consistent := by
   -- Apply is_consistent_extend with h := λ f, (∃' f).cast1 ⟹ f and
     -- g := wit'.
-
   have hwit_inj : Function.Injective (@wit' L) :=
     by
     intro f f' h
@@ -231,7 +225,6 @@ lemma is_consistent_henkin_theory_step {L : Language.{u}} {T : SentTheory L}
       ⟨g, hg⟩
         -- hg : henkin_language_inclusion.on_function g = wit' x
             -- on_function g = inc g, wit' x = wit x — different constructors
-
     simp [henkin_language_inclusion, wit'] at hg
   have hext :=
     Lhom.is_consistent_extend hT henkin_language_inclusion_inj
@@ -259,7 +252,6 @@ lemma is_consistent_henkin_theory_step {L : Language.{u}} {T : SentTheory L}
           -- The RHS first arg equals the LHS first arg because
           -- (incl.on_formula (∃' f.fst))
           -- is a sentence (closed bounded_formula).
-
     congr 1
       -- Goal: ∃' (incl.on_bf f).fst = (incl.on_bf (cast1 (bd_ex
           -- f))).fst [c // 0]f
@@ -271,7 +263,6 @@ lemma is_consistent_henkin_theory_step {L : Language.{u}} {T : SentTheory L}
           -- f.fst) [c//0]f
           --       = (∃' (on_formula f.fst)) [c//0]f
           -- And subst sentence_irrel gives ∃' (on_formula f.fst).
-
     have hRHS :
       ((@henkin_language_inclusion L).on_bounded_formula
             (bounded_preformula.cast1 (bd_ex f))).fst =
@@ -285,7 +276,6 @@ lemma is_consistent_henkin_theory_step {L : Language.{u}} {T : SentTheory L}
           -- ∃' X is closed if X is bounded_formula L 1, so use
           -- subst_sentence_irrel via casting
           -- to a sentence
-
     have hSent :
       (bd_ex ((@henkin_language_inclusion L).on_bounded_formula f) :
             sentence (henkin_language_step L)).fst =
@@ -908,7 +898,6 @@ private lemma bounded_formula_comparison_surj {L : Language.{u}} :
         -- bounded_formula_comparison (canonical_map (i+j) (bd_equal
               -- ...)) = bd_equal t₁ t₂
               -- Use the fact that bounded_term_comparison respects same-fiber
-
     have key₁ :
       bounded_term_comparison _ 0 (canonical_map (i + j) (push_to_sum_r xt₁ j)) = t₁ := by
       rw [← same_fiber_as_push_to_r]; exact Hbt₁
@@ -920,10 +909,8 @@ private lemma bounded_formula_comparison_surj {L : Language.{u}} :
       cocone_of_bounded_formula_L_infty, Lhom.on_bounded_formula, bounded_preformula.fst]
       -- Goal: preformula.equal (...).fst (...).fst = preformula.equal
             -- t₁.fst t₂.fst
-
     congr 1
     · -- (on_bounded_term (canonical_map (i+j)) (push_r xt₁ j)).fst = t₁.fst
-
       have h_eq := congrArg bounded_preterm.fst key₁
       simp only [bounded_term_comparison, universal_map_property,
         cocone_of_bounded_term_L_infty] at h_eq
@@ -1094,7 +1081,6 @@ lemma is_consistent_iota {L : Language.{u}} {T : SentTheory L} (hT : T.is_consis
     -- (henkin_theory_chain T m)
     -- and henkin_language_canonical_map m is injective, and
     -- henkin_theory_chain T m is consistent
-
   have hm := is_consistent_henkin_theory_chain hT m
   exact Lhom.is_consistent_Theory_induced (henkin_language_canonical_map_inj m) hm
 
@@ -1135,7 +1121,6 @@ lemma iota_inclusion_of_le {L : Language.{u}} {T : SentTheory L} :
                 -- = on_bf ((canonical_map (n+1)).comp (hcm n (n+1))) g
                 -- = on_bf (canonical_map n) g   [by cocone compat]
                 -- = ψ
-
       have hc :
         henkin_language_canonical_map n =
           (henkin_language_canonical_map (n + 1)).comp
@@ -1149,7 +1134,6 @@ lemma iota_inclusion_of_le {L : Language.{u}} {T : SentTheory L} :
                   -- so lhs = ((canonical_map (n+1)).comp (hcm n
                   -- (n+1))).on_bounded_formula g = (canonical_map
                   -- n).on_bounded_formula g = ψ
-
       have key :
         (henkin_language_canonical_map (n + 1)).on_bounded_formula
             ((henkin_language_chain_maps L n (n + 1) (Nat.le_succ n)).on_bounded_formula g) =
@@ -1254,7 +1238,6 @@ lemma henkinization_is_henkin {L : Language.{u}} {T : SentTheory L}
       (wit' f'')
         -- wp_step ∈ henkin_theory_chain T (i+1) = henkin_theory_step
           -- (henkin_theory_chain T i)
-
   have hwp_step : wp_step ∈ henkin_theory_chain T (i + 1) :=
     by
     simp only [henkin_theory_chain, henkin_theory_step]
@@ -1262,7 +1245,6 @@ lemma henkinization_is_henkin {L : Language.{u}} {T : SentTheory L}
     exact
       ⟨f'', Set.mem_univ _, rfl⟩
         -- (hcm (i+1)).on_bounded_formula wp_step ∈ ι (i+1)
-
   have hwp_iota :
     (henkin_language_canonical_map (i + 1)).on_bounded_formula wp_step ∈ @ι L T (i + 1) :=
     in_iota_of_in_step i wp_step hwp_step
@@ -1279,7 +1261,6 @@ lemma henkinization_is_henkin {L : Language.{u}} {T : SentTheory L}
       -- Key: (hcm (i+1)).on_bf (inclusion.on_bf f'') = f
         -- via cocone_of_bounded_formula'_L_infty.h_compat at i ≤ i+1:
         -- (hcm i).on_bf = (hcm (i+1)).on_bf ∘ incl.on_bf
-
   have hinc_eq :
     (henkin_language_canonical_map (i + 1)).on_bounded_formula
         (henkin_language_inclusion.on_bounded_formula f'') =
@@ -1287,20 +1268,17 @@ lemma henkinization_is_henkin {L : Language.{u}} {T : SentTheory L}
     by
     -- Use cocone_of_bounded_formula'_L_infty.h_compat to get the key
         -- equality
-
     have hcompat :=
       (@cocone_of_bounded_formula'_L_infty L).h_compat
         (Nat.le_succ i)
           -- hcompat : (hcm i).on_bf = (hcm (i+1)).on_bf ∘ (chain_maps i
               -- (i+1)).on_bf
-
     have hc_bf := congr_fun hcompat f''
     simp only [Function.comp, henkin_bounded_formula_chain', henkin_bounded_formula_chain,
       cocone_of_bounded_formula'_L_infty] at hc_bf
     rw [← henkin_language_inclusion_chain_map] at hc_bf
     rw [← hc_bf, hf_eq]
       -- Key: (hcm (i+1)).on_bounded_formula wp_step = wit_property f c
-
   have heq :
     (henkin_language_canonical_map (i + 1)).on_bounded_formula wp_step =
       wit_property f c :=
@@ -1308,11 +1286,9 @@ lemma henkinization_is_henkin {L : Language.{u}} {T : SentTheory L}
     simp only [wp_step, wit_property, Lhom.on_bounded_formula]
     congr 1
     · -- bd_ex (incl.on_bf f'') maps to bd_ex f
-
       simp only [bd_ex, bd_not, Lhom.on_bounded_formula]
       exact congrArg (fun g => bd_imp (bd_all (bd_imp g bd_falsum)) bd_falsum) hinc_eq
     · -- subst0 (incl.on_bf f'') (bd_const (wit' f'')) maps to subst0 f (bd_const c)
-
       rw [on_bounded_formula_subst0, hinc_eq]
       congr 1
       simp only [bd_const, Lhom.on_bounded_term]
@@ -1341,10 +1317,8 @@ lemma iota_union_rw {L : Language.{u}} (T : SentTheory L) (hT : T.is_consistent)
     @ι L T 0 ∪ ⋃₀ (Subtype.val '' henkin_theory_schain T hT) = henkinization hT := by
   -- henkinization hT = T_infty T = ⋃ n, ι n
     -- LHS = ι 0 ∪ (⋃ { ι k | k : ℕ })  = ⋃ n, ι n
-
   apply Set.eq_of_subset_of_subset
   · -- LHS ⊆ henkinization
-
     apply Set.union_subset
     · exact Set.subset_iUnion (@ι L T) 0
     · intro ψ hψ
@@ -1355,7 +1329,6 @@ lemma iota_union_rw {L : Language.{u}} (T : SentTheory L) (hT : T.is_consistent)
       simp only [henkinization, T_infty, Set.mem_iUnion]
       exact ⟨k, hk ▸ hSTo ▸ hψS⟩
   · -- henkinization ⊆ LHS
-
     intro ψ hψ
     simp only [henkinization, T_infty, Set.mem_iUnion] at hψ
     obtain ⟨k, hk⟩ := hψ
@@ -1367,7 +1340,6 @@ lemma iota_union_rw {L : Language.{u}} (T : SentTheory L) (hT : T.is_consistent)
         ⟨@ι L T (n + 1), ?_, hk⟩
           -- Need: ι (n+1) ∈ Subtype.val '' henkin_theory_schain T hT
                 -- i.e., ∃ To ∈ henkin_theory_schain T hT, To.val = ι (n+1)
-
       let To : Theory_over (@ι L T 0) (is_consistent_iota hT 0) :=
         ⟨@ι L T (n + 1), iota_inclusion_of_le (Nat.zero_le _), is_consistent_iota hT _⟩
       refine ⟨To, ?_, rfl⟩
@@ -1383,13 +1355,11 @@ lemma chain_henkin_theory_chain {L : Language.{u}} (T : SentTheory L)
   by_cases h : i ≤ j
   · left
       -- T₁.val = ι i ⊆ ι j = T₂.val
-
     intro f hf
     rw [← hj]
     exact iota_inclusion_of_le h (hi ▸ hf)
   · right
       -- T₂.val = ι j ⊆ ι i = T₁.val
-
     intro f hf
     rw [← hi]
     exact iota_inclusion_of_le (Nat.le_of_lt (Nat.lt_of_not_le h)) (hj ▸ hf)
@@ -1462,7 +1432,6 @@ lemma mem_of_sprovable {L : Language.{u}} {T : SentTheory L} (hcomp : T.is_compl
       hcomp.1
         -- h : bd_not f ∈ T, hf : T ⊢ₛ' f
             -- T.fst ⊢' f.fst ⟹ ⊥'  (from h), and T.fst ⊢' f.fst (from hf)
-
     exact impE' _ ⟨prf.axm (Set.mem_image_of_mem _ h)⟩ hf
 
 /-- If T is complete and T ⊬ₛ' f, then T ⊢ₛ' bd_not f -/
@@ -1484,7 +1453,6 @@ lemma impI_of_is_complete {L : Language.{u}} {T : SentTheory L} (hcomp : T.is_co
   · -- φ ∈ T
     exact impI' (weakening1' (h ⟨prf.axm (Set.mem_image_of_mem _ h₁)⟩))
   · -- bd_not φ ∈ T (h₁ : bd_not φ ∈ T)
-
     apply impI'
     apply falsumE'
     apply weakening1'
@@ -1509,7 +1477,6 @@ lemma find_counterexample_of_henkin {L : Language.{u}} {T : SentTheory L}
           -- (C (bd_not f))))).fst
           -- Strategy: use ex_not_of_not_all to get ∃'(∼f), then apply hwit
           -- Get ∼(∀'f) as a prf and apply ex_not_of_not_all:
-
   have hnotall_prf : T.fst ⊢ ∼(∀'f.fst) := (notI_of_is_complete hcomp hf).some
   have hex : T.fst ⊢' (bd_ex (bd_not f)).fst :=
     ⟨ex_not_of_not_all hnotall_prf⟩
@@ -1519,7 +1486,6 @@ lemma find_counterexample_of_henkin {L : Language.{u}} {T : SentTheory L}
         -- c).fst ⟹ ⊥'
         -- which equals T.fst ⊢ₛ' bd_not (subst0_bf f (bd_const (C
         -- (bd_not f))))
-
   simp only [SentTheory.sprovable, SentTheory.fst]
   simp only [bounded_preformula.fst, bd_not] at hwit
   exact impE' _ hwit hex
@@ -1572,7 +1538,6 @@ private lemma bd_apps_congr_equal_preterms {L : Language.{u}} {T : SentTheory L}
         -- ih is: equal_preterms T.fst (bd_app t x).fst (bd_app t'
         -- x').fst → ...
         -- No, ih is the claim for bd_app t x, bd_app t' x', hxs
-
     simp only [term_rel, SentTheory.sprovable, SentTheory.fst,
       bd_apps] at *
         -- Need: T.fst ⊢' bd_apps (bd_app t x) xs ≃ bd_apps (bd_app t'
@@ -1581,7 +1546,6 @@ private lemma bd_apps_congr_equal_preterms {L : Language.{u}} {T : SentTheory L}
             -- xs'
             -- Ht' : equal_preterms T.fst (bd_app t x).fst (bd_app t' x').fst
             -- follows from Ht and hx
-
     exact ih (equal_preterms_app Ht hx.some)
 
 /-- Helper: term_model_fun' is compatible with term_rel on each
@@ -1687,7 +1651,6 @@ private lemma realize_closed_preterm_term_model {L : Language.{u}} {T : SentTheo
         --   = term_model_fun T (bd_func f) (ts.map term_mk)
         -- = term_model_fun' T (bd_func f) ts (by quotient_beta) =
         -- ⟦bd_apps (bd_func f) ts⟧ = term_mk ...
-
     change
       term_model_fun T (bd_func f) (ts.map (term_mk T)) =
         term_mk T (bd_apps (bd_func f) ts)
@@ -1698,12 +1661,10 @@ private lemma realize_closed_preterm_term_model {L : Language.{u}} {T : SentTheo
   | bd_app t₁ t₂ ih₁ ih₂ =>
     -- bd_app t₁ t₂ has type closed_preterm L l, t₁ has level (l+1),
         -- t₂ has level 0
-
     rw [realize_bounded_term_bd_app]
       -- Goal: realize_bounded_term [] t₁ (rbt t₂ DVec.nil :: ts.map
           -- term_mk)
           --     = term_mk T (bd_apps (bd_app t₁ t₂) ts)
-
     have h2 :
       realize_bounded_term (DVec.nil : DVec (term_model hcomp henk) 0) t₂ DVec.nil =
         term_mk T t₂ :=
@@ -1716,7 +1677,6 @@ private lemma realize_closed_preterm_term_model {L : Language.{u}} {T : SentTheo
           -- term_mk)
           --     = term_mk T (bd_apps (bd_app t₁ t₂) ts)
           -- which equals  term_mk T (bd_apps t₁ (t₂ :: ts))
-
     have h1 := ih₁ (DVec.cons t₂ ts)
     simp only [DVec.map, bd_apps] at h1
     exact h1
@@ -1776,7 +1736,6 @@ private lemma realize_subst_formula {L : Language.{u}} (S : Structure L) {n}
       (substmax_bounded_formula f t) DVec.nil]
     -- RHS via realize_bounded_formula_iff with extension
       -- subst_realize φ y n
-
   rw [realize_bounded_formula_iff (v₁ := v.concat y) (v₂ := subst_realize φ y n)
       (fun k hk => by
         by_cases hkn : k < n
@@ -1790,7 +1749,6 @@ private lemma realize_subst_formula {L : Language.{u}} (S : Structure L) {n}
           simp [DVec.concat_nth_last])
       f DVec.nil]
     -- Formula side
-
   simp only [substmax_bounded_formula_fst]
     -- realize_formula_subst gives:
       -- realize_formula (subst_realize φ (realize_term φ (lift_term
@@ -1798,7 +1756,6 @@ private lemma realize_subst_formula {L : Language.{u}} (S : Structure L) {n}
       --     ↔ realize_formula φ (subst_formula f.fst t.fst n) []
       -- We need: realize_formula (subst_realize φ y n) f.fst [] ↔
       -- realize_formula φ (subst_formula ...) []
-
   have hreal_t : realize_term φ (lift_term t.fst n) DVec.nil = y :=
     by
     rw [hy_def]
@@ -1810,7 +1767,6 @@ private lemma realize_subst_formula {L : Language.{u}} (S : Structure L) {n}
           -- (since closed terms ignore the valuation, lifting is
           -- irrelevant)
           -- = realize_bounded_term [] t []
-
     have hlift :
       realize_term φ (lift_term t.fst n) DVec.nil = realize_term φ t.fst DVec.nil :=
       by
@@ -1836,14 +1792,12 @@ private lemma realize_subst_formula0 {L : Language.{u}} (S : Structure L)
       -- DVec.nil
       -- and (DVec.nil).concat (realize_closed_term S t) = DVec.cons
       -- (...) DVec.nil
-
   change
     realize_bounded_formula (DVec.nil : DVec S 0) (substmax_bounded_formula f t)
         DVec.nil ↔
       _
   rw [realize_subst_formula S f t DVec.nil]
     -- (DVec.nil).concat y = DVec.cons y DVec.nil
-
   rfl
 
 /-- Substituting in the term model: relate to realization at the
@@ -2048,7 +2002,6 @@ lemma reduct_of_complete_henkinization_models_T {L : Language.{u}} {T : SentTheo
       (henkin_language_canonical_map_inj 0)
         -- Goal: all_realize_sentence (term_model ...) ((hcm
           -- 0).on_sentence '' T)
-
   intro f hf
   obtain ⟨f₀, hf₀, rfl⟩ := hf
   apply term_model_ssatisfied

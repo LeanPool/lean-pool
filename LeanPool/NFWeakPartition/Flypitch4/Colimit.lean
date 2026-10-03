@@ -125,7 +125,6 @@ lemma germ_equivalence {D : directed_type.{u}} (F : directed_diagram.{u, v} D) :
       rw [Hil, Hjl1]
         -- F.mor f3 z = F.mor g2 (F.mor fk z) = F.mor g2 w₂ = F.mor g2
             -- (F.mor fj2 y) = F.mor f2 y
-
     have Hf3_f2 : F.mor f3 z = F.mor f2 y := by
       rw [H3, H2r];
       simp only [Function.comp_apply]; rw [Hkl2, Hjl2]
@@ -181,7 +180,6 @@ def cocone_of_colimit {D : directed_type} (F : directed_diagram D) : cocone F
         -- F.mor h_refl_j (F.mor H x) = F.mor H x
             -- By h_mor with f1=H, f2=h_refl_j, f3=H: F.mor H = F.mor
             -- h_refl_j ∘ F.mor H
-
     have hmor : F.mor H = F.mor h_refl_j ∘ F.mor H := @F.h_mor i j j H h_refl_j H
     exact (congr_fun hmor x).symm
 
@@ -223,7 +221,6 @@ lemma universal_map_inj_of_components_inj {D : directed_type} {F : directed_diag
   refine
     ⟨k, F.mor Hik x, Hik, Hjk, rfl, ?_⟩
       -- Goal: F.mor Hjk y = F.mor Hik x
-
   apply h_inj k
   have e1 : V.map i x = V.map k (F.mor Hik x) := congr_fun (V.h_compat Hik) x
   have e2 : V.map j y = V.map k (F.mor Hjk y) := congr_fun (V.h_compat Hjk) y
@@ -262,7 +259,6 @@ lemma eq_mor_of_same_fiber {D : directed_type} {F : directed_diagram D}
     (H_rel : D.rel a.1 b.1) : F.mor H_rel a.2 = b.2 := by
   -- The cocone_of_colimit h_compat gives:
     -- canonical_map a.1 a.2 = canonical_map b.1 (F.mor H_rel a.2)
-
   have H_eq : z = canonical_map b.1 (F.mor H_rel a.2) :=
     by
     have hcompat := (cocone_of_colimit F).h_compat H_rel

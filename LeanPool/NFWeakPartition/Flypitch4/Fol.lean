@@ -507,7 +507,6 @@ lemma lift_at_subst_term_small :
     by
     rcases Nat.lt_trichotomy k n₂ with hk | hk | hk
     · -- k < n₂: subst gives &k, lift gives k (since ¬(m+n₂+1 ≤ k))
-
       have h1 : ¬(m + n₂ + 1 ≤ k) := by omega
       have h2 : ¬(m + n₂ ≤ k) := by omega
       simp only [lift_term_at, h1, ite_false, subst_term, subst_realize, hk, ite_true, h2,
@@ -523,16 +522,13 @@ lemma lift_at_subst_term_small :
               -- Need: (s ↑' n₁ # m) ↑ k = (s ↑ k) ↑' n₁ # m+k =
               -- lift_term_at2_small
               -- rewrite n₂ as k throughout using hk
-
       rw [← hk]
       simp only [lift_term_at, show ¬(m + k + 1 ≤ k) from by omega, ite_false, subst_term,
         subst_realize, lt_irrefl, ite_false, lift_term]
       exact lift_term_at2_small s n₁ k (Nat.zero_le m)
     · -- k > n₂: subst gives &(k-1), lift depends on m+n₂+1 ≤ k
-
       by_cases h1 : m + n₂ + 1 ≤ k
       · -- k ≥ m+n₂+1: lift gives &(k+n₁), substitute gives &(k+n₁-1)
-
         have h2 : m + n₂ ≤ k - 1 := by omega
         have hk1 : 1 ≤ k := by
           omega
@@ -541,7 +537,6 @@ lemma lift_at_subst_term_small :
                       -- rhs: subst var k at n₂: n₂ < k, gives &(k-1); lift &(k-1) at
                       -- (m+n₂): m+n₂ ≤ k-1, gives &(k-1+n₁)
                       -- need k+n₁-1 = k-1+n₁
-
         have hknlt : ¬(k < n₂) := Nat.lt_asymm hk
         have hkn1lt : ¬(k + n₁ < n₂) := by omega
         simp only [lift_term_at, h1, ite_true, subst_term, subst_realize, hknlt,
@@ -552,7 +547,6 @@ lemma lift_at_subst_term_small :
                   -- lift gives &k (since ¬(m+n₂+1 ≤ k)), subst gives &(k-1) (since
                   -- k > n₂)
                   -- and ¬(m+n₂ ≤ k-1) because k ≤ m+n₂, so k-1 < m+n₂
-
         have h2 : ¬(m + n₂ ≤ k - 1) := by omega
         simp only [lift_term_at, h1, ite_false, subst_term, subst_realize,
           Nat.lt_asymm hk, ite_false, hk, ite_true, h2, ite_false]
@@ -569,26 +563,21 @@ lemma subst_term2 :
     -- Case analysis: k < n₁ | k = n₁ | n₁ < k
           -- Then for n₁ < k, further: k < n₁+n₂+1 | k = n₁+n₂+1 | k >
           -- n₁+n₂+1
-
     rcases Nat.lt_trichotomy k n₁ with hk | hk | hk
     · -- k < n₁: both sides give &k
-
       have hkn : k < n₁ + n₂ := Nat.lt_of_lt_of_le hk (Nat.le_add_right _ _)
       rw [subst_term_var_lt s₁ hk, subst_term_var_lt s₂ (Nat.lt_succ_of_lt hkn),
         subst_term_var_lt _ hkn, subst_term_var_lt _ hk]
     · -- k = n₁: LHS = subst_term (lift_term s₁ n₁) s₂ (n₁+n₂) = lift_term (s₁[s₂//n₂]) n₁
               -- RHS = subst_term (var n₁) (s₁[s₂//n₂]) n₁ = lift_term
               -- (s₁[s₂//n₂]) n₁
-
       subst hk
       rw [subst_term_var_lt s₂ (by omega : k < k + n₂ + 1),
         subst_term_var_eq (subst_term s₁ s₂ n₂) k, subst_term_var_eq s₁ k,
         lift_subst_term_large']
     · -- n₁ < k
-
       rcases Nat.lt_trichotomy k (n₁ + n₂ + 1) with hk' | hk' | hk'
       · -- n₁ < k < n₁+n₂+1: both sides give &(k-1)
-
         have hk1lt : k - 1 < n₁ + n₂ := by omega
         have hk1n1 : n₁ < k - 1 ∨ k - 1 = n₁ := by omega
         have hkn1 : ¬(k - 1 < n₁) := by omega
@@ -599,7 +588,6 @@ lemma subst_term2 :
                   -- (n₁+n₂) 0
                   -- RHS: subst_term (lift_term_at s₂ (n₁+n₂+1) 0) (s₁[s₂//n₂]) n₁
                   -- = lift_term_at s₂ (n₁+n₂) 0
-
         subst hk'
         rw [subst_term_var_gt s₁ hk, show n₁ + n₂ + 1 - 1 = n₁ + n₂ from by omega,
           subst_term_var_eq s₂ (n₁ + n₂)]
@@ -608,10 +596,8 @@ lemma subst_term2 :
                     -- (s₁[s₂//n₂]) n₁
                     --    = subst_term (lift_term_at s₂ (n₁+n₂+1) 0) (s₁[s₂//n₂]) n₁
                     --    = lift_term_at s₂ (n₁+n₂) 0 [lift_subst_term_medium]
-
         rw [subst_term_var_eq s₂ (n₁ + n₂ + 1), lift_subst_term_medium]
       · -- k > n₁+n₂+1: both sides give &(k-2)
-
         have hkgt : n₁ + n₂ + 1 < k := hk'
         have hk1gt : n₁ + n₂ < k - 1 := by omega
         have hn1lt : n₁ < k - 1 := by omega
@@ -619,11 +605,9 @@ lemma subst_term2 :
           -- LHS: subst_term (var (k-1)) s₂ (n₁+n₂)
                     -- k-1 > n₁+n₂ (since k > n₁+n₂+1), so gives var (k-1-1) = var
                     -- (k-2)
-
         rw [subst_term_var_gt s₂ hk1gt]
           -- RHS: subst_term (var (k-1)) (s₁[s₂//n₂]) n₁
                     --   k-1 > n₁, so gives var (k-1-1) = var (k-2)
-
         rw [subst_term_var_gt (subst_term s₁ s₂ n₂) hn1lt]
   | _, preterm.func _, _, _, _, _ => rfl
   | _, preterm.app t₁ t₂, s₁, s₂, n₁, n₂ => by
@@ -783,7 +767,6 @@ lemma formula.rec_apps_rel {C : formula L → Sort v} (hfalsum : C ⊥')
   -- formula.rec f = apps_rel_zero f [] ▸ formula.rec' ... 0 f []
     -- This is definitionally equal to: (apps_rel_zero ...).symm ▸
     -- formula.rec'_apps_rel ▸ hrel R ts
-
   show
     (apps_rel_zero (apps_rel (preformula.rel R) ts) DVec.nil ▸
         @formula.rec' L C hfalsum hequal hrel himp hall 0 (apps_rel (preformula.rel R) ts)
@@ -1319,7 +1302,6 @@ noncomputable def prf_substitution {Γ : Set (formula L)} {f : formula L} (t : t
         -- 0]
         -- which follows from allE₂ applied to ih n : (subst Γ) ⊢
         -- ∀'(subst_formula A t (n+1))
-
     have key :
       subst_formula (subst_formula A s 0) t n =
         subst_formula (subst_formula A t (n + 1)) (subst_term s t n) 0 :=
@@ -1588,12 +1570,10 @@ noncomputable def equiv_preformulae_apprel {T : Set (formula L)} {l}
         apps_rel (lift_formula f' 1) (DVec.cons (&0) (xs.map lift_term1)))
       Hs
   · -- H₂: T ⊢ f₁ [s // 0]f. After simp, becomes biimp_refl.
-
     simp only [subst_formula_biimp, subst_formula_apps_rel, DVec.map, DVec.map_map,
       lift_term1_subst_term, subst_term_var0]
     exact biimp_refl T _
   · -- H₃: f₁ [s' // 0]f = goal. After simp, becomes the target equation.
-
     simp only [subst_formula_biimp, subst_formula_apps_rel, DVec.map, DVec.map_map,
       lift_term1_subst_term, subst_term_var0]
     simp only [DVec.map_id, apps_rel, lift_formula1_subst]
@@ -1747,11 +1727,9 @@ lemma realize_term_subst_lift {S : Structure L} (v : ℕ → S) (x : S) (m : ℕ
     simp only [realize_term, lift_term_at]
     by_cases h : m ≤ k
     · -- lift gives k+1, subst_realize gives v k
-
       have hmk1 : m < k + 1 := Nat.lt_succ_of_le h
       simp only [ite_eq_left h, subst_realize_gt _ _ hmk1, Nat.add_sub_cancel]
     · -- lift gives k, subst_realize gives v k (since k < m)
-
       have hkm : k < m := Nat.lt_of_not_le h
       simp only [ite_eq_right h, subst_realize_lt _ _ hkm]
   | _, preterm.func _, _ => rfl
@@ -1824,7 +1802,6 @@ lemma realize_formula_subst {S : Structure L} :
     congr 1
       -- Goal: realize_term v (lift_term s n) [] = realize_term
             -- (subst_realize v x 0) (lift_term s (n+1)) []
-
     rw [← realize_term_subst_lift v x 0 (lift_term s n) DVec.nil]
     simp only [lift_term_def]
     rw [← lift_term2 s n 1]
@@ -2231,9 +2208,9 @@ def realize_bounded_term {S : Structure L} {n} (v : DVec S n) :
 
 /-- Notation for realizing a bounded term with an empty extra
 argument list. -/
-notation:0 S "[" t " ;;; " v "]" => @realize_bounded_term _ S _ v 0 t DVec.nil
+notation:0 S "[" t ";;;" v "]" => @realize_bounded_term _ S _ v 0 t DVec.nil
 
-notation:0 S "[" t " ;;; " v " ;;; " xs "]" => @realize_bounded_term _ S _ v _ t xs
+notation:0 S "[" t ";;;" v ";;;" xs "]" => @realize_bounded_term _ S _ v _ t xs
 
 @[reducible, expose]
 def realize_closed_term (S : Structure L) (t : closed_term L) : S.carrier :=
@@ -2455,7 +2432,6 @@ theorem substmax_var_eq {n} (k : Fin (n + 1)) (s : closed_term L) (h : k.1 = n) 
     -- Goal: s.fst ↑' n # 0 = s.fst
       -- s : closed_term L = bounded_preterm L 0 0, so bound is 0 ≤ 0
       -- (lift at position 0)
-
   exact lift_bounded_term_irrel s n (Nat.zero_le 0)
 
 @[expose]
@@ -2697,7 +2673,6 @@ protected theorem eq :
       congrArg bd_all
         (bounded_preformula.eq h)
           -- cross-constructor cases: fst is in different constructors
-
   | _, _, bd_falsum, bd_equal _ _, h => by simp [bounded_preformula.fst] at h
   | _, _, bd_falsum, bd_rel _, h => by simp [bounded_preformula.fst] at h
   | _, _, bd_falsum, bd_imp _ _, h => by simp [bounded_preformula.fst] at h
@@ -2815,7 +2790,6 @@ lemma cast_eq_hrfl {n m l} {h : n = m} {f : bounded_preformula L n l} :
     HEq (f.cast_eq h) f := by
   -- TODO: port from src/fol.lean:1801-1802 (cast_eq_hrfl,
     -- heterogeneous equality)
-
   subst h
   apply heq_of_eq
   apply bounded_preformula.eq; simp [bounded_preformula.cast_eq_fst]
@@ -3077,7 +3051,6 @@ def bounded_preformula.rec1 {C : ∀ n l, bounded_preformula L (n + 1) l → Sor
     ∀ {{n l : ℕ}} (f : bounded_preformula L (n + 1) l), C n l f :=
   -- Port from src/fol.lean:1984-2004: define C' with n=0 case =
     -- PUnit, then use full rec
-
   let C' : ∀ n l, bounded_preformula L n l → Sort v := fun n =>
     match n with
     | 0 => fun _l _f => PUnit
@@ -3105,7 +3078,6 @@ def bounded_formula.rec1 {C : ∀ n, bounded_formula L (n + 1) → Sort v}
     {{n : ℕ}} (f : bounded_formula L (n + 1)) : C n f :=
   -- Use a helper that handles partially-applied formulas via dvec
     -- accumulator
-
   let rec go :
     ∀ {n' l} (f' : bounded_preformula L (n' + 1) l)
       (ts : DVec (bounded_term L (n' + 1)) l), C n' (bd_apps_rel f' ts)
@@ -3230,7 +3202,6 @@ lemma substmax_bounded_formula_bd_apps_rel {n l} (f : bounded_preformula L (n + 
 def subst0_bounded_formula {n l} (f : bounded_preformula L (n + 1) l)
     (s : bounded_term L n) : bounded_preformula L n l :=
   -- n + 1 = 0 + n + 1, so we use h : 0 + n + 1 = n + 1
-
   (subst_bounded_formula f s (by omega : 0 + n + 1 = n + 1)).cast_eq
     (by omega : 0 + n = n)
 
@@ -3314,7 +3285,6 @@ lemma realize_bounded_formula_ex {S : Structure L} :
   simp only [bd_ex, bd_not, realize_bounded_formula]
     -- Goal: (∀ x, realize_bounded_formula (x ::ᵥ v) f [] → False) →
       -- False ↔ ∃ x, ...
-
   constructor
   · intro h
     by_contra hc
@@ -3367,17 +3337,14 @@ lemma realize_cast_bounded_formula {S : Structure L} {n m} {h : n ≤ m}
       realize_bounded_formula (v.trunc n h) f DVec.nil :=
   by
   -- Case split: n = m or n < m
-
   by_cases hn : n = m
   · -- n = m: cast is identity, trunc is identity
     subst hn; simp [bounded_preformula.cast_rfl]
   · -- n < m
-
     have hnlt : n < m := Nat.lt_of_le_of_ne h hn
     apply propext
     apply realize_bounded_formula_irrel'
     · -- Show v.nth k (hk : k < m) = (v.trunc n h).nth k (hk' : k < n) when k < n
-
       intro k hkn hkm
       rw [DVec.trunc_nth]
     · -- Show (f.cast h).fst = f.fst

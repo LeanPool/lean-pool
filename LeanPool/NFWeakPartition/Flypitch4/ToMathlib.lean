@@ -157,7 +157,6 @@ protected theorem mem_of_pmem : ∀ {n : ℕ} {x : α} {xs : DVec α n}, DVec.pm
   | _, x, DVec.cons x' xs, hx => by
     -- x ∈ DVec.cons x' xs = DVec.mem x (DVec.cons x' xs) = x = x' ∨
         -- DVec.mem x xs
-
     change DVec.mem x (DVec.cons x' xs)
     exact hx.casesOn (fun h => Or.inl h) (fun h => Or.inr (DVec.mem_of_pmem h))
 
@@ -574,11 +573,9 @@ theorem neq_neg_of_nonempty {α : Type*} {P : Set α} (H_nonempty : Nonempty α)
   obtain ⟨a⟩ := H_nonempty
   by_cases HP : a ∈ P
   · -- a ∈ P, so by H_eq, a ∈ Pᶜ, i.e., a ∉ P — contradiction
-
     have : a ∈ Pᶜ := H_eq ▸ HP
     exact this HP
   · -- a ∉ P, so a ∈ Pᶜ, so by H_eq, a ∈ P — contradiction
-
     have : a ∈ Pᶜ := HP
     rw [← H_eq] at this
     exact HP this
