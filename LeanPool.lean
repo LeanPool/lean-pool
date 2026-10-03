@@ -259,10 +259,12 @@ public import LeanPool.TwoColoringOneRound.Imports
 public import LeanPool.UlmsTheorem.Imports
 public import LeanPool.UnconditionalSchauderBasis.Imports
 public import LeanPool.VirasoroProject.Imports
+public import LeanPool.Vizing.Imports
 public import LeanPool.Vlasov.Imports
 public import LeanPool.Wallace.Imports
 public import LeanPool.WhiteheadTheorem.Imports
 public import LeanPool.ZFLean.Imports
+public import LeanPool.Zeta32.Imports
 public import LeanPool.Zeta3Irrational.Imports
 public import LeanPool.Zeta5Irrational.Imports
 public import LeanPool.ZetaH123.Imports
