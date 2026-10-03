@@ -118,6 +118,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/GapCVP                    https://github.com/openai/ten-proofs
   LeanPool/GoemansFlow               https://github.com/jyh/dinitz-verify
   LeanPool/GranvilleMoore            https://github.com/AxiomMath/GranvilleMoore
+  LeanPool/GraphColouringMatching    https://github.com/jtraverso/lean-pool
   LeanPool/HadwigerNelsonBounds      https://github.com/lyfar/hadwiger-nelson-bounds-lean
   LeanPool/HansonWright              https://github.com/Lean-MoDS/StatsMLlib
   LeanPool/HardSphereNBC             https://github.com/ukiyois/hs-virial-nbc-identity
