@@ -91,6 +91,7 @@ def vertexStar (d : ℕ) : Fragment (Fin d) where
 
 /-- The degree-`d` vertex functional data: the image vector of
 the vertex star read as a `(0, d)`-morphism. -/
+@[expose]
 noncomputable def starVec (d : ℕ) :
     (P.ω.obj (SkeinObj.mk d)).even :=
   omegaVec f P (HomSpace.ofFragment f.val

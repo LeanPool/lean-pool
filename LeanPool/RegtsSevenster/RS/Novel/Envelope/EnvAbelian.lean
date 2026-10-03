@@ -304,7 +304,7 @@ noncomputable def envNormalEpi {M N : Env f} (e : M ⟶ N) [Epi e] :
 
 /-- **The envelope is abelian**, from the factorial trace
 obstruction and the connection pairing. -/
-@[reducible]
+@[expose, reducible]
 noncomputable def envAbelian :
     Abelian (Env f) := by
   haveI : HasFiniteBiproducts (Env f) := inferInstance

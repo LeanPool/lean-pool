@@ -24,6 +24,7 @@ namespace RS
 variable {R : ℕ} (f : EdgeRankParameter R)
 
 /-- The vertex-star class: a `(0, d)`-morphism. -/
+@[expose]
 noncomputable def vertexStarClass (d : ℕ) :
     HomSpace f.val (0 + d) :=
   HomSpace.ofFragment f.val
