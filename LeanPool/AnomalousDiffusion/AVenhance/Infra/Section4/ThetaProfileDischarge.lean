@@ -33,7 +33,8 @@ theorem ThetaProfileDischarge.iterateSpatialWord_eq_classicalWordDerivative
     iterateSpatialWord w f = classicalWordDerivative w f := by
   induction w with
   | nil => rfl
-  | cons i w ih => simp [iterateSpatialWord, classicalWordDerivative, ih]
+  | cons i w ih => simp [iterateSpatialWord, classicalWordDerivative,
+    Classical.classicalWordDerivative, ih]
 
 /-- Stream-regularity and diffusivity-recursion data extracted from the conclusions.
 The second stream-regularity display and both diffusivity bounds are retained verbatim. -/

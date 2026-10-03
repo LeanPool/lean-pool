@@ -225,7 +225,8 @@ theorem theta_interval_word_l2_le_partial_gradient
     have ht : 0 < p.1 := hp.1.1
     have hslice := theta_classical_word_slice_contDiff_nonneg hθ [] p.1 ht.le
     have hslice' : ContDiff ℝ (⊤ : ℕ∞) (θ p.1) := by
-      simpa [classicalWordDerivative] using hslice
+      simpa [classicalWordDerivative,
+        Classical.classicalWordDerivative] using hslice
     change (thetaWordExtension θ word p) ^ 2 ≤
       vecNormSq (thetaWordGradientExtension θ right p)
     rw [thetaWordExtension_eq_slice p.1 ht p.2]
@@ -527,7 +528,8 @@ theorem ThetaHonestAnalytic.theta_const_time_gradient_energy
         spaceGrad (classicalWordDerivative w u) x := by
       funext j
       change thetaWordExtension v (j :: w) (t, x) = _
-      simp [thetaWordExtension, v, max_eq_left ht.1, classicalWordDerivative]
+      simp [thetaWordExtension, v, max_eq_left ht.1, classicalWordDerivative,
+        Classical.classicalWordDerivative]
     rw [hvec]
   have hinner : ∀ t ∈ Set.Icc (0 : ℝ) 1,
       (∫ x in AVenhance.unitCube,
@@ -891,7 +893,8 @@ private theorem first_order_stream_pairing_bound :
       I Φ hΦ hm hA3 (t := t) (j :: split.1) hlen2 x
     have hlen' : (j :: split.1).length = 2 := by simp [hlen]
     rw [hlen'] at hA3point
-    simpa [M, φ, classicalWordDerivative] using hA3point
+    simpa [M, φ, classicalWordDerivative,
+      Classical.classicalWordDerivative] using hA3point
   have hcompPoint (x : Vec 2) :
       classicalWordDerivative w (θ t) x ^ 2 ≤
         Homogenization.vecNormSq

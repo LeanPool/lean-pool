@@ -244,10 +244,12 @@ theorem ThetaIntegratedEnergy.thetaJointStreamVelocity_eq_slice
   fin_cases j
   · simp [ThetaIntegratedEnergy.thetaJointStreamVelocity,
       ThetaIntegratedEnergy.thetaWordJointSlice, classicalWordDerivative,
+      Classical.classicalWordDerivative,
       AVenhance.streamVel, AVenhance.sigmaMat, Matrix.mulVec_apply_eq_sum,
       Fin.sum_univ_two]
   · simp [ThetaIntegratedEnergy.thetaJointStreamVelocity,
       ThetaIntegratedEnergy.thetaWordJointSlice, classicalWordDerivative,
+      Classical.classicalWordDerivative,
       AVenhance.streamVel, AVenhance.sigmaMat, Matrix.mulVec_apply_eq_sum,
       Fin.sum_univ_two]
 
@@ -279,7 +281,8 @@ theorem ThetaIntegratedEnergy.thetaJointEnergyFluxPairing_continuousOn
         AVenhance.spaceGrad (classicalWordDerivative w (θ p.1)) p.2 j)
       ThetaIntegratedEnergy.thetaTraceDomain := by
     have h := theta_classical_word_joint_contDiffOn_nonneg hθ (j :: w)
-    simpa [classicalWordDerivative, ThetaIntegratedEnergy.thetaTraceDomain] using h.continuousOn
+    simpa [classicalWordDerivative, Classical.classicalWordDerivative,
+      ThetaIntegratedEnergy.thetaTraceDomain] using h.continuousOn
   have hflux (j : Fin 2) :
       ContinuousOn (fun p => ThetaIntegratedEnergy.thetaJointStreamFlux w φ θ p j)
           ThetaIntegratedEnergy.thetaTraceDomain :=
@@ -326,7 +329,8 @@ theorem ThetaIntegratedEnergy.thetaJointEnergyGradientNormSq_continuousOn
         AVenhance.spaceGrad (classicalWordDerivative w (θ p.1)) p.2 j)
       ThetaIntegratedEnergy.thetaTraceDomain := by
     have h := theta_classical_word_joint_contDiffOn_nonneg hθ (j :: w)
-    simpa [classicalWordDerivative, ThetaIntegratedEnergy.thetaTraceDomain] using h.continuousOn
+    simpa [classicalWordDerivative, Classical.classicalWordDerivative,
+      ThetaIntegratedEnergy.thetaTraceDomain] using h.continuousOn
   have heq : (fun p : ℝ × Vec 2 =>
       vecNormSq (AVenhance.spaceGrad (classicalWordDerivative w (θ p.1)) p.2)) =
       fun p =>

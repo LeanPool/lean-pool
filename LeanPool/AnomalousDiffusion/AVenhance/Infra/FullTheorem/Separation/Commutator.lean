@@ -41,8 +41,10 @@ theorem comm_one_eq {b : Vec 2 → Vec 2} {f : Vec 2 → ℝ} (hb : ContDiff ℝ
   rw [classicalWordDerivative_transport_eq_commutatorExpansion [i] b f hb hf x]
   apply Finset.sum_congr rfl
   intro k _
-  simp [classicalWordCommutatorExpansion, classicalWordCommutatorSplits, classicalWordSplits,
-    classicalWordProductTerm, classicalWordDerivative]
+  simp [classicalWordCommutatorExpansion,
+    Classical.classicalWordCommutatorExpansion, Classical.classicalWordCommutatorSplits,
+    Classical.classicalWordSplits, Classical.classicalWordProductTerm,
+    Classical.classicalWordDerivative]
 
 theorem comm_two_eq {b : Vec 2 → Vec 2} {f : Vec 2 → ℝ} (hb : ContDiff ℝ (⊤ : ℕ∞) b)
     (hf : ContDiff ℝ (⊤ : ℕ∞) f) (j i : Fin 2) (x : Vec 2) :
@@ -54,13 +56,17 @@ theorem comm_two_eq {b : Vec 2 → Vec 2} {f : Vec 2 → ℝ} (hb : ContDiff ℝ
   rw [classicalWordDerivative_transport_eq_commutatorExpansion [j, i] b f hb hf x]
   apply Finset.sum_congr rfl
   intro k _
-  simp [classicalWordCommutatorExpansion, classicalWordCommutatorSplits, classicalWordSplits,
-    classicalWordProductTerm, classicalWordDerivative]
+  simp [classicalWordCommutatorExpansion,
+    Classical.classicalWordCommutatorExpansion, Classical.classicalWordCommutatorSplits,
+    Classical.classicalWordSplits, Classical.classicalWordProductTerm,
+    Classical.classicalWordDerivative]
   ring
 
 theorem commPair_nil (b : Vec 2 → Vec 2) (f : Vec 2 → ℝ) : commPair [] b f = 0 := by
   unfold commPair
-  simp [classicalWordDerivative, classicalTransport]
+  simp [classicalWordDerivative,
+    Classical.classicalWordDerivative, classicalTransport,
+    Classical.classicalTransport]
 
 section first
 

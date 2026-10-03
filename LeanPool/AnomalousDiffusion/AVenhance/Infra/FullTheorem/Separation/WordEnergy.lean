@@ -61,7 +61,8 @@ theorem wDiss_continuousOn {θ : ℝ → Vec 2 → ℝ}
       (fun p : ℝ × Vec 2 => spaceGrad (classicalWordDerivative w (θ p.1)) p.2 j)
       WordEnergy.nonnegDomain := by
     have h := theta_classical_word_joint_contDiffOn_nonneg hθ (j :: w)
-    simpa [classicalWordDerivative, WordEnergy.nonnegDomain] using h.continuousOn
+    simpa [classicalWordDerivative,
+      Classical.classicalWordDerivative, WordEnergy.nonnegDomain] using h.continuousOn
   have hjoint : ContinuousOn (fun p : ℝ × Vec 2 =>
       vecNormSq (spaceGrad (classicalWordDerivative w (θ p.1)) p.2)) WordEnergy.nonnegDomain := by
     have heq : (fun p : ℝ × Vec 2 =>

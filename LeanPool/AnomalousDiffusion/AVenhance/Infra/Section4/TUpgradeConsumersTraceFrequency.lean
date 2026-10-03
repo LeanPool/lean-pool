@@ -23,6 +23,7 @@ theorem TUpgradeConsumersTraceFrequency.iterateSpatialWord_eq_classicalWordDeriv
     iterateSpatialWord w f = classicalWordDerivative w f := by
   induction w with
   | nil => rfl
-  | cons i w ih => simp [iterateSpatialWord, classicalWordDerivative, ih]
+  | cons i w ih => simp [iterateSpatialWord, classicalWordDerivative,
+    Classical.classicalWordDerivative, ih]
 
 end AVenhance.Infra.Section4

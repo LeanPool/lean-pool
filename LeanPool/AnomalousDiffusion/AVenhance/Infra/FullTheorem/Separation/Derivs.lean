@@ -40,7 +40,8 @@ theorem integral_vecNormSq_eq {f : Vec 2 → ℝ} (hf : ContDiff ℝ (⊤ : ℕ�
   rw [← integral_add (intOn c0) (intOn c1)]
   congr 1
   funext x
-  simp [vecNormSq, vecDot, Fin.sum_univ_two, pow_two, classicalWordDerivative]
+  simp [vecNormSq, vecDot, Fin.sum_univ_two, pow_two, classicalWordDerivative,
+    Classical.classicalWordDerivative]
 
 theorem wDiss_eq {θ : ℝ → Vec 2 → ℝ} {s : ℝ} (hs : ContDiff ℝ (⊤ : ℕ∞) (θ s))
     (w : List (Fin 2)) :

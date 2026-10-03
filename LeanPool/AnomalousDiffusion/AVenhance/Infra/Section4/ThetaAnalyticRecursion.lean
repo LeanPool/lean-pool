@@ -205,7 +205,8 @@ theorem ThetaAnalyticRecursion.theta_word_energy_step_of_A3
     have hidentity : thetaWordSpatialEnergy θ w T +
         2 * κ * thetaIntervalWordGradientEnergy θ T w = S₀ - 2 * P := by
       simpa [thetaWordSpatialEnergy, thetaIntervalWordGradientEnergy,
-        S₀, P, classicalWordDerivative] using hid
+        S₀, P, classicalWordDerivative,
+        Classical.classicalWordDerivative] using hid
     dsimp [Q]
     linarith [hidentity, hPcost, hYoung]
   have hSsup : thetaWordSpatialEnergySup θ w ≤ Q := by

@@ -102,7 +102,7 @@ theorem theta_stream_flux_pairing_integration_by_parts
     rw [hgp k x, congrFun (hvper k x) j]
   have hdivV (x : Vec 2) : AVenhance.vecDiv v x = 0 := by
     have h := theta_streamVel_ordered_derivative_divergence_free h hh [] x
-    simpa [AVenhance.vecDiv, classicalWordDerivative] using h
+    simpa [AVenhance.vecDiv, classicalWordDerivative, Classical.classicalWordDerivative] using h
   have hdivF (x : Vec 2) :
       AVenhance.vecDiv F x = vecDot (AVenhance.spaceGrad g x) (v x) := by
     simpa [F, v] using theta_product_vector_divergence hg hv hdivV x
@@ -358,7 +358,7 @@ theorem theta_classical_differentiated_energy_pairing
         ∑ j : Fin 2,
           classicalWordCommutatorExpansion w (fun y => b t y j)
             (fun y => AVenhance.spaceGrad (θ t) y j) x = 0 := by
-      simpa [u, b, classicalTransport] using hdiff
+      simpa [u, b, classicalTransport, Classical.classicalTransport] using hdiff
     have htime := classicalTimePartial_eq_deriv huOpen ht x
     calc
       _ = -∑ j : Fin 2,

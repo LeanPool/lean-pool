@@ -33,7 +33,7 @@ theorem theta_initial_word_l2_le_of_analytic
   by_cases hn0 : w.length = 0
   · have hw : w = [] := List.length_eq_zero_iff.mp hn0
     subst w
-    simp [classicalWordDerivative, AVenhance.l2NormSq]
+    simp [classicalWordDerivative, Classical.classicalWordDerivative, AVenhance.l2NormSq]
   · have hn : 1 ≤ w.length := by omega
     have hθ := hθ₀ w.length hn (fun j => w.get j)
     have hf : ContDiff ℝ (⊤ : ℕ∞) θ₀ := by

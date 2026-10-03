@@ -40,7 +40,8 @@ theorem SourceErrorDTheta.sed_iterateSpatialWord_eq_classicalWordDerivative
     iterateSpatialWord w f = classicalWordDerivative w f := by
   induction w with
   | nil => rfl
-  | cons i w ih => simp [iterateSpatialWord, classicalWordDerivative, ih]
+  | cons i w ih => simp [iterateSpatialWord, classicalWordDerivative,
+    Classical.classicalWordDerivative, ih]
 
 theorem SourceErrorDTheta.sed_theta_profile_of_explicit_A3_A5
     {β : ℝ} (I : Ingredients β) {Φ : ℕ → ℝ → Vec 2 → ℝ}

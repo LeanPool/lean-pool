@@ -29,7 +29,8 @@ theorem ThetaAnalyticTrace.theta_initial_trace_l2_sq_le
     AVenhance.l2NormSq θ₀ ≤ B ^ 2 := by
   have hzero := hTrace []
   have hnorm : Real.sqrt (AVenhance.l2NormSq θ₀) ≤ B := by
-    simpa [AVenhance.l2NormSq, classicalWordDerivative] using hzero
+    simpa [AVenhance.l2NormSq, classicalWordDerivative,
+      Classical.classicalWordDerivative] using hzero
   have hSnonneg : 0 ≤ AVenhance.l2NormSq θ₀ := by
     unfold AVenhance.l2NormSq
     exact integral_nonneg fun _ => sq_nonneg _
@@ -66,7 +67,9 @@ theorem theta_homogeneous_gradient_energy_le_of_initial_l2_sq
           2 * κ * thetaWordSpaceTimeGradientEnergy θ w =
         AVenhance.l2NormSq θ₀ := by
     simpa [w, thetaWordSpatialEnergy, AVenhance.l2NormSq,
-      classicalWordDerivative, classicalTransport] using henergy
+      classicalWordDerivative,
+      Classical.classicalWordDerivative, classicalTransport,
+      Classical.classicalTransport] using henergy
   have hSnonneg : 0 ≤ thetaWordSpatialEnergy θ w 1 := by
     exact integral_nonneg fun _ => sq_nonneg _
   have hGbound : κ * thetaWordSpaceTimeGradientEnergy θ w ≤ B ^ 2 := by
@@ -74,7 +77,8 @@ theorem theta_homogeneous_gradient_energy_le_of_initial_l2_sq
   have hG : thetaWordSpaceTimeGradientEnergy θ w =
       AVenhance.spaceTimeGradNormSq (fun t => AVenhance.spaceGrad (θ t)) := by
     simp [w, thetaWordSpaceTimeGradientEnergy,
-      AVenhance.spaceTimeGradNormSq, classicalWordDerivative]
+      AVenhance.spaceTimeGradNormSq, classicalWordDerivative,
+      Classical.classicalWordDerivative]
   rw [← hG]
   exact hGbound
 
@@ -94,7 +98,8 @@ theorem ThetaAnalyticTrace.theta_gradient_only_order_zero_bound_of_initial_l2_sq
     rw [← Real.sqrt_mul hκ.le]
     exact (Real.sqrt_le_iff).2 ⟨hB, by
       simpa [AVenhance.spaceTimeGradNormSq,
-        thetaWordSpaceTimeGradientEnergy, classicalWordDerivative] using hG⟩
+        thetaWordSpaceTimeGradientEnergy, classicalWordDerivative,
+        Classical.classicalWordDerivative] using hG⟩
   simpa [thetaAnalyticInductionLevel] using hroot
 
 theorem ThetaAnalyticTrace.theta_gradient_only_order_zero_bound_of_gradient_energy
@@ -167,7 +172,8 @@ theorem theta_analytic_positive_energy_bound_of_initial_trace_A3_A5
     theta_prev_stream_admissible I Φ hΦ hm
   have hzero' : κm * thetaWordSpaceTimeGradientEnergy θ [] ≤ B ^ 2 := by
     simpa [κm, AVenhance.spaceTimeGradNormSq,
-      thetaWordSpaceTimeGradientEnergy, classicalWordDerivative] using hzero
+      thetaWordSpaceTimeGradientEnergy, classicalWordDerivative,
+      Classical.classicalWordDerivative] using hzero
   have hbase : thetaAnalyticInductionLevel θ κm 0 ≤ B := by
     simpa [κm] using
       ThetaAnalyticTrace.theta_gradient_only_order_zero_bound_of_gradient_energy

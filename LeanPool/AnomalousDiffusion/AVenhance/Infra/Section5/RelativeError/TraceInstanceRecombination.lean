@@ -91,7 +91,7 @@ theorem TraceInstanceRecombination.ordered_eq_classical_instance (w : List (Fin 
       funext x
       simp [orderedRealDerivative,
         AVenhance.Infra.Section4.classicalWordDerivative,
-        AVenhance.spaceGrad, ih]
+        AVenhance.Infra.Classical.classicalWordDerivative, AVenhance.spaceGrad, ih]
 
 /-- A positive-order derivative of the sum of the low projection and its
 spectral complement is bounded by the sum of their cell `L²` bounds. -/

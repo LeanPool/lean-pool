@@ -5,7 +5,8 @@ Authors: Scott Armstrong and Vlad Vicol
 -/
 module
 
-public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Classical.Drift
+public import LeanPool.AnomalousDiffusion.AVenhance.Statements.Roots.SpaceGrad
+public import Mathlib.Analysis.Calculus.FDeriv.Symmetric
 public import Mathlib.Analysis.Calculus.FDeriv.Mul
 public import Mathlib.Analysis.Calculus.FDeriv.Add
 
@@ -691,34 +692,8 @@ theorem classicalTransport_firstCommutator
         AVenhance.spaceGrad (fun y => b y j) x i * AVenhance.spaceGrad u x j := by
   have hcommute (j : Fin 2) :
       AVenhance.spaceGrad (fun y => AVenhance.spaceGrad u y j) x i =
-        AVenhance.spaceGrad (fun y => AVenhance.spaceGrad u y i) x j := by
-    let f : Vec 2 → ℝ := u
-    let g : Vec 2 → Vec 2 →L[ℝ] ℝ := fun y => fderiv ℝ f y
-    have hfirst (y : Vec 2) : HasFDerivAt f (fderiv ℝ f y) y :=
-      (hu.differentiable (by simp) y).hasFDerivAt
-    have hsecond : ContDiff ℝ (⊤ : ℕ∞) g := by
-      dsimp [g, f]
-      exact hu.fderiv_right (by simp)
-    have hsecond' (y : Vec 2) : HasFDerivAt g (fderiv ℝ g y) y :=
-      (hsecond.differentiable (by simp) y).hasFDerivAt
-    have hsymmetric := second_derivative_symmetric hfirst (hsecond' x)
-      (Homogenization.basisVec i) (Homogenization.basisVec j)
-    have hleft : AVenhance.spaceGrad
-        (fun y => AVenhance.spaceGrad f y j) x i =
-          fderiv ℝ g x (Homogenization.basisVec i) (Homogenization.basisVec j) := by
-      change fderiv ℝ (fun y => fderiv ℝ f y (Homogenization.basisVec j)) x
-        (Homogenization.basisVec i) = _
-      rw [fderiv_clm_apply (hsecond.differentiable (by simp) x) (by fun_prop)]
-      simp [g]
-    have hright : AVenhance.spaceGrad
-        (fun y => AVenhance.spaceGrad f y i) x j =
-          fderiv ℝ g x (Homogenization.basisVec j) (Homogenization.basisVec i) := by
-      change fderiv ℝ (fun y => fderiv ℝ f y (Homogenization.basisVec i)) x
-        (Homogenization.basisVec j) = _
-      rw [fderiv_clm_apply (hsecond.differentiable (by simp) x) (by fun_prop)]
-      simp [g]
-    rw [hleft, hright]
-    exact hsymmetric
+        AVenhance.spaceGrad (fun y => AVenhance.spaceGrad u y i) x j :=
+    classicalSpaceGrad_commute u hu i j x
   have hbcomp (j : Fin 2) : ContDiff ℝ (⊤ : ℕ∞) (fun y => b y j) :=
     (contDiff_pi.1 hb) j
   have hgradcomp (j : Fin 2) :
@@ -770,6 +745,43 @@ theorem classicalTransport_firstCommutator
     rw [hcommute]
   rw [hcancel]
   simp [add_sub_cancel_left]
+
+/-- The Leibniz split list has binomial multiplicities for the number of derivatives assigned
+to its first factor. -/
+theorem classicalWordSplits_leftLength_count (w : List (Fin 2)) (q : ℕ) :
+    ((classicalWordSplits w).filter (fun p => p.1.length = q)).length =
+      w.length.choose q := by
+  induction w generalizing q with
+  | nil =>
+      cases q <;> simp [classicalWordSplits]
+  | cons i w ih =>
+      cases q with
+      | zero =>
+          simpa [classicalWordSplits, List.filter_map, Function.comp_def,
+            List.length_eq_zero_iff] using (ih 0)
+      | succ q =>
+          simp [classicalWordSplits, List.filter_map, Function.comp_def, ih,
+            Nat.choose_succ_succ]
+
+/-- The commutator split list has the same binomial multiplicities, with the zero-derivative
+on the first factor removed. -/
+theorem classicalWordCommutatorSplits_leftLength_count
+    (w : List (Fin 2)) (q : ℕ) :
+    ((classicalWordCommutatorSplits w).filter
+      (fun p => p.1.length = q)).length =
+      if q = 0 then 0 else w.length.choose q := by
+  induction w generalizing q with
+  | nil =>
+      cases q <;> simp [classicalWordCommutatorSplits]
+  | cons i w ih =>
+      cases q with
+      | zero =>
+          simpa [classicalWordCommutatorSplits, List.filter_map,
+            Function.comp_def, List.length_eq_zero_iff] using (ih 0)
+      | succ q =>
+          simp [classicalWordCommutatorSplits, List.filter_map, Function.comp_def,
+            classicalWordSplits_leftLength_count, ih,
+            Nat.choose_succ_succ]
 
 end AVenhance.Infra.Classical
 

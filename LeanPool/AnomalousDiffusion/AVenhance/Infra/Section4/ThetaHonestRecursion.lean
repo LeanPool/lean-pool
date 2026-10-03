@@ -131,14 +131,17 @@ theorem thetaHonestResidualExtension_eq_commutator
         (fun y => AVenhance.streamVel (fun _ => f) 0 y j)
         (fun y => spaceGrad u y j) x := by
     rw [ThetaHonestRecursion.theta_list_fun_sum_apply]
-    unfold classicalWordCommutatorExpansion
+    unfold classicalWordCommutatorExpansion Classical.classicalWordCommutatorExpansion
     rw [ThetaHonestRecursion.theta_list_fun_sum_apply]
     simp only [List.map_map, Function.comp_def]
     apply congrArg List.sum
     apply List.map_congr_left
     intro split hmem
-    simp [thetaHonestResidualTermExtension, classicalWordProductTerm,
-      hstream split j, hword split j]
+    change thetaHonestResidualTermExtension φ θ split j (t, x) =
+      classicalWordDerivative split.1 (fun y => AVenhance.streamVel (fun _ => f) 0 y j) x *
+        classicalWordDerivative split.2 (fun y => spaceGrad u y j) x
+    dsimp only [thetaHonestResidualTermExtension]
+    rw [hstream, hword]
   rw [thetaHonestResidualExtension]
   have hsum : ∑ j : Fin 2,
       classicalWordCommutatorExpansion w
@@ -968,7 +971,9 @@ theorem theta_order_zero_energy_bound
     have h :=
       (theta_classical_differentiated_energy_integrated hφ hsol hT w).1
     simpa [w, S₀, thetaWordSpatialEnergy, classicalWordDerivative,
-      classicalTransport, Homogenization.vecDot, Fin.sum_univ_two,
+      Classical.classicalWordDerivative,
+      classicalTransport,
+      Classical.classicalTransport, Homogenization.vecDot, Fin.sum_univ_two,
       AVenhance.l2NormSq] using h
   have hE_nonneg (T : ℝ) : 0 ≤ thetaWordSpatialEnergy θ w T := by
     exact integral_nonneg fun _ => sq_nonneg _
@@ -1036,7 +1041,8 @@ theorem theta_order_zero_energy_bound
       ∫ t in (0 : ℝ)..1,
         ∫ x in AVenhance.unitCube,
           Homogenization.vecNormSq (AVenhance.spaceGrad (θ t) x) := by
-    simpa [w, classicalWordDerivative] using hGtime
+    simpa [w, classicalWordDerivative,
+      Classical.classicalWordDerivative] using hGtime
   have hE1 : 0 ≤ thetaWordSpatialEnergy θ w 1 := hE_nonneg 1
   have hGbound : κ * thetaWordSpaceTimeGradientEnergy θ w ≤ S₀ / 2 := by
     have hId := henergy 1 (by norm_num)

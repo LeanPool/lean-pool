@@ -111,7 +111,8 @@ theorem diff_energy_le {Ψ θ θ' : ℝ → Vec 2 → ℝ} {κ κ' : ℝ} {θ₀
     simp only [Φ, Ew, h0]; ring
   have hE0 : wEnergy [] θ' 0 = l2NormSq θ₀ := by
     have : ∀ x, θ' 0 x = θ₀ x := hθ'.2.2.1
-    simp [wEnergy, classicalWordDerivative, l2NormSq, this]
+    simp [wEnergy, classicalWordDerivative,
+      Classical.classicalWordDerivative, l2NormSq, this]
   have hEt : 0 ≤ wEnergy [] θ' t := integral_nonneg fun x => sq_nonneg _
   have : Ew t ≤ c * (wEnergy [] θ' 0 - wEnergy [] θ' t) := by
     have := hΦt

@@ -52,7 +52,9 @@ theorem ThetaAnalyticBound.theta_gradient_only_order_zero_bound
       thetaWordSpatialEnergy θ w 1 +
           2 * κ * thetaWordSpaceTimeGradientEnergy θ w = S₀ := by
     simpa [w, S₀, thetaWordSpatialEnergy, AVenhance.l2NormSq,
-      classicalWordDerivative, classicalTransport] using henergy
+      classicalWordDerivative,
+      Classical.classicalWordDerivative, classicalTransport,
+      Classical.classicalTransport] using henergy
   have hSnonneg : 0 ≤ thetaWordSpatialEnergy θ w 1 := by
     exact integral_nonneg fun _ => sq_nonneg _
   have hNnonneg : 0 ≤ N := by

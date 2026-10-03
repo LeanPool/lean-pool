@@ -123,10 +123,12 @@ theorem thetaStreamWordExtension_eq_slice
   fin_cases j
   · simp [thetaStreamWordExtension, thetaWordExtension_eq_slice t ht x,
       AVenhance.streamVel, AVenhance.sigmaMat,
-      Matrix.mulVec_apply_eq_sum, Fin.sum_univ_two, classicalWordDerivative]
+      Matrix.mulVec_apply_eq_sum, Fin.sum_univ_two, classicalWordDerivative,
+    Classical.classicalWordDerivative]
   · simp [thetaStreamWordExtension, thetaWordExtension_eq_slice t ht x,
       AVenhance.streamVel, AVenhance.sigmaMat,
-      Matrix.mulVec_apply_eq_sum, Fin.sum_univ_two, classicalWordDerivative]
+      Matrix.mulVec_apply_eq_sum, Fin.sum_univ_two, classicalWordDerivative,
+    Classical.classicalWordDerivative]
 
 theorem ThetaFluxEstimates.thetaWord_gradient_energy_eq_components
     {u : ℝ → Vec 2 → ℝ} {w : List (Fin 2)}
@@ -188,7 +190,8 @@ theorem theta_word_derivative_energy_le_gradient
     have ht : 0 < p.1 := hp.1.1
     have hθslice : ContDiff ℝ (⊤ : ℕ∞) (u p.1) := by
       have hθ := theta_classical_word_slice_contDiff_nonneg hu [] p.1 ht.le
-      simpa [classicalWordDerivative] using hθ
+      simpa [classicalWordDerivative,
+        Classical.classicalWordDerivative] using hθ
     calc
       (thetaWordExtension u word p) ^ 2 =
           classicalWordDerivative word (u p.1) p.2 ^ 2 := by

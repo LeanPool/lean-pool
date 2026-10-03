@@ -770,7 +770,7 @@ theorem theta_streamVel_periodic (φ : Vec 2 → ℝ)
     AVenhance.IsZ2Periodic (AVenhance.streamVel (fun _ => φ) 0) := by
   have hgrad (j : Fin 2) :
       AVenhance.IsZ2Periodic (fun x => AVenhance.spaceGrad φ x j) := by
-    simpa [classicalWordDerivative] using
+    simpa [classicalWordDerivative, Classical.classicalWordDerivative] using
       (classicalWordDerivative_periodic [j] hφ hper)
   intro k x
   have hvx := ThetaDifferentiated.thetaDifferentiated_streamVel_components (φ := φ) (x := x)
@@ -1022,7 +1022,8 @@ theorem thetaStreamCommutatorFlux_divergence
       have hdiv := theta_streamVel_ordered_derivative_divergence_free
         (classicalWordDerivative p.2 u)
         (classicalWordDerivative_contDiff p.2 u hu) [] y
-      simpa [AVenhance.vecDiv, classicalWordDerivative] using hdiv
+      simpa [AVenhance.vecDiv, classicalWordDerivative, Classical.classicalWordDerivative]
+        using hdiv
     have hdivProduct := theta_product_vector_divergence
       (classicalWordDerivative_contDiff p.1 φ hφ)
       (theta_streamVel_contDiff (classicalWordDerivative p.2 u)
@@ -1068,7 +1069,7 @@ theorem thetaStreamCommutatorFlux_divergence
         classicalWordCommutatorExpansion w
           (fun y => AVenhance.streamVel (fun _ => φ) 0 y j)
           (fun y => AVenhance.spaceGrad u y j) x := by
-    unfold classicalWordCommutatorExpansion
+    unfold classicalWordCommutatorExpansion Classical.classicalWordCommutatorExpansion
     rw [classicalListSum_eval]
     simp only [List.map_map, Function.comp_def]
     apply ThetaDifferentiated.theta_list_map_sum_congr
@@ -1082,7 +1083,10 @@ theorem thetaStreamCommutatorFlux_divergence
         classicalWordDerivative p.2 (fun y => AVenhance.spaceGrad u y j) x =
           AVenhance.spaceGrad (classicalWordDerivative p.2 u) x j :=
       congrFun (classicalWordDerivative_commute_gradient p.2 u hu j) x
-    simp [G, classicalWordProductTerm, hbderiv, hgradderiv]
+    change G j p = classicalWordDerivative p.1
+      (fun y => AVenhance.streamVel (fun _ => φ) 0 y j) x *
+        classicalWordDerivative p.2 (fun y => AVenhance.spaceGrad u y j) x
+    rw [hbderiv, hgradderiv]
   have hcomm :
       (L.map fun p => vecDot
         (AVenhance.spaceGrad (classicalWordDerivative p.1 φ) x)
