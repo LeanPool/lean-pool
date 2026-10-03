@@ -109,6 +109,7 @@ public import LeanPool.GapCVP.Imports
 public import LeanPool.GaussianMomentsCounterexamples.Imports
 public import LeanPool.GoemansFlow.Imports
 public import LeanPool.GranvilleMoore.Imports
+public import LeanPool.GraphColouringMatching.Imports
 public import LeanPool.GrothendieckVanishing.Imports
 public import LeanPool.HSDInteriorPointLP.Imports
 public import LeanPool.HadwigerNelsonBounds.Imports
