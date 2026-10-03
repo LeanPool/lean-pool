@@ -107,7 +107,8 @@ theorem colorable_of_cut_partition (G : SimpleGraph V) [DecidableRel G.Adj]
   have hApiece : (G.induce ((A : Finset V) : Set V)).Colorable 3 := by
     apply connected_colorable_three_of_exists_degree_lt _ hAconn
     · intro v
-      exact (induce_degree_le G (A : Set V) v).trans (le_of_eq (hreg v.val))
+      simpa only [← SimpleGraph.ncard_neighborSet] using
+        (induce_degree_le G (A : Set V) v).trans (le_of_eq (hreg v.val))
     · -- x has degree < 3 in G[A] : misses its B₀-neighbour bz
       have hxmem : x ∈ ((A : Finset V) : Set V) := by simp [hA]
       refine ⟨⟨x, hxmem⟩, ?_⟩
@@ -139,7 +140,8 @@ theorem colorable_of_cut_partition (G : SimpleGraph V) [DecidableRel G.Adj]
   have hBpiece : (G.induce ((B : Finset V) : Set V)).Colorable 3 := by
     apply connected_colorable_three_of_exists_degree_lt _ hBconn
     · intro v
-      exact (induce_degree_le G (B : Set V) v).trans (le_of_eq (hreg v.val))
+      simpa only [← SimpleGraph.ncard_neighborSet] using
+        (induce_degree_le G (B : Set V) v).trans (le_of_eq (hreg v.val))
     · have hxmem : x ∈ ((B : Finset V) : Set V) := by simp [hB]
       refine ⟨⟨x, hxmem⟩, ?_⟩
       have haznotB : az ∉ B := by

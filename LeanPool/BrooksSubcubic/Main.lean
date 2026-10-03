@@ -37,7 +37,8 @@ theorem brooks_cubic (G : SimpleGraph V) [DecidableRel G.Adj]
   have hemb : H ↪g G := SimpleGraph.Embedding.induce c.supp
   have hdeg : ∀ v, H.degree v ≤ 3 := by
     intro v
-    exact (induce_degree_le G c.supp v).trans ((G.degree_le_maxDegree v.val).trans hΔ)
+    simpa only [← SimpleGraph.ncard_neighborSet] using
+      (induce_degree_le G c.supp v).trans ((G.degree_le_maxDegree v.val).trans hΔ)
   have hfree : H.CliqueFree 4 := hK4.comap ⟨hemb.toCopy⟩
   by_cases hlow : ∃ v, H.degree v < 3
   · exact connected_colorable_three_of_exists_degree_lt H hconn hdeg hlow
