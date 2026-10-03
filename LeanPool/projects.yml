@@ -1,40 +1,50 @@
 projects:
-  - slug: quadratic-carleson-palomar-submission
-    title: Endpoint estimates for Stein's purely quadratic Carleson operator
-    summary: 'A Lean 4 formalization of four principal endpoint assertions from Fragkos,
-      Krause, and Lacey''s Endpoint Estimates for Stein''s Purely Quadratic Carleson
-      Operator: two failures of modular estimates below t log₂ t, a full-modulation
-      L log L endpoint estimate, and a lacunary L (log₂ L)² log₄ L endpoint estimate.'
-    branch: harmonic analysis
-    entry_module: LeanPool.QuadraticCarleson
+  - slug: list-edge-coloring-complete
+    title: Häggkvist–Janssen list edge colouring of complete graphs
+    summary: >-
+      Proves that arbitrary lists of at least n colours on the edges of a
+      complete graph with n vertices admit a proper list edge colouring.
+      The proof constructs and proves uniqueness of the local rank certificate,
+      identifies a nonzero extended-star polynomial coefficient, and applies
+      Mathlib's combinatorial Nullstellensatz. This is an alternative proof
+      presentation, not a literal translation of the article's argument.
+      The conclusion uses Mathlib's
+      actual edge type and line-graph colouring, with no certificate hypothesis
+      and no restriction on the colour universe. This formalizes a classical
+      theorem, not a new bound or a solution of the general list-edge conjecture.
+    branch: graph theory
+    entry_module: LeanPool.ListEdgeColoringComplete
     authors:
-    - Anastasios Fragkos
+      - Juan Pablo Traverso Gianini
     source:
-      url: https://github.com/anastasiosfragkosmath/quadratic-carleson-palomar-submission
-      github_repo: anastasiosfragkosmath/quadratic-carleson-palomar-submission
-      commit: 3d3cf4316acac4c23140059a78fb570b1440394b
+      title: New Bounds on the List-Chromatic Index of the Complete Graph and Other Simple Graphs
+      authors:
+        - Roland Häggkvist
+        - Jeannette Janssen
+      doi: 10.1017/S0963548397002927
+      url: https://github.com/jtraverso/haggkvist-janssen/tree/26d7b2ee0e14813f0e42c3f8628d6b216327c8df
+      github_repo: jtraverso/haggkvist-janssen
+      commit: 26d7b2ee0e14813f0e42c3f8628d6b216327c8df
     license: Apache-2.0
     status: verified
     provenance: AI
     main_declarations:
-    - QuadraticCarleson.StatementSurface.PaperTheorems.full_LlogL_endpoint
+      - LeanPool.ListEdgeColoringComplete.exists_listEdgeColoring_complete
     main_results:
-    - declaration: QuadraticCarleson.StatementSurface.PaperTheorems.lacunary_sub_log2_modular_failure
-      informal: Lacunary purely quadratic modulation fails modular estimates below the
-        specified iterated-logarithmic threshold.
-    - declaration: QuadraticCarleson.StatementSurface.PaperTheorems.full_sub_log2_modular_failure
-      informal: Full purely quadratic modulation fails modular estimates below the specified
-        iterated-logarithmic threshold.
-    - declaration: QuadraticCarleson.StatementSurface.PaperTheorems.full_LlogL_endpoint
-      informal: The full-modulation operator satisfies the L log L endpoint estimate.
-    - declaration: QuadraticCarleson.StatementSurface.PaperTheorems.lacunary_log2_squared_log4_endpoint
-      informal: The lacunary operator satisfies the L (log₂ L)² log₄ L endpoint estimate.
+      - declaration: LeanPool.ListEdgeColoringComplete.exists_listEdgeColoring_complete
+        informal: >-
+          For every finite vertex type V, arbitrary colour type and finite list
+          on each edge of the complete graph, if every list has cardinality at
+          least the number of vertices, there is a proper colouring of the line
+          graph choosing a colour from each list. This includes orders zero and one.
+        source_ref: Häggkvist–Janssen (1997), Theorems 1.1 and 3.1, complete-graph case.
     tags:
-    - harmonic-analysis
-    - maximal-operators
-    - endpoint-estimates
+      - graph-theory
+      - list-edge-colouring
+      - complete-graphs
+      - combinatorial-nullstellensatz
     msc:
-    - 42B20
+      - 05C15
   - slug: zeta2-zeta3-linear-independence
     title: Linear independence of 1, zeta(2), and zeta(3)
     summary: >-
@@ -12836,3 +12846,39 @@ projects:
     msc:
       - 05C15
       - 05C70
+  - slug: quadratic-carleson-palomar-submission
+    title: Endpoint estimates for Stein's purely quadratic Carleson operator
+    summary: 'A Lean 4 formalization of four principal endpoint assertions from Fragkos,
+      Krause, and Lacey''s Endpoint Estimates for Stein''s Purely Quadratic Carleson
+      Operator: two failures of modular estimates below t log₂ t, a full-modulation
+      L log L endpoint estimate, and a lacunary L (log₂ L)² log₄ L endpoint estimate.'
+    branch: harmonic analysis
+    entry_module: LeanPool.QuadraticCarleson
+    authors:
+    - Anastasios Fragkos
+    source:
+      url: https://github.com/anastasiosfragkosmath/quadratic-carleson-palomar-submission
+      github_repo: anastasiosfragkosmath/quadratic-carleson-palomar-submission
+      commit: 3d3cf4316acac4c23140059a78fb570b1440394b
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+    - QuadraticCarleson.StatementSurface.PaperTheorems.full_LlogL_endpoint
+    main_results:
+    - declaration: QuadraticCarleson.StatementSurface.PaperTheorems.lacunary_sub_log2_modular_failure
+      informal: Lacunary purely quadratic modulation fails modular estimates below the
+        specified iterated-logarithmic threshold.
+    - declaration: QuadraticCarleson.StatementSurface.PaperTheorems.full_sub_log2_modular_failure
+      informal: Full purely quadratic modulation fails modular estimates below the specified
+        iterated-logarithmic threshold.
+    - declaration: QuadraticCarleson.StatementSurface.PaperTheorems.full_LlogL_endpoint
+      informal: The full-modulation operator satisfies the L log L endpoint estimate.
+    - declaration: QuadraticCarleson.StatementSurface.PaperTheorems.lacunary_log2_squared_log4_endpoint
+      informal: The lacunary operator satisfies the L (log₂ L)² log₄ L endpoint estimate.
+    tags:
+    - harmonic-analysis
+    - maximal-operators
+    - endpoint-estimates
+    msc:
+    - 42B20
