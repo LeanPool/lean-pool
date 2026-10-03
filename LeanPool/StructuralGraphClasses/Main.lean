@@ -5,17 +5,17 @@ Authors: Juan Pablo Traverso Gianini
 -/
 module
 
-public import LeanPool.StructuralGraphClasses.ChordalBridge
-public import LeanPool.StructuralGraphClasses.CotreeCompleteness
 public import LeanPool.StructuralGraphClasses.Examples
-public import LeanPool.StructuralGraphClasses.SplitObstructions
 public import LeanPool.StructuralGraphClasses.NativeInterfaces
-public import LeanPool.StructuralGraphClasses.SplitExtension
+public import LeanPool.StructuralGraphClasses.ForbiddenCharacterization
 
 /-!
 # Structural graph classes
 
-Split partitions, nested-neighborhood threshold graphs, and cotree semantics
-share Mathlib's `SimpleGraph`. Split partitions connect to the existing perfect
-elimination order and chordality interfaces.
+Split, cograph and threshold membership share Mathlib's `SimpleGraph` and
+native induced embeddings. Finite split graphs are characterized by their
+forbidden induced subgraphs and by chordality of the graph and complement;
+finite cographs are exactly cotree-representable graphs. Threshold membership
+is equivalent to split-and-cograph membership and to its three forbidden
+induced subgraphs. Existing chordal results are reused, not duplicated.
 -/
