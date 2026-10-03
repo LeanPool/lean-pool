@@ -31,6 +31,7 @@ noncomputable def CurrentMainRate (p Cp C Kbar L M0 : ℝ) : ℝ :=
 /-- G03 and `thm:main`: one runtime-`p` method family is selected first;
 the universal Euclidean constant precedes `p`, while `Cp` is selected after
 `p` and before dimension or instance data. -/
+@[expose]
 noncomputable def MainStatement : Prop :=
   ∃ family : RuntimeMethodFamily,
     ∃ C : ℝ, 0 < C ∧

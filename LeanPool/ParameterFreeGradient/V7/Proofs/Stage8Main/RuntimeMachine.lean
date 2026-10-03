@@ -209,6 +209,7 @@ controller. -/
   action := currentMethodAction
 
 /-- One family is fixed before runtime `p`, dimension-specific input, or oracle. -/
+@[expose]
 noncomputable def currentMethodFamily : RuntimeMethodFamily := fun d => currentMethod d
 
 end V7.Stage8Main
