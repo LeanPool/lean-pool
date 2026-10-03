@@ -218,6 +218,7 @@ noncomputable def reverseCollar
   simp [reflectPoint, lowerCylinderPoint, upperCylinderPoint]
 
 /-- Reverse an endpoint-identified collar. -/
+@[expose]
 noncomputable def reverseEndpointCollar
     (C : EndpointIdentifiedRelativeAffineCollar hp N₀ N₁ M L) :
     EndpointIdentifiedRelativeAffineCollar hp N₁ N₀ M L where

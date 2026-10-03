@@ -422,6 +422,7 @@ noncomputable def globalToOriginalPL
   (originalPLToGlobal hp F A k).symm
 
 /-- Transport a compatible chart map along an equality of subdivision levels. -/
+@[expose]
 noncomputable def ChartMap.castLevel
     {hp : Nat.Prime p} {N M : Nat} (h : N = M) (K : ChartMap hp N) : ChartMap hp M :=
   h ▸ K

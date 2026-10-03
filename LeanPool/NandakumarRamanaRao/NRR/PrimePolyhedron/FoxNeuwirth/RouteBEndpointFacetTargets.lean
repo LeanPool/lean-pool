@@ -329,6 +329,7 @@ theorem oneStepLowerFacetTarget_respects_lower
       Finset.sum_ite_eq']
 
 /-- Lower-relative facet target property used by stack composition. -/
+@[expose]
 def LowerFacetTargets
     (hp : Nat.Prime p)
     {N₀ N₁ M L : Nat}
