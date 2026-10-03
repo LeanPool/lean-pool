@@ -12,6 +12,10 @@ public import LeanPool.PaperIVCliqueTree.Characterization
 public import LeanPool.PaperIVCliqueTree.Connector
 public import LeanPool.PaperIVCliqueTree.Counting
 public import LeanPool.PaperIVCliqueTree.Gavril
+public import LeanPool.PaperIVCliqueTree.Gluing
+public import LeanPool.PaperIVCliqueTree.GluingChordal
+public import LeanPool.PaperIVCliqueTree.GluingCounting
+public import LeanPool.PaperIVCliqueTree.GluingSimplicial
 public import LeanPool.PaperIVCliqueTree.Helly
 public import LeanPool.PaperIVCliqueTree.Maximal
 public import LeanPool.PaperIVCliqueTree.MaximalBridge

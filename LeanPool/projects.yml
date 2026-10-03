@@ -12483,6 +12483,46 @@ projects:
       - 30C15
       - 30C10
       - 12D10
+  - slug: brooks-subcubic
+    title: Brooks' theorem for subcubic graphs
+    summary: >-
+      Proves that every finite simple graph of maximum degree at most three
+      with no four-clique admits a three-colouring, without a connectedness
+      assumption. Includes controlled greedy colouring, colouring across cut
+      vertices, and a good-triple argument for cubic components. This is the
+      subcubic case of Brooks' theorem, not the general-degree theorem.
+    branch: graph theory
+    entry_module: LeanPool.BrooksSubcubic
+    authors:
+      - Juan Pablo Traverso Gianini
+    source:
+      title: On colouring the nodes of a network
+      authors:
+        - R. L. Brooks
+      doi: 10.1017/S030500410002168X
+      url: https://github.com/jtraverso/lean-pool/blob/aced439fd4161d118bf167a1e8d10553f28913fe/LeanPool/BrooksSubcubic/Main.lean
+      github_repo: jtraverso/lean-pool
+      commit: aced439fd4161d118bf167a1e8d10553f28913fe
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+      - BrooksSubcubic.brooks_cubic
+    main_results:
+      - declaration: BrooksSubcubic.brooks_cubic
+        informal: >-
+          Every finite simple graph with maximum degree at most three and no
+          clique on four vertices is three-colourable. The graph may be disconnected.
+        source_ref: >-
+          The subcubic specialization of Brooks' 1941 colouring theorem;
+          the linked Apache-2.0 Lean source proves exactly this specialization.
+    tags:
+      - graph-theory
+      - vertex-colouring
+      - brooks-theorem
+      - subcubic-graphs
+    msc:
+      - 05C15
   - slug: vizing-equitable-edge-colouring
     title: Vizing's theorem and equitable edge colourings
     summary: >-
@@ -12544,7 +12584,9 @@ projects:
       Develops rooted clique forests with the running-intersection property, constructs
       them from perfect elimination orders of finite chordal graphs, characterizes
       chordality by their existence, and obtains maximal-clique, separator, and
-      counting results. Extracted as a reusable byproduct of the published Paper IV
+      counting results. Also characterizes chordality under retained-clique gluing
+      of induced pieces, with exact vertex and edge inclusion-exclusion identities.
+      The original library was extracted as a reusable byproduct of the published Paper IV
       formalization of the chordal-graph case of Erdős problem #81; this library
       is not by itself a proof of that paper's partition bound.
       Gavril's characterization supplies exact finite-tree subtree representations
@@ -12611,6 +12653,24 @@ projects:
         informal: >-
           A finite nonempty chordal graph admits a tree decomposition whose
           width plus one is its clique number.
+      - declaration: SimpleGraph.CliqueGluing.isChordal_iff
+        informal: >-
+          If two induced pieces cover a finite graph, their overlap is a clique,
+          and no edge joins their exclusive parts, the graph is chordal exactly
+          when both pieces are chordal. Overlap edges are retained.
+        source_ref: >-
+          New Lean Pool extension proved here using the existing Dirac and
+          simplicial-elimination interfaces; not a claim from the frozen paper.
+      - declaration: SimpleGraph.CliqueGluing.card_vertices_add_overlap
+        informal: >-
+          The vertex count of the graph plus the overlap size equals the sum
+          of the vertex counts of the two covering pieces.
+        source_ref: New Lean Pool extension; finite-set inclusion-exclusion.
+      - declaration: SimpleGraph.CliqueGluing.card_edges_add_choose_overlap
+        informal: >-
+          The graph edge count plus the number of pairs in the retained clique
+          overlap equals the sum of the induced pieces' edge counts.
+        source_ref: New Lean Pool extension; induced-edge inclusion-exclusion.
     tags:
       - graph-theory
       - chordal-graphs
@@ -12619,6 +12679,59 @@ projects:
       - separators
     msc:
       - 05C75
+  - slug: beck-fiala-matrix
+    title: Strict Beck–Fiala rounding for incidence matrices
+    summary: >-
+      Proves the rational integer-making form of Beck–Fiala rounding for finite
+      zero-one incidence matrices with column degree bounded by a positive t.
+      Every row has discrepancy strictly less than t, and initially integral
+      coordinates are preserved. Includes the necessity of the positive-bound
+      hypothesis. This is distinct from the Komlós discrepancy bound and from
+      the non-strict hyperedge-selection rounding used in triangle packing.
+    branch: discrepancy theory
+    entry_module: LeanPool.BeckFialaMatrix
+    authors:
+      - Juan Pablo Traverso Gianini
+    source:
+      title: '"Integer-making" theorems'
+      authors:
+        - József Beck
+        - Tibor Fiala
+      doi: 10.1016/0166-218X(81)90022-6
+      url: https://github.com/jtraverso/lean-pool/blob/523a4ae71168258f9142d70bccf650a140355650/LeanPool/BeckFialaMatrix/Basic.lean
+      github_repo: jtraverso/lean-pool
+      commit: 523a4ae71168258f9142d70bccf650a140355650
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+      - BeckFialaMatrix.exists_rounding
+    main_results:
+      - declaration: BeckFialaMatrix.exists_rounding
+        informal: >-
+          Given a finite zero-one integer matrix with at most t ones per column,
+          t at least one, and a rational vector in the unit cube, there is a
+          zero-one integer vector whose discrepancy in every row is strictly
+          less than t.
+        source_ref: Rational unit-cube integer-making form with the stated strict discrepancy bound.
+      - declaration: BeckFialaMatrix.exists_rounding_preserving_integral
+        informal: >-
+          The strict rounding can additionally be chosen to leave every initially
+          integral coordinate unchanged.
+        source_ref: Strengthened conclusion of the floating-coordinate proof in the pinned source.
+      - declaration: BeckFialaMatrix.zero_bound_counterexample
+        informal: >-
+          The same universally quantified strict rounding claim without the
+          assumption t at least one is false, already for a one-by-one zero matrix
+          with t equal to zero.
+        source_ref: Boundary-condition witness in the pinned formalization.
+    tags:
+      - discrepancy-theory
+      - beck-fiala
+      - integer-rounding
+      - incidence-matrices
+    msc:
+      - 05D40
   - slug: line-graph-colouring-matching
     title: Line-graph colourings and matching decompositions
     summary: >-

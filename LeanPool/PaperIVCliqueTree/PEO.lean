@@ -67,9 +67,10 @@ theorem IsChordal.exists_simplicial_in_finset (hG : G.IsChordal) (S : Finset V)
       (G.induce (S : Set V)).neighborSet z := hvb
   exact hz ha' hb' (by simp [Subtype.ext_iff, hab])
 
-private theorem exists_peo_aux
-    (hsimp : ∀ (S : Finset V), S.Nonempty →
-      ∃ z ∈ S, ∀ a ∈ S, ∀ b ∈ S, G.Adj z a → G.Adj z b → a ≠ b → G.Adj a b) :
+/-- Relative simplicial elimination produces an injective ranking on every finite set. -/
+theorem exists_rank_of_simplicial_elimination
+    (helim : ∀ (S : Finset V), S.Nonempty → ∃ z ∈ S,
+      ∀ a ∈ S, ∀ b ∈ S, G.Adj z a → G.Adj z b → a ≠ b → G.Adj a b) :
     ∀ (n : ℕ) (S : Finset V), S.card = n → ∃ f : V → ℕ, Set.InjOn f S ∧
       ∀ v ∈ S, G.IsClique {u | u ∈ S ∧ f v < f u ∧ G.Adj v u} := by
   classical
@@ -83,7 +84,7 @@ private theorem exists_peo_aux
   | succ n ih =>
       intro S hS
       have hSne : S.Nonempty := Finset.card_pos.1 (by omega)
-      obtain ⟨z, hvS, hsimp⟩ := hsimp S hSne
+      obtain ⟨z, hvS, hsimp⟩ := helim S hSne
       obtain ⟨f', hinj', hcl'⟩ := ih (S.erase (z : V))
         (by rw [Finset.card_erase_of_mem hvS, hS]; omega)
       refine ⟨fun u => if u = (z : V) then 0 else f' u + 1, ?_, ?_⟩
@@ -124,7 +125,8 @@ theorem exists_isPEO_of_simplicial_in_finset [Finite V]
     ∃ ord : V → ℕ, G.IsPEO ord := by
   classical
   let _ : Fintype V := Fintype.ofFinite V
-  obtain ⟨f, hinj, hclique⟩ := exists_peo_aux hsimp (Finset.univ.card) Finset.univ rfl
+  obtain ⟨f, hinj, hclique⟩ := exists_rank_of_simplicial_elimination
+    hsimp (Finset.univ.card) Finset.univ rfl
   refine ⟨f, ⟨fun a b hab => hinj (Finset.mem_coe.2 (Finset.mem_univ a))
       (Finset.mem_coe.2 (Finset.mem_univ b)) hab, fun v => ?_⟩⟩
   have := hclique v (Finset.mem_univ v)

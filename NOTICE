@@ -34,6 +34,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/AsymptoticTrianglePacking https://github.com/jtraverso/erdos-81-chordal-clique-partitions
   LeanPool/BKARForestFormula         https://github.com/scottnarmstrong/bkarforestformula
   LeanPool/BannaiBannaiStanton       https://github.com/AntoineduFresne/Bannai-Bannai-Stanton_Theorem
+  LeanPool/BeckFialaMatrix           https://github.com/jtraverso/lean-pool
   LeanPool/Besicovitch               https://github.com/CoolRmal/Besicovitchs-1-2
   LeanPool/BicausalOT                https://github.com/maxwellapexlab/bicausalot-palomar
   LeanPool/BlockSpectralSensitivity  https://github.com/Timeroot/BS_Lam
@@ -41,6 +42,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/BooleanIsoperimetry       https://github.com/AlexeyMilovanov/BooleanIsoperimetry
   LeanPool/BrauerGroupNew            https://github.com/Whysoserioushah/BrauerGroup
   LeanPool/BrillNoetherGraphs        https://github.com/npflueger/brill-noether-graphs
+  LeanPool/BrooksSubcubic            https://github.com/jtraverso/lean-pool
   LeanPool/BruhatTits                https://github.com/chrisflav/bruhat-tits
   LeanPool/Burkholder                https://github.com/SmaniaD/Burkholder
   LeanPool/CaffarelliKohnNirenberg   https://github.com/scottnarmstrong/CaffarelliKohnNirenberg
@@ -116,6 +118,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/GapCVP                    https://github.com/openai/ten-proofs
   LeanPool/GoemansFlow               https://github.com/jyh/dinitz-verify
   LeanPool/GranvilleMoore            https://github.com/AxiomMath/GranvilleMoore
+  LeanPool/GraphColouringMatching    https://github.com/jtraverso/lean-pool
   LeanPool/HadwigerNelsonBounds      https://github.com/lyfar/hadwiger-nelson-bounds-lean
   LeanPool/HansonWright              https://github.com/Lean-MoDS/StatsMLlib
   LeanPool/HardSphereNBC             https://github.com/ukiyois/hs-virial-nbc-identity
