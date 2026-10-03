@@ -29,30 +29,12 @@ def test_new_claims_only_covers_what_the_pr_adds() -> None:
     """A card already on main is settled; only new headlines are searched."""
     from lean_pool.prior_art import new_claims
 
-    claims = new_claims(PROJECTS_HEAD, PROJECTS_BASE, "project")
+    claims = new_claims(PROJECTS_HEAD, PROJECTS_BASE)
 
     assert [claim.declaration for claim in claims] == [
         "LeanPool.DeBruijnErdos.colorable_of_forall_finite"
     ]
     assert "finite subgraph" in claims[0].informal
-
-
-def test_new_claims_reads_the_challenge_registry_too() -> None:
-    """Challenges carry the same pairs under different keys."""
-    from lean_pool.prior_art import new_claims
-
-    head = """
-challenges:
-  - slug: twin-primes
-    statements:
-      - declaration: Challenge.TwinPrimes.infinite
-        informal: There are infinitely many twin primes.
-"""
-
-    claims = new_claims(head, "challenges: []\n", "challenge")
-
-    assert claims[0].declaration == "Challenge.TwinPrimes.infinite"
-    assert claims[0].query == "There are infinitely many twin primes."
 
 
 def test_claim_query_falls_back_to_the_declaration_name() -> None:
@@ -66,8 +48,8 @@ def test_new_claims_survives_a_malformed_registry() -> None:
     """Unparseable YAML costs the search, never the review."""
     from lean_pool.prior_art import new_claims
 
-    assert new_claims("projects: [oops", PROJECTS_BASE, "project") == []
-    assert new_claims("", "", "project") == []
+    assert new_claims("projects: [oops", PROJECTS_BASE) == []
+    assert new_claims("", "") == []
 
 
 def test_pool_index_lists_every_project() -> None:
@@ -92,7 +74,7 @@ def test_render_surfaces_a_duplicate_as_a_candidate_not_a_verdict() -> None:
     """
     from lean_pool.prior_art import MathlibHit, new_claims, render
 
-    claims = new_claims(PROJECTS_HEAD, PROJECTS_BASE, "project")
+    claims = new_claims(PROJECTS_HEAD, PROJECTS_BASE)
     hits = {
         claims[0].declaration: [
             MathlibHit(
@@ -118,7 +100,7 @@ def test_render_says_plainly_when_nothing_matched() -> None:
     """An empty result is evidence of novelty and must read as such."""
     from lean_pool.prior_art import new_claims, render
 
-    claims = new_claims(PROJECTS_HEAD, PROJECTS_BASE, "project")
+    claims = new_claims(PROJECTS_HEAD, PROJECTS_BASE)
 
     section = render(claims, {claims[0].declaration: []}, PROJECTS_HEAD, None)
 
@@ -136,7 +118,7 @@ def test_one_failed_query_is_not_reported_as_novelty() -> None:
     """
     from lean_pool.prior_art import new_claims, render
 
-    claims = new_claims(PROJECTS_HEAD, PROJECTS_BASE, "project")
+    claims = new_claims(PROJECTS_HEAD, PROJECTS_BASE)
 
     section = render(claims, {claims[0].declaration: None}, PROJECTS_HEAD, None)
 
@@ -176,7 +158,7 @@ def test_render_distinguishes_a_failed_search_from_a_clean_one() -> None:
     """Silence must never be mistaken for an absence of prior art."""
     from lean_pool.prior_art import new_claims, render
 
-    claims = new_claims(PROJECTS_HEAD, PROJECTS_BASE, "project")
+    claims = new_claims(PROJECTS_HEAD, PROJECTS_BASE)
 
     section = render(claims, {}, PROJECTS_HEAD, "LEANEXPLORE_API_KEY is not set")
 

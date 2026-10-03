@@ -87,7 +87,7 @@ def shared_context(diff: str, character_budget: int) -> str:
     for chunk in chunks:
         header = chunk.split("\n", 1)[0]
         if not re.search(
-            r" b/(?:LeanPool|Challenge|Solution)/(?:[^/]+\.lean|[^/]+\.yml)$",
+            r" b/LeanPool/(?:[^/]+\.lean|[^/]+\.yml)$",
             header,
         ):
             continue

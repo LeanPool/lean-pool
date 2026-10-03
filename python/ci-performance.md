@@ -86,7 +86,7 @@ lint, axiom audits and option-backdoor audits import all owned modules; each
 compiled declaration is checked in its owning unit. Registry declarations use
 separate per-entry receipts. Static checks (registry/card consistency,
 reachability, forbidden constructs, size limits and Lake options), text style
-lint, and Challenge/Solution validation still run every time.
+and lint still run every time.
 
 `.lake/validation-cache/v1/passes.json` contains successful receipts keyed by
 source contents, each module's transitive compiler import inventory, toolchain,
