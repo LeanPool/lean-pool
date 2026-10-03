@@ -77,6 +77,7 @@ noncomputable def coevClass : HomSpace f.val (0 + 2) :=
   HomSpace.ofFragment f.val coevFrag
 
 /-- The braiding class on two strands. -/
+@[expose]
 noncomputable def braidClass : HomSpace f.val (2 + 2) :=
   HomSpace.ofFragment f.val
     (permFragment (_root_.Equiv.swap (0 : Fin 2) 1))

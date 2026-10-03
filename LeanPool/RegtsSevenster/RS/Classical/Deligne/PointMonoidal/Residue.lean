@@ -238,6 +238,7 @@ noncomputable def pointBaseMu (M N : S.Mod.{u, u, u, u}) :
 
 /-- **The unit of base change**, over the algebra: the point read
 as a morphism from the unit, followed by the inverse left unitor. -/
+@[expose]
 noncomputable def pointBaseEps :
     (S.unitMod : S.Mod.{u, u, u, u}) ⟶
       (S.unitMod : S.Mod.{u, u, u, u}).tensor (pointMod P) :=

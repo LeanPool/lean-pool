@@ -186,6 +186,7 @@ variable {α : Type}
 
 /-- A chord pair whose low end is anti-canonical for `o`: the label
 pair of a chain flipped by the recanonicalization of `o`. -/
+@[expose]
 def AntiLowPair [LinearOrder α] {W : Fragment α} {F : EdgeSubset W}
     {κ : F.RelTransitionSystem} (o : κ.Orientation)
     (p : α × α) : Prop :=

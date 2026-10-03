@@ -76,6 +76,7 @@ noncomputable instance skeinEndModule (n : ℕ) : Module ℂ (skeinEnd f n) :=
 /-! ### The permutation representation -/
 
 /-- The class of a permutation fragment in the endomorphism algebra. -/
+@[expose]
 noncomputable def permClass (n : ℕ) (σ : Equiv.Perm (Fin n)) :
     skeinEnd f n :=
   HomSpace.ofFragment f.val (permFragment σ)

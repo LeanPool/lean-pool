@@ -158,6 +158,7 @@ noncomputable def snakeFragREquiv :
 variable {R : ℕ} (f : EdgeRankParameter R)
 
 /-- The identity class on one strand. -/
+@[expose]
 noncomputable def idClass : HomSpace f.val (1 + 1) :=
   HomSpace.ofFragment f.val (strandBundle 1)
 

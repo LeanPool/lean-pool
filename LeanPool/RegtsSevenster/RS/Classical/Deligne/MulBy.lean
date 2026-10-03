@@ -37,6 +37,7 @@ section Basic
 variable {D : Type u}
 
 /-- **Multiplication by an even scalar.** -/
+@[expose]
 noncomputable def mulBy [Category.{v} D] [MonoidalCategory D] (R : D) [MonObj R]
     (g : 𝟙_ D ⟶ R) : R ⟶ R :=
   (λ_ R).inv ≫ gmul g (𝟙 R)

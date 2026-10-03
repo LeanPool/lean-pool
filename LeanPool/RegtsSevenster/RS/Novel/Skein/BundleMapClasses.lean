@@ -41,6 +41,7 @@ def outMapEquiv {n m : ℕ} (e : Fin n ≃ Fin m) :
 
 /-- The bundle map of a label equivalence: strand `k` joins input
 `k` to output `e k`. -/
+@[expose]
 noncomputable def bundleMap {n m : ℕ} (e : Fin n ≃ Fin m) :
     Fragment (Fin (n + m)) :=
   (strandBundle n).relabel (outMapEquiv e)

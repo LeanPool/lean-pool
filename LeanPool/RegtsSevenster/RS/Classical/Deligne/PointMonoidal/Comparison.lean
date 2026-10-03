@@ -72,6 +72,7 @@ open scoped TensorProduct
 variable {S : SuperCommAlgebra.{u, u}} (P : SuperPoint S)
 
 /-- The unit of the residue module. -/
+@[expose]
 noncomputable def pointOne : (pointMod P : S.Mod.{u, u, u, u}).even :=
   ULift.up 1
 
@@ -433,6 +434,7 @@ variable (M N)
 /-- **The inner lift of the inverse comparison**, in even degree:
 the two even blocks descend to the tensor product of the two
 modules. -/
+@[expose]
 noncomputable def baseNuInnerEven :
     (M.tensor N : S.Mod.{u, u, u, u}).even →ₗ[ℂ]
       ((pointMod P : S.Mod.{u, u, u, u}).even →ₗ[ℂ]
@@ -442,6 +444,7 @@ noncomputable def baseNuInnerEven :
     (baseNuFoo_balanced_oeo P) (baseNuFee_balanced_ooe P)
 
 /-- **The inner lift of the inverse comparison**, in odd degree. -/
+@[expose]
 noncomputable def baseNuInnerOdd :
     (M.tensor N : S.Mod.{u, u, u, u}).odd →ₗ[ℂ]
       ((pointMod P : S.Mod.{u, u, u, u}).even →ₗ[ℂ]

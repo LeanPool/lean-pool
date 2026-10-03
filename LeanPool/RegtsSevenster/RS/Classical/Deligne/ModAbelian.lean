@@ -251,6 +251,7 @@ section Biprod
 variable {D : Type u}
 
 /-- The binary bicone carried by the biproduct of two modules. -/
+@[expose]
 noncomputable def modBinaryBicone
     [Category.{v} D] [MonoidalCategory D] [Preadditive D]
     [MonoidalPreadditive D] [HasBinaryBiproducts D] (A : D) [MonObj A]
@@ -1510,6 +1511,7 @@ theorem exists_sublist_iso_of_epi [Category.{v} E] [Abelian E]
 /-! ## Sums of copies of two simple objects -/
 
 /-- The direct sum of `p` copies of `X` and `q` copies of `Y`. -/
+@[expose]
 noncomputable def mixSum [Category.{v} E] [Abelian E]
     (X Y : E) (p q : ℕ) : E :=
   idxSum (id : E → E) (List.replicate p X ++ List.replicate q Y)
