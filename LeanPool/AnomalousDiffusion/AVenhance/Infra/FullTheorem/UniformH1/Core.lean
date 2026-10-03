@@ -71,7 +71,7 @@ theorem holder_of_analytic {b : ℝ → Vec 2 → Vec 2} {κ μ p K : ℝ}
     linarith
   set H := C * N₁ - n0 with hH
   have hH' : (10 + 4 * (2 : ℝ) ^ p * K) * N₁ ≤ H := by
-    rw [hH, hC]; nlinarith
+    rw [hH, hC]; nlinarith only [hn0N]
   intro s hs t ht
   have hhs : |t - s| ≤ 1 := by
     rw [abs_le]; constructor <;> linarith [hs.1, hs.2, ht.1, ht.2]
@@ -167,7 +167,7 @@ theorem holder_of_analytic {b : ℝ → Vec 2 → Vec 2} {κ μ p K : ℝ}
       have : n0 ^ 2 = l2NormSq θ₀ := Real.sq_sqrt hl0
       have hN2 : N₁ ^ 2 = l2NormSq θ₀ + gradNormSq Dθ₀ := Real.sq_sqrt (by linarith)
       rw [mul_pow, hN2]
-      nlinarith
+      nlinarith only [hgsq, hgrg, this, hl0, hg0]
     have hRp1 := one_le_scale (ν := ν) (p := p) hpos hhs hνpos.le hp
     set Rp := (h ^ ν / 2) ^ (-p) with hRp
     have hid : Rp * h ^ μ = (2 : ℝ) ^ p * h ^ ν := rpow_scale_identity hpos hμν
@@ -210,7 +210,7 @@ theorem holder_of_analytic {b : ℝ → Vec 2 → Vec 2} {κ μ p K : ℝ}
     refine hdiff0.trans (h1.trans ?_)
     have : 8 * N₁ ≤ H := by
       have : 0 ≤ 4 * (2 : ℝ) ^ p * K * N₁ := by positivity
-      nlinarith
+      nlinarith only [hH', this, hN₀]
     calc 8 * h ^ ν * N₁ = (8 * N₁) * h ^ ν := by ring
       _ ≤ H * h ^ ν := mul_le_mul_of_nonneg_right this hhν.le
 
