@@ -26,17 +26,20 @@ finds, and register them as instances of `X` itself:
   structures derived from it;
 * `real_normed_space_shortcut_instances p binders : X` does both.
 
-Each instance is named `p.inst` followed by the class name, and unfolds to the instance found by
-the search. All of them are elaborated before any is registered, so the recorded instances are
-exactly the ones that resolution selects without the shortcuts: terms elaborated with and without
-them agree up to unfolding the shortcut. A later query for one of these structures on `X` is
-answered by its shortcut, without a search.
+Each generated declaration is named `p.inst` followed by the class name. Each reducible definition
+unfolds to the instance term captured when its body is elaborated. The generated theorem aliases
+have proposition-valued targets; proof irrelevance applies at a fixed target with fixed data
+parameters. Within one group or scalar batch, the declarations are elaborated before that batch's
+final `attribute [instance]` command. The combined command completes and
+registers the group batch before elaborating the scalar batch. Later invocations and imported
+shortcut modules can therefore see aliases registered by earlier batches.
 
-The one exception is `SeminormedAddCommGroup X`, which is recorded as the seminormed group
-underlying the recorded `NormedAddCommGroup X`. A hypothesis list
-`[NormedAddCommGroup E] [NormedSpace ℝ E]` states its second hypothesis over that seminormed
-group, so the recorded `NormedSpace ℝ X` then matches such a request without comparing two
-seminormed structures field by field.
+`SeminormedAddCommGroup X` is projected from the normed group selected in the same group batch.
+The scalar batch is elaborated after those group aliases are registered. The generated declarations
+are then available as instances for later queries on `X`. This capture order alone does not
+establish that the complete shortcut set reproduces the instance terms from an environment with
+no shortcuts, or that every direct alias is definitionally equal to every higher-class projection
+on every carrier.
 -/
 
 public section

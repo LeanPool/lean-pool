@@ -15,17 +15,20 @@ a search through general instances each time, and are not shared between declara
 
 * **Coercions.** Using a set or a subobject as a type, using an element of a subtype as an
   element of the ambient type, and writing `∞` for a smoothness order each ask for a coercion.
-  The answer is found through the chain of coercion classes, which tries the other kinds of
-  coercion first. The instances of `CoercionShortcut` answer these queries directly; each is the
-  instance that resolution already finds, registered with high priority, so the elaborated
-  coercion is unchanged.
+  The answer is found through the chain of coercion classes. Each `CoercionShortcut` definition
+  records the instance selected for its displayed `CoeT` query when its body is elaborated, then
+  registers that alias at high priority. The declarations are sequential, so a later capture can
+  see earlier aliases. This capture order alone does not establish equality with all coercion
+  queries in an environment preceding the complete shortcut set.
 
 * **Facts about `ℝ`.** Arithmetic on `ℝ` needs that `ℝ` has characteristic zero, that addition
   and multiplication are monotone, that the operations are continuous. None of these is stated
   directly for `ℝ`; each is derived from the ordered field or normed field structure after the
   search has tried the unrelated ways of proving such a fact. The instances of `RealShortcut`
-  state them for `ℝ` itself. All of them are propositions, so they do not change any structure
-  that resolution finds.
+  state them for `ℝ` itself. These 44 theorem aliases have proposition-valued targets; for a
+  fixed target and its data parameters, proof irrelevance identifies their proof values. This
+  does not assert that instance search follows an identical route for other queries with unknown
+  data parameters.
 -/
 
 public section
