@@ -12612,7 +12612,7 @@ projects:
     msc:
       - 05C15
   - slug: paper-iv-clique-trees
-    title: Clique trees and separators of chordal graphs
+    title: Clique trees, subtree representations and chordal treewidth
     summary: >-
       Develops rooted clique forests with the running-intersection property, constructs
       them from perfect elimination orders of finite chordal graphs, characterizes
@@ -12622,6 +12622,11 @@ projects:
       The original library was extracted as a reusable byproduct of the published Paper IV
       formalization of the chordal-graph case of Erdős problem #81; this library
       is not by itself a proof of that paper's partition bound.
+      Gavril's characterization supplies exact finite-tree subtree representations
+      and the converse to chordality. Finite subtree Helly places every finite clique
+      in a bag of any tree decomposition and gives optimal chordal treewidth.
+      The supplied representation includes an empty connector; no minimal-host
+      or runtime bound is claimed.
     branch: graph theory
     entry_module: LeanPool.PaperIVCliqueTree
     authors:
@@ -12637,7 +12642,7 @@ projects:
     status: verified
     provenance: AI
     main_declarations:
-      - SimpleGraph.isChordal_iff_nonempty_cliqueTree
+      - SimpleGraph.isChordal_iff_nonempty_subtreeRepresentation
     main_results:
       - declaration: SimpleGraph.IsChordal.exists_isPEO
         informal: Every finite chordal graph admits a perfect elimination order.
@@ -12655,6 +12660,32 @@ projects:
         informal: >-
           The total bag size minus the total parent-child bag intersection size
           equals the number of graph vertices.
+      - declaration: SimpleGraph.CliqueTree.toSubtreeRepresentation
+        informal: >-
+          A finite rooted clique forest gives nonempty connected vertex sets of
+          a finite host tree, with adjacency of distinct source vertices exactly
+          equivalent to intersection of their assigned sets. Empty and disconnected
+          source graphs are supported through one empty connector node.
+        source_ref: 'Gavril, JCT B 16 (1974), 47–56, doi:10.1016/0095-8956(74)90094-X; constructor using the PR 579 adapter.'
+      - declaration: SimpleGraph.isChordal_iff_nonempty_subtreeRepresentation
+        informal: >-
+          A finite graph on a vertex type in Type is chordal if and only if it has
+          an exact representation by nonempty connected vertex sets of a finite tree.
+        source_ref: 'Gavril, JCT B 16 (1974), 47–56, doi:10.1016/0095-8956(74)90094-X.'
+      - declaration: SimpleGraph.IsTree.finite_subtree_helly
+        informal: >-
+          A finite pairwise-intersecting family of nonempty connected vertex sets
+          of a finite tree has a common vertex; the empty family is also allowed.
+      - declaration: Utilities.Treewidth.TreeDecomposition.exists_clique_subset_bag
+        informal: Every finite clique is contained in one bag of any tree decomposition.
+      - declaration: SimpleGraph.IsChordal.treewidth_succ_eq_cliqueNum
+        informal: >-
+          For every finite nonempty chordal graph on a vertex type in Type,
+          its natural treewidth plus one equals its clique number.
+      - declaration: SimpleGraph.IsChordal.exists_optimal_treeDecomposition
+        informal: >-
+          A finite nonempty chordal graph admits a tree decomposition whose
+          width plus one is its clique number.
       - declaration: SimpleGraph.CliqueGluing.isChordal_iff
         informal: >-
           If two induced pieces cover a finite graph, their overlap is a clique,
