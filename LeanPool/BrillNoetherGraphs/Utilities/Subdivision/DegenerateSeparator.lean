@@ -98,6 +98,7 @@ theorem classCard_pos : 0 < d.classCard :=
 
 /-- The contracted core: one vertex per `rep`-class, one slot per surviving
 slot, endpoints taken `rep`-wise. -/
+@[expose]
 noncomputable def contractedCore : ExplicitPotential.Core d.classCard d.slotCard where
   tail := fun e' =>
     d.classIndex ⟨d.rep (d.core.tail (d.slotIndex.symm e').val), d.rep_idem _⟩
@@ -107,6 +108,7 @@ noncomputable def contractedCore : ExplicitPotential.Core d.classCard d.slotCard
 /-- **The canonical contraction target.**  A genuinely positive
 `SubdivisionGraph.Spec`, so every lemma of the open-orthant layer applies to
 it verbatim. -/
+@[expose]
 noncomputable def contractedSpec :
     SubdivisionGraph.Spec d.classCard d.slotCard where
   core := d.contractedCore
@@ -121,6 +123,7 @@ noncomputable def contractedSpec :
 
 /-- The `DegSpec` is a contraction onto its canonical target.  This is the
 datum a row would otherwise have to produce by hand. -/
+@[expose]
 noncomputable def canonicalContraction : Contraction d d.contractedSpec where
   vtx := fun v' => (d.classIndex.symm v').val
   vtx_rep := fun v' => (d.classIndex.symm v').property

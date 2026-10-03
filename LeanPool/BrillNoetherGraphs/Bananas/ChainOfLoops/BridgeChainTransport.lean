@@ -27,6 +27,7 @@ abbrev bridge (M N : MarkedGraph.{u}) : MarkedGraph.{u} where
   right := Sum.inr N.right
 
 /-- Attach each graph in the list by a bridge, starting from the given marked graph. -/
+@[expose]
 def bridgeChain (M : MarkedGraph.{u}) : List MarkedGraph.{u} → MarkedGraph.{u}
   | [] => M
   | N :: rest => bridgeChain (M.bridge N) rest

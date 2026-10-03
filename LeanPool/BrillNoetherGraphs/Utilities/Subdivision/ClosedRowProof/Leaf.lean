@@ -346,6 +346,7 @@ variable {m n p : ℕ}
 
 /-- The row `rise_e − lo_e·σ_e ≥ 0`, written so that it is *definitionally*
 `(leafCertificate …).lowerForm`. -/
+@[expose]
 def leafLowerForm (m : ℕ) (core : ExplicitPotential.Core n p) (w : Witness)
     (a : Fin n) (e : Fin p) : ExplicitPotential.AffineForm m :=
   ExplicitPotential.AffineForm.sub
@@ -357,6 +358,7 @@ def leafLowerForm (m : ℕ) (core : ExplicitPotential.Core n p) (w : Witness)
 
 /-- The row `hi_e·σ_e − rise_e ≥ 0`, written so that it is *definitionally*
 `(leafCertificate …).upperForm`. -/
+@[expose]
 def leafUpperForm (m : ℕ) (core : ExplicitPotential.Core n p) (w : Witness)
     (a : Fin n) (e : Fin p) : ExplicitPotential.AffineForm m :=
   ExplicitPotential.AffineForm.sub

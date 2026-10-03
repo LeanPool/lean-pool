@@ -218,6 +218,7 @@ theorem PositiveSubdivisionDharConstruction.toPositiveSubdivisionPencil
 /-! ## Closed-orthant constructions -/
 
 /-- The zero-length slots of a closed length vector. -/
+@[expose]
 def zeroSlots {p : ℕ} (length : Fin p → ℕ) : Finset (Fin p) :=
   Finset.univ.filter (fun e => length e = 0)
 

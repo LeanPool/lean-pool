@@ -195,6 +195,7 @@ end RepIndependence
 
 /-- The vanishing slots of a degenerate spec.  Syntactically the `Finset`
 appearing in the `forest` field. -/
+@[expose]
 def zeroSlotSet (d : DegSpec n p) : Finset (Fin p) :=
   Finset.univ.filter (fun e => d.length e = 0)
 

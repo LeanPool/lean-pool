@@ -153,6 +153,7 @@ structure Context where
   eq : List Form
 
 /-- The point `x` satisfies the context. -/
+@[expose]
 def Context.Holds (Γ : Context) (x : List ℤ) : Prop :=
   (∀ g ∈ Γ.ge, 0 ≤ eval g x) ∧ (∀ g ∈ Γ.eq, eval g x = 0)
 

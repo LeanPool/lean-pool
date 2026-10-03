@@ -28,6 +28,7 @@ open Utilities.Certificate.ContractionForestCensusGeneral
 variable {n p : ℕ}
 
 /-- The vanishing slots of a nonnegative length assignment. -/
+@[expose]
 def zeroSet (length : Fin p → ℕ) : Finset (Fin p) :=
   Finset.univ.filter (fun edge => length edge = 0)
 
@@ -36,6 +37,7 @@ def zeroSet (length : Fin p → ℕ) : Finset (Fin p) :=
   simp [zeroSet]
 
 /-- The canonical degenerate subdivision attached to a forest face. -/
+@[expose]
 def censusSpec (core : ExplicitPotential.Core n p) (hn : 0 < n)
     (length : Fin p → ℕ)
     (hForest : IsForest core (zeroSet length))

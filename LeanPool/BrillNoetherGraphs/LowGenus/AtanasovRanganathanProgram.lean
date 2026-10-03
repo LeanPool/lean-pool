@@ -44,6 +44,7 @@ open Certificate.SubdivisionGraph
 /-- A fixed ordered loopless core carries a degree-`degree` rank-one pencil on
 every assignment of positive integral edge lengths.  This is the exact target
 proved by each uniform configuration calculation in the paper. -/
+@[expose]
 def PositiveSubdivisionPencil {n p : ℕ} (core : Core n p)
     (core_nonempty : 0 < n)
     (core_loopless : ∀ edge : Fin p, core.tail edge ≠ core.head edge)

@@ -35,6 +35,7 @@ abbrev Banana (g : ℕ) := Spec 2 (g + 1)
 core with `g + 1` parallel strands, none of which is a loop.  This is the
 coordinate-first constructor behind the notation `B_{n₀,…,nₑ}` and, at
 `g = 2`, `θ_{a,b,c}`. -/
+@[expose]
 def bananaOfLengths (g : ℕ) (length : Fin (g + 1) → ℕ)
     (hpos : ∀ i, 0 < length i) : Banana g where
   core := { tail := fun _ => 0, head := fun _ => 1 }

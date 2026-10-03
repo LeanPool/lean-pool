@@ -89,6 +89,7 @@ variable {m n p : ℕ}
 /-- The closed-orthant segment row.  The first two disjuncts are exactly
 `Valid`'s row (`ℓ_e ≥ 1`); the last two are the relaxation (`ℓ_e ≥ 0`).
 Any one of the four delivers `0 ≤ (segment e).eval point` at a cone point. -/
+@[expose]
 def SegmentRowClosed (certificate : CertificateData m n p) (edge : Fin p) : Prop :=
   AffineForm.positive (certificate.segment edge) = 0 ∨
     AffineForm.positive (certificate.segment edge) ∈ certificate.cone ∨
