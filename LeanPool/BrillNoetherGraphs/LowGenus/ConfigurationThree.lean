@@ -115,6 +115,7 @@ theorem step_zero {L i : ℕ} (hi : i < L) :
   SubdivisionArithmetic.step_zero_of_lt hi
 
 /-- One chip leaves an arm exactly when its ramp has positive height. -/
+@[expose]
 def drain (height : ℕ) : ℤ := if 0 < height then 1 else 0
 
 theorem drain_bounds (height : ℕ) :

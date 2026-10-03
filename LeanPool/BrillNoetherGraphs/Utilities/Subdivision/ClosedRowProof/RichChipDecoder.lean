@@ -212,6 +212,7 @@ both for W4 runs and for W5 endpoint prefixes/suffixes. -/
 /-- The Boolean predicate by which the C checker assigns a raw chip to a
 named point.  The `range (i - 1)` clause makes this the first syntactic match;
 index zero is excluded separately by `chipAt`. -/
+@[expose]
 def chipMatches (w : RichWitness) (a e i : ℕ) (c : ℕ × Form × ℤ) : Bool :=
   c.1 == e && formEq c.2.1 (w.point a e i) &&
     (List.range (i - 1)).all

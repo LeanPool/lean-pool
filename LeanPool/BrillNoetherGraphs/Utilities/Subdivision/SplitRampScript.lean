@@ -50,6 +50,7 @@ open Finset ExplicitPotential
 variable {n p : ℕ} (d : DegSpec n p)
 
 /-- The rise of the ramp from the tail class up to the mark. -/
+@[expose]
 def markRiseIn (potential : Fin n → ℤ) (markValue : Fin p → ℤ) (e : Fin p) : ℤ :=
   markValue e - potential (d.rep (d.core.tail e))
 

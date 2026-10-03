@@ -68,6 +68,7 @@ private theorem sum_range_list_sum {α : Type} (l : List α) (f : ℕ → α →
 
 /-- The head-side chip sum used by `headCandidate`, named so that the bridge
 can be stated without repeating the fold. -/
+@[expose]
 def headChipSum (w : RichWitness) (a e s : ℕ) : ℤ :=
   (List.range (s + 1)).foldl (fun z t =>
     if t = 0 then z else z + w.chipAt a e ((w.blockList a e).length - t)) 0

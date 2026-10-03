@@ -69,6 +69,7 @@ def chipPrefix (w : RichWitness) (a e s : ℕ) : ℤ :=
 
 /-- The W5 tail candidate when precisely the first `s` named points have
 fallen into the tail. -/
+@[expose]
 def tailCandidate (w : RichWitness) (a e s : ℕ) : ℤ :=
   w.chipPrefix a e s + (w.block a e s).lo
 
