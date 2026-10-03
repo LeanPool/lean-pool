@@ -15,7 +15,7 @@ the edges coloured `a` or `b`.  Swapping the two colours on the connected compon
 `x` produces another partial proper edge colouring, colouring exactly the same edges.
 -/
 
-@[expose] public section
+public section
 
 open SimpleGraph Finset
 

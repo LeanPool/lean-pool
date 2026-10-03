@@ -16,7 +16,7 @@ public import Mathlib.Tactic.Tauto
 Basic definitions and extension operations for the fan-and-Kempe proof of Vizing's theorem.
 -/
 
-@[expose] public section
+public section
 
 section
 /-!

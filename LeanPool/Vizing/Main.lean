@@ -16,7 +16,7 @@ Iterating the extension step colours all edges, giving a proper edge colouring w
 `Δ + 1` colours; equivalently, the line graph is `(Δ + 1)`-colourable.
 -/
 
-@[expose] public section
+public section
 
 open SimpleGraph Finset
 

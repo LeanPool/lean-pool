@@ -19,7 +19,7 @@ the termination argument for Kempe recolouring. An equitable colouring also
 has every class bounded by the ceiling of the average size.
 -/
 
-@[expose] public section
+public section
 
 namespace LeanPool.Vizing.EquitableDefinitions
 

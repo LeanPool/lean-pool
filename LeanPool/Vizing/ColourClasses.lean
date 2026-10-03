@@ -15,7 +15,7 @@ Colour classes partition a finite set. For graph edges, properness means
 that two distinct edges of the same colour have disjoint endpoints.
 -/
 
-@[expose] public section
+public section
 
 namespace LeanPool.Vizing.ColourClasses
 
