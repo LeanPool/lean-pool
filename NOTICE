@@ -34,6 +34,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/AsymptoticTrianglePacking https://github.com/jtraverso/erdos-81-chordal-clique-partitions
   LeanPool/BKARForestFormula         https://github.com/scottnarmstrong/bkarforestformula
   LeanPool/BannaiBannaiStanton       https://github.com/AntoineduFresne/Bannai-Bannai-Stanton_Theorem
+  LeanPool/BeckFialaMatrix           https://github.com/jtraverso/lean-pool
   LeanPool/Besicovitch               https://github.com/CoolRmal/Besicovitchs-1-2
   LeanPool/BicausalOT                https://github.com/maxwellapexlab/bicausalot-palomar
   LeanPool/BlockSpectralSensitivity  https://github.com/Timeroot/BS_Lam
@@ -41,6 +42,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/BooleanIsoperimetry       https://github.com/AlexeyMilovanov/BooleanIsoperimetry
   LeanPool/BrauerGroupNew            https://github.com/Whysoserioushah/BrauerGroup
   LeanPool/BrillNoetherGraphs        https://github.com/npflueger/brill-noether-graphs
+  LeanPool/BrooksSubcubic            https://github.com/jtraverso/lean-pool
   LeanPool/BruhatTits                https://github.com/chrisflav/bruhat-tits
   LeanPool/Burkholder                https://github.com/SmaniaD/Burkholder
   LeanPool/CaffarelliKohnNirenberg   https://github.com/scottnarmstrong/CaffarelliKohnNirenberg
@@ -72,6 +74,8 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Dilatations               https://github.com/rndmx/DilCat
   LeanPool/DistanceGeometry          https://github.com/lyfar/distance-geometry-lean
   LeanPool/DomainTheory              https://github.com/catskillsresearch/domain_theory
+  LeanPool/DrossFractionalTriangleDecomposition
+                                     https://github.com/jtraverso/erdos-81-chordal-clique-partitions
   LeanPool/Duality                   https://github.com/madvorak/duality
   LeanPool/EcTateLean                https://github.com/KisaraBlue/ec-tate-lean
   LeanPool/Egrs75                    https://github.com/lyfar/egrs75-lean
@@ -182,9 +186,11 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Odlyzko                   https://github.com/ImperialCollegeLondon/FLT
   LeanPool/OneManifold               https://github.com/sweeneyde/1mfld
   LeanPool/OperatorTheory            https://github.com/savarin/lean-operator-theory
+  LeanPool/OrderClosures             https://github.com/pedrotradacete/OrderClosures
   LeanPool/OrderPQ                   https://github.com/wupr/order-p-q
   LeanPool/PDL                       https://github.com/m4lvin/lean4-pdl
   LeanPool/PFR                       https://github.com/teorth/pfr
+  LeanPool/PaperIVCliqueTree         https://github.com/jtraverso/erdos-81-chordal-clique-partitions
   LeanPool/ParallelPostulate         https://github.com/Richiesutie/ParallelPostulate
   LeanPool/ParameterFreeGradient     https://github.com/yuningyang19/parameter_free_gradient_p
   LeanPool/PebblingLean              https://github.com/pachterlab/P_2026_2
@@ -223,6 +229,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Schoenflies               https://github.com/alonamaloh/schoenflies-lean
   LeanPool/SelbergSieve4             https://github.com/amellendijk/selberg-sieve4
   LeanPool/SemicircleCheck           https://github.com/Wondermonger-daydreaming/semicircle-catalan
+  LeanPool/Sendov                    https://github.com/teorth/sendov
   LeanPool/Sensitivity               https://github.com/SamuelSchlesinger/sensitivity-conjecture
   LeanPool/SetTheory                 https://github.com/znssong/SetTheory
   LeanPool/SeveralComplexVariables   https://github.com/bjbraams/lean-scv
@@ -243,10 +250,12 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/UnconditionalSchauderBasis
                                      https://github.com/SmaniaD/UnconditionalSchauderBasis
   LeanPool/VirasoroProject           https://github.com/kkytola/VirasoroProject
+  LeanPool/Vizing                    https://github.com/jtraverso/erdos-81-chordal-clique-partitions
   LeanPool/Vlasov                    https://github.com/Hydrodynamical/Vlasov_Meanfield_Formalization
   LeanPool/Wallace                   https://github.com/vo-rodrigues/wallace-problem-zfc-paper
   LeanPool/WhiteheadTheorem          https://github.com/jzxia/WhiteheadTheorem
   LeanPool/ZFLean                    https://github.com/VTrelat/ZFLean
+  LeanPool/Zeta32                    https://github.com/dtq1997/zeta2-zeta3-linear-independence
   LeanPool/Zeta3Irrational           https://github.com/ahhwuhu/zeta_3_irrational
   LeanPool/Zeta5Irrational           https://github.com/mo271/Zeta5
   LeanPool/ZetaZeros                 https://github.com/AxiomMath/ZetaZeros
