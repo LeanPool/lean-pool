@@ -668,7 +668,7 @@ theorem chainColimit_mul_assoc
 /-- **The chain colimit as a monoid object**: the unit is the
 included bottom-stage unit and the multiplication is assembled from
 the stagewise multiplications. -/
-@[reducible]
+@[expose, reducible]
 noncomputable def chainColimitMonObj
     [Category.{v} E] (B : ℕ → E) (δ : ∀ n, B n ⟶ B (n + 1))
     [HasColimitsOfShape SmallNat.{v} E] [MonoidalCategory E]

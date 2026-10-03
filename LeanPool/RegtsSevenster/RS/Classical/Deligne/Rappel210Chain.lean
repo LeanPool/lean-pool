@@ -413,7 +413,7 @@ noncomputable def splitAlgebraUnit
 /-- **The local splitting algebra as a monoid object**: the unit is
 the included seed and the multiplication is assembled from the stage
 multiplications through the chain kit. -/
-@[reducible]
+@[expose, reducible]
 noncomputable def splitAlgebraMonObj
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]

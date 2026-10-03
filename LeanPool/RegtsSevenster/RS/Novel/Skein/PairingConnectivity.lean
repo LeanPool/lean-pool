@@ -55,6 +55,7 @@ theorem SamePairing.trans {W : Fragment α} {F : EdgeSubset W}
   fun δ hδ => (h δ hδ).trans (h' δ hδ)
 
 /-- A repair step that preserves the boundary pairing. -/
+@[expose]
 def MatchPreservingStep {W : Fragment α} {F : EdgeSubset W}
     (κ₁ κ₂ : F.RelTransitionSystem) : Prop :=
   ∃ (a b c d : W.Flag) (v : W.Vertex)
@@ -87,6 +88,7 @@ def PairedStep {W : Fragment α} {F : EdgeSubset W}
 
 /-- A pairing-preserving move: a single preserved step or a
 π-restoring pair. -/
+@[expose]
 def MatchPreservingMove {W : Fragment α} {F : EdgeSubset W}
     (κ₁ κ₂ : F.RelTransitionSystem) : Prop :=
   MatchPreservingStep κ₁ κ₂ ∨ PairedStep κ₁ κ₂
@@ -126,6 +128,7 @@ step preserves the signed canonical summand (dischargeable from
 the localized/non-separated ledgers plus the orbit
 parities; two-path moves change the pairing and are excluded by
 the step relation). -/
+@[expose]
 def MatchPreservingLedger : Prop :=
   ∀ {α : Type} [LinearOrder α] {W : Fragment α}
     {F : EdgeSubset W} {k ℓ : ℕ} (hM : MixedFunctional k ℓ)

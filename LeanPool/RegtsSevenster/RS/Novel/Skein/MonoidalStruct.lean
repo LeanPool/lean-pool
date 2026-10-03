@@ -29,6 +29,7 @@ open CategoryTheory
 variable {R : ℕ} (f : EdgeRankParameter R)
 
 /-- The cast isomorphism between equal-arity objects. -/
+@[expose]
 noncomputable def castIso {n m : ℕ} (h : n = m) :
     (SkeinObj.mk n : SkeinObj f) ≅ SkeinObj.mk m where
   hom := bundleMapClass f (finCongr h)
