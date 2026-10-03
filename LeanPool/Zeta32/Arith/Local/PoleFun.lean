@@ -143,6 +143,7 @@ end Adm
 def plc (p : ℕ) (Pl : Finset ℤ) (c : ZMod p) : Finset ℤ := Pl.filter fun r : ℤ => (r : ZMod p) = c
 
 /-- Poles in the same class differ by exactly one power of `p`. -/
+@[expose]
 def Sep (p : ℕ) (Pl : Finset ℤ) : Prop :=
   ∀ r ∈ Pl, ∀ s ∈ Pl, r ≠ s → (r : ZMod p) = s → ¬ (p : ℤ) ^ 2 ∣ r - s
 

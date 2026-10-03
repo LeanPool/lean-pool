@@ -37,6 +37,7 @@ variable (p K : ℕ)
 def Ccl (c : ℕ) : ℕ := if c + 1 ≤ K then (K - (c+1))/p + 1 else 0
 
 /-- Descending enumeration of the residue class represented by `c + 1`. -/
+@[expose]
 def jn (c t : ℕ) : ℕ := c + 1 + p * (Ccl p K c - 1 - t)
 
 lemma Ccl_pos {c : ℕ} {t : ℕ} (ht : t < Ccl p K c) : c + 1 ≤ K := by
@@ -218,6 +219,7 @@ lemma wv_cancelled {n p j : ℕ} (hj : j ≤ n) : wv n p j = 15 * (n:ℚ) + 1 :=
 /-! ## Class costs -/
 
 /-- The Newton-form class cost of `rank_one_GV`. -/
+@[expose]
 def Scl (n p c : ℕ) : ℚ :=
   ∑ k ∈ Finset.range (Ccl p (5*n) c), min (wv n p (jn p (5*n) c k) + 2 * k) 0
 

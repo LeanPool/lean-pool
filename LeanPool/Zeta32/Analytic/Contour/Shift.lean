@@ -119,6 +119,7 @@ lemma right_pt (y : ℝ) : (((3/2 : ℝ)) : ℂ) + (y : ℂ) * Complex.I = tpt y
   unfold tpt; push_cast; ring
 
 /-- The growth hypothesis on the closed strip `1/2 ≤ Re t ≤ 3/2`. -/
+@[expose]
 def PolyGrowth (F : ℂ → ℂ) (C : ℝ) (N : ℕ) : Prop :=
   ∀ t : ℂ, 1/2 ≤ t.re → t.re ≤ 3/2 → ‖F t‖ ≤ C * (1 + |t.im|) ^ N
 

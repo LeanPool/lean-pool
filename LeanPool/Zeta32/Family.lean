@@ -155,6 +155,7 @@ theorem primitiveScale_spec (r : ℚ) (n : ℕ) :
     (primitiveQ r n).map (algebraMap ℤ ℚ) = C (primitiveScale r n) * Q r n :=
   (primitiveQ_proportional r n).choose_spec.2
 /-- Primitive integral determinant polynomial with a positive proportionality factor. -/
+@[expose]
 def P (r : ℚ) (n : ℕ) : ℤ[X] :=
   if 0 < primitiveScale r n then primitiveQ r n else -primitiveQ r n
 
