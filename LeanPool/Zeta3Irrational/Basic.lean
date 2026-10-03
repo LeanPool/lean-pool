@@ -355,16 +355,14 @@ lemma integrableOn_JJ2 (n : ℕ) : MeasureTheory.Integrable (Function.uncurry fu
                   suffices ineq1 : |y * z * x * ((1 - z) / (1 - (1 - y * z) * x))| ≤ 1 from
                     pow_le_one₀ (abs_nonneg _) ineq1
                   rw [show (1 - (1 - y * z) * x) = 1 - x + y * z * x by ring]
-                  by_cases ineq : 1 - x + y * z * x = 0
-                  · simp_all
-                  · have hprod : 0 ≤ y * z * x := mul_nonneg (mul_nonneg hy0.le hz0.le) hx0.le
-                    have hden : 0 < 1 - x + y * z * x :=
-                      add_pos_of_pos_of_nonneg (sub_pos.mpr hx1) hprod
-                    rw [abs_of_nonneg (mul_nonneg hprod
-                      (div_nonneg (sub_pos.mpr hz1).le hden.le)),
-                      ← mul_div_assoc, div_le_one hden]
-                    exact (mul_le_of_le_one_right hprod (sub_le_self 1 hz0.le)).trans
-                      (le_add_of_nonneg_left (sub_pos.mpr hx1).le)
+                  have hprod : 0 ≤ y * z * x := mul_nonneg (mul_nonneg hy0.le hz0.le) hx0.le
+                  have hden : 0 < 1 - x + y * z * x :=
+                    add_pos_of_pos_of_nonneg (sub_pos.mpr hx1) hprod
+                  rw [abs_of_nonneg (mul_nonneg hprod
+                    (div_nonneg (sub_pos.mpr hz1).le hden.le)),
+                    ← mul_div_assoc, div_le_one hden]
+                  exact (mul_le_of_le_one_right hprod (sub_le_self 1 hz0.le)).trans
+                    (le_add_of_nonneg_left (sub_pos.mpr hx1).le)
               · simp only [pow_one]
                 exact le_abs_self (1 - (1 - x.2.1 * x.2.2) * x.1)
             · simp only [abs_pos]; linarith [pos_aux x hx]
