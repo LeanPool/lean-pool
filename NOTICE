@@ -188,6 +188,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/OrderPQ                   https://github.com/wupr/order-p-q
   LeanPool/PDL                       https://github.com/m4lvin/lean4-pdl
   LeanPool/PFR                       https://github.com/teorth/pfr
+  LeanPool/PaperIVCliqueTree         https://github.com/jtraverso/erdos-81-chordal-clique-partitions
   LeanPool/ParallelPostulate         https://github.com/Richiesutie/ParallelPostulate
   LeanPool/ParameterFreeGradient     https://github.com/yuningyang19/parameter_free_gradient_p
   LeanPool/PebblingLean              https://github.com/pachterlab/P_2026_2
