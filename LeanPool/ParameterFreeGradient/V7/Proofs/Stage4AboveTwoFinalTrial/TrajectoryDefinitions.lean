@@ -20,6 +20,7 @@ namespace V7.Stage4AboveTwoFinalTrial
 /-- The accuracy normalized by the trial's smoothness and distance estimates. -/
 @[expose] noncomputable def delta (eps M D : ℝ) : ℝ := eps / (M * D)
 /-- The primal phase error budget `1 / p`. -/
+@[expose]
 noncomputable def etaF (p : ℝ) : ℝ := 1 / p
 /-- The dual phase error budget determined by the normalized accuracy. -/
 @[expose]

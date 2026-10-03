@@ -382,6 +382,7 @@ def BelowTrialOperationalContract (p eps M D : ℝ) (x0 : Point d)
 
 /-- Source carrier for `prop:belowtrial` (B01--B13), with the current no-log
 local count. -/
+@[expose]
 noncomputable def BelowTrialStatement : Prop :=
   ∀ (p : ℝ), 1 < p → p < 2 → ∀ (d : ℕ) (eps M D : ℝ),
     0 < eps → 0 < M → 0 < D → ∀ (x0 : Point d)

@@ -120,6 +120,7 @@ def ControllerPath (G Ma Da : ℝ) (visits : List ControllerVisit)
     | .scale _ => next.M = 2 * current.M ∧ next.D = G / next.M
 
 /-- The realized visits form the permitted geometric sequence of scales and radii. -/
+@[expose]
 def RealizedPathGeometricallyDominated (eps G Ma R : ℝ)
     (visits : List ControllerVisit) : Prop :=
   ∃ (S : ℕ) (lastRadius : ℕ → ℕ),
@@ -156,6 +157,7 @@ def GuardLedgerComplete (p : ℝ) (report : TrialReport d)
 /-- U15--U22: source carrier for `prop:certification`.  Correctness,
 visited bounds, reset behavior, and realized-path accounting are distinct
 conjuncts. -/
+@[expose]
 noncomputable def TrialOutcomeCertificationStatement : Prop :=
   ∀ (p : ℝ), 1 < p → ∀ (d : ℕ) (eps G Ma Da L R : ℝ),
     0 < eps → 0 < G → 0 < Ma → 0 < Da →

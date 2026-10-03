@@ -268,6 +268,7 @@ noncomputable def AboveLowerBaseGradientStatement : Prop :=
       1 / (128 * data.kernel.Mpd * (T : ℝ) ^ (1 + 2 / p))
 
 /-- Source carrier for `lem:above-lower-radius` (L08). -/
+@[expose]
 noncomputable def AboveLowerOptimizerRadiusStatement : Prop :=
   ∀ (p : ℝ), 2 < p → ∀ (d T : ℕ), 2 ≤ d → 1 ≤ T → T ≤ d →
     ∀ kernel : SmoothingKernelData p d, SmoothingKernelAssumptions kernel →
