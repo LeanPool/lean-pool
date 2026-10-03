@@ -28,6 +28,7 @@ namespace RS
 
 /-- The class of the empty fragment in the arity-zero Hom
 space. -/
+@[expose]
 noncomputable def emptyClass (f : ClosedFragment → ℂ) :
     HomSpace f 0 :=
   HomSpace.ofFragment f emptyClosedFragment

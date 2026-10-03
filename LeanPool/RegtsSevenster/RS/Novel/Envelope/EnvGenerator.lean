@@ -63,6 +63,7 @@ variable {D : Type u}
 
 /-- The diagonal comparison from the tensor of embeddings to the
 embedding of the tensor. -/
+@[expose]
 noncomputable def matEmbTensorHom
     [Category.{v} D] [Preadditive D] [MonoidalCategory D]
     (x y : D) :
@@ -81,6 +82,7 @@ noncomputable def matEmbTensorInv
 
 /-- The diagonal isomorphism between the tensor of embeddings and
 the embedding of the tensor. -/
+@[expose]
 noncomputable def matEmbTensorIso
     [Category.{v} D] [Preadditive D] [MonoidalCategory D]
     (x y : D) :

@@ -33,6 +33,7 @@ def blockAssign : (ds : List ℕ) → Fin ds.sum → Fin ds.length
         omega⟩).succ
 
 /-- The iterated tensor of vertex stars over a degree list. -/
+@[expose]
 noncomputable def starTensor : (ds : List ℕ) →
     Fragment (Fin ds.sum)
   | [] => emptyClosedFragment

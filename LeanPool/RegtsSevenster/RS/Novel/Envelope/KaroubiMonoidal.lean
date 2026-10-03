@@ -601,6 +601,7 @@ private theorem braid_inv_nat
 /-- The braiding isomorphism on Karoubi objects, defined prior to the instance
 so that simp lemmas for the `.f` projection are available inside the axiom
 proofs. -/
+@[expose]
 noncomputable def karoubiBraidingIso
     [Category.{v} C] [MonoidalCategory C] [BraidedCategory C]
     (X Y : Karoubi C) :
