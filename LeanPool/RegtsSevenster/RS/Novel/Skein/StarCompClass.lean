@@ -36,6 +36,7 @@ noncomputable def starClass (W : ClosedFragment) :
         0 + (edgeCount W + edgeCount W))))
 
 /-- The strand-bundle class as a `(2m, 0)`-morphism. -/
+@[expose]
 noncomputable def bundleCapClass (m : ℕ) :
     HomSpace f.val ((m + m) + 0) :=
   HomSpace.ofFragment f.val
