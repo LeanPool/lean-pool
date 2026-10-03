@@ -153,6 +153,7 @@ theorem transposeEquiv_trans_self (a b : ℕ) :
 
 /-- **The braiding isomorphism** of the skein category: the
 block-transpose bundle map. -/
+@[expose]
 noncomputable def skeinBraiding (X Y : SkeinObj f) :
     MonoidalCategoryStruct.tensorObj X Y ≅
       MonoidalCategoryStruct.tensorObj Y X where

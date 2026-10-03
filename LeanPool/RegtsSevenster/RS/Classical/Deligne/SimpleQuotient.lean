@@ -179,6 +179,7 @@ instance small_subobject_subset [SmallCategory C] [Abelian C]
 
 /-- A `v`-small copy of a family of subobjects of an ind-object,
 serving as the index of the diagram of its members. -/
+@[expose]
 def SubIndex [SmallCategory C] [Abelian C]
     {A : Ind C} (s : Set (Subobject A)) : Type v :=
   Shrink.{v} ↥s
@@ -235,6 +236,7 @@ theorem isFiltered_subIndex [SmallCategory C] [Abelian C]
   exact isFiltered_of_directed_le_nonempty _
 
 /-- The diagram of the members of a family of subobjects. -/
+@[expose]
 noncomputable def subDiagram [SmallCategory C] [Abelian C]
     {A : Ind C} (s : Set (Subobject A)) :
     SubIndex s ⥤ Ind C where

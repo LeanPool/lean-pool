@@ -117,6 +117,7 @@ variable {C : Type v}
 
 /-- A compatible family of maps into a fixed object, read as a
 diagram in the arrow category. -/
+@[expose]
 noncomputable def arrowDiagram
     [SmallCategory C] {I : Type v} [SmallCategory I] {D : I ⥤ Ind C}
     {Q : Ind C}
@@ -137,6 +138,7 @@ noncomputable def arrowDiagram
 
 /-- **The diagram of images** of a compatible family of maps into a
 fixed object. -/
+@[expose]
 noncomputable def imageDiag
     [SmallCategory C] [Abelian C] {I : Type v} [SmallCategory I]
     {D : I ⥤ Ind C} {Q : Ind C}

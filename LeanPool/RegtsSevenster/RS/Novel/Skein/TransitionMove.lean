@@ -415,6 +415,7 @@ theorem RepairSquare.symm {κ : F.RelTransitionSystem}
 
 /-- One elementary move joins `κ₁` to `κ₂`: some admissible square of
 `κ₁` repairs it to a system matching-equal to `κ₂`. -/
+@[expose]
 def IsRepairStep (κ₁ κ₂ : F.RelTransitionSystem) : Prop :=
   ∃ (a b c d : W.Flag) (v : W.Vertex)
     (h : RepairSquare κ₁ a b c d v),

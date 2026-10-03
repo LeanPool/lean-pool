@@ -86,6 +86,7 @@ identity.  Multiplication: `End.mul_def` reverses composition
 order, and `permFragmentCompose τ σ` gives
 `(permFragment τ).compose (permFragment σ) ≃ permFragment (σ * τ)`,
 so `[P_σ] * [P_τ] = [P_τ] ≫ [P_σ] = [compose P_τ P_σ] = [P_{σ*τ}]`. -/
+@[expose]
 noncomputable def permToEnd (n : ℕ) :
     Equiv.Perm (Fin n) →* skeinEnd f n where
   toFun σ := permClass f n σ

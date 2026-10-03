@@ -702,6 +702,7 @@ repair undoes the re-routing of the first, the composite walk
 change is supported on the two crossing squares, and the two vertex
 negations cancel against the net chord-parity change.  Proved in
 `PairedAssembly.lean`. -/
+@[expose]
 def PairedLedger : Prop :=
   ∀ {α : Type} [LinearOrder α] {W : Fragment α}
     {F : EdgeSubset W} {k ℓ : ℕ} (hM : MixedFunctional k ℓ)

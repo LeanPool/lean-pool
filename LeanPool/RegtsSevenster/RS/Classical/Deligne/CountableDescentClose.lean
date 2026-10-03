@@ -79,6 +79,7 @@ variable {C : Type v}
 /-- **Compactness of an ind-object**, phrased as in
 `RS.Classical.Deligne.IndCompact`: a morphism from the object into a
 filtered colimit factors through a stage of the diagram. -/
+@[expose]
 def IndCompactObj [SmallCategory C]
     (Y : Ind C) : Prop :=
   ∀ {I : Type v} [SmallCategory I] [IsFiltered I] (D : I ⥤ Ind C)

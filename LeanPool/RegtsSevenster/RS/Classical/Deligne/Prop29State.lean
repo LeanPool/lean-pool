@@ -80,6 +80,7 @@ section Steps
 
 /-- **Case (a) of the dévissage**: when every symmetric power of
 the remainder survives, a further unit factor splits off. -/
+@[expose]
 def DevissageStepA [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [HasFiniteBiproducts D]
     [HasCoequalizers D]

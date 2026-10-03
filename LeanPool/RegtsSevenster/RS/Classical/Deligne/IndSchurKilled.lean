@@ -89,7 +89,7 @@ tensorator followed by the image of the evaluation and the counit
 comparison.  Both triangle identities descend from the corresponding
 identities downstairs, whose image is expanded by the oplax
 coherences of `CategoryTheory.Functor.Monoidal`. -/
-@[implicit_reducible]
+@[expose, implicit_reducible]
 def exactPairingMap
     [Category.{v} A] [MonoidalCategory A] {B : Type u'} [Category.{v'} B]
     [MonoidalCategory B] (F : A ⥤ B) [F.Monoidal]

@@ -79,6 +79,7 @@ the boundary pairing (individual repairs may cross two chains and
 change it; the double-crossing example shows single-step
 connectivity fails, and non-adjacent restorations force general
 blocks rather than pairs). -/
+@[expose]
 def PairedStep {W : Fragment α} {F : EdgeSubset W}
     (κ₁ κ₂ : F.RelTransitionSystem) : Prop :=
   (∃ (n : ℕ) (chain : Fin (n + 1) → F.RelTransitionSystem),
