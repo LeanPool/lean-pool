@@ -43,6 +43,7 @@ lemma mapsTo_range_of_comp_comm (C F : V →ₗ[k] V)
   exact LinearMap.congr_fun hF.symm v
 
 /-- The endomorphism induced by `F` on `V / range C`. -/
+@[expose]
 def quotientEnd (C F : V →ₗ[k] V) (hF : F.comp C = C.comp F) :
     (V ⧸ LinearMap.range C) →ₗ[k] (V ⧸ LinearMap.range C) :=
   (LinearMap.range C).mapQ (LinearMap.range C) F

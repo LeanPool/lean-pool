@@ -31,6 +31,7 @@ noncomputable section
 variable {B : Type*} [Ring B]
 
 /-- The zero derivation on a ring. -/
+@[expose]
 def zeroDerivation : OreDivisionDerivation B where
   toFun := 0
   map_zero' := rfl

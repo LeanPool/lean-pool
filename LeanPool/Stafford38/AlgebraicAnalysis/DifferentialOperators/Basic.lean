@@ -46,6 +46,7 @@ theorem commutator_apply (P : End (k := k) (R := R)) (a x : R) :
     commutator P a x = P (a * x) - a * P x := rfl
 
 /-- Differential operators of order at most `n`. -/
+@[expose]
 def order : ℕ → Submodule k (End (k := k) (R := R))
   | 0 =>
       { carrier := {P | ∀ a, commutator P a = 0}
@@ -177,6 +178,7 @@ theorem mul_mem_order {P Q : End (k := k) (R := R)} {m n : ℕ}
             (by simpa only [Nat.succ_add, Nat.add_succ] using ihm (hP a) hQ')
 
 /-- The algebra of all finite-order `k`-linear differential operators on `R`. -/
+@[expose]
 def algebra : Subalgebra k (End (k := k) (R := R)) where
   carrier := {P | ∃ n, P ∈ order n}
   zero_mem' := ⟨0, (order 0).zero_mem⟩

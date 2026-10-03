@@ -122,12 +122,14 @@ The definition is coefficientwise and finite.  It is deliberately not the
 ordinary multiplication of `Polynomial B`: the inner `push` expansion is the
 derivation correction for moving `b` through powers of `x`.
 -/
+@[expose]
 def rightTerm (i : ℕ) (a b : B) (j : ℕ) : Polynomial B :=
   ∑ k ∈ Finset.range (i + 1),
     Polynomial.monomial (i - k + j)
       (a * (Nat.choose i k • (D^[k]) b))
 
 /-- Right multiplication by one coefficient-monomial. -/
+@[expose]
 def rightMulMonomial (p : Polynomial B) (b : B) (j : ℕ) : Polynomial B :=
   p.sum (fun i a => rightTerm D i a b j)
 

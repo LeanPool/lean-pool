@@ -219,6 +219,7 @@ noncomputable def fallingPoly (k : Type*) [CommRing k] : ℕ → k[X]
 
 /-- The Euler corner polynomial `C_r = R₊ - R₋`; its evaluation at `E` is the
 commutator `p ^ r x ^ r - x ^ r p ^ r`. -/
+@[expose]
 noncomputable def cornerPoly (k : Type*) [CommRing k] (r : ℕ) : k[X] :=
   risingPoly k r - fallingPoly k r
 
@@ -315,6 +316,7 @@ theorem potential_elimination (hw : p * x = x * p + 1) (C : k[X])
 /-! ### The main theorem -/
 
 /-- Shifting every exponent of the potential support by `r`. -/
+@[expose]
 def shiftSupport (terms : List (D × ℕ)) (r : ℕ) : List (D × ℕ) :=
   terms.map fun t => (t.1, t.2 + r)
 

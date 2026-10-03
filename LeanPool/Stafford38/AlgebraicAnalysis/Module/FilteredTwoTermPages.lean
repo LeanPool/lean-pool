@@ -45,10 +45,12 @@ namespace FilteredTwoTerm
 variable (K : FilteredTwoTerm k M)
 
 /-- The numerator of `Z_r` in the source. -/
+@[expose]
 def cycles (r : ℕ) (p : ℤ) : Submodule k M :=
   K.G p ⊓ (K.G (p + r)).comap K.f
 
 /-- The numerator of `B_r` in the target. -/
+@[expose]
 def boundaries (r : ℕ) (p : ℤ) : Submodule k M :=
   (K.G p ⊓ (K.G (p - r + 1)).map K.f) ⊔ K.G (p + 1)
 
@@ -81,6 +83,7 @@ instance targetPageAddCommGroup (r : ℕ) (p : ℤ) : AddCommGroup (K.TargetPage
     (K.G p ⧸ (K.boundaries r p).comap (K.G p).subtype))
 
 /-- Apply the filtered differential to a cycle representative. -/
+@[expose]
 def restrictedDrop (r : ℕ) (p : ℤ) :
     K.cycles r p →ₗ[k] K.G (p + r) :=
   (K.f.comp (K.cycles r p).subtype).codRestrict (K.G (p + r))

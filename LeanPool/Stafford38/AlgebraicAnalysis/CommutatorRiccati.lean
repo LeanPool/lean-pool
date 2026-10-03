@@ -25,6 +25,7 @@ namespace AlgebraicAnalysis.InverseEulerRiccati
 variable {A : Type*} [Ring A]
 
 /-- Historical local name for the shared ring commutator. -/
+@[expose]
 def commutator (a b : A) : A := AlgebraicAnalysis.ringCommutator a b
 
 @[simp]

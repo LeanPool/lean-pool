@@ -62,6 +62,7 @@ theorem normalForm_smul_left (D : OreDivisionDerivation K)
 
 /-- Coefficient-left Ore normal form as a linear equivalence over the
 coefficient field. -/
+@[expose]
 def leftNormalFormLinearEquiv (D : OreDivisionDerivation K) :
     Polynomial K ≃ₗ[K] NormalOre D :=
   { normalFormAddEquiv D with

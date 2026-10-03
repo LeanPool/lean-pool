@@ -47,6 +47,7 @@ def zeroSectionPoint (y : Fin n → k) : PhaseVar n → k
   | Sum.inr _ => 0
 
 /-- The point obtained from `(y, 0)` by translating the fibre by `t df_y`. -/
+@[expose]
 def differentialTranslatePoint
     (y : Fin n → k) (f : MvPolynomial (Fin n) k) (t : k) : PhaseVar n → k
   | Sum.inl i => y i
@@ -232,6 +233,7 @@ theorem fibreLinePolynomial_poissonBracket_baseLift
 /-! ## Iterated Hamiltonian differentiation -/
 
 /-- Iteration of bracketing on the left by one base equation. -/
+@[expose]
 def hamiltonIter (f : MvPolynomial (Fin n) k) : ℕ → SymbolRing k n → SymbolRing k n
   | 0, g => g
   | m + 1, g => poissonBracket (baseLift f) (hamiltonIter f m g)

@@ -44,6 +44,7 @@ variable {k A ι : Type*} [Field k] [Ring A] [Algebra k A]
   [Fintype ι] [DecidableEq ι]
 
 /-- Historical namespace for the shared ring commutator. -/
+@[expose]
 def commutator (u v : A) : A := AlgebraicAnalysis.ringCommutator u v
 
 @[simp]

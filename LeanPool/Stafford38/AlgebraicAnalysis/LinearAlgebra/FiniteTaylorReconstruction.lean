@@ -29,6 +29,7 @@ variable {𝕜 : Type*} [Field 𝕜] [CharZero 𝕜]
 variable {V : Type*} [AddCommGroup V] [Module 𝕜 V]
 
 /-- The finite alternating Taylor projector associated with two endomorphisms. -/
+@[expose]
 def projectorMapG (K : ℕ) (S D : V →ₗ[𝕜] V) : V →ₗ[𝕜] V :=
   ∑ r ∈ Finset.range (K + 1),
     ((-1 : 𝕜) ^ r / (r.factorial : 𝕜)) • (S ^ r * D ^ r)
