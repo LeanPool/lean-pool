@@ -29,6 +29,7 @@ structure DeterministicExactPairAlgorithm (d : ℕ) where
   output : Point d → List (Observation d) → Point d
 
 /-- Each trace point is the deterministic algorithm's query for the preceding history. -/
+@[expose]
 def GeneratedBy (algorithm : DeterministicExactPairAlgorithm d) (x0 : Point d)
     (trace : List (Observation d)) : Prop :=
   ∀ (t : ℕ) (ht : t < trace.length),
@@ -278,6 +279,7 @@ noncomputable def AboveLowerOptimizerRadiusStatement : Prop :=
         rT = minimizerDistance p data.completedOracle data.x0
 
 /-- An exact deterministic run with a nonempty trace charging its initial query. -/
+@[expose]
 def ChargedKnownParameterRun (algorithm : DeterministicExactPairAlgorithm d)
     (x0 : Point d) (oracle : PairOracle d) (trace : List (Observation d)) : Prop :=
   GeneratedBy algorithm x0 trace ∧ TraceExact oracle trace ∧

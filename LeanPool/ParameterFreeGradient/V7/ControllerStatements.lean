@@ -147,6 +147,7 @@ def RealizedPathGeometricallyDominated (eps G Ma R : ℝ)
 /-- The complete schedule belongs to the specified local routine.  An early
 success or first failure consumes a prefix; Radius is legal only after the
 entire regime-appropriate schedule has been checked. -/
+@[expose]
 def GuardLedgerComplete (p : ℝ) (report : TrialReport d)
     (schedule : List (ObservableGuardCheck d)) : Prop :=
   report.checkedGuards <+: schedule ∧
