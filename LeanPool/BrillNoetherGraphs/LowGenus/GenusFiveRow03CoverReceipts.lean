@@ -1703,6 +1703,7 @@ def farkasReceipts5 : List Certificate.AffineCover.FarkasData :=
 
 /-- Farkas receipt entries 768 through 795 for the row-03 cover: sparse rational combinations of
 active inequalities used to certify cell inclusion or exclude a branch. -/
+@[expose]
 def farkasReceipts6 : List Certificate.AffineCover.FarkasData :=
   [
     { terms :=

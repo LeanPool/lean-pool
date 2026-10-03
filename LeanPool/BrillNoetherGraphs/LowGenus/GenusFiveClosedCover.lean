@@ -86,6 +86,7 @@ def CoordinateCell.certificate {core : ExplicitPotential.Core n p}
     cell.certificate.cone = cell.cone := rfl
 
 /-- The length point used by a coordinate cell. -/
+@[expose]
 def lengthPoint (length : Fin p → ℕ) : Fin p → ℤ :=
   fun edge => length edge
 
