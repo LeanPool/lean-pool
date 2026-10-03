@@ -86,6 +86,7 @@ theorem exists_total [DecidableRel G.Adj] (hcard : G.maxDegree < Fintype.card C)
 /-! ### From total colourings to colourings of the line graph -/
 
 /-- The optional colour on an unordered pair. -/
+@[expose]
 def edgeOption (c : PEC G C) (e : Sym2 V) : Option C :=
   Sym2.lift ⟨c.col, c.col_symm⟩ e
 

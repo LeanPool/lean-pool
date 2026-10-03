@@ -96,6 +96,7 @@ lemma kempeSwapFun_isSome (c : PEC G C) (a b : C) (x u v : V) :
   · rw [kempeSwapFun_of_not_reachable c a b hu v]
 
 /-- Swapping the colours `a` and `b` on the Kempe component of `x`. -/
+@[expose]
 noncomputable def kempeSwap (c : PEC G C) (a b : C) (x : V) : PEC G C where
   col := c.kempeSwapFun a b x
   col_symm := by

@@ -22,6 +22,7 @@ namespace LeanPool.Vizing.ColourClasses
 variable {α β : Type*} [DecidableEq β]
 
 /-- The elements of `S` assigned the literal colour `b`. -/
+@[expose]
 def colourClass (S : Finset α) (colour : α → β) (b : β) : Finset α :=
   S.filter fun a => colour a = b
 
@@ -67,6 +68,7 @@ theorem card_eq_sum_card_colourClass (S : Finset α) (colour : α → β) :
 variable {V : Type*} [DecidableEq V]
 
 /-- Two distinct edges assigned the same colour have no common endpoint. -/
+@[expose]
 def ProperOn (E : Finset (Sym2 V)) (colour : Sym2 V → β) : Prop :=
   ∀ e ∈ E, ∀ f ∈ E, e ≠ f → colour e = colour f →
     Disjoint e.toFinset f.toFinset
