@@ -77,11 +77,13 @@ def row04Core : Core :=
     head := ![1, 1, 4, 5, 5, 6, 7, 7, 3, 2, 2, 0] }
 
 /-- Figure scope 5 (`a6,b6,c6,d6,x,y,e6,f6`). -/
+@[expose]
 def row05Core : Core :=
   { tail := ![0, 0, 2, 1, 2, 3, 5, 2, 4, 4, 6, 6]
     head := ![1, 1, 0, 3, 5, 5, 7, 4, 6, 3, 7, 7] }
 
 /-- Figure scope 6 (`a6,b6,c6,d6,e6,f6,q6,p6`). -/
+@[expose]
 def row06Core : Core :=
   { tail := ![0, 0, 2, 1, 2, 7, 7, 6, 3, 2, 4, 4]
     head := ![1, 1, 0, 3, 7, 6, 6, 3, 5, 4, 5, 5] }
@@ -93,26 +95,31 @@ def row07Core : Core :=
     head := ![2, 1, 3, 1, 3, 4, 5, 7, 6, 6, 7, 7] }
 
 /-- Figure scope 8 (`a6,b6,c6,j6,d6,h6,e6,f6`). -/
+@[expose]
 def row08Core : Core :=
   { tail := ![0, 0, 6, 3, 1, 2, 4, 5, 5, 2, 6, 6]
     head := ![1, 1, 3, 0, 4, 4, 5, 7, 2, 3, 7, 7] }
 
 /-- Figure scope 9 (`31,32,33,34,35,36,311,312`). -/
+@[expose]
 def row09Core : Core :=
   { tail := ![0, 2, 1, 2, 1, 3, 4, 5, 0, 3, 6, 6]
     head := ![2, 1, 0, 5, 4, 4, 5, 3, 6, 7, 7, 7] }
 
 /-- Figure scope 10 (`31,32,33,34,35,36,37,38`). -/
+@[expose]
 def row10Core : Core :=
   { tail := ![0, 2, 1, 2, 1, 3, 4, 6, 6, 5, 0, 5]
     head := ![2, 1, 0, 5, 4, 4, 6, 7, 7, 3, 3, 7] }
 
 /-- Figure scope 11 (outer square and inner square). -/
+@[expose]
 def row11Core : Core :=
   { tail := ![0, 1, 3, 2, 4, 5, 7, 6, 4, 5, 7, 6]
     head := ![1, 3, 2, 0, 5, 7, 6, 4, 0, 1, 3, 2] }
 
 /-- Figure scope 12, omitting the anomalous extra self-loop command. -/
+@[expose]
 def row12Core : Core :=
   { tail := ![0, 4, 2, 3, 0, 1, 5, 6, 7, 5, 6, 7]
     head := ![4, 2, 3, 1, 3, 4, 6, 7, 5, 0, 1, 2] }
@@ -124,16 +131,19 @@ def row13Core : Core :=
     head := ![2, 1, 3, 1, 3, 6, 5, 7, 5, 7, 4, 5] }
 
 /-- Figure scope 14 (`a,b,c,d,e,f,g,h`). -/
+@[expose]
 def row14Core : Core :=
   { tail := ![0, 7, 7, 7, 0, 2, 3, 1, 5, 4, 2, 3]
     head := ![6, 1, 6, 6, 2, 3, 1, 5, 4, 0, 5, 4] }
 
 /-- Figure scope 15, with cyclic vertex labels `O1, ..., O8`. -/
+@[expose]
 def row15Core : Core :=
   { tail := ![0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 7]
     head := ![1, 2, 3, 4, 5, 6, 7, 0, 4, 5, 6, 3] }
 
 /-- Figure scope 16, omitting the anomalous extra self-loop command. -/
+@[expose]
 def row16Core : Core :=
   { tail := ![0, 4, 2, 3, 0, 3, 5, 6, 7, 5, 6, 7]
     head := ![4, 2, 3, 1, 1, 4, 6, 7, 5, 0, 1, 2] }

@@ -64,6 +64,7 @@ open Utilities.Certificate.CubicMatrixReplay
 in order, with the `k`-th summand bounded by the `k`-th capacity.  This is the
 branch set of one vertex of the completion tree: the remaining degree of the
 current vertex is distributed over the vertices that come after it. -/
+@[expose]
 def boundedCompositions (total : ℕ) : List ℕ → List (List ℕ)
   | [] => if total = 0 then [[]] else []
   | capacity :: capacities =>
@@ -420,6 +421,7 @@ theorem follows_capsOf_rowsOf {n deg : ℕ} {M : ℕ → ℕ → ℕ}
 
 /-- The entry of a symmetric matrix recovered from its strict-upper-triangular
 row list. -/
+@[expose]
 def entryOf (rows : List (List ℕ)) (i j : ℕ) : ℕ :=
   if i < j then (rows.getD i []).getD (j - i - 1) 0
   else if j < i then (rows.getD j []).getD (i - j - 1) 0
