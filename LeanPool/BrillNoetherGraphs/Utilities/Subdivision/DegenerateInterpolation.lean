@@ -135,6 +135,7 @@ def pathValue (potential : Fin n → ℤ) (e : Fin p) (k : ℕ) : ℤ :=
 /-- Extend a rep-invariant core potential over every surviving slot by the
 canonical convex interpolation.  Collapsed slots contribute nothing: they carry
 no interior vertex and their two endpoints are already one class. -/
+@[expose]
 def interpolatedScript (potential : Fin n → ℤ) : firingScript d.graph :=
   d.slotValueScript potential (d.pathValue potential)
 

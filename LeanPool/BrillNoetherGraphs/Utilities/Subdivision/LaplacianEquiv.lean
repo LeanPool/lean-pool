@@ -49,6 +49,7 @@ instance : CoeFun (LaplacianEquiv G H) (fun _ => G.V → H.V) :=
 basic transport API rather than in a particular subdivision construction, so
 proof-carrying normalization certificates can combine independent graph
 presentations without changing universes. -/
+@[expose]
 def trans {K : CFGraph.{w}} (first : LaplacianEquiv G H)
     (second : LaplacianEquiv H K) : LaplacianEquiv G K where
   toEquiv := first.toEquiv.trans second.toEquiv

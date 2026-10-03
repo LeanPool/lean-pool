@@ -25,6 +25,7 @@ namespace Bananas
 open Utilities
 
 /-- The support of the affine simple reflection indexed by `i` modulo `k`. -/
+@[expose]
 def affineReflectionSupport (k : ℕ) (i : ℤ) : Set ℤ :=
   {n | (k : ℤ) ∣ n - i}
 

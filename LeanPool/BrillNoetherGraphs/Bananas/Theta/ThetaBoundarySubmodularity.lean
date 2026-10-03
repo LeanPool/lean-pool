@@ -829,6 +829,7 @@ vertices may be presented on any strand.  The first clause is the genuinely
 different-strand case (both coordinates must be interior).  The second says
 that the two physical marked vertices are, in either order, one of the three
 normalized same-strand boundary pairs. -/
+@[expose]
 def ThetaAllSubmodularCoordinates
     (B : Banana 2) (alpha beta : Fin 3)
     (i : B.PathPosition alpha) (j : B.PathPosition beta) : Prop :=

@@ -82,6 +82,7 @@ variable {K : CFGraph.{u}} (first second : OneVertexCut K)
 -- constructions no longer unfolds them; use the previous transparency locally.
 /-- The second cut may be viewed inside the right factor of the first when
 its left side is contained in that factor. -/
+@[expose]
 noncomputable def restrictRight
     (hLeft : second.left ⊆ first.right) : OneVertexCut first.rightGraph where
   left := Finset.univ.filter fun z => z.val ∈ second.left

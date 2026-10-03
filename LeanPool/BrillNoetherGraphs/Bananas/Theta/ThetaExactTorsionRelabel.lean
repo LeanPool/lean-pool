@@ -44,6 +44,7 @@ theorem thetaNormalizeSlots_apply_right (alpha beta : Fin 3) :
 
 /-- The same banana presentation with its strand occurrences normalized so
 that `alpha` and `beta` become slots `0` and `1`. -/
+@[expose]
 def thetaNormalizedBanana (B : Banana 2) (alpha beta : Fin 3) : Banana 2 :=
   specReindex B (Equiv.refl (Fin 2)) (thetaNormalizeSlots alpha beta) (by omega)
 

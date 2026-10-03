@@ -36,6 +36,7 @@ def normalizeFirstInversion (k : ℕ) (p : ℤ × ℤ) : ℤ × ℤ :=
   (p.1 % k, p.2 - (p.1 / k) * k)
 
 /-- The rectangular family of inversions crossing both coordinate axes. -/
+@[expose]
 def crossingInversions (τ : ℤ → ℤ) : Set (ℤ × ℤ) :=
   northwestSet τ 1 0 ×ˢ southeastSet τ 1 0
 

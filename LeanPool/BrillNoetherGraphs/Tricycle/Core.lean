@@ -162,6 +162,7 @@ theorem tricycleSpec_genus (length : Fin 15 → ℕ) (hpos : ∀ e, 0 < length e
 
 /-- **A tricycle graph**: the transition slots are not subdivided.  This is the
 characterisation at line 537 of the source's TeX, not Definition 3.1. -/
+@[expose]
 def IsTricycle (length : Fin 15 → ℕ) : Prop := ∀ i : Fin 3, length (transitionSlot i) = 1
 
 end Utilities.Tricycle

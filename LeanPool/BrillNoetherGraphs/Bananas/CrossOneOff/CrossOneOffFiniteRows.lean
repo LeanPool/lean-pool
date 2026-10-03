@@ -26,6 +26,7 @@ open Utilities
 
 /-- Ordered pairs of rows in `[lo, hi]` on which a finite row function is
 strictly decreasing. -/
+@[expose]
 def finiteRowInversionPairs (lo hi : ℕ) (row : ℕ → ℕ) :
     Finset (ℕ × ℕ) :=
   ((Finset.Icc lo hi).product (Finset.Icc lo hi)).filter fun ij =>

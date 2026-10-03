@@ -195,6 +195,7 @@ theorem prin_eq_sum_steps (script : firingScript d.graph) (v : d.Vertex) :
 /-- A slope datum for a firing script: the script rises by `slope edge k`
 across the `k`-th unit step of slot `edge`.  Vanishing slots impose no
 condition, since they carry no unit step. -/
+@[expose]
 def IsStepSlope (script : firingScript d.graph) (slope : Fin p → ℕ → ℤ) :
     Prop :=
   ∀ (e : Fin p) (o : Fin (d.length e)),

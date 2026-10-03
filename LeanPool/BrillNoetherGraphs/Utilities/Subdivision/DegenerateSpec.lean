@@ -228,6 +228,7 @@ theorem pathVertex_eq_of_val_eq (e : Fin p) {j k : d.PathPosition e}
 /-- A path position clamped into range.  On a slot the certificate actually
 uses this is the identity; it exists so that a *generic* statement can name a
 position on every slot without carrying a bound for the slots it ignores. -/
+@[expose]
 def clampPos (d : DegSpec n p) (e : Fin p) (k : ℕ) : d.PathPosition e :=
   ⟨min k (d.length e), by omega⟩
 
@@ -247,6 +248,7 @@ clamped to the head, which is where a chip pushed off the end belongs.
 It lives here rather than beside its first consumer because the two consumers
 sit on independent branches of the tower: ramp scripts read chips off it, and
 `Certificate/ScaleQReduced.lean` walks along it. -/
+@[expose]
 def pathAt (d : DegSpec n p) (e : Fin p) (k : ℕ) : d.Vertex :=
   d.pathVertex e (d.clampPos e k)
 

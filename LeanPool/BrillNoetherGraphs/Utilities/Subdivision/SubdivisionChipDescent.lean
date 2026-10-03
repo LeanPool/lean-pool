@@ -289,6 +289,7 @@ def coarseStep (c : spec.Chip N) : spec.Step :=
   ⟨c.edge, ⟨c.step, c.step_lt⟩⟩
 
 /-- The coarse vertex the chip is rounded to. -/
+@[expose]
 def coarseVertex (c : spec.Chip N) : spec.Vertex :=
   if c.toRight then spec.stepRight c.edge ⟨c.step, c.step_lt⟩
   else spec.stepLeft c.edge ⟨c.step, c.step_lt⟩

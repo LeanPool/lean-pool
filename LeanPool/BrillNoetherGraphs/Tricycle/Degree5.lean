@@ -47,6 +47,7 @@ variable {spec : Spec 7 15}
 /-! ## Aggregates -/
 
 /-- The chips on the closed transition path `i`, from `vᵢ⁺` to `vᵢ₊₁⁻`. -/
+@[expose]
 def transitionPathChips (spec : Spec 7 15) (D : CFDiv spec.graph) (i : Fin 3) : ℤ :=
   D (spec.coreVertex (vPlus i)) + spec.slotInteriorChips D (transitionSlot i)
     + D (spec.coreVertex (vMinus (i + 1)))

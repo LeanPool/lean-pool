@@ -65,10 +65,12 @@ noncomputable def swapTransmissionPermutation
   rawAffineReflection (rawInverse tau)
 
 /-- Simultaneously translate a pair by an integral number of periods. -/
+@[expose]
 def shiftPair (k : ℕ) (q : ℤ) (p : ℤ × ℤ) : ℤ × ℤ :=
   (p.1 + q * k, p.2 + q * k)
 
 /-- Normalize the first coordinate of a pair into the standard period. -/
+@[expose]
 def normalizeFirstPair (k : ℕ) (p : ℤ × ℤ) : ℤ × ℤ :=
   (p.1 % k, p.2 - (p.1 / k) * k)
 

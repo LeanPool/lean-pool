@@ -107,6 +107,7 @@ noncomputable def root (marker : Fin core.loopCount)
   (cut split spec marker hCore hCompatible).leftGlue
 
 /-- The wedge isomorphism in base-first orientation. -/
+@[expose]
 noncomputable def wedgeIso (marker : Fin core.loopCount)
     (hCore : spec.core = split.splitCore)
     (hCompatible : PseudocoreSplitGlue.Compatible split) :
@@ -153,6 +154,7 @@ theorem base_genus (marker : Fin core.loopCount)
 
 /-- Compose a presentation of `G` by the split subdivision with the
 base-first marker wedge isomorphism. -/
+@[expose]
 noncomputable def wedgeEquiv {G : CFGraph} (marker : Fin core.loopCount)
     (hCore : spec.core = split.splitCore)
     (hCompatible : PseudocoreSplitGlue.Compatible split)

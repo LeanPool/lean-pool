@@ -93,6 +93,7 @@ structure RampData (d : DegSpec n p) (pot : Fin n → ℤ) (sgn : Fin p → ℤ)
   repInv : ∀ v : Fin n, pot (d.rep v) = pot v
 
 /-- The ramp firing script. -/
+@[expose]
 def rampScript (d : DegSpec n p) (pot : Fin n → ℤ) (sgn : Fin p → ℤ)
     (lo : Fin p → ℕ) (t : ℕ) : firingScript d.graph :=
   d.slotValueScript pot (d.rampValue pot sgn lo t)
