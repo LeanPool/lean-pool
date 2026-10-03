@@ -36,6 +36,7 @@ structure FlexiblePrimeRefinementStep
   certificate : PrimeRefinementSeparator model hA phi
 
 /-- Model-independent prime-refinement theorem. -/
+@[expose]
 def FlexiblePrimeRefinementTheorem : Prop :=
   ∀ (p : Nat) (hp : Nat.Prime p)
     (K : Geometry.ConvexBody Plane) (A : Real) (hA : 0 < A)
