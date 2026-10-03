@@ -110,6 +110,17 @@ lemma J_rs_linear {r s : ℕ} (h : r > s) : ∃ a : ℤ, J r s = a / (d (Finset.
     rw [← Nat.cast_sub (by linarith)]
     norm_cast; linarith
 
+/-- Constant monomial weights preserve integrability of the Apéry integrand. -/
+lemma integrableOn_weighted_J (r s : ℕ) (p q : ℝ) :
+    MeasureTheory.IntegrableOn
+      (fun (x : ℝ × ℝ) ↦ -Real.log (x.1 * x.2) / (1 - x.1 * x.2) *
+        p * x.1 ^ r * q * x.2 ^ s)
+      (Set.Ioo 0 1 ×ˢ Set.Ioo 0 1) := by
+  unfold MeasureTheory.IntegrableOn
+  convert (integrableOn_J_rs r s).mul_const (p * q) using 1
+  funext x
+  ring
+
 lemma multi_integral_sum_comm (c : ℕ → ℤ) :
     ∫ (x : ℝ × ℝ) in Set.Ioo 0 1 ×ˢ Set.Ioo 0 1,
     ∑ x_1 ∈ Finset.range (n + 1), ∑ x_2 ∈ Finset.range (n + 1),
@@ -129,15 +140,7 @@ lemma multi_integral_sum_comm (c : ℕ → ℤ) :
       congr! 1 with a _
       rw [← MeasureTheory.integral_finsetSum]
       intro i _
-      have h :
-          (fun (x : ℝ × ℝ) ↦ -Real.log (x.1 * x.2) / (1 - x.1 * x.2) *
-            ↑(c a) * x.1 ^ a * ↑(c i) * x.2 ^ i) =
-          fun x ↦ -Real.log (x.1 * x.2) / (1 - x.1 * x.2) *
-            x.1 ^ a * x.2 ^ i * (↑(c i) * ↑(c a)) := by
-        ext x; ring
-      rw [h]
-      apply MeasureTheory.Integrable.mul_const
-      exact integrableOn_J_rs a i
+      exact integrableOn_weighted_J a i (c a) (c i)
     _ = ∫ (x : ℝ × ℝ) in Set.Ioo 0 1 ×ˢ Set.Ioo 0 1,
       ∑ x_1 ∈ Finset.range (n + 1), ∑ x_2 ∈ Finset.range (n + 1),
       -(x.1 * x.2).log / (1 - x.1 * x.2) * ↑(c x_1) * x.1 ^ x_1 *
@@ -146,15 +149,7 @@ lemma multi_integral_sum_comm (c : ℕ → ℤ) :
       intro i _
       apply MeasureTheory.integrable_finsetSum
       intro j _
-      have h :
-          (fun (x : ℝ × ℝ) ↦ -Real.log (x.1 * x.2) / (1 - x.1 * x.2) *
-            ↑(c i) * x.1 ^ i * ↑(c j) * x.2 ^ j) =
-          fun x ↦ -Real.log (x.1 * x.2) / (1 - x.1 * x.2) *
-            x.1 ^ i * x.2 ^ j * (↑(c i) * ↑(c j)) := by
-        ext x; ring
-      rw [h]
-      apply MeasureTheory.Integrable.mul_const
-      exact integrableOn_J_rs i j
+      exact integrableOn_weighted_J i j (c i) (c j)
 
 lemma multi_integral_mul_const (c d : ℕ) (p q : ℝ) :
     ∫ (x : ℝ × ℝ) in Set.Ioo 0 1 ×ˢ Set.Ioo 0 1,
