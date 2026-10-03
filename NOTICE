@@ -118,6 +118,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/GapCVP                    https://github.com/openai/ten-proofs
   LeanPool/GoemansFlow               https://github.com/jyh/dinitz-verify
   LeanPool/GranvilleMoore            https://github.com/AxiomMath/GranvilleMoore
+  LeanPool/GraphColouringMatching    https://github.com/jtraverso/lean-pool
   LeanPool/HadwigerNelsonBounds      https://github.com/lyfar/hadwiger-nelson-bounds-lean
   LeanPool/HansonWright              https://github.com/Lean-MoDS/StatsMLlib
   LeanPool/HardSphereNBC             https://github.com/ukiyois/hs-virial-nbc-identity
@@ -149,6 +150,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/LehmerE10                 https://github.com/dillon-11/lehmer-E10
   LeanPool/Lentil                    https://github.com/verse-lab/Lentil
   LeanPool/LiCriterion               https://github.com/nicholasbulka/li-criterion-rh-equivalence-lean
+  LeanPool/ListEdgeColoringComplete  https://github.com/jtraverso/haggkvist-janssen
   LeanPool/LocalComplexGeometry      https://github.com/BochaoKong/nullstellensatz
   LeanPool/LongGapsBetweenPrimes     https://github.com/openai/LongGapsBetweenPrimes
   LeanPool/LowDimSolvClassification  https://github.com/LieLean/LowDimSolvClassification
@@ -237,6 +239,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/SpectralPositivity        https://github.com/mrdouglasny/spectral-positivity
   LeanPool/SpectralTheory            https://github.com/savarin/lean-spectral-theory
   LeanPool/SpherePacking             https://github.com/openai/ten-proofs
+  LeanPool/Stafford38                https://github.com/itpplasma/stafford38-formal
   LeanPool/StallingsFolding          https://github.com/Arthur742Ramos/stallings-folding
   LeanPool/SumDifferenceExponent     https://github.com/linhaowei1/sum-diff-proof
   LeanPool/SumsThreeSquares          https://github.com/pitmonticone/SumsThreeSquares
