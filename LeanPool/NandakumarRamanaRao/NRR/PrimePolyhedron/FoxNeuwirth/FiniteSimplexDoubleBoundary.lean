@@ -31,6 +31,7 @@ open SphereOddDegree.AffineBarycentricSubdivision
 open EquivariantPrismNonhorizontalCancellation
 
 /-- Ordered pairs of distinct vertices of an `(n+2)`-simplex. -/
+@[expose]
 def DeletedVertexPair (n : Nat) :=
   {z : Fin (n + 3) × Fin (n + 3) // z.1 ≠ z.2}
 

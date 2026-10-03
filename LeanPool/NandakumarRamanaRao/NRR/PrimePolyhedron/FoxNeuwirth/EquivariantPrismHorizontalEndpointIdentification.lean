@@ -535,6 +535,7 @@ theorem refinedSidePrismMap_not_upperHorizontal
 /-! ## Endpoint pairing for an arbitrary affine-facet weight -/
 
 /-- Restrict an arbitrary facet-map weight to the lower horizontal faces. -/
+@[expose]
 noncomputable def weightedLowerMapWeight
     (W : (Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) → ZMod p)
     (tau : Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) : ZMod p := by
@@ -542,6 +543,7 @@ noncomputable def weightedLowerMapWeight
   exact if MapIsLowerHorizontal tau then W tau else 0
 
 /-- Restrict an arbitrary facet-map weight to the upper horizontal faces. -/
+@[expose]
 noncomputable def weightedUpperMapWeight
     (W : (Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) → ZMod p)
     (tau : Delta (p - 1) → Realization p × Set.Icc (0 : Real) 1) : ZMod p := by

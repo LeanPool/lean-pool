@@ -178,15 +178,18 @@ def alternatingSign (k : Fin (p + 1)) : ZMod p :=
     if C.facetClass o = s then C.coefficient o.1 * alternatingSign o.2 else 0
 
 /-- A local facet occurrence lies in the fixed lower horizontal boundary. -/
+@[expose]
 def IsLowerFacetOccurrence (o : C.FacetOccurrence) : Prop :=
   ∀ i : Fin p, (C.facetSignature o i).time.1 = 0
 
 /-- A local facet occurrence lies in the fixed upper horizontal boundary. -/
+@[expose]
 def IsUpperFacetOccurrence (o : C.FacetOccurrence) : Prop :=
   ∀ i : Fin p, (C.facetSignature o i).time.1 = 1
 
 /-- Lower-horizontal status is well-defined on ordered quotient-facet classes because
 prime symmetry preserves the interval coordinate. -/
+@[expose]
 noncomputable def IsLowerFacet : C.Facet → Prop :=
   Quotient.lift C.IsLowerFacetOccurrence (by
     intro a b hab
@@ -207,6 +210,7 @@ noncomputable def IsLowerFacet : C.Facet → Prop :=
 
 /-- Upper-horizontal status is well-defined on ordered quotient-facet classes because prime
 symmetry preserves the interval coordinate. -/
+@[expose]
 noncomputable def IsUpperFacet : C.Facet → Prop :=
   Quotient.lift C.IsUpperFacetOccurrence (by
     intro a b hab
@@ -226,6 +230,7 @@ noncomputable def IsUpperFacet : C.Facet → Prop :=
       exact hb i)
 
 /-- A geometric facet is horizontal when it belongs to either fixed endpoint boundary. -/
+@[expose]
 def IsHorizontalFacet (s : C.Facet) : Prop :=
   C.IsLowerFacet s ∨ C.IsUpperFacet s
 
@@ -929,16 +934,19 @@ theorem eval_restrictedCodimTwoMinorPolynomial
   exact eval_codimTwoMinorPolynomial hp C (replaceMovable hp C base move) q f
 
 /-- An ordered codimension-two face is purely lower horizontal. -/
+@[expose]
 def IsLowerHorizontalCodimTwo
     (q : C.Cell) (f : CodimTwoFace p) : Prop :=
   ∀ i : Fin (p - 1), (C.vertex q (codimTwoVertex hp f i)).time.1 = 0
 
 /-- An ordered codimension-two face is purely upper horizontal. -/
+@[expose]
 def IsUpperHorizontalCodimTwo
     (q : C.Cell) (f : CodimTwoFace p) : Prop :=
   ∀ i : Fin (p - 1), (C.vertex q (codimTwoVertex hp f i)).time.1 = 1
 
 /-- Purely horizontal codimension-two faces are excluded from the movable full-minor family. -/
+@[expose]
 def IsPurelyHorizontalCodimTwo
     (q : C.Cell) (f : CodimTwoFace p) : Prop :=
   IsLowerHorizontalCodimTwo hp C q f ∨ IsUpperHorizontalCodimTwo hp C q f
@@ -973,6 +981,7 @@ noncomputable def restrictedGenericityPolynomial
   | Sum.inr qf => restrictedCodimTwoMinorPolynomial hp C base qf.1.1 qf.1.2
 
 /-- Real determinant family corresponding to a full boundary-relative assignment. -/
+@[expose]
 noncomputable def genericityValue
     (a : Assignment hp C) : RelativeGenericityIndex hp C → Real
   | Sum.inl qk => VertexMap.facetDeterminant hp (localVertexMap hp C a qk.1) qk.2
