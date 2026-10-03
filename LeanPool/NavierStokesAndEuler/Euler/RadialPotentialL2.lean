@@ -37,7 +37,7 @@ open scoped ENNReal
 
 namespace Euler.ComparatorBridge
 
-local notation "Space" => EuclideanSpace ℝ (Fin 3)
+local notation "Space" => (EuclideanSpace ℝ (Fin 3))
 
 /-- A square substitution removes the singular weight in the radial estimate. -/
 theorem radial_average_eq_quadratic (u : Space → Space) (hu : Continuous u) (x : Space) :

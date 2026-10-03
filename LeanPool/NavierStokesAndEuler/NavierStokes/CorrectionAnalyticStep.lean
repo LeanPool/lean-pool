@@ -413,9 +413,9 @@ variable {ι : Type} (G : SignedMeanGain.Geometry)
     (a : SignedMeanGain.Assembly f)
     (q₂ : OscillatoryScalar Point) (e₂ : Oscillation Point)
 
-local notation "u₁" => SignedMeanGain.waveStage G.gauge c u w₁ q₁ e₁
-local notation "w₂" => SignedMeanGain.tangentField f a + SignedMeanGain.curlField f a
-local notation "u₂" => SignedMeanGain.waveStage G.gauge c u₁ w₂ q₂ e₂
+local notation "u₁" => (SignedMeanGain.waveStage G.gauge c u w₁ q₁ e₁)
+local notation "w₂" => (SignedMeanGain.tangentField f a + SignedMeanGain.curlField f a)
+local notation "u₂" => (SignedMeanGain.waveStage G.gauge c u₁ w₂ q₂ e₂)
 
 /-- The two actual wave updates, temporal inverse, and rank solve form one
 mean/debt gain. All intermediate residual and flux regularity is derived
@@ -578,9 +578,9 @@ variable (hcs : ∀ l, SameCarrier (v.blocks l) ((ofGeometry G h index axial par
     (hP1 : ∀ l n x, x ∈ G.strip.domain → P l n x ≤ 1)
     (hkp : ∀ l n, (v.blocks l).angularFrequency n ≠ 0)
 
-local notation "F" => signedFamily (ofGeometry G h index axial particular signed r) v c u primary P
+local notation "F" => (signedFamily (ofGeometry G h index axial particular signed r) v c u primary P
     hσ N hprimary hband hcp hcs
-  hold hdiff hpart htangent hcurl hP0 hP1 hkp
+  hold hdiff hpart htangent hcurl hP0 hP1 hkp)
 
 /-- The complete measured-mean gain for `next`. The signed family is
 computed from this cycle's actual particular, tangent, and curl blocks;
@@ -1048,7 +1048,7 @@ variable {ι : Type} (G : SignedMeanGain.Geometry)
     (primary : ι → HarmonicBlock Point) (P : ι → ℕ → Point → ℝ)
     (S : ι → ℕ → Set Point) {σ κ : ℝ}
 
-local notation "p" => CycleParameters.ofGeometry G h index axial particular signed r
+local notation "p" => (CycleParameters.ofGeometry G h index axial particular signed r)
 local notation "v" => x.coefficients
 local notation "u" => x.state
 
@@ -1277,7 +1277,7 @@ variable {ι : Type} (G : SignedMeanGain.Geometry)
     (primary : ι → HarmonicBlock Point) (P : ι → ℕ → Point → ℝ)
     (S : ι → ℕ → Set Point) {σ κ : ℝ}
 
-local notation "p" => CycleParameters.ofGeometry G h index axial particular signed r
+local notation "p" => (CycleParameters.ofGeometry G h index axial particular signed r)
 local notation "v" => x.coefficients
 local notation "u" => x.state
 
@@ -1484,8 +1484,8 @@ variable {ι : Type} (G : SignedMeanGain.Geometry)
     (primary : ι → HarmonicBlock Point) (P : ι → ℕ → Point → ℝ)
     (S : ι → ℕ → Set Point) {κ : ℝ}
 
-local notation "p" => CycleParameters.ofGeometry G h index axial particular signed r
-local notation "state" => CycleState.iterate (fun _ => p) c seed
+local notation "p" => (CycleParameters.ofGeometry G h index axial particular signed r)
+local notation "state" => (CycleState.iterate (fun _ => p) c seed)
 
 /-- All stages use the same primitive parameters, strip, gauge, carriers,
 and comparison primary.  The supplied data construct each actual wave;

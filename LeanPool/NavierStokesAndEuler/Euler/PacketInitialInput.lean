@@ -1044,11 +1044,11 @@ variable {U : Type} [NormedAddCommGroup U] [InnerProductSpace ℝ U] [CompleteSp
   (Ω : Set Space) (hΩ : MeasurableSet Ω) (hΩo : IsOpen Ω)
   (hsub : S ⊆ Ω) (hΩball : ∀ x ∈ Ω, ‖x‖ ≤ (1 / 2 : ℝ))
 
-local notation "A" => L.geometryInputs H m hm R S hS τ hτ hτT P J hball Ti TiTotal
-  hτ1 hTi hT1 hTiTotal Ω hΩ hΩo hsub hΩball
-local notation "BC" => joinedCoefficientBudget period (G.meanData H)
+local notation "A" => (L.geometryInputs H m hm R S hS τ hτ hτT P J hball Ti TiTotal
+  hτ1 hTi hT1 hTiTotal Ω hΩ hΩo hsub hΩball)
+local notation "BC" => (joinedCoefficientBudget period (G.meanData H)
   (G.transverseData m hm R S hS) rfl τ hτ hτT (G.historyOn H m hm R S hS τ hτ hτT)
-  (JoinedInputs.normal A)
+  (JoinedInputs.normal A))
 
 theorem geometry_initial_primitives (ξ : U) (hδ : 0 < J.δ) :
     let X := L.geometryParameterSize H m hm R S hS τ hτ hτT P J Ti TiTotal ξ

@@ -698,7 +698,7 @@ variable (hJ : 2 ≤ J) (C c : ℝ) (hC : 0 < C) (hc : 0 ≤ c)
   (hσ : ∀ n, (A n).frame.sigma * scaleSequence J X n ≤ 2)
   (hfrequency : ∀ n, (A n).frequencyGuard (frequency J X n))
 
-local notation "V" => initialLimit A J hJ C c hC hc p q X hX hparameter hscale hσ hk hfrequency
+local notation "V" => (initialLimit A J hJ C c hC hc p q X hX hparameter hscale hσ hk hfrequency)
 
 theorem selectedQ_initial_Hm (s : ℕ) :
     Tendsto (fun N => derivativeSum s (exactPartial A J X hk hn Q N-(V).field)) atTop (𝓝 0) := by

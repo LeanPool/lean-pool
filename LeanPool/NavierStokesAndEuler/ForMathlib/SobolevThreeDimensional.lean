@@ -40,7 +40,7 @@ open scoped ContDiff ENNReal NNReal Topology
 
 namespace NavierStokesAndEuler.SobolevThreeDimensional
 
-local notation "ℝ³" => EuclideanSpace ℝ (Fin 3)
+local notation "ℝ³" => (EuclideanSpace ℝ (Fin 3))
 
 /-- The fixed whole-space `H¹ → L⁶` Sobolev constant in dimension three. -/
 @[expose] def sobolevConstant : ℝ≥0 :=

@@ -55,7 +55,7 @@ contains no challenge theorem or proof placeholder and does not import `Euler`.
 
 
 -- Inline the only needed notation from FormalConjecturesForMathlib.Geometry.3d.
-local notation "ℝ³" => EuclideanSpace ℝ (Fin 3)
+local notation "ℝ³" => (EuclideanSpace ℝ (Fin 3))
 
 open ContDiff Set InnerProductSpace MeasureTheory
 

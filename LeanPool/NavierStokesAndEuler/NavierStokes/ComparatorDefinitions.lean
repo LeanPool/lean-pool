@@ -55,7 +55,7 @@ namespace NavierStokes.Comparator
 
 -- Inlined notation from FormalConjecturesForMathlib.Geometry.Euclidean and Geometry.«3d».
 local notation "ℝ^" n:65 => EuclideanSpace ℝ (Fin n)
-local notation "ℝ³" => EuclideanSpace ℝ (Fin 3)
+local notation "ℝ³" => (EuclideanSpace ℝ (Fin 3))
 
 variable {n : ℕ}
 

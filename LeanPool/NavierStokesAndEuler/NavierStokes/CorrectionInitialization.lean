@@ -3564,8 +3564,8 @@ variable {coord cL cR : ℝ} (U : SlowRegion coord) (g : GaugeData PressureStrea
     (ha : 0 < g.radial.inner) (hcL : 0 < cL) (hcR : 0 < cR)
     (ε L : ℕ → ℝ) (hε : ∀ n, 0 < ε n) (hεone : ∀ n, ε n ≤ 1) (hL : ∀ n, 1 ≤ L n)
 
-local notation "st" => movingStripData U g.radial.inner g.radial.outer cL cR ha hcL hcR ε L hε
-    hεone hL
+local notation "st" => (movingStripData U g.radial.inner g.radial.outer cL cR ha hcL hcR ε L hε
+    hεone hL)
 
 /-- Data of the base, actual primary covariance, and virtual stress. No
 bound on the pressure, residual, temporal increment, or rank output is a field. -/
@@ -3712,9 +3712,10 @@ variable {coord cL cR : ℝ} (U : SlowRegion coord) (g : GaugeData PressureStrea
     (ha : 0 < g.radial.inner) (hcL : 0 < cL) (hcR : 0 < cR)
     (ε L : ℕ → ℝ) (hε : ∀ n, 0 < ε n) (hεone : ∀ n, ε n ≤ 1) (hL : ∀ n, 1 ≤ L n)
 
-local notation "st" => movingStripData U g.radial.inner g.radial.outer cL cR ha hcL hcR ε L hε
-    hεone hL
-local notation "slowSt" => PhysicalMeanDomain.localSlowStripData U.carrier U.isOpen ε L hε hεone hL
+local notation "st" => (movingStripData U g.radial.inner g.radial.outer cL cR ha hcL hcR ε L hε
+    hεone hL)
+local notation "slowSt" => (PhysicalMeanDomain.localSlowStripData U.carrier U.isOpen ε L hε hεone
+    hL)
 
 /-- The estimates refer to the actual rank inverse and recomputed pressure.
 The defect estimate is obtained after the five-row cancellation. -/
@@ -3907,9 +3908,10 @@ variable {coord cL cR : ℝ} (U : SlowRegion coord) (g : GaugeData PressureStrea
     (baseError : Oscillation Point) (c : Context Point)
     (d : PrimaryMeanData U g ha hcL hcR ε L hε hεone hL c (bandSeed labels pieces baseError))
 
-local notation "st" => movingStripData U g.radial.inner g.radial.outer cL cR ha hcL hcR ε L hε
-    hεone hL
-local notation "slowSt" => PhysicalMeanDomain.localSlowStripData U.carrier U.isOpen ε L hε hεone hL
+local notation "st" => (movingStripData U g.radial.inner g.radial.outer cL cR ha hcL hcR ε L hε
+    hεone hL)
+local notation "slowSt" => (PhysicalMeanDomain.localSlowStripData U.carrier U.isOpen ε L hε hεone
+    hL)
 
 include d in
 /-- The actual pressure, temporal, rank, and alias-retention stages meet

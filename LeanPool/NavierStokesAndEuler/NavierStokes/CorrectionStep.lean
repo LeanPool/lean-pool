@@ -4807,8 +4807,8 @@ variable {coord cL cR : ℝ} (U : SlowRegion coord) (g : GaugeData PressureStrea
 
 include hd hell
 
-local notation "stageStrip" => movingStripData U g.radial.inner g.radial.outer cL cR ha hcL hcR ε L
-    hε hεone hL
+local notation "stageStrip" => (movingStripData U g.radial.inner g.radial.outer cL cR ha hcL hcR ε L
+    hε hεone hL)
 
 /-- The pressure difference is computed by the same variable-gauge integral.
 Both radial-source regularity statements and its class follow from the
@@ -5479,8 +5479,8 @@ variable {coord cL cR : ℝ} (U : SlowRegion coord) (g : GaugeData PressureStrea
     (hell : ∀ n, g.length n = qLength coord)
 
 include hd hell
-local notation "stageStrip" => movingStripData U g.radial.inner g.radial.outer cL cR ha hcL hcR ε L
-    hε hεone hL
+local notation "stageStrip" => (movingStripData U g.radial.inner g.radial.outer cL cR ha hcL hcR ε L
+    hε hεone hL)
 
 /-- Full mean-step bound for the constructed temporal inverse and stream.
 The increment and pressure-change classes are conclusions. -/
@@ -5556,8 +5556,8 @@ variable {coord cL cR A B : ℝ} (U : SlowRegion coord) (g : GaugeData PressureS
     (hell : ∀ n, g.length n = qLength coord)
 
 include hd hell
-local notation "stageStrip" => movingStripData U g.radial.inner g.radial.outer cL cR ha hcL hcR ε L
-    hε hεone hL
+local notation "stageStrip" => (movingStripData U g.radial.inner g.radial.outer cL cR ha hcL hcR ε L
+    hε hεone hL)
 
 /-- The actual rank increment and its pressure change are derived from the
 measured debt. The previous temporal alias stays subtracted. -/
@@ -5748,12 +5748,12 @@ variable {ι : Type} (p : CycleParameters ι) (v : CycleCoefficients ι)
     (hell : ∀ n, p.gauge.length n = qLength coord)
 
 include hd hell
-local notation "stageStrip" => movingStripData U p.gauge.radial.inner p.gauge.radial.outer cL cR ha
-    hcL hcR ε L hε hεone hL
-local notation "slowStrip" => PhysicalMeanDomain.localSlowStripData U.carrier U.isOpen ε L hε hεone
-    hL
-local notation "signedState" => p.afterSigned v c u
-local notation "temporalState" => p.afterTemporal v c u
+local notation "stageStrip" => (movingStripData U p.gauge.radial.inner p.gauge.radial.outer cL cR ha
+    hcL hcR ε L hε hεone hL)
+local notation "slowStrip" => (PhysicalMeanDomain.localSlowStripData U.carrier U.isOpen ε L hε hεone
+    hL)
+local notation "signedState" => (p.afterSigned v c u)
+local notation "temporalState" => (p.afterTemporal v c u)
 
 /-- The two actual mean stages complete the `σ+1/10` mean and debt gains.
 Every increment and pressure-change estimate is derived internally from the
@@ -8036,9 +8036,9 @@ variable {coord cL cR : ℝ} (U : SlowRegion coord) (g : GaugeData PressureStrea
     (ha : 0 < g.radial.inner) (hd : 0 < g.radial.exponent) (hcL : 0 < cL) (hcR : 0 < cR)
     (ε L : ℕ → ℝ) (hε : ∀ n, 0 < ε n) (hεone : ∀ n, ε n ≤ 1) (hL : ∀ n, 1 ≤ L n)
     (hell : ∀ n, g.length n = qLength coord)
-local notation "st" => movingStripData U g.radial.inner g.radial.outer cL cR ha hcL hcR ε L hε
-    hεone hL
-local notation "ss" => PhysicalMeanDomain.localSlowStripData U.carrier U.isOpen ε L hε hεone hL
+local notation "st" => (movingStripData U g.radial.inner g.radial.outer cL cR ha hcL hcR ε L hε
+    hεone hL)
+local notation "ss" => (PhysicalMeanDomain.localSlowStripData U.carrier U.isOpen ε L hε hεone hL)
 variable (c : Context Point) (u : State Point) (w : Oscillation Point)
     (q : OscillatoryScalar Point) (gaussian : Oscillation Point)
     (hop : LocalRankDefect.LocalOperators U.carrier c.operators)
@@ -8558,12 +8558,12 @@ variable (g : GaugeData PressureStream.Plane) (r : RankData PressureStream.Plane
     (ε L : ℕ → ℝ) (hε : ∀ n, 0 < ε n) (hεone : ∀ n, ε n ≤ 1) (hL : ∀ n, 1 ≤ L n)
     (hell : ∀ n, g.length n = qLength coord)
 include hd hell
-local notation "stageStrip" => movingStripData U g.radial.inner g.radial.outer cL cR ha hcL hcR ε L
-    hε hεone hL
-local notation "slowStrip" => PhysicalMeanDomain.localSlowStripData U.carrier U.isOpen ε L hε hεone
-    hL
+local notation "stageStrip" => (movingStripData U g.radial.inner g.radial.outer cL cR ha hcL hcR ε L
+    hε hεone hL)
+local notation "slowStrip" => (PhysicalMeanDomain.localSlowStripData U.carrier U.isOpen ε L hε hεone
+    hL)
 local notation "signedState" => u
-local notation "temporalState" => temporalStageState g h index axial c u
+local notation "temporalState" => (temporalStageState g h index axial c u)
 theorem meanStages_constructed {σ κ : ℝ}
     (hfixed : (reconstructState g c u).pressure = u.pressure)
     (hσ : 1 / 5 ≤ σ) (hκsmall : κ ≤ 1 / 100000)
@@ -9055,9 +9055,9 @@ variable {ι : Type} (G : SignedMeanGain.Geometry) (B : SignedMeanGain.NativeDat
     (a : SignedMeanGain.Assembly f)
     (q₂ : OscillatoryScalar Point) (e₂ : Oscillation Point)
 
-local notation "u₁" => SignedMeanGain.waveStage G.gauge c u w₁ q₁ e₁
-local notation "w₂" => SignedMeanGain.tangentField f a + SignedMeanGain.curlField f a
-local notation "u₂" => SignedMeanGain.waveStage G.gauge c u₁ w₂ q₂ e₂
+local notation "u₁" => (SignedMeanGain.waveStage G.gauge c u w₁ q₁ e₁)
+local notation "w₂" => (SignedMeanGain.tangentField f a + SignedMeanGain.curlField f a)
+local notation "u₂" => (SignedMeanGain.waveStage G.gauge c u₁ w₂ q₂ e₂)
 
 /-- The two actual wave updates, temporal inverse, and rank solve form one
 mean/debt gain. All intermediate residual and flux regularity is derived
@@ -9626,9 +9626,9 @@ variable (hcs : ∀ l, SameCarrier (v.blocks l) ((ofGeometry G h index axial par
     (hP1 : ∀ l n x, x ∈ G.strip.domain → P l n x ≤ 1)
     (hkp : ∀ l n, (v.blocks l).angularFrequency n ≠ 0)
 
-local notation "F" => signedFamily (ofGeometry G h index axial particular signed r) v c u primary P
+local notation "F" => (signedFamily (ofGeometry G h index axial particular signed r) v c u primary P
     hσ N hprimary hband hcp hcs
-  hold hdiff hpart htangent hcurl hP0 hP1 hkp
+  hold hdiff hpart htangent hcurl hP0 hP1 hkp)
 
 /-- The complete measured-mean gain for `next`. The signed family is
 computed from this cycle's actual particular, tangent, and curl blocks;

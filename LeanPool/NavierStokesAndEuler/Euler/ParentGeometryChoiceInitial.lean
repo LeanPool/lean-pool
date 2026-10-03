@@ -42,7 +42,7 @@ variable (I : EulerPacketInitial.Input U) (S : SmoothState I.parent)
   (nextEll : ℝ) (hnext : 0 < nextEll) (hnext1 : nextEll ≤ 1)
   (F : GeometryJoinedChoice I S k hk nextEll hnext hnext1)
 
-local notation "res" => residual I S k hk nextEll hnext hnext1 F
+local notation "res" => (residual I S k hk nextEll hnext hnext1 F)
 
 theorem normalized_initial :
     I.parent.normalizedPacketVelocity I.normal I.normal_unit I.coordinates I.support
@@ -60,7 +60,7 @@ theorem normalized_initial :
     funext S.evolution.inverse.normalized_initial]
 
 variable (hSym : ∀ x, -x ∈ I.support ↔ x ∈ I.support)
-local notation "T" => state I S k hk nextEll hnext hnext1 F hSym
+local notation "T" => (state I S k hk nextEll hnext hnext1 F hSym)
 
 theorem initial_increment : S.velocityIncrement T 0 = I.exactInitial k hk.four F.hn F.Q := by
   funext x
@@ -137,7 +137,7 @@ variable (I : GeometryForwardInput U) (S : SmoothState I.parent)
   (nextEll : ℝ) (hnext : 0 < nextEll) (hnext1 : nextEll ≤ 1)
   (F : GeometryForwardChoice I S k hk nextEll hnext hnext1)
 
-local notation "res" => residual I S k hk nextEll hnext hnext1 F
+local notation "res" => (residual I S k hk nextEll hnext hnext1 F)
 
 theorem normalized_initial :
     I.parent.normalizedPacketVelocity I.normal I.normal_unit I.coordinates I.support
@@ -154,7 +154,7 @@ theorem normalized_initial :
     funext S.evolution.inverse.normalized_initial]
 
 variable (hSym : ∀ x, -x ∈ I.support ↔ x ∈ I.support)
-local notation "T" => state I S k hk nextEll hnext hnext1 F hSym
+local notation "T" => (state I S k hk nextEll hnext hnext1 F hSym)
 
 theorem initial_increment : S.velocityIncrement T 0 = I.exactInitial k hk.four F.hn F.Q := by
   funext x

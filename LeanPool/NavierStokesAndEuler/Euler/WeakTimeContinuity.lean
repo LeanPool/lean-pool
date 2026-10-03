@@ -32,7 +32,7 @@ open scoped ContDiff Topology
 
 namespace Euler.EulerExistenceAndSmoothnessR3
 
-local notation "ℝ³" => EuclideanSpace ℝ (Fin 3)
+local notation "ℝ³" => (EuclideanSpace ℝ (Fin 3))
 
 private theorem inner_toLp_eq_integral
     (a b : ℝ³ → ℝ³) (ha : MemLp a 2 volume) (hb : MemLp b 2 volume) :

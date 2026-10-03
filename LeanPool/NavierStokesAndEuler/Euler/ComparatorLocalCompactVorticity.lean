@@ -267,7 +267,7 @@ open scoped ENNReal Topology
 
 namespace Euler.ComparatorBridge
 
-local notation "ℝ³" => EuclideanSpace ℝ (Fin 3)
+local notation "ℝ³" => (EuclideanSpace ℝ (Fin 3))
 
 private theorem positive_volume_set_of_nonzero_outside
     (w : ℝ³ → ℝ³) (hw : Continuous w) (B : ℝ) (x : ℝ³)

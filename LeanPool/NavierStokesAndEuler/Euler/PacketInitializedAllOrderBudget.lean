@@ -382,9 +382,9 @@ variable (M : EulerMeanPacketProvider.Data)
   (hgrowth : timeProfileChange S.growth hTime = α • L.fullProfile)
   (Kc : CorrectionCoefficientBudget D period)
 
-local notation "cg" => growth D period Kc L.R S.H0 BC.multiplierCost
-local notation "dg" => drift L.R S.H0 BC.multiplierCost
-local notation "ρg" => initialRadius L.R Kc.M Kc.Rc
+local notation "cg" => (growth D period Kc L.R S.H0 BC.multiplierCost)
+local notation "dg" => (drift L.R S.H0 BC.multiplierCost)
+local notation "ρg" => (initialRadius L.R Kc.M Kc.Rc)
 
 /-- Explicit scalar guards suffice because every analytic input to the
 all-order correction theorem is supplied by the constructed packet. -/

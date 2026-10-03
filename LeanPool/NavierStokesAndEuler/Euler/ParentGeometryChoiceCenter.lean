@@ -39,8 +39,8 @@ abbrev residual := initializedApproximationResidual I.meanData I.data rfl
   I.historyTime I.history_pos I.history_lt I.history I.geometry.δ I.delta_pos
   I.terminal I.cutoff_support I.alpha I.agreement (truncation k) F.hn k hk.four
 
-local notation "T" => state I S k hk nextEll hnext hnext1 F hSym
-local notation "res" => residual I S k hk nextEll hnext hnext1 F
+local notation "T" => (state I S k hk nextEll hnext hnext1 F hSym)
+local notation "res" => (residual I S k hk nextEll hnext hnext1 F)
 
 theorem state_velocity :
     (T).evolution.velocity = I.parent.exactPacketVelocity I.normal I.normal_unit I.coordinates
@@ -88,8 +88,8 @@ abbrev residual := forwardInitializedApproximationResidual I.meanData I.data rfl
   I.geometry.δ I.delta_pos I.geometry.initialCoordinate I.cutoff_support I.alpha
   I.agreement (truncation k) F.hn k hk.four
 
-local notation "T" => state I S k hk nextEll hnext hnext1 F hSym
-local notation "res" => residual I S k hk nextEll hnext hnext1 F
+local notation "T" => (state I S k hk nextEll hnext hnext1 F hSym)
+local notation "res" => (residual I S k hk nextEll hnext hnext1 F)
 
 theorem state_velocity :
     (T).evolution.velocity = I.parent.exactPacketVelocity I.normal I.normal_unit I.coordinates
