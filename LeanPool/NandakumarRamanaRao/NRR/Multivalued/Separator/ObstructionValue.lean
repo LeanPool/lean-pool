@@ -149,6 +149,7 @@ def toTopBottomComplement : TopBottomComplement X carrier where
   top_subset_upper := D.top_subset_upper
 
 /-- Adding closedness of the carrier gives a top--bottom separator. -/
+@[expose]
 def toTopBottomSeparator
     (hcarrier : IsClosed carrier) : TopBottomSeparator X :=
   D.toTopBottomComplement.toSeparator hcarrier

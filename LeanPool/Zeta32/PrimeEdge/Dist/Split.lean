@@ -117,6 +117,7 @@ lemma dl_C_mul (r : ℚ) (n p b : ℕ) (c : ℚ) (F : ℚ[X]) :
   ring
 
 /-- The error of the truncated distribution formula on a numerator `F`. -/
+@[expose]
 def Err (r : ℚ) (n p : ℕ) (F : ℚ[X]) : ℚ :=
   locValue r F (Finset.Icc 1 (5 * n)) - (p : ℚ) ^ (-2 : ℤ) * ∑ b ∈ Finset.range p, dl r n p b F
 

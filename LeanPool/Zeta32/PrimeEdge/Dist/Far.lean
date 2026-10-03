@@ -24,6 +24,7 @@ open Zeta32.Arith.Local
 noncomputable section
 
 /-- `D_S / (t + j)`. -/
+@[expose]
 def Ej (M : Finset ℕ) (j : ℕ) : ℚ[X] := ∏ m' ∈ M.erase j, (X + C (m' : ℚ))
 
 lemma Ej_mul {M : Finset ℕ} {j : ℕ} (hj : j ∈ M) : Ej M j * (X + C (j : ℚ)) = mprod M := by

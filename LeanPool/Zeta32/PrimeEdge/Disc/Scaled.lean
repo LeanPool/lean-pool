@@ -28,6 +28,7 @@ def Scaled (p : ℕ) (f : ℚ[X]) : Prop := ∀ e, VG p (f.coeff e) e
 def ScaledPS (p : ℕ) (f : PowerSeries ℚ) : Prop := ∀ e, VG p (PowerSeries.coeff e f) e
 
 /-- A nonzero rational of valuation `0`. -/
+@[expose]
 def IsUnitV (p : ℕ) (q : ℚ) : Prop := q ≠ 0 ∧ padicValRat p q = 0
 
 lemma IsUnitV.mul [Fact p.Prime] {q q' : ℚ} (h : IsUnitV p q) (h' : IsUnitV p q') :

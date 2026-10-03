@@ -118,6 +118,7 @@ lemma locValue_sum_linear {ι : Type*} (s : ℚ) (t : Finset ι) (S : ι → ℚ
 
 /-- `V_Y(g_b)` without the `Y` part, with far poles truncated: `p^{-|near|} V(seriesPart /
 nearProd)`. -/
+@[expose]
 def discLocal (r : ℚ) (n p b : ℕ) (A : ℚ[X]) : ℚ :=
   (p : ℚ) ^ (-((nearSet n p b).card : ℤ)) *
     locValue (r * p) (seriesPart n p b A) (nearSet n p b)

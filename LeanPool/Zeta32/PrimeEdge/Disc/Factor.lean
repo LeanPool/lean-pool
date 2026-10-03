@@ -36,6 +36,7 @@ lemma crtBasis_eq (a : Idx p) :
 noncomputable def B0 (p b : ℕ) : ℚ[X] := crt0 p b * crt0 p b * Zeta32.D (p - 1) ^ 4
 
 /-- Exponent of the own disc. -/
+@[expose]
 def ownExp (b : ℕ) : ℕ := if b = 0 then 1 else 4
 
 lemma good_crt0 [Fact p.Prime] {d : ℕ} (hd : d < p) (b : ℕ) :
