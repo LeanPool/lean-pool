@@ -304,6 +304,7 @@ noncomputable def KnownParameterAboveTwoUpperStatement : Prop :=
 
 /-- Lower half of the current proposition: deterministic, exact-pair,
 every first-`T` query, `T ≤ d`, and explicit `Mpd`. -/
+@[expose]
 noncomputable def KnownParameterAboveTwoLowerStatement : Prop :=
   ∃ C : ℝ, 0 < C ∧ ∀ (p : ℝ), 2 < p → ∀ (d T : ℕ),
     2 ≤ d → 1 ≤ T → T ≤ d → ∀ (L R : ℝ), 0 < L → 0 < R →
