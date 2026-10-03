@@ -14,6 +14,7 @@ public import LeanPool.Zeta5Irrational.Arith.BasisChange
 public import LeanPool.Zeta5Irrational.Arith.BinomBasis
 public import LeanPool.Zeta5Irrational.Arith.ClassCount
 public import LeanPool.Zeta5Irrational.Arith.ClassFrame
+public import LeanPool.Zeta5Irrational.Arith.CoefficientMatrix
 public import LeanPool.Zeta5Irrational.Arith.DirectBound
 public import LeanPool.Zeta5Irrational.Arith.DirectPoly
 public import LeanPool.Zeta5Irrational.Arith.InnerAlloc
@@ -92,6 +93,7 @@ public import LeanPool.Zeta5Irrational.PrimeSum
 public import LeanPool.Zeta5Irrational.PrimeSumIntegral
 public import LeanPool.Zeta5Irrational.PrimeSumStep
 public import LeanPool.Zeta5Irrational.RealBound
+public import LeanPool.Zeta5Irrational.SimplePoles
 public import LeanPool.Zeta5Irrational.Stirling
 public import LeanPool.Zeta5Irrational.Table.Bracket
 public import LeanPool.Zeta5Irrational.Table.Common
