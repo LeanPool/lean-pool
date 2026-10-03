@@ -19,7 +19,7 @@ For a numerator `A ∈ ℚ[x]` and a finite set `Pl ⊆ ℤ` of simple poles:
 * `VG_polyPart_eval` : a class-wise lower bound for the values of the polynomial part at integers.
 -/
 
-@[expose] public section
+public section
 
 -- adapted from mo271/Zeta5@f19a196:Apery/Arith/PoleFun.lean,
 -- .../Apery/Arith/DirectBound.lean and .../Apery/Arith/DirectPoly.lean

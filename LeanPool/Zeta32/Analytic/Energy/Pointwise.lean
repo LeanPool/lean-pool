@@ -22,7 +22,7 @@ Stirling bound for `S_n`, `|w(y)| ≤ 4π(|r|+π) e^{−2π|y|}`, and the identi
 The wfun bound follows Zeta32/Analytic/Contour/Kernel.lean and the structure follows
 Li2Unified/Modular/Base/OriginalProductLog.lean, OriginalScaledProductLog.lean. -/
 
-@[expose] public section
+public section
 
 open Real MeasureTheory Set
 open scoped BigOperators

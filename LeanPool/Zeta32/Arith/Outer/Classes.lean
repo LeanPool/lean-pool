@@ -22,7 +22,7 @@ The regrouping (`Ccl`, `jn`, `regroup`) is adapted from
 dtq1997/li2-half-irrationality@d5d8206:Li2Unified/Modular/Base/DecayMediumAssembly.lean
 and the finite indicator sums from .../Base/MediumClassCounts.lean. -/
 
-@[expose] public section
+public section
 
 open Polynomial
 open scoped BigOperators

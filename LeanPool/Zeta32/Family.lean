@@ -9,7 +9,7 @@ public import Mathlib.NumberTheory.Bernoulli
 
 /-! Zeta32 — Family. -/
 
-@[expose] public section
+public section
 
 open Polynomial
 open scoped BigOperators

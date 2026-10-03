@@ -10,7 +10,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-! Zeta32 — Arith — Profiles. -/
 
-@[expose] public section
+public section
 
 namespace Zeta32.ArithSum
 /-- The fractional-part profile controlling the arithmetic valuation bound. -/

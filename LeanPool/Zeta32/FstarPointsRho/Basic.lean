@@ -21,7 +21,7 @@ sum of the
 lower bound.
 Written from scratch. -/
 
-@[expose] public section
+public section
 
 open Real
 namespace Zeta32.Fstar.B2

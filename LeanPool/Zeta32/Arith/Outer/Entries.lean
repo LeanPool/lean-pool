@@ -23,7 +23,7 @@ DecayMediumNodes: `D_eval_neg_of_lt`, `padicValRat_factorial_small`, `rscale_val
 IntegerFamily: the integer quotient),
 with the layout `(s, K) = (3, 4)` there replaced by `(4, 5)` here. -/
 
-@[expose] public section
+public section
 
 open Zeta32.Arith.Local
 

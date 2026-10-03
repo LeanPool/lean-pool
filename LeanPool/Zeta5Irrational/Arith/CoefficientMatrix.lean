@@ -13,7 +13,7 @@ public import Mathlib.Data.Matrix.Basic
 The coefficient matrix and its expansion are shared by the Zeta5 and Zeta32
 changes of polynomial basis. -/
 
-@[expose] public section
+public section
 
 open Finset Polynomial
 

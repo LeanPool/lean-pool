@@ -15,7 +15,7 @@ public import Mathlib.RingTheory.Polynomial.Pochhammer
 arbitrary centre, derivatives at integers (`v_p ≥ β - ⌊log_p e⌋`), `D_m = m!·binom(t+m,m)`, and the
 residue scale `K!/∏_{l≠j}(l-j) ∈ ℤ`. -/
 
-@[expose] public section
+public section
 
 open Zeta32.Arith.Local
 

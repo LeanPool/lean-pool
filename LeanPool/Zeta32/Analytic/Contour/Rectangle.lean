@@ -15,7 +15,7 @@ Proof: `π²/sin²(πt) = -(π cot πt)'`, so by the fundamental theorem of calc
 four edges the boundary integral equals that of `F'(t) π cot(πt)`, which has the single
 simple pole `t = 1` in the rectangle with residue `F'(1)`. -/
 
-@[expose] public section
+public section
 
 open MeasureTheory Set Filter Topology
 open scoped Interval

@@ -20,7 +20,7 @@ public import Mathlib.RingTheory.Polynomial.Pochhammer
   and `r` is `p`-integral, then `v_p(polynomialMoment r q) ≥ β - 2`.
 -/
 
-@[expose] public section
+public section
 
 -- adapted from mo271/Zeta5@f19a196:Apery/Arith/BinomBasis.lean
 -- and .../Apery/Arith/TauBound.lean (mo271/Zeta5 by Moritz Firsching, Apache-2.0).

@@ -13,7 +13,7 @@ for `F` holomorphic on `0 < Re t < 2` with polynomial growth on `1/2 ≤ Re t �
 Obtained from `boundaryIntegral_mul_Kc` by letting the height `T → ∞`: on both vertical
 edges `π²/sin²(πt) = 2πρ(y)`, and on the horizontal edges `|π²/sin²(πt)| ≤ 16π² e^{-2πT}`. -/
 
-@[expose] public section
+public section
 
 open MeasureTheory Set Filter Topology
 open scoped Interval

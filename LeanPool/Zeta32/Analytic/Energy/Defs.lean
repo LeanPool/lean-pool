@@ -17,7 +17,7 @@ potential and energy of a
   `gtil = (1/3, 5/3, 4/3)` on `(0,1), [1,5), [5,∞)`, and the constants `kC a c`, `wC c x` with
   `2 L_c = kC + wC` on the support. -/
 
-@[expose] public section
+public section
 
 open Real MeasureTheory
 

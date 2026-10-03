@@ -19,7 +19,7 @@ into 196 half-open pieces `[ub i, ub (i+1))`. On the piece with `⌊u⌋ = m` an
 The outer range `(7/3, 5]` of `x` is `[1/5, 3/7)` in `u`, four pieces on which `phiL` is linear.
 The tail `x ≤ 1/20` is handled by the global bound `psiL x ≤ 33/5 + (121/100) x`. -/
 
-@[expose] public section
+public section
 
 namespace Zeta32.ArithSum
 noncomputable section

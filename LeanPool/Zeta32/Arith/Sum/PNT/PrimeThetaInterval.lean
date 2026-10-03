@@ -13,7 +13,7 @@ public import LeanPool.Zeta5Irrational.PrimeSum
 -- dtq1997/li2-half-irrationality@d5d8206:Li2Unified/Modular/Base/PrimeThetaInterval.lean
 -- (namespace Li2 -> Zeta32.ArithSum, imports renamed; proof and style updated for Lean Pool)
 
-@[expose] public section
+public section
 
 open Finset Filter Topology Asymptotics
 namespace Zeta32.ArithSum.PrimeSums

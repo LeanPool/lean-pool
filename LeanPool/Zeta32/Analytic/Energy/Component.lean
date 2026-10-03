@@ -15,7 +15,7 @@ unit disc:
 the balayage of `δ_{±ic}` onto `[-a, a]` minus a multiple of the arcsine measure
 (GLOBAL-INTEGRAL-v1 §5). -/
 
-@[expose] public section
+public section
 
 open Real MeasureTheory Set
 

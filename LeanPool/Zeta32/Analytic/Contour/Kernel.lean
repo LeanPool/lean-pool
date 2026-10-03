@@ -19,7 +19,7 @@ public import Mathlib.Tactic.Ring
 derivative, the kernel `w = 2rρ + iρ'` of `Interfaces.lean`, and integrability of
 polynomially bounded functions against them (the proof notes, 5.1). -/
 
-@[expose] public section
+public section
 
 open MeasureTheory Set Filter Topology
 

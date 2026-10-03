@@ -65,7 +65,7 @@ complex analysis, residue theorem, contour integral, Cauchy formula, rectangular
 -/
 
 
-@[expose] public section
+public section
 
 open Filter Topology MeasureTheory intervalIntegral Real
 open scoped Topology Interval

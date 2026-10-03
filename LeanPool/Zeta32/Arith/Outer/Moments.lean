@@ -13,7 +13,7 @@ public import LeanPool.Zeta32.Arith.Local.Val
 `H_j^{(e)}` and `β_j` (`v_p(β_j) ≥ 0` for `j < p`, `≥ -2` for `p ∣ j`, `≥ -3` otherwise, `j <
 p²`). -/
 
-@[expose] public section
+public section
 
 open Zeta32.Arith.Local
 

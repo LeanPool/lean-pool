@@ -17,7 +17,7 @@ and the resulting limit of one "piece" `∑ (A n + B p + C n²/p) log p`, plus t
 window
 into consecutive pieces. -/
 
-@[expose] public section
+public section
 
 open Finset Filter Topology MeasureTheory Set Real Asymptotics
 

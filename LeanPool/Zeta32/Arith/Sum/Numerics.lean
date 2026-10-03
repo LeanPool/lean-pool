@@ -21,7 +21,7 @@ results/lean-route-A.out; here the tail constant is `33/5 + 121/2000` (slightly 
 `33/5 + 28/500`,
 see `psiL_le_tail`). -/
 
-@[expose] public section
+public section
 
 namespace Zeta32.ArithSum
 noncomputable section

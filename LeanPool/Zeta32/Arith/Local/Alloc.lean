@@ -21,7 +21,7 @@ number of entries taken from column `b` before step `i`.
   class of `-b` (`Adm_gbasis`).
 -/
 
-@[expose] public section
+public section
 
 open Finset Polynomial
 

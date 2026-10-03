@@ -11,7 +11,7 @@ public import Mathlib.LinearAlgebra.Lagrange
 
 This generic API is shared by the Zeta5 and Zeta32 arithmetic and contour proofs. -/
 
-@[expose] public section
+public section
 
 open Finset Polynomial
 

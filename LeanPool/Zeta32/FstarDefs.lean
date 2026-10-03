@@ -12,7 +12,7 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 the proof notes, 5.4). Mathlib only. `FstarPoints` implies `FstarInput`, which the
 energy bound uses. -/
 
-@[expose] public section
+public section
 
 namespace Zeta32
 noncomputable section

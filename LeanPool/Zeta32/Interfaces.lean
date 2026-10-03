@@ -12,7 +12,7 @@ public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 Arithmetic: `colVal`, `allocCost`, `GreedyBound` (the proof notes, Lemma 4 in allocation form).
 Analytic: `Rfun`, `wfun`, `heineIntegrand`, `HeineBound` (the proof notes, 5.2 in bound form). -/
 
-@[expose] public section
+public section
 
 open Polynomial
 open scoped BigOperators

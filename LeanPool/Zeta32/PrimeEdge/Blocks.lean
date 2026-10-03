@@ -14,7 +14,7 @@ r_0)]` with
 (exact rationals of code/local_blocks_453.py and the FIX table of code/prime_edge_crt453.py).
 The Hankel entries depend only on `i+k`; the moment sequences are recorded separately. -/
 
-@[expose] public section
+public section
 namespace Zeta32.PrimeEdge
 
 /-- `V⁰(u^e r_L)`, `e = 0, …, 4`. -/

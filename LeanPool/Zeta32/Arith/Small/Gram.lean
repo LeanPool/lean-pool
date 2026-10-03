@@ -11,7 +11,7 @@ public import LeanPool.Zeta32.Arith.Small.Bern
 `Q_n/F_n = det[U_r(binom(t,a) binom(t,b) R_n)]`, and with one factor `S_n` per row,
 `Qtilde r n = det[U_r(S_n D_n^4 binom(t,a) binom(t,b) / D_{5n})]`. -/
 
-@[expose] public section
+public section
 
 -- adapted from
 -- dtq1997/li2-half-irrationality@d5d8206:Li2Unified/Modular/Base/NumeratorFunctional.lean

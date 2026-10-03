@@ -23,7 +23,7 @@ The local functional (the `X`-free part of `V_Y`, Corollary 2) on `S / ∏_{m �
 `V((u+m)^{-1}) = 2 H_m^{(3)} - 2 s H_m^{(2)}` (the `-2Y` part is dropped; `Y ∈ p³ ℤ_p[X]`).
 `s = r p` gives `V_Y` without `Y`; `s = 0` gives `V⁰`. -/
 
-@[expose] public section
+public section
 
 open Polynomial
 open scoped BigOperators
