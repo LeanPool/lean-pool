@@ -32,7 +32,7 @@ theorem IsChordal.induce_finset_subset {A S : Finset V}
   exact hA.comap f
 
 /-- A nonempty chordal induced vertex set contains a relative simplicial vertex. -/
-theorem IsChordal.exists_relative_simplicial [Finite V] {S : Finset V}
+theorem IsChordal.exists_relative_simplicial {S : Finset V}
     (hS : (G.induce (↑S : Set V)).IsChordal) (hSne : S.Nonempty) :
     ∃ z ∈ S, ∀ a ∈ S, ∀ b ∈ S, G.Adj z a → G.Adj z b → a ≠ b → G.Adj a b := by
   let : Nonempty (↑S : Set V) := ⟨⟨hSne.choose, hSne.choose_spec⟩⟩
