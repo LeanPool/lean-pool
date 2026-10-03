@@ -125,6 +125,7 @@ theorem deviation_value_apply
 
 /-- A positive zero is a relative-interior zero of the deviation map at which the common
 coordinate mean is positive. -/
+@[expose]
 def HasPositiveInteriorZero
     (hp : Nat.Prime p)
     (F : CoordinateAffineVertexMap p)

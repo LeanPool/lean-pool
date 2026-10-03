@@ -103,6 +103,7 @@ noncomputable def augmentedMatrix
   Matrix.det (augmentedMatrix hp N F q)
 
 /-- Relative-interior positive-ray intersection on a refined top simplex. -/
+@[expose]
 def HasPositiveInteriorZero
     (hp : Nat.Prime p) (N : Nat)
     (F : ContinuousCoordinateMap p) (q : TopCell hp N) : Prop :=

@@ -20,6 +20,7 @@ namespace FoxNeuwirthOrderComplex
 variable {p : Nat}
 
 /-- Prime-equivariance of a continuous full-coordinate map. -/
+@[expose]
 def IsEquivariantCoordinateMap
     (p : Nat)
     (F : RefinedAffineMap.ContinuousCoordinateMap p) : Prop :=

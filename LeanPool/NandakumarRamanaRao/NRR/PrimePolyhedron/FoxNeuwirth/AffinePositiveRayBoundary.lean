@@ -100,6 +100,7 @@ def facetCoordinateIndex (i : Fin p) : Fin ((p - 1) + 1) :=
   fun r => ∑ i : Fin p, w (facetCoordinateIndex i) * facetValue V k i r
 
 /-- A relative-interior intersection of a facet with the positive diagonal ray. -/
+@[expose]
 def FacetHasPositiveRayIntersection
     (hp : Nat.Prime p) (V : VertexMap p) (k : Fin (p + 1)) : Prop :=
   ∃ w : StandardSimplex (p - 1),
@@ -520,6 +521,7 @@ noncomputable def lineCoordinate
 /-- Parameters for which the cofactor line remains in the standard simplex.  The barycentric sum
 is automatic because the cofactor direction has coordinate sum zero, so feasibility consists only
 of the coordinatewise nonnegativity inequalities. -/
+@[expose]
 def LineFeasible
     (hp : Nat.Prime p) (V : VertexMap p)
     (w : StandardSimplex p) (t : Real) : Prop :=
