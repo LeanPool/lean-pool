@@ -98,6 +98,7 @@ def rightCoverVertex
 
 /-- Seam compatibility for two vector assignments.  It is stated directly on geometric cover
 occurrences so it applies before either component is embedded into the combined quotient. -/
+@[expose]
 def SeamCompatible
     (VC : GlobalVertex hp C → Fin p → Real)
     (VD : GlobalVertex hp D → Fin p → Real) : Prop :=
