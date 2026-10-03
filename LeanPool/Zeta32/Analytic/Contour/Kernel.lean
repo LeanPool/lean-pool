@@ -28,9 +28,11 @@ namespace Zeta32.Analytic.Contour
 noncomputable section
 
 /-- The contour point `t = 1/2 + i y`, written exactly as in `heineIntegrand`. -/
+@[expose]
 def tpt (y : ℝ) : ℂ := (1/2 : ℂ) + Complex.I * (y : ℂ)
 
 /-- The logistic density `ρ(y) = (π/2) sech²(πy)`. -/
+@[expose]
 def rho (y : ℝ) : ℝ := Real.pi / 2 / Real.cosh (Real.pi * y) ^ 2
 
 /-- `ρ'(y) = -π² sinh(πy) / cosh³(πy)`. -/

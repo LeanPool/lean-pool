@@ -33,9 +33,11 @@ def potD (ρ : ℝ → ℝ) (a x : ℝ) : ℝ := ∫ t in (-a)..a, Real.log |x -
 def ID (ρ : ℝ → ℝ) (a : ℝ) : ℝ := ∫ x in (-a)..a, potD ρ a x * ρ x
 
 /-- Potential of the comparison density `rhoA a`. -/
+@[expose]
 def potA (a x : ℝ) : ℝ := potD (rhoA a) a x
 
 /-- Energy of the comparison density `rhoA a`. -/
+@[expose]
 def IA (a : ℝ) : ℝ := ID (rhoA a) a
 
 /-- The weight `g` of the proof notes (8′) for layout (4,5,3). -/

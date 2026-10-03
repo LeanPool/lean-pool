@@ -61,6 +61,7 @@ def A (r : ℚ) (n : ℕ) : Matrix (Fin (3*n)) (Fin (3*n)) ℚ :=
 def B (n : ℕ) : Matrix (Fin (3*n)) (Fin (3*n)) ℚ :=
   fun i k => slope n (i.val+k.val)
 /-- Determinant polynomial of the moment pencil `X • B + A`. -/
+@[expose]
 def Q (r : ℚ) (n : ℕ) : ℚ[X] :=
   Matrix.det ((X : ℚ[X]) • (B n).map C + (A r n).map C)
 

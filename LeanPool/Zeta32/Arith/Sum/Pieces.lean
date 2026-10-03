@@ -297,12 +297,15 @@ theorem psiL_piece (i : ℕ) {x : ℝ} (hx : 0 < x) (h1 : (ub i : ℝ) ≤ 1 / x
 /-! ### The four pieces of the outer range (`7/3 < x ≤ 5`, i.e. `1/5 ≤ u < 3/7`) -/
 
 /-- Rational breakpoints for the reciprocal outer-prime profile. -/
+@[expose]
 def vb : ℕ → ℚ
   | 0 => 1/5 | 1 => 1/4 | 2 => 1/3 | 3 => 2/5 | _ => 3/7
 /-- Constant terms of the affine pieces of the reciprocal outer-prime profile. -/
+@[expose]
 def vc : ℕ → ℚ
   | 0 => 2 | 1 => 18 | 2 => 24 | _ => 6
 /-- Slopes of the affine pieces of the reciprocal outer-prime profile. -/
+@[expose]
 def vd : ℕ → ℚ
   | 0 => -1 | 1 => -5 | 2 => -7 | _ => -1
 
