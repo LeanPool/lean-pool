@@ -117,7 +117,7 @@ def _claims_of(entry: dict, results_key: str) -> list[Claim]:
     return claims
 
 
-def new_claims(head_text: str, base_text: str, kind: str) -> list[Claim]:
+def new_claims(head_text: str, base_text: str) -> list[Claim]:
     """Return the headlines this PR adds that were not there before.
 
     Only *new* entries are searched. A refactor or a bump touches cards
@@ -127,17 +127,11 @@ def new_claims(head_text: str, base_text: str, kind: str) -> list[Claim]:
     Args:
         head_text: The registry file as of the PR head.
         base_text: The same file on the base branch.
-        kind: ``"project"`` (``projects.yml``) or ``"challenge"``
-            (``challenges.yml``), which differ only in their keys.
 
     Returns:
         Up to :data:`MAX_CLAIMS` claims, in registry order.
     """
-    list_key, results_key = (
-        ("projects", "main_results")
-        if kind == "project"
-        else ("challenges", "statements")
-    )
+    list_key, results_key = "projects", "main_results"
     known = {
         claim.declaration
         for entry in _entries(base_text, list_key)
