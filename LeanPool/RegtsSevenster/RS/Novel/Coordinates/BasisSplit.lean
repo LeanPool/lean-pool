@@ -39,6 +39,14 @@ noncomputable def oddBasisVec {n : ℕ}
     (superPow (stdSuperPair k ℓ) n).odd :=
   (colourPowerEquiv k ℓ n).oddEquiv.symm (Pi.single c 1)
 
+/-- The odd colouring coordinates of an odd coordinate basis vector. -/
+theorem colourPowerEquiv_oddBasisVec {n : ℕ}
+    (c : {c : MixedColouring k ℓ n // ¬ c.IsEven}) :
+    (colourPowerEquiv k ℓ n).oddEquiv (oddBasisVec c) =
+      Pi.single c 1 := by
+  unfold oddBasisVec
+  exact (colourPowerEquiv k ℓ n).oddEquiv.apply_symm_apply _
+
 /-- Colourings are determined by their halves. -/
 theorem MixedColouring.ext_halves {a b : ℕ}
     {c₁ c₂ : MixedColouring k ℓ (a + b)}

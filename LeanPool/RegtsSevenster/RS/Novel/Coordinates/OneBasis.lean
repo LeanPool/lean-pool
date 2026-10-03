@@ -189,12 +189,7 @@ theorem oddBasisVec_one (a : Fin (2 * ℓ)) :
       {c : MixedColouring k ℓ 1 // ¬ c.IsEven}) =
       oddUnitPad (stdF ℓ a) := by
   apply (colourPowerEquiv k ℓ 1).oddEquiv.injective
-  rw [show (colourPowerEquiv k ℓ 1).oddEquiv
-      (oddBasisVec (⟨oneColourO k ℓ a,
-        oneColourO_not_isEven a⟩ :
-        {c : MixedColouring k ℓ 1 // ¬ c.IsEven})) =
-    Pi.single ⟨oneColourO k ℓ a, oneColourO_not_isEven a⟩ 1 from
-    (colourPowerEquiv k ℓ 1).oddEquiv.apply_symm_apply _]
+  rw [colourPowerEquiv_oddBasisVec]
   funext ⟨c', hc'⟩
   change _ = ((colourPowerEquiv k ℓ 1).oddEquiv
     (oddUnitPad (stdF ℓ a)) ⟨c', hc'⟩)
