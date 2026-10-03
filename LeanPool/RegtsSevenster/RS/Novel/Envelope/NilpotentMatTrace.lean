@@ -120,7 +120,7 @@ variable {f} {M : Mat_ (Karoubi (SkeinObj f))}
   Σ i : M.ι, A.idx i
 
 /-- The atom at a total index. -/
-@[reducible] noncomputable def AtomResolution.S
+@[expose, reducible] noncomputable def AtomResolution.S
     (A : AtomResolution f M) (p : A.κ) :
     Karoubi (SkeinObj f) :=
   cutBy (f := f) (M.X p.1) (A.atomic p.1 p.2).idem

@@ -23,6 +23,7 @@ public section
 namespace RS
 
 /-- The closed fragment of `c` free circles. -/
+@[expose]
 noncomputable def circlesClosed (c : ℕ) : ClosedFragment :=
   (Fragment.circlesOnly c).relabel
     (_root_.Equiv.equivOfIsEmpty Empty (Fin 0))

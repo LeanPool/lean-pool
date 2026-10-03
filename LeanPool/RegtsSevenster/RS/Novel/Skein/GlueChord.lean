@@ -86,6 +86,7 @@ local notation "Fl" =>
 
 /-- **The glued subset's used labels** are the lifted subset's, less
 the two glued ones. -/
+@[expose]
 noncomputable def usedLabelGlueEquiv
     (hbi : W.boundaryFlag i ∈ (Fl).boundaryFlags)
     (hbj : W.boundaryFlag j ∈ (Fl).boundaryFlags) :
@@ -560,6 +561,7 @@ theorem chordInv_closed_pair
 
 /-- **The glued subset's used labels** across a closed glue whose
 edge lies in the subset: the lifted ones, less the two glued. -/
+@[expose]
 noncomputable def usedLabelGlueClosedEquiv
     (hbi : W.boundaryFlag i ∈ (FlT).boundaryFlags)
     (hbj : W.boundaryFlag j ∈ (FlT).boundaryFlags) :

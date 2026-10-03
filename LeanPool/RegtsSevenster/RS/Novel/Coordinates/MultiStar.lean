@@ -45,6 +45,7 @@ def multiStar {V : Type} [Fintype V] {n : ℕ}
 
 /-- The inner-flag enumeration of the star union: original flags
 through the star enumeration. -/
+@[expose]
 noncomputable def starFlagEnum (W : ClosedFragment) :
     W.Flag ≃ Fin (edgeCount W + edgeCount W) :=
   (_root_.Equiv.subtypeUnivEquiv
