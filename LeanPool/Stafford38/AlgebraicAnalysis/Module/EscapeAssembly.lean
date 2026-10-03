@@ -24,7 +24,7 @@ The theorem deliberately stops at this local span result.  It does not claim
 that a global Stafford correction family supplies the hypotheses.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.EscapeAssembly
 

@@ -18,7 +18,7 @@ filtered elements; it includes the degree-zero case rather than hiding natural-
 number truncation behind a positivity hypothesis.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.WeylFilteredCommutator
 

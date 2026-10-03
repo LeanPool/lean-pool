@@ -18,7 +18,7 @@ to a unimodular element.  It uses no rank, Ore, simplicity, or finiteness
 hypothesis.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.Unimodular
 

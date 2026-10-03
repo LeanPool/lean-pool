@@ -15,7 +15,7 @@ Compatibility exports for exhaustion of filtered two-term boundaries
 from the shared algebraic-analysis library.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.FilteredTwoTermPages
 

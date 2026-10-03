@@ -21,7 +21,7 @@ the two checked universal properties; it does not assume a PBW theorem for
 the quotient presentation.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.WeylIteratedEquivalence
 

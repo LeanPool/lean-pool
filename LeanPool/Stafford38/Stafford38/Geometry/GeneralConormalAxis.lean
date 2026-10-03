@@ -29,7 +29,7 @@ Chapters 1–2 supply characteristic-variety context. The visible-frame and fini
   construction is project mathematics, not a cited theorem from this book. See docs/literature.md.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.GeneralConormalAxis
 

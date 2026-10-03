@@ -22,7 +22,7 @@ The actual construction of the finite-gradient certificate remains a separate
 geometric problem.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.CanonicalNonconstantFiniteGradientProduction
 

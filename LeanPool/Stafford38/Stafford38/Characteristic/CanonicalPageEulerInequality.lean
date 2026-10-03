@@ -17,7 +17,7 @@ public import LeanPool.Stafford38.Stafford38.Characteristic.TwoTermPageLength
 The localized Euler length inequality for canonical two-term pages.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.CanonicalPageEulerInequality
 open Stafford38.Characteristic

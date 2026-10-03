@@ -18,7 +18,7 @@ matrix order, matching the Weyl-generator substitution convention. Explicit
 mutual inverse certificates produce an algebra equivalence.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CharacteristicLinearAction
 

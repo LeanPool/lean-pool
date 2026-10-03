@@ -25,7 +25,7 @@ single-coordinate decomposition.  No freeness of an Ore localization is
 assumed or encoded by an equivalent hypothesis here.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.RightCoordinates
 

@@ -17,7 +17,7 @@ into maps on the total direct sums.  The index shift is part of the map: an
 operator of degree `d` sends the summand at `p` to the summand at `p - d`.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.FilteredTwoTermPages
 

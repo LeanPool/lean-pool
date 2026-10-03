@@ -25,7 +25,7 @@ or tangent-space equality is constructed here.  Those geometric existence
 statements remain outside this algebraic chart calculation.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.ProjectiveEquationFormalChart
 

@@ -17,7 +17,7 @@ public import LeanPool.Stafford38.Stafford38.Geometry.RelativeRetainedBoundaryPl
 Existence of a divisorial frame satisfying the exact visibility interface.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.ExactDivisorialVisibleFrameExistence
 

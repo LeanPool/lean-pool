@@ -16,7 +16,7 @@ Compatibility exports for principal Koszul support over the base ring
 from the shared algebraic-analysis library.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.PrincipalKoszulSupportOverBase
 

@@ -22,7 +22,7 @@ finite separable tower constructed in `RelativeDivisorialTower` to the exact
 input expected by `DivisorialBoundaryExtension`.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.RelativeFractionFieldTransport
 

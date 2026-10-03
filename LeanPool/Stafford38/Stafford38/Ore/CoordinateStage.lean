@@ -17,7 +17,7 @@ identifies the first stage in the recursive Weyl construction with a central
 polynomial extension and transports ordinary differentiation to it.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.OreCoordinateStage
 

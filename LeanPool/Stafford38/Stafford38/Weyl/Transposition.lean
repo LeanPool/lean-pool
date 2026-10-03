@@ -20,7 +20,7 @@ change sign.  The construction uses only the checked universal property of
 the quotient presentation.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.WeylTransposition
 

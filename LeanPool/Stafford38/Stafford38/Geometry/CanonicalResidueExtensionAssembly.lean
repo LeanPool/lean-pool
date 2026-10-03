@@ -34,7 +34,7 @@ integrability, prove noncharacteristic restriction, or prove the canonical
 coordinate-preimage hypothesis.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.CanonicalResidueExtensionAssembly
 

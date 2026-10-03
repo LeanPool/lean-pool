@@ -20,7 +20,7 @@ explicit: division has the divisor on the left and the quotient on the right.
 No simplicity, localization, or left-PID statement is asserted here.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.OrePrincipalRightIdeal
 

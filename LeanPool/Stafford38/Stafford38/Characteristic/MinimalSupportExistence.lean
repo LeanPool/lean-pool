@@ -14,7 +14,7 @@ Compatibility exports for existence of a minimal support prime
 from the shared algebraic-analysis library.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.MinimalSupportExistence
 

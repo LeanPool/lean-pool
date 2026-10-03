@@ -14,7 +14,7 @@ Compatibility exports for support comparison for an endomorphism kernel and coke
 from the shared algebraic-analysis library.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic
 

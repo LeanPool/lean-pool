@@ -19,7 +19,7 @@ generation of `E` over `R` is needed: only the first `R`-kernel has finite
 length.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.PrincipalKoszulSupportOverBase
 

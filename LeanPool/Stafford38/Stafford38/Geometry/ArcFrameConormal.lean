@@ -25,7 +25,7 @@ divisorial chart, identify an arc with a projective component, or descend a
 `CanonicalAsymptoticLaurentProducer`.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.ArcFrameConormal
 

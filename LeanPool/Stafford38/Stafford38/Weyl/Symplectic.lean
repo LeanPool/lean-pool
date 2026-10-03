@@ -20,7 +20,7 @@ of the input, which keeps this theorem independent of matrix inversion APIs
 and makes the exact direction of generator substitution explicit.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.WeylSymplectic
 

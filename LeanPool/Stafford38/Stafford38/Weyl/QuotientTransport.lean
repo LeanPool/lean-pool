@@ -20,7 +20,7 @@ ideal and its right quotient across that equivalence.  The final theorem is
 the presented-Weyl form of the already proved `PairStage` surjectivity.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.WeylQuotientTransport
 

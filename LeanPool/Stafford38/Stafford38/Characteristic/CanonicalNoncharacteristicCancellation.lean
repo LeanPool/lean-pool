@@ -26,7 +26,7 @@ coordinate).  Monicity and unrestricted surjectivity alone do not prove that
 strictness statement; no such implication is assumed here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CanonicalNoncharacteristicCancellation
 

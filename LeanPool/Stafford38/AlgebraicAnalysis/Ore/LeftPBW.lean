@@ -24,7 +24,7 @@ The iterated tower still needs the commuting derivations to be extended over
 earlier stages.  Nothing in this file postulates such extensions.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.OreLeftPBW
 

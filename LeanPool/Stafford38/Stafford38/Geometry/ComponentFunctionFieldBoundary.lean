@@ -21,7 +21,7 @@ field.  Therefore every transcendental component coordinate admits the
 discrete boundary refinement constructed by the relative divisorial tower.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.ComponentFunctionFieldBoundary
 

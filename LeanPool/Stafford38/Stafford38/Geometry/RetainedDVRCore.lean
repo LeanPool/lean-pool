@@ -26,7 +26,7 @@ not construct a relative coefficient-field map, residue separability, an
 inverse limit, or a power-series chart.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.RetainedDVR
 

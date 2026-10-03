@@ -28,7 +28,7 @@ Conjecture 3.8, p. 438, is the source problem. This project proves the general c
   visible-frame route.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.FoundationClosure
 

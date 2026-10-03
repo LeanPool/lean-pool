@@ -15,7 +15,7 @@ Compatibility exports for residual support after removing stable torsion
 from the shared algebraic-analysis library.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.StableTorsionResidualSupport
 

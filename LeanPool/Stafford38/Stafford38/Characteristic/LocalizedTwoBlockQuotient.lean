@@ -27,7 +27,7 @@ congruence quotient by `J`.
 No source matrices, adapted basis, or trace identity is assumed here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.LocalizedTwoBlockQuotient
 

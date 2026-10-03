@@ -20,7 +20,7 @@ differential operator, provided that commuting with all the coordinates
 already characterizes multiplication operators.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.DifferentialOperators.CoordinateGeneration
 

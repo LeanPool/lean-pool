@@ -19,7 +19,7 @@ degree-`N` coefficient lies in `F_N A`.  No commutativity of `A`, Rees
 specialization, or Gabber theorem is assumed.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.WeylOrderRees
 

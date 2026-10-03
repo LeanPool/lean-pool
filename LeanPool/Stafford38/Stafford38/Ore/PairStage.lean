@@ -20,7 +20,7 @@ derivation momentum.  This file packages the resulting three canonical
 generator families and proves their exact relations.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.OrePairStage
 

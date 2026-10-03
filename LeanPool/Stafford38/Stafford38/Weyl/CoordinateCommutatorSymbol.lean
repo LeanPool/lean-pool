@@ -17,7 +17,7 @@ presented Weyl elements.  The proof packages both sides as linear maps and
 checks equality on the full PBW basis.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.WeylCoordinateCommutatorSymbol
 

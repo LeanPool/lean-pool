@@ -15,7 +15,7 @@ public import Mathlib.RingTheory.Nullstellensatz
 A constant coordinate equation and its pure conormal axis on an affine component.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.GeneralConstantCoordinateAxis
 

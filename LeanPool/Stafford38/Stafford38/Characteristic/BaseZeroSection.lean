@@ -20,7 +20,7 @@ already determines a zero-section point of the full reduced support; no
 chosen point in the original support fibre is needed.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.BaseZeroSection
 

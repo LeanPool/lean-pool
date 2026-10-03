@@ -19,7 +19,7 @@ hypersurface. The proof is the determinant trick and is independent of any
 filtered or differential-operator application.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.HyperplaneRestriction
 

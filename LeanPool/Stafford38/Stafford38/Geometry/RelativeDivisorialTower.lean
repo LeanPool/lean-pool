@@ -30,7 +30,7 @@ comparison, together with transport of the finite-dimensional instance, is
 the next formal interface needed by the existing divisorial-extension theorem.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.RelativeDivisorialTower
 

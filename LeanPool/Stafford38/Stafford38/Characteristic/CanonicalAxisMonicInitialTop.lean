@@ -31,7 +31,7 @@ No D-module theorem, noncharacteristic pullback theorem, or project axiom is
 used here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CanonicalAxisMonicInitialTop
 

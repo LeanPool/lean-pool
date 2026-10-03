@@ -22,7 +22,7 @@ No identification of the quotient ring modulo its parameter with the
 commutative doubled-power quotient is asserted.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.LocalizedTwoBlockModuleExactness
 

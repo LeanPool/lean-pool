@@ -21,7 +21,7 @@ No localization, trace theorem, minimal-prime statement, Gabber theorem, or
 concrete Weyl instance is asserted here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.SquareZeroTraceData
 

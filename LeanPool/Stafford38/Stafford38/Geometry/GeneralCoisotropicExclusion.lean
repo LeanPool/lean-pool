@@ -18,7 +18,7 @@ symbol hypersurface transverse to the distinguished axis must meet the
 coordinate hyperplane.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.GeneralCoisotropicExclusion
 

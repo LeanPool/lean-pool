@@ -17,7 +17,7 @@ functionals.  It does not assert that such a sequence can be constructed
 from rank or torsion hypotheses.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.FreeSummandInduction
 

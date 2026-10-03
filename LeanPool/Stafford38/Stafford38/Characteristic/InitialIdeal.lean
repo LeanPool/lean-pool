@@ -20,7 +20,7 @@ construction is concrete: no abstract D-module or characteristic-variety
 interface is assumed.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CharacteristicInitialIdeal
 

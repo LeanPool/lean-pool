@@ -14,7 +14,7 @@ Compatibility exports for polynomial actions from commuting endomorphisms
 from the shared algebraic-analysis library.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic
 

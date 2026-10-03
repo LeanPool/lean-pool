@@ -23,7 +23,7 @@ file only combines those facts; it adds no hypothesis and supplies no degree
 or normal-form datum.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38FixedSourceChallenge
 

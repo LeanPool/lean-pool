@@ -11,7 +11,7 @@ public import LeanPool.Stafford38.AlgebraicAnalysis.Module.SplitLatticePresentat
 
 /-! Compatibility exports for the neutral split-lattice presentation. -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.GeneralTangentLatticePresentation
 

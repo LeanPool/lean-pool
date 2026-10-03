@@ -15,7 +15,7 @@ public import Mathlib.RingTheory.MvPolynomial.Homogeneous
 Normal-symbol polynomials obtained from the canonical filtered quotient.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.NormalSymbolPolynomial
 

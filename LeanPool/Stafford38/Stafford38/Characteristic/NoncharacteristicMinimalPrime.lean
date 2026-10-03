@@ -15,7 +15,7 @@ public import LeanPool.Stafford38.Stafford38.Characteristic.CanonicalNormalAxisS
 Avoidance of the normal coordinate by minimal primes of the characteristic support.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.NoncharacteristicMinimalPrime
 

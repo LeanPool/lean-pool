@@ -22,7 +22,7 @@ prime containing the polynomial and every auxiliary variable also contains
 the distinguished variable, provided the pure coefficient is a unit.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.MvPolynomial
 

@@ -11,7 +11,7 @@ public import LeanPool.Stafford38.Stafford38.PolynomialDifferentialOperators
 
 /-! Coordinate commutators on the intrinsic polynomial endomorphism ring. -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.PolynomialOperatorCommutators
 

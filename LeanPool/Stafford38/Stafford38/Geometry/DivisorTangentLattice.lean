@@ -49,7 +49,7 @@ about the derivation restricted to `V`, and producing a place that satisfies
 it is the remaining geometric input of lane C.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.DivisorTangentLattice
 

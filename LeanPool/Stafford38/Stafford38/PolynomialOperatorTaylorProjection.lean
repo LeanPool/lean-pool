@@ -18,7 +18,7 @@ operator representation.  Products are compositions and the powers of the
 partial derivative stay on the right.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.PolynomialOperatorTaylorProjection
 

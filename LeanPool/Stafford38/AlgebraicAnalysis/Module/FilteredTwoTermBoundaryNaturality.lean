@@ -17,7 +17,7 @@ The quotient maps from page one to later target pages commute with every
 filtered operator.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.FilteredTwoTermPages
 

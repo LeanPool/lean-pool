@@ -22,7 +22,7 @@ For a symplectic linear Weyl map, this induced substitution is exactly the
 phase-space linear action defined in `Characteristic.LinearAction`.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.WeylSymbolCompatibility
 

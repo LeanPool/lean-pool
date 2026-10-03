@@ -19,7 +19,7 @@ right ideals of the coefficient ring are represented as submodules for the
 opposite scalar ring.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.OreDerivationRightHilbertBasis
 

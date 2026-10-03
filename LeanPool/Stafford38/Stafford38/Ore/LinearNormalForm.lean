@@ -21,7 +21,7 @@ killed by the coefficient derivation.  This is the scalar interface needed to
 turn the iterated Ore normal form into a PBW basis.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.OreLinearNormalForm
 

@@ -17,7 +17,7 @@ These are the actual quotient maps of the filtered complex, with their
 linearity over the tangential polynomial ring proved from the Weyl action.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.CanonicalTangentialTotalAction
 

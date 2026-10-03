@@ -20,7 +20,7 @@ filtrations, the principal component of a product is the product of the
 principal components. No associated graded identification is assumed here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.WeylLeadingSymbol
 

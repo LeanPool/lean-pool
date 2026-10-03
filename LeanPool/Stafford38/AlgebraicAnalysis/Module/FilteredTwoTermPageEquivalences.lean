@@ -18,7 +18,7 @@ This file proves, from the concrete representative definitions in
 differential and that the next target page is its cokernel.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.FilteredTwoTermPages
 

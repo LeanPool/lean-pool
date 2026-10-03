@@ -30,7 +30,7 @@ identify a completion with `K[[t]]`, or extend these derivations continuously
 to power series.  Those remain separate inputs to the completed-chart step.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.SeparableResidueDerivationExtension
 

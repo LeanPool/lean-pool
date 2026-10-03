@@ -36,7 +36,7 @@ Nothing here constructs the place or the frame.  The producer statement
 remaining geometric input of lane C.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.CanonicalVisibleDivisorFrameProduction
 

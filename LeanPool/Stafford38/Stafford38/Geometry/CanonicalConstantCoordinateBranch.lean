@@ -23,7 +23,7 @@ This gives the exact residue-extension endpoint used by the canonical
 assembly, with residue extension equal to the ground field.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.CanonicalConstantCoordinateBranch
 

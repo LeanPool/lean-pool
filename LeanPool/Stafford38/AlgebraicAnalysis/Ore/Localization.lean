@@ -18,7 +18,7 @@ Ore condition.  No flatness, Noetherianity, or freeness of a localized ring
 over a stage ring is assumed.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis
 namespace OreStageLocalization

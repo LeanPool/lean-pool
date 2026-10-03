@@ -23,7 +23,7 @@ and exact normalized image. Converting this PBW statement to `Polynomial.Monic`
 for the outer Ore layer remains separate.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.WeylPBWMonicBridge
 

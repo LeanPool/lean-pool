@@ -19,7 +19,7 @@ kept as a separate theorem below, so its hypotheses and its use of the
 equation-defined conormal are visible at the call site.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.ConormalPrincipalOpenDensity
 

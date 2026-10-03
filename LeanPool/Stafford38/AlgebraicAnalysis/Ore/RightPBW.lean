@@ -20,7 +20,7 @@ monomials form a genuine right basis; the proof uses finite-support maximal
 degree induction, so no freeness or flatness assumption is introduced.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.OreRightPBW
 

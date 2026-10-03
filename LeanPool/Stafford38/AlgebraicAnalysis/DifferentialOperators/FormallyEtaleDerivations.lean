@@ -15,7 +15,7 @@ The base-change equivalence for Kähler differentials extends derivations unique
 Localizations and separable field extensions use this common construction.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.DifferentialOperators.FormallyEtaleDerivations
 

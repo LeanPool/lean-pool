@@ -20,7 +20,7 @@ operator is unchanged on pages after adding one that shifts an additional
 filtration level.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.FilteredTwoTermPages
 

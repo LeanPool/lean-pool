@@ -23,7 +23,7 @@ It does not identify a smooth scheme-theoretic conormal bundle or prove the
 asymptotic conormal theorem at infinity.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.AffineConormalClosure
 

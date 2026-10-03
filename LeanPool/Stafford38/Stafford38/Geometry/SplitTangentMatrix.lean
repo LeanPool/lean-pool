@@ -23,7 +23,7 @@ selected minor has nonzero constant coefficient.  This file does not assert
 that a suitable minor exists for a geometric tangent family.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.GeometrySplitTangentMatrix
 

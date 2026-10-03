@@ -23,7 +23,7 @@ faithfulness and freeness over a rational Weyl subring are deliberately not
 asserted here.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.OreIteratedTower
 

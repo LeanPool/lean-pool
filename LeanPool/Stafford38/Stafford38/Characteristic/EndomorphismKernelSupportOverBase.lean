@@ -15,7 +15,7 @@ Compatibility exports for kernel and cokernel support over the base ring
 from the shared algebraic-analysis library.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic
 

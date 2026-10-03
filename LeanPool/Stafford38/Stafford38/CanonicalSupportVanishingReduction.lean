@@ -30,7 +30,7 @@ No finite phase-space limit is asserted: the Laurent base coordinates may have
 poles, and only the fibre residue is specialized.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CanonicalSupportVanishingReduction
 

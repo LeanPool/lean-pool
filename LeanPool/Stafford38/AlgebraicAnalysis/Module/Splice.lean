@@ -19,7 +19,7 @@ assumption.  The hypotheses that construct the relevant submodules remain
 with the application.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.Splice
 

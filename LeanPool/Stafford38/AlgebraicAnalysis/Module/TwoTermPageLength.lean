@@ -15,7 +15,7 @@ public import Mathlib.Tactic
 Length comparison for stabilized two-term pages with exhaustive target boundaries.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.TwoTermPageLength
 

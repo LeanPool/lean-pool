@@ -41,7 +41,7 @@ Convention: all ideals here are **right** ideals, matching the repository
 convention.  Statements are written as `d * R + x ^ r * d * S = 1`.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Evolution
 

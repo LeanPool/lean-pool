@@ -30,7 +30,7 @@ of a smooth locus, or the passage from pointwise fibres to the closure of the
 smooth conormal bundle.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.AffineConormalSpan
 

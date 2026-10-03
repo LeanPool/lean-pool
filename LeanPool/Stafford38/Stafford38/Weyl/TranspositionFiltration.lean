@@ -20,7 +20,7 @@ preserves both differential order and Bernstein degree.  No filtered
 `D`-module or characteristic-variety theorem is used here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.WeylTranspositionFiltration
 

@@ -26,7 +26,7 @@ No projective chart, completion, Gabber input, or filtered cancellation is
 used here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.OneVariablePrimeConormal
 

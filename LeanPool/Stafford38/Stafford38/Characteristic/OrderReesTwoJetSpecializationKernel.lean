@@ -24,7 +24,7 @@ The factor is always written on the left.  Centrality of `T` is not used to
 reverse any noncommutative product.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CharacteristicOrderReesTwoJetSpecializationKernel
 

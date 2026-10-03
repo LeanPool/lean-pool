@@ -27,7 +27,7 @@ Every output is constructed from the displayed equations.  No residue-rank,
 saturation, splitting, or left-inverse hypothesis is assumed.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.GeometryFormalDivisorTangent
 

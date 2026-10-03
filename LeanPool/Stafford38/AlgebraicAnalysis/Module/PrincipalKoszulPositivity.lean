@@ -20,7 +20,7 @@ a support prime avoids the scalar. The proof retains embedded torsion;
 it does not infer injectivity from minimal-prime avoidance.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.PrincipalKoszulPositivity
 

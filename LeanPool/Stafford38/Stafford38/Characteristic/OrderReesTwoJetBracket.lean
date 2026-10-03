@@ -24,7 +24,7 @@ asserts existence for arbitrary two-jet classes while retaining the explicit
 source-level witness used to prove it.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CharacteristicOrderReesTwoJetBracket
 

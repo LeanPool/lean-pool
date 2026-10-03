@@ -22,7 +22,7 @@ This is the localization input needed by the minimal-prime trace argument.  No
 trace, finite-length, or prime-ideal conclusion is asserted here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.SquareZeroOreLocalization
 

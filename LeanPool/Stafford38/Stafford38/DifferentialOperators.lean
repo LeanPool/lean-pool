@@ -12,7 +12,7 @@ public import LeanPool.Stafford38.AlgebraicAnalysis.DifferentialOperators.Basic
 /-! Compatibility aliases for the neutral AlgebraicAnalysis differential
 operator API. -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.DifferentialOperators
 

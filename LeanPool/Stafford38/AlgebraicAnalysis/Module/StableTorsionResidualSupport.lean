@@ -18,7 +18,7 @@ sequence for the power kernel splits support into torsion and residual parts,
 and `support_quotSMulTop` then applies at the larger prime.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.StableTorsionResidualSupport
 

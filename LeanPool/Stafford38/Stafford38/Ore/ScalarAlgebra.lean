@@ -17,7 +17,7 @@ If the coefficient ring is a `k`-algebra and the derivation kills `k`, then
 the canonical image of `k` is central in the normal-form Ore ring.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.OreScalarAlgebra
 

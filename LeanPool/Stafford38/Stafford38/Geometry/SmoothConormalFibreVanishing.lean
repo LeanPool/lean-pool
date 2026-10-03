@@ -17,7 +17,7 @@ For a prime affine ideal, a fibre polynomial vanishing on all smooth conormal
 fibres also vanishes on the entire equation-conormal locus.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.SmoothConormalFibreVanishing
 

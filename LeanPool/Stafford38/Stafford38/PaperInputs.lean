@@ -27,7 +27,7 @@ typeclass. The assembly theorems here remain conditional when considered in
 isolation; their hypotheses are discharged by the unconditional development.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.PaperInputs
 

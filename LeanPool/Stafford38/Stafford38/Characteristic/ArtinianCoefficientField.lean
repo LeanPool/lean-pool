@@ -31,7 +31,7 @@ smoothness of the residue field therefore lifts its identity map through the
 residue quotient, producing the coefficient-field section.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

@@ -14,7 +14,7 @@ Compatibility exports for finite modules from monic annihilators
 from the shared algebraic-analysis library.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.MonicAnnihilatorFinite
 

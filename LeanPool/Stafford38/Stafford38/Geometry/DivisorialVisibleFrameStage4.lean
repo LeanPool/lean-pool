@@ -18,7 +18,7 @@ public import Mathlib.FieldTheory.IntermediateField.Adjoin.Defs
 Algebraicity of the divisorial residue field from integral affine models.
 -/
 
-@[expose] public section
+public section
 
 open IsLocalRing
 noncomputable section

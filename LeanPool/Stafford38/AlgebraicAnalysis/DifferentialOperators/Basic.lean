@@ -18,7 +18,7 @@ from Stafford38 commit `1585e4c7`, originally
 application-specific hypothesis is used.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.DifferentialOperators
 

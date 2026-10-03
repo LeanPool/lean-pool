@@ -20,7 +20,7 @@ transcendence stages and states the assembly interface used by the dedicated
 normalization, residue-algebraicity, and coefficient-field modules.
 -/
 
-@[expose] public section
+public section
 
 open IsLocalRing Polynomial
 open Stafford38.Geometry.NormalizationHeightOne

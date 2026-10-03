@@ -29,7 +29,7 @@ comparison, algebraic closedness, or base change is asserted here.  Those are
 inputs to the comparison theorem, not consequences of it.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.JacobianConormalComparison
 

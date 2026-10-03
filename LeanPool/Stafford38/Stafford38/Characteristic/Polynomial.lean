@@ -20,7 +20,7 @@ that ring and its canonical polynomial Poisson bracket without assuming any
 characteristic-variety theorem.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic
 

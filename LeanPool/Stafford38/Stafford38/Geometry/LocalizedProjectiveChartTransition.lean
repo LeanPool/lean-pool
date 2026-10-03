@@ -18,7 +18,7 @@ chosen chart is obtained by inverting the chosen-chart coordinate representing
 `X₀ / X_chart`.  This file constructs the resulting transition homomorphism.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.LocalizedProjectiveChartTransition
 

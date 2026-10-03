@@ -42,7 +42,7 @@ proving the tangent-span inclusion are separate geometric obligations.
 `CanonicalBoundaryChartProduction` records exactly that remaining obligation.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.CanonicalAsymptoticLaurentProducer
 

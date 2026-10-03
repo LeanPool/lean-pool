@@ -15,7 +15,7 @@ Compatibility exports for operator actions on total filtered two-term pages
 from the shared algebraic-analysis library.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.FilteredTwoTermPages
 

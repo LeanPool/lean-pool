@@ -20,7 +20,7 @@ Bernstein and order weights.  Exact normal ordering then proves multiplicative
 closure.  Leading symbols and the associated graded algebra remain downstream.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.WeylFiltration
 

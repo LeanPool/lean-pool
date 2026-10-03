@@ -17,7 +17,7 @@ A nontrivial finite module over a commutative Noetherian ring has a prime in
 its support which is minimal among the support primes.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.MinimalSupportExistence
 

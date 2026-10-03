@@ -21,7 +21,7 @@ is smooth.  This file deliberately makes no Jacobian or conormal
 identification.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry
 

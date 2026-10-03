@@ -37,7 +37,7 @@ the trace-zero operator from a square-zero module, or connect it to the
 localized right Rees module.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.ArtinianTriangularTrace
 

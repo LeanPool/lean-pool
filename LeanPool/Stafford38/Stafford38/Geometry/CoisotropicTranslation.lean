@@ -23,7 +23,7 @@ here.  In particular, no variety, characteristic support, conormal bundle, or
 geometric integration theorem is represented by these declarations.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.CoisotropicTranslation
 

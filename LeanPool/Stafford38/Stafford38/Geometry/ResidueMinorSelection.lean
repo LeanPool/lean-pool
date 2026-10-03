@@ -20,7 +20,7 @@ the column index type into the row index type, matching the input expected by
 `GeometrySplitTangentMatrix`.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.GeometryResidueMinorSelection
 

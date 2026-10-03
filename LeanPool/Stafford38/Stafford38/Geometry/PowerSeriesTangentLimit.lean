@@ -27,7 +27,7 @@ does not construct the split lattice from `T`, nor does it construct an arc, a
 normalization, a divisor at infinity, or a projective closure.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.GeometryPowerSeriesTangentLimit
 

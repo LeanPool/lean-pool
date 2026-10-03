@@ -22,7 +22,7 @@ coordinate ratio, and the two zero-residue facts needed by downstream
 certificates.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.CanonicalFiniteGradientProjectiveCoordinates
 

@@ -21,7 +21,7 @@ same scalar is used in every coordinate, so all projective ratios and
 homogeneous equations are preserved.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.ProjectiveValuationNormalization
 

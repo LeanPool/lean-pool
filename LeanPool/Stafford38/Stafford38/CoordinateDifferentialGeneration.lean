@@ -11,7 +11,7 @@ public import LeanPool.Stafford38.AlgebraicAnalysis.DifferentialOperators.Coordi
 
 /-! Compatibility exports for the reusable coordinate-generation argument. -/
 
-@[expose] public section
+public section
 namespace Stafford38.CoordinateDifferentialGeneration
 
 export AlgebraicAnalysis.DifferentialOperators.CoordinateGeneration

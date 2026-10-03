@@ -36,7 +36,7 @@ under the extension (nor the equivalent normalization/height-one-prime
 construction).
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.AsymptoticDivisorExistence
 

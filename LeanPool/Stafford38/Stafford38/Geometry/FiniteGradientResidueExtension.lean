@@ -24,7 +24,7 @@ map `K → k`, algebraic-closedness of `K`, normalization, boundary divisor, or
 global certificate construction is assumed.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.FiniteGradientResidueExtension
 

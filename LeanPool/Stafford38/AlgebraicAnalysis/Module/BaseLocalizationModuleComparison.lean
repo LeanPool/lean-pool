@@ -17,7 +17,7 @@ For an `R`-algebra `C`, localizing a `C`-module at the image of a submonoid
 `S ≤ R` agrees with localizing it as an `R`-module at `S`.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.BaseLocalizationModuleComparison
 

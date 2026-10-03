@@ -14,7 +14,7 @@ Compatibility exports for comparison of base and coefficient localizations
 from the shared algebraic-analysis library.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.BaseLocalizationModuleComparison
 

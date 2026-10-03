@@ -23,7 +23,7 @@ This file stops at the commutative-symbol monicity interface. Identifying it
 with a monic Ore polynomial in the selected momentum is the next dependency.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.WeylMonicNormalization
 

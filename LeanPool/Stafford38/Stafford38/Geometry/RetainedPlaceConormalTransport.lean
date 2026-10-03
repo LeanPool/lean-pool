@@ -56,7 +56,7 @@ What is not proved here: the existence of a visible divisor frame `D`, and
 the bridge `hbridge`; both are explicit hypotheses.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.RetainedPlaceConormalTransport
 

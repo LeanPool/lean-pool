@@ -33,7 +33,7 @@ This adapter is deliberately separate from the canonical support assembly, so
 the general theorem can be integrated there without an import cycle.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.GeneralCoisotropicCanonicalAdapter
 

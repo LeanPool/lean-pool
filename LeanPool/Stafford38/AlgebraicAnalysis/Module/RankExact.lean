@@ -21,7 +21,7 @@ known to split, its localized middle term is equivalent to a product and the
 rank is additive.  No flatness or exactness interface is postulated here.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis
 namespace RankExact

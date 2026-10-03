@@ -27,7 +27,7 @@ isolates the remaining trace-comparison obligation.  It does not assert an
 equality with a residue-mapped coefficient matrix.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.SourceActionCommutatorExpansion
 

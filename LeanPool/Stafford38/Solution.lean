@@ -13,7 +13,7 @@ public import LeanPool.Stafford38.Stafford38.FoundationClosure
 The presented Weyl algebra and the two-generator identity proved by Stafford’s theorem.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38Challenge
 

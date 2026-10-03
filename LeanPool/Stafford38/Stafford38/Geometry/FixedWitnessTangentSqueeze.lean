@@ -19,7 +19,7 @@ linear-algebra consumer; it does not construct tangent vectors or establish a
 smoothness or dimension bound.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.FixedWitnessTangentSqueeze
 

@@ -21,7 +21,7 @@ The final section instantiates the construction on the outer momentum layer
 of the iterated Weyl tower and uses the literal generators `d` and `x^N d`.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.OreRightQuotient
 

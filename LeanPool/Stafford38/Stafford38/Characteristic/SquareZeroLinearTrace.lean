@@ -25,7 +25,7 @@ block decomposition.  The off-diagonal block of the displayed commutator is
 a sum of two rectangular commutators, so its trace is zero.
 -/
 
-@[expose] public section
+public section
 
 noncomputable section
 

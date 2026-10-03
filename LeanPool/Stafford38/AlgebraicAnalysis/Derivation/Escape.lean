@@ -31,7 +31,7 @@ No module-span, simplicity, denominator, or geometric statement is included:
 those are separate packet obligations.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.Escape
 

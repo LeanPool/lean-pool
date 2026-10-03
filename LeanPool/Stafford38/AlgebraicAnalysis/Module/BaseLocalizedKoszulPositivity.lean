@@ -17,7 +17,7 @@ public import LeanPool.Stafford38.AlgebraicAnalysis.Module.PrincipalKoszulMinima
 Strict positivity of the localized principal Koszul Euler characteristic over the base ring.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.BaseLocalizedKoszulPositivity
 

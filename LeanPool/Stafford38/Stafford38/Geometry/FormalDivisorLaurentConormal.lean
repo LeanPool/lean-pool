@@ -27,7 +27,7 @@ No normalization or divisor chart is constructed here.  In particular this
 file makes no global closure, coisotropy, or Gabber claim.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.FormalDivisorLaurentConormal
 

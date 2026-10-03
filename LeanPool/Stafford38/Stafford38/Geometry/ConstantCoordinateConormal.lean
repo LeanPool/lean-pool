@@ -22,7 +22,7 @@ axis is then present at a constant point, with no projective boundary or
 completion.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.ConstantCoordinateConormal
 

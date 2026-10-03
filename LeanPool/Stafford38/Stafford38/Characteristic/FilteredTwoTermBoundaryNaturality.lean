@@ -16,7 +16,7 @@ Compatibility exports for naturality of filtered boundary maps
 from the shared algebraic-analysis library.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.FilteredTwoTermPages
 

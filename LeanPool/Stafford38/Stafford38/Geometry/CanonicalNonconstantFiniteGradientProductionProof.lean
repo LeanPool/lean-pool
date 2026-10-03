@@ -27,7 +27,7 @@ boundary construction.  The theorem below is the trust-zero adapter from
 that bridge to the finite equation/gradient certificate.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.CanonicalNonconstantFiniteGradientProductionProof
 

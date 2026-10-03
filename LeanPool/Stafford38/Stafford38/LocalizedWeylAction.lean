@@ -20,7 +20,7 @@ operators of a localization of a polynomial ring.  No identification of the
 resulting differential-operator algebra with another presentation is used.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.LocalizedWeylAction
 

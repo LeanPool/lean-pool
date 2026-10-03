@@ -35,7 +35,7 @@ Mathlib remains available, but is deliberately not reused as a theorem about
 noncommutative `R`.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis
 namespace RankTorsion

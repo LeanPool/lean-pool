@@ -24,7 +24,7 @@ quotient presentation.  Recursive all-degree formulas identify those basis
 vectors with ordered products of the named Weyl generators.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.WeylPBW
 

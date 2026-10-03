@@ -19,7 +19,7 @@ filtered operator on the canonical quotient.  The distinguished coordinate
 commutes with these operators, so they induce operators on every page.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.CanonicalTangentialPageOperators
 

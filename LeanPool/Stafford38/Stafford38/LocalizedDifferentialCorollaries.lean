@@ -15,7 +15,7 @@ public import LeanPool.Stafford38.Stafford38.FoundationClosure
 Two-generator corollaries for localized polynomial differential-operator rings.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.LocalizedDifferentialCorollaries
 

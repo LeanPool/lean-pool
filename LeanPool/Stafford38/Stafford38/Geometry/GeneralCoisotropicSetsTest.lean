@@ -21,7 +21,7 @@ rather than by an explicit homogeneous-ideal hypothesis.  The additional
 Poisson import supplies product rules for the independent negative control.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.GeneralCoisotropicSetsTest
 

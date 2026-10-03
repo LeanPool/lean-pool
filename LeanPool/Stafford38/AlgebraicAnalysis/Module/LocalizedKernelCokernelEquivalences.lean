@@ -17,7 +17,7 @@ needed by the successor pages.  The equivalences below are obtained from the
 canonical submodule and quotient localization equivalences in Mathlib.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.LocalizedKernelCokernelEquivalences
 

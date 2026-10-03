@@ -27,7 +27,7 @@ contradiction for an arbitrary variable type and arbitrary specialization
 vector.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.GeometryRetractionSpecialization
 

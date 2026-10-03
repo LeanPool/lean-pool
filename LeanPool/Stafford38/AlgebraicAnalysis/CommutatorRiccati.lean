@@ -18,7 +18,7 @@ inverse-Euler calculation.  No Weyl presentation, filtration, module, or
 application-specific hypothesis is assumed.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.InverseEulerRiccati
 

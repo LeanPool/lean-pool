@@ -20,7 +20,7 @@ quotient is canonically linearly equivalent to its symbol component. The
 external graded multiplication is a downstream construction.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.WeylAssociatedGraded
 

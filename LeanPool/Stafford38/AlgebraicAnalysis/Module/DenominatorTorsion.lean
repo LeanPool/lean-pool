@@ -23,7 +23,7 @@ the principal right-ideal case is proved directly from the opposite Ore
 condition.  No stage freeness or noncommutative flatness is postulated.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis
 namespace DenominatorTorsion

@@ -24,7 +24,7 @@ equation-conormal-closure containment gives the corresponding contradiction.
 This file proves no conormal-axis producer and no Gabber theorem.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.ConormalAxisContradiction
 

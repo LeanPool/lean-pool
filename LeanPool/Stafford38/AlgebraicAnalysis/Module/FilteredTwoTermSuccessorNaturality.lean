@@ -17,7 +17,7 @@ page action.  The proof is by direct-sum induction and quotient
 representatives; no abstract successor-page interface is used.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.FilteredTwoTermPages
 

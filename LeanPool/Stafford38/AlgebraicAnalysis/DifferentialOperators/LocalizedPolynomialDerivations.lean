@@ -19,7 +19,7 @@ change.  This file records the resulting extension operation and its
 specialization to the partial derivations of a polynomial ring.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.DifferentialOperators.LocalizedPolynomialDerivations
 

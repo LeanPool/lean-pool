@@ -24,7 +24,7 @@ The choice of `Algebra` structure is part of the statement.  No equality with
 an unrelated ground-field embedding of the residue field is asserted.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.RetainedGroundMapIdentification
 

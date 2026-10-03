@@ -32,7 +32,7 @@ criterion concerns the closed point directly; no generic-rank specialization
 is used.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.AsymptoticChartArcAdapter
 

@@ -16,7 +16,7 @@ This removes the commutativity assumption from the faithful-operator proof of
 associativity for `Stafford.OreDivision.rightMul`.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.OreAssociativity
 

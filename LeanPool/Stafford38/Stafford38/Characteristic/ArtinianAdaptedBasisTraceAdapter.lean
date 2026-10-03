@@ -33,7 +33,7 @@ hypothesis already implies trace zero. It is not a formalization of equation
 adapter is proved here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.ArtinianAdaptedBasisTraceAdapter
 

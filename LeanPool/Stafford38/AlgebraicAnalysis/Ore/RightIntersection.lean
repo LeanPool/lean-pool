@@ -20,7 +20,7 @@ right Ore condition is kept as an explicit common-right-multiple hypothesis;
 this module does not depend on a particular localization construction.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.OreRightIntersection
 

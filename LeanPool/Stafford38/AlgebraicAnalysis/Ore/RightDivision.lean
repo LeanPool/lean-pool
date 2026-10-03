@@ -26,7 +26,7 @@ The coefficient ring is allowed to be noncommutative.  No commutative
 polynomial division theorem is used.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis
 

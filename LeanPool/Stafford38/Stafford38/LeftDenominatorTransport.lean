@@ -13,7 +13,7 @@ public import LeanPool.Stafford38.Stafford38.LocalizationCorollaries
 Transport of the two-generator identity through left unit denominator clearing.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.LocalizationCorollaries
 

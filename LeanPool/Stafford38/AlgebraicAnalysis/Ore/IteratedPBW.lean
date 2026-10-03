@@ -19,7 +19,7 @@ coefficient embedding at every stage; no centrality of the coefficient field
 inside the Ore ring is used.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.OreIteratedPBW
 

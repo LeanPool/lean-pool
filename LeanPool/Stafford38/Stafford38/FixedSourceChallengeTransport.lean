@@ -38,7 +38,7 @@ theorem `Stafford38.universalFixedSourceStatement`. No degree and no
 normal-form datum is supplied as a hypothesis anywhere.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38FixedSourceChallenge
 

@@ -30,7 +30,7 @@ This is the classical theorem implemented for cyclic Weyl quotients. Its exact
   radical-involutivity interface is proved here; see docs/literature.md and docs/proof-guide.md.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.GabberGlobalAssembly
 

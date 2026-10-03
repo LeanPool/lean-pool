@@ -26,7 +26,7 @@ No Artinianness, module-action statement, adapted basis, or matrix identity is
 used here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.LocalizedTwoBlockPrincipalKernelDescent
 

@@ -26,7 +26,7 @@ This is only a homogeneous projective statement.  It does not assert that an
 arbitrary affine chart point satisfies the original affine component ideal.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.ComponentProjectiveClosureNormalization
 

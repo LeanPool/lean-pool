@@ -21,7 +21,7 @@ coordinate and derives strict filtered surjectivity and its associated-graded
 form.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CanonicalAxisAvoidanceConsumer
 

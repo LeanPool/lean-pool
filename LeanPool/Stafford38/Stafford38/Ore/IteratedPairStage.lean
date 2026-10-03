@@ -18,7 +18,7 @@ canonical data introduced at each successor; it does not identify the tower
 with a presented Weyl algebra.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.OreIteratedPairStage
 

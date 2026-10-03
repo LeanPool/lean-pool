@@ -26,7 +26,7 @@ names and imports are intentionally absent.  The written multiplication order
 is preserved.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis
 

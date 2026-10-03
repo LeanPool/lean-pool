@@ -15,7 +15,7 @@ public import LeanPool.Stafford38.Stafford38.Characteristic.CanonicalTangentialS
 Tangentially linear equivalences between canonical total pages and graded modules.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.CanonicalGradedTangentialEquivalences
 

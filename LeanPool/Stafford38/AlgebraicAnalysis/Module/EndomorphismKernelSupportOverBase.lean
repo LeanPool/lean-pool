@@ -18,7 +18,7 @@ over that algebra.  This gives the kernel--cokernel support inclusion after
 restriction of scalars, without assuming finite generation over the base.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis
 

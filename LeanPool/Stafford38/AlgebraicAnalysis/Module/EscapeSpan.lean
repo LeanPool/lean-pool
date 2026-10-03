@@ -21,7 +21,7 @@ No claim is made here that a particular escape family produces the pure
 coordinate vectors.  That is the remaining Stafford correction construction.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.EscapeSpan
 

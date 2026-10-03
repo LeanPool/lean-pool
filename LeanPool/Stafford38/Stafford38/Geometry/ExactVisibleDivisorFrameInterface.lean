@@ -28,7 +28,7 @@ The exact producer is supplied separately by
 `ExactDivisorialVisibleFrameExistence`.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.ExactVisibleDivisorFrameInterface
 

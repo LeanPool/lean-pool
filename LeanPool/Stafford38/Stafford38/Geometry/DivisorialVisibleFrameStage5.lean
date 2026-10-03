@@ -13,7 +13,7 @@ public import LeanPool.Stafford38.Stafford38.Geometry.DivisorialVisibleFrameCore
 Coefficient-field maps and residue-field compatibility for a divisorial valuation ring.
 -/
 
-@[expose] public section
+public section
 
 open IsLocalRing
 

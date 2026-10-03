@@ -23,7 +23,7 @@ No noncharacteristic restriction theorem or D-module comparison theorem is
 used here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CharacteristicTransposedFilteredModuleSupport
 

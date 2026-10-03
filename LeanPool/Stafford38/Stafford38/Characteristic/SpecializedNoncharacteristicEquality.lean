@@ -27,7 +27,7 @@ specialized strict noncharacteristic inverse-image theorem.  No substitute
 for that theorem is assumed here.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.SpecializedNoncharacteristicEquality
 

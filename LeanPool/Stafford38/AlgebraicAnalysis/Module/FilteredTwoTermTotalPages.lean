@@ -19,7 +19,7 @@ packages the component maps into one direct-sum map; no successor-page
 interface is assumed here.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.FilteredTwoTermPages
 

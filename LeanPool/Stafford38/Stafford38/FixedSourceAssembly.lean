@@ -13,7 +13,7 @@ public import LeanPool.Stafford38.Stafford38.FixedSourceStatement
 Assembly of the fixed-source reduction from canonical characteristic and Weyl data.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.FixedSource
 

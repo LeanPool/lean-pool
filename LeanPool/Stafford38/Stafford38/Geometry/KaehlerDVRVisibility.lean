@@ -24,7 +24,7 @@ remaining residue cotangent space.  Mapping this statement to the fraction
 field gives the visibility condition used by `VisibleDivisorFrame`.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.KaehlerDVRVisibility
 

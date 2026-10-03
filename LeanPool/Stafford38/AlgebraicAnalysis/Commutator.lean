@@ -22,7 +22,7 @@ symplectic layer and the differential-Ore escape layer.  The convention is
 specific structure is assumed.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis
 

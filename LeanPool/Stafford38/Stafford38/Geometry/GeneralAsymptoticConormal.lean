@@ -19,7 +19,7 @@ coordinates may have poles. Smooth-locus density and scalar-extension
 vanishing relate that witness to the ground-field projective direction set.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.GeneralAsymptoticConormal
 

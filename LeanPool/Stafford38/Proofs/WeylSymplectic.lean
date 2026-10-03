@@ -36,7 +36,7 @@ linear-algebra scope. Reusable commutator identities are imported from
 AlgebraicAnalysis.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford
 

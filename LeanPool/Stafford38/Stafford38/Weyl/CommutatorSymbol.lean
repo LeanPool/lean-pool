@@ -18,7 +18,7 @@ commutator--Poisson correspondence.  It uses the exact PBW block normal form;
 no characteristic-ideal, radical, or Gabber statement is assumed.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.WeylCommutatorSymbol
 

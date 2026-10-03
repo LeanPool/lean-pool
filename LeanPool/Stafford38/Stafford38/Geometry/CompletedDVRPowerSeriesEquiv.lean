@@ -28,7 +28,7 @@ No Cohen structure theorem is invoked.  In particular, an equivalence is
 constructed only from a separately proved surjectivity statement.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.CompletedDVRPowerSeries
 

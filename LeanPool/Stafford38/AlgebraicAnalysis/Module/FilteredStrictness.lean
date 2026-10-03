@@ -17,7 +17,7 @@ subquotient of the filtration.  The formulation here uses only submodules and
 their quotients; it does not introduce a separate associated-graded framework.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.FilteredStrictness
 

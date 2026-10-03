@@ -21,7 +21,7 @@ finite-order differential operators, so this construction does not assume an
 identification of that algebra with the Weyl algebra.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.PolynomialDifferentialOperators
 

@@ -37,7 +37,7 @@ of the residue vectors and the tangent-dimension bound.  This file does not
 construct the residue-field section or the `K[[t]]` chart.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.ContinuousPowerSeriesTangentFrame
 

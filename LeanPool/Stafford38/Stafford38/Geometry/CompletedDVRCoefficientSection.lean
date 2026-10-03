@@ -27,7 +27,7 @@ separability hypothesis in characteristic zero, so the construction applies
 to it directly.  No equivalence with a power-series ring is asserted.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Geometry.CompletedDVRCoefficientSection
 

@@ -22,7 +22,7 @@ pure-power coefficient. The remaining chart-existence obligation is to place
 the chosen nonzero vector into a prescribed column of a symplectic matrix.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.CharacteristicHomogeneousChart
 

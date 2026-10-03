@@ -14,7 +14,7 @@ Compatibility exports for finite length after localization at a minimal support 
 from the shared algebraic-analysis library.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.Characteristic.MinimalPrimeFiniteLengthLocalization
 

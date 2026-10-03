@@ -21,7 +21,7 @@ We use a decreasing, integer-indexed filtration `G`, as obtained from an
 increasing filtration `F` by `G p = F (-p)`.
 -/
 
-@[expose] public section
+public section
 
 namespace AlgebraicAnalysis.FilteredTwoTermPages
 

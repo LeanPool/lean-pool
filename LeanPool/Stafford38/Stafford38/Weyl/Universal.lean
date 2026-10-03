@@ -18,7 +18,7 @@ This factors the quotient lift used by the existing symplectic maps: any
 family satisfying the prescribed commutators induces a unique algebra map.
 -/
 
-@[expose] public section
+public section
 
 namespace Stafford38.WeylUniversal
 

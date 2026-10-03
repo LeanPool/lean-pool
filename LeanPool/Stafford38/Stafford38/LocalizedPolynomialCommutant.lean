@@ -11,7 +11,7 @@ public import LeanPool.Stafford38.AlgebraicAnalysis.DifferentialOperators.Locali
 
 /-! Compatibility export for the reusable localized polynomial commutant. -/
 
-@[expose] public section
+public section
 namespace Stafford38.LocalizedPolynomialCommutant
 
 export AlgebraicAnalysis.DifferentialOperators.LocalizedPolynomialCommutant
