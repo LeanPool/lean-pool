@@ -287,7 +287,7 @@ theorem norm_radialPotential_le (u : Space → Space) (i : Fin 3) (x : Space) :
       (norm_nonneg _) (norm_nonneg _)
   exact (norm_sub_le _ _).trans (by
     dsimp only [radialPotential, negativeCrossPotential]
-    nlinarith [hprod (i + 2) (i + 1), hprod (i + 1) (i + 2)])
+    nlinarith only [hprod, hprod (i + 2) (i + 1), hprod (i + 1) (i + 2)])
 
 /-- Cutting off the potential introduces only a zeroth-order error in the
 radial average, with no derivative of the original velocity in the bound. -/
@@ -320,7 +320,7 @@ theorem potentialTruncation_error_bound
       intro i _
       rw [he]
       exact (norm_sub_le _ _).trans (by
-        nlinarith [hp (i + 1) (i + 2), hp (i + 2) (i + 1)])
+        nlinarith only [hp, hp (i + 1) (i + 2), hp (i + 2) (i + 1)])
     _ = _ := by simp; ring
 
 theorem potentialTruncation_norm_bound
@@ -335,7 +335,7 @@ theorem potentialTruncation_norm_bound
     exact (mul_le_mul_of_nonneg_right (hχbound x) (norm_nonneg _)).trans_eq (one_mul _)
   have hsplit := norm_le_norm_sub_add (potentialTruncation u χ x) (χ x • u x)
   have hscale := mul_le_mul_of_nonneg_right (hderiv x) (norm_nonneg (radialAverage u x))
-  nlinarith
+  nlinarith only [herror, hmain, hsplit, hscale]
 
 /-- A cutoff controlled in the scale-invariant derivative norm gives a
 uniform finite-energy truncation. The numerical constant is inessential. -/
@@ -364,7 +364,7 @@ theorem potentialTruncation_energy_bound
       2 * ‖u x‖ ^ 2 + 288 * C ^ 2 * ‖radialAverage u x‖ ^ 2 := by
     have hh := pow_le_pow_left₀ (norm_nonneg _) (potentialTruncation_norm_bound
       u hu hdiv χ hχ C hχbound hderiv x) 2
-    nlinarith [sq_nonneg (‖u x‖ - 12 * C * ‖radialAverage u x‖)]
+    nlinarith only [hh, sq_nonneg (‖u x‖ - 12 * C * ‖radialAverage u x‖)]
   refine ⟨hw, ?_⟩
   calc
     (∫ x : Space, ‖potentialTruncation u χ x‖ ^ 2) ≤
@@ -375,7 +375,7 @@ theorem potentialTruncation_energy_bound
       rw [integral_add (hui.const_mul 2) (hBi.const_mul (288 * C ^ 2)),
         integral_const_mul, integral_const_mul]
     _ ≤ (2 + 1152 * C ^ 2) * (∫ x : Space, ‖u x‖ ^ 2) := by
-      nlinarith [mul_le_mul_of_nonneg_left hBE (by positivity : 0 ≤ 288 * C ^ 2)]
+      nlinarith only [hBE, mul_le_mul_of_nonneg_left hBE (by positivity : 0 ≤ 288 * C ^ 2)]
 
 /-- A fixed bump is dilated, so its weighted derivative bound is independent
 of the truncation radius. -/

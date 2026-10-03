@@ -130,7 +130,7 @@ theorem eulerRhs_word_tame (A P : SmoothL2Field Space) (m : ℕ) (hm : 3 ≤ m)
   have hc := h3ProductConstant_nonneg
   have hb' : ‖(transportCommutator A A w).toLp‖ ≤ 3*(2 : ℝ)^n*h3ProductConstant*M*X := by
     apply hb.trans
-    have hcoef : 3*((2 : ℝ)^n-1) ≤ 3*(2 : ℝ)^n := by linarith
+    have hcoef : 3*((2 : ℝ)^n-1) ≤ 3*(2 : ℝ)^n := by linarith only
     exact mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right
       (mul_le_mul_of_nonneg_right hcoef hc) hM0) hX
   rw [eulerRhs_pairing A P hdiv hA hP w]

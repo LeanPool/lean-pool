@@ -58,7 +58,7 @@ theorem hold_Qs_pos {d : TailData} {K : ℝ} (w : ResetWitness d K)
   have hp : 0 < ShapedWaitBounds.holdFloor d.core.m *
       (eta ^ 2 + d.core.lam + Real.exp (-(1 - d.core.lam) * t)) := by
     exact mul_pos hf (by
-        linarith [sq_nonneg eta, d.core.lam_pos, Real.exp_pos (-(1 - d.core.lam) * t)])
+        linarith only [sq_nonneg eta, d.core.lam_pos, Real.exp_pos (-(1 - d.core.lam) * t)])
   exact hp.trans_le hl
 
 /-- Hold ratio constant, given by `ShapedWaitBounds.axialWaitConstant P m / (2 *
@@ -92,14 +92,14 @@ theorem hold_ratio_bound {d : TailData} {K : ℝ} (w : ResetWitness d K)
     ring
   have hsq : 2 * |eta| * s ≤ eta ^ 2 + Real.exp (-(1 - d.core.lam) * t) := by
     have hb := sq_nonneg (|eta| - s)
-    linarith [hs, sq_abs eta]
+    linarith only [hs, hb, sq_abs eta]
   have hmul := mul_le_mul_of_nonneg_left hsq hc.le
   have hqeta : 2 * ShapedWaitBounds.holdFloor d.core.m * |eta| * s ≤
       OutgoingHistories.Qs w Amp (d.core.holdStart + t, eta) := by
-    linarith [mul_pos hc d.core.lam_pos]
+    linarith only [hlo, hmul, hc, mul_pos hc d.core.lam_pos]
   have hfac : 0 ≤ holdRatioConstant d.core.P d.core.m * (1 + t) * Real.exp (d.core.lam * t / 2) :=
     mul_nonneg (mul_nonneg (holdRatioConstant_pos d.core.P_pos d.core.m).le (by
-        linarith)) (Real.exp_pos _).le
+        linarith only [ht])) (Real.exp_pos _).le
   have hb := mul_le_mul_of_nonneg_left hqeta hfac
   have hex : Real.exp (d.core.lam * t / 2) * s = Real.exp (-(1 / 2 - d.core.lam) * t) := by
     dsimp [s]
@@ -169,7 +169,7 @@ theorem hold_coneA {d : TailData} {K : ℝ} (w : ResetWitness d K) (eta : ℝ) {
     coneA w (y, eta) = 2 + 2 * d.core.lam := by
   have hend : y < d.core.endpoint := by
     dsimp [OutgoingSchedule.Parameters.endpoint]
-    linarith [d.core.pulseLength_pos]
+    linarith only [hy', d.core.pulseLength_pos]
   rw [OutgoingEntranceCone.coneA_before w hend]
   dsimp [OutgoingEntranceCone.radialA]
   rw [slope_hold d.core.dropLength_pos.le hy]
@@ -180,7 +180,7 @@ theorem hold_coneB {d : TailData} {K : ℝ} (w : ResetWitness d K)
     (hy : d.core.holdStart ≤ y) (hy' : y ≤ d.core.pulseStart) : coneB w Amp (y, eta) = 0 := by
   have hHB : d.core.holdStart < d.core.pulseStart := by
     dsimp [OutgoingSchedule.Parameters.pulseStart]
-    linarith [d.core.wait_gt]
+    linarith only [d.core.wait_gt]
   have hz : HasDerivWithinAt (fun t => OutgoingHistories.U d Amp (t, eta)) 0
       (Icc d.core.holdStart d.core.pulseStart) y := by
     apply (hasDerivWithinAt_const y (Icc d.core.holdStart d.core.pulseStart) (0 : ℝ)).congr
@@ -273,7 +273,7 @@ theorem normalV_gt_two_of_radial {d : TailData} {K : ℝ} (w : ResetWitness d K)
     (Amp : ℝ → ℝ) (p : ℝ × ℝ) (ha : 2 < coneA w p) : 2 < normalV w Amp p := by
   have hm := mul_nonneg (show 0 ≤ coneA w p by linarith) (sq_nonneg (coneB w Amp p / coneA w p))
   unfold normalV
-  linarith
+  linarith only [ha, hm]
 
 theorem sourceCriterion_before_endpoint {d : TailData} {K : ℝ} (w : ResetWitness d K)
     {Amp : ℝ → ℝ} (ha : ContDiff ℝ ∞ Amp)
@@ -302,20 +302,20 @@ theorem sourceCriterion_before_endpoint {d : TailData} {K : ℝ} (w : ResetWitne
       (by norm_num : (0 : ℝ) < 4 / 5).trans_le hm.1, hm.2.trans_lt (by norm_num)⟩
     have he : y < d.core.endpoint := by
       dsimp [OutgoingSchedule.Parameters.endpoint]
-      linarith [d.core.pulseStart_ge_hold, d.core.pulseLength_pos]
+      linarith only [hyH, d.core.pulseStart_ge_hold, d.core.pulseLength_pos]
     rw [OutgoingEntranceCone.coneA_before w he]
     exact (by norm_num : (0 : ℝ) < 4 / 5).trans_le (OutgoingEntranceCone.radialA_bounds d.core y).1
   by_cases hyB : y ≤ d.core.pulseStart
   · have hh := hold_source_criterion w ha hwait hh1 hhlam hhT hhold heta (le_of_not_ge hyH) hyB
-    exact ⟨hh.1, by linarith [hh.2.2.2], hh.2.1, hh.2.2.1⟩
-  have ht : 0 ≤ y - d.core.pulseStart := by linarith
+    exact ⟨hh.1, by linarith only [hh, hh.2.2.2], hh.2.1, hh.2.2.1⟩
+  have ht : 0 ≤ y - d.core.pulseStart := by linarith only [hyB]
   have ht' : y - d.core.pulseStart ≤ d.core.pulseLength := by
     dsimp [OutgoingSchedule.Parameters.endpoint] at hy
-    linarith
+    linarith only [hy]
   have hp := hpulse eta (y - d.core.pulseStart) heta ht ht'
   rw [add_sub_cancel] at hp
   exact ⟨hp.angular_positive, by
-      change 0 < PulseCone.radialA w (y, eta); linarith [hp.radial_gt_two],
+      change 0 < PulseCone.radialA w (y, eta); linarith only [hp, hp.radial_gt_two],
     hp.true_criterion.1, hp.true_criterion.2.1⟩
 
 theorem true_radial_before_endpoint {d : TailData} {K : ℝ} (w : ResetWitness d K)
@@ -327,9 +327,9 @@ theorem true_radial_before_endpoint {d : TailData} {K : ℝ} (w : ResetWitness d
   apply normalV_gt_two_of_radial
   by_cases hyB : y ≤ d.core.pulseStart
   · rw [hold_coneA w eta hy hyB]
-    linarith [d.core.lam_pos]
-  · have hp := hpulse eta (y - d.core.pulseStart) heta (by linarith) (by
-      dsimp [OutgoingSchedule.Parameters.endpoint] at hy'; linarith)
+    linarith only [d.core.lam_pos]
+  · have hp := hpulse eta (y - d.core.pulseStart) heta (by linarith only [hyB]) (by
+      dsimp [OutgoingSchedule.Parameters.endpoint] at hy'; linarith only [hy'])
     rw [add_sub_cancel] at hp
     exact hp.radial_gt_two
 
@@ -378,20 +378,20 @@ theorem compact_actual_pre_cone {d : TailData} {K : ℝ} (w : ResetWitness d K)
   obtain ⟨c, hc, Hc⟩ := UniformCone.positive_uniform_margin hcompact hp1 (by
     rintro ⟨y, eta⟩ hp
     exact actual_p1_pos w Amp (abs_le.mpr hp.2) (hsource _ hp).angular_positive)
-  refine ⟨(p0 + 1) / c, div_pos (by linarith) hc, ?_⟩
+  refine ⟨(p0 + 1) / c, div_pos (by linarith only [hp0]) hc, ?_⟩
   intro XR hXR p hp
-  have hXR0 : 0 < XR := (div_pos (by linarith : 0 < p0 + 1) hc).trans hXR
+  have hXR0 : 0 < XR := (div_pos (by linarith only [hp0] : 0 < p0 + 1) hc).trans hXR
   have hlarge : p0 < OutgoingHistories.p1 XR w Amp p := by
     have ht := (div_lt_iff₀ hc).mp hXR
     have hm := mul_le_mul_of_nonneg_left (Hc p hp) hXR0.le
     rw [OutgoingHistories.p1_dilation]
-    linarith
+    linarith only [ht, hm]
   have hcone := Hcone _ hlarge p hp
   refine ⟨(hsource p hp).angular_positive, (hsource p hp).radial_positive, ?_, ?_⟩
   · dsimp [normalP]
-    linarith [hcone.1]
+    linarith only [hgap, hcone, hcone.1]
   · dsimp [normalV, normalP, normalJ]
-    linarith [hcone.2]
+    linarith only [hgap, hcone, hcone.2]
 
 theorem relaxed_of_zero_shear {d : TailData} {K : ℝ} (w : ResetWitness d K)
     (Amp : ℝ → ℝ) (XR y eta : ℝ) (heta : |eta| ≤ 1)
@@ -530,7 +530,7 @@ theorem exists_ordered_clean_cone :
   have hhold' : holdSmallConstant d.core.P d.core.m * PulseCone.coneRate d.core.lam ≤ 1 / 2 := by
     rw [hdP, hdm]; exact Hhold _ d.core.lam_pos hhold
   apply clean_cone_of_components w hK hwait hsmall hscale hsource hh1 (by
-      linarith [d.core.lam_pos]) hhT
+      linarith only [hhTiny, d.core.lam_pos]) hhT
     hreset hfinite hrelease hchosen.1 hdrop hchosen.2.1 hhold' ?_ left hleft
   exact Hpulse d hdP hdm hwait hpulse hhTiny w
 
@@ -689,10 +689,10 @@ theorem leading_gap_of_finite {s c j v : ℝ} (hs : 0 < s) (hv : 2 < v)
   have hc : 0 < c := by
     by_contra hn
     have hm := mul_nonpos_of_nonneg_of_nonpos hs.le (le_of_not_gt hn)
-    linarith
+    linarith only [hv, hvP, hm]
   have hd : (s * c - v) ^ 2 < (s * c) ^ 2 := by
-    apply (sq_lt_sq₀ (by linarith : 0 ≤ s * c - v) (mul_pos hs hc).le).mpr
-    linarith
+    apply (sq_lt_sq₀ (by linarith only [hvP] : 0 ≤ s * c - v) (mul_pos hs hc).le).mpr
+    linarith only [hv]
   have hgap : s ^ 2 * ((v - 2) * j ^ 2) < s ^ 2 * (2 * c ^ 2) := by
     linarith only [hquad, hd]
   exact ⟨hc, sub_pos.mpr ((mul_lt_mul_iff_right₀ (sq_pos_of_pos hs)).mp hgap)⟩

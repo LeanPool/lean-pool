@@ -82,10 +82,10 @@ theorem baseSize_inverse_bound (directions : ι → P)
       have h := baseSize_succ directions q f hf x
       change baseSize directions (q+1) f x = _ at h
       dsimp only [N]
-      linarith [norm_nonneg (f x)]
+      linarith only [h, norm_nonneg (f x)]
     have hdA : (∑ i, baseSize directions q (directional directions A i) x) ≤ B := by
       have h := baseSize_succ directions q A hA x
-      linarith [norm_nonneg (A x)]
+      linarith only [hAb, h, norm_nonneg (A x)]
     have hdi (i : ι) : baseSize directions q (directional directions u i) x ≤
         C*(baseSize directions q (directional directions f i) x +
           (2 : ℝ)^q*baseSize directions q (directional directions A i) x*baseSize directions q u x)

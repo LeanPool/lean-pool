@@ -82,7 +82,7 @@ theorem velocityLp_norm_bounded :
   have habs := le_abs_self E
   have habs0 := abs_nonneg E
   have hn := norm_nonneg (h.velocityLp t)
-  nlinarith [sq_nonneg (|E|)]
+  nlinarith only [h, he, habs, hn, sq_nonneg (|E|)]
 
 /-- Every `L²` test pairing is continuous. This is weak time continuity of the
 velocity in `L²`, derived from the exact Comparator hypotheses. -/
@@ -128,7 +128,7 @@ theorem velocityLp_weakly_continuous (φ : Lp ℝ³ 2 (volume : Measure ℝ³)) 
             (inner ℝ (hg.toLp g) (h.velocityLp t₀)) +
           dist (inner ℝ (hg.toLp g) (h.velocityLp t₀)) (inner ℝ φ (h.velocityLp t₀)) :=
         dist_triangle4 _ _ _ _
-    _ < δ * M + ε / 2 + δ * M := by linarith [herr t]
+    _ < δ * M + ε / 2 + δ * M := by linarith only [h, hg, hmid, hlast, herr, herr t]
     _ = ε := by dsimp [δ]; field_simp; ring
 
 /-- Function-level form of weak `L²` continuity, without quotient representatives. -/

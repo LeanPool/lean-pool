@@ -46,13 +46,13 @@ noncomputable def Patch.mid (P : Patch) : ℝ := (P.left + P.right) / 2
 /-- Left half, given by `⟨P.left, P.mid, P.left_pos, by dsimp [Patch.mid]; linarith
 [P.ordered]⟩`. -/
 noncomputable def Patch.leftHalf (P : Patch) : Patch :=
-  ⟨P.left, P.mid, P.left_pos, by dsimp [Patch.mid]; linarith [P.ordered]⟩
+  ⟨P.left, P.mid, P.left_pos, by dsimp [Patch.mid]; linarith only [P.ordered]⟩
 
 /-- Right half, given by `⟨P.mid, P.right, by dsimp [Patch.mid]; linarith [P.left_pos,
 P.ordered], by dsimp [Patch.mid]; linarith [P.ordered]⟩`. -/
 noncomputable def Patch.rightHalf (P : Patch) : Patch :=
-  ⟨P.mid, P.right, by dsimp [Patch.mid]; linarith [P.left_pos, P.ordered],
-    by dsimp [Patch.mid]; linarith [P.ordered]⟩
+  ⟨P.mid, P.right, by dsimp [Patch.mid]; linarith only [P.left_pos, P.ordered],
+    by dsimp [Patch.mid]; linarith only [P.ordered]⟩
 
 section Family
 
@@ -99,8 +99,8 @@ theorem bumps_disjoint (P : Patch) (i j : Fin n) (hij : i ≠ j) (x : ℝ) :
   have hix := bump_tsupport P i (subset_tsupport _ hi)
   have hjx := bump_tsupport P j (subset_tsupport _ hj)
   rcases lt_or_gt_of_ne hij with h | h
-  · linarith [intervals_separated P i j h, hix.2, hjx.1]
-  · linarith [intervals_separated P j i h, hjx.2, hix.1]
+  · linarith only [h, hix, hjx, intervals_separated P i j h, hix.2, hjx.1]
+  · linarith only [h, hjx, hix, intervals_separated P j i h, hjx.2, hix.1]
 
 /-- Correction, given by `∑ j, c j * bump P j x`. -/
 noncomputable def correction (P : Patch) (c : Fin n → ℝ) (x : ℝ) : ℝ := ∑ j, c j * bump P j x
@@ -304,8 +304,8 @@ theorem good_initial : GoodExponent (1 / 10 : ℝ) := by norm_num [GoodExponent]
 theorem good_outgoing (lam : ℝ) (hlam : 0 < lam) : GoodExponent (-1 / 2 - lam) := by
   unfold GoodExponent
   constructor
-  · linarith
-  constructor <;> linarith
+  · linarith only [hlam]
+  constructor <;> linarith only [hlam]
 
 /-- Axial powers, given by `![0, b + 1 / 2]`. -/
 noncomputable def axialPowers (b : ℝ) : Fin 2 → ℝ := ![0, b + 1 / 2]
@@ -316,13 +316,13 @@ theorem axialPowers_injective (b : ℝ) (hb : GoodExponent b) : Injective (axial
   intro i j hij
   by_contra hne
   fin_cases i <;> fin_cases j <;> norm_num [axialPowers] at hij <;> norm_num at hne
-  all_goals exact hb.1 (by linarith)
+  all_goals exact hb.1 (by linarith only [hij])
 
 theorem angularPowers_injective (b : ℝ) (hb : GoodExponent b) : Injective (angularPowers b) := by
   intro i j hij
   by_contra hne
   fin_cases i <;> fin_cases j <;> norm_num [angularPowers] at hij <;> norm_num at hne
-  all_goals first | exact hb.2.1 (by linarith) | exact hb.2.2 (by linarith)
+  all_goals first | exact hb.2.1 (by linarith only [hij]) | exact hb.2.2 (by linarith only [hij])
 
 /-- U, given by `correction P.leftHalf c.1`. -/
 noncomputable def u (P : Patch) (c : Coeff) : ℝ → ℝ := correction P.leftHalf c.1
@@ -434,11 +434,11 @@ theorem spatial_jet_bound (P : Patch) (k : ℕ) :
       |iteratedDeriv k (u P c) x| ≤ C * ‖c‖ ∧ |iteratedDeriv k (e P c) x| ≤ C * ‖c‖ := by
   obtain ⟨CU, hCU, hU⟩ := correction_derivative_bound (n := 2) P.leftHalf k
   obtain ⟨CE, hCE, hE⟩ := correction_derivative_bound (n := 3) P.rightHalf k
-  refine ⟨CU + CE + 1, by linarith, fun c x => ⟨?_, ?_⟩⟩
+  refine ⟨CU + CE + 1, by linarith only [hCU, hCE], fun c x => ⟨?_, ?_⟩⟩
   · exact (hU c.1 x).trans ((mul_le_mul_of_nonneg_left (norm_fst_le c) hCU).trans
-      (mul_le_mul_of_nonneg_right (by linarith) (norm_nonneg c)))
+      (mul_le_mul_of_nonneg_right (by linarith only [hCE]) (norm_nonneg c)))
   · exact (hE c.2 x).trans ((mul_le_mul_of_nonneg_left (norm_snd_le c) hCE).trans
-      (mul_le_mul_of_nonneg_right (by linarith) (norm_nonneg c)))
+      (mul_le_mul_of_nonneg_right (by linarith only [hCU]) (norm_nonneg c)))
 
 theorem finite_spatial_jet_bound (P : Patch) (N : ℕ) :
     ∃ C : ℝ, 0 < C ∧ ∀ k ≤ N, ∀ (c : Coeff) (x : ℝ),
@@ -448,14 +448,14 @@ theorem finite_spatial_jet_bound (P : Patch) (N : ℕ) :
   have hK : 0 < K := by
     have hs : 0 ≤ ∑ k ∈ Finset.range (N + 1), C k := Finset.sum_nonneg (fun k _ => (hC k).le)
     dsimp [K]
-    linarith
+    linarith only [hs]
   refine ⟨K, hK, ?_⟩
   intro k hk c x
   have hCK : C k ≤ K := by
     have h := Finset.single_le_sum (fun j _ => (hC j).le)
       (Finset.mem_range.mpr (Nat.lt_succ_of_le hk))
     dsimp [K]
-    linarith
+    linarith only [h]
   exact ⟨(hbound k c x).1.trans (mul_le_mul_of_nonneg_right hCK (norm_nonneg c)),
     (hbound k c x).2.trans (mul_le_mul_of_nonneg_right hCK (norm_nonneg c))⟩
 
@@ -754,14 +754,14 @@ theorem physicalDensity_zero_outside (P : Patch) (b A G : ℝ) (c : Coeff) {x : 
     intro hn
     have hs := correction_tsupport P.leftHalf c.1 (subset_tsupport _ hn)
     apply hx
-    exact ⟨hs.1, hs.2.trans (by dsimp [Patch.leftHalf, Patch.mid]; linarith [P.ordered])⟩
+    exact ⟨hs.1, hs.2.trans (by dsimp [Patch.leftHalf, Patch.mid]; linarith only [P.ordered])⟩
   have he : e P c x = 0 := by
     apply Classical.byContradiction
     intro hn
     have hs := correction_tsupport P.rightHalf c.2 (subset_tsupport _ hn)
     apply hx
     have hl : P.left < P.rightHalf.left := by
-        dsimp [Patch.rightHalf, Patch.mid]; linarith [P.ordered]
+        dsimp [Patch.rightHalf, Patch.mid]; linarith only [P.ordered]
     exact ⟨hl.trans hs.1, hs.2⟩
   rw [physicalDensity_eq]
   ext i
@@ -848,7 +848,7 @@ theorem compact_normalization_bound (S : Set ℝ) (hS : IsCompact S) {A G : ℝ 
   have hK : 0 < K := by
     have hs := Finset.sum_nonneg (s := Finset.univ) (fun i _ => hB i)
     dsimp [K]
-    linarith
+    linarith only [hs]
   refine ⟨K, hK, ?_⟩
   intro p hp d
   rw [normalizedDebt_eq_sum]
@@ -860,7 +860,7 @@ theorem compact_normalization_bound (S : Set ℝ) (hS : IsCompact S) {A G : ℝ 
       rw [norm_smul]
       exact mul_le_mul (norm_le_pi_norm d i) (hbound i p hp) (norm_nonneg _) (norm_nonneg _)
     _ = (∑ i, B i) * ‖d‖ := by rw [← Finset.mul_sum, mul_comm]
-    _ ≤ K * ‖d‖ := mul_le_mul_of_nonneg_right (by dsimp [K]; linarith) (norm_nonneg d)
+    _ ≤ K * ‖d‖ := mul_le_mul_of_nonneg_right (by dsimp [K]; linarith only) (norm_nonneg d)
 
 theorem correction_family_contDiffOn {n : ℕ} (P : Patch) {S : Set ℝ} {c : ℝ → Fin n → ℝ}
     (hc : ContDiffOn ℝ ∞ c S) :
@@ -908,15 +908,16 @@ theorem compact_parameter_repair (P : Patch) (b : ℝ) (hb : GoodExponent b)
   have hL : 0 < L := by dsimp [L]; positivity
   have hAbound : ∀ p ∈ S, |A p| ≤ L := by
     intro p hp
-    exact (hL₀ p hp).trans (by dsimp [L]; linarith [le_abs_self L₀])
+    exact (hL₀ p hp).trans (by dsimp [L]; linarith only [le_abs_self L₀])
   let K : ℝ := (1 + L) * (1 + J) * (C * D)
   have hK : 0 < K := by dsimp [K]; positivity
   have hKC : C * D ≤ K := by
     dsimp [K]
-    nlinarith [mul_pos hC hD, mul_pos hL hJ]
+    nlinarith only [hJ, hK, hL, mul_pos hC hD, mul_pos hL hJ]
   have hKJ : L * J * (C * D) ≤ K := by
     dsimp [K]
-    linarith [mul_pos hC hD, mul_pos hL (mul_pos hC hD), mul_pos hJ (mul_pos hC hD)]
+    linarith only [hC, hD, hL, hJ, mul_pos hC hD, mul_pos hL (mul_pos hC hD),
+        mul_pos hJ (mul_pos hC hD)]
   refine ⟨ε₀ / D, K, div_pos hε₀ hD, hK, ?_⟩
   intro d hd hsmall
   let f : ℝ → Coeff := fun p => normalizedDebt (A p) (G p) (d p)
@@ -975,7 +976,7 @@ theorem smooth_solver_jet_bound {g : Coeff → Coeff} {r : ℝ} (hr : 0 < r)
     ∃ B : ℝ, 0 < B ∧ ∀ k ≤ N, ∀ z ∈ Metric.closedBall (0 : Coeff) (r / 2),
       ‖iteratedFDeriv ℝ k g z‖ ≤ B := by
   have hsub : Metric.closedBall (0 : Coeff) (r / 2) ⊆ Metric.ball 0 r :=
-    Metric.closedBall_subset_ball (by linarith)
+    Metric.closedBall_subset_ball (by linarith only [hr])
   have hsingle : ∀ k : ℕ, ∃ B : ℝ, 0 ≤ B ∧
       ∀ z ∈ Metric.closedBall (0 : Coeff) (r / 2), ‖iteratedFDeriv ℝ k g z‖ ≤ B := by
     intro k
@@ -990,10 +991,10 @@ theorem smooth_solver_jet_bound {g : Coeff → Coeff} {r : ℝ} (hr : 0 < r)
   choose B hB hbound using hsingle
   refine ⟨1 + ∑ k ∈ Finset.range (N + 1), B k, ?_, ?_⟩
   · have hs := Finset.sum_nonneg (s := Finset.range (N + 1)) (fun k _ => hB k)
-    linarith
+    linarith only [hs]
   · intro k hk z hz
     have hs := Finset.single_le_sum (fun j _ => hB j) (Finset.mem_range.mpr (Nat.lt_succ_of_le hk))
-    exact (hbound k z hz).trans (by linarith)
+    exact (hbound k z hz).trans (by linarith only [hs])
 
 /-- Genuine higher parameter jets of the nonlinear branch are small when
 the corresponding normalized-debt jets are small. The stronger input scale
@@ -1021,7 +1022,7 @@ theorem smooth_solver_parameter_jets {g : Coeff → Coeff} {r C : ℝ}
     simpa only [Metric.mem_closedBall, dist_zero_right] using hfx.trans htr
   have hxball : f x ∈ Metric.ball (0 : Coeff) r := by
     simpa only [Metric.mem_ball, dist_zero_right] using hfx.trans_lt (lt_of_le_of_lt htr (by
-        linarith))
+        linarith only [htau, htr]))
   by_cases hk0 : k = 0
   · subst k
     rw [norm_iteratedFDeriv_zero]
@@ -1041,7 +1042,7 @@ theorem smooth_solver_parameter_jets {g : Coeff → Coeff} {r C : ℝ}
     have hp : tau ^ k ≤ tau := by
       simpa only [pow_one] using pow_le_pow_of_le_one htau.le ht1 (show 1 ≤ k by omega)
     exact (hchain.trans (mul_le_mul hfac hp (pow_nonneg htau.le k) (by positivity))).trans
-      (mul_le_mul_of_nonneg_right (by dsimp [K]; linarith) htau.le)
+      (mul_le_mul_of_nonneg_right (by dsimp [K]; linarith only [hC]) htau.le)
   · rw [iteratedFDerivWithin_of_isOpen j Metric.isOpen_ball hxball]
     exact hgb j (hj.trans hk) _ hxclosed
   · rw [iteratedFDerivWithin_of_isOpen j hV hxV]
@@ -1178,13 +1179,15 @@ theorem physical_mixed_jets_small (P : Patch) {g : Coeff → Coeff} {r C : ℝ}
 theorem u_tsupport_patch (P : Patch) (c : Coeff) : tsupport (u P c) ⊆ Ioo P.left P.right := by
   intro x hx
   have hs := correction_tsupport P.leftHalf c.1 hx
-  have hm : P.leftHalf.right < P.right := by dsimp [Patch.leftHalf, Patch.mid]; linarith [P.ordered]
+  have hm : P.leftHalf.right < P.right := by dsimp [Patch.leftHalf, Patch.mid]; linarith only [
+      P.ordered]
   exact ⟨hs.1, hs.2.trans hm⟩
 
 theorem e_tsupport_patch (P : Patch) (c : Coeff) : tsupport (e P c) ⊆ Ioo P.left P.right := by
   intro x hx
   have hs := correction_tsupport P.rightHalf c.2 hx
-  have hm : P.left < P.rightHalf.left := by dsimp [Patch.rightHalf, Patch.mid]; linarith [P.ordered]
+  have hm : P.left < P.rightHalf.left := by dsimp [Patch.rightHalf, Patch.mid]; linarith only [
+      P.ordered]
   exact ⟨hm.trans hs.1, hs.2⟩
 
 theorem u_zero_outside (P : Patch) (c : Coeff) {x : ℝ} (hx : x ∉ Ioo P.left P.right) : u P c x = 0
@@ -1273,11 +1276,11 @@ theorem compact_global_jet_bound {F : Type*} [NormedAddCommGroup F] [NormedSpace
   choose B hB hbound using hb
   refine ⟨1 + ∑ j ∈ Finset.range (N + 1), B j, ?_, ?_⟩
   · have hs := Finset.sum_nonneg (s := Finset.range (N + 1)) (fun j _ => hB j)
-    linarith
+    linarith only [hs]
   · intro j hj p hp
     have hsum := Finset.single_le_sum (fun j _ => hB j) (Finset.mem_range.mpr (Nat.lt_succ_of_le
         hj))
-    exact (hbound j p hp).trans (by linarith)
+    exact (hbound j p hp).trans (by linarith only [hsum])
 
 /-- The fixed smooth weights in the normalization preserve smallness of every
 finite parameter jet. This bridges physical row estimates to the nonlinear

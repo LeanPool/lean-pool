@@ -422,8 +422,8 @@ theorem contDiffOn_descent_local {r : ℝ} (hr : 0 < r) {f : ℝ → E}
   · have hpos : 0 < X := lt_of_le_of_ne hX.1 (Ne.symm hz)
     have hsqrt : Real.sqrt X ∈ Ioo (-r) r := by
       constructor
-      · linarith [Real.sqrt_nonneg X]
-      · nlinarith [Real.sq_sqrt hX.1, Real.sqrt_nonneg X, hX.2]
+      · linarith only [hr, Real.sqrt_nonneg X]
+      · nlinarith only [hX, hr, Real.sq_sqrt hX.1, Real.sqrt_nonneg X, hX.2]
     exact ((hf.contDiffAt (isOpen_Ioo.mem_nhds hsqrt)).comp X
       (Real.contDiffAt_sqrt hz)).contDiffWithinAt
 

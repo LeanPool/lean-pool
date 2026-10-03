@@ -304,7 +304,7 @@ theorem increment_twice_target {H : SmoothCovariance.Mat2} {T : SmoothCovariance
   apply (div_eq_iff (mul_ne_zero (by norm_num) (hc.amplitudes_pos j).ne')).mpr
   have hs : SmoothCovariance.amplitudes H T j ^ 2 = SmoothCovariance.weights H T j :=
     Real.sq_sqrt (hc.weights_pos j).le
-  nlinarith
+  nlinarith only [hs]
 
 /-- Coefficients, given by `SignedWaveUpdate.coefficients a s d H T (fun n x => (2 : ℝ) • T n x)
 mask v Ndot A j`. -/
@@ -647,7 +647,7 @@ theorem frame_tail_ne_zero {U : PhaseJetBounds.Domain ℕ PhaseCalculus.Slow}
     (P : PrimaryPulseBounds.PhaseConstruction U) (n : ℕ)
     {z : PhaseCalculus.Slow × ℝ} (hz : z ∈ (U.slot P.V P.openV).carrier n) :
     MovingFrameODE.tail (P.phase.normal n z) ≠ 0 := by
-  have hB : 0 < P.B n := lt_of_lt_of_le (by linarith [P.b_pos]) (P.B_bound n).1
+  have hB : 0 < P.B n := lt_of_lt_of_le (by linarith only [P.b_pos]) (P.B_bound n).1
   exact (PhaseEstimates.normal_lower_bounds hB (P.K_unit n)
     (P.error_small n z hz) (P.normal_close n z hz)).2.2.1
 
@@ -1913,8 +1913,8 @@ theorem zeroMean_gr_mem {s : StripData D} {κ : ℝ} (c : Context D) (u : State 
     MeanClass s (1 - κ) (u.gr c) := by
   rw [zeroMean_gr c u hm]
   exact Class.neg (Class.sub ((ho.radialDiv (hW 0 0) 1).add
-    ((ho.dz (hW 2 0)).mono_exponent (by linarith [ho.kappa_nonneg])))
-    ((ho.inv_mul (hW 1 1)).mono_exponent (by linarith [ho.kappa_nonneg])))
+    ((ho.dz (hW 2 0)).mono_exponent (by linarith only [ho, ho.kappa_nonneg])))
+    ((ho.inv_mul (hW 1 1)).mono_exponent (by linarith only [ho, ho.kappa_nonneg])))
 
 theorem zeroMean_theta_mem {s : StripData D} {κ : ℝ} (c : Context D) (u : State D)
     (ho : OperatorBounds s c.operators κ) (hm : u.mean = ⟨0, 0, 0⟩)
@@ -1922,7 +1922,7 @@ theorem zeroMean_theta_mem {s : StripData D} {κ : ℝ} (c : Context D) (u : Sta
     (hT : MeanClass s 1 c.virtualTheta) : MeanClass s (1 - κ) (u.thetaResidual c) := by
   rw [zeroMean_theta c u hm]
   exact Class.sub ((ho.radialDiv (hW 0 1) 2).add
-    ((ho.dz (hW 2 1)).mono_exponent (by linarith [ho.kappa_nonneg])))
+    ((ho.dz (hW 2 1)).mono_exponent (by linarith only [ho, ho.kappa_nonneg])))
     (ho.radialDiv hT 2)
 
 theorem zeroMean_axial_mem {s : StripData D} {κ : ℝ} (c : Context D) (u : State D)
@@ -1933,7 +1933,7 @@ theorem zeroMean_axial_mem {s : StripData D} {κ : ℝ} (c : Context D) (u : Sta
   rw [zeroMean_axial c u hm]
   have hflux := ((hW 2 2).mono_exponent (show 1 - κ ≤ 1 by linarith [ho.kappa_nonneg])).add hp
   exact Class.sub ((ho.radialDiv (hW 0 2) 1).add
-    ((ho.dz hflux).mono_exponent (by linarith))) (ho.radialDiv hT 1)
+    ((ho.dz hflux).mono_exponent (by linarith only))) (ho.radialDiv hT 1)
 
 end ZeroMean
 
@@ -2101,7 +2101,7 @@ theorem matched_flux_mem {a b cL cR : ℝ} (ha : 0 < a) (hcL : 0 < cL) (hcR : 0 
   have ht := congrFun (congrFun (meanBar_sub T T0 hT hT0) n) x
   have hm := hmatch n hx
   simp only [Pi.sub_apply] at *
-  linarith
+  linarith only [hr, ht, hm]
 
 /-- The initial bar exponent `1.49` follows from the actual averaged
 flux balance, a curl covariance error, and the axial derivative gain. -/
@@ -2506,7 +2506,7 @@ theorem matched_flux_mem (R R₀ T T₀ : ScalarField Point)
   change meanBar (T - T₀) n x = _ at ht
   change (meanBar R - meanBar T) n x = (meanBar (R - R₀) - meanBar (T - T₀)) n x
   simp only [Pi.sub_apply] at *
-  linarith
+  linarith only [hm, hr, ht]
 
 theorem fluxBalance_mem (o : Operators Point)
     (ho : OperatorBounds (movingStripData U a b cL cR ha hcL hcR ε L hε hεone hL)
@@ -3377,13 +3377,13 @@ theorem state_debt_mem (c : Context Point) (u : State Point) {H : ℝ} (hH : 0 �
     have h1 := (Class.coefficient_mul hb.axial hm.angular).mono_exponent (by linarith : H ≤ 0 + H)
     have h2 := (Class.coefficient_mul hb.angular hm.axial).mono_exponent (by linarith : H ≤ 0 + H)
     have h3 := (Class.product hm.axial hm.angular ho.weight_le_one).mono_exponent (by
-        linarith : H ≤ H + H)
+        linarith only [hH] : H ≤ H + H)
     exact ((h1.add h2).add h3).add (hW 2 1)
   have hz : MeanClass (movingStripData U a b cL cR ha hcL hcR ε L hε hεone hL) H
       (axialAxial c.base u.mean + u.covariance 2 2) := by
     have h1 := (Class.coefficient_mul hb.axial hm.axial).mono_exponent (by linarith : H ≤ 0 + H)
     have h2 := (Class.product hm.axial hm.axial ho.weight_le_one).mono_exponent (by
-        linarith : H ≤ H + H)
+        linarith only [hH] : H ≤ H + H)
     exact ((Class.smul h1 2).add h2).add (hW 2 2)
   obtain ⟨hgc, hgs⟩ := CorrectionStep.state_gr_moving_regular U ha hab c u hop hbc hmc hms hWc hWs
   obtain ⟨a₀, b₀, L₀, ha₀, _, _, _, hleft, hright, _⟩ := qLength_reference_bounds U ha hab
@@ -3508,7 +3508,7 @@ theorem temporal_rank_increment_bounds
   have hgv := temporal_gr_mem g h index axial c u ho hb hm0 hi hH
     (by norm_num [ChartScales.kappa]) (fun i j => (hW i j).smooth) hgr
   have hdebt := state_debt_mem U ha g.radial.inner_lt_outer hcL hcR ε L hε hεone hL
-    c v (by linarith : 0 ≤ H) ho hb (by simpa only [hmean] using hi) hgv hop hbc
+    c v (by linarith only [hH] : 0 ≤ H) ho hb (by simpa only [hmean] using hi) hgv hop hbc
     (by simpa only [hmean] using hic) (by simpa only [hmean] using his)
     (by simpa only [hcov] using hW) (by simpa only [hcov] using hWc)
     (by simpa only [hcov] using hWs)
@@ -4000,10 +4000,10 @@ theorem active_level_mem {D q : ℝ} {n : ℕ} {L : SlotColoring.Label}
   have hm := PhysicalWaveSum.logCoordinate_in_band hq
     (PhysicalWaveSum.labelRegion_band hs).1 (PhysicalWaveSum.labelRegion_band hs).2
   have hnm : n ≤ L.1 + 2 := by
-    have he : (n : ℝ) ≤ (L.1 : ℝ) + 2 := by linarith [hn.1, hm.2]
+    have he : (n : ℝ) ≤ (L.1 : ℝ) + 2 := by linarith only [hn, hm, hn.1, hm.2]
     exact_mod_cast he
   have hmn : L.1 ≤ n + 2 := by
-    have he : (L.1 : ℝ) ≤ (n : ℝ) + 2 := by linarith [hm.1, hn.2]
+    have he : (L.1 : ℝ) ≤ (n : ℝ) + 2 := by linarith only [hm, hn, hm.1, hn.2]
     exact_mod_cast he
   unfold levels
   apply Finset.mem_insert_of_mem
@@ -4045,7 +4045,7 @@ theorem grid_mem_of_box {D M : ℝ} {m : ℕ} (hm : 1 ≤ m) {k : SlotColoring.G
   have hk : |(k j : ℝ)| ≤ M / SlotColoring.width D j m + 2 := by
     calc
       _ ≤ (M + 2 * SlotColoring.width D j m) / SlotColoring.width D j m :=
-        (le_div_iff₀ hw).mpr (by nlinarith [ha])
+        (le_div_iff₀ hw).mpr (by nlinarith only [ha])
       _ = M / SlotColoring.width D j m + 2 := by field_simp
   have hc : |(k j : ℝ)| ≤ (gridRadius D M m j : ℝ) := hk.trans (Int.le_ceil _)
   have hlo : -gridRadius D M m j ≤ k j := by exact_mod_cast (abs_le.mp hc).1
@@ -4599,8 +4599,8 @@ theorem spatialMask_reference (L : Label B N0) {p : PhaseCalculus.Slow}
     p ∈ PositiveRepresentatives.positivePart (PrimaryGeometryAssembly.referenceSet nominal) := by
   refine ⟨subset_closure ?_, hT⟩
   have hs := SimilarityCoordinates.coordinateQ_spec (show 0 < 2 * h by
-      linarith [outgoing.data.h_pos])
-    (show 2 * h < 1 by linarith [outgoing.data.h_lt_half]) (p := (p.2.2, p.2.1)) hT
+      linarith only [outgoing.data.h_pos])
+    (show 2 * h < 1 by linarith only [outgoing.data.h_lt_half]) (p := (p.2.2, p.2.1)) hT
   refine ⟨hR, hT.le, SimilarityCoordinates.coordinateQ (2 * h) (p.2.2, p.2.1),
     ⟨(spatialMask_q_range L p hm).1.le, (spatialMask_q_range L p hm).2.le⟩, hs.2, ?_⟩
   simpa only [BaseChartJets.normalizedCoordinates_eq, SimilarityHomogeneity.chartX,
@@ -4666,7 +4666,7 @@ theorem rank_before_active_right : rankOuter < PrimaryTargetBounds.rightRadius n
     have h3 := OutgoingTail.tailStart_gt_release outgoing.data
     have h4 := (ReservedPatches.clock_inside_wait outgoing .mean).2
     dsimp [OutgoingTail.tailEnd]
-    linarith
+    linarith only [hp, h1, h2, h3, h4]
   have hX : ReservedPatches.right outgoing nominal.controls.radius .mean <
       NominalConeAssembly.activeRight nominal :=
     mul_lt_mul_of_pos_left (Real.exp_lt_exp.mpr hc) nominal.controls.radius_pos
@@ -5002,8 +5002,8 @@ theorem tangentMode_pair_covariance (L : Label B N0) (p : PhaseCalculus.Slow)
   have hq : 0 < similarityScale L p := by
     apply mul_pos (ChartScales.Q_pos _)
     exact (SimilarityCoordinates.coordinateQ_spec
-      (show 0 < 2*h by linarith [outgoing.data.h_pos])
-      (show 2*h < 1 by linarith [outgoing.data.h_lt_half]) (p := (p.2.2,p.2.1)) hK.2).1
+      (show 0 < 2*h by linarith only [outgoing.data.h_pos])
+      (show 2*h < 1 by linarith only [outgoing.data.h_lt_half]) (p := (p.2.2,p.2.1)) hK.2).1
   have hv := slots.finite_wave_covariance (Finset.univ : Finset (Fin 2))
     (signedLabel (PrimaryGeometryAssembly.label nominal L))
     (signedLabel_injective _).injOn (fun _ _ => L.val.property.1)
@@ -5220,7 +5220,8 @@ theorem outerRawVelocity_core (j : Fin 2) (L : Label B N0) (x : ActualSignedGeom
     apply hx
     simp [outerRawVelocity, hz]
   have hs := PrimaryCopyBounds.outerCutoff_support (subset_tsupport _ ho)
-  have hτ : (pulseCoordinates L x).2 ∈ Ioo (0 : ℝ) 1 := ⟨by linarith [hs.1], by linarith [hs.2]⟩
+  have hτ : (pulseCoordinates L x).2 ∈ Ioo (0 : ℝ) 1 := ⟨by linarith [hs.1], by linarith only [hs,
+      hs.2]⟩
   have ht := rawVelocity_transverse j L x hu
   have hL := (phases B N0 0).L_pos L
   refine ⟨⟨ht.1.le, ht.2.le⟩, ?_⟩
@@ -5573,7 +5574,7 @@ theorem physicalPosition_bound (U : LocalSignedRequest.SlowRegion (2 * h)) (n : 
     simpa only [Real.sqrt_one] using Real.sqrt_le_sqrt (ChartScales.Q_le_one n)
   have hD : 0 ≤ CoordinateAlgebra.D h := by
     unfold CoordinateAlgebra.D
-    linarith [outgoing.data.h_lt_half]
+    linarith only [outgoing.data.h_lt_half]
   have hd := Real.rpow_le_one (ChartScales.Q_pos n).le (ChartScales.Q_le_one n) hD
   intro j
   fin_cases j

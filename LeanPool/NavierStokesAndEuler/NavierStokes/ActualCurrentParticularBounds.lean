@@ -1072,7 +1072,7 @@ theorem current_mode_physical_bound {h a b : ℝ}
   have hBPhi : 1 ≤ B * ChartScales.Q n ^ (-ρ) * ChartScales.S n ^ r :=
     one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le hB hQρ) (one_le_pow₀ hS)
   have hAc : 0 ≤ A * ChartScales.Q n ^ gain * ChartScales.S n ^ p := by positivity
-  have hc' : |c| ≤ 1 + H := hc.trans (by linarith)
+  have hc' : |c| ≤ 1 + H := hc.trans (by linarith only)
   have hjets := mode_jet_bound_local hamp hPhi m hAc hBPhi (by linarith : 1 ≤ 1 + H) hc' hab hPhib
   let F : PhysicalWaveSum.LiftPoint → ℂ := fun y => (ChartScales.Q n ^ (-degree)) •
     (amp y * PhysicalGraphBounds.character c (Φ y))
@@ -1162,8 +1162,8 @@ theorem current_potential_mode_bound (H : ActualParticularCycleData.Invariant σ
       intro i hi
       apply native_bound_on_closed hs i (fun z hz => hab l n hn z hz i hi) hz
       rwa [hzrad]
-    have hlo : PhysicalWaveSum.physicalQ h w / 2 ≤ ChartScales.Q n := by linarith [hw.2.2]
-    have hhi : ChartScales.Q n ≤ 2 * PhysicalWaveSum.physicalQ h w := by linarith [hw.2.1]
+    have hlo : PhysicalWaveSum.physicalQ h w / 2 ≤ ChartScales.Q n := by linarith only [hw, hw.2.2]
+    have hhi : ChartScales.Q n ≤ 2 * PhysicalWaveSum.physicalQ h w := by linarith only [hw, hw.2.1]
     have he := hb n hn (CurrentPhysicalModeGerms.commonGap n) (commonGap_bound n) w hann
       (PhysicalStageBounds.abs_time_le_one outgoing.data.h_pos outgoing.data.h_lt_half hw.1 hq)
       _ hqpos hlo hhi chart (ActualCurrentParticularPhysical.nativePotential y l j n) hnear hjets
@@ -1232,8 +1232,8 @@ theorem current_pressure_mode_bound (H : ActualParticularCycleData.Invariant σ 
       intro i hi
       apply native_bound_on_closed hs i (fun z hz => hab l n hn z hz i hi) hz
       rwa [hzrad]
-    have hlo : PhysicalWaveSum.physicalQ h w / 2 ≤ ChartScales.Q n := by linarith [hw.2.2]
-    have hhi : ChartScales.Q n ≤ 2 * PhysicalWaveSum.physicalQ h w := by linarith [hw.2.1]
+    have hlo : PhysicalWaveSum.physicalQ h w / 2 ≤ ChartScales.Q n := by linarith only [hw, hw.2.2]
+    have hhi : ChartScales.Q n ≤ 2 * PhysicalWaveSum.physicalQ h w := by linarith only [hw, hw.2.1]
     have he := hb n hn (CurrentPhysicalModeGerms.commonGap n) (commonGap_bound n) w hann
       (PhysicalStageBounds.abs_time_le_one outgoing.data.h_pos outgoing.data.h_lt_half hw.1 hq)
       _ hqpos hlo hhi chart (fun z => (ActualCurrentParticularPhysical.nativePressure y l j n

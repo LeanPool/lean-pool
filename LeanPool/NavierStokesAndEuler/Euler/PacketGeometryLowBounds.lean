@@ -38,7 +38,7 @@ theorem cutoff_le (x : Space) : innerCutoff x ≤ cutoffBound := by
   simp only [norm_iteratedFDeriv_zero,majorant,Nat.zero_add,Nat.factorial_zero,
     Nat.cast_one,pow_zero,one_pow,mul_one] at h
   have he := (le_abs_self (innerCutoff x)).trans (by simpa only [Real.norm_eq_abs] using h)
-  exact he.trans (by unfold cutoffBound; linarith)
+  exact he.trans (by unfold cutoffBound; linarith only)
 
 /-- Good ratio, given by `cutoffBound*(64*Real.exp 6)`. -/
 def goodRatio : ℝ := cutoffBound*(64*Real.exp 6)

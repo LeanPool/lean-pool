@@ -146,11 +146,11 @@ theorem ray_controlled_velocity_error
           idealVelocityFirst β t U V| +
         |velocitySecondRhs (A t) (C t) ε (P t) (Q t) (N t) U V + U| ≤
           200000 * e * Θ ^ 12 * (|U| + |V|) := by
-  have hΘ0 : 0 ≤ Θ := by linarith
+  have hΘ0 : 0 ≤ Θ := by linarith only [hΘ]
   have hsmallR : 400 * (4 * e) * Θ ^ 5 ≤ 1 := by
     have hnonneg : 0 ≤ e * Θ ^ 5 := by positivity
     linarith only [hsmall, hnonneg]
-  have hinitialR : norm3 (P 0) (Q 0) (N 0 - 1) ≤ 4 * e := by linarith
+  have hinitialR : norm3 (P 0) (Q 0) (N 0 - 1) ≤ 4 * e := by linarith only [he, hinitial]
   have hray := ray_closeness_of_coefficient_error hβ hβupper hΘ hT0 hT
     (by positivity : 0 ≤ 4 * e) hsmallR hRc hP hQ hN hRclose hinitialR
   intro t ht
@@ -272,7 +272,7 @@ theorem controlled_velocity_relative_error
   have hNne : ∀ t ∈ Icc 0 T, N t ≠ 0 := by
     intro t ht
     have hh := (hcontrol t ht).1
-    linarith
+    linarith only [hσ, hσsmall, hh]
   obtain ⟨hU₁c, hV₁c⟩ := continuousOn_velocity_rhs (ε := ε) hAc hCc hPc hQc hNc hUc hVc hNne
   have hsmall' : 40 * (200000 * e) * Θ ^ 21 ≤ 1 := by linarith only [hsmall]
   have herror : ∀ t ∈ Icc 0 T,

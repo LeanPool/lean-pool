@@ -152,12 +152,12 @@ theorem perturbation_majorant_le {q A W P b n t d p k : ℝ}
       k * (W * q ^ (n + b)) * (W * q ^ (n + b)) ≤
       (t * W + d * W + p * P + k * A * W + k * W * A + k * W * W) * q ^ n := by
   have hpow : q ^ (n + b) ≤ q ^ n :=
-    Real.rpow_le_rpow_of_exponent_ge hq hq1 (by linarith)
+    Real.rpow_le_rpow_of_exponent_ge hq hq1 (by linarith only [hb])
   have hlinW := mul_le_mul_of_nonneg_left hpow hW
   have hlinP := mul_le_mul_of_nonneg_left hpow hP
-  have hAW := power_product_le hq hq1 hA hW (show n ≤ -b + (n + b) by linarith)
-  have hWA := power_product_le hq hq1 hW hA (show n ≤ (n + b) + -b by linarith)
-  have hWW := power_product_le hq hq1 hW hW (show n ≤ (n + b) + (n + b) by linarith)
+  have hAW := power_product_le hq hq1 hA hW (show n ≤ -b + (n + b) by linarith only)
+  have hWA := power_product_le hq hq1 hW hA (show n ≤ (n + b) + -b by linarith only)
+  have hWW := power_product_le hq hq1 hW hW (show n ≤ (n + b) + (n + b) by linarith only [hb, hn])
   have h1 := mul_le_mul_of_nonneg_left hlinW ht
   have h2 := mul_le_mul_of_nonneg_left hlinW hd
   have h3 := mul_le_mul_of_nonneg_left hlinP hp
@@ -251,7 +251,7 @@ theorem residual_jetRate_of_stages {U : Set SpaceTime} {l : Filter SpaceTime}
     exact (hbg J k).weaken hq (neg_le_neg (le_maxJetLoss Lbg hk))
   have htailgain (k : ℕ) (hk : k ≤ m + 2) : n + b ≤ g J - Ltail k := by
     have hkt : Ltail k ≤ t := le_maxJetLoss Ltail hk
-    linarith
+    linarith only [hgain, hkt]
   have hvelocity : FiniteJetRate l q (fun z => u z - uStage J z) (m + 2) (n + b) := by
     apply finiteJetRate_of_jetRate hqpos
     intro k hk
@@ -262,7 +262,7 @@ theorem residual_jetRate_of_stages {U : Set SpaceTime} {l : Filter SpaceTime}
     exact (htp J k (by omega)).weaken hq (htailgain k (by omega))
   have hstage : JetRate l q
       (fun z => navierStokesResidual (uStage J) (pStage J) z.1 z.2) m n :=
-    (hres J m).weaken hq (by linarith)
+    (hres J m).weaken hq (by linarith only [hresgain])
   have hdiff := residualDifference_jetRate hU hlU hq (hus J) (hu.sub (hus J))
     (hps J) (hp.sub (hps J)) m hb hn hbackground hvelocity hpressure
   have hsStage := ResidualRegularity.contDiffOn_residual hU (hus J) (hps J)

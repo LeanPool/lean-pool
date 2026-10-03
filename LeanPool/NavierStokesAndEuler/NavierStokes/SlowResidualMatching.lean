@@ -329,7 +329,7 @@ theorem transportTail_bound {q h : ℝ} (hq : 0 < q) (hq1 : q ≤ 1) (hh : 0 ≤
   rw [abs_mul, abs_of_pos (Real.rpow_pos_of_pos hq _)]
   have hb := pairTail_bound hq hq1 hh N (e - 1) (transportKernel h e α v u f w)
   dsimp only [transportTailSize]
-  nlinarith
+  nlinarith only [hb]
 
 /-- Pressure tail size, constructed using `transportTailSize`. -/
 noncomputable def pressureTailSize (N : ℕ) (h C : ℝ) (f : SlowProfiles)
@@ -354,7 +354,7 @@ theorem pressureTail_bound {q h : ℝ} (hq : 0 < q) (hq1 : q ≤ 1) (hh : 0 ≤ 
   have he : pressureExponent h + slowOrder h (N + 1) ≤
       0 - 1 + slowOrder h (N + 1) := by
     unfold pressureExponent CoordinateAlgebra.A
-    linarith
+    linarith only [hh]
   have ht' := ht.trans (mul_le_mul_of_nonneg_left
     (Real.rpow_le_rpow_of_exponent_ge hq hq1 he)
     (transportTailSize_nonneg N h 0 (-1/2) f.flux f.axial f.flux w))
@@ -365,7 +365,7 @@ theorem pressureTail_bound {q h : ℝ} (hq : 0 < q) (hq1 : q ≤ 1) (hh : 0 ≤ 
   rw [abs_mul, abs_mul, abs_of_pos (Real.rpow_pos_of_pos hq _)]
   have hh' := mul_le_mul_of_nonneg_left hp (abs_nonneg (2 * w.1 * C⁻¹ ^ 2))
   dsimp only [pressureTailSize]
-  nlinarith
+  nlinarith only [ht', hh']
 
 /-- The change from cylindrical radius R to the regular variable X. -/
 noncomputable def radiusPoint (w : InnerPoint) : InnerPoint := (w.1 ^ 2 / 2, w.2)
@@ -1043,7 +1043,7 @@ theorem pressurePower_lower {h : ℝ} (hh : 0 ≤ h) (N : ℕ)
     have hi' : i ∈ transportIndices N := by simpa [pressureIndices] using hi
     refine le_trans ?_ (transportPower_lower hh N 0 hi')
     unfold pressureExponent CoordinateAlgebra.A
-    linarith
+    linarith only [hh]
   | inr i =>
     have hi' : i ∈ transportIndices N := by simpa [pressureIndices] using hi
     cases i with
@@ -1108,7 +1108,7 @@ theorem common_tail_power_lower {h : ℝ} (hh : 0 ≤ h) (N : ℕ) :
     slowOrder, Nat.cast_add, Nat.cast_one]
   constructor
   · ring
-  constructor <;> linarith
+  constructor <;> linarith only [hh]
 
 /-- Compact coefficient jets give a uniform bound for every fixed inner
 derivative of a finite sum of actual powers. The exponent is unchanged by
@@ -1133,7 +1133,7 @@ theorem finite_monomial_inner_jet_bound {ι : Type*} (s : Finset ι)
   have hC : 0 < C := by
     have := Finset.sum_nonneg (fun i (_ : i ∈ s) => hDn i)
     dsimp [C]
-    linarith
+    linarith only [this]
   refine ⟨C, hC, fun q hq hq1 w hw => ?_⟩
   have hwO := hKO hw
   have hmn : (m : WithTop ℕ∞) ≤ ∞ := ENat.natCast_le_of_coe_top_le_withTop le_rfl m
@@ -1160,7 +1160,7 @@ theorem finite_monomial_inner_jet_bound {ι : Type*} (s : Finset ι)
           (Real.rpow_le_rpow_of_exponent_ge hq hq1 (hb i hi)) (hDn i)
         _ = _ := mul_comm _ _
     _ = (∑ i ∈ s, D i) * q ^ bmin := (Finset.sum_mul _ _ _).symm
-    _ ≤ C * q ^ bmin := mul_le_mul_of_nonneg_right (by dsimp [C]; linarith)
+    _ ≤ C * q ^ bmin := mul_le_mul_of_nonneg_right (by dsimp [C]; linarith only)
       (Real.rpow_nonneg hq.le _)
 
 theorem transportTail_inner_jet_bound {O K : Set InnerPoint} (hO : IsOpen O)

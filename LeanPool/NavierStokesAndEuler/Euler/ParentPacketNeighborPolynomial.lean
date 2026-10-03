@@ -102,13 +102,13 @@ theorem envelope_power (K Ti Ei Hi CM CH : ℝ)
     (hCM : 0 ≤ CM) (hCH : 0 ≤ CH) :
     envelope K Ti Ei Hi CM CH ≤ boundConstant*(1+K+Ti+Ei+Hi+CM+CH)^degree := by
   let P := 1+K+Ti+Ei+Hi+CM+CH
-  have hP : 1 ≤ P := by dsimp [P]; linarith
-  have hKP : K ≤ P := by dsimp [P]; linarith
-  have hbase : 1+K+Ti ≤ P := by dsimp [P]; linarith
-  have hEP : Ei ≤ P := by dsimp [P]; linarith
-  have hIP : Hi ≤ P := by dsimp [P]; linarith
-  have hMP : CM ≤ P := by dsimp [P]; linarith
-  have hHP : CH ≤ P := by dsimp [P]; linarith
+  have hP : 1 ≤ P := by dsimp [P]; linarith only [hK, hTi, hEi, hHi, hCM, hCH]
+  have hKP : K ≤ P := by dsimp [P]; linarith only [hTi, hEi, hHi, hCM, hCH]
+  have hbase : 1+K+Ti ≤ P := by dsimp [P]; linarith only [hEi, hHi, hCM, hCH]
+  have hEP : Ei ≤ P := by dsimp [P]; linarith only [hK, hTi, hHi, hCM, hCH]
+  have hIP : Hi ≤ P := by dsimp [P]; linarith only [hK, hTi, hEi, hCM, hCH]
+  have hMP : CM ≤ P := by dsimp [P]; linarith only [hK, hTi, hEi, hHi, hCH]
+  have hHP : CH ≤ P := by dsimp [P]; linarith only [hK, hTi, hEi, hHi, hCM]
   have hEmbedding := embeddingCost_nonneg
   have hHistory := labelHistoryConstant_pos
   have hV : gradientAmplitude K ≤ gradientAmplitude P := by
@@ -117,7 +117,7 @@ theorem envelope_power (K Ti Ei Hi CM CH : ℝ)
   have hF : frameAmplitude K ≤ frameAmplitude P := add_le_add (le_refl (1 : ℝ)) hV
   have hR : coefficientRadius K ≤ 1024+4*P := by
     unfold coefficientRadius
-    apply max_le <;> linarith
+    apply max_le <;> linarith only [hK, hTi, hEi, hHi, hCM, hCH]
   have hHist : labelHistoryConstant*(1+K+Ti)^labelHistoryPower ≤
       labelHistoryConstant*P^labelHistoryPower := by gcongr
   have he : envelope K Ti Ei Hi CM CH ≤ polynomial.eval P := by

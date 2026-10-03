@@ -338,11 +338,11 @@ theorem frame_input_jets
     hW hsep hA hgeometry hf N
   let B := Cc + Cp + C0 + C1
   let q := mc + mp + m0 + m1
-  have hB : 0 ≤ B := by dsimp [B]; linarith
-  have hbc : Cc ≤ B := by dsimp [B]; linarith
-  have hbp : Cp ≤ B := by dsimp [B]; linarith
-  have hb0 : C0 ≤ B := by dsimp [B]; linarith
-  have hb1 : C1 ≤ B := by dsimp [B]; linarith
+  have hB : 0 ≤ B := by dsimp [B]; linarith only [hCc, hCp, hC0, hC1]
+  have hbc : Cc ≤ B := by dsimp [B]; linarith only [hCp, hC0, hC1]
+  have hbp : Cp ≤ B := by dsimp [B]; linarith only [hCc, hC0, hC1]
+  have hb0 : C0 ≤ B := by dsimp [B]; linarith only [hCc, hCp, hC1]
+  have hb1 : C1 ≤ B := by dsimp [B]; linarith only [hCc, hCp, hC0]
   let C := B + 2^N * B * Cs
   have hP : 0 ≤ 2^N * B * Cs := mul_nonneg (mul_nonneg (pow_nonneg zero_le_two N) hB) hCs
   have hC : 0 ≤ C := add_nonneg hB hP
@@ -466,8 +466,8 @@ theorem uniform_parameter_pull {s : StripData P} {w : Label → ℕ → P → �
   intro l n x hx j hj
   have ht := PhaseJetBounds.norm_jet_comp_linear s.isOpen_domain (hf.smooth l n) L hx j
   have hpow : ‖L‖^j ≤ (‖L‖+1)^N :=
-    (pow_le_pow_left₀ (norm_nonneg _) (by linarith) j).trans
-      (pow_le_pow_right₀ (by linarith [norm_nonneg L]) hj)
+    (pow_le_pow_left₀ (norm_nonneg _) (by linarith only) j).trans
+      (pow_le_pow_right₀ (by linarith only [norm_nonneg L]) hj)
   calc
     _ ≤ ‖iteratedFDeriv ℝ j (f l n) (L x)‖*‖L‖^j := ht
     _ ≤ majorant s (w l) α C m n (L x)*(‖L‖+1)^N :=
@@ -656,10 +656,10 @@ noncomputable def referenceControl
       (fun l n => referenceP (F.lam (l,n)) (F.u (l,n)) (F.L (l,n)))
       (phasePatch s F χ g r) := by
   let K := F.M + Real.exp ((F.E+4*F.C)*F.M) + A + 1
-  have hKM : F.M ≤ K := by dsimp [K]; linarith [Real.exp_pos ((F.E+4*F.C)*F.M)]
-  have hKA : A ≤ K := by dsimp [K]; linarith [F.one_le_M, Real.exp_pos ((F.E+4*F.C)*F.M)]
+  have hKM : F.M ≤ K := by dsimp [K]; linarith only [hA, Real.exp_pos ((F.E+4*F.C)*F.M)]
+  have hKA : A ≤ K := by dsimp [K]; linarith only [F.one_le_M, Real.exp_pos ((F.E+4*F.C)*F.M)]
   have hK : 1 ≤ K := F.one_le_M.trans hKM
-  have hnonneg : 0 ≤ F.E+4*F.C := by linarith [F.C_nonneg,F.E_nonneg]
+  have hnonneg : 0 ≤ F.E+4*F.C := by linarith only [F.C_nonneg, F.E_nonneg]
   have hlength (l : Label) (n : ℕ) : F.L (l,n) ≤ F.M*D.scale (l,n) := by
     have hh := F.slot (l,n) (F.L (l,n)) (F.interval (l,n) ⟨(F.L_pos (l,n)).le,le_rfl⟩)
     simpa only [abs_of_pos (F.L_pos (l,n))] using hh
@@ -721,14 +721,14 @@ noncomputable def referenceControl
         _ = _ := by field_simp
     apply (Real.exp_le_exp.mpr he).trans
     dsimp [K]
-    linarith [F.one_le_M]
+    linarith only [hA, F.one_le_M]
   · intro l n k x hx hcell v hv z
     rw [copyFrame_coefficient, frameArgument_apply]
     exact selected_energy F (l,n) hcell.1.2.1 hv hj z
   · intro N
     obtain ⟨C,hC,m,hb⟩ := selected_input_jets s F χ g r hscale hsep hA hgeometry
-      (fun _ => j) (J := |(j : ℝ)|+1) (by linarith [abs_nonneg (j:ℝ)])
-      (fun _ => by linarith) hf N
+      (fun _ => j) (J := |(j : ℝ)|+1) (by linarith only [abs_nonneg (j:ℝ)])
+      (fun _ => by linarith only) hf N
     exact ⟨C,hC,m,fun l n k x hx hcell i hi v hv =>
       hb l n k x hx hcell.1.2.1 hcell.2 i hi v hv⟩
 
@@ -1300,7 +1300,7 @@ theorem frame_jets (s : StripData P) (F : PhaseConstruction D)
       (fun i => clock.value i.1 i.2) (fun i => normal.value i.1 i.2)
       (a := 0) (b := 1)
       (T := (targetDomain (D := D) s φ).slot (interval F clock) (interval_open F clock))
-      (show 1 ≤ A+R by linarith) hB hR hclock hnormal hlin
+      (show 1 ≤ A+R by linarith only [hA, hR]) hB hR hclock hnormal hlin
       (by simpa only [targetDomain,Domain.slot,pow_one] using hscale)
       (by intro i z hz; simp only [add_zero, zero_add]; exact ⟨hz.1, hz.2⟩)
   simp only [add_zero] at hj ⊢
@@ -1334,10 +1334,10 @@ noncomputable def scaledControl
   let K := Lc + Real.exp ((F.E+4*F.C)*F.M) + C + 1
   have hLc : 0 ≤ Lc := div_nonneg (mul_nonneg (zero_le_one.trans F.one_le_M)
     (zero_le_one.trans hB)) clock.lower_pos.le
-  have hK : 1 ≤ K := by dsimp [K]; linarith [Real.exp_pos ((F.E+4*F.C)*F.M)]
-  have hCK : C ≤ K := by dsimp [K]; linarith [Real.exp_pos ((F.E+4*F.C)*F.M)]
-  have hLK : Lc ≤ K := by dsimp [K]; linarith [Real.exp_pos ((F.E+4*F.C)*F.M)]
-  have heK : Real.exp ((F.E+4*F.C)*F.M) ≤ K := by dsimp [K]; linarith
+  have hK : 1 ≤ K := by dsimp [K]; linarith only [hC, hLc, Real.exp_pos ((F.E+4*F.C)*F.M)]
+  have hCK : C ≤ K := by dsimp [K]; linarith only [hLc, Real.exp_pos ((F.E+4*F.C)*F.M)]
+  have hLK : Lc ≤ K := by dsimp [K]; linarith only [hC, Real.exp_pos ((F.E+4*F.C)*F.M)]
+  have heK : Real.exp ((F.E+4*F.C)*F.M) ≤ K := by dsimp [K]; linarith only [hC, hLc]
   have hd := frame_jets s F φ clock normal hA hB hφ hscale
   have hcopy (l : Label) (n : ℕ) (k : Frequency) :
       (PrimaryCopyBridge.copyFrame (nativeFrame (frame F φ clock normal (l,n)) χ) (g l n)
@@ -1357,7 +1357,7 @@ noncomputable def scaledControl
   have hsepTarget (l : Label) (n : ℕ) : WaveEnvelopeTransport.Separated (g l n) (r l n) (length F
       clock l n) :=
     separated_transport (hsep l n) (clock.value_pos l n) (gap l n)
-  have herror : 0 ≤ F.E+4*F.C := by linarith [F.E_nonneg,F.C_nonneg]
+  have herror : 0 ≤ F.E+4*F.C := by linarith only [F.E_nonneg, F.C_nonneg]
   refine {
     neighborhood := neighborhood s F χ φ clock g
     open_neighborhood := neighborhood_open s F χ φ clock g
@@ -1436,7 +1436,7 @@ noncomputable def scaledControl
       (frame F φ clock normal) (fun i => length F clock i.1 i.2) (envelope F clock)
       hd (interval_contains F clock) (fun _ _ _ => (referenceP_pos _ _ _ _).le)
       χ g r (fun _ _ => rfl) hsepTarget hC hgeometry (fun _ => j)
-      (J := |(j : ℝ)|+1) (by linarith [abs_nonneg (j:ℝ)]) (fun _ => by linarith) hf N
+      (J := |(j : ℝ)|+1) (by linarith only [abs_nonneg (j:ℝ)]) (fun _ => by linarith only) hf N
     exact ⟨C0,hC0,m,fun l n k x hx hcell i hi v hv =>
       hb l n k x hx hcell.1.2.1 hcell.2 i hi v hv⟩
 
@@ -1591,9 +1591,9 @@ theorem norm_timeChart_le (rate : ℝ) (hrate : rate ≠ 0) :
   intro z
   rw [ContinuousLinearEquiv.coe_coe, TorusAverages.transverseChart_apply, Prod.norm_def]
   refine max_le ((norm_fst_le z).trans ?_) ?_
-  · exact le_mul_of_one_le_left (norm_nonneg _) (by linarith [abs_nonneg rate])
+  · exact le_mul_of_one_le_left (norm_nonneg _) (by linarith only [abs_nonneg rate])
   · rw [norm_mul, Real.norm_eq_abs rate]
-    exact mul_le_mul (by linarith [abs_nonneg rate] : |rate| ≤ 1+|rate|)
+    exact mul_le_mul (by linarith only [abs_nonneg rate] : |rate| ≤ 1+|rate|)
       (norm_snd_le z) (norm_nonneg _) (by positivity)
 
 /-- Geometry factor, given by `1 + coveringBound budget * (2+clock.upper+clock.lower⁻¹)`. -/
@@ -1606,7 +1606,7 @@ theorem geometryFactor_one (clock : ActualSignedControl.PositiveScale Label) (bu
   unfold geometryFactor
   have hi := inv_pos.mpr clock.lower_pos
   have hH := coveringBound_pos budget
-  nlinarith [clock.upper_one]
+  nlinarith only [hH, hi, clock.upper_one]
 
 /-- Refining the cover and scaling its time column has polynomial cost.
 The constant uses only the already selected scale bounds and gap budget. -/
@@ -1705,7 +1705,7 @@ theorem geometry_cost_constant_one (clock : ActualSignedControl.PositiveScale La
     (budget : ℕ) {C : ℝ} (hC : 1 ≤ C) : 1 ≤ 4*(geometryFactor clock budget)^2*C^2 := by
   have hU := one_le_pow₀ (n := 2) (geometryFactor_one clock budget)
   have hC2 := one_le_pow₀ (n := 2) hC
-  linarith [mul_nonneg (sub_nonneg.mpr hU) (sub_nonneg.mpr hC2)]
+  linarith only [hU, hC2, mul_nonneg (sub_nonneg.mpr hU) (sub_nonneg.mpr hC2)]
 
 /-! ## The actual active-window parameter and frequency scales -/
 
@@ -1781,7 +1781,7 @@ theorem slotCost_one (clock : ActualSignedControl.PositiveScale Label) (budget :
     1 ≤ slotCost hdet clock budget :=
   geometry_cost_constant_one clock budget (by
     have hc := CommonCoverClass.bandArgumentCost_one_le (TorusAverages.slotChart vr vt hdet) 0
-    linarith)
+    linarith only [hdet, hc])
 
 theorem slot_geometry_cost (s : StripData P) (hh : 0 ≤ h)
     (clock : ActualSignedControl.PositiveScale Label) (gap : Label → ℕ → ℕ) (budget : ℕ)

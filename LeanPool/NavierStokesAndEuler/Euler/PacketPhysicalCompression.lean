@@ -43,7 +43,7 @@ theorem target_compression_order40
       H * ε * Q * P / rayDenominator ε P Q N ≤ -(H * ε) / (10 * t) := by
   let ρ := 800 * e * Θ ^ 5
   let M := K * e * Θ ^ 40
-  have hΘpos : 0 < Θ := by linarith
+  have hΘpos : 0 < Θ := by linarith only [ht, htΘ]
   have hρ : 0 ≤ ρ := by dsimp [ρ]; positivity
   have hMb : 1000000 * M ≤ 1 := by dsimp [M]; linarith only [hsmall]
   have hp (n : ℕ) (hn : n ≤ 40) : e * Θ ^ n ≤ M := scaled_power_le hΘ hK he hn

@@ -131,7 +131,7 @@ theorem liftedAmplitude_small_eventually (C E R T : ℝ)
     liftedAmplitude_eventually_le_inverse_half C E,
     (_root_.tendsto_rpow_atTop (by norm_num : (0 : ℝ) < 1/2)).eventually_ge_atTop (16*R*T)]
     with k hk hb hroot
-  have hk0 : 0 < k := by linarith
+  have hk0 : 0 < k := by linarith only [hk]
   have hp : 0 < k^(1/2 : ℝ) := Real.rpow_pos_of_pos hk0 _
   refine ⟨hk, liftedAmplitude_nonneg C E k hC hE hk0.le, hb, ?_⟩
   calc
@@ -140,7 +140,7 @@ theorem liftedAmplitude_small_eventually (C E R T : ℝ)
     _ = (2*R*T)/k^(1/2 : ℝ) := by rw [Real.rpow_neg hk0.le]; ring
     _ ≤ 1/8 := by
       apply (div_le_iff₀ hp).mpr
-      nlinarith
+      nlinarith only [hroot]
 
 end EulerPacketSourceFrequency
 
@@ -232,7 +232,7 @@ theorem liftedAmplitude_small_of_costs (C E R T k : ℝ) (hk : 1 ≤ k)
         _ = _ := by rw [← Real.rpow_add hk0,← Real.rpow_add hk0]; norm_num
     _ ≤ 1/8 := by
       rw [Real.rpow_neg hk0.le,← div_eq_mul_inv]
-      exact (div_le_iff₀ (Real.rpow_pos_of_pos hk0 _)).mpr (by linarith)
+      exact (div_le_iff₀ (Real.rpow_pos_of_pos hk0 _)).mpr (by linarith only [hroot])
 
 /-- This one numerical threshold is independent of all parent fields,
 all source costs and all stages of the iteration. -/

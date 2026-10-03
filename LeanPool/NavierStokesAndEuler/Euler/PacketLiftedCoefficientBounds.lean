@@ -108,7 +108,7 @@ theorem lift_add_inverse_scale_bound (A B : SmoothTimeField K E Space)
     (hE : ∀ n, ‖B.jet n‖ ≤ Ce * R ^ n * (n.factorial : ℝ) ^ 2) (n : ℕ) :
     ‖(lift (A.add B) k⁻¹ m).jet n‖ ≤
       ((C0+Cn)/k+2*Ce)*R^n*(n.factorial : ℝ)^2 := by
-  have hk0 : 0 < k := by linarith
+  have hk0 : 0 < k := by linarith only [hk]
   have hki : |k⁻¹| ≤ 1 := by
     rw [abs_of_pos (inv_pos.mpr hk0)]
     exact inv_le_one_of_one_le₀ hk
@@ -171,13 +171,13 @@ theorem liftedInputRadius_packet (R ρ : ℝ) (_hR : 0 ≤ R) (hρ : 0 < ρ) :
   have h := mul_nonneg (norm_nonneg coordinateEquiv.symm.toContinuousLinearMap) (inv_nonneg.mpr
       hρ.le)
   dsimp [liftedInputRadius]
-  nlinarith
+  nlinarith only [h]
 
 theorem liftedInputRadius_error (R ρ : ℝ) (hR : 0 ≤ R) :
     ‖coordinateEquiv.symm.toContinuousLinearMap‖ * ρ⁻¹ ≤ liftedInputRadius R ρ := by
   have h := mul_nonneg (norm_nonneg coordinateEquiv.symm.toContinuousLinearMap) hR
   dsimp [liftedInputRadius]
-  nlinarith
+  nlinarith only [h]
 
 private theorem jet_envelope_mono {C D R S : ℝ} (hD : 0 ≤ D) (hR : 0 ≤ R)
     (hCD : C ≤ D) (hRS : R ≤ S) (n : ℕ) :
@@ -281,7 +281,7 @@ theorem Budget.liftedPacketCoefficient_jet_bound (G : Field P T raw)
       (liftedInputConstant P*((C0+Cn)/k+2*Ce)) * (liftedInputRadius R ρ)^n * (n.factorial : ℝ)^2 :=
           by
   have hK : 0 ≤ liftedInputConstant P := (zero_le_one.trans (liftedInputConstant_one_le P))
-  have hk0 : 0 < k := by linarith
+  have hk0 : 0 < k := by linarith only [hk]
   have hA' (j : ℕ) : ‖G.toSmoothTimeField.jet j‖ ≤
       (liftedInputConstant P*C0)*(liftedInputRadius R ρ)^j*(j.factorial : ℝ)^2 :=
     (hG.toSmoothTimeField_jet_bound (by norm_num) hR hC0 j).trans
@@ -329,7 +329,7 @@ theorem Budget.liftedPacketCoefficient_L2_bound (G : Field P T raw)
           P)).toReal ≤
       (liftedInputConstant P*((C0+Cn)/k+2*Ce)) * (liftedInputRadius R ρ)^n * (n.factorial : ℝ)^2 :=
           by
-  have hk0 : 0 < k := by linarith
+  have hk0 : 0 < k := by linarith only [hk]
   have hA' := (hG.coverTensor_bound n t).trans
     (jet_envelope_mono hC0 (mul_nonneg (norm_nonneg _) hR) le_rfl
       (liftedInputRadius_packet R ρ hR hρ) n)

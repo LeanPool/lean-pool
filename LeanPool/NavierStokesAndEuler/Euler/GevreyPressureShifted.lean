@@ -82,7 +82,7 @@ theorem nonlinear_pressure_lower_bound {s : ℕ} {A : SmoothCoefficient period} 
   rw [heq] at hp
   have ht := mul_le_mul_of_nonneg_left
     (transport_lower_weighted_bound period N ρ hρ b e hb he hbL2 heL2)
-    (show 0 ≤ 2*M by linarith)
+    (show 0 ≤ 2*M by linarith only [hM])
   exact hp.trans (ht.trans_eq (by ring))
 
 end EulerH6Nonlinear
@@ -354,7 +354,7 @@ theorem transportPressure_shifted_smooth {s : ℕ} (hs : 6 ≤ s) {A : SmoothCoe
   conv_rhs => rw [weightedNorm_eq_classical period 6 (N+1) (by omega) ρ u f hu hf,
     weightedLoss_eq_classical period 6 (N+1) (by omega) ρ v g hv hg]
   have hcoef : 0 ≤ 4*M*productConstant period 3 := mul_nonneg (by
-      linarith) (productConstant_nonneg period 3)
+      linarith only [hM]) (productConstant_nonneg period 3)
   have hv0 : 0 ≤ ∑ j ∈ Finset.range (N+2), (j : ℝ)*weight ρ j * wordSobolevNorm period 6 j g :=
     Finset.sum_nonneg fun j _ => mul_nonneg (mul_nonneg (Nat.cast_nonneg j) (weight_pos hρ j).le)
         (wordSobolevNorm_nonneg period 6 j g)

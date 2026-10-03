@@ -93,7 +93,7 @@ theorem curve_escape_sq_le_action
     (hV.mono hsub) (fun t ht => hderiv t ⟨ht.1, ht.2.trans_le hs.2⟩)
   have hdist : R - K ≤ ‖X s - X 0‖ := by
     have hh := norm_sub_norm_le (X s) (X 0)
-    linarith
+    linarith only [hstart, hescape, hh]
   have hsq := pow_le_pow_left₀ (sub_nonneg.mpr hKR) hdist 2
   have hi : IntegrableOn (fun t => ‖V t‖ ^ 2) (Icc 0 T) :=
     (hV.norm.pow 2).integrableOn_Icc
@@ -177,7 +177,7 @@ theorem escape_measure_le_of_action
       _ = T * (∫ x, action x ∂μ) := integral_const_mul _ _
   apply (le_div_iff₀ (sq_pos_of_pos (sub_pos.mpr hKR))).mpr
   have hc := mul_le_mul_of_nonneg_left haenergy hT
-  nlinarith
+  nlinarith only [hb, hc]
 
 /-- A finite-energy measure-preserving flow can carry at most
 `energy * T^2 / (R-K)^2` measure of points from radius `K` to radius `R`.

@@ -72,7 +72,7 @@ theorem conjugate_product (p q : ℤ) :
     quadraticForm p q * quadraticForm p (-q) = (integerNorm p q : ℝ) := by
   simp only [quadraticForm, integerNorm, Int.cast_neg, Int.cast_sub,
     Int.cast_pow, Int.cast_mul, Int.cast_ofNat]
-  nlinarith [congrArg (fun x : ℝ => x * (q : ℝ) ^ 2) sqrt_two_square]
+  nlinarith only [congrArg (fun x : ℝ => x * (q : ℝ) ^ 2) sqrt_two_square]
 
 theorem integerNorm_ne_zero (p q : ℤ) (hpq : p ≠ 0 ∨ q ≠ 0) :
     integerNorm p q ≠ 0 := by
@@ -169,8 +169,8 @@ theorem radialConjugate_upper (m n : ℤ) :
       rw [abs_mul, abs_of_nonneg (by positivity : 0 ≤ 1 + Real.sqrt 2)]
     _ ≤ 3 * frequencyL1 m n := by
       unfold frequencyL1
-      nlinarith [mul_le_mul_of_nonneg_right sqrt_two_le_two (abs_nonneg (n : ℝ)),
-        abs_nonneg (m : ℝ)]
+      nlinarith only [mul_le_mul_of_nonneg_right sqrt_two_le_two (abs_nonneg (n : ℝ)),
+          abs_nonneg (m : ℝ)]
 
 theorem timeConjugate_upper (m n : ℤ) :
     |timeConjugate m n| ≤ 3 * frequencyL1 m n := by
@@ -182,8 +182,8 @@ theorem timeConjugate_upper (m n : ℤ) :
       rw [abs_mul, abs_of_nonneg (by positivity : 0 ≤ 1 + Real.sqrt 2)]
     _ ≤ 3 * frequencyL1 m n := by
       unfold frequencyL1
-      nlinarith [mul_le_mul_of_nonneg_right sqrt_two_le_two (abs_nonneg (m : ℝ)),
-        abs_nonneg (n : ℝ)]
+      nlinarith only [mul_le_mul_of_nonneg_right sqrt_two_le_two (abs_nonneg (m : ℝ)),
+          abs_nonneg (n : ℝ)]
 
 theorem frequencyL1_le_twice_length (m n : ℤ) :
     frequencyL1 m n ≤ 2 * frequencyLength m n := by
@@ -192,13 +192,13 @@ theorem frequencyL1_le_twice_length (m n : ℤ) :
   have hm : |(m : ℝ)| ≤ frequencyLength m n := by
     apply (sq_le_sq₀ (abs_nonneg _) (frequencyLength_nonneg m n)).mp
     rw [sq_abs, hs]
-    nlinarith [sq_nonneg (n : ℝ)]
+    nlinarith only [sq_nonneg (n : ℝ)]
   have hn : |(n : ℝ)| ≤ frequencyLength m n := by
     apply (sq_le_sq₀ (abs_nonneg _) (frequencyLength_nonneg m n)).mp
     rw [sq_abs, hs]
-    nlinarith [sq_nonneg (m : ℝ)]
+    nlinarith only [sq_nonneg (m : ℝ)]
   unfold frequencyL1
-  linarith
+  linarith only [hm, hn]
 
 theorem lower_of_conjugate_bound {a b D : ℝ} (hprod : 1 ≤ |a| * |b|)
     (hD : 0 < D) (hb : |b| ≤ D) : 1 / D ≤ |a| := by
@@ -213,7 +213,7 @@ theorem radial_diophantine_l1 (m n : ℤ) (hmn : m ≠ 0 ∨ n ≠ 0) :
   · have := frequencyL1_nonneg m n
     positivity
   · have := radialConjugate_upper m n
-    linarith
+    linarith only [this]
 
 /-- Explicit Diophantine bound for `v_t = (sqrt 2-1,1)` in the L1 length. -/
 theorem time_diophantine_l1 (m n : ℤ) (hmn : m ≠ 0 ∨ n ≠ 0) :
@@ -223,7 +223,7 @@ theorem time_diophantine_l1 (m n : ℤ) (hmn : m ≠ 0 ∨ n ≠ 0) :
   · have := frequencyL1_nonneg m n
     positivity
   · have := timeConjugate_upper m n
-    linarith
+    linarith only [this]
 
 /-- The manuscript's estimate with an explicit constant and Euclidean length. -/
 theorem radial_diophantine (m n : ℤ) (hmn : m ≠ 0 ∨ n ≠ 0) :
@@ -324,7 +324,7 @@ theorem coveringFrequency_injective : Function.Injective coveringFrequency := by
   have h₁ := congrArg Prod.fst hkl
   have h₂ := congrArg Prod.snd hkl
   simp only [coveringFrequency] at h₁ h₂
-  apply Prod.ext <;> linarith
+  apply Prod.ext <;> linarith only [h₁, h₂]
 
 theorem coveringFrequency_ne_zero (k : ℤ × ℤ) (hk : k ≠ 0) :
     coveringFrequency k ≠ 0 := by
@@ -339,7 +339,7 @@ theorem radial_symbol_covering (k : ℤ × ℤ) :
       (4 - Real.sqrt 2) * radialSymbol k.1 k.2 := by
   simp only [coveringFrequency, radialSymbol_formula, Int.cast_add,
     Int.cast_mul, Int.cast_ofNat]
-  nlinarith [congrArg (fun x : ℝ => x * (k.2 : ℝ)) sqrt_two_square]
+  nlinarith only [congrArg (fun x : ℝ => x * (k.2 : ℝ)) sqrt_two_square]
 
 /-- The temporal symbol scales by the larger eigenvalue of the covering matrix. -/
 theorem time_symbol_covering (k : ℤ × ℤ) :
@@ -347,7 +347,7 @@ theorem time_symbol_covering (k : ℤ × ℤ) :
       (4 + Real.sqrt 2) * timeSymbol k.1 k.2 := by
   simp only [coveringFrequency, timeSymbol_formula, Int.cast_add,
     Int.cast_mul, Int.cast_ofNat]
-  nlinarith [congrArg (fun x : ℝ => x * (k.1 : ℝ)) sqrt_two_square]
+  nlinarith only [congrArg (fun x : ℝ => x * (k.1 : ℝ)) sqrt_two_square]
 
 theorem covering_eigenvalues_gt_one :
     1 < 4 - Real.sqrt 2 ∧ 1 < 4 + Real.sqrt 2 := by
@@ -452,14 +452,14 @@ theorem norm_freqX_le (k : Frequency) : ‖freqX k‖ ≤ ‖omega‖ * weight k
   apply mul_le_mul_of_nonneg_left _ (norm_nonneg _)
   unfold weight
   have := abs_nonneg (k.2 : ℝ)
-  linarith
+  linarith only [this]
 
 theorem norm_freqY_le (k : Frequency) : ‖freqY k‖ ≤ ‖omega‖ * weight k := by
   rw [freqY, norm_mul, Complex.norm_intCast]
   apply mul_le_mul_of_nonneg_left _ (norm_nonneg _)
   unfold weight
   have := abs_nonneg (k.1 : ℝ)
-  linarith
+  linarith only [this]
 
 theorem Rapid.derivX {a : Frequency → ℂ} (ha : Rapid a) : Rapid (derivX a) :=
   ha.mul_linear ‖omega‖ norm_freqX_le
@@ -599,10 +599,10 @@ theorem length_le_weight (k : Frequency) :
       |(k.1 : ℝ)| + |(k.2 : ℝ)| := by
     apply (sq_le_sq₀ hs (by positivity)).mp
     rw [hsq]
-    nlinarith [sq_abs (k.1 : ℝ), sq_abs (k.2 : ℝ),
-      mul_nonneg (abs_nonneg (k.1 : ℝ)) (abs_nonneg (k.2 : ℝ))]
+    nlinarith only [sq_abs (k.1 : ℝ), sq_abs (k.2 : ℝ),
+        mul_nonneg (abs_nonneg (k.1 : ℝ)) (abs_nonneg (k.2 : ℝ))]
   unfold weight
-  linarith
+  linarith only [ht]
 
 theorem reciprocal_symbol_bound (d : Direction) {k : Frequency} (hk : k ≠ 0) :
     |1 / symbol d k| ≤ 6 * weight k := by
@@ -1198,7 +1198,7 @@ theorem norm_omega_ge_one : 1 ≤ ‖omega‖ := by
   have hnorm : ‖omega‖ = 2 * Real.pi := by
     simp [omega, Complex.norm_real, Real.norm_eq_abs, abs_of_pos Real.pi_pos]
   rw [hnorm]
-  linarith [Real.two_le_pi]
+  linarith only [Real.two_le_pi]
 
 /-- Multiplying by the first frequency power is controlled by the actual derivative norm. -/
 theorem coefficient_first_moment {f : Plane → ℂ} (hf : ContDiff ℝ ∞ f)
@@ -1233,7 +1233,7 @@ theorem weight_le_dominant {k : Frequency} (hk : k.1 ≠ 0)
   have hi : (1 : ℤ) ≤ |k.1| := Int.add_one_le_iff.mpr (abs_pos.mpr hk)
   have hr : (1 : ℝ) ≤ |(k.1 : ℝ)| := by exact_mod_cast hi
   unfold weight
-  linarith
+  linarith only [hdom, hr]
 
 theorem weight_moment_of_dominant {k : Frequency} {p : ℕ} {A C : ℝ}
     (hk : k.1 ≠ 0) (hdom : |(k.2 : ℝ)| ≤ |(k.1 : ℝ)|) (hA : 0 ≤ A)
@@ -1312,10 +1312,10 @@ theorem weight_inv_four_le_product (k : Frequency) :
     (weight k ^ 4)⁻¹ ≤ ((1 + |(k.1 : ℝ)|) ^ 2)⁻¹ * ((1 + |(k.2 : ℝ)|) ^ 2)⁻¹ := by
   have hfirst : 1 + |(k.1 : ℝ)| ≤ weight k := by
     unfold weight
-    linarith [abs_nonneg (k.2 : ℝ)]
+    linarith only [abs_nonneg (k.2 : ℝ)]
   have hsecond : 1 + |(k.2 : ℝ)| ≤ weight k := by
     unfold weight
-    linarith [abs_nonneg (k.1 : ℝ)]
+    linarith only [abs_nonneg (k.1 : ℝ)]
   have hproduct : (1 + |(k.1 : ℝ)|) ^ 2 * (1 + |(k.2 : ℝ)|) ^ 2 ≤ weight k ^ 4 := by
     calc
       _ ≤ (weight k ^ 2) * (weight k ^ 2) :=

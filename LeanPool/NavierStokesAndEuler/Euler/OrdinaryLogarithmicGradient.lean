@@ -204,7 +204,7 @@ theorem elliptic_derivative_split (A G H : SmoothL2Field ℝ) (a b j : Fin 3)
       change ‖v-m‖ ≤ _ at hh
       change ‖m-l‖ ≤ _ at hm
       change ‖l‖ ≤ _ at hl
-      linarith
+      linarith only [hh, hm, hl]
 
 end EulerWholeSpaceGaussian
 
@@ -238,13 +238,13 @@ theorem optimize (X c L W H : ℝ) (hc : 0 ≤ c) (hL : 0 ≤ L) (hH : 0 ≤ H)
   let A := exp 1+H
   have hE : 1 < exp (1 : ℝ) := by
     simpa only [exp_zero] using exp_lt_exp.mpr (by norm_num : (0 : ℝ) < 1)
-  have hA1 : 1 < A := by dsimp [A]; linarith
+  have hA1 : 1 < A := by dsimp [A]; linarith only [hH, hE]
   have hA0 : 0 < A := zero_lt_one.trans hA1
   have hl : 0 < log A := log_pos hA1
   let ε := exp (-4*log A)
   have he0 : 0 < ε := exp_pos _
   have he1 : ε < 1 := by
-    have hneg : -4*log A < 0 := by linarith
+    have hneg : -4*log A < 0 := by linarith only [hl]
     simpa only [ε,exp_zero] using exp_lt_exp.mpr hneg
   have heLog : -log ε=4*log A := by simp only [ε,log_exp]; ring
   have hePow : ε^(1/4 : ℝ)=A⁻¹ := by
@@ -309,9 +309,10 @@ theorem elliptic_derivative_logarithmic (A G J : SmoothL2Field ℝ) (a b j : Fin
   intro ε hε hε1
   have he : 0 ≤ -Real.log ε := neg_nonneg.mpr (Real.log_nonpos hε.le hε1.le)
   have hr : 0 ≤ ε^((1:ℝ)/4) := Real.rpow_nonneg hε.le _
-  have hl : lowCost ≤ splitCost := by unfold splitCost; linarith [middleCost_nonneg]
-  have hm : middleCost ≤ splitCost := by unfold splitCost; linarith [lowCost_nonneg]
-  have hh : (3:ℝ) ≤ splitCost := by unfold splitCost; linarith [lowCost_nonneg, middleCost_nonneg]
+  have hl : lowCost ≤ splitCost := by unfold splitCost; linarith only [hε, hε1, middleCost_nonneg]
+  have hm : middleCost ≤ splitCost := by unfold splitCost; linarith only [hε, hε1, lowCost_nonneg]
+  have hh : (3:ℝ) ≤ splitCost := by unfold splitCost; linarith only [lowCost_nonneg,
+      middleCost_nonneg]
   calc
     _ ≤ lowCost*‖A.toLp‖+middleCost*W*(-Real.log ε)+3*ε^((1:ℝ)/4)*‖A.jetLp 3‖ :=
       elliptic_derivative_split A G J a b j hΔ W hG hJ x hε hε1.le
@@ -381,7 +382,7 @@ theorem logarithmic_gradient_bound (A : SmoothL2Field Space)
     rw [componentField_partial] at h
     apply h.trans
     apply mul_le_mul_of_nonneg_left _ (mul_nonneg (by norm_num) splitCost_nonneg)
-    linarith [componentField_toLp_norm A j]
+    linarith only [componentField_toLp_norm A j]
   have h := operator_norm_le_of_entries (fderiv ℝ A.field x) K hK hentries
   exact h.trans_eq (by unfold logarithmicGradientConstant; dsimp [K]; ring)
 

@@ -210,7 +210,7 @@ theorem copyCost_one : 1 ≤ copyCost := by
         ActualPrimary.vectors_det)
     (CommonWindow.gap ActualPrimary.h + SlotColoring.nativeGap ActualPrimary.h)
   unfold copyCost
-  linarith
+  linarith only [ha, hb]
 
 theorem copyLinear_bound {l : SignedLabel B N0} {n : ℕ} (hn : near l n) :
     ‖copyLinear l n‖ ≤ copyCost * nativeStrip.slow n :=
@@ -610,7 +610,7 @@ theorem near_of_closed_band (l : SignedLabel B N0) (n : ℕ) {p : PhaseCalculus.
   have ht : 0 < p.2.2 := hm.1.1
   have hq0 : SimilarityHomogeneity.chartQ ActualPrimary.h p ∈ Ioo (1 / 2 : ℝ) 2 := hm.1.2
   let q := ChartScales.Q n * SimilarityHomogeneity.chartQ ActualPrimary.h p
-  have hqpos : 0 < q := mul_pos (ChartScales.Q_pos _) (by linarith [hq0.1])
+  have hqpos : 0 < q := mul_pos (ChartScales.Q_pos _) (by linarith only [hq0, hq0.1])
   have he : SimilarityHomogeneity.chartQ ActualPrimary.h
       (ActualSignedGeometry.slowChange ActualPrimary.h (ChartScales.Q n)
         (ChartScales.Q (BaseChartJets.cellBand l.2)) p) = q / ChartScales.Q (BaseChartJets.cellBand
@@ -622,18 +622,21 @@ theorem near_of_closed_band (l : SignedLabel B N0) (n : ℕ) {p : PhaseCalculus.
     ring
   rw [he] at hq
   have hn := PhysicalWaveSum.logCoordinate_in_band hqpos
-    (show ChartScales.Q n / 2 ≤ q by dsimp [q]; nlinarith [ChartScales.Q_pos n, hq0.1])
-    (show q ≤ 2 * ChartScales.Q n by dsimp [q]; nlinarith [ChartScales.Q_pos n, hq0.2])
+    (show ChartScales.Q n / 2 ≤ q by dsimp [q]; nlinarith only [hqpos, hq0, ChartScales.Q_pos n,
+        hq0.1])
+    (show q ≤ 2 * ChartScales.Q n by dsimp [q]; nlinarith only [hq0, ChartScales.Q_pos n, hq0.2])
   have hL := PhysicalWaveSum.logCoordinate_in_band hqpos
     (show ChartScales.Q (BaseChartJets.cellBand l.2) / 2 ≤ q by
       have hh := (le_div_iff₀ (ChartScales.Q_pos _)).mp hq.1
-      linarith)
+      linarith only [hh])
     ((div_le_iff₀ (ChartScales.Q_pos _)).mp hq.2)
   have hnm : n ≤ BaseChartJets.cellBand l.2 + 2 := by
-    have hh : (n : ℝ) ≤ (BaseChartJets.cellBand l.2 : ℝ) + 2 := by linarith [hn.1, hL.2]
+    have hh : (n : ℝ) ≤ (BaseChartJets.cellBand l.2 : ℝ) + 2 := by linarith only [hn, hL, hn.1,
+        hL.2]
     exact_mod_cast hh
   have hmn : BaseChartJets.cellBand l.2 ≤ n + 2 := by
-    have hh : (BaseChartJets.cellBand l.2 : ℝ) ≤ (n : ℝ) + 2 := by linarith [hL.1, hn.2]
+    have hh : (BaseChartJets.cellBand l.2 : ℝ) ≤ (n : ℝ) + 2 := by linarith only [hL, hn, hL.1,
+        hn.2]
     exact_mod_cast hh
   have hm4 : 4 ≤ BaseChartJets.cellBand l.2 := label_large l
   refine ⟨by omega, ?_⟩
@@ -1202,9 +1205,9 @@ theorem native_normal_polynomial :
   let r := min (ActualPrimary.phases B N0 0).r (ActualPrimary.phases B N0 1).r
   have hM0 := (ActualPrimary.phases B N0 0).one_le_M
   have hM1 := (ActualPrimary.phases B N0 1).one_le_M
-  have hM : 1 ≤ M := by dsimp [M]; linarith
+  have hM : 1 ≤ M := by dsimp [M]; linarith only [hM0, hM1]
   have hMj (j : Fin 2) : (ActualPrimary.phases B N0 j).M ≤ M := by
-    fin_cases j <;> dsimp [M] <;> linarith
+    fin_cases j <;> dsimp [M] <;> linarith only [hM1, hM0]
   have hr : 0 < r := lt_min (ActualPrimary.phases B N0 0).r_pos (ActualPrimary.phases B N0 1).r_pos
   have hrj (j : Fin 2) : r ≤ (ActualPrimary.phases B N0 j).r := by
     fin_cases j
@@ -1586,7 +1589,7 @@ theorem carrier_band : BandBound fullStrip (-(1 / 2 : ℝ))
   have hs1 := Real.sqrt_le_one.mpr (fullStrip.epsilon_le_one n)
   have hle : (ChartScales.carrier ActualPrimary.h n : ℝ) ≤ 2 / Real.sqrt (fullStrip.epsilon n) := by
     apply (le_div_iff₀ hs).mpr
-    exact hu.trans (by linarith)
+    exact hu.trans (by linarith only [hs1])
   rw [Real.sqrt_eq_rpow] at hle
   simpa only [Real.norm_eq_abs, abs_of_pos hk, pow_zero, mul_one,
     Real.rpow_neg he.le, div_eq_mul_inv] using hle

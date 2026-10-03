@@ -220,7 +220,7 @@ theorem weighted_sobolev_energy_majorized {α β : Type*} [Fintype α] [Fintype 
           (hKt u hu) (het i j u hu) hsymL)
     have hq := hQ0 i u ⟨hu.1.le, hu.2.le⟩
     exact (HasDerivAt.sqrt (hd.add_const (δ ^ 2)) (by
-        nlinarith : Q i u + δ ^ 2 ≠ 0)).differentiableAt
+        nlinarith only [hq, hδ] : Q i u + δ ^ 2 ≠ 0)).differentiableAt
   have hreg (i : α) (δ : ℝ) (hδ : 0 < δ) (u : ℝ) (hu : u ∈ Ioo s t) :
       deriv (fun v => √(Q i v + δ ^ 2)) u ≤ a u * √(Q i u + δ ^ 2) + F i u := by
     have h := finite_sobolev_viscous_energy period hq κ m K (G u) (e i) u δ c ν (K' u)

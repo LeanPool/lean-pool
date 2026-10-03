@@ -96,7 +96,7 @@ theorem cross_cancels_with_defect (G : Geometry) (e : ℕ) (he : e = 2 ∨ e = 1
     (fun n => (physicalSigma_smooth G e hf hs n).mono G.strip_subset) hD n hx]
   have hc := physicalSigma_cancels G e he hf hs n hx
   simp only [Pi.add_apply]
-  linarith
+  linarith only [hc]
 
 /-- Averaging the literal updated residual produces the removed moment
 bump, the usual covariance/pressure remainder, and the cross defect. -/
@@ -147,7 +147,7 @@ theorem averaged_residual_decomposition_with_defect
         meanBar_add_on H.theta hrad n (G.strip_subset hx)] at hbar
     norm_num only [Nat.cast_ofNat] at hbump
     simp only [Pi.add_apply] at hbar hbump ⊢
-    linarith
+    linarith only [hbar, hbump]
   · intro n x hx
     have hbar := G.average_congr (H.axial_split hSs hEs hX) n hx
     have hrad :=
@@ -158,7 +158,7 @@ theorem averaged_residual_decomposition_with_defect
         meanBar_add_on H.axial hrad n (G.strip_subset hx)] at hbar
     norm_num only [Nat.cast_ofNat] at hbump
     simp only [Pi.add_apply] at hbar hbump ⊢
-    linarith
+    linarith only [hbar, hbump]
 
 /-- The same four mean gains as the exact-cross theorem, allowing the
 literal cross defects at the derivative-adjusted gain exponent. -/
@@ -355,11 +355,12 @@ theorem bandSignedStage_mean_debt_of_cross_defects {ι : Type}
   have hdebt := GaugeDebtIncrement.waveStage_defectBounds G.region G.patch.a_pos G.patch.a_lt_b
     G.left_pos G.right_pos G.epsilon G.slow G.epsilon_pos G.epsilon_le_one G.slow_ge_one
     G.gauge c u w q gaussian hop hbase hm hW hXR hc hXT
-    (show σ-2*κ ≤ σ-κ by linarith) (show 1+(σ-2*κ) ≤ (1+σ-κ)-κ by linarith) hd
+    (show σ-2*κ ≤ σ-κ by linarith only [hκ]) (show 1+(σ-2*κ) ≤ (1+σ-κ)-κ by linarith only) hd
   have hgain := signed_mean_gain_of_cross_defects G c u hσ hκ hκsmall f a
     q gaussian hold H ho hX hS hθ hz hd hDθ hDz
   have hcum : CorrectionState.CumulativeBounds G.strip v :=
-    gaugeWaveStage_cumulative G.gauge c u w q ⟨0,gaussian,0⟩ hu hpressure (by linarith)
+    gaugeWaveStage_cumulative G.gauge c u w q ⟨0,gaussian,0⟩ hu hpressure (by linarith only [hσ,
+        hκsmall])
   exact ⟨hpressure, hcum, hgain.1, hgain.2.1, hgain.2.2.1, hgain.2.2.2, hdebt⟩
 
 /-- Exact cross identities recover the original signed-stage conclusion
@@ -896,7 +897,7 @@ theorem signed (hκ : κ ≤ 1 / 2) : ∀ i j,
     LabelSumBounds.UniformWaveClass (p).strip P (1/2+σ-κ)
       (fun l n z => ((p).signedBlock v c u l).velocity n i j z) := by
   intro i j
-  apply ((W.tangent i j).add ((W.curl i j).mono_exponent (by linarith))).congr
+  apply ((W.tangent i j).add ((W.curl i j).mono_exponent (by linarith only [hκ]))).congr
   intro l n z hz
   change ((p).signedTangent v c u l).velocity n i j z +
       (((p).signedBlock v c u l).velocity n i j z - ((p).signedTangent v c u l).velocity n i j z) =
@@ -1131,7 +1132,7 @@ private theorem assemble
         temporalAliasState G.gauge h index c ((p).afterSigned v c u) n (z, 0) 2))
     (hAxis : ∀ β, MeanClass G.strip β ((p).nextAxisymmetricAlias v c u x.axisymmetricAlias)) :
     CycleAnalyticInvariant G c primary P S (σ+1/10) (CycleState.step p c x) := by
-  have hsigned := W.signed (show κ ≤ 1/2 by linarith)
+  have hsigned := W.signed (show κ ≤ 1/2 by linarith only [hκsmall])
   have hzpart n l z (hz : z ∈ G.strip.domain) (hn : z ∉ C n l) i j hj :=
     W.particular_zero_germ hS l n (G.strip_subset hz) (fun hmem => hn (hSC l n hmem)) i j hj
   have hzsigned n l z (hz : z ∈ G.strip.domain) (hn : z ∉ C n l) i j hj :=
@@ -1225,8 +1226,8 @@ private theorem assemble
     pressure := hPressure
     difference := hDifference
     cumulative := hCumulative
-    covariance := (p).next_covariance_mem v c u (by linarith : (1:ℝ) ≤ 1+σ)
-      (by linarith : (1:ℝ) ≤ 1+σ-κ) H.covariance hCovP hCovS
+    covariance := (p).next_covariance_mem v c u (by linarith only [hσ] : (1:ℝ) ≤ 1+σ)
+      (by linarith only [hσ, hκsmall] : (1:ℝ) ≤ 1+σ-κ) H.covariance hCovP hCovS
     residual := hResidual
     mean := hMean
     meanHypotheses := hStep.next_meanHypotheses H.meanHypotheses
@@ -1359,7 +1360,7 @@ theorem step (D : StaticData G h index axial r c κ)
     rw [halabels]
     funext n z i
     exact H.representation.velocity n z i
-  have hCov₀ := assembledCovarianceIncrement_mem (show (1:ℝ)/2 ≤ 1/2+σ by linarith)
+  have hCov₀ := assembledCovarianceIncrement_mem (show (1:ℝ)/2 ≤ 1/2+σ by linarith only [hσ])
     a.labels a.label a.injective a.level a.window a.window_continuous a.auxiliary
     (v).blocks ((p).particularBlock v c u) (v).residualBand H.bands.velocityPressure
     ((p).particularBlock_band v c u) (fun _ => ⟨rfl,rfl,rfl⟩)
@@ -1450,15 +1451,16 @@ theorem step (D : StaticData G h index axial r c κ)
   have hAxis := ActualCycleExcluded.nextAxisymmetricAlias_all_powers D.aliasData p v c u
     (D.compatible particular signed) HAlias hXPAlias hXSAlias hRankAlias D.operators D.base
     H.cumulative hCumulative H.covariance
-    (fun i j => (hCovP i j).mono_exponent (show (1:ℝ) ≤ 1+σ by linarith))
-    (fun i j => (hCovS i j).mono_exponent (show (1:ℝ) ≤ 1+σ-κ by linarith))
+    (fun i j => (hCovP i j).mono_exponent (show (1:ℝ) ≤ 1+σ by linarith only [hσ]))
+    (fun i j => (hCovS i j).mono_exponent (show (1:ℝ) ≤ 1+σ-κ by linarith only [hσ, hκsmall]))
     hSz x.axisymmetricAlias H.axisFlat
   have hFull := assemble G h index axial particular signed r c x primary P S H W hσ hκsmall
     D.operators D.base (fun _ hz => D.radius_pos hz) d.carrier_closed d.carrier_cells
     d.normal d.frequency d.angular d.envelope_nonneg d.envelope_le_one d.rank_geometry
     D.rankParameters.length D.rank_left.le D.rank_right.le D.graph
     hCovP hCovS hT hRank hCumulative hDebt hTheta hAxial hAxis
-  have hInc := (p).finalBlock_increment_bounds v c u hκ W.particular (W.signed (by linarith))
+  have hInc := (p).finalBlock_increment_bounds v c u hκ W.particular (W.signed (by linarith only [
+      hκsmall]))
     W.particularPressure W.signedPressure
   exact ⟨hFull, hT, hRank, hPressure, hInc.1, hInc.2, hSθ, hSz⟩
 

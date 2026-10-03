@@ -125,7 +125,7 @@ theorem integral_sq_le_length_mul (g : ℝ → ℝ) {a b : ℝ} (hab : a ≤ b)
   have hlen : 0 < b-a := sub_pos.mpr hab
   have hc : c*(b-a) = ∫ t in a..b, g t := div_mul_cancel₀ _ hlen.ne'
   have hp := mul_nonneg hlen.le hn
-  nlinarith [sq_nonneg ((b-a)*(∫ t in a..b, g t))]
+  nlinarith only [hp, hc, sq_nonneg ((b-a)*(∫ t in a..b, g t))]
 
 /-- Bochner Cauchy--Schwarz, requiring actual square integrability rather than continuity. -/
 theorem norm_integral_sq_le_length_mul (f : ℝ → E) {a b : ℝ} (hab : a ≤ b)

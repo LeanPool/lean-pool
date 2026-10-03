@@ -55,7 +55,7 @@ theorem kernel_le_gamma {a : ℝ} (ha : 1 < a) (n : ℕ) {z v : ℝ}
     kernel a n z v ≤ Real.exp (-v) * v ^ (a + (n : ℝ) - 1) := by
   have hn : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
   have hp : (1 + z * v) ^ (1 - a - (n : ℝ)) ≤ 1 :=
-    Real.rpow_le_one_of_one_le_of_nonpos (base_one_le hz hv.le) (by linarith)
+    Real.rpow_le_one_of_one_le_of_nonpos (base_one_le hz hv.le) (by linarith only [ha])
   exact (mul_le_mul_of_nonneg_left hp
     (mul_nonneg (Real.exp_pos _).le (Real.rpow_pos_of_pos hv _).le)).trans_eq (mul_one _)
 
@@ -162,14 +162,14 @@ theorem moment_hasDerivAt {a z : ℝ} (ha : 1 < a) (n : ℕ) (hz : 0 < z) :
     intro y hy
     have hd : |y - z| < z / 2 := by simpa only [Metric.mem_ball, Real.dist_eq] using hy
     have hlow := (abs_lt.mp hd).1
-    linarith
+    linarith only [hz, hlow]
   have hga : 0 < a + ((n + 1 : ℕ) : ℝ) := by positivity
   have hi := hasDerivAt_integral_of_dominated_loc_of_deriv_le
     (F := fun z v => kernel a n z v)
     (F' := fun z v => (1 - a - (n : ℝ)) * kernel a (n + 1) z v)
     (bound := fun v : ℝ => ‖1 - a - (n : ℝ)‖ *
       (Real.exp (-v) * v ^ (a + ((n + 1 : ℕ) : ℝ) - 1)))
-    (μ := volume.restrict (Ioi 0)) (Metric.ball_mem_nhds _ (show 0 < z / 2 by linarith))
+    (μ := volume.restrict (Ioi 0)) (Metric.ball_mem_nhds _ (show 0 < z / 2 by linarith only [hz]))
     (by
       filter_upwards [isOpen_Ioi.mem_nhds hz] with y hy
       exact (kernel_continuousOn_v a n (show 0 < y from hy).le).aestronglyMeasurable
@@ -324,7 +324,7 @@ theorem boundaryTerm_tendsto_zero {a z : ℝ} (ha : 1 < a) (hz : 0 ≤ z) :
         (Real.rpow_pos_of_pos (base_pos hz hv.le) _)
     rw [Real.norm_eq_abs, abs_of_pos hb]
     exact (mul_le_mul_of_nonneg_left
-      (Real.rpow_le_one_of_one_le_of_nonpos (base_one_le hz hv.le) (by linarith : -a ≤ 0))
+      (Real.rpow_le_one_of_one_le_of_nonpos (base_one_le hz hv.le) (by linarith only [ha] : -a ≤ 0))
       (mul_pos (Real.exp_pos _) (Real.rpow_pos_of_pos hv a)).le).trans_eq (mul_one _)
   · simpa only [neg_one_mul, mul_neg_one, mul_comm] using
       tendsto_rpow_mul_exp_neg_mul_atTop_nhds_zero a 1 zero_lt_one
@@ -449,7 +449,7 @@ theorem profile_logSlopeWithin_lt {a z : ℝ} (ha : 1 < a) (hz : 0 ≤ z) :
     (moment_slope_gap_pos ha hz)
   rw [profile_derivWithin ha hz]
   dsimp only [profile]
-  nlinarith
+  nlinarith only [hp]
 
 theorem profile_logSlope_lt {a z : ℝ} (ha : 1 < a) (hz : 0 < z) :
     -z * deriv (profile a) z / profile a z < a - 1 := by
@@ -674,7 +674,7 @@ theorem spatialFirst_neg {a τ s : ℝ} (ha : 1 < a) (hτ : 0 < τ) (hs : 0 < s)
   have hb : spatialExponent a * profile a (2 * τ / s) -
       (2 * τ / s) * profileJet a 1 (2 * τ / s) < 0 := by
     dsimp only [spatialExponent]
-    nlinarith
+    nlinarith only [hpos, hlog]
   exact mul_neg_of_pos_of_neg (Real.rpow_pos_of_pos hs _) hb
 
 theorem radialProfile_derivative_neg {a τ r : ℝ} (ha : 1 < a) (hτ : 0 < τ) (hr : 0 < r) :
@@ -721,14 +721,14 @@ theorem radialProfile_source_formula (h τ r : ℝ) :
 
 theorem profile_h_sub_one_bound {h z : ℝ} (hh : 0 < h) (hz : 0 ≤ z) :
     |profile (1 + h) z - 1| ≤ h * (1 + h) * z := by
-  have hb := profile_sub_one_bound (a := 1 + h) (by linarith) hz
+  have hb := profile_sub_one_bound (a := 1 + h) (by linarith only [hh]) hz
   convert! hb using 1
   ring
 
 theorem profile_h_logSlope_lt {h z : ℝ} (hh : 0 < h) (hz : 0 < z) :
     -z * deriv (profile (1 + h)) z / profile (1 + h) z < h := by
   simpa only [add_sub_cancel_left] using
-    profile_logSlope_lt (a := 1 + h) (by linarith) hz
+    profile_logSlope_lt (a := 1 + h) (by linarith only [hh]) hz
 
 /-- Any fixed normalization constant preserves the actual forward heat equation. -/
 theorem scaled_forward_radial_heat_equation (C : ℝ) {a t r : ℝ}

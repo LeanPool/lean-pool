@@ -64,13 +64,13 @@ theorem compact_amplitude_within_bounds {S : Set ℝ} (hS : IsCompact S)
   obtain ⟨B₃, hb₃⟩ := hS.exists_bound_of_continuousOn had.continuousOn
   let D : ℝ := 1 + |B₀| + |B₁| + |B₂| + |B₃|
   have hD₀ : B₀ ≤ D := by
-      dsimp [D]; linarith [le_abs_self B₀, abs_nonneg B₁, abs_nonneg B₂, abs_nonneg B₃]
+      dsimp [D]; linarith only [le_abs_self B₀, abs_nonneg B₁, abs_nonneg B₂, abs_nonneg B₃]
   have hD₁ : B₁ ≤ D := by
-      dsimp [D]; linarith [le_abs_self B₁, abs_nonneg B₀, abs_nonneg B₂, abs_nonneg B₃]
+      dsimp [D]; linarith only [le_abs_self B₁, abs_nonneg B₀, abs_nonneg B₂, abs_nonneg B₃]
   have hD₂ : B₂ ≤ D := by
-      dsimp [D]; linarith [le_abs_self B₂, abs_nonneg B₀, abs_nonneg B₁, abs_nonneg B₃]
+      dsimp [D]; linarith only [le_abs_self B₂, abs_nonneg B₀, abs_nonneg B₁, abs_nonneg B₃]
   have hD₃ : B₃ ≤ D := by
-      dsimp [D]; linarith [le_abs_self B₃, abs_nonneg B₀, abs_nonneg B₁, abs_nonneg B₂]
+      dsimp [D]; linarith only [le_abs_self B₃, abs_nonneg B₀, abs_nonneg B₁, abs_nonneg B₂]
   refine ⟨D, by dsimp [D]; positivity, fun η hη => ⟨(hb₀ η hη).trans hD₀,
     (hb₁ η hη).trans hD₁, ?_, ?_⟩⟩
   · exact (hb₂ η hη).trans hD₂
@@ -285,7 +285,7 @@ theorem scaled_family_ratio_bounds (q : ℝ) (hq : 0 < q)
   let L : Coeff →L[ℝ] Coeff := radiusRatioCLM q
   let C : ℝ := ‖L‖ + 1
   have hC : 0 < C := by dsimp [C]; positivity
-  have hLC : ‖L‖ ≤ C := by dsimp [C]; linarith
+  have hLC : ‖L‖ ≤ C := by dsimp [C]; linarith only
   refine ⟨C * B, mul_pos hC hB, ?_⟩
   intro K hK
   have heq : (fun η => scaledDebt (q * K) (d K η)) =
@@ -334,7 +334,7 @@ theorem exists_compensation_for_scaled_family (P : Patch) (lam : ℝ) (hlam : 0 
     apply (div_lt_iff₀ hK).mpr
     have hk' : B / ε < K := by
       have ht := (le_max_right 1 (1 + B / ε)).trans hlarge
-      linarith
+      linarith only [ht]
     have ht := (div_lt_iff₀ hε).mp hk'
     simpa only [mul_comm] using ht
   obtain ⟨c, hc, hspec⟩ := hsolve v (hreg K hKone)
@@ -404,7 +404,7 @@ theorem angular_scaling_bound {K B u : ℝ} (hK : 0 < K) (hB : 0 ≤ B)
   calc
     |u| ≤ B * Real.sqrt K := hu
     _ ≤ B * Real.sqrt (2 * K) := mul_le_mul_of_nonneg_left
-      (Real.sqrt_le_sqrt (by linarith)) hB
+      (Real.sqrt_le_sqrt (by linarith only [hK])) hB
     _ = (B / K) * (K * Real.sqrt (2 * K)) := by field_simp
 
 theorem scaled_triple_norm_bound {K B p e i : ℝ} (hK : 0 < K) (hB : 0 ≤ B)

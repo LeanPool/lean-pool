@@ -804,7 +804,7 @@ theorem actual_upper_covers_exterior :
       Real.exp (OutgoingTail.tailStart ActualPrimary.outgoing.data + 1/5) ≤
         ActualPrimary.nominal.controls.radius *
           Real.exp (OutgoingTail.tailStart ActualPrimary.outgoing.data + 3)
-    exact mul_le_mul_of_nonneg_left (Real.exp_le_exp.mpr (by linarith))
+    exact mul_le_mul_of_nonneg_left (Real.exp_le_exp.mpr (by linarith only))
       ActualPrimary.nominal.controls.radius_pos.le
   have houter : AssembledSlowBase.nominalOuterX ActualPrimary.nominal ≤ R :=
     (AssembledSlowBase.nominalOuterX_lt_switch ActualPrimary.nominal).le.trans hswitch
@@ -825,10 +825,10 @@ theorem actual_upper_covers_exterior :
   change max (AssembledSlowBase.nominalOuterX ActualPrimary.nominal)
     (max ActualPrimary.nominal.controls.radius
       (BaseExterior.nominalHeatSwitch ActualPrimary.nominal * Real.exp 3)) ≤ 2 * R
-  exact max_le (houter.trans (by linarith))
+  exact max_le (houter.trans (by linarith only [hR]))
     (max_le (((AssembledSlowBase.nominalOuterX_gt_radius ActualPrimary.nominal).le.trans
         houter).trans
-      (by linarith)) hlate)
+      (by linarith only [hR])) hlate)
 
 theorem base_residual_germ (B : ℕ) {w : ProblemStatement.SpaceTime}
     (hw : w ∈ preterminal) (hout : w ∉ active) :
@@ -1188,7 +1188,7 @@ theorem native_residual (hN : ActualCarrierGeometry.geometricThreshold ≤ N0)
     intro m
     simp only [sub_zero]
     exact (sub_le_self _ (hβ m)).trans
-      (mul_le_mul_of_nonneg_left (by linarith) ActualPrimary.outgoing.data.h_pos.le)
+      (mul_le_mul_of_nonneg_left (by linarith only) ActualPrimary.outgoing.data.h_pos.le)
   have hb : NativeBounds 4 U (ActualPrimary.h * (1/2 + σ)) (fun m => (2 * ActualPrimary.h) * m)
       (fun (_ : Unit) => x.state.errors.base) := by
     rw [hbase]
@@ -1265,7 +1265,7 @@ theorem selected_residual_jet_bound {a b h gain β : ℝ} {N Δ : ℕ} {gap : �
   intro w hw ht hsmall hwS
   have hq := physicalQ_pos hh hh1 hw
   obtain ⟨n, hn, hlo, hhi⟩ := PhysicalMeanJetBounds.exists_comparable_band N hq hsmall
-  have hlo' : physicalQ h w / 2 ≤ ChartScales.Q n := by linarith
+  have hlo' : physicalQ h w / 2 ≤ ChartScales.Q n := by linarith only [hq, hlo]
   have hann := g.annulus n hn w hw hlo hhi hwS
   obtain ⟨j, hj⟩ := PolarCharts.annulus_covered ha hann
   have hc := PolarCharts.sector_subset_chartDomain ha j hj

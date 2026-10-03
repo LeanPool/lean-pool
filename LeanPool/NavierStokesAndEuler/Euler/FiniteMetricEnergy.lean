@@ -106,7 +106,7 @@ theorem familyMetricNorm_lower (K : H →L[ℝ] H) (v : ι → H) (c : ℝ) (hc 
   have hE := sqrt_nonneg (familyEnergy K v)
   have hN := mul_nonneg hc (familyNorm_nonneg v)
   change c * familyNorm v ≤ √(familyEnergy K v)
-  nlinarith
+  nlinarith only [hl, hsq, hn, hE]
 
 /-- The upper metric comparison is independent of the number of external derivatives. -/
 theorem familyMetricNorm_upper (K : H →L[ℝ] H) (v : ι → H) :
@@ -145,13 +145,13 @@ theorem family_energy_derivative_bound (K K' : H →L[ℝ] H)
     have hb := energy_derivative_bound K K' (e i) (transport i) (forcing i) B hB (ht i)
     have hh := mul_le_mul_of_nonneg_left (hheat i) (mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) hν)
     rw [inner_add_right, real_inner_smul_right]
-    linarith
+    linarith only [hb, hh]
   have hs := Finset.sum_le_sum (fun i (_ : i ∈ (Finset.univ : Finset ι)) => hcomp i)
   simp only [Finset.sum_add_distrib, ← Finset.mul_sum] at hs
   have hcs := mul_le_mul_of_nonneg_left (family_cauchy_schwarz e forcing)
     (show 0 ≤ 2 * ‖K‖ by positivity)
   change _ ≤ _ * familySquaredNorm e + _ at hs
-  exact hs.trans (by dsimp [familySquaredNorm]; linarith)
+  exact hs.trans (by dsimp [familySquaredNorm]; linarith only [hcs])
 
 /-- Regularized root energy for a finite family, with constants independent of its cardinality. -/
 theorem family_regularized_energy_evolution (K : ℝ → H →L[ℝ] H) (e : ι → ℝ → H)

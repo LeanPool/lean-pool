@@ -152,13 +152,13 @@ theorem iteratedFDeriv_decay (f : VelocityField)
   obtain ⟨M, hMpos, hM⟩ := periodic_bound_on_timeInterval hcont
     (iteratedFDeriv_periods hper m) 0 (T + 1)
   let C : ℝ := M * (1 + (T + 1)) ^ K
-  have hbase : 0 < 1 + (T + 1) := by linarith
+  have hbase : 0 < 1 + (T + 1) := by linarith only [hT]
   have hCpos : 0 < C := mul_pos hMpos (Real.rpow_pos_of_pos hbase K)
   refine ⟨C, hCpos, ?_⟩
   intro t ht x
   by_cases hsmall : t ≤ T + 1
   · have hpow : (1 + (T + 1)) ^ (-K) ≤ (1 + t) ^ (-K) :=
-      Real.rpow_le_rpow_of_nonpos (by linarith) (by linarith)
+      Real.rpow_le_rpow_of_nonpos (by linarith only [ht]) (by linarith only [hsmall])
         (neg_nonpos.mpr hK)
     have hcancel : C * (1 + (T + 1)) ^ (-K) = M := by
       dsimp [C]
@@ -168,8 +168,8 @@ theorem iteratedFDeriv_decay (f : VelocityField)
       ‖iteratedFDeriv ℝ m f (t, x)‖ ≤ M := hM t ⟨ht, hsmall⟩ x
       _ = C * (1 + (T + 1)) ^ (-K) := hcancel.symm
       _ ≤ C * (1 + t) ^ (-K) := mul_le_mul_of_nonneg_left hpow hCpos.le
-  · rw [iteratedFDeriv_eq_zero_after hzero m (by linarith : T < t) x, norm_zero]
-    exact mul_nonneg hCpos.le (Real.rpow_nonneg (by linarith) _)
+  · rw [iteratedFDeriv_eq_zero_after hzero m (by linarith only [hsmall] : T < t) x, norm_zero]
+    exact mul_nonneg hCpos.le (Real.rpow_nonneg (by linarith only [hT, hsmall]) _)
 
 /-- The four coordinate directions in the product spacetime norm. -/
 def spacetimeCoordinate : Fin 4 → SpaceTime :=

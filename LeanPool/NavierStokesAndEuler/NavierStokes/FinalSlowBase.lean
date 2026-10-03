@@ -452,7 +452,7 @@ theorem exists_terminal_exterior_neighborhood {h R : ℝ}
       (isOpen_lt (continuous_const.sub continuous_fst) hfcont)
   have hxU : (1, x) ∈ U := by
     constructor
-    · linarith
+    · linarith only [hs]
     · simpa [SimilarityCoordinates.forwardScalar, hx] using hb
   refine ⟨U, hU, hxU, ?_, ?_⟩
   · intro z hz
@@ -460,7 +460,7 @@ theorem exists_terminal_exterior_neighborhood {h R : ℝ}
   · intro z hz ht
     have hq : 0 < q h (AxisymmetricFields.profilePoint z.1 z.2) := q_pos hh hh1 ht
     have hqb : q h (AxisymmetricFields.profilePoint z.1 z.2) < b :=
-      coordinateQ_lt_of_forward_lt (by linarith) (by linarith) hb (sub_pos.mpr ht) hz.2
+      coordinateQ_lt_of_forward_lt (by linarith) (by linarith only [hh1]) hb (sub_pos.mpr ht) hz.2
     have hbeq : b * (2 * (R + 1)) = AxisymmetricFields.radialEnergy x :=
       div_mul_cancel₀ _ (by positivity)
     refine ⟨ht, ?_⟩
@@ -469,7 +469,7 @@ theorem exists_terminal_exterior_neighborhood {h R : ℝ}
     calc
       R * q h (AxisymmetricFields.profilePoint z.1 z.2) ≤ R * b :=
         mul_le_mul_of_nonneg_left hqb.le hR
-      _ < AxisymmetricFields.radialEnergy x / 2 := by nlinarith
+      _ < AxisymmetricFields.radialEnergy x / 2 := by nlinarith only [hq, hqb, hbeq]
       _ < AxisymmetricFields.radialEnergy z.2 := hz.1
 
 /-- The incoming field is retained at every past time; the actual heat

@@ -239,7 +239,7 @@ theorem periodic_eq_of_cos_sin {E : Type*} {f : ℝ → E}
     (hc : Real.cos alpha = Real.cos beta) (hs : Real.sin alpha = Real.sin beta) :
     f alpha = f beta := by
   obtain ⟨k, hk⟩ := Real.Angle.angle_eq_iff_two_pi_dvd_sub.mp (Real.Angle.cos_sin_inj hc hs)
-  have he : alpha = beta + (k : ℝ) * (2 * Real.pi) := by nlinarith [hk]
+  have he : alpha = beta + (k : ℝ) * (2 * Real.pi) := by nlinarith only [hk]
   rw [he]
   exact hf.int_mul k beta
 
@@ -453,11 +453,11 @@ theorem exists_cartesianChart {z : SpaceTime} (hr : 0 < z.2 0) :
   have hnorm : z.2 0 / 2 ≤ ‖PhysicalGraphBounds.radialProjection (forward z)‖ := by
     have hb := PolarCharts.radius_le_two_norm (PhysicalGraphBounds.radialProjection (forward z))
     rw [he] at hb
-    linarith
+    linarith only [hb]
   obtain ⟨i, hi⟩ := PolarCharts.exists_rotate_fst_ge hnorm
   refine ⟨z.2 0, hr, i, ?_⟩
   change z.2 0 / 4 < (PolarCharts.rotate i (PhysicalGraphBounds.radialProjection (forward z))).1
-  linarith
+  linarith only [hr, hi]
 
 open CorrectionInitialization.ActualPrimary
 

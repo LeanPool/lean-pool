@@ -98,8 +98,8 @@ theorem norm_coverEquiv_symm_le (y : TorusInverse.Plane) :
   rw [CommonCoverSolve.coverEquiv_apply, SlotGeometry.cover_apply] at he
   have h1 := congrArg Prod.fst he
   have h2 := congrArg Prod.snd he
-  have hx : x.1 = (5 * y.1 - y.2) / 14 := by dsimp only at h1 h2; linarith
-  have hy : x.2 = (3 * y.2 - y.1) / 14 := by dsimp only at h1 h2; linarith
+  have hx : x.1 = (5 * y.1 - y.2) / 14 := by dsimp only at h1 h2; linarith only [h1, h2]
+  have hy : x.2 = (3 * y.2 - y.1) / 14 := by dsimp only at h1 h2; linarith only [h1, h2]
   have hY1 : |y.1| ≤ ‖y‖ := by simpa only [Real.norm_eq_abs] using norm_fst_le y
   have hY2 : |y.2| ≤ ‖y‖ := by simpa only [Real.norm_eq_abs] using norm_snd_le y
   have hX : |x.1| ≤ ‖y‖ := by
@@ -107,13 +107,13 @@ theorem norm_coverEquiv_symm_le (y : TorusInverse.Plane) :
     apply (div_le_iff₀ (by norm_num : (0 : ℝ) < 14)).mpr
     have ha := abs_sub (5 * y.1) y.2
     rw [abs_mul, abs_of_pos (by norm_num : (0 : ℝ) < 5)] at ha
-    linarith [norm_nonneg y]
+    linarith only [hY1, hY2, ha, norm_nonneg y]
   have hY : |x.2| ≤ ‖y‖ := by
     rw [hy, abs_div, abs_of_pos (by norm_num : (0 : ℝ) < 14)]
     apply (div_le_iff₀ (by norm_num : (0 : ℝ) < 14)).mpr
     have ha := abs_sub (3 * y.2) y.1
     rw [abs_mul, abs_of_pos (by norm_num : (0 : ℝ) < 3)] at ha
-    linarith [norm_nonneg y]
+    linarith only [hY1, hY2, ha, norm_nonneg y]
   exact max_le hX hY
 
 theorem norm_coverPower_symm_le (d : ℕ) (y : TorusInverse.Plane) :
@@ -1197,13 +1197,14 @@ theorem primitive_annulus (hh0 : 0 < h) (hh1 : h < 1 / 2)
       ‖PhysicalGraphBounds.liftZT x‖ ≤ 2 := by
   let y := PhysicalClassBounds.cylindricalMap x
   have hy := hloc.normalized L y hx (Real.sqrt_nonneg _) hm hT
-  have hq : 0 < SimilarityCoordinates.coordinateQ (2 * h) y.2.1 := by linarith [hy.1]
+  have hq : 0 < SimilarityCoordinates.coordinateQ (2 * h) y.2.1 := by linarith only [hh0, hh1, hy,
+      hy.1]
   have hs := Real.sqrt_pos.mpr hq
   have hslow := normalized_slow_norm hh0 hh1 hx hy.1 hy.2.1
   have hlo : 1 / 2 ≤ Real.sqrt (SimilarityCoordinates.coordinateQ (2 * h) y.2.1) :=
-    (Real.le_sqrt (by norm_num) hq.le).mpr (by linarith [hy.1])
+    (Real.le_sqrt (by norm_num) hq.le).mpr (by linarith only [hh0, hh1, hy, hy.1])
   have hhi : Real.sqrt (SimilarityCoordinates.coordinateQ (2 * h) y.2.1) ≤ 2 :=
-    (Real.sqrt_le_left (by norm_num)).mpr (by linarith [hy.2.1])
+    (Real.sqrt_le_left (by norm_num)).mpr (by linarith only [hh0, hh1, hy, hy.2.1])
   have hradlo := (le_div_iff₀ hs).mp hy.2.2.1
   have hradhi := (div_le_iff₀ hs).mp hy.2.2.2
   have hR : y.1 = PolarCharts.radius (PhysicalGraphBounds.liftXY x) := rfl
@@ -1214,7 +1215,7 @@ theorem primitive_annulus (hh0 : 0 < h) (hh1 : h < 1 / 2)
   have hnormlo : a / 4 ≤ ‖PhysicalGraphBounds.liftXY x‖ := by
     have hradius := PolarCharts.radius_le_two_norm (PhysicalGraphBounds.liftXY x)
     have hmul := mul_le_mul_of_nonneg_left hlo ha.le
-    linarith
+    linarith only [hradlo, hradius, hmul]
   constructor
   · exact ⟨by simpa only [Metric.mem_closedBall, dist_zero_right] using hnorm, hnormlo⟩
   · change max ‖x.1.2.2.2‖ ‖x.1.1‖ ≤ 2
@@ -1513,7 +1514,7 @@ theorem potential_source_domain (i : Fin 3) (k : Frequency)
   have hu : ‖PhysicalGraphBounds.liftXY x‖ ≤ 2 * b := by
     simpa only [Metric.mem_closedBall, dist_zero_right] using hg.1.1
   have hl : a / 4 ≤ ‖PhysicalGraphBounds.liftXY x‖ := hg.1.2
-  exact ⟨by change a / 4 / 2 < _; linarith, by change _ < 2 * b + 1; linarith⟩
+  exact ⟨by change a / 4 / 2 < _; linarith, by change _ < 2 * b + 1; linarith only [hh0, hh1, hu]⟩
 
 theorem pressure_source_domain (k : Frequency) (I : PhysicalWaveSum.WaveIndex 1)
     (x : LiftPoint) (hx : x ∈ PositiveTimeCopyFamily.liftPast)
@@ -1527,7 +1528,7 @@ theorem pressure_source_domain (k : Frequency) (I : PhysicalWaveSum.WaveIndex 1)
   have hu : ‖PhysicalGraphBounds.liftXY x‖ ≤ 2 * b := by
     simpa only [Metric.mem_closedBall, dist_zero_right] using hg.1.1
   have hl : a / 4 ≤ ‖PhysicalGraphBounds.liftXY x‖ := hg.1.2
-  exact ⟨by change a / 4 / 2 < _; linarith, by change _ < 2 * b + 1; linarith⟩
+  exact ⟨by change a / 4 / 2 < _; linarith, by change _ < 2 * b + 1; linarith only [hh0, hh1, hu]⟩
 
 variable (hp : NativeProfiles (h := h) f) (hn : NativeRegular sys hh f)
   {P : ℝ} (hP : 1 ≤ P)
@@ -2916,7 +2917,7 @@ noncomputable def signedInputs (B N0 : ℕ)
   potential_exponent j := by
     change 1 / 2 + ActualIterationLedger.sigma j - ChartScales.kappa ≤
       1 + ActualIterationLedger.sigma j - ChartScales.kappa
-    linarith
+    linarith only
   pressure_exponent _ := le_rfl
   potential_shift _ := rfl
   pressure_shift _ := rfl

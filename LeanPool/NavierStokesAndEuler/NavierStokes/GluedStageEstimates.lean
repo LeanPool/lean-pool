@@ -941,16 +941,16 @@ theorem refinedCarrier_window (l : Label B N0) (n : ℕ) {w : SpaceTime}
   rw [chartPoint_scale n hw.1] at he
   have hleft : ChartScales.Q (BaseChartJets.cellBand l.2) / 2 ≤ PhysicalWaveSum.physicalQ h w := by
     have hb := mul_le_mul_of_nonneg_left hq.1 (ChartScales.Q_pos (BaseChartJets.cellBand l.2)).le
-    linarith
+    linarith only [he, hb]
   have hright : PhysicalWaveSum.physicalQ h w ≤ 2 * ChartScales.Q (BaseChartJets.cellBand l.2) := by
     have hb := mul_le_mul_of_nonneg_left hq.2 (ChartScales.Q_pos (BaseChartJets.cellBand l.2)).le
-    linarith
+    linarith only [he, hb]
   have hlog := PhysicalWaveSum.logCoordinate_in_band
     (PhysicalWaveSum.physicalQ_pos outgoing.data.h_pos outgoing.data.h_lt_half hw.1) hleft hright
   refine ⟨?_, hbox⟩
   change SquaredPartition.logCoordinate (PhysicalWaveSum.physicalQ h w) ∈
     Icc ((BaseChartJets.cellBand l.2 : ℝ) - 2) ((BaseChartJets.cellBand l.2 : ℝ) + 2)
-  constructor <;> linarith [hlog.1, hlog.2]
+  constructor <;> linarith only [hlog, hlog.1, hlog.2]
 
 theorem current_modes_window
     (hN : ActualCarrierGeometry.geometricThreshold ≤ N0)
@@ -1305,7 +1305,7 @@ private theorem potential_gain (j : ℕ) :
   rw [← ActualStageEstimates.nativePotential_eq_ledger j] at hg
   have ha := mul_le_mul_of_nonneg_left (W.potential_exponent j) outgoing.data.h_pos.le
   rw [W.potential_shift]
-  linarith
+  linarith only [hg, ha]
 
 private theorem pressure_gain (j : ℕ) :
     ActualIterationLedger.gain h (j + 1) ≤
@@ -1315,7 +1315,7 @@ private theorem pressure_gain (j : ℕ) :
   rw [← ActualStageEstimates.nativePressure_eq_ledger j] at hg
   have ha := mul_le_mul_of_nonneg_left (W.pressure_exponent j) outgoing.data.h_pos.le
   rw [W.pressure_shift]
-  linarith
+  linarith only [hg, ha]
 
 private theorem mean_gain (j : ℕ) :
     ActualIterationLedger.gain h (j + 1) ≤
@@ -1826,7 +1826,7 @@ theorem gain_le_current_exponent (j : ℕ) :
   apply hg.trans
   apply mul_le_mul_of_nonneg_left _ outgoing.data.h_pos.le
   have hk : 0 ≤ ChartScales.kappa := by norm_num [ChartScales.kappa]
-  linarith
+  linarith only [hk]
 
 omit R in
 /-- The current-phase loss fits inside the original physical wave loss.
@@ -1835,10 +1835,10 @@ theorem current_loss_le_wave (degree : ℝ) (m : ℕ) :
     degree + (2 * h) * (m : ℝ) + PhysicalGraphBounds.graphLoss m + 1 ≤
       PhysicalGraphBounds.waveLoss h m + degree := by
   have hm : 0 ≤ (m : ℝ) := Nat.cast_nonneg m
-  have hh : 0 ≤ 2 - 3 * h := by linarith [outgoing.data.h_lt_half]
+  have hh : 0 ≤ 2 - 3 * h := by linarith only [outgoing.data.h_lt_half]
   have hb := mul_nonneg hh hm
   unfold PhysicalGraphBounds.waveLoss
-  linarith
+  linarith only [hb]
 
 omit R in
 theorem current_potential_loss_le (m : ℕ) :
@@ -1870,7 +1870,7 @@ theorem current_potential_bound
   have hgain := gain_le_current_exponent j
   have hloss := current_potential_loss_le m
   unfold ActualCurrentParticularBounds.currentLoss
-  linarith
+  linarith only [hgain, hloss]
 
 theorem current_pressure_bound
     (C : ∀ j, ActualCycleCoherence.Coherent (ActualCyclePreservation.state B N0 j))
@@ -1891,7 +1891,7 @@ theorem current_pressure_bound
   have hgain := gain_le_current_exponent j
   have hloss := current_pressure_loss_le m
   unfold ActualCurrentParticularBounds.currentLoss
-  linarith
+  linarith only [hgain, hloss]
 
 variable {D : Type} [NormedAddCommGroup D] [NormedSpace ℝ D] {I K : Type*}
   (M : ActualMeanPhysicalData.InitialCycleInput B N0 N

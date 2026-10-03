@@ -224,7 +224,7 @@ theorem controlledValue_eq {T : ℝ} (hT : T ≠ 0) (κ : ℝ)
     controlledValue F ((κ, T), (u, η)) = controlled T κ F (T * u, η) := by
   have h := controlled_scaled_factor hT κ hJ hF u hη
   dsimp only [controlledValue, rescale]
-  linarith
+  linarith only [h]
 
 /-- Angular value, defined pointwise by `Real.exp (controlledValue L q)`. -/
 noncomputable def angularValue (L : ProfileHistories.Field) : ScaledPoint → ℝ :=
@@ -315,7 +315,7 @@ theorem width_uniform_jet_bound {J K : Set ℝ} (hJ : IsOpen J) (hK : IsCompact 
   have hm := mul_le_mul_of_nonneg_left
     (hb (κ, T) ⟨hκ, hT.1.le, hT.2⟩ u hu η hη)
     (mul_nonneg hy.1 (activation_nonneg T κ y hκ.2))
-  nlinarith
+  nlinarith only [hm]
 
 theorem weightedPrimitive_uniform_jets {J K : Set ℝ} (hJ : IsOpen J) (hK : IsCompact K)
     (hKJ : K ⊆ J) {B : ProfileHistories.Field} (hB : ContDiffOn ℝ ∞ B (logDomain J hJ).carrier)
@@ -421,7 +421,7 @@ theorem density_scaled_factor {T : ℝ} (hT : T ≠ 0) (κ X0 : ℝ)
       scaledDistance ((κ, T), (u, η)) * angularErrorFactor L ((κ, T), (u, η)) := by
     rw [hfa]
     dsimp only [rescale, referenceAngular] at hf ⊢
-    linarith
+    linarith only [hf]
   have hu' : controlledValue U ((κ, T), (u, η)) = rescale U ((κ, T), (u, η)) +
       scaledDistance ((κ, T), (u, η)) * controlledErrorFactor U ((κ, T), (u, η)) := rfl
   change radius X0 (T * u) * radialDensity r (radius X0 (T * u))
@@ -902,7 +902,7 @@ noncomputable def add (A B : SmoothPair Ω w) : SmoothPair Ω w where
   actual_smooth := A.actual_smooth.add B.actual_smooth
   reference_smooth := A.reference_smooth.add B.reference_smooth
   factor_smooth := A.factor_smooth.add B.factor_smooth
-  difference := by intro p hp; nlinarith [A.difference p hp, B.difference p hp]
+  difference := by intro p hp; nlinarith only [hp, A.difference p hp, B.difference p hp]
 
 /-- Neg, bundling `actual`, `reference`, `factor`, `actual_smooth` and the required
 compatibility proofs. -/
@@ -913,7 +913,7 @@ noncomputable def neg (A : SmoothPair Ω w) : SmoothPair Ω w where
   actual_smooth := A.actual_smooth.neg
   reference_smooth := A.reference_smooth.neg
   factor_smooth := A.factor_smooth.neg
-  difference := by intro p hp; nlinarith [A.difference p hp]
+  difference := by intro p hp; nlinarith only [hp, A.difference p hp]
 
 /-- Sub, given by `A.add B.neg`. -/
 noncomputable def sub (A B : SmoothPair Ω w) : SmoothPair Ω w := A.add B.neg
@@ -1235,7 +1235,7 @@ theorem historyPair_actual_eq (X0 : ℝ) (initial : HistoryRow → ℝ → ℝ)
       logHistory X0 initial (activatedAngular T κ L) (controlled T κ U) r (T * u, η) := by
   have he := ActivationBounds.history_scaled_factor hT κ X0 initial hJ hL hU r u hη
   dsimp only [historyPair, ActivationBounds.rescale]
-  linarith
+  linarith only [he]
 
 theorem angularPair_actual_eq {J : Set ℝ} (hJ : IsOpen J) {L : ProfileHistories.Field}
     (hL : ContDiffOn ℝ ∞ L (logDomain J hJ).carrier)
@@ -1570,7 +1570,7 @@ theorem log_stocks_uniform_jets {K : Set ℝ} (hK : IsCompact K) (hKJ : K ⊆ J)
   have ha : 0 ≤ y * activation T κ y := mul_nonneg hy.1 (activation_nonneg T κ y hκ.2)
   have hinc1 := mul_nonneg (sub_nonneg.mpr (le_max_left M₁ M₂)) ha
   have hinc2 := mul_nonneg (sub_nonneg.mpr (le_max_right M₁ M₂)) ha
-  constructor <;> nlinarith
+  constructor <;> nlinarith only [hb1, hinc1, hb2, hinc2]
 
 end ConstructedFactors
 
@@ -1708,7 +1708,7 @@ noncomputable def naturalDomain {Λ : ℝ} (hΛ : 0 < Λ) : RadialDomain where
       exact ⟨mul_nonneg ht.1 hx, mul_le_of_le_one_left hx ht.2⟩
     · rw [uIcc_of_ge hx]
       constructor
-      · nlinarith [ht.2]
+      · nlinarith only [hx, ht, ht.2]
       · exact mul_nonpos_of_nonneg_of_nonpos ht.1 hx
 
 section NaturalHistories
@@ -1758,7 +1758,7 @@ theorem naturalHistories_pressure {p : Point} (hp : p ∈ domain Λ) :
   have he := F.natural.pressure_integral p hp
   change F.Pi p - P0 p.2 = ∫ x in (0 : ℝ)..p.1, F.f (x, p.2) ^ 2 at he
   change P0 p.2 + (∫ x in (0 : ℝ)..p.1, F.f (x, p.2) ^ 2) = F.Pi p
-  linarith
+  linarith only [he]
 
 theorem naturalHistories_average_derivative {p : Point} (hp : p ∈ domain Λ) :
     parameterPartial (naturalHistories F hΛ hP0).Ubar p = partialEta F.Ubar p := by
@@ -1876,7 +1876,7 @@ theorem reference_stocks_natural {δ : ℝ} (hδ : 0 < δ)
     profileStockTwo P h p = NaturalEntrance.p2 F.f F.U p
   have hηJ : η ∈ ReferencePath.parameterInterval :=
       NaturalAxisCoefficients.original_interval_interior hη
-  have hyT : y < ReferencePath.rampLimit := by linarith
+  have hyT : y < ReferencePath.rampLimit := by linarith only [hδ, hδT, hy]
   have hp : p ∈ domain Λ := N.fromLog_mem ⟨hyT, hηJ⟩
   have hpN : p ∈ N.radialDomain.carrier :=
     StressActivation.FromReference.log_radius_mem N y hηJ
@@ -1903,7 +1903,7 @@ theorem reference_stocks_natural {δ : ℝ} (hδ : 0 < δ)
       simpa only [ReferencePath.rampLimit, Real.exp_log (by norm_num : (0 : ℝ) < 41 / 40)] using
         Real.exp_lt_exp.mpr hyT
     rw [hs]
-    linarith
+    linarith only [he]
   have hf : ∀ x ∈ uIcc (0 : ℝ) p.1, F.f (x, p.2) ≠ 0 := by
     intro x hx
     have hx' : x ∈ Icc (0 : ℝ) p.1 := by simpa only [uIcc_of_le hX.le] using hx

@@ -411,8 +411,8 @@ private theorem cost_bounds (c C : ℝ) (hc : 0 < c) :
   unfold gramCost
   constructor
   · have h : 0 ≤ c⁻¹*(3*C^2+1+1) := by positivity
-    linarith
-  constructor <;> nlinarith [sq_nonneg C]
+    linarith only [h]
+  constructor <;> nlinarith only [hi, sq_nonneg C]
 
 /-- Cache the standard `NormedAddCommGroup C(K,α →ᵇ U →L[ℝ] U)` instance to shorten typeclass
 synthesis. -/
@@ -451,7 +451,7 @@ theorem bilinear_inverse_gevrey {F : Type*} [NormedAddCommGroup F] [NormedSpace 
       (3*C^2)*(Rc^(j+1)*((j+1).factorial : ℝ)^2) := by
     simpa only [majorant,Nat.add_zero] using hAall (j+1) y
   obtain ⟨hM1,hMC,hMD⟩ := cost_bounds c C hc
-  have hR0 : 0 ≤ R := by nlinarith
+  have hR0 : 0 ≤ R := by nlinarith only [hRc, hR, hM1]
   exact EulerBoundedInverseGevrey.solution_gevrey (fun y => M (B y)) V (fun _ : P => e) hA hV
     contDiff_const hsolve (fun y => M (V y)) hleft c⁻¹ (3*C^2) 1 (gramCost c C 1) Rc R
     (by positivity) zero_le_one hM1 hMC (by simpa only [mul_one] using hMD) hRc hR hI hApos 0

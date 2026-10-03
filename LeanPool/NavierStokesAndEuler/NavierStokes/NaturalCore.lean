@@ -84,18 +84,18 @@ noncomputable def coreVelocity (h : ℝ) (f V : ℝ × ℝ → ℝ) : VelocityFi
 
 theorem physicalQ_pos {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {p : ProfilePoint} (hp : p.1 < 1) : 0 < physicalQ h p :=
-  (SimilarityCoordinates.coordinateQ_spec (by linarith) (by linarith)
+  (SimilarityCoordinates.coordinateQ_spec (by linarith only [hh]) (by linarith only [hh1])
     (sub_pos.mpr hp)).1
 
 theorem physicalQ_contDiffAt {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {p : ProfilePoint} (hp : p.1 < 1) : ContDiffAt ℝ ∞ (physicalQ h) p := by
-  exact (SimilarityCoordinates.coordinateQ_smooth (by linarith) (by linarith)
+  exact (SimilarityCoordinates.coordinateQ_smooth (by linarith only [hh]) (by linarith only [hh1])
     (p := (1 - p.1, p.2.2)) (sub_pos.mpr hp)).comp p
     ((contDiffAt_const.sub contDiffAt_fst).prodMk contDiffAt_snd.snd)
 
 theorem physicalEta_contDiffAt {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {p : ProfilePoint} (hp : p.1 < 1) : ContDiffAt ℝ ∞ (physicalEta h) p := by
-  exact (SimilarityCoordinates.coordinateEta_smooth (by linarith) (by linarith)
+  exact (SimilarityCoordinates.coordinateEta_smooth (by linarith only [hh]) (by linarith only [hh1])
     (p := (1 - p.1, p.2.2)) (sub_pos.mpr hp)).comp p
     ((contDiffAt_const.sub contDiffAt_fst).prodMk contDiffAt_snd.snd)
 
@@ -121,7 +121,7 @@ theorem coreDomain_isOpen {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2) (Λ : ℝ) :
 
 theorem physicalQ_at_zero_z {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {t : ℝ} (ht : t < 1) (s : ℝ) : physicalQ h (t, (s, 0)) = 1 - t := by
-  apply (SimilarityCoordinates.eq_coordinateQ (by linarith) (by linarith)
+  apply (SimilarityCoordinates.eq_coordinateQ (by linarith only [hh]) (by linarith only [hh1])
     (p := (1 - t, 0)) (sub_pos.mpr ht) (sub_pos.mpr ht) ?_).symm
   simp [SimilarityCoordinates.forwardScalar]
 
@@ -447,7 +447,7 @@ theorem coreVelocity_axis_tendsto_atTop {h j Λ : ℝ} {P0 a0 : ℝ → ℝ}
     {f U V Pr : ℝ × ℝ → ℝ} (hh : 0 < h) (hh1 : h < 1 / 2) (hj : 0 < j)
     (hs : NaturalProfile.IsNaturalSolution h j Λ P0 a0 f U V Pr) :
     Tendsto (fun t : ℝ => ‖coreVelocity h f V (t, 0)‖) (𝓝[<] 1) atTop := by
-  have hA : 0 < NaturalAxisData.A h := by dsimp [NaturalAxisData.A]; linarith
+  have hA : 0 < NaturalAxisData.A h := by dsimp [NaturalAxisData.A]; linarith only [hh, hh1]
   have hlim : Tendsto (fun t : ℝ => (1 - t) ^ (-NaturalAxisData.A h) * j)
       (𝓝[<] 1) atTop :=
     (BlowupImplication.negative_power_tendsto_atTop hA
@@ -461,7 +461,7 @@ theorem speedUnbounded_of_axis_tendsto {u : VelocityField}
     SpeedUnboundedAtOne u := by
   intro M hM δ hδ
   have hlow : Ioi (max 0 (1 - δ)) ∈ 𝓝[<] (1 : ℝ) :=
-    mem_nhdsWithin_of_mem_nhds (Ioi_mem_nhds (max_lt (by norm_num) (by linarith)))
+    mem_nhdsWithin_of_mem_nhds (Ioi_mem_nhds (max_lt (by norm_num) (by linarith only [hδ])))
   have hlarge : ∀ᶠ t in 𝓝[<] (1 : ℝ), M < ‖u (t, 0)‖ :=
     hu.eventually (eventually_gt_atTop M)
   have hbefore : ∀ᶠ t in 𝓝[<] (1 : ℝ), t < 1 := self_mem_nhdsWithin
@@ -515,7 +515,7 @@ theorem exists_natural_core {h j : ℝ} (hsmall : NaturalAxisData.SmallParameter
       SpeedUnboundedAtOne (coreVelocity h f V) := by
   obtain ⟨_, _, Λ, _, _, _, hΛ, _, f, U, V, Pr, hs, _, _⟩ :=
     NaturalProfile.exists_natural_profiles hsmall hp hB hg ha
-  have hh1 : h < 1 / 2 := by linarith [hsmall.h_le]
+  have hh1 : h < 1 / 2 := by linarith only [hsmall, hsmall.h_le]
   refine ⟨Λ, hΛ, f, V, coreDomain_isOpen hsmall.h_pos hh1 Λ,
     (fun t ht => core_axis_mem h Λ ht),
     coreVelocity_contDiffOn hsmall.h_pos hh1 hs.f_smooth hs.average_smooth,

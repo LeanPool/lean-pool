@@ -227,7 +227,7 @@ theorem correctionBudget_bounds (X : ℝ) (hX : 1 ≤ X)
   have hi : D.inverseBound ≤ 1+X := by
     change 1+‖D.FInv.field‖ ≤ 1+X
     have hn := (coefficientPath_norm_le_of_gevrey D.FInv R CI hCI hFI).trans hCIX
-    linarith
+    linarith only [hn]
   have hm : inverseMetricBound D ≤ X^2 :=
     (inverseMetricBound_le_source D R C0 hC0 hF).trans (pow_le_pow_left₀ hC0 hC0X 2)
   have hf : inverseMetricFirstBound D ≤ 3*X*X*X := by

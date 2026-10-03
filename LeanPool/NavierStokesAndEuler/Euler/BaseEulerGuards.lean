@@ -216,11 +216,11 @@ theorem guardTime_small (T K : ℝ) :
   have hc' : C*(1/(4*(1+C+R))) ≤ 1/4 := by
     rw [mul_one_div]
     apply (div_le_iff₀ hd).mpr
-    nlinarith
+    nlinarith only [hR]
   have hr' : R*(1/(4*(1+C+R))) ≤ 1/4 := by
     rw [mul_one_div]
     apply (div_le_iff₀ hd).mpr
-    nlinarith
+    nlinarith only [hC]
   exact ⟨hc.trans hc',hr.trans hr'⟩
 
 theorem inner_bounds_of_norm (A : Space →L[ℝ] Space) (C : ℝ)
@@ -235,7 +235,7 @@ theorem inner_bounds_of_norm (A : Space →L[ℝ] Space) (C : ℝ)
       _ ≤ (C*‖v‖)*‖v‖ := mul_le_mul_of_nonneg_right hn (norm_nonneg _)
       _ = _ := by ring
   constructor
-  · nlinarith [(abs_le.mp hi).1]
+  · nlinarith only [hi, (abs_le.mp hi).1]
   · exact (abs_le.mp hi).2
 
 variable {G : Parent} (L : LabelData G)
@@ -287,9 +287,9 @@ def lowBoundsOn (S : ℝ) (hS : 0 < S) (hST : S ≤ G.T)
   small := by
     change coefficientCost L.K*(S^2/2)+coefficientCost L.K*S+_ ≤ 1/2
     simp only [mul_zero,zero_mul,zero_pow (by decide : 3 ≠ 0),add_zero]
-    have hsquare : S^2 ≤ S := by nlinarith [mul_nonneg hS.le (sub_nonneg.mpr hSone)]
+    have hsquare : S^2 ≤ S := by nlinarith only [hS, hSone, mul_nonneg hS.le (sub_nonneg.mpr hSone)]
     have hc := mul_le_mul_of_nonneg_left hsquare (coefficientCost_nonneg L.K)
-    nlinarith
+    nlinarith only [hsmall, hc]
 
 /-- Low bounds, given by `lowBoundsOn L _ _ _ (guardTime_le_one G.T L.K) (guardTime_small G.T
 L.K).1`. -/

@@ -556,7 +556,7 @@ theorem forwardInitializedAngularPressure_bound :
   simp only [mul_one] at hb
   have ha : S.H0^2 ≤ 3*S.H0^(2*1) := by
     norm_num only [Nat.mul_one]
-    nlinarith [sq_nonneg S.H0]
+    nlinarith only [sq_nonneg S.H0]
   have hc := (hb.mono_amplitude (zero_le_one.trans L.radius_one) ha).fixed_velocity_grade
     (n := 1) (zero_le_one.trans L.radius_one) S.H0_pos.le
   exact (hc.changeTime hTime).ofRawEq _

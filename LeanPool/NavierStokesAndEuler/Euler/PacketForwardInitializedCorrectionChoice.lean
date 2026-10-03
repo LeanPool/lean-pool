@@ -79,7 +79,7 @@ theorem forwardInitialized_correction_budgets_eventually :
     ({tailPolynomialConstant L'.R S.H0 BC.termCost,BC.multiplierCost,
       12*cg*D.T,8*cg*D.T*dg/ρ0,8*cg*D.T/ρ0} : Finset ℝ)] with k hk
   obtain ⟨hk,hX,hlog,hc⟩ := hk
-  have hn : 1 ≤ truncation k := (truncation_bounds k (by linarith)).1
+  have hn : 1 ≤ truncation k := (truncation_bounds k (by linarith only [hk])).1
   let Q := forwardInitializedAllOrderBudget M D hTime δ hδ ξ hs α Cagree
     L' N' wf M' wm BC hrc hcost hδ1 hα hterminal wp S hgrowth Kc k hk hX hlog
     (hc _ (by simp)) (hc _ (by simp)) (hc _ (by simp [cg]))

@@ -666,8 +666,8 @@ theorem modelBox_slope_pos {coord qlo qhi rlo rhi : ℝ} (hc : 0 < coord) (hc1 :
     0 < SimilarityCoordinates.scalarSlope coord (modelToInverse coord y).2.2
       (modelToInverse coord y).1 := by
   rw [modelToInverse_slope (hqlo.trans_le hy.1.1)]
-  have hη : y.2.2 ^ 2 ≤ 1 := by nlinarith [hy.2.2.1, hy.2.2.2]
-  nlinarith [mul_le_mul_of_nonneg_left hη hc.le]
+  have hη : y.2.2 ^ 2 ≤ 1 := by nlinarith only [hc, hc1, hy, hy.2.2.1, hy.2.2.2]
+  nlinarith only [hc1, hη, hc, mul_le_mul_of_nonneg_left hη hc.le]
 
 theorem modelBox_image_isCompact {qlo qhi rlo rhi : ℝ} (hqlo : 0 < qlo) (coord : ℝ) :
     IsCompact (modelToInverse coord '' modelBox qlo qhi rlo rhi) :=
@@ -1506,8 +1506,8 @@ theorem reserved_five_rows (F : OutgoingProfile.Profile) {XR q : ℝ}
             Real.sqrt q) := by
     have hdiv : r / Real.sqrt q ∈ ReservedPatches.radialClosedPatch F XR .mean := by
       constructor
-      · exact ((le_div_iff₀ (Real.sqrt_pos.mpr hq)).mpr (by nlinarith [hr.1])).trans le_rfl
-      · exact (div_le_iff₀ (Real.sqrt_pos.mpr hq)).mpr (by nlinarith [hr.2])
+      · exact ((le_div_iff₀ (Real.sqrt_pos.mpr hq)).mpr (by nlinarith only [hr, hr.1])).trans le_rfl
+      · exact (div_le_iff₀ (Real.sqrt_pos.mpr hq)).mpr (by nlinarith only [hr, hr.2])
     exact ReservedPatches.radial_heated_fields F XR hXR c (by decide) η
       (ReservedPatches.radial_closedPatch_subset F XR hXR .mean hdiv)
   apply physical_rows_on_patch F.data.core.lam_pos

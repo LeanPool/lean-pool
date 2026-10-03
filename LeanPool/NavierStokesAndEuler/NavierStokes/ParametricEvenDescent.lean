@@ -284,7 +284,7 @@ theorem contDiff_localized {a A R : ℝ} (hA : 0 < A) (hR : 0 < R) {F : Plane �
     · have hmem : q ∈ Ioo (a - A) (a + A) ×ˢ Ioo (-R) R := by
         constructor
         · rcases abs_lt.mp hp with ⟨h1, h2⟩
-          constructor <;> linarith
+          constructor <;> linarith only [h1, h2]
         · exact abs_lt.mp hr
       exact (((EvenSmoothDescent.contDiff_evenCutoff A).comp
           (contDiff_fst.sub contDiff_const)).mul
@@ -305,7 +305,7 @@ theorem even_localized {a A R : ℝ} (hA : 0 < A) (hR : 0 < R) {F : Plane → E}
   · by_cases hr : |r| < R
     · have hpmem : p ∈ Ioo (a - A) (a + A) := by
         rcases abs_lt.mp hp with ⟨h1, h2⟩
-        constructor <;> linarith
+        constructor <;> linarith only [h1, h2]
       change (EvenSmoothDescent.evenCutoff A (p - a) *
           EvenSmoothDescent.evenCutoff R (-r)) • F (p, -r) = _
       rw [EvenSmoothDescent.even_evenCutoff R r, he p hpmem r (abs_lt.mp hr)]
@@ -374,8 +374,8 @@ theorem contDiffOn_descend_local {U : Set ℝ} (hU : IsOpen U) {R : ℝ} (hR : 0
   · have hpos : 0 < X := lt_of_le_of_ne hq.2.1 (Ne.symm hz)
     have hsqrt : Real.sqrt X ∈ Ioo (-R) R := by
       constructor
-      · linarith [Real.sqrt_nonneg X]
-      · nlinarith [Real.sq_sqrt hq.2.1, Real.sqrt_nonneg X, hq.2.2]
+      · linarith only [hR, Real.sqrt_nonneg X]
+      · nlinarith only [hq, hR, Real.sq_sqrt hq.2.1, Real.sqrt_nonneg X, hq.2.2]
     have hmem : (p, Real.sqrt X) ∈ U ×ˢ Ioo (-R) R := ⟨hq.1, hsqrt⟩
     have hFAt : ContDiffAt ℝ ∞ F (p, Real.sqrt X) :=
       hF.contDiffAt ((hU.prod isOpen_Ioo).mem_nhds hmem)

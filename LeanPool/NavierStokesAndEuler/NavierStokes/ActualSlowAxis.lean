@@ -67,10 +67,10 @@ theorem weight_le_core {ε : ℝ} (hε : 0 < ε) (n m : ℕ) :
     weight ε n m ≤ coreWeight ε n m := by
   have hden : (1 : ℝ) ≤ ((n : ℝ) + 1) ^ 2 * ((m : ℝ) + 1) ^ 2 := by
     have hn : (1 : ℝ) ≤ ((n : ℝ) + 1) ^ 2 := by
-      nlinarith [show (0 : ℝ) ≤ n by positivity]
+      nlinarith only [show (0 : ℝ) ≤ n by positivity]
     have hm : (1 : ℝ) ≤ ((m : ℝ) + 1) ^ 2 := by
-      nlinarith [show (0 : ℝ) ≤ m by positivity]
-    nlinarith
+      nlinarith only [show (0 : ℝ) ≤ m by positivity]
+    nlinarith only [hn, hm]
   change coreWeight ε n m / _ ≤ coreWeight ε n m
   exact div_le_self (coreWeight_pos hε n m).le hden
 
@@ -89,7 +89,7 @@ theorem term_factorial_bound (I : Window) {ε R s : ℝ} (hε : 0 < ε)
       (‖A‖ / (1 - s) * (m.factorial : ℝ) * ((ε * (1 - s))⁻¹) ^ m) *
         (((n : ℝ) + 1) ^ k * (R / 20 / s) ^ n) := by
   have hs0 : 0 < s := lt_trans (by positivity : 0 < R / 20) hs
-  have hb : 0 < 1 - s := by linarith
+  have hb : 0 < 1 - s := by linarith only [hs1]
   have hj : |jet I (weight ε) A.1 n m p.2| ≤ weight ε n m * ‖A‖ := by
     simpa only [abs_of_pos (weight_pos hε n m)] using
       abs_jet_le I (weight ε) A n m p.2
@@ -129,7 +129,7 @@ theorem mixedSeries_factorial_bound (I : Window) {ε R s : ℝ} (hε : 0 < ε)
   have hs0 : 0 < s := lt_trans (by positivity : 0 < R / 20) hs
   have hq0 : 0 < R / 20 / s := by positivity
   have hq1 : R / 20 / s < 1 := (div_lt_one hs0).mpr hs
-  have hb : 0 < 1 - s := by linarith
+  have hb : 0 < 1 - s := by linarith only [hs1]
   have ht := (summable_geometricMoment hq0 hq1 k).mul_left
     (‖A‖ / (1 - s) * (m.factorial : ℝ) * ((ε * (1 - s))⁻¹) ^ m)
   calc
@@ -254,7 +254,7 @@ theorem verticalTerm_bound {c : ℕ → ℝ → ℝ} {C a : ℝ} (hC : 0 ≤ C) 
     ‖verticalTerm c m z‖ ≤ C * (1 / 2 : ℝ) ^ m := by
   have hi : a⁻¹ * |z.im| ≤ 1 / 2 := by
     rw [inv_mul_eq_div]
-    exact (div_le_iff₀ ha).mpr (by linarith)
+    exact (div_le_iff₀ ha).mpr (by linarith only [hz])
   calc
     _ = ‖c m z.re‖ * |z.im| ^ m := by simp [verticalTerm, norm_pow]
     _ ≤ (C * (a⁻¹) ^ m) * |z.im| ^ m := by gcongr; exact hc m
@@ -290,7 +290,8 @@ theorem verticalY_bound {c : ℕ → ℝ → ℝ} {C a : ℝ} (hC : 0 ≤ C) (ha
     simp only [verticalY_succ, norm_mul, Complex.norm_I, one_mul]
     refine (verticalX_bound hC ha hz hc m).trans ?_
     simp only [Nat.cast_add, Nat.cast_one, pow_succ]
-    nlinarith [mul_nonneg (div_nonneg hC ha.le) (pow_nonneg (by norm_num : (0 : ℝ) ≤ 1 / 2) m)]
+    nlinarith only [hC, ha,
+        mul_nonneg (div_nonneg hC ha.le) (pow_nonneg (by norm_num : (0 : ℝ) ≤ 1 / 2) m)]
 
 theorem summable_verticalTerm {c : ℕ → ℝ → ℝ} {C a : ℝ} (hC : 0 ≤ C) (ha : 0 < a)
     {z : ℂ} (hz : |z.im| ≤ a / 2)
@@ -351,7 +352,7 @@ theorem verticalExtension_hasDerivAt (I : Window) {c : ℕ → ℝ → ℝ} {C a
     (fun m w hw => (complexLinearForm_norm _ _).trans (by
       have hx := verticalX_bound hC ha hw.2.le (fun n => hbound n w.re hw.1) m
       have hy := verticalY_bound hC ha hw.2.le (fun n => hbound n w.re hw.1) m
-      linarith))
+      linarith only [hx, hy]))
     hz (summable_verticalTerm hC ha hz.2.le (fun m => hbound m z.re hz.1)) hz
   rw [complexLinearForm_tsum hX hY, verticalY_tsum hX hY] at hd
   rw [hasDerivAt_iff_hasFDerivAt]
@@ -392,7 +393,7 @@ noncomputable def jetConstant (R s : ℝ) (k : ℕ) : ℝ :=
 theorem jetConstant_nonneg {R s : ℝ} (hR : 1 ≤ R) (hs : R / 20 < s)
     (hs1 : s < 1) (k : ℕ) : 0 ≤ jetConstant R s k := by
   have hs0 : 0 < s := lt_trans (by positivity : 0 < R / 20) hs
-  exact div_nonneg (geometricMoment_nonneg (by positivity) k) (by linarith)
+  exact div_nonneg (geometricMoment_nonneg (by positivity) k) (by linarith only [hs1])
 
 theorem normalizedJet_bound (I : Window) {ε R s : ℝ} (hε : 0 < ε)
     (hR : 1 ≤ R) (hs : R / 20 < s) (hs1 : s < 1) (A : AxisSpace I ε)
@@ -447,10 +448,10 @@ theorem complexProfile_analytic (I : Window) {ε R s : ℝ} (hε : 0 < ε)
     (hR : 1 ≤ R) (hs : R / 20 < s) (hs1 : s < 1) (A : AxisSpace I ε)
     (k : ℕ) {Y : ℝ} (hY : |Y| ≤ R) :
     AnalyticOnNhd ℂ (complexProfile I ε A k Y) (parameterStrip I (ε * (1 - s))) := by
-  have hY20 : |Y| < 20 := hY.trans_lt (by linarith)
+  have hY20 : |Y| < 20 := hY.trans_lt (by linarith only [hs, hs1])
   exact verticalExtension_analytic I
     (mul_nonneg (jetConstant_nonneg hR hs hs1 k) (norm_nonneg A))
-    (mul_pos hε (by linarith))
+    (mul_pos hε (by linarith only [hs1]))
     (fun m x hx => normalizedJet_hasDerivAt_eta I hε A k m hY20 hx)
     (fun m x _ => normalizedJet_bound I hε hR hs hs1 A k m hY x)
 
@@ -463,7 +464,7 @@ theorem complexProfile_bound (I : Window) {ε R s : ℝ} (hε : 0 < ε)
   unfold complexProfile
   simpa only [mul_assoc] using verticalExtension_bound
     (mul_nonneg (jetConstant_nonneg hR hs hs1 k) (norm_nonneg A))
-    (mul_pos hε (by linarith)) hz
+    (mul_pos hε (by linarith only [hs1])) hz
     (fun m => normalizedJet_bound I hε hR hs hs1 A k m hY z.re)
 
 theorem verticalTerm_hasDerivAt_Y (I : Window) {ε : ℝ} (hε : 0 < ε)
@@ -482,8 +483,8 @@ theorem complexProfile_hasDerivAt_Y (I : Window) {ε R s : ℝ} (hε : 0 < ε)
     (hz : z ∈ parameterStrip I (ε * (1 - s))) :
     HasDerivAt (fun y => complexProfile I ε A k y z)
       (complexProfile I ε A (k + 1) Y z) Y := by
-  have hR20 : R < 20 := by linarith
-  have ha : 0 < ε * (1 - s) := mul_pos hε (by linarith)
+  have hR20 : R < 20 := by linarith only [hs, hs1]
+  have ha : 0 < ε * (1 - s) := mul_pos hε (by linarith only [hs1])
   have hC : 0 ≤ jetConstant R s (k + 1) * ‖A‖ :=
     mul_nonneg (jetConstant_nonneg hR hs hs1 (k + 1)) (norm_nonneg A)
   have hgeom := (summable_geometric_of_norm_lt_one
@@ -526,8 +527,8 @@ theorem complexProfile_iteratedDeriv_ofReal (I : Window) {ε R s : ℝ} (hε : 0
     (k m : ℕ) {Y x : ℝ} (hY : |Y| ≤ R) (hx : x ∈ Ioo I.left I.right) :
     iteratedDeriv m (complexProfile I ε A k Y) (x : ℂ) =
       (mixedSeries I ε A k m (Y, x) : ℂ) := by
-  have hY20 : |Y| < 20 := hY.trans_lt (by linarith)
-  have ha : 0 < ε * (1 - s) := mul_pos hε (by linarith)
+  have hY20 : |Y| < 20 := hY.trans_lt (by linarith only [hs, hs1])
+  have ha : 0 < ε * (1 - s) := mul_pos hε (by linarith only [hs1])
   induction m generalizing x with
   | zero => simpa only [iteratedDeriv_zero] using complexProfile_ofReal I ε A k Y x
   | succ m ih =>
@@ -559,7 +560,7 @@ theorem exists_parameterTube_subset (I J : Window) (hleft : I.left < J.left)
     (hright : J.right < I.right) {a : ℝ} (ha : 0 < a) :
     ∃ δ : ℝ, 0 < δ ∧ parameterTube J δ ⊆ parameterStrip I a := by
   let δ := min (a / 4) (min ((J.left - I.left) / 2) ((I.right - J.right) / 2))
-  have hδ : 0 < δ := lt_min (by positivity) (lt_min (by linarith) (by linarith))
+  have hδ : 0 < δ := lt_min (by positivity) (lt_min (by linarith) (by linarith only [hright]))
   have hδa : δ ≤ a / 4 := min_le_left _ _
   have hδl : δ ≤ (J.left - I.left) / 2 := (min_le_right _ _).trans (min_le_left _ _)
   have hδr : δ ≤ (I.right - J.right) / 2 := (min_le_right _ _).trans (min_le_right _ _)
@@ -573,7 +574,7 @@ theorem exists_parameterTube_subset (I J : Window) (hleft : I.left < J.left)
       Complex.abs_im_le_norm (z - (x : ℂ))
   have hx' : J.left ≤ x ∧ x ≤ J.right := hx
   have hz' := abs_le.mp hre
-  exact ⟨⟨by linarith, by linarith⟩, by linarith⟩
+  exact ⟨⟨by linarith, by linarith⟩, by linarith only [hδ, hδa, hz, him]⟩
 
 /-- A common, explicitly constructed holomorphic extension exists on a positive
 tube over every strictly smaller real window and compact radial interval.
@@ -596,8 +597,8 @@ theorem exists_common_holomorphic_extension (I J : Window) (hleft : I.left < J.l
   obtain ⟨S, hS, hS20⟩ := exists_between (max_lt (by norm_num : (1 : ℝ) < 20) hR20)
   have hS1 : 1 ≤ S := (le_max_left 1 R).trans hS.le
   have hRS : R < S := (le_max_right 1 R).trans_lt hS
-  obtain ⟨s, hs, hs1⟩ := exists_between (show S / 20 < 1 by linarith)
-  have ha : 0 < ε * (1 - s) := mul_pos hε (by linarith)
+  obtain ⟨s, hs, hs1⟩ := exists_between (show S / 20 < 1 by linarith only [hS20])
+  have ha : 0 < ε * (1 - s) := mul_pos hε (by linarith only [hs1])
   obtain ⟨δ, hδ, htube⟩ := exists_parameterTube_subset I J hleft hright ha
   refine ⟨δ, hδ, (fun k => 2 * jetConstant S s k), ?_, ?_⟩
   · intro k
@@ -842,8 +843,8 @@ theorem exists_common_joint_extension (I J : Window) (hleft : I.left < J.left)
   obtain ⟨S, hS, hS20⟩ := exists_between (max_lt (by norm_num : (1 : ℝ) < 20) hR20)
   have hS1 : 1 ≤ S := (le_max_left 1 R).trans hS.le
   have hRS : R < S := (le_max_right 1 R).trans_lt hS
-  obtain ⟨s, hs, hs1⟩ := exists_between (show S / 20 < 1 by linarith)
-  have ha : 0 < ε * (1 - s) := mul_pos hε (by linarith)
+  obtain ⟨s, hs, hs1⟩ := exists_between (show S / 20 < 1 by linarith only [hS20])
+  have ha : 0 < ε * (1 - s) := mul_pos hε (by linarith only [hs1])
   obtain ⟨δ, hδ, htube⟩ := exists_parameterTube_subset I J hleft hright ha
   refine ⟨δ, hδ, S, hRS, hS20, (fun k => 2 * jetConstant S s k), ?_, ?_⟩
   · intro k
@@ -918,9 +919,9 @@ theorem radial_holomorphic {S : Set ℝ} {Ω : Set ℂ} (hS : IsOpen S) (hΩ : I
   intro z hz
   obtain ⟨ε, hε, hεsub⟩ := Metric.mem_nhds_iff.mp (hΩ.mem_nhds hz)
   let σ := ε / 2
-  have hσ : 0 < σ := by dsimp [σ]; linarith
+  have hσ : 0 < σ := by dsimp [σ]; linarith only [hε]
   have hDisk : closedBall z σ ⊆ Ω :=
-    (closedBall_subset_ball (by dsimp [σ]; linarith : σ < ε)).trans hεsub
+    (closedBall_subset_ball (by dsimp [σ]; linarith only [hε] : σ < ε)).trans hεsub
   let V : ℝ → C(CauchyRestriction.Disk z σ, ℂ) :=
     CompactSmoothFamily.family (closedBall z σ) F
   have hV : ContDiffOn ℝ ∞ V S :=
@@ -1226,7 +1227,7 @@ theorem continuation_eq_initial {T δ : ℝ} (_ : 0 < T) (hδ : 0 < δ) (hδT : 
       HasDerivAt (fun x => G (x,p.2)) (dampedSlope δ G (t,p.2)) t := by
     intro t ht
     have htδ : t ≤ δ := (mem_uIcc.mp ht).elim (fun h => h.2.trans hx) (fun h => h.2.trans hδ.le)
-    have htT : t < T := by linarith
+    have htT : t < T := by linarith only [hδ, hδT, htδ]
     simpa only [dampedSlope,ReferencePath.slopeCutoff_one hδ htδ,Complex.ofReal_one,one_mul] using
       radial_hasDerivAt isOpen_Iio hΩ hG.smooth (p := (t,p.2)) ⟨htT,hp⟩
   have hc := slice_continuous hΩ (regular_dampedSlope hδ hδT hΩ hG).smooth hp
@@ -1615,12 +1616,12 @@ theorem parameterWindow_subset {η : ℝ} (hη : η ∈ parameterWindow.interval
     η ∈ window.interval ∧ η ∈ ReferencePath.parameterInterval := by
   change -21/20 ≤ η ∧ η ≤ 21/20 at hη
   change (-11/10 ≤ η ∧ η ≤ 11/10) ∧ (-11/10 < η ∧ η < 11/10)
-  constructor <;> constructor <;> linarith [hη.1,hη.2]
+  constructor <;> constructor <;> linarith only [hη, hη.1, hη.2]
 
 theorem closed_parameter_subset {η : ℝ} (hη : η ∈ Icc (-1 : ℝ) 1) :
     η ∈ parameterWindow.interval := by
   change -21/20 ≤ η ∧ η ≤ 21/20
-  constructor <;> linarith [hη.1,hη.2]
+  constructor <;> linarith only [hη, hη.1, hη.2]
 
 theorem parameterTube_open (J : AxisCoefficientSpace.Window) (δ : ℝ) :
     IsOpen (AxisHolomorphic.parameterTube J δ) := by
@@ -1779,7 +1780,7 @@ theorem exists_positive_natural_tube (hΛ : 0 < Λ) (hsmall : NaturalAxisData.Sm
       simpa only [mul_div_cancel₀ (41/10) hΛ.ne'] using hh
     have hdom : (x,η) ∈ NaturalProfile.domain Λ := by
       change (-20 < Λ*x ∧ Λ*x < 20) ∧ η ∈ ReferencePath.parameterInterval
-      exact ⟨⟨by linarith,by linarith⟩,(parameterWindow_subset hη).2⟩
+      exact ⟨⟨by linarith only [hY0],by linarith only [hY1]⟩,(parameterWindow_subset hη).2⟩
     exact F.family.positive (x,η) hdom hY0 hY1
   obtain ⟨δ,hδ,hδO⟩ := hK.exists_cthickening_subset_open hopen hKO
   have hpos (x : ℝ) (hx : x ∈ Icc (0 : ℝ) ((41/10)/Λ))
@@ -1806,7 +1807,7 @@ theorem natural_log_radius (hΛ : 0 < Λ) {t : ℝ} (ht : t < ReferencePath.ramp
   constructor
   · positivity
   · rw [div_mul_eq_mul_div]
-    exact (div_lt_div_iff_of_pos_right hΛ).2 (by nlinarith)
+    exact (div_lt_div_iff_of_pos_right hΛ).2 (by nlinarith only [he])
 
 /-- Construction from the actual coefficient witness. In particular the
 natural extension and its common positive neighborhood are not assumptions. -/
@@ -2081,7 +2082,7 @@ theorem natural_Pi_real {h j σ Λ C : ℝ} {P0 : ℝ → ℝ} {d : AnalyticInpu
   congr 1
   have he := F.family.natural.pressure_integral p hp
   change F.family.Pi p - P0 p.2 = ProfileHistories.primitive (fun q => F.family.f q ^ 2) p at he
-  linarith
+  linarith only [he]
 
 theorem iteratedDeriv_smooth {S : Set ℝ} (hS : IsOpen S) {g : ℝ → ℝ}
     (hg : ContDiffOn ℝ ∞ g S) (k : ℕ) : ContDiffOn ℝ ∞ (iteratedDeriv k g) S := by
@@ -2210,7 +2211,7 @@ theorem InitialTube.natural_real_profiles {h j σ Λ C : ℝ} {P0 : ℝ → ℝ}
     change P0 p.2 + ProfileHistories.primitive (fun q => F.family.f q ^ 2) p = F.family.Pi p
     have he := F.family.natural.pressure_integral p hp
     change F.family.Pi p - P0 p.2 = ProfileHistories.primitive (fun q => F.family.f q ^ 2) p at he
-    linarith
+    linarith only [he]
 
 end NavierStokes.ActivationHolomorphic
 
@@ -2277,7 +2278,7 @@ theorem smallTube_subset_domain {ρ τ : ℝ} (hτρ : τ ≤ ρ) (hτ : τ ≤ 
   have hb := abs_lt.mp (lt_of_le_of_lt hre hd)
   change -21 / 20 ≤ x ∧ x ≤ 21 / 20 at hx
   change -11 / 10 < z.re ∧ z.re < 11 / 10
-  constructor <;> linarith [hx.1, hx.2, hb.1, hb.2]
+  constructor <;> linarith only [hτ, hb, hx, hx.1, hx.2, hb.1, hb.2]
 
 theorem histories_congr_below {D D' : ProfileHistories.RadialDomain}
     (P : ProfileHistories.Profiles D) (Q : ProfileHistories.Profiles D')
@@ -2395,7 +2396,7 @@ theorem real_domain_mem (N : ReferencePath.Input) {X eta : ℝ} (hX : 0 ≤ X)
     (heta : eta ∈ ReferencePath.parameterInterval) : (X, eta) ∈ N.radialDomain.carrier := by
   refine ⟨?_, heta⟩
   have := mul_nonneg N.scale_pos.le hX
-  linarith
+  linarith only [this]
 
 /-- The canonical right jets agree with the actual smooth ACT jets at the
 axis as well as at every positive radius. -/
@@ -2504,7 +2505,7 @@ theorem collar_lt_square (N : ReferencePath.Input) (δ : ℝ) :
   have hs := Real.sq_sqrt hp
   have hn := Real.sqrt_nonneg (N.endpoint * Real.exp δ)
   unfold axisRadius
-  nlinarith
+  nlinarith only [hs, hn]
 
 /-- Hierarchy used in actual slow axis. -/
 noncomputable def hierarchy {T δ : ℝ} (hT : 0 < T) (hδ : 0 < δ)

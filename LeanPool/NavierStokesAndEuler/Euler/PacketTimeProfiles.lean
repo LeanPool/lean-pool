@@ -50,7 +50,7 @@ theorem slow_mean_mean (H : ℝ) (hH : 1 ≤ H) (i j p : ℕ)
     (hi : 1 ≤ i) (hj : 1 ≤ j) (hp : i + j = p) :
     meanScale H i*meanScale H j ≤ meanScale H p := by
   have hH0 : 0 ≤ H := le_trans zero_le_one hH
-  have hs : (1 : ℝ) ≤ H^2 := by nlinarith
+  have hs : (1 : ℝ) ≤ H^2 := by nlinarith only [hH]
   calc
     _ ≤ (meanScale H i*meanScale H j)*H^2 :=
       le_mul_of_one_le_right (mul_nonneg (pow_nonneg hH0 _) (pow_nonneg hH0 _)) hs

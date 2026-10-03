@@ -187,7 +187,7 @@ theorem separated_bandGeometry (B : Plane ≃L[ℝ] Plane) (h : ℝ) (n gap : �
     · exact (abs_le.mpr hz.1).trans_lt hr
     · apply (abs_le.mpr ?_).trans_lt hr0
       dsimp only
-      constructor <;> linarith [htime.1, htime.2]
+      constructor <;> linarith only [htime, htime.1, htime.2]
   · change (center + B (0, r0)) + B (z.1, ChartScales.timeCoefficient h n * z.2 - r0) =
       center + scaledBasis B _ _ z
     rw [scaledBasis_apply, add_assoc, ← map_add]
@@ -202,11 +202,11 @@ theorem exists_separated_native_rectangle (B : Plane ≃L[ℝ] Plane) :
   have hM : 0 ≤ M := norm_nonneg _
   have hr : 0 < r := by dsimp [r]; positivity
   refine ⟨r, hr, fun h n gap center => separated_bandGeometry B h n gap center
-    (R := 2 * r) (by linarith) (by linarith) ?_⟩
+    (R := 2 * r) (by linarith only [hr]) (by linarith only [hr]) ?_⟩
   change M * (2 * (1 / (8 * (M + 1)))) < 1 / 2
   apply (mul_lt_mul_iff_of_pos_right (show 0 < 8 * (M + 1) by positivity)).1
   field_simp
-  linarith
+  linarith only [hM]
 
 section GroupedSources
 
@@ -366,7 +366,7 @@ theorem grouped_waveClass (s : StripData P) (g : ℕ → Geometry) (r L : ℕ �
         C * s.epsilon n ^ α * s.growth n z.1 ^ d *
           (Real.sqrt (s.zeta z.1) * copyEnvelope (g n) (r n) (L n) (W n) z.2)
       rw [copyEnvelope_eq_copy (hsep n) (W n) hk]
-      nlinarith
+      nlinarith only [hh]
     · have hn : ∀ k, z ∉ copyCell (g n) (r n) (L n) k := by simpa using hk
       rw [jet_congr (grouped_eventually_zero (F n) (hFsupport n) hn) j,
         iteratedFDeriv_fun_zero, Pi.zero_apply, norm_zero]

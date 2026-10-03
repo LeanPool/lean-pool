@@ -83,7 +83,7 @@ theorem taperSecond_factorization (d : TailData) (x : ℝ) :
     have hW0 : W 0 = 0 := by simp [W]
     simp only [hz, hW0, zero_mul, add_zero] at hh
     simp only [FlatCutoff.edge_zero, zero_pow (by norm_num : 6 ≠ 0), div_zero, zero_mul]
-    linarith
+    linarith only [hh]
   · have hdW := ((FlatPrimitive.edge_hasDerivAt (by norm_num : (0 : ℝ) < 4) x).div
       ((hasDerivAt_id x).pow 3) (pow_ne_zero 3 hx)).deriv
     change deriv W x = _ at hdW
@@ -313,7 +313,7 @@ theorem compact_jets_bound_on {E F : Type*} [NormedAddCommGroup E] [NormedSpace 
   · intro i hi x hx
     have hs := Finset.single_le_sum (fun j _ => hA j)
       (Finset.mem_range.mpr (Nat.lt_succ_of_le hi))
-    exact (hbound i x hx).trans (by linarith)
+    exact (hbound i x hx).trans (by linarith only [hs])
 
 theorem stressX_jets (C : ℝ) (d : TailData) (y0 : ℝ) (n : ℕ)
     {b : ℝ} (hb : 0 < b) :
@@ -334,8 +334,8 @@ theorem stressX_jets (C : ℝ) (d : TailData) (y0 : ℝ) (n : ℕ)
   have hl := Real.log_le_log (Real.exp_pos (y0 + 3 - b)) hX.1
   have hu := Real.log_lt_log hXp hX.2
   rw [Real.log_exp] at hl hu
-  have hδ : 0 < y0 + 3 - Real.log X := by linarith
-  have hδb : y0 + 3 - Real.log X ≤ b := by linarith
+  have hδ : 0 < y0 + 3 - Real.log X := by linarith only [hu]
+  have hδb : y0 + 3 - Real.log X ≤ b := by linarith only [hl]
   have hc := norm_iteratedFDerivWithin_comp_le (profileStress_contDiff C d y0).contDiffOn
     (xChart_contDiffOn y0) (EdgeWeightJets.nat_le_infty n) uniqueDiffOn_univ hS.uniqueDiffOn
     (mapsTo_univ _ _) (show (X, η) ∈ {w : ℝ × ℝ | 0 < w.1} from hXp)
@@ -367,7 +367,7 @@ theorem stressX_zero_outside (C : ℝ) (d : TailData) (y0 : ℝ)
     {X : ℝ} (hX : Real.exp (y0 + 3) ≤ X) (η : ℝ) : stressX C d y0 (X, η) = 0 := by
   have hl := Real.log_le_log (Real.exp_pos (y0 + 3)) hX
   rw [Real.log_exp] at hl
-  exact profileStress_zero_of_nonpos C d y0 (by dsimp [xChart]; linarith)
+  exact profileStress_zero_of_nonpos C d y0 (by dsimp [xChart]; linarith only [hl])
 
 theorem edge_mono_positive {c x y : ℝ} (hc : 0 ≤ c) (hx : 0 < x) (hxy : x ≤ y) :
     FlatCutoff.edge c x ≤ FlatCutoff.edge c y := by
@@ -375,7 +375,7 @@ theorem edge_mono_positive {c x y : ℝ} (hc : 0 ≤ c) (hx : 0 < x) (hxy : x �
   apply Real.exp_le_exp.mpr
   simp only [neg_div]
   apply neg_le_neg
-  exact div_le_div_of_nonneg_left hc (sq_pos_of_pos hx) (by nlinarith)
+  exact div_le_div_of_nonneg_left hc (sq_pos_of_pos hx) (by nlinarith only [hx, hxy])
 
 /-- The full weight from (20), with the lesser of the two log distances and one.
 The only geometric condition is that the closed outer collar avoids the inner edge. -/
@@ -399,7 +399,7 @@ theorem stressX_weighted_jets (C : ℝ) (d : TailData) (y0 : ℝ) (n : ℕ)
   have hi : 0 < Real.log (X / a) := hl.trans_le hlog
   have hu := Real.log_lt_log hXp hX.2
   rw [Real.log_exp] at hu
-  have ho : 0 < y0 + 3 - Real.log X := by linarith
+  have ho : 0 < y0 + 3 - Real.log X := by linarith only [hu]
   have hd : 0 < edgeDistance a y0 X := lt_min zero_lt_one (lt_min hi ho)
   have hdo : edgeDistance a y0 X ≤ y0 + 3 - Real.log X :=
     (min_le_right _ _).trans (min_le_right _ _)
@@ -586,7 +586,7 @@ theorem profileRadius_xChart (y0 : ℝ) {w : ℝ × ℝ} (hX : 0 < w.1) :
   have hh := profileRadius_square y0 (xChart y0 w).2
   rw [profileS_xChart y0 hX] at hh
   have hs := Real.sq_sqrt (show 0 ≤ 2 * w.1 by positivity)
-  nlinarith [profileRadius_pos y0 (xChart y0 w).2, Real.sqrt_nonneg (2 * w.1)]
+  nlinarith only [hh, hs, profileRadius_pos y0 (xChart y0 w).2, Real.sqrt_nonneg (2 * w.1)]
 
 theorem edgeCoordinate_eq_log (y0 : ℝ) {R : ℝ} (hR : 0 < R) :
     edgeCoordinate (profileRadius y0 0) R = y0 + 3 - Real.log (R ^ 2 / 2) := by

@@ -163,7 +163,7 @@ theorem compact_time_integration_by_parts {T : ℝ} {a F D : ℝ → ℝ}
     exact (lt_irrefl T) (hsupp h).2)
   rw [intervalIntegral.integral_add hi₁ hi₂, Pi.mul_apply, Pi.mul_apply, ha0, haT, zero_mul,
       zero_mul, sub_self] at hFTC
-  linarith
+  linarith only [hFTC]
 
 /-- The compact pressure-gradient identity integrated against a time test.
 Both derivatives of the velocity have transferred to the two test functions. -/
@@ -531,7 +531,7 @@ theorem norm_sub_cutoffTest_le (R : ℝ) (ψ : Space → ℂ) (x : Space) :
     ring
   rw [heq, norm_mul, Complex.norm_real, Real.norm_eq_abs,
     abs_of_nonneg (sub_nonneg.mpr (cutoff_le_one R x))]
-  exact mul_le_of_le_one_left (norm_nonneg _) (by linarith [cutoff_nonneg R x])
+  exact mul_le_of_le_one_left (norm_nonneg _) (by linarith only [cutoff_nonneg R x])
 
 /-- The compact approximations converge uniformly on all of space. -/
 theorem tendstoUniformly_cutoffTest {ψ : Space → ℂ} (hψ : Continuous ψ)
@@ -1026,7 +1026,7 @@ theorem l2_inner_integrable_and_norm_integral_le {E : Type*} [NormedAddCommGroup
   have hg_sq := (memLp_two_iff_integrable_sq_norm hg.aestronglyMeasurable).1 hg
   have hpoint (x : Space) : ‖⟪f x, g x⟫_ℝ‖ ≤ ‖f x‖ ^ 2 + ‖g x‖ ^ 2 := by
     apply (norm_inner_le_norm (f x) (g x)).trans
-    nlinarith [sq_nonneg (‖f x‖ - ‖g x‖), mul_nonneg (norm_nonneg (f x)) (norm_nonneg (g x))]
+    nlinarith only [sq_nonneg (‖f x‖ - ‖g x‖), mul_nonneg (norm_nonneg (f x)) (norm_nonneg (g x))]
   have hint := (hf_sq.add hg_sq).mono' (β := ℝ)
     (hf.aestronglyMeasurable.inner (𝕜 := ℝ) (E := E) hg.aestronglyMeasurable)
     (Filter.Eventually.of_forall hpoint)
@@ -1145,7 +1145,7 @@ theorem l2_complex_mul_integrable_and_norm_integral_le {f : Space → ℝ} {ψ :
   have hψ_sq := (memLp_two_iff_integrable_sq_norm hψ.aestronglyMeasurable).1 hψ
   have hpoint (x : Space) : ‖(f x : ℂ) * ψ x‖ ≤ ‖f x‖ ^ 2 + ‖ψ x‖ ^ 2 := by
     rw [norm_mul, Complex.norm_real]
-    nlinarith [sq_nonneg (‖f x‖ - ‖ψ x‖), mul_nonneg (norm_nonneg (f x)) (norm_nonneg (ψ x))]
+    nlinarith only [sq_nonneg (‖f x‖ - ‖ψ x‖), mul_nonneg (norm_nonneg (f x)) (norm_nonneg (ψ x))]
   have hmeas := (Complex.continuous_ofReal.comp_aestronglyMeasurable
     hf.aestronglyMeasurable).mul hψ.aestronglyMeasurable
   have hint := (hf_sq.add hψ_sq).mono' hmeas (Filter.Eventually.of_forall hpoint)
@@ -1730,7 +1730,7 @@ theorem norm_r_le {φ : Space → ℝ} {w : Space → Space} {x : Space}
     ‖r φ w x‖ ≤ (8 * L) * ‖(φ x ^ 3) • w x‖ := by
   have hp2 : φ x ^ 2 ≤ 1 := pow_le_one₀ hφ0 hφ1
   have hp : φ x ^ 5 ≤ φ x ^ 3 := by
-    nlinarith [mul_le_mul_of_nonneg_left hp2 (pow_nonneg hφ0 3)]
+    nlinarith only [hp2, hφ0, mul_le_mul_of_nonneg_left hp2 (pow_nonneg hφ0 3)]
   have happly : ‖fderiv ℝ φ x (w x)‖ ≤ L * ‖w x‖ :=
     ((fderiv ℝ φ x).le_opNorm (w x)).trans
       (mul_le_mul_of_nonneg_right hL (norm_nonneg _))
@@ -1740,7 +1740,7 @@ theorem norm_r_le {φ : Space → ℝ} {w : Space → Space} {x : Space}
     _ ≤ 8 * φ x ^ 5 * (L * ‖w x‖) :=
       mul_le_mul_of_nonneg_left happly (by positivity)
     _ ≤ (8 * L) * (φ x ^ 3 * ‖w x‖) := by
-      nlinarith [mul_le_mul_of_nonneg_right hp (mul_nonneg hL0 (norm_nonneg (w x)))]
+      nlinarith only [hp, hL0, mul_le_mul_of_nonneg_right hp (mul_nonneg hL0 (norm_nonneg (w x)))]
     _ = (8 * L) * ‖(φ x ^ 3) • w x‖ := by
       rw [norm_smul, Real.norm_eq_abs, abs_of_nonneg (pow_nonneg hφ0 3)]
 
@@ -1861,7 +1861,7 @@ theorem norm_fderiv_r_le_amplitude {φ : Space → ℝ} {w : Space → Space}
   have hp4 : φ x ^ 4 ≤ 1 := pow_le_one₀ hφ0 hφ1
   have hp5 : φ x ^ 5 ≤ 1 := pow_le_one₀ hφ0 hφ1
   have hp54 : φ x ^ 5 ≤ φ x ^ 4 := by
-    nlinarith [mul_le_mul_of_nonneg_left hφ1 (pow_nonneg hφ0 4)]
+    nlinarith only [hφ1, hφ0, mul_le_mul_of_nonneg_left hφ1 (pow_nonneg hφ0 4)]
   have hgrad := GradientOperator.norm_fderiv_le_three_mul_sqrt_gradientSq w x
   have h1 : φ x ^ 5 * ‖fderiv ℝ φ x‖ * ‖fderiv ℝ w x‖ ≤
       3 * L * WeightedSobolev.cutoffGradientAmplitude φ w x := by
@@ -1946,7 +1946,7 @@ theorem lpNorm_fderiv_r_two_le {φ : Space → ℝ} {w : Space → Space}
   have h := (memLp_and_lpNorm_fderiv_r_two_le hφ hs hw hw2 hφ0 hφ1 hL0 hJ0 hL hJ).2
   have hA := Real.sqrt_nonneg (∫ x, φ x ^ 8 * gradientSq w x)
   have hM := LpNormTools.lpNorm_nonneg 2 w
-  nlinarith [mul_nonneg hL0 hA, mul_nonneg hJ0 hM]
+  nlinarith only [h, hL0, hA, hJ0, hM, mul_nonneg hL0 hA, mul_nonneg hJ0 hM]
 
 /-- The actual test at radius `R` in the fixed cutoff family. -/
 def cutoffTest (R : ℝ) (w : Space → Space) : Space → ℝ :=
@@ -2437,7 +2437,8 @@ theorem norm_weighted_tensorDiff_le (u v : VelocityField) (t : ℝ) (i j : Fin 3
       mul_le_mul_of_nonneg_left ht (sq_nonneg s)
     _ ≤ 2 * (‖a‖ * ‖w‖) + ‖s • w‖ ^ 2 := by
       rw [norm_smul, Real.norm_eq_abs, abs_of_nonneg hs0]
-      nlinarith [mul_nonneg (sub_nonneg.mpr hs2) (mul_nonneg (norm_nonneg a) (norm_nonneg w))]
+      nlinarith only [hs2,
+          mul_nonneg (sub_nonneg.mpr hs2) (mul_nonneg (norm_nonneg a) (norm_nonneg w))]
 
 /-- Compactness supplies finite weighted tensor norms without any growth
 assumption on either velocity. -/
@@ -2500,7 +2501,7 @@ theorem weighted_tensorDiff_bound {φ : Space → ℝ} {u v : VelocityField} {t 
         comparisonLpNorm 2 (fun x => (u - v) (t, x)) ^ (3 / 2 : ℝ) *
           comparisonLpNorm 6 (fun x => φ x ^ 4 • (u - v) (t, x)) ^ (1 / 2 : ℝ) +
         2 * comparisonLpNorm 2 (fun x => (u - v) (t, x)) * comparisonLpNorm 3 (fun x => u (t, x))
-      nlinarith
+      nlinarith only [hPb, hQb]
 
 end NavierStokesR3.LocalizedTensorBounds
 

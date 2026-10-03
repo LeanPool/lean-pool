@@ -121,7 +121,7 @@ theorem radius_le_two_norm (p : Plane) : radius p ≤ 2 * ‖p‖ := by
 
 theorem radius_pos_of_fst_pos {p : Plane} (hp : 0 < p.1) : 0 < radius p := by
   apply Real.sqrt_pos.2
-  nlinarith [sq_nonneg p.2]
+  nlinarith only [hp, sq_nonneg p.2]
 
 theorem radius_rotate (j : Index) (p : Plane) : radius (rotate j p) = radius p := by
   simp only [radius, rotate_sum_sq]
@@ -135,7 +135,7 @@ theorem polar_contDiff : ContDiff ℝ ∞ polar :=
 
 theorem radius_polar (r θ : ℝ) : radius (polar (r, θ)) = |r| := by
   have hs : (r * Real.cos θ) ^ 2 + (r * Real.sin θ) ^ 2 = r ^ 2 := by
-    nlinarith [Real.sin_sq_add_cos_sq θ]
+    nlinarith only [Real.sin_sq_add_cos_sq θ]
   simp only [radius, polar, hs, Real.sqrt_sq_eq_abs]
 
 theorem polar_add_offset (j : Index) (r θ : ℝ) :
@@ -192,7 +192,7 @@ theorem localChart_contDiffAt (j : Index) {p : Plane} (hp : 0 < (rotate j p).1) 
     ContDiffAt ℝ ∞ (localChart j) p := by
   have hc : ContDiffAt ℝ ∞ (rotate j) p := (rotate_contDiff j).contDiffAt
   have hrad : (rotate j p).1 ^ 2 + (rotate j p).2 ^ 2 ≠ 0 := by
-    nlinarith [sq_nonneg (rotate j p).2]
+    nlinarith only [hp, sq_nonneg (rotate j p).2]
   exact ((hc.fst.pow 2).add (hc.snd.pow 2)).sqrt hrad |>.prodMk
     ((hc.snd.div hc.fst hp.ne').arctan.add contDiffAt_const)
 
@@ -220,7 +220,7 @@ theorem sector_subset_chartDomain {a b : ℝ} (ha : 0 < a) (j : Index) :
   intro p hp
   have hs : a / 2 ≤ (rotate j p).1 := hp.2
   change a / 4 < (rotate j p).1
-  linarith
+  linarith only [ha, hs]
 
 theorem exists_rotate_fst_ge {a : ℝ} {p : Plane} (hp : a ≤ ‖p‖) :
     ∃ j : Index, a ≤ (rotate j p).1 := by
@@ -239,14 +239,14 @@ theorem annulus_covered {a b : ℝ} (ha : 0 < a) {p : Plane} (hp : p ∈ annulus
   obtain ⟨j, hj⟩ := exists_rotate_fst_ge hp.2
   refine ⟨j, hp.1, ?_⟩
   change a / 2 ≤ (rotate j p).1
-  linarith
+  linarith only [ha, hj]
 
 /-- The same four sectors cover a compact annulus defined by the Euclidean
 radius, with the stated margin `rotated x ≥ a/2`. -/
 theorem euclidean_annulus_covered {a b : ℝ} {p : Plane}
     (hlo : a ≤ radius p) (hhi : radius p ≤ b) :
     ∃ j : Index, p ∈ sector a b j := by
-  have hn : a / 2 ≤ ‖p‖ := by linarith [radius_le_two_norm p]
+  have hn : a / 2 ≤ ‖p‖ := by linarith only [hlo, radius_le_two_norm p]
   obtain ⟨j, hj⟩ := exists_rotate_fst_ge hn
   refine ⟨j, ?_, hj⟩
   rw [Metric.mem_closedBall, dist_zero_right]
@@ -269,7 +269,7 @@ theorem extendedBase_contDiff {a : ℝ} (ha : 0 < a) : ContDiff ℝ ∞ (extende
 
 theorem extendedBase_eq {a : ℝ} (ha : 0 < a) {p : Plane} (hp : a / 4 < p.1) :
     extendedBase a p = baseChart p := by
-  have hx : 2 * (a / 8) ≤ p.1 := by linarith
+  have hx : 2 * (a / 8) ≤ p.1 := by linarith only [hp]
   have hr : 2 * (a ^ 2 / 32) ≤ p.1 ^ 2 + p.2 ^ 2 := by
     have hxp := pow_le_pow_left₀ (div_nonneg ha.le (by norm_num : (0 : ℝ) ≤ 4)) hp.le 2
     linarith only [hxp, sq_nonneg p.2]
@@ -299,7 +299,7 @@ theorem polar_chart {a : ℝ} (ha : 0 < a) (j : Index) {p : Plane}
   rw [chart_eq_localChart ha j hp]
   apply polar_localChart
   dsimp [chartDomain] at hp
-  linarith
+  linarith only [ha, hp]
 
 theorem chart_polar {a : ℝ} (ha : 0 < a) (j : Index) {r θ : ℝ}
     (hr : 0 < r) (hθ : θ - offset j ∈ Ioo (-(Real.pi / 2)) (Real.pi / 2))
@@ -329,12 +329,12 @@ theorem chart_finiteJets_uniform {a : ℝ} (ha : 0 < a) (b : ℝ) (m : ℕ) :
   choose B hB using hbound
   refine ⟨1 + ∑ i : Index × Fin (m + 1), |B i|, ?_, ?_⟩
   · have hs : 0 ≤ ∑ i : Index × Fin (m + 1), |B i| := Finset.sum_nonneg (fun i _ => abs_nonneg _)
-    linarith
+    linarith only [hs]
   · intro j k hk p hp
     let i : Index × Fin (m + 1) := (j, ⟨k, by omega⟩)
     have hs : |B i| ≤ ∑ v : Index × Fin (m + 1), |B v| :=
       Finset.single_le_sum (fun v _ => abs_nonneg (B v)) (Finset.mem_univ i)
-    exact (hB i p hp).trans ((le_abs_self (B i)).trans (by linarith))
+    exact (hB i p hp).trans ((le_abs_self (B i)).trans (by linarith only [hs]))
 
 /-- The compact sectors cover the annulus and carry one uniform bound for the
 actual local inverse jets, not merely for a prescribed jet family. -/
@@ -407,7 +407,7 @@ theorem physicalChart_finiteJets_uniform {a : ℝ} (ha : 0 < a) (b : ℝ) (m : �
     rw [← Real.rpow_mul_natCast hQ.le]
     congr 1
     ring
-  exact h.trans ((mul_le_mul_of_nonneg_left hs (by linarith)).trans_eq (by rw [he]))
+  exact h.trans ((mul_le_mul_of_nonneg_left hs (by linarith only [hC])).trans_eq (by rw [he]))
 
 theorem rotate_smul (j : Index) (c : ℝ) (p : Plane) : rotate j (c • p) = c • rotate j p := by
   fin_cases j <;> ext <;> simp [rotate, mul_neg]
@@ -468,7 +468,7 @@ theorem localChart_periodic_agree {V : Type*} (f : Plane → V)
     f (localChart i p) = f (localChart j p) := by
   obtain ⟨n, hn⟩ := localChart_angle_difference i j hi hj
   have he : (localChart i p).2 = (localChart j p).2 + n * (2 * Real.pi) := by
-    linarith [hn]
+    linarith only [hn]
   have hv := ((hf (radius p)).int_mul n) (localChart j p).2
   have hri : (localChart i p).1 = radius p := by simp only [localChart_apply]
   have hrj : (localChart j p).1 = radius p := by simp only [localChart_apply]
@@ -482,9 +482,9 @@ theorem chart_periodic_agree {V : Type*} {a : ℝ} (ha : 0 < a) (f : Plane → V
   rw [chart_eq_localChart ha i hi, chart_eq_localChart ha j hj]
   apply localChart_periodic_agree f hf i j
   · have h : a / 4 < (rotate i p).1 := hi
-    linarith
+    linarith only [ha, h]
   · have h : a / 4 < (rotate j p).1 := hj
-    linarith
+    linarith only [ha, h]
 
 theorem chart_periodic_eventuallyEq {V : Type*} {a : ℝ} (ha : 0 < a) (f : Plane → V)
     (hf : ∀ r : ℝ, Periodic (fun θ => f (r, θ)) (2 * Real.pi))
@@ -592,8 +592,8 @@ theorem radiusPower_eq (d : ℝ) (y : Plane) :
 
 theorem sum_sq_pos {y : Plane} (hy : y ≠ 0) : 0 < y.1 ^ 2 + y.2 ^ 2 := by
   by_contra hn
-  have h1 : y.1 = 0 := by nlinarith [sq_nonneg y.2]
-  have h2 : y.2 = 0 := by nlinarith [sq_nonneg y.1]
+  have h1 : y.1 = 0 := by nlinarith only [hn, sq_nonneg y.2]
+  have h2 : y.2 = 0 := by nlinarith only [hn, sq_nonneg y.1]
   exact hy (Prod.ext h1 h2)
 
 theorem contDiffOn_radialProfile (d : ℝ) :
@@ -673,7 +673,7 @@ theorem annulus_axisFree {a b : ℝ} (ha : 0 < a) :
   intro y hy hz
   have : a ≤ ‖y‖ := hy.2
   rw [hz, norm_zero] at this
-  linarith
+  linarith only [ha, this]
 
 /-- Compactness is used only for one fixed smooth profile on one fixed annulus. -/
 theorem compact_jet_bound {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
@@ -726,7 +726,7 @@ theorem axisFree_open : IsOpen {y : Plane | y ≠ 0} := isClosed_singleton.isOpe
 theorem S_ge_one {n : ℕ} (hn : 1 ≤ n) : 1 ≤ ChartScales.S n := by
   have h : (1 : ℝ) ≤ n := by exact_mod_cast hn
   unfold ChartScales.S
-  nlinarith
+  nlinarith only [h]
 
 /-- The actual floor index has a fixed time-frequency power bound. -/
 theorem native_time_power_le {h : ℝ} (hh : 0 ≤ h) (hh1 : h ≤ 1)
@@ -739,7 +739,7 @@ theorem native_time_power_le {h : ℝ} (hh : 0 ≤ h) (hh1 : h ≤ 1)
     _ ≤ ChartScales.Q n ^ (-1 - h) := div_le_self
       (Real.rpow_nonneg (ChartScales.Q_pos n).le _) (S_ge_one (by omega))
     _ ≤ ChartScales.Q n ^ (-2 : ℝ) := Real.rpow_le_rpow_of_exponent_ge
-      (ChartScales.Q_pos n) (ChartScales.Q_le_one n) (by linarith)
+      (ChartScales.Q_pos n) (ChartScales.Q_le_one n) (by linarith only [hh1])
 
 /-- A coarse fixed power controls the actual normalized radial graph frequency. -/
 theorem native_radial_power_le {h : ℝ} (hh : 0 ≤ h) (hh1 : h ≤ 1)
@@ -762,7 +762,7 @@ theorem native_radial_power_le {h : ℝ} (hh : 0 ≤ h) (hh1 : h ≤ 1)
     _ ≤ ChartScales.Q n ^ (-1 : ℝ) :=
       Real.rpow_le_rpow_of_exponent_ge (ChartScales.Q_pos n) (ChartScales.Q_le_one n) (by
         unfold ChartScales.kappa
-        linarith)
+        linarith only [hh1])
 
 theorem norm_scaledRadial_coarse_le (n : ℕ) :
     ‖scaledRadial n‖ ≤ ChartScales.Q n ^ (-1 : ℝ) :=
@@ -885,7 +885,7 @@ theorem nativeGraph_jet_bound {h a b : ℝ} (hh : 0 ≤ h) (hh1 : h ≤ 1) (ha :
       _ ≤ ChartScales.Q n ^ (-((m : ℝ) + 2)) * ‖timeDirection‖ :=
         mul_le_mul_of_nonneg_right (Real.rpow_le_rpow_of_exponent_ge hq hq1 (by
           have := Nat.cast_nonneg (α := ℝ) m
-          linarith)) (norm_nonneg _)
+          linarith only)) (norm_nonneg _)
       _ = _ := mul_comm _ _
   calc
     _ ≤ C * ChartScales.Q n ^ (-((m : ℝ) + 2)) +
@@ -938,7 +938,7 @@ theorem norm_chartLinear_le {h : ℝ} (hh : 0 ≤ h) (n : ℕ) :
   have hax : ChartScales.Q n ^ (-CoordinateAlgebra.D h) ≤ ChartScales.Q n ^ (-1 : ℝ) :=
     Real.rpow_le_rpow_of_exponent_ge hq (ChartScales.Q_le_one n) (by
       unfold CoordinateAlgebra.D
-      linarith)
+      linarith only [hh])
   refine ContinuousLinearMap.opNorm_le_bound _ hscale ?_
   intro p
   have hcoord (j : Fin 3) : ‖p.2 j‖ ≤ ‖p‖ :=
@@ -1000,7 +1000,7 @@ theorem physicalLift_positive_jet_bound {h a b : ℝ} (hh : 0 ≤ h) (hh1 : h �
       scaledRadial n p ∈ annulus a b → |p.1| ≤ 1 → ∀ k, 1 ≤ k → k ≤ m →
       ‖iteratedFDeriv ℝ k (physicalLift h n) p‖ ≤
         C * ChartScales.Q n ^ (-((m : ℝ) + 2)) := by
-  obtain ⟨C, hC, hbound⟩ := nativeGraph_jet_bound hh (by linarith : h ≤ 1) ha m
+  obtain ⟨C, hC, hbound⟩ := nativeGraph_jet_bound hh (by linarith only [hh1] : h ≤ 1) ha m
   refine ⟨C, hC, ?_⟩
   intro n hn p hp ht k hk hkm
   have haxis := scaledRadial_ne_zero (annulus_axisFree ha hp)
@@ -1133,7 +1133,7 @@ theorem carrier_upper {h : ℝ} (hh : 0 ≤ h) (n : ℕ) :
     Real.sqrt_le_one.mpr (ChartScales.epsilon_le_one h hh n)
   have hk := (Scaling.carrier_frequency_sqrt_bounds he).2
   have hk2 : (ChartScales.carrier h n : ℝ) * Real.sqrt (ChartScales.epsilon h n) ≤ 2 := by
-    exact hk.trans (by linarith)
+    exact hk.trans (by linarith only [hs])
   calc
     _ ≤ 2 / Real.sqrt (ChartScales.epsilon h n) :=
       (le_div_iff₀ (Real.sqrt_pos.mpr he)).mpr hk2
@@ -1646,8 +1646,8 @@ theorem norm_slotLinear_le (ci : ℝ) : ‖slotLinear ci‖ ≤ 1 + |ci⁻¹| * 
   simp only [norm_zero]
   rw [max_eq_right (norm_nonneg (liftZT y)), max_eq_right (abs_nonneg (ci⁻¹ * etaCoordinate y.2))]
   apply max_le
-  · exact hzt.trans (by nlinarith [norm_nonneg y])
-  · exact he.trans (by linarith [norm_nonneg y])
+  · exact hzt.trans (by nlinarith only [hcoef, norm_nonneg y])
+  · exact he.trans (by linarith only [norm_nonneg y])
 
 theorem positive_jet_affine_bound {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [NormedAddCommGroup F] [NormedSpace ℝ F] (L : E →L[ℝ] F) (c : F)
@@ -1726,7 +1726,7 @@ theorem liftedPhase_jet_bound {κ : Plane → Plane} (hκ : ContDiff ℝ ∞ κ)
     (PhaseCalculus.contDiff_phase _ _ _ _ _ _ hF hG) y m (by positivity)
     (by
         have := mul_nonneg (abs_nonneg ((ChartScales.timeCoefficient h n)⁻¹)) (norm_nonneg
-            etaCoordinate); linarith)
+            etaCoordinate); linarith only [hK, this])
   · exact phase_slot_jet_bound _ _ _ _ hF hG _ m hM hpoint hB hFb hGb
   · exact slotMap_positive_jet_bound hκ _ _ _ y m hK hκb
 
@@ -1740,7 +1740,8 @@ theorem slotMap_norm_bound (κ : Plane → Plane) (ci : ℝ) (center : Plane) (r
   have hk1 := (le_max_right ‖(κ (liftXY y)).1‖ ‖(κ (liftXY y)).2‖).trans hk
   change max (max ‖(κ (liftXY y)).1‖ ‖liftZT y‖)
     (max ‖(κ (liftXY y)).2‖ |(etaCoordinate (y.2 - center) + r0) / ci|) ≤ _
-  exact max_le (max_le (by linarith) (by linarith)) (max_le (by linarith) (by linarith))
+  exact max_le (max_le (by linarith) (by linarith)) (max_le (by linarith) (by linarith only [hK, hZ,
+      hv]))
 
 theorem Q_inv_ge_one (n : ℕ) : 1 ≤ ChartScales.Q n ^ (-1 : ℝ) := by
   have h := Real.rpow_le_rpow_of_exponent_ge (ChartScales.Q_pos n)
@@ -1753,7 +1754,7 @@ theorem epsilon_inv_le {h : ℝ} (hh : h ≤ 1) (n : ℕ) :
     simp [ChartScales.epsilon, Real.rpow_neg (ChartScales.Q_pos n).le]
   rw [he]
   exact Real.rpow_le_rpow_of_exponent_ge (ChartScales.Q_pos n) (ChartScales.Q_le_one n) (by
-      linarith)
+      linarith only [hh])
 
 /-- The exact phase (26) has one fixed inverse-`Q` loss. The integer degree
 of the slow factor may grow with the base profile class; it affects no power
@@ -2060,7 +2061,7 @@ theorem native_carrier_physical_bound {h a b Z r0 P B dBase : ℝ}
           physicalLift h n) w‖ ≤ C * q ^ (g - waveLoss h m) := by
   obtain ⟨K, hK, hpolar⟩ := PolarCharts.chart_finiteJets_uniform ha b m
   obtain ⟨BPhase, hBPhase, hphase⟩ :=
-    liftedPhase_power_bound hh (show h ≤ 1 by linarith) hK hZ hr0 hP hB hdBase m
+    liftedPhase_power_bound hh (show h ≤ 1 by linarith only [hh1]) hK hZ hr0 hP hB hdBase m
   obtain ⟨C, hC, hbound⟩ := carrier_class_physical_bound (b := b) hh hh1 ha m
     g dAmp (dBase + (m : ℝ) + 1) A BPhase H hA hBPhase (by positivity) hH
   refine ⟨C, hC, ?_⟩

@@ -466,7 +466,7 @@ theorem joinedResidual_normalized_bound (A : VectorField) (π : ScalarField)
     (hX : 6 ≤ X) (hNX : X-1 ≤ (N : ℝ)) :
     (((joinedSourceCoefficientData P M D τ hτ hτT B hTime).inverse.multiply
       (joinedResidualField P M D hTime τ hτ hτT B A π hp hπ htan hpEquation Cagree N hN
-        k⁻¹ (inv_ne_zero (by linarith)))).smul k).WordBound
+        k⁻¹ (inv_ne_zero (by linarith only [hk])))).smul k).WordBound
           6 (4*L.R) (Real.exp (-(7/10)*X*Real.log k)) 0 := by
   have h := joinedTailSum_normalized_bound P M D hTime τ hτ hτT B L NB W LM WM BC
     hRc hcost S α hα hgrowth
@@ -648,7 +648,7 @@ theorem initializedResidual_normalized_bound (Cagree : SourceCoefficientAgreemen
     (hcoef : BC.multiplierCost ≤ k ^ (1 / 100 : ℝ)) (hX : 6 ≤ X) (hNX : X - 1 ≤ (N : ℝ)) :
     (((joinedSourceCoefficientData period M D τ hτ hτT B hTime).inverse.multiply
       (initializedResidualField M D hTime τ hτ hτT B δ hδ ξ hs α Cagree N hN k⁻¹
-        (inv_ne_zero (by linarith)))).smul k).WordBound
+        (inv_ne_zero (by linarith only [hk])))).smul k).WordBound
           6 (4*L.R) (Real.exp (-(7/10)*X*Real.log k)) 0 :=
   joinedResidual_normalized_bound period M D hTime τ hτ hτT B L NB W LM WM BC hRc hcost S α hα
       hgrowth
@@ -696,7 +696,7 @@ def initializedNormalizedResidualField (Cagree : SourceCoefficientAgreement M D)
     (N : ℕ) (hN : 1 ≤ N) (k : ℝ) (hk : 4 ≤ k) :=
   (((joinedSourceCoefficientData period M D τ hτ hτT B hTime).inverse.multiply
     (initializedResidualField M D hTime τ hτ hτT B δ hδ ξ hs α Cagree N hN k⁻¹
-      (inv_ne_zero (by linarith)))).smul k).changeTime hTime
+      (inv_ne_zero (by linarith only [hk])))).smul k).changeTime hTime
 
 /-- Initialized correction data, constructed using
 `EulerPacketCorrectionCoefficients.correctionDataOfFields`. -/
@@ -704,8 +704,8 @@ def initializedCorrectionData (Cagree : SourceCoefficientAgreement M D)
     (N : ℕ) (hN : 1 ≤ N) (k : ℝ) (hk : 4 ≤ k) :
     EulerAllOrderCorrectionData.Data period D.T :=
   EulerPacketCorrectionCoefficients.correctionDataOfFields D period k⁻¹
-    (by rw [abs_of_pos (inv_pos.mpr (by linarith : 0 < k))]
-        exact inv_le_one_of_one_le₀ (by linarith))
+    (by rw [abs_of_pos (inv_pos.mpr (by linarith only [hk] : 0 < k))]
+        exact inv_le_one_of_one_le₀ (by linarith only [hk]))
     (initializedNormalizedField M D hTime τ hτ hτT B δ hδ ξ hs α N k)
     (initializedNormalizedResidualField M D hTime τ hτ hτT B δ hδ ξ hs α Cagree N hN k hk)
 

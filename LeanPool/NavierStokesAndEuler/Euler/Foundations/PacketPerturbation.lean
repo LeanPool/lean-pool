@@ -49,10 +49,10 @@ theorem integral_absorb
   have hKi := mul_le_mul_of_nonneg_left hi hK
   have hKc : K * (c - a) ≤ 1 / 2 := by
     have hm := mul_le_mul_of_nonneg_left hc.2 hK
-    linarith
+    linarith only [hsmall, hm]
   have hmaxn : 0 ≤ g c := hgn c hc
   have hscaled := mul_le_mul_of_nonneg_right hKc hmaxn
-  have hgc : g c ≤ 2 * A := by linarith [hineq c hc]
+  have hgc : g c ≤ 2 * A := by linarith only [hKi, hscaled, hineq, hc, hineq c hc]
   intro t ht
   exact (hmax ht).trans hgc
 
@@ -115,7 +115,7 @@ theorem forced_wronskian_integral
   have hi := intervalIntegral.integral_eq_sub_of_hasDerivAt
     (fun s hs => forced_wronskian_derivative (hu s (hsubset hs)) (hfu s (hsubset hs))
       (hY s (hsubset hs)) (hfY s (hsubset hs))) hint
-  linarith
+  linarith only [hi]
 
 /-- Variation of constants from two homogeneous solutions whose Wronskian
 flux is normalized to one.  This handles forcing in both state components. -/
@@ -146,8 +146,8 @@ theorem forced_variation_of_constants
   dsimp only
   rw [← hWu, ← hWv]
   constructor
-  · linarith [congrArg (fun r : ℝ => r * Y t) hW]
-  · linarith [congrArg (fun r : ℝ => r * Y₁ t) hW]
+  · linarith only [hW, congrArg (fun r : ℝ => r * Y t) hW]
+  · linarith only [hW, congrArg (fun r : ℝ => r * Y₁ t) hW]
 
 /-- First displacement component of the scalar fundamental propagator. -/
 def kernel11 (D u u₁ v v₁ : ℝ → ℝ) (t s : ℝ) : ℝ :=
@@ -301,7 +301,7 @@ theorem two_column_bound {a b c d x y C : ℝ}
   simp only [abs_mul] at hfirst hsecond
   have hx := mul_le_mul_of_nonneg_right h1 (abs_nonneg x)
   have hy := mul_le_mul_of_nonneg_right h2 (abs_nonneg y)
-  linarith
+  linarith only [hfirst, hsecond, hx, hy]
 
 /-- Passing from Duhamel's formula and relative kernel bounds to a scalar
 relative integral inequality, with the forcing in both components. -/
@@ -352,7 +352,7 @@ theorem kernel_integral_bound
       |∫ s in a..b, K11 s * f s + K12 s * g s| := by rw [hy]; exact abs_add_le _ _
   have hsecond : |y₁| ≤ |K21 a * y0 + K22 a * y₁0| +
       |∫ s in a..b, K21 s * f s + K22 s * g s| := by rw [hy₁]; exact abs_add_le _ _
-  linarith
+  linarith only [hmono, hI, hbase, hfirst, hsecond]
 
 /-- Duhamel's inequality for the exact scalar ODE, measured relative to the
 zero-slope reference solution.  The forcing may occur in both components. -/

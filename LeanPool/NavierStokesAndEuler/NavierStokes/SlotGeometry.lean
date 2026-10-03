@@ -50,7 +50,7 @@ theorem cover_injective : Function.Injective cover := by
   have h1 := congrArg Prod.fst h
   have h2 := congrArg Prod.snd h
   simp only [cover_apply] at h1 h2
-  apply Prod.ext <;> linarith
+  apply Prod.ext <;> linarith only [h1, h2]
 
 theorem cover_pow_injective (n : ℕ) : Function.Injective (cover ^ n : Plane →L[ℝ] Plane) := by
   induction n with
@@ -68,10 +68,10 @@ theorem norm_cover_le (x : Plane) : ‖cover x‖ ≤ 6 * ‖x‖ := by
   apply max_le
   · calc
       |3 * x.1 + x.2| ≤ |3 * x.1| + |x.2| := abs_add_le _ _
-      _ ≤ 6 * ‖x‖ := by rw [abs_mul]; norm_num; linarith [norm_nonneg x]
+      _ ≤ 6 * ‖x‖ := by rw [abs_mul]; norm_num; linarith only [hx, hy, norm_nonneg x]
   · calc
       |x.1 + 5 * x.2| ≤ |x.1| + |5 * x.2| := abs_add_le _ _
-      _ ≤ 6 * ‖x‖ := by rw [abs_mul]; norm_num; linarith
+      _ ≤ 6 * ‖x‖ := by rw [abs_mul]; norm_num; linarith only [hx, hy]
 
 theorem norm_cover_pow_le (n : ℕ) (x : Plane) :
     ‖(cover ^ n) x‖ ≤ (6 : ℝ) ^ n * ‖x‖ := by
@@ -91,7 +91,7 @@ theorem cover_pow_positive (n : ℕ) (x : Plane) (hx : 0 < x.1) (hy : 0 ≤ x.2)
   | succ n ih =>
       rw [pow_succ', _root_.mul_apply_eq_comp, cover_apply]
       dsimp
-      constructor <;> linarith [ih.1, ih.2]
+      constructor <;> linarith only [ih, ih.1, ih.2]
 
 theorem cover_pow_second_positive {n : ℕ} (hn : 0 < n) (x : Plane)
     (hx : 0 < x.1) (hy : 0 ≤ x.2) : 0 < ((cover ^ n) x).2 := by
@@ -99,7 +99,7 @@ theorem cover_pow_second_positive {n : ℕ} (hn : 0 < n) (x : Plane)
   have hp := cover_pow_positive k x hx hy
   rw [pow_succ', _root_.mul_apply_eq_comp, cover_apply]
   dsimp
-  linarith [hp.1, hp.2]
+  linarith only [hp, hp.1, hp.2]
 
 /-- Denominator, given by `((m : ℝ) + 1) * (6 : ℝ) ^ D`. -/
 def denominator (m D : ℕ) : ℝ := ((m : ℝ) + 1) * (6 : ℝ) ^ D
@@ -183,7 +183,7 @@ theorem torusEq_of_unit_square {x y : Plane} (hxy : torusEq x y)
   apply lattice_norm_lt_one hxy
   change max |x.1 - y.1| |x.2 - y.2| < 1
   rw [max_lt_iff, abs_lt, abs_lt]
-  constructor <;> constructor <;> linarith
+  constructor <;> constructor <;> linarith only [hx1, hy1', hy1, hx1', hx2, hy2', hy2, hx2']
 
 theorem cover_center_norm_lt_one (m D : ℕ) (i : Fin m) (n : ℕ) (hn : n ≤ D) :
     ‖(cover ^ n) (center m D i)‖ < 1 := by
@@ -278,11 +278,11 @@ private theorem exists_safe_offset_radius (m D : ℕ) :
       ‖e.1‖ ≤ 2 * r → ‖e.2‖ ≤ 2 * r → e ∈ safeOffsets m D := by
   obtain ⟨ε, hε, hball⟩ := Metric.isOpen_iff.mp (isOpen_safeOffsets m D)
     (0 : Plane × Plane) (zero_mem_safeOffsets m D)
-  refine ⟨ε / 4, by linarith, ?_⟩
+  refine ⟨ε / 4, by linarith only [hε], ?_⟩
   intro e he1 he2
   apply hball
   rw [Metric.mem_ball, dist_eq_norm, sub_zero, Prod.norm_def]
-  exact max_lt (by linarith) (by linarith)
+  exact max_lt (by linarith only [hε, he1]) (by linarith only [hε, he2])
 
 /-- A common positive radius exists for the explicit rational centers.
 The rectangles of radius `2*r` already include fixed padding.
@@ -327,10 +327,10 @@ theorem torusEq_symm {x y : Plane} (h : torusEq x y) : torusEq y x := by
   refine ⟨⟨-a, ?_⟩, ⟨-b, ?_⟩⟩
   · push_cast
     dsimp at ha ⊢
-    linarith
+    linarith only [ha]
   · push_cast
     dsimp at hb ⊢
-    linarith
+    linarith only [hb]
 
 theorem torusEq_trans {x y z : Plane} (hxy : torusEq x y) (hyz : torusEq y z) :
     torusEq x z := by
@@ -339,10 +339,10 @@ theorem torusEq_trans {x y z : Plane} (hxy : torusEq x y) (hyz : torusEq y z) :
   refine ⟨⟨a + c, ?_⟩, ⟨b + d, ?_⟩⟩
   · push_cast
     dsimp at ha hc ⊢
-    linarith
+    linarith only [ha, hc]
   · push_cast
     dsimp at hb hd ⊢
-    linarith
+    linarith only [hb, hd]
 
 /-- The covering preserves the integer lattice and therefore torus equality. -/
 theorem cover_torusEq {x y : Plane} (h : torusEq x y) : torusEq (cover x) (cover y) := by
@@ -351,11 +351,11 @@ theorem cover_torusEq {x y : Plane} (h : torusEq x y) : torusEq (cover x) (cover
   · push_cast
     simp only [Prod.fst_sub, cover_apply]
     dsimp at ha hb ⊢
-    linarith
+    linarith only [ha, hb]
   · push_cast
     simp only [Prod.snd_sub, cover_apply]
     dsimp at ha hb ⊢
-    linarith
+    linarith only [ha, hb]
 
 theorem cover_pow_torusEq (n : ℕ) {x y : Plane} (h : torusEq x y) :
     torusEq ((cover ^ n) x) ((cover ^ n) y) := by
@@ -411,9 +411,9 @@ theorem orientedRectangle_subset (c a b : Plane) (r : ℝ) (hr : 0 ≤ r) :
     ‖ξ • a + η • b‖ ≤ ‖ξ • a‖ + ‖η • b‖ := norm_add_le _ _
     _ = |ξ| * ‖a‖ + |η| * ‖b‖ := by simp only [norm_smul, Real.norm_eq_abs]
     _ ≤ (r / (1 + ‖a‖ + ‖b‖)) * (‖a‖ + ‖b‖) := by
-      nlinarith [mul_le_mul_of_nonneg_right hξ (norm_nonneg a),
-        mul_le_mul_of_nonneg_right hη (norm_nonneg b)]
-    _ ≤ (r / (1 + ‖a‖ + ‖b‖)) * (1 + ‖a‖ + ‖b‖) := by nlinarith
+      nlinarith only [hξ, hη, mul_le_mul_of_nonneg_right hξ (norm_nonneg a),
+          mul_le_mul_of_nonneg_right hη (norm_nonneg b)]
+    _ ≤ (r / (1 + ‖a‖ + ‖b‖)) * (1 + ‖a‖ + ‖b‖) := by nlinarith only [hquot]
     _ = r := div_mul_cancel₀ _ (ne_of_gt hden)
 
 /-- In particular this applies to the manuscript's two eigendirections.
@@ -452,12 +452,12 @@ theorem rotated_axes_injective (β : ℝ) :
     simpa [mul_comm] using congrArg Prod.fst h
   have h2 : -β * q.1 + q.2 = -β * z.1 + z.2 := by
     simpa [mul_comm] using congrArg Prod.snd h
-  have hdet : (1 + β ^ 2) ≠ 0 := by nlinarith [sq_nonneg β]
+  have hdet : (1 + β ^ 2) ≠ 0 := by nlinarith only [sq_nonneg β]
   have hprod : (1 + β ^ 2) * (q.1 - z.1) = 0 := by
     have hm := congrArg (fun t : ℝ => β * t) h2
-    nlinarith
+    nlinarith only [h1, hm]
   have hq : q.1 = z.1 := sub_eq_zero.mp ((mul_eq_zero.mp hprod).resolve_left hdet)
-  exact Prod.ext hq (by rw [hq] at h2; linarith)
+  exact Prod.ext hq (by rw [hq] at h2; linarith only [h2])
 
 /-- Application to any label family with a finite proper coloring and a
 bounded difference of interacting levels. Constructing that coloring from

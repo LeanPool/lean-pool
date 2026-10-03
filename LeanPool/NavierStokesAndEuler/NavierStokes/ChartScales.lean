@@ -97,7 +97,7 @@ theorem spacing_ratio_le (a A : ℝ) {n m : ℕ}
     have h1 : (n : ℝ) ≤ (m : ℝ) + 4 := by exact_mod_cast hnm
     have h2 : (m : ℝ) ≤ (n : ℝ) + 4 := by exact_mod_cast hmn
     rw [abs_le]
-    constructor <;> linarith
+    constructor <;> linarith only [h1, h2]
   have hexp : ((m : ℝ) - (n : ℝ)) * a ≤ 4 * A := by
     calc
       ((m : ℝ) - (n : ℝ)) * a ≤ |((m : ℝ) - (n : ℝ)) * a| := le_abs_self _
@@ -124,12 +124,12 @@ theorem width_ratio_le (D : ℝ) (j : Fin 3) {n m : ℕ}
   fin_cases j
   · change |(1 / 2 : ℝ)| ≤ 1 + |D|
     rw [abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 1 / 2)]
-    linarith [abs_nonneg D]
+    linarith only [abs_nonneg D]
   · change |D| ≤ 1 + |D|
-    linarith
+    linarith only
   · change |(1 : ℝ)| ≤ 1 + |D|
     rw [abs_one]
-    linarith [abs_nonneg D]
+    linarith only [abs_nonneg D]
 
 /-- Physical box, given by `{x | ∀ j, |x j - width D j L.1 * (L.2.1 j : ℝ)| ≤ 2 * width D j
 L.1}`. -/
@@ -153,7 +153,7 @@ theorem overlapping_centers (D : ℝ) (L M : Label)
   have htriangle := abs_sub_le (width D j L.1 * (L.2.1 j : ℝ)) (x j)
     (width D j M.1 * (M.2.1 j : ℝ))
   rw [abs_sub_comm (width D j L.1 * (L.2.1 j : ℝ)) (x j)] at htriangle
-  linarith [hx j, hy j]
+  linarith only [htriangle, hx, hy, hx j, hy j]
 
 theorem same_level_grid_gap (D : ℝ) (L M : Label) (hn : 1 ≤ L.1)
     (hl : L.1 = M.1) (hov : (physicalBox D L ∩ physicalBox D M).Nonempty) (j : Fin 3) :
@@ -161,7 +161,7 @@ theorem same_level_grid_gap (D : ℝ) (L M : Label) (hn : 1 ≤ L.1)
   have h := overlapping_centers D L M hov j
   rw [← hl, ← mul_sub, abs_mul, abs_of_pos (width_pos D j hn)] at h
   have hr : |(L.2.1 j : ℝ) - (M.2.1 j : ℝ)| ≤ 4 := by
-    nlinarith [width_pos D j hn]
+    nlinarith only [h, hn, width_pos D j hn]
   exact_mod_cast hr
 
 /-- Int color as an element of `Fin 5`. -/
@@ -228,17 +228,17 @@ theorem normalized_index_gap (h h' B : ℝ) (i j : ℤ) (hh' : 0 < h')
     _ = |h * (i : ℝ) - h' * (j : ℝ)| / h' := by rw [abs_div, abs_of_pos hh']
     _ ≤ (2 * (h + h')) / h' := div_le_div_of_nonneg_right hgap hh'.le
     _ = 2 * (h / h' + 1) := by field_simp
-    _ ≤ 2 * (B + 1) := by linarith
+    _ ≤ 2 * (B + 1) := by linarith only [hratio]
 
 theorem index_near_floor (c A : ℝ) (j : ℤ) (K : ℕ)
     (hgap : |c - (j : ℝ)| ≤ A) (hK : A + 1 ≤ (K : ℝ)) :
     |j - ⌊c⌋| ≤ (K : ℤ) := by
   have hfloor : |c - (⌊c⌋ : ℝ)| ≤ 1 := by
     rw [abs_of_nonneg (sub_nonneg.mpr (Int.floor_le c))]
-    linarith [Int.lt_floor_add_one c]
+    linarith only [Int.lt_floor_add_one c]
   have ht := abs_sub_le (j : ℝ) c (⌊c⌋ : ℝ)
   rw [abs_sub_comm (j : ℝ) c] at ht
-  have hreal : |(j : ℝ) - (⌊c⌋ : ℝ)| ≤ (K : ℝ) := by linarith
+  have hreal : |(j : ℝ) - (⌊c⌋ : ℝ)| ≤ (K : ℝ) := by linarith only [hgap, hK, hfloor, ht]
   exact_mod_cast hreal
 
 /-- Index radius, given by `⌈2 * (ratioBound D + 1) + 1⌉₊`. -/
@@ -392,18 +392,18 @@ theorem log_level_gap {n m : ℕ} (hn : 1 ≤ n) (hm : 1 ≤ m)
   rw [Real.log_mul (by norm_num : (5 : ℝ) ≠ 0) (ne_of_gt hm')] at h1
   rw [Real.log_mul (by norm_num : (5 : ℝ) ≠ 0) (ne_of_gt hn')] at h2
   rw [abs_le]
-  constructor <;> linarith
+  constructor <;> linarith only [h2, h1]
 
 theorem nativeArgument_gap (h : ℝ) (hh : 0 ≤ h) {n m : ℕ}
     (hn : 1 ≤ n) (hm : 1 ≤ m) (hnm : n ≤ m + 4) (hmn : m ≤ n + 4) :
     |nativeArgument h n - nativeArgument h m| ≤ nativeGapBudget h := by
   have hlog2 : 0 ≤ Real.log (2 : ℝ) := (Real.log_pos (by norm_num)).le
-  have h1h : 0 ≤ 1 + h := by linarith
+  have h1h : 0 ≤ 1 + h := by linarith only [hh]
   have hdiff : |(n : ℝ) - (m : ℝ)| ≤ 4 := by
     have hn' : (n : ℝ) ≤ (m : ℝ) + 4 := by exact_mod_cast hnm
     have hm' : (m : ℝ) ≤ (n : ℝ) + 4 := by exact_mod_cast hmn
     rw [abs_le]
-    constructor <;> linarith
+    constructor <;> linarith only [hm', hn']
   have hlogs := log_level_gap hn hm hnm hmn
   have hnum :
       |((n : ℝ) - (m : ℝ)) * (1 + h) * Real.log 2 -
@@ -435,7 +435,7 @@ theorem natFloor_gap_le (u v C : ℝ) (h : u - v ≤ C) :
     ⌊u⌋₊ ≤ ⌊v⌋₊ + (⌈C⌉₊ + 1) := by
   apply Nat.floor_le_of_le
   push_cast
-  linarith [Nat.lt_floor_add_one v, Nat.le_ceil C]
+  linarith only [h, Nat.lt_floor_add_one v, Nat.le_ceil C]
 
 /-- The actual adjacent native indices have an explicit uniform gap. -/
 theorem nativeIndex_gap (h : ℝ) (hh : 0 ≤ h) {n m : ℕ}
@@ -445,7 +445,7 @@ theorem nativeIndex_gap (h : ℝ) (hh : 0 ≤ h) {n m : ℕ}
   have hg := abs_le.mp (nativeArgument_gap h hh hn hm hnm hmn)
   constructor
   · exact natFloor_gap_le _ _ _ hg.2
-  · exact natFloor_gap_le _ _ _ (by linarith [hg.1])
+  · exact natFloor_gap_le _ _ _ (by linarith only [hg, hg.1])
 
 theorem nat_square_le_two_pow {n : ℕ} (hn : 4 ≤ n) : n ^ 2 ≤ 2 ^ n := by
   induction n, hn using Nat.le_induction with
@@ -453,7 +453,7 @@ theorem nat_square_le_two_pow {n : ℕ} (hn : 4 ≤ n) : n ^ 2 ≤ 2 ^ n := by
   | succ n hn ih =>
       have hmul := Nat.mul_le_mul_right n hn
       calc
-        (n + 1) ^ 2 ≤ 2 * n ^ 2 := by nlinarith
+        (n + 1) ^ 2 ≤ 2 * n ^ 2 := by nlinarith only [hn, hmul]
         _ ≤ 2 * 2 ^ n := Nat.mul_le_mul_left 2 ih
         _ = 2 ^ (n + 1) := by rw [pow_succ]; ring
 
@@ -470,7 +470,7 @@ theorem nativeArgument_nonneg (h : ℝ) (hh : 0 ≤ h) {n : ℕ} (hn : 4 ≤ n) 
       (n : ℝ) ^ 2 ≤ (2 : ℝ) ^ n := hsquare
       _ = (2 : ℝ) ^ (n : ℝ) := (Real.rpow_natCast _ _).symm
       _ ≤ (2 : ℝ) ^ (-(n : ℝ) * (-1 - h)) :=
-        Real.rpow_le_rpow_of_exponent_le (by norm_num) (by nlinarith)
+        Real.rpow_le_rpow_of_exponent_le (by norm_num) (by nlinarith only [hh])
   have hratio : 1 ≤ dyadicQ n ^ (-1 - h) / (n : ℝ) ^ 2 := by
     apply (le_div_iff₀ (pow_pos hn' 2)).mpr
     simpa using hq
@@ -567,22 +567,22 @@ theorem rho_lower : (1 / 3 : ℝ) ≤ rho := by
   have ht : Tg ≤ (2 : ℝ) ^ 3 := by
     unfold Tg SlotColoring.coverGrowth
     norm_num
-    linarith [sqrt_two_lt_two]
+    linarith only [sqrt_two_lt_two]
   have htlog := Real.log_le_log Tg_pos ht
   rw [Real.log_pow] at htlog
   norm_num at htlog
   unfold rho
   apply (le_div_iff₀ log_Tg_pos).mpr
-  linarith
+  linarith only [hl, htlog]
 
 theorem rho_pos : 0 < rho := lt_of_lt_of_le (by norm_num) rho_lower
 
 /-- This includes the manuscript's range `0<h<1/2`, and in fact every `h≥0`. -/
 theorem radialExponent_pos (h : ℝ) (hh : 0 ≤ h) : 0 < radialExponent h := by
-  have hk : kappa < rho := by unfold kappa; linarith [rho_lower]
+  have hk : kappa < rho := by unfold kappa; linarith only [rho_lower]
   have hm := mul_nonneg hh (sub_nonneg.mpr hk.le)
   unfold radialExponent
-  nlinarith [rho_pos]
+  nlinarith only [hm, rho_pos]
 
 theorem Q_pos (n : ℕ) : 0 < Q n := Real.rpow_pos_of_pos (by norm_num) _
 

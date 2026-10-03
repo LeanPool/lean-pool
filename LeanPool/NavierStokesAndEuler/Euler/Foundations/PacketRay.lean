@@ -85,7 +85,7 @@ theorem triangular_ray_formula
   have hFN := intervalIntegral.integral_eq_sub_of_hasDerivAt (fun s hs => hN s (hsub hs)) hNi
   simp only [sub_self, zero_mul, mul_zero, zero_pow (by
       decide : 2 ≠ 0), add_zero, sub_zero] at hFP hFQ
-  exact ⟨by linarith, by linarith, by linarith⟩
+  exact ⟨by linarith only [hFP], by linarith only [hFQ], by linarith only [hFN]⟩
 
 /-- The triangular ray propagator has a polynomial norm bound. -/
 theorem triangular_ray_kernel_bound
@@ -154,8 +154,8 @@ theorem triangular_ray_forced_bound
         (g s - 2 * β * (t - s) * h s) (h s) ≤ 4 * Θ ^ 2 * norm3 (f s) (g s) (h s) := by
     intro s hs
     apply triangular_ray_kernel_bound hβ hβupper hΘ
-    · linarith [hs.2]
-    · linarith [hs.1, ht.2]
+    · linarith only [hs, hs.2]
+    · linarith only [hT, hs, ht, hs.1, ht.2]
   have hmono := intervalIntegral.integral_mono_on ht.1 ((hi1.add hi2).add hi3) himajor hpoint
   rw [intervalIntegral.integral_const_mul] at hmono
   have hI :
@@ -182,7 +182,7 @@ theorem triangular_ray_forced_bound
     rw [hformula.2.2]
     exact abs_add_le _ _
   unfold norm3 at hbase hI hmono ⊢
-  linarith
+  linarith only [hmono, hI, hbase, hPt, hQt, hNt]
 
 /-- A small perturbation of the triangular ray system remains polynomially
 bounded on the whole interval. -/
@@ -220,14 +220,14 @@ theorem triangular_ray_perturbed_bound
       (fun s hs => hforcing s ⟨hs.1, hs.2.trans ht.2⟩)
     rw [intervalIntegral.integral_const_mul] at hi
     have hm := mul_le_mul_of_nonneg_left hi (show 0 ≤ 4 * Θ ^ 2 by positivity)
-    linarith [hforced t ht]
+    linarith only [hm, hforced, ht, hforced t ht]
   have hresult := integral_absorb
     (g := fun t => norm3 (P t) (Q t) (N t))
     (A := 4 * Θ ^ 2 * norm3 (P 0) (Q 0) (N 0)) (K := 4 * Θ ^ 2 * δ)
     hT0 hstate (fun _ _ => by unfold norm3; positivity) (by positivity)
     (by simpa using hsmall) hineq
   intro t ht
-  linarith [hresult t ht]
+  linarith only [hresult, ht, hresult t ht]
 
 /-- Ray closeness is derived from the ODE and the forcing bound, with a
 polynomial loss and arbitrary small initial ray error. -/
@@ -249,7 +249,7 @@ theorem triangular_ray_difference_bound
       have := abs_add_le (N 0 - 1) 1
       simpa using this
     unfold norm3 at hinitial ⊢
-    linarith
+    linarith only [hinitial, hn]
   have hstate := triangular_ray_perturbed_bound hβ hβupper hΘ hT0 hT hδ hsmall
     hP hQ hN hfc hgc hhc hforcing
   have hPe : ∀ t ∈ Icc 0 T,
@@ -290,7 +290,7 @@ theorem triangular_ray_difference_bound
   have hinit := mul_le_mul_of_nonneg_left hinitial (show 0 ≤ 4 * Θ ^ 2 by positivity)
   have herr := herror t ht
   simp only [zero_pow (by decide : 2 ≠ 0), mul_zero, sub_zero, add_zero] at herr
-  linarith
+  linarith only [hm, htime, hinit, herr]
 
 /-- Entries of the triangular ideal ray generator. -/
 def idealRayEntry (β : ℝ) (i j : Fin 3) : ℝ :=
@@ -306,7 +306,7 @@ theorem three_term_bound {a b c p q n e : ℝ}
   have hq := mul_le_mul_of_nonneg_right hb (abs_nonneg q)
   have hn := mul_le_mul_of_nonneg_right hc (abs_nonneg n)
   unfold norm3
-  linarith
+  linarith only [h1, h2, hp, hq, hn]
 
 /-- The ray closeness estimate follows from entrywise coefficient error.
 No closeness of the ray itself is assumed.  The third component stays away
@@ -383,7 +383,7 @@ theorem ray_closeness_of_coefficient_error
   intro t ht
   have hbound : norm3 (P t - β * t ^ 2) (Q t + 2 * β * t) (N t - 1) ≤ 200 * e * Θ ^ 5 := by
     have h1 := mul_le_mul_of_nonneg_left hpow25 (show 0 ≤ 4 * e by positivity)
-    have h2 := mul_le_mul_of_nonneg_left (show 1 + e ≤ 2 by linarith)
+    have h2 := mul_le_mul_of_nonneg_left (show 1 + e ≤ 2 by linarith only [he1])
       (show 0 ≤ 96 * e * Θ ^ 5 by positivity)
     have hp : 0 ≤ e * Θ ^ 5 := by positivity
     linarith only [hdiff t ht, h1, h2, hp]
@@ -833,7 +833,7 @@ theorem normalized_unprojected_entry_error
   have hαabs : |α| ≤ 2 := by
     have hh := abs_add_le (α - 1) 1
     norm_num at hh
-    linarith
+    linarith only [heupper, hα, hh]
   have hαε : |ε ^ 2 * α| ≤ 2 * e := by
     rw [abs_mul, abs_of_nonneg (sq_nonneg ε)]
     have hh := mul_le_mul hε2e hαabs (abs_nonneg α) he
@@ -874,8 +874,8 @@ theorem quotient_difference_bound
     (hD : 1 / 4 ≤ D) (hD₀ : 1 ≤ D₀)
     (hP : |P - P₀| ≤ ρ) (hP₀ : |P₀| ≤ A) (hDD : |D - D₀| ≤ d) :
     |P / D - P₀ / D₀| ≤ 4 * ρ + 4 * A * d := by
-  have hDp : 0 < D := by linarith
-  have hD₀p : 0 < D₀ := by linarith
+  have hDp : 0 < D := by linarith only [hD]
+  have hD₀p : 0 < D₀ := by linarith only [hD₀]
   have hρ : 0 ≤ ρ := (abs_nonneg _).trans hP
   have hd : 0 ≤ d := (abs_nonneg _).trans hDD
   have hA : 0 ≤ A := (abs_nonneg _).trans hP₀
@@ -903,8 +903,8 @@ theorem velocity_projection_error
         72 * ε ^ 2 * Θ ^ 4) * (|U| + |V|) := by
   have hΘ2 : 1 ≤ Θ ^ 2 := one_le_pow₀ hΘ
   have hL : 0 ≤ |U| + |V| := add_nonneg (abs_nonneg _) (abs_nonneg _)
-  have hDp : 0 < D := by linarith
-  have hD₀p : 0 < D₀ := by linarith
+  have hDp : 0 < D := by linarith only [hD]
+  have hD₀p : 0 < D₀ := by linarith only [hD₀]
   have hratio := quotient_difference_bound hD hD₀ hP hP₀ hDD
   have hratio0 : |P₀ / D₀| ≤ Θ ^ 2 := by
     rw [abs_div, abs_of_pos hD₀p, div_le_iff₀ hD₀p]

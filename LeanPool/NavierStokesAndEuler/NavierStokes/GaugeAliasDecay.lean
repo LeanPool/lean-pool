@@ -360,7 +360,7 @@ theorem localBandJets_compactAlias_gain {coord a b d α κ B : ℝ} (U : SlowReg
   obtain ⟨p, hpnat⟩ := exists_nat_gt ((β - α) / κ)
   have horder : β ≤ α + κ * (p : ℝ) := by
     have hh := (div_lt_iff₀ hκ).mp hpnat
-    nlinarith
+    nlinarith only [hh]
   intro m
   obtain ⟨K, hK, hbK⟩ := compactAlias_finiteJets_local U ha hab hd direction m p
   obtain ⟨C, hC, k, hbC⟩ := hsource (m + 6 * p + 4)
@@ -433,7 +433,7 @@ theorem radialFrequency_inv_compare {h Mbase : ℝ} {n i D : ℕ} (hM : Mbase �
     calc
       _ ≤ ChartScales.Lambda ^ (i + D) * ChartScales.Q n ^ (ChartScales.radialExponent h / 2) :=
         mul_le_mul_of_nonneg_right
-          (pow_le_pow_right₀ (by linarith [ChartScales.Lambda_two_lt]) hgap)
+          (pow_le_pow_right₀ (by linarith only [ChartScales.Lambda_two_lt]) hgap)
           (Real.rpow_pos_of_pos (ChartScales.Q_pos n) _).le
       _ = _ := by
         rw [radialFrequency_abs, pow_add]

@@ -64,7 +64,7 @@ theorem scalar_word_pointwise {k : ℕ} (hk : k ≤ 2) (w : Fin k → Fin 4)
   unfold mixedConstant
   have hpos := mul_nonneg (cylinderEmbeddingConstant_nonneg period) (liftSobolevNorm_nonneg period
       5 f)
-  nlinarith
+  nlinarith only [hpos]
 
 /-- Low vector derivatives are bounded by the original H⁵ norm. -/
 theorem vector_word_pointwise {k : ℕ} (hk : k ≤ 2) (w : Fin k → Fin 4)

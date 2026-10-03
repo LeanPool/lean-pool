@@ -200,7 +200,7 @@ theorem periodic_eq_of_cos_sin {E : Type*} {f : ℝ → E}
     (hf : Function.Periodic f (2 * Real.pi)) {a b : ℝ}
     (hc : Real.cos a = Real.cos b) (hs : Real.sin a = Real.sin b) : f a = f b := by
   obtain ⟨k, hk⟩ := Real.Angle.angle_eq_iff_two_pi_dvd_sub.mp (Real.Angle.cos_sin_inj hc hs)
-  have he : a = b + (k : ℝ) * (2 * Real.pi) := by nlinarith [hk]
+  have he : a = b + (k : ℝ) * (2 * Real.pi) := by nlinarith only [hk]
   rw [he]
   exact hf.int_mul k b
 

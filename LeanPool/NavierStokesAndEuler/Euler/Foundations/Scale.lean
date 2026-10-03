@@ -78,7 +78,7 @@ theorem polynomial_over_growth_summable (J : ℕ) (hJ : 1 ≤ J) (x : ℕ → �
 /-- A simple exponential majorization requiring no numerical approximations. -/
 theorem exp_neg_le_reciprocal (t : ℝ) (ht : 0 < t) :
     Real.exp (-t) ≤ 1 / t := by
-  have he : t ≤ Real.exp t := by linarith [Real.add_one_le_exp t]
+  have he : t ≤ Real.exp t := by linarith only [Real.add_one_le_exp t]
   simpa only [Real.exp_neg, one_div] using one_div_le_one_div_of_le ht he
 
 /-- Every exponential decay in a scale divided by a fixed natural power is summable. -/
@@ -114,7 +114,7 @@ theorem exponential_decay_real_power_summable (J : ℕ) (hJ : 1 ≤ J) (x : ℕ 
     simpa only [Real.rpow_natCast] using Real.rpow_le_rpow_of_exponent_le hj hN.le
   apply Real.exp_le_exp.mpr
   exact mul_le_mul_of_nonpos_left
-    (div_le_div_of_nonneg_left (hxp n).le (Real.rpow_pos_of_pos hjp A) hpow) (by linarith)
+    (div_le_div_of_nonneg_left (hxp n).le (Real.rpow_pos_of_pos hjp A) hpow) (by linarith only [hb])
 
 /-- The logarithm of the rapidly growing scale still has a quadratic polynomial bound. -/
 theorem abs_log_growth_le (J : ℕ) (hJ : 1 ≤ J) (x : ℕ → ℝ)
@@ -128,7 +128,7 @@ theorem abs_log_growth_le (J : ℕ) (hJ : 1 ≤ J) (x : ℕ → ℝ)
       have hJr : (1 : ℝ) ≤ J := by exact_mod_cast hJ
       have hJ2 : (1 : ℝ) ≤ (J : ℝ) ^ 2 := one_le_pow₀ hJr
       calc
-        _ ≤ |Real.log (x 0)| + 2 := by linarith
+        _ ≤ |Real.log (x 0)| + 2 := by linarith only
         _ ≤ _ := by
             simpa using mul_le_mul_of_nonneg_left hJ2 (by positivity : 0 ≤ |Real.log (x 0)| + 2)
   | succ n ih =>
@@ -136,7 +136,7 @@ theorem abs_log_growth_le (J : ℕ) (hJ : 1 ≤ J) (x : ℕ → ℝ)
       have hjp : (0 : ℝ) < (J + n : ℕ) := lt_of_lt_of_le zero_lt_one hj1
       have hlog : 0 ≤ Real.log ((J + n : ℕ) : ℝ) := Real.log_nonneg hj1
       have hlogle : Real.log ((J + n : ℕ) : ℝ) ≤ (J + n : ℕ) :=
-        (Real.log_le_sub_one_of_pos hjp).trans (by linarith)
+        (Real.log_le_sub_one_of_pos hjp).trans (by linarith only)
       have hjnext : (((J + (n + 1) : ℕ) : ℝ)) = ((J + n : ℕ) : ℝ) + 1 := by push_cast; ring
       rw [hx, Real.log_mul (pow_ne_zero _ hjp.ne') (hxp n).ne', Real.log_pow]
       calc
@@ -144,11 +144,11 @@ theorem abs_log_growth_le (J : ℕ) (hJ : 1 ≤ J) (x : ℕ → ℝ)
         _ = 2 * Real.log ((J + n : ℕ) : ℝ) + |Real.log (x n)| := by
             rw [abs_of_nonneg (by positivity)]
         _ ≤ 2 * ((J + n : ℕ) : ℝ) +
-            (|Real.log (x 0)| + 2) * ((J + n : ℕ) : ℝ) ^ 2 := by linarith
+            (|Real.log (x 0)| + 2) * ((J + n : ℕ) : ℝ) ^ 2 := by linarith only [ih, hlogle]
         _ ≤ _ := by
           rw [hjnext]
-          nlinarith [abs_nonneg (Real.log (x 0)),
-            mul_nonneg (abs_nonneg (Real.log (x 0))) hjp.le]
+          nlinarith only [hj1, hjp, abs_nonneg (Real.log (x 0)),
+              mul_nonneg (abs_nonneg (Real.log (x 0))) hjp.le]
 
 /-- Every polynomial weight times `|log x|/x` is summable. -/
 theorem polynomial_log_over_growth_summable (J : ℕ) (hJ : 1 ≤ J) (x : ℕ → ℝ)
@@ -200,7 +200,7 @@ theorem polynomial_stage_log_over_growth_summable (J : ℕ) (hJ : 1 ≤ J) (x : 
   · intro n
     have hjp : (0 : ℝ) < (J + n : ℕ) := lt_of_lt_of_le zero_lt_one (hj1 n)
     have hl : Real.log ((J + n : ℕ) : ℝ) ≤ (J + n : ℕ) :=
-      (Real.log_le_sub_one_of_pos hjp).trans (by linarith)
+      (Real.log_le_sub_one_of_pos hjp).trans (by linarith only)
     simpa only [pow_succ] using div_le_div_of_nonneg_right
       (mul_le_mul_of_nonneg_left hl (show 0 ≤ ((J + n : ℕ) : ℝ) ^ A by positivity)) (hxp n).le
 
@@ -501,7 +501,7 @@ theorem perturbed_exponential_decay_summable (J : ℕ) (hJ : 1 ≤ J) (x : ℕ �
     (he : Tendsto (fun n => e n / (x n / ((J + n : ℕ) : ℝ) ^ A)) atTop (𝓝 0)) :
     Summable (fun n => Real.exp (-b * (x n / ((J + n : ℕ) : ℝ) ^ A) + e n)) := by
   have hxp := quadratic_growth_pos J hJ x hx0 hx
-  have hb2 : 0 < b / 2 := by linarith
+  have hb2 : 0 < b / 2 := by linarith only [hb]
   apply (exponential_decay_real_power_summable J hJ x hx0 hx A (b / 2)
       hb2).of_norm_bounded_eventually_nat
   filter_upwards [he.eventually_le_const hb2] with n hn
@@ -510,7 +510,7 @@ theorem perturbed_exponential_decay_summable (J : ℕ) (hJ : 1 ≤ J) (x : ℕ �
   have herror := (div_le_iff₀ hy).mp hn
   rw [Real.norm_of_nonneg (Real.exp_pos _).le]
   apply Real.exp_le_exp.mpr
-  linarith
+  linarith only [herror]
 
 /--
 Both initial-increment exponential bounds after (22) are summable. In particular,

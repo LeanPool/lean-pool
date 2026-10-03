@@ -68,10 +68,10 @@ theorem labelHistoryConstant_pos : 0 < labelHistoryConstant := coefficientCost_p
 theorem labelHistoryEnvelope_power (K Ti : ℝ) (hK : 0 ≤ K) (hTi : 0 ≤ Ti) :
     labelHistoryEnvelope K Ti ≤ labelHistoryConstant*(1+K+Ti)^labelHistoryPower := by
   let P := 1+K+Ti
-  have hP : 1 ≤ P := by dsimp [P]; linarith
+  have hP : 1 ≤ P := by dsimp [P]; linarith only [hK, hTi]
   have hP0 : 0 ≤ P := zero_le_one.trans hP
-  have hKP : K ≤ P := by dsimp [P]; linarith
-  have hTiP : Ti ≤ P := by dsimp [P]; linarith
+  have hKP : K ≤ P := by dsimp [P]; linarith only [hTi]
+  have hTiP : Ti ≤ P := by dsimp [P]; linarith only [hK]
   have hE := embeddingCost_nonneg
   have hF0 := frameAmplitude_nonneg K
   have hV0 := gradientAmplitude_nonneg K
@@ -84,8 +84,8 @@ theorem labelHistoryEnvelope_power (K Ti : ℝ) (hK : 0 ≤ K) (hTi : 0 ≤ Ti) 
   have hR : coefficientRadius K ≤ 1024+4*P := by
     unfold coefficientRadius
     apply max_le
-    · linarith
-    · linarith
+    · linarith only [hK, hTi]
+    · linarith only [hTi]
   have he : labelHistoryEnvelope K Ti ≤ labelHistoryPolynomial.eval P := by
     rw [labelHistoryPolynomial_eval]
     exact parentDifferenceEnvelope_mono hTi hF0 hV0 (by positivity)

@@ -151,9 +151,9 @@ theorem signed_mask_cutoff_source (l : Index B N0) (n : ℕ)
     lt_of_not_ge (fun h => hg (GaussianTailFlat.profile_zero h))
   have hL := (ActualPrimary.phases B N0 0).L_pos l.1
   have hlo : (1 / 6 : ℝ) ≤ z.2.2 / ((ActualPrimary.phases B N0 0).L l.1) := by
-    linarith [(abs_lt.mp hga).1]
+    linarith only [hga, (abs_lt.mp hga).1]
   have hhi : z.2.2 / ((ActualPrimary.phases B N0 0).L l.1) ≤ 5 / 6 := by
-    linarith [(abs_lt.mp hga).2]
+    linarith only [hga, (abs_lt.mp hga).2]
   refine ⟨k, hs, ⟨htrans.1.le, htrans.2.le⟩, ?_, ?_⟩
   · change ((ActualPrimary.phases B N0 0).L l.1 / 1) / 6 ≤ z.2.2
     simpa only [div_eq_mul_inv, inv_one, mul_one, one_mul, mul_comm] using
@@ -365,9 +365,9 @@ theorem signed_cutoff_sourceCell (l : Index B N0) (n : ℕ)
     lt_of_not_ge (fun h => hg (GaussianTailFlat.profile_zero h))
   have hL := (ActualPrimary.phases B N0 0).L_pos l.1
   have hlo : (1 / 6 : ℝ) ≤ z.2.2 / ((ActualPrimary.phases B N0 0).L l.1) := by
-    linarith [(abs_lt.mp hga).1]
+    linarith only [hga, (abs_lt.mp hga).1]
   have hhi : z.2.2 / ((ActualPrimary.phases B N0 0).L l.1) ≤ 5 / 6 := by
-    linarith [(abs_lt.mp hga).2]
+    linarith only [hga, (abs_lt.mp hga).2]
   refine ⟨⟨htrans.1.le, htrans.2.le⟩, ?_, ?_⟩
   · change ((ActualPrimary.phases B N0 0).L l.1 / 1) / 6 ≤ z.2.2
     simpa only [div_eq_mul_inv, inv_one, mul_one, one_mul, mul_comm] using

@@ -119,7 +119,7 @@ theorem equation30_ideal_numerator_positive
       linarith only [hh]
     have hεt2 : 1 ≤ ε ^ 2 * t ^ 2 := (one_le_pow₀ hεt).trans_eq (mul_pow ε t 2)
     have hε2 : 2 * ε ^ 2 ≤ 1 := by linarith only [pow_le_pow_left₀ hε.le hεsmall 2]
-    have h₁ := mul_nonneg (show 0 ≤ ε ^ 2 * t ^ 2 - 2 * ε ^ 2 by linarith) hVp.le
+    have h₁ := mul_nonneg (show 0 ≤ ε ^ 2 * t ^ 2 - 2 * ε ^ 2 by linarith only [hεt2, hε2]) hVp.le
     have h₂ := mul_nonneg (by positivity : 0 ≤ 2 * ε ^ 2) hposit.le
     linarith only [h₁, h₂]
 
@@ -129,8 +129,8 @@ theorem relative_state_error_consequences
     {U V Z Z₁ η : ℝ} (hZ : 0 < Z) (hη : 0 ≤ η) (hηsmall : η ≤ 1 / 2)
     (herror : |V - Z| + |U + Z₁| ≤ η * Z) (hslope : |Z₁ / Z| ≤ 4) :
     0 < V ∧ |V / Z - 1| ≤ η ∧ |U / V + Z₁ / Z| ≤ 10 * η := by
-  have hVerror : |V - Z| ≤ η * Z := by linarith [abs_nonneg (U + Z₁)]
-  have hUerror : |U + Z₁| ≤ η * Z := by linarith [abs_nonneg (V - Z)]
+  have hVerror : |V - Z| ≤ η * Z := by linarith only [herror, abs_nonneg (U + Z₁)]
+  have hUerror : |U + Z₁| ≤ η * Z := by linarith only [herror, abs_nonneg (V - Z)]
   have hVlower : Z / 2 ≤ V := by
     have hh := (abs_le.mp hVerror).1
     have hm := mul_le_mul_of_nonneg_right hηsmall hZ.le
@@ -177,7 +177,8 @@ theorem equation30_relative_state_consequences
     0 < V ∧ |V / Z t - 1| ≤ 2 * exp 6 * δ ∧
       |U / V + Z₁ t / Z t| ≤ 20 * exp 6 * δ := by
   have hZ₁0pos : 0 ≤ Z₁ 0 := by rw [hZ₁0]; exact hlam
-  have hZpos := equation30_global_positive hε hεsmall hZ hfluxZ hZ0 hZ₁0pos t (by linarith)
+  have hZpos := equation30_global_positive hε hεsmall hZ hfluxZ hZ0 hZ₁0pos t (by linarith only [hε,
+      hεsmall, ht])
   have hlower := equation30_slope_uniform_lower hε hεsmall hlam hF hZ hfluxF hfluxZ
     hF0 hF₁0 hZ0 hZ₁0 t ht
   have hslope := equation30_primary_logderivative_bound hε hεsmall hZ hfluxZ hZ0 hZ₁0pos t ht

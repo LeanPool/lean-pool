@@ -293,7 +293,7 @@ theorem normalizeSource_anchor_eq {c a b d : ℝ} (hc : 0 < c) (hca : c ≤ a)
 theorem powerChart_anchor_lt {c a d R : ℝ} (hc : 0 < c) (hca : c ≤ a) (hd : 0 < d)
     (hR : R < a) : RadialPullback.powerChart d c R < a ^ d := by
   apply Real.rpow_lt_rpow (RadialPullback.positiveRadius_pos (by positivity) R).le _ hd
-  exact RadialPullback.positiveRadius_lt (by positivity) (by linarith) hR
+  exact RadialPullback.positiveRadius_lt (by positivity) (by linarith only [hc, hca]) hR
 
 /-- Changing the auxiliary regularization radius leaves the actual primitive
 unchanged; only the compactification cutoff remains. -/
@@ -309,8 +309,8 @@ theorem physicalCompact_reference {c a b d M : ℝ} (hc : 0 < c) (hca : c ≤ a)
       physicalPast PressureStream.physicalTotal RadialPullback.physicalCutoff
           RadialPullback.liftChart
     simp only [Function.comp_apply, smul_eq_mul]
-    rw [RadialPullback.powerChart_eq ha (by linarith) d,
-      RadialPullback.powerChart_eq hc (by linarith) d, he]
+    rw [RadialPullback.powerChart_eq ha (by linarith only [hc, hca, hz]) d,
+      RadialPullback.powerChart_eq hc (by linarith only [hc, hca, hz]) d, he]
   · have hlt : z.1 < a := lt_of_not_ge hz
     rw [TransportPrimitive.radial_zero_of_lt
       (RadialPullback.physicalCompact_supported ha hab hd hf hs M v) hlt,
@@ -1001,8 +1001,8 @@ theorem physicalMeanPressure_naturality {h d a b : ℝ} (hh : 0 < h) (hh1 : h < 
     fieldOnPhysicalTZ h n i (2 * CoordinateAlgebra.A h)
       (meanPressure d a b (radialFrequency h n i d M) hab (qLength (2 * h)) (vector .radial) f) z
           := by
-  have hc : 0 < 2 * h := by linarith
-  have hc1 : 2 * h < 1 := by linarith
+  have hc : 0 < 2 * h := by linarith only [hh]
+  have hc1 : 2 * h < 1 := by linarith only [hh1]
   have he := meanPressure_coverPull (chartScale_pos n) ha hab hd (slowToChartTZ h n) i M
     (radialFrequency h n i d M) (ChartScales.Q n ^ (-(2 * CoordinateAlgebra.A h + 1 / 2)))
     (vector .radial) (vector .radial) (radialFrequency_shift h n i d M)
@@ -1029,8 +1029,8 @@ theorem physicalStreamPotential_naturality {h d a b : ℝ} (hh : 0 < h) (hh1 : h
     fieldOnPhysicalTZ h n i (CoordinateAlgebra.A h - 1 / 2)
       (streamPotential d a b (radialFrequency h n i d M) (qLength (2 * h)) (vector .radial) f) z :=
           by
-  have hc : 0 < 2 * h := by linarith
-  have hc1 : 2 * h < 1 := by linarith
+  have hc : 0 < 2 * h := by linarith only [hh]
+  have hc1 : 2 * h < 1 := by linarith only [hh1]
   have he := streamPotential_coverPull (chartScale_pos n) ha hab hd (slowToChartTZ h n) i M
     (radialFrequency h n i d M) (ChartScales.Q n ^ (-CoordinateAlgebra.A h))
     (vector .radial) (vector .radial) (radialFrequency_shift h n i d M)
@@ -1241,10 +1241,10 @@ theorem normalizeSource_gauge_finiteJets {c e a b d : ℝ}
   have hlp := Real.rpow_pos_of_pos hl d
   have hlaz : (l * a) ^ d < z.1 := by
     rw [Real.mul_rpow hl.le ha.le]
-    linarith [(lt_div_iff₀ hlp).mp hz.1]
+    linarith only [hlp, hz, (lt_div_iff₀ hlp).mp hz.1]
   have hlbz : z.1 < (l * b) ^ d := by
     rw [Real.mul_rpow hl.le (ha.trans hab).le]
-    linarith [(div_lt_iff₀ hlp).mp hz.2]
+    linarith only [hlp, hz, (div_lt_iff₀ hlp).mp hz.2]
   have hzce : z.1 ∈ Ioo (c ^ d) (e ^ d) :=
     ⟨(Real.rpow_le_rpow hc.le hca hd.le).trans_lt hlaz,
       hlbz.trans_le (Real.rpow_le_rpow (mul_pos hl (ha.trans hab)).le hbe hd.le)⟩
@@ -1257,7 +1257,7 @@ theorem normalizeSource_gauge_finiteJets {c e a b d : ℝ}
     (Real.rpow_lt_rpow_iff hrp.le (mul_pos hl (ha.trans hab)).le hd).mp (by
         simpa only [hrpow] using hlbz)
   have hr : inverseChart d c z.1 / l ∈ Ioo a b :=
-    ⟨(lt_div_iff₀ hl).mpr (by linarith), (div_lt_iff₀ hl).mpr (by linarith)⟩
+    ⟨(lt_div_iff₀ hl).mpr (by linarith only [har]), (div_lt_iff₀ hl).mpr (by linarith only [hrb])⟩
   have hratio : (inverseChart d c z.1 / l) ^ d = z.1 / l ^ d := by
     rw [Real.div_rpow hrp.le hl.le, hrpow]
   have hw : 0 ≤ logWeight cL cR a b p (inverseChart d c z.1 / l) :=
@@ -1536,10 +1536,10 @@ theorem cutoff_eq_normalizedCutoff {c a b d : ℝ} (hc : 0 < c) (ha : 0 < a)
     (hleft : c ≤ ell z.2.1 * a) (hR : z.1 / ell z.2.1 ∈ Ioo a b) :
     cutoff d a b ell z = normalizedCutoff (a ^ d) (b ^ d) (fun s => ell s ^ d)
       (liftChart (powerChart d c) z) := by
-  have hr : c < z.1 := hleft.trans_lt (by linarith [(lt_div_iff₀ hl).mp hR.1])
+  have hr : c < z.1 := hleft.trans_lt (by linarith only [hl, hR, (lt_div_iff₀ hl).mp hR.1])
   have hratio : 0 < z.1 / ell z.2.1 := ha.trans hR.1
   simp only [cutoff, radialRatio, physicalCutoff, normalizedCutoff, liftChart]
-  rw [powerChart_eq ha (by linarith [hR.1]) d, powerChart_eq hc (by linarith) d,
+  rw [powerChart_eq ha (by linarith [hR.1]) d, powerChart_eq hc (by linarith only [hc, hr]) d,
     Real.div_rpow (hc.trans hr).le hl.le]
 
 theorem compactPrimitive_eq_transportGauge {c a b d M : ℝ}
@@ -1590,26 +1590,26 @@ theorem qLength_reference_bounds {coord a b : ℝ} (U : SlowRegion coord)
   let L := Real.sqrt (|U.qhi| + U.qlo + 1)
   have hl : 0 < l := Real.sqrt_pos.mpr U.qlo_pos
   have hL : 0 < L := Real.sqrt_pos.mpr (by have := abs_nonneg U.qhi; linarith [U.qlo_pos])
-  have hlL : l ≤ L := Real.sqrt_le_sqrt (by have := abs_nonneg U.qhi; linarith)
+  have hlL : l ≤ L := Real.sqrt_le_sqrt (by have := abs_nonneg U.qhi; linarith only [this])
   have hlow : ∀ s ∈ U.carrier, l ≤ qLength coord s :=
     fun s hs => Real.sqrt_le_sqrt (U.q_mem s hs).1
   have hupp : ∀ s ∈ U.carrier, qLength coord s ≤ L := by
     intro s hs
     apply Real.sqrt_le_sqrt
-    exact (U.q_mem s hs).2.trans (by have := le_abs_self U.qhi; linarith [U.qlo_pos])
+    exact (U.q_mem s hs).2.trans (by have := le_abs_self U.qhi; linarith only [this, U.qlo_pos])
   refine ⟨l * a / 2, L * b + 1, L, by positivity, ?_, hL,
     fun s hs => hl.trans_le (hlow s hs), ?_, ?_, hupp⟩
   · have h1 : l * a ≤ L * a := mul_le_mul_of_nonneg_right hlL ha.le
     have h2 : L * a < L * b := mul_lt_mul_of_pos_left hab hL
     have hp : 0 < l * a := mul_pos hl ha
-    linarith
+    linarith only [h1, h2, hp]
   · intro s hs
     have hh := mul_le_mul_of_nonneg_right (hlow s hs) ha.le
     have hp : 0 < l * a := mul_pos hl ha
-    linarith
+    linarith only [hh, hp]
   · intro s hs
     have hh := mul_le_mul_of_nonneg_right (hupp s hs) (ha.trans hab).le
-    linarith
+    linarith only [hh]
 
 /-- Normalized cutoff model, given by `TransportPrimitive.interiorCutoff (a ^ d) (b ^ d) (y.2.1
 / (Real.sqrt y.1) ^ d)`. -/
@@ -2165,7 +2165,8 @@ theorem meanClass_divideRadius_moving {α : ℝ} {f : ℕ → Point → ℝ}
     ((movingStrip_domain U a b cL cR ha hcL hcR ε L hε hεone hL z).mp hz).1
     ((movingStrip_domain U a b cL cR ha hcL hcR ε L hε hεone hL z).mp hz).2
   have hcz : 2 * c ≤ z.1 := by
-      dsimp [c]; have := mul_pos (Real.sqrt_pos.mpr U.qlo_pos) ha; linarith [hrad.1]
+      dsimp [c]; have := mul_pos (Real.sqrt_pos.mpr U.qlo_pos) ha; linarith only [this, hrad,
+          hrad.1]
   change f n z / z.1 = (positiveRadius c z.1)⁻¹ * f n z
   rw [positiveRadius_eq_self hc hcz]
   ring
@@ -2402,7 +2403,7 @@ theorem physicalTotal_anchor_eq {c a b d M : ℝ} (hc : 0 < c) (hca : c ≤ a)
   have ha := hc.trans_le hca
   simp only [PressureStream.physicalTotal, liftChart]
   rw [normalizeSource_anchor_eq hc hca hab hd hs,
-    powerChart_eq hc (by linarith) d, powerChart_eq ha (by linarith) d]
+    powerChart_eq hc (by linarith) d, powerChart_eq ha (by linarith only [hc, hca, hz]) d]
 
 theorem compactAlias_reference {c a b d M : ℝ} (hc : 0 < c) (ha : 0 < a)
     (hab : a < b) (hd : 0 < d) (ell : S → ℝ) (v : PressureStream.Plane)
@@ -2422,7 +2423,7 @@ theorem compactAlias_reference {c a b d M : ℝ} (hc : 0 < c) (ha : 0 < a)
       physicalTotal_fiberLocal d (ell z.2.1 * a) M v g f z.2.1 (fun _ _ => rfl) z.1 z.2.2] at h
     exact congrArg (fun t : ℝ => cutoffRadialDerivative d a b ell z * t) h.symm
   · have hsmall : z.1 / ell z.2.1 < a :=
-      (div_lt_iff₀ (hl _ hz)).mpr (by linarith [lt_of_not_ge hR])
+      (div_lt_iff₀ (hl _ hz)).mpr (by linarith only [hR, lt_of_not_ge hR])
     have he : cutoffRadialDerivative d a b ell z = 0 := by
       simp only [cutoffRadialDerivative, radialRatio, deriv_physicalCutoff_zero_left ha hab hd
           hsmall, mul_zero]
@@ -2447,9 +2448,9 @@ theorem cutoffRadialDerivative_interior_support {a b d : ℝ} (ha : 0 < a) (hab 
   have habU : a ^ d < b ^ d := Real.rpow_lt_rpow ha.le hab hd
   let cU := (2 * a ^ d + b ^ d) / 3
   let eU := (a ^ d + 2 * b ^ d) / 3
-  have hacU : a ^ d < cU := by dsimp [cU]; linarith
-  have hceU : cU < eU := by dsimp [cU, eU]; linarith
-  have hebU : eU < b ^ d := by dsimp [eU]; linarith
+  have hacU : a ^ d < cU := by dsimp [cU]; linarith only [habU]
+  have hceU : cU < eU := by dsimp [cU, eU]; linarith only [habU]
+  have hebU : eU < b ^ d := by dsimp [eU]; linarith only [habU]
   have hcU : 0 < cU := haU.trans hacU
   have heU : 0 < eU := hcU.trans hceU
   let c := cU ^ d⁻¹
@@ -2465,20 +2466,20 @@ theorem cutoffRadialDerivative_interior_support {a b d : ℝ} (ha : 0 < a) (hab 
   have hePow : e ^ d = eU := Real.rpow_inv_rpow heU.le hd.ne'
   have hzeroLeft (r : ℝ) (hr : r < c) : deriv (physicalCutoff d a b) r = 0 := by
     by_cases hra : a ≤ r
-    · rw [deriv_physicalCutoff ha (by linarith) d b]
+    · rw [deriv_physicalCutoff ha (by linarith only [ha, hra]) d b]
       have hχ : deriv (TransportPrimitive.interiorCutoff (a ^ d) (b ^ d)) (powerChart d a r) = 0 :=
           by
         apply TemporalMeanUpdate.interiorCutoff_deriv_zero_left habU
-        rw [powerChart_eq ha (by linarith) d]
+        rw [powerChart_eq ha (by linarith only [ha, hra]) d]
         exact (Real.rpow_lt_rpow (ha.trans_le hra).le hr hd).trans_eq hcPow
       rw [hχ, mul_zero]
     · exact deriv_physicalCutoff_zero_left ha hab hd (lt_of_not_ge hra)
   have hzeroRight (r : ℝ) (hr : e < r) : deriv (physicalCutoff d a b) r = 0 := by
-    rw [deriv_physicalCutoff ha (by linarith) d b]
+    rw [deriv_physicalCutoff ha (by linarith only [ha, hac, hce, hr]) d b]
     have hχ : deriv (TransportPrimitive.interiorCutoff (a ^ d) (b ^ d)) (powerChart d a r) = 0 := by
       apply TemporalMeanUpdate.interiorCutoff_deriv_zero_right habU
       change eU < powerChart d a r
-      rw [powerChart_eq ha (by linarith) d, ← hePow]
+      rw [powerChart_eq ha (by linarith only [ha, hac, hce, hr]) d, ← hePow]
       exact Real.rpow_lt_rpow (ha.trans (hac.trans hce)).le hr hd
     rw [hχ, mul_zero]
   refine ⟨c, e, hac, hce, heb, ?_⟩
@@ -2495,8 +2496,8 @@ theorem cutoffRadialDerivative_interior_support {a b d : ℝ} (ha : 0 < a) (hab 
       apply hn
       dsimp only [cutoffRadialDerivative, radialRatio]
       rw [hzeroRight _ hlt, mul_zero]
-  exact ⟨by linarith [(le_div_iff₀ (hl _ hz)).mp hprofile.1],
-    by linarith [(div_le_iff₀ (hl _ hz)).mp hprofile.2]⟩
+  exact ⟨by linarith only [hl, hz, hprofile, (le_div_iff₀ (hl _ hz)).mp hprofile.1],
+    by linarith only [hl, hz, hprofile, (div_le_iff₀ (hl _ hz)).mp hprofile.2]⟩
 
 theorem compactAlias_interior_support {a b d : ℝ} (ha : 0 < a) (hab : a < b) (hd : 0 < d) :
     ∃ c e : ℝ, a < c ∧ c < e ∧ e < b ∧ ∀ (ell : S → ℝ) (U : Set S),

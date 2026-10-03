@@ -142,7 +142,7 @@ theorem physicalQ_origin {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {t : ℝ} (ht : t < 1) : physicalQ h (t, 0) = 1 - t := by
   change SimilarityCoordinates.coordinateQ (2 * h) (1 - t, 0) = 1 - t
   have hq := SimilarityCoordinates.coordinateQ_spec
-    (by linarith : 0 < 2 * h) (by linarith : 2 * h < 1)
+    (by linarith only [hh] : 0 < 2 * h) (by linarith only [hh1] : 2 * h < 1)
     (p := (1 - t, 0)) (by simpa using sub_pos.mpr ht)
   simpa only [SimilarityCoordinates.forwardScalar, zero_pow (by norm_num : 2 ≠ 0),
     zero_mul, sub_zero] using hq.2

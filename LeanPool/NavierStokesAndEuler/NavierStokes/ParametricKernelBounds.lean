@@ -55,8 +55,8 @@ theorem finite_polynomial_majorant {X : Type*} [NormedAddCommGroup X]
       obtain ⟨D, M, hD, hd⟩ := h (n + 1) le_rfl
       refine ⟨C + D, N + M, add_nonneg hC hD, ?_⟩
       intro k hk y t hy ht
-      have ht1 : 1 ≤ 1 + t := by linarith
-      have hp0 : 0 ≤ (1 + t) ^ (N + M) := pow_nonneg (by linarith) _
+      have ht1 : 1 ≤ 1 + t := by linarith only [ht]
+      have hp0 : 0 ≤ (1 + t) ^ (N + M) := pow_nonneg (by linarith only [ht]) _
       rcases lt_or_eq_of_le hk with hlt | rfl
       · calc
           f k y t ≤ C * (1 + t) ^ N := hb k (Nat.le_of_lt_succ hlt) y t hy ht
@@ -209,13 +209,13 @@ theorem transform_derivative_bound (n : ℕ) {R : ℝ} (hR : 0 ≤ R) :
     have hcoord : |y.2| ≤ R := by
       simpa only [Real.norm_eq_abs] using (norm_snd_le y).trans hy
     have hpow : 1 ≤ (1 + t) ^ N := by
-      simpa using pow_le_pow_right₀ (by linarith : 1 ≤ 1 + t) (Nat.zero_le N)
+      simpa using pow_le_pow_right₀ (by linarith only [ht] : 1 ≤ 1 + t) (Nat.zero_le N)
     calc
       ‖iteratedFDeriv ℝ n (transform t) y‖ ≤
         1 + |iteratedDeriv n (fun x => coordinate x t) y.2| :=
           norm_iteratedFDeriv_transform_le n hn ht y
       _ ≤ 1 + C * (1 + t) ^ N := add_le_add_right (hbound y.2 t hcoord ht) 1
-      _ ≤ (C + 1) * (1 + t) ^ N := by nlinarith
+      _ ≤ (C + 1) * (1 + t) ^ N := by nlinarith only [hpow]
 
 /-- Amplitude, given by `denominator x t ^ j / denominator x t ^ 3`. -/
 def amplitude (j : ℕ) (x t : ℝ) : ℝ := denominator x t ^ j / denominator x t ^ 3
@@ -276,10 +276,10 @@ theorem profile_comp_derivative_bound {b : E × ℝ → ℝ} (hb : ContDiff ℝ 
     (fun k _ => transform_derivative_bound k hR)
   refine ⟨(n.factorial : ℝ) * B * (1 + A) ^ n, M * n, by positivity, ?_⟩
   intro y t hy ht
-  have ht1 : 1 ≤ 1 + t := by linarith
+  have ht1 : 1 ≤ 1 + t := by linarith only [ht]
   have hpow : 1 ≤ (1 + t) ^ M := by
     simpa using pow_le_pow_right₀ ht1 (Nat.zero_le M)
-  have hD : 1 ≤ (1 + A) * (1 + t) ^ M := by nlinarith
+  have hD : 1 ≤ (1 + A) * (1 + t) ^ M := by nlinarith only [hA, hpow]
   have hcomp := norm_iteratedFDeriv_comp_le hb (transform_contDiff ht)
     (nat_le_smooth n) y
     (fun k hk => hjets k hk (transform t y) ((norm_transform_le ht y).trans hy))
@@ -293,7 +293,7 @@ theorem profile_comp_derivative_bound {b : E × ℝ → ℝ} (hb : ContDiff ℝ 
   · calc
       ‖iteratedFDeriv ℝ k (transform t) y‖ ≤ A * (1 + t) ^ M :=
         htransform k hkn y t hy ht
-      _ ≤ (1 + A) * (1 + t) ^ M := by nlinarith
+      _ ≤ (1 + A) * (1 + t) ^ M := by nlinarith only [hpow]
       _ ≤ ((1 + A) * (1 + t) ^ M) ^ k := by
         simpa only [pow_one] using pow_le_pow_right₀ hD hk1
 

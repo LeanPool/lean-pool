@@ -168,11 +168,11 @@ theorem exists_fiber_localization [FiniteDimensional ℝ S]
   obtain ⟨ρ, hρ, hball⟩ := Metric.mem_nhds_iff.mp (hU.mem_nhds hs)
   let c : ContDiffBump s :=
     { rIn := ρ / 4, rOut := ρ / 2, rIn_pos := by positivity,
-      rIn_lt_rOut := by linarith }
+      rIn_lt_rOut := by linarith only [hρ] }
   have hcs : tsupport c ⊆ U := by
     rw [c.tsupport_eq]
     intro t ht
-    exact hball ((Metric.closedBall_subset_ball (by dsimp [c]; linarith)) ht)
+    exact hball ((Metric.closedBall_subset_ball (by dsimp [c]; linarith only [hρ])) ht)
   refine ⟨c, c.contDiff, hcs, localize_smooth hU c.contDiff hcs hf, ?_⟩
   filter_upwards [c.eventuallyEq_one] with t ht
   intro r Y
@@ -416,7 +416,7 @@ theorem canonical_transport_finiteJets_fiber
           K * A * logWeight cL cR a b p z.1 := by
   exact transport_compact_finiteJets_fiber (S := S) (V := V) ha
     (c := (2 * a + b) / 3) (d := (a + 2 * b) / 3)
-    (by linarith) (by linarith) (by linarith) hcL hcR p m
+    (by linarith only [hab]) (by linarith only [hab]) (by linarith only [hab]) hcL hcR p m
     (TransportPrimitive.interiorCutoff a b) (TransportPrimitive.interiorCutoff_contDiff a b)
     (fun X hX => TransportPrimitive.interiorCutoff_zero hab hX)
     (fun X hX => TransportPrimitive.interiorCutoff_one hab hX)
@@ -518,7 +518,7 @@ theorem physicalCompact_finiteJets_fiber {a b d cL cR : ℝ}
   change ‖iteratedFDeriv ℝ j (physicalCompact d a b M (0, v) g) z‖ ≤
     KP * (KT * (KN * A) * logWeight (d ^ 2 * cL) (d ^ 2 * cR) (a ^ d) (b ^ d) p (powerChart d a
         z.1)) at hp
-  rw [powerChart_eq ha (show a / 2 ≤ z.1 by linarith [hz.1]) d] at hp
+  rw [powerChart_eq ha (show a / 2 ≤ z.1 by linarith only [ha, hz, hz.1]) d] at hp
   have hw := logWeight_power_forward ha hd hz cL cR p
   calc
     _ ≤ KP * (KT * (KN * A) * logWeight (d ^ 2 * cL) (d ^ 2 * cR) (a ^ d) (b ^ d) p (z.1 ^ d)) := hp
@@ -1499,8 +1499,8 @@ theorem dividedAlias_bounded_fiber {a b d : ℝ}
   obtain ⟨KN, hKN, hbN⟩ := normalizeSource_bounded_fiber (S := S) (V := ℝ) ha hd (a ^ d) (b ^ d) m
   obtain ⟨KA, hKA, hbA⟩ := exactAlias_bounded_fiber (S := S) (V := ℝ) habU.le
     (TransportPrimitive.interiorCutoff_contDiff (a ^ d) (b ^ d))
-    (fun u hu => TransportPrimitive.interiorCutoff_zero habU (by linarith))
-    (fun u hu => TransportPrimitive.interiorCutoff_one habU (by linarith)) m
+    (fun u hu => TransportPrimitive.interiorCutoff_zero habU (by linarith only [habU, hu]))
+    (fun u hu => TransportPrimitive.interiorCutoff_one habU (by linarith only [habU, hu])) m
   obtain ⟨KT, hKT, hbT⟩ := dividedAlias_finiteJets_fiber (S := S) ha hab hd m
   refine ⟨KT * KA * KN, mul_nonneg (mul_nonneg hKT hKA) hKN, ?_⟩
   intro M v f hf hs C hC s hb j hj z hzs
@@ -1636,7 +1636,7 @@ theorem meanClass_divideRadius {a b cL cR : ℝ}
     (meanClass_radialMultiply ha hcL hcR ε L hε hεone hL U hU hclass hφ)
   intro n p hp
   dsimp [PressureStream.divideRadius, φ]
-  rw [positiveRadius_eq_self (show 0 < a / 4 by positivity) (by linarith [hp.1.1])]
+  rw [positiveRadius_eq_self (show 0 < a / 4 by positivity) (by linarith only [ha, hp, hp.1.1])]
   simp only [div_eq_mul_inv, mul_comm]
 
 theorem meanClass_streamPotential {a b d cL cR : ℝ}
@@ -2061,14 +2061,14 @@ private theorem radialMap_positiveJets {U : Set Plane} (hU : IsOpen U)
     BoundedPositiveJets (fun x : Point => (φ x, x.2)) S := by
   intro m
   obtain ⟨C, hC, hbound⟩ := hb m
-  refine ⟨C + 1, by linarith, ?_⟩
+  refine ⟨C + 1, by linarith only [hC], ?_⟩
   intro j hj hjm x hx
   have hφx := (hφ.contDiffAt ((PhysicalMeanDomain.slowDomain_open hU).mem_nhds (hS hx))).of_le
     (nat_le_infty j)
   rw [PhysicalGraphBounds.iteratedFDeriv_pair hφx contDiffAt_snd,
     ContinuousMultilinearMap.opNorm_prod]
   apply max_le
-  · exact (hbound j hjm x hx).trans (by linarith)
+  · exact (hbound j hjm x hx).trans (by linarith only)
   · have h := ParametricKernelBounds.norm_iteratedFDeriv_linear_le
       (ContinuousLinearMap.snd ℝ ℝ (Plane × Plane)) j hj x
     have hn : ‖ContinuousLinearMap.snd ℝ ℝ (Plane × Plane)‖ ≤ 1 := by
@@ -2076,7 +2076,7 @@ private theorem radialMap_positiveJets {U : Set Plane} (hU : IsOpen U)
       intro p
       change ‖p.2‖ ≤ 1 * ‖p‖
       simpa only [one_mul] using norm_snd_le p
-    exact h.trans (hn.trans (by linarith))
+    exact h.trans (hn.trans (by linarith only [hC]))
 
 theorem profileMap_positiveJets {coord rlo rhi : ℝ} (U : SlowRegion coord)
     {S : Set Point} (hS : S ⊆ PhysicalMeanDomain.slowDomain U.carrier)
@@ -2115,10 +2115,10 @@ theorem moving_radial_bounds {coord a b : ℝ} (U : SlowRegion coord) (ha : 0 < 
   · calc
       Real.sqrt U.qlo * a ≤ Real.sqrt (MeanRankUpdate.chartQ coord x) * a :=
         mul_le_mul_of_nonneg_right hL ha.le
-      _ ≤ x.1 := by nlinarith [(lt_div_iff₀ hs).mp hr.1]
+      _ ≤ x.1 := by nlinarith only [hs, hr, (lt_div_iff₀ hs).mp hr.1]
   · calc
       x.1 ≤ Real.sqrt (MeanRankUpdate.chartQ coord x) * b :=
-        by nlinarith [(div_lt_iff₀ hs).mp hr.2]
+        by nlinarith only [hs, hr, (div_lt_iff₀ hs).mp hr.2]
       _ ≤ Real.sqrt U.qhi * b := mul_le_mul_of_nonneg_right hR (ha.trans hab).le
 
 section ClassMaps

@@ -140,7 +140,7 @@ theorem orderZeroPressure_bound {s : ℕ} (hs : 6 ≤ s) (N : ℕ) (hN : N + 6 �
       _).trans
     (mul_le_mul_of_nonneg_left (orderZeroSource_bound period hs N hN ρ hρ L hL C0 K0 C K background
         r e)
-      (by linarith : 0 ≤ 2*M))
+      (by linarith only [hM] : 0 ≤ 2*M))
 
 /-- The solver's actual raw source has exactly the transport/order-zero decomposition used by the
 energy estimate. -/

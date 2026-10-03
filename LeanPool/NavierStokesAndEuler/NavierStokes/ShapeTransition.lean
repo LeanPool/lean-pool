@@ -210,10 +210,10 @@ theorem logarithmicSlope_bounds {T K B : ℝ} {li : ℝ → ℝ}
         hData (abs_nonneg _) (div_nonneg hK hT.le)
       _ ≤ 1 / 20 := by
         rw [div_mul_eq_mul_div]
-        exact (div_le_iff₀ hT).mpr (by linarith)
+        exact (div_le_iff₀ hT).mpr (by linarith only [hDuration])
   have hab := abs_le.mp hb
   dsimp [logarithmicSlope]
-  constructor <;> linarith
+  constructor <;> linarith only [hab]
 
 theorem exists_duration (B : ℝ) (hB : 0 ≤ B) :
     ∃ T : ℝ, 0 < T ∧ ∀ (li : ℝ → ℝ) (C y eta : ℝ),
@@ -223,7 +223,7 @@ theorem exists_duration (B : ℝ) (hB : 0 ≤ B) :
   obtain ⟨K, hK, hSigma⟩ := sigma_deriv_bounded
   refine ⟨1 + 20 * K * B, by positivity, fun li C y eta hData => ?_⟩
   rw [← logarithmicSlope_eq C]
-  exact logarithmicSlope_bounds (by positivity) hK hB hSigma (by linarith) hData
+  exact logarithmicSlope_bounds (by positivity) hK hB hSigma (by linarith only) hData
 
 theorem blend_abs_le {T B : ℝ} {li : ℝ → ℝ} {y eta : ℝ}
     (hli : |li eta| ≤ B) (hf : |logShape eta| ≤ B) : |blend T li (y, eta)| ≤ B := by
@@ -405,11 +405,11 @@ theorem restore_contDiff {Gi : ℝ → ℝ} (hGi : ContDiff ℝ ∞ Gi) :
 
 theorem restore_before {z : ℝ} (hz : z ≤ -8) (Gi : ℝ → ℝ) (eta : ℝ) :
     restore Gi (z, eta) = Gi eta := by
-  simp [restore, OutgoingSchedule.sigma_zero (by linarith : z + 8 ≤ 0)]
+  simp [restore, OutgoingSchedule.sigma_zero (by linarith only [hz] : z + 8 ≤ 0)]
 
 theorem restore_after {z : ℝ} (hz : -7 ≤ z) (Gi : ℝ → ℝ) (eta : ℝ) :
     restore Gi (z, eta) = 4 * eta := by
-  simp [restore, OutgoingSchedule.sigma_one (by linarith : 1 ≤ z + 8)]
+  simp [restore, OutgoingSchedule.sigma_one (by linarith only [hz] : 1 ≤ z + 8)]
 
 theorem restore_sub (Gi : ℝ → ℝ) (z eta : ℝ) :
     restore Gi (z, eta) - 4 * eta =
@@ -421,7 +421,7 @@ theorem restore_error_le (Gi : ℝ → ℝ) (z eta : ℝ) :
     |restore Gi (z, eta) - 4 * eta| ≤ |Gi eta - 4 * eta| := by
   rw [restore_sub, abs_mul, abs_of_nonneg (sub_nonneg.mpr (OutgoingSchedule.sigma_le_one _))]
   exact mul_le_of_le_one_left (abs_nonneg _)
-    (by linarith [OutgoingSchedule.sigma_nonneg (z + 8)])
+    (by linarith only [OutgoingSchedule.sigma_nonneg (z + 8)])
 
 theorem restore_error_jet (Gi : ℝ → ℝ) (hGi : ContDiff ℝ ∞ Gi) (z eta : ℝ) (n : ℕ) :
     iteratedDeriv n (fun e => restore Gi (z, e) - 4 * e) eta =
@@ -439,7 +439,7 @@ theorem restore_error_jet_le (Gi : ℝ → ℝ) (hGi : ContDiff ℝ ∞ Gi) (z e
   rw [restore_error_jet Gi hGi, abs_mul,
     abs_of_nonneg (sub_nonneg.mpr (OutgoingSchedule.sigma_le_one _))]
   exact mul_le_of_le_one_left (abs_nonneg _)
-    (by linarith [OutgoingSchedule.sigma_nonneg (z + 8)])
+    (by linarith only [OutgoingSchedule.sigma_nonneg (z + 8)])
 
 /-! ## A smooth physical-radius implementation, including the old axis piece -/
 
@@ -456,7 +456,7 @@ theorem radialSwitch_zero {Xi T X : ℝ} (hXi : 0 < Xi) (hT : 0 < T) (hX : X ≤
   · apply OutgoingSchedule.sigma_zero
     apply div_nonpos_of_nonpos_of_nonneg _ hT.le
     apply Real.log_nonpos
-    · exact (div_pos (by linarith : 0 < X) hXi).le
+    · exact (div_pos (by linarith only [hXi, h] : 0 < X) hXi).le
     · exact (div_le_one hXi).mpr hX
 
 theorem radialSwitch_eq {Xi T X : ℝ} (hXi : 0 < Xi) (hT : 0 < T) (hX : 0 < X) :
@@ -466,7 +466,7 @@ theorem radialSwitch_eq {Xi T X : ℝ} (hXi : 0 < Xi) (hT : 0 < T) (hX : 0 < X) 
   · symm
     apply OutgoingSchedule.sigma_zero
     apply div_nonpos_of_nonpos_of_nonneg _ hT.le
-    exact Real.log_nonpos (div_pos hX hXi).le ((div_le_one hXi).mpr (by linarith))
+    exact Real.log_nonpos (div_pos hX hXi).le ((div_le_one hXi).mpr (by linarith only [hX, h]))
   · rfl
 
 theorem radialSwitch_contDiff {Xi T : ℝ} (hXi : 0 < Xi) (hT : 0 < T) :
@@ -541,7 +541,7 @@ theorem shapeField_jet_bound {Xi C T X B K : ℝ} (hXi : 0 < Xi) (hC : 0 < C)
   · have hXpos : 0 < X := hXi.trans (lt_of_not_ge hXXi)
     have hy : Real.log (X / Xi) ≤ T :=
       (Real.log_le_iff_le_exp (div_pos hXpos hXi)).mpr
-        ((div_le_iff₀ hXi).mpr (by linarith))
+        ((div_le_iff₀ hXi).mpr (by linarith only [hXL]))
     have he : (fun e => shapeField Xi T li old (X, e)) =
         fun e => (Real.sqrt (2 * X))⁻¹ * angular C T li (Real.log (X / Xi), e) := by
       funext e
@@ -555,7 +555,7 @@ theorem shapeField_jet_bound {Xi C T X B K : ℝ} (hXi : 0 < Xi) (hC : 0 < C)
     have hb := angular_jet_bound hC hli hB hy n eta hl hf
     have hs : (Real.sqrt (2 * X))⁻¹ ≤ (Real.sqrt (2 * Xi))⁻¹ := by
       apply inv_anti₀ (Real.sqrt_pos.2 (by positivity))
-      exact Real.sqrt_le_sqrt (by linarith)
+      exact Real.sqrt_le_sqrt (by linarith only [hXXi])
     calc
       _ ≤ (Real.sqrt (2 * Xi))⁻¹ *
           ((n.factorial * Real.exp (T / 10 + B) * B ^ n) / C) :=
@@ -666,7 +666,7 @@ theorem sqrt_scaled_product {R x : ℝ} (hR : 0 ≤ R) (hx : 0 ≤ x) :
     Real.sqrt (2 * x) * Real.sqrt (2 * R * x) = 2 * Real.sqrt R * x := by
   rw [show 2 * R * x = R * (2 * x) by ring, Real.sqrt_mul hR]
   have hs := Real.sq_sqrt (show 0 ≤ 2 * x by positivity)
-  nlinarith [Real.sqrt_nonneg R]
+  nlinarith only [hs, Real.sqrt_nonneg R]
 
 theorem scaledE_sq {R x : ℝ} (hR : 0 ≤ R) (hx : 0 ≤ x)
     (f : ℝ × ℝ → ℝ) (eta : ℝ) :
@@ -829,7 +829,7 @@ theorem prefixJetSize_bound {R r L B K C : ℝ} (hR : 0 ≤ R) (hr : 0 ≤ r) (h
   have hKC : 0 ≤ K / C := div_nonneg hK hCpos.le
   have hKCle : K / C ≤ K := div_le_self hK hC
   have hroot : Real.sqrt R ≤ R + 1 := by
-    linarith [Real.sqrt_nonneg R, Real.sq_sqrt hR, sq_nonneg (Real.sqrt R - 1)]
+    linarith only [hR, Real.sqrt_nonneg R, Real.sq_sqrt hR, sq_nonneg (Real.sqrt R - 1)]
   have hrr : Real.sqrt R * r ≤ L + 1 := calc
     _ ≤ (R + 1) * r := mul_le_mul_of_nonneg_right hroot hr
     _ = L + r := by rw [add_mul, hRL, one_mul]
@@ -928,7 +928,8 @@ theorem idealWeightI_bound {r : ℝ} (hr : 0 ≤ r) (hr1 : r ≤ 1) :
         have hx0 : 0 ≤ x := hx'.1.le
         have hx1 : x ≤ 1 := hx'.2.trans hr1
         have hs : Real.sqrt (2 * x) ≤ 2 := by
-          nlinarith [Real.sq_sqrt (show 0 ≤ 2 * x by positivity), Real.sqrt_nonneg (2 * x)]
+          nlinarith only [hx1, hx0, Real.sq_sqrt (show 0 ≤ 2 * x by positivity),
+              Real.sqrt_nonneg (2 * x)]
         rw [Real.norm_eq_abs, abs_mul, abs_of_nonneg (Real.sqrt_nonneg _),
           abs_of_nonneg (Real.rpow_nonneg hx0 _)]
         exact (mul_le_mul hs (Real.rpow_le_one hx0 hx1 (by norm_num))
@@ -1072,7 +1073,7 @@ theorem idealPrefixJetSize_bound {r B K : ℝ} (hr : 0 ≤ r) (hr1 : r ≤ 1)
     rw [abs_mul, abs_mul, abs_of_nonneg hr]
     have hleft := mul_le_mul_of_nonneg_left hGG hr
     have hright := mul_le_mul (idealWeightS_bound hr hr1) hAA (abs_nonneg _) (by positivity)
-    linarith
+    linarith only [hleft, hright]
   have hp : |iteratedDeriv n (idealP A r) eta| ≤
       (5 / 2) * (2 ^ n * K ^ 2) * r ^ (1 / 5 : ℝ) := by
     change |iteratedDeriv n (fun e => idealWeightP r * A e ^ 2) eta| ≤ _
@@ -1081,7 +1082,7 @@ theorem idealPrefixJetSize_bound {r B K : ℝ} (hr : 0 ≤ r) (hr1 : r ≤ 1)
     convert! mul_le_mul_of_nonneg_left hAA
       (show 0 ≤ (5 / 2 : ℝ) * r ^ (1 / 5 : ℝ) by positivity) using 1; ring
   dsimp [idealPrefixJetSize, idealPrefixCoefficient]
-  linarith
+  linarith only [hm, hi, hj, hs, hp]
 
 theorem separation_fifth_tendsto (T : ℝ) {P : ℝ} (hP : P ≠ 0) :
     Tendsto (fun C : ℝ => separation T C P ^ (1 / 5 : ℝ)) atTop (𝓝 0) := by
@@ -1213,7 +1214,7 @@ theorem restoreJetSize_bound {a b B K delta : ℝ} (ha : 0 < a) (hab : a ≤ b) 
     restoreJetSize n Gi A a b eta ≤
       delta * (1 + 2 * (2 ^ n * K) + 2 ^ n * (delta + 2 * B)) := by
   have hlen : 0 ≤ b - a := sub_nonneg.mpr hab
-  have hlen1 : b - a ≤ 1 := by linarith
+  have hlen1 : b - a ≤ 1 := by linarith only [ha, hb]
   have hrSmooth (x : ℝ) : ContDiff ℝ ∞ (fun e => restore Gi (Real.log x, e)) :=
     (restore_contDiff hGi).comp (contDiff_const.prodMk contDiff_id)
   have hdSmooth (x : ℝ) : ContDiff ℝ ∞ (fun e => restoreDefect Gi (x, e)) :=
@@ -1252,7 +1253,8 @@ theorem restoreJetSize_bound {a b B K delta : ℝ} (ha : 0 < a) (hab : a ≤ b) 
     have hw : |Real.sqrt (2 * x) * x ^ (1 / 10 : ℝ)| ≤ 2 := by
       rw [abs_mul, abs_of_nonneg (Real.sqrt_nonneg _), abs_of_nonneg (Real.rpow_nonneg hx0 _)]
       have hs : Real.sqrt (2 * x) ≤ 2 := by
-        nlinarith [Real.sq_sqrt (show 0 ≤ 2 * x by positivity), Real.sqrt_nonneg (2 * x)]
+        nlinarith only [hx1, hx0, Real.sq_sqrt (show 0 ≤ 2 * x by positivity),
+            Real.sqrt_nonneg (2 * x)]
       exact (mul_le_mul hs (Real.rpow_le_one hx0 hx1 (by norm_num))
         (Real.rpow_nonneg hx0 _) (by norm_num)).trans_eq (by ring)
     change |iteratedDeriv n (fun e => (Real.sqrt (2 * x) * x ^ (1 / 10 : ℝ)) *
@@ -1272,7 +1274,7 @@ theorem restoreJetSize_bound {a b B K delta : ℝ} (ha : 0 < a) (hab : a ≤ b) 
   have hj' := hj.trans (mul_le_of_le_one_right (by positivity) hlen1)
   have hs' := hs.trans (mul_le_of_le_one_right (by positivity) hlen1)
   dsimp [restoreJetSize]
-  linarith
+  linarith only [hm', hj', hs']
 
 /-! ## Subtracting the ideal rows and including restoration -/
 

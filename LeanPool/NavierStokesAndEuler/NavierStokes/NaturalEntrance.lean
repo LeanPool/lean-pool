@@ -83,16 +83,16 @@ theorem base_source_lower {h j : ℝ} (hsmall : NaturalAxisData.SmallParameters 
     calc
       _ ≤ |4 * η| + |j| := abs_add_le _ _
       _ = 4 * |η| + j := by rw [abs_mul, abs_of_pos hsmall.j_pos]; norm_num
-      _ ≤ _ := by linarith [hsmall.j_le]
+      _ ≤ _ := by linarith only [he, hsmall, hsmall.j_le]
   have hprod : |η * NaturalAxisData.U j η| ≤ 4001 / 1000 := by
     rw [abs_mul]
     exact (mul_le_mul he hu (abs_nonneg _) (by norm_num)).trans_eq (by ring)
   have hfactor : 1 - 2 * η * NaturalAxisData.U j η ≤ 4501 / 500 := by
     have := (abs_le.mp hprod).1
-    linarith
+    linarith only [this]
   have hterm := mul_le_mul_of_nonneg_left hfactor hsmall.h_pos.le
   have hupper := mul_le_mul_of_nonneg_right hsmall.h_le (by norm_num : (0 : ℝ) ≤ 4501 / 500)
-  linarith
+  linarith only [hw, hterm, hupper]
 
 theorem chi_zero_imp_H_zero (h j : ℝ) {σ η : ℝ} (hσ : 0 < σ)
     (hchi : NaturalAxisData.chi h j σ η = 0) : NaturalAxisData.H h j η = 0 := by
@@ -112,7 +112,7 @@ theorem cone_size_of_second_large {a b : ℝ} (ha : 0 < a) (hb : (6 / 5 : ℝ) ^
   calc
     12 / 5 < (a ^ 2 + b ^ 2) / a := by
       apply (lt_div_iff₀ ha).mpr
-      nlinarith [sq_nonneg (a - 6 / 5)]
+      nlinarith only [hb, sq_nonneg (a - 6 / 5)]
     _ = _ := by field_simp
 
 /-- Compactness supplies one absorption scale when the limiting remainder
@@ -134,11 +134,11 @@ theorem compact_absorption {K : Type*} [TopologicalSpace K] [CompactSpace K]
       apply mem_iUnion.mpr ⟨(b - R p + 1) / χ p, ?_⟩
       change b < (b - R p + 1) / χ p * χ p + R p
       rw [div_mul_cancel₀ _ hp]
-      linarith
+      linarith only
   obtain ⟨s, hs⟩ := isCompact_univ.elim_finite_subcover U hU hcover
   let M : ℝ := 1 + ∑ a ∈ s, |a|
   have hsum : 0 ≤ ∑ a ∈ s, |a| := Finset.sum_nonneg (fun _ _ => abs_nonneg _)
-  refine ⟨M, by dsimp [M]; linarith, ?_⟩
+  refine ⟨M, by dsimp [M]; linarith only [hsum], ?_⟩
   intro Λ hΛ p
   have hc : ∃ a ∈ s, b < a * χ p + R p := by
     simpa only [U, mem_iUnion, Set.mem_ofPred_eq, exists_prop] using hs (mem_univ p)
@@ -147,7 +147,7 @@ theorem compact_absorption {K : Type*} [TopologicalSpace K] [CompactSpace K]
     have hterm : |a| ≤ ∑ a ∈ s, |a| :=
       Finset.single_le_sum (fun _ _ => abs_nonneg _) ha
     dsimp [M]
-    linarith [le_abs_self a]
+    linarith only [hterm, le_abs_self a]
   exact hpa.trans_le (add_le_add_left
     (mul_le_mul_of_nonneg_right (ham.trans hΛ) (hnonneg p)) _)
 
@@ -206,14 +206,14 @@ theorem derivative_neg_of_regular_source {f : ℝ → ℝ} {R L : ℝ}
     have hnum : 0 < -2 * L * (x * deriv (deriv f) x + 2 * deriv f x) :=
       (div_pos_iff_of_pos_right hfx).mp hsrc
     have hrad : x * deriv (deriv f) x + 2 * deriv f x < 0 := by
-      nlinarith
+      nlinarith only [hnum, hL]
     exact mul_neg_of_pos_of_neg hx.1 hrad
   have hneg := hanti (show (0 : ℝ) ∈ Icc 0 R from ⟨le_rfl, hR.le⟩)
     (show R ∈ Icc 0 R from ⟨hR.le, le_rfl⟩) hR
   simp only [zero_pow (by norm_num : 2 ≠ 0), zero_mul] at hneg
   by_contra hd
   have hm := mul_nonneg (sq_nonneg R) (le_of_not_gt hd)
-  linarith
+  linarith only [hneg, hm]
 
 /-- Entrance set, constructed using `Icc`. -/
 def entranceSet : Set (ℝ × ℝ) := Icc (0 : ℝ) (41 / 10) ×ˢ Icc (-1 : ℝ) 1
@@ -224,11 +224,11 @@ instance : CompactSpace entranceSet :=
 theorem entrance_mem_strip {p : ℝ × ℝ} (hp : p ∈ entranceSet) :
     p ∈ AxisEvaluation.strip window 20 := by
   refine ⟨?_, original_interval_interior hp.2⟩
-  constructor <;> linarith [hp.1.1, hp.1.2]
+  constructor <;> linarith only [hp, hp.1.1, hp.1.2]
 
 theorem entrance_abs_le_five {p : ℝ × ℝ} (hp : p ∈ entranceSet) : |p.1| ≤ 5 := by
   rw [abs_of_nonneg hp.1.1]
-  linarith [hp.1.2]
+  linarith only [hp, hp.1.2]
 
 /-- Coefficient pair: an abbreviation for `AxisCoefficientSpace.AxisSpace window ε ×
 AxisCoefficientSpace.AxisSpace window ε`. -/
@@ -255,7 +255,7 @@ theorem sourceJetConstant_pos {ε : ℝ} (hε : 0 < ε) : 0 < sourceJetConstant 
   have h1 := AxisEvaluation.jetBound_nonneg hε (by norm_num : (1 : ℝ) ≤ 5) 1 0
   have h2 := AxisEvaluation.jetBound_nonneg hε (by norm_num : (1 : ℝ) ≤ 5) 0 1
   unfold sourceJetConstant
-  linarith
+  linarith only [h0, h1, h2]
 
 theorem sourceJets_sub_bound {ε : ℝ} (hε : 0 < ε) (x y : CoefficientPair ε)
     {p : ℝ × ℝ} (hp : p ∈ entranceSet) :
@@ -266,11 +266,11 @@ theorem sourceJets_sub_bound {ε : ℝ} (hε : 0 < ε) (x y : CoefficientPair ε
   have hj1 := AxisEvaluation.jetBound_nonneg hε (by norm_num : (1 : ℝ) ≤ 5) 1 0
   have hj2 := AxisEvaluation.jetBound_nonneg hε (by norm_num : (1 : ℝ) ≤ 5) 0 1
   have hc0 : AxisEvaluation.jetBound ε 5 0 0 ≤ sourceJetConstant ε := by
-    unfold sourceJetConstant; linarith
+    unfold sourceJetConstant; linarith only [hj1, hj2]
   have hc1 : AxisEvaluation.jetBound ε 5 1 0 ≤ sourceJetConstant ε := by
-    unfold sourceJetConstant; linarith
+    unfold sourceJetConstant; linarith only [hj0, hj2]
   have hc2 : AxisEvaluation.jetBound ε 5 0 1 ≤ sourceJetConstant ε := by
-    unfold sourceJetConstant; linarith
+    unfold sourceJetConstant; linarith only [hj0, hj1]
   have hfst : ‖x.1 - y.1‖ ≤ N := norm_fst_le (x - y)
   have hsnd : ‖x.2 - y.2‖ ≤ N := norm_snd_le (x - y)
   have havg : ‖AxisOperators.average window hε x.2 - AxisOperators.average window hε y.2‖ ≤ N := by
@@ -343,7 +343,7 @@ theorem sourceRemainder_continuous (h j : ℝ) {σ : ℝ} (hσ : 0 < σ) :
   have hn : ∀ v : Fin 6 → ℝ, max (1 / 8 : ℝ) (v 0) ≠ 0 := by
     intro v
     have := le_max_left (1 / 8 : ℝ) (v 0)
-    linarith
+    linarith only [this]
   dsimp only [sourceRemainder, NaturalAxisData.W, NaturalAxisData.H,
     NaturalAxisData.U, NaturalAxisData.d]
   fun_prop (disch := first | exact fun x => hn x.2.2 | exact hn _ | positivity)
@@ -446,7 +446,7 @@ theorem reference_source_absorption {h j σ : ℝ} {P0 : ℝ → ℝ}
       mul_ne_zero (by norm_num) (NaturalAxisData.L_pos hsmall p.property.2).ne'
     have hchi := (mul_eq_zero.mp hp).resolve_left hfac
     rw [referenceRemainder_at_chi_zero v hσ p hchi]
-    linarith [base_source_lower hsmall p.property.2]
+    linarith only [hsmall, base_source_lower hsmall p.property.2]
 
 /-- Perturbation source, given by `sourceRemainder h j σ q.1 q.2.1 (sourceJets v.epsilon_pos
 (referencePair v) q.1 + q.2.2)`. -/
@@ -483,17 +483,17 @@ theorem sourceRemainder_uniform_limit {h j σ : ℝ} {P0 : ℝ → ℝ}
   refine ⟨M, hM, ?_⟩
   intro Λ hΛ x hx p
   have hΛpos : 0 < Λ := hM.trans_le hΛ
-  have hratio : (1 + J * K) / δ < Λ := by dsimp [M] at hΛ; linarith
+  have hratio : (1 + J * K) / δ < Λ := by dsimp [M] at hΛ; linarith only [hΛ]
   have hmul := (div_lt_iff₀ hδ).mp hratio
   have htime : |1 / Λ| < δ := by
     rw [abs_of_pos (one_div_pos.mpr hΛpos), div_lt_iff₀ hΛpos]
-    nlinarith [mul_nonneg hJ.le hK]
+    nlinarith only [hmul, hJ, hK, mul_nonneg hJ.le hK]
   have hjets : ‖sourceJets v.epsilon_pos x p -
       sourceJets v.epsilon_pos (referencePair v) p‖ < δ := by
     apply (sourceJets_sub_bound v.epsilon_pos x (referencePair v) p.property).trans_lt
     apply (mul_le_mul_of_nonneg_left hx hJ.le).trans_lt
     rw [← mul_div_assoc, div_lt_iff₀ (by positivity : 0 < 2 * Λ)]
-    nlinarith [mul_nonneg hJ.le hK]
+    nlinarith only [hmul, hJ, hK, mul_nonneg hJ.le hK]
   have hpert : ‖((1 / Λ), sourceJets v.epsilon_pos x p -
       sourceJets v.epsilon_pos (referencePair v) p)‖ < δ := by
     simpa only [Prod.norm_def, Real.norm_eq_abs, max_lt_iff] using And.intro htime hjets
@@ -519,7 +519,7 @@ theorem source_uniform_lower {h j σ : ℝ} {P0 : ℝ → ℝ}
   intro Λ hΛ x hx p
   have hbase := hmain Λ ((le_max_left _ _).trans hΛ) p
   have he := (abs_lt.mp (herr Λ ((le_max_right _ _).trans hΛ) x hx p)).1
-  nlinarith
+  nlinarith only [hbase, he]
 
 theorem angularProfile_radial_log_derivative {a : ℝ → ℝ} {Λ : ℝ}
     {Φ : ℝ × ℝ → ℝ} (hΦ : ContDiffOn ℝ ∞ Φ (AxisEvaluation.strip window 20))
@@ -573,7 +573,7 @@ theorem Sq_reconstruction {h j σ Λ : ℝ} (P0 : ℝ → ℝ) {a : ℝ → ℝ}
           ![Φ (rescalePoint Λ p), partialY Φ (rescalePoint Λ p),
             partialEta Φ (rescalePoint Λ p), u (rescalePoint Λ p),
             B (rescalePoint Λ p), partialEta B (rescalePoint Λ p)] := by
-  have hφ : Φ (rescalePoint Λ p) ≠ 0 := by linarith
+  have hφ : Φ (rescalePoint Λ p) ≠ 0 := by linarith only [hval]
   unfold Sq
   rw [angularProfile_radial_log_derivative hΦ hp ha hφ,
     angularProfile_parameter_log_derivative hΦ hp ha hφ had,
@@ -667,7 +667,7 @@ theorem p1_pos_of_source {h j Λ R η : ℝ} {P0 a : ℝ → ℝ}
     simpa only [radialDifferential, partialY, iteratedDeriv_succ,
       iteratedDeriv_zero, Nat.cast_ofNat] using hsrc
   unfold p1 partialY
-  exact div_pos (mul_pos_of_neg_of_neg (by nlinarith) hneg) (hpos R ⟨hR.le, le_rfl⟩)
+  exact div_pos (mul_pos_of_neg_of_neg (by nlinarith only [hR]) hneg) (hpos R ⟨hR.le, le_rfl⟩)
 
 /-- Applying the actual regular inverse to radially constant data gives
 exactly its degree-one polynomial. -/
@@ -823,7 +823,7 @@ theorem ns_error {h j σ Λ K : ℝ} {P0 : ℝ → ℝ}
 theorem L_le_one {h j : ℝ} (hsmall : NaturalAxisData.SmallParameters h j) (η : ℝ) :
     NaturalAxisData.L h η ≤ 1 := by
   unfold NaturalAxisData.L
-  nlinarith [mul_nonneg hsmall.h_pos.le (sq_nonneg η)]
+  nlinarith only [hsmall, mul_nonneg hsmall.h_pos.le (sq_nonneg η)]
 
 /-- Where `Z*` is separated from zero, the actual axial shear is separated
 from zero uniformly in the normalization. -/
@@ -839,8 +839,8 @@ theorem ns_separated {h j σ Λ K δ : ℝ} {P0 : ℝ → ℝ}
   have hbK : 0 ≤ AxisEvaluation.jetBound v.epsilon 5 1 0 * K := mul_nonneg hb hK
   have hΛ : 0 < Λ := by
     have ht : 0 ≤ 2 * AxisEvaluation.jetBound v.epsilon 5 1 0 * K / δ := by positivity
-    linarith
-  have hΛ' : 2 * AxisEvaluation.jetBound v.epsilon 5 1 0 * K / δ < Λ := by linarith
+    linarith only [hscale, ht]
+  have hΛ' : 2 * AxisEvaluation.jetBound v.epsilon 5 1 0 * K / δ < Λ := by linarith only [hscale]
   have hL : 0 < NaturalAxisData.L h p.2 := NaturalAxisData.L_pos hsmall hp.2
   have he := ns_error v hΛ hK x hx hp hL.ne'
   have he' : |ns (axialField j Λ x) p - NaturalAxisData.Z h j P0 p.2 / NaturalAxisData.L h p.2| <
@@ -848,7 +848,7 @@ theorem ns_separated {h j σ Λ K δ : ℝ} {P0 : ℝ → ℝ}
     apply he.trans_lt
     rw [div_lt_iff₀ hΛ]
     have ht := (div_lt_iff₀ hδ).mp hΛ'
-    nlinarith
+    nlinarith only [ht]
   have hratio : δ < |NaturalAxisData.Z h j P0 p.2 / NaturalAxisData.L h p.2| := by
     rw [abs_div, abs_of_pos hL]
     apply hZ.trans_le
@@ -857,7 +857,7 @@ theorem ns_separated {h j σ Λ K δ : ℝ} {P0 : ℝ → ℝ}
   have habs := abs_sub_abs_le_abs_sub
     (NaturalAxisData.Z h j P0 p.2 / NaturalAxisData.L h p.2) (ns (axialField j Λ x) p)
   rw [abs_sub_comm] at habs
-  linarith
+  linarith only [he', hratio, habs]
 
 /-- Profile bound, given by `1 + AxisEvaluation.jetBound v.epsilon 5 0 0 * (‖referencePair v‖ +
 1)`. -/
@@ -881,7 +881,7 @@ theorem coefficient_profile_le {h j σ : ℝ} {P0 : ℝ → ℝ}
     calc
       ‖x‖ = ‖(x - referencePair v) + referencePair v‖ := congrArg norm heq
       _ ≤ ‖x - referencePair v‖ + ‖referencePair v‖ := norm_add_le _ _
-      _ ≤ ‖referencePair v‖ + 1 := by linarith
+      _ ≤ ‖referencePair v‖ + 1 := by linarith only [hx]
   have hb := AxisEvaluation.mixedSeries_bound window v.epsilon_pos
     (by norm_num : (1 : ℝ) ≤ 5) (by norm_num : (5 : ℝ) < 20) x.1 0 0 hp
   rw [AxisEvaluation.mixedSeries_zero, Real.norm_eq_abs] at hb
@@ -889,7 +889,7 @@ theorem coefficient_profile_le {h j σ : ℝ} {P0 : ℝ → ℝ}
   have he := mul_le_mul_of_nonneg_left ((norm_fst_le x).trans hn)
     (AxisEvaluation.jetBound_nonneg v.epsilon_pos (by norm_num : (1 : ℝ) ≤ 5) 0 0)
   unfold profileBound
-  linarith
+  linarith only [he]
 
 theorem realAmplitude_le_threshold {h j σ Λ C : ℝ} {P0 : ℝ → ℝ}
     (d : AnalyticInputs h j σ P0) (hΛ : 0 ≤ Λ) (hC : 0 < C)
@@ -915,7 +915,8 @@ theorem entranceNormalization_ge {h j σ Λ δ : ℝ} {P0 : ℝ → ℝ}
   have hT : 0 < d.normalizationThreshold Λ := Real.exp_pos _
   have hB := profileBound_pos d.coefficients
   unfold entranceNormalization
-  nlinarith [div_nonneg (by positivity : 0 ≤ 100 * Λ * profileBound d.coefficients) hδ.le]
+  nlinarith only [hT, hΛ, hB, hδ,
+      div_nonneg (by positivity : 0 ≤ 100 * Λ * profileBound d.coefficients) hδ.le]
 
 theorem angularField_small {h j σ Λ C δ : ℝ} {P0 : ℝ → ℝ}
     (d : AnalyticInputs h j σ P0) (hΛ : 0 < Λ) (hδ : 0 < δ)
@@ -950,7 +951,7 @@ theorem angularField_small {h j σ Λ C δ : ℝ} {P0 : ℝ → ℝ}
       unfold entranceNormalization
       field_simp
     rwa [hid] at hh
-  nlinarith [mul_pos hT hδ]
+  nlinarith only [hc', hT, hδ, mul_pos hT hδ]
 
 theorem second_coordinate_large {Λ δ f n : ℝ}
     (hΛ : 1 ≤ Λ) (hδ : 0 < δ) (hf : 0 < f)
@@ -1117,7 +1118,7 @@ theorem CoefficientProfile.cone_at_four {h j σ Λ C δ : ℝ} {P0 : ℝ → ℝ
     {η : ℝ} (hη : η ∈ Icc (-1 : ℝ) 1)
     (hp1 : 0 < p1 F.family.f (4 / Λ, η)) :
     9 / 4 < coneSize F.family.f F.family.U (4 / Λ, η) := by
-  have hΛpos : 0 < Λ := by linarith
+  have hΛpos : 0 < Λ := by linarith only [hΛ]
   have hrescale : rescalePoint Λ (4 / Λ, η) = (4, η) := by
     unfold rescalePoint
     congr 1
@@ -1130,7 +1131,7 @@ theorem CoefficientProfile.cone_at_four {h j σ Λ C δ : ℝ} {P0 : ℝ → ℝ
     change 23 / 10 < p1 F.family.f (4 / Λ, η) at hs
     have hnonneg := div_nonneg (sq_nonneg (p2 F.family.f F.family.U (4 / Λ, η))) hp1.le
     unfold coneSize
-    linarith
+    linarith only [hs, hnonneg]
   · have hZ : δ < |NaturalAxisData.Z h j P0 η| := by
       by_contra hn
       exact hchi (hcut η hη (le_of_not_gt hn)).le
@@ -1148,7 +1149,7 @@ theorem CoefficientProfile.cone_at_four {h j σ Λ C δ : ℝ} {P0 : ℝ → ℝ
     have hc := cone_size_of_second_large hp1 hb
     change 9 / 4 < p1 F.family.f (4 / Λ, η) +
       p2 F.family.f F.family.U (4 / Λ, η) ^ 2 / p1 F.family.f (4 / Λ, η)
-    linarith
+    linarith only [hc]
 
 /-- The actual natural profiles satisfy the entrance test, with a fixed
 strict cone margin and their complete coefficient-space witness. -/
@@ -1202,7 +1203,7 @@ theorem exists_entranceProfile {h j σ δ : ℝ} {P0 : ℝ → ℝ}
     have hL : 0 < NaturalAxisData.L h p.2 := NaturalAxisData.L_pos hsmall hp.2
     have hg : 0 ≤ (19 / 20 : ℝ) * NaturalAxisData.L h p.2 * Λ *
       NaturalAxisData.chi h j σ p.2 := by positivity
-    linarith [hs p hp]
+    linarith only [hg, hs, hp, hs p hp]
   have ha : ∀ p : ℝ × ℝ, rescalePoint Λ p ∈ entranceSet → 0 < p.1 →
       0 < p1 F.family.f p := fun p hp hX => F.p1_pos hsmall hΛpos hspos hp hX
   refine ⟨{profile := F, source_lower := hs, slope_positive := ha, cone_margin := ?_}⟩

@@ -69,7 +69,7 @@ theorem weightedForcing_norm (hg₀ : g ⟨0, le_rfl, hT⟩ = 1) (C : ℝ) (hC :
     (fun s => (weight_pointwise_bound g (fun s => (hg s).le) f s).trans_eq (mul_comm _ _)) t
   have ht := mul_le_mul_of_nonneg_right t.property.2
     (mul_nonneg (mul_nonneg hC (hg t).le) (norm_nonneg f))
-  nlinarith
+  nlinarith only [hT, hp, ht]
 
 /-- The normalized constructed path, with normalized forcing as input. -/
 def weightedSolution (f : C(Icc (0 : ℝ) T, E)) (a₀ : E) : C(Icc (0 : ℝ) T,E) :=

@@ -281,7 +281,7 @@ theorem corrected_bounds : LinearWaveBounds.InputBounds (HarmonicWaveInteraction
   obtain ⟨b, M, hb, hlo, hhi⟩ := h.normal_bounds
   have hc := (h.coefficients.with_cutoff h.cutoff).curlCorrection_class h.matching.radius
     h.normal_jets hb hlo hhi h.inverse_frequency
-  exact (h.coefficients.with_cutoff h.cutoff).add_curl_amplitude (by linarith [h.loss_le])
+  exact (h.coefficients.with_cutoff h.cutoff).add_curl_amplitude (by linarith only [h, h.loss_le])
     (fun i => CurlClassBounds.class_component hc i)
 
 theorem good_class : WaveClass (HarmonicWaveInteraction.productStrip s) (fun n p => P n p.1)
@@ -323,7 +323,7 @@ theorem normal_ne (n : ℕ) (p : D × ℝ) (hp : p.1 ∈ s.domain) :
   intro hn
   have := hlo n p hp
   rw [hn, norm_zero] at this
-  linarith
+  linarith only [hb, this]
 
 theorem corrected_divergence (n : ℕ) (p : D × ℝ) (hp : p.1 ∈ s.domain) :
     cylindricalDivergence (a.radius n) ((directions c).radialField n)
@@ -725,9 +725,9 @@ theorem initial_residual_class (u : CorrectionState.State D)
       (gaussianCoefficients c a ψ) A).WaveBounds s P (7 / 10) := by
   intro i j hj
   have hl := (h.linear_good_class j i).mono_exponent (show (7 / 10 : ℝ) ≤ 1 - 3 * κ by
-      linarith [h.loss_le])
+      linarith only [h, h.loss_le])
   have hc (m : ℤ) := (h.convection_class m i).mono_exponent
-    (show (7 / 10 : ℝ) ≤ 1 - κ by linarith [h.loss_le])
+    (show (7 / 10 : ℝ) ≤ 1 - κ by linarith only [h, h.loss_le])
   have hcr := HarmonicMeanInteraction.realCoefficient_class
     (fun n => HarmonicResidual.transport (HarmonicResidual.contextFrame c n)
       (a.frequency n) (fun y => a.phase n (y, 0)) (kp n)
@@ -1041,12 +1041,12 @@ theorem polynomial_comp_with_edges
   have hg0 := s.growth_nonneg n x
   have hg1 := s.one_le_growth n x
   have hD : 1 ≤ (B + 1) * s.growth n x ^ k :=
-    one_le_mul_of_one_le_of_one_le (by linarith) (one_le_pow₀ hg1)
+    one_le_mul_of_one_le_of_one_le (by linarith only [hB]) (one_le_pow₀ hg1)
   have hinner (a : ℕ) (haN : a ≤ N) :
       ‖iteratedFDeriv ℝ a (c n) x‖ ≤ (B + 1) * s.growth n x ^ k := by
     have hh := hb n x hx a haN
     simp only [majorant, Real.rpow_zero, mul_one] at hh
-    exact hh.trans (mul_le_mul_of_nonneg_right (by linarith) (pow_nonneg hg0 _))
+    exact hh.trans (mul_le_mul_of_nonneg_right (by linarith only) (pow_nonneg hg0 _))
   have houter (a : ℕ) (haN : a ≤ N) :
       ‖iteratedFDeriv ℝ a (f n) (c n x)‖ ≤ A * s.growth n x ^ m := by
     have hh := ha n a haN _ (hmap n hx)
@@ -1380,11 +1380,11 @@ theorem timeCoefficient_uniform (h : ℝ) (hh : 0 ≤ h) :
   by_cases hn : n < 4
   · have hs := Finset.single_le_sum (fun i (_ : i ∈ Finset.range 4) =>
       norm_nonneg (ChartScales.timeCoefficient h i)) (Finset.mem_range.mpr hn)
-    exact hs.trans (by dsimp [C]; linarith)
+    exact hs.trans (by dsimp [C]; linarith only)
   · have hSn : 1 ≤ ChartScales.S n := by
       have hn' : (4 : ℝ) ≤ n := by exact_mod_cast (le_of_not_gt hn)
       dsimp [ChartScales.S]
-      nlinarith
+      nlinarith only [hn']
     have ht := (ChartScales.timeCoefficient_bounds h hh (le_of_not_gt hn)).2
     rw [Real.norm_eq_abs, abs_of_pos (ChartScales.timeCoefficient_pos h n)]
     exact ht.trans ((one_div_le_one_div_of_le zero_lt_one hSn).trans (by simpa using hC))
@@ -1403,12 +1403,12 @@ theorem radialCoefficient_uniform (h : ℝ) (hh : 0 ≤ h) :
   by_cases hn : n < 4
   · have hs := Finset.single_le_sum (fun i (_ : i ∈ Finset.range 4) =>
       norm_nonneg (ChartScales.radialCoefficient h i)) (Finset.mem_range.mpr hn)
-    exact (hs.trans (by dsimp [C]; linarith)).trans
+    exact (hs.trans (by dsimp [C]; linarith only)).trans
       (le_mul_of_one_le_right (zero_le_one.trans hC) (hpow n))
   · have hSn : 1 ≤ ChartScales.S n := by
       have hn' : (4 : ℝ) ≤ n := by exact_mod_cast (le_of_not_gt hn)
       dsimp [ChartScales.S]
-      nlinarith
+      nlinarith only [hn']
     have ht : ChartScales.timeCoefficient h n ≤ 1 :=
       ((ChartScales.timeCoefficient_bounds h hh (le_of_not_gt hn)).2).trans
         (by simpa using one_div_le_one_div_of_le zero_lt_one hSn)
@@ -1543,13 +1543,13 @@ theorem nativeStrip_active (U : LocalSignedRequest.SlowRegion (2 * F.data.h))
     Real.sq_sqrt (mul_nonneg (by norm_num) (NominalConeAssembly.activeLeft_pos W).le)
   have hb : (PrimaryTargetBounds.rightRadius W)^2 = 2 * NominalConeAssembly.activeRight W :=
     Real.sq_sqrt (mul_nonneg (by norm_num) (LeadingStressWeights.activeRight_pos W).le)
-  have hls := sq_lt_sq' (by linarith [PrimaryTargetBounds.leftRadius_pos W]) hr.1
-  have hrs := sq_lt_sq' (by linarith [PrimaryTargetBounds.rightRadius_pos W]) hr.2
+  have hls := sq_lt_sq' (by linarith only [hpos, PrimaryTargetBounds.leftRadius_pos W]) hr.1
+  have hrs := sq_lt_sq' (by linarith only [hpos, PrimaryTargetBounds.rightRadius_pos W]) hr.2
   have heta := BaseChartJets.normalizedCoordinates_eta F.data.h_pos F.data.h_lt_half
     (p := slowCoordinates x) hT
   refine ⟨⟨?_, ?_⟩, ?_⟩
-  · nlinarith
-  · nlinarith
+  · nlinarith only [he, ha, hls]
+  · nlinarith only [he, hb, hrs]
   · exact ⟨(abs_lt.mp heta).1.le, (abs_lt.mp heta).2.le⟩
 
 theorem nativeStrip_weight (U : LocalSignedRequest.SlowRegion (2 * F.data.h))
@@ -1607,7 +1607,7 @@ theorem geometryRadius_pos (U : LocalSignedRequest.SlowRegion (2 * F.data.h)) :
         (PrimaryTargetBounds.leftRadius_pos W)
 
 theorem geometryUpper_pos (U : LocalSignedRequest.SlowRegion (2 * F.data.h)) :
-    0 < geometryUpper U := by dsimp [geometryUpper]; linarith [le_max_left (1 : ℝ) U.qhi]
+    0 < geometryUpper U := by dsimp [geometryUpper]; linarith only [le_max_left (1 : ℝ) U.qhi]
 
 theorem one_le_geometryBound (U : LocalSignedRequest.SlowRegion (2 * F.data.h)) :
     1 ≤ geometryBound W U := le_max_left _ _
@@ -1633,7 +1633,7 @@ theorem native_geometry (U : LocalSignedRequest.SlowRegion (2 * F.data.h)) (ι :
     have hqM := hq.2.trans (le_max_right (1 : ℝ) U.qhi)
     rw [BaseChartJets.normalizedCoordinates_eq] at hqp hqM
     have hD : 0 ≤ CoordinateAlgebra.D F.data.h := by
-      unfold CoordinateAlgebra.D; linarith [F.data.h_lt_half]
+      unfold CoordinateAlgebra.D; linarith only [F.data.h_lt_half]
     have heta := BaseChartJets.normalizedCoordinates_eta F.data.h_pos F.data.h_lt_half ht
     rw [BaseChartJets.normalizedCoordinates_eq] at heta
     change |p.2.1 / SimilarityHomogeneity.chartQ F.data.h p ^ ((1-2*F.data.h)/2)| < 1 at heta
@@ -1644,14 +1644,14 @@ theorem native_geometry (U : LocalSignedRequest.SlowRegion (2 * F.data.h)) (ι :
     have hz : |p.2.1| ≤ (max 1 U.qhi) ^ CoordinateAlgebra.D F.data.h :=
       heta.le.trans (Real.rpow_le_rpow hqp.le hqM hD)
     have hspec := SimilarityCoordinates.coordinateQ_spec (show 0 < 2*F.data.h by
-        linarith [F.data.h_pos])
-      (show 2*F.data.h < 1 by linarith [F.data.h_lt_half]) (p := (p.2.2,p.2.1)) ht
+        linarith only [F.data.h_pos])
+      (show 2*F.data.h < 1 by linarith only [F.data.h_lt_half]) (p := (p.2.2,p.2.1)) ht
     have htq : p.2.2 ≤ SimilarityHomogeneity.chartQ F.data.h p := by
       have hn := mul_nonneg (sq_nonneg p.2.1) (Real.rpow_nonneg hspec.1.le (2*F.data.h))
       change p.2.2 ≤ SimilarityCoordinates.coordinateQ (2*F.data.h) (p.2.2,p.2.1)
       have he := hspec.2
       dsimp [SimilarityCoordinates.forwardScalar] at he
-      linarith
+      linarith only [hn, he]
     have hR := (hr hp).2.trans (mul_le_mul_of_nonneg_right
       (Real.sqrt_le_sqrt (le_max_right (1 : ℝ) U.qhi)) (PrimaryTargetBounds.rightRadius_pos W).le)
     change max |p.1| (max |p.2.1| |p.2.2|) ≤ geometryBound W U
@@ -1661,8 +1661,8 @@ theorem native_geometry (U : LocalSignedRequest.SlowRegion (2 * F.data.h)) (ι :
   · intro i p hp
     have hq := hqm hp
     exact ⟨by
-        linarith [U.qlo_pos, hq.1], by
-            dsimp [geometryUpper]; linarith [hq.2, le_max_right (1 : ℝ) U.qhi]⟩
+        linarith only [hq, U.qlo_pos, hq.1], by
+            dsimp [geometryUpper]; linarith only [hq, hq.2, le_max_right (1 : ℝ) U.qhi]⟩
   · intro i p hp
     exact (nativeStrip_active W U hp).1
 
@@ -1988,8 +1988,8 @@ theorem virtualStress_support (U : LocalSignedRequest.SlowRegion (2 * F.data.h))
   have hrad : PrimaryTargetBounds.profileRadius F.data.h (slowCoordinates x) ∈
       Icc (PrimaryTargetBounds.leftRadius W) (PrimaryTargetBounds.rightRadius W) := by
     constructor
-    · nlinarith [PrimaryTargetBounds.leftRadius_pos W, hX.1]
-    · nlinarith [PrimaryTargetBounds.rightRadius_pos W, hX.2]
+    · nlinarith only [he, ha, hX, hpos, PrimaryTargetBounds.leftRadius_pos W, hX.1]
+    · nlinarith only [he, hb, hX, hpos, PrimaryTargetBounds.rightRadius_pos W, hX.2]
   change x.1 / Real.sqrt (MeanRankUpdate.chartQ (2 * F.data.h) x) ∈ _
   rw [← PrimaryTargetBounds.meanPoint_scalar (F := F) x]
   exact hrad

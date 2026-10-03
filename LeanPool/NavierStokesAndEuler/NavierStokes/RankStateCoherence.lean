@@ -351,7 +351,7 @@ theorem normalized_rank_on {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
                 h)
     rw [SimilarityHomogeneity.coordinateQ_scale_h hh hh1 hQ (hV s hs),
       Real.mul_rpow hQ.le (SimilarityCoordinates.coordinateQ_spec (by
-          linarith) (by linarith) (hV s hs)).1.le,
+          linarith only [hh]) (by linarith only [hh1]) (hV s hs)).1.le,
       ← mul_assoc, ← Real.rpow_add hQ, add_neg_cancel, Real.rpow_zero, one_mul]
   · intro s hs
     change MeanRankUpdate.shapedAmplitude B (SimilarityCoordinates.coordinateEta (2*h) s) =
@@ -360,7 +360,7 @@ theorem normalized_rank_on {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
           (ChartScales.Q n / ChartScales.Q m)^CoordinateAlgebra.D h*s.2))
     rw [SimilarityHomogeneity.coordinateEta_scale_h hh hh1 hQ (hV s hs)]
   · intro s hs
-    exact (VariableGaugeMean.qLength_pos (by linarith) (by linarith) (hpos s hs)).ne'
+    exact (VariableGaugeMean.qLength_pos (by linarith) (by linarith only [hh1]) (hpos s hs)).ne'
   · intro s hs
     exact (Real.rpow_pos_of_pos
       (SimilarityCoordinates.coordinateQ_spec (by linarith) (by linarith) (hpos s hs)).1 _).ne'

@@ -423,7 +423,7 @@ theorem similarityGaugeOn {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
       (VariableGaugeMean.similarityGauge h d a b M hab index) n m := by
   refine ⟨rfl, rfl, rfl, ?_, ?_, ?_⟩
   · intro s hs
-    exact VariableGaugeMean.qLength_pos (by linarith) (by linarith) (hV s hs)
+    exact VariableGaugeMean.qLength_pos (by linarith only [hh]) (by linarith only [hh1]) (hV s hs)
   · intro s hs
     exact qLength_bandSlowEquiv hh hh1 n m (hV s hs)
   · change MeanChartCompatibility.radialFrequency h n (index n) d M •

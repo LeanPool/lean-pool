@@ -129,7 +129,7 @@ theorem difference_heat_bound {q : ℕ} (hq : 2 ≤ q) (K : SmoothCoefficient pe
   have hd : 0 ≤ ∑ i : Fin 4, ‖(EulerH6Pressure.SpatialJet.restrict (toJet period u) 2 hq).word (fun
       _ : Fin 1 => i)‖^2 :=
     Finset.sum_nonneg (fun i _ => sq_nonneg _)
-  have hsq : (K.firstBound : ℝ)^2 ≤ Kx^2 := by nlinarith [K.firstBound.coe_nonneg]
+  have hsq : (K.firstBound : ℝ)^2 ≤ Kx^2 := by nlinarith only [hKx, K.firstBound.coe_nonneg]
   have hcoef := div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_left hsq (by
       norm_num : (0 : ℝ) ≤ 2)) (sq_nonneg c)
   have hprod := mul_le_mul_of_nonneg_right hcoef (sq_nonneg ‖value period u‖)

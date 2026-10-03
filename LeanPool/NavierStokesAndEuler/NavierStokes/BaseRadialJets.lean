@@ -131,7 +131,7 @@ theorem normalizedStream_deriv_Z {a : ℕ → ℕ} (ha : StrictMono a) {h C Q : 
         AxisymmetricFields.partialZ (SlowBorelBase.streamFactor a h C d) (bandInput h Q p) := by
   have ht : (bandInput h Q p).1 < 1 := by
     change 1 - Q * p.2.2 < 1
-    linarith [mul_pos hQ hT]
+    linarith only [hQ, hT, mul_pos hQ hT]
   have hs := (SlowBorelBase.physicalProfile_smoothAt ha hh hh1
     (SlowBorelBase.bundleComponent_smooth hd C 0) (-CoordinateAlgebra.A h) ht).differentiableAt (by
         simp)
@@ -240,7 +240,7 @@ theorem scaled_sum_polynomial {ι : Type*} {D : Domain ι Slow}
     have heta := abs_lt.mp (normalizedCoordinates_eta hh hh1 (H.time i p hp))
     exact ⟨⟨(H.x_range i p hp).1.le, (H.x_range i p hp).2.le⟩, heta.1.le, heta.2.le⟩
   have hep := hec.to_polynomial (fun i _ _ =>
-    Real.rpow_le_one (hQ i).le (hQ1 i) (show 0 ≤ 2 * h by linarith))
+    Real.rpow_le_one (hQ i).le (hQ1 i) (show 0 ≤ 2 * h by linarith only [hh]))
   apply (hep.add hlead).congr
   intro i p hp
   simp only [err, Function.comp_apply, SlowBorelBase.scaleMap_apply, sub_add_cancel]

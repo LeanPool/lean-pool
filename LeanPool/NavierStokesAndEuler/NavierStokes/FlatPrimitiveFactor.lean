@@ -49,7 +49,7 @@ def factor (c : ℝ) (j : ℕ) (b : ℝ → ℝ) (x : ℝ) : ℝ :=
 
 theorem denominator_inner_pos (x : ℝ) {t : ℝ} (ht : 0 ≤ t) : 0 < 1 + x ^ 2 * t := by
   have := mul_nonneg (sq_nonneg x) ht
-  linarith
+  linarith only [this]
 
 theorem denominator_pos (x : ℝ) {t : ℝ} (ht : 0 ≤ t) : 0 < denominator x t :=
   Real.sqrt_pos.mpr (denominator_inner_pos x ht)
@@ -89,14 +89,14 @@ theorem coordinate_mem_Ioo {x t : ℝ} (hx : 0 < x) (ht : 0 < t) :
     coordinate x t ∈ Ioo 0 x := by
   have hinner : 1 < 1 + x ^ 2 * t := by
     have := mul_pos (sq_pos_of_pos hx) ht
-    linarith
+    linarith only [this]
   have hd : 1 < denominator x t := by
     simpa only [denominator, Real.sqrt_one] using Real.sqrt_lt_sqrt (by
         norm_num : (0 : ℝ) ≤ 1) hinner
   constructor
   · exact coordinate_pos hx ht.le
   · apply (div_lt_iff₀ (denominator_pos x ht.le)).mpr
-    nlinarith
+    nlinarith only [hx, hd]
 
 theorem coordinate_injOn {x : ℝ} (hx : 0 < x) : InjOn (coordinate x) (Ioi 0) := by
   intro t ht s hs h
@@ -105,7 +105,7 @@ theorem coordinate_injOn {x : ℝ} (hx : 0 < x) : InjOn (coordinate x) (Ioi 0) :
   have hd : denominator x t = denominator x s := (mul_left_cancel₀ hx.ne' hcross).symm
   have hsq := congrArg (fun a : ℝ => a ^ 2) hd
   rw [denominator_sq x ht.le, denominator_sq x hs.le] at hsq
-  have hmul : x ^ 2 * t = x ^ 2 * s := by linarith
+  have hmul : x ^ 2 * t = x ^ 2 * s := by linarith only [hsq]
   exact mul_left_cancel₀ (pow_ne_zero 2 hx.ne') hmul
 
 theorem coordinate_image {x : ℝ} (hx : 0 < x) : coordinate x '' Ioi 0 = Ioo 0 x := by
@@ -117,7 +117,7 @@ theorem coordinate_image {x : ℝ} (hx : 0 < x) : coordinate x '' Ioi 0 = Ioo 0 
     let t : ℝ := (x ^ 2 - u ^ 2) / (x ^ 2 * u ^ 2)
     have ht : 0 < t := by
       apply div_pos
-      · nlinarith [hu.1, hu.2]
+      · nlinarith only [hx, hu, hu.1, hu.2]
       · exact mul_pos (sq_pos_of_pos hx) (sq_pos_of_pos hu.1)
     refine ⟨t, ht, ?_⟩
     have ha : 1 + x ^ 2 * t = (x / u) ^ 2 := by
@@ -202,7 +202,7 @@ theorem polynomial_exp_integrable {c : ℝ} (hc : 0 < c) (N : ℕ) :
     apply tendsto_atTop.2
     intro r
     filter_upwards [eventually_ge_atTop r] with t ht
-    linarith
+    linarith only [ht]
   have hbase : Tendsto (fun t : ℝ => (1 + t) ^ N * Real.exp (-(c / 2) * (1 + t)))
       atTop (𝓝 0) := by
     simpa only [Function.comp_def, Real.rpow_natCast] using
@@ -261,7 +261,7 @@ theorem kernel_locallyDominated {c : ℝ} (hc : 0 < c) (j : ℕ) {b : ℝ → �
   have hyR : |y| ≤ |x| + 1 := by
     have htri : |y| ≤ |y - x| + |x| := by
       simpa only [sub_add_cancel] using abs_add_le (y - x) x
-    linarith
+    linarith only [hdist, htri]
   simpa only [Real.norm_eq_abs, kernel, FlatKernelBounds.kernel, coordinate, denominator,
       FlatKernelBounds.coordinate, FlatKernelBounds.denominator] using hbound y t hyR ht.le
 

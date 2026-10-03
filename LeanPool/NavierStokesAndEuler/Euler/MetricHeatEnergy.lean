@@ -117,7 +117,7 @@ theorem metric_cross_young (c D x y : ℝ) (hc : 0 < c) :
     ring
   have h := div_nonneg hs hden.le
   rw [← heq] at h
-  linarith
+  linarith only [h]
 
 /-- A positive metric absorbs half of the second-derivative dissipation, leaving an explicit L²
 error. -/

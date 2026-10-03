@@ -171,7 +171,7 @@ theorem norm_fderiv_cutoff_four_le_amplitude {φ : Space → ℝ} {w : Space →
         (4 * L) * ‖w x‖ := by
       apply add_le_add
       · exact mul_le_mul_of_nonneg_left hg (by positivity)
-      · nlinarith [mul_le_mul_of_nonneg_right hd (norm_nonneg (w x))]
+      · nlinarith only [hd, mul_le_mul_of_nonneg_right hd (norm_nonneg (w x))]
     _ = _ := by unfold cutoffGradientAmplitude; ring
 
 /-- The derivative of the cutoff velocity has a finite `L²` bound involving
@@ -234,7 +234,7 @@ theorem weighted_sobolev {φ : Space → ℝ} {w : Space → Space}
   apply hSob.trans
   apply (mul_le_mul_of_nonneg_left hDer hS).trans
   unfold weightedSobolevConstant
-  nlinarith [mul_nonneg hS hA, mul_nonneg hL0 hM]
+  nlinarith only [hA, hS, hL0, hM, mul_nonneg hS hA, mul_nonneg hL0 hM]
 
 /-- Time-slice form using precisely the common comparison definitions. -/
 theorem cutoffL6_le {φ : Space → ℝ} {w : VelocityField} {t : ℝ}

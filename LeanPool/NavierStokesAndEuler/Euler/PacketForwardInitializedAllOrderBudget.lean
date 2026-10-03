@@ -99,7 +99,7 @@ theorem forwardInitializedCorrection_drift (s Q : ℕ) (hQ : Q + 6 ≤ s)
   have hn := forwardInitializedNormalizedField_normal_bound M D hTime δ hδ ξ hs α
     L NB W LM WM BC hRc hcost hδ1 hα hR WP S hgrowth N hN k hk hbase
   have hR0 := zero_le_one.trans L.radius_one
-  have hk0 : 0 < k := by linarith
+  have hk0 : 0 < k := by linarith only [hk]
   have hd := hz.toFieldTower_weightedDrift_le_two k⁻¹ D.m₀ hn (by linarith)
     (velocity_nonneg L.R S.H0 BC.multiplierCost hR0 BC.multiplierCost_nonneg)
     (div_nonneg (normal_nonneg L.R S.H0 BC.multiplierCost hR0 BC.multiplierCost_nonneg) hk0.le)
@@ -151,8 +151,8 @@ def forwardInitializedMetricBudget (q : ℕ) :
       ((forwardInitializedCorrectionData M D hTime δ hδ ξ hs α Cagree N hN k hk).atOrder period
           (q+1)) :=
   sourceMetricBudgetOfFields D period k⁻¹
-    (by rw [abs_of_pos (inv_pos.mpr (by linarith : 0 < k))]
-        exact inv_le_one_of_one_le₀ (by linarith))
+    (by rw [abs_of_pos (inv_pos.mpr (by linarith only [hk] : 0 < k))]
+        exact inv_le_one_of_one_le₀ (by linarith only [hk]))
     (forwardInitializedNormalizedField M D hTime δ hδ ξ hs α N k)
     (forwardInitializedNormalizedResidualField M D hTime δ hδ ξ hs α Cagree N hN k hk) q
 
@@ -238,7 +238,7 @@ def forwardInitializedDriftBudget (q : ℕ) (hq : 6 ≤ q) :
   drift_nonneg := div_nonneg
     (drift_nonneg L.R S.H0 BC.multiplierCost (zero_le_one.trans L.radius_one)
         BC.multiplierCost_nonneg)
-    (by linarith)
+    (by linarith only [hk])
   drift_bound t := forwardInitializedCorrection_drift M D hTime δ hδ ξ hs α
     L NB W LM WM BC hRc hcost hδ1 hα hR WP S hgrowth Cagree N hN k hk hbase
     (((q+1)+1)+1) (q-4) (by omega) (ρ t) (hρ t) (hpacket t) t
@@ -370,7 +370,7 @@ def forwardInitializedAllOrderBudget (k : ℝ) (hk : 4 ≤ k)
     (hdet : ∀ t x, (EulerPacketPiola.operatorMatrix (D.F.field t x)).det = 1) :
     EulerAllOrderDriftCorrection.Budget period D.T_pos
       (forwardInitializedCorrectionData M D hTime δ hδ ξ hs α Cagree
-        (truncation k) (truncation_bounds k (by linarith)).1 k hk) := by
+        (truncation k) (truncation_bounds k (by linarith only [hk])).1 k hk) := by
   have hk1 : 1 ≤ k := by linarith only [hk]
   have hk0 : 0 < k := by linarith only [hk]
   have hn := (truncation_bounds k hk1).1

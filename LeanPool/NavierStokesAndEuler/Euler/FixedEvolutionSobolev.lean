@@ -54,7 +54,7 @@ theorem weak_radius_bounds (ι : Type*) [Fintype ι] (q : ℕ) (T Rc C₀ C₁ C
     1 ≤ R ∧ sobolevCoefficientRadius ι Rc ≤ R := by
   have hM := blockCost_one_le ι q T Rc C₀ C₁ CH c Cf hT hRc hC₀ hC₁ hCH hCf
   have hRc0 := sobolevCoefficientRadius_nonneg (ι := ι) Rc hRc
-  constructor <;> nlinarith
+  constructor <;> nlinarith only [hR, hM, hRc0]
 
 variable {X U E ι : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X]
   [NormedAddCommGroup U] [InnerProductSpace ℝ U] [CompleteSpace U]

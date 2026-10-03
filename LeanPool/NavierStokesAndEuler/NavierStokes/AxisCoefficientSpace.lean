@@ -82,7 +82,7 @@ theorem squareDecay_succ_le (n : ℕ) : squareDecay (n + 1) ≤ squareDecay n :=
   unfold squareDecay
   apply one_div_le_one_div_of_le (by positivity)
   push_cast
-  linarith [show (0 : ℝ) ≤ n by positivity]
+  linarith only [show (0 : ℝ) ≤ n by positivity]
 
 theorem squareDecay_le_four_succ (n : ℕ) : squareDecay n ≤ 4 * squareDecay (n + 1) := by
   unfold squareDecay
@@ -98,12 +98,12 @@ theorem squareDecay_le_four_succ (n : ℕ) : squareDecay n ≤ 4 * squareDecay (
 /-- Elementary telescoping majorant for the square summability estimate. -/
 theorem reciprocal_square_telescope (x : ℝ) (hx : 1 ≤ x) :
     1 / x ^ 2 ≤ 2 / x - 2 / (x + 1) := by
-  have hx0 : 0 < x := by linarith
-  have hx1 : 0 < x + 1 := by linarith
+  have hx0 : 0 < x := by linarith only [hx]
+  have hx1 : 0 < x + 1 := by linarith only [hx]
   have hid : 2 / x - 2 / (x + 1) = 2 / (x * (x + 1)) := by
     field_simp; ring
   rw [hid, div_le_div_iff₀ (sq_pos_of_pos hx0) (mul_pos hx0 hx1)]
-  nlinarith
+  nlinarith only [hx]
 
 theorem sum_squareDecay_le (n : ℕ) :
     (∑ i ∈ Finset.range (n + 1), squareDecay i) ≤ 2 - 2 / ((n : ℝ) + 2) := by
@@ -112,20 +112,20 @@ theorem sum_squareDecay_le (n : ℕ) :
   | succ n ih =>
       rw [Finset.sum_range_succ]
       have hn : (0 : ℝ) ≤ n := by positivity
-      have htel := reciprocal_square_telescope ((n : ℝ) + 2) (by linarith)
+      have htel := reciprocal_square_telescope ((n : ℝ) + 2) (by linarith only)
       have hid : squareDecay (n + 1) = 1 / ((n : ℝ) + 2) ^ 2 := by
         simp [squareDecay, Nat.cast_add, Nat.cast_one]
         ring
       rw [hid]
       push_cast
       ring_nf at ih htel ⊢
-      linarith
+      linarith only [ih, htel]
 
 theorem sum_squareDecay_le_two (n : ℕ) :
     (∑ i ∈ Finset.range (n + 1), squareDecay i) ≤ 2 := by
   have h := sum_squareDecay_le n
   have hp : 0 ≤ 2 / ((n : ℝ) + 2) := by positivity
-  linarith
+  linarith only [h, hp]
 
 theorem squareDecay_product_le (i j : ℕ) :
     squareDecay i * squareDecay j ≤
@@ -165,7 +165,7 @@ theorem squareDecay_convolution_le (n : ℕ) :
     exact hfirst
   rw [← Finset.mul_sum, Finset.sum_add_distrib] at hsum
   have hd := (squareDecay_pos n).le
-  nlinarith
+  nlinarith only [hsum, hfirst, hd, hsecond]
 
 /-- A term of Vandermonde's sum gives the binomial estimate used in the norm. -/
 theorem choose_product_le (i j k l : ℕ) :
@@ -240,7 +240,7 @@ theorem coreWeight_radial_le {ε : ℝ} (hε : 0 < ε) (n m : ℕ) :
         coreWeight ε n m * ((n : ℝ) + m + 1) := by
       exact mul_le_mul_of_nonneg_left (by
         have hm : (0 : ℝ) ≤ m := by positivity
-        linarith)
+        linarith only)
         (coreWeight_pos hε n m).le
     _ = 20 * coreWeight ε (n + 1) m * ((n : ℝ) + 1) := by
       rw [coreWeight_radial_identity hε]
@@ -557,7 +557,7 @@ theorem averageJet_bound {ε F : ℝ} (_hε : 0 < ε) (_hF : 0 ≤ F)
   rw [abs_div, abs_of_pos (by positivity : 0 < (n : ℝ) + 1)]
   exact (div_le_self (abs_nonneg _) (by
     have hn : (0 : ℝ) ≤ n := by positivity
-    linarith)).trans (hf n m)
+    linarith only)).trans (hf n m)
 
 theorem primitiveJet_bound {ε F : ℝ} (hε : 0 < ε) (hF : 0 ≤ F)
     (f : ℕ → ℕ → ℝ) (hf : ∀ n m, |f n m| ≤ F * weight ε n m) (n m : ℕ) :
@@ -577,8 +577,8 @@ theorem primitiveJet_bound {ε F : ℝ} (hε : 0 < ε) (hF : 0 ≤ F)
 theorem radialDivisor_ge_one {r : ℕ} (hr : 1 ≤ r) (n : ℕ) : 1 ≤ radialDivisor r n := by
   have hn : (0 : ℝ) ≤ n := by positivity
   have hr' : (1 : ℝ) ≤ r := by exact_mod_cast hr
-  have ha : (1 : ℝ) ≤ n + 1 := by linarith
-  have hb : (1 : ℝ) ≤ n + r := by linarith
+  have ha : (1 : ℝ) ≤ n + 1 := by linarith only
+  have hb : (1 : ℝ) ≤ n + r := by linarith only [hr']
   simpa only [one_mul, radialDivisor] using
     (mul_le_mul ha hb (by norm_num : (0 : ℝ) ≤ 1) (by positivity : 0 ≤ (n : ℝ) + 1))
 

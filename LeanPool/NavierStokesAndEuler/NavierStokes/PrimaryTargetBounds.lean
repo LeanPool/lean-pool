@@ -74,7 +74,7 @@ theorem openCell_subset_box (n : ℕ) (k : SlotColoring.Grid) :
     · exact hp.1.1
     · exact hp.1.2.1
     · exact hp.1.2.2
-  exact abs_le.mpr ⟨by linarith [hj.1], by linarith [hj.2]⟩
+  exact abs_le.mpr ⟨by linarith only [hj, hj.1], by linarith only [hj, hj.2]⟩
 
 theorem openCell_subset_larger {n : ℕ} (hn : 1 ≤ n) (k : SlotColoring.Grid) :
     openCell n k ⊆ PositiveRepresentatives.positiveCell n k :=
@@ -92,7 +92,7 @@ theorem support_subset_openCell {n : ℕ} (hn : 1 ≤ n) (k : SlotColoring.Grid)
       PrimaryRepresentatives.position p j < SquaredPartition.nativeSpacing n * (k j : ℝ) +
         2 * SquaredPartition.nativeSpacing n := by
     have hj := abs_le.mp (hb j)
-    constructor <;> linarith [hj.1, hj.2]
+    constructor <;> linarith only [hs, hj, hj.1, hj.2]
   exact ⟨⟨hc 0, hc 1, hc 2⟩, hp.2⟩
 
 theorem representative_mem_openCell (K : Set Slow) (L : PositiveRepresentatives.ActiveLabel K) :
@@ -434,7 +434,7 @@ theorem radius_lower_of_majorant {lo M : ℝ} (hlo : 0 < lo) (hM : 1 ≤ M)
   have hs : 0 < Real.sqrt lo := Real.sqrt_pos.mpr hlo
   have hb := (div_le_iff₀ hs).mp hbound
   apply (div_le_iff₀ hM0).mpr
-  nlinarith
+  nlinarith only [hb]
 
 /-- The smooth summed base, its positive mask representatives, and the
 actual strict cone supply every datum used by the phase theorem.  The
@@ -773,7 +773,7 @@ theorem basisMatrix_det (K : Plane) (hK : ‖K‖ = 1) : (basisMatrix K).det = -
   simp only [basisMatrix, Matrix.det_fin_two, ite_true, show (1 : Fin 2) ≠ 0 by decide,
     ite_false]
   change -K 1 * K 1 - K 0 * K 0 = -1
-  nlinarith
+  nlinarith only [hs]
 
 theorem modelMatrix_column (c u : ℝ) (K : Plane) (i j : Fin 2) :
     modelMatrix c u K i j =
@@ -827,7 +827,7 @@ theorem modelMatrix_strictCone {c u eta : ℝ} {K T : Plane}
     apply (div_lt_iff₀ hmp).mpr
     have hh := mul_pos heta hmp
     change |c * modelTransverse K T| < PrimaryRepresentatives.slopeRatio u * modelNormal K T
-    nlinarith
+    nlinarith only [hr, hh]
   have hbase := PulseCovariance.signedModel_strictCone hc hu (Covariance.cone_of_ratio hmp hratio)
   have hh := strictCone_mul_left (B := basisMatrix K) (by rw [basisMatrix_det K hK]; norm_num) hbase
   rwa [basisMatrix_target K T hK] at hh

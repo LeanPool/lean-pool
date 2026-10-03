@@ -62,7 +62,7 @@ theorem initializedExactPhysicalPressure_gradient
       gradient (fun y => initializedPressure M D τ hτ hτT B δ hδ ξ hs α N k⁻¹
         (t,(Y t y,k*⟪D.m₀,Y t y⟫_ℝ))) x +
       gradient (Q.physicalPotential D period k Y t) x := by
-  have hk0 : k ≠ 0 := by linarith
+  have hk0 : k ≠ 0 := by linarith only [hk]
   have hkk : k*(initializedCorrectionData M D hTime τ hτ hτT B δ hδ ξ hs α
       Cagree N hN k hk).κ=1 := mul_inv_cancel₀ hk0
   let S := initializedExactPacket M D hTime τ hτ hτT B δ hδ ξ hs α Cagree N hN k hk Q
@@ -103,7 +103,7 @@ theorem initializedExactPhysicalPressure_hessian
       fderiv ℝ (gradient (fun y => initializedPressure M D τ hτ hτT B δ hδ ξ hs α N k⁻¹
         (t,(Y t y,k*⟪D.m₀,Y t y⟫_ℝ)))) x +
       fderiv ℝ (gradient (Q.physicalPotential D period k Y t)) x := by
-  have hk0 : k ≠ 0 := by linarith
+  have hk0 : k ≠ 0 := by linarith only [hk]
   have hkk : k*(initializedCorrectionData M D hTime τ hτ hτT B δ hδ ξ hs α
       Cagree N hN k hk).κ=1 := mul_inv_cancel₀ hk0
   have hp := ((initializedPressureWitness M D hTime τ hτ hτT B δ hδ ξ hs α N k⁻¹).changeTime

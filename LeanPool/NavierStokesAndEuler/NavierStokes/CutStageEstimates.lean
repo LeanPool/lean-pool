@@ -275,7 +275,7 @@ theorem cut_product_bound {U S : Set E} (hU : IsOpen U) (hSU : S ⊆ U)
         have hL := le_finiteBound L hki
         have hi' : (i : ℝ) ≤ m := by exact_mod_cast him
         dsimp only [cutLoss]
-        linarith
+        linarith only [hL, hi']
       calc
         _ ≤ (m.choose i : ℝ) * (CQ * q x ^ (-(i : ℝ))) *
             (CA * l ^ (finiteBound p m) * q x ^ (g - L (m - i))) := by
@@ -414,7 +414,7 @@ theorem exists_finite_diagonal_cut_bounds [Finite ι] {U S : Set E} (hU : IsOpen
     intro j m
     have := Finset.sum_nonneg (fun i (_ : i ∈ Finset.univ) => abs_nonneg (K i j m))
     dsimp only [Kall]
-    linarith
+    linarith only [this]
   have hKle : ∀ i j m, K i j m ≤ Kall j m := by
     intro i j m
     exact (le_abs_self _).trans ((Finset.single_le_sum (fun i _ => abs_nonneg (K i j m))
@@ -550,7 +550,7 @@ theorem physicalQ_jet_bound {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2) (m : ℕ) :
       ‖iteratedFDeriv ℝ m (PhysicalWaveSum.physicalQ h) w‖ ≤
         C * PhysicalWaveSum.physicalQ h w ^ (1 - (m : ℝ)) := by
   have ha : 0 < 2 * h := by positivity
-  have ha1 : 2 * h < 1 := by linarith
+  have ha1 : 2 * h < 1 := by linarith only [hh1]
   obtain ⟨C, hC, hb⟩ := PhysicalCoordinateBounds.physical_q_derivative_bound ha ha1 0 0 1 m
   refine ⟨C * (‖physicalProjection‖ + 1) ^ m, by positivity, ?_⟩
   intro w hw hq1

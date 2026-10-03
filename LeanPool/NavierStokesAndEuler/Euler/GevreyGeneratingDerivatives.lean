@@ -407,7 +407,7 @@ theorem continuous_barrier (f : ℝ → ℝ) (T B a : ℝ)
     have hh := hstep m hmI hbefore
     have hmB : B*m ≤ B*T := mul_le_mul_of_nonneg_left hmI.2 hB
     rw [hfm] at hh
-    linarith
+    linarith only [hBa, hh, hmB]
   intro t ht
   exact hstep t ht (fun s hs => (hstrict s ⟨hs.1,hs.2.trans ht.2⟩).le)
 
@@ -416,10 +416,10 @@ def rationalRate (B R a u : ℝ) : ℝ := B*(R*(a+u))/(1-R*(a+u))
 
 theorem rationalRate_le (B R a u : ℝ) (hB : 0 ≤ B)
     (hu : R * (a + u) ≤ 1 / 2) : rationalRate B R a u ≤ B := by
-  have hd : 0 < 1-R*(a+u) := by linarith
+  have hd : 0 < 1-R*(a+u) := by linarith only [hu]
   unfold rationalRate
   apply (div_le_iff₀ hd).2
-  linarith [mul_le_mul_of_nonneg_left hu hB]
+  linarith only [hu, hB, mul_le_mul_of_nonneg_left hu hB]
 
 /-- The nonlinear generating-sum inequality closes at BRT≤1/8.  The bound
 is linear in the velocity size B and time, with no exponential factor. -/
@@ -436,18 +436,18 @@ theorem rational_integral_bootstrap (f : ℝ → ℝ) (T B R : ℝ)
     by_contra h
     have hm := mul_le_mul_of_nonneg_left (le_of_not_gt h) hR.le
     rw [hRa] at hm
-    linarith
+    linarith only [hsmall, hm]
   have hb : ∀ t ∈ Icc 0 T, f t ≤ B*t := by
     apply continuous_barrier f T B ((4*R)⁻¹) hT hB ha hBT hf hf0
     intro t ht hbefore
     have hhalf : ∀ s ∈ Icc 0 t, R*((4*R)⁻¹+f s) ≤ 1/2 := by
       intro s hs
       have hm := mul_le_mul_of_nonneg_left (hbefore s hs) hR.le
-      linarith
+      linarith only [hRa, hm]
     have hden : ∀ s ∈ Icc 0 t, 1-R*((4*R)⁻¹+f s) ≠ 0 := by
       intro s hs
       have hh := hhalf s hs
-      linarith
+      linarith only [hh]
     have hrate : ContinuousOn (fun s => rationalRate B R ((4*R)⁻¹) (f s)) (Icc 0 t) := by
       have hf' := hf.mono (Icc_subset_Icc_right ht.2)
       unfold rationalRate
@@ -463,7 +463,7 @@ theorem rational_integral_bootstrap (f : ℝ → ℝ) (T B R : ℝ)
   refine ⟨hb t ht,?_⟩
   have hm := mul_le_mul_of_nonneg_left (hb t ht) hR.le
   have htB := mul_le_mul_of_nonneg_left ht.2 (mul_nonneg hB hR.le)
-  linarith
+  linarith only [hsmall, hRa, hm, htB]
 
 end EulerGevreyFlowBootstrap
 
@@ -577,10 +577,10 @@ theorem derivativeSum_comp_le (f : E → F) (g : F → G) (N : ℕ)
 theorem rational_fraction_mono (B x y : ℝ) (hB : 0 ≤ B)
     (hxy : x ≤ y) (hy : y < 1) :
     B*x/(1-x) ≤ B*y/(1-y) := by
-  have hx : 0 < 1-x := by linarith
-  have hy' : 0 < 1-y := by linarith
+  have hx : 0 < 1-x := by linarith only [hxy, hy]
+  have hy' : 0 < 1-y := by linarith only [hy]
   apply (div_le_div_iff₀ hx hy').2
-  linarith [mul_le_mul_of_nonneg_left hxy hB]
+  linarith only [hxy, hB, mul_le_mul_of_nonneg_left hxy hB]
 
 /-- The identity part of a flow costs exactly z in its generating sum. -/
 theorem derivativeSum_comp_id_add_le (f : E → E) (g : E → F) (N : ℕ)

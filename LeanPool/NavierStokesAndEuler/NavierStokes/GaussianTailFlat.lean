@@ -123,14 +123,14 @@ theorem slotCutoff_one {L v : ℝ} (hL : 0 < L) (hv : |v - L / 2| ≤ L / 5) :
   apply profile_one
   rw [slot_normalized_distance hL]
   apply (div_le_iff₀ hL).2
-  linarith
+  linarith only [hv]
 
 theorem slotCutoff_zero {L v : ℝ} (hL : 0 < L) (hv : L / 3 ≤ |v - L / 2|) :
     slotCutoff L v = 0 := by
   apply profile_zero
   rw [slot_normalized_distance hL]
   apply (le_div_iff₀ hL).2
-  linarith
+  linarith only [hv]
 
 /-- The derivative error is supported strictly inside the slot and outside
 the central plateau; in particular it lies near the entry or exit. -/
@@ -145,9 +145,9 @@ theorem slotCutoff_deriv_support {L v : ℝ} (hL : 0 < L)
   rw [slot_normalized_distance hL] at hh
   constructor
   · have ht := (le_div_iff₀ hL).1 hh.1
-    linarith
+    linarith only [ht]
   · have ht := (div_le_iff₀ hL).1 hh.2
-    linarith
+    linarith only [ht]
 
 /-- The precise Gaussian tail bound uses the full plateau radius. -/
 theorem gaussian_off_plateau {c L v : ℝ} (hc : 0 ≤ c) (hL : 0 < L)
@@ -157,7 +157,7 @@ theorem gaussian_off_plateau {c L v : ℝ} (hc : 0 ≤ c) (hL : 0 < L)
     simpa only [sq_abs] using pow_le_pow_left₀ (by positivity : 0 ≤ L / 5) hv 2
   apply Real.exp_le_exp.2
   apply (div_le_iff₀ hL).2
-  linarith [mul_le_mul_of_nonneg_left hsq hc]
+  linarith only [hsq, hc, mul_le_mul_of_nonneg_left hsq hc]
 
 theorem reference_envelope_off_plateau {lam u L v : ℝ}
     (hlam : 0 < lam) (hu : 0 < u) (hL : 0 < L) (hv : v ∈ Icc 0 L)
@@ -218,7 +218,7 @@ theorem polynomial_exp_bound {c : ℝ} (hc : 0 < c) (p : ℕ) {x : ℝ} (hx : 0 
   have hfac : (0 : ℝ) < p.factorial := by exact_mod_cast Nat.factorial_pos p
   have hb := (div_le_iff₀ hfac).1
     (Real.pow_div_factorial_le_exp (c * (1 + x))
-      (mul_nonneg hc.le (by linarith : 0 ≤ 1 + x)) p)
+      (mul_nonneg hc.le (by linarith only [hx] : 0 ≤ 1 + x)) p)
   have hp : 0 < c ^ p := pow_pos hc p
   calc
     _ = ((c * (1 + x)) ^ p / c ^ p) * Real.exp (-c * x) := by
@@ -251,16 +251,16 @@ theorem gaussian_beats_Q_power {c : ℝ} (hc : 0 < c) (p : ℕ) (N : ℝ) :
   have hlin : A * (n : ℝ) ≤ c / 2 * (n : ℝ) ^ 2 + K := by
     have hs := sq_nonneg (c * (n : ℝ) - A)
     have hc2 : 0 < 2 * c := by positivity
-    suffices A * (n : ℝ) - c / 2 * (n : ℝ) ^ 2 ≤ K by linarith
+    suffices A * (n : ℝ) - c / 2 * (n : ℝ) ^ 2 ≤ K by linarith only [this]
     dsimp [K]
     apply (le_div_iff₀ hc2).2
-    linarith
+    linarith only [hs]
   have hexp : Real.exp (-c * ChartScales.S n) ≤
       Real.exp (-(c / 2) * ChartScales.S n) * Real.exp K * ChartScales.Q n ^ N := by
     rw [Q_rpow_eq_exp, ← Real.exp_add, ← Real.exp_add]
     apply Real.exp_le_exp.2
     dsimp [ChartScales.S, A] at *
-    linarith
+    linarith only [hlin]
   calc
     _ ≤ (1 + ChartScales.S n) ^ p *
         (Real.exp (-(c / 2) * ChartScales.S n) * Real.exp K * ChartScales.Q n ^ N) :=
@@ -270,20 +270,20 @@ theorem gaussian_beats_Q_power {c : ℝ} (hc : 0 < c) (p : ℕ) (N : ℝ) :
     _ ≤ B * Real.exp K * ChartScales.Q n ^ N := by
       apply mul_le_mul_of_nonneg_right _ (Real.rpow_pos_of_pos (ChartScales.Q_pos n) _).le
       apply mul_le_mul_of_nonneg_right _ (Real.exp_pos _).le
-      exact polynomial_exp_bound (by linarith : 0 < c / 2) p (sq_nonneg (n : ℝ))
+      exact polynomial_exp_bound (by linarith only [hc] : 0 < c / 2) p (sq_nonneg (n : ℝ))
     _ = _ := by ring
 
 theorem gaussian_length_comparison {c κ L S : ℝ} (hc : 0 ≤ c) (hL : κ * S ≤ L) :
     Real.exp (-(c / 25) * L) ≤ Real.exp (-(c * κ / 25) * S) := by
   apply Real.exp_le_exp.2
-  linarith [mul_le_mul_of_nonneg_left hL hc]
+  linarith only [hL, hc, mul_le_mul_of_nonneg_left hL hc]
 
 /-- A fixed power loss consumes only half of a Gaussian tail. -/
 theorem fixed_power_gaussian_bound {c : ℝ} (hc : 0 < c) (r : ℝ) :
     ∃ C : ℝ, 0 < C ∧ ∀ n : ℕ,
       ChartScales.Q n ^ r * Real.exp (-c * ChartScales.S n) ≤
         C * Real.exp (-(c / 2) * ChartScales.S n) := by
-  obtain ⟨C, hC, hb⟩ := gaussian_beats_Q_power (by linarith : 0 < c / 2) 0 (-r)
+  obtain ⟨C, hC, hb⟩ := gaussian_beats_Q_power (by linarith only [hc] : 0 < c / 2) 0 (-r)
   refine ⟨C, hC, fun n => ?_⟩
   have he : Real.exp (-c * ChartScales.S n) =
       Real.exp (-(c / 2) * ChartScales.S n) * Real.exp (-(c / 2) * ChartScales.S n) := by
@@ -336,8 +336,8 @@ theorem omittedProfile_jet_bounded (m : ℕ) :
   | zero =>
     refine ⟨1, zero_le_one, fun x => ?_⟩
     rw [norm_iteratedFDeriv_zero, Real.norm_eq_abs, abs_of_nonneg (by
-      linarith [(profile_mem_Icc x).2] : 0 ≤ 1 - profile x)]
-    linarith [(profile_mem_Icc x).1]
+      linarith only [(profile_mem_Icc x).2] : 0 ≤ 1 - profile x)]
+    linarith only [(profile_mem_Icc x).1]
   | succ m =>
     obtain ⟨C, hC, hb⟩ := profile_jet_bounded (m + 1)
     refine ⟨C, hC, fun x => ?_⟩
@@ -700,11 +700,11 @@ theorem native_slot_length_lower (r0 h : ℝ) (hr0 : 0 < r0) (hh : 0 ≤ h) :
   · have hSn : 1 ≤ ChartScales.S n := by
       have hnn : (4 : ℝ) ≤ n := by exact_mod_cast hn
       unfold ChartScales.S
-      nlinarith
+      nlinarith only [hnn]
     calc
       _ ≤ r0 * (1 + ChartScales.S n) :=
         mul_le_mul_of_nonneg_right (min_le_left _ _) (hS n).le
-      _ ≤ 2 * r0 * ChartScales.S n := by nlinarith
+      _ ≤ 2 * r0 * ChartScales.S n := by nlinarith only [hr0, hSn]
       _ ≤ ChartScales.slotLength r0 h n := (ChartScales.slotLength_bounds r0 h hr0.le hh hn).1
 
 /-- Actual native slots. `η` is the fixed longitudinal coordinate functional;
@@ -718,7 +718,7 @@ noncomputable def actualSlotFamily (s : StripData D) (r0 h : ℝ)
   have hκL (n : ℕ) : κ ≤ ChartScales.slotLength r0 h n := by
     apply le_trans _ (hκ.2 n)
     have hn : 0 ≤ ChartScales.S n := sq_nonneg _
-    nlinarith [hκ.1]
+    nlinarith only [hr0, hh, hκ, hn, hκ.1]
   refine {
     length := ChartScales.slotLength r0 h
     length_pos := hL
@@ -738,7 +738,7 @@ noncomputable def actualSlotFamily (s : StripData D) (r0 h : ℝ)
     simpa only [one_div] using one_div_le_one_div_of_le hκ.1 (hκL n)
   · intro n
     apply le_trans _ (hκ.2 n)
-    linarith [hκ.1]
+    linarith only [hr0, hh, hκ, hκ.1]
 
 @[simp] theorem actualSlotFamily_length (s : StripData D) (r0 h : ℝ)
     (hr0 : 0 < r0) (hh : 0 ≤ h) (η : D →L[ℝ] ℝ) (center : ℕ → ℝ) (n : ℕ) :
@@ -775,7 +775,7 @@ theorem referenceSlotEnvelope_bound {lam u L : ℝ}
       Real.exp (-(u * GaussianEnvelope.referenceMinSlope lam u / 2) * (θ - 1 / 2) ^ 2 * L) := by
   by_cases hθ : θ ∈ Icc (0 : ℝ) 1
   · rw [referenceSlotEnvelope, ite_eq_left hθ]
-    have ht : L * θ ∈ Icc (0 : ℝ) L := ⟨mul_nonneg hL.le hθ.1, by nlinarith [hθ.2]⟩
+    have ht : L * θ ∈ Icc (0 : ℝ) L := ⟨mul_nonneg hL.le hθ.1, by nlinarith only [hL, hθ, hθ.2]⟩
     apply (GaussianEnvelope.reference_gaussian_bounds hlam hu hL ht).2.trans_eq
     congr 1
     field_simp [hL.ne']
@@ -814,10 +814,10 @@ theorem error_contDiff_of_slot {s : StripData D} (g : SlotFamily s) {u f : ℕ �
       have hx' : g.coordinate n x ≤ 0 ∨ 1 ≤ g.coordinate n x := by
         simpa only [mem_Ioo, not_and_or, not_lt] using hx
       rcases hx' with hx' | hx'
-      · rw [abs_of_nonpos (by linarith)]
-        linarith
-      · rw [abs_of_nonneg (by linarith)]
-        linarith
+      · rw [abs_of_nonpos (by linarith only [hx'])]
+        linarith only [hx']
+      · rw [abs_of_nonneg (by linarith only [hx'])]
+        linarith only [hx']
     have hp := (profile_eventually_zero hout).comp_tendsto
       (g.coordinate_contDiff n).continuous.continuousAt
     have hd := (profile_eventually_zero hout).deriv.comp_tendsto
@@ -879,7 +879,7 @@ theorem error_physical_isBigO {s : StripData LiftPoint} (g : SlotFamily s)
   have hQ := ChartScales.Q_pos n
   have hpn := hp n hn
   have hh := hb n hn (p n) hpn.1 hpn.2.1 hpn.2.2 (ChartScales.Q n) hQ
-    (by linarith) (by linarith)
+    (by linarith only [hQ]) (by linarith only [hQ])
   simpa only [Real.norm_eq_abs, abs_of_pos (Real.rpow_pos_of_pos hQ N)] using hh
 
 /-- The same result for the actual oscillatory carrier. The phase estimates
@@ -1013,14 +1013,14 @@ theorem derivativeError_jet_near_ends {s : StripData D} (g : SlotFamily s)
   have hb := g.derivativeError_jet_support u n j hx
   change 1 / 5 ≤ |g.coordinate n x - 1 / 2| ∧ |g.coordinate n x - 1 / 2| ≤ 1 / 3 at hb
   rcases le_total (g.coordinate n x) (1 / 2) with h | h
-  · rw [abs_of_nonpos (by linarith)]
+  · rw [abs_of_nonpos (by linarith only [h])]
       at hb
     left
-    constructor <;> linarith [hb.1, hb.2]
-  · rw [abs_of_nonneg (by linarith)]
+    constructor <;> linarith only [hb, hb.1, hb.2]
+  · rw [abs_of_nonneg (by linarith only [h])]
       at hb
     right
-    constructor <;> linarith [hb.1, hb.2]
+    constructor <;> linarith only [hb, hb.1, hb.2]
 
 theorem omittedSource_jet_support {s : StripData D} (g : SlotFamily s)
     (f : ℕ → D → E) (n j : ℕ) :

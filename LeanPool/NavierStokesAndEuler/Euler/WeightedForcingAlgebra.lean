@@ -42,7 +42,7 @@ theorem familyNorm_add_le (v w : β → H) : familyNorm (v+w) ≤ familyNorm v +
   have hcs := family_cauchy_schwarz v w
   have hv := familyNorm_sq v
   have hw := familyNorm_sq w
-  nlinarith
+  nlinarith only [hsq, hcs, hv, hw]
 
 /-- Signs do not change the genuine Hilbert family norm. -/
 theorem familyNorm_neg (v : β → H) : familyNorm (-v) = familyNorm v := by

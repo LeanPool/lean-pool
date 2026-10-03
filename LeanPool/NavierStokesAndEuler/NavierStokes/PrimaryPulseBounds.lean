@@ -158,7 +158,7 @@ noncomputable def rescaleConstant (N : ℕ) (K : ℝ) : ℝ := 2 ^ N * K ^ 2 + K
 
 theorem le_rescaleConstant (N : ℕ) (K : ℝ) : K ≤ rescaleConstant N K := by
   unfold rescaleConstant
-  linarith [mul_nonneg (pow_nonneg (by norm_num : (0 : ℝ) ≤ 2) N) (sq_nonneg K)]
+  linarith only [mul_nonneg (pow_nonneg (by norm_num : (0 : ℝ) ≤ 2) N) (sq_nonneg K)]
 
 section JointEstimate
 
@@ -233,7 +233,7 @@ theorem homogeneous_joint_jet_bound
       (fun i hi => hjets i hi _ (hinside σ))
     have hconst : (2 : ℝ) ^ N * K ^ 2 ≤ K' := by
       dsimp [K', rescaleConstant]
-      linarith
+      linarith only [hK]
     calc
       _ ≤ (2 : ℝ) ^ N * (K * S) * (K * S ^ m) := by
         simpa only [JointODE.rescale, JointODE.timeMap, JointODE.affineTime, sub_zero, zero_add]
@@ -479,9 +479,9 @@ theorem homogeneous_family_envelope_jets
   intro N
   obtain ⟨C, hC, m, hm⟩ := hA.bound N
   let K := C + K₀ + 1
-  have hK : 1 ≤ K := by dsimp [K]; linarith
-  have hCK : C ≤ K := by dsimp [K]; linarith
-  have hK₀K : K₀ ≤ K := by dsimp [K]; linarith
+  have hK : 1 ≤ K := by dsimp [K]; linarith only [hK₀, hC]
+  have hCK : C ≤ K := by dsimp [K]; linarith only [hK₀]
+  have hK₀K : K₀ ≤ K := by dsimp [K]; linarith only [hC]
   let B := (2 : ℝ) ^ (N + 1) * rescaleConstant N K ^ 3
   have hB : 1 ≤ B := one_le_mul_of_one_le_of_one_le (one_le_pow₀ (by norm_num))
     (one_le_pow₀ (hK.trans (le_rescaleConstant N K)))
@@ -581,7 +581,7 @@ theorem positiveSeed_norm : ‖positiveSeed‖ = 1 := by
       _ = (positiveSeed 0) ^ 2 + (positiveSeed 1) ^ 2 := ViscousPropagator.plane_norm_sq
           positiveSeed
       _ = 1 := by norm_num [positiveSeed]
-  nlinarith [norm_nonneg positiveSeed]
+  nlinarith only [h, norm_nonneg positiveSeed]
 
 /-- Reference P, given by `GaussianEnvelope.envelope (GaussianEnvelope.referenceRate lam u L) (L
 / 2) t`. -/
@@ -639,7 +639,7 @@ theorem fundamental_envelope_jets
       (fun i => fundamental (d i) (lam i) (u i) (L i)) := by
   let μ := fun i => (B + 4 * C) / D.scale i
   let K := M + Real.exp ((B + 4 * C) * M) + 1
-  have hK : 1 ≤ K := by dsimp [K]; linarith [Real.exp_pos ((B + 4 * C) * M)]
+  have hK : 1 ≤ K := by dsimp [K]; linarith only [hM, Real.exp_pos ((B + 4 * C) * M)]
   have hμ (i) : 0 ≤ μ i := div_nonneg (by positivity) (zero_le_one.trans (D.one_le_scale i))
   apply homogeneous_family_envelope_jets D V hV L μ hL hI (fun i => (d i).coefficient 1)
     (hd.coefficient 1) (fun i => referenceP (lam i) (u i) (L i))
@@ -650,7 +650,7 @@ theorem fundamental_envelope_jets
     apply (hslot i).trans
     apply mul_le_mul_of_nonneg_right _ (zero_le_one.trans (D.one_le_scale i))
     dsimp [K]
-    linarith [Real.exp_pos ((B + 4 * C) * M)]
+    linarith only [Real.exp_pos ((B + 4 * C) * M)]
   · intro i
     have hS : 0 < D.scale i := zero_lt_one.trans_le (D.one_le_scale i)
     have hμL : μ i * L i ≤ (B + 4 * C) * M := by
@@ -659,7 +659,7 @@ theorem fundamental_envelope_jets
         _ = _ := by dsimp [μ]; field_simp
     apply (Real.exp_le_exp.mpr hμL).trans
     dsimp [K]
-    linarith
+    linarith only [hM]
   · intro i p hp v hv x
     have he := (d i).energy_bound (p, v) (by norm_num : (1 : ℤ) ≠ 0)
       (by
@@ -714,19 +714,19 @@ theorem EnvelopeJets.normalize_slot
   refine hf.precomp_linear
     (D := productDomain D (fun _ => Ioo (0 : ℝ) 1) (fun _ => isOpen_Ioo))
     (fun i => timeLinear (L i)) (fun _ => rfl) ?_
-    (show 1 ≤ M + 1 by linarith) (k := 1) ?_
+    (show 1 ≤ M + 1 by linarith only [hM]) (k := 1) ?_
   · intro i z hz
     refine ⟨hz.1, ?_, ?_⟩
     · exact mul_pos (hL i) hz.2.1
     · change L i * z.2 < L i
-      nlinarith [hL i, hz.2.2]
+      nlinarith only [hL, hz, hL i, hz.2.2]
   · intro i
     apply (timeLinear_norm_le_max (L i)).trans
     rw [abs_of_pos (hL i), pow_one]
     change max 1 (L i) ≤ (M + 1) * D.scale i
     apply max_le
-    · nlinarith [D.one_le_scale i]
-    · linarith [hslot i, D.one_le_scale i]
+    · nlinarith only [hM, D.one_le_scale i]
+    · linarith only [hslot, hslot i, D.one_le_scale i]
 
 end NormalizeSlot
 
@@ -906,7 +906,7 @@ theorem covariance_weights_class
     have h2 := mul_le_mul (hentry n x hx 0 1) (hentry n x hx 1 0)
       (abs_nonneg _) (zero_le_one.trans hM)
     simp only [abs_mul] at h1 h2 ⊢
-    linarith
+    linarith only [h1, h2]
   have hinv := hD.inv hb hdet hDupper
   have hscale : UnweightedClass s 0 (fun n x => r n ^ 2 *
       (normalizedMatrix (r n) (H n x)).det⁻¹) := polynomial_memClass s ((hr.pow 2).mul hinv)
@@ -930,7 +930,7 @@ theorem covariance_weights_class
   intro hz
   have h := hdet n x hx
   rw [normalizedMatrix_det, hz, mul_zero, abs_zero] at h
-  linarith
+  linarith only [hb, h]
 
 /-- The primary square root retains the edge factor. Positivity is derived
 from the positive edge weight and the order-zero lower bound. -/
@@ -967,7 +967,7 @@ theorem sqrt_slow_polynomial (s : StripData E) :
     phaseDomain]
   have hs := s.one_le_slow n
   have hsq := Real.sq_sqrt (zero_le_one.trans hs)
-  nlinarith [Real.sqrt_nonneg (s.slow n)]
+  nlinarith only [hs, hsq, Real.sqrt_nonneg (s.slow n)]
 
 end CovarianceInverse
 
@@ -1061,7 +1061,7 @@ theorem primaryCurlRemainder_budget
     (h : WaveClass s P (1 - κ) (primaryCurlRemainder s N R Vr Vθ Vz harmonic a))
     (hκ : κ ≤ 8 / 25) :
     WaveClass s P (17 / 25) (primaryCurlRemainder s N R Vr Vθ Vz harmonic a) :=
-  h.mono_exponent (by linarith)
+  h.mono_exponent (by linarith only [hκ])
 
 end PrimaryClass
 
@@ -1089,7 +1089,7 @@ theorem EnvelopeJets.map {f : ι → E → F} (hf : EnvelopeJets D w f)
   refine ⟨hf.nonneg, fun i => L.contDiff.comp_contDiffOn (hf.smooth i), ?_⟩
   intro N
   obtain ⟨C, hC, m, hm⟩ := hf.bound N
-  refine ⟨(‖L‖ + 1) * C, by nlinarith [norm_nonneg L], m, ?_⟩
+  refine ⟨(‖L‖ + 1) * C, by nlinarith only [hC, norm_nonneg L], m, ?_⟩
   intro i x hx j hj
   change ‖iteratedFDeriv ℝ j (L ∘ f i) x‖ ≤ _
   rw [L.iteratedFDeriv_comp_left ((hf.smooth i).contDiffAt ((D.isOpen i).mem_nhds hx))
@@ -1102,7 +1102,7 @@ theorem EnvelopeJets.map {f : ι → E → F} (hf : EnvelopeJets D w f)
       have hs := pow_nonneg (zero_le_one.trans (D.one_le_scale i)) m
       have hw := hf.nonneg i x hx
       have hcw : 0 ≤ C * D.scale i ^ m * w i x := by positivity
-      linarith [mul_nonneg (show 0 ≤ C by linarith) (mul_nonneg hs hw)]
+      linarith only [hcw, mul_nonneg (show 0 ≤ C by linarith) (mul_nonneg hs hw)]
 
 theorem EnvelopeJets.add {f g : ι → E → F}
     (hf : EnvelopeJets D w f) (hg : EnvelopeJets D w g) :
@@ -1111,7 +1111,7 @@ theorem EnvelopeJets.add {f g : ι → E → F}
   intro N
   obtain ⟨A, hA, m, hm⟩ := hf.bound N
   obtain ⟨B, hB, k, hk⟩ := hg.bound N
-  refine ⟨A + B, by linarith, m + k, ?_⟩
+  refine ⟨A + B, by linarith only [hA, hB], m + k, ?_⟩
   intro i x hx j hj
   rw [fun_iteratedFDeriv_add_apply
     (((hf.smooth i).contDiffAt ((D.isOpen i).mem_nhds hx)).of_le (nat_le_infty j))
@@ -1211,7 +1211,7 @@ theorem normalizedPulse_polynomial
   apply referenceP_le_one (hlam i) (hu i) (hL i)
   constructor
   · exact mul_nonneg (hL i).le hz.2.1.le
-  · nlinarith [hL i, hz.2.2]
+  · nlinarith only [hL, hz, hL i, hz.2.2]
 
 end ActualAmbient
 
@@ -1243,7 +1243,7 @@ theorem primaryCovariance_entry_polynomial
     (r c : Fin 2) :
     PhaseJetBounds.PolynomialJets D (fun n p => primaryCovariance pref d lam u L n p r c) := by
   exact covarianceMatrix_entry_polynomial D (fun _ => Ioo (0 : ℝ) 1) (fun _ => isOpen_Ioo)
-    (by norm_num) (fun _ t ht => by constructor <;> linarith [ht.1, ht.2])
+    (by norm_num) (fun _ t ht => by constructor <;> linarith only [ht, ht.1, ht.2])
     hpref (fun _ => slot_profile_polynomial D _ GaussianTailFlat.profile_contDiff)
     (fun c => normalizedPulse_polynomial D (lam c) (u c) (L c) (d c) (hpulse c)
       (hlam c) (hu c) (hL c)) r c
@@ -1255,7 +1255,7 @@ theorem profile_support_covariance_interval :
     by_contra hn
     exact ht (GaussianTailFlat.profile_zero (le_of_not_gt hn))
   obtain ⟨hlo, hhi⟩ := abs_lt.mp hd
-  constructor <;> linarith
+  constructor <;> linarith only [hlo, hhi]
 
 /-- Exact change of variables from the physical slot to the fixed middle
 interval. The integrand identity can be checked only where the cutoff is
@@ -1409,7 +1409,7 @@ theorem profile_linear_polynomial (D : PhaseJetBounds.Domain ι E) (L : E →L[�
     refine ⟨fun _ => GaussianTailFlat.profile_contDiff.contDiffOn, ?_⟩
     intro N
     obtain ⟨C, hC, hc⟩ := GaussianTailFlat.finite_jet_bounds GaussianTailFlat.profile_jet_bounded N
-    refine ⟨C + 1, by linarith, 0, ?_⟩
+    refine ⟨C + 1, by linarith only [hC], 0, ?_⟩
     intro i j hj x hx
     simpa only [pow_zero, mul_one] using (hc j hj x).trans (le_add_of_nonneg_right zero_le_one)
   simpa only [add_zero] using hp.precomp_affine (D := D) L (fun _ => 0) (fun _ => rfl)
@@ -1438,7 +1438,7 @@ theorem profile_tsupport_slot :
       (profile_support_covariance_interval hz).2⟩
   intro z hz
   obtain ⟨hl, hr⟩ := hcl hz
-  constructor <;> linarith
+  constructor <;> linarith only [hl, hr]
 
 /-- The actual cutoff pulse has global slot-coordinate jets with the
 zero-extended Gaussian envelope. This is the form used in physical charts. -/
@@ -1876,11 +1876,11 @@ theorem slotCutoff_zero_of_not_mem_Icc {L t : ℝ} (hL : 0 < L) (ht : t ∉ Icc 
   have hout : t < 0 ∨ L < t := by simpa only [mem_Icc, not_and_or, not_le] using ht
   rcases hout with ht | ht
   · have hq : t / L < 0 := div_neg_of_neg_of_pos ht hL
-    rw [abs_of_nonpos (by linarith : t / L - 1 / 2 ≤ 0)]
-    linarith
-  · have hq : 1 < t / L := (lt_div_iff₀ hL).mpr (by linarith)
-    rw [abs_of_nonneg (by linarith : 0 ≤ t / L - 1 / 2)]
-    linarith
+    rw [abs_of_nonpos (by linarith only [hq] : t / L - 1 / 2 ≤ 0)]
+    linarith only [hq]
+  · have hq : 1 < t / L := (lt_div_iff₀ hL).mpr (by linarith only [ht])
+    rw [abs_of_nonneg (by linarith only [hq] : 0 ≤ t / L - 1 / 2)]
+    linarith only [hq]
 
 theorem slotCutoff_hasCompactSupport {L : ℝ} (hL : 0 < L) :
     HasCompactSupport (GaussianTailFlat.slotCutoff L) := by
@@ -2040,7 +2040,7 @@ theorem normalizedPulse_hasDerivAt
   have hslot {t : ℝ} (ht : t ∈ Ioo (0 : ℝ) 1) : L * t ∈ Icc 0 L := by
     constructor
     · exact mul_nonneg hL.le ht.1.le
-    · nlinarith [ht.2]
+    · nlinarith only [hL, ht, ht.2]
   have heq (t : ℝ) (ht : t ∈ Ioo (0 : ℝ) 1) : normalizedPulse d lam u L (p, t) = f (L * t) := by
     unfold normalizedPulse f
     rw [fundamental_eq_primary hL U hA hp (hslot ht)]

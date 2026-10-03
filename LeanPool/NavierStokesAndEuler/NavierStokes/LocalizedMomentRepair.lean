@@ -117,7 +117,7 @@ theorem expSum_coefficients_zero :
         intro i j hij
         have hij' : a i.succ = a j.succ := by
           dsimp [a'] at hij
-          linarith
+          linarith only [hij]
         exact Fin.succ_inj.mp (ha hij')
       have hd : d = 0 := ih a' d y ha' hy hyzero
       have htail : ∀ j : Fin n, c j.succ = 0 := by
@@ -314,7 +314,7 @@ theorem bumpMomentMatrix_det_ne_zero {n : ℕ} (a l u : Fin n → ℝ)
     obtain ⟨t, ht⟩ := hnonzero j
     have hpos : 0 < ∫ t, β j t := (hcont j).integral_pos_of_hasCompactSupport_nonneg_nonzero
       (hcompact j) (hnonneg j) ht
-    linarith
+    linarith only [heq, hpos]
   have hmatrix : bumpMomentMatrix a β = intervalMomentMatrix a l u μ := by
     ext i j
     change (∫ t, t ^ a i * β j t) = ∫ t in Set.Icc (l j) (u j), t ^ a i ∂μ j
@@ -370,10 +370,10 @@ theorem bump_support_subset (l u : ℝ) (hlu : l < u) :
   have hs : (t - (l + u) / 2) / ((u - l) / 4) ∈ Ioo (-1 : ℝ) 1 := by
     rw [← SmoothCutoffs.cutoff_support]
     exact ht
-  have hr : 0 < (u - l) / 4 := by linarith
+  have hr : 0 < (u - l) / 4 := by linarith only [hlu]
   have hlo := (lt_div_iff₀ hr).mp hs.1
   have hup := (div_lt_iff₀ hr).mp hs.2
-  constructor <;> dsimp [innerLower, innerUpper] <;> linarith
+  constructor <;> dsimp [innerLower, innerUpper] <;> linarith only [hlo, hup]
 
 theorem bump_tsupport_subset (l u : ℝ) (hlu : l < u) :
     tsupport (bump l u) ⊆ Icc (innerLower l u) (innerUpper l u) :=
@@ -387,7 +387,7 @@ theorem innerInterval_subset_open (l u : ℝ) (hlu : l < u) :
     Icc (innerLower l u) (innerUpper l u) ⊆ Ioo l u := by
   intro t ht
   dsimp [innerLower, innerUpper] at ht
-  constructor <;> linarith [ht.1, ht.2]
+  constructor <;> linarith only [hlu, ht, ht.1, ht.2]
 
 theorem bump_tsupport_subset_open (l u : ℝ) (hlu : l < u) :
     tsupport (bump l u) ⊆ Ioo l u :=
@@ -422,10 +422,10 @@ theorem matrix_det_ne_zero (a l u : Fin n → ℝ) (ha : Injective a)
     (fun j => bump (l j) (u j)) ha
   · intro j
     dsimp [innerLower]
-    linarith [hl j, hlu j]
+    linarith only [hl, hlu, hl j, hlu j]
   · intro i j hij
     dsimp [innerLower, innerUpper]
-    linarith [hlu i, hlu j, hsep i j hij]
+    linarith only [hlu, hsep, hij, hlu i, hlu j, hsep i j hij]
   · intro j
     exact (bump_contDiff _ _).continuous
   · exact fun j t => bump_nonneg _ _ t
@@ -484,7 +484,7 @@ theorem integrable_power_mul_bump (p l u : ℝ) (hl : 0 < l) (hlu : l < u) :
   apply continuousOn_id.rpow_const
   intro t ht
   apply Or.inl
-  have hlo : 0 < innerLower l u := by dsimp [innerLower]; linarith
+  have hlo : 0 < innerLower l u := by dsimp [innerLower]; linarith only [hl, hlu]
   exact ne_of_gt (lt_of_lt_of_le hlo ht.1)
 
 /-- The prescribed moments hold as exact ordinary Lebesgue integral identities. -/

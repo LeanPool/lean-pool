@@ -88,7 +88,7 @@ private noncomputable def l2Cutoff (n : ℕ) : ContDiffBump (0 : Space) where
   rIn := (n : ℝ) + 1
   rOut := (n : ℝ) + 2
   rIn_pos := by positivity
-  rIn_lt_rOut := by linarith
+  rIn_lt_rOut := by linarith only
 
 private theorem l2Cutoff_eventually_one (x : Space) :
     ∀ᶠ n : ℕ in atTop, l2Cutoff n x = 1 := by
@@ -98,7 +98,7 @@ private theorem l2Cutoff_eventually_one (x : Space) :
   rw [Metric.mem_closedBall, dist_zero_right]
   change ‖x‖ ≤ (n : ℝ) + 1
   have hNn : (N : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
-  linarith
+  linarith only [hN, hNn]
 
 private theorem cutoff_energy_le_of_pairing_bound {f : Space → ℂ}
     (hf : ContDiff ℝ ∞ f) {C : ℝ} (hC : 0 ≤ C)
@@ -122,7 +122,7 @@ private theorem cutoff_energy_le_of_pairing_bound {f : Space → ℂ}
     apply mul_le_mul_of_nonneg_right _ (sq_nonneg _)
     have h0 := χ.nonneg (x := x)
     have h1 := χ.le_one (x := x)
-    nlinarith
+    nlinarith only [h0, h1]
   have hpair_eq : (∫ x : Space, f x * conj (φ x)) =
       ((∫ x : Space, χ x * ‖f x‖ ^ 2 : ℝ) : ℂ) := by
     calc
@@ -144,8 +144,8 @@ private theorem cutoff_energy_le_of_pairing_bound {f : Space → ℂ}
     rw [hpair_eq, Complex.norm_real, Real.norm_of_nonneg hY] at hp
     exact hp.trans (mul_le_mul_of_nonneg_left (Real.sqrt_le_sqrt hφY)
       (Real.sqrt_nonneg C))
-  linarith [sq_nonneg (Real.sqrt C - Real.sqrt (∫ x : Space, χ x * ‖f x‖ ^ 2)),
-    Real.sq_sqrt hC, Real.sq_sqrt hY]
+  linarith only [hbound, hC, hY, sq_nonneg (Real.sqrt C - Real.sqrt (∫ x : Space, χ x * ‖f x‖ ^ 2)),
+      Real.sq_sqrt hC, Real.sq_sqrt hY]
 
 /-- A smooth function satisfying the `L²` dual estimate on Schwartz tests is square
 integrable with the corresponding bound. -/

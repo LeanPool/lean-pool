@@ -56,7 +56,7 @@ theorem initializedExactPhysicalVelocity_eq (t : Icc (0 : ℝ) D.T) (Y : Space �
       initializedVelocity M D τ hτ hτT B δ hδ ξ hs α N k⁻¹
         (t,(Y x,k*inner ℝ D.m₀ (Y x))) +
       k⁻¹ • D.F.field t (Y x) (Q.pointField period t (cylinderGraph period k D.m₀ (Y x))) := by
-  have hk0 : k ≠ 0 := by linarith
+  have hk0 : k ≠ 0 := by linarith only [hk]
   have ha : (initializedCorrectionData M D hTime τ hτ hτT B δ hδ ξ hs α Cagree N hN k
       hk).approximation =
       (coordinateField D (initializedVelocityField M D hTime τ hτ hτT B δ hδ ξ hs α N k⁻¹)

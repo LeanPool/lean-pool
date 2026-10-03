@@ -953,9 +953,9 @@ theorem cut_pair_annulus (l : SignedLabel B N0) (L : PhysicalWaveSum.BandLabel)
   have hq : 0 < q := lt_trans (by norm_num) hqlo
   have hs := Real.sqrt_pos.mpr hq
   have hslo : (1 / 2 : ℝ) ≤ Real.sqrt q :=
-    (Real.le_sqrt (by norm_num) hq.le).mpr (by nlinarith)
+    (Real.le_sqrt (by norm_num) hq.le).mpr (by nlinarith only [hqlo])
   have hshi : Real.sqrt q ≤ 2 :=
-    (Real.sqrt_le_left (by norm_num)).mpr (by linarith)
+    (Real.sqrt_le_left (by norm_num)).mpr (by linarith only [hqhi])
   have hradius : WaveEdgeExtension.nativeRadius ActualPrimary.h (nativeAt L k x) =
       PolarCharts.radius (PhysicalGraphBounds.liftXY x) / Real.sqrt q := by
     rw [WaveEdgeExtension.nativeRadius_eq_qLength]
@@ -972,11 +972,11 @@ theorem cut_pair_annulus (l : SignedLabel B N0) (L : PhysicalWaveSum.BandLabel)
   have hnhi : ‖PhysicalGraphBounds.liftXY x‖ ≤ outerRadius := by
     apply (PolarCharts.norm_le_radius _).trans
     change _ ≤ 2 * PrimaryTargetBounds.rightRadius ActualPrimary.nominal
-    nlinarith
+    nlinarith only [hrhi, hshi, hb]
   have hnlo : innerRadius ≤ ‖PhysicalGraphBounds.liftXY x‖ := by
     have hh := PolarCharts.radius_le_two_norm (PhysicalGraphBounds.liftXY x)
     change PrimaryTargetBounds.leftRadius ActualPrimary.nominal / 4 ≤ _
-    nlinarith
+    nlinarith only [hrlo, hh, hslo, ha]
   refine ⟨⟨?_, hnlo⟩, ?_⟩
   · simpa only [Metric.mem_closedBall, dist_zero_right] using hnhi
   · have hz := ActualSignedPhysicalData.normalized_slow_norm
@@ -1325,9 +1325,9 @@ theorem cut_pair_source_domain (l : SignedLabel B N0) (L : PhysicalWaveSum.BandL
   have hl : innerRadius ≤ ‖PhysicalGraphBounds.liftXY x‖ := hg.2
   refine ⟨⟨?_, ?_⟩, cut_pair_domain l L k x ht hne⟩
   · change innerRadius / 2 < _
-    linarith [innerRadius_pos]
+    linarith only [hl, innerRadius_pos]
   · change _ < outerRadius + 1
-    linarith
+    linarith only [hu]
 
 theorem potential_source_domain (B N0 : ℕ) (i : Fin 3) (k : Frequency)
     (I : PhysicalWaveSum.WaveIndex 1) (x : LiftPoint)
@@ -1516,7 +1516,7 @@ theorem commonLift_mem_paddedPast (n d : ℕ) {w : ProblemStatement.SpaceTime}
   have hu : ‖PhysicalGraphBounds.scaledRadial n w‖ ≤ outerRadius := by
     simpa only [Metric.mem_closedBall, dist_zero_right] using hann.1
   have hl : innerRadius ≤ ‖PhysicalGraphBounds.scaledRadial n w‖ := hann.2
-  exact ⟨by linarith [innerRadius_pos], by linarith⟩
+  exact ⟨by linarith only [hl, innerRadius_pos], by linarith only [hu]⟩
 
 theorem potentialSmooth (B N0 : ℕ) (i : Fin 3) :
     LocalPhysicalCopyBounds.SmoothData (potentialFamily B N0 i) innerRadius ActualPrimary.h
@@ -3074,12 +3074,12 @@ theorem graph_mem_strip_of_activeX (n d : ℕ) {w : ProblemStatement.SpaceTime}
     apply (sq_lt_sq₀ ha.le hr).mp
     rw [ha2]
     rw [he] at hX
-    linarith [hX.1]
+    linarith only [hX, hX.1]
   have hhi : r < PrimaryTargetBounds.rightRadius ActualPrimary.nominal := by
     apply (sq_lt_sq₀ hr hb.le).mp
     rw [hb2]
     rw [he] at hX
-    linarith [hX.2]
+    linarith only [hX, hX.2]
   exact (BaseContextAssembly.nativeStrip_mem ActualPrimary.nominal ActualPrimary.standardRegion
       x).mpr
     ⟨hs, hlo, hhi⟩

@@ -373,7 +373,7 @@ theorem nonlinear_externalPressure_bound {s : ℕ} (hs : 6 ≤ s) {A : SmoothCoe
     externalPressureNorm period K (N+1) ρ (transportPressure period hs K κ m c hc hpos L hL u v) ≤
       (8*Rc*M*productConstant period 3)*weightedDriftNorm period 6 (N+1) ρ (velocityMap L)
           u*weightedLoss period 6 (N+1) ρ v := by
-  have hhalf : ρ*Rc ≤ 1/2 := by nlinarith [mul_nonneg hρ.le hRc]
+  have hhalf : ρ*Rc ≤ 1/2 := by nlinarith only [hM, hsmall, mul_nonneg hρ.le hRc]
   have hcN : ∀ l, 1 ≤ l → l ≤ N → coefficientBlock period K 6 l ≤ Rc^l*(l.factorial : ℝ)^2 :=
     fun l hl hn => hcoeff l hl (by omega)
   have hp := transportPressure_shifted_drift period hs K κ m c hc hpos N (by
@@ -495,7 +495,7 @@ theorem correctionForcing_uniform_bound {s : ℕ} (hs : 6 ≤ s) {A : SmoothCoef
         transportConstant period B M*weightedNorm period 6 N ρ u*weightedNorm period 6 N ρ v +
         (productConstant period 3*ρ⁻¹+8*Rc*M*productConstant period 3)*weightedDriftNorm period 6 N
             ρ (velocityMap L) u*weightedLoss period 6 N ρ v := by
-  have hhalf : ρ*Rc ≤ 1/2 := by nlinarith [mul_nonneg hρ.le hRc]
+  have hhalf : ρ*Rc ≤ 1/2 := by nlinarith only [hM, hsmall, mul_nonneg hρ.le hRc]
   have hw := weightedCoefficient_uniform period K N ρ Rc B hρ hRc hhalf hB hcoeff
   have hb := baseCoefficientSum_le period K0 B hB0
   have hM0 : 0 ≤ M := zero_le_one.trans hM
@@ -646,14 +646,15 @@ theorem correctionForcing_polynomial {s : ℕ} (hs : 6 ≤ s) {A : SmoothCoeffic
     simpa only [lossConstant] using drift_loss_absorption (productConstant period 3) M Rc ρ B0
       (weightedNorm period 6 N ρ e) (weightedLoss period 6 N ρ e)
       (weightedDriftNorm period 6 N ρ (velocityMap L) (z+e))
-      (productConstant_nonneg period 3) (by linarith) hRc hρ hB0
+      (productConstant_nonneg period 3) (by linarith only [hM]) hRc hρ hB0
       (weightedNorm_nonneg period 6 N ρ hρ e) (weightedLoss_nonneg period 6 N ρ hρ e) hD
   have h := hraw.trans (add_le_add (le_refl _) hloss)
   exact polynomial_assembly (sourceConstant B M) (transportConstant period B M)
     (lossConstant period M*(ρ⁻¹+Rc)) Z0 B0 (productConstant period 3) B1 A0 A2 R
     (weightedNorm period 6 N ρ e) (weightedLoss period 6 N ρ e) (weightedNorm period 6 N ρ (z+e))
     (weightedNorm period 6 N ρ f) _
-    (sourceConstant_nonneg hB (by linarith)) (transportConstant_nonneg period hB (by linarith))
+    (sourceConstant_nonneg hB (by linarith)) (transportConstant_nonneg period hB (by linarith only [
+        hM]))
     (weightedNorm_nonneg period 6 N ρ hρ e) hv hf h
 
 end EulerDriftNonlinearEstimate

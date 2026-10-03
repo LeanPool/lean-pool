@@ -54,7 +54,7 @@ theorem metric_energy_evolution (K : ℝ → H →L[ℝ] H) (e : ℝ → H)
   refine (metric_energy_hasDerivAt K e t K' e' hK he hsym).congr_deriv ?_
   have h := congrArg (fun v => ⟪K t (e t), v⟫_ℝ) heq
   simp only [inner_add_right, hp, add_zero] at h
-  linarith
+  linarith only [h]
 
 theorem energy_derivative_bound (K K' : H →L[ℝ] H) (e transport forcing : H)
     (B : ℝ) (_hB : 0 ≤ B) (ht : |⟪K e, transport⟫_ℝ| ≤ B * ‖e‖ ^ 2) :
@@ -69,7 +69,7 @@ theorem energy_derivative_bound (K K' : H →L[ℝ] H) (e transport forcing : H)
     exact (real_inner_le_norm _ _).trans
       (mul_le_mul_of_nonneg_right (K.le_opNorm e) (norm_nonneg _))
   have ht' := (abs_le.mp ht).1
-  linarith
+  linarith only [hk, hf, ht']
 
 /-- A positive regularization gives a differentiable metric norm even at zero. -/
 theorem regularized_metric_norm_hasDerivAt (K : ℝ → H →L[ℝ] H) (e : ℝ → H)
@@ -81,7 +81,8 @@ theorem regularized_metric_norm_hasDerivAt (K : ℝ → H →L[ℝ] H) (e : ℝ 
       ((⟪K' (e t), e t⟫_ℝ + 2 * ⟪K t (e t), e'⟫_ℝ) /
         (2 * √(⟪K t (e t), e t⟫_ℝ + δ ^ 2))) t := by
   exact HasDerivAt.sqrt
-    ((metric_energy_hasDerivAt K e t K' e' hK he hsym).add_const (δ ^ 2)) (by nlinarith)
+    ((metric_energy_hasDerivAt K e t K' e' hK he hsym).add_const (δ ^ 2)) (by nlinarith only [hpos,
+        hδ])
 
 /-- The norm estimate used before summing Gevrey weights. All terms come from
 the actual differential equation; no estimate for the energy derivative is assumed. -/

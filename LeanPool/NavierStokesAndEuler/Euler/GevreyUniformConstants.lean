@@ -68,7 +68,7 @@ theorem weightedCoefficient_uniform {s : ℕ} {A : SmoothCoefficient period}
     weightedCoefficient period K 6 N ρ ≤ 448*L+1 := by
   have h := weightedCoefficient_le period K N ρ Rc hρ hRc hsmall hcoeff
   have hz := coefficientBlock_zero_le period K L hL
-  linarith
+  linarith only [hsmall, h, hz]
 
 omit [Fact (0 < period)] in
 /-- Summed positive base coefficient derivatives contribute at most 6L. -/
@@ -88,7 +88,7 @@ theorem pressureConstant_le_six {q : ℕ} (hq : q ≤ 6) {A : SmoothCoefficient 
   have h := pressureConstant_polynomial K c L hc hL hcL hcoeff
   have he : 3^q ≤ 729 := by
     exact (Nat.pow_le_pow_right (by norm_num : 1 ≤ 3) hq).trans (by norm_num)
-  exact h.trans (pow_le_pow_right₀ (by linarith : 1 ≤ 9*L) he)
+  exact h.trans (pow_le_pow_right₀ (by linarith only [hL] : 1 ≤ 9*L) he)
 
 omit [Fact (0 < period)] in
 /-- Both fixed inverse orders needed by the actual pressure forcing have the same cutoff-independent

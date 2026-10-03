@@ -99,15 +99,15 @@ theorem linear_growth_bound (E E' : ℝ → ℝ) (A B T : ℝ) (hA : 0 ≤ A) (h
       rw [interior_Icc] at ht
       rw [(hFd t ht).deriv]
       have h := mul_le_mul_of_nonneg_left (hineq t ht) (exp_pos (-A*t)).le
-      have hexp : exp (-A*t) ≤ 1 := exp_le_one_iff.mpr (by nlinarith [ht.1])
+      have hexp : exp (-A*t) ≤ 1 := exp_le_one_iff.mpr (by nlinarith only [hA, ht, ht.1])
       have hBexp := mul_le_mul_of_nonneg_right hexp hB
-      linarith
+      linarith only [h, hBexp]
   intro t ht
   have hF := hanti ⟨le_rfl,hT⟩ ht ht.1
   have hscaled : exp (-A*t)*E t ≤ B*t := by
     dsimp [F] at hF
     simp only [mul_zero,exp_zero,one_mul,sub_zero] at hF
-    linarith
+    linarith only [hzero, hF]
   have heq : exp (A*t)*exp (-A*t)=1 := by rw [← exp_add,show A*t+ -A*t=0 by ring,exp_zero]
   have hE : E t ≤ B*t*exp (A*t) := by
     have h := mul_le_mul_of_nonneg_left hscaled (exp_pos (A*t)).le

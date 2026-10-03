@@ -73,7 +73,7 @@ theorem locallyIntegrable_cover (f : LiftDomain period → F) (hf : MemLp f 2 (l
     have hh := abs_le.mp (hc.trans hd.le)
     change a < z 0 ∧ z 0 ≤ a+period
     dsimp [a]
-    constructor <;> linarith
+    constructor <;> linarith only [hT, hh]
   have hmeasure : (volume : Measure (Domain 4)).restrict (Metric.ball x (period/4)) ≤ stripMeasure
       period a :=
     Measure.restrict_mono hsubset le_rfl

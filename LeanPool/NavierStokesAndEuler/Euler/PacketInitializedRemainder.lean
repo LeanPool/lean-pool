@@ -174,13 +174,13 @@ theorem initializedPrimaryRemainder_physical_fderiv_inv (N : ℕ) (hN : 1 ≤ N)
     ‖fderiv ℝ (fun y => initializedPrimaryRemainder M D τ hτ hτT B δ hδ ξ hs α N k⁻¹
       (t,(Y y,k*inner ℝ D.m₀ (Y y)))) x‖ ≤
       (initializedRemainderDerivativeCost L.R S.H0/k)*‖fderiv ℝ Y x‖ := by
-  have hk0 : k ≠ 0 := by linarith
+  have hk0 : k ≠ 0 := by linarith only [hk]
   have hc := fixedVelocityGradeCost_nonneg L.R S.H0 (zero_le_one.trans L.radius_bounds.1) 2
   have he := sobolevEmbeddingConstant_nonneg period 3
   have hr : 0 ≤ L.R := zero_le_one.trans L.radius_bounds.1
   have hb : 0 ≤ sobolevEmbeddingConstant period 3 *
       ((fixedVelocityGradeCost L.R S.H0 2+2)/k^2)*(4*L.R) := by positivity
-  have hf := frequencyFactor_le_linear k (by linarith) D.m₀
+  have hf := frequencyFactor_le_linear k (by linarith only [hk]) D.m₀
   rw [D.m₀_unit] at hf
   norm_num only at hf
   have h := initializedPrimaryRemainder_physical_fderiv M D hTime τ hτ hτT B δ hδ ξ hs α
@@ -209,7 +209,7 @@ theorem initializedVelocity_gradient_error (N : ℕ) (hN : 1 ≤ N)
       (α/δ) • rankOne ℝ (E := Space) (F := Space) (canonicalVelocity τ hτ hτT B ξ hs t 0)
         (D.normal.field t 0)‖ ≤
       (initializedRemainderDerivativeCost L.R S.H0/k)*‖D.FInv.field t 0‖ := by
-  have hk0 : k ≠ 0 := by linarith
+  have hk0 : k ≠ 0 := by linarith only [hk]
   rw [initializedVelocity_gradient_split M D hTime τ hτ hτT B δ hδ ξ hs α
     N hN k hk0 t X Y hX hY hleft,add_sub_cancel_left]
   have he : Y ∘ X = id := funext hleft

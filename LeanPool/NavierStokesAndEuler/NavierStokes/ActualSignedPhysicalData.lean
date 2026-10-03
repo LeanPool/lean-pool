@@ -223,7 +223,7 @@ theorem width_on_core (label : SlotColoring.Label) (gap : ℕ) (k : Frequency) (
       2 * sys.radius := by
     unfold ChartScales.slotLength
     field_simp
-  exact abs_le.mpr ⟨by nlinarith [mul_nonneg hci.le hv.1], by nlinarith⟩
+  exact abs_le.mpr ⟨by nlinarith only [hci, hv, mul_nonneg hci.le hv.1], by nlinarith only [hb, he]⟩
 
 /-- Native mask, given by `PartitionedCovariance.cutoff sys.radius z.1 *
 PrimaryCopyBounds.outerCutoff (z.2 / ChartScales.slotLength sys.radius h label.1)`. -/
@@ -247,10 +247,10 @@ theorem nativeMask_support (label : SlotColoring.Label) :
   have hL : 0 < ChartScales.slotLength sys.radius h label.1 :=
     div_pos (mul_pos (by norm_num) sys.radius_pos) (ChartScales.timeCoefficient_pos _ _)
   have hv0 : 0 ≤ z.2 := by
-    have he := (le_div_iff₀ hL).mp (show 0 ≤ z.2 / _ by linarith [hv.1])
+    have he := (le_div_iff₀ hL).mp (show 0 ≤ z.2 / _ by linarith only [hv, hv.1])
     simpa only [zero_mul] using he
   have hv1 : z.2 ≤ ChartScales.slotLength sys.radius h label.1 :=
-    (div_le_one hL).mp (by linarith [hv.2])
+    (div_le_one hL).mp (by linarith only [hv, hv.2])
   exact ⟨⟨hu.1.le, hu.2.le⟩, hv0, hv1⟩
 
 /-- The concrete compact native layout used to periodize the same signed
@@ -1108,7 +1108,7 @@ theorem angular_integer (L : NativeLabel f.active) (k : Frequency) :
       one_smul, zero_add, mul_zero,
     mul_one, add_zero] at he
   have hp : ((f.primary L).pulse (f.column L)).phase.p L.val.1 =
-      (G.angular L).mode / (f.primary L).base.frequency L.val.1 := by linarith
+      (G.angular L).mode / (f.primary L).base.frequency L.val.1 := by linarith only [he]
   change (ChartScales.carrier h L.val.1 : ℝ) *
     ((f.primary L).pulse (f.column L)).phase.p L.val.1 = _
   rw [hp, G.frequency L]
@@ -1474,8 +1474,8 @@ omit sys hh f in
 theorem normalized_slow_norm {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2) {p : Plane}
     (ht : 0 < p.1) (hlo : 1 / 2 ≤ SimilarityCoordinates.coordinateQ (2 * h) p)
     (hhi : SimilarityCoordinates.coordinateQ (2 * h) p ≤ 2) : ‖p‖ ≤ 2 := by
-  have he := SimilarityCoordinates.coordinateQ_spec (by linarith : 0 < 2 * h)
-    (by linarith : 2 * h < 1) ht
+  have he := SimilarityCoordinates.coordinateQ_spec (by linarith only [hh] : 0 < 2 * h)
+    (by linarith only [hh1] : 2 * h < 1) ht
   have hq : 0 < SimilarityCoordinates.coordinateQ (2 * h) p := he.1
   dsimp only [SimilarityCoordinates.forwardScalar] at he
   have hp : 1 / 2 ≤ SimilarityCoordinates.coordinateQ (2 * h) p ^ (2 * h) := by
@@ -1483,7 +1483,7 @@ theorem normalized_slow_norm {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2) {p : Plane
     · calc
         1 / 2 ≤ SimilarityCoordinates.coordinateQ (2 * h) p := hlo
         _ = SimilarityCoordinates.coordinateQ (2 * h) p ^ (1 : ℝ) := (Real.rpow_one _).symm
-        _ ≤ _ := Real.rpow_le_rpow_of_exponent_ge hq h1 (by linarith)
+        _ ≤ _ := Real.rpow_le_rpow_of_exponent_ge hq h1 (by linarith only [hh1])
     · exact (by norm_num : (1 / 2 : ℝ) ≤ 1).trans
         (Real.one_le_rpow (le_of_not_ge h1) (by positivity))
   have hprod : 0 ≤ p.2 ^ 2 * SimilarityCoordinates.coordinateQ (2 * h) p ^ (2 * h) :=
@@ -1508,13 +1508,14 @@ theorem primitive_annulus (hh0 : 0 < h) (hh1 : h < 1 / 2) (ha : 0 < a) (hb : 0 <
       ‖PhysicalGraphBounds.liftZT x‖ ≤ 2 := by
   let y := PhysicalClassBounds.cylindricalMap x
   have hy := hloc.normalized L y (Real.sqrt_nonneg _) hm hT
-  have hq : 0 < SimilarityCoordinates.coordinateQ (2 * h) y.2.1 := by linarith [hy.2.1]
+  have hq : 0 < SimilarityCoordinates.coordinateQ (2 * h) y.2.1 := by linarith only [hh0, hh1, hy,
+      hy.2.1]
   have hs := Real.sqrt_pos.mpr hq
   have hslow := normalized_slow_norm hh0 hh1 hy.1 hy.2.1 hy.2.2.1
   have hlo : 1 / 2 ≤ Real.sqrt (SimilarityCoordinates.coordinateQ (2 * h) y.2.1) :=
-    (Real.le_sqrt (by norm_num) hq.le).mpr (by nlinarith [hy.2.1])
+    (Real.le_sqrt (by norm_num) hq.le).mpr (by nlinarith only [hh0, hh1, hy, hy.2.1])
   have hhi : Real.sqrt (SimilarityCoordinates.coordinateQ (2 * h) y.2.1) ≤ 2 :=
-    (Real.sqrt_le_left (by norm_num)).mpr (by linarith [hy.2.2.1])
+    (Real.sqrt_le_left (by norm_num)).mpr (by linarith only [hh0, hh1, hy, hy.2.2.1])
   have hradlo := (le_div_iff₀ hs).mp hy.2.2.2.1
   have hradhi := (div_le_iff₀ hs).mp hy.2.2.2.2
   have hR : y.1 = PolarCharts.radius (PhysicalGraphBounds.liftXY x) := rfl
@@ -1525,7 +1526,7 @@ theorem primitive_annulus (hh0 : 0 < h) (hh1 : h < 1 / 2) (ha : 0 < a) (hb : 0 <
   have hnormlo : a / 4 ≤ ‖PhysicalGraphBounds.liftXY x‖ := by
     have hradius := PolarCharts.radius_le_two_norm (PhysicalGraphBounds.liftXY x)
     have hmul := mul_le_mul_of_nonneg_left hlo ha.le
-    linarith
+    linarith only [hradlo, hradius, hmul]
   constructor
   · exact ⟨by simpa only [Metric.mem_closedBall, dist_zero_right] using hnorm, hnormlo⟩
   · change max ‖x.1.2.2.2‖ ‖x.1.1‖ ≤ 2
@@ -1647,8 +1648,8 @@ noncomputable def carrierRegion (h a b : ℝ) : Set PhysicalGraphBounds.Slow :=
 theorem carrierRegion_open {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2) (a b : ℝ) :
     IsOpen (carrierRegion h a b) :=
   (isOpen_Ioo.preimage continuous_fst).inter
-    ((PhysicalMeanDomain.normalizedSlowDomain_open (by linarith : 0 < 2 * h)
-      (by linarith : 2 * h < 1) (1 / 4) 4).preimage
+    ((PhysicalMeanDomain.normalizedSlowDomain_open (by linarith only [hh] : 0 < 2 * h)
+      (by linarith only [hh1] : 2 * h < 1) (1 / 4) 4).preimage
       (continuous_snd.snd.prodMk continuous_snd.fst))
 
 /-- Carrier profile arguments lie in a fixed open native region. The
@@ -1678,7 +1679,7 @@ theorem carrierRegion_contains {h a b : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2) (ha 
   rw [PhysicalGraphBounds.slotMap_formula, PhysicalGraphBounds.liftXY_physicalLift,
     chart_radius ha4 j hj]
   constructor
-  · exact ⟨by linarith, by linarith⟩
+  · exact ⟨by linarith only [ha, hl, hrlo], by linarith only [hh, hh1, hn, hrhi]⟩
   · simpa only [LocalPhysicalCopyBounds.slotSlow, PhysicalGraphBounds.slotMap_formula,
       PhysicalMeanJetBounds.graph, Function.comp_apply, commonLift_zero,
       PhysicalClassBounds.cylindricalMap, PhysicalClassBounds.slowFast_apply] using hs
@@ -1880,7 +1881,7 @@ theorem commonLift_mem_liftedNativePast (n : ℕ) {w : SpaceTime}
     have hb' : ‖PhysicalGraphBounds.scaledRadial n w‖ ≤ 2 * b := by
       simpa only [Metric.mem_closedBall, dist_zero_right] using hann.1
     have ha' : a / 4 ≤ ‖PhysicalGraphBounds.scaledRadial n w‖ := hann.2
-    exact ⟨by linarith, by linarith⟩
+    exact ⟨by linarith only [ha, ha'], by linarith only [hb']⟩
   · exact PhysicalMeanJetBounds.graph_time_pos h n 0 hw
 
 variable {s : StripData Native} (hloc : PrimitiveLocalization (h := h) f a b s)
@@ -2025,7 +2026,7 @@ theorem potential_source_domain (i : Fin 3) (k : Frequency) (I : PhysicalWaveSum
   have hu : ‖PhysicalGraphBounds.liftXY x‖ ≤ 2 * b := by
     simpa only [Metric.mem_closedBall, dist_zero_right] using hg.1.1
   have hl : a / 4 ≤ ‖PhysicalGraphBounds.liftXY x‖ := hg.1.2
-  exact ⟨by change a / 4 / 2 < _; linarith, by change _ < 2 * b + 1; linarith⟩
+  exact ⟨by change a / 4 / 2 < _; linarith, by change _ < 2 * b + 1; linarith only [hh0, hh1, hu]⟩
 
 theorem pressure_source_domain (k : Frequency) (I : PhysicalWaveSum.WaveIndex 1)
     (x : LiftPoint) (hx : (pressureFamily sys hh f).amplitude k I x ≠ 0) :
@@ -2036,7 +2037,7 @@ theorem pressure_source_domain (k : Frequency) (I : PhysicalWaveSum.WaveIndex 1)
   have hu : ‖PhysicalGraphBounds.liftXY x‖ ≤ 2 * b := by
     simpa only [Metric.mem_closedBall, dist_zero_right] using hg.1.1
   have hl : a / 4 ≤ ‖PhysicalGraphBounds.liftXY x‖ := hg.1.2
-  exact ⟨by change a / 4 / 2 < _; linarith, by change _ < 2 * b + 1; linarith⟩
+  exact ⟨by change a / 4 / 2 < _; linarith, by change _ < 2 * b + 1; linarith only [hh0, hh1, hu]⟩
 
 omit sys hh hloc G hh0 hh1 ha hb in
 theorem carrier_frequencies {P : ℝ} (hP : 1 ≤ P)
@@ -2207,7 +2208,7 @@ theorem polarCoordinates_valid {a : ℝ} (ha : 0 < a) (j : PolarCharts.Index)
     rw [← PolarCharts.radius_rotate j]
     apply PolarCharts.radius_pos_of_fst_pos
     have hx' : a / 4 < (PolarCharts.rotate j (PhysicalGraphBounds.radialProjection x)).1 := hx
-    linarith
+    linarith only [ha, hx']
   change 0 < (PhysicalCurlCovariance.polarCoordinates a j x).2 0 ∧ _
   refine ⟨?_, ?_, ?_⟩
   · rwa [PhysicalCurlCovariance.polarCoordinates_radius ha j hx]

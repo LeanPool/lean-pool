@@ -234,7 +234,7 @@ def firstChildLowBounds (hL : H.L = 0) (hquarter : A.ell ≤ 1 / 4)
     (A.sourceAgreement m hm J support hSupport H) N hN k hk
   let V := forwardInitializedNormalizedField (A.meanData H)
     (A.transverseData m hm J support hSupport) rfl δ hδ ξ hs (δ*hchild) N k
-  have hkinv : k*k⁻¹=1 := mul_inv_cancel₀ (by linarith : k ≠ 0)
+  have hkinv : k*k⁻¹=1 := mul_inv_cancel₀ (by linarith only [hk] : k ≠ 0)
   let EC := E.child m hm J support hSupport Q residual V rfl G hG k hkinv hgraph nextEll hnext
       hnext1
   let Cnew := CM+hchild*firstRatio+ev

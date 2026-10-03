@@ -148,14 +148,14 @@ theorem cauchySeq_of_norm_le {X : Type*} [NormedAddCommGroup X]
     (hbound : ∀ m n, ‖u m - u n‖ ≤ C * |a m - a n|) : CauchySeq u := by
   apply Metric.cauchySeq_iff.mpr
   intro ε hε
-  have hd : 0 < ε/(C+1) := div_pos hε (by linarith)
+  have hd : 0 < ε/(C+1) := div_pos hε (by linarith only [hC])
   obtain ⟨N,hN⟩ := Metric.cauchySeq_iff.mp ha (ε/(C+1)) hd
   refine ⟨N,fun m hm n hn => ?_⟩
   rw [dist_eq_norm]
   have hdist : |a m-a n| < ε/(C+1) := by simpa only [Real.dist_eq] using hN m hm n hn
   have h := mul_le_mul_of_nonneg_left hdist.le hC
   have hlast : C*(ε/(C+1)) < ε := by
-    have hh : C/(C+1) < 1 := (div_lt_one (by linarith : 0 < C+1)).mpr (by linarith)
+    have hh : C/(C+1) < 1 := (div_lt_one (by linarith : 0 < C+1)).mpr (by linarith only)
     have hm := mul_lt_mul_of_pos_right hh hε
     calc
       C*(ε/(C+1)) = (C/(C+1))*ε := by ring

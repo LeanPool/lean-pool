@@ -87,9 +87,9 @@ theorem entrance_lt_cap {lo : ℝ} (hlo : NominalConeAssembly.activeLeft W < lo)
   have hr := Real.one_lt_exp_iff.mpr W.controls.referenceWidth_pos
   apply lt_min hlo
   apply lt_min
-  · nlinarith
+  · nlinarith only [H, ha, ht]
   · dsimp [analyticEnd]
-    nlinarith
+    nlinarith only [ha, hr]
 
 theorem window_order {lo : ℝ} (hlo : NominalConeAssembly.activeLeft W < lo) :
     NominalConeAssembly.activeLeft W < zeroEnd W H lo ∧
@@ -97,7 +97,7 @@ theorem window_order {lo : ℝ} (hlo : NominalConeAssembly.activeLeft W < lo) :
     cutoffInner W H lo < cutoffStop W H lo ∧ cutoffStop W H lo < windowCap W H lo := by
   have hm := entrance_lt_cap W H hlo
   dsimp [zeroEnd, cutoffInner, cutoffStop]
-  constructor <;> [skip; constructor] <;> [skip; skip; constructor] <;> linarith
+  constructor <;> [skip; constructor] <;> [skip; skip; constructor] <;> linarith only [H, hm]
 
 theorem cutoffStop_lt_lo {lo : ℝ} (hlo : NominalConeAssembly.activeLeft W < lo) :
     cutoffStop W H lo < lo :=
@@ -135,7 +135,7 @@ theorem analyticEnd_lt_patch :
         norm_num) (ReservedPatches.left_pos F W.controls.radius W.controls.radius_pos
             .positive).le)]
   dsimp [analyticEnd, NominalConeAssembly.activeLeft]
-  linarith
+  linarith only [hb]
 
 theorem cutoffStop_lt_radius {lo : ℝ} (hlo : NominalConeAssembly.activeLeft W < lo) :
     cutoffStop W H lo < nominalRadius W ^ 2 :=
@@ -287,7 +287,7 @@ theorem base_beta_axis {eta : ℝ} (heta : eta ∈ S) :
     have hc : R ^ 2 / 2 < cutoffInner W H lo := by
       have hh := (sq_lt_sq₀ hR.1.le hs.le).2 hR.2
       rw [Real.sq_sqrt (cutoffInner_pos W H hlo).le] at hh
-      linarith [sq_nonneg R]
+      linarith only [H, hh, sq_nonneg R]
     dsimp only
     rw [← xProfile_radius (scheme W H Q M hlo).base.beta hR.1.le eta,
       base_beta_pos W H Q M hlo (div_pos (sq_pos_of_pos hR.1) (by norm_num)) hc heta,
@@ -318,7 +318,7 @@ theorem baseAgreement : BaseAgreement (scheme W H Q M hlo) (nominalHierarchy W) 
 theorem small_lt_entrance : nominalInner W < NominalConeAssembly.activeLeft W := by
   have hp := NominalConeAssembly.activeLeft_pos W
   change NominalConeAssembly.activeLeft W / 4 < NominalConeAssembly.activeLeft W
-  linarith
+  linarith only [hp]
 
 include hlo in
 theorem small_lt_cutoffInner : nominalInner W < cutoffInner W H lo :=
@@ -429,7 +429,8 @@ theorem positive_densities_zero {n : ℕ} (hn : 0 < n) {R eta : ℝ}
       calc
         R ^ 2 ≤ (Real.sqrt (2 * zeroEnd W H lo)) ^ 2 := (sq_le_sq₀ hR.1 (Real.sqrt_nonneg _)).2 hR.2
         _ = 2 * zeroEnd W H lo := Real.sq_sqrt (mul_nonneg (by norm_num) (zeroEnd_pos W H hlo).le)
-    have hc : R ^ 2 / 2 < cutoffInner W H lo := by linarith [(window_order W H hlo).2.1]
+    have hc : R ^ 2 / 2 < cutoffInner W H lo := by linarith only [H, hs, hlo,
+        (window_order W H hlo).2.1]
     have hz := positive_coefficients_zero W H Q M hlo hn (p := (R ^ 2 / 2, eta))
       (div_pos (sq_pos_of_ne_zero hR0) (by norm_num)) hc heta
     simp only [SlowResidualMatching.thetaDensity, SlowResidualMatching.zDensity,
@@ -465,7 +466,7 @@ theorem natural_densities_zero {R eta : ℝ}
       have hsq := (sq_lt_sq₀ hr.1.le hb.le).2 hr.2
       dsimp only [b] at hsq
       rwa [Real.sq_sqrt (mul_nonneg (by norm_num) (NominalConeAssembly.activeLeft_pos W).le)] at hsq
-    have he : r ^ 2 / 2 < NominalConeAssembly.activeLeft W := by linarith
+    have he : r ^ 2 / 2 < NominalConeAssembly.activeLeft W := by linarith only [hs]
     have hz := zero_coefficients W H Q M hlo (p := (r ^ 2 / 2, eta))
       (div_pos (sq_pos_of_pos hr.1) (by norm_num)) he heta
     dsimp only [f]
@@ -508,7 +509,7 @@ theorem extendCoreZero_zero_prefix {T : Set ℝ} (w : ParametricRadialExtension.
     change _ * (w.bump p.2 * f (Real.sqrt (2 * p.1), w.parameterMap p.2)) = 0
     rw [hz _ (w.parameterMap_mem _) _ ⟨Real.sqrt_nonneg _,
       Real.sqrt_le_sqrt (mul_le_mul_of_nonneg_left hp (by norm_num))⟩, mul_zero, mul_zero]
-  · exact extendCoreZero_zero_left w hcore f (by linarith)
+  · exact extendCoreZero_zero_left w hcore f (by linarith only [hcore, hx])
 
 /-- Every positive stress coefficient vanishes strictly past the natural
 entrance, with one order-independent endpoint. -/
@@ -754,7 +755,7 @@ theorem aligned_finiteIdentities :
       (alignedCoefficients W H Q M hlo) (asSlowProfiles (scheme W H Q M hlo)) := by
   apply ConstructedSlowBase.repaired_finiteIdentities (smallLocalization W H Q M hlo)
     (smallBaseAgreement W H Q M hlo) (smallZeroOrder W H Q M hlo) M.contains
-    W.axis.small.h_pos (by linarith [W.axis.small.h_le]) rfl
+    W.axis.small.h_pos (by linarith only [W.axis.small.h_le]) rfl
   intro n p hp
   exact pressureCoefficient_zero W H Q M hlo n hp.1 (M.contains ⟨hp.2.1.le, hp.2.2.le⟩)
 
@@ -1089,7 +1090,7 @@ theorem modulated_weighted_on_actual_scales {a : ℕ → ℕ} {c : ℝ} (hc : 0 
       ring
     rw [he]
     exact hz.le
-  · exact Real.exp_lt_exp.mpr (by linarith)
+  · exact Real.exp_lt_exp.mpr (by linarith only)
   · exact modulated_higherInteriorSupport H v
   · intro p hp
     have hz := modulated_positive_stress_zero H v (by decide : 0 < 1) hp.le
@@ -1226,7 +1227,7 @@ theorem uniform_envelope {ι E F : Type*} [NormedAddCommGroup E] [NormedSpace �
     have hsum := Finset.single_le_sum (fun k _ => (hC k).le)
       (Finset.mem_range.mpr (Nat.lt_succ_of_le hj))
     simpa only [oneDomain, pow_zero, mul_one] using (hbound j i x hx).trans
-      (mul_le_mul_of_nonneg_right (by linarith) (hw i))
+      (mul_le_mul_of_nonneg_right (by linarith only [hsum]) (hw i))
 
 /-- Sum region, given by `Ioi 0 ×ˢ (Ioi 0 ×ˢ univ)`. -/
 noncomputable def sumRegion : Set Chart := Ioi 0 ×ˢ (Ioi 0 ×ˢ univ)
@@ -1313,7 +1314,7 @@ theorem normalized_error_envelope {ι : Type*} {h qlo qhi lo hi : ℝ}
     have hs : Q i * y.1 ≤ 1 :=
       (mul_le_mul_of_nonneg_left hy.1.2.le (hQ i).le).trans (hsmall i)
     have hr : y.1 ^ (2 * h) ≤ qhi ^ (2 * h) :=
-      Real.rpow_le_rpow hrho.le hy.1.2.le (by linarith)
+      Real.rpow_le_rpow hrho.le hy.1.2.le (by linarith only [hh])
     calc
       _ ≤ ‖SlowBorelBase.blownJet j f (Q i * y.1, y.2)‖ * K ^ j := hscaled
       _ ≤ (B * (Q i * y.1) ^ (2 * h)) * K ^ j :=
@@ -1405,17 +1406,17 @@ theorem normalizedCoordinates_eq (h : ℝ) (p : Slow) :
 theorem normalizedCoordinates_smoothAt {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {p : Slow} (hT : 0 < p.2.2) : ContDiffAt ℝ ∞ (normalizedCoordinates h) p :=
   (SlowBorelBase.physicalChart_smoothAt hh hh1 (show (physicalInput p).1 < 1 by
-    dsimp [physicalInput]; linarith)).comp p physicalInput_smooth.contDiffAt
+    dsimp [physicalInput]; linarith only [hT])).comp p physicalInput_smooth.contDiffAt
 
 theorem normalizedCoordinates_q_pos {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {p : Slow} (hT : 0 < p.2.2) : 0 < (normalizedCoordinates h p).1 :=
   SlowBorelBase.physicalChart_positive hh hh1 (show (physicalInput p).1 < 1 by
-    dsimp [physicalInput]; linarith)
+    dsimp [physicalInput]; linarith only [hT])
 
 theorem normalizedCoordinates_eta {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {p : Slow} (hT : 0 < p.2.2) : |(normalizedCoordinates h p).2.2| < 1 :=
-  PhysicalCoordinateBounds.physicalEta_abs_lt_one (by linarith) (by linarith)
-    (show (physicalInput p).1 < 1 by dsimp [physicalInput]; linarith)
+  PhysicalCoordinateBounds.physicalEta_abs_lt_one (by linarith only [hh]) (by linarith only [hh1])
+    (show (physicalInput p).1 < 1 by dsimp [physicalInput]; linarith only [hT])
 
 /-- These are only pointwise geometric restrictions on the actual chart,
 not coordinate-derivative or base-field estimates. -/
@@ -1459,15 +1460,15 @@ theorem physicalChart_jet_bound {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
       ‖iteratedFDeriv ℝ j (SlowBorelBase.physicalChart h) p‖ ≤
         C * (SlowBorelBase.physicalChart h p).1 ^ (-(j : ℝ)) := by
   obtain ⟨C, hC, hb⟩ := PhysicalCoordinateBounds.physical_coordinate_derivative_bounds
-    (show 0 < 2 * h by linarith) (show 2 * h < 1 by linarith) lo hi qhi j
+    (show 0 < 2 * h by linarith only [hh]) (show 2 * h < 1 by linarith only [hh1]) lo hi qhi j
   refine ⟨C, hC, fun p hp hq hX => ?_⟩
   have hj : (j : WithTop ℕ∞) ≤ ∞ := ENat.natCast_le_of_coe_top_le_withTop le_rfl j
   have hqj := (PhysicalCoordinateBounds.physicalQ_contDiffAt
-    (show 0 < 2 * h by linarith) (show 2 * h < 1 by linarith) hp).of_le hj
+    (show 0 < 2 * h by linarith only [hh]) (show 2 * h < 1 by linarith only [hh1]) hp).of_le hj
   have hxj := (PhysicalCoordinateBounds.physicalX_contDiffAt
-    (show 0 < 2 * h by linarith) (show 2 * h < 1 by linarith) hp).of_le hj
+    (show 0 < 2 * h by linarith only [hh]) (show 2 * h < 1 by linarith only [hh1]) hp).of_le hj
   have hej := (PhysicalCoordinateBounds.physicalEta_contDiffAt
-    (show 0 < 2 * h by linarith) (show 2 * h < 1 by linarith) hp).of_le hj
+    (show 0 < 2 * h by linarith only [hh]) (show 2 * h < 1 by linarith only [hh1]) hp).of_le hj
   obtain ⟨bq, be, bx⟩ := hb p hp hq hX
   change ‖iteratedFDeriv ℝ j (fun y => (PhysicalCoordinateBounds.physicalQ (2 * h) y,
     (PhysicalCoordinateBounds.physicalX (2 * h) y, PhysicalCoordinateBounds.physicalEta (2 * h)
@@ -1498,7 +1499,7 @@ theorem normalizedCoordinates_polynomial {ι : Type*} {D : Domain ι Slow}
     refine ⟨(N.factorial : ℝ) * A * B ^ N, by positivity, ?_⟩
     intro i p hp
     have hT := H.time i p hp
-    have hphys : (physicalInput p).1 < 1 := by dsimp [physicalInput]; linarith
+    have hphys : (physicalInput p).1 < 1 := by dsimp [physicalInput]; linarith only [hT]
     have hq := normalizedCoordinates_q_pos hh hh1 hT
     have houter (j : ℕ) (hj : j ≤ N) :
         ‖iteratedFDeriv ℝ j (SlowBorelBase.physicalChart h) (physicalInput p)‖ ≤ A := by
@@ -1520,7 +1521,7 @@ theorem normalizedCoordinates_polynomial {ι : Type*} {D : Domain ι Slow}
     have hmap : MapsTo physicalInput U V := by
       intro q hq
       have ht : 0 < q.2.2 := hq
-      exact ⟨by change 1 - q.2.2 < 1; linarith, mem_univ _⟩
+      exact ⟨by change 1 - q.2.2 < 1; linarith only [ht], mem_univ _⟩
     have hpnorm : p ∈ Metric.closedBall (0 : Slow) M := by
       simpa only [Metric.mem_closedBall, dist_zero_right] using H.bounded i p hp
     have hchain := norm_iteratedFDerivWithin_comp_le hF physicalInput_smooth.contDiffOn
@@ -1667,7 +1668,7 @@ theorem actual_estimates {ι : Type*} {D : Domain ι Slow}
     simp only [axial, leadingAxial, axialError, Function.comp_apply, smul_eq_mul, mul_sub,
         SlowBorelBase.scaleMap_apply]
   have hw i p (_hp : p ∈ (unitScale D).carrier i) : Q i ^ (2 * h) ≤ 1 :=
-    Real.rpow_le_one (hQ i).le (hQ1 i) (by linarith)
+    Real.rpow_le_one (hQ i).le (hQ1 i) (by linarith only [hh])
   refine ⟨hF, hG, h0.1, h0.2, ?_, ?_⟩
   · exact ((hF.to_polynomial hw).add h0.1).congr (fun _ _ _ => sub_add_cancel _ _)
   · exact ((hG.to_polynomial hw).add h0.2).congr (fun _ _ _ => sub_add_cancel _ _)
@@ -1730,12 +1731,12 @@ theorem Estimates.localBaseBounds {ι : Type*} {D : Domain ι Slow} {Q : ι → 
   obtain ⟨BF, hBF, hBFj⟩ := polynomial_unit_bound H.leading_frequency 2
   obtain ⟨BG, hBG, hBGj⟩ := polynomial_unit_bound H.leading_axial 2
   let K := CF + CG + BF + BG + 1
-  have hK : 1 ≤ K := by dsimp [K]; linarith
-  have hCFK : CF ≤ K := by dsimp [K]; linarith
-  have hCGK : CG ≤ K := by dsimp [K]; linarith
-  have hBFK : BF ≤ K := by dsimp [K]; linarith
-  have hBGK : BG ≤ K := by dsimp [K]; linarith
-  refine ⟨2 * K, by linarith, fun i => ?_⟩
+  have hK : 1 ≤ K := by dsimp [K]; linarith only [hCF, hCG, hBF, hBG]
+  have hCFK : CF ≤ K := by dsimp [K]; linarith only [hCG, hBF, hBG]
+  have hCGK : CG ≤ K := by dsimp [K]; linarith only [hCF, hBF, hBG]
+  have hBFK : BF ≤ K := by dsimp [K]; linarith only [hCF, hCG, hBG]
+  have hBGK : BG ≤ K := by dsimp [K]; linarith only [hCF, hCG, hBF]
+  refine ⟨2 * K, by linarith only [hCF, hCG, hBF, hBG], fun i => ?_⟩
   have hsquare : (Q i ^ h) ^ 2 = Q i ^ (2 * h) := by
     rw [← Real.rpow_mul_natCast (hQ i).le]
     congr 1
@@ -1819,7 +1820,7 @@ theorem physicalChart_band {h Q : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     SlowBorelBase.physicalChart h
       (SimilarityHomogeneity.physicalScale h Q (physicalInput p)) =
       SlowBorelBase.scaleMap Q (normalizedCoordinates h p) := by
-  have hp : (physicalInput p).1 < 1 := by dsimp [physicalInput]; linarith
+  have hp : (physicalInput p).1 < 1 := by dsimp [physicalInput]; linarith only [hT]
   simp only [SlowBorelBase.physicalChart_eq, SimilarityHomogeneity.q_physicalScale hh hh1 hQ hp,
     SimilarityHomogeneity.inner_physicalScale hh hh1 hQ hp,
     SlowBorelBase.scaleMap_apply, normalizedCoordinates]
@@ -1862,7 +1863,7 @@ noncomputable def bandPoint (h Q : ℝ) (p : Slow) : ProblemStatement.SpaceTime 
 theorem bandPoint_time {h Q : ℝ} (hQ : 0 < Q) {p : Slow} (hT : 0 < p.2.2) :
     (bandPoint h Q p).1 < 1 := by
   change 1 - Q * p.2.2 < 1
-  linarith [mul_pos hQ hT]
+  linarith only [hQ, hT, mul_pos hQ hT]
 
 theorem bandPoint_profile {h Q : ℝ} (hQ : 0 ≤ Q) (p : Slow) :
     AxisymmetricFields.profilePoint (bandPoint h Q p).1 (bandPoint h Q p).2 =
@@ -2038,7 +2039,7 @@ noncomputable def positiveCellDomain (h lo hi : ℝ) (N : ℕ) : Domain (CellInd
   one_le_scale L := by
     have hn : (1 : ℝ) ≤ L.val.val.1 := by exact_mod_cast L.val.property.1
     change 1 ≤ (L.val.val.1 : ℝ) ^ 2
-    nlinarith
+    nlinarith only [hn]
 
 theorem positiveCellDomain_convex (h lo hi : ℝ) (N : ℕ) (L : CellIndex h lo hi N) :
     Convex ℝ ((positiveCellDomain h lo hi N).carrier L) :=
@@ -2624,7 +2625,7 @@ theorem compact_signedShear_bounds {K : Set Slow} (hK : IsCompact K)
     apply PrimaryRepresentatives.referenceCone_of_shear_coordinates (hFp p hp) (hap p hp)
     have he := shear_size_mul (c := c p) (hap p hp).ne'
     have hm := mul_lt_mul_of_pos_left (hv p hp) (hap p hp)
-    nlinarith
+    nlinarith only [he, hm]
   have hTar : ∀ p ∈ K, PrimaryRepresentatives.TargetCone (F p) (F p • !₂[-a p, -c p]) (T p) :=
     fun p hp => targetCone_of_signedShear (hFp p hp) (hap p hp) (hv p hp) (T p)
       (hin p hp) (hquad p hp)

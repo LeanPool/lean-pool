@@ -59,13 +59,13 @@ theorem parameterClamp_mem (eta : ℝ) : parameterClamp eta ∈ ReferencePath.pa
   have hs1 := OutgoingSchedule.sigma_le_one (20 * (eta ^ 2 - 1) - 1)
   have hnorm : |parameterClamp eta| < 11 / 10 := by
     by_cases h : eta ^ 2 < 11 / 10
-    · have he : |eta| < 11 / 10 := by nlinarith [sq_abs eta, abs_nonneg eta]
+    · have he : |eta| < 11 / 10 := by nlinarith only [h, sq_abs eta, abs_nonneg eta]
       calc
         |parameterClamp eta| = |eta| * (1 - OutgoingSchedule.sigma (20 * (eta ^ 2 - 1) - 1)) := by
           rw [parameterClamp, abs_mul, abs_of_nonneg (sub_nonneg.mpr hs1)]
-        _ ≤ |eta| := mul_le_of_le_one_right (abs_nonneg eta) (by linarith)
+        _ ≤ |eta| := mul_le_of_le_one_right (abs_nonneg eta) (by linarith only [hs0])
         _ < 11 / 10 := he
-    · have hs := OutgoingSchedule.sigma_one (show 1 ≤ 20 * (eta ^ 2 - 1) - 1 by linarith)
+    · have hs := OutgoingSchedule.sigma_one (show 1 ≤ 20 * (eta ^ 2 - 1) - 1 by linarith only [h])
       simp only [parameterClamp, hs, sub_self, mul_zero, abs_zero]
       norm_num
   simpa only [ReferencePath.parameterInterval, NaturalAxisCoefficients.window, mem_Ioo,
@@ -75,7 +75,7 @@ theorem parameterClamp_eventuallyEq {eta : ℝ} (hη : eta ∈ Icc (-1 : ℝ) 1)
     parameterClamp =ᶠ[𝓝 eta] id := by
   have hs : eta ^ 2 ≤ 1 := (sq_le_one_iff_abs_le_one eta).mpr (abs_le.mpr hη)
   have hn : {x : ℝ | x ^ 2 < 21 / 20} ∈ 𝓝 eta :=
-    (continuousAt_id.pow 2).eventually (Iio_mem_nhds (by linarith : eta ^ 2 < 21 / 20))
+    (continuousAt_id.pow 2).eventually (Iio_mem_nhds (by linarith only [hs] : eta ^ 2 < 21 / 20))
   filter_upwards [hn] with x hx
   exact parameterClamp_eq hx.le
 
@@ -90,7 +90,7 @@ theorem radialClamp_smooth (scale : ℝ) : ContDiff ℝ ∞ (radialClamp scale) 
 theorem radialClamp_eq {scale X : ℝ} (hscale : 0 < scale) (hX : 0 ≤ X) :
     radialClamp scale X = X := by
   simp [radialClamp, OutgoingSchedule.sigma_one (show 1 ≤ scale * X + 2 by
-    linarith [mul_nonneg hscale.le hX])]
+    linarith only [hscale, hX, mul_nonneg hscale.le hX])]
 
 theorem radialClamp_mem {scale : ℝ} (hscale : 0 < scale) (X : ℝ) :
     -20 < scale * radialClamp scale X := by
@@ -100,12 +100,12 @@ theorem radialClamp_mem {scale : ℝ} (hscale : 0 < scale) (X : ℝ) :
   · simp [radialClamp, OutgoingSchedule.sigma_zero h]
   · by_cases hX : 0 ≤ X
     · rw [radialClamp_eq hscale hX]
-      linarith [mul_nonneg hscale.le hX]
+      linarith only [h, mul_nonneg hscale.le hX]
     · have hXn : X ≤ 0 := (lt_of_not_ge hX).le
       have hm : scale * X ≤ scale * X * OutgoingSchedule.sigma (scale * X + 2) := by
-        nlinarith [mul_nonpos_of_nonneg_of_nonpos hscale.le hXn]
+        nlinarith only [hs1, hscale, hXn, mul_nonpos_of_nonneg_of_nonpos hscale.le hXn]
       dsimp [radialClamp]
-      linarith
+      linarith only [h, hm]
 
 /-- Strip, given by `{p | -20 < scale * p.1 ∧ p.2 ∈ ReferencePath.parameterInterval}`. -/
 noncomputable def strip (scale : ℝ) : Set Point :=
@@ -604,7 +604,7 @@ theorem driftBudget_weighted {F : OutgoingProfile.Profile} {N : ℕ}
   have hm := (le_div_iff₀ (mul_pos (by norm_num : (0 : ℝ) < 4) (mul_pos q.normalizer_pos hd))).mp
     (min_le_right 1 (rho / (4 * (q.normalizer * driftFactor N q.axial q.angular))))
   change driftBudget q rho * (4 * (q.normalizer * driftFactor N q.axial q.angular)) ≤ rho at hm
-  linarith
+  linarith only [hm]
 
 theorem normalized_debt_small_of_budgets {F : OutgoingProfile.Profile} {A :
     NominalProfile.AxisStage F}
@@ -621,10 +621,10 @@ theorem normalized_debt_small_of_budgets {F : OutgoingProfile.Profile} {A :
     (driftBudget_pos q hrho).le (driftBudget_le_one q rho) hC hsep hdef
   have hpre : q.normalizer * prefixBudget q B K BJ c.shapeTime A.normalization < rho / 4 := by
     have hh := (lt_div_iff₀ (mul_pos (by norm_num : (0 : ℝ) < 4) q.normalizer_pos)).mp hp
-    linarith
+    linarith only [hh]
   have hrest := driftBudget_weighted q rho
   intro n hn eta hη
-  exact (hb n hn eta hη).trans_lt (by linarith)
+  exact (hb n hn eta hη).trans_lt (by linarith only [hrho, hpre, hrest])
 
 /-- Matching bounds data, collecting `separation`, `normalized_jets`, `shape_slope`. -/
 structure MatchingBounds {F : OutgoingProfile.Profile} {A : NominalProfile.AxisStage F}
@@ -723,7 +723,7 @@ theorem exists_ordered_matching_threshold (F : OutgoingProfile.Profile) (N : ℕ
   have hd1 : delta ≤ 1 := driftBudget_le_one q rho
   let eps := delta / 3
   have heps : 0 < eps := by dsimp [eps]; positivity
-  have heps1 : eps ≤ 1 := by dsimp [eps]; linarith
+  have heps1 : eps ≤ 1 := by dsimp [eps]; linarith only [hd1]
   refine ⟨eps, heps, heps1, ?_⟩
   intro j hjbound hj prep
   obtain ⟨D, hD, hDb⟩ := TransitionRamp.finite_majorant
@@ -743,7 +743,7 @@ theorem exists_ordered_matching_threshold (F : OutgoingProfile.Profile) (N : ℕ
       ReferenceJetBounds.jetConstant prep.inputs.coefficients 0 n / Λ ≤ delta / 3 := by
     apply (div_le_iff₀ hΛ).mpr
     have hm := (div_le_iff₀ hd).mp hLD
-    linarith [hDb n hn]
+    linarith only [hm, hDb, hn, hDb n hn]
   obtain ⟨B, hB, K, hK, BJ0, hBJ0, hseed⟩ := TransitionRamp.ordered_seed_bounds
     prep.inputs hΛ hj prep.sigma_pos hnatural F.axisDatum_contDiff N
   let BJ := max BJ0 q.logarithm
@@ -790,7 +790,7 @@ theorem exists_ordered_matching_threshold (F : OutgoingProfile.Profile) (N : ℕ
     change ReferenceJetBounds.jetConstant prep.inputs.coefficients 0 n / Λ + eps + |j| ≤ delta
     have hjb : |j| ≤ delta / 3 := hjbound
     dsimp [eps]
-    linarith [hcoef n hn]
+    linarith only [hjb, hcoef, hn, hcoef n hn]
   refine ⟨hcsep, normalized_debt_small_of_budgets c q hsj (zero_le_one.trans hB)
     (zero_le_one.trans hK) hBJ hqJ hrho hC1 hcsep.le hcp hdef, ?_⟩
   intro y eta hη
@@ -798,7 +798,7 @@ theorem exists_ordered_matching_threshold (F : OutgoingProfile.Profile) (N : ℕ
   have hlog := (q.logarithm_jets eta hη 0 (Nat.zero_le _)).trans hqJ
   simp only [iteratedDeriv_zero] at hli hlog
   have hdata : |ShapeTransition.logShape eta - c.initialShape eta| ≤ 2 * BJ :=
-    (abs_sub _ _).trans (by linarith)
+    (abs_sub _ _).trans (by linarith only [hj, hΛlarge, hClarge, hli, hlog])
   simp only [hcT]
   exact hslopes c.initialShape C y eta hdata
 
@@ -951,7 +951,7 @@ theorem exists_nominal_witness {F : OutgoingProfile.Profile} {D : ℝ}
   have hj : 0 < j := lt_min (by positivity) (by norm_num)
   have hjbound : |j| ≤ eps := by
     rw [abs_of_pos hj]
-    exact (min_le_left _ _).trans (by linarith)
+    exact (min_le_left _ _).trans (by linarith only [heps])
   have hsmall : NaturalAxisData.SmallParameters F.data.h j :=
     ⟨F.data.h_pos, hh, hj, (min_le_right _ _).trans (by norm_num)⟩
   obtain ⟨Λ0, hΛ0, hscale⟩ := hordered j hjbound hsmall
@@ -977,7 +977,7 @@ theorem exists_nominal_with_small_coefficients {F : OutgoingProfile.Profile} {D 
       pow_le_pow_of_le_one htau.le ht1 (show 1 ≤ N + 1 by omega)
   have hradius : tau ^ (N + 1) ≤ NominalProfile.resetSolver.radius :=
     hpow.trans ((hmax.trans (min_le_right _ _)).trans
-      (by linarith [NominalProfile.resetSolver.radius_pos]))
+      (by linarith only [NominalProfile.resetSolver.radius_pos]))
   obtain ⟨W, hw⟩ := exists_nominal_witness hF hP hh N (pow_pos htau _) hradius
   refine ⟨W, hw, hk W.controls hw.separation.le tau htau hmax ?_⟩
   exact fun n hn eta hη => (hw.normalized_jets n hn eta hη).le
@@ -989,7 +989,7 @@ theorem nominal_witness_exists {F : OutgoingProfile.Profile} {D : ℝ}
     (show 0 < NominalProfile.resetSolver.radius / 2 by
       exact div_pos NominalProfile.resetSolver.radius_pos (by norm_num))
     (show NominalProfile.resetSolver.radius / 2 ≤ NominalProfile.resetSolver.radius by
-      linarith [NominalProfile.resetSolver.radius_pos])
+      linarith only [NominalProfile.resetSolver.radius_pos])
   exact ⟨W⟩
 
 end NavierStokes.MatchingDebtBounds

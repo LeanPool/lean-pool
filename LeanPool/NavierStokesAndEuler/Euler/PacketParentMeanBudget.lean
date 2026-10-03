@@ -107,8 +107,8 @@ theorem radius_guards (q : ℕ) (T Ti R C C₁ C₂ L : ℝ)
   have hgc' := mul_nonneg hgc hr
   unfold radius
   constructor
-  · linarith
-  constructor <;> linarith
+  · linarith only [hg', hgc']
+  constructor <;> linarith only [hw', hgc', hg']
 
 variable (D : EulerMeanPacketProvider.Data) (q : ℕ) (Ti R C C₁ C₂ : ℝ)
   (hT : D.T ≤ 1) (hTi : D.T⁻¹ ≤ Ti) (hR : 1024 ≤ R)

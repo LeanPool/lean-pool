@@ -58,7 +58,7 @@ theorem slopeCutoff_smooth (δ : ℝ) : ContDiff ℝ ∞ (slopeCutoff δ) :=
 theorem slopeCutoff_mem (δ t : ℝ) : slopeCutoff δ t ∈ Icc (0 : ℝ) 1 := by
   have hlo := Real.smoothTransition.nonneg ((t - δ) / δ)
   have hhi := Real.smoothTransition.le_one ((t - δ) / δ)
-  constructor <;> dsimp [slopeCutoff] <;> linarith
+  constructor <;> dsimp [slopeCutoff] <;> linarith only [hhi, hlo]
 
 theorem slopeCutoff_one {δ t : ℝ} (hδ : 0 < δ) (ht : t ≤ δ) : slopeCutoff δ t = 1 := by
   rw [slopeCutoff, Real.smoothTransition.zero_of_nonpos
@@ -66,7 +66,7 @@ theorem slopeCutoff_one {δ t : ℝ} (hδ : 0 < δ) (ht : t ≤ δ) : slopeCutof
 
 theorem slopeCutoff_zero {δ t : ℝ} (hδ : 0 < δ) (ht : 2 * δ ≤ t) : slopeCutoff δ t = 0 := by
   rw [slopeCutoff, Real.smoothTransition.one_of_one_le
-    ((le_div_iff₀ hδ).2 (by linarith)), sub_self]
+    ((le_div_iff₀ hδ).2 (by linarith only [ht])), sub_self]
 
 /-- Damped slope, defined pointwise by `slopeCutoff δ p.1 * radialPartial G p`. -/
 def dampedSlope (δ : ℝ) (G : ProfileHistories.Field) : ProfileHistories.Field :=
@@ -122,7 +122,7 @@ theorem continuation_eq_natural {T δ : ℝ} (hT : 0 < T) (hδ : 0 < δ) (hδT :
     intro t ht'
     have htδ : t ≤ δ := (mem_uIcc.mp ht').elim
       (fun h => h.2.trans ht) (fun h => h.2.trans hδ.le)
-    have htT : t < T := htδ.trans_lt (by linarith)
+    have htT : t < T := htδ.trans_lt (by linarith only [hδ, hδT])
     simpa only [dampedSlope, slopeCutoff_one hδ htδ, one_mul] using
       radialPartial_hasDerivAt (earlyStrip T hT J hJ) hG (p := (t, p.2)) ⟨htT, hp⟩
   have hi := intervalIntegral.integral_eq_sub_of_hasDerivAt hd
@@ -147,7 +147,7 @@ theorem continuation_frozen {T δ : ℝ} (hT : 0 < T) (hδ : 0 < δ) (hδT : 2 *
     IntervalIntegrable (fun _ : ℝ => (0 : ℝ)) volume (2 * δ) p.1)
   have heq : (0 : ℝ) = continuation δ G p - continuation δ G (2 * δ, p.2) := by
     simpa only [intervalIntegral.integral_zero, Prod.eta] using hi
-  linarith
+  linarith only [heq]
 
 section CompactSmoothIntegral
 
@@ -245,11 +245,11 @@ theorem continuation_eq_master_hold {T δ : ℝ} (hT : 0 < T) (hδ : 0 < δ) (h�
     {t η : ℝ} (hη : η ∈ J) (_ : 0 ≤ t) :
     continuation δ G (t, η) = master G ((δ, holdTime δ t), η) := by
   by_cases hsmall : t ≤ 2 * δ
-  · have htdiv : t / δ ≤ 2 := (div_le_iff₀ hδ).2 (by nlinarith)
+  · have htdiv : t / δ ≤ 2 := (div_le_iff₀ hδ).2 (by nlinarith only [hsmall])
     rw [holdTime, min_eq_left htdiv, ← continuation_rescaled G hδ.ne']
     rw [mul_div_cancel₀ _ hδ.ne']
   · have hbig : 2 * δ ≤ t := (lt_of_not_ge hsmall).le
-    have htdiv : 2 ≤ t / δ := (le_div_iff₀ hδ).2 (by nlinarith)
+    have htdiv : 2 ≤ t / δ := (le_div_iff₀ hδ).2 (by nlinarith only [hsmall])
     rw [continuation_frozen hT hδ hδT hJ hG hη hbig,
       holdTime, min_eq_right htdiv, ← continuation_rescaled G hδ.ne']
     rw [mul_comm δ 2]
@@ -285,7 +285,7 @@ theorem master_parameter_jet_close {T : ℝ} (hT : 0 < T) {J : Set ℝ} (hJ : Is
     have huabs : |u| ≤ 2 := by rw [abs_of_nonneg hu.1]; exact hu.2
     have hprod := mul_le_mul hδabs huabs (abs_nonneg u) ha.le
     rw [abs_mul]
-    exact hprod.trans_lt (by dsimp [a]; linarith)
+    exact hprod.trans_lt (by dsimp [a]; linarith only [hT])
   have hc : ContinuousOn (parameterJet k F) C := by
     intro p hp
     exact (parameterJet_continuousAt (hF.contDiffAt ((masterDomain_open T hJ).mem_nhds (hCD hp)))
@@ -339,7 +339,7 @@ theorem continuation_parameter_jet_close {T : ℝ} (hT : 0 < T) {J : Set ℝ} (h
     (fun u η => by simp only [transformedMaster, master_at_zero]) hK hKJ k hε
   refine ⟨min r (T / 4), lt_min hr (by positivity), ?_⟩
   intro δ hδ hδ₀ t ht η hη
-  have hδT : 2 * δ < T := by have := hδ₀.trans_le (min_le_right _ _); linarith
+  have hδT : 2 * δ < T := by have := hδ₀.trans_le (min_le_right _ _); linarith only [hδ, this]
   have hδr : |δ| < r := by rw [abs_of_pos hδ]; exact hδ₀.trans_le (min_le_left _ _)
   have heq : (fun y => Φ (continuation δ G (t, y), G (0, y))) =ᶠ[𝓝 η]
       (fun y => transformedMaster Φ G ((δ, holdTime δ t), y)) := by
@@ -369,7 +369,7 @@ theorem exists_small_length {ε : ℝ} (hε : 0 < ε) :
     have := rampLimit_pos
     linarith
   · have := min_le_right (rampLimit / 4) (ε / 2)
-    linarith
+    linarith only [hε, this]
 
 /-- Only the proved natural-profile regularity and positivity are used in
 constructing REF. The natural ODE is not replaced by a surrogate assumption. -/
@@ -437,7 +437,7 @@ theorem fromLog_mem {p : Point}
   have hupper : Real.exp p.1 < 41 / 40 := by
     simpa only [rampLimit, Real.exp_log (by
         norm_num : (0 : ℝ) < 41 / 40)] using Real.exp_lt_exp.mpr hp.1
-  refine ⟨⟨?_, ?_⟩, hp.2⟩ <;> nlinarith [Real.exp_pos p.1]
+  refine ⟨⟨?_, ?_⟩, hp.2⟩ <;> nlinarith only [hupper, Real.exp_pos p.1]
 
 theorem fromLog_f_pos {p : Point}
     (hp : p ∈ (earlyStrip rampLimit rampLimit_pos parameterInterval
@@ -449,7 +449,7 @@ theorem fromLog_f_pos {p : Point}
     have hupper : Real.exp p.1 < 41 / 40 := by
       simpa only [rampLimit, Real.exp_log (by
           norm_num : (0 : ℝ) < 41 / 40)] using Real.exp_lt_exp.mpr hp.1
-    linarith
+    linarith only [hupper]
 
 theorem logF_smooth : ContDiffOn ℝ ∞ N.logF
     (earlyStrip rampLimit rampLimit_pos parameterInterval parameterInterval_open).carrier := by
@@ -504,7 +504,7 @@ theorem natural_mem_of_le_endpoint {p : Point} (hp : p ∈ N.radialDomain.carrie
   refine ⟨⟨hp.1, ?_⟩, hp.2⟩
   have hb := mul_le_mul_of_nonneg_left hX N.scale_pos.le
   rw [N.scale_endpoint] at hb
-  linarith
+  linarith only [hb]
 
 /-- Ref F, defined pointwise by `if p.1 ≤ N.endpoint then N.f p else Real.exp (continuation δ
 N.logF (N.logTime p.1, p.2))`. -/
@@ -529,7 +529,7 @@ theorem refF_pos (δ : ℝ) {p : Point} (hp : p ∈ N.radialDomain.carrier) (hX 
     apply N.positive _ (N.natural_mem_of_le_endpoint hp hx) (mul_nonneg N.scale_pos.le hX)
     have hb := mul_le_mul_of_nonneg_left hx N.scale_pos.le
     rw [N.scale_endpoint] at hb
-    linarith
+    linarith only [hb]
   · rw [refF, ite_eq_right hx]
     exact Real.exp_pos _
 
@@ -540,7 +540,7 @@ theorem refF_eq_natural {δ : ℝ} (hδ : 0 < δ) (hδT : 2 * δ < rampLimit)
   · exact N.refF_eq_natural_initial δ hx
   · have hxpos : 0 < p.1 := N.endpoint_pos.trans (lt_of_not_ge hx)
     have ht := (N.logTime_le_iff hxpos).2 hX
-    have htT : N.logTime p.1 < rampLimit := ht.trans_lt (by linarith)
+    have htT : N.logTime p.1 < rampLimit := ht.trans_lt (by linarith only [hδ, hδT])
     rw [refF, ite_eq_right hx, continuation_eq_natural rampLimit_pos hδ hδT
       parameterInterval_open N.logF_smooth (p := (N.logTime p.1, p.2)) hη ht]
     change Real.exp (Real.log (N.f (N.fromLog (N.logTime p.1, p.2)))) = _
@@ -760,7 +760,8 @@ theorem ref_log_transformed_jet_close {Φ : ℝ × ℝ → ℝ} (hΦ : ContDiff 
     N.logF_smooth hΦ hK hKJ k hε
   refine ⟨min r (rampLimit / 4), lt_min hr (div_pos rampLimit_pos (by norm_num)), ?_⟩
   intro δ hδ hδ₀ X hX η hη
-  have hδT : 2 * δ < rampLimit := by have := hδ₀.trans_le (min_le_right _ _); linarith
+  have hδT : 2 * δ < rampLimit := by have := hδ₀.trans_le (min_le_right _ _); linarith only [hδ,
+      this]
   have hXpos := N.endpoint_pos.trans_le hX
   have ht : 0 ≤ N.logTime X := (N.le_logTime_iff hXpos).2 (by
       simpa only [Real.exp_zero, mul_one] using hX)
@@ -783,7 +784,8 @@ theorem ref_U_transformed_jet_close {Φ : ℝ × ℝ → ℝ} (hΦ : ContDiff �
     N.logU_smooth hΦ hK hKJ k hε
   refine ⟨min r (rampLimit / 4), lt_min hr (div_pos rampLimit_pos (by norm_num)), ?_⟩
   intro δ hδ hδ₀ X hX η hη
-  have hδT : 2 * δ < rampLimit := by have := hδ₀.trans_le (min_le_right _ _); linarith
+  have hδT : 2 * δ < rampLimit := by have := hδ₀.trans_le (min_le_right _ _); linarith only [hδ,
+      this]
   have hXpos := N.endpoint_pos.trans_le hX
   have ht : 0 ≤ N.logTime X := (N.le_logTime_iff hXpos).2 (by
       simpa only [Real.exp_zero, mul_one] using hX)
@@ -884,10 +886,10 @@ theorem freeze_before_Xbig (hscale : 1 ≤ N.scale) {δ : ℝ} (hδT : 2 * δ < 
   have hb : N.endpoint ≤ 4 := by
     change 4 / N.scale ≤ 4
     apply (div_le_iff₀ N.scale_pos).2
-    linarith
+    linarith only [hscale]
   have hm := mul_le_mul_of_nonneg_right hb (Real.exp_pos (2 * δ)).le
   dsimp [Xbig]
-  linarith
+  linarith only [he, hm]
 
 /-- In particular the reference is already frozen throughout [100,110]. -/
 theorem frozen_through_Xi (hscale : 1 ≤ N.scale) {δ : ℝ} (hδ : 0 < δ)

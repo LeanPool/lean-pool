@@ -264,7 +264,7 @@ def envelope (J : ℕ) (C X : ℝ) (n : ℕ) : ℝ := parameterEnvelope J (sourc
 /-- Frequency spec, constructed using `frequencyCostSpec`. -/
 def frequencySpec (C : ℝ) : CostSpec :=
   frequencyCostSpec (1+frequencyConstant) (sourceConstant C) 320
-    (by have h := frequencyConstant_pos; linarith) (sourceConstant_pos C)
+    (by have h := frequencyConstant_pos; linarith only [h]) (sourceConstant_pos C)
     20 1000 (frequencyPower+1) (theta/100) (by norm_num [theta])
 
 theorem previousShear_one (J : ℕ) (hJ : 1 ≤ J) (X : ℝ) (hX : 1 ≤ X) (n : ℕ) :
@@ -282,7 +282,7 @@ theorem frequency_guard (J : ℕ) (C X P : ℝ) (n : ℕ)
     frequencyConstant*P^frequencyPower ≤ smallPower (frequency J X n) := by
   have hE : 1 ≤ envelope J C X n := hP.trans hPE
   have hguard := guard_of_cost_le J (1+frequencyConstant) (sourceConstant C) 320
-    (by have h := frequencyConstant_pos; linarith) (sourceConstant_pos C)
+    (by have h := frequencyConstant_pos; linarith only [h]) (sourceConstant_pos C)
     20 1000 (frequencyPower+1) (theta/100) (by norm_num [theta]) X n hcost
   apply le_trans _ hguard
   have hpow := pow_le_pow_left₀ (zero_le_one.trans hP) hPE frequencyPower
@@ -330,7 +330,7 @@ theorem normalParameterSize_bound (J D : ℕ) (hJ : 2 ≤ J) (C X : ℝ) (hC : 1
   rw [hM,hH] at hterm
   have hterm' : ‖G.terminal‖ ≤ terminalCap*L.K^4 := hterm.trans
     (mul_le_mul_of_nonneg_right (by
-        unfold terminalCap; linarith) (pow_nonneg (zero_le_one.trans L.K_one) _))
+        unfold terminalCap; linarith only) (pow_nonneg (zero_le_one.trans L.K_one) _))
   have hboundary := boundary_parameter_bound gradientConstant H.Bc H.L X hX hBc hL
   have hEi : P.epsilon⁻¹ ≤ 2*previousShear J X n := by
     rw [← hshear]

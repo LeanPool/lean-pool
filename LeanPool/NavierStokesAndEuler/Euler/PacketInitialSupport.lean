@@ -52,7 +52,7 @@ theorem scale_support (ell : ℝ) (hell : 0 < ell) (f : Space → V) (R : ℝ)
       abs_of_pos (inv_pos.mpr hell)] at hb
     have h := mul_le_mul_of_nonneg_left hb hell.le
     rw [← mul_assoc,mul_inv_cancel₀ hell.ne',one_mul] at h
-    linarith
+    linarith only [hx, h]
   exact congrArg (ell • ·) (image_eq_zero_of_notMem_tsupport hn) |>.trans (smul_zero ell)
 
 end EulerPhysicalL2Scaling
@@ -78,7 +78,7 @@ theorem high_scaled_support
   intro hm
   have hb := hs hm
   rw [Metric.mem_closedBall,dist_zero_right] at hb
-  linarith
+  linarith only [hx, hb]
 
 theorem mean_scaled_support (κ k : ℝ) (m : Space) (ell : ℝ) (hell : 0 < ell)
     (a : ℕ → Profile)

@@ -65,14 +65,14 @@ theorem primitive_increment_le {g : ℝ → ℝ} (hg : Continuous g)
     (hg.intervalIntegrable 0 a) (hg.intervalIntegrable a b)
   simp only [intervalIntegral.integral_const, smul_eq_mul] at hi
   unfold primitive
-  linarith
+  linarith only [hadd, hi]
 
 theorem releasePrimitive_increment_le (d : TailData) {a b : ℝ} (hab : a ≤ b) :
     releasePrimitive d b ≤ releasePrimitive d a - d.h * (b - a) := by
   have h := primitive_increment_le (releaseSlope_contDiff d).continuous hab
     (c := -d.h) (fun t _ => (releaseSlope_bounds d t).2)
   change primitive (releaseSlope d) b ≤ primitive (releaseSlope d) a - d.h * (b - a)
-  linarith
+  linarith only [h]
 
 @[simp] theorem releasePrimitive_zero (d : TailData) : releasePrimitive d 0 = 0 := by
   simp [releasePrimitive, primitive]
@@ -93,21 +93,21 @@ theorem releasePrimitive_plateau_le (d : TailData) {t : ℝ}
       (fun v hv => releaseSlope_plateau d (uIcc_of_le h1' ▸ hv).1
         ((uIcc_of_le h1' ▸ hv).2.trans ht'))
     change releasePrimitive d t = releasePrimitive d 1 + (t - 1) * (-1) at hinc
-    linarith [releasePrimitive_nonpos d (by norm_num : (0 : ℝ) ≤ 1)]
+    linarith only [hinc, releasePrimitive_nonpos d (by norm_num : (0 : ℝ) ≤ 1)]
 
 theorem releasePrimitive_late_le (d : TailData) {t : ℝ}
     (ht : d.secondRampStart ≤ t) :
     releasePrimitive d t ≤ -d.longHold - d.h * (t - d.secondRampStart) := by
   have hb : 0 ≤ d.secondRampStart := by
     dsimp [TailData.secondRampStart]
-    linarith [d.longHold_pos]
+    linarith only [d.longHold_pos]
   have hp := releasePrimitive_plateau_le d hb le_rfl
   have hi := releasePrimitive_increment_le d ht
   have hb' : 1 - d.secondRampStart = -d.longHold := by
     dsimp [TailData.secondRampStart]
     ring
   rw [hb'] at hp
-  linarith
+  linarith only [hp, hi]
 
 theorem plateau_suppression (d : TailData) :
     Real.exp (-2 * d.longHold) = d.h ^ 8 := by
@@ -128,7 +128,7 @@ theorem h_secondRampStart_le (d : TailData) : d.h * d.secondRampStart ≤ 4 := b
   have hid : d.h * (1 / d.h - 1) = 1 - d.h := by field_simp
   rw [hid] at hi'
   dsimp [TailData.secondRampStart, TailData.longHold]
-  linarith [d.h_pos]
+  linarith only [hi', d.h_pos]
 
 theorem release_exp_bound (d : TailData) {t : ℝ} (ht : 0 ≤ t) :
     Real.exp (2 * releasePrimitive d t) ≤
@@ -136,15 +136,15 @@ theorem release_exp_bound (d : TailData) {t : ℝ} (ht : 0 ≤ t) :
         d.h ^ 8 * Real.exp 8 * Real.exp (-(2 * d.h) * t) := by
   by_cases hb : t ≤ d.secondRampStart
   · have hp := Real.exp_le_exp.mpr (show 2 * releasePrimitive d t ≤ 2 + -2 * t by
-      linarith [releasePrimitive_plateau_le d ht hb])
+      linarith only [ht, hb, releasePrimitive_plateau_le d ht hb])
     rw [Real.exp_add] at hp
     exact hp.trans (le_add_of_nonneg_right (by positivity))
   · have hp := Real.exp_le_exp.mpr (show 2 * releasePrimitive d t ≤
         (-2 * d.longHold) + 2 * (d.h * d.secondRampStart) + -(2 * d.h) * t by
-      linarith [releasePrimitive_late_le d (le_of_not_ge hb)])
+      linarith only [hb, releasePrimitive_late_le d (le_of_not_ge hb)])
     rw [Real.exp_add, Real.exp_add, plateau_suppression] at hp
     have he : Real.exp (2 * (d.h * d.secondRampStart)) ≤ Real.exp 8 :=
-      Real.exp_le_exp.mpr (by linarith [h_secondRampStart_le d])
+      Real.exp_le_exp.mpr (by linarith only [h_secondRampStart_le d])
     have hm := mul_le_mul_of_nonneg_right
       (mul_le_mul_of_nonneg_left he (pow_nonneg d.h_pos.le 8))
       (Real.exp_pos (-(2 * d.h) * t)).le
@@ -156,7 +156,7 @@ theorem energyDensity_release_eq (d : TailData) (eta : ℝ) {y : ℝ}
       Real.exp (2 * releasePrimitive d (y - d.releaseStart)) *
       (tailShape d (y - tailStart d) / (1 - d.rho)) ^ 2 := by
   have hR : d.core.holdStart ≤ d.releaseStart := by
-    linarith [coreEndpoint_ge_hold d, flattenEnd_gt_core d, releaseStart_gt_flattenEnd d]
+    linarith only [coreEndpoint_ge_hold d, flattenEnd_gt_core d, releaseStart_gt_flattenEnd d]
   have hrad := radialAmplitude_hold d.core.dropLength_pos.le hR hy
     (P := d.core.P) (lam := d.core.lam)
   have hf : d.flattenEnd ≤ y := (releaseStart_gt_flattenEnd d).le.trans hy
@@ -183,12 +183,12 @@ theorem energyDensity_release_eq (d : TailData) (eta : ℝ) {y : ℝ}
 
 theorem tailShape_ratio_sq_le (d : TailData) (t : ℝ) :
     (tailShape d t / (1 - d.rho)) ^ 2 ≤ 4 := by
-  have hden : 0 < 1 - d.rho := by linarith [d.rho_lt_half]
+  have hden : 0 < 1 - d.rho := by linarith only [d.rho_lt_half]
   have hlo := div_nonneg (tailShape_pos d t).le hden.le
   have hup : tailShape d t / (1 - d.rho) ≤ 2 := by
     apply (div_le_iff₀ hden).mpr
-    linarith [(tailShape_bounds d t).2, d.rho_lt_half]
-  nlinarith
+    linarith only [(tailShape_bounds d t).2, d.rho_lt_half]
+  nlinarith only [hup, hlo]
 
 theorem energyDensity_release_bound (d : TailData) (eta : ℝ) {y : ℝ}
     (hy : d.releaseStart ≤ y) :
@@ -201,7 +201,7 @@ theorem energyDensity_release_bound (d : TailData) (eta : ℝ) {y : ℝ}
     (mul_nonneg hE (Real.exp_pos (2 * releasePrimitive d (y - d.releaseStart))).le)
   have h2 := mul_le_mul_of_nonneg_left
     (release_exp_bound d (sub_nonneg.mpr hy)) (mul_nonneg (by norm_num : (0 : ℝ) ≤ 4) hE)
-  linarith
+  linarith only [h1, h2]
 
 /-! ## The improper release integral -/
 
@@ -274,26 +274,26 @@ theorem integral_energyDensity_release_le (d : TailData) (eta : ℝ) :
   have h := setIntegral_mono_on (energyDensity_integrable_release d eta) hm
     measurableSet_Ioi (fun y hy => energyDensity_release_bound d eta hy.le)
   rw [integral_const_mul, integral_releaseEnvelope] at h
-  have hp : d.h ^ 7 ≤ 1 := pow_le_one₀ d.h_pos.le (by linarith [d.h_lt_half])
+  have hp : d.h ^ 7 ≤ 1 := pow_le_one₀ d.h_pos.le (by linarith only [d.h_lt_half])
   have hE := (energyDensity_pos d eta d.releaseStart).le
   have he := (Real.exp_pos (8 : ℝ)).le
   have hp' := mul_le_mul_of_nonneg_right hp he
   have hp'' := mul_le_mul_of_nonneg_left hp' hE
   dsimp [releaseConstant]
-  linarith
+  linarith only [h, hp'']
 
 /-! ## Flattening and the uniform wait -/
 
 theorem finalAngular_before_release (d : TailData) (eta : ℝ) {y : ℝ}
     (hy : y ≤ d.releaseStart) : finalAngular d (y, eta) = flattened d (y, eta) := by
-  have ht : y - tailStart d ≤ 1 := by linarith [tailStart_gt_release d]
-  have hn : 1 - d.rho ≠ 0 := by linarith [d.rho_lt_half]
+  have ht : y - tailStart d ≤ 1 := by linarith only [hy, tailStart_gt_release d]
+  have hn : 1 - d.rho ≠ 0 := by linarith only [d.rho_lt_half]
   simp [finalAngular, releaseAdjustment_early d (sub_nonpos.mpr hy), tailShape_early d ht, hn]
 
 theorem flattenFactor_le_one (d : TailData) (eta y : ℝ) (heta : eta ^ 2 ≤ 1) :
     flattenFactor d (y, eta) ≤ 1 := by
   have hlog : logShape eta ≤ Real.log 2 :=
-    Real.log_le_log (by positivity) (by linarith)
+    Real.log_le_log (by positivity) (by linarith only [heta])
   apply Real.exp_le_one_iff.mpr
   exact mul_nonpos_of_nonneg_of_nonpos (sigma_nonneg _) (sub_nonpos.mpr hlog)
 
@@ -381,7 +381,7 @@ theorem postPulseEnergy_le_length (d : TailData) (eta : ℝ) (heta : eta ^ 2 ≤
   have hR := mul_le_mul_of_nonneg_left (energyDensity_prefix_le d eta heta hle le_rfl)
     releaseConstant_pos.le
   rw [postPulseEnergy_split d eta hle]
-  linarith
+  linarith only [hp, hr, hR]
 
 /-- Tail constant, given by `flattenLength + 30 + releaseConstant`. -/
 noncomputable def tailConstant : ℝ := flattenLength + 30 + releaseConstant
@@ -397,11 +397,11 @@ theorem postPulseEnergy_le (d : TailData) (eta : ℝ) (heta : eta ^ 2 ≤ 1) :
   have hlog : 0 ≤ Real.log (1 / d.core.lam) := by
     have := d.uniformWait_pos
     dsimp [TailData.uniformWait] at this
-    linarith
+    linarith only [this]
   have hc : d.releaseStart - d.core.endpoint + releaseConstant ≤
       tailConstant * (1 + Real.log (1 / d.core.lam)) := by
     dsimp [TailData.releaseStart, TailData.flattenEnd, TailData.uniformWait, tailConstant]
-    linarith [mul_nonneg (add_nonneg flattenLength_pos.le releaseConstant_pos.le) hlog]
+    linarith only [hlog, mul_nonneg (add_nonneg flattenLength_pos.le releaseConstant_pos.le) hlog]
   exact (postPulseEnergy_le_length d eta heta).trans
     (mul_le_mul_of_nonneg_right hc (energyDensity_pos d eta d.core.endpoint).le)
 
@@ -455,7 +455,7 @@ theorem finalAngular_hasDerivAt_eta (d : TailData) (eta y : ℝ) :
   have hq : HasDerivAt (fun q : ℝ => 1 + q ^ 2) (2 * eta) eta := by
     simpa using ((hasDerivAt_id eta).pow 2).const_add 1
   have hn : 1 + eta ^ 2 ≠ 0 := by positivity
-  have hrho : 1 - d.rho ≠ 0 := by linarith [d.rho_lt_half]
+  have hrho : 1 - d.rho ≠ 0 := by linarith only [d.rho_lt_half]
   have hs := hq.inv hn
   have hl := ((hq.log hn).sub_const (Real.log 2)).const_mul
     (sigma ((y - d.core.endpoint) / flattenLength))
@@ -478,13 +478,13 @@ theorem etaCoefficient_abs_le (d : TailData) (eta y : ℝ) : |etaCoefficient d e
   have hs1 := sigma_le_one ((y - d.core.endpoint) / flattenLength)
   have hp : 0 < 1 + eta ^ 2 := by positivity
   have heta : 2 * |eta| ≤ 1 + eta ^ 2 := by
-    linarith [sq_nonneg (|eta| - 1), sq_abs eta]
+    linarith only [sq_nonneg (|eta| - 1), sq_abs eta]
   have hprod : 4 * (1 - sigma ((y - d.core.endpoint) / flattenLength)) * |eta| ≤
-      4 * |eta| := by nlinarith [abs_nonneg eta]
+      4 * |eta| := by nlinarith only [hs0, abs_nonneg eta]
   dsimp [etaCoefficient]
   rw [abs_neg, abs_div, abs_mul, abs_mul, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 4),
     abs_of_nonneg (sub_nonneg.mpr hs1), abs_of_pos hp]
-  exact (div_le_iff₀ hp).mpr (by linarith)
+  exact (div_le_iff₀ hp).mpr (by linarith only [heta, hprod])
 
 theorem energyDensity_eta_bound (d : TailData) (eta y : ℝ) :
     |etaCoefficient d eta y * energyDensity d eta y| ≤ 2 * energyDensity d eta y := by
@@ -547,7 +547,7 @@ theorem abs_deriv_postPulseEnergy_le (d : TailData) (eta : ℝ) (heta : eta ^ 2 
     dsimp [TailData.flattenEnd]
     ring
   rw [hlen] at h
-  linarith
+  linarith only [h]
 
 /-! ## Relation to the pulse normalization -/
 
@@ -557,7 +557,7 @@ theorem energyDensity_endpoint_eq (d : TailData) (eta : ℝ) :
           by
   have hy : d.core.pulseStart ≤ d.core.endpoint := by
     dsimp [OutgoingSchedule.Parameters.endpoint]
-    linarith [d.core.pulseLength_pos]
+    linarith only [d.core.pulseLength_pos]
   unfold energyDensity
   rw [finalAngular_before d eta le_rfl, angular_pulse d.core eta hy]
   have he : Real.exp d.core.endpoint *
@@ -580,7 +580,7 @@ theorem energyDensity_endpoint_le (d : TailData) (eta : ℝ) :
   have he : Real.exp (-26 : ℝ) ≤ 1 := Real.exp_le_one_iff.mpr (by norm_num)
   have hp : 0 ≤ Real.exp d.core.pulseStart * pulseAmplitude d.core ^ 2 * shape eta ^ 2 := by
     positivity
-  nlinarith
+  nlinarith only [he, hp]
 
 theorem normalized_postPulseEnergy_le (d : TailData) (eta : ℝ) (heta : eta ^ 2 ≤ 1) :
     d.core.lam * postPulseEnergy d eta /
@@ -593,12 +593,12 @@ theorem normalized_postPulseEnergy_le (d : TailData) (eta : ℝ) (heta : eta ^ 2
   have hlog : 0 ≤ 1 + Real.log (1 / d.core.lam) := by
     have := d.uniformWait_pos
     dsimp [TailData.uniformWait] at this
-    linarith
+    linarith only [this]
   have hbase := (postPulseEnergy_le d eta heta).trans
     (mul_le_mul_of_nonneg_left (energyDensity_endpoint_le d eta)
       (mul_nonneg tailConstant_pos.le hlog))
   have h := mul_le_mul_of_nonneg_left hbase d.core.lam_pos.le
-  linarith
+  linarith only [h]
 
 /-- Normalization of the derivative of the energy. The derivative of the
 normalized quotient also has the elementary derivative of `shape eta ^ 2`. -/
@@ -614,7 +614,7 @@ theorem normalized_deriv_postPulseEnergy_le (d : TailData) (eta : ℝ) (heta : e
     (mul_le_mul_of_nonneg_left (energyDensity_endpoint_le d eta)
       (mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) flattenLength_pos.le))
   have h := mul_le_mul_of_nonneg_left hbase d.core.lam_pos.le
-  linarith
+  linarith only [h]
 
 /-! ## Differentiating the fully normalized quotient -/
 
@@ -683,11 +683,11 @@ theorem abs_deriv_normalizedPostPulseEnergy_le (d : TailData) (eta : ℝ)
   have hp : 0 < 1 + eta ^ 2 := by positivity
   have habs : |eta| ≤ 1 := by
     apply abs_le.mpr
-    constructor <;> linarith [sq_nonneg (eta + 1), sq_nonneg (eta - 1)]
+    constructor <;> linarith only [heta, sq_nonneg (eta + 1), sq_nonneg (eta - 1)]
   have hcoef : |4 * eta / (1 + eta ^ 2)| ≤ 4 := by
     rw [abs_div, abs_mul, abs_of_pos (by norm_num : (0 : ℝ) < 4), abs_of_pos hp]
     apply (div_le_iff₀ hp).mpr
-    linarith [sq_nonneg eta]
+    linarith only [habs, sq_nonneg eta]
   have hE0 := normalizedPostPulseEnergy_nonneg d eta
   have hE := normalized_postPulseEnergy_le d eta heta
   change normalizedPostPulseEnergy d eta ≤ _ at hE
@@ -705,7 +705,7 @@ theorem abs_deriv_normalizedPostPulseEnergy_le (d : TailData) (eta : ℝ)
   have hlog : 1 ≤ 1 + Real.log (1 / d.core.lam) := by
     have := d.uniformWait_pos
     dsimp [TailData.uniformWait] at this
-    linarith
+    linarith only [this]
   have hpad := mul_le_mul_of_nonneg_left hlog
     (mul_nonneg (mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) flattenLength_pos.le) d.core.lam_pos.le)
   rw [(normalizedPostPulseEnergy_hasDerivAt d eta).deriv]
@@ -716,7 +716,7 @@ theorem abs_deriv_normalizedPostPulseEnergy_le (d : TailData) (eta : ℝ)
     _ ≤ 2 * flattenLength * d.core.lam +
         4 * (tailConstant * d.core.lam * (1 + Real.log (1 / d.core.lam))) :=
       add_le_add hfirst hsecond
-    _ ≤ _ := by linarith
+    _ ≤ _ := by linarith only [hpad]
 
 theorem abs_deriv_normalized_postPulseEnergy_le (d : TailData) (eta : ℝ)
     (heta : eta ^ 2 ≤ 1) :

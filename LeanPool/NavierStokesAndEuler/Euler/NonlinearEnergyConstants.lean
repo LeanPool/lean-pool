@@ -91,7 +91,7 @@ theorem correctionForcing_metric {s : ℕ} (hs : 6 ≤ s) {A : SmoothCoefficient
     (fun i => coefficientSobolevOperator period (K i)) z r (truncateOperator period s e)
   have h := correctionForcing_polynomial period hs KG KG0 κ m c hc hpos N hN ρ Rc M B hρ hRc hM hB
     hbase5 hbase6 hsmall hcoeff hG hG0 L hL C0 K0 C K z e r B0 B1 A0 A2 R hA2 hz hdz hC0 hC hr
-  have hM0 : 0 ≤ M := by linarith
+  have hM0 : 0 ≤ M := by linarith only [hM]
   have hP := productConstant_nonneg period 3
   have hb0 : 0 ≤ B0 := (weightedNorm_nonneg period 6 N ρ hρ z).trans hz
   have hb1 : 0 ≤ B1 := (Finset.sum_nonneg (fun i _ =>

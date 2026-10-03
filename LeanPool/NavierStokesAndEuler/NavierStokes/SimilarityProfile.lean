@@ -85,12 +85,12 @@ theorem D_eq (h : ℝ) : (1 - 2 * h) / 2 = D h := by unfold D CoordinateAlgebra.
 
 theorem q_pos {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {p : PhysicalPoint} (hp : p.1 < 1) : 0 < q h p :=
-  (SimilarityCoordinates.coordinateQ_spec (by linarith) (by linarith)
+  (SimilarityCoordinates.coordinateQ_spec (by linarith only [hh]) (by linarith only [hh1])
     (p := (1 - p.1, p.2.2)) (sub_pos.mpr hp)).1
 
 theorem eta_sq_lt_one {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {p : PhysicalPoint} (hp : p.1 < 1) : eta h p ^ 2 < 1 :=
-  SimilarityCoordinates.coordinateEta_sq_lt_one (by linarith) (by linarith)
+  SimilarityCoordinates.coordinateEta_sq_lt_one (by linarith only [hh]) (by linarith only [hh1])
     (p := (1 - p.1, p.2.2)) (sub_pos.mpr hp)
 
 theorem L_pos {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
@@ -99,13 +99,13 @@ theorem L_pos {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
 
 theorem q_smoothAt {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {p : PhysicalPoint} (hp : p.1 < 1) : ContDiffAt ℝ ∞ (q h) p := by
-  exact (SimilarityCoordinates.coordinateQ_smooth (by linarith) (by linarith)
+  exact (SimilarityCoordinates.coordinateQ_smooth (by linarith only [hh]) (by linarith only [hh1])
     (p := (1 - p.1, p.2.2)) (sub_pos.mpr hp)).comp p
       ((contDiffAt_const.sub contDiffAt_fst).prodMk contDiffAt_snd.snd)
 
 theorem eta_smoothAt {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {p : PhysicalPoint} (hp : p.1 < 1) : ContDiffAt ℝ ∞ (eta h) p := by
-  exact (SimilarityCoordinates.coordinateEta_smooth (by linarith) (by linarith)
+  exact (SimilarityCoordinates.coordinateEta_smooth (by linarith only [hh]) (by linarith only [hh1])
     (p := (1 - p.1, p.2.2)) (sub_pos.mpr hp)).comp p
       ((contDiffAt_const.sub contDiffAt_fst).prodMk contDiffAt_snd.snd)
 
@@ -133,7 +133,7 @@ theorem q_hasDerivAt_time {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     HasDerivAt (fun t => q h (t, p.2)) (CoordinateAlgebra.qTime h (eta h p)) p.1 := by
   simpa only [q, eta, CoordinateAlgebra.qTime, CoordinateAlgebra.L] using
     SimilarityCoordinates.coordinateQ_hasDerivAt_time_L (a := 2 * h)
-      (z := p.2.2) (by linarith) (by linarith) hp
+      (z := p.2.2) (by linarith only [hh]) (by linarith only [hh1]) hp
 
 theorem eta_hasDerivAt_time {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {p : PhysicalPoint} (hp : p.1 < 1) :
@@ -141,7 +141,7 @@ theorem eta_hasDerivAt_time {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
       (CoordinateAlgebra.etaTime (q h p) h (eta h p)) p.1 := by
   simpa only [q, eta, CoordinateAlgebra.etaTime, CoordinateAlgebra.L, D_eq] using
     SimilarityCoordinates.coordinateEta_hasDerivAt_time (a := 2 * h)
-      (z := p.2.2) (by linarith) (by linarith) hp
+      (z := p.2.2) (by linarith only [hh]) (by linarith only [hh1]) hp
 
 theorem X_hasDerivAt_time {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {p : PhysicalPoint} (hp : p.1 < 1) :
@@ -150,7 +150,7 @@ theorem X_hasDerivAt_time {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
   simpa only [q, eta, X, CoordinateAlgebra.xTime, CoordinateAlgebra.L,
     SimilarityCoordinates.coordinateX] using
     SimilarityCoordinates.coordinateX_hasDerivAt_time (a := 2 * h)
-      (s := p.2.1) (z := p.2.2) (by linarith) (by linarith) hp
+      (s := p.2.1) (z := p.2.2) (by linarith only [hh]) (by linarith only [hh1]) hp
 
 theorem q_hasDerivAt_z {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {p : PhysicalPoint} (hp : p.1 < 1) :
@@ -159,7 +159,7 @@ theorem q_hasDerivAt_z {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
   rw [CoordinateAlgebra.qAxial_rpow (q_pos hh hh1 hp)]
   simpa only [q, eta, CoordinateAlgebra.L, D_eq] using
     SimilarityCoordinates.coordinateQ_hasDerivAt_z_L (a := 2 * h)
-      (τ := 1 - p.1) (z := p.2.2) (by linarith) (by linarith) (sub_pos.mpr hp)
+      (τ := 1 - p.1) (z := p.2.2) (by linarith only [hh]) (by linarith only [hh1]) (sub_pos.mpr hp)
 
 theorem eta_hasDerivAt_z {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {p : PhysicalPoint} (hp : p.1 < 1) :
@@ -168,7 +168,7 @@ theorem eta_hasDerivAt_z {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
   simpa only [q, eta, CoordinateAlgebra.etaAxial, CoordinateAlgebra.L,
     CoordinateAlgebra.d, D_eq] using
     SimilarityCoordinates.coordinateEta_hasDerivAt_z_L (a := 2 * h)
-      (τ := 1 - p.1) (z := p.2.2) (by linarith) (by linarith) (sub_pos.mpr hp)
+      (τ := 1 - p.1) (z := p.2.2) (by linarith only [hh]) (by linarith only [hh1]) (sub_pos.mpr hp)
 
 theorem X_hasDerivAt_z {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {p : PhysicalPoint} (hp : p.1 < 1) :
@@ -178,7 +178,7 @@ theorem X_hasDerivAt_z {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     SimilarityCoordinates.coordinateX, D_eq] using
     SimilarityCoordinates.coordinateX_hasDerivAt_z (a := 2 * h)
       (s := p.2.1) (τ := 1 - p.1) (z := p.2.2)
-      (by linarith) (by linarith) (sub_pos.mpr hp)
+      (by linarith only [hh]) (by linarith only [hh1]) (sub_pos.mpr hp)
 
 theorem fderiv_inner_apply (f : InnerProfile) (w v : InnerPoint) :
     fderiv ℝ f w v = partialX f w * v.1 + partialEta f w * v.2 := by

@@ -79,7 +79,7 @@ theorem forwardInitializedPrimary_global_bound :
   simp only [mul_one] at hb
   have ha : S.H0^2 ≤ 3*S.H0^(2*1) := by
     norm_num only [Nat.mul_one]
-    nlinarith [sq_nonneg S.H0]
+    nlinarith only [sq_nonneg S.H0]
   have hc := (hb.mono_amplitude (zero_le_one.trans L.radius_one) ha).fixed_velocity_grade
     (n := 1) (zero_le_one.trans L.radius_one) S.H0_pos.le
   exact (hc.changeTime hTime).ofRawEq _
@@ -95,7 +95,7 @@ theorem forwardInitializedVelocity_global_gradient_error (N : ℕ) (hN : 1 ≤ N
         rankOne ℝ (E := Space) (F := Space) (canonicalVelocity D ξ t (Y x))
           (D.normal.field t (Y x))‖ ≤
       forwardInitializedGlobalShearCost L.R S.H0 NB.C/k := by
-  have hk0 : 0 < k := by linarith
+  have hk0 : 0 < k := by linarith only [hk]
   have hr0 : 0 ≤ L.R := zero_le_one.trans L.radius_one
   have hc0 := fixedVelocityGradeCost_nonneg L.R S.H0 hr0 1
   have hinv : ‖D.FInv.field t (Y x)‖ ≤ NB.C := by

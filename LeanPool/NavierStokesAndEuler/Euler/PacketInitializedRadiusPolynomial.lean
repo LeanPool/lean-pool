@@ -381,10 +381,12 @@ theorem primary_required_le (δ : ℝ) (hδ : 0 < δ) (hi : δ⁻¹ ≤ W) :
   have hW0 := zero_le_one.trans hW
   have hb := requiredEnvelope_bounds W hW0
   have hw := primary_weak_le L W hW hτi hci hRc hC0 hC1 hCH
-  have hs := primary_gram_le L W hW hτi hci hRc hC0 hC1 1 zero_le_one (by linarith)
+  have hs := primary_gram_le L W hW hτi hci hRc hC0 hC1 1 zero_le_one (by linarith only [hτ, hτT,
+      hW, hT])
   have ht0 := traceCost_nonneg τ hτ.le
   have ht := EulerPacketParentTransverseCosts.traceCost_le τ W hτ L.history_length hτi
-  have hu := primary_gram_le L W hW hτi hci hRc hC0 hC1 (traceCost τ) ht0 (by linarith)
+  have hu := primary_gram_le L W hW hτi hci hRc hC0 hC1 (traceCost τ) ht0 (by linarith only [hτ,
+      hτT, hW, hT, ht])
   have hf := primary_forward_le L W hW hT hτi hC0 hC1 hC hRi
   have hsw := strongEnvelope_nonneg W hW0
   have hrc0 := L.Rc_nonneg
@@ -485,7 +487,7 @@ theorem joined_common_le : L.commonCost ≤ commonEnvelope W := by
   have hi0 := joined_inverseRadius_nonneg L
   have ht0 := traceCost_nonneg τ hτ.le
   have ht := EulerPacketParentTransverseCosts.traceCost_le τ W hτ L.history_length hτi
-  have ht' : traceCost τ ≤ 2*W+2 := by linarith
+  have ht' : traceCost τ ≤ 2*W+2 := by linarith only [hW, ht]
   have ha0 := coeff_nonneg L.Rc L.C₀ hr h0
   have ha1 := coeff_nonneg L.Rc L.C₁ hr h1
   have haw := coeff_nonneg W W hW0 hW0
@@ -510,7 +512,7 @@ theorem primary_common_le (H : EulerTransversePacketPrimary.Budget L) :
   have hi0 := joined_inverseRadius_nonneg L
   have ht0 := traceCost_nonneg τ hτ.le
   have ht := EulerPacketParentTransverseCosts.traceCost_le τ W hτ L.history_length hτi
-  have ht' : τ⁻¹+traceCost τ ≤ 2*W+2 := by linarith
+  have ht' : τ⁻¹+traceCost τ ≤ 2*W+2 := by linarith only [hτi, ht]
   have hcoord0 : 0 ≤ τ⁻¹+traceCost τ := add_nonneg (inv_nonneg.mpr hτ.le) ht0
   have ha0 := coeff_nonneg L.Rc L.C₀ hr h0
   have ha1 := coeff_nonneg L.Rc L.C₁ hr h1
@@ -536,7 +538,7 @@ theorem normal_block_le {qR : ℝ} (N : NormalBudget D 6 qR) (W : ℝ) (hW : 0 �
   have hi := N.Ri_nonneg
   have hcr : N.coefficientRadius ≤ 5*W+1 := by
     unfold NormalBudget.coefficientRadius Data.correctorCoefficientRadius
-    linarith
+    linarith only [hNR, hNI]
   have hca : N.coefficientAmplitude ≤ 1+W+6*W^2+729*W^6 := by
     unfold NormalBudget.coefficientAmplitude Data.correctorCoefficientAmplitude
     calc

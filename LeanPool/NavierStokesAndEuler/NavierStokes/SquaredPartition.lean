@@ -72,22 +72,22 @@ theorem translatedBump_support (k : ℤ) :
   change bump (x - k) ≠ 0 ↔ _
   rw [← mem_support, bump.support_eq]
   simp only [Metric.mem_ball, Real.dist_eq, sub_zero, bump, abs_lt, mem_Ioo]
-  constructor <;> intro h <;> constructor <;> linarith [h.1, h.2]
+  constructor <;> intro h <;> constructor <;> linarith only [h, h.1, h.2]
 
 theorem integer_intervals_locallyFinite :
     LocallyFinite fun k : ℤ => Icc ((k : ℝ) - 1) ((k : ℝ) + 1) := by
   intro x
-  refine ⟨Ioo (x - 1) (x + 1), Ioo_mem_nhds (by linarith) (by linarith), ?_⟩
+  refine ⟨Ioo (x - 1) (x + 1), Ioo_mem_nhds (by linarith only) (by linarith only), ?_⟩
   apply (Set.finite_Icc (⌊x⌋ - 2) (⌊x⌋ + 3)).subset
   rintro k ⟨y, hy, hyx⟩
   have hfloor := Int.floor_le x
   have hfloor' := Int.lt_floor_add_one x
   have hlo : ((⌊x⌋ - 2 : ℤ) : ℝ) ≤ k := by
     push_cast
-    linarith [hy.2, hyx.1]
+    linarith only [hfloor, hy, hyx, hy.2, hyx.1]
   have hhi : (k : ℝ) ≤ ((⌊x⌋ + 3 : ℤ) : ℝ) := by
     push_cast
-    linarith [hy.1, hyx.2]
+    linarith only [hfloor', hy, hyx, hy.1, hyx.2]
   exact ⟨by exact_mod_cast hlo, by exact_mod_cast hhi⟩
 
 theorem translatedBump_locallyFinite : LocallyFinite fun k => support (translatedBump k) := by
@@ -113,8 +113,8 @@ theorem denominatorSquared_pos (x : ℝ) : 0 < denominatorSquared x := by
     apply bump.pos_of_mem_ball
     simp only [Metric.mem_ball, Real.dist_eq, sub_zero, bump, abs_lt]
     constructor
-    · linarith [Int.floor_le x]
-    · linarith [Int.lt_floor_add_one x]
+    · linarith only [Int.floor_le x]
+    · linarith only [Int.lt_floor_add_one x]
   · exact squaredBump_locallyFinite.point_finite x
 
 theorem denominatorSquared_smooth : ContDiff ℝ ∞ denominatorSquared :=
@@ -144,7 +144,7 @@ theorem lineMask_support (k : ℤ) :
 
 theorem lineMask_tsupport (k : ℤ) :
     tsupport (lineMask k) = Icc ((k : ℝ) - 1) ((k : ℝ) + 1) := by
-  rw [tsupport, lineMask_support, closure_Ioo (by linarith : (k : ℝ) - 1 ≠ k + 1)]
+  rw [tsupport, lineMask_support, closure_Ioo (by linarith only : (k : ℝ) - 1 ≠ k + 1)]
 
 theorem lineMask_compactSupport (k : ℤ) : HasCompactSupport (lineMask k) := by
   rw [HasCompactSupport, lineMask_tsupport]
@@ -203,11 +203,11 @@ theorem gridMask_support (δ : ℝ) (hδ : 0 < δ) (k : ℤ) :
   rw [lineMask_support]
   simp only [mem_Ioo]
   rw [lt_div_iff₀ hδ, div_lt_iff₀ hδ]
-  constructor <;> intro h <;> constructor <;> nlinarith [h.1, h.2]
+  constructor <;> intro h <;> constructor <;> nlinarith only [h, h.1, h.2]
 
 theorem gridMask_tsupport (δ : ℝ) (hδ : 0 < δ) (k : ℤ) :
     tsupport (gridMask δ k) = Icc (δ * k - δ) (δ * k + δ) := by
-  rw [tsupport, gridMask_support δ hδ, closure_Ioo (by linarith : δ * k - δ ≠ δ * k + δ)]
+  rw [tsupport, gridMask_support δ hδ, closure_Ioo (by linarith only [hδ] : δ * k - δ ≠ δ * k + δ)]
 
 theorem gridMask_compactSupport (δ : ℝ) (hδ : 0 < δ) (k : ℤ) :
     HasCompactSupport (gridMask δ k) := by
@@ -392,14 +392,14 @@ theorem logCoordinate_window {q : ℝ} (hq : 0 < q) :
     constructor
     · apply (Real.log_lt_log_iff (by norm_num : (0 : ℝ) < 1 / 2) hq).mp
       rw [hhalf]
-      linarith [h.2]
+      linarith only [h, h.2]
     · apply (Real.log_lt_log_iff hq (by norm_num : (0 : ℝ) < 2)).mp
-      linarith [h.1]
+      linarith only [h, h.1]
   · intro h
     have hl := (Real.log_lt_log_iff (by norm_num : (0 : ℝ) < 1 / 2) hq).mpr h.1
     have hu := (Real.log_lt_log_iff hq (by norm_num : (0 : ℝ) < 2)).mpr h.2
     rw [hhalf] at hl
-    constructor <;> linarith
+    constructor <;> linarith only [hu, hl]
 
 /-- A single compact annular profile; its zero extension is smooth at zero. -/
 def dyadicProfile (q : ℝ) : ℝ := if 0 < q then lineMask 0 (logCoordinate q) else 0
@@ -417,7 +417,7 @@ theorem dyadicProfile_support : support dyadicProfile = Ioo (1 / 2 : ℝ) 2 := b
   · simp only [mem_support, dyadicProfile, ite_eq_right hq, ne_eq, not_true_eq_false, mem_Ioo,
       false_iff, not_and]
     intro hl
-    exact (hq (by linarith : 0 < q)).elim
+    exact (hq (by linarith only [hq, hl] : 0 < q)).elim
 
 theorem dyadicProfile_zero_of_le_half {q : ℝ} (hq : q ≤ 1 / 2) : dyadicProfile q = 0 := by
   by_contra h
@@ -435,7 +435,7 @@ theorem dyadicProfile_smooth : ContDiff ℝ ∞ dyadicProfile := by
     exact ((lineMask_smooth 0).contDiffAt.comp q
       (((Real.contDiffAt_log.mpr hq.ne').neg).div_const (Real.log 2))).congr_of_eventuallyEq heq
   · have heq : dyadicProfile =ᶠ[𝓝 q] fun _ => 0 := by
-      filter_upwards [Iio_mem_nhds (show q < (1 / 2 : ℝ) by linarith)] with y hy
+      filter_upwards [Iio_mem_nhds (show q < (1 / 2 : ℝ) by linarith only [hq])] with y hy
       exact dyadicProfile_zero_of_le_half hy.le
     exact contDiffAt_const.congr_of_eventuallyEq heq
 
@@ -481,11 +481,11 @@ theorem dyadicMask_support (n : ℤ) :
   rw [dyadicProfile_support]
   simp only [mem_Ioo]
   rw [lt_div_iff₀ (integerQ_pos n), div_lt_iff₀ (integerQ_pos n)]
-  constructor <;> intro h <;> constructor <;> linarith [h.1, h.2]
+  constructor <;> intro h <;> constructor <;> linarith only [h, h.1, h.2]
 
 theorem dyadicMask_tsupport (n : ℤ) :
     tsupport (dyadicMask n) = Icc (integerQ n / 2) (2 * integerQ n) := by
-  rw [tsupport, dyadicMask_support, closure_Ioo (by linarith [integerQ_pos n] :
+  rw [tsupport, dyadicMask_support, closure_Ioo (by linarith only [integerQ_pos n] :
     integerQ n / 2 ≠ 2 * integerQ n)]
 
 theorem dyadicMask_compactSupport (n : ℤ) : HasCompactSupport (dyadicMask n) := by
@@ -536,7 +536,7 @@ theorem dyadicMask_zero_of_neg {q : ℝ} (hq : 0 < q) (hq1 : q ≤ 1)
     · exact neg_nonneg.mpr (Real.log_nonpos hq.le hq1)
     · exact (Real.log_pos (by norm_num : (1 : ℝ) < 2)).le
   have hn' : (n : ℝ) ≤ -1 := by exact_mod_cast (show n ≤ -1 by omega)
-  linarith [hm.2]
+  linarith only [hl, hn', hm, hm.2]
 
 /-- Natural bands already form a partition on `0<q≤1`. -/
 theorem dyadicMask_nat_sum_sq {q : ℝ} (hq : 0 < q) (hq1 : q ≤ 1) :
@@ -678,7 +678,7 @@ theorem physicalSlowMask_tsupport_smallBox (D : ℝ) {n : ℕ} (hn : 1 ≤ n)
     change x j ∈ Icc (SlotColoring.width D j n * k j - SlotColoring.width D j n)
       (SlotColoring.width D j n * k j + SlotColoring.width D j n)
     rw [hw]
-    constructor <;> nlinarith
+    constructor <;> nlinarith only [hlo, hhi]
   · exact (isCompact_univ_pi fun _ => isCompact_Icc).isClosed
 
 theorem physicalSlowMask_compactSupport (D : ℝ) {n : ℕ} (hn : 1 ≤ n)
@@ -696,7 +696,7 @@ theorem physicalSlowMask_tsupport_subset_physicalBox (D : ℝ) {n : ℕ} (hn : 1
   have hp := SlotColoring.width_pos D j hn
   change |x j - SlotColoring.width D j n * (k j : ℝ)| ≤ 2 * SlotColoring.width D j n
   rw [abs_le]
-  constructor <;> linarith [hj.1, hj.2]
+  constructor <;> linarith only [hp, hj, hj.1, hj.2]
 
 theorem physicalSlowMask_jet_tsupport_subset_physicalBox (D : ℝ) {n : ℕ} (hn : 1 ≤ n)
     (k : SlotColoring.Grid) (sign : Bool) (m : ℕ) :

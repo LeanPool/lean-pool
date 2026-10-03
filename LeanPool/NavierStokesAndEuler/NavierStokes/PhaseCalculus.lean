@@ -298,8 +298,8 @@ theorem referenceNormal_norm_ge (B s Kθ Kz : ℝ)
       (B * Kθ) ^ 2 + (B * Kz) ^ 2 = B ^ 2 * (Kθ ^ 2 + Kz ^ 2) := by ring
       _ = B ^ 2 := by rw [hK, mul_one]
   have hsq : B ^ 2 ≤ ‖referenceNormal B s Kθ Kz‖ ^ 2 := by
-    nlinarith [sq_nonneg (B * s)]
-  nlinarith [norm_nonneg (referenceNormal B s Kθ Kz)]
+    nlinarith only [hn, htan, sq_nonneg (B * s)]
+  nlinarith only [hn, htan, norm_nonneg (referenceNormal B s Kθ Kz)]
 
 /-- An explicit reference-vector error bound gives a quantitative lower bound
 for the actual phase normal. The comparison estimate itself is a hypothesis. -/
@@ -311,7 +311,7 @@ theorem phaseNormal_norm_lower (ε p pz x0 B s Kθ Kz δ : ℝ)
   have htriangle := norm_sub_norm_le (referenceNormal B s Kθ Kz)
     (phaseNormal ε p pz x0 F G q)
   rw [norm_sub_rev] at htriangle
-  linarith
+  linarith only [hclose, href, htriangle]
 
 /-- Half-scale closeness ensures the denominator in the projected pulse
 equation is nonzero for this actual phase normal. -/
@@ -322,6 +322,6 @@ theorem phaseNormal_ne_zero_of_close (ε p pz x0 B s Kθ Kz : ℝ)
   have hlow := phaseNormal_norm_lower ε p pz x0 B s Kθ Kz (B / 2) F G q hK hclose
   intro hz
   rw [hz, norm_zero] at hlow
-  linarith
+  linarith only [hB, hlow]
 
 end NavierStokes.PhaseCalculus

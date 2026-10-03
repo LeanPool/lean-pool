@@ -124,7 +124,7 @@ theorem compact_normalized_cone_gap {K : Set X} (hK : IsCompact K)
   obtain ⟨ε, _, hε, _, hbounds, _⟩ := compact_normalized_cone hK hc hj hv hcpos hmargin
   obtain ⟨B, hB⟩ := (hK.image_of_continuousOn (hj.pow 2)).bddAbove
   let M : ℝ := max 0 B + 1
-  have hM : 0 < M := by dsimp [M]; linarith [le_max_left (0 : ℝ) B]
+  have hM : 0 < M := by dsimp [M]; linarith only [le_max_left (0 : ℝ) B]
   let η : ℝ := ε / (2 * M)
   have hη : 0 < η := div_pos hε (mul_pos (by norm_num) hM)
   have hηM : η * M = ε / 2 := by
@@ -136,11 +136,11 @@ theorem compact_normalized_cone_gap {K : Set X} (hK : IsCompact K)
       calc
         j x ^ 2 ≤ B := hB (mem_image_of_mem (fun y => j y ^ 2) hx)
         _ ≤ max 0 B := le_max_right _ _
-        _ ≤ M := by dsimp [M]; linarith
+        _ ≤ M := by dsimp [M]; linarith only
     have hηj : η * j x ^ 2 ≤ ε / 2 :=
       (mul_le_mul_of_nonneg_left hjM hη.le).trans_eq hηM
     have hd := (hbounds x hx).2
-    nlinarith
+    nlinarith only [hε, hηj, hd]
   obtain ⟨_, p₁, _, hp₁, _, hlarge⟩ := compact_normalized_cone hK hc hj
     (hv.add continuousOn_const) hcpos hshift
   refine ⟨η, max p₁ ((2 + η) / ε), hη,
@@ -176,10 +176,10 @@ theorem compact_equation_eleven {K : Set X} (hK : IsCompact K)
   · exact ha.mul (continuousOn_const.add ((hb.div ha hane).pow 2))
   · intro x hx
     apply sub_pos.mpr
-    exact (div_lt_one (hapos x hx)).mpr (by linarith [hfirst x hx])
+    exact (div_lt_one (hapos x hx)).mpr (by linarith only [hfirst, hx, hfirst x hx])
   · intro x hx
     have h := normalized_test_negative (hapos x hx) (hsecond x hx)
-    linarith
+    linarith only [h]
 
 /-- Equation (11), with a common positive additive gap in both relaxed-cone
 inequalities for every parameter and every sufficiently large amplitude. -/
@@ -200,10 +200,10 @@ theorem compact_equation_eleven_gap {K : Set X} (hK : IsCompact K)
   · exact ha.mul (continuousOn_const.add ((hb.div ha hane).pow 2))
   · intro x hx
     apply sub_pos.mpr
-    exact (div_lt_one (hapos x hx)).mpr (by linarith [hfirst x hx])
+    exact (div_lt_one (hapos x hx)).mpr (by linarith only [hfirst, hx, hfirst x hx])
   · intro x hx
     have h := normalized_test_negative (hapos x hx) (hsecond x hx)
-    linarith
+    linarith only [h]
 
 /-- Coordinates `(P,J,v)` for a stress cone datum, with the product metric. -/
 abbrev ConeDatum := ℝ × ℝ × ℝ

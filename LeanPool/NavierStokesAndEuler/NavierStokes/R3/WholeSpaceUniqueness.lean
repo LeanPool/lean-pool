@@ -179,7 +179,7 @@ theorem integral_weighted_second_partial {χ : Space → ℝ} {w : Space → Spa
     dsimp only [spatialPartial]
     ring
   rw [hsecond_lhs, integral_const_mul] at hsecond
-  linarith
+  linarith only [hfirst, hsecond]
 
 /-- Compactly weighted Laplacian energy identity for an arbitrary smooth
 spatial vector field. No global integrability assumption on the vector field
@@ -428,7 +428,7 @@ theorem hasDerivAt_difference_energy_balance {a b t : ℝ} {χ : Space → ℝ}
     (time_differentiable_at_interior hu ht) (time_differentiable_at_interior hv ht)
     hdivu hdivv hNS
   convert! hd using 1
-  linarith
+  linarith only [hb]
 
 end NavierStokesR3.LocalizedDifferenceEnergy
 
@@ -472,7 +472,7 @@ theorem exists_rpow_absorption {C δ p : ℝ}
     (hC : 0 ≤ C) (hδ : 0 < δ) (hp0 : 0 ≤ p) (hp2 : p < 2) :
     ∃ D ≥ 0, ∀ A ≥ 0, C * A ^ p ≤ δ * A ^ 2 + D := by
   have hevent : ∀ᶠ A : ℝ in atTop, C / δ ≤ A ^ (2 - p) :=
-    (tendsto_rpow_atTop (by linarith : 0 < 2 - p)).eventually
+    (tendsto_rpow_atTop (by linarith only [hp2] : 0 < 2 - p)).eventually
       (eventually_ge_atTop (C / δ))
   obtain ⟨b, hb⟩ := eventually_atTop.mp hevent
   let K : ℝ := max 1 b
@@ -508,11 +508,11 @@ theorem exists_shifted_rpow_absorption {C δ p : ℝ}
   obtain ⟨D, hD, hbound⟩ := exists_rpow_absorption hC (half_pos hδ) hp0 hp2
   refine ⟨D + δ, add_nonneg hD hδ.le, ?_⟩
   intro A hA
-  have hboundA := hbound (A + 1) (by linarith)
+  have hboundA := hbound (A + 1) (by linarith only [hA])
   have hsquare : (A + 1) ^ 2 ≤ 2 * A ^ 2 + 2 := by
-    linarith [sq_nonneg (A - 1)]
+    linarith only [sq_nonneg (A - 1)]
   have hscaled := mul_le_mul_of_nonneg_left hsquare (half_pos hδ).le
-  linarith
+  linarith only [hboundA, hscaled]
 
 /-- Dividing the shifted estimate by a radius at least one preserves the
 arbitrarily small square coefficient and makes the constant decay as `1 / R`. -/
@@ -530,7 +530,7 @@ theorem exists_scaled_shifted_rpow_absorption {C δ p : ℝ}
   have hquadratic := mul_le_mul_of_nonneg_left hInv1
     (mul_nonneg hδ.le (sq_nonneg A))
   simp only [div_eq_mul_inv]
-  linarith
+  linarith only [hscaled, hquadratic]
 
 /-- The pressure and transport cutoff remainders are controlled by one shifted
 subquadratic power. The estimate retains the full factor `1 / R`. -/
@@ -651,7 +651,7 @@ theorem exists_uniform_flux_absorption {C1 C2 S M δ : ℝ}
   have hSMQ : S * M ≤ Q :=
     (mul_le_mul_of_nonneg_left (le_max_right 1 M) hS).trans (le_max_right _ _)
   have hQ0 : 0 ≤ Q := (mul_nonneg hS hM).trans hSMQ
-  have hQsq1 : 1 ≤ Q ^ 2 := by linarith [sq_nonneg (Q - 1)]
+  have hQsq1 : 1 ≤ Q ^ 2 := by linarith only [hQ1, sq_nonneg (Q - 1)]
   let C : ℝ := (C1 + C2) * Q ^ 2
   have hC : 0 ≤ C := mul_nonneg (add_nonneg hC1 hC2) (sq_nonneg _)
   have hC1Q : C1 * Q ^ 2 ≤ C :=
@@ -738,7 +738,7 @@ theorem exists_uniform_rate_bound {C0 C1 C2 S M : ℝ}
   refine ⟨2 * (C0 + D), by positivity, ?_⟩
   intro R hR A hA B hB hSobolev E E' G henergy
   have hRpos : 0 < R := zero_lt_one.trans_le hR
-  have hRsq : R ≤ R ^ 2 := by linarith [sq_nonneg (R - 1)]
+  have hRsq : R ≤ R ^ 2 := by linarith only [hR, sq_nonneg (R - 1)]
   have hC0radius : C0 / R ^ 2 ≤ C0 / R :=
     div_le_div_of_nonneg_left hC0 hRpos hRsq
   have hbound := hflux R hR A hA B hB hSobolev
@@ -807,7 +807,7 @@ theorem neg_coupling_le_weightedEnergy {χ : Space → ℝ} {u w : VelocityField
     G * (χ x * ‖w (t, x)‖ ^ 2)
   have h := NavierStokes.SolutionDifference.nonlinear_energy_bound
     (spatialDerivative u t x) (w (t, x)) (hG x)
-  linarith [mul_le_mul_of_nonneg_left h (hχ0 x)]
+  linarith only [h, hχ0, mul_le_mul_of_nonneg_left h (hχ0 x)]
 
 /-- Derivative of the energy weight. -/
 theorem fderiv_cutoff_eight {φ : Space → ℝ} {x : Space}
@@ -1056,7 +1056,7 @@ theorem exp_neg_mul_le_of_deriv_le {T K ε : ℝ} {E E' : ℝ → ℝ}
   intro t ht
   have hle := Gronwall.exp_neg_mul_le_add_of_deriv_le_add hT hK hε hcont hderiv hbound t ht
   simp only [sub_zero] at hle
-  exact hle.trans (by linarith)
+  exact hle.trans (by linarith only [hinitial])
 
 /-- Perturbed Gronwall, retaining the actual time in the bound. -/
 theorem le_exp_mul_of_deriv_le {T K ε : ℝ} {E E' : ℝ → ℝ}
@@ -1068,7 +1068,7 @@ theorem le_exp_mul_of_deriv_le {T K ε : ℝ} {E E' : ℝ → ℝ}
   intro t ht
   have hle := Gronwall.le_exp_mul_add_of_deriv_le_add hT hK hε hcont hderiv hbound t ht
   simp only [sub_zero] at hle
-  exact hle.trans (mul_le_mul_of_nonneg_right (by linarith) (Real.exp_pos _).le)
+  exact hle.trans (mul_le_mul_of_nonneg_right (by linarith only [hinitial]) (Real.exp_pos _).le)
 
 /-- Perturbed Gronwall with one bound valid throughout the closed interval. -/
 theorem le_uniform_exp_mul_of_deriv_le {T K ε : ℝ} {E E' : ℝ → ℝ}
@@ -1118,12 +1118,12 @@ theorem eq_zero_of_forall_radius_bound {x D : ℝ} (hx : 0 ≤ x) (hD : 0 ≤ D)
   let R : ℝ := (D + 1) / x + 1
   have hR : 1 ≤ R := by
     dsimp [R]
-    linarith [div_nonneg (show 0 ≤ D + 1 by linarith) hx]
+    linarith only [hD, hx, div_nonneg (show 0 ≤ D + 1 by linarith) hx]
   have hRpos : 0 < R := lt_of_lt_of_le zero_lt_one hR
   have hmul : x * R ≤ D := (le_div_iff₀ hRpos).mp (hbound R hR)
   have hcancel : (D + 1) / x * x = D + 1 := div_mul_cancel₀ _ hxpos.ne'
   dsimp [R] at hmul
-  linarith
+  linarith only [hxpos, hmul, hcancel]
 
 /-- For a fixed compact set, the cutoff bound is available only after the
 radius contains that set. Such a bound is still sufficient for vanishing. -/
@@ -1138,7 +1138,7 @@ theorem eq_zero_of_forall_large_radius_bound {x D R₀ : ℝ} (hx : 0 ≤ x)
   have hsize : (D + 1) / x + 1 ≤ R := le_max_right _ _
   have hsize_mul := mul_le_mul_of_nonneg_left hsize hx
   have hcancel : (D + 1) / x * x = D + 1 := div_mul_cancel₀ _ hxpos.ne'
-  linarith
+  linarith only [hxpos, hmul, hsize_mul, hcancel]
 
 end NavierStokesR3.ComparisonGronwall
 

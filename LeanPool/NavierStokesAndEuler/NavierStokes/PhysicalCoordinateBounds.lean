@@ -185,10 +185,10 @@ theorem normalizedCompact_isCompact (lo hi : ℝ) : IsCompact (normalizedCompact
 theorem normalized_slope_pos {a lo hi : ℝ} (ha : 0 < a) (ha1 : a < 1)
     {y : Point} (hy : y ∈ normalizedCompact lo hi) : 0 < scalarSlope a y.2.2 y.1 := by
   have hy1 : y.1 = 1 := hy.1
-  have hz : y.2.2 ^ 2 ≤ 1 := by nlinarith [hy.2.2.1, hy.2.2.2]
+  have hz : y.2.2 ^ 2 ≤ 1 := by nlinarith only [ha, ha1, hy, hy.2.2.1, hy.2.2.2]
   have haz := mul_le_mul_of_nonneg_left hz ha.le
   simp only [scalarSlope, hy1, Real.one_rpow, mul_one]
-  nlinarith
+  nlinarith only [ha1, haz]
 
 theorem exists_normalized_jet_bound {a : ℝ} (ha : 0 < a) (ha1 : a < 1)
     {g : Point → ℝ} (hg : ContDiffOn ℝ ∞ g positiveTime) (lo hi : ℝ) (n : ℕ) :
@@ -306,7 +306,7 @@ theorem scaleFactor_pos (a qbig : ℝ) : 0 < scaleFactor a qbig :=
 
 theorem norm_inverse_dilation_le {a q qbig : ℝ} (ha : 0 < a) (hq : 0 < q)
     (hqb : q ≤ qbig) : ‖dilation a q⁻¹‖ ≤ scaleFactor a qbig / q := by
-  have he : 0 ≤ 1 - D a := by dsimp [D]; linarith
+  have he : 0 ≤ 1 - D a := by dsimp [D]; linarith only [ha]
   have hpow : q ^ (1 - D a) ≤ scaleFactor a qbig :=
     (Real.rpow_le_rpow hq.le hqb he).trans (le_max_right _ _)
   have hfirst : q⁻¹ ≤ scaleFactor a qbig / q := by

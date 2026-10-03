@@ -76,7 +76,7 @@ theorem labelVelocity_exists_ne_zero (x : Space) (ξ : U) (hξ : ξ ≠ 0) :
     change D.lower*‖D.labelCoordinate x ξ t‖^2 ≤ ‖D.labelVelocity x ξ t‖^2 at h
     rw [hn t,norm_zero,zero_pow (by decide : 2 ≠ 0)] at h
     have hs : ‖D.labelCoordinate x ξ t‖^2 ≤ 0 := nonpos_of_mul_nonpos_right h D.lower_pos
-    exact norm_eq_zero.mp (by nlinarith [norm_nonneg (D.labelCoordinate x ξ t)])
+    exact norm_eq_zero.mp (by nlinarith only [hs, norm_nonneg (D.labelCoordinate x ξ t)])
   let z := EulerFixedEndpointClassical.displacement T D.time_pos.le (D.labelFrame x)
       (D.labelFrameDerivative x)
     (D.labelHessian x) D.lower D.lower_pos (D.labelFrame_lower x) (D.labelFrame_derivative x)

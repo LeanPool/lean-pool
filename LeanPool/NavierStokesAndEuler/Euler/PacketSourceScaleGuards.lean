@@ -37,8 +37,8 @@ theorem source_activation_ode_guards {j x β : ℝ}
     1 / sqrt β ≤ (j ^ 2 * x) / sqrt β ∧
     (j ^ 2 * x) / sqrt β ≤ 2 * j ^ 2 * x ^ 2 ∧
     0 < 1 / (j ^ 2 * x) ∧ 1 / (j ^ 2 * x) ≤ 1 / 2 := by
-  have hxp : 0 < x := by linarith
-  have hjp : 0 < j := by linarith
+  have hxp : 0 < x := by linarith only [hx]
+  have hjp : 0 < j := by linarith only [hj]
   have hβ : 0 < β := by nlinarith only [hβx, sq_nonneg x]
   have hx64 : 64 ≤ x ^ 2 := by nlinarith only [hx]
   have hm := mul_le_mul_of_nonneg_left hx64 hβ.le

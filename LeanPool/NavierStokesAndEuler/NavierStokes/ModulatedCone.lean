@@ -206,18 +206,18 @@ theorem stockMap_small_perturbation (h μ B : ℝ) (hμ : 0 < μ)
     simpa only [Pi.sub_apply, Real.norm_eq_abs] using norm_le_pi_norm (w - z) (0 : Fin 12)
   have hw0 : μ ≤ w 0 := by
     have := (abs_le.mp (hcomp.trans (hclose.trans (min_le_right _ _)))).1
-    linarith
+    linarith only [hz0, this]
   have hzmem : z ∈ dataSet μ (B + 1) := by
     refine ⟨?_, ?_⟩
     · simpa only [Metric.mem_closedBall, dist_zero_right] using
-        (hz.trans (by linarith : B ≤ B + 1))
+        (hz.trans (by linarith only : B ≤ B + 1))
     · change μ ≤ z 0
-      linarith
+      linarith only [hμ, hz0]
   have hwmem : w ∈ dataSet μ (B + 1) := by
     refine ⟨?_, hw0⟩
     have hw : ‖w‖ ≤ ‖w - z‖ + ‖z‖ := by
       simpa only [sub_add_cancel] using norm_add_le (w - z) z
-    have hn : ‖w‖ ≤ B + 1 := by linarith [hclose.trans (min_le_left _ _)]
+    have hn : ‖w‖ ≤ B + 1 := by linarith only [hz, hw, hclose, hclose.trans (min_le_left _ _)]
     simpa only [Metric.mem_closedBall, dist_zero_right] using hn
   exact ⟨hw0, hb p hp z hzmem w hwmem⟩
 
@@ -269,7 +269,7 @@ theorem profile_stocks_lipschitz {D : RadialDomain} (Q : Profiles D) (h : ℝ)
   intro D' P p hp hpD hclose
   have hbase : 2 * (fmin / 2) ≤ profileData Q p 0 := by
     change 2 * (fmin / 2) ≤ Q.f p
-    linarith [hmin p hp]
+    linarith only [hmin, hp, hmin p hp]
   obtain ⟨hnew, hpair⟩ := hbound p hp (profileData Q p) (profileData P p) (hB p hp) hbase hclose
   have hPpos : 0 < P.f p := hμ.trans_le hnew
   rw [profileData_coordinates P h hpD (hX p hp) hPpos.ne',
@@ -361,7 +361,7 @@ theorem profile_stocks_rate {D D' : RadialDomain} (Q : Profiles D) (h : ℝ)
   have hsmall : Cdata / n ≤ δ := by
     apply (div_le_iff₀ hnpos).mpr
     have := (div_le_iff₀ hδ).mp hδn
-    linarith
+    linarith only [this]
   obtain ⟨hf, hU, hH⟩ := hdata n hn₀ hn1 p hp
   obtain ⟨hPpos, hs₁, hs₂⟩ := hb (P n) p hp (hSD' hp) (Cdata / n)
     (div_nonneg hCdata hnpos.le) hsmall hf hU hH
@@ -484,7 +484,7 @@ theorem realized_shears_factor
   have hbNom' : -a p * m p =
       2 * p.1 * deriv (fun x => U (x, p.2)) p.1 / E p := by
     change a p * m p = -(2 * p.1 * deriv (fun x => U (x, p.2)) p.1 / E p) at hbNom
-    linarith
+    linarith only [hbNom]
   have hexact := realized_shears_exact r E U ha hm hp₂ hE hU n p.1 p.2 hn hX hE0 hp
     haNom hbNom'
   constructor
@@ -692,7 +692,7 @@ theorem exists_integer_frequency (C ε : ℝ) (hε : 0 < ε) :
   have hNn : (N : ℝ) ≤ n := by exact_mod_cast hn
   have hn1 : (1 : ℝ) ≤ n := hN1.le.trans hNn
   refine ⟨hn1, (div_le_iff₀ (lt_of_lt_of_le zero_lt_one hn1)).mpr ?_⟩
-  nlinarith
+  nlinarith only [hNC, hε, hNn]
 
 /-- Interface for combining the derived shear bound with derived stock
 estimates. The actual history construction supplies `hstock` below. -/
@@ -847,7 +847,7 @@ theorem compact_shear_perturbation
   refine ⟨δ, C, hδ, hC, ?_⟩
   intro F V ε hε hεδ hdata p hp
   obtain ⟨hedit, hEedit, hUedit⟩ := hdata p hp
-  have hnom : δ ≤ E p := by have := hmin p hp; dsimp [δ]; linarith
+  have hnom : δ ≤ E p := by have := hmin p hp; dsimp [δ]; linarith only [he, this]
   have hnew : δ ≤ F p := by
     have := hmin p hp
     have := (abs_le.mp hedit).1
@@ -1517,7 +1517,7 @@ theorem field_difference_identities {D D' : RadialDomain} (P : Profiles D) (Q : 
       c q) p at hUd
   rw [radialDerivative_add E _ hE (ModulatedHistories.editE_contDiff patch A c hA hc) p] at hEd
   rw [radialDerivative_add U _ hUs (ModulatedHistories.editU_contDiff patch A c hA hc) p] at hUd
-  exact ⟨by linarith [hEg.eq_of_nhds], by linarith, by linarith⟩
+  exact ⟨by linarith only [hEg, hEg.eq_of_nhds], by linarith only [hEd], by linarith only [hUd]⟩
 
 /-- The actual moment edit supplies a uniform first-radial-derivative
 bound from its coefficient jet bound. No shear estimate is a premise. -/
@@ -1563,7 +1563,7 @@ theorem window_shears_match {D D' : RadialDomain} (W : ModulatedHistories.Window
         (fun q => realizedU r E U n q.1 q.2) p := by
   have hout : p.1 ∉ Ioo patch.left patch.right := by
     intro hx
-    linarith [hp.2, hx.1]
+    linarith only [hgap, hp, hx, hp.2, hx.1]
   have hr := shears_unchanged_outside P Q patch A c hPf hPU hout
   have hm := Localized.physical_shears_match W r f E U ha hm hBK J hends n Q hQf hQU hp hη hphys
   exact ⟨hr.2.2.1.trans hm.1, hr.2.2.2.trans hm.2⟩
@@ -1691,14 +1691,14 @@ theorem profile_stocks_rate {D D' : RadialDomain}
     have hb : Cc / δr ≤ n :=
       ((le_max_left _ _).trans ((le_max_right _ _).trans (le_max_right _ _))).trans (hN.le.trans hn)
     have := (div_le_iff₀ hδr).mp hb
-    linarith
+    linarith only [this]
   have hsmalls : Ddata / n ≤ δs := by
     apply (div_le_iff₀ hnpos).mpr
     have hb : Ddata / δs ≤ n :=
       ((le_max_right _ _).trans ((le_max_right _ _).trans (le_max_right _ _))).trans (hN.le.trans
           hn)
     have := (div_le_iff₀ hδs).mp hb
-    linarith
+    linarith only [this]
   have hdatap := hdata n hn1 (c n) (hc n) (Cc / n) (div_nonneg hCc hnpos.le) hsmallr
     (hcoeff n hnr hn1) (P n) Q (hPf n) (hPU n) hQf hQU (hP0 n) p (hX p hp).le
     (hTJ p hp) (hTD hp) (hTD' hp)
@@ -1797,7 +1797,8 @@ theorem profiles_trueCone {D D' : RadialDomain}
       ((fun X => (R n).E (X, p.2)) =ᶠ[𝓝 p.1] fun X => realizedE r E n X p.2) ∧
       ((fun X => (R n).U (X, p.2)) =ᶠ[𝓝 p.1] fun X => realizedU r E U n X p.2) := by
     intro n _ p hp
-    have hout : p.1 ∉ Ioo patch.left patch.right := by intro hx; linarith [(hKW p hp).2, hx.1]
+    have hout : p.1 ∉ Ioo patch.left patch.right := by intro hx; linarith only [hgap, hKW, hp, hx,
+        (hKW p hp).2, hx.1]
     have hg := profileRepair_radial_germs (P n) patch A (c n) hA (hc n) hout
     have hb := Localized.physical_profile_germs W r f E U ha hm hBK J hends n (P n) (hPf n) (hPU n)
       (hKW p hp) (hTJ p (Or.inl hp)) (hphys p (Or.inl hp))

@@ -206,8 +206,8 @@ theorem density_uniform_eta_jets
       (f := fun j : Fin (q + 1) => ∑ i : Fin 5, c j i)
       (fun j _ => Finset.sum_nonneg (fun i _ => hc j i)) (Finset.mem_univ j)
     dsimp [C]
-    linarith
-  refine ⟨C, by dsimp [C]; linarith, ?_⟩
+    linarith only [hi, hj]
+  refine ⟨C, by dsimp [C]; linarith only [hsum], ?_⟩
   intro N hN X hX eta heta j hj i
   exact (hbound ⟨j, Nat.lt_succ_of_le hj⟩ i N hN X hX eta heta).trans
     (div_le_div_of_nonneg_right (hle _ i) (le_trans zero_le_one hN))
@@ -473,7 +473,7 @@ theorem axisHistory_localized_sub (W : Window)
     have hsum := hnom.add hi.intervalIntegrable
     apply hsum.congr_ae
     filter_upwards with s
-    linarith [localized_density_difference W r f E U N s eta i]
+    linarith only [localized_density_difference W r f E U N s eta i]
   change (∫ s in (0 : ℝ)..X, density (localizedF W r f N) (localizedU W r E U N) (s, eta) i) -
     (∫ s in (0 : ℝ)..X, density f U (s, eta) i) = _
   rw [← intervalIntegral.integral_sub hnew hnom]
@@ -703,7 +703,7 @@ theorem smooth_extension_ball {g : Coeff → Coeff} {r : ℝ} (hr : 0 < r)
   obtain ⟨χ⟩ := ParametricModulation.exists_compactCutoff
     (Metric.closedBall (0 : Coeff) (r / 2)) (Metric.ball 0 r)
     (isCompact_closedBall _ _) Metric.isOpen_ball
-    (Metric.closedBall_subset_ball (by linarith))
+    (Metric.closedBall_subset_ball (by linarith only [hr]))
   let G : Coeff → Coeff := fun z => χ.value z • g z
   refine ⟨G, contDiff_iff_contDiffAt.mpr ?_, ?_⟩
   · intro z
@@ -739,7 +739,7 @@ theorem repair_family_rate (P : FiveProfileMoments.Patch) (b : ℝ)
   have hvalue : ∀ z ∈ Metric.ball (0 : Coeff) (r / 2), ‖gext z‖ ≤ C0 * ‖z‖ := by
     intro z hz
     rw [hext hz]
-    exact (hbranch z ((Metric.ball_subset_ball (by linarith : r / 2 ≤ r)) hz)).2.1
+    exact (hbranch z ((Metric.ball_subset_ball (by linarith only [hr] : r / 2 ≤ r)) hz)).2.1
   obtain ⟨J, hJ, hjet⟩ := smooth_solver_linear_jets hr2 hC0 hgext.contDiffOn hvalue q
   obtain ⟨B0, hB0, hnormal⟩ := FiveProfileMoments.compact_normalizedDebt_jets
     S hS hA hG (fun eta => (hApos eta).ne') q
@@ -753,7 +753,7 @@ theorem repair_family_rate (P : FiveProfileMoments.Patch) (b : ℝ)
   have hsmall : B0 * D / N ≤ delta := by
     apply (div_le_iff₀ hNpos).mpr
     have ht := (div_le_iff₀ hdelta).mp ((le_max_right _ _).trans hN)
-    nlinarith
+    nlinarith only [ht]
   let v : ℝ → Coeff := fun eta => FiveProfileMoments.normalizedDebt (A eta) (G eta) (d N eta)
   have hv : ContDiff ℝ ∞ v := FiveProfileMoments.normalizedDebt_contDiff hA hG (hd N)
     (fun eta => (hApos eta).ne')
@@ -768,10 +768,10 @@ theorem repair_family_rate (P : FiveProfileMoments.Patch) (b : ℝ)
     rw [sub_zero]
     exact (hvb.norm_le heta).trans_lt (hsmall.trans_lt (by
       dsimp [delta]
-      exact (min_le_right _ _).trans_lt (by linarith)))
+      exact (min_le_right _ _).trans_lt (by linarith only [hr])))
   refine ⟨c, V, hgext.comp hv, hV, hSV, ?_, ?_⟩
   · intro eta heta
-    have hb0 := hbranch (v eta) ((Metric.ball_subset_ball (by linarith : r / 2 ≤ r)) heta)
+    have hb0 := hbranch (v eta) ((Metric.ball_subset_ball (by linarith only [hr] : r / 2 ≤ r)) heta)
     have hc : c eta = g (v eta) := hext heta
     constructor
     · rw [hc, FiveProfileMoments.physicalMoments_eq P b (A eta) (G eta) (hApos eta).ne']
@@ -1004,7 +1004,7 @@ theorem axisHistory_repair_sub (P : FiveProfileMoments.Patch) (b : ℝ) (A G : �
     filter_upwards with x
     have he := congrFun (density_repair_change P b A G c f U eta hU hE x) i
     simp only [Pi.sub_apply] at he
-    linarith
+    linarith only [he]
   change (∫ x in (0 : ℝ)..X, density (applyRepairF P A c f) (applyRepairU P A c U) (x, eta) i) -
     (∫ x in (0 : ℝ)..X, density f U (x, eta) i) = _
   rw [← intervalIntegral.integral_sub hnew (hi i)]
@@ -1038,7 +1038,7 @@ theorem localized_density_integrable (W : Window)
         continuous_const)).intervalIntegrable 0 X
   apply (hnom.add hi.intervalIntegrable).congr_ae
   filter_upwards with s
-  linarith [localized_density_difference W r f E U N s eta i]
+  linarith only [localized_density_difference W r f E U N s eta i]
 
 theorem actual_histories_restored (W : Window)
     (r : ParametricModulation.TrueConeRealization a m p₁ p₂ K B) (f E U : Field)
@@ -1192,11 +1192,11 @@ theorem compact_eta_jet_bound (F : Field) (hF : ContDiff ℝ ∞ F)
   choose B hB hb using hsingle
   refine ⟨1 + ∑ j : Fin (q + 1), B j, ?_, ?_⟩
   · have hs := Finset.sum_nonneg (s := Finset.univ) (fun j _ => hB j)
-    linarith
+    linarith only [hs]
   · intro X hX eta heta j hj
     have hsum := Finset.single_le_sum (fun j _ => hB j)
       (Finset.mem_univ (⟨j, Nat.lt_succ_of_le hj⟩ : Fin (q + 1)))
-    exact (hb ⟨j, Nat.lt_succ_of_le hj⟩ X hX eta heta).trans (by linarith)
+    exact (hb ⟨j, Nat.lt_succ_of_le hj⟩ X hX eta heta).trans (by linarith only [hj, hsum])
 
 theorem normalized_edits_eta_bound (P : FiveProfileMoments.Patch) (S : Set ℝ)
     (hS : IsCompact S) (A : ℝ → ℝ) (hA : ContDiff ℝ ∞ A) (q : ℕ) :
@@ -1212,13 +1212,13 @@ theorem normalized_edits_eta_bound (P : FiveProfileMoments.Patch) (S : Set ℝ)
   have h := hj c hc eps heps hcb eta heta 0 (Nat.zero_le q) j hjq X
   simp only [iteratedDeriv_zero, norm_iteratedFDeriv_eq_norm_iteratedDeriv, Real.norm_eq_abs] at h
   have hcost : J * eps ≤ ((1 + t) * J) * eps :=
-    mul_le_mul_of_nonneg_right (by nlinarith : J ≤ (1 + t) * J) heps
+    mul_le_mul_of_nonneg_right (by nlinarith only [hJ, ht] : J ≤ (1 + t) * J) heps
   refine ⟨?_, h.1.trans hcost⟩
   by_cases hX : X ∈ Ioo P.left P.right
-  · have hXs : 0 < Real.sqrt (2 * X) := Real.sqrt_pos.2 (by linarith [P.left_pos, hX.1])
+  · have hXs : 0 < Real.sqrt (2 * X) := Real.sqrt_pos.2 (by linarith only [hX, P.left_pos, hX.1])
     have hts : (Real.sqrt (2 * X))⁻¹ ≤ t := by
-      apply inv_anti₀ (Real.sqrt_pos.2 (by linarith [P.left_pos]))
-      exact Real.sqrt_le_sqrt (by linarith [hX.1])
+      apply inv_anti₀ (Real.sqrt_pos.2 (by linarith only [P.left_pos]))
+      exact Real.sqrt_le_sqrt (by linarith only [hX, hX.1])
     have he : (fun e => editF P A c (X, e)) =
         fun e => (Real.sqrt (2 * X))⁻¹ * editE P A c (X, e) := by
       funext e
@@ -1231,7 +1231,7 @@ theorem normalized_edits_eta_bound (P : FiveProfileMoments.Patch) (S : Set ℝ)
     exact hb.trans (by
       calc
         _ ≤ t * (J * eps) := mul_le_mul_of_nonneg_right hts (mul_nonneg hJ.le heps)
-        _ ≤ ((1 + t) * J) * eps := by nlinarith)
+        _ ≤ ((1 + t) * J) * eps := by nlinarith only [hJ, heps])
   · have he : (fun e => editF P A c (X, e)) = fun _ => (0 : ℝ) := by
       funext e
       exact (edits_zero_outside P A c hX).2.2
@@ -1297,7 +1297,7 @@ theorem repairHistory_scalar_jets (P : FiveProfileMoments.Patch) (S : Set ℝ)
   intro c hc eps heps hepsJ hcb X eta heta j hjq i
   have hsmall : J * eps ≤ 1 := by
     have h := (le_div_iff₀ hJ).mp hepsJ
-    nlinarith
+    nlinarith only [h]
   have hdensity : ∀ s ∈ Ioc P.left ((patchWindow P).clamp X),
       |iteratedDeriv j (fun e => repairDensity P A c f U (s, e) i) eta| ≤ K0 * eps := by
     intro s hs
@@ -1393,7 +1393,7 @@ theorem actual_repair_history_identity (W : Window)
     have he := hdelta x
     dsimp only [repairDensity, Pi.sub_apply] at he
     dsimp only [repairDensity, Pi.sub_apply]
-    linarith
+    linarith only [he]
   change (∫ x in (0 : ℝ)..X, density (applyRepairF P A c (localizedF W r f N))
       (applyRepairU P A c (localizedU W r E U N)) (x, eta) i) -
     (∫ x in (0 : ℝ)..X, density (localizedF W r f N) (localizedU W r E U N) (x, eta) i) = _

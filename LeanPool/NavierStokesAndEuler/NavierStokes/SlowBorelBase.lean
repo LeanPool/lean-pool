@@ -55,13 +55,13 @@ theorem localPower_smooth (b : ℝ) : ContDiff ℝ ∞ (localPower b) := by
   · exact (((SmoothCutoffs.cutoff_contDiff).comp
       (contDiff_const.mul (contDiff_id.sub contDiff_const))).contDiffAt).mul
       (contDiffAt_id.rpow_const_of_ne hq.ne')
-  · have hq' : q < 1 / 2 := by linarith
+  · have hq' : q < 1 / 2 := by linarith only [hq]
     have he : localPower b =ᶠ[𝓝 q] (fun _ => 0) := by
       filter_upwards [Iio_mem_nhds hq'] with r hr
       change r < 1 / 2 at hr
       have habs : 1 ≤ |4 * (r - 1)| := by
         have := neg_le_abs (4 * (r - 1))
-        linarith
+        linarith only [hr, this]
       simp only [localPower, SmoothCutoffs.cutoff_zero_of_one_le_abs habs, zero_mul]
     exact contDiffAt_const.congr_of_eventuallyEq he
 
@@ -71,7 +71,7 @@ theorem localPower_eventually_eq (b : ℝ) : localPower b =ᶠ[𝓝 1] (fun q : 
     simp only [Metric.mem_ball, Real.dist_eq] at hq
     rw [abs_mul]
     norm_num
-    linarith
+    linarith only [hq]
   simp only [localPower, SmoothCutoffs.cutoff_one_of_abs_le habs, one_mul]
 
 variable {V : Type} [NormedAddCommGroup V] [NormedSpace ℝ V]
@@ -154,7 +154,7 @@ theorem exists_template_jet_bound {f : Inner → V} (hf : ContDiff ℝ ∞ f)
   have hb := mul_le_mul_of_nonneg_right (hD (c, (1, w)) ⟨hc, rfl, hw⟩)
     (pow_nonneg (norm_nonneg (ContinuousLinearMap.inr ℝ ℝ Chart)) m)
   exact hb.trans (by
-      dsimp [C]; linarith [le_max_left (D * ‖ContinuousLinearMap.inr ℝ ℝ Chart‖ ^ m) 0])
+      dsimp [C]; linarith only [le_max_left (D * ‖ContinuousLinearMap.inr ℝ ℝ Chart‖ ^ m) 0])
 
 /-- Jets in the chart obtained by freezing the scale at the evaluation point
 and replacing q by q·s. The inner variables are left unscaled. -/
@@ -359,7 +359,7 @@ theorem exists_admissibleScales {f : ℕ → Inner → V}
     rw [slowStage_eq (by omega)]
     by_cases hactive : (a j : ℝ) * q ≤ 1
     · have hac : (0 : ℝ) < a j := by exact_mod_cast hapos j
-      have hqa : q ≤ 1 / (a j : ℝ) := (le_div_iff₀ hac).2 (by nlinarith)
+      have hqa : q ≤ 1 / (a j : ℝ) := (le_div_iff₀ hac).2 (by nlinarith only [hactive])
       have ht := hC j m ((a j : ℝ) * q) ⟨mul_nonneg hac.le hq.le, hactive⟩ w hw
       refine (powerStage_jet_bound (hf j) (a j) (2 * h * j) hq hq1
         (hCpos j m).le w m ht).trans ?_
@@ -374,7 +374,7 @@ theorem exists_admissibleScales {f : ℕ → Inner → V}
     rw [slowStage_eq (by omega)]
     by_cases hactive : (a j : ℝ) * q ≤ 1
     · have hac : (0 : ℝ) < a j := by exact_mod_cast hapos j
-      have hqa : q ≤ 1 / (a j : ℝ) := (le_div_iff₀ hac).2 (by nlinarith)
+      have hqa : q ≤ 1 / (a j : ℝ) := (le_div_iff₀ hac).2 (by nlinarith only [hactive])
       have ht := hC j m ((a j : ℝ) * q) ⟨mul_nonneg hac.le hq.le, hactive⟩ w hw
       refine (powerStage_blown_bound (hf j) (a j) (2 * h * j) hq w m ht).trans ?_
       have he : 2 * h * (j : ℝ) = h * j + h * j := by ring
@@ -620,7 +620,7 @@ theorem normalized_correction_bound {a : ℕ → ℕ} {h : ℝ} (hh : 0 < h)
         · refine (hCb j q hq w hw).trans (mul_le_mul_of_nonneg_left ?_ (hC j).le)
           apply Real.rpow_le_rpow_of_exponent_ge hq hq1
           have hj1 : (1 : ℝ) ≤ j := by exact_mod_cast (show 1 ≤ j by omega)
-          nlinarith
+          nlinarith only [hh, hj1]
       _ = D * q ^ (2 * h) := by rw [Finset.sum_mul]
   have hT : ‖blownJet m (fun y => positiveSum a h f y - P y) (q, w)‖ ≤
       (1 / 2 : ℝ) ^ J * q ^ (2 * h) := by
@@ -633,7 +633,7 @@ theorem normalized_correction_bound {a : ℕ → ℕ} {h : ℝ} (hh : 0 < h)
     refine hb.trans (mul_le_mul_of_nonneg_left ?_ (by positivity))
     apply Real.rpow_le_rpow_of_exponent_ge hq hq1
     have hJ : (1 : ℝ) ≤ J := by exact_mod_cast (le_max_right m 1)
-    nlinarith
+    nlinarith only [hh, hJ]
   have he : (fun y => slowSum a h f y - f 0 y.2) = positiveSum a h f := by
     funext y
     simp [slowSum]
@@ -658,21 +658,21 @@ noncomputable def physicalChart (h : ℝ) (p : Chart) : Chart :=
 theorem physicalChart_smoothAt {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {p : Chart} (hp : p.1 < 1) : ContDiffAt ℝ ∞ (physicalChart h) p := by
   have ha : 0 < 2 * h := by positivity
-  have ha1 : 2 * h < 1 := by linarith
+  have ha1 : 2 * h < 1 := by linarith only [hh1]
   exact (PhysicalCoordinateBounds.physicalQ_contDiffAt ha ha1 hp).prodMk
     ((PhysicalCoordinateBounds.physicalX_contDiffAt ha ha1 hp).prodMk
       (PhysicalCoordinateBounds.physicalEta_contDiffAt ha ha1 hp))
 
 theorem physicalChart_positive {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {p : Chart} (hp : p.1 < 1) : 0 < (physicalChart h p).1 :=
-  PhysicalCoordinateBounds.physicalQ_pos (by positivity) (by linarith) hp
+  PhysicalCoordinateBounds.physicalQ_pos (by positivity) (by linarith only [hh1]) hp
 
 theorem physicalChart_inner_mem {h lo hi : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {p : Chart} (hp : p.1 < 1)
     (hX : PhysicalCoordinateBounds.physicalX (2 * h) p ∈ Icc lo hi) :
     (physicalChart h p).2 ∈ innerBox lo hi := by
   have he := PhysicalCoordinateBounds.physicalEta_abs_lt_one
-    (by positivity : 0 < 2 * h) (by linarith : 2 * h < 1) hp
+    (by positivity : 0 < 2 * h) (by linarith only [hh1] : 2 * h < 1) hp
   exact ⟨hX, (abs_lt.mp he).1.le, (abs_lt.mp he).2.le⟩
 
 private theorem iteratedFDeriv_pair {E F G : Type*}
@@ -699,7 +699,7 @@ theorem physicalChart_jet_bound {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
       (physicalChart h p).2.1 ∈ Icc lo hi →
       ‖iteratedFDeriv ℝ n (physicalChart h) p‖ ≤ C * (physicalChart h p).1 ^ (-(n : ℝ)) := by
   have ha : 0 < 2 * h := by positivity
-  have ha1 : 2 * h < 1 := by linarith
+  have ha1 : 2 * h < 1 := by linarith only [hh1]
   obtain ⟨C, hC, hb⟩ := PhysicalCoordinateBounds.physical_coordinate_derivative_bounds
     ha ha1 lo hi 1 n
   refine ⟨C, hC, fun p hp hq1 hX => ?_⟩
@@ -735,7 +735,7 @@ theorem physicalChart_finite_bound {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     have hsum := Finset.single_le_sum (fun j _ => (hC j).le)
       (Finset.mem_range.mpr (Nat.lt_succ_of_le hin))
     dsimp [D]
-    linarith
+    linarith only [hh, hh1, hsum]
   have hDp : D ≤ D ^ i := by
     simpa only [pow_one] using pow_le_pow_right₀ hD hi
   calc
@@ -1456,7 +1456,7 @@ theorem compact_map_finite_bound {E : Type} [NormedAddCommGroup E] [NormedSpace 
     have hs := Finset.single_le_sum (fun j (_ : j ∈ Finset.range (M + 1)) =>
       zero_le_one.trans (hC j)) (Finset.mem_range.mpr (Nat.lt_succ_of_le hiM))
     dsimp [D]
-    linarith
+    linarith only [hs]
   refine (hCb i x hx).trans (hCi.trans ?_)
   simpa only [pow_one] using pow_le_pow_right₀ hD hi
 
@@ -1548,7 +1548,7 @@ theorem normalized_correction_smul_inner {a : ℕ → ℕ} {h : ℝ} (hh : 0 < h
     have hAi := zero_le_one.trans (hA i)
     have hBi := (hB (m - i)).le
     positivity
-  refine ⟨C, by dsimp [C]; linarith, ?_⟩
+  refine ⟨C, by dsimp [C]; linarith only [hsum], ?_⟩
   intro q hq hq1 w hw
   let F : Chart → V := fun y => slowSum a h f y - f 0 y.2
   have hFs {y : Chart} (hy : 0 < y.1) : ContDiffAt ℝ ∞ F y :=
@@ -1575,7 +1575,7 @@ theorem normalized_correction_smul_inner {a : ℕ → ℕ} {h : ℝ} (hh : 0 < h
       ring
     _ = (∑ i ∈ Finset.range (m + 1), (m.choose i : ℝ) * A i * B (m - i)) * q ^ (2 * h) :=
       (Finset.sum_mul _ _ _).symm
-    _ ≤ C * q ^ (2 * h) := mul_le_mul_of_nonneg_right (by dsimp [C]; linarith)
+    _ ≤ C * q ^ (2 * h) := mul_le_mul_of_nonneg_right (by dsimp [C]; linarith only)
       (Real.rpow_nonneg hq.le _)
 
 /-- Normalized swirl, given by `Real.sqrt (2 * y.2.1) / C * slowSum a h d.phi y`. -/
@@ -1691,7 +1691,7 @@ theorem normalized_stress_weighted_compact {a : ℕ → ℕ} {h C : ℝ}
   obtain ⟨A, hA, hAb⟩ := normalized_correction_smul_inner hh hd.stressTheta hK hU hKU htheta hr m
   obtain ⟨B, hB, hBb⟩ := normalized_correction_smul_inner hh hd.stressAxial hK hU hKU haxial hr m
   refine ⟨A + B, add_pos hA hB, fun q hq hq1 w hw => ?_⟩
-  have hp : q ^ (2 * h) ≤ q ^ h := Real.rpow_le_rpow_of_exponent_ge hq hq1 (by linarith)
+  have hp : q ^ (2 * h) ≤ q ^ h := Real.rpow_le_rpow_of_exponent_ge hq hq1 (by linarith only [hh])
   refine ⟨(hAb q hq hq1 w hw).trans ?_, (hBb q hq hq1 w hw).trans ?_⟩
   · exact (mul_le_mul_of_nonneg_left hp hA.le).trans
       (mul_le_mul_of_nonneg_right (le_add_of_nonneg_right hB.le) (Real.rpow_nonneg hq.le _))
@@ -1743,7 +1743,7 @@ theorem powered_fixed_prefix_bound {a : ℕ → ℕ} {h : ℝ}
   apply mul_le_mul_of_nonneg_left _ (by positivity)
   apply Real.rpow_le_rpow_of_exponent_ge hq (hsmall.le.trans hδ1)
   have hmR : (m : ℝ) ≤ M := by exact_mod_cast hm
-  linarith
+  linarith only [hmR]
 
 end FixedPrefixes
 

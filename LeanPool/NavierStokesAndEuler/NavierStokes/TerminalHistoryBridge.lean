@@ -392,7 +392,7 @@ theorem angularHistory_eq_power_sub_future {F : Profile} {XR C : ℝ}
   have hsplit := split_positive_integral (w.renormalized_integrable η hη) hX.le
   rw [w.renormalized_zero η hη,integral_sub hi hp] at hsplit
   unfold angularHistory powerHistory
-  linarith
+  linarith only [hsplit]
 
 theorem energyHistory_eq_neg_future {F : Profile} {XR C B : ℝ}
     (hF : OutgoingProfile.Specification F B) (w : CompensationWitness F XR C)
@@ -404,7 +404,7 @@ theorem energyHistory_eq_neg_future {F : Profile} {XR C B : ℝ}
   unfold HeatedOutgoing.totalS at hz
   rw [hz] at hs
   unfold energyHistory
-  linarith
+  linarith only [hs]
 
 theorem square_integrable_after_switch {F : Profile} {XR C : ℝ}
     (w : CompensationWitness F XR C) {η X : ℝ}
@@ -497,7 +497,7 @@ theorem full_switch_radial {F : Profile} {XR : ℝ} (hXR : 0 < XR)
     change p.2.1 / SimilarityProfile.q F.data.h p ≤ u / SimilarityProfile.q F.data.h p
     exact div_le_div_of_nonneg_right hu hq.le
   have hlog := Real.log_le_log (div_pos hX hK) (div_le_div_of_nonneg_right hle hK.le)
-  linarith
+  linarith only [hfull, hlog]
 
 /-- Exact physical canonical pressure, with its required `q^(-2A)` factor.
 This is a change of variables in the actual improper integral. -/
@@ -562,7 +562,7 @@ theorem terminalStart_after_endpoint (F : Profile) :
   have ht := OutgoingTail.tailStart_gt_release F.data
   dsimp only [TerminalCone.terminalStart]
   have hf := OutgoingTail.flattenEnd_gt_core F.data
-  linarith
+  linarith only [hr, ht, hf]
 
 theorem Qs_after_endpoint (F : Profile) (XR : ℝ) (c : ℝ → Coeff)
     {p : ℝ × ℝ} (hp : F.data.core.endpoint ≤ p.1) :
@@ -841,7 +841,7 @@ theorem thetaWeight_eq_forward (F : Profile) {XR C : ℝ} (w : CompensationWitne
     show 3*p.1/2=p.1+p.1/2 by ring,Real.exp_add]
   generalize Real.sqrt (2*XR) = r at *
   field_simp [hE,hL,hR,Real.exp_ne_zero]
-  have hx : XR=r^2/2 := by linarith [hR2]
+  have hx : XR=r^2/2 := by linarith only [hR2]
   have hex : Real.exp p.1 = Real.exp (p.1/2)^2 := by
     rw [pow_two,← Real.exp_add,add_halves]
   generalize logE F XR w.coefficients p = e
@@ -1098,7 +1098,7 @@ theorem terminalAmplitude_operator (C : ℝ) (d : OutgoingTail.TailData) (y0 : �
     (TerminalPressure.outgoingTaper_contDiff d y0).contDiffAt.of_le two_le_infty
   have hA : ContDiffAt ℝ 2 (terminalAmplitude C d y0) (TerminalStress.radiusPoint t r z) :=
     ((TerminalStress.physicalHeat_contDiffAt C (by
-        linarith [d.h_pos]) hp hs).of_le two_le_infty).mul
+        linarith only [d.h_pos]) hp hs).of_le two_le_infty).mul
       (TerminalStress.flattening_contDiffAt d.h_pos d.h_lt_half hp hs hf)
   have he := TerminalStress.terminal_radial_residual C d.h_pos d.h_lt_half ht hr hf
   change deriv (fun u => terminalAmplitude C d y0 (TerminalStress.radiusPoint u r z)) t -
@@ -1199,8 +1199,8 @@ theorem powerHistory_identity (F : Profile) {XR X : ℝ} (hXR : 0 < XR) (hX : 0 
     exact HeatTailHistoryLimits.powerH_eq F hXR hu.1
   rw [he,HeatTailHistoryLimits.powerH_eq F hXR hX,
     ← intervalIntegral.integral_of_le hX.le,
-    integral_rpow (Or.inl (by linarith [F.data.h_lt_half] : -1 < -F.data.h)),
-    Real.zero_rpow (by linarith [F.data.h_lt_half] : -F.data.h+1 ≠ 0),sub_zero,
+    integral_rpow (Or.inl (by linarith only [F.data.h_lt_half] : -1 < -F.data.h)),
+    Real.zero_rpow (by linarith only [F.data.h_lt_half] : -F.data.h+1 ≠ 0),sub_zero,
     Real.rpow_add_one hX.ne']
   rw [show -F.data.h+1=1-F.data.h by ring]
   field_simp [F.data.one_sub_h_pos.ne']
@@ -1387,7 +1387,7 @@ theorem full_switch_late (F : Profile) {XR X : ℝ} (hXR : 0 < XR) (hX : 0 < X)
   have he := TerminalCone.tailTime_clock F hXR (Real.log (X/XR))
   rw [Real.exp_log (div_pos hX hXR),mul_div_cancel₀ _ hXR.ne'] at he
   unfold TerminalCone.terminalStart
-  linarith
+  linarith only [hfull, he]
 
 theorem full_switch_radial_strict {F : Profile} {XR : ℝ} (hXR : 0 < XR)
     {p : SimilarityProfile.PhysicalPoint} (ht : p.1 < 1) (hs : 0 < p.2.1)
@@ -1576,13 +1576,13 @@ theorem physicalThetaWeight_eq_tail (F : Profile) {XR C t r z : ℝ}
     have hh := full_switch_radial_strict w.radius_pos ht
       (show 0 < (TerminalStress.radiusPoint t r z).2.1 by
           dsimp [TerminalStress.radiusPoint]; positivity)
-      hfull (u := u^2/2) (by dsimp [TerminalStress.radiusPoint]; nlinarith)
+      hfull (u := u^2/2) (by dsimp [TerminalStress.radiusPoint]; nlinarith only [hr, hu])
     exact hh
   have hi := terminal_angular_integrable (normalization F XR) F.data (shift F XR) (z := z) ht hr
   have hh := integral_Ioi_of_hasDerivAt_of_tendsto' hd hi.neg (physicalThetaWeight_tendsto_zero F w
       ht)
   rw [integral_neg] at hh
-  linarith
+  linarith only [hh]
 
 theorem physicalAxialWeight_eq_tail (F : Profile) {XR C B t s z : ℝ}
     (hF : OutgoingProfile.Specification F B) (w : CompensationWitness F XR C)
@@ -1604,7 +1604,7 @@ theorem physicalAxialWeight_eq_tail (F : Profile) {XR C B t s z : ℝ}
   have hh := integral_Ioi_of_hasDerivAt_of_tendsto' hd hi.neg (physicalAxialWeight_tendsto_zero F
       hF w ht)
   rw [integral_neg] at hh
-  linarith
+  linarith only [hh]
 
 /-- The actual forward angular stress equals the independently defined
 backward physical stress.  Its similarity factor is `q^(-A-1/2)`. -/
@@ -1729,7 +1729,7 @@ theorem forward_stresses_eq_profile_interior (F : Profile) {XR C B y η : ℝ}
     change SimilarityProfile.X F.data.h (TerminalStress.radiusPoint (η^2) r η) = XR*Real.exp y at hx
     rw [hx,TerminalCone.tailTime_clock F w.radius_pos y]
     unfold TerminalCone.terminalStart at hy
-    linarith
+    linarith only [hy]
   have ht := physical_forwardTheta_eq_terminal F w he2 hr hfull
   have hz := physical_forwardAxial_eq_terminal F hF w he2 hr hfull
   rw [hn.1,hn.2,logPoint_radius w.radius_pos,Real.one_rpow,one_mul,
@@ -1944,7 +1944,7 @@ theorem terminal_forward_cone (F : Profile) {XR C B y η : ℝ}
     have hp0 : 0 < XR*Real.exp y*HeatSwitchCone.Qs F XR w.coefficients (y,η)/CoordinateAlgebra.L
         F.data.h η := by
       rw [← hscale]
-      linarith
+      linarith only [hP2]
     exact (mul_pos_iff_of_pos_left (mul_pos w.radius_pos (Real.exp_pos y))).mp
       ((div_pos_iff_of_pos_right hL).mp hp0)
   have hJ := (forward_normalization F w (p := (y,η)) hafter hη hQ.ne').2
@@ -1959,12 +1959,12 @@ theorem terminal_forward_cone (F : Profile) {XR C B y η : ℝ}
     exact he.2.2
   have ha2 : 2 < HeatSwitchCone.radialA F XR w.coefficients (y,η) := by
     rw [he.2.2]
-    linarith [F.data.h_pos]
+    linarith only [hspeed, F.data.h_pos]
   refine ⟨?_,hP,hJ'⟩
   unfold HeatSwitchCone.TrueAt
-  refine ⟨hQ,by linarith,?_,hP2,?_⟩
+  refine ⟨hQ,by linarith only [ha2],?_,hP2,?_⟩
   · rw [hV]
-    linarith [F.data.h_pos]
+    linarith only [he, ha2, F.data.h_pos]
   · rw [hV,hP,hJ']
     exact htrue.2
 

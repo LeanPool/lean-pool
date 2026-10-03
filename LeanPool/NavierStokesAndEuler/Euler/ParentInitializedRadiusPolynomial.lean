@@ -100,7 +100,7 @@ theorem leafEnvelope_power (K : ℝ) (hK : 1 ≤ K) :
 
 theorem radiusCeiling_le (K : ℝ) (hK : 0 ≤ K) : coefficientRadius K ≤ radiusCeiling K := by
   unfold coefficientRadius radiusCeiling
-  exact max_le (by linarith) (by linarith)
+  exact max_le (by linarith only [hK]) (by linarith only)
 
 theorem leaf_bounds (K : ℝ) (hK : 0 ≤ K) :
     1 ≤ leafEnvelope K ∧ coefficientRadius K ≤ leafEnvelope K ∧
@@ -135,13 +135,14 @@ theorem leaf_bounds (K : ℝ) (hK : 0 ≤ K) :
     change 16*(coefficientRadius K+4*EulerPacketParentNormalBudget.inverseRadius
       (coefficientRadius K) (frameAmplitude K) (gradientAmplitude K)+1) ≤
       16*(radiusCeiling K+4*normalInverse K+1)
-    linarith
+    linarith only [hr, hi]
   have hj : EulerPacketParentTransverseCosts.inverseRadius (coefficientRadius K)
       (frameAmplitude K) ≤ transverseInverse K := by
     unfold transverseInverse EulerPacketParentTransverseCosts.inverseRadius
     gcongr
   unfold leafEnvelope
-  refine ⟨?_,?_,?_,?_,?_,?_,?_,?_,?_,?_,?_⟩ <;> linarith
+  refine ⟨?_,?_,?_,?_,?_,?_,?_,?_,?_,?_,?_⟩ <;> linarith only [hG, hF, hR, hH, hA, hI, hN, hC, hJ,
+      hV, hr, hi, hn, hj]
 
 open EulerSmoothLimit EulerPacketPiola
 
@@ -326,7 +327,9 @@ theorem parameterSize_bounds (K Ti TiTotal Cp B δ N : ℝ)
   have hi := (inv_pos.mpr hδ).le
   unfold parameterSize
   exact ⟨by
-      linarith,by linarith,by linarith,by linarith,by linarith,by linarith,by linarith,by linarith⟩
+      linarith,by linarith,by linarith,by linarith,by linarith,by linarith only [hK, hTi, hTiTotal,
+          hCp, hN, hi],by linarith only [hK,
+          hTi, hTiTotal, hCp, hB, hN],by linarith⟩
 
 /-- Full envelope, given by `radiusEnvelope (sourceEnvelope X)`. -/
 def fullEnvelope (X : ℝ) : ℝ := radiusEnvelope (sourceEnvelope X)
@@ -413,7 +416,7 @@ theorem joined_radius_primitives (δ : ℝ) (ξ : U) (X : ℝ)
     joined_radius_le τ (G.T-τ) Ti (coefficientRadius L.K) (frameAmplitude L.K)
       (gradientAmplitude L.K) (gradientAmplitude L.K)
       (EulerPacketParentPhysicalBudgets.physicalCost L.K Cp) W hW hτ.le hτ1
-      (sub_pos.mpr hτT).le (by linarith) hTi0 (hTiX.trans hb.2.1)
+      (sub_pos.mpr hτT).le (by linarith only [hτ, hT1]) hTi0 (hTiX.trans hb.2.1)
       (coefficientRadius_nonneg L.K) (hr.trans hLW) (frameAmplitude_nonneg L.K) (hf.trans hLW)
       (gradientAmplitude_nonneg L.K) (hgK.trans hLW) (gradientAmplitude_nonneg L.K)
       (EulerPacketParentPhysicalBudgets.physicalCost_nonneg L.K Cp hCp) hPW

@@ -210,11 +210,11 @@ theorem tendsto_approximate (ψ : SchwartzMap Space ℂ) :
   have hR : (0 : ℝ) < (n : ℝ) + 1 := by positivity
   have hRone : (1 : ℝ) ≤ (n : ℝ) + 1 := by
     have hnnonneg : (0 : ℝ) ≤ (n : ℝ) := by positivity
-    linarith
+    linarith only
   refine (seminorm_truncate_sub_le ψ hR hRone k m).trans_lt ?_
   apply (div_lt_iff₀ hR).2
   have hNn : (N : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
-  have hlarge : errorTailBound ψ k m / ε < (n : ℝ) + 1 := by linarith
+  have hlarge : errorTailBound ψ k m / ε < (n : ℝ) + 1 := by linarith only [hN, hNn]
   simpa [mul_comm] using (div_lt_iff₀ hε).1 hlarge
 
 /-- Compactly supported smooth tests are dense in Schwartz space. -/

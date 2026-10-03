@@ -90,7 +90,7 @@ theorem graph_evaluated_tensor_bound (k : ℝ) (m : Vector3) (C R : ℝ)
   refine ⟨hg,hgNorm.trans ?_⟩
   have hfirst : C*R^n*(n.factorial : ℝ)^2 ≤ C*majorant (4*R) 0 n := by
     simpa only [majorant,Nat.add_zero,mul_assoc] using mul_le_mul_of_nonneg_left
-      (majorant_radius_mono R (4*R) hR (by linarith) 0 n) hC
+      (majorant_radius_mono R (4*R) hR (by linarith only [hR]) 0 n) hC
   have hsecond : C*R^(n+1)*((n+1).factorial : ℝ)^2 ≤ C*R*majorant (4*R) 0 n := by
     simpa only [majorant,mul_assoc] using mul_le_mul_of_nonneg_left
       (majorant_one_le_radius_four R hR n) hC

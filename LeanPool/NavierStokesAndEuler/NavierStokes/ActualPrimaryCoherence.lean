@@ -896,8 +896,8 @@ theorem piece_velocity_support (U : LocalSignedRequest.SlowRegion (2 * h))
     rw [piece_velocity_representation, hz, smul_zero]
   rw [amplitudeRadius_chart L n hT hr] at hm
   have hq : 0 < VariableGaugeMean.qLength (2*h) x.1.2.1 :=
-    VariableGaugeMean.qLength_pos (by linarith [outgoing.data.h_pos])
-      (by linarith [outgoing.data.h_lt_half]) hT
+    VariableGaugeMean.qLength_pos (by linarith only [outgoing.data.h_pos])
+      (by linarith only [outgoing.data.h_lt_half]) hT
   exact ⟨by simpa only [mul_comm] using (le_div_iff₀ hq).mp hm.1,
     by simpa only [mul_comm] using (div_le_iff₀ hq).mp hm.2⟩
 
@@ -1117,8 +1117,8 @@ theorem radius_mem_of_amplitudeRadius_mem (L : Label B N0) (n : ℕ) {x : ChartP
       (mul_nonpos_of_nonneg_of_nonpos (Real.sqrt_nonneg _) (le_of_not_gt hh)) hm
   rw [amplitudeRadius_chart L n hT hr] at hm
   have hq : 0 < VariableGaugeMean.qLength (2*h) x.1.2.1 :=
-    VariableGaugeMean.qLength_pos (by linarith [outgoing.data.h_pos])
-      (by linarith [outgoing.data.h_lt_half]) hT
+    VariableGaugeMean.qLength_pos (by linarith only [outgoing.data.h_pos])
+      (by linarith only [outgoing.data.h_lt_half]) hT
   exact ⟨by simpa only [mul_comm] using (le_div_iff₀ hq).mp hm.1,
     by simpa only [mul_comm] using (div_le_iff₀ hq).mp hm.2⟩
 
@@ -1157,7 +1157,7 @@ theorem constructed_frame_normal {ι : Type} {D : PhaseJetBounds.Domain ι Phase
     (P : PrimaryPulseBounds.PhaseConstruction D) (i : ι)
     {z : PhaseCalculus.Slow × ℝ} (hz : z ∈ (D.slot P.V P.openV).carrier i) :
     (P.frame i).normal z = P.phase.normal i z := by
-  have hB : 0 < P.B i := lt_of_lt_of_le (by linarith [P.b_pos]) (P.B_bound i).1
+  have hB : 0 < P.B i := lt_of_lt_of_le (by linarith only [P.b_pos]) (P.B_bound i).1
   have hn := (PhaseEstimates.normal_lower_bounds hB (P.K_unit i)
     (P.error_small i z hz) (P.normal_close i z hz)).2.2.1
   exact PrimaryODE.FrameData.ofNormalLocal_normal _ _ _ _ _ _ _ _ hn
@@ -1820,7 +1820,7 @@ theorem physicalAmplitude_zero_axis (j : Fin 2) (L : Label B N0) (z : ProblemSta
     have hs : 1/2 < Real.sqrt (SimilarityCoordinates.coordinateQ (2*h)
       ((nativeSlow L (physicalLift z).1).2.2,(nativeSlow L (physicalLift z).1).2.1)) := by
       apply (Real.lt_sqrt (by norm_num)).2
-      linarith
+      linarith only [hq]
     have hu : (nativeSlow L (physicalLift z).1).1 ≤ PrimaryTargetBounds.leftRadius nominal / 4 := by
       change z.2 0 / Real.sqrt (ChartScales.Q (BaseChartJets.cellBand L)) ≤ _
       apply (div_le_iff₀ (Real.sqrt_pos.mpr (ChartScales.Q_pos _))).2
@@ -1834,7 +1834,7 @@ theorem physicalAmplitude_zero_axis (j : Fin 2) (L : Label B N0) (z : ProblemSta
       SimilarityHomogeneity.chartQ] at hx1
     have hn := (lt_div_iff₀ (lt_trans (by norm_num : (0:ℝ)<1/2) hs)).mp hx1
     have hp := PrimaryTargetBounds.leftRadius_pos nominal
-    nlinarith
+    nlinarith only [hu, hn, hp, hs]
   have he : absoluteAmplitude j L (physicalLift z).1 = 0 := by
     rcases hr with hr | hr
     · exact absoluteAmplitude_zero_outside j L (physicalLift z) hr
@@ -1861,7 +1861,7 @@ theorem periodic_value_of_polar_eq {E : Type} (f : TorusInverse.Plane → E)
     apply mul_left_cancel₀ hr
     simpa only [PolarCharts.polar,hqr] using congrArg Prod.snd hq
   obtain ⟨n,hn⟩ := Real.Angle.angle_eq_iff_two_pi_dvd_sub.mp (Real.Angle.cos_sin_inj hc hs)
-  have he : q.2 = θ+n*(2*Real.pi) := by nlinarith [hn]
+  have he : q.2 = θ+n*(2*Real.pi) := by nlinarith only [hn]
   rw [← Prod.eta q,hqr,he]
   exact ((hf r).int_mul n) θ
 
@@ -1917,7 +1917,7 @@ theorem globalPotential_forward {a : ℝ} (ha : 0 < a)
     have hz : z.2 0 ≤ a := by
       have hb := PolarCharts.radius_le_two_norm (PolarCharts.polar (z.2 0,z.2 1))
       rw [PolarCharts.radius_polar,abs_of_pos hr] at hb
-      linarith
+      linarith only [hr, hn, hb]
     have hc' : ¬∃ j : PolarCharts.Index,
         PhysicalGraphBounds.radialProjection (z.1,CylindricalResidual.chart z.2) ∈
             PolarCharts.chartDomain a j := by

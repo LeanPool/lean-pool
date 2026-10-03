@@ -160,7 +160,7 @@ theorem scaledCutoff_zero_of_inv_le {a q : ℝ} (ha : 0 < a) (hq : 1 / a ≤ q) 
     scaledCutoff a q = 0 := by
   apply cutoff_zero_of_one_le
   have hprod := (div_le_iff₀ ha).mp hq
-  nlinarith
+  nlinarith only [hprod]
 
 theorem scaledCutoff_hasCompactSupport {a : ℝ} (ha : a ≠ 0) :
     HasCompactSupport (scaledCutoff a) := by
@@ -262,17 +262,17 @@ theorem timeSwitch_contDiff : ContDiff ℝ ∞ timeSwitch :=
 theorem timeSwitch_mem_Icc (t : ℝ) : timeSwitch t ∈ Icc (0 : ℝ) 1 := by
   obtain ⟨hlo, hhi⟩ := scaledCutoff_mem_Icc (4 / 3) t
   unfold timeSwitch
-  constructor <;> linarith
+  constructor <;> linarith only [hhi, hlo]
 
 theorem timeSwitch_zero_of_abs_le {t : ℝ} (ht : |t| ≤ 3 / 8) : timeSwitch t = 0 := by
   have hs : |(4 / 3 : ℝ) * t| ≤ 1 / 2 := by
     rw [abs_mul, abs_of_pos (by norm_num : (0 : ℝ) < 4 / 3)]
-    linarith
+    linarith only [ht]
   simp [timeSwitch, scaledCutoff_one_of_abs_le hs]
 
 theorem timeSwitch_one_of_three_quarters_le {t : ℝ} (ht : 3 / 4 ≤ t) :
     timeSwitch t = 1 := by
-  have hs : (1 : ℝ) ≤ (4 / 3) * t := by linarith
+  have hs : (1 : ℝ) ≤ (4 / 3) * t := by linarith only [ht]
   simp [timeSwitch, scaledCutoff, cutoff_zero_of_one_le hs]
 
 theorem timeSwitch_eventually_zero : timeSwitch =ᶠ[𝓝 0] (fun _ => 0) := by
@@ -282,7 +282,7 @@ theorem timeSwitch_eventually_zero : timeSwitch =ᶠ[𝓝 0] (fun _ => 0) := by
 theorem timeSwitch_eventually_one {t : ℝ} (ht : 3 / 4 < t) :
     timeSwitch =ᶠ[𝓝 t] (fun _ => 1) := by
   have hs : (1 : ℝ) < |(4 / 3) * t| := by
-    have hprod : (1 : ℝ) < (4 / 3) * t := by linarith
+    have hprod : (1 : ℝ) < (4 / 3) * t := by linarith only [ht]
     exact hprod.trans_le (le_abs_self _)
   filter_upwards [scaledCutoff_eventually_zero hs] with s hs
   simp [timeSwitch, hs]
@@ -315,6 +315,6 @@ theorem timeSwitch_iteratedDeriv_support_nonneg (n : ℕ) {t : ℝ} (ht : 0 ≤ 
   have hb := cutoff_iteratedDeriv_support n hcut
   change 1 / 2 ≤ |(4 / 3 : ℝ) * t| ∧ |(4 / 3 : ℝ) * t| ≤ 1 at hb
   rw [abs_of_nonneg (by positivity : (0 : ℝ) ≤ (4 / 3) * t)] at hb
-  constructor <;> linarith [hb.1, hb.2]
+  constructor <;> linarith only [hb, hb.1, hb.2]
 
 end NavierStokes.SmoothCutoffs

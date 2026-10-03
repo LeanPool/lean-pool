@@ -144,7 +144,7 @@ theorem forwardInitializedExactPhysicalVelocity_eq (t : Icc (0 : ℝ) D.T) (Y : 
       forwardInitializedVelocity M D δ hδ ξ hs α N k⁻¹
         (t,(Y x,k*inner ℝ D.m₀ (Y x))) +
       k⁻¹ • D.F.field t (Y x) (Q.pointField period t (cylinderGraph period k D.m₀ (Y x))) := by
-  have hk0 : k ≠ 0 := by linarith
+  have hk0 : k ≠ 0 := by linarith only [hk]
   have ha : (forwardInitializedCorrectionData M D hTime δ hδ ξ hs α Cagree N hN k hk).approximation
       =
       (coordinateField D (forwardInitializedVelocityField M D hTime δ hδ ξ hs α N k⁻¹)
@@ -205,7 +205,7 @@ theorem forwardInitializedExactPhysicalPressure_gradient
       gradient (fun y => forwardInitializedPressure M D δ hδ ξ hs α N k⁻¹
         (t,(Y t y,k*⟪D.m₀,Y t y⟫_ℝ))) x +
       gradient (Q.physicalPotential D period k Y t) x := by
-  have hk0 : k ≠ 0 := by linarith
+  have hk0 : k ≠ 0 := by linarith only [hk]
   have hkk : k*(forwardInitializedCorrectionData M D hTime δ hδ ξ hs α
       Cagree N hN k hk).κ=1 := mul_inv_cancel₀ hk0
   let S := forwardInitializedExactPacket M D hTime δ hδ ξ hs α Cagree N hN k hk Q
@@ -247,7 +247,7 @@ theorem forwardInitializedExactPhysicalPressure_hessian
       fderiv ℝ (gradient (fun y => forwardInitializedPressure M D δ hδ ξ hs α N k⁻¹
         (t,(Y t y,k*⟪D.m₀,Y t y⟫_ℝ)))) x +
       fderiv ℝ (gradient (Q.physicalPotential D period k Y t)) x := by
-  have hk0 : k ≠ 0 := by linarith
+  have hk0 : k ≠ 0 := by linarith only [hk]
   have hkk : k*(forwardInitializedCorrectionData M D hTime δ hδ ξ hs α
       Cagree N hN k hk).κ=1 := mul_inv_cancel₀ hk0
   have hp := ((forwardInitializedPressureWitness M D hTime δ hδ ξ hs α N k⁻¹).changeTime

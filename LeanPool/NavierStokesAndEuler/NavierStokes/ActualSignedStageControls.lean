@@ -405,9 +405,9 @@ theorem native_phase_jets (U : LocalSignedRequest.SlowRegion (2 * ActualPrimary.
   let r := min (ActualPrimary.phases B N0 0).r (ActualPrimary.phases B N0 1).r
   have hM0 := (ActualPrimary.phases B N0 0).one_le_M
   have hM1 := (ActualPrimary.phases B N0 1).one_le_M
-  have hM : 1 ≤ M := by dsimp [M]; linarith
+  have hM : 1 ≤ M := by dsimp [M]; linarith only [hM0, hM1]
   have hMj (j : Fin 2) : (ActualPrimary.phases B N0 j).M ≤ M := by
-    fin_cases j <;> dsimp [M] <;> linarith
+    fin_cases j <;> dsimp [M] <;> linarith only [hM1, hM0]
   have hr : 0 < r := lt_min (ActualPrimary.phases B N0 0).r_pos (ActualPrimary.phases B N0 1).r_pos
   have hrj (j : Fin 2) : r ≤ (ActualPrimary.phases B N0 j).r := by
     fin_cases j
@@ -580,7 +580,7 @@ theorem cutoff_support (l : SignedLabel B N0) (n : ℕ) (k : Frequency) :
     by_contra hn
     exact hg (GaussianTailFlat.profile_zero (le_of_not_gt hn))
   obtain ⟨htlo, hthi⟩ := abs_lt.mp hdist
-  have htime : nativeTime l n k x ∈ Ioo (0 : ℝ) 1 := ⟨by linarith, by linarith⟩
+  have htime : nativeTime l n k x ∈ Ioo (0 : ℝ) 1 := ⟨by linarith, by linarith only [hthi]⟩
   have hL := (ActualPrimary.phases B N0 0).L_pos l.1
   apply (cells_mem l n k x).mpr
   have hu' := hu
@@ -597,11 +597,11 @@ theorem cutoff_zero_germ_outside_time (l : SignedLabel B N0) (n : ℕ) (k : Freq
   have hdist : 1 / 3 < |nativeTime l n k x - 1 / 2| := by
     rcases not_and_or.mp hx with hlo | hhi
     · have hh := lt_of_not_ge hlo
-      rw [abs_of_neg (by linarith)]
-      linarith
+      rw [abs_of_neg (by linarith only [hlo])]
+      linarith only [hlo]
     · have hh := lt_of_not_ge hhi
-      rw [abs_of_pos (by linarith)]
-      linarith
+      rw [abs_of_pos (by linarith only [hhi])]
+      linarith only [hhi]
   have hg := (GaussianTailFlat.profile_eventually_zero hdist).comp_tendsto
     (nativeTime_smooth l n k).continuous.continuousAt
   filter_upwards [hg] with y hy
@@ -637,7 +637,7 @@ theorem nativePoint_eq_fullCopy (l : SignedLabel B N0) (n : ℕ) (k : Frequency)
 
 theorem phaseCell_time {l : SignedLabel B N0} {n : ℕ} {k : Frequency} {x : FullPoint}
     (hc : x ∈ phaseCell l n k) : nativeTime l n k x ∈ Ioo (0 : ℝ) 1 :=
-  ⟨by linarith [hc.2.1], by linarith [hc.2.2]⟩
+  ⟨by linarith only [hc, hc.2.1], by linarith only [hc, hc.2.2]⟩
 
 theorem uniform_of_primary {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {w : PulseLabel B N0 → ℕ → FullPoint → ℝ} {α : ℝ}

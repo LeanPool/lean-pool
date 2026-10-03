@@ -135,22 +135,22 @@ theorem chartSupport_cover : ({z : EulerSobolev.Domain 4 | |z 0| ≤ 2 * period}
   by_cases h₀ : z 0 ≤ -2 * period
   · apply Set.mem_iUnion.2 ⟨0, ?_⟩
     norm_num
-    constructor <;> linarith
+    constructor <;> linarith only [hT, hz', h₀]
   by_cases h₁ : z 0 ≤ -period
   · apply Set.mem_iUnion.2 ⟨1, ?_⟩
     norm_num
-    constructor <;> linarith
+    constructor <;> linarith only [h₀, h₁]
   by_cases h₂ : z 0 ≤ 0
   · apply Set.mem_iUnion.2 ⟨2, ?_⟩
     norm_num
-    constructor <;> linarith
+    constructor <;> linarith only [h₁, h₂]
   by_cases h₃ : z 0 ≤ period
   · apply Set.mem_iUnion.2 ⟨3, ?_⟩
     norm_num
-    constructor <;> linarith
+    constructor <;> linarith only [h₂, h₃]
   · apply Set.mem_iUnion.2 ⟨4, ?_⟩
     norm_num
-    constructor <;> linarith
+    constructor <;> linarith only [h₃, hz']
 
 theorem chartSupport_measure_le :
     volume.restrict (({z : EulerSobolev.Domain 4 | |z 0| ≤ 2 * period})) ≤ chartMeasure period :=

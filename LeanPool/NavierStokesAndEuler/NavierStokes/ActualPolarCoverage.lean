@@ -254,11 +254,11 @@ theorem finite_compact_jet_bound {ι E F : Type*} [Finite ι]
   choose C hC hb using fun i => PhysicalGraphBounds.compact_jet_bound hU (hf i) hK hKU m
   refine ⟨1 + ∑ i, |C i|, ?_, ?_⟩
   · have hsum : 0 ≤ ∑ i, |C i| := Finset.sum_nonneg (fun i _ => abs_nonneg (C i))
-    linarith
+    linarith only [hsum]
   · intro i k hk x hx
     have hi : |C i| ≤ ∑ j, |C j| :=
       Finset.single_le_sum (fun j _ => abs_nonneg (C j)) (Finset.mem_univ i)
-    exact (hb i k hk x hx).trans ((le_abs_self (C i)).trans (by linarith))
+    exact (hb i k hk x hx).trans ((le_abs_self (C i)).trans (by linarith only [hi]))
 
 theorem rotationLift_jet_bound {a : ℝ} (ha : 0 < a) (b : ℝ) (m : ℕ) :
     ∃ B : ℝ, 1 ≤ B ∧ ∀ j : PolarCharts.Index, ∀ x : LiftPoint,
@@ -858,7 +858,7 @@ theorem ResidualChartData.residual_jet_bound {a b h gain β : ℝ} {N Δ : ℕ} 
   intro w hw ht hsmall hs
   have hq := physicalQ_pos hh hh1 hw
   obtain ⟨n, hn, hlo, hhi⟩ := PhysicalMeanJetBounds.exists_comparable_band N hq hsmall
-  have hlo' : physicalQ h w / 2 ≤ ChartScales.Q n := by linarith
+  have hlo' : physicalQ h w / 2 ≤ ChartScales.Q n := by linarith only [hq, hlo]
   have hann := d.annulus n hn w hw hlo' hhi.le hs
   obtain ⟨j, hj⟩ := PolarCharts.annulus_covered ha hann
   have hc := PolarCharts.sector_subset_chartDomain ha j hj
@@ -1079,7 +1079,7 @@ theorem NativeBounds.to_phaseLoss {D E ι : Type} [NormedAddCommGroup D] [Normed
   apply hf.weaken hN
   intro m
   have hm := mul_nonneg hβ (Nat.cast_nonneg m : (0 : ℝ) ≤ m)
-  linarith
+  linarith only [hg, hm]
 
 theorem excluded_nativeBounds {N : ℕ} {U : Set Cylinder} {gain : ℝ} {loss : ℕ → ℝ}
     (hN : 1 ≤ N) (hU : IsOpen U) (e : CorrectionState.ExcludedErrors Point)
@@ -1170,7 +1170,7 @@ theorem inner_lt_outer : inner < outer := by
   have hab := PrimaryTargetBounds.radii_ordered ActualPrimary.nominal
   change PrimaryTargetBounds.leftRadius ActualPrimary.nominal / 4 <
     2 * PrimaryTargetBounds.rightRadius ActualPrimary.nominal
-  linarith
+  linarith only [ha, hab]
 
 theorem nativeDomain_open : IsOpen nativeDomain :=
   HarmonicResidual.liftDomain_open
@@ -1245,9 +1245,9 @@ theorem graph_profileRadius_mem {F : OutgoingProfile.Profile}
     Real.sq_sqrt (mul_nonneg (by norm_num) (LeadingStressWeights.activeRight_pos W).le)
   constructor
   · apply (sq_le_sq₀ ha.le hr).mp
-    linarith [hactive.1]
+    linarith only [hsq, hasq, hactive, hactive.1]
   · apply (sq_le_sq₀ hr hb.le).mp
-    linarith [hactive.2]
+    linarith only [hsq, hbsq, hactive, hactive.2]
 
 /-! ## Closure of a moving strip, including both radial endpoints -/
 
@@ -1301,9 +1301,9 @@ theorem graph_slow_mem_standard {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
   have hQ := ChartScales.Q_pos n
   constructor
   · apply (lt_div_iff₀ hQ).mpr
-    linarith
+    linarith only [hQq]
   · apply (div_lt_iff₀ hQ).mpr
-    linarith
+    linarith only [hqQ, hQq]
 
 theorem selected_mean_domain (n d : ℕ) {w : SpaceTime} (hw : w ∈ preterminal)
     (hqQ : physicalQ ActualPrimary.h w ≤ ChartScales.Q n)
@@ -1327,7 +1327,7 @@ theorem selected_annulus (n : ℕ) {w : SpaceTime} (hw : w ∈ preterminal)
     scaledRadial n w ∈ annulus inner outer := by
   have hq := physicalQ_pos ActualPrimary.outgoing.data.h_pos
     ActualPrimary.outgoing.data.h_lt_half hw
-  have hlo : physicalQ ActualPrimary.h w / 2 ≤ ChartScales.Q n := by linarith
+  have hlo : physicalQ ActualPrimary.h w / 2 ≤ ChartScales.Q n := by linarith only [hqQ, hQq]
   have hell := graph_length_pos ActualPrimary.outgoing.data.h_pos
     ActualPrimary.outgoing.data.h_lt_half n 0 hw
   have hlen := graph_length_bounds ActualPrimary.outgoing.data.h_pos
@@ -1338,9 +1338,10 @@ theorem selected_annulus (n : ℕ) {w : SpaceTime} (hw : w ∈ preterminal)
   have ha := PrimaryTargetBounds.leftRadius_pos ActualPrimary.nominal
   have hb := PrimaryTargetBounds.rightRadius_pos ActualPrimary.nominal
   have hRlo : PrimaryTargetBounds.leftRadius ActualPrimary.nominal / 2 ≤
-      (graph ActualPrimary.h n 0 w).1 := by nlinarith [hlen.1]
+      (graph ActualPrimary.h n 0 w).1 := by nlinarith only [hloR, hlen, ha, hlen.1]
   have hRhi : (graph ActualPrimary.h n 0 w).1 ≤
-      2 * PrimaryTargetBounds.rightRadius ActualPrimary.nominal := by nlinarith [hlen.2]
+      2 * PrimaryTargetBounds.rightRadius ActualPrimary.nominal := by nlinarith only [hhiR, hlen,
+          hb, hlen.2]
   rw [graph_radius] at hRlo hRhi
   refine ⟨?_, ?_⟩
   · simpa only [outer, Metric.mem_closedBall, dist_zero_right] using

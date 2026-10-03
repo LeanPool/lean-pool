@@ -208,7 +208,7 @@ theorem scalarField_jet_bound (δ : ℝ) (hδ : 0 < δ) (hδ1 : δ ≤ 1)
   have hc : 0 ≤ (9 / rawBump 0)^3 := by have := rawBump_pos_zero; positivity
   have hp : 0 ≤ 100*(δ^2)⁻¹ := by positivity
   have hR₁ : (64 : ℝ) ≤ jetRadius δ := le_add_of_nonneg_right (by positivity)
-  have hR₂ : 40*(δ^2)⁻¹ ≤ jetRadius δ := by unfold jetRadius; linarith
+  have hR₂ : 40*(δ^2)⁻¹ ≤ jetRadius δ := by unfold jetRadius; linarith only
   have hb₁ (k : ℕ) (b : LiftTangent) :=
     (cutoffLift_bound y k b).trans (mul_le_mul_of_nonneg_left
       (majorant_radius_mono 64 (jetRadius δ) (by norm_num) hR₁ 0 k) hc)

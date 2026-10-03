@@ -46,7 +46,7 @@ theorem normalized_motion_errors_within
       (∀ i j, |E t i j / a| ≤ e) ∧
       |ε ^ 2 * h t / a - 1| ≤ e ∧
       |B t 0 1 / a - 1| ≤ e ∧ |B t 2 1 / a - β| ≤ e := by
-  have hΘ0 : 0 < Θ := by linarith
+  have hΘ0 : 0 < Θ := by linarith only [hΘ]
   have h0 : (0:ℝ) ∈ Icc 0 Θ := ⟨le_rfl, hΘ0.le⟩
   obtain ⟨b', hbeq, hbd⟩ := exists_extension hΘ0 hb
   obtain ⟨k', hkeq, hkd⟩ := exists_extension hΘ0 hk

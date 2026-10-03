@@ -108,7 +108,7 @@ theorem exists_comparable_band (N : ℕ) {q : ℝ} (hq : 0 < q) (hsmall : q ≤ 
   · have hh := (lt_div_iff₀ hQN).mp hlo
     rw [pow_succ] at hh
     rw [Q_add, Q_eq_half_pow k]
-    nlinarith
+    nlinarith only [hh]
 
 /-! ## The local, nonoscillatory graph estimate -/
 
@@ -268,21 +268,21 @@ theorem graph_slow_normalized {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
   have hq := physicalQ_pos hh hh1 hw
   constructor
   · apply (lt_div_iff₀ hQ).mpr
-    nlinarith
+    nlinarith only [hhi, hq]
   · apply (div_lt_iff₀ hQ).mpr
-    nlinarith
+    nlinarith only [hlo, hQ]
 
 theorem graph_length_pos {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2) (n d : ℕ)
     {w : SpaceTime} (hw : w ∈ preterminal) :
     0 < VariableGaugeMean.qLength (2 * h) (graph h n d w).2.1 :=
-  VariableGaugeMean.qLength_pos (by linarith) (by linarith) (graph_time_pos h n d hw)
+  VariableGaugeMean.qLength_pos (by linarith) (by linarith only [hh1]) (graph_time_pos h n d hw)
 
 theorem graph_length_continuousAt {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2) (n d : ℕ)
     {w : SpaceTime} (hw : w ∈ preterminal) :
     ContinuousAt (fun z => VariableGaugeMean.qLength (2 * h) (graph h n d z).2.1) w := by
   have he : ContDiffAt ℝ ∞ (VariableGaugeMean.qLength (2 * h)) (graph h n d w).2.1 :=
-    (VariableGaugeMean.qLength_contDiffOn (by linarith : 0 < 2 * h)
-    (by linarith : 2 * h < 1)).contDiffAt
+    (VariableGaugeMean.qLength_contDiffOn (by linarith only [hh] : 0 < 2 * h)
+    (by linarith only [hh1] : 2 * h < 1)).contDiffAt
       ((isOpen_lt continuous_const continuous_fst).mem_nhds (graph_time_pos h n d hw))
   have ht : Tendsto (fun z : SpaceTime => (graph h n d z).2.1) (𝓝 w)
       (𝓝 (graph h n d w).2.1) := (graph_slow_continuous h n d).continuousAt
@@ -297,10 +297,10 @@ theorem graph_length_bounds {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2) (n d : ℕ)
   have hq := physicalQ_pos hh hh1 hw
   have hlow : (1 / 4 : ℝ) ≤ physicalQ h w / ChartScales.Q n := by
     apply (le_div_iff₀ hQ).mpr
-    nlinarith
+    nlinarith only [hhi, hq]
   have hhigh : physicalQ h w / ChartScales.Q n ≤ (4 : ℝ) := by
     apply (div_le_iff₀ hQ).mpr
-    nlinarith
+    nlinarith only [hlo, hQ]
   change 1 / 2 ≤ Real.sqrt (SimilarityCoordinates.coordinateQ (2 * h) (graph h n d w).2.1) ∧ _
   rw [graph_q_eq hh hh1 n d hw]
   constructor
@@ -431,7 +431,7 @@ theorem CoherentFamily.field_jet_bound (D : CoherentFamily h degree N Δ U E)
   have hq := physicalQ_pos hh hh1 hw
   by_cases hts : w ∈ tsupport D.field
   · obtain ⟨n, hn, hqn, hnq⟩ := exists_comparable_band N hq hsmall
-    have hlo : physicalQ h w / 2 ≤ ChartScales.Q n := by linarith
+    have hlo : physicalQ h w / 2 ≤ ChartScales.Q n := by linarith only [hq, hqn]
     have hu := hcover (graph_slow_normalized hh hh1 n (D.gap n) hw hlo hnq.le)
     have hann := D.annulus_on_tsupport hh hh1 ha hab hU hs n hn hw hu hlo hnq.le hts
     rw [iteratedFDeriv_eq_of_eventuallyEq (D.field_germ hU n hn hw hu) m]
@@ -453,7 +453,7 @@ theorem CoherentFamily.field_smoothAt (D : CoherentFamily h degree N Δ U E)
   classical
   by_cases hts : w ∈ tsupport D.field
   · obtain ⟨n, hn, hqn, hnq⟩ := exists_comparable_band N (physicalQ_pos hh hh1 hw) hsmall
-    have hlo : physicalQ h w / 2 ≤ ChartScales.Q n := by linarith
+    have hlo : physicalQ h w / 2 ≤ ChartScales.Q n := by linarith only [hqn, hnq]
     have hu := hcover (graph_slow_normalized hh hh1 n (D.gap n) hw hlo hnq.le)
     have hann := D.annulus_on_tsupport hh hh1 ha hab hU hs n hn hw hu hlo hnq.le hts
     have hnative := (hsm n hn).contDiffAt ((PhysicalMeanDomain.slowDomain_open hU).mem_nhds hu)
@@ -766,7 +766,7 @@ theorem CoherentFamily.angularField_jet_bound (D : CoherentFamily h degree N Δ 
   have hq := physicalQ_pos hh hh1 hw
   by_cases hts : w ∈ tsupport D.field
   · obtain ⟨n, hn, hqn, hnq⟩ := exists_comparable_band N hq hsmall
-    have hlo : physicalQ h w / 2 ≤ ChartScales.Q n := by linarith
+    have hlo : physicalQ h w / 2 ≤ ChartScales.Q n := by linarith only [hq, hqn]
     have hu := hcover (graph_slow_normalized hh hh1 n (D.gap n) hw hlo hnq.le)
     have hann := D.annulus_on_tsupport hh hh1 ha hab hU hs n hn hw hu hlo hnq.le hts
     rw [iteratedFDeriv_eq_of_eventuallyEq (D.angularField_germ hU n hn hw hu) m]
@@ -789,7 +789,7 @@ theorem CoherentFamily.angularField_smoothAt (D : CoherentFamily h degree N Δ U
   classical
   by_cases hts : w ∈ tsupport D.field
   · obtain ⟨n, hn, hqn, hnq⟩ := exists_comparable_band N (physicalQ_pos hh hh1 hw) hsmall
-    have hlo : physicalQ h w / 2 ≤ ChartScales.Q n := by linarith
+    have hlo : physicalQ h w / 2 ≤ ChartScales.Q n := by linarith only [hqn, hnq]
     have hu := hcover (graph_slow_normalized hh hh1 n (D.gap n) hw hlo hnq.le)
     have hann := D.annulus_on_tsupport hh hh1 ha hab hU hs n hn hw hu hlo hnq.le hts
     have haxis := PhysicalGraphBounds.scaledRadial_ne_zero

@@ -52,7 +52,7 @@ theorem coordinateQ_le_upperScale {a : ℝ} (ha : 0 < a) (ha1 : a < 1)
       apply (mul_lt_mul_iff_left₀ hqa).mp
       rw [mul_comm (coordinateQ a p ^ (1 - a)), hprod]
       dsimp [forwardScalar] at he
-      nlinarith
+      nlinarith only [he, hsmall]
     have hbound := Real.rpow_le_rpow
       (Real.rpow_nonneg hq.le (1 - a)) hpower.le (inv_pos.mpr hd).le
     rw [Real.rpow_rpow_inv hq.le hd.ne'] at hbound
@@ -87,7 +87,7 @@ theorem physical_q_bound {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {p : SimilarityProfile.PhysicalPoint} (ht : p.1 < 1) :
     SimilarityProfile.q h p ≤
       2 * (1 - p.1) + (2 * p.2.2 ^ 2) ^ (1 - 2 * h)⁻¹ :=
-  coordinateQ_le_upperScale (by linarith) (by linarith) (sub_pos.mpr ht)
+  coordinateQ_le_upperScale (by linarith only [hh]) (by linarith only [hh1]) (sub_pos.mpr ht)
 
 theorem physical_q_tendsto_zero {α : Type*} {l : Filter α}
     {p : α → SimilarityProfile.PhysicalPoint} {h : ℝ}
@@ -96,7 +96,7 @@ theorem physical_q_tendsto_zero {α : Type*} {l : Filter α}
     (hz : Tendsto (fun i => (p i).2.2) l (𝓝 0))
     (hbefore : ∀ᶠ i in l, (p i).1 < 1) :
     Tendsto (fun i => SimilarityProfile.q h (p i)) l (𝓝 0) := by
-  refine coordinateQ_tendsto_zero (by linarith) (by linarith) ?_ hz ?_
+  refine coordinateQ_tendsto_zero (by linarith only [hh]) (by linarith only [hh1]) ?_ hz ?_
   · simpa using (tendsto_const_nhds :
       Tendsto (fun _ : α => (1 : ℝ)) l (𝓝 1)).sub ht
   · exact hbefore.mono (fun _ hi => sub_pos.mpr hi)

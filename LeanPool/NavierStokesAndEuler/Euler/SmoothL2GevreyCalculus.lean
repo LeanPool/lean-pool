@@ -78,12 +78,12 @@ theorem positive_id_add_bound (f : E → E) (hf : ContDiff ℝ ∞ f) (B R : ℝ
     iteratedFDeriv_add_apply contDiffAt_id (hf.contDiffAt.of_le (by simp))]
   have hi : ‖iteratedFDeriv ℝ n (id : E → E) x‖ ≤ 1 := by
     have h := EulerGevreyGeneratingDerivatives.norm_iteratedFDeriv_id_le n hn x
-    split_ifs at h <;> linarith
+    split_ifs at h <;> linarith only [h]
   have hfact : (1 : ℝ) ≤ n.factorial := by exact_mod_cast Nat.succ_le_of_lt (Nat.factorial_pos n)
   have hweight : (1 : ℝ) ≤ (1+R)^n*(n.factorial : ℝ)^2 := by
-    exact one_le_mul_of_one_le_of_one_le (one_le_pow₀ (by linarith)) (by nlinarith)
+    exact one_le_mul_of_one_le_of_one_le (one_le_pow₀ (by linarith)) (by nlinarith only [hfact])
   have hdisp : ‖iteratedFDeriv ℝ n f x‖ ≤ B*(1+R)^n*(n.factorial : ℝ)^2 :=
-    (hb.mono hB hR le_rfl (by linarith)) n x
+    (hb.mono hB hR le_rfl (by linarith only)) n x
   exact (norm_add_le _ _).trans ((add_le_add (hi.trans hweight) hdisp).trans_eq (by ring))
 
 end EulerGevrey

@@ -44,8 +44,8 @@ theorem slowQ_physical (h : ℝ) (w : SpaceTime) :
 
 theorem slowQ_smoothAt {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
     {s : DirectAngularDiagonal.Slow} (hs : s.1 < 1) : ContDiffAt ℝ ∞ (slowQ h) s := by
-  exact (SimilarityCoordinates.coordinateQ_smooth (by linarith : 0 < 2 * h)
-    (by linarith : 2 * h < 1) (p := (1 - s.1, s.2)) (sub_pos.mpr hs)).comp s
+  exact (SimilarityCoordinates.coordinateQ_smooth (by linarith only [hh] : 0 < 2 * h)
+    (by linarith only [hh1] : 2 * h < 1) (p := (1 - s.1, s.2)) (sub_pos.mpr hs)).comp s
     ((contDiffAt_const.sub contDiffAt_fst).prodMk contDiffAt_snd)
 
 theorem localSlowDomain_open {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2) (qbig : ℝ) :

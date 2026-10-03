@@ -410,7 +410,7 @@ theorem initialRadius_mul (R : ℝ) (hR : 0 ≤ R) : initialRadius R*R ≤ 1/2 :
   apply (le_div_iff₀ (by norm_num : (0 : ℝ) < 2)).mpr
   calc
     _ = R/(R+1) := by field_simp
-    _ ≤ 1 := (div_le_one (by positivity)).mpr (by linarith)
+    _ ≤ 1 := (div_le_one (by positivity)).mpr (by linarith only)
 
 /-- These are scalar smallness inequalities, obtained explicitly below. -/
 structure Scale (C R E : ℝ) where
@@ -1550,7 +1550,7 @@ theorem retainedRadius_small (R : ℝ) (hR : 0 ≤ R) :
   have hn := mul_nonneg (EulerSmallCorrection.initialRadius_pos _ (mixedRadius_nonneg R hR)).le
     (mixedRadius_nonneg R hR)
   dsimp [retainedRadius]
-  linarith
+  linarith only [h]
 
 theorem baseErrorFactor_nonneg : 0 ≤ baseErrorFactor :=
   div_nonneg (zero_le_one.trans (metricAmplification_one_le (by
@@ -1886,7 +1886,7 @@ theorem velocityCoefficient_bound (n : ℕ) :
         _ = _ := by rw [hi,one_mul]
     _ ≤ _ := jet_mono (outputVelocitySize_nonneg P C R hC hR) (coverRadius_nonneg R hR)
       (mul_le_mul_of_nonneg_right (graphCost_embedding P R hR) hV)
-      (by have hc := coverRadius_nonneg R hR; unfold outputRadius; linarith) n
+      (by have hc := coverRadius_nonneg R hR; unfold outputRadius; linarith only [hc]) n
 
 theorem derivativeCoefficient_bound (n : ℕ) :
     ‖(derivativeCoefficient P u C R hC hR hu hdiv).jet n‖ ≤
@@ -1919,7 +1919,7 @@ theorem derivativeCoefficient_bound (n : ℕ) :
     _ ≤ _ := jet_mono (outputDerivativeSize_nonneg P C R hC hR) (coverRadius_nonneg R hR)
       (mul_le_mul_of_nonneg_right
         (mul_le_mul_of_nonneg_left (graphCost_embedding P R hR) (inv_nonneg.mpr he)) hT)
-      (by have hc := coverRadius_nonneg R hR; unfold outputRadius; linarith) n
+      (by have hc := coverRadius_nonneg R hR; unfold outputRadius; linarith only [hc]) n
 
 theorem localField_bound (t : Icc (0 : ℝ) (amplitude P C R hC hR)) :
     (localField P u C R hC hR hu hdiv t).HasJetBound (outputVelocitySize P C R) (outputRadius R) :=
@@ -1952,7 +1952,7 @@ theorem localField_bound (t : Icc (0 : ℝ) (amplitude P C R hC hR)) :
   exact h.mono (by have hc := coverRadius_nonneg R hR; positivity)
     (mul_nonneg (by norm_num) (coverRadius_nonneg R hR))
     (mul_le_mul_of_nonneg_right (graphCost_trace P R) hV)
-    (by unfold outputRadius; linarith)
+    (by unfold outputRadius; linarith only)
 
 theorem localDerivativeField_bound (t : Icc (0 : ℝ) (amplitude P C R hC hR)) :
     (localDerivativeField P u C R hC hR hu hdiv t).HasJetBound
@@ -1985,7 +1985,7 @@ theorem localDerivativeField_bound (t : Icc (0 : ℝ) (amplitude P C R hC hR)) :
     (mul_nonneg (by norm_num) (coverRadius_nonneg R hR))
     (mul_le_mul_of_nonneg_right
       (mul_le_mul_of_nonneg_left (graphCost_trace P R) (inv_nonneg.mpr he)) hT)
-    (by unfold outputRadius; linarith)
+    (by unfold outputRadius; linarith only)
 
 end EulerStaticEuler
 
@@ -2179,7 +2179,7 @@ theorem horizon_small (T B R : ℝ) (hT : 0 < T) (hB : 0 ≤ B) (hR : 0 ≤ R) :
   have hd : 0 < 8*(1+B*R) := by positivity
   have he := (le_div_iff₀ hd).1 (min_le_right T (1/(8*(1+B*R))))
   change horizon T B R*(8*(1+B*R)) ≤ 1 at he
-  linarith
+  linarith only [hp, he]
 
 /-- Of interval, bundling `T`, `T_pos`, `field`, `derivative` and the required compatibility
 proofs. -/
@@ -2403,7 +2403,7 @@ theorem field_derivative_bound (t : Icc (0 : ℝ) I.T) :
     fun n x => field_jet_bound I.T I.field I.B I.R I.bound n t x
   exact (h.derivative I.B_nonneg I.R_pos.le).mono (mul_nonneg I.B_nonneg I.R_pos.le)
     (mul_nonneg (by norm_num) I.R_pos.le) le_rfl
-    (by dsimp [accelerationSourceRadius]; linarith [L.S_nonneg,L.S₁_nonneg])
+    (by dsimp [accelerationSourceRadius]; linarith only [L.S_nonneg, L.S₁_nonneg])
 
 /-- Acceleration product, constructed using `SmoothL2Field.productField`. -/
 def accelerationProduct (t : Icc (0 : ℝ) I.T) : SmoothL2Field Space :=
@@ -2412,7 +2412,7 @@ def accelerationProduct (t : Icc (0 : ℝ) I.T) : SmoothL2Field Space :=
     (I.B*I.R) L.C L.accelerationSourceRadius (mul_nonneg I.B_nonneg I.R_pos.le) L.C_nonneg
     L.accelerationSourceRadius_nonneg (L.field_derivative_bound t)
     ((L.velocity_bound t).mono L.C_nonneg L.S_nonneg le_rfl
-      (by dsimp [accelerationSourceRadius]; linarith [I.R_pos,L.S₁_nonneg]))
+      (by dsimp [accelerationSourceRadius]; linarith only [I.R_pos, L.S₁_nonneg]))
 
 /-- Acceleration source, given by `SmoothL2Field.addField (L.derivative t)
 (L.accelerationProduct t)`. -/
@@ -2434,7 +2434,7 @@ theorem accelerationSource_bound (t : Icc (0 : ℝ) I.T) :
     (L.accelerationSource t).HasJetBound L.accelerationAmplitude L.accelerationSourceRadius := by
   apply SmoothL2Field.HasJetBound.add
   · exact (L.derivative_bound t).mono L.C₁_nonneg L.S₁_nonneg le_rfl
-      (by dsimp [accelerationSourceRadius]; linarith [I.R_pos,L.S_nonneg])
+      (by dsimp [accelerationSourceRadius]; linarith only [I.R_pos, L.S_nonneg])
   · exact SmoothL2Field.productField_bound _ _ _ _ _ _ _ _ _ _ _
 
 /-- Acceleration radius, given by `flowRadius I.B I.R I.T L.accelerationSourceRadius`. -/
@@ -2517,7 +2517,7 @@ private theorem costs_nonneg :
 theorem labelCost_one : 1 ≤ L.labelCost := by
   obtain ⟨h1,h2,h3,h4,h5⟩ := L.costs_nonneg
   dsimp [labelCost]
-  linarith
+  linarith only [h1, h2, h3, h4, h5]
 
 theorem displacement_labelBound (t : Icc (0 : ℝ) I.T) :
     HasLabelBound L.labelCost (L.displacementField t) := by
@@ -2525,16 +2525,16 @@ theorem displacement_labelBound (t : Icc (0 : ℝ) I.T) :
   apply SmoothL2Field.hasLabelBound_of_jet_bound (L.displacementField t)
     (I.T*L.C) L.velocityRadius L.labelCost (mul_nonneg I.T_pos.le L.C_nonneg)
     L.velocityRadius_nonneg (L.displacementField_bound t)
-  · dsimp [labelCost]; linarith
-  · dsimp [labelCost]; linarith
+  · dsimp [labelCost]; linarith only [h2, h3, h4, h5]
+  · dsimp [labelCost]; linarith only [h1, h2, h3, h5]
 
 theorem velocity_labelBound (t : Icc (0 : ℝ) I.T) :
     HasLabelBound L.labelCost (L.velocityField t) := by
   obtain ⟨h1,h2,h3,h4,h5⟩ := L.costs_nonneg
   apply SmoothL2Field.hasLabelBound_of_jet_bound (L.velocityField t)
     L.C L.velocityRadius L.labelCost L.C_nonneg L.velocityRadius_nonneg (L.velocityField_bound t)
-  · dsimp [labelCost]; linarith
-  · dsimp [labelCost]; linarith
+  · dsimp [labelCost]; linarith only [h1, h3, h4, h5]
+  · dsimp [labelCost]; linarith only [h1, h2, h3, h5]
 
 theorem acceleration_labelBound (t : Icc (0 : ℝ) I.T) :
     HasLabelBound L.labelCost (L.accelerationField t) := by
@@ -2542,8 +2542,8 @@ theorem acceleration_labelBound (t : Icc (0 : ℝ) I.T) :
   apply SmoothL2Field.hasLabelBound_of_jet_bound (L.accelerationField t)
     L.accelerationAmplitude L.accelerationRadius L.labelCost L.accelerationAmplitude_nonneg
     L.accelerationRadius_nonneg (L.accelerationField_bound t)
-  · dsimp [labelCost]; linarith
-  · dsimp [labelCost]; linarith
+  · dsimp [labelCost]; linarith only [h1, h2, h4, h5]
+  · dsimp [labelCost]; linarith only [h1, h2, h3, h4]
 
 /-- Label data, bundling `K`, `K_one`, `displacement`, `velocity` and the required compatibility
 proofs. -/
@@ -3163,7 +3163,7 @@ theorem id_bound_on_ball (r R : ℝ) (hr : 1 ≤ r) (hR : 1 ≤ R)
   | succ n =>
     have hi := norm_iteratedFDeriv_id_le (n+1) (Nat.succ_pos _) x
     have hnorm : ‖iteratedFDeriv ℝ (n+1) (id : E → E) x‖ ≤ 1 := by
-      split_ifs at hi <;> linarith
+      split_ifs at hi <;> linarith only [hi]
     exact hnorm.trans (one_le_mul_of_one_le_of_one_le hr (majorant_one_le R hR _))
 
 theorem linear_bound_on_ball (L : E →L[ℝ] V) (r R : ℝ) (hr : 1 ≤ r) (hR : 1 ≤ R)
@@ -3257,7 +3257,7 @@ theorem coordinate_bound_on_ball (i : Fin 3) (x : Space) (hx : ‖x‖ ≤ 2) (n
     ‖iteratedFDeriv ℝ n (fun y : Space => y i) x‖ ≤ 2*majorant 256 0 n := by
   apply (linear_bound_on_ball (EuclideanSpace.proj i) 2 256 (by
       norm_num) (by norm_num) x hx n).trans
-  exact mul_le_mul_of_nonneg_right (by linarith [coordinate_norm_le i])
+  exact mul_le_mul_of_nonneg_right (by linarith only [coordinate_norm_le i])
     (majorant_nonneg 256 (by norm_num) 0 n)
 
 theorem linear_coordinate_bound_on_ball (L : Space →L[ℝ] Space) (i : Fin 3)
@@ -3268,7 +3268,7 @@ theorem linear_coordinate_bound_on_ball (L : Space →L[ℝ] Space) (i : Fin 3)
     simpa only [one_mul] using (mul_le_mul_of_nonneg_right (coordinate_norm_le i) (norm_nonneg L))
   apply (linear_bound_on_ball ((EuclideanSpace.proj i).comp L) 2 256
     (by norm_num) (by norm_num) x hx n).trans
-  exact mul_le_mul_of_nonneg_right (by linarith) (majorant_nonneg 256 (by norm_num) 0 n)
+  exact mul_le_mul_of_nonneg_right (by linarith only [hL]) (majorant_nonneg 256 (by norm_num) 0 n)
 
 theorem linearPotential_bound (L : Space →L[ℝ] Space) (i : Fin 3)
     (x : Space) (hx : ‖x‖ ≤ 2) (n : ℕ) :
@@ -3445,13 +3445,13 @@ theorem uniformAmplitude_pos : 0 < uniformAmplitude := by
 
 theorem velocityAmplitude_le_uniform (β : ℝ) (hβ : |β| ≤ 1) :
     velocityAmplitude (linear β) ≤ uniformAmplitude := by
-  have hL : ‖linear β‖ ≤ 2 := (linear_norm β).trans (by linarith)
+  have hL : ‖linear β‖ ≤ 2 := (linear_norm β).trans (by linarith only [hβ])
   have hc := cutoffAmplitude_nonneg
   calc
     velocityAmplitude (linear β) ≤ ‖curlOperator‖*(3*(3*cutoffAmplitude*(24*2))*256) := by
       unfold velocityAmplitude potentialAmplitude
       gcongr
-    _ ≤ uniformAmplitude := by unfold uniformAmplitude; linarith
+    _ ≤ uniformAmplitude := by unfold uniformAmplitude; linarith only
 
 theorem velocity_uniform_sup (β : ℝ) (hβ : |β| ≤ 1) :
     HasSupBound (velocity (linear β)) uniformAmplitude 1024 :=
@@ -3481,7 +3481,7 @@ theorem uniformLabelBound_one : 1 ≤ uniformLabelBound := by
     (by norm_num) uniformL2Amplitude_nonneg
   have hr := sobolevCoefficientRadius_nonneg (ι := Fin 3) 1024 (by norm_num)
   unfold uniformLabelBound
-  linarith
+  linarith only [ha, hr]
 
 theorem field_uniform_label (β : ℝ) (hβ : |β| ≤ 1) :
     HasLabelBound uniformLabelBound (field (linear β)) := by
@@ -3491,9 +3491,9 @@ theorem field_uniform_label (β : ℝ) (hβ : |β| ≤ 1) :
   apply SmoothL2Field.hasLabelBound_of_jet_bound (field (linear β)) uniformL2Amplitude
     1024 uniformLabelBound uniformL2Amplitude_nonneg (by norm_num) (field_uniform_jet β hβ)
   · unfold uniformLabelBound
-    linarith
+    linarith only [hr]
   · unfold uniformLabelBound
-    linarith
+    linarith only [ha]
 
 theorem field_uniform_Hq (β : ℝ) (hβ : |β| ≤ 1) (q n : ℕ) :
     classicalBlockSize direction q (field (linear β)).toLp
@@ -3883,6 +3883,6 @@ theorem initial_pressure_numerator_on_support (t : Icc (0 : ℝ) initialTime)
     simpa only [Metric.mem_ball,dist_zero_right] using EulerSpatialCutoffs.innerCutoff_support hx
   rw [norm_smul,Real.norm_eq_abs,abs_of_pos hell]
   have hb := mul_le_mul_of_nonneg_right hell1 (norm_nonneg x)
-  linarith
+  linarith only [hn, hb]
 
 end EulerBaseDatum

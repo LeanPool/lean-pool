@@ -34,7 +34,7 @@ theorem rootTerm_nonneg (P J : ℝ) : 0 ≤ rootTerm P J := by
 
 theorem rootTerm_sq {P J : ℝ} (hP : 2 < P) :
     rootTerm P J ^ 2 = J ^ 2 * ((P - 2) / 2 + J ^ 2 / 16) := by
-  have hrad : 0 ≤ (P - 2) / 2 + J ^ 2 / 16 := by linarith [sq_nonneg J]
+  have hrad : 0 ≤ (P - 2) / 2 + J ^ 2 / 16 := by linarith only [hP, sq_nonneg J]
   unfold rootTerm
   rw [mul_pow, sq_abs, Real.sq_sqrt hrad]
 
@@ -53,13 +53,13 @@ theorem rootTerm_ge_quarter {P J : ℝ} (hP : 2 < P) :
   have hsq := rootTerm_sq (J := J) hP
   have hr := rootTerm_nonneg P J
   have hJ := sq_nonneg J
-  have hprod : 0 ≤ J ^ 2 * (P - 2) := mul_nonneg hJ (by linarith)
-  nlinarith [sq_nonneg (rootTerm P J - J ^ 2 / 4)]
+  have hprod : 0 ≤ J ^ 2 * (P - 2) := mul_nonneg hJ (by linarith only [hP])
+  nlinarith only [hsq, hP, hr, sq_nonneg (rootTerm P J - J ^ 2 / 4)]
 
 theorem coneBound_le_parameter {P J : ℝ} (hP : 2 < P) : coneBound P J ≤ P := by
   have h := rootTerm_ge_quarter (J := J) hP
   change P + J ^ 2 / 4 - rootTerm P J ≤ P
-  linarith
+  linarith only [h]
 
 /-- The lower root is strictly above two for every finite J and P > 2. -/
 theorem coneBound_gt_two {P J : ℝ} (hP : 2 < P) : 2 < coneBound P J := by
@@ -67,11 +67,11 @@ theorem coneBound_gt_two {P J : ℝ} (hP : 2 < P) : 2 < coneBound P J := by
   have hr := rootTerm_nonneg P J
   have hid := square_difference P J 2
   have hJ := sq_nonneg J
-  have hpos : 0 < P + J ^ 2 / 4 - 2 := by linarith
+  have hpos : 0 < P + J ^ 2 / 4 - 2 := by linarith only [hP, hJ]
   have hlt : rootTerm P J < P + J ^ 2 / 4 - 2 := by
-    nlinarith [sq_pos_of_pos (show 0 < P - 2 by linarith)]
+    nlinarith only [hsq, hP, hr, sq_pos_of_pos (show 0 < P - 2 by linarith)]
   change 2 < P + J ^ 2 / 4 - rootTerm P J
-  linarith
+  linarith only [hlt]
 
 /-- Lemma 3.5: the full square-root criterion is equivalent to the quadratic test. -/
 theorem true_cone_iff {P J v : ℝ} (hv : 2 < v) :
@@ -118,7 +118,7 @@ theorem normalized_test_negative {a b w : ℝ} (ha : 0 < a)
     (a * (1 + (b / a) ^ 2) - 2) * (w + b / a) ^ 2 -
       2 * (1 - b * w / a) ^ 2 < 0 := by
   rw [normalized_factorization a b w (ne_of_gt ha)]
-  exact mul_neg_of_pos_of_neg (by linarith [sq_nonneg (b / a)]) (by linarith)
+  exact mul_neg_of_pos_of_neg (by linarith only [sq_nonneg (b / a)]) (by linarith only [hcriterion])
 
 /-- An explicit finite-amplitude sufficient condition, prior to taking any limit. -/
 theorem finite_amplitude_cone {c j v p : ℝ} (hp : 0 < p)
@@ -132,7 +132,7 @@ theorem finite_amplitude_cone {c j v p : ℝ} (hp : 0 < p)
     have hid : 2 * (p * c - v) ^ 2 - (v - 2) * (p * j) ^ 2 =
         p * (p * (2 * c ^ 2 - (v - 2) * j ^ 2) - 4 * c * v) + 2 * v ^ 2 := by
       ring
-    linarith [sq_nonneg v]
+    linarith only [hprod, sq_nonneg v]
   · exact relaxed_cone_of_le_two hP (le_of_not_gt hv)
 
 /-- For fixed normalized parameters, a positive leading coefficient and strict
@@ -166,8 +166,8 @@ theorem equation_eleven_sufficient {a b w : ℝ} (ha : 0 < a)
         coneBound (p * (1 - b * w / a)) (p * (w + b / a)) := by
   apply sufficiently_large_amplitude_cone
   · apply sub_pos.mpr
-    exact (div_lt_one ha).mpr (by linarith)
+    exact (div_lt_one ha).mpr (by linarith only [hfirst])
   · have h := normalized_test_negative ha hsecond
-    linarith
+    linarith only [h]
 
 end NavierStokes.ConeAlgebra

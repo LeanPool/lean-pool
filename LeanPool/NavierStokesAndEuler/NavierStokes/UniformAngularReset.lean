@@ -81,7 +81,7 @@ theorem bump_support (j : Fin 2) :
   intro y hy
   have h := template_support hy
   change (-3 : ℝ) / 20 ≤ y - 2 * (j.val : ℝ) ∧ y - 2 * (j.val : ℝ) ≤ 3 / 20 at h
-  constructor <;> linarith [h.1, h.2]
+  constructor <;> linarith only [h, h.1, h.2]
 
 theorem bump_hasCompactSupport (j : Fin 2) : HasCompactSupport (bump j) :=
   HasCompactSupport.of_support_subset_isCompact isCompact_Icc (bump_support j)
@@ -94,7 +94,7 @@ theorem bumps_disjoint (y : ℝ) : bump 0 y * bump 1 y = 0 := by
   have hs0 := bump_support 0 h0
   have hs1 := bump_support 1 h1
   norm_num at hs0 hs1
-  linarith [hs0.2, hs1.1]
+  linarith only [hs0, hs1, hs0.2, hs1.1]
 
 /-- Moment, given by `∫ y, Real.exp (s * y) * template y`. -/
 def moment (s : ℝ) : ℝ := ∫ y, Real.exp (s * y) * template y
@@ -161,7 +161,7 @@ theorem linearMatrix_det_ne_zero (lam : ℝ) (hlam : 0 < lam) :
     apply sub_neg.mpr
     apply Real.exp_lt_exp.mpr
     unfold angularSlope pressureSlope
-    linarith
+    linarith only [hlam]
 
 /-- The integral derivative is an actual continuous linear equivalence. -/
 def linearEquiv (lam : ℝ) (hlam : 0 < lam) : Coeff ≃L[ℝ] Coeff :=
@@ -189,10 +189,10 @@ theorem relative_support (c : Coeff) : support (relative c) ⊆ Icc (-3 / 20 : �
   · have h1 : bump 1 y ≠ 0 := by intro h1; exact hy (by simp [relative, h0, h1])
     have hs := bump_support 1 h1
     norm_num at hs
-    constructor <;> linarith [hs.1, hs.2]
+    constructor <;> linarith only [hs, hs.1, hs.2]
   · have hs := bump_support 0 h0
     norm_num at hs
-    constructor <;> linarith [hs.1, hs.2]
+    constructor <;> linarith only [hs, hs.1, hs.2]
 
 theorem relative_hasCompactSupport (c : Coeff) : HasCompactSupport (relative c) :=
   HasCompactSupport.of_support_subset_isCompact isCompact_Icc (relative_support c)
@@ -378,7 +378,7 @@ theorem relative_first_jet_bound :
   obtain ⟨D1, hD1, hb1⟩ := LocalizedMomentRepair.smooth_compact_derivative_bound
     (bump 1) (bump_contDiff 1) (bump_hasCompactSupport 1) 1
   simp only [iteratedDeriv_one] at hb0 hb1
-  refine ⟨2 + D0 + D1, by linarith, ?_⟩
+  refine ⟨2 + D0 + D1, by linarith only [hD0, hD1], ?_⟩
   intro c y
   have hc0 : |c 0| ≤ ‖c‖ := by simpa only [Real.norm_eq_abs] using norm_le_pi_norm c 0
   have hc1 : |c 1| ≤ ‖c‖ := by simpa only [Real.norm_eq_abs] using norm_le_pi_norm c 1
@@ -391,7 +391,7 @@ theorem relative_first_jet_bound :
       _ ≤ ‖c‖ * 1 + ‖c‖ * 1 := add_le_add
         (mul_le_mul hc0 ha0 (abs_nonneg _) (norm_nonneg _))
         (mul_le_mul hc1 ha1 (abs_nonneg _) (norm_nonneg _))
-      _ ≤ (2 + D0 + D1) * ‖c‖ := by nlinarith [norm_nonneg c]
+      _ ≤ (2 + D0 + D1) * ‖c‖ := by nlinarith only [hD0, hD1, norm_nonneg c]
   · rw [relative_deriv]
     calc
       _ ≤ |c 0| * |deriv (bump 0) y| + |c 1| * |deriv (bump 1) y| := by
@@ -399,19 +399,19 @@ theorem relative_first_jet_bound :
       _ ≤ ‖c‖ * D0 + ‖c‖ * D1 := add_le_add
         (mul_le_mul hc0 (hb0 y) (abs_nonneg _) (norm_nonneg _))
         (mul_le_mul hc1 (hb1 y) (abs_nonneg _) (norm_nonneg _))
-      _ ≤ (2 + D0 + D1) * ‖c‖ := by nlinarith [norm_nonneg c]
+      _ ≤ (2 + D0 + D1) * ‖c‖ := by nlinarith only [norm_nonneg c]
 
 theorem positive_and_slope_of_small (lam : ℝ) (hlam : 0 < lam) (c : Coeff) (y : ℝ)
     (h0 : |relative c y| ≤ 1 / 2) (h1 : |deriv (relative c) y| ≤ lam / 4) :
     0 < 1 + relative c y ∧ -lam + deriv (relative c) y / (1 + relative c y) ≤ -lam / 2 := by
   have hlo : -(1 / 2 : ℝ) ≤ relative c y := (abs_le.mp h0).1
-  have hden : 0 < 1 + relative c y := by linarith
+  have hden : 0 < 1 + relative c y := by linarith only [hlo]
   refine ⟨hden, ?_⟩
   have hd : deriv (relative c) y ≤ lam / 4 := (le_abs_self _).trans h1
   have hratio : deriv (relative c) y / (1 + relative c y) ≤ lam / 2 := by
     apply (div_le_iff₀ hden).mpr
-    nlinarith
-  linarith
+    nlinarith only [hd, hlam, hlo]
+  linarith only [hratio]
 
 /-- A constructed branch, with exact normalized integrals and quantitative first-jet control. -/
 structure ResetBranch (lam : ℝ) where
@@ -447,24 +447,24 @@ theorem exists_resetBranch (lam : ℝ) (hlam : 0 < lam) : Nonempty (ResetBranch 
   have hb : 0 < b := lt_min (by norm_num) (by positivity)
   have hDK : 0 < D * K := mul_pos hD hK
   have hε : 0 < ε := lt_min hε0 (div_pos hb hDK)
-  have hL : 0 < L := mul_pos (by linarith) hK
+  have hL : 0 < L := mul_pos (by linarith only [hD]) hK
   have hsub : Ioo (-ε) ε ⊆ Ioo (-ε0) ε0 := by
     intro δ hδ
     have he : ε ≤ ε0 := min_le_left _ _
-    constructor <;> linarith [hδ.1, hδ.2]
+    constructor <;> linarith only [he, hδ, hδ.1, hδ.2]
   have htotal : ∀ δ ∈ Ioo (-ε) ε, D * ‖c δ‖ ≤ b := by
     intro δ hδ
     have hnorm := (heq δ (hsub hδ)).2.2
     have habs : |δ| ≤ ε := (abs_lt.mpr hδ).le
     have he : ε ≤ b / (D * K) := min_le_right _ _
     have he' := (le_div_iff₀ hDK).mp he
-    nlinarith
+    nlinarith only [he', hD, hnorm, hDK, habs]
   have hcoeff : ∀ δ ∈ Ioo (-ε) ε, ‖c δ‖ ≤ L * |δ| := by
     intro δ hδ
     apply ((heq δ (hsub hδ)).2.2).trans
     apply mul_le_mul_of_nonneg_right _ (abs_nonneg δ)
     dsimp [L]
-    nlinarith
+    nlinarith only [hDK]
   refine ⟨{
     coefficients := c
     radius := ε
@@ -480,7 +480,7 @@ theorem exists_resetBranch (lam : ℝ) (hlam : 0 < lam) : Nonempty (ResetBranch 
     small_jets := ?_ }⟩
   · intro δ hδ y
     have hn := (heq δ (hsub hδ)).2.2
-    have hL' : D * K ≤ L := by dsimp [L]; nlinarith
+    have hL' : D * K ≤ L := by dsimp [L]; nlinarith only [hK]
     have hbound : D * ‖c δ‖ ≤ L * |δ| :=
       (mul_le_mul_of_nonneg_left hn hD.le).trans
         (by simpa only [mul_assoc] using mul_le_mul_of_nonneg_right hL' (abs_nonneg δ))
@@ -538,7 +538,7 @@ theorem modifiedE_sub_support (lam e0 y0 : ℝ) (c : Coeff) :
     intro hz
     exact hy (by simp [modifiedE, hz])
   have hs := relative_support c hn
-  constructor <;> linarith [hs.1, hs.2]
+  constructor <;> linarith only [hs, hs.1, hs.2]
 
 theorem modifiedE_sub_hasCompactSupport (lam e0 y0 : ℝ) (c : Coeff) :
     HasCompactSupport (modifiedE lam e0 y0 c - baseE lam e0) :=
@@ -549,7 +549,7 @@ theorem modifiedE_sub_tsupport (lam e0 y0 : ℝ) (c : Coeff) :
     tsupport (modifiedE lam e0 y0 c - baseE lam e0) ⊆ Ioo (y0 - 1) (y0 + 3) := by
   apply (closure_minimal (modifiedE_sub_support lam e0 y0 c) isClosed_Icc).trans
   intro y hy
-  constructor <;> linarith [hy.1, hy.2]
+  constructor <;> linarith only [hy, hy.1, hy.2]
 
 theorem modifiedE_unchanged (lam e0 y0 : ℝ) (c : Coeff) {y : ℝ}
     (hy : y ∉ Ioo (y0 - 1) (y0 + 3)) : modifiedE lam e0 y0 c y = baseE lam e0 y := by
@@ -831,7 +831,7 @@ theorem ResetBranch.exact_endpoint_moment {lam : ℝ} (B : ResetBranch lam)
     field_simp
   rw [hd] at hi
   dsimp [prefixI] at hi
-  linarith
+  linarith only [hi]
 
 /-! ## Smooth dependence on the angular parameter -/
 
@@ -890,7 +890,7 @@ theorem linearMatrix_det_ne_zero_nonneg (lam : ℝ) (hlam : 0 ≤ lam) :
     apply sub_neg.mpr
     apply Real.exp_lt_exp.mpr
     unfold angularSlope pressureSlope
-    linarith
+    linarith only [hlam]
 
 theorem continuous_moment : Continuous moment := by
   apply continuousOn_univ.mp
@@ -1091,8 +1091,8 @@ theorem tangent_lower_bound (B : E ≃L[ℝ] E) (A : E →L[ℝ] E →L[ℝ] E)
       _ ≤ β * (‖tangent B A c x‖ + (2 * K * r) * ‖x‖) :=
         mul_le_mul_of_nonneg_left (add_le_add_right hrem _) hβ
       _ ≤ β * ‖tangent B A c x‖ + (1 / 2 : ℝ) * ‖x‖ := by
-        nlinarith [mul_le_mul_of_nonneg_right hsmall (norm_nonneg x)]
-  linarith
+        nlinarith only [hsmall, mul_le_mul_of_nonneg_right hsmall (norm_nonneg x)]
+  linarith only [hn]
 
 theorem tangent_invertible [FiniteDimensional ℝ E]
     (B : E ≃L[ℝ] E) (A : E →L[ℝ] E →L[ℝ] E)
@@ -1172,7 +1172,7 @@ theorem exists_smooth_solver_on_ball [FiniteDimensional ℝ E] [CompleteSpace E]
     · exact hsmall
     · have hd : ‖(d : E)‖ < ε := by simpa only [Metric.mem_ball, dist_zero_right] using d.property
       have hb := mul_lt_mul_of_pos_left hd (show 0 < 2 * β by positivity)
-      linarith
+      linarith only [hr, hεeq, hb]
   choose f hf using hex
   let g : E → E := fun d => if hd : d ∈ Metric.ball (0 : E) ε then f ⟨d, hd⟩ else 0
   have hspec : ∀ d (hd : d ∈ Metric.ball (0 : E) ε),
@@ -1190,7 +1190,7 @@ theorem exists_smooth_solver_on_ball [FiniteDimensional ℝ E] [CompleteSpace E]
     intro d hd
     have hd' : ‖d‖ < ε := by simpa only [Metric.mem_ball, dist_zero_right] using hd
     have ht := mul_lt_mul_of_pos_left hd' (show 0 < 2 * β by positivity)
-    linarith [hbound d hd]
+    linarith only [hr, hεeq, ht, hbound, hd, hbound d hd]
   refine ⟨g, ?_, fun d hd => ⟨(hspec d hd).1.2, hbound d hd⟩, ?_⟩
   · intro d hd
     obtain ⟨D, hD⟩ := tangent_invertible B A β K r hβ.le hK hinv hA hsmall
@@ -1251,9 +1251,9 @@ theorem uniform_reset_branch :
   let L : ℝ := (1 + D) * (2 * β)
   have hr : 0 < r := by dsimp [r]; positivity
   have hε : 0 < ε := div_pos hr (by positivity)
-  have hL : 0 < L := mul_pos (by linarith) (by positivity)
-  have hLbase : 2 * β ≤ L := by dsimp [L]; nlinarith
-  have hLD : D * (2 * β) ≤ L := by dsimp [L]; nlinarith
+  have hL : 0 < L := mul_pos (by linarith only [hD]) (by positivity)
+  have hLbase : 2 * β ≤ L := by dsimp [L]; nlinarith only [hβ, hD]
+  have hLD : D * (2 * β) ≤ L := by dsimp [L]; nlinarith only [hβ]
   have hsmall : 4 * β * K * r ≤ 1 := by dsimp [r]; field_simp ; rfl
   refine ⟨ε, L, hε, hL, ?_⟩
   intro lam hlam
@@ -1278,7 +1278,7 @@ theorem uniform_reset_branch :
     exact ((hgeq (debt δ) (hd δ hδ)).2).trans
       (mul_le_mul_of_nonneg_left (debt_norm_le δ) (by positivity))
   have hc_zero : c 0 = 0 := by
-    have h := hc_norm 0 (by constructor <;> linarith)
+    have h := hc_norm 0 (by constructor <;> linarith only [hε])
     simp only [abs_zero, mul_zero, norm_le_zero_iff] at h
     exact h
   have hclip : ∀ δ ∈ Ioo (-ε) ε, ∀ η ∈ Ioo (-ε) ε,
@@ -1333,7 +1333,7 @@ theorem core_slope_lower (d : TailData) (y : ℝ) :
     (sub_nonneg.mpr (sigma_le_one y))
   have h1 := mul_nonneg d.core.lam_pos.le
     (sub_nonneg.mpr (sigma_le_one (y - (d.core.dropLength + 1))))
-  linarith
+  linarith only [h0, h1]
 
 theorem baseWeight_hasDerivAt (d : TailData) (y : ℝ) :
     HasDerivAt (baseWeight d)
@@ -1355,7 +1355,7 @@ theorem baseHistory_nonneg (d : TailData) {y : ℝ} (hy : 0 ≤ y) : 0 ≤ baseH
 the ideal incoming prefix is included explicitly. -/
 theorem baseHistory_le (d : TailData) {y : ℝ} (hy : 0 ≤ y) :
     baseHistory d y ≤ baseWeight d y / (1 - d.core.lam) := by
-  have hk : 0 < 1 - d.core.lam := by linarith [d.core.lam_lt]
+  have hk : 0 < 1 - d.core.lam := by linarith only [d.core.lam_lt]
   let f : ℝ → ℝ := fun y => baseWeight d y / (1 - d.core.lam) - baseHistory d y
   have hf : ∀ y, HasDerivAt f
       (baseWeight d y * (1 + slope d.core.dropLength d.core.lam y) / (1 - d.core.lam) -
@@ -1374,10 +1374,10 @@ theorem baseHistory_le (d : TailData) {y : ℝ} (hy : 0 ≤ y) :
     simp only [baseHistory, OutgoingSchedule.primitive, intervalIntegral.integral_same, add_zero]
     apply sub_nonneg.mpr
     apply (le_div_iff₀ hk).mpr
-    nlinarith [d.core.P_pos, d.core.lam_pos]
+    nlinarith only [hk, d.core.P_pos, d.core.lam_pos]
   have h := hmono hy
   dsimp [f] at h hzero
-  linarith
+  linarith only [hzero, h]
 
 /-- Flatten shape, constructed using `Real.exp`. -/
 def flattenShape (d : TailData) (y eta : ℝ) : ℝ :=
@@ -1401,12 +1401,12 @@ theorem flattenShape_pos (d : TailData) (y eta : ℝ) : 0 < flattenShape d y eta
 
 theorem flattenShape_le_one (d : TailData) (y eta : ℝ) : flattenShape d y eta ≤ 1 := by
   apply Real.exp_le_one_iff.mpr
-  have hl : 0 ≤ logShape eta := Real.log_nonneg (by nlinarith [sq_nonneg eta])
+  have hl : 0 ≤ logShape eta := Real.log_nonneg (by nlinarith only [sq_nonneg eta])
   have ha := mul_nonpos_of_nonpos_of_nonneg
     (sub_nonpos.mpr (sigma_le_one ((y - d.core.endpoint) / flattenLength))) hl
   have hb := mul_nonneg (sigma_nonneg ((y - d.core.endpoint) / flattenLength))
     (Real.log_nonneg (by norm_num : (1 : ℝ) ≤ 2))
-  linarith
+  linarith only [ha, hb]
 
 /-- Flat weight, given by `Real.exp (3 * y / 2) * flattened d (y, eta)`. -/
 def flatWeight (d : TailData) (eta y : ℝ) : ℝ :=
@@ -1442,7 +1442,7 @@ theorem flatHistory_bounds (d : TailData) (eta : ℝ) {y : ℝ} (hy : 0 ≤ y) :
     · have hs : shape eta ≤ 1 := by
         unfold shape
         apply inv_le_one_of_one_le₀
-        nlinarith [sq_nonneg eta]
+        nlinarith only [sq_nonneg eta]
       exact mul_le_of_le_one_right (mul_nonneg (by norm_num) d.core.P_pos.le) hs
     · exact intervalIntegral.integral_mono hy ((flatWeight_contDiff d
         eta).continuous.intervalIntegrable 0 y)
@@ -1486,14 +1486,14 @@ theorem logShape_deriv_bound (eta : ℝ) : |2 * eta / (1 + eta ^ 2)| ≤ 1 := by
   rw [abs_div, abs_mul, abs_of_pos (by
       positivity : 0 < (2 : ℝ)), abs_of_pos (by positivity : 0 < 1 + eta ^ 2)]
   apply (div_le_one (by positivity : 0 < 1 + eta ^ 2)).mpr
-  nlinarith [sq_nonneg (|eta| - 1), sq_abs eta]
+  nlinarith only [sq_nonneg (|eta| - 1), sq_abs eta]
 
 theorem etaRate_bound (d : TailData) (eta y : ℝ) : |etaRate d eta y| ≤ 1 := by
   unfold etaRate
   rw [abs_mul]
   have hs : |sigma ((y - d.core.endpoint) / flattenLength) - 1| ≤ 1 := by
     rw [abs_of_nonpos (sub_nonpos.mpr (sigma_le_one _))]
-    linarith [sigma_nonneg ((y - d.core.endpoint) / flattenLength)]
+    linarith only [sigma_nonneg ((y - d.core.endpoint) / flattenLength)]
   exact (mul_le_mul hs (logShape_deriv_bound eta) (abs_nonneg _) zero_le_one).trans_eq (one_mul _)
 
 theorem flatWeight_eq (d : TailData) (eta y : ℝ) :
@@ -1535,7 +1535,7 @@ theorem shape_hasDerivAt (eta : ℝ) :
 theorem shape_le_one (eta : ℝ) : shape eta ≤ 1 := by
   unfold shape
   apply inv_le_one_of_one_le₀
-  nlinarith [sq_nonneg eta]
+  nlinarith only [sq_nonneg eta]
 
 theorem flatHistory_hasDerivAt (d : TailData) (eta y : ℝ) :
     HasDerivAt (fun eta => flatHistory d eta y)
@@ -1603,7 +1603,7 @@ theorem baseWeight_hold (d : TailData) {a y : ℝ}
 theorem flatHistory_increment (d : TailData) (eta : ℝ) {y : ℝ} (hy : d.flattenEnd ≤ y) :
     flatHistory d eta y = flatHistory d eta d.flattenEnd +
       (baseWeight d y - baseWeight d d.flattenEnd) / (2 * (1 - d.core.lam)) := by
-  have hk : 1 - d.core.lam ≠ 0 := by linarith [d.core.lam_lt]
+  have hk : 1 - d.core.lam ≠ 0 := by linarith only [d.core.lam_lt]
   have hderiv : ∀ t ∈ uIcc d.flattenEnd y,
       HasDerivAt (fun t => baseWeight d t / (2 * (1 - d.core.lam))) (flatWeight d eta t) t := by
     intro t ht
@@ -1641,7 +1641,7 @@ theorem flatRatio_bounds (d : TailData) (eta : ℝ) :
       flatRatio d eta ≤ (baseWeight d d.flattenEnd / (1 - d.core.lam)) /
           (baseWeight d d.flattenEnd / 2) :=
         div_le_div_of_nonneg_right (hI.2.trans hB) (by positivity)
-      _ = _ := by field_simp [hW.ne', show 1 - d.core.lam ≠ 0 by linarith [d.core.lam_lt]]
+      _ = _ := by field_simp [hW.ne', show 1 - d.core.lam ≠ 0 by linarith only [d.core.lam_lt]]
 
 theorem flatRatio_deriv_bound (d : TailData) (eta : ℝ) :
     |deriv (flatRatio d) eta| ≤ 2 / (1 - d.core.lam) := by
@@ -1655,7 +1655,7 @@ theorem flatRatio_deriv_bound (d : TailData) (eta : ℝ) :
           positivity)
     _ ≤ (baseWeight d d.flattenEnd / (1 - d.core.lam)) / (baseWeight d d.flattenEnd / 2) :=
       div_le_div_of_nonneg_right (baseHistory_le d (flattenEnd_pos d).le) (by positivity)
-    _ = _ := by field_simp [hW.ne', show 1 - d.core.lam ≠ 0 by linarith [d.core.lam_lt]]
+    _ = _ := by field_simp [hW.ne', show 1 - d.core.lam ≠ 0 by linarith only [d.core.lam_lt]]
 
 /-- Decay factor, given by `Real.exp (-(1 - d.core.lam) * (d.uniformWait - 3))`. -/
 def decayFactor (d : TailData) : ℝ :=
@@ -1671,10 +1671,10 @@ theorem normalizedDebt_contDiff (d : TailData) : ContDiff ℝ ∞ (normalizedDeb
 theorem normalizedDebt_bounds (d : TailData) (eta : ℝ) :
     |normalizedDebt d eta| ≤ 3 * decayFactor d ∧
       |deriv (normalizedDebt d) eta| ≤ 3 * decayFactor d := by
-  have hk : 0 < 1 - d.core.lam := by linarith [d.core.lam_lt]
+  have hk : 0 < 1 - d.core.lam := by linarith only [d.core.lam_lt]
   have hinv : 2 / (1 - d.core.lam) ≤ 3 := by
     apply (div_le_iff₀ hk).mpr
-    linarith [d.core.lam_lt]
+    linarith only [hk, d.core.lam_lt]
   have hR := flatRatio_bounds d eta
   have he : 0 ≤ decayFactor d := (Real.exp_pos _).le
   constructor
@@ -1684,7 +1684,7 @@ theorem normalizedDebt_bounds (d : TailData) (eta : ℝ) :
       apply abs_le.mpr
       have hpos : 0 ≤ 1 / (1 - d.core.lam) := by positivity
       have htwo : 2 / (1 - d.core.lam) = 2 * (1 / (1 - d.core.lam)) := by ring
-      constructor <;> linarith
+      constructor <;> linarith only [hinv, hR, htwo]
     calc
       _ ≤ decayFactor d * 3 := mul_le_mul_of_nonneg_left hsmall he
       _ = _ := mul_comm _ _
@@ -1700,7 +1700,7 @@ theorem normalizedDebt_bounds (d : TailData) (eta : ℝ) :
 
 theorem decayFactor_le (d : TailData) (hlam : d.core.lam ≤ 1 / 15) :
     decayFactor d ≤ Real.exp 3 * d.core.lam ^ (28 : ℕ) := by
-  have hl1 : d.core.lam ≤ 1 := by linarith [d.core.lam_lt]
+  have hl1 : d.core.lam ≤ 1 := by linarith only [hlam, d.core.lam_lt]
   have hlog : Real.log (1 / d.core.lam) = -Real.log d.core.lam := by
     rw [one_div, Real.log_inv]
   have he : decayFactor d = Real.exp (3 * (1 - d.core.lam)) *
@@ -1712,9 +1712,9 @@ theorem decayFactor_le (d : TailData) (hlam : d.core.lam ≤ 1 / 15) :
   rw [he]
   apply mul_le_mul
   · apply Real.exp_le_exp.mpr
-    linarith [d.core.lam_pos]
+    linarith only [d.core.lam_pos]
   · have hp : d.core.lam ^ (30 * (1 - d.core.lam)) ≤ d.core.lam ^ ((28 : ℕ) : ℝ) :=
-      Real.rpow_le_rpow_of_exponent_ge d.core.lam_pos hl1 (by norm_num; linarith)
+      Real.rpow_le_rpow_of_exponent_ge d.core.lam_pos hl1 (by norm_num; linarith only [hlam])
     simpa only [Real.rpow_natCast] using hp
   · exact Real.rpow_nonneg d.core.lam_pos.le _
   · exact (Real.exp_pos _).le
@@ -1735,9 +1735,9 @@ theorem actual_debt_first_jet_bound (d : TailData) (hlam : d.core.lam ≤ 1 / 15
 
 theorem finalAngular_before_release (d : TailData) (eta : ℝ) {y : ℝ}
     (hy : y ≤ d.releaseStart) : finalAngular d (y, eta) = flattened d (y, eta) := by
-  have hrel : y - d.releaseStart ≤ 0 := by linarith
-  have htail : y - tailStart d ≤ 1 := by linarith [tailStart_gt_release d]
-  have hden : 1 - d.rho ≠ 0 := by linarith [d.rho_lt_half]
+  have hrel : y - d.releaseStart ≤ 0 := by linarith only [hy]
+  have htail : y - tailStart d ≤ 1 := by linarith only [hy, tailStart_gt_release d]
+  have hden : 1 - d.rho ≠ 0 := by linarith only [d.rho_lt_half]
   simp [finalAngular, releaseAdjustment_early d hrel, tailShape_early d htail, hden]
 
 /-- The angular history of the actual unedited full outgoing profile, divided
@@ -1760,7 +1760,7 @@ theorem fullHistory_eq_flat (d : TailData) (eta : ℝ) {y : ℝ}
 theorem first_center_after_flatten (d : TailData) : d.flattenEnd ≤ d.releaseStart - 3 := by
   have h := uniformWait_gt_twentyseven d
   dsimp [TailData.releaseStart]
-  linarith
+  linarith only [h]
 
 /-- Identification with the literal endpoint discrepancy and first-center
 normalization of the actual full profile. -/
@@ -1789,16 +1789,16 @@ theorem normalizedDebt_eq_actual (d : TailData) (eta : ℝ) :
       ring,
     Real.exp_neg]
   field_simp [(baseWeight_pos d d.flattenEnd).ne', Real.exp_ne_zero,
-    show 1 - d.core.lam ≠ 0 by linarith [d.core.lam_lt]]
+    show 1 - d.core.lam ≠ 0 by linarith only [d.core.lam_lt]]
 
 theorem power28_le_self (d : TailData) : d.core.lam ^ (28 : ℕ) ≤ d.core.lam := by
   have h : d.core.lam ^ ((28 : ℕ) : ℝ) ≤ d.core.lam ^ (1 : ℝ) :=
-    Real.rpow_le_rpow_of_exponent_ge d.core.lam_pos (by linarith [d.core.lam_lt]) (by norm_num)
+    Real.rpow_le_rpow_of_exponent_ge d.core.lam_pos (by linarith only [d.core.lam_lt]) (by norm_num)
   simpa only [Real.rpow_natCast, Real.rpow_one] using h
 
 theorem power28_le_square (d : TailData) : d.core.lam ^ (28 : ℕ) ≤ d.core.lam ^ (2 : ℕ) := by
   have h : d.core.lam ^ ((28 : ℕ) : ℝ) ≤ d.core.lam ^ ((2 : ℕ) : ℝ) :=
-    Real.rpow_le_rpow_of_exponent_ge d.core.lam_pos (by linarith [d.core.lam_lt]) (by norm_num)
+    Real.rpow_le_rpow_of_exponent_ge d.core.lam_pos (by linarith only [d.core.lam_lt]) (by norm_num)
   simpa only [Real.rpow_natCast] using h
 
 /-- Uniform convergence of both actual first jets, with no hypotheses on the
@@ -1814,7 +1814,7 @@ theorem actual_debt_tends_to_zero (ε : ℝ) (hε : 0 < ε) :
   have hbound : C * d.core.lam ^ (28 : ℕ) < ε := by
     apply lt_of_le_of_lt (mul_le_mul_of_nonneg_left (power28_le_self d) hC.le)
     have h := lt_of_lt_of_le hd (min_le_right _ _)
-    nlinarith [(lt_div_iff₀ hC).mp h]
+    nlinarith only [hC, h, (lt_div_iff₀ hC).mp h]
   have hj := actual_debt_first_jet_bound d hsmall eta
   exact ⟨hj.1.trans_lt hbound, hj.2.trans_lt hbound⟩
 
@@ -1934,7 +1934,7 @@ theorem reference_matches (d : TailData) {y : ℝ} (hy : d.flattenEnd ≤ y) :
 theorem last_four_after_flatten (d : TailData) : d.flattenEnd < d.releaseStart - 4 := by
   have h := uniformWait_gt_twentyseven d
   dsimp [TailData.releaseStart]
-  linarith
+  linarith only [h]
 
 theorem original_matches_reference (d : TailData) (eta : ℝ) {y : ℝ}
     (hy : y ∈ Icc (d.releaseStart - 4) d.releaseStart) :
@@ -1965,7 +1965,7 @@ theorem relative_zero_outside (d : TailData) (c : Coeff) {y : ℝ}
   have hs := relative_support c hn
   apply hy
   dsimp [correctionCenter] at hs
-  constructor <;> linarith [hs.1, hs.2]
+  constructor <;> linarith only [hs, hs.1, hs.2]
 
 /-- The actual complete outgoing angular field after the two relative bumps. -/
 def correctedAngular (d : TailData) (c : ℝ → Coeff) (p : ℝ × ℝ) : ℝ :=
@@ -2014,7 +2014,7 @@ variable {d : TailData} {K : ℝ} (w : ResetWitness d K)
 theorem positive (p : ℝ × ℝ) : 0 < correctedAngular d w.coefficients p := by
   apply mul_pos (finalAngular_pos d p)
   have h := (abs_le.mp (w.small_jets p.2 (p.1 - correctionCenter d)).1).1
-  linarith
+  linarith only [h]
 
 theorem logSlope_le (eta : ℝ) {y : ℝ} (hy : y ∈ Ioo (d.releaseStart - 4) d.releaseStart) :
     logSlope (fun t => correctedAngular d w.coefficients (t, eta)) y ≤ -d.core.lam / 2 := by
@@ -2121,7 +2121,7 @@ theorem exact_endpoint (eta : ℝ) : correctedHistory d w.coefficients eta =
     field_simp [(baseWeight_pos d (correctionCenter d)).ne']
   rw [hnorm] at hchange
   unfold correctedHistory fullHistory at *
-  linarith
+  linarith only [hchange]
 
 theorem pressure_interval_neutral (eta : ℝ) :
     (∫ y in (0 : ℝ)..d.releaseStart, (correctedAngular d w.coefficients (y, eta)) ^ 2) =
@@ -2156,7 +2156,7 @@ theorem physical_endpoint (eta : ℝ) :
         (radialAmplitude d.core.P d.core.dropLength d.core.lam d.releaseStart / 2) /
           (1 - d.core.lam) := by
       rw [hex]
-      field_simp [show 1 - d.core.lam ≠ 0 by linarith [d.core.lam_lt]]
+      field_simp [show 1 - d.core.lam ≠ 0 by linarith only [d.core.lam_lt]]
     _ = _ := by ring
 
 end ResetWitness
@@ -2221,7 +2221,7 @@ theorem history_from_ideal_prefix (d : TailData) (eta : ℝ) (f : ℝ → ℝ)
   refine ⟨hi, ?_⟩
   have hdiff := intervalIntegral.integral_Iic_sub_Iic h0 hi
   rw [he] at hdiff
-  linarith
+  linarith only [hdiff]
 
 theorem fullHistory_eq_integral (d : TailData) (eta : ℝ) {y : ℝ} (hy : 0 ≤ y) :
     fullHistory d eta y = ∫ t in Iic y, Real.exp (3 * t / 2) * finalAngular d (t, eta) := by
@@ -2248,7 +2248,7 @@ theorem correctedHistory_eq_integral (eta : ℝ) :
     intro t ht
     have hout : t ∉ Ioo (d.releaseStart - 4) d.releaseStart := by
       intro hw
-      linarith [flattenEnd_pos d, last_four_after_flatten d, hw.1]
+      linarith only [ht, hw, flattenEnd_pos d, last_four_after_flatten d, hw.1]
     rw [correctedAngular_unchanged d w.coefficients eta hout]
     exact full_weight_ideal d eta ht
   exact (history_from_ideal_prefix d eta _ hc hp

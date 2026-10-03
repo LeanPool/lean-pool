@@ -197,7 +197,7 @@ theorem close_integral_energy_estimate
       have htc : t ∈ Icc 0 S := ⟨ht.1, ht.2.le⟩
       have hrad := radius_bounds C B Δ ρ₀ S R₀ hC.le hB hΔ.le hρ hS hR hdecay hscale t htc
       have hloss := shrinking_radius_cancels_loss C B Δ _ R₀ (X t)
-        hC.le hB hΔ.le hrad.2.1 hR hrad.2.2 (by rw [hXF]; linarith [hFle t htc])
+        hC.le hB hΔ.le hrad.2.1 hR hrad.2.2 (by rw [hXF]; linarith only [hΔ, hFle, htc, hFle t htc])
       have hlossY := mul_nonpos_of_nonpos_of_nonneg hloss (hY t ht)
       have hmain := hineq t ht
       have hFt := hFp t

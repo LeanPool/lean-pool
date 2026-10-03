@@ -572,7 +572,7 @@ private theorem nat_le_infty (n : ℕ) : (n : WithTop ℕ∞) ≤ ∞ :=
   ENat.natCast_le_of_coe_top_le_withTop le_rfl n
 
 private theorem one_le_mul' {a b : ℝ} (ha : 1 ≤ a) (hb : 1 ≤ b) : 1 ≤ a * b := by
-  nlinarith
+  nlinarith only [ha, hb]
 
 section Calculus
 
@@ -622,7 +622,7 @@ theorem PolynomialJets.clm {f : ι → E → F} (hf : PolynomialJets D f)
   intro N
   obtain ⟨C, hC, m, hm⟩ := hf.bound N
   refine ⟨(‖L‖ + 1) * C, ?_, m, ?_⟩
-  · nlinarith [norm_nonneg L]
+  · nlinarith only [hC, norm_nonneg L]
   intro i n hn x hx
   have he := L.iteratedFDeriv_comp_left
     ((hf.smooth i).contDiffAt ((D.isOpen i).mem_nhds hx)) (nat_le_infty n)
@@ -634,7 +634,7 @@ theorem PolynomialJets.clm {f : ι → E → F} (hf : PolynomialJets D f)
       mul_le_mul_of_nonneg_left (hm i n hn x hx) (norm_nonneg L)
     _ ≤ (‖L‖ + 1) * C * D.scale i ^ m := by
       have := pow_nonneg (le_trans zero_le_one (D.one_le_scale i)) m
-      nlinarith
+      nlinarith only [this, hC]
 
 theorem PolynomialJets.add {f g : ι → E → F}
     (hf : PolynomialJets D f) (hg : PolynomialJets D g) :
@@ -643,14 +643,14 @@ theorem PolynomialJets.add {f g : ι → E → F}
   intro N
   obtain ⟨A, hA, a, ha⟩ := hf.bound N
   obtain ⟨B, hB, b, hb⟩ := hg.bound N
-  refine ⟨A + B, by linarith, a + b, ?_⟩
+  refine ⟨A + B, by linarith only [hA, hB], a + b, ?_⟩
   intro i
   apply (JetBounds.FiniteJetBound.add (D.isOpen i)
     ((hf.smooth i).of_le (nat_le_infty N)) ((hg.smooth i).of_le (nat_le_infty N))
     (ha i) (hb i)).mono
   have hsa := pow_le_pow_right₀ (D.one_le_scale i) (Nat.le_add_right a b)
   have hsb := pow_le_pow_right₀ (D.one_le_scale i) (Nat.le_add_left b a)
-  nlinarith
+  nlinarith only [hsa, hsb, hA, hB]
 
 theorem PolynomialJets.neg {f : ι → E → F} (hf : PolynomialJets D f) :
     PolynomialJets D (fun i x => -f i x) := by
@@ -678,7 +678,7 @@ theorem PolynomialJets.bilinear {f : ι → E → F} {g : ι → E → G}
   obtain ⟨C, hC, c, hc⟩ := hg.bound N
   refine ⟨(‖B‖ + 1) * 2 ^ N * A * C, ?_, a + c, ?_⟩
   · have hpow : (1 : ℝ) ≤ 2 ^ N := one_le_pow₀ (by norm_num)
-    have hba : 1 ≤ (‖B‖ + 1) * 2 ^ N := one_le_mul' (by linarith [norm_nonneg B]) hpow
+    have hba : 1 ≤ (‖B‖ + 1) * 2 ^ N := one_le_mul' (by linarith only [norm_nonneg B]) hpow
     exact one_le_mul' (one_le_mul' hba hA) hC
   intro i
   apply (JetBounds.FiniteJetBound.bilinear B (D.isOpen i)
@@ -718,7 +718,7 @@ theorem PolynomialJets.affine (L : E →L[ℝ] F) (c : ι → F) {C : ℝ} {m : 
     PolynomialJets D (fun i x => L x + c i) := by
   refine ⟨fun _ => L.contDiff.contDiffOn.add contDiffOn_const, ?_⟩
   intro N
-  refine ⟨C + ‖L‖, by linarith [norm_nonneg L], m, ?_⟩
+  refine ⟨C + ‖L‖, by linarith only [hC, norm_nonneg L], m, ?_⟩
   intro i n hn x hx
   have hs : 1 ≤ D.scale i ^ m := one_le_pow₀ (D.one_le_scale i)
   have hfd : _root_.fderiv ℝ (fun y => L y + c i) = fun _ => L := by
@@ -776,11 +776,11 @@ theorem PolynomialJets.precomp_affine {D' : Domain ι F} {f : ι → F → G}
     (L.contDiff.contDiffOn.add contDiffOn_const) (hmap i), ?_⟩
   intro N
   obtain ⟨C, hC, m, hm⟩ := hf.bound N
-  refine ⟨C * (‖L‖ + 1) ^ N, one_le_mul' hC (one_le_pow₀ (by linarith [norm_nonneg L])), m, ?_⟩
+  refine ⟨C * (‖L‖ + 1) ^ N, one_le_mul' hC (one_le_pow₀ (by linarith only [norm_nonneg L])), m, ?_⟩
   intro i n hn x hx
   have hp : ‖L‖ ^ n ≤ (‖L‖ + 1) ^ N :=
-    (pow_le_pow_left₀ (norm_nonneg L) (by linarith) n).trans
-      (pow_le_pow_right₀ (by linarith [norm_nonneg L]) hn)
+    (pow_le_pow_left₀ (norm_nonneg L) (by linarith only) n).trans
+      (pow_le_pow_right₀ (by linarith only [norm_nonneg L]) hn)
   calc
     _ ≤ ‖iteratedFDeriv ℝ n (f i) (L x + c i)‖ * ‖L‖ ^ n :=
       norm_jet_comp_affine (D'.isOpen i) (hf.smooth i) L (c i) (hmap i x hx) n
@@ -898,7 +898,7 @@ theorem PolynomialJets.inv {f : ι → E → ℝ} (hf : PolynomialJets D f)
     intro r hr he
     have h : b ≤ |r| := hr.2
     simp only [he, abs_zero] at h
-    linarith
+    linarith only [hb, h]
   apply hf.compact_comp (isClosed_singleton.isOpen_compl)
     (contDiffOn_id.inv (fun _ h => h)) hK hKU
   intro i x hx
@@ -933,7 +933,7 @@ theorem normalRange_regular {b M : ℝ} (hb : 0 < b) : normalRange b M ⊆ regul
   intro n hn he
   have h : b ≤ ‖MovingFrameODE.tail n‖ := hn.2
   simp only [he, norm_zero] at h
-  linarith
+  linarith only [hb, h]
 
 section Geometry
 
@@ -1310,7 +1310,7 @@ theorem frameJets_ofNormalLocal
     have hbnd := hhlow i z hz
     change h i z = 0 at he
     rw [he, abs_zero] at hbnd
-    linarith
+    linarith only [hbh, hbnd]
 
 /-- The form consumed by `PrimaryODE.norm_iteratedFDeriv_solution_le_polynomial`
 and `WeightedODEJets`: all parameter jets at fixed slot time share one
@@ -1322,13 +1322,13 @@ theorem PolynomialJets.parameter_bound {F : Type*} [NormedAddCommGroup F] [Norme
   obtain ⟨C, hC, m, hm⟩ := hf.bound N
   let L := ContinuousLinearMap.inl ℝ Q ℝ
   refine ⟨C * (‖L‖ + 1) ^ N,
-    one_le_mul' hC (one_le_pow₀ (by linarith [norm_nonneg L])), m, ?_⟩
+    one_le_mul' hC (one_le_pow₀ (by linarith only [norm_nonneg L])), m, ?_⟩
   intro i p v hp k hk
   have hmap : L p + (0, v) ∈ D.carrier i := by simpa [L] using hp
   have hjet := norm_jet_comp_affine (D.isOpen i) (hf.smooth i) L (0, v) hmap k
   have hfac : ‖L‖ ^ k ≤ (‖L‖ + 1) ^ N :=
-    (pow_le_pow_left₀ (norm_nonneg L) (by linarith) k).trans
-      (pow_le_pow_right₀ (by linarith [norm_nonneg L]) hk)
+    (pow_le_pow_left₀ (norm_nonneg L) (by linarith only) k).trans
+      (pow_le_pow_right₀ (by linarith only [norm_nonneg L]) hk)
   calc
     _ ≤ ‖iteratedFDeriv ℝ k (f i) (p, v)‖ * ‖L‖ ^ k := by simpa [L] using hjet
     _ ≤ (C * D.scale i ^ m) * (‖L‖ + 1) ^ N :=
@@ -1356,12 +1356,12 @@ theorem normal_range_of_reference_close {n : ι → E → Space}
       ‖n i z - MovingFrameODE.pack (B i * s i z) (B i • K i)‖ ≤ δ i z) :
     (∀ i, ∀ z ∈ D.carrier i, b ≤ ‖MovingFrameODE.tail (n i z)‖) ∧
       (∀ i, ∀ z ∈ D.carrier i, ‖n i z‖ ≤ M ^ 2 + 3 * M) := by
-  have hBpos (i) : 0 < B i := lt_of_lt_of_le (by linarith) (hB i).1
+  have hBpos (i) : 0 < B i := lt_of_lt_of_le (by linarith only [hb]) (hB i).1
   constructor
   · intro i z hz
     have h := (PhaseEstimates.normal_lower_bounds (hBpos i) (hK i) (hδ i z hz) (hclose i z hz)).1
     change b ≤ MovingFrameODE.normalScale (n i z)
-    linarith [(hB i).1]
+    linarith only [h, hB, (hB i).1]
   · intro i z hz
     have hc (k : Fin 2) : |K i k| ≤ 1 := by
       simpa only [Real.norm_eq_abs, hK i] using PiLp.norm_apply_le (K i) k
@@ -1370,14 +1370,14 @@ theorem normal_range_of_reference_close {n : ι → E → Space}
       change ‖MovingFrameODE.pack (B i * s i z) (B i • K i)‖ ≤
         |B i * s i z| + |B i * K i 0| + |B i * K i 1| at hh
       simp only [abs_mul, abs_of_pos (hBpos i)] at hh
-      have h1 := mul_le_mul (hB i).2 (hs i z hz) (abs_nonneg _) (by linarith : 0 ≤ M)
-      have h2 := mul_le_mul (hB i).2 (hc 0) (abs_nonneg _) (by linarith : 0 ≤ M)
-      have h3 := mul_le_mul (hB i).2 (hc 1) (abs_nonneg _) (by linarith : 0 ≤ M)
-      linarith
+      have h1 := mul_le_mul (hB i).2 (hs i z hz) (abs_nonneg _) (by linarith only [hM] : 0 ≤ M)
+      have h2 := mul_le_mul (hB i).2 (hc 0) (abs_nonneg _) (by linarith only [hM] : 0 ≤ M)
+      have h3 := mul_le_mul (hB i).2 (hc 1) (abs_nonneg _) (by linarith only [hM] : 0 ≤ M)
+      linarith only [hh, h1, h2, h3]
     have hh := norm_sub_le_norm_sub_add_norm_sub (n i z)
       (MovingFrameODE.pack (B i * s i z) (B i • K i)) 0
     simp only [sub_zero] at hh
-    linarith [hclose i z hz, hδ i z hz, (hB i).2]
+    linarith only [hM, href, hh, hclose, hz, hδ, hB, hclose i z hz, hδ i z hz, (hB i).2]
 
 theorem PolynomialJets.radius {s : ι → E → ℝ} (hs : PolynomialJets D s)
     {M : ℝ} (hbound : ∀ i, ∀ z ∈ D.carrier i, |s i z| ≤ M) :
@@ -1400,7 +1400,7 @@ theorem radius_bounds (s : ℝ) : 1 ≤ Real.sqrt (1 + s ^ 2) ∧
     Real.sqrt (1 + s ^ 2) ≤ 1 + |s| := by
   have hpos := Real.sqrt_nonneg (1 + s ^ 2)
   have hsq := Real.sq_sqrt (show 0 ≤ 1 + s ^ 2 by positivity)
-  constructor <;> nlinarith [sq_nonneg s, sq_abs s, abs_nonneg s]
+  constructor <;> nlinarith only [hsq, hpos, sq_nonneg s, sq_abs s, abs_nonneg s]
 
 end ReferenceBounds
 
@@ -1424,7 +1424,7 @@ theorem reference_jets (lam c0 u ell : ι → ℝ)
     (∀ i, ∀ z ∈ D.carrier i,
       |PrimaryODE.referenceProfile (c0 i) (u i) (ell i) z.2| ≤ M * (1 + M + M ^ 2)) := by
   have hq (i) : |u i / ell i| ≤ M := by
-    nlinarith [hrate i, D.one_le_scale i, abs_nonneg (u i / ell i)]
+    nlinarith only [hrate, hM, hrate i, D.one_le_scale i, abs_nonneg (u i / ell i)]
   have pu := PolynomialJets.const_uniform (D := D) u hM (fun i => by simpa using hu i)
   have pq := PolynomialJets.const_uniform (D := D) (fun i => u i / ell i) hM
     (fun i => by simpa only [Real.norm_eq_abs] using hq i)
@@ -1443,13 +1443,13 @@ theorem reference_jets (lam c0 u ell : ι → ℝ)
   have hsb (i) (z : Q × ℝ) (hz : z ∈ D.carrier i) :
       |PulseGrowth.slotMagnitude (u i) (ell i) z.2| ≤ M + M ^ 2 := by
     rw [← heq i z]
-    have h1 : |u i / 2| ≤ M := by rw [abs_div]; norm_num; linarith [hu i]
+    have h1 : |u i / 2| ≤ M := by rw [abs_div]; norm_num; linarith only [hM, hu, hu i]
     have h2 : |(u i / ell i) * z.2| ≤ M ^ 2 := by
       rw [abs_mul]
       have hh := mul_le_mul_of_nonneg_left (hslot i z hz) (abs_nonneg (u i / ell i))
-      have hh' := mul_le_mul_of_nonneg_right (hrate i) (show 0 ≤ M by linarith)
-      linarith
-    exact (abs_add_le _ _).trans (by linarith)
+      have hh' := mul_le_mul_of_nonneg_right (hrate i) (show 0 ≤ M by linarith only [hM])
+      linarith only [hh, hh']
+    exact (abs_add_le _ _).trans (by linarith only [h1, h2])
   obtain ⟨pr, pri, pdi⟩ := ps.radius hsb
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · simpa only [ViscousPropagator.referenceEigenvalue, div_eq_mul_inv] using plam.mul pri
@@ -1458,13 +1458,13 @@ theorem reference_jets (lam c0 u ell : ι → ℝ)
   · intro i z _
     have h := (radius_bounds (PulseGrowth.slotMagnitude (u i) (ell i) z.2)).1
     simp only [PrimaryODE.referenceProfile, abs_mul, abs_of_nonneg (Real.sqrt_nonneg _)]
-    nlinarith [(hc i).1, abs_nonneg (c0 i)]
+    nlinarith only [hc, hb, h, (hc i).1, abs_nonneg (c0 i)]
   · intro i z hz
     have h := (radius_bounds (PulseGrowth.slotMagnitude (u i) (ell i) z.2)).2.trans
       (add_le_add_right (hsb i z hz) 1)
     simp only [PrimaryODE.referenceProfile, abs_mul, abs_of_nonneg (Real.sqrt_nonneg _)]
-    have hh := mul_le_mul (hc i).2 h (Real.sqrt_nonneg _) (show 0 ≤ M by linarith)
-    linarith
+    have hh := mul_le_mul (hc i).2 h (Real.sqrt_nonneg _) (show 0 ≤ M by linarith only [hM])
+    linarith only [hh]
 
 end ReferenceJets
 
@@ -1538,7 +1538,7 @@ It is constant in the chart variables even when it jumps across labels. -/
 theorem rounded_frequency_jets (k target : ι → ℝ) {M : ℝ} (hM : 1 ≤ M)
     (hk : ∀ i, 1 ≤ k i) (ht : ∀ i, |target i| ≤ M) :
     PolynomialJets D (fun i _ => PhaseEstimates.roundedFrequency (k i) (target i)) := by
-  apply PolynomialJets.const_uniform _ (show 1 ≤ M + 1 by linarith)
+  apply PolynomialJets.const_uniform _ (show 1 ≤ M + 1 by linarith only [hM])
   intro i
   have hkpos : 0 < k i := lt_of_lt_of_le zero_lt_one (hk i)
   have herr := PhaseEstimates.roundedFrequency_error hkpos (target i)
@@ -1546,7 +1546,7 @@ theorem rounded_frequency_jets (k target : ι → ℝ) {M : ℝ} (hM : 1 ≤ M)
   have hsum := abs_add_le (PhaseEstimates.roundedFrequency (k i) (target i) - target i) (target i)
   rw [sub_add_cancel] at hsum
   rw [Real.norm_eq_abs]
-  linarith [ht i]
+  linarith only [herr, hinv, hsum, ht, ht i]
 
 /-- With the actual carrier choice, the fundamental viscosity factor is a
 uniformly bounded label constant.  Thus no factor k is lost in slow jets. -/
@@ -1586,7 +1586,7 @@ noncomputable def Domain.ofBands (band : ι → ℕ) (hband : ∀ i, 1 ≤ band 
   one_le_scale i := by
     have h : (1 : ℝ) ≤ band i := by exact_mod_cast hband i
     dsimp [ChartScales.S]
-    nlinarith
+    nlinarith only [h]
 
 omit [NormedSpace ℝ E] in
 /-- The reference logarithmic-rate input follows from a lower slot-length
@@ -1601,7 +1601,7 @@ theorem normalized_slot_rate_le {S ell u c M : ℝ} (hS : 0 < S) (hc : 0 < c)
   apply (div_le_iff₀ hellpos).mpr
   have h1 := mul_le_mul_of_nonneg_right hu (mul_nonneg hS.le hc.le)
   have h2 := mul_le_mul_of_nonneg_left hell hM
-  linarith
+  linarith only [h1, h2]
 
 end BandChoices
 
@@ -1850,13 +1850,13 @@ theorem cylindricalCurl_class (ha : MemClass s w α a) (hκ : 0 ≤ κ)
     simpa only [sub_eq_add_neg] using class_along hr (class_component ha i)
   have hDz (i : Fin 3) : MemClass s w (α - κ)
       (fun n => HarmonicCalculus.along (Vz n) (fun x => a n x i)) :=
-    (class_along hz (class_component ha i)).mono_exponent (by linarith)
+    (class_along hz (class_component ha i)).mono_exponent (by linarith only [hκ])
   have hDθ (i : Fin 3) : MemClass s w (α - κ)
       (fun n x => (R x)⁻¹ • HarmonicCalculus.along (Vθ n) (fun y => a n y i) x) := by
     apply (class_mul_real hR (class_along hθ (class_component ha i))).mono_exponent
-    linarith
+    linarith only [hκ]
   have hconn (i : Fin 3) : MemClass s w (α - κ) (fun n x => (R x)⁻¹ • a n x i) :=
-    (class_mul_real hR (class_component ha i)).mono_exponent (by linarith)
+    (class_mul_real hR (class_component ha i)).mono_exponent (by linarith only [hκ])
   apply class_vector
   intro i
   fin_cases i
@@ -1874,9 +1874,9 @@ theorem strippedDivergence_class (ha : MemClass s w α a) (hκ : 0 ≤ κ)
     simpa only [sub_eq_add_neg] using class_along hr (class_component ha 0)
   have hDz : MemClass s w (α - κ)
       (fun n => HarmonicCalculus.along (Vz n) (fun x => a n x 2)) :=
-    (class_along hz (class_component ha 2)).mono_exponent (by linarith)
+    (class_along hz (class_component ha 2)).mono_exponent (by linarith only [hκ])
   have hconn : MemClass s w (α - κ) (fun n x => (R x)⁻¹ • a n x 0) :=
-    (class_mul_real hR (class_component ha 0)).mono_exponent (by linarith)
+    (class_mul_real hR (class_component ha 0)).mono_exponent (by linarith only [hκ])
   exact (hDr.add hconn).add hDz
 
 end CurlClass
@@ -1954,7 +1954,7 @@ theorem graphVector_class {ρ : D → ℝ} {M : ℕ → ℝ}
     have h := hv.band_smul hM
     simp only [zero_add] at h
     exact h
-  exact ((unweighted_const s e).mono_exponent (by linarith)).add hm
+  exact ((unweighted_const s e).mono_exponent (by linarith only [hκ])).add hm
 
 theorem axialVector_class (s : StripData D) (z : D) :
     UnweightedClass s 1 (fun n _ => s.epsilon n • z) := by
@@ -2416,7 +2416,7 @@ theorem realizedCoefficient_waveClass
     (hK : BandBound s (1 / 2) (fun n => 1 / K n)) :
     WaveClass s P α (fun n => realizedCoefficient (K n) R (Vr n) (Vθ n) (Vz n) (Φ n) (a n)) := by
   have hrem := curlRemainder_waveClass hN ha hb hlower hupper hκ hr hθ hz hR hK
-  exact ha.add (hrem.mono_exponent (by linarith))
+  exact ha.add (hrem.mono_exponent (by linarith only [hκhalf]))
 
 end WaveClasses
 

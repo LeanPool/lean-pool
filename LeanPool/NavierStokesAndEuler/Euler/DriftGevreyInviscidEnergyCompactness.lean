@@ -168,7 +168,7 @@ theorem exists_global_gevrey_correction {q : ℕ} (hq : 6 ≤ q) (S : ℝ) (hS :
     rw [hR t]
     apply (min_le_left (ρ0/2) 1).trans
     have hm := mul_le_mul_of_nonneg_left t.property.2 hcoef
-    linarith
+    linarith only [hq, hN, hNfull, hdecay, hm]
   have hbound : ∀ (T : ℝ) (hT : 0 ≤ T) (hTS : T ≤ S)
       (e : C(Icc (0 : ℝ) T,SobolevSpace period (q+1))),
       (∀ t, e t = quadraticDuhamel period ν hν hT hTS

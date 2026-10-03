@@ -99,7 +99,7 @@ theorem repair_coefficients_unique (L : ι → V →ₗ[ℝ] ℝ) (b : ι → V)
   change L i (u + synthesize b c) = target i at hi
   simp only [map_add] at hi
   change L i (synthesize b c) = target i - L i u
-  linarith
+  linarith only [hi]
 
 /-- The repair is idempotent for fixed target moments. -/
 theorem repair_idempotent (L : ι → V →ₗ[ℝ] ℝ) (b : ι → V)
@@ -168,7 +168,7 @@ theorem correctionIteration_norm_le
     (hQ : ∀ x, ‖x‖ ≤ r → ‖Q x‖ ≤ K * ‖x‖ ^ 2)
     (hsmall : 4 * β * K * r ≤ 1) (hd : 2 * β * ‖d‖ ≤ r)
     (c : E) (hc : ‖c‖ ≤ r) : ‖correctionIteration B Q d c‖ ≤ r := by
-  have hc2 : ‖c‖ ^ 2 ≤ r ^ 2 := by nlinarith [norm_nonneg c]
+  have hc2 : ‖c‖ ^ 2 ≤ r ^ 2 := by nlinarith only [hr, hc, norm_nonneg c]
   have hQc : ‖Q c‖ ≤ K * r ^ 2 :=
     (hQ c hc).trans (mul_le_mul_of_nonneg_left hc2 hK)
   have hsr := mul_le_mul_of_nonneg_right hsmall hr
@@ -177,7 +177,7 @@ theorem correctionIteration_norm_le
     _ ≤ β * (‖d‖ + ‖Q c‖) := mul_le_mul_of_nonneg_left (norm_sub_le _ _) hβ
     _ ≤ β * (‖d‖ + K * r ^ 2) :=
       mul_le_mul_of_nonneg_left (add_le_add_right hQc _) hβ
-    _ ≤ r := by nlinarith
+    _ ≤ r := by nlinarith only [hr, hd, hsr]
 
 /-- On the correction ball the iteration has Lipschitz constant at most `1/2`. -/
 theorem correctionIteration_sub_le
@@ -190,8 +190,8 @@ theorem correctionIteration_sub_le
     (x y : E) (hx : ‖x‖ ≤ r) (hy : ‖y‖ ≤ r) :
     ‖correctionIteration B Q d x - correctionIteration B Q d y‖ ≤
       (1 / 2 : ℝ) * ‖x - y‖ := by
-  have hsum : ‖x‖ + ‖y‖ ≤ 2 * r := by linarith
-  have hcoef : β * (K * (2 * r)) ≤ (1 / 2 : ℝ) := by nlinarith [hsmall]
+  have hsum : ‖x‖ + ‖y‖ ≤ 2 * r := by linarith only [hx, hy]
+  have hcoef : β * (K * (2 * r)) ≤ (1 / 2 : ℝ) := by nlinarith only [hsmall]
   calc
     ‖correctionIteration B Q d x - correctionIteration B Q d y‖ =
         ‖B.symm ((d - Q x) - (d - Q y))‖ := by rw [map_sub]; rfl

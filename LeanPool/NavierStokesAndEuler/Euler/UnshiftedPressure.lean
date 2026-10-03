@@ -95,7 +95,7 @@ theorem unshifted_weighted_inverse (ρ Rc M : ℝ) (hρ : 0 < ρ) (hRc : 0 ≤ R
   have hzsum : 0 ≤ ∑ n ∈ range (N + 1), v n * Z n :=
     sum_nonneg (fun n _ => mul_nonneg (hv n) (hZ n))
   have hsmall' := mul_le_mul_of_nonneg_right hsmall hzsum
-  have hcomm' := mul_le_mul_of_nonneg_left hcomm (show 0 ≤ M by linarith)
+  have hcomm' := mul_le_mul_of_nonneg_left hcomm (show 0 ≤ M by linarith only [hM])
   change (∑ n ∈ range (N + 1), v n * Z n) ≤ 2 * M * ∑ n ∈ range (N + 1), v n * F n
   linarith only [hs, hcomm', hsmall']
 

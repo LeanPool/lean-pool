@@ -122,7 +122,7 @@ theorem output_components (X : ℝ) (hX : 0 ≤ X) :
   have h2 : 0 ≤ 2*X*sourceEnvelope P X := by positivity
   have h3 : 0 ≤ (1+2*X*(448*X+1))*sourceEnvelope P X := by positivity
   unfold outputEnvelope
-  exact ⟨by linarith,by linarith,by linarith,by linarith⟩
+  exact ⟨by linarith,by linarith only [h2, h3],by linarith only [hb, h3],by linarith only [hb, h2]⟩
 
 variable {U : Type*} [NormedAddCommGroup U] [InnerProductSpace ℝ U]
   (D : EulerTransversePacketProvider.Data U) (Kc : CorrectionCoefficientBudget D P)

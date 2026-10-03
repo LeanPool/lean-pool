@@ -110,16 +110,16 @@ theorem cooperative_nonneg_of_bounded
       constructor
       · intro _
         have hmul : a t * (-(ε * exp ((K + 1) * t))) ≤ a t * g t :=
-          mul_le_mul_of_nonneg_left (by linarith) hat.1
+          mul_le_mul_of_nonneg_left (by linarith only [hgt]) hat.1
         have hpos : 0 < (K + 1 - a t) * (ε * exp ((K + 1) * t)) :=
-          mul_pos (by linarith [hat.2]) hεE
-        linarith [hdf t hti]
+          mul_pos (by linarith only [hat, hat.2]) hεE
+        linarith only [hmul, hpos, hdf, hti, hdf t hti]
       · intro _
         have hmul : b t * (-(ε * exp ((K + 1) * t))) ≤ b t * f t :=
-          mul_le_mul_of_nonneg_left (by linarith) hbt.1
+          mul_le_mul_of_nonneg_left (by linarith only [hft]) hbt.1
         have hpos : 0 < (K + 1 - b t) * (ε * exp ((K + 1) * t)) :=
-          mul_pos (by linarith [hbt.2]) hεE
-        linarith [hdg t hti]
+          mul_pos (by linarith only [hbt, hbt.2]) hεE
+        linarith only [hmul, hpos, hdg, hti, hdg t hti]
   intro t ht
   have hE : exp ((K + 1) * t) ≠ 0 := ne_of_gt (exp_pos _)
   constructor
@@ -185,7 +185,7 @@ theorem cosh_lower_of_flux_system
       constructor
       · positivity
       · have : 1 / D t ≤ 1 := (div_le_one hdpos).mpr hdt.1
-        linarith)
+        linarith only [this])
     (fun t ht => ⟨le_trans zero_le_one (hc t ht).1, (hc t ht).2⟩)
     (fun t ht => by
       have hdt := hD t ht
@@ -194,14 +194,14 @@ theorem cosh_lower_of_flux_system
         sinh_nonneg_iff.mpr (div_nonneg ht.1 hspos.le)
       have hinv : 1 / (√2 : ℝ) ≤ √2 / D t := by
         apply (div_le_div_iff₀ hspos hdpos).mpr
-        linarith [hdt.2]
+        linarith only [hsq, hdt, hdt.2]
       have hmul := mul_nonneg hsinh (sub_nonneg.mpr hinv)
       simp only [div_eq_mul_inv] at hmul ⊢
-      linarith)
+      linarith only [hmul])
     (fun t ht => by
       have hmul := mul_nonneg (sub_nonneg.mpr (hc t ht).1)
         (cosh_pos (t / √2)).le
-      linarith)
+      linarith only [hmul])
   intro t ht
   exact ⟨sub_nonneg.mp (hcompare t ht).1, sub_nonneg.mp (hcompare t ht).2⟩
 
@@ -247,7 +247,7 @@ theorem equation30_cosh_lower
     obtain ⟨hl, hu⟩ := hcoeff t ht
     have hp : 0 ≤ β * (β * t ^ 2) := mul_nonneg hβ hl
     have hq : β * (β * t ^ 2) ≤ β := mul_le_of_le_one_right hβ hu
-    constructor <;> linarith
+    constructor <;> linarith only [hβsmall, hq, hp]
 
 /-- Equation (30) gives positivity and a nonnegative derivative from the
 initial conditions alone, throughout the pre-inversion interval. -/
@@ -278,17 +278,17 @@ theorem exp_quarter_le_cosh {t : ℝ} (ht : 4 ≤ t) :
   have ht0 : 0 ≤ t := le_trans (by norm_num) ht
   have hspos : (0 : ℝ) < √2 := by positivity
   have hsq : (√2 : ℝ) ^ 2 = 2 := Real.sq_sqrt (by norm_num)
-  have hsle : (√2 : ℝ) ≤ 2 := by nlinarith [sqrt_nonneg (2 : ℝ)]
-  have hexp : 2 ≤ exp (t / 4) := by linarith [add_one_le_exp (t / 4)]
+  have hsle : (√2 : ℝ) ≤ 2 := by nlinarith only [hsq, hspos, sqrt_nonneg (2 : ℝ)]
+  have hexp : 2 ≤ exp (t / 4) := by linarith only [ht, add_one_le_exp (t / 4)]
   have harg : t / 4 + t / 4 ≤ t / √2 := by
     apply (le_div_iff₀ hspos).mpr
     have := mul_le_mul_of_nonneg_left hsle ht0
-    linarith
+    linarith only [this]
   have hprod : exp (t / 4) * exp (t / 4) ≤ exp (t / √2) := by
     rw [← exp_add]
     exact exp_le_exp.mpr harg
   rw [cosh_eq]
-  nlinarith [exp_pos (-(t / √2))]
+  nlinarith only [hexp, hprod, exp_pos (-(t / √2))]
 
 /-- At `T = 1 / sqrt β`, equation (30) amplifies by at least
 `exp (1 / (4 sqrt β))`, uniformly over every nonnegative initial derivative. -/
@@ -312,7 +312,7 @@ theorem equation30_endpoint_exponential
     exact this.le
   have hT4 : 4 ≤ 1 / √β := by
     apply (le_div_iff₀ hspos).mpr
-    nlinarith
+    nlinarith only [hsq, hβ, hβsmall, hspos]
   have hg := (equation30_cosh_lower hβ.le (by linarith) hT hscale hV hflux hV0 hV₁0
     (1 / √β) ⟨hT, le_rfl⟩).1
   have he := exp_quarter_le_cosh hT4
@@ -340,8 +340,8 @@ theorem flux_lower_initial
     (fun t ht => by
       have hp := mul_nonneg (hD t ht).1 hF0
       simp only [div_eq_mul_inv] at hp ⊢
-      linarith)
-    (fun t ht => by linarith [mul_nonneg (hc t ht).1 hV0])
+      linarith only [hp])
+    (fun t ht => by linarith only [hc, ht, hV0, mul_nonneg (hc t ht).1 hV0])
   intro t ht
   exact ⟨sub_nonneg.mp (hp t ht).1, sub_nonneg.mp (hp t ht).2⟩
 
@@ -355,10 +355,10 @@ theorem inversion_positive
       ((2 / β - 2 * y ^ 2) * f y) y)
     (hf1 : 0 < f 1) (hf₁1 : f₁ 1 < 0) :
     ∀ y ∈ Icc a 1, f 1 ≤ f y ∧ 0 < f y ∧ f₁ y < 0 := by
-  have htwo : (2 : ℝ) ≤ 2 / β := (le_div_iff₀ hβ).mpr (by linarith)
+  have htwo : (2 : ℝ) ≤ 2 / β := (le_div_iff₀ hβ).mpr (by linarith only [hβsmall])
   have hmirror : ∀ t ∈ Icc 0 (1 - a), 1 - t ∈ Icc a 1 := by
     intro t ht
-    constructor <;> linarith [ht.1, ht.2]
+    constructor <;> linarith only [ht, ht.1, ht.2]
   have hp := flux_lower_initial
     (V := fun t => f (1 - t))
     (F := fun t => -((1 + (1 - t) ^ 4) * f₁ (1 - t)))
@@ -375,27 +375,27 @@ theorem inversion_positive
         ((hasDerivAt_id t).const_sub 1)).neg).congr_deriv
       ring)
     (by simpa using hf1.le)
-    (by norm_num; linarith)
+    (by norm_num; linarith only [hf₁1])
     (fun t ht => by
       have hdpos : 0 < 1 + (1 - t) ^ 4 := by positivity
       have hdinv : 1 / (1 + (1 - t) ^ 4) ≤ 1 :=
         (div_le_one hdpos).mpr (by
           have : 0 ≤ (1 - t) ^ 4 := by positivity
-          linarith)
-      exact ⟨by positivity, by linarith⟩)
+          linarith only [this])
+      exact ⟨by positivity, by linarith only [htwo, hdinv]⟩)
     (fun t ht => by
       obtain ⟨hyl, hyu⟩ := hmirror t ht
       have hy0 : 0 ≤ 1 - t := le_trans ha hyl
       have hy2 : (1 - t) ^ 2 ≤ 1 := pow_le_one₀ hy0 hyu
       constructor <;> linarith only [hy2, sq_nonneg (1 - t), htwo])
   intro y hy
-  have htime : 1 - y ∈ Icc 0 (1 - a) := by constructor <;> linarith [hy.1, hy.2]
+  have htime : 1 - y ∈ Icc 0 (1 - a) := by constructor <;> linarith only [hy, hy.1, hy.2]
   have hp' := hp (1 - y) htime
   have hrefl : 1 - (1 - y) = y := by ring
   simp only [sub_zero, hrefl, one_pow, one_add_one_eq_two] at hp'
   refine ⟨hp'.1, hf1.trans_le hp'.1, ?_⟩
-  have hpositive : 0 < -((1 + y ^ 4) * f₁ y) := lt_of_lt_of_le (by linarith) hp'.2
-  have hnegative : (1 + y ^ 4) * f₁ y < 0 := by linarith
+  have hpositive : 0 < -((1 + y ^ 4) * f₁ y) := lt_of_lt_of_le (by linarith only [hf₁1]) hp'.2
+  have hnegative : (1 + y ^ 4) * f₁ y < 0 := by linarith only [hf₁1, hp']
   exact neg_of_mul_neg_right hnegative (by positivity)
 
 /-- A uniform Riccati upper bound that does not depend on the finite initial
@@ -427,7 +427,7 @@ theorem riccati_upper_bound
       have hmul := mul_le_mul_of_nonneg_left (hineq t ht) (sq_nonneg t)
       have hsq := congrArg (fun x : ℝ => x ^ 2) hboundary
       apply (mul_lt_mul_iff_right₀ htpos).mp
-      nlinarith
+      nlinarith only [hboundary, htpos, hmul, hsq]
   intro t ht
   have htp := hp t ⟨ht.1.le, ht.2⟩
   calc
@@ -495,7 +495,7 @@ theorem equation30_log_derivative_upper
     div_nonneg (mul_nonneg (mul_nonneg (by norm_num) (sq_nonneg β)) (pow_nonneg ht0 3)) hDpos.le
   have hlog : 0 ≤ V₁ t / V t := div_nonneg (hp t hti).2 (hp t hti).1.le
   dsimp [dl]
-  linarith [mul_nonneg hcoef hlog]
+  linarith only [hquot, hcoef, hlog, mul_nonneg hcoef hlog]
 
 /-- A coarse Riccati upper barrier for the inverted equation. -/
 theorem riccati_le_four
@@ -513,7 +513,7 @@ theorem riccati_le_four
     hz0 (fun t => hasDerivAt_const t 4)
   intro t ht hboundary
   rw [hboundary]
-  linarith [ha t ht, hb t ht]
+  linarith only [ha, ht, hb, ha t ht, hb t ht]
 
 /-- Quantitative tracking of the stable positive Riccati branch.  This
 abstract estimate is applied below with `μ = sqrt(2/(1+y^4))`; all constants
@@ -546,14 +546,16 @@ theorem riccati_tracking
         (fun t ht => ((hz t ht).sub (hμ t ht)).continuousAt.continuousWithinAt)
         (fun t ht => ((hz t (Ico_subset_Icc_self ht)).sub
           (hμ t (Ico_subset_Icc_self ht))).hasDerivWithinAt)
-        (by norm_num; linarith [(hzrange 0 hzero).2, (hμrange 0 hzero).1]) hBd
+        (by norm_num; linarith only [hε, hzrange, hzero, hμrange, (hzrange 0 hzero).2,
+            (hμrange 0 hzero).1]) hBd
       intro t ht hboundary
       have hti := Ico_subset_Icc_self ht
-      have hsum : 1 ≤ z t + μ t := by linarith [(hzrange t hti).1, (hμrange t hti).1]
+      have hsum : 1 ≤ z t + μ t := by linarith only [hzrange, hti, hμrange, (hzrange t hti).1,
+          (hμrange t hti).1]
       have hprod := mul_nonneg (sub_nonneg.mpr hsum) (hBpos t)
       obtain ⟨hrlo, hrhi⟩ := abs_le.mp (hres t ht)
       obtain ⟨hμlo, hμhi⟩ := abs_le.mp (hμderiv t ht)
-      nlinarith
+      nlinarith only [hε, hboundary, hprod, hrhi, hμlo, hsum]
     have hlower : ∀ t ∈ Icc 0 T, μ t - z t ≤ 6 * exp (-t) + 48 * ε := by
       apply image_le_of_deriv_right_lt_deriv_boundary
         (f := fun t => μ t - z t) (f' := fun t => dμ t - dz t)
@@ -561,16 +563,18 @@ theorem riccati_tracking
         (fun t ht => ((hμ t ht).sub (hz t ht)).continuousAt.continuousWithinAt)
         (fun t ht => ((hμ t (Ico_subset_Icc_self ht)).sub
           (hz t (Ico_subset_Icc_self ht))).hasDerivWithinAt)
-        (by norm_num; linarith [(hzrange 0 hzero).1, (hμrange 0 hzero).2]) hBd
+        (by norm_num; linarith only [hε, hzrange, hzero, hμrange, (hzrange 0 hzero).1,
+            (hμrange 0 hzero).2]) hBd
       intro t ht hboundary
       have hti := Ico_subset_Icc_self ht
-      have hsum : 1 ≤ z t + μ t := by linarith [(hzrange t hti).1, (hμrange t hti).1]
+      have hsum : 1 ≤ z t + μ t := by linarith only [hzrange, hti, hμrange, (hzrange t hti).1,
+          (hμrange t hti).1]
       have hprod := mul_nonneg (sub_nonneg.mpr hsum) (hBpos t)
       obtain ⟨hrlo, hrhi⟩ := abs_le.mp (hres t ht)
       obtain ⟨hμlo, hμhi⟩ := abs_le.mp (hμderiv t ht)
-      nlinarith
+      nlinarith only [hε, hboundary, hprod, hrlo, hμhi, hsum]
     intro t ht
-    exact abs_le.mpr ⟨by linarith [hlower t ht], hupper t ht⟩
+    exact abs_le.mpr ⟨by linarith only [hlower, ht, hlower t ht], hupper t ht⟩
   · intro t ht
     exact False.elim (hT (le_trans ht.1 ht.2))
 
@@ -588,15 +592,15 @@ theorem riccati_tracking_after_layer
   intro t ht hlayer
   have htime : 1 ≤ 2 * ε * t := by
     have := (div_le_iff₀ (show 0 < 2 * ε by positivity)).mp hlayer
-    linarith
+    linarith only [this]
   have hexp : exp (-t) ≤ 2 * ε := by
     rw [exp_neg]
     rw [← one_div]
     apply (div_le_iff₀ (exp_pos _)).mpr
     have hm := mul_le_mul_of_nonneg_left (add_one_le_exp t) (show 0 ≤ 2 * ε by positivity)
-    linarith
+    linarith only [hε, htime, hm]
   have htrack := riccati_tracking hε hz hμ hzrange hμrange hres hμderiv t ht
-  linarith
+  linarith only [hexp, htrack]
 
 /-- The positive stationary branch of the rescaled inverted Riccati equation. -/
 noncomputable def riccatiRoot (ε t : ℝ) : ℝ :=
@@ -632,16 +636,16 @@ theorem riccatiRoot_bounds {ε t : ℝ}
   have hdpos : 0 < 1 + (1 - ε * t) ^ 4 := by positivity
   have hdge : 1 ≤ 1 + (1 - ε * t) ^ 4 := by
     have : 0 ≤ (1 - ε * t) ^ 4 := by positivity
-    linarith
+    linarith only [this]
   constructor
   · apply one_le_sqrt.mpr
     apply (le_div_iff₀ hdpos).mpr
-    linarith
+    linarith only [hy4]
   · apply sqrt_le_iff.mpr
     constructor
     · norm_num
     · apply (div_le_iff₀ hdpos).mpr
-      linarith
+      linarith only [hdpos, hdge]
 
 theorem riccatiRootDeriv_bounds {ε t : ℝ} (hε : 0 ≤ ε)
     (hy : 0 ≤ 1 - ε * t ∧ 1 - ε * t ≤ 1) :
@@ -652,11 +656,11 @@ theorem riccatiRootDeriv_bounds {ε t : ℝ} (hε : 0 ≤ ε)
     simpa using pow_le_pow_left₀ hy.1 hy.2 3
   have hdge : 1 ≤ 1 + (1 - ε * t) ^ 4 := by
     have : 0 ≤ (1 - ε * t) ^ 4 := by positivity
-    linarith
-  have hDsq : 1 ≤ (1 + (1 - ε * t) ^ 4) ^ 2 := by nlinarith
+    linarith only [this]
+  have hDsq : 1 ≤ (1 + (1 - ε * t) ^ 4) ^ 2 := by nlinarith only [hdge]
   have hden : 1 ≤ (1 + (1 - ε * t) ^ 4) ^ 2 * riccatiRoot ε t :=
     hDsq.trans (le_mul_of_one_le_right (sq_nonneg _) hμ.1)
-  have hdenpos : 0 < (1 + (1 - ε * t) ^ 4) ^ 2 * riccatiRoot ε t := by linarith
+  have hdenpos : 0 < (1 + (1 - ε * t) ^ 4) ^ 2 * riccatiRoot ε t := by linarith only [hden]
   constructor
   · exact div_nonneg (by positivity) hdenpos.le
   · apply (div_le_iff₀ hdenpos).mpr
@@ -816,18 +820,18 @@ theorem inversion_riccati_error
     ∀ y ∈ Icc a (1 / 2),
       |(-ε * f₁ y / f y) ^ 2 - 2 / (1 + y ^ 4)| ≤ 360 * ε := by
   have hεne : ε ≠ 0 := ne_of_gt hε
-  have hp := inversion_positive (sq_pos_of_pos hε) (by nlinarith : ε ^ 2 ≤ 1)
+  have hp := inversion_positive (sq_pos_of_pos hε) (by nlinarith only [hε, hεsmall] : ε ^ 2 ≤ 1)
     ha hf hflux hf1 hf₁1
   have hmirror : ∀ t ∈ Icc 0 ((1 - a) / ε), 1 - ε * t ∈ Icc a 1 := by
     intro t ht
     have hu : ε * t ≤ 1 - a := by
       have := (le_div_iff₀ hε).mp ht.2
-      linarith
+      linarith only [this]
     have hl := mul_nonneg hε.le ht.1
-    constructor <;> linarith
+    constructor <;> linarith only [hu, hl]
   have hscale : ε * ((1 - a) / ε) ≤ 1 := by
     field_simp
-    linarith
+    linarith only [ha]
   have hz : ∀ t ∈ Icc 0 ((1 - a) / ε),
       HasDerivAt (fun s => -ε * f₁ (1 - ε * s) / f (1 - ε * s))
         (invertedRiccati ε t (-ε * f₁ (1 - ε * t) / f (1 - ε * t))) t := by
@@ -844,14 +848,14 @@ theorem inversion_riccati_error
   have herr := inverted_riccati_squared_error hε hεsmall hscale hz
     (by simpa using hinit) hznonneg
   intro y hy
-  have hy1 : y ≤ 1 := by linarith [hy.2]
+  have hy1 : y ≤ 1 := by linarith only [hε, hεsmall, hy, hy.2]
   have ht : (1 - y) / ε ∈ Icc 0 ((1 - a) / ε) := by
     constructor
     · exact div_nonneg (sub_nonneg.mpr hy1) hε.le
-    · exact div_le_div_of_nonneg_right (by linarith [hy.1]) hε.le
+    · exact div_le_div_of_nonneg_right (by linarith only [hy, hy.1]) hε.le
   have hlayer : 1 / (2 * ε) ≤ (1 - y) / ε := by
     apply (div_le_div_iff₀ (show 0 < 2 * ε by positivity) hε).mpr
-    nlinarith [hy.2]
+    nlinarith only [hε, hy, hy.2]
   have heq : 1 - ε * ((1 - y) / ε) = y := by field_simp; ring
   simpa only [heq] using herr ((1 - y) / ε) ht hlayer
 
@@ -908,7 +912,7 @@ theorem invertedScalar_initial_bound
   have hεne : ε ≠ 0 := ne_of_gt hε
   have hT : 0 ≤ 1 / ε := by positivity
   have hscale : ε ^ 2 * (1 / ε) ^ 2 ≤ 1 := by field_simp; norm_num
-  have hβsmall : ε ^ 2 ≤ 1 / 2 := by nlinarith
+  have hβsmall : ε ^ 2 ≤ 1 / 2 := by nlinarith only [hε, hεsmall]
   have hp := equation30_positive (sq_nonneg ε) hβsmall hT hscale hV hflux hV0 hV₁0
     (1 / ε) ⟨hT, le_rfl⟩
   have hl := equation30_log_derivative_upper (sq_nonneg ε) hβsmall hT hscale
@@ -918,12 +922,12 @@ theorem invertedScalar_initial_bound
   simp only [inv_one, one_pow, div_one, mul_one, neg_mul]
   refine ⟨hp.1, ?_, ?_⟩
   · have hquot : 0 ≤ V₁ (1 / ε) / ε := div_nonneg hp.2 hε.le
-    linarith
+    linarith only [hp, hquot]
   · have heq : -(ε * (-(V (1 / ε)) - V₁ (1 / ε) / ε)) / V (1 / ε) =
         ε + V₁ (1 / ε) / V (1 / ε) := by field_simp; ring
     rw [heq]
     rw [one_div_one_div] at hl
-    linarith
+    linarith only [hε, hεsmall, hl]
 
 /-- The full uniform estimate (31) for the scalar equation, including the
 rescaling, inversion, positivity, and removal of all dependence on the
@@ -1029,7 +1033,7 @@ theorem reduction_of_order
   have hune : u t ≠ 0 := hupos t ht
   have hratio : v t / u t = v a / u a +
       (u a * (D a * v₁ a) - (D a * u₁ a) * v a) *
-        ∫ s in a..t, 1 / (D s * (u s) ^ 2) := by linarith
+        ∫ s in a..t, 1 / (D s * (u s) ^ 2) := by linarith only [hint]
   rw [← hratio]
   field_simp
 
@@ -1058,7 +1062,7 @@ theorem invertedScalar_positive
     have harg : 0 ≤ s⁻¹ / ε := by positivity
     exact invertedScalar_equations (ne_of_gt hε) (ne_of_gt hspos)
       (hV _ harg) (hflux _ harg)
-  exact inversion_positive (sq_pos_of_pos hε) (by nlinarith : ε ^ 2 ≤ 1) hy.le
+  exact inversion_positive (sq_pos_of_pos hε) (by nlinarith only [hε, hεsmall] : ε ^ 2 ≤ 1) hy.le
     (fun s hs => (heqs s hs).1) (fun s hs => (heqs s hs).2)
     hinit.1 hinit.2.1 y ⟨le_rfl, hy1⟩
 
@@ -1084,7 +1088,7 @@ theorem equation30_post_inversion_lower
   rw [hid, hid1] at hp
   constructor
   · apply (div_le_iff₀ hxpos).mpr
-    linarith [hp.1]
+    linarith only [hp, hp.1]
   · exact pos_of_mul_pos_right hp.2.1 hxpos.le
 
 /-- A solution with the source's initial conditions stays positive for every
@@ -1103,11 +1107,11 @@ theorem equation30_global_positive
   by_cases hpre : t ≤ 1 / ε
   · have hT : 0 ≤ 1 / ε := by positivity
     have hscale : ε ^ 2 * (1 / ε) ^ 2 ≤ 1 := by field_simp; norm_num
-    exact (equation30_positive (sq_nonneg ε) (by nlinarith) hT hscale
+    exact (equation30_positive (sq_nonneg ε) (by nlinarith only [hε, hεsmall]) hT hscale
       (fun s hs => hV s hs.1) (fun s hs => hflux s hs.1) hV0 hV₁0 t ⟨ht, hpre⟩).1
   · have hx : 1 ≤ ε * t := by
       have := (div_le_iff₀ hε).mp (le_of_not_ge hpre)
-      linarith
+      linarith only [this]
     have hp := (equation30_post_inversion_lower hε hεsmall hV hflux hV0 hV₁0 (ε * t) hx).2
     simpa only [mul_div_cancel_left₀ t hεne] using hp
 
@@ -1150,7 +1154,7 @@ theorem equation30_zero_slope_prefix_upper
     (hU0 : U 0 = 1) (hU₁0 : U₁ 0 = 0) :
     ∀ t ∈ Icc 0 1, U t ≤ exp 3 := by
   have hp := equation30_positive (sq_nonneg ε) (by nlinarith) (by norm_num : (0 : ℝ) ≤ 1)
-    (by simp only [one_pow, mul_one]; nlinarith : ε ^ 2 * (1 : ℝ) ^ 2 ≤ 1)
+    (by simp only [one_pow, mul_one]; nlinarith only [hε, hεsmall] : ε ^ 2 * (1 : ℝ) ^ 2 ≤ 1)
     hU hfluxU hU0 (by rw [hU₁0])
   have hsum : ∀ t ∈ Icc 0 1,
       U t + (1 + (ε ^ 2 * t ^ 2) ^ 2) * U₁ t ≤ exp (3 * t) := by
@@ -1169,18 +1173,18 @@ theorem equation30_zero_slope_prefix_upper
     intro t ht hboundary
     have hti := Ico_subset_Icc_self ht
     have hpt := hp t hti
-    have hD : 1 ≤ 1 + (ε ^ 2 * t ^ 2) ^ 2 := by linarith [sq_nonneg (ε ^ 2 * t ^ 2)]
+    have hD : 1 ≤ 1 + (ε ^ 2 * t ^ 2) ^ 2 := by linarith only [sq_nonneg (ε ^ 2 * t ^ 2)]
     have hfirst := mul_le_mul_of_nonneg_right hD hpt.2
     have hc : 2 * (1 - ε ^ 2 * (ε ^ 2 * t ^ 2)) ≤ 2 := by
-      linarith [mul_nonneg (sq_nonneg ε) (mul_nonneg (sq_nonneg ε) (sq_nonneg t))]
+      linarith only [mul_nonneg (sq_nonneg ε) (mul_nonneg (sq_nonneg ε) (sq_nonneg t))]
     have hsecond := mul_le_mul_of_nonneg_right hc hpt.1.le
     have hFn : 0 ≤ (1 + (ε ^ 2 * t ^ 2) ^ 2) * U₁ t := mul_nonneg (by positivity) hpt.2
-    linarith [exp_pos (3 * t)]
+    linarith only [hboundary, hpt, hfirst, hsecond, exp_pos (3 * t)]
   intro t ht
   have hpt := hp t ht
   have hFn : 0 ≤ (1 + (ε ^ 2 * t ^ 2) ^ 2) * U₁ t := mul_nonneg (by positivity) hpt.2
-  have he : exp (3 * t) ≤ exp 3 := exp_le_exp.mpr (by linarith [ht.2])
-  linarith [hsum t ht]
+  have he : exp (3 * t) ≤ exp 3 := exp_le_exp.mpr (by linarith only [ht, ht.2])
+  linarith only [hFn, he, hsum, ht, hsum t ht]
 
 /-- The reduction-of-order integral at time `1` has a positive absolute
 lower bound.  No numerical approximations occur in the constant. -/
@@ -1291,13 +1295,13 @@ theorem equation30_slope_uniform_lower
   have hI := equation30_reduction_integral_lower hε hεsmall hU hfluxU hU0 hU₁0 t ht
   have hc : 1 / (2 * exp 6) ≤ 1 := by
     apply (div_le_one (by positivity : 0 < 2 * exp 6)).mpr
-    linarith [add_one_le_exp (6 : ℝ)]
+    linarith only [hε, hεsmall, add_one_le_exp (6 : ℝ)]
   have hi : (1 + lam) / (2 * exp 6) ≤
       1 + lam * ∫ s in (0 : ℝ)..t, 1 / ((1 + (ε ^ 2 * s ^ 2) ^ 2) * (U s) ^ 2) := by
     have hm := mul_le_mul_of_nonneg_left hI hlam
     simp only [div_eq_mul_inv] at hc hm ⊢
-    linarith
-  linarith [mul_le_mul_of_nonneg_right hi (hpos t ht0).le]
+    linarith only [hc, hm]
+  linarith only [hi, hpos, ht0, mul_le_mul_of_nonneg_right hi (hpos t ht0).le]
 
 /-- Before `x=1`, the original scalar solution is nondecreasing. -/
 theorem equation30_prefix_monotone
@@ -1311,7 +1315,7 @@ theorem equation30_prefix_monotone
     MonotoneOn V (Icc 0 (1 / ε)) := by
   have hεne : ε ≠ 0 := ne_of_gt hε
   have hscale : ε ^ 2 * (1 / ε) ^ 2 ≤ 1 := by field_simp; norm_num
-  have hp := equation30_positive (sq_nonneg ε) (by nlinarith)
+  have hp := equation30_positive (sq_nonneg ε) (by nlinarith only [hε, hεsmall])
     (by positivity : 0 ≤ 1 / ε) hscale
     (fun t ht => hV t ht.1) (fun t ht => hflux t ht.1) hV0 hV₁0
   apply monotoneOn_of_hasDerivWithinAt_nonneg (convex_Icc (0 : ℝ) (1 / ε))
@@ -1364,8 +1368,8 @@ theorem equation30_weighted_monotone
   have hthreshold : 0 < 1 / ε := by positivity
   have hspos : 0 < s := hthreshold.trans_le hs
   have htpos : 0 < t := hthreshold.trans_le ht
-  have hεs : 1 ≤ ε * s := by have := (div_le_iff₀ hε).mp hs; linarith
-  have hεt : 1 ≤ ε * t := by have := (div_le_iff₀ hε).mp ht; linarith
+  have hεs : 1 ≤ ε * s := by have := (div_le_iff₀ hε).mp hs; linarith only [this]
+  have hεt : 1 ≤ ε * t := by have := (div_le_iff₀ hε).mp ht; linarith only [this]
   have hys : 1 / (ε * s) ∈ Ioc 0 1 :=
     ⟨by positivity, (div_le_one (by positivity)).mpr hεs⟩
   have hyt : 1 / (ε * t) ∈ Ioc 0 1 :=
@@ -1391,7 +1395,7 @@ theorem equation30_relative_ratio
   have hpos := equation30_global_positive hε hεsmall hV hflux hV0 hV₁0
   have hpre := equation30_prefix_monotone hε hεsmall hV hflux hV0 hV₁0
   have hpost := equation30_weighted_monotone hε hεsmall hV hflux hV0 hV₁0
-  have hthreshold : 1 ≤ 1 / ε := (le_div_iff₀ hε).mpr (by linarith)
+  have hthreshold : 1 ≤ 1 / ε := (le_div_iff₀ hε).mpr (by linarith only [hε, hεsmall])
   have hthreshold0 : 0 ≤ 1 / ε := by positivity
   intro s t hs hst ht
   have ht0 : 0 ≤ t := hs.trans hst
@@ -1442,7 +1446,7 @@ theorem equation30_post_inversion_positive_derivative
   have hεne : ε ≠ 0 := ne_of_gt hε
   have htpos : 0 < t := lt_of_lt_of_le (by positivity : 0 < 1 / ε) ht
   have htne : t ≠ 0 := ne_of_gt htpos
-  have hεt : 1 ≤ ε * t := by have := (div_le_iff₀ hε).mp ht; linarith
+  have hεt : 1 ≤ ε * t := by have := (div_le_iff₀ hε).mp ht; linarith only [this]
   have hypos : 0 < 1 / (ε * t) := by positivity
   have hy1 : 1 / (ε * t) ≤ 1 := (div_le_one (by positivity)).mpr hεt
   have hp := (invertedScalar_positive hε hεsmall hV hflux hV0 hV₁0
@@ -1454,7 +1458,7 @@ theorem equation30_post_inversion_positive_derivative
     field_simp
     ring
   rw [heq] at hp
-  have hprod : 0 < (ε * t) ^ 2 * (V t + t * V₁ t) := by linarith
+  have hprod : 0 < (ε * t) ^ 2 * (V t + t * V₁ t) := by linarith only [hp]
   exact pos_of_mul_pos_right hprod (sq_nonneg _)
 
 /-- A uniform absolute logarithmic-derivative bound for the zero-slope
@@ -1563,7 +1567,7 @@ theorem reduction_of_order_derivative_relative
   have hane : u a ≠ 0 := hupos a ⟨le_rfl, ht.1.trans ht.2⟩
   have hw := flux_wronskian_constant hu hv hfu hfv t ht
   field_simp [hupos t ht, hD t ht]
-  linarith [hw]
+  linarith only [hw]
 
 /-- A polynomial bound for the normalized reduction integral. -/
 theorem relative_reduction_integral_bound
@@ -1590,7 +1594,7 @@ theorem relative_reduction_integral_bound
     have hq2 : (u a / u s) ^ 2 ≤ Θ ^ 2 := (sq_le_sq₀ hq0 hΘ0).mpr hq
     apply (div_le_iff₀ (lt_of_lt_of_le zero_lt_one (hD s hs))).mpr
     have hm := mul_le_mul_of_nonneg_left (hD s hs) (sq_nonneg Θ)
-    linarith
+    linarith only [hq2, hm]
   constructor
   · apply intervalIntegral.integral_nonneg hab
     intro s hs
@@ -1599,8 +1603,8 @@ theorem relative_reduction_integral_bound
       (intervalIntegrable_const : IntervalIntegrable (fun _ : ℝ => Θ ^ 2) MeasureTheory.volume a b)
           hbound
     simp only [intervalIntegral.integral_const, smul_eq_mul] at hi
-    have hm := mul_le_mul_of_nonneg_right (show b - a ≤ Θ by linarith) (sq_nonneg Θ)
-    linarith
+    have hm := mul_le_mul_of_nonneg_right (show b - a ≤ Θ by linarith only [ha, hb]) (sq_nonneg Θ)
+    linarith only [hi, hm]
 
 /-- A relative propagator estimate with an explicit polynomial loss.
 The large reference amplitude enters only through `u b / u a`. -/
@@ -1640,7 +1644,7 @@ theorem relative_propagator_bound
       _ = |v₁ a| + |u₁ a / u a| * |v a| := by rw [abs_mul]
       _ ≤ |v₁ a| + 2 * |v a| :=
         add_le_add le_rfl (mul_le_mul_of_nonneg_right (hlog a haI) (abs_nonneg (v a)))
-      _ ≤ 2 * N := by dsimp [N]; linarith [abs_nonneg (v₁ a)]
+      _ ≤ 2 * N := by dsimp [N]; linarith only [abs_nonneg (v₁ a)]
   have hΘ0 : 0 ≤ Θ := le_trans zero_le_one hΘ
   have hpow78 : Θ ^ 7 ≤ Θ ^ 8 := pow_le_pow_right₀ hΘ (by norm_num)
   have hpow68 : Θ ^ 6 ≤ Θ ^ 8 := pow_le_pow_right₀ hΘ (by norm_num)
@@ -1731,11 +1735,11 @@ theorem equation30_relative_propagator
     have ht0 : 0 ≤ t := ha.trans ht.1
     have htΘ : t ≤ Θ := ht.2.trans hb
     have heps4 : ε ^ 4 ≤ 1 := by
-      simpa using pow_le_pow_left₀ hε.le (show ε ≤ 1 by linarith) 4
+      simpa using pow_le_pow_left₀ hε.le (show ε ≤ 1 by linarith only [hε, hεsmall]) 4
     have ht4 : t ^ 4 ≤ Θ ^ 4 := pow_le_pow_left₀ ht0 htΘ 4
     have hΘ4 : 1 ≤ Θ ^ 4 := one_le_pow₀ hΘ
     have hm := mul_le_mul heps4 ht4 (by positivity : 0 ≤ t ^ 4) (by norm_num : (0 : ℝ) ≤ 1)
-    constructor <;> linarith [sq_nonneg (ε ^ 2 * t ^ 2)]
+    constructor <;> linarith only [hΘ4, hm, sq_nonneg (ε ^ 2 * t ^ 2)]
   · intro t ht
     exact hp t (ha.trans ht.1)
   · intro t ht
@@ -1755,19 +1759,19 @@ theorem inverted_riccati_le_four
     have ht0 := ht.1
     have hDpos : 0 < 1 + (1 - ε * t) ^ 4 := by positivity
     apply (div_le_iff₀ hDpos).mpr
-    linarith [mul_nonneg (sq_nonneg ε) (sq_nonneg (1 - ε * t)),
-      show 0 ≤ (1 - ε * t) ^ 4 by positivity]
+    linarith only [mul_nonneg (sq_nonneg ε) (sq_nonneg (1 - ε * t)),
+        show 0 ≤ (1 - ε * t) ^ 4 by positivity]
   · intro t ht
     have hprod := mul_le_mul_of_nonneg_left ht.2.le hε.le
     have hprod0 := mul_nonneg hε.le ht.1
-    have hy0 : 0 ≤ 1 - ε * t := by linarith
-    have hy1 : 1 - ε * t ≤ 1 := by linarith
+    have hy0 : 0 ≤ 1 - ε * t := by linarith only [hscale, hprod]
+    have hy1 : 1 - ε * t ≤ 1 := by linarith only [hprod0]
     have hy3 : (1 - ε * t) ^ 3 ≤ 1 := by
       simpa using pow_le_pow_left₀ hy0 hy1 3
     have hDpos : 0 < 1 + (1 - ε * t) ^ 4 := by positivity
     apply (div_le_iff₀ hDpos).mpr
     have hm := mul_le_mul_of_nonneg_left hy3 (show 0 ≤ 4 * ε by positivity)
-    linarith [show 0 ≤ (1 - ε * t) ^ 4 by positivity]
+    linarith only [hεsmall, hm, show 0 ≤ (1 - ε * t) ^ 4 by positivity]
 
 /-- The inverted logarithmic derivative remains in `[0,4]`, derived
 directly from the scalar equation and its endpoint conditions. -/
@@ -1781,16 +1785,16 @@ theorem inversion_riccati_range
     (hinit : -ε * f₁ 1 / f 1 ≤ 4) :
     ∀ y ∈ Icc a 1, 0 ≤ -ε * f₁ y / f y ∧ -ε * f₁ y / f y ≤ 4 := by
   have hεne : ε ≠ 0 := ne_of_gt hε
-  have hp := inversion_positive (sq_pos_of_pos hε) (by nlinarith : ε ^ 2 ≤ 1)
+  have hp := inversion_positive (sq_pos_of_pos hε) (by nlinarith only [hε, hεsmall] : ε ^ 2 ≤ 1)
     ha hf hflux hf1 hf₁1
   have hmirror : ∀ t ∈ Icc 0 ((1 - a) / ε), 1 - ε * t ∈ Icc a 1 := by
     intro t ht
     have hu : ε * t ≤ 1 - a := by
       have := (le_div_iff₀ hε).mp ht.2
-      linarith
+      linarith only [this]
     have hl := mul_nonneg hε.le ht.1
-    constructor <;> linarith
-  have hscale : ε * ((1 - a) / ε) ≤ 1 := by field_simp; linarith
+    constructor <;> linarith only [hu, hl]
+  have hscale : ε * ((1 - a) / ε) ≤ 1 := by field_simp; linarith only [ha]
   have hz : ∀ t ∈ Icc 0 ((1 - a) / ε),
       HasDerivAt (fun s => -ε * f₁ (1 - ε * s) / f (1 - ε * s))
         (invertedRiccati ε t (-ε * f₁ (1 - ε * t) / f (1 - ε * t))) t := by
@@ -1802,7 +1806,7 @@ theorem inversion_riccati_range
   intro y hy
   have ht : (1 - y) / ε ∈ Icc 0 ((1 - a) / ε) :=
     ⟨div_nonneg (sub_nonneg.mpr hy.2) hε.le,
-      div_le_div_of_nonneg_right (by linarith [hy.1]) hε.le⟩
+      div_le_div_of_nonneg_right (by linarith only [hy, hy.1]) hε.le⟩
   have heq : 1 - ε * ((1 - y) / ε) = y := by field_simp; ring
   constructor
   · exact div_nonneg
@@ -1958,7 +1962,8 @@ theorem equation30_ideal_frame_bounds
           y ^ 4 + ε ^ 2 * y ^ 2 + 8 * ε * y ^ 3 ∧
         |idealFrameNumerator ε y z / idealFrameDenominator ε y z - 1| ≤ 1500 * ε := by
   intro y hy hysmall
-  have hr := equation30_inverted_riccati_range hε hεsmall hV hflux hV0 hV₁0 y hy (by linarith)
+  have hr := equation30_inverted_riccati_range hε hεsmall hV hflux hV0 hV₁0 y hy (by linarith only [
+      hε, hεsmall, hysmall])
   have he := equation30_inverted_riccati_error hε hεsmall hV hflux hV0 hV₁0 y hy hysmall
   exact ideal_frame_bounds hε.le hεsmall hy.le hysmall hr.1 hr.2 he
 
@@ -1972,6 +1977,6 @@ theorem ideal_target_compression
   apply (div_le_div_iff₀ hDpos hxpos).mpr
   have hx4 : 1 ≤ x ^ 4 := one_le_pow₀ hx
   have hp := mul_nonneg (mul_nonneg hH hε) (sub_nonneg.mpr hx4)
-  linarith
+  linarith only [hp]
 
 end EulerPacketGrowth

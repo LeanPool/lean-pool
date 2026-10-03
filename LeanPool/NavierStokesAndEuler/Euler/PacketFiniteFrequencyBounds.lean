@@ -30,20 +30,20 @@ theorem fourth_power_le_frequency (k B : ℝ) (hk : 1 ≤ k) (hB0 : 0 ≤ B)
 theorem normalized_low_high_le (k B C₁ C₂ : ℝ) (hk : 2 ≤ k) (hC₂ : 0 ≤ C₂)
     (hB4 : B ^ 4 ≤ k) :
     k*(k⁻¹*C₁+(k⁻¹)^2*C₂+2*B*(k⁻¹*B)^3) ≤ C₁+C₂+1 := by
-  have hk0 : 0 < k := by linarith
+  have hk0 : 0 < k := by linarith only [hk]
   have he : k*(k⁻¹*C₁+(k⁻¹)^2*C₂+2*B*(k⁻¹*B)^3) = C₁+C₂/k+2*B^4/k^2 := by
     field_simp
-  have hc : C₂/k ≤ C₂ := (div_le_iff₀ hk0).mpr (by nlinarith)
-  have ht : 2*B^4/k^2 ≤ 1 := (div_le_one (sq_pos_of_pos hk0)).mpr (by nlinarith)
+  have hc : C₂/k ≤ C₂ := (div_le_iff₀ hk0).mpr (by nlinarith only [hC₂, hk])
+  have ht : 2*B^4/k^2 ≤ 1 := (div_le_one (sq_pos_of_pos hk0)).mpr (by nlinarith only [hk, hB4])
   rw [he]
-  linarith
+  linarith only [hc, ht]
 
 theorem remainder_low_high_le (k B C₂ : ℝ) (hk : 0 < k) (hB4 : B ^ 4 ≤ k) :
     (k⁻¹)^2*C₂+2*B*(k⁻¹*B)^3 ≤ (C₂+2)/k^2 := by
   have he : (k⁻¹)^2*C₂+2*B*(k⁻¹*B)^3 = (C₂+2*B^4/k)/k^2 := by
     field_simp
-  have ht : 2*B^4/k ≤ 2 := (div_le_iff₀ hk).mpr (by nlinarith)
+  have ht : 2*B^4/k ≤ 2 := (div_le_iff₀ hk).mpr (by nlinarith only [hB4])
   rw [he]
-  exact div_le_div_of_nonneg_right (by linarith) (sq_nonneg k)
+  exact div_le_div_of_nonneg_right (by linarith only [ht]) (sq_nonneg k)
 
 end EulerPacketFiniteFrequency

@@ -674,7 +674,7 @@ theorem inverse_frequency_power_le_epsilon {M : ℕ → ℝ} {h κ A growth : �
   obtain ⟨p, hp⟩ := exists_nat_gt ((N : ℝ) / (κ / 2))
   have hNp : (N : ℝ) ≤ (κ / 2) * (p : ℝ) := by
     have hp' := (div_lt_iff₀ (half_pos hκ)).mp hp
-    nlinarith
+    nlinarith only [hp']
   refine ⟨p, ?_⟩
   filter_upwards [inverse_frequency_eventually_small hh hκ hbound] with n hn
   calc

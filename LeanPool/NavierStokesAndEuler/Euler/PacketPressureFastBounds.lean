@@ -124,7 +124,7 @@ theorem physicalCovector_error_bound (R A : ℝ) (hR : 0 ≤ R) (hA : 0 ≤ A)
     (t : Icc (0 : ℝ) D.T) (x : Space) :
     ‖fderiv ℝ (physicalCovector D G k Y t) x‖ ≤
       (9*C*physicalFixedCost D Rc C R 1*sobolevEmbeddingConstant P 3*A)/k := by
-  have hk0 : k ≠ 0 := by linarith
+  have hk0 : k ≠ 0 := by linarith only [hk]
   have hb : ∀ n t z, (∑ w : Fin n → Fin 4,
       ‖iteratedFieldDerivative P w (G.toFieldTower.pointField t) z‖) ≤
       (sobolevEmbeddingConstant P 3*(A/k^2))*R^n*(n.factorial : ℝ)^2 := by
@@ -250,7 +250,7 @@ theorem covectorRemainder_bound (hN : 1 ≤ N) (hm : (a 1).meanPressure = 0)
     (k : ℝ) (hk : 4 ≤ k) (hbase : tailBase R S.H0 BC.termCost N ≤ k ^ (1 / 100 : ℝ)) :
     (covectorRemainderField hT m G K ha hN hm k⁻¹).WordBound 6 (4*R)
       ((fixedVelocityGradeCost R S.H0 2+2)/k^2) 0 := by
-  have hk0 : 0 < k := by linarith
+  have hk0 : 0 < k := by linarith only [hk]
   let B := tailBase R S.H0 BC.termCost N
   have hB : 0 ≤ B := tailBase_nonneg R S.H0 BC.termCost BC.termCost_nonneg N
   have hsmall : k⁻¹*B ≤ 1/2 := by
@@ -258,14 +258,14 @@ theorem covectorRemainder_bound (hN : 1 ≤ N) (hm : (a 1).meanPressure = 0)
   have hz := covectorGrades_zero (N := N) m ha
   have h := Field.wordBound_evaluateRemainder N hN k⁻¹ B (fixedVelocityGradeCost R S.H0 2)
     (inv_nonneg.mpr hk0.le) hB hsmall (covectorGrades N m a) (covectorGradeField hT m G K)
-    6 (4*R) (by linarith) (fun _ _ _ => by rw [hz]; rfl)
+    6 (4*R) (by linarith only [hR]) (fun _ _ _ => by rw [hz]; rfl)
     ((covectorGrade_bound hT m G K hG hR ha 2).fixed_velocity_grade (zero_le_one.trans hR)
         S.H0_pos.le)
     (fun n _ hn => (covectorGrade_bound hT m G K hG hR ha n).coarse_velocity_grade
       hR S.H0_one_le BC.termCost BC.one_le_termCost N hN (by omega))
-  exact (h.mono_amplitude (by linarith)
+  exact (h.mono_amplitude (by linarith only [hR])
     (remainder_low_high_le k B (fixedVelocityGradeCost R S.H0 2) hk0
-      (fourth_power_le_frequency k B (by linarith) hB hbase))).of_path_eq _ rfl
+      (fourth_power_le_frequency k B (by linarith only [hk]) hB hbase))).of_path_eq _ rfl
 
 end EulerPacketPressure
 

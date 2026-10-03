@@ -100,7 +100,7 @@ theorem forwardInitializedNormalizedDerivativeField_bound (N : ℕ) (hN : 1 ≤ 
     fun i _ hi => forwardInitialized_profile_budgets M D hTime δ hδ ξ hs α
       L NB W LM WM BC hRc hcost hδ1 hα hR WP S hgrowth i hi
   have hzero : forwardInitializedProfiles M D δ hδ ξ hs α 0 = 0 := profiles_zero _ _
-  have hk0 : 0 ≤ k := by linarith
+  have hk0 : 0 ≤ k := by linarith only [hk]
   have hsmall : k⁻¹*tailBase L.R S.H0 BC.termCost N ≤ 1/2 := by
     simpa only [div_eq_mul_inv,mul_comm] using
       EulerPacketTailBound.grade_ratio_le_half k (tailBase L.R S.H0 BC.termCost N) hk hbase

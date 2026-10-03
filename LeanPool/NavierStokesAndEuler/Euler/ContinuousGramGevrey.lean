@@ -42,8 +42,8 @@ private theorem cost_bounds (c C D : ℝ) (hc : 0 < c) (hD : 0 ≤ D) :
   unfold gramCost
   constructor
   · have h : 0 ≤ c⁻¹*(3*C^2+D+1) := by positivity
-    linarith
-  constructor <;> nlinarith [sq_nonneg C]
+    linarith only [h]
+  constructor <;> nlinarith only [hi, hD, sq_nonneg C]
 
 variable {U E : Type*}
   [NormedAddCommGroup U] [InnerProductSpace ℝ U] [CompleteSpace U]

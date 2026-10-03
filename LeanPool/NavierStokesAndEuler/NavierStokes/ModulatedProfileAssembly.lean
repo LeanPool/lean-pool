@@ -50,12 +50,12 @@ theorem positiveMap_contDiff (a : ℝ) : ContDiff ℝ ∞ (positiveMap a) :=
     (contDiff_id.sub contDiff_const))
 
 theorem positiveMap_eq {a X : ℝ} (ha : 0 < a) (hX : a ≤ X) : positiveMap a X = X := by
-  rw [positiveMap, TransportPrimitive.cutoff_one (by linarith) hX]
+  rw [positiveMap, TransportPrimitive.cutoff_one (by linarith only [ha]) hX]
   ring
 
 theorem positiveMap_pos {a : ℝ} (ha : 0 < a) (X : ℝ) : 0 < positiveMap a X := by
   by_cases hX : X ≤ a / 2
-  · rw [positiveMap, TransportPrimitive.cutoff_zero (by linarith) hX, zero_mul, add_zero]
+  · rw [positiveMap, TransportPrimitive.cutoff_zero (by linarith only [ha]) hX, zero_mul, add_zero]
     exact ha
   · by_cases hXa : a ≤ X
     · rw [positiveMap_eq ha hXa]
@@ -63,7 +63,7 @@ theorem positiveMap_pos {a : ℝ} (ha : 0 < a) (X : ℝ) : 0 < positiveMap a X :
     · have hc := (TransportPrimitive.cutoff_mem_Icc (a / 2) a X).2
       have hm := mul_le_mul_of_nonneg_right hc (sub_nonneg.mpr (le_of_not_ge hXa))
       dsimp [positiveMap]
-      nlinarith
+      nlinarith only [hX, hXa, hm]
 
 /-- Auxiliary, given by `F (positiveMap a p.1, w.parameterMap p.2)`. -/
 noncomputable def auxiliary {S : Set ℝ}
@@ -211,7 +211,7 @@ theorem exists_parameterData {F : OutgoingProfile.Profile} (W : NominalProfile.W
   obtain ⟨a, ha, _, hd⟩ := W.exists_parameter_interval
   exact ⟨⟨Ioo (-a) a, isOpen_Ioo, by
     intro eta heta
-    constructor <;> linarith [heta.1, heta.2], hd⟩⟩
+    constructor <;> linarith only [ha, heta, heta.1, heta.2], hd⟩⟩
 
 namespace ParameterData
 
@@ -355,7 +355,7 @@ theorem repairPatch_before_positive {F : OutgoingProfile.Profile} (W : NominalPr
     apply ReservedPatches.radius_strictMono W.controls.radius W.controls.radius_pos
     simp only [ReservedPatches.rightClock, ReservedPatches.leftClock,
       ReservedPatches.rightOffset, ReservedPatches.leftOffset]
-    linarith
+    linarith only
   exact hm.trans hh
 
 theorem nominal_patch_fields {F : OutgoingProfile.Profile} (W : NominalProfile.Witness F)
@@ -492,11 +492,11 @@ theorem parameters_open : IsOpen d.parameters := isOpen_Ioo
 
 theorem parameters_contains : Icc (-1 : ℝ) 1 ⊆ d.parameters := by
   intro eta heta
-  constructor <;> linarith [d.one_lt_etaRadius, heta.1, heta.2]
+  constructor <;> linarith only [heta, d.one_lt_etaRadius, heta.1, heta.2]
 
 theorem band_target : band d.etaRadius ⊆ d.parameter.target := by
   intro eta heta
-  constructor <;> linarith [d.etaRadius_lt_target, heta.1, heta.2]
+  constructor <;> linarith only [heta, d.etaRadius_lt_target, heta.1, heta.2]
 
 theorem parameters_target : d.parameters ⊆ d.parameter.target :=
   Subset.trans Ioo_subset_Icc_self d.band_target
@@ -542,7 +542,7 @@ theorem auxiliary_shears {p : Point} (hp : p ∈ fullRegion W d.modulation d.eta
     ModulatedCone.angularShear d.angularAux p = ModulatedCone.angularShear W.profiles.E p ∧
       ModulatedCone.signedAxialShear d.angularAux d.parameter.U p =
         ModulatedCone.signedAxialShear W.profiles.E W.profiles.U p := by
-  have hx : d.modulation.left / 2 < p.1 := by linarith [d.modulation.left_pos, hp.1.1]
+  have hx : d.modulation.left / 2 < p.1 := by linarith only [hp, d.modulation.left_pos, hp.1.1]
   have ht : Tendsto (fun X : ℝ => (X, p.2)) (𝓝 p.1) (𝓝 p) :=
     continuousAt_id.prodMk continuousAt_const
   exact ModulatedCone.shears_eq_of_radial_eventuallyEq
@@ -649,7 +649,7 @@ theorem exists_witness {F : OutgoingProfile.Profile} {W : NominalProfile.Witness
       d.angularAux =ᶠ[𝓝 p] fun q => Real.sqrt (2 * q.1) * d.parameter.f q := by
     intro p hp
     apply d.parameter.E_germ (half_pos d.modulation.left_pos)
-    linarith [d.modulation.left_pos, (d.union_full hp).1.1]
+    linarith only [hp, d.modulation.left_pos, (d.union_full hp).1.1]
   have hstock (p : Point) (hp : p ∈ modulationRegion d.modulation d.etaRadius ∪
       followingRegion W d.modulation d.etaRadius) :=
     d.parameter.stocks_eq (d.full_positive (d.union_full hp)) (htarget p hp)
@@ -775,9 +775,9 @@ theorem rows_before {X eta : ℝ} (hX : 0 ≤ X) (hbefore : X ≤ d.modulation.l
       ModulatedHistories.profileRows W.profiles (X, eta) := by
   apply rows_eq_of_nonnegative v.profiles W.profiles v.pressure0 hX
   · intro x hx
-    exact (v.fields_outside (by intro hc; linarith [hx.2, hc.1])).1
+    exact (v.fields_outside (by intro hc; linarith only [hbefore, hx, hc, hx.2, hc.1])).1
   · intro x hx
-    exact (v.fields_outside (by intro hc; linarith [hx.2, hc.1])).2
+    exact (v.fields_outside (by intro hc; linarith only [hbefore, hx, hc, hx.2, hc.1])).2
 
 theorem exterior_pressure {X eta : ℝ} (heta : eta ∈ d.parameters)
     (hX : (repairPatch W).right ≤ X) :
@@ -1036,7 +1036,7 @@ theorem exists_loopData : ∃ d : LoopData W, d.modulation = b.modulation := by
   have hband : band w.inner ⊆ V := by
     intro eta heta
     apply w.outer_subset
-    constructor <;> linarith [heta.1, heta.2, w.inner_lt_outer]
+    constructor <;> linarith only [heta, heta.1, heta.2, w.inner_lt_outer]
   have hT : fullRegion W b.modulation w.inner ⊆ relaxedDomain W.profiles F.data.h := by
     intro p hp
     exact hprod₁ ⟨hI₁ hp.1, (hband hp.2).1.1.1⟩
@@ -1081,7 +1081,7 @@ theorem exists_loopData : ∃ d : LoopData W, d.modulation = b.modulation := by
     etaRadius := w.inner
     one_lt_etaRadius := w.one_lt_inner
     etaRadius_lt_target := (hband (show w.inner ∈ band w.inner from ⟨by
-        linarith [w.inner_pos], le_rfl⟩)).2.2
+        linarith only [w.inner_pos], le_rfl⟩)).2.2
     modulation := b.modulation
     after_initial := b.after_initial
     before_repair := b.before_repair
@@ -1157,7 +1157,7 @@ theorem finiteModification : AssembledSlowBase.FiniteModification W v.profiles v
   inner := by
     have hpos : 0 < 4 / W.axis.scale := div_pos (by norm_num) W.axis.scale_pos
     change (4 / W.axis.scale) / 4 ≤ d.modulation.left
-    linarith [d.after_initial]
+    linarith only [hpos, d.after_initial]
   ordered := d.modulation.ordered.trans (d.before_repair.trans (repairPatch W).ordered)
   outer := (repairPatch_before_positive W).le
   pressure0 := v.pressure0
@@ -1229,7 +1229,7 @@ theorem repairPatch_before_activeRight {F : OutgoingProfile.Profile} (W : Nomina
     have h₃ := OutgoingTail.tailStart_gt_release F.data
     dsimp only [OutgoingSchedule.Parameters.endpoint] at h₁
     dsimp only [OutgoingTail.tailEnd]
-    linarith [F.data.core.pulseLength_pos]
+    linarith only [h₀, h₁, h₂, h₃, F.data.core.pulseLength_pos]
   exact (ReservedPatches.support_margins F W.controls.radius W.controls.radius_pos
       .modulation).2.2.trans
     (ReservedPatches.radius_strictMono W.controls.radius W.controls.radius_pos hclock)
@@ -1250,7 +1250,7 @@ theorem nominalBounds_of_certificate {F : OutgoingProfile.Profile} (W : NominalP
   have hloXi : lo ≤ NominalProfile.Xi := by
     apply le_trans _ W.controls.activation_collar_le_Xi
     apply mul_le_mul_of_nonneg_left (Real.exp_le_exp.mpr _) hx₀.le
-    linarith [W.controls.activationTime_le]
+    linarith only [ht, htact, W.controls.activationTime_le]
   have hlor : lo < holdRadius W :=
     (hloXi.trans_lt (W.controls.Xi_lt_heatJoin W.separated)).trans
       (W.controls.heatJoin_lt_radius.trans (holdRadius_gt_radius W))
@@ -1276,7 +1276,7 @@ theorem nominalBounds_of_certificate {F : OutgoingProfile.Profile} (W : NominalP
     true_boundary := by
       intro p hp
       rcases Set.mem_insert_iff.mp hp.1 with h | h
-      · have hc := hinit (t / 2) p.2 (half_pos ht) (by linarith) hp.2
+      · have hc := hinit (t / 2) p.2 (half_pos ht) (by linarith only [ht]) hp.2
         convert! hc using 1
         apply Prod.ext
         · exact h
@@ -1295,7 +1295,7 @@ theorem nominalBounds_of_certificate {F : OutgoingProfile.Profile} (W : NominalP
       apply NominalConeAssembly.lt_log_chart hx₀
       simpa only [Real.exp_zero, mul_one] using hl
     have hy' : Real.log (p.1 / NominalConeAssembly.activeLeft W) ≤ t :=
-      (NominalConeAssembly.log_chart_lt hx₀ hx hleft).le.trans (by linarith)
+      (NominalConeAssembly.log_chart_lt hx₀ hx hleft).le.trans (by linarith only [ht])
     have hc := hinit _ p.2 hy hy' heta
     rwa [NominalConeAssembly.chart_log hx₀ hx] at hc
   · exact htrue_after p (hgap.le.trans ((repairPatch W).ordered.le.trans hright.le)) hr heta

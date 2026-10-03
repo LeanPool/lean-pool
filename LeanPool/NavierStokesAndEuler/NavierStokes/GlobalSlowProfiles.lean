@@ -471,9 +471,9 @@ noncomputable def phiCorrection {S : Set ℝ} (_hS : IsOpen S) {a b : ℝ} (ha :
           fun _ => (0 : ℝ) := by
         filter_upwards [hn] with p hp
         have h1 := patch_zero hs (eta := p.2) (R := p.1) (by
-          intro hh; linarith [(abs_lt.mp hp).2, hh.1])
+          intro hh; linarith only [hp, hh, (abs_lt.mp hp).2, hh.1])
         have h2 := patch_zero hs (eta := p.2) (R := -p.1) (by
-          intro hh; linarith [(abs_lt.mp hp).1, hh.1])
+          intro hh; linarith only [hp, hh, (abs_lt.mp hp).1, hh.1])
         simp [h1, h2]
       exact ((contDiffAt_const : ContDiffAt ℝ ∞ (fun _ : ℝ × ℝ => (0 : ℝ)) w).congr_of_eventuallyEq
           he).contDiffWithinAt
@@ -488,7 +488,7 @@ noncomputable def phiCorrection {S : Set ℝ} (_hS : IsOpen S) {a b : ℝ} (ha :
 theorem evenCorrection_nonneg {S : Set ℝ} {a b : ℝ} (ha : 0 < a) {f : Field}
     (hf : Smooth S f) (hs : PatchSupport a b f) {R eta : ℝ} (hR : 0 ≤ R) :
     evenCorrection hf (R, eta) = f (R, eta) := by
-  have hz := patch_zero hs (R := -R) (eta := eta) (by intro hh; linarith [hh.1])
+  have hz := patch_zero hs (R := -R) (eta := eta) (by intro hh; linarith only [ha, hR, hh, hh.1])
   change f (R, eta) + f (-R, eta) = _
   rw [hz, add_zero]
 
@@ -496,12 +496,12 @@ theorem phiCorrection_angular_nonneg {S : Set ℝ} (hS : IsOpen S) {a b : ℝ} (
     {f : Field} (hf : Smooth S f) (hs : PatchSupport a b f) {C : ℝ} (hC : C ≠ 0)
     {R eta : ℝ} (hR : 0 ≤ R) :
     angularField C (phiCorrection hS ha hf hs C) (R, eta) = f (R, eta) := by
-  have hz := patch_zero hs (R := -R) (eta := eta) (by intro hh; linarith [hh.1])
+  have hz := patch_zero hs (R := -R) (eta := eta) (by intro hh; linarith only [ha, hR, hh, hh.1])
   change R / C * (C * (f (R, eta) - f (-R, eta)) / R) = _
   rw [hz, sub_zero]
   rcases hR.eq_or_lt with he | he
   · subst R
-    have h0 := patch_zero hs (R := 0) (eta := eta) (by intro hh; linarith [hh.1])
+    have h0 := patch_zero hs (R := 0) (eta := eta) (by intro hh; linarith only [ha, hh, hh.1])
     simp [h0]
   · field_simp [hC, he.ne']
 
@@ -509,9 +509,9 @@ theorem evenCorrection_inner {S : Set ℝ} {a b : ℝ} {f : Field} (hf : Smooth 
     (hs : PatchSupport a b f) {R eta : ℝ} (hR : |R| ≤ a) :
     evenCorrection hf (R, eta) = 0 := by
   have hz := patch_zero hs (R := R) (eta := eta) (by
-    intro hh; linarith [(abs_le.mp hR).2, hh.1])
+    intro hh; linarith only [hR, hh, (abs_le.mp hR).2, hh.1])
   have hn := patch_zero hs (R := -R) (eta := eta) (by
-    intro hh; linarith [(abs_le.mp hR).1, hh.1])
+    intro hh; linarith only [hR, hh, (abs_le.mp hR).1, hh.1])
   change f (R, eta) + f (-R, eta) = _
   rw [hz, hn, add_zero]
 
@@ -519,9 +519,9 @@ theorem phiCorrection_inner {S : Set ℝ} (hS : IsOpen S) {a b : ℝ} (ha : 0 < 
     {f : Field} (hf : Smooth S f) (hs : PatchSupport a b f) (C : ℝ)
     {R eta : ℝ} (hR : |R| ≤ a) : phiCorrection hS ha hf hs C (R, eta) = 0 := by
   have hz := patch_zero hs (R := R) (eta := eta) (by
-    intro hh; linarith [(abs_le.mp hR).2, hh.1])
+    intro hh; linarith only [hR, hh, (abs_le.mp hR).2, hh.1])
   have hn := patch_zero hs (R := -R) (eta := eta) (by
-    intro hh; linarith [(abs_le.mp hR).1, hh.1])
+    intro hh; linarith only [hR, hh, (abs_le.mp hR).1, hh.1])
   change C * (f (R, eta) - f (-R, eta)) / R = _
   simp [hz, hn]
 
@@ -617,14 +617,15 @@ theorem exterior_evenCorrection {S : Set ℝ} {a b B : ℝ} (ha : 0 < a) (hab : 
   intro eta _ R hR
   have hRa : a < R := hab.trans_le (hbB.trans hR)
   rw [evenCorrection_nonneg ha hf hs (ha.trans hRa).le]
-  exact patch_zero hs (by intro hh; linarith [hh.2])
+  exact patch_zero hs (by intro hh; linarith only [hbB, hR, hh, hh.2])
 
 theorem exterior_phiCorrection {S : Set ℝ} (hS : IsOpen S) {a b B : ℝ}
     (ha : 0 < a) (hab : a < b) (hbB : b ≤ B) {f : Field} (hf : Smooth S f)
     (hs : PatchSupport a b f) (C : ℝ) : Exterior B S (phiCorrection hS ha hf hs C) := by
   intro eta _ R hR
-  have hz := patch_zero hs (R := R) (eta := eta) (by intro hh; linarith [hh.2])
-  have hn := patch_zero hs (R := -R) (eta := eta) (by intro hh; linarith [hh.1])
+  have hz := patch_zero hs (R := R) (eta := eta) (by intro hh; linarith only [hbB, hR, hh, hh.2])
+  have hn := patch_zero hs (R := -R) (eta := eta) (by intro hh; linarith only [ha, hab, hbB, hR, hh,
+      hh.1])
   change C * (f (R, eta) - f (-R, eta)) / R = 0
   simp [hz, hn]
 
@@ -710,13 +711,15 @@ theorem exists_repaired_order {S : Set ℝ} (hS : IsOpen S) {C lam a b B : ℝ}
     rw [hpB n hn le_rfl eta heta R hR, exterior_phiCorrection hS ha hab hbB hde hdeS C eta heta R
         hR, add_zero]
   · intro eta R hR
-    have hz := patch_zero hduS (R := R) (eta := eta) (by intro hh; linarith [hh.2])
-    have hn := patch_zero hduS (R := -R) (eta := eta) (by intro hh; linarith [hh.1])
+    have hz := patch_zero hduS (R := R) (eta := eta) (by intro hh; linarith only [hR, hh, hh.2])
+    have hn := patch_zero hduS (R := -R) (eta := eta) (by intro hh; linarith only [ha, hab, hR, hh,
+        hh.1])
     change u n (R, eta) + (du (R, eta) + du (-R, eta)) = u n (R, eta)
     rw [hz, hn, add_zero, add_zero]
   · intro eta R hR
-    have hz := patch_zero hdeS (R := R) (eta := eta) (by intro hh; linarith [hh.2])
-    have hn := patch_zero hdeS (R := -R) (eta := eta) (by intro hh; linarith [hh.1])
+    have hz := patch_zero hdeS (R := R) (eta := eta) (by intro hh; linarith only [hR, hh, hh.2])
+    have hn := patch_zero hdeS (R := -R) (eta := eta) (by intro hh; linarith only [ha, hab, hR, hh,
+        hh.1])
     change phi n (R, eta) + C * (de' (R, eta) - de' (-R, eta)) / R = phi n (R, eta)
     rw [hz, hn, sub_self, mul_zero, zero_div, add_zero]
   · intro eta heta
@@ -1212,13 +1215,13 @@ noncomputable def schemeFromHierarchy {rho : ℝ} {U : Set ℂ} {S : Set ℝ}
     apply cutoffLift_zero
     have haR : a ≤ R := hab.le.trans (hbB.trans hR)
     have hs : a ^ 2 ≤ R ^ 2 := (sq_le_sq₀ ha.le (ha.le.trans haR)).2 haR
-    linarith
+    linarith only [hsa, hs]
   seedPhi_exterior n := by
     intro eta _ R hR
     apply cutoffLift_zero
     have haR : a ≤ R := hab.le.trans (hbB.trans hR)
     have hs : a ^ 2 ≤ R ^ 2 := (sq_le_sq₀ ha.le (ha.le.trans haR)).2 haR
-    linarith
+    linarith only [hsa, hs]
 
 /-- The actual squared-radius profile.  We use ordinary derivatives only
 at positive X; the axis jets are the right jets of this descent. -/
@@ -1481,7 +1484,8 @@ theorem profiles_x_inner_axial {n : ℕ} (hn : 0 < n) {w : ℝ × ℝ}
   have hs : (Real.sqrt (2 * w.1)) ^ 2 = 2 * w.1 := Real.sq_sqrt (mul_nonneg (by norm_num) hX)
   have hr : |Real.sqrt (2 * w.1)| ≤ s.a := by
     rw [abs_of_nonneg (Real.sqrt_nonneg _)]
-    exact (sq_le_sq₀ (Real.sqrt_nonneg _) s.a_pos.le).mp (by linarith [L.inner_patch])
+    exact (sq_le_sq₀ (Real.sqrt_nonneg _) s.a_pos.le).mp (by linarith only [hi, hs, L,
+        L.inner_patch])
   change (profiles s n).axial (Real.sqrt (2 * w.1), w.2) = _
   rw [profiles_inner_axial s hn hr]
   exact L.axial_seed n w hX hi
@@ -1492,7 +1496,8 @@ theorem profiles_x_inner_phi {n : ℕ} (hn : 0 < n) {w : ℝ × ℝ}
   have hs : (Real.sqrt (2 * w.1)) ^ 2 = 2 * w.1 := Real.sq_sqrt (mul_nonneg (by norm_num) hX)
   have hr : |Real.sqrt (2 * w.1)| ≤ s.a := by
     rw [abs_of_nonneg (Real.sqrt_nonneg _)]
-    exact (sq_le_sq₀ (Real.sqrt_nonneg _) s.a_pos.le).mp (by linarith [L.inner_patch])
+    exact (sq_le_sq₀ (Real.sqrt_nonneg _) s.a_pos.le).mp (by linarith only [hi, hs, L,
+        L.inner_patch])
   change (profiles s n).phi (Real.sqrt (2 * w.1), w.2) = _
   rw [profiles_inner_phi s hn hr]
   exact L.phi_seed n w hX hi
@@ -1525,7 +1530,7 @@ theorem massHistory_of_composition (u : EvenProfile S) (g : Field) {R eta : ℝ}
     constructor
     · positivity
     · have hs := (sq_le_sq₀ hr.1 hR).2 hr.2
-      linarith
+      linarith only [hs]
   have hint := intervalIntegral.integral_comp_mul_deriv'
     (f := fun r : ℝ => r ^ 2 / 2) (f' := fun r => r) (g := fun X => g (X, eta))
     (fun r _ => hder r) continuousOn_id (hg.mono him)
@@ -1556,7 +1561,7 @@ theorem local_mass {n : ℕ} (hn : 0 < n) {R eta : ℝ} (hR : 0 ≤ R)
   · intro r hr
     have hs : r ^ 2 / 2 ≤ inner := by
       have hsq := (sq_le_sq₀ hr.1 hR).2 hr.2
-      linarith
+      linarith only [hi, hsq]
     rw [← xProfile_radius (profiles s n).axial hr.1 eta]
     exact profiles_x_inner_axial L hn (by positivity) hs
 
@@ -1614,7 +1619,7 @@ theorem profiles_radial_inner_beta_pos {n : ℕ} (hn : 0 < n) {R eta : ℝ} (hR 
 noncomputable def localExtension (n : ℕ) (i : Fin 5) : EvenProfile S :=
   cutoffLift L.radius_pos L.parameter_open s.domain.isOpen L.parameter_embedding
     (inner := inner) (stop := (inner + rho ^ 2) / 2)
-    (by linarith [L.inner_radius]) (by linarith [L.inner_radius]) (A.coefficients n i)
+    (by linarith [L.inner_radius]) (by linarith only [L, L.inner_radius]) (A.coefficients n i)
 
 theorem localExtension_xProfile (n : ℕ) (i : Fin 5) {w : ℝ × ℝ}
     (hX : 0 ≤ w.1) (hi : w.1 ≤ inner) :
@@ -1651,7 +1656,7 @@ theorem profiles_radial_inner_beta_axis {n : ℕ} (hn : 0 < n) {eta : ℝ} (heta
     have hi : R ^ 2 / 2 ≤ inner := by
       have hh := (sq_le_sq₀ hR.1.le hs.le).2 hR.2.le
       rw [Real.sq_sqrt L.inner_pos.le] at hh
-      linarith [sq_nonneg R]
+      linarith only [hh, sq_nonneg R]
     change (profiles s n).beta (R, eta) = localExtension L n 4 (R, eta)
     rw [profiles_radial_inner_beta_pos L hn hR.1 hi heta, localExtension_radial L n 4 hR.1.le hi]
   have hc := he.closure (slice_smooth (profiles s n).beta.smooth heta).continuous
@@ -1770,7 +1775,7 @@ theorem profiles_radial_inner_pressure {n : ℕ} (hn : 0 < n) {R eta : ℝ} (hR 
     rw [uIcc_of_le hR] at hr
     have hir : r ^ 2 / 2 < inner := by
       have hs := (sq_le_sq₀ hr.1 hR).2 hr.2
-      linarith
+      linarith only [hi, hs]
     have hp := ProfileHistories.radialPartial_hasDerivAt
       (PositiveOrderMoments.parameterDomain S s.domain.isOpen) P.smooth (p := (r, eta)) ⟨mem_univ
           _, heta⟩
@@ -2053,7 +2058,7 @@ theorem compactSupport_of_even_exterior {S : Set ℝ} (f : EvenProfile S) {B : �
   · exact hf eta heta R hBR
   · have hneg : B ≤ -R := by
       by_contra hn
-      exact hout ⟨by linarith, (lt_of_not_ge hBR).le⟩
+      exact hout ⟨by linarith only [hn], (lt_of_not_ge hBR).le⟩
     rw [← f.even heta R]
     exact hf eta heta (-R) hneg
 

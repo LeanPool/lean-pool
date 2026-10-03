@@ -434,7 +434,7 @@ theorem actualRadialError_eq_formula {U : Set (Point P)} (hU : IsOpen U)
   intro n x hx
   have he := gr_change hU o ha hb hm hh W hW n hx
   simp only [actualRadialError, Pi.add_apply, Pi.sub_apply] at he ⊢
-  linarith
+  linarith only [he]
 
 section RemainderClasses
 
@@ -449,16 +449,16 @@ theorem thetaQuadratic_mem : MeanClass s (H + 9 / 10 - 2 * κ) (thetaQuadratic m
     simpa only [add_comm] using Class.product hm.axial hh.angular ho.weight_le_one
   have h2 := Class.product hh.axial hm.angular ho.weight_le_one
   have h3 := (Class.product hh.axial hh.angular ho.weight_le_one).mono_exponent
-    (show H + 9 / 10 ≤ H + H from by linarith)
-  exact ((h1.add h2).add h3).mono_exponent (by linarith [ho.kappa_nonneg])
+    (show H + 9 / 10 ≤ H + H from by linarith only [hH])
+  exact ((h1.add h2).add h3).mono_exponent (by linarith only [ho, ho.kappa_nonneg])
 
 include ho hm hh hH in
 theorem axialQuadratic_mem : MeanClass s (H + 9 / 10 - 2 * κ) (axialQuadratic m h) := by
   have h1 : MeanClass s (H + 9 / 10) ((2 : ℝ) • (m.axial * h.axial)) := by
     simpa only [add_comm] using Class.smul (Class.product hm.axial hh.axial ho.weight_le_one) 2
   have h2 := (Class.product hh.axial hh.axial ho.weight_le_one).mono_exponent
-    (show H + 9 / 10 ≤ H + H from by linarith)
-  exact (h1.add h2).mono_exponent (by linarith [ho.kappa_nonneg])
+    (show H + 9 / 10 ≤ H + H from by linarith only [hH])
+  exact (h1.add h2).mono_exponent (by linarith only [ho, ho.kappa_nonneg])
 
 include ho hb hm hh hH in
 theorem actualRadialError_mem

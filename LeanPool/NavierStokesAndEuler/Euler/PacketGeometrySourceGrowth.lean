@@ -49,7 +49,7 @@ theorem growthProfile_pos (hhorizon : G.time G.H = G.t₀ + D.T)
   rw [growthProfile_eq_physical]
   apply H.physical_profile_positive
   rw [hhorizon]
-  exact ⟨by linarith [t.property.1],by linarith [t.property.2]⟩
+  exact ⟨by linarith only [t.property.1],by linarith only [t.property.2]⟩
 
 /-- Growth constant, given by `560*G.Θ^10/G.ε`. -/
 def growthConstant : ℝ := 560*G.Θ^10/G.ε
@@ -72,7 +72,7 @@ theorem physicalGrowth_of_geometry
   have hmap : MapsTo (fun r => r-G.t₀) G.S (Icc (0 : ℝ) D.T) := by
     intro r hr
     rw [hinterval] at hr
-    exact ⟨by linarith [hr.1],by linarith [hr.2]⟩
+    exact ⟨by linarith only [hr, hr.1],by linarith only [hr, hr.2]⟩
   have hu : ∀ r ∈ G.S, HasDerivWithinAt u
       (-(G.M ξ r) (u r)+(2*⟪G.r ξ r,(G.M ξ r) (u r)⟫_ℝ/‖G.r ξ r‖^2) • G.r ξ r) G.S r := by
     intro r hr
@@ -91,7 +91,7 @@ theorem physicalGrowth_of_geometry
     simpa only [u,sub_self] using hw0
   have hmem (r : Icc (0 : ℝ) D.T) : G.t₀+r ∈ Icc G.t₀ (G.time G.H) := by
     rw [hhorizon]
-    exact ⟨by linarith [r.property.1],by linarith [r.property.2]⟩
+    exact ⟨by linarith only [r.property.1],by linarith only [r.property.2]⟩
   have hb := H.tangent_propagator ξ u hu htan (G.t₀+s) (G.t₀+t) (hmem s) (hmem t)
     (add_le_add le_rfl (show (s : ℝ) ≤ t from hst))
   rw [← growthProfile_eq_physical D G H t,← growthProfile_eq_physical D G H s] at hb

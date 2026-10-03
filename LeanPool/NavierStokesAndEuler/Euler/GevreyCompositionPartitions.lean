@@ -46,11 +46,12 @@ lemma sum_partSize_succ_sq_le (c : OrderedFinpartition n) :
       apply Finset.sum_le_sum
       intro i _
       have hi : (c.partSize i : ℝ) ≤ n := by exact_mod_cast c.partSize_le i
-      nlinarith [mul_nonneg (sub_nonneg.mpr hi) (show 0 ≤ (c.partSize i : ℝ) + 1 by positivity)]
+      nlinarith only [hi,
+          mul_nonneg (sub_nonneg.mpr hi) (show 0 ≤ (c.partSize i : ℝ) + 1 by positivity)]
     _ = ((n : ℝ) + 1) * ((n : ℝ) + c.length) := by
       rw [← Finset.mul_sum, Finset.sum_add_distrib, sum_partSize_real]
       simp
-    _ ≤ _ := by nlinarith
+    _ ≤ _ := by nlinarith only [hl]
 
 /-- Factorial product, given by `∏ i, ((c.partSize i).factorial : ℝ)`. -/
 def factorialProduct (c : OrderedFinpartition n) : ℝ :=

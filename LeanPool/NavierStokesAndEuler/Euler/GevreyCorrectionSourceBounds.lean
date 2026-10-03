@@ -158,7 +158,7 @@ theorem metric_smallerRadius_bound (S : SpatialBudget period hq D P R)
   have hsmall : 4*S.M*(r*S.Rc) ≤ 1 :=
     (mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right hrR S.Rc_nonneg) (by positivity)).trans
       (S.radius_small t)
-  have hhalf : r*S.Rc ≤ 1/2 := by nlinarith [S.M_one_le]
+  have hhalf : r*S.Rc ≤ 1/2 := by nlinarith only [hq, hsmall, hM, S.M_one_le]
   exact weightedCoefficient_uniform period (D.metric.jet t) N r S.Rc S.B hr S.Rc_nonneg hhalf
     (S.metric_base t) (fun l hl hlN => S.metric_derivatives t l hl (hlN.trans hNP))
 

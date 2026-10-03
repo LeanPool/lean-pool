@@ -154,7 +154,7 @@ theorem thetaResidual_joint_change (T : ScalarField D) :
   have hmean := thetaResidual_change hU o ha hb hm hh W hW T n hx
   have hwave := thetaResidual_covariance_change hU o hb (smooth_updated hm hh) W X hW hX T n hx
   simp only [Pi.add_apply, Pi.sub_apply] at *
-  linarith
+  linarith only [hmean, hwave]
 
 include hU ha hb hm hh hW hX in
 theorem axialResidual_joint_change (p δp T : ScalarField D)
@@ -167,7 +167,7 @@ theorem axialResidual_joint_change (p δp T : ScalarField D)
   have hwave := axialResidual_covariance_change hU o hb (smooth_updated hm hh) W X hW hX
     (p + δp) T (hp.add hδp) n hx
   simp only [Pi.add_apply, Pi.sub_apply] at *
-  linarith
+  linarith only [hmean, hwave]
 
 include hU ha hb hm hh hW hX in
 theorem gr_joint_change :
@@ -177,7 +177,7 @@ theorem gr_joint_change :
   have hmean := gr_change hU o ha hb hm hh W hW n hx
   have hwave := gr_covariance_change hU o hb (smooth_updated hm hh) W X hW hX n hx
   simp only [Pi.add_apply, Pi.sub_apply] at *
-  linarith
+  linarith only [hmean, hwave]
 
 end JointChanges
 
@@ -195,20 +195,20 @@ include ho hX in
 theorem thetaCovarianceChange_mem :
     MeanClass s (α - κ) (thetaCovarianceChange o X) := by
   exact (ho.radialDiv (hX 0 1) 2).add
-    ((ho.dz (hX 2 1)).mono_exponent (by linarith [ho.kappa_nonneg]))
+    ((ho.dz (hX 2 1)).mono_exponent (by linarith only [ho, ho.kappa_nonneg]))
 
 include ho hX in
 theorem axialCovarianceChange_mem :
     MeanClass s (α - κ) (axialCovarianceChange o X) := by
   exact (ho.radialDiv (hX 0 2) 1).add
-    ((ho.dz (hX 2 2)).mono_exponent (by linarith [ho.kappa_nonneg]))
+    ((ho.dz (hX 2 2)).mono_exponent (by linarith only [ho, ho.kappa_nonneg]))
 
 include ho hX in
 theorem radialCovarianceChange_mem :
     MeanClass s (α - κ) (radialCovarianceChange o X) := by
   exact (Class.sub (Class.neg (ho.radialDiv (hX 0 0) 1))
-    ((ho.dz (hX 2 0)).mono_exponent (by linarith [ho.kappa_nonneg]))).add
-    ((ho.inv_mul (hX 1 1)).mono_exponent (by linarith [ho.kappa_nonneg]))
+    ((ho.dz (hX 2 0)).mono_exponent (by linarith only [ho, ho.kappa_nonneg]))).add
+    ((ho.inv_mul (hX 1 1)).mono_exponent (by linarith only [ho, ho.kappa_nonneg]))
 
 end CovarianceBounds
 
@@ -567,7 +567,7 @@ theorem fullResidual_actual_update {U : Set (D × ℝ)} (hU : IsOpen U)
   change _ = (fullDifferentialIncrement c s m p v q n x i).re + _
   unfold fullDifferentialIncrement
   simp only [Pi.add_apply, Complex.add_re]
-  linarith
+  linarith only [hdreal]
 
 theorem fullGoodResidual_actual_update {U : Set (D × ℝ)} (hU : IsOpen U)
     (c : Context D) (s : State D) (m : Triple D) (p : ScalarField D)
@@ -584,7 +584,7 @@ theorem fullGoodResidual_actual_update {U : Set (D × ℝ)} (hU : IsOpen U)
   have hd := fullResidual_actual_update hU c s m p v q e n hr ha hb hp hq hx i
   simp only [fullGoodResidual, State.addIncrement, ExcludedErrors.total,
     ExcludedErrors.add, Pi.sub_apply, Pi.add_apply] at *
-  linarith
+  linarith only [hd]
 
 end ActualFullUpdate
 
@@ -659,7 +659,7 @@ theorem temporalStage_theta_exact {U : Set (PressureStream.Lift S)} (hU : IsOpen
   change _ = PressureStream.torusAverage (u.thetaResidual c n) (x.1, x.2.1) + _
   change _ + (u.thetaResidual c n x - _) = 0 at hf
   change _ - u.thetaResidual c n x = _ at he'
-  linarith
+  linarith only [hf, he']
 
 theorem temporalStage_axial_exact {U : Set (PressureStream.Lift S)} (hU : IsOpen U)
     (r : ReconstructionData) (h : ℝ) (axial slow : S × PressureStream.Plane)
@@ -708,7 +708,7 @@ theorem temporalStage_axial_exact {U : Set (PressureStream.Lift S)} (hU : IsOpen
   change _ + (u.axialResidual c n x - _) = _ at hf
   change _ - u.axialResidual c n x = _ at he'
   dsimp only
-  linarith
+  linarith only [hf, he']
 
 /-- The increment bound is proved for the actual inverse and stream, from
 the current residual classes. No increment or updated-residual class is
@@ -1882,7 +1882,7 @@ theorem commonTemporalStage_theta_exact {U : Set (PressureStream.Lift S)} (hU : 
       (u.thetaResidual c n x - PressureStream.torusAverage (u.thetaResidual c n) (x.1, x.2.1)) = 0
           at hf
   change _ - u.thetaResidual c n x = _ at he'
-  linarith
+  linarith only [hf, he']
 
 theorem commonTemporalStage_axial_exact {U : Set (PressureStream.Lift S)} (hU : IsOpen U)
     (r : ℕ → ReconstructionData) (h : ℝ) (index : ℕ → ℕ)
@@ -1941,7 +1941,7 @@ theorem commonTemporalStage_axial_exact {U : Set (PressureStream.Lift S)} (hU : 
   change _ - u.axialResidual c n x = _ at he'
   change _ - -MeanChartCompatibility.fastAtIndex h n (index n)
     (MeanChartCompatibility.commonTemporalAlias r h index (u.axialResidual c) n) x = _
-  linarith
+  linarith only [hf, he']
 
 end CommonTemporalConstruction
 
@@ -2168,7 +2168,8 @@ theorem sameCarrier_covarianceIncrement_mem {s : StripData D} {P : ℕ → D →
       hcarrier.frequency hcarrier.phase hcarrier.angular hca hcb hP0 hP1 hkp j i
   have hsquare : MeanClass s (α + β) (bilinearCovariance b.oscillation b.oscillation i j) :=
     (HarmonicCovariance.blockCovariance_mem b M hMb hcb hP0 hP1
-      (fun n => by simpa only [hcarrier.angular] using hkp n) i j).mono_exponent (by linarith)
+      (fun n => by simpa only [hcarrier.angular] using hkp n) i j).mono_exponent (by linarith only [
+          hαβ])
   exact (hcross.add hreverse).add hsquare
 
 /-- Substitution of the constructed field into the state's covariance is
@@ -2248,10 +2249,10 @@ theorem meanUpdate_residualBlock_next {s : StripData D} {κ σ : ℝ} {P : ℕ �
       (ExponentLedger.waveExponent (σ + 1 / 10))) :
     (HarmonicResidual.residualBlock c v b G A₁).WaveBounds s P
       (ExponentLedger.waveExponent (σ + 1 / 10)) := by
-  apply meanUpdate_residualBlock_mem c ho (by linarith) hR u v m he hbase hmean hm b hb
+  apply meanUpdate_residualBlock_mem c ho (by linarith only [hκ]) hR u v m he hbase hmean hm b hb
     hN hk hkp hP G A₀ A₁ hA hold
   have hg := ExponentLedger.mean_update_wave_margin (σ := σ) hκ
-  linarith
+  linarith only [hg]
 
 end MeanWaveComposition
 
@@ -2459,7 +2460,7 @@ theorem signedTensorRemainder_mem {s : StripData D} {P : ℕ → D → ℝ}
     (block_angularContinuous old) (block_angularContinuous tangent) (block_angularContinuous curl)]
   intro i j
   exact ((hdiff i j).mono_exponent hγd |>.add ((hcurl i j).mono_exponent hγc)).add
-    ((hsquare i j).mono_exponent (by linarith))
+    ((hsquare i j).mono_exponent (by linarith only [hγs]))
 
 /-- Applying the fixed radial derivative loss still leaves the signed
 tensor error at the manuscript's `.17` improvement. -/
@@ -2489,8 +2490,8 @@ theorem signedTensorRemainder_divergence_mem {s : StripData D} {P : ℕ → D �
   have he := signedTensorRemainder_mem (γ := ExponentLedger.meanExponent σ + 17 / 100 + κ)
     primary old tangent curl N hop hot hoc hpN hoN htN hcN ho hd ht hc hp0 ho0 ht0 hc0
     (by linarith) (by unfold ExponentLedger.waveExponent ExponentLedger.meanExponent; linarith)
-    (by unfold ExponentLedger.waveExponent ExponentLedger.meanExponent; linarith)
-    (by unfold ExponentLedger.waveExponent ExponentLedger.meanExponent; linarith)
+    (by unfold ExponentLedger.waveExponent ExponentLedger.meanExponent; linarith only [hκ])
+    (by unfold ExponentLedger.waveExponent ExponentLedger.meanExponent; linarith only [hσ, hκ])
     hkp hP0 hP1
   simpa only [add_sub_cancel_right] using
     And.intro (thetaCovarianceChange_mem hops he)
@@ -2768,7 +2769,8 @@ theorem twoWaveUpdates_cumulative {s : StripData D} {P : ℕ → D → ℝ} {σ 
       finalBlock.PressureBounds s P 1 := by
   have hpbound := ExponentLedger.particular_increment_above_cumulative_difference hσ
   have hsbound := ExponentLedger.signed_increment_above_cumulative_difference hσ hκ
-  refine ⟨addBlock_waveBounds (addBlock_waveBounds ho hp (by linarith)) hs (by linarith), ?_, ?_⟩
+  refine ⟨addBlock_waveBounds (addBlock_waveBounds ho hp (by linarith)) hs (by linarith only [
+      hsbound]), ?_, ?_⟩
   · exact addBlock_differenceBounds primary (addBlock old particular) signed
       (addBlock_differenceBounds primary old particular hod hp hpbound.le) hs hsbound.le
   · exact addBlock_pressureBounds (addBlock_pressureBounds hop hpp (by linarith)) hsp (by linarith)
@@ -2966,7 +2968,7 @@ theorem gaugeTemporalStage_theta_exact {U : Set (PressureStream.Lift S)} (hU : I
   rw [hnew]
   simp only [Pi.add_apply, Pi.sub_apply] at he' ⊢
   change _ - u.thetaResidual c n x = _ at he'
-  linarith
+  linarith only [hc, he']
 
 theorem gaugeTemporalStage_axial_exact {U : Set (PressureStream.Lift S)} (hU : IsOpen U)
     {V : Set S} (hV : IsOpen V) (hUV : ∀ x ∈ U, x.2.1 ∈ V)
@@ -3011,7 +3013,7 @@ theorem gaugeTemporalStage_axial_exact {U : Set (PressureStream.Lift S)} (hU : I
   rw [hnew]
   simp only [Pi.add_apply, Pi.sub_apply] at he' ⊢
   change _ - u.axialResidual c n x = _ at he'
-  linarith
+  linarith only [hc, he']
 
 end GaugeTemporalResidual
 
@@ -3089,12 +3091,12 @@ theorem gaugeTemporalStage_next_mean {s : StripData (PressureStream.Lift S)}
         (fun n x => (temporalStageState g h index axial c u).axialResidual c n x -
           temporalAliasState g h index c u n (x, 0) 2) := by
   apply gaugeTemporalStage_mean_gain hV hUV g h index axial c u hv hfast ho hb hu hi hdp hW
-    (hbarθ.mono_exponent (by unfold ExponentLedger.meanExponent; linarith))
-    (hbarz.mono_exponent (by unfold ExponentLedger.meanExponent; linarith))
+    (hbarθ.mono_exponent (by unfold ExponentLedger.meanExponent; linarith only))
+    (hbarz.mono_exponent (by unfold ExponentLedger.meanExponent; linarith only))
     hθ hz hpθ hpz
   · exact (ExponentLedger.mean_increment_above_cumulative_mean hσ hκ).le
   · simp only [ExponentLedger.meanUpdateExponent, ExponentLedger.meanExponent]
-    linarith
+    linarith only [hκ]
 
 end GaugeTemporalGain
 
@@ -3507,7 +3509,7 @@ theorem gaugeWaveStage_axial_change {U : Set (PressureStream.Lift S)} (hU : IsOp
   simp only [Pi.add_apply, Pi.sub_apply] at hc' hd' ⊢
   change _ - MeanIncrementBounds.axialResidual c.operators c.base u.mean u.covariance
     u.pressure c.virtualAxial n x = _
-  linarith
+  linarith only [hc', hd']
 
 theorem gaugeWaveStage_mean_changes_mem {s : StripData (PressureStream.Lift S)} {α κ : ℝ}
     (g : GaugeData S) (c : Context (PressureStream.Lift S))
@@ -3528,7 +3530,7 @@ theorem gaugeWaveStage_mean_changes_mem {s : StripData (PressureStream.Lift S)} 
     exact gaugeWaveStage_theta_change s.isOpen_domain g c u w q e hu hw
       hb.smooth hm.velocity.smooth hW hXs
   · apply class_congr ((axialCovarianceChange_mem ho hX).add
-      ((ho.dz hδp).mono_exponent (by linarith)))
+      ((ho.dz hδp).mono_exponent (by linarith only)))
     exact gaugeWaveStage_axial_change s.isOpen_domain g c u w q e hu hw
       hb.smooth hm.velocity.smooth hW hXs hm.pressure.smooth hδp.smooth
   · apply class_congr (radialCovarianceChange_mem ho hX)
@@ -3913,7 +3915,7 @@ theorem linearGoodBlock_cancel {U : Set D} (hU : IsOpen U)
           (HarmonicFields.field (g n i) (a.frequency n) (a.phase n) (a.angularFrequency n) (x,
               θ)).re) =
         (HarmonicFields.field (good.velocity n i) (a.frequency n) (a.phase n)
-          (a.angularFrequency n) (x, θ)).re := by linarith
+          (a.angularFrequency n) (x, θ)).re := by linarith only [hc]
     exact_mod_cast hh
   simpa only [HarmonicWaveInteraction.linearGoodBlock,
     HarmonicMeanInteraction.nonconstant_apply_of_ne _ hj, AddMonoidAlgebra.coeff_add,
@@ -4626,9 +4628,9 @@ theorem gaugeRankStage_next_mean {s : StripData (PressureStream.Lift S)}
   apply gaugeRankStage_mean_gain hU hSU g r axial c u hg ha hab hleft hright v hfast
     ho hb hu hi hdp hW A hθ hz
   · unfold ExponentLedger.meanUpdateExponent ExponentLedger.meanExponent
-    linarith
+    linarith only [hσ, hκ]
   · unfold ExponentLedger.meanUpdateExponent ExponentLedger.meanExponent
-    linarith
+    linarith only [hκ]
 
 end GaugeRankMean
 
@@ -7899,7 +7901,7 @@ theorem residual_gain_local
       (HarmonicWaveInteraction.addBlock b (p.updateBlock s c u b G A N))
       (G + (p.gaussianBlock c u b G A N).velocity) A).WaveBounds
       s (fun n x => W n (angleShuffle (x,0))) (α + 1/10) := by
-  have hκhalf : κ ≤ 1/2 := by linarith
+  have hκhalf : κ ≤ 1/2 := by linarith only [hκ]
   have hbounds := p.assembled_bounds s c u b G A N C hW hκhalf
   have hzmode : HarmonicWaveInteraction.ZeroMode (p.updateBlock s c u b G A N) :=
     (assembledBlock_zero _ _ _ _ _ _).1
@@ -7916,10 +7918,10 @@ theorem residual_gain_local
     G (p.gaussianBlock c u b G A N).velocity A A
     (fun n i => by
         rw [sub_self]; exact HarmonicResidual.band_zero _) _ (by
-            linarith) (by linarith) (by linarith)
+            linarith only) (by linarith only [hκ]) (by linarith only [hα, hκ])
   intro i j hj
   exact (p.linearGood_bounds s c u b G A N C dyn hκhalf hsourceBand hb.smooth
-    (operator_radial_smooth ho) hm hphase hkp hW i j hj).mono_exponent (by linarith)
+    (operator_radial_smooth ho) hm hphase hkp hW i j hj).mono_exponent (by linarith only [hκ])
 
 end ParticularParameters
 
@@ -7964,7 +7966,7 @@ theorem NativeDynamics.residual_gain_local (d : NativeDynamics h request) (i₀ 
     (HarmonicResidual.residualBlock c v
       (HarmonicWaveInteraction.addBlock a (p.exactBlock s request))
       (G + (p.gaussianBlock s request).velocity) A).WaveBounds s P (B+1/10) := by
-  have hκhalf : κ ≤ 1/2 := by linarith
+  have hκhalf : κ ≤ 1/2 := by linarith only [hκ]
   have hbounds := h.block_bounds hκhalf request hRquest
   have hnewdiv : HarmonicWaveInteraction.ModeSolenoidal s c
       (HarmonicWaveInteraction.withCarrier a (p.exactBlock s request)) := by
@@ -7978,10 +7980,10 @@ theorem NativeDynamics.residual_gain_local (d : NativeDynamics h request) (i₀ 
     G (p.gaussianBlock s request).velocity A A
     (fun n i => by
         rw [sub_self]; exact HarmonicResidual.band_zero _) _ (by
-            linarith) (by linarith) (by linarith)
+            linarith only [hκ]) (by linarith only [hκ]) (by linarith only [hB, hκ])
   intro i j hj
   exact (hold i j hj).add ((d.linearGood_bounds i₀ hκhalf hRquest hkp hkpne c hbase.smooth
-    (operator_radial_smooth ho) hm a hcarrier i j hj).mono_exponent (by linarith))
+    (operator_radial_smooth ho) hm a hcarrier i j hj).mono_exponent (by linarith only [hκ]))
 
 end PeriodizedSignedParameters
 
@@ -8094,7 +8096,7 @@ theorem gaugeWaveStage_mean_from_covariance
       hb.smooth hu.velocity.smooth hWs (fun i j => (hcX i j).smooth)
   have hz' : MeanClass st (α-κ) (v.axialResidual c - u.axialResidual c) := by
     apply class_congr ((SignedMeanGain.axialCovarianceChange_mem ho hcX).add
-      ((ho.dz hp).mono_exponent (by linarith)))
+      ((ho.dz hp).mono_exponent (by linarith only)))
     exact SignedMeanGain.waveStage_axial_change (st).isOpen_domain g c u w q gaussian
       hb.smooth hu.velocity.smooth hWs (fun i j => (hcX i j).smooth) hu.pressure.smooth hp.smooth
   refine ⟨hp, gaugeWaveStage_cumulative g c u w q ⟨0,gaussian,0⟩ hu hp hα, ?_, ?_, ?_⟩
@@ -8203,9 +8205,9 @@ noncomputable def signedFamily
   primary_carrier l := ⟨(hcp l).frequency, (hcp l).phase, (hcp l).angular⟩
   tangent_carrier l := ⟨(hcs l).frequency, (hcs l).phase, (hcs l).angular⟩
   curl_carrier l := ⟨(hcs l).frequency, (hcs l).phase, (hcs l).angular⟩
-  old_bounds i j := (hold i j).add ((hpart i j).mono_exponent (by linarith))
+  old_bounds i j := (hold i j).add ((hpart i j).mono_exponent (by linarith only [hσ]))
   difference_bounds i j := by
-    apply ((hdiff i j).add ((hpart i j).mono_exponent (by linarith))).congr
+    apply ((hdiff i j).add ((hpart i j).mono_exponent (by linarith only [hσ]))).congr
     intro l n x hx
     change (v.blocks l).velocity n i j x - (primary l).velocity n i j x +
       (p.particularBlock v c u l).velocity n i j x =
@@ -8287,11 +8289,12 @@ theorem nativeSignedStage_mean_debt
   have hdebt := GaugeDebtIncrement.waveStage_defectBounds G.region G.patch.a_pos G.patch.a_lt_b
     G.left_pos G.right_pos G.epsilon G.slow G.epsilon_pos G.epsilon_le_one G.slow_ge_one
     G.gauge c u w q gaussian hop hbase hm hW hXR hc hXT
-    (show σ-2*κ ≤ σ-κ by linarith) (show 1+(σ-2*κ) ≤ (1+σ-κ)-κ by linarith) hd
+    (show σ-2*κ ≤ σ-κ by linarith only [hκ]) (show 1+(σ-2*κ) ≤ (1+σ-κ)-κ by linarith only) hd
   have hgain := SignedMeanGain.native_signed_mean_gain G B c u hσ hκ hκsmall f a hl hp hcp ht hct
     q gaussian hold H ho hX hS hθ hz hd
   have hcum : CorrectionState.CumulativeBounds G.strip v :=
-    gaugeWaveStage_cumulative G.gauge c u w q ⟨0,gaussian,0⟩ hu hpressure (by linarith)
+    gaugeWaveStage_cumulative G.gauge c u w q ⟨0,gaussian,0⟩ hu hpressure (by linarith only [hσ,
+        hκsmall])
   exact ⟨hpressure, hcum, hgain.1, hgain.2.1, hgain.2.2.1, hgain.2.2.2, hdebt⟩
 
 
@@ -8786,7 +8789,7 @@ theorem uniform_residual_gain {W : ι → ℕ → (Q × ℝ) × Plane → ℝ} {
       (fun l => HarmonicResidual.residualBlock c v
         (HarmonicWaveInteraction.addBlock (b l) ((p l).updateBlock s c u (b l) (G l) (A l) N))
         (G l + ((p l).gaussianBlock c u (b l) (G l) (A l) N).velocity) (A l)) := by
-  have hkhalf : κ ≤ 1/2 := by linarith
+  have hkhalf : κ ≤ 1/2 := by linarith only [hκ]
   have hblocks := uniform_assembled_bounds p s c u b G A N hW hcopy hpressure hgood
   have hlin := uniform_linearGood_bounds p s c u b G A N C dyn hkhalf hW hblocks.2.2
     hsource hb.smooth (operator_radial_smooth ho) hm hphase hkp
@@ -8805,8 +8808,8 @@ theorem uniform_residual_gain {W : ι → ℕ → (Q × ℝ) × Plane → ℝ} {
     (fun l n x hx => hW l n _ hx) hWone hpold (fun l n j => (hblocks.2.1 j).smooth l n)
     G (fun l => ((p l).gaussianBlock c u (b l) (G l) (A l) N).velocity) A A
     (fun _ _ _ => by rw [sub_self]; exact HarmonicResidual.band_zero _)
-    (fun i j hj => (hlin i j hj).mono_exponent (by linarith))
-    (by linarith) (by linarith) (by linarith)
+    (fun i j hj => (hlin i j hj).mono_exponent (by linarith only [hκ]))
+    (by linarith only) (by linarith only [hκ]) (by linarith only [hα, hκ])
 
 end ParticularParameters
 
@@ -8883,12 +8886,13 @@ theorem bandNativeSignedStage_mean_debt {ι : Type}
   have hdebt := GaugeDebtIncrement.waveStage_defectBounds G.region G.patch.a_pos G.patch.a_lt_b
     G.left_pos G.right_pos G.epsilon G.slow G.epsilon_pos G.epsilon_le_one G.slow_ge_one
     G.gauge c u w q gaussian hop hbase hm hW hXR hc hXT
-    (show σ-2*κ ≤ σ-κ by linarith) (show 1+(σ-2*κ) ≤ (1+σ-κ)-κ by linarith) hd
+    (show σ-2*κ ≤ σ-κ by linarith only [hκ]) (show 1+(σ-2*κ) ≤ (1+σ-κ)-κ by linarith only) hd
   have hgain := BandReindexedSignedMeanGain.native_signed_mean_gain G B c u hσ hκ hκsmall f a e he
       hlabels hp hcp ht hct
     q gaussian hold H ho hX hS hθ hz hd
   have hcum : CorrectionState.CumulativeBounds G.strip v :=
-    gaugeWaveStage_cumulative G.gauge c u w q ⟨0,gaussian,0⟩ hu hpressure (by linarith)
+    gaugeWaveStage_cumulative G.gauge c u w q ⟨0,gaussian,0⟩ hu hpressure (by linarith only [hσ,
+        hκsmall])
   exact ⟨hpressure, hcum, hgain.1, hgain.2.1, hgain.2.2.1, hgain.2.2.2, hdebt⟩
 
 end BandNativeSignedMeanComposition
@@ -9009,7 +9013,7 @@ theorem uniform_residual_gain {B : ℝ}
       (fun l => HarmonicResidual.residualBlock c v
         (HarmonicWaveInteraction.addBlock (a l) ((p l).exactBlock s request))
         (G l+((p l).gaussianBlock s request).velocity) (A l)) := by
-  have hkhalf : κ ≤ 1/2 := by linarith
+  have hkhalf : κ ≤ 1/2 := by linarith only [hκ]
   have hgood' : UniformHarmonicInteraction.UniformVelocity s P ((B-1/2-κ)+1-3*κ)
       (fun l => (p l).goodBlock s request) := by
     convert! hgood using 1
@@ -9030,8 +9034,8 @@ theorem uniform_residual_gain {B : ℝ}
       ((p l).exactBlock_pressure_zero s request)) G (fun l => ((p l).gaussianBlock s
           request).velocity) A A
     (fun _ _ _ => by rw [sub_self]; exact HarmonicResidual.band_zero _)
-    (fun i j hj => (hold i j hj).add ((hlin i j hj).mono_exponent (by linarith)))
-    (by linarith) (by linarith) (by linarith)
+    (fun i j hj => (hold i j hj).add ((hlin i j hj).mono_exponent (by linarith only [hκ])))
+    (by linarith only [hκ]) (by linarith only [hκ]) (by linarith only [hB, hκ])
 
 end PeriodizedSignedParameters
 
@@ -9225,11 +9229,11 @@ theorem finalBlock_uniform_cumulative
       (fun l n x => (p.finalBlock v c u l).velocity n i j x - (primary l).velocity n i j x)) := by
   constructor
   · intro i j
-    exact ((hold i j).add ((hpart i j).mono_exponent (by linarith))).add
-      ((hsigned i j).mono_exponent (by linarith))
+    exact ((hold i j).add ((hpart i j).mono_exponent (by linarith only [hσ]))).add
+      ((hsigned i j).mono_exponent (by linarith only [hσ, hκsmall]))
   · intro i j
-    apply (((hdiff i j).add ((hpart i j).mono_exponent (by linarith))).add
-      ((hsigned i j).mono_exponent (by linarith))).congr
+    apply (((hdiff i j).add ((hpart i j).mono_exponent (by linarith only [hσ]))).add
+      ((hsigned i j).mono_exponent (by linarith only [hσ, hκsmall]))).congr
     intro l n x hx
     change (v.blocks l).velocity n i j x - (primary l).velocity n i j x +
       (p.particularBlock v c u l).velocity n i j x + (p.signedBlock v c u l).velocity n i j x =
@@ -9253,14 +9257,14 @@ theorem finalBlock_increment_bounds {P : ι → ℕ → CyclePoint → ℝ} {σ 
       (fun l n x => (p.finalBlock v c u l).pressure n j x - (v.blocks l).pressure n j x)) := by
   constructor
   · intro i j
-    apply (((hpart i j).mono_exponent (by linarith)).add (hsigned i j)).congr
+    apply (((hpart i j).mono_exponent (by linarith only [hκ])).add (hsigned i j)).congr
     intro l n x hx
     change (p.particularBlock v c u l).velocity n i j x + (p.signedBlock v c u l).velocity n i j x =
       (v.blocks l).velocity n i j x + (p.particularBlock v c u l).velocity n i j x +
       (p.signedBlock v c u l).velocity n i j x - (v.blocks l).velocity n i j x
     ring
   · intro j
-    apply (((hpp j).mono_exponent (by linarith)).add (hsp j)).congr
+    apply (((hpp j).mono_exponent (by linarith only [hκ])).add (hsp j)).congr
     intro l n x hx
     change (p.particularBlock v c u l).pressure n j x + (p.signedBlock v c u l).pressure n j x =
       (v.blocks l).pressure n j x + (p.particularBlock v c u l).pressure n j x +
@@ -9305,7 +9309,8 @@ theorem meanStages_residual_gain {P : ι → ℕ → CyclePoint → ℝ} {σ κ 
     (updated (p.temporalIncrement v c u) (p.rankIncrement v c u)) he hb hms hh (p.finalBlock v c u)
     hvelocity hNormal hFreq hAng hz ((p.nextCoefficients v c u).gaussian) v.aliasCoefficients
         v.aliasCoefficients
-    (fun _ _ _ => by rw [sub_self]; exact HarmonicResidual.band_zero _) hold (by linarith)
+    (fun _ _ _ => by rw [sub_self]; exact HarmonicResidual.band_zero _) hold (by linarith only [
+        hκsmall])
   simp only [add_assoc] at hout ⊢
   exact hout
 
@@ -10380,9 +10385,9 @@ theorem waveStage_mean_gain (G : SignedMeanGain.Geometry)
     c u w q gaussian H.operators.regular H.base.smooth H₀.mean.regular
     (fun i j => MeanStateRegularity.MovingField.regular (H₀.covariance i j)) HX
     (hs.symm ▸ ho) (hs.symm ▸ hXC) hfixed (hs.symm ▸ hb) (hs.symm ▸ hu)
-    (show 9/10 ≤ (1+σ)-κ by linarith) le_rfl
-    (hs.symm ▸ hθ.mono_exponent (by linarith)) (hs.symm ▸ hz.mono_exponent (by linarith))
-    (fun i => (hd i).mono_exponent (by linarith))
+    (show 9/10 ≤ (1+σ)-κ by linarith only [hσ, hκsmall]) le_rfl
+    (hs.symm ▸ hθ.mono_exponent (by linarith)) (hs.symm ▸ hz.mono_exponent (by linarith only [hκ]))
+    (fun i => (hd i).mono_exponent (by linarith only [hκ]))
   rw [hs] at hf
   obtain ⟨hp, hcum, htheta, haxial, hdebt⟩ := hf
   have Hn := H.waveStage G.gauge w q gaussian hX
@@ -10523,8 +10528,8 @@ theorem finalBlock_pressure_cumulative {P : ι → ℕ → CyclePoint → ℝ} {
       (fun l n z => (p.signedBlock v c u l).pressure n j z)) :
     ∀ j, LabelSumBounds.UniformWaveClass p.strip P 1
       (fun l n z => (p.finalBlock v c u l).pressure n j z) :=
-  fun j => ((hold j).add ((hp j).mono_exponent (by linarith))).add
-    ((hs j).mono_exponent (by linarith))
+  fun j => ((hold j).add ((hp j).mono_exponent (by linarith only [hσ]))).add
+    ((hs j).mono_exponent (by linarith only [hσ, hκsmall]))
 
 end CycleParameters
 end FurtherPreservation

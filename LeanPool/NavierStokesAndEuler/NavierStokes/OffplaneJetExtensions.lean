@@ -412,7 +412,7 @@ omit [CompleteSpace V] in
 theorem smoothExtension_zero_from {T : ℝ} {f : (ℝ × X) → V}
     (hf : ContDiffOn ℝ ∞ f (past T)) {t : ℝ} (ht : T + 1 ≤ t) (x : X) :
     smoothExtension T f hf (t, x) = 0 := by
-  have hnot : ¬t ≤ T := by linarith
+  have hnot : ¬t ≤ T := by linarith only [ht]
   simp only [smoothExtension, glue, ite_eq_right hnot]
   exact SpatialBorelExtension.rightExtension_zero_from (normalTrace T f)
     (normalTrace_contDiff hf) T ht x
@@ -671,11 +671,11 @@ theorem lowerClamp_contDiff : ContDiff ℝ ∞ lowerClamp :=
     ((contDiff_const.mul contDiff_id).add contDiff_const))
 
 theorem lowerClamp_eq {t : ℝ} (ht : -1 / 2 ≤ t) : lowerClamp t = t := by
-  rw [lowerClamp, Real.smoothTransition.one_of_one_le (by linarith), mul_one]
+  rw [lowerClamp, Real.smoothTransition.one_of_one_le (by linarith only [ht]), mul_one]
 
 theorem lowerClamp_mem {t : ℝ} (ht : t ≤ 1) : lowerClamp t ∈ Icc (-1 : ℝ) 1 := by
   by_cases hlow : t ≤ -1
-  · rw [lowerClamp, Real.smoothTransition.zero_of_nonpos (by linarith), mul_zero]
+  · rw [lowerClamp, Real.smoothTransition.zero_of_nonpos (by linarith only [hlow]), mul_zero]
     norm_num
   · have hgt : -1 < t := lt_of_not_ge hlow
     by_cases hneg : t ≤ 0
@@ -683,8 +683,8 @@ theorem lowerClamp_mem {t : ℝ} (ht : t ≤ 1) : lowerClamp t ∈ Icc (-1 : ℝ
       have hb := Real.smoothTransition.le_one (2 * t + 2)
       have hupper := mul_nonpos_of_nonpos_of_nonneg hneg ha
       dsimp only [lowerClamp]
-      constructor <;> nlinarith
-    · rw [lowerClamp_eq (by linarith)]
+      constructor <;> nlinarith only [hlow, ht, hb, ha, hupper]
+    · rw [lowerClamp_eq (by linarith only [hlow, hneg])]
       exact ⟨hgt.le, ht⟩
 
 /-- Clamped, given by `f (lowerClamp z.1, z.2)`. -/
@@ -759,7 +759,7 @@ theorem reflect_contDiffOn {f : ℝ × X → V} (hf : ContDiffOn ℝ ∞ f close
   intro z hz
   refine ⟨?_, mem_univ z.2⟩
   change -1 ≤ -z.1 ∧ -z.1 ≤ 1
-  constructor <;> linarith [hz.1.1, hz.1.2]
+  constructor <;> linarith only [hz, hz.1.1, hz.1.2]
 
 /-- Lower closed, given by `reflect (upperClosed (reflect f) (reflect_contDiffOn hf))`. -/
 noncomputable def lowerClosed (f : ℝ × X → V) (hf : ContDiffOn ℝ ∞ f closedStrip) :
@@ -773,7 +773,7 @@ omit [CompleteSpace V] in
 theorem lowerClosed_eq {f : ℝ × X → V} (hf : ContDiffOn ℝ ∞ f closedStrip)
     {t : ℝ} (hlo : -1 ≤ t) (hhi : t ≤ 1 / 2) (x : X) : lowerClosed f hf (t, x) = f (t, x) := by
   change upperClosed (reflect f) (reflect_contDiffOn hf) (-t, x) = f (t, x)
-  rw [upperClosed_eq (reflect_contDiffOn hf) (by linarith) (by linarith)]
+  rw [upperClosed_eq (reflect_contDiffOn hf) (by linarith only [hhi]) (by linarith only [hlo])]
   simp only [reflect, neg_neg]
 
 omit [CompleteSpace V] in
@@ -782,14 +782,14 @@ theorem lowerClosed_zero {f : ℝ × X → V} (hf : ContDiffOn ℝ ∞ f closedS
     lowerClosed f hf (t, x) = 0 := by
   apply upperClosed_zero (reflect_contDiffOn hf)
   intro s hs
-  exact hz (-s) ⟨by linarith [hs.2], by linarith [hs.1]⟩
+  exact hz (-s) ⟨by linarith only [hs, hs.2], by linarith only [hs, hs.1]⟩
 
 omit [CompleteSpace V] in
 theorem lowerClosed_add_period {f : ℝ × X → V} (hf : ContDiffOn ℝ ∞ f closedStrip)
     (p : X) (hp : ∀ t ∈ Icc (-1 : ℝ) 1, ∀ x : X, f (t, x + p) = f (t, x))
     (t : ℝ) (x : X) : lowerClosed f hf (t, x + p) = lowerClosed f hf (t, x) :=
   upperClosed_add_period (reflect_contDiffOn hf) p
-    (fun s hs y => hp (-s) ⟨by linarith [hs.2], by linarith [hs.1]⟩ y) (-t) x
+    (fun s hs y => hp (-s) ⟨by linarith only [hs, hs.2], by linarith only [hs, hs.1]⟩ y) (-t) x
 
 /-- Use the lower continuation for negative parameters and the upper
 continuation for positive ones. They agree on a whole central strip. -/
@@ -803,9 +803,9 @@ theorem closedStripExtension_eq {f : ℝ × X → V} (hf : ContDiffOn ℝ ∞ f 
   rcases z with ⟨t, x⟩
   by_cases ht : t ≤ 0
   · rw [closedStripExtension, ite_eq_left ht]
-    exact lowerClosed_eq hf hz.1.1 (by linarith) x
+    exact lowerClosed_eq hf hz.1.1 (by linarith only [ht]) x
   · rw [closedStripExtension, ite_eq_right ht]
-    exact upperClosed_eq hf (by linarith) hz.1.2 x
+    exact upperClosed_eq hf (by linarith only [ht]) hz.1.2 x
 
 theorem closedStripExtension_contDiff {f : ℝ × X → V}
     (hf : ContDiffOn ℝ ∞ f closedStrip) : ContDiff ℝ ∞ (closedStripExtension f hf) := by
@@ -819,7 +819,7 @@ theorem closedStripExtension_contDiff {f : ℝ × X → V}
     have hband : z.1 ∈ Ioo (-1 / 2 : ℝ) (1 / 2) := by rw [hzero]; norm_num
     filter_upwards [(continuous_fst.tendsto z).eventually (isOpen_Ioo.mem_nhds hband)] with y hy
     rw [closedStripExtension_eq hf ⟨⟨by linarith [hy.1], by linarith [hy.2]⟩, mem_univ y.2⟩,
-      upperClosed_eq hf hy.1.le (by linarith [hy.2]) y.2]
+      upperClosed_eq hf hy.1.le (by linarith only [hy, hy.2]) y.2]
   · apply (upperClosed_contDiff hf).contDiffAt.congr_of_eventuallyEq
     filter_upwards [(continuous_fst.tendsto z).eventually (Ioi_mem_nhds hpos)] with y hy
     exact ite_eq_right (not_le_of_gt hy)
@@ -850,11 +850,11 @@ theorem closedStripExtension_zero_parameter {f : ℝ × X → V}
     (hf : ContDiffOn ℝ ∞ f closedStrip) {t : ℝ} (ht : 2 ≤ |t|) (x : X) :
     closedStripExtension f hf (t, x) = 0 := by
   rcases le_abs.mp ht with hpos | hneg
-  · rw [closedStripExtension, ite_eq_right (by linarith : ¬t ≤ 0)]
-    exact Gluing.smoothExtension_zero_from (clamped_contDiffOn hf) (by linarith) x
-  · rw [closedStripExtension, ite_eq_left (by linarith : t ≤ 0)]
+  · rw [closedStripExtension, ite_eq_right (by linarith only [hpos] : ¬t ≤ 0)]
+    exact Gluing.smoothExtension_zero_from (clamped_contDiffOn hf) (by linarith only [hpos]) x
+  · rw [closedStripExtension, ite_eq_left (by linarith only [hneg] : t ≤ 0)]
     exact Gluing.smoothExtension_zero_from
-      (clamped_contDiffOn (reflect_contDiffOn hf)) (by linarith) x
+      (clamped_contDiffOn (reflect_contDiffOn hf)) (by linarith only [hneg]) x
 
 /-- The constructed extension takes only interior smoothness and bounds on
 the actual joint derivatives as inputs. -/
@@ -939,12 +939,12 @@ noncomputable def localBump (x : Space) {r : ℝ} (hr : 0 < r) : ContDiffBump ((
   rIn := r / 4
   rOut := r / 2
   rIn_pos := by positivity
-  rIn_lt_rOut := by linarith
+  rIn_lt_rOut := by linarith only [hr]
 
 theorem localBump_support (x : Space) {r : ℝ} (hr : 0 < r) :
     tsupport (localBump x hr) ⊆ Metric.ball ((1 : ℝ), x) r := by
   rw [(localBump x hr).tsupport_eq]
-  exact Metric.closedBall_subset_ball (by change r / 2 < r; linarith)
+  exact Metric.closedBall_subset_ball (by change r / 2 < r; linarith only [hr])
 
 theorem localBump_jet_bounded (x : Space) {r : ℝ} (hr : 0 < r) (m : ℕ) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ w : SpaceTime, ‖iteratedFDeriv ℝ m (localBump x hr) w‖ ≤ C := by
@@ -1062,7 +1062,7 @@ theorem exists_scale_neighborhood {h qbig : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
   have he : ∀ᶠ w in 𝓝[SpacetimeEndpoint.openPast 1] (1, x),
       PhysicalWaveSum.physicalQ h w ∈
         Ioo (EndpointCoordinates.endpointRoot (2 * h) (x 2) / 2) qbig :=
-    hlim.eventually (isOpen_Ioo.mem_nhds ⟨by linarith, hq⟩)
+    hlim.eventually (isOpen_Ioo.mem_nhds ⟨by linarith only [hp], hq⟩)
   obtain ⟨U, hU, hxU, hsub⟩ := mem_nhdsWithin.mp he
   obtain ⟨r, hr, hball⟩ := Metric.mem_nhds_iff.mp (hU.mem_nhds hxU)
   refine ⟨min r 1, lt_min hr zero_lt_one, ?_⟩
@@ -1077,7 +1077,7 @@ theorem exists_scale_neighborhood {h qbig : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
   have htime : 0 < w.1 := by
     rw [Real.dist_eq] at hdist
     have hs := (abs_lt.mp hdist).1
-    linarith
+    linarith only [hs]
   exact ⟨⟨hw.2.1, hscale.2⟩, hscale.1,
     by rw [abs_of_pos htime]; exact hw.2.1.le⟩
 

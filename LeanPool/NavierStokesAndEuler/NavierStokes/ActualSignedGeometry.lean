@@ -492,12 +492,12 @@ theorem rescale_margins {r R dg eb il ζ c clo rlo rhi : ℝ} {H : Mat2} {T : Ve
   · intro i j
     have hentry : R * H i j = (R / r) * (r * H i j) := by field_simp
     rw [hentry, abs_mul, abs_of_pos hratio]
-    exact mul_le_mul hhi (h.entries i j) (abs_nonneg _) (by linarith [hratio, hhi])
+    exact mul_le_mul hhi (h.entries i j) (abs_nonneg _) (by linarith only [hrlo, hlo, hhi, hratio])
   · intro j
     rw [PhysicalSignedWave.weights_smul_target, Pi.smul_apply, smul_eq_mul]
     have hbase : il * ζ ≤ SmoothCovariance.weights H T j := by
       apply le_trans _ (h.weights j)
-      nlinarith [mul_nonneg hil hζ]
+      nlinarith only [hr, hil, hζ, mul_nonneg hil hζ]
     have hh := mul_le_mul (pow_le_pow_left₀ hclo.le hc 2) hbase
       (mul_nonneg hil hζ) (sq_nonneg c)
     simpa only [mul_assoc] using hh
@@ -878,11 +878,11 @@ noncomputable def standardSlowRegion {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2) :
     rw [isOpen_iff_mem_nhds]
     intro z hz
     have hq := (SimilarityCoordinates.coordinateQ_smooth
-      (by linarith : 0 < 2 * h) (by linarith : 2 * h < 1) hz.1).continuousAt
+      (by linarith only [hh] : 0 < 2 * h) (by linarith only [hh1] : 2 * h < 1) hz.1).continuousAt
     exact inter_mem (isOpen_lt continuous_const continuous_fst |>.mem_nhds hz.1)
       (hq.preimage_mem_nhds (isOpen_Ioo.mem_nhds hz.2))
-  coord_pos := by linarith
-  coord_lt_one := by linarith
+  coord_pos := by linarith only [hh]
+  coord_lt_one := by linarith only [hh1]
   qlo := 1 / 2
   qhi := 2
   qlo_pos := by norm_num
@@ -940,8 +940,8 @@ theorem nativeSlow_positive (L : Label H v a) {p : Slow}
   have hq : SimilarityHomogeneity.chartQ F.data.h p ∈ Icc (1 / 2 : ℝ) 2 :=
     ⟨hs.1.2.1.le, hs.1.2.2.le⟩
   have hspec := SimilarityCoordinates.coordinateQ_spec
-    (by linarith [F.data.h_pos] : 0 < 2 * F.data.h)
-    (by linarith [F.data.h_lt_half] : 2 * F.data.h < 1) (p := (p.2.2, p.2.1)) ht
+    (by linarith only [F.data.h_pos] : 0 < 2 * F.data.h)
+    (by linarith only [F.data.h_lt_half] : 2 * F.data.h < 1) (p := (p.2.2, p.2.1)) ht
   have hactive := (BaseContextAssembly.nativeStrip_active W _ hp.2).1
   refine ⟨subset_closure ?_, ht⟩
   refine ⟨(BaseContextAssembly.nativeStrip_radius W _ hp.2).le, ht.le,
@@ -1036,7 +1036,7 @@ theorem radialDelta_le_edge {r : ℝ}
   have hp := WeightedRadialPrimitive.logPosition_mem ha hr
   change min 1 (min _ _) ≤ min 1 (min _ _)
   rw [hl, hu]
-  exact min_le_min le_rfl (min_le_min (by linarith [hp.1]) (by linarith [hp.2]))
+  exact min_le_min le_rfl (min_le_min (by linarith only [hp, hp.1]) (by linarith only [hp, hp.2]))
 
 theorem nativeSlow_inverse_edge (L : Label H v a) {p : Slow}
     (hp : p ∈ (nativeSlow H v a).carrier L) :
@@ -1128,7 +1128,7 @@ theorem dyadic_ratioPower_le {n m : ℕ} (hnm : n ≤ m + 4) (hmn : m ≤ n + 4)
     have h1 : (n : ℝ) ≤ (m : ℝ) + 4 := by exact_mod_cast hnm
     have h2 : (m : ℝ) ≤ (n : ℝ) + 4 := by exact_mod_cast hmn
     rw [abs_le]
-    constructor <;> linarith
+    constructor <;> linarith only [h1, h2]
   calc
     _ ≤ |((m : ℝ) - (n : ℝ)) * exponent| := le_abs_self _
     _ = |(m : ℝ) - (n : ℝ)| * |exponent| := abs_mul _ _
@@ -1161,7 +1161,7 @@ theorem S_window_le {n m : ℕ} (hn : 1 ≤ n) (hmn : m ≤ n + 4) :
   have h0 : (0 : ℝ) ≤ m := Nat.cast_nonneg _
   have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg _
   unfold ChartScales.S
-  nlinarith [sq_nonneg (5 * (n : ℝ) - m)]
+  nlinarith only [hm, sq_nonneg (5 * (n : ℝ) - m)]
 
 theorem sqrt_S_window {n m : ℕ} (hn : 1 ≤ n) (hm : 1 ≤ m)
     (hnm : n ≤ m + 4) (hmn : m ≤ n + 4) :
@@ -1172,7 +1172,7 @@ theorem sqrt_S_window {n m : ℕ} (hn : 1 ≤ n) (hm : 1 ≤ m)
   have hn5 : (n : ℝ) ≤ 5 * (m : ℝ) := by exact_mod_cast (show n ≤ 5 * m by omega)
   have hm5 : (m : ℝ) ≤ 5 * (n : ℝ) := by exact_mod_cast (show m ≤ 5 * n by omega)
   simp only [ChartScales.S, Real.sqrt_sq (le_of_lt hn0), Real.sqrt_sq (le_of_lt hm0)]
-  exact ⟨(le_div_iff₀ hm0).mpr (by linarith), (div_le_iff₀ hm0).mpr hn5⟩
+  exact ⟨(le_div_iff₀ hm0).mpr (by linarith only [hm5]), (div_le_iff₀ hm0).mpr hn5⟩
 
 theorem common_native_gap {h : ℝ} (hh : 0 ≤ h) {index : ℕ → ℕ} {budget : ℕ}
     (hi : CommonBaseContext.IndexBounds h index budget) {n m : ℕ}
@@ -1323,7 +1323,7 @@ theorem slotGeometry_common_cost (hh : 0 ≤ h) {index : ℕ → ℕ} {budget : 
   have hc := CommonCoverClass.bandArgumentCost_one_le (TorusAverages.slotChart vr vt hdet)
     (budget + SlotColoring.nativeGap h)
   have he := mul_le_mul_of_nonneg_left (S_window_le hn hln) (zero_le_one.trans hc)
-  nlinarith
+  nlinarith only [hdet, he]
 
 end Slots
 
@@ -1376,7 +1376,7 @@ theorem profileRadius_slowChange {F : OutgoingProfile.Profile}
   have he := congrArg Prod.fst (normalized_inner_slowChange (F := F) hQ hQr ht)
   rw [← PrimaryTargetBounds.profileRadius_sq (F := F) htp,
     ← PrimaryTargetBounds.profileRadius_sq (F := F) ht] at he
-  nlinarith
+  nlinarith only [he, hp, hp']
 
 theorem movingWeight_slowChange {F : OutgoingProfile.Profile} (W : NominalProfile.Witness F)
     {Q Qr : ℝ} (hQ : 0 < Q) (hQr : 0 < Qr) {p : Slow} (ht : 0 < p.2.2) (hr : 0 < p.1) :
@@ -1392,7 +1392,7 @@ noncomputable def slowChangeCost (h : ℝ) : ℝ :=
 
 theorem slowChangeCost_one (h : ℝ) : 1 ≤ slowChangeCost h := by
   unfold slowChangeCost
-  linarith [powerBound_one (1 / 2), powerBound_one (CoordinateAlgebra.D h), powerBound_one 1]
+  linarith only [powerBound_one (1 / 2), powerBound_one (CoordinateAlgebra.D h), powerBound_one 1]
 
 theorem norm_slowChange_le (h : ℝ) {n m : ℕ} (hnm : n ≤ m + 4) (hmn : m ≤ n + 4) :
     ‖slowChange h (ChartScales.Q n) (ChartScales.Q m)‖ ≤ slowChangeCost h := by
@@ -1564,7 +1564,7 @@ theorem roundedCarrier_bounds {h : ℝ} (hh : 0 ≤ h) (n : ℕ) :
   obtain ⟨hl, hu⟩ := Scaling.carrier_frequency_sqrt_bounds (ChartScales.epsilon_pos h n)
   have hs : Real.sqrt (ChartScales.epsilon h n) ≤ 1 := by
     simpa only [Real.sqrt_one] using Real.sqrt_le_sqrt (ChartScales.epsilon_le_one h hh n)
-  exact ⟨hl, hu.trans (by linarith)⟩
+  exact ⟨hl, hu.trans (by linarith only [hs])⟩
 
 section PhysicalScales
 
@@ -1600,7 +1600,7 @@ noncomputable def carrierRatioScale {h : ℝ} (hh : 0 ≤ h) : ActualSignedContr
     have h1 := roundedCarrier_bounds hh (reference l n)
     have h2 := roundedCarrier_bounds hh (chart n)
     have hpos : 0 < roundedCarrier h (chart n) := zero_lt_one.trans_le h2.1
-    exact ⟨(le_div_iff₀ hpos).mpr (by linarith), (div_le_iff₀ hpos).mpr (by linarith)⟩
+    exact ⟨(le_div_iff₀ hpos).mpr (by linarith), (div_le_iff₀ hpos).mpr (by linarith only [h1, h2])⟩
 
 /-- Normal scale, given by `(carrierRatioScale chart reference hh).mul (bandPowerScale chart
 reference hnear (h / 2 + 1 / 2))`. -/
@@ -1697,7 +1697,7 @@ theorem copy_growth_le
       25 * BaseContextAssembly.slowScale (chart n) := by
     unfold BaseContextAssembly.slowScale
     rw [max_eq_right hSn]
-    exact max_le (by linarith) hSm
+    exact max_le (by linarith only [hSn]) hSm
   change BaseContextAssembly.slowScale (BaseChartJets.cellBand (reference l n)) *
     max 1 ((BaseContextAssembly.nativeStrip W _).delta
       (BaseContextAssembly.insertSlow (slowChange F.data.h (ChartScales.Q (chart n))
@@ -1737,7 +1737,7 @@ noncomputable def copyChart (hr0 : 0 < r0)
     have h1 := slowChangeCost_one F.data.h
     have h2 := CommonCoverClass.bandArgumentCost_one_le (TorusAverages.slotChart vr vt hdet)
       (budget + SlotColoring.nativeGap F.data.h)
-    linarith
+    linarith only [hdet, h1, h2]
   growthDegree := 1
   linearDegree := 1
   growth_bound l n k x hx _ := by
@@ -2365,7 +2365,7 @@ theorem nativeCutoff_nonzero_mem (hr0 : 0 < r0) (L : Label H v a) {x : Native}
   have hdiv : 0 < x.2.2 / ChartScales.slotLength r0 F.data.h (BaseChartJets.cellBand L) ∧
       x.2.2 / ChartScales.slotLength r0 F.data.h (BaseChartJets.cellBand L) < 1 := by
     dsimp only [pulseCoordinates] at hgauss
-    constructor <;> linarith [(abs_lt.mp hgauss).1, (abs_lt.mp hgauss).2]
+    constructor <;> linarith only [H, hgauss, (abs_lt.mp hgauss).1, (abs_lt.mp hgauss).2]
   have hL : 0 < ChartScales.slotLength r0 F.data.h (BaseChartJets.cellBand L) :=
     div_pos (mul_pos (by norm_num) hr0) (ChartScales.timeCoefficient_pos _ _)
   have hv : x.2.2 ∈ Ioo 0 (ChartScales.slotLength r0 F.data.h (BaseChartJets.cellBand L)) := by
@@ -2385,7 +2385,7 @@ theorem nativeCutoff_zero_germ_outside_q (L : Label H v a) {x : Native}
         simpa only [SquaredPartition.dyadicProfile_tsupport] using hq)
   have hc : ContinuousAt (fun y : Native => SimilarityHomogeneity.chartQ F.data.h y.1) x := by
     exact ((SimilarityCoordinates.coordinateQ_smooth
-      (by linarith [F.data.h_pos]) (by linarith [F.data.h_lt_half]) ht).continuousAt).comp
+      (by linarith only [F.data.h_pos]) (by linarith only [F.data.h_lt_half]) ht).continuousAt).comp
         (continuousAt_fst.snd.snd.prodMk continuousAt_fst.snd.fst)
   filter_upwards [hc.eventually he] with y hy
   simp only [nativeCutoff, hy, zero_mul]

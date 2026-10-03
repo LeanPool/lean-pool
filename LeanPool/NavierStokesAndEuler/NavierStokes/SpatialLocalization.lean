@@ -250,7 +250,7 @@ theorem translate_eq_zero_on_innerCube {r : ℝ} {f : SpaceTime → V}
       _ ≤ |x i| + |x i - (n i : ℝ)| := by
         simpa only [sub_zero, zero_sub, abs_neg] using
           abs_sub_le (x i) 0 (x i - (n i : ℝ))
-      _ < 1 := by have := hx i; linarith
+      _ < 1 := by have := hx i; linarith only [hi, this]
   have hlo : (-1 : ℤ) < n i := by exact_mod_cast (abs_lt.mp hni).1
   have hhi : n i < (1 : ℤ) := by exact_mod_cast (abs_lt.mp hni).2
   change n i = 0
@@ -288,7 +288,7 @@ theorem periodize_eventuallyEq_at_origin {r : ℝ} {f : SpaceTime → V}
   apply periodize_eventuallyEq hf
   intro i
   simp only [PiLp.zero_apply, abs_zero]
-  linarith
+  linarith only [hr]
 
 /-- For support strictly inside the fundamental cube, equality holds on the
 whole closed fundamental cube, including its boundary. -/
@@ -299,7 +299,7 @@ theorem periodize_eq_on_unitCube {r : ℝ} {f : SpaceTime → V}
   apply periodize_eq_on_innerCube hf (t := t)
   intro i
   have := hx i
-  linarith
+  linarith only [hr, this]
 
 /-- Spatial periodization preserves every zero time slice. -/
 theorem periodize_eq_zero_of_timeSlice {f : SpaceTime → V} {t : ℝ}
@@ -385,9 +385,9 @@ theorem isCompact_supportCylinder : IsCompact supportCylinder := by
   ext x
   simp only [supportCylinder, Set.mem_ofPred_eq, AxisymmetricFields.radialEnergy, radialSquare]
   constructor <;> intro hx <;> constructor
-  · linarith [hx.1]
+  · linarith only [hx, hx.1]
   · exact hx.2
-  · linarith [hx.1]
+  · linarith only [hx, hx.1]
   · exact hx.2
 
 theorem spatialCutoff_support_subset : Function.support spatialCutoff ⊆ supportCylinder := by
@@ -403,7 +403,7 @@ theorem spatialCutoff_support_subset : Function.support spatialCutoff ⊆ suppor
     exact (mul_ne_zero_iff.mp hprod).2
       (SmoothCutoffs.cutoff_zero_of_one_le_abs (le_of_not_gt h))
   simp only [abs_mul, abs_of_pos (show (0 : ℝ) < 4 by norm_num)] at hz
-  exact ⟨by linarith, by linarith⟩
+  exact ⟨by linarith only [hr], by linarith only [hz]⟩
 
 theorem spatialCutoff_tsupport_subset : tsupport spatialCutoff ⊆ supportCylinder :=
   closure_minimal spatialCutoff_support_subset isClosed_supportCylinder
@@ -419,20 +419,20 @@ theorem supportCylinder_coordinate_bound {x : Space} (hx : x ∈ supportCylinder
   · change |x 0| ≤ 1 / 4
     have hs : |x 0| ^ 2 ≤ (1 / 4 : ℝ) ^ 2 := by
       rw [sq_abs]
-      nlinarith [sq_nonneg (x 1)]
-    nlinarith [abs_nonneg (x 0)]
+      nlinarith only [hr, sq_nonneg (x 1)]
+    nlinarith only [hs, abs_nonneg (x 0)]
   · change |x 1| ≤ 1 / 4
     have hs : |x 1| ^ 2 ≤ (1 / 4 : ℝ) ^ 2 := by
       rw [sq_abs]
-      nlinarith [sq_nonneg (x 0)]
-    nlinarith [abs_nonneg (x 1)]
+      nlinarith only [hr, sq_nonneg (x 0)]
+    nlinarith only [hs, abs_nonneg (x 1)]
   · exact hx.2
 
 /-- The support is strictly inside the centered fundamental period cube. -/
 theorem spatialCutoff_strictly_inside_cube {x : Space} (hx : x ∈ tsupport spatialCutoff)
     (i : Fin 3) : |x i| < 1 / 2 := by
   have := supportCylinder_coordinate_bound (spatialCutoff_tsupport_subset hx) i
-  linarith
+  linarith only [this]
 
 /-- An open cylinder on which the cutoff is identically one. -/
 noncomputable def plateau : Set Space := {x | radialSquare x < 1 / 32 ∧ |x 2| < 1 / 8}
@@ -447,10 +447,10 @@ theorem zero_mem_plateau : (0 : Space) ∈ plateau := by
 theorem spatialCutoff_eq_one {x : Space} (hx : x ∈ plateau) : spatialCutoff x = 1 := by
   have hr : |16 * radialSquare x| ≤ 1 / 2 := by
     rw [abs_of_nonneg (mul_nonneg (by norm_num) (radialSquare_nonneg x))]
-    linarith [hx.1]
+    linarith only [hx, hx.1]
   have hz : |4 * x 2| ≤ 1 / 2 := by
     rw [abs_mul, abs_of_pos (show (0 : ℝ) < 4 by norm_num)]
-    linarith [hx.2]
+    linarith only [hx, hx.2]
   simp only [spatialCutoff, cutoffProfile, SmoothCutoffs.cutoff_one_of_abs_le hr,
     SmoothCutoffs.cutoff_one_of_abs_le hz, one_mul]
 
@@ -461,9 +461,9 @@ theorem spatialCutoff_eventually_one {x : Space} (hx : x ∈ plateau) :
 
 theorem plateau_subset_innerCube : plateau ⊆ PeriodicLocalization.innerCube (1 / 4) := by
   intro x hx i
-  have hb : x ∈ supportCylinder := ⟨by linarith [hx.1], by linarith [hx.2]⟩
+  have hb : x ∈ supportCylinder := ⟨by linarith only [hx, hx.1], by linarith only [hx, hx.2]⟩
   have := supportCylinder_coordinate_bound hb i
-  linarith
+  linarith only [this]
 
 /-- Multiplication of the actual Cartesian potential, before any curl. -/
 noncomputable def cutPotential (A : VelocityField) : VelocityField :=
@@ -598,7 +598,7 @@ theorem periodic_fields_eq_cut_on_unitCube (A : VelocityField) (p : PressureFiel
   have hi : x ∈ PeriodicLocalization.innerCube (1 / 4) := by
     intro i
     have := hx i
-    linarith
+    linarith only [this]
   exact ⟨(periodicVelocity_eventuallyEq_cut A (z := (t, x)) hi).self_of_nhds,
     (periodicPressure_eventuallyEq_cut p (z := (t, x)) hi).self_of_nhds,
     (periodic_residual_eventuallyEq_cut A p (z := (t, x)) hi).self_of_nhds⟩
@@ -853,7 +853,7 @@ private theorem unbounded_of_origin_blowup {u : VelocityField}
     SpeedUnboundedAtOne u := by
   intro M _ δ hδ
   have hlow : Ioi (max 0 (1 - δ)) ∈ 𝓝[<] (1 : ℝ) :=
-    mem_nhdsWithin_of_mem_nhds (Ioi_mem_nhds (max_lt (by norm_num) (by linarith)))
+    mem_nhdsWithin_of_mem_nhds (Ioi_mem_nhds (max_lt (by norm_num) (by linarith only [hδ])))
   have hlarge : ∀ᶠ t in 𝓝[<] (1 : ℝ), M < ‖u (t, 0)‖ :=
     hu.eventually (eventually_gt_atTop M)
   have hbefore : ∀ᶠ t in 𝓝[<] (1 : ℝ), t < 1 := self_mem_nhdsWithin

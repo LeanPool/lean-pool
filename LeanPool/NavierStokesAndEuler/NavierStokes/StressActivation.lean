@@ -56,7 +56,7 @@ theorem activation_le_one (T κ y : ℝ) (hκ : κ ∈ Icc (0 : ℝ) 1) :
   have hs := OutgoingSchedule.sigma_le_one (y / T)
   have hl := OutgoingSchedule.sigma_nonneg (y / T)
   dsimp [activation]
-  nlinarith [mul_nonneg hκ.1 hl]
+  nlinarith only [hs, hκ, hl, mul_nonneg hκ.1 hl]
 
 theorem activation_monotone {T κ : ℝ} (hT : 0 < T) (hκ : κ ≤ 1) :
     Monotone (activation T κ) := by
@@ -502,7 +502,7 @@ theorem scaled_family_jet_bound {T : ℝ} (_hT : 0 < T) {J K : Set ℝ}
     abs_of_nonneg (mul_nonneg hy.1 (activation_nonneg T κ y hκ.2))]
   have hb := mul_le_mul_of_nonneg_left (hbound κ hκ y hy η hη)
     (mul_nonneg hy.1 (activation_nonneg T κ y hκ.2))
-  nlinarith
+  nlinarith only [hb]
 
 theorem controlled_parameter_jet_bounds {T : ℝ} (hT : 0 < T) {J K : Set ℝ}
     (hJ : IsOpen J) (hK : IsCompact K) (hKJ : K ⊆ J) {F : ProfileHistories.Field}
@@ -654,7 +654,7 @@ theorem controlledFamily_smooth (T : ℝ) {J : Set ℝ} (hJ : IsOpen J) {F : Pro
   have he := controlled_sub T q.1.1 hJ hF q.1.2 hq.2
   rw [weightedPrimitive_scale] at he
   dsimp only [controlledFamily, fieldFamily]
-  linarith
+  linarith only [he]
 
 /-- Angular family, given by `activatedAngular T q.1.1 L (q.1.2, q.2)`. -/
 noncomputable def angularFamily (T : ℝ) (L : ProfileHistories.Field) (q : FamilyPoint) : ℝ :=
@@ -744,11 +744,11 @@ theorem density_difference_factorization {T : ℝ} (hT : 0 < T) (κ X0 : ℝ)
   have hf' : angularFamily T L ((κ, y), η) = fieldFamily (referenceAngular L) ((κ, y), η) +
       y * activation T κ y * angularDifferenceFamily T L ((κ, y), η) := by
     dsimp only [angularFamily, fieldFamily]
-    linarith
+    linarith only [hf]
   have hu' : controlledFamily T U ((κ, y), η) = fieldFamily U ((κ, y), η) +
       y * activation T κ y * differenceFamily T U ((κ, y), η) := by
     dsimp only [controlledFamily, fieldFamily, differenceFamily]
-    linarith
+    linarith only [hu]
   change radius X0 y * radialDensity r (radius X0 y) (angularFamily T L ((κ, y), η))
       (controlledFamily T U ((κ, y), η)) -
     radius X0 y * radialDensity r (radius X0 y) (fieldFamily (referenceAngular L) ((κ, y), η))
@@ -1109,7 +1109,7 @@ theorem log_radius_mem (y : ℝ) {η : ℝ} (hη : η ∈ parameterInterval) :
   refine ⟨?_, hη⟩
   have hx : 0 < N.scale * radius N.endpoint y :=
     mul_pos N.scale_pos (mul_pos N.endpoint_pos (Real.exp_pos y))
-  linarith
+  linarith only [hx]
 
 theorem f_logPullback {T δ : ℝ} (hT : 0 < T) (hδ : 0 < δ)
     (hδT : 2 * δ < rampLimit) (κ y : ℝ) {η : ℝ} (hη : η ∈ parameterInterval) :
@@ -1259,7 +1259,7 @@ theorem damping_ge (T κ y : ℝ) (hκ : κ ≤ 1) : κ ≤ damping T κ y := by
   have hs := mul_le_mul_of_nonneg_left (OutgoingSchedule.sigma_le_one (y / T))
     (sub_nonneg.mpr hκ)
   dsimp only [damping, activation]
-  nlinarith
+  nlinarith only [hs]
 
 theorem damping_pos (T κ y : ℝ) (hκ : κ ∈ Ioc (0 : ℝ) 1) : 0 < damping T κ y :=
   hκ.1.trans_le (damping_ge T κ y hκ.2)

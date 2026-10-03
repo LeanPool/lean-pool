@@ -59,7 +59,7 @@ variable (M : EulerMeanPacketProvider.Data)
 /-- Initialized uniform budget used in packet initialized uniform budget. -/
 def initializedUniformBudget : EulerAllOrderDriftCorrection.Budget period D.T_pos
     (initializedCorrectionData M D hTime τ hτ hτT B δ hδ ξ hs α Cagree
-      (truncation k) (truncation_bounds k (by linarith)).1 k hk) := by
+      (truncation k) (truncation_bounds k (by linarith only [hk])).1 k hk) := by
   let BC := joinedCoefficientBudget period M D hTime τ hτ hτT B NB
   let L' := initializedJoinedBudget LM L NB BC δ ξ
   let H' := initializedPrimaryBudget LM L NB BC δ ξ

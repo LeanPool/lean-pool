@@ -35,8 +35,8 @@ theorem quadratic_weight_sqrt {p : ℝ} (hp : 0 ≤ p) :
     Real.sqrt (1+p^2) ≤ 1+p ∧ 1+p ≤ 2*Real.sqrt (1+p^2) := by
   constructor
   · exact Real.sqrt_le_iff.mpr ⟨by positivity, by nlinarith only [hp]⟩
-  · have h1 : 1 ≤ Real.sqrt (1+p^2) := Real.one_le_sqrt.mpr (by nlinarith [sq_nonneg p])
-    have hp' : p ≤ Real.sqrt (1+p^2) := Real.le_sqrt_of_sq_le (by linarith)
+  · have h1 : 1 ≤ Real.sqrt (1+p^2) := Real.one_le_sqrt.mpr (by nlinarith only [sq_nonneg p])
+    have hp' : p ≤ Real.sqrt (1+p^2) := Real.le_sqrt_of_sq_le (by linarith only)
     linarith only [h1, hp']
 
 theorem equation30_polynomial_size_monotone {σ : ℝ} {Z Z₁ : ℝ → ℝ}

@@ -299,9 +299,9 @@ theorem extension_pos {a z : ℝ} (ha : 1 < a) (hz : 0 ≤ z) :
 
 theorem extension_zero_of_le_neg_one (a : ℝ) {z : ℝ} (hz : z ≤ -1) :
     extension a z = 0 := by
-  rw [extension_eq_leftBranch a (by linarith)]
+  rw [extension_eq_leftBranch a (by linarith only [hz])]
   exact BorelExtension.extension_zero_of_one_le_abs (endpointJet a)
-    ((by linarith : (1 : ℝ) ≤ -z).trans (neg_le_abs z))
+    ((by linarith only [hz] : (1 : ℝ) ≤ -z).trans (neg_le_abs z))
 
 /-! ## Global fixed-order derivative bounds -/
 
@@ -370,7 +370,7 @@ theorem extension_positive_on_collar {a : ℝ} (ha : 1 < a) :
   by_cases hnonneg : 0 ≤ z
   · exact extension_pos ha hnonneg
   · have hz0 : z < 0 := lt_of_not_ge hnonneg
-    have hsmall : |z| < δ := by rw [abs_of_neg hz0]; linarith
+    have hsmall : |z| < δ := by rw [abs_of_neg hz0]; linarith only [hz]
     exact lt_trans (by norm_num) (hnear z hsmall).1
 
 /-! ## Physical parameter composition -/
@@ -441,7 +441,7 @@ theorem physicalProfile_eq_profile (a : ℝ) {X η : ℝ} (hX : 0 < X)
     (hη : η ∈ Icc (-1 : ℝ) 1) :
     physicalProfile a X η = profile a (2 * (1 - η ^ 2) / X) := by
   apply scaledProfile_eq_profile a hX
-  have hp : 0 ≤ (η + 1) * (1 - η) := mul_nonneg (by linarith [hη.1]) (by linarith [hη.2])
-  nlinarith
+  have hp : 0 ≤ (η + 1) * (1 - η) := mul_nonneg (by linarith [hη.1]) (by linarith only [hη, hη.2])
+  nlinarith only [hp]
 
 end NavierStokes.HeatProfileExtension

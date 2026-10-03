@@ -53,10 +53,10 @@ theorem annulus_of_ratio (n : ℕ) {w : SpaceTime} (hw : w ∈ preterminal)
   have hQ := ChartScales.Q_pos n
   have hlo : physicalQ h w / 2 ≤ ChartScales.Q n := by
     have he := (div_lt_iff₀ hQ).mp hq.2
-    linarith
+    linarith only [he]
   have hhi : ChartScales.Q n ≤ 2 * physicalQ h w := by
     have he := (lt_div_iff₀ hQ).mp hq.1
-    linarith
+    linarith only [he]
   have hell := graph_length_pos outgoing.data.h_pos outgoing.data.h_lt_half n 0 hw
   have hlen := graph_length_bounds outgoing.data.h_pos outgoing.data.h_lt_half n 0 hw hlo hhi
   have hr := ActualPolarCoverage.graph_profileRadius_mem nominal n 0 hw hactive
@@ -65,9 +65,9 @@ theorem annulus_of_ratio (n : ℕ) {w : SpaceTime} (hw : w ∈ preterminal)
   have ha := PrimaryTargetBounds.leftRadius_pos nominal
   have hb := PrimaryTargetBounds.rightRadius_pos nominal
   have hRlo : PrimaryTargetBounds.leftRadius nominal / 2 ≤ (graph h n 0 w).1 := by
-    nlinarith [hlen.1]
+    nlinarith only [hloR, hlen, ha, hlen.1]
   have hRhi : (graph h n 0 w).1 ≤ 2 * PrimaryTargetBounds.rightRadius nominal := by
-    nlinarith [hlen.2]
+    nlinarith only [hhiR, hlen, hb, hlen.2]
   rw [graph_radius] at hRlo hRhi
   refine ⟨?_, ?_⟩
   · simpa only [ActualPolarCoverage.outer, Metric.mem_closedBall, dist_zero_right] using

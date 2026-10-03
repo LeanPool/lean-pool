@@ -106,11 +106,11 @@ theorem normalize_tail (p : C(Icc (0 : ℝ) S, E)) :
   apply ContinuousMap.ext
   intro t
   have hright := profile_right S τ hτ0 hτS g hg0
-    ⟨τ+(t : ℝ),by linarith [t.property.1],by linarith [t.property.2]⟩
+    ⟨τ+(t : ℝ),by linarith only [t.property.1],by linarith only [t.property.2]⟩
   have hsub : τ+(t : ℝ)-τ = t := by ring
   simp only [hsub] at hright
   change (profile S τ hτ0 hτS g hg0 ⟨τ+t,by
-      linarith [t.property.1],by linarith [t.property.2]⟩)⁻¹ • p _ =
+      linarith only [hτ0, t.property.1],by linarith only [t.property.2]⟩)⁻¹ • p _ =
     (g t)⁻¹ • p _
   rw [hright]
 

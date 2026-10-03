@@ -29,24 +29,24 @@ theorem sqrt_unit_error
     1 ≤ sqrt E ∧ sqrt E ≤ 2 ∧ |sqrt E - 1| ≤ d := by
   have hs : 1 ≤ sqrt E := Real.one_le_sqrt.mpr hE
   have hself : sqrt E ≤ E := Real.sqrt_le_self_iff.mpr (Or.inr hE)
-  refine ⟨hs, by linarith, ?_⟩
-  rw [abs_of_nonneg (by linarith : 0 ≤ sqrt E - 1)]
-  linarith
+  refine ⟨hs, by linarith only [herror, hd, hself], ?_⟩
+  rw [abs_of_nonneg (by linarith only [hs] : 0 ≤ sqrt E - 1)]
+  linarith only [herror, hself]
 
 /-- The ray square root is uniformly stable away from zero. -/
 theorem sqrt_ray_error
     {D D₀ d : ℝ} (hD : 1 / 4 ≤ D) (hD₀ : 1 ≤ D₀) (herror : |D - D₀| ≤ d) :
     1 / 2 ≤ sqrt D ∧ |sqrt D - sqrt D₀| ≤ d := by
-  have hD0 : 0 ≤ D := by linarith
-  have hD₀0 : 0 ≤ D₀ := by linarith
+  have hD0 : 0 ≤ D := by linarith only [hD]
+  have hD₀0 : 0 ≤ D₀ := by linarith only [hD₀]
   have hsq := sq_sqrt hD0
   have hsq₀ := sq_sqrt hD₀0
   have hs0 := sqrt_nonneg D
   have hs₀ : 1 ≤ sqrt D₀ := Real.one_le_sqrt.mpr hD₀
-  have hsum : 1 ≤ sqrt D + sqrt D₀ := by linarith
+  have hsum : 1 ≤ sqrt D + sqrt D₀ := by linarith only [hs0, hs₀]
   have hid : (sqrt D - sqrt D₀) * (sqrt D + sqrt D₀) = D - D₀ := by linarith only [hsq, hsq₀]
   have hh : |sqrt D - sqrt D₀| * (sqrt D + sqrt D₀) ≤ d := by
-    rw [← abs_of_nonneg (by linarith : 0 ≤ sqrt D + sqrt D₀), ← abs_mul, hid]
+    rw [← abs_of_nonneg (by linarith only [hs0, hs₀] : 0 ≤ sqrt D + sqrt D₀), ← abs_mul, hid]
     exact herror
   have hm := mul_le_mul_of_nonneg_left hsum (abs_nonneg (sqrt D - sqrt D₀))
   constructor <;> nlinarith only [hD, hsq, hs0, hh, hm]
@@ -97,10 +97,10 @@ theorem quotient_error_half_denominator
     rw [hid, abs_mul]
     norm_num
     linarith only [hbb]
-  have hh := quotient_difference_bound (show (1 : ℝ) / 4 ≤ 2 * b by linarith)
-    (show (1 : ℝ) ≤ 2 * b₀ by linarith) ha2 ha₀2 hb2
-  have hbe : b ≠ 0 := by linarith
-  have hb₀e : b₀ ≠ 0 := by linarith
+  have hh := quotient_difference_bound (show (1 : ℝ) / 4 ≤ 2 * b by linarith only [hb])
+    (show (1 : ℝ) ≤ 2 * b₀ by linarith only [hb₀]) ha2 ha₀2 hb2
+  have hbe : b ≠ 0 := by linarith only [hb]
+  have hb₀e : b₀ ≠ 0 := by linarith only [hb₀]
   have h₁ : 2 * a / (2 * b) = a / b := by field_simp
   have h₂ : 2 * a₀ / (2 * b₀) = a₀ / b₀ := by field_simp
   rw [h₁, h₂] at hh
@@ -126,7 +126,7 @@ theorem coupling_quotient_error
     linarith only [hh, hJ₀, hJsmall]
   have hden : 1 / 4 ≤ (J / P₀) * sqrt E := by
     have hh := mul_le_mul hJlower hrootE (by norm_num : (0 : ℝ) ≤ 1)
-      (by linarith : 0 ≤ J / P₀)
+      (by linarith only [hJlower] : 0 ≤ J / P₀)
     linarith only [hh]
   have hJ₀abs : |J₀ / P₀| ≤ 2 := by rw [abs_of_nonneg (by linarith : 0 ≤ J₀ / P₀)]; exact hJ₀upper
   have hdenDiff : |(J / P₀) * sqrt E - J₀ / P₀| ≤ 2 * (dJ / P₀) + 2 * dE := by

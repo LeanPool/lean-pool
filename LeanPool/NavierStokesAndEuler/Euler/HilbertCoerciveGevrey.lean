@@ -164,7 +164,7 @@ theorem coerciveSolution_gevrey_amplitudes
       (fun y => coerciveInverse (A y) (c y) (hc y) (hcoercive y) (f y)) x‖ ≤
         majorant R (d+1) n := by
   let u := fun y => coerciveInverse (A y) (c y) (hc y) (hcoercive y) (f y)
-  have hR0 : 0 ≤ R := by nlinarith
+  have hR0 : 0 ≤ R := by nlinarith only [hM, hRc, hR]
   apply triangular_inverse_majorant M Rc R hM hRc hR d
     (fun k => majorant R d k) (fun k => ‖iteratedFDeriv ℝ k u x‖) (fun _ => le_rfl) _ n
   intro k
@@ -193,7 +193,7 @@ theorem coerciveSolution_gevrey_amplitudes
   have ha := mul_le_mul_of_nonneg_right hMC hS
   have hf' := mul_le_mul_of_nonneg_right hMD (majorant_nonneg R hR0 d k)
   change ‖iteratedFDeriv ℝ k u x‖ ≤ M * (majorant R d k + S)
-  linarith
+  linarith only [hb, ha, hf']
 
 end Hilbert
 
