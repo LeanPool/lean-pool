@@ -87,6 +87,45 @@ theorem prunedSet_inter_nonempty_iff {leaf neighbour : N}
     · exact ⟨⟨x, by simpa only [Set.mem_compl_iff, Set.mem_singleton_iff] using hx⟩,
         hxS, hxR⟩
 
+/-- A set with no vertex other than the designated leaf is contained in that singleton. -/
+theorem eq_leaf_of_no_other {S : Set N} {leaf x : N}
+    (hother : ¬ ∃ y ∈ S, y ≠ leaf) (hx : x ∈ S) : x = leaf := by
+  by_contra hne
+  exact hother ⟨x, hx, hne⟩
+
+/-- The common smaller-host step: pruning preserves the tree, subtrees and intersections. -/
+theorem IsTree.prune_subtree_family [Fintype N] [DecidableEq N] (hT : T.IsTree)
+    {leaf neighbour : N} (hadj : T.Adj leaf neighbour)
+    (hunique : ∀ x, T.Adj leaf x → x = neighbour)
+    {I : Type*} (F : Finset I) (S : I → Set N)
+    (hc : ∀ i ∈ F, (T.induce (S i)).Connected)
+    (hother : ∀ i ∈ F, ∃ x ∈ S i, x ≠ leaf) :
+    Fintype.card ({leaf}ᶜ : Set N) < Fintype.card N ∧
+      (T.induce ({leaf}ᶜ : Set N)).IsTree ∧
+      (∀ i ∈ F, ((T.induce ({leaf}ᶜ : Set N)).induce (prunedSet (S i) leaf)).Connected) ∧
+      (∀ i ∈ F, ∀ j ∈ F,
+        (prunedSet (S i) leaf ∩ prunedSet (S j) leaf).Nonempty ↔
+          (S i ∩ S j).Nonempty) := by
+  classical
+  have hd : T.degree leaf = 1 :=
+    degree_eq_one_iff_existsUnique_adj.mpr ⟨neighbour, hadj, hunique⟩
+  refine ⟨Fintype.card_subtype_lt (by simp : leaf ∉ ({leaf}ᶜ : Set N)),
+    ⟨hT.connected.induce_compl_singleton_of_degree_eq_one hd, hT.isAcyclic.induce _⟩,
+    fun i hi => connected_prunedSet hadj hunique (hc i hi) (hother i hi), ?_⟩
+  intro i hi j hj
+  exact prunedSet_inter_nonempty_iff hadj hunique (hc i hi) (hc j hj)
+    (hother i hi) (hother j hj)
+
+private theorem subtree_helly_of_singleton {I : Type*} {F : Finset I}
+    {S : I → Set N} {leaf : N}
+    (hsingle : ∃ i ∈ F, ¬ ∃ x ∈ S i, x ≠ leaf)
+    (hinter : ∀ i ∈ F, ∀ j ∈ F, (S i ∩ S j).Nonempty) :
+    ∀ j ∈ F, leaf ∈ S j := by
+  obtain ⟨i, hi, hs⟩ := hsingle
+  intro j hj
+  obtain ⟨x, hxi, hxj⟩ := hinter i hi j hj
+  exact eq_leaf_of_no_other hs hxi ▸ hxj
+
 private theorem subtree_helly_aux : ∀ n : ℕ,
     ∀ {N : Type*} [Fintype N] (T : SimpleGraph N), Fintype.card N = n → T.IsTree →
     ∀ {I : Type*} (F : Finset I) (S : I → Set N),
@@ -108,37 +147,16 @@ private theorem subtree_helly_aux : ∀ n : ℕ,
       obtain ⟨leaf, hdegree⟩ := hT.exists_vert_degree_one_of_nontrivial
       obtain ⟨neighbour, hadj, hunique⟩ := degree_eq_one_iff_existsUnique_adj.mp hdegree
       by_cases hsingle : ∃ i ∈ F, ¬ ∃ x ∈ S i, x ≠ leaf
-      · obtain ⟨i, hi, hsingle⟩ := hsingle
-        refine ⟨leaf, fun j hj => ?_⟩
-        obtain ⟨x, hxi, hxj⟩ := hinter i hi j hj
-        have hx : x = leaf := by
-          by_contra hne
-          exact hsingle ⟨x, hxi, hne⟩
-        exact hx ▸ hxj
+      · exact ⟨leaf, subtree_helly_of_singleton hsingle hinter⟩
       · have hother : ∀ i ∈ F, ∃ x ∈ S i, x ≠ leaf := by
           intro i hi
           by_contra h
           exact hsingle ⟨i, hi, h⟩
-        let T' := T.induce ({leaf}ᶜ : Set N)
-        have hT' : T'.IsTree :=
-          ⟨hT.connected.induce_compl_singleton_of_degree_eq_one hdegree,
-            hT.isAcyclic.induce _⟩
-        have hsmaller : Fintype.card ({leaf}ᶜ : Set N) < n := by
-          rw [← hcard]
-          exact Fintype.card_lt_of_injective_not_surjective Subtype.val
-            Subtype.val_injective (by
-              intro hsurj
-              obtain ⟨x, hx⟩ := hsurj leaf
-              exact x.property (Set.mem_singleton_iff.mpr hx))
-        have hc : ∀ i ∈ F, (T'.induce (prunedSet (S i) leaf)).Connected :=
-          fun i hi => connected_prunedSet hadj hunique (hconnected i hi) (hother i hi)
-        have hp : ∀ i ∈ F, ∀ j ∈ F,
-            (prunedSet (S i) leaf ∩ prunedSet (S j) leaf).Nonempty := by
-          intro i hi j hj
-          exact (prunedSet_inter_nonempty_iff hadj hunique (hconnected i hi)
-            (hconnected j hj) (hother i hi) (hother j hj)).mpr (hinter i hi j hj)
-        obtain ⟨x, hx⟩ := ih _ hsmaller T' rfl hT' F
-          (fun i => prunedSet (S i) leaf) hc hp
+        obtain ⟨hlt, ht, hc, hp⟩ :=
+          hT.prune_subtree_family hadj hunique F S hconnected hother
+        obtain ⟨x, hx⟩ := ih _ (hlt.trans_eq hcard) (T.induce ({leaf}ᶜ : Set N)) rfl ht F
+          (fun i => prunedSet (S i) leaf) hc
+          (fun i hi j hj => (hp i hi j hj).mpr (hinter i hi j hj))
         exact ⟨x.val, hx⟩
 
 /-- A finite pairwise-intersecting family of nonempty subtrees has a common vertex. -/

@@ -24,6 +24,31 @@ doi:10.1016/0095-8956(74)90094-X. No recognition algorithm or runtime bound is c
 
 namespace SimpleGraph
 
+private theorem subtree_family_simplicial_of_subsingleton
+    {N : Type} [Subsingleton N] (T : SimpleGraph N)
+    {V : Type*} (G : SimpleGraph V) (F : Finset V) (hF : F.Nonempty)
+    (S : V → Set N) (hc : ∀ i ∈ F, (T.induce (S i)).Connected)
+    (ha : ∀ i ∈ F, ∀ j ∈ F, i ≠ j → (G.Adj i j ↔ (S i ∩ S j).Nonempty)) :
+    ∃ z ∈ F, ∀ a ∈ F, ∀ b ∈ F, G.Adj z a → G.Adj z b → a ≠ b → G.Adj a b := by
+  obtain ⟨z, hz⟩ := hF
+  refine ⟨z, hz, fun a hfa b hfb _ _ hab => ?_⟩
+  obtain ⟨x⟩ := (hc a hfa).nonempty
+  obtain ⟨y⟩ := (hc b hfb).nonempty
+  exact (ha a hfa b hfb hab).mpr
+    ⟨x.val, x.property, Subsingleton.elim y.val x.val ▸ y.property⟩
+
+private theorem subtree_family_simplicial_of_singleton
+    {N : Type} {V : Type*} (G : SimpleGraph V) (F : Finset V) (S : V → Set N)
+    {leaf : N} (hsingle : ∃ z ∈ F, ¬ ∃ x ∈ S z, x ≠ leaf)
+    (ha : ∀ i ∈ F, ∀ j ∈ F, i ≠ j → (G.Adj i j ↔ (S i ∩ S j).Nonempty)) :
+    ∃ z ∈ F, ∀ a ∈ F, ∀ b ∈ F, G.Adj z a → G.Adj z b → a ≠ b → G.Adj a b := by
+  obtain ⟨z, hz, hs⟩ := hsingle
+  refine ⟨z, hz, fun a hfa b hfb hza hzb hab => ?_⟩
+  obtain ⟨x, hxz, hxa⟩ := (ha z hz a hfa hza.ne).mp hza
+  obtain ⟨y, hyz, hyb⟩ := (ha z hz b hfb hzb.ne).mp hzb
+  exact (ha a hfa b hfb hab).mpr
+    ⟨leaf, eq_leaf_of_no_other hs hxz ▸ hxa, eq_leaf_of_no_other hs hyz ▸ hyb⟩
+
 private theorem subtree_family_simplicial_aux : ∀ n : ℕ,
     ∀ {N : Type} [Fintype N] (T : SimpleGraph N), Fintype.card N = n → T.IsTree →
     ∀ {V : Type*} (G : SimpleGraph V) (F : Finset V), F.Nonempty →
@@ -37,44 +62,22 @@ private theorem subtree_family_simplicial_aux : ∀ n : ℕ,
     classical
     rcases subsingleton_or_nontrivial N with hsmall | hlarge
     · let _ := hsmall
-      obtain ⟨z, hz⟩ := hF
-      refine ⟨z, hz, fun a hfa b hfb _ _ hab => ?_⟩
-      obtain ⟨x⟩ := (hc a hfa).nonempty
-      obtain ⟨y⟩ := (hc b hfb).nonempty
-      exact (ha a hfa b hfb hab).mpr
-        ⟨x.val, x.property, Subsingleton.elim y.val x.val ▸ y.property⟩
+      exact subtree_family_simplicial_of_subsingleton T G F hF S hc ha
     · let _ := hlarge
       obtain ⟨leaf, hdegree⟩ := hT.exists_vert_degree_one_of_nontrivial
       obtain ⟨neighbour, hadj, hunique⟩ := degree_eq_one_iff_existsUnique_adj.mp hdegree
       by_cases hsingle : ∃ z ∈ F, ¬ ∃ x ∈ S z, x ≠ leaf
-      · obtain ⟨z, hz, hsingle⟩ := hsingle
-        refine ⟨z, hz, fun a hfa b hfb hza hzb hab => ?_⟩
-        obtain ⟨x, hxz, hxa⟩ := (ha z hz a hfa hza.ne).mp hza
-        obtain ⟨y, hyz, hyb⟩ := (ha z hz b hfb hzb.ne).mp hzb
-        have hx : x = leaf := by
-          by_contra hne
-          exact hsingle ⟨x, hxz, hne⟩
-        have hy : y = leaf := by
-          by_contra hne
-          exact hsingle ⟨y, hyz, hne⟩
-        exact (ha a hfa b hfb hab).mpr ⟨leaf, hx ▸ hxa, hy ▸ hyb⟩
+      · exact subtree_family_simplicial_of_singleton G F S hsingle ha
       · have hother : ∀ i ∈ F, ∃ x ∈ S i, x ≠ leaf := by
           intro i hi
           by_contra h
           exact hsingle ⟨i, hi, h⟩
-        let T' := T.induce ({leaf}ᶜ : Set N)
-        have ht : T'.IsTree :=
-          ⟨hT.connected.induce_compl_singleton_of_degree_eq_one hdegree,
-            hT.isAcyclic.induce _⟩
-        have hlt : Fintype.card ({leaf}ᶜ : Set N) < n := by
-          rw [← hcard]
-          exact Fintype.card_subtype_lt (by simp : leaf ∉ ({leaf}ᶜ : Set N))
-        refine ih _ hlt T' rfl ht G F hF (fun i => prunedSet (S i) leaf)
-          (fun i hi => connected_prunedSet hadj hunique (hc i hi) (hother i hi)) ?_
+        obtain ⟨hlt, ht, hc', hp⟩ := hT.prune_subtree_family hadj hunique F S hc hother
+        refine ih _ (hlt.trans_eq hcard) (T.induce ({leaf}ᶜ : Set N)) rfl ht G F hF
+          (fun i => prunedSet (S i) leaf) hc' ?_
         intro i hi j hj hij
         exact (ha i hi j hj hij).trans
-          (prunedSet_inter_nonempty_iff hadj hunique (hc i hi) (hc j hj)
-            (hother i hi) (hother j hj)).symm
+          (hp i hi j hj).symm
 
 variable {V : Type*} {G : SimpleGraph V}
 
