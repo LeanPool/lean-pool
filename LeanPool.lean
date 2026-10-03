@@ -13,6 +13,7 @@ public import LeanPool.AsymptoticTrianglePacking.Imports
 public import LeanPool.BKARForestFormula.Imports
 public import LeanPool.BannaiBannaiStanton.Imports
 public import LeanPool.Basic.Imports
+public import LeanPool.BeckFialaMatrix.Imports
 public import LeanPool.Besicovitch.Imports
 public import LeanPool.BicausalOT.Imports
 public import LeanPool.Biswal.Imports
