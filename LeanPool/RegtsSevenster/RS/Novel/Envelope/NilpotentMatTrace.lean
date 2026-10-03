@@ -116,7 +116,7 @@ theorem matTrace_resolution
 variable {f} {M : Mat_ (Karoubi (SkeinObj f))}
 
 /-- The total atom index. -/
-@[reducible] def AtomResolution.κ (A : AtomResolution f M) :=
+@[expose, reducible] def AtomResolution.κ (A : AtomResolution f M) :=
   Σ i : M.ι, A.idx i
 
 /-- The atom at a total index. -/

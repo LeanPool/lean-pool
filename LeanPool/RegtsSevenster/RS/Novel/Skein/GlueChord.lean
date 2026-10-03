@@ -429,6 +429,7 @@ subfamily of the base's, not to all of them.
 
 /-- **The base's subsets the glue reaches**: pairing-closed, and
 using the two glued boundary flags together. -/
+@[expose]
 def AgreeingSubset (i j : α) (s : Finset W.Flag) : Prop :=
   (∀ f ∈ s, W.pairing f ∈ s)
     ∧ (W.boundaryFlag i ∈ s ↔ W.boundaryFlag j ∈ s)

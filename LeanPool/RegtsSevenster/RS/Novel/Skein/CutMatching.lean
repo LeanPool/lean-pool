@@ -171,6 +171,7 @@ theorem chordInv_relabelUp [LinearOrder α] {W : Fragment α}
     exact (e.apply_symm_apply b).symm
 
 /-- **The used labels shift through the relabel.** -/
+@[expose]
 noncomputable def usedLabRelabelEquiv [LinearOrder α] {W : Fragment α}
     {β : Type} [LinearOrder β]
     (e : α ≃o β) (F : EdgeSubset W) :

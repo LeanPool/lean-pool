@@ -42,6 +42,7 @@ variable {γ δ : Type}
 
 /-- **The subset uses the two halves of every interface pair
 together.** -/
+@[expose]
 def InterfacePaired
     {V : Fragment (γ ⊕ δ)} (F : EdgeSubset V) (e : γ ≃ δ) : Prop :=
   ∀ a : γ, V.boundaryFlag (Sum.inl a) ∈ F.boundaryFlags

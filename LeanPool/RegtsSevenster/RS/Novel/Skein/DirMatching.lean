@@ -1985,6 +1985,7 @@ common component.
 -/
 
 /-- **Two matchings, side by side.** -/
+@[expose]
 def sumMatching {γ δ : Type} (M : DirMatching γ) (N : DirMatching δ) :
     DirMatching (γ ⊕ δ) where
   edge := Sum.map M.edge N.edge
@@ -2004,6 +2005,7 @@ def sumMatching {γ δ : Type} (M : DirMatching γ) (N : DirMatching δ) :
 
 /-- **The interface matching across an identification** of the two
 sides' labels. -/
+@[expose]
 def interfaceEquivMatching {γ δ : Type} (e : γ ≃ δ) :
     DirMatching (γ ⊕ δ) where
   edge := Sum.elim (fun a => Sum.inr (e a)) (fun b => Sum.inl (e.symm b))

@@ -68,6 +68,7 @@ noncomputable instance matLinear :
 /-! ### The diagonal trace -/
 
 /-- The diagonal trace on matrix-envelope endomorphisms. -/
+@[expose]
 noncomputable def matTrace (M : Mat_ (Karoubi (SkeinObj f))) :
     End M →ₗ[ℂ] ℂ where
   toFun φ := ∑ i : M.ι,

@@ -307,6 +307,7 @@ theorem blockRep_compat (n : ℕ) {j k : ℕ} (h : j ≤ k)
 /-- **The block permutation tower**: `S_k` acting by block
 permutations on the `n·k`-strand endomorphism algebras, of growth
 `(R ^ n) ^ 2`. -/
+@[expose]
 noncomputable def blockPermTower (n : ℕ) :
     PermTower (fun k => skeinEnd f (n * k)) (((R : ℝ) ^ n) ^ 2) where
   rep k := blockRep f n k

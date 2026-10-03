@@ -113,6 +113,7 @@ noncomputable def starEnum :
 
 /-- **The star union**: the explosion at the full cut with the
 representatives-first boundary enumeration. -/
+@[expose]
 noncomputable def starUnion :
     Fragment (Fin (edgeCount W + edgeCount W)) :=
   (explodeAt W Finset.univ (fullCut_closed W)).relabel (starEnum W)
