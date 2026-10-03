@@ -184,6 +184,7 @@ noncomputable def TrialOutcomeCertificationStatement : Prop :=
 
 /-- G01--G02: source carrier for `lem:amortization`.  Both geometric sums
 range over the realized path, never a rectangular product grid. -/
+@[expose]
 noncomputable def GeometricTrialAmortizationStatement : Prop :=
   ∃ C : ℝ, 0 < C ∧ ∀ (p : ℝ), 1 < p →
   ∃ Cp : ℝ, 0 < Cp ∧ ∀ (eps G L R Ma Da : ℝ),

@@ -27,9 +27,11 @@ noncomputable def etaF (p : ℝ) : ℝ := 1 / p
 noncomputable def etaD (p eps M D : ℝ) : ℝ :=
   delta eps M D ^ conjugateExponent p / conjugateExponent p
 /-- The ceiling of the primal horizon required by the above-two gap bound. -/
+@[expose]
 noncomputable def nF (p eps M D : ℝ) : ℕ :=
   Nat.ceil ((aboveHp p / delta eps M D) ^ (p / (p + 2)))
 /-- The ceiling of the dual horizon required by the above-two gradient bound. -/
+@[expose]
 noncomputable def nD (p eps M D : ℝ) : ℕ :=
   Nat.ceil ((aboveJp p / delta eps M D) ^ (p / (p + 2)))
 

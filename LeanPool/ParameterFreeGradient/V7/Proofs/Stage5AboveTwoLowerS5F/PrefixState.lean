@@ -50,6 +50,7 @@ structure ResistingPrefixState (d : ℕ) where
   obsPrefix : List (Observation d)
 
 /-- The empty state before any resisting coordinate or observation is chosen. -/
+@[expose]
 def initialState (d : ℕ) : ResistingPrefixState d := ⟨[], [], []⟩
 
 /-- A previously selected coordinate, with zero as the out-of-range default. -/
@@ -104,6 +105,7 @@ noncomputable def stepOracle (P : PrefixParameters p d T) (t : ℕ)
     gradient := fun x => P.beta • (P.kernel.smooth P.chi (stepH P t state)).gradient x }
 
 /-- The prefix state after appending the selected coordinate, sign, and oracle observation. -/
+@[expose]
 noncomputable def advance (P : PrefixParameters p d T) (t : ℕ)
     (state : ResistingPrefixState d) : ResistingPrefixState d :=
   { sigmaPrefix := state.sigmaPrefix ++ [stepSigma P t state]
@@ -139,6 +141,7 @@ noncomputable def partialH (P : PrefixParameters p d T) (t : ℕ) : Point d → 
   stepH P t (prefixState P t)
 
 /-- The scaled smoothed oracle at prefix length `t + 1`. -/
+@[expose]
 noncomputable def partialOracle (P : PrefixParameters p d T) (t : ℕ) : PairOracle d :=
   stepOracle P t (prefixState P t)
 
