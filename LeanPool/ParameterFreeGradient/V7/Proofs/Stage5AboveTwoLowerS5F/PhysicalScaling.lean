@@ -49,6 +49,7 @@ lemma physicalBackward_forward (x0 : Point d) {R rT : ℝ}
       bar.gradient (physicalBackward x0 R rT x) }
 
 /-- An observation transported to physical coordinates with rescaled value and gradient. -/
+@[expose]
 noncomputable def physicalObservation (x0 : Point d) (L R rT : ℝ)
     (obs : Observation d) : Observation d :=
   { point := physicalForward x0 R rT obs.point
