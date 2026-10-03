@@ -329,7 +329,7 @@ def test_content_free_rename_is_verified_from_both_blobs(monkeypatch):
     assert "omitted" not in diff
 
 
-@pytest.mark.parametrize("kind", ["project", "refactor", "challenge", "solution"])
+@pytest.mark.parametrize("kind", ["project", "refactor"])
 def test_unresolved_evidence_stays_visible(kind):
     """All comment formats retain concrete source findings and coverage details."""
     payload = review_portions.enforce_resolutions(

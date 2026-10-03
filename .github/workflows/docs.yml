@@ -7,14 +7,12 @@ on:
     paths:
       - '**/*.lean'
       - 'LeanPool/projects.yml'
-      - 'Challenge/challenges.yml'
       - 'lakefile.toml'
       - 'lake-manifest.json'
       - 'lean-toolchain'
       - 'docbuild/**'
       - 'python/lean_pool/exposition/**'
       - 'python/lean_pool/quality.py'
-      - 'python/lean_pool/challenge.py'
       - 'python/lean_pool/validation_cache.py'
       - 'python/lean_pool/ci_artifacts.py'
       - 'python/lean_pool/rebase_fastpath.py'
@@ -32,14 +30,12 @@ on:
       - 'scripts/ci/**'
       - '**/*.lean'
       - 'LeanPool/projects.yml'
-      - 'Challenge/challenges.yml'
       - 'lakefile.toml'
       - 'lake-manifest.json'
       - 'lean-toolchain'
       - 'docbuild/**'
       - 'python/lean_pool/exposition/**'
       - 'python/lean_pool/quality.py'
-      - 'python/lean_pool/challenge.py'
       - 'python/lean_pool/validation_cache.py'
       - 'python/lean_pool/ci_artifacts.py'
       - 'python/lean_pool/rebase_fastpath.py'
@@ -500,14 +496,13 @@ jobs:
       # writes through one WAL database, so these targets intentionally share a
       # single job instead of unsafe parallel shards.
       - name: Build documentation data
-        run: cd docbuild && ~/.elan/bin/lake build LeanPool:docInfo Challenge:docInfo
+        run: cd docbuild && ~/.elan/bin/lake build LeanPool:docInfo
 
       - name: Validate pool documentation checkpoint
         run: |
           set -euo pipefail
           test -s docbuild/.lake/build/api-docs.db
           test -n "$(find docbuild/.lake/build/doc-data -type f -name 'LeanPool*.doc' -print -quit)"
-          test -n "$(find docbuild/.lake/build/doc-data -type f -name 'Challenge*.doc' -print -quit)"
           python3 - <<'PY'
           import sqlite3
 
@@ -533,21 +528,14 @@ jobs:
             .lake/packages/MD4Lean
           key: DocsInfo-v3-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.toml', 'lake-manifest.json', 'docbuild/lean-toolchain', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-${{ github.sha }}
 
-      # The challenge board is documented alongside the pool: each statement's
-      # card carries the informal statement it is judged against, which is
-      # worth reading on the docs site. `Solution:docs` is deliberately not
-      # built — a solution restates its challenge's declarations under the same
-      # names, so rendering both into one doc tree would produce two pages
-      # claiming the same declaration.
       - name: Build documentation
-        run: cd docbuild && ~/.elan/bin/lake build LeanPool:docs Challenge:docs
+        run: cd docbuild && ~/.elan/bin/lake build LeanPool:docs
 
       - name: Validate documentation site
         run: |
           set -euo pipefail
           test -s docbuild/.lake/build/doc/index.html
           test -s docbuild/.lake/build/doc/LeanPool.html
-          test -s docbuild/.lake/build/doc/Challenge.html
           test -s docbuild/.lake/build/doc/declarations/declaration-data.bmp
 
       - name: Remove cached exposition
