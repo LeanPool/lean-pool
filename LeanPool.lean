@@ -259,6 +259,7 @@ public import LeanPool.UlmsTheorem.Imports
 public import LeanPool.UnconditionalSchauderBasis.Imports
 public import LeanPool.VirasoroProject.Imports
 public import LeanPool.ViscositySolutionTheory.Imports
+public import LeanPool.Vizing.Imports
 public import LeanPool.Vlasov.Imports
 public import LeanPool.Wallace.Imports
 public import LeanPool.WhiteheadTheorem.Imports
