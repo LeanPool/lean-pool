@@ -249,6 +249,7 @@ public import LeanPool.SingularModuli.Imports
 public import LeanPool.SpectralPositivity.Imports
 public import LeanPool.SpectralTheory.Imports
 public import LeanPool.SpherePacking.Imports
+public import LeanPool.Stafford38.Imports
 public import LeanPool.StallingsFolding.Imports
 public import LeanPool.SteinhausThreeGap.Imports
 public import LeanPool.SumDifferenceExponent.Imports
