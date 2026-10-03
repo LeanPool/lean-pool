@@ -38,10 +38,12 @@ namespace IndexedConvexPartition
 variable {K L : Body} {ι κ : Type*}
 
 /-- All indexed pieces have equal area. -/
+@[expose]
 def IsEqualArea (P : IndexedConvexPartition K ι) : Prop :=
   ∀ i j, (P.piece i).area = (P.piece j).area
 
 /-- All indexed pieces have equal perimeter. -/
+@[expose]
 def HasEqualPerimeter (P : IndexedConvexPartition K ι) : Prop :=
   ∀ i j, (P.piece i).perimeter = (P.piece j).perimeter
 
@@ -54,6 +56,7 @@ def ofConvexPartition {n : ℕ} (P : ConvexPartition K n) :
   nullOverlap := P.nullOverlap
 
 /-- The singleton indexed partition. -/
+@[expose]
 noncomputable def singleton (K : Body) : IndexedConvexPartition K Unit where
   piece := fun _ => K
   subset := fun _ => subset_rfl
