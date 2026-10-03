@@ -24,6 +24,7 @@ public import LeanPool.BooleanIsoperimetry.Imports
 public import LeanPool.BooleanMultiplication.Imports
 public import LeanPool.BrauerGroupNew.Imports
 public import LeanPool.BrillNoetherGraphs.Imports
+public import LeanPool.BrooksSubcubic.Imports
 public import LeanPool.Brouwer.Imports
 public import LeanPool.BruhatTits.Imports
 public import LeanPool.Burkholder.Imports
