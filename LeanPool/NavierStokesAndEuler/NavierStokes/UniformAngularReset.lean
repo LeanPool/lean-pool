@@ -1114,7 +1114,7 @@ theorem tangent_lower_bound (B : E ≃L[ℝ] E) (A : E →L[ℝ] E →L[ℝ] E)
       _ = _ := by ring
   have hid : B x = tangent B A c x - (A c x + A x c) := by
     change B x = B x + A c x + A x c - (A c x + A x c)
-    abel
+    rw [add_assoc, add_sub_cancel_right]
   have hn : ‖x‖ ≤ β * ‖tangent B A c x‖ + (1 / 2 : ℝ) * ‖x‖ := by
     calc
       ‖x‖ = ‖B.symm (B x)‖ := by rw [B.symm_apply_apply]
@@ -1125,7 +1125,7 @@ theorem tangent_lower_bound (B : E ≃L[ℝ] E) (A : E →L[ℝ] E →L[ℝ] E)
       _ ≤ β * (‖tangent B A c x‖ + (2 * K * r) * ‖x‖) :=
         mul_le_mul_of_nonneg_left (add_le_add_right hrem _) hβ
       _ ≤ β * ‖tangent B A c x‖ + (1 / 2 : ℝ) * ‖x‖ := by
-        nlinarith only [hsmall, mul_le_mul_of_nonneg_right hsmall (norm_nonneg x)]
+        linarith only [mul_le_mul_of_nonneg_right hsmall (norm_nonneg x)]
   linarith only [hn]
 
 theorem tangent_invertible [FiniteDimensional ℝ E]
@@ -1189,8 +1189,11 @@ theorem exists_smooth_solver_on_ball [FiniteDimensional ℝ E] [CompleteSpace E]
         ‖g d - g e‖ ≤ 2 * β * ‖d - e‖ := by
   classical
   let ε : ℝ := r / (4 * β)
-  have hε : 0 < ε := div_pos hr (by positivity)
-  have hεeq : 2 * β * ε = r / 2 := by dsimp only [ε]; field_simp ; ring
+  have hε : 0 < ε := div_pos hr (mul_pos four_pos hβ)
+  have hεeq : 2 * β * ε = r / 2 := by
+    dsimp only [ε]
+    linear_combination (r / 2) * mul_inv_cancel₀ hβ.ne'
+  have h2β : 0 < 2 * β := mul_pos two_pos hβ
   have hex : ∀ d : Metric.ball (0 : E) ε, ∃! c : E,
       ‖c‖ ≤ r ∧ quadraticMap B A c = d := by
     intro d
@@ -1205,7 +1208,7 @@ theorem exists_smooth_solver_on_ball [FiniteDimensional ℝ E] [CompleteSpace E]
           (norm_nonneg _))
     · exact hsmall
     · have hd : ‖(d : E)‖ < ε := by simpa only [Metric.mem_ball, dist_zero_right] using d.property
-      have hb := mul_lt_mul_of_pos_left hd (show 0 < 2 * β by positivity)
+      have hb := mul_lt_mul_of_pos_left hd h2β
       linarith only [hr, hεeq, hb]
   choose f hf using hex
   let g : E → E := fun d => if hd : d ∈ Metric.ball (0 : E) ε then f ⟨d, hd⟩ else 0
@@ -1223,8 +1226,8 @@ theorem exists_smooth_solver_on_ball [FiniteDimensional ℝ E] [CompleteSpace E]
   have hinterior : ∀ d ∈ Metric.ball (0 : E) ε, ‖g d‖ < r := by
     intro d hd
     have hd' : ‖d‖ < ε := by simpa only [Metric.mem_ball, dist_zero_right] using hd
-    have ht := mul_lt_mul_of_pos_left hd' (show 0 < 2 * β by positivity)
-    linarith only [hr, hεeq, ht, hbound, hd, hbound d hd]
+    have ht := mul_lt_mul_of_pos_left hd' h2β
+    linarith only [hr, hεeq, ht, hbound d hd]
   refine ⟨g, ?_, fun d hd => ⟨(hspec d hd).1.2, hbound d hd⟩, ?_⟩
   · intro d hd
     obtain ⟨D, hD⟩ := tangent_invertible B A β K r hβ.le hK hinv hA hsmall

@@ -305,30 +305,15 @@ theorem hasFDerivAt_joint (c : ℂ) {ρ σ : ℝ} (hσ : 0 < σ) (hgap : ρ < σ
     hasDerivAt_parameter c hS V F hV hvalues hr ⟨z, closedBall_subset_closedBall hgap.le z.2⟩
   have hb : HasDerivAt (F r) b (z : ℂ) :=
     hasDerivAt_complex c hgap (V r) (F r) (hF r hr) (hvalues r hr) z
-  have hleftD : HasFDerivAt (fun s => F s z) (D.comp (ContinuousLinearMap.inl ℝ ℝ ℂ)) r :=
-    HasFDerivAt.comp (𝕜 := ℝ) (E := ℝ) (F := ℝ × ℂ) (G := E)
-      (f := fun s : ℝ => (s, (z : ℂ))) (g := g)
-      (f' := ContinuousLinearMap.inl ℝ ℝ ℂ) (g' := D) r hg
-      (hasFDerivAt_prodMk_left (𝕜 := ℝ) r (z : ℂ))
-  have hrightD : HasFDerivAt (F r) (D.comp (ContinuousLinearMap.inr ℝ ℝ ℂ)) (z : ℂ) :=
-    HasFDerivAt.comp (𝕜 := ℝ) (E := ℂ) (F := ℝ × ℂ) (G := E)
-      (f := fun w : ℂ => (r, w)) (g := g)
-      (f' := ContinuousLinearMap.inr ℝ ℝ ℂ) (g' := D) (z : ℂ) hg
-      (hasFDerivAt_prodMk_right (𝕜 := ℝ) r (z : ℂ))
+  have hleftD := hg.comp (f := fun s : ℝ => (s, (z : ℂ))) r
+    (hasFDerivAt_prodMk_left (𝕜 := ℝ) r (z : ℂ))
+  have hrightD := hg.comp (f := fun w : ℂ => (r, w)) (z : ℂ)
+    (hasFDerivAt_prodMk_right (𝕜 := ℝ) r (z : ℂ))
   have hleft := hleftD.unique ha.hasFDerivAt
   have hright := hrightD.unique (hb.hasFDerivAt.restrictScalars ℝ)
-  have hD : D = jointDerivative a b := by
-    apply ContinuousLinearMap.ext
-    intro v
-    have hl := congrArg (fun L : ℝ →L[ℝ] E => L v.1) hleft
-    have hr' := congrArg (fun L : ℂ →L[ℝ] E => L v.2) hright
-    change D (v.1, 0) = v.1 • a at hl
-    change D (0, v.2) = v.2 • b at hr'
-    change D v = v.1 • a + v.2 • b
-    calc
-      D v = D ((v.1, 0) + (0, v.2)) := by simp only [Prod.mk_add_mk, add_zero, zero_add]
-      _ = D (v.1, 0) + D (0, v.2) := map_add D _ _
-      _ = v.1 • a + v.2 • b := by rw [hl, hr']
+  have hD : D = jointDerivative a b :=
+    (ContinuousLinearMap.coprod_comp_inl_inr D).symm.trans
+      (congrArg₂ ContinuousLinearMap.coprod hleft hright)
   simpa only [hD] using hg
 
 omit [CompleteSpace E] in

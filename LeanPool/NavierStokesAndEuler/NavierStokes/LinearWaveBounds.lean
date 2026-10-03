@@ -460,6 +460,9 @@ theorem viscousRemainder_mem (h : InputBounds s P α κ d a) (i : Fin 3) :
       LinearWaveResidual.viscousRemainder (a.radius n) (d.radialField n) (fun _ => d.angular)
         (d.axialField s n) (a.frequency n) (a.phase n) (a.amplitude n) x i) := by
   have hAi := h.amplitude i
+  have hκ := h.loss_nonneg
+  have h3 : κ ≤ 3 * κ := le_mul_of_one_le_left hκ (by norm_num)
+  have hA : α - 1 / 2 - 3 * κ ≤ α - 1 / 2 := sub_le_self _ (mul_nonneg (by norm_num) hκ)
   have hDr := d.Dr_mem hAi h.radial_profile h.radial_scale h.loss_nonneg
   have hDrr := d.Dr_mem hDr h.radial_profile h.radial_scale h.loss_nonneg
   have hDz := d.Dz_mem hAi
@@ -474,7 +477,8 @@ theorem viscousRemainder_mem (h : InputBounds s P α κ d a) (i : Fin 3) :
       Complex.ofReal (a.normal s d n x 0) * d.Dr (fun n x => a.amplitude n x i) n x) := by
     simpa only [zero_add] using hcrossr
   have hcrossz' := hcrossz.mono_exponent
-    (show α - κ ≤ 0 + (α + 1) by linarith [h.loss_nonneg])
+    (show α - κ ≤ 0 + (α + 1) from
+      (sub_le_self α hκ).trans ((le_add_of_nonneg_right zero_le_one).trans_eq (zero_add _).symm))
   have hcross := constant_complex_mul
     (frequency_mul (hcrossr'.add hcrossz') h.frequency_scale) 2
   have hNr := d.Dr_mem (h.normal 0) h.radial_profile h.radial_scale h.loss_nonneg
@@ -482,8 +486,10 @@ theorem viscousRemainder_mem (h : InputBounds s P α κ d a) (i : Fin 3) :
   have hNz := d.Dz_mem (h.normal 2)
   have hNr' : UnweightedClass s (-κ) (d.Dr (fun n x => a.normal s d n x 0)) := by
     simpa only [zero_sub] using hNr
-  have hNi' := hNi.mono_exponent (show -κ ≤ 0 + 0 by linarith [h.loss_nonneg])
-  have hNz' := hNz.mono_exponent (show -κ ≤ 0 + 1 by linarith [h.loss_nonneg])
+  have hNi' := hNi.mono_exponent
+    (show -κ ≤ 0 + 0 from (neg_nonpos.mpr hκ).trans_eq (zero_add 0).symm)
+  have hNz' := hNz.mono_exponent
+    (show -κ ≤ 0 + 1 from (neg_nonpos.mpr hκ).trans (zero_le_one.trans_eq (zero_add 1).symm))
   have hdiv := frequency_mul (real_mul_complex ((hNr'.add hNi').add hNz') hAi) h.frequency_scale
   have htheta := constant_complex_mul
     (frequency_mul (real_mul_complex (unweighted_mul (h.normal 1) h.inverse_radius) (hJ i))
@@ -493,15 +499,21 @@ theorem viscousRemainder_mem (h : InputBounds s P α κ d a) (i : Fin 3) :
   have hri' := hri.mono_exponent
     (show α - 1 / 2 - 3 * κ ≤ 0 + (α - κ) by linarith [h.loss_nonneg])
   have hDzz' := hDzz.mono_exponent
-    (show α - 1 / 2 - 3 * κ ≤ (α + 1) + 1 by linarith [h.loss_nonneg])
+    (show α - 1 / 2 - 3 * κ ≤ (α + 1) + 1 from hA.trans ((sub_le_self α (by norm_num)).trans
+      ((le_add_of_nonneg_right zero_le_one).trans (le_add_of_nonneg_right zero_le_one))))
   have hjj' := hjj.mono_exponent
-    (show α - 1 / 2 - 3 * κ ≤ 0 + α by linarith [h.loss_nonneg])
+    (show α - 1 / 2 - 3 * κ ≤ 0 + α from
+      (hA.trans (sub_le_self α (by norm_num))).trans_eq (zero_add α).symm)
   have hcross' := hcross.mono_exponent
-    (show α - 1 / 2 - 3 * κ ≤ (α - κ) - 1 / 2 by linarith [h.loss_nonneg])
+    (show α - 1 / 2 - 3 * κ ≤ (α - κ) - 1 / 2 from
+      (sub_right_comm α (1 / 2) (3 * κ)).trans_le (sub_le_sub_right (sub_le_sub_left h3 α) _))
   have hdiv' := hdiv.mono_exponent
-    (show α - 1 / 2 - 3 * κ ≤ (-κ + α) - 1 / 2 by linarith [h.loss_nonneg])
+    (show α - 1 / 2 - 3 * κ ≤ (-κ + α) - 1 / 2 from
+      (sub_right_comm α (1 / 2) (3 * κ)).trans_le
+        (sub_le_sub_right ((sub_le_sub_left h3 α).trans_eq (neg_add_eq_sub κ α).symm) _))
   have htheta' := htheta.mono_exponent
-    (show α - 1 / 2 - 3 * κ ≤ ((0 + 0) + α) - 1 / 2 by linarith [h.loss_nonneg])
+    (show α - 1 / 2 - 3 * κ ≤ ((0 + 0) + α) - 1 / 2 from
+      hA.trans_eq (by rw [add_zero, zero_add]))
   have hh := (((((hDrr'.add hri').add hDzz').add hjj').add hcross').add hdiv').add htheta'
   simpa only [LinearWaveResidual.viscousRemainder, GraphDirections.Dr, GraphDirections.Dz,
     WaveCoefficients.normal, Complex.real_smul, div_eq_mul_inv, Complex.ofReal_mul,
@@ -852,9 +864,11 @@ theorem principal_cutoff {s : StripData D} {P : ℕ → D → ℝ} {α κ : ℝ}
   simp only [WaveCoefficients.principal, LinearWaveResidual.principal, Pi.add_apply]
   rw [hD i]
   fin_cases i <;>
-    simp [WaveCoefficients.withCutoff, LinearWaveResidual.principal,
-      LinearWaveResidual.shear, excludedSlotError,
-      Pi.add_apply, Pi.smul_apply, Complex.real_smul, Complex.ofReal_sub] <;> ring
+    simp only [Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Fin.isValue, LinearWaveResidual.shear,
+      WaveCoefficients.withCutoff, neg_mul, Pi.smul_apply, Complex.real_smul, Complex.ofReal_add,
+      Complex.ofReal_mul, Complex.ofReal_ofNat, Matrix.cons_val_zero, Matrix.cons_val_one,
+      Matrix.cons_val, Complex.ofReal_pow, Pi.add_apply, LinearWaveResidual.principal, smul_add,
+      smul_neg, excludedSlotError, Complex.ofReal_sub, Complex.ofReal_one] <;> ring
 
 theorem principal_cutoff_of_solve {s : StripData D} {P : ℕ → D → ℝ} {α κ : ℝ}
     {d : GraphDirections D} {a : WaveCoefficients D} (h : InputBounds s P α κ d a)

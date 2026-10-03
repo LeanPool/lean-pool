@@ -138,9 +138,8 @@ theorem solution_norm_bound (B₀ : E ≃L[ℝ] E) (B : E →L[ℝ] E)
       _ ≤ δ * ‖c‖ + K * r * ‖c‖ := add_le_add hlin hquad
       _ = _ := by ring
   have hid : B₀ c = d - ((B - B₀.toContinuousLinearMap) c + A c c) := by
-    rw [← heq, sub_apply]
-    change B₀ c = (B c + A c c) - (B c - B₀ c + A c c)
-    abel
+    rw [← heq, sub_apply, ContinuousLinearEquiv.coe_coe, add_sub_add_right_eq_sub,
+      sub_sub_cancel]
   have hbound : ‖c‖ ≤ β * ‖d‖ + (1 / 2 : ℝ) * ‖c‖ := by
     calc
       ‖c‖ = ‖B₀.symm (B₀ c)‖ := by rw [B₀.symm_apply_apply]
@@ -153,7 +152,7 @@ theorem solution_norm_bound (B₀ : E ≃L[ℝ] E) (B : E →L[ℝ] E)
       _ = β * ‖d‖ + (β * (δ + K * r)) * ‖c‖ := by ring
       _ ≤ β * ‖d‖ + (1 / 2 : ℝ) * ‖c‖ :=
         add_le_add_right (mul_le_mul_of_nonneg_right hsmall (norm_nonneg c)) _
-  linarith
+  linarith only [hbound]
 
 /-- The analytic solver has a uniform linear-in-debt bound on one common open neighborhood. -/
 theorem exists_local_bounded_analytic_solver [CompleteSpace E]
@@ -308,27 +307,26 @@ theorem compact_uniform_small_correction [CompleteSpace E]
   obtain ⟨β, K, hβ, hK, hbound⟩ := compact_inverse_quadratic_bounds S hS B A hB hA hinv
   let r : ℝ := 1 / (4 * β * K)
   let ε : ℝ := r / (2 * β)
-  have hr : 0 < r := by change 0 < 1 / (4 * β * K); positivity
-  have hε : 0 < ε := by change 0 < r / (2 * β); positivity
-  have hsmall : 4 * β * K * r ≤ 1 := by
-    change 4 * β * K * (1 / (4 * β * K)) ≤ 1
-    apply le_of_eq
-    field_simp
+  have h4 : 0 < 4 * β * K := mul_pos (mul_pos four_pos hβ) hK
+  have h2 : 0 < 2 * β := mul_pos two_pos hβ
+  have hr : 0 < r := div_pos one_pos h4
+  have hε : 0 < ε := div_pos hr h2
+  have hsmall : 4 * β * K * r ≤ 1 := (mul_one_div_cancel h4.ne').le
   refine ⟨β, ε, hβ, hε, ?_⟩
   intro p hp d hd
   have hradius : 2 * β * ‖d‖ ≤ r := by
     calc
-      _ ≤ 2 * β * ε := mul_le_mul_of_nonneg_left hd (by positivity)
-      _ = r := by change 2 * β * (r / (2 * β)) = r; field_simp
+      _ ≤ 2 * β * ε := mul_le_mul_of_nonneg_left hd h2.le
+      _ = r := mul_div_cancel₀ r h2.ne'
   have hsmall' : 4 * β * K * (2 * β * ‖d‖) ≤ 1 :=
-    (mul_le_mul_of_nonneg_left hradius (by positivity)).trans hsmall
+    (mul_le_mul_of_nonneg_left hradius h4.le).trans hsmall
   obtain ⟨e, he⟩ := hinv p hp
   have heinv : ‖e.symm.toContinuousLinearMap‖ ≤ β := by
     have h := (hbound p hp).1
     rwa [← he, ContinuousLinearMap.inverse_equiv] at h
   have hsolve : ∃! c : E, ‖c‖ ≤ 2 * β * ‖d‖ ∧ e c + A p c c = d := by
     apply MomentRepair.exists_unique_small_correction e (fun c => A p c c) d β K
-      (2 * β * ‖d‖) hβ.le hK.le (by positivity)
+      (2 * β * ‖d‖) hβ.le hK.le (mul_nonneg h2.le (norm_nonneg d))
     · intro x
       exact (e.symm.toContinuousLinearMap.le_opNorm x).trans
         (mul_le_mul_of_nonneg_right heinv (norm_nonneg x))

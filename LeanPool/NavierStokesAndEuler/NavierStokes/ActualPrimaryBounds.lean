@@ -1113,8 +1113,9 @@ theorem slotLinear_bound {l : SignedLabel B N0} {n : ℕ} (hn : near l n) :
     _ ≤ ‖slotOfNative‖ * (‖copyLinear l n‖ * ‖nativeOfFull‖) :=
       (ContinuousLinearMap.opNorm_comp_le _ _).trans
         (mul_le_mul_of_nonneg_left (ContinuousLinearMap.opNorm_comp_le _ _) (norm_nonneg _))
-    _ ≤ 1 * (‖copyLinear l n‖ * 1) := by
-        gcongr <;> first | exact slotOfNative_norm | exact nativeOfFull_norm
+    _ ≤ 1 * (‖copyLinear l n‖ * 1) :=
+      mul_le_mul slotOfNative_norm (mul_le_mul_of_nonneg_left nativeOfFull_norm (norm_nonneg _))
+        (mul_nonneg (norm_nonneg _) (norm_nonneg _)) zero_le_one
     _ ≤ _ := by simp only [one_mul, mul_one]; exact copyLinear_bound hn
 
 theorem slotCopy_affine (l : SignedLabel B N0) (n : ℕ) (k : TorusInverse.Frequency) (x :
@@ -1169,20 +1170,19 @@ theorem polynomial_on_control {E : Type*} [NormedAddCommGroup E] [NormedSpace �
         _ ≤ (copyCost * fullStrip.slow n) ^ m :=
           (pow_le_pow_left₀ (norm_nonneg _) (slotLinear_bound hc.1) j).trans
             (pow_le_pow_right₀ (one_le_mul_of_one_le_of_one_le hcost hS) hj)
-        _ ≤ (copyCost * fullStrip.growth n x) ^ m := by gcongr; exact fullStrip.slow_le_growth n x
+        _ ≤ (copyCost * fullStrip.growth n x) ^ m :=
+          pow_le_pow_left₀ (mul_nonneg (zero_le_one.trans hcost) (zero_le_one.trans hS))
+            (mul_le_mul_of_nonneg_left (fullStrip.slow_le_growth n x) (zero_le_one.trans hcost)) m
         _ = _ := mul_pow _ _ _
     have hu := norm_jet_comp_affine (D.isOpen i.1) (hf.smooth i.1)
       (slotLinear i.1 n) (slotOfNative (copyPoint i.1 n i.2 0))
       (by simpa only [← slotCopy_affine] using hm) j
     simp only [← slotCopy_affine] at hu
+    have hfb := (hb i.1 j hj _ hm).trans (mul_le_mul_of_nonneg_left
+      (pow_le_pow_left₀ (zero_le_one.trans (D.one_le_scale i.1)) hscale p) (zero_le_one.trans hC))
     calc
-      _ ≤ ‖iteratedFDeriv ℝ j (f i.1) ((fullCopy i.1 n i.2 x).1, (fullCopy i.1 n i.2 x).2.2)‖ *
-          ‖slotLinear i.1 n‖ ^ j := hu
-      _ ≤ (C * (25 * fullStrip.growth n x) ^ p) * (copyCost ^ m * fullStrip.growth n x ^ m) := by
-        have hfb := (hb i.1 j hj _ hm).trans (mul_le_mul_of_nonneg_left
-          (pow_le_pow_left₀ (zero_le_one.trans (D.one_le_scale i.1)) hscale p) (zero_le_one.trans
-              hC))
-        exact mul_le_mul hfb hlin (pow_nonneg (norm_nonneg _) _) ((norm_nonneg _).trans hfb)
+      _ ≤ (C * (25 * fullStrip.growth n x) ^ p) * (copyCost ^ m * fullStrip.growth n x ^ m) :=
+        hu.trans (mul_le_mul hfb hlin (pow_nonneg (norm_nonneg _) _) ((norm_nonneg _).trans hfb))
       _ = majorant fullStrip (fun _ _ => 1) 0 (C * 25 ^ p * copyCost ^ m) (p + m) n x := by
         rw [majorant, mul_pow, pow_add, Real.rpow_zero]
         ring

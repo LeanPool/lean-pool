@@ -468,8 +468,9 @@ theorem clock_band_transport (h : ℝ) (n m i ir k : ℕ) (hi : i + k = ir) :
     unfold CoordinateAlgebra.A
     ring
   rw [hu, clock, clock, ← hi, pow_add,
-    Real.div_rpow (ChartScales.Q_pos n).le (ChartScales.Q_pos m).le]
-  field_simp [(Real.rpow_pos_of_pos (ChartScales.Q_pos m) (1+h)).ne']
+    Real.div_rpow (ChartScales.Q_pos n).le (ChartScales.Q_pos m).le, div_mul_eq_mul_div,
+    eq_div_iff (Real.rpow_pos_of_pos (ChartScales.Q_pos m) (1+h)).ne']
+  ring
 
 /-- Axial direction, given by `((0,1),0)`. -/
 noncomputable def axialDirection : Plane × Plane := ((0,1),0)

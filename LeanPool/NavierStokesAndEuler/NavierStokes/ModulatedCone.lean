@@ -166,9 +166,7 @@ theorem stockMap_lipschitz_on_dataSet (h μ R : ℝ) (hμ : 0 < μ)
   have hsub : S ×ˢ dataSet μ R ⊆ stockDomain h := by
     intro q hq
     exact ⟨hX q.1 hq.1, hL q.1 hq.1, hμ.trans_le hq.2.2⟩
-  have hds : ContDiffOn ℝ ∞ (fderiv ℝ (stockMap h)) (stockDomain h) :=
-    (stockMap_smooth h).fderiv_of_isOpen (isOpen_stockDomain h) (by simp)
-  have hd := hds.continuousOn
+  have hd := (stockMap_smooth h).continuousOn_fderiv_of_isOpen (isOpen_stockDomain h) (by simp)
   obtain ⟨C, hC⟩ := (hS.prod (isCompact_dataSet μ R)).exists_bound_of_continuousOn (hd.mono hsub)
   refine ⟨max C 0, le_max_right _ _, ?_⟩
   intro p hp z hz w hw

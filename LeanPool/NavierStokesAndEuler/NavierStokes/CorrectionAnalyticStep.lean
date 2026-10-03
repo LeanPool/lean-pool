@@ -1091,6 +1091,10 @@ private theorem meanStepData
     angular := H.angular
     signed_carrier := W.carrier }
 
+theorem exponent_bounds {s k : ℝ} (hs : 1 / 5 ≤ s) (hk : k ≤ 1 / 100000) :
+    k ≤ 1 / 2 ∧ (1 : ℝ) ≤ 1 + s ∧ (1 : ℝ) ≤ 1 + s - k ∧ (1 : ℝ) / 2 ≤ 1 / 2 + s :=
+  ⟨by linarith only [hk], by linarith only [hs], by linarith only [hs, hk], by linarith only [hs]⟩
+
 /-- Assemble the invariant after the quantitative mean calculation.
 The public preservation theorem below derives those mean inputs from
 the same finite waves and measured cross defects. -/
@@ -1132,7 +1136,8 @@ private theorem assemble
         temporalAliasState G.gauge h index c ((p).afterSigned v c u) n (z, 0) 2))
     (hAxis : ∀ β, MeanClass G.strip β ((p).nextAxisymmetricAlias v c u x.axisymmetricAlias)) :
     CycleAnalyticInvariant G c primary P S (σ+1/10) (CycleState.step p c x) := by
-  have hsigned := W.signed (show κ ≤ 1/2 by linarith only [hκsmall])
+  obtain ⟨hκhalf, hσ₁, hσκ, -⟩ := exponent_bounds hσ hκsmall
+  have hsigned := W.signed hκhalf
   have hzpart n l z (hz : z ∈ G.strip.domain) (hn : z ∉ C n l) i j hj :=
     W.particular_zero_germ hS l n (G.strip_subset hz) (fun hmem => hn (hSC l n hmem)) i j hj
   have hzsigned n l z (hz : z ∈ G.strip.domain) (hn : z ∉ C n l) i j hj :=
@@ -1226,8 +1231,7 @@ private theorem assemble
     pressure := hPressure
     difference := hDifference
     cumulative := hCumulative
-    covariance := (p).next_covariance_mem v c u (by linarith only [hσ] : (1:ℝ) ≤ 1+σ)
-      (by linarith only [hσ, hκsmall] : (1:ℝ) ≤ 1+σ-κ) H.covariance hCovP hCovS
+    covariance := (p).next_covariance_mem v c u hσ₁ hσκ H.covariance hCovP hCovS
     residual := hResidual
     mean := hMean
     meanHypotheses := hStep.next_meanHypotheses H.meanHypotheses
@@ -1360,7 +1364,8 @@ theorem step (D : StaticData G h index axial r c κ)
     rw [halabels]
     funext n z i
     exact H.representation.velocity n z i
-  have hCov₀ := assembledCovarianceIncrement_mem (show (1:ℝ)/2 ≤ 1/2+σ by linarith only [hσ])
+  obtain ⟨hκhalf, hσ₁, hσκ, hσ₂⟩ := exponent_bounds hσ hκsmall
+  have hCov₀ := assembledCovarianceIncrement_mem hσ₂
     a.labels a.label a.injective a.level a.window a.window_continuous a.auxiliary
     (v).blocks ((p).particularBlock v c u) (v).residualBand H.bands.velocityPressure
     ((p).particularBlock_band v c u) (fun _ => ⟨rfl,rfl,rfl⟩)
@@ -1451,16 +1456,14 @@ theorem step (D : StaticData G h index axial r c κ)
   have hAxis := ActualCycleExcluded.nextAxisymmetricAlias_all_powers D.aliasData p v c u
     (D.compatible particular signed) HAlias hXPAlias hXSAlias hRankAlias D.operators D.base
     H.cumulative hCumulative H.covariance
-    (fun i j => (hCovP i j).mono_exponent (show (1:ℝ) ≤ 1+σ by linarith only [hσ]))
-    (fun i j => (hCovS i j).mono_exponent (show (1:ℝ) ≤ 1+σ-κ by linarith only [hσ, hκsmall]))
+    (fun i j => (hCovP i j).mono_exponent hσ₁) (fun i j => (hCovS i j).mono_exponent hσκ)
     hSz x.axisymmetricAlias H.axisFlat
   have hFull := assemble G h index axial particular signed r c x primary P S H W hσ hκsmall
     D.operators D.base (fun _ hz => D.radius_pos hz) d.carrier_closed d.carrier_cells
     d.normal d.frequency d.angular d.envelope_nonneg d.envelope_le_one d.rank_geometry
     D.rankParameters.length D.rank_left.le D.rank_right.le D.graph
     hCovP hCovS hT hRank hCumulative hDebt hTheta hAxial hAxis
-  have hInc := (p).finalBlock_increment_bounds v c u hκ W.particular (W.signed (by linarith only [
-      hκsmall]))
+  have hInc := (p).finalBlock_increment_bounds v c u hκ W.particular (W.signed hκhalf)
     W.particularPressure W.signedPressure
   exact ⟨hFull, hT, hRank, hPressure, hInc.1, hInc.2, hSθ, hSz⟩
 

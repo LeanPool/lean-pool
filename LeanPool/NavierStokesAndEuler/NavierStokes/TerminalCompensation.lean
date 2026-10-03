@@ -233,9 +233,13 @@ noncomputable def slope (lam : ℝ) : ℝ := -1 / 2 - lam
 noncomputable def powers (lam : ℝ) : Coeff := ![-1 + slope lam, slope lam, 1 / 2]
 
 theorem powers_injective (lam : ℝ) (hlam : 0 ≤ lam) : Injective (powers lam) := by
-  intro i j hij
-  fin_cases i <;> fin_cases j <;> norm_num [powers, slope] at hij <;> norm_num <;> linarith only [
-      hlam, hij]
+  have h0 : powers lam 0 < powers lam 1 := by
+    change -1 + slope lam < slope lam
+    linarith only
+  have h1 : powers lam 1 < powers lam 2 := by
+    change -1 / 2 - lam < 1 / 2
+    linarith only [hlam]
+  exact (Fin.strictMono_iff_lt_succ.mpr (Fin.forall_fin_two.mpr ⟨h0, h1⟩)).injective
 
 /-- Linear matrix, given by `LocalizedMomentRepair.matrix (powers lam) (lower P) (upper P)`. -/
 noncomputable def linearMatrix (P : Patch) (lam : ℝ) : Matrix (Fin 3) (Fin 3) ℝ :=
@@ -750,8 +754,8 @@ theorem exists_uniform_parameter_compensation (P : Patch) (lam : ℝ) (hlam : 0 
   have hB : 0 < B := mul_pos hC₀ hD
   have hT : 0 < T := add_pos (mul_pos hD hB) (mul_pos hD (mul_pos hJ hB))
   have hC : 0 < C := add_pos (add_pos one_pos hB) hT
-  have hBC : B ≤ C := by dsimp only [C]; linarith only [hT]
-  have hTC : T ≤ C := by dsimp only [C]; linarith only [hB]
+  have hBC : B ≤ C := (le_add_of_nonneg_left zero_le_one).trans (le_add_of_nonneg_right hT.le)
+  have hTC : T ≤ C := le_add_of_nonneg_left (add_pos one_pos hB).le
   have hDBC : D * B ≤ C := (le_add_of_nonneg_right (mul_pos hD (mul_pos hJ hB)).le).trans hTC
   refine ⟨ε₀ / D, C, div_pos hε₀ hD, hC, ?_⟩
   intro v hv
@@ -903,7 +907,7 @@ theorem scaled_heatDebt_bound (T : OutgoingTail.TailData) (ν q : ℝ)
   let A := HeatTailEdit.exponent T.h
   have hH : 0 < H := HeatTailEdit.heatConstant_pos T.h_pos hν
   have he : 0 < e := HeatTailEdit.outgoingAmplitude_pos T
-  have hA : 0 < A := by dsimp only [HeatTailEdit.exponent, A]; linarith only [T.h_pos]
+  have hA : 0 < A := add_pos one_half_pos T.h_pos
   have hh : 0 < T.h := T.h_pos
   let P₀ : ℝ := 2 * H * e ^ 2 / (2 * A + 1)
   let S₀ : ℝ := 2 * H * e ^ 2 / (2 * A)
@@ -913,12 +917,12 @@ theorem scaled_heatDebt_bound (T : OutgoingTail.TailData) (ν q : ℝ)
   have hI₀ : 0 < I₀ := by dsimp only [I₀]; positivity
   have hsqrt : 0 < Real.sqrt (2 * q) := Real.sqrt_pos.2 (by positivity)
   let C : ℝ := P₀ + S₀ / q + I₀ / (q * Real.sqrt (2 * q))
-  have hC : 0 < C := by dsimp only [C]; positivity
   have hSq : 0 < S₀ / q := div_pos hS₀ hq
   have hIq : 0 < I₀ / (q * Real.sqrt (2 * q)) := div_pos hI₀ (mul_pos hq hsqrt)
-  have hCP : P₀ ≤ C := by dsimp only [C]; linarith only [hSq, hIq]
-  have hCS : S₀ / q ≤ C := by dsimp only [C]; linarith only [hP₀, hIq]
-  have hCI : I₀ / (q * Real.sqrt (2 * q)) ≤ C := by dsimp only [C]; linarith only [hP₀, hSq]
+  have hC : 0 < C := add_pos (add_pos hP₀ hSq) hIq
+  have hCP : P₀ ≤ C := (le_add_of_nonneg_right hSq.le).trans (le_add_of_nonneg_right hIq.le)
+  have hCS : S₀ / q ≤ C := (le_add_of_nonneg_left hP₀.le).trans (le_add_of_nonneg_right hIq.le)
+  have hCI : I₀ / (q * Real.sqrt (2 * q)) ≤ C := le_add_of_nonneg_left (add_pos hP₀ hSq).le
   refine ⟨C, hC, ?_⟩
   intro K hK
   have hqK : 0 < q * K := mul_pos hq hK
@@ -952,8 +956,11 @@ theorem scaled_heatDebt_bound (T : OutgoingTail.TailData) (ν q : ℝ)
       _ ≤ (I₀ * Real.sqrt K) / (q * K * Real.sqrt (2 * (q * K))) :=
         div_le_div_of_nonneg_right hi (mul_pos hqK hrootqK).le
       _ = (I₀ / (q * Real.sqrt (2 * q))) / K := by
-        rw [← mul_assoc 2 q K, Real.sqrt_mul (by positivity : 0 ≤ 2 * q)]
-        field_simp
+        rw [← mul_assoc 2 q K, Real.sqrt_mul (mul_pos two_pos hq).le,
+          show q * K * (Real.sqrt (2 * q) * Real.sqrt K) =
+            q * Real.sqrt (2 * q) * K * Real.sqrt K by ring,
+          mul_div_mul_right _ _ hrootK.ne']
+        exact (div_div _ _ _).symm
       _ ≤ C / K := div_le_div_of_nonneg_right hCI hK.le
 
 theorem FirstJetBound.mono {P : Patch} {a : ℝ → ℝ} {c : ℝ → Coeff} {η L M : ℝ}

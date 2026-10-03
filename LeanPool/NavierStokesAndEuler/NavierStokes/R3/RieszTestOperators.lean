@@ -55,10 +55,12 @@ theorem norm_rieszTest_pairing_le (i j : Fin 3) (ψ φ : ComplexTest) :
     ‖∫ x : Space, rieszTest i j ψ x * conj (φ x)‖ ≤
       Real.sqrt (∫ x : Space, ‖ψ x‖ ^ 2) *
         Real.sqrt (∫ x : Space, ‖φ x‖ ^ 2) := by
-  let Fψ : ComplexTest := FourierTransform.fourierCLE ℂ ComplexTest ψ
-  let Fφ : ComplexTest := FourierTransform.fourierCLE ℂ ComplexTest φ
+  let Fψ : ComplexTest := EulerSobolev.schwartzFourier ψ
+  let Fφ : ComplexTest := EulerSobolev.schwartzFourier φ
+  have hψ2 := Fψ.memLp 2 volume
+  have hφ2 := Fφ.memLp 2 volume
   have hprod : Integrable (fun ξ : Space => ‖Fψ ξ‖ * ‖Fφ ξ‖) :=
-    (Fψ.memLp 2 volume).norm.integrable_mul (Fφ.memLp 2 volume).norm
+    hψ2.norm.integrable_mul hφ2.norm
   rw [rieszTest_pairing_fourier_conj]
   change ‖∫ ξ : Space, (rieszSymbol i j ξ : ℂ) * Fψ ξ * conj (Fφ ξ)‖ ≤ _
   calc
@@ -76,8 +78,8 @@ theorem norm_rieszTest_pairing_le (i j : Fin 3) (ψ φ : ComplexTest) :
       have h := integral_mul_norm_le_Lp_mul_Lq
         (μ := (volume : Measure Space)) (f := (Fψ : Space → ℂ))
         (g := (Fφ : Space → ℂ)) Real.HolderConjugate.two_two
-        (by rw [ENNReal.ofReal_ofNat]; exact Fψ.memLp 2 volume)
-        (by rw [ENNReal.ofReal_ofNat]; exact Fφ.memLp 2 volume)
+        (by rw [ENNReal.ofReal_ofNat]; exact hψ2)
+        (by rw [ENNReal.ofReal_ofNat]; exact hφ2)
       have hψ : (∫ ξ : Space, ‖Fψ ξ‖ ^ 2) = ∫ x : Space, ‖ψ x‖ ^ 2 :=
         SchwartzParseval.integral_norm_sq_fourier ψ
       have hφ : (∫ ξ : Space, ‖Fφ ξ‖ ^ 2) = ∫ x : Space, ‖φ x‖ ^ 2 :=
@@ -120,9 +122,7 @@ private theorem cutoff_energy_le_of_pairing_bound {f : Space → ℂ}
     change ‖χ x • f x‖ ^ 2 ≤ χ x * ‖f x‖ ^ 2
     rw [norm_smul, Real.norm_of_nonneg χ.nonneg, mul_pow]
     apply mul_le_mul_of_nonneg_right _ (sq_nonneg _)
-    have h0 := χ.nonneg (x := x)
-    have h1 := χ.le_one (x := x)
-    nlinarith only [h0, h1]
+    exact pow_le_of_le_one χ.nonneg χ.le_one two_ne_zero
   have hpair_eq : (∫ x : Space, f x * conj (φ x)) =
       ((∫ x : Space, χ x * ‖f x‖ ^ 2 : ℝ) : ℂ) := by
     calc
@@ -132,9 +132,7 @@ private theorem cutoff_energy_le_of_pairing_bound {f : Space → ℂ}
         change f x * conj (χ x • f x) = ((χ x * ‖f x‖ ^ 2 : ℝ) : ℂ)
         calc
           _ = (χ x : ℂ) * (f x * conj (f x)) := by
-            rw [Algebra.smul_def]
-            change f x * conj ((χ x : ℂ) * f x) = _
-            rw [map_mul, Complex.conj_ofReal]
+            rw [Complex.real_smul, map_mul, Complex.conj_ofReal]
             ring
           _ = _ := by simp only [Complex.mul_conj, Complex.normSq_eq_norm_sq, Complex.ofReal_pow,
               Complex.ofReal_mul]
@@ -390,8 +388,7 @@ private theorem lpNorm_two_fin3_sum_le {E : Type*} [NormedAddCommGroup E]
 theorem lpNorm_two_fderiv_rieszTest_le (i j : Fin 3) (ψ : ComplexTest) :
     comparisonLpNorm 2 (fderiv ℝ (rieszTest i j ψ)) ≤
       3 * comparisonLpNorm 2 (fderiv ℝ (fun y => ψ y)) := by
-  have hDψ : MemLp (fderiv ℝ (fun y => ψ y)) 2 volume :=
-    (SchwartzMap.fderivCLM ℂ Space ℂ ψ).memLp 2 volume
+  have hDψ := (SchwartzMap.fderivCLM ℂ Space ℂ ψ).memLp 2 volume
   have hcol (k : Fin 3) (x : Space) :
       ‖Comparison.partialD k (fun y => ψ y) x‖ ≤ ‖fderiv ℝ (fun y => ψ y) x‖ := by
     simpa only [Comparison.partialD, NavierStokes.SolutionDifference.spatialPartial,
@@ -453,13 +450,13 @@ mixed derivative. The multiplier identity is valid also at frequency zero. -/
 theorem rieszTest_laplacianCLM (i j : Fin 3) (ψ : ComplexTest) (x : Space) :
     rieszTest i j (laplacianCLM ψ) x =
       -(partialCLM i (partialCLM j ψ)) x := by
-  let e := FourierTransform.fourierCLE ℂ ComplexTest
   have hmult (ξ : Space) :
       (rieszSymbol i j ξ : ℂ) * EulerSobolev.schwartzFourier (laplacianCLM ψ) ξ =
         EulerSobolev.schwartzFourier (-(partialCLM i (partialCLM j ψ))) ξ := by
     have hneg : EulerSobolev.schwartzFourier (-(partialCLM i (partialCLM j ψ))) ξ =
         -EulerSobolev.schwartzFourier (partialCLM i (partialCLM j ψ)) ξ :=
-      congrArg (fun φ : ComplexTest => φ ξ) (e.map_neg (partialCLM i (partialCLM j ψ)))
+      congrArg (fun φ : ComplexTest => φ ξ)
+        (EulerSobolev.schwartzFourierCLM.map_neg (partialCLM i (partialCLM j ψ)))
     have hsymbol : (rieszSymbol i j ξ : ℂ) * ((‖ξ‖ ^ 2 : ℝ) : ℂ) =
         -((ξ i : ℂ) * (ξ j : ℂ)) := by
       exact_mod_cast rieszSymbol_mul_norm_sq i j ξ
@@ -470,8 +467,8 @@ theorem rieszTest_laplacianCLM (i j : Fin 3) (ψ : ComplexTest) (x : Space) :
   unfold rieszTest
   simp only [hmult]
   have hinv := congrArg (fun φ : ComplexTest => φ x)
-    (e.symm_apply_apply (-(partialCLM i (partialCLM j ψ))))
-  simpa only [e, FourierTransform.fourierCLE_symm_apply, SchwartzMap.fourierInv_coe] using! hinv
+    (FourierPair.fourierInv_fourier_eq (F := ComplexTest) (-(partialCLM i (partialCLM j ψ))))
+  simpa only [SchwartzMap.fourierInv_coe] using! hinv
 
 /-- The canonical pressure functional solves the test-function Poisson equation. -/
 theorem pressurePair_laplacianCLM (i j : Fin 3) (g : Space → ℝ) (ψ : ComplexTest) :

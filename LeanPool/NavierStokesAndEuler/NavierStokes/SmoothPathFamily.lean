@@ -75,10 +75,10 @@ proofs. -/
 noncomputable def flipLinear : C(Icc a b, P →L[ℝ] E) →ₗ[ℝ] P →ₗ[ℝ] C(Icc a b, E) where
   toFun g := {
     toFun := fun v => ⟨fun t => g t v, g.continuous.clm_apply continuous_const⟩
-    map_add' := by intros; ext t; exact map_add (g t) _ _
-    map_smul' := by intros; ext t; exact map_smul (g t) _ _ }
-  map_add' := by intros; ext v t; rfl
-  map_smul' := by intros; ext v t; rfl
+    map_add' := by intros; ext t; exact (g t).map_add _ _
+    map_smul' := by intros; ext t; exact (g t).map_smul _ _ }
+  map_add' := by intros; rfl
+  map_smul' := by intros; rfl
 
 theorem norm_flipLinear_le (g : C(Icc a b, P →L[ℝ] E)) (v : P) :
     ‖flipLinear (P := P) (E := E) (a := a) (b := b) g v‖ ≤ ‖g‖ * ‖v‖ := by

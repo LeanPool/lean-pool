@@ -529,7 +529,7 @@ theorem strippedRemainder_jet_bound {U : Set SpaceTime} {B : VelocityField}
     SpatialCurl.contDiffAt_spatialCurl (hB.contDiffAt (hU.mem_nhds hz)) (by simp only [
         ENat.coe_top_add_one, Std.le_refl])
   unfold strippedRemainder
-  rw [iteratedFDeriv_const_smul_apply' (hcurl.of_le
+  simp only [iteratedFDeriv_const_smul_apply' (hcurl.of_le
     (ENat.natCast_le_of_coe_top_le_withTop le_rfl m)), norm_smul, Real.norm_eq_abs, abs_div,
         abs_one]
   calc
@@ -546,7 +546,8 @@ theorem strippedRemainder_finiteJetBound {U : Set SpaceTime} {B : VelocityField}
       ((‖SpatialCurl.curlLinear.comp (ResidualStability.spaceRestriction Space)‖ / |k|) * C) := by
   intro n hn z hz
   exact (strippedRemainder_jet_bound k hU hB hz n).trans
-    (mul_le_mul_of_nonneg_left (hjet (n + 1) (Nat.add_le_add_right hn 1) z hz) (by positivity))
+    (mul_le_mul_of_nonneg_left (hjet (n + 1) (Nat.add_le_add_right hn 1) z hz)
+      (div_nonneg (norm_nonneg _) (abs_nonneg k)))
 
 end NavierStokes.OscillatoryCurl
 
@@ -778,7 +779,8 @@ theorem norm_jet_comp_linear {f : F → G} {U : Set F}
   rw [iteratedFDerivWithin_of_isOpen n hp hx,
     iteratedFDerivWithin_of_isOpen n hU hx] at he
   rw [he]
-  simpa using (iteratedFDeriv ℝ n f (L x)).norm_compContinuousLinearMap_le (fun _ => L)
+  simpa only [Finset.prod_const, Finset.card_univ, Fintype.card_fin] using
+    (iteratedFDeriv ℝ n f (L x)).norm_compContinuousLinearMap_le (fun _ => L)
 
 /-- Translations introduce no growth in higher-derivative norms. -/
 theorem norm_jet_comp_affine {f : F → G} {U : Set F}
@@ -1433,9 +1435,10 @@ theorem PolynomialJets.radius {s : ι → E → ℝ} (hs : PolynomialJets D s)
 
 theorem radius_bounds (s : ℝ) : 1 ≤ Real.sqrt (1 + s ^ 2) ∧
     Real.sqrt (1 + s ^ 2) ≤ 1 + |s| := by
-  have hpos := Real.sqrt_nonneg (1 + s ^ 2)
-  have hsq := Real.sq_sqrt (show 0 ≤ 1 + s ^ 2 by positivity)
-  constructor <;> nlinarith only [hsq, hpos, sq_nonneg s, sq_abs s, abs_nonneg s]
+  refine ⟨Real.one_le_sqrt.mpr (le_add_of_nonneg_right (sq_nonneg s)),
+    (Real.sqrt_le_left (add_nonneg zero_le_one (abs_nonneg s))).mpr ?_⟩
+  rw [add_sq, one_pow, mul_one, sq_abs]
+  linarith only [abs_nonneg s]
 
 end ReferenceBounds
 
@@ -1458,8 +1461,8 @@ theorem reference_jets (lam c0 u ell : ι → ℝ)
     (∀ i, ∀ z ∈ D.carrier i, b ≤ |PrimaryODE.referenceProfile (c0 i) (u i) (ell i) z.2|) ∧
     (∀ i, ∀ z ∈ D.carrier i,
       |PrimaryODE.referenceProfile (c0 i) (u i) (ell i) z.2| ≤ M * (1 + M + M ^ 2)) := by
-  have hq (i) : |u i / ell i| ≤ M := by
-    nlinarith only [hrate, hM, hrate i, D.one_le_scale i, abs_nonneg (u i / ell i)]
+  have hq (i) : |u i / ell i| ≤ M :=
+    (le_mul_of_one_le_right (abs_nonneg _) (D.one_le_scale i)).trans (hrate i)
   have pu := PolynomialJets.const_uniform (D := D) u hM (fun i => by simpa using hu i)
   have pq := PolynomialJets.const_uniform (D := D) (fun i => u i / ell i) hM
     (fun i => by simpa only [Real.norm_eq_abs] using hq i)
@@ -1493,7 +1496,7 @@ theorem reference_jets (lam c0 u ell : ι → ℝ)
   · intro i z _
     have h := (radius_bounds (PulseGrowth.slotMagnitude (u i) (ell i) z.2)).1
     simp only [PrimaryODE.referenceProfile, abs_mul, abs_of_nonneg (Real.sqrt_nonneg _)]
-    nlinarith only [hc, hb, h, (hc i).1, abs_nonneg (c0 i)]
+    exact (hc i).1.trans (le_mul_of_one_le_right (hb.le.trans (hc i).1) h)
   · intro i z hz
     have h := (radius_bounds (PulseGrowth.slotMagnitude (u i) (ell i) z.2)).2.trans
       (add_le_add_right (hsb i z hz) 1)

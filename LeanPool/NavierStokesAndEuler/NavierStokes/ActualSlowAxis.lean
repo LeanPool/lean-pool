@@ -90,9 +90,8 @@ theorem term_factorial_bound (I : Window) {ε R s : ℝ} (hε : 0 < ε)
         (((n : ℝ) + 1) ^ k * (R / 20 / s) ^ n) := by
   have hs0 : 0 < s := lt_trans (by positivity : 0 < R / 20) hs
   have hb : 0 < 1 - s := by linarith only [hs1]
-  have hj : |jet I (weight ε) A.1 n m p.2| ≤ weight ε n m * ‖A‖ := by
-    simpa only [abs_of_pos (weight_pos hε n m)] using
-      abs_jet_le I (weight ε) A n m p.2
+  have hj := abs_jet_le I (weight ε) A n m p.2
+  rw [abs_of_pos (weight_pos hε n m)] at hj
   have hp0 : 0 ≤ (R / 20 / s) ^ n := by positivity
   have hc := mul_le_mul_of_nonneg_right (choose_geometric_le hs0 hs1 n m) hp0
   have he : s ^ n * (R / 20 / s) ^ n = (R / 20) ^ n := by
@@ -100,20 +99,24 @@ theorem term_factorial_bound (I : Window) {ε R s : ℝ} (hε : 0 < ε)
     congr 1
     field_simp
   rw [mul_assoc, he] at hc
+  have hn1 : (0 : ℝ) ≤ (n : ℝ) + 1 := (Nat.cast_add_one_pos n).le
+  have hpoly : 0 ≤ ((n : ℝ) + 1) ^ k * R ^ n :=
+    mul_nonneg (pow_nonneg hn1 k) (pow_nonneg (zero_le_one.trans hR) n)
   rw [term, Real.norm_eq_abs, abs_mul]
   calc
     _ ≤ (((n : ℝ) + 1) ^ k * R ^ n) * (weight ε n m * ‖A‖) :=
-      mul_le_mul (polynomialJet_bound hR hp n k) hj (abs_nonneg _) (by positivity)
-    _ ≤ (((n : ℝ) + 1) ^ k * R ^ n) * (coreWeight ε n m * ‖A‖) := by
-      gcongr
-      exact weight_le_core hε n m
+      mul_le_mul (polynomialJet_bound hR hp n k) hj (abs_nonneg _) hpoly
+    _ ≤ (((n : ℝ) + 1) ^ k * R ^ n) * (coreWeight ε n m * ‖A‖) :=
+      mul_le_mul_of_nonneg_left
+        (mul_le_mul_of_nonneg_right (weight_le_core hε n m) (norm_nonneg _)) hpoly
     _ = (‖A‖ * (ε⁻¹) ^ m * (m.factorial : ℝ) * ((n : ℝ) + 1) ^ k) *
         (((n + m).choose m : ℝ) * (R / 20) ^ n) := by
       simp only [coreWeight, div_pow, one_pow]
       ring
     _ ≤ (‖A‖ * (ε⁻¹) ^ m * (m.factorial : ℝ) * ((n : ℝ) + 1) ^ k) *
-        ((1 / (1 - s) ^ (m + 1)) * (R / 20 / s) ^ n) := by
-      gcongr
+        ((1 / (1 - s) ^ (m + 1)) * (R / 20 / s) ^ n) :=
+      mul_le_mul_of_nonneg_left hc (mul_nonneg (mul_nonneg (mul_nonneg (norm_nonneg A)
+        (pow_nonneg (inv_nonneg.mpr hε.le) m)) (Nat.cast_nonneg _)) (pow_nonneg hn1 k))
     _ = _ := by
       simp only [mul_inv_rev, mul_pow, pow_succ, div_eq_mul_inv, mul_inv_rev]
       ring
@@ -2487,9 +2490,9 @@ theorem base_beta_value {T δ : ℝ} (hT : 0 < T) (hδ : 0 < δ)
         mul_zero, zero_mul,
       PositiveAxisSystem.betaValue, PositiveAxisSystem.actualJet, hu.eq_of_nhds, hk.eq_of_nhds,
       SimilarityProfile.partialEta, hu.fderiv_eq, hk.fderiv_eq]
-  exact hb.trans (hcompare.trans (PositiveAxisSystem.betaValue_averageDefect N.radialDomain
-      P.U_smooth h 0
-    (real_domain_mem N hX.1.le (parameterDomain_real_interval heta)) hX.1.ne'))
+  have hfinal := PositiveAxisSystem.betaValue_averageDefect N.radialDomain P.U_smooth h 0
+    (real_domain_mem N hX.1.le (parameterDomain_real_interval heta)) hX.1.ne'
+  exact (hb.trans (hcompare.trans hfinal) :)
 
 /-- A fixed radial rectangle strictly containing the entire initial collar. -/
 noncomputable def axisRadius (N : ReferencePath.Input) (δ : ℝ) : ℝ :=

@@ -425,10 +425,7 @@ private theorem bilinear_jet_at (L : E →L[ℝ] F →L[ℝ] G)
         rw [hchoose]
       _ ≤ _ := mul_le_mul_of_nonneg_right
         (mul_le_mul_of_nonneg_right (pow_le_pow_right₀ (by norm_num) hj) hA) hB
-  exact hle.trans (by
-    calc
-      _ ≤ ‖L‖ * ((2 : ℝ) ^ m * A * B) := mul_le_mul_of_nonneg_left hsum (norm_nonneg L)
-      _ = _ := by ring)
+  exact hle.trans ((mul_le_mul_of_nonneg_left hsum (norm_nonneg L)).trans_eq (by ring))
 
 namespace LocalJets
 
@@ -499,7 +496,9 @@ theorem bilinear {u : ℕ → I → D → F} (hf : LocalJets s w α K f)
   intro m
   obtain ⟨A, hA, p, ha⟩ := hf.bounds m
   obtain ⟨B, hB, q, hb⟩ := hu.bounds m
-  refine ⟨‖L‖ * (2 : ℝ) ^ m * A * B, by positivity, p + q, ?_⟩
+  refine ⟨‖L‖ * (2 : ℝ) ^ m * A * B,
+    mul_nonneg (mul_nonneg (mul_nonneg (norm_nonneg L) (pow_nonneg zero_le_two m)) hA) hB,
+    p + q, ?_⟩
   intro n i x hx hi j hj
   calc
     _ ≤ ‖L‖ * (2 : ℝ) ^ m * majorant s w α A p n x * majorant s v β B q n x :=
@@ -554,21 +553,23 @@ theorem local_gaussian_tail_bound {s : StripData D} {K : ℕ → I → Set D}
   obtain ⟨A, hA, p, hb⟩ := hf.bounds m
   obtain ⟨B, hB, hweight⟩ := edges.uniform_weight p
   have hconstant := scales.constant_one_le
-  have hdec : 0 < c * ell / 25 := by positivity
+  have hdec : 0 < c * ell / 25 := div_pos (mul_pos hc hell) (by norm_num)
   obtain ⟨C, hC, hgauss⟩ := fixed_power_gaussian_bound hdec (scales.power * α)
-  refine ⟨A * B * scales.boundConstant ^ p * C, by positivity, scales.degree * p, ?_⟩
+  have hABC : 0 ≤ A * B * scales.boundConstant ^ p * C :=
+    mul_nonneg (mul_nonneg (mul_nonneg hA hB) (pow_nonneg (zero_le_one.trans hconstant) p)) hC.le
+  refine ⟨A * B * scales.boundConstant ^ p * C, hABC, scales.degree * p, ?_⟩
   intro n i x hx hi j hj
   have hQ := ChartScales.Q_pos n
   by_cases hmid : |θ n i x - 1 / 2| < 1 / 5
   · rw [jets_eq_of_germ (hzero n i x hx hi hmid) j]
     simp only [iteratedFDeriv_fun_zero, Pi.zero_apply, norm_zero]
     have hS : 0 ≤ ChartScales.S n := sq_nonneg _
-    positivity
+    exact mul_nonneg (mul_nonneg hABC (pow_nonneg (add_nonneg zero_le_one hS) _))
+      (Real.exp_pos _).le
   have htail : 1 / 5 ≤ |θ n i x - 1 / 2| := le_of_not_gt hmid
   have hsq : (1 / 25 : ℝ) ≤ (θ n i x - 1 / 2) ^ 2 := by
     have hh := pow_le_pow_left₀ (by norm_num : (0 : ℝ) ≤ 1 / 5) htail 2
-    norm_num [sq_abs] at hh ⊢
-    exact hh
+    exact (by norm_num : (1 / 25 : ℝ) = (1 / 5) ^ 2).trans_le (hh.trans_eq (sq_abs _))
   have hPg : W n x ≤ Real.exp (-(c * ell / 25) * ChartScales.S n) := by
     apply (hW n i x hx hi).trans
     apply (Real.exp_le_exp.2 ?_).trans (gaussian_length_comparison hc.le (hLell n))
@@ -583,20 +584,25 @@ theorem local_gaussian_tail_bound {s : StripData D} {K : ℕ → I → Set D}
         ((1 + ChartScales.S n) ^ (scales.degree * p) *
           Real.exp (-(c * ell / 25) * ChartScales.S n)) := by
     rw [majorant, StripData.growth, mul_pow, scales.epsilon_eq, ← Real.rpow_mul hQ.le]
+    have hAQ := mul_nonneg hA (Real.rpow_nonneg hQ.le (scales.power * α))
+    have hX := mul_nonneg hAQ (pow_nonneg hslow0 p)
     calc
       _ = (A * ChartScales.Q n ^ (scales.power * α) * s.slow n ^ p) *
           (Real.sqrt (s.zeta x) * max 1 (s.delta x)⁻¹ ^ p) * W n x := by ring
       _ ≤ (A * ChartScales.Q n ^ (scales.power * α) * s.slow n ^ p) *
           (Real.sqrt (s.zeta x) * max 1 (s.delta x)⁻¹ ^ p) *
             Real.exp (-(c * ell / 25) * ChartScales.S n) :=
-        mul_le_mul_of_nonneg_left hPg (by positivity)
+        mul_le_mul_of_nonneg_left hPg (mul_nonneg hX (mul_nonneg (Real.sqrt_nonneg _)
+          (pow_nonneg (zero_le_one.trans (le_max_left _ _)) p)))
       _ ≤ (A * ChartScales.Q n ^ (scales.power * α) * s.slow n ^ p) * B *
-            Real.exp (-(c * ell / 25) * ChartScales.S n) := by
-        gcongr
-        exact hweight x hx
+            Real.exp (-(c * ell / 25) * ChartScales.S n) :=
+        mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left (hweight x hx) hX)
+          (Real.exp_pos _).le
       _ ≤ (A * ChartScales.Q n ^ (scales.power * α) *
           (scales.boundConstant ^ p * (1 + ChartScales.S n) ^ (scales.degree * p))) * B *
-            Real.exp (-(c * ell / 25) * ChartScales.S n) := by gcongr
+            Real.exp (-(c * ell / 25) * ChartScales.S n) :=
+        mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right
+          (mul_le_mul_of_nonneg_left hslowp hAQ) hB) (Real.exp_pos _).le
       _ = _ := by ring
   calc
     _ ≤ majorant s (fun n x => Real.sqrt (s.zeta x) * W n x) α A p n x := hb n i x hx hi j hj
@@ -607,7 +613,8 @@ theorem local_gaussian_tail_bound {s : StripData D} {K : ℕ → I → Set D}
     _ ≤ (A * B * scales.boundConstant ^ p) * (1 + ChartScales.S n) ^ (scales.degree * p) *
         (C * Real.exp (-((c * ell / 25) / 2) * ChartScales.S n)) := by
       have hS : 0 ≤ ChartScales.S n := sq_nonneg _
-      exact mul_le_mul_of_nonneg_left (hgauss n) (by positivity)
+      exact mul_le_mul_of_nonneg_left (hgauss n) (mul_nonneg (mul_nonneg (mul_nonneg hA hB)
+        (pow_nonneg hK0 p)) (pow_nonneg (add_nonneg zero_le_one hS) _))
     _ = _ := by
       rw [show c * ell / 25 / 2 = c * ell / 50 by ring]
       ring

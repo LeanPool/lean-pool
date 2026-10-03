@@ -287,8 +287,9 @@ theorem realVector_norm_le (z : ComplexVector) :
         Finset.sum_le_sum (fun i _ => pow_le_pow_left₀ (norm_nonneg _) (hi i) 2)
       _ = 3 * ‖z‖ ^ 2 := by simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin,
           nsmul_eq_mul, Nat.cast_ofNat]
-  apply (sq_le_sq₀ (norm_nonneg _) (by positivity : 0 ≤ 3 * ‖z‖)).mp
-  nlinarith [sq_nonneg ‖z‖]
+  apply (sq_le_sq₀ (norm_nonneg _) (mul_nonneg (by norm_num) (norm_nonneg z))).mp
+  rw [mul_pow]
+  exact hs.trans (mul_le_mul_of_nonneg_right (by norm_num) (sq_nonneg _))
 
 /-- The literal real-vector constructor is a fixed bounded linear map.
 This provides the final codomain conversion for physical vector modes. -/

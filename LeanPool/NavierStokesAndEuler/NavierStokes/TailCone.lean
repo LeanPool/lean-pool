@@ -1920,28 +1920,28 @@ theorem actualS_finite_bounds {d : TailData} {K : ℝ} (w : ResetWitness d K)
     rw [abs_of_nonneg (postPulseEnergy_nonneg d eta)] at hsum
     have hR := ResetEnergyBounds.resetEnergy_abs_le w eta heta
     have hs := mul_le_mul_of_nonneg_right hsmall hD
-    linarith only [hsum, hR, hs, heta, postPulseEnergy_le_length d eta heta]
+    linear_combination (1 / 2) * hsum + (1 / 2) * postPulseEnergy_le_length d eta heta +
+      (1 / 2) * hR + 12 * hs
   have hSEI : |OutgoingHistories.dEta (OutgoingHistories.S w Amp) (d.core.endpoint, eta)| ≤
       (flattenLength + 12) * energyDensity d eta d.core.endpoint := by
     rw [actualS_eta_endpoint w ha eta hz, abs_mul, abs_of_pos (by norm_num : (0 : ℝ) < 1 / 2)]
     have hsum := abs_add_le (deriv (postPulseEnergy d) eta)
       (deriv (ResetEnergyBounds.resetEnergy d w.coefficients) eta)
     have hs := mul_le_mul_of_nonneg_right hsmall hD
-    linarith only [hsum, hs, heta, abs_deriv_postPulseEnergy_le d eta heta,
-        ResetEnergyBounds.resetEnergy_deriv_abs_le w eta heta]
+    linear_combination (1 / 2) * hsum + (1 / 2) * abs_deriv_postPulseEnergy_le d eta heta +
+      (1 / 2) * ResetEnergyBounds.resetEnergy_deriv_abs_le w eta heta + 12 * hs
   have hSD := abs_increment_le hy (fun t ht => actualS_after_hasDerivAt w ha eta ht.1)
     (C := 2 * energyDensity d eta d.core.endpoint) (fun t ht => by
-      rw [abs_div, abs_neg, abs_of_nonneg (mul_nonneg (Real.exp_pos _).le (sq_nonneg _))]
-      norm_num
+      rw [abs_div, abs_neg, abs_of_nonneg (mul_nonneg (Real.exp_pos _).le (sq_nonneg _)), abs_two]
       have hd := corrected_density_prefix_le w eta heta ht.1 (ht.2.trans hy')
-      linarith only [hD, hd])
+      linear_combination (1 / 2) * hd + (7 / 8) * hD)
   have hSED := abs_increment_le hy (fun t ht => actualS_eta_after_hasDerivAt w ha eta ht.1)
     (C := 12 * energyDensity d eta d.core.endpoint) (fun t ht => by
       rw [abs_mul, abs_neg, abs_of_nonneg (mul_nonneg (Real.exp_pos _).le (sq_nonneg _))]
       have hd := corrected_density_prefix_le w eta heta ht.1 (ht.2.trans hy')
       have hs := mul_le_mul_of_nonneg_left (correctedEtaSlope_abs_le w hsmall eta t)
         (mul_nonneg (Real.exp_pos t).le (sq_nonneg (OutgoingHistories.E w (t, eta))))
-      linarith only [hD, hd, hs])
+      linear_combination hs + 5 * hd + (3 / 4) * hD)
   have hlen := mul_le_mul_of_nonneg_right (show y - d.core.endpoint ≤ d.releaseStart -
       d.core.endpoint by
       linarith only [hy']) hD
@@ -1951,8 +1951,12 @@ theorem actualS_finite_bounds {d : TailData} {K : ℝ} (w : ResetWitness d K)
     (OutgoingHistories.dEta (OutgoingHistories.S w Amp) (d.core.endpoint, eta)) 0
   simp only [sub_zero] at hS hSE
   dsimp [finiteEnergyBudget]
-  constructor <;> linarith only [hD, hSI, hSD, hlen, hS, hL, hSEI, hSED, hSE,
-      mul_nonneg flattenLength_pos.le hD, mul_nonneg releaseConstant_pos.le hD, mul_nonneg hL hD]
+  have hf := mul_nonneg flattenLength_pos.le hD
+  have hr := mul_nonneg releaseConstant_pos.le hD
+  have hl := mul_nonneg hL hD
+  constructor
+  · linear_combination hS + hSD + 2 * hlen + hSI + hf + (1 / 2) * hr + (35 / 2) * hl + 28 * hD
+  · linear_combination hSE + hSED + 12 * hlen + hSEI + hr + 8 * hl + 28 * hD
 
 /-- Finite numerator budget, given by `5 * finiteEnergyBudget d + 12 *
 CorrectedPressureBounds.correctedConstant`. -/

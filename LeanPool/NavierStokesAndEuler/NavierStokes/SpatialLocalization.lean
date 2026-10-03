@@ -419,15 +419,9 @@ theorem supportCylinder_coordinate_bound {x : Space} (hx : x ∈ supportCylinder
   change (x 0) ^ 2 + (x 1) ^ 2 ≤ 1 / 16 at hr
   fin_cases i
   · change |x 0| ≤ 1 / 4
-    have hs : |x 0| ^ 2 ≤ (1 / 4 : ℝ) ^ 2 := by
-      rw [sq_abs]
-      nlinarith only [hr, sq_nonneg (x 1)]
-    nlinarith only [hs, abs_nonneg (x 0)]
+    exact abs_le_of_sq_le_sq (by linarith only [hr, sq_nonneg (x 1)]) (by norm_num)
   · change |x 1| ≤ 1 / 4
-    have hs : |x 1| ^ 2 ≤ (1 / 4 : ℝ) ^ 2 := by
-      rw [sq_abs]
-      nlinarith only [hr, sq_nonneg (x 0)]
-    nlinarith only [hs, abs_nonneg (x 1)]
+    exact abs_le_of_sq_le_sq (by linarith only [hr, sq_nonneg (x 0)]) (by norm_num)
   · exact hx.2
 
 /-- The support is strictly inside the centered fundamental period cube. -/

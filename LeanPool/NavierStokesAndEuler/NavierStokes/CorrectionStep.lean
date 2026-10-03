@@ -291,8 +291,11 @@ theorem cylindricalVectorLaplacian_add {U : Set D} (hU : IsOpen U) (R : D → �
     (((hb i).contDiffAt (hU.mem_nhds hx)).differentiableAt (by simp))
   ext i
   fin_cases i <;>
-    simp [cylindricalVectorLaplacian, angularGenerator, hL 0, hL 1, hL 2,
-      hD 0, hD 1, Complex.real_smul] <;> ring
+    simp only [cylindricalVectorLaplacian, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Fin.isValue,
+      Pi.add_apply, hL 0, hL 1, hL 2, angularGenerator, hD 0, hD 1, neg_add_rev,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, smul_add, smul_neg, smul_zero,
+      Complex.real_smul, Complex.ofReal_inv, Complex.ofReal_pow, mul_neg, mul_zero,
+      add_zero] <;> ring
 
 theorem gradient_add (R : D → ℝ) (Vr Vθ Vz : D → D)
     {p q : D → ℂ} {x : D} (hp : DifferentiableAt ℝ p x)
@@ -2489,7 +2492,8 @@ theorem signedTensorRemainder_divergence_mem {s : StripData D} {P : ℕ → D �
           := by
   have he := signedTensorRemainder_mem (γ := ExponentLedger.meanExponent σ + 17 / 100 + κ)
     primary old tangent curl N hop hot hoc hpN hoN htN hcN ho hd ht hc hp0 ho0 ht0 hc0
-    (by linarith) (by unfold ExponentLedger.waveExponent ExponentLedger.meanExponent; linarith)
+    (by linarith only [hσ, hκ])
+    (by unfold ExponentLedger.waveExponent ExponentLedger.meanExponent; linarith only [hσ, hκ])
     (by unfold ExponentLedger.waveExponent ExponentLedger.meanExponent; linarith only [hκ])
     (by unfold ExponentLedger.waveExponent ExponentLedger.meanExponent; linarith only [hσ, hκ])
     hkp hP0 hP1
@@ -2769,11 +2773,12 @@ theorem twoWaveUpdates_cumulative {s : StripData D} {P : ℕ → D → ℝ} {σ 
       finalBlock.PressureBounds s P 1 := by
   have hpbound := ExponentLedger.particular_increment_above_cumulative_difference hσ
   have hsbound := ExponentLedger.signed_increment_above_cumulative_difference hσ hκ
-  refine ⟨addBlock_waveBounds (addBlock_waveBounds ho hp (by linarith)) hs (by linarith only [
-      hsbound]), ?_, ?_⟩
+  refine ⟨addBlock_waveBounds (addBlock_waveBounds ho hp (by linarith only [hpbound])) hs
+    (by linarith only [hsbound]), ?_, ?_⟩
   · exact addBlock_differenceBounds primary (addBlock old particular) signed
       (addBlock_differenceBounds primary old particular hod hp hpbound.le) hs hsbound.le
-  · exact addBlock_pressureBounds (addBlock_pressureBounds hop hpp (by linarith)) hsp (by linarith)
+  · exact addBlock_pressureBounds (addBlock_pressureBounds hop hpp (by linarith only [hpbound])) hsp
+      (by linarith only [hsbound])
 
 end CumulativeWaveUpdates
 
@@ -4315,6 +4320,23 @@ theorem SignedParameters.Dynamics.context_linear_identity
   have he := congrArg Complex.re (congrFun (h.linear_identity hc hR n x hx) i)
   simpa only [add_mul, Complex.add_re, Pi.add_apply] using he
 
+omit [NormedAddCommGroup D] [NormedSpace ℝ D] in
+theorem SameCarrier.trans {a b c : HarmonicBlock D} (h₁ : SameCarrier a b)
+    (h₂ : SameCarrier b c) : SameCarrier a c :=
+  ⟨h₂.frequency.trans h₁.frequency, h₂.phase.trans h₁.phase, h₂.angular.trans h₁.angular⟩
+
+theorem SignedParameters.exactBlock_carrier (p : SignedParameters D) (s : StripData D)
+    (request : ℕ → D × ℝ → SignedWaveUpdate.Vec2) :
+    (p.exactBlock s request).frequency = p.base.frequency ∧
+      (p.exactBlock s request).phase = (fun n x => p.base.phase n (x, 0)) ∧
+        (p.exactBlock s request).angularFrequency = p.angularFrequency := ⟨rfl, rfl, rfl⟩
+
+theorem SignedParameters.exact_good_carrier (p : SignedParameters D) (s : StripData D)
+    (request : ℕ → D × ℝ → SignedWaveUpdate.Vec2) :
+    SameCarrier (p.exactBlock s request) (p.goodBlock s request) :=
+  ⟨(p.exactBlock_carrier s request).1.symm, (p.exactBlock_carrier s request).2.1.symm,
+    (p.exactBlock_carrier s request).2.2.symm⟩
+
 /-- The literal harmonic linear remainder has the gain proved for the
 constructed signed coefficient. No output residual class is an input. -/
 theorem SignedParameters.Dynamics.linearGood_bounds
@@ -4354,8 +4376,7 @@ theorem SignedParameters.Dynamics.linearGood_bounds
     have hh := (contDiff_fst.comp_contDiffOn he).comp
       (SignedWaveUpdate.zeroSection (D := D)).contDiff.contDiffOn (fun x hx => hx)
     exact hh
-  have hgcarrier : SameCarrier a (p.goodBlock s request) :=
-    ⟨hcarrier.frequency, hcarrier.phase, hcarrier.angular⟩
+  have hgcarrier := hcarrier.trans (p.exact_good_carrier s request)
   have hecarrier : SameCarrier a (p.gaussianBlock s request) :=
     ⟨hcarrier.frequency, hcarrier.phase, hcarrier.angular⟩
   have hcancel := linearGoodBlock_cancel_mem c a (p.exactBlock s request) zero
@@ -7057,6 +7078,8 @@ theorem cancellation_sum (hκ : κ ≤ 1 / 2)
   intro j hj i
   exact (dyn j hj).section_equation hκ n x hx i
 
+theorem updateBlock_carrier : SameCarrier b (p.updateBlock s c u b G A N) := ⟨rfl, rfl, rfl⟩
+
 include dyn in
 theorem context_linear_sum (hκ : κ ≤ 1 / 2)
     (hB : MeanIncrementBounds.SmoothTriple s.domain c.base)
@@ -7080,7 +7103,7 @@ theorem context_linear_sum (hκ : κ ≤ 1 / 2)
       (HarmonicResidual.liftDomain s.domain) := by
     rw [hu.2]
     exact ContDiffOn.sum (fun j hj => Complex.reCLM.contDiff.comp_contDiffOn (hp j hj))
-  have hcarrier : SameCarrier b (p.updateBlock s c u b G A N) := ⟨rfl,rfl,rfl⟩
+  have hcarrier := p.updateBlock_carrier s c u b G A N
   have hr : ContDiffOn ℝ ∞ (radialDirection c n) (HarmonicResidual.liftDomain s.domain) :=
     HarmonicResidual.liftDirection_smooth (hrad n)
   rw [linearBlockField_eq_real s.isOpen_domain c b (p.updateBlock s c u b G A N) n hr
@@ -7869,6 +7892,12 @@ namespace ParticularParameters
 open TorusInverse
 variable {Q : Type} [NormedAddCommGroup Q] [NormedSpace ℝ Q]
 
+theorem gain_exponents {α κ : ℝ} (hα : 7 / 10 ≤ α) (hκ : κ ≤ 1 / 100000) :
+    κ ≤ 1 / 2 ∧ α + 1 / 10 ≤ α + 9 / 10 - 1 / 2 ∧ α + 1 / 10 ≤ 1 / 2 + α - κ ∧
+      α + 1 / 10 ≤ α + α - κ ∧ α + 1 / 10 ≤ 2 * α - κ ∧ α + 1 / 10 ≤ α + 1 / 2 - 3 * κ :=
+  ⟨by linarith only [hκ], by linarith only, by linarith only [hκ], by linarith only [hα, hκ],
+    by linarith only [hα, hκ], by linarith only [hκ]⟩
+
 theorem residual_gain_local
     (p : ParticularParameters Q) (s : StripData (Q × Plane))
     (c : Context (Q × Plane)) (u v : State (Q × Plane)) (hmean : v.mean = u.mean)
@@ -7901,7 +7930,7 @@ theorem residual_gain_local
       (HarmonicWaveInteraction.addBlock b (p.updateBlock s c u b G A N))
       (G + (p.gaussianBlock c u b G A N).velocity) A).WaveBounds
       s (fun n x => W n (angleShuffle (x,0))) (α + 1/10) := by
-  have hκhalf : κ ≤ 1/2 := by linarith only [hκ]
+  obtain ⟨hκhalf, hγm, hγc, hγs, -, hmono⟩ := gain_exponents hα hκ
   have hbounds := p.assembled_bounds s c u b G A N C hW hκhalf
   have hzmode : HarmonicWaveInteraction.ZeroMode (p.updateBlock s c u b G A N) :=
     (assembledBlock_zero _ _ _ _ _ _).1
@@ -7909,7 +7938,7 @@ theorem residual_gain_local
     (assembledBlock_zero _ _ _ _ _ _).2
   have hnewdiv : HarmonicWaveInteraction.ModeSolenoidal s c
       (HarmonicWaveInteraction.withCarrier b (p.updateBlock s c u b G A N)) := by
-    rw [withCarrier_of_same (show SameCarrier b (p.updateBlock s c u b G A N) from ⟨rfl,rfl,rfl⟩)]
+    rw [withCarrier_of_same (p.updateBlock_carrier s c u b G A N)]
     exact p.modeSolenoidal s c u b G A N C dyn hκhalf hW hm hphase hkp
   apply waveStage_residual_mem_local c ho hκhalf hR u v hmean (meanIncrement_of_cumulative hu)
     hb.smooth b (p.updateBlock s c u b G A N) hold hbounds.1 hold0 hzmode holdBand
@@ -7917,11 +7946,10 @@ theorem residual_gain_local
     (fun n x hx => hW n _ hx) hWone hpress (pressureBounds_smooth hbounds.2.1 hzpress)
     G (p.gaussianBlock c u b G A N).velocity A A
     (fun n i => by
-        rw [sub_self]; exact HarmonicResidual.band_zero _) _ (by
-            linarith only) (by linarith only [hκ]) (by linarith only [hα, hκ])
+        rw [sub_self]; exact HarmonicResidual.band_zero _) _ hγm hγc hγs
   intro i j hj
   exact (p.linearGood_bounds s c u b G A N C dyn hκhalf hsourceBand hb.smooth
-    (operator_radial_smooth ho) hm hphase hkp hW i j hj).mono_exponent (by linarith only [hκ])
+    (operator_radial_smooth ho) hm hphase hkp hW i j hj).mono_exponent hmono
 
 end ParticularParameters
 
@@ -8789,15 +8817,14 @@ theorem uniform_residual_gain {W : ι → ℕ → (Q × ℝ) × Plane → ℝ} {
       (fun l => HarmonicResidual.residualBlock c v
         (HarmonicWaveInteraction.addBlock (b l) ((p l).updateBlock s c u (b l) (G l) (A l) N))
         (G l + ((p l).gaussianBlock c u (b l) (G l) (A l) N).velocity) (A l)) := by
-  have hkhalf : κ ≤ 1/2 := by linarith only [hκ]
+  obtain ⟨hkhalf, hγm, hγc, -, hγs, hmono⟩ := gain_exponents hα hκ
   have hblocks := uniform_assembled_bounds p s c u b G A N hW hcopy hpressure hgood
   have hlin := uniform_linearGood_bounds p s c u b G A N C dyn hkhalf hW hblocks.2.2
     hsource hb.smooth (operator_radial_smooth ho) hm hphase hkp
   have hnewdiv l : HarmonicWaveInteraction.ModeSolenoidal s c
       (HarmonicWaveInteraction.withCarrier (b l) ((p l).updateBlock s c u (b l) (G l) (A l) N)) :=
           by
-    rw [withCarrier_of_same (show SameCarrier (b l) ((p l).updateBlock s c u (b l) (G l) (A l) N)
-        from ⟨rfl,rfl,rfl⟩)]
+    rw [withCarrier_of_same ((p l).updateBlock_carrier s c u (b l) (G l) (A l) N)]
     exact (p l).modeSolenoidal s c u (b l) (G l) (A l) N (C l) (dyn l) hkhalf (hW l) (hm l) (hphase
         l) (hkp l)
   exact waveStage_residual_uniform c ho hkhalf hR u v hmean (meanIncrement_of_cumulative hu)
@@ -8808,8 +8835,7 @@ theorem uniform_residual_gain {W : ι → ℕ → (Q × ℝ) × Plane → ℝ} {
     (fun l n x hx => hW l n _ hx) hWone hpold (fun l n j => (hblocks.2.1 j).smooth l n)
     G (fun l => ((p l).gaussianBlock c u (b l) (G l) (A l) N).velocity) A A
     (fun _ _ _ => by rw [sub_self]; exact HarmonicResidual.band_zero _)
-    (fun i j hj => (hlin i j hj).mono_exponent (by linarith only [hκ]))
-    (by linarith only) (by linarith only [hκ]) (by linarith only [hα, hκ])
+    (fun i j hj => (hlin i j hj).mono_exponent hmono) hγm hγc hγs
 
 end ParticularParameters
 

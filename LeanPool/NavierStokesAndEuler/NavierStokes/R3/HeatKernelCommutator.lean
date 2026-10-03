@@ -109,12 +109,10 @@ private theorem heatSecondTest_eq_integral (s : ℝ) (i j : Fin 3)
       ∫ ξ : Space, heatSecondSymbol s i j ξ •
         (Real.fourierChar ⟪ξ, x⟫ • (FourierTransform.fourierCLE ℂ ComplexTest ψ) ξ) := by
   rw [heatSecondTest, Real.fourierInv_eq]
-  rw [show EulerSobolev.schwartzFourier (V := Space) (E := ℂ) =
-      (FourierTransform.fourierCLE ℂ ComplexTest : ComplexTest → ComplexTest) from rfl]
   apply integral_congr_ae
   filter_upwards [] with ξ
   simp only [Circle.smul_def, smul_eq_mul, Algebra.smul_def, realAlgebraMap_apply]
-  ring
+  exact mul_left_comm _ _ _
 
 private theorem integrable_heatFourierProduct (i j : Fin 3) (ψ : ComplexTest)
     (x : Space) :

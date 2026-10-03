@@ -534,7 +534,7 @@ theorem next_fullDivergence
     n (H.domain hx.1).2 (H.domain hx.1).1.ne' x.2 du₂
   have hr := ActualInitialMeanEquation.rankStage_fullDivergence_local hgt H.length
     p.axial slowTime temporal hop n (H.domain hx.1).2 (H.domain hx.1).1.ne' x.2 dut
-  exact hr.trans (ht.trans (hw₂.trans hw₁))
+  apply hr.trans (ht.trans (hw₂.trans hw₁))
 
 /-- The complete primitive mean-PDE hypotheses are preserved by the
 actual four updates, including pressure reconstruction and error refresh. -/

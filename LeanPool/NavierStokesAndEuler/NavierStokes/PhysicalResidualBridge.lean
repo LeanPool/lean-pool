@@ -178,13 +178,14 @@ theorem graphResidual_eq_cylindrical {U : Set SpaceTime}
       _ = (along LinearWaveResidual.physicalTimeDirection a (t, q)) j :=
         LinearWaveResidual.along_map (AxisymmetricFields.projection j) _ had
       _ = _ := congrArg (fun v : Space => v j) (LinearWaveResidual.along_time_slice had)
+  have hps := LinearWaveResidual.along_space_slice hpd
   ext i
   fin_cases i <;>
     simp only [graphResidual, Fin.zero_eta, Fin.isValue, htime, LinearWaveResidual.realTransport,
         hfirst, LinearWaveResidual.coordinateRadius, LinearWaveResidual.realAngularGenerator,
         Matrix.cons_val_zero, LinearWaveResidual.realFrameLaplacian, hLap, mul_neg,
         Matrix.cons_val_one, one_mul, Nat.succ_eq_add_one, Nat.reduceAdd,
-        LinearWaveResidual.along_space_slice hpd, CylindricalResidual.cylindricalResidual,
+        hps, CylindricalResidual.cylindricalResidual,
         CylindricalResidual.vectorAdvection, CylindricalResidual.connection_apply, smul_add,
         CylindricalResidual.vectorLaplacian, AxisymmetricResidual.pack_one,
         AxisymmetricResidual.pack_zero, CylindricalResidual.scalarGradient, PiLp.add_apply,

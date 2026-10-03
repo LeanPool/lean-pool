@@ -837,7 +837,9 @@ theorem exists_actual_signed_control
   have hb := hr.copied_coefficients_jets copy scale normal clock base dirs
     (LocalSignedRequest.fullRequest s P coord ctx u) hζ
     (fullRequest_localJets s P coord ctx u hrequest K) hW j henv hnormal hfrequency
-  exact ⟨⟨hr.nativeCovariance copy scale hζ⟩, hb.1, hb.2, copy.unweighted hr.cutoff_jets⟩
+  refine ⟨⟨hr.nativeCovariance copy scale hζ⟩, ?_, ?_, copy.unweighted hr.cutoff_jets⟩
+  · apply hb.1
+  · apply hb.2
 
 end Combined
 
@@ -1953,12 +1955,12 @@ theorem periodicPhase_differentiableAt (l : SlotColoring.Label) (gap : ℕ)
         WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hchi : DifferentiableAt ℝ (fun y : Cylinder =>
       ((y.1.1, y.1.2.1), (y.2, PeriodicPhaseAssembly.periodicClock
-        (slotGeometry sys vectors_det l gap) (clockWindow sys l.1).cutoff y.1.2.2))) x :=
-    (differentiableAt_fst.fst.prodMk differentiableAt_fst.snd.fst).prodMk
-      (differentiableAt_snd.prodMk (hc.differentiableAt.comp x differentiableAt_fst.snd.snd))
-  exact (PrimaryMaterialDefect.differentiableAt_phase epsilon p pz x0 F G
-    ((x.1.1, x.1.2.1), (x.2, PeriodicPhaseAssembly.periodicClock
-      (slotGeometry sys vectors_det l gap) (clockWindow sys l.1).cutoff x.1.2.2)) hF hG).comp x hchi
+        (slotGeometry sys vectors_det l gap) (clockWindow sys l.1).cutoff y.1.2.2))) x := by
+    fun_prop
+  exact DifferentiableAt.comp x (f := fun y : Cylinder =>
+      ((y.1.1, y.1.2.1), (y.2, PeriodicPhaseAssembly.periodicClock
+        (slotGeometry sys vectors_det l gap) (clockWindow sys l.1).cutoff y.1.2.2)))
+    (PrimaryMaterialDefect.differentiableAt_phase epsilon p pz x0 F G _ hF hG) hchi
 
 theorem periodicPhase_normal_germ (hh : 0 ≤ h) {l : SlotColoring.Label} (hl : 4 ≤ l.1)
     (gap i : ℕ) {Q : ℝ} (hQ : 0 < Q) (p pz x0 : ℝ) (F G : Slow → ℝ)

@@ -1787,8 +1787,8 @@ private theorem norm_fderiv_apply_le {φ : Space → ℝ} {w : Space → Space} 
       ‖fderiv ℝ φ x‖ * ‖fderiv ℝ w x‖ + ‖fderiv ℝ (fderiv ℝ φ) x‖ * ‖w x‖ := by
   have hflip : ‖(fderiv ℝ (fderiv ℝ φ) x).flip (w x)‖ ≤
       ‖fderiv ℝ (fderiv ℝ φ) x‖ * ‖w x‖ := by
-    apply ContinuousLinearMap.opNorm_le_bound _ (by positivity)
-    intro z
+    refine ContinuousLinearMap.opNorm_le_bound _
+      (mul_nonneg (ContinuousLinearMap.opNorm_nonneg _) (norm_nonneg _)) fun z => ?_
     change ‖fderiv ℝ (fderiv ℝ φ) x z (w x)‖ ≤ _
     calc
       _ ≤ ‖fderiv ℝ (fderiv ℝ φ) x z‖ * ‖w x‖ :=
@@ -1797,9 +1797,8 @@ private theorem norm_fderiv_apply_le {φ : Space → ℝ} {w : Space → Space} 
         mul_le_mul_of_nonneg_right ((fderiv ℝ (fderiv ℝ φ) x).le_opNorm z)
           (norm_nonneg _)
       _ = _ := by ring
-  rw [fderiv_clm_apply hφ hw]
-  exact (norm_add_le _ _).trans
-    (add_le_add (ContinuousLinearMap.opNorm_comp_le _ _) hflip)
+  exact (congrArg (‖·‖) (fderiv_clm_apply hφ hw)).trans_le ((norm_add_le _ _).trans
+    (add_le_add (ContinuousLinearMap.opNorm_comp_le _ _) hflip))
 
 /-- Product differentiation before replacing the cutoff derivative norms by constants. -/
 theorem norm_fderiv_r_le_raw {φ : Space → ℝ} {w : Space → Space}
@@ -1823,20 +1822,13 @@ theorem norm_fderiv_r_le_raw {φ : Space → ℝ} {w : Space → Space}
     have heq : fderiv ℝ (fun y => φ y ^ 5) x = (5 * φ x ^ 4) • fderiv ℝ φ x := by
       simpa only [Function.comp_def, Nat.cast_ofNat, Nat.reduceSub] using
         ((hasDerivAt_pow 5 (φ x)).comp_hasFDerivAt x hdφ.hasFDerivAt).fderiv
-    rw [heq]
-    calc
-      _ ≤ ‖(5 : ℝ) * φ x ^ 4‖ * ‖fderiv ℝ φ x‖ :=
-        ContinuousLinearMap.opNorm_smul_le (5 * φ x ^ 4) (fderiv ℝ φ x)
-      _ = _ := by rw [Real.norm_of_nonneg (by positivity : 0 ≤ 5 * φ x ^ 4)]
+    rw [heq, norm_smul, Real.norm_of_nonneg (mul_nonneg (by norm_num) (pow_nonneg hφ0 4))]
   have hq : ‖q x‖ ≤ ‖fderiv ℝ φ x‖ * ‖w x‖ := (fderiv ℝ φ x).le_opNorm _
-  have hDq : ‖fderiv ℝ q x‖ ≤ ‖fderiv ℝ φ x‖ * ‖fderiv ℝ w x‖ +
-      ‖fderiv ℝ (fderiv ℝ φ) x‖ * ‖w x‖ := norm_fderiv_apply_le hdDφ hdw
+  have hDq := norm_fderiv_apply_le hdDφ hdw
   calc
     ‖fderiv ℝ (r φ w) x‖ ≤ 8 * ‖fderiv ℝ (fun y => φ y ^ 5 * q y) x‖ := by
-      rw [hr, fderiv_const_mul (a := fun y => φ y ^ 5 * q y) ((hdφ.pow 5).mul hdq) 8]
-      exact (ContinuousLinearMap.opNorm_smul_le (8 : ℝ)
-        (fderiv ℝ (fun y => φ y ^ 5 * q y) x)).trans_eq
-        (by rw [Real.norm_of_nonneg (by norm_num : (0 : ℝ) ≤ 8)])
+      rw [hr, fderiv_const_mul (a := fun y => φ y ^ 5 * q y) ((hdφ.pow 5).mul hdq) 8,
+        norm_smul, Real.norm_of_nonneg (by norm_num : (0 : ℝ) ≤ 8)]
     _ ≤ 8 * (φ x ^ 5 * ‖fderiv ℝ q x‖ +
         ‖q x‖ * ‖fderiv ℝ (fun y => φ y ^ 5) x‖) := by
       apply mul_le_mul_of_nonneg_left _ (by norm_num)
@@ -1860,8 +1852,7 @@ theorem norm_fderiv_r_le_amplitude {φ : Space → ℝ} {w : Space → Space}
         (40 * L ^ 2 + 8 * J) * ‖w x‖ := by
   have hp4 : φ x ^ 4 ≤ 1 := pow_le_one₀ hφ0 hφ1
   have hp5 : φ x ^ 5 ≤ 1 := pow_le_one₀ hφ0 hφ1
-  have hp54 : φ x ^ 5 ≤ φ x ^ 4 := by
-    nlinarith only [hφ1, hφ0, mul_le_mul_of_nonneg_left hφ1 (pow_nonneg hφ0 4)]
+  have hp54 : φ x ^ 5 ≤ φ x ^ 4 := pow_le_pow_of_le_one hφ0 hφ1 (by norm_num)
   have hgrad := GradientOperator.norm_fderiv_le_three_mul_sqrt_gradientSq w x
   have h1 : φ x ^ 5 * ‖fderiv ℝ φ x‖ * ‖fderiv ℝ w x‖ ≤
       3 * L * WeightedSobolev.cutoffGradientAmplitude φ w x := by
@@ -1870,10 +1861,8 @@ theorem norm_fderiv_r_le_amplitude {φ : Space → ℝ} {w : Space → Space}
         mul_le_mul (mul_le_mul hp54 hL (norm_nonneg _) (pow_nonneg hφ0 4)) hgrad
           (norm_nonneg _) (mul_nonneg (pow_nonneg hφ0 4) hL0)
       _ = _ := by unfold WeightedSobolev.cutoffGradientAmplitude; ring
-  have h2 : φ x ^ 5 * ‖fderiv ℝ (fderiv ℝ φ) x‖ * ‖w x‖ ≤ J * ‖w x‖ := by
-    apply mul_le_mul_of_nonneg_right _ (norm_nonneg _)
-    simpa only [one_mul] using
-      mul_le_mul hp5 hJ (norm_nonneg (fderiv ℝ (fderiv ℝ φ) x)) zero_le_one
+  have h2 := mul_le_mul_of_nonneg_right
+    ((mul_le_mul hp5 hJ (norm_nonneg _) zero_le_one).trans_eq (one_mul J)) (norm_nonneg (w x))
   have hsquare : ‖fderiv ℝ φ x‖ ^ 2 ≤ L ^ 2 :=
     pow_le_pow_left₀ (norm_nonneg _) hL 2
   have h3 : 5 * φ x ^ 4 * ‖fderiv ℝ φ x‖ ^ 2 * ‖w x‖ ≤
@@ -1909,7 +1898,8 @@ theorem memLp_and_lpNorm_fderiv_r_two_le {φ : Space → ℝ} {w : Space → Spa
   have hG24 : MemLp (fun x => (24 * L) • G x) 2 volume := hG.const_smul (24 * L)
   have hw40 : MemLp (fun x => (40 * L ^ 2 + 8 * J) • ‖w x‖) 2 volume :=
     hw2.norm.const_mul (40 * L ^ 2 + 8 * J)
-  have hc : 0 ≤ 40 * L ^ 2 + 8 * J := by positivity
+  have hc : 0 ≤ 40 * L ^ 2 + 8 * J :=
+    add_nonneg (mul_nonneg (by norm_num) (sq_nonneg L)) (mul_nonneg (by norm_num) hJ0)
   refine ⟨memLp_fderiv_r hφ hs hw 2, ?_⟩
   calc
     comparisonLpNorm 2 (fderiv ℝ (r φ w)) ≤
@@ -1918,10 +1908,10 @@ theorem memLp_and_lpNorm_fderiv_r_two_le {φ : Space → ℝ} {w : Space → Spa
       intro x
       have hp := norm_fderiv_r_le_amplitude hφ hw x (hφ0 x) (hφ1 x) hL0 (hL x) (hJ x)
       simpa only [Pi.add_apply, smul_eq_mul, Real.norm_eq_abs,
-        abs_of_nonneg (show 0 ≤ (24 * L) * G x + (40 * L ^ 2 + 8 * J) * ‖w x‖ by
-          have := WeightedSobolev.cutoffGradientAmplitude_nonneg φ w x
-          dsimp [G] at *
-          positivity)] using hp
+        abs_of_nonneg (show 0 ≤ (24 * L) * G x + (40 * L ^ 2 + 8 * J) * ‖w x‖ from
+          add_nonneg (mul_nonneg (mul_nonneg (by norm_num) hL0)
+            (WeightedSobolev.cutoffGradientAmplitude_nonneg φ w x))
+            (mul_nonneg hc (norm_nonneg _)))] using hp
     _ ≤ comparisonLpNorm 2 (fun x => (24 * L) • G x) +
         comparisonLpNorm 2 (fun x => (40 * L ^ 2 + 8 * J) • ‖w x‖) :=
       LpNormTools.lpNorm_add_le (by norm_num) hG24 hw40
@@ -2483,12 +2473,10 @@ theorem weighted_tensorDiff_bound {φ : Space → ℝ} {u v : VelocityField} {t 
       apply LpNormTools.lpNorm_mono_of_norm_le (h2P.add hQ)
       intro x
       change ‖φ x ^ 2 * tensorDiff u v t i j x‖ ≤ ‖2 * P x + Q x‖
-      have hn : ‖2 * P x + Q x‖ = 2 * P x + Q x := by
-        rw [Real.norm_eq_abs, abs_of_nonneg]
-        dsimp [P, Q]
-        positivity
-      rw [hn]
-      exact norm_weighted_tensorDiff_le u v t i j x (hφ0 x) (hφ1 x)
+      have hn : ‖2 * P x + Q x‖ = 2 * P x + Q x :=
+        Real.norm_of_nonneg (add_nonneg (mul_nonneg zero_le_two
+          (mul_nonneg (norm_nonneg _) (norm_nonneg _))) (sq_nonneg _))
+      exact (norm_weighted_tensorDiff_le u v t i j x (hφ0 x) (hφ1 x)).trans_eq hn.symm
     _ ≤ comparisonLpNorm (6 / 5) (fun x => (2 : ℝ) • P x) + comparisonLpNorm (6 / 5) Q :=
       LpNormTools.lpNorm_add_le (by
         apply (ENNReal.toReal_le_toReal ENNReal.one_ne_top six_fifths_ne_top).mp
@@ -2501,7 +2489,7 @@ theorem weighted_tensorDiff_bound {φ : Space → ℝ} {u v : VelocityField} {t 
         comparisonLpNorm 2 (fun x => (u - v) (t, x)) ^ (3 / 2 : ℝ) *
           comparisonLpNorm 6 (fun x => φ x ^ 4 • (u - v) (t, x)) ^ (1 / 2 : ℝ) +
         2 * comparisonLpNorm 2 (fun x => (u - v) (t, x)) * comparisonLpNorm 3 (fun x => u (t, x))
-      nlinarith only [hPb, hQb]
+      linarith only [hPb, hQb]
 
 end NavierStokesR3.LocalizedTensorBounds
 
@@ -2928,16 +2916,17 @@ theorem uniform_expression_bound {C₁ C₂ M₀ U₀ G₀ M U G A B R : ℝ}
   have hM₀p := Real.rpow_nonneg hM₀ (3 / 2 : ℝ)
   have hM₀p₄ := Real.rpow_nonneg hM₀ (1 / 4 : ℝ)
   have hRp := Real.rpow_nonneg hR.le (-(7 / 4 : ℝ))
+  have hm0 : 0 ≤ 2 * M₀ := mul_nonneg zero_le_two hM₀
+  have hm0u0 : 0 ≤ 2 * M₀ * U₀ := mul_nonneg hm0 hU₀
   have hMU : 2 * M * U ≤ 2 * M₀ * U₀ :=
-    mul_le_mul (mul_le_mul_of_nonneg_left hMM (by norm_num)) hUU hU (by positivity)
+    mul_le_mul (mul_le_mul_of_nonneg_left hMM zero_le_two) hUU hU hm0
   have hT : M ^ (3 / 2 : ℝ) * B ^ (1 / 2 : ℝ) + 2 * M * U ≤
       (M₀ ^ (3 / 2 : ℝ) + 2 * M₀ * U₀) * (B ^ (1 / 2 : ℝ) + 1) := by
     have h := add_le_add (mul_le_mul_of_nonneg_right hMp hB₁) hMU
-    have hm0u0 : 0 ≤ 2 * M₀ * U₀ := by positivity
     exact h.trans (by simpa only [mul_one] using
       sum_products_le_product_sums hM₀p hm0u0 hB₁ zero_le_one)
   have hAR : 0 ≤ A / R := div_nonneg hA hR.le
-  have hInv : 0 ≤ 1 / R ^ 2 := by positivity
+  have hInv : 0 ≤ 1 / R ^ 2 := div_nonneg zero_le_one (sq_nonneg R)
   have hD : A / R + M / R ^ 2 ≤ (M₀ + 1) * (A / R + 1 / R ^ 2) := by
     have hdiv := (div_le_div_iff_of_pos_right (sq_pos_of_pos hR)).2 hMM
     have hdiv' : M / R ^ 2 ≤ M₀ * (1 / R ^ 2) := by simpa only [mul_one_div] using hdiv
@@ -2951,7 +2940,9 @@ theorem uniform_expression_bound {C₁ C₂ M₀ U₀ G₀ M U G A B R : ℝ}
     calc
       _ ≤ (C₁ * ((M₀ ^ (3 / 2 : ℝ) + 2 * M₀ * U₀) * (B ^ (1 / 2 : ℝ) + 1))) *
           ((M₀ + 1) * (A / R + 1 / R ^ 2)) :=
-        mul_le_mul (mul_le_mul_of_nonneg_left hT hC₁) hD (by positivity) (by positivity)
+        mul_le_mul (mul_le_mul_of_nonneg_left hT hC₁) hD
+          (add_nonneg hAR (div_nonneg hM (sq_nonneg R)))
+          (mul_nonneg hC₁ (mul_nonneg (add_nonneg hM₀p hm0u0) (add_nonneg hB₁ zero_le_one)))
       _ = _ := by ring
   have hcoeff : C₂ * G * M ^ (1 / 4 : ℝ) ≤ C₂ * G₀ * M₀ ^ (1 / 4 : ℝ) :=
     mul_le_mul (mul_le_mul_of_nonneg_left hGG hC₂) hMp₄
@@ -2961,9 +2952,11 @@ theorem uniform_expression_bound {C₁ C₂ M₀ U₀ G₀ M U G A B R : ℝ}
     calc
       _ = (C₂ * G * M ^ (1 / 4 : ℝ)) * (R ^ (-(7 / 4 : ℝ)) * B ^ (3 / 4 : ℝ)) := by ring
       _ ≤ _ := mul_le_mul_of_nonneg_right hcoeff (mul_nonneg hRp hB₃)
-  have hK₁ : 0 ≤ C₁ * (M₀ ^ (3 / 2 : ℝ) + 2 * M₀ * U₀) * (M₀ + 1) := by positivity
-  have hK₂ : 0 ≤ C₂ * G₀ * M₀ ^ (1 / 4 : ℝ) := by positivity
-  have hE₁ : 0 ≤ (B ^ (1 / 2 : ℝ) + 1) * (A / R + 1 / R ^ 2) := by positivity
+  have hK₁ : 0 ≤ C₁ * (M₀ ^ (3 / 2 : ℝ) + 2 * M₀ * U₀) * (M₀ + 1) :=
+    mul_nonneg (mul_nonneg hC₁ (add_nonneg hM₀p hm0u0)) (add_nonneg hM₀ zero_le_one)
+  have hK₂ : 0 ≤ C₂ * G₀ * M₀ ^ (1 / 4 : ℝ) := mul_nonneg (mul_nonneg hC₂ hG₀) hM₀p₄
+  have hE₁ : 0 ≤ (B ^ (1 / 2 : ℝ) + 1) * (A / R + 1 / R ^ 2) :=
+    mul_nonneg (add_nonneg hB₁ zero_le_one) (add_nonneg hAR hInv)
   have hE₂ : 0 ≤ R ^ (-(7 / 4 : ℝ)) * B ^ (3 / 4 : ℝ) := mul_nonneg hRp hB₃
   unfold uniformCoefficient
   exact (add_le_add hlocal hcomm).trans (sum_products_le_product_sums hK₁ hK₂ hE₁ hE₂)

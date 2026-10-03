@@ -742,7 +742,11 @@ theorem axisymmetricVelocity_components (B F U : Profile) (q : ProfilePoint) (θ
     AxisymmetricResidual.componentY, AxisymmetricResidual.lift]
   rw [profilePoint_polarSpace]
   simp only [polarSpace, AxisymmetricResidual.pack_zero, AxisymmetricResidual.pack_one]
-  convert! he using 2 <;> ring_nf
+  convert! he using 2
+  · exact congrArg₂ (fun u w => AxisymmetricResidual.pack u w (U (polarProfile q)))
+      (by ring) (by ring)
+  · exact neg_mul_comm _ _
+  · rw [neg_mul_neg]
 
 /-- The literal Cartesian Navier--Stokes residual, expressed in its cylindrical
 frame. This is not an independently specified error oracle. -/

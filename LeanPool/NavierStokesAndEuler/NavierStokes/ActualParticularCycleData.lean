@@ -478,14 +478,13 @@ theorem native_action_match (x : CycleState (Label B N0)) (l : Label B N0)
   have hfg := ActualPrimaryDynamics.frequency_germ l.1 l.2 n k (x := q) hR hT
   have hgg := ActualPrimaryDynamics.axial_germ l.1 l.2 n k (x := q) hT
   obtain ⟨hFr,hGr⟩ := ActualPrimaryDynamics.native_base_differentiable l.1 l.2 n k (x := q) hR hT
+  have hc := (ActualPrimaryDynamics.copyPoint_hasFDerivAt l.1 l.2 n k q).fst.differentiableAt
   have hF : DifferentiableAt ℝ (a.frequencyBase n) q :=
-    ((hFr.comp q (ActualPrimaryDynamics.copyPoint_hasFDerivAt l.1 l.2 n k
-        q).fst.differentiableAt).const_mul
-      (ActualPrimaryDynamics.clockScale l.2 n)).congr_of_eventuallyEq hfg
+    ((DifferentiableAt.comp (f := fun y => (ActualPrimaryDynamics.copyPoint l.1 l.2 n k y).1) q
+      hFr hc).const_mul (ActualPrimaryDynamics.clockScale l.2 n)).congr_of_eventuallyEq hfg
   have hG : DifferentiableAt ℝ (a.axialBase n) q :=
-    ((hGr.comp q (ActualPrimaryDynamics.copyPoint_hasFDerivAt l.1 l.2 n k
-        q).fst.differentiableAt).const_mul
-      (ActualPrimaryDynamics.velocityScale l.2 n)).congr_of_eventuallyEq hgg
+    ((DifferentiableAt.comp (f := fun y => (ActualPrimaryDynamics.copyPoint l.1 l.2 n k y).1) q
+      hGr hc).const_mul (ActualPrimaryDynamics.velocityScale l.2 n)).congr_of_eventuallyEq hgg
   have hr : LinearWaveResidual.shear ((data x l j).background.radius n)
       ((data x l j).background.frequencyBase n) ((data x l j).background.axialBase n)
       ((directions (B := B)).radialField n) (fun _ => CurlClassBounds.complexify v) z =
@@ -942,7 +941,7 @@ theorem selected_principal {x : CycleState (Label B N0)} (Hc : PreservesCarriers
       (selectedBackground e x j ()).normal (modalStrip e) (selectedDirections e) q z =
         (data x (selectedLabel e q) j).background.normal
           (ParticularParameters.nativeStrip associatedStrip) (directions (B := B))
-          (selectedBand e q) z := rfl
+          (selectedBand e q) z := by rfl
   have hN : (selectedBackground e x j ()).normal (modalStrip e) (selectedDirections e) q z =
       (selectedTangent e x j () q).normal
         (ParticularWaveBounds.nativePoint (selectedGeometry e () q) k z) := by
@@ -969,7 +968,7 @@ theorem selected_principal {x : CycleState (Label B N0)} (Hc : PreservesCarriers
     (fun r => ScaledActualParticularControl.length_pos (selectedConstruction e) (selectedClock e)
         () r)
     hr hi q k hz hcell hfreq hN hδ hfast hA
-  exact result
+  apply result
 
 theorem controlPatch_geometry (x : CycleState (Label B N0)) (l : Label B N0)
     (n : ℕ) (k : Frequency) {z : Native} (hz : z ∈ controlPatch l n k) :
@@ -1539,22 +1538,18 @@ theorem update_smooth {x : CycleState (Label B N0)} (Hc : PreservesCarriers x)
     change ContDiffOn ℝ ∞ ((∑ j ∈ modes N,
       ErrorHarmonics.conjugatePair j (fun z => (actualWave x l j).amplitude n (angleShuffle (z,0))
           i)) m) _
-    rw [AddMonoidAlgebra.coeff_sum, Finsupp.finsetSum_apply]
-    convert! ContDiffOn.sum (fun j h => pair_smooth
+    rw [AddMonoidAlgebra.coeff_sum, Finsupp.finsetSum_apply, Finset.sum_fn]
+    exact ContDiffOn.sum (fun j h => pair_smooth
       ((contDiffOn_pi.mp (common_smooth Hc j (hj j h) (Hs j h) l (S j h) n).1 i).comp
-        hsection.contDiffOn hmap) j m) using 1
-    ext y
-    simp only [Finset.sum_apply, Function.comp_def]
+        hsection.contDiffOn hmap) j m)
   · intro m
     change ContDiffOn ℝ ∞ ((∑ j ∈ modes N,
       ErrorHarmonics.conjugatePair j (fun z => (actualWave x l j).pressure n (angleShuffle (z,0))))
           m) _
-    rw [AddMonoidAlgebra.coeff_sum, Finsupp.finsetSum_apply]
-    convert! ContDiffOn.sum (fun j h => pair_smooth
+    rw [AddMonoidAlgebra.coeff_sum, Finsupp.finsetSum_apply, Finset.sum_fn]
+    exact ContDiffOn.sum (fun j h => pair_smooth
       ((common_smooth Hc j (hj j h) (Hs j h) l (S j h) n).2.comp
-        hsection.contDiffOn hmap) j m) using 1
-    ext y
-    simp only [Finset.sum_apply, Function.comp_def]
+        hsection.contDiffOn hmap) j m)
 
 /-- Source classes type used in actual particular dynamics. -/
 abbrev SourceClasses (x : CycleState (Label B N0)) (N : ℕ) (α : ℝ) : Prop :=
@@ -1828,6 +1823,14 @@ theorem linearBlockField_pull {D E : Type} [NormedAddCommGroup D] [NormedSpace �
     hr, hz, ht, hb]
   exact congrArg (fun f => fun i => (f i).re) he
 
+theorem assembly_residualBlock (x : CycleState (Label B N0)) (l : Label B N0) :
+    HarmonicResidual.residualBlock (assembly x l).context (assembly x l).state
+        (assembly x l).carrierBlock (assembly x l).gaussianInput (assembly x l).aliasInput =
+      StateReindex.block cycleAssoc.symm (HarmonicResidual.residualBlock
+        (ActualPrimary.commonContext B) x.state (x.coefficients.blocks l)
+        (x.coefficients.gaussian l) (x.coefficients.aliasCoefficients l)) :=
+  StateReindex.residualBlock_pull _ _ _ _ _ _
+
 theorem cycle_context_linear_cancellation {x : CycleState (Label B N0)} (Hc : PreservesCarriers x)
     (hs : ActualParticularStageControls.InputSupport x)
     (hN : ActualCarrierGeometry.geometricThreshold ≤ N0)
@@ -1848,14 +1851,7 @@ theorem cycle_context_linear_cancellation {x : CycleState (Label B N0)} (Hc : Pr
   have hBand' : (HarmonicResidual.residualBlock (assembly x l).context (assembly x l).state
       (assembly x l).carrierBlock (assembly x l).gaussianInput (assembly x
           l).aliasInput).BandLimited N := by
-    change (HarmonicResidual.residualBlock (StateReindex.context cycleAssoc.symm
-        (ActualPrimary.commonContext B))
-      (StateReindex.state cycleAssoc.symm x.state) (StateReindex.block cycleAssoc.symm
-          (x.coefficients.blocks l))
-      (StateReindex.blockCoefficients cycleAssoc.symm (x.coefficients.gaussian l))
-      (StateReindex.blockCoefficients cycleAssoc.symm (x.coefficients.aliasCoefficients
-          l))).BandLimited N
-    rw [StateReindex.residualBlock_pull]
+    rw [assembly_residualBlock]
     exact StateReindex.block_bandLimited cycleAssoc.symm hBand
   have hz' : (StateReindex.cylinder cycleAssoc z).1 ∈ associatedStrip.domain := by
     change cycleAssoc.symm (cycleAssoc z.1) ∈
@@ -1879,14 +1875,7 @@ theorem cycle_context_linear_cancellation {x : CycleState (Label B N0)} (Hc : Pr
       (HarmonicResidual.residualBlock (ActualPrimary.commonContext B) x.state
         (x.coefficients.blocks l) (x.coefficients.gaussian l) (x.coefficients.aliasCoefficients
             l)).oscillation n z := by
-    change (HarmonicResidual.residualBlock (StateReindex.context cycleAssoc.symm
-        (ActualPrimary.commonContext B))
-      (StateReindex.state cycleAssoc.symm x.state) (StateReindex.block cycleAssoc.symm
-          (x.coefficients.blocks l))
-      (StateReindex.blockCoefficients cycleAssoc.symm (x.coefficients.gaussian l))
-      (StateReindex.blockCoefficients cycleAssoc.symm (x.coefficients.aliasCoefficients
-          l))).oscillation n _ = _
-    rw [StateReindex.residualBlock_pull, StateReindex.block_oscillation]
+    rw [assembly_residualBlock, StateReindex.block_oscillation]
     simp only [StateReindex.oscillation, StateReindex.cylinder_apply,
       cycleAssoc.symm_apply_apply, Prod.eta]
   rw [hres] at hh
@@ -2741,10 +2730,11 @@ theorem coefficients_smooth (H : Invariant σ x) (hN : ActualCarrierGeometry.geo
         a.gaussianInput a.aliasInput x.coefficients.residualBand).velocity n i) := by
     apply assembled_velocity_smooth
     intro j hj m
-    exact native_slice_smooth (native_corrected_smooth H hN l j
+    apply native_slice_smooth (native_corrected_smooth H hN l j
       ((ParticularWaveAssembly.mem_modes _ _).mp hj).1 m)
   intro q
-  exact (hh q).comp cycleAssoc.contDiff.contDiffOn (fun z hz => ⟨hz, mem_univ _⟩)
+  apply (hh q).comp cycleAssoc.contDiff.contDiffOn
+  exact fun z hz => ⟨hz, mem_univ _⟩
 
 theorem pressure_coefficients_smooth (H : Invariant σ x)
     (hN : ActualCarrierGeometry.geometricThreshold ≤ N0) (l : Index B N0) (n : ℕ) :
@@ -2758,10 +2748,11 @@ theorem pressure_coefficients_smooth (H : Invariant σ x)
         a.gaussianInput a.aliasInput x.coefficients.residualBand).pressure n) := by
     apply assembled_pressure_smooth
     intro j hj m
-    exact native_slice_smooth (native_pressure_smooth H hN l j
+    apply native_slice_smooth (native_pressure_smooth H hN l j
       ((ParticularWaveAssembly.mem_modes _ _).mp hj).1 m)
   intro q
-  exact (hh q).comp cycleAssoc.contDiff.contDiffOn (fun z hz => ⟨hz, mem_univ _⟩)
+  apply (hh q).comp cycleAssoc.contDiff.contDiffOn
+  exact fun z hz => ⟨hz, mem_univ _⟩
 
 theorem gaussian_coefficients_smooth (H : Invariant σ x)
     (hN : ActualCarrierGeometry.geometricThreshold ≤ N0) (l : Index B N0) (n : ℕ) (i : Fin 3) :
@@ -2775,10 +2766,11 @@ theorem gaussian_coefficients_smooth (H : Invariant σ x)
         x.coefficients.residualBand).velocity n i) := by
     apply assembled_velocity_smooth
     intro j hj m
-    exact native_slice_smooth (native_gaussian_smooth H hN l j
+    apply native_slice_smooth (native_gaussian_smooth H hN l j
       ((ParticularWaveAssembly.mem_modes _ _).mp hj).1 m)
   intro q
-  exact (hh q).comp cycleAssoc.contDiff.contDiffOn (fun z hz => ⟨hz, mem_univ _⟩)
+  apply (hh q).comp cycleAssoc.contDiff.contDiffOn
+  exact fun z hz => ⟨hz, mem_univ _⟩
 
 theorem block_eq_output (H : Invariant σ x) (l : Index B N0) :
     block x l = ActualParticularStageControls.outputBlock (ActualCycleParameters.particularState x)

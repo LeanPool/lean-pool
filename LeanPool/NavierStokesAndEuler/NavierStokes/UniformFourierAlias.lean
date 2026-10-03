@@ -444,13 +444,9 @@ theorem hasFDerivAt_multiplierTerm {f : Source P} (hf : ContDiff ℝ ∞ f)
     HasFDerivAt (fun w : Point P => m k * coefficient f w.1 k * mode k w.2)
       (multiplierTermDerivative m f k z) z := by
   let L := fderiv ℝ (fun q => coefficient f q k) z.1
-  have hc : HasFDerivAt (fun w : Point P => coefficient f w.1 k)
-      (L.comp (ContinuousLinearMap.fst ℝ P Plane)) z :=
-    (((coefficient_smooth hf k).differentiable (by simp) z.1).hasFDerivAt.comp z
-      (hasFDerivAt_fst))
-  have he : HasFDerivAt (fun w : Point P => mode k w.2)
-      (mode k z.2 • ((phase k).comp (ContinuousLinearMap.snd ℝ P Plane))) z :=
-    ((phase k).hasFDerivAt.comp z (hasFDerivAt_snd)).cexp
+  have hc := ((coefficient_smooth hf k).differentiable (by simp) z.1).hasFDerivAt.comp z
+    (hasFDerivAt_fst (p := z))
+  have he := ((phase k).hasFDerivAt.comp z (hasFDerivAt_snd (p := z))).cexp
   have hd : multiplierTermDerivative m f k z =
       (m k * coefficient f z.1 k) •
         (mode k z.2 • ((phase k).comp (ContinuousLinearMap.snd ℝ P Plane))) +
@@ -480,7 +476,7 @@ theorem hasFDerivAt_multiplierTerm {f : Source P} (hf : ContDiff ℝ ∞ f)
     simp only [Complex.real_smul, smul_eq_mul]
     ring
   rw [hd]
-  exact (hc.const_mul (m k)).mul he
+  apply (hc.const_mul (m k)).mul he
 
 theorem norm_multiplierTermDerivative_le (m : Frequency → ℂ) (f : Source P)
     (k : Frequency) (z : Point P) :
@@ -572,10 +568,8 @@ theorem fderiv_applyMultiplier {m : Frequency → ℂ} (hm : PolynomialGrowth m)
       ((torusLiftX (P := P)).summable hX)) ((torusLiftY (P := P)).summable hY),
     Summable.tsum_add (summable_sum fun i hi => hLP i) ((torusLiftX (P := P)).summable hX),
     Summable.tsum_finsetSum (fun i hi => hLP i)]
-  congr 2
-  · apply Finset.sum_congr rfl
-    intro i hi
-    exact ((parameterLift i).map_tsum (hP i)).symm
+  refine congrArg₂ (· + ·) (congrArg₂ (· + ·) (Finset.sum_congr rfl fun i _ => ?_) ?_) ?_
+  · exact ((parameterLift i).map_tsum (hP i)).symm
   · exact ((torusLiftX (P := P)).map_tsum hX).symm
   · exact ((torusLiftY (P := P)).map_tsum hY).symm
 

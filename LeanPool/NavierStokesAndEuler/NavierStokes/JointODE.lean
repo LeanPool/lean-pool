@@ -195,16 +195,9 @@ theorem reparamSolution_eq_actualSolution (hab : a ≤ b) {U : Set P}
     simpa only [w, B, g, rescale, timeMap, Function.comp_def,
       _root_.smul_apply, smul_add] using hd
   have hinit : y 0 = w 0 := by
-    change x₀ z.1 + (∫ s in (0 : ℝ)..0,
-      ParametricODE.extend zero_le_one
-        (ParametricODE.applyCoefficient
-          (SmoothPathFamily.pathFamily (E := E →L[ℝ] E) (rescale a A) z)
-          (ParametricODE.solution zero_le_one
-            (SmoothPathFamily.pathFamily (E := E →L[ℝ] E) (rescale a A) z) (x₀ z.1)
-            (SmoothPathFamily.pathFamily (rescale a f) z)) +
-          SmoothPathFamily.pathFamily (rescale a f) z) s) = w 0
-    simp only [intervalIntegral.integral_same, add_zero, w, affineTime_zero,
-      actualSolution_initial]
+    simp only [w, affineTime_zero, actualSolution_initial]
+    exact (ParametricODE.solutionExtension_coe zero_le_one _ _ _ ⟨0, le_rfl, zero_le_one⟩).trans
+      (ParametricODE.solution_initial zero_le_one _ _ _)
   have heq := TangentODE.linear_solution_unique zero_le_one B g hB hy hw hinit
   have h1 := heq (show (1 : ℝ) ∈ Icc (0 : ℝ) 1 from ⟨zero_le_one, le_rfl⟩)
   have hy1 : y 1 = reparamSolution a A x₀ f z :=

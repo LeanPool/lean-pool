@@ -84,7 +84,8 @@ theorem fourier_laplacianCLM_apply (ψ : ComplexTest) (ξ : Space) :
       (-(4 * (Real.pi : ℂ) ^ 2) * ((‖ξ‖ ^ 2 : ℝ) : ℂ)) *
         EulerSobolev.schwartzFourier ψ ξ := by
   have hF (f : ComplexTest) :
-      EulerSobolev.schwartzFourier f = FourierTransform.fourierCLE ℂ ComplexTest f := rfl
+      EulerSobolev.schwartzFourier f = EulerSobolev.schwartzFourierCLM (V := Space) (E := ℂ) f :=
+    rfl
   have hnorm : ‖ξ‖ ^ 2 = (ξ 0) ^ 2 + (ξ 1) ^ 2 + (ξ 2) ^ 2 := by
     simp only [PiLp.norm_sq_eq_of_L2, Real.norm_eq_abs, sq_abs, Fin.sum_univ_succ, Fin.isValue,
         Fin.succ_zero_eq_one, Finset.univ_unique, Fin.default_eq_zero, Finset.sum_singleton,
@@ -98,8 +99,7 @@ theorem fourier_laplacianCLM_apply (ψ : ComplexTest) (ξ : Space) :
   simp only [← hF, fourier_partialCLM_apply]
   rw [hnorm]
   push_cast
-  ring_nf
-  simp only [Complex.I_sq, mul_neg, mul_one, Fin.isValue, neg_mul]
-  ring
+  linear_combination (4 * (Real.pi : ℂ) ^ 2 * ((ξ 0 : ℂ) ^ 2 + (ξ 1 : ℂ) ^ 2 + (ξ 2 : ℂ) ^ 2) *
+    EulerSobolev.schwartzFourier ψ ξ) * Complex.I_sq
 
 end NavierStokesR3.HarmonicTestFunctionals

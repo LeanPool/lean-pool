@@ -517,7 +517,7 @@ theorem qModel_uniform_lower {h j σ : ℝ} {P0 : ℝ → ℝ}
           mul_ne_zero (by norm_num) (NaturalAxisData.L_pos hsmall p.1.property.2).ne'
         have hchi := (mul_eq_zero.mp hz).resolve_left hf
         rw [qModel_at_chi_zero v B hσ p hchi]
-        linarith only [hsmall, NaturalEntrance.base_source_lower hsmall p.1.property.2])
+        exact lt_trans (by norm_num) (NaturalEntrance.base_source_lower hsmall p.1.property.2))
   obtain ⟨δ, hδ, hpert⟩ := NaturalEntrance.compact_small_perturbation _
     (qModel_continuous v B hσ) (by norm_num : (0 : ℝ) < 1 / 10)
   let M := max M₀ (1 + (1 + K) / δ)
@@ -538,7 +538,7 @@ theorem qModel_uniform_lower {h j σ : ℝ} {P0 : ℝ → ℝ}
     simpa only [Prod.norm_def, Real.norm_eq_abs, max_lt_iff] using And.intro ht he'
   have herror := (abs_lt.mp (hpert p ((1 / Λ), e) hnorm)).1
   have hb := hmain Λ ((le_max_left _ _).trans hΛ) p
-  linarith only [herror, hb]
+  linear_combination herror + hb
 
 /-- Axial source parameter: an abbreviation for `Icc (-1 : ℝ) 1 × BoundedJets B`. -/
 abbrev AxialSourceParameter (B : ℝ) := Icc (-1 : ℝ) 1 × BoundedJets B
@@ -2534,8 +2534,8 @@ theorem prepare_stock_comparison {h j σ Λ C B K : ℝ} {P0 : ℝ → ℝ}
   have hα : 0 < α := mul_pos (by norm_num) hX0
   let M := 1 + M0 + M0 / α
   have hM : 0 < M := by dsimp [M]; positivity
-  have hM0M : M0 ≤ M := by dsimp [M]; linarith [div_nonneg hM0.le hα.le]
-  have hratioM : M0 / α ≤ M := by dsimp [M]; linarith
+  have hM0M : M0 ≤ M := by dsimp [M]; linarith only [div_nonneg hM0.le hα.le]
+  have hratioM : M0 / α ≤ M := by dsimp [M]; linarith only [hM0]
   obtain ⟨ε, κs, hε, hε1, hκs, hκs1, he, hv, ha⟩ := comparison_tolerances hM.le
   obtain ⟨τ, hτ, htransfer⟩ := uniform_stock_transfer (B := BS) hsmall hμ hε hS hSX hSη
   obtain ⟨ρ, hρ, hfield⟩ := field_to_stockJet_transfer BF hτ
@@ -2552,7 +2552,7 @@ theorem prepare_stock_comparison {h j σ Λ C B K : ℝ} {P0 : ℝ → ℝ}
     intro t ht
     exact hqfield (t, p.2) ⟨⟨ht.1, ht.2.trans hp.1.2⟩, hp.2⟩
   have hqfloor (p : Point) (hp : p ∈ S) : 2 * μ ≤ Q.f p := hfloor δ hδ hdr p hp.1.1 hp.2
-  have hqpositive (p : Point) (hp : p ∈ S) : 0 < Q.f p := by linarith [hqfloor p hp]
+  have hqpositive (p : Point) (hp : p ∈ S) : 0 < Q.f p := by linarith only [hqfloor p hp, hμ]
   have hqcoords (p : Point) (hp : p ∈ S) := stockJet_coordinates Q h
     (ReferenceBounds.reference_mem E.profile hΛ (hSX p hp).le hp.2) (hSX p hp) (hqpositive p hp).ne'
   have hlow (p : Point) (hp : p ∈ S) : α ≤ ReferenceBounds.p1 Q h p := by
@@ -2562,7 +2562,7 @@ theorem prepare_stock_comparison {h j σ Λ C B K : ℝ} {P0 : ℝ → ℝ}
   have hbnd (p : Point) (hp : p ∈ S) :
       |ReferenceBounds.p1 Q h p| ≤ M0 ∧ |ReferenceBounds.p2 Q h p| ≤ M0 := by
     have hh := hstock p hp (stockJet Q p) (hqstate p hp) (by
-        change μ ≤ Q.f p; linarith [hqfloor p hp])
+        change μ ≤ Q.f p; linarith only [hqfloor p hp, hμ])
     rwa [(hqcoords p hp).1, (hqcoords p hp).2] at hh
   refine ⟨⟨?_, ?_, ?_, ?_⟩, ?_⟩
   · intro p hp
@@ -2575,10 +2575,7 @@ theorem prepare_stock_comparison {h j σ Λ C B K : ℝ} {P0 : ℝ → ℝ}
     have hpos := hα.trans_le (hlow p hp)
     calc
       _ = |ReferenceBounds.p2 Q h p| / ReferenceBounds.p1 Q h p := by rw [abs_div, abs_of_pos hpos]
-      _ ≤ M0 / α := by
-        gcongr
-        · exact (hbnd p hp).2
-        · exact hlow p hp
+      _ ≤ M0 / α := div_le_div₀ hM0.le (hbnd p hp).2 hα (hlow p hp)
       _ ≤ M := hratioM
   · intro D P hp0eq p hp hpD hclose
     have hpQ := ReferenceBounds.reference_mem E.profile hΛ (hSX p hp).le hp.2

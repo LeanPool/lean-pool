@@ -208,7 +208,6 @@ theorem profileSpeed_eq {C : ℝ} (hC : 0 < C) (d : OutgoingTail.TailData) (y0 :
   rw [Real.rpow_sub hs, Real.rpow_one]
   field_simp [hC.ne', hs.ne', hp.ne', hH.ne', (OutgoingTail.tailShape_pos d (3 - δ)).ne']
   unfold RadialHeatProfile.spatialExponent
-  ring_nf
   rw [TerminalEdgeFactor.profileRadius_square]
   ring
 
@@ -470,7 +469,7 @@ theorem profile_relative_cone (d : OutgoingTail.TailData) (hsmall : SmallTail d)
   have hT := profileAngularStress_pos (TerminalPressure.releasedNormalization_pos d hKp)
     d (Real.log K - 1 / 5) hδ heta
   obtain ⟨hs, _, hg⟩ := profile_cone_margin d hsmall hK hδ.le hδ' heta
-  refine ⟨hT, by linarith [d.h_pos], ?_⟩
+  refine ⟨hT, by linarith only [d.h_pos, hs], ?_⟩
   have hnorm : (TerminalEdgeFactor.profileSpeed (TerminalPressure.releasedNormalization d K) d
       (Real.log K - 1 / 5) (eta, δ) - 2) *
       (TerminalEdgeFactor.profileAxialStress (TerminalPressure.releasedNormalization d K) d

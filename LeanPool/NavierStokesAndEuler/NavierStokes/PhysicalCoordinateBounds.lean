@@ -169,9 +169,8 @@ theorem iteratedFDeriv_comp_inverse {a : ℝ} (ha : 0 < a) (ha1 : a < 1)
         (show inverseCoordinates a p ∈ positiveTime from hq))) n
     change (continuousMultilinearCurryLeftEquiv ℝ (fun _ : Fin (n + 1) => Point) ℝ).symm
       (fderiv ℝ (iteratedFDeriv ℝ n (g ∘ inverseCoordinates a)) p) = _
-    rw [heq.fderiv_eq]
-    rw [fderiv_comp p (hj.differentiableAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-        ENat.top_ne_zero, not_false_eq_true]))
+    simp only [heq.fderiv_eq, fderiv_comp p (hj.differentiableAt (by simp only [ne_eq,
+        WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
       ((inverseCoordinates_contDiffAt ha ha1 hp).differentiableAt (by simp only [ne_eq,
           WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])),
       (inverseCoordinates_hasFDerivAt ha ha1 hp).fderiv]
@@ -379,7 +378,7 @@ theorem homogeneous_derivative_bound {a b : ℝ} (ha : 0 < a) (ha1 : a < 1)
     _ = q ^ b * (‖iteratedFDeriv ℝ n F (L p)‖ * ‖L‖ ^ n) := by simp only [Finset.prod_const,
         Finset.card_univ, Fintype.card_fin]
     _ ≤ q ^ b * (K * (scaleFactor a qbig / q) ^ n) :=
-      mul_le_mul_of_nonneg_left (mul_le_mul hjet hLn (by positivity) hK.le)
+      mul_le_mul_of_nonneg_left (mul_le_mul hjet hLn (pow_nonneg (norm_nonneg _) n) hK.le)
         (Real.rpow_pos_of_pos hq b).le
     _ = K * scaleFactor a qbig ^ n * q ^ (b - n) := by
       rw [Real.rpow_sub hq, Real.rpow_natCast, div_pow]

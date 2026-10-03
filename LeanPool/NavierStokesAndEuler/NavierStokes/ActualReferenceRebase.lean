@@ -750,7 +750,8 @@ theorem inverseCover_associatedFrame (h Q : ℝ) (i k : ℕ) :
       ((ChartScales.Lambda ^ i * Q ^ (ChartScales.radialExponent h / 2) *
         GraphCalculus.radialSpeed (ChartScales.radialExponent h) x.1.1) •
           PhysicalGraphBounds.radialDirection)) = _
-    rw [map_smul, coverPower_apply, PhysicalGraphBounds.cover_pow_radialDirection, smul_smul]
+    rw [(coverPower k).map_smul, coverPower_apply, PhysicalGraphBounds.cover_pow_radialDirection,
+      smul_smul]
     congr 2
     simp only [ PhysicalResidualBridge.commonGraph,
       PhysicalResidualNaturality.associatedToLift_apply]
@@ -758,12 +759,13 @@ theorem inverseCover_associatedFrame (h Q : ℝ) (i k : ℕ) :
     ring
   · funext x
     change ((0, (0, Q ^ h)), coverPower k 0) = _
-    rw [map_zero]
+    rw [(coverPower k).map_zero]
     rfl
   · funext x
     change ((0, (-(Q ^ h), 0)), coverPower k
       ((ChartScales.Tg ^ i * Q ^ (1+h)) • PhysicalGraphBounds.timeDirection)) = _
-    rw [map_smul, coverPower_apply, PhysicalGraphBounds.cover_pow_timeDirection, smul_smul]
+    rw [(coverPower k).map_smul, coverPower_apply, PhysicalGraphBounds.cover_pow_timeDirection,
+      smul_smul]
     congr 2
     simp only [PhysicalResidualBridge.commonGraph]
     rw [pow_add]

@@ -411,18 +411,18 @@ theorem Pi_deriv_abs_le (d : TailData) {y eta : ℝ}
 theorem Pi_second_deriv_abs_le_pressure (d : TailData) (y : ℝ) {eta : ℝ}
     (heta : |eta| ≤ 1) :
     |deriv (deriv (Pi d y)) eta| ≤ 20 * |Pi d y eta| := by
-  have hs : eta ^ 2 ≤ 1 := by nlinarith only [heta, sq_abs eta, abs_nonneg eta]
+  have hs : eta ^ 2 ≤ 1 := (sq_le_one_iff_abs_le_one eta).mpr heta
   have hsub : 0 ≤ 1 - eta ^ 2 := sub_nonneg.mpr hs
-  have hsq : (1 : ℝ) ≤ (1 + eta ^ 2) ^ 2 := by nlinarith only [sq_nonneg eta]
+  have hsq : (1 : ℝ) ≤ (1 + eta ^ 2) ^ 2 := one_le_pow₀ (le_add_of_nonneg_right (sq_nonneg eta))
   have hpos : 0 < (1 + eta ^ 2) ^ 2 := by positivity
   have h1 : |2 * (1 - eta ^ 2) / (1 + eta ^ 2) ^ 2| ≤ 2 := by
     rw [abs_of_nonneg (by positivity : 0 ≤ 2 * (1 - eta ^ 2) / (1 + eta ^ 2) ^ 2)]
     apply (div_le_iff₀ hpos).mpr
-    nlinarith only [hsq, sq_nonneg eta]
+    linear_combination 2 * hsq + 2 * sq_nonneg eta
   have h2 : |8 * eta ^ 2 / (1 + eta ^ 2) ^ 2| ≤ 8 := by
     rw [abs_of_nonneg (by positivity : 0 ≤ 8 * eta ^ 2 / (1 + eta ^ 2) ^ 2)]
     apply (div_le_iff₀ hpos).mpr
-    nlinarith only [hs, hsq]
+    linear_combination 8 * hs + 8 * hsq
   rw [Pi_second_deriv_eta]
   calc
     _ ≤ |(2 * (1 - eta ^ 2) / (1 + eta ^ 2) ^ 2) * futureMass d y 1 eta| +

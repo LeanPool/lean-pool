@@ -452,10 +452,7 @@ theorem along_along_mode {U : Set E} {V : E → E} (κ : ℝ)
     ring
   rw [hDb]
   dsimp only [b]
-  have hs := phaseFactor_sq κ
-  ring_nf at hs ⊢
-  rw [hs]
-  ring
+  linear_combination (Complex.ofReal (along V Φ x) ^ 2 * a x * carrier κ Φ x) * phaseFactor_sq κ
 
 /-! ## Cylindrical scalar operators -/
 

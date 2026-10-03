@@ -66,7 +66,8 @@ theorem integral_first_moment_le {f : Space → ℂ}
   let b : Space → ℝ := fun ξ => (1 + ‖ξ‖ ^ 2) * ‖ξ‖ * ‖f ξ‖
   have ha : AEStronglyMeasurable a := by
     exact ((continuous_const.add (continuous_norm.pow 2)).inv₀
-      (fun ξ : Space => ne_of_gt (by positivity : (0 : ℝ) < 1 + ‖ξ‖ ^ 2))).aestronglyMeasurable
+      (fun ξ : Space =>
+        (add_pos_of_pos_of_nonneg zero_lt_one (sq_nonneg ‖ξ‖)).ne')).aestronglyMeasurable
   have hb : AEStronglyMeasurable b := by
     exact (by fun_prop : Continuous
       (fun ξ : Space => (1 + ‖ξ‖ ^ 2) * ‖ξ‖)).aestronglyMeasurable.mul hf.norm
@@ -75,9 +76,9 @@ theorem integral_first_moment_le {f : Space → ℂ}
     calc
       ((1 + ‖ξ‖ ^ 2) * ‖ξ‖ * ‖f ξ‖) ^ 2 =
           (1 + ‖ξ‖ ^ 2) ^ 2 * ‖ξ‖ ^ 2 * ‖f ξ‖ ^ 2 := by ring
-      _ ≤ (1 + ‖ξ‖ ^ 2) ^ 2 * (1 + ‖ξ‖ ^ 2) * ‖f ξ‖ ^ 2 := by
-        gcongr
-        linarith
+      _ ≤ (1 + ‖ξ‖ ^ 2) ^ 2 * (1 + ‖ξ‖ ^ 2) * ‖f ξ‖ ^ 2 :=
+        mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left
+          (le_add_of_nonneg_left zero_le_one) (sq_nonneg _)) (sq_nonneg _)
       _ = (1 + ‖ξ‖ ^ 2) ^ 3 * ‖f ξ‖ ^ 2 := by ring
   have hb_int : Integrable (fun ξ => b ξ ^ 2) :=
     hw.mono' (hb.pow 2) (Filter.Eventually.of_forall fun ξ => by
@@ -88,14 +89,16 @@ theorem integral_first_moment_le {f : Space → ℂ}
   have hb_lp : MemLp b 2 := (memLp_two_iff_integrable_sq hb).mpr hb_int
   have hcs := integral_mul_le_Lp_mul_Lq_of_nonneg
     (μ := (volume : Measure Space)) (f := a) (g := b) Real.HolderConjugate.two_two
-    (Filter.Eventually.of_forall (fun ξ => by dsimp [a]; positivity))
-    (Filter.Eventually.of_forall (fun ξ => by dsimp [b]; positivity))
+    (Filter.Eventually.of_forall (fun ξ => inv_nonneg.mpr (add_nonneg zero_le_one (sq_nonneg _))))
+    (Filter.Eventually.of_forall (fun ξ =>
+      mul_nonneg (mul_nonneg (add_nonneg zero_le_one (sq_nonneg _)) (norm_nonneg _))
+        (norm_nonneg _)))
     (by simpa using ha_lp) (by simpa using hb_lp)
   simp only [Real.rpow_two, ← Real.sqrt_eq_rpow] at hcs
   have hprod : (fun ξ : Space => a ξ * b ξ) = fun ξ => ‖ξ‖ * ‖f ξ‖ := by
     funext ξ
     dsimp [a, b]
-    have hq : (1 + ‖ξ‖ ^ 2 : ℝ) ≠ 0 := by positivity
+    have hq : (1 + ‖ξ‖ ^ 2 : ℝ) ≠ 0 := (add_pos_of_pos_of_nonneg zero_lt_one (sq_nonneg _)).ne'
     simp [← mul_assoc, hq]
   rw [hprod] at hcs
   exact hcs.trans (mul_le_mul_of_nonneg_left

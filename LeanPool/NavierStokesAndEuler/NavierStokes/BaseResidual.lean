@@ -992,16 +992,18 @@ theorem finiteRate_bilinear {l : Filter D} {q : D → ℝ} {f : D → E} {g : D 
     FiniteJetRate l q (fun x => L (f x) (g x)) M (r + s) := by
   obtain ⟨A, hA, ha⟩ := hf
   obtain ⟨B, hB, hb⟩ := hg
-  refine ⟨‖L‖ * (2 : ℝ) ^ M * A * B, by positivity, ?_⟩
+  refine ⟨‖L‖ * (2 : ℝ) ^ M * A * B,
+    mul_nonneg (mul_nonneg (mul_nonneg (norm_nonneg L) (pow_nonneg zero_le_two M)) hA) hB, ?_⟩
   filter_upwards [hlU, hq, ha, hb] with x hx hqx hax hbx
   intro m hm
   calc
     _ ≤ ‖L‖ * (2 : ℝ) ^ m * (A * q x ^ r) * (B * q x ^ s) :=
       ResidualStability.norm_jet_bilinear_bound L hU hsf hsg hx m
         (fun k hk => hax k (hk.trans hm)) (fun k hk => hbx k (hk.trans hm))
-    _ ≤ ‖L‖ * (2 : ℝ) ^ M * (A * q x ^ r) * (B * q x ^ s) := by
-      gcongr
-      norm_num
+    _ ≤ ‖L‖ * (2 : ℝ) ^ M * (A * q x ^ r) * (B * q x ^ s) :=
+      mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_left (pow_le_pow_right₀ one_le_two hm) (norm_nonneg L))
+        (mul_nonneg hA (Real.rpow_nonneg hqx.le r))) (mul_nonneg hB (Real.rpow_nonneg hqx.le s))
     _ = (‖L‖ * (2 : ℝ) ^ M * A * B) * q x ^ (r + s) := by
       rw [Real.rpow_add hqx]
       ring
@@ -1199,7 +1201,7 @@ theorem potential_prefix_rate {l : Filter SpaceTime} {a : ℕ → ℕ} {h C lo h
   have hr := potentialFromScalars_rate past_isOpen hp (hq.mono (fun _ hz => hz.1))
     A.compact A.in_carrier hHs hKs hH
     (finiteRate_weaken hK hq (show h * (J + 1) + -CoordinateAlgebra.A h - 2 * M ≤
-      h * (J + 1) + (1 / 2 - CoordinateAlgebra.A h) - 2 * M by linarith only [hh, hh1]))
+      h * (J + 1) + (1 / 2 - CoordinateAlgebra.A h) - 2 * M by linear_combination))
   have he : (fun z => summedPotential a h C d z - prefixPotential J h C d z) =
       potentialFromScalars
         (fun z => cartesianProfile a h (-CoordinateAlgebra.A h) (bundleComponent C d 0) z -
@@ -1336,7 +1338,7 @@ theorem prefixPotential_growth {l : Filter SpaceTime} {h C lo hi : ℝ}
     (cartesianUncutPrefix_smooth (b := -CoordinateAlgebra.A h) hh hh1 (bundleComponent_smooth hd C
         0) J)
     (cartesianUncutPrefix_smooth (b := 1 / 2 - CoordinateAlgebra.A h) hh hh1
-      (bundleComponent_smooth hd C 1) J) hrH (finiteRate_weaken hrK hq (by linarith only [hh, hh1]))
+      (bundleComponent_smooth hd C 1) J) hrH (finiteRate_weaken hrK hq (by linear_combination))
   simp only [prefixPotential, potential_eq_scalars] at hr ⊢
   exact hr
 
@@ -1393,9 +1395,10 @@ theorem derivative_fixed_prefix_bound {a : ℕ → ℕ} {h : ℝ}
   obtain ⟨D, hD, hDb⟩ := compact_map_finite_bound hG hK m
   let L := ContinuousLinearMap.apply ℝ ℝ (E := Chart) v
   let B := 1 + ‖L‖ * C
-  have hB : 0 < B := by dsimp only [B]; positivity
+  have hB : 0 < B := add_pos_of_pos_of_nonneg zero_lt_one (mul_nonneg (norm_nonneg L) hC.le)
   have hDpos : 0 < D := lt_of_lt_of_le zero_lt_one hD
-  refine ⟨δ, (m.factorial : ℝ) * B * D ^ m, hδ, by positivity, ?_⟩
+  refine ⟨δ, (m.factorial : ℝ) * B * D ^ m, hδ,
+    mul_pos (mul_pos (Nat.cast_pos.mpr m.factorial_pos) hB) (pow_pos hDpos m), ?_⟩
   intro z hz ht hq hX
   let F : Chart → ℝ := fun p => physicalProfile a h b f p - physicalUncutPrefix h b f J p
   have hF : ContDiffOn ℝ ∞ F profilePast := by
@@ -1663,9 +1666,9 @@ theorem stressForce_rate {l : Filter SpaceTime} {h lo hi : ℝ}
   have hads := (cartesianDerivative_smooth ha (0, (1, 0))).mono annularPast_subset
   have hr0 := radialPower_rate hh hh1 A hlo (-1) M
   have hrp := finiteRate_weaken (radialPower_rate hh hh1 A hlo (1 / 2) M) hq
-    (show -1 - (M : ℝ) ≤ 1 / 2 - M by linarith only [hh, hh1])
+    (sub_le_sub_right (by norm_num : (-1 : ℝ) ≤ 1 / 2) _)
   have hrn := finiteRate_weaken (radialPower_rate hh hh1 A hlo (-(1 / 2)) M) hq
-    (show -1 - (M : ℝ) ≤ -(1 / 2) - M by linarith only [hh, hh1])
+    (sub_le_sub_right (by norm_num : (-1 : ℝ) ≤ -(1 / 2)) _)
   have hpt := finiteRate_bilinear hr0 htv hU hlU hq0 (radialPower_smooth (-1)) hts
     (ContinuousLinearMap.mul ℝ ℝ)
   have hpa := finiteRate_bilinear hrp had hU hlU hq0 (radialPower_smooth (1 / 2)) hads
@@ -1675,8 +1678,8 @@ theorem stressForce_rate {l : Filter SpaceTime} {h lo hi : ℝ}
   have hexp : -1 - (M : ℝ) + r = r - 1 - M := by ring
   rw [hexp] at hpt hpa hqa
   have hpt2 := scalarConst_rate hpt hU hlU ((radialPower_smooth (-1)).mul hts) 2
-  have hdt := finiteRate_weaken htd hq (show r - 1 - M ≤ r by
-    have := Nat.cast_nonneg (α := ℝ) M; linarith only [hh, hh1])
+  have hdt := finiteRate_weaken htd hq
+    ((sub_le_self _ (Nat.cast_nonneg M)).trans (sub_le_self r zero_le_one))
   have hs0 := scalarConst_rate (finiteRate_add hdt hpt2 hU hlU htds
     (contDiffOn_const.mul ((radialPower_smooth (-1)).mul hts))) hU hlU
     (htds.add (contDiffOn_const.mul ((radialPower_smooth (-1)).mul hts))) (-2)
@@ -1776,7 +1779,8 @@ theorem stress_prefix_rate {l : Filter SpaceTime} {a : ℕ → ℕ} {h C lo hi :
   have hz1 := derivative_prefix_rate hh hh1 A (bundleComponent_smooth hd C 4) b
     (admissible_component hd ha 4) (0, (1, 0)) J M hM
   have hr := stressForce_rate hh hh1 A hlo hts hzs M (h * (J + 1) + b - 2 * (M + 1))
-    (finiteRate_weaken ht0 hq (by linarith)) (finiteRate_weaken hz0 hq (by linarith)) ht1 hz1
+    (finiteRate_weaken ht0 hq (by linear_combination))
+    (finiteRate_weaken hz0 hq (by linear_combination)) ht1 hz1
   have he : h * (J + 1) + b - 2 * ((M : ℝ) + 1) - 1 - M =
       h * (J + 1) - CoordinateAlgebra.A h - 1 / 2 - 3 * (M + 1) := by dsimp only [b]; ring
   rw [he] at hr
@@ -1878,8 +1882,13 @@ theorem assembleComponents_eq_pack (R A Z : SpaceTime → ℝ) (z : SpaceTime) :
       AxisymmetricResidual.pack (z.2 0 * R z - z.2 1 * A z)
         (z.2 1 * R z + z.2 0 * A z) (Z z) := by
   ext i
-  fin_cases i <;> simp [assembleComponents, radialVector, angularVector,
-    AxisymmetricResidual.pack, coordinateVector] <;> ring
+  fin_cases i <;>
+    simp only [assembleComponents, radialVector, Fin.isValue, coordinateVector, smul_add,
+      angularVector, neg_smul, smul_neg, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk,
+      PiLp.add_apply, PiLp.smul_apply, PiLp.single_eq_same, smul_eq_mul, mul_one, ne_eq,
+      zero_ne_one, one_ne_zero, not_false_eq_true, PiLp.single_eq_of_ne, mul_zero, add_zero,
+      zero_add, PiLp.neg_apply, neg_zero, Fin.reduceEq, AxisymmetricResidual.pack] <;>
+    ring
 
 theorem assembleComponents_rate {l : Filter SpaceTime} {q : SpaceTime → ℝ}
     {U B : Set SpaceTime} (hU : IsOpen U) (hlU : ∀ᶠ z in l, z ∈ U)
@@ -2102,9 +2111,9 @@ theorem baseResidual_jetRate {l : Filter SpaceTime} {a : ℕ → ℕ} {h C lo hi
     (hfinite : FiniteIdentities h C d f) (m : ℕ) (n : ℝ) (hn : 0 ≤ n) :
     JetRate l (fun z => (cartesianChart h z).1) (baseResidual a h C d) m n := by
   let b : ℝ := CoordinateAlgebra.A h + m + 2
-  have hA : 0 < CoordinateAlgebra.A h := by unfold CoordinateAlgebra.A; linarith only [hh, hh1]
+  have hA : 0 < CoordinateAlgebra.A h := add_pos one_half_pos hh
   have hm : (0 : ℝ) ≤ m := Nat.cast_nonneg m
-  have hb : 0 ≤ b := by dsimp only [b]; positivity
+  have hb : 0 ≤ b := add_nonneg (add_nonneg hA.le hm) zero_le_two
   obtain ⟨N, hN⟩ := exists_nat_ge ((n + b + 2 * CoordinateAlgebra.A h + 6 * m + 12) / h)
   let J := max (m + 2) N
   have hJ : m + 2 ≤ J := le_max_left _ _
@@ -2130,23 +2139,23 @@ theorem baseResidual_jetRate {l : Filter SpaceTime} {a : ℕ → ℕ} {h C lo hi
       (fun z => baseVelocity a h C d z - prefixVelocity J h C d z) (m + 2) (n + b) := by
     apply finiteRate_weaken (velocity_prefix_rate hh hh1 A hd ha J (m + 2) (by omega)) hq
     push_cast
-    linarith only [hh, hh1, hA, hgain]
+    linear_combination hgain + hA.le + 4 * hm
   have hpres : FiniteJetRate l (fun z => (cartesianChart h z).1)
       (fun z => basePressure a h C d z - prefixPressure J h C d z) (m + 1) (n + b) := by
     apply finiteRate_weaken (pressure_prefix_rate hh hh1 A hd ha J (m + 1) (by omega)) hq
     push_cast
-    linarith only [hh, hh1, hgain]
+    linear_combination hgain + 4 * hm
   have hstress : JetRate l (fun z => (cartesianChart h z).1)
       (fun z => baseStressForce a h C d z - prefixStressForce J h C d z) m n := by
     apply (finiteRate_at (stress_prefix_rate hh hh1 A hlo hd ha J m (by omega)) le_rfl).weaken hq
     dsimp only [b] at hgain
-    linarith only [hh, hh1, hA, hgain]
+    linear_combination hgain + 2 * hA.le + 4 * hm
   have htail : JetRate l (fun z => (cartesianChart h z).1)
       (fun z => truncationResidual J h C f z.1 z.2) m n := by
     apply (finiteRate_at (truncationResidual_rate hh hh1 A hlo hO hKO J C f
       (fun j _ => hv j) (fun j _ => hu j) (fun j _ => hf j) hX hL m) le_rfl).weaken hq
     dsimp only [b] at hgain
-    linarith only [hh, hh1, hn, hA, hgain]
+    linear_combination 2 * hgain + hn + 6 * hA.le + 13 * hm + 2 * hh1.le
   let EJ : SpaceTime → Space := fun z =>
     navierStokesResidual (prefixVelocity J h C d) (prefixPressure J h C d) z.1 z.2 -
       prefixStressForce J h C d z
@@ -2161,8 +2170,8 @@ theorem baseResidual_jetRate {l : Filter SpaceTime} {a : ℕ → ℕ} {h C lo hi
     residualDifference_jetRate hU hlU hq huJs (hus.sub huJs) hpJs (hps.sub hpJs)
       m hb hn hbg hvel hpres
   have hDfs : ContDiffOn ℝ ∞ Df annularPast :=
-    (ResidualRegularity.contDiffOn_residual hU (huJs.add (hus.sub huJs))
-      (hpJs.add (hps.sub hpJs))).sub (ResidualRegularity.contDiffOn_residual hU huJs hpJs)
+    ((ResidualRegularity.contDiffOn_residual hU (huJs.add (hus.sub huJs))
+      (hpJs.add (hps.sub hpJs))).sub (ResidualRegularity.contDiffOn_residual hU huJs hpJs) :)
   have hsum := (hEJ.add hDf hU hlU hEJs hDfs).add (jetRate_neg hstress) hU hlU
     (hEJs.add hDfs) (htS.sub htJ).neg
   have hvelsum : (fun z => prefixVelocity J h C d z +
@@ -2881,7 +2890,7 @@ theorem stress_prefix_rate_axis {l : Filter SpaceTime} {a : ℕ → ℕ} {h C hi
       exact ⟨hzs, hz.2⟩
     scale := A.scale.mono_left inf_le_left }
   have ha' : AdmissibleScales h (coefficientBundle C d) (innerBox (r / 2) hi) a :=
-    admissible_mono ha (fun w hw => ⟨⟨(by linarith : (0 : ℝ) ≤ r / 2).trans hw.1.1, hw.1.2⟩, hw.2⟩)
+    admissible_mono ha (fun w hw => ⟨⟨(half_pos hr).le.trans hw.1.1, hw.1.2⟩, hw.2⟩)
   have hb := stress_prefix_rate hh hh1 A' (by positivity) hd ha' J M hM
   apply finiteRate_extend_zero hb ((A.positive_small hh hh1).mono (fun _ hz => hz.1))
   filter_upwards [A.past] with z ht
@@ -2905,14 +2914,12 @@ theorem eqOn_of_off_axis {V : Type} [NormedAddCommGroup V]
   · exact he z hz hs
   have hs0 : AxisymmetricFields.radialEnergy z.2 = 0 :=
     le_antisymm (le_of_not_gt hs) (AxisymmetricFields.radialEnergy_nonneg z.2)
-  have hx0 : z.2 0 = 0 := by
-    apply sq_eq_zero_iff.mp
+  have hsum : z.2 0 ^ 2 + z.2 1 ^ 2 = 0 := by
     unfold AxisymmetricFields.radialEnergy at hs0
-    linarith only [hs0, sq_nonneg (z.2 0), sq_nonneg (z.2 1)]
-  have hx1 : z.2 1 = 0 := by
-    apply sq_eq_zero_iff.mp
-    unfold AxisymmetricFields.radialEnergy at hs0
-    linarith only [hs0, sq_nonneg (z.2 0), sq_nonneg (z.2 1)]
+    exact (div_eq_zero_iff.mp hs0).resolve_right two_ne_zero
+  have hx := (add_eq_zero_iff_of_nonneg (sq_nonneg _) (sq_nonneg _)).mp hsum
+  have hx0 : z.2 0 = 0 := sq_eq_zero_iff.mp hx.1
+  have hx1 : z.2 1 = 0 := sq_eq_zero_iff.mp hx.2
   let gamma : ℝ → SpaceTime := fun t => (z.1, z.2 + t • coordinateVector 0)
   have hgamma : Continuous gamma := continuous_const.prodMk (continuous_const.add
       (continuous_id.smul continuous_const))
@@ -3145,9 +3152,9 @@ theorem baseResidual_jetRate_axis {l : Filter SpaceTime} {a : ℕ → ℕ} {h C 
     (m : ℕ) (n : ℝ) (hn : 0 ≤ n) :
     JetRate l (fun z => (cartesianChart h z).1) (baseResidual a h C d) m n := by
   let b : ℝ := CoordinateAlgebra.A h + m + 2
-  have hA : 0 < CoordinateAlgebra.A h := by unfold CoordinateAlgebra.A; linarith only [hh, hh1]
+  have hA : 0 < CoordinateAlgebra.A h := add_pos one_half_pos hh
   have hm : (0 : ℝ) ≤ m := Nat.cast_nonneg m
-  have hb0 : 0 ≤ b := by dsimp only [b]; positivity
+  have hb0 : 0 ≤ b := add_nonneg (add_nonneg hA.le hm) zero_le_two
   obtain ⟨N, hN⟩ := exists_nat_ge ((n + b + 2 * CoordinateAlgebra.A h + 6 * m + 12) / h)
   let J := max (m + 2) N
   have hJ : m + 2 ≤ J := le_max_left _ _
@@ -3173,18 +3180,18 @@ theorem baseResidual_jetRate_axis {l : Filter SpaceTime} {a : ℕ → ℕ} {h C 
       (fun z => baseVelocity a h C d z - prefixVelocity J h C d z) (m + 2) (n + b) := by
     apply finiteRate_weaken (velocity_prefix_rate hh hh1 A hd ha J (m + 2) (by omega)) hq
     push_cast
-    linarith only [hh, hh1, hA, hgain]
+    linear_combination hgain + hA.le + 4 * hm
   have hpres : FiniteJetRate l (fun z => (cartesianChart h z).1)
       (fun z => basePressure a h C d z - prefixPressure J h C d z) (m + 1) (n + b) := by
     apply finiteRate_weaken (pressure_prefix_rate hh hh1 A hd ha J (m + 1) (by omega)) hq
     push_cast
-    linarith only [hh, hh1, hgain]
+    linear_combination hgain + 4 * hm
   have hstress : JetRate l (fun z => (cartesianChart h z).1)
       (fun z => baseStressForce a h C d z - prefixStressForce J h C d z) m n := by
     apply (finiteRate_at (stress_prefix_rate_axis hh hh1 A hr hd hc ha J m (by
         omega)) le_rfl).weaken hq
     dsimp only [b] at hgain
-    linarith only [hh, hh1, hA, hgain]
+    linear_combination hgain + 2 * hA.le + 4 * hm
   let EJ : SpaceTime → Space := fun z =>
     navierStokesResidual (prefixVelocity J h C d) (prefixPressure J h C d) z.1 z.2 -
       prefixStressForce J h C d z
@@ -3193,7 +3200,7 @@ theorem baseResidual_jetRate_axis {l : Filter SpaceTime} {a : ℕ → ℕ} {h C 
       (fun j _ => hp j) (fun j _ => hu j) (fun j _ => hb j)
       (fun j _ => hv j) (fun j _ => heu j) (fun j _ => hep j) hL m) le_rfl).weaken hq
     dsimp only [b] at hgain
-    linarith only [hh, hh1, hn, hA, hgain]
+    linear_combination 2 * hgain + hn + 6 * hA.le + 13 * hm + 2 * hh1.le
   have hEJs : ContDiffOn ℝ ∞ EJ past :=
     (ResidualRegularity.contDiffOn_residual hU huJs hpJs).sub htJ
   let Df := residualDifference (prefixVelocity J h C d)
@@ -3203,8 +3210,8 @@ theorem baseResidual_jetRate_axis {l : Filter SpaceTime} {a : ℕ → ℕ} {h C 
     residualDifference_jetRate hU hlU hq huJs (hus.sub huJs) hpJs (hps.sub hpJs)
       m hb0 hn hbg hvel hpres
   have hDfs : ContDiffOn ℝ ∞ Df past :=
-    (ResidualRegularity.contDiffOn_residual hU (huJs.add (hus.sub huJs))
-      (hpJs.add (hps.sub hpJs))).sub (ResidualRegularity.contDiffOn_residual hU huJs hpJs)
+    ((ResidualRegularity.contDiffOn_residual hU (huJs.add (hus.sub huJs))
+      (hpJs.add (hps.sub hpJs))).sub (ResidualRegularity.contDiffOn_residual hU huJs hpJs) :)
   have hsum := (hEJ.add hDf hU hlU hEJs hDfs).add (jetRate_neg hstress) hU hlU
     (hEJs.add hDfs) (htS.sub htJ).neg
   have hvelsum : (fun z => prefixVelocity J h C d z +

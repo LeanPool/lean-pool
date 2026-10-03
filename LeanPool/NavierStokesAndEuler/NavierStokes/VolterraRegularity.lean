@@ -146,8 +146,8 @@ theorem weightedMean_hasDerivAt_on (c : ℕ) {R : ℝ} {f : ℝ → E}
   let b : ℝ := |r| + δ
   have hrR : |r| < R := by simpa only [radialDomain, Metric.mem_ball,
     dist_zero_right, Real.norm_eq_abs] using hr
-  have hδ : 0 < δ := by dsimp [δ]; linarith
-  have hbR : b < R := by dsimp [b, δ]; linarith
+  have hδ : 0 < δ := half_pos (sub_pos.mpr hrR)
+  have hbR : b < R := by dsimp [b, δ]; linarith only [hrR]
   have hsub : Metric.closedBall (0 : ℝ) b ⊆ radialDomain R := by
     intro x hx
     exact lt_of_le_of_lt hx hbR
@@ -160,7 +160,7 @@ theorem weightedMean_hasDerivAt_on (c : ℕ) {R : ℝ} {f : ℝ → E}
       have ht := abs_add_le (x - r) r
       rw [sub_add_cancel] at ht
       dsimp [b]
-      linarith
+      linarith only [ht, hx']
     change dist (t * x) 0 ≤ b
     rw [dist_zero_right, Real.norm_eq_abs, abs_mul, abs_of_nonneg ht.1]
     exact (mul_le_of_le_one_left (abs_nonneg x) ht.2).trans hxn
@@ -308,8 +308,7 @@ theorem scale_contDiffOn (c : ι → ℕ) {R : ℝ}
         exact contDiffOn_zero.mpr (hW j)
     | succ n ih =>
         intro j
-        have hrhs : ContDiffOn ℝ n (fun r =>
-            f j r + (A₀ j r) (W j r) + (A₁ j r) (W (j + 1) r)) (radialDomain R) :=
+        have hrhs :=
           ((contDiffOn_infty.1 (hf j) n).add
             ((contDiffOn_infty.1 (hA₀ j) n).clm_apply (ih j))).add
             ((contDiffOn_infty.1 (hA₁ j) n).clm_apply (ih (j + 1)))

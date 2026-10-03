@@ -748,18 +748,25 @@ theorem angularSourceEta_abs_bound (c : Parameters) {h y η : ℝ} (hh : 0 ≤ h
     calc
       _ = 4 * |h| * |slope c.dropLength c.lam y| * |η| * |averagedDrop c y| := by
           simp only [abs_mul]; norm_num
-      _ ≤ 4 * 1 * 1 * 1 * 4 := by gcongr
+      _ ≤ 4 * 1 * 1 * 1 * 4 :=
+        mul_le_mul (mul_le_mul (mul_le_mul (mul_le_mul_of_nonneg_left hhabs (by norm_num)) hl
+          (abs_nonneg _) (by norm_num)) hη (abs_nonneg _) (by norm_num)) hbabs (abs_nonneg _)
+          (by norm_num)
       _ = _ := by norm_num
   have hsecond : |4 * h * dropCoefficient c.m y * η| ≤ 16 := by
     calc
       _ = 4 * |h| * |dropCoefficient c.m y| * |η| := by simp only [abs_mul]; norm_num
-      _ ≤ 4 * 1 * 4 * 1 := by gcongr
+      _ ≤ 4 * 1 * 4 * 1 :=
+        mul_le_mul (mul_le_mul (mul_le_mul_of_nonneg_left hhabs (by norm_num)) hkabs
+          (abs_nonneg _) (by norm_num)) hη (abs_nonneg _) (by norm_num)
       _ = _ := by norm_num
   have hthird : |2 * dropCoefficient c.m y * η ^ 2 * shapeGradient η| ≤ 16 := by
     calc
       _ = 2 * |dropCoefficient c.m y| * η ^ 2 * |shapeGradient η| := by
           simp only [abs_mul, abs_pow, sq_abs]; norm_num
-      _ ≤ 2 * 4 * 1 * 2 := by gcongr
+      _ ≤ 2 * 4 * 1 * 2 :=
+        mul_le_mul (mul_le_mul (mul_le_mul_of_nonneg_left hkabs (by norm_num)) hsq
+          (sq_nonneg _) (by norm_num)) hJ (abs_nonneg _) (by norm_num)
       _ = _ := by norm_num
   have hjoint : |shapeGradient η + η * deriv shapeGradient η| ≤ 4 := by
     have hm : |η * deriv shapeGradient η| ≤ 2 := by
@@ -866,7 +873,9 @@ theorem holdCoefficient_deriv_bound (c : Parameters) {h η : ℝ} (hh : 0 ≤ h)
     _ = 4 * h * |η| * averagedDrop c c.holdStart := by
       simp only [abs_mul, abs_of_nonneg hh, abs_of_nonneg hb.1]
       norm_num
-    _ ≤ 4 * (1 / 100) * 1 * 4 := by gcongr
+    _ ≤ 4 * (1 / 100) * 1 * 4 :=
+      mul_le_mul (mul_le_mul (mul_le_mul_of_nonneg_left hh1 (by norm_num)) hη (abs_nonneg _)
+        (by norm_num)) hb₁ hb₀ (by norm_num)
     _ ≤ _ := by norm_num
 
 theorem angularLag_hold_deriv_error (v : TailData) {η t : ℝ}
@@ -962,8 +971,7 @@ theorem initialAxial_hasDerivAt (v : TailData) (η : ℝ) :
   · funext θ
     simp only [id_eq]
     ring
-  · simp only [initialAxialDerivative, id_eq, d]
-    norm_num
+  · simp only [initialAxialDerivative, id_eq, d, Nat.cast_ofNat, Nat.reduceSub]
     ring
 
 theorem initialAxialDerivative_bound (v : TailData) {η : ℝ}
@@ -1006,7 +1014,8 @@ theorem initialAxialDerivative_bound (v : TailData) {η : ℝ}
     have hsecond : |2 * η * shapeGradient η| ≤ 4 := by
       calc
         _ = 2 * |η| * |shapeGradient η| := by simp only [abs_mul]; norm_num
-        _ ≤ 2 * 1 * 2 := by gcongr
+        _ ≤ 2 * 1 * 2 :=
+          mul_le_mul (mul_le_mul_of_nonneg_left hη (by norm_num)) hJ (abs_nonneg _) (by norm_num)
         _ = _ := by norm_num
     have hthird : |d η * deriv shapeGradient η| ≤ 2 := by
       rw [abs_mul, abs_of_nonneg hd.1]
@@ -1037,7 +1046,8 @@ theorem initialAxialDerivative_bound (v : TailData) {η : ℝ}
       calc
         _ = 2 * |2 * v.h * η + d η * shapeGradient η| * |shapeGradient η| := by
             simp only [abs_mul]; norm_num
-        _ ≤ 2 * 3 * 2 := by gcongr
+        _ ≤ 2 * 3 * 2 :=
+          mul_le_mul (mul_le_mul_of_nonneg_left hC (by norm_num)) hJ (abs_nonneg _) (by norm_num)
         _ = _ := by norm_num
     exact mul_le_mul hc hbar hbar0 (by norm_num)
   have h3 : |4 * A v.h * entrancePressure v v.core.holdStart η| ≤
@@ -1389,7 +1399,8 @@ theorem polynomial_decay_le_power (c : Parameters) (hlam : c.lam ≤ 1 / 120)
     _ ≤ (120 * Real.exp (c.wait / 120)) * Real.exp (-(1 / 2 - c.lam) * c.wait) :=
       mul_le_mul_of_nonneg_right hlin (Real.exp_pos _).le
     _ = 120 * Real.exp (c.wait / 120 + -(1 / 2 - c.lam) * c.wait) := by rw [Real.exp_add]; ring
-    _ ≤ 120 * Real.exp (29 * Real.log c.lam) := by gcongr
+    _ ≤ 120 * Real.exp (29 * Real.log c.lam) :=
+      mul_le_mul_of_nonneg_left (Real.exp_le_exp.mpr harg) (by norm_num)
     _ = _ := by
       change 120 * Real.exp (((29 : ℕ) : ℝ) * Real.log c.lam) = 120 * c.lam ^ 29
       rw [Real.exp_nat_mul, Real.exp_log c.lam_pos]

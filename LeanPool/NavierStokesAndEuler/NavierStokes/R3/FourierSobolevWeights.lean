@@ -88,20 +88,22 @@ def B : ComplexTest →ₗ[ℂ] Lp ℂ 2 (volume : Measure Space) :=
 
 theorem continuous_B : Continuous B := BCLM.continuous
 
+theorem B_apply (ψ : ComplexTest) :
+    B ψ = SchwartzMap.toLp (weightedSchwartz (EulerSobolev.schwartzFourier ψ)) 2 volume := rfl
+
 theorem B_ae_eq (ψ : ComplexTest) :
     B ψ =ᵐ[volume] fun ξ : Space =>
       (((1 + ‖ξ‖ ^ 2) ^ 2 : ℝ) : ℂ) * (EulerSobolev.schwartzFourier ψ) ξ := by
-  change B ψ =ᵐ[volume] fun ξ : Space =>
-      (((1 + ‖ξ‖ ^ 2) ^ 2 : ℝ) : ℂ) * (FourierTransform.fourierCLE ℂ ComplexTest ψ) ξ
-  exact (SchwartzMap.coeFn_toLp (weightedSchwartz
-    (FourierTransform.fourierCLE ℂ ComplexTest ψ)) 2 volume).trans
+  rw [B_apply]
+  exact (SchwartzMap.coeFn_toLp (weightedSchwartz (EulerSobolev.schwartzFourier ψ)) 2 volume).trans
       (Filter.Eventually.of_forall (weightedSchwartz_apply _))
 
 theorem B_injective : Function.Injective B := by
   intro ψ φ h
+  rw [B_apply, B_apply] at h
   apply (FourierTransform.fourierCLE ℂ ComplexTest).injective
-  apply weightedSchwartz_injective
-  exact SchwartzMap.injective_toLp 2 volume h
+  change EulerSobolev.schwartzFourier ψ = EulerSobolev.schwartzFourier φ
+  exact weightedSchwartz_injective (SchwartzMap.injective_toLp 2 volume h)
 
 theorem norm_weightedSchwartz_apply_sq (ψ : ComplexTest) (ξ : Space) :
     ‖weightedSchwartz ψ ξ‖ ^ 2 = (1 + ‖ξ‖ ^ 2) ^ 4 * ‖ψ ξ‖ ^ 2 := by

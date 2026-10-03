@@ -741,18 +741,19 @@ theorem realization_native_smooth {h : ℝ} {N : ℕ} {gap : ℕ → ℕ} {U : S
   have hR : ∀ z ∈ V, z.1.1 ≠ 0 := fun z hz => r.radius_ne (PhysicalResidualTZ.swapCylinder z) hz
   have hB (i : Fin 3) : ContDiffOn ℝ ∞
       (fun z => PhysicalResidualBridge.baseComponents (PhysicalResidualTZ.swapContext c) n z i) V :=
-    (r.base_smooth n hn i).comp PhysicalResidualTZ.swapCylinder.contDiff.contDiffOn (fun _ hz => hz)
+    ((r.base_smooth n hn i).comp (PhysicalResidualTZ.swapCylinder.contDiff.contDiffOn (s := V))
+      (fun _ hz => hz) :)
   have ha (i : Fin 3) : ContDiffOn ℝ ∞
       (fun z => PhysicalResidualBridge.incrementComponents (PhysicalResidualTZ.swapState s) n z i)
           V :=
-    (r.increment_smooth n hn i).comp PhysicalResidualTZ.swapCylinder.contDiff.contDiffOn (fun _ hz
-        => hz)
+    ((r.increment_smooth n hn i).comp
+      (PhysicalResidualTZ.swapCylinder.contDiff.contDiffOn (s := V)) (fun _ hz => hz) :)
   have hp : ContDiffOn ℝ ∞ ((PhysicalResidualTZ.swapState s).totalPressureIncrement n) V :=
-    (r.pressure_smooth n hn).comp PhysicalResidualTZ.swapCylinder.contDiff.contDiffOn (fun _ hz =>
-        hz)
+    ((r.pressure_smooth n hn).comp
+      (PhysicalResidualTZ.swapCylinder.contDiff.contDiffOn (s := V)) (fun _ hz => hz) :)
   have hp₀ : ContDiffOn ℝ ∞ (fun z => p₀ n (PhysicalResidualTZ.swapCylinder z)) V :=
-    (r.base_pressure_smooth n hn).comp PhysicalResidualTZ.swapCylinder.contDiff.contDiffOn (fun _
-        hz => hz)
+    ((r.base_pressure_smooth n hn).comp
+      (PhysicalResidualTZ.swapCylinder.contDiff.contDiffOn (s := V)) (fun _ hz => hz) :)
   have hbase (z : Cylinder) (hz : z ∈ V) (i : Fin 3) :
       PhysicalResidualBridge.graphResidual G.epsilon PhysicalResidualBridge.ScaledGraph.radius
         G.radial PhysicalResidualBridge.ScaledGraph.angular G.axial G.temporal

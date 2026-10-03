@@ -90,6 +90,8 @@ theorem parameterIntegral_hasFDerivAt {U : Set D} (hU : IsOpen U) {f : D × ℝ 
     HasFDerivAt (fun y => ∫ θ in a..b, f (y, θ))
       (∫ θ in a..b, TransportPrimitive.parameterDerivative f (x, θ)) x := by
   have hdf := (parameterDerivative_smooth hU hf).continuousOn
+  have := secondCountableTopologyEither_of_left ℝ E
+  have := secondCountableTopologyEither_of_left ℝ (D →L[ℝ] E)
   obtain ⟨η, hη, C, hball, hC⟩ := uniform_local_bound hU hdf hx a b
   apply intervalIntegral.hasFDerivAt_integral_of_dominated_of_fderiv_le
     (F' := fun y θ => TransportPrimitive.parameterDerivative f (y, θ)) (bound := fun _ => C)

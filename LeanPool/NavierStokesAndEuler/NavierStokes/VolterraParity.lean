@@ -450,7 +450,7 @@ theorem norm_word_le {A₀ A₁ : Coeff} {F : Field} {T ρ σ B M : ℝ} {c : �
       exact_mod_cast (losses_le_half w hw).trans (le_max_right 1 p)
     have hbudget : ρ + (losses w : ℝ) * δ ≤ σ := by
       have hmul := mul_le_mul_of_nonneg_right hp hd.le
-      have hcancel : q * δ = σ - ρ := by dsimp only [δ]; field_simp
+      have hcancel : q * δ = σ - ρ := mul_div_cancel₀ (σ - ρ) hq0.ne'
       rw [hcancel] at hmul
       linarith
     have hwbound := word_radialBound hB hM hd hA₀ hA₁ hF ha w hbudget r hr z hz i
@@ -470,7 +470,12 @@ theorem norm_word_le {A₀ A₁ : Coeff} {F : Field} {T ρ σ B M : ℝ} {c : �
       _ ≤ B * M ^ w.length * (δ⁻¹) ^ losses w * r ^ w.length /
           (w.length.factorial : ℝ) := hwbound
       _ ≤ B * M ^ w.length * (max 1 (σ - ρ)⁻¹ * q) ^ p * T ^ w.length /
-          (w.length.factorial : ℝ) := by gcongr
+          (w.length.factorial : ℝ) := by
+        have hBM : 0 ≤ B * M ^ w.length := mul_nonneg hB (pow_nonneg hM _)
+        exact div_le_div_of_nonneg_right
+          (mul_le_mul (mul_le_mul_of_nonneg_left hpow hBM) (pow_le_pow_left₀ hr0 hrT _)
+            (pow_nonneg hr0 _) (mul_nonneg hBM (pow_nonneg (zero_le_one.trans hbase) _)))
+          (Nat.cast_nonneg _)
       _ = _ := by dsimp only [wordMajorant, q, p]; rw [mul_pow]; ring
   · rw [word_eq_zero_of_not_good A₀ hshape w hw F]
     simpa only [Pi.zero_apply, norm_zero, ge_iff_le] using mul_nonneg hB
@@ -927,8 +932,7 @@ theorem pathLetter_holomorphic {R : ℝ} (hR : 0 ≤ R) (c : Fin 6 → ℕ)
     (hU : IsOpen U) (hA₀ : DifferentiableOn ℂ A₀ U) (hA₁ : DifferentiableOn ℂ A₁ U)
     (hF : DifferentiableOn ℂ F U) (b : Bool) :
     DifferentiableOn ℂ (pathLetter hR c A₀ A₁ b F) U := by
-  have hAction : Differentiable ℂ (coefficientAction (R := R)) :=
-    ContinuousLinearMap.differentiable (𝕜 := ℂ)
+  have hAction := ContinuousLinearMap.differentiable (𝕜 := ℂ)
       (E := CoefficientPath R) (F := Path R →L[ℂ] Path R) coefficientAction
   cases b
   · exact (pathInverse hR c).differentiable.comp_differentiableOn
@@ -1354,7 +1358,10 @@ theorem solutionSeries_equation {z : ℂ} (hz : z ∈ Metric.ball center ρ) :
     _ = layer hR VolterraAnalyticBounds.exponent A₀ A₁ F 0 z +
         ∑' k, layer hR VolterraAnalyticBounds.exponent A₀ A₁ F (k + 1) z :=
       hs.summable.tsum_eq_zero_add
-    _ = _ := by rw [layer_zero, hshift.tsum_eq, map_add]; rfl
+    _ = _ := (congrArg₂ (· + ·) (congrFun (layer_zero hR _ A₀ A₁ F) z) hshift.tsum_eq).trans
+      (congrArg (F z + ·) ((pathInverse hR VolterraAnalyticBounds.exponent).map_add
+        (coefficientAction (R := R) (A₀ z) (solutionSeries hR A₀ A₁ F z))
+        (coefficientAction (R := R) (A₁ z) (deriv (solutionSeries hR A₀ A₁ F) z))).symm)
 
 end Summation
 
@@ -1376,11 +1383,11 @@ theorem integralSolution_spec {R : ℝ} (hR : 0 ≤ R)
         integralSolution hR A₀ A₁ f z = pathInverse hR VolterraAnalyticBounds.exponent
           (f z + (coefficientAction (R := R) (A₀ z) (integralSolution hR A₀ A₁ f z) +
             coefficientAction (R := R) (A₁ z) (deriv (integralSolution hR A₀ A₁ f) z))) := by
-  obtain ⟨K₀, hK₀⟩ := (isCompact_closedBall center σ).exists_bound_of_continuousOn
+  choose K₀ hK₀ using (isCompact_closedBall center σ).exists_bound_of_continuousOn
     (f := A₀) (hA₀.continuousOn.mono hDisk)
-  obtain ⟨K₁, hK₁⟩ := (isCompact_closedBall center σ).exists_bound_of_continuousOn
+  choose K₁ hK₁ using (isCompact_closedBall center σ).exists_bound_of_continuousOn
     (f := A₁) (hA₁.continuousOn.mono hDisk)
-  obtain ⟨B₀, hB₀⟩ := (isCompact_closedBall center σ).exists_bound_of_continuousOn
+  choose B₀ hB₀ using (isCompact_closedBall center σ).exists_bound_of_continuousOn
     (hf.continuousOn.mono hDisk)
   let K := max 0 (max K₀ K₁)
   have hK : 0 ≤ K := le_max_left _ _
@@ -2301,16 +2308,11 @@ theorem rhsPath_parity {R : ℝ} (hR : 0 ≤ R)
     parityPath R (NilpotentVolterra.rhsPath (sideData hR false A₀)
       (sideData hR false A₁) (sideData hR false f) W z) := by
   unfold NilpotentVolterra.rhsPath
-  rw [parityPath_deriv hW]
   ext r i
-  change (sideData hR true f z r + ((sideData hR true A₀ z r) (parityVec (W z r)) +
-    (sideData hR true A₁ z r) (parityVec (deriv W z r)))) i =
-    (parityVec (sideData hR false f z r +
-      ((sideData hR false A₀ z r) (W z r) +
-        (sideData hR false A₁ z r) (deriv W z r)))) i
-  rw [sideData_forcing_parity hR hf hz r,
-    sideData_coefficient_parity hR hA₀ hz r,
-    sideData_coefficient_parity hR hA₁ hz r, map_add, map_add]
+  simp only [parityPath_deriv hW, ContinuousMap.add_apply,
+    NilpotentVolterra.coefficientAction_apply, parityPath_apply,
+    sideData_forcing_parity hR hf hz r, sideData_coefficient_parity hR hA₀ hz r,
+    sideData_coefficient_parity hR hA₁ hz r, map_add]
 
 /-- Parity transforms a solution of the positive equation into a solution
 of the reflected positive equation. -/
@@ -2347,17 +2349,17 @@ theorem side_curves_parity {R : ℝ} (hR : 0 ≤ R)
         (sideData hR true A₁) (sideData hR true f))
       (fun z => parityPath R (NilpotentVolterra.integralSolution hR
         (sideData hR false A₀) (sideData hR false A₁) (sideData hR false f) z)) U := by
-  obtain ⟨hp, hpEq⟩ := NilpotentVolterra.integralSolution_spec_open hR hU
+  have hP := NilpotentVolterra.integralSolution_spec_open hR hU
     (sideData_holomorphic hR false hA₀) (sideData_holomorphic hR false hA₁)
     (sideData_holomorphic hR false hf) (side_shape hR hshape false)
-  obtain ⟨hm, hmEq⟩ := NilpotentVolterra.integralSolution_spec_open hR hU
-    (sideData_holomorphic hR true hA₀) (sideData_holomorphic hR true hA₁)
+  have htA₀ := sideData_holomorphic hR true hA₀
+  have htA₁ := sideData_holomorphic hR true hA₁
+  have hM := NilpotentVolterra.integralSolution_spec_open hR hU htA₀ htA₁
     (sideData_holomorphic hR true hf) (side_shape hR hshape true)
-  exact NilpotentVolterra.integral_solution_unique hR hU
-    (sideData_holomorphic hR true hA₀) (sideData_holomorphic hR true hA₁)
-    hm ((parityPath R).differentiable.comp_differentiableOn hp)
-    (side_shape hR hshape true) hmEq
-    (parity_transforms_equation hR hU hp hpA₀ hpA₁ hpf hpEq)
+  exact NilpotentVolterra.integral_solution_unique hR hU htA₀ htA₁
+    hM.1 ((parityPath R).differentiable.comp_differentiableOn hP.1)
+    (side_shape hR hshape true) hM.2
+    (parity_transforms_equation hR hU hP.1 hpA₀ hpA₁ hpf hP.2)
 
 theorem sideSolution_parity {R : ℝ} (hR : 0 ≤ R)
     {A₀ A₁ : ℂ → SymmetricCoefficientPath R} {f : ℂ → SymmetricPath R Vec}

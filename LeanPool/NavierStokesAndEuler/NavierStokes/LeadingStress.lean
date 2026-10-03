@@ -200,8 +200,7 @@ theorem axial_divergence (h : ℝ) {w : Point} (hw : w ∈ Ω.carrier)
       _ = (2 * w.1) ^ 2 := by rw [hr2]
       _ = _ := by ring
   field_simp
-  ring_nf
-  simp only [hr2]
+  rw [hr2]
   ring
 
 /-- The coefficient of the angular inviscid residual is the negative lag source. -/

@@ -1430,9 +1430,11 @@ theorem principal_cutoff_at (a : WaveCoefficients D) (s : StripData D) (d : Grap
   simp only [WaveCoefficients.principal, LinearWaveResidual.principal, Pi.add_apply]
   rw [hD j]
   fin_cases j <;>
-    simp [WaveCoefficients.withCutoff, LinearWaveResidual.principal,
-      LinearWaveResidual.shear, LinearWaveBounds.excludedSlotError,
-      Pi.add_apply, Pi.smul_apply, Complex.real_smul, Complex.ofReal_sub] <;> ring
+    simp only [Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Fin.isValue, WaveCoefficients.withCutoff,
+      LinearWaveResidual.principal, LinearWaveResidual.shear, LinearWaveBounds.excludedSlotError,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Pi.add_apply, Pi.smul_apply,
+      neg_mul, smul_add, smul_neg, Complex.real_smul, Complex.ofReal_add, Complex.ofReal_mul,
+      Complex.ofReal_ofNat, Complex.ofReal_pow, Complex.ofReal_sub, Complex.ofReal_one] <;> ring
 
 theorem corrected_coefficient_eq_good_add_excluded_at
     (a : WaveCoefficients D) (s : StripData D) (d : GraphDirections D)

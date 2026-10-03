@@ -383,19 +383,19 @@ noncomputable def baseOperatorFamily : (ℝ × State) →L[ℝ] (Space →L[ℝ]
       ext x i
       fin_cases i <;>
         simp only [Prod.fst_add, Prod.snd_add, baseOperator_apply, MovingFrameODE.baseAction,
-            MovingFrameODE.pack, Fin.isValue, neg_mul, MovingFrameODE.tail, Matrix.cons_val_zero,
-            smul_add, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, Fin.zero_eta, add_apply,
-            Fin.mk_one, Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val] <;>
+            Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, MovingFrameODE.pack_zero,
+            MovingFrameODE.pack_one, MovingFrameODE.pack_two, add_apply,
+            PiLp.add_apply, PiLp.smul_apply, smul_eq_mul] <;>
         ring
     map_smul' := by
       intro c z
       ext x i
       fin_cases i <;>
         simp only [Prod.smul_fst, smul_eq_mul, Prod.smul_snd, baseOperator_apply,
-            MovingFrameODE.baseAction, MovingFrameODE.pack, Fin.isValue, neg_mul,
-            MovingFrameODE.tail, Matrix.cons_val_zero, smul_add, PiLp.add_apply, PiLp.smul_apply,
-            Fin.zero_eta, RingHom.id_apply, smul_apply, mul_neg, neg_inj, Fin.mk_one,
-            Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val] <;>
+            MovingFrameODE.baseAction, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk,
+            MovingFrameODE.pack_zero, MovingFrameODE.pack_one, MovingFrameODE.pack_two,
+            RingHom.id_apply, smul_apply, PiLp.add_apply,
+            PiLp.smul_apply] <;>
         ring }
 
 @[simp] theorem baseOperatorFamily_apply (z : ℝ × State) :
@@ -408,14 +408,14 @@ theorem projectedOperator_continuousOn {X H : Type*} [TopologicalSpace X]
     (hδ : ContinuousOn δ S) (hne : ∀ z ∈ S, n z ≠ 0) :
     ContinuousOn (fun z => TangentODE.projectedOperator (n z) (nd z) (A z) (δ z)) S := by
   have hlin : ContinuousOn (fun z => (innerSL ℝ (n z)).comp (A z) - innerSL ℝ (nd z)) S :=
-    (((innerSL ℝ).continuous.comp_continuousOn hn).clm_comp hA).sub
+    (((innerSL ℝ).continuous.comp_continuousOn hn).clm_comp hA).fun_sub
       ((innerSL ℝ).continuous.comp_continuousOn hnd)
   have hv : ContinuousOn (fun z => (⟪n z, n z⟫_ℝ)⁻¹ • n z) S :=
     ((hn.inner hn).inv₀ (fun z hz => inner_self_ne_zero.mpr (hne z hz))).smul hn
   have ho :=
     (isBoundedBilinearMap_smulRight (𝕜 := ℝ) (E := H) (F := H)).continuous.comp_continuousOn
       (hlin.prodMk hv)
-  exact (hA.neg.add ho).sub (hδ.smul continuousOn_const)
+  exact (hA.fun_neg.fun_add ho).fun_sub (hδ.fun_smul continuousOn_const)
 
 theorem projectedForcing_continuousOn {X : Type*} [TopologicalSpace X]
     {S : Set X} {n f : X → Space} (hn : ContinuousOn n S) (hf : ContinuousOn f S)
@@ -784,10 +784,10 @@ theorem forced_family_envelope_jets
   obtain ⟨C, hC, m, hm⟩ := hA.bound N
   obtain ⟨C', hC', m', hm'⟩ := hf.bound N
   let K := C + C' + K₀ + 1
-  have hK : 1 ≤ K := by dsimp only [K]; linarith
-  have hCK : C ≤ K := by dsimp only [K]; linarith
-  have hC'K : C' ≤ K := by dsimp only [K]; linarith
-  have hK₀K : K₀ ≤ K := by dsimp only [K]; linarith
+  have hK : 1 ≤ K := by dsimp only [K]; linarith only [hC, hC', hK₀]
+  have hCK : C ≤ K := by dsimp only [K]; linarith only [hC', hK₀]
+  have hC'K : C' ≤ K := by dsimp only [K]; linarith only [hC, hK₀]
+  have hK₀K : K₀ ≤ K := by dsimp only [K]; linarith only [hC, hC']
   let B := (2 : ℝ) ^ (N + 1) * rescaleConstant N K ^ 3
   have hB : 1 ≤ B := one_le_mul_of_one_le_of_one_le (one_le_pow₀ (by norm_num))
     (one_le_pow₀ (hK.trans (le_rescaleConstant N K)))
@@ -1043,10 +1043,9 @@ theorem copySolve_joint_jet_bound (d : LinearData P V H) (g : Geometry) (copy : 
   exact mul_le_mul hbnd
     (pow_le_pow_left₀ (norm_nonneg _) (CommonCoverClass.norm_currentLinear_le (P := P) g) j)
     (pow_nonneg (norm_nonneg _) j)
-    (by
-      have := hW (g.coordinates copy p.2).2
-      have hR := hK.trans (le_rescaleConstant N K)
-      positivity)
+    (mul_nonneg (mul_nonneg (mul_nonneg hw (pow_nonneg (mul_nonneg (pow_nonneg zero_le_two _)
+      (pow_nonneg (zero_le_one.trans (hK.trans (le_rescaleConstant N K))) 3)) _))
+      (pow_nonneg (zero_le_one.trans hS) _)) (hW _).le)
 
 end CopyJointEstimate
 
@@ -1093,13 +1092,15 @@ theorem copySolve_waveClass
   intro N
   obtain ⟨C, hC, m, hm⟩ := hinput N
   let K := C + K₀ + 1
-  have hK : 1 ≤ K := by dsimp only [K]; linarith
-  have hCK : C ≤ K := by dsimp only [K]; linarith
-  have hK₀K : K₀ ≤ K := by dsimp only [K]; linarith
+  have hK : 1 ≤ K := by dsimp only [K]; linarith only [hC, hK₀]
+  have hCK : C ≤ K := by dsimp only [K]; linarith only [hK₀]
+  have hK₀K : K₀ ≤ K := by dsimp only [K]; linarith only [hC]
   let B := (2 : ℝ) ^ (N + 1) * rescaleConstant N K ^ 3
   have hB' : 1 ≤ B := one_le_mul_of_one_le_of_one_le (one_le_pow₀ (by norm_num))
     (one_le_pow₀ (hK.trans (le_rescaleConstant N K)))
-  refine ⟨B ^ (N + 1) * K₀ ^ N, by positivity, (m + 2) * (N + 1) + q * N, ?_⟩
+  refine ⟨B ^ (N + 1) * K₀ ^ N,
+    mul_nonneg (pow_nonneg (zero_le_one.trans hB') _) (pow_nonneg (zero_le_one.trans hK₀) _),
+    (m + 2) * (N + 1) + q * N, ?_⟩
   intro n p hp j hj
   have hG := s.one_le_growth n p
   have hG0 := s.growth_nonneg n p
@@ -1532,7 +1533,8 @@ theorem copySolve_principal (t : TangentData P ProblemStatement.Space) (g : Geom
   have hi := congrFun hh i
   simp only [LinearWaveResidual.principal, projectedPressure, copyPressure, copyPressureReal,
     copyVelocity, nativePoint, hN, Pi.neg_apply] at hi ⊢
-  exact hi
+  unfold copyVelocity
+  with_reducible exact hi
 
 /-- The coefficient family to which the cutoff and exact-curl construction
 is applied; neither velocity nor pressure is supplied as an output input. -/
@@ -1579,7 +1581,7 @@ variable {Q : Type} [NormedAddCommGroup Q] [NormedSpace ℝ Q]
 /-- The explicit source projection in the two-dimensional moving frame. -/
 noncomputable def frameForcingLinear (d : FrameData Q) (z : Q × ℝ) : PrimaryODE.Space →L[ℝ]
     PrimaryODE.State :=
-  LinearMap.toContinuousLinearMap {
+  LinearMap.toContinuousLinearMap (𝕜 := ℝ) (E := PrimaryODE.Space) (F' := PrimaryODE.State) {
     toFun := fun f => d.forcing (fun _ => f) z
     map_add' := by
       intro f g
@@ -1924,11 +1926,7 @@ theorem copySolve_contDiffOn_from_modal
     apply (((hcomp 0).smul (hcols 0)).add ((hcomp 1).smul (hcols 1))).congr
     intro z hz
     exact ambient_eq_synthesis frame z (u z)
-  have hcurrent : ContDiff ℝ ∞ (CommonCoverClass.currentArgument (P := P) g copy) := by
-    simpa only [← CommonCoverClass.currentArgument_affine] using
-      (contDiff_const.add (CommonCoverClass.currentLinear P g).contDiff :
-        ContDiff ℝ ∞ (fun p => CommonCoverClass.currentArgument (P := P) g copy 0 +
-          CommonCoverClass.currentLinear P g p))
+  have hcurrent := CommonCoverClass.currentArgument_smooth (P := P) g copy
   have hh := hpath.comp hcurrent.contDiffOn (fun p hp => ⟨hp, heta p hp⟩)
   apply hh.congr
   intro p hp
@@ -2010,16 +2008,19 @@ theorem ModalCopyControl.waveClass {s : StripData (P × Plane)} {α : ℝ}
   intro N
   obtain ⟨C, hC, m, hm⟩ := h.input_jets N
   let K := C + h.boundConstant + 1
-  have hK : 1 ≤ K := by dsimp only [K]; linarith [h.constant_ge_one]
-  have hCK : C ≤ K := by dsimp only [K]; linarith [h.constant_ge_one]
-  have hK₀K : h.boundConstant ≤ K := by dsimp only [K]; linarith
+  have hK : 1 ≤ K := by dsimp only [K]; linarith only [hC, h.constant_ge_one]
+  have hCK : C ≤ K := by dsimp only [K]; linarith only [h.constant_ge_one]
+  have hK₀K : h.boundConstant ≤ K := by dsimp only [K]; linarith only [hC]
   let B := (2 : ℝ) ^ (N + 1) * rescaleConstant N K ^ 3
   have hB : 1 ≤ B := one_le_mul_of_one_le_of_one_le (one_le_pow₀ (by norm_num))
     (one_le_pow₀ (hK.trans (le_rescaleConstant N K)))
-  have hconst : 0 ≤ ambientJetConstant N := by unfold ambientJetConstant; positivity
+  have hconst : 0 ≤ ambientJetConstant N :=
+    mul_nonneg (pow_nonneg zero_le_two _) (add_nonneg (norm_nonneg _) (norm_nonneg _))
   have hK₀ : 0 ≤ h.boundConstant := zero_le_one.trans h.constant_ge_one
+  have hB₀ : 0 ≤ B := zero_le_one.trans hB
   refine ⟨ambientJetConstant N * B ^ (N + 1) * K * h.boundConstant ^ N,
-    by positivity, (m + 2) * (N + 1) + m + h.coordinatePower * N, ?_⟩
+    mul_nonneg (mul_nonneg (mul_nonneg hconst (pow_nonneg hB₀ _)) (zero_le_one.trans hK))
+      (pow_nonneg hK₀ _), (m + 2) * (N + 1) + m + h.coordinatePower * N, ?_⟩
   intro n p hp j hj
   have hG := s.one_le_growth n p
   have hG0 := s.growth_nonneg n p
@@ -2075,7 +2076,9 @@ theorem ModalCopyControl.waveClass {s : StripData (P × Plane)} {α : ℝ}
         (K * s.growth n p ^ m) * (h.boundConstant ^ N * s.growth n p ^ (h.coordinatePower * N)) :=
             by
       apply mul_le_mul_of_nonneg_left hcp
-      exact mul_nonneg (mul_nonneg hconst (by positivity)) (by positivity)
+      exact mul_nonneg (mul_nonneg hconst (mul_nonneg (mul_nonneg (mul_nonneg hw
+        (pow_nonneg hB₀ _)) (pow_nonneg hG0 _)) hW)) (mul_nonneg (zero_le_one.trans hK)
+        (pow_nonneg hG0 _))
     _ = _ := by unfold majorant; simp only [pow_add]; ring
 
 end ModalControl
@@ -2157,7 +2160,8 @@ theorem copySolve_principal_of_path (t : TangentData P ProblemStatement.Space) (
   have hi := congrFun hh i
   simp only [LinearWaveResidual.principal, projectedPressure, copyPressure, copyPressureReal,
     copyVelocity, nativePoint, hN, Pi.neg_apply] at hi ⊢
-  exact hi
+  unfold copyVelocity
+  with_reducible exact hi
 
 end LocalCopyEquation
 

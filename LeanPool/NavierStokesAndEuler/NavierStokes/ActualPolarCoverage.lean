@@ -218,11 +218,8 @@ theorem polarLift_positiveJets {a b : ℝ} (ha : 0 < a) (m : ℕ) :
       ContinuousMultilinearMap.opNorm_prod]
     exact max_le hc ((PhysicalGraphBounds.norm_positive_jet_linear_le
       PhysicalClassBounds.slowFast x hk).trans (PhysicalClassBounds.norm_slowFast_le.trans hB))
-  have hnorm : ‖polarAssoc.toContinuousLinearEquiv.toContinuousLinearMap‖ ≤ 1 := by
-    apply ContinuousLinearMap.opNorm_le_bound _ zero_le_one
-    intro y
-    change ‖polarAssoc y‖ ≤ 1 * ‖y‖
-    rw [polarAssoc.norm_map, one_mul]
+  have hnorm : ‖polarAssoc.toContinuousLinearEquiv.toContinuousLinearMap‖ ≤ 1 :=
+    polarAssoc.toLinearIsometry.norm_toContinuousLinearMap_le
   have he := norm_jet_linear_comp_at (w := x)
     ((((PolarCharts.chart_contDiff ha j).comp PhysicalGraphBounds.liftXY.contDiff).prodMk
       PhysicalClassBounds.slowFast.contDiff).contDiffAt.of_le (nat_le_infty k))
@@ -1008,14 +1005,9 @@ theorem StateRealization.chartIdentity {a h : ℝ} {N : ℕ} {gap : ℕ → ℕ}
     have hi := PhysicalResidualTZ.context_fullResidual_physicalTZ (ChartScales.Q_pos n) h
       (ChartScales.nativeIndex h n - gap n) n c s (r.matching n hn) r.domain_open r.radius_ne
       (r.base_smooth n hn) (r.increment_smooth n hn) (r.base_pressure_smooth n hn)
-      (r.pressure_smooth n hn) hzU (r.base_equation n hn _ hzU.2) hu hP
-      (r.velocity_germ n hn z hztime hzU) (r.pressure_germ n hn z hztime hzU) i
-    change LiftedMeanResidual.fullResidual c s n (PhysicalResidualTZ.graphMapTZ (bandGraph h n (gap
-        n)) z) i =
-      ChartScales.Q n ^ residualDegree h *
-        CylindricalResidual.frame (-(z.2 1)) (residual u P (z.1, CylindricalResidual.chart z.2)) i
-            at hi
-    rw [hzgraph, hzangle, hzcart] at hi
+      (r.pressure_smooth n hn) (t := z.1) (q := z.2) hzU (r.base_equation n hn _ hzU.2) hu hP
+      (r.velocity_germ n hn z hztime hzU :) (r.pressure_germ n hn z hztime hzU :) i
+    rw [← hzgraph, ← hzangle, ← hzcart]
     exact hi
   have hout := physical_vector_of_components (ChartScales.Q_pos n) h
     (ResidualPolarGraph.angle a j n w)

@@ -207,7 +207,7 @@ theorem meanBar_radialDiv (o : MeanIncrementBounds.Operators (Lift S))
   rw [hprofile x.1 x.2.1 x.2.2]
   have hb : MeanMomentBounds.liftedTorusAverage (f n) = meanBar f n := rfl
   rw [hb]
-  ring_nf
+  ring
 
 theorem meanBar_add (f g : ScalarField (Lift S))
     (hf : ∀ n, ContDiff ℝ ∞ (f n)) (hg : ∀ n, ContDiff ℝ ∞ (g n)) :

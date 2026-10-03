@@ -918,21 +918,18 @@ theorem regularDensity_eq {D : ProfileHistories.RadialDomain}
     (P : ProfileHistories.Profiles D) {x : ℝ} (hx : 0 < x) (eta : ℝ) :
     density (fun t => P.U (t, eta)) (fun t => P.E (t, eta)) x = regularDensity P (x, eta) := by
   ext i
-  fin_cases i
-  · rfl
-  · change Real.sqrt (2 * x) * (Real.sqrt (2 * x) * P.f (x, eta)) = 2 * x * P.f (x, eta)
-    rw [← mul_assoc, Real.mul_self_sqrt (show 0 ≤ 2 * x by positivity)]
-  · change P.U (x, eta) * Real.sqrt (2 * x) * (Real.sqrt (2 * x) * P.f (x, eta)) =
-      P.U (x, eta) * (2 * x * P.f (x, eta))
-    calc
+  fin_cases i <;>
+    simp only [density, regularDensity, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Fin.isValue,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, ProfileHistories.Profiles.E,
+      ProfileHistories.Profiles.H, ProfileHistories.Profiles.transportDensity,
+      ProfileHistories.Profiles.energyDensity]
+  · rw [← mul_assoc, Real.mul_self_sqrt (show 0 ≤ 2 * x by positivity)]
+  · calc
       _ = (Real.sqrt (2 * x) * Real.sqrt (2 * x)) * (P.U (x, eta) * P.f (x, eta)) := by ring
       _ = _ := by rw [Real.mul_self_sqrt (show 0 ≤ 2 * x by positivity)]; ring
-  · change P.U (x, eta) ^ 2 - (Real.sqrt (2 * x) * P.f (x, eta)) ^ 2 / 2 =
-      P.U (x, eta) ^ 2 - x * P.f (x, eta) ^ 2
-    rw [mul_pow, Real.sq_sqrt (show 0 ≤ 2 * x by positivity)]
+  · rw [mul_pow, Real.sq_sqrt (show 0 ≤ 2 * x by positivity)]
     ring
-  · change (Real.sqrt (2 * x) * P.f (x, eta)) ^ 2 / (2 * x) = P.f (x, eta) ^ 2
-    rw [mul_pow, Real.sq_sqrt (show 0 ≤ 2 * x by positivity),
+  · rw [mul_pow, Real.sq_sqrt (show 0 ≤ 2 * x by positivity),
       mul_div_cancel_left₀ _ (show 2 * x ≠ 0 by positivity)]
 
 theorem regularDensity_integrable {D : ProfileHistories.RadialDomain}
@@ -1075,7 +1072,11 @@ theorem outgoing_moments_ideal (F : Profile) {r : ℝ} (hr : r ≤ 1) (eta : ℝ
     apply setIntegral_congr_fun measurableSet_Ioc
     intro x hx
     rcases hvals x hx with ⟨hU, hE⟩
-    fin_cases i <;> simp [density, hU, hE] <;> ring
+    fin_cases i <;>
+      simp only [density, hU, Nat.ofNat_nonneg, Real.sqrt_mul, hE, one_div, Fin.zero_eta,
+        Fin.mk_one, Fin.reduceFinMk, Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one,
+        Matrix.cons_val, Nat.succ_eq_add_one, Nat.reduceAdd, mul_one, sub_right_inj] <;>
+      ring
   rw [hrows]
   have hc0 : IntegrableOn (fun _ : ℝ => (1 : ℝ)) (Ioc 0 r) := continuous_const.integrableOn_Ioc
   have hc2 : IntegrableOn (fun x : ℝ => (x ^ (1 / 10 : ℝ)) ^ 2) (Ioc 0 r) :=
@@ -1830,7 +1831,7 @@ theorem outgoing_axis_halfKernel (F : Profile) (R eta : ℝ) (hR : 0 < R) :
   simp only [OutgoingDilation.axisDatum, OutgoingDilation.canonicalKernel] at ha
   simp_rw [halfKernel_eq]
   rw [integral_div]
-  linarith
+  linear_combination -ha
 
 theorem outgoing_pressure_halfKernel (F : Profile) (R eta : ℝ) (hR : 0 < R)
     {X : ℝ} (hX : 0 < X) :
@@ -2218,7 +2219,7 @@ theorem heated_outgoing_axis_halfKernel {F : Profile} {R B : ℝ}
   rw [he, integral_div]
   have ha := w.axisDatum_eq eta hη
   dsimp only [HeatedOutgoing.axisDatum] at ha
-  linarith
+  linear_combination -ha
 
 theorem heated_outgoing_pressure_prefix {F : Profile} {R B : ℝ}
     (w : HeatedOutgoing.CompensationWitness F R B) {eta X : ℝ}

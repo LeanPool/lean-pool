@@ -3001,7 +3001,7 @@ theorem particular_coefficient_translations (l : ActualParticularStageControls.L
     simp only [p, v, ActualParticularStageControls.canonicalParameters,
         ActualParticularStageControls.directions,
       ParticularWaveBounds.reindex_radialField, ParticularWaveBounds.reindexVector,
-      nativeToFull_eq, map_add, LinearIsometryEquiv.symm_symm,
+      nativeToFull_eq, LinearIsometryEquiv.map_add, LinearIsometryEquiv.symm_symm,
       LinearIsometryEquiv.symm_apply_apply] at hh ⊢
     exact hh
   have hΦ : ActualWaveRegularity.TranslationOn Ω v (a.background.phase n) := by
@@ -3010,7 +3010,7 @@ theorem particular_coefficient_translations (l : ActualParticularStageControls.L
     rw [hphase]
     change (ActualPrimary.chartCoefficients l.1 l.2).phase n
       (ActualWaveRegularity.particularChart.symm (z+v)) = _
-    rw [map_add]
+    rw [LinearIsometryEquiv.map_add]
     change (ActualPrimary.chartCoefficients l.1 l.2).phase n
       (ActualWaveRegularity.particularChart.symm z + ActualWaveRegularity.deckShift m) = _
     exact phase_deck (l.2,l.1) n hn m (ActualWaveRegularity.particularChart.symm z) (mem_univ _)

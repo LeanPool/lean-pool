@@ -257,8 +257,7 @@ theorem jet_product {U : Set P} (hU : IsOpen U)
   | cons v l ih =>
     have hdA := contDiffOn_directional hU hA v
     have hdu := contDiffOn_directional hU hu v
-    have hcoeff : ContDiff ℝ ∞ (coefficientAction (E := E) (a := a) (b := b)) :=
-      ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := ∞)
+    have hcoeff := ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := ∞)
         (E := Coefficient a b E) (F := Curve a b E →L[ℝ] Curve a b E)
         (coefficientAction (E := E))
     have hleft : ContDiffOn ℝ ∞ (fun p => applyCoefficient (directional A v p) (u p)) U :=
@@ -551,11 +550,9 @@ theorem norm_jet_solution_le (hab : a ≤ b) {U : Set P} (hU : IsOpen U)
             (mul_le_mul_of_nonneg_left (pow_le_pow_right₀ hQ hrn) hB) (hW z).le)
         have hforce (z : Icc a b) :
             ‖jetSource A f u k p z‖ ≤ (F₀ + K * B₀ * Q ^ n) * W z := by
-          have hjA (r : List P) (hr : r.length ≤ k.length) (hru : UnitWord r) :
-              ‖jet A r p z‖ ≤ M := hAj r (by omega) hru z
           have hcross := norm_crossJet_le A u k p z hM
             (mul_nonneg (mul_nonneg hB (pow_nonneg hQ0 _)) (hW z).le)
-            hjA (fun r hr hru => hlower r hr hru z) hku
+            (fun r hr hru => hAj r (by omega) hru z) (fun r hr hru => hlower r hr hru z) hku
           have hpow : (2 : ℝ) ^ k.length ≤ (2 : ℝ) ^ N :=
             pow_le_pow_right₀ (by norm_num) (by omega)
           calc
@@ -600,9 +597,12 @@ theorem amplitude_le_polynomial {S K w L : ℝ} (hS : 1 ≤ S) (hK : 1 ≤ K)
   have hK0 : 0 ≤ K := zero_le_one.trans hK
   have hT : 1 ≤ T := one_le_pow₀ hS
   have hT0 : 0 ≤ T := zero_le_one.trans hT
-  have hD0 : 0 ≤ D := by dsimp only [D]; positivity
-  have hB0 : 0 ≤ B := by dsimp only [B]; positivity
-  have hQ0 : 0 ≤ Q := by dsimp only [Q]; positivity
+  have hD0 : 0 ≤ D := mul_nonneg (pow_nonneg zero_le_two _) (pow_nonneg hK0 3)
+  have hwKS : 0 ≤ w * K * S ^ m := mul_nonneg (mul_nonneg hw hK0) (pow_nonneg hS0 m)
+  have hB0 : 0 ≤ B := mul_nonneg hK0 (add_nonneg hwKS (mul_nonneg hL hwKS))
+  have h2KS : 0 ≤ (2 : ℝ) ^ N * (K * S ^ m) :=
+    mul_nonneg (pow_nonneg zero_le_two N) (mul_nonneg hK0 (pow_nonneg hS0 m))
+  have hQ0 : 0 ≤ Q := add_nonneg zero_le_one (mul_nonneg (mul_nonneg hK0 hL) h2KS)
   have hKS : 1 ≤ K * S := one_le_mul_of_one_le_of_one_le hK hS
   have htwopow : (2 : ℝ) ≤ (2 : ℝ) ^ (N + 1) := by
     simpa only [pow_one] using pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2)
@@ -611,26 +611,27 @@ theorem amplitude_le_polynomial {S K w L : ℝ} (hS : 1 ≤ S) (hK : 1 ≤ K)
     calc
       B = (w * K ^ 2 * S ^ m) * (1 + L) := by dsimp only [B]; ring
       _ ≤ (w * K ^ 2 * S ^ m) * (2 * K * S) :=
-        mul_le_mul_of_nonneg_left (by linarith) (by positivity)
+        mul_le_mul_of_nonneg_left (by linarith only [hLS, hKS])
+          (mul_nonneg (mul_nonneg hw (pow_nonneg hK0 2)) (pow_nonneg hS0 m))
       _ = w * (2 * K ^ 3) * T := by dsimp only [T]; rw [pow_succ]; ring
-      _ ≤ w * D * T := by dsimp only [D]; gcongr
+      _ ≤ w * D * T := mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right htwopow (pow_nonneg hK0 3)) hw) hT0
   have hprod : 1 ≤ (2 : ℝ) ^ N * K ^ 3 * T :=
     one_le_mul_of_one_le_of_one_le
       (one_le_mul_of_one_le_of_one_le (one_le_pow₀ (by norm_num : (1 : ℝ) ≤ 2))
         (one_le_pow₀ hK)) hT
   have hstep : Q ≤ D * T := by
     calc
-      Q ≤ 1 + K * (K * S) * ((2 : ℝ) ^ N * (K * S ^ m)) := by dsimp only [Q]; gcongr
+      Q ≤ 1 + K * (K * S) * ((2 : ℝ) ^ N * (K * S ^ m)) :=
+        add_le_add (le_refl 1) (mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hLS hK0) h2KS)
       _ = 1 + (2 : ℝ) ^ N * K ^ 3 * T := by dsimp only [T]; rw [pow_succ]; ring
-      _ ≤ 2 * ((2 : ℝ) ^ N * K ^ 3 * T) := by linarith
+      _ ≤ 2 * ((2 : ℝ) ^ N * K ^ 3 * T) := by linarith only [hprod]
       _ = D * T := by dsimp only [D]; rw [pow_succ]; ring
   calc
     B * Q ^ n ≤ (w * D * T) * (D * T) ^ n :=
-      mul_le_mul hbase (pow_le_pow_left₀ hQ0 hstep n) (pow_nonneg hQ0 _) (by positivity)
-    _ = w * D ^ (n + 1) * T ^ (n + 1) := by
-      rw [mul_pow]
-      simp only [pow_succ]
-      ring
+      mul_le_mul hbase (pow_le_pow_left₀ hQ0 hstep n) (pow_nonneg hQ0 _)
+        (mul_nonneg (mul_nonneg hw hD0) hT0)
+    _ = w * D ^ (n + 1) * T ^ (n + 1) := by ring
     _ = w * D ^ (n + 1) * S ^ ((m + 1) * (n + 1)) := by dsimp only [T]; rw [pow_mul]
 
 /-- An error of order `1/S` on a slot of length at most `d*S` has a uniform
@@ -756,7 +757,9 @@ theorem norm_iteratedFDeriv_odeFamily_le_polynomial (hab : a ≤ b)
   have hS0 : 0 ≤ S := zero_le_one.trans hS
   have hK0 : 0 ≤ K := zero_le_one.trans hK
   have hWt : 0 ≤ W t := (hW t).le
-  apply multilinear_norm_le_of_unit _ (by positivity)
+  apply multilinear_norm_le_of_unit _ (mul_nonneg (mul_nonneg (mul_nonneg hw
+    (pow_nonneg (mul_nonneg (pow_nonneg zero_le_two _) (pow_nonneg hK0 3)) _))
+    (pow_nonneg hS0 _)) hWt)
   intro v hv
   let l := (List.ofFn v).reverse
   have hl : UnitWord l := by

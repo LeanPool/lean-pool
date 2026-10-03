@@ -323,7 +323,8 @@ theorem carrier_le_inverse_epsilon (n : ℕ) :
     (ChartScales.epsilon_le_one ActualPrimary.h ActualPrimary.outgoing.data.h_pos.le n)
   have hsq := Real.sq_sqrt he.le
   have hel : ChartScales.epsilon ActualPrimary.h n ≤
-      Real.sqrt (ChartScales.epsilon ActualPrimary.h n) := by nlinarith
+      Real.sqrt (ChartScales.epsilon ActualPrimary.h n) :=
+    hsq.symm.trans_le (pow_le_of_le_one hs hs1 two_ne_zero)
   have hupper := (Scaling.carrier_frequency_sqrt_bounds he).2
   change (ChartScales.carrier ActualPrimary.h n : ℝ) *
     Real.sqrt (ChartScales.epsilon ActualPrimary.h n) ≤
@@ -397,7 +398,7 @@ theorem localPhase_positive_jets (m : ℕ) :
   have hK := ActualPrimaryBounds.copyCost_one
   have hA : 1 ≤ A :=
     one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le (by norm_num) hM) hK
-  refine ⟨A + C, by linarith, p + 1, ?_⟩
+  refine ⟨A + C, le_add_of_le_of_nonneg hA (zero_le_one.trans hC), p + 1, ?_⟩
   intro n i x hx j hj hjm
   have hS := PhysicalGraphBounds.S_ge_one hx.1.1
   have hei := one_le_inverse_epsilon (BaseChartJets.cellBand i.1.2)
@@ -427,9 +428,11 @@ theorem localPhase_positive_jets (m : ℕ) :
         C * ChartScales.S n ^ (p + 1) *
           (ChartScales.epsilon ActualPrimary.h (BaseChartJets.cellBand i.1.2))⁻¹ := by
       apply add_le_add
-      · gcongr
+      · exact mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hs1 (zero_le_one.trans hA))
+          (zero_le_one.trans hei)
       · exact (mul_le_mul_of_nonneg_left hs0 (zero_le_one.trans hC)).trans
-          (le_mul_of_one_le_right (by positivity) hei)
+          (le_mul_of_one_le_right
+            (mul_nonneg (zero_le_one.trans hC) (pow_nonneg (zero_le_one.trans hS) _)) hei)
     _ = _ := by ring
 
 /-- The full frequency-weighted phase, with the literal chosen carrier. -/
@@ -628,9 +631,11 @@ theorem carrier_jets_phaseCell (m : ℕ) :
       ring
     _ ≤ ((m.factorial : ℝ) * C^m) *
         ActualPrimaryBounds.fullStrip.growth n x ^ (p*m) *
-          (ChartScales.epsilon ActualPrimary.h n)⁻¹ ^ (2*m) := by
-      gcongr
-      exact pow_nonneg (inv_nonneg.mpr (ChartScales.epsilon_pos _ _).le) _
+          (ChartScales.epsilon ActualPrimary.h n)⁻¹ ^ (2*m) :=
+      mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ (zero_le_one.trans hS) hSG _)
+          (mul_nonneg (Nat.cast_nonneg _) (pow_nonneg (zero_le_one.trans hC) _)))
+        (pow_nonneg (inv_nonneg.mpr (ChartScales.epsilon_pos _ _).le) _)
     _ = _ := by
       rw [inverse_power_eq_rpow, WeightedClasses.majorant, mul_one]
       change _ = ((m.factorial : ℝ) * C^m) *

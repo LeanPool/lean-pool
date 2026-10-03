@@ -1020,11 +1020,11 @@ theorem derivativeError_jet_near_ends {s : StripData D} (g : SlotFamily s)
   · rw [abs_of_nonpos (by linarith only [h])]
       at hb
     left
-    constructor <;> linarith only [hb, hb.1, hb.2]
+    exact ⟨by linarith only [hb.2], by linarith only [hb.1]⟩
   · rw [abs_of_nonneg (by linarith only [h])]
       at hb
     right
-    constructor <;> linarith only [hb, hb.1, hb.2]
+    exact ⟨by linarith only [hb.1], by linarith only [hb.2]⟩
 
 theorem omittedSource_jet_support {s : StripData D} (g : SlotFamily s)
     (f : ℕ → D → E) (n j : ℕ) :

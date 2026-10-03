@@ -75,10 +75,10 @@ noncomputable def flipLinear (K : Set Z) :
     C(K, P →L[ℝ] E) →ₗ[ℝ] P →ₗ[ℝ] C(K, E) where
   toFun g := {
     toFun := fun v => ⟨fun z => g z v, g.continuous.clm_apply continuous_const⟩
-    map_add' := by intros; ext z; exact map_add (g z) _ _
-    map_smul' := by intros; ext z; exact map_smul (g z) _ _ }
-  map_add' := by intros; ext v z; rfl
-  map_smul' := by intros; ext v z; rfl
+    map_add' := by intros; ext z; exact (g z).map_add _ _
+    map_smul' := by intros; ext z; exact (g z).map_smul _ _ }
+  map_add' := by intros; rfl
+  map_smul' := by intros; rfl
 
 omit [NormedSpace ℝ Z] in
 theorem norm_flipLinear_le (K : Set Z) [CompactSpace K]

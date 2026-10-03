@@ -1122,7 +1122,8 @@ theorem meanClass_pressureMass {a b cL cR : ℝ}
     hab.le hU hf hs
   refine ⟨fun _ _ _ => zero_le_one, ?_, ?_⟩
   · intro n
-    exact (hm n).comp (MeanMomentBounds.insertSlow (P := S)).contDiff.contDiffOn (fun _ hp => hp)
+    exact ((hm n).comp (MeanMomentBounds.insertSlow (P := S)).contDiff.contDiffOn
+      (fun _ hp => hp) :)
   · intro m
     obtain ⟨C, hC, k, hbound⟩ := hb m
     refine ⟨C, hC, k, ?_⟩
@@ -1600,7 +1601,8 @@ theorem localBandJets_meanClass_of_support {a b c e cL cR : ℝ}
       _ ≤ C * ε n ^ α * L n ^ k := hbound n p hp.2 j hj
       _ ≤ C * ε n ^ α * st.growth n p ^ k :=
         mul_le_mul_of_nonneg_left hgr (mul_nonneg hC (Real.rpow_pos_of_pos (hε n) α).le)
-      _ = (C / δ * ε n ^ α * st.growth n p ^ k) * δ := by field_simp
+      _ = (C / δ * ε n ^ α * st.growth n p ^ k) * δ := by
+        linear_combination (ε n ^ α * st.growth n p ^ k) * (div_mul_cancel₀ C hδ.ne').symm
       _ ≤ (C / δ * ε n ^ α * st.growth n p ^ k) * st.zeta p := mul_le_mul_of_nonneg_left hζ hA
       _ = _ := rfl
   · rw [jet_zero_outside hU (hf n) (hs n) hp.2 (fun hi => hpi ⟨hi.1.le, hi.2.le⟩) j, norm_zero]
@@ -2842,11 +2844,8 @@ theorem physicalDensity_meanClass {coord : ℝ} (U : SlowRegion coord)
     exact (((contDiffAt_fst.sqrt (ne_of_gt hx)).pow (e + 1)).inv
       (pow_ne_zero _ (Real.sqrt_pos.mpr hx).ne')).contDiffWithinAt
   have h := MeanIncrementBounds.Class.coefficient_mul hm hp
-  simp only [zero_add, SignedStressPrimitive.physicalDensity, SignedStressPrimitive.lengthScale,
-    profileMap, MeanRankUpdate.chartQ, MeanRankUpdate.chartInput_apply,
-        PhysicalCoordinateBounds.qCoord,
-    div_eq_mul_inv, mul_comm] at h ⊢
-  exact h
+  rw [zero_add] at h
+  exact MeanRankUpdate.meanClass_congr_on h fun n x _ => div_eq_inv_mul _ _
 
 theorem fderiv_slowLift (D : Plane → ℝ) (x : Point) (v : Plane)
     (hD : DifferentiableAt ℝ D x.2.1) :

@@ -1282,11 +1282,10 @@ theorem sourceMoment_coverPull {l : ℝ} (hl : 0 < l) (P : S →L[ℝ] T)
   have he : (fun z : PressureStream.Lift S => z.1 ^ m * coverPull l P k u f z) =
       coverPull l P k (u / l ^ m) (fun z => z.1 ^ m * f z) := by
     funext z
-    change z.1 ^ m * (u * f (chartLinear l (P.prodMap (TemporalMeanUpdate.coverMap k)) z)) =
-      (u / l ^ m) * ((l * z.1) ^ m * f (chartLinear l (P.prodMap (TemporalMeanUpdate.coverMap k))
-          z))
-    rw [mul_pow]
-    field_simp
+    change z.1 ^ m * (u * _) = (u / l ^ m) * ((l * z.1) ^ m * _)
+    rw [mul_pow, mul_assoc (l ^ m), ← mul_assoc (u / l ^ m),
+      div_mul_cancel₀ u (pow_ne_zero m hl.ne')]
+    exact mul_left_comm _ _ _
   have hfp : PressureStream.TorusPeriodicLift (fun z : PressureStream.Lift T => z.1 ^ m * f z) := by
     intro r t Y j
     exact congrArg (r ^ m * ·) (hp r t Y j)

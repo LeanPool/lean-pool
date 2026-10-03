@@ -981,9 +981,10 @@ theorem native_geometry_jets
       (fun l n k x => (tangent F χ φ clock normal source j l n).action
         (ParticularWaveBounds.nativePoint (g l n) k x)) := by
   have hd := ScaledActualParticularControl.frame_jets s F φ clock normal hA hB hφ hscale
-  exact ⟨frame_field_native_jets s F χ φ clock g r (frame_normal_jets hd) hC hgeometry,
-    frame_field_native_jets s F χ φ clock g r (frame_motion_jets hd) hC hgeometry,
-    frame_field_native_jets s F χ φ clock g r (frame_action_jets hd) hC hgeometry⟩
+  refine ⟨?_, ?_, ?_⟩
+  · apply frame_field_native_jets s F χ φ clock g r (frame_normal_jets hd) hC hgeometry
+  · apply frame_field_native_jets s F χ φ clock g r (frame_motion_jets hd) hC hgeometry
+  · apply frame_field_native_jets s F χ φ clock g r (frame_action_jets hd) hC hgeometry
 
 end ActualJets
 
@@ -3155,7 +3156,7 @@ theorem associated_assembled_bounds (x : CycleState (Label B N0))
   have hm (j : ℤ) (hj : j ∈ ParticularWaveAssembly.modes N) :=
     common_bounds x hx hs hN j ((ParticularWaveAssembly.mem_modes N j).mp hj).1
       (current_source_class x H j ((ParticularWaveAssembly.mem_modes N j).mp hj).1)
-  exact ParticularParameters.uniform_assembled_bounds (fun l => parameters x l)
+  apply ParticularParameters.uniform_assembled_bounds (fun l => parameters x l)
     associatedStrip (associatedContext (B := B)) (StateReindex.state cycleAssoc.symm x.state)
     (fun l => StateReindex.block cycleAssoc.symm (x.coefficients.blocks l))
     (fun l => StateReindex.blockCoefficients cycleAssoc.symm (x.coefficients.gaussian l))

@@ -372,23 +372,12 @@ theorem native_radialDiv_slow_on (r : ReconstructionData) (ε fast : ℕ → ℝ
   have hdr : deriv (fun q => F n (q, x.2.1)) x.1 =
       fderiv ℝ (liftSlow F n) x (1, (0, 0)) := hd.deriv
   have hv : fderiv ℝ (liftSlow F n) x (0, (0, r.radialDirection)) = 0 := by
-    have hin : HasDerivAt (fun q : ℝ => x + q • (0, (0, r.radialDirection)))
-        (0, (0, r.radialDirection)) 0 := by
-      have he := (hasDerivAt_const (0 : ℝ) x).fun_add
-        ((hasDerivAt_id (0 : ℝ)).smul_const (F := PressureStream.Lift S)
-          (0, (0, r.radialDirection)))
-      simp only [Prod.smul_mk, smul_eq_mul, mul_zero, smul_zero, hasDerivAt_const_add_iff, id_eq,
-          one_smul, zero_add] at he ⊢
-      exact he
-    have hf0 : HasFDerivAt (liftSlow F n) (fderiv ℝ (liftSlow F n) x)
-        (x + (0 : ℝ) • (0, (0, r.radialDirection))) := by simpa using hdiff.hasFDerivAt
-    have hh := hf0.comp_hasDerivAt (0 : ℝ) hin
-    have hc : (fun q : ℝ => liftSlow F n (x + q • (0, (0, r.radialDirection)))) =
-        (fun _ => F n (x.1, x.2.1)) := by
-      funext q
-      simp [liftSlow]
-    simpa only [zero_smul, add_zero, zero_add, one_smul, hc, Function.comp_def, deriv_const] using
-        hh.deriv.symm
+    have hin := ((hasDerivAt_id (0 : ℝ)).smul_const (F := PressureStream.Lift S)
+      (0, (0, r.radialDirection))).const_add x
+    have hh := hdiff.hasFDerivAt.comp_hasDerivAt_of_eq (0 : ℝ) hin
+      (by simp only [id_eq, zero_smul, add_zero])
+    simpa only [one_smul, id_eq, Function.comp_def, liftSlow, Prod.smul_mk, smul_zero,
+      Prod.fst_add, add_zero, Prod.snd_add, deriv_const] using hh.deriv.symm
   simp only [Operators.radialDiv, Operators.dr, graphDerivative, Operators.invRadius,
     Pi.add_apply, Pi.smul_apply, Pi.mul_apply, smul_eq_mul, nativeOperators, graphOperators,
     hv, mul_zero, add_zero, liftSlow, IntegratedMeanBalances.radialDivergence, hdr,
@@ -510,10 +499,12 @@ theorem signed_tensor_bounds {σ κ : ℝ} (hσ : 1 / 5 ≤ σ)
     (a : Assembly f) :
     TensorClass s (1 + σ - κ) (incrementTensor f a) ∧
       TensorClass s (1 + σ + 17 / 100 + κ) (remainderTensor f a) := by
+  have hβη : 1 / 2 + σ - κ ≤ 1 + σ - 2 * κ := by linarith only [hκsmall]
   constructor
-  · convert! incrementTensor_mem f a (by linarith) (by linarith) using 1
+  · convert! incrementTensor_mem f a (by linarith only [hσ, hκsmall]) hβη using 1
     ring
-  · exact remainderTensor_mem f a (by linarith) (by linarith) (by linarith) (by linarith)
+  · exact remainderTensor_mem f a hβη (by linarith only [hκsmall]) (by linarith only [hκsmall])
+      (by linarith only [hσ, hκsmall])
 
 end Families
 
@@ -699,11 +690,9 @@ theorem slowClass_lift (G : Geometry) {α : ℝ} {f : ℕ → Plane → ℝ}
   refine ⟨C, hC, k, ?_⟩
   intro n x hx j hj
   have hpopen : IsOpen (pr ⁻¹' G.region.carrier) := G.region.isOpen.preimage pr.continuous
-  have he := pr.iteratedFDerivWithin_comp_right (hf.smooth n) G.region.isOpen.uniqueDiffOn
-    hpopen.uniqueDiffOn hx (ENat.natCast_le_of_coe_top_le_withTop le_rfl j)
-  change iteratedFDerivWithin ℝ j (f n ∘ pr) (pr ⁻¹' G.region.carrier) x =
-    (iteratedFDerivWithin ℝ j (f n) G.region.carrier (pr x)).compContinuousLinearMap (fun _ => pr)
-        at he
+  have he := pr.iteratedFDerivWithin_comp_right (s := G.region.carrier) (hf.smooth n)
+    G.region.isOpen.uniqueDiffOn hpopen.uniqueDiffOn hx
+    (ENat.natCast_le_of_coe_top_le_withTop le_rfl j)
   rw [iteratedFDerivWithin_of_isOpen j hpopen hx,
     iteratedFDerivWithin_of_isOpen (f := f n) j G.region.isOpen
       (show pr x ∈ G.region.carrier from hx)] at he

@@ -86,20 +86,14 @@ theorem norm_fderiv_cutoff_four_le {φ : Space → ℝ} {w : Space → Space}
         4 * φ x ^ 3 * ‖fderiv ℝ φ x‖ * ‖w x‖ := by
   rw [fderiv_fun_smul (c := fun y => φ y ^ 4) (hφ.pow 4) hw,
     fderiv_cutoff_four hφ]
-  calc
-    ‖φ x ^ 4 • fderiv ℝ w x +
-        ((4 * φ x ^ 3) • fderiv ℝ φ x).smulRight (w x)‖ ≤
-        ‖φ x ^ 4 • fderiv ℝ w x‖ +
-          ‖((4 * φ x ^ 3) • fderiv ℝ φ x).smulRight (w x)‖ := norm_add_le _ _
-    _ ≤ ‖φ x ^ 4‖ * ‖fderiv ℝ w x‖ +
-        (‖4 * φ x ^ 3‖ * ‖fderiv ℝ φ x‖) * ‖w x‖ := by
-      rw [ContinuousLinearMap.norm_smulRight_apply]
-      exact add_le_add
-        (ContinuousLinearMap.opNorm_smul_le (φ x ^ 4) (fderiv ℝ w x))
-        (mul_le_mul_of_nonneg_right
-          (ContinuousLinearMap.opNorm_smul_le (4 * φ x ^ 3) (fderiv ℝ φ x))
-          (norm_nonneg _))
-    _ = _ := by simp [Real.norm_eq_abs, abs_of_nonneg hφ0]
+  have h4 : ‖φ x ^ 4‖ = φ x ^ 4 := Real.norm_of_nonneg (pow_nonneg hφ0 4)
+  have h3 : ‖4 * φ x ^ 3‖ = 4 * φ x ^ 3 :=
+    Real.norm_of_nonneg (mul_nonneg zero_le_four (pow_nonneg hφ0 3))
+  refine (norm_add_le _ _).trans (add_le_add ?_ ?_)
+  · exact (ContinuousLinearMap.opNorm_smul_le _ _).trans_eq (by rw [h4])
+  · rw [ContinuousLinearMap.norm_smulRight_apply]
+    exact mul_le_mul_of_nonneg_right
+      ((ContinuousLinearMap.opNorm_smul_le _ _).trans_eq (by rw [h3])) (norm_nonneg _)
 
 /-- The pointwise magnitude of the weighted coordinate gradient. -/
 def cutoffGradientAmplitude (φ : Space → ℝ) (w : Space → Space) (x : Space) : ℝ :=

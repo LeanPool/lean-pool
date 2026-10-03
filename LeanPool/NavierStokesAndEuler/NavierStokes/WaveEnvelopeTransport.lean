@@ -445,7 +445,9 @@ theorem waveClass_sourceArgument_bound
         ‖sourceLinear P g‖ ^ j := hjet
     _ ≤ (A * s.epsilon n ^ α * s.growth n z.1 ^ p * (Real.sqrt (s.zeta z.1) * W n v)) *
         (K ^ N * s.growth n z.1 ^ N) :=
-      mul_le_mul hsrc hpow (pow_nonneg (norm_nonneg _) _) (by positivity)
+      mul_le_mul hsrc hpow (pow_nonneg (norm_nonneg _) _)
+        (mul_nonneg (mul_nonneg (mul_nonneg hA (Real.rpow_nonneg he.le α)) (pow_nonneg hGn p))
+          (mul_nonneg (Real.sqrt_nonneg _) hw))
     _ = _ := by rw [pow_add]; ring
 
 end SourceJetTransport

@@ -1059,7 +1059,9 @@ theorem current_mode_physical_bound {h a b : ℝ}
           PhysicalGraphBounds.character c (Φ (PhysicalWaveSum.commonLift h n d y)))) w‖ ≤
         C * q ^ (gain - currentLoss degree ρ m) := by
   let A' : ℝ := (2 : ℝ) ^ m * A * (m.factorial : ℝ) * (1 + H) ^ m * B ^ m
-  have hA' : 0 ≤ A' := by dsimp [A']; positivity
+  have hA' : 0 ≤ A' := mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (pow_nonneg zero_le_two _)
+    hA) (Nat.cast_nonneg _)) (pow_nonneg (add_nonneg zero_le_one hH) _))
+    (pow_nonneg (zero_le_one.trans hB) _)
   obtain ⟨C, hC, hbound⟩ := PhysicalMeanJetBounds.common_stripped_physical_bound_local (E := ℂ) (b
       := b)
     hh hh1 ha Δ m (gain - degree - ρ * m) (p + r * m : ℕ) A' hA'
@@ -1071,9 +1073,12 @@ theorem current_mode_physical_bound {h a b : ℝ}
     Real.one_le_rpow_of_pos_of_le_one_of_nonpos hQ (ChartScales.Q_le_one n) (neg_nonpos.mpr hρ)
   have hBPhi : 1 ≤ B * ChartScales.Q n ^ (-ρ) * ChartScales.S n ^ r :=
     one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le hB hQρ) (one_le_pow₀ hS)
-  have hAc : 0 ≤ A * ChartScales.Q n ^ gain * ChartScales.S n ^ p := by positivity
-  have hc' : |c| ≤ 1 + H := hc.trans (by linarith only)
-  have hjets := mode_jet_bound_local hamp hPhi m hAc hBPhi (by linarith : 1 ≤ 1 + H) hc' hab hPhib
+  have hAc : 0 ≤ A * ChartScales.Q n ^ gain * ChartScales.S n ^ p :=
+    mul_nonneg (mul_nonneg hA (Real.rpow_pos_of_pos hQ gain).le)
+      (pow_nonneg (zero_le_one.trans hS) p)
+  have hc' : |c| ≤ 1 + H := hc.trans (le_add_of_nonneg_left zero_le_one)
+  have hjets := mode_jet_bound_local hamp hPhi m hAc hBPhi (le_add_of_nonneg_right hH) hc' hab
+    hPhib
   let F : PhysicalWaveSum.LiftPoint → ℂ := fun y => (ChartScales.Q n ^ (-degree)) •
     (amp y * PhysicalGraphBounds.character c (Φ y))
   have hnear : LocalPhysicalCopyBounds.SmoothNear F (PhysicalWaveSum.commonLift h n d w) := by

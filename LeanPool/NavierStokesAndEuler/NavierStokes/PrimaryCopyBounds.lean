@@ -249,8 +249,8 @@ theorem sqrt {g : ι → D → ℝ} (hg : NativeJets V w g)
       apply mul_le_mul
       · exact mul_le_mul_of_nonneg_left hjA (Real.sqrt_nonneg _)
       · exact pow_le_pow_right₀ hB (by omega)
-      · positivity
-      · positivity
+      · exact pow_nonneg hBpos.le _
+      · exact mul_nonneg (Real.sqrt_nonneg _) (zero_le_one.trans hA)
     _ = _ := by dsimp [B]; rw [mul_pow, ← pow_mul]; ring
 
 end NativeJets
@@ -339,14 +339,11 @@ theorem pressureCoefficient_jets
       (N i x) (Ndot i x) (u i x) (A i x (u i x)) 0) := by
   have hNsq := hN.inner hN
   have hInv := hNsq.inv (b := b ^ 2) (M := M ^ 2) (sq_pos_of_pos hb)
-    (by
-      intro i x hx
-      rw [real_inner_self_eq_norm_sq, abs_of_nonneg (sq_nonneg _)]
-      exact pow_le_pow_left₀ hb.le (hlo i x hx) 2)
-    (by
-      intro i x hx
-      rw [real_inner_self_eq_norm_sq, abs_of_nonneg (sq_nonneg _)]
-      exact pow_le_pow_left₀ (norm_nonneg _) (hhi i x hx) 2)
+    (fun i x hx => ((pow_le_pow_left₀ hb.le (hlo i x hx) 2).trans_eq
+      (real_inner_self_eq_norm_sq (N i x)).symm).trans (le_abs_self _))
+    (fun i x hx => ((abs_of_nonneg real_inner_self_nonneg).trans
+      (real_inner_self_eq_norm_sq (N i x))).trans_le
+        (pow_le_pow_left₀ (norm_nonneg _) (hhi i x hx) 2))
   have hAu : NativeJets V w (fun i x => A i x (u i x)) := by
     have he := (NativeJets.of_polynomial hA).bilinear hu
       (ContinuousLinearMap.apply ℝ ProblemStatement.Space).flip
@@ -358,8 +355,10 @@ theorem pressureCoefficient_jets
     have he := h1.sub h2
     simp only [one_mul] at he
     exact he
-  simpa only [TangentProjection.pressureCoefficient, inner_zero_right, add_zero,
-    real_inner_self_eq_norm_sq, div_eq_mul_inv, mul_comm] using hnum.polynomial_mul hInv
+  refine (hnum.polynomial_mul hInv).congr ?_
+  intro i x _
+  simp only [TangentProjection.pressureCoefficient, inner_zero_right, add_zero, div_eq_mul_inv]
+  exact mul_comm _ _
 
 end Pressure
 
@@ -854,15 +853,19 @@ theorem NativeJets.copy_localJets (hf : NativeJets V w f)
       _ ≤ ‖iteratedFDeriv ℝ j (f (index l n)) (L l n i x + c l n i)‖ * ‖L l n i‖ ^ j := hu
       _ ≤ (C * V.growth (index l n) (L l n i x + c l n i) ^ p *
           w (index l n) (L l n i x + c l n i)) * (B ^ m * s.growth n x ^ (b * m)) :=
-        mul_le_mul (hb _ _ ht j hj) hL (by positivity)
+        mul_le_mul (hb _ _ ht j hj) hL (pow_nonneg (norm_nonneg _) _)
           (mul_nonneg (mul_nonneg (zero_le_one.trans hC) (pow_nonneg (zero_le_one.trans hGN) _))
             (hf.nonneg _ _ ht))
       _ ≤ (C * (A * s.growth n x ^ a) ^ p * (s.epsilon n ^ α * W l n x)) *
           (B ^ m * s.growth n x ^ (b * m)) := by
-        gcongr
-        · exact hf.nonneg _ _ ht
-        · exact hgrowth l n i x hx hk
-        · exact hweight l n i x hx hk
+        have hC0 : 0 ≤ C := zero_le_one.trans hC
+        have hG0 : 0 ≤ s.growth n x := zero_le_one.trans hG
+        have hAg : 0 ≤ A * s.growth n x ^ a :=
+          mul_nonneg (zero_le_one.trans hA) (pow_nonneg hG0 a)
+        exact mul_le_mul_of_nonneg_right (mul_le_mul (mul_le_mul_of_nonneg_left
+          (pow_le_pow_left₀ (zero_le_one.trans hGN) (hgrowth l n i x hx hk) p) hC0)
+          (hweight l n i x hx hk) (hf.nonneg _ _ ht) (mul_nonneg hC0 (pow_nonneg hAg p)))
+          (mul_nonneg (pow_nonneg (zero_le_one.trans hB) m) (pow_nonneg hG0 _))
       _ = majorant s (W l) α (C * A ^ p * B ^ m) (a * p + b * m) n x := by
         rw [majorant, mul_pow, ← pow_mul, pow_add]
         ring

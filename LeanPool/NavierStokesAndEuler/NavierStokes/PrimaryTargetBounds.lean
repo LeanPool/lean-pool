@@ -1031,6 +1031,13 @@ theorem signedSlot_center {u L : ℝ} (hu : 0 ≤ u) (hL : 0 < L)
   rw [he, abs_div, abs_mul, abs_mul, phaseSign_abs, one_mul, abs_of_nonneg hu,
     abs_of_pos hL]
 
+theorem pulseRatio_apply (d : PrimaryODE.FrameData Slow) (lam u L : ℝ) (p : Slow) (v : ℝ)
+    (k : Fin 2) :
+    pulseRatio d lam u L p v k =
+      PrimaryPulseBounds.normalizedPulse d lam u L (p, v / L) k.succ /
+        PrimaryPulseBounds.normalizedPulse d lam u L (p, v / L) 0 := by
+  fin_cases k <;> rfl
+
 section FamilyRatio
 
 open BasePhaseGeometry
@@ -1198,8 +1205,7 @@ theorem primary_center_error (i : ι) (j : Fin 2) (hsign : a.sigma i = phaseSign
           (p,v / a.length i) k.succ /
         PrimaryPulseBounds.normalizedPulse (a.frame i) (a.lam i) u (a.length i)
           (p,v / a.length i) 0 - modelMatrix (a.c0 i) u (a.K i) k j := by
-    rw [PiLp.sub_apply, modelVector_column]
-    fin_cases k <;> rfl
+    rw [PiLp.sub_apply, modelVector_column, pulseRatio_apply]
   rw [he, Real.norm_eq_abs] at hcomponent
   exact hcomponent.trans (hbound.trans (add_le_add_left hratioL _))
 

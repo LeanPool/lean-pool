@@ -1829,13 +1829,19 @@ theorem controlledRemainder_bound_eq (O : NaturalOperators V) (d : AxisData V)
     (S : V →L[ℝ] V) (R M : ℝ) (hR : 0 ≤ R) (hM : 0 ≤ M)
     (t : ℝ) (ht : |t| ≤ 1) (a : V) (ha : ‖a‖ ≤ M) :
     (controlledRemainder O d S R M hR hM t ht a ha).bound =
-      remainderBound O d S R M hR hM := by rfl
+      remainderBound O d S R M hR hM := by
+  dsimp only [remainderBound, controlledRemainder, Controlled.const, Controlled.constBound,
+    Controlled.fst, Controlled.snd, Controlled.linear, Controlled.bilinear, Controlled.add,
+    Controlled.sub, Controlled.neg, Controlled.unitSmul, Controlled.pair]
 
 theorem controlledRemainder_lip_eq (O : NaturalOperators V) (d : AxisData V)
     (S : V →L[ℝ] V) (R M : ℝ) (hR : 0 ≤ R) (hM : 0 ≤ M)
     (t : ℝ) (ht : |t| ≤ 1) (a : V) (ha : ‖a‖ ≤ M) :
     (controlledRemainder O d S R M hR hM t ht a ha).lip =
-      remainderLip O d S R M hR hM := by rfl
+      remainderLip O d S R M hR hM := by
+  dsimp only [remainderLip, controlledRemainder, Controlled.const, Controlled.constBound,
+    Controlled.fst, Controlled.snd, Controlled.linear, Controlled.bilinear, Controlled.add,
+    Controlled.sub, Controlled.neg, Controlled.unitSmul, Controlled.pair]
 
 theorem remainderBound_nonneg (O : NaturalOperators V) (d : AxisData V)
     (S : V →L[ℝ] V) (R M : ℝ) (hR : 0 ≤ R) (hM : 0 ≤ M) :
@@ -1904,15 +1910,15 @@ theorem exists_unique_natural_fixedPoint [CompleteSpace V]
   have hB : 0 ≤ B := remainderBound_nonneg O d S R M hR hM
   have hL : 0 ≤ L := remainderLip_nonneg O d S R M hR hM
   have htotal : 1 + B + L ≤ Λ := hΛ
-  have hΛ1 : 1 ≤ Λ := by linarith
-  have hBΛ : B ≤ Λ := by linarith
-  have hLΛ : L ≤ Λ := by linarith
+  have hΛ1 : 1 ≤ Λ := by linarith only [htotal, hB, hL]
+  have hBΛ : B ≤ Λ := by linarith only [htotal, hL]
+  have hLΛ : L ≤ Λ := by linarith only [htotal, hB]
   have hΛpos : 0 < Λ := lt_of_lt_of_le zero_lt_one hΛ1
-  have hden : 0 < 2 * Λ := by positivity
+  have hden : 0 < 2 * Λ := mul_pos two_pos hΛpos
   have ht : |1 / Λ| ≤ 1 := by
     rw [abs_of_pos (one_div_pos.mpr hΛpos)]
     exact (div_le_one hΛpos).mpr hΛ1
-  have hs : 0 ≤ 1 / (2 * Λ) := by positivity
+  have hs : 0 ≤ 1 / (2 * Λ) := (one_div_pos.mpr hden).le
   let f := controlledRemainder O d S R M hR hM (1 / Λ) ht a ha
   have hfB : f.bound = B := controlledRemainder_bound_eq O d S R M hR hM (1 / Λ) ht a ha
   have hfL : f.lip = L := controlledRemainder_lip_eq O d S R M hR hM (1 / Λ) ht a ha
@@ -1920,12 +1926,12 @@ theorem exists_unique_natural_fixedPoint [CompleteSpace V]
     rw [hfB]
     rw [show (1 / (2 * Λ)) * B = B / (2 * Λ) by ring]
     apply (div_le_iff₀ hden).mpr
-    linarith
+    linarith only [hBΛ, hΛpos]
   have hl : (1 / (2 * Λ)) * f.lip ≤ 1 / 2 := by
     rw [hfL]
     rw [show (1 / (2 * Λ)) * L = L / (2 * Λ) by ring]
     apply (div_le_iff₀ hden).mpr
-    linarith
+    linarith only [hLΛ]
   obtain ⟨x, hx, hfixed, herr, huniq⟩ :=
     exists_fixedPoint_of_controlled x₀ f (1 / (2 * Λ)) hs hb hl
   refine ⟨x, hx, ?_, ?_, ?_⟩
@@ -3284,7 +3290,7 @@ theorem integrated_solution (I : Window) {ε : ℝ} (hε : 0 < ε)
           (2 * s) * angularRemainder (parameters I ε χ d) t
             (AxisEvaluation.profile I ε x.1) (AxisEvaluation.profile I ε x.2)
             (AxisEvaluation.profile I ε (AxisOperators.average I hε x.2)) p := by
-        linarith only [he]
+        linear_combination 2 * he
       _ = _ := by rw [hst]
   · intro p hp
     have hY : |p.1| < 20 := abs_lt.mpr hp.1
@@ -3306,7 +3312,7 @@ theorem integrated_solution (I : Window) {ε : ℝ} (hε : 0 < ε)
             (AxisEvaluation.profile I ε x.2)
             (AxisEvaluation.profile I ε (AxisOperators.average I hε x.2))
             (AxisEvaluation.profile I ε (pressureCoefficient I hε a x.1)) p := by
-        linarith only [he]
+        linear_combination 2 * he
       _ = _ := by rw [hst]
 
 /-- The leading pair defined using the proved angular resolvent. -/

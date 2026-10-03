@@ -124,7 +124,8 @@ theorem anchoredSolve_timeData (d : LinearData P V E) (g : Geometry)
     have hclock : HasDerivAt (fun t : ℝ => shift + rate * t) rate t := by
       simpa only [mul_one, id_eq] using ((hasDerivAt_id t).const_mul rate).const_add shift
     simpa only [u, coefficientAlong_timeData, forcingAlong_timeData,
-      _root_.smul_apply, smul_add, Function.comp_def] using hold.scomp t hclock
+      _root_.smul_apply, smul_add, Function.comp_def] using
+      hold.scomp (h := fun t : ℝ => shift + rate * t) t hclock
   exact (anchoredSolve_unique (timeData d shift rate) (timeGeometry g shift rate hrate.ne')
     hab copy p Y hAc hfc hu0 hu hs).symm
 
@@ -1154,12 +1155,12 @@ theorem frame_slices (F : PhaseConstruction D) (i : ι) (j : ℤ)
   have hd := (ActualParticularControl.selected_frame_jets F).smoothOn i
   have hmap : MapsTo (fun s : ℝ => (p, s)) (Icc 0 (F.L i)) ((D.slot F.V F.openV).carrier i) :=
     fun s hs => ⟨hp, F.interval i hs⟩
-  have hn := (PrimaryCopyBridge.frame_normal_continuousOn hd).comp
-    (continuous_const.prodMk continuous_id).continuousOn hmap
-  have hnd := (PrimaryCopyBridge.frame_normalMotion_continuousOn hd).comp
-    (continuous_const.prodMk continuous_id).continuousOn hmap
-  have hA := (PrimaryCopyBridge.frame_baseOperator_continuousOn hd).comp
-    (continuous_const.prodMk continuous_id).continuousOn hmap
+  have hn := (PrimaryCopyBridge.frame_normal_continuousOn hd).comp'
+    (continuous_const.prodMk continuous_id').continuousOn hmap
+  have hnd := (PrimaryCopyBridge.frame_normalMotion_continuousOn hd).comp'
+    (continuous_const.prodMk continuous_id').continuousOn hmap
+  have hA := (PrimaryCopyBridge.frame_baseOperator_continuousOn hd).comp'
+    (continuous_const.prodMk continuous_id').continuousOn hmap
   have hδ : ContinuousOn (fun s : ℝ => (F.frame i).damping j (p, s)) (Icc 0 (F.L i)) :=
     (continuousOn_const.mul hd.viscosity.continuousOn).comp
       (continuous_const.prodMk continuous_id).continuousOn hmap
@@ -1314,10 +1315,9 @@ theorem native_parameter_eq (l : Label B N0) (n : ℕ) (p : Parameter) (Y : Plan
         (ChartScales.Q (reference l).band) p) =
       ActualPrimaryCovariance.nativePoint n (p.1, (p.2, Y)) l.2 := by
   ext <;> simp only [ActualSignedGeometry.swapParameter, PhysicalParticularWave.parameterChange,
-      PhysicalParticularWave.ratioPower, div_eq_mul_inv, one_mul, reference, mul_comm,
-      Real.rpow_one, LinearIsometryEquiv.coe_mk, LinearEquiv.coe_mk, LinearMap.coe_mk,
-      AddHom.coe_mk, ActualPrimaryCovariance.nativePoint, ActualPrimary.nativeSlow,
-      ActualPrimary.toAbsolute, Real.sqrt_eq_rpow, mul_assoc]
+      PhysicalParticularWave.ratioPower, reference, Real.rpow_one, LinearIsometryEquiv.coe_mk,
+      LinearEquiv.coe_mk, LinearMap.coe_mk, AddHom.coe_mk, ActualPrimaryCovariance.nativePoint,
+      ActualPrimary.nativeSlow, ActualPrimary.toAbsolute, Real.sqrt_eq_rpow, div_mul_eq_mul_div]
 
 theorem native_cell_of_refinedCarrier (l : Label B N0) (n : ℕ) (p : Parameter)
     (hT : 0 < p.2.1) {Y : Plane}
@@ -2437,7 +2437,7 @@ theorem corrected_amplitude_of_germs (x : CorrectionStep.CycleState (Label B N0)
   exact ActualPrimaryCoherence.realizedCoefficient_equiv (bandMap n m)
     (L := (j : ℝ) * (x.coefficients.blocks l).frequency m)
     (ratioPower_pos (ChartScales.Q_pos n) (ChartScales.Q_pos m) _).ne'
-    (div_ne_zero hKm hKn) hKn (by field_simp [hKn, (mul_ne_zero_iff.mp hKn).2])
+    (div_ne_zero hKm hKn) hKn (mul_div_cancel₀ _ hKn)
     (fun y => y.1.1.1) (fun y => y.1.1.1)
     (d.radialField n) (fun _ => d.angular) (d.axialField s n)
     (d.radialField m) (fun _ => d.angular) (d.axialField s m)

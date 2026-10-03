@@ -526,7 +526,7 @@ theorem temporalInverse_solves {f : PressureStream.Lift S → ℝ} (hf : ContDif
       Plane).symm.toContinuousLinearEquiv.toContinuousLinearMap
   have hi := SmoothFamilyTorusInverse.inverse_smooth .temporal hfs hps
   have hD := (Complex.reCLM.hasFDerivAt.comp q
-    (((hi.differentiable (by simp)) q).hasFDerivAt)).comp z L.hasFDerivAt
+    (((hi.differentiable (by simp)) q).hasFDerivAt)).comp (f := ⇑L) z L.hasFDerivAt
   change HasFDerivAt (temporalInverse f) _ z at hD
   rw [PressureStream.graphDz, hD.fderiv]
   change (fderiv ℝ (SmoothFamilyTorusInverse.inverse .temporal (sourceToFamily f)) q
@@ -1436,7 +1436,8 @@ theorem meanClass_of_interior_bounds {a b c e cL cR α : ℝ}
       _ ≤ C * ε n ^ α * R n ^ p := hbound n j hj z
       _ ≤ C * ε n ^ α * st.growth n z ^ p :=
         mul_le_mul_of_nonneg_left hgr (mul_nonneg hC (Real.rpow_pos_of_pos (hε n) α).le)
-      _ = (C / η * ε n ^ α * st.growth n z ^ p) * η := by field_simp
+      _ = (C / η * ε n ^ α * st.growth n z ^ p) * η := by
+        linear_combination (-(C * ε n ^ α * st.growth n z ^ p)) * mul_inv_cancel₀ hη.ne'
       _ ≤ (C / η * ε n ^ α * st.growth n z ^ p) * st.zeta z := mul_le_mul_of_nonneg_left hζ hA
       _ = _ := rfl
   · have hzero : iteratedFDeriv ℝ j (f n) z = 0 :=

@@ -178,7 +178,7 @@ theorem bandPhase_eq (j : ℤ) (hj : j ≠ 0) (hf : ∀ m, D.carrierBlock.freque
     _ = PhysicalParticularWave.referenceFrequency D j * PhysicalParticularWave.liftPhase D j
         (PhysicalParticularWave.cylinderChange h (ChartScales.Q n) (ChartScales.Q D.reference.band)
             (gap n) x) := by
-          field_simp [hf n]
+          rw [← mul_assoc, mul_div_cancel₀ _ hK]
     _ = _ := href.trans htarget.symm
 
 include H in
@@ -809,7 +809,7 @@ theorem liftCoefficient_smooth :
         PhysicalResidualBridge.ScaledGraph.angular := H.angular
     have hz : StateReindex.vector waveEquiv (D.directions.axialField D.strip D.reference.band) =
         (PhysicalResidualBridge.commonGraph Qr h I).axial := H.axial
-    rw [hR, hr, ht, hz] at hn
+    simp only [hR, hr, ht, hz] at hn
     funext x
     simp only [coefficient, liftRaw, referenceRaw_eq_common D H.identity]
     exact congrArg₂ normalCoefficient (congrFun hn x) rfl
@@ -842,7 +842,7 @@ theorem referenceLiftVelocity_eq_wave :
       PhysicalResidualBridge.ScaledGraph.angular := H.angular
   have hz : StateReindex.vector waveEquiv (D.directions.axialField D.strip D.reference.band) =
       (PhysicalResidualBridge.commonGraph Qr h I).axial := H.axial
-  rw [hR, hr, ht, hz] at he
+  simp only [hR, hr, ht, hz] at he
   funext x
   have ha : liftRaw D j = fun y => (rawCommon D j).amplitude D.reference.band (waveEquiv y) := by
     unfold liftRaw
@@ -883,7 +883,7 @@ theorem bandVelocity_eq_reference {x : Cylinder} (hx : x ∈ bandDomain D h Q Qr
   have he := correctedMode_scaled
     (SpatialScaling.commonChart hQ hQr h i gap (bandDomain_open D h Q Qr gap hU) (fun _ hy => hy.1))
     (velocityWeight h Q Qr) hK (div_ne_zero hKr hK)
-    (show K * (referenceFrequency D j / K) = referenceFrequency D j by field_simp)
+    (mul_div_cancel₀ (referenceFrequency D j) hK)
     (fun y hy => ((liftPhase_smooth D C).contDiffAt ((referenceDomain_open D).mem_nhds
         hy.2.1)).differentiableAt (by
         simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
@@ -917,7 +917,7 @@ theorem bandPressureMode_eq_reference (D : AssemblyData Parameter) (h : ℝ) {Q 
         (PhysicalParticularWave.cylinderChange h Q Qr gap x) :=
     PhysicalCurlCovariance.carrier_eq_of_products (by
       unfold PhysicalParticularWave.bandPhase
-      field_simp)
+      rw [← mul_assoc, mul_div_cancel₀ _ hK])
   unfold PhysicalParticularWave.bandPressureMode referenceLiftPressure mode
   rw [hp, hc]
   simp only [Complex.real_smul]

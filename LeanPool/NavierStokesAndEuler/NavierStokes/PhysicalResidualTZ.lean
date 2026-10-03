@@ -540,10 +540,10 @@ theorem context_fullResidual_physicalTZ {Q : ℝ} (hQ : 0 < Q) (h : ℝ) (k n : 
   have hRV : ∀ x ∈ V, x.1.1 ≠ 0 := fun x hx => hR (swapCylinder x) hx
   have hBV (j : Fin 3) : ContDiffOn ℝ ∞
       (fun x => PhysicalResidualBridge.baseComponents (swapContext c) n x j) V :=
-    (hB j).comp swapCylinder.contDiff.contDiffOn (fun _ hx => hx)
+    ((hB j).comp (swapCylinder.contDiff.contDiffOn (s := V)) (fun _ hx => hx) :)
   have haV (j : Fin 3) : ContDiffOn ℝ ∞
       (fun x => PhysicalResidualBridge.incrementComponents (swapState s) n x j) V :=
-    (ha j).comp swapCylinder.contDiff.contDiffOn (fun _ hx => hx)
+    ((ha j).comp (swapCylinder.contDiff.contDiffOn (s := V)) (fun _ hx => hx) :)
   have hpV : ContDiffOn ℝ ∞ ((swapState s).totalPressureIncrement n) V :=
     hp.comp swapCylinder.contDiff.contDiffOn (fun _ hx => hx)
   have hp₀V : ContDiffOn ℝ ∞ (fun x => p₀ (swapCylinder x)) V :=

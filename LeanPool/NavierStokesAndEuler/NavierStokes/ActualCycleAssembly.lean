@@ -841,10 +841,7 @@ theorem common_raw_zero_germ_of_factorization (j : ℤ) (n : ℕ)
       (StateReindex.blockCoefficients cycleAssoc.symm A) j
     a.common.amplitude n =ᶠ[𝓝 z] fun _ => 0 := by
   classical
-  let a := (ActualParticularStageControls.canonicalParameters (l.2,l.1)).copyData
-    (StateReindex.context cycleAssoc.symm c) (StateReindex.state cycleAssoc.symm u)
-    (StateReindex.block cycleAssoc.symm b) (StateReindex.blockCoefficients cycleAssoc.symm G)
-    (StateReindex.blockCoefficients cycleAssoc.symm A) j
+  intro a
   have hsupp : ∀ n k, support (a.cutoff n k) ⊆ (particularCells l).carrier n k :=
     canonical_cutoff_support l _ _ _ _ _ j
   by_cases hcell : ∃ k, z ∈ (particularCells l).carrier n k

@@ -943,8 +943,14 @@ theorem bandPoint_affine (h Q : ℝ) (p : Slow) :
     ring
   · ext i
     fin_cases i <;>
-      simp [BaseChartJets.bandPoint, bandLinear, AxisymmetricResidual.packDerivative,
-          coordinateVector]
+      simp only [BaseChartJets.bandPoint, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Fin.isValue,
+        Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, bandLinear, neg_smul,
+        AxisymmetricResidual.packDerivative, coordinateVector, ContinuousLinearMap.zero_smulRight,
+        add_zero, ContinuousLinearMap.prod_apply, neg_apply, smul_apply,
+        ContinuousLinearMap.comp_apply, ContinuousLinearMap.coe_snd', smul_eq_mul, add_apply,
+        ContinuousLinearMap.smulRight_apply, ContinuousLinearMap.coe_fst', Prod.mk_add_mk,
+        PiLp.add_apply, PiLp.smul_apply, PiLp.single_eq_same, mul_one, ne_eq, Fin.reduceEq,
+        not_false_eq_true, PiLp.single_eq_of_ne, mul_zero, one_ne_zero, zero_add]
 
 theorem bandPoint_smooth (h Q : ℝ) : ContDiff ℝ ∞ (BaseChartJets.bandPoint h Q) := by
   have he : BaseChartJets.bandPoint h Q = fun p => bandLinear h Q p + (1, 0) :=
@@ -1201,7 +1207,8 @@ theorem normalizedBase_prefix (alpha : ℝ) (m : ℕ) :
     have hh : F.data.h * alpha - a ≤ r := le_max_right _ _
     linarith only [hh]
   obtain ⟨C, hC, hb⟩ := physical_error_prefix_bound W U H v upper B m r hr
-  refine ⟨C * 4 ^ m, mul_nonneg hC (by positivity), fun n p hp j hj => ?_⟩
+  have h4 : (0 : ℝ) ≤ 4 ^ m := pow_nonneg zero_le_four m
+  refine ⟨C * 4 ^ m, mul_nonneg hC h4, fun n p hp j hj => ?_⟩
   have ht := (BaseContextAssembly.native_geometry W U ℕ).time 0 p hp
   have he : ContDiffAt ℝ ∞
       (fun p => FinalSlowBase.error H v upper B (BaseChartJets.bandPoint F.data.h (ChartScales.Q n)
@@ -1218,7 +1225,7 @@ theorem normalizedBase_prefix (alpha : ℝ) (m : ℕ) :
         ⟨BaseChartJets.bandPoint_time (h := F.data.h) (ChartScales.Q_pos n) ht, Set.mem_univ _⟩)) j
   simp only [← bandPoint_affine] at hcomp
   have hD : 0 ≤ CoordinateAlgebra.D F.data.h := by
-    unfold CoordinateAlgebra.D; linarith only [F.data.h_lt_half]
+    unfold CoordinateAlgebra.D; exact sub_nonneg.mpr F.data.h_lt_half.le
   have hnorm : ‖bandLinear F.data.h (ChartScales.Q n)‖ ^ j ≤ 4 ^ m :=
     (pow_le_pow_left₀ (norm_nonneg _)
       (bandLinear_bound (ChartScales.Q_pos n) (ChartScales.Q_le_one n) hD) j).trans
@@ -1239,13 +1246,13 @@ theorem normalizedBase_prefix (alpha : ℝ) (m : ℕ) :
             ‖bandLinear F.data.h (ChartScales.Q n)‖ ^ j) :=
       mul_le_mul_of_nonneg_left hcomp (Real.rpow_pos_of_pos (ChartScales.Q_pos n) a).le
     _ ≤ ChartScales.Q n ^ a * (C * ChartScales.Q n ^ r * 4 ^ m) :=
-      mul_le_mul_of_nonneg_left (mul_le_mul (hb n p hp j hj) hnorm (by positivity)
+      mul_le_mul_of_nonneg_left (mul_le_mul (hb n p hp j hj) hnorm (pow_nonneg (norm_nonneg _) j)
         (mul_nonneg hC (Real.rpow_pos_of_pos (ChartScales.Q_pos n) r).le))
         (Real.rpow_pos_of_pos (ChartScales.Q_pos n) a).le
     _ = (C * 4 ^ m) * ChartScales.Q n ^ (a + r) := by
       rw [Real.rpow_add (ChartScales.Q_pos n) a r]; ring
     _ ≤ (C * 4 ^ m) * ChartScales.epsilon F.data.h n ^ alpha := by
-      apply mul_le_mul_of_nonneg_left _ (mul_nonneg hC (by positivity))
+      apply mul_le_mul_of_nonneg_left _ (mul_nonneg hC h4)
       rw [ChartScales.epsilon, ← Real.rpow_mul (ChartScales.Q_pos n).le]
       exact Real.rpow_le_rpow_of_exponent_ge (ChartScales.Q_pos n) (ChartScales.Q_le_one n) hexp
 

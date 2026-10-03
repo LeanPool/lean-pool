@@ -341,11 +341,16 @@ theorem heat_velocity_rate {l : Filter SpaceTime} (hl : l ≤ endpoint)
     exact he
   obtain ⟨A, hA, ha⟩ := extension_uniform_jets (by linarith only [hh] : 1 < 1 + h) m
   have he := finiteRate_uniform_comp positiveRadius_isOpen hlU heatRatio_smooth
-    (HeatProfileExtension.extension (1 + h)) (HeatProfileExtension.extension_contDiff (by linarith))
-    (powerLoss_nonneg m) hA ha hq hr
+    (HeatProfileExtension.extension (1 + h))
+    (HeatProfileExtension.extension_contDiff (by linarith only [hh])) (powerLoss_nonneg m)
+    hA ha hq hr
   have hp := finiteRate_negative_power physicalEnergy_smooth (isCompact_closedBall _ _) hK hq
     hR hlow (p := RadialHeatProfile.spatialExponent (1 + h))
-    (by unfold RadialHeatProfile.spatialExponent; constructor <;> linarith only [hh, hh1]) m
+    (by
+      unfold RadialHeatProfile.spatialExponent
+      exact ⟨(by norm_num : (-2 : ℝ) ≤ 1 / 2 - (1 + 1 / 2)).trans
+          (sub_le_sub_left (add_le_add le_rfl hh1.le) _),
+        sub_nonpos.mpr ((half_le_self zero_le_one).trans (le_add_of_nonneg_right hh.le))⟩) m
   have hs := (energyPower_smooth (RadialHeatProfile.spatialExponent (1 + h))).mul
     ((HeatProfileExtension.extension_contDiff (by linarith only [hh] : 1 < 1 + h)).comp_contDiffOn
       heatRatio_smooth)
@@ -355,7 +360,7 @@ theorem heat_velocity_rate {l : Filter SpaceTime} (hl : l ≤ endpoint)
   have hC := scalarConst_rate hpe positiveRadius_isOpen hlU hs C
   have hlow2 : ∀ᶠ z in l, (2 * R) * q z ≤ 2 * physicalEnergy z := by
     filter_upwards [hlow] with z hz
-    nlinarith only [hz]
+    exact (mul_assoc 2 R (q z)).trans_le (mul_le_mul_of_nonneg_left hz zero_le_two)
   have hd := finiteRate_negative_power (contDiff_const.mul physicalEnergy_smooth)
     (isCompact_closedBall _ _) hK hq (mul_pos (by norm_num) hR) hlow2
     (p := -(1 / 2 : ℝ)) (by constructor <;> norm_num) m

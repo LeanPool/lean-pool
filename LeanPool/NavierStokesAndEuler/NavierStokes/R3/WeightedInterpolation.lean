@@ -227,9 +227,8 @@ theorem cutoff_transport_bound
   obtain ⟨hmem, hbound⟩ := cutoff_interpolation_three hφm hφ hw hweighted
   have hid (x : Space) :
       ‖(φ x ^ 2) • w x‖ ^ (3 : ℝ) = φ x ^ 6 * ‖w x‖ ^ 3 := by
-    rw [show (3 : ℝ) = ((3 : ℕ) : ℝ) by norm_num, Real.rpow_natCast,
-      norm_smul, Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
-    ring
+    rw [Real.rpow_ofNat, norm_smul, Real.norm_eq_abs, abs_of_nonneg (sq_nonneg (φ x)), mul_pow,
+      ← pow_mul]
   have hint : Integrable (fun x => φ x ^ 6 * ‖w x‖ ^ 3) volume := by
     have hi := hmem.integrable_norm_rpow (by norm_num) (by norm_num)
     exact hi.congr (Filter.Eventually.of_forall fun x => by simpa using hid x)

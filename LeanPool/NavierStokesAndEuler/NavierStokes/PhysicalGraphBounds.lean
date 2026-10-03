@@ -1057,7 +1057,8 @@ theorem graphRestriction_jet_bound {E : Type*} [NormedAddCommGroup E] [NormedSpa
       ‖iteratedFDeriv ℝ m (F ∘ physicalLift h n) p‖ ≤
         C * B * ChartScales.Q n ^ (-graphLoss m) := by
   obtain ⟨C, hC, hbound⟩ := physicalLift_positive_jet_bound hh hh1 ha m
-  refine ⟨(m.factorial : ℝ) * C ^ m, mul_pos (by positivity) (pow_pos (by linarith) _), ?_⟩
+  refine ⟨(m.factorial : ℝ) * C ^ m,
+    mul_pos (by positivity) (pow_pos (zero_lt_one.trans_le hC) _), ?_⟩
   intro n hn p hp ht F hF B hB hFB
   let U : Set SpaceTime := {p | radialProjection p ≠ 0}
   have hU : IsOpen U := axisFree_open.preimage radialProjection.continuous
@@ -1065,11 +1066,10 @@ theorem graphRestriction_jet_bound {E : Type*} [NormedAddCommGroup E] [NormedSpa
   let D := C * ChartScales.Q n ^ (-((m : ℝ) + 2))
   have hpower : 1 ≤ ChartScales.Q n ^ (-((m : ℝ) + 2)) := by
     have he := Real.rpow_le_rpow_of_exponent_ge (ChartScales.Q_pos n)
-      (ChartScales.Q_le_one n) (show -((m : ℝ) + 2) ≤ 0 by
-        have := Nat.cast_nonneg (α := ℝ) m
-        linarith)
+      (ChartScales.Q_le_one n)
+      (neg_nonpos.mpr (add_nonneg (Nat.cast_nonneg m) zero_le_two) : -((m : ℝ) + 2) ≤ 0)
     simpa only [Real.rpow_zero] using he
-  have hD : 1 ≤ D := by dsimp only [D]; nlinarith
+  have hD : 1 ≤ D := one_le_mul_of_one_le_of_one_le hC hpower
   have hj := norm_iteratedFDerivWithin_comp_le hF.contDiffOn (physicalLift_smooth h n)
     (nat_le_infty m) uniqueDiffOn_univ hU.uniqueDiffOn (mapsTo_univ _ _) hx
     (C := B) (D := D)
@@ -1660,7 +1660,7 @@ theorem slotMap_smooth {κ : Plane → Plane} (hκ : ContDiff ℝ ∞ κ)
 
 theorem norm_slotLinear_le (ci : ℝ) : ‖slotLinear ci‖ ≤ 1 + |ci⁻¹| * ‖etaCoordinate‖ := by
   have hcoef : 0 ≤ |ci⁻¹| * ‖etaCoordinate‖ := mul_nonneg (abs_nonneg _) (norm_nonneg _)
-  refine ContinuousLinearMap.opNorm_le_bound _ (by positivity) ?_
+  refine ContinuousLinearMap.opNorm_le_bound _ (add_nonneg zero_le_one hcoef) ?_
   intro y
   have hzt : ‖liftZT y‖ ≤ ‖y‖ :=
     ((liftZT.le_opNorm y).trans (mul_le_of_le_one_left (norm_nonneg y) norm_liftZT_le))
@@ -1669,14 +1669,16 @@ theorem norm_slotLinear_le (ci : ℝ) : ‖slotLinear ci‖ ≤ 1 + |ci⁻¹| * 
     calc
       _ ≤ |ci⁻¹| * (‖etaCoordinate‖ * ‖y.2‖) :=
         mul_le_mul_of_nonneg_left (etaCoordinate.le_opNorm y.2) (abs_nonneg _)
-      _ ≤ |ci⁻¹| * (‖etaCoordinate‖ * ‖y‖) := by gcongr; exact le_max_right _ _
-      _ = _ := by ring
+      _ ≤ |ci⁻¹| * (‖etaCoordinate‖ * ‖y‖) := mul_le_mul_of_nonneg_left
+        (mul_le_mul_of_nonneg_left (le_max_right _ _) (norm_nonneg _)) (abs_nonneg _)
+      _ = _ := (mul_assoc _ _ _).symm
   change max (max ‖(0 : ℝ)‖ ‖liftZT y‖) (max ‖(0 : ℝ)‖ |ci⁻¹ * etaCoordinate y.2|) ≤ _
   simp only [norm_zero]
   rw [max_eq_right (norm_nonneg (liftZT y)), max_eq_right (abs_nonneg (ci⁻¹ * etaCoordinate y.2))]
   apply max_le
-  · exact hzt.trans (by nlinarith only [hcoef, norm_nonneg y])
-  · exact he.trans (by linarith only [norm_nonneg y])
+  · exact hzt.trans (le_mul_of_one_le_left (norm_nonneg y) (le_add_of_nonneg_right hcoef))
+  · exact he.trans (mul_le_mul_of_nonneg_right (le_add_of_nonneg_left zero_le_one)
+      (norm_nonneg y))
 
 theorem positive_jet_affine_bound {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [NormedAddCommGroup F] [NormedSpace ℝ F] (L : E →L[ℝ] F) (c : F)
@@ -1845,7 +1847,8 @@ theorem liftedPhase_power_bound {h K Z r0 P B d : ℝ}
     apply (slotMap_norm_bound κ _ center r0 y (zero_le_one.trans hK) hZ
       (mul_nonneg (mul_nonneg (mul_nonneg zero_le_two hr0) hTg.le) hS0.le) hκ0 hz hv).trans
     dsimp only [M0]
-    nlinarith only [hK, hZ, hS]
+    linarith only [hS, le_mul_of_one_le_right (zero_le_one.trans hK) hS,
+      le_mul_of_one_le_right hZ hS]
   have hlin : |p| + |pz / ChartScales.epsilon h n| + |x0| ≤
       3 * P * ChartScales.Q n ^ (-1 : ℝ) := by
     have hP0 : 0 ≤ P := zero_le_one.trans hP
@@ -1861,7 +1864,7 @@ theorem liftedPhase_power_bound {h K Z r0 P B d : ℝ}
       D0 * ChartScales.S n := by
     have he := mul_le_mul_of_nonneg_right hci (norm_nonneg etaCoordinate)
     dsimp only [D0]
-    nlinarith only [he, hK, hS]
+    linarith only [he, le_mul_of_one_le_right (add_nonneg (zero_le_one.trans hK) zero_le_one) hS]
   have he := liftedPhase_jet_bound hκ h n center r0 p pz x0 hF hG y m
     (zero_le_one.trans hK) hM (zero_le_one.trans hbase) hκb hpoint hFb hGb i hi
   have hP0 : 0 ≤ P := zero_le_one.trans hP

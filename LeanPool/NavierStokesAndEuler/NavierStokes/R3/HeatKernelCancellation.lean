@@ -323,20 +323,19 @@ theorem heatKernelSecond_eq_partial {s : ℝ} (hs : 0 < s)
   change heatKernelSecond s i j z = fderiv ℝ ((fun x : Space => -(x j / (2 * s))) * heatKernel s) z
       (NavierStokes.ProblemStatement.coordinateVector i)
   rw [(hg.mul (hasFDerivAt_heatKernel hs z)).fderiv]
+  simp only [add_apply, smul_apply, coe_innerSL_apply, smul_eq_mul]
   by_cases hij : i = j
   · subst i
-    simp only [heatKernelSecond, ↓reduceIte, one_div, mul_inv_rev, neg_smul, smul_neg, neg_neg,
-      NavierStokes.ProblemStatement.coordinateVector, add_apply, smul_apply, coe_innerSL_apply,
-      EuclideanSpace.inner_single_right, conj_trivial, one_mul, smul_eq_mul, neg_apply,
+    simp only [heatKernelSecond, ↓reduceIte, one_div, mul_inv_rev,
+      NavierStokes.ProblemStatement.coordinateVector,
+      EuclideanSpace.inner_single_right, conj_trivial, one_mul,
       inner_self_eq_norm_sq_to_K, PiLp.norm_single, norm_one, RCLike.ofReal_real_eq_id, id_eq,
       one_pow, mul_one]
-    field_simp
     ring
-  · simp only [heatKernelSecond, hij, ↓reduceIte, zero_div, sub_zero, neg_smul, smul_neg, neg_neg,
-      mul_inv_rev, NavierStokes.ProblemStatement.coordinateVector, add_apply, smul_apply,
-      coe_innerSL_apply, EuclideanSpace.inner_single_right, conj_trivial, one_mul, smul_eq_mul,
-      neg_apply, ne_eq, not_false_eq_true, PiLp.single_eq_of_ne, mul_zero, neg_zero, add_zero]
-    field_simp
+  · simp only [heatKernelSecond, hij, ↓reduceIte, zero_div, sub_zero,
+      mul_inv_rev, NavierStokes.ProblemStatement.coordinateVector,
+      EuclideanSpace.inner_single_right, conj_trivial, one_mul,
+      ne_eq, not_false_eq_true, PiLp.single_eq_of_ne, mul_zero, add_zero]
     ring
 
 /-- A radial envelope for every component of the Gaussian Hessian. -/

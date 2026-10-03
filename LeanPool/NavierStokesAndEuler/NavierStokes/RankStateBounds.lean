@@ -65,11 +65,8 @@ theorem slowClass_lift {F : Type} [NormedAddCommGroup F] [NormedSpace ℝ F]
     intro n x hx j hj
     have hxu : slowProjection x ∈ U := hSU x hx
     have hpre : IsOpen (slowProjection ⁻¹' U) := hU.preimage slowProjection.continuous
-    have he := slowProjection.iteratedFDerivWithin_comp_right (hf.smooth n) hU.uniqueDiffOn
+    have he := slowProjection.iteratedFDerivWithin_comp_right (s := U) (hf.smooth n) hU.uniqueDiffOn
       hpre.uniqueDiffOn hxu (ENat.natCast_le_of_coe_top_le_withTop le_rfl j)
-    change iteratedFDerivWithin ℝ j (f n ∘ slowProjection) (slowProjection ⁻¹' U) x =
-      (iteratedFDerivWithin ℝ j (f n) U (slowProjection x)).compContinuousLinearMap
-        (fun _ => slowProjection) at he
     rw [iteratedFDerivWithin_of_isOpen j hpre hxu,
       iteratedFDerivWithin_of_isOpen (f := f n) j hU hxu] at he
     have hn : ‖iteratedFDeriv ℝ j (fun y : Point => f n y.2.1) x‖ ≤

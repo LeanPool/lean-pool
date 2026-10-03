@@ -94,8 +94,10 @@ theorem rawVelocity_hasDerivAt (j : Fin 2) (L : Label B N0) {x : Native}
       ((PrimaryGeometryAssembly.domain nominal (choice B N0).prepared.N).slot P.V P.openV).carrier
           L :=
     ⟨hp, P.interval L ⟨ht.1.le, ht.2.le⟩⟩
-  have hd' := (hd.scomp x.2.2 ((hasDerivAt_id x.2.2).div_const ell)).const_smul a
-  simp only [hv, one_div, smul_smul, inv_mul_cancel₀ hL.ne', one_smul] at hd'
+  have hd' := (hd.scomp (h := fun t => t / ell) x.2.2
+    ((hasDerivAt_id x.2.2).div_const ell)).const_smul a
+  simp only [hv, one_div, smul_smul, inv_mul_cancel₀ hL.ne', one_smul, Function.comp_def,
+    Pi.smul_def] at hd'
   have he (t : ℝ) : rawVelocity j L (x.1,(x.2.1,t)) =
       a • PrimaryPulseBounds.normalizedPulse (P.frame L) (P.lam L) (P.u L) ell (x.1,t/ell) := by
     simp only [rawVelocity, pulseCoordinates, a, ell, P, length_sign]
@@ -105,7 +107,7 @@ theorem rawVelocity_hasDerivAt (j : Fin 2) (L : Label B N0) {x : Native}
     frame_normal P L hz,
     show (P.frame L).normalMotion (x.1,x.2.2) = P.phase.velocity L (phasePoint L x) from
     frame_motion P L hz, map_smul, SignedWaveUpdate.projectedRhs_smul]
-  rfl
+  exact congrArg (a • ·) rfl
 
 theorem frame_viscosity (j : Fin 2) (L : Label B N0) (x : Native) :
     ((phases B N0 j).frame L).viscosity (phasePoint L x) =
@@ -918,7 +920,8 @@ theorem copyVelocity_ode (j : Fin 2) (L : Label B N0) (n : ℕ)
     (ChartScales.epsilon h (BaseChartJets.cellBand L) *
       (ChartScales.carrier h (BaseChartJets.cellBand L) : ℝ)^2 *
       ‖(phases B N0 j).phase.normal L (phasePoint L z)‖^2) (normalScale_pos L n).ne'
-  simpa only [copyVelocity, copyMotion, copyAction, smul_zero, smul_smul, mul_comm, z] using hs.symm
+  rw [smul_smul, mul_comm (velocityScale L n)]
+  simpa only [copyVelocity, copyMotion, copyAction, smul_zero, z] using hs.symm
 
 theorem pressure_scale_algebra {K Kr r : ℝ} (hK : K ≠ 0) (hKr : Kr ≠ 0)
     (hr : r ≠ 0) (b c : ℝ) :

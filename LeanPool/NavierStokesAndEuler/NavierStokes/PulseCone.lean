@@ -1030,24 +1030,23 @@ theorem source_factor_bounds {R Reta rate B : ℝ} (hB : 0 ≤ B)
     (hR : |R| ≤ B) (hReta : |Reta| ≤ B) (hrate : |rate| ≤ 2) :
     |R ^ 2 - 1 / 2| ≤ 6 * B ^ 2 + 2 ∧
       |2 * R * Reta - 2 * rate * (R ^ 2 - 1 / 2)| ≤ 6 * B ^ 2 + 2 := by
-  have hRsq : R ^ 2 ≤ B ^ 2 := by
-    linarith only [hB, hR, sq_le_sq₀ (abs_nonneg R) hB |>.mpr hR, sq_abs R]
-  have hbase : |R ^ 2 - 1 / 2| ≤ B ^ 2 + 1 / 2 := by
-    apply (abs_sub _ _).trans
-    rw [abs_of_nonneg (sq_nonneg R), abs_of_pos (by norm_num : (0 : ℝ) < 1 / 2)]
-    linarith only [hRsq]
+  have hRsq : R ^ 2 ≤ B ^ 2 := (sq_abs R).symm.trans_le (pow_le_pow_left₀ (abs_nonneg R) hR 2)
+  have hbase : |R ^ 2 - 1 / 2| ≤ B ^ 2 + 1 / 2 :=
+    (abs_sub _ _).trans (add_le_add ((abs_of_nonneg (sq_nonneg R)).trans_le hRsq)
+      (abs_of_pos (by norm_num : (0 : ℝ) < 1 / 2)).le)
   have hproduct : |R * Reta| ≤ B ^ 2 := by
     rw [abs_mul, pow_two]
     exact mul_le_mul hR hReta (abs_nonneg _) hB
   have hfirst : |2 * R * Reta| ≤ 2 * B ^ 2 := by
-    rw [show 2 * R * Reta = 2 * (R * Reta) by ring, abs_mul,
-      abs_of_pos (by norm_num : (0 : ℝ) < 2)]
-    linarith only [hproduct]
+    rw [mul_assoc, abs_mul, abs_two]
+    exact mul_le_mul_of_nonneg_left hproduct zero_le_two
   have hsecond : |2 * rate * (R ^ 2 - 1 / 2)| ≤ 4 * (B ^ 2 + 1 / 2) := by
-    rw [abs_mul, abs_mul, abs_of_pos (by norm_num : (0 : ℝ) < 2)]
-    linarith only [hrate, hbase, mul_le_mul hrate hbase (abs_nonneg _) (by norm_num : (0 : ℝ) ≤ 2)]
-  exact ⟨hbase.trans (by linarith only [sq_nonneg B]),
-    (abs_sub _ _).trans (by linarith only [hfirst, hsecond])⟩
+    rw [abs_mul, abs_mul, abs_two, mul_assoc]
+    exact (mul_le_mul_of_nonneg_left (mul_le_mul hrate hbase (abs_nonneg _) zero_le_two)
+      zero_le_two).trans_eq (by ring)
+  exact ⟨hbase.trans (add_le_add (le_mul_of_one_le_left (sq_nonneg B) (by norm_num))
+      (by norm_num)),
+    (abs_sub _ _).trans ((add_le_add hfirst hsecond).trans_eq (by ring))⟩
 
 /-- The actual energy source and its actual parameter derivative have a common bound. -/
 theorem energy_sources_bound (w : ResetWitness d K) {amp : ℝ → ℝ}
@@ -1530,23 +1529,23 @@ theorem geometric_coefficient_bounds {h eta : ℝ} (hh : 0 ≤ h) (hh' : h ≤ 1
     (heta : |eta| ≤ 1) :
     |2 * (1 / 2 - h) * eta - (1 - eta ^ 2) * shapeGradient eta| ≤ 3 ∧
       |1 - eta ^ 2| ≤ 1 ∧ |2 * h * eta + (1 - eta ^ 2) * shapeGradient eta| ≤ 3 := by
-  have hs : eta ^ 2 ≤ 1 := by
-      linarith only [heta, sq_abs eta,
-          sq_le_sq₀ (abs_nonneg eta) (by norm_num : (0 : ℝ) ≤ 1) |>.mpr heta]
-  have hd : |1 - eta ^ 2| ≤ 1 := by rw [abs_of_nonneg (by linarith)]; linarith only [sq_nonneg eta]
-  have hD : |1 / 2 - h| ≤ 1 / 2 := by rw [abs_of_nonneg (by linarith)]; linarith only [hh]
-  have hg : |(1 - eta ^ 2) * shapeGradient eta| ≤ 2 := by
-    rw [abs_mul]
-    have hm := mul_le_mul hd (shapeGradient_bound heta) (abs_nonneg _) (by norm_num)
-    norm_num at hm ⊢
-    exact hm
+  have hs : eta ^ 2 ≤ 1 := (sq_le_one_iff_abs_le_one eta).mpr heta
+  have hd : |1 - eta ^ 2| ≤ 1 :=
+    abs_sub_le_of_nonneg_of_le zero_le_one le_rfl (sq_nonneg eta) hs
+  have hD : |1 / 2 - h| ≤ 1 / 2 := abs_sub_le_of_nonneg_of_le (by norm_num) le_rfl hh hh'
+  have hg : |(1 - eta ^ 2) * shapeGradient eta| ≤ 2 :=
+    (abs_mul _ _).trans_le ((mul_le_mul hd (shapeGradient_bound heta) (abs_nonneg _)
+      zero_le_one).trans_eq (one_mul _))
   have hDeta : |2 * (1 / 2 - h) * eta| ≤ 1 := by
-    rw [abs_mul, abs_mul, abs_of_pos (by norm_num : (0 : ℝ) < 2)]
-    linarith only [hD, heta, mul_le_mul hD heta (abs_nonneg eta) (by norm_num)]
+    rw [abs_mul, abs_mul, abs_two]
+    exact (mul_le_mul (mul_le_mul_of_nonneg_left hD zero_le_two) heta (abs_nonneg _)
+      (by norm_num)).trans_eq (by norm_num)
   have heta' : |2 * h * eta| ≤ 1 := by
-    rw [abs_mul, abs_mul, abs_of_pos (by norm_num : (0 : ℝ) < 2), abs_of_nonneg hh]
-    linarith only [hh', heta, mul_le_mul hh' heta (abs_nonneg eta) (by norm_num)]
-  exact ⟨(abs_sub _ _).trans (by linarith), hd, (abs_add_le _ _).trans (by linarith)⟩
+    rw [abs_mul, abs_mul, abs_two, abs_of_nonneg hh]
+    exact (mul_le_mul (mul_le_mul_of_nonneg_left hh' zero_le_two) heta (abs_nonneg _)
+      (by norm_num)).trans_eq (by norm_num)
+  exact ⟨(abs_sub _ _).trans ((add_le_add hDeta hg).trans_eq (by norm_num)), hd,
+    (abs_add_le _ _).trans ((add_le_add heta' hg).trans_eq (by norm_num))⟩
 
 /-- Pulse angular source as an element of `ℝ`. -/
 noncomputable def pulseAngularSource (c : Parameters) (h : ℝ) (amp : ℝ → ℝ) (eta y : ℝ) : ℝ :=
@@ -2368,12 +2367,20 @@ theorem pulse_geometric_bounds (d : TailData) {eta : ℝ} (heta : |eta| ≤ 1) :
     (1 / 2 - d.h) + geometricSource d eta ≤ 1 ∧
       d.core.lam / 2 + (2 / 5) * eta ^ 2 ≤ equilibriumNumerator d eta := by
   obtain ⟨hg₁, hg₂⟩ := eta_shapeGradient_bounds heta
-  have hD : (2 / 5 : ℝ) ≤ 1 / 2 - d.h := by linarith only [d.h_small, d.core.lam_lt]
-  have hc₁ := mul_le_mul_of_nonneg_left hg₁ (show 0 ≤ 1 / 2 - d.h by linarith only [hD])
-  have hc₂ := mul_le_mul_of_nonneg_left hg₂ (show 0 ≤ 1 / 2 - d.h by linarith only [hD])
-  have hc₃ := mul_le_mul_of_nonneg_right hD (sq_nonneg eta)
-  dsimp [geometricSource, equilibriumNumerator] at *
-  constructor <;> linarith only [hc₂, hc₁, hc₃, d.h_pos, d.h_small]
+  have hD : (2 / 5 : ℝ) ≤ 1 / 2 - d.h :=
+    le_sub_comm.mpr ((d.h_lt_lam.trans d.core.lam_lt).le.trans_eq (by norm_num))
+  have hD₀ : 0 ≤ 1 / 2 - d.h := (by norm_num : (0 : ℝ) ≤ 2 / 5).trans hD
+  have hc₂ := (mul_assoc (1 / 2 - d.h) eta (shapeGradient eta)).trans_le
+    (mul_le_mul_of_nonneg_left hg₂ hD₀)
+  have hc := (mul_le_mul_of_nonneg_right hD (sq_nonneg eta)).trans
+    ((mul_le_mul_of_nonneg_left hg₁ hD₀).trans_eq (mul_assoc _ _ _).symm)
+  constructor
+  · calc
+      (1 / 2 - d.h) + geometricSource d eta ≤ (1 / 2 - d.h) + (1 / 2 - d.h) * 1 :=
+        add_le_add le_rfl hc₂
+      _ = 1 - 2 * d.h := by ring
+      _ ≤ 1 := sub_le_self _ (mul_nonneg zero_le_two d.h_pos.le)
+  · exact add_le_add (by linarith only [d.h_small]) hc
 
 theorem derivativeCoefficient_nonneg (d : TailData) (eta : ℝ) :
     0 ≤ derivativeCoefficient d eta := by
@@ -2751,15 +2758,16 @@ theorem denominator_bounds (d : TailData) {eta Q : ℝ} (heta : |eta| ≤ 1)
     (hQ : equilibriumNumerator d eta / 2 ≤ Q) :
     0 < Q ∧ 1 / Q ≤ 4 / d.core.lam ∧ |eta| / Q ≤ 4 / Real.sqrt d.core.lam := by
   have hA := (pulse_geometric_bounds d heta).2
-  have hq : d.core.lam / 4 + eta ^ 2 / 5 ≤ Q := by linarith only [hQ, hA]
-  have hQpos : 0 < Q := by linarith only [hQ, hA, d.core.lam_pos, sq_nonneg eta]
+  have hq : 5 * d.core.lam + 4 * eta ^ 2 ≤ 20 * Q := by linarith only [hQ, hA]
+  have hQpos : 0 < Q := (half_pos (equilibriumNumerator_pos d eta)).trans_le hQ
   have hs := Real.sqrt_pos.mpr d.core.lam_pos
   have hs₂ := Real.sq_sqrt d.core.lam_pos.le
   refine ⟨hQpos, ?_, ?_⟩
   · apply (div_le_div_iff₀ hQpos d.core.lam_pos).mpr
-    linarith only [hQ, hA, sq_nonneg eta]
+    linarith only [hq, sq_nonneg eta]
   · apply (div_le_div_iff₀ hQpos hs).mpr
-    nlinarith only [hQ, hA, hs₂, sq_nonneg (Real.sqrt d.core.lam - |eta| / 2), sq_abs eta]
+    linarith only [hq, hs₂, sq_nonneg (2 * Real.sqrt d.core.lam - |eta|), sq_abs eta,
+      sq_nonneg eta]
 
 /-- Main direction bound, given by `18 * forceConstant P m + 3 * derivativeConstant P m`. -/
 noncomputable def mainDirectionBound (P m : ℝ) : ℝ :=
@@ -2856,19 +2864,18 @@ theorem directionRatio_error_bound (w : ResetWitness d K)
       (4 / Real.sqrt d.core.lam) * (3 * mainBound * |deriv amp eta| +
         parameterLagConstant d.core.P d.core.m * d.core.lam ^ 2) := by
   have hden := denominator_bounds d heta hQlow
-  have hdata := fullError_bounds_of_amplitude_bounds d.core hwait (by linarith only [hsmall])
+  have h120 : d.core.lam ≤ 1 / 120 := hsmall.trans (by norm_num)
+  have hdata := fullError_bounds_of_amplitude_bounds d.core hwait h120
     ((ha.differentiable (by simp) eta).hasDerivAt) heta hamp hamp' hy
-  have hmp := normalizedLag_parameter_fine_bound d.core hwait (by linarith only [hsmall])
+  have hmp := normalizedLag_parameter_fine_bound d.core hwait h120
     ((ha.differentiable (by simp) eta).hasDerivAt) heta hamp' hy
-  have hH := axialHistoryError_bound w hwait (by linarith only [hsmall]) ha heta hamp hamp' hy hy'
+  have hH := axialHistoryError_bound w hwait h120 ha heta hamp hamp' hy hy'
   have hB := mainDirection_abs_le d hsmall hh heta hamp y
-  have hC : |(1 / 2 - d.h) + geometricSource d eta| ≤ 1 := by
-    rw [abs_of_nonneg (by have hg := geometricSource_nonneg d eta; linarith only [hsmall, hh, hg,
-        d.h_lt_half])]
-    exact (pulse_geometric_bounds d heta).1
-  have hD : |1 / 2 - d.h| ≤ 1 := by
-    rw [abs_of_nonneg (by linarith only [hsmall, hh, d.h_lt_half])]
-    linarith only [d.h_pos]
+  have hC : |(1 / 2 - d.h) + geometricSource d eta| ≤ 1 :=
+    (abs_of_nonneg (add_nonneg (sub_nonneg.mpr d.h_lt_half.le)
+      (geometricSource_nonneg d eta))).trans_le (pulse_geometric_bounds d heta).1
+  have hD : |1 / 2 - d.h| ≤ 1 := abs_sub_le_of_nonneg_of_le (by norm_num) (by norm_num)
+    d.h_pos.le (d.h_lt_half.le.trans (by norm_num))
   have hb := quotient_remainder_bound hden.1 (Ns_pulse_expansion w ha eta hy hy')
     hC hD hQerr hdata.1 hmp hH hB hden.2.1 hden.2.2
   simpa only [directionRatio, div_div] using hb
@@ -3000,36 +3007,40 @@ theorem mainDirection_ideal_error (d : TailData)
     {amp : ℝ → ℝ} {eta : ℝ} (heta : |eta| ≤ 1) (hamp : |amp eta| ≤ 6 / 5) (y : ℝ) :
     |mainDirection d amp eta y - idealDirection d amp eta y| ≤
       directionMainErrorConstant d.core.P d.core.m * d.core.lam := by
-  have hR := pulseRatio_abs_le d.core (by linarith only [hsmall]) amp heta hamp y
-  have hc := scaledPulse_correction_bounds d.core (by linarith only [hsmall]) amp heta hamp y
+  have h120 : d.core.lam ≤ 1 / 120 := hsmall.trans (by norm_num)
+  have hR := pulseRatio_abs_le d.core h120 amp heta hamp y
+  have hc := scaledPulse_correction_bounds d.core h120 amp heta hamp y
   have hCd : |derivativeCoefficient d eta| ≤ 3 := by
     rw [abs_of_nonneg (derivativeCoefficient_nonneg d eta)]
     exact (derivativeCoefficient_le d hsmall hh eta).trans (by norm_num)
   have hratio : |d.core.lam / decay d.core| ≤ 3 * d.core.lam := by
     rw [abs_of_pos (div_pos d.core.lam_pos (decay_pos d.core))]
     exact decay_div_le_three d.core d.core.lam_pos.le
+  have hq : (1 - d.core.lam) / decay d.core = d.core.lam / decay d.core + 2 := by
+    rw [show 1 - d.core.lam = d.core.lam + 2 * decay d.core by unfold decay; ring, add_div,
+      mul_div_cancel_right₀ _ (decay_pos d.core).ne']
   have hid : mainDirection d amp eta y - idealDirection d amp eta y =
       (d.core.lam / decay d.core) * pulseRatio d.core amp (y, eta) +
         2 * (pulseRatio d.core amp (y, eta) - mainRatio d.core amp eta y) -
         derivativeCoefficient d eta *
           (deriv (scaledPulse d.core amp eta) (d.core.lam * y) - mainSlope d.core amp eta y) := by
     unfold mainDirection idealDirection
-    field_simp [(decay_pos d.core).ne']
-    dsimp [decay]
+    rw [hq]
     ring
-  have h₁ := mul_le_mul hratio hR (abs_nonneg _) (show 0 ≤ 3 * d.core.lam by
-      linarith only [d.core.lam_pos])
-  have h₃ := mul_le_mul hCd hc.2 (abs_nonneg _) (by norm_num : (0 : ℝ) ≤ 3)
-  have hpow : d.core.lam ^ 2 ≤ d.core.lam := by
-    simpa only [pow_two, mul_one] using mul_le_mul_of_nonneg_left
-      (show d.core.lam ≤ 1 by linarith only [d.core.lam_lt]) d.core.lam_pos.le
+  have h₁ := mul_le_mul hratio hR (abs_nonneg _) (mul_nonneg zero_le_three d.core.lam_pos.le)
+  have h₃ := mul_le_mul hCd hc.2 (abs_nonneg _) zero_le_three
+  have hpow : d.core.lam ^ 2 ≤ d.core.lam :=
+    pow_le_of_le_one d.core.lam_pos.le (d.core.lam_lt.le.trans (by norm_num)) two_ne_zero
   have hscale := mul_le_mul_of_nonneg_left hpow (valueRepairConstant_pos d.core.P_pos d.core.m).le
   rw [hid]
-  apply (abs_sub _ _).trans
-  apply (add_le_add_left (abs_add_le _ _) _).trans
-  rw [abs_mul, abs_mul, abs_mul, abs_of_pos (by norm_num : (0 : ℝ) < 2)]
-  dsimp [directionMainErrorConstant, mainRatio, mainSlope] at h₁ h₃ hc hscale ⊢
-  linarith only [h₁, h₃, hc.1, hscale]
+  refine (abs_sub _ _).trans ((add_le_add_left (abs_add_le _ _) _).trans ?_)
+  rw [abs_mul, abs_mul, abs_mul, abs_two]
+  calc
+    _ ≤ 3 * d.core.lam * (6 * forceConstant d.core.P d.core.m) +
+          2 * (valueRepairConstant d.core.P d.core.m * d.core.lam) +
+          3 * (derivativeRepairConstant d.core.P d.core.m * d.core.lam) :=
+      add_le_add (add_le_add h₁ (mul_le_mul_of_nonneg_left (hc.1.trans hscale) zero_le_two)) h₃
+    _ = _ := by unfold directionMainErrorConstant; ring
 
 /-! ## The shaped wait supplies the actual angular equilibrium error -/
 
@@ -3160,9 +3171,9 @@ private theorem raw_error_le_rate {lam Q B M H P A F v : ℝ}
     linarith only [h₁, h₂]
   have hfirst : (4 / lam) * (Q * lam ^ 28 * B + M * lam ^ 2 + H * lam ^ 29) ≤
       4 * (Q * B + M + H) * lam := by
-    have h := mul_le_mul_of_nonneg_left hfirstInside (by positivity : 0 ≤ 4 / lam)
-    convert! h using 1
-    field_simp [hlam.ne']
+    refine (mul_le_mul_of_nonneg_left hfirstInside (div_pos four_pos hlam).le).trans_eq ?_
+    rw [div_mul_eq_mul_div, div_eq_iff hlam.ne']
+    ring
   have hv' : v / Real.sqrt lam ≤ A * Real.sqrt lam * (1 + Real.log (1 / lam)) := by
     apply (div_le_iff₀ hs).mpr
     calc
@@ -3173,23 +3184,28 @@ private theorem raw_error_le_rate {lam Q B M H P A F v : ℝ}
           _ = _ := by ring
   have hp2 : lam ^ 2 / Real.sqrt lam ≤ lam := by
     apply (div_le_iff₀ hs).mpr
-    have hl : lam ≤ Real.sqrt lam := Real.le_sqrt_of_sq_le (by nlinarith only [hlam, hsmall])
+    have hl : lam ≤ Real.sqrt lam :=
+      Real.le_sqrt_of_sq_le (pow_le_of_le_one hlam.le hsmall two_ne_zero)
     linarith only [mul_le_mul_of_nonneg_left hl hlam.le]
+  have h12 : (0 : ℝ) ≤ 12 := by norm_num
   have hsecond : (4 / Real.sqrt lam) * (3 * F * v + P * lam ^ 2) ≤
       12 * F * A * (Real.sqrt lam * (1 + Real.log (1 / lam))) + 4 * P * lam := by
-    have h₁ := mul_le_mul_of_nonneg_left hv' (mul_nonneg (by norm_num : (0 : ℝ) ≤ 12) hF)
-    have h₂ := mul_le_mul_of_nonneg_left hp2 (mul_nonneg (by norm_num : (0 : ℝ) ≤ 4) hP)
+    have h₁ := mul_le_mul_of_nonneg_left hv' (mul_nonneg h12 hF)
+    have h₂ := mul_le_mul_of_nonneg_left hp2 (mul_nonneg zero_le_four hP)
     calc
       _ = 12 * F * (v / Real.sqrt lam) + 4 * P * (lam ^ 2 / Real.sqrt lam) := by ring
-      _ ≤ _ := by
-        convert! add_le_add h₁ h₂ using 1
-        ring
+      _ ≤ _ := (add_le_add h₁ h₂).trans_eq (by ring)
   have hr := coneRate_parts hlam hsmall
   have hlinear := mul_le_mul_of_nonneg_left hr.2.1
-    (show 0 ≤ 4 * (Q * B + M + H + P) by positivity)
-  have hparameter := mul_le_mul_of_nonneg_left hr.2.2
-    (show 0 ≤ 12 * F * A by positivity)
-  linarith only [hfirst, hsecond, hlinear, hparameter]
+    (mul_nonneg zero_le_four (add_nonneg (add_nonneg (add_nonneg (mul_nonneg hQ hB) hM) hH) hP))
+  have hparameter := mul_le_mul_of_nonneg_left hr.2.2 (mul_nonneg (mul_nonneg h12 hF) hA)
+  calc
+    _ ≤ 4 * (Q * B + M + H) * lam +
+        (12 * F * A * (Real.sqrt lam * (1 + Real.log (1 / lam))) + 4 * P * lam) :=
+      add_le_add hfirst hsecond
+    _ = 4 * (Q * B + M + H + P) * lam +
+        12 * F * A * (Real.sqrt lam * (1 + Real.log (1 / lam))) := by ring
+    _ ≤ _ := (add_le_add hlinear hparameter).trans_eq (add_mul _ _ _).symm
 
 /-- Direction error constant, constructed using `4`. -/
 noncomputable def directionErrorConstant (P m A : ℝ) : ℝ :=

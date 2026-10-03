@@ -275,6 +275,8 @@ theorem jetSystem_iff_expanded {h lam C r eta : K} (hr : r ≠ 0)
       ExpandedEquations h lam C eta (r ^ 2) b s phi u k p := by
   unfold JetSystem
   rw [matrixRHS_jet]
+  have h31 : ((3 : K) + 1) / 2 = 2 := by norm_num
+  have h11 : ((1 : K) + 1) / 2 = 1 := by norm_num
   constructor
   · intro hh
     have h2 := congrFun hh 2
@@ -295,16 +297,14 @@ theorem jetSystem_iff_expanded {h lam C r eta : K} (hr : r ≠ 0)
       (axialRHS h lam eta (r ^ 2) b s phi u k {p with radial := pressureValue C b s phi}) 1).mp (by
           simpa only [one_div] using h5)
     have hpjet : {p with radial := pressureValue C b s phi} = p := by
-      cases p
-      simp_all
+      rw [← hp]
     rw [hpjet] at hu
-    refine ⟨hk, hp, ?_, ?_⟩
-    · convert! hphi using 1; norm_num
-    · convert! hu using 1; norm_num
+    rw [h31] at hphi
+    rw [h11, one_mul] at hu
+    exact ⟨hk, hp, hphi, hu⟩
   · rintro ⟨hk, hp, hphi, hu⟩
     have hpjet : {p with radial := pressureValue C b s phi} = p := by
-      cases p
-      simp_all
+      rw [← hp]
     ext i
     fin_cases i
     · simp only [radialJetVector, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero, diagonal,
@@ -319,12 +319,12 @@ theorem jetSystem_iff_expanded {h lam C r eta : K} (hr : r ≠ 0)
     · simpa only [radialJetVector, Fin.reduceFinMk, Matrix.cons_val, diagonal, jetVector,
         Nat.succ_eq_add_one, Nat.reduceAdd, neg_mul] using
         (second_row_iff hr phi.radial phi.radial2 (angularRHS h lam eta (r ^ 2) b s phi u k) 3).mpr
-          (by convert! hphi using 1; norm_num)
+          (by rwa [h31])
     · rw [hpjet]
       simpa only [radialJetVector, Fin.reduceFinMk, Matrix.cons_val, diagonal, one_div, jetVector,
           Nat.succ_eq_add_one, Nat.reduceAdd, neg_mul] using
         (second_row_iff hr u.radial u.radial2 (axialRHS h lam eta (r ^ 2) b s phi u k p) 1).mpr
-          (by convert! hu using 1; norm_num)
+          (by rwa [h11, one_mul])
 
 
 /-- Slow exponent at order `n`. -/
@@ -524,8 +524,8 @@ theorem partialX_contDiffAt {f : InnerProfile} {w : InnerPoint}
 theorem hasDerivAt_squareProfile {f : InnerProfile} {r eta : ℝ}
     (hf : DifferentiableAt ℝ f (r ^ 2, eta)) :
     HasDerivAt (fun s => f (s ^ 2, eta)) (2 * r * partialX f (r ^ 2, eta)) r := by
-  have hc := hf.hasFDerivAt.comp_hasDerivAt r
-    (((hasDerivAt_id r).pow 2).prodMk (hasDerivAt_const r eta))
+  have hp := ((hasDerivAt_id r).pow 2).prodMk (hasDerivAt_const r eta)
+  have hc := hf.hasFDerivAt.comp_hasDerivAt r hp
   convert! hc using 1
   simp only [Nat.cast_ofNat, id_eq, Nat.add_one_sub_one, pow_one, mul_one, fderiv_inner_apply,
       mul_zero, add_zero]
@@ -869,17 +869,33 @@ theorem coefficient0_parity (h lam C : ℂ) (F : CoefficientData) :
     simp only [mul_neg, neg_mul, axialValue, even_two, Even.neg_pow, neg_add_rev, mul_one,
       mul_zero, neg_neg, one_mul]
 
+theorem lowerBlock_parity (a b c d e f : ℂ) (i j : Fin 6) :
+    (!![0, 0, 0, 0, 0, 0; 0, 0, 0, 0, 0, 0; 0, 0, 0, 0, 0, 0; 0, 0, 0, 0, 0, 0;
+      a, b, c, 0, 0, 0; 0, d, e, f, 0, 0] : Matrix (Fin 6) (Fin 6) ℂ) i j =
+      -(paritySign i * paritySign j) *
+        (!![0, 0, 0, 0, 0, 0; 0, 0, 0, 0, 0, 0; 0, 0, 0, 0, 0, 0; 0, 0, 0, 0, 0, 0;
+          a, b, c, 0, 0, 0; 0, d, e, f, 0, 0] : Matrix (Fin 6) (Fin 6) ℂ) i j := by
+  fin_cases i <;>
+    simp only [paritySign, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Fin.isValue,
+      Nat.ofNat_pos, ite_true, Nat.one_lt_ofNat, Nat.reduceLT, Nat.lt_add_one,
+      lt_self_iff_false, ite_false, ↓Matrix.of_apply, ↓Matrix.cons_val_zero,
+      ↓Matrix.cons_val_one, ↓Matrix.cons_val, ← Matrix.zero_empty, Matrix.cons_zero_zero,
+      Pi.zero_apply, mul_zero] <;>
+    fin_cases j <;>
+    simp only [Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Fin.isValue,
+      Nat.ofNat_pos, ite_true, Nat.one_lt_ofNat, Nat.reduceLT, Nat.lt_add_one,
+      lt_self_iff_false, ite_false, ↓Matrix.cons_val_zero, ↓Matrix.cons_val_one, ↓Matrix.cons_val,
+      Pi.zero_apply, mul_one, mul_zero, mul_neg, neg_neg, one_mul]
+
 theorem coefficient1_parity (h : ℂ) (F : CoefficientData) :
     CoefficientParity (coefficient1 h F) := by
   intro r z i j
   simp only [coefficient1, neg_sq, Complex.ofReal_neg]
-  fin_cases i <;> fin_cases j <;>
-    simp only [paritySign, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Fin.isValue,
-      Nat.ofNat_pos, ite_true, Nat.one_lt_ofNat, Nat.reduceLT, Nat.lt_add_one,
-      lt_self_iff_false, ite_false] <;>
-    simp only [A1, ↓Matrix.of_apply, ↓Matrix.cons_val', ↓Matrix.cons_val_zero,
-      ↓Matrix.cons_val_one, ↓Matrix.cons_val, ↓Matrix.cons_val_fin_one] <;>
-    simp only [neg_mul, even_two, Even.neg_pow, mul_one, mul_zero, mul_neg, neg_neg, one_mul]
+  have hA : A1 h (-(r : ℂ)) z (coefficientBase F (r ^ 2) z) =
+      A1 h (r : ℂ) z (coefficientBase F (r ^ 2) z) := by
+    simp only [A1, even_two, Even.neg_pow]
+  rw [hA]
+  exact lowerBlock_parity _ _ _ _ _ _ i j
 
 theorem sourceField_parity (h C : ℂ) (F : CoefficientData) :
     ForcingParity (sourceField h C F) := by
@@ -1193,6 +1209,17 @@ noncomputable def complexBase (b : BaseJet ℝ) : BaseJet ℂ :=
 noncomputable def complexSource (s : SourceJet ℝ) : SourceJet ℂ :=
   ⟨s.angular, s.axial, s.pressureProduct, s.omegaQuotient⟩
 
+theorem comp_vecCons6 {α β : Type*} (f : α → β) (a₀ a₁ a₂ a₃ a₄ a₅ : α) :
+    f ∘ ![a₀, a₁, a₂, a₃, a₄, a₅] = ![f a₀, f a₁, f a₂, f a₃, f a₄, f a₅] := by
+  ext i
+  fin_cases i <;> rfl
+
+theorem map_of_vecCons6 {α β : Type*} (f : α → β) (r₀ r₁ r₂ r₃ r₄ r₅ : Fin 6 → α) :
+    (Matrix.of ![r₀, r₁, r₂, r₃, r₄, r₅]).map f =
+      Matrix.of ![f ∘ r₀, f ∘ r₁, f ∘ r₂, f ∘ r₃, f ∘ r₄, f ∘ r₅] := by
+  ext i j
+  fin_cases i <;> rfl
+
 theorem A0_ofReal (h lam C r eta : ℝ) (b : BaseJet ℝ) :
     A0 (h : ℂ) (lam : ℂ) (C : ℂ) (r : ℂ) (eta : ℂ) (complexBase b) =
       (A0 h lam C r eta b).map Complex.ofReal := by
@@ -1203,9 +1230,8 @@ theorem A0_ofReal (h lam C r eta : ℝ) (b : BaseJet ℝ) :
     ← Complex.ofReal_add, ← Complex.ofReal_sub, ← Complex.ofReal_mul,
     ← Complex.ofReal_div, ← Complex.ofReal_neg, ← Complex.ofReal_pow,
     ← Complex.ofReal_inv]
-  apply Matrix.ext
-  intro i j
-  fin_cases i <;> fin_cases j <;> rfl
+  rw [map_of_vecCons6]
+  simp only [comp_vecCons6]
 
 theorem A1_ofReal (h r eta : ℝ) (b : BaseJet ℝ) :
     A1 (h : ℂ) (r : ℂ) (eta : ℂ) (complexBase b) =
@@ -1214,9 +1240,8 @@ theorem A1_ofReal (h r eta : ℝ) (b : BaseJet ℝ) :
     ← Complex.ofReal_zero, ← Complex.ofReal_one, ← Complex.ofReal_ofNat,
     ← Complex.ofReal_add, ← Complex.ofReal_sub, ← Complex.ofReal_mul,
     ← Complex.ofReal_div, ← Complex.ofReal_neg, ← Complex.ofReal_pow]
-  apply Matrix.ext
-  intro i j
-  fin_cases i <;> fin_cases j <;> rfl
+  rw [map_of_vecCons6]
+  simp only [comp_vecCons6]
 
 theorem forcing_ofReal (h C r eta : ℝ) (s : SourceJet ℝ) :
     forcing (h : ℂ) (C : ℂ) (r : ℂ) (eta : ℂ) (complexSource s) =

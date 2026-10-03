@@ -94,7 +94,8 @@ theorem forwardMap_hasFDerivAt_equiv (d : E → CircleDensity) (z : E × ℝ)
       (D.comp (ContinuousLinearMap.inr ℝ E ℝ)) z.2 := by
     change HasFDerivAt ((familyPhase d) ∘ fun t : ℝ => (z.1, t))
       (D.comp (ContinuousLinearMap.inr ℝ E ℝ)) z.2
-    exact hphase.hasFDerivAt.comp z.2 (hasFDerivAt_prodMk_right (𝕜 := ℝ) z.1 z.2)
+    exact hphase.hasFDerivAt.comp z.2 (f := fun t : ℝ => (z.1, t))
+      (hasFDerivAt_prodMk_right (𝕜 := ℝ) z.1 z.2)
   have hvertical₂ : HasFDerivAt (phaseMap (d z.1)) (B : ℝ →L[ℝ] ℝ) z.2 :=
     (phaseMap_hasDerivAt (d z.1) z.2).hasFDerivAt_equiv
       (ne_of_gt ((d z.1).positive z.2))
@@ -108,11 +109,10 @@ theorem forwardMap_hasFDerivAt_equiv (d : E → CircleDensity) (z : E × ℝ)
     · rfl
     · change B y.2 + D (y.1, 0) = D y
       have hv : D (0, y.2) = B y.2 := congrArg (fun f : ℝ →L[ℝ] ℝ => f y.2) hvertical
-      rw [← hv, ← map_add]
-      simp
+      rw [← hv, ← ContinuousLinearMap.map_add, Prod.mk_add_mk, zero_add, add_zero]
   refine ⟨L, ?_⟩
   rw [hL]
-  exact hasFDerivAt_fst.prodMk hphase.hasFDerivAt
+  exact (hasFDerivAt_fst.prodMk hphase.hasFDerivAt :)
 
 section InverseSmoothness
 

@@ -124,12 +124,12 @@ theorem compact_normalized_cone_gap {K : Set X} (hK : IsCompact K)
   obtain ⟨ε, _, hε, _, hbounds, _⟩ := compact_normalized_cone hK hc hj hv hcpos hmargin
   obtain ⟨B, hB⟩ := (hK.image_of_continuousOn (hj.pow 2)).bddAbove
   let M : ℝ := max 0 B + 1
-  have hM : 0 < M := by dsimp [M]; linarith only [le_max_left (0 : ℝ) B]
+  have hM : 0 < M := add_pos_of_nonneg_of_pos (le_max_left 0 B) one_pos
   let η : ℝ := ε / (2 * M)
   have hη : 0 < η := div_pos hε (mul_pos (by norm_num) hM)
   have hηM : η * M = ε / 2 := by
     dsimp [η]
-    field_simp [ne_of_gt hM]
+    rw [div_mul_eq_mul_div, mul_div_mul_right _ _ hM.ne']
   have hshift : ∀ x ∈ K, (v x + η - 2) * j x ^ 2 < 2 * c x ^ 2 := by
     intro x hx
     have hjM : j x ^ 2 ≤ M := by
@@ -140,7 +140,7 @@ theorem compact_normalized_cone_gap {K : Set X} (hK : IsCompact K)
     have hηj : η * j x ^ 2 ≤ ε / 2 :=
       (mul_le_mul_of_nonneg_left hjM hη.le).trans_eq hηM
     have hd := (hbounds x hx).2
-    nlinarith only [hε, hηj, hd]
+    linarith only [hε, hηj, hd]
   obtain ⟨_, p₁, _, hp₁, _, hlarge⟩ := compact_normalized_cone hK hc hj
     (hv.add continuousOn_const) hcpos hshift
   refine ⟨η, max p₁ ((2 + η) / ε), hη,

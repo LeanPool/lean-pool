@@ -358,6 +358,8 @@ theorem parameterIntegral_hasFDerivAt {g : H × ℝ → G} (hg : ContDiff ℝ �
       (∫ u in a..b, parameterDerivative g (x, u)) x := by
   obtain ⟨ε, hε, C, hC⟩ := uniform_local_bound
     (parameterDerivative_contDiff hg).continuous x a b
+  have := secondCountableTopologyEither_of_left ℝ G
+  have := secondCountableTopologyEither_of_left ℝ (H →L[ℝ] G)
   apply intervalIntegral.hasFDerivAt_integral_of_dominated_of_fderiv_le
     (F' := fun y u => parameterDerivative g (y, u)) (bound := fun _ => C) (Metric.ball_mem_nhds _
         hε)

@@ -567,7 +567,7 @@ theorem primary_radial (l : Label B N0) (n : ℕ) :
   funext x
   simp only [primary, directions, freezeDirections,
     LinearWaveBounds.GraphDirections.radialField, ActualReferenceRebase.pullDirections,
-    ← map_smul, ← map_add]
+    ← ContinuousLinearEquiv.map_smul, ← ContinuousLinearEquiv.map_add]
   change (toCommonCylinder l).symm
     ((PrimaryResidualClass.directions (commonContext B)).radialField (reference l)
       (toCommonCylinder l x)) = _
@@ -589,11 +589,12 @@ theorem primary_radial (l : Label B N0) (n : ℕ) :
                                           Equiv.prodAssoc_symm_apply,
                                               ContinuousLinearEquiv.refl_apply,
                                                   LinearIsometryEquiv.coe_prodAssoc,
-                                                      Equiv.prodAssoc_apply, Prod.mk.eta, map_smul,
+                                                      Equiv.prodAssoc_apply, Prod.mk.eta,
+                                                          ContinuousLinearEquiv.map_smul,
                                                           Prod.mk.injEq, true_and, and_true]
   apply (CommonCoverSolve.coverPower (ChartScales.nativeIndex h (reference l) -
     CommonWindow.index h (reference l))).injective
-  simp only [map_smul, ContinuousLinearEquiv.apply_symm_apply]
+  simp only [ContinuousLinearEquiv.map_smul, ContinuousLinearEquiv.apply_symm_apply]
   rw [show CommonCoverSolve.coverPower (ChartScales.nativeIndex h (reference l) -
       CommonWindow.index h (reference l)) PhysicalGraphBounds.radialDirection =
       ChartScales.Lambda ^ (ChartScales.nativeIndex h (reference l) - CommonWindow.index h
@@ -848,7 +849,8 @@ theorem primary_radial_pull (l : Label B N0) (n : ℕ) (x : Cylinder) :
       (toCommonCylinder l).symm ((PrimaryResidualClass.directions (commonContext B)).radialField
         (reference l) (toCommonCylinder l x)) := by
   simp only [primary, directions, freezeDirections, ActualReferenceRebase.pullDirections,
-    LinearWaveBounds.GraphDirections.radialField, map_add, map_smul]
+    LinearWaveBounds.GraphDirections.radialField, ContinuousLinearEquiv.map_add,
+    ContinuousLinearEquiv.map_smul]
 
 theorem primary_axial_pull (l : Label B N0) (n : ℕ) (x : Cylinder) :
     (primary l).directions.axialField (primary l).strip n x =
@@ -857,7 +859,7 @@ theorem primary_axial_pull (l : Label B N0) (n : ℕ) (x : Cylinder) :
             standardRegion))
           (reference l) (toCommonCylinder l x)) := by
   simp only [primary, directions, freezeDirections, ActualReferenceRebase.pullDirections,
-    LinearWaveBounds.GraphDirections.axialField, map_smul]
+    LinearWaveBounds.GraphDirections.axialField, ContinuousLinearEquiv.map_smul]
   rfl
 
 /-- Actual Fréchet derivatives transform with the native frame; no smoothness

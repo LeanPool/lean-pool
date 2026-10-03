@@ -89,10 +89,7 @@ theorem along_along_mode_at {V : D → D} (κ : ℝ)
     ring
   rw [hDb]
   dsimp only [b]
-  have hs := phaseFactor_sq κ
-  ring_nf at hs ⊢
-  rw [hs]
-  ring
+  linear_combination (Complex.ofReal (along V Φ x) ^ 2 * a x * carrier κ Φ x) * phaseFactor_sq κ
 
 theorem cylindricalLaplacian_mode_at (R : D → ℝ) {Vr Vθ Vz : D → D} (κ : ℝ)
     {Φ : D → ℝ} {a : D → ℂ} {x : D}

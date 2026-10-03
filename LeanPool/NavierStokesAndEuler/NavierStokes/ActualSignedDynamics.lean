@@ -122,7 +122,7 @@ theorem nativeUnit_hasDerivAt (j : Fin 2) (L : Label B N0) {x : Native}
       PrimaryPulseBounds.normalizedPulse (P.frame L) (P.lam L) (P.u L) ell (x.1,t/ell) := by
     simp only [nativeUnit, pulseCoordinates, ell, P, length_sign]
   simp only [he]
-  convert! hd' using 1
+  refine hd'.congr_deriv ?_
   rw [show (P.frame L).normal (x.1,x.2.2) = P.phase.normal L (phasePoint L x) from
     frame_normal P L hz,
     show (P.frame L).normalMotion (x.1,x.2.2) = P.phase.velocity L (phasePoint L x) from

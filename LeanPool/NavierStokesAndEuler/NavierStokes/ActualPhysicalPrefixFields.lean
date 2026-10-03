@@ -304,13 +304,14 @@ theorem velocity_pullback_germ {a : ℝ} (ha : 0 < a) (i : PolarCharts.Index)
     {z : SpaceTime} (hr : 0 < z.2 0) (hz : forward z ∈ V)
     (hc : forward z ∈ ActualMeanPotentialRealization.cartesianDomain a i) :
     (u ∘ forward) =ᶠ[𝓝 z] (fun y => CylindricalResidual.frame (y.2 1) (f y)) := by
-  filter_upwards [forward_smooth.continuous.continuousAt (hV.mem_nhds hz),
-    forward_smooth.continuous.continuousAt
+  filter_upwards [forward_smooth.continuous.continuousAt.preimage_mem_nhds (hV.mem_nhds hz),
+    forward_smooth.continuous.continuousAt.preimage_mem_nhds
       ((ActualMeanPotentialRealization.cartesianDomain_open a i).mem_nhds hc),
     (isOpen_lt continuous_const (PhysicalGraphBounds.coordinateProjection 0).continuous).mem_nhds
-        hr]
+        (hr.trans_eq (PhysicalGraphBounds.coordinateProjection_apply 0 z).symm)]
     with y hy hyc hyr
-  exact (hu hy).trans (polarVelocity_forward ha i hf hyr hyc)
+  exact (hu hy).trans (polarVelocity_forward ha i hf
+    (lt_of_lt_of_eq hyr (PhysicalGraphBounds.coordinateProjection_apply 0 y)) hyc)
 
 theorem pressure_pullback_germ {a : ℝ} (ha : 0 < a) (i : PolarCharts.Index)
     {P f : PressureField} (hf : AngularPeriodic f) {V : Set SpaceTime} (hV : IsOpen V)
@@ -318,13 +319,14 @@ theorem pressure_pullback_germ {a : ℝ} (ha : 0 < a) (i : PolarCharts.Index)
     {z : SpaceTime} (hr : 0 < z.2 0) (hz : forward z ∈ V)
     (hc : forward z ∈ ActualMeanPotentialRealization.cartesianDomain a i) :
     CylindricalResidual.pressurePullback P =ᶠ[𝓝 z] f := by
-  filter_upwards [forward_smooth.continuous.continuousAt (hV.mem_nhds hz),
-    forward_smooth.continuous.continuousAt
+  filter_upwards [forward_smooth.continuous.continuousAt.preimage_mem_nhds (hV.mem_nhds hz),
+    forward_smooth.continuous.continuousAt.preimage_mem_nhds
       ((ActualMeanPotentialRealization.cartesianDomain_open a i).mem_nhds hc),
     (isOpen_lt continuous_const (PhysicalGraphBounds.coordinateProjection 0).continuous).mem_nhds
-        hr]
+        (hr.trans_eq (PhysicalGraphBounds.coordinateProjection_apply 0 z).symm)]
     with y hy hyc hyr
-  exact (hP hy).trans (polarPressure_forward ha i hf hyr hyc)
+  exact (hP hy).trans (polarPressure_forward ha i hf
+    (lt_of_lt_of_eq hyr (PhysicalGraphBounds.coordinateProjection_apply 0 y)) hyc)
 
 /-! ## Periodicity comes from the stored harmonic representation -/
 

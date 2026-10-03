@@ -179,7 +179,7 @@ theorem integral_weighted_second_partial {χ : Space → ℝ} {w : Space → Spa
     dsimp only [spatialPartial]
     ring
   rw [hsecond_lhs, integral_const_mul] at hsecond
-  linarith only [hfirst, hsecond]
+  linear_combination hfirst - (1 / 2 : ℝ) * hsecond
 
 /-- Compactly weighted Laplacian energy identity for an arbitrary smooth
 spatial vector field. No global integrability assumption on the vector field
@@ -428,7 +428,7 @@ theorem hasDerivAt_difference_energy_balance {a b t : ℝ} {χ : Space → ℝ}
     (time_differentiable_at_interior hu ht) (time_differentiable_at_interior hv ht)
     hdivu hdivv hNS
   convert! hd using 1
-  linarith only [hb]
+  linear_combination -2 * hb
 
 end NavierStokesR3.LocalizedDifferenceEnergy
 
@@ -512,7 +512,7 @@ theorem exists_shifted_rpow_absorption {C δ p : ℝ}
   have hsquare : (A + 1) ^ 2 ≤ 2 * A ^ 2 + 2 := by
     linarith only [sq_nonneg (A - 1)]
   have hscaled := mul_le_mul_of_nonneg_left hsquare (half_pos hδ).le
-  linarith only [hboundA, hscaled]
+  linear_combination hboundA + hscaled
 
 /-- Dividing the shifted estimate by a radius at least one preserves the
 arbitrarily small square coefficient and makes the constant decay as `1 / R`. -/
@@ -529,8 +529,7 @@ theorem exists_scaled_shifted_rpow_absorption {C δ p : ℝ}
   have hscaled := mul_le_mul_of_nonneg_right (hbound A hA) hInv
   have hquadratic := mul_le_mul_of_nonneg_left hInv1
     (mul_nonneg hδ.le (sq_nonneg A))
-  simp only [div_eq_mul_inv]
-  linarith only [hscaled, hquadratic]
+  linear_combination hscaled + hquadratic
 
 /-- The pressure and transport cutoff remainders are controlled by one shifted
 subquadratic power. The estimate retains the full factor `1 / R`. -/
@@ -742,9 +741,7 @@ theorem exists_uniform_rate_bound {C0 C1 C2 S M : ℝ}
   have hC0radius : C0 / R ^ 2 ≤ C0 / R :=
     div_le_div_of_nonneg_left hC0 hRpos hRsq
   have hbound := hflux R hR A hA B hB hSobolev
-  have hdivide : 2 * (C0 + D) / R = 2 * (C0 / R + D / R) := by ring
-  rw [hdivide]
-  linarith only [henergy, hbound, hC0radius, sq_nonneg A]
+  linear_combination 2 * henergy + 2 * hbound + 2 * hC0radius + sq_nonneg A
 
 end NavierStokesR3.ComparisonRateBound
 

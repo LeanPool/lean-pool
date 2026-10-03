@@ -356,7 +356,7 @@ theorem context_frame_band (B : ℕ) {V : Set Plane} (htime : ∀ s ∈ V, 0 < s
       (bandVelocityScale h n m * bandScale n m) •
         ((commonContext B).operators.fastCoefficient m • (commonContext B).operators.vT -
           ChartScales.epsilon h m • ((0, ((1,0),0)) : Point))
-    rw [map_sub, smul_sub, slowTime_vector]
+    rw [ContinuousLinearEquiv.map_sub, smul_sub, slowTime_vector]
     congr 1
     exact TemporalStateCoherence.common_fast_transport h
         (CorrectionInitialization.CommonWindow.index h)

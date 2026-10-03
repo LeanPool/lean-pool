@@ -438,11 +438,10 @@ theorem profileAtScale_hasFDerivAt (h Q : ℝ) (x : Point) :
     change Q * y.1 ^ 2 / 2 = 1 / 2 * (Q * (y.1 * y.1))
     ring
   · refine ContinuousLinearMap.ext fun d => ?_
-    rw [profileJacobian_apply]
-    simp only [neg_mul, ContinuousLinearMap.comp_id, one_div, id_eq, smul_add,
-      ContinuousLinearMap.prod_apply, neg_apply, smul_apply, ContinuousLinearMap.comp_apply,
-      ContinuousLinearMap.coe_snd', ContinuousLinearMap.coe_fst', smul_eq_mul, add_apply,
-      Prod.mk.injEq, true_and, and_true]
+    simp only [profileJacobian_apply, neg_mul, ContinuousLinearMap.comp_id, one_div, id_eq,
+      smul_add, ContinuousLinearMap.prod_apply, neg_apply, smul_apply,
+      ContinuousLinearMap.comp_apply, ContinuousLinearMap.coe_snd', ContinuousLinearMap.coe_fst',
+      smul_eq_mul, add_apply, Prod.mk.injEq, true_and, and_true]
     ring
 
 /-- A direct derivative calculation for the normalized stress profile. -/
@@ -478,10 +477,11 @@ theorem normalized_profile_radialDiv
     rw [Real.rpow_add hQ, Real.sqrt_eq_rpow]
   rw [LeadingStress.radialDivergence, hsqrt, hpower]
   unfold SimilarityProfile.partialS
-  field_simp [hx.ne', (Real.sqrt_pos.2 hQ).ne']
-  ring_nf
-  rw [Real.sq_sqrt hQ.le]
-  ring
+  have hs : Real.sqrt Q * Real.sqrt Q = Q := Real.mul_self_sqrt hQ.le
+  have hinv : Real.sqrt Q * (Real.sqrt Q)⁻¹ = 1 := mul_inv_cancel₀ (Real.sqrt_pos.2 hQ).ne'
+  linear_combination (-(Q ^ (2 * CoordinateAlgebra.A h) * x.1 *
+      fderiv ℝ S (profileAtScale h Q x) (0, 1, 0))) * hs -
+    (k * Q ^ (2 * CoordinateAlgebra.A h) * S (profileAtScale h Q x) * x.1⁻¹) * hinv
 
 /-- Rotation of the actual Cartesian tangential stress force. -/
 theorem tangentialStressForce_components (theta axial : AxisymmetricFields.Profile)

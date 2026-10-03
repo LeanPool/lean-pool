@@ -209,6 +209,7 @@ theorem direction_average {f : SpaceTime → E}
         (fderiv ℝ f (angularShift q a)) q := by
       simpa only [angularShift, Function.comp_def, id_eq, ContinuousLinearMap.comp_id] using
         ((hf.differentiable (by simp)) (angularShift q a)).hasFDerivAt.comp q
+          (f := fun x => id x + a • angularVector)
           ((hasFDerivAt_id q).add_const (a • angularVector))
     exact congrArg (fun L : SpaceTime →L[ℝ] E => L v)
       ((TransportPrimitive.parameter_hasFDerivAt hg q a).unique hchain)
@@ -281,7 +282,7 @@ theorem direction_mul {f g : Scalar} (hf : ContDiff ℝ ∞ f)
     direction v (fun y => f y * g y) q = direction v f q * g q + f q * direction v g q := by
   unfold direction
   rw [fderiv_fun_mul (hf.differentiable (by simp) q) (hg.differentiable (by simp) q)]
-  simp
+  simp only [_root_.add_apply, _root_.smul_apply, smul_eq_mul]
   ring
 
 theorem direction_map (L : E →L[ℝ] F) {f : SpaceTime → E} (hf : ContDiff ℝ ∞ f)

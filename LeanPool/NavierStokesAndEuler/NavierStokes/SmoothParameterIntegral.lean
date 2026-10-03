@@ -67,10 +67,8 @@ theorem hasFDerivAt_integral_jet_of_ball {k : ℕ} {x : H} {ε : ℝ} (hε : 0 <
     (hint : Integrable (jet F k x) μ) (hm₁ : AEStronglyMeasurable (jet F (k + 1) x) μ) :
     HasFDerivAt (fun y => ∫ t, jet F k y t ∂μ)
       (∫ t, jet F (k + 1) x t ∂μ).curryLeft x := by
-  let curry : (H [×(k + 1)]→L[ℝ] E) ≃ₗᵢ[ℝ] (H →L[ℝ] H [×k]→L[ℝ] E) :=
-    continuousMultilinearCurryLeftEquiv ℝ (fun _ : Fin (k + 1) => H) E
-  have hm : AEStronglyMeasurable (fun t => curry (jet F (k + 1) x t)) μ :=
-    curry.continuous.comp_aestronglyMeasurable hm₁
+  let curry := continuousMultilinearCurryLeftEquiv ℝ (fun _ : Fin (k + 1) => H) E
+  have hm := curry.continuous.comp_aestronglyMeasurable hm₁
   have hnorm : ∀ᵐ t ∂μ, ∀ y ∈ ball x ε,
       ‖curry (jet F (k + 1) y t)‖ ≤ bound t := by
     filter_upwards [hbound] with t ht
@@ -232,7 +230,8 @@ theorem contDiffOn_integral_Ioc_of_continuous_jet (hs : IsOpen s)
     have hc : ContinuousOn (jet F k x) (Icc a b) :=
       (h_jet k).comp (f := fun t => (x, t)) (continuous_const.prodMk continuous_id).continuousOn
         (fun t ht => ⟨hx, ht⟩)
-    exact (hc.mono Ioc_subset_Icc_self).aestronglyMeasurable measurableSet_Ioc
+    exact ContinuousOn.aestronglyMeasurable (h := secondCountableTopologyEither_of_left ℝ _)
+      (hc.mono Ioc_subset_Icc_self) measurableSet_Ioc
   · intro k x hx
     obtain ⟨ε, hε, hεs⟩ := nhds_basis_closedBall.mem_iff.mp (hs.mem_nhds hx)
     have hcompact : IsCompact (closedBall x ε ×ˢ Icc a b) :=

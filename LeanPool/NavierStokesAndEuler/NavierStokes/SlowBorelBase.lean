@@ -1558,10 +1558,8 @@ theorem normalized_correction_smul_inner {a : ℕ → ℕ} {h : ℝ} (hh : 0 < h
   have hsum : 0 ≤ ∑ i ∈ Finset.range (m + 1), (m.choose i : ℝ) * A i * B (m - i) := by
     apply Finset.sum_nonneg
     intro i hi
-    have hAi := zero_le_one.trans (hA i)
-    have hBi := (hB (m - i)).le
-    positivity
-  refine ⟨C, by dsimp only [C]; linarith only [hsum], ?_⟩
+    exact mul_nonneg (mul_nonneg (Nat.cast_nonneg _) (zero_le_one.trans (hA i))) (hB (m - i)).le
+  refine ⟨C, add_pos_of_nonneg_of_pos hsum one_pos, ?_⟩
   intro q hq hq1 w hw
   let F : Chart → V := fun y => slowSum a h f y - f 0 y.2
   have hFs {y : Chart} (hy : 0 < y.1) : ContDiffAt ℝ ∞ F y :=
@@ -1583,12 +1581,12 @@ theorem normalized_correction_smul_inner {a : ℕ → ℕ} {h : ℝ} (hh : 0 < h
       have hBi : ‖iteratedFDeriv ℝ (m - i) (F ∘ scaleMap q) (1, w)‖ ≤
           B (m - i) * q ^ (2 * h) := hBb (m - i) q hq hq1 w hw
       have hAi0 := zero_le_one.trans (hA i)
-      refine (mul_le_mul (mul_le_mul_of_nonneg_left hAi (by positivity)) hBi
-        (norm_nonneg _) (by positivity)).trans_eq ?_
+      refine (mul_le_mul (mul_le_mul_of_nonneg_left hAi (Nat.cast_nonneg _)) hBi
+        (norm_nonneg _) (mul_nonneg (Nat.cast_nonneg _) hAi0)).trans_eq ?_
       ring
     _ = (∑ i ∈ Finset.range (m + 1), (m.choose i : ℝ) * A i * B (m - i)) * q ^ (2 * h) :=
       (Finset.sum_mul _ _ _).symm
-    _ ≤ C * q ^ (2 * h) := mul_le_mul_of_nonneg_right (by dsimp only [C]; linarith only)
+    _ ≤ C * q ^ (2 * h) := mul_le_mul_of_nonneg_right (le_add_of_nonneg_right zero_le_one)
       (Real.rpow_nonneg hq.le _)
 
 /-- Normalized swirl, given by `Real.sqrt (2 * y.2.1) / C * slowSum a h d.phi y`. -/

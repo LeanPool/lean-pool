@@ -328,7 +328,9 @@ theorem cutoffAlias_finiteJet_bound {a b : ℝ} {f : State → F} {χ : ℝ → 
     ((contDiff_infty_iff_deriv.mp hχ).2).comp contDiff_fst
   obtain ⟨B, hB, hcutoff⟩ := periodic_finiteJet_bound hc (fun _ _ _ => rfl) a b m
   have hL : 0 ≤ b - a := sub_nonneg.mpr hab
-  refine ⟨(2 : ℝ) ^ m * (B * (A * (b - a))), by positivity, ?_⟩
+  have hK : 0 ≤ B * (A * (b - a)) := mul_nonneg hB (mul_nonneg hA hL)
+  have hC : 0 ≤ (2 : ℝ) ^ m * (B * (A * (b - a))) := mul_nonneg (pow_nonneg zero_le_two m) hK
+  refine ⟨(2 : ℝ) ^ m * (B * (A * (b - a))), hC, ?_⟩
   intro M v j hj z
   by_cases hz : z.1 ∈ Icc a b
   · have hb := norm_iteratedFDeriv_smul_le (𝕜 := ℝ) hc
@@ -357,15 +359,14 @@ theorem cutoffAlias_finiteJet_bound {a b : ℝ} {f : State → F} {χ : ℝ → 
         intro i _
         ring
       _ ≤ (2 : ℝ) ^ m * (B * (A * (b - a))) := by
-        exact mul_le_mul_of_nonneg_right (pow_le_pow_right₀ (by norm_num) hj)
-          (by positivity)
+        exact mul_le_mul_of_nonneg_right (pow_le_pow_right₀ (by norm_num) hj) hK
   · have hsj := TransportPrimitive.iteratedFDeriv_supported
       (cutoffAlias_supported (M := M) (v := v) hχ hf hs hleft hright) j
     have heq : iteratedFDeriv ℝ j (cutoffAlias χ M v f) z = 0 := by
       by_contra hnz
       exact hz (hsj hnz)
     rw [heq, norm_zero]
-    positivity
+    exact hC
 
 end Averages
 

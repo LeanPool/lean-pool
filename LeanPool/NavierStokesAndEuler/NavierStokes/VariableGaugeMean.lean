@@ -2113,7 +2113,8 @@ theorem localBandJets_meanClass_of_gaugeInteriorSupport {c e α : ℝ}
       _ ≤ C * ε n ^ α * L n ^ k := hbound n z hzs j hj
       _ ≤ C * ε n ^ α * st.growth n z ^ k :=
         mul_le_mul_of_nonneg_left hgr (mul_nonneg hC (Real.rpow_pos_of_pos (hε n) α).le)
-      _ = (C / δ * ε n ^ α * st.growth n z ^ k) * δ := by field_simp
+      _ = (C / δ * ε n ^ α * st.growth n z ^ k) * δ := by
+        rw [div_mul_eq_mul_div, div_mul_eq_mul_div, div_mul_cancel₀ _ hδ.ne']
       _ ≤ (C / δ * ε n ^ α * st.growth n z ^ k) * st.zeta z := mul_le_mul_of_nonneg_left hζ hA
       _ = _ := rfl
   · have hr : z.1 ∉ Ioo (qLength coord z.2.1 * c) (qLength coord z.2.1 * e) := by
@@ -2209,21 +2210,18 @@ theorem fderiv_eq_on_radialFiber {f g : PressureStream.Lift S → ℝ} {z : Pres
     (hf : DifferentiableAt ℝ f z) (hg : DifferentiableAt ℝ g z)
     (he : ∀ r Y, f (r, (z.2.1, Y)) = g (r, (z.2.1, Y))) (r : ℝ) (Y : PressureStream.Plane) :
     fderiv ℝ f z (r, ((0 : S), Y)) = fderiv ℝ g z (r, ((0 : S), Y)) := by
-  let L : (ℝ × PressureStream.Plane) →L[ℝ] PressureStream.Lift S :=
-    (ContinuousLinearMap.fst ℝ ℝ PressureStream.Plane).prod
-      ((0 : (ℝ × PressureStream.Plane) →L[ℝ] S).prod (ContinuousLinearMap.snd ℝ ℝ
-          PressureStream.Plane))
-  have hi : HasFDerivAt (fun q : ℝ × PressureStream.Plane => (q.1, (z.2.1, q.2))) L (z.1, z.2.2) :=
-    hasFDerivAt_fst.prodMk ((hasFDerivAt_const z.2.1 _).prodMk hasFDerivAt_snd)
-  have hff := hf.hasFDerivAt.comp (z.1, z.2.2) hi
-  have hgg := hg.hasFDerivAt.comp (z.1, z.2.2) hi
-  have heq : (f ∘ fun q : ℝ × PressureStream.Plane => (q.1, (z.2.1, q.2))) =
-      (g ∘ fun q : ℝ × PressureStream.Plane => (q.1, (z.2.1, q.2))) := by
-    funext q
-    exact he q.1 q.2
+  obtain ⟨z1, z2, z3⟩ := z
+  let φ : ℝ × PressureStream.Plane → PressureStream.Lift S := fun q => (q.1, (z2, q.2))
+  have hi := (hasFDerivAt_fst (𝕜 := ℝ) (p := (z1, z3))).prodMk
+    ((hasFDerivAt_const (𝕜 := ℝ) z2 (z1, z3)).prodMk (hasFDerivAt_snd (𝕜 := ℝ) (p := (z1, z3))))
+  have hff := HasFDerivAt.comp (f := φ) (z1, z3) hf.hasFDerivAt hi
+  have hgg := HasFDerivAt.comp (f := φ) (z1, z3) hg.hasFDerivAt hi
+  have heq : f ∘ φ = g ∘ φ := funext fun q => he q.1 q.2
   rw [heq] at hff
   have h := congrArg (fun A : (ℝ × PressureStream.Plane) →L[ℝ] ℝ => A (r, Y)) (hff.unique hgg)
-  simpa [L] using h
+  simpa only [ContinuousLinearMap.comp_apply, ContinuousLinearMap.prod_apply,
+    ContinuousLinearMap.coe_fst', ContinuousLinearMap.coe_snd',
+    zero_apply] using h
 
 theorem graphDr_eq_on_radialFiber {f g : PressureStream.Lift S → ℝ} {z : PressureStream.Lift S}
     (hf : DifferentiableAt ℝ f z) (hg : DifferentiableAt ℝ g z)
@@ -2825,7 +2823,9 @@ theorem localBandJets_compactAlias {ε L : ℕ → ℝ} {α : ℝ} {f : ℕ → 
       U.qlo_pos ha d b
     (V := V) (fun z hz => U.time_pos z.2.1 hz.1) (fun z hz => U.q_mem z.2.1 hz.1) (fun _ hz =>
         hz.2) m
-  refine ⟨(2 : ℝ) ^ m * B * K * C, by positivity, k, ?_⟩
+  have hP : 0 ≤ (2 : ℝ) ^ m * B * K * C :=
+    mul_nonneg (mul_nonneg (mul_nonneg (pow_nonneg zero_le_two m) hB) hK) hC0
+  refine ⟨(2 : ℝ) ^ m * B * K * C, hP, k, ?_⟩
   intro n z hz j hj
   have hA : 0 ≤ C * ε n ^ α * L n ^ k :=
     mul_nonneg (mul_nonneg hC0 (Real.rpow_pos_of_pos (hε n) α).le)
@@ -2846,7 +2846,7 @@ theorem localBandJets_compactAlias {ε L : ℕ → ℝ} {α : ℝ} {f : ℕ → 
   · rw [PhysicalMeanDomain.jet_zero_outside U.isOpen (compactAlias_q_contDiffOn U ha hab hd (M n)
       (v n) (hf n) (hs n))
       (hAfixed n) hz hr j, norm_zero]
-    exact mul_nonneg (mul_nonneg (by positivity) (Real.rpow_pos_of_pos (hε n) α).le)
+    exact mul_nonneg (mul_nonneg hP (Real.rpow_pos_of_pos (hε n) α).le)
       (pow_nonneg (zero_le_one.trans (hL n)) k)
 
 variable {cL cR : ℝ} (hcL : 0 < cL) (hcR : 0 < cR)

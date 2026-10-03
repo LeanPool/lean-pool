@@ -1175,26 +1175,24 @@ theorem shear_direction_drop_bound (v : TailData) {y η : ℝ}
     calc
       _ ≤ 2 * |deriv (dropCoefficient v.core.m) y| * |η| *
           (axialBound * |η| * (1 + y) * angular v.core.P v.core.dropLength v.core.lam (y, η) ^ 2) :=
-        mul_le_mul_of_nonneg_left hN (by positivity)
+        mul_le_mul_of_nonneg_left hN
+          (mul_nonneg (mul_nonneg zero_le_two (abs_nonneg _)) (abs_nonneg _))
       _ = (2 * axialBound * η ^ 2 * angular v.core.P v.core.dropLength v.core.lam (y, η) ^ 2) *
           (|deriv (dropCoefficient v.core.m) y| * (1 + y)) := by rw [← sq_abs η]; ring
-      _ ≤ _ := by
-        have h := mul_le_mul_of_nonneg_left hdy
-          (show 0 ≤ 2 * axialBound * η ^ 2 * angular v.core.P v.core.dropLength v.core.lam (y, η) ^
-              2 by
-            have := axialBound_pos
-            positivity)
-        convert! h using 1
-        ring
+      _ ≤ _ :=
+        (mul_le_mul_of_nonneg_left hdy (mul_nonneg (mul_nonneg
+          (mul_nonneg zero_le_two axialBound_pos.le) (sq_nonneg η)) (sq_nonneg _))).trans_eq
+          (by ring)
   apply hnum.trans
   have hc : 0 ≤ (4 * axialBound / coneFloor) * dropSpeed v.core.m *
-      angular v.core.P v.core.dropLength v.core.lam (y, η) ^ 2 := by
-    have := axialBound_pos
-    have := coneFloor_pos
-    have := dropSpeed_pos v.core.m_pos
-    positivity
+      angular v.core.P v.core.dropLength v.core.lam (y, η) ^ 2 :=
+    mul_nonneg (mul_nonneg (div_nonneg (mul_nonneg zero_le_four axialBound_pos.le)
+      coneFloor_pos.le) (dropSpeed_pos v.core.m_pos).le) (sq_nonneg _)
   have h := mul_le_mul_of_nonneg_left hQη hc
-  convert! h using 1 <;> field_simp [coneFloor_pos.ne']
+  convert! h using 1
+  · linear_combination (-(4 * axialBound * dropSpeed v.core.m * η ^ 2 *
+      angular v.core.P v.core.dropLength v.core.lam (y, η) ^ 2)) * mul_inv_cancel₀ coneFloor_pos.ne'
+  · ring
 
 theorem radialA_drop (c : Parameters) {y : ℝ} (hy : 1 ≤ y)
     (hy' : y ≤ c.dropLength + 1) : radialA c y = 2 := by
@@ -1844,16 +1842,18 @@ theorem pressureAxialSource_deriv_bound (v : TailData) {y η : ℝ} (hh1 : v.h �
     constructor <;> linarith only [hη, sq_nonneg η, parameter_square_le_one hη]
   have hA : 0 ≤ 4 * A v.h ∧ 4 * A v.h ≤ 3 := by
     unfold A
-    constructor <;> linarith only [hh1, v.h_pos]
+    exact ⟨mul_nonneg (by norm_num) (add_nonneg (by norm_num) v.h_pos.le),
+      (mul_le_mul_of_nonneg_left (add_le_add le_rfl hh1) (by norm_num)).trans (by norm_num)⟩
   have hp1 : |pressureGradient v y η| ≤ pressureBound * angular v.core.P v.core.dropLength
       v.core.lam (y, η) ^ 2 := by
     apply hp.2.1.trans
     linarith only [hη, hE, mul_le_mul_of_nonneg_right hη (mul_nonneg pressureBound_pos.le hE)]
+  have h24 : 0 ≤ 2 + 4 * A v.h := add_nonneg zero_le_two hA.1
   have hfirst : |(2 + 4 * A v.h) * η * pressureGradient v y η| ≤
       5 * pressureBound * angular v.core.P v.core.dropLength v.core.lam (y, η) ^ 2 := by
-    rw [abs_mul, abs_mul, abs_of_nonneg (by linarith only [hA] : 0 ≤ 2 + 4 * A v.h)]
+    rw [abs_mul, abs_mul, abs_of_nonneg h24]
     have hc : (2 + 4 * A v.h) * |η| ≤ 5 := by
-      linarith [mul_le_mul_of_nonneg_left hη (by linarith only [hA] : 0 ≤ 2 + 4 * A v.h)]
+      linarith only [hA.2, mul_le_mul_of_nonneg_left hη h24]
     have hb := mul_le_mul hc hp1 (abs_nonneg _) (by norm_num : (0 : ℝ) ≤ 5)
     linarith only [hb]
   have hsecond : |d η * deriv (pressureGradient v y) η| ≤

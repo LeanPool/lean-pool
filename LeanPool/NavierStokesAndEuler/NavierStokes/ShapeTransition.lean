@@ -735,6 +735,7 @@ theorem rows_jet_bounds {R r B K C : ℝ} (hR : 0 ≤ R) (hr : 0 ≤ r)
       (2 ^ n * B ^ 2 + R * r * (2 ^ n * (K / C) ^ 2)) * r ∧
     |iteratedDeriv n (rowP R f r) eta| ≤ R * (2 ^ n * (K / C) ^ 2) * r := by
   have hKC : 0 ≤ K / C := div_nonneg hK hC.le
+  have hsR : 0 ≤ 2 * Real.sqrt R := mul_nonneg zero_le_two (Real.sqrt_nonneg R)
   have hus (x : ℝ) : ContDiff ℝ ∞ (fun e => u (x, e)) :=
     hu.comp (contDiff_const.prodMk contDiff_id)
   have hfs (x : ℝ) : ContDiff ℝ ∞ (fun e => f (x, e)) :=
@@ -764,9 +765,9 @@ theorem rows_jet_bounds {R r B K C : ℝ} (hR : 0 ≤ R) (hr : 0 ≤ r)
       have hx0 : 0 ≤ x := hx.1.le
       dsimp only
       rw [iteratedDeriv_const_mul _ ((hfs x).of_le (nat_le_infty n)).contDiffAt,
-        abs_mul, abs_of_nonneg (by positivity : 0 ≤ 2 * Real.sqrt R * x)]
-      exact mul_le_mul (mul_le_mul_of_nonneg_left hx.2 (by positivity))
-        (hfb x hx n le_rfl) (abs_nonneg _) (by positivity)
+        abs_mul, abs_of_nonneg (mul_nonneg hsR hx0)]
+      exact mul_le_mul (mul_le_mul_of_nonneg_left hx.2 hsR)
+        (hfb x hx n le_rfl) (abs_nonneg _) (mul_nonneg hsR hr)
   · have he : rowJ R u f r = fun e => ∫ x in (0 : ℝ)..r,
         (2 * Real.sqrt R * x) * (u (x, e) * f (x, e)) :=
       funext (rowJ_normalized hR hr u f)
@@ -780,9 +781,9 @@ theorem rows_jet_bounds {R r B K C : ℝ} (hR : 0 ≤ R) (hr : 0 ≤ r)
       have hx0 : 0 ≤ x := hx.1.le
       dsimp only
       rw [iteratedDeriv_const_mul _ (((hus x).mul (hfs x)).of_le (nat_le_infty n)).contDiffAt,
-        abs_mul, abs_of_nonneg (by positivity : 0 ≤ 2 * Real.sqrt R * x)]
-      exact mul_le_mul (mul_le_mul_of_nonneg_left hx.2 (by positivity))
-        (huf x hx) (abs_nonneg _) (by positivity)
+        abs_mul, abs_of_nonneg (mul_nonneg hsR hx0)]
+      exact mul_le_mul (mul_le_mul_of_nonneg_left hx.2 hsR)
+        (huf x hx) (abs_nonneg _) (mul_nonneg hsR hr)
   · have he : rowS R u f r = fun e => ∫ x in (0 : ℝ)..r,
         u (x, e) ^ 2 - (R * x) * f (x, e) ^ 2 := funext (rowS_normalized hR hr u f)
     rw [he]
@@ -1061,13 +1062,13 @@ theorem idealPrefixJetSize_bound {r B K : ℝ} (hr : 0 ≤ r) (hr1 : r ≤ 1)
   have hi : |iteratedDeriv n (idealI A r) eta| ≤ 2 * K * r := by
     change |iteratedDeriv n (fun e => idealWeightI r * A e) eta| ≤ _
     rw [iteratedDeriv_const_mul _ (hA.of_le (nat_le_infty n)).contDiffAt, abs_mul]
-    convert! mul_le_mul (idealWeightI_bound hr hr1) (hAb n le_rfl)
-      (abs_nonneg _) (by positivity) using 1; ring
+    exact (mul_le_mul (idealWeightI_bound hr hr1) (hAb n le_rfl)
+      (abs_nonneg _) (mul_nonneg zero_le_two hr)).trans_eq (mul_right_comm _ _ _)
   have hj : |iteratedDeriv n (idealJ G A r) eta| ≤ 2 * (2 ^ n * B * K) * r := by
     change |iteratedDeriv n (fun e => idealWeightI r * (G e * A e)) eta| ≤ _
     rw [iteratedDeriv_const_mul _ ((hG.mul hA).of_le (nat_le_infty n)).contDiffAt, abs_mul]
-    convert! mul_le_mul (idealWeightI_bound hr hr1) hGA (abs_nonneg _) (by
-        positivity) using 1; ring
+    exact (mul_le_mul (idealWeightI_bound hr hr1) hGA (abs_nonneg _)
+      (mul_nonneg zero_le_two hr)).trans_eq (mul_right_comm _ _ _)
   have hs : |iteratedDeriv n (idealS G A r) eta| ≤
       (2 ^ n * B ^ 2 + (2 ^ n * K ^ 2) / 2) * r := by
     change |iteratedDeriv n ((fun e => r * G e ^ 2) - (fun e => idealWeightS r * A e ^ 2)) eta| ≤ _
@@ -1078,17 +1079,19 @@ theorem idealPrefixJetSize_bound {r B K : ℝ} (hr : 0 ≤ r) (hr1 : r ≤ 1)
     apply (abs_sub _ _).trans
     rw [abs_mul, abs_mul, abs_of_nonneg hr]
     have hleft := mul_le_mul_of_nonneg_left hGG hr
-    have hright := mul_le_mul (idealWeightS_bound hr hr1) hAA (abs_nonneg _) (by positivity)
-    linarith only [hleft, hright]
+    have hright := mul_le_mul (idealWeightS_bound hr hr1) hAA (abs_nonneg _)
+      (div_nonneg hr zero_le_two)
+    exact (add_le_add hleft hright).trans_eq (by ring)
   have hp : |iteratedDeriv n (idealP A r) eta| ≤
       (5 / 2) * (2 ^ n * K ^ 2) * r ^ (1 / 5 : ℝ) := by
     change |iteratedDeriv n (fun e => idealWeightP r * A e ^ 2) eta| ≤ _
+    have h52 : 0 ≤ (5 / 2 : ℝ) * r ^ (1 / 5 : ℝ) :=
+      mul_nonneg (by norm_num) (Real.rpow_nonneg hr _)
     rw [iteratedDeriv_const_mul _ ((hA.pow 2).of_le (nat_le_infty n)).contDiffAt,
-      abs_mul, idealWeightP_eq hr, abs_of_nonneg (by positivity)]
-    convert! mul_le_mul_of_nonneg_left hAA
-      (show 0 ≤ (5 / 2 : ℝ) * r ^ (1 / 5 : ℝ) by positivity) using 1; ring
+      abs_mul, idealWeightP_eq hr, abs_of_nonneg h52]
+    exact (mul_le_mul_of_nonneg_left hAA h52).trans_eq (mul_right_comm _ _ _)
   dsimp only [idealPrefixJetSize, idealPrefixCoefficient]
-  linarith only [hm, hi, hj, hs, hp]
+  exact (add_le_add (add_le_add (add_le_add (add_le_add hm hi) hj) hs) hp).trans_eq (by ring)
 
 theorem separation_fifth_tendsto (T : ℝ) {P : ℝ} (hP : P ≠ 0) :
     Tendsto (fun C : ℝ => separation T C P ^ (1 / 5 : ℝ)) atTop (𝓝 0) := by
@@ -1119,8 +1122,8 @@ theorem smooth_parameter_interval {a b : ℝ} (hab : a ≤ b) {F : ℝ × ℝ �
       (fun x => iteratedDeriv k (fun q => F (x, q)) e) (volume.restrict (Ioc a b)) := by
     intro k e
     have hc : ContinuousOn (fun x => iteratedDeriv k (fun q => F (x, q)) e) (Icc a b) :=
-      (hj k).comp (continuous_id.prodMk continuous_const).continuousOn (fun x hx => ⟨hx, mem_univ
-          _⟩)
+      ((hj k).comp (continuous_id.prodMk continuous_const).continuousOn
+        (fun x hx => ⟨hx, mem_univ _⟩) :)
     exact (hc.mono Ioc_subset_Icc_self).aestronglyMeasurable measurableSet_Ioc
   have hd : SmoothParameterIntegral.LocallyDominatedDeriv (fun e x => F (x, e))
       (volume.restrict (Ioc a b)) := by
@@ -1222,6 +1225,7 @@ theorem restoreJetSize_bound {a b B K delta : ℝ} (ha : 0 < a) (hab : a ≤ b) 
       delta * (1 + 2 * (2 ^ n * K) + 2 ^ n * (delta + 2 * B)) := by
   have hlen : 0 ≤ b - a := sub_nonneg.mpr hab
   have hlen1 : b - a ≤ 1 := by linarith only [ha, hb]
+  have hdB : 0 ≤ delta + 2 * B := add_nonneg hd (mul_nonneg zero_le_two hB)
   have hrSmooth (x : ℝ) : ContDiff ℝ ∞ (fun e => restore Gi (Real.log x, e)) :=
     (restore_contDiff hGi).comp (contDiff_const.prodMk contDiff_id)
   have hdSmooth (x : ℝ) : ContDiff ℝ ∞ (fun e => restoreDefect Gi (x, e)) :=
@@ -1259,9 +1263,8 @@ theorem restoreJetSize_bound {a b B K delta : ℝ} (ha : 0 < a) (hab : a ≤ b) 
     have hx1 : x ≤ 1 := hx.2.trans hb
     have hw : |Real.sqrt (2 * x) * x ^ (1 / 10 : ℝ)| ≤ 2 := by
       rw [abs_mul, abs_of_nonneg (Real.sqrt_nonneg _), abs_of_nonneg (Real.rpow_nonneg hx0 _)]
-      have hs : Real.sqrt (2 * x) ≤ 2 := by
-        nlinarith only [hx1, hx0, Real.sq_sqrt (show 0 ≤ 2 * x by positivity),
-            Real.sqrt_nonneg (2 * x)]
+      have hs : Real.sqrt (2 * x) ≤ 2 :=
+        (Real.sqrt_le_left zero_le_two).mpr (by linarith only [hx1])
       exact (mul_le_mul hs (Real.rpow_le_one hx0 hx1 (by norm_num))
         (Real.rpow_nonneg hx0 _) (by norm_num)).trans_eq (by ring)
     change |iteratedDeriv n (fun e => (Real.sqrt (2 * x) * x ^ (1 / 10 : ℝ)) *
@@ -1276,10 +1279,11 @@ theorem restoreJetSize_bound {a b B K delta : ℝ} (ha : 0 < a) (hab : a ≤ b) 
         e).2.2)
       n eta
     intro x hx
-    exact product_jet_bound (hdSmooth x) (hpSmooth x) n eta hd (by positivity) (hdb x) (hpb x)
+    exact product_jet_bound (hdSmooth x) (hpSmooth x) n eta hd hdB (hdb x) (hpb x)
+  have h2d : 0 ≤ (2 : ℝ) ^ n * delta := mul_nonneg (pow_nonneg zero_le_two n) hd
   have hm' := hm.trans (mul_le_of_le_one_right hd hlen1)
-  have hj' := hj.trans (mul_le_of_le_one_right (by positivity) hlen1)
-  have hs' := hs.trans (mul_le_of_le_one_right (by positivity) hlen1)
+  have hj' := hj.trans (mul_le_of_le_one_right (mul_nonneg zero_le_two (mul_nonneg h2d hK)) hlen1)
+  have hs' := hs.trans (mul_le_of_le_one_right (mul_nonneg h2d hdB) hlen1)
   dsimp only [restoreJetSize]
   linarith only [hm', hj', hs']
 

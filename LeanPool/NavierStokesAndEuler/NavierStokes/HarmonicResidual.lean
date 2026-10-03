@@ -709,8 +709,11 @@ theorem cylindricalVectorLaplacian_add {U : Set D} (hU : IsOpen U) (R : D → �
         WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true]))
   ext i
   fin_cases i <;>
-    simp [cylindricalVectorLaplacian, angularGenerator, hL 0, hL 1, hL 2,
-      hD 0, hD 1, Complex.real_smul] <;> ring
+    simp only [cylindricalVectorLaplacian, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Fin.isValue,
+      Pi.add_apply, hL 0, hL 1, hL 2, angularGenerator, hD 0, hD 1, neg_add_rev,
+      Matrix.cons_val, Matrix.cons_val_zero, Matrix.cons_val_one, smul_add, Complex.real_smul,
+      Complex.ofReal_inv, Complex.ofReal_pow, smul_neg, mul_neg, mul_zero, add_zero,
+      smul_zero] <;> ring
 
 theorem gradient_add (R : D → ℝ) (Vr Vθ Vz : D → D)
     {p q : D → ℂ} {x : D} (hp : DifferentiableAt ℝ p x)

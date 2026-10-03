@@ -1496,14 +1496,13 @@ theorem profileCarrier_radial_gap {C : ℝ} (hC : 0 < C) (d : TailData) (y0 : �
       profileZ y0 y * deriv (HeatProfileExtension.extension (1 + d.h)) (profileZ y0 y)) +
       HeatProfileExtension.extension (1 + d.h) (profileZ y0 y) < 0 := by
     unfold RadialHeatProfile.spatialExponent
-    nlinarith only [hlog]
+    linear_combination 2 * hlog
   have hi := mul_neg_of_pos_of_neg
     (mul_pos hC (Real.rpow_pos_of_pos hs (RadialHeatProfile.spatialExponent (1 + d.h)))) hb
   convert! hi using 1
   unfold profileCarrierRadial profileCarrier
   rw [Real.rpow_sub hs, Real.rpow_one]
   field_simp [hs.ne']
-  ring_nf
   rw [profileRadius_square]
   ring
 
@@ -1605,7 +1604,8 @@ theorem profileCarrier_hasDerivAt_edge (C : ℝ) (d : TailData) (y0 η x : ℝ) 
     (p := RadialHeatProfile.spatialExponent (1 + d.h)) (Or.inl hs.ne')
   have hH := ((HeatProfileExtension.extension_contDiff (a := 1 + d.h)
     (by linarith only [d.h_pos])).differentiable (by simp) (profileZ y0 (η, x))).hasDerivAt
-  have hp := (hpow.fun_mul (hH.comp x (profileZ_hasDerivAt y0 η x))).const_mul C
+  have hp := (hpow.fun_mul (hH.comp (h := fun u => profileZ y0 (η, u)) x
+    (profileZ_hasDerivAt y0 η x))).const_mul C
   simp only [Function.comp_def] at hp
   convert! hp using 1
   · funext u
@@ -1616,7 +1616,6 @@ theorem profileCarrier_hasDerivAt_edge (C : ℝ) (d : TailData) (y0 η x : ℝ) 
     dsimp only
     rw [Real.rpow_sub hs, Real.rpow_one]
     field_simp [hs.ne']
-    ring_nf
     rw [profileRadius_square]
     ring
 

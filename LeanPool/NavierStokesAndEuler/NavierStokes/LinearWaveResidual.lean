@@ -620,8 +620,8 @@ theorem cartesianLinearResidual_cylindrical (ε : ℝ) {B a : VelocityField} {p 
     CylindricalResidual.cartesianGradient_pullback hps (ne_of_gt hr),
     CylindricalResidual.cartesianLaplacian_components has (ne_of_gt hr)]
   simp only [cylindricalLinearResidual, map_add, map_sub, map_smul,
-    CylindricalResidual.velocityComponents, CylindricalResidual.pressurePullback]
-  rfl
+    CylindricalResidual.velocityComponents, CylindricalResidual.pressurePullback,
+    Function.comp_def]
 
 /-- Space direction, given by `(0, coordinateVector i)`. -/
 noncomputable def spaceDirection (i : Fin 3) (_ : SpaceTime) : SpaceTime :=

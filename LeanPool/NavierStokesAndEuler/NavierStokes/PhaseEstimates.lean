@@ -193,8 +193,8 @@ theorem positive_invariant_cone
     2 * z t 1 * (e21 t * z t 0 + (-lam t - damping t + e22 t) * z t 1) -
       r ^ 2 * (2 * z t 0 * ((lam t - damping t + e11 t) * z t 0 + e12 t * z t 1))
   have hd (t : ℝ) (ht : t ∈ Icc a b) : HasDerivAt barrier (barrier' t) t := by
-    convert! ((hq t ht).pow 2).sub (((hp t ht).pow 2).const_mul (r ^ 2)) using 1
-    simp [barrier']
+    refine (((hq t ht).pow 2).sub (((hp t ht).pow 2).const_mul (r ^ 2))).congr_deriv ?_
+    simp only [Fin.isValue, Nat.cast_ofNat, Nat.add_one_sub_one, pow_one, barrier']
   have hbarrier : ∀ t ∈ Icc a b, barrier t ≤ 0 := by
     apply image_le_of_deriv_right_lt_deriv_boundary'
       (fun t ht => (hd t ht).continuousAt.continuousWithinAt)
@@ -427,8 +427,8 @@ theorem scaled_growing_mode_bounds
   have hrhalf := (scaled_cone_conditions hlamMin hC hS hlarge).2.1
   have hmu : D / S + (C / S) * (1 + coneConstant lamMin C / S) ≤ (D + 2 * C) / S := by
     have hmul : (C / S) * (coneConstant lamMin C / S) ≤ C / S := by
-      have h := mul_le_mul_of_nonneg_left (show coneConstant lamMin C / S ≤ 1 by linarith only [
-          hrhalf])
+      have h := mul_le_mul_of_nonneg_left
+        (show coneConstant lamMin C / S ≤ 1 from hrhalf.trans (by norm_num))
         (div_nonneg hC hS.le)
       simpa only [mul_one] using h
     calc
@@ -451,12 +451,12 @@ theorem scaled_growing_mode_bounds
     calc
       ((D + 2 * C) / S) * (t - a) ≤ ((D + 2 * C) / S) * (L * S) :=
         mul_le_mul_of_nonneg_left ((sub_le_sub_right ht.2 a).trans hslot) hmu0
-      _ = (D + 2 * C) * L := by
-        field_simp
+      _ = (D + 2 * C) * L := by rw [mul_comm L S, ← mul_assoc, div_mul_cancel₀ _ hS.ne']
   have hlo : Real.exp (-(D + 2 * C) * L) ≤
       Real.exp (-((D + 2 * C) / S) * (t - a)) := by
     apply Real.exp_le_exp.mpr
-    linarith only [hexponent]
+    rw [neg_mul, neg_mul]
+    exact neg_le_neg hexponent
   have hhi : Real.exp (((D + 2 * C) / S) * (t - a)) ≤
       Real.exp ((D + 2 * C) * L) := Real.exp_le_exp.mpr hexponent
   have hratio : 0 ≤ z a 0 / P a := div_nonneg hplus.le (hPpos a ⟨le_rfl, hab⟩).le
@@ -1863,19 +1863,22 @@ theorem velocity_error_scaled {M S ε k : ℝ}
   have hM0 : 0 ≤ M := le_trans zero_le_one hM
   have hS0 : 0 < S := lt_of_lt_of_le zero_lt_one hS
   have hE : 0 ≤ phaseError S ε k := by unfold phaseError; positivity
+  have hS1 : 0 ≤ 1 / S := one_div_nonneg.mpr hS0.le
+  have hS2 : 0 ≤ S * ε ^ 2 := mul_nonneg hS0.le (sq_nonneg ε)
+  have hS3 : 0 ≤ S / k := div_nonneg hS0.le hk.le
+  have hS4 : 0 ≤ ε * S := mul_nonneg hε hS0.le
   have h0 : 1 / S ≤ phaseError S ε k := by
     unfold phaseError
-    linarith only [mul_nonneg hS0.le (sq_nonneg ε), div_nonneg hS0.le hk.le, mul_nonneg hε hS0.le]
+    exact le_add_of_le_of_nonneg (le_add_of_le_of_nonneg (le_add_of_nonneg_right hS2) hS3) hS4
   have h1 : 1 / S + S * ε ^ 2 ≤ phaseError S ε k := by
     unfold phaseError
-    linarith only [div_nonneg hS0.le hk.le, mul_nonneg hε hS0.le]
+    exact le_add_of_le_of_nonneg (le_add_of_nonneg_right hS3) hS4
   have h2 : S / k ≤ phaseError S ε k := by
     unfold phaseError
-    linarith only [one_div_nonneg.mpr hS0.le, mul_nonneg hS0.le (sq_nonneg ε), mul_nonneg hε hS0.le]
+    exact le_add_of_le_of_nonneg (le_add_of_nonneg_left (add_nonneg hS1 hS2)) hS4
   have h3 : ε * S ≤ phaseError S ε k := by
     unfold phaseError
-    linarith only [one_div_nonneg.mpr hS0.le, mul_nonneg hS0.le (sq_nonneg ε), div_nonneg hS0.le
-        hk.le]
+    exact le_add_of_nonneg_left (add_nonneg (add_nonneg hS1 hS2) hS3)
   have ha : M ^ 3 / S ≤ M ^ 3 * phaseError S ε k := by
     simpa only [mul_one_div] using mul_le_mul_of_nonneg_left h0 (pow_nonneg hM0 3)
   have hb : M * (1 / k) ≤ M * phaseError S ε k :=
@@ -1885,7 +1888,8 @@ theorem velocity_error_scaled {M S ε k : ℝ}
       (add_le_add (inverse_cube_bounds hS).1
         (by simpa only [one_mul] using mul_le_mul_of_nonneg_right hS (sq_nonneg ε))).trans h1
     have hh' := mul_le_mul_of_nonneg_left hh (show 0 ≤ 2 * M ^ 2 by positivity)
-    linarith only [hh']
+    exact (by ring : 2 * M * (M * (1 / S ^ 3 + ε ^ 2)) = 2 * M ^ 2 * (1 / S ^ 3 + ε ^ 2)).trans_le
+      hh'
   have hd : |ε| * (3 * M ^ 2) ≤ 3 * M ^ 2 * phaseError S ε k := by
     rw [abs_of_nonneg hε]
     have hεle : ε ≤ ε * S := by simpa only [mul_one] using mul_le_mul_of_nonneg_left hS hε
@@ -1898,7 +1902,11 @@ theorem velocity_error_scaled {M S ε k : ℝ}
   have hcoeff : M ^ 3 + M + 5 * M ^ 2 ≤ phaseConstant M := by
     unfold phaseConstant
     linarith only [hm2, hm3, hm4, pow_nonneg hM0 3]
-  linarith only [ha, hb, hc, hd, mul_le_mul_of_nonneg_right hcoeff hE]
+  calc
+    _ ≤ M ^ 3 * phaseError S ε k + (M * phaseError S ε k + 2 * M ^ 2 * phaseError S ε k) +
+        3 * M ^ 2 * phaseError S ε k := add_le_add (add_le_add ha (add_le_add hb hc)) hd
+    _ = (M ^ 3 + M + 5 * M ^ 2) * phaseError S ε k := by ring
+    _ ≤ _ := mul_le_mul_of_nonneg_right hcoeff hE
 
 /-- Quantitative estimates for the actual rounded phase.  The C2 comparison
 lemma above supplies the two `M (S⁻³ + ε²)` derivative hypotheses. -/

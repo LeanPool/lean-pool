@@ -884,10 +884,9 @@ theorem chartKernel_finiteJetBounds {coord qlo qhi rlo rhi : ℝ}
   calc
     _ ≤ ‖iteratedFDeriv ℝ j (g ∘ PhysicalCoordinateBounds.inverseCoordinates coord) (chartInput p)‖
         *
-        ‖chartInput‖ ^ j := by
-      simpa using ContinuousMultilinearMap.norm_compContinuousLinearMap_le
-        (iteratedFDeriv ℝ j (g ∘ PhysicalCoordinateBounds.inverseCoordinates coord) (chartInput p))
-        (fun _ => chartInput)
+        ‖chartInput‖ ^ j :=
+      (ContinuousMultilinearMap.norm_compContinuousLinearMap_le _ fun _ => chartInput).trans_eq
+        (congrArg (_ * ·) (Fin.prod_const _ _))
     _ ≤ C * 1 := mul_le_mul (hb _ (hT p hp) (hq p hp) (hR p hp))
       (pow_le_one₀ (norm_nonneg _) chartInput_norm_le_one) (pow_nonneg (norm_nonneg _) _) hC
     _ = C := mul_one _

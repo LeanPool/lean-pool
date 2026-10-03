@@ -275,7 +275,7 @@ theorem sourceJets_sub_bound {ε : ℝ} (hε : 0 < ε) (x y : CoefficientPair ε
   have hfst : ‖x.1 - y.1‖ ≤ N := norm_fst_le (x - y)
   have hsnd : ‖x.2 - y.2‖ ≤ N := norm_snd_le (x - y)
   have havg : ‖AxisOperators.average window hε x.2 - AxisOperators.average window hε y.2‖ ≤ N := by
-    rw [← map_sub]
+    rw [← (AxisOperators.average window hε).map_sub]
     exact ((AxisOperators.average window hε).le_opNorm _).trans
       ((mul_le_mul_of_nonneg_right (AxisOperators.norm_average_le window hε) (norm_nonneg _)).trans
         ((one_mul _).trans_le hsnd))
@@ -1052,8 +1052,8 @@ theorem exists_coefficientProfile {h j σ : ℝ} {P0 : ℝ → ℝ}
   have hCpos : 0 < C := (Real.exp_pos _).trans_le hC
   obtain ⟨a, ha, harad, havalue⟩ := d.uniformAmplitude Λ hΛpos.le C hC
   obtain ⟨x, hball, herr, hφ, hu, _, _⟩ := hex Λ ((le_max_left _ _).trans hΛ) a ha
-  change ‖x - referencePair v‖ ≤ K / (2 * Λ) at herr
-  have hst : 2 * (1 / (2 * Λ)) = 1 / Λ := by field_simp
+  have hst : 2 * (1 / (2 * Λ)) = 1 / Λ := by
+    rw [mul_one_div, div_mul_cancel_left₀ two_ne_zero, one_div]
   have hs := integrated_solution window v.epsilon_pos (v.elements .chi) v.axisData v.compatible
     (1 / Λ) (1 / (2 * Λ)) hst a harad x hφ hu
   have hs' := materialize_scaled v a havalue hs

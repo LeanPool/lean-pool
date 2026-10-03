@@ -1650,8 +1650,9 @@ theorem averagedDirection_error {q : ℝ → ℝ} (hq : ContinuousOn q (Icc 0 (r
   have hpoint (v : ℝ) : |weight ψ x v * (q v - q₀)| ≤
       ε * weight ψ x v + (K / r ^ 2) * (|v - r ^ 2 / 2| * weight ψ x v) := by
     by_cases hv : v ∈ Icc (r ^ 2 / 6) (5 * r ^ 2 / 6)
-    · have hslot : v ∈ Icc 0 (r ^ 2) := by
-        constructor <;> nlinarith only [hv, hv.1, hv.2, sq_nonneg r]
+    · have hslot : v ∈ Icc 0 (r ^ 2) :=
+        ⟨(div_nonneg (sq_nonneg r) (by norm_num)).trans hv.1,
+          hv.2.trans (by linarith only [sq_nonneg r])⟩
       rw [abs_mul, abs_of_nonneg (weight_nonneg v)]
       convert! mul_le_mul_of_nonneg_left (hqbound v hslot) (weight_nonneg v) using 1
       ring

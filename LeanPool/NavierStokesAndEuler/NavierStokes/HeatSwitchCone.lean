@@ -89,26 +89,19 @@ noncomputable def freeE (F : Profile) (z : Raw) : ℝ :=
     (Real.exp (z.2.1 - OutgoingDilation.patchClock F))
 
 theorem freeE_contDiff (F : Profile) : ContDiff ℝ ∞ (freeE F) := by
-  have he := F.logE_contDiff.comp (contDiff_snd : ContDiff ℝ ∞ (fun z : Raw => z.2))
-  have hs : ContDiff ℝ ∞ (fun z : Raw => OutgoingSchedule.sigma
-      ((z.2.1 - HeatTailEdit.switchStart F.data) / (3 / 10))) :=
-    OutgoingSchedule.sigma_contDiff.comp ((contDiff_snd.fst.sub contDiff_const).div_const _)
-  have hz : ContDiff ℝ ∞ (fun z : Raw =>
-      2 * (1 - z.2.2 ^ 2) * z.1.1 * Real.exp (-z.2.1)) :=
-    ((contDiff_const.mul (contDiff_const.sub (contDiff_snd.snd.pow 2))).mul
-      contDiff_fst.fst).mul contDiff_snd.fst.neg.exp
-  have hh := (HeatProfileExtension.extension_contDiff
-    (show 1 < 1 + F.data.h by linarith [F.data.h_pos])).comp hz
+  have he := F.logE_contDiff
+  have hs := OutgoingSchedule.sigma_contDiff
+  have hh := HeatProfileExtension.extension_contDiff (lt_add_of_pos_right 1 F.data.h_pos)
+  have ha := OutgoingDilation.shapedPatchAmplitude_contDiff F
   have hb : ContDiff ℝ ∞ (fun z : Raw => TerminalCompensation.correction
       OutgoingDilation.compensationPatch z.1.2
       (Real.exp (z.2.1 - OutgoingDilation.patchClock F))) := by
     apply ContDiff.sum
     intro j _
-    exact ((contDiff_apply ℝ ℝ j).comp contDiff_fst.snd).mul
-      ((TerminalCompensation.bump_contDiff OutgoingDilation.compensationPatch j).comp
-        (contDiff_snd.fst.sub contDiff_const).exp)
-  exact (he.mul (contDiff_const.add (hs.mul (hh.sub contDiff_const)))).add
-    (((OutgoingDilation.shapedPatchAmplitude_contDiff F).comp contDiff_snd.snd).mul hb)
+    have hj := TerminalCompensation.bump_contDiff OutgoingDilation.compensationPatch j
+    fun_prop
+  unfold freeE
+  fun_prop
 
 @[simp] theorem freeE_zero (F : Profile) (p : Point) : freeE F ((0, 0), p) = F.logE p := by
   simp [freeE, HeatProfileExtension.extension_zero

@@ -140,7 +140,7 @@ theorem time_slice_iteratedDerivWithin {I : Set ℝ} {f : (ℝ × X) → V}
     rw [iteratedDerivWithin_succ, derivWithin_congr ih (ih ht)]
     have hsmooth := normalIter_contDiffOn hf (hI.prod uniqueDiffOn_univ) n
     have hdiff := hsmooth.differentiableOn (by simp) (t, x) ⟨ht, mem_univ x⟩
-    have hcurve := hdiff.hasFDerivWithinAt.comp t
+    have hcurve := hdiff.hasFDerivWithinAt.comp (f := fun y : ℝ => (y, x)) t
       (hasFDerivAt_prodMk_left t x).hasFDerivWithinAt
       (fun y hy => show (y, x) ∈ I ×ˢ univ from ⟨hy, mem_univ x⟩)
     have hderiv : HasDerivWithinAt (fun y => normalIter (I ×ˢ univ) f n (y, x))
@@ -162,16 +162,10 @@ theorem boundary_fderiv_eq {s t : Set (ℝ × X)} {f g : (ℝ × X) → V} {T : 
     fderivWithin ℝ f s (T, x) = fderivWithin ℝ g t (T, x) := by
   have hfD := (hf.differentiableOn (by simp) (T, x) (hBs x)).hasFDerivWithinAt
   have hgD := (hg.differentiableOn (by simp) (T, x) (hBt x)).hasFDerivWithinAt
-  have hftrace : HasFDerivAt (fun y : X => f (T, y))
-      ((fderivWithin ℝ f s (T, x)).comp (ContinuousLinearMap.inr ℝ ℝ X)) x := by
-    have h := hfD.comp x (s := univ) (hasFDerivAt_prodMk_right T x).hasFDerivWithinAt
-      (fun y _ => hBs y)
-    simpa only [Function.comp_def, hasFDerivWithinAt_univ] using h
-  have hgtrace : HasFDerivAt (fun y : X => g (T, y))
-      ((fderivWithin ℝ g t (T, x)).comp (ContinuousLinearMap.inr ℝ ℝ X)) x := by
-    have h := hgD.comp x (s := univ) (hasFDerivAt_prodMk_right T x).hasFDerivWithinAt
-      (fun y _ => hBt y)
-    simpa only [Function.comp_def, hasFDerivWithinAt_univ] using h
+  have hftrace := hasFDerivWithinAt_univ.mp (hfD.comp x (s := univ)
+    (hasFDerivAt_prodMk_right T x).hasFDerivWithinAt (fun y _ => hBs y))
+  have hgtrace := hasFDerivWithinAt_univ.mp (hgD.comp x (s := univ)
+    (hasFDerivAt_prodMk_right T x).hasFDerivWithinAt (fun y _ => hBt y))
   have htan := hftrace.unique (hgtrace.congr_of_eventuallyEq (Eventually.of_forall hvalue))
   apply ContinuousLinearMap.ext
   intro v
@@ -180,8 +174,10 @@ theorem boundary_fderiv_eq {s t : Set (ℝ × X)} {f g : (ℝ × X) → V} {T : 
   have htime : fderivWithin ℝ f s (T, x) timeVector =
       fderivWithin ℝ g t (T, x) timeVector := hnormal x
   have hv : v = v.1 • timeVector + (0, v.2) := by
-    ext <;> simp [timeVector]
-  rw [hv, map_add, map_add, map_smul, map_smul, htime, hspatial]
+    simp only [timeVector, Prod.smul_mk, Prod.mk_add_mk, smul_eq_mul, mul_one, smul_zero,
+      add_zero, zero_add, Prod.mk.eta]
+  rw [hv, ContinuousLinearMap.map_add, ContinuousLinearMap.map_add,
+    ContinuousLinearMap.map_smul, ContinuousLinearMap.map_smul, htime, hspatial]
 
 omit [FiniteDimensional ℝ X] in
 /-- Matching normal trace functions implies matching normal traces after

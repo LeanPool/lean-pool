@@ -249,7 +249,7 @@ theorem matrixPath_holomorphic {R T : ℝ} (hRT : R < T) {U : Set ℂ} (hU : IsO
     contDiffOn_pi.mpr fun i => contDiffOn_pi.mpr (hA i)
   apply HolomorphicFamily.differentiableOn_family_of_joint (Icc (-R) R) U (radialDomain T)
     hU Metric.isOpen_ball (symmetricInterval_subset_radialDomain hRT)
-  · exact (matrixOperator.restrictScalars ℝ).contDiff.comp_contDiffOn
+  · exact (matrixOperator.contDiff.restrict_scalars ℝ).comp_contDiffOn
       (hs.comp (contDiff_snd.prodMk contDiff_fst).contDiffOn (fun p hp => ⟨hp.2, hp.1⟩))
   · intro r hr
     exact matrixOperator.differentiable.comp_differentiableOn
@@ -815,12 +815,8 @@ theorem positiveSolution_extends_order {R T : ℝ} (hR : 0 < R) (hRT : R < T)
   let beta' := Function.update beta n (newBeta h n uNew k)
   let r := Real.sqrt X
   have hr0 : r ≠ 0 := ne_of_gt (Real.sqrt_pos.mpr hX.1)
-  have hr : r ∈ Ioo (-R) R := by
-    constructor
-    · linarith [Real.sqrt_nonneg X]
-    · have hsq := Real.sq_sqrt hX.1.le
-      dsimp only [r]
-      nlinarith [Real.sqrt_nonneg X, hX.2]
+  have hr : r ∈ Ioo (-R) R :=
+    ⟨(neg_neg_of_pos hR).trans_le (Real.sqrt_nonneg X), (Real.sqrt_lt' hR).mpr hX.2⟩
   have hrX : r ^ 2 = X := Real.sq_sqrt hX.1.le
   have hWsm := positiveSolution_jointly_smooth hR.le hRT hU ((slowPower h n : ℝ) : ℂ) (C : ℂ) hF
   have hpar : ∀ s ∈ Icc (-R) R, ∀ z ∈ U, W (-s) z = parityVec (W s z) :=

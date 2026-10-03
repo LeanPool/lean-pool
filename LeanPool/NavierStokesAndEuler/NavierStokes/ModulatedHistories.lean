@@ -87,18 +87,15 @@ theorem density_eq_physical (X f U : ℝ) (hX : 0 < X) :
       _ = Real.sqrt (2 * X) ^ 2 * f := by ring
       _ = _ := by rw [hs]
   have h2 : (Real.sqrt (2 * X) * f) ^ 2 = 2 * X * f ^ 2 := by rw [mul_pow, hs]
-  ext i
-  fin_cases i
-  · rfl
-  · exact h1.symm
-  · change U * (2 * X * f) = U * Real.sqrt (2 * X) * (Real.sqrt (2 * X) * f)
-    simpa only [mul_assoc] using congrArg (fun z => U * z) h1.symm
-  · change U ^ 2 - X * f ^ 2 = U ^ 2 - (Real.sqrt (2 * X) * f) ^ 2 / 2
+  have h3 : U * Real.sqrt (2 * X) * (Real.sqrt (2 * X) * f) = U * (2 * X * f) := by
+    rw [mul_assoc, h1]
+  have h4 : U ^ 2 - (Real.sqrt (2 * X) * f) ^ 2 / 2 = U ^ 2 - X * f ^ 2 := by
     rw [h2]
     ring
-  · change f ^ 2 = (Real.sqrt (2 * X) * f) ^ 2 / (2 * X)
+  have h5 : (Real.sqrt (2 * X) * f) ^ 2 / (2 * X) = f ^ 2 := by
     rw [h2]
-    field_simp
+    exact mul_div_cancel_left₀ _ (mul_pos two_pos hX).ne'
+  rw [densityAt, h3, h1, h4, h5]
 
 variable {a m p₁ p₂ : Point → ℝ} {K B : Set Point}
 
@@ -739,25 +736,24 @@ theorem repair_family_rate (P : FiveProfileMoments.Patch) (b : ℝ)
         JetBounds.FiniteJetBound q c S (C / N) := by
   obtain ⟨g, r, C0, hr, hC0, hg, _, hbranch⟩ := FiveProfileMoments.exists_normalized_repair P b hb
   obtain ⟨gext, hgext, hext⟩ := smooth_extension_ball hr hg
-  have hr2 : 0 < r / 2 := by positivity
+  have hr2 : 0 < r / 2 := half_pos hr
   have hvalue : ∀ z ∈ Metric.ball (0 : Coeff) (r / 2), ‖gext z‖ ≤ C0 * ‖z‖ := by
     intro z hz
     rw [hext hz]
-    exact (hbranch z ((Metric.ball_subset_ball (by linarith only [hr] : r / 2 ≤ r)) hz)).2.1
+    exact (hbranch z ((Metric.ball_subset_ball (half_le_self hr.le)) hz)).2.1
   obtain ⟨J, hJ, hjet⟩ := smooth_solver_linear_jets hr2 hC0 hgext.contDiffOn hvalue q
   obtain ⟨B0, hB0, hnormal⟩ := FiveProfileMoments.compact_normalizedDebt_jets
     S hS hA hG (fun eta => (hApos eta).ne') q
   let delta : ℝ := min 1 (r / 2 / 2)
-  have hdelta : 0 < delta := lt_min zero_lt_one (by positivity)
+  have hdelta : 0 < delta := lt_min zero_lt_one (half_pos hr2)
   let N0 : ℝ := max 1 (B0 * D / delta)
-  refine ⟨N0, J * (B0 * D), le_max_left _ _, by positivity, ?_⟩
+  refine ⟨N0, J * (B0 * D), le_max_left _ _, mul_pos hJ (mul_pos hB0 hD), ?_⟩
   intro N hN
   have hN1 : 1 ≤ N := (le_max_left _ _).trans hN
   have hNpos : 0 < N := zero_lt_one.trans_le hN1
   have hsmall : B0 * D / N ≤ delta := by
     apply (div_le_iff₀ hNpos).mpr
-    have ht := (div_le_iff₀ hdelta).mp ((le_max_right _ _).trans hN)
-    nlinarith only [ht]
+    exact ((div_le_iff₀ hdelta).mp ((le_max_right _ _).trans hN)).trans_eq (mul_comm _ _)
   let v : ℝ → Coeff := fun eta => FiveProfileMoments.normalizedDebt (A eta) (G eta) (d N eta)
   have hv : ContDiff ℝ ∞ v := FiveProfileMoments.normalizedDebt_contDiff hA hG (hd N)
     (fun eta => (hApos eta).ne')
@@ -772,10 +768,10 @@ theorem repair_family_rate (P : FiveProfileMoments.Patch) (b : ℝ)
     rw [sub_zero]
     exact (hvb.norm_le heta).trans_lt (hsmall.trans_lt (by
       dsimp only [delta]
-      exact (min_le_right _ _).trans_lt (by linarith only [hr])))
+      exact (min_le_right _ _).trans_lt (half_lt_self hr2)))
   refine ⟨c, V, hgext.comp hv, hV, hSV, ?_, ?_⟩
   · intro eta heta
-    have hb0 := hbranch (v eta) ((Metric.ball_subset_ball (by linarith only [hr] : r / 2 ≤ r)) heta)
+    have hb0 := hbranch (v eta) ((Metric.ball_subset_ball (half_le_self hr.le)) heta)
     have hc : c eta = g (v eta) := hext heta
     constructor
     · rw [hc, FiveProfileMoments.physicalMoments_eq P b (A eta) (G eta) (hApos eta).ne']
@@ -1331,9 +1327,11 @@ theorem repairHistory_scalar_jets (P : FiveProfileMoments.Patch) (S : Set ℝ)
     change ((1 + 2 * P.right) * (1 + 2 ^ j * (2 * B0 + 1))) * (J * eps) ≤ _
     dsimp only [K0]
     calc
-      _ ≤ ((1 + 2 * P.right) * (1 + 2 ^ q * (2 * B0 + 1))) * (J * eps) := by
-        gcongr
-        norm_num
+      _ ≤ ((1 + 2 * P.right) * (1 + 2 ^ q * (2 * B0 + 1))) * (J * eps) :=
+        mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left (add_le_add le_rfl
+          (mul_le_mul_of_nonneg_right (pow_le_pow_right₀ one_le_two hjq)
+            (add_pos (mul_pos two_pos hB0) one_pos).le))
+          (add_pos one_pos (mul_pos two_pos hR)).le) (mul_nonneg hJ.le heps)
       _ = _ := by ring
   have hb := ShapeTransition.integral_jet_bound_on ((patchWindow P).clamp_mem X).1
     (fun _ _ _ => (repairDensity_contDiff P A c f U hA hc hf hU i).contDiffAt) j eta hdensity

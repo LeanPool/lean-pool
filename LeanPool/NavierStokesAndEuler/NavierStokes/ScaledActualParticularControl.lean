@@ -96,6 +96,17 @@ theorem selected_kinematics (F : PhaseConstruction D) (i : ι)
   · intro v _
     exact PrimaryODE.hasDerivAt_referenceProfile (F.c0 i) (F.u i) (F.L i) v
 
+theorem modalOperator_eq_sum (lam damping e11 e12 e21 e22 : ℝ) :
+    GrowingMode.modalOperator lam damping e11 e12 e21 e22 =
+      (lam - damping + e11) • GrowingMode.modalOperator 0 0 1 0 0 0 +
+      e12 • GrowingMode.modalOperator 0 0 0 1 0 0 +
+      e21 • GrowingMode.modalOperator 0 0 0 0 1 0 +
+      (-lam - damping + e22) • GrowingMode.modalOperator 0 0 0 0 0 1 := by
+  ext z i
+  fin_cases i <;> simp only [Fin.zero_eta, Fin.mk_one, Fin.isValue, add_apply, smul_apply,
+    PiLp.add_apply, PiLp.smul_apply, GrowingMode.modalOperator_zero,
+    GrowingMode.modalOperator_one, smul_eq_mul] <;> ring
+
 /-- A finite harmonic range introduces only a finite coefficient constant;
 the index type may already include every spatial label and band. -/
 theorem frame_coefficient_jets_bounded
@@ -106,9 +117,8 @@ theorem frame_coefficient_jets_bounded
     PolynomialJets U (fun i => (d i).coefficient (j i)) := by
   obtain ⟨h11, h12, h21, h22⟩ := hd.modal_errors
   have hjets : PolynomialJets U (fun i _ => (j i : ℝ)^2) :=
-    PolynomialJets.const_uniform _ (one_le_pow₀ hJ) (fun i => by
-      rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
-      simpa only [sq_abs] using pow_le_pow_left₀ (abs_nonneg _) (hj i) 2)
+    PolynomialJets.const_uniform _ (one_le_pow₀ hJ) (fun i => (norm_pow _ 2).trans_le
+      (pow_le_pow_left₀ (norm_nonneg _) ((Real.norm_eq_abs _).trans_le (hj i)) 2))
   have hν := hjets.mul hd.viscosity
   have hh := (((((hd.eigenvalue.sub hν).add h11).smul
     (PolynomialJets.const_fixed (GrowingMode.modalOperator 0 0 1 0 0 0))).add
@@ -118,12 +128,8 @@ theorem frame_coefficient_jets_bounded
             (PolynomialJets.const_fixed (GrowingMode.modalOperator 0 0 0 0 0 1)))
   apply hh.congr
   intro i z _
-  ext w k
-  fin_cases k <;> simp only [GrowingMode.modalOperator, Fin.isValue, sub_self, zero_add, one_mul,
-      zero_mul, add_zero, neg_zero, add_apply, smul_apply, LinearMap.coe_toContinuousLinearMap',
-      LinearMap.coe_mk, AddHom.coe_mk, Fin.zero_eta, PiLp.add_apply, PiLp.smul_apply,
-      Matrix.cons_val_zero, smul_eq_mul, mul_zero, PrimaryODE.FrameData.coefficient,
-      PrimaryODE.FrameData.damping, Fin.mk_one, Matrix.cons_val_one, Matrix.cons_val_fin_one]
+  exact (modalOperator_eq_sum ((d i).eigenvalue z) ((d i).damping (j i) z) ((d i).error11 z)
+    ((d i).error12 z) ((d i).error21 z) ((d i).error22 z)).symm
 
 end SelectedFrame
 
@@ -278,7 +284,9 @@ theorem source_path_bounds
         ‖CommonCoverClass.sourceLinear P G‖^j := hjet
     _ ≤ (B * s.epsilon n^α * s.growth n x.1^b * (Real.sqrt (s.zeta x.1) * W l n v)) *
         (A^N * s.growth n x.1^(a*N)) :=
-      mul_le_mul hs hpow (pow_nonneg (norm_nonneg _) _) (by positivity)
+      mul_le_mul hs hpow (pow_nonneg (norm_nonneg _) _)
+        (mul_nonneg (mul_nonneg (mul_nonneg hB (Real.rpow_nonneg he.le α)) (pow_nonneg hG0 b))
+          (mul_nonneg (Real.sqrt_nonneg _) hw))
     _ = _ := by rw [pow_add]; ring
 
 end SourcePath
@@ -1006,24 +1014,25 @@ theorem transported_kinematics (d : PrimaryODE.FrameData P) (φ : Q → P)
   refine ⟨fun v hv => mul_ne_zero hnormal (hd.beta_ne_zero _ (hmap hv)),
     fun v hv => hd.eigenvector_ne_zero _ (hmap hv), ?_, ?_, ?_, ?_, ?_⟩
   · intro v hv
-    have he := ((hd.beta_deriv _ (hmap hv)).scomp v (ht v)).const_mul normalScale
+    have he := ((hd.beta_deriv _ (hmap hv)).scomp (h := fun t : ℝ => shift+rate*t) v
+      (ht v)).const_mul normalScale
     simpa only [transportedFrame,Function.comp_def,smul_eq_mul,mul_assoc,mul_left_comm,mul_comm]
         using he
   · intro v hv
-    have he := (hd.rho_deriv _ (hmap hv)).scomp v (ht v)
+    have he := (hd.rho_deriv _ (hmap hv)).scomp (h := fun t : ℝ => shift+rate*t) v (ht v)
     simp only [transportedFrame, Function.comp_def, smul_eq_mul, mul_comm] at he ⊢
     exact he
   · intro v hv
-    have he := (hd.eigenvector_deriv _ (hmap hv)).scomp v (ht v)
+    have he := (hd.eigenvector_deriv _ (hmap hv)).scomp (h := fun t : ℝ => shift+rate*t) v (ht v)
     simp only [transportedFrame, Function.comp_def, smul_eq_mul, mul_assoc,mul_left_comm,mul_comm]
         at he ⊢
     exact he
   · intro v hv
-    have he := (hd.frameK_deriv _ (hmap hv)).scomp v (ht v)
+    have he := (hd.frameK_deriv _ (hmap hv)).scomp (h := fun t : ℝ => shift+rate*t) v (ht v)
     simp only [transportedFrame, Function.comp_def, smul_smul, mul_comm] at he ⊢
     exact he
   · intro v hv
-    have he := (hd.frameN_deriv _ (hmap hv)).scomp v (ht v)
+    have he := (hd.frameN_deriv _ (hmap hv)).scomp (h := fun t : ℝ => shift+rate*t) v (ht v)
     simp only [transportedFrame, Function.comp_def, smul_smul, mul_neg, mul_comm] at he ⊢
     exact he
 
@@ -1049,9 +1058,11 @@ theorem frameTangentData_transport
     intro x
     ext i
     fin_cases i <;>
-      simp [ transportedFrame,
+      simp only [transportedFrame, PrimaryCopyBridge.nativePoint,
         PrimaryCopyBridge.baseOperator_apply, MovingFrameODE.baseAction, MovingFrameODE.pack,
-        PrimaryCopyBridge.nativePoint, CopySolveCompatibility.nativeTimeMap] <;> ring
+        Fin.isValue, neg_mul, smul_add, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, Fin.zero_eta,
+        Fin.mk_one, Fin.reduceFinMk, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val,
+        CopySolveCompatibility.nativeTimeMap, smul_apply, mul_neg, neg_inj] <;> ring
   · funext z
     simp only [PrimaryODE.FrameData.damping, transportedFrame, PrimaryCopyBridge.nativePoint,
         CopySolveCompatibility.nativeTimeMap]
@@ -1106,6 +1117,7 @@ theorem scaled_selected_copy_energy
   have he := transported_energy F (l,n) (φ (l,n)) 0
     (rate (l,n)) (normalScale (l,n)) hrate.le hx htime hj z
   simp only [zero_add] at he
+  dsimp only [copyFrame_coefficient, frameArgument_apply, scaledSelectedFrame]
   exact he
 
 /-- All input jets at every target band are derived from the selected

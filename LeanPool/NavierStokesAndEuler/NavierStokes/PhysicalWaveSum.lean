@@ -512,7 +512,7 @@ theorem physical_active_neighborhood {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
   obtain ⟨U, hU, hUs⟩ := (mem_nhds_subtype preterminal ⟨w, hw⟩ _).mp hsub
   refine ⟨s, hs, ?_⟩
   filter_upwards [hU, preterminal_open.mem_nhds hw] with y hy hyt
-  exact ⟨hyt, hUs (show (⟨y, hyt⟩ : preterminal) ∈ Subtype.val ⁻¹' U from hy)⟩
+  exact ⟨hyt, (hUs (show (⟨y, hyt⟩ : preterminal) ∈ Subtype.val ⁻¹' U from hy) :)⟩
 
 theorem iteratedFDeriv_eq_of_eventuallyEq {E F : Type*}
     [NormedAddCommGroup E] [NormedSpace ℝ E] [NormedAddCommGroup F] [NormedSpace ℝ F]

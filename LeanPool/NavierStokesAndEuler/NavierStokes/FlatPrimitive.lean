@@ -329,11 +329,10 @@ theorem primitive_div_pow_tendsto_zero {c : ℝ} (hc : 0 < c) (j : ℕ)
         (fun x => integrand c j b x / ((n + 1 : ℝ) * x ^ n)) (𝓝[>] 0) (𝓝 0) := by
       have hlim := hE.mul hB
       simp only [zero_mul] at hlim
-      refine hlim.congr' ?_
-      filter_upwards [self_mem_nhdsWithin] with x hx
+      refine hlim.congr' (Eventually.of_forall fun x => ?_)
       dsimp only [integrand]
-      rw [pow_add]
-      field_simp
+      simp only [div_eq_mul_inv, mul_inv]
+      ring
     refine HasDerivAt.lhopital_zero_nhdsGT
       (Eventually.of_forall fun x => primitive_hasDerivAt hc j hb x)
       (Eventually.of_forall fun x => ?_)

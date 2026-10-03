@@ -594,14 +594,14 @@ theorem cylinderAt_physical_forward (h : ℝ) (n : ℕ) {a : ℝ} (ha : 0 < a)
           PhysicalGraphBounds.nativeGraph h n (z.1, CylindricalResidual.chart z.2))), z.2 1) := by
     unfold cylinderAt
     rw [PhysicalGraphBounds.liftXY_physicalLift, hp]
-    ext <;> simp only [Fin.isValue, one_div, PhysicalGraphBounds.liftZT,
-        PhysicalGraphBounds.physicalLift, PhysicalGraphBounds.physicalChart,
-        CylindricalResidual.chart, AxisymmetricResidual.pack, coordinateVector,
-        PhysicalGraphBounds.chartLinear_apply, neg_mul, PiLp.add_apply, PiLp.smul_apply,
-        PiLp.single_eq_same, smul_eq_mul, mul_one, ne_eq, zero_ne_one, not_false_eq_true,
-        PiLp.single_eq_of_ne, mul_zero, add_zero, Fin.reduceEq, one_ne_zero, zero_add,
-        Prod.mk_add_mk, ContinuousLinearMap.comp_apply, ContinuousLinearMap.coe_fst',
-        ContinuousLinearMap.prod_apply, ContinuousLinearMap.coe_snd']
+    simp only [one_div, PhysicalGraphBounds.liftZT, PhysicalGraphBounds.physicalLift,
+      PhysicalGraphBounds.physicalChart, CylindricalResidual.chart, AxisymmetricResidual.pack,
+      coordinateVector, PhysicalGraphBounds.chartLinear_apply, neg_mul, Prod.mk_add_mk, add_zero,
+      ContinuousLinearMap.comp_apply, ContinuousLinearMap.coe_fst', ContinuousLinearMap.prod_apply,
+      ContinuousLinearMap.coe_snd']
+    ext <;> simp only [Fin.isValue, PiLp.add_apply, PiLp.smul_apply, ne_eq, Fin.reduceEq,
+      not_false_eq_true, PiLp.single_eq_of_ne, smul_eq_mul, mul_zero, add_zero,
+      PiLp.single_eq_same, mul_one, zero_add]
     ring
   rw [hc, hn]
   simp only [PhysicalResidualBridge.ScaledGraph.map, PhysicalResidualBridge.commonGraph,
@@ -1553,14 +1553,13 @@ theorem primitive_annulus (hh0 : 0 < h) (hh1 : h < 1 / 2) (ha : 0 < a) (hb : 0 <
       ‖PhysicalGraphBounds.liftZT x‖ ≤ 2 := by
   let y := PhysicalClassBounds.cylindricalMap x
   have hy := hloc.normalized L y (Real.sqrt_nonneg _) hm hT
-  have hq : 0 < SimilarityCoordinates.coordinateQ (2 * h) y.2.1 := by linarith only [hh0, hh1, hy,
-      hy.2.1]
+  have hq : 0 < SimilarityCoordinates.coordinateQ (2 * h) y.2.1 := one_half_pos.trans_le hy.2.1
   have hs := Real.sqrt_pos.mpr hq
   have hslow := normalized_slow_norm hh0 hh1 hy.1 hy.2.1 hy.2.2.1
   have hlo : 1 / 2 ≤ Real.sqrt (SimilarityCoordinates.coordinateQ (2 * h) y.2.1) :=
-    (Real.le_sqrt (by norm_num) hq.le).mpr (by nlinarith only [hh0, hh1, hy, hy.2.1])
+    (Real.le_sqrt (by norm_num) hq.le).mpr (by linarith only [hy.2.1])
   have hhi : Real.sqrt (SimilarityCoordinates.coordinateQ (2 * h) y.2.1) ≤ 2 :=
-    (Real.sqrt_le_left (by norm_num)).mpr (by linarith only [hh0, hh1, hy, hy.2.2.1])
+    (Real.sqrt_le_left (by norm_num)).mpr (by linarith only [hy.2.2.1])
   have hradlo := (le_div_iff₀ hs).mp hy.2.2.2.1
   have hradhi := (div_le_iff₀ hs).mp hy.2.2.2.2
   have hR : y.1 = PolarCharts.radius (PhysicalGraphBounds.liftXY x) := rfl
