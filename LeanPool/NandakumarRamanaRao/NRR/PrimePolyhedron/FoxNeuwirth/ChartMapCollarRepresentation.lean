@@ -39,6 +39,7 @@ variable {hp : Nat.Prime p}
 
 /-- Every decorated local occurrence is evaluated through one chart of `K` at the represented
 spatial point. -/
+@[expose]
 def Represents
     (C : RelativeAffineCellSystem hp A B M L)
     (K : ChartMap hp N)

@@ -192,6 +192,7 @@ theorem globalVector_smul
   rfl
 
 /-- Canonical one-step assignment associated with a compatible chart map. -/
+@[expose]
 noncomputable def assignment
     (hp : Nat.Prime p) {N : Nat} (K : ChartMap hp N) :
     Assignment hp (Cells hp N) :=
