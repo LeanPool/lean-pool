@@ -353,14 +353,11 @@ theorem differentiableAt_of_evaluations {K : Type*} [TopologicalSpace K] [Compac
   have hL : Lc.restrictScalars ℝ = L := by
     ext v x
     let T := fderiv ℂ (fun w => G w x) z
-    have hEvalMap : HasFDerivAt (ContinuousMap.evalCLM ℝ (M := E) x)
-        (ContinuousMap.evalCLM ℝ (M := E) x) (G z) :=
-      ContinuousLinearMap.hasFDerivAt (𝕜 := ℝ) (E := C(K, E)) (F := E)
-        (ContinuousMap.evalCLM ℝ (M := E) x)
+    have hEvalMap := ContinuousLinearMap.hasFDerivAt (𝕜 := ℝ) (E := C(K, E)) (F := E)
+        (ContinuousMap.evalCLM ℝ (M := E) x) (x := G z)
     have hreal : HasFDerivAt (fun w => G w x) ((ContinuousMap.evalCLM ℝ (M := E) x).comp L) z :=
       HasFDerivAt.comp (𝕜 := ℝ) (E := ℂ) (F := C(K, E)) (G := E) z hEvalMap hG.hasFDerivAt
-    have hc : HasFDerivAt (fun w => G w x) (T.restrictScalars ℝ) z :=
-      (heval x).hasFDerivAt.restrictScalars ℝ
+    have hc := (heval x).hasFDerivAt.restrictScalars ℝ
     have heq := hreal.unique hc
     have h1 := congrArg (fun D : ℂ →L[ℝ] E => D 1) heq
     have hv := congrArg (fun D : ℂ →L[ℝ] E => D v) heq

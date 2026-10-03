@@ -255,10 +255,10 @@ theorem differenceRemainder_norm {q : ℕ} {T : Type*} [TopologicalSpace T]
           d))‖+
       ‖value period (algebraicBilinear period hq C (D.approximation t+u) d)‖+
       ‖value period (algebraicBilinear period hq C d (D.approximation t+v))‖ := by
-    change ‖(_+_+_+_ : LiftL2 period)‖ ≤ _
-    exact (norm_add_le _ _).trans (add_le_add
-      ((norm_add_le _ _).trans (add_le_add (norm_add_le _ _) le_rfl)) le_rfl)
-  exact hsum.trans ((add_le_add (add_le_add (add_le_add htrans hlin) halg1) halg2).trans_eq (by
-      dsimp [d]; ring))
+    refine le_trans (le_of_eq ?_) norm_add₄_le
+    rfl
+  apply hsum.trans ((add_le_add (add_le_add (add_le_add htrans hlin) halg1) halg2).trans_eq ?_)
+  dsimp only [d]
+  ring
 
 end EulerCorrectionDifference

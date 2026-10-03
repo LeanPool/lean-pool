@@ -86,12 +86,14 @@ theorem bilinearProductPath_majorant (R A C : ℝ) (hR : 0 ≤ R) (hA : 0 ≤ A)
       block standardDirection 6 (fun b : LiftTangent =>
           pathTranslate (K := K) (V := Vector3) P b (bilinearTerm P B p q hp hq i)) n a ≤
       (3*productBlockConstant P*‖B‖*A*C)*majorant R (d+e) n := by
-    have hi : ‖B (basisVector i)‖ ≤ ‖B‖ := by
-      simpa [basisVector] using B.le_opNorm (basisVector i)
+    have hi : ‖B (basisVector i)‖ ≤ ‖B‖ :=
+      (B.le_opNorm (basisVector i)).trans_eq (by
+        simp only [basisVector, PiLp.norm_single, norm_one, mul_one])
     have hs := scalarProductPath_majorant P (component i) (component_norm i)
       p q hp hq R A C hR hA hC d e a hb hc n
     have hpos : 0 ≤ (3*productBlockConstant P*A*C)*majorant R (d+e) n :=
-      mul_nonneg (by have := productBlockConstant_nonneg P; positivity) (majorant_nonneg R hR _ _)
+      mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg zero_le_three
+        (productBlockConstant_nonneg P)) hA) hC) (majorant_nonneg R hR _ _)
     have h := (pathMap_block_le P (B (basisVector i))
       (scalarProductPath P (component i) (component_norm i) p q hp hq)
       (scalarProductPath_orbit P (component i) (component_norm i) p q hp hq) 6 n a).trans

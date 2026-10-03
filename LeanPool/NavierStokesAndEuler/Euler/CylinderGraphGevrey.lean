@@ -108,6 +108,9 @@ theorem graph_Lp_bound (k : ℝ) (m : Vector3) (C R : ℝ)
         (Real.sqrt (2/P+2*P)*C*(1+R))*(4*R*graphFactor k m)^n*(n.factorial : ℝ)^2 := by
   obtain ⟨hg,hgNorm⟩ := graph_evaluated_tensor_bound P f hperiod hf k m C R hC hR hLp hn n
   have hm : AEStronglyMeasurable (iteratedFDeriv ℝ n (f ∘ graphMap k m)) volume :=
+    have : SecondCountableTopologyEither Vector3
+        (ContinuousMultilinearMap ℝ (fun _ : Fin n => Vector3) W) :=
+      secondCountableTopologyEither_of_left _ _
     ((hf.comp (graphMap k m).contDiff).continuous_iteratedFDeriv (m := n) (by
         simp)).aestronglyMeasurable
   have hbound := norm_graph_derivative_le f hf k m n

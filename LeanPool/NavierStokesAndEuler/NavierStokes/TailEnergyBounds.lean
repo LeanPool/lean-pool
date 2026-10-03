@@ -322,11 +322,11 @@ theorem energyDensity_prefix_le (d : TailData) (eta : ℝ) (heta : eta ^ 2 ≤ 1
     energyDensity d eta y ≤ energyDensity d eta d.core.endpoint := by
   have hf0 : 0 ≤ flattenFactor d (y, eta) := (Real.exp_pos _).le
   have hf1 := flattenFactor_le_one d eta y heta
-  have hf2 : flattenFactor d (y, eta) ^ 2 ≤ 1 := by nlinarith
+  have hf2 : flattenFactor d (y, eta) ^ 2 ≤ 1 := pow_le_one₀ hf0 hf1
   have he0 := (Real.exp_pos (-2 * d.core.lam * (y - d.core.endpoint))).le
   have he1 : Real.exp (-2 * d.core.lam * (y - d.core.endpoint)) ≤ 1 := by
     apply Real.exp_le_one_iff.mpr
-    nlinarith [d.core.lam_pos, sub_nonneg.mpr hy]
+    linarith only [mul_nonneg d.core.lam_pos.le (sub_nonneg.mpr hy)]
   have hE := (energyDensity_pos d eta d.core.endpoint).le
   have hid : energyDensity d eta y = energyDensity d eta d.core.endpoint *
       Real.exp (-2 * d.core.lam * (y - d.core.endpoint)) * flattenFactor d (y, eta) ^ 2 := by
@@ -335,11 +335,7 @@ theorem energyDensity_prefix_le (d : TailData) (eta : ℝ) (heta : eta ^ 2 ≤ 1
     dsimp only [flattened]
     rw [mul_pow, ← mul_assoc, core_energy_hold d eta hy]
   rw [hid]
-  calc
-    _ ≤ energyDensity d eta d.core.endpoint * Real.exp (-2 * d.core.lam * (y - d.core.endpoint)) :=
-        by
-      nlinarith [mul_nonneg hE he0]
-    _ ≤ energyDensity d eta d.core.endpoint := by nlinarith
+  exact (mul_le_of_le_one_right (mul_nonneg hE he0) hf2).trans (mul_le_of_le_one_right hE he1)
 
 theorem endpoint_le_releaseStart (d : TailData) : d.core.endpoint ≤ d.releaseStart :=
   (flattenEnd_gt_core d).le.trans (releaseStart_gt_flattenEnd d).le

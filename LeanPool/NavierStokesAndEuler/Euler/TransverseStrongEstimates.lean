@@ -198,23 +198,23 @@ theorem acceleration_norm (hT : 0 ≤ T) (v a : TimeLp T U) (f : TimeLp T E)
     ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg Q) (timeApply_bound T hT Q)
   have hp : ‖adjoint (𝕜 := ℝ) (E := TimeLp T U) (F := TimeLp T E) (timeMultiplier T hT Q) r‖ ≤
       ‖Q‖ * ‖r‖ := by
-    apply ((adjoint (𝕜 := ℝ) (E := TimeLp T U) (F := TimeLp T E)
-      (timeMultiplier T hT Q)).le_opNorm r).trans
-    rw [LinearIsometryEquiv.norm_map]
-    exact mul_le_mul_of_nonneg_right hM (norm_nonneg r)
+    exact ((adjoint (𝕜 := ℝ) (E := TimeLp T U) (F := TimeLp T E)
+      (timeMultiplier T hT Q)).le_opNorm r).trans (mul_le_mul_of_nonneg_right
+        ((LinearIsometryEquiv.norm_map _ _).trans_le hM) (norm_nonneg r))
   have hr : ‖r‖ ≤ ‖f‖ + 2 * ‖Q₁‖ * ‖v‖ := by
-    apply (norm_sub_le f ((2 : ℝ) • timeMultiplier T hT Q₁ v)).trans
-    rw [norm_smul, Real.norm_of_nonneg (by norm_num : (0 : ℝ) ≤ 2)]
     have hq : ‖timeMultiplier T hT Q₁ v‖ ≤ ‖Q₁‖ * ‖v‖ := timeApply_bound T hT Q₁ v
-    nlinarith only [hq]
+    exact (norm_sub_le f ((2 : ℝ) • timeMultiplier T hT Q₁ v)).trans (add_le_add le_rfl
+      ((norm_smul_of_nonneg zero_le_two _).trans_le
+        ((mul_le_mul_of_nonneg_left hq zero_le_two).trans_eq (mul_assoc _ _ _).symm)))
   calc
     _ ≤ ‖gramInversePath T Q c hc hQ‖ *
         ‖adjoint (𝕜 := ℝ) (E := TimeLp T U) (F := TimeLp T E) (timeMultiplier T hT Q) r‖ :=
       timeApply_bound T hT (gramInversePath T Q c hc hQ) _
     _ ≤ c⁻¹ * (‖Q‖ * ‖r‖) := mul_le_mul (gramInversePath_norm T Q c hc hQ) hp
       (norm_nonneg _) (inv_nonneg.mpr hc.le)
-    _ ≤ c⁻¹ * (‖Q‖ * (‖f‖ + 2 * ‖Q₁‖ * ‖v‖)) := by
-      gcongr
+    _ ≤ c⁻¹ * (‖Q‖ * (‖f‖ + 2 * ‖Q₁‖ * ‖v‖)) :=
+      mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hr (norm_nonneg Q))
+        (inv_nonneg.mpr hc.le)
     _ = _ := by ring
 
 /-- Applying the strong bound to the actual variational solver gives a polynomial

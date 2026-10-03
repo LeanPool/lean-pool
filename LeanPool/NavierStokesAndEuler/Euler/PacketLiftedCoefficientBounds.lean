@@ -309,8 +309,9 @@ theorem Budget.liftedPacketCoefficient_jet_bound (G : Field P T raw)
     k hk A.direction hm (liftedInputRadius R ρ) (liftedInputConstant P*C0)
     (liftedInputConstant P*Cn) (liftedInputConstant P*Ce)
     (liftedInputRadius_pos R ρ hR hρ).le (mul_nonneg hK hCe) hA' hN' hE' n
-  change ‖(lift (G.toSmoothTimeField.add (B.correctionCoefficient P)) A.κ A.direction).jet n‖ ≤ _
-  rw [hκ]
+  have hl : B.liftedPacketCoefficient P G =
+      lift (G.toSmoothTimeField.add (B.correctionCoefficient P)) A.κ A.direction := rfl
+  rw [hl, hκ]
   apply h.trans_eq
   ring
 

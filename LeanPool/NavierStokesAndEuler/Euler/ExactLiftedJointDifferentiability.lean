@@ -81,7 +81,8 @@ theorem hasFDerivAt (E : X → H →L[ℝ] V) (C : ℝ) (hE : ∀ x, ‖E x‖ �
   apply hasFDerivAt_iff_isLittleO.mpr
   apply ((hfirst.add hsecond).add hthird).congr_left
   intro q
-  simp only [map_sub,map_smul,add_apply,comp_apply,toSpanSingleton_apply,coe_fst',coe_snd',smul_sub]
+  simp only [ContinuousLinearMap.map_sub, ContinuousLinearMap.map_smul, add_apply, comp_apply,
+    toSpanSingleton_apply, coe_fst', coe_snd', smul_sub]
   module
 
 end EulerBoundedEvaluation

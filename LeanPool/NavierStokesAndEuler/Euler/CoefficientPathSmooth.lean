@@ -111,12 +111,12 @@ def smoothCoefficient (t : K) : SmoothCoefficient P where
   norm_bound x := (A t).norm_coe_le_norm x.1
   firstBound := ‖iteratedFDeriv ℝ 1 (translateCoefficientPath A) 0‖₊
   norm_first x := by
-    rw [← norm_iteratedFDeriv_one]
-    exact cylinder_norm_iteratedFDeriv_le P A hA 1 t x 0
+    exact (norm_iteratedFDeriv_one (𝕜 := ℝ) _).symm.trans_le
+      (cylinder_norm_iteratedFDeriv_le P A hA 1 t x 0)
   secondBound := ‖iteratedFDeriv ℝ 2 (translateCoefficientPath A) 0‖₊
   norm_second x y := by
-    rw [← norm_iteratedFDeriv_one,norm_iteratedFDeriv_fderiv]
-    exact cylinder_norm_iteratedFDeriv_le P A hA 2 t x y
+    exact ((norm_iteratedFDeriv_one (𝕜 := ℝ) _).symm.trans norm_iteratedFDeriv_fderiv).trans_le
+      (cylinder_norm_iteratedFDeriv_le P A hA 2 t x y)
 
 omit [Fact (0 < P)] in
 @[simp] theorem smoothCoefficient_apply (t : K) (x : LiftDomain P) :

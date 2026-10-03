@@ -285,13 +285,13 @@ theorem forward_uniform_flow_and_shear :
   have hKerr_k : Kerr ≤ smallPower k := costs.2.2.2.2.2.1.trans hout
   have hKv_k : Kv ≤ smallPower k := costs.2.2.2.2.2.2.1.trans hout
   have hKp_k : Kp ≤ smallPower k := costs.2.2.2.2.2.2.2.trans hout
-  have hk0 : 0 < k := by linarith
-  have hk1 : 1 ≤ k := by linarith
+  have hk0 : 0 < k := by linarith only [hk]
+  have hk1 : 1 ≤ k := by linarith only [hk]
   have hn := (truncation_bounds k hk1).1
   have hT_k : D.T ≤ smallPower k := hW.total_time.trans
     (Real.one_le_rpow hk1 (by norm_num [theta]))
-  have hRv : 0 ≤ 4*L'.R := by have := L'.radius_one; linarith
-  have hρ' : 0 < ρ0/4 := by positivity
+  have hRv : 0 ≤ 4*L'.R := mul_nonneg (Nat.ofNat_nonneg 4) (zero_le_one.trans L'.radius_one)
+  have hρ' : 0 < ρ0/4 := div_pos hρ four_pos
   have hRf : 0 < Rf := (liftedInputRadius_pos (4*L'.R) (ρ0/4) hRv hρ').trans_le (le_max_left _ _)
   have hC0 : 0 ≤ C0 := velocity_nonneg L'.R S.H0 BC.multiplierCost
     (zero_le_one.trans L'.radius_one) BC.multiplierCost_nonneg
@@ -301,8 +301,8 @@ theorem forward_uniform_flow_and_shear :
     have hN := N'.blockAmplitude_nonneg
     have h₁ := fixedVelocityGradeCost_nonneg L'.R S.H0 (zero_le_one.trans L'.radius_one) 1
     have h₂ := fixedVelocityGradeCost_nonneg L'.R S.H0 (zero_le_one.trans L'.radius_one) 2
-    dsimp [Ch]
-    positivity
+    exact mul_nonneg (mul_nonneg (Nat.ofNat_nonneg 6) hN)
+      (add_nonneg (add_nonneg h₁ h₂) zero_le_one)
   have hsmall := liftedAmplitude_small_of_costs Av Ev Rf D.T k hk1 hRf.le D.T_pos.le
     hAv_k hEv_k hRf_k hT_k hdelta hroot
   have hbase : tailBase L'.R S.H0 BC.termCost (truncation k) ≤ k^(1/100 : ℝ) :=
@@ -354,7 +354,7 @@ theorem forward_uniform_flow_and_shear :
     Q.physical_gradient_hessian_of_weighted D period X Y hXd hXY hY hdet
       L.Rc L.C₀ L.Rc_nonneg L.C₀_nonneg L.frame_bound k (ρ0/4) Cw (delta (expansion k))
       hk1 rfl rfl hρ' hCw.le (delta_pos _).le he hp t x
-  have hroot2 : 2 ≤ k^(1/4 : ℝ) := by linarith
+  have hroot2 : 2 ≤ k^(1/4 : ℝ) := (show (2 : ℝ) ≤ 16 by norm_num).trans hroot
   have hvErr := physical_error_le_inverse_quarter Kv Kerr k hk1 hKv_k hKerr_k hdelta hroot2
   have hpErr := physical_error_le_inverse_quarter Kp Kerr k hk1 hKp_k hKerr_k hdelta hroot2
   have hA : G.A = Q.liftedPacketCoefficient period V := rfl
@@ -496,15 +496,15 @@ theorem forward_uniform_child_label_bounds (q : ℕ)
     forward_uniform_flow_and_shear M D hTime δ hδ hδ1 ξ hs α hα
       L NB LM Cagree W hW hprofile k hk hX hlog hfrequency hdelta hroot htrace
       X Y hXs hF hXY hY hdet
+  have e1 : -(1 / 2 : ℝ) + 1 / 4 = -(1 / 4) := by norm_num
+  have e2 : (1 : ℝ) + 1 / 4 = 5 / 4 := by norm_num
+  have hf (t : Icc (0 : ℝ) D.T) := hfields ell hell hell1 t
+  rw [← e1, ← e2] at hf
   have hcoarse (t : Icc (0 : ℝ) D.T) :=
-    EulerPhysicalChildFields.coarsen_graph_bounds k ell (by linarith) hell hinv
+    EulerPhysicalChildFields.coarsen_graph_bounds k ell (by linarith only [hk]) hell hinv
       (G.displacementField k D.m₀ ell hell t) (G.velocityField k D.m₀ ell hell t)
       (G.accelerationFieldL2 k D.m₀ ell hell t)
-      (by convert (hfields ell hell hell1 t).1 using 1 <;> norm_num)
-      (by convert (hfields ell hell hell1 t).2.1 using 1 <;> norm_num)
-      (by convert (hfields ell hell hell1 t).2.2.1 using 1; norm_num)
-      (by convert (hfields ell hell hell1 t).2.2.2.1 using 1 <;> norm_num)
-      (by convert (hfields ell hell hell1 t).2.2.2.2 using 1 <;> norm_num)
+      (hf t).1 (hf t).2.1 (hf t).2.2.1 (hf t).2.2.2.1 (hf t).2.2.2.2
   obtain ⟨E,hmatch,hlabel⟩ := EulerPhysicalChildFields.exists_source_child_fields
     G k D.m₀ hgraph ell hell Dp Vp Wp K hK hDp hVp hWp q hk69 hKk hbig hcost hcoarse
   refine ⟨hn,Q,G,E,hδQ,hρQ,hA,hA1,hgraph,hweighted,herror,hmatch,hlabel,?_⟩

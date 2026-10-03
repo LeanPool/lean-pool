@@ -185,18 +185,22 @@ variable {P : ℝ} [Fact (0 < P)]
 
 include h
 
+omit [CompleteSpace U] in
+theorem forcingPath_eq_smul : forcingPath H = a • forcingPath G := by
+  unfold forcingPath
+  rw [h, ContinuousLinearMap.map_smul]
+
 theorem coordinatePath_eq_smul : B.coordinatePath H = a • B.coordinatePath G := by
-  have hf : forcingPath H = a • forcingPath G := by unfold forcingPath; rw [h,map_smul]
   unfold coordinatePath
-  rw [hf,pathLp_smul,map_smul]
+  rw [forcingPath_eq_smul G H a h, pathLp_smul, ContinuousLinearMap.map_smul]
 
 theorem velocityPath_eq_smul : B.velocityPath H = a • B.velocityPath G := by
-  have hf : forcingPath H = a • forcingPath G := by unfold forcingPath; rw [h,map_smul]
+  have hf := forcingPath_eq_smul G H a h
   unfold velocityPath
   rw [hf,B.coefficients.physicalVelocity_smul P a (forcingPath G)]
 
 theorem derivativePath_eq_smul : B.derivativePath H = a • B.derivativePath G := by
-  have hf : forcingPath H = a • forcingPath G := by unfold forcingPath; rw [h,map_smul]
+  have hf := forcingPath_eq_smul G H a h
   unfold derivativePath
   rw [hf,B.coefficients.physicalDerivative_smul P a (forcingPath G)]
 

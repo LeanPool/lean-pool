@@ -147,8 +147,8 @@ variable (M : EulerMeanPacketProvider.Data)
   (hF : ∀ t x, fderiv ℝ (Ξ t) x = D.F.field t x)
   (hdet : ∀ t x, (EulerPacketPiola.operatorMatrix (D.F.field t x)).det = 1)
 
-local notation "Q" => initializedUniformBudget M D hTime τ hτ hτT B δ hδ hδ1 ξ hs α hα
-  L NB LM Cagree W hW hprofile k hk hX hlog hfrequency Ξ hΞ hF hdet
+local notation "Q" => (initializedUniformBudget M D hTime τ hτ hτT B δ hδ hδ1 ξ hs α hα
+  L NB LM Cagree W hW hprofile k hk hX hlog hfrequency Ξ hΞ hF hdet)
 
 theorem initializedUniformBudget_weighted (s N : ℕ) (hN : N + 6 ≤ s) (t : Icc (0 : ℝ) D.T) :
     weightedNorm period 6 N ((Q).initialRadius/4) (((Q).fieldTower period).realization s t) ≤

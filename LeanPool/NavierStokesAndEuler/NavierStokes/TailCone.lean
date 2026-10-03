@@ -2047,9 +2047,11 @@ theorem actualNs_finite_bound {d : TailData} {K : ℝ} (w : ResetWitness d K)
       4 * StressAlgebra.velocityExponent d.h * eta * OutgoingHistories.Pi w (y, eta)) 0
     (StressAlgebra.coordinateFactor eta * OutgoingHistories.dEta (OutgoingHistories.Pi w) (y, eta))
   simp only [sub_zero, zero_sub, abs_neg] at ht1 ht3
+  have hsum := (ht3.trans (add_le_add (ht2.trans (add_le_add ht1 le_rfl)) le_rfl)).trans
+    (add_le_add (add_le_add (add_le_add h1 h2) h3) h4)
+  refine hsum.trans ?_
   dsimp [finiteNumeratorBudget]
-  linarith only [h1, h2, h3, h4, ht1, ht2, ht3, mul_nonneg hB hF,
-    mul_nonneg CorrectedPressureBounds.correctedConstant_pos.le hF]
+  linarith only [mul_nonneg hB hF, mul_nonneg CorrectedPressureBounds.correctedConstant_pos.le hF]
 
 theorem lambda_log_bound (d : TailData) : d.core.lam * Real.log (1 / d.core.lam) ≤ 1 := by
   have h := Real.log_le_sub_one_of_pos (one_div_pos.mpr d.core.lam_pos)

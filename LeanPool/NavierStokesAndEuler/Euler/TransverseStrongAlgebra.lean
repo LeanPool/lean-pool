@@ -101,8 +101,9 @@ theorem projected_equation_of_momentum_balance
         (adjoint (𝕜 := ℝ) (E := U) (F := E) Q).comp Q₂) ξ +
       adjoint (𝕜 := ℝ) (E := U) (F := E) Q (Q₁ v)) :
     gram Q a = adjoint (𝕜 := ℝ) (E := U) (F := E) Q (f - (2 : ℝ) • Q₁ v) := by
-  simp only [hu, hframe, comp_apply, add_apply, neg_apply, map_add, map_neg] at hbalance
-  simp only [map_sub, map_smul]
-  linear_combination (norm := module) -hbalance
+  simp only [hu, hframe, comp_apply, add_apply, neg_apply, ContinuousLinearMap.map_add,
+    ContinuousLinearMap.map_neg] at hbalance
+  simp only [ContinuousLinearMap.map_sub, two_smul, ContinuousLinearMap.map_add]
+  linear_combination (norm := abel) -hbalance
 
 end EulerTransverseStrongAlgebra

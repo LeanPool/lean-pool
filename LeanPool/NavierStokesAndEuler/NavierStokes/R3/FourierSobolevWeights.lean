@@ -141,17 +141,14 @@ theorem integrable_fourierHNormSq_three (ψ : ComplexTest) :
 
 theorem norm_B_eq_sqrt (ψ : ComplexTest) :
     ‖B ψ‖ = Real.sqrt (fourierHNormSq 4 ψ) := by
-  change ‖(weightedSchwartz (FourierTransform.fourierCLE ℂ ComplexTest ψ)).toLp 2 volume‖ = _
+  change ‖(weightedSchwartz (EulerSobolev.schwartzFourier ψ)).toLp 2 volume‖ = _
   rw [SchwartzMap.norm_toLp, MemLp.eLpNorm_eq_integral_rpow_norm
     (by norm_num : (2 : ℝ≥0∞) ≠ 0) (by norm_num : (2 : ℝ≥0∞) ≠ ⊤)
-    ((weightedSchwartz (FourierTransform.fourierCLE ℂ ComplexTest ψ)).memLp 2 volume)]
+    ((weightedSchwartz (EulerSobolev.schwartzFourier ψ)).memLp 2 volume)]
   simp only [ENNReal.toReal_ofNat, Real.rpow_two, norm_weightedSchwartz_apply_sq]
-  have hi : 0 ≤ ∫ ξ : Space, (1 + ‖ξ‖ ^ 2) ^ 4 *
-      ‖(FourierTransform.fourierCLE ℂ ComplexTest ψ) ξ‖ ^ 2 :=
-    integral_nonneg fun ξ => by positivity
-  rw [ENNReal.toReal_ofReal (Real.rpow_nonneg hi _), Real.sqrt_eq_rpow]
-  simp only [fourierHNormSq, one_div]
-  rfl
+  have hi : 0 ≤ fourierHNormSq 4 ψ := integral_nonneg fun ξ => by positivity
+  rw [← fourierHNormSq, ENNReal.toReal_ofReal (Real.rpow_nonneg hi _), Real.sqrt_eq_rpow,
+    one_div]
 
 theorem norm_B_sq (ψ : ComplexTest) :
     ‖B ψ‖ ^ 2 = fourierHNormSq 4 ψ := by

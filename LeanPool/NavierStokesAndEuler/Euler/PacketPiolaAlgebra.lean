@@ -35,9 +35,11 @@ theorem matrixAntisym_congruence (F A : Mat3) :
     matrixAntisym (F.transpose * A * F) = F.adjugate.mulVec (matrixAntisym A) := by
   ext i
   fin_cases i <;>
-    norm_num [matrixAntisym, Matrix.mul_apply, Matrix.transpose_apply,
-      Matrix.mulVec, dotProduct, Fin.sum_univ_three, Matrix.adjugate_fin_three,
-      Matrix.cons_val_two] <;>
+    simp only [matrixAntisym, Matrix.mul_apply, Matrix.transpose_apply,
+      Matrix.mulVec, dotProduct, Fin.sum_univ_three, Matrix.adjugate_fin_three, Matrix.of_apply,
+      Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
+      Matrix.head_cons, Matrix.tail_cons, Matrix.empty_val', Matrix.cons_val_fin_one,
+      Matrix.head_fin_const, Fin.reduceFinMk, Fin.isValue] <;>
     ring
 
 /-- Operator matrix, defined pointwise by `(A (EuclideanSpace.single j 1)) i`. -/

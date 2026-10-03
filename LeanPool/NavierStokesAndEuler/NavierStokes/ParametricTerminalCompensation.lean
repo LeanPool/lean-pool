@@ -155,11 +155,11 @@ theorem exists_variable_compensation (P : Patch) (lam : ℝ) (hlam : 0 ≤ lam)
   let T : ℝ := D * B + D * (J * B)
   let C : ℝ := 1 + B + T
   have hB : 0 < B := mul_pos hC₀ hD
-  have hT : 0 < T := by dsimp [T]; positivity
-  have hC : 0 < C := by dsimp [C]; positivity
-  have hBC : B ≤ C := by dsimp [C]; linarith
-  have hTC : T ≤ C := by dsimp [C]; linarith
-  have hDBC : D * B ≤ C := by dsimp [T] at hTC; nlinarith [mul_pos hD (mul_pos hJ hB)]
+  have hT : 0 < T := add_pos (mul_pos hD hB) (mul_pos hD (mul_pos hJ hB))
+  have hC : 0 < C := add_pos (add_pos one_pos hB) hT
+  have hBC : B ≤ C := (le_add_of_nonneg_left zero_le_one).trans (le_add_of_nonneg_right hT.le)
+  have hTC : T ≤ C := le_add_of_nonneg_left (add_pos one_pos hB).le
+  have hDBC : D * B ≤ C := (le_add_of_nonneg_right (mul_pos hD (mul_pos hJ hB)).le).trans hTC
   refine ⟨ε₀ / D, C, div_pos hε₀ hD, hC, ?_⟩
   intro v hv hvsmall
   let d : ℝ → Coeff := fun η => amplitudeDebt (a η) (v η)

@@ -301,7 +301,7 @@ theorem initialized_uniform_flow_and_shear :
   have hT_k : D.T ≤ smallPower k := hW.total_time.trans
     (Real.one_le_rpow hk1 (by norm_num [theta]))
   have hRv : 0 ≤ 4*L'.R := by have := L'.radius_bounds.1; linarith only [this]
-  have hρ' : 0 < ρ0/4 := by positivity
+  have hρ' : 0 < ρ0/4 := div_pos hρ four_pos
   have hRf : 0 < Rf := (liftedInputRadius_pos (4*L'.R) (ρ0/4) hRv hρ').trans_le (le_max_left _ _)
   have hC0 : 0 ≤ C0 := velocity_nonneg L'.R S.H0 BC.multiplierCost
     (zero_le_one.trans L'.radius_bounds.1) BC.multiplierCost_nonneg
@@ -311,8 +311,8 @@ theorem initialized_uniform_flow_and_shear :
     have hN := N'.blockAmplitude_nonneg
     have h₁ := fixedVelocityGradeCost_nonneg L'.R S.H0 (zero_le_one.trans L'.radius_bounds.1) 1
     have h₂ := fixedVelocityGradeCost_nonneg L'.R S.H0 (zero_le_one.trans L'.radius_bounds.1) 2
-    dsimp [Ch]
-    positivity
+    exact mul_nonneg (mul_nonneg (Nat.ofNat_nonneg 6) hN)
+      (add_nonneg (add_nonneg h₁ h₂) zero_le_one)
   have hsmall := liftedAmplitude_small_of_costs Av Ev Rf D.T k hk1 hRf.le D.T_pos.le
     hAv_k hEv_k hRf_k hT_k hdelta hroot
   have hbase : tailBase L'.R S.H0 BC.termCost (truncation k) ≤ k^(1/100 : ℝ) :=

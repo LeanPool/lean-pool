@@ -191,7 +191,9 @@ theorem adjointMultiplier_intertwines (A : U →L[ℝ] V) (B : E →L[ℝ] F)
   intro v
   have key := timeMultiplier_intertwines T hT _ _ R Q hRQ v
   rw [← timeLift_adjoint, ← timeLift_adjoint] at key
-  rw [adjoint_inner_left, ← adjoint_inner_right, ← key, ← adjoint_inner_left, adjoint_inner_right]
+  exact (adjoint_inner_left _ v _).trans <| (adjoint_inner_right _ f _).symm.trans <|
+    (congrArg (inner ℝ f) key.symm).trans <|
+      (adjoint_inner_left _ _ f).symm.trans (adjoint_inner_right _ _ v)
 
 /-- The true Gram operator commutes with compatible rectangular intertwiners. -/
 theorem gramOperator_intertwines (A : U →L[ℝ] V) (B : E →L[ℝ] F)
@@ -321,8 +323,9 @@ theorem adjoint_intertwines (A : U →L[ℝ] V) (B : E →L[ℝ] F)
       A (adjoint (𝕜 := ℝ) (E := U) (F := E) Q f) := by
   apply ext_inner_right ℝ
   intro v
-  rw [adjoint_inner_left,← adjoint_inner_right,← hback,
-    ← adjoint_inner_left,adjoint_inner_right]
+  exact (adjoint_inner_left _ v _).trans <| (adjoint_inner_right _ f _).symm.trans <|
+    (congrArg (inner ℝ f) (hback v).symm).trans <|
+      (adjoint_inner_left _ _ f).symm.trans (adjoint_inner_right _ _ v)
 
 theorem gram_intertwines (A : U →L[ℝ] V) (B : E →L[ℝ] F)
     (Q : U →L[ℝ] E) (R : V →L[ℝ] F)

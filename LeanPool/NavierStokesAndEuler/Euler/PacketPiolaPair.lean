@@ -389,9 +389,7 @@ theorem coveringCurl_pullback (κ : ℝ) (m : Space) (Ξ : Space → Space)
         ((fderiv ℝ q z).comp (EulerGraphPullback.liftedDirection κ m))) := by
   have hD : DifferentiableAt ℝ (fderiv ℝ Ξ) z.1 :=
     ((hΞ.fderiv_right (m := 1) le_rfl).differentiable one_ne_zero).differentiableAt
-  have hX : HasFDerivAt (fun w : LiftTangent => fderiv ℝ Ξ w.1)
-      ((fderiv ℝ (fderiv ℝ Ξ) z.1).comp (ContinuousLinearMap.fst ℝ Space ℝ)) z :=
-    hD.hasFDerivAt.comp z hasFDerivAt_fst
+  have hX := hD.hasFDerivAt.comp z (hasFDerivAt_fst (𝕜 := ℝ) (p := z))
   have hA : HasFDerivAt (fun w : LiftTangent =>
         ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) (fderiv ℝ Ξ w.1))
       ((realAdjoint (U := Space) (E := Space)).comp

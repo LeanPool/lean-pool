@@ -429,8 +429,9 @@ theorem joined_history_hessian (hn : n ≠ 0) :
       hessianConstant*(previousShear S.J S.X n)^2 := by
   apply (ContinuousMap.norm_le _ (mul_nonneg hessian_nonneg (sq_nonneg _))).2
   intro t
-  change ‖P.restrictedParent.curvature.field
-    (initialInclusion P.restrictedParent.T P.time P.time_lt_nextHorizon.le t) 0‖ ≤ _
+  have he : (P.joinedHistory hn).coefficients.labelHessian 0 t = P.restrictedParent.curvature.field
+      (initialInclusion P.restrictedParent.T P.time P.time_lt_nextHorizon.le t) 0 := by rfl
+  rw [he]
   have hp := P.restricted_curvature_bound
     (initialInclusion P.restrictedParent.T P.time P.time_lt_nextHorizon.le t) 0
   have hm := mul_le_mul_of_nonneg_left (S.olderShear_le n)
@@ -735,7 +736,8 @@ def forwardGeometryGuardsOfStage
         mul_le_mul_of_nonneg_left (add_le_add hmain hE) (by norm_num)
       _ = _ := by unfold geometryError; ring
   have hcoef0 : 0 ≤ 16*(P.epsilon*P.horizon*(4*P.G)^2+P.forwardError ρ) := by
-    positivity
+    exact mul_nonneg (Nat.ofNat_nonneg _) (add_nonneg
+      (mul_nonneg (mul_nonneg heps.le (zero_le_one.trans hH)) (sq_nonneg _)) herror0)
   have hN1 : 1 ≤ 1000000*neighborStabilityConstant := by
     linarith only [neighborStabilityConstant_ge]
   have hN : 0 ≤ 1000000*neighborStabilityConstant := zero_le_one.trans hN1

@@ -196,8 +196,11 @@ theorem divergence_velocity_at {B F U : Profile} {t : ℝ} {x : Space}
         2 * radialEnergy x * partialS B (profilePoint t x) := by
   unfold spatialDivergence spatialDerivative
   rw [(hasFDerivAt_velocity_at hB hF hU).fderiv, Fin.sum_univ_three]
-  simp [velocityJacobian, packDerivative_apply, profileDerivative_apply,
-    coordinateVector, profilePoint, radialEnergy, lift]
+  simp only [velocityJacobian, Fin.isValue, lift, profilePoint, radialEnergy, neg_add_rev,
+    coordinateVector, packDerivative_apply, add_apply, neg_apply, smul_apply, projection_apply,
+    ne_eq, one_ne_zero, not_false_eq_true, PiLp.single_eq_of_ne, smul_eq_mul, mul_zero, neg_zero,
+    profileDerivative_apply, PiLp.single_eq_same, mul_one, add_zero, Fin.reduceEq, zero_mul,
+    zero_add, sub_apply, pack_zero, zero_ne_one, pack_one, one_mul, pack_two]
   ring
 
 /-- Actual Cartesian divergence, needing regularity only at the evaluated

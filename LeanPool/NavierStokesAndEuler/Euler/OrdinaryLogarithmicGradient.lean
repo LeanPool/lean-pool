@@ -49,6 +49,13 @@ open scoped ContDiff ENNReal RealInnerProductSpace Topology
 
 variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V] [FiniteDimensional ℝ V]
 
+theorem integral_three_quarter_rpow (ε N : ℝ) :
+    (∫ t in (0:ℝ)..ε, (3/4:ℝ)*t^(-(3:ℝ)/4)*N) = 3*ε^((1:ℝ)/4)*N := by
+  rw [intervalIntegral.integral_mul_const, intervalIntegral.integral_const_mul,
+    integral_rpow (Or.inl (by norm_num : (-1:ℝ) < -(3:ℝ)/4)),
+    show -(3:ℝ)/4+1=(1:ℝ)/4 by norm_num, Real.zero_rpow (by norm_num : (1:ℝ)/4 ≠ 0)]
+  ring
+
 /-- The heat remainder of one actual spatial derivative is O(ε^(1/4))
 times the third spatial L² tensor. No Hölder or heat estimate is assumed. -/
 theorem derivative_high_remainder (A : SmoothL2Field V) (j : Fin 3) (x : Space)
@@ -75,17 +82,10 @@ theorem derivative_high_remainder (A : SmoothL2Field V) (j : Fin 3) (x : Space)
   have h := norm_sub_le_integral_of_norm_deriv_le_of_le hε.le hc.continuousOn
     (fun t ht => (hd t ht).differentiableAt.differentiableWithinAt)
     (Eventually.of_forall hb) hbi
-  have he : (∫ t in (0:ℝ)..ε, B t) = 3*ε^((1:ℝ)/4)*‖A.jetLp 3‖ := by
-    dsimp [B]
-    rw [intervalIntegral.integral_mul_const, intervalIntegral.integral_const_mul,
-      integral_rpow (Or.inl (by norm_num : (-1:ℝ) < -(3:ℝ)/4))]
-    rw [show -(3:ℝ)/4+1=(1:ℝ)/4 by norm_num,
-      Real.zero_rpow (by norm_num : (1:ℝ)/4 ≠ 0)]
-    ring
-  rw [he] at h
-  change ‖scaledAverage ε D.field x-scaledAverage 0 D.field x‖ ≤ _ at h
-  rw [scaledAverage_eq hε, scaledAverage_zero, norm_sub_rev] at h
-  exact h
+  have he := integral_three_quarter_rpow ε ‖A.jetLp 3‖
+  exact (norm_sub_rev _ _).trans_le ((congrArg₂ (fun a b : V => ‖a - b‖)
+    (scaledAverage_eq hε D.field x) (scaledAverage_zero D.field x)).symm.trans_le
+      (h.trans_eq he))
 
 end EulerWholeSpaceGaussian
 
@@ -260,8 +260,8 @@ theorem optimize (X c L W H : ℝ) (hc : 0 ≤ c) (hL : 0 ≤ L) (hH : 0 ≤ H)
   have hmid : X ≤ c*(L+4*(W*log A)+1) := by
     apply h.trans
     apply mul_le_mul_of_nonneg_left _ hc
-    nlinarith only [hsmall]
-  have hdiff : 0 ≤ c*(3+3*L) := mul_nonneg hc (by linarith)
+    linarith only [hsmall]
+  have hdiff : 0 ≤ c*(3+3*L) := mul_nonneg hc (by linarith only [hL])
   change X ≤ 4*c*(1+L+W*log A)
   nlinarith only [hmid,hdiff]
 

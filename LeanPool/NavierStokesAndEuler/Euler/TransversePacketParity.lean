@@ -227,7 +227,9 @@ theorem projectedForcing_reflection_neg (t : Icc (0 : ℝ) T) :
   change reflection (V := U) P (fullOperatorMap (E := E) (F := U) P (sourceForcing Q c hc hQ t)
       (f t : CylinderL2 P E)) =
     -fullOperatorMap (E := E) (F := U) P (sourceForcing Q c hc hQ t) (f t : CylinderL2 P E)
-  rw [reflection_fullOperator P _ (sourceForcing_even Q c hc hQ hE t), hf, map_neg]
+  exact (reflection_fullOperator P _ (sourceForcing_even Q c hc hQ hE t) _).trans
+    ((congrArg (fullOperatorMap (E := E) (F := U) P (sourceForcing Q c hc hQ t)) (hf t)).trans
+      (ContinuousLinearMap.map_neg _ _))
 
 include hSym hE hE₁ hf ha₀ in
 theorem coordinates_reflection_neg (t : Icc (0 : ℝ) T) :
@@ -244,9 +246,10 @@ theorem velocity_reflection_neg (t : Icc (0 : ℝ) T) :
       -(velocity P S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 P E) := by
   change reflection (V := E) P (fullOperatorMap (E := U) (F := E) P (Q.field t)
       (coordinates P S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 P U)) = _
-  rw [reflection_fullOperator P _ (hE t),
-    coordinates_reflection_neg P S hS hSym T hT Q Q₁ c hc hQ hE hE₁ f a₀ hf ha₀, map_neg]
-  rfl
+  exact (reflection_fullOperator P _ (hE t) _).trans
+    ((congrArg (fullOperatorMap (E := U) (F := E) P (Q.field t))
+      (coordinates_reflection_neg P S hS hSym T hT Q Q₁ c hc hQ hE hE₁ f a₀ hf ha₀ t)).trans
+      (ContinuousLinearMap.map_neg _ _))
 
 include hSym hE hE₁ hf ha₀ in
 theorem coordinateDerivative_reflection_neg (t : Icc (0 : ℝ) T) :
@@ -257,11 +260,16 @@ theorem coordinateDerivative_reflection_neg (t : Icc (0 : ℝ) T) :
     (fullOperatorMap (E := U) (F := U) P (sourceGenerator Q Q₁ c hc hQ t)
         (coordinates P S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 P U) +
       fullOperatorMap (E := E) (F := U) P (sourceForcing Q c hc hQ t) (f t : CylinderL2 P E)) = _
-  rw [map_add, reflection_fullOperator P _ (sourceGenerator_even Q Q₁ c hc hQ hE hE₁ t),
-    reflection_fullOperator P _ (sourceForcing_even Q c hc hQ hE t),
-    coordinates_reflection_neg P S hS hSym T hT Q Q₁ c hc hQ hE hE₁ f a₀ hf ha₀,
-    hf, map_neg, map_neg, ← neg_add]
-  rfl
+  refine ((reflection (V := U) P).map_add _ _).trans ?_
+  refine (congrArg₂ (· + ·)
+    ((reflection_fullOperator P _ (sourceGenerator_even Q Q₁ c hc hQ hE hE₁ t) _).trans
+      ((congrArg (fullOperatorMap (E := U) (F := U) P (sourceGenerator Q Q₁ c hc hQ t))
+        (coordinates_reflection_neg P S hS hSym T hT Q Q₁ c hc hQ hE hE₁ f a₀ hf ha₀ t)).trans
+        (ContinuousLinearMap.map_neg _ _)))
+    ((reflection_fullOperator P _ (sourceForcing_even Q c hc hQ hE t) _).trans
+      ((congrArg (fullOperatorMap (E := E) (F := U) P (sourceForcing Q c hc hQ t)) (hf t)).trans
+        (ContinuousLinearMap.map_neg _ _)))).trans ?_
+  exact (neg_add _ _).symm
 
 include hSym hE hE₁ hf ha₀ in
 theorem velocityDerivative_reflection_neg (t : Icc (0 : ℝ) T) :
@@ -273,11 +281,18 @@ theorem velocityDerivative_reflection_neg (t : Icc (0 : ℝ) T) :
         (coordinates P S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 P U) +
       fullOperatorMap (E := U) (F := E) P (Q.field t)
         (coordinateDerivative P S hS T hT Q Q₁ c hc hQ f a₀ t : CylinderL2 P U)) = _
-  rw [map_add, reflection_fullOperator P _ (hE₁ t), reflection_fullOperator P _ (hE t),
-    coordinates_reflection_neg P S hS hSym T hT Q Q₁ c hc hQ hE hE₁ f a₀ hf ha₀,
-    coordinateDerivative_reflection_neg P S hS hSym T hT Q Q₁ c hc hQ hE hE₁ f a₀ hf ha₀,
-    map_neg, map_neg, ← neg_add]
-  rfl
+  refine ((reflection (V := E) P).map_add _ _).trans ?_
+  refine (congrArg₂ (· + ·)
+    ((reflection_fullOperator P _ (hE₁ t) _).trans
+      ((congrArg (fullOperatorMap (E := U) (F := E) P (Q₁.field t))
+        (coordinates_reflection_neg P S hS hSym T hT Q Q₁ c hc hQ hE hE₁ f a₀ hf ha₀ t)).trans
+        (ContinuousLinearMap.map_neg _ _)))
+    ((reflection_fullOperator P _ (hE t) _).trans
+      ((congrArg (fullOperatorMap (E := U) (F := E) P (Q.field t))
+        (coordinateDerivative_reflection_neg P S hS hSym T hT Q Q₁ c hc hQ hE hE₁ f a₀ hf ha₀
+          t)).trans
+        (ContinuousLinearMap.map_neg _ _)))).trans ?_
+  exact (neg_add _ _).symm
 
 end Evolution
 end EulerSourceCylinderParity

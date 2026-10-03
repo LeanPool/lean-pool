@@ -164,7 +164,8 @@ theorem bandField_jet_bound {h a b : ℝ}
         C * q ^ (gain - loss degree m) := by
   obtain ⟨B, hB, hBj⟩ := PhysicalClassBounds.cylindricalMap_positiveJets (b := b) ha m
   let A' : ℝ := (m.factorial : ℝ) * A * B ^ m
-  have hA' : 0 ≤ A' := by dsimp [A']; positivity
+  have hA' : 0 ≤ A' :=
+    mul_nonneg (mul_nonneg (Nat.cast_nonneg _) hA) (pow_nonneg (zero_le_one.trans hB) m)
   obtain ⟨C, hC, hb⟩ := common_stripped_physical_bound_local (E := E) (b := b)
     hh hh1 ha Δ m (gain - degree) e A' hA'
   refine ⟨C, hC, ?_⟩
@@ -186,7 +187,8 @@ theorem bandField_jet_bound {h a b : ℝ}
   have hbound := hb n hn d hd w hann ht q hq hlo hhi u hu
   have hqN := ChartScales.Q_pos n
   have hSN := ChartScales.S_pos (show 1 ≤ n by omega)
-  have hab : 0 ≤ A * ChartScales.Q n ^ gain * ChartScales.S n ^ e := by positivity
+  have hab : 0 ≤ A * ChartScales.Q n ^ gain * ChartScales.S n ^ e :=
+    mul_nonneg (mul_nonneg hA (Real.rpow_nonneg hqN.le _)) (Real.rpow_nonneg hSN.le _)
   have hFjet : ∀ i ≤ m, ‖iteratedFDeriv ℝ i F (graph h n d w)‖ ≤
       A * ChartScales.Q n ^ gain * ChartScales.S n ^ e := by
     intro i hi
@@ -203,9 +205,7 @@ theorem bandField_jet_bound {h a b : ℝ}
       (F ∘ PhysicalClassBounds.cylindricalMap) x) (commonLift h n d w)‖ ≤ _
     rw [iteratedFDeriv_const_smul_apply' (hnear.of_le
       (ENat.natCast_le_of_coe_top_le_withTop le_rfl i)),
-      norm_smul (ChartScales.Q n ^ (-degree))
-        (iteratedFDeriv ℝ i (F ∘ PhysicalClassBounds.cylindricalMap) (commonLift h n d w)),
-      Real.norm_of_nonneg (Real.rpow_pos_of_pos hqN (-degree)).le]
+      norm_smul_of_nonneg (Real.rpow_pos_of_pos hqN (-degree)).le]
     calc
       _ ≤ ChartScales.Q n ^ (-degree) * ((m.factorial : ℝ) *
           (A * ChartScales.Q n ^ gain * ChartScales.S n ^ e) * B ^ m) :=
@@ -395,8 +395,10 @@ theorem CoherentFamily.annulus_on_tsupport (D : CoherentFamily h degree N Δ U E
   have hlen := graph_length_bounds hh hh1 n (D.gap n) hw hlo hhi
   have hloR := (le_div_iff₀ hell).mp hratio.1
   have hhiR := (div_le_iff₀ hell).mp hratio.2
-  have haR : a / 2 ≤ (graph h n (D.gap n) w).1 := by nlinarith [hlen.1]
-  have hbR : (graph h n (D.gap n) w).1 ≤ 2 * b := by nlinarith [hlen.2]
+  have haR : a / 2 ≤ (graph h n (D.gap n) w).1 := by
+    linarith only [hloR, mul_le_mul_of_nonneg_left hlen.1 ha.le]
+  have hbR : (graph h n (D.gap n) w).1 ≤ 2 * b := by
+    linarith only [hhiR, mul_le_mul_of_nonneg_left hlen.2 (ha.trans hab).le]
   rw [graph_radius] at haR hbR
   refine ⟨?_, ?_⟩
   · simpa only [Metric.mem_closedBall, dist_zero_right] using
@@ -650,7 +652,9 @@ theorem bandAngularField_jet_bound {h a b : ℝ}
   obtain ⟨B, hB, hBj⟩ := PhysicalClassBounds.cylindricalMap_positiveJets (b := b) ha m
   obtain ⟨V, hV, hVj⟩ := angularVector_lift_jet_bound (b := b) ha m
   let A' : ℝ := (2 : ℝ) ^ m * ((m.factorial : ℝ) * A * B ^ m) * V
-  have hA' : 0 ≤ A' := by dsimp [A']; positivity
+  have hA' : 0 ≤ A' := mul_nonneg (mul_nonneg (pow_nonneg zero_le_two m)
+    (mul_nonneg (mul_nonneg (Nat.cast_nonneg _) hA) (pow_nonneg (zero_le_one.trans hB) m)))
+    (zero_le_one.trans hV)
   obtain ⟨C, hC, hb⟩ := common_stripped_physical_bound_local (E := Space) (b := b)
     hh hh1 ha Δ m (gain - degree) e A' hA'
   refine ⟨C, hC, ?_⟩
@@ -681,7 +685,8 @@ theorem bandAngularField_jet_bound {h a b : ℝ}
   have hbound := hb n hn d hd w hann ht q hq hlo hhi u hu
   have hqN := ChartScales.Q_pos n
   have hSN := ChartScales.S_pos (show 1 ≤ n by omega)
-  have hab : 0 ≤ A * ChartScales.Q n ^ gain * ChartScales.S n ^ e := by positivity
+  have hab : 0 ≤ A * ChartScales.Q n ^ gain * ChartScales.S n ^ e :=
+    mul_nonneg (mul_nonneg hA (Real.rpow_nonneg hqN.le _)) (Real.rpow_nonneg hSN.le _)
   have hFjet : ∀ i ≤ m, ‖iteratedFDeriv ℝ i F (graph h n d w)‖ ≤
       A * ChartScales.Q n ^ gain * ChartScales.S n ^ e := by
     intro i hi
@@ -698,12 +703,10 @@ theorem bandAngularField_jet_bound {h a b : ℝ}
       (commonLift h n d w)‖ ≤ _
     rw [iteratedFDeriv_const_smul_apply' (hnear.of_le
       (ENat.natCast_le_of_coe_top_le_withTop le_rfl i)),
-      norm_smul (ChartScales.Q n ^ (-degree)) (iteratedFDeriv ℝ i v (commonLift h n d w)),
-      Real.norm_of_nonneg (Real.rpow_pos_of_pos hqN (-degree)).le]
+      norm_smul_of_nonneg (Real.rpow_pos_of_pos hqN (-degree)).le]
     have hprod := smul_jet_bound (PhysicalClassBounds.cylindricalDomain_open a b)
       hg (angularVector_lift_smooth ha) hx hi
-      (by positivity : 0 ≤ (m.factorial : ℝ) *
-        (A * ChartScales.Q n ^ gain * ChartScales.S n ^ e) * B ^ m)
+      (mul_nonneg (mul_nonneg (Nat.cast_nonneg _) hab) (pow_nonneg (zero_le_one.trans hB) m))
       (zero_le_one.trans hV) hcomp (hVj _ hx)
     calc
       _ ≤ ChartScales.Q n ^ (-degree) * ((2 : ℝ) ^ m * ((m.factorial : ℝ) *

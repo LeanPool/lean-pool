@@ -69,6 +69,9 @@ theorem angularJet_memLp_and_bound (hf : ContDiff ℝ ∞ f) (n : ℕ)
   have hb : ∀ᵐ q ∂liftMeasure P,
       ‖fieldDerivative P (0,1) (fun x => jetSeries P f x n) q‖ ≤ ‖jetSeries P f q (n+1)‖ :=
     Eventually.of_forall (angularJet_bound P f hperiod n)
+  have : SecondCountableTopologyEither (LiftDomain P)
+      (ContinuousMultilinearMap ℝ (fun _ : Fin n => LiftTangent) W) :=
+    secondCountableTopologyEither_of_left _ _
   exact ⟨hLp.of_le hc.aestronglyMeasurable hb,
     ENNReal.toReal_mono hLp.eLpNorm_ne_top (eLpNorm_mono_ae hc.aestronglyMeasurable hb)⟩
 

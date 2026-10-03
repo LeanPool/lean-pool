@@ -207,21 +207,22 @@ theorem weightedSolution_gevrey
   have hCT : 0 ≤ C*T := mul_nonneg hC hT
   have hM : 1 ≤ M := by
     dsimp [M,forwardCost]
-    linarith [mul_nonneg hC hA, mul_nonneg hCT (add_nonneg hD hCB)]
+    linarith only [mul_nonneg hC hA, mul_nonneg hCT (add_nonneg hD hCB)]
   have hR0 : 0 ≤ R := le_trans
-    (mul_nonneg (mul_nonneg (by norm_num) (le_trans zero_le_one hM)) (by linarith)) hR
+    (mul_nonneg (mul_nonneg (by norm_num) (le_trans zero_le_one hM)) (by linarith only [hRc])) hR
   have htop : C*A + C*T*D ≤ M := by
     dsimp [M,forwardCost]
-    linarith [mul_nonneg hCT hCB]
+    linarith only [mul_nonneg hCT hCB]
   have hcoef : C*T*CB ≤ M := by
     dsimp [M,forwardCost]
-    linarith [mul_nonneg hC hA, mul_nonneg hCT hD]
+    linarith only [mul_nonneg hC hA, mul_nonneg hCT hD]
   apply triangular_inverse_majorant M Rc R hM hRc hR d
     (fun k => majorant R d k) (fun k => ‖iteratedFDeriv ℝ k u x‖) (fun _ => le_rfl) _ n
   intro k
   let S : ℝ := ∑ j ∈ Finset.range k, (k.choose (j+1) : ℝ) * Rc^(j+1) *
     ((j+1).factorial : ℝ)^2 * ‖iteratedFDeriv ℝ (k-(j+1)) u x‖
-  have hS : 0 ≤ S := by dsimp [S]; positivity
+  have hS : 0 ≤ S := Finset.sum_nonneg fun j _ => mul_nonneg
+    (mul_nonneg (mul_nonneg (Nat.cast_nonneg _) (pow_nonneg hRc _)) (sq_nonneg _)) (norm_nonneg _)
   have hmajor : 0 ≤ majorant R d k := majorant_nonneg R hR0 d k
   have hcoeffOp (j : ℕ) :
       ‖iteratedFDeriv ℝ (j+1) (fun y => multiplier (B y)) x‖ ≤
@@ -241,7 +242,7 @@ theorem weightedSolution_gevrey
     apply sum_le_sum
     intro j _
     have hh := mul_le_mul_of_nonneg_right
-      (mul_le_mul_of_nonneg_left (hcoeffOp j) (by positivity : (0 : ℝ) ≤ k.choose (j+1)))
+      (mul_le_mul_of_nonneg_left (hcoeffOp j) (Nat.cast_nonneg (k.choose (j+1))))
       (norm_nonneg (iteratedFDeriv ℝ (k-(j+1)) u x))
     convert hh using 1
     ring

@@ -102,7 +102,8 @@ theorem fixedEndpointCorrection_equation (L : V →L[ℝ] TimeLp T E) (Y : V)
       (fixedFrameOperator_coercive T hT Q Q₁ H c hc hQ hd K hK hH hsmall)
       (adjoint (𝕜 := ℝ) (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E)
         (fixedFrameDerivative T hT Q Q₁) (energyOperator T hT H (L Y)))), v⟫_ℝ = _
-  rw [operator_inverse_apply, adjoint_inner_left]
+  exact (congrArg (fun z => ⟪z, v⟫_ℝ) (operator_inverse_apply _ _ _ _ _)).trans
+    (adjoint_inner_left _ _ _)
 
 theorem fixedEndpointDerivative_orthogonal (L : V →L[ℝ] TimeLp T E) (Y : V)
     (v : zeroTraceDerivatives (U := U) T hT) :

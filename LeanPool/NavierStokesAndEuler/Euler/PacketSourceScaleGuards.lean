@@ -262,8 +262,8 @@ theorem stage_guards (J D : ℕ) (hJ : 3 ≤ J) (C c X K δ : ℝ)
   have hd : 0 ≤ priorError J D X n+neighborError J D X c n := by
     have hp := (previousShear_pos J hXp n).le
     have hk := (previousFrequency_pos J D hXp n).le
-    unfold priorError neighborError supportScale
-    positivity
+    exact add_nonneg (Real.rpow_nonneg hk _)
+      (mul_nonneg (mul_nonneg (Real.exp_pos _).le (Real.rpow_nonneg hk _)) (Real.rpow_nonneg hp _))
   have he0 : geometryError J D C c X a n ≤ 1 := by
     have hh := coefficient_small J D hJ C c X δ hC1 hX hb a ha₀ ha₂ 0 (by omega) n
     norm_num only [pow_zero, mul_one] at hh
@@ -277,7 +277,7 @@ theorem stage_guards (J D : ℕ) (hJ : 3 ≤ J) (C c X K δ : ℝ)
     unfold geometryError at he0
     linarith only [he0, hh, hd]
   have htθ : targetTime J X (β n) n ≤ sourceTheta J C (scaleSequence J X) n := by
-    have hnonneg : 0 ≤ ((J+n:ℕ):ℝ)^2*scaleSequence J X n^2 := by positivity
+    have hnonneg : 0 ≤ ((J+n:ℕ):ℝ)^2*scaleSequence J X n^2 := mul_nonneg (sq_nonneg _) (sq_nonneg _)
     have hm := mul_le_mul_of_nonneg_right hC (by
         linarith only [hnonneg] : 0 ≤ 1+((J+n:ℕ):ℝ)^2*scaleSequence J X n^2)
     unfold sourceTheta
@@ -288,7 +288,8 @@ theorem stage_guards (J D : ℕ) (hJ : 3 ≤ J) (C c X K δ : ℝ)
   · simpa only [one_div, scaleSequence_succ] using hact.2.2.2.2.2.2.2
   · simpa only [targetTime, scaleSequence_succ] using hact.2.2.2.2.1
   · exact le_add_of_nonneg_right hextra₀
-  · have hnonneg : 0 ≤ ((J+n:ℕ):ℝ)^2*scaleSequence J X n^2 := by positivity
+  · have hnonneg : 0 ≤ ((J+n:ℕ):ℝ)^2*scaleSequence J X n^2 :=
+      mul_nonneg (sq_nonneg _) (sq_nonneg _)
     have hm := mul_le_mul_of_nonneg_right hC (by
         linarith only [hnonneg] : 0 ≤ 1+((J+n:ℕ):ℝ)^2*scaleSequence J X n^2)
     unfold horizon sourceTheta

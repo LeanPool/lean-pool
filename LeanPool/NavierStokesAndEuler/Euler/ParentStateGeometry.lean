@@ -104,7 +104,7 @@ def geometryFrameOfPhysicalUpdate (τ : ℝ) (hτ : 0 ≤ τ)
   G.geometryFrameOfCenterExpansion m hm R S hS
     (N.transverseData mNew hmNew RNew SNew hSNew) hTime τ hτ η hη w c CM CH K error
     hCM hK he hMK hHK hM hH
-    (G.center_update_of_odd N hTime u w hu hw hGvelocity hNvelocity hGodd hNodd) hpacket
+    (G.center_update_of_odd N hTime u w hu hw hGvelocity hNvelocity hGodd hNodd :) hpacket
 
 end Parent
 end EulerParentPacketFrames

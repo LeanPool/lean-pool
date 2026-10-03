@@ -84,16 +84,12 @@ theorem projectedForcing_block_bound
     block directions q (fun a : LiftTangent => pathTranslate (K := K) (V := U) period a
       (includePath (K := K) (V := U) period S hS (projectedForcing period S hS Q c hc hQ f))) n 0 ≤
       (3*sobolevCoefficientAmplitude ι q (4*Ri) (3*Ri*C)*D)*majorant R d n := by
-  obtain ⟨hRi₀,-⟩ := inverseRadius_bounds c C Rc Ri hc hRc hRi
-  change block directions q (fun a : LiftTangent => pathTranslate (K := K) (V := U) period a
-    (includePath (K := K) (V := U) period S hS
-      (supportedMultiplierMap (K := K) (E := E) (F := U) period S hS
-        (sourceForcing Q c hc hQ) f))) n 0 ≤ _
-  rw [include_supportedMultiplier]
-  exact product_orbit_block_bound period (sourceForcing Q c hc hQ)
+  have hRi₀ := (inverseRadius_bounds c C Rc Ri hc hRc hRi).1
+  apply product_orbit_block_bound period (sourceForcing Q c hc hQ)
     (sourceForcing_translation_contDiff Q c hc hQ) directions hd q
     (includePath (K := K) (V := E) period S hS f) hf
-    (4*Ri) (3*Ri*C) R D (by positivity) (by positivity) hD hR
+    (4*Ri) (3*Ri*C) R D (mul_nonneg zero_le_four hRi₀)
+    (mul_nonneg (mul_nonneg zero_le_three hRi₀) hC) hD hR
     (sourceForcing_translation_bound Q c hc hQ Rc C Ri hRc hC hRi hbQ) d hbf n
 
 omit [CompleteSpace U] [CompleteSpace E] in
@@ -113,11 +109,7 @@ theorem physicalVelocity_block_bound
     block directions q (fun a : LiftTangent => pathTranslate (K := K) (V := E) period a
       (includePath (K := K) (V := E) period S hS (physicalVelocity period S hS Q u))) n 0 ≤
       (3*sobolevCoefficientAmplitude ι q Rc C*D)*majorant R d n := by
-  change block directions q (fun a : LiftTangent => pathTranslate (K := K) (V := E) period a
-    (includePath (K := K) (V := E) period S hS
-      (supportedMultiplierMap (K := K) (E := U) (F := E) period S hS Q.field u))) n 0 ≤ _
-  rw [include_supportedMultiplier]
-  exact product_orbit_block_bound period Q.field Q.translation_contDiff directions hd q
+  apply product_orbit_block_bound period Q.field Q.translation_contDiff directions hd q
     (includePath (K := K) (V := U) period S hS u) hu Rc C R D hRc hC hD hR
     (fun j a => Q.norm_iteratedFDeriv_translation_le j _
       (mul_nonneg hC (majorant_nonneg Rc hRc 0 j)) (hbQ j) a) d hbu n

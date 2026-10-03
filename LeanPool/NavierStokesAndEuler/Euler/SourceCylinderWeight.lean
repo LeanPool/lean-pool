@@ -45,14 +45,6 @@ theorem coordinates_weight_eq :
     coordinates period S hS T hT Q Q₁ c hc hQ (weight (E := Supported period E S hS) g f) a₀ =
       weight (E := Supported period U S hS) g
         (normalizedCoordinates period T hT S hS Q Q₁ c hc hQ g hg f a₀) := by
-  change (evolution period T hT Q Q₁ c hc hQ S hS).solution
-      (supportedMultiplierMap (K := Icc (0 : ℝ) T) (E := E) (F := U) period S hS
-        (sourceForcing Q c hc hQ) (weight (E := Supported period E S hS) g f)) a₀ =
-    weight (E := Supported period U S hS) g (normalize (E := Supported period U S hS) g hg
-      ((evolution period T hT Q Q₁ c hc hQ S hS).solution
-        (weight (E := Supported period U S hS) g
-          (supportedMultiplierMap (K := Icc (0 : ℝ) T) (E := E) (F := U) period S hS
-            (sourceForcing Q c hc hQ) f)) a₀))
   exact (congrArg ((evolution period T hT Q Q₁ c hc hQ S hS).solution · a₀)
     (supportedMultiplier_weight period S hS g (sourceForcing Q c hc hQ) f)).trans
       (weight_normalize (E := Supported period U S hS) g hg _).symm

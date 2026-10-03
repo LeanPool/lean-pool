@@ -767,15 +767,17 @@ theorem polynomial_logs_uniformly_absorbed
       (b / 2) * (x n / ((J + n : ℕ) : ℝ) ^ A) := by
   let S := |C| + |p| + 2 * |q|
   let L := 2 * S / b
-  have hS : 0 ≤ S := by dsimp [S]; positivity
-  have hL : 0 ≤ L := by dsimp [L]; positivity
+  have hS : 0 ≤ S :=
+    add_nonneg (add_nonneg (abs_nonneg C) (abs_nonneg p)) (mul_nonneg zero_le_two (abs_nonneg q))
+  have hL : 0 ≤ L := div_nonneg (mul_nonneg zero_le_two hS) hb.le
   have hJp : (0 : ℝ) < J := by exact_mod_cast (show 0 < J by omega)
   have hx1 := quadratic_growth_one_le J hJ x hx0 hx
   have hgeom := polynomial_scale_geometric_lower J (2 * A + 2) hJ
-    (by simpa only [show 2 * A + 2 + 1 = 2 * A + 3 by omega] using hJA) x (by linarith) hx
+    (by simpa only [show 2 * A + 2 + 1 = 2 * A + 3 by omega] using hJA) x
+    (zero_lt_one.trans_le hx0) hx
   intro n
   have hj1 : (1 : ℝ) ≤ (J + n : ℕ) := by exact_mod_cast (show 1 ≤ J + n by omega)
-  have hj : (0 : ℝ) < (J + n : ℕ) := by linarith
+  have hj : (0 : ℝ) < (J + n : ℕ) := zero_lt_one.trans_le hj1
   have hstart : L ^ 2 ≤ x 0 / (J : ℝ) ^ (2 * A + 2) := by
     apply (le_div_iff₀ (pow_pos hJp _)).2
     exact hlarge
@@ -790,9 +792,10 @@ theorem polynomial_logs_uniformly_absorbed
       rw [← pow_mul]
       congr 1
       omega
-    have hs := sq_sqrt (le_trans zero_le_one (hx1 n))
-    have hn : 0 ≤ L * ((J + n : ℕ) : ℝ) ^ (A + 1) := by positivity
-    nlinarith only [hsquare, hp, hs, hn, sqrt_nonneg (x n)]
+    have hn : 0 ≤ L * ((J + n : ℕ) : ℝ) ^ (A + 1) := mul_nonneg hL (pow_nonneg hj.le _)
+    refine (Real.le_sqrt hn (le_trans zero_le_one (hx1 n))).2 ?_
+    rw [mul_pow, hp]
+    exact hsquare
   have hlog := polynomial_log_bound (C := C) (p := p) (q := q) hj1 (hx1 n)
   have hlogmul := mul_le_mul_of_nonneg_right hlog (pow_nonneg hj.le A)
   have hrootmul := mul_le_mul_of_nonneg_right hroot

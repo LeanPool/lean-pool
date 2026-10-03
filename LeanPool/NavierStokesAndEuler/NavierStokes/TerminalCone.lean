@@ -153,29 +153,33 @@ theorem extension_deriv_eq (d : OutgoingTail.TailData) {z : ℝ} (hz : 0 ≤ z) 
 theorem heatSlope_bounds (d : OutgoingTail.TailData) (hh : d.h ≤ 1 / 4)
     {z : ℝ} (hz : 0 ≤ z) (hz1 : z ≤ 1 / 16) :
     0 ≤ heatSlope d z ∧ heatSlope d z ≤ d.h / 4 := by
-  have hH := HeatProfileExtension.extension_pos (a := 1 + d.h) (by linarith [d.h_pos]) hz
-  have hder := RadialHeatProfile.profile_first_derivative_bound (a := 1 + d.h) (by
-      linarith [d.h_pos]) hz
-  have hneg := RadialHeatProfile.profile_derivWithin_neg (a := 1 + d.h) (by linarith [d.h_pos]) hz
+  have ha : 1 < 1 + d.h := lt_add_of_pos_right 1 d.h_pos
+  have hH := HeatProfileExtension.extension_pos (a := 1 + d.h) ha hz
+  have hder := RadialHeatProfile.profile_first_derivative_bound (a := 1 + d.h) ha hz
+  have hneg := RadialHeatProfile.profile_derivWithin_neg (a := 1 + d.h) ha hz
   rw [← extension_deriv_eq d hz] at hder hneg
   have hdev := RadialHeatProfile.profile_h_sub_one_bound d.h_pos hz
   rw [← HeatProfileExtension.extension_eq_profile (1 + d.h) hz] at hdev
-  have hdh : (1 + d.h) * d.h ≤ 2 * d.h := by nlinarith [d.h_pos]
+  have hdh : (1 + d.h) * d.h ≤ 2 * d.h :=
+    mul_le_mul_of_nonneg_right (by linarith only [hh]) d.h_pos.le
   have hn : -deriv (HeatProfileExtension.extension (1 + d.h)) z ≤ 2 * d.h := by
     have he := (abs_le.mp hder).1
-    linarith
-  have hprod : 2 * d.h * z ≤ d.h / 8 := by nlinarith [d.h_pos]
+    linarith only [he, hdh]
+  have hprod : 2 * d.h * z ≤ d.h / 8 := by
+    have h2 := mul_le_mul_of_nonneg_left hz1 (mul_nonneg zero_le_two d.h_pos.le)
+    linarith only [h2]
   have hhprod : d.h * (1 + d.h) * z ≤ d.h / 8 :=
-    (mul_le_mul_of_nonneg_right (by linarith : d.h * (1 + d.h) ≤ 2 * d.h) hz).trans hprod
+    (mul_le_mul_of_nonneg_right ((mul_comm _ _).trans_le hdh) hz).trans hprod
   have hHhalf : 1 / 2 ≤ HeatProfileExtension.extension (1 + d.h) z := by
     have hl := (abs_le.mp hdev).1
-    linarith
+    linarith only [hl, hhprod, hh]
   unfold heatSlope
   constructor
   · exact div_nonneg (mul_nonneg_of_nonpos_of_nonpos (neg_nonpos.mpr hz) hneg.le) hH.le
   · apply (div_le_iff₀ hH).mpr
     have hnprod := mul_le_mul_of_nonneg_left hn hz
-    linarith [mul_le_mul_of_nonneg_left hHhalf (div_nonneg d.h_pos.le (by norm_num : (0 : ℝ) ≤ 4))]
+    have hmul := mul_le_mul_of_nonneg_left hHhalf (div_nonneg d.h_pos.le zero_le_four)
+    linarith only [hnprod, hprod, hmul]
 
 theorem profileZ_small (_d : OutgoingTail.TailData) {K δ eta : ℝ}
     (hK : 32 ≤ K) (hδ : δ ≤ 5 / 2) (heta : eta ^ 2 ≤ 1) :

@@ -215,11 +215,11 @@ theorem frozenOperator_bound (hB : ContDiff ℝ ∞ B)
   have hKb : ‖K‖ ≤ C*T := (U x).weightedForcing_norm g hg hg₀ C hC hU
   have hKD (j : ℕ) (z : P) : ‖iteratedFDeriv ℝ j (fun w => K.comp (D w)) z‖ ≤
       (2*C*T*CB)*majorant Rc 0 j := by
-    have h := clm_comp_const_left_bound K D hD Rc (CB+CB) hRc (by positivity) 0 hDb j z
+    have h := clm_comp_const_left_bound K D hD Rc (CB+CB) hRc (add_nonneg hCB hCB) 0 hDb j z
     apply h.trans
     apply mul_le_mul_of_nonneg_right _ (majorant_nonneg Rc hRc 0 j)
     calc
-      ‖K‖*(CB+CB) ≤ (C*T)*(CB+CB) := mul_le_mul_of_nonneg_right hKb (by positivity)
+      ‖K‖*(CB+CB) ≤ (C*T)*(CB+CB) := mul_le_mul_of_nonneg_right hKb (add_nonneg hCB hCB)
       _ = 2*C*T*CB := by ring
   have h := sub_bound (fun _ : P => ContinuousLinearMap.id ℝ C(Icc (0 : ℝ) T,E))
     (fun z => K.comp (D z)) contDiff_const (contDiff_const.clm_comp hD)

@@ -65,7 +65,7 @@ theorem physical_frame_renewal_order40 (M : Space →L[ℝ] Space) (m v r w : �
   let R := scaledRay m v r s₀ t₀ a ε (y⁻¹/σ)
   let V := scaledVelocity m v w t₀ a ε (y⁻¹/σ)
   have hp := scaled_power_le hΘ hK he (by decide : 5 ≤ 40)
-  have hρ : 800*e*Θ^5 ≤ 1/2 := by nlinarith only [hsmall, hp]
+  have hρ : 800*e*Θ^5 ≤ 1/2 := by linarith only [hsmall, hp]
   have hNne : R 2 ≠ 0 := by
     have hh := (abs_le.mp hN).1
     change -(800*e*Θ^5) ≤ R 2-1 at hh

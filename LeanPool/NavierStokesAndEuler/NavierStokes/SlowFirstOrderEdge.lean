@@ -90,14 +90,14 @@ theorem taperSecond_factorization (d : TailData) (x : ℝ) :
     have hdW' : deriv W x = (8 * FlatCutoff.edge 4 x -
         3 * x ^ 2 * FlatCutoff.edge 4 x) / x ^ 6 := by
       rw [hdW]
-      dsimp only [id]
-      norm_num
-      field_simp [hx]
+      dsimp only [Pi.pow_apply, id]
+      rw [div_mul_cancel₀ _ (pow_ne_zero 3 hx)]
+      ring
     rw [hdW'] at hh
     calc
       _ = -((8 * FlatCutoff.edge 4 x - 3 * x ^ 2 * FlatCutoff.edge 4 x) / x ^ 6 *
           taperSlopeFactor d x + (FlatCutoff.edge 4 x / x ^ 3) *
-            deriv (taperSlopeFactor d) x) := by dsimp only [W] at hh; linarith
+            deriv (taperSlopeFactor d) x) := neg_eq_iff_eq_neg.mp hh
       _ = _ := by unfold taperSecondFactor; field_simp [hx] ; ring
 
 /-- The normalized negative axial-viscosity source, before radial integration. -/

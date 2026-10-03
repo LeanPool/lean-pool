@@ -153,9 +153,7 @@ theorem derivativeMap_translation (D : CylinderL2 P (LiftTangent →L[ℝ] V)) (
     translate_ae P a (derivativeMap (liftMeasure P) D v),
     (measurePreserving_translation P (coveringMap P a)).quasiMeasurePreserving.ae
       (derivativeMap_ae (liftMeasure P) D v)] with x hm ht hv hd
-  change derivativeMap (liftMeasure P) (translate (V := LiftTangent →L[ℝ] V) P a D) v x =
-    translate (V := V) P a (derivativeMap (liftMeasure P) D v) x
-  rw [hm,ht,hv,hd]
+  exact hm.trans ((congrArg (fun f : LiftTangent →L[ℝ] V => f v) ht).trans (hd.symm.trans hv.symm))
 
 theorem translation_hasFDerivAt (A : CompactField P V) (a : LiftTangent) :
     HasFDerivAt (fun b : LiftTangent => translate (V := V) P b A.toLp)
@@ -182,9 +180,8 @@ private theorem translation_contDiff_aux (n : ℕ) :
     rw [Nat.cast_add,Nat.cast_one,contDiff_succ_iff_fderiv]
     refine ⟨fun a => (A.translation_hasFDerivAt a).differentiableAt,by simp,?_⟩
     rw [A.translation_fderiv]
-    exact (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := (n : ℕ∞ω))
-      (E := CylinderL2 P (LiftTangent →L[ℝ] V)) (F := LiftTangent →L[ℝ] CylinderL2 P V)
-      (derivativeBundling (liftMeasure P))).comp (ih (LiftTangent →L[ℝ] V) A.derivative)
+    exact (derivativeBundling (P := LiftTangent) (V := V) (liftMeasure P)).contDiff.comp
+      (ih (LiftTangent →L[ℝ] V) A.derivative)
 
 /-- All four covering directions are differentiated in the actual L² norm. -/
 theorem translation_contDiff (A : CompactField P V) :

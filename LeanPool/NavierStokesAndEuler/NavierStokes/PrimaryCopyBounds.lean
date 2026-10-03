@@ -147,22 +147,22 @@ theorem bilinear {f : ι → D → E} {g : ι → D → F}
   refine ⟨(‖L‖ + 1) * 2 ^ m * A * B, ?_, p + q, ?_⟩
   · exact one_le_mul_of_one_le_of_one_le
       (one_le_mul_of_one_le_of_one_le
-        (one_le_mul_of_one_le_of_one_le (by
-            linarith [norm_nonneg L]) (one_le_pow₀ (by norm_num))) hA) hB
+        (one_le_mul_of_one_le_of_one_le (le_add_of_nonneg_left (norm_nonneg L))
+          (one_le_pow₀ (by norm_num))) hA) hB
   intro i x hx j hj
   have hG : 0 ≤ V.growth i x := zero_le_one.trans (V.one_le_growth i hx)
   have hw := hf.nonneg i x hx
   have hv := hg.nonneg i x hx
+  have hX : 0 ≤ A * V.growth i x ^ p * w i x :=
+    mul_nonneg (mul_nonneg (zero_le_one.trans hA) (pow_nonneg hG p)) hw
+  have hY : 0 ≤ B * V.growth i x ^ q * v i x :=
+    mul_nonneg (mul_nonneg (zero_le_one.trans hB) (pow_nonneg hG q)) hv
   have h := LabelSumBounds.bilinear_jet_bound L (V.isOpen i) (hf.smooth i) (hg.smooth i) hx hj
-    (by positivity : 0 ≤ A * V.growth i x ^ p * w i x)
-    (by positivity : 0 ≤ B * V.growth i x ^ q * v i x)
-    (ha i x hx) (hb i x hx)
-  calc
-    _ ≤ ‖L‖ * 2 ^ m * (A * V.growth i x ^ p * w i x) *
-        (B * V.growth i x ^ q * v i x) := h
-    _ ≤ (‖L‖ + 1) * 2 ^ m * (A * V.growth i x ^ p * w i x) *
-        (B * V.growth i x ^ q * v i x) := by gcongr; linarith
-    _ = _ := by rw [pow_add]; ring
+    hX hY (ha i x hx) (hb i x hx)
+  refine h.trans ((mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right
+    (mul_le_mul_of_nonneg_right (le_add_of_nonneg_right zero_le_one) (pow_nonneg zero_le_two m))
+    hX) hY).trans_eq ?_)
+  rw [pow_add]; ring
 
 theorem mul {f g : ι → D → ℝ} (hf : NativeJets V w f) (hg : NativeJets V v g) :
     NativeJets V (fun i x => w i x * v i x) (fun i x => f i x * g i x) :=
@@ -704,7 +704,7 @@ theorem outerCutoff_support : tsupport outerCutoff ⊆ Icc (1 / 12 : ℝ) (11 / 
   intro t ht
   have h : |t - 1 / 2| ≤ 5 / 12 := by simpa only [Metric.mem_closedBall, Real.dist_eq] using ht
   rw [abs_le] at h
-  constructor <;> linarith [h.1, h.2]
+  constructor <;> linarith only [h.1, h.2]
 
 theorem outerCutoff_one {t : ℝ} (ht : |t - 1 / 2| ≤ 1 / 3) : outerCutoff t = 1 := by
   apply outerBump.one_of_mem_closedBall
@@ -776,7 +776,7 @@ theorem outerCutoff_affine_support (L : D →L[ℝ] ℝ) (c : ℝ) :
     exact outerCutoff_support (subset_tsupport outerCutoff hx)
   intro x hx
   have h := hs hx
-  constructor <;> linarith [h.1, h.2]
+  constructor <;> linarith only [h.1, h.2]
 
 /-- The actual outer cutoff permits a larger native domain while retaining
 the uncut fundamental's Gaussian envelope and flat weight. -/

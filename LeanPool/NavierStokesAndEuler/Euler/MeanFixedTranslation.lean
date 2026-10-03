@@ -165,14 +165,11 @@ theorem fixedMeanPrimitive_adjoint_translate (f : TimeLp T L2) :
         (adjoint (𝕜 := ℝ) (F := TimeLp T L2) (fixedMeanPrimitive T hT F F₁) f) := by
   apply eq_of_translated_pairing T a
   intro v
-  exact (adjoint_inner_left (translatedMeanPrimitive T hT a F F₁)
-      (timeSolenoidalTranslation T a v) (timeTranslation T a f)).trans
+  exact (adjoint_inner_left _ (timeSolenoidalTranslation T a v) (timeTranslation T a f)).trans
     ((congrArg (fun z : TimeLp T L2 => ⟪timeTranslation T a f,z⟫_ℝ)
         (fixedMeanPrimitive_translate T hT a F F₁ v)).trans
       (((timeTranslation T a).inner_map_map f (fixedMeanPrimitive T hT F F₁ v)).trans
-        ((adjoint_inner_left (fixedMeanPrimitive T hT F F₁) v f).symm.trans
-          ((timeSolenoidalTranslation T a).inner_map_map
-            (adjoint (𝕜 := ℝ) (E := TimeLp T solenoidalSpace) (F := TimeLp T L2)
-              (fixedMeanPrimitive T hT F F₁) f) v).symm)))
+        ((adjoint_inner_left _ v f).symm.trans
+          ((timeSolenoidalTranslation T a).inner_map_map _ v).symm)))
 
 end EulerMeanFixedTranslation

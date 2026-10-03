@@ -151,13 +151,17 @@ noncomputable def cylinderLinear (h Q : ℝ) : Full →L[ℝ] SpaceTime where
     · change -Q * (x.1.2.1.1 + y.1.2.1.1) = -Q * x.1.2.1.1 + -Q * y.1.2.1.1
       ring
     · ext i
-      fin_cases i <;> simp [AxisymmetricResidual.pack] <;> ring
+      fin_cases i <;> simp only [Fin.reduceFinMk, Prod.snd_add, Prod.fst_add, PiLp.add_apply,
+        AxisymmetricResidual.pack_zero, AxisymmetricResidual.pack_one,
+        AxisymmetricResidual.pack_two] <;> ring
   map_smul' c x := by
     apply Prod.ext
     · change -Q * (c * x.1.2.1.1) = c * (-Q * x.1.2.1.1)
       ring
     · ext i
-      fin_cases i <;> simp [AxisymmetricResidual.pack] <;> ring
+      fin_cases i <;> simp only [Fin.reduceFinMk, Prod.smul_fst, Prod.smul_snd, PiLp.smul_apply,
+        smul_eq_mul, RingHom.id_apply, AxisymmetricResidual.pack_zero,
+        AxisymmetricResidual.pack_one, AxisymmetricResidual.pack_two] <;> ring
   cont := by
     apply Continuous.prodMk
     · exact continuous_const.mul continuous_fst.snd.fst.fst

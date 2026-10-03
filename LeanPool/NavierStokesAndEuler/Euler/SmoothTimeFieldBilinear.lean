@@ -134,11 +134,11 @@ theorem exists_bilinear_jet (B : V →L[ℝ] W →L[ℝ] Z)
     intro t x
     rfl
   | succ n ih =>
-    obtain ⟨J₁,hJ₁⟩ := ih (V := V) (W := E →L[ℝ] W) (Z := E →L[ℝ] Z)
+    have h₁ := ih (V := V) (W := E →L[ℝ] W) (Z := E →L[ℝ] Z)
       (B.precompR E) A C.derivative
-    obtain ⟨J₂,hJ₂⟩ := ih (V := E →L[ℝ] V) (W := W) (Z := E →L[ℝ] Z)
+    have h₂ := ih (V := E →L[ℝ] V) (W := W) (Z := E →L[ℝ] Z)
       (B.precompL E) A.derivative C
-    refine ⟨uncurryRightPath n (HAdd.hAdd J₁ J₂), fun t x => ?_⟩
+    refine ⟨uncurryRightPath n (HAdd.hAdd h₁.choose h₂.choose), fun t x => ?_⟩
     have hd : fderiv ℝ (fun y => B (A.field t y) (C.field t y)) =
         fun y => B.precompR E (A.field t y) (C.derivative.field t y) +
           B.precompL E (A.derivative.field t y) (C.field t y) := by
@@ -147,7 +147,7 @@ theorem exists_bilinear_jet (B : V →L[ℝ] W →L[ℝ] Z)
         ((C.smooth t).differentiable (by simp) y)]
       simp only [derivative, derivativeField_eq]
     simp only [uncurryRightPath_apply, ContinuousMap.add_apply, BoundedContinuousFunction.add_apply,
-      hJ₁, hJ₂, iteratedFDeriv_succ_eq_comp_right, Function.comp_apply, hd]
+      h₁.choose_spec, h₂.choose_spec, iteratedFDeriv_succ_eq_comp_right, Function.comp_apply, hd]
     refine congrArg _ ?_
     refine (fun_iteratedFDeriv_add_apply ?_ ?_).symm
     · exact (((B.precompR E).contDiff.comp (A.smooth t)).clm_apply

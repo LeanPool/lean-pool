@@ -38,7 +38,7 @@ theorem jetLp_zero_from_value (f : SmoothL2Field V) :
       (continuousMultilinearCurryFin0 ℝ Space
           V).symm.toContinuousLinearEquiv.toContinuousLinearMap.compLpL
         2 volume f.toLp := by
-  let L : V →L[ℝ] (Space [×0]→L[ℝ] V) :=
+  let L :=
     (continuousMultilinearCurryFin0 ℝ Space V).symm.toContinuousLinearEquiv.toContinuousLinearMap
   apply Lp.ext
   filter_upwards [f.jetLp_ae 0, L.coeFn_compLpL f.toLp, f.toLp_ae] with x h₁ h₂ h₃
@@ -50,9 +50,8 @@ theorem jetLp_succ_from_derivative (f : SmoothL2Field V) (n : ℕ) :
       (continuousMultilinearCurryRightEquiv' ℝ n Space
           V).symm.toContinuousLinearEquiv.toContinuousLinearMap.compLpL
         2 volume (f.derivative.jetLp n) := by
-  let L : (Space [×n]→L[ℝ] (Space →L[ℝ] V)) →L[ℝ] (Space [×(n+1)]→L[ℝ] V) :=
-    (continuousMultilinearCurryRightEquiv' ℝ n Space
-        V).symm.toContinuousLinearEquiv.toContinuousLinearMap
+  let L := (continuousMultilinearCurryRightEquiv' ℝ n Space
+    V).symm.toContinuousLinearEquiv.toContinuousLinearMap
   apply Lp.ext
   filter_upwards [f.jetLp_ae (n+1), L.coeFn_compLpL (f.derivative.jetLp n),
     f.derivative.jetLp_ae n] with x h₁ h₂ h₃

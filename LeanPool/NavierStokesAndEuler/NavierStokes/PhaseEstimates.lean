@@ -773,7 +773,11 @@ theorem hasDerivAt_normal {β ρ : ℝ → ℝ} {B : ℝ → Frame}
       (normalMotion (β v) β' (ρ v) ρ' rot (B v)) v := by
   convert! hasDerivAt_pack (hβ.mul hρ) (hβ.smul hK) using 1
   ext i
-  fin_cases i <;> simp [normalMotion, pack] <;> ring
+  fin_cases i <;>
+    simp only [normalMotion, pack, Fin.isValue, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul,
+      Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Matrix.cons_val_zero, Matrix.cons_val_one,
+      Matrix.cons_val] <;>
+    ring
 
 /-- Differentiation of the actual tangent parametrization. -/
 theorem hasDerivAt_tangent {ρ x y : ℝ → ℝ} {B : ℝ → Frame}
@@ -785,7 +789,12 @@ theorem hasDerivAt_tangent {ρ x y : ℝ → ℝ} {B : ℝ → Frame}
       (tangentMotion (ρ v) ρ' rot (B v) (x v) (y v) x' y') v := by
   convert! hasDerivAt_pack hx (((hρ.neg.mul hx).smul hK).add (hy.smul hN)) using 1
   ext i
-  fin_cases i <;> simp [tangentMotion, pack] <;> ring
+  fin_cases i <;>
+    simp only [tangentMotion, pack, neg_add_rev, Fin.isValue, PiLp.add_apply, PiLp.smul_apply,
+      smul_eq_mul, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Matrix.cons_val_zero,
+      Matrix.cons_val_one, Matrix.cons_val, Pi.mul_apply, Pi.neg_apply, neg_mul, neg_smul,
+      smul_neg, PiLp.neg_apply] <;>
+    ring
 
 /-- The ambient ODE is equivalent to the two explicit coordinate ODEs, using
 actual derivatives of the curve and the moving frame. -/
@@ -1209,24 +1218,26 @@ theorem modal_equations_iff {h : ℝ} (hh : h ≠ 0)
     constructor
     · calc
         p' = ((p' + q') + ((rate * h * (p - q) + h * (p' - q')) / h -
-            rate * (p - q))) / 2 := by field_simp; ring
+            rate * (p - q))) / 2 := by
+          linear_combination -((p' - q') + rate * (p - q)) / 2 * mul_inv_cancel₀ hh
         _ = _ := by
           rw [hx, hy]
           unfold modal11 modal12
-          field_simp; ring
+          linear_combination (lam * p - damping * (p - q) / 2) * mul_inv_cancel₀ hh
     · calc
         q' = ((p' + q') - ((rate * h * (p - q) + h * (p' - q')) / h -
-            rate * (p - q))) / 2 := by field_simp; ring
+            rate * (p - q))) / 2 := by
+          linear_combination ((p' - q') + rate * (p - q)) / 2 * mul_inv_cancel₀ hh
         _ = _ := by
           rw [hx, hy]
           unfold modal21 modal22
-          field_simp; ring
+          linear_combination (-lam * q + damping * (p - q) / 2) * mul_inv_cancel₀ hh
   · rintro ⟨rfl, rfl⟩
     constructor
     · unfold modal11 modal12 modal21 modal22
-      field_simp; ring
+      linear_combination (-lam * (p - q)) * mul_inv_cancel₀ hh
     · unfold modal11 modal12 modal21 modal22
-      field_simp; ring
+      linear_combination (c * (p + q) + fy) * mul_inv_cancel₀ hh
 
 /-- Pair continuous linear map, constructed using `LinearMap.toContinuousLinearMap`. -/
 noncomputable def pairCLM : (ℝ × ℝ) →L[ℝ] Plane :=
@@ -1322,8 +1333,8 @@ theorem modalOperator_eq_coefficient (lam damping e11 e12 e21 e22 : ℝ) :
 
 theorem plane_norm_le_coordinate_sum (z : Plane) : ‖z‖ ≤ |z 0| + |z 1| := by
   have h := ViscousPropagator.plane_norm_sq z
-  nlinarith only [h, norm_nonneg z, sq_abs (z 0), sq_abs (z 1), abs_nonneg (z 0),
-    abs_nonneg (z 1), mul_nonneg (abs_nonneg (z 0)) (abs_nonneg (z 1))]
+  refine le_of_pow_le_pow_left₀ two_ne_zero (add_nonneg (abs_nonneg _) (abs_nonneg _)) ?_
+  linarith only [h, sq_abs (z 0), sq_abs (z 1), mul_nonneg (abs_nonneg (z 0)) (abs_nonneg (z 1))]
 
 /-- Entrywise control gives a genuine Euclidean operator norm estimate.
 The harmless factor four avoids any choice of an equivalent matrix norm. -/
@@ -1602,8 +1613,10 @@ noncomputable def referenceNormal (B sigma u L v : ℝ) (K : Plane) : Space :=
 
 theorem vec3_norm_le_sum (w : Space) : ‖w‖ ≤ |w 0| + |w 1| + |w 2| := by
   have hs := PhaseCalculus.vec3_norm_sq w
-  nlinarith only [hs, norm_nonneg w, sq_abs (w 0), sq_abs (w 1), sq_abs (w 2),
-    abs_nonneg (w 0), abs_nonneg (w 1), abs_nonneg (w 2),
+  have hsum : 0 ≤ |w 0| + |w 1| + |w 2| :=
+    add_nonneg (add_nonneg (abs_nonneg _) (abs_nonneg _)) (abs_nonneg _)
+  refine le_of_pow_le_pow_left₀ two_ne_zero hsum ?_
+  linarith only [hs, sq_abs (w 0), sq_abs (w 1), sq_abs (w 2),
     mul_nonneg (abs_nonneg (w 0)) (abs_nonneg (w 1)),
     mul_nonneg (abs_nonneg (w 0)) (abs_nonneg (w 2)),
     mul_nonneg (abs_nonneg (w 1)) (abs_nonneg (w 2))]

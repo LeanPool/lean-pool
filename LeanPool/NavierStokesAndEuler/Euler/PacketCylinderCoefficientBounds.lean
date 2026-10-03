@@ -98,11 +98,7 @@ theorem adjoint_bound (Rc C : ℝ)
     ‖iteratedFDeriv ℝ n (translateCoefficientPath K.adjoint.path) a‖ ≤ C*majorant Rc 0 n := by
   let A : (Space →L[ℝ] Space) →L[ℝ] (Space →L[ℝ] Space) :=
     EulerTransverseGramInverse.realAdjoint
-  have hA : ‖A‖ ≤ 1 := by
-    apply opNorm_le_bound _ zero_le_one
-    intro v
-    change ‖ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) v‖ ≤ 1*‖v‖
-    rw [LinearIsometryEquiv.norm_map,one_mul]
+  have hA : ‖A‖ ≤ 1 := LinearMap.mkContinuous_norm_le _ zero_le_one _
   have he : translateCoefficientPath K.adjoint.path =
       (mapCoefficientPath (K := Icc (0 : ℝ) T) A) ∘ translateCoefficientPath K.path := by
     funext b

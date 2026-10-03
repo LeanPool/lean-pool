@@ -73,11 +73,9 @@ theorem scalarGradientPath_block_bound (q n : ℕ) (a : LiftTangent) :
       (block_nonneg standardDirection q
         (fun b : LiftTangent =>
           pathTranslate (K := K) (V := Vector3) P b (derivativePath P u i.succ)) n a))
-    simp only [one_mul] at h₂
-    have h₃ := h₂.trans (derivativePath_block_bound P u hu i.succ q n a)
+    have h₃ := (h₂.trans_eq (one_mul _)).trans (derivativePath_block_bound P u hu i.succ q n a)
     have h₄ := pathMap_block_bound P standardDirection q scalarEmbed p hp (n+1) a
-    rw [scalarEmbed_norm,one_mul] at h₄
-    exact h₃.trans h₄
+    exact h₃.trans (h₄.trans_eq ((congrArg (· * _) scalarEmbed_norm).trans (one_mul _)))
   have hfun :
       (fun b : LiftTangent => pathTranslate (K := K) (V := Vector3) P b (scalarGradientPath p)) =
         ∑ i : Fin 3, (fun b : LiftTangent =>

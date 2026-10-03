@@ -280,13 +280,13 @@ theorem acceleration_norm
   have h := EulerTransverseStrongEstimates.acceleration_norm T (solenoidalFrame T F)
     (solenoidalFrame T F₁) (meanFrameCoercivity T FInv) (meanFrameCoercivity_pos T FInv)
     (solenoidalFrame_lower T FInv F hInv) hT s.velocityLp s.acceleration f heq
-  have h' : ‖s.acceleration‖ ≤ (‖FInv‖+1)^2*‖solenoidalFrame T F‖*
-      (‖f‖+2*‖solenoidalFrame T F₁‖*‖s.velocityLp‖) := by
-    simpa only [meanFrameCoercivity, inv_inv] using h
-  apply h'.trans
-  gcongr
-  · exact solenoidalFrame_norm_le T F
-  · exact solenoidalFrame_norm_le T F₁
+  simp only [meanFrameCoercivity, inv_inv] at h
+  exact h.trans (mul_le_mul (mul_le_mul_of_nonneg_left (solenoidalFrame_norm_le T F) (sq_nonneg _))
+    (add_le_add le_rfl (mul_le_mul_of_nonneg_right
+      (mul_le_mul_of_nonneg_left (solenoidalFrame_norm_le T F₁) zero_le_two) (norm_nonneg _)))
+    (add_nonneg (norm_nonneg _) (mul_nonneg (mul_nonneg zero_le_two (norm_nonneg _))
+      (norm_nonneg _)))
+    (mul_nonneg (sq_nonneg _) (norm_nonneg _)))
 
 /-- The product-rule derivative B_t has the corresponding actual L² bound. -/
 theorem velocityDerivative_norm :

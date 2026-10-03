@@ -981,11 +981,9 @@ theorem physicalLog_amplitudeOperator {h b XR : ℝ} (hh : 0 < h) (hh' : h < 1 /
             G (logPoint XR (SimilarityProfile.inner h p))/2)/SimilarityProfile.X h p) := by
   have hq := SimilarityProfile.q_pos hh hh' ht
   have hx : 0 < (SimilarityProfile.inner h p).1 := div_pos hs hq
-  have heta : (SimilarityProfile.inner h p).2 ∈ Ioo (-1) 1 := by
-    change SimilarityProfile.eta h p ∈ Ioo (-1) 1
-    have he := SimilarityProfile.eta_sq_lt_one hh hh' ht
-    constructor <;> nlinarith [sq_nonneg (SimilarityProfile.eta h p+1),sq_nonneg
-        (SimilarityProfile.eta h p-1)]
+  have heta : (SimilarityProfile.inner h p).2 ∈ Ioo (-1) 1 :=
+    Set.mem_Ioo.mpr (abs_lt.mp ((sq_lt_one_iff_abs_lt_one _).mp
+      (SimilarityProfile.eta_sq_lt_one hh hh' ht)))
   have hd := radialLift_contDiffAt hXR hG hx heta
   have hL := SimilarityProfile.L_pos hh hh' ht
   unfold amplitudeOperator physicalLog
@@ -1012,10 +1010,9 @@ theorem physicalLog_angularResidual (F : Profile) {XR C : ℝ} (w : Compensation
     (HeatSwitchHistoryDerivatives.logE_contDiffOn F w) ht hs]
   have hx : 0 < SimilarityProfile.X F.data.h p :=
     div_pos hs (SimilarityProfile.q_pos F.data.h_pos F.data.h_lt_half ht)
-  have heta : SimilarityProfile.eta F.data.h p ∈ Ioo (-1) 1 := by
-    have he := SimilarityProfile.eta_sq_lt_one F.data.h_pos F.data.h_lt_half ht
-    constructor <;> nlinarith [sq_nonneg (SimilarityProfile.eta F.data.h p+1),sq_nonneg
-        (SimilarityProfile.eta F.data.h p-1)]
+  have heta : SimilarityProfile.eta F.data.h p ∈ Ioo (-1) 1 :=
+    Set.mem_Ioo.mpr (abs_lt.mp ((sq_lt_one_iff_abs_lt_one _).mp
+      (SimilarityProfile.eta_sq_lt_one F.data.h_pos F.data.h_lt_half ht)))
   have hp : logPoint XR (SimilarityProfile.inner F.data.h p) ∈
       HeatSwitchHistoryDerivatives.interiorDomain.carrier :=
     ⟨mem_univ _,heta⟩
@@ -1036,11 +1033,9 @@ theorem physicalLog_axialResidual (F : Profile) {XR C : ℝ} (w : CompensationWi
         axialResidual F XR w.coefficients (logPoint XR (SimilarityProfile.inner F.data.h p)) := by
   have hq := SimilarityProfile.q_pos F.data.h_pos F.data.h_lt_half ht
   have hx : 0 < (SimilarityProfile.inner F.data.h p).1 := div_pos hs hq
-  have heta : (SimilarityProfile.inner F.data.h p).2 ∈ Ioo (-1) 1 := by
-    change SimilarityProfile.eta F.data.h p ∈ Ioo (-1) 1
-    have he := SimilarityProfile.eta_sq_lt_one F.data.h_pos F.data.h_lt_half ht
-    constructor <;> nlinarith [sq_nonneg (SimilarityProfile.eta F.data.h p+1),sq_nonneg
-        (SimilarityProfile.eta F.data.h p-1)]
+  have heta : (SimilarityProfile.inner F.data.h p).2 ∈ Ioo (-1) 1 :=
+    Set.mem_Ioo.mpr (abs_lt.mp ((sq_lt_one_iff_abs_lt_one _).mp
+      (SimilarityProfile.eta_sq_lt_one F.data.h_pos F.data.h_lt_half ht)))
   have hm : logPoint XR (SimilarityProfile.inner F.data.h p) ∈
       HeatSwitchHistoryDerivatives.interiorDomain.carrier :=
     ⟨mem_univ _,heta⟩
@@ -1154,9 +1149,9 @@ theorem terminal_germs (F : Profile) {XR C : ℝ} (w : CompensationWitness F XR 
   · filter_upwards [hev] with q hq
     have hx := div_pos hq.2.1 (SimilarityProfile.q_pos F.data.h_pos F.data.h_lt_half hq.1)
     have heta : SimilarityProfile.eta F.data.h q ∈ HeatedOutgoing.parameterDomain := by
-      have he := SimilarityProfile.eta_sq_lt_one F.data.h_pos F.data.h_lt_half hq.1
-      constructor <;> nlinarith [sq_nonneg (SimilarityProfile.eta F.data.h q+1),sq_nonneg
-          (SimilarityProfile.eta F.data.h q-1)]
+      obtain ⟨h₁, h₂⟩ := abs_lt.mp ((sq_lt_one_iff_abs_lt_one _).mp
+        (SimilarityProfile.eta_sq_lt_one F.data.h_pos F.data.h_lt_half hq.1))
+      exact Set.mem_Icc.mpr ⟨h₁.le, h₂.le⟩
     unfold physicalLog SimilarityProfile.pullback
     rw [logPi_radialLift F w hx heta]
     exact physicalPressure_eq_terminal F w.radius_pos w.coefficients hq.1 hq.2.1 hq.2.2.le
@@ -1382,10 +1377,9 @@ theorem axialWeight_tendsto_zero (F : Profile) {XR C B : ℝ}
 
 theorem eta_mem_interior {h : ℝ} (hh : 0 < h) (hh' : h < 1 / 2)
     {p : SimilarityProfile.PhysicalPoint} (ht : p.1 < 1) :
-    SimilarityProfile.eta h p ∈ Ioo (-1) 1 := by
-  have he := SimilarityProfile.eta_sq_lt_one hh hh' ht
-  constructor <;> nlinarith [sq_nonneg (SimilarityProfile.eta h p+1),sq_nonneg
-      (SimilarityProfile.eta h p-1)]
+    SimilarityProfile.eta h p ∈ Ioo (-1) 1 :=
+  Set.mem_Ioo.mpr (abs_lt.mp ((sq_lt_one_iff_abs_lt_one _).mp
+    (SimilarityProfile.eta_sq_lt_one hh hh' ht)))
 
 theorem full_switch_late (F : Profile) {XR X : ℝ} (hXR : 0 < XR) (hX : 0 < X)
     (hfull : 1 / 2 ≤ Real.log (X / OutgoingDilation.switchRadius F XR) + 1 / 5) :

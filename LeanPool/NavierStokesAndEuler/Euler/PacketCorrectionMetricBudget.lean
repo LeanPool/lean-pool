@@ -186,6 +186,11 @@ def inverseMetricFirstBound : ℝ :=
 /-- Inverse metric time bound, given by `‖(inverseMetricTimeCoefficient D).path‖`. -/
 def inverseMetricTimeBound : ℝ := ‖(inverseMetricTimeCoefficient D).path‖
 
+theorem adjoint_comp_norm_le (A B : Space →L[ℝ] Space) :
+    ‖(ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) A).comp B‖ ≤ ‖A‖ * ‖B‖ :=
+  (ContinuousLinearMap.opNorm_comp_le _ _).trans_eq
+    (congrArg (· * ‖B‖) (ContinuousLinearMap.adjoint.norm_map A))
+
 theorem inverseMetricBound_le : inverseMetricBound D ≤ ‖D.F.field‖^2 := by
   apply (ContinuousMap.norm_le _ (sq_nonneg ‖D.F.field‖)).2
   intro t
@@ -195,11 +200,7 @@ theorem inverseMetricBound_le : inverseMetricBound D ≤ ‖D.F.field‖^2 := by
   have hF : ‖D.F.field t x‖ ≤ ‖D.F.field‖ :=
     ((D.F.field t).norm_coe_le_norm x).trans (D.F.field.norm_coe_le_norm t)
   calc
-    _ ≤ ‖ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) (D.F.field t x)‖*
-        ‖D.F.field t x‖ :=
-      ContinuousLinearMap.opNorm_comp_le _ _
-    _ = ‖D.F.field t x‖*‖D.F.field t x‖ := by
-      rw [ContinuousLinearMap.adjoint.norm_map]
+    _ ≤ ‖D.F.field t x‖*‖D.F.field t x‖ := adjoint_comp_norm_le _ _
     _ ≤ ‖D.F.field‖*‖D.F.field‖ := mul_le_mul hF hF (norm_nonneg _) (norm_nonneg _)
     _ = _ := (pow_two _).symm
 
@@ -215,17 +216,8 @@ theorem inverseMetricTimeBound_le :
   have hF₁ : ‖D.F₁.field t x‖ ≤ ‖D.F₁.field‖ :=
     ((D.F₁.field t).norm_coe_le_norm x).trans (D.F₁.field.norm_coe_le_norm t)
   calc
-    _ ≤ ‖(ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space)
-          (D.F₁.field t x)).comp (D.F.field t x)‖ +
-        ‖(ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space)
-          (D.F.field t x)).comp (D.F₁.field t x)‖ := norm_add_le _ _
-    _ ≤ ‖ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) (D.F₁.field t x)‖*
-          ‖D.F.field t x‖ +
-        ‖ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := Space) (F := Space) (D.F.field t x)‖*
-          ‖D.F₁.field t x‖ :=
-      add_le_add (ContinuousLinearMap.opNorm_comp_le _ _) (ContinuousLinearMap.opNorm_comp_le _ _)
-    _ = ‖D.F₁.field t x‖*‖D.F.field t x‖ + ‖D.F.field t x‖*‖D.F₁.field t x‖ := by
-      rw [ContinuousLinearMap.adjoint.norm_map,ContinuousLinearMap.adjoint.norm_map]
+    _ ≤ ‖D.F₁.field t x‖*‖D.F.field t x‖ + ‖D.F.field t x‖*‖D.F₁.field t x‖ :=
+      (norm_add_le _ _).trans (add_le_add (adjoint_comp_norm_le _ _) (adjoint_comp_norm_le _ _))
     _ ≤ ‖D.F₁.field‖*‖D.F.field‖ + ‖D.F.field‖*‖D.F₁.field‖ :=
       add_le_add (mul_le_mul hF₁ hF (norm_nonneg _) (norm_nonneg _))
         (mul_le_mul hF hF₁ (norm_nonneg _) (norm_nonneg _))

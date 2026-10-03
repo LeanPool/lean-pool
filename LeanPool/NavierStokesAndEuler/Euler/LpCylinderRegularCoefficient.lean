@@ -93,11 +93,10 @@ theorem mixedCoefficient_bound (n : ℕ) (C : ℝ)
     rw [(ContinuousLinearMap.fst ℝ Space ℝ).iteratedFDeriv_comp_right hB a (by simp)]
     apply (ContinuousMultilinearMap.norm_compContinuousLinearMap_le _ _).trans
     exact (mul_le_of_le_one_right (norm_nonneg _) (Finset.prod_le_one₀ (fun _ _ => norm_nonneg _)
-      (fun _ _ => ContinuousLinearMap.norm_fst_le ℝ Space ℝ))).trans (hb a.1)
-  have hleft := ContinuousLinearMap.norm_iteratedFDeriv_comp_left (𝕜 := ℝ) (E := LiftTangent)
-    (F := C(Icc (0 : ℝ) T,Space →ᵇ V →L[ℝ] V))
-    (G := C(Icc (0 : ℝ) T,Supported period V S hS →L[ℝ] Supported period V S hS))
-    (liftedOperatorPathMap period S hS T)
+      (fun _ _ => ContinuousLinearMap.norm_fst_le ℝ Space ℝ))).trans
+        (hb (ContinuousLinearMap.fst ℝ Space ℝ a))
+  have hleft := ContinuousLinearMap.norm_iteratedFDeriv_comp_left
+    (liftedOperatorPathMap (V := V) period S hS T)
     ((hB.comp (ContinuousLinearMap.fst ℝ Space ℝ).contDiff).contDiffAt (x := a)) (n := n) (by simp)
   exact hleft.trans ((mul_le_of_le_one_left (norm_nonneg _)
     (liftedOperatorPathMap_norm period S hS T)).trans hright)

@@ -136,21 +136,16 @@ theorem normalized_spatial_derivative (k : ℝ) (hk : k ≠ 0)
         fderiv ℝ (fun y => coordinate D k W (t,y)) (x,θ) v := by
   have hfst : HasFDerivAt (fun y : SpatialDomain => y.1) (fst ℝ Space ℝ) (x,θ) :=
     hasFDerivAt_fst
-  have hF := ((D.F.smooth t).differentiable (by simp) x).hasFDerivAt.comp (x,θ) hfst
+  have hF : HasFDerivAt (fun y : SpatialDomain => D.F.field t y.1)
+      ((fderiv ℝ (D.F.field t : Space → Space →L[ℝ] Space) x).comp (fst ℝ Space ℝ)) (x,θ) :=
+    ((D.F.smooth t).differentiable (by simp) x).hasFDerivAt.comp (x,θ) hfst
   have hZ := ((coordinate_smooth D G k t).differentiable (by simp) (x,θ)).hasFDerivAt
   have h := (hF.clm_apply hZ).const_smul k⁻¹
   have he : (fun y : SpatialDomain => W (t,y)) =
-      fun y => k⁻¹ • D.F.field t y.1 (coordinate D k W (t,y)) := by
+      k⁻¹ • fun y => D.F.field t y.1 (coordinate D k W (t,y)) := by
     funext y
-    simpa only [rawFrame,Data.clamp_coe] using reconstruct D k hk W (t,y)
-  have hh : fderiv ℝ (fun y : SpatialDomain =>
-      k⁻¹ • D.F.field t y.1 (coordinate D k W (t,y))) (x,θ) =
-      k⁻¹ • ((D.F.field t x).comp
-        (fderiv ℝ (fun y => coordinate D k W (t,y)) (x,θ)) +
-        ((fderiv ℝ (D.F.field t : Space → Space →L[ℝ] Space) x).comp
-          (fst ℝ Space ℝ)).flip (coordinate D k W (t,(x,θ)))) := by
-    convert! h.fderiv using 1
-  rw [he,hh]
+    simpa only [rawFrame,Data.clamp_coe,Pi.smul_apply] using reconstruct D k hk W (t,y)
+  rw [he,h.fderiv]
   simp only [smul_apply,add_apply,
     ContinuousLinearMap.comp_apply,
     ContinuousLinearMap.flip_apply,rawInverse,Data.clamp_coe,map_smul,map_add,

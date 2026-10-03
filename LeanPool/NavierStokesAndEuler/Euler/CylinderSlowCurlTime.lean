@@ -84,7 +84,8 @@ theorem path_hasDerivWithinAt (t : Icc (0 : ℝ) T) :
       (wordPath_hasDerivWithinAt P T hT p f hp hf hd (fun _ : Fin 1 => i.succ)) t
   have h := HasDerivWithinAt.fun_sum (u := Finset.univ) (fun i _ => hterm i)
   have he : derivative P T G G₁ p f t = ∑ i, (term P G₁ p i t + term P G f i t) := by
-    simp [derivative, path, Finset.sum_add_distrib]
+    simp only [derivative, path, ContinuousMap.add_apply, ContinuousMap.sum_apply,
+      Finset.sum_add_distrib]
   rw [he]
   exact h
 
@@ -124,16 +125,10 @@ theorem derivative_block_bound (q : ℕ) (Rc C R D : ℝ)
     funext a
     exact map_add (pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a) _ _
   rw [he]
-  calc
-    _ ≤ block standardDirection q (fun a : LiftTangent =>
-          pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a (path P G₁ p)) n 0 +
-        block standardDirection q (fun a : LiftTangent =>
-          pathTranslate (K := Icc (0 : ℝ) T) (V := Vector3) P a (path P G f)) n 0 :=
-      block_add_le standardDirection q _ _ (path_orbit P G₁ hG₁ p hp) (path_orbit P G hG f hf) n 0
-    _ ≤ (9*sobolevCoefficientAmplitude (Fin 4) q Rc C*D)*majorant R (d+1) n +
-        (9*sobolevCoefficientAmplitude (Fin 4) q Rc C*D)*majorant R (d+1) n :=
-      add_le_add (path_block_bound P G₁ hG₁ p hp q Rc C R D hRc hC hD hR hbG₁ d hbp n)
-        (path_block_bound P G hG f hf q Rc C R D hRc hC hD hR hbG d hbf n)
-    _ = _ := by ring
+  have hb := add_le_add (path_block_bound P G₁ hG₁ p hp q Rc C R D hRc hC hD hR hbG₁ d hbp n)
+    (path_block_bound P G hG f hf q Rc C R D hRc hC hD hR hbG d hbf n)
+  refine (block_add_le standardDirection q _ _ (path_orbit P G₁ hG₁ p hp)
+    (path_orbit P G hG f hf) n 0).trans (hb.trans_eq ?_)
+  ring
 
 end EulerCylinderSlowCurl

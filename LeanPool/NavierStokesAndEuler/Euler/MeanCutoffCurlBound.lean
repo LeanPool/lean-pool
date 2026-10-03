@@ -120,7 +120,9 @@ theorem cutoff_curl_lpNorm_le (ψ : Space → ℝ) (φ : Space → Space)
       6 * (lpNorm ψ ∞ volume + (sobolevConstant : ℝ) * lpNorm (fderiv ℝ ψ) 3 volume) *
         lpNorm (fderiv ℝ φ) 2 volume := by
   let : ENNReal.HolderTriple 3 6 2 := ⟨by
-    apply (ENNReal.toReal_eq_toReal_iff' (by finiteness) (by finiteness)).mp
+    apply (ENNReal.toReal_eq_toReal_iff' (ENNReal.add_ne_top.mpr
+      ⟨ENNReal.inv_ne_top.mpr (by norm_num), ENNReal.inv_ne_top.mpr (by norm_num)⟩)
+      (ENNReal.inv_ne_top.mpr (by norm_num))).mp
     norm_num [ENNReal.toReal_add, ENNReal.toReal_inv]⟩
   have hψm : MemLp ψ ∞ volume := hψ.continuous.memLp_of_hasCompactSupport hψc
   have hφm : MemLp φ 6 volume := hφ.continuous.memLp_of_hasCompactSupport hφc
@@ -140,7 +142,7 @@ theorem cutoff_curl_lpNorm_le (ψ : Space → ℝ) (φ : Space → Space)
         ((hψ.differentiable (by simp)).differentiableAt)
         ((hφ.differentiable (by simp)).differentiableAt))
     _ = 6 * lpNorm (a + b) 2 volume := by
-      simpa [Pi.add_apply] using lpNorm_fun_natCast_mul 6 (a + b) 2 volume
+      simpa only [Nat.cast_ofNat, Pi.add_apply] using lpNorm_fun_natCast_mul 6 (a + b) 2 volume
     _ ≤ 6 * (lpNorm a 2 volume + lpNorm b 2 volume) :=
       mul_le_mul_of_nonneg_left (lpNorm_add_le ha (by norm_num)) (by norm_num)
     _ ≤ 6 * (lpNorm ψ ∞ volume * lpNorm (fderiv ℝ φ) 2 volume +

@@ -510,7 +510,10 @@ theorem waveClass_forcingAlong_bound
   obtain ⟨A, hA, q, hnative⟩ := hBj N
   let K := bandArgumentCost B gapBound
   have hK : 1 ≤ K := bandArgumentCost_one_le B gapBound
-  refine ⟨(2 : ℝ) ^ N * A * K ^ N * C, by positivity, q + N + p, ?_⟩
+  have hK0 : 0 ≤ K := zero_le_one.trans hK
+  refine ⟨(2 : ℝ) ^ N * A * K ^ N * C,
+    mul_nonneg (mul_nonneg (mul_nonneg (pow_nonneg zero_le_two N) hA) (pow_nonneg hK0 N)) hC,
+    q + N + p, ?_⟩
   intro n k z hz hξ v hv j hj
   let g := bandGeometry B h (band n) (gap n) (center n)
   let U := (s.domain ×ˢ (univ : Set Plane)) ×ˢ I n
@@ -551,11 +554,12 @@ theorem waveClass_forcingAlong_bound
           ‖nativeLinear P g‖ ^ i := hb
       _ ≤ (A * s.growth n z.1 ^ q) * (K ^ N * s.growth n z.1 ^ N) :=
         mul_le_mul (hnative n z.1 hz _ hξ v hv i hi) hpow
-          (pow_nonneg (norm_nonneg _) _) (by positivity)
+          (pow_nonneg (norm_nonneg _) _) (mul_nonneg hA (pow_nonneg hGn q))
       _ = _ := by rw [pow_add]; ring
-  have hb := clm_apply_jet_bound_on hU hBs hfs hx N (by positivity)
-    (show 0 ≤ C * s.growth n z.1 ^ p * (s.epsilon n ^ α * Real.sqrt (s.zeta z.1)) * W n v by
-        positivity)
+  have hb := clm_apply_jet_bound_on hU hBs hfs hx N
+    (mul_nonneg (mul_nonneg hA (pow_nonneg hK0 N)) (pow_nonneg hGn _))
+    (mul_nonneg (mul_nonneg (mul_nonneg hC (pow_nonneg hGn p))
+      (mul_nonneg (Real.rpow_nonneg he.le α) (Real.sqrt_nonneg _))) hw)
     hBbound (fun i hi => hsource n k z hz hξ v hv i hi) j hj
   change ‖iteratedFDeriv ℝ j ((d n).forcingAlong g k) (z, v)‖ ≤ _ at hb
   apply hb.trans_eq

@@ -288,7 +288,8 @@ theorem l2_timeDerivative_of_sobolev
       L (ordinarySobolev q C.toLp C.translation_contDiff)=C.toLp := by
     change adjoint (𝕜 := ℝ) (E := L2) (F := LiftL2 1) ordinaryLift.toContinuousLinearMap
       (value 1 (ordinarySobolev q C.toLp C.translation_contDiff))=C.toLp
-    erw [ordinarySobolev_value]
+    refine (congrArg (adjoint (𝕜 := ℝ) (E := L2) (F := LiftL2 1)
+      ordinaryLift.toContinuousLinearMap) (ordinarySobolev_value q C.toLp _)).trans ?_
     exact congrArg (fun M : L2 →L[ℝ] L2 => M C.toLp) ordinaryLift.adjoint_comp_self
   have h := L.hasFDerivAt.comp_hasDerivAt t (hd t ht)
   simpa only [Function.comp_def,extendPath,sobolevPath,ContinuousMap.coe_mk,hL] using h

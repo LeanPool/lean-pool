@@ -379,14 +379,17 @@ theorem wave_eq {U : Set SpaceTime} {Φ : PressureField} {a : VelocityField}
   have hBslice := ResidualStability.spatialSlice_differentiable hU hB hz
   have hcarrier : HasFDerivAt (fun y : Space => carrier k (Φ (z.1, y)))
       ((-Real.cos (k * Φ z)) • fderiv ℝ (fun y : Space => Φ (z.1, y)) z.2) z.2 := by
-    exact (carrier_hasDerivAt hk (Φ z)).comp_hasFDerivAt z.2 hΦslice.hasFDerivAt
+    exact (carrier_hasDerivAt hk (Φ z)).comp_hasFDerivAt (f := fun y : Space => Φ (z.1, y)) z.2
+      hΦslice.hasFDerivAt
   change SpatialCurl.curl (fun y => carrier k (Φ (z.1, y)) • coefficient Φ a (z.1, y)) z.2 = _
   rw [curl_smul hcarrier.differentiableAt hBslice, hcarrier.fderiv, map_smul,
     cross_smul_left]
-  change (-Real.cos (k * Φ z)) • cross (phaseNormal Φ z) (normalCoefficient (phaseNormal Φ z) (a
-      z)) +
-    carrier k (Φ z) • SpatialCurl.spatialCurl (coefficient Φ a) z = _
-  rw [cross_normalCoefficient (hn z hz) (htangent z hz)]
+  have hcross : cross (gradientLinear (fderiv ℝ (fun y => Φ (z.1, y)) z.2))
+      (coefficient Φ a (z.1, z.2)) = -a z :=
+    cross_normalCoefficient (hn z hz) (htangent z hz)
+  have hcurl : SpatialCurl.curl (fun y => coefficient Φ a (z.1, y)) z.2 =
+      SpatialCurl.spatialCurl (coefficient Φ a) z := rfl
+  rw [hcross, hcurl, Prod.mk.eta]
   simp only [neg_smul, smul_neg, neg_neg, carrier, neg_div, sub_eq_add_neg]
 
 theorem wave_contDiffOn {U : Set SpaceTime} {Φ : PressureField} {a : VelocityField}
@@ -724,17 +727,20 @@ theorem PolynomialJets.affine (L : E →L[ℝ] F) (c : ι → F) {C : ℝ} {m : 
   cases n with
   | zero =>
       rw [norm_iteratedFDeriv_zero]
-      exact (hv i x hx).trans (by nlinarith [norm_nonneg L])
+      exact (hv i x hx).trans (mul_le_mul_of_nonneg_right
+        (le_add_of_nonneg_right (norm_nonneg L)) (zero_le_one.trans hs))
   | succ n =>
       rw [← norm_iteratedFDeriv_fderiv, hfd]
       cases n with
       | zero =>
           rw [norm_iteratedFDeriv_zero]
-          nlinarith [norm_nonneg L]
+          exact (le_add_of_nonneg_left (zero_le_one.trans hC)).trans
+            (le_mul_of_one_le_right (add_nonneg (zero_le_one.trans hC) (norm_nonneg L)) hs)
       | succ n =>
           rw [iteratedFDeriv_succ_const]
           simp only [Pi.zero_apply, norm_zero]
-          positivity
+          exact mul_nonneg (add_nonneg (zero_le_one.trans hC) (norm_nonneg L))
+            (zero_le_one.trans hs)
 
 theorem norm_jet_comp_linear {f : F → G} {U : Set F}
     (hU : IsOpen U) (hf : ContDiffOn ℝ ∞ f U)

@@ -51,11 +51,11 @@ def mean : CylinderL2 P V →L[ℝ] SpatialL2 V := P⁻¹ • (embedding P).adjo
       P⁻¹ • adjoint (𝕜 := ℝ) (E := SpatialL2 V) (F := CylinderL2 P V) (embedding P) u := rfl
 
 theorem mean_norm : ‖mean (V := V) P‖ ≤ P⁻¹*Real.sqrt P := by
+  have hP : 0 ≤ P⁻¹ := inv_nonneg.mpr (le_of_lt (Fact.out : 0 < P))
   change ‖P⁻¹ • adjoint (𝕜 := ℝ) (E := SpatialL2 V) (F := CylinderL2 P V)
     (embedding (V := V) P)‖ ≤ _
-  rw [norm_smul, Real.norm_eq_abs, abs_of_pos (inv_pos.mpr (Fact.out : 0 < P)),
-    LinearIsometryEquiv.norm_map]
-  exact mul_le_mul_of_nonneg_left (embedding_norm P) (inv_nonneg.mpr (le_of_lt (Fact.out : 0 < P)))
+  exact (norm_smul _ _).trans_le (mul_le_mul (Real.norm_of_nonneg hP).le
+    ((LinearIsometryEquiv.norm_map _ _).trans_le (embedding_norm P)) (norm_nonneg _) hP)
 
 theorem mean_embedding (u : SpatialL2 V) :
     mean (V := V) P (embedding (V := V) P u) = u := by

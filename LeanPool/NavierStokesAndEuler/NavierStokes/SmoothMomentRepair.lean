@@ -100,10 +100,7 @@ theorem exists_local_analytic_solver [CompleteSpace E]
   have hinv0 : inv (base B A) = base B A := by
     simpa only [forward_base] using hF.localInverse_apply_image hDF (by simp)
   have hinv : ∀ᶠ z in 𝓝 (base B A), forward (inv z) = z := by
-    have h := HasStrictFDerivAt.eventually_right_inverse
-      (f' := (ContinuousLinearEquiv.refl ℝ (QuadraticCoefficients E)).prodCongr
-        (M₃ := E) (M₄ := E) B)
-      (hF.hasStrictFDerivAt' hDF (by simp))
+    have h := HasStrictFDerivAt.eventually_right_inverse (hF.hasStrictFDerivAt' hDF (by simp))
     change ∀ᶠ z in 𝓝 (forward (base B A)), forward (inv z) = z at h
     simpa only [forward_base] using h
   have hsm := hcont.eventually (by simp)
@@ -170,10 +167,11 @@ theorem exists_local_bounded_analytic_solver [CompleteSpace E]
   let K : ℝ := ‖A₀‖ + 1
   let δ : ℝ := 1 / (4 * β)
   let r : ℝ := 1 / (4 * β * K)
-  have hβ : 0 < β := by change 0 < ‖B₀.symm.toContinuousLinearMap‖ + 1; positivity
-  have hK : 0 < K := by change 0 < ‖A₀‖ + 1; positivity
-  have hδ : 0 < δ := by change 0 < 1 / (4 * β); positivity
-  have hr : 0 < r := by change 0 < 1 / (4 * β * K); positivity
+  have hβ : 0 < β := add_pos_of_nonneg_of_pos (norm_nonneg _) one_pos
+  have hK : 0 < K := add_pos_of_nonneg_of_pos (norm_nonneg _) one_pos
+  have h4 : (0 : ℝ) < 4 := by norm_num
+  have hδ : 0 < δ := div_pos one_pos (mul_pos h4 hβ)
+  have hr : 0 < r := div_pos one_pos (mul_pos (mul_pos h4 hβ) hK)
   have hsmall : β * (δ + K * r) ≤ 1 / 2 := by
     change β * (1 / (4 * β) + K * (1 / (4 * β * K))) ≤ 1 / 2
     apply le_of_eq
@@ -195,7 +193,7 @@ theorem exists_local_bounded_analytic_solver [CompleteSpace E]
   have hAcont : ContinuousAt (fun z : RepairData E => ‖z.1.2‖) (base B₀ A₀) :=
     (hAnorm.comp hAproj).continuousAt
   have hAsmall : ∀ᶠ z in 𝓝 (base B₀ A₀), ‖z.1.2‖ < K :=
-    hAcont.eventually (eventually_lt_nhds (by change ‖A₀‖ < ‖A₀‖ + 1; linarith))
+    hAcont.eventually (eventually_lt_nhds (lt_add_one ‖A₀‖))
   have hall : ∀ᶠ z in 𝓝 (base B₀ A₀), z ∈ U ∧
       ‖z.1.1 - B₀.toContinuousLinearMap‖ < δ ∧ ‖z.1.2‖ < K ∧ ‖g z‖ < r := by
     filter_upwards [hUopen.mem_nhds hUbase, hBsmall, hAsmall, hgsmall] with z hz hB hA hgz
@@ -210,8 +208,7 @@ theorem exists_local_bounded_analytic_solver [CompleteSpace E]
   · intro x
     apply (B₀.symm.toContinuousLinearMap.le_opNorm x).trans
     apply mul_le_mul_of_nonneg_right _ (norm_nonneg x)
-    change ‖B₀.symm.toContinuousLinearMap‖ ≤ ‖B₀.symm.toContinuousLinearMap‖ + 1
-    linarith
+    exact le_add_of_nonneg_right zero_le_one
   · exact hs.2.1.le
   · exact hs.2.2.1.le
   · exact hs.2.2.2.le

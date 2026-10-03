@@ -104,11 +104,11 @@ theorem nativeCutoff_source_time_zero_germ {r L c : ℝ}
   have hd : 1 / 3 < |z.2 / (L / c) - 1 / 2| := by
     by_contra! h
     obtain ⟨hlo, hhi⟩ := abs_le.mp h
-    have hlow : (1 / 6 : ℝ) ≤ z.2 / (L / c) := by linarith
-    have hhigh : z.2 / (L / c) ≤ (5 / 6 : ℝ) := by linarith
+    have hlow : (1 / 6 : ℝ) ≤ z.2 / (L / c) := by linarith only [hlo]
+    have hhigh : z.2 / (L / c) ≤ (5 / 6 : ℝ) := by linarith only [hhi]
     have hl := (le_div_iff₀ hlen).mp hlow
     have hh := (div_le_iff₀ hlen).mp hhigh
-    exact hz ⟨by nlinarith, by nlinarith⟩
+    exact hz ⟨by linarith only [hl], by linarith only [hh]⟩
   have hd' : 1 / 3 < |c * z.2 / L - 1 / 2| := by
     simpa only [ActualGaussianCoverage.normalized_clock hL.ne' hc.ne'] using hd
   have ht : Continuous (fun y : Plane => c * y.2 / L) :=

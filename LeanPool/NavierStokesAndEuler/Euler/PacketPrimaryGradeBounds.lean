@@ -104,7 +104,6 @@ theorem future_velocity_bound (n : ℕ) :
     erw [ContinuousLinearMap.map_zero]
     simp only [ContinuousLinearMap.map_zero,block_zero_function,le_refl]
   dsimp only [futureVelocity]
-  rw [show d+3=d+2+1 by omega]
   exact
     (zeroForcing (D.tail τ hτ.le hτT)).source_velocity_normalized_bound (forwardInitial τ hτ hτT B
         Y)
@@ -131,7 +130,6 @@ theorem future_derivative_bound (n : ℕ) :
     erw [ContinuousLinearMap.map_zero]
     simp only [ContinuousLinearMap.map_zero,block_zero_function,le_refl]
   dsimp only [futureDerivative]
-  rw [show d+3=d+2+1 by omega]
   exact
     (zeroForcing (D.tail τ hτ.le hτT)).source_derivative_normalized_bound (forwardInitial τ hτ hτT
         B Y)
@@ -258,18 +256,11 @@ theorem initial_amplitude_bound
         exact (translate P a).map_smul (g t)⁻¹ (S Z t)
       rw [he]
       exact (normalize (E := CylinderL2 P V) g hg).contDiff.comp (hs Z)
-    have hr := block_restore_bound directions q
-      (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := V) P a
-        (normalize (E := CylinderL2 P V) g hg (S Z)))
-      (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := V) P a
-        (normalize (E := CylinderL2 P V) g hg (S Y)))
-      hsZ A hA
-      (fun a => by
-        rw [hrestore]
-        exact ((pathTranslate (K := Icc (0 : ℝ) D.T) (V := V) P a) ∘L
-          normalize (E := CylinderL2 P V) g hg).map_smul A (S Z))
-      R C e n 0 (hunit Z hZ n)
-    exact hr.trans_eq (by ring)
+    refine (block_restore_bound directions q _ _ hsZ A hA (fun a => ?_)
+      R C e n 0 (hunit Z hZ n)).trans_eq (by ring)
+    rw [hrestore]
+    exact ((pathTranslate (K := Icc (0 : ℝ) D.T) (V := V) P a) ∘L
+      normalize (E := CylinderL2 P V) g hg).map_smul A (S Z)
 
 end EulerTransversePacketProvider
 
@@ -416,7 +407,8 @@ theorem correctorPath_normalized_bound (n : ℕ) :
   have ha := sobolevCoefficientAmplitude_nonneg (ι := Fin 4) q Rc C hRc hC
   have h := EulerCylinderSlowCurl.normalized_path_block_bound P g D.FInv.field
     (potentialPath τ hτ hτT B Y) (potentialPath_orbit τ hτ hτT B Y) hg D.FInv.translation_contDiff
-    q Rc C R (3*sobolevCoefficientAmplitude (Fin 4) q Rc C*(P*A)) hRc hC (by positivity) hR hbI d
+    q Rc C R (3*sobolevCoefficientAmplitude (Fin 4) q Rc C*(P*A)) hRc hC
+    (mul_nonneg (mul_nonneg (by norm_num) ha) (mul_nonneg hp hA)) hR hbI d
     (potentialPath_normalized_bound τ hτ hτT B Y g hg q Rc C R A hRc hC hA hR d hbA hbK) n
   exact h.trans_eq (by ring)
 
@@ -436,15 +428,14 @@ theorem correctorTimePath_normalized_bound (n : ℕ) :
         (6*sobolevCoefficientAmplitude (Fin 4) q Rc C*(P*A))*majorant R d j := by
     apply (potentialPath_normalized_bound τ hτ hτT B Y g hg q Rc C R A hRc hC hA hR d hbA hbK
         j).trans
-    have hn := mul_nonneg
-      (show 0 ≤ sobolevCoefficientAmplitude (Fin 4) q Rc C*(P*A) by positivity)
-      (majorant_nonneg R hRn d j)
-    nlinarith
+    have hn := mul_nonneg (mul_nonneg ha (mul_nonneg hp hA)) (majorant_nonneg R hRn d j)
+    linarith only [hn]
   have h := EulerCylinderSlowCurl.normalized_derivative_block_bound P D.T g hg
     D.FInv.field D.inverseDerivative (potentialPath τ hτ hτT B Y) (potentialTimePath τ hτ hτT B Y)
     (potentialPath_orbit τ hτ hτT B Y) (potentialTimePath_orbit τ hτ hτT B Y)
         D.FInv.translation_contDiff D.inverseDerivative_orbit
-    q Rc C R (6*sobolevCoefficientAmplitude (Fin 4) q Rc C*(P*A)) hRc hC (by positivity) hR
+    q Rc C R (6*sobolevCoefficientAmplitude (Fin 4) q Rc C*(P*A)) hRc hC
+    (mul_nonneg (mul_nonneg (by norm_num) ha) (mul_nonneg hp hA)) hR
     hbI hbIt d hQ (potentialTimePath_normalized_bound τ hτ hτT B Y g hg q Rc C R A hRc hC hA hR d
         hbA hbAt hbK hbKt) n
   exact h.trans_eq (by ring)

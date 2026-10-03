@@ -240,7 +240,7 @@ theorem exists_unique_small_correction [CompleteSpace E]
       (by simpa only [S, Metric.mem_closedBall, dist_zero_right] using x.property)
       (by simpa only [S, Metric.mem_closedBall, dist_zero_right] using y.property)
   have hcomplete : IsComplete S := Metric.isClosed_closedBall.isComplete
-  have hzero : (0 : E) ∈ S := by simpa [S] using hr
+  have hzero : (0 : E) ∈ S := Metric.mem_closedBall_self hr
   obtain ⟨c, hcS, hfix, _, _⟩ :=
     ContractingWith.exists_fixedPoint' hcomplete hmaps hcontract hzero (edist_ne_top 0 (f 0))
   have hc : ‖c‖ ≤ r := by
@@ -259,7 +259,7 @@ theorem exists_unique_small_correction [CompleteSpace E]
   have hdist := correctionIteration_sub_le B Q d β K r hβ hK hB hQdiff hsmall y c hy.1 hc
   change correctionIteration B Q d c = c at hfix
   rw [hyfix, hfix] at hdist
-  have hnorm : ‖y - c‖ = 0 := by nlinarith [norm_nonneg (y - c)]
+  have hnorm : ‖y - c‖ = 0 := le_antisymm (by linarith only [hdist]) (norm_nonneg _)
   exact sub_eq_zero.mp (norm_eq_zero.mp hnorm)
 
 end NonlinearRepair

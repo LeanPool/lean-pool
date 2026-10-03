@@ -1380,7 +1380,8 @@ theorem controlled_pressure_ratio_lower
     apply (mul_le_mul_iff_right₀ hZpos).mp
     have hz : Z τ ≠ 0 := ne_of_gt hZpos
     have hid : (σ^2*τ^2+σ^2+(-2*σ^2*τ)*(-Z₁ τ/Z τ))*Z τ =
-        (σ^2*τ^2+σ^2)*Z τ+2*σ^2*τ*Z₁ τ := by field_simp
+        (σ^2*τ^2+σ^2)*Z τ+2*σ^2*τ*Z₁ τ := by
+      linear_combination (-2*σ^2*τ) * div_mul_cancel₀ (-Z₁ τ) hz
     linarith only [hid, hnum]
   linarith only [(abs_le.mp herr).1, herrorSmall, hideal]
 

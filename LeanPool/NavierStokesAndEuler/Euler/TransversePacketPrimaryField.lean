@@ -98,7 +98,7 @@ theorem futureDerivative_reflection_neg (t : Icc (0 : ℝ) (D.T - τ)) :
 
 theorem velocityPath_reflection_neg (t : Icc (0 : ℝ) D.T) :
     reflection (V := Vector3) P (velocityPath τ hτ hτT B Y t) = -velocityPath τ hτ hτT B Y t :=
-  join_mem D.T τ hτ.le hτT.le _ _ (velocity_match τ hτ hτT B Y)
+  join_mem D.T τ hτ.le hτT.le _ _ (velocity_match' τ hτ hτT B Y)
     {u | reflection (V := Vector3) P u = -u}
     (pastVelocity_reflection_neg τ hτ hτT B Y hF hM hH hY)
     (futureVelocity_reflection_neg τ hτ hτT B Y hSym hF hM hH hY) t
@@ -106,7 +106,7 @@ theorem velocityPath_reflection_neg (t : Icc (0 : ℝ) D.T) :
 theorem derivativePath_reflection_neg (t : Icc (0 : ℝ) D.T) :
     reflection (V := Vector3) P (derivativePath τ hτ hτT B Y t) =
       -derivativePath τ hτ hτT B Y t :=
-  join_mem D.T τ hτ.le hτT.le _ _ (derivative_match τ hτ hτT B Y)
+  join_mem D.T τ hτ.le hτT.le _ _ (derivative_match' τ hτ hτT B Y)
     {u | reflection (V := Vector3) P u = -u}
     (pastDerivative_reflection_neg τ hτ hτT B Y hF hM hH hY)
     (futureDerivative_reflection_neg τ hτ hτT B Y hSym hF hM hH hY) t

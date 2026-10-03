@@ -81,7 +81,8 @@ theorem primaryAmplitude_profile_bound (r w : ℝ → Space)
     rw [hid] at hb
     nlinarith only [hb]
   intro τ hτ
-  have hroot : 1 ≤ sqrt (1+(σ^2*τ^2)^2) := one_le_sqrt.mpr (by nlinarith [sq_nonneg (σ^2*τ^2)])
+  have hroot : 1 ≤ sqrt (1+(σ^2*τ^2)^2) :=
+    one_le_sqrt.mpr (le_add_of_nonneg_right (sq_nonneg _))
   have hz : Z τ ≤ idealPrimarySize σ Z τ := by
     have hb := mul_le_mul_of_nonneg_right hroot (hZpos τ hτ.1).le
     simpa only [one_mul, idealPrimarySize] using hb

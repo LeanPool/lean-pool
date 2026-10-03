@@ -346,17 +346,9 @@ theorem jointDerivative_contDiffAt_one
   have hq := realField_contDiffAt_one T hT A₁ A₂ hA₁ t ht x
   have hJ := realField_contDiffAt_one T hT A.derivative A₁.derivative
     (TimeDerivative.derivative T hT A A₁ hA) t ht x
-  have hs := (ContinuousLinearMap.toSpanSingletonLIE ℝ
-      V).toContinuousLinearEquiv.contDiff.contDiffAt.comp
-    (t,x) hq
-  let L : ((ℝ →L[ℝ] V) × (E →L[ℝ] V)) →L[ℝ] ((ℝ × E) →L[ℝ] V) :=
-    (ContinuousLinearMap.coprodEquivL (𝕜 := ℝ) (E := ℝ) (F := E) (G := V) ℝ).toContinuousLinearMap
-  exact (ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := 1)
-    (E := (ℝ →L[ℝ] V) × (E →L[ℝ] V)) (F := (ℝ × E) →L[ℝ] V) L).contDiffAt.comp
-    (g := L) (f := fun p : ℝ × E =>
-      (((ContinuousLinearMap.toSpanSingletonLIE ℝ V).toContinuousLinearEquiv ∘
-        Function.uncurry (A₁.realField T hT)) p, Function.uncurry (A.derivative.realField T hT) p))
-    (t,x) (hs.prodMk hJ)
+  have hs := (ContinuousLinearMap.toSpanSingletonLIE ℝ V).contDiff.contDiffAt.comp (t,x) hq
+  exact ((ContinuousLinearMap.coprodEquivL (𝕜 := ℝ) (E := ℝ) (F := E) (G := V)
+    ℝ).contDiff.contDiffAt.comp (t,x) (hs.prodMk hJ) :)
 
 theorem realField_contDiffAt_two
     (hA : TimeDerivative T hT A A₁) (hA₁ : TimeDerivative T hT A₁ A₂)

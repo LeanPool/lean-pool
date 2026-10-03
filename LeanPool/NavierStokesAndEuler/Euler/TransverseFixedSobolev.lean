@@ -196,10 +196,7 @@ theorem fixedFrameOperator_bound (T : ℝ) (hT : 0 ≤ T)
   have hbA := dirichletOperator_bound T hT H hH R CH hR hCH hbH
   have hAD := clm_comp_bound A D hA hD R (1+T^2*CH) (derivativeCost T C₀ C₁)
     hR ha0 hd0 0 0 hbA hbD
-  have h := clm_comp_bound (fun y => ContinuousLinearMap.adjoint (𝕜 := ℝ)
-      (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E) (D y))
-    (fun y => (A y).comp (D y))
-    (contDiff_adjoint hD)
+  have h := clm_comp_bound _ _ (contDiff_adjoint hD)
     (hA.clm_comp hD) R (derivativeCost T C₀ C₁) (3*(1+T^2*CH)*derivativeCost T C₀ C₁)
     hR hd0 (mul_nonneg (mul_nonneg (by norm_num) ha0) hd0) 0 0
     (adjoint_bound D hD R _ hR hd0 0 hbD) hAD n x
@@ -230,11 +227,9 @@ theorem fixedForcing_bound (T : ℝ) (hT : 0 ≤ T)
   have hC := mul_nonneg hT (derivativeCost_nonneg hT hC₀ hC₁)
   have hbound := adjoint_bound Z hZ R (T * derivativeCost T C₀ C₁) hR hC 0
     (fixedFramePrimitive_bound T hT Q Q₁ hQ hQ₁ R C₀ C₁ hR hC₀ hC₁ hbQ hbQ₁)
-  have hp (k : ℕ) (y : P) := clm_apply_bound (fun z => -(ContinuousLinearMap.adjoint (𝕜 := ℝ)
-      (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E) (Z z))) f
+  have hp (k : ℕ) (y : P) := clm_apply_bound _ f
     hZT.neg hf R (T * derivativeCost T C₀ C₁) 1 hR hC zero_le_one 0 d
-    (neg_bound (fun z => ContinuousLinearMap.adjoint (𝕜 := ℝ)
-      (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E) (Z z)) R _ 0 hbound)
+    (neg_bound _ R _ 0 hbound)
     (by simpa only [one_mul] using hbf) k y
   simpa only [forcingCost, mul_one, Nat.zero_add] using hp n x
 

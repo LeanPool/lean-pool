@@ -144,7 +144,6 @@ theorem product_hasDerivAt (A B : SmoothCoefficient period) (a : LiftTangent)
     HasDerivAt (fun t => translation period (translationPath period a t) (A.operator f))
       (A.operator f' + B.operator f) 0 := by
   have hprod := (A.operator_translation_hasDerivAt a).clm_apply hf
-  rw [A.derivative_operator_eq B a hB] at hprod
   have hcov : (fun t => coefficientOperator
       (translatedCoefficient period (translationPath period a t) A.coefficient)
       (translatedCoefficient_measurable period (translationPath period a t) A.coefficient
@@ -155,7 +154,6 @@ theorem product_hasDerivAt (A B : SmoothCoefficient period) (a : LiftTangent)
     funext t
     exact (coefficientOperator_translation period (translationPath period a t) A.coefficient
       A.measurable A.bound A.norm_bound f).symm
-  rw [hcov] at hprod
   have hop0 : coefficientOperator
       (translatedCoefficient period (translationPath period a 0) A.coefficient)
       (translatedCoefficient_measurable period (translationPath period a 0) A.coefficient
@@ -172,10 +170,9 @@ theorem product_hasDerivAt (A B : SmoothCoefficient period) (a : LiftTangent)
       A.operator_ae u] with x hx hy
     rw [hx, hy]
     simp [translatedCoefficient]
-  rw [hop0] at hprod
+  simp only [A.derivative_operator_eq B a hB, hcov, hop0] at hprod
   simp only [translationPath_zero, translation_zero] at hprod
-  convert hprod using 1
-  first | rfl | exact add_comm _ _
+  exact hprod.congr_deriv (add_comm _ _)
 
 theorem pressure_hasDerivAt (A B : SmoothCoefficient period) (a : LiftTangent)
     (hB : ∀ x, B.coefficient x = fieldDerivative period a A.coefficient x)

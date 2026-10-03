@@ -83,33 +83,34 @@ theorem ramp_cone_of_errors {c B r e s P J v : ℝ}
     (hP : |P - r| ≤ s * e) (hv : |v - (1 - e) * r| ≤ s * e)
     (hJ : |J| ≤ s * e) :
     e ≤ P - v ∧ 2 + c / 4 < P ∧ (v - 2) * J ^ 2 < 2 * (P - v) ^ 2 := by
-  have hrpos : 0 < r := by linarith
+  have hrpos : 0 < r := by linarith only [hc, hr]
   have hBpos : 0 < B := lt_of_lt_of_le hrpos hrB
   obtain ⟨hPl, hPu⟩ := abs_le.mp hP
   obtain ⟨hvl, hvu⟩ := abs_le.mp hv
   have hse : 0 ≤ s * e := mul_nonneg hs he.le
   have hsle : s * e ≤ s := mul_le_of_le_one_right hs he1
-  have hrgap : 1 ≤ r - 2 * s := by linarith
+  have hrgap : 1 ≤ r - 2 * s := by linarith only [hr, hsc]
   have hgap : e ≤ P - v := by
     have h := mul_le_mul_of_nonneg_left hrgap he.le
-    linarith
-  have hPgt : 2 + c / 4 < P := by linarith
+    linarith only [h, hPl, hvu]
+  have hPgt : 2 + c / 4 < P := by linarith only [hPl, hr, hsle, hsc, hc]
   have hvB : v - 2 ≤ B := by
     have h := mul_nonneg he.le hrpos.le
-    linarith
+    linarith only [hvu, h, hsle, hsquarter, hrB]
   have hJsq : J ^ 2 ≤ s ^ 2 * e ^ 2 := by
     simpa only [mul_pow] using sq_le_sq' (abs_le.mp hJ).1 (abs_le.mp hJ).2
-  have hBs : B * s ≤ 1 / 4 := by linarith
+  have hBs : B * s ≤ 1 / 4 :=
+    (le_add_of_nonneg_right hs).trans ((add_one_mul B s).symm.trans_le hsB)
   have hBss : B * s ^ 2 ≤ 1 / 16 := by
     have h := mul_le_mul_of_nonneg_right hBs hs
-    linarith
+    linarith only [h, hsquarter]
   have he2 : 0 < e ^ 2 := sq_pos_of_pos he
   have hquad : (v - 2) * J ^ 2 < 2 * (P - v) ^ 2 := calc
     (v - 2) * J ^ 2 ≤ B * J ^ 2 := mul_le_mul_of_nonneg_right hvB (sq_nonneg J)
     _ ≤ B * (s ^ 2 * e ^ 2) := mul_le_mul_of_nonneg_left hJsq hBpos.le
     _ = (B * s ^ 2) * e ^ 2 := by ring
     _ ≤ (1 / 16 : ℝ) * e ^ 2 := mul_le_mul_of_nonneg_right hBss he2.le
-    _ < 2 * e ^ 2 := by linarith
+    _ < 2 * e ^ 2 := by linarith only [he2]
     _ ≤ 2 * (P - v) ^ 2 :=
       mul_le_mul_of_nonneg_left (pow_le_pow_left₀ he.le hgap 2) (by norm_num)
   exact ⟨hgap, hPgt, hquad⟩
@@ -384,28 +385,36 @@ theorem cone_error_bounds {κ A B z dA dB dR M : ℝ}
   have hzr : |z * dR| ≤ M := by
     rw [abs_mul]
     simpa only [one_mul] using mul_le_mul hz hdR (abs_nonneg _) (by norm_num : (0 : ℝ) ≤ 1)
-  have h1 : |1 + z * dR| ≤ 1 + M := (abs_add_le _ _).trans (by simpa using add_le_add_right hzr 1)
-  have h2 : |2 + z * dR| ≤ 2 + M := (abs_add_le _ _).trans (by simpa using add_le_add_right hzr 2)
+  have h1 : |1 + z * dR| ≤ 1 + M := (abs_add_le _ _).trans (add_le_add abs_one.le hzr)
+  have h2 : |2 + z * dR| ≤ 2 + M := (abs_add_le _ _).trans (add_le_add abs_two.le hzr)
+  have hMM : 0 ≤ M * M := mul_nonneg hM hM
   refine ⟨?_, ?_, ?_⟩
   · calc
       |projectionError A B z dA dB dR| ≤
           |dA| + |dB| * |B / A| * |1 + z * dR| + |B ^ 2 / A| * |dR| := by
         exact (abs_add_le _ _).trans (add_le_add_left (abs_add_le _ _) _)
           |>.trans_eq (by simp only [abs_mul])
-      _ ≤ M + M * M * (1 + M) + M * M := by gcongr
+      _ ≤ M + M * M * (1 + M) + M * M :=
+        add_le_add (add_le_add hdA (mul_le_mul (mul_le_mul hdB hBA (abs_nonneg _) hM) h1
+          (abs_nonneg _) hMM)) (mul_le_mul hB2A hdR (abs_nonneg _) hM)
       _ = comparisonConstant M := by unfold comparisonConstant; ring
   · calc
       |crossError A B z dA dB dR| ≤
           |dB| + |B| * |dR| + |dA| * |B / A| * |1 + z * dR| := by
         exact (abs_sub _ _).trans (add_le_add_left (abs_sub _ _) _)
           |>.trans_eq (by simp only [abs_mul])
-      _ ≤ M + M * M + M * M * (1 + M) := by gcongr
+      _ ≤ M + M * M + M * M * (1 + M) :=
+        add_le_add (add_le_add hdB (mul_le_mul hB hdR (abs_nonneg _) hM))
+          (mul_le_mul (mul_le_mul hdA hBA (abs_nonneg _) hM) h1 (abs_nonneg _) hMM)
       _ = comparisonConstant M := by unfold comparisonConstant; ring
   · calc
       |sizeError κ A B z dR| = |κ| * |B ^ 2 / A| * |dR| * |2 + z * dR| := by
         simp only [sizeError, abs_mul]
-      _ ≤ 1 * M * M * (2 + M) := by gcongr
-      _ ≤ comparisonConstant M := by unfold comparisonConstant; linarith
+      _ ≤ 1 * M * M * (2 + M) :=
+        mul_le_mul (mul_le_mul (mul_le_mul hκ hB2A (abs_nonneg _) zero_le_one) hdR
+          (abs_nonneg _) (mul_nonneg zero_le_one hM)) h2 (abs_nonneg _)
+          (mul_nonneg (mul_nonneg zero_le_one hM) hM)
+      _ ≤ comparisonConstant M := by unfold comparisonConstant; linarith only [hM]
 
 private theorem bounded_error_factor {M z x : ℝ} (hM : 0 ≤ M) (hz : 0 ≤ z)
     (hx : |x| ≤ M * z) : ∃ d : ℝ, |d| ≤ M ∧ x = z * d := by

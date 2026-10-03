@@ -328,9 +328,10 @@ theorem exists_gevrey_inviscid_energy_limit {q : ℕ} (hq : 6 ≤ q) (S : ℝ) (
           energyNorm period P hP (R t) (K.operatorPath period t) (e t) ≤
             2*B.residual*Real.exp (3*C*t.val) ∧
           energyNorm period P hP (R t) (K.operatorPath period t) (e t) ≤ Δ/2 := by
-  obtain ⟨u,hu,hdefect⟩ := exists_viscous_correction_family period (q := q) hq S hS D KG KL KQ hGq
+  have hex := exists_viscous_correction_family period (q := q) hq S hS D KG KL KQ hGq
       hLq hQq hG
     N hN hNfull R B K C Δ ρ0 hC hΔ hΔ1 hρ0 hdecay hscale hsmall hR hz
+  obtain ⟨u,hu,hdefect⟩ := hex
   refine ⟨u,?_⟩
   let M := metricAmplification K.c*(Δ/2)/weight (min (ρ0/2) 1) N
   have huM (n : ℕ) : ‖u n‖ ≤ M := (hu n).2.2.2.2

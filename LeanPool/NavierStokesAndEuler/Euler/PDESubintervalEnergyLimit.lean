@@ -108,8 +108,8 @@ theorem weighted_sobolev_energy_integral {α β : Type*} [Fintype α] [Fintype �
             u) (e' i j u)
           (hKt u hu) (het i j u hu) hsymL)
     have hq := hQ0 i u ⟨hu.1.le, hu.2.le⟩
-    exact (HasDerivAt.sqrt (hd.add_const (δ ^ 2)) (by
-        nlinarith : Q i u + δ ^ 2 ≠ 0)).differentiableAt
+    exact (HasDerivAt.sqrt (hd.add_const (δ ^ 2))
+      (add_pos_of_nonneg_of_pos hq (pow_pos hδ 2)).ne').differentiableAt
   have hreg (i : α) (δ : ℝ) (hδ : 0 < δ) (u : ℝ) (hu : u ∈ Ioo s t) :
       deriv (fun v => √(Q i v + δ ^ 2)) u ≤ a u * √(Q i u + δ ^ 2) + F i u := by
     exact finite_sobolev_viscous_energy period hq κ m K (G u) (e i) u δ c ν (K' u)

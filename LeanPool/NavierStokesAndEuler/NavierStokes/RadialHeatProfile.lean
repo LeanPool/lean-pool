@@ -586,7 +586,7 @@ theorem spatial_heat_identity {a τ s : ℝ} (ha : 1 < a) (hτ : 0 < τ) (hs : 0
   have hsum : (2 * τ / s) ^ 2 * profileJet a 2 (2 * τ / s) +
       (2 * a * (2 * τ / s)) * profileJet a 1 (2 * τ / s) +
       a * (a - 1) * profile a (2 * τ / s) = -profileJet a 1 (2 * τ / s) := by
-    linarith
+    linear_combination hode
   rw [hsum]
   ring
 

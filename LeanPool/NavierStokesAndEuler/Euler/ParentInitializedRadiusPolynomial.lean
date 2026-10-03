@@ -375,10 +375,11 @@ variable {U : Type} [NormedAddCommGroup U] [InnerProductSpace ℝ U] [CompleteSp
     EulerPacketParentPhysicalBudgets.halfBall g Cp)
   (TiTotal : ℝ) (hT1 : G.T ≤ 1) (hTiTotal : G.T⁻¹ ≤ TiTotal)
 
-local notation "J" => L.joinedInputs H m hm R S hS τ hτ hτT Ti Cp hτ1 hTi hCp
-  g hg hg0 Ω hΩ hΩo hsub hΩball hphysical TiTotal hT1 hTiTotal
-local notation "BC" => joinedCoefficientBudget period (G.meanData H) (G.transverseData m hm R S hS)
-  rfl τ hτ hτT (G.historyOn H m hm R S hS τ hτ hτT) (JoinedInputs.normal J)
+local notation "J" => (L.joinedInputs H m hm R S hS τ hτ hτT Ti Cp hτ1 hTi hCp
+  g hg hg0 Ω hΩ hΩo hsub hΩball hphysical TiTotal hT1 hTiTotal)
+local notation "BC" => (joinedCoefficientBudget period (G.meanData H)
+  (G.transverseData m hm R S hS) rfl τ hτ hτT (G.historyOn H m hm R S hS τ hτ hτT)
+  (JoinedInputs.normal J))
 
 /-- Canonical initialized radius, given by `initializedRadius (J).mean (J).linear (J).normal BC
 δ ξ`. -/

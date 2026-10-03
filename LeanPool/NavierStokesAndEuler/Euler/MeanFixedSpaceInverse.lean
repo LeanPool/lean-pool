@@ -104,12 +104,7 @@ theorem fixedMeanOperator_inner (u v : TimeLp T solenoidalSpace) :
       ⟪timeMultiplier T hT H (fixedMeanPrimitive T hT F F₁ u),
         fixedMeanPrimitive T hT F F₁ v⟫_ℝ +
       ⟪(M0+L • A) (fixedMeanTrace T hT F F₁ u), fixedMeanTrace T hT F F₁ v⟫_ℝ := by
-  exact (transportedOperator_inner (fixedMeanDerivative T hT F F₁)
-    (meanOperator (primitiveTimeLp T hT) (initialTrace T hT) (timeMultiplier T hT H) (M0+L • A)) u
-        v).trans
-      (meanOperator_inner (primitiveTimeLp (E := L2) T hT) (initialTrace (E := L2) T hT)
-        (timeMultiplier (E := L2) (F := L2) T hT H) (M0+L • A)
-        (fixedMeanDerivative T hT F F₁ u) (fixedMeanDerivative T hT F F₁ v))
+  exact (transportedOperator_inner _ _ u v).trans (meanOperator_inner _ _ _ _ _ _)
 
 variable (FInv : C(Icc (0 : ℝ) T, L2 →L[ℝ] L2))
   (hInv : ∀ (t : Icc (0 : ℝ) T) (x : L2), FInv t (F t x) = x)
@@ -137,27 +132,21 @@ include hInv hF K B hK hB hFInv₀ hH hboundary hsmall in
 theorem fixedMeanOperator_coercive (v : TimeLp T solenoidalSpace) :
     fixedMeanCoercivity T F F₁ FInv*‖v‖^2 ≤ ⟪fixedMeanOperator T hT F F₁ H M0 A L v, v⟫_ℝ := by
   let u := meanTestMap T hT FInv F F₁ hF hInv v
-  have hbase := meanOperator_coercive (meanPrimitive T hT FInv) (meanTrace T hT FInv)
-    (timeMultiplier T hT H) (M0+L • A) (T^2/2) T K B hK hB
+  have hbase := meanOperator_coercive _ _ _ _ _ _ _ _ hK hB
     (meanPrimitive_norm_sq T hT FInv) (meanTrace_norm_sq T hT FInv)
     (timeMultiplier_quadratic_upper T hT H K hH)
     (meanTrace_boundary T hT FInv M0 A L B hFInv₀ hboundary) hsmall u
-  have hp := hbase.trans_eq (meanOperator_inner (meanPrimitive T hT FInv)
-    (meanTrace T hT FInv) (timeMultiplier T hT H) (M0+L • A) u u)
-  change (1/2 : ℝ)*‖fixedMeanDerivative T hT F F₁ v‖^2 ≤
-    ⟪fixedMeanDerivative T hT F F₁ v, fixedMeanDerivative T hT F F₁ v⟫_ℝ -
-      ⟪timeMultiplier T hT H (fixedMeanPrimitive T hT F F₁ v), fixedMeanPrimitive T hT F F₁ v⟫_ℝ +
-      ⟪(M0+L • A) (fixedMeanTrace T hT F F₁ v), fixedMeanTrace T hT F F₁ v⟫_ℝ at hp
-  have hlow := meanForward_norm_sq_lower T hT FInv F F₁ hInv hF v
   calc
     fixedMeanCoercivity T F F₁ FInv*‖v‖^2 =
         (1/2 : ℝ)*((meanTransportCost T FInv F F₁)⁻¹^2*‖v‖^2) := by
       unfold fixedMeanCoercivity
       ring
-    _ ≤ (1/2 : ℝ)*‖fixedMeanDerivative T hT F F₁ v‖^2 :=
-      mul_le_mul_of_nonneg_left hlow (by norm_num)
-    _ ≤ ⟪fixedMeanOperator T hT F F₁ H M0 A L v, v⟫_ℝ :=
-      hp.trans_eq (fixedMeanOperator_inner T hT F F₁ H M0 A L v v).symm
+    _ ≤ (1/2 : ℝ)*‖u‖^2 :=
+      mul_le_mul_of_nonneg_left (meanForward_norm_sq_lower T hT FInv F F₁ hInv hF v)
+        (by norm_num)
+    _ ≤ _ := hbase
+    _ = ⟪fixedMeanOperator T hT F F₁ H M0 A L v, v⟫_ℝ :=
+      (meanOperator_inner _ _ _ _ u u).trans (fixedMeanOperator_inner T hT F F₁ H M0 A L v v).symm
 
 /-- The actual fixed-space inverse operator. -/
 def fixedMeanInverse : TimeLp T solenoidalSpace →L[ℝ] TimeLp T solenoidalSpace :=

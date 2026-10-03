@@ -198,9 +198,17 @@ theorem linearAdvection_mode (R b F G : E → ℝ) (Vr Vθ Vz : E → E) (κ : �
   fin_cases i <;>
     simp only [transport, hmode, hbase, haθ, hBθ, Complex.ofReal_zero,
       zero_add] <;>
-    simp [complexBase, base, vectorMode, mode, shear, baseDerivativeRemainder,
-      angularGenerator, Complex.ofReal_add, Complex.ofReal_mul, hrad] <;>
-    field_simp [hrC] <;> ring
+    simp only [complexBase, base, Fin.isValue, Matrix.cons_val_zero, Fin.zero_eta, Fin.mk_one,
+      Fin.reduceFinMk, Matrix.cons_val_one, Complex.ofReal_mul, angularGenerator, vectorMode, mode,
+      Matrix.cons_val, mul_neg, shear, neg_mul, Complex.ofReal_add, Complex.ofReal_ofNat,
+      baseDerivativeRemainder, Nat.succ_eq_add_one, Nat.reduceAdd, hrad, add_zero, mul_zero,
+      zero_add]
+  · linear_combination (phaseFactor κ * a x 0 * carrier κ Φ x * (F x : ℂ) *
+      ((along Vθ Φ x : ℝ) : ℂ) - 2 * carrier κ Φ x * (F x : ℂ) * a x 1) * mul_inv_cancel₀ hrC
+  · linear_combination (phaseFactor κ * a x 1 * carrier κ Φ x * (F x : ℂ) *
+      ((along Vθ Φ x : ℝ) : ℂ) + carrier κ Φ x * (F x : ℂ) * a x 0) * mul_inv_cancel₀ hrC
+  · linear_combination (phaseFactor κ * a x 2 * carrier κ Φ x * (F x : ℂ) *
+      ((along Vθ Φ x : ℝ) : ℂ)) * mul_inv_cancel₀ hrC
 
 /-- The scalar and frame Laplacian identities assembled into the viscous
 braces of (31), with the phase-square term separated. -/
@@ -509,11 +517,14 @@ theorem realMap_linearResidual {U : Set E} (L : ℂ →L[ℝ] ℝ) (ε : ℝ) (R
   have hLap i := cylindricalLaplacian_map L R hU hr hθ hz (ha i) hx
   ext i
   fin_cases i <;>
-    simp [linearResidual, realComponentLinearResidual, transport, realTransport, realLift,
-      gradient, cylindricalVectorLaplacian, realFrameLaplacian, angularGenerator,
-      realAngularGenerator, hD, hDB, hLap, along_map L _ hp,
-      ← Complex.ofReal_div, map_ofReal_mul, map_mul_ofReal, map_add,
-      map_sub, map_neg, Complex.real_smul] <;>
+    simp only [linearResidual, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Fin.isValue, transport,
+      realLift, ← Complex.ofReal_div, angularGenerator, Matrix.cons_val_zero, Matrix.cons_val_one,
+      Matrix.cons_val, add_zero, mul_zero, smul_zero, hDB, gradient, Complex.real_smul,
+      Complex.ofReal_inv, cylindricalVectorLaplacian, mul_neg, smul_add, smul_neg,
+      Complex.ofReal_pow, map_sub, map_add, map_ofReal_mul, map_neg, map_mul_ofReal,
+      realComponentLinearResidual, hD, realTransport, realAngularGenerator, Nat.succ_eq_add_one,
+      Nat.reduceAdd, along_map L _ hp, realFrameLaplacian, hLap, sub_left_inj, add_left_inj,
+      add_right_inj, mul_eq_mul_right_iff] <;>
     simp only [← Complex.ofReal_neg, ← Complex.ofReal_add, ← Complex.ofReal_pow,
       ← Complex.ofReal_inv, map_ofReal_mul, map_mul_ofReal, map_div_ofReal, map_two_mul,
       true_or] <;> ring
@@ -700,9 +711,13 @@ theorem realComponentLinearResidual_eq_cylindrical {U : Set SpaceTime} (ε : ℝ
       _ = _ := congrArg (fun v : Space => v j) (along_time_slice had)
   ext i
   fin_cases i <;>
-    simp [realComponentLinearResidual, realTransport, realFrameLaplacian, realAngularGenerator,
-      hAfirst, hBfirst, hLap, htime, along_space_slice hpd, coordinateRadius,
-      cylindricalLinearResidual, bilinearAdvection, CylindricalResidual.vectorLaplacian,
-      CylindricalResidual.scalarGradient, CylindricalResidual.connection_apply] <;> ring
+    simp only [realComponentLinearResidual, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Fin.isValue,
+      htime, realTransport, hAfirst, coordinateRadius, realAngularGenerator, Matrix.cons_val_zero,
+      Matrix.cons_val_one, Matrix.cons_val, hBfirst, Nat.succ_eq_add_one, Nat.reduceAdd,
+      along_space_slice hpd, realFrameLaplacian, hLap, mul_neg, mul_zero, add_zero,
+      cylindricalLinearResidual, bilinearAdvection, CylindricalResidual.connection_apply, smul_add,
+      CylindricalResidual.scalarGradient, CylindricalResidual.vectorLaplacian,
+      AxisymmetricResidual.pack_one, AxisymmetricResidual.pack_zero, AxisymmetricResidual.pack_two,
+      PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul] <;> ring
 
 end NavierStokes.LinearWaveResidual

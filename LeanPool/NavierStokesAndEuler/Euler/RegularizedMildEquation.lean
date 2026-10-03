@@ -171,10 +171,9 @@ theorem regularizerFirst_rhs (n : ℕ) (i : Fin 4) (ν : ℝ)
       value period (regularizerFirst period n i f) =
       value period (derivativeOperator period 0 i
         (ν • laplacianOperator period 1 (heatRegularizer period 0 n (truncateOperator period 0 u)) +
-          restrictOperator period (by norm_num : 1 ≤ 3) (heatRegularizer period 0 n f))) := by
-  rw [regularizerFirst_laplacian period n i (truncateOperator period 0 u),
-    regularizerFirst_source period n i f]
-  exact (value_derivative_smul_add period i ν _ _).symm
+          restrictOperator period (by norm_num : 1 ≤ 3) (heatRegularizer period 0 n f))) :=
+  (congrArg₂ (fun a b => ν • a + b) (regularizerFirst_laplacian period n i _)
+    (regularizerFirst_source period n i f)).trans (value_derivative_smul_add period i ν _ _).symm
 
 /-- Every genuine spatial heat regularization of the actual mild solution satisfies the first-word
 heat equation used in maximal regularity. -/
@@ -197,12 +196,9 @@ theorem regularizedState_first_time_derivative (T : ℝ) (hT : 0 ≤ T) (ν : �
     (fun t _ => f t) hF u hsol t ht
   have hd' := hd.congr_deriv (regularizerFirst_rhs period n i ν (u ⟨t, ht.1.le, ht.2.le⟩) (f ⟨t,
       ht.1.le, ht.2.le⟩))
-  change HasDerivAt _ (value period (derivativeOperator period 0 i
-    (ν • laplacianOperator period 1 (heatRegularizer period 0 n (truncateOperator period 0 (u
-        (projIcc 0 T hT t)))) +
-      restrictOperator period (by
-          norm_num : 1 ≤ 3) (heatRegularizer period 0 n (f (projIcc 0 T hT t)))))) t
-  rw [projIcc_of_mem hT ⟨ht.1.le, ht.2.le⟩]
-  exact hd'
+  exact hd'.congr_deriv (congrArg (fun s : Icc (0 : ℝ) T => value period (derivativeOperator period
+    0 i (ν • laplacianOperator period 1 (heatRegularizer period 0 n (truncateOperator period 0
+      (u s))) + restrictOperator period (by norm_num : 1 ≤ 3) (heatRegularizer period 0 n (f s)))))
+    (projIcc_of_mem hT ⟨ht.1.le, ht.2.le⟩).symm)
 
 end EulerRegularizedMildEquation

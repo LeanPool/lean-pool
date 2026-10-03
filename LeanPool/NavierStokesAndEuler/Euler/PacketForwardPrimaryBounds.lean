@@ -48,7 +48,8 @@ theorem primary_profile_budget (O : Operators) (hcorrector : O.curlCorrector = D
         (normalize L.g L.positive (HistoryData.forcingPath G))) n 0 ≤ (α*C)*majorant L.R 0 n := by
     have hh : HistoryData.forcingPath G = 0 := by
       unfold HistoryData.forcingPath
-      rw [EulerPacketForwardPrimary.forcing_path_zero,map_zero]
+      rw [EulerPacketForwardPrimary.forcing_path_zero]
+      exact map_zero _
     simpa only [hh,map_zero,block_zero_function] using
       mul_nonneg (mul_nonneg hα.le W.data_nonneg)
         (majorant_nonneg L.R (zero_le_one.trans L.radius_one) 0 n)
@@ -61,21 +62,21 @@ theorem primary_profile_budget (O : Operators) (hcorrector : O.curlCorrector = D
   have hz := Field.wordBound_normalized_of_zero (Field.zero P D.T)
     (fun _ _ _ => rfl) D.T_pos.le (S.mean 1) (S.mean_pos 1) 6 L.R (meanShift 1)
   refine ⟨?_,?_,?_,?_,?_,?_,?_⟩
-  · exact Field.normalized_wordBound_congr (G.vectorField Y) D.T_pos.le
+  · apply Field.normalized_wordBound_congr (G.vectorField Y) D.T_pos.le
       (S.high 1) (α • L.g) (S.high_pos 1)
       (smul_profile_pos L.g L.positive α hα) he 6 (highShift 1) L.R 1 hv
-  · exact Field.normalized_wordBound_congr (G.vectorDerivativeField Y) D.T_pos.le
+  · apply Field.normalized_wordBound_congr (G.vectorDerivativeField Y) D.T_pos.le
       (S.high 1) (α • L.g) (S.high_pos 1)
       (smul_profile_pos L.g L.positive α hα) he 6 (highShift 1) L.R 1 ht
   · exact hz.mono_amplitude (zero_le_one.trans L.radius_one) zero_le_one
   · exact hz.mono_amplitude (zero_le_one.trans L.radius_one) zero_le_one
-  · exact Field.normalized_wordBound_congr (G.curlCorrectorField Y) D.T_pos.le
+  · apply Field.normalized_wordBound_congr (G.curlCorrectorField Y) D.T_pos.le
       (S.high 1) (α • L.g) (S.high_pos 1)
       (smul_profile_pos L.g L.positive α hα) he 6 (highShift 1) L.R 1 hc
-  · exact Field.normalized_wordBound_congr (G.correctorDerivativeField Y) D.T_pos.le
+  · apply Field.normalized_wordBound_congr (G.correctorDerivativeField Y) D.T_pos.le
       (S.high 1) (α • L.g) (S.high_pos 1)
       (smul_profile_pos L.g L.positive α hα) he 6 (highShift 1) L.R 1 hct
-  · exact Field.normalized_wordBound_congr (G.scalarGradientField Y) D.T_pos.le
+  · apply Field.normalized_wordBound_congr (G.scalarGradientField Y) D.T_pos.le
       (S.high 1) (α • L.g) (S.high_pos 1)
       (smul_profile_pos L.g L.positive α hα) he 6 (highShift 1) L.R 1 hp
 

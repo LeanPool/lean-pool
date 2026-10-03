@@ -177,11 +177,7 @@ theorem potentialCoefficient_translated (a : Space) :
 
 theorem potentialCoefficient_translation_contDiff :
     ContDiff ℝ ∞ (translateCoefficientPath (potentialCoefficient m c hc hm)) := by
-  have he : translateCoefficientPath (potentialCoefficient m c hc hm) =
-      fun a => potentialPathMap (K := K)
-        (translateCoefficientPath (normalFunctional m c hc hm) a) :=
-    funext (potentialCoefficient_translated m c hc hm)
-  rw [he]
+  rw [funext (potentialCoefficient_translated m c hc hm)]
   exact (potentialPathMap (K := K)).contDiff.comp
     (normalFunctional_translation_contDiff m c hc hm)
 
@@ -192,11 +188,7 @@ theorem potentialCoefficient_translation_bound (Rc C Ri : ℝ) (hRc : 0 ≤ Rc) 
     (n : ℕ) (a : Space) :
     ‖iteratedFDeriv ℝ n (translateCoefficientPath (potentialCoefficient m c hc hm)) a‖ ≤
       (3*Ri*C)*majorant (4*Ri) 0 n := by
-  have he : translateCoefficientPath (potentialCoefficient m c hc hm) =
-      fun a => potentialPathMap (K := K)
-        (translateCoefficientPath (normalFunctional m c hc hm) a) :=
-    funext (potentialCoefficient_translated m c hc hm)
-  rw [he]
+  rw [funext (potentialCoefficient_translated m c hc hm)]
   have h := (potentialPathMap (K := K)).norm_iteratedFDeriv_comp_left
     ((normalFunctional_translation_contDiff m c hc hm).contDiffAt (x := a)) (n := n) (by simp)
   exact h.trans ((mul_le_mul_of_nonneg_right (potentialPathMap_norm (K := K))

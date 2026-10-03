@@ -97,7 +97,8 @@ theorem cutoffField_tendsto (f : Space → V) (x : Space) :
 theorem cutoffField_fderiv_tendsto (f : Space → V) (hf : ContDiff ℝ ∞ f) (x : Space) :
     Tendsto (fun n => fderiv ℝ (cutoffField f n) x) atTop (𝓝 (fderiv ℝ f x)) := by
   have hright : Tendsto (fun n => (fderiv ℝ (cutoff n) x).smulRight (f x)) atTop (𝓝 0) := by
-    have hc : Continuous (fun L : Space →L[ℝ] ℝ => L.smulRight (f x)) := by fun_prop
+    have hc : Continuous (fun L : Space →L[ℝ] ℝ => L.smulRight (f x)) :=
+      ((ContinuousLinearMap.smulRightL ℝ Space V).flip (f x)).continuous
     simpa only [ContinuousLinearMap.zero_smulRight, Function.comp_def] using
         hc.continuousAt.tendsto.comp
       (cutoff_derivative_tendsto x)

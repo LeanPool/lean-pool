@@ -467,7 +467,10 @@ theorem polynomial_on_padded (hN : ActualCarrierGeometry.geometricThreshold ≤ 
         _ ≤ (copyCost * fullStrip.slow n) ^ m :=
           (pow_le_pow_left₀ (norm_nonneg _) (slotLinear_bound hc.1) j).trans
             (pow_le_pow_right₀ (one_le_mul_of_one_le_of_one_le hcost hS) hj)
-        _ ≤ (copyCost * fullStrip.growth n x) ^ m := by gcongr; exact fullStrip.slow_le_growth n x
+        _ ≤ (copyCost * fullStrip.growth n x) ^ m :=
+          pow_le_pow_left₀ (mul_nonneg (zero_le_one.trans hcost) (zero_le_one.trans hS))
+            (mul_le_mul_of_nonneg_left (fullStrip.slow_le_growth n x)
+              (zero_le_one.trans hcost)) m
         _ = _ := mul_pow _ _ _
     have hu := PhaseJetBounds.norm_jet_comp_affine (D.isOpen i.1) (hf.smooth i.1)
       (slotLinear i.1 n) (slotOfNative (copyPoint i.1 n i.2 0))
@@ -3176,6 +3179,22 @@ theorem associated_wave_return {E : Type} [NormedAddCommGroup E] [NormedSpace �
       meanEnvelope α (fun l n z => f l n (cycleAssoc z)) := by
   exact MeanBoundsReindex.uniformClass_return cycleAssoc hf
 
+theorem block_velocity_return {α : ℝ} {b : Label B N0 → HarmonicBlock (Parameter × Plane)}
+    (i : Fin 3) (j : ℤ)
+    (hb : LabelSumBounds.UniformWaveClass associatedStrip envelope α
+      (fun l n z => (b l).velocity n i j z)) :
+    LabelSumBounds.UniformWaveClass (BaseContextAssembly.nativeStrip nominal standardRegion)
+      meanEnvelope α (fun l n z => (StateReindex.block cycleAssoc (b l)).velocity n i j z) :=
+  associated_wave_return hb
+
+theorem block_pressure_return {α : ℝ} {b : Label B N0 → HarmonicBlock (Parameter × Plane)}
+    (j : ℤ)
+    (hb : LabelSumBounds.UniformWaveClass associatedStrip envelope α
+      (fun l n z => (b l).pressure n j z)) :
+    LabelSumBounds.UniformWaveClass (BaseContextAssembly.nativeStrip nominal standardRegion)
+      meanEnvelope α (fun l n z => (StateReindex.block cycleAssoc (b l)).pressure n j z) :=
+  associated_wave_return hb
+
 /-- The finite harmonic assembly and coordinate association retain
 constants chosen before the spatial label and band. -/
 theorem assembled_bounds (x : CycleState (Label B N0))
@@ -3190,8 +3209,8 @@ theorem assembled_bounds (x : CycleState (Label B N0))
       meanEnvelope (α+1/2-3*ChartScales.kappa)
       (fun l n z => (outputGood x N l).velocity n i j z)) := by
   obtain ⟨ha,hp,hg⟩ := associated_assembled_bounds x hx hs hN H N
-  exact ⟨fun i j => associated_wave_return (ha i j),
-    fun j => associated_wave_return (hp j), fun i j => associated_wave_return (hg i j)⟩
+  exact ⟨fun i j => block_velocity_return i j (ha i j),
+    fun j => block_pressure_return j (hp j), fun i j => block_velocity_return i j (hg i j)⟩
 
 /-- The quantitative inputs are precisely fields of the current analytic
 invariant. The geometric equalities identify its actual strip and carrier. -/

@@ -134,11 +134,12 @@ theorem hold_sqrt_ratio_bound {d : TailData} {K : ℝ} (w : ResetWitness d K)
     Real.sqrt d.core.lam * |coneRatio w Amp (d.core.holdStart + t, eta)| ≤
       holdSmallConstant d.core.P d.core.m * PulseCone.coneRate d.core.lam := by
   have hlog : 0 ≤ Real.log (1 / d.core.lam) := Real.log_nonneg
-    ((le_div_iff₀ d.core.lam_pos).mpr (by linarith [d.core.lam_lt]))
+    ((le_div_iff₀ d.core.lam_pos).mpr (by linarith only [d.core.lam_lt]))
   have htlog : t ≤ 60 * Real.log (1 / d.core.lam) := by rwa [hwait] at htw
-  have hlin : 1 + t ≤ 60 * (1 + Real.log (1 / d.core.lam)) := by linarith
+  have hlin : 1 + t ≤ 60 * (1 + Real.log (1 / d.core.lam)) := by linarith only [htlog, hlog]
   have hlambda := mul_le_mul_of_nonneg_left htlog d.core.lam_pos.le
-  have harg : d.core.lam * t / 2 ≤ 30 := by linarith [TailCone.lambda_log_bound d]
+  have harg : d.core.lam * t / 2 ≤ 30 := by
+    linarith only [hlambda, TailCone.lambda_log_bound d]
   have hex := Real.exp_le_exp.mpr harg
   have hb := hold_ratio_bound w ha hh1 hhlam hhT heta ht htw
   have hC := (holdRatioConstant_pos d.core.P_pos d.core.m).le
@@ -148,11 +149,11 @@ theorem hold_sqrt_ratio_bound {d : TailData} {K : ℝ} (w : ResetWitness d K)
   have hraw : |coneRatio w Amp (d.core.holdStart + t, eta)| ≤
       holdSmallConstant d.core.P d.core.m * (1 + Real.log (1 / d.core.lam)) := by
     dsimp [holdSmallConstant]
-    linarith
+    linarith only [hb, hm]
   have hs := mul_le_mul_of_nonneg_left hraw (Real.sqrt_nonneg d.core.lam)
-  have hr := (PulseCone.coneRate_parts d.core.lam_pos (by linarith [d.core.lam_lt])).2.2
+  have hr := (PulseCone.coneRate_parts d.core.lam_pos (by linarith only [d.core.lam_lt])).2.2
   have hr' := mul_le_mul_of_nonneg_left hr (holdSmallConstant_pos d.core.P_pos d.core.m).le
-  linarith
+  linarith only [hs, hr']
 
 theorem exists_hold_threshold (P m : ℝ) :
     ∃ lam0 : ℝ, 0 < lam0 ∧ ∀ lam : ℝ, 0 < lam → lam < lam0 →
@@ -206,24 +207,24 @@ theorem hold_source_criterion {d : TailData} {K : ℝ} (w : ResetWitness d K)
   have ht : 0 ≤ y - d.core.holdStart := sub_nonneg.mpr hy
   have htw : y - d.core.holdStart ≤ d.core.wait := by
     dsimp [OutgoingSchedule.Parameters.pulseStart] at hy'
-    linarith
+    linarith only [hy']
   have hsum : d.core.holdStart + (y - d.core.holdStart) = y := by ring
   have hq := hold_Qs_pos w ha hh1 hhlam hhT heta ht htw
   rw [hsum] at hq
   have hr := (hold_sqrt_ratio_bound w ha hwait hh1 hhlam hhT heta ht htw).trans hsmall
   rw [hsum] at hr
   have hpow : d.core.lam * coneRatio w Amp (y, eta) ^ 2 ≤ 1 / 4 := by
-    have hp := Real.sq_sqrt d.core.lam_pos.le
-    have hab : |coneRatio w Amp (y, eta)| ^ 2 = coneRatio w Amp (y, eta) ^ 2 := sq_abs _
     have hnonneg := mul_nonneg (Real.sqrt_nonneg d.core.lam) (abs_nonneg (coneRatio w Amp (y, eta)))
-    nlinarith [sq_nonneg (Real.sqrt d.core.lam * |coneRatio w Amp (y, eta)| - 1 / 2)]
+    have hsq := pow_le_pow_left₀ hnonneg hr 2
+    rw [mul_pow, Real.sq_sqrt d.core.lam_pos.le, sq_abs] at hsq
+    exact hsq.trans_eq (by norm_num)
   rw [hold_coneA w eta hy hy', hold_coneB w ha eta hy hy']
   refine ⟨hq, ?_, ?_, ?_⟩
   · simp only [zero_mul, sub_zero]
-    linarith [d.core.lam_pos]
+    linarith only [d.core.lam_pos]
   · norm_num only [zero_mul, mul_zero, zero_pow, zero_div, zero_add, add_zero]
-    linarith
-  · linarith [d.core.lam_pos]
+    linarith only [hpow]
+  · linarith only [d.core.lam_pos]
 
 /-! ## Common actual cone coordinates and source tests -/
 

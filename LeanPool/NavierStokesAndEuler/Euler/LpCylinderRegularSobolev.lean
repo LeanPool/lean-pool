@@ -180,12 +180,11 @@ theorem solutionFamily_block_bound
       (fun a : LiftTangent => translate (V := V) period a a₀) n 0 ≤ A*majorant R d n)
     (n : ℕ) :
     block directions q (solutionFamily period T hT Ω hΩ B g hg f a₀) n 0 ≤ majorant R (d+1) n := by
-  have hBc : ContDiff ℝ ∞ (coefficientFamily period T Ω hΩ B) :=
-    mixedCoefficient_contDiff period Ω hΩ T B hB
-  have hBbound (j : ℕ) (a : LiftTangent) :
-      ‖iteratedFDeriv ℝ j (coefficientFamily period T Ω hΩ B) a‖ ≤ CB*majorant Rc 0 j :=
+  have hBc := mixedCoefficient_contDiff period Ω hΩ T B hB
+  have hBbound := fun (j : ℕ) (a : LiftTangent) =>
     mixedCoefficient_bound period Ω hΩ T B hB j (CB*majorant Rc 0 j) (hBb j) a
-  exact weightedSolution_block_gevrey_at directions hd q T hT (coefficientFamily period T Ω hΩ B)
+  exact weightedSolution_block_gevrey_at (E := Supported period V Ω hΩ) directions hd q T hT
+    (coefficientFamily period T Ω hΩ B)
     (evolutionFamily period T hT Ω hΩ B) g hg (translatedForcing period Ω hΩ f) (translatedData
         period Ω hΩ a₀)
     hBc (translatedForcing_contDiff period Ω hΩ f hf) (translatedData_contDiff period Ω hΩ a₀ ha₀)

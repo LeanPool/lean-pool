@@ -120,7 +120,8 @@ theorem difference_metric_deriv_bound {q : ℕ} {T : Type*} [TopologicalSpace T]
     exact coefficientOperator_inner_swap A.coefficient A.measurable A.bound A.norm_bound hsym
   have hgen := metric_derivative_bound K e t ν c (Kx*V) (2*Kx^2/c^2) L |ν-μ| (4*R) K'
     (differenceRhs period D hq ν μ τ u v) top ((D.metric.coefficient τ).operator p) F
-    (laplacianEvaluation period (q+1) (by omega) d) hc hν (mul_nonneg hkx0 hV) (by positivity) hL
+    (laplacianEvaluation period (q+1) (by omega) d) hc hν (mul_nonneg hkx0 hV)
+    (div_nonneg (mul_nonneg zero_le_two (sq_nonneg Kx)) (sq_nonneg c)) hL
     hK he hsymL hcoer heq hp ht hheat hforce
   have he0 : 0 ≤ ⟪K t (e t),e t⟫_ℝ := (mul_nonneg (sq_nonneg c) (sq_nonneg ‖e t‖)).trans hcoer
   have hkn : ‖K t‖ ≤ Kb := by rw [hKv]; exact hKb
@@ -131,7 +132,8 @@ theorem difference_metric_deriv_bound {q : ℕ} {T : Type*} [TopologicalSpace T]
     have hh : 2*ν*(2*Kx^2/c^2) ≤ 4*Kx^2/c^2 := by
       calc
         _ = ν*(4*Kx^2/c^2) := by ring
-        _ ≤ 1*(4*Kx^2/c^2) := mul_le_mul_of_nonneg_right hν1 (by positivity)
+        _ ≤ 1*(4*Kx^2/c^2) := mul_le_mul_of_nonneg_right hν1
+          (div_nonneg (mul_nonneg zero_le_four (sq_nonneg Kx)) (sq_nonneg c))
         _ = _ := one_mul _
     have hk : 2*‖K t‖*L ≤ 2*Kb*L := by
       have h := mul_le_mul_of_nonneg_right hkn (mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) hL)

@@ -86,8 +86,8 @@ theorem forwardUniformBudget_initialRadius :
 
 open EulerPacketCorrectionOutput EulerSobolevGevreyOperators EulerAllOrderDriftCorrection
 
-local notation "Q" => forwardUniformBudget M D hTime δ hδ hδ1 ξ hs α hα
-  L NB LM Cagree W hW hprofile k hk hX hlog hfrequency Ξ hΞ hF hdet
+local notation "Q" => (forwardUniformBudget M D hTime δ hδ hδ1 ξ hs α hα
+  L NB LM Cagree W hW hprofile k hk hX hlog hfrequency Ξ hΞ hF hdet)
 
 theorem forwardUniformBudget_weighted (s N : ℕ) (hN : N + 6 ≤ s) (t : Icc (0 : ℝ) D.T) :
     weightedNorm period 6 N ((Q).initialRadius/4) (((Q).fieldTower period).realization s t) ≤

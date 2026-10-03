@@ -76,10 +76,11 @@ theorem cylindricalCurl_equiv (e : E ≃L[ℝ] F) {l : ℝ} (hl : l ≠ 0)
   have hcancel (z : ℂ) : (l:ℂ) * ((c:ℂ) * ((l:ℂ)⁻¹ * z)) = (c:ℂ)*z := by
     rw [mul_left_comm (l:ℂ) (c:ℂ), mul_inv_cancel_left₀ hc]
   ext i
-  fin_cases i <;> simp [CurlClassBounds.cylindricalCurl, Pi.smul_apply,
-    hd1, hd2, hd3, Complex.real_smul,
-    hr, Complex.ofReal_mul, mul_inv_rev] <;> ring_nf <;>
-    simp [mul_assoc, mul_comm, hc]
+  fin_cases i <;> simp only [CurlClassBounds.cylindricalCurl, Fin.isValue, Pi.smul_apply,
+    Complex.real_smul, hd2, Complex.ofReal_inv, hd3, hd1, Fin.zero_eta, Fin.mk_one,
+    Fin.reduceFinMk, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, hr, mul_inv_rev,
+    Complex.ofReal_mul] <;> ring_nf <;>
+    simp only [mul_comm, mul_assoc, hc, ne_eq, not_false_eq_true, inv_mul_cancel_left₀]
 
 theorem realizedCoefficient_equiv (e : E ≃L[ℝ] F) {l b K L : ℝ}
     (hl : l ≠ 0) (hb : b ≠ 0) (hK : K ≠ 0) (hKL : K * b = L)

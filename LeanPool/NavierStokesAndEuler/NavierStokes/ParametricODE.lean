@@ -403,12 +403,8 @@ theorem parameter_derivative_eq_solution
     _ = _ := by
       unfold solution source
       apply congrArg (resolvent hab (A p))
-      rw [(integrator hab).map_add]
-      change _ = constantCurve (a := a) (b := b) (E := E) (x₀' v) +
-        (volterra (E := E) hab (A' v) (resolvent hab (A p)
-          (constantCurve (a := a) (b := b) (E := E) (x₀ p) + integrator (E := E) hab (f p))) +
-          integrator (E := E) hab (f' v))
-      abel
+      exact (add_assoc _ _ _).trans
+        (congrArg _ ((add_comm _ _).trans ((integrator hab).map_add _ _).symm))
 
 theorem parameter_derivative_hasDerivWithinAt
     (A : P → Coefficient a b E) (x₀ : P → E) (f : P → Curve a b E)

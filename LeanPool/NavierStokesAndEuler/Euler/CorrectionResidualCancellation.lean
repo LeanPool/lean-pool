@@ -48,11 +48,12 @@ theorem rawSource_eq_residual_increment {q : ℕ} {T : Type*} [TopologicalSpace 
       nonlinearity period D hq t (D.approximation t) := by
   let B := (D.coefficients period hq).quadratic t
   let A := (coefficientSobolevOperator period (D.linear.jet t)).comp (truncateOperator period q)
-  change D.residual t + linearize B A (D.approximation t) e + B e e =
-    D.residual t + (A (D.approximation t+e) + B (D.approximation t+e) (D.approximation t+e)) -
-      (A (D.approximation t) + B (D.approximation t) (D.approximation t))
-  simp only [linearize_apply,map_add,add_apply]
-  abel
+  have h : D.residual t + linearize B A (D.approximation t) e + B e e =
+      D.residual t + (A (D.approximation t+e) + B (D.approximation t+e) (D.approximation t+e)) -
+        (A (D.approximation t) + B (D.approximation t) (D.approximation t)) := by
+    simp only [linearize_apply,map_add,add_apply]
+    abel
+  apply h
 
 /-- The signed approximate and correction equations cancel the residual and add their actual
 pressures. -/

@@ -458,6 +458,11 @@ def normalizedResidual (k : ℝ) (W : VectorField) (p : ScalarField) (z : Domain
   k • rawInverse D z (slicedMomentumResidual (Icc (0 : ℝ) D.T) k⁻¹
     (rawInverse D z) (D.strain z) (D.normalField z) W p z)
 
+private theorem value_add_ae {q : ℕ} (u v : SobolevSpace P q) :
+    (value P (u + v) : LiftDomain P → Space) =ᵐ[liftMeasure P]
+      (value P u : LiftDomain P → Space) + value P v :=
+  Lp.coeFn_add _ _
+
 private theorem nonlinearity_value_ae (κ : ℝ) (hκ : |κ| ≤ 1)
     {z r : VectorField} (Z : EulerPacketCylinderField.Field P D.T z)
     (R : EulerPacketCylinderField.Field P D.T r)
@@ -469,30 +474,19 @@ private theorem nonlinearity_value_ae (κ : ℝ) (hκ : |κ| ≤ 1)
           (transportDirection κ D.m₀ (pointField P Z.path Z.orbit t x)) +
         ∑ i : Fin 3, (pointField P Z.path Z.orbit t x) i •
           (quadraticCoefficient D κ i).path t x.1 (pointField P Z.path Z.orbit t x) := by
-  let u := Z.toFieldTower.realization (q+1) t
-  let a := coefficientSobolevOperator P ((linearTower D P).jet q t) (truncateOperator P q u)
-  let b := transportBilinear P hq (velocityComponents κ D.m₀)
-    (velocityComponents_norm κ D.m₀ hκ D.m₀_unit.le) u u
-  let c := algebraicBilinear P hq
-    (fun i => coefficientSobolevOperator P ((quadraticTower D P κ i).jet q t)) u u
-  have ha := coefficient_value_ae (linearCoefficient D) q t (truncateOperator P q u)
-    (pointField P Z.path Z.orbit t) (by
-      simpa only [value_truncateOperator] using Z.toFieldTower_value_ae (q+1) t)
+  have ha := coefficient_value_ae (linearCoefficient D) q t
+    (truncateOperator P q (Z.toFieldTower.realization (q+1) t)) (pointField P Z.path Z.orbit t)
+    (by simpa only [value_truncateOperator] using Z.toFieldTower_value_ae (q+1) t)
   have hb := transport_value_ae Z κ D.m₀ hκ D.m₀_unit.le q hq t
   have hc := algebraicBilinear_ae P hq (fun i => (quadraticTower D P κ i).coefficient t)
-    (fun i => (quadraticTower D P κ i).jet q t) u u _ _
+    (fun i => (quadraticTower D P κ i).jet q t) (Z.toFieldTower.realization (q+1) t)
+    (Z.toFieldTower.realization (q+1) t) _ _
     (Z.toFieldTower_value_ae (q+1) t) (Z.toFieldTower_value_ae (q+1) t)
-  change ((valueOperator P q) (a+(b+c)) : LiftDomain P → Space) =ᵐ[liftMeasure P] _
-  rw [map_add,map_add]
-  filter_upwards [Lp.coeFn_add (value P a) (value P b+value P c),
-    Lp.coeFn_add (value P b) (value P c),ha,hb,hc] with x hx hy ha hb hc
-  change (value P a + (value P b + value P c)) x = _
-  simp only [Pi.add_apply] at hx hy
-  change (value P a) x = _ at ha
-  change (value P b) x = _ at hb
-  change (value P c) x = _ at hc
-  rw [hx,hy,ha,hb,hc]
-  simp only [add_assoc,quadraticTower,MatrixCoefficient.toCoefficientTower_coefficient]
+  have hs := (value_add_ae _ _).trans (ha.add ((value_add_ae _ _).trans (hb.add hc)))
+  refine hs.trans ?_
+  refine Filter.Eventually.of_forall fun x => ?_
+  simp only [Pi.add_apply, add_assoc, quadraticTower,
+    MatrixCoefficient.toCoefficientTower_coefficient]
 
 section Equation
 
@@ -518,29 +512,18 @@ theorem sobolev_residual_identity (q : ℕ) (hq : 6 ≤ q) (t : Icc (0 : ℝ) D.
           (Pa.toFieldTower.realization q t) := by
   let Z := coordinateField D G k
   let Zt := coordinateTimeField D G Gt k
-  let A := coordinateData D k hκ G p R
-  let N := nonlinearity P (A.atOrder P q) hq t (Z.toFieldTower.realization (q+1) t)
-  let Q := coefficientSobolevOperator P ((metricTower D P).jet q t)
-    (Pa.toFieldTower.realization q t)
-  have hn := nonlinearity_value_ae D k⁻¹ hκ Z R q hq t
+  have hn := nonlinearity_value_ae D k⁻¹ hκ (coordinateField D G k) R q hq t
   have hp := coefficient_value_ae (metricCoefficient D) q t
     (Pa.toFieldTower.realization q t) (pointField P Pa.path Pa.orbit t)
     (Pa.toFieldTower_value_ae q t)
+  have hs := (value_add_ae _ _).trans
+    (((value_add_ae _ _).trans
+      (((coordinateTimeField D G Gt k).toFieldTower_value_ae q t).add hn)).add hp)
   apply value_injective P
-  change value P (R.toFieldTower.realization q t) =
-    (valueOperator P q) (Zt.toFieldTower.realization q t+N+Q)
-  rw [map_add,map_add]
   apply Lp.ext
-  filter_upwards [R.toFieldTower_value_ae q t,Zt.toFieldTower_value_ae q t,hn,hp,
-    Lp.coeFn_add (value P (Zt.toFieldTower.realization q t)) (value P N),
-    Lp.coeFn_add (value P (Zt.toFieldTower.realization q t)+value P N) (value P Q)]
-    with x hr ht hn hp hs hs'
-  change (value P (R.toFieldTower.realization q t)) x =
-    (value P (Zt.toFieldTower.realization q t)+value P N+value P Q) x
-  simp only [Pi.add_apply] at hs hs'
-  change (value P N) x = _ at hn
-  change (value P Q) x = _ at hp
-  rw [hr,hs',hs,ht,hn,hp]
+  refine (R.toFieldTower_value_ae q t).trans (Filter.EventuallyEq.trans ?_ hs.symm)
+  refine Filter.Eventually.of_forall fun x => ?_
+  simp only [Pi.add_apply]
   obtain ⟨θ,hθ⟩ := QuotientAddGroup.mk_surjective x.2
   have he := normalized_residual D G Gt k hk hW p t x.1 θ
   change normalizedResidual D k W p (t,(x.1,θ)) = _ at he

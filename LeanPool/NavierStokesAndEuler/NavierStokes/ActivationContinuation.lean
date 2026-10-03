@@ -1006,24 +1006,25 @@ theorem pressureJets_small {p : Point} (hp : p ∈ D.carrier)
     (hf : ∀ s ∈ Icc (0 : ℝ) p.1, |P.f (s, p.2)| ≤ K / C)
     (hfη : ∀ s ∈ Icc (0 : ℝ) p.1, |parameterPartial P.f (s, p.2)| ≤ K / C) :
     ‖pressureJets P Λ p‖ < ε := by
-  have hΛ0 : 0 < Λ := by linarith [one_div_pos.mpr hε]
+  have hΛ0 : 0 < Λ := by linarith only [one_div_pos.mpr hε, hΛ]
   have hC1 : 1 ≤ C := by
-    have hn : 0 ≤ 220 * K ^ 2 / ε := by positivity
-    linarith
+    have hn : 0 ≤ 220 * K ^ 2 / ε :=
+      div_nonneg (mul_nonneg (by norm_num) (sq_nonneg K)) hε.le
+    linarith only [hn, hC]
   have hC0 : 0 < C := zero_lt_one.trans_le hC1
   have hinv : |1 / Λ| < ε := by
     rw [abs_of_pos (one_div_pos.mpr hΛ0), div_lt_iff₀ hΛ0]
-    have hmul := (div_lt_iff₀ hε).mp (show 1 / ε < Λ by linarith)
-    linarith
+    have hmul := (div_lt_iff₀ hε).mp (show 1 / ε < Λ by linarith only [hΛ])
+    linarith only [hmul]
   have hsize : 220 * K ^ 2 / C ^ 2 < ε := by
     apply (div_lt_iff₀ (sq_pos_of_pos hC0)).mpr
-    have hb := (div_lt_iff₀ hε).mp (show 220 * K ^ 2 / ε < C by linarith)
-    have hh : C ≤ C ^ 2 := by nlinarith
-    nlinarith
+    have hb := (div_lt_iff₀ hε).mp (show 220 * K ^ 2 / ε < C by linarith only [hC])
+    have hh : C ≤ C ^ 2 := le_self_pow₀ hC1 two_ne_zero
+    linarith only [hb, mul_le_mul_of_nonneg_left hh hε.le]
   have hvnum : p.1 * K ^ 2 ≤ 220 * K ^ 2 :=
     mul_le_mul_of_nonneg_right (hX.2.trans (by norm_num)) (sq_nonneg K)
   have hpnum : (2 * p.1) * K ^ 2 ≤ 220 * K ^ 2 :=
-    mul_le_mul_of_nonneg_right (by linarith [hX.2]) (sq_nonneg K)
+    mul_le_mul_of_nonneg_right (by linarith only [hX.2]) (sq_nonneg K)
   have hval : |P.pressure p - P.pressure0 p.2| < ε := by
     apply (pressure_increment_bound P hp hX.1 hK hC0 hf).trans_lt
     exact (div_le_div_of_nonneg_right hvnum (sq_nonneg C)).trans_lt hsize
@@ -1129,9 +1130,12 @@ theorem bounds_from_sources (hsmall : NaturalAxisData.SmallParameters h j) (hσ 
           (NaturalAxisData.chi_bounds h j hσ p.2).1
       have hqa : (23 / 10 : ℝ) * NaturalAxisData.L h p.2 ≤ q * (4 / Λ) := by
         have he : q * (4 / Λ) = (94 / 25 : ℝ) * NaturalAxisData.L h p.2 *
-            NaturalAxisData.chi h j σ p.2 := by dsimp [q]; field_simp ; ring
+            NaturalAxisData.chi h j σ p.2 := by
+          dsimp only [q]
+          linear_combination (47 / 50 * 4 * NaturalAxisData.L h p.2 *
+            NaturalAxisData.chi h j σ p.2) * mul_inv_cancel₀ hΛ.ne'
         rw [he]
-        nlinarith
+        linarith only [mul_le_mul_of_nonneg_left hchi hL.le, hL]
       apply p1_preserves_lower P hdom hX h hL ha haX (by norm_num : (0 : ℝ) ≤ 23 / 10)
         hqpos hqa
         (fun s hsp => N.refF_pos δ (reference_mem E.profile hΛ (p := (s, p.2)) hsp.1 hp.2) hsp.1)
@@ -1275,7 +1279,7 @@ theorem exists_reference_bounds {h j σ ν : ℝ} {P0 : ℝ → ℝ}
   have hpressure : 1 + 220 * K ^ 2 / τ ≤ C := (le_max_left _ _).trans hlast
   have hcone : 18 * K / ((4 / Λ) * (ν / 2)) < C := by
     have hh := (le_max_right _ _).trans hlast
-    linarith
+    linarith only [hh]
   have hCpos : 0 < C := hC₀.trans_le hC
   obtain ⟨E⟩ := hentrance Λ hscalee C hentry
   obtain ⟨r, hr, hlastChoice⟩ := hjetΛ C hnormal E.profile
@@ -1285,7 +1289,7 @@ theorem exists_reference_bounds {h j σ ν : ℝ} {P0 : ℝ → ℝ}
   refine ⟨hc.length_bound, ?_⟩
   let P := referenceProfiles E.profile hΛ hδ hc.length_bound hP0
   have hJ : ReferenceJetBounds.JetBounds h j σ Λ C B K P.f P.U := hj
-  have hB0 : 0 ≤ B := by linarith
+  have hB0 : 0 ≤ B := zero_le_one.trans hB.le
   have hhistory (p : Point) (hp : p ∈ holdRegion) :
       |Λ * (P.Ubar p - NaturalAxisData.U j p.2)| ≤ B ∧
       |Λ * (ProfileHistories.average (parameterPartial P.U) p - 4)| ≤ B :=
@@ -1295,9 +1299,9 @@ theorem exists_reference_bounds {h j σ ν : ℝ} {P0 : ℝ → ℝ}
       (47 / 50 : ℝ) * NaturalAxisData.L h p.2 * Λ * NaturalAxisData.chi h j σ p.2 + 12 / 5 <
         sourceQ P h p := by
     by_cases hnat : p.1 ≤ 4 / Λ
-    · have hY : Λ * p.1 ≤ 4 := by linarith [(le_div_iff₀ hΛ).mp hnat]
+    · have hY : Λ * p.1 ≤ 4 := (mul_comm _ _).trans_le ((le_div_iff₀ hΛ).mp hnat)
       have hpoint : NaturalProfile.rescalePoint Λ p ∈ NaturalEntrance.entranceSet :=
-        ⟨⟨mul_nonneg hΛ.le hp.1.1, by change Λ * p.1 ≤ 41 / 10; linarith⟩, hp.2⟩
+        ⟨⟨mul_nonneg hΛ.le hp.1.1, by change Λ * p.1 ≤ 41 / 10; linarith only [hY]⟩, hp.2⟩
       have he := reference_sourceQ_natural E.profile hΛ hδ hc.length_bound hP0
         (NaturalEntrance.entrance_mem_strip hpoint) hnat
       change sourceQ P h p = _ at he
@@ -1306,7 +1310,7 @@ theorem exists_reference_bounds {h j σ ν : ℝ} {P0 : ℝ → ℝ}
       have hnonneg : 0 ≤ NaturalAxisData.L h p.2 * Λ * NaturalAxisData.chi h j σ p.2 :=
         mul_nonneg (mul_nonneg (NaturalAxisData.L_pos hsmall hp.2).le hΛ.le)
           (NaturalAxisData.chi_bounds h j hσ p.2).1
-      linarith
+      linarith only [hh, hnonneg]
     · obtain ⟨s⟩ := hsamples p hp (le_of_lt (lt_of_not_ge hnat))
       exact hqmodel Λ hscaleq P p s.Y s.theta s.phi s.error s.point_mem s.theta_mem
         s.phi_lower s.phi_upper s.error_bound (hJ.axial_value p hp)
@@ -2231,37 +2235,37 @@ theorem reference_fieldJet_bound {D : RadialDomain} (P : Profiles D)
     ‖fieldJet P p‖ ≤ K + B + 6 := by
   have hΛ0 : 0 < Λ := zero_lt_one.trans_le hΛ
   have hC0 : 0 < C := zero_lt_one.trans_le hC
-  have hf : K / C ≤ K := (div_le_iff₀ hC0).mpr (by nlinarith)
+  have hf : K / C ≤ K := (div_le_iff₀ hC0).mpr (le_mul_of_one_le_right hK hC)
   have hu := hj.axial_value p hp
   have huη := hj.axial_parameter p hp
   rw [abs_mul, abs_of_pos hΛ0] at hu huη
-  have hdu : |P.U p - NaturalAxisData.U j p.2| ≤ B := by
-    nlinarith [abs_nonneg (P.U p - NaturalAxisData.U j p.2)]
-  have hduη : |parameterPartial P.U p - 4| ≤ B := by
-    nlinarith [abs_nonneg (parameterPartial P.U p - 4)]
+  have hdu : |P.U p - NaturalAxisData.U j p.2| ≤ B :=
+    (le_mul_of_one_le_left (abs_nonneg _) hΛ).trans hu
+  have hduη : |parameterPartial P.U p - 4| ≤ B :=
+    (le_mul_of_one_le_left (abs_nonneg _) hΛ).trans huη
   have hη : |p.2| ≤ 1 := abs_le.mpr hp.2
   have hstar : |NaturalAxisData.U j p.2| ≤ 5 := by
     calc
       _ ≤ |4 * p.2| + |j| := abs_add_le _ _
       _ = 4 * |p.2| + j := by rw [abs_mul, abs_of_pos hsmall.j_pos]; norm_num
-      _ ≤ 5 := by linarith [hsmall.j_le]
+      _ ≤ 5 := by linarith only [hη, hsmall.j_le]
   have huabs : |P.U p| ≤ B + 5 := by
     have hh := abs_add_le (P.U p - NaturalAxisData.U j p.2) (NaturalAxisData.U j p.2)
     rw [sub_add_cancel] at hh
-    linarith
+    linarith only [hh, hdu, hstar]
   have hueabs : |parameterPartial P.U p| ≤ B + 4 := by
     have hh := abs_add_le (parameterPartial P.U p - 4) (4 : ℝ)
     rw [sub_add_cancel] at hh
     norm_num at hh
-    linarith
-  apply (pi_norm_le_iff_of_nonneg (by positivity : 0 ≤ K + B + 6)).2
+    linarith only [hh, hduη]
+  apply (pi_norm_le_iff_of_nonneg (add_nonneg (add_nonneg hK hB) (by norm_num))).2
   intro i
   rw [Real.norm_eq_abs]
   fin_cases i
-  · exact (hj.angular_value p hp).trans (hf.trans (by linarith))
-  · exact huabs.trans (by linarith)
-  · exact (hj.angular_parameter p hp).trans (hf.trans (by linarith))
-  · exact hueabs.trans (by linarith)
+  · exact (hj.angular_value p hp).trans (hf.trans (by linarith only [hB]))
+  · exact huabs.trans (by linarith only [hK])
+  · exact (hj.angular_parameter p hp).trans (hf.trans (by linarith only [hB]))
+  · exact hueabs.trans (by linarith only [hK])
 
 theorem pressure_initial_bound {P0 : ℝ → ℝ} (hP0 : ContDiff ℝ ∞ P0) :
     ∃ B0 > 0, ∀ η ∈ Icc (-1 : ℝ) 1, |P0 η| ≤ B0 ∧ |deriv P0 η| ≤ B0 := by
@@ -3107,7 +3111,7 @@ theorem exists_comparable_ramp {h j σ Λ C B K r0 : ℝ} {P0 : ℝ → ℝ}
   have hrmin : 0 < rmin := lt_min hr0 (lt_min c.referenceRadius_pos hrE)
   let δ := rmin / 2
   have hδ : 0 < δ := div_pos hrmin (by norm_num)
-  have hδmin : δ < rmin := by dsimp [δ]; linarith
+  have hδmin : δ < rmin := by dsimp only [δ]; linarith only [hrmin]
   have hdr0 : δ < r0 := hδmin.trans_le (min_le_left _ _)
   have hdrc : δ < c.referenceRadius := hδmin.trans_le ((min_le_right _ _).trans (min_le_left _ _))
   have hdrE : δ < rE := hδmin.trans_le ((min_le_right _ _).trans (min_le_right _ _))
@@ -3118,7 +3122,7 @@ theorem exists_comparable_ramp {h j σ Λ C B K r0 : ℝ} {P0 : ℝ → ℝ}
   have hb : δ ≤ R.bigTime := by
     have hf := N.freeze_before_Xbig hΛ1 hδT
     have hm : N.endpoint * Real.exp δ ≤ 100 := by
-      exact (mul_le_mul_of_nonneg_left (Real.exp_le_exp.mpr (by linarith : δ ≤ 2 * δ))
+      exact (mul_le_mul_of_nonneg_left (Real.exp_le_exp.mpr (by linarith only [hδ] : δ ≤ 2 * δ))
         N.endpoint_pos.le).trans hf.le
     exact (N.le_logTime_iff (by norm_num : (0 : ℝ) < 100)).mpr hm
   obtain ⟨Tstar, θ, hTstar, hTstarδ, hθ, hθ1, hInitial⟩ :=
@@ -3130,18 +3134,19 @@ theorem exists_comparable_ramp {h j σ Λ C B K r0 : ℝ} {P0 : ℝ → ℝ}
       isCompact_Icc original_interval_interior (max Nextra 1) hεall hb
   let T := min T0 Tstar / 2
   have hT : 0 < T := div_pos (lt_min hT0 hTstar) (by norm_num)
-  have hTmin : T < min T0 Tstar := by dsimp [T]; linarith [lt_min hT0 hTstar]
+  have hTmin : T < min T0 Tstar := by dsimp only [T]; linarith only [lt_min hT0 hTstar]
   have hTT0 : T < T0 := hTmin.trans_le (min_le_left _ _)
   have hTTstar : T ≤ Tstar := (hTmin.trans_le (min_le_right _ _)).le
   let κ := min κ0 c.damping / 2
   have hκ : 0 < κ := div_pos (lt_min hκ0 c.damping_pos) (by norm_num)
-  have hκmin : κ < min κ0 c.damping := by dsimp [κ]; linarith [lt_min hκ0 c.damping_pos]
+  have hκmin : κ < min κ0 c.damping := by
+    dsimp only [κ]; linarith only [lt_min hκ0 c.damping_pos]
   have hκκ0 : κ < κ0 := hκmin.trans_le (min_le_left _ _)
   have hκc : κ ≤ c.damping := (hκmin.trans_le (min_le_right _ _)).le
   have hκ1 : κ < 1 := hκκ0.trans hκ01
   let w := w0 / 2
   have hw : 0 < w := div_pos hw0 (by norm_num)
-  have hww0 : w < w0 := by dsimp [w]; linarith
+  have hww0 : w < w0 := by dsimp only [w]; linarith only [hw0]
   have hJoint := hControls T ⟨hT, hTT0⟩ κ ⟨hκ.le, hκκ0⟩ w ⟨hw, hww0⟩ w ⟨hw, hww0⟩
   have hAll : R.SmallPhysicalControl (Icc (-1 : ℝ) 1) (max Nextra 1) εall T κ w w := hJoint.2
   have hOne : R.SmallPhysicalControl (Icc (-1 : ℝ) 1) 1 εA T κ w w :=
@@ -3167,12 +3172,13 @@ theorem exists_comparable_ramp {h j σ Λ C B K r0 : ℝ} {P0 : ℝ → ℝ}
     have hu : εU ≤ 1 / (4 * Λ) := min_le_right _ _
     have hid : 1 / (4 * Λ) = (1 / Λ) / 4 := by ring
     rw [hid] at hu
-    linarith [one_div_pos.mpr hΛ]
+    linarith only [hu, one_div_pos.mpr hΛ]
   have hUraw : εU + εU < c.fieldTolerance := by
     have hu : εU ≤ εF := min_le_left _ _
-    dsimp [εF] at hu
-    linarith [c.fieldTolerance_pos]
-  have hFraw : εF + εF < c.fieldTolerance := by dsimp [εF]; linarith [c.fieldTolerance_pos]
+    dsimp only [εF] at hu
+    linarith only [hu, c.fieldTolerance_pos]
+  have hFraw : εF + εF < c.fieldTolerance := by
+    dsimp only [εF]; linarith only [c.fieldTolerance_pos]
   have hAct (p : Point) (hp : p ∈ continuationRegion (4 / Λ)) :
       |P.U p - N.U (N.endpoint, p.2)| < εA ∧
       |parameterPartial P.U p - parameterPartial N.U (N.endpoint, p.2)| < εA ∧

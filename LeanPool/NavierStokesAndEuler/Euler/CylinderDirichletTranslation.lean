@@ -36,12 +36,12 @@ theorem fullOperator_translation_back (a : LiftTangent) (Q : EulerSmoothLimit.Sp
       adjoint (𝕜 := ℝ) (E := CylinderL2 P E) (F := CylinderL2 P E)
         (translate (V := E) P a).toContinuousLinearMap
         (fullOperatorMap (E := U) (F := E) P (translated Q a.1) u) := by
-  rw [translate_adjoint,translate_adjoint]
-  change fullOperatorMap (E := U) (F := E) P Q (translate (V := U) P (-a) u) =
-    translate (V := E) P (-a) (fullOperatorMap (E := U) (F := E) P (translated Q a.1) u)
   have he := congrArg (translate (V := E) P (-a))
     (fullOperator_translation P a Q (translate (V := U) P (-a) u))
-  simpa only [translate_add,add_neg_cancel,neg_add_cancel,translate_zero] using he.symm
+  simp only [translate_add, add_neg_cancel, neg_add_cancel, translate_zero] at he
+  exact (congrArg (fullOperatorMap (E := U) (F := E) P Q)
+    (DFunLike.congr_fun (translate_adjoint (V := U) P a) u)).trans
+      (he.symm.trans (DFunLike.congr_fun (translate_adjoint (V := E) P a) _).symm)
 
 end EulerLpCylinderRectangular
 

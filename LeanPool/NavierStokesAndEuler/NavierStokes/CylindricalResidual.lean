@@ -56,17 +56,26 @@ noncomputable def frame (θ : ℝ) : Space →L[ℝ] Space :=
 theorem frame_apply (θ : ℝ) (v : Space) :
     frame θ v = pack (Real.cos θ * v 0 - Real.sin θ * v 1)
       (Real.sin θ * v 0 + Real.cos θ * v 1) (v 2) := by
+  simp only [frame, horizontal, connection, vertical, add_apply, smul_apply, packDerivative_apply,
+    AxisymmetricFields.projection_apply, zero_apply, neg_apply]
   ext i
-  fin_cases i <;> simp [frame, horizontal, connection, vertical] <;> ring
+  fin_cases i <;>
+    simp only [Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, PiLp.add_apply, PiLp.smul_apply,
+      pack_zero, pack_one, pack_two, smul_eq_mul, mul_neg, mul_zero, add_zero, zero_add] <;> ring
 
 theorem connection_apply (v : Space) : connection v = pack (-v 1) (v 0) 0 := by
   simp [connection, packDerivative_apply]
 
 theorem frame_connection (θ : ℝ) :
     (frame θ).comp connection = -Real.sin θ • horizontal + Real.cos θ • connection := by
-  ext v i
-  fin_cases i <;> simp [frame_apply, connection_apply, horizontal, packDerivative_apply]
-  ring
+  ext v : 1
+  simp only [ContinuousLinearMap.comp_apply, add_apply, smul_apply, frame_apply, connection_apply,
+    horizontal, packDerivative_apply, AxisymmetricFields.projection_apply, zero_apply, pack_zero,
+    pack_one, pack_two]
+  ext i
+  fin_cases i <;>
+    simp only [Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, PiLp.add_apply, PiLp.smul_apply,
+      pack_zero, pack_one, pack_two, smul_eq_mul, mul_neg, mul_zero, add_zero] <;> ring
 
 theorem frame_inverse (θ : ℝ) (v : Space) : frame (-θ) (frame θ v) = v := by
   ext i
@@ -93,9 +102,13 @@ theorem hasFDerivAt_chart (q : Space) : HasFDerivAt chart (chartJacobian q) q :=
   have h0 := (projection 0).hasFDerivAt (x := q)
   have h1 := (projection 1).hasFDerivAt (x := q)
   have h2 := (projection 2).hasFDerivAt (x := q)
-  convert! hasFDerivAt_pack (h0.mul h1.cos) (h0.mul h1.sin) h2 using 1
-  ext v i
-  fin_cases i <;> simp [chartJacobian_apply, frame_apply, packDerivative_apply] <;> ring
+  refine (hasFDerivAt_pack (h0.mul h1.cos) (h0.mul h1.sin) h2).congr_fderiv ?_
+  ext v : 1
+  simp only [chartJacobian_apply, packDerivative_apply, frame_apply, add_apply, smul_apply,
+    AxisymmetricFields.projection_apply, smul_eq_mul, pack_zero, pack_one, pack_two]
+  ext i
+  fin_cases i <;> simp only [Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, pack_zero, pack_one,
+    pack_two] <;> ring
 
 theorem contDiff_chart {n : WithTop ℕ∞} : ContDiff ℝ n chart := by
   unfold chart pack
@@ -194,20 +207,15 @@ theorem second_chain {f : Space → E} {g : Space → Space} {q : Space}
       hg.continuousAt (hf.eventually (by norm_num))
     filter_upwards [hfnear, hg.eventually (by norm_num)] with y hyf hyg
     exact congrArg (fun L : Space →L[ℝ] E => L (coordinateVector i))
-      ((hyf.differentiableAt (by norm_num)).hasFDerivAt.comp y
-        (hyg.differentiableAt (by norm_num)).hasFDerivAt).fderiv
+      (fderiv_comp y (hyf.differentiableAt (by norm_num)) (hyg.differentiableAt (by norm_num)))
   rw [dCoord_congr hnear]
   have hD := (hf.fderiv_right (m := 1) (by norm_num)).differentiableAt (by norm_num)
   have hgD := hg.differentiableAt (by norm_num)
   have hDi := (contDiffAt_dCoord hg (m := 1) (by norm_num) i).differentiableAt (by norm_num)
   change (fderiv ℝ (fun y => ((fderiv ℝ f) ∘ g) y (dCoord i g y)) q)
     (coordinateVector i) = _
-  rw [fderiv_clm_apply (hD.comp q hgD) hDi]
-  rw [show fderiv ℝ ((fderiv ℝ f) ∘ g) q =
-      (fderiv ℝ (fderiv ℝ f) (g q)).comp (fderiv ℝ g q) from
-    (hD.hasFDerivAt.comp q hgD.hasFDerivAt).fderiv]
-  rw [add_apply, ContinuousLinearMap.comp_apply, ContinuousLinearMap.flip_apply,
-    ContinuousLinearMap.comp_apply, add_comm]
+  rw [((hD.hasFDerivAt.comp q hgD.hasFDerivAt).clm_apply hDi.hasFDerivAt).fderiv,
+    add_apply, add_comm]
   rfl
 
 theorem dCoord_chart_zero (q : Space) :
@@ -249,8 +257,13 @@ theorem dCoord_dCoord_chart_one (q : Space) :
     (y 0 * Real.cos (y 1)) 0) q) _ = _
   rw [(hasFDerivAt_pack (h0.fun_neg.fun_mul h1.sin) (h0.fun_mul h1.cos) hz).fderiv,
     dCoord_chart_zero]
+  simp only [coordinateVector, packDerivative_apply, add_apply, neg_apply, smul_apply,
+    AxisymmetricFields.projection_apply, PiLp.single_eq_same, smul_eq_mul, mul_one, ne_eq,
+    zero_ne_one, not_false_eq_true, PiLp.single_eq_of_ne, mul_zero, neg_zero, add_zero, zero_apply]
   ext i
-  fin_cases i <;> simp [packDerivative_apply, coordinateVector]
+  fin_cases i <;>
+    simp only [Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, pack_zero, pack_one, pack_two,
+      PiLp.smul_apply, smul_eq_mul, mul_zero, neg_mul, mul_neg]
 
 theorem dCoord_dCoord_chart_two (q : Space) : dCoord 2 (dCoord 2 chart) q = 0 := by
   rw [show dCoord 2 chart = fun _ => coordinateVector 2 from funext dCoord_chart_two]
@@ -277,7 +290,16 @@ theorem scalarLaplacian_pullback {f : Space → E} {q : Space}
     dCoord_chart_one, dCoord_chart_two, hessian, pack, map_add, map_smul,
     map_zero, _root_.add_apply, _root_.smul_apply,
     zero_smul, add_zero]
-  match_scalars <;> field_simp [hr] <;> nlinarith [Real.cos_sq_add_sin_sq (q 1)]
+  have hk : (q 0 ^ 2)⁻¹ * q 0 ^ 2 = 1 := inv_mul_cancel₀ (pow_ne_zero 2 hr)
+  have hk' : (q 0)⁻¹ * q 0 = 1 := inv_mul_cancel₀ hr
+  match_scalars
+  · linear_combination Real.cos_sq_add_sin_sq (q 1) + Real.sin (q 1) ^ 2 * hk
+  · linear_combination -(Real.sin (q 1) * Real.cos (q 1)) * hk
+  · linear_combination -(Real.sin (q 1) * Real.cos (q 1)) * hk
+  · linear_combination Real.cos_sq_add_sin_sq (q 1) + Real.cos (q 1) ^ 2 * hk
+  · linear_combination -((q 0)⁻¹ * Real.cos (q 1)) * hk'
+  · linear_combination -((q 0)⁻¹ * Real.sin (q 1)) * hk'
+  · rfl
 
 theorem contDiff_frame {n : WithTop ℕ∞} : ContDiff ℝ n frame := by
   unfold frame
@@ -289,12 +311,11 @@ theorem hasFDerivAt_frameField (q : Space) :
       ((projection 1).smulRight ((frame (q 1)).comp connection)) q := by
   have h1 : HasFDerivAt (fun y : Space => y 1) (projection 1) q :=
     (projection 1).hasFDerivAt
-  convert! ((h1.cos.smul_const horizontal).add (h1.sin.smul_const connection)).add_const
-    vertical using 1
-  rw [frame_connection]
+  refine (((h1.cos.smul_const horizontal).add (h1.sin.smul_const connection)).add_const
+    vertical).congr_fderiv ?_
   ext v : 1
-  simp only [ContinuousLinearMap.smulRight_apply, add_apply, smul_apply, smul_eq_mul,
-    AxisymmetricFields.projection_apply]
+  simp only [frame_connection, ContinuousLinearMap.smulRight_apply, add_apply, smul_apply,
+    smul_eq_mul, AxisymmetricFields.projection_apply]
   module
 
 /-- Cartesian representation of cylindrical vector components. -/
@@ -436,7 +457,12 @@ noncomputable def vectorDivergence (w : Space → Space) (q : Space) : ℝ :=
 theorem trace_rotation (A : Space →L[ℝ] Space) (θ : ℝ) :
     (∑ i : Fin 3, (A (coordinateVector i)) i) =
       ∑ i : Fin 3, (frame (-θ) (A (frame θ (coordinateVector i)))) i := by
-  simp [Fin.sum_univ_three, frame_apply, pack, coordinateVector]
+  simp only [coordinateVector, Fin.sum_univ_three, Fin.isValue, frame_apply, pack,
+    PiLp.single_apply, mul_ite, mul_one, mul_zero, ite_smul, one_smul, zero_smul,
+    ContinuousLinearMap.map_add, ContinuousLinearMap.map_smul, Real.cos_neg, PiLp.add_apply,
+    PiLp.smul_apply, smul_eq_mul, Real.sin_neg, neg_mul, sub_neg_eq_add, ↓reduceIte, one_ne_zero,
+    sub_zero, add_zero, Fin.reduceEq, ContinuousLinearMap.map_zero, PiLp.zero_apply, zero_ne_one,
+    zero_sub, zero_add, sub_self, zero_mul, add_left_inj]
   linear_combination -((A (EuclideanSpace.single 0 1)) 0 +
     (A (EuclideanSpace.single 1 1)) 1) * Real.cos_sq_add_sin_sq θ
 
@@ -457,24 +483,28 @@ noncomputable def euclideanGradient (f : Space → ℝ) (x : Space) : Space :=
 noncomputable def scalarGradient (f : Space → ℝ) (q : Space) : Space :=
   pack (dCoord 0 f q) (dCoord 1 f q / q 0) (dCoord 2 f q)
 
+theorem euclideanGradient_eq_pack (f : Space → ℝ) (x : Space) :
+    euclideanGradient f x = pack (dCoord 0 f x) (dCoord 1 f x) (dCoord 2 f x) := by
+  rw [euclideanGradient, Fin.sum_univ_three]
+  rfl
+
 theorem cartesianGradient_pullback {f : Space → ℝ} {q : Space}
     (hf : DifferentiableAt ℝ f (chart q)) (hr : q 0 ≠ 0) :
     euclideanGradient f (chart q) = frame (q 1) (scalarGradient (f ∘ chart) q) := by
   unfold scalarGradient
-  rw [dCoord_pullback hf 0, dCoord_pullback hf 1, dCoord_pullback hf 2]
-  rw [dCoord_chart_zero, dCoord_chart_one, dCoord_chart_two]
+  rw [dCoord_pullback hf 0, dCoord_pullback hf 1, dCoord_pullback hf 2, dCoord_chart_zero,
+    dCoord_chart_one, dCoord_chart_two, fderiv_pack, fderiv_pack, frame_apply,
+    euclideanGradient_eq_pack]
   ext i
   fin_cases i
-  · simp [euclideanGradient, Fin.sum_univ_three, frame_apply, pack, dCoord, coordinateVector]
+  · simp only [Fin.zero_eta, pack_zero, pack_one, smul_eq_mul, zero_mul, add_zero]
     field_simp [hr]
-    linear_combination -(fderiv ℝ f (chart q) (EuclideanSpace.single 0 1)) *
-      Real.cos_sq_add_sin_sq (q 1)
-  · simp [euclideanGradient, Fin.sum_univ_three, frame_apply, pack, dCoord, coordinateVector]
+    linear_combination -(dCoord 0 f (chart q)) * Real.cos_sq_add_sin_sq (q 1)
+  · simp only [Fin.mk_one, pack_zero, pack_one, smul_eq_mul, zero_mul, add_zero]
     field_simp [hr]
-    linear_combination -(fderiv ℝ f (chart q) (EuclideanSpace.single 1 1)) *
-      Real.cos_sq_add_sin_sq (q 1)
-  · simp [euclideanGradient, Fin.sum_univ_three, frame_apply,
-      pack, dCoord, coordinateVector]
+    linear_combination -(dCoord 1 f (chart q)) * Real.cos_sq_add_sin_sq (q 1)
+  · simp only [Fin.reduceFinMk, pack_two]
+    rfl
 
 /-- Pullback of a time-dependent velocity into the moving cylindrical frame. -/
 noncomputable def velocityComponents (u : VelocityField) : VelocityField :=

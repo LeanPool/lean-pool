@@ -184,26 +184,14 @@ theorem velocityRepresentative_projected_equation
   have hbalance := hpt.unique (hbalanceDer.congr_of_eventuallyEq
     (Filter.Eventually.of_forall fun s =>
       (velocityRepresentative_momentum T hT Q Q₁ c hc hQ u p s).symm))
-  rw [hft, ← hvt] at hbalance
   have hη := coordinatePrimitive_reconstruct_of_range T hT Q c hc hQ u huRange ⟨t, ht⟩
-  rw [← hη] at hbalance
-  simp only [extendPath, projIcc_of_mem hT ht] at hbalance hut ⊢
+  simp only [hft, ← hvt, ← hη, extendPath, projIcc_of_mem hT ht] at hbalance
+  simp only [extendPath, projIcc_of_mem hT ht] at hut ⊢
   exact projected_equation_of_momentum_balance (Q ⟨t, ht⟩) (Q₁ ⟨t, ht⟩) (Q₂ ⟨t, ht⟩)
     (H ⟨t, ht⟩) (coordinatePrimitive T hT Q c hc hQ u t)
     (coordinateDerivative T hT Q Q₁ c hc hQ u t)
     (coordinateSecondDerivative T hT Q Q₁ Q₂ c hc hQ H u f t) (u t) (f t)
-    hut (hframe ⟨t, ht⟩) (by
-      change _ =
-        ((adjoint (𝕜 := ℝ) (E := U) (F := E) (Q₁ ⟨t, ht⟩)).comp (Q ⟨t, ht⟩) +
-          (adjoint (𝕜 := ℝ) (E := U) (F := E) (Q ⟨t, ht⟩)).comp (Q₁ ⟨t, ht⟩))
-          (coordinateDerivative T hT Q Q₁ c hc hQ u t) +
-        gram (Q ⟨t, ht⟩) (coordinateSecondDerivative T hT Q Q₁ Q₂ c hc hQ H u f t) +
-        (((adjoint (𝕜 := ℝ) (E := U) (F := E) (Q₁ ⟨t, ht⟩)).comp (Q₁ ⟨t, ht⟩) +
-          (adjoint (𝕜 := ℝ) (E := U) (F := E) (Q ⟨t, ht⟩)).comp (Q₂ ⟨t, ht⟩))
-          (coordinatePrimitive T hT Q c hc hQ u t) +
-        adjoint (𝕜 := ℝ) (E := U) (F := E) (Q ⟨t, ht⟩) ((Q₁ ⟨t, ht⟩)
-          (coordinateDerivative T hT Q Q₁ c hc hQ u t))) at hbalance
-      simpa only [add_assoc] using hbalance)
+    hut (hframe ⟨t, ht⟩) (hbalance.trans (add_assoc _ _ _).symm)
 
 include hd hd₁ in
 /-- A general moving-frame weak solution has genuine H² coordinates and the

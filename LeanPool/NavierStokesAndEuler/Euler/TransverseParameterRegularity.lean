@@ -75,8 +75,7 @@ theorem contDiff_fixedFrameOperator (hQ : ContDiff ℝ n Q) (hQ₁ : ContDiff �
       (primitiveTimeLp (E := E) T hT) (timeMultiplier (E := E) (F := E) T hT (H x))) := by
     exact contDiff_const.sub
       (contDiff_const.clm_comp ((contDiff_timeMultiplier T hT H hH).clm_comp contDiff_const))
-  exact ((realAdjoint (U := zeroTraceDerivatives (U := U) T hT)
-    (E := TimeLp T E)).contDiff.comp hD).clm_comp (hA.clm_comp hD)
+  exact (contDiff_adjoint hD).clm_comp (hA.clm_comp hD)
 
 variable (c : ℝ) (hc : 0 < c)
   (hLower : ∀ x t v, c * ‖v‖ ^ 2 ≤ ‖Q x t v‖ ^ 2)

@@ -149,11 +149,7 @@ theorem curlCoefficientPath_orbit (i : Fin 3) (G : C(K, Space →ᵇ Space →L[
     (hG : ContDiff ℝ ∞ (translateCoefficientPath (K := K) (V := Space →L[ℝ] Space) G)) :
     ContDiff ℝ ∞ (translateCoefficientPath (K := K) (V := Space →L[ℝ] Space)
       (curlCoefficientPath (K := K) i G)) := by
-  have he : translateCoefficientPath (K := K) (V := Space →L[ℝ] Space)
-        (curlCoefficientPath (K := K) i G) =
-      fun a => curlCoefficientPath (K := K) i
-        (translateCoefficientPath (K := K) (V := Space →L[ℝ] Space) G a) :=
-    funext (curlCoefficientPath_translation i G)
+  have he := funext (curlCoefficientPath_translation (K := K) i G)
   rw [he]
   exact (curlCoefficientPath (K := K) i).contDiff.comp hG
 
@@ -164,17 +160,12 @@ theorem curlCoefficientPath_bound (i : Fin 3) (G : C(K, Space →ᵇ Space →L[
       (translateCoefficientPath (K := K) (V := Space →L[ℝ] Space) G) a‖ ≤ C) (a : Space) :
     ‖iteratedFDeriv ℝ n (translateCoefficientPath (K := K) (V := Space →L[ℝ] Space)
       (curlCoefficientPath (K := K) i G)) a‖ ≤ C := by
-  have he : translateCoefficientPath (K := K) (V := Space →L[ℝ] Space)
-        (curlCoefficientPath (K := K) i G) =
-      fun a => curlCoefficientPath (K := K) i
-        (translateCoefficientPath (K := K) (V := Space →L[ℝ] Space) G a) :=
-    funext (curlCoefficientPath_translation i G)
+  have he := funext (curlCoefficientPath_translation (K := K) i G)
   rw [he]
   have h := (curlCoefficientPath (K := K) i).norm_iteratedFDeriv_comp_left
     (hG.contDiffAt (x := a)) (n := n) (by simp)
   exact h.trans ((mul_le_mul_of_nonneg_right (curlCoefficientPath_norm (K := K) i)
-      (norm_nonneg _)).trans
-    (by simpa only [one_mul] using hb a))
+      (norm_nonneg _)).trans ((one_mul _).trans_le (hb a)))
 
 end EulerPacketPiola
 

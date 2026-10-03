@@ -154,10 +154,16 @@ theorem curlMatrix_eq_zero_iff_isSymmetric (A : Space →L[ℝ] Space) :
     change (A (EuclideanSpace.single 0 1)) 1 - (A (EuclideanSpace.single 1 1)) 0 = 0 at h2
     have heq (i j : Fin 3) :
         (A (EuclideanSpace.single i 1)) j = (A (EuclideanSpace.single j 1)) i := by
-      fin_cases i <;> fin_cases j <;>
-        first | rfl | exact sub_eq_zero.mp h0 | exact sub_eq_zero.mp h1 |
-          exact sub_eq_zero.mp h2 | exact (sub_eq_zero.mp h0).symm |
-          exact (sub_eq_zero.mp h1).symm | exact (sub_eq_zero.mp h2).symm
+      fin_cases i <;> fin_cases j
+      · rfl
+      · exact sub_eq_zero.mp h2
+      · exact (sub_eq_zero.mp h1).symm
+      · exact (sub_eq_zero.mp h2).symm
+      · rfl
+      · exact sub_eq_zero.mp h0
+      · exact sub_eq_zero.mp h1
+      · exact (sub_eq_zero.mp h0).symm
+      · rfl
     intro x y
     have hx := (EuclideanSpace.basisFun (Fin 3) ℝ).sum_repr x
     have hy := (EuclideanSpace.basisFun (Fin 3) ℝ).sum_repr y

@@ -790,9 +790,13 @@ theorem basisMatrix_target (K T : Plane) (hK : ‖K‖ = 1) :
   rw [hK, one_pow] at hs
   ext i
   fin_cases i <;>
-    simp [basisMatrix, Covariance.target, modelNormal, modelTransverse, Matrix.mulVec,
-      dotProduct, Fin.sum_univ_two, PiLp.inner_apply, MovingFrameODE.quarterTurn] <;>
-    nlinarith [congrArg (fun x : ℝ => x * T 0) hs, congrArg (fun x : ℝ => x * T 1) hs]
+    simp only [mulVec, dotProduct, basisMatrix, Fin.isValue, MovingFrameODE.quarterTurn,
+      LinearMap.coe_toContinuousLinearMap', LinearMap.coe_mk, AddHom.coe_mk, Fin.zero_eta,
+      Fin.mk_one, cons_val_zero, cons_val_one, cons_val_fin_one, Covariance.target, modelNormal,
+      PiLp.inner_apply, RCLike.inner_apply, conj_trivial, Fin.sum_univ_two, neg_mul, neg_add_rev,
+      neg_neg, modelTransverse, ite_mul, ↓reduceIte, one_ne_zero]
+  · linear_combination (-T.ofLp 0) * hs
+  · linear_combination (-T.ofLp 1) * hs
 
 theorem weights_unique {H : Mat2} {T z : Vec2} (hd : H.det ≠ 0) (he : H.mulVec z = T) :
     SmoothCovariance.weights H T = z := by
@@ -961,6 +965,10 @@ noncomputable def pulseRatio (d : PrimaryODE.FrameData Slow) (lam u L : ℝ) (p 
     PrimaryPulseBounds.normalizedPulse d lam u L (p, v/L) 2 /
       PrimaryPulseBounds.normalizedPulse d lam u L (p, v/L) 0]
 
+theorem combination_div_eq {R : ℝ} (hR : R ≠ 0) (a b c T e : ℝ) :
+    (-(a * R * b) + c * T * e) / R = -(a * b) + c * T / R * e := by
+  field_simp
+
 theorem pulseRatio_eq (d : PrimaryODE.FrameData Slow) (lam u : ℝ) {L : ℝ} (hL : 0 < L)
     {U : Set Slow} (hA : ContinuousOn (d.coefficient 1) (U ×ˢ Icc 0 L))
     {p : Slow} (hp : p ∈ U) {v : ℝ} (hv : v ∈ Icc 0 L)
@@ -978,10 +986,11 @@ theorem pulseRatio_eq (d : PrimaryODE.FrameData Slow) (lam u : ℝ) {L : ℝ} (h
   rw [hLv, PrimaryPulseBounds.fundamental_eq_primary hL U hA hp hv]
   ext i
   fin_cases i <;>
-    simp [PrimaryODE.FrameData.ambient, MovingFrameODE.tangent, MovingFrameODE.pack,
-      PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, PrimaryODE.radialPrimary,
-      PrimaryODE.transversePrimary] at * <;>
-    field_simp
+    simp only [PrimaryODE.radialPrimary, Fin.isValue, ne_eq, PrimaryODE.FrameData.ambient,
+      MovingFrameODE.tangent, MovingFrameODE.pack, neg_mul, neg_smul, PiLp.add_apply,
+      PiLp.neg_apply, PiLp.smul_apply, smul_eq_mul, cons_val_one, cons_val_zero, cons_val,
+      Fin.zero_eta, Fin.mk_one, cons_val_fin_one, PrimaryODE.transversePrimary] at hx ⊢ <;>
+    exact combination_div_eq hx _ _ _ _ _
 
 /-- Geometric ratio constant as an element of `ℝ`. -/
 noncomputable def geometricRatioConstant (M u : ℝ) : ℝ :=

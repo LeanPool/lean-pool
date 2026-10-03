@@ -180,10 +180,10 @@ theorem sobolevNorm_six_le_pure_derivatives (d : ℕ) (f : 𝓢(Domain d, ℂ)) 
         rw [show (-6 : ℤ) = -(6 : ℤ) from rfl, zpow_neg]
         exact inv_mul_cancel₀ (by positivity)
       simp_rw [← mul_assoc, hp, one_mul]
-      rw [add_mul, one_mul, Finset.sum_mul]
+      simp only [add_mul, one_mul, Finset.sum_mul]
     rw [hg]
-    linarith [mul_le_mul_of_nonneg_right (besselWeight_six_le_pure_six d ξ)
-      (norm_nonneg (schwartzFourier f ξ))]
+    exact (mul_le_mul_of_nonneg_right (besselWeight_six_le_pure_six d ξ)
+      (norm_nonneg _)).trans_eq (mul_assoc _ _ _)
   have h := normLp_le_sum d (weightedFourier d 6 f) g (((d : ℝ) + 1) ^ 2)
     (sq_nonneg _) hpoint
   have hnorm : ∑ i, ‖(g i).toLp 2 volume‖ = ‖f.toLp 2 volume‖ +
@@ -194,7 +194,7 @@ theorem sobolevNorm_six_le_pure_derivatives (d : ℕ) (f : 𝓢(Domain d, ℂ)) 
     change ‖(𝓕 f).toLp 2 volume‖ + ∑ i,
       ‖SchwartzMap.toLpCLM (E := Domain d) ℝ ℂ 2 volume (((2 * Real.pi) ^ (-6 : ℤ)) •
         𝓕 (directional d 6 (EuclideanSpace.single i 1) f))‖ = _
-    simp only [map_smul, norm_smul,
+    simp only [ContinuousLinearMap.map_smul, norm_smul,
       Real.norm_of_nonneg (by positivity : 0 ≤ (2 * Real.pi) ^ (-6 : ℤ)),
       SchwartzMap.toLpCLM_apply, SchwartzMap.norm_fourier_toL2_eq, Finset.mul_sum]
   rw [hnorm] at h

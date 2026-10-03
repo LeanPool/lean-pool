@@ -70,7 +70,7 @@ local instance instCylinderSlowCurlBounds12 : NormedSpace ℝ C(K,LiftL2 P) := i
 
 variable
   (G : C(K, Space →ᵇ Space →L[ℝ] Space))
-  (hG : ContDiff ℝ ∞ (translateCoefficientPath G))
+  (hG : ContDiff ℝ ∞ (translateCoefficientPath (K := K) (V := Space →L[ℝ] Space) G))
   (p : C(K, LiftL2 P))
   (hp : ContDiff ℝ ∞ (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p))
 
@@ -80,7 +80,8 @@ include hG hp in
 theorem path_block_bound (q : ℕ) (Rc C R D : ℝ)
     (hRc : 0 ≤ Rc) (hC : 0 ≤ C) (hD : 0 ≤ D)
     (hR : sobolevCoefficientRadius (Fin 4) Rc ≤ R)
-    (hbG : ∀ n a, ‖iteratedFDeriv ℝ n (translateCoefficientPath G) a‖ ≤ C * majorant Rc 0 n)
+    (hbG : ∀ n a, ‖iteratedFDeriv ℝ n
+      (translateCoefficientPath (K := K) (V := Space →L[ℝ] Space) G) a‖ ≤ C * majorant Rc 0 n)
     (d : ℕ) (hbp : ∀ n, block standardDirection q
       (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a p) n 0 ≤
         D*majorant R d n) (n : ℕ) :

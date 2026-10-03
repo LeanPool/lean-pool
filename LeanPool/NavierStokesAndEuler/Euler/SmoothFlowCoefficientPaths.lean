@@ -316,11 +316,8 @@ theorem forward_jointDerivative_contDiffAt_one
   have hs := (ContinuousLinearMap.toSpanSingletonLIE ℝ
       E).toContinuousLinearEquiv.contDiff.contDiffAt.comp
     (t,x) hq
-  let L : ((ℝ →L[ℝ] E) × (E →L[ℝ] E)) →L[ℝ] ((ℝ × E) →L[ℝ] E) :=
-    (ContinuousLinearMap.coprodEquivL (𝕜 := ℝ) (E := ℝ) (F := E) (G := E) ℝ).toContinuousLinearMap
-  exact ((ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := 1)
-    (E := (ℝ →L[ℝ] E) × (E →L[ℝ] E)) (F := (ℝ × E) →L[ℝ] E) L).contDiffAt.comp
-    (t,x) (hs.prodMk hJ) :)
+  exact ((ContinuousLinearMap.coprodEquivL (𝕜 := ℝ) (E := ℝ) (F := E) (G := E)
+    ℝ).contDiff.contDiffAt.comp (t,x) (hs.prodMk hJ) :)
 
 theorem forward_joint_contDiffAt_two
     (htime : SmoothTimeField.TimeDerivative T hT A A₁)
@@ -345,8 +342,18 @@ def timeLiftEquiv (J : E ≃L[ℝ] E) (v : E) : (ℝ × E) ≃L[ℝ] (ℝ × E) 
       (J.symm.toContinuousLinearMap.comp
         ((ContinuousLinearMap.snd ℝ ℝ E) -
           (ContinuousLinearMap.toSpanSingleton ℝ v).comp (ContinuousLinearMap.fst ℝ ℝ E))))
-    (by intro p; ext <;> simp)
-    (by intro p; ext <;> simp)
+    (by
+      intro p
+      simp only [ContinuousLinearMap.prod_apply, ContinuousLinearMap.coe_fst',
+        ContinuousLinearMap.coe_snd', ContinuousLinearMap.comp_apply, add_apply, sub_apply,
+        ContinuousLinearMap.toSpanSingleton_apply, ContinuousLinearEquiv.coe_coe,
+        add_sub_cancel_left, ContinuousLinearEquiv.symm_apply_apply, Prod.mk.eta])
+    (by
+      intro p
+      simp only [ContinuousLinearMap.prod_apply, ContinuousLinearMap.coe_fst',
+        ContinuousLinearMap.coe_snd', ContinuousLinearMap.comp_apply, add_apply, sub_apply,
+        ContinuousLinearMap.toSpanSingleton_apply, ContinuousLinearEquiv.coe_coe,
+        add_sub_cancel, ContinuousLinearEquiv.apply_symm_apply, Prod.mk.eta])
 
 /-- Lift forward, given by `(p.1, (flowData T hT A).forward p.1 p.2)`. -/
 def liftForward (p : ℝ × E) : ℝ × E := (p.1, (flowData T hT A).forward p.1 p.2)

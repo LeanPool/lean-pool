@@ -73,11 +73,18 @@ theorem fastHessianRemainder_bound (a : ScalarField)
       ‖coordinateEquiv.symm.toContinuousLinearMap‖*(sobolevEmbeddingConstant P 3*A*R) := by
     have h := hG.raw_fderiv_le (by norm_num) t z
     rw [norm_fderiv_smul_unit (fun z => a (t,z)) D.m₀ D.m₀_unit z ha] at h
-    simpa [majorant] using h
-  have hJ : ‖D.FInv.field t (Y x)‖ ≤ NB.C := by simpa [majorant] using NB.inverse_bound 0 t (Y x)
-  have hn : ‖D.normal.field t (Y x)‖ ≤ NB.C := by simpa [majorant] using NB.normal_bound 0 t (Y x)
+    simpa only [majorant, add_zero, pow_one, Nat.factorial_one, Nat.cast_one, one_pow,
+      mul_one] using h
+  have hJ : ‖D.FInv.field t (Y x)‖ ≤ NB.C := by
+    simpa only [norm_iteratedFDeriv_zero, majorant, add_zero, pow_zero, Nat.factorial_zero,
+      Nat.cast_one, one_pow, mul_one] using NB.inverse_bound 0 t (Y x)
+  have hn : ‖D.normal.field t (Y x)‖ ≤ NB.C := by
+    simpa only [EulerTransverseBoundedFrame.normalCoefficient_apply, norm_iteratedFDeriv_zero,
+      majorant, add_zero, pow_zero, Nat.factorial_zero, Nat.cast_one, one_pow, mul_one] using
+      NB.normal_bound 0 t (Y x)
   have hnd : ‖fderiv ℝ (D.normal.field t : Space → Space) (Y x)‖ ≤ NB.C*NB.Rc := by
-    simpa [majorant] using NB.normal_bound 1 t (Y x)
+    simpa only [norm_iteratedFDeriv_one, majorant, add_zero, pow_one, Nat.factorial_one,
+      Nat.cast_one, one_pow, mul_one] using NB.normal_bound 1 t (Y x)
   have hnder : fderiv ℝ (transportedNormal D.m₀ (fun y => D.FInv.field t (Y y))) x =
       (fderiv ℝ (D.normal.field t : Space → Space) (Y x)).comp (D.FInv.field t (Y x)) :=
     (((D.normal.smooth t).differentiable (by simp) (Y x)).hasFDerivAt.comp x hY).fderiv
@@ -86,8 +93,10 @@ theorem fastHessianRemainder_bound (a : ScalarField)
     rw [hnder]
     exact (opNorm_comp_le _ _).trans (mul_le_mul hnd hJ (norm_nonneg _) (mul_nonneg hC hRc))
   have h1 := mul_le_mul hval hnD (norm_nonneg _) (mul_nonneg hs hA)
-  have h2 := mul_le_mul hda hJ (norm_nonneg _) (by positivity)
-  have h3 := mul_le_mul h2 hn (norm_nonneg _) (by positivity)
+  have h2 := mul_le_mul hda hJ (norm_nonneg _)
+    (mul_nonneg (norm_nonneg _) (mul_nonneg (mul_nonneg hs hA) hR))
+  have h3 := mul_le_mul h2 hn (norm_nonneg _)
+    (mul_nonneg (mul_nonneg (norm_nonneg _) (mul_nonneg (mul_nonneg hs hA) hR)) hC)
   have h := fastHessianRemainder_norm_le (fun z => a (t,z)) k D.m₀ Y
     (fun y => D.FInv.field t (Y y)) x
   rw [abs_of_pos (inv_pos.mpr hk)] at h

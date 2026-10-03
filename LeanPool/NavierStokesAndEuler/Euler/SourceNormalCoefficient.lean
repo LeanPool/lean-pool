@@ -76,7 +76,7 @@ theorem normalFunctional_apply (t : K) (x : Space) (v : E) :
 
 /-- The pressure coefficient has genuine translated uniform-path regularity. -/
 theorem normalFunctional_translation_contDiff :
-    ContDiff ℝ ∞ (translateCoefficientPath (normalFunctional m c hc hm)) :=
+    ContDiff ℝ ∞ (translateCoefficientPath (V := E →L[ℝ] ℝ) (normalFunctional m c hc hm)) :=
   sourceForcing_translation_contDiff (normalColumn m) c hc (normalColumn_lower m c hm)
 
 theorem normalFunctional_translation_bound
@@ -84,7 +84,8 @@ theorem normalFunctional_translation_bound
     (hRi : 2 * gramCost c C 1 * (Rc + 1) ≤ Ri)
     (hbm : ∀ n t x, ‖iteratedFDeriv ℝ n (m.field t : Space → E) x‖ ≤ C * majorant Rc 0 n)
     (n : ℕ) (a : Space) :
-    ‖iteratedFDeriv ℝ n (translateCoefficientPath (normalFunctional m c hc hm)) a‖ ≤
+    ‖iteratedFDeriv ℝ n
+        (translateCoefficientPath (V := E →L[ℝ] ℝ) (normalFunctional m c hc hm)) a‖ ≤
       (3*Ri*C)*majorant (4*Ri) 0 n := by
   apply sourceForcing_translation_bound (normalColumn m) c hc (normalColumn_lower m c hm)
     Rc C Ri hRc hC hRi _ n a

@@ -38,16 +38,16 @@ variable (G H) (hT : 0 ≤ T) (g : C(Icc (0 : ℝ) T, ℝ)) (hg : ∀ t, 0 < g t
 
 theorem normalized_add_path : ((G.add H).normalized hT g hg).path =
     ((G.normalized hT g hg).add (H.normalized hT g hg)).path :=
-  (normalize g hg).map_add G.path H.path
+  (EulerContinuousTimeWeight.normalize g hg).map_add G.path H.path
 
 theorem normalized_sub_path : ((G.sub H).normalized hT g hg).path =
-    ((G.normalized hT g hg).sub (H.normalized hT g hg)).path := by
-  change normalize (E := LiftL2 P) g hg (G.path + -H.path) =
-    normalize (E := LiftL2 P) g hg G.path + -normalize (E := LiftL2 P) g hg H.path
-  rw [map_add,map_neg]
+    ((G.normalized hT g hg).sub (H.normalized hT g hg)).path :=
+  ((EulerContinuousTimeWeight.normalize g hg).map_add G.path (-H.path)).trans
+    (congrArg (EulerContinuousTimeWeight.normalize g hg G.path + ·)
+      ((EulerContinuousTimeWeight.normalize g hg).map_neg H.path :))
 
 theorem normalized_neg_path : (G.neg.normalized hT g hg).path = (G.normalized hT g hg).neg.path :=
-  (normalize g hg).map_neg G.path
+  (EulerContinuousTimeWeight.normalize g hg).map_neg G.path
 
 theorem normalized_multiply_path
     {coef : EulerPacketPointJets.Domain → Space →L[ℝ] Space} (K : MatrixCoefficient T coef) :
@@ -59,7 +59,7 @@ theorem normalized_finsetSum_path {ι : Type*} (s : Finset ι) (f : ι → Vecto
     ((Field.finsetSum s f W).normalized hT g hg).path =
       (Field.finsetSum s (fun i z => (g (projIcc 0 T hT z.1))⁻¹ • f i z)
         (fun i => (W i).normalized hT g hg)).path :=
-  map_sum (normalize g hg) (fun i => (W i).path) s
+  map_sum (EulerContinuousTimeWeight.normalize g hg) (fun i => (W i).path) s
 
 variable {G H g hg}
 

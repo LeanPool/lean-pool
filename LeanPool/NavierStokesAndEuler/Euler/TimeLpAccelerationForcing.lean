@@ -91,14 +91,12 @@ theorem forcing_bound (T : ℝ) (hT : 0 ≤ T)
   have hr : ContDiff ℝ ∞ r := hf.sub (hw.const_smul (2 : ℝ))
   have hbr := sub_bound f (fun y => (2 : ℝ) • w y) hf (hw.const_smul (2 : ℝ))
     R F (6*C₁*V) d hbf hb2w
-  have hAdj : ContDiff ℝ ∞ (fun y =>
-      adjoint (𝕜 := ℝ) (E := TimeLp T U) (F := TimeLp T E) (timeMultiplier T hT (Q y))) :=
-    (realAdjoint (U := TimeLp T U) (E := TimeLp T E)).contDiff.comp (contDiff_timeMultiplier T hT Q
-        hQ)
+  have hAdj := (realAdjoint (U := TimeLp T U) (E := TimeLp T E)).contDiff.comp
+    (contDiff_timeMultiplier T hT Q hQ)
   have h := clm_apply_bound
     (fun y => adjoint (𝕜 := ℝ) (E := TimeLp T U) (F := TimeLp T E) (timeMultiplier T hT (Q y)))
     r hAdj hr R C₀ (F+6*C₁*V)
-    hR hC₀ (by positivity) 0 d
+    hR hC₀ (add_nonneg hF (mul_nonneg (mul_nonneg (by norm_num) hC₁) hV)) 0 d
     (adjoint_bound (fun y => timeMultiplier (E := U) (F := E) T hT (Q y))
       (contDiff_timeMultiplier T hT Q hQ)
       R C₀ hR hC₀ 0 (timeMultiplier_bound T hT Q hQ R C₀ hR hC₀ 0 hbQ)) hbr n x

@@ -200,7 +200,8 @@ theorem iteratedFDeriv_affineAverage (L : D →L[ℝ] E) (hL : ‖L‖ ≤ 1)
         (iteratedFDeriv ℝ k f (L y + t • v)).compContinuousLinearMap (fun _ => L) :=
       funext fun t => iteratedFDeriv_affine L (t • v) hf k y
     rw [he]
-    exact hc.aestronglyMeasurable
+    exact (hc.stronglyMeasurable
+      (h := secondCountableTopologyEither_of_left _ _)).aestronglyMeasurable
   have hd : SmoothParameterIntegral.LocallyDominated g μ := by
     intro k y
     obtain ⟨C, hC⟩ := hb k

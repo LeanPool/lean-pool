@@ -164,21 +164,14 @@ theorem parameterJet_contDiffAt {F : (ℝ × ℝ) × ℝ → ℝ} {z : (ℝ × �
       (fun w : (ℝ × ℝ) × ℝ => iteratedFDeriv ℝ k (fun p => F (p, w.2)) w.1) z := by
   induction k with
   | zero =>
-    exact hF.continuousLinearMap_comp
-      ((continuousMultilinearCurryFin0 ℝ (ℝ × ℝ) ℝ).symm :
-        ℝ →L[ℝ] (ℝ × ℝ)[×0]→L[ℝ] ℝ)
+    exact (continuousMultilinearCurryFin0 ℝ (ℝ × ℝ) ℝ).symm.contDiff.comp_contDiffAt z hF
   | succ k ih =>
-    have hG : ContDiffAt ℝ ∞
-        (fun w : ((ℝ × ℝ) × ℝ) × (ℝ × ℝ) =>
-          iteratedFDeriv ℝ k (fun p => F (p, w.1.2)) w.2) (z, z.1) :=
-      ih.comp (z, z.1) (contDiffAt_snd.prodMk contDiffAt_fst.snd)
-    have hD : ContDiffAt ℝ ∞
-        (fun w : (ℝ × ℝ) × ℝ => fderiv ℝ
-          (fun p : ℝ × ℝ => iteratedFDeriv ℝ k (fun q => F (q, w.2)) p) w.1) z :=
-      hG.fderiv contDiffAt_fst infty_add_one_le
-    exact hD.continuousLinearMap_comp
-      ((continuousMultilinearCurryLeftEquiv ℝ (fun _ : Fin (k + 1) => ℝ × ℝ) ℝ).symm :
-        ((ℝ × ℝ) →L[ℝ] (ℝ × ℝ)[×k]→L[ℝ] ℝ) →L[ℝ] (ℝ × ℝ)[×(k + 1)]→L[ℝ] ℝ)
+    have hG := ih.comp (f := fun w : ((ℝ × ℝ) × ℝ) × (ℝ × ℝ) => (w.2, w.1.2)) (z, z.1)
+      (contDiffAt_snd.prodMk contDiffAt_fst.snd)
+    have hD := hG.fderiv (f := fun (w : (ℝ × ℝ) × ℝ) (p : ℝ × ℝ) =>
+      iteratedFDeriv ℝ k (fun q => F (q, w.2)) p) contDiffAt_fst infty_add_one_le
+    exact (continuousMultilinearCurryLeftEquiv ℝ (fun _ : Fin (k + 1) => ℝ × ℝ)
+      ℝ).symm.contDiff.comp_contDiffAt z hD
 
 theorem radialPrimitive_unit_interval (f : ℝ × ℝ → ℝ) (p : ℝ × ℝ) :
     radialPrimitive f p = p.1 * ∫ r in (0 : ℝ)..1, f (p.1 * r, p.2) := by

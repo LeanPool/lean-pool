@@ -1270,7 +1270,7 @@ theorem wave_physical (request referenceRequest : ℕ → Cylinder → Vec2)
     apply (((R.cutoff_amplitude_smooth j).comp (V.map n).contDiff.contDiffOn hmap).const_smul
       (V.velocity n)).congr
     intro x hx
-    exact V.amplitude_transport request referenceRequest j n x (hrequest x hx)
+    apply V.amplitude_transport request referenceRequest j n x (hrequest x hx)
   have hnrel (x : Cylinder) (hx : x ∈ V.strip.domain) :
       phaseNormal PhysicalResidualBridge.ScaledGraph.radius
         (PhysicalResidualBridge.commonGraph (V.scale n) V.exponent (V.cover n)).radial
@@ -1308,8 +1308,7 @@ theorem wave_physical (request referenceRequest : ℕ → Cylinder → Vec2)
         ((PhysicalResidualBridge.commonGraph V.referenceScale V.exponent V.referenceCover).map y) =
       V.frequency n * ((B.base.frequency reference / V.frequency n) * B.base.phase reference
         (V.map n ((PhysicalResidualBridge.commonGraph (V.scale n) V.exponent (V.cover n)).map y)))
-    rw [V.map_graph n hy.1]
-    field_simp [V.frequency_ne n]
+    rw [V.map_graph n hy.1, ← mul_assoc, mul_div_cancel₀ _ (V.frequency_ne n)]
   have hav : ∀ y ∈ (PhysicalResidualBridge.commonGraph (V.scale n) V.exponent (V.cover n)).source
       V.strip.domain,
       V.physicalRaw referenceRequest j y = V.scale n ^ (-CoordinateAlgebra.A V.exponent) •
@@ -1323,7 +1322,7 @@ theorem wave_physical (request referenceRequest : ℕ → Cylinder → Vec2)
     congr 1
     rw [mul_comm]
     exact (PhysicalParticularWave.ratioPower_cancel (V.scale_pos n) V.referenceScale_pos _).symm
-  exact PhysicalCurlCovariance.reference_correctedWave_constructed (V.scale_pos n) V.exponent
+  apply PhysicalCurlCovariance.reference_correctedWave_constructed (V.scale_pos n) V.exponent
       (V.cover n)
     V.strip.isOpen_domain (fun x hx => (hradius x hx).ne') hK (V.frequency_ne n) hphi ha hn ht
     V.physicalPhase (V.physicalRaw referenceRequest j) hp hav

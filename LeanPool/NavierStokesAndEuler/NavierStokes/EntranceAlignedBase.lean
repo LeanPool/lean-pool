@@ -2492,6 +2492,22 @@ theorem normalized_X_pos {h : ℝ} (hh : 0 < h) (hh1 : h < 1 / 2)
   exact div_pos (sq_pos_of_pos hR)
     (mul_pos (by norm_num) (BaseChartJets.normalizedCoordinates_q_pos hh hh1 hT))
 
+theorem leading_scale_cancel (x y C : ℝ) (hC : C ≠ 0) : x / C * (C * y) = x * y := by
+  rw [div_mul_eq_mul_div, mul_left_comm, mul_div_cancel_left₀ _ hC]
+
+theorem leading_scale_cancel_mul (x y z C : ℝ) (hC : C ≠ 0) :
+    x / C * (z * (C * y)) = x * (z * y) := by
+  rw [mul_left_comm z, leading_scale_cancel x _ C hC]
+
+theorem leading_shear_identity_angular (p e r x f : ℝ) (hf : f ≠ 0) :
+    p * (e * (p / r * x)) = e * f * (-(-2 * (p ^ 2 / (2 * r)) * x / f)) := by
+  linear_combination (-(e * p ^ 2 * x / r)) * mul_inv_cancel₀ hf
+
+theorem leading_shear_identity_axial (p e r s x f : ℝ) (hp : p ≠ 0) (hr : r ≠ 0) (hs : s ≠ 0)
+    (hf : f ≠ 0) :
+    e * (p / r * x) = e / s * f * (-(-2 * (p ^ 2 / (2 * r)) * x / (p / s * f))) := by
+  field_simp
+
 /-- Value and radial-germ agreement with a profile suffice to identify the
 genuine shear vector of the coefficient-defined leading fields. -/
 theorem leading_shear_eq_profile {D : RadialDomain} (P : Profiles D)
@@ -2529,13 +2545,11 @@ theorem leading_shear_eq_profile {D : RadialDomain} (P : Profiles D)
   have hF : BaseChartJets.leadingFrequency h C d p =
       rho ^ (-CoordinateAlgebra.A h - 1 / 2) * P.f w := by
     rw [BaseChartJets.leadingFrequency_eq hh hh1 hT hR, hphi0]
-    dsimp only [rho]
-    field_simp
+    exact leading_scale_cancel _ _ C hC
   have hFX : PhaseCalculus.slowR (BaseChartJets.leadingFrequency h C d) p =
       rho ^ (-CoordinateAlgebra.A h - 1 / 2) * (p.1 / rho * SimilarityProfile.partialX P.f w) := by
     rw [leadingFrequency_slowR hh hh1 hd hT hR, hphiX]
-    dsimp only [rho]
-    field_simp
+    exact leading_scale_cancel_mul _ _ _ C hC
   have hGX : PhaseCalculus.slowR (BaseChartJets.leadingAxial h d) p =
       rho ^ (-CoordinateAlgebra.A h) * (p.1 / rho * SimilarityProfile.partialX P.U w) := by
     rw [leadingAxial_slowR hh hh1 hd hT, hUX]
@@ -2557,7 +2571,7 @@ theorem leading_shear_eq_profile {D : RadialDomain} (P : Profiles D)
     change p.1 * (rho ^ (-CoordinateAlgebra.A h - 1 / 2) * (p.1 / rho * radialPartial P.f w)) =
       rho ^ (-CoordinateAlgebra.A h - 1 / 2) * P.f w * (-(-2 * w.1 * radialPartial P.f w / P.f w))
     rw [hw]
-    field_simp [show P.f w ≠ 0 from hf, hrho.ne']
+    exact leading_shear_identity_angular _ _ _ _ _ hf
   · change PhaseCalculus.slowR (BaseChartJets.leadingAxial h d) p =
       BaseChartJets.leadingFrequency h C d p * (-ActivationContinuation.shearB P w)
     rw [hGX, hF]
@@ -2566,7 +2580,7 @@ theorem leading_shear_eq_profile {D : RadialDomain} (P : Profiles D)
       rho ^ (-CoordinateAlgebra.A h - 1 / 2) * P.f w *
         (-(-2 * w.1 * radialPartial P.U w / (Real.sqrt (2 * w.1) * P.f w)))
     rw [hpow, hsqrt, hw]
-    field_simp [show P.f w ≠ 0 from hf, hrho.ne', hR.ne', (Real.sqrt_pos.mpr hrho).ne']
+    exact leading_shear_identity_axial _ _ _ _ _ _ hR.ne' hrho.ne' (Real.sqrt_pos.mpr hrho).ne' hf
 
 /-! ## Uniform choices on a compact reference set -/
 

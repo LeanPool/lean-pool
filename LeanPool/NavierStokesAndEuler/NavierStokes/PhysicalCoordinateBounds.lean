@@ -145,13 +145,11 @@ theorem inverseJet_contDiffAt {a : ℝ} {g : Point → ℝ} {y : Point}
     ContDiffAt ℝ ∞ (inverseJet a g n) y := by
   induction n with
   | zero =>
-    exact hg.continuousLinearMap_comp
-      ((continuousMultilinearCurryFin0 ℝ Point ℝ).symm : ℝ →L[ℝ] Point[×0]→L[ℝ] ℝ)
+    exact (continuousMultilinearCurryFin0 ℝ Point ℝ).symm.contDiff.comp_contDiffAt y hg
   | succ n ih =>
-    exact ((ih.fderiv_right infty_add_one_le).clm_comp
-      (inverseDifferential_contDiffAt hy hs)).continuousLinearMap_comp
-        ((continuousMultilinearCurryLeftEquiv ℝ (fun _ : Fin (n + 1) => Point) ℝ).symm :
-          (Point →L[ℝ] Point[×n]→L[ℝ] ℝ) →L[ℝ] Point[×(n + 1)]→L[ℝ] ℝ)
+    exact (continuousMultilinearCurryLeftEquiv ℝ (fun _ : Fin (n + 1) => Point) ℝ).symm.contDiff
+      |>.comp_contDiffAt y
+        ((ih.fderiv_right infty_add_one_le).clm_comp (inverseDifferential_contDiffAt hy hs))
 
 theorem iteratedFDeriv_comp_inverse {a : ℝ} (ha : 0 < a) (ha1 : a < 1)
     {g : Point → ℝ} (hg : ContDiffOn ℝ ∞ g positiveTime)

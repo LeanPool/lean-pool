@@ -65,9 +65,8 @@ theorem hasDerivWithinAt_gramInverse (Q : ℝ → U →L[ℝ] E) (c : ℝ) (hc :
     ext x
     exact coerciveEquiv_apply B c hc hB x
   have hui : (↑u⁻¹ : U →L[ℝ] U) = gramInverse (Q t) c hc (hQ t) := rfl
-  have hi := hasFDerivAt_ringInverse (𝕜 := ℝ) u
-  rw [hu] at hi
-  have hcomp := hi.comp_hasDerivWithinAt t (hasDerivWithinAt_gram Q Q₁ s t hd)
+  have hcomp := (hasFDerivAt_ringInverse (𝕜 := ℝ) u).comp_hasDerivWithinAt_of_eq t
+    (hasDerivWithinAt_gram Q Q₁ s t hd) hu
   have hfun : (fun r => gramInverse (Q r) c hc (hQ r)) =
       Ring.inverse ∘ (fun r => gram (Q r)) := by
     funext r
@@ -109,9 +108,8 @@ def gramInversePath : C(Icc (0 : ℝ) T, U →L[ℝ] U) where
     have he : (e.toUnit : U →L[ℝ] U) = gram (Q t) := by
       ext x
       exact coerciveEquiv_apply (gram (Q t)) c hc (gram_coercive (Q t) c (hQ t)) x
-    have hcont := (hasFDerivAt_ringInverse (𝕜 := ℝ) e.toUnit).continuousAt
-    rw [he] at hcont
-    exact hcont.comp (x := t) (gramPath T Q).continuous.continuousAt
+    exact (NormedRing.inverse_continuousAt e.toUnit).comp_of_eq
+      (gramPath T Q).continuous.continuousAt he.symm
 
 /-- Explicit continuous coefficient of the inverse derivative `-K⁻¹ K' K⁻¹`. -/
 def gramInverseDerivativePath : C(Icc (0 : ℝ) T, U →L[ℝ] U) :=

@@ -38,7 +38,12 @@ theorem historyDifferenceCost_le_parentEnvelope
   have hci0 := (inv_pos.mpr hc).le
   have hTi0 := (inv_pos.mpr hT).le.trans hTi
   have hGram : 0 ≤ gramInverseEnvelope C := by unfold gramInverseEnvelope; positivity
-  have hTr : 0 ≤ scalarTransport T c q q1 := by unfold scalarTransport; positivity
+  have h2q : 0 ≤ 2*(c⁻¹)^2*q^2 := mul_nonneg (mul_nonneg zero_le_two (sq_nonneg _)) (sq_nonneg _)
+  have hTr : 0 ≤ scalarTransport T c q q1 := add_nonneg zero_le_one
+    (add_nonneg (mul_nonneg (add_nonneg (mul_nonneg h2q hq10) (mul_nonneg hci0 hq10)) hT0)
+      (mul_nonneg hci0 hq0))
+  have hd0 : 0 ≤ T*q1+q := add_nonneg (mul_nonneg hT0 hq10) hq0
+  have ha0 : 0 ≤ 1+T^2*h := add_nonneg zero_le_one (mul_nonneg (sq_nonneg T) hh0)
   have hd : T*q1+q ≤ C1+C := by
     calc
       _ ≤ 1*C1+C := add_le_add (mul_le_mul hT1 hq1 hq10 (by norm_num)) hq
@@ -52,13 +57,20 @@ theorem historyDifferenceCost_le_parentEnvelope
     unfold scalarTransport transportEnvelope
     calc
       _ ≤ 1+((2*(gramInverseEnvelope C)^2*C^2*C1+gramInverseEnvelope C*C1)*1 +
-          gramInverseEnvelope C*C) := by gcongr
+          gramInverseEnvelope C*C) := by
+        have hG2 : 0 ≤ 2*(gramInverseEnvelope C)^2 := mul_nonneg zero_le_two (sq_nonneg _)
+        have hsq := mul_le_mul (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ hci0 hci 2)
+          zero_le_two) (pow_le_pow_left₀ hq0 hq 2) (sq_nonneg q) hG2
+        have hlead := mul_le_mul hsq hq1 hq10 (mul_nonneg hG2 (sq_nonneg C))
+        refine add_le_add le_rfl (add_le_add (mul_le_mul (add_le_add hlead
+          (mul_le_mul hci hq1 hq10 hGram)) hT1 hT0 ?_) (mul_le_mul hci hq hq0 hGram))
+        exact add_nonneg (mul_nonneg (mul_nonneg hG2 (sq_nonneg C)) hC1) (mul_nonneg hGram hC1)
       _ = _ := by ring
   apply (historyDifferenceCost_le_envelope T c Ti (gramInverseEnvelope C) q q1
     (T*q1+q) (1+T^2*h) (scalarTransport T c q q1) (C*R) (C1*R) (CH*R)
-    hT hT1 hTi hc hci hq0 hq10 (by positivity) (by positivity) hTr
+    hT hT1 hTi hc hci hq0 hq10 hd0 ha0 hTr
     (mul_nonneg hC hR) (mul_nonneg hC1 hR) (mul_nonneg hCH hR)).trans
-  exact differenceEnvelope_mono hTi0 hGram hq0 hq10 (by positivity) (by positivity) hTr
+  exact differenceEnvelope_mono hTi0 hGram hq0 hq10 hd0 ha0 hTr
     (mul_nonneg hC hR) (mul_nonneg hC1 hR) (mul_nonneg hCH hR)
     le_rfl le_rfl hq hq1 hd ha hr le_rfl le_rfl le_rfl
 

@@ -176,15 +176,14 @@ theorem extendedJets_hasFDerivAt {c : ℝ} (hc : 0 < c)
     (hf : ContDiffOn ℝ ∞ f (U ×ˢ Ioi 0)) (hB : LocalGaussianJets c U f)
     (n : ℕ) {p : E × ℝ} (hp : p ∈ U ×ˢ (univ : Set ℝ)) :
     HasFDerivAt (fun q => extendedJets f q n) (extendedJets f p (n + 1)).curryLeft p := by
-  change HasFDerivAt (zeroExtension (iteratedFDeriv ℝ n f))
-    (zeroExtension (iteratedFDeriv ℝ (n + 1) f) p).curryLeft p
+  simp only [extendedJets]
   rcases lt_trichotomy p.2 0 with hneg | heq | hpos
   · rw [zeroExtension_of_nonpos _ hneg.le]
-    convert! (hasFDerivAt_const (0 : (E × ℝ)[×n]→L[ℝ] F) p).congr_of_eventuallyEq
-      (zeroExtension_germ_neg _ hneg) using 1
+    exact ((hasFDerivAt_const (0 : (E × ℝ)[×n]→L[ℝ] F) p).congr_of_eventuallyEq
+      (zeroExtension_germ_neg _ hneg)).congr_fderiv rfl
   · have hp₀ : p = (p.1, 0) := Prod.ext rfl heq
     rw [hp₀, zeroExtension_edge]
-    convert! hasFDerivAt_zeroExtension_edge hc hU (hB n) hp.1 using 1
+    exact (hasFDerivAt_zeroExtension_edge hc hU (hB n) hp.1).congr_fderiv rfl
   · rw [zeroExtension_of_pos _ hpos]
     have hfp := hf.contDiffAt ((hU.prod isOpen_Ioi).mem_nhds ⟨hp.1, hpos⟩)
     exact (iteratedFDeriv_hasFDerivAt hfp n).congr_of_eventuallyEq

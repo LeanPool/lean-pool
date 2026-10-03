@@ -54,8 +54,8 @@ theorem matrixSlowCurl_hasDerivWithinAt (t : Icc (0 : ℝ) T) (x : LiftDomain P)
       (Icc (0 : ℝ) T) t := by
   have hL : HasDerivWithinAt (fun r => (ContinuousLinearMap.inl ℝ Space ℝ).comp (G r))
       ((ContinuousLinearMap.inl ℝ Space ℝ).comp G₁) (Icc (0 : ℝ) T) t := by
-    have h := ((hasDerivAt_const (t : ℝ) (ContinuousLinearMap.inl ℝ Space
-        ℝ)).hasDerivWithinAt).clm_comp hG
+    have h := (hasDerivWithinAt_const (t : ℝ) (Icc (0 : ℝ) T)
+      (ContinuousLinearMap.inl ℝ Space ℝ)).clm_comp hG
     simpa only [ContinuousLinearMap.zero_comp, zero_add] using h
   have hD := pointField_fderiv_hasDerivWithinAt P T hT p f hp hf hd t x
   have h := curlOperator.hasFDerivAt.comp_hasDerivWithinAt (t : ℝ) (hD.clm_comp hL)

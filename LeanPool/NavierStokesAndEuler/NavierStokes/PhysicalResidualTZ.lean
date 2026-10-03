@@ -329,7 +329,7 @@ theorem fullResidual_swap (c : CorrectionState.Context Lift) (s : CorrectionStat
   rw [show (swapContext c).operators.epsilon = c.operators.epsilon from rfl,
     show (fun y : Cylinder => (swapContext c).operators.radius y.1) =
       (fun y : Cylinder => c.operators.radius (swapCylinder.toContinuousLinearEquiv y).1) from rfl]
-  have hcoe : (swapCylinder.toContinuousLinearEquiv : Cylinder → Cylinder) = swapCylinder := rfl
+  have hcoe : ⇑swapCylinder.toContinuousLinearEquiv = ⇑swapCylinder := rfl
   simp only [hcoe] at hlin hquad ⊢
   rw [hlin, hquad, virtualDivergence_swap]
   rfl

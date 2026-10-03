@@ -85,17 +85,17 @@ theorem physical_size_comparison_order40 (m v r w : ℝ → Space)
   let ρ := 800*e*Θ^5
   let η := K*e*Θ^29
   let A := K*e*Θ^40
-  have hK0 : 0 ≤ K := by linarith
-  have hΘ0 : 0 ≤ Θ := by linarith
-  have hA0 : 0 ≤ A := by dsimp [A]; positivity
+  have hK0 : 0 ≤ K := zero_le_one.trans hK
+  have hΘ0 : 0 ≤ Θ := zero_le_one.trans hΘ
+  have hA0 : 0 ≤ A := mul_nonneg (mul_nonneg hK0 he) (pow_nonneg hΘ0 40)
   have hA : 1000000*A ≤ 1 := by simpa only [A, mul_assoc] using hsmall
   have hp (n : ℕ) (hn : n ≤ 40) : e*Θ^n ≤ A := scaled_power_le hΘ hK he hn
   have hηA : η ≤ A := by
     exact mul_le_mul_of_nonneg_left (pow_le_pow_right₀ hΘ (by decide : 29 ≤ 40))
       (mul_nonneg hK0 he)
-  have hρ0 : 0 ≤ ρ := by dsimp [ρ]; positivity
+  have hρ0 : 0 ≤ ρ := mul_nonneg (mul_nonneg (Nat.ofNat_nonneg _) he) (pow_nonneg hΘ0 5)
   have hρ : ρ ≤ 1/2 := by have hh := hp 5 (by decide); dsimp [ρ]; linarith only [hh, hA]
-  have hη0 : 0 ≤ η := by dsimp [η]; positivity
+  have hη0 : 0 ≤ η := mul_nonneg (mul_nonneg hK0 he) (pow_nonneg hΘ0 29)
   have hη : η ≤ 1/2 := by linarith only [hηA, hA]
   have he1 : e ≤ 1 := by have hh := hp 0 (by decide); norm_num at hh; linarith only [hh, hA]
   have hε1 : ε ≤ 1 := hεe.trans he1
@@ -104,7 +104,7 @@ theorem physical_size_comparison_order40 (m v r w : ℝ → Space)
     (mul_le_mul_of_nonneg_right hε2e (pow_nonneg hΘ0 4)).trans (hp 4 (by decide))
   have hVdiff : |V 1-Z| ≤ Z/2 := by
     have hrel : |V 1/Z-1| ≤ 1/2 := hVrel.trans hη
-    have hid : V 1/Z-1 = (V 1-Z)/Z := by field_simp
+    have hid : V 1/Z-1 = (V 1-Z)/Z := by rw [sub_div, div_self hZ.ne']
     rw [hid, abs_div, abs_of_pos hZ] at hrel
     have hh := (div_le_iff₀ hZ).mp hrel
     linarith only [hh]
@@ -126,7 +126,7 @@ theorem physical_size_comparison_order40 (m v r w : ℝ → Space)
     have hp7 := hp 7 (by decide)
     dsimp [ρ] at hDD
     linarith only [hDD, hp7, hε4, hA]
-  have hb := scalar_size_comparison hs₀.le (show 1 ≤ 1+P₀^2 by linarith [sq_nonneg P₀])
+  have hb := scalar_size_comparison hs₀.le (le_add_of_nonneg_right (sq_nonneg P₀))
     hDsmall hE.1 hEup hZ hVdiff
   have hid := physical_primary_size m v r w hs₀ (ne_of_gt hε) hm hv hmv hVp
   rw [hid]

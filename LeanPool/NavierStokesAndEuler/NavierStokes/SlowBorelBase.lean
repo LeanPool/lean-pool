@@ -956,21 +956,16 @@ theorem powered_physical_tail_of_chart_bound {a : ℕ → ℕ} {h : ℝ}
   let S := P - b + M
   obtain ⟨D, hD, hDb⟩ := physicalChart_finite_bound hh hh1 lo hi M
   choose A hA hAb using fun i => PhysicalCoordinateBounds.physical_power_derivative_bound
-    (by positivity : 0 < 2 * h) (by linarith : 2 * h < 1) b lo hi 1 i
+    (by positivity : 0 < 2 * h) (by linarith only [hh1] : 2 * h < 1) b lo hi 1 i
   let K : ℕ → ℕ → ℝ := fun m i => (m.choose i : ℝ) * A i *
     ((m - i).factorial : ℝ) * E * D ^ (m - i)
   let C := (∑ m ∈ Finset.range (M + 1), ∑ i ∈ Finset.range (m + 1), K m i) + 1
   have hDpos : 0 < D := lt_of_lt_of_le zero_lt_one hD
-  have hKn : ∀ m i, 0 ≤ K m i := by
-    intro m i
-    have := hA i
-    dsimp [K]
-    positivity
-  have hCn : 0 < C := by
-    have := Finset.sum_nonneg (s := Finset.range (M + 1))
-      (fun m _ => Finset.sum_nonneg (s := Finset.range (m + 1)) (fun i _ => hKn m i))
-    dsimp [C]
-    linarith
+  have hKn : ∀ m i, 0 ≤ K m i := fun m i =>
+    mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (Nat.cast_nonneg _) (hA i).le)
+      (Nat.cast_nonneg _)) hE) (pow_nonneg hDpos.le _)
+  have hCn : 0 < C := add_pos_of_nonneg_of_pos (Finset.sum_nonneg (s := Finset.range (M + 1))
+    (fun m _ => Finset.sum_nonneg (s := Finset.range (m + 1)) (fun i _ => hKn m i))) one_pos
   refine ⟨min δ 1, C, lt_min hδ (by norm_num), hCn, ?_⟩
   intro m hm p hp hsmall hX
   let q := (physicalChart h p).1
@@ -1007,10 +1002,9 @@ theorem powered_physical_tail_of_chart_bound {a : ℕ → ℕ} {h : ℝ}
         (fun k hk hki => hDb p hp hq1 hX k hk (by omega))
       have hAi : ‖iteratedFDeriv ℝ i (fun y : Chart => (physicalChart h y).1 ^ b) p‖ ≤
           A i * q ^ (b - i) := hAb i p hp hq1 hX
-      have hi0 : 0 ≤ (m.choose i : ℝ) := by positivity
-      have hAi0 := (hA i).le
-      refine (mul_le_mul (mul_le_mul_of_nonneg_left hAi hi0) hFi
-        (norm_nonneg _) (by positivity)).trans_eq ?_
+      have hi0 : 0 ≤ (m.choose i : ℝ) := Nat.cast_nonneg _
+      refine (mul_le_mul (mul_le_mul_of_nonneg_left hAi hi0) hFi (norm_nonneg _)
+        (mul_nonneg hi0 (mul_nonneg (hA i).le (Real.rpow_nonneg hq.le _)))).trans_eq ?_
       have hpow : q ^ (b - i) * q ^ S / q ^ (m - i) = q ^ (P + M - m) := by
         rw [← Real.rpow_natCast q (m - i), ← Real.rpow_add hq, ← Real.rpow_sub hq]
         congr 1
@@ -1029,15 +1023,14 @@ theorem powered_physical_tail_of_chart_bound {a : ℕ → ℕ} {h : ℝ}
       apply mul_le_mul_of_nonneg_left _ (Finset.sum_nonneg (fun i _ => hKn m i))
       apply Real.rpow_le_rpow_of_exponent_ge hq hq1
       have hmR : (m : ℝ) ≤ M := by exact_mod_cast hm
-      linarith
+      linarith only [hmR]
     _ ≤ C * q ^ P := by
       apply mul_le_mul_of_nonneg_right _ (Real.rpow_nonneg hq.le _)
       have hsingle := Finset.single_le_sum
         (fun k (_ : k ∈ Finset.range (M + 1)) =>
           Finset.sum_nonneg (s := Finset.range (k + 1)) (fun i _ => hKn k i))
         (Finset.mem_range.mpr (Nat.lt_succ_of_le hm))
-      dsimp [C]
-      linarith
+      exact hsingle.trans (le_add_of_nonneg_right zero_le_one)
 
 theorem exists_powered_physical_tail_finite {a : ℕ → ℕ} {h : ℝ}
     (hh : 0 < h) (hh1 : h < 1 / 2)

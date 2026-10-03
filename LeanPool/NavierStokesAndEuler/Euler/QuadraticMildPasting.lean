@@ -66,7 +66,7 @@ theorem exists_uniform_restart_time (q : ℕ) (ν : ℝ) (hν : 0 < ν) (S : ℝ
               ∫ r in (0 : ℝ)..t.val, heatKernel period q ν hν r
                 (C.apply (timeWindow a T ha haT (projIcc 0 T hT (t.val-r)))
                   (u (projIcc 0 T hT (t.val-r)))) := by
-  have hR1 : 0 ≤ R+1 := by linarith
+  have hR1 : 0 ≤ R+1 := add_nonneg hR zero_le_one
   obtain ⟨δ, hδ, hδS, hb, hl⟩ := exists_positive_time_budget ν
     (C.ballBound (R+1)) (C.ballLipschitz (R+1)) 1 S (by norm_num) hS
   refine ⟨δ, hδ, hδS, ?_⟩
@@ -77,13 +77,13 @@ theorem exists_uniform_restart_time (q : ℕ) (ν : ℝ) (hν : 0 < ν) (S : ℝ
   have hL := C.ballLipschitz_nonneg (R+1) hR1
   have hbudget : ‖u₀‖ + (T+2*parabolicConstant ν*Real.sqrt T)*C.ballBound (R+1) ≤ R+1 := by
     have hh := mul_le_mul_of_nonneg_right hmass hM
-    linarith
+    linarith only [hh, hb, hu₀]
   have hsmall : (T+2*parabolicConstant ν*Real.sqrt T)*C.ballLipschitz (R+1) < 1 :=
     (mul_le_mul_of_nonneg_right hmass hL).trans_lt hl
   obtain ⟨u, hu, hsol⟩ := exists_viscous_mild_solution period q ν hν T hT u₀ D.apply D.continuous
     (R+1) (C.ballBound (R+1)) (C.ballLipschitz (R+1)) hR1 hM hL
-    (fun t x hx => C.apply_bound (R+1) hR1 (timeWindow a T ha haT t) x hx)
-    (fun t x y hx hy => C.apply_sub_bound (R+1) hR1 (timeWindow a T ha haT t) x y hx hy)
+    (fun t => C.apply_bound (R+1) hR1 (timeWindow a T ha haT t))
+    (fun t => C.apply_sub_bound (R+1) hR1 (timeWindow a T ha haT t))
     hbudget hsmall
   refine ⟨u, hu, ?_, hsol⟩
   have hzero := hsol ⟨0, le_rfl, hT⟩

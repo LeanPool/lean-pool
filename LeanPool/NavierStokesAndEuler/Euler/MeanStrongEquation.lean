@@ -185,13 +185,6 @@ theorem meanWeakSolution_strong
     simp only [extendPath, projIcc_of_mem hT ⟨le_rfl, hT⟩,
       gramPath, mixedPath] at hm
     have hm := hm.trans hp₀
-    change gram ((F ⟨0, le_rfl, hT⟩).comp solenoidalSpace.subtypeL) (v 0) +
-      adjoint (𝕜 := ℝ) (E := solenoidalSpace) (F := L2)
-        ((F ⟨0, le_rfl, hT⟩).comp solenoidalSpace.subtypeL)
-        (F₁ ⟨0, le_rfl, hT⟩ (z 0 : L2)) =
-      adjoint (𝕜 := ℝ) (E := solenoidalSpace) (F := L2)
-        ((F ⟨0, le_rfl, hT⟩).comp solenoidalSpace.subtypeL)
-        ((M0+L • A) (meanTrace T hT FInv u)) at hm
     have hb := congrArg (fun x : L2 =>
       adjoint (𝕜 := ℝ) (E := solenoidalSpace) (F := L2)
         ((F ⟨0, le_rfl, hT⟩).comp solenoidalSpace.subtypeL) ((M0+L • A) x)) hz₀.symm

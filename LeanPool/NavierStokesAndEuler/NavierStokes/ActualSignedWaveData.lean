@@ -404,7 +404,7 @@ theorem singleton_rawPotential (l : Label B N0) (k : Copy)
         (ActualSignedPhysicalBinding.reference l) k z) := by
   rw [native_raw_amplitude]
   simp only [ActualSignedPhysicalData.rawPotential, ActualSignedPhysicalData.rawSignedAmplitude,
-      singleton_referenceRequest]
+      singleton_referenceRequest, ActualSignedPhysicalData.potentialMap_apply]
   dsimp only [DependentSignedPhysicalFamily.Family.singleton]
   simp only [family, ActualSignedExterior.family, ActualSignedExterior.actualLabel_nativeLabel]
   dsimp only [DependentSignedPhysicalFamily.Family.singletonLabel]

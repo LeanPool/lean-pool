@@ -351,10 +351,10 @@ variable (M : EulerMeanPacketProvider.Data)
   (hgrowth : timeProfileChange S.growth hTime = α • L.g)
   (Kc : CorrectionCoefficientBudget D period)
 
-local notation "cg" => growthCoefficient D period Kc (2*velocity L.R S.H0 BC.multiplierCost)
-  (12*velocity L.R S.H0 BC.multiplierCost*(4*L.R))
-local notation "dg" => drift L.R S.H0 BC.multiplierCost
-local notation "ρg" => initialRadius L.R Kc.M Kc.Rc
+local notation "cg" => (growthCoefficient D period Kc (2*velocity L.R S.H0 BC.multiplierCost)
+  (12*velocity L.R S.H0 BC.multiplierCost*(4*L.R)))
+local notation "dg" => (drift L.R S.H0 BC.multiplierCost)
+local notation "ρg" => (initialRadius L.R Kc.M Kc.Rc)
 
 /-- Explicit scalar guards suffice because every analytic input to the
 all-order correction theorem is supplied by the constructed packet. -/
@@ -371,17 +371,18 @@ def forwardInitializedAllOrderBudget (k : ℝ) (hk : 4 ≤ k)
     EulerAllOrderDriftCorrection.Budget period D.T_pos
       (forwardInitializedCorrectionData M D hTime δ hδ ξ hs α Cagree
         (truncation k) (truncation_bounds k (by linarith)).1 k hk) := by
-  have hk1 : 1 ≤ k := by linarith
-  have hk0 : 0 < k := by linarith
+  have hk1 : 1 ≤ k := by linarith only [hk]
+  have hk0 : 0 < k := by linarith only [hk]
   have hn := (truncation_bounds k hk1).1
   have hnx := (truncation_bounds k hk1).2.1
   have hR0 := zero_le_one.trans L.radius_one
   have hM0 := zero_le_one.trans Kc.M_one_le
   have hb := tailBase_frequency L.R S.H0 BC.termCost k BC.termCost_nonneg hk1 htail
   have hc := hcoefficient.trans (smallPower_le_gradeCap k hk1)
-  have hx6 : 6 ≤ expansion k := by linarith
+  have hx6 : 6 ≤ expansion k := by linarith only [hX]
   have hv := velocity_nonneg L.R S.H0 BC.multiplierCost hR0 BC.multiplierCost_nonneg
-  have hcg : 0 < cg := growthCoefficient_pos D period Kc _ _ (by positivity) (by positivity)
+  have hcg : 0 < cg := growthCoefficient_pos D period Kc _ _ (by exact mul_nonneg zero_le_two hv)
+    (by exact mul_nonneg (mul_nonneg (Nat.ofNat_nonneg _) hv) (mul_nonneg (Nat.ofNat_nonneg _) hR0))
   have hdg := drift_nonneg L.R S.H0 BC.multiplierCost hR0 BC.multiplierCost_nonneg
   have hinit := initialRadius_bounds L.R Kc.M Kc.Rc hR0 hM0 Kc.Rc_nonneg
   have hscalar := correction_guards cg D.T dg ρg k hk1 hinit.1 hX hlog
@@ -392,10 +393,12 @@ def forwardInitializedAllOrderBudget (k : ℝ) (hk : 4 ≤ k)
   have hρ (t : Icc (0 : ℝ) D.T) : 0 < ρ t :=
     (half_pos hinit.1).trans_le (hρbounds t).1
   have hpacket (t : Icc (0 : ℝ) D.T) : ρ t*(4*L.R) ≤ 1/2 :=
-    (mul_le_mul_of_nonneg_right (hρbounds t).2 (by positivity)).trans hinit.2.1
+    (mul_le_mul_of_nonneg_right (hρbounds t).2 (by exact mul_nonneg (Nat.ofNat_nonneg 4) hR0)).trans
+      hinit.2.1
   have hpressure (t : Icc (0 : ℝ) D.T) : 4*Kc.M*(ρ t*Kc.Rc) ≤ 1 :=
     (mul_le_mul_of_nonneg_left
-      (mul_le_mul_of_nonneg_right (hρbounds t).2 Kc.Rc_nonneg) (by positivity)).trans hinit.2.2.1
+      (mul_le_mul_of_nonneg_right (hρbounds t).2 Kc.Rc_nonneg)
+      (by exact mul_nonneg (Nat.ofNat_nonneg 4) hM0)).trans hinit.2.2.1
   refine {
     metric := forwardInitializedMetricBudget M D hTime δ hδ ξ hs α Cagree (truncation k) hn k hk 0
     radius := ρ

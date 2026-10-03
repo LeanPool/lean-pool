@@ -50,8 +50,7 @@ theorem full_comp (A : α →ᵇ E →L[ℝ] F) (B : α →ᵇ U →L[ℝ] E) :
   apply Lp.ext
   filter_upwards [full_ae μ (compositionMap (α := α) (U := U) (E := E) (F := F) A B) u,
     full_ae μ A (full μ B u),full_ae μ B u] with x hab ha hb
-  rw [ContinuousLinearMap.comp_apply,hab,ha,hb]
-  rfl
+  exact hab.trans (ha.trans (congrArg (A x) hb)).symm
 
 theorem full_neg (A : α →ᵇ E →L[ℝ] F) : full μ (-A) = -full μ A :=
   map_neg (fullMap μ) A

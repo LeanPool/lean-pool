@@ -546,8 +546,8 @@ theorem cutoff_expression_le {C A R : ℝ}
   have hInv1 : R⁻¹ ≤ 1 := (inv_le_one₀ hRpos).mpr hR
   have hx : 0 ≤ A + R⁻¹ := add_nonneg hA hInv
   have hxB : A + R⁻¹ ≤ A + 1 := add_le_add_right hInv1 A
-  have hB1 : 1 ≤ A + 1 := by linarith
-  have hBpos : 0 < A + 1 := by linarith
+  have hB1 : 1 ≤ A + 1 := le_add_of_nonneg_left hA
+  have hBpos : 0 < A + 1 := add_pos_of_nonneg_of_pos hA zero_lt_one
   have hR2 : R ^ (-2 : ℝ) ≤ R⁻¹ := by
     simpa only [Real.rpow_neg_one] using
       (Real.rpow_le_rpow_of_exponent_le hR (by norm_num : (-2 : ℝ) ≤ -1))
@@ -558,9 +558,10 @@ theorem cutoff_expression_le {C A R : ℝ}
       2 * (A + 1) ^ (1 / 2 : ℝ) := by
     have hmon := Real.rpow_le_rpow hx hxB (by norm_num : (0 : ℝ) ≤ 1 / 2)
     have hone := Real.one_le_rpow hB1 (by norm_num : (0 : ℝ) ≤ 1 / 2)
-    linarith
+    exact (add_le_add hmon hone).trans_eq (two_mul _).symm
   have hlinear : R⁻¹ * A + R ^ (-2 : ℝ) ≤ R⁻¹ * (A + 1) := by
-    linarith
+    rw [mul_add, mul_one]
+    exact add_le_add_right hR2 _
   have hlinear0 : 0 ≤ R⁻¹ * A + R ^ (-2 : ℝ) :=
     add_nonneg (mul_nonneg hInv hA) (Real.rpow_nonneg hRpos.le _)
   have hprod : (A + 1) ^ (1 / 2 : ℝ) * (A + 1) =
@@ -587,8 +588,8 @@ theorem cutoff_expression_le {C A R : ℝ}
   have hterm2 := mul_le_mul_of_nonneg_left
     (mul_le_mul hR74 hthreeQuarters (Real.rpow_nonneg hx _) hInv) hC
   have hterm3 := mul_le_mul_of_nonneg_left hthreeHalves (mul_nonneg hC hInv)
-  simp only [div_eq_mul_inv]
-  linarith only [hterm1, hterm2, hterm3]
+  rw [mul_assoc C, mul_assoc C (R ^ (-7 / 4 : ℝ))]
+  exact (add_le_add (add_le_add hterm1 hterm2) hterm3).trans_eq (by ring)
 
 /-- Scalar Young absorption of all cutoff remainders. The same nonnegative
 constant works for every nonnegative gradient norm and every radius at least
@@ -687,7 +688,7 @@ theorem exists_uniform_flux_absorption {C1 C2 S M δ : ℝ}
       _ ≤ C2 * (Q ^ 2 * (x ^ (1 / 2 : ℝ) + 1)) :=
         mul_le_mul_of_nonneg_left hhalfOne hC2
       _ = (C2 * Q ^ 2) * (x ^ (1 / 2 : ℝ) + 1) := by ring
-      _ ≤ _ := mul_le_mul_of_nonneg_right hC2Q (by positivity)
+      _ ≤ _ := mul_le_mul_of_nonneg_right hC2Q (add_nonneg (Real.rpow_nonneg hx _) zero_le_one)
   have hRminus2 : R ^ (-2 : ℝ) = 1 / R ^ 2 := by
     rw [Real.rpow_neg hRpos.le, Real.rpow_two, one_div]
   have hlinear : A / R + 1 / R ^ 2 = R⁻¹ * A + R ^ (-2 : ℝ) := by
@@ -701,31 +702,24 @@ theorem exists_uniform_flux_absorption {C1 C2 S M δ : ℝ}
     exact mul_le_mul_of_nonneg_right hfactor hlinear0
   have hcommutator : C2 * (R ^ (-7 / 4 : ℝ) * B ^ (3 / 4 : ℝ)) ≤
       C * R ^ (-7 / 4 : ℝ) * x ^ (3 / 4 : ℝ) := by
+    have hRa := Real.rpow_nonneg hRpos.le (-7 / 4 : ℝ)
     calc
-      _ = (C2 * R ^ (-7 / 4 : ℝ)) * B ^ (3 / 4 : ℝ) := by ring
-      _ ≤ (C2 * R ^ (-7 / 4 : ℝ)) * (Q ^ 2 * x ^ (3 / 4 : ℝ)) :=
-        mul_le_mul_of_nonneg_left hquarter (mul_nonneg hC2 (Real.rpow_nonneg hRpos.le _))
-      _ = (C2 * Q ^ 2) * (R ^ (-7 / 4 : ℝ) * x ^ (3 / 4 : ℝ)) := by ring
-      _ ≤ C * (R ^ (-7 / 4 : ℝ) * x ^ (3 / 4 : ℝ)) :=
-        mul_le_mul_of_nonneg_right hC2Q (by positivity)
-      _ = _ := by ring
+      _ ≤ C2 * (R ^ (-7 / 4 : ℝ) * (Q ^ 2 * x ^ (3 / 4 : ℝ))) :=
+        mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hquarter hRa) hC2
+      _ = (C2 * Q ^ 2) * R ^ (-7 / 4 : ℝ) * x ^ (3 / 4 : ℝ) := by ring
+      _ ≤ _ := mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right hC2Q hRa)
+        (Real.rpow_nonneg hx _)
   have htransport : C1 / R * B ^ (3 / 2 : ℝ) ≤
       C * R⁻¹ * x ^ (3 / 2 : ℝ) := by
     calc
       _ ≤ C1 / R * (Q ^ 2 * x ^ (3 / 2 : ℝ)) :=
         mul_le_mul_of_nonneg_left hthree (div_nonneg hC1 hRpos.le)
-      _ = (C1 * Q ^ 2) * (R⁻¹ * x ^ (3 / 2 : ℝ)) := by ring
-      _ ≤ C * (R⁻¹ * x ^ (3 / 2 : ℝ)) :=
-        mul_le_mul_of_nonneg_right hC1Q (by positivity)
-      _ = _ := by ring
-  have hsum : C1 / R * B ^ (3 / 2 : ℝ) +
-      C2 * ((B ^ (1 / 2 : ℝ) + 1) * (A / R + 1 / R ^ 2) +
-        R ^ (-7 / 4 : ℝ) * B ^ (3 / 4 : ℝ)) ≤
-      C * (x ^ (1 / 2 : ℝ) + 1) * (R⁻¹ * A + R ^ (-2 : ℝ)) +
-        C * R ^ (-7 / 4 : ℝ) * x ^ (3 / 4 : ℝ) +
-        C * R⁻¹ * x ^ (3 / 2 : ℝ) := by
-    linarith only [hpressure, hcommutator, htransport]
-  exact hsum.trans (hD_bound A hA R hR)
+      _ = (C1 * Q ^ 2) * R⁻¹ * x ^ (3 / 2 : ℝ) := by ring
+      _ ≤ _ := mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right hC1Q hInv)
+        (Real.rpow_nonneg hx _)
+  have hsum := add_le_add htransport (add_le_add hpressure hcommutator)
+  rw [← mul_add] at hsum
+  exact hsum.trans ((add_comm _ _).trans_le (hD_bound A hA R hR))
 
 /-- One radius-independent constant turns the full localized energy inequality
 into the differential inequality required by Gronwall. -/

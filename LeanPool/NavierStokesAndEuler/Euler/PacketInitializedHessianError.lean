@@ -153,9 +153,7 @@ theorem initializedAngularPressure_bound :
   have hb := K.angular_bound.remove_profile M.T_pos.le (S.high 1) (S.high_pos 1)
     (S.H0^(2*1)) (pow_nonneg S.H0_pos.le _) (S.high_le_coarse 1 le_rfl)
   simp only [mul_one] at hb
-  have ha : S.H0^2 ≤ 3*S.H0^(2*1) := by
-    norm_num only [Nat.mul_one]
-    nlinarith [sq_nonneg S.H0]
+  have ha : S.H0^2 ≤ 3*S.H0^(2*1) := le_mul_of_one_le_left (sq_nonneg _) (by norm_num)
   have hc := (hb.mono_amplitude (zero_le_one.trans L.radius_bounds.1) ha).fixed_velocity_grade
     (n := 1) (zero_le_one.trans L.radius_bounds.1) S.H0_pos.le
   exact (hc.changeTime hTime).ofRawEq _
@@ -397,7 +395,7 @@ theorem initializedPressure_hessian_bound (N : ℕ) (hN : 1 ≤ N) (k : ℝ) (hk
         deriv (profile δ) (k*⟪D.m₀,Y t x⟫_ℝ)) •
       rankOne (E := Space) (F := Space) ℝ (D.normal.field t (Y t x)) (D.normal.field t (Y t x))‖ ≤
         initializedPressureHessianCost NB L.R S.H0 L.Rc L.C₀/k := by
-  have hk0 : 0 < k := by linarith
+  have hk0 : 0 < k := zero_lt_four.trans_le hk
   have hr0 : 0 ≤ L.R := zero_le_one.trans L.radius_bounds.1
   let AF := initializedAngularPressureField M D hTime τ hτ hτT B δ hδ ξ hs α
     L H NB W LM WM BC hRc hcost hδ1 hα hR WP S hgrowth
@@ -429,8 +427,8 @@ theorem initializedPressure_hessian_bound (N : ℕ) (hN : 1 ≤ N) (k : ℝ) (hk
     (ha.differentiable (by simp) _)
   have htail := physicalCovector_error_bound D RF (4*L.R)
     (fixedVelocityGradeCost L.R S.H0 2+2) (by positivity)
-    (by have h := fixedVelocityGradeCost_nonneg L.R S.H0 hr0 2; linarith)
-    k (by linarith) hRF L.Rc L.C₀ L.Rc_nonneg L.C₀_nonneg hdet L.frame_bound
+    (add_nonneg (fixedVelocityGradeCost_nonneg L.R S.H0 hr0 2) zero_le_two)
+    k (by linarith only [hk]) hRF L.Rc L.C₀ L.Rc_nonneg L.C₀_nonneg hdet L.frame_bound
     X Y hX hYd hXY t x
   have htaild : DifferentiableAt ℝ (physicalCovector D RF k Y t) x := by
     have hI := (adjoint.differentiableAt.comp x hJ)
@@ -446,9 +444,7 @@ theorem initializedPressure_hessian_bound (N : ℕ) (hN : 1 ≤ N) (k : ℝ) (hk
   calc
     _ = ‖fastHessianRemainder a k D.m₀ (Y t) J x +
         fderiv ℝ (physicalCovector D RF k Y t) x‖ := by
-      rw [he,fderiv_add hf.differentiableAt htaild,hf.fderiv]
-      congr 1
-      abel
+      rw [he, fderiv_add hf.differentiableAt htaild, hf.fderiv, add_assoc, add_sub_cancel_left]
     _ ≤ _ := (norm_add_le _ _).trans ((add_le_add hfast htail).trans_eq (by
       unfold initializedPressureHessianCost
       ring))

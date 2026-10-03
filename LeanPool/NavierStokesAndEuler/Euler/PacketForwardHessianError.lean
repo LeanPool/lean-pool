@@ -367,7 +367,7 @@ theorem forwardInitializedPressureBudget_exists (p : ℕ) :
           (α*(wordCost (Fin 4) 6 δ*‖ξ‖))*majorant L.R 0 n := by
       intro n
       have hh := initialData_common_radius D δ hδ (α • ξ) hs standardDirection
-        (fun i => by cases i using Fin.cases <;> simp [Prod.norm_def]) 6 hδ1 L.R hR n
+        (fun i => (EulerMetricHeatEnergy.standardDirection_norm i).le) 6 hδ1 L.R hR n
       simpa only [norm_smul,Real.norm_eq_abs,abs_of_pos hα,mul_assoc,mul_left_comm,mul_comm] using
           hh
     have hb := (L.primary_scalar_and_angular_grade_bound NB _ WP
@@ -672,7 +672,7 @@ theorem forwardInitializedPressure_hessian_bound (N : ℕ) (hN : 1 ≤ N) (k : �
       rankOne (E := Space) (F := Space) ℝ (D.normal.field t (Y t x))
         (D.normal.field t (Y t x))‖ ≤
         forwardInitializedPressureHessianCost NB L.R S.H0 L.Rc L.C₀/k := by
-  have hk0 : 0 < k := by linarith
+  have hk0 : 0 < k := (by norm_num : (0 : ℝ) < 4).trans_le hk
   have hr0 : 0 ≤ L.R := zero_le_one.trans L.radius_one
   let AF := forwardInitializedAngularPressureField M D hTime δ hδ ξ hs α
     L NB W LM WM BC hRc hcost hδ1 hα hR WP S hgrowth
@@ -704,11 +704,11 @@ theorem forwardInitializedPressure_hessian_bound (N : ℕ) (hN : 1 ≤ N) (k : �
     (ha.differentiable (by simp) _)
   have htail := physicalCovector_error_bound D RF (4*L.R)
     (fixedVelocityGradeCost L.R S.H0 2+2) (by positivity)
-    (by have h := fixedVelocityGradeCost_nonneg L.R S.H0 hr0 2; linarith)
-    k (by linarith) hRF L.Rc L.C₀ L.Rc_nonneg L.C₀_nonneg hdet L.frame_bound
+    (add_nonneg (fixedVelocityGradeCost_nonneg L.R S.H0 hr0 2) zero_le_two)
+    k (by linarith only [hk]) hRF L.Rc L.C₀ L.Rc_nonneg L.C₀_nonneg hdet L.frame_bound
     X Y hX hYd hXY t x
   have htaild : DifferentiableAt ℝ (physicalCovector D RF k Y t) x := by
-    have hI := (adjoint.differentiableAt.comp x hJ)
+    have hI := ((adjoint (𝕜 := ℝ) (E := Space) (F := Space)).differentiableAt.comp x hJ)
     have hR := (RF.raw_graph_contDiff t k D.m₀).differentiable (by simp) (Y t x)
     have hRg := hR.comp x (hYd t x)
     exact hI.clm_apply hRg

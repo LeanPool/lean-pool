@@ -713,9 +713,9 @@ theorem native_modulated_bound {α : ℝ}
       (show LocalPhysicalCopyBounds.SmoothNear (f l n) z from
         ⟨nativeStrip.domain, nativeStrip.isOpen_domain, hz, hf.smooth l n⟩)
       (ActualCurrentCarrierJets.weightedPhase_smoothNear_controlPatch l n k hk) m
-      (by positivity : 0 ≤ A * ChartScales.Q n ^ (h * α) * ChartScales.S n ^ p)
+      (mul_nonneg (mul_nonneg hA (Real.rpow_nonneg hQ.le _)) (pow_nonneg (zero_le_one.trans hS) p))
       hD' (le_add_of_nonneg_right (abs_nonneg (j : ℝ)))
-      (by linarith : |(j : ℝ)| ≤ 1 + |(j : ℝ)|)
+      (le_add_of_nonneg_left zero_le_one : |(j : ℝ)| ≤ 1 + |(j : ℝ)|)
       (ha l n hn z hz) (fun a h1 h2 => by
         simpa only [mul_right_comm] using hd l n k z hk a h1 h2) i him
     apply hh.trans_eq

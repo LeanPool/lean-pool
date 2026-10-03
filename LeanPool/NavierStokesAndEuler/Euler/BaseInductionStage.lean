@@ -252,12 +252,13 @@ def firstChildLowBounds (hL : H.L = 0) (hquarter : A.ell ≤ 1 / 4)
   apply EC.lowBoundsFromPhysical CM Cnew (boundaryLocalizationC1*Cnew+1) A.ell Knew
     hCM0
   · dsimp [Cnew]
-    positivity [firstRatio_pos]
+    exact add_nonneg (add_nonneg hCM0 (mul_nonneg hhchild firstRatio_pos.le)) hev
   · exact le_add_of_nonneg_right zero_le_one
   · exact A.ell_pos.le
   · exact hquarter
   · dsimp [Knew]
-    positivity [H.K_nonneg,firstRatio_pos]
+    exact add_nonneg (add_nonneg H.K_nonneg (mul_nonneg (mul_nonneg (mul_nonneg zero_le_two hCM0)
+      hδ.le) (mul_nonneg hhchild firstRatio_pos.le))) hep
   · intro x hx z
     have he : fderiv ℝ (fun y => EC.velocity (0,y)) x=fderiv ℝ (fun y => E.velocity (0,y)) x :=
       A.exactForwardPacket_initial_gradient_exterior H m hm J support hSupport
@@ -427,8 +428,9 @@ def firstPacketState
   (packetBaseState β hβ ell hell hell1 T hT hTB).forwardChild
     (packetBaseLowBounds β hβ ell hell hell1 T hT hTB)
     firstNormal firstNormal_unit firstFrame support compact symmetric
-    δ hδ firstCoordinate (subset_refl _) (δ*hchild) N hN k hk Q G hG hgraph nextEll hnext hnext1
-        labels
+    δ hδ firstCoordinate (subset_refl _) (δ*hchild) N hN k hk Q G
+    (by dsimp only [firstPacketMeanData, firstPacketData] at hG; exact hG) hgraph nextEll hnext
+    hnext1 labels
 
 /-- First packet low bounds as an element of `LowBounds ((packetBaseParent β hβ ell hell hell1 T
 hT hTB).child G k firstNormal hgraph nextEll hnext hnext1)`. -/

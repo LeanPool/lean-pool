@@ -116,19 +116,20 @@ theorem corrector_coefficient_bounds (R C Ri : ℝ) (hR : 0 ≤ R) (hC : 0 ≤ C
         correctorCoefficientAmplitude C Ri*majorant (correctorCoefficientRadius R Ri) 0 n := by
   let Rc := correctorCoefficientRadius R Ri
   let Cc := correctorCoefficientAmplitude C Ri
-  have hRc : 0 ≤ Rc := by dsimp [Rc,correctorCoefficientRadius]; positivity
-  have hRR : R ≤ Rc := by dsimp [Rc,correctorCoefficientRadius]; linarith
-  have hIR : 4*Ri ≤ Rc := by dsimp [Rc,correctorCoefficientRadius]; linarith
-  have hN : 0 ≤ 3*Ri*C := by positivity
-  have hD : 0 ≤ 3*C^2 := by positivity
-  have hDt : 0 ≤ 27*(3*Ri*C)^2*(3*C^2) := by positivity
-  have hCc : 0 ≤ Cc := by dsimp [Cc,correctorCoefficientAmplitude]; positivity
-  have hC0 : C ≤ Cc := by dsimp [Cc,correctorCoefficientAmplitude]; linarith
-  have hC1 : 3*C^2 ≤ Cc := by dsimp [Cc,correctorCoefficientAmplitude]; linarith
-  have hCN : 3*Ri*C ≤ Cc := by dsimp [Cc,correctorCoefficientAmplitude]; linarith
+  have hRc : 0 ≤ Rc := add_nonneg (add_nonneg hR (mul_nonneg zero_le_four hRi)) zero_le_one
+  have hRR : R ≤ Rc := by dsimp [Rc,correctorCoefficientRadius]; linarith only [hRi]
+  have hIR : 4*Ri ≤ Rc := by dsimp [Rc,correctorCoefficientRadius]; linarith only [hR]
+  have hN : 0 ≤ 3*Ri*C := mul_nonneg (mul_nonneg zero_le_three hRi) hC
+  have hD : 0 ≤ 3*C^2 := mul_nonneg zero_le_three (sq_nonneg C)
+  have hDt : 0 ≤ 27*(3*Ri*C)^2*(3*C^2) := mul_nonneg (mul_nonneg (by norm_num) (sq_nonneg _)) hD
+  have hCc : 0 ≤ Cc :=
+    add_nonneg (add_nonneg (add_nonneg (add_nonneg zero_le_one hC) hD) hN) hDt
+  have hC0 : C ≤ Cc := by dsimp [Cc,correctorCoefficientAmplitude]; linarith only [hD, hN, hDt]
+  have hC1 : 3*C^2 ≤ Cc := by dsimp [Cc,correctorCoefficientAmplitude]; linarith only [hC, hN, hDt]
+  have hCN : 3*Ri*C ≤ Cc := by dsimp [Cc,correctorCoefficientAmplitude]; linarith only [hC, hD, hDt]
   have hCT : 27*(3*Ri*C)^2*(3*C^2) ≤ Cc := by
     dsimp [Cc,correctorCoefficientAmplitude]
-    linarith
+    linarith only [hC, hD, hN]
   have hIb (n : ℕ) (a : Space) :=
     (D.FInv.norm_iteratedFDeriv_translation_le n (C*majorant R 0 n)
       (mul_nonneg hC (majorant_nonneg R hR 0 n)) (hI n) a).trans

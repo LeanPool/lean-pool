@@ -691,7 +691,9 @@ theorem native_jets_on_phaseCell {J D E : Type} [NormedAddCommGroup D] [NormedSp
         _ ≤ (H * fullStrip.slow n) ^ m :=
           (pow_le_pow_left₀ (norm_nonneg _) (hlinear l n k x hx hc) j).trans
             (pow_le_pow_right₀ (one_le_mul_of_one_le_of_one_le hH hS) hj)
-        _ ≤ (H * fullStrip.growth n x) ^ m := by gcongr; exact fullStrip.slow_le_growth n x
+        _ ≤ (H * fullStrip.growth n x) ^ m :=
+          pow_le_pow_left₀ (mul_nonneg (zero_le_one.trans hH) (zero_le_one.trans hS))
+            (mul_le_mul_of_nonneg_left (fullStrip.slow_le_growth n x) (zero_le_one.trans hH)) m
         _ = _ := mul_pow _ _ _
     have hu := norm_jet_comp_affine (V.isOpen (index l n)) (hf.smooth (index l n))
       (L l n k) (c l n k) hm j
@@ -699,14 +701,21 @@ theorem native_jets_on_phaseCell {J D E : Type} [NormedAddCommGroup D] [NormedSp
       _ ≤ ‖iteratedFDeriv ℝ j (f (index l n)) (L l n k x + c l n k)‖ * ‖L l n k‖ ^ j := hu
       _ ≤ (C * V.growth (index l n) (L l n k x + c l n k) ^ p *
           w (index l n) (L l n k x + c l n k)) * (H ^ m * fullStrip.growth n x ^ m) :=
-        mul_le_mul (hb _ _ hm j hj) hlin (by positivity)
+        mul_le_mul (hb _ _ hm j hj) hlin (pow_nonneg (norm_nonneg _) j)
           (mul_nonneg (mul_nonneg (zero_le_one.trans hC)
             (pow_nonneg (zero_le_one.trans hGN) _)) hw)
       _ ≤ (C * (A * fullStrip.growth n x) ^ p * W l n x) *
-          (H ^ m * fullStrip.growth n x ^ m) := by
-        gcongr
-        · exact hgrowth l n k x hx hc
-        · exact hweight l n k x hx hc
+          (H ^ m * fullStrip.growth n x ^ m) :=
+        mul_le_mul_of_nonneg_right
+          (mul_le_mul
+            (mul_le_mul_of_nonneg_left
+              (pow_le_pow_left₀ (zero_le_one.trans hGN) (hgrowth l n k x hx hc) p)
+              (zero_le_one.trans hC))
+            (hweight l n k x hx hc) hw
+            (mul_nonneg (zero_le_one.trans hC)
+              (pow_nonneg (mul_nonneg (zero_le_one.trans hA) (zero_le_one.trans hG)) p)))
+          (mul_nonneg (pow_nonneg (zero_le_one.trans hH) m)
+            (pow_nonneg (zero_le_one.trans hG) m))
       _ = majorant fullStrip (W l) 0 (C * A ^ p * H ^ m) (p + m) n x := by
         rw [majorant, Real.rpow_zero, mul_pow, pow_add]
         ring

@@ -1411,8 +1411,8 @@ theorem transportGauge_finiteJets {c e a b cL cR L : ℝ} (hce : c < e)
           (mul_le_mul_of_nonneg_left (hweight _ (logPosition_mem ha hp)) hA)
       · have hp' : R ∉ Ioo (ell z.2.1 * a) (ell z.2.1 * b) := by
           intro h
-          exact hp ⟨(lt_div_iff₀ (hl _ hz)).mpr (by linarith [h.1]),
-            (div_lt_iff₀ (hl _ hz)).mpr (by linarith [h.2])⟩
+          exact hp ⟨(lt_div_iff₀ (hl _ hz)).mpr ((mul_comm _ _).trans_lt h.1),
+            (div_lt_iff₀ (hl _ hz)).mpr (h.2.trans_eq (mul_comm _ _))⟩
         rw [iteratedFDeriv_zero_outsideGauge (z := (R, (z.2.1, Y)))
           hU hell.continuousOn hf hsg hz hp' i, norm_zero]
         exact mul_nonneg hA hW
@@ -1484,17 +1484,21 @@ theorem transportGauge_finiteJets {c e a b cL cR L : ℝ} (hce : c < e)
         (sub_jet_norm_le (PhysicalMeanDomain.slowDomain_open hU) hI (hC.mul hJ) hz j).trans
           (add_le_add (hmass j hj).1 hprod)
       have hmid : massK * A + (2 : ℝ) ^ m * B * (massK * A) ≤ midK * (1 + B) * A * δ := by
-        dsimp [midK]
-        have hpow : 0 ≤ (2 : ℝ) ^ m := by positivity
-        have : 1 + (2 : ℝ) ^ m * B ≤ (1 + (2 : ℝ) ^ m) * (1 + B) := by
+        have hpow : 0 ≤ (2 : ℝ) ^ m := pow_nonneg zero_le_two m
+        have hfac : 1 + (2 : ℝ) ^ m * B ≤ (1 + (2 : ℝ) ^ m) * (1 + B) := by
           linarith only [hpow, hB]
-        field_simp [hδ.ne']
-        linarith only [mul_nonneg (mul_nonneg hmassK hA) (sub_nonneg.mpr this)]
+        have hcancel : midK * δ = massK * (1 + (2 : ℝ) ^ m) := div_mul_cancel₀ _ hδ.ne'
+        calc massK * A + (2 : ℝ) ^ m * B * (massK * A)
+            = massK * A * (1 + (2 : ℝ) ^ m * B) := by ring
+          _ ≤ massK * A * ((1 + (2 : ℝ) ^ m) * (1 + B)) :=
+            mul_le_mul_of_nonneg_left hfac (mul_nonneg hmassK hA)
+          _ = midK * δ * (1 + B) * A := by rw [hcancel]; ring
+          _ = midK * (1 + B) * A * δ := by ring
       exact (hb.trans hmid).trans ((mul_le_mul_of_nonneg_left hw
-        (mul_nonneg (mul_nonneg hmidK (by positivity)) hA)).trans
+        (mul_nonneg (mul_nonneg hmidK (add_nonneg zero_le_one hB)) hA)).trans
           (mul_le_mul_of_nonneg_right
-            (mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right hmiddleK (by
-                positivity)) hA) hnorm))
+            (mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right hmiddleK
+              (add_nonneg zero_le_one hB)) hA) hnorm))
 
 end VariableTransport
 
@@ -1873,8 +1877,8 @@ theorem meanClass_moving_localBandJets {α : ℝ} {f : ℕ → Point → ℝ}
         ring)
   · have hR' : z.1 ∉ Ioo (qLength coord z.2.1 * a) (qLength coord z.2.1 * b) := by
       intro h
-      exact hR ⟨(lt_div_iff₀ hp).mpr (by
-          linarith [h.1]), (div_lt_iff₀ hp).mpr (by linarith [h.2])⟩
+      exact hR ⟨(lt_div_iff₀ hp).mpr ((mul_comm _ _).trans_lt h.1),
+        (div_lt_iff₀ hp).mpr (h.2.trans_eq (mul_comm _ _))⟩
     have hell : ContinuousOn (qLength coord) U.carrier :=
       ((qLength_contDiffOn U.coord_pos U.coord_lt_one).mono (fun s hs => U.time_pos s
           hs)).continuousOn
@@ -2114,8 +2118,8 @@ theorem localBandJets_meanClass_of_gaugeInteriorSupport {c e α : ℝ}
       _ = _ := rfl
   · have hr : z.1 ∉ Ioo (qLength coord z.2.1 * c) (qLength coord z.2.1 * e) := by
       intro h
-      exact hpi ⟨((lt_div_iff₀ hEll).mpr (by linarith [h.1])).le,
-        ((div_lt_iff₀ hEll).mpr (by linarith [h.2])).le⟩
+      exact hpi ⟨((lt_div_iff₀ hEll).mpr ((mul_comm _ _).trans_lt h.1)).le,
+        ((div_lt_iff₀ hEll).mpr (h.2.trans_eq (mul_comm _ _))).le⟩
     rw [iteratedFDeriv_zero_outsideGauge_on U.isOpen
       ((qLength_contDiffOn U.coord_pos U.coord_lt_one).mono (fun s hs => U.time_pos s
           hs)).continuousOn

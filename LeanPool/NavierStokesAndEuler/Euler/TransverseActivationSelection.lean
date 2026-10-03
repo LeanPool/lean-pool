@@ -922,7 +922,7 @@ theorem select_actual_activation
       R.norm_toContinuousLinearMap_le CM CH hCM hCH M hRay hM H hHs hHnorm K hK hH hsmall
   have hC : 1 ≤ activationConstant CM CH := by
     unfold activationConstant
-    nlinarith only [sq_nonneg CM, hCH]
+    linarith only [sq_nonneg CM, hCH]
   obtain ⟨yp, yq, hwq, hwpl, hwpu, hY⟩ :=
     select_endpoint_hilbert Λ B p q (activationConstant CM CH) ε h hΛ hp hq hpq
       hC hε hh hεsmall hΛnorm hB hBpp
@@ -949,9 +949,9 @@ theorem select_actual_activation
   have hwt : ContinuousLinearMap.adjoint (𝕜 := ℝ) (E := V) (F := E) R.toContinuousLinearMap
       (w T) = Λ Y - B Y - (h * ⟪p, Y⟫_ℝ) • q := by
     dsimp only [w]
-    rw [ContinuousLinearMap.map_sub, hvt, hηT]
-    simp only [B, terminalPerturbation, sub_apply, comp_apply, smul_apply, rankOne_apply,
-      smul_smul, extendPath, projIcc_of_mem hT.le (show T ∈ Icc (0 : ℝ) T from ⟨hT.le, le_rfl⟩)]
+    simp only [ContinuousLinearMap.map_sub, hvt, hηT, B, terminalPerturbation, sub_apply,
+      comp_apply, smul_apply, rankOne_apply, smul_smul, extendPath,
+      projIcc_of_mem hT.le (show T ∈ Icc (0 : ℝ) T from ⟨hT.le, le_rfl⟩)]
     abel
   have hwcoord (z : V) : ⟪w T, R z⟫_ℝ =
       ⟪Λ Y - B Y - (h * ⟪p, Y⟫_ℝ) • q, z⟫_ℝ := by

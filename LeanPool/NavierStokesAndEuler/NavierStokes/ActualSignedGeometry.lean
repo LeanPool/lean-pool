@@ -1265,14 +1265,14 @@ theorem clock_outer_in_slot (hh : 0 ≤ h) {l : SlotColoring.Label} (hl : 4 ≤ 
   have hz1 : |z.1| ≤ 2 * sys.radius := by
     have he : -sys.radius - 2 * (clockWindow sys l.1).padding ≤ z.1 ∧
         z.1 ≤ sys.radius + 2 * (clockWindow sys l.1).padding := hz.1
-    exact abs_le.mpr ⟨by linarith [he.1], by linarith [he.2]⟩
+    exact abs_le.mpr ⟨by linarith only [he.1, hpad, hr], by linarith only [he.2, hpad, hr]⟩
   have hprodpad : ChartScales.timeCoefficient h l.1 * (clockWindow sys l.1).padding ≤ sys.radius /
       16 :=
     (mul_le_of_le_one_left hpad0.le hci1).trans hpad
   have htime : ChartScales.timeCoefficient h l.1 * ChartScales.slotLength sys.radius h l.1 =
       2 * sys.radius := by
     unfold ChartScales.slotLength
-    field_simp
+    exact mul_div_cancel₀ _ hci.ne'
   have hz2 : |ChartScales.timeCoefficient h l.1 * z.2 - sys.radius| ≤ 2 * sys.radius := by
     have he : -(2 * (clockWindow sys l.1).padding) ≤ z.2 ∧
         z.2 ≤ ChartScales.slotLength sys.radius h l.1 + 2 * (clockWindow sys l.1).padding := by
@@ -1281,7 +1281,8 @@ theorem clock_outer_in_slot (hh : 0 ≤ h) {l : SlotColoring.Label} (hl : 4 ≤ 
       exact he
     have hlo := mul_le_mul_of_nonneg_left he.1 hci.le
     have hhi := mul_le_mul_of_nonneg_left he.2 hci.le
-    exact abs_le.mpr ⟨by nlinarith, by nlinarith⟩
+    exact abs_le.mpr ⟨by linarith only [hlo, hprodpad, hr],
+      by linarith only [hhi, htime, hprodpad, hr]⟩
   refine ⟨z.1, ChartScales.timeCoefficient h l.1 * z.2 - sys.radius, hz1, hz2, ?_⟩
   dsimp only
   rw [slotGeometry_basis]
@@ -1501,34 +1502,40 @@ theorem norm_copyLinear_le (hh : 0 ≤ h) {index : ℕ → ℕ} {budget : ℕ}
       CommonCoverClass.argumentCost (slotGeometry sys hdet l (ChartScales.nativeIndex h l.1 - index
           n)) := by
     unfold CommonCoverClass.argumentCost
-    have hp : 0 ≤ ‖(slotGeometry sys hdet l (ChartScales.nativeIndex h l.1 - index n)).pointLinear‖
-        *
-        (1 + ‖(slotGeometry sys hdet l (ChartScales.nativeIndex h l.1 - index
-            n)).coordinateLinear‖) := by
-            positivity
-    linarith
+    have hp := mul_nonneg
+      (norm_nonneg (slotGeometry sys hdet l (ChartScales.nativeIndex h l.1 - index n)).pointLinear)
+      (add_nonneg zero_le_one (norm_nonneg
+        (slotGeometry sys hdet l (ChartScales.nativeIndex h l.1 - index n)).coordinateLinear))
+    linarith only [hp]
   have hS : 1 ≤ BaseContextAssembly.slowScale n := BaseContextAssembly.one_le_slowScale _
   have hSs : ChartScales.S n ≤ BaseContextAssembly.slowScale n := le_max_right _ _
   have hC := CommonCoverClass.bandArgumentCost_one_le (TorusAverages.slotChart vr vt hdet)
     (budget + SlotColoring.nativeGap h)
   have hA := slowChangeCost_one h
   have hSn : 0 ≤ ChartScales.S n := sq_nonneg _
-  apply ContinuousLinearMap.opNorm_le_bound _ (by positivity)
+  have hA0 := zero_le_one.trans hA
+  have hC0 := mul_nonneg (by norm_num : (0 : ℝ) ≤ 25) (zero_le_one.trans hC)
+  have hS0 := zero_le_one.trans hS
+  apply ContinuousLinearMap.opNorm_le_bound _ (mul_nonneg (add_nonneg hA0 hC0) hS0)
   intro x
   change max ‖slowChange h (ChartScales.Q n) (ChartScales.Q l.1) x.1‖
     ‖(slotGeometry sys hdet l (ChartScales.nativeIndex h l.1 - index n)).coordinateLinear x.2‖ ≤ _
   apply max_le
   · calc
       _ ≤ slowChangeCost h * ‖x‖ :=
-        ((slowChange h _ _).le_opNorm _).trans (mul_le_mul hc (norm_fst_le x) (norm_nonneg _) (by
-            linarith))
-      _ ≤ _ := mul_le_mul_of_nonneg_right (by nlinarith) (norm_nonneg _)
+        ((slowChange h _ _).le_opNorm _).trans (mul_le_mul hc (norm_fst_le x) (norm_nonneg _) hA0)
+      _ ≤ _ := mul_le_mul_of_nonneg_right
+        ((le_add_of_nonneg_right hC0).trans (le_mul_of_one_le_right (add_nonneg hA0 hC0) hS))
+        (norm_nonneg _)
   · calc
       _ ≤ (25 * CommonCoverClass.bandArgumentCost (TorusAverages.slotChart vr vt hdet)
           (budget + SlotColoring.nativeGap h) * ChartScales.S n) * ‖x‖ :=
         ((slotGeometry sys hdet l _).coordinateLinear.le_opNorm _).trans
-          (mul_le_mul (hd.trans hg) (norm_snd_le x) (norm_nonneg _) (by positivity))
-      _ ≤ _ := mul_le_mul_of_nonneg_right (by nlinarith) (norm_nonneg _)
+          (mul_le_mul (hd.trans hg) (norm_snd_le x) (norm_nonneg _) (mul_nonneg hC0 hSn))
+      _ ≤ _ := mul_le_mul_of_nonneg_right
+        ((mul_le_mul_of_nonneg_left hSs hC0).trans
+          (mul_le_mul_of_nonneg_right (le_add_of_nonneg_left hA0) hS0))
+        (norm_nonneg _)
 
 end CopyMap
 

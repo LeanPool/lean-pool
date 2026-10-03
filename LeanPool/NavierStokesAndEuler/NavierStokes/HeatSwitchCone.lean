@@ -1010,15 +1010,25 @@ theorem compensated_source_margins (F : Profile) {anchor left : ℝ}
       |actualObservations F XR w.coefficients p i - observations F (0, p) i| ≤ err :=
     fun i => (he i).trans hsmall
   have hq : |Qs F XR w.coefficients p - OutgoingHistories.Qs F.reset F.amp p| ≤ err := by
-    simpa [actualObservations, observations] using herrs 9
+    simpa only [actualObservations, Fin.isValue, Matrix.cons_val, observations,
+      familyQ_zero, familyN_zero, familyA_zero, familyB_zero, familyR_zero, familyC_zero,
+      familyJ_zero, familyV_zero, familyGap_zero] using herrs 9
   have ha' : |radialA F XR w.coefficients p - OutgoingEntranceCone.coneA F.reset p| ≤ err := by
-    simpa [actualObservations, observations] using herrs 11
+    simpa only [actualObservations, Fin.isValue, Matrix.cons_val, observations,
+      familyQ_zero, familyN_zero, familyA_zero, familyB_zero, familyR_zero, familyC_zero,
+      familyJ_zero, familyV_zero, familyGap_zero] using herrs 11
   have hv : |normalV F XR w.coefficients p - OutgoingCone.normalV F.reset F.amp p| ≤ err := by
-    simpa [actualObservations, observations] using herrs 16
+    simpa only [actualObservations, Fin.isValue, Matrix.cons_val, observations,
+      familyQ_zero, familyN_zero, familyA_zero, familyB_zero, familyR_zero, familyC_zero,
+      familyJ_zero, familyV_zero, familyGap_zero] using herrs 16
   have hc' : |sourceC F XR w.coefficients p - OutgoingCone.sourceC F.reset F.amp p| ≤ err := by
-    simpa [actualObservations, observations] using herrs 14
+    simpa only [actualObservations, Fin.isValue, Matrix.cons_val, observations,
+      familyQ_zero, familyN_zero, familyA_zero, familyB_zero, familyR_zero, familyC_zero,
+      familyJ_zero, familyV_zero, familyGap_zero] using herrs 14
   have hg : |leadingGap F XR w.coefficients p - OutgoingCone.leadingGap F.reset F.amp p| ≤ err := by
-    simpa [actualObservations, observations] using herrs 17
+    simpa only [actualObservations, Fin.isValue, Matrix.cons_val, observations,
+      familyQ_zero, familyN_zero, familyA_zero, familyB_zero, familyR_zero, familyC_zero,
+      familyJ_zero, familyV_zero, familyGap_zero] using herrs 17
   have hm' := hm p hp
   have herreps : err ≤ eps / 2 := min_le_left _ _
   have herrone : err ≤ 1 := min_le_right _ _
@@ -1026,16 +1036,20 @@ theorem compensated_source_margins (F : Profile) {anchor left : ℝ}
     have hi := norm_le_pi_norm (observations F (0, p)) i
     exact hi.trans (hM p hp)
   have hCM : |OutgoingCone.sourceC F.reset F.amp p| ≤ M := by
-    simpa [observations] using habs 14
+    simpa only [observations, Fin.isValue, Matrix.cons_val,
+      familyQ_zero, familyN_zero, familyA_zero, familyB_zero, familyR_zero, familyC_zero,
+      familyJ_zero, familyV_zero, familyGap_zero] using habs 14
   have hVM : |OutgoingCone.normalV F.reset F.amp p| ≤ M := by
-    simpa [observations] using habs 16
+    simpa only [observations, Fin.isValue, Matrix.cons_val,
+      familyQ_zero, familyN_zero, familyA_zero, familyB_zero, familyR_zero, familyC_zero,
+      familyJ_zero, familyV_zero, familyGap_zero] using habs 16
   dsimp only [OutgoingProfile.Profile.amp] at hq hv hc' hg
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · linarith [(abs_le.mp hq).1, hm'.1]
-  · linarith [(abs_le.mp ha').1, hm'.2.1]
-  · linarith [(abs_le.mp hv).1, hm'.2.2.1]
-  · linarith [(abs_le.mp hc').1, hm'.2.2.2.1]
-  · linarith [(abs_le.mp hg).1, hm'.2.2.2.2]
+  · linarith only [(abs_le.mp hq).1, hm'.1, herreps]
+  · linarith only [(abs_le.mp ha').1, hm'.2.1, herreps]
+  · linarith only [(abs_le.mp hv).1, hm'.2.2.1, herreps]
+  · linarith only [(abs_le.mp hc').1, hm'.2.2.2.1, herreps]
+  · linarith only [(abs_le.mp hg).1, hm'.2.2.2.2, herreps]
   · calc
       |sourceC F XR w.coefficients p| ≤
           |sourceC F XR w.coefficients p - OutgoingCone.sourceC F.reset F.amp p| +
@@ -1044,7 +1058,7 @@ theorem compensated_source_margins (F : Profile) {anchor left : ℝ}
               (sourceC F XR w.coefficients p - OutgoingCone.sourceC F.reset F.amp p)
               (OutgoingCone.sourceC F.reset F.amp p)
       _ ≤ err + M := add_le_add hc' hCM
-      _ ≤ T := by dsimp [T]; linarith [le_max_right (1 : ℝ) (M + 1)]
+      _ ≤ T := by dsimp [T]; linarith only [le_max_right (1 : ℝ) (M + 1), herrone]
   · calc
       |normalV F XR w.coefficients p| ≤
           |normalV F XR w.coefficients p - OutgoingCone.normalV F.reset F.amp p| +
@@ -1053,7 +1067,7 @@ theorem compensated_source_margins (F : Profile) {anchor left : ℝ}
               (normalV F XR w.coefficients p - OutgoingCone.normalV F.reset F.amp p)
               (OutgoingCone.normalV F.reset F.amp p)
       _ ≤ err + M := add_le_add hv hVM
-      _ ≤ T := by dsimp [T]; linarith [le_max_right (1 : ℝ) (M + 1)]
+      _ ≤ T := by dsimp [T]; linarith only [le_max_right (1 : ℝ) (M + 1), herrone]
 
 /-- Stress scale, given by `XR * Real.exp p.1 * Qs F XR c p / CoordinateAlgebra.L F.data.h p.2`. -/
 noncomputable def stressScale (F : Profile) (XR : ℝ) (c : ℝ → Coeff) (p : Point) : ℝ :=

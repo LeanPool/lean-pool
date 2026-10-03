@@ -874,13 +874,13 @@ theorem norm_jet_applyMultiplier_le (n l : ℕ) {m : Frequency → ℂ}
           · apply add_le_add
             · apply Finset.sum_le_sum
               intro i hi
-              exact (norm_jet_linear (parameterLift i)
+              apply (norm_jet_linear (parameterLift i)
                 (applyMultiplier_smooth hmg (hG i) (hPG i)) n (p, Y)).trans
                 (mul_le_mul_of_nonneg_left (hGb i) (norm_nonneg _))
-            · exact (norm_jet_linear (torusLiftX (P := P))
+            · apply (norm_jet_linear (torusLiftX (P := P))
                 (applyMultiplier_smooth hmg.mulX hf hp) n (p, Y)).trans
                 (mul_le_mul_of_nonneg_left hx (norm_nonneg _))
-          · exact (norm_jet_linear (torusLiftY (P := P))
+          · apply (norm_jet_linear (torusLiftY (P := P))
               (applyMultiplier_smooth hmg.mulY hf hp) n (p, Y)).trans
               (mul_le_mul_of_nonneg_left hy (norm_nonneg _))
         _ = _ := by

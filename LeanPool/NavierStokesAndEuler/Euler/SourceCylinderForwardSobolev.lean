@@ -105,10 +105,11 @@ theorem physical_forward_block_bound
     EulerLpCylinderRegularForward.source_solution_contDiff period T hT Ω hΩ
       (sourceGenerator Q Q₁ c hc hQ) (sourceGenerator_translation_contDiff Q Q₁ c hc hQ)
       S hS hSc hΩo hsub g hg (projectedForcing period S hS Q c hc hQ f) a₀ hpf ha₀
-  obtain ⟨hRi₀,-⟩ := EulerTransverseForwardCoefficientGevrey.inverseRadius_bounds c C₀ Rc Ri hc hRc
-      hRi
+  have hRi₀ := (EulerTransverseForwardCoefficientGevrey.inverseRadius_bounds c C₀ Rc Ri hc hRc
+      hRi).1
   have hcost : 0 ≤ forcingCost ι q Ri C₀ := mul_nonneg (by norm_num)
-    (sobolevCoefficientAmplitude_nonneg q (4*Ri) (3*Ri*C₀) (by positivity) (by positivity))
+    (sobolevCoefficientAmplitude_nonneg q (4*Ri) (3*Ri*C₀) (mul_nonneg (by norm_num) hRi₀)
+      (mul_nonneg (mul_nonneg (by norm_num) hRi₀) hC₀))
   have hub (j : ℕ) : block directions q (fun a : LiftTangent =>
       pathTranslate (K := Icc (0 : ℝ) T) (V := U) period a
         (includePath (K := Icc (0 : ℝ) T) (V := U) period S hS

@@ -346,7 +346,9 @@ theorem fixedAffineEndpoint_sub_norm_le (d a r : ℝ)
       P P₁ G hP hp hG d a r hD hD' hA hA' hr hr')
     (energyOperator_sub_norm_le T hT H G)
     (affineTrial_sub_norm_le T hT Q Q₁ P P₁)
-  exact h.trans_eq (by unfold endpointDifferenceCost; ring)
+  apply h.trans_eq
+  unfold endpointDifferenceCost
+  ring
 
 variable (m n : Icc (0 : ℝ) T → E)
   (hm : ∀ t v, ⟪m t, Q t v⟫_ℝ = 0) (hn : ∀ t v, ⟪n t, P t v⟫_ℝ = 0)

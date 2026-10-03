@@ -108,12 +108,15 @@ theorem measured_debt_on {l c : ℝ} (hl : 0 < l) (P : S ≃L[ℝ] T) (k : ℕ)
   fin_cases i
   · change MeanChartCompatibility.sourceMoment 0 (u.gr C n) s = _
     rw [h0]
-    simp [MeanRankUpdate.scaleDebt, MeanChartCompatibility.sourceDebt, hl.ne', pow_two]
+    simp only [MeanRankUpdate.scaleDebt, MeanChartCompatibility.sourceDebt, Fin.zero_eta,
+      Matrix.cons_val_zero]
+    rw [zero_add, pow_one, mul_div_cancel_right₀ _ hl.ne', pow_two]
   · change MeanChartCompatibility.sourceMoment 2
       (MeanIncrementBounds.thetaAxial C.base u.mean n + u.covariance 2 1 n) s = _
     rw [htheta2]
-    simp [MeanRankUpdate.scaleDebt, MeanChartCompatibility.sourceDebt,
-      div_eq_mul_inv, pow_two, mul_comm, mul_assoc]
+    simp only [MeanRankUpdate.scaleDebt, MeanChartCompatibility.sourceDebt, Fin.mk_one,
+      Matrix.cons_val_one, Matrix.cons_val_zero, Pi.add_apply]
+    ring
   · change MeanChartCompatibility.sourceMoment 1
       (MeanIncrementBounds.axialAxial C.base u.mean n + u.covariance 2 2 n) s - (1/2:ℝ) *
       MeanChartCompatibility.sourceMoment 2 (u.gr C n) s = _
@@ -122,7 +125,8 @@ theorem measured_debt_on {l c : ℝ} (hl : 0 < l) (P : S ≃L[ℝ] T) (k : ℕ)
       Matrix.cons_val_two, Matrix.cons_val_one, Matrix.cons_val_zero,
       Matrix.cons_val_zero', Matrix.cons_val_succ', Matrix.vecHead, Matrix.vecTail,
       Matrix.cons_val_succ, Function.comp_def, Pi.add_apply]
-    field_simp; ring
+    rw [pow_succ l 2, mul_div_mul_right (c * c) (l ^ 2) hl.ne']
+    ring
 
 /-- Primitive rank data use one dimensionless kernel.  No rank-output or
 debt equality is a field of this structure. -/

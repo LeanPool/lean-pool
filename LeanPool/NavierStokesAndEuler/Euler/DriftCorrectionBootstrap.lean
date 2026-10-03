@@ -498,7 +498,7 @@ theorem correctionForcing_uniform_bound {s : ℕ} (hs : 6 ≤ s) {A : SmoothCoef
   have hhalf : ρ*Rc ≤ 1/2 := by nlinarith [mul_nonneg hρ.le hRc]
   have hw := weightedCoefficient_uniform period K N ρ Rc B hρ hRc hhalf hB hcoeff
   have hb := baseCoefficientSum_le period K0 B hB0
-  have hM0 : 0 ≤ M := by linarith
+  have hM0 : 0 ≤ M := zero_le_one.trans hM
   have hsf : 1+2*M*(weightedCoefficient period K 6 N ρ+448*baseCoefficientSum period K0) ≤
       sourceConstant B M := by
     have h := add_le_add (le_refl (1 : ℝ)) (mul_le_mul_of_nonneg_left
@@ -724,7 +724,7 @@ theorem correctionForcing_metric {s : ℕ} (hs : 6 ≤ s) {A : SmoothCoefficient
   have h := EulerDriftNonlinearEstimate.correctionForcing_polynomial period hs KG KG0 κ m c hc hpos
       N hN ρ Rc M B hρ hRc hM hB
     hbase5 hbase6 hsmall hcoeff hG hG0 L hL C0 K0 C K z e r Z0 B0 B1 A0 A2 R hA2 hz hb hdz hC0 hC hr
-  have hM0 : 0 ≤ M := by linarith
+  have hM0 : 0 ≤ M := zero_le_one.trans hM
   have hP := productConstant_nonneg period 3
   have hz0 : 0 ≤ Z0 := (weightedNorm_nonneg period 6 N ρ hρ z).trans hz
   have hb0 : 0 ≤ B0 := (weightedDriftNorm_nonneg period 6 N ρ hρ (velocityMap L) z).trans hb
@@ -736,9 +736,11 @@ theorem correctionForcing_metric {s : ℕ} (hs : 6 ≤ s) {A : SmoothCoefficient
   have hlf := lossConstant_nonneg period hM0
   have hlin : 0 ≤ sourceConstant B M*(productConstant period 3*B1+A0+2*A2*productConstant period
       3*Z0) +
-      transportConstant period B M*Z0 := by positivity
-  have hquad : 0 ≤ sourceConstant B M*A2*productConstant period 3+transportConstant period B M := by
-      positivity
+      transportConstant period B M*Z0 :=
+    add_nonneg (mul_nonneg hsf (add_nonneg (add_nonneg (mul_nonneg hP hb1) ha0)
+      (mul_nonneg (mul_nonneg (mul_nonneg zero_le_two hA2) hP) hz0))) (mul_nonneg htf hz0)
+  have hquad : 0 ≤ sourceConstant B M*A2*productConstant period 3+transportConstant period B M :=
+    add_nonneg (mul_nonneg (mul_nonneg hsf hA2) hP) htf
   have hconv := metric_polynomial_conversion (sourceConstant B M)
     (sourceConstant B M*(productConstant period 3*B1+A0+2*A2*productConstant period
         3*Z0)+transportConstant period B M*Z0)
@@ -753,12 +755,12 @@ theorem correctionForcing_metric {s : ℕ} (hs : 6 ≤ s) {A : SmoothCoefficient
     (energyNorm_nonneg period N (by omega : N+6 ≤ s+1) ρ hρ KM e)
     (weightedNorm_le_energy period N (by omega : N+6 ≤ s+1) ρ hρ KM e cM hcM hKM)
     (weightedLoss_le_energy period N (by omega : N+6 ≤ s+1) ρ hρ KM e cM hcM hKM) h
+  refine hconv.trans_eq ?_
   unfold EulerDriftEnergyConstants.forcingPolynomial
     EulerNonlinearEnergyConstants.linearCoefficient
     EulerNonlinearEnergyConstants.quadraticCoefficient
     EulerNonlinearEnergyConstants.lossCoefficient
   rw [mul_right_comm (lossConstant period M)]
-  exact hconv
 
 end EulerDriftMetricForcing
 
@@ -907,11 +909,13 @@ theorem correctionArray_bound {q : ℕ} {T : ℝ} {hq : 6 ≤ q + 1}
     (S.full.linear τ) (S.full.quadratic τ) (S.full.residual_bound τ)
     (K.operatorPath period τ) K.c K.c_pos (K.operator_coercive period τ)
   have hv : value period V = value period (e τ) := congrArg (value period) hV
-  rw [energyNorm_of_value_eq period N (by omega) hN (R τ) (K.operatorPath period τ) V (e τ) hv,
-    energyLoss_of_value_eq period N (by omega) hN (R τ) (K.operatorPath period τ) V (e τ) hv] at h
+  have hn := energyNorm_of_value_eq period N (by omega) hN (R τ) (K.operatorPath period τ)
+    V (e τ) hv
+  have hl := energyLoss_of_value_eq period N (by omega) hN (R τ) (K.operatorPath period τ)
+    V (e τ) hv
   simpa only [correctionArray, lowerOrderPath, orderZeroPath, ContinuousMap.coe_mk,
     CoefficientPath.operatorPath, EulerGevreyPressureTransport.transportPressure, hV,
-    forcingMajorant, energyPath_apply, lossPath_apply] using h
+    forcingMajorant, energyPath_apply, lossPath_apply, hn, hl] using h
 
 /-- The full Bochner forcing inherits the drift bound from the actual spatial fields. -/
 theorem weightedCorrectionForcing_bound {q : ℕ} {T : ℝ} {hq : 6 ≤ q + 1}

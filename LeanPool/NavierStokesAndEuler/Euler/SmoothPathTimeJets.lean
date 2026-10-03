@@ -82,14 +82,9 @@ theorem jetFamily_integral (n : ℕ) (x : E) :
   have hJ := J.iteratedFDeriv_comp_left (x := x) hq.contDiffAt (by simp : (n : ℕ∞) ≤ ∞)
   have hjets := hD.trans (hs.trans (congrArg₂ (fun A B : E [×n]→L[ℝ] C(Icc (0 : ℝ) T,V) => A+B) hK
       hJ))
-  have hp := congrArg (tensorPathMap (K := Icc (0 : ℝ) T) (E := E) (V := V) n) hjets
-  rw [map_add] at hp
-  have hKi : tensorPathMap (K := Icc (0 : ℝ) T) (E := E) (V := V) n
-        (K.compContinuousMultilinearMap (iteratedFDeriv ℝ n f x)) =
-      (ContinuousLinearMap.const ℝ (Icc (0 : ℝ) T))
-        ((ContinuousMap.evalCLM ℝ (⟨0,le_rfl,hT⟩ : Icc (0 : ℝ) T)).compContinuousMultilinearMap
-          (iteratedFDeriv ℝ n f x)) :=
-    tensorPath_const (E := E) (V := V) (K := Icc (0 : ℝ) T) n
+  have hp := (congrArg (tensorPathMap (K := Icc (0 : ℝ) T) (E := E) (V := V) n) hjets).trans
+    ((tensorPathMap (K := Icc (0 : ℝ) T) (E := E) (V := V) n).map_add _ _)
+  have hKi := tensorPath_const (E := E) (V := V) (K := Icc (0 : ℝ) T) n
       ((ContinuousMap.evalCLM ℝ (⟨0,le_rfl,hT⟩ : Icc (0 : ℝ) T)).compContinuousMultilinearMap
         (iteratedFDeriv ℝ n f x))
   exact hp.trans (congrArg₂ (fun a b : C(Icc (0 : ℝ) T,E [×n]→L[ℝ] V) => a+b)

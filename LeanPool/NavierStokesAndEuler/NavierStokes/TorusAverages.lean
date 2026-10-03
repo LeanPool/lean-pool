@@ -1412,29 +1412,25 @@ theorem weight_continuous : Continuous (weight ψ x) :=
 theorem weight_gaussian_upper (v : ℝ) :
     weight ψ x v ≤ A ^ 2 * gaussian (2 * b) (r ^ 2 / 2) r v := by
   by_cases hv : v ∈ Icc (r ^ 2 / 6) (5 * r ^ 2 / 6)
-  · have hslot : v ∈ Icc 0 (r ^ 2) := by
-      constructor <;> nlinarith [hv.1, hv.2, sq_nonneg r]
+  · have hslot : v ∈ Icc 0 (r ^ 2) :=
+      ⟨(div_nonneg (sq_nonneg r) (by norm_num)).trans hv.1,
+        hv.2.trans (by linarith only [sq_nonneg r])⟩
     have hx := h.component_upper v hslot
     have hx0 := (h.component_pos hslot).le
-    have hg := (gaussian_pos b (r ^ 2 / 2) r v).le
-    have hψ : ψ v ^ 2 ≤ 1 := by
-      have hp := h.cutoff_abs_le v
-      have hab := abs_le.mp hp
-      nlinarith [sq_nonneg (ψ v), hab.1, hab.2]
+    have hψ : ψ v ^ 2 ≤ 1 := (sq_le_one_iff_abs_le_one _).mpr (h.cutoff_abs_le v)
     have he : gaussian b (r ^ 2 / 2) r v ^ 2 =
         gaussian (2 * b) (r ^ 2 / 2) r v := by
       simp only [gaussian, sq, ← Real.exp_add]
       congr 1
       ring
     calc
-      weight ψ x v ≤ x v ^ 2 := by
-        unfold weight
-        nlinarith [mul_le_mul_of_nonneg_right hψ (sq_nonneg (x v))]
+      weight ψ x v ≤ x v ^ 2 :=
+        (mul_le_mul_of_nonneg_right hψ (sq_nonneg (x v))).trans_eq (one_mul _)
       _ ≤ (A * gaussian b (r ^ 2 / 2) r v) ^ 2 :=
         pow_le_pow_left₀ hx0 hx 2
       _ = A ^ 2 * gaussian (2 * b) (r ^ 2 / 2) r v := by rw [mul_pow, he]
-  · rw [weight, h.cutoff_zero v hv]
-    simpa using mul_nonneg (sq_nonneg A) (gaussian_pos (2 * b) (r ^ 2 / 2) r v).le
+  · rw [weight, h.cutoff_zero v hv, zero_pow two_ne_zero, zero_mul]
+    exact mul_nonneg (sq_nonneg A) (gaussian_pos (2 * b) (r ^ 2 / 2) r v).le
 
 theorem weight_integrable : Integrable (weight ψ x) := by
   apply ((integrable_gaussian (b := 2 * b) (by linarith [h.decay_pos]) h.radius_pos
@@ -1453,7 +1449,8 @@ theorem moment_integrable :
   rw [Real.norm_eq_abs, abs_of_nonneg
     (mul_nonneg (abs_nonneg _) (weight_nonneg v))]
   simp only [id_eq]
-  nlinarith [mul_le_mul_of_nonneg_left (h.weight_gaussian_upper v) (abs_nonneg (v - r ^ 2 / 2))]
+  linarith only [mul_le_mul_of_nonneg_left (h.weight_gaussian_upper v)
+    (abs_nonneg (v - r ^ 2 / 2))]
 
 theorem mass_upper : mass ψ x ≤ A ^ 2 * Real.sqrt (Real.pi / (2 * b)) * r := by
   have hi := integral_mono h.weight_integrable
@@ -1470,15 +1467,15 @@ theorem moment_upper :
       (r ^ 2 / 2)).const_mul (A ^ 2)) (fun v => ?_)
   · rw [integral_const_mul, integral_first_gaussian_scaled _ _ _ h.radius_pos] at hi
     exact hi.trans_eq (by ring)
-  · nlinarith [mul_le_mul_of_nonneg_left (h.weight_gaussian_upper v)
+  · linarith only [mul_le_mul_of_nonneg_left (h.weight_gaussian_upper v)
       (abs_nonneg (v - r ^ 2 / 2))]
 
 theorem core_mem_middle {v : ℝ}
     (hv : v ∈ Icc (r ^ 2 / 2 - r / 6) (r ^ 2 / 2 + r / 6)) :
     v ∈ Icc (r ^ 2 / 3) (2 * r ^ 2 / 3) := by
   have hr := h.radius_one_le
-  have hrr : r ≤ r ^ 2 := by nlinarith [mul_nonneg (sub_nonneg.mpr hr) h.radius_pos.le]
-  constructor <;> nlinarith [hv.1, hv.2]
+  have hrr : r ≤ r ^ 2 := by linarith only [mul_nonneg (sub_nonneg.mpr hr) h.radius_pos.le]
+  constructor <;> linarith only [hv.1, hv.2, hrr]
 
 theorem core_scaled_sq {v : ℝ}
     (hv : v ∈ Icc (r ^ 2 / 2 - r / 6) (r ^ 2 / 2 + r / 6)) :

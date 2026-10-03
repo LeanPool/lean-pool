@@ -101,13 +101,11 @@ theorem norm_le_radius (p : Plane) : ‖p‖ ≤ radius p := by
   rw [Prod.norm_def, Real.norm_eq_abs, Real.norm_eq_abs]
   apply max_le
   · have h := radius_sq p
-    have ha := abs_nonneg p.1
-    have hr := radius_nonneg p
-    nlinarith [sq_abs p.1, sq_nonneg p.2]
+    refine le_of_pow_le_pow_left₀ two_ne_zero (radius_nonneg p) ?_
+    linarith only [h, sq_abs p.1, sq_nonneg p.2]
   · have h := radius_sq p
-    have ha := abs_nonneg p.2
-    have hr := radius_nonneg p
-    nlinarith [sq_abs p.2, sq_nonneg p.1]
+    refine le_of_pow_le_pow_left₀ two_ne_zero (radius_nonneg p) ?_
+    linarith only [h, sq_abs p.2, sq_nonneg p.1]
 
 theorem radius_le_two_norm (p : Plane) : radius p ≤ 2 * ‖p‖ := by
   have hx : |p.1| ≤ ‖p‖ := by
@@ -118,9 +116,8 @@ theorem radius_le_two_norm (p : Plane) : radius p ≤ 2 * ‖p‖ := by
       (le_max_right |p.1| |p.2|)
   have hx2 := sq_le_sq₀ (abs_nonneg p.1) (norm_nonneg p) |>.2 hx
   have hy2 := sq_le_sq₀ (abs_nonneg p.2) (norm_nonneg p) |>.2 hy
-  have hr := radius_nonneg p
-  have hn := norm_nonneg p
-  nlinarith [radius_sq p, sq_abs p.1, sq_abs p.2, sq_nonneg ‖p‖]
+  refine le_of_pow_le_pow_left₀ two_ne_zero (mul_nonneg zero_le_two (norm_nonneg p)) ?_
+  linarith only [radius_sq p, sq_abs p.1, sq_abs p.2, hx2, hy2, sq_nonneg ‖p‖]
 
 theorem radius_pos_of_fst_pos {p : Plane} (hp : 0 < p.1) : 0 < radius p := by
   apply Real.sqrt_pos.2
@@ -274,8 +271,8 @@ theorem extendedBase_eq {a : ℝ} (ha : 0 < a) {p : Plane} (hp : a / 4 < p.1) :
     extendedBase a p = baseChart p := by
   have hx : 2 * (a / 8) ≤ p.1 := by linarith
   have hr : 2 * (a ^ 2 / 32) ≤ p.1 ^ 2 + p.2 ^ 2 := by
-    have hxp : 0 < p.1 := by linarith
-    nlinarith [sq_nonneg p.2, sq_nonneg (p.1 - a / 4)]
+    have hxp := pow_le_pow_left₀ (div_nonneg ha.le (by norm_num : (0 : ℝ) ≤ 4)) hp.le 2
+    linarith only [hxp, sq_nonneg p.2]
   simp only [extendedBase, baseChart, radius,
     RadialPullback.positiveRadius_eq_self (by positivity : 0 < a ^ 2 / 32) hr,
     RadialPullback.positiveRadius_eq_self (by positivity : 0 < a / 8) hx]
@@ -828,11 +825,11 @@ theorem nativeGraph_jet_bound {h a b : ℝ} (hh : 0 ≤ h) (hh1 : h ≤ 1) (ha :
   obtain ⟨C, hC, hbound⟩ := compact_jet_bound axisFree_open
     (contDiffOn_radialProfile (ChartScales.radialExponent h)) (isCompact_annulus a b)
     (annulus_axisFree ha) m
-  refine ⟨C + ‖timeDirection‖, by linarith [norm_nonneg timeDirection], ?_⟩
+  refine ⟨C + ‖timeDirection‖, le_add_of_le_of_nonneg hC (norm_nonneg timeDirection), ?_⟩
   intro n hn p hp ht k hk
   have hq := ChartScales.Q_pos n
   have hq1 := ChartScales.Q_le_one n
-  have hC0 : 0 ≤ C := by linarith
+  have hC0 : 0 ≤ C := zero_le_one.trans hC
   have haxis := annulus_axisFree ha hp
   have hr : ContDiffAt ℝ k
       (radialProfile (ChartScales.radialExponent h) ∘ scaledRadial n) p :=
@@ -860,10 +857,11 @@ theorem nativeGraph_jet_bound {h a b : ℝ} (hh : 0 ≤ h) (hh1 : h ≤ 1) (ha :
       (contDiffOn_radialProfile (ChartScales.radialExponent h)) (scaledRadial n) haxis k
     have hl := pow_le_pow_left₀ (norm_nonneg (scaledRadial n)) (norm_scaledRadial_coarse_le n) k
     have hfull := mul_le_mul_of_nonneg_left
-      (hj.trans (mul_le_mul (hbound k hk _ hp) hl (by positivity) hC0))
+      (hj.trans (mul_le_mul (hbound k hk _ hp) hl (pow_nonneg (norm_nonneg _) k) hC0))
       (ChartScales.radialCoefficient_pos h n).le
     have hM := native_radial_power_le hh hh1 hn
-    have hprod := hfull.trans (mul_le_mul_of_nonneg_right hM (by positivity))
+    have hprod := hfull.trans (mul_le_mul_of_nonneg_right hM
+      (mul_nonneg hC0 (pow_nonneg (Real.rpow_nonneg hq.le _) k)))
     have hpow : ChartScales.Q n ^ (-1 : ℝ) * (C * (ChartScales.Q n ^ (-1 : ℝ)) ^ k) =
         C * ChartScales.Q n ^ (-((k : ℝ) + 1)) := by
       rw [← Real.rpow_mul_natCast hq.le]
@@ -874,7 +872,7 @@ theorem nativeGraph_jet_bound {h a b : ℝ} (hh : 0 ≤ h) (hh1 : h ≤ 1) (ha :
     exact hprod.trans (mul_le_mul_of_nonneg_left
       (Real.rpow_le_rpow_of_exponent_ge hq hq1 (by
         have hk' : (k : ℝ) ≤ m := by exact_mod_cast hk
-        linarith)) hC0)
+        linarith only [hk'])) hC0)
   have htime : ‖ChartScales.Tg ^ ChartScales.nativeIndex h n • iteratedFDeriv ℝ k timeProfile p‖ ≤
       ‖timeDirection‖ * ChartScales.Q n ^ (-((m : ℝ) + 2)) := by
     rw [norm_smul (ChartScales.Tg ^ ChartScales.nativeIndex h n)
@@ -1272,21 +1270,25 @@ theorem carrier_graph_jet_bound {h a b : ℝ} (hh : 0 ≤ h) (hh1 : h ≤ 1 / 2)
   let M := (1 + 2 * H) * ChartScales.Q n ^ (-h / 2)
   have hQpow : 1 ≤ ChartScales.Q n ^ (-h / 2) := by
     have he := Real.rpow_le_rpow_of_exponent_ge hq (ChartScales.Q_le_one n)
-      (show -h / 2 ≤ 0 by linarith)
+      (show -h / 2 ≤ 0 by linarith only [hh])
     simpa only [Real.rpow_zero] using he
-  have hM : 1 ≤ M := by dsimp [M]; nlinarith
+  have hM : 1 ≤ M := one_le_mul_of_one_le_of_one_le (by linarith only [hH0]) hQpow
   have hc : |(ChartScales.carrier h n : ℝ) * (j : ℝ)| ≤ M := by
     rw [abs_mul, abs_of_nonneg (Nat.cast_nonneg _)]
     have he := mul_le_mul (carrier_upper hh n) hH (abs_nonneg _)
       (mul_nonneg (by norm_num) (Real.rpow_nonneg hq.le _))
-    exact he.trans (by dsimp [M]; linarith)
+    exact he.trans (by dsimp only [M]; linarith only [Real.rpow_nonneg hq.le (-h / 2)])
   have hw := character_comp_jet_bound hΦ (physicalLift h n p) m hB hM hc hΦb
   have hwsm := (character_smooth ((ChartScales.carrier h n : ℝ) * (j : ℝ))).comp hΦ
-  have hb : 0 ≤ (2 : ℝ) ^ m * P * ((m.factorial : ℝ) * M ^ m * B ^ m) := by positivity
+  have hMB : 0 ≤ (m.factorial : ℝ) * M ^ m * B ^ m :=
+    mul_nonneg (mul_nonneg (Nat.cast_nonneg _) (pow_nonneg (zero_le_one.trans hM) m))
+      (pow_nonneg (zero_le_one.trans hB) m)
+  have hb : 0 ≤ (2 : ℝ) ^ m * P * ((m.factorial : ℝ) * M ^ m * B ^ m) :=
+    mul_nonneg (mul_nonneg (pow_nonneg zero_le_two m) hP) hMB
   have hphysical := hbound n hn p hp ht (fun y => A y * character
     ((ChartScales.carrier h n : ℝ) * (j : ℝ)) (Φ y)) (hA.mul hwsm)
     _ hb (fun i hi => pointwise_product_jet_bound hA hwsm (physicalLift h n p)
-      hi hP (by positivity) hAb hw)
+      hi hP hMB hAb hw)
   apply hphysical.trans_eq
   dsimp [M]
   rw [mul_pow, ← Real.rpow_mul_natCast hq.le]
@@ -1518,9 +1520,11 @@ theorem phase_slot_jet_bound (ε p pz x0 : ℝ) {F G : Slow → ℝ}
   apply (norm_add_le _ _).trans
   rw [norm_neg]
   exact add_le_add
-    (linear_jet_bound (phaseLinear ε p pz x0) q hM hq (by
-        positivity) (norm_phaseLinear_le _ _ _ _) k)
-    (pointwise_product_jet_bound slotV.contDiff hA q hk (by linarith) (by positivity) hVb hAb)
+    (linear_jet_bound (phaseLinear ε p pz x0) q hM hq
+      (add_nonneg (add_nonneg (abs_nonneg _) (abs_nonneg _)) (abs_nonneg _))
+      (norm_phaseLinear_le _ _ _ _) k)
+    (pointwise_product_jet_bound slotV.contDiff hA q hk (zero_le_one.trans hM)
+      (mul_nonneg (add_nonneg (abs_nonneg _) (abs_nonneg _)) hB) hVb hAb)
 
 theorem pointwise_composition_jet_bound {E F G : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [NormedAddCommGroup F] [NormedSpace ℝ F] [NormedAddCommGroup G] [NormedSpace ℝ G]
@@ -1772,8 +1776,12 @@ theorem liftedPhase_power_bound {h K Z r0 P B d : ℝ}
   let M0 := K + Z + 2 * r0 * ChartScales.Tg + 1
   let D0 := K + 1 + ChartScales.Tg * ‖etaCoordinate‖
   let C0 := (m.factorial : ℝ) * (3 + (2 : ℝ) ^ (m + 1)) * P * M0 * B * D0 ^ m
-  have hM0 : 1 ≤ M0 := by dsimp [M0]; nlinarith [ChartScales.Tg_pos]
-  have hD0 : 1 ≤ D0 := by dsimp [D0]; nlinarith [ChartScales.Tg_pos, norm_nonneg etaCoordinate]
+  have hM0 : 1 ≤ M0 := by
+    dsimp only [M0]
+    linarith only [hK, hZ, mul_nonneg (mul_nonneg zero_le_two hr0) ChartScales.Tg_pos.le]
+  have hD0 : 1 ≤ D0 := by
+    dsimp only [D0]
+    linarith only [hK, mul_nonneg ChartScales.Tg_pos.le (norm_nonneg etaCoordinate)]
   refine ⟨max 1 C0, le_max_left _ _, ?_⟩
   intro κ hκ n hn center p pz x0 hp hpz hx0 F G hF hG y hκb hz hslot hFb hGb i hi
   have hS := S_ge_one (show 1 ≤ n by omega)
@@ -1793,7 +1801,7 @@ theorem liftedPhase_power_bound {h K Z r0 P B d : ℝ}
     have he : |etaCoordinate (y.2 - center) + r0| ≤ 2 * r0 := by
       have ht := abs_add_le (etaCoordinate (y.2 - center)) r0
       rw [abs_of_nonneg hr0] at ht
-      linarith
+      linarith only [ht, hslot]
     calc
       _ ≤ (2 * r0) * (ChartScales.Tg * ChartScales.S n) :=
         mul_le_mul he (ChartScales.timeCoefficient_inv_upper h hh hn)
@@ -1803,27 +1811,33 @@ theorem liftedPhase_power_bound {h K Z r0 P B d : ℝ}
       by
     have hκ0 : ‖κ (liftXY y)‖ ≤ K := by
         simpa only [norm_iteratedFDeriv_zero] using hκb 0 (Nat.zero_le _)
-    apply (slotMap_norm_bound κ _ center r0 y (by linarith) hZ (by positivity) hκ0 hz hv).trans
+    apply (slotMap_norm_bound κ _ center r0 y (zero_le_one.trans hK) hZ
+      (mul_nonneg (mul_nonneg (mul_nonneg zero_le_two hr0) hTg.le) hS0.le) hκ0 hz hv).trans
     dsimp [M0]
     nlinarith only [hK, hZ, hS]
   have hlin : |p| + |pz / ChartScales.epsilon h n| + |x0| ≤
       3 * P * ChartScales.Q n ^ (-1 : ℝ) := by
-    have hP0 : 0 ≤ P := by linarith
+    have hP0 : 0 ≤ P := zero_le_one.trans hP
     have hp' := hp.trans (le_mul_of_one_le_right hP0 hQ1)
     have hx' := hx0.trans (le_mul_of_one_le_right hP0 hQ1)
     have hz' : |pz / ChartScales.epsilon h n| ≤ P * ChartScales.Q n ^ (-1 : ℝ) := by
       rw [abs_div, abs_of_pos (ChartScales.epsilon_pos h n), div_eq_mul_inv]
       exact mul_le_mul hpz (epsilon_inv_le hh1 n)
         (inv_nonneg.mpr (ChartScales.epsilon_pos h n).le) hP0
-    linarith
-  have hsum : |p| + |pz| ≤ 2 * P := by linarith
+    linarith only [hp', hx', hz']
+  have hsum : |p| + |pz| ≤ 2 * P := by linarith only [hp, hpz]
   have hD : K + 1 + |(ChartScales.timeCoefficient h n)⁻¹| * ‖etaCoordinate‖ ≤
       D0 * ChartScales.S n := by
     have he := mul_le_mul_of_nonneg_right hci (norm_nonneg etaCoordinate)
     dsimp [D0]
     nlinarith only [he, hK, hS]
   have he := liftedPhase_jet_bound hκ h n center r0 p pz x0 hF hG y m
-    (by linarith) hM (by linarith) hκb hpoint hFb hGb i hi
+    (zero_le_one.trans hK) hM (zero_le_one.trans hbase) hκb hpoint hFb hGb i hi
+  have hP0 : 0 ≤ P := zero_le_one.trans hP
+  have hM0S : 0 ≤ M0 * ChartScales.S n := zero_le_one.trans hM
+  have hBS : 0 ≤ B * ChartScales.S n ^ d := zero_le_one.trans hbase
+  have h2MS : 0 ≤ (2 : ℝ) ^ m * (M0 * ChartScales.S n) :=
+    mul_nonneg (pow_nonneg zero_le_two m) hM0S
   have hinside :
       (|p| + |pz / ChartScales.epsilon h n| + |x0|) * (M0 * ChartScales.S n) +
         (2 : ℝ) ^ m * (M0 * ChartScales.S n) * ((|p| + |pz|) * (B * ChartScales.S n ^ d)) ≤
@@ -1831,22 +1845,32 @@ theorem liftedPhase_power_bound {h K Z r0 P B d : ℝ}
         (B * ChartScales.S n ^ d) * ChartScales.Q n ^ (-1 : ℝ) := by
     calc
       _ ≤ (3 * P * ChartScales.Q n ^ (-1 : ℝ)) * (M0 * ChartScales.S n) +
-          (2 : ℝ) ^ m * (M0 * ChartScales.S n) * ((2 * P) * (B * ChartScales.S n ^ d)) := by
-        gcongr
+          (2 : ℝ) ^ m * (M0 * ChartScales.S n) * ((2 * P) * (B * ChartScales.S n ^ d)) :=
+        add_le_add (mul_le_mul_of_nonneg_right hlin hM0S)
+          (mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right hsum hBS) h2MS)
       _ ≤ ((3 * P * ChartScales.Q n ^ (-1 : ℝ)) * (M0 * ChartScales.S n)) * (B * ChartScales.S n ^
           d) +
           ((2 : ℝ) ^ m * (M0 * ChartScales.S n) * ((2 * P) * (B * ChartScales.S n ^ d))) *
             ChartScales.Q n ^ (-1 : ℝ) := by
         apply add_le_add
-        · exact le_mul_of_one_le_right (by positivity) hbase
-        · exact le_mul_of_one_le_right (by positivity) hQ1
+        · exact le_mul_of_one_le_right (mul_nonneg (mul_nonneg (mul_nonneg zero_le_three hP0)
+            (Real.rpow_nonneg hQ.le _)) hM0S) hbase
+        · exact le_mul_of_one_le_right
+            (mul_nonneg h2MS (mul_nonneg (mul_nonneg zero_le_two hP0) hBS)) hQ1
       _ = _ := by rw [pow_succ]; ring
   have hmajor : ‖iteratedFDeriv ℝ i (liftedPhase κ h n center r0 p pz x0 F G) y‖ ≤
       (m.factorial : ℝ) *
         ((3 + (2 : ℝ) ^ (m + 1)) * P * (M0 * ChartScales.S n) * (B * ChartScales.S n ^ d) *
           ChartScales.Q n ^ (-1 : ℝ)) * (D0 * ChartScales.S n) ^ m := by
-    apply he.trans
-    gcongr
+    have hη : 0 ≤ K + 1 + |(ChartScales.timeCoefficient h n)⁻¹| * ‖etaCoordinate‖ :=
+      add_nonneg (by linarith only [hK]) (mul_nonneg (abs_nonneg _) (norm_nonneg _))
+    have hbig : 0 ≤ (3 + (2 : ℝ) ^ (m + 1)) * P * (M0 * ChartScales.S n) *
+        (B * ChartScales.S n ^ d) * ChartScales.Q n ^ (-1 : ℝ) :=
+      mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg
+        (add_nonneg zero_le_three (pow_nonneg zero_le_two _)) hP0) hM0S) hBS)
+        (Real.rpow_nonneg hQ.le _)
+    exact he.trans (mul_le_mul (mul_le_mul_of_nonneg_left hinside (Nat.cast_nonneg _))
+      (pow_le_pow_left₀ hη hD m) (pow_nonneg hη m) (mul_nonneg (Nat.cast_nonneg _) hbig))
   have hpowers : ChartScales.S n * ChartScales.S n ^ d * ChartScales.S n ^ m =
       ChartScales.S n ^ (d + (m : ℝ) + 1) := by
     calc
@@ -1869,7 +1893,8 @@ theorem liftedPhase_power_bound {h K Z r0 P B d : ℝ}
                 ℝ) := by
                 ring
         _ = _ := by rw [hpowers]
-    _ ≤ _ := by gcongr; exact le_max_right 1 C0
+    _ ≤ _ := mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right (le_max_right 1 C0)
+      (Real.rpow_nonneg hS0.le _)) (Real.rpow_nonneg hQ.le _)
 
 /-- Wave loss, given by `graphLoss m + (m : ℝ) + h * (m : ℝ) / 2 + 1`. -/
 noncomputable def waveLoss (h : ℝ) (m : ℕ) : ℝ :=
@@ -1913,17 +1938,19 @@ theorem carrier_class_physical_bound {h a b : ℝ} (hh : 0 ≤ h) (hh1 : h ≤ 1
   obtain ⟨C, hC, hbound⟩ := carrier_graph_jet_bound (b := b) hh hh1 ha m
   obtain ⟨D, hD, hslow⟩ := slow_power_absorption (d + e * (m : ℝ))
   let W := C * A * B ^ m * (1 + 2 * H) ^ m
-  have hW : 0 ≤ W := by dsimp [W]; positivity
-  refine ⟨W * D * 2 ^ |g - waveLoss h m|, by positivity, ?_⟩
+  have hW : 0 ≤ W := mul_nonneg (mul_nonneg (mul_nonneg hC.le hA)
+    (pow_nonneg (zero_le_one.trans hB) m)) (pow_nonneg (by linarith only [hH]) m)
+  refine ⟨W * D * 2 ^ |g - waveLoss h m|,
+    mul_nonneg (mul_nonneg hW hD.le) (Real.rpow_nonneg zero_le_two _), ?_⟩
   intro n hn p hp ht q hq hlo hhi amp Φ j hamp hΦ hj hab hph
   have hQ := ChartScales.Q_pos n
   have hS := ChartScales.S_pos (show 1 ≤ n by omega)
   have hSb : 1 ≤ ChartScales.S n ^ e := Real.one_le_rpow (S_ge_one (by omega)) he
   have hQ1 := Q_inv_ge_one n
-  have hphaseB : 1 ≤ B * ChartScales.S n ^ e * ChartScales.Q n ^ (-1 : ℝ) := by
-    have : 1 ≤ B * ChartScales.S n ^ e := by nlinarith
-    nlinarith
-  have hAmp0 : 0 ≤ A * ChartScales.Q n ^ g * ChartScales.S n ^ d := by positivity
+  have hphaseB : 1 ≤ B * ChartScales.S n ^ e * ChartScales.Q n ^ (-1 : ℝ) :=
+    one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le hB hSb) hQ1
+  have hAmp0 : 0 ≤ A * ChartScales.Q n ^ g * ChartScales.S n ^ d :=
+    mul_nonneg (mul_nonneg hA (Real.rpow_nonneg hQ.le g)) (Real.rpow_nonneg hS.le d)
   have hb := hbound n hn p hp ht amp Φ hamp hΦ _ _ H j hAmp0 hphaseB hj hab hph
   rw [carrier_weight_identity hQ hS] at hb
   change _ ≤ W * ChartScales.S n ^ (d + e * (m : ℝ)) *
@@ -1933,10 +1960,9 @@ theorem carrier_class_physical_bound {h a b : ℝ} (hh : 0 ≤ h) (hh1 : h ≤ 1
     ring
   calc
     _ ≤ W * (D * ChartScales.Q n ^ (-1 : ℝ)) *
-        ChartScales.Q n ^ (g - (graphLoss m + h * (m : ℝ) / 2) - (m : ℝ)) := by
-      apply hb.trans
-      gcongr
-      exact hslow n
+        ChartScales.Q n ^ (g - (graphLoss m + h * (m : ℝ) / 2) - (m : ℝ)) :=
+      hb.trans (mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left (hslow n) hW)
+        (Real.rpow_nonneg hQ.le _))
     _ = (W * D) * ChartScales.Q n ^ (g - waveLoss h m) := by
       calc
         _ = (W * D) * (ChartScales.Q n ^ (-1 : ℝ) *

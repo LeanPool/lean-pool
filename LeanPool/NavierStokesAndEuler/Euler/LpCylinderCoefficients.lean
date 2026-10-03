@@ -151,7 +151,6 @@ def liftedOperatorPathMap : C(Icc (0 : ℝ) T,Space →ᵇ V →L[ℝ] V) →L[�
     (@ContinuousMap.instSeminormedAddCommGroup _ _ _ _ (instLpCylinderCoefficients2
       (V := V)).toNonUnitalNormedRing.toNonUnitalSeminormedRing.toSeminormedAddCommGroup)
     _ _ _ _ (liftedOperatorPathLinear (V := V) period S hS T) 1 (fun A => by
-    change ‖liftedOperatorPath period S hS T A‖ ≤ 1*‖A‖
     exact (liftedOperatorPath_norm period S hS T A).trans_eq (one_mul ‖A‖).symm)
 
 omit [CompleteSpace V] in
@@ -163,7 +162,6 @@ omit [CompleteSpace V] in
 theorem liftedOperatorPathMap_norm : ‖liftedOperatorPathMap (V := V) period S hS T‖ ≤ 1 := by
   apply opNorm_le_bound _ zero_le_one
   intro A
-  change ‖liftedOperatorPath period S hS T A‖ ≤ 1*‖A‖
   exact (liftedOperatorPath_norm period S hS T A).trans_eq (one_mul ‖A‖).symm
 
 omit [CompleteSpace V] in
@@ -187,24 +185,17 @@ theorem mixedOperator_bound (B : SmoothCoefficientPath (Icc (0 : ℝ) T) (V →L
       (translateCoefficientPath B.field b.1)) a‖ ≤ C := by
   let f : Space → C(Icc (0 : ℝ) T,Space →ᵇ V →L[ℝ] V) := translateCoefficientPath B.field
   have hf : ContDiff ℝ ∞ f := B.translation_contDiff
-  have hright : ‖iteratedFDeriv ℝ n (f ∘ ContinuousLinearMap.fst ℝ Space ℝ) a‖ ≤ C := by
-    rw [(ContinuousLinearMap.fst ℝ Space ℝ).iteratedFDeriv_comp_right hf a (by simp)]
-    apply (ContinuousMultilinearMap.norm_compContinuousLinearMap_le _ _).trans
-    calc
-      _ ≤ ‖iteratedFDeriv ℝ n f a.1‖ * ∏ _i : Fin n, (1 : ℝ) := by
-        apply mul_le_mul_of_nonneg_left _ (norm_nonneg _)
-        exact Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _) (fun _ _ =>
-            ContinuousLinearMap.norm_fst_le ℝ Space ℝ)
-      _ ≤ C := by
-          simpa only [Finset.prod_const_one, mul_one] using B.norm_iteratedFDeriv_translation_le n
-              C hC hb a.1
+  have hright := (congrArg norm ((ContinuousLinearMap.fst ℝ Space ℝ).iteratedFDeriv_comp_right
+    hf a (i := n) (by simp))).trans_le
+    ((ContinuousMultilinearMap.norm_compContinuousLinearMap_le _ _).trans
+      ((mul_le_of_le_one_right (norm_nonneg _) (Finset.prod_le_one₀ (fun _ _ => norm_nonneg _)
+        fun _ _ => ContinuousLinearMap.norm_fst_le ℝ Space ℝ)).trans
+        (B.norm_iteratedFDeriv_translation_le n C hC hb a.1)))
   have hleft := ContinuousLinearMap.norm_iteratedFDeriv_comp_left (𝕜 := ℝ) (E := LiftTangent)
-    (F := C(Icc (0 : ℝ) T,Space →ᵇ V →L[ℝ] V))
-    (G := C(Icc (0 : ℝ) T,Supported period V S hS →L[ℝ] Supported period V S hS))
-    (liftedOperatorPathMap period S hS T)
+    (liftedOperatorPathMap (V := V) period S hS T)
     ((hf.comp (ContinuousLinearMap.fst ℝ Space ℝ).contDiff).contDiffAt (x := a)) (n := n) (by simp)
   exact hleft.trans ((mul_le_mul_of_nonneg_right (liftedOperatorPathMap_norm period S hS T)
-    (norm_nonneg _)).trans (by simpa only [one_mul] using hright))
+    (norm_nonneg _)).trans ((one_mul _).trans_le hright))
 
 variable (hT : 0 ≤ T) (B : C(Icc (0 : ℝ) T, Space →ᵇ V →L[ℝ] V))
 

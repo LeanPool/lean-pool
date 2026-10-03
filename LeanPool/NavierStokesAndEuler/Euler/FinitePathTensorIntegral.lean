@@ -49,22 +49,15 @@ theorem tensorPath_integral (T : ℝ) (hT : 0 ≤ T) (n : ℕ)
   intro t
   apply ContinuousMultilinearMap.ext
   intro v
-  rw [tensorPathMap_apply]
-  let ev : (E [×n]→L[ℝ] V) →L[ℝ] V :=
-    (ContinuousLinearMap.id ℝ (E [×n]→L[ℝ] V)).flipMultilinear v
-  change (∫ s in (0 : ℝ)..(t : ℝ), extendPath T hT (A v) s) =
-    ev (∫ s in (0 : ℝ)..(t : ℝ),
-      extendPath T hT (tensorPathMap (K := Icc (0 : ℝ) T) (E := E) (V := V) n A) s)
+  refine (tensorPathMap_apply n _ t v).trans ?_
+  let ev := ContinuousMultilinearMap.apply ℝ (fun _ : Fin n => E) V v
   have he : extendPath T hT (A v) =
       fun s => ev (extendPath T hT
-        (tensorPathMap (K := Icc (0 : ℝ) T) (E := E) (V := V) n A) s) := by
-    funext s
-    change A v (projIcc 0 T hT s) =
-      tensorPathMap (K := Icc (0 : ℝ) T) (E := E) (V := V) n A (projIcc 0 T hT s) v
-    rw [tensorPathMap_apply]
-  rw [he]
-  exact ev.intervalIntegral_comp_comm
-    ((extendPath_continuous T hT
-      (tensorPathMap (K := Icc (0 : ℝ) T) (E := E) (V := V) n A)).intervalIntegrable 0 t)
+        (tensorPathMap (K := Icc (0 : ℝ) T) (E := E) (V := V) n A) s) :=
+    funext fun s => (tensorPathMap_apply n A (projIcc 0 T hT s) v).symm
+  exact (congrArg (fun f => ∫ s in (0 : ℝ)..(t : ℝ), f s) he).trans
+    (ev.intervalIntegral_comp_comm
+      ((extendPath_continuous T hT
+        (tensorPathMap (K := Icc (0 : ℝ) T) (E := E) (V := V) n A)).intervalIntegrable 0 t))
 
 end EulerFinitePathTensor

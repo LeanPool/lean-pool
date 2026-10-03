@@ -104,18 +104,9 @@ theorem weighted_frozen_solution (f : C(Icc (0 : ℝ) T, E)) (a₀ : E) :
     V.weightedSolution g hg f a₀ = U.weightedInitial g hg a₀ +
       U.weightedForcing g hg (f + multiplier (D-B) (V.weightedSolution g hg f a₀)) := by
   have he := U.frozen_solution V (weight (E := E) g f) a₀
-  have hw : weight (E := E) g (f + multiplier (D-B) (V.weightedSolution g hg f a₀)) =
-      weight (E := E) g f + multiplier (D-B) (V.solution (weight (E := E) g f) a₀) := by
-    rw [map_add, weight_multiplier]
-    change _ + multiplier (D-B) (weight (E := E) g
-      (normalize (E := E) g hg (V.solution (weight (E := E) g f) a₀))) = _
-    rw [weight_normalize]
-  change normalize (E := E) g hg (V.solution (weight (E := E) g f) a₀) =
-    normalize (E := E) g hg (U.initialOperator a₀) +
-      normalize (E := E) g hg (U.forcingOperator (weight (E := E) g
-        (f + multiplier (D-B) (V.weightedSolution g hg f a₀))))
-  rw [hw]
-  simpa only [map_add] using congrArg (normalize (E := E) g hg) he
+  rw [weightedForcing, ContinuousLinearMap.comp_apply, ContinuousLinearMap.comp_apply,
+    (weight (E := E) g).map_add, weight_multiplier, weightedSolution, weight_normalize]
+  exact (congrArg (normalize (E := E) g hg) he).trans ((normalize (E := E) g hg).map_add _ _)
 
 end Evolution
 

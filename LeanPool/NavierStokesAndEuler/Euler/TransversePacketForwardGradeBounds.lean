@@ -122,17 +122,7 @@ theorem pair_amplitude_bound
         pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
         (normalize (E := CylinderL2 P Space) g hg (HistoryData.forcingPath H))) j 0 ≤
             majorant R d j := by
-      have he : (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
-          (normalize (E := CylinderL2 P Space) g hg (HistoryData.forcingPath H))) =
-          fun a => A⁻¹ • pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
-              (normalize (E := CylinderL2 P Space) g hg (HistoryData.forcingPath G)) := by
-        funext a
-        exact (congrArg (fun x => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
-            (normalize (E := CylinderL2 P Space) g hg x)) hinput).trans
-          ((congrArg (pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a)
-            ((normalize (E := CylinderL2 P Space) g hg).map_smul A⁻¹ _)).trans
-          ((pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a).map_smul A⁻¹ _))
-      rw [he]
+      simp only [hinput, ContinuousLinearMap.map_smul]
       simpa only [one_mul] using block_normalize_bound directions q
         (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
             (normalize (E := CylinderL2 P Space) g hg (HistoryData.forcingPath G)))
@@ -150,11 +140,7 @@ theorem pair_amplitude_bound
         (by simpa only [one_mul] using hi j)
     have hrestore : S G I = A • S H J := by
       rw [hm G H I J A⁻¹ rfl rfl,smul_smul,mul_inv_cancel₀ hz,one_smul]
-    exact (block_restore_bound directions q
-      (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
-          (normalize (E := CylinderL2 P Vector3) g hg (S H J)))
-      (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
-          (normalize (E := CylinderL2 P Vector3) g hg (S G I)))
+    exact (block_restore_bound directions q _ _
       (normalize_orbit_contDiff P g hg (S H J) (hs H J)) A hA
       (fun a => (congrArg (fun x => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Vector3) P a
           (normalize (E := CylinderL2 P Vector3) g hg x)) hrestore).trans
@@ -452,7 +438,7 @@ theorem source_pressure_gradient_bound (g : C(Icc (0 : ℝ) D.T, ℝ)) (hg : ∀
   intro j
   rw [G.pressurePath_normalized_eq_source I g hg]
   exact sourcePressure_block_bound P D.M D.normal D.normalLower D.normalLower_pos D.normal_lower
-    _ _ standardDirection (fun i => by cases i using Fin.cases <;> simp [Prod.norm_def]) q
+    _ _ standardDirection direction_norm_bound q
     (weighted_orbit P (reciprocal g hg) _ G.path_orbit)
     (weighted_orbit P (reciprocal g hg) _ (G.velocityPath_orbit I))
     Rc Cm CM Ri R Af Av hRc hCm hCM hAf hAv hRi hR hm hM d hf hv j
@@ -672,9 +658,7 @@ theorem grade_fields :
     ((G.scalarGradientField I).normalized D.T_pos.le (c • L.g)
       (smul_profile_pos L.g L.positive c hc)).WordBound 6 L.R 1 e := by
   have ha := mul_nonneg hc.le W.data_nonneg
-  have hd : ∀ i : Fin 4, ‖standardDirection i‖ ≤ 1 := by
-    intro i
-    cases i using Fin.cases <;> simp [Prod.norm_def]
+  have hd : ∀ i : Fin 4, ‖standardDirection i‖ ≤ 1 := standard_norm
   have hv : ((G.vectorField I).normalized D.T_pos.le L.g L.positive).WordBound
       6 L.R ((L.commonCost*C)*c) (d+1) := by
     intro n

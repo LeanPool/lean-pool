@@ -993,7 +993,10 @@ def quadraticCoefficientMap : Coeff →ₗ[ℝ] (Coeff →L[ℝ] Coeff →L[ℝ]
     apply ContinuousLinearMap.ext
     intro d
     ext i
-    fin_cases i <;> simp [quadraticCoefficientsBilin, Pi.add_apply]
+    fin_cases i <;> simp only [quadraticCoefficientsBilin, Fin.isValue, Pi.add_apply,
+      LinearMap.coe_toContinuousLinearMap', LinearMap.coe_comp, LinearEquiv.coe_coe,
+      LinearMap.coe_mk, AddHom.coe_mk, comp_apply, Fin.zero_eta, Fin.mk_one, Matrix.cons_val_zero,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one, add_apply, add_zero]
     ring
   map_smul' r q := by
     apply ContinuousLinearMap.ext
@@ -1001,7 +1004,10 @@ def quadraticCoefficientMap : Coeff →ₗ[ℝ] (Coeff →L[ℝ] Coeff →L[ℝ]
     apply ContinuousLinearMap.ext
     intro d
     ext i
-    fin_cases i <;> simp [quadraticCoefficientsBilin, Pi.smul_apply, smul_eq_mul]
+    fin_cases i <;> simp only [quadraticCoefficientsBilin, Fin.isValue, Pi.smul_apply, smul_eq_mul,
+      LinearMap.coe_toContinuousLinearMap', LinearMap.coe_comp, LinearEquiv.coe_coe,
+      LinearMap.coe_mk, AddHom.coe_mk, comp_apply, Fin.zero_eta, Fin.mk_one, Matrix.cons_val_zero,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one, RingHom.id_apply, smul_apply, mul_zero]
     ring
 
 theorem continuous_quadraticCLM : Continuous quadraticCLM := by
@@ -1117,10 +1123,10 @@ theorem quadratic_solution_distance (B : E ≃L[ℝ] E) (A : E →L[ℝ] E →L[
     apply mul_le_mul_of_nonneg_right _ (norm_nonneg _)
     calc
       ‖A‖ * (‖c‖ + ‖e‖) ≤ K * (2 * r) :=
-        mul_le_mul hA (by linarith) (by positivity) hK
+        mul_le_mul hA (by linarith only [hc, he]) (add_nonneg (norm_nonneg c) (norm_nonneg e)) hK
       _ = _ := by ring
   have hid : B (c - e) = (d - f) - (A c c - A e e) := by
-    rw [map_sub, ← hceq, ← heeq]
+    rw [B.map_sub, ← hceq, ← heeq]
     unfold quadraticMap
     abel
   have hn : ‖c - e‖ ≤ β * ‖d - f‖ + (1 / 2 : ℝ) * ‖c - e‖ := by
@@ -1133,8 +1139,8 @@ theorem quadratic_solution_distance (B : E ≃L[ℝ] E) (A : E →L[ℝ] E →L[
       _ ≤ β * (‖d - f‖ + (2 * K * r) * ‖c - e‖) :=
         mul_le_mul_of_nonneg_left (add_le_add_right hrem _) hβ
       _ ≤ β * ‖d - f‖ + (1 / 2 : ℝ) * ‖c - e‖ := by
-        nlinarith [mul_le_mul_of_nonneg_right hsmall (norm_nonneg (c - e))]
-  linarith
+        linarith only [mul_le_mul_of_nonneg_right hsmall (norm_nonneg (c - e))]
+  linarith only [hn]
 
 /-- Contraction uniqueness patches the local smooth inverses throughout one
 uniform debt ball. The resulting smoothness radius is quantitative. -/
@@ -1176,7 +1182,8 @@ theorem exists_smooth_solver_on_ball [FiniteDimensional ℝ E] [CompleteSpace E]
     simpa only [g, dite_eq_left hd] using hf ⟨d, hd⟩
   have hbound : ∀ d ∈ Metric.ball (0 : E) ε, ‖g d‖ ≤ 2 * β * ‖d‖ := by
     intro d hd
-    have hz : quadraticMap B A 0 = 0 := by simp [quadraticMap]
+    have hz : quadraticMap B A 0 = 0 := by
+      rw [quadraticMap, B.map_zero, A.map_zero, zero_apply, add_zero]
     simpa only [sub_zero] using quadratic_solution_distance B A β K r hβ.le hK hinv hA hsmall
       (g d) 0 d 0 (hspec d hd).1.1 (by simpa using hr.le) (hspec d hd).1.2 hz
   have hinterior : ∀ d ∈ Metric.ball (0 : E) ε, ‖g d‖ < r := by

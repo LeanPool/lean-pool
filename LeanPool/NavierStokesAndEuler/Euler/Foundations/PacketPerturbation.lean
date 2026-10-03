@@ -473,7 +473,7 @@ theorem equation30_perturbed_bound
     (D := fun s => 1 + (ε ^ 2 * s ^ 2) ^ 2)
     (continuous_const.add ((continuous_const.mul (continuous_pow 2)).pow 2)).continuousOn
     (fun t ht => (hfluxY t ht).continuousAt.continuousWithinAt)
-    (fun _ _ => ne_of_gt (by positivity))
+    (fun _ _ => ne_of_gt (add_pos_of_pos_of_nonneg one_pos (sq_nonneg _)))
   have hNc := hYc.abs.add hY₁c.abs
   have hforcingBound := equation30_forced_bound hε hεsmall hΘ ha hb hU hV hfluxU hfluxV
     hU0 hU₁0 hV₁0 hY hfluxY hfc hgc
@@ -502,7 +502,8 @@ theorem equation30_perturbed_bound
     rw [intervalIntegral.integral_const_mul] at hi
     have hUt : 0 < U t := hUp t (ha.trans ht.1)
     have hscaled := mul_le_mul_of_nonneg_left hi
-      (show 0 ≤ 20 * Θ ^ 8 * U t by positivity)
+      (mul_nonneg (mul_nonneg (by norm_num : (0 : ℝ) ≤ 20) (pow_nonneg (zero_le_one.trans hΘ) 8))
+        hUt.le)
     calc
       |Y t| + |Y₁ t| ≤ 20 * Θ ^ 8 * (U t / U a) * (|Y a| + |Y₁ a|) +
           20 * Θ ^ 8 * U t * ∫ s in a..t, (|f s| + |g s|) / U s := hforcingBound t ht
@@ -513,8 +514,9 @@ theorem equation30_perturbed_bound
   have hresult := relative_integral_absorb
     (f := fun t => |Y t| + |Y₁ t|) (U := U)
     (A := 20 * Θ ^ 8 * (|Y a| + |Y₁ a|) / U a) (K := 20 * Θ ^ 8 * δ)
-    hab hNc hUc (fun _ _ => by positivity) (fun t ht => hUp t (ha.trans ht.1))
-    (by positivity) hsmall hineq
+    hab hNc hUc (fun _ _ => add_nonneg (abs_nonneg _) (abs_nonneg _))
+    (fun t ht => hUp t (ha.trans ht.1))
+    (mul_nonneg (mul_nonneg (by norm_num) (pow_nonneg (zero_le_one.trans hΘ) 8)) hδ) hsmall hineq
   intro t ht
   convert! hresult t ht using 1
   ring

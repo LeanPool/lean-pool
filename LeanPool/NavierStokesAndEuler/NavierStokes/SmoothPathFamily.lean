@@ -150,8 +150,7 @@ theorem hasFDerivAt_pathFamily {U : Set P} (hU : IsOpen U)
     hd hb (mem_ball_self hδ) hv'
   have heq : F (p + v, t) - F (p, t) - G (p, t) v =
       (F (p + v, t) - G (p, t) (p + v)) - (F (p, t) - G (p, t) p) := by
-    rw [map_add]
-    abel
+    rw [(G (p, t)).map_add, sub_sub_sub_comm, add_sub_cancel_left]
   rw [heq]
   simpa only [add_sub_cancel_left] using hmean
 
@@ -183,25 +182,13 @@ theorem contDiffOn_pathFamily_nat (U : Set P) (V : Set ℝ)
       hF.continuousOn.mono (Set.prod_mono Subset.rfl hI)
     have hDc : ContinuousOn (parameterDerivative F) (U ×ˢ Icc a b) :=
       hD.continuousOn.mono (Set.prod_mono Subset.rfl hI)
-    have hd : ∀ p ∈ U, HasFDerivAt (pathFamily (a := a) (b := b) F)
-        (flipPath (P := P) (E := W) (a := a) (b := b)
-          (pathFamily (a := a) (b := b) (parameterDerivative F) p)) p := by
-      intro p hp
-      apply hasFDerivAt_pathFamily hU F (parameterDerivative F) hFc hDc _ hp
-      intro q hq t
-      have hDF := (hdata.1 (q, (t : ℝ)) ⟨hq, hI t.2⟩).differentiableAt
-        ((hU.prod hV).mem_nhds ⟨hq, hI t.2⟩)
-      exact hDF.hasFDerivAt.comp q (hasFDerivAt_prodMk_left q (t : ℝ))
-    have hpathD := ih (parameterDerivative F) hD
-    let L : C(Icc a b, P →L[ℝ] W) →L[ℝ] P →L[ℝ] C(Icc a b, W) :=
-      flipPath (P := P) (E := W) (a := a) (b := b)
-    have hL : ContDiff ℝ (n : WithTop ℕ∞) L :=
-      ContinuousLinearMap.contDiff (𝕜 := ℝ) (n := n)
-        (E := C(Icc a b, P →L[ℝ] W)) (F := P →L[ℝ] C(Icc a b, W)) L
-    have hflip : ContDiffOn ℝ n
-        (fun p => flipPath (P := P) (E := W) (a := a) (b := b)
-          (pathFamily (a := a) (b := b) (parameterDerivative F) p)) U := by
-      exact hL.comp_contDiffOn hpathD
+    have hd := fun (p : P) (hp : p ∈ U) =>
+      hasFDerivAt_pathFamily (a := a) (b := b) hU F (parameterDerivative F) hFc hDc
+        (fun q hq t => ((hdata.1 (q, (t : ℝ)) ⟨hq, hI t.2⟩).differentiableAt
+          ((hU.prod hV).mem_nhds ⟨hq, hI t.2⟩)).hasFDerivAt.comp q
+            (hasFDerivAt_prodMk_left q (t : ℝ))) hp
+    have hflip := (flipPath (P := P) (E := W) (a := a) (b := b)).contDiff.comp_contDiffOn
+      (ih (parameterDerivative F) hD)
     have hresult : ContDiffOn ℝ ((n : WithTop ℕ∞) + 1)
         (pathFamily (a := a) (b := b) F) U := by
       apply (contDiffOn_succ_iff_hasFDerivWithinAt_of_uniqueDiffOn hU.uniqueDiffOn).mpr

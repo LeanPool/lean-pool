@@ -1492,42 +1492,28 @@ noncomputable def bilinear (B : F →L[ℝ] G →L[ℝ] H)
       (mul_nonneg f.bound_nonneg g.lip_nonneg))
   norm_le := by
     intro x hx
-    calc
-      ‖B (f.eval x) (g.eval x)‖ ≤ ‖B‖ * ‖f.eval x‖ * ‖g.eval x‖ :=
-        B.le_opNorm₂ _ _
-      _ ≤ ‖B‖ * f.bound * g.bound :=
-        mul_le_mul
-          (mul_le_mul_of_nonneg_left (f.norm_le x hx) (norm_nonneg B))
-          (g.norm_le x hx) (norm_nonneg _)
-          (mul_nonneg (norm_nonneg B) f.bound_nonneg)
+    exact (B.le_opNorm₂ _ _).trans <| mul_le_mul
+      (mul_le_mul_of_nonneg_left (f.norm_le x hx) (norm_nonneg B))
+      (g.norm_le x hx) (norm_nonneg _)
+      (mul_nonneg (norm_nonneg B) f.bound_nonneg)
   sub_le := by
     intro x y hx hy
     have hid : B (f.eval x) (g.eval x) - B (f.eval y) (g.eval y) =
         B (f.eval x - f.eval y) (g.eval x) +
           B (f.eval y) (g.eval x - g.eval y) := by
-      simp only [map_sub, _root_.sub_apply]
-      abel
+      rw [B.map_sub, (B (f.eval y)).map_sub, _root_.sub_apply, sub_add_sub_cancel]
     rw [hid]
-    calc
-      ‖B (f.eval x - f.eval y) (g.eval x) +
-          B (f.eval y) (g.eval x - g.eval y)‖ ≤
-          ‖B (f.eval x - f.eval y) (g.eval x)‖ +
-            ‖B (f.eval y) (g.eval x - g.eval y)‖ := norm_add_le _ _
-      _ ≤ ‖B‖ * ‖f.eval x - f.eval y‖ * ‖g.eval x‖ +
-          ‖B‖ * ‖f.eval y‖ * ‖g.eval x - g.eval y‖ :=
-        add_le_add (B.le_opNorm₂ _ _) (B.le_opNorm₂ _ _)
-      _ ≤ ‖B‖ * (f.lip * ‖x - y‖) * g.bound +
-          ‖B‖ * f.bound * (g.lip * ‖x - y‖) :=
-        add_le_add
-          (mul_le_mul
-            (mul_le_mul_of_nonneg_left (f.sub_le x y hx hy) (norm_nonneg B))
-            (g.norm_le x hx) (norm_nonneg _)
-            (mul_nonneg (norm_nonneg B) (mul_nonneg f.lip_nonneg (norm_nonneg _))))
-          (mul_le_mul
-            (mul_le_mul_of_nonneg_left (f.norm_le y hy) (norm_nonneg B))
-            (g.sub_le x y hx hy) (norm_nonneg _)
-            (mul_nonneg (norm_nonneg B) f.bound_nonneg))
-      _ = (‖B‖ * (f.lip * g.bound + f.bound * g.lip)) * ‖x - y‖ := by ring
+    refine (norm_add_le _ _).trans <|
+      (add_le_add (B.le_opNorm₂ _ _) (B.le_opNorm₂ _ _)).trans <| (add_le_add
+        (mul_le_mul
+          (mul_le_mul_of_nonneg_left (f.sub_le x y hx hy) (norm_nonneg B))
+          (g.norm_le x hx) (norm_nonneg _)
+          (mul_nonneg (norm_nonneg B) (mul_nonneg f.lip_nonneg (norm_nonneg _))))
+        (mul_le_mul
+          (mul_le_mul_of_nonneg_left (f.norm_le y hy) (norm_nonneg B))
+          (g.sub_le x y hx hy) (norm_nonneg _)
+          (mul_nonneg (norm_nonneg B) f.bound_nonneg))).trans_eq ?_
+    ring
 
 /-- Pair, bundling `eval`, `bound`, `lip`, `bound_nonneg` and the required compatibility proofs. -/
 noncomputable def pair (f : Controlled E F R) (g : Controlled E G R) : Controlled E (F × G) R where
@@ -1572,7 +1558,7 @@ theorem exists_fixedPoint_of_controlled [CompleteSpace E]
       _ = ‖x₀‖ + 1 := add_comm _ _
   have herr {x : E} (hx : x ∈ closedBall x₀ 1) :
       ‖F x - x₀‖ ≤ s * f.bound := by
-    have heq : F x - x₀ = s • f.eval x := by dsimp [F]; abel
+    have heq : F x - x₀ = s • f.eval x := add_sub_cancel_left x₀ (s • f.eval x)
     rw [heq, norm_smul, Real.norm_eq_abs, abs_of_nonneg hs]
     exact mul_le_mul_of_nonneg_left (f.norm_le x (hnorm hx)) hs
   have hmaps : MapsTo F (closedBall x₀ 1) (closedBall x₀ 1) := by
@@ -1580,10 +1566,8 @@ theorem exists_fixedPoint_of_controlled [CompleteSpace E]
     simpa only [mem_closedBall, dist_eq_norm] using (herr hx).trans hbound
   have hdiff {x y : E} (hx : x ∈ closedBall x₀ 1) (hy : y ∈ closedBall x₀ 1) :
       ‖F x - F y‖ ≤ (1 / 2 : ℝ) * ‖x - y‖ := by
-    have heq : F x - F y = s • (f.eval x - f.eval y) := by
-      dsimp [F]
-      rw [smul_sub]
-      abel
+    have heq : F x - F y = s • (f.eval x - f.eval y) :=
+      (add_sub_add_left_eq_sub _ _ x₀).trans (smul_sub s _ _).symm
     rw [heq, norm_smul, Real.norm_eq_abs, abs_of_nonneg hs]
     calc
       s * ‖f.eval x - f.eval y‖ ≤ s * (f.lip * ‖x - y‖) :=
@@ -1609,7 +1593,7 @@ theorem exists_fixedPoint_of_controlled [CompleteSpace E]
     have h := hdiff hym hx
     change ‖F y - F x‖ ≤ (1 / 2 : ℝ) * ‖y - x‖ at h
     rw [show F y = y from hyfix, hfix.eq] at h
-    have : ‖y - x‖ = 0 := by linarith [norm_nonneg (y - x)]
+    have : ‖y - x‖ = 0 := le_antisymm (by linarith only [h]) (norm_nonneg _)
     exact sub_eq_zero.mp (norm_eq_zero.mp this)
 
 /-- Actual bounded coefficient operators, later instantiated by AxisOperators.
@@ -2139,15 +2123,13 @@ theorem natural_axis_profiles
         ContDiffOn ℝ ∞ (AxisEvaluation.profile I ε x.1) (AxisEvaluation.strip I 20) ∧
         ContDiffOn ℝ ∞ (AxisEvaluation.profile I ε x.2) (AxisEvaluation.strip I 20) := by
   dsimp only
-  obtain ⟨Λ₀, hΛ₀, hexists⟩ :=
-    coefficient_fixedPoint I hε d (AxisResolvent.naturalResolvent I hε χ) M hM
-  refine ⟨Λ₀, hΛ₀, ?_⟩
-  intro Λ hΛ a ha
-  obtain ⟨x, hball, hfixed, herr, _⟩ := hexists Λ hΛ a ha
+  refine (coefficient_fixedPoint I hε d (AxisResolvent.naturalResolvent I hε χ) M hM).elim
+    fun Λ₀ hΛ₀ => ⟨Λ₀, hΛ₀.1, fun Λ hΛ a ha => ?_⟩
+  refine (hΛ₀.2 Λ hΛ a ha).elim fun x hx => ?_
   have heq := fixedPoint_integrated_equations (coefficientOperators I hε) d
     (AxisResolvent.naturalResolvent I hε χ) (AxisResolvent.naturalOperator I hε χ)
-    (AxisResolvent.naturalResolvent_equation I hε χ) (1 / Λ) (1 / (2 * Λ)) a x hfixed
-  exact ⟨x, hball, herr, heq.1, heq.2,
+    (AxisResolvent.naturalResolvent_equation I hε χ) (1 / Λ) (1 / (2 * Λ)) a x hx.2.1
+  exact ⟨x, hx.1, hx.2.2.1, heq.1, heq.2,
     AxisEvaluation.profile_smooth I hε x.1, AxisEvaluation.profile_smooth I hε x.2⟩
 
 end NavierStokes.AxisContraction
@@ -2366,7 +2348,8 @@ theorem primitive_Y_value (I : Window) {ε : ℝ} (hε : 0 < ε)
   rw [jet_primitive_eval I hε A (n + 1) 0 hη]
   simp only [primitiveScale, Nat.pred_succ]
   change ((n : ℝ) + 1) * Y ^ n * (1 / ((n : ℝ) + 1) * coefficient I (weight ε) A n η) = _
-  field_simp
+  linear_combination (Y ^ n * coefficient I (weight ε) A n η) *
+    mul_inv_cancel₀ (Nat.cast_add_one_ne_zero n : (n : ℝ) + 1 ≠ 0)
 
 theorem primitive_hasDerivAt (I : Window) {ε : ℝ} (hε : 0 < ε)
     (A : AxisSpace I ε) {Y η : ℝ} (hY : Y ∈ Ioo (-20 : ℝ) 20)
@@ -2582,7 +2565,8 @@ theorem parameterPrimitive_Y_value (I : Window) {ε : ℝ} (hε : 0 < ε)
   change ((n : ℝ) + 1) * Y ^ n * inputJet I ε (parameterPrimitive I hε A) (n + 1) 0 η = _
   rw [jet_parameterPrimitive_eval I hε A (n + 1) 0 hη]
   simp only [primitiveScale, Nat.pred_succ, Nat.add_zero]
-  field_simp
+  linear_combination (Y ^ n * inputJet I ε A n 1 η) *
+    mul_inv_cancel₀ (Nat.cast_add_one_ne_zero n : (n : ℝ) + 1 ≠ 0)
 
 theorem parameterPrimitive_hasDerivAt (I : Window) {ε : ℝ} (hε : 0 < ε)
     (A : AxisSpace I ε) {Y η : ℝ} (hY : Y ∈ Ioo (-20 : ℝ) 20)

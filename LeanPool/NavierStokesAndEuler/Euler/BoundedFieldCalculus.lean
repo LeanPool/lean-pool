@@ -235,10 +235,10 @@ def pathCompositionMap : C(K,α →ᵇ E →L[ℝ] F) →L[ℝ]
 
 theorem pathCompositionMap_norm : ‖pathCompositionMap (α := α) (K := K) (U := U) (E := E) (F := F)‖
     ≤ 1 := by
-  apply opNorm_le_bound _ zero_le_one
+  with_reducible apply opNorm_le_bound _ zero_le_one
   intro A
   simp only [one_mul]
-  apply opNorm_le_bound _ (norm_nonneg A)
+  with_reducible apply opNorm_le_bound _ (norm_nonneg A)
   intro B
   apply (ContinuousMap.norm_le _ (mul_nonneg (norm_nonneg A) (norm_nonneg B))).2
   intro t
@@ -361,16 +361,16 @@ omit [CompactSpace K] in
       adjoint (𝕜 := ℝ) (E := U) (F := E) (A t x) := rfl
 
 theorem pathAdjointMap_norm : ‖pathAdjointMap (α := α) (K := K) (U := U) (E := E)‖ ≤ 1 := by
-  apply opNorm_le_bound _ zero_le_one
+  with_reducible apply opNorm_le_bound _ zero_le_one
   intro A
-  rw [one_mul]
+  refine le_of_le_of_eq ?_ (one_mul ‖A‖).symm
   apply (ContinuousMap.norm_le _ (norm_nonneg A)).2
   intro t
   apply (BoundedContinuousFunction.norm_le (norm_nonneg A)).2
   intro x
   change ‖adjoint (𝕜 := ℝ) (E := U) (F := E) (A t x)‖ ≤ ‖A‖
-  rw [LinearIsometryEquiv.norm_map]
-  exact ((A t).norm_coe_le_norm x).trans (A.norm_coe_le_norm t)
+  exact (LinearIsometryEquiv.norm_map _ _).trans_le
+    (((A t).norm_coe_le_norm x).trans (A.norm_coe_le_norm t))
 
 end Adjoint
 

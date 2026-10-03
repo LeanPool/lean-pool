@@ -337,7 +337,7 @@ theorem baseCommutator_ae (r : ℕ) (hr : r ≤ 6) (w : Fin r → Fin 4)
     with x hx h1 h2
   simp only [Pi.sub_apply] at hx
   with_reducible refine hx.trans ?_
-  rw [h1, h2]
+  simp only [h1, h2]
   rfl
 
 /-- On actual smooth representatives, the base commutator has the H⁶-only norm bound. -/

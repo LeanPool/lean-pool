@@ -91,11 +91,11 @@ theorem pathAverage_slowCurl (G : C(K, Space →ᵇ Space →L[ℝ] Space)) :
     pathAverage (K := K) (V := Vector3) P (path P G p) =
       path P G (pathAverage (K := K) (V := Vector3) P p) := by
   unfold path
-  rw [map_sum]
-  apply Finset.sum_congr rfl
-  intro i _
+  refine (map_sum (pathAverage (K := K) (V := Vector3) P) _ _).trans
+    (Finset.sum_congr rfl fun i _ => ?_)
   unfold term
-  rw [pathAverage_fullMultiplier, pathAverage_derivativePath P p hp]
+  exact (pathAverage_fullMultiplier P _ _).trans
+    (congrArg _ (pathAverage_derivativePath P p hp _))
 
 include hp in
 theorem slowCurl_mean_zero (G : C(K, Space →ᵇ Space →L[ℝ] Space))

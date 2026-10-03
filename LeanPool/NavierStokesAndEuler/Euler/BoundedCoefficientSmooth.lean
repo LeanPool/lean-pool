@@ -50,8 +50,7 @@ def derivativeBundling : (Space →ᵇ (Space →L[ℝ] V)) →L[ℝ]
     (Space →L[ℝ] (Space →ᵇ V)) where
   toLinearMap := derivativeBundlingLinear
   cont := AddMonoidHomClass.continuous_of_bound (derivativeBundlingLinear (V := V)) 1 (fun A => by
-    change ‖fieldDerivativeMap A‖ ≤ 1 * ‖A‖
-    simpa only [one_mul] using fieldDerivativeMap_norm_le A)
+    exact (fieldDerivativeMap_norm_le A).trans_eq (one_mul _).symm)
 
 @[simp] theorem derivativeBundling_apply (A : Space →ᵇ (Space →L[ℝ] V)) :
     derivativeBundling (V := V) A = fieldDerivativeMap A := rfl

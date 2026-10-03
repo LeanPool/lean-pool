@@ -1366,7 +1366,7 @@ theorem exists_small_log_control (hJ : IsOpen J) {K : Set ℝ} (hK : IsCompact K
   have huM : Mu ≤ M := by dsimp [M]; linarith
   have hf : 0 < R.finalTime := lt_of_le_of_lt hb R.finalTime_gt_bigTime
   let s := ε / (4 * M * (1 + R.finalTime))
-  have hs : 0 < s := div_pos hε (by positivity)
+  have hs : 0 < s := div_pos hε (mul_pos (mul_pos four_pos hM) (add_pos one_pos hf))
   let T0 := min Tmax s
   let κ0 := min (1 / 2 : ℝ) s
   let w0 := min ((R.finalTime - R.bigTime) / 4) (ε / 4)
@@ -1376,7 +1376,7 @@ theorem exists_small_log_control (hJ : IsOpen J) {K : Set ℝ} (hK : IsCompact K
     min_le_left _ _, lt_of_le_of_lt (min_le_left _ _) (by norm_num), ?_, ?_⟩
   · have hw := min_le_left ((R.finalTime - R.bigTime) / 4) (ε / 4)
     dsimp only [w0]
-    linarith [R.finalTime_gt_bigTime]
+    linarith only [hw, R.finalTime_gt_bigTime]
   intro T hT κ hκ w₁ hw₁ w₂ hw₂
   have hTs : T < s := hT.2.trans_le (min_le_right _ _)
   have hκs : κ < s := hκ.2.trans_le (min_le_right _ _)
@@ -1384,35 +1384,35 @@ theorem exists_small_log_control (hJ : IsOpen J) {K : Set ℝ} (hK : IsCompact K
     ⟨hκ.1, hκ.2.le.trans ((min_le_left _ _).trans (by norm_num))⟩
   have hws : w₁ + w₂ < R.finalTime - R.bigTime := by
     have hw : w0 ≤ (R.finalTime - R.bigTime) / 4 := min_le_left _ _
-    linarith [hw₁.2, hw₂.2, R.finalTime_gt_bigTime]
+    linarith only [hw, hw₁.2, hw₂.2, R.finalTime_gt_bigTime]
   have hwe : w₁ + w₂ < ε / 2 := by
     have hw : w0 ≤ ε / 4 := min_le_right _ _
-    linarith [hw₁.2, hw₂.2]
+    linarith only [hw, hw₁.2, hw₂.2]
   have hcontrol (y : ℝ) (hy : y ∈ Icc (0 : ℝ) R.finalTime) : M * (T + κ * y) < ε / 4 := by
     have hky : κ * y ≤ s * R.finalTime := mul_le_mul hκs.le hy.2 hy.1 hs.le
-    have hsum : T + κ * y < s * (1 + R.finalTime) := by linarith
+    have hsum : T + κ * y < s * (1 + R.finalTime) := by linarith only [hTs, hky]
     have hm := mul_lt_mul_of_pos_left hsum hM
     have he : M * (s * (1 + R.finalTime)) = ε / 4 := by
       dsimp [s]
       field_simp
     rwa [he] at hm
-  refine ⟨by linarith, ?_, ?_, ?_⟩
+  refine ⟨by linarith only [hws], ?_, ?_, ?_⟩
   · intro y hy η hη n hn
     have hv := axialField_jet_error_bound hJ (R.axialStock_smooth hJ) R.initialU
       (b := R.bigTime) (w := w₁) hT.1 hκ1 hy.1 (hKJ hη) hM.le n
       (fun t ht => (hu n hn t ⟨ht.1, ht.2.trans hy.2⟩ η hη).trans huM)
-    exact hv.trans_lt ((hcontrol y hy).trans (by linarith))
+    exact hv.trans_lt ((hcontrol y hy).trans (div_lt_self hε (by norm_num)))
   · intro y hy η hη n hn hn0
     have hv := logField_positive_jet_error_bound hJ (R.angularStock_smooth hJ) R.initialLog
       (b := R.bigTime) (w₁ := w₁) (w₂ := w₂) hT.1 hκ1 hy.1 (hKJ hη) hM.le (Nat.ne_of_gt hn0)
       (fun t ht => (ha n hn t ⟨ht.1, ht.2.trans hy.2⟩ η hη).trans haM)
-    exact hv.trans_lt ((hcontrol y hy).trans (by linarith))
+    exact hv.trans_lt ((hcontrol y hy).trans (div_lt_self hε (by norm_num)))
   · intro y hy η hη
-    have hyf : y ∈ Icc (0 : ℝ) R.finalTime := ⟨hy.1, hy.2.trans (by linarith)⟩
+    have hyf : y ∈ Icc (0 : ℝ) R.finalTime := ⟨hy.1, hy.2.trans (by linarith only [hws])⟩
     have hv := logField_value_error_bound hJ (R.angularStock_smooth hJ) R.initialLog
       hT.1 hκ1 hb hw₁.1.le hw₂.1 hy.1 hy.2 (hKJ hη) hM.le
       (fun t ht => (ha 0 (Nat.zero_le N) t ⟨ht.1, ht.2.trans hyf.2⟩ η hη).trans haM)
-    exact hv.trans_lt (by linarith [hcontrol y hyf])
+    exact hv.trans_lt (by linarith only [hcontrol y hyf, hwe, hε])
 
 /-- The same estimates stated directly for the actual physical fields. -/
 structure SmallPhysicalControl (K : Set ℝ) (N : ℕ) (ε T κ w₁ w₂ : ℝ) : Prop where
@@ -1997,16 +1997,15 @@ theorem endpointLog_jets_of_control (hJ : IsOpen J) {K : Set ℝ} (hKJ : K ⊆ J
     have hc0 := (hc.log_value a ⟨ha0, le_rfl⟩ η hη).le
     have hi0 := hi 0 (Nat.zero_le N) η hη
     simp only [iteratedDeriv_zero] at hi0
-    have htime : 0 ≤ R.finalTime - a ∧ R.finalTime - a ≤ Real.log (11 / 10 : ℝ) := by
-      have hg := R.finalTime_sub_bigTime
-      dsimp [a] at *
-      constructor <;> linarith
+    have hadef : a = R.bigTime + w₁ + w₂ := rfl
+    have htime : 0 ≤ R.finalTime - a ∧ R.finalTime - a ≤ Real.log (11 / 10 : ℝ) :=
+      ⟨sub_nonneg.mpr ha, by linarith only [R.finalTime_sub_bigTime, hw₁, hw₂, hadef]⟩
     have heq : R.endpointLog T κ w₁ w₂ C η = R.normalizedInitial C η +
         (R.logAmplitude T κ w₁ w₂ (a, η) - R.initialLog η) -
         (2 / 5 : ℝ) * (R.finalTime - a) + Real.log 220 / 2 := by
       unfold endpointLog normalizedInitial
       unfold normalizedLog at he
-      linarith
+      linear_combination he
     rw [heq]
     have hmul : |(2 / 5 : ℝ) * (R.finalTime - a)| ≤ (2 / 5 : ℝ) * Real.log (11 / 10 : ℝ) := by
       rw [abs_mul, abs_of_nonneg htime.1, abs_of_pos (by norm_num : (0 : ℝ) < 2 / 5)]
@@ -2016,7 +2015,7 @@ theorem endpointLog_jets_of_control (hJ : IsOpen J) {K : Set ℝ} (hKJ : K ⊆ J
           |(2 / 5 : ℝ) * (R.finalTime - a)| + |Real.log 220 / 2| := by
         exact (abs_add_le _ _).trans (add_le_add_left
           ((abs_sub _ _).trans (add_le_add_left (abs_add_le _ _) _)) _)
-      _ ≤ _ := by linarith
+      _ ≤ _ := add_le_add (add_le_add (add_le_add hi0 hc0) hmul) le_rfl
   · have hnpos : 0 < n := Nat.pos_of_ne_zero hn0
     have heq : R.endpointLog T κ w₁ w₂ C =
         fun ξ => Real.log 220 / 2 + R.normalizedLog T κ w₁ w₂ C R.finalTime ξ := by
@@ -2025,7 +2024,8 @@ theorem endpointLog_jets_of_control (hJ : IsOpen J) {K : Set ℝ} (hKJ : K ⊆ J
       ring
     rw [heq, iteratedDeriv_const_add hnpos]
     exact ((hbound R.finalTime (ha0.trans ha) η hη).2 n hn hnpos).trans
-      (by linarith [abs_nonneg (Real.log 220 / 2)])
+      (le_add_of_le_of_nonneg (le_add_of_nonneg_right (mul_nonneg (by norm_num) hgap.le))
+        (abs_nonneg _))
 
 theorem SmallLogControl.mono_tolerance {K : Set ℝ} {N : ℕ} {ε ε' T κ w₁ w₂ : ℝ}
     (hc : R.SmallLogControl K N ε T κ w₁ w₂) (hε : ε ≤ ε') :

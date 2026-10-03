@@ -84,31 +84,18 @@ variable (P : ℝ) [Fact (0 < P)]
 theorem velocityMap_L2_bound (κ : ℝ) (m : Space) (u : LiftL2 P) :
     ‖(velocityMap (velocityComponents κ m)).compLpL 2 (liftMeasure P) u‖ ≤
       3 * |κ| * ‖u‖ + ‖(normalComponentMap m).compLpL 2 (liftMeasure P) u‖ := by
-  rw [velocityMap_split,add_compLpL,smul_compLpL,add_apply,smul_apply]
-  have he : (normalVelocityMap.comp (normalComponentMap m)).compLpL 2 (liftMeasure P) u =
-      normalVelocityMap.compLpL 2 (liftMeasure P)
-        ((normalComponentMap m).compLpL 2 (liftMeasure P) u) := by
-    exact congrArg (fun L => L u) (map_comp P normalVelocityMap (normalComponentMap m))
-  rw [he]
-  calc
-    _ ≤ |κ| * ‖spatialVelocityMap.compLpL 2 (liftMeasure P) u‖ +
-        ‖normalVelocityMap.compLpL 2 (liftMeasure P)
-          ((normalComponentMap m).compLpL 2 (liftMeasure P) u)‖ := by
-      simpa only [norm_smul,Real.norm_eq_abs] using norm_add_le
-        (κ • spatialVelocityMap.compLpL 2 (liftMeasure P) u)
-        (normalVelocityMap.compLpL 2 (liftMeasure P)
-          ((normalComponentMap m).compLpL 2 (liftMeasure P) u))
-    _ ≤ |κ| * (3*‖u‖) + 1*‖(normalComponentMap m).compLpL 2 (liftMeasure P) u‖ := by
-      apply add_le_add
-      · exact mul_le_mul_of_nonneg_left
-          (((spatialVelocityMap.compLpL 2 (liftMeasure P)).le_opNorm u).trans
-            (mul_le_mul_of_nonneg_right
-              (spatialVelocityMap.norm_compLpL_le.trans spatialVelocityMap_norm) (norm_nonneg u)))
-          (abs_nonneg κ)
-      · exact ((normalVelocityMap.compLpL 2 (liftMeasure P)).le_opNorm _).trans
-          (mul_le_mul_of_nonneg_right
-            (normalVelocityMap.norm_compLpL_le.trans normalVelocityMap_norm) (norm_nonneg _))
-    _ = _ := by ring
+  have hc := congrArg (fun L => L u) (map_comp P normalVelocityMap (normalComponentMap m))
+  simp only [velocityMap_split, add_compLpL, smul_compLpL, add_apply, smul_apply]
+  refine (norm_add_le _ _).trans (add_le_add ?_ ?_)
+  · rw [norm_smul, Real.norm_eq_abs]
+    exact (mul_le_mul_of_nonneg_left
+      (((spatialVelocityMap.compLpL 2 (liftMeasure P)).le_opNorm u).trans
+        (mul_le_mul_of_nonneg_right
+          (spatialVelocityMap.norm_compLpL_le.trans spatialVelocityMap_norm) (norm_nonneg u)))
+      (abs_nonneg κ)).trans_eq (by ring)
+  · exact (congrArg norm hc).trans_le (((map P normalVelocityMap).le_opNorm _).trans
+      ((mul_le_mul_of_nonneg_right ((map_norm P _).trans normalVelocityMap_norm)
+        (norm_nonneg _)).trans_eq (one_mul _)))
 
 end EulerLiftedVelocitySplit
 

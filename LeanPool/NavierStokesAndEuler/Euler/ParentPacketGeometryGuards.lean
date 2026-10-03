@@ -210,7 +210,8 @@ def geometryGuardsOfStage
       _ = _ := by unfold geometryError; ring
   have hcoef0 : 0 ≤ 16*(P.epsilon*P.horizon*(4*P.G)^2 +
       P.totalError hτ hτT (G.historyOn H m hm R S hS τ hτ hτT) CM CH ρ) := by
-    positivity
+    exact mul_nonneg (Nat.ofNat_nonneg _) (add_nonneg
+      (mul_nonneg (mul_nonneg hepsPos.le (zero_le_one.trans hhor)) (sq_nonneg _)) herror0)
   have hN1 : 1 ≤ 1000000*neighborStabilityConstant := by
     have he : 1 ≤ Real.exp 6 := Real.one_le_exp_iff.mpr (by norm_num)
     unfold neighborStabilityConstant

@@ -182,19 +182,34 @@ theorem curl_linearPotential (L : Space →L[ℝ] Space) (x : Space) :
       (LinearMap.trace ℝ Space L.toLinearMap / 3) • x := by
   have hx : (∑ j : Fin 3, x j • (EuclideanSpace.single j 1 : Space)) = x := by
     simpa using (EuclideanSpace.basisFun (Fin 3) ℝ).sum_repr x
-  have hL (i : Fin 3) : (L x) i =
-      ∑ j : Fin 3, x j * (L (EuclideanSpace.single j 1)) i := by
+  have hL (i : Fin 3) : (L x) i = x 0 * (L (EuclideanSpace.single 0 1)) i +
+      x 1 * (L (EuclideanSpace.single 1 1)) i + x 2 * (L (EuclideanSpace.single 2 1)) i := by
     nth_rw 1 [← hx]
-    simp [map_sum, map_smul, smul_eq_mul]
-  rw [← coordinateTrace_eq_linearTrace]
+    simp only [Fin.sum_univ_three, Fin.isValue, map_add, map_smul, PiLp.add_apply, PiLp.smul_apply,
+      smul_eq_mul]
+  have htr : LinearMap.trace ℝ Space L.toLinearMap = (L (EuclideanSpace.single 0 1)) 0 +
+      (L (EuclideanSpace.single 1 1)) 1 + (L (EuclideanSpace.single 2 1)) 2 := by
+    rw [← coordinateTrace_eq_linearTrace]
+    simp only [coordinateTrace, Fin.sum_univ_three, add_apply, ContinuousLinearMap.comp_apply,
+      ContinuousLinearMap.apply_apply, PiLp.proj_apply]
+  rw [htr]
   ext i
-  fin_cases i <;>
-    simp only [Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Fin.isValue, curl_apply, zero_add,
-      partialDerivative_linearPotential, Fin.reduceAdd, ne_eq, zero_ne_one, one_ne_zero,
-      not_false_eq_true, PiLp.single_eq_of_ne, hL, Fin.sum_univ_three, zero_mul,
-      PiLp.single_eq_same, one_mul, neg_sub, Fin.reduceEq, coordinateTrace, add_apply,
-      ContinuousLinearMap.comp_apply, ContinuousLinearMap.apply_apply, PiLp.proj_apply,
-      PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul] <;> ring
+  fin_cases i
+  · simp only [Fin.zero_eta, Fin.isValue, curl_apply, zero_add, partialDerivative_linearPotential,
+      Fin.reduceAdd, ne_eq, zero_ne_one, not_false_eq_true, PiLp.single_eq_of_ne, zero_mul,
+      PiLp.single_eq_same, one_mul, neg_sub, Fin.reduceEq, PiLp.sub_apply, PiLp.smul_apply,
+      smul_eq_mul]
+    linear_combination (-1/3 : ℝ) * hL 0
+  · simp only [Fin.mk_one, Fin.isValue, curl_apply, Fin.reduceAdd,
+      partialDerivative_linearPotential, ne_eq, Fin.reduceEq, not_false_eq_true,
+      PiLp.single_eq_of_ne, zero_mul, zero_add, PiLp.single_eq_same, one_mul, neg_sub,
+      one_ne_zero, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul]
+    linear_combination (-1/3 : ℝ) * hL 1
+  · simp only [Fin.reduceFinMk, curl_apply, Fin.isValue, Fin.reduceAdd,
+      partialDerivative_linearPotential, ne_eq, Fin.reduceEq, not_false_eq_true,
+      PiLp.single_eq_of_ne, zero_mul, zero_add, PiLp.single_eq_same, one_mul, neg_sub,
+      PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul]
+    linear_combination (-1/3 : ℝ) * hL 2
 
 theorem curl_linearPotential_of_trace_zero (L : Space →L[ℝ] Space)
     (hL : LinearMap.trace ℝ Space L.toLinearMap = 0) (x : Space) :

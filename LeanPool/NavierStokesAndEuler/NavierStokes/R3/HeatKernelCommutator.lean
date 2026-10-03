@@ -155,20 +155,19 @@ theorem integrableOn_heatSecondTest (i j : Fin 3) (ψ : ComplexTest) (x : Space)
 /-- The actual double Riesz test operator is the positive-time heat integral. -/
 theorem rieszTest_eq_integral_heatSecondTest (i j : Fin 3) (ψ : ComplexTest) (x : Space) :
     rieszTest i j ψ x = ∫ s : ℝ in Ioi 0, heatSecondTest s i j ψ x := by
+  let ψhat : ComplexTest := FourierTransform.fourierCLE ℂ ComplexTest ψ
   calc
     rieszTest i j ψ x = ∫ ξ : Space, ∫ s : ℝ in Ioi 0,
-        heatSecondSymbol s i j ξ •
-          (Real.fourierChar ⟪ξ, x⟫ • (FourierTransform.fourierCLE ℂ ComplexTest ψ) ξ) := by
-      rw [rieszTest, Real.fourierInv_eq]
-      rw [show EulerSobolev.schwartzFourier (V := Space) (E := ℂ) =
-          (FourierTransform.fourierCLE ℂ ComplexTest : ComplexTest → ComplexTest) from rfl]
+        heatSecondSymbol s i j ξ • (Real.fourierChar ⟪ξ, x⟫ • ψhat ξ) := by
+      rw [rieszTest, Real.fourierInv_eq,
+        show EulerSobolev.schwartzFourier (V := Space) (E := ℂ) ψ = ψhat from rfl]
       apply integral_congr_ae
       filter_upwards [] with ξ
       rw [integral_smul_const, integral_heatSecondSymbol]
       simp only [Circle.smul_def, smul_eq_mul, Algebra.smul_def, realAlgebraMap_apply]
       ring
     _ = ∫ s : ℝ in Ioi 0, ∫ ξ : Space, heatSecondSymbol s i j ξ •
-        (Real.fourierChar ⟪ξ, x⟫ • (FourierTransform.fourierCLE ℂ ComplexTest ψ) ξ) :=
+        (Real.fourierChar ⟪ξ, x⟫ • ψhat ξ) :=
       integral_integral_swap (integrable_heatFourierProduct i j ψ x)
     _ = ∫ s : ℝ in Ioi 0, heatSecondTest s i j ψ x := by
       apply integral_congr_ae

@@ -52,15 +52,19 @@ theorem metric_derivative_bound (K : ℝ → H →L[ℝ] H) (e : ℝ → H)
   rw [hd.deriv]
   have hb := energy_derivative_bound (K t) K' (e t) transport forcing β hβ ht
   have hheat := mul_le_mul_of_nonneg_left hlap (mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) hν)
-  have hforce := mul_le_mul_of_nonneg_left hf (by positivity : 0 ≤ 2*‖K t‖*‖e t‖)
+  have hforce := mul_le_mul_of_nonneg_left hf
+    (mul_nonneg (mul_nonneg zero_le_two (norm_nonneg (K t))) (norm_nonneg (e t)))
   have hy := sq_nonneg (‖e t‖-‖K t‖*M*ε)
   have hraw : ⟪K' (e t),e t⟫_ℝ+2*⟪K t (e t),forcing+ν • lap⟫_ℝ-2*⟪K t (e t),transport⟫_ℝ ≤
       (‖K'‖+2*β+2*ν*h+2*‖K t‖*L+1)*‖e t‖^2+(‖K t‖*M)^2*ε^2 := by
     rw [inner_add_right,real_inner_smul_right]
-    linarith
-  have hn : ‖e t‖^2 ≤ ⟪K t (e t),e t⟫_ℝ/c^2 := (le_div_iff₀ (sq_pos_of_pos hc)).mpr (by
-      linarith [hcoer])
-  have ha : 0 ≤ ‖K'‖+2*β+2*ν*h+2*‖K t‖*L+1 := by positivity
+    linarith only [hb, hheat, hforce, hy]
+  have hn : ‖e t‖^2 ≤ ⟪K t (e t),e t⟫_ℝ/c^2 :=
+    (le_div_iff₀ (sq_pos_of_pos hc)).mpr ((mul_comm _ _).trans_le hcoer)
+  have ha : 0 ≤ ‖K'‖+2*β+2*ν*h+2*‖K t‖*L+1 :=
+    add_nonneg (add_nonneg (add_nonneg (add_nonneg (norm_nonneg K')
+      (mul_nonneg zero_le_two hβ)) (mul_nonneg (mul_nonneg zero_le_two hν) hh))
+      (mul_nonneg (mul_nonneg zero_le_two (norm_nonneg (K t))) hL)) zero_le_one
   calc
     _ ≤ (‖K'‖+2*β+2*ν*h+2*‖K t‖*L+1)*‖e t‖^2+(‖K t‖*M)^2*ε^2 := hraw
     _ ≤ (‖K'‖+2*β+2*ν*h+2*‖K t‖*L+1)*(⟪K t (e t),e t⟫_ℝ/c^2)+(‖K t‖*M)^2*ε^2 :=

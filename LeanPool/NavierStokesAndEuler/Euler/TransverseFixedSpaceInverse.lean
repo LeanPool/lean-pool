@@ -124,13 +124,8 @@ theorem fixedFrameSolver_weak (f : TimeLp T E) (v : zeroTraceDerivatives (U := U
         fixedFramePrimitive T hT Q Q₁ v⟫_ℝ = -⟪f, fixedFramePrimitive T hT Q Q₁ v⟫_ℝ := by
   dsimp only
   rw [← fixedFrameOperator_inner]
-  change ⟪fixedFrameOperator T hT Q Q₁ H
-    (coerciveInverse (fixedFrameOperator (U := U) (E := E) T hT Q Q₁ H)
-      (fixedCoercivity T Q Q₁ c) (fixedCoercivity_pos T hT Q Q₁ c hc)
-      (fixedFrameOperator_coercive T hT Q Q₁ H c hc hQ hd K hK hH hsmall)
-      (-(adjoint (𝕜 := ℝ) (E := zeroTraceDerivatives (U := U) T hT) (F := TimeLp T E)
-        (fixedFramePrimitive T hT Q Q₁) f))), v⟫_ℝ = _
-  rw [operator_inverse_apply, inner_neg_left, adjoint_inner_left]
+  simp only [fixedFrameSolver, ContinuousLinearMap.comp_apply, operator_inverse_apply, neg_apply,
+    inner_neg_left, adjoint_inner_left]
 
 /-- The fixed-space variational inverse is unique. -/
 theorem fixedFrameSolver_unique (f : TimeLp T E) (u : zeroTraceDerivatives (U := U) T hT)

@@ -542,17 +542,14 @@ theorem closureJet_hasFDerivWithinAt {s : Set Y} {f : Y → V}
     (n : ℕ) {x : Y} (hx : x ∈ closure s) :
     HasFDerivWithinAt (closureJet s f n)
       (closureJet s f (n + 1) x).curryLeft (closure s) x := by
-  have hD (y : Y) (hy : y ∈ s) : HasFDerivAt (closureJet s f n)
-      (iteratedFDeriv ℝ (n + 1) f y).curryLeft y :=
+  have hD (y : Y) (hy : y ∈ s) :=
     (actualJet_hasFDerivAt hs hf n hy).congr_of_eventuallyEq
       (closureJet_eventuallyEq hs hf n hy)
   apply hasFDerivWithinAt_closure_of_tendsto_fderiv
     (fun y hy => (hD y hy).differentiableAt.differentiableWithinAt) hc hs
     (fun y hy => (closureJet_continuousOn hs hc hf hb n y hy).mono subset_closure)
-  let A : (Y[×(n + 1)]→L[ℝ] V) →L[ℝ] (Y →L[ℝ] (Y[×n]→L[ℝ] V)) :=
-    (continuousMultilinearCurryLeftEquiv ℝ (fun _ : Fin (n + 1) => Y)
-        V).toContinuousLinearEquiv.toContinuousLinearMap
-  have hlim := A.continuous.continuousAt.tendsto.comp (closureJet_limit hs hc hf hb (n + 1) hx)
+  have hlim := (continuousMultilinearCurryLeftEquiv ℝ (fun _ : Fin (n + 1) => Y) V).continuous
+    |>.continuousAt.tendsto.comp (closureJet_limit hs hc hf hb (n + 1) hx)
   apply hlim.congr'
   filter_upwards [self_mem_nhdsWithin] with y hy
   exact (hD y hy).fderiv.symm

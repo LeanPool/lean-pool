@@ -128,7 +128,7 @@ theorem frameMatrixRate_abs_le (B B₁ : Space →L[ℝ] Space) (p q : Space)
       simpa only [hn, mul_one] using B₁.le_opNorm (frame p q j)
   have hBr := B.le_opNorm (frameRate B p q j)
   have h1 := (abs_real_inner_le_norm (frameRate B p q i) (B (frame p q j))).trans
-    (mul_le_mul hr hBj (norm_nonneg _) (by positivity : 0 ≤ 6*‖B‖))
+    (mul_le_mul hr hBj (norm_nonneg _) (mul_nonneg (Nat.ofNat_nonneg 6) (norm_nonneg B)))
   have h2 := abs_real_inner_le_norm (frame p q i) (B₁ (frame p q j)+B (frameRate B p q j))
   rw [hn i, one_mul] at h2
   have h3 := norm_add_le (B₁ (frame p q j)) (B (frameRate B p q j))
@@ -136,7 +136,7 @@ theorem frameMatrixRate_abs_le (B B₁ : Space →L[ℝ] Space) (p q : Space)
   have h5 := abs_add_le ⟪frameRate B p q i,B (frame p q j)⟫_ℝ
     ⟪frame p q i,B₁ (frame p q j)+B (frameRate B p q j)⟫_ℝ
   unfold frameMatrixRate
-  nlinarith only [h1, h2, h3, h4, h5, hB₁j, hBr]
+  linarith only [h1, h2, h3, h4, h5, hB₁j, hBr]
 
 /-- Primary shear, given by `c*(‖m t‖*‖v t‖)`. -/
 def primaryShear (c : ℝ) (m v : ℝ → Space) (t : ℝ) : ℝ := c*(‖m t‖*‖v t‖)

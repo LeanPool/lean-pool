@@ -71,8 +71,14 @@ theorem curlLinear_rotation (L : Space →L[ℝ] Space) (θ : ℝ) :
         (L.comp (CylindricalResidual.frame θ))) := by
   ext i
   fin_cases i <;>
-    simp [CylindricalResidual.frame_apply, AxisymmetricResidual.pack,
-      coordinateVector]
+    simp only [CylindricalResidual.frame_apply, AxisymmetricResidual.pack, Fin.isValue,
+      Real.cos_neg, Real.sin_neg, coordinateVector, SpatialCurl.curlLinear_apply_zero,
+      SpatialCurl.curlLinear_apply_one, SpatialCurl.curlLinear_apply_two, neg_mul, sub_neg_eq_add,
+      Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, PiLp.add_apply, PiLp.smul_apply, PiLp.neg_apply,
+      PiLp.single_eq_same, PiLp.single_eq_of_ne, smul_eq_mul, mul_one, mul_zero, add_zero,
+      zero_add, ne_eq, zero_ne_one, one_ne_zero, not_false_eq_true, Fin.reduceEq,
+      ContinuousLinearMap.comp_apply, zero_sub, sub_zero, sub_self, neg_smul, zero_smul, one_smul,
+      ContinuousLinearMap.map_add, ContinuousLinearMap.map_neg, ContinuousLinearMap.map_smul]
   · ring
   · ring
   · linear_combination

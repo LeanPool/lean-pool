@@ -141,15 +141,10 @@ def fullMap : (α →ᵇ (E →L[ℝ] F)) →L[ℝ] (Lp E 2 μ →L[ℝ] Lp F 2 
   cont := AddMonoidHomClass.continuous_of_bound
     ({ toFun := full μ, map_add' := full_add μ, map_smul' := full_smul μ } :
       (α →ᵇ (E →L[ℝ] F)) →ₗ[ℝ] (Lp E 2 μ →L[ℝ] Lp F 2 μ)) 1
-    (fun A => by
-      change ‖full μ A‖ ≤ (1 : ℝ)*‖A‖
-      simpa only [one_mul] using full_norm μ A)
+    (fun A => by exact (full_norm μ A).trans_eq (one_mul _).symm)
 
-theorem fullMap_norm : ‖fullMap (E := E) (F := F) μ‖ ≤ 1 := by
-  apply opNorm_le_bound _ zero_le_one
-  intro A
-  change ‖full μ A‖ ≤ (1 : ℝ)*‖A‖
-  simpa only [one_mul] using full_norm μ A
+theorem fullMap_norm : ‖fullMap (E := E) (F := F) μ‖ ≤ 1 :=
+  opNorm_le_bound _ zero_le_one fun A => (full_norm μ A).trans_eq (one_mul _).symm
 
 end EulerLpOperatorField
 

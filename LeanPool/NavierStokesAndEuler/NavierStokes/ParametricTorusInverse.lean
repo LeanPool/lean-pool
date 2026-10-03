@@ -444,17 +444,18 @@ theorem uniform_multiplierDerivative_bound {m : Frequency → ℂ} (hm : Polynom
     (parameterPartial_smooth hf) (parameterPartial_periodic hp) a b
   obtain ⟨CX, hCX, hX⟩ := uniform_multiplied_coeff_bound hm.mulX hf hp a b
   obtain ⟨CY, hCY, hY⟩ := uniform_multiplied_coeff_bound hm.mulY hf hp a b
-  refine ⟨‖jointLiftP‖ * CP + ‖jointLiftX‖ * CX + ‖jointLiftY‖ * CY, by positivity, ?_⟩
+  refine ⟨‖jointLiftP‖ * CP + ‖jointLiftX‖ * CX + ‖jointLiftY‖ * CY,
+    add_nonneg (add_nonneg (mul_nonneg (norm_nonneg _) hCP) (mul_nonneg (norm_nonneg _) hCX))
+      (mul_nonneg (norm_nonneg _) hCY), ?_⟩
   intro z hz k
   apply (norm_multiplierTermDerivative_le m f k z).trans
   calc
     _ ≤ ‖jointLiftP‖ * (CP * (weight k ^ 4)⁻¹) +
         ‖jointLiftX‖ * (CX * (weight k ^ 4)⁻¹) +
-        ‖jointLiftY‖ * (CY * (weight k ^ 4)⁻¹) := by
-      gcongr
-      · exact hP z.1 hz k
-      · exact hX z.1 hz k
-      · exact hY z.1 hz k
+        ‖jointLiftY‖ * (CY * (weight k ^ 4)⁻¹) :=
+      add_le_add (add_le_add (mul_le_mul_of_nonneg_left (hP z.1 hz k) (norm_nonneg _))
+        (mul_le_mul_of_nonneg_left (hX z.1 hz k) (norm_nonneg _)))
+        (mul_le_mul_of_nonneg_left (hY z.1 hz k) (norm_nonneg _))
     _ = _ := by ring
 
 theorem hasFDerivAt_applyMultiplier {m : Frequency → ℂ} (hm : PolynomialGrowth m)

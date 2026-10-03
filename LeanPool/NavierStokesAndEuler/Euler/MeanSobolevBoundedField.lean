@@ -85,8 +85,8 @@ theorem continuous_spaceField {K : Type*} [TopologicalSpace K]
       fun t => multilinearBundling (P := Space) (V := Space) volume n ((A t).jetLp n) := by
     funext t
     have h := (A t).iteratedFDeriv_translation_eq n 0
-    rw [EulerLpTranslation.translation_zero] at h
-    simpa only [EulerLpTranslation.translation, EulerMeanSolenoidal.translation] using h
+    simpa only [EulerLpTranslation.translation, EulerMeanSolenoidal.translation] using
+      h.trans (congrArg _ (EulerLpTranslation.translation_zero _))
   rw [he]
   exact (multilinearBundling (P := Space) (V := Space) volume n).continuous.comp (hA n)
 

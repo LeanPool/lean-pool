@@ -70,12 +70,10 @@ theorem global_gradient (a k : ℝ) (hk : k ≠ 0)
   have he := (graph_vector_hasFDerivAt
     (fun z => vector D (initialData D δ hδ (a • ξ) hs) (t,z))
     k hk D.m₀ Y _ x hY (hq _)).fderiv
-  rw [angular_fderiv D δ hδ ξ hs] at he
-  convert! he using 1
-  apply congrArg (fun V : Space →L[ℝ] Space => V + _)
+  refine he.trans (congrArg (fun V : Space →L[ℝ] Space => V + _) ?_).symm
   apply ContinuousLinearMap.ext
   intro v
-  simp only [smul_apply,rankOne_apply,smul_smul,graphMap_apply]
+  simp only [smul_apply, rankOne_apply, smul_smul, graphMap_apply, angular_fderiv D δ hδ ξ hs]
   rw [mul_comm]
   rfl
 

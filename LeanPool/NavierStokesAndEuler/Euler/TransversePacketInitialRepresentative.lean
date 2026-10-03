@@ -43,10 +43,8 @@ theorem vector_initial_of_representative (f : LiftDomain P → U) (hf : Continuo
     filter_upwards [hp,EulerLpOperatorField.full_ae (liftMeasure P)
       (fieldLift (W := U →L[ℝ] Space) P (D.frame.field t0)) (I.value : CylinderL2 P U),
       hrep] with x hx hm hf
-    exact hx.symm.trans (hm.trans (congrArg (D.frame.field t0 x.1) hf))
-  have hpoint : pointField P (G.fullVelocityPath I) (G.velocityPath_orbit I) t0 =
-      fun x => D.frame.field t0 x.1 (f x) :=
-    Measure.eq_of_ae_eq hae
+    exact hx.symm.trans (hm.trans (congrArg _ hf))
+  have hpoint := Measure.eq_of_ae_eq hae
       (smoothField_continuous P _ (pointField_smooth P _ _ t0))
       (((D.frame.field t0).continuous.comp continuous_fst).clm_apply hf)
   calc

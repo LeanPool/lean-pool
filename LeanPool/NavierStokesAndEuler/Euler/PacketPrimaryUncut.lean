@@ -71,23 +71,18 @@ theorem historyVelocity_homogeneous {D : Data U} (B : HistoryData D)
       (C.labelFrame x) (C.labelFrameDerivative x) (C.labelHessian x) C.lower C.lower_pos
       (C.labelFrame_lower x) (C.labelFrame_derivative x) C.potential C.potential_nonneg
       (C.labelHessian_upper x) C.small ξ t
-    change gram (D.frame.field t x) b = adjoint (𝕜 := ℝ) (E := U) (F := Space)
-        (D.frame.field t x) ((-2 : ℝ) • D.frameDerivative.field t x a) at hp
-    simpa only [zero_sub,neg_smul] using hp
+    rw [zero_sub, ← neg_smul]
+    exact hp
   have hb := physical_velocity_balance (D.frame.field t x) (D.frameDerivative.field t x)
     (D.M.field t x) (D.normal.field t x) hnormal (D.frame_tangent t x) (D.frame_range t x)
     (D.frame_strain t x) a b 0 he
   have hd' : HasDerivWithinAt (extendPath D.T D.T_pos.le (C.labelVelocity x ξ))
       (D.frameDerivative.field t x a+D.frame.field t x b) (Icc (0 : ℝ) D.T) t := by
-    convert! hd using 1
+    refine HasDerivWithinAt.congr_deriv hd ?_
     simp only [extendPath,projIcc_of_mem D.T_pos.le t.property]
     rfl
   apply hd'.congr_deriv
   rw [physicalGenerator_apply]
-  change D.frameDerivative.field t x a+D.frame.field t x b =
-    -D.M.field t x (D.frame.field t x a) +
-      (2*⟪D.normal.field t x,D.M.field t x (D.frame.field t x a)⟫_ℝ/
-        ‖D.normal.field t x‖^2) • D.normal.field t x
   simp only [inner_zero_right,zero_sub,neg_div,neg_smul] at hb
   exact eq_neg_add_iff_add_eq.mpr ((add_comm _ _).trans (add_neg_eq_zero.mp hb))
 

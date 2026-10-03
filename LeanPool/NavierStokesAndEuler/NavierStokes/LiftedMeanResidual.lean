@@ -420,9 +420,10 @@ theorem advectionIncrement_conservative (R : D × ℝ → ℝ) (Vr Vθ Vz : D ×
       LinearWaveResidual.along_mul_real V (ha j) (hB k),
       LinearWaveResidual.along_mul_real V (ha j) (ha k)]
   fin_cases i <;>
-    simp [advectionIncrement, LinearWaveResidual.realTransport,
-        LinearWaveResidual.realAngularGenerator,
-      conservativeFlux, realDivergence, hd, quadraticFlux] <;> ring
+    simp only [advectionIncrement, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Fin.isValue,
+      Pi.add_apply, LinearWaveResidual.realTransport, LinearWaveResidual.realAngularGenerator,
+      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, add_zero, conservativeFlux, hd,
+      quadraticFlux, realDivergence] <;> ring
 
 theorem advectionIncrement_eq_conservative (R : D × ℝ → ℝ) (Vr Vθ Vz : D × ℝ → D × ℝ)
     {B a : D × ℝ → Fin 3 → ℝ} {p : D × ℝ}

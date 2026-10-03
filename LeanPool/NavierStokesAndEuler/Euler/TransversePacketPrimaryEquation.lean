@@ -71,12 +71,11 @@ theorem tangent_ae (t : Icc (0 : ℝ) D.T) :
   · let th : Icc (0 : ℝ) τ := ⟨t,t.property.1,ht⟩
     have hv : velocityPath τ hτ hτT B Y t = pastVelocity τ hτ hτT B Y th :=
       velocityPath_left τ hτ hτT B Y th
-    rw [hv]
+    rw [hv, pastVelocity_eq]
     filter_upwards [EulerTransversePacketEndpoint.velocityPath_ae B (endpointData τ hτ hτT Y) th]
       with x hx
-    change pastVelocity τ hτ hτT B Y th x = _ at hx
-    rw [hx]
-    exact (D.initial τ hτ hτT.le).frame_tangent th x.1 _
+    exact (congrArg (fun v => ⟪D.normal.field t x.1, v⟫_ℝ) hx).trans
+      ((D.initial τ hτ hτT.le).frame_tangent th x.1 _)
   · let tr : Icc τ D.T := ⟨t,(not_le.mp ht).le,t.property.2⟩
     let tf : Icc (0 : ℝ) (D.T-τ) :=
       ⟨(t : ℝ)-τ,sub_nonneg.mpr tr.property.1,sub_le_sub_right t.property.2 τ⟩
@@ -90,12 +89,11 @@ theorem tangent_ae (t : Icc (0 : ℝ) D.T) :
     have hm : Df.normal.field tf = D.normal.field t := by
       change D.normal.field (tailInclusion D.T τ hτ.le tf) = D.normal.field t
       rw [hidx]
-    rw [hv,← hm]
+    rw [hv, ← hm, futureVelocity_apply]
     filter_upwards [EulerSourceCylinderEquation.velocity_ae P D.support D.support_measurable
       Df.T Df.T_pos.le Df.frame Df.frameDerivative Df.frameLower Df.frameLower_pos Df.frame_lower
       (zeroForcing Df).path (forwardInitial τ hτ hτT B Y).value tf] with x hx
-    change futureVelocity τ hτ hτT B Y tf x = _ at hx
-    rw [hx]
-    exact Df.frame_tangent tf x.1 _
+    exact (congrArg (fun v => ⟪Df.normal.field tf x.1, v⟫_ℝ) hx).trans
+      (Df.frame_tangent tf x.1 _)
 
 end EulerTransversePacketPrimary

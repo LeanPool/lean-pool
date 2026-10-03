@@ -782,23 +782,14 @@ theorem sourceForcing_translated (a : Space) :
 /-- The actual generator's translated family is genuinely smooth in the uniform time-space norm. -/
 theorem sourceGenerator_translation_contDiff :
     ContDiff ℝ ∞ (translateCoefficientPath (sourceGenerator Q Q₁ c hc hQ)) := by
-  have he : translateCoefficientPath (sourceGenerator Q Q₁ c hc hQ) =
-      fun a => generatorPath c hc (translateCoefficientPath Q.field a) (translateCoefficientPath
-          Q₁.field a)
-        (translated_lower Q c hQ a) := funext (fun a => (sourceGenerator_translated Q Q₁ c hc hQ
-            a).symm)
-  rw [he]
+  rw [funext (fun a => (sourceGenerator_translated Q Q₁ c hc hQ a).symm)]
   exact generatorPath_contDiff c hc (translateCoefficientPath Q.field) (translateCoefficientPath
       Q₁.field)
     (translated_lower Q c hQ) Q.translation_contDiff Q₁.translation_contDiff
 
 theorem sourceForcing_translation_contDiff :
     ContDiff ℝ ∞ (translateCoefficientPath (sourceForcing Q c hc hQ)) := by
-  have he : translateCoefficientPath (sourceForcing Q c hc hQ) =
-      fun a => leftInversePath c hc (translateCoefficientPath Q.field a) (translated_lower Q c hQ
-          a) :=
-    funext (fun a => (sourceForcing_translated Q c hc hQ a).symm)
-  rw [he]
+  rw [funext (fun a => (sourceForcing_translated Q c hc hQ a).symm)]
   exact leftInversePath_contDiff c hc (translateCoefficientPath Q.field) (translated_lower Q c hQ)
     Q.translation_contDiff
 
@@ -812,12 +803,7 @@ include hRc hC₀ hC₁ hRi hbQ hbQ₁ in
 theorem sourceGenerator_translation_bound (n : ℕ) (a : Space) :
     ‖iteratedFDeriv ℝ n (translateCoefficientPath (sourceGenerator Q Q₁ c hc hQ)) a‖ ≤
       (18*Ri*C₀*C₁)*majorant (4*Ri) 0 n := by
-  have he : translateCoefficientPath (sourceGenerator Q Q₁ c hc hQ) =
-      fun a => generatorPath c hc (translateCoefficientPath Q.field a) (translateCoefficientPath
-          Q₁.field a)
-        (translated_lower Q c hQ a) := funext (fun a => (sourceGenerator_translated Q Q₁ c hc hQ
-            a).symm)
-  rw [he]
+  rw [funext (fun a => (sourceGenerator_translated Q Q₁ c hc hQ a).symm)]
   exact generatorPath_bound (translateCoefficientPath Q.field) (translateCoefficientPath Q₁.field)
     c hc (translated_lower Q c hQ) Q.translation_contDiff Q₁.translation_contDiff
     Rc C₀ C₁ Ri hRc hC₀ hC₁ hRi
@@ -831,11 +817,7 @@ include hRc hC₀ hRi hbQ in
 theorem sourceForcing_translation_bound (n : ℕ) (a : Space) :
     ‖iteratedFDeriv ℝ n (translateCoefficientPath (sourceForcing Q c hc hQ)) a‖ ≤
       (3*Ri*C₀)*majorant (4*Ri) 0 n := by
-  have he : translateCoefficientPath (sourceForcing Q c hc hQ) =
-      fun a => leftInversePath c hc (translateCoefficientPath Q.field a) (translated_lower Q c hQ
-          a) :=
-    funext (fun a => (sourceForcing_translated Q c hc hQ a).symm)
-  rw [he]
+  rw [funext (fun a => (sourceForcing_translated Q c hc hQ a).symm)]
   exact leftInversePath_bound (translateCoefficientPath Q.field) c hc (translated_lower Q c hQ)
     Q.translation_contDiff Rc C₀ Ri hRc hC₀ hRi
     (fun j x => Q.norm_iteratedFDeriv_translation_le j _ (mul_nonneg hC₀ (majorant_nonneg Rc hRc 0

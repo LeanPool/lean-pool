@@ -172,6 +172,7 @@ include hA in
 theorem mixedMultiplier_bound (n : ℕ) (C : ℝ)
     (hb : ∀ a, ‖iteratedFDeriv ℝ n (translateCoefficientPath A) a‖ ≤ C) (a : LiftTangent) :
     ‖iteratedFDeriv ℝ n (mixedMultiplier period A) a‖ ≤ C := by
+  let _ : SeminormedAddCommGroup (E →L[ℝ] F) := inferInstance
   have hright : ‖iteratedFDeriv ℝ n
       (translateCoefficientPath A ∘ ContinuousLinearMap.fst ℝ Space ℝ) a‖ ≤ C := by
     rw [(ContinuousLinearMap.fst ℝ Space ℝ).iteratedFDeriv_comp_right hA a (by simp)]

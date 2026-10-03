@@ -173,8 +173,11 @@ theorem hessian_physical {q : LiftTangent → ℝ} (hq : ContDiff ℝ ∞ q)
   rw [hm]
   dsimp only [z,a,n]
   simp only [angularDerivative,graph_decomposition,inl_apply]
-  match_scalars <;> field_simp
-  all_goals ring
+  match_scalars
+  · ring
+  · rfl
+  · simp only [mul_add, ← mul_assoc, inv_mul_cancel₀ hk, one_mul]
+    ring
 
 theorem lowerHessian_norm_le (q : LiftTangent → ℝ) (k : ℝ) (m : Space)
     (Y : Space → Space) (J : Space → Space →L[ℝ] Space) (x : Space) :

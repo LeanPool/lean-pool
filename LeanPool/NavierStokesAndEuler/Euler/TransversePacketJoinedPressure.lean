@@ -68,7 +68,8 @@ theorem pressurePath_eq_source : pressurePath τ hτ hτT B G =
         ((HistoryData.forcingPath G) t-(2 : ℝ) •
           fullOperatorMap (E := Space) (F := Space) P (D.M.field t)
             (velocityPath τ hτ hτT B G t)))
-    rw [hN,velocityPath_left τ hτ hτT B G th]
+    simp only [hN]
+    rw [velocityPath_left τ hτ hτT B G th]
     rfl
   · let tr : Icc τ D.T := ⟨t,(not_le.mp ht).le,t.property.2⟩
     let tf : Icc (0 : ℝ) (D.T-τ) :=
@@ -107,7 +108,8 @@ theorem pressurePath_eq_source : pressurePath τ hτ hτT B G =
         ((HistoryData.forcingPath G) t-(2 : ℝ) •
           fullOperatorMap (E := Space) (F := Space) P (D.M.field t)
             (velocityPath τ hτ hτT B G t)))
-    rw [hN,hM,hf,velocityPath_right τ hτ hτT B G tr]
+    simp only [hN, hM, hf]
+    rw [velocityPath_right τ hτ hτT B G tr]
 
 theorem pressurePath_normalized_eq_source
     (g : C(Icc (0 : ℝ) D.T, ℝ)) (hg : ∀ t, 0 < g t) :

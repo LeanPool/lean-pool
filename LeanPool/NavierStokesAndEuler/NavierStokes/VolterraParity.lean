@@ -1655,11 +1655,8 @@ theorem integral_solution_unique {R : ℝ} (hR : 0 ≤ R)
         coefficientAction (R := R) (A₁ z) (deriv (W₀ - W₁) z)) := by
     intro z hz
     have hs := congrArg₂ (fun u v : Path R => u - v) (heq₀ z hz) (heq₁ z hz)
-    rw [← map_sub] at hs
-    refine hs.trans ?_
-    congr 1
-    rw [hd z hz]
-    simp only [rhsPath, map_sub, Pi.sub_apply]
+    refine (hs.trans (ContinuousLinearMap.map_sub _ _ _).symm).trans (congrArg _ ?_)
+    simp only [hd z hz, rhsPath, ContinuousLinearMap.map_sub, Pi.sub_apply]
     abel
   intro z hz
   have hzero := homogeneous_solution_zero hR hU hA₀ hA₁ (hW₀.sub hW₁) hshape heq z hz
