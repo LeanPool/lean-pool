@@ -135,6 +135,7 @@ def vertexWedgeAssocLastVertex
 
 The middle graph is glued to `G` at `y` and to `K` at `z`; no hypothesis
 that these two vertices are distinct is needed. -/
+@[expose]
 def vertexWedgeAssoc
     (G : CFGraph.{u}) (H : CFGraph.{v}) (K : CFGraph.{w})
     (x : G.V) (y z : H.V) (t : K.V) :

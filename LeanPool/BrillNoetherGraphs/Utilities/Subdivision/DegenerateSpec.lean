@@ -581,6 +581,7 @@ theorem unitEdge_stepEquiv (s : target.Step) :
 /-- **The correspondence.**  A face of the closed orthant whose zero set is a
 forest carries the same Laplacian as the strictly positive subdivision of the
 contracted core. -/
+@[expose]
 noncomputable def laplacianEquiv : LaplacianEquiv target.graph d.graph where
   toEquiv := c.vertexEquiv
   num_edges_eq := by

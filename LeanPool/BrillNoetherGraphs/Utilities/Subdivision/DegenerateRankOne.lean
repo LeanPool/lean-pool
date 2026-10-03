@@ -564,6 +564,7 @@ end Assembly
 
 /-- The embedded core classes of a contracted subdivision.  `coreVertex` is not
 injective, so this image can be strictly smaller than `n`. -/
+@[expose]
 def degenerateCoreVertices (d : Utilities.Certificate.DegenerateSpec.DegSpec n p) : Finset d.graph.V
   :=
   Finset.univ.image d.coreVertex

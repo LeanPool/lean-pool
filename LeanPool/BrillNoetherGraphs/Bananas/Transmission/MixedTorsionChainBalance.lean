@@ -339,6 +339,7 @@ theorem graph_connected_factorChain
 
 /-- The graph obtained by gluing the two nonempty halves at their central
 marks.  The right half is presented from the outside inward. -/
+@[expose]
 def balancedChainGraph
     (leftHead : KGeneralChainFactor)
     (leftTail : List KGeneralChainFactor)

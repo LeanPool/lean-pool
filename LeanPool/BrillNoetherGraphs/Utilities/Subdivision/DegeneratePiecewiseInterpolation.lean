@@ -40,6 +40,7 @@ variable {n p : ℕ} (d : DegSpec n p)
 
 /-- The left endpoint of a block.  Block zero starts at the tail; every later
 block starts where its predecessor ended. -/
+@[expose]
 def blockStart (blockEnd : Fin p → ℕ → ℕ) (e : Fin p) (block : ℕ) : ℕ :=
   if block = 0 then 0 else blockEnd e (block - 1)
 

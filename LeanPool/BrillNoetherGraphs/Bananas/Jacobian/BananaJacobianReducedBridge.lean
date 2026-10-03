@@ -37,6 +37,7 @@ def IsPaperInteriorCoordinate {g : ℕ} (B : Banana g)
 
 /-- The storage-oriented semibreak chips encoded by a vector of normalized
 strand positions. -/
+@[expose]
 noncomputable def paperCoordinateChips {g : ℕ} (B : Banana g)
     (p : ∀ alpha : Fin (g + 1), B.PathPosition alpha) :
     ∀ alpha : Fin (g + 1), Option (Fin (B.length alpha - 1)) :=

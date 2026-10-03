@@ -36,6 +36,7 @@ namespace CFGraphIso
 variable {G : CFGraph.{u}} {H : CFGraph.{v}} {K : CFGraph.{w}}
 
 /-- The identity graph isomorphism. -/
+@[expose]
 def refl (G : CFGraph.{u}) : CFGraphIso G G where
   vertexEquiv := Equiv.refl G.V
   map_num_edges := by simp

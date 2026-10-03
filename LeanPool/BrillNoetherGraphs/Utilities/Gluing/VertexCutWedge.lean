@@ -78,6 +78,7 @@ noncomputable def rightGlue : cut.rightGraph.V :=
 
 /-- A one-vertex cut canonically presents the ambient graph as the wedge of
 its two induced factors. -/
+@[expose]
 noncomputable def presentation :
     VertexWedgePresentation K cut.leftGraph cut.rightGraph
       cut.leftGlue cut.rightGlue where
@@ -129,6 +130,7 @@ noncomputable def presentation :
         exact hValue
 
 /-- The occurrence-safe graph isomorphism extracted from a one-vertex cut. -/
+@[expose]
 noncomputable def graphIso :
     CFGraphIso
       (vertexWedge cut.leftGraph cut.rightGraph cut.leftGlue cut.rightGlue) K :=
