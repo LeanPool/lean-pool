@@ -54,6 +54,7 @@ def diagIndex (n u v : ℕ) : ℕ :=
   if n - 1 ≤ u + v then u + v - (n - 1) else u + v
 
 /-- `u` is the low end of the edge `{u, v}` (the endpoint receiving the small rank). -/
+@[expose]
 def IsLowEnd (n u v : ℕ) : Prop :=
   (diagIndex n u v % 2 = 0 ↔ v < u)
 
