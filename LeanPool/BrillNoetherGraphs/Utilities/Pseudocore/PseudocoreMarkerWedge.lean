@@ -263,7 +263,7 @@ theorem restricted_second_factor_rigid
     change flatten.vertexEquiv.symm secondCut.leftGlue = restricted.leftGlue
     apply flatten.vertexEquiv.injective
     rw [Equiv.apply_symm_apply]
-    exact firstCut.restrictRightLeftIso_apply_leftGlue secondCut hSubset
+    exact (firstCut.restrictRightLeftIso_apply_leftGlue secondCut hSubset).symm
   rw [hRoot] at hTransported
   exact hTransported
 
