@@ -5,6 +5,7 @@ Authors: Moritz Firsching
 -/
 
 module
+public import LeanPool.Zeta5Irrational.Arith.CoefficientMatrix
 
 public import LeanPool.Zeta5Irrational.Construction
 import LeanPool.Zeta5Irrational.PartialFractions
@@ -72,17 +73,6 @@ lemma μX_sum {ι : Type*} (K : ℕ) (s : Finset ι) (f : ι → ℚ[X]) :
     have := μX_C_mul K 0 0
     simpa using this
   | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, μX_add, ih]
-
-/-- The coefficient matrix of a family of polynomials. -/
-@[expose] noncomputable def coeffMat {h : ℕ} (E : Fin h → ℚ[X]) : Matrix (Fin h) (Fin h) ℚ :=
-  Matrix.of fun a k => (E a).coeff k
-
-lemma sum_coeffMat {h : ℕ} (E : Fin h → ℚ[X]) (hE : ∀ a, (E a).natDegree < h) (a : Fin h) :
-    E a = ∑ k : Fin h, C (coeffMat E a k) * X ^ (k : ℕ) := by
-  conv_lhs => rw [as_sum_range' (E a) h (hE a)]
-  rw [Finset.sum_range (fun k => monomial k ((E a).coeff k))]
-  refine Finset.sum_congr rfl fun k _ => ?_
-  rw [coeffMat, Matrix.of_apply, C_mul_X_pow_eq_monomial]
 
 /-- **Change of basis**. -/
 theorem det_basis_change (n : ℕ) (E : Fin (37 * n) → ℚ[X]) (hE : ∀ a, (E a).natDegree < 37 * n) :

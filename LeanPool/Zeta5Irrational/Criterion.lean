@@ -1,9 +1,11 @@
 /-
 Copyright (c) 2026 Moritz Firsching. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Moritz Firsching
+Authors: Moritz Firsching, Qian Tang
 -/
 
+/- Copyright (c) 2026 Qian Tang; the degree-general decay proof is adapted from
+Zeta32 at 669c92bf7a3728e0de9ad80c373bc29fb5ca3d58 (Apache-2.0). -/
 module
 
 public import Mathlib.Analysis.Complex.Exponential
@@ -88,56 +90,40 @@ theorem irrational_of_eventually_exists_int_poly (ξ : ℝ) (d : ℕ → ℕ) (�
       _ < 1 := hlt
   linarith
 
-/-- The specific decay used in the paper: `b ^ (37 n) * exp (-(139/5) n²) → 0`. -/
-theorem tendsto_pow_mul_exp_neg_sq (b : ℕ) (hb : 0 < b) :
-    Tendsto (fun n : ℕ => (b : ℝ) ^ (37 * n) * Real.exp (-(139 / 5) * (n : ℝ) ^ 2)) atTop (𝓝 0) :=
-  by
-  have hbR : (0 : ℝ) < b := by
-    exact_mod_cast
-      hb
-        -- rewrite as a single exponential
-  have hrw :
-    ∀ n : ℕ,
-      (b : ℝ) ^ (37 * n) * Real.exp (-(139 / 5) * (n : ℝ) ^ 2) =
-        Real.exp ((37 * n) * Real.log b - (139 / 5) * (n : ℝ) ^ 2) := by
+/-- Gaussian decay dominates every fixed linear power exponent. -/
+theorem tendsto_pow_mul_exp_neg_sq_of_pos_degree {c : ℝ} (hc : 0 < c) (D b : ℕ) (hb : 0 < b) :
+    Tendsto (fun n : ℕ => (b : ℝ) ^ (D * n) * Real.exp (-c * (n : ℝ) ^ 2)) atTop (𝓝 0) := by
+  have hbR : (0 : ℝ) < b := by exact_mod_cast hb
+  have hrw : ∀ n : ℕ, (b : ℝ) ^ (D * n) * Real.exp (-c * (n : ℝ) ^ 2) =
+      Real.exp ((D * n) * Real.log b - c * (n : ℝ) ^ 2) := by
     intro n
-    have hbpow : (0 : ℝ) < (b : ℝ) ^ (37 * n) := pow_pos hbR _
+    have hbpow : (0 : ℝ) < (b : ℝ) ^ (D * n) := pow_pos hbR _
     rw [← Real.exp_log hbpow, ← Real.exp_add, Real.log_pow]
-    congr 1; push_cast; ring
+    congr 1
+    push_cast
+    ring
   simp_rw [hrw]
-    -- for large `n` the exponent is at most `-n`
   have hexp : Tendsto (fun n : ℕ => Real.exp (-(n : ℝ))) atTop (𝓝 0) :=
     Real.tendsto_exp_neg_atTop_nhds_zero.comp tendsto_natCast_atTop_atTop
   refine squeeze_zero' (Eventually.of_forall fun n => (Real.exp_pos _).le) ?_ hexp
-  filter_upwards [eventually_ge_atTop (⌈(37 * Real.log b + 1) * 5 / 139⌉₊)] with n hn
+  filter_upwards [eventually_ge_atTop (⌈(D * Real.log b + 1) / c⌉₊)] with n hn
   apply Real.exp_le_exp.mpr
-  have hn' : (37 * Real.log b + 1) * 5 / 139 ≤ (n : ℝ) :=
+  have hn' : (D * Real.log b + 1) / c ≤ (n : ℝ) :=
     le_trans (Nat.le_ceil _) (by exact_mod_cast hn)
+  have hn'' : D * Real.log b + 1 ≤ c * n := by
+    rw [div_le_iff₀ hc] at hn'
+    linarith
   have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg n
-  nlinarith [mul_le_mul_of_nonneg_left hn' hn0]
+  nlinarith [mul_le_mul_of_nonneg_left hn'' hn0]
 
 /-- The decay `b ^ (37 n) * exp (-c n²) → 0` for every `c > 0`. -/
 theorem tendsto_pow_mul_exp_neg_sq_of_pos {c : ℝ} (hc : 0 < c) (b : ℕ) (hb : 0 < b) :
-    Tendsto (fun n : ℕ => (b : ℝ) ^ (37 * n) * Real.exp (-c * (n : ℝ) ^ 2)) atTop (𝓝 0) := by
-  have hbR : (0 : ℝ) < b := by exact_mod_cast hb
-  have hrw :
-    ∀ n : ℕ,
-      (b : ℝ) ^ (37 * n) * Real.exp (-c * (n : ℝ) ^ 2) =
-        Real.exp ((37 * n) * Real.log b - c * (n : ℝ) ^ 2) := by
-    intro n
-    have hbpow : (0 : ℝ) < (b : ℝ) ^ (37 * n) := pow_pos hbR _
-    rw [← Real.exp_log hbpow, ← Real.exp_add, Real.log_pow]
-    congr 1; push_cast; ring
-  simp_rw [hrw]
-  have hexp : Tendsto (fun n : ℕ => Real.exp (-(n : ℝ))) atTop (𝓝 0) :=
-    Real.tendsto_exp_neg_atTop_nhds_zero.comp tendsto_natCast_atTop_atTop
-  refine squeeze_zero' (Eventually.of_forall fun n => (Real.exp_pos _).le) ?_ hexp
-  filter_upwards [eventually_ge_atTop (⌈(37 * Real.log b + 1) / c⌉₊)] with n hn
-  apply Real.exp_le_exp.mpr
-  have hn' : (37 * Real.log b + 1) / c ≤ (n : ℝ) :=
-    le_trans (Nat.le_ceil _) (by exact_mod_cast hn)
-  have hn'' : 37 * Real.log b + 1 ≤ c * n := by rw [div_le_iff₀ hc] at hn'; linarith
-  have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg n
-  nlinarith [mul_le_mul_of_nonneg_left hn'' hn0]
+    Tendsto (fun n : ℕ => (b : ℝ) ^ (37 * n) * Real.exp (-c * (n : ℝ) ^ 2)) atTop (𝓝 0) :=
+  tendsto_pow_mul_exp_neg_sq_of_pos_degree hc 37 b hb
+
+/-- The specific decay used in the paper: `b ^ (37 n) * exp (-(139/5) n²) → 0`. -/
+theorem tendsto_pow_mul_exp_neg_sq (b : ℕ) (hb : 0 < b) :
+    Tendsto (fun n : ℕ => (b : ℝ) ^ (37 * n) * Real.exp (-(139 / 5) * (n : ℝ) ^ 2)) atTop (𝓝 0) :=
+  tendsto_pow_mul_exp_neg_sq_of_pos (by norm_num) b hb
 
 end Zeta5Irrational
