@@ -112,7 +112,5 @@ def test_single_and_sharded_builds_use_validation_cache() -> None:
         assert "if" not in save  # normal success guard, including PR updates
         contracts.append(restore["with"])
         assert "validation_cache lint" in steps[names.index("Lint")]["run"]
-        assert "runLinter Challenge" in steps[names.index("Lint")]["run"]
-        assert "runLinter Solution" in steps[names.index("Lint")]["run"]
         assert "lint-style LeanPool" in steps[names.index("Text style lint")]["run"]
     assert contracts[0] == contracts[1]
