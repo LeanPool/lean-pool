@@ -43,6 +43,38 @@ theorem induce_degree_le (G : SimpleGraph V) [DecidableRel G.Adj] (S : Set V)
     _ ≤ (G.neighborFinset w.val).card := Finset.card_le_card hsub
     _ = G.degree w.val := G.card_neighborFinset_eq_degree _
 
+omit [DecidableEq V] in
+/-- An outside neighbour supplies the low-degree vertex needed to colour a connected piece. -/
+private theorem colorable_induce_of_outside_neighbor (G : SimpleGraph V) [DecidableRel G.Adj]
+    (S : Set V) (hconn : (G.induce S).Connected)
+    (hdeg : ∀ v, G.degree v ≤ 3) (x : ↥S) (z : V)
+    (hz : z ∉ S) (hadj : G.Adj x.val z) : (G.induce S).Colorable 3 := by
+  classical
+  apply connected_colorable_three_of_exists_degree_lt _ hconn
+  · intro v
+    exact (induce_degree_le G S v).trans (hdeg v.val)
+  · refine ⟨x, ?_⟩
+    have hsub : ((G.induce S).neighborFinset x).image Subtype.val
+        ⊆ (G.neighborFinset x.val).erase z := by
+      intro y hy
+      obtain ⟨w, hw, rfl⟩ := Finset.mem_image.mp hy
+      rw [Finset.mem_erase, mem_neighborFinset]
+      refine ⟨?_, ?_⟩
+      · intro h
+        exact hz (h ▸ w.property)
+      · rw [mem_neighborFinset] at hw
+        simpa [SimpleGraph.induce, SimpleGraph.comap] using hw
+    have hzmem : z ∈ G.neighborFinset x.val := by rw [mem_neighborFinset]; exact hadj
+    calc (G.induce S).degree x
+        = ((G.induce S).neighborFinset x).card :=
+          ((G.induce S).card_neighborFinset_eq_degree x).symm
+      _ = (((G.induce S).neighborFinset x).image Subtype.val).card :=
+          (Finset.card_image_of_injective _ Subtype.val_injective).symm
+      _ ≤ ((G.neighborFinset x.val).erase z).card := Finset.card_le_card hsub
+      _ = G.degree x.val - 1 := by
+          rw [Finset.card_erase_of_mem hzmem, G.card_neighborFinset_eq_degree]
+      _ < 3 := by have := hdeg x.val; omega
+
 /-- **B, cut-vertex reduction (structural half).** Given a 3-regular `G`, a vertex `x`, and a
 partition of `V∖{x}` into nonempty `A₀,B₀` with no edge crossing between them, such that both
 `G[{x}∪A₀]` and `G[{x}∪B₀]` are connected, `G` is 3-colourable: each side has `x` at degree `< 3`
@@ -104,69 +136,17 @@ theorem colorable_of_cut_partition (G : SimpleGraph V) [DecidableRel G.Adj]
         · simpa [SimpleGraph.induce, SimpleGraph.comap] using hadj
   obtain ⟨bz, hbz0, hxbz⟩ := hxneighbor B₀ hBne hxnB hBconn
   obtain ⟨az, haz0, hxaz⟩ := hxneighbor A₀ hAne hxnA hAconn
-  have hApiece : (G.induce ((A : Finset V) : Set V)).Colorable 3 := by
-    apply connected_colorable_three_of_exists_degree_lt _ hAconn
-    · intro v
-      exact (induce_degree_le G (A : Set V) v).trans (le_of_eq (hreg v.val))
-    · -- x has degree < 3 in G[A] : misses its B₀-neighbour bz
-      have hxmem : x ∈ ((A : Finset V) : Set V) := by simp [hA]
-      refine ⟨⟨x, hxmem⟩, ?_⟩
-      have hbznotA : bz ∉ A := by
-        rw [hA, Finset.mem_insert]; push Not
-        exact ⟨fun h => hxnB (h ▸ hbz0), fun h => (Finset.disjoint_left.mp hdisj h) hbz0⟩
-      have hsub : ((G.induce ((A : Finset V) : Set V)).neighborFinset ⟨x, hxmem⟩).image Subtype.val
-          ⊆ (G.neighborFinset x).erase bz := by
-        intro z hz
-        rw [Finset.mem_image] at hz
-        obtain ⟨y, hy, rfl⟩ := hz
-        rw [mem_neighborFinset] at hy
-        rw [Finset.mem_erase, mem_neighborFinset]
-        have hadjxy : G.Adj x y.val := by simpa [SimpleGraph.induce, SimpleGraph.comap] using hy
-        refine ⟨?_, hadjxy⟩
-        intro h
-        apply hbznotA
-        rw [← h]; exact y.property
-      have hbzmem : bz ∈ G.neighborFinset x := by rw [mem_neighborFinset]; exact hxbz
-      calc (G.induce ((A : Finset V) : Set V)).degree ⟨x, hxmem⟩
-          = ((G.induce ((A : Finset V) : Set V)).neighborFinset ⟨x, hxmem⟩).card :=
-            ((G.induce _).card_neighborFinset_eq_degree _).symm
-        _ = (((G.induce (A : Set V)).neighborFinset ⟨x, hxmem⟩).image Subtype.val).card :=
-            (Finset.card_image_of_injective _ Subtype.val_injective).symm
-        _ ≤ ((G.neighborFinset x).erase bz).card := Finset.card_le_card hsub
-        _ = G.degree x - 1 := by
-          rw [Finset.card_erase_of_mem hbzmem, G.card_neighborFinset_eq_degree]
-        _ < 3 := by have := hreg x; omega
-  have hBpiece : (G.induce ((B : Finset V) : Set V)).Colorable 3 := by
-    apply connected_colorable_three_of_exists_degree_lt _ hBconn
-    · intro v
-      exact (induce_degree_le G (B : Set V) v).trans (le_of_eq (hreg v.val))
-    · have hxmem : x ∈ ((B : Finset V) : Set V) := by simp [hB]
-      refine ⟨⟨x, hxmem⟩, ?_⟩
-      have haznotB : az ∉ B := by
-        rw [hB, Finset.mem_insert]; push Not
-        exact ⟨fun h => hxnA (h ▸ haz0), fun h => (Finset.disjoint_right.mp hdisj h) haz0⟩
-      have hsub : ((G.induce ((B : Finset V) : Set V)).neighborFinset ⟨x, hxmem⟩).image Subtype.val
-          ⊆ (G.neighborFinset x).erase az := by
-        intro z hz
-        rw [Finset.mem_image] at hz
-        obtain ⟨y, hy, rfl⟩ := hz
-        rw [mem_neighborFinset] at hy
-        rw [Finset.mem_erase, mem_neighborFinset]
-        have hadjxy : G.Adj x y.val := by simpa [SimpleGraph.induce, SimpleGraph.comap] using hy
-        refine ⟨?_, hadjxy⟩
-        intro h
-        apply haznotB
-        rw [← h]; exact y.property
-      have hazmem : az ∈ G.neighborFinset x := by rw [mem_neighborFinset]; exact hxaz
-      calc (G.induce ((B : Finset V) : Set V)).degree ⟨x, hxmem⟩
-          = ((G.induce ((B : Finset V) : Set V)).neighborFinset ⟨x, hxmem⟩).card :=
-            ((G.induce _).card_neighborFinset_eq_degree _).symm
-        _ = (((G.induce (B : Set V)).neighborFinset ⟨x, hxmem⟩).image Subtype.val).card :=
-            (Finset.card_image_of_injective _ Subtype.val_injective).symm
-        _ ≤ ((G.neighborFinset x).erase az).card := Finset.card_le_card hsub
-        _ = G.degree x - 1 := by
-          rw [Finset.card_erase_of_mem hazmem, G.card_neighborFinset_eq_degree]
-        _ < 3 := by have := hreg x; omega
+  have hbznotA : bz ∉ A := by
+    rw [hA, Finset.mem_insert]; push Not
+    exact ⟨fun h => hxnB (h ▸ hbz0), fun h => (Finset.disjoint_left.mp hdisj h) hbz0⟩
+  have haznotB : az ∉ B := by
+    rw [hB, Finset.mem_insert]; push Not
+    exact ⟨fun h => hxnA (h ▸ haz0), fun h => (Finset.disjoint_right.mp hdisj h) haz0⟩
+  have hdeg : ∀ v, G.degree v ≤ 3 := fun v => le_of_eq (hreg v)
+  have hApiece := colorable_induce_of_outside_neighbor G (A : Set V) hAconn
+    hdeg ⟨x, hxA⟩ bz hbznotA hxbz
+  have hBpiece := colorable_induce_of_outside_neighbor G (B : Set V) hBconn
+    hdeg ⟨x, hxB⟩ az haznotB hxaz
   have hcross : ∀ u ∈ A, ∀ w ∈ B, u ≠ x → w ≠ x → ¬ G.Adj u w := by
     intro u hu w hw hux hwx
     have huA0 : u ∈ A₀ := by
