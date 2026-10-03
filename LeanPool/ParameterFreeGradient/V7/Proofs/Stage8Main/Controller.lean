@@ -77,6 +77,7 @@ noncomputable def runController (data : RuntimeData d)
       | .exhausted state' => runController data inst hcached hlarge fuel state'
 
 /-- The underlying controller configuration, including the initialization and anchor call count. -/
+@[expose]
 noncomputable def controllerConfig (data : RuntimeData d) : O3.ControllerConfig :=
   { initialScale := data.Ma
     gradientSizeAtStart := data.G
