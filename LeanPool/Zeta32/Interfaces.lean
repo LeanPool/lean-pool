@@ -52,11 +52,13 @@ def wfun (r : ℚ) (y : ℝ) : ℂ :=
     (2 * (r : ℂ) - 2 * Real.pi * Complex.I * (Real.tanh (Real.pi * y) : ℂ))
 
 /-- `∏_l |(t R_n)(t_l) w(y_l)| · Δ(y)²` with `t_l = 1/2 + i y_l`, `h = 3n`. -/
+@[expose]
 def heineIntegrand (r : ℚ) (n : ℕ) (y : Fin (3 * n) → ℝ) : ℝ :=
   (∏ l, ‖((1/2 : ℂ) + Complex.I * (y l)) * Rfun n ((1/2 : ℂ) + Complex.I * (y l)) * wfun r (y l)‖) *
     ∏ l, ∏ l' ∈ Finset.univ.filter (fun l' => l < l'), (y l - y l') ^ 2
 
 /-- the proof notes, 5.2 (Heine), in the bound form used by 5.3. -/
+@[expose]
 def HeineBound (r : ℚ) (n : ℕ) : Prop :=
   |Polynomial.aeval (Cr r) (Q r n)| ≤ (1 / ((3*n).factorial : ℝ)) * ∫ y, heineIntegrand r n y
 

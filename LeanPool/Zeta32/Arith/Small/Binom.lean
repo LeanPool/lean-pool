@@ -290,6 +290,7 @@ lemma inv_choose_VG (p : ℕ) [hp : Fact p.Prime] {k K N : ℕ} (hk : K ≤ k) (
 /-! ### Residue denominators -/
 
 /-- Product of the differences from `j` to all other indices in `1`, …, `K`. -/
+@[expose]
 def eraseProd (K j : ℕ) : ℚ := ∏ l ∈ (Finset.Icc 1 K).erase j, ((l:ℚ) - (j:ℚ))
 
 lemma D_eval_eq_prod (m : ℕ) (x : ℚ) : (D m).eval x = ∏ l ∈ Finset.Icc 1 m, (x + l) := by

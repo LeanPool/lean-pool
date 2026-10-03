@@ -24,6 +24,7 @@ namespace Zeta32.Analytic.EnergyI
 noncomputable section
 
 /-- The squared Vandermonde product in the form of `heineIntegrand`. -/
+@[expose]
 def vdm {m : ℕ} (x : Fin m → ℝ) : ℝ :=
   ∏ l, ∏ l' ∈ Finset.univ.filter (fun l' => l < l'), (x l - x l') ^ 2
 

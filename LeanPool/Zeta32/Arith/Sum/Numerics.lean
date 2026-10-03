@@ -27,6 +27,7 @@ namespace Zeta32.ArithSum
 noncomputable section
 
 /-- Exact integral of `pa i + pb i · x` over piece `i` in `x` (from `1/ub (i+1)` to `1/ub i`). -/
+@[expose]
 def pieceRat (i : ℕ) : ℚ :=
   pa i * (1 / ub i - 1 / ub (i + 1)) + pb i * ((1 / ub i ^ 2 - 1 / ub (i + 1) ^ 2) / 2)
 

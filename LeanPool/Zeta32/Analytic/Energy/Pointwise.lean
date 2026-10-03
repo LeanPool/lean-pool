@@ -133,6 +133,7 @@ theorem external_field_eq (x : ℝ) :
 /-! ### The pointwise bound -/
 
 /-- The single-variable Heine factor `|t R_n(t) w(y)|`, `t = 1/2 + iy`. -/
+@[expose]
 def psiH (r : ℚ) (n : ℕ) (y : ℝ) : ℝ :=
   ‖((1/2 : ℂ) + Complex.I * (y : ℂ)) * Rfun n ((1/2 : ℂ) + Complex.I * (y : ℂ)) * wfun r y‖
 

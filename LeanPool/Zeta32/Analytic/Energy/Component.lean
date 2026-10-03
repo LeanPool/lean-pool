@@ -24,6 +24,7 @@ noncomputable section
 
 /-- `β = a/(u_c + c)`: `±iβ` are the preimages of `±ic` inside the unit disc under `w ↦ (a/2)(w
 + 1/w)`. -/
+@[expose]
 def betaC (a c : ℝ) : ℝ := a / (uC a c + c)
 
 /-- Angular density of `ρ_c`. -/

@@ -35,6 +35,7 @@ export Zeta5Irrational (poly_eq_of_nat Lb Lb_add Lb_smul Lb_C_mul Lb_monomial Lb
   Lb_sum Lb_shift)
 
 /-- `Lbp Q = ∑_n Q_n B'_n` (the convention `B'₁ = +1/2` of `Zeta32.moment`). -/
+@[expose]
 noncomputable def Lbp (Q : ℚ[X]) : ℚ := Q.sum fun n a => a * bernoulli' n
 
 lemma Lbp_add (P Q : ℚ[X]) : Lbp (P + Q) = Lbp P + Lbp Q := by

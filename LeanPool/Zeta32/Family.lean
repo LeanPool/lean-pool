@@ -45,15 +45,19 @@ def beta (r : ℚ) (j : ℕ) : ℚ := 2*r - 2*j*H 3 j + 2*r*j*H 2 j
 @[expose]
 def polynomialMoment (r : ℚ) (p : ℚ[X]) : ℚ := p.sum fun e a => a * moment r e
 /-- Coefficient of the target zeta value in the rational-function moment. -/
+@[expose]
 def slope (n k : ℕ) : ℚ := ∑ j ∈ Finset.Icc 1 (5*n), residue n k j * (2*j)
 /-- Constant coefficient in the rational-function moment. -/
+@[expose]
 def intercept (r : ℚ) (n k : ℕ) : ℚ :=
   polynomialMoment r (polynomialPart n k) +
     ∑ j ∈ Finset.Icc 1 (5*n), residue n k j * beta r j
 /-- Hankel matrix of the constant moment coefficients. -/
+@[expose]
 def A (r : ℚ) (n : ℕ) : Matrix (Fin (3*n)) (Fin (3*n)) ℚ :=
   fun i k => intercept r n (i.val+k.val)
 /-- Hankel matrix of the target-value moment coefficients. -/
+@[expose]
 def B (n : ℕ) : Matrix (Fin (3*n)) (Fin (3*n)) ℚ :=
   fun i k => slope n (i.val+k.val)
 /-- Determinant polynomial of the moment pencil `X • B + A`. -/
