@@ -20,10 +20,12 @@ open scoped BigOperators
 namespace V7.Stage4AboveTwoFinalTrial
 
 /-- The terminal-plateau weight sequence used by the above-two trial. -/
+@[expose]
 noncomputable def weight (p eta : ℝ) (n : ℕ) : ScalarSeq :=
   Stage4AboveTwoDualPhase.plateauU p eta n
 
 /-- The increments of the above-two trial's weight sequence. -/
+@[expose]
 noncomputable def increment (p eta : ℝ) (n : ℕ) : ScalarSeq :=
   Stage4AboveTwoDualPhase.plateauDw p eta n
 

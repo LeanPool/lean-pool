@@ -54,6 +54,7 @@ structure ResistingPrefixState (d : ℕ) where
 def initialState (d : ℕ) : ResistingPrefixState d := ⟨[], [], []⟩
 
 /-- A previously selected coordinate, with zero as the out-of-range default. -/
+@[expose]
 def priorSigma (P : PrefixParameters p d T) (state : ResistingPrefixState d)
     (s : ℕ) : Fin d :=
   state.sigmaPrefix.getD s (firstCoordinate P)
@@ -79,6 +80,7 @@ noncomputable def stepQuery (P : PrefixParameters p d T) (t : ℕ)
   resistingSign ((stepQuery P t state) (stepSigma P t state))
 
 /-- An indexed signed-coordinate affine piece after appending the current resisting choice. -/
+@[expose]
 noncomputable def piece (P : PrefixParameters p d T) (state : ResistingPrefixState d)
     (t i : ℕ) (x : Point d) : ℝ :=
   let sigmas := state.sigmaPrefix ++ [stepSigma P t state]
@@ -86,6 +88,7 @@ noncomputable def piece (P : PrefixParameters p d T) (state : ResistingPrefixSta
   xis.getD i 0 * x (sigmas.getD i (firstCoordinate P)) - (i : ℝ) * P.delta
 
 /-- The maximum of the affine pieces selected through the current step. -/
+@[expose]
 noncomputable def stepG (P : PrefixParameters p d T) (t : ℕ)
     (state : ResistingPrefixState d) (x : Point d) : ℝ :=
   let values := (Finset.range (t + 1)).image (fun i => piece P state t i x)
@@ -94,11 +97,13 @@ noncomputable def stepG (P : PrefixParameters p d T) (t : ℕ)
     exact ⟨0, Finset.mem_range.mpr (Nat.zero_lt_succ t), rfl⟩)
 
 /-- The resisting maximum combined with a radial term to ensure coercivity. -/
+@[expose]
 noncomputable def stepH (P : PrefixParameters p d T) (t : ℕ)
     (state : ResistingPrefixState d) (x : Point d) : ℝ :=
   max (stepG P t state x / 2) (lpNorm p x - 3 / 2)
 
 /-- The scaled smooth oracle associated with the current regularized resisting objective. -/
+@[expose]
 noncomputable def stepOracle (P : PrefixParameters p d T) (t : ℕ)
     (state : ResistingPrefixState d) : PairOracle d :=
   { value := fun x => P.beta * (P.kernel.smooth P.chi (stepH P t state)).value x
@@ -133,10 +138,12 @@ noncomputable def prefixState (P : PrefixParameters p d T) :
   stepXi P t (prefixState P t)
 
 /-- The resisting affine maximum at prefix length `t + 1`. -/
+@[expose]
 noncomputable def partialG (P : PrefixParameters p d T) (t : ℕ) : Point d → ℝ :=
   stepG P t (prefixState P t)
 
 /-- The regularized nonsmooth objective at prefix length `t + 1`. -/
+@[expose]
 noncomputable def partialH (P : PrefixParameters p d T) (t : ℕ) : Point d → ℝ :=
   stepH P t (prefixState P t)
 
