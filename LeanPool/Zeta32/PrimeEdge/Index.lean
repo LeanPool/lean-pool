@@ -39,6 +39,7 @@ def colBase (p b : ℕ) : ℤ := if b = 0 then -5 else if b + 5 ≤ p then -3 el
 abbrev Idx (p : ℕ) := (b : Fin p) × Fin (mult p b.val)
 
 /-- Greedy level `π_a = c_b + 2 i`. -/
+@[expose]
 def level (p : ℕ) (a : Idx p) : ℤ := colBase p a.1.val + 2 * (a.2.val : ℤ)
 
 /-- Row/column weight `ρ_a = π_a / 2`. -/

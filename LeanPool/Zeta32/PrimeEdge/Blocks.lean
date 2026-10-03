@@ -29,10 +29,13 @@ def zeroMoment : Fin 7 → ℚ :=
   ![1/1296, 7/648, 1565/648, -15575/648, 101261/648, -545255/648, 2649929/648]
 
 /-- The three-by-three Hankel block formed from the low moments. -/
+@[expose]
 def lowBlockMatrix : Matrix (Fin 3) (Fin 3) ℚ := fun i k => lowMoment ⟨i.val + k.val, by omega⟩
 /-- The two-by-two Hankel block formed from the high moments. -/
+@[expose]
 def highBlockMatrix : Matrix (Fin 2) (Fin 2) ℚ := fun i k => highMoment ⟨i.val + k.val, by omega⟩
 /-- The four-by-four Hankel block formed from the zero moments. -/
+@[expose]
 def M₀ : Matrix (Fin 4) (Fin 4) ℚ := fun i k => zeroMoment ⟨i.val + k.val, by omega⟩
 
 theorem M_L_eq : lowBlockMatrix = !![1565/648, -15575/648, 101261/648;

@@ -74,6 +74,7 @@ theorem braid_top_intertwine {C D : Type*} [Category C]
 variable {R : ℕ} (f : EdgeRankParameter R)
 
 /-- The skein-side adjacent braiding at position `i`. -/
+@[expose]
 noncomputable def skeinPowBraid :
     (n : ℕ) → (i : ℕ) → i + 2 ≤ n →
       ((SkeinObj.mk n : SkeinObj f) ⟶ SkeinObj.mk n)

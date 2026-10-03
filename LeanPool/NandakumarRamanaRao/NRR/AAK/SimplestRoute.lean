@@ -86,6 +86,7 @@ open Geometry
 
 /-- The exact analytic/topological theorem needed after the finite cellular and affine stages.
 Its output is a locally constant orbit obstruction on the complement of the projected zero set. -/
+@[expose]
 def SimplestRouteObstructionTheorem : Prop :=
   ∀ (p : Nat) (hp : Nat.Prime p)
     (K : Geometry.ConvexBody Plane) (A : Real) (hA : 0 < A)
