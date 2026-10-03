@@ -27,6 +27,7 @@ open scoped TensorProduct
 variable {k ℓ : ℕ}
 
 /-- The even coordinate basis vector at a colouring. -/
+@[expose]
 noncomputable def evenBasisVec {n : ℕ}
     (c : {c : MixedColouring k ℓ n // c.IsEven}) :
     (superPow (stdSuperPair k ℓ) n).even :=
