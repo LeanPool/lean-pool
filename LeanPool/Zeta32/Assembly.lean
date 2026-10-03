@@ -30,14 +30,17 @@ theorem P_eq_zero_of_Q_eq_zero (r : ℚ) (n : ℕ) (hQ : Q r n = 0) : P r n = 0 
 /-- The two growth nodes of the proof notes, §9, as hypotheses: arithmetic (`A = 283/50`, only
 needed when `Q r n ≠ 0`)
 and analytic (`F = −6`). -/
+@[expose]
 def ArithNode (r : ℚ) : Prop :=
   ∀ ε > 0, ∀ᶠ n : ℕ in atTop, Q r n ≠ 0 → Real.log (dtilde r n) ≤ (283/50 + ε) * (n:ℝ)^2
 
 /-- Eventual exponential bound for the scaled polynomial evaluated at the target zeta value. -/
+@[expose]
 def AnalyticNode (r : ℚ) : Prop :=
   ∀ ε > 0, ∀ᶠ n : ℕ in atTop, |Polynomial.aeval (Cr r) (Qtilde r n)| ≤ Real.exp ((-6 + ε) * (n:ℝ)^2)
 
 /-- Nonzero constant reduction of the primitive polynomial at admissible prime edges. -/
+@[expose]
 def PrimeEdgeNode (r : ℚ) : Prop :=
   ∀ (p : ℕ) [Fact p.Prime], 7 ≤ p → p ∉ PrimeEdge.exceptional → ¬ p ∣ r.den →
     ∃ c : ZMod p, c ≠ 0 ∧ (P r (p-1)).map (Int.castRingHom (ZMod p)) = Polynomial.C c

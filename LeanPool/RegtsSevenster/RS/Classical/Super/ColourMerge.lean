@@ -27,11 +27,13 @@ open CategoryTheory MonoidalCategory
 /-! ### First and second halves of a colouring -/
 
 /-- The first half of a colouring of a sum. -/
+@[expose]
 def MixedColouring.firstHalf {k ℓ a b : ℕ}
     (c : MixedColouring k ℓ (a + b)) : MixedColouring k ℓ a :=
   fun i => c (Fin.castAdd b i)
 
 /-- The second half of a colouring of a sum. -/
+@[expose]
 def MixedColouring.secondHalf {k ℓ a b : ℕ}
     (c : MixedColouring k ℓ (a + b)) : MixedColouring k ℓ b :=
   fun j => c (Fin.natAdd a j)
