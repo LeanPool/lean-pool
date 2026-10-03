@@ -251,6 +251,7 @@ public import LeanPool.SpherePacking.Imports
 public import LeanPool.Stafford38.Imports
 public import LeanPool.StallingsFolding.Imports
 public import LeanPool.SteinhausThreeGap.Imports
+public import LeanPool.StructuralGraphClasses.Imports
 public import LeanPool.SumDifferenceExponent.Imports
 public import LeanPool.SumsThreeSquares.Imports
 public import LeanPool.Sundogcert.Imports
