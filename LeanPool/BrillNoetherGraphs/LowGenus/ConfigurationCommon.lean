@@ -176,10 +176,12 @@ Both are handled by moving weight *within* a class, which leaves every class
 sum -- hence the divisor -- unchanged. -/
 
 /-- The integer indicator assigning one chip at the source vertex and zero elsewhere. -/
+@[expose]
 def indicatorWeight (vertex source : Fin n) : ℤ :=
   if vertex = source then 1 else 0
 
 /-- The degree-zero weight that removes one chip at the source and adds one at the target. -/
+@[expose]
 def transferWeight (source target vertex : Fin n) : ℤ :=
   indicatorWeight vertex target - indicatorWeight vertex source
 

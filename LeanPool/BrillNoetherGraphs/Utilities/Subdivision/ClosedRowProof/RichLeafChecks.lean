@@ -214,6 +214,7 @@ def w5MultResidual (w : RichWitness) (core : ExplicitPotential.Core n p)
       (if (core.head e).val == v then w.headContribution a e.val else 0)) 0
 
 /-- W5 residual at one core vertex for one anchor. -/
+@[expose]
 def w5Residual (w : RichWitness) (core : ExplicitPotential.Core n p) (a v : ℕ) : ℤ :=
   w.w5MultResidual core 1 a v
 

@@ -92,11 +92,13 @@ structure BananaLedger extends ChainLedger where
     toChainLedger.head L hu hv = 1
 
 /-- The slot read from its core tail. -/
+@[expose]
 def fwd : BananaLedger where
   toChainLedger := ConfigurationThreeChain.forward
   head_eq_one_of_full h1 h2 := headContribution_eq_one_of_full h1 h2
 
 /-- The same slot read from its core head. -/
+@[expose]
 def rev : BananaLedger where
   toChainLedger := ConfigurationThreeChain.reverse
   head_eq_one_of_full h1 h2 := tailContribution_eq_one_of_full h1 h2

@@ -87,6 +87,7 @@ def slotHeadTerm (potential : Fin 8 → ℤ) (mark : Fin 12 → ℕ)
     (d.length e - 1)
 
 /-- The per-vertex endpoint ledger of a marked script. -/
+@[expose]
 def positiveEndpointContribution (potential : Fin 8 → ℤ) (mark : Fin 12 → ℕ)
     (markValue : Fin 12 → ℤ) (v : Fin 8) : ℤ :=
   ∑ e : Fin 12,

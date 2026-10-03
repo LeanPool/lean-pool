@@ -55,6 +55,7 @@ open ConfigurationCommon
 open ConfigurationThree
 
 /-- The indicator of "the chip at `v` sits in the contracted class of `r`". -/
+@[expose]
 def chipInd (d : DegSpec 8 12) (r v : Fin 8) : ℤ :=
   if d.rep v = d.rep r then 1 else 0
 

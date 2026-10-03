@@ -131,6 +131,7 @@ theorem bounds {al be ga p q r hc h0 ht hv : ℕ}
 
 /-- The target delivers its own chip: its arm goes full, or one of the two
 triangle slots at it goes full. -/
+@[expose]
 def Delivers (al p q hc h0 ht : ℕ) : Prop :=
   ht = al ∨ (0 < p ∧ ht = hc + p) ∨ (0 < q ∧ ht = h0 + q)
 
