@@ -72,7 +72,7 @@ decomposition of each matrix entry
 `NilpotentMatTrace.lean`).  The outer Karoubi is still needed:
 the additive envelope of an idempotent-complete category need not
 be idempotent-complete. -/
-@[reducible] def Env := Karoubi (Mat_ (Karoubi (SkeinObj f)))
+@[expose, reducible] def Env := Karoubi (Mat_ (Karoubi (SkeinObj f)))
 
 /-! ### Semisimplicity of envelope endomorphism algebras -/
 

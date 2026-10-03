@@ -23,6 +23,7 @@ namespace RS
 
 /-- A multi-star: `n` pendant edges with a vertex assignment and
 a free-circle count. -/
+@[expose]
 def multiStar {V : Type} [Fintype V] {n : ℕ}
     (assign : Fin n → V) (c : ℕ) : Fragment (Fin n) where
   Flag := Fin n ⊕ Fin n

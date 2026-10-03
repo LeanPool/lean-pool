@@ -69,6 +69,7 @@ theorem star_pairing (W : ClosedFragment) :
 
 /-- The single-vertex star with `d` legs: one internal vertex,
 `d` pendant edges. -/
+@[expose]
 def vertexStar (d : ℕ) : Fragment (Fin d) where
   Flag := Fin d ⊕ Fin d
   Vertex := Unit
