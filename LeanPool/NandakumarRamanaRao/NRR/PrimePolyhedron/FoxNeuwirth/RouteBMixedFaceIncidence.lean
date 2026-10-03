@@ -77,6 +77,7 @@ noncomputable instance mixedFaceCaseDecidableEq : DecidableEq (MixedFaceCase hp 
   Classical.decEq _
 
 /-- The bad set attached to one distinguished positive movable vertex. -/
+@[expose]
 def mixedFaceBadSet
     (base : Assignment hp C) (κ : MixedFaceCase hp C) :
     Set (MovableParameterSpace hp C) :=

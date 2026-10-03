@@ -218,6 +218,7 @@ theorem negativeReference_zeroCount_zero
   simp
 
 /-- Explicit regular approximation of the positive reference lift. -/
+@[expose]
 noncomputable def positiveReferenceApproximation
     (hp : Nat.Prime p) :
     RegularApproximation hp
@@ -245,6 +246,7 @@ noncomputable def positiveReferenceApproximation
     exact (ne_of_gt (hpos ⟨0, hp.pos⟩)) hi
 
 /-- Explicit regular approximation of the negative reference lift. -/
+@[expose]
 noncomputable def negativeReferenceApproximation
     (hp : Nat.Prime p) :
     RegularApproximation hp

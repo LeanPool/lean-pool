@@ -668,6 +668,7 @@ noncomputable def Result.upperStableApproximation
 
 /-- An assignment is relative to two endpoint approximations when its horizontal samples agree
 exactly with their sampled maps. -/
+@[expose]
 def BoundaryFixed
     (hp : Nat.Prime p) (N L : Nat)
     {F₀ F₁ : ZeroFreeMap hp}

@@ -87,6 +87,7 @@ theorem slabFacetMap_translate
   rfl
 
 /-- Embed one base-prism facet occurrence into slab `r`. -/
+@[expose]
 def stackOccurrence
     (hp : Nat.Prime p) (N m : Nat) (hm : 0 < m)
     (r : Fin m) (o : (BaseCells hp N).FacetOccurrence) :
@@ -576,6 +577,7 @@ theorem upperBoundaryCoefficient_zero_of_not_upper
   rw [hindicator, mul_zero]
 
 /-- The complete thin-time stack as a pointwise Fox--Neuwirth relative affine collar. -/
+@[expose]
 noncomputable def collar
     (hp : Nat.Prime p) (N m : Nat) (hm : 0 < m) :
     FoxNeuwirthRelativeAffineCollar hp N N N m where
