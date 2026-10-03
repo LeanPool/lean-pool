@@ -21,6 +21,7 @@ namespace Zeta32.Analytic.Contour
 noncomputable section
 
 /-- The logistic functional. -/
+@[expose]
 def Erho (φ : ℂ → ℂ) : ℂ := ∫ y : ℝ, φ (tpt y) * (rho y : ℂ)
 
 lemma norm_tpt_le (y : ℝ) : ‖tpt y‖ ≤ 1 + |y| := by
@@ -95,6 +96,7 @@ theorem Erho_pow (m : ℕ) : Erho (fun t => t ^ m) = (bernoulli' m : ℂ) := by
 /-! ### Poles -/
 
 /-- `(t + j)^{-(p+1)}`. -/
+@[expose]
 def invPow (j p : ℕ) (t : ℂ) : ℂ := ((t + j) ^ (p + 1))⁻¹
 
 lemma add_nat_re (t : ℂ) (j : ℕ) : (t + j).re = t.re + j := by simp

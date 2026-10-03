@@ -32,6 +32,7 @@ namespace Zeta32.PrimeEdge
 noncomputable section
 
 /-- Near poles on the disc `b`. -/
+@[expose]
 def nearSet (n p b : ℕ) : Finset ℕ :=
   ((Finset.Icc 1 (5 * n)).filter (fun j => j % p = b)).image (fun j => (j - b) / p)
 
@@ -39,13 +40,16 @@ def nearSet (n p b : ℕ) : Finset ℕ :=
 def nearProd (n p b : ℕ) : ℚ[X] := ∏ m ∈ nearSet n p b, (X + C (m : ℚ))
 
 /-- Transformed denominator factors outside the residue class selected by `b`. -/
+@[expose]
 def farProd (n p b : ℕ) : ℚ[X] :=
   ∏ j ∈ (Finset.Icc 1 (5 * n)).filter (fun j => j % p ≠ b), (C ((j : ℚ) - b) + C (p : ℚ) * X)
 
 /-- `(t · A)(p u - b)` as a polynomial in `u`. -/
+@[expose]
 def dissectNum (p b : ℕ) (A : ℚ[X]) : ℚ[X] := (X * A).comp (C (p : ℚ) * X - C (b : ℚ))
 
 /-- Truncation order of the far-pole expansions. -/
+@[expose]
 def truncOrder (n : ℕ) : ℕ := 10 * n + 2
 
 /-- `dissectNum / farProd`, expanded in `ℚ[[u]]` and truncated to degree `< truncOrder n`. -/

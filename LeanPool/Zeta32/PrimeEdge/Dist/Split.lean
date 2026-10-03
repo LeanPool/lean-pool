@@ -21,10 +21,12 @@ open Zeta32.Arith.Local
 noncomputable section
 
 /-- Near poles of `S` on the disc `b`. -/
+@[expose]
 def nearS (p b : ℕ) (S : Finset ℕ) : Finset ℕ :=
   (S.filter (fun j => j % p = b)).image (fun j => (j - b) / p)
 
 /-- Far factors of `S` on the disc `b`. -/
+@[expose]
 def farS (p b : ℕ) (S : Finset ℕ) : ℚ[X] :=
   ∏ j ∈ S.filter (fun j => j % p ≠ b), (C ((j : ℚ) - b) + C (p : ℚ) * X)
 

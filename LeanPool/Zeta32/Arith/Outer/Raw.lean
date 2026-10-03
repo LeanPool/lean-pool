@@ -25,6 +25,7 @@ namespace Zeta32.Outer
 noncomputable section
 
 /-- Row scaling: `p` on the last `r_p` rows. -/
+@[expose]
 def rowScale (n p : ℕ) (a : ℕ) : ℚ := if a + 2*n + 2 ≤ p then 1 else p
 
 section Val

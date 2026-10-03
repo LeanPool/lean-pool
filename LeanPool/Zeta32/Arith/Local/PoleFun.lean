@@ -140,6 +140,7 @@ end Adm
 /-! ### Residues -/
 
 /-- Poles in the class `c`. -/
+@[expose]
 def plc (p : ℕ) (Pl : Finset ℤ) (c : ZMod p) : Finset ℤ := Pl.filter fun r : ℤ => (r : ZMod p) = c
 
 /-- Poles in the same class differ by exactly one power of `p`. -/

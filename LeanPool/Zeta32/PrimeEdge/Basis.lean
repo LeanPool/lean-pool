@@ -23,11 +23,13 @@ open Zeta32.Arith.Local
 variable {p : ℕ}
 
 /-- The CRT product basis vector `φ_a`. -/
+@[expose]
 noncomputable def crtBasis (p : ℕ) (a : Idx p) : ℚ[X] :=
   (X + C (a.1.val : ℚ)) ^ a.2.val *
     ∏ b ∈ (Finset.range p).erase a.1.val, (X + C (b : ℚ)) ^ mult p b
 
 /-- The entry numerator `φ_a φ_c D_n^4`, `n = p - 1`. -/
+@[expose]
 noncomputable def Aent (p : ℕ) (a c : Idx p) : ℚ[X] :=
   crtBasis p a * crtBasis p c * Zeta32.D (p - 1) ^ 4
 
@@ -36,6 +38,7 @@ noncomputable def idxEquiv (hp : 5 ≤ p) : Fin (3 * (p - 1)) ≃ Idx p :=
   (Fintype.equivFinOfCardEq (card_Idx hp)).symm
 
 /-- Determinant of the change of basis from monomials to the CRT basis. -/
+@[expose]
 noncomputable def basisDet (p : ℕ) (hp : 5 ≤ p) : ℚ :=
   (coeffMat fun i => crtBasis p (idxEquiv hp i)).det
 

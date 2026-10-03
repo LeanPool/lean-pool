@@ -196,10 +196,13 @@ theorem P_eq_dtilde_Qtilde (r : ℚ) (n : ℕ) :
       field_simp [scale_pos n |>.ne']
 
 /-- Real zeta value at three, expressed as a convergent series. -/
+@[expose]
 def zeta3val : ℝ := ∑' k : ℕ, 1 / ((k : ℝ) + 1)^3
 /-- Real zeta value at two, expressed as a convergent series. -/
+@[expose]
 def zeta2val : ℝ := ∑' k : ℕ, 1 / ((k : ℝ) + 1)^2
 /-- The real target value `ζ(3) - r * ζ(2)`. -/
+@[expose]
 def Cr (r : ℚ) : ℝ := zeta3val - (r : ℝ) * zeta2val
 
 end

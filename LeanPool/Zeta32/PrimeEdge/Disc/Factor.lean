@@ -25,6 +25,7 @@ open Zeta32.Arith.Local
 variable {p : ℕ}
 
 /-- The CRT basis vector without its own-class factor. -/
+@[expose]
 noncomputable def crt0 (p b : ℕ) : ℚ[X] :=
   ∏ b' ∈ (Finset.range p).erase b, (X + C (b' : ℚ)) ^ mult p b'
 

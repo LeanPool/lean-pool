@@ -25,6 +25,7 @@ open Zeta32.Arith.Local
 noncomputable section
 
 /-- `∏_{m ∈ M} (X + m)`. -/
+@[expose]
 def mprod (M : Finset ℕ) : ℚ[X] := ∏ m ∈ M, (X + C (m : ℚ))
 
 lemma mprod_monic (M : Finset ℕ) : (mprod M).Monic :=

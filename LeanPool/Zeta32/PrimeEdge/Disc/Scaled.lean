@@ -149,6 +149,7 @@ end ScaledPS
 /-! ### The disc factorization predicate -/
 
 /-- `F(p u - d) = p^E u^E R(u)`, `R` scaled with unit constant term. -/
+@[expose]
 def Good (p d : ℕ) (F : ℚ[X]) (E : ℕ) : Prop :=
   ∃ R : ℚ[X], F.comp (C (p : ℚ) * X - C (d : ℚ)) = C ((p : ℚ) ^ E) * X ^ E * R ∧
     Scaled p R ∧ IsUnitV p (R.coeff 0)
