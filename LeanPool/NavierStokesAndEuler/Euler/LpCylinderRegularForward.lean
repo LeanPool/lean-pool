@@ -67,8 +67,8 @@ theorem weightedSolution_map (g : C(Icc (0 : ℝ) T, ℝ)) (hg : ∀ t, 0 < g t)
     intro t
     exact (map_smul L (g t) (f t)).symm
   have hn (p : C(Icc (0 : ℝ) T,E)) :
-      normalize g hg (L.compLeftContinuous ℝ (Icc (0 : ℝ) T) p) =
-        L.compLeftContinuous ℝ (Icc (0 : ℝ) T) (normalize g hg p) := by
+      EulerContinuousTimeWeight.normalize g hg (L.compLeftContinuous ℝ (Icc (0 : ℝ) T) p) =
+        L.compLeftContinuous ℝ (Icc (0 : ℝ) T) (EulerContinuousTimeWeight.normalize g hg p) := by
     apply ContinuousMap.ext
     intro t
     exact (map_smul L ((g t)⁻¹) (p t)).symm

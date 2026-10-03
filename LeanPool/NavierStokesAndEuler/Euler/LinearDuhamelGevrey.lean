@@ -157,9 +157,9 @@ theorem weightedSolution_contDiff {n : ℕ∞ω} (hB : ContDiff ℝ n B)
     change ContDiff ℝ n ((weight (E := E) g) ∘ f)
     exact (weight (E := E) g).contDiff.comp hf
   have hs := solution_contDiff T hT B U (fun x => weight (E := E) g (f x)) a₀ hB hw ha₀
-  change ContDiff ℝ n ((normalize (E := E) g hg) ∘
+  change ContDiff ℝ n ((EulerContinuousTimeWeight.normalize (E := E) g hg) ∘
     (fun x => (U x).solution (weight (E := E) g (f x)) (a₀ x)))
-  exact (normalize (E := E) g hg).contDiff.comp hs
+  exact (EulerContinuousTimeWeight.normalize (E := E) g hg).contDiff.comp hs
 
 /-- The exact differentiated ODE yields a triangular estimate in the fixed
 profile norm, with the same homogeneous and Green operators at every order. -/

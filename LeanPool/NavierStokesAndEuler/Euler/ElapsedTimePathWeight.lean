@@ -64,35 +64,37 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
 include hg0 hm in
 theorem normalize_match : u ⟨τ,hτ0,le_rfl⟩ =
-    normalize (E := E) g hg v ⟨0,le_rfl,sub_nonneg.mpr hτS⟩ := by
+    EulerContinuousTimeWeight.normalize (E := E) g hg v ⟨0,le_rfl,sub_nonneg.mpr hτS⟩ := by
   simp only [EulerContinuousTimeWeight.normalize_apply,hg0,inv_one,one_smul]
   exact hm
 
 /-- The normalized join is exactly the join of the normalized forward path. -/
 theorem normalize_join :
-    normalize (E := E) (profile S τ hτ0 hτS g hg0) (profile_pos S τ hτ0 hτS g hg0 hg)
+    EulerContinuousTimeWeight.normalize (E := E) (profile S τ hτ0 hτS g hg0)
+        (profile_pos S τ hτ0 hτS g hg0 hg)
       (join S τ hτ0 hτS u v hm) =
-        join S τ hτ0 hτS u (normalize (E := E) g hg v)
+        join S τ hτ0 hτS u (EulerContinuousTimeWeight.normalize (E := E) g hg v)
           (normalize_match S τ hτ0 hτS g hg0 hg u v hm) := by
   apply ContinuousMap.ext
   intro t
   by_cases ht : (t : ℝ) ≤ τ
   · have hp := profile_left S τ hτ0 hτS g hg0 ⟨t,t.property.1,ht⟩
     have hu := join_left S τ hτ0 hτS u v hm ⟨t,t.property.1,ht⟩
-    have hv := join_left S τ hτ0 hτS u (normalize (E := E) g hg v)
+    have hv := join_left S τ hτ0 hτS u (EulerContinuousTimeWeight.normalize (E := E) g hg v)
       (normalize_match S τ hτ0 hτS g hg0 hg u v hm) ⟨t,t.property.1,ht⟩
     rw [EulerContinuousTimeWeight.normalize_apply,hp,hu,hv,inv_one,one_smul]
   · have hr : τ ≤ (t : ℝ) := (not_le.mp ht).le
     have hp := profile_right S τ hτ0 hτS g hg0 ⟨t,hr,t.property.2⟩
     have hu := join_right S τ hτ0 hτS u v hm ⟨t,hr,t.property.2⟩
-    have hv := join_right S τ hτ0 hτS u (normalize (E := E) g hg v)
+    have hv := join_right S τ hτ0 hτS u (EulerContinuousTimeWeight.normalize (E := E) g hg v)
       (normalize_match S τ hτ0 hτS g hg0 hg u v hm) ⟨t,hr,t.property.2⟩
     rw [EulerContinuousTimeWeight.normalize_apply, hp, hu, hv,
         EulerContinuousTimeWeight.normalize_apply]
 
 /-- Restriction of a normalized full path to the history is unchanged. -/
 theorem normalize_initial (p : C(Icc (0 : ℝ) S, E)) :
-    (normalize (E := E) (profile S τ hτ0 hτS g hg0) (profile_pos S τ hτ0 hτS g hg0 hg) p).comp
+    (EulerContinuousTimeWeight.normalize (E := E) (profile S τ hτ0 hτS g hg0)
+        (profile_pos S τ hτ0 hτS g hg0 hg) p).comp
       (initialInclusion S τ hτS) = p.comp (initialInclusion S τ hτS) := by
   apply ContinuousMap.ext
   intro t
@@ -101,8 +103,10 @@ theorem normalize_initial (p : C(Icc (0 : ℝ) S, E)) :
 
 /-- Restriction of the normalized full path to the future uses exactly g. -/
 theorem normalize_tail (p : C(Icc (0 : ℝ) S, E)) :
-    (normalize (E := E) (profile S τ hτ0 hτS g hg0) (profile_pos S τ hτ0 hτS g hg0 hg) p).comp
-      (tailInclusion S τ hτ0) = normalize (E := E) g hg (p.comp (tailInclusion S τ hτ0)) := by
+    (EulerContinuousTimeWeight.normalize (E := E) (profile S τ hτ0 hτS g hg0)
+        (profile_pos S τ hτ0 hτS g hg0 hg) p).comp
+      (tailInclusion S τ hτ0) =
+          EulerContinuousTimeWeight.normalize (E := E) g hg (p.comp (tailInclusion S τ hτ0)) := by
   apply ContinuousMap.ext
   intro t
   have hright := profile_right S τ hτ0 hτS g hg0
@@ -130,13 +134,15 @@ theorem normalize_orbit_contDiff {K : Type*} [TopologicalSpace K] [CompactSpace 
     (g : C(K, ℝ)) (hg : ∀ t, 0 < g t) (p : C(K, CylinderL2 P V))
     (hp : ContDiff ℝ ∞ (fun a => pathTranslate (K := K) (V := V) P a p)) :
     ContDiff ℝ ∞ (fun a => pathTranslate (K := K) (V := V) P a
-      (normalize (E := CylinderL2 P V) g hg p)) := by
+      (EulerContinuousTimeWeight.normalize (E := CylinderL2 P V) g hg p)) := by
   have he : (fun a => pathTranslate (K := K) (V := V) P a
-      (normalize (E := CylinderL2 P V) g hg p)) =
-      fun a => normalize (E := CylinderL2 P V) g hg (pathTranslate (K := K) (V := V) P a p) :=
+      (EulerContinuousTimeWeight.normalize (E := CylinderL2 P V) g hg p)) =
+      fun a =>
+          EulerContinuousTimeWeight.normalize (E := CylinderL2 P V) g hg
+          (pathTranslate (K := K) (V := V) P a p) :=
     funext (fun a => translate_normalize P g hg a p)
   rw [he]
-  exact (normalize (E := CylinderL2 P V) g hg).contDiff.comp hp
+  exact (EulerContinuousTimeWeight.normalize (E := CylinderL2 P V) g hg).contDiff.comp hp
 
 /-- Profile normalization at the join preserves the exact external radius. -/
 theorem normalized_join_block (S τ : ℝ) (hτ0 : 0 ≤ τ) (hτS : τ ≤ S)
@@ -148,13 +154,14 @@ theorem normalized_join_block (S τ : ℝ) (hτ0 : 0 ≤ τ) (hτS : τ ≤ S)
     (hv : ContDiff ℝ ∞ (fun a => pathTranslate (K := Icc (0 : ℝ) (S - τ)) (V := V) P a v))
     {ι : Type*} [Fintype ι] (directions : ι → LiftTangent) (q n : ℕ) (a : LiftTangent) :
     block directions q (fun b => pathTranslate (K := Icc (0 : ℝ) S) (V := V) P b
-      (normalize (E := CylinderL2 P V) (profile S τ hτ0 hτS g hg0)
+      (EulerContinuousTimeWeight.normalize (E := CylinderL2 P V) (profile S τ hτ0 hτS g hg0)
         (profile_pos S τ hτ0 hτS g hg0 hg) (join S τ hτ0 hτS u v hm))) n a ≤
       block directions q (fun b => pathTranslate (K := Icc (0 : ℝ) τ) (V := V) P b u) n a +
         block directions q (fun b => pathTranslate (K := Icc (0 : ℝ) (S - τ)) (V := V) P b
-          (normalize (E := CylinderL2 P V) g hg v)) n a := by
+          (EulerContinuousTimeWeight.normalize (E := CylinderL2 P V) g hg v)) n a := by
   rw [normalize_join]
-  exact join_orbit_block P S τ hτ0 hτS u (normalize (E := CylinderL2 P V) g hg v)
+  exact join_orbit_block P S τ hτ0 hτS u
+      (EulerContinuousTimeWeight.normalize (E := CylinderL2 P V) g hg v)
     (normalize_match S τ hτ0 hτS g hg0 hg u v hm) hu
     (normalize_orbit_contDiff P g hg v hv) directions q n a
 

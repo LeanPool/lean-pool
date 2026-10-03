@@ -65,7 +65,8 @@ def normalized (hT : 0 ≤ T) (g : C(Icc (0 : ℝ) T, ℝ)) (hg : ∀ t, 0 < g t
     (G.weighted hT g).path = weight (E := LiftL2 P) g G.path := rfl
 
 @[simp] theorem normalized_path (hT : 0 ≤ T) (g : C(Icc (0 : ℝ) T, ℝ)) (hg : ∀ t, 0 < g t) :
-    (G.normalized hT g hg).path = normalize (E := LiftL2 P) g hg G.path := rfl
+    (G.normalized hT g hg).path =
+        EulerContinuousTimeWeight.normalize (E := LiftL2 P) g hg G.path := rfl
 
 theorem derivative_weighted_path (hT : 0 ≤ T) (g : C(Icc (0 : ℝ) T, ℝ)) (i : Fin 4) :
     ((G.weighted hT g).derivative i).path = ((G.derivative i).weighted hT g).path :=

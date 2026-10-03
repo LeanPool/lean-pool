@@ -80,7 +80,8 @@ theorem scalar_grade_bound_pred (C : ℝ) (W : GradeGuards (P := P) L N C)
     (c : ℝ) (hc : 0 < c) (d e : ℕ) (hroom : d + 3 ≤ e)
     (hforce : ∀ n, block standardDirection 6
       (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
-        (normalize (E := CylinderL2 P Space) L.g L.positive (HistoryData.forcingPath G))) n 0 ≤
+        (EulerContinuousTimeWeight.normalize (E := CylinderL2 P Space) L.g L.positive
+            (HistoryData.forcingPath G))) n 0 ≤
           (c * C) * majorant L.R d n)
     (hinitial : ∀ n, block standardDirection 6
       (fun a => translate (V := U) P a (I.value : CylinderL2 P U)) n 0 ≤
@@ -104,7 +105,8 @@ theorem angular_grade_bound (C : ℝ) (W : GradeGuards (P := P) L N C)
     (c : ℝ) (hc : 0 < c) (d e : ℕ) (hroom : d + 3 ≤ e)
     (hforce : ∀ n, block standardDirection 6
       (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
-        (normalize (E := CylinderL2 P Space) L.g L.positive (HistoryData.forcingPath G))) n 0 ≤
+        (EulerContinuousTimeWeight.normalize (E := CylinderL2 P Space) L.g L.positive
+            (HistoryData.forcingPath G))) n 0 ≤
           (c * C) * majorant L.R d n)
     (hinitial : ∀ n, block standardDirection 6
       (fun a => translate (V := U) P a (I.value : CylinderL2 P U)) n 0 ≤
@@ -123,7 +125,8 @@ theorem scalar_grade_bound (C : ℝ) (W : GradeGuards (P := P) L N C)
     (c : ℝ) (hc : 0 < c) (d e : ℕ) (hroom : d + 3 ≤ e)
     (hforce : ∀ n, block standardDirection 6
       (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
-        (normalize (E := CylinderL2 P Space) L.g L.positive (HistoryData.forcingPath G))) n 0 ≤
+        (EulerContinuousTimeWeight.normalize (E := CylinderL2 P Space) L.g L.positive
+            (HistoryData.forcingPath G))) n 0 ≤
           (c * C) * majorant L.R d n)
     (hinitial : ∀ n, block standardDirection 6
       (fun a => translate (V := U) P a (I.value : CylinderL2 P U)) n 0 ≤
@@ -170,7 +173,8 @@ theorem primary_scalar_and_angular_grade_bound
   let G := EulerPacketForwardPrimary.forcing (P := P) D
   have hf (n : ℕ) : block standardDirection 6
       (fun a => pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
-        (normalize (E := CylinderL2 P Space) L.g L.positive (HistoryData.forcingPath G))) n 0 ≤
+        (EulerContinuousTimeWeight.normalize (E := CylinderL2 P Space) L.g L.positive
+            (HistoryData.forcingPath G))) n 0 ≤
           (α*C)*majorant L.R 0 n := by
     have hh : HistoryData.forcingPath G = 0 := by
       unfold HistoryData.forcingPath

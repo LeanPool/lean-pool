@@ -38,11 +38,11 @@ variable (U : Evolution T hT B) (g : C(Icc (0 : ℝ) T, ℝ)) (hg : ∀ t, 0 < g
 
 /-- The actual homogeneous data map, normalized by the profile. -/
 def weightedInitial : E →L[ℝ] C(Icc (0 : ℝ) T,E) :=
-  (normalize g hg).comp U.initialOperator
+  (EulerContinuousTimeWeight.normalize g hg).comp U.initialOperator
 
 /-- The actual Green map for forcing measured in the source profile. -/
 def weightedForcing : C(Icc (0 : ℝ) T,E) →L[ℝ] C(Icc (0 : ℝ) T,E) :=
-  (normalize g hg).comp (U.forcingOperator.comp (weight g))
+  (EulerContinuousTimeWeight.normalize g hg).comp (U.forcingOperator.comp (weight g))
 
 omit [CompleteSpace E] in
 /-- The initial-data norm uses just the relative propagator constant. -/
@@ -73,7 +73,7 @@ theorem weightedForcing_norm (hg₀ : g ⟨0, le_rfl, hT⟩ = 1) (C : ℝ) (hC :
 
 /-- The normalized constructed path, with normalized forcing as input. -/
 def weightedSolution (f : C(Icc (0 : ℝ) T, E)) (a₀ : E) : C(Icc (0 : ℝ) T,E) :=
-  normalize (E := E) g hg (U.solution (weight (E := E) g f) a₀)
+  EulerContinuousTimeWeight.normalize (E := E) g hg (U.solution (weight (E := E) g f) a₀)
 
 /-- The normalized solution is still exactly the two actual data maps. -/
 theorem weightedSolution_eq (f : C(Icc (0 : ℝ) T, E)) (a₀ : E) :
@@ -106,7 +106,8 @@ theorem weighted_frozen_solution (f : C(Icc (0 : ℝ) T, E)) (a₀ : E) :
   have he := U.frozen_solution V (weight (E := E) g f) a₀
   rw [weightedForcing, ContinuousLinearMap.comp_apply, ContinuousLinearMap.comp_apply,
     (weight (E := E) g).map_add, weight_multiplier, weightedSolution, weight_normalize]
-  exact (congrArg (normalize (E := E) g hg) he).trans ((normalize (E := E) g hg).map_add _ _)
+  exact (congrArg (EulerContinuousTimeWeight.normalize (E := E) g hg) he).trans
+    ((EulerContinuousTimeWeight.normalize (E := E) g hg).map_add _ _)
 
 end Evolution
 

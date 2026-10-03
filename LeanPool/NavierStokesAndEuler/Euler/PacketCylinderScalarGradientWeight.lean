@@ -68,8 +68,8 @@ theorem scalarGradientPath_weight (g : C(K, ℝ)) :
 
 include hp in
 theorem scalarGradientPath_normalize (g : C(K, ℝ)) (hg : ∀ t, 0 < g t) :
-    scalarGradientPath (normalize (K := K) (E := CylinderL2 P ℝ) g hg p) =
-      normalize (K := K) (E := LiftL2 P) g hg (scalarGradientPath p) :=
+    scalarGradientPath (EulerContinuousTimeWeight.normalize (K := K) (E := CylinderL2 P ℝ) g hg p) =
+      EulerContinuousTimeWeight.normalize (K := K) (E := LiftL2 P) g hg (scalarGradientPath p) :=
   scalarGradientPath_weight p hp (reciprocal g hg)
 
 include hp in
@@ -77,15 +77,17 @@ theorem scalarGradientPath_normalized_majorant (g : C(K, ℝ)) (hg : ∀ t, 0 < 
     (q : ℕ) (R A : ℝ) (d : ℕ)
     (hb : ∀ n, block standardDirection q
       (fun a : LiftTangent => pathTranslate (K := K) (V := ℝ) P a
-        (normalize (K := K) (E := CylinderL2 P ℝ) g hg p)) n 0 ≤
+        (EulerContinuousTimeWeight.normalize (K := K) (E := CylinderL2 P ℝ) g hg p)) n 0 ≤
         A*majorant R d n)
     (n : ℕ) :
     block standardDirection q
       (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a
-        (normalize (K := K) (E := CylinderL2 P Vector3) g hg (scalarGradientPath p))) n 0 ≤
+        (EulerContinuousTimeWeight.normalize (K := K) (E := CylinderL2 P Vector3) g hg
+            (scalarGradientPath p))) n 0 ≤
         (3*A)*majorant R (d+1) n := by
   rw [← scalarGradientPath_normalize p hp g hg]
-  exact scalarGradientPath_majorant (normalize (K := K) (E := CylinderL2 P ℝ) g hg p)
+  exact scalarGradientPath_majorant
+      (EulerContinuousTimeWeight.normalize (K := K) (E := CylinderL2 P ℝ) g hg p)
     (scalarWeightedOrbit p hp (reciprocal g hg)) q R A d hb n
 
 end EulerPacketCylinderField

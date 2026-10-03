@@ -100,15 +100,16 @@ theorem potentialPath_weight :
     (pathPrimitive_weight P g p)).trans (fullMultiplier_weight P g _ B)
 
 theorem potentialPath_normalize (hg : ∀ t, 0 < g t) :
-    potentialPath P B (normalize (E := LiftL2 P) g hg p) =
-      normalize (E := LiftL2 P) g hg (potentialPath P B p) :=
+    potentialPath P B (EulerContinuousTimeWeight.normalize (E := LiftL2 P) g hg p) =
+      EulerContinuousTimeWeight.normalize (E := LiftL2 P) g hg (potentialPath P B p) :=
   potentialPath_weight P (reciprocal g hg) p B
 
 /-- The bound applies to the literal quotient Q/g, without any extrema or derivative of g. -/
 theorem normalized_potentialPath_block_bound (hg : ∀ t, 0 < g t)
     (hB : ContDiff ℝ ∞ (translateCoefficientPath (K := K) (V := Space →L[ℝ] Space) B))
     (hp : ContDiff ℝ ∞ (fun a : LiftTangent =>
-      pathTranslate (K := K) (V := Vector3) P a (normalize g hg p : C(K, CylinderL2 P _))))
+      pathTranslate (K := K) (V := Vector3) P a
+          (EulerContinuousTimeWeight.normalize g hg p : C(K, CylinderL2 P _))))
     {ι : Type*} [Fintype ι] (directions : ι → LiftTangent) (hd : ∀ i, ‖directions i‖ ≤ 1)
     (q : ℕ) (Rc C R D : ℝ) (hRc : 0 ≤ Rc) (hC : 0 ≤ C) (hD : 0 ≤ D)
     (hR : sobolevCoefficientRadius ι Rc ≤ R)
@@ -116,13 +117,15 @@ theorem normalized_potentialPath_block_bound (hg : ∀ t, 0 < g t)
       (translateCoefficientPath (K := K) (V := Space →L[ℝ] Space) B) a‖ ≤ C*majorant Rc 0 n)
     (d : ℕ) (hbp : ∀ n, block directions q
       (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a
-        (normalize g hg p : C(K, CylinderL2 P _))) n 0 ≤ D*majorant R d n)
+        (EulerContinuousTimeWeight.normalize g hg p : C(K, CylinderL2 P _))) n 0 ≤ D*majorant R d n)
     (n : ℕ) :
     block directions q (fun a : LiftTangent => pathTranslate (K := K) (V := Vector3) P a
-        (normalize g hg (potentialPath P B p) : C(K, CylinderL2 P _))) n 0 ≤
+        (EulerContinuousTimeWeight.normalize g hg
+            (potentialPath P B p) : C(K, CylinderL2 P _))) n 0 ≤
       (3*sobolevCoefficientAmplitude ι q Rc C*(P*D))*majorant R d n := by
   rw [← potentialPath_normalize P g p B hg]
-  exact potentialPath_block_bound P B hB (normalize (E := LiftL2 P) g hg p) hp directions hd q
+  exact potentialPath_block_bound P B hB
+      (EulerContinuousTimeWeight.normalize (E := LiftL2 P) g hg p) hp directions hd q
     Rc C R D hRc hC hD hR hbB d hbp n
 
 end EulerCylinderPotential

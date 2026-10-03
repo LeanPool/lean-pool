@@ -85,7 +85,8 @@ theorem unweighted_solution_contDiff
     exact one_smul ℝ (f t)
   have he : (constructedEvolution period S hS T hT B).weightedSolution g hg f a₀ =
       (constructedEvolution period S hS T hT B).solution f a₀ := by
-    refine (congrArg (fun w => normalize (K := Icc (0 : ℝ) T) (E := Supported period V S hS) g hg
+    refine (congrArg (fun w =>
+        EulerContinuousTimeWeight.normalize (K := Icc (0 : ℝ) T) (E := Supported period V S hS) g hg
       ((constructedEvolution period S hS T hT B).solution w a₀)) hw).trans ?_
     apply ContinuousMap.ext
     intro t

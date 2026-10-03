@@ -45,7 +45,8 @@ theorem primary_profile_budget (O : Operators) (hcorrector : O.curlCorrector = D
   let G := EulerPacketForwardPrimary.forcing (P := P) D
   have hf (n : ℕ) : block standardDirection 6 (fun a =>
       pathTranslate (K := Icc (0 : ℝ) D.T) (V := Space) P a
-        (normalize L.g L.positive (HistoryData.forcingPath G))) n 0 ≤ (α*C)*majorant L.R 0 n := by
+        (EulerContinuousTimeWeight.normalize L.g L.positive (HistoryData.forcingPath G))) n 0 ≤
+            (α*C)*majorant L.R 0 n := by
     have hh : HistoryData.forcingPath G = 0 := by
       unfold HistoryData.forcingPath
       rw [EulerPacketForwardPrimary.forcing_path_zero]
