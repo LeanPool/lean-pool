@@ -24,6 +24,7 @@ variable {p : ℕ}
 def Scaled (p : ℕ) (f : ℚ[X]) : Prop := ∀ e, VG p (f.coeff e) e
 
 /-- Coefficientwise valuation lower bound for a power series scaled by its degree. -/
+@[expose]
 def ScaledPS (p : ℕ) (f : PowerSeries ℚ) : Prop := ∀ e, VG p (PowerSeries.coeff e f) e
 
 /-- A nonzero rational of valuation `0`. -/

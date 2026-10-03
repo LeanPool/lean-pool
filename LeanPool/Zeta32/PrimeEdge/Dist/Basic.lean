@@ -73,6 +73,7 @@ lemma dist_locValue_sum {ι : Type*} (s : ℚ) (t : Finset ι) (S : ι → ℚ[X
   exact locValue_sum_linear s t S M
 
 /-- Residue of `S / mprod M` at `-m`. -/
+@[expose]
 def resN (S : ℚ[X]) (M : Finset ℕ) (m : ℕ) : ℚ :=
   S.eval (-(m : ℚ)) / ∏ m' ∈ M.erase m, ((m' : ℚ) - m)
 

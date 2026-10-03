@@ -97,6 +97,7 @@ lemma ps_mul_inv {F : ℚ[X]} (h : F.coeff 0 ≠ 0) : (F : PowerSeries ℚ) * (F
   PowerSeries.mul_inv_cancel _ (by rwa [Polynomial.constantCoeff_coe])
 
 /-- The truncated local functional on a general numerator `F`. -/
+@[expose]
 def dl (r : ℚ) (n p b : ℕ) (F : ℚ[X]) : ℚ :=
   (p : ℚ) ^ (-((nearSet n p b).card : ℤ)) *
     locValue (r * p) (PowerSeries.trunc (truncOrder n)

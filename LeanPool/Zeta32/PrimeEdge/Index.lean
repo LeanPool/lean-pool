@@ -31,6 +31,7 @@ namespace Zeta32.PrimeEdge
 def mult (p b : ℕ) : ℕ := if b = 0 then 4 else if b + 5 ≤ p then 3 else 2
 
 /-- Greedy column base `c_b = s N_b - C_b + [b = 0] - 2` for `n = p - 1`. -/
+@[expose]
 def colBase (p b : ℕ) : ℤ := if b = 0 then -5 else if b + 5 ≤ p then -3 else -2
 
 /-- Basis index: a class `b` and an order `i < m_b`. -/
@@ -43,6 +44,7 @@ def level (p : ℕ) (a : Idx p) : ℤ := colBase p a.1.val + 2 * (a.2.val : ℤ)
 def rho (p : ℕ) (a : Idx p) : ℚ := (level p a : ℚ) / 2
 
 /-- Multiplicity of `(t + d)` in the basis vector `a`. -/
+@[expose]
 def kmul (p : ℕ) (a : Idx p) (d : ℕ) : ℕ := if a.1.val = d then a.2.val else mult p d
 
 /-- Lemma 4 exponent of the entry `(a, c)` on the disc `d`. -/

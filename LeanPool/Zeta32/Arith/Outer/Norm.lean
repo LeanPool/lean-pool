@@ -35,6 +35,7 @@ lemma padicValRat_prod_range (p : ℕ) [Fact p.Prime] (f : ℕ → ℚ) (hf : �
       padicValRat.mul (Finset.prod_ne_zero_iff.mpr fun i _ => hf i) (hf N), ih]
 
 /-- Prime-valuation normalization term for the scaled determinant. -/
+@[expose]
 def normVal (p n : ℕ) : ℚ :=
   3 * (n:ℚ) * (((5*n)/p : ℕ) - 4 * ((n/p : ℕ) : ℚ)) -
     2 * ∑ i ∈ Finset.range (3*n), ((i/p : ℕ) : ℚ)

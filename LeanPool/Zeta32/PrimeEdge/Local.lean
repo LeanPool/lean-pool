@@ -53,6 +53,7 @@ def dissectNum (p b : ℕ) (A : ℚ[X]) : ℚ[X] := (X * A).comp (C (p : ℚ) * 
 def truncOrder (n : ℕ) : ℕ := 10 * n + 2
 
 /-- `dissectNum / farProd`, expanded in `ℚ[[u]]` and truncated to degree `< truncOrder n`. -/
+@[expose]
 def seriesPart (n p b : ℕ) (A : ℚ[X]) : ℚ[X] :=
   PowerSeries.trunc (truncOrder n)
     ((dissectNum p b A : PowerSeries ℚ) * (farProd n p b : PowerSeries ℚ)⁻¹)
