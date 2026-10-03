@@ -133,6 +133,7 @@ theorem contextHolds_of_formsHold_toAffineForm {m : ℕ}
 /-! ### The coordinate forms -/
 
 /-- The form `x_e`, as a `List ℤ`: entry `e + 1` is `1` and the rest are `0`. -/
+@[expose]
 def coordForm (e : ℕ) : Form := List.replicate (e + 1) 0 ++ [1]
 
 private theorem dot_replicate_append (e : ℕ) (x : List ℤ) :
@@ -287,11 +288,14 @@ variable (w : RichWitness)
 
 /-- Look up the rich firing plan for an anchor, returning the empty default plan for an absent
 entry. -/
+@[expose]
 def plan (a : ℕ) : RichAnchorPlan := w.anchors.getD a RichAnchorPlan.dflt
 /-- Read an anchor plan’s potential at a core vertex, using the zero affine form for a missing
 entry. -/
+@[expose]
 def pot (a v : ℕ) : Form := (w.plan a).potential.getD v []
 /-- Read the ordered block list for an anchor and slot, using an empty list when it is absent. -/
+@[expose]
 def blockList (a e : ℕ) : List Block := (w.plan a).blocks.getD e []
 /-- Read a specified interpolation block, using the default block with inconsistent slope bounds
 for a missing entry. -/
@@ -299,6 +303,7 @@ for a missing entry. -/
 def block (a e i : ℕ) : Block := (w.blockList a e).getD i Block.dflt
 /-- Read an anchor’s receipts for a slot and block, falling back to the default rich block
 certificate. -/
+@[expose]
 def blockReceipt (a e i : ℕ) : RichBlockCert :=
   ((w.plan a).blockCert.getD e []).getD i RichBlockCert.dflt
 /-- Read the strict separation receipt for a run of named points, indexed by anchor, slot, and
@@ -324,15 +329,19 @@ namespace Witness
 variable (w : Witness)
 
 /-- The plan of anchor `a`. -/
+@[expose]
 def plan (a : ℕ) : AnchorPlan := w.anchors.getD a AnchorPlan.dflt
 
 /-- The potential of anchor `a` at core vertex `v`. -/
+@[expose]
 def pot (a v : ℕ) : Form := (w.plan a).potential.getD v []
 
 /-- The block list of anchor `a` on slot `e`. -/
+@[expose]
 def blockList (a e : ℕ) : List Block := (w.plan a).blocks.getD e []
 
 /-- The first (and, once `leafChecks` accepts, only) block of slot `e`. -/
+@[expose]
 def block (a e : ℕ) : Block := (w.blockList a e).getD 0 Block.dflt
 
 end Witness
@@ -408,6 +417,7 @@ this node; `degree` is the goal's degree.
 
 Restrictions, both fail-closed and both deliberate: no chips, and exactly one
 block per slot.  See the module docstring. -/
+@[expose]
 def Witness.leafChecks (w : Witness) (m : ℕ) (core : ExplicitPotential.Core n p)
     (Γ : Context) (degree : ℤ) : Bool :=
   -- the row itself: a loopless, connected core
@@ -641,6 +651,7 @@ and leaves exactly the row obligation of §3: *for every* `ℓ : Fin p → ℕ` 
 vanishing set is a non-loopy forest, the goal holds. -/
 
 /-- The closed-orthant root context. -/
+@[expose]
 def rootContextClosed (p : ℕ) : Context where
   ge := (List.range p).map coordForm
   eq := []

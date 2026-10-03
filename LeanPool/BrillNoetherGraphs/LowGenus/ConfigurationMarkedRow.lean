@@ -178,11 +178,13 @@ theorem marks_admissible {mark : Fin 12 → ℕ} {h : Fin 8 → ℕ}
 /-! ## Each slot as one or two ordinary arms -/
 
 /-- The tail contribution of a slot, splitting at an interior mark when one is present. -/
+@[expose]
 def slotTailForm (mark : Fin 12 → ℕ) (h : Fin 8 → ℕ) (e : Fin 12) : ℤ :=
   if 0 < mark e then tailContribution (mark e) (h (d.core.tail e)) 0
   else tailContribution (d.length e) (h (d.core.tail e)) (h (d.core.head e))
 
 /-- The head contribution of a slot, using the arm beyond an interior mark when it exists. -/
+@[expose]
 def slotHeadForm (mark : Fin 12 → ℕ) (h : Fin 8 → ℕ) (e : Fin 12) : ℤ :=
   if 0 < mark e then
     (if mark e < d.length e then

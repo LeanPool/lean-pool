@@ -115,9 +115,11 @@ theorem doubleChip_add_tail_nonneg {L h : ℕ} (hh : h ≤ 2 * L) :
 
 /-- The height at the near vertex: two chips' worth of its own arm, clamped by
 the far arm. -/
+@[expose]
 def nearHeight (p q : ℕ) : ℕ := min (2 * q) p
 
 /-- The height at the far vertex, the target. -/
+@[expose]
 def farHeight (p q par : ℕ) : ℕ := min p (nearHeight p q + par)
 
 theorem nearHeight_le_far {p q par : ℕ} :

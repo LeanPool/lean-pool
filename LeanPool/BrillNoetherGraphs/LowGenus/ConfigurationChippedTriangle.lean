@@ -88,6 +88,7 @@ def partnerHeight (al be ga p q r : ℕ) : ℕ :=
 
 /-- The chip `c` lends its partner when the slot between them has collapsed and
 `c` is strictly shallower than the partner's own arm. -/
+@[expose]
 def lend (r hc be : ℕ) : ℤ := if r = 0 ∧ hc < be then 1 else 0
 
 theorem lend_nonneg (r hc be : ℕ) : 0 ≤ lend r hc be := by

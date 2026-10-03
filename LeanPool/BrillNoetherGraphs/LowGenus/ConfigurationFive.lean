@@ -257,6 +257,7 @@ structure SlotLedger where
     0 ≤ positiveChip L + head L h 0
 
 /-- The slot read from its tail. -/
+@[expose]
 def forward : SlotLedger where
   tail := tailContribution
   head := headContribution
@@ -265,6 +266,7 @@ def forward : SlotLedger where
   positiveChip_add_head_nonneg h := positiveChip_add_head_nonneg h
 
 /-- The same slot read from its head. -/
+@[expose]
 def reverse : SlotLedger where
   tail L hu hv := headContribution L hv hu
   head L hu hv := tailContribution L hv hu

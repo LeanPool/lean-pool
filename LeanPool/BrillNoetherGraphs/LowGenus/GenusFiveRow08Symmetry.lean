@@ -93,15 +93,18 @@ def sigma : CoreSymmetry row08Core :=
     (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
 
 /-- AR's first scope: `a ≤ b` and `d ≤ c`. -/
+@[expose]
 def ChamberOne (length : Fin 12 → ℕ) : Prop :=
   length 4 ≤ length 3 ∧ length 7 ≤ length 2
 
 /-- AR's second scope: `b ≤ a` and `c ≤ d`. -/
+@[expose]
 def ChamberTwo (length : Fin 12 → ℕ) : Prop :=
   length 3 ≤ length 4 ∧ length 2 ≤ length 7
 
 /-- AR's third scope: `b ≤ a` and `d ≤ c`. Its `sigma` image gives the
 remaining sign pattern. -/
+@[expose]
 def ChamberThree (length : Fin 12 → ℕ) : Prop :=
   length 3 ≤ length 4 ∧ length 7 ≤ length 2
 

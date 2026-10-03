@@ -107,10 +107,12 @@ def sigma : CoreSymmetry row10Core :=
     (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
 
 /-- Chamber 1: AR's first scope, the apex spoke `a` realizes the minimum. -/
+@[expose]
 def ChamberOne (length : Fin 12 → ℕ) : Prop :=
   length 10 ≤ length 4 ∧ length 10 ≤ length 3
 
 /-- Chamber 2: AR's second scope, the spoke `b` realizes the minimum. -/
+@[expose]
 def ChamberTwo (length : Fin 12 → ℕ) : Prop :=
   length 4 ≤ length 10 ∧ length 4 ≤ length 3
 

@@ -496,6 +496,7 @@ theorem chipInd_nonneg (r v : Fin n) : 0 ≤ chipInd d r v := by
   split_ifs <;> omega
 
 /-- One chip on each of the four displayed vertices. -/
+@[expose]
 def divisor : CFDiv d.graph :=
   fourChipDivisor (d.coreVertex cfg.chipOne) (d.coreVertex cfg.chipTwo)
     (d.coreVertex cfg.chipThree) (d.coreVertex cfg.chipFour)
