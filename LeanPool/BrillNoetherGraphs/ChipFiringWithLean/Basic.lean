@@ -197,6 +197,7 @@ theorem le_set_firing_apply_of_not_mem (G : CFGraph) (D : CFDiv G)
   exact le_add_of_nonneg_right (outdeg_S_nonneg G Sᶜ v)
 
 /-- The principal divisor associated to firing a single vertex. -/
+@[expose]
 def firingVector (G : CFGraph) (v : G.V) : CFDiv G :=
   fun w => if w = v then -vertexDegree G v else numEdges G v w
 

@@ -28,12 +28,14 @@ open Utilities.Certificate.SubdivisionGraph.Spec
 
 /-- A divisor is supported on `A` when every vertex with nonzero coefficient
 belongs to `A`. -/
+@[expose]
 def DivisorSupportedOn {G : CFGraph} (A : Set G.V) (E : CFDiv G) : Prop :=
   ∀ v, E v ≠ 0 → v ∈ A
 
 /-- The literal restricted-rank lower-bound relation from the paper:
 `r_A(D) ≥ k` means that subtracting every effective degree-`k` divisor
 supported on `A` leaves a winnable divisor. -/
+@[expose]
 def restrictedRankGeq (G : CFGraph) (A : Set G.V)
     (D : CFDiv G) (k : ℤ) : Prop :=
   ∀ E : CFDiv G, effective E → CFDiv.degree E = k → DivisorSupportedOn A E →
@@ -42,6 +44,7 @@ def restrictedRankGeq (G : CFGraph) (A : Set G.V)
 /-- A set is rank determining when restricted rank agrees with ordinary rank
 at every integer lower bound, equivalently when `r_A(D) = r(D)` for every
 divisor `D`. -/
+@[expose]
 def RankDetermining (G : CFGraph) (A : Set G.V) : Prop :=
   ∀ (D : CFDiv G) (k : ℤ), restrictedRankGeq G A D k ↔ rankGeq G D k
 

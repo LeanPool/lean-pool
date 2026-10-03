@@ -57,6 +57,7 @@ theorem mem_rankSupport_canonical_sub_markedTwist_iff
 
 /-- The canonical supports indexed by two distinct nonzero residues are
 disjoint. -/
+@[expose]
 def CanonicalMarkedSupportsPairwiseDisjoint (M : TwiceMarked) (k : ℕ) : Prop :=
   ∀ n m : Fin k, n.val ≠ 0 → m.val ≠ 0 → n ≠ m →
     Disjoint

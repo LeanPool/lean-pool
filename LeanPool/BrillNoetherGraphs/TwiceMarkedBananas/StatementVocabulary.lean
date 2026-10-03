@@ -41,12 +41,14 @@ def graph : CFGraph where
 
 /-- The vertex at a path position along a strand, measured from the
 strand's tail. -/
+@[expose]
 def pathVertex (α : Fin (g + 1)) (i : B.PathPosition α) : B.Vertex :=
   if hzero : i.val = 0 then B.coreVertex (B.tail α)
   else if hlast : i.val = B.length α then B.coreVertex (B.head α)
   else B.interiorVertex α ⟨i.val - 1, by have := i.isLt; omega⟩
 
 /-- Interior positions exclude the two shared endpoints. -/
+@[expose]
 def IsInteriorPosition (α : Fin (g + 1)) (i : B.PathPosition α) : Prop :=
   0 < i.val ∧ i.val < B.length α
 
@@ -73,18 +75,22 @@ def strandVertex {g : ℕ} (B : Banana g) (α : Fin (g + 1))
       ⟨B.length α - i.val, by have := i.isLt; omega⟩)
 
 /-- Reflection of a strand coordinate. -/
+@[expose]
 def strandMirror {g : ℕ} (B : Banana g) (α : Fin (g + 1))
     (i : B.PathPosition α) : B.PathPosition α :=
   ⟨B.length α - i.val, by have := i.isLt; omega⟩
 
 /-- The two multivalent vertices. -/
+@[expose]
 def leftEndpoint {g : ℕ} (B : Banana g) : B.graph.V := B.coreVertex 0
 /-- The multivalent banana endpoint corresponding to core pole 1. -/
+@[expose]
 def rightEndpoint {g : ℕ} (B : Banana g) : B.graph.V := B.coreVertex 1
 
 namespace TwoPathCycle
 
 /-- A two-path cycle is the genus-one banana with the prescribed lengths. -/
+@[expose]
 def spec (length : Fin 2 → ℕ) (hLength : ∀ edge, 0 < length edge) :
     Banana 1 where
   tail := fun _ => 0
@@ -111,33 +117,40 @@ structure TwiceMarked where
 abbrev mark (G : CFGraph) (u v : G.V) : TwiceMarked := ⟨G, u, v⟩
 
 /-- The marked second difference of divisor rank. -/
+@[expose]
 noncomputable def rankDelta (M : TwiceMarked) (D : CFDiv M.graph) : ℤ :=
   rank M.graph D - rank M.graph (D - oneChip M.u) -
     rank M.graph (D - oneChip M.v) +
       rank M.graph (D - oneChip M.u - oneChip M.v)
 
 /-- A two-point twist of a divisor. -/
+@[expose]
 def twist (M : TwiceMarked) (D : CFDiv M.graph) (a b : ℤ) : CFDiv M.graph :=
   D + a • oneChip M.u + b • oneChip M.v
 
 /-- Submodularity of every marked twist. -/
+@[expose]
 def Submodular (M : TwiceMarked) (D : CFDiv M.graph) : Prop :=
   ∀ a b : ℤ, 0 ≤ rankDelta M (twist M D a b)
 
 /-- Every divisor is submodular. -/
+@[expose]
 def AllSubmodular (M : TwiceMarked) : Prop :=
   ∀ D : CFDiv M.graph, Submodular M D
 
 /-- A positive multiple killing the marked difference. -/
+@[expose]
 def TorsionWitness (M : TwiceMarked) (k : ℕ) : Prop :=
   0 < k ∧ linearEquiv M.graph
     ((k : ℤ) • (oneChip M.u - oneChip M.v)) 0
 
 /-- The least positive torsion witness. -/
+@[expose]
 def IsTorsionOrder (M : TwiceMarked) (k : ℕ) : Prop :=
   TorsionWitness M k ∧ ∀ m : ℕ, TorsionWitness M m → k ≤ m
 
 /-- Rank-difference characterization of a transmission permutation. -/
+@[expose]
 def IsTransmissionPermutation (M : TwiceMarked) (D : CFDiv M.graph)
     (τ : ℤ → ℤ) : Prop :=
   Function.Bijective τ ∧ ∀ a b : ℤ,
@@ -145,18 +158,22 @@ def IsTransmissionPermutation (M : TwiceMarked) (D : CFDiv M.graph)
       rankDelta M (D + a • oneChip M.u - b • oneChip M.v)
 
 /-- Period-`k` affine permutations. -/
+@[expose]
 def IsKAffine (k : ℕ) (τ : ℤ → ℤ) : Prop :=
   ∀ n : ℤ, τ (n + k) = τ n + k
 
 /-- Fundamental-domain representatives of affine inversions. -/
+@[expose]
 def kInversions (k : ℕ) (τ : ℤ → ℤ) : Set (ℤ × ℤ) :=
   { p | p.1 < p.2 ∧ τ p.1 > τ p.2 ∧ 0 ≤ p.1 ∧ p.1 < k }
 
 /-- Number of affine inversions. -/
+@[expose]
 noncomputable def kInversionCount (k : ℕ) (τ : ℤ → ℤ) : ℕ :=
   (kInversions k τ).ncard
 
 /-- `k`-general transmission. -/
+@[expose]
 def KGeneralTransmission (M : TwiceMarked) (k : ℕ) : Prop :=
   TorsionWitness M k ∧ AllSubmodular M ∧
     ∀ D : CFDiv M.graph, ∃ τ : ℤ → ℤ,
@@ -165,10 +182,12 @@ def KGeneralTransmission (M : TwiceMarked) (k : ℕ) : Prop :=
           kInversionCount k τ ≤ Int.toNat (genus M.graph)
 
 /-- Brill--Noether generality in the nonexistence direction. -/
+@[expose]
 def BrillNoetherGeneral (G : CFGraph) : Prop :=
   ∀ r d : ℤ, 0 ≤ r → BNExists G r d → 0 ≤ bnNumber G r d
 
 /-- The exceptional same-strand position set from Theorem 3.4. -/
+@[expose]
 def thetaExceptionalPositions {g : ℕ} (B : Banana g) (α : Fin (g + 1))
     (i j : B.PathPosition α) : Set (B.PathPosition α) :=
   { q | (q.val : ℤ) ≠ (B.length α : ℤ) - (i.val : ℤ) ∧
@@ -177,6 +196,7 @@ def thetaExceptionalPositions {g : ℕ} (B : Banana g) (α : Fin (g + 1))
       (q.val : ℤ) ≤ (j.val : ℤ) - (i.val : ℤ) + (B.length α : ℤ) }
 
 /-- Even marking on two distinct theta strands, by cross multiplication. -/
+@[expose]
 def EvenlyMarkedTheta (B : Banana 2) (α β : Fin 3)
     (i : B.PathPosition α) (j : B.PathPosition β) : Prop :=
   α ≠ β ∧ 0 < i.val ∧ i.val < B.length α ∧ 0 < j.val ∧ j.val < B.length β ∧
@@ -195,6 +215,7 @@ structure KGeneralChainFactor where
     (mark marked.graph marked.left marked.right) period
 
 /-- Prefix-genus period inequalities. -/
+@[expose]
 def ChainPrefixBudget : ℤ → List KGeneralChainFactor → Prop
   | _, [] => True
   | g, F :: rest =>
@@ -202,10 +223,12 @@ def ChainPrefixBudget : ℤ → List KGeneralChainFactor → Prop
         ChainPrefixBudget (g + genus F.marked.graph) rest
 
 /-- Total genus of a list of chain factors. -/
+@[expose]
 def chainFactorGenus (L : List KGeneralChainFactor) : ℤ :=
   (L.map fun F => genus F.marked.graph).sum
 
 /-- Sharp two-sided torsion budget for a chain. -/
+@[expose]
 def ChainMinBudget (L : List KGeneralChainFactor) : Prop :=
   ∀ (i : ℕ) (hi : i < L.length),
     min (chainFactorGenus (L.take (i + 1)))
@@ -215,20 +238,24 @@ def ChainMinBudget (L : List KGeneralChainFactor) : Prop :=
 /-! ### Weierstrass partitions and the once-marked census -/
 
 /-- Twists at the marked point having rank at least `i`. -/
+@[expose]
 def poleOrderSet (G : CFGraph) (v : G.V) (D : CFDiv G) (i : ℕ) : Set ℤ :=
   {ell | (i : ℤ) ≤ rank G (D + ell • oneChip v)}
 
 /-- Pole order `s_i(D, v)`: the least twist of rank at least `i`. -/
+@[expose]
 noncomputable def poleOrder (G : CFGraph) (v : G.V) (D : CFDiv G)
     (i : ℕ) : ℤ :=
   sInf (poleOrderSet G v D i)
 
 /-- The `i`th Weierstrass part `i + g - deg D - s_i(D, v)`, over `ℤ`. -/
+@[expose]
 noncomputable def weierstrassPartInt (G : CFGraph) (v : G.V) (D : CFDiv G)
     (i : ℕ) : ℤ :=
   (i : ℤ) + genus G - deg D - poleOrder G v D i
 
 /-- The `i`th Weierstrass part as a natural number. -/
+@[expose]
 noncomputable def weierstrassPart (G : CFGraph) (v : G.V) (D : CFDiv G)
     (i : ℕ) : ℕ :=
   (weierstrassPartInt G v D i).toNat
@@ -236,17 +263,20 @@ noncomputable def weierstrassPart (G : CFGraph) (v : G.V) (D : CFDiv G)
 /-- Size `|λ(D, v)|` of the Weierstrass partition: the sum of its parts.  On
 a connected graph only the first `g` parts can be nonzero, so the sum is
 taken over those. -/
+@[expose]
 noncomputable def weierstrassSize {G : CFGraph}
     (_hconn : graphConnected G) (v : G.V) (D : CFDiv G) : ℕ :=
   ∑ i ∈ Finset.range (genus G).toNat, weierstrassPart G v D i
 
 /-- The `i`th part of a Young diagram, extended by zero. -/
+@[expose]
 def onceMarkedPart (lambda : YoungDiagram) (i : ℕ) : ℕ :=
   lambda.rowLens.getD i 0
 
 /-- Membership of a partition in the divisor census of a once-marked graph:
 some divisor has `λ_i(D, v) ≥ λ_i` for every `i`, written as the rank test
 `r(D + (i + g - deg D - λ_i) v) ≥ i`. -/
+@[expose]
 def OnceMarkedCensusContains (G : CFGraph) (v : G.V)
     (lambda : YoungDiagram) : Prop :=
   ∃ D : CFDiv G,
@@ -257,6 +287,7 @@ def OnceMarkedCensusContains (G : CFGraph) (v : G.V)
 
 /-- Once-marked Brill--Noether generality: every partition in the divisor
 census has size at most the genus. -/
+@[expose]
 def OnceMarkedBrillNoetherGeneral (G : CFGraph) (v : G.V) : Prop :=
   ∀ lambda : YoungDiagram,
     OnceMarkedCensusContains G v lambda → (lambda.card : ℤ) ≤ genus G
@@ -264,51 +295,61 @@ def OnceMarkedBrillNoetherGeneral (G : CFGraph) (v : G.V) : Prop :=
 /-! ### Support complexes and rank determining sets -/
 
 /-- Support on which deleting one chip leaves nonnegative rank. -/
+@[expose]
 def rankSupport (G : CFGraph) (D : CFDiv G) : Set G.V :=
   {x | 0 ≤ rank G (D - oneChip x)}
 
 /-- A divisor is supported on `A`. -/
+@[expose]
 def DivisorSupportedOn {G : CFGraph} (A : Set G.V) (E : CFDiv G) : Prop :=
   ∀ x, E x ≠ 0 → x ∈ A
 
 /-- Restricted rank lower bound. -/
+@[expose]
 def restrictedRankGeq (G : CFGraph) (A : Set G.V)
     (D : CFDiv G) (r : ℤ) : Prop :=
   ∀ E : CFDiv G, effective E → deg E = r → DivisorSupportedOn A E →
     winnable G (D - E)
 
 /-- A set tests every divisor-rank lower bound. -/
+@[expose]
 def RankDetermining (G : CFGraph) (A : Set G.V) : Prop :=
   ∀ (D : CFDiv G) (r : ℤ), restrictedRankGeq G A D r ↔ rankGeq G D r
 
 /-! ### Banana normal forms and exceptional families -/
 
 /-- A semibreak divisor has at most one chosen interior chip per strand. -/
+@[expose]
 def semibreakDivisor {g : ℕ} (B : Banana g)
     (chips : ∀ α : Fin (g + 1), Option (Fin (B.length α - 1))) : CFDiv B.graph
   | Sum.inl _ => 0
   | Sum.inr ⟨α, offset⟩ => if chips α = some offset then 1 else 0
 
 /-- Membership in the semibreak family. -/
+@[expose]
 def IsSemibreak {g : ℕ} (B : Banana g) (E : CFDiv B.graph) : Prop :=
   ∃ chips : ∀ α : Fin (g + 1), Option (Fin (B.length α - 1)),
     E = semibreakDivisor B chips
 
 /-- Endpoint/semibreak normal form. -/
+@[expose]
 def bananaNormalForm {g : ℕ} (B : Banana g) (a b : ℤ)
     (E : CFDiv B.graph) : CFDiv B.graph :=
   a • oneChip (leftEndpoint B) + b • oneChip (rightEndpoint B) + E
 
 /-- The endpoint hyperelliptic pencil. -/
+@[expose]
 def endpointPencilDivisor {g : ℕ} (B : Banana g) : CFDiv B.graph :=
   oneChip (leftEndpoint B) + oneChip (rightEndpoint B)
 
 /-- A position at distance at least two from both endpoints. -/
+@[expose]
 def FarFromBananaEndpoints {g : ℕ} (B : Banana g)
     (α : Fin (g + 1)) (i : B.PathPosition α) : Prop :=
   2 ≤ i.val ∧ i.val + 2 ≤ B.length α
 
 /-- Corrected exceptional family for Theorem 1.16. -/
+@[expose]
 def CorrectedBananaSimpleException {g : ℕ} (B : Banana g)
     (α β : Fin (g + 1)) (i : B.PathPosition α) (j : B.PathPosition β) : Prop :=
   (α ≠ β ∧ B.length β = 2 ∧ j.val = 1) ∨
@@ -321,11 +362,13 @@ def CorrectedMidpointException {g : ℕ} (B : Banana g)
     (B.length α = 2 ∨ B.length β = 2)
 
 /-- A vertex lies on a normalized banana strand. -/
+@[expose]
 def VertexOnBananaStrand {g : ℕ} (B : Banana g) (α : Fin (g + 1))
     (x : B.graph.V) : Prop :=
   ∃ i : B.PathPosition α, x = strandVertex B α i
 
 /-- Three vertices lie on one common strand. -/
+@[expose]
 def VerticesOnCommonBananaStrand {g : ℕ} (B : Banana g)
     (x y z : B.graph.V) : Prop :=
   ∃ α : Fin (g + 1),
@@ -335,6 +378,7 @@ def VerticesOnCommonBananaStrand {g : ℕ} (B : Banana g)
 
 /-- The corrected cross-strand exceptional coordinates of Theorem 3.9 for
 two strictly interior marks. -/
+@[expose]
 def NSMForBananaInteriorException {g : ℕ} (B : Banana g)
     (α β : Fin (g + 1)) (i : B.PathPosition α) (j : B.PathPosition β) : Prop :=
   α ≠ β ∧
@@ -344,6 +388,7 @@ def NSMForBananaInteriorException {g : ℕ} (B : Banana g)
       (B.length β = 2 ∧ j.val = 1))
 
 /-- Endpoint-safe exceptional alternatives in corrected Theorem 3.9. -/
+@[expose]
 def NSMForBananaException {g : ℕ} (B : Banana g) (u v : B.graph.V) : Prop :=
     (u = leftEndpoint B ∧ v = rightEndpoint B) ∨
     (u = rightEndpoint B ∧ v = leftEndpoint B) ∨
@@ -358,6 +403,7 @@ def NSMForBananaException {g : ℕ} (B : Banana g) (u v : B.graph.V) : Prop :=
       NSMForBananaInteriorException B α β i j)
 
 /-- Coordinate alternatives for all-submodular theta markings. -/
+@[expose]
 def ThetaAllSubmodularCoordinates
     (B : Banana 2) (α β : Fin 3)
     (i : B.PathPosition α) (j : B.PathPosition β) : Prop :=
@@ -374,12 +420,14 @@ def ThetaAllSubmodularCoordinates
           strandVertex B β j = strandVertex B γ p))
 
 /-- The four exceptional transmission rows in genus two. -/
+@[expose]
 def ThetaTransmissionSubTwoCase
     (B : Banana 2) (u : B.graph.V) (X : CFDiv B.graph) : Prop :=
   linearEquiv B.graph X (2 • oneChip u)
 
 /-- The theta-graph case where `X` is equivalent to a chip at `u` plus a chip at some `w`, and
 the degree-zero differences from `w` to either mark are nonprincipal. -/
+@[expose]
 def ThetaTransmissionSubOneCase
     (B : Banana 2) (u v : B.graph.V) (X : CFDiv B.graph) : Prop :=
   ∃ w : B.graph.V,
@@ -389,6 +437,7 @@ def ThetaTransmissionSubOneCase
 
 /-- The theta-graph case where `X` is equivalent to a chip at `v` plus a chip at `w`, and
 neither marked two-chip divisor with `w` is canonical. -/
+@[expose]
 def ThetaTransmissionAddOneCase
     (B : Banana 2) (u v : B.graph.V) (X : CFDiv B.graph) : Prop :=
   ∃ w : B.graph.V,
@@ -400,12 +449,14 @@ def ThetaTransmissionAddOneCase
 
 /-- The theta-graph case where `X` is equivalent to the canonical divisor shifted by a chip from
 `u` to `v`. -/
+@[expose]
 def ThetaTransmissionAddTwoCase
     (B : Banana 2) (u v : B.graph.V) (X : CFDiv B.graph) : Prop :=
   linearEquiv B.graph X
     (canonicalDivisor B.graph - oneChip u + oneChip v)
 
 /-- Concrete finite-residue nonrecurrence. -/
+@[expose]
 def NonRecurrent (M : TwiceMarked) (k : ℕ) : Prop :=
   ∀ (w : M.graph.V) (n m : Fin k), n.val ≠ 0 → m.val ≠ 0 →
     0 ≤ rank M.graph
@@ -415,6 +466,7 @@ def NonRecurrent (M : TwiceMarked) (k : ℕ) : Prop :=
     n = m
 
 /-- The three coordinate families in the theta branch of Theorem 4.13. -/
+@[expose]
 def ThetaKGeneralCoordinates
     {k : ℕ} (B : Banana 2) (alpha beta : Fin 3)
     (i : B.PathPosition alpha) (j : B.PathPosition beta) : Prop :=
@@ -441,6 +493,7 @@ def ThetaKGeneralCoordinates
 
 /-- The six ordered placements that can have general transmission on a
 rigid wedge of two genus-one factors. -/
+@[expose]
 def WedgeKGeneralPlacement
     (G H : CFGraph) (x : G.V) (y : H.V)
     (u v : (vertexWedge G H x y).V) (k : ℕ) : Prop :=
@@ -464,6 +517,7 @@ def WedgeKGeneralPlacement
       IsTorsionOrder (mark H y p) r ∧ k = r)
 
 /-- The isomorphism-invariant theta-or-wedge classification in genus two. -/
+@[expose]
 def BridgelessGenusTwoKGeneralCharacterization
     (G : CFGraph.{0}) (u v : G.V) (k : ℕ) : Prop :=
   (∃ (B : Banana 2) (φ : CFGraphIso G B.graph)
@@ -482,6 +536,7 @@ def BridgelessGenusTwoKGeneralCharacterization
 
 /-- Pairwise disjointness of the canonical marked supports at the nonzero
 torsion residues. -/
+@[expose]
 def CanonicalMarkedSupportsPairwiseDisjoint (M : TwiceMarked) (k : ℕ) : Prop :=
   ∀ n m : Fin k, n.val ≠ 0 → m.val ≠ 0 → n ≠ m →
     Disjoint
@@ -491,11 +546,13 @@ def CanonicalMarkedSupportsPairwiseDisjoint (M : TwiceMarked) (k : ℕ) : Prop :
         (canonicalDivisor M.graph - (m.val : ℤ) • (oneChip M.u - oneChip M.v)))
 
 /-- Degree-`d` representative at a marked-difference index. -/
+@[expose]
 noncomputable def degreeTwistInt
     (M : TwiceMarked) (D : CFDiv M.graph) (d b : ℤ) : CFDiv M.graph :=
   D + (d - deg D + b) • oneChip M.u - b • oneChip M.v
 
 /-- Effective degree-one torsion residues. -/
+@[expose]
 def effectiveDegreeOneTwistResidues
     (M : TwiceMarked) (D : CFDiv M.graph) (k : ℕ) : Set (Fin k) :=
   {b | 0 ≤ rank M.graph (degreeTwistInt M D 1 b.val)}
@@ -510,10 +567,12 @@ noncomputable def invTauCorrection (M : TwiceMarked) (D : CFDiv M.graph) : ℤ :
     then 1 else 0
 
 /-- Southeast and northwest quadrant index sets. -/
+@[expose]
 def southeastSet (τ : ℤ → ℤ) (m n : ℤ) : Set ℤ := { k : ℤ | n ≤ k ∧ τ k < m }
 
 /-- The northwest quadrant of an integer function at thresholds `(m, n)`: indices below `n`
 whose image is at least `m`. -/
+@[expose]
 def northwestSet (τ : ℤ → ℤ) (m n : ℤ) : Set ℤ := { k : ℤ | k < n ∧ m ≤ τ k }
 
 /-- Set-theoretic inverse of an integer function. -/
@@ -555,6 +614,7 @@ structure MarkedPointSwap (M : TwiceMarked) extends MarkedPointAutomorphism M wh
   map_v : toMarkedPointAutomorphism.iso.vertexEquiv M.v = M.u
 
 /-- Finite rank-drop sum from Section 5. -/
+@[expose]
 noncomputable def sectionFiveRankDropSum
     (M : TwiceMarked) (D : CFDiv M.graph) (k : ℕ) : ℤ :=
   ∑ m : Fin k,
@@ -566,6 +626,7 @@ noncomputable def sectionFiveRankDropSum
           ((m : ℕ) : ℤ) • oneChip M.v))
 
 /-- A transmission permutation with a specified inversion lower bound. -/
+@[expose]
 def HasInversionLowerBound (M : TwiceMarked) (k q : ℕ) : Prop :=
   ∃ D : CFDiv M.graph, ∃ τ : ℤ → ℤ,
     IsTransmissionPermutation M D τ ∧ IsKAffine k τ ∧
