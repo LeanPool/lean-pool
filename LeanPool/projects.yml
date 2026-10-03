@@ -12511,7 +12511,7 @@ projects:
           t at least one, and a rational vector in the unit cube, there is a
           zero-one integer vector whose discrepancy in every row is strictly
           less than t.
-        source_ref: Rational unit-cube integer-making form; not the strongest bound of the cited article.
+        source_ref: Rational unit-cube integer-making form with the stated strict discrepancy bound.
       - declaration: BeckFialaMatrix.exists_rounding_preserving_integral
         informal: >-
           The strict rounding can additionally be chosen to leave every initially
