@@ -98,6 +98,7 @@ public import LeanPool.CoarseGraining.Homogenization.Book.Ch01.Theorems.Potentia
 public import LeanPool.CoarseGraining.Homogenization.Book.Ch01.Theorems.RadiusIteration
 public import LeanPool.CoarseGraining.Homogenization.Book.Ch02
 public import LeanPool.CoarseGraining.Homogenization.Book.Ch02.Block
+public import LeanPool.CoarseGraining.Homogenization.Book.Ch02.BlockEntryBounds
 public import LeanPool.CoarseGraining.Homogenization.Book.Ch02.CoeffRestriction
 public import LeanPool.CoarseGraining.Homogenization.Book.Ch02.Definitions
 public import LeanPool.CoarseGraining.Homogenization.Book.Ch02.Dilation

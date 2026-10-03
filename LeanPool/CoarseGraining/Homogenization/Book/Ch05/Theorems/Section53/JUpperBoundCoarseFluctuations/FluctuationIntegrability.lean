@@ -6,6 +6,7 @@ Authors: Scott Armstrong, Tuomo Kuusi
 module
 
 
+public import LeanPool.CoarseGraining.Homogenization.Book.Ch02.BlockEntryBounds
 public import LeanPool.CoarseGraining.Homogenization.Book.Ch05.Theorems.Section53.JUpperBoundCoarseFluctuations.CoarseAverages
 public import LeanPool.CoarseGraining.Homogenization.Book.Ch05.Theorems.Section52.P4Integrability
 
@@ -63,34 +64,6 @@ private theorem integrable_abs_sq_of_ae_abs_le_nonneg_memLp_two
     rw [abs_of_nonneg (hY_nonneg a)]
   simpa [hleft, hright] using hpow
 
-private theorem blockMatVecMul_sub'
-    {d : ℕ} (A : BlockMat d) (X Y : BlockVec d) :
-    blockMatVecMul A (X - Y) = blockMatVecMul A X - blockMatVecMul A Y := by
-  have hneg : blockMatVecMul A (-Y) = -blockMatVecMul A Y := by
-    simpa using blockMatVecMul_smul A (-1) Y
-  rw [sub_eq_add_neg, blockMatVecMul_add, hneg]
-  rfl
-
-private theorem blockVecDot_sub_left'
-    {d : ℕ} (X Y Z : BlockVec d) :
-    blockVecDot (X - Y) Z = blockVecDot X Z - blockVecDot Y Z := by
-  have hneg : blockVecDot (-Y) Z = -blockVecDot Y Z := by
-    simpa using blockVecDot_smul_left (-1) Y Z
-  rw [sub_eq_add_neg, blockVecDot_add_left, hneg]
-  rfl
-
-private theorem blockBasis_sub_pairing'
-    {d : ℕ} (A : BlockMat d) (α β : BlockCoord d) :
-    blockVecDot (blockBasis α - blockBasis β)
-        (blockMatVecMul A (blockBasis α - blockBasis β)) =
-      blockMatEntry A α α - blockMatEntry A α β -
-        blockMatEntry A β α + blockMatEntry A β β := by
-  rw [blockMatVecMul_sub', blockVecDot_sub_left']
-  rw [blockVecDot_sub_right]
-  rw [blockVecDot_sub_right]
-  rw [blockBasis_pairing, blockBasis_pairing, blockBasis_pairing, blockBasis_pairing]
-  ring
-
 private theorem aemeasurable_blockMatEntry_coarseBlockMatrix_cubeSet
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
     (hP : Ch04.RestrictionLawCarrier P) (Q : TriadicCube d)
@@ -114,79 +87,6 @@ private theorem aemeasurable_blockMatEntry_coarseBlockMatrix_cubeSet
       | inr j =>
           simpa [blockMatEntry] using
             hP.aemeasurable_coarseBlockMatrix_lowerRight_apply_cubeSet Q i j
-
-private theorem blockBasis_add_ne_zero'
-    {d : ℕ} {α β : BlockCoord d} (hαβ : α ≠ β) :
-    blockBasis α + blockBasis β ≠ (0 : BlockVec d) := by
-  intro hzero
-  have hcoord := congrArg (fun X : BlockVec d => toFullBlockVec X α) hzero
-  cases α with
-  | inl i =>
-      cases β with
-      | inl j =>
-          have hij : i ≠ j := by
-            intro h
-            exact hαβ (by simp [h])
-          simp [blockBasis, toFullBlockVec, Pi.single_eq_of_ne hij] at hcoord
-      | inr j =>
-          simp [blockBasis, toFullBlockVec] at hcoord
-  | inr i =>
-      cases β with
-      | inl j =>
-          simp [blockBasis, toFullBlockVec] at hcoord
-      | inr j =>
-          have hij : i ≠ j := by
-            intro h
-            exact hαβ (by simp [h])
-          simp [blockBasis, toFullBlockVec, Pi.single_eq_of_ne hij] at hcoord
-
-private theorem blockBasis_sub_ne_zero'
-    {d : ℕ} {α β : BlockCoord d} (hαβ : α ≠ β) :
-    blockBasis α - blockBasis β ≠ (0 : BlockVec d) := by
-  intro hzero
-  have hcoord := congrArg (fun X : BlockVec d => toFullBlockVec X α) hzero
-  cases α with
-  | inl i =>
-      cases β with
-      | inl j =>
-          have hij : i ≠ j := by
-            intro h
-            exact hαβ (by simp [h])
-          simp [blockBasis, toFullBlockVec, Pi.single_eq_of_ne hij] at hcoord
-      | inr j =>
-          simp [blockBasis, toFullBlockVec] at hcoord
-  | inr i =>
-      cases β with
-      | inl j =>
-          simp [blockBasis, toFullBlockVec] at hcoord
-      | inr j =>
-          have hij : i ≠ j := by
-            intro h
-            exact hαβ (by simp [h])
-          simp [blockBasis, toFullBlockVec, Pi.single_eq_of_ne hij] at hcoord
-
-private theorem abs_cross_blockMatEntry_le_diag_sum_of_blockPosDef'
-    {d : ℕ} {A : BlockMat d} (hSymm : IsSymmetricBlockMat A)
-    (hPos : Ch02.BlockPosDef A) {α β : BlockCoord d} (hαβ : α ≠ β) :
-    |blockMatEntry A α β| ≤
-      (1 / 2 : ℝ) * (blockMatEntry A α α + blockMatEntry A β β) := by
-  have hplus_pos :=
-    hPos (blockBasis α + blockBasis β) (blockBasis_add_ne_zero' hαβ)
-  have hminus_pos :=
-    hPos (blockBasis α - blockBasis β) (blockBasis_sub_ne_zero' hαβ)
-  have hplus :
-      0 <
-        blockMatEntry A α α + blockMatEntry A α β +
-          blockMatEntry A β α + blockMatEntry A β β := by
-    simpa [blockBasis_sum_pairing] using hplus_pos
-  have hminus :
-      0 <
-        blockMatEntry A α α - blockMatEntry A α β -
-          blockMatEntry A β α + blockMatEntry A β β := by
-    simpa [blockBasis_sub_pairing'] using hminus_pos
-  have hsymm : blockMatEntry A β α = blockMatEntry A α β := (hSymm α β).symm
-  rw [abs_le]
-  constructor <;> nlinarith
 
 private theorem blockMatEntry_abs_le_factor_sum_ae
     {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
@@ -269,7 +169,7 @@ private theorem blockMatEntry_abs_le_factor_sum_ae
                   (blockMatEntry (coarseBlockMatrix (cubeSet Q) a.toFun) (Sum.inl i) (Sum.inl i) +
                     blockMatEntry (coarseBlockMatrix (cubeSet Q) a.toFun)
                       (Sum.inr j) (Sum.inr j)) :=
-            abs_cross_blockMatEntry_le_diag_sum_of_blockPosDef' hSymm hPos
+            Ch02.abs_cross_blockMatEntry_le_diag_sum_of_blockPosDef hSymm hPos
               (by intro h; cases h)
           have hUL :
               blockMatEntry (coarseBlockMatrix (cubeSet Q) a.toFun) (Sum.inl i) (Sum.inl i) ≤
@@ -289,7 +189,7 @@ private theorem blockMatEntry_abs_le_factor_sum_ae
                   (blockMatEntry (coarseBlockMatrix (cubeSet Q) a.toFun) (Sum.inr i) (Sum.inr i) +
                     blockMatEntry (coarseBlockMatrix (cubeSet Q) a.toFun)
                       (Sum.inl j) (Sum.inl j)) :=
-            abs_cross_blockMatEntry_le_diag_sum_of_blockPosDef' hSymm hPos
+            Ch02.abs_cross_blockMatEntry_le_diag_sum_of_blockPosDef hSymm hPos
               (by intro h; cases h)
           have hLR :
               blockMatEntry (coarseBlockMatrix (cubeSet Q) a.toFun) (Sum.inr i) (Sum.inr i) ≤

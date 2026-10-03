@@ -6,6 +6,7 @@ Authors: Scott Armstrong, Tuomo Kuusi
 module
 
 
+public import LeanPool.CoarseGraining.Homogenization.Book.Ch05.Theorems.Section52.ScalarAlgebra
 public import LeanPool.CoarseGraining.Homogenization.Book.Ch05.Theorems.Section53.JUpperBoundCoarseFluctuations.PositiveExcessResponseDefect
 
 /-! # Low Scale Tails -/
@@ -43,14 +44,6 @@ private theorem rpow_three_sq (x : ℝ) :
 private theorem inv_sq_eq_inv_sq {x : ℝ} (hx : x ≠ 0) :
     x⁻¹ ^ 2 = (x ^ 2)⁻¹ := by
   field_simp [hx]
-
-private theorem positivePart_split_le (x base : ℝ) :
-    x ≤ base + max (x - base) 0 := by
-  by_cases h : x ≤ base
-  · exact h.trans (le_add_of_nonneg_right (le_max_right _ _))
-  · have hx : base ≤ x := le_of_lt (lt_of_not_ge h)
-    have hmax : max (x - base) 0 = x - base := max_eq_left (sub_nonneg.mpr hx)
-    linarith
 
 private theorem buffered_lowScaleTail_sq (m k : ℕ) {β coefficient Jm : ℝ}
     (hβ_ne : β ≠ 0) (hcoefficient_nonneg : 0 ≤ coefficient) (hJ_nonneg : 0 ≤ Jm) :
@@ -183,9 +176,9 @@ theorem paired_lowScaleTailSquares_special_le_baseline_add_positiveExcess
     exact mul_nonneg (inv_nonneg.mpr (sq_nonneg _))
       (Real.rpow_nonneg (by norm_num : 0 ≤ (3 : ℝ)) _)
   have hlower_split : lowerCoeff ≤ lowerBase + lowerExcess := by
-    simpa [lowerExcess] using positivePart_split_le lowerCoeff lowerBase
+    simpa [lowerExcess] using Section52.real_le_base_add_max_sub_base_zero lowerCoeff lowerBase
   have hupper_split : upperCoeff ≤ upperBase + upperExcess := by
-    simpa [upperExcess] using positivePart_split_le upperCoeff upperBase
+    simpa [upperExcess] using Section52.real_le_base_add_max_sub_base_zero upperCoeff upperBase
   have hgrad_sq :
       (WeakNormsMaximizer.gradientLowScaleTailAtScale
           (m : ℤ) (k : ℤ) s s' p_e q_e a) ^ 2 =

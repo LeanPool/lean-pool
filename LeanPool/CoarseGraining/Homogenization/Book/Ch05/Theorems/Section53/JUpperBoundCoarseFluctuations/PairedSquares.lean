@@ -6,6 +6,7 @@ Authors: Scott Armstrong, Tuomo Kuusi
 module
 
 
+public import LeanPool.CoarseGraining.Homogenization.Book.Ch05.Theorems.Section52.ScalarAlgebra
 public import LeanPool.CoarseGraining.Homogenization.Book.Ch05.Theorems.Section53.JUpperBoundCoarseFluctuations.LowScaleExpectation
 
 /-! # Paired Squares -/
@@ -33,14 +34,6 @@ noncomputable section
 attribute [local irreducible] coarseFluctuationScalarWeightAtScale
   coarseFluctuationTauSumAtScale coarseFluctuationUnitMomentWeightAtScale
   coarseFluctuationResponseMomentAtScale
-
-private theorem positivePart_split_le (x base : ℝ) :
-    x ≤ base + max (x - base) 0 := by
-  by_cases h : x ≤ base
-  · exact h.trans (le_add_of_nonneg_right (le_max_right _ _))
-  · have hx : base ≤ x := le_of_lt (lt_of_not_ge h)
-    have hmax : max (x - base) 0 = x - base := max_eq_left (sub_nonneg.mpr hx)
-    linarith
 
 /-- Pointwise decomposition of the response-defect mismatch-square pair in
 the weak-norm maximizer RHS.  The endpoint ellipticity factors are split into
@@ -149,9 +142,9 @@ theorem paired_mismatchTermSquares_special_le_baseline_add_positiveExcess
     rw [hgap]
     rw [mul_pow, Real.sq_sqrt hupperCoeff_nonneg]
   have hlower_le : lowerCoeff ≤ lowerBase + lowerExcess := by
-    simpa [lowerExcess] using positivePart_split_le lowerCoeff lowerBase
+    simpa [lowerExcess] using Section52.real_le_base_add_max_sub_base_zero lowerCoeff lowerBase
   have hupper_le : upperCoeff ≤ upperBase + upperExcess := by
-    simpa [upperExcess] using positivePart_split_le upperCoeff upperBase
+    simpa [upperExcess] using Section52.real_le_base_add_max_sub_base_zero upperCoeff upperBase
   have hDsq_nonneg : 0 ≤ D ^ 2 := sq_nonneg _
   have hScalarWeight :
       coarseFluctuationScalarWeightAtScale hP hStruct m =
