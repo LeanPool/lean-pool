@@ -111,8 +111,9 @@ lemma pos_aux (x : ℝ × ℝ × ℝ)
       0 < x.2.2 ∧ x.2.2 < 1) :
     0 < (1 - (1 - x.2.1 * x.2.2) * x.1) := by
   simp only [sub_pos]
-  suffices (1 - x.2.1 * x.2.2) * x.1 < x.1 by linarith
-  simp_all
+  exact (mul_lt_mul_of_pos_right
+    (sub_lt_self 1 (mul_pos hx.2.1.1 hx.2.2.1)) hx.1.1).trans_le
+      (by simpa only [one_mul] using hx.1.2.le)
 
 private lemma JJ'_nonneg (x : ℝ × ℝ × ℝ) (hx : x ∈ Set.Ioo 0 1 ×ˢ Set.Ioo 0 1 ×ˢ Set.Ioo 0 1)
     (n : ℕ) :
@@ -121,16 +122,11 @@ private lemma JJ'_nonneg (x : ℝ × ℝ × ℝ) (hx : x ∈ Set.Ioo 0 1 ×ˢ Se
       (1 - (1 - x.2.1 * x.2.2) * x.1) := by
   simp only [Set.mem_prod, Set.mem_Ioo] at hx
   obtain ⟨⟨hx0, hx1⟩, ⟨hy0, hy1⟩, hz0, hz1⟩ := hx
-  apply div_nonneg
-  · apply pow_nonneg
-    apply div_nonneg
-    · apply mul_nonneg _ (by linarith)
-      apply mul_nonneg _ (by linarith)
-      apply mul_nonneg _ (by linarith)
-      apply mul_nonneg _ (by linarith)
-      apply mul_nonneg (by linarith) (by linarith)
-    · linarith [pos_aux x ⟨⟨hx0, hx1⟩, ⟨hy0, hy1⟩, hz0, hz1⟩]
-  · linarith [pos_aux x ⟨⟨hx0, hx1⟩, ⟨hy0, hy1⟩, hz0, hz1⟩]
+  have hden := (pos_aux x ⟨⟨hx0, hx1⟩, ⟨hy0, hy1⟩, hz0, hz1⟩).le
+  have hnum := mul_nonneg
+    (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg hy0.le (sub_pos.mpr hy1).le)
+      hz0.le) (sub_pos.mpr hz1).le) hx0.le) (sub_pos.mpr hx1).le
+  exact div_nonneg (pow_nonneg (div_nonneg hnum hden) n) hden
 
 lemma JJENN_upper (n : ℕ) : JJENN n ≤
     ENNReal.ofReal (2 * (1 / 30) ^ n * ∑' n : ℕ , 1 / ((n : ℝ) + 1) ^ 3) := by
@@ -216,11 +212,12 @@ lemma integrableOn_JJ' (n : ℕ) : MeasureTheory.Integrable (fun (x : ℝ × ℝ
         rw [ENNReal.ofReal_eq_ofReal_iff]
         · congr 3
           · rw [abs_eq_self.2, abs_eq_self.2, abs_eq_self.2, abs_eq_self.2, abs_eq_self.2,
-              abs_eq_self.2] <;> nlinarith
+              abs_eq_self.2] <;>
+              linarith only [hx.1.1, hx.1.2, hx.2.1.1, hx.2.1.2, hx.2.2.1, hx.2.2.2]
           · simp only [abs_eq_self, sub_nonneg]
-            exact (mul_le_of_le_one_left (by linarith) (by nlinarith)).trans (by linarith)
+            exact (sub_pos.mp (pos_aux x hx)).le
           · simp only [abs_eq_self, sub_nonneg]
-            exact (mul_le_of_le_one_left (by linarith) (by nlinarith)).trans (by linarith)
+            exact (sub_pos.mp (pos_aux x hx)).le
         · positivity
         · exact JJ'_nonneg x hx n
       · simp only [hx, ↓reduceIte]
@@ -358,47 +355,14 @@ lemma integrableOn_JJ2 (n : ℕ) : MeasureTheory.Integrable (Function.uncurry fu
                   suffices ineq1 : |y * z * x * ((1 - z) / (1 - (1 - y * z) * x))| ≤ 1 from
                     pow_le_one₀ (abs_nonneg _) ineq1
                   rw [show (1 - (1 - y * z) * x) = 1 - x + y * z * x by ring]
-                  by_cases ineq : 1 - x + y * z * x = 0
-                  · simp_all
-                  · rw [
-                    show y * z * x * ((1 - z) / (1 - x + y * z * x)) = (1-z)/((1-x)/(y*z*x) + 1) by
-                      rw [mul_div, div_eq_div_iff]
-                      · rw [mul_comm _ (1 - z), mul_assoc _ (y * z * x), mul_add,
-                          mul_div_cancel₀]
-                        · ring
-                        · apply mul_ne_zero
-                          · apply mul_ne_zero
-                            · linarith
-                            · linarith
-                          · linarith
-                      · exact ineq
-                      · rw [div_add_one]
-                        · intro r
-                          rw [_root_.div_eq_zero_iff] at r
-                          · refine ineq <| r.resolve_right ?_
-                            apply mul_ne_zero
-                            · apply mul_ne_zero <;> linarith
-                            · linarith
-                        · apply mul_ne_zero
-                          · apply mul_ne_zero <;> linarith
-                          · linarith, abs_div]
-                    trans |1 - z|
-                    · apply div_le_self (abs_nonneg _)
-                      rw [abs_of_nonneg, le_add_iff_nonneg_left]
-                      · apply div_nonneg
-                        · linarith
-                        · apply mul_nonneg
-                          · apply mul_nonneg <;> linarith
-                          · linarith
-                      · apply add_nonneg
-                        · apply div_nonneg
-                          · linarith
-                          · apply mul_nonneg
-                            · apply mul_nonneg <;> linarith
-                            · linarith
-                        · linarith
-                    rw [abs_le]
-                    exact ⟨by linarith, by linarith⟩
+                  have hprod : 0 ≤ y * z * x := mul_nonneg (mul_nonneg hy0.le hz0.le) hx0.le
+                  have hden : 0 < 1 - x + y * z * x :=
+                    add_pos_of_pos_of_nonneg (sub_pos.mpr hx1) hprod
+                  rw [abs_of_nonneg (mul_nonneg hprod
+                    (div_nonneg (sub_pos.mpr hz1).le hden.le)),
+                    ← mul_div_assoc, div_le_one hden]
+                  exact (mul_le_of_le_one_right hprod (sub_le_self 1 hz0.le)).trans
+                    (le_add_of_nonneg_left (sub_pos.mpr hx1).le)
               · simp only [pow_one]
                 exact le_abs_self (1 - (1 - x.2.1 * x.2.2) * x.1)
             · simp only [abs_pos]; linarith [pos_aux x hx]
@@ -1097,16 +1061,9 @@ theorem JJ_upper (n : ℕ) :
       · exact JJENN_upper n
     · rw [ENNReal.toReal_ofReal]
       apply mul_nonneg (by norm_num)
-      linarith [zeta3_pos]
-  · apply MeasureTheory.ae_nonneg_restrict_of_forall_setIntegral_nonneg_inter
-    · rw [MeasureTheory.IntegrableOn]
-      exact integrableOn_JJ' n
-    · rintro s hs -
-      apply MeasureTheory.setIntegral_nonneg (by measurability)
-      intro x hx
-      by_cases h : x ∈ Set.Ioo 0 1 ×ˢ Set.Ioo 0 1 ×ˢ Set.Ioo 0 1
-      · exact JJ'_nonneg x h n
-      · simp_all
+      exact zeta3_pos.le
+  · filter_upwards [MeasureTheory.ae_restrict_mem (by measurability)] with x hx
+    exact JJ'_nonneg x hx n
   · apply AEMeasurable.aestronglyMeasurable
     measurability
 
