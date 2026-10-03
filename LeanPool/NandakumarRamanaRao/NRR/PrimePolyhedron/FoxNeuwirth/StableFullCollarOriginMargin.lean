@@ -72,6 +72,7 @@ structure FineFullCollarData
 /-- Item 4, expressed as the exact construction proposition still required from the endpoint-stack
 geometry.  This is a named target, not an assumed theorem and not a field of the final AAK result.
 -/
+@[expose]
 def FineFullCollarConstructionTheorem : Prop :=
   ∀ {p : Nat} (hp : Nat.Prime p)
     (F₀ F₁ : ZeroFreeMap hp)

@@ -440,6 +440,7 @@ noncomputable def ChartHomotopy.castLevel
   exact J
 
 /-- Canonical common spatial level used by the PL-ended middle homotopy. -/
+@[expose]
 def baseCommonLevel
     {hp : Nat.Prime p} {F0 F1 : ZeroFreeMap hp}
     (A0 : StableRegularApproximation hp F0.map)
