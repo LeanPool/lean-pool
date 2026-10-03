@@ -38,6 +38,7 @@ namespace RS
 /-- **The loop graph** `L`: one vertex, one edge, both of whose
 flags are attached to that vertex.  No boundary labels, and no free
 circles — the loop is an edge, not a circle. -/
+@[expose]
 def loopGraph : ClosedFragment where
   Flag := Bool
   Vertex := Unit

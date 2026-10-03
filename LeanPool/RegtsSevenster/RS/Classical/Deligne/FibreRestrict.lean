@@ -42,7 +42,7 @@ def SplitsOn [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     Nonempty (freeMod R (F.obj X) ≅ freeMod R (L.mix p q))
 
 /-- **The restricted fibre functor is strong monoidal.** -/
-@[implicit_reducible]
+@[expose, implicit_reducible]
 noncomputable def fibreRestrictMonoidal
     [Category.{v} D] [MonoidalCategory D] [SymmetricCategory D]
     [Preadditive D] [MonoidalPreadditive D] [Linear ℂ D]

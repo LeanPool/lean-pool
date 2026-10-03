@@ -112,6 +112,7 @@ theorem blockRep_of (n k : ℕ) (σ : Equiv.Perm (Fin k)) :
 /-! ### The block-diagonal power -/
 
 /-- The End-typed tensor at block arities. -/
+@[expose]
 noncomputable def blockTensorEnd {a b : ℕ}
     (u : skeinEnd f a) (v : skeinEnd f b) :
     skeinEnd f (a + b) :=
@@ -123,6 +124,7 @@ noncomputable def blockTensorEnd {a b : ℕ}
 /-- The block-diagonal tensor power: `k` copies of an `n`-strand
 endomorphism.  The index arithmetic is definitional:
 `n * (k + 1) ≡ n * k + n`. -/
+@[expose]
 noncomputable def blockPow (n : ℕ) (g : skeinEnd f n) :
     (k : ℕ) → skeinEnd f (n * k)
   | 0 => 1

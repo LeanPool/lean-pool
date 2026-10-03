@@ -199,6 +199,7 @@ theorem not_coreFlags_pairing {W : Fragment α}
 
 /-- **The agreement condition**: at a through-edge the state's two
 legs carry one colour. -/
+@[expose]
 def ThroughAgree {W : Fragment α}
     {k ℓ : ℕ} (F : EdgeSubset W)
     (χ : GenBoundaryState k ℓ α)

@@ -305,7 +305,7 @@ theorem isField_gammaEven
 
 /-- The even part of the Γ-algebra of a simple algebra, as a
 field. -/
-@[reducible] noncomputable def gammaEvenField
+@[expose, reducible] noncomputable def gammaEvenField
     [SmallCategory C] [MonoidalCategory C] [SymmetricCategory C] [Abelian C]
     [RigidCategory C] [MonoidalPreadditive C] (R : Ind C) [MonObj R]
     [IsCommMonObj R] [CategoryTheory.Linear ℂ (Ind C)]

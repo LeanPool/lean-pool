@@ -162,6 +162,7 @@ noncomputable def dualLeg {k ℓ : ℕ} :
   | Sum.inr c => Sum.inr (oddPartner ℓ c)
 
 /-- **The dual state**: the dual colour at every leg. -/
+@[expose]
 noncomputable def dualState {k ℓ : ℕ} {α : Type}
     (x : GenBoundaryState k ℓ α) : GenBoundaryState k ℓ α :=
   fun i => dualLeg (x i)
@@ -296,6 +297,7 @@ count.
 -/
 
 /-- One leg's dual-basis weight, as it occurs in `dualWeight`. -/
+@[expose]
 noncomputable def legWeight {k ℓ : ℕ} (b : Bool)
     (v : Fin k ⊕ Fin (2 * ℓ)) : ℂ :=
   match v with
@@ -358,6 +360,7 @@ theorem dualLeg_involutive {k ℓ : ℕ} :
     rw [oddPartner_invol]
 
 /-- **Undoing the dual basis at the legs whose arc leaves.** -/
+@[expose]
 noncomputable def untwistState {k ℓ t : ℕ} (b : Fin t → Bool)
     (x : GenBoundaryState k ℓ (Fin t)) :
     GenBoundaryState k ℓ (Fin t) :=

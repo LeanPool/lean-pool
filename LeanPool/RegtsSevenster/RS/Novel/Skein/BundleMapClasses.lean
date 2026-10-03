@@ -33,6 +33,7 @@ namespace RS
 
 /-- The outgoing label map of a bundle: fix the inputs, apply `e`
 to the outputs. -/
+@[expose]
 def outMapEquiv {n m : ℕ} (e : Fin n ≃ Fin m) :
     Fin (n + n) ≃ Fin (n + m) :=
   finSumFinEquiv.symm.trans

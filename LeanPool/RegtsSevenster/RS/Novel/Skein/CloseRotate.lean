@@ -33,6 +33,7 @@ namespace RS
 
 /-- The boundary transpose: exchange the two sides of an
 `(n,p)`-boundary. -/
+@[expose]
 noncomputable def transposeEquiv (n p : ℕ) :
     Fin (n + p) ≃ Fin (p + n) :=
   (finSumFinEquiv.symm.trans

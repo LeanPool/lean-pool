@@ -84,6 +84,7 @@ labels** — RS21's `M(ω,κ)`.  Partners are the two ends of a trail;
 the direction is the trail's own, read from the orientation where
 the trail has an internal step and from the label order where it is
 a single edge. -/
+@[expose]
 noncomputable def cutMatching [LinearOrder α] {W : Fragment α}
     (F : EdgeSubset W)
     (κ : F.RelTransitionSystem) (o : κ.Orientation) :

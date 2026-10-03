@@ -525,6 +525,7 @@ end EdgeSubset
 
 /-- The paired step without the chord signs: within a block the
 pairing returns, so the two path signs agree and cancel. -/
+@[expose]
 def PairedLedgerUnsigned : Prop :=
   ∀ {α : Type} [LinearOrder α] {W : Fragment α}
     {F : EdgeSubset W} {k ℓ : ℕ} (hM : MixedFunctional k ℓ)

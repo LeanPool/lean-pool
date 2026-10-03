@@ -95,6 +95,7 @@ theorem symmU_assoc (E₁ E₂ E₃ : Finset α) :
 
 open scoped Classical in
 /-- The two-element label set of a label pair. -/
+@[expose]
 noncomputable def pairSet (p : α × α) : Finset α := {p.1, p.2}
 
 /-- Membership in a pair's label set. -/
