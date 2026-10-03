@@ -12617,7 +12617,9 @@ projects:
       Develops rooted clique forests with the running-intersection property, constructs
       them from perfect elimination orders of finite chordal graphs, characterizes
       chordality by their existence, and obtains maximal-clique, separator, and
-      counting results. Extracted as a reusable byproduct of the published Paper IV
+      counting results. Also characterizes chordality under retained-clique gluing
+      of induced pieces, with exact vertex and edge inclusion-exclusion identities.
+      The original library was extracted as a reusable byproduct of the published Paper IV
       formalization of the chordal-graph case of Erdős problem #81; this library
       is not by itself a proof of that paper's partition bound.
     branch: graph theory
@@ -12653,6 +12655,24 @@ projects:
         informal: >-
           The total bag size minus the total parent-child bag intersection size
           equals the number of graph vertices.
+      - declaration: SimpleGraph.CliqueGluing.isChordal_iff
+        informal: >-
+          If two induced pieces cover a finite graph, their overlap is a clique,
+          and no edge joins their exclusive parts, the graph is chordal exactly
+          when both pieces are chordal. Overlap edges are retained.
+        source_ref: >-
+          New Lean Pool extension proved here using the existing Dirac and
+          simplicial-elimination interfaces; not a claim from the frozen paper.
+      - declaration: SimpleGraph.CliqueGluing.card_vertices_add_overlap
+        informal: >-
+          The vertex count of the graph plus the overlap size equals the sum
+          of the vertex counts of the two covering pieces.
+        source_ref: New Lean Pool extension; finite-set inclusion-exclusion.
+      - declaration: SimpleGraph.CliqueGluing.card_edges_add_choose_overlap
+        informal: >-
+          The graph edge count plus the number of pairs in the retained clique
+          overlap equals the sum of the induced pieces' edge counts.
+        source_ref: New Lean Pool extension; induced-edge inclusion-exclusion.
     tags:
       - graph-theory
       - chordal-graphs
