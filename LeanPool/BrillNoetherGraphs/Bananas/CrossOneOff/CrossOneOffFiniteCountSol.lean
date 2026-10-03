@@ -423,6 +423,7 @@ private theorem crossOneOffTriangularPair_mem
 
 /-- The additional adjacent high-to-low inversion over the `i`th complete
 column. -/
+@[expose]
 def crossOneOffAdjacentPair (n : ℕ) (i : ℕ) : ℕ × ℕ :=
   ((i + 1) * n - 1, (i + 1) * n)
 

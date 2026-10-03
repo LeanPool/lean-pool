@@ -310,6 +310,7 @@ def subdivisionDivisor (certificate : ExplicitPotential.CertificateData m n p)
   | Sum.inr _interior => 0
 
 /-- Evaluate one affine core potential at the chosen integral length point. -/
+@[expose]
 def evaluatedPotential (certificate : ExplicitPotential.CertificateData m n p)
     (anchor : Fin n) (point : Fin m → ℤ) (vertex : Fin n) : ℤ :=
   ((certificate.witness anchor).potential vertex).eval point

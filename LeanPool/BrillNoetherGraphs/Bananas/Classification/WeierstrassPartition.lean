@@ -402,6 +402,7 @@ private theorem card_cellsOfRowLens (rows : List ℕ) :
         omega
 
 /-- Definition 1.6: the finite size `|lambda(D,v)|`. -/
+@[expose]
 noncomputable def weierstrassSize {G : CFGraph}
     (hG : _root_.graphConnected G) (v : G.V) (D : CFDiv G) : ℕ :=
   (weierstrassPartition hG v D).card

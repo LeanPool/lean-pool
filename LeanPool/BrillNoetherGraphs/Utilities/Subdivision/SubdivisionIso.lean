@@ -306,6 +306,7 @@ def laplacianEquiv : LaplacianEquiv source.graph target.graph :=
 /-- The same relabeling packaged for the older, transmission-facing graph
 isomorphism API.  It has exactly the same finite multiplicity content as
 `laplacianEquiv`. -/
+@[expose]
 def graphIso : CFGraphIso source.graph target.graph where
   vertexEquiv := vertexEquiv source target relabeling
   map_num_edges := (laplacianEquiv source target relabeling).num_edges_eq

@@ -97,6 +97,7 @@ def SegmentRowClosed (certificate : CertificateData m n p) (edge : Fin p) : Prop
 
 /-- Point-independent validity on the **closed** length orthant.  Identical to
 `Valid` except that the segment row is `SegmentRowClosed`. -/
+@[expose]
 def ValidClosed (certificate : CertificateData m n p) (degree : ℤ) : Prop :=
   (∀ edge : Fin p, certificate.core.tail edge ≠ certificate.core.head edge) ∧
   (∑ vertex : Fin n, certificate.divisor vertex) = degree ∧

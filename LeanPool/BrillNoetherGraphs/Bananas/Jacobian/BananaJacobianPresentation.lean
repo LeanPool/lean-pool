@@ -91,6 +91,7 @@ def bananaPresentedClassHom {g : ℕ} (B : Banana g) :
       exact ha)
 
 /-- The standard coordinate vector `e_alpha`. -/
+@[expose]
 def bananaCoordinateBasis {g : ℕ} (alpha : Fin (g + 1)) :
     Fin (g + 1) → ℤ := fun beta => if beta = alpha then 1 else 0
 
@@ -109,6 +110,7 @@ def bananaStrandLengthRelation {g : ℕ} (B : Banana g)
     (B.length beta : ℤ) • bananaCoordinateBasis beta
 
 /-- The other displayed relation vector, `(1, ..., 1)`. -/
+@[expose]
 def bananaDiagonalRelation {g : ℕ} : Fin (g + 1) → ℤ := fun _ => 1
 
 @[simp] theorem bananaCoordinateDivisorHom_diagonalRelation

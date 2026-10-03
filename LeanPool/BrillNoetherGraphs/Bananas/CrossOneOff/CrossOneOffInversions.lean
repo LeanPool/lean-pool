@@ -25,6 +25,7 @@ open Utilities
 
 /-- Translate the standard pair embedding into a natural interval beginning
 at `lo`. -/
+@[expose]
 noncomputable def shiftedEndpointPairEmbedding (lo length : ℕ) :
     Sym2 (Fin length) → ℤ × ℤ := fun x =>
   let p := endpointPairEmbedding length x

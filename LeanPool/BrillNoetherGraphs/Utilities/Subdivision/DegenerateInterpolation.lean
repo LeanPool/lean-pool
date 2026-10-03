@@ -62,6 +62,7 @@ variable {n p : ℕ} (d : DegSpec n p)
 /-! ## Potentials constant on the contracted classes -/
 
 /-- A core potential that is constant on every contracted class. -/
+@[expose]
 def RepInvariant (potential : Fin n → ℤ) : Prop :=
   ∀ v : Fin n, potential (d.rep v) = potential v
 

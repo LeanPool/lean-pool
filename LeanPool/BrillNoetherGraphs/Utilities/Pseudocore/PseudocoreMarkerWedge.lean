@@ -93,6 +93,7 @@ noncomputable def factor (marker : Fin core.loopCount)
   (cut split spec marker hCore hCompatible).leftGraph
 
 /-- The glue vertex in the base graph where the separated marker factor is attached. -/
+@[expose]
 noncomputable def attachment (marker : Fin core.loopCount)
     (hCore : spec.core = split.splitCore)
     (hCompatible : PseudocoreSplitGlue.Compatible split) :
@@ -100,6 +101,7 @@ noncomputable def attachment (marker : Fin core.loopCount)
   (cut split spec marker hCore hCompatible).rightGlue
 
 /-- The corresponding root vertex in the separated marker factor. -/
+@[expose]
 noncomputable def root (marker : Fin core.loopCount)
     (hCore : spec.core = split.splitCore)
     (hCompatible : PseudocoreSplitGlue.Compatible split) :

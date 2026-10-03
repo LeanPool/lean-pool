@@ -42,6 +42,7 @@ def bananaPositionCoordinateDivisor {g : ℕ} (B : Banana g)
 
 /-- Regard a vector of strand positions as the corresponding nonnegative
 integer coordinate vector. -/
+@[expose]
 def bananaPositionCoordinates {g : ℕ} (B : Banana g)
     (p : ∀ alpha : Fin (g + 1), B.PathPosition alpha) :
     Fin (g + 1) → ℤ :=
