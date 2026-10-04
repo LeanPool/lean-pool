@@ -32,6 +32,7 @@ open AtanasovRanganathan.GenusFiveCubicAtlas
 /-- The finite structural obligation left after the sixteen AR rows: every
 closed face of each of the four cubic bridge cores carries a degree-four
 rank-one pencil. -/
+@[expose]
 def BridgeAtlasClosedCoverage : Prop :=
   ∀ row ∈ bridgeAtlas,
     ClosedSubdivisionDharConstruction row.core (by norm_num)

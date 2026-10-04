@@ -63,6 +63,7 @@ This formulation deliberately does not mention the historical numbering of
 the sixteen cubic pictures.  A finite catalog theorem may discharge these
 quantifiers later, while structural proofs can already handle looped,
 separated, and small-core families directly. -/
+@[expose]
 def GenusFivePseudocorePencils : Prop :=
   ∀ (vertexCount : ℕ)
     (core : Certificate.GenusFourPseudocore.Pseudocore vertexCount)
