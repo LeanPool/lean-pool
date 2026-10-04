@@ -52,8 +52,7 @@ noncomputable def nominalDfInt (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉ A
                   simp only [List.mem_cons, List.not_mem_nil, or_false,
                     Prod.mk.injEq] at h;
                   repeat'
-                    (first
-                      | (rcases h with ⟨rfl, rfl⟩));
+                    ((rcases h with ⟨rfl, rfl⟩));
                     all_goals aesop))) (TAlphaWff.objMem
               (TAlphaVar.there (freshVar_injective ((A).fv) (by decide)) dv_x_y
                 (TAlphaVar.here _ _ _)) (TAlphaVar.here _ _ _)))))

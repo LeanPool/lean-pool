@@ -426,8 +426,7 @@ noncomputable def nominalDfImak (x : Var) (y : Var) (A : Class) (B : Class)
                   simp only [List.mem_cons, List.not_mem_nil, or_false,
                     Prod.mk.injEq] at h;
                   repeat'
-                    (first
-                      | (rcases h with ⟨rfl, rfl⟩));
+                    ((rcases h with ⟨rfl, rfl⟩));
                     all_goals aesop))) (TAlphaWff.classMem (TAlphaClass.cab (TAlphaWff.neg
                   (TAlphaWff.conj (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                       (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
@@ -476,8 +475,7 @@ noncomputable def nominalDfImak (x : Var) (y : Var) (A : Class) (B : Class)
                   simp only [List.mem_cons, List.not_mem_nil, or_false,
                     Prod.mk.injEq] at h;
                   repeat'
-                    (first
-                      | (rcases h with ⟨rfl, rfl⟩));
+                    ((rcases h with ⟨rfl, rfl⟩));
                     all_goals aesop))))))
 
 end NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired

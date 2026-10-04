@@ -52,15 +52,13 @@ noncomputable def nominalDfIf (ph : Wff) (x : Var) (A : Class) (B : Class)
                     simp only [List.mem_cons, List.not_mem_nil, or_false,
                       Prod.mk.injEq] at h;
                     repeat'
-                      (first
-                        | (rcases h with ⟨rfl, rfl⟩));
+                      ((rcases h with ⟨rfl, rfl⟩));
                       all_goals aesop))) (TAlphaWff.reflOfFvFresh _ _ (by
                   intro a b h hne;
                   simp only [List.mem_cons, List.not_mem_nil, or_false,
                     Prod.mk.injEq] at h;
                   repeat'
-                    (first
-                      | (rcases h with ⟨rfl, rfl⟩));
+                    ((rcases h with ⟨rfl, rfl⟩));
                     all_goals aesop)))) (TAlphaWff.conj
             (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
               (TAlphaClass.reflOfFvFresh _ _ (by
@@ -68,15 +66,13 @@ noncomputable def nominalDfIf (ph : Wff) (x : Var) (A : Class) (B : Class)
                   simp only [List.mem_cons, List.not_mem_nil, or_false,
                     Prod.mk.injEq] at h;
                   repeat'
-                    (first
-                      | (rcases h with ⟨rfl, rfl⟩));
+                    ((rcases h with ⟨rfl, rfl⟩));
                     all_goals aesop))) (TAlphaWff.neg (TAlphaWff.reflOfFvFresh _ _ (by
                   intro a b h hne;
                   simp only [List.mem_cons, List.not_mem_nil, or_false,
                     Prod.mk.injEq] at h;
                   repeat'
-                    (first
-                      | (rcases h with ⟨rfl, rfl⟩));
+                    ((rcases h with ⟨rfl, rfl⟩));
                     all_goals aesop))))))
 
 end NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired

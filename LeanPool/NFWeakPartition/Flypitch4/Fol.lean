@@ -491,7 +491,7 @@ lemma lift_at_subst_term_large :
       | (congr 1; omega)
       |
         -- Goal: &(k+n₂-1) = &(k-1) ↑' n₂ # m; know m ≤ n₁ < k so m ≤ k-1
-        (simp only [liftTermAt]; split_ifs with hm <;> (first | (congr 1; omega)))
+        (simp only [liftTermAt]; split_ifs with hm <;> ((congr 1; omega)))
   | _, preterm.func _, _, _, _, _, _ => rfl
   | _, preterm.app t₁ t₂, s, n₁, n₂, m, h => by
     simp [lift_at_subst_term_large t₁ s n₂ h, lift_at_subst_term_large t₂ s n₂ h]

@@ -915,8 +915,7 @@ noncomputable def nominalDfP6 (x : Var) (A : Class) (dv_A_x : x ∉ A.fv) :
                               simp only [List.mem_cons, List.not_mem_nil, or_false,
                                 Prod.mk.injEq] at h;
                               repeat'
-                                (first
-                                  | (rcases h with ⟨rfl, rfl⟩));
+                                ((rcases h with ⟨rfl, rfl⟩));
                                 all_goals aesop)))))))
                 (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
                     (TAlphaWff.neg (TAlphaWff.conj
@@ -929,8 +928,7 @@ noncomputable def nominalDfP6 (x : Var) (A : Class) (dv_A_x : x ∉ A.fv) :
                               simp only [List.mem_cons, List.not_mem_nil, or_false,
                                 Prod.mk.injEq] at h;
                               repeat'
-                                (first
-                                  | (rcases h with ⟨rfl, rfl⟩));
+                                ((rcases h with ⟨rfl, rfl⟩));
                                 all_goals aesop)))))))))) (TAlphaClass.cab
             (TAlphaWff.ex (TAlphaWff.ex (TAlphaWff.neg splitAlpha0003))))))
 

@@ -348,9 +348,7 @@ noncomputable def gPweq (A : Class) (B : Class) :
   have p0001 :=
     @gAbbidv (.classEq A B) (synWss (.cv x) A) (synWss (.cv x) B) x
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classEq,
@@ -360,13 +358,11 @@ noncomputable def gPweq (A : Class) (B : Class) :
   have p0002 :=
     NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfPw x A
       (by
-        first
-        | (aesop))
+        aesop)
   have p0003 :=
     NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfPw x B
       (by
-        first
-        | (aesop))
+        aesop)
   have p0004 :=
     @gN3eqtr4g (.classEq A B) (.cab x (synWss (.cv x) A)) (.cab x (synWss (.cv x) B))
       (synCpw A) (synCpw B) p0001 p0002 p0003
@@ -415,17 +411,13 @@ noncomputable def gElpw (A : Class) (B : Class)
   have p0001 :=
     NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfPw x B
       (by
-        first
-        | (aesop))
+        aesop)
   have p0002 :=
     @gElab2 (synWss (.cv x) B) (synWss A B) x A (synCpw B)
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_wss,
@@ -463,12 +455,9 @@ noncomputable def gElpwg (A : Class) (B : Class) (V : Class) :
     @gVtoclbg (.classMem (.cv x) (synCpw B)) (synWss (.cv x) B)
       (.classMem A (synCpw B)) (synWss A B) x A V
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem,
@@ -476,9 +465,7 @@ noncomputable def gElpwg (A : Class) (B : Class) (V : Class) :
               Finset.mem_union] at ⊢;
             aesop))
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_wss,
@@ -508,9 +495,7 @@ noncomputable def gSneq (A : Class) (B : Class) :
   have p0001 :=
     @gAbbidv (.classEq A B) (.classEq (.cv x) A) (.classEq (.cv x) B) x
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classEq,
@@ -520,13 +505,11 @@ noncomputable def gSneq (A : Class) (B : Class) :
   have p0002 :=
     NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfSn x A
       (by
-        first
-        | (aesop))
+        aesop)
   have p0003 :=
     NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfSn x B
       (by
-        first
-        | (aesop))
+        aesop)
   have p0004 :=
     @gN3eqtr4g (.classEq A B) (.cab x (.classEq (.cv x) A))
       (.cab x (.classEq (.cv x) B)) (synCsn A) (synCsn B) p0001 p0002 p0003
@@ -569,12 +552,10 @@ noncomputable def gDfsn2 (A : Class) :
 noncomputable def gElsn (x : Var) (A : Class) (dv_A_x : x ∉ A.fv) :
     Nominal.NPrf (synWb (.classMem (.cv x) (synCsn A)) (.classEq (.cv x) A)) :=
   by
-  let proofSupport : Finset Var := ({ x } : Finset Var) ∪ A.fv
   have p0000 :=
     NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfSn x A
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gEqabri (.classEq (.cv x) A) x (synCsn A) p0000
   exact p0001
 
@@ -585,19 +566,16 @@ noncomputable def gDfpr2 (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv)
     Nominal.NPrf
       (.classEq (synCpr A B) (.cab x (synWo (.classEq (.cv x) A) (.classEq (.cv x) B)))) :=
   by
-  let proofSupport : Finset Var := ({ x } : Finset Var) ∪ A.fv ∪ B.fv
   have p0000 := (Nominal.classEqRefl (synCpr A B))
   have p0001 := @gElun (.cv x) (synCsn A) (synCsn B)
   have p0002 :=
     @gElsn x A
       (by
-        first
-        | (aesop))
+        aesop)
   have p0003 :=
     @gElsn x B
       (by
-        first
-        | (aesop))
+        aesop)
   have p0004 :=
     @gOrbi12i (.classMem (.cv x) (synCsn A)) (.classEq (.cv x) A)
       (.classMem (.cv x) (synCsn B)) (.classEq (.cv x) B) p0002 p0003
@@ -609,9 +587,7 @@ noncomputable def gDfpr2 (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv)
     @gEqabi (synWo (.classEq (.cv x) A) (.classEq (.cv x) B)) x
       (synCun (synCsn A) (synCsn B))
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun,
@@ -661,21 +637,16 @@ noncomputable def gElprg (A : Class) (B : Class) (C : Class) (V : Class) :
   have p0003 :=
     @gDfpr2 x B C
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0004 :=
     @gElab2g (synWo (.classEq (.cv x) B) (.classEq (.cv x) C))
       (synWo (.classEq A B) (.classEq A C)) x A (synCpr B C) V
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_wo,
@@ -752,17 +723,13 @@ noncomputable def gElsncg (A : Class) (B : Class) (V : Class) :
   have p0001 :=
     NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfSn x B
       (by
-        first
-        | (aesop))
+        aesop)
   have p0002 :=
     @gElab2g (.classEq (.cv x) B) (.classEq A B) x A (synCsn B) V
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classEq,
@@ -853,12 +820,10 @@ noncomputable def gRexsns (ph : Wff) (x : Var) (A : Class) (V : Class)
     Nominal.NPrf
       (.imp (.classMem A V) (synWb (synWrex x (synCsn A) ph) (synWsbc A x ph))) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ({ x } : Finset Var) ∪ A.fv ∪ V.fv
   have p0000 :=
     @gSbc5 ph x A
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gA1i (synWb (synWsbc A x ph) (synWex x (synWa (.classEq (.cv x) A) ph)))
       (.classMem A V) p0000
@@ -866,8 +831,7 @@ noncomputable def gRexsns (ph : Wff) (x : Var) (A : Class) (V : Class)
   have p0003 :=
     @gElsn x A
       (by
-        first
-        | (aesop))
+        aesop)
   have p0004 := @gAnbi1i (.classMem (.cv x) (synCsn A)) (.classEq (.cv x) A) ph p0003
   have p0005 :=
     @gExbii (synWa (.classMem (.cv x) (synCsn A)) ph) (synWa (.classEq (.cv x) A) ph)
@@ -888,20 +852,16 @@ noncomputable def gRexsng (ph : Wff) (ps : Wff) (x : Var) (A : Class) (V : Class
     (hyp_ralsng_1 : Nominal.NPrf (.imp (.classEq (.cv x) A) (synWb ph ps))) :
     Nominal.NPrf (.imp (.classMem A V) (synWb (synWrex x (synCsn A) ph) ps)) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ps.fv ∪ ({ x } : Finset Var) ∪ A.fv ∪ V.fv
   have p0000 :=
     @gRexsns ph x A V
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gSbcieg ph ps x A V
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_ralsng_1
   have p0002 :=
     @gBitrd (.classMem A V) (synWrex x (synCsn A) ph) (synWsbc A x ph) ps p0000 p0001
@@ -914,15 +874,12 @@ noncomputable def gRexsn (ph : Wff) (ps : Wff) (x : Var) (A : Class) (dv_A_x : x
     (hyp_ralsn_2 : Nominal.NPrf (.imp (.classEq (.cv x) A) (synWb ph ps))) :
     Nominal.NPrf (synWb (synWrex x (synCsn A) ph) ps) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ps.fv ∪ ({ x } : Finset Var) ∪ A.fv
   have p0000 :=
     @gRexsng ph ps x A (synCvv)
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_ralsn_2
   have p0001 := Nominal.mp hyp_ralsn_1 p0000
   exact p0001
@@ -948,12 +905,9 @@ noncomputable def gDisjsn (A : Class) (B : Class) :
   have p0000 :=
     @gDisj1 x A (synCsn B)
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn] at ⊢;
@@ -962,8 +916,7 @@ noncomputable def gDisjsn (A : Class) (B : Class) :
   have p0002 :=
     @gElsn x B
       (by
-        first
-        | (aesop))
+        aesop)
   have p0003 :=
     @gImbi1i (.classMem (.cv x) (synCsn B)) (.classEq (.cv x) B)
       (.neg (.classMem (.cv x) A)) p0002
@@ -979,10 +932,8 @@ noncomputable def gDisjsn (A : Class) (B : Class) :
   have p0007 := @gAlnex (synWa (.classEq (.cv x) B) (.classMem (.cv x) A)) x
   have p0008 :=
     (NFChoice.DirectNominalPrf.Nominal.DefinitionLeafHandlersCanonical001.dfClelOfDV x B A (by
-        first
-        | (aesop)) (by
-        first
-        | (aesop)))
+        aesop) (by
+        aesop))
   have p0009 :=
     @gXchbinxr (.all x (.neg (synWa (.classEq (.cv x) B) (.classMem (.cv x) A))))
       (synWex x (synWa (.classEq (.cv x) B) (.classMem (.cv x) A))) (.classMem B A)
@@ -1012,15 +963,12 @@ noncomputable def gSnprc (A : Class) :
   have p0000 :=
     @gElsn x A
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gExbii (.classMem (.cv x) (synCsn A)) (.classEq (.cv x) A) x p0000
   have p0002 :=
     @gNeq0 x (synCsn A)
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn] at ⊢;
@@ -1028,8 +976,7 @@ noncomputable def gSnprc (A : Class) :
   have p0003 :=
     @gIsset x A
       (by
-        first
-        | (aesop))
+        aesop)
   have p0004 :=
     @gN3bitr4i (synWex x (.classMem (.cv x) (synCsn A)))
       (synWex x (.classEq (.cv x) A)) (.neg (.classEq (synCsn A) (synC0)))
@@ -1044,7 +991,6 @@ noncomputable def gRabsn (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv)
     Nominal.NPrf
       (.imp (.classMem B A) (.classEq (synCrab x A (.classEq (.cv x) B)) (synCsn B))) :=
   by
-  let proofSupport : Finset Var := ({ x } : Finset Var) ∪ A.fv ∪ B.fv
   have p0000 := @gEleq1 (.cv x) B A
   have p0001 :=
     @gPm532ri (.classEq (.cv x) B) (.classMem (.cv x) A) (.classMem B A) p0000
@@ -1055,9 +1001,7 @@ noncomputable def gRabsn (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv)
     @gAbbidv (.classMem B A) (synWa (.classMem (.cv x) A) (.classEq (.cv x) B))
       (.classEq (.cv x) B) x
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem,
@@ -1068,8 +1012,7 @@ noncomputable def gRabsn (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv)
   have p0005 :=
     NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfSn x B
       (by
-        first
-        | (aesop))
+        aesop)
   have p0006 :=
     @gN3eqtr4g (.classMem B A)
       (.cab x (synWa (.classMem (.cv x) A) (.classEq (.cv x) B)))
@@ -1219,8 +1162,7 @@ noncomputable def gSnss (A : Class) (B : Class)
   have p0000 :=
     @gElsn x A
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gImbi1i (.classMem (.cv x) (synCsn A)) (.classEq (.cv x) A) (.classMem (.cv x) B)
       p0000
@@ -1230,24 +1172,19 @@ noncomputable def gSnss (A : Class) (B : Class)
   have p0003 :=
     @gDfss2 x (synCsn A) B
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn] at ⊢;
             aesop))
       (by
-        first
-        | (aesop))
+        aesop)
   have p0004 :=
     @gClel2 x A B
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_snss_1
   have p0005 :=
     @gN3bitr4ri (.all x (.imp (.classMem (.cv x) (synCsn A)) (.classMem (.cv x) B)))
@@ -1322,21 +1259,16 @@ noncomputable def gSnssg (A : Class) (B : Class) (V : Class) :
     @gVtoclbg (.classMem (.cv x) B) (synWss (synCsn (.cv x)) B) (.classMem A B)
       (synWss (synCsn A) B) x A V
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem,
               Finset.mem_union] at ⊢;
             aesop))
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_wss,
@@ -1383,9 +1315,7 @@ noncomputable def gDifsn (A : Class) (B : Class) :
   have p0009 :=
     @gEqrdv (.neg (.classMem A B)) x (synCdif B (synCsn A)) B
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cdif,
@@ -1393,12 +1323,9 @@ noncomputable def gDifsn (A : Class) (B : Class) :
               Finset.mem_union] at ⊢;
             aesop))
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_neg,
               NFChoice.Compiler.CoreFVSimp.fv_wff_classMem, Finset.mem_union] at ⊢;
             aesop))
@@ -1466,8 +1393,7 @@ noncomputable def gSssn (A : Class) (B : Class) :
   have p0000 :=
     @gNeq0 x A
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gSsel A (synCsn B) (.cv x)
   have p0002 := @gElsni (.cv x) B
   have p0003 :=
@@ -1481,18 +1407,14 @@ noncomputable def gSssn (A : Class) (B : Class) :
   have p0007 :=
     @gExlimdv (synWss A (synCsn B)) (.classMem (.cv x) A) (.classMem B A) x
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem,
               Finset.mem_union] at ⊢;
             aesop))
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_wss,
@@ -1582,12 +1504,9 @@ noncomputable def gSneqrg (A : Class) (B : Class) (V : Class) :
     @gVtoclg (.imp (.classEq (synCsn (.cv x)) (synCsn B)) (.classEq (.cv x) B))
       (.imp (.classEq (synCsn A) (synCsn B)) (.classEq A B)) x A V
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_imp,
               NFChoice.Compiler.CoreFVSimp.fv_wff_classEq,
               NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn,
@@ -1641,18 +1560,14 @@ noncomputable def gPwv : Nominal.NPrf (.classEq (synCpw (synCvv)) (synCvv)) :=
   have p0005 :=
     @gEqriv x (synCpw (synCvv)) (synCvv)
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw,
               NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv] at ⊢;
             aesop))
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv] at ⊢;
@@ -1706,16 +1621,13 @@ noncomputable def gDfpss4 (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv
       (synWb (synWpss A B)
         (synWa (synWss A B) (synWrex x B (.neg (.classMem (.cv x) A))))) :=
   by
-  let proofSupport : Finset Var := ({ x } : Finset Var) ∪ A.fv ∪ B.fv
   have p0000 := @gDfpss3 A B
   have p0001 :=
     @gDfss3 x B A
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0002 := @gDfral2 (.classMem (.cv x) A) x B
   have p0003 :=
     @gBitr2i (synWss B A) (synWral x B (.classMem (.cv x) A))
@@ -1767,18 +1679,14 @@ noncomputable def gDfuni2 (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉ A.fv)
     Nominal.NPrf
       (.classEq (synCuni A) (.cab x (synWrex y A (.classMem (.cv x) (.cv y))))) :=
   by
-  let proofSupport : Finset Var := ({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ A.fv
   have p0000 :=
     NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfUni x y A
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gExancom (.classMem (.cv x) (.cv y)) (.classMem (.cv y) A) y
   have p0002 := (Nominal.biimpRefl (synWrex y A (.classMem (.cv x) (.cv y))))
   have p0003 :=
@@ -1847,9 +1755,7 @@ noncomputable def gEluni (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv)
     @gExlimiv (synWa (.classMem A (.cv x)) (.classMem (.cv x) B))
       (.classMem A (synCvv)) x
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem,
@@ -1866,9 +1772,7 @@ noncomputable def gEluni (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv)
       (synWa (.classMem (.cv y) (.cv x)) (.classMem (.cv x) B))
       (synWa (.classMem A (.cv x)) (.classMem (.cv x) B)) x
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classEq,
@@ -1879,14 +1783,11 @@ noncomputable def gEluni (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv)
   have p0007 :=
     NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfUni y x B
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0008_e01_recanon :
     Nominal.NPrf
       (.classEq (synCuni B) (.cab y
@@ -1911,12 +1812,9 @@ noncomputable def gEluni (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv)
       (synWex x (synWa (.classMem A (.cv x)) (.classMem (.cv x) B))) y A (synCuni B)
       (synCvv)
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_wex,
@@ -1938,16 +1836,13 @@ noncomputable def gEluni2 (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv
     Nominal.NPrf
       (synWb (.classMem A (synCuni B)) (synWrex x B (.classMem A (.cv x)))) :=
   by
-  let proofSupport : Finset Var := ({ x } : Finset Var) ∪ A.fv ∪ B.fv
   have p0000 := @gExancom (.classMem A (.cv x)) (.classMem (.cv x) B) x
   have p0001 :=
     @gEluni x A B
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0002 := (Nominal.biimpRefl (synWrex x B (.classMem A (.cv x))))
   have p0003 :=
     @gN3bitr4i (synWex x (synWa (.classMem A (.cv x)) (.classMem (.cv x) B)))
@@ -1985,12 +1880,9 @@ noncomputable def gElunii (A : Class) (B : Class) (C : Class) :
     @gSpcegv (synWa (.classMem A (.cv x)) (.classMem (.cv x) C))
       (synWa (.classMem A B) (.classMem B C)) x B C
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_wa,
@@ -2003,11 +1895,9 @@ noncomputable def gElunii (A : Class) (B : Class) (C : Class) :
   have p0005 :=
     @gEluni x A C
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0006 :=
     @gSylibr (synWa (.classMem A B) (.classMem B C))
       (synWex x (synWa (.classMem A (.cv x)) (.classMem (.cv x) C)))
@@ -2053,20 +1943,15 @@ noncomputable def gNfuni (x : Var) (A : Class)
   have p0000 :=
     @gDfuni2 y z A
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gNfv (.classMem (.cv y) (.cv z)) x
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem,
@@ -2116,18 +2001,14 @@ noncomputable def gUnieq (A : Class) (B : Class) :
   have p0000 :=
     @gRexeq (.classMem (.cv y) (.cv x)) x A B
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gAbbidv (.classEq A B) (synWrex x A (.classMem (.cv y) (.cv x)))
       (synWrex x B (.classMem (.cv y) (.cv x))) y
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classEq,
@@ -2137,25 +2018,19 @@ noncomputable def gUnieq (A : Class) (B : Class) :
   have p0002 :=
     @gDfuni2 y x A
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0003 :=
     @gDfuni2 y x B
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0004 :=
     @gN3eqtr4g (.classEq A B) (.cab y (synWrex x A (.classMem (.cv y) (.cv x))))
       (.cab y (synWrex x B (.classMem (.cv y) (.cv x)))) (synCuni A) (synCuni B) p0001
@@ -2211,12 +2086,9 @@ noncomputable def gEluniab (ph : Wff) (x : Var) (A : Class) (dv_A_x : x ∉ A.fv
   have p0000 :=
     @gEluni y A (.cab x ph)
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cab,
@@ -2225,9 +2097,7 @@ noncomputable def gEluniab (ph : Wff) (x : Var) (A : Class) (dv_A_x : x ∉ A.fv
   have p0001 :=
     @gNfv (.classMem A (.cv y)) x
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem,
@@ -2237,16 +2107,13 @@ noncomputable def gEluniab (ph : Wff) (x : Var) (A : Class) (dv_A_x : x ∉ A.fv
   have p0002 :=
     @gNfsab1 ph x y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0003 :=
     @gNfan (.classMem A (.cv y)) (.classMem (.cv y) (.cab x ph)) x p0001 p0002
   have p0004 :=
     @gNfv (synWa (.classMem A (.cv x)) ph) y
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_wa,
@@ -2348,18 +2215,14 @@ noncomputable def gUnipr (A : Class) (B : Class)
   have p0008 :=
     @gEluni y (.cv x) (synCpr A B)
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv,
               Finset.mem_singleton] at ⊢;
             aesop))
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpr,
@@ -2369,17 +2232,14 @@ noncomputable def gUnipr (A : Class) (B : Class)
   have p0010 :=
     @gClel3 y (.cv x) A
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv,
               Finset.mem_singleton] at ⊢;
             aesop))
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_unipr_1
   have p0011 := @gExancom (.classEq (.cv y) A) (.objMem x y) y
   have p0012_e00_recanon :
@@ -2418,17 +2278,14 @@ noncomputable def gUnipr (A : Class) (B : Class)
   have p0013 :=
     @gClel3 y (.cv x) B
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv,
               Finset.mem_singleton] at ⊢;
             aesop))
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_unipr_2
   have p0014 := @gExancom (.classEq (.cv y) B) (.objMem x y) y
   have p0015_e00_recanon :
@@ -2514,9 +2371,7 @@ noncomputable def gUnipr (A : Class) (B : Class)
   have p0019 :=
     @gEqriv x (synCuni (synCpr A B)) (synCun A B)
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cuni,
@@ -2524,9 +2379,7 @@ noncomputable def gUnipr (A : Class) (B : Class)
               Finset.mem_union] at ⊢;
             aesop))
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun,

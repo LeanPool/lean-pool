@@ -929,8 +929,7 @@ noncomputable def nominalDfSik (x : Var) (y : Var) (z : Var) (u : Var) (t : Var)
                     simp only [List.mem_cons, List.not_mem_nil, or_false,
                       Prod.mk.injEq] at h;
                     repeat'
-                      (first
-                        | (rcases h with ⟨rfl, rfl⟩));
+                      ((rcases h with ⟨rfl, rfl⟩));
                       all_goals aesop))))))))
   exact
     Nominal.alphaClassEq

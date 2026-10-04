@@ -557,13 +557,10 @@ noncomputable def gSpimv (ph : Wff) (ps : Wff) (x : Var) (y : Var) (dv_ps_x : x 
     (hyp_spimv_1 : Nominal.NPrf (.imp (.objEq x y) (.imp ph ps))) :
     Nominal.NPrf (.imp (.all x ph) ps) :=
   by
-  let proofSupport : Finset Var :=
-    ph.fv ∪ ps.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 :=
     @gNfv ps x
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gSpim ph ps x y p0000 hyp_spimv_1
   exact p0001
 
@@ -577,13 +574,10 @@ noncomputable def gAx11v2 (ph : Wff) (x : Var) (y : Var) (z : Var) (dv_ph_z : z 
       (.imp (.neg (.all x (.objEq x y)))
         (.imp (.objEq x y) (.imp ph (.all x (.imp (.objEq x y) ph))))) :=
   by
-  let proofSupport : Finset Var :=
-    ph.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ ({ z } : Finset Var)
   have p0000 :=
     @gA9ev z y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gEquequ2 z y x
   have p0002 :=
     @gAdantl (.objEq z y) (synWb (.objEq x z) (.objEq x y)) (.neg (.all x (.objEq x y)))
@@ -591,8 +585,7 @@ noncomputable def gAx11v2 (ph : Wff) (x : Var) (y : Var) (z : Var) (dv_ph_z : z 
   have p0003 :=
     @gDveeq2 x y z
       (by
-        first
-        | (aesop))
+        aesop)
   have p0004 :=
     @gImp (.neg (.all x (.objEq x y))) (.objEq z y) (.all x (.objEq z y)) p0003
   have p0005 := @gNfa1 (.objEq z y) x
@@ -623,18 +616,14 @@ noncomputable def gAx11v2 (ph : Wff) (x : Var) (y : Var) (z : Var) (dv_ph_z : z 
     @gExlimdv (.neg (.all x (.objEq x y))) (.objEq z y)
       (.imp (.objEq x y) (.imp ph (.all x (.imp (.objEq x y) ph)))) z
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_imp,
               NFChoice.Compiler.CoreFVSimp.fv_wff_objEq,
               NFChoice.Compiler.CoreFVSimp.fv_wff_all, Finset.mem_union,
               Finset.mem_erase] at ⊢;
             aesop))
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_neg,
               NFChoice.Compiler.CoreFVSimp.fv_wff_all,
               NFChoice.Compiler.CoreFVSimp.fv_wff_objEq, Finset.mem_erase] at ⊢;
@@ -655,26 +644,20 @@ noncomputable def gAx11a2 (ph : Wff) (x : Var) (y : Var) (z : Var) (dv_ph_z : z 
       (.imp (.neg (.all x (.objEq x y)))
         (.imp (.objEq x y) (.imp ph (.all x (.imp (.objEq x y) ph))))) :=
   by
-  let proofSupport : Finset Var :=
-    ph.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ ({ z } : Finset Var)
   have p0000 :=
     Nominal.ax17 ph z
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gSyl5 ph (.all z ph) (.objEq x z) (.all x (.imp (.objEq x z) ph)) p0000 hyp_ax11a2_1
   have p0002 :=
     @gAx11v2 ph x y z
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
       p0001
   exact p0002
 
@@ -708,14 +691,11 @@ noncomputable def gAx11o (ph : Wff) (x : Var) (y : Var) :
   have p0001 :=
     @gAx11a2 ph x y z
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
       p0000
   exact p0001
 
@@ -743,14 +723,11 @@ noncomputable def gSpv (ph : Wff) (ps : Wff) (x : Var) (y : Var) (dv_ps_x : x �
     (hyp_spv_1 : Nominal.NPrf (.imp (.objEq x y) (synWb ph ps))) :
     Nominal.NPrf (.imp (.all x ph) ps) :=
   by
-  let proofSupport : Finset Var :=
-    ph.fv ∪ ps.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 := @gBiimpd (.objEq x y) ph ps hyp_spv_1
   have p0001 :=
     @gSpimv ph ps x y
       (by
-        first
-        | (aesop))
+        aesop)
       p0000
   exact p0001
 
@@ -761,18 +738,14 @@ noncomputable def gCbvalv (ph : Wff) (ps : Wff) (x : Var) (y : Var) (dv_ph_y : y
     (hyp_cbvalv_1 : Nominal.NPrf (.imp (.objEq x y) (synWb ph ps))) :
     Nominal.NPrf (synWb (.all x ph) (.all y ps)) :=
   by
-  let proofSupport : Finset Var :=
-    ph.fv ∪ ps.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 :=
     @gNfv ph y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gNfv ps x
       (by
-        first
-        | (aesop))
+        aesop)
   have p0002 := @gCbval ph ps x y p0000 p0001 hyp_cbvalv_1
   exact p0002
 
@@ -783,18 +756,14 @@ noncomputable def gCbvexv (ph : Wff) (ps : Wff) (x : Var) (y : Var) (dv_ph_y : y
     (hyp_cbvalv_1 : Nominal.NPrf (.imp (.objEq x y) (synWb ph ps))) :
     Nominal.NPrf (synWb (synWex x ph) (synWex y ps)) :=
   by
-  let proofSupport : Finset Var :=
-    ph.fv ∪ ps.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 :=
     @gNfv ph y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gNfv ps x
       (by
-        first
-        | (aesop))
+        aesop)
   have p0002 := @gCbvex ph ps x y p0000 p0001 hyp_cbvalv_1
   exact p0002
 
@@ -809,17 +778,12 @@ noncomputable def gCbval2 (ph : Wff) (ps : Wff) (x : Var) (y : Var) (z : Var) (w
     (hyp_cbval2_5 : Nominal.NPrf (.imp (synWa (.objEq x z) (.objEq y w)) (synWb ph ps))) :
     Nominal.NPrf (synWb (.all x (.all y ph)) (.all z (.all w ps))) :=
   by
-  let proofSupport : Finset Var :=
-    ph.fv ∪ ps.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ ({ z } : Finset Var) ∪
-      ({ w } : Finset Var)
   have p0000 := @gNfal ph z y hyp_cbval2_1
   have p0001 := @gNfal ps x w hyp_cbval2_3
   have p0002 :=
     @gNfv (.objEq x z) w
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_objEq] at ⊢;
@@ -828,9 +792,7 @@ noncomputable def gCbval2 (ph : Wff) (ps : Wff) (x : Var) (y : Var) (z : Var) (w
   have p0004 :=
     @gNfv (.objEq x z) y
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_objEq] at ⊢;
@@ -843,9 +805,7 @@ noncomputable def gCbval2 (ph : Wff) (ps : Wff) (x : Var) (y : Var) (z : Var) (w
   have p0009 :=
     @gN1928v (.objEq x z) ph y
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_objEq] at ⊢;
@@ -853,9 +813,7 @@ noncomputable def gCbval2 (ph : Wff) (ps : Wff) (x : Var) (y : Var) (z : Var) (w
   have p0010 :=
     @gN1928v (.objEq x z) ps w
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_objEq] at ⊢;
@@ -883,17 +841,12 @@ noncomputable def gCbvex2 (ph : Wff) (ps : Wff) (x : Var) (y : Var) (z : Var) (w
     (hyp_cbval2_5 : Nominal.NPrf (.imp (synWa (.objEq x z) (.objEq y w)) (synWb ph ps))) :
     Nominal.NPrf (synWb (synWex x (synWex y ph)) (synWex z (synWex w ps))) :=
   by
-  let proofSupport : Finset Var :=
-    ph.fv ∪ ps.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ ({ z } : Finset Var) ∪
-      ({ w } : Finset Var)
   have p0000 := @gNfex ph z y hyp_cbval2_1
   have p0001 := @gNfex ps x w hyp_cbval2_3
   have p0002 :=
     @gNfv (.objEq x z) w
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_objEq] at ⊢;
@@ -902,9 +855,7 @@ noncomputable def gCbvex2 (ph : Wff) (ps : Wff) (x : Var) (y : Var) (z : Var) (w
   have p0004 :=
     @gNfv (.objEq x z) y
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_objEq] at ⊢;
@@ -917,9 +868,7 @@ noncomputable def gCbvex2 (ph : Wff) (ps : Wff) (x : Var) (y : Var) (z : Var) (w
   have p0009 :=
     @gN1942v (.objEq x z) ph y
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_objEq] at ⊢;
@@ -927,9 +876,7 @@ noncomputable def gCbvex2 (ph : Wff) (ps : Wff) (x : Var) (y : Var) (z : Var) (w
   have p0010 :=
     @gN1942v (.objEq x z) ps w
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_objEq] at ⊢;
@@ -955,43 +902,32 @@ noncomputable def gCbval2v (ph : Wff) (ps : Wff) (x : Var) (y : Var) (z : Var) (
     (hyp_cbval2v_1 : Nominal.NPrf (.imp (synWa (.objEq x z) (.objEq y w)) (synWb ph ps))) :
     Nominal.NPrf (synWb (.all x (.all y ph)) (.all z (.all w ps))) :=
   by
-  let proofSupport : Finset Var :=
-    ph.fv ∪ ps.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ ({ z } : Finset Var) ∪
-      ({ w } : Finset Var)
   have p0000 :=
     @gNfv ph z
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gNfv ph w
       (by
-        first
-        | (aesop))
+        aesop)
   have p0002 :=
     @gNfv ps x
       (by
-        first
-        | (aesop))
+        aesop)
   have p0003 :=
     @gNfv ps y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0004 :=
     @gCbval2 ph ps x y z w
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
       p0000 p0001 p0002 p0003 hyp_cbval2v_1
   exact p0004
 
@@ -1004,20 +940,16 @@ noncomputable def gCbvald (ph : Wff) (ps : Wff) (ch : Wff) (x : Var) (y : Var)
     (hyp_cbvald_3 : Nominal.NPrf (.imp ph (.imp (.objEq x y) (synWb ps ch)))) :
     Nominal.NPrf (.imp ph (synWb (.all x ps) (.all y ch))) :=
   by
-  let proofSupport : Finset Var :=
-    ph.fv ∪ ps.fv ∪ ch.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 := @gNfri ph y hyp_cbvald_1
   have p0001 :=
     @gAlrimiv ph (.all y ph) x
       (by
-        first
-        | (aesop))
+        aesop)
       p0000
   have p0002 :=
     @gNfvd ph ch x
       (by
-        first
-        | (aesop))
+        aesop)
   have p0003 := @gCbv2 ph ps ch x y hyp_cbvald_2 p0002 hyp_cbvald_3
   have p0004 :=
     @gSyl ph (.all x (.all y ph)) (synWb (.all x ps) (.all y ch)) p0001 p0003
@@ -1032,8 +964,6 @@ noncomputable def gCbvexd (ph : Wff) (ps : Wff) (ch : Wff) (x : Var) (y : Var)
     (hyp_cbvald_3 : Nominal.NPrf (.imp ph (.imp (.objEq x y) (synWb ps ch)))) :
     Nominal.NPrf (.imp ph (synWb (synWex x ps) (synWex y ch))) :=
   by
-  let proofSupport : Finset Var :=
-    ph.fv ∪ ps.fv ∪ ch.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 := @gNfnd ph ps y hyp_cbvald_2
   have p0001 := @gNotbi ps ch
   have p0002 :=
@@ -1042,16 +972,13 @@ noncomputable def gCbvexd (ph : Wff) (ps : Wff) (ch : Wff) (x : Var) (y : Var)
   have p0003 :=
     @gCbvald ph (.neg ps) (.neg ch) x y
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_neg] at ⊢;
             aesop))
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_cbvald_1 p0000 p0002
   have p0004 := @gNotbid ph (.all x (.neg ps)) (.all y (.neg ch)) p0003
   have p0005 := (Nominal.biimpRefl (synWex x ps))
@@ -1238,12 +1165,10 @@ noncomputable def gNfs1 (ph : Wff) (x : Var) (y : Var)
 noncomputable def gAx16 (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y) :
     Nominal.NPrf (.imp (.all x (.objEq x y)) (.imp ph (.all x ph))) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 :=
     @gA16g ph x y x
       (by
-        first
-        | (aesop))
+        aesop)
   exact p0000
 
 /-- Checked nominal proof certificate identified upstream as `g_a16nf`. -/
@@ -1251,14 +1176,11 @@ noncomputable def gAx16 (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y) :
 noncomputable def gA16nf (ph : Wff) (x : Var) (y : Var) (z : Var) (dv_x_y : x ≠ y) :
     Nominal.NPrf (.imp (.all x (.objEq x y)) (synWnf z ph)) :=
   by
-  let proofSupport : Finset Var :=
-    ph.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ ({ z } : Finset Var)
   have p0000 := @gNfae x y z
   have p0001 :=
     @gA16g ph x y z
       (by
-        first
-        | (aesop))
+        aesop)
   have p0002 := @gNfd (.all x (.objEq x y)) ph z p0000 p0001
   exact p0002
 
@@ -1825,13 +1747,11 @@ noncomputable def gSb8 (ph : Wff) (x : Var) (y : Var)
 noncomputable def gAx11v (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y) :
     Nominal.NPrf (.imp (.objEq x y) (.imp ph (.all x (.imp (.objEq x y) ph)))) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 := Nominal.ax1 ph (.objEq x y)
   have p0001 :=
     @gAx16 (.imp (.objEq x y) ph) x y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0002 :=
     @gSyl5 ph (.imp (.objEq x y) ph) (.all x (.objEq x y))
       (.all x (.imp (.objEq x y) ph)) p0000 p0001
@@ -1850,13 +1770,11 @@ noncomputable def gSb56 (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y) :
     Nominal.NPrf
       (synWb (synWex x (synWa (.objEq x y) ph)) (.all x (.imp (.objEq x y) ph))) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 := @gNfa1 (.imp (.objEq x y) ph) x
   have p0001 :=
     @gAx11v ph x y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0002 := @gSp (.imp (.objEq x y) ph) x
   have p0003 := @gCom12 (.all x (.imp (.objEq x y) ph)) (.objEq x y) ph p0002
   have p0004 := @gImpbid (.objEq x y) ph (.all x (.imp (.objEq x y) ph)) p0001 p0003
@@ -1868,12 +1786,10 @@ noncomputable def gSb56 (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y) :
 noncomputable def gSb6 (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y) :
     Nominal.NPrf (synWb (synWsb y x ph) (.all x (.imp (.objEq x y) ph))) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 :=
     @gSb56 ph x y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gAnbi2i (synWex x (synWa (.objEq x y) ph)) (.all x (.imp (.objEq x y) ph))
       (.imp (.objEq x y) ph) p0000
@@ -1891,17 +1807,14 @@ noncomputable def gSb6 (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y) :
 noncomputable def gSb5 (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y) :
     Nominal.NPrf (synWb (synWsb y x ph) (synWex x (synWa (.objEq x y) ph))) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 :=
     @gSb6 ph x y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gSb56 ph x y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0002 :=
     @gBitr4i (synWsb y x ph) (.all x (.imp (.objEq x y) ph))
       (synWex x (synWa (.objEq x y) ph)) p0000 p0001
@@ -1912,14 +1825,10 @@ noncomputable def gSb5 (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y) :
 noncomputable def gEqusb3lem (x : Var) (y : Var) (z : Var) (dv_x_y : x ≠ y)
     (dv_x_z : x ≠ z) : Nominal.NPrf (synWb (synWsb y x (.objEq x z)) (.objEq y z)) :=
   by
-  let proofSupport : Finset Var :=
-    ({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ ({ z } : Finset Var)
   have p0000 :=
     @gNfv (.objEq y z) x
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_objEq] at ⊢;
@@ -1959,18 +1868,14 @@ noncomputable def gEqusb3 (x : Var) (y : Var) (z : Var) (dv_x_z : x ≠ z) :
   have p0000 :=
     @gEqusb3lem x w z
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gSbbii (synWsb w x (.objEq x z)) (.objEq w z) w y p0000
   have p0002 :=
     @gNfv (.objEq x z) w
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_objEq] at ⊢;
@@ -1979,11 +1884,9 @@ noncomputable def gEqusb3 (x : Var) (y : Var) (z : Var) (dv_x_z : x ≠ z) :
   have p0004 :=
     @gEqusb3lem w y z
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0005 :=
     @gN3bitr3i (synWsb y w (synWsb w x (.objEq x z))) (synWsb y w (.objEq w z))
       (synWsb y x (.objEq x z)) (.objEq y z) p0001 p0003 p0004
@@ -1994,12 +1897,10 @@ noncomputable def gEqusb3 (x : Var) (y : Var) (z : Var) (dv_x_z : x ≠ z) :
 noncomputable def gHbs1 (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y) :
     Nominal.NPrf (.imp (synWsb y x ph) (.all x (synWsb y x ph))) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 :=
     @gAx16 (synWsb y x ph) x y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gHbsb2 ph x y
   have p0002 :=
     @gPm261i (.all x (.objEq x y)) (.imp (synWsb y x ph) (.all x (synWsb y x ph)))
@@ -2011,12 +1912,10 @@ noncomputable def gHbs1 (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y) :
 noncomputable def gNfs1v (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y) :
     Nominal.NPrf (synWnf x (synWsb y x ph)) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 :=
     @gHbs1 ph x y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gNfi (synWsb y x ph) x p0000
   exact p0001
 
@@ -2026,13 +1925,10 @@ noncomputable def gNfsb (ph : Wff) (x : Var) (y : Var) (z : Var) (dv_y_z : y ≠
     (hyp_nfsb_1 : Nominal.NPrf (synWnf z ph)) :
     Nominal.NPrf (synWnf z (synWsb y x ph)) :=
   by
-  let proofSupport : Finset Var :=
-    ph.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ ({ z } : Finset Var)
   have p0000 :=
     @gA16nf (synWsb y x ph) z y z
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gNfsb4 ph x y z hyp_nfsb_1
   have p0002 := @gPm261i (.all z (.objEq z y)) (synWnf z (synWsb y x ph)) p0000 p0001
   exact p0002
@@ -2043,14 +1939,11 @@ noncomputable def gHbsb (ph : Wff) (x : Var) (y : Var) (z : Var) (dv_y_z : y ≠
     (hyp_hbsb_1 : Nominal.NPrf (.imp ph (.all z ph))) :
     Nominal.NPrf (.imp (synWsb y x ph) (.all z (synWsb y x ph))) :=
   by
-  let proofSupport : Finset Var :=
-    ph.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ ({ z } : Finset Var)
   have p0000 := @gNfi ph z hyp_hbsb_1
   have p0001 :=
     @gNfsb ph x y z
       (by
-        first
-        | (aesop))
+        aesop)
       p0000
   have p0002 := @gNfri (synWsb y x ph) z p0001
   exact p0002
@@ -2062,8 +1955,6 @@ noncomputable def gNfsbd (ph : Wff) (ps : Wff) (x : Var) (y : Var) (z : Var)
     (hyp_nfsbd_2 : Nominal.NPrf (.imp ph (synWnf z ps))) :
     Nominal.NPrf (.imp ph (synWnf z (synWsb y x ps))) :=
   by
-  let proofSupport : Finset Var :=
-    ph.fv ∪ ps.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ ({ z } : Finset Var)
   have p0000 := @gAlrimi ph (synWnf z ps) x hyp_nfsbd_1 hyp_nfsbd_2
   have p0001 := @gNfsb4t ps x y z
   have p0002 :=
@@ -2072,8 +1963,7 @@ noncomputable def gNfsbd (ph : Wff) (ps : Wff) (x : Var) (y : Var) (z : Var)
   have p0003 :=
     @gA16nf (synWsb y x ps) z y z
       (by
-        first
-        | (aesop))
+        aesop)
   have p0004 :=
     @gPm261d2 ph (.all z (.objEq z y)) (synWnf z (synWsb y x ps)) p0002 p0003
   exact p0004
@@ -2107,17 +1997,13 @@ noncomputable def gEuf (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y)
   have p0000 :=
     Nominal.dfEu x z ph
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gNfv (.classEq (.cv x) (.cv z)) y
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classEq,
@@ -2129,14 +2015,11 @@ noncomputable def gEuf (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y)
   have p0004 :=
     @gNfv ph z
       (by
-        first
-        | (aesop))
+        aesop)
   have p0005 :=
     @gNfv (.classEq (.cv x) (.cv y)) z
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classEq,
@@ -2172,9 +2055,7 @@ noncomputable def gEuf (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y)
     @gAlbidv (.classEq (.cv z) (.cv y)) (synWb ph (.classEq (.cv x) (.cv z)))
       (synWb ph (.classEq (.cv x) (.cv y))) x
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classEq,
@@ -2280,25 +2161,20 @@ noncomputable def gEubid (ph : Wff) (ps : Wff) (ch : Wff) (x : Var)
     @gExbidv ph (.all x (synWb ps (.classEq (.cv x) (.cv y))))
       (.all x (synWb ch (.classEq (.cv x) (.cv y)))) y
       (by
-        first
-        | (aesop))
+        aesop)
       p0001
   have p0003 :=
     Nominal.dfEu x y ps
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0004 :=
     Nominal.dfEu x y ch
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0005_e01_recanon :
     Nominal.NPrf
       (synWb (synWeu x ps) (synWex y (.all x (synWb ps (.classEq (.cv x) (.cv y)))))) :=
@@ -2393,12 +2269,10 @@ noncomputable def gEubidv (ph : Wff) (ps : Wff) (ch : Wff) (x : Var)
     (dv_ph_x : x ∉ ph.fv) (hyp_eubidv_1 : Nominal.NPrf (.imp ph (synWb ps ch))) :
     Nominal.NPrf (.imp ph (synWb (synWeu x ps) (synWeu x ch))) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ps.fv ∪ ch.fv ∪ ({ x } : Finset Var)
   have p0000 :=
     @gNfv ph x
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gEubid ph ps ch x p0000 hyp_eubidv_1
   exact p0001
 
@@ -2408,14 +2282,11 @@ noncomputable def gEubii (ph : Wff) (ps : Wff) (x : Var)
     (hyp_eubii_1 : Nominal.NPrf (synWb ph ps)) :
     Nominal.NPrf (synWb (synWeu x ph) (synWeu x ps)) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ps.fv ∪ ({ x } : Finset Var)
   have p0000 := @gA1i (synWb ph ps) synWtru hyp_eubii_1
   have p0001 :=
     @gEubidv synWtru ph ps x
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_wtru] at ⊢;
@@ -2445,11 +2316,9 @@ noncomputable def gNfeu1 (ph : Wff) (x : Var) :
   have p0000 :=
     Nominal.dfEu x y ph
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gNfa1 (synWb ph (.classEq (.cv x) (.cv y))) x
   have p0002 := @gNfex (.all x (synWb ph (.classEq (.cv x) (.cv y)))) x y p0001
   have p0003_e00_recanon :
@@ -2548,16 +2417,13 @@ noncomputable def gNfeud2 (ph : Wff) (ps : Wff) (x : Var) (y : Var)
   have p0000 :=
     Nominal.dfEu y z ps
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gNfv ph z
       (by
-        first
-        | (aesop))
+        aesop)
   have p0002 := @gNfnae x z y
   have p0003_e01_recanon :
     Nominal.NPrf (synWnf y (.neg (.all x (.classEq (.cv x) (.cv z))))) :=
@@ -2824,9 +2690,7 @@ noncomputable def gSb8eu (ph : Wff) (x : Var) (y : Var)
   have p0000 :=
     @gNfv (synWb ph (.classEq (.cv x) (.cv z))) w
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_wb,
@@ -2839,20 +2703,16 @@ noncomputable def gSb8eu (ph : Wff) (x : Var) (y : Var)
   have p0003 :=
     @gNfsb ph x w y
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_sb8eu_1
   have p0004 :=
     @gEqusb3 x w z
       (by
-        first
-        | (aesop))
+        aesop)
   have p0005 :=
     @gNfv (.classEq (.cv w) (.cv z)) y
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classEq,
@@ -2912,9 +2772,7 @@ noncomputable def gSb8eu (ph : Wff) (x : Var) (y : Var)
   have p0009 :=
     @gNfv (synWsb y x (synWb ph (.classEq (.cv x) (.cv z)))) w
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_wsb,
@@ -2930,8 +2788,7 @@ noncomputable def gSb8eu (ph : Wff) (x : Var) (y : Var)
   have p0012 :=
     @gEqusb3 x y z
       (by
-        first
-        | (aesop))
+        aesop)
   have p0013_e00_recanon :
     Nominal.NPrf
       (synWb (synWsb y x (.classEq (.cv x) (.cv z))) (.classEq (.cv y) (.cv z))) :=
@@ -2991,20 +2848,15 @@ noncomputable def gSb8eu (ph : Wff) (x : Var) (y : Var)
   have p0017 :=
     Nominal.dfEu x z ph
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0018 :=
     Nominal.dfEu y z (synWsb y x ph)
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_wsb,
@@ -3123,17 +2975,14 @@ noncomputable def gEu1 (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y)
       (synWb (synWeu x ph) (synWex x
           (synWa ph (.all y (.imp (synWsb y x ph) (.classEq (.cv x) (.cv y))))))) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 :=
     @gNfs1v ph x y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gEuf (synWsb y x ph) y x
       (by
-        first
-        | (aesop))
+        aesop)
       p0000
   have p0002 := @gSb8eu ph x y hyp_eu1_1
   have p0003 := @gEqucom x y
@@ -3234,9 +3083,7 @@ noncomputable def gMo (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y)
   have p0000 :=
     @gNfv (.classEq (.cv x) (.cv z)) y
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classEq,
@@ -3248,9 +3095,7 @@ noncomputable def gMo (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y)
   have p0003 :=
     @gNfv (.all x (.imp ph (.classEq (.cv x) (.cv y)))) z
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_all,
               NFChoice.Compiler.CoreFVSimp.fv_wff_imp,
               NFChoice.Compiler.CoreFVSimp.fv_wff_classEq,
@@ -3284,9 +3129,7 @@ noncomputable def gMo (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y)
     @gAlbidv (.classEq (.cv z) (.cv y)) (.imp ph (.classEq (.cv x) (.cv z)))
       (.imp ph (.classEq (.cv x) (.cv y))) x
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classEq,
@@ -3312,9 +3155,7 @@ noncomputable def gMo (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y)
   have p0009 :=
     @gNfv (.classEq (.cv y) (.cv z)) x
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classEq,
@@ -3415,9 +3256,7 @@ noncomputable def gMo (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y)
     @gExlimiv (.all x (.imp ph (.classEq (.cv x) (.cv z))))
       (.all x (.all y (.imp (synWa ph (synWsb y x ph)) (.classEq (.cv x) (.cv y))))) z
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_all,
               NFChoice.Compiler.CoreFVSimp.fv_wff_imp,
               NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_wa,
@@ -3520,13 +3359,11 @@ noncomputable def gEuex (ph : Wff) (x : Var) :
   have p0000 :=
     @gNfv ph y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gEu1 ph x y
       (by
-        first
-        | (aesop))
+        aesop)
       p0000
   have p0002 :=
     @gExsimpl ph (.all y (.imp (synWsb y x ph) (.classEq (.cv x) (.cv y)))) x
@@ -3542,12 +3379,10 @@ noncomputable def gEumo0 (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y)
     (hyp_eumo0_1 : Nominal.NPrf (synWnf y ph)) :
     Nominal.NPrf (.imp (synWeu x ph) (synWex y (.all x (.imp ph (.objEq x y))))) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 :=
     @gEuf ph x y
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_eumo0_1
   have p0001 := @gBi1 ph (.objEq x y)
   have p0002 := @gAlimi (synWb ph (.objEq x y)) (.imp ph (.objEq x y)) x p0001
@@ -3606,19 +3441,16 @@ noncomputable def gEu2 (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y)
       (synWb (synWeu x ph) (synWa (synWex x ph)
           (.all x (.all y (.imp (synWa ph (synWsb y x ph)) (.objEq x y)))))) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 := @gEuex ph x
   have p0001 :=
     @gEumo0 ph x y
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_eu2_1
   have p0002 :=
     @gMo ph x y
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_eu2_1
   have p0003_e01_recanon :
     Nominal.NPrf
@@ -3693,8 +3525,7 @@ noncomputable def gEu2 (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y)
   have p0015 :=
     @gEu1 ph x y
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_eu2_1
   have p0016_e01_recanon :
     Nominal.NPrf
@@ -3753,18 +3584,15 @@ noncomputable def gEu3 (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y)
       (synWb (synWeu x ph)
         (synWa (synWex x ph) (synWex y (.all x (.imp ph (.objEq x y)))))) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 :=
     @gEu2 ph x y
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_eu3_1
   have p0001 :=
     @gMo ph x y
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_eu3_1
   have p0002_e00_recanon :
     Nominal.NPrf
@@ -3819,7 +3647,6 @@ noncomputable def gMo2 (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y)
     (hyp_mo2_1 : Nominal.NPrf (synWnf y ph)) :
     Nominal.NPrf (synWb (synWmo x ph) (synWex y (.all x (.imp ph (.objEq x y))))) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 := (Nominal.biimpRefl (synWmo x ph))
   have p0001 := @gAlnex ph x
   have p0002 := @gPm221 ph (.objEq x y)
@@ -3834,8 +3661,7 @@ noncomputable def gMo2 (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y)
   have p0007 :=
     @gEumo0 ph x y
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_mo2_1
   have p0008 :=
     @gJa (synWex x ph) (synWeu x ph) (synWex y (.all x (.imp ph (.objEq x y)))) p0006
@@ -3843,8 +3669,7 @@ noncomputable def gMo2 (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y)
   have p0009 :=
     @gEu3 ph x y
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_mo2_1
   have p0010 :=
     @gSimplbi2com (synWeu x ph) (synWex x ph)
@@ -3865,18 +3690,15 @@ noncomputable def gMo3 (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y)
       (synWb (synWmo x ph)
         (.all x (.all y (.imp (synWa ph (synWsb y x ph)) (.objEq x y))))) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 :=
     @gMo2 ph x y
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_mo3_1
   have p0001 :=
     @gMo ph x y
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_mo3_1
   have p0002_e01_recanon :
     Nominal.NPrf
@@ -3929,18 +3751,14 @@ noncomputable def gMo4f (ph : Wff) (ps : Wff) (x : Var) (y : Var) (dv_ph_y : y �
     Nominal.NPrf
       (synWb (synWmo x ph) (.all x (.all y (.imp (synWa ph ps) (.objEq x y))))) :=
   by
-  let proofSupport : Finset Var :=
-    ph.fv ∪ ps.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 :=
     @gNfv ph y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gMo3 ph x y
       (by
-        first
-        | (aesop))
+        aesop)
       p0000
   have p0002 := @gSbie ph ps x y hyp_mo4f_1 hyp_mo4f_2
   have p0003 := @gAnbi2i (synWsb y x ph) ps ph p0002
@@ -3962,21 +3780,16 @@ noncomputable def gMo4 (ph : Wff) (ps : Wff) (x : Var) (y : Var) (dv_ph_y : y �
     Nominal.NPrf
       (synWb (synWmo x ph) (.all x (.all y (.imp (synWa ph ps) (.objEq x y))))) :=
   by
-  let proofSupport : Finset Var :=
-    ph.fv ∪ ps.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 :=
     @gNfv ps x
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gMo4f ph ps x y
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
       p0000 hyp_mo4_1
   exact p0001
 
@@ -4004,12 +3817,10 @@ noncomputable def gMobidv (ph : Wff) (ps : Wff) (ch : Wff) (x : Var)
     (dv_ph_x : x ∉ ph.fv) (hyp_mobidv_1 : Nominal.NPrf (.imp ph (synWb ps ch))) :
     Nominal.NPrf (.imp ph (synWb (synWmo x ps) (synWmo x ch))) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ps.fv ∪ ch.fv ∪ ({ x } : Finset Var)
   have p0000 :=
     @gNfv ph x
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gMobid ph ps ch x p0000 hyp_mobidv_1
   exact p0001
 
@@ -4019,14 +3830,11 @@ noncomputable def gMobii (ps : Wff) (ch : Wff) (x : Var)
     (hyp_mobii_1 : Nominal.NPrf (synWb ps ch)) :
     Nominal.NPrf (synWb (synWmo x ps) (synWmo x ch)) :=
   by
-  let proofSupport : Finset Var := ps.fv ∪ ch.fv ∪ ({ x } : Finset Var)
   have p0000 := @gA1i (synWb ps ch) synWtru hyp_mobii_1
   have p0001 :=
     @gMobidv synWtru ps ch x
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_wtru] at ⊢;
@@ -4075,19 +3883,16 @@ noncomputable def gEu5 (ph : Wff) (x : Var) :
   have p0000 :=
     @gNfv ph y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gEu3 ph x y
       (by
-        first
-        | (aesop))
+        aesop)
       p0000
   have p0002 :=
     @gMo2 ph x y
       (by
-        first
-        | (aesop))
+        aesop)
       p0000
   have p0003_e00_recanon :
     Nominal.NPrf
@@ -4174,20 +3979,15 @@ noncomputable def gEu4 (ph : Wff) (ps : Wff) (x : Var) (y : Var) (dv_ph_y : y �
       (synWb (synWeu x ph)
         (synWa (synWex x ph) (.all x (.all y (.imp (synWa ph ps) (.objEq x y)))))) :=
   by
-  let proofSupport : Finset Var :=
-    ph.fv ∪ ps.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 := @gEu5 ph x
   have p0001 :=
     @gMo4 ph ps x y
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_eu4_1
   have p0002 :=
     @gAnbi2i (synWmo x ph) (.all x (.all y (.imp (synWa ph ps) (.objEq x y))))
@@ -4258,9 +4058,7 @@ noncomputable def gMoim (ph : Wff) (ps : Wff) (x : Var) :
     @gEximdv (.all x (.imp ph ps)) (.all x (.imp ps (.classEq (.cv x) (.cv y))))
       (.all x (.imp ph (.classEq (.cv x) (.cv y)))) y
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_all,
               NFChoice.Compiler.CoreFVSimp.fv_wff_imp, Finset.mem_union,
               Finset.mem_erase] at ⊢;
@@ -4269,24 +4067,20 @@ noncomputable def gMoim (ph : Wff) (ps : Wff) (x : Var) :
   have p0003 :=
     @gNfv ps y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0004 :=
     @gMo2 ps x y
       (by
-        first
-        | (aesop))
+        aesop)
       p0003
   have p0005 :=
     @gNfv ph y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0006 :=
     @gMo2 ph x y
       (by
-        first
-        | (aesop))
+        aesop)
       p0005
   have p0007_e01_recanon :
     Nominal.NPrf
@@ -4389,9 +4183,7 @@ noncomputable def gMoanim (ph : Wff) (ps : Wff) (x : Var)
   have p0005 :=
     @gNfv (synWa ph ps) y
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_wa,
@@ -4400,27 +4192,23 @@ noncomputable def gMoanim (ph : Wff) (ps : Wff) (x : Var)
   have p0006 :=
     @gMo2 (synWa ph ps) x y
       (by
-        first
-        | (aesop))
+        aesop)
       p0005
   have p0007 :=
     @gNfv ps y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0008 :=
     @gMo2 ps x y
       (by
-        first
-        | (aesop))
+        aesop)
       p0007
   have p0009 :=
     @gImbi2i (synWmo x ps) (synWex y (.all x (.imp ps (.objEq x y)))) ph p0008
   have p0010 :=
     @gN1937v ph (.all x (.imp ps (.objEq x y))) y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0011 :=
     @gBitr4i (.imp ph (synWmo x ps))
       (.imp ph (synWex y (.all x (.imp ps (.objEq x y)))))
@@ -4473,12 +4261,10 @@ noncomputable def gEuan (ph : Wff) (ps : Wff) (x : Var)
 noncomputable def gMoanimv (ph : Wff) (ps : Wff) (x : Var) (dv_ph_x : x ∉ ph.fv) :
     Nominal.NPrf (synWb (synWmo x (synWa ph ps)) (.imp ph (synWmo x ps))) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ps.fv ∪ ({ x } : Finset Var)
   have p0000 :=
     @gNfv ph x
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gMoanim ph ps x p0000
   exact p0001
 
@@ -4487,12 +4273,10 @@ noncomputable def gMoanimv (ph : Wff) (ps : Wff) (x : Var) (dv_ph_x : x ∉ ph.f
 noncomputable def gEuanv (ph : Wff) (ps : Wff) (x : Var) (dv_ph_x : x ∉ ph.fv) :
     Nominal.NPrf (synWb (synWeu x (synWa ph ps)) (synWa ph (synWeu x ps))) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ps.fv ∪ ({ x } : Finset Var)
   have p0000 :=
     @gNfv ph x
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gEuan ph ps x p0000
   exact p0001
 
@@ -4520,9 +4304,7 @@ noncomputable def gMopick (ph : Wff) (ps : Wff) (x : Var) :
   have p0000 :=
     @gNfv (synWa ph ps) y
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_wa,
@@ -4531,13 +4313,11 @@ noncomputable def gMopick (ph : Wff) (ps : Wff) (x : Var) :
   have p0001 :=
     @gNfs1v ph x y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0002 :=
     @gNfs1v ps x y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0003 := @gNfan (synWsb y x ph) (synWsb y x ps) x p0001 p0002
   have p0004 := @gSbequ12 ph x y
   have p0005 := @gSbequ12 ps x y
@@ -4578,13 +4358,11 @@ noncomputable def gMopick (ph : Wff) (ps : Wff) (x : Var) :
   have p0008 :=
     @gNfv ph y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0009 :=
     @gMo3 ph x y
       (by
-        first
-        | (aesop))
+        aesop)
       p0008
   have p0010 := @gSp (.imp (synWa ph (synWsb y x ph)) (.classEq (.cv x) (.cv y))) y
   have p0011 :=
@@ -4651,9 +4429,7 @@ noncomputable def gMopick (ph : Wff) (ps : Wff) (x : Var) :
     @gExlimiv (synWa (synWsb y x ph) (synWsb y x ps))
       (.imp (synWmo x ph) (.imp ph ps)) y
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_imp,
               NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_wmo, Finset.mem_union,
               Finset.mem_erase] at ⊢;
@@ -4750,13 +4526,10 @@ noncomputable def gMoexexv (ph : Wff) (ps : Wff) (x : Var) (y : Var)
       (.imp (synWa (synWmo x ph) (.all x (synWmo y ps)))
         (synWmo y (synWex x (synWa ph ps)))) :=
   by
-  let proofSupport : Finset Var :=
-    ph.fv ∪ ps.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 :=
     @gNfv ph y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gMoexex ph ps x y p0000
   exact p0001
 
@@ -4782,32 +4555,26 @@ noncomputable def gEuequ1 (x : Var) (y : Var) (dv_x_y : x ≠ y) :
   have p0000 :=
     @gA9ev x y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gEqutr2 x z y
   have p0002 := @gGen2 (.imp (synWa (.objEq x y) (.objEq z y)) (.objEq x z)) x z p0001
   have p0003 := @gEquequ1 x z y
   have p0004 :=
     @gEu4 (.objEq x y) (.objEq z y) x z
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_objEq] at ⊢;
             aesop))
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_objEq] at ⊢;
             aesop))
       (by
-        first
-        | (aesop))
+        aesop)
       p0003
   have p0005 :=
     @gMpbir2an (synWeu x (.objEq x y)) (synWex x (.objEq x y))
@@ -4833,15 +4600,13 @@ noncomputable def gHbab1 (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y) :
     Nominal.NPrf
       (.imp (.classMem (.cv y) (.cab x ph)) (.all x (.classMem (.cv y) (.cab x ph)))) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 :=
     (NFChoice.DirectNominalPrf.Nominal.DefinitionLeafHandlersCanonical001.dfClabStructural
       y x ph)
   have p0001 :=
     @gHbs1 ph x y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0002 := @gHbxfrbi (.classMem (.cv y) (.cab x ph)) (synWsb y x ph) x p0000 p0001
   exact p0002
 
@@ -4850,12 +4615,10 @@ noncomputable def gHbab1 (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y) :
 noncomputable def gNfsab1 (ph : Wff) (x : Var) (y : Var) (dv_x_y : x ≠ y) :
     Nominal.NPrf (synWnf x (.classMem (.cv y) (.cab x ph))) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   have p0000 :=
     @gHbab1 ph x y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gNfi (.classMem (.cv y) (.cab x ph)) x p0000
   exact p0001
 
@@ -4866,16 +4629,13 @@ noncomputable def gHbab (ph : Wff) (x : Var) (y : Var) (z : Var) (dv_x_z : x ≠
     Nominal.NPrf
       (.imp (.classMem (.cv z) (.cab y ph)) (.all x (.classMem (.cv z) (.cab y ph)))) :=
   by
-  let proofSupport : Finset Var :=
-    ph.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ ({ z } : Finset Var)
   have p0000 :=
     (NFChoice.DirectNominalPrf.Nominal.DefinitionLeafHandlersCanonical001.dfClabStructural
       z y ph)
   have p0001 :=
     @gHbsb ph y z x
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_hbab_1
   have p0002 := @gHbxfrbi (.classMem (.cv z) (.cab y ph)) (synWsb z y ph) x p0000 p0001
   exact p0002
@@ -4886,14 +4646,11 @@ noncomputable def gNfsab (ph : Wff) (x : Var) (y : Var) (z : Var) (dv_x_z : x �
     (hyp_nfsab_1 : Nominal.NPrf (synWnf x ph)) :
     Nominal.NPrf (synWnf x (.classMem (.cv z) (.cab y ph))) :=
   by
-  let proofSupport : Finset Var :=
-    ph.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ ({ z } : Finset Var)
   have p0000 := @gNfri ph x hyp_nfsab_1
   have p0001 :=
     @gHbab ph x y z
       (by
-        first
-        | (aesop))
+        aesop)
       p0000
   have p0002 := @gNfi (.classMem (.cv z) (.cab y ph)) x p0001
   exact p0002
@@ -4948,21 +4705,16 @@ noncomputable def gDfcleq (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv
   have p0000 :=
     NFChoice.DirectNominalPrf.Nominal.NFLiteralBaseFour.axExt y z x
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     (NFChoice.DirectNominalPrf.Nominal.DefinitionLeafHandlersObjExtCompat001.dfCleqOfDVObjExt
       x y z A B p0000 (by
-        first
-        | (aesop)) (by
-        first
-        | (aesop)))
+        aesop) (by
+        aesop))
   exact p0001
 
 /-- Checked nominal proof certificate identified upstream as `g_eqriv`. -/
@@ -4972,15 +4724,12 @@ noncomputable def gEqriv (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv)
     (hyp_eqriv_1 : Nominal.NPrf (synWb (.classMem (.cv x) A) (.classMem (.cv x) B))) :
     Nominal.NPrf (.classEq A B) :=
   by
-  let proofSupport : Finset Var := ({ x } : Finset Var) ∪ A.fv ∪ B.fv
   have p0000 :=
     @gDfcleq x A B
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gMpgbir (.classEq A B) (synWb (.classMem (.cv x) A) (.classMem (.cv x) B)) x p0000
       hyp_eqriv_1
@@ -4994,21 +4743,17 @@ noncomputable def gEqrdv (ph : Wff) (x : Var) (A : Class) (B : Class) (dv_A_x : 
       Nominal.NPrf (.imp ph (synWb (.classMem (.cv x) A) (.classMem (.cv x) B)))) :
     Nominal.NPrf (.imp ph (.classEq A B)) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ({ x } : Finset Var) ∪ A.fv ∪ B.fv
   have p0000 :=
     @gAlrimiv ph (synWb (.classMem (.cv x) A) (.classMem (.cv x) B)) x
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_eqrdv_1
   have p0001 :=
     @gDfcleq x A B
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0002 :=
     @gSylibr ph (.all x (synWb (.classMem (.cv x) A) (.classMem (.cv x) B)))
       (.classEq A B) p0000 p0001
@@ -5031,11 +4776,9 @@ noncomputable def gEqid (A : Class) : Nominal.NPrf (.classEq A A) :=
   have p0001 :=
     @gEqriv x A A
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
       p0000
   exact p0001
 
@@ -5072,19 +4815,15 @@ noncomputable def gEqcom (A : Class) (B : Class) :
   have p0002 :=
     @gDfcleq x A B
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0003 :=
     @gDfcleq x B A
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0004 :=
     @gN3bitr4i (.all x (synWb (.classMem (.cv x) A) (.classMem (.cv x) B)))
       (.all x (synWb (.classMem (.cv x) B) (.classMem (.cv x) A))) (.classEq A B)
@@ -5143,11 +4882,9 @@ noncomputable def gEqeq1 (A : Class) (B : Class) (C : Class) :
   have p0000 :=
     @gDfcleq x A B
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gBiimpi (.classEq A B) (.all x (synWb (.classMem (.cv x) A) (.classMem (.cv x) B)))
       p0000
@@ -5161,9 +4898,7 @@ noncomputable def gEqeq1 (A : Class) (B : Class) (C : Class) :
     @gAlbidv (.classEq A B) (synWb (.classMem (.cv x) A) (.classMem (.cv x) C))
       (synWb (.classMem (.cv x) B) (.classMem (.cv x) C)) x
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classEq,
@@ -5173,19 +4908,15 @@ noncomputable def gEqeq1 (A : Class) (B : Class) (C : Class) :
   have p0005 :=
     @gDfcleq x A C
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0006 :=
     @gDfcleq x B C
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0007 :=
     @gN3bitr4g (.classEq A B)
       (.all x (synWb (.classMem (.cv x) A) (.classMem (.cv x) C)))
@@ -5704,9 +5435,7 @@ noncomputable def gEleq1 (A : Class) (B : Class) (C : Class) :
     @gExbidv (.classEq A B) (synWa (.classEq (.cv x) A) (.classMem (.cv x) C))
       (synWa (.classEq (.cv x) B) (.classMem (.cv x) C)) x
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classEq,
@@ -5715,16 +5444,12 @@ noncomputable def gEleq1 (A : Class) (B : Class) (C : Class) :
       p0001
   have p0003 :=
     (NFChoice.DirectNominalPrf.Nominal.DefinitionLeafHandlersCanonical001.dfClelOfDV x A C (by
-        first
-        | (aesop)) (by
-        first
-        | (aesop)))
+        aesop) (by
+        aesop))
   have p0004 :=
     (NFChoice.DirectNominalPrf.Nominal.DefinitionLeafHandlersCanonical001.dfClelOfDV x B C (by
-        first
-        | (aesop)) (by
-        first
-        | (aesop)))
+        aesop) (by
+        aesop))
   have p0005 :=
     @gN3bitr4g (.classEq A B)
       (synWex x (synWa (.classEq (.cv x) A) (.classMem (.cv x) C)))
@@ -5755,11 +5480,9 @@ noncomputable def gEleq2 (A : Class) (B : Class) (C : Class) :
   have p0000 :=
     @gDfcleq x A B
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gBiimpi (.classEq A B) (.all x (synWb (.classMem (.cv x) A) (.classMem (.cv x) B)))
       p0000
@@ -5773,9 +5496,7 @@ noncomputable def gEleq2 (A : Class) (B : Class) (C : Class) :
     @gExbidv (.classEq A B) (synWa (.classEq (.cv x) C) (.classMem (.cv x) A))
       (synWa (.classEq (.cv x) C) (.classMem (.cv x) B)) x
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classEq,
@@ -5784,16 +5505,12 @@ noncomputable def gEleq2 (A : Class) (B : Class) (C : Class) :
       p0003
   have p0005 :=
     (NFChoice.DirectNominalPrf.Nominal.DefinitionLeafHandlersCanonical001.dfClelOfDV x C A (by
-        first
-        | (aesop)) (by
-        first
-        | (aesop)))
+        aesop) (by
+        aesop))
   have p0006 :=
     (NFChoice.DirectNominalPrf.Nominal.DefinitionLeafHandlersCanonical001.dfClelOfDV x C B (by
-        first
-        | (aesop)) (by
-        first
-        | (aesop)))
+        aesop) (by
+        aesop))
   have p0007 :=
     @gN3bitr4g (.classEq A B)
       (synWex x (synWa (.classEq (.cv x) C) (.classMem (.cv x) A)))
@@ -6068,22 +5785,16 @@ noncomputable def gCleqh (x : Var) (y : Var) (A : Class) (B : Class) (dv_A_y : y
     Nominal.NPrf
       (synWb (.classEq A B) (.all x (synWb (.classMem (.cv x) A) (.classMem (.cv x) B)))) :=
   by
-  let proofSupport : Finset Var :=
-    ({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ A.fv ∪ B.fv
   have p0000 :=
     @gDfcleq y A B
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     Nominal.ax17 (synWb (.classMem (.cv x) A) (.classMem (.cv x) B)) y
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_wb,
@@ -6160,13 +5871,10 @@ noncomputable def gEqsb1lem (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉ A.fv
     (dv_x_y : x ≠ y) :
     Nominal.NPrf (synWb (synWsb y x (.classEq (.cv x) A)) (.classEq (.cv y) A)) :=
   by
-  let proofSupport : Finset Var := ({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ A.fv
   have p0000 :=
     @gNfv (.classEq (.cv y) A) x
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classEq,
@@ -6216,18 +5924,14 @@ noncomputable def gEqsb1 (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉ A.fv) :
   have p0000 :=
     @gEqsb1lem x w A
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gSbbii (synWsb w x (.classEq (.cv x) A)) (.classEq (.cv w) A) w y p0000
   have p0002 :=
     @gNfv (.classEq (.cv x) A) w
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classEq,
@@ -6238,11 +5942,9 @@ noncomputable def gEqsb1 (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉ A.fv) :
   have p0004 :=
     @gEqsb1lem w y A
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0005 :=
     @gN3bitr3i (synWsb y w (synWsb w x (.classEq (.cv x) A)))
       (synWsb y w (.classEq (.cv w) A)) (synWsb y x (.classEq (.cv x) A))
@@ -6278,9 +5980,7 @@ noncomputable def gClelsb1 (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉ A.fv)
   have p0000 :=
     @gNfv (.classMem (.cv w) A) x
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem,
@@ -6291,9 +5991,7 @@ noncomputable def gClelsb1 (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉ A.fv)
   have p0002 :=
     @gNfv (.classMem (.cv x) A) w
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem,
@@ -6318,9 +6016,7 @@ noncomputable def gClelsb1 (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉ A.fv)
   have p0006 :=
     @gNfv (.classMem (.cv y) A) w
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem,
@@ -6353,19 +6049,15 @@ noncomputable def gHblem (x : Var) (y : Var) (z : Var) (A : Class) (dv_A_y : y �
     (hyp_hblem_1 : Nominal.NPrf (.imp (.classMem (.cv y) A) (.all x (.classMem (.cv y) A)))) :
     Nominal.NPrf (.imp (.classMem (.cv z) A) (.all x (.classMem (.cv z) A))) :=
   by
-  let proofSupport : Finset Var :=
-    ({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ ({ z } : Finset Var) ∪ A.fv
   have p0000 :=
     @gHbsb (.classMem (.cv y) A) y z x
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_hblem_1
   have p0001 :=
     @gClelsb1 y z A
       (by
-        first
-        | (aesop))
+        aesop)
   have p0002 := @gAlbii (synWsb z y (.classMem (.cv y) A)) (.classMem (.cv z) A) x p0001
   have p0003 :=
     @gN3imtr3i (synWsb z y (.classMem (.cv y) A))
@@ -6400,9 +6092,7 @@ noncomputable def gEqabb (ph : Wff) (x : Var) (A : Class) (dv_A_x : x ∉ A.fv) 
   have p0000 :=
     Nominal.ax17 (.classMem (.cv y) A) x
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem,
@@ -6412,25 +6102,20 @@ noncomputable def gEqabb (ph : Wff) (x : Var) (A : Class) (dv_A_x : x ∉ A.fv) 
   have p0001 :=
     @gHbab1 ph x y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0002 :=
     @gCleqh x y A (.cab x ph)
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cab,
               Finset.mem_erase] at ⊢;
             aesop))
       (by
-        first
-        | (aesop))
+        aesop)
       p0000 p0001
   have p0003 := @gAbid ph x
   have p0004 := @gBibi2i (.classMem (.cv x) (.cab x ph)) ph (.classMem (.cv x) A) p0003
@@ -6449,12 +6134,10 @@ noncomputable def gEqabcb (ph : Wff) (x : Var) (A : Class) (dv_A_x : x ∉ A.fv)
     Nominal.NPrf
       (synWb (.classEq (.cab x ph) A) (.all x (synWb ph (.classMem (.cv x) A)))) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ({ x } : Finset Var) ∪ A.fv
   have p0000 :=
     @gEqabb ph x A
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gEqcom (.cab x ph) A
   have p0002 := @gBicom ph (.classMem (.cv x) A)
   have p0003 :=
@@ -6513,18 +6196,14 @@ noncomputable def gAbbib (ph : Wff) (ps : Wff) (x : Var) :
   have p0000 :=
     @gDfcleq y (.cab x ph) (.cab x ps)
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cab,
               Finset.mem_erase] at ⊢;
             aesop))
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cab,
@@ -6533,21 +6212,17 @@ noncomputable def gAbbib (ph : Wff) (ps : Wff) (x : Var) :
   have p0001 :=
     @gNfsab1 ph x y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0002 :=
     @gNfsab1 ps x y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0003 :=
     @gNfbi (.classMem (.cv y) (.cab x ph)) (.classMem (.cv y) (.cab x ps)) x p0001 p0002
   have p0004 :=
     @gNfv (synWb ph ps) y
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_wb,
@@ -6583,12 +6258,10 @@ noncomputable def gEqabi (ph : Wff) (x : Var) (A : Class) (dv_A_x : x ∉ A.fv)
     (hyp_abbiri_1 : Nominal.NPrf (synWb (.classMem (.cv x) A) ph)) :
     Nominal.NPrf (.classEq A (.cab x ph)) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ({ x } : Finset Var) ∪ A.fv
   have p0000 :=
     @gEqabb ph x A
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gMpgbir (.classEq A (.cab x ph)) (synWb (.classMem (.cv x) A) ph) x p0000
       hyp_abbiri_1
@@ -6624,12 +6297,10 @@ noncomputable def gAbbidv (ph : Wff) (ps : Wff) (ch : Wff) (x : Var)
     (dv_ph_x : x ∉ ph.fv) (hyp_abbidv_1 : Nominal.NPrf (.imp ph (synWb ps ch))) :
     Nominal.NPrf (.imp ph (.classEq (.cab x ps) (.cab x ch))) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ps.fv ∪ ch.fv ∪ ({ x } : Finset Var)
   have p0000 :=
     @gNfv ph x
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gAbbid ph ps ch x p0000 hyp_abbidv_1
   exact p0001
 
@@ -6640,18 +6311,15 @@ noncomputable def gEqabdv (ph : Wff) (ps : Wff) (x : Var) (A : Class) (dv_A_x : 
     (hyp_eqabdv_1 : Nominal.NPrf (.imp ph (synWb (.classMem (.cv x) A) ps))) :
     Nominal.NPrf (.imp ph (.classEq A (.cab x ps))) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ps.fv ∪ ({ x } : Finset Var) ∪ A.fv
   have p0000 :=
     @gAlrimiv ph (synWb (.classMem (.cv x) A) ps) x
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_eqabdv_1
   have p0001 :=
     @gEqabb ps x A
       (by
-        first
-        | (aesop))
+        aesop)
   have p0002 :=
     @gSylibr ph (.all x (synWb (.classMem (.cv x) A) ps)) (.classEq A (.cab x ps)) p0000
       p0001
@@ -6664,18 +6332,15 @@ noncomputable def gEqabcdv (ph : Wff) (ps : Wff) (x : Var) (A : Class)
     (hyp_eqabcdv_1 : Nominal.NPrf (.imp ph (synWb ps (.classMem (.cv x) A)))) :
     Nominal.NPrf (.imp ph (.classEq (.cab x ps) A)) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ps.fv ∪ ({ x } : Finset Var) ∪ A.fv
   have p0000 :=
     @gAlrimiv ph (synWb ps (.classMem (.cv x) A)) x
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_eqabcdv_1
   have p0001 :=
     @gEqabcb ps x A
       (by
-        first
-        | (aesop))
+        aesop)
   have p0002 :=
     @gSylibr ph (.all x (synWb ps (.classMem (.cv x) A))) (.classEq (.cab x ps) A) p0000
       p0001
@@ -6686,13 +6351,11 @@ noncomputable def gEqabcdv (ph : Wff) (ps : Wff) (x : Var) (A : Class)
 noncomputable def gAbid2 (x : Var) (A : Class) (dv_A_x : x ∉ A.fv) :
     Nominal.NPrf (.classEq (.cab x (.classMem (.cv x) A)) A) :=
   by
-  let proofSupport : Finset Var := ({ x } : Finset Var) ∪ A.fv
   have p0000 := @gBiid (.classMem (.cv x) A)
   have p0001 :=
     @gEqabi (.classMem (.cv x) A) x A
       (by
-        first
-        | (aesop))
+        aesop)
       p0000
   have p0002 := @gEqcomi A (.cab x (.classMem (.cv x) A)) p0001
   exact p0002
@@ -6735,8 +6398,7 @@ noncomputable def gCbvab (ph : Wff) (ps : Wff) (x : Var) (y : Var)
   have p0000 :=
     @gNfsb ps y z x
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_cbvab_2
   have p0001 := @gEqucoms (synWb ph ps) x y hyp_cbvab_3
   have p0002_e00_recanon :
@@ -6794,18 +6456,14 @@ noncomputable def gCbvab (ph : Wff) (ps : Wff) (x : Var) (y : Var)
   have p0010 :=
     @gEqriv z (.cab x ph) (.cab y ps)
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cab,
               Finset.mem_erase] at ⊢;
             aesop))
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cab,
@@ -6820,15 +6478,12 @@ noncomputable def gNfci (x : Var) (y : Var) (A : Class) (dv_A_y : y ∉ A.fv)
     (dv_x_y : x ≠ y) (hyp_nfci_1 : Nominal.NPrf (synWnf x (.classMem (.cv y) A))) :
     Nominal.NPrf (synWnfc x A) :=
   by
-  let proofSupport : Finset Var := ({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ A.fv
   have p0000 :=
     NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfNfc x y A
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gMpgbir (synWnfc x A) (synWnf x (.classMem (.cv y) A)) y p0000 hyp_nfci_1
   exact p0001
@@ -6839,15 +6494,12 @@ noncomputable def gNfcr (x : Var) (y : Var) (A : Class) (dv_A_y : y ∉ A.fv)
     (dv_x_y : x ≠ y) :
     Nominal.NPrf (.imp (synWnfc x A) (synWnf x (.classMem (.cv y) A))) :=
   by
-  let proofSupport : Finset Var := ({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ A.fv
   have p0000 :=
     NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfNfc x y A
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gSp (synWnf x (.classMem (.cv y) A)) y
   have p0002 :=
     @gSylbi (synWnfc x A) (.all y (synWnf x (.classMem (.cv y) A)))
@@ -6884,21 +6536,17 @@ noncomputable def gNfcrii (x : Var) (y : Var) (A : Class) (dv_x_y : x ≠ y)
   have p0000 :=
     @gNfcr x z A
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := Nominal.mp hyp_nfcri_1 p0000
   have p0002 := @gNfri (.classMem (.cv z) A) x p0001
   have p0003 :=
     @gHblem x z y A
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
       p0002
   exact p0003
 
@@ -6908,12 +6556,10 @@ noncomputable def gNfcri (x : Var) (y : Var) (A : Class) (dv_x_y : x ≠ y)
     (hyp_nfcri_1 : Nominal.NPrf (synWnfc x A)) :
     Nominal.NPrf (synWnf x (.classMem (.cv y) A)) :=
   by
-  let proofSupport : Finset Var := ({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ A.fv
   have p0000 :=
     @gNfcrii x y A
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_nfcri_1
   have p0001 := @gNfi (.classMem (.cv y) A) x p0000
   exact p0001
@@ -6925,17 +6571,13 @@ noncomputable def gNfcd (ph : Wff) (x : Var) (y : Var) (A : Class) (dv_A_y : y �
     (hyp_nfcd_2 : Nominal.NPrf (.imp ph (synWnf x (.classMem (.cv y) A)))) :
     Nominal.NPrf (.imp ph (synWnfc x A)) :=
   by
-  let proofSupport : Finset Var :=
-    ph.fv ∪ ({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ A.fv
   have p0000 := @gAlrimi ph (synWnf x (.classMem (.cv y) A)) y hyp_nfcd_1 hyp_nfcd_2
   have p0001 :=
     NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfNfc x y A
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0002 :=
     @gSylibr ph (.all y (synWnf x (.classMem (.cv y) A))) (synWnfc x A) p0000 p0001
   exact p0002
@@ -6971,19 +6613,15 @@ noncomputable def gNfceqi (x : Var) (A : Class) (B : Class)
   have p0003 :=
     NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfNfc x y A
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0004 :=
     NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfNfc x y B
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0005 :=
     @gN3bitr4i (.all y (synWnf x (.classMem (.cv y) A)))
       (.all y (synWnf x (.classMem (.cv y) B))) (synWnfc x A) (synWnfc x B) p0002 p0003
@@ -7048,25 +6686,20 @@ noncomputable def gNfceqdf (ph : Wff) (x : Var) (A : Class) (B : Class)
   have p0002 :=
     @gAlbidv ph (synWnf x (.classMem (.cv y) A)) (synWnf x (.classMem (.cv y) B)) y
       (by
-        first
-        | (aesop))
+        aesop)
       p0001
   have p0003 :=
     NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfNfc x y A
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0004 :=
     NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfNfc x y B
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0005 :=
     @gN3bitr4g ph (.all y (synWnf x (.classMem (.cv y) A)))
       (.all y (synWnf x (.classMem (.cv y) B))) (synWnfc x A) (synWnfc x B) p0002 p0003
@@ -7094,9 +6727,7 @@ noncomputable def gNfcv (x : Var) (A : Class) (dv_A_x : x ∉ A.fv) :
   have p0000 :=
     @gNfv (.classMem (.cv y) A) x
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem,
@@ -7106,11 +6737,9 @@ noncomputable def gNfcv (x : Var) (A : Class) (dv_A_x : x ∉ A.fv) :
   have p0001 :=
     @gNfci x y A
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
       p0000
   exact p0001
 
@@ -7119,12 +6748,10 @@ noncomputable def gNfcv (x : Var) (A : Class) (dv_A_x : x ∉ A.fv) :
 noncomputable def gNfcvd (ph : Wff) (x : Var) (A : Class) (dv_A_x : x ∉ A.fv) :
     Nominal.NPrf (.imp ph (synWnfc x A)) :=
   by
-  let proofSupport : Finset Var := ph.fv ∪ ({ x } : Finset Var) ∪ A.fv
   have p0000 :=
     @gNfcv x A
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gA1i (synWnfc x A) ph p0000
   exact p0001
 
@@ -7148,22 +6775,18 @@ noncomputable def gNfab1 (ph : Wff) (x : Var) : Nominal.NPrf (synWnfc x (.cab x 
   have p0000 :=
     @gNfsab1 ph x y
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gNfci x y (.cab x ph)
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cab,
               Finset.mem_erase] at ⊢;
             aesop))
       (by
-        first
-        | (aesop))
+        aesop)
       p0000
   exact p0001
 
@@ -7188,11 +6811,9 @@ noncomputable def gNfnfc1 (x : Var) (A : Class) :
   have p0000 :=
     NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfNfc x y A
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gNfnf1 (.classMem (.cv y) A) x
   have p0002 := @gNfal (synWnf x (.classMem (.cv y) A)) x y p0001
   have p0003 :=
@@ -7226,23 +6847,19 @@ noncomputable def gNfab (ph : Wff) (x : Var) (y : Var)
   have p0000 :=
     @gNfsab ph x y z
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_nfab_1
   have p0001 :=
     @gNfci x z (.cab y ph)
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cab,
               Finset.mem_erase] at ⊢;
             aesop))
       (by
-        first
-        | (aesop))
+        aesop)
       p0000
   exact p0001
 
@@ -7283,22 +6900,18 @@ noncomputable def gNfeq (x : Var) (A : Class) (B : Class)
   have p0000 :=
     @gDfcleq z A B
       (by
-        first
-        | (aesop))
+        aesop)
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 :=
     @gNfcri x z A
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_nfnfc_1
   have p0002 :=
     @gNfcri x z B
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_nfeq_2
   have p0003 := @gNfbi (.classMem (.cv z) A) (.classMem (.cv z) B) x p0001 p0002
   have p0004 := @gNfal (synWb (.classMem (.cv z) A) (.classMem (.cv z) B)) x z p0003
@@ -7334,16 +6947,12 @@ noncomputable def gNfel (x : Var) (A : Class) (B : Class)
     exact fresh_z (Finset.mem_union_right _ (h))
   have p0000 :=
     (NFChoice.DirectNominalPrf.Nominal.DefinitionLeafHandlersCanonical001.dfClelOfDV z A B (by
-        first
-        | (aesop)) (by
-        first
-        | (aesop)))
+        aesop) (by
+        aesop))
   have p0001 :=
     @gNfcv x (.cv z)
       (by
-        first
-        |
-          (simp (config :=
+        (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv,
@@ -7353,8 +6962,7 @@ noncomputable def gNfel (x : Var) (A : Class) (B : Class)
   have p0003 :=
     @gNfcri x z B
       (by
-        first
-        | (aesop))
+        aesop)
       hyp_nfeq_2
   have p0004 := @gNfan (.classEq (.cv z) A) (.classMem (.cv z) B) x p0002 p0003
   have p0005 := @gNfex (synWa (.classEq (.cv z) A) (.classMem (.cv z) B)) x z p0004
@@ -7369,12 +6977,10 @@ noncomputable def gNfel1 (x : Var) (A : Class) (B : Class) (dv_B_x : x ∉ B.fv)
     (hyp_nfeq1_1 : Nominal.NPrf (synWnfc x A)) :
     Nominal.NPrf (synWnf x (.classMem A B)) :=
   by
-  let proofSupport : Finset Var := ({ x } : Finset Var) ∪ A.fv ∪ B.fv
   have p0000 :=
     @gNfcv x B
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gNfel x A B hyp_nfeq1_1 p0000
   exact p0001
 
@@ -7384,12 +6990,10 @@ noncomputable def gNfeq2 (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv)
     (hyp_nfeq2_1 : Nominal.NPrf (synWnfc x B)) :
     Nominal.NPrf (synWnf x (.classEq A B)) :=
   by
-  let proofSupport : Finset Var := ({ x } : Finset Var) ∪ A.fv ∪ B.fv
   have p0000 :=
     @gNfcv x A
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gNfeq x A B p0000 hyp_nfeq2_1
   exact p0001
 
@@ -7399,12 +7003,10 @@ noncomputable def gNfel2 (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv)
     (hyp_nfeq2_1 : Nominal.NPrf (synWnfc x B)) :
     Nominal.NPrf (synWnf x (.classMem A B)) :=
   by
-  let proofSupport : Finset Var := ({ x } : Finset Var) ∪ A.fv ∪ B.fv
   have p0000 :=
     @gNfcv x A
       (by
-        first
-        | (aesop))
+        aesop)
   have p0001 := @gNfel x A B p0000 hyp_nfeq2_1
   exact p0001
 

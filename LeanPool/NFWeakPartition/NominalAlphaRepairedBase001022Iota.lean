@@ -109,8 +109,7 @@ noncomputable def nominalDfIota (ph : Wff) (x : Var) (y : Var) (dv_ph_y : y ∉ 
                         simp only [List.mem_cons, List.not_mem_nil, or_false,
                           Prod.mk.injEq] at h;
                         repeat'
-                          (first
-                            | (rcases h with ⟨rfl, rfl⟩));
+                          ((rcases h with ⟨rfl, rfl⟩));
                           all_goals aesop))) (TAlphaClass.cab
                     (TAlphaWff.classEq (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
                         (TAlphaVar.there (Nat.ne_of_lt (mem_lt_freshVar support_mem_0000 0))
