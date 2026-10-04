@@ -141,7 +141,7 @@ bounded coercive (i.e. `B(u, u) ≥ β‖u‖²_H`) bilinear form, and `f` is a 
 functional on `H`, then there is a unique `u ∈ H` such that `B(u, v) = ⟪f, v⟫` for all
 `v ∈ H`.
 
-Guo, *Partial Differential Equations I and II* (Course Lecture Notes), Theorem VII.3.1,
+Guo, *Partial Differential Equations* (Course Lecture Notes), Theorem VII.3.1,
 p. 49. The two hypotheses are boundedness and coercivity, and `B` is otherwise
 arbitrary, which is Remark VII.3.2 there.
 

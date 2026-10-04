@@ -17,7 +17,7 @@ public import LeanPool.EllipticPDE.Regularity.LowerOrderWkInfty
 
 `EllipticPdes.Regularity.principal_move`, `transport_move` and `zeroth_move` move `∂_ℓ` from
 the test function onto the solution in the three terms of the equation, each by one application
-of the Leibniz rule for a `C¹` weight. Guo, *Partial Differential Equations I and II* (Course
+of the Leibniz rule for a `C¹` weight. Guo, *Partial Differential Equations* (Course
 Lecture Notes), Theorem VIII.3.2 (p. 65) asks only for `W^{k,∞}` coefficients, which have no
 classical derivative, and this file repeats the three with `HasWeakDerivOn.mul_isWkInfty_left`
 in place of `HasWeakDerivOn.mul_contDiff_left`.

@@ -72,11 +72,8 @@ theorem restrictL2_diffQuot_extendL2 (k : Fin d) (h : ℝ) (hΩm : MeasurableSet
 /-- **Extension by zero is a left inverse of restriction on `Ω`.** Restricting the whole-space
 extension of a class recovers the class. -/
 theorem restrictL2_extendL2_eq (hΩm : MeasurableSet Ω) (g : L2D Ω) :
-    restrictL2 (extendL2 hΩm g) = g := by
-  apply Lp.ext
-  filter_upwards [coeFn_restrictL2 (Ω := Ω) (extendL2 hΩm g),
-      ae_restrict_of_ae (coeFn_extendL2 hΩm g), ae_restrict_mem hΩm] with x h1 h2 h3
-  rw [h1, h2, Set.indicator_of_mem h3]
+    restrictL2 (extendL2 hΩm g) = g :=
+  restrictL2_extendL2 hΩm g
 
 /-- **First-order bound for the interior difference quotient.** For `u ∈ H₀¹(Ω)` the interior
 difference quotient of the function coordinate is bounded by the corresponding gradient

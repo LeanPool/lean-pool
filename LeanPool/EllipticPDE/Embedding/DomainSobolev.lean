@@ -33,7 +33,7 @@ This is the single rung the proof of the Sobolev embedding at order `k` iterates
 
 ## References
 
-Y. Guo, *Partial Differential Equations I and II* (Course Lecture Notes), Theorem III.4.3 and
+James Guo, *Partial Differential Equations* (Course Lecture Notes), Theorem III.4.3 and
 Theorem IV.2.3; L. C. Evans, *Partial Differential Equations* (2nd ed.), §5.6.1 Theorem 2.
 -/
 
