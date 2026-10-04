@@ -51,6 +51,23 @@ namespace EllipticPdes.Sobolev
 
 variable {d : ℕ} {Ω : Set (EuclideanSpace ℝ (Fin d))}
 
+-- Cache the canonical structures to avoid repeated instance search through the graph spaces.
+private abbrev cachedSobolevNormedAddCommGroup (Ω : Set (EuclideanSpace ℝ (Fin d))) :
+    NormedAddCommGroup (H01 Ω) := inferInstance
+attribute [local instance] cachedSobolevNormedAddCommGroup
+
+private abbrev cachedSobolevInnerProductSpace (Ω : Set (EuclideanSpace ℝ (Fin d))) :
+    InnerProductSpace ℝ (H01 Ω) := inferInstance
+attribute [local instance] cachedSobolevInnerProductSpace
+
+private abbrev cachedDatumNormedAddCommGroup (Ω : Set (EuclideanSpace ℝ (Fin d))) :
+    NormedAddCommGroup (L2D Ω) := inferInstance
+attribute [local instance] cachedDatumNormedAddCommGroup
+
+private abbrev cachedDatumInnerProductSpace (Ω : Set (EuclideanSpace ℝ (Fin d))) :
+    InnerProductSpace ℝ (L2D Ω) := inferInstance
+attribute [local instance] cachedDatumInnerProductSpace
+
 /-- The **solution operator** on `L²(Ω)` of a coercive form `B`: `G = ι ∘ (B♯)⁻¹ ∘ ι†`, with
 `ι = embL2 Ω` the Rellich embedding and `(B♯)⁻¹` the Lax-Milgram inverse of `B`. -/
 def solOp (B : H01 Ω →L[ℝ] H01 Ω →L[ℝ] ℝ) (hco : IsCoercive B) : L2D Ω →L[ℝ] L2D Ω :=
