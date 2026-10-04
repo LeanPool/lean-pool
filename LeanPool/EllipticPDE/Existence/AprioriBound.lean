@@ -25,9 +25,16 @@ bounded in absolute value by the same expression with the boundary supremum of `
 * `EllipticPdes.Classical.apriori_bound_sub`: the bound for a subsolution.
 * `EllipticPdes.Classical.apriori_bound_abs`: the bound for a solution.
 
+## Operator convention
+
+The non-divergence operator here is `L u = -∑ aᵢⱼ ∂ᵢⱼu + ∑ bᵢ ∂ᵢu + c u`.
+All Guo results cited in this file are translated by negating the source operator:
+Guo's operator is `-L`, with coefficients `a`, `-b`, `-c`. Thus his subsolution inequality
+`(-L) u ≥ 0` becomes `L u ≤ 0`, and his potential condition `-c ≤ 0` becomes `c ≥ 0`.
+
 ## References
 
-Y. Guo, *Partial Differential Equations I and II* (Course Lecture Notes), Theorem XI.5.1
+James Guo, *Partial Differential Equations* (Course Lecture Notes), Theorem XI.5.1
 (p. 103); D. Gilbarg and N. S. Trudinger, *Elliptic Partial Differential Equations of Second
 Order*, Theorem 3.7 (p. 36).
 -/
