@@ -118,6 +118,7 @@ def ChamberTwo (length : Fin 12 → ℕ) : Prop :=
 
 /-- The union of the two scopes AR draw.  The third case, `c = min`, is the
 `sigma` image of chamber 2 and needs no proof of its own. -/
+@[expose]
 def Chamber (length : Fin 12 → ℕ) : Prop :=
   ChamberOne length ∨ ChamberTwo length
 

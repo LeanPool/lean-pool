@@ -31,6 +31,7 @@ open AtanasovRanganathan.GenusFourCubicAtlas
 open AtanasovRanganathan.GenusFourPseudocoreCoverage
 
 /-- The six concrete closed-row obligations. -/
+@[expose]
 def RowClosedCoverage : Prop :=
   ∀ row ∈ atlas,
     ∀ (length : Fin 9 → ℕ)

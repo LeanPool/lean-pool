@@ -109,6 +109,7 @@ def ChamberThree (length : Fin 12 → ℕ) : Prop :=
   length 3 ≤ length 4 ∧ length 7 ≤ length 2
 
 /-- The union of the three scopes AR draw. -/
+@[expose]
 def Chamber (length : Fin 12 → ℕ) : Prop :=
   ChamberOne length ∨ ChamberTwo length ∨ ChamberThree length
 
