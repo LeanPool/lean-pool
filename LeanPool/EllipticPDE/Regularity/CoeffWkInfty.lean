@@ -13,7 +13,7 @@ public import LeanPool.EllipticPDE.Regularity.CoeffCk
 /-!
 # `W^{k,∞}` coefficients
 
-Guo, *Partial Differential Equations I and II* (Course Lecture Notes), Theorem VIII.3.2
+Guo, *Partial Differential Equations* (Course Lecture Notes), Theorem VIII.3.2
 (*Higher Interior Regularity*, p. 65) runs the induction over `a_{ij} ∈ W^{k+1,∞}(Ω)` and
 `b_i, c ∈ W^{k,∞}(Ω)`, where Evans, *Partial Differential Equations* (2nd ed.), §6.3.1,
 Theorem 2 asks for `C^{m+1}`. The development here asks `W^{k+1,∞}` for `a_{ij}` and
@@ -82,8 +82,8 @@ def HasWeakPartial (k : Fin d) (f f' : EuclideanSpace ℝ (Fin d) → ℝ) : Pro
   ∀ φ : EuclideanSpace ℝ (Fin d) → ℝ, ContDiff ℝ (⊤ : ℕ∞) φ → HasCompactSupport φ →
     ∫ x, f x * partialD k φ x = - ∫ x, f' x * φ x
 
-/-- A `W^{k,∞}` ellipticity bundle, in the sense of Guo, *Partial Differential Equations I and
-II* (Course Lecture Notes), Theorem VIII.3.2 (p. 65): every coefficient entry has weak
+/-- A `W^{k,∞}` ellipticity bundle, in the sense of Guo, *Partial Differential Equations* (Course
+Lecture Notes), Theorem VIII.3.2 (p. 65): every coefficient entry has weak
 derivatives up to order `k`, each measurable and essentially bounded, with no continuity
 assumed. The derivative family is indexed by a list of directions, one `cons` per
 differentiation. -/

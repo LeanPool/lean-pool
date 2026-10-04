@@ -42,7 +42,7 @@ is what `2 < q < 2⋆` amounts to, in the form the estimates use.
 
 ## References
 
-Y. Guo, *Partial Differential Equations*, Theorem IV.2.10; L. C. Evans, *Partial Differential
+James Guo, *Partial Differential Equations*, Theorem IV.2.10; L. C. Evans, *Partial Differential
 Equations* (2nd ed.), §5.7 Theorem 1.
 -/
 
