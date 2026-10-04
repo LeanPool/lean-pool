@@ -39,7 +39,7 @@ extensions requires.
 
 ## References
 
-Y. Guo, *Partial Differential Equations I and II* (Course Lecture Notes), Theorem III.2.2
+James Guo, *Partial Differential Equations* (Course Lecture Notes), Theorem III.2.2
 (p. 20), proof step 3 (p. 21); L. C. Evans, *Partial Differential Equations* (2nd ed.),
 §5.4 Theorem 1 (p. 253).
 -/
