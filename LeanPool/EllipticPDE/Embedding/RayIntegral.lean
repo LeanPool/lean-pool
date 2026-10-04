@@ -7,8 +7,8 @@ Authors: Alejandro Soto Franco
 -- Adapted for Lean Pool's pinned Lean and Mathlib; upstream commit is recorded in projects.yml.
 module
 
+public import LeanPool.EllipticPDE.Analysis.SegmentCalculus
 public import LeanPool.EllipticPDE.Embedding.WeakGradient
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 public import Mathlib.Analysis.Calculus.FDeriv.Comp
 public import Mathlib.MeasureTheory.Constructions.HaarToSphere
 public import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
@@ -36,27 +36,12 @@ namespace EllipticPdes.Embedding
 
 variable {d : ℕ}
 
-/-- The segment path `t ↦ φ (x + t • v)` has derivative `(fderiv ℝ φ (x + t • v)) v`. -/
-private theorem hasDerivAt_comp_segment {φ : EuclideanSpace ℝ (Fin d) → ℝ}
-    (hφ : ContDiff ℝ (⊤ : ℕ∞) φ) (x v : EuclideanSpace ℝ (Fin d)) (t : ℝ) :
-    HasDerivAt (fun s : ℝ => φ (x + s • v)) ((fderiv ℝ φ (x + t • v)) v) t := by
-  have hline : HasDerivAt (fun s : ℝ => x + s • v) v t := by
-    simpa using ((hasDerivAt_id t).smul_const v).const_add x
-  have hφ' : HasFDerivAt φ (fderiv ℝ φ (x + t • v)) (x + t • v) :=
-    (hφ.differentiable (by simp)).differentiableAt.hasFDerivAt
-  exact hφ'.comp_hasDerivAt t hline
-
 /-- **Ray fundamental theorem of calculus.** For smooth `φ`, the increment along the
 segment from `x` to `x + v` is the integral of the directional derivative. -/
 theorem sub_eq_intervalIntegral_fderiv {φ : EuclideanSpace ℝ (Fin d) → ℝ}
     (hφ : ContDiff ℝ (⊤ : ℕ∞) φ) (x v : EuclideanSpace ℝ (Fin d)) :
-    φ (x + v) - φ x = ∫ t in (0 : ℝ)..1, (fderiv ℝ φ (x + t • v)) v := by
-  have hcont : Continuous (fun t : ℝ => (fderiv ℝ φ (x + t • v)) v) :=
-    ((hφ.continuous_fderiv (by simp)).comp (by fun_prop)).clm_apply continuous_const
-  rw [intervalIntegral.integral_eq_sub_of_hasDerivAt
-        (fun t _ => hasDerivAt_comp_segment hφ x v t)
-        hcont.continuousOn.intervalIntegrable]
-  simp
+    φ (x + v) - φ x = ∫ t in (0 : ℝ)..1, (fderiv ℝ φ (x + t • v)) v :=
+  EllipticPdes.Analysis.sub_translation_eq_integral (hφ.of_le (by simp)) x v
 
 /-- **Ray-FTC average identity over a measurable set.** For smooth `φ` and a measurable set `W`
 of positive finite measure on which `φ` is integrable, the oscillation of the `W`-average of `φ`

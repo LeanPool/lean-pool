@@ -32,9 +32,16 @@ Neumann problem up to a constant then follow.
   interior sphere forces equality.
 * `EllipticPdes.Classical.neumann_unique`: uniqueness up to a constant for the Neumann problem.
 
+## Operator convention
+
+The non-divergence operator here is `L u = -∑ aᵢⱼ ∂ᵢⱼu + ∑ bᵢ ∂ᵢu + c u`.
+All Guo results cited in this file are translated by negating the source operator:
+Guo's operator is `-L`, with coefficients `a`, `-b`, `-c`. Thus his subsolution inequality
+`(-L) u ≥ 0` becomes `L u ≤ 0`, and his potential condition `-c ≤ 0` becomes `c ≥ 0`.
+
 ## References
 
-Y. Guo, *Partial Differential Equations I and II* (Course Lecture Notes), Lemma XI.4.3,
+James Guo, *Partial Differential Equations* (Course Lecture Notes), Lemma XI.4.3,
 Theorem XI.4.5, Corollaries XI.4.6, XI.4.7 and XI.4.8 (pp. 100–103).
 -/
 

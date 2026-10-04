@@ -31,7 +31,7 @@ which `EllipticPdes.Regularity.PointwiseEquation` proves and
 ## References
 
 L. C. Evans, *Partial Differential Equations* (2nd ed.), §6.3.1 Theorem 3 (p. 334);
-Y. Guo, *Partial Differential Equations I and II* (Course Lecture Notes), Theorem VIII.3.3.
+James Guo, *Partial Differential Equations* (Course Lecture Notes), Theorem VIII.3.3.
 -/
 
 @[expose] public section
