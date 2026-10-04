@@ -5,6 +5,7 @@ Authors: Viviana del Barco, Gustavo Infanti, Exequiel Rivas, Paul Schwahn
 -/
 module
 
+public import Mathlib.Algebra.Lie.Prod
 public import LeanPool.LowDimSolvClassification.GeneralResults
 import LeanPool.LowDimSolvClassification.Tactics
 
@@ -267,74 +268,10 @@ section lie_direct
 
 variable {K L J : Type*} [CommRing K] [LieRing L] [LieRing J] [LieAlgebra K L] [LieAlgebra K J]
 
-instance instBracketProdLeanPool : Bracket (L × J) (L × J) := {
-  bracket := fun a b ↦ ⟨⁅a.1, b.1⁆, ⁅a.2, b.2⁆⟩
-}
-
 lemma Prod.bracket_def (a b : L × J) :
     ⁅a, b⁆ = ⟨⁅a.1, b.1⁆, ⁅a.2, b.2⁆⟩ := rfl
 
-instance instLieRingProdLeanPool : LieRing (L × J) := {
-  (inferInstance : AddCommGroup (L × J)) with
-  add_lie := fun _ _ _ ↦ by simp only [Prod.bracket_def, Prod.fst_add, add_lie, Prod.snd_add,
-    Prod.mk_add_mk]
-  lie_add := fun _ _ ↦ by simp only [Prod.bracket_def, Prod.fst_add, lie_add, Prod.snd_add,
-    Prod.mk_add_mk, implies_true]
-  lie_self := fun _ ↦ by simp only [Prod.bracket_def, lie_self, Prod.mk_zero_zero]
-  leibniz_lie := fun _ _ _ ↦ by simp only [Prod.bracket_def, lie_lie, Prod.mk_add_mk,
-    sub_add_cancel]
-}
-
-instance instLieAlgebraProdLeanPool : LieAlgebra K (L × J) := {
-  lie_smul := fun _ _ _ ↦ by simp only [Prod.bracket_def, Prod.smul_fst, lie_smul, Prod.smul_snd,
-    Prod.smul_mk]
-}
-
 variable (K L J : Type*) [CommRing K] [LieRing L] [LieRing J] [LieAlgebra K L] [LieAlgebra K J]
-
-/-- TODO. -/
-def LieHom.inl : L →ₗ⁅K⁆ L × J := {
-  toFun := fun x ↦ ⟨x, 0⟩,
-  map_add' := by
-    simp_all
-  map_smul' := by
-    simp_all
-  map_lie' := by
-    intro x y
-    ext <;> simp only [Prod.bracket_def, lie_self]
-}
-
-/-- TODO. -/
-def LieHom.inr : J →ₗ⁅K⁆ L × J := {
-  toFun := fun x ↦ ⟨0, x⟩,
-  map_add' := by
-    simp_all
-  map_smul' := by
-    simp_all
-  map_lie' := by
-    intro x y
-    ext <;> simp only [Prod.bracket_def, lie_self]
-}
-
-/-- TODO. -/
-def LieHom.fst : L × J →ₗ⁅K⁆ L := {
-  toFun := fun x ↦ x.1,
-  map_add' := by
-    simp_all
-  map_smul' := by
-    simp_all
-  map_lie' := rfl
-}
-
-/-- TODO. -/
-def LieHom.snd : L × J →ₗ⁅K⁆ J := {
-  toFun := fun x ↦ x.2,
-  map_add' := by
-    simp_all
-  map_smul' := by
-    simp_all
-  map_lie' := rfl
-}
 
 /-- TODO. -/
 def leftIdeal : LieIdeal K (L × J) := LieHom.ker (LieHom.snd K L J)

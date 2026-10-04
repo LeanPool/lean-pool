@@ -1,0 +1,239 @@
+/-
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: The Tau Ceti contributors
+-/
+module
+
+-- Imported from Tau Ceti at 1cec710789ba072804a906cf8667af8aa0b7966c.
+-- Adapted module paths and namespaces for Lean Pool; original attribution is retained.
+
+public import LeanPool.Ado.Algebra.Lie.Weights.Diagonalizable
+import LeanPool.Ado.LinearAlgebra.Projection
+
+/-!
+# The projections attached to the weight-space decomposition
+
+A finite-dimensional triangularizable module `M` over a nilpotent Lie algebra `L` is the internal
+direct sum of its generalized weight spaces (`Ado.isInternal_genWeightSpace`). This file names
+the associated family of projections `Ado.genWeightSpaceProjection`, one for each weight, and
+records the three facts that characterise it: each projection lands in its weight space, it is the
+identity there and kills the other weight spaces, and the whole family sums to the identity.
+
+The last section specialises to the root-space decomposition of a Lie algebra `L` with
+non-degenerate Killing form over its Cartan subalgebra `H`, where the projections acquire two
+further properties that the decomposition alone does not give. Root spaces are Killing-orthogonal
+unless the two weights are opposite, so the Killing-adjoint of the projection onto the `χ`-root
+space is the projection onto the `-χ` one; and each projection has trace the dimension of its root
+space, which for a root is `1`.
+
+## Main definitions
+
+* `Ado.genWeightSpaceProjection`: the projection of `M` onto the generalized weight space of a
+  weight, along the sum of the other weight spaces.
+
+## Main results
+
+* `Ado.sum_genWeightSpaceProjection_apply`: the projections sum to the identity.
+* `Ado.killingForm_genWeightSpaceProjection`: `κ (π_χ x) y = κ x (π_{-χ} y)`, so `π_χ` and
+  `π_{-χ}` are Killing-adjoint; `Ado.isAdjointPair_genWeightSpaceProjection` says the same in
+  the `LinearMap.IsAdjointPair` form.
+* `Ado.trace_genWeightSpaceProjection`: the trace of a projection is the dimension of the
+  weight space it projects onto.
+
+## Implementation notes
+
+The projection specializes `Ado.internalProjection` to the internal decomposition by
+generalized weight spaces. Its characteristic equations and sum formula therefore share the
+generic internal-summand projection API, while the trace computation uses
+`LinearMap.trace_eq_sum_trace_restrict`.
+
+`DirectSum` needs a `DecidableEq (Weight K L M)`. The projection is noncomputable in any case, so
+that choice is made classically inside the definition instead of being carried as a hypothesis:
+the API is stated without any decidability assumption.
+
+## References
+
+The projections are the working form of the "generalized weight-space decomposition" item of Layer
+2 of `TauCetiRoadmap/RepresentationTheory/LieHighestWeight/README.md`; the Killing-adjointness and
+the trace are what the Casimir eigenvalue computation of Layer 5 consumes.
+
+* J. E. Humphreys, *Introduction to Lie Algebras and Representation Theory*, GTM 9, §8.1 (the
+  root-space decomposition) and §8.2 (the Killing form pairs `Lα` with `L_{-α}` alone).
+-/
+
+public section
+
+namespace Ado
+
+open Finset LieAlgebra LieModule Module
+
+universe u v w
+
+/-! ### The projections of the weight-space decomposition -/
+
+section Triangularizable
+
+variable (K : Type u) (L : Type v) (M : Type w) [Field K] [LieRing L] [LieAlgebra K L]
+  [LieRing.IsNilpotent L] [AddCommGroup M] [Module K M] [LieRingModule L M] [LieModule K L M]
+  [FiniteDimensional K M] [LieModule.IsTriangularizable K L M]
+
+open scoped Classical in
+/-- **The projection onto a generalized weight space** along the sum of the other weight spaces,
+for a finite-dimensional triangularizable module. -/
+noncomputable def genWeightSpaceProjection (χ : Weight K L M) : M →ₗ[K] M :=
+  (genWeightSpace M (χ : L → K)).toSubmodule.subtype ∘ₗ
+    Ado.internalProjection
+      (isInternal_genWeightSpace K L M).submodule_iSupIndep
+      (isInternal_genWeightSpace K L M).submodule_iSup_eq_top χ
+
+variable {K L M}
+
+/-- A projection lands in the weight space it is attached to. -/
+theorem genWeightSpaceProjection_apply_mem (χ : Weight K L M) (m : M) :
+    genWeightSpaceProjection K L M χ m ∈ genWeightSpace M (χ : L → K) :=
+  Submodule.coe_mem _
+
+/-- A projection is the identity on its own weight space. -/
+@[simp]
+theorem genWeightSpaceProjection_apply_of_mem {χ : Weight K L M} {m : M}
+    (hm : m ∈ genWeightSpace M (χ : L → K)) : genWeightSpaceProjection K L M χ m = m := by
+  classical
+  rw [genWeightSpaceProjection, LinearMap.comp_apply,
+    Ado.internalProjection_apply_of_mem
+      (Q := fun ψ : Weight K L M ↦ (genWeightSpace M (ψ : L → K)).toSubmodule)
+      (isInternal_genWeightSpace K L M).submodule_iSupIndep
+      (isInternal_genWeightSpace K L M).submodule_iSup_eq_top hm]
+  rfl
+
+/-- A projection kills every other weight space.
+
+Not `@[simp]`: the weight `ψ` occurs only in the hypotheses, so `simp` could not instantiate it.
+The `simp`-usable consequence is `Ado.genWeightSpaceProjection_apply_apply_of_ne`. -/
+theorem genWeightSpaceProjection_apply_of_mem_of_ne {χ ψ : Weight K L M} (h : ψ ≠ χ) {m : M}
+    (hm : m ∈ genWeightSpace M (ψ : L → K)) : genWeightSpaceProjection K L M χ m = 0 := by
+  classical
+  rw [genWeightSpaceProjection, LinearMap.comp_apply,
+    Ado.internalProjection_apply_eq_zero_of_mem_of_ne
+      (Q := fun ω : Weight K L M ↦ (genWeightSpace M (ω : L → K)).toSubmodule)
+      (isInternal_genWeightSpace K L M).submodule_iSupIndep
+      (isInternal_genWeightSpace K L M).submodule_iSup_eq_top h hm]
+  rfl
+
+/-- The projections are idempotent. -/
+@[simp]
+theorem genWeightSpaceProjection_apply_apply (χ : Weight K L M) (m : M) :
+    genWeightSpaceProjection K L M χ (genWeightSpaceProjection K L M χ m) =
+      genWeightSpaceProjection K L M χ m :=
+  genWeightSpaceProjection_apply_of_mem (genWeightSpaceProjection_apply_mem χ m)
+
+/-- Projections attached to distinct weights annihilate one another. -/
+@[simp]
+theorem genWeightSpaceProjection_apply_apply_of_ne {χ ψ : Weight K L M} (h : ψ ≠ χ) (m : M) :
+    genWeightSpaceProjection K L M χ (genWeightSpaceProjection K L M ψ m) = 0 :=
+  genWeightSpaceProjection_apply_of_mem_of_ne h (genWeightSpaceProjection_apply_mem ψ m)
+
+/-- **The projections sum to the identity**: this is the weight-space decomposition, read on a
+single vector. -/
+theorem sum_genWeightSpaceProjection_apply (m : M) :
+    ∑ χ : Weight K L M, genWeightSpaceProjection K L M χ m = m := by
+  classical
+  simpa only [genWeightSpaceProjection, LinearMap.comp_apply, Submodule.coe_subtype] using
+    Ado.sum_coe_internalProjection
+      (isInternal_genWeightSpace K L M).submodule_iSupIndep
+      (isInternal_genWeightSpace K L M).submodule_iSup_eq_top m
+
+/-- A projection maps each weight space into itself: its own weight space identically, the others
+to zero. -/
+theorem mapsTo_genWeightSpaceProjection (χ ψ : Weight K L M) :
+    Set.MapsTo (genWeightSpaceProjection K L M χ) (genWeightSpace M (ψ : L → K))
+      (genWeightSpace M (ψ : L → K)) := by
+  intro m hm
+  rcases eq_or_ne ψ χ with rfl | h
+  · simpa [genWeightSpaceProjection_apply_of_mem hm] using hm
+  · simp [genWeightSpaceProjection_apply_of_mem_of_ne h hm]
+
+/-- **The trace of a projection is the dimension of the weight space it projects onto.** -/
+theorem trace_genWeightSpaceProjection (χ : Weight K L M) :
+    LinearMap.trace K M (genWeightSpaceProjection K L M χ) =
+      finrank K (genWeightSpace M (χ : L → K)) := by
+  classical
+  have hmaps : ∀ ψ : Weight K L M, ∀ x ∈ (genWeightSpace M (ψ : L → K)).toSubmodule,
+      genWeightSpaceProjection K L M χ x ∈ (genWeightSpace M (ψ : L → K)).toSubmodule :=
+    fun ψ _ hx ↦ mapsTo_genWeightSpaceProjection χ ψ hx
+  have hid : (genWeightSpaceProjection K L M χ).restrict (hmaps χ) = LinearMap.id := by
+    refine LinearMap.ext fun m ↦ Subtype.ext ?_
+    rw [LinearMap.coe_restrict_apply]
+    exact genWeightSpaceProjection_apply_of_mem m.2
+  have hzero : ∀ ψ : Weight K L M, ψ ≠ χ →
+      (genWeightSpaceProjection K L M χ).restrict (hmaps ψ) = 0 := by
+    intro ψ h
+    refine LinearMap.ext fun m ↦ Subtype.ext ?_
+    rw [LinearMap.coe_restrict_apply, LinearMap.zero_apply, ZeroMemClass.coe_zero]
+    exact genWeightSpaceProjection_apply_of_mem_of_ne h m.2
+  rw [LinearMap.trace_eq_sum_trace_restrict (isInternal_genWeightSpace K L M) hmaps,
+    Finset.sum_eq_single χ (fun ψ _ h ↦ by rw [hzero ψ h, map_zero]) (by simp), hid,
+    LinearMap.trace_id]
+  rfl
+
+end Triangularizable
+
+/-! ### The root-space projections of a Killing Lie algebra -/
+
+section Killing
+
+open LieAlgebra.IsKilling
+
+variable {K : Type u} {L : Type v} [Field K] [LieRing L] [LieAlgebra K L]
+  [LieAlgebra.IsKilling K L] [FiniteDimensional K L] (H : LieSubalgebra K L)
+  [H.IsCartanSubalgebra] [LieModule.IsTriangularizable K H L]
+
+/-- Two weights whose weight spaces are not Killing-orthogonal are opposite. -/
+private theorem weight_add_ne_zero {χ ψ : Weight K H L} (h : χ ≠ -ψ) :
+    (χ : H → K) + (ψ : H → K) ≠ 0 := fun hc ↦
+  h <| Weight.ext fun u ↦ by
+    have := congrFun hc u
+    simp only [Pi.add_apply, Pi.zero_apply] at this
+    simpa using eq_neg_of_add_eq_zero_left this
+
+/-- **The root-space projections are Killing-adjoint in opposite pairs.** Root spaces pair to zero
+under the Killing form unless their weights are opposite, so pushing the projection onto the
+`χ`-root space across the form turns it into the projection onto the `-χ`-root space. -/
+theorem killingForm_genWeightSpaceProjection (χ : Weight K H L) (x y : L) :
+    killingForm K L (genWeightSpaceProjection K H L χ x) y =
+      killingForm K L x (genWeightSpaceProjection K H L (-χ) y) := by
+  have key : ∀ z w : L, killingForm K L (genWeightSpaceProjection K H L χ z) w =
+      killingForm K L (genWeightSpaceProjection K H L χ z)
+        (genWeightSpaceProjection K H L (-χ) w) := by
+    intro z w
+    conv_lhs => rw [← sum_genWeightSpaceProjection_apply (K := K) (L := H) w]
+    rw [map_sum, Finset.sum_eq_single (-χ) _ (by simp)]
+    intro ψ _ h
+    exact killingForm_apply_eq_zero_of_mem_rootSpace_of_add_ne_zero K L H
+      (genWeightSpaceProjection_apply_mem χ z) (genWeightSpaceProjection_apply_mem ψ w)
+      (weight_add_ne_zero H fun hc ↦ h (by rw [hc, neg_neg]))
+  rw [key]
+  conv_rhs => rw [← sum_genWeightSpaceProjection_apply (K := K) (L := H) x]
+  rw [map_sum, LinearMap.sum_apply, Finset.sum_eq_single χ _ (by simp)]
+  intro ψ _ h
+  exact killingForm_apply_eq_zero_of_mem_rootSpace_of_add_ne_zero K L H
+    (genWeightSpaceProjection_apply_mem ψ x) (genWeightSpaceProjection_apply_mem (-χ) y)
+    (weight_add_ne_zero H fun hc ↦ h (by rwa [neg_neg] at hc))
+
+/-- **Opposite root-space projections are a Killing-adjoint pair.** This is the
+`LinearMap.IsAdjointPair` form of `Ado.killingForm_genWeightSpaceProjection`, which is what
+the Killing-dual-basis lemmas consume. -/
+theorem isAdjointPair_genWeightSpaceProjection (χ : Weight K H L) :
+    LinearMap.IsAdjointPair (killingForm K L) (killingForm K L)
+      (genWeightSpaceProjection K H L (-χ)) (genWeightSpaceProjection K H L χ) := fun x y ↦ by
+  rw [killingForm_genWeightSpaceProjection H (-χ) x y, neg_neg]
+
+/-- **A root-space projection has trace one.** The root spaces at nonzero weights are lines
+(`LieAlgebra.IsKilling.finrank_rootSpace_eq_one`). -/
+theorem trace_genWeightSpaceProjection_eq_one [CharZero K] {χ : Weight K H L}
+    (hχ : χ.IsNonZero) : LinearMap.trace K L (genWeightSpaceProjection K H L χ) = 1 := by
+  rw [trace_genWeightSpaceProjection, finrank_rootSpace_eq_one χ hχ, Nat.cast_one]
+
+end Killing
+
+end Ado
