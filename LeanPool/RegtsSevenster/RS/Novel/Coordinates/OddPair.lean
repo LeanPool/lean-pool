@@ -26,6 +26,7 @@ open MonoidalCategory
 open scoped TensorProduct
 
 /-- The even element carried by a pair of odd vectors. -/
+@[expose]
 def oddPair {V W : SuperVect} (v : V.odd) (w : W.odd) :
     (SuperVect.tensorObj V W).even := (0, v ⊗ₜ[ℂ] w)
 

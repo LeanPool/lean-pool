@@ -25,10 +25,12 @@ open scoped TensorProduct
 variable {k ℓ : ℕ}
 
 /-- The one-position even colouring. -/
+@[expose]
 def oneColourE (k ℓ : ℕ) (i : Fin k) :
     MixedColouring k ℓ 1 := fun _ => Sum.inl i
 
 /-- The one-position odd colouring. -/
+@[expose]
 def oneColourO (k ℓ : ℕ) (a : Fin (2 * ℓ)) :
     MixedColouring k ℓ 1 := fun _ => Sum.inr a
 
