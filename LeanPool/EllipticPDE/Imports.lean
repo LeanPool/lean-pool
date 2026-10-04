@@ -19,6 +19,7 @@ public import LeanPool.EllipticPDE.Analysis.LpTranslationContinuity
 public import LeanPool.EllipticPDE.Analysis.LqDerivative
 public import LeanPool.EllipticPDE.Analysis.LqEulerLagrange
 public import LeanPool.EllipticPDE.Analysis.PoincareInequality
+public import LeanPool.EllipticPDE.Analysis.SegmentCalculus
 public import LeanPool.EllipticPDE.Analysis.WeakCompactness
 public import LeanPool.EllipticPDE.BoundedInstances
 public import LeanPool.EllipticPDE.Campanato.Basic

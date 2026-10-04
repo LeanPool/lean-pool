@@ -16,7 +16,7 @@ public import LeanPool.EllipticPDE.Regularity.DifferentiatedWkInfty
 
 `EllipticPdes.Regularity.differentiated_weakForm_of_weakSolution` discharges every hypothesis
 of the differentiated identity except the weak `ℓ`-derivative of the datum, and asks for `C²`
-principal and `C¹` lower-order coefficients. Guo, *Partial Differential Equations I and II*
+principal and `C¹` lower-order coefficients. Guo, *Partial Differential Equations*
 (Course Lecture Notes), Theorem VIII.3.2 (p. 65) asks instead for `W^{k+2,∞}` and `W^{k+1,∞}`,
 and this file repeats the bridge under that hypothesis.
 

@@ -14,7 +14,7 @@ public import LeanPool.EllipticPDE.Regularity.IteratedRestrict
 /-!
 # Identifications on the collar
 
-The inductive hypothesis of Guo, *Partial Differential Equations I and II* (Course Lecture
+The inductive hypothesis of Guo, *Partial Differential Equations* (Course Lecture
 Notes), Theorem VIII.3.2 (p. 65) hands over a family of iterated weak derivatives on a compact
 set, and says of its first entries only that they are weak derivatives of the solution. The
 ambient element has its own first derivatives, in its gradient coordinates. The two agree, but

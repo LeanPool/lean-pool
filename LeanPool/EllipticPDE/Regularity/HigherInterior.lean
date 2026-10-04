@@ -14,10 +14,12 @@ public import LeanPool.EllipticPDE.Regularity.CutoffDatum
 
 
 /-!
-# Higher interior regularity
+# Higher interior regularity for H₀¹ weak solutions
 
-Guo, *Partial Differential Equations I and II* (Course Lecture Notes), Theorem VIII.3.2
-(*Higher Interior Regularity*, p. 65). For a weak solution `u` of `L u = f` with
+James Guo, *Partial Differential Equations* (Course Lecture Notes), Theorem VIII.3.2
+(*Higher Interior Regularity*, p. 65) gives the weak-coefficient version. The formalization
+below treats `H₀¹` weak solutions `u` of `L u = f`, with globally defined coefficients and a
+separate globally Lipschitz hypothesis on the principal-coefficient representatives. With
 `a_{ij} ∈ W^{k+1,∞}`, `b_i, c ∈ W^{k,∞}` and `f ∈ H^k`, the solution lies in `H^{k+2}_loc`
 with
 
@@ -26,7 +28,8 @@ with
 the constant depending on the data and the pair `V ⋐ Ω` and on neither `u` nor `f`. Evans,
 *Partial Differential Equations* (2nd ed.), §6.3.1, Theorem 2 (p. 332) is the same statement
 with `C^{k+1}` coefficients, which `IsCkCoeff.toIsWkInftyCoeff` shows to be the stronger
-hypothesis. The theorem below asks Guo's orders, together with `a_{ij} ∈ W^{1,∞}` for the base case.
+hypothesis. The theorem below asks Guo's weak-derivative orders together with the separate
+pointwise `IsLipCoeff` bundle for the base case.
 
 ## Shape of the induction
 
@@ -526,23 +529,23 @@ theorem interiorRegularityAt_succ (Op : FullEllipticOp (n + 1))
   nlinarith [hprod]
 
 /-- **Higher interior regularity (Evans, *Partial Differential Equations* (2nd ed.),
-§6.3.1, Theorem 2, p. 332; Guo, *Partial Differential Equations I and II* (Course Lecture
-Notes), Theorem VIII.3.2, p. 65).** Evans states the result for `C^{m+1}` coefficients; the
-`W^{k,∞}` hypotheses below are Guo's, and nothing in the differentiated equation asks a
-coefficient to be continuous. A weak solution with `W^{k+1,∞}` principal coefficients that are
-`W^{1,∞}`, `W^{k,∞}` lower-order coefficients and an `H^k` datum has weak derivatives of every order
-up to `k + 2` on each compact `V ⋐ Ω`, bounded by the data with a constant quantified before
-the solution and the datum.
+§6.3.1, Theorem 2, p. 332; a variant of James Guo, *Partial Differential Equations*
+(Course Lecture Notes), Theorem VIII.3.2, p. 65).** Evans states the result for
+`C^{m+1}` coefficients; the weak
+coefficient derivative hypotheses follow Guo's statement. This formalization additionally
+requires the specified principal-coefficient representatives to be globally Lipschitz for the
+base case, and quantifies over `H₀¹` weak solutions. The pointwise Lipschitz hypothesis is
+retained separately from the weak-derivative bundles.
 
-The coefficient hypotheses are `W^{k+1,∞}` for `a_{ij}` and `W^{k,∞}` for `b_i, c`, with
-`a_{ij}` also `W^{1,∞}` in the pointwise form of `IsLipCoeff` for the base case, which at
-`k = 0` is the whole of what the proof reads: `interiorRegularityAt_zero` takes `hA1` alone
-and the order-one bundle passed with it goes unused. The step to order `k + 1` differentiates
-    the equation
-once: its datum pairs second derivatives of each `a_{ij}` and first derivatives of `b_i, c`
-against derivatives of `u` of order at most two, so an `H^k` datum asks `a_{ij} ∈ W^{k+2,∞}`
-and `b_i, c ∈ W^{k+1,∞}` (`exists_cutoffDatum`), and the induction hypothesis at order `k`
-asks no more. -/
+With `W^{k+1,∞}` principal coefficients, `W^{k,∞}` lower-order coefficients and an `H^k` datum,
+weak derivatives of every order up to `k + 2` exist on each compact `V ⋐ Ω`. Their L² bounds
+use a constant quantified before the solution, datum and datum bound.
+
+At `k = 0`, `interiorRegularityAt_zero` uses the pointwise `IsLipCoeff` hypothesis alone.
+The step to order `k + 1` differentiates the equation once: its datum pairs second derivatives
+of each `a_{ij}` and first derivatives of `b_i, c` against derivatives of `u` of order at most
+two, so an `H^k` datum asks `a_{ij} ∈ W^{k+2,∞}` and `b_i, c ∈ W^{k+1,∞}`
+(`exists_cutoffDatum`), and the induction hypothesis at order `k` asks no more. -/
 theorem higher_interior_regularity (Op : FullEllipticOp (n + 1))
     {Ω : Set (EuclideanSpace ℝ (Fin (n + 1)))} (hΩm : MeasurableSet Ω) (hΩo : IsOpen Ω)
     (hA1 : IsLipCoeff Op.toEllipticCoeff) (k : ℕ)

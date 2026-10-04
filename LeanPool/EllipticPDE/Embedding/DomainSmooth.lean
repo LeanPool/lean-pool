@@ -33,7 +33,7 @@ bounds the supremum and the Hölder seminorm of every member on `closure Ω` by 
 
 ## References
 
-Y. Guo, *Partial Differential Equations I and II* (Course Lecture Notes), Theorem IV.2.3 case
+James Guo, *Partial Differential Equations* (Course Lecture Notes), Theorem IV.2.3 case
 (ii); L. C. Evans, *Partial Differential Equations* (2nd ed.), §5.6.3 Theorem 6 clause (ii).
 -/
 
