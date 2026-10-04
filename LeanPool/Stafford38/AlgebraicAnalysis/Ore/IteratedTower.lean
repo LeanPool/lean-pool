@@ -44,6 +44,7 @@ variable {B : Type u} [Ring B]
 abbrev Derivation (B : Type u) [Ring B] := OreDivisionDerivation B
 
 /-- Commutation of two coefficient derivations. -/
+@[expose]
 def Commutes (D E : Derivation B) : Prop :=
   ∀ b : B, D (E b) = E (D b)
 

@@ -213,6 +213,7 @@ lemma rightMulMonomial_zero_right (p : Polynomial B) (j : ℕ) :
   simp [iterate_zero]
 
 /-- The product `d*q` of a normal polynomial by a normal right quotient. -/
+@[expose]
 def rightMul (d q : Polynomial B) : Polynomial B :=
   q.sum (fun j c => rightMulMonomial D d c j)
 

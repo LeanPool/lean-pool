@@ -143,6 +143,7 @@ theorem normalForm_monomial_reverse (D : OreDivisionDerivation B)
   rw [normalForm_X_pow_coe]
 
 /-- The finite right-coefficient window of order less than `n`. -/
+@[expose]
 def rightCoefficientWindow (D : OreDivisionDerivation B) (n : ℕ) :
     Submodule Bᵐᵒᵖ (NormalOre D) :=
   Submodule.span Bᵐᵒᵖ
@@ -189,6 +190,7 @@ theorem normalForm_mem_rightCoefficientWindow_of_degree_lt
     exact lt_of_le_of_lt (Polynomial.le_natDegree_of_mem_supp j hj) hp
 
 /-- A right ideal viewed as a coefficient-opposite submodule. -/
+@[expose]
 def rightIdealAsCoeffSubmodule (D : OreDivisionDerivation B)
     (I : Submodule (NormalOre D)ᵐᵒᵖ (NormalOre D)) :
     Submodule Bᵐᵒᵖ (NormalOre D) where

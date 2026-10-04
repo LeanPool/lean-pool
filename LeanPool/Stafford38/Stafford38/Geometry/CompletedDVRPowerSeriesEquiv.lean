@@ -221,6 +221,7 @@ theorem powerSeriesCoordinateMap_compatible
 
 /-- The actual chosen-coordinate power-series map to the maximal-ideal adic
 completion. -/
+@[expose]
 def completedDVRPowerSeriesMap
     (hsep : Algebra.IsSeparable E (ResidueFieldModel V)) :
     PowerSeries (ResidueFieldModel V) →+* AdicCompletion (maximalIdealModel V) V where
