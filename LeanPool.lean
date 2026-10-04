@@ -3,6 +3,7 @@ module  -- shake: keep-all --deprecated_module: ignore
 public import LeanPool.ABCExceptions.Imports
 public import LeanPool.ACMax.Imports
 public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Imports
+public import LeanPool.Ado.Imports
 public import LeanPool.AgreeToDisagree.Imports
 public import LeanPool.AharoniKorman.Imports
 public import LeanPool.AndersonConjecture.Imports
