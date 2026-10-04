@@ -161,6 +161,7 @@ theorem brillNoetherConjecture_of_genus_le_five_of_criticalPencils
 
 /-- The proposition represented by the paper's main theorem in the library's
 degree-exact, rank-lower-bound convention. -/
+@[expose]
 def BrillNoetherExistenceThroughFive : Prop :=
   ∀ (G : CFGraph.{0}) (hG : graphConnected G), CFGraph.genus G ≤ 5 →
     ∀ r d : ℤ, brillNoetherConjecture hG r d

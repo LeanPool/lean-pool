@@ -119,6 +119,7 @@ noncomputable def banana (P : Loop) : Banana 1 :=
 /-- The torsion order of `(loop, v_{i-1}, v_i)`: the order of the class of
 `v_i - v_{i-1}` in the Jacobian of the cycle, which is `(ℓ+m)/gcd(ℓ,m)`
 (`Bananas.cycle_isTorsionOrder`, Pflueger--Solomon Example 1.11). -/
+@[expose]
 def torsionOrder (P : Loop) : ℕ := (P.top + P.bot) / Nat.gcd P.top P.bot
 
 /-! ### The reduced pair `(ℓ/d, m/d)`
@@ -289,6 +290,7 @@ the ratio of two positive integers whose sum is at most `2g - 2`.
 
 Cross multiplication avoids a division convention, exactly as in
 `Bananas.EvenlyMarkedTheta`. -/
+@[expose]
 def CDPRGeneric (L : List Loop) : Prop :=
   ∀ P ∈ L, ∀ p q : ℕ, 0 < p → 0 < q → p + q ≤ 2 * L.length - 2 →
     P.top * q ≠ P.bot * p

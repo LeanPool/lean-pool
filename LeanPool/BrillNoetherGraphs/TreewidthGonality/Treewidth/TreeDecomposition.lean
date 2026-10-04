@@ -125,6 +125,7 @@ theorem card_bag_le_card [Fintype V] (D : TreeDecomposition H) (t : D.Node) :
 end TreeDecomposition
 
 /-- The set of widths realized by some tree decomposition of `H`. -/
+@[expose]
 def widthSet (H : SimpleGraph V) : Set ℕ :=
   {w : ℕ | ∃ D : TreeDecomposition H, D.width = w}
 

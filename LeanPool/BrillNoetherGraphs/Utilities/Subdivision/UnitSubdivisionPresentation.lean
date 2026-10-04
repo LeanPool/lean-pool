@@ -38,6 +38,7 @@ universe u
 variable (G : CFGraph.{u})
 
 /-- A fixed finite label for each vertex of `G`. -/
+@[expose]
 noncomputable def vertexEquiv : G.V ≃ Fin (Fintype.card G.V) :=
   Fintype.equivFin G.V
 
@@ -46,6 +47,7 @@ noncomputable def vertexEquiv : G.V ≃ Fin (Fintype.card G.V) :=
 The domain is the multiset-as-type: its second dependent coordinate
 distinguishes repeated copies of the same endpoint pair.
 -/
+@[expose]
 noncomputable def edgeEquiv : G.edges ≃ Fin G.edges.card := by
   simpa using Fintype.equivFin G.edges
 
