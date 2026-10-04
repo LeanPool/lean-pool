@@ -54,7 +54,7 @@ reciprocal to zero, the ladder reaches every finite exponent, and the Hölder ex
 
 ## References
 
-Y. Guo, *Partial Differential Equations I and II* (Course Lecture Notes), Theorem IV.2.3
+James Guo, *Partial Differential Equations* (Course Lecture Notes), Theorem IV.2.3
 (pp. 32-33); L. C. Evans, *Partial Differential Equations* (2nd ed.), §5.6.3 Theorem 6.
 -/
 
@@ -70,14 +70,6 @@ namespace EllipticPdes.Embedding
 open EllipticPdes.Extension (HasC1Boundary)
 
 variable {d : ℕ}
-
-private theorem inv_anti_emb {a b : ℝ} (ha : 0 < a) (h : a ≤ b) : b⁻¹ ≤ a⁻¹ := by
-  have hb : 0 < b := lt_of_lt_of_le ha h
-  nlinarith [mul_inv_cancel₀ ha.ne', mul_inv_cancel₀ hb.ne', inv_pos.mpr ha, inv_pos.mpr hb]
-
-private theorem coe_toNNReal_inv_emb {t : ℝ} (ht : 0 < t) :
-    ((Real.toNNReal t⁻¹ : ℝ≥0) : ℝ) = t⁻¹ :=
-  Real.coe_toNNReal _ (inv_nonneg.mpr ht.le)
 
 /-- **Positivity of the landing reciprocal.** The strict rung condition `p₀ s < d`, which is
 the condition `k < n/p`, says exactly that `1/p₀ - s/d` is positive. -/
@@ -118,12 +110,12 @@ theorem exists_const_memLp_of_gradClosed_domain_ideal (hd : 1 < d)
     have : 0 ≤ (s : ℝ) * (d : ℝ)⁻¹ := by positivity
     linarith
   have hqcoe : ((Real.toNNReal ((p₀ : ℝ)⁻¹ - (s : ℝ) * (d : ℝ)⁻¹)⁻¹ : ℝ≥0) : ℝ)
-      = ((p₀ : ℝ)⁻¹ - (s : ℝ) * (d : ℝ)⁻¹)⁻¹ := coe_toNNReal_inv_emb ht0
+      = ((p₀ : ℝ)⁻¹ - (s : ℝ) * (d : ℝ)⁻¹)⁻¹ := Real.coe_toNNReal _ (inv_nonneg.mpr ht0.le)
   have hqinv : ((Real.toNNReal ((p₀ : ℝ)⁻¹ - (s : ℝ) * (d : ℝ)⁻¹)⁻¹ : ℝ≥0) : ℝ)⁻¹
       = (p₀ : ℝ)⁻¹ - (s : ℝ) * (d : ℝ)⁻¹ := by rw [hqcoe, inv_inv]
   have hp₀q : p₀ ≤ Real.toNNReal ((p₀ : ℝ)⁻¹ - (s : ℝ) * (d : ℝ)⁻¹)⁻¹ := by
     rw [← NNReal.coe_le_coe, hqcoe]
-    have := inv_anti_emb ht0 ht_le
+    have := inv_anti₀ ht0 ht_le
     simpa using this
   exact exists_const_memLp_of_gradClosed_domain hd hΩopen hΩb hC1 hp₀ ι s hsd.le hp₀q
     (le_of_eq hqinv.symm)
@@ -145,11 +137,11 @@ private theorem exists_landing_ideal (hd0 : 0 < d) {p₀ : ℝ≥0} (hp₀0 : (0
     linarith
   set P : ℝ≥0 := Real.toNNReal ((p₀ : ℝ)⁻¹ - (s : ℝ) * (d : ℝ)⁻¹)⁻¹ with hP_def
   have hPcoe : ((P : ℝ≥0) : ℝ) = ((p₀ : ℝ)⁻¹ - (s : ℝ) * (d : ℝ)⁻¹)⁻¹ := by
-    rw [hP_def]; exact coe_toNNReal_inv_emb ht0
+    rw [hP_def]; exact Real.coe_toNNReal _ (inv_nonneg.mpr ht0.le)
   have hPinv : ((P : ℝ≥0) : ℝ)⁻¹ = (p₀ : ℝ)⁻¹ - (s : ℝ) * (d : ℝ)⁻¹ := by rw [hPcoe, inv_inv]
   have hp₀P : p₀ ≤ P := by
     rw [← NNReal.coe_le_coe, hPcoe]
-    have := inv_anti_emb ht0 ht_le
+    have := inv_anti₀ ht0 ht_le
     simpa using this
   -- the upper rung condition places the landing exponent above the dimension
   have hPd : (d : ℝ) < (P : ℝ) := by
@@ -165,7 +157,7 @@ private theorem exists_landing_ideal (hd0 : 0 < d) {p₀ : ℝ≥0} (hp₀0 : (0
     have hinv : ((P : ℝ≥0) : ℝ)⁻¹ < (d : ℝ)⁻¹ := by rw [hPinv]; exact hstrict
     by_contra hcon
     have hle : (P : ℝ) ≤ (d : ℝ) := le_of_not_gt hcon
-    exact absurd (inv_anti_emb hPpos hle) (not_le.mpr hinv)
+    exact absurd (inv_anti₀ hPpos hle) (not_le.mpr hinv)
   refine ⟨P, hp₀P, hPd, le_of_eq hPinv.symm, ?_⟩
   -- Morrey's exponent at the landing exponent is the one the theorem names
   have hval := morreyExponent_eq_ladder (d := d) (p₀ := p₀) (P := P) (s := s) hd0 hp₀0 hPd.le

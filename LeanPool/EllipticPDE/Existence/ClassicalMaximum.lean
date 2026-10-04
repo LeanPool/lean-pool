@@ -44,13 +44,20 @@ bounded on the set; the sources also ask for continuity, which the proof does no
 * `EllipticPdes.Classical.weak_maximum_principle_of_nonneg`: the weak maximum principle with
   nonnegative zeroth-order coefficient, through the positive part on the boundary.
 
+## Operator convention
+
+The non-divergence operator here is `L u = -∑ aᵢⱼ ∂ᵢⱼu + ∑ bᵢ ∂ᵢu + c u`.
+All Guo results cited in this file are translated by negating the source operator:
+Guo's operator is `-L`, with coefficients `a`, `-b`, `-c`. Thus his subsolution inequality
+`(-L) u ≥ 0` becomes `L u ≤ 0`, and his potential condition `-c ≤ 0` becomes `c ≥ 0`.
+
 ## References
 
 L. C. Evans, *Partial Differential Equations* (2nd ed.), §6.4.1 Theorem 1 (p. 343) and
 Theorem 2 (p. 344);
 D. Gilbarg and N. S. Trudinger, *Elliptic Partial Differential Equations of Second Order*,
 §3.1 Theorem 3.1 (p. 32) and Corollary 3.2 (p. 33);
-Y. Guo, *Partial Differential Equations I and II* (Course Lecture Notes), Theorem XI.3.7.
+James Guo, *Partial Differential Equations* (Course Lecture Notes), Theorem XI.3.7.
 -/
 
 @[expose] public section
@@ -718,7 +725,8 @@ theorem weak_minimum_principle (hd : 0 < d) {U : Set (EuclideanSpace ℝ (Fin d)
   exact ⟨y, hy, fun x hx => by linarith [hmax x hx]⟩
 
 /-- **Weak maximum principle with nonnegative zeroth-order coefficient** (Evans §6.4.1
-Theorem 2(i), Gilbarg and Trudinger Corollary 3.2, Guo Theorem XI.3.7(ii)). With `c ≥ 0`, a
+Theorem 2(i), Gilbarg and Trudinger Corollary 3.2, Guo Theorem XI.3.7(ii),
+translated by negating the source operator). With `c ≥ 0`, a
 subsolution is bounded on the closure by the maximum of its positive part over the boundary. -/
 theorem weak_maximum_principle_of_nonneg (hd : 0 < d) {U : Set (EuclideanSpace ℝ (Fin d))}
     (hU : IsOpen U) (hUb : Bornology.IsBounded U) (hUne : U.Nonempty)

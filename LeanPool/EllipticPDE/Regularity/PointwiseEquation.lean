@@ -43,7 +43,7 @@ that agreement hold on the whole set.
 
 ## References
 
-Y. Guo, *Partial Differential Equations I and II* (Course Lecture Notes), Lemma I.2.4 (p. 3);
+James Guo, *Partial Differential Equations* (Course Lecture Notes), Lemma I.2.4 (p. 3);
 L. C. Evans, *Partial Differential Equations* (2nd ed.), §6.1.2 (pp. 313–315) and §6.3.1
 Theorem 3 (p. 334).
 -/
