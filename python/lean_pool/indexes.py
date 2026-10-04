@@ -127,7 +127,7 @@ def _write_indexes(contents: dict[Path, str], *, check: bool) -> int:
 
 
 def _library_index(root: Path, library: str, *, use_module: bool) -> str:
-    """Keep the ordinary flat indexes for Challenge and Solution unchanged."""
+    """Render a flat pool index for repositories without project roots."""
     existing = root / f"{library}.lean"
     source = existing.read_text(encoding="utf-8") if existing.exists() else ""
     module_style = use_module or code_view(source).lstrip().startswith("module")
@@ -148,19 +148,17 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--module", action="store_true")
     parser.add_argument("--project-roots", action="store_true")
-    parser.add_argument("--lib", choices=("LeanPool", "Challenge", "Solution"))
+    parser.add_argument("--lib", choices=("LeanPool",))
     args = parser.parse_args(argv)
     root = args.repo.resolve()
-    contents = {}
-    for library in [args.lib] if args.lib else ["LeanPool", "Challenge", "Solution"]:
-        if library == "LeanPool" and (
-            args.project_roots or requires_project_roots(root)
-        ):
-            contents.update(render_project_indexes(root))
-        else:
-            contents[root / f"{library}.lean"] = _library_index(
-                root, library, use_module=args.module
+    if args.project_roots or requires_project_roots(root):
+        contents = render_project_indexes(root)
+    else:
+        contents = {
+            root / "LeanPool.lean": _library_index(
+                root, "LeanPool", use_module=args.module
             )
+        }
     try:
         return _write_indexes(contents, check=args.check)
     except ValueError as error:

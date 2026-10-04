@@ -12,7 +12,6 @@ on:
     # is an input below, so it cannot trigger a commit loop.
     paths:
       - 'LeanPool/**'
-      - 'Challenge/challenges.yml'
       - 'NOTICE.extra.yml'
       - 'python/lean_pool/notice.py'
       - 'python/lean_pool/stats.py'
