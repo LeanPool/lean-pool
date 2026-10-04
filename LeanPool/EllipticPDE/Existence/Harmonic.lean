@@ -31,7 +31,7 @@ functions, in the sense of the sum of the second coordinate partials.
 
 ## References
 
-Y. Guo, *Partial Differential Equations I and II* (Course Lecture Notes), Lemma XI.1.5,
+James Guo, *Partial Differential Equations* (Course Lecture Notes), Lemma XI.1.5,
 Corollary XI.1.6, Lemma XI.1.7 (p. 92) and Lemma XI.2.4 (p. 95).
 -/
 

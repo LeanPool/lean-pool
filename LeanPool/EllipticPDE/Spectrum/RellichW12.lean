@@ -46,7 +46,7 @@ totally bounded and the embedding is compact.
 ## References
 
 L. C. Evans, *Partial Differential Equations* (2nd ed.), §5.7 Theorem 1 (p. 286);
-Y. Guo, *Partial Differential Equations I and II* (Course Lecture Notes), Theorem IV.2.10.
+James Guo, *Partial Differential Equations* (Course Lecture Notes), Theorem IV.2.10.
 -/
 
 @[expose] public section

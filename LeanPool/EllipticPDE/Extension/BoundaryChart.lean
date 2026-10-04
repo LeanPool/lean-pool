@@ -41,7 +41,7 @@ and the reflection returns through `T`.
 
 ## References
 
-Y. Guo, *Partial Differential Equations I and II* (Course Lecture Notes), Theorem III.2.2
+James Guo, *Partial Differential Equations* (Course Lecture Notes), Theorem III.2.2
 steps 1 and 2 (p. 21); L. C. Evans, *Partial Differential Equations* (2nd ed.), §5.4 Theorem 1
 and §C.1.
 -/
