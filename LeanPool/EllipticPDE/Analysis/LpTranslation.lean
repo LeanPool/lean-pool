@@ -7,14 +7,10 @@ Authors: Alejandro Soto Franco
 -- Adapted for Lean Pool's pinned Lean and Mathlib; upstream commit is recorded in projects.yml.
 module
 
-public import Mathlib.Analysis.Calculus.ContDiff.Basic
-public import Mathlib.Analysis.Calculus.Deriv.Comp
-public import Mathlib.Analysis.Calculus.FDeriv.Add
+public import LeanPool.EllipticPDE.Analysis.SegmentCalculus
 public import Mathlib.MeasureTheory.Integral.Prod
 public import Mathlib.MeasureTheory.Group.Integral
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 public import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
-public import LeanPool.EllipticPDE.Analysis.PoincareInequality
 
 
 /-!
@@ -51,52 +47,10 @@ noncomputable section
 
 namespace MeasureTheory
 
+open EllipticPdes.Analysis
+  (continuous_squared_segment_deriv sq_sub_translation_le)
+
 variable {n : ℕ} {f : EuclideanSpace ℝ (Fin n) → ℝ}
-
-/-- The segment path `t ↦ f (x + t • h)` has derivative `(fderiv ℝ f (x + t • h)) h`
-at every `t`, for a differentiable `f`. -/
-private theorem hasDerivAt_comp_segment (hf : ContDiff ℝ 1 f)
-    (x h : EuclideanSpace ℝ (Fin n)) (t : ℝ) :
-    HasDerivAt (fun s : ℝ => f (x + s • h)) ((fderiv ℝ f (x + t • h)) h) t := by
-  have hline : HasDerivAt (fun s : ℝ => x + s • h) h t := by
-    simpa using ((hasDerivAt_id t).smul_const h).const_add x
-  have hf' : HasFDerivAt f (fderiv ℝ f (x + t • h)) (x + t • h) :=
-    hf.differentiable_one.differentiableAt.hasFDerivAt
-  exact hf'.comp_hasDerivAt t hline
-
-/-- Continuity of the segment derivative `t ↦ (fderiv ℝ f (x + t • h)) h`. -/
-private theorem continuous_segment_deriv (hf : ContDiff ℝ 1 f)
-    (x h : EuclideanSpace ℝ (Fin n)) :
-    Continuous (fun t : ℝ => (fderiv ℝ f (x + t • h)) h) :=
-  ((hf.continuous_fderiv (by norm_num)).comp (by fun_prop)).clm_apply continuous_const
-
-/-- Joint continuity of `(x, t) ↦ ((fderiv ℝ f (x + t • h)) h) ^ 2`. -/
-private theorem continuous_uncurry_segment (hf : ContDiff ℝ 1 f)
-    (h : EuclideanSpace ℝ (Fin n)) :
-    Continuous (Function.uncurry fun (x : EuclideanSpace ℝ (Fin n)) (t : ℝ) =>
-        ((fderiv ℝ f (x + t • h)) h) ^ 2) :=
-  (((hf.continuous_fderiv (by norm_num)).comp (by fun_prop : Continuous
-    fun p : EuclideanSpace ℝ (Fin n) × ℝ => p.1 + p.2 • h)).clm_apply continuous_const).pow 2
-
-/-- Fundamental theorem of calculus along the segment from `x` to `x + h`. -/
-private theorem sub_translation_eq_integral (hf : ContDiff ℝ 1 f)
-    (x h : EuclideanSpace ℝ (Fin n)) :
-    f (x + h) - f x = ∫ t in (0 : ℝ)..1, (fderiv ℝ f (x + t • h)) h := by
-  rw [intervalIntegral.integral_eq_sub_of_hasDerivAt
-        (fun t _ => hasDerivAt_comp_segment hf x h t)
-        (continuous_segment_deriv hf x h).continuousOn.intervalIntegrable]
-  simp
-
-/-- Pointwise square estimate: `(f (x + h) - f x) ^ 2` is at most the `[0, 1]`
-integral of the squared segment derivative. -/
-private theorem sq_sub_translation_le (hf : ContDiff ℝ 1 f)
-    (x h : EuclideanSpace ℝ (Fin n)) :
-    (f (x + h) - f x) ^ 2 ≤ ∫ t in (0 : ℝ)..1, ((fderiv ℝ f (x + t • h)) h) ^ 2 := by
-  rw [sub_translation_eq_integral hf x h]
-  have h01 : (0 : ℝ) ≤ 1 := by norm_num
-  have := MeasureTheory.sq_intervalIntegral_le h01
-    (continuous_segment_deriv hf x h).continuousOn
-  simpa using this
 
 /-- The squared-gradient integrand `x ↦ (fderiv ℝ f x v) ^ 2` is integrable for a
 `C¹` compactly supported `f`. -/
@@ -128,7 +82,7 @@ private theorem integrable_uncurry_segment (hf : ContDiff ℝ 1 f)
       ((fderiv ℝ f (x + t • h)) h) ^ 2 with hg
   set ρ : Measure (EuclideanSpace ℝ (Fin n) × ℝ) :=
     volume.prod (volume.restrict (Ioc (0 : ℝ) 1)) with hρ
-  have hcont : Continuous g := continuous_uncurry_segment hf h
+  have hcont : Continuous g := continuous_squared_segment_deriv hf h
   obtain ⟨R, hR⟩ := (hfc.fderiv ℝ).isCompact.isBounded.subset_closedBall 0
   set C : Set (EuclideanSpace ℝ (Fin n) × ℝ) := closedBall 0 (R + ‖h‖) ×ˢ Icc 0 1 with hC
   have hCcomp : IsCompact C := (isCompact_closedBall _ _).prod isCompact_Icc

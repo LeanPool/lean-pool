@@ -16,7 +16,7 @@ public import LeanPool.EllipticPDE.Existence.Garding
 
 `EllipticPdes.Sobolev.FullEllipticOp` gives `b` and `c` sup bounds and measurability and no
 derivatives at all, which is everything the existence theory and the interior `H²` estimate
-need. Guo, *Partial Differential Equations I and II* (Course Lecture Notes), Theorem VIII.3.2
+need. Guo, *Partial Differential Equations* (Course Lecture Notes), Theorem VIII.3.2
 (p. 65) asks for `a_{ij} ∈ W^{k+2,∞}` and `b_i, c ∈ W^{k+1,∞}`, one order less on the lower-order
 coefficients than on the principal part, because the lower-order terms are differentiated once
 less often on the way to the same conclusion. This file supplies the missing hypothesis.

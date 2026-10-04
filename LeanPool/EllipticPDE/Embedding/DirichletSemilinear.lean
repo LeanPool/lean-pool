@@ -42,7 +42,7 @@ Dirichlet-energy one.
 
 ## References
 
-Y. Guo, *Partial Differential Equations*, Section IX.1; L. C. Evans, *Partial Differential
+James Guo, *Partial Differential Equations*, Section IX.1; L. C. Evans, *Partial Differential
 Equations* (2nd ed.), §8.5.
 -/
 
