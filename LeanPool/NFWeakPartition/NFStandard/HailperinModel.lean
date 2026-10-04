@@ -23,7 +23,8 @@ open NFChoice.SemanticCore.Lowering
 open NFChoice.ReplaySupport
 open NFChoice.Compiler.NFCompactLeafEndpoints
 
-/-! This file packages the eleven literal Hailperin axioms as ordinary operations
+/-! This file packages the eleven axioms of the literal Metamath Hailperin-derived presentation
+as ordinary operations
 on an arbitrary model.  All operations are Skolem choices from the actual
 axioms; their API exposes only extensional membership laws.
 -/
@@ -471,7 +472,7 @@ theorem mem_typeLower {S : Fol.Structure LNF}
 /-! ### A reusable bundled kernel -/
 
 
-/-- All semantic operations supplied by Hailperin's finite basis, detached from
+/-- All semantic operations supplied by the Metamath Hailperin-derived finite basis, detached from
 the syntactic theory after extraction.  The equations on the four derived
 constructors record that no additional choices were made for them.
 -/

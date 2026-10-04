@@ -26,7 +26,7 @@ open NFChoice.Compiler.CompactSourceSyntax
 abbrev Theory : Fol.SentTheory LNF :=
   LiteralHailperinNF
 
-/-- One exact member of the eleven-sentence Hailperin basis. -/
+/-- One exact member of the eleven-sentence Metamath Hailperin-derived basis. -/
 @[expose]
 def literalProof (name : HailperinAxiomName) :
     Theory.fst ⊢ (literalAxiomFormula name).fst :=

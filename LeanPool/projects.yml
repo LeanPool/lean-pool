@@ -12886,8 +12886,9 @@ projects:
       Constructs a formal first-order derivation of the negation of the Weak
       Partition Principle from New Foundations, with extensionality and the full
       integer-stratified comprehension schema. Proves full deductive equivalence
-      with Hailperin's finite presentation and replays the source proof through
-      nominal syntax, explicit freshness certificates, and a de Bruijn calculus.
+      with Metamath's Hailperin-derived finite presentation, including its added
+      singleton axiom. Replays the source proof through nominal syntax, explicit
+      freshness certificates, and a de Bruijn calculus.
       Includes reusable first-order soundness and completeness, stratification,
       lowering, and proof-translation infrastructure. This is a derivability
       theorem; it does not assert the consistency of New Foundations.
@@ -12930,9 +12931,13 @@ projects:
       - declaration: NFChoice.Foundation.NFStandard.nf_hailperin_deductivelyEquivalent
         informal: >-
           Extensionality together with every integer-stratified comprehension
-          instance and Hailperin's finite first-order presentation derive exactly
-          the same sentences.
-        source_ref: Upstream Proof/NFStandard/Equivalence.lean at the pinned commit.
+          instance and Metamath's Hailperin-derived finite first-order presentation,
+          including its added singleton axiom, derive exactly the same sentences.
+        source_ref: >-
+          Upstream Proof/NFStandard/Equivalence.lean at the pinned commit.
+          Metamath's ax-sn entry credits the singleton addition to SF on
+          2015-01-12 and distinguishes it from Hailperin's original presentation:
+          https://us.metamath.org/nfeuni/ax-sn.html.
     tags:
       - new-foundations
       - weak-partition-principle

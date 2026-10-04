@@ -35,10 +35,21 @@ the pinned upstream URL rather than imported as executable tooling here. Future
 upgrades must validate the retained source, including its generated certificates;
 the acquisition PR records clean build times and declaration profiles.
 
-Three general proof layers have no external declaration callers in the current
+Four general proof layers have no external declaration callers in the current
 endpoint. They are retained as reusable infrastructure: `NFStandard.StratificationNormalize`
 normalizes arbitrary finite integer type assignments, `NFCompactLeafGate` establishes
 compact axiom validity in arbitrary models of the literal finite theory, and
 `PartialTotalizationBridgeDev002` proves compatibility of partial and total lowering.
+`FocusedFVPaths` supplies generic free-variable embeddings through binding and complement.
 The last layer is exposed in the namespace `NFChoice.DirectNominalPrf.Nominal.Totalization`.
+-/
+
+/-!
+## Finite-presentation attribution
+
+The compatibility name `HailperinNF` denotes the eleven-sentence Metamath
+Hailperin-derived presentation, including its added singleton axiom `axSn`.
+Metamath credits that addition to SF on 12 January 2015 and identifies it as
+absent from Hailperin's original presentation: <https://us.metamath.org/nfeuni/ax-sn.html>.
+Both advertised equivalences concern this explicitly defined augmented presentation.
 -/

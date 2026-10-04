@@ -42,7 +42,7 @@ theorem realize_comprehensionInstance_of_cylinder {S : Fol.Structure LNF}
   exact C.mem_comprehensionSet p hp xs
 
 /-- Extensionality plus a cylinder algebra is a model of standard `NF`.
-No feature of Hailperin's particular finite presentation is used here.
+No feature of the particular Metamath Hailperin-derived finite presentation is used here.
 -/
 theorem models_NF_of_cylinder {S : Fol.Structure LNF} (C : CylinderAlgebra S)
     (hExt : Fol.realizeSentence S (literalAxiomFormula .axExt)) :

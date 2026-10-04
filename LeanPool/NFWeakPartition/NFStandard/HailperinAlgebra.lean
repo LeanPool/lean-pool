@@ -149,7 +149,7 @@ theorem mem_sliceObj {n : Nat} (cap : Int) (ty : Fin (n + 1) → Int) (A : S)
 `headRel j R` lifts a binary relation `R` to homogeneous tuple codes and
 tests the head against coordinate `j`.  `Ins3` handles the next coordinate;
 `Ins2` skips it and recurses.  This is precisely the purpose of the two
-inserted-pair primitives in Hailperin's finite basis.
+inserted-pair primitives in the Metamath Hailperin-derived finite basis.
 -/
 
 
@@ -343,7 +343,7 @@ theorem mem_memSetObj {n : Nat} (cap : Int) (ty : Fin n → Int) (hcap : ∀ i, 
 /-! #### The complete cap-aware cylinder algebra -/
 
 
-/-- Hailperin's finite basis supplies the full uniform cylinder compiler. -/
+/-- the Metamath Hailperin-derived finite basis supplies the full uniform cylinder compiler. -/
 @[expose]
 noncomputable def hailperinCylinderAlgebra : CylinderAlgebra S
     where

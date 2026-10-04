@@ -25,7 +25,7 @@ open NFChoice.Compiler.NFCompactLeafSemanticAdapters
 open NFChoice.Compiler.NFCompactLeafEndpoints
 
 /-! This file proves the finite, semantic half of the equivalence between the
-ordinary NF axioms and Hailperin's eleven-axiom presentation.  The class
+ordinary NF axioms and Metamath's Hailperin-derived eleven-axiom presentation.  The class
 notation in the literal Hailperin sentences is extensional notation, so the
 only substantive shared construction is the usual Kuratowski ordered pair.
 -/
@@ -878,7 +878,8 @@ theorem realizes_literalAxIns3 (hNF : Fol.allRealizeSentence S NF) :
   · intro hm
     exact ⟨z, w, ⟨t, rfl⟩, hm⟩
 
-/-- Every model of ordinary NF satisfies all eleven literal Hailperin axioms. -/
+/-- Every model of ordinary NF satisfies all eleven axioms of the literal Metamath
+Hailperin-derived presentation. -/
 theorem nf_models_literalHailperin (hNF : Fol.allRealizeSentence S NF) :
     Fol.allRealizeSentence S LiteralHailperinNF :=
   by

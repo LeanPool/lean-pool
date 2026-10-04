@@ -280,7 +280,10 @@ def axTypeLower : Sentence :=
   .all
     (Formula.ex (.all (Formula.biimp (.mem 0 1) (.all (Formula.pairSingletonSecondMem 0 1 3)))))
 
-/-- Proof-translation construction identified upstream as `axSn`. -/
+/-- The singleton-existence axiom added to Metamath's Hailperin-derived NF basis.
+Metamath credits contributor SF on 12 January 2015; it identifies this as an addition
+missing from Hailperin's presentation. See <https://us.metamath.org/nfeuni/ax-sn.html>.
+-/
 @[expose]
 def axSn : Sentence :=
   .all (Formula.ex (.all (Formula.biimp (.mem 0 1) (.equal 0 2))))
@@ -320,7 +323,7 @@ def axiomSyntax : HailperinAxiomName → Sentence
 def axiomFormula (name : HailperinAxiomName) : Fol.sentence LNF :=
   Formula.toFlypitch (axiomSyntax name)
 
-/-- Hailperin's finite NF theory, represented as a set of eleven sentences. -/
+/-- The eleven-sentence Metamath Hailperin-derived NF presentation, including `axSn`. -/
 abbrev HailperinNF : Fol.SentTheory LNF :=
   Set.range axiomFormula
 

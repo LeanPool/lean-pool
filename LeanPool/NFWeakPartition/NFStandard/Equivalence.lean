@@ -22,7 +22,8 @@ open scoped Fol
 open NFChoice.Foundation.ExactLiteralTrial
 
 /-! The two directions are deliberately exposed at the model boundary.  The
-forward direction verifies Hailperin's eleven finite axioms by ordinary
+forward direction verifies the eleven axioms of Metamath's Hailperin-derived presentation by
+ordinary
 stratified comprehension.  The reverse direction instantiates the uniform
 cylinder compiler with the operations constructed from those eleven axioms.
 First-order completeness then converts equality of model classes into full
@@ -62,7 +63,7 @@ theorem models_NF_iff_HailperinNF (S : Fol.Structure LNF) :
   ⟨nf_models_HailperinNF, hailperin_models_NF⟩
 
 /-- Full equivalence of the standard stratified-comprehension theory and
-Hailperin's finite first-order presentation.
+Metamath's Hailperin-derived finite first-order presentation.
 -/
 theorem nf_hailperin_deductivelyEquivalent : DeductivelyEquivalent NF HailperinNF :=
   deductivelyEquivalent_of_models_iff models_NF_iff_HailperinNF
