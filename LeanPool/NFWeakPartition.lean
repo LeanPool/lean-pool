@@ -41,7 +41,8 @@ normalizes arbitrary finite integer type assignments, `NFCompactLeafGate` establ
 compact axiom validity in arbitrary models of the literal finite theory, and
 `PartialTotalizationBridgeDev002` proves compatibility of partial and total lowering.
 `FocusedFVPaths` supplies generic free-variable embeddings through binding and complement.
-The last layer is exposed in the namespace `NFChoice.DirectNominalPrf.Nominal.Totalization`.
+The partial/total lowering layer is exposed as `NFChoice.DirectNominalPrf.Nominal.Totalization`.
+The focused-variable lemmas are exposed as `NFChoice.DefinitionLeaves.AlphaFocusedFV`.
 -/
 
 /-!
