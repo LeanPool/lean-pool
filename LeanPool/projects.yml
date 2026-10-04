@@ -12879,6 +12879,61 @@ projects:
     - bernstein-degree
     msc:
     - 16S32
+
+  - slug: ado-characteristic-zero
+    title: Ado's theorem in characteristic zero
+    summary: >-
+      Every finite-dimensional Lie algebra over a field of characteristic zero
+      admits a faithful finite-dimensional representation in which every
+      element of the nilradical acts nilpotently. The development includes
+      Levi complements, Weyl complete reducibility, highest-weight and sl2
+      infrastructure, and extensions of nilrepresentations across split ideals.
+    branch: Lie algebras and representation theory
+    entry_module: LeanPool.Ado
+    authors:
+      - The Tau Ceti contributors
+    source:
+      title: Ado's theorem in characteristic zero, following Fulton-Harris Appendix E
+      url: https://github.com/TauCetiProject/TauCeti/tree/1cec710789ba072804a906cf8667af8aa0b7966c
+      github_repo: TauCetiProject/TauCeti
+      commit: 1cec710789ba072804a906cf8667af8aa0b7966c
+      announcement_date: '2026-10-03T06:41:26Z'
+      announcement_url: https://github.com/TauCetiProject/TauCeti/pull/11223
+      notes: >-
+        The completion PR was prepared with Claude Code and merged on
+        October 3, 2026. Imported only the 130-module dependency closure of
+        CharacteristicZero.lean, with original Apache-2.0 attribution retained.
+        The proof follows Fulton and Harris, Representation Theory: A First
+        Course, Appendix E, Section E.2; Jacobson, Lie Algebras, Chapter VI;
+        and Asgarli's Ado's Theorem notes. Characteristic-positive Ado and
+        Hochschild's stronger preservation of all adjoint-nilpotent elements
+        are outside this project's scope.
+    license: Apache-2.0
+    status: verified
+    provenance: AI
+    main_declarations:
+      - Ado.adoCharZero
+      - Ado.exists_faithful_nilrepresentation_charZero
+    main_results:
+      - declaration: Ado.adoCharZero
+        informal: >-
+          Every finite-dimensional Lie algebra over any field of
+          characteristic zero has an injective Lie algebra homomorphism into
+          the endomorphisms of a finite-dimensional vector space.
+        source_ref: Fulton-Harris, Appendix E, Section E.2; upstream PR 11223.
+      - declaration: Ado.exists_faithful_nilrepresentation_charZero
+        informal: >-
+          The faithful finite-dimensional representation can be chosen so that
+          each element of the nilradical acts as a nilpotent endomorphism.
+        source_ref: Fulton-Harris, Appendix E, Section E.2; upstream PR 11223.
+    tags:
+      - Lie-algebras
+      - representation-theory
+      - faithful-representations
+      - nilpotent-representations
+    msc:
+      - '17B10'
+      - '17B05'
   - slug: markoff-modp
     title: Markoff mod p
     summary: Lean 4 formalization of strong approximation for the Markoff surface modulo
