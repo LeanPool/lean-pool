@@ -39,6 +39,7 @@ universe u
 variable {B : Type u} [Ring B]
 
 /-- The candidate right-coefficient PBW monomial of order `n`. -/
+@[expose]
 def rightPBWMonomial (D : OreDivisionDerivation B) (n : ℕ) : NormalOre D :=
   normalForm D (Polynomial.X ^ n)
 
