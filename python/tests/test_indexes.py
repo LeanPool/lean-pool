@@ -41,6 +41,8 @@ def test_complete_public_indexes(tmp_path: Path) -> None:
         + "public import LeanPool.Beta.Core\n"
         + "public import LeanPool.Beta.Nested.Other\n"
     )
+    assert not (tmp_path / "Challenge.lean").exists()
+    assert not (tmp_path / "Solution.lean").exists()
     assert indexes.structure_errors(tmp_path) == []
     assert _check_project_indexes(tmp_path) == []
     assert check_index(tmp_path)
@@ -179,3 +181,12 @@ def test_lean_public_exports(tmp_path: Path) -> None:
             capture_output=True,
             timeout=30,
         )
+
+
+def test_default_generation_only_writes_pool_indexes(tmp_path: Path) -> None:
+    """Default regeneration never recreates retired library roots."""
+    _sources(tmp_path)
+    assert indexes.main(["--repo", str(tmp_path), "--module"]) == 0
+    assert (tmp_path / "LeanPool.lean").exists()
+    assert not (tmp_path / "Challenge.lean").exists()
+    assert not (tmp_path / "Solution.lean").exists()

@@ -33,8 +33,6 @@ on:
       - 'lean-toolchain'
       - 'lake-manifest.json'
       - 'LeanPool/projects.yml'
-      - 'Challenge/challenges.yml'
-      - 'python/lean_pool/challenge.py'
       - 'python/lean_pool/quality.py'
       - 'python/lean_pool/validation_cache.py'
       - 'python/lean_pool/ci_artifacts.py'
@@ -62,8 +60,6 @@ on:
       - 'lean-toolchain'
       - 'lake-manifest.json'
       - 'LeanPool/projects.yml'
-      - 'Challenge/challenges.yml'
-      - 'python/lean_pool/challenge.py'
       - 'python/lean_pool/quality.py'
       - 'python/lean_pool/validation_cache.py'
       - 'python/lean_pool/ci_artifacts.py'
@@ -252,9 +248,6 @@ jobs:
             exit 1
           fi
 
-      - name: Build challenges and solutions
-        run: ./scripts/ci/build-challenges.sh
-
       # Publish once compilation succeeds, so docs can overlap the later
       # linters/quality checks without compiling the same PR a second time.
       - name: Package build for documentation
@@ -289,14 +282,10 @@ jobs:
           cd python
           uv run python -m lean_pool.validation_cache lint --repo ..
           cd ..
-          ~/.elan/bin/lake exe runLinter Challenge
-          ~/.elan/bin/lake exe runLinter Solution
 
       - name: Text style lint
         run: |
           ~/.elan/bin/lake exe lint-style LeanPool
-          ~/.elan/bin/lake exe lint-style Challenge
-          ~/.elan/bin/lake exe lint-style Solution
 
       - name: Repository quality checks
         run: |
@@ -530,9 +519,6 @@ jobs:
             exit 1
           fi
 
-      - name: Build challenges and solutions
-        run: ./scripts/ci/build-challenges.sh
-
       # Publish once compilation succeeds, so docs can overlap the later
       # linters/quality checks without compiling the same PR a second time.
       - name: Package build for documentation
@@ -567,14 +553,10 @@ jobs:
           cd python
           uv run python -m lean_pool.validation_cache lint --repo ..
           cd ..
-          ~/.elan/bin/lake exe runLinter Challenge
-          ~/.elan/bin/lake exe runLinter Solution
 
       - name: Text style lint
         run: |
           ~/.elan/bin/lake exe lint-style LeanPool
-          ~/.elan/bin/lake exe lint-style Challenge
-          ~/.elan/bin/lake exe lint-style Solution
 
       - name: Repository quality checks
         run: |
@@ -727,13 +709,8 @@ jobs:
         if: steps.project-build.outcome != 'success'
         run: |
           set -euo pipefail
-          ./scripts/ci/build-challenges.sh
           (cd python && uv run python -m lean_pool.validation_cache lint --repo ..)
-          ~/.elan/bin/lake exe runLinter Challenge
-          ~/.elan/bin/lake exe runLinter Solution
           ~/.elan/bin/lake exe lint-style LeanPool
-          ~/.elan/bin/lake exe lint-style Challenge
-          ~/.elan/bin/lake exe lint-style Solution
           (cd python && uv run python -m lean_pool.validation_cache quality --repo ..)
 
       - name: Package PR project build for later rebases
