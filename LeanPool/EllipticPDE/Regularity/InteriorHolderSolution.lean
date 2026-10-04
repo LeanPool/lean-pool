@@ -39,7 +39,7 @@ coefficients and of the datum, and adds the Hölder seminorm bound, which the `C
 
 ## References
 
-Y. Guo, *Partial Differential Equations*, Theorem IV.2.3(ii); L. C. Evans, *Partial Differential
+James Guo, *Partial Differential Equations*, Theorem IV.2.3(ii); L. C. Evans, *Partial Differential
 Equations* (2nd ed.), §6.3.1.
 -/
 
