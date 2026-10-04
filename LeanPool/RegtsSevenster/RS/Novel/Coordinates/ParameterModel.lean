@@ -32,6 +32,7 @@ variable (e' : P.ω.obj (SkeinObj.mk 1) ⟶ stdSuperPair k ℓ)
 
 /-- The model action of a permutation: trivial at arity zero,
 the braiding word of the adjacent-transposition word above. -/
+@[expose]
 noncomputable def modelPermMap :
     {n : ℕ} → (σ : _root_.Equiv.Perm (Fin n)) →
       (superPow (stdSuperPair k ℓ) n ⟶ superPow (stdSuperPair k ℓ) n)
