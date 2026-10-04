@@ -32,14 +32,15 @@ open NFChoice.DefinitionLeaves.AlphaFocusedFV
 open NFChoice.DirectNominalPrf
 open NFChoice.DirectNominalPrf.Nominal
 
+/-- Checked nominal proof certificate identified upstream as `nominal_df_iun`. -/
 @[expose]
-noncomputable def nominal_df_iun (x : Var) (y : Var) (A : Class) (B : Class)
+noncomputable def nominalDfIun (x : Var) (y : Var) (A : Class) (B : Class)
     (dv_A_y : y ∉ A.fv) (dv_B_y : y ∉ B.fv) (dv_x_y : x ≠ y) :
     Nominal.NPrf
-      (.classEq (syn_ciun x A B) (.cab y (syn_wrex x A (.classMem (.cv y) B)))) :=
+      (.classEq (synCiun x A B) (.cab y (synWrex x A (.classMem (.cv y) B)))) :=
   by
-  let alpha_dummy_000 : Var := (freshVar (({ x } : Finset Var) ∪ (A).fv ∪ (B).fv) 0)
-  have fresh_000 : alpha_dummy_000 ∉ (({ x } : Finset Var) ∪ (A).fv ∪ (B).fv) := by
+  let alphaDummy000 : Var := (freshVar (({ x } : Finset Var) ∪ (A).fv ∪ (B).fv) 0)
+  have fresh_000 : alphaDummy000 ∉ (({ x } : Finset Var) ∪ (A).fv ∪ (B).fv) := by
     exact freshVar_not_mem (({ x } : Finset Var) ∪ (A).fv ∪ (B).fv) 0
   have support_part_0000 : x ∈ (({ x } : Finset Var)) := by
     exact Finset.mem_singleton_self _
@@ -50,7 +51,7 @@ noncomputable def nominal_df_iun (x : Var) (y : Var) (A : Class) (B : Class)
     Nominal.alphaClassEq
       (TAlphaClass.cab (TAlphaWff.ex (TAlphaWff.conj
             (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
-              (TAlphaClass.refl_of_fv_fresh _ _ (by
+              (TAlphaClass.reflOfFvFresh _ _ (by
                   intro a b h hne;
                   simp only [List.mem_cons, List.not_mem_nil, or_false,
                     Prod.mk.injEq] at h;
@@ -59,7 +60,7 @@ noncomputable def nominal_df_iun (x : Var) (y : Var) (A : Class) (B : Class)
                       | (rcases h with ⟨rfl, rfl⟩));
                     all_goals aesop))) (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.there
                   (Ne.symm (Nat.ne_of_lt (mem_lt_freshVar support_mem_0000 0)))
-                  (Ne.symm dv_x_y) (TAlphaVar.here _ _ _))) (TAlphaClass.refl_of_fv_fresh _ _
+                  (Ne.symm dv_x_y) (TAlphaVar.here _ _ _))) (TAlphaClass.reflOfFvFresh _ _
                 (by
                   intro a b h hne;
                   simp only [List.mem_cons, List.not_mem_nil, or_false,

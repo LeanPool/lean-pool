@@ -32,24 +32,25 @@ open NFChoice.DefinitionLeaves.AlphaFocusedFV
 open NFChoice.DirectNominalPrf
 open NFChoice.DirectNominalPrf.Nominal
 
+/-- Checked nominal proof certificate identified upstream as `nominal_df_uni`. -/
 @[expose]
-noncomputable def nominal_df_uni (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉ A.fv)
+noncomputable def nominalDfUni (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉ A.fv)
     (dv_A_y : y ∉ A.fv) (dv_x_y : x ≠ y) :
     Nominal.NPrf
-      (.classEq (syn_cuni A)
-        (.cab x (syn_wex y (syn_wa (.objMem x y) (.classMem (.cv y) A))))) :=
+      (.classEq (synCuni A)
+        (.cab x (synWex y (synWa (.objMem x y) (.classMem (.cv y) A))))) :=
   by
-  let alpha_dummy_000 : Var := (freshVar ((A).fv) 0)
-  let alpha_dummy_001 : Var := (freshVar ((A).fv) 1)
-  have fresh_000 : alpha_dummy_000 ∉ ((A).fv) := by exact freshVar_not_mem ((A).fv) 0
-  have fresh_001 : alpha_dummy_001 ∉ ((A).fv) := by exact freshVar_not_mem ((A).fv) 1
+  let alphaDummy000 : Var := (freshVar ((A).fv) 0)
+  let alphaDummy001 : Var := (freshVar ((A).fv) 1)
+  have fresh_000 : alphaDummy000 ∉ ((A).fv) := by exact freshVar_not_mem ((A).fv) 0
+  have fresh_001 : alphaDummy001 ∉ ((A).fv) := by exact freshVar_not_mem ((A).fv) 1
   exact
     Nominal.alphaClassEq
       (TAlphaClass.cab (TAlphaWff.ex (TAlphaWff.conj (TAlphaWff.objMem
               (TAlphaVar.there (freshVar_injective ((A).fv) (by decide)) dv_x_y
                 (TAlphaVar.here _ _ _)) (TAlphaVar.here _ _ _))
             (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
-              (TAlphaClass.refl_of_fv_fresh _ _ (by
+              (TAlphaClass.reflOfFvFresh _ _ (by
                   intro a b h hne;
                   simp only [List.mem_cons, List.not_mem_nil, or_false,
                     Prod.mk.injEq] at h;

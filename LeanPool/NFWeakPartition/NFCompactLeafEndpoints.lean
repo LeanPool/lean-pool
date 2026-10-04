@@ -54,7 +54,7 @@ theorem formulaHolds_classMemSet {S : Fol.Structure LNF} {n : Nat} (xs : DVec S 
 theorem holds_syn_csn_literal {S : Fol.Structure LNF} {n : Nat} (v : Var → S)
     (xs : DVec S n) (A : Class) (LA : LiteralClass n)
     (hA : ∀ a : S, Class.Holds S v A a ↔ LiteralClassSem xs LA a) (s : S) :
-    Class.Holds S v (syn_csn A) s ↔ LiteralClassSem xs (.singleton LA) s :=
+    Class.Holds S v (synCsn A) s ↔ LiteralClassSem xs (.singleton LA) s :=
   by
   rw [holds_syn_csn v A s]
   simp only [LiteralClassSem]
@@ -66,7 +66,7 @@ theorem holds_syn_cpr_literal {S : Fol.Structure LNF} {n : Nat} (hExt : Extensio
     (v : Var → S) (xs : DVec S n) (A B : Class) (LA LB : LiteralClass n)
     (hA : ∀ a : S, Class.Holds S v A a ↔ LiteralClassSem xs LA a)
     (hB : ∀ a : S, Class.Holds S v B a ↔ LiteralClassSem xs LB a) (p : S) :
-    Class.Holds S v (syn_cpr A B) p ↔ LiteralClassSem xs (.unorderedPair LA LB) p :=
+    Class.Holds S v (synCpr A B) p ↔ LiteralClassSem xs (.unorderedPair LA LB) p :=
   by
   rw [holds_syn_cpr hExt v A B p]
   simp only [LiteralClassSem]
@@ -82,7 +82,7 @@ theorem holds_syn_copk_literal {S : Fol.Structure LNF} {n : Nat} (hExt : Extensi
     (v : Var → S) (xs : DVec S n) (A B : Class) (LA LB : LiteralClass n)
     (hA : ∀ a : S, Class.Holds S v A a ↔ LiteralClassSem xs LA a)
     (hB : ∀ a : S, Class.Holds S v B a ↔ LiteralClassSem xs LB a) (p : S) :
-    Class.Holds S v (syn_copk A B) p ↔ LiteralClassSem xs (.kPair LA LB) p :=
+    Class.Holds S v (synCopk A B) p ↔ LiteralClassSem xs (.kPair LA LB) p :=
   by
   rw [holds_syn_copk hExt v A B p]
   simp only [LiteralClassSem]
@@ -138,14 +138,14 @@ theorem holds_classMem_cv_literal {S : Fol.Structure LNF} {n : Nat} (v : Var →
 theorem holds_literalKPair {S : Fol.Structure LNF} {n : Nat} (hExt : Extensional S)
     (v : Var → S) (xs : DVec S n) (z w t : Var) (iz iw it : Fin n)
     (hz : v z = lookup xs iz) (hw : v w = lookup xs iw) (ht : v t = lookup xs it) :
-    Wff.Holds S v (.classEq (.cv z) (syn_copk (.cv w) (.cv t))) ↔
+    Wff.Holds S v (.classEq (.cv z) (synCopk (.cv w) (.cv t))) ↔
       FormulaHolds S xs (literalKPair iz iw it) :=
   by
   change
-    Wff.Holds S v (.classEq (.cv z) (syn_copk (.cv w) (.cv t))) ↔
+    Wff.Holds S v (.classEq (.cv z) (synCopk (.cv w) (.cv t))) ↔
       FormulaHolds S xs (LiteralClass.setEqClass iz (.kPair (.setVar iw) (.setVar it)))
   apply
-    holds_classEq_cv_literal v xs z iz (syn_copk (.cv w) (.cv t))
+    holds_classEq_cv_literal v xs z iz (synCopk (.cv w) (.cv t))
       (.kPair (.setVar iw) (.setVar it)) hz
   intro p
   apply holds_syn_copk_literal hExt v xs (.cv w) (.cv t) (.setVar iw) (.setVar it)
@@ -157,14 +157,14 @@ theorem holds_literalKPair {S : Fol.Structure LNF} {n : Nat} (hExt : Extensional
 theorem holds_literalPairMem {S : Fol.Structure LNF} {n : Nat} (hExt : Extensional S)
     (v : Var → S) (xs : DVec S n) (a b r : Var) (ia ib ir : Fin n)
     (ha : v a = lookup xs ia) (hb : v b = lookup xs ib) (hr : v r = lookup xs ir) :
-    Wff.Holds S v (.classMem (syn_copk (.cv a) (.cv b)) (.cv r)) ↔
+    Wff.Holds S v (.classMem (synCopk (.cv a) (.cv b)) (.cv r)) ↔
       FormulaHolds S xs (literalPairMem ia ib ir) :=
   by
   change
-    Wff.Holds S v (.classMem (syn_copk (.cv a) (.cv b)) (.cv r)) ↔
+    Wff.Holds S v (.classMem (synCopk (.cv a) (.cv b)) (.cv r)) ↔
       FormulaHolds S xs (LiteralClass.classMemSet (.kPair (.setVar ia) (.setVar ib)) ir)
   apply
-    holds_classMem_cv_literal v xs r ir (syn_copk (.cv a) (.cv b))
+    holds_classMem_cv_literal v xs r ir (synCopk (.cv a) (.cv b))
       (.kPair (.setVar ia) (.setVar ib)) hr
   intro p
   apply holds_syn_copk_literal hExt v xs (.cv a) (.cv b) (.setVar ia) (.setVar ib)
@@ -176,20 +176,20 @@ theorem holds_literalPairMem {S : Fol.Structure LNF} {n : Nat} (hExt : Extension
 theorem holds_literalSingletonPairMem {S : Fol.Structure LNF} {n : Nat}
     (hExt : Extensional S) (v : Var → S) (xs : DVec S n) (a b r : Var) (ia ib ir : Fin n)
     (ha : v a = lookup xs ia) (hb : v b = lookup xs ib) (hr : v r = lookup xs ir) :
-    Wff.Holds S v (.classMem (syn_copk (syn_csn (.cv a)) (syn_csn (.cv b))) (.cv r)) ↔
+    Wff.Holds S v (.classMem (synCopk (synCsn (.cv a)) (synCsn (.cv b))) (.cv r)) ↔
       FormulaHolds S xs (literalSingletonPairMem ia ib ir) :=
   by
   change
-    Wff.Holds S v (.classMem (syn_copk (syn_csn (.cv a)) (syn_csn (.cv b))) (.cv r)) ↔
+    Wff.Holds S v (.classMem (synCopk (synCsn (.cv a)) (synCsn (.cv b))) (.cv r)) ↔
       FormulaHolds S xs
         (LiteralClass.classMemSet
           (.kPair (.singleton (.setVar ia)) (.singleton (.setVar ib))) ir)
   apply
-    holds_classMem_cv_literal v xs r ir (syn_copk (syn_csn (.cv a)) (syn_csn (.cv b)))
+    holds_classMem_cv_literal v xs r ir (synCopk (synCsn (.cv a)) (synCsn (.cv b)))
       (.kPair (.singleton (.setVar ia)) (.singleton (.setVar ib))) hr
   intro p
   apply
-    holds_syn_copk_literal hExt v xs (syn_csn (.cv a)) (syn_csn (.cv b))
+    holds_syn_copk_literal hExt v xs (synCsn (.cv a)) (synCsn (.cv b))
       (.singleton (.setVar ia)) (.singleton (.setVar ib))
   · intro z
     apply holds_syn_csn_literal v xs (.cv a) (.setVar ia)
@@ -205,27 +205,27 @@ theorem holds_literalInsertedPairMem {S : Fol.Structure LNF} {n : Nat}
     (iz iw it ir : Fin n) (hz : v z = lookup xs iz) (hw : v w = lookup xs iw)
     (ht : v t = lookup xs it) (hr : v r = lookup xs ir) :
     Wff.Holds S v
-        (.classMem (syn_copk (syn_csn (syn_csn (.cv z))) (syn_copk (.cv w) (.cv t))) (.cv r)) ↔
+        (.classMem (synCopk (synCsn (synCsn (.cv z))) (synCopk (.cv w) (.cv t))) (.cv r)) ↔
       FormulaHolds S xs (literalInsertedPairMem iz iw it ir) :=
   by
   change
     Wff.Holds S v
-        (.classMem (syn_copk (syn_csn (syn_csn (.cv z))) (syn_copk (.cv w) (.cv t))) (.cv r)) ↔
+        (.classMem (synCopk (synCsn (synCsn (.cv z))) (synCopk (.cv w) (.cv t))) (.cv r)) ↔
       FormulaHolds S xs
         (LiteralClass.classMemSet (.kPair (.singleton (.singleton (.setVar iz)))
             (.kPair (.setVar iw) (.setVar it))) ir)
   apply
     holds_classMem_cv_literal v xs r ir
-      (syn_copk (syn_csn (syn_csn (.cv z))) (syn_copk (.cv w) (.cv t)))
+      (synCopk (synCsn (synCsn (.cv z))) (synCopk (.cv w) (.cv t)))
       (.kPair (.singleton (.singleton (.setVar iz))) (.kPair (.setVar iw) (.setVar it)))
       hr
   intro p
   apply
-    holds_syn_copk_literal hExt v xs (syn_csn (syn_csn (.cv z)))
-      (syn_copk (.cv w) (.cv t)) (.singleton (.singleton (.setVar iz)))
+    holds_syn_copk_literal hExt v xs (synCsn (synCsn (.cv z)))
+      (synCopk (.cv w) (.cv t)) (.singleton (.singleton (.setVar iz)))
       (.kPair (.setVar iw) (.setVar it))
   · intro q
-    apply holds_syn_csn_literal v xs (syn_csn (.cv z)) (.singleton (.setVar iz))
+    apply holds_syn_csn_literal v xs (synCsn (.cv z)) (.singleton (.setVar iz))
     intro u
     apply holds_syn_csn_literal v xs (.cv z) (.setVar iz)
     intro e
@@ -240,19 +240,19 @@ theorem holds_literalInsertedPairMem {S : Fol.Structure LNF} {n : Nat}
 theorem holds_literalPairSingletonSecondMem {S : Fol.Structure LNF} {n : Nat}
     (hExt : Extensional S) (v : Var → S) (xs : DVec S n) (a z r : Var) (ia iz ir : Fin n)
     (ha : v a = lookup xs ia) (hz : v z = lookup xs iz) (hr : v r = lookup xs ir) :
-    Wff.Holds S v (.classMem (syn_copk (.cv a) (syn_csn (.cv z))) (.cv r)) ↔
+    Wff.Holds S v (.classMem (synCopk (.cv a) (synCsn (.cv z))) (.cv r)) ↔
       FormulaHolds S xs (literalPairSingletonSecondMem ia iz ir) :=
   by
   change
-    Wff.Holds S v (.classMem (syn_copk (.cv a) (syn_csn (.cv z))) (.cv r)) ↔
+    Wff.Holds S v (.classMem (synCopk (.cv a) (synCsn (.cv z))) (.cv r)) ↔
       FormulaHolds S xs
         (LiteralClass.classMemSet (.kPair (.setVar ia) (.singleton (.setVar iz))) ir)
   apply
-    holds_classMem_cv_literal v xs r ir (syn_copk (.cv a) (syn_csn (.cv z)))
+    holds_classMem_cv_literal v xs r ir (synCopk (.cv a) (synCsn (.cv z)))
       (.kPair (.setVar ia) (.singleton (.setVar iz))) hr
   intro p
   apply
-    holds_syn_copk_literal hExt v xs (.cv a) (syn_csn (.cv z)) (.setVar ia)
+    holds_syn_copk_literal hExt v xs (.cv a) (synCsn (.cv z)) (.setVar ia)
       (.singleton (.setVar iz))
   · intro e
     simpa [Class.Holds, LiteralClassSem] using congrArg (Mem S e) ha

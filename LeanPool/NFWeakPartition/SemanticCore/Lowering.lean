@@ -65,7 +65,8 @@ end
 
 /-- Direct semantics of the small intrinsically scoped formula front end. -/
 @[expose]
-def FormulaHolds (S : Fol.Structure LNF) : {n : Nat} → DVec S n → Formula n → Prop
+def _root_.NFChoice.SemanticCore.Lowering.FormulaHolds
+    (S : Fol.Structure LNF) : {n : Nat} → DVec S n → Formula n → Prop
   | _, _, .falsum => False
   | _, xs, .equal x y => lookup xs x = lookup xs y
   | _, xs, .mem x y => Mem S (lookup xs x) (lookup xs y)
@@ -73,12 +74,14 @@ def FormulaHolds (S : Fol.Structure LNF) : {n : Nat} → DVec S n → Formula n 
   | _, xs, .all p => ∀ a : S, FormulaHolds S (DVec.cons a xs) p
 
 @[simp]
-theorem formulaHolds_neg {S : Fol.Structure LNF} {n : Nat} {xs : DVec S n}
+theorem _root_.NFChoice.SemanticCore.Lowering.formulaHolds_neg
+    {S : Fol.Structure LNF} {n : Nat} {xs : DVec S n}
     {p : Formula n} : FormulaHolds S xs (Formula.neg p) ↔ ¬FormulaHolds S xs p :=
   Iff.rfl
 
 @[simp]
-theorem formulaHolds_conj {S : Fol.Structure LNF} {n : Nat} {xs : DVec S n}
+theorem _root_.NFChoice.SemanticCore.Lowering.formulaHolds_conj
+    {S : Fol.Structure LNF} {n : Nat} {xs : DVec S n}
     {p q : Formula n} :
     FormulaHolds S xs (Formula.conj p q) ↔ FormulaHolds S xs p ∧ FormulaHolds S xs q :=
   by
@@ -86,7 +89,8 @@ theorem formulaHolds_conj {S : Fol.Structure LNF} {n : Nat} {xs : DVec S n}
   tauto
 
 @[simp]
-theorem formulaHolds_biimp {S : Fol.Structure LNF} {n : Nat} {xs : DVec S n}
+theorem _root_.NFChoice.SemanticCore.Lowering.formulaHolds_biimp
+    {S : Fol.Structure LNF} {n : Nat} {xs : DVec S n}
     {p q : Formula n} :
     FormulaHolds S xs (Formula.biimp p q) ↔ (FormulaHolds S xs p ↔ FormulaHolds S xs q) :=
   by
@@ -94,7 +98,8 @@ theorem formulaHolds_biimp {S : Fol.Structure LNF} {n : Nat} {xs : DVec S n}
   tauto
 
 @[simp]
-theorem formulaHolds_ex {S : Fol.Structure LNF} {n : Nat} {xs : DVec S n}
+theorem _root_.NFChoice.SemanticCore.Lowering.formulaHolds_ex
+    {S : Fol.Structure LNF} {n : Nat} {xs : DVec S n}
     {p : Formula (n + 1)} :
     FormulaHolds S xs (Formula.ex p) ↔ ∃ a : S, FormulaHolds S (DVec.cons a xs) p :=
   by
@@ -110,7 +115,8 @@ theorem formulaHolds_ex {S : Fol.Structure LNF} {n : Nat} {xs : DVec S n}
 
 mutual
   /-- Semantic correctness of class-predicate lowering. -/
-  theorem lowerClassPred_sound {S : Fol.Structure LNF} {n : Nat} (rho : Var → Fin n)
+  theorem _root_.NFChoice.SemanticCore.Lowering.lowerClassPred_sound
+      {S : Fol.Structure LNF} {n : Nat} (rho : Var → Fin n)
       (xs : DVec S n) (v : Var → S) (hrho : ∀ x, lookup xs (rho x) = v x)
       (candidate : Fin n) (A : Class) :
       Class.Holds S v A (lookup xs candidate) ↔
@@ -131,7 +137,8 @@ mutual
         simp [update]
       · simp [Function.update, update, hyx, hrho]
   /-- Semantic correctness of nominal-wff lowering. -/
-  theorem lowerWff_sound {S : Fol.Structure LNF} {n : Nat} (rho : Var → Fin n)
+  theorem _root_.NFChoice.SemanticCore.Lowering.lowerWff_sound
+      {S : Fol.Structure LNF} {n : Nat} (rho : Var → Fin n)
       (xs : DVec S n) (v : Var → S) (hrho : ∀ x, lookup xs (rho x) = v x) (p : Wff) :
       Wff.Holds S v p ↔ FormulaHolds S xs (lowerWff rho p) := by
     cases p with
@@ -189,28 +196,29 @@ mutual
 end
 
 /-- The direct front-end semantics agrees with Flypitch realization. -/
-theorem formulaHolds_toFlypitch :
+theorem _root_.NFChoice.SemanticCore.Lowering.formulaHolds_toFlypitch :
     ∀ {S : Fol.Structure LNF} {n : Nat} (xs : DVec S n) (p : Formula n),
-      FormulaHolds S xs p ↔ Fol.realize_bounded_formula xs (Formula.toFlypitch p) DVec.nil
+      FormulaHolds S xs p ↔ Fol.realizeBoundedFormula xs (Formula.toFlypitch p) DVec.nil
   | _, _, _, .falsum => Iff.rfl
   | _, _, _, .equal _ _ => Iff.rfl
   | _, _, _, .mem _ _ => Iff.rfl
   | _, _, xs, .imp p q =>
     by
-    simp only [FormulaHolds, Formula.toFlypitch, Fol.realize_bounded_formula]
+    simp only [FormulaHolds, Formula.toFlypitch, Fol.realizeBoundedFormula]
     exact Iff.imp (formulaHolds_toFlypitch xs p) (formulaHolds_toFlypitch xs q)
   | _, _, xs, .all p =>
     by
-    simp only [FormulaHolds, Formula.toFlypitch, Fol.realize_bounded_formula]
+    simp only [FormulaHolds, Formula.toFlypitch, Fol.realizeBoundedFormula]
     apply forall_congr'
     intro a
     exact formulaHolds_toFlypitch (DVec.cons a xs) p
 
 /-- End-to-end correctness of nominal lowering at the Flypitch boundary. -/
-theorem lowerWff_realize_iff {S : Fol.Structure LNF} {n : Nat} (rho : Var → Fin n)
+theorem _root_.NFChoice.SemanticCore.Lowering.lowerWff_realize_iff
+    {S : Fol.Structure LNF} {n : Nat} (rho : Var → Fin n)
     (xs : DVec S n) (v : Var → S) (hrho : ∀ x, lookup xs (rho x) = v x) (p : Wff) :
     Wff.Holds S v p ↔
-      Fol.realize_bounded_formula xs (Formula.toFlypitch (lowerWff rho p)) DVec.nil :=
+      Fol.realizeBoundedFormula xs (Formula.toFlypitch (lowerWff rho p)) DVec.nil :=
   (lowerWff_sound rho xs v hrho p).trans (formulaHolds_toFlypitch xs (lowerWff rho p))
 
 end NFChoice.SemanticCore.Lowering

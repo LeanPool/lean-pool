@@ -23,11 +23,12 @@ open NFChoice.DirectCertificate.ClassBoundaryCoreDev006
 /-! Proof-object reflexivity for class-valued definitional leaves. -/
 
 
+/-- Proof-translation construction identified upstream as `classEqRefl`. -/
 @[expose]
 noncomputable def classEqRefl (A : Class) : NPrf (.classEq A A) := fun rho =>
   by
   simp only [lowerWff]
-  exact Fol.prf.allI (Fol.biimp_refl _ _)
+  exact Fol.prf.allI (Fol.biimpReflCertificate _ _)
 
 
 end NFChoice.DirectNominalPrf.Nominal

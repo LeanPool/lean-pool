@@ -32,13 +32,13 @@ deductive equivalence.
 
 /-- The exact literal Hailperin basis supplies every stratified comprehension. -/
 theorem literalHailperin_models_NF {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) :
-    Fol.all_realize_sentence S NF :=
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) :
+    Fol.allRealizeSentence S NF :=
   models_NF_of_cylinder (hailperinCylinderAlgebra hH) (hH (literalAxiom_mem .axExt))
 
 /-- Standard NF and the exact literal finite basis have the same models. -/
 theorem models_NF_iff_literalHailperinNF (S : Fol.Structure LNF) :
-    Fol.all_realize_sentence S NF ↔ Fol.all_realize_sentence S LiteralHailperinNF :=
+    Fol.allRealizeSentence S NF ↔ Fol.allRealizeSentence S LiteralHailperinNF :=
   ⟨nf_models_literalHailperin, literalHailperin_models_NF⟩
 
 /-- Standard NF and the exact literal finite basis have the same consequences. -/
@@ -48,17 +48,17 @@ theorem nf_literalHailperin_deductivelyEquivalent :
 
 /-- The existing finite theory `HailperinNF` supplies standard NF. -/
 theorem hailperin_models_NF {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S HailperinNF) : Fol.all_realize_sentence S NF :=
+    (hH : Fol.allRealizeSentence S HailperinNF) : Fol.allRealizeSentence S NF :=
   literalHailperin_models_NF (foundationModel_to_literalModel hH)
 
 /-- Standard NF supplies the existing finite theory `HailperinNF`. -/
 theorem nf_models_HailperinNF {S : Fol.Structure LNF}
-    (hNF : Fol.all_realize_sentence S NF) : Fol.all_realize_sentence S HailperinNF :=
+    (hNF : Fol.allRealizeSentence S NF) : Fol.allRealizeSentence S HailperinNF :=
   literalModel_to_foundationModel (nf_models_literalHailperin hNF)
 
 /-- Standard `NF` and finite `HailperinNF` have exactly the same models. -/
 theorem models_NF_iff_HailperinNF (S : Fol.Structure LNF) :
-    Fol.all_realize_sentence S NF ↔ Fol.all_realize_sentence S HailperinNF :=
+    Fol.allRealizeSentence S NF ↔ Fol.allRealizeSentence S HailperinNF :=
   ⟨nf_models_HailperinNF, hailperin_models_NF⟩
 
 /-- Full equivalence of the standard stratified-comprehension theory and

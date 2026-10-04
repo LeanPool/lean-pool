@@ -51,7 +51,7 @@ de-Bruijn shift certificate induced by the source `$d x p` condition.
 -/
 @[expose]
 def freshIntroOfShift (p : Wff) (x : Var)
-    (hShift : ∀ rho, lowerWff (bindRho rho x) p = Fol.lift_formula1 (lowerWff rho p)) :
+    (hShift : ∀ rho, lowerWff (bindRho rho x) p = Fol.liftFormula1 (lowerWff rho p)) :
     NPrf (.imp p (.all x p)) := fun rho =>
   by
   change
@@ -63,7 +63,7 @@ def freshIntroOfShift (p : Wff) (x : Var)
 /-- Metamath `ax-17`, with its checked `$d x p` evidence compiled to shift. -/
 @[expose]
 def ax17OfShift (p : Wff) (x : Var)
-    (hShift : ∀ rho, lowerWff (bindRho rho x) p = Fol.lift_formula1 (lowerWff rho p)) :
+    (hShift : ∀ rho, lowerWff (bindRho rho x) p = Fol.liftFormula1 (lowerWff rho p)) :
     NPrf (.imp p (.all x p)) :=
   freshIntroOfShift p x hShift
 
@@ -73,7 +73,7 @@ separate identity keeps that structural fact kernel-visible.
 @[expose]
 def ax6OfShift (x : Var) (p : Wff)
     (hShift : ∀ rho, lowerWff (bindRho rho x) (Wff.neg (.all x p)) =
-          Fol.lift_formula1 (lowerWff rho (Wff.neg (.all x p)))) :
+          Fol.liftFormula1 (lowerWff rho (Wff.neg (.all x p)))) :
     NPrf (.imp (Wff.neg (.all x p)) (.all x (Wff.neg (.all x p)))) :=
   freshIntroOfShift (Wff.neg (.all x p)) x hShift
 
@@ -106,8 +106,8 @@ noncomputable def ax8 (x y z : Var) :
 @[expose]
 def ax9OfNe (x y : Var) (hxy : y ≠ x) : NPrf (Wff.neg (.all x (Wff.neg (.objEq x y)))) :=
   fun rho => by
-  simpa [Wff.neg, lowerWff, neg, Fol.not', bindRho, hxy, Fol.lift_term1,
-    Fol.lift_term_at] using (GenericLogicalHandlers.ax9 LiteralHailperinNF.fst (&(rho y)))
+  simpa [Wff.neg, lowerWff, neg, Fol.not', bindRho, hxy, Fol.liftTerm1,
+    Fol.liftTermAt] using (GenericLogicalHandlers.ax9 LiteralHailperinNF.fst (&(rho y)))
 
 /-- Metamath `ax-13` (left equality for membership). -/
 @[expose]
@@ -128,7 +128,7 @@ checking; coincident bundled-variable branches can be emitted separately.
 @[expose]
 def ax12OfShift (x y z : Var)
     (hShift : ∀ rho, lowerWff (bindRho rho x) (.objEq y z) =
-          Fol.lift_formula1 (lowerWff rho (.objEq y z))) :
+          Fol.liftFormula1 (lowerWff rho (.objEq y z))) :
     NPrf (.imp (Wff.neg (.objEq x y)) (.imp (.objEq y z) (.all x (.objEq y z)))) :=
   fun rho =>
   by
@@ -149,11 +149,11 @@ target-binder identities for the chosen one-hole de-Bruijn template.
 noncomputable def ax11OfTemplate (x y : Var) (p : Wff) (hxy : y ≠ x)
     (template : (Var → Nat) → Fol.formula LNF)
     (hSource : ∀ rho, GenericLogicalHandlers.ax11Inst (lowerWff (bindRho rho y) p) (&(rho y)) =
-          (template rho) [Fol.lift_term1 (&(rho x)) // 0]f)
+          (template rho) [Fol.liftTerm1 (&(rho x)) // 0]f)
     (hTarget : ∀ rho, (template rho) [(&0) // 0]f = lowerWff (bindRho rho x) p) :
     NPrf (.imp (.objEq x y) (.imp (.all y p) (.all x (.imp (.objEq x y) p)))) :=
   fun rho => by
-  simpa [lowerWff, bindRho, hxy, Fol.lift_term1, Fol.lift_term_at] using
+  simpa [lowerWff, bindRho, hxy, Fol.liftTerm1, Fol.liftTermAt] using
     (GenericLogicalHandlers.ax11Core LiteralHailperinNF.fst (&(rho x)) (&(rho y))
       (lowerWff (bindRho rho y) p) (lowerWff (bindRho rho x) p) (template rho)
       (hSource rho) (hTarget rho))

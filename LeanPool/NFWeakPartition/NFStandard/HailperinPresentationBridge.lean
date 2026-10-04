@@ -35,10 +35,13 @@ available.  Those representatives are supplied in either presentation by
 /-- The small common kernel needed to compare the two presentations. -/
 structure PresentationKernel (S : Fol.Structure LNF) where
   extensional : Extensional S
+  /-- The singleton operation of this NF model presentation. -/
   singleton : S → S
   mem_singleton : ∀ x z, Mem S z (singleton x) ↔ z = x
+  /-- The unordered Pair operation of this NF model presentation. -/
   unorderedPair : S → S → S
   mem_unorderedPair : ∀ x y z, Mem S z (unorderedPair x y) ↔ z = x ∨ z = y
+  /-- The k Pair operation of this NF model presentation. -/
   kPair : S → S → S
   kPair_eq : ∀ x y, kPair x y = unorderedPair (singleton x) (unorderedPair x y)
   mem_kPair : ∀ x y z, Mem S z (kPair x y) ↔ z = singleton x ∨ z = unorderedPair x y
@@ -50,7 +53,6 @@ variable {S : Fol.Structure LNF} (K : PresentationKernel S)
 /-! ### The existential-intermediate presentation -/
 
 
-@[simp]
 theorem formulaHolds_singleton_iff {n : Nat} (xs : DVec S n) (is ia : Fin n) :
     FormulaHolds S xs (Formula.singleton is ia) ↔
       lookup xs is = K.singleton (lookup xs ia) :=
@@ -65,7 +67,6 @@ theorem formulaHolds_singleton_iff {n : Nat} (xs : DVec S n) (is ia : Fin n) :
     rw [h]
     exact K.mem_singleton _
 
-@[simp]
 theorem formulaHolds_unorderedPair_iff {n : Nat} (xs : DVec S n) (ip ia ib : Fin n) :
     FormulaHolds S xs (Formula.unorderedPair ip ia ib) ↔
       lookup xs ip = K.unorderedPair (lookup xs ia) (lookup xs ib) :=
@@ -87,7 +88,6 @@ theorem formulaHolds_unorderedPair_iff {n : Nat} (xs : DVec S n) (ip ia ib : Fin
     rw [K.mem_unorderedPair]
     tauto
 
-@[simp]
 theorem formulaHolds_isKPair_iff {n : Nat} (xs : DVec S n) (ip ia ib : Fin n) :
     FormulaHolds S xs (Formula.isKPair ip ia ib) ↔
       lookup xs ip = K.kPair (lookup xs ia) (lookup xs ib) :=
@@ -97,25 +97,21 @@ theorem formulaHolds_isKPair_iff {n : Nat} (xs : DVec S n) (ip ia ib : Fin n) :
     lookup_cons_succ]
   simp [K.kPair_eq, lookup, DVec.nth]
 
-@[simp]
 theorem formulaHolds_equalKPair_iff {n : Nat} (xs : DVec S n) (iz ia ib : Fin n) :
     FormulaHolds S xs (Formula.equalKPair iz ia ib) ↔
       lookup xs iz = K.kPair (lookup xs ia) (lookup xs ib) :=
   by simp [Formula.equalKPair, K.formulaHolds_isKPair_iff, FormulaHolds, lookup, DVec.nth]
 
-@[simp]
 theorem formulaHolds_pairMem_iff {n : Nat} (xs : DVec S n) (ia ib ir : Fin n) :
     FormulaHolds S xs (Formula.pairMem ia ib ir) ↔
       Mem S (K.kPair (lookup xs ia) (lookup xs ib)) (lookup xs ir) :=
   by simp [Formula.pairMem, K.formulaHolds_isKPair_iff, FormulaHolds, lookup, DVec.nth]
 
-@[simp]
 theorem formulaHolds_doubleSingleton_iff {n : Nat} (xs : DVec S n) (id ia : Fin n) :
     FormulaHolds S xs (Formula.doubleSingleton id ia) ↔
       lookup xs id = K.singleton (K.singleton (lookup xs ia)) :=
   by simp [Formula.doubleSingleton, K.formulaHolds_singleton_iff, lookup, DVec.nth]
 
-@[simp]
 theorem formulaHolds_singletonPairMem_iff {n : Nat} (xs : DVec S n) (ia ib ir : Fin n) :
     FormulaHolds S xs (Formula.singletonPairMem ia ib ir) ↔
       Mem S (K.kPair (K.singleton (lookup xs ia)) (K.singleton (lookup xs ib)))
@@ -124,7 +120,6 @@ theorem formulaHolds_singletonPairMem_iff {n : Nat} (xs : DVec S n) (ia ib ir : 
   simp [Formula.singletonPairMem, K.formulaHolds_singleton_iff,
     K.formulaHolds_pairMem_iff, lookup, DVec.nth]
 
-@[simp]
 theorem formulaHolds_insertedPairMem_iff {n : Nat} (xs : DVec S n) (iz iw it ir : Fin n) :
     FormulaHolds S xs (Formula.insertedPairMem iz iw it ir) ↔
       Mem S
@@ -135,7 +130,6 @@ theorem formulaHolds_insertedPairMem_iff {n : Nat} (xs : DVec S n) (iz iw it ir 
   simp [Formula.insertedPairMem, K.formulaHolds_doubleSingleton_iff,
     K.formulaHolds_isKPair_iff, K.formulaHolds_pairMem_iff, lookup, DVec.nth]
 
-@[simp]
 theorem formulaHolds_pairSingletonSecondMem_iff {n : Nat} (xs : DVec S n)
     (ia iz ir : Fin n) :
     FormulaHolds S xs (Formula.pairSingletonSecondMem ia iz ir) ↔
@@ -220,7 +214,6 @@ theorem formulaHolds_classMemSet_iff_mem_ofKernel (K : PresentationKernel S) {n 
   · intro har
     exact ⟨a, ha, har⟩
 
-@[simp]
 theorem formulaHolds_literalKPair_iff_kernel {n : Nat} (xs : DVec S n)
     (ip ia ib : Fin n) :
     FormulaHolds S xs (literalKPair ip ia ib) ↔
@@ -231,7 +224,6 @@ theorem formulaHolds_literalKPair_iff_kernel {n : Nat} (xs : DVec S n)
     K.representsLiteral_kPair_ofKernel (representsLiteral_setVar xs ia)
       (representsLiteral_setVar xs ib)
 
-@[simp]
 theorem formulaHolds_literalPairMem_iff_kernel {n : Nat} (xs : DVec S n)
     (ia ib ir : Fin n) :
     FormulaHolds S xs (literalPairMem ia ib ir) ↔
@@ -242,7 +234,6 @@ theorem formulaHolds_literalPairMem_iff_kernel {n : Nat} (xs : DVec S n)
     K.representsLiteral_kPair_ofKernel (representsLiteral_setVar xs ia)
       (representsLiteral_setVar xs ib)
 
-@[simp]
 theorem formulaHolds_literalSingletonPairMem_iff_kernel {n : Nat} (xs : DVec S n)
     (ia ib ir : Fin n) :
     FormulaHolds S xs (literalSingletonPairMem ia ib ir) ↔
@@ -255,7 +246,6 @@ theorem formulaHolds_literalSingletonPairMem_iff_kernel {n : Nat} (xs : DVec S n
       (K.representsLiteral_singleton_ofKernel (representsLiteral_setVar xs ia))
       (K.representsLiteral_singleton_ofKernel (representsLiteral_setVar xs ib))
 
-@[simp]
 theorem formulaHolds_literalInsertedPairMem_iff_kernel {n : Nat} (xs : DVec S n)
     (iz iw it ir : Fin n) :
     FormulaHolds S xs (literalInsertedPairMem iz iw it ir) ↔
@@ -272,7 +262,6 @@ theorem formulaHolds_literalInsertedPairMem_iff_kernel {n : Nat} (xs : DVec S n)
       (K.representsLiteral_kPair_ofKernel (representsLiteral_setVar xs iw)
         (representsLiteral_setVar xs it))
 
-@[simp]
 theorem formulaHolds_literalPairSingletonSecondMem_iff_kernel {n : Nat} (xs : DVec S n)
     (ia iz ir : Fin n) :
     FormulaHolds S xs (literalPairSingletonSecondMem ia iz ir) ↔
@@ -290,106 +279,121 @@ end PresentationKernel
 
 /-- Realize a named axiom from the original foundation theory. -/
 theorem realizes_foundation_axiom {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S HailperinNF) (name : HailperinAxiomName) :
-    Fol.realize_sentence S (axiomFormula name) :=
+    (hH : Fol.allRealizeSentence S HailperinNF) (name : HailperinAxiomName) :
+    Fol.realizeSentence S (axiomFormula name) :=
   hH (axiom_mem_HailperinNF name)
 
 /-- Intrinsic semantic form of an original foundation axiom. -/
 theorem formulaHolds_foundation_axiom {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S HailperinNF) (name : HailperinAxiomName) :
+    (hH : Fol.allRealizeSentence S HailperinNF) (name : HailperinAxiomName) :
     FormulaHolds S DVec.nil (axiomSyntax name) :=
   (formulaHolds_toFlypitch DVec.nil (axiomSyntax name)).2
     (realizes_foundation_axiom hH name)
 
 theorem foundation_model_extensional {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S HailperinNF) : Extensional S :=
+    (hH : Fol.allRealizeSentence S HailperinNF) : Extensional S :=
   (extensional_iff_foundation_axExt S).2 (realizes_foundation_axiom hH .axExt)
 
 theorem foundation_exists_nin {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S HailperinNF) (x y : S) :
+    (hH : Fol.allRealizeSentence S HailperinNF) (x y : S) :
     ∃ a : S, ∀ z : S, Mem S z a ↔ ¬(Mem S z x ∧ Mem S z y) :=
   by
   have h := formulaHolds_foundation_axiom hH .axNin
   simpa [axiomSyntax, axNin, FormulaHolds, lookup, DVec.nth] using h x y
 
+/-- Standard-NF model or stratification construction identified upstream as `foundationNin`. -/
 @[expose]
 noncomputable def foundationNin {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S HailperinNF) (x y : S) : S :=
+    (hH : Fol.allRealizeSentence S HailperinNF) (x y : S) : S :=
   Classical.choose (foundation_exists_nin hH x y)
 
 @[simp]
 theorem mem_foundationNin {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S HailperinNF) (x y z : S) :
+    (hH : Fol.allRealizeSentence S HailperinNF) (x y z : S) :
     Mem S z (foundationNin hH x y) ↔ ¬(Mem S z x ∧ Mem S z y) :=
   Classical.choose_spec (foundation_exists_nin hH x y) z
 
 theorem foundation_exists_singleton {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S HailperinNF) (x : S) :
+    (hH : Fol.allRealizeSentence S HailperinNF) (x : S) :
     ∃ a : S, ∀ z : S, Mem S z a ↔ z = x :=
   by
   have h := formulaHolds_foundation_axiom hH .axSn
   simpa [axiomSyntax, axSn, FormulaHolds, lookup, DVec.nth] using h x
 
+/-- Standard-NF model or stratification construction identified upstream as
+`foundationSingleton`.
+-/
 @[expose]
 noncomputable def foundationSingleton {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S HailperinNF) (x : S) : S :=
+    (hH : Fol.allRealizeSentence S HailperinNF) (x : S) : S :=
   Classical.choose (foundation_exists_singleton hH x)
 
 @[simp]
 theorem mem_foundationSingleton {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S HailperinNF) (x z : S) :
+    (hH : Fol.allRealizeSentence S HailperinNF) (x z : S) :
     Mem S z (foundationSingleton hH x) ↔ z = x :=
   Classical.choose_spec (foundation_exists_singleton hH x) z
 
+/-- Standard-NF model or stratification construction identified upstream as
+`foundationComplement`.
+-/
 @[expose]
 noncomputable def foundationComplement {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S HailperinNF) (x : S) : S :=
+    (hH : Fol.allRealizeSentence S HailperinNF) (x : S) : S :=
   foundationNin hH x x
 
 @[simp]
 theorem mem_foundationComplement {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S HailperinNF) (x z : S) :
+    (hH : Fol.allRealizeSentence S HailperinNF) (x z : S) :
     Mem S z (foundationComplement hH x) ↔ ¬Mem S z x := by simp [foundationComplement]
 
+/-- Standard-NF model or stratification construction identified upstream as `foundationUnion`. -/
 @[expose]
 noncomputable def foundationUnion {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S HailperinNF) (x y : S) : S :=
+    (hH : Fol.allRealizeSentence S HailperinNF) (x y : S) : S :=
   foundationNin hH (foundationComplement hH x) (foundationComplement hH y)
 
 @[simp]
 theorem mem_foundationUnion {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S HailperinNF) (x y z : S) :
+    (hH : Fol.allRealizeSentence S HailperinNF) (x y z : S) :
     Mem S z (foundationUnion hH x y) ↔ Mem S z x ∨ Mem S z y :=
   by
   simp [foundationUnion]
   tauto
 
+/-- Standard-NF model or stratification construction identified upstream as
+`foundationUnorderedPair`.
+-/
 @[expose]
 noncomputable def foundationUnorderedPair {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S HailperinNF) (x y : S) : S :=
+    (hH : Fol.allRealizeSentence S HailperinNF) (x y : S) : S :=
   foundationUnion hH (foundationSingleton hH x) (foundationSingleton hH y)
 
 @[simp]
 theorem mem_foundationUnorderedPair {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S HailperinNF) (x y z : S) :
+    (hH : Fol.allRealizeSentence S HailperinNF) (x y z : S) :
     Mem S z (foundationUnorderedPair hH x y) ↔ z = x ∨ z = y := by
   simp [foundationUnorderedPair]
 
+/-- Standard-NF model or stratification construction identified upstream as `foundationKPair`. -/
 @[expose]
 noncomputable def foundationKPair {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S HailperinNF) (x y : S) : S :=
+    (hH : Fol.allRealizeSentence S HailperinNF) (x y : S) : S :=
   foundationUnorderedPair hH (foundationSingleton hH x) (foundationUnorderedPair hH x y)
 
 @[simp]
 theorem mem_foundationKPair {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S HailperinNF) (x y z : S) :
+    (hH : Fol.allRealizeSentence S HailperinNF) (x y z : S) :
     Mem S z (foundationKPair hH x y) ↔
       z = foundationSingleton hH x ∨ z = foundationUnorderedPair hH x y :=
   by simp [foundationKPair]
 
+/-- Standard-NF model or stratification construction identified upstream as
+`PresentationKernel.ofFoundationModel`.
+-/
 @[expose]
 noncomputable def PresentationKernel.ofFoundationModel {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S HailperinNF) : PresentationKernel S
+    (hH : Fol.allRealizeSentence S HailperinNF) : PresentationKernel S
     where
   extensional := foundation_model_extensional hH
   singleton := foundationSingleton hH
@@ -400,9 +404,12 @@ noncomputable def PresentationKernel.ofFoundationModel {S : Fol.Structure LNF}
   kPair_eq := fun _ _ => rfl
   mem_kPair := mem_foundationKPair hH
 
+/-- Standard-NF model or stratification construction identified upstream as
+`PresentationKernel.ofLiteralModel`.
+-/
 @[expose]
 noncomputable def PresentationKernel.ofLiteralModel {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) : PresentationKernel S :=
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) : PresentationKernel S :=
   by
   let H := HailperinModel.ofLiteralModel hH
   exact
@@ -438,8 +445,8 @@ theorem formulaHolds_axiomSyntax_iff_literal {S : Fol.Structure LNF}
 
 /-- Every model of the original presentation is a model of the literal one. -/
 theorem foundationModel_to_literalModel {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S HailperinNF) :
-    Fol.all_realize_sentence S LiteralHailperinNF :=
+    (hH : Fol.allRealizeSentence S HailperinNF) :
+    Fol.allRealizeSentence S LiteralHailperinNF :=
   by
   intro f hf
   rcases hf with ⟨name, rfl⟩
@@ -450,8 +457,8 @@ theorem foundationModel_to_literalModel {S : Fol.Structure LNF}
 
 /-- Every model of the literal presentation is a model of the original one. -/
 theorem literalModel_to_foundationModel {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) :
-    Fol.all_realize_sentence S HailperinNF :=
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) :
+    Fol.allRealizeSentence S HailperinNF :=
   by
   intro f hf
   rcases hf with ⟨name, rfl⟩
@@ -462,8 +469,8 @@ theorem literalModel_to_foundationModel {S : Fol.Structure LNF}
 
 /-- The two finite Hailperin presentations have exactly the same models. -/
 theorem hailperinPresentation_models_iff (S : Fol.Structure LNF) :
-    Fol.all_realize_sentence S HailperinNF ↔
-      Fol.all_realize_sentence S LiteralHailperinNF :=
+    Fol.allRealizeSentence S HailperinNF ↔
+      Fol.allRealizeSentence S LiteralHailperinNF :=
   ⟨foundationModel_to_literalModel, literalModel_to_foundationModel⟩
 
 /-- Hence the two presentations have exactly the same formal consequences. -/

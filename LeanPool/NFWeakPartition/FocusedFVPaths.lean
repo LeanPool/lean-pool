@@ -29,7 +29,7 @@ open NFChoice.DefinitionLeaves.AlphaFocusedSupport
 /-- The class parameter remains free through `cab outer (wrex inner A p)`. -/
 theorem fv_subset_cab_wrex_left {outer inner : Var} {A : Class} {p : Wff}
     (houter : outer ∉ A.fv) (hinner : inner ∉ A.fv) :
-    A.fv ⊆ (Class.cab outer (syn_wrex inner A p)).fv :=
+    A.fv ⊆ (Class.cab outer (synWrex inner A p)).fv :=
   by
   rw [fv_class_cab, fv_syn_wrex]
   apply subset_erase_of_subset_of_not_mem
@@ -40,7 +40,7 @@ theorem fv_subset_cab_wrex_left {outer inner : Var} {A : Class} {p : Wff}
 /-- Complement preserves the preceding focused free-variable embedding. -/
 theorem fv_subset_ccompl_cab_wrex_left {outer inner : Var} {A : Class} {p : Wff}
     (houter : outer ∉ A.fv) (hinner : inner ∉ A.fv) :
-    A.fv ⊆ (syn_ccompl (Class.cab outer (syn_wrex inner A p))).fv :=
+    A.fv ⊆ (synCcompl (Class.cab outer (synWrex inner A p))).fv :=
   by
   rw [fv_syn_ccompl]
   exact fv_subset_cab_wrex_left houter hinner

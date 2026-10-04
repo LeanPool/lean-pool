@@ -31,10 +31,10 @@ open NFChoice.DirectNominalPrf
 open NFChoice.DirectNominalPrf.Nominal
 
 theorem nb069_support_mem_0042 :
-    (nb069_alpha_dummy_002) ∈
-      (((syn_cnin (Class.cv (nb069_alpha_dummy_002)) (Class.cv (nb069_alpha_dummy_003)))).fv ∪
-        ((syn_cnin (Class.cv (nb069_alpha_dummy_002))
-            (Class.cv (nb069_alpha_dummy_003)))).fv) :=
+    (nb069AlphaDummy002) ∈
+      (((synCnin (Class.cv (nb069AlphaDummy002)) (Class.cv (nb069AlphaDummy003)))).fv ∪
+        ((synCnin (Class.cv (nb069AlphaDummy002))
+            (Class.cv (nb069AlphaDummy003)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -46,7 +46,7 @@ theorem nb069_support_mem_0042 :
 
 theorem nb069_support_mem_0043 (x : Var) (y : Var) :
     x ∈
-      (((syn_cnin (Class.cv x) (Class.cv y))).fv ∪ ((syn_cnin (Class.cv x) (Class.cv y))).fv) :=
+      (((synCnin (Class.cv x) (Class.cv y))).fv ∪ ((synCnin (Class.cv x) (Class.cv y))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -57,8 +57,8 @@ theorem nb069_support_mem_0043 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb069_support_mem_0044 :
-    (nb069_alpha_dummy_002) ∈
-      (((Class.cv (nb069_alpha_dummy_002))).fv ∪ ((Class.cv (nb069_alpha_dummy_003))).fv) :=
+    (nb069AlphaDummy002) ∈
+      (((Class.cv (nb069AlphaDummy002))).fv ∪ ((Class.cv (nb069AlphaDummy003))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -74,10 +74,10 @@ theorem nb069_support_mem_0045 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb069_support_mem_0046 :
-    (nb069_alpha_dummy_003) ∈
-      (((syn_cnin (Class.cv (nb069_alpha_dummy_002)) (Class.cv (nb069_alpha_dummy_003)))).fv ∪
-        ((syn_cnin (Class.cv (nb069_alpha_dummy_002))
-            (Class.cv (nb069_alpha_dummy_003)))).fv) :=
+    (nb069AlphaDummy003) ∈
+      (((synCnin (Class.cv (nb069AlphaDummy002)) (Class.cv (nb069AlphaDummy003)))).fv ∪
+        ((synCnin (Class.cv (nb069AlphaDummy002))
+            (Class.cv (nb069AlphaDummy003)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -89,7 +89,7 @@ theorem nb069_support_mem_0046 :
 
 theorem nb069_support_mem_0047 (x : Var) (y : Var) :
     y ∈
-      (((syn_cnin (Class.cv x) (Class.cv y))).fv ∪ ((syn_cnin (Class.cv x) (Class.cv y))).fv) :=
+      (((synCnin (Class.cv x) (Class.cv y))).fv ∪ ((synCnin (Class.cv x) (Class.cv y))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -100,8 +100,8 @@ theorem nb069_support_mem_0047 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb069_support_mem_0048 :
-    (nb069_alpha_dummy_003) ∈
-      (((Class.cv (nb069_alpha_dummy_002))).fv ∪ ((Class.cv (nb069_alpha_dummy_003))).fv) :=
+    (nb069AlphaDummy003) ∈
+      (((Class.cv (nb069AlphaDummy002))).fv ∪ ((Class.cv (nb069AlphaDummy003))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   right

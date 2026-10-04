@@ -32,28 +32,29 @@ open NFChoice.DefinitionLeaves.AlphaFocusedFV
 open NFChoice.DirectNominalPrf
 open NFChoice.DirectNominalPrf.Nominal
 
+/-- Checked nominal proof certificate identified upstream as `nominal_df_if`. -/
 @[expose]
-noncomputable def nominal_df_if (ph : Wff) (x : Var) (A : Class) (B : Class)
+noncomputable def nominalDfIf (ph : Wff) (x : Var) (A : Class) (B : Class)
     (dv_A_x : x ∉ A.fv) (dv_B_x : x ∉ B.fv) (dv_ph_x : x ∉ ph.fv) :
     Nominal.NPrf
-      (.classEq (syn_cif ph A B) (.cab x (syn_wo (syn_wa (.classMem (.cv x) A) ph)
-            (syn_wa (.classMem (.cv x) B) (.neg ph))))) :=
+      (.classEq (synCif ph A B) (.cab x (synWo (synWa (.classMem (.cv x) A) ph)
+            (synWa (.classMem (.cv x) B) (.neg ph))))) :=
   by
-  let alpha_dummy_000 : Var := (freshVar ((ph).fv ∪ (A).fv ∪ (B).fv) 0)
-  have fresh_000 : alpha_dummy_000 ∉ ((ph).fv ∪ (A).fv ∪ (B).fv) := by
+  let alphaDummy000 : Var := (freshVar ((ph).fv ∪ (A).fv ∪ (B).fv) 0)
+  have fresh_000 : alphaDummy000 ∉ ((ph).fv ∪ (A).fv ∪ (B).fv) := by
     exact freshVar_not_mem ((ph).fv ∪ (A).fv ∪ (B).fv) 0
   exact
     Nominal.alphaClassEq
       (TAlphaClass.cab (TAlphaWff.imp (TAlphaWff.neg (TAlphaWff.conj
               (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
-                (TAlphaClass.refl_of_fv_fresh _ _ (by
+                (TAlphaClass.reflOfFvFresh _ _ (by
                     intro a b h hne;
                     simp only [List.mem_cons, List.not_mem_nil, or_false,
                       Prod.mk.injEq] at h;
                     repeat'
                       (first
                         | (rcases h with ⟨rfl, rfl⟩));
-                      all_goals aesop))) (TAlphaWff.refl_of_fv_fresh _ _ (by
+                      all_goals aesop))) (TAlphaWff.reflOfFvFresh _ _ (by
                   intro a b h hne;
                   simp only [List.mem_cons, List.not_mem_nil, or_false,
                     Prod.mk.injEq] at h;
@@ -62,14 +63,14 @@ noncomputable def nominal_df_if (ph : Wff) (x : Var) (A : Class) (B : Class)
                       | (rcases h with ⟨rfl, rfl⟩));
                     all_goals aesop)))) (TAlphaWff.conj
             (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
-              (TAlphaClass.refl_of_fv_fresh _ _ (by
+              (TAlphaClass.reflOfFvFresh _ _ (by
                   intro a b h hne;
                   simp only [List.mem_cons, List.not_mem_nil, or_false,
                     Prod.mk.injEq] at h;
                   repeat'
                     (first
                       | (rcases h with ⟨rfl, rfl⟩));
-                    all_goals aesop))) (TAlphaWff.neg (TAlphaWff.refl_of_fv_fresh _ _ (by
+                    all_goals aesop))) (TAlphaWff.neg (TAlphaWff.reflOfFvFresh _ _ (by
                   intro a b h hne;
                   simp only [List.mem_cons, List.not_mem_nil, or_false,
                     Prod.mk.injEq] at h;

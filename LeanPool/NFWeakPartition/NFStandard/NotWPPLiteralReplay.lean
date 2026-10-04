@@ -28,17 +28,17 @@ open NFChoice.DirectNominalPrf.Nominal.BoundedNominalLoweringBridgeDev004
 /- Soundness of the accepted nominal replay, stated at its source WPP. -/
 
 theorem literalHailperin_valid_not_WPP {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) : Wff.Valid S (.neg syn_wwpp) :=
-  NFChoice.ReplaySupport.valid_closed_of_nominal_proof (.neg syn_wwpp)
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) : Wff.Valid S (.neg synWwpp) :=
+  NFChoice.ReplaySupport.valid_closed_of_nominal_proof (.neg synWwpp)
     (by simp only [Wff.neg, Wff.fv, fv_syn_wwpp, Finset.union_empty])
-    NFChoice.DirectNominalPrf.WPPReplay.g_wppfiniteblocknotwppndv hH
+    NFChoice.DirectNominalPrf.WPPReplay.gWppfiniteblocknotwppndv hH
 
 /-- The accepted replay proves the exact lowered WPP sentence from the literal basis. -/
-theorem literalHailperin_proves_not_WPP : LiteralHailperinNF ⊢ₛ' Fol.bd_not WPP :=
+theorem literalHailperin_proves_not_WPP : LiteralHailperinNF ⊢ₛ' Fol.bdNot WPP :=
   by
   unfold WPP
   exact
-    NFChoice.ReplaySupport.derives_not_of_nominal_validity syn_wwpp WPPSyntax fv_syn_wwpp
+    NFChoice.ReplaySupport.derives_not_of_nominal_validity synWwpp WPPSyntax fv_syn_wwpp
       lowerClosed_syn_wwpp (fun _ _ hH => literalHailperin_valid_not_WPP hH)
 
 end NFChoice.Foundation.NFStandard

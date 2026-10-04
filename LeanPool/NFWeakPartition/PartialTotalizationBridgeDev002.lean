@@ -13,11 +13,12 @@ public import LeanPool.NFWeakPartition.NominalNFLiteralHandlers
 
 public section
 
-namespace NFChoice.DirectNominalPrf.Nominal.PartialTotalizationBridgeDev002
+namespace NFChoice.DirectNominalPrf.Nominal.Totalization
 
 open NFChoice.Foundation
 open NFChoice.SemanticCore
 
+/-- Proof-translation construction identified upstream as `totalizeRho`. -/
 @[expose]
 def totalizeRho {n : Nat} (rho : Var → Option (Fin n)) (default : Fin n) : Var → Fin n :=
   fun x => (rho x).getD default
@@ -31,138 +32,141 @@ theorem totalize_update_some {n : Nat} (rho : Var → Option (Fin n))
   by_cases hyx : y = x <;> simp [totalizeRho, Function.update, hyx]
 
 theorem totalize_lift {n : Nat} (rho : Var → Option (Fin n)) (default : Fin n) :
-    totalizeRho (SemanticCore.PartialLowering.liftRho? rho) (Fin.succ default) =
+    totalizeRho (SemanticCore.PartialLowering.liftRhoOption rho) (Fin.succ default) =
       SemanticCore.Lowering.liftRho (totalizeRho rho default) :=
   by
   funext x
   cases hx : rho x <;>
-    simp [totalizeRho, SemanticCore.PartialLowering.liftRho?,
+    simp [totalizeRho, SemanticCore.PartialLowering.liftRhoOption,
       SemanticCore.Lowering.liftRho, hx]
 
 theorem totalize_bind {n : Nat} (rho : Var → Option (Fin n)) (default : Fin n) (x : Var) :
-    totalizeRho (SemanticCore.PartialLowering.bindRho? rho x) (Fin.succ default) =
+    totalizeRho (SemanticCore.PartialLowering.bindRhoOption rho x) (Fin.succ default) =
       SemanticCore.Lowering.bindRho (totalizeRho rho default) x :=
   by
-  rw [SemanticCore.PartialLowering.bindRho?, SemanticCore.Lowering.bindRho,
+  rw [SemanticCore.PartialLowering.bindRhoOption, SemanticCore.Lowering.bindRho,
     totalize_update_some, totalize_lift]
 
 mutual
-  theorem lowerClassPred?_some_totalize {n : Nat} (rho : Var → Option (Fin n))
+  theorem _root_.NFChoice.DirectNominalPrf.Nominal.Totalization.lowerClassPredOption_some_totalize
+      {n : Nat} (rho : Var → Option (Fin n))
       (default candidate : Fin n) (A : Class) (f : Formula n)
-      (h : SemanticCore.PartialLowering.lowerClassPred? rho candidate A = some f) :
+      (h : SemanticCore.PartialLowering.lowerClassPredOption rho candidate A = some f) :
       SemanticCore.Lowering.lowerClassPred (totalizeRho rho default) candidate A = f := by
     cases A with
     | cv x =>
       cases hx : rho x with
-      | none => simp [SemanticCore.PartialLowering.lowerClassPred?, hx] at h
+      | none => simp [SemanticCore.PartialLowering.lowerClassPredOption, hx] at h
       | some i =>
-        simp [SemanticCore.PartialLowering.lowerClassPred?, hx] at h
+        simp [SemanticCore.PartialLowering.lowerClassPredOption, hx] at h
         subst f
         simp [SemanticCore.Lowering.lowerClassPred, totalizeRho, hx]
     | cab x p =>
-      simp only [SemanticCore.PartialLowering.lowerClassPred?] at h
+      simp only [SemanticCore.PartialLowering.lowerClassPredOption] at h
       have ih :=
-        lowerWff?_some_totalize (Function.update rho x (some candidate)) default p f h
+        lowerWffOption_some_totalize (Function.update rho x (some candidate)) default p f h
       simpa [SemanticCore.Lowering.lowerClassPred, totalize_update_some] using ih
-  theorem lowerWff?_some_totalize {n : Nat} (rho : Var → Option (Fin n)) (default : Fin n)
+  theorem _root_.NFChoice.DirectNominalPrf.Nominal.Totalization.lowerWffOption_some_totalize
+      {n : Nat} (rho : Var → Option (Fin n)) (default : Fin n)
       (p : Wff) (f : Formula n)
-      (h : SemanticCore.PartialLowering.lowerWff? rho p = some f) :
+      (h : SemanticCore.PartialLowering.lowerWffOption rho p = some f) :
       SemanticCore.Lowering.lowerWff (totalizeRho rho default) p = f := by
     cases p with
     | falsum =>
-      simp [SemanticCore.PartialLowering.lowerWff?] at h
+      simp [SemanticCore.PartialLowering.lowerWffOption] at h
       subst f
       rfl
     | imp p q =>
-      cases hp : SemanticCore.PartialLowering.lowerWff? rho p with
-      | none => simp [SemanticCore.PartialLowering.lowerWff?, hp] at h
+      cases hp : SemanticCore.PartialLowering.lowerWffOption rho p with
+      | none => simp [SemanticCore.PartialLowering.lowerWffOption, hp] at h
       | some fp =>
-        cases hq : SemanticCore.PartialLowering.lowerWff? rho q with
-        | none => simp [SemanticCore.PartialLowering.lowerWff?, hp, hq] at h
+        cases hq : SemanticCore.PartialLowering.lowerWffOption rho q with
+        | none => simp [SemanticCore.PartialLowering.lowerWffOption, hp, hq] at h
         | some fq =>
-          simp [SemanticCore.PartialLowering.lowerWff?, hp, hq] at h
+          simp [SemanticCore.PartialLowering.lowerWffOption, hp, hq] at h
           subst f
           simp [SemanticCore.Lowering.lowerWff,
-            lowerWff?_some_totalize rho default p fp hp,
-            lowerWff?_some_totalize rho default q fq hq]
+            lowerWffOption_some_totalize rho default p fp hp,
+            lowerWffOption_some_totalize rho default q fq hq]
     | all x p =>
       cases hp :
-        SemanticCore.PartialLowering.lowerWff?
-          (SemanticCore.PartialLowering.bindRho? rho x) p with
-      | none => simp [SemanticCore.PartialLowering.lowerWff?, hp] at h
+        SemanticCore.PartialLowering.lowerWffOption
+          (SemanticCore.PartialLowering.bindRhoOption rho x) p with
+      | none => simp [SemanticCore.PartialLowering.lowerWffOption, hp] at h
       | some fp =>
-        simp [SemanticCore.PartialLowering.lowerWff?, hp] at h
+        simp [SemanticCore.PartialLowering.lowerWffOption, hp] at h
         subst f
         have ih :=
-          lowerWff?_some_totalize (SemanticCore.PartialLowering.bindRho? rho x)
+          lowerWffOption_some_totalize (SemanticCore.PartialLowering.bindRhoOption rho x)
             (Fin.succ default) p fp hp
         simpa [SemanticCore.Lowering.lowerWff, totalize_bind] using ih
     | objEq x y =>
       cases hx : rho x with
-      | none => simp [SemanticCore.PartialLowering.lowerWff?, hx] at h
+      | none => simp [SemanticCore.PartialLowering.lowerWffOption, hx] at h
       | some ix =>
         cases hy : rho y with
-        | none => simp [SemanticCore.PartialLowering.lowerWff?, hx, hy] at h
+        | none => simp [SemanticCore.PartialLowering.lowerWffOption, hx, hy] at h
         | some iy =>
-          simp [SemanticCore.PartialLowering.lowerWff?, hx, hy] at h
+          simp [SemanticCore.PartialLowering.lowerWffOption, hx, hy] at h
           subst f
           simp [SemanticCore.Lowering.lowerWff, totalizeRho, hx, hy]
     | objMem x y =>
       cases hx : rho x with
-      | none => simp [SemanticCore.PartialLowering.lowerWff?, hx] at h
+      | none => simp [SemanticCore.PartialLowering.lowerWffOption, hx] at h
       | some ix =>
         cases hy : rho y with
-        | none => simp [SemanticCore.PartialLowering.lowerWff?, hx, hy] at h
+        | none => simp [SemanticCore.PartialLowering.lowerWffOption, hx, hy] at h
         | some iy =>
-          simp [SemanticCore.PartialLowering.lowerWff?, hx, hy] at h
+          simp [SemanticCore.PartialLowering.lowerWffOption, hx, hy] at h
           subst f
           simp [SemanticCore.Lowering.lowerWff, totalizeRho, hx, hy]
     | classEq A B =>
       cases hA :
-        SemanticCore.PartialLowering.lowerClassPred?
-          (SemanticCore.PartialLowering.liftRho? rho) 0 A with
-      | none => simp [SemanticCore.PartialLowering.lowerWff?, hA] at h
+        SemanticCore.PartialLowering.lowerClassPredOption
+          (SemanticCore.PartialLowering.liftRhoOption rho) 0 A with
+      | none => simp [SemanticCore.PartialLowering.lowerWffOption, hA] at h
       | some fA =>
         cases hB :
-          SemanticCore.PartialLowering.lowerClassPred?
-            (SemanticCore.PartialLowering.liftRho? rho) 0 B with
-        | none => simp [SemanticCore.PartialLowering.lowerWff?, hA, hB] at h
+          SemanticCore.PartialLowering.lowerClassPredOption
+            (SemanticCore.PartialLowering.liftRhoOption rho) 0 B with
+        | none => simp [SemanticCore.PartialLowering.lowerWffOption, hA, hB] at h
         | some fB =>
-          simp [SemanticCore.PartialLowering.lowerWff?, hA, hB] at h
+          simp [SemanticCore.PartialLowering.lowerWffOption, hA, hB] at h
           subst f
           have ihA :=
-            lowerClassPred?_some_totalize (SemanticCore.PartialLowering.liftRho? rho)
+            lowerClassPredOption_some_totalize (SemanticCore.PartialLowering.liftRhoOption rho)
               (Fin.succ default) 0 A fA hA
           have ihB :=
-            lowerClassPred?_some_totalize (SemanticCore.PartialLowering.liftRho? rho)
+            lowerClassPredOption_some_totalize (SemanticCore.PartialLowering.liftRhoOption rho)
               (Fin.succ default) 0 B fB hB
           simp only [totalize_lift] at ihA ihB
           simp [SemanticCore.Lowering.lowerWff, ihA, ihB]
     | classMem A B =>
       cases hA :
-        SemanticCore.PartialLowering.lowerClassPred?
-          (SemanticCore.PartialLowering.liftRho? (SemanticCore.PartialLowering.liftRho? rho))
+        SemanticCore.PartialLowering.lowerClassPredOption
+          (SemanticCore.PartialLowering.liftRhoOption
+            (SemanticCore.PartialLowering.liftRhoOption rho))
           0 A with
-      | none => simp [SemanticCore.PartialLowering.lowerWff?, hA] at h
+      | none => simp [SemanticCore.PartialLowering.lowerWffOption, hA] at h
       | some fA =>
         cases hB :
-          SemanticCore.PartialLowering.lowerClassPred?
-            (SemanticCore.PartialLowering.liftRho? rho) 0 B with
-        | none => simp [SemanticCore.PartialLowering.lowerWff?, hA, hB] at h
+          SemanticCore.PartialLowering.lowerClassPredOption
+            (SemanticCore.PartialLowering.liftRhoOption rho) 0 B with
+        | none => simp [SemanticCore.PartialLowering.lowerWffOption, hA, hB] at h
         | some fB =>
-          simp [SemanticCore.PartialLowering.lowerWff?, hA, hB] at h
+          simp [SemanticCore.PartialLowering.lowerWffOption, hA, hB] at h
           subst f
           have ihA :=
-            lowerClassPred?_some_totalize
-              (SemanticCore.PartialLowering.liftRho?
-                (SemanticCore.PartialLowering.liftRho? rho))
+            lowerClassPredOption_some_totalize
+              (SemanticCore.PartialLowering.liftRhoOption
+                (SemanticCore.PartialLowering.liftRhoOption rho))
               (Fin.succ (Fin.succ default)) 0 A fA hA
           have ihB :=
-            lowerClassPred?_some_totalize (SemanticCore.PartialLowering.liftRho? rho)
+            lowerClassPredOption_some_totalize (SemanticCore.PartialLowering.liftRhoOption rho)
               (Fin.succ default) 0 B fB hB
           simp only [totalize_lift] at ihA ihB
           simp [SemanticCore.Lowering.lowerWff, ihA, ihB]
 end
 
 
-end NFChoice.DirectNominalPrf.Nominal.PartialTotalizationBridgeDev002
+end NFChoice.DirectNominalPrf.Nominal.Totalization

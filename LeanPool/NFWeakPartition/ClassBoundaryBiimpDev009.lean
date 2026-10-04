@@ -17,16 +17,19 @@ namespace NFChoice.DirectCertificate.ClassBoundaryBiimpDev009
 
 open scoped Fol
 
+/-- Proof-translation construction identified upstream as `biimpForward`. -/
 @[expose]
 noncomputable def biimpForward {L : Fol.Language} {Γ : Set (Fol.formula L)}
     {p q : Fol.formula L} (h : Γ ⊢ p ⇔ q) (hp : Γ ⊢ p) : Γ ⊢ q :=
   Fol.prf.impE p (Fol.andE1 (q ⟹ p) h) hp
 
+/-- Proof-translation construction identified upstream as `biimpBackward`. -/
 @[expose]
 noncomputable def biimpBackward {L : Fol.Language} {Γ : Set (Fol.formula L)}
     {p q : Fol.formula L} (h : Γ ⊢ p ⇔ q) (hq : Γ ⊢ q) : Γ ⊢ p :=
   Fol.prf.impE q (Fol.andE2 (p ⟹ q) h) hq
 
+/-- Proof-translation construction identified upstream as `biimpCongr`. -/
 @[expose]
 noncomputable def biimpCongr {L : Fol.Language} {Γ : Set (Fol.formula L)}
     {p p' q q' : Fol.formula L} (hpEq : Γ ⊢ p ⇔ p') (hqEq : Γ ⊢ q ⇔ q') :

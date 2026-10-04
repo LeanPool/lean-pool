@@ -24,6 +24,7 @@ the checked certificate emitter uses the corresponding `Prop`-valued helper.
 -/
 
 
+/-- Proof-translation construction identified upstream as `neg`. -/
 @[expose]
 def neg {p q : Wff} (h : TRecanonWff p q) : TRecanonWff (Wff.neg p) (Wff.neg q) :=
   by

@@ -153,7 +153,7 @@ theorem Stratified.ex {n : Nat} {p : Formula (n + 1)} (hp : Stratified p) :
 /-- Universally close all free de Bruijn variables of an intrinsic formula. -/
 @[expose]
 def closeAll {n : Nat} (p : Formula n) : Fol.sentence LNF :=
-  Fol.bd_alls n p.toFlypitch
+  Fol.bdAlls n p.toFlypitch
 
 end Formula
 
@@ -184,7 +184,6 @@ theorem mem_stratifiedComprehension_iff (f : Fol.sentence LNF) :
         Formula.Stratified p ∧ f = comprehensionInstance p :=
   Iff.rfl
 
-@[simp]
 theorem comprehensionInstance_mem {n : Nat} (p : Formula (n + 1))
     (hp : Formula.Stratified p) : comprehensionInstance p ∈ StratifiedComprehension :=
   ⟨n, p, hp, rfl⟩
@@ -279,25 +278,25 @@ theorem formulaHolds_eqCandidateToPredicate {S : Fol.Structure LNF} {n : Nat}
     lookup_one]
 
 /-- Every model of `NF` is extensional. -/
-theorem nf_extensional {S : Fol.Structure LNF} (hNF : Fol.all_realize_sentence S NF) :
+theorem nf_extensional {S : Fol.Structure LNF} (hNF : Fol.allRealizeSentence S NF) :
     Extensional S :=
   (extensional_iff_literal_axExt S).2 (hNF extensionality_mem_NF)
 
 /-- A model of `NF` realizes each certified closed comprehension instance. -/
 theorem nf_realizes_comprehensionInstance {S : Fol.Structure LNF}
-    (hNF : Fol.all_realize_sentence S NF) {n : Nat} (p : Formula (n + 1))
-    (hp : Formula.Stratified p) : Fol.realize_sentence S (comprehensionInstance p) :=
+    (hNF : Fol.allRealizeSentence S NF) {n : Nat} (p : Formula (n + 1))
+    (hp : Formula.Stratified p) : Fol.realizeSentence S (comprehensionInstance p) :=
   hNF (comprehensionInstance_mem_NF p hp)
 
 /-- Semantic elimination rule for standard stratified comprehension. -/
-theorem nf_comprehension {S : Fol.Structure LNF} (hNF : Fol.all_realize_sentence S NF)
+theorem nf_comprehension {S : Fol.Structure LNF} (hNF : Fol.allRealizeSentence S NF)
     {n : Nat} (p : Formula (n + 1)) (hp : Formula.Stratified p) (xs : DVec S n) :
     ∃ a : S, ∀ z : S, Mem S z a ↔ Lowering.FormulaHolds S (DVec.cons z xs) p :=
   by
   have hclosed := nf_realizes_comprehensionInstance hNF p hp
   have hall :
     ∀ ys : DVec S n,
-      Fol.realize_bounded_formula ys (Formula.toFlypitch (comprehensionBody p))
+      Fol.realizeBoundedFormula ys (Formula.toFlypitch (comprehensionBody p))
         DVec.nil :=
     by
     apply (Fol.realize_sentence_bd_alls).1

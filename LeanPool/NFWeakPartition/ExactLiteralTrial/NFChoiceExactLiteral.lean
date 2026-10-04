@@ -115,35 +115,43 @@ open LiteralClass
 /-! Exact relational readings of the source class constructors. -/
 
 
+/-- Proof-translation construction identified upstream as `literalSingleton`. -/
 @[expose]
 def literalSingleton {n : Nat} (s a : Fin n) : Formula n :=
   setEqClass s (.singleton (.setVar a))
 
+/-- Proof-translation construction identified upstream as `literalUnorderedPair`. -/
 @[expose]
 def literalUnorderedPair {n : Nat} (p a b : Fin n) : Formula n :=
   setEqClass p (.unorderedPair (.setVar a) (.setVar b))
 
+/-- Proof-translation construction identified upstream as `literalKPair`. -/
 @[expose]
 def literalKPair {n : Nat} (p a b : Fin n) : Formula n :=
   setEqClass p (.kPair (.setVar a) (.setVar b))
 
+/-- Proof-translation construction identified upstream as `literalPairMem`. -/
 @[expose]
 def literalPairMem {n : Nat} (a b r : Fin n) : Formula n :=
   classMemSet (.kPair (.setVar a) (.setVar b)) r
 
+/-- Proof-translation construction identified upstream as `literalDoubleSingleton`. -/
 @[expose]
 def literalDoubleSingleton {n : Nat} (d a : Fin n) : Formula n :=
   setEqClass d (.singleton (.singleton (.setVar a)))
 
+/-- Proof-translation construction identified upstream as `literalSingletonPairMem`. -/
 @[expose]
 def literalSingletonPairMem {n : Nat} (a b r : Fin n) : Formula n :=
   classMemSet (.kPair (.singleton (.setVar a)) (.singleton (.setVar b))) r
 
+/-- Proof-translation construction identified upstream as `literalInsertedPairMem`. -/
 @[expose]
 def literalInsertedPairMem {n : Nat} (z w t r : Fin n) : Formula n :=
   classMemSet
     (.kPair (.singleton (.singleton (.setVar z))) (.kPair (.setVar w) (.setVar t))) r
 
+/-- Proof-translation construction identified upstream as `literalPairSingletonSecondMem`. -/
 @[expose]
 def literalPairSingletonSecondMem {n : Nat} (a z r : Fin n) : Formula n :=
   classMemSet (.kPair (.setVar a) (.singleton (.setVar z))) r
@@ -308,10 +316,12 @@ def literalAxiomSyntax : HailperinAxiomName → Sentence
   | .axTypeLower => literalAxTypeLower
   | .axSn => literalAxSn
 
+/-- Proof-translation construction identified upstream as `literalAxiomFormula`. -/
 @[expose]
 def literalAxiomFormula (name : HailperinAxiomName) : Fol.sentence LNF :=
   Formula.toFlypitch (literalAxiomSyntax name)
 
+/-- Proof-translation construction identified upstream as `LiteralHailperinNF`. -/
 abbrev LiteralHailperinNF : Fol.SentTheory LNF :=
   Set.range literalAxiomFormula
 
@@ -319,8 +329,11 @@ theorem literalAxiom_mem (name : HailperinAxiomName) :
     literalAxiomFormula name ∈ LiteralHailperinNF :=
   ⟨name, rfl⟩
 
+/-- Proof-translation construction identified upstream as
+`LiteralSourceNFProvesNotChoiceTarget`.
+-/
 abbrev LiteralSourceNFProvesNotChoiceTarget (sourceChoiceNF : Fol.sentence LNF) : Prop :=
-  LiteralHailperinNF ⊢ₛ' (Fol.bd_not sourceChoiceNF)
+  LiteralHailperinNF ⊢ₛ' (Fol.bdNot sourceChoiceNF)
 
 
 end NFChoice.Foundation.ExactLiteralTrial

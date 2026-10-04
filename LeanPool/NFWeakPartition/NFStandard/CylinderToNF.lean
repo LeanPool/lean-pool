@@ -31,7 +31,7 @@ sentences comprising `NF`.
 /-- A cylinder algebra realizes each closed stratified-comprehension axiom. -/
 theorem realize_comprehensionInstance_of_cylinder {S : Fol.Structure LNF}
     (C : CylinderAlgebra S) {n : Nat} (p : Formula (n + 1)) (hp : Formula.Stratified p) :
-    Fol.realize_sentence S (comprehensionInstance p) :=
+    Fol.realizeSentence S (comprehensionInstance p) :=
   by
   apply (Fol.realize_sentence_bd_alls).2
   intro xs
@@ -45,8 +45,8 @@ theorem realize_comprehensionInstance_of_cylinder {S : Fol.Structure LNF}
 No feature of Hailperin's particular finite presentation is used here.
 -/
 theorem models_NF_of_cylinder {S : Fol.Structure LNF} (C : CylinderAlgebra S)
-    (hExt : Fol.realize_sentence S (literalAxiomFormula .axExt)) :
-    Fol.all_realize_sentence S NF := by
+    (hExt : Fol.realizeSentence S (literalAxiomFormula .axExt)) :
+    Fol.allRealizeSentence S NF := by
   intro f hf
   rcases hf with hEq | hComp
   · simpa [hEq] using hExt

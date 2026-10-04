@@ -43,7 +43,7 @@ return the sublist excluding x, a proof it's a subset of T, and a
 proof none of its
 elements equal x. -/
 @[expose]
-def list_except {α : Type u} [DecidableEq α] (xs : List α) (x : α) (T : Set α)
+def listExcept {α : Type u} [DecidableEq α] (xs : List α) (x : α) (T : Set α)
     (h : ∀ y ∈ xs, y ≠ x → y ∈ T) :
     Σ' ys : List α, ({ϕ | ϕ ∈ ys} ⊆ T ∧ (∀ y ∈ ys, y ≠ x)) ∧ (∀ y ∈ xs, y ≠ x → y ∈ ys) :=
   ⟨xs.filter (fun y => decide (y ≠ x)),
@@ -62,7 +62,7 @@ def list_except {α : Type u} [DecidableEq α] (xs : List α) (x : α) (T : Set 
 
 /-- Given x ∈ f '' S, choose a lift x' in the preimage of x. -/
 @[expose]
-noncomputable def image_lift {α : Type u} {β : Type v} {f : α → β} {S : Set α} (x : β)
+noncomputable def imageLift {α : Type u} {β : Type v} {f : α → β} {S : Set α} (x : β)
     (hx : x ∈ f '' S) : Σ' (x' : α), x' ∈ S ∧ f x' = x :=
   ⟨hx.choose, hx.choose_spec.1, hx.choose_spec.2⟩
 
@@ -70,7 +70,7 @@ noncomputable def image_lift {α : Type u} {β : Type v} {f : α → β} {S : Se
 '' S, return a list of
 lifts ys ⊆ S such that f '' {y | y ∈ ys} = {x | x ∈ xs}. -/
 @[expose]
-noncomputable def image_lift_list {α : Type u} {β : Type v} {f : α → β} {S : Set α}
+noncomputable def imageLiftList {α : Type u} {β : Type v} {f : α → β} {S : Set α}
     {xs : List β} (h_sub : {x | x ∈ xs} ⊆ f '' S) :
     Σ' (ys : List α), ({y' | y' ∈ ys} ⊆ S) ∧ f '' {y | y ∈ ys} = {x | x ∈ xs} :=
   by
@@ -182,23 +182,23 @@ lemma theory_proof_compactness_iff {T : SentTheory L} {ψ : sentence L} :
 -/
 lemma sprf_by_cases {T : SentTheory L} (f₁ : sentence L) {f₂ : sentence L}
     (H₁ : SentTheory.sprovable (insert f₁ T) f₂)
-    (H₂ : SentTheory.sprovable (insert (bd_not f₁) T) f₂) : SentTheory.sprovable T f₂ :=
+    (H₂ : SentTheory.sprovable (insert (bdNot f₁) T) f₂) : SentTheory.sprovable T f₂ :=
   by
   simp only [SentTheory.sprovable, SentTheory.fst, Set.image_insert_eq] at H₁ H₂ ⊢
-  simp only [bd_not, bounded_preformula.fst] at H₂
+  simp only [bdNot, BoundedPreformula.fst] at H₂
   exact prf_by_cases f₁.fst H₁ H₂
 
 /-! ## is_consistent_union -/
 
 
-lemma is_consistent_union {T₁ T₂ : SentTheory L} (h₁ : T₁.is_consistent)
-    (h₂ : ∀ ψ ∈ T₂, SentTheory.sprovable (insert (bd_not ψ) T₁) bd_falsum) :
-    (T₁ ∪ T₂).is_consistent :=
+lemma is_consistent_union {T₁ T₂ : SentTheory L} (h₁ : T₁.isConsistent)
+    (h₂ : ∀ ψ ∈ T₂, SentTheory.sprovable (insert (bdNot ψ) T₁) bd_falsum) :
+    (T₁ ∪ T₂).isConsistent :=
   by
   have : DecidableEq (sentence L) := fun x y => Classical.propDecidable _
   have : DecidableEq (formula L) := fun x y => Classical.propDecidable _
   have lem :
-    ∀ (T₀ : Finset (sentence L)), (↑T₀ : SentTheory L) ⊆ T₂ → (T₁ ∪ ↑T₀).is_consistent :=
+    ∀ (T₀ : Finset (sentence L)), (↑T₀ : SentTheory L) ⊆ T₂ → (T₁ ∪ ↑T₀).isConsistent :=
     by
     apply Finset.induction
     · intro _
@@ -219,7 +219,7 @@ lemma is_consistent_union {T₁ T₂ : SentTheory L} (h₁ : T₁.is_consistent)
                   · exact Or.inr (Or.inl hT₁)
                   · exact Or.inl rfl
                   · exact Or.inr (Or.inr hs')) hT)
-            (show SentTheory.sprovable (insert (bd_not ψ) (T₁ ∪ ↑s)) bd_falsum from weakening'
+            (show SentTheory.sprovable (insert (bdNot ψ) (T₁ ∪ ↑s)) bd_falsum from weakening'
                 (by
                   simp only [SentTheory.fst, Set.image_insert_eq, Set.image_union]
                   apply Set.insert_subset_insert

@@ -25,7 +25,8 @@ open NFChoice.DirectNominalPrf.Nominal
 open NFChoice.DirectNominalPrf.Nominal.NFLiteralHandlers
 open NFChoice.DirectNominalPrf.Nominal.OneFreeCompletenessBridgeDev003
 
-macro "nf_weak_partition_freshness" : tactic =>
+/-- Close finite-variable freshness goals for the literal NF axiom wrappers. -/
+macro "nfWeakPartitionFreshness" : tactic =>
   `(tactic|
     first
     | ( intro a ha
@@ -41,8 +42,9 @@ theorem axCnvFv (x y z w : Var) (_hxy : x ≠ y) (_hxz : x ≠ z) (_hxw : x ≠ 
     (axCnvGoal x y z w).fv ⊆ ({ x } : Finset Var) :=
   by
   simp only [axCnvGoal]
-  nf_weak_partition_freshness
+  nfWeakPartitionFreshness
 
+/-- Proof-translation construction identified upstream as `axCnv`. -/
 @[expose]
 noncomputable def axCnv (x y z w : Var) (hxy : x ≠ y) (hxz : x ≠ z) (hxw : x ≠ w)
     (hyz : y ≠ z) (hyw : y ≠ w) (hzw : z ≠ w) : NPrf (axCnvGoal x y z w) :=
@@ -58,8 +60,9 @@ theorem axSsetFv (x y z w : Var) (_hxy : x ≠ y) (_hxz : x ≠ z) (_hxw : x ≠
     (axSsetGoal x y z w).fv ⊆ ({ x } : Finset Var) :=
   by
   simp only [axSsetGoal]
-  nf_weak_partition_freshness
+  nfWeakPartitionFreshness
 
+/-- Proof-translation construction identified upstream as `axSset`. -/
 @[expose]
 noncomputable def axSset (x y z w : Var) (hxy : x ≠ y) (hxz : x ≠ z) (hxw : x ≠ w)
     (hyz : y ≠ z) (hyw : y ≠ w) (hzw : z ≠ w) : NPrf (axSsetGoal x y z w) :=
@@ -74,8 +77,9 @@ theorem axSiFv (x y z w : Var) (_hxy : x ≠ y) (_hxz : x ≠ z) (_hxw : x ≠ w
     (_hyw : y ≠ w) (_hzw : z ≠ w) : (axSiGoal x y z w).fv ⊆ ({ x } : Finset Var) :=
   by
   simp only [axSiGoal]
-  nf_weak_partition_freshness
+  nfWeakPartitionFreshness
 
+/-- Proof-translation construction identified upstream as `axSi`. -/
 @[expose]
 noncomputable def axSi (x y z w : Var) (hxy : x ≠ y) (hxz : x ≠ z) (hxw : x ≠ w)
     (hyz : y ≠ z) (hyw : y ≠ w) (hzw : z ≠ w) : NPrf (axSiGoal x y z w) :=
@@ -91,8 +95,9 @@ theorem axIns2Fv (x y z w t : Var) (_hxy : x ≠ y) (_hxz : x ≠ z) (_hxw : x �
     (_hzt : z ≠ t) (_hwt : w ≠ t) : (axIns2Goal x y z w t).fv ⊆ ({ x } : Finset Var) :=
   by
   simp only [axIns2Goal]
-  nf_weak_partition_freshness
+  nfWeakPartitionFreshness
 
+/-- Proof-translation construction identified upstream as `axIns2`. -/
 @[expose]
 noncomputable def axIns2 (x y z w t : Var) (hxy : x ≠ y) (hxz : x ≠ z) (hxw : x ≠ w)
     (hxt : x ≠ t) (hyz : y ≠ z) (hyw : y ≠ w) (hyt : y ≠ t) (hzw : z ≠ w) (hzt : z ≠ t)
@@ -110,8 +115,9 @@ theorem axIns3Fv (x y z w t : Var) (_hxy : x ≠ y) (_hxz : x ≠ z) (_hxw : x �
     (_hzt : z ≠ t) (_hwt : w ≠ t) : (axIns3Goal x y z w t).fv ⊆ ({ x } : Finset Var) :=
   by
   simp only [axIns3Goal]
-  nf_weak_partition_freshness
+  nfWeakPartitionFreshness
 
+/-- Proof-translation construction identified upstream as `axIns3`. -/
 @[expose]
 noncomputable def axIns3 (x y z w t : Var) (hxy : x ≠ y) (hxz : x ≠ z) (hxw : x ≠ w)
     (hxt : x ≠ t) (hyz : y ≠ z) (hyw : y ≠ w) (hyt : y ≠ t) (hzw : z ≠ w) (hzt : z ≠ t)
@@ -129,8 +135,9 @@ theorem axTypeLowerFv (x y z w : Var) (_hxy : x ≠ y) (_hxz : x ≠ z) (_hxw : 
     (axTypeLowerGoal x y z w).fv ⊆ ({ x } : Finset Var) :=
   by
   simp only [axTypeLowerGoal]
-  nf_weak_partition_freshness
+  nfWeakPartitionFreshness
 
+/-- Proof-translation construction identified upstream as `axTypeLower`. -/
 @[expose]
 noncomputable def axTypeLower (x y z w : Var) (hxy : x ≠ y) (hxz : x ≠ z) (hxw : x ≠ w)
     (hyz : y ≠ z) (hyw : y ≠ w) (hzw : z ≠ w) : NPrf (axTypeLowerGoal x y z w) :=

@@ -30,15 +30,16 @@ open NFChoice.DefinitionLeaves.AlphaFocusedFV
 open NFChoice.DirectNominalPrf
 open NFChoice.DirectNominalPrf.Nominal
 
+/-- Checked nominal proof certificate identified upstream as `nominal_df_opab`. -/
 @[expose]
-noncomputable def nominal_df_opab (ph : Wff) (x : Var) (y : Var) (z : Var)
+noncomputable def nominalDfOpab (ph : Wff) (x : Var) (y : Var) (z : Var)
     (dv_ph_z : z ∉ ph.fv) (dv_x_z : x ≠ z) (dv_y_z : y ≠ z) :
     Nominal.NPrf
-      (.classEq (syn_copab x y ph) (.cab z (syn_wex x
-            (syn_wex y (syn_wa (.classEq (.cv z) (syn_cop (.cv x) (.cv y))) ph))))) :=
+      (.classEq (synCopab x y ph) (.cab z (synWex x
+            (synWex y (synWa (.classEq (.cv z) (synCop (.cv x) (.cv y))) ph))))) :=
   by
   exact
     Nominal.alphaClassEq
-      (nb037_opab_alpha_certificate_opaque004 ph x y z dv_ph_z dv_x_z dv_y_z)
+      (nb037OpabAlphaCertificateOpaque004 ph x y z dv_ph_z dv_x_z dv_y_z)
 
 end NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired

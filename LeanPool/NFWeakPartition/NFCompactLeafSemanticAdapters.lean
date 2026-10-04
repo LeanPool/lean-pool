@@ -24,11 +24,11 @@ open NFChoice.Compiler.CompactSourceSyntax
 
 /-- Semantic membership in the compact singleton constructor. -/
 theorem holds_syn_csn {S : Fol.Structure LNF} (v : Var → S) (A : Class) (s : S) :
-    Class.Holds S v (syn_csn A) s ↔ ∀ a : S, Mem S a s ↔ Class.Holds S v A a :=
+    Class.Holds S v (synCsn A) s ↔ ∀ a : S, Mem S a s ↔ Class.Holds S v A a :=
   by
   let d := NFChoice.ReplaySupport.freshVar A.fv 0
   have hd : d ∉ A.fv := NFChoice.ReplaySupport.freshVar_not_mem A.fv 0
-  simp only [syn_csn, Class.Holds, Wff.Holds, update_same]
+  simp only [synCsn, Class.Holds, Wff.Holds, update_same]
   apply forall_congr'
   intro a
   exact iff_congr Iff.rfl (NFChoice.DefinitionLeaves.Class.holds_update_fresh A v hd s a)
@@ -36,7 +36,7 @@ theorem holds_syn_csn {S : Fol.Structure LNF} (v : Var → S) (A : Class) (s : S
 /-- Semantic NAND law for the compact class intersection-complement primitive. -/
 theorem holds_syn_cnin {S : Fol.Structure LNF} (hExt : Extensional S) (v : Var → S)
     (A B : Class) (s : S) :
-    Class.Holds S v (syn_cnin A B) s ↔ ¬(Class.Holds S v A s ∧ Class.Holds S v B s) :=
+    Class.Holds S v (synCnin A B) s ↔ ¬(Class.Holds S v A s ∧ Class.Holds S v B s) :=
   by
   let d := NFChoice.ReplaySupport.freshVar (A.fv ∪ B.fv) 0
   have hdA : d ∉ A.fv :=
@@ -44,9 +44,9 @@ theorem holds_syn_cnin {S : Fol.Structure LNF} (hExt : Extensional S) (v : Var �
   have hdB : d ∉ B.fv :=
     NFChoice.ReplaySupport.freshVar_not_mem_of_subset (Finset.subset_union_right) 0
   change
-    Wff.Holds S (update v d s) (syn_wnan (.classMem (.cv d) A) (.classMem (.cv d) B)) ↔ _
+    Wff.Holds S (update v d s) (synWnan (.classMem (.cv d) A) (.classMem (.cv d) B)) ↔ _
   rw [show
-      syn_wnan (.classMem (.cv d) A) (.classMem (.cv d) B) =
+      synWnan (.classMem (.cv d) A) (.classMem (.cv d) B) =
         Wff.neg (Wff.conj (.classMem (.cv d) A) (.classMem (.cv d) B))
       by rfl]
   simp only [Wff.holds_neg, Wff.holds_conj]
@@ -59,41 +59,41 @@ theorem holds_syn_cnin {S : Fol.Structure LNF} (hExt : Extensional S) (v : Var �
   rw [NFChoice.DefinitionLeaves.Class.holds_update_fresh B v hdB s s]
 
 theorem holds_syn_ccompl {S : Fol.Structure LNF} (hExt : Extensional S) (v : Var → S)
-    (A : Class) (s : S) : Class.Holds S v (syn_ccompl A) s ↔ ¬Class.Holds S v A s :=
+    (A : Class) (s : S) : Class.Holds S v (synCcompl A) s ↔ ¬Class.Holds S v A s :=
   by
-  rw [show syn_ccompl A = syn_cnin A A by rfl]
+  rw [show synCcompl A = synCnin A A by rfl]
   rw [holds_syn_cnin hExt v A A s]
   tauto
 
 theorem holds_syn_cun {S : Fol.Structure LNF} (hExt : Extensional S) (v : Var → S)
     (A B : Class) (s : S) :
-    Class.Holds S v (syn_cun A B) s ↔ Class.Holds S v A s ∨ Class.Holds S v B s :=
+    Class.Holds S v (synCun A B) s ↔ Class.Holds S v A s ∨ Class.Holds S v B s :=
   by
-  rw [show syn_cun A B = syn_cnin (syn_ccompl A) (syn_ccompl B) by rfl]
-  rw [holds_syn_cnin hExt v (syn_ccompl A) (syn_ccompl B) s]
+  rw [show synCun A B = synCnin (synCcompl A) (synCcompl B) by rfl]
+  rw [holds_syn_cnin hExt v (synCcompl A) (synCcompl B) s]
   rw [holds_syn_ccompl hExt v A s, holds_syn_ccompl hExt v B s]
   tauto
 
 theorem holds_syn_cpr {S : Fol.Structure LNF} (hExt : Extensional S) (v : Var → S)
     (A B : Class) (s : S) :
-    Class.Holds S v (syn_cpr A B) s ↔
+    Class.Holds S v (synCpr A B) s ↔
       (∀ a : S, Mem S a s ↔ Class.Holds S v A a) ∨
         (∀ a : S, Mem S a s ↔ Class.Holds S v B a) :=
   by
-  rw [show syn_cpr A B = syn_cun (syn_csn A) (syn_csn B) by rfl]
-  rw [holds_syn_cun hExt v (syn_csn A) (syn_csn B) s]
+  rw [show synCpr A B = synCun (synCsn A) (synCsn B) by rfl]
+  rw [holds_syn_cun hExt v (synCsn A) (synCsn B) s]
   rw [holds_syn_csn v A s, holds_syn_csn v B s]
 
 /-- The compact ordered-pair constructor, stated without unfolding its syntax DAG. -/
 theorem holds_syn_copk {S : Fol.Structure LNF} (hExt : Extensional S) (v : Var → S)
     (A B : Class) (p : S) :
-    Class.Holds S v (syn_copk A B) p ↔
+    Class.Holds S v (synCopk A B) p ↔
       (∀ u : S, Mem S u p ↔ ∀ a : S, Mem S a u ↔ Class.Holds S v A a) ∨
         (∀ u : S, Mem S u p ↔ (∀ a : S, Mem S a u ↔ Class.Holds S v A a) ∨
               (∀ a : S, Mem S a u ↔ Class.Holds S v B a)) :=
   by
-  rw [show syn_copk A B = syn_cpr (syn_csn A) (syn_cpr A B) by rfl]
-  rw [holds_syn_cpr hExt v (syn_csn A) (syn_cpr A B) p]
+  rw [show synCopk A B = synCpr (synCsn A) (synCpr A B) by rfl]
+  rw [holds_syn_cpr hExt v (synCsn A) (synCpr A B) p]
   apply or_congr
   · apply forall_congr'
     intro u

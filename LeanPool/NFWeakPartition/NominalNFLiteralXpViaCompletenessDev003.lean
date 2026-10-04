@@ -34,6 +34,7 @@ theorem axXpFv (x y z w t : Var) (_hxy : x ≠ y) (_hxz : x ≠ z) (_hxw : x ≠
     Finset.mem_erase, Finset.mem_union, Finset.mem_singleton] at ha ⊢
   simp_all; aesop
 
+/-- Proof-translation construction identified upstream as `axXp`. -/
 @[expose]
 noncomputable def axXp (x y z w t : Var) (hxy : x ≠ y) (hxz : x ≠ z) (hxw : x ≠ w)
     (hxt : x ≠ t) (hyz : y ≠ z) (hyw : y ≠ w) (hyt : y ≠ t) (hzw : z ≠ w) (hzt : z ≠ t)

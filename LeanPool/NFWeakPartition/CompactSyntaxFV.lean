@@ -21,153 +21,153 @@ open NFChoice.ReplaySupport
 open NFChoice.Compiler.CompactSourceSyntax
 
 @[simp]
-theorem fv_syn_wtru : syn_wtru.fv = (∅ : Finset Var) := by rfl
+theorem fv_syn_wtru : synWtru.fv = (∅ : Finset Var) := by rfl
 
 @[simp]
-theorem fv_syn_wb (ph : Wff) (ps : Wff) : (syn_wb ph ps).fv = (ph.fv) ∪ (ps.fv) :=
+theorem fv_syn_wb (ph : Wff) (ps : Wff) : (synWb ph ps).fv = (ph.fv) ∪ (ps.fv) :=
   by
   ext u
-  simp [syn_wb, Wff.fv, Wff.neg]; aesop
+  simp [synWb, Wff.fv, Wff.neg]; aesop
 
 @[simp]
-theorem fv_syn_wo (ph : Wff) (ps : Wff) : (syn_wo ph ps).fv = (ph.fv) ∪ (ps.fv) :=
+theorem fv_syn_wo (ph : Wff) (ps : Wff) : (synWo ph ps).fv = (ph.fv) ∪ (ps.fv) :=
   by
   ext u
-  simp [syn_wo, Wff.fv, Wff.neg]
+  simp [synWo, Wff.fv, Wff.neg]
 
 @[simp]
-theorem fv_syn_wa (ph : Wff) (ps : Wff) : (syn_wa ph ps).fv = (ph.fv) ∪ (ps.fv) :=
+theorem fv_syn_wa (ph : Wff) (ps : Wff) : (synWa ph ps).fv = (ph.fv) ∪ (ps.fv) :=
   by
   ext u
-  simp [syn_wa, Wff.fv, Wff.neg]
+  simp [synWa, Wff.fv, Wff.neg]
 
 @[simp]
 theorem fv_syn_w3o (ph : Wff) (ps : Wff) (ch : Wff) :
-    (syn_w3o ph ps ch).fv = (ch.fv) ∪ (ph.fv) ∪ (ps.fv) :=
+    (synW3o ph ps ch).fv = (ch.fv) ∪ (ph.fv) ∪ (ps.fv) :=
   by
   ext u
-  simp [syn_w3o]; aesop
+  simp [synW3o]; aesop
 
 @[simp]
 theorem fv_syn_w3a (ph : Wff) (ps : Wff) (ch : Wff) :
-    (syn_w3a ph ps ch).fv = (ch.fv) ∪ (ph.fv) ∪ (ps.fv) :=
+    (synW3a ph ps ch).fv = (ch.fv) ∪ (ph.fv) ∪ (ps.fv) :=
   by
   ext u
-  simp [syn_w3a]; aesop
+  simp [synW3a]; aesop
 
 @[simp]
-theorem fv_syn_wnan (ph : Wff) (ps : Wff) : (syn_wnan ph ps).fv = (ph.fv) ∪ (ps.fv) :=
+theorem fv_syn_wnan (ph : Wff) (ps : Wff) : (synWnan ph ps).fv = (ph.fv) ∪ (ps.fv) :=
   by
   ext u
-  simp [syn_wnan, Wff.fv, Wff.neg]
+  simp [synWnan, Wff.fv, Wff.neg]
 
 @[simp]
-theorem fv_syn_wex (x : Var) (ph : Wff) : (syn_wex x ph).fv = (ph.fv).erase x :=
+theorem fv_syn_wex (x : Var) (ph : Wff) : (synWex x ph).fv = (ph.fv).erase x :=
   by
   ext u
-  simp [syn_wex, Wff.fv, Wff.neg]
+  simp [synWex, Wff.fv, Wff.neg]
 
 @[simp]
-theorem fv_syn_wnf (x : Var) (ph : Wff) : (syn_wnf x ph).fv = (ph.fv).erase x :=
+theorem fv_syn_wnf (x : Var) (ph : Wff) : (synWnf x ph).fv = (ph.fv).erase x :=
   by
   ext u
-  simp [syn_wnf, Wff.fv]
+  simp [synWnf, Wff.fv]
 
 @[simp]
 theorem fv_syn_wsb (y : Var) (x : Var) (ph : Wff) :
-    (syn_wsb y x ph).fv =
+    (synWsb y x ph).fv =
       (ph.fv) ∪ ((ph.fv).erase x) ∪ ((({ y } : Finset Var)).erase x) ∪
           (({ x } : Finset Var)) ∪
         (({ y } : Finset Var)) :=
   by
   ext u
-  simp [syn_wsb, Wff.fv]; aesop
+  simp [synWsb, Wff.fv]; aesop
 
 @[simp]
-theorem fv_syn_weu (x : Var) (ph : Wff) : (syn_weu x ph).fv = (ph.fv).erase x :=
+theorem fv_syn_weu (x : Var) (ph : Wff) : (synWeu x ph).fv = (ph.fv).erase x :=
   by
   have fresh_y :
     freshVar (({ x } : Finset Var) ∪ ph.fv) 0 ∉ (({ x } : Finset Var) ∪ ph.fv) :=
     freshVar_not_mem (({ x } : Finset Var) ∪ ph.fv) 0
   simp only [Finset.mem_union, Finset.mem_singleton] at fresh_y
   ext u
-  simp [syn_weu, Wff.fv]; aesop
+  simp [synWeu, Wff.fv]; aesop
 
 @[simp]
-theorem fv_syn_wmo (x : Var) (ph : Wff) : (syn_wmo x ph).fv = (ph.fv).erase x :=
+theorem fv_syn_wmo (x : Var) (ph : Wff) : (synWmo x ph).fv = (ph.fv).erase x :=
   by
   ext u
-  simp [syn_wmo, Wff.fv]
+  simp [synWmo, Wff.fv]
 
 @[simp]
-theorem fv_syn_wnfc (x : Var) (A : Class) : (syn_wnfc x A).fv = (A.fv).erase x :=
+theorem fv_syn_wnfc (x : Var) (A : Class) : (synWnfc x A).fv = (A.fv).erase x :=
   by
   have fresh_y :
     freshVar (({ x } : Finset Var) ∪ A.fv) 0 ∉ (({ x } : Finset Var) ∪ A.fv) :=
     freshVar_not_mem (({ x } : Finset Var) ∪ A.fv) 0
   simp only [Finset.mem_union, Finset.mem_singleton] at fresh_y
   ext u
-  simp [syn_wnfc, Wff.fv, Class.fv]; aesop
+  simp [synWnfc, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_wne (A : Class) (B : Class) : (syn_wne A B).fv = (A.fv) ∪ (B.fv) :=
+theorem fv_syn_wne (A : Class) (B : Class) : (synWne A B).fv = (A.fv) ∪ (B.fv) :=
   by
   ext u
-  simp [syn_wne, Wff.fv, Wff.neg]
+  simp [synWne, Wff.fv, Wff.neg]
 
 @[simp]
 theorem fv_syn_wral (x : Var) (A : Class) (ph : Wff) :
-    (syn_wral x A ph).fv = ((A.fv).erase x) ∪ ((ph.fv).erase x) :=
+    (synWral x A ph).fv = ((A.fv).erase x) ∪ ((ph.fv).erase x) :=
   by
   ext u
-  simp [syn_wral, Wff.fv, Class.fv]; aesop
+  simp [synWral, Wff.fv, Class.fv]; aesop
 
 @[simp]
 theorem fv_syn_wrex (x : Var) (A : Class) (ph : Wff) :
-    (syn_wrex x A ph).fv = ((A.fv).erase x) ∪ ((ph.fv).erase x) :=
+    (synWrex x A ph).fv = ((A.fv).erase x) ∪ ((ph.fv).erase x) :=
   by
   ext u
-  simp [syn_wrex, Wff.fv, Class.fv]; aesop
+  simp [synWrex, Wff.fv, Class.fv]; aesop
 
 @[simp]
 theorem fv_syn_wreu (x : Var) (A : Class) (ph : Wff) :
-    (syn_wreu x A ph).fv = ((A.fv).erase x) ∪ ((ph.fv).erase x) :=
+    (synWreu x A ph).fv = ((A.fv).erase x) ∪ ((ph.fv).erase x) :=
   by
   ext u
-  simp [syn_wreu, Wff.fv, Class.fv]; aesop
+  simp [synWreu, Wff.fv, Class.fv]; aesop
 
 @[simp]
 theorem fv_syn_wrmo (x : Var) (A : Class) (ph : Wff) :
-    (syn_wrmo x A ph).fv = ((A.fv).erase x) ∪ ((ph.fv).erase x) :=
+    (synWrmo x A ph).fv = ((A.fv).erase x) ∪ ((ph.fv).erase x) :=
   by
   ext u
-  simp [syn_wrmo, Wff.fv, Class.fv]; aesop
+  simp [synWrmo, Wff.fv, Class.fv]; aesop
 
 @[simp]
 theorem fv_syn_crab (x : Var) (A : Class) (ph : Wff) :
-    (syn_crab x A ph).fv = ((A.fv).erase x) ∪ ((ph.fv).erase x) :=
+    (synCrab x A ph).fv = ((A.fv).erase x) ∪ ((ph.fv).erase x) :=
   by
   ext u
-  simp [syn_crab, Wff.fv, Class.fv]; aesop
+  simp [synCrab, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cvv : (syn_cvv).fv = (∅ : Finset Var) :=
+theorem fv_syn_cvv : (synCvv).fv = (∅ : Finset Var) :=
   by
   have fresh_x : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
   ext u
-  simp [syn_cvv, Wff.fv, Class.fv]
+  simp [synCvv, Wff.fv, Class.fv]
 
 @[simp]
 theorem fv_syn_wsbc (A : Class) (x : Var) (ph : Wff) :
-    (syn_wsbc A x ph).fv = (A.fv) ∪ ((ph.fv).erase x) :=
+    (synWsbc A x ph).fv = (A.fv) ∪ ((ph.fv).erase x) :=
   by
   ext u
-  simp [syn_wsbc, Wff.fv, Class.fv]
+  simp [synWsbc, Wff.fv, Class.fv]
 
 @[simp]
 theorem fv_syn_csb (A : Class) (x : Var) (B : Class) :
-    (syn_csb A x B).fv = (A.fv) ∪ ((B.fv).erase x) :=
+    (synCsb A x B).fv = (A.fv) ∪ ((B.fv).erase x) :=
   by
   have fresh_y :
     freshVar (A.fv ∪ ({ x } : Finset Var) ∪ B.fv) 0 ∉
@@ -175,125 +175,125 @@ theorem fv_syn_csb (A : Class) (x : Var) (B : Class) :
     freshVar_not_mem (A.fv ∪ ({ x } : Finset Var) ∪ B.fv) 0
   simp only [Finset.mem_union, Finset.mem_singleton] at fresh_y
   ext u
-  simp [syn_csb, Wff.fv, Class.fv]; aesop
+  simp [synCsb, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cnin (A : Class) (B : Class) : (syn_cnin A B).fv = (A.fv) ∪ (B.fv) :=
+theorem fv_syn_cnin (A : Class) (B : Class) : (synCnin A B).fv = (A.fv) ∪ (B.fv) :=
   by
   have fresh_x : freshVar (A.fv ∪ B.fv) 0 ∉ (A.fv ∪ B.fv) :=
     freshVar_not_mem (A.fv ∪ B.fv) 0
   simp only [Finset.mem_union] at fresh_x
   ext u
-  simp [syn_cnin, Wff.fv, Class.fv]; aesop
+  simp [synCnin, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_ccompl (A : Class) : (syn_ccompl A).fv = A.fv :=
+theorem fv_syn_ccompl (A : Class) : (synCcompl A).fv = A.fv :=
   by
   ext u
-  simp [syn_ccompl]
+  simp [synCcompl]
 
 @[simp]
-theorem fv_syn_cin (A : Class) (B : Class) : (syn_cin A B).fv = (A.fv) ∪ (B.fv) :=
+theorem fv_syn_cin (A : Class) (B : Class) : (synCin A B).fv = (A.fv) ∪ (B.fv) :=
   by
   ext u
-  simp [syn_cin]
+  simp [synCin]
 
 @[simp]
-theorem fv_syn_cun (A : Class) (B : Class) : (syn_cun A B).fv = (A.fv) ∪ (B.fv) :=
+theorem fv_syn_cun (A : Class) (B : Class) : (synCun A B).fv = (A.fv) ∪ (B.fv) :=
   by
   ext u
-  simp [syn_cun]
+  simp [synCun]
 
 @[simp]
-theorem fv_syn_cdif (A : Class) (B : Class) : (syn_cdif A B).fv = (A.fv) ∪ (B.fv) :=
+theorem fv_syn_cdif (A : Class) (B : Class) : (synCdif A B).fv = (A.fv) ∪ (B.fv) :=
   by
   ext u
-  simp [syn_cdif]
+  simp [synCdif]
 
 @[simp]
-theorem fv_syn_csymdif (A : Class) (B : Class) : (syn_csymdif A B).fv = (A.fv) ∪ (B.fv) :=
+theorem fv_syn_csymdif (A : Class) (B : Class) : (synCsymdif A B).fv = (A.fv) ∪ (B.fv) :=
   by
   ext u
-  simp [syn_csymdif]; aesop
+  simp [synCsymdif]; aesop
 
 @[simp]
-theorem fv_syn_wss (A : Class) (B : Class) : (syn_wss A B).fv = (A.fv) ∪ (B.fv) :=
+theorem fv_syn_wss (A : Class) (B : Class) : (synWss A B).fv = (A.fv) ∪ (B.fv) :=
   by
   ext u
-  simp [syn_wss, Wff.fv]; aesop
+  simp [synWss, Wff.fv]; aesop
 
 @[simp]
-theorem fv_syn_wpss (A : Class) (B : Class) : (syn_wpss A B).fv = (A.fv) ∪ (B.fv) :=
+theorem fv_syn_wpss (A : Class) (B : Class) : (synWpss A B).fv = (A.fv) ∪ (B.fv) :=
   by
   ext u
-  simp [syn_wpss]
+  simp [synWpss]
 
 @[simp]
-theorem fv_syn_c0 : (syn_c0).fv = (∅ : Finset Var) :=
+theorem fv_syn_c0 : (synC0).fv = (∅ : Finset Var) :=
   by
   ext u
-  simp [syn_c0]
+  simp [synC0]
 
 @[simp]
 theorem fv_syn_cif (ph : Wff) (A : Class) (B : Class) :
-    (syn_cif ph A B).fv = (A.fv) ∪ (B.fv) ∪ (ph.fv) :=
+    (synCif ph A B).fv = (A.fv) ∪ (B.fv) ∪ (ph.fv) :=
   by
   have fresh_x : freshVar (ph.fv ∪ A.fv ∪ B.fv) 0 ∉ (ph.fv ∪ A.fv ∪ B.fv) :=
     freshVar_not_mem (ph.fv ∪ A.fv ∪ B.fv) 0
   simp only [Finset.mem_union] at fresh_x
   ext u
-  simp [syn_cif, Wff.fv, Class.fv, Wff.neg]; aesop
+  simp [synCif, Wff.fv, Class.fv, Wff.neg]; aesop
 
 @[simp]
-theorem fv_syn_cpw (A : Class) : (syn_cpw A).fv = A.fv :=
+theorem fv_syn_cpw (A : Class) : (synCpw A).fv = A.fv :=
   by
   have fresh_x : freshVar (A.fv) 0 ∉ (A.fv) := freshVar_not_mem (A.fv) 0
   ext u
-  simp [syn_cpw, Class.fv]; aesop
+  simp [synCpw, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_csn (A : Class) : (syn_csn A).fv = A.fv :=
+theorem fv_syn_csn (A : Class) : (synCsn A).fv = A.fv :=
   by
   have fresh_x : freshVar (A.fv) 0 ∉ (A.fv) := freshVar_not_mem (A.fv) 0
   ext u
-  simp [syn_csn, Wff.fv, Class.fv]; aesop
+  simp [synCsn, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cpr (A : Class) (B : Class) : (syn_cpr A B).fv = (A.fv) ∪ (B.fv) :=
+theorem fv_syn_cpr (A : Class) (B : Class) : (synCpr A B).fv = (A.fv) ∪ (B.fv) :=
   by
   ext u
-  simp [syn_cpr]
+  simp [synCpr]
 
 @[simp]
 theorem fv_syn_ctp (A : Class) (B : Class) (C : Class) :
-    (syn_ctp A B C).fv = (A.fv) ∪ (B.fv) ∪ (C.fv) :=
+    (synCtp A B C).fv = (A.fv) ∪ (B.fv) ∪ (C.fv) :=
   by
   ext u
-  simp [syn_ctp]
+  simp [synCtp]
 
 @[simp]
-theorem fv_syn_cuni (A : Class) : (syn_cuni A).fv = A.fv :=
+theorem fv_syn_cuni (A : Class) : (synCuni A).fv = A.fv :=
   by
   have fresh_x : freshVar (A.fv) 0 ∉ (A.fv) := freshVar_not_mem (A.fv) 0
   have fresh_y : freshVar (A.fv) 1 ∉ (A.fv) := freshVar_not_mem (A.fv) 1
   have distinct_x_y : freshVar (A.fv) 0 ≠ freshVar (A.fv) 1 :=
     freshVar_injective (A.fv) (by decide)
   ext u
-  simp [syn_cuni, Wff.fv, Class.fv]; aesop
+  simp [synCuni, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cint (A : Class) : (syn_cint A).fv = A.fv :=
+theorem fv_syn_cint (A : Class) : (synCint A).fv = A.fv :=
   by
   have fresh_x : freshVar (A.fv) 0 ∉ (A.fv) := freshVar_not_mem (A.fv) 0
   have fresh_y : freshVar (A.fv) 1 ∉ (A.fv) := freshVar_not_mem (A.fv) 1
   have distinct_x_y : freshVar (A.fv) 0 ≠ freshVar (A.fv) 1 :=
     freshVar_injective (A.fv) (by decide)
   ext u
-  simp [syn_cint, Wff.fv, Class.fv]; aesop
+  simp [synCint, Wff.fv, Class.fv]; aesop
 
 @[simp]
 theorem fv_syn_ciun (x : Var) (A : Class) (B : Class) :
-    (syn_ciun x A B).fv = ((A.fv).erase x) ∪ ((B.fv).erase x) :=
+    (synCiun x A B).fv = ((A.fv).erase x) ∪ ((B.fv).erase x) :=
   by
   have fresh_y :
     freshVar (({ x } : Finset Var) ∪ A.fv ∪ B.fv) 0 ∉
@@ -301,16 +301,16 @@ theorem fv_syn_ciun (x : Var) (A : Class) (B : Class) :
     freshVar_not_mem (({ x } : Finset Var) ∪ A.fv ∪ B.fv) 0
   simp only [Finset.mem_union, Finset.mem_singleton] at fresh_y
   ext u
-  simp [syn_ciun, Wff.fv, Class.fv]; aesop
+  simp [synCiun, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_copk (A : Class) (B : Class) : (syn_copk A B).fv = (A.fv) ∪ (B.fv) :=
+theorem fv_syn_copk (A : Class) (B : Class) : (synCopk A B).fv = (A.fv) ∪ (B.fv) :=
   by
   ext u
-  simp [syn_copk]
+  simp [synCopk]
 
 @[simp]
-theorem fv_syn_c1c : (syn_c1c).fv = (∅ : Finset Var) :=
+theorem fv_syn_c1c : (synC1c).fv = (∅ : Finset Var) :=
   by
   have fresh_x : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -319,22 +319,22 @@ theorem fv_syn_c1c : (syn_c1c).fv = (∅ : Finset Var) :=
   have distinct_x_y : freshVar ((∅ : Finset Var)) 0 ≠ freshVar ((∅ : Finset Var)) 1 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_c1c, Wff.fv, Class.fv]; aesop
+  simp [synC1c, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cpw1 (A : Class) : (syn_cpw1 A).fv = A.fv :=
+theorem fv_syn_cpw1 (A : Class) : (synCpw1 A).fv = A.fv :=
   by
   ext u
-  simp [syn_cpw1]
+  simp [synCpw1]
 
 @[simp]
-theorem fv_syn_cuni1 (A : Class) : (syn_cuni1 A).fv = A.fv :=
+theorem fv_syn_cuni1 (A : Class) : (synCuni1 A).fv = A.fv :=
   by
   ext u
-  simp [syn_cuni1]
+  simp [synCuni1]
 
 @[simp]
-theorem fv_syn_cxpk (A : Class) (B : Class) : (syn_cxpk A B).fv = (A.fv) ∪ (B.fv) :=
+theorem fv_syn_cxpk (A : Class) (B : Class) : (synCxpk A B).fv = (A.fv) ∪ (B.fv) :=
   by
   have fresh_x : freshVar (A.fv ∪ B.fv) 0 ∉ (A.fv ∪ B.fv) :=
     freshVar_not_mem (A.fv ∪ B.fv) 0
@@ -352,10 +352,10 @@ theorem fv_syn_cxpk (A : Class) (B : Class) : (syn_cxpk A B).fv = (A.fv) ∪ (B.
   have distinct_y_z : freshVar (A.fv ∪ B.fv) 1 ≠ freshVar (A.fv ∪ B.fv) 2 :=
     freshVar_injective (A.fv ∪ B.fv) (by decide)
   ext u
-  simp [syn_cxpk, Wff.fv, Class.fv]; aesop
+  simp [synCxpk, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_ccnvk (A : Class) : (syn_ccnvk A).fv = A.fv :=
+theorem fv_syn_ccnvk (A : Class) : (synCcnvk A).fv = A.fv :=
   by
   have fresh_x : freshVar (A.fv) 0 ∉ (A.fv) := freshVar_not_mem (A.fv) 0
   have fresh_y : freshVar (A.fv) 1 ∉ (A.fv) := freshVar_not_mem (A.fv) 1
@@ -367,10 +367,10 @@ theorem fv_syn_ccnvk (A : Class) : (syn_ccnvk A).fv = A.fv :=
   have distinct_y_z : freshVar (A.fv) 1 ≠ freshVar (A.fv) 2 :=
     freshVar_injective (A.fv) (by decide)
   ext u
-  simp [syn_ccnvk, Wff.fv, Class.fv]; aesop
+  simp [synCcnvk, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cins2k (A : Class) : (syn_cins2k A).fv = A.fv :=
+theorem fv_syn_cins2k (A : Class) : (synCins2k A).fv = A.fv :=
   by
   have fresh_t : freshVar (A.fv) 0 ∉ (A.fv) := freshVar_not_mem (A.fv) 0
   have fresh_u : freshVar (A.fv) 1 ∉ (A.fv) := freshVar_not_mem (A.fv) 1
@@ -409,10 +409,10 @@ theorem fv_syn_cins2k (A : Class) : (syn_cins2k A).fv = A.fv :=
   have distinct_y_z : freshVar (A.fv) 4 ≠ freshVar (A.fv) 5 :=
     freshVar_injective (A.fv) (by decide)
   ext u
-  simp [syn_cins2k, Wff.fv, Class.fv]; aesop
+  simp [synCins2k, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cins3k (A : Class) : (syn_cins3k A).fv = A.fv :=
+theorem fv_syn_cins3k (A : Class) : (synCins3k A).fv = A.fv :=
   by
   have fresh_t : freshVar (A.fv) 0 ∉ (A.fv) := freshVar_not_mem (A.fv) 0
   have fresh_u : freshVar (A.fv) 1 ∉ (A.fv) := freshVar_not_mem (A.fv) 1
@@ -451,10 +451,10 @@ theorem fv_syn_cins3k (A : Class) : (syn_cins3k A).fv = A.fv :=
   have distinct_y_z : freshVar (A.fv) 4 ≠ freshVar (A.fv) 5 :=
     freshVar_injective (A.fv) (by decide)
   ext u
-  simp [syn_cins3k, Wff.fv, Class.fv]; aesop
+  simp [synCins3k, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cimak (A : Class) (B : Class) : (syn_cimak A B).fv = (A.fv) ∪ (B.fv) :=
+theorem fv_syn_cimak (A : Class) (B : Class) : (synCimak A B).fv = (A.fv) ∪ (B.fv) :=
   by
   have fresh_x : freshVar (A.fv ∪ B.fv) 0 ∉ (A.fv ∪ B.fv) :=
     freshVar_not_mem (A.fv ∪ B.fv) 0
@@ -465,23 +465,23 @@ theorem fv_syn_cimak (A : Class) (B : Class) : (syn_cimak A B).fv = (A.fv) ∪ (
   have distinct_x_y : freshVar (A.fv ∪ B.fv) 0 ≠ freshVar (A.fv ∪ B.fv) 1 :=
     freshVar_injective (A.fv ∪ B.fv) (by decide)
   ext u
-  simp [syn_cimak, Wff.fv, Class.fv]; aesop
+  simp [synCimak, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_ccomk (A : Class) (B : Class) : (syn_ccomk A B).fv = (A.fv) ∪ (B.fv) :=
+theorem fv_syn_ccomk (A : Class) (B : Class) : (synCcomk A B).fv = (A.fv) ∪ (B.fv) :=
   by
   ext u
-  simp [syn_ccomk]
+  simp [synCcomk]
 
 @[simp]
-theorem fv_syn_cp6 (A : Class) : (syn_cp6 A).fv = A.fv :=
+theorem fv_syn_cp6 (A : Class) : (synCp6 A).fv = A.fv :=
   by
   have fresh_x : freshVar (A.fv) 0 ∉ (A.fv) := freshVar_not_mem (A.fv) 0
   ext u
-  simp [syn_cp6, Class.fv]; aesop
+  simp [synCp6, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_csik (A : Class) : (syn_csik A).fv = A.fv :=
+theorem fv_syn_csik (A : Class) : (synCsik A).fv = A.fv :=
   by
   have fresh_t : freshVar (A.fv) 0 ∉ (A.fv) := freshVar_not_mem (A.fv) 0
   have fresh_u : freshVar (A.fv) 1 ∉ (A.fv) := freshVar_not_mem (A.fv) 1
@@ -509,10 +509,10 @@ theorem fv_syn_csik (A : Class) : (syn_csik A).fv = A.fv :=
   have distinct_y_z : freshVar (A.fv) 3 ≠ freshVar (A.fv) 4 :=
     freshVar_injective (A.fv) (by decide)
   ext u
-  simp [syn_csik, Wff.fv, Class.fv]; aesop
+  simp [synCsik, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cssetk : (syn_cssetk).fv = (∅ : Finset Var) :=
+theorem fv_syn_cssetk : (synCssetk).fv = (∅ : Finset Var) :=
   by
   have fresh_x : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -527,16 +527,16 @@ theorem fv_syn_cssetk : (syn_cssetk).fv = (∅ : Finset Var) :=
   have distinct_y_z : freshVar ((∅ : Finset Var)) 1 ≠ freshVar ((∅ : Finset Var)) 2 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_cssetk, Wff.fv, Class.fv]; aesop
+  simp [synCssetk, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cimagek (A : Class) : (syn_cimagek A).fv = A.fv :=
+theorem fv_syn_cimagek (A : Class) : (synCimagek A).fv = A.fv :=
   by
   ext u
-  simp [syn_cimagek]
+  simp [synCimagek]
 
 @[simp]
-theorem fv_syn_cidk : (syn_cidk).fv = (∅ : Finset Var) :=
+theorem fv_syn_cidk : (synCidk).fv = (∅ : Finset Var) :=
   by
   have fresh_x : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -551,26 +551,26 @@ theorem fv_syn_cidk : (syn_cidk).fv = (∅ : Finset Var) :=
   have distinct_y_z : freshVar ((∅ : Finset Var)) 1 ≠ freshVar ((∅ : Finset Var)) 2 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_cidk, Wff.fv, Class.fv]; aesop
+  simp [synCidk, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cio (x : Var) (ph : Wff) : (syn_cio x ph).fv = (ph.fv).erase x :=
+theorem fv_syn_cio (x : Var) (ph : Wff) : (synCio x ph).fv = (ph.fv).erase x :=
   by
   have fresh_y :
     freshVar (({ x } : Finset Var) ∪ ph.fv) 0 ∉ (({ x } : Finset Var) ∪ ph.fv) :=
     freshVar_not_mem (({ x } : Finset Var) ∪ ph.fv) 0
   simp only [Finset.mem_union, Finset.mem_singleton] at fresh_y
   ext u
-  simp [syn_cio, Wff.fv, Class.fv]; aesop
+  simp [synCio, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_c0c : (syn_c0c).fv = (∅ : Finset Var) :=
+theorem fv_syn_c0c : (synC0c).fv = (∅ : Finset Var) :=
   by
   ext u
-  simp [syn_c0c]
+  simp [synC0c]
 
 @[simp]
-theorem fv_syn_cplc (A : Class) (B : Class) : (syn_cplc A B).fv = (A.fv) ∪ (B.fv) :=
+theorem fv_syn_cplc (A : Class) (B : Class) : (synCplc A B).fv = (A.fv) ∪ (B.fv) :=
   by
   have fresh_x : freshVar (A.fv ∪ B.fv) 0 ∉ (A.fv ∪ B.fv) :=
     freshVar_not_mem (A.fv ∪ B.fv) 0
@@ -588,10 +588,10 @@ theorem fv_syn_cplc (A : Class) (B : Class) : (syn_cplc A B).fv = (A.fv) ∪ (B.
   have distinct_y_z : freshVar (A.fv ∪ B.fv) 1 ≠ freshVar (A.fv ∪ B.fv) 2 :=
     freshVar_injective (A.fv ∪ B.fv) (by decide)
   ext u
-  simp [syn_cplc, Wff.fv, Class.fv]; aesop
+  simp [synCplc, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cnnc : (syn_cnnc).fv = (∅ : Finset Var) :=
+theorem fv_syn_cnnc : (synCnnc).fv = (∅ : Finset Var) :=
   by
   have fresh_b : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -600,16 +600,16 @@ theorem fv_syn_cnnc : (syn_cnnc).fv = (∅ : Finset Var) :=
   have distinct_b_y : freshVar ((∅ : Finset Var)) 0 ≠ freshVar ((∅ : Finset Var)) 1 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_cnnc, Wff.fv, Class.fv]; aesop
+  simp [synCnnc, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cfin : (syn_cfin).fv = (∅ : Finset Var) :=
+theorem fv_syn_cfin : (synCfin).fv = (∅ : Finset Var) :=
   by
   ext u
-  simp [syn_cfin]
+  simp [synCfin]
 
 @[simp]
-theorem fv_syn_clefin : (syn_clefin).fv = (∅ : Finset Var) :=
+theorem fv_syn_clefin : (synClefin).fv = (∅ : Finset Var) :=
   by
   have fresh_w : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -632,10 +632,10 @@ theorem fv_syn_clefin : (syn_clefin).fv = (∅ : Finset Var) :=
   have distinct_y_z : freshVar ((∅ : Finset Var)) 2 ≠ freshVar ((∅ : Finset Var)) 3 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_clefin, Wff.fv, Class.fv]; aesop
+  simp [synClefin, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cltfin : (syn_cltfin).fv = (∅ : Finset Var) :=
+theorem fv_syn_cltfin : (synCltfin).fv = (∅ : Finset Var) :=
   by
   have fresh_m : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -658,27 +658,27 @@ theorem fv_syn_cltfin : (syn_cltfin).fv = (∅ : Finset Var) :=
   have distinct_p_x : freshVar ((∅ : Finset Var)) 2 ≠ freshVar ((∅ : Finset Var)) 3 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_cltfin, Wff.fv, Class.fv]; aesop
+  simp [synCltfin, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cncfin (A : Class) : (syn_cncfin A).fv = A.fv :=
+theorem fv_syn_cncfin (A : Class) : (synCncfin A).fv = A.fv :=
   by
   have fresh_x : freshVar (A.fv) 0 ∉ (A.fv) := freshVar_not_mem (A.fv) 0
   ext u
-  simp [syn_cncfin, Wff.fv, Class.fv]; aesop
+  simp [synCncfin, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_ctfin (M : Class) : (syn_ctfin M).fv = M.fv :=
+theorem fv_syn_ctfin (M : Class) : (synCtfin M).fv = M.fv :=
   by
   have fresh_a : freshVar (M.fv) 0 ∉ (M.fv) := freshVar_not_mem (M.fv) 0
   have fresh_n : freshVar (M.fv) 1 ∉ (M.fv) := freshVar_not_mem (M.fv) 1
   have distinct_a_n : freshVar (M.fv) 0 ≠ freshVar (M.fv) 1 :=
     freshVar_injective (M.fv) (by decide)
   ext u
-  simp [syn_ctfin, Wff.fv, Class.fv]; aesop
+  simp [synCtfin, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cevenfin : (syn_cevenfin).fv = (∅ : Finset Var) :=
+theorem fv_syn_cevenfin : (synCevenfin).fv = (∅ : Finset Var) :=
   by
   have fresh_n : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -687,10 +687,10 @@ theorem fv_syn_cevenfin : (syn_cevenfin).fv = (∅ : Finset Var) :=
   have distinct_n_x : freshVar ((∅ : Finset Var)) 0 ≠ freshVar ((∅ : Finset Var)) 1 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_cevenfin, Wff.fv, Class.fv]; aesop
+  simp [synCevenfin, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_coddfin : (syn_coddfin).fv = (∅ : Finset Var) :=
+theorem fv_syn_coddfin : (synCoddfin).fv = (∅ : Finset Var) :=
   by
   have fresh_n : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -699,19 +699,19 @@ theorem fv_syn_coddfin : (syn_coddfin).fv = (∅ : Finset Var) :=
   have distinct_n_x : freshVar ((∅ : Finset Var)) 0 ≠ freshVar ((∅ : Finset Var)) 1 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_coddfin, Wff.fv, Class.fv]; aesop
+  simp [synCoddfin, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_wsfin (M : Class) (N : Class) : (syn_wsfin M N).fv = (M.fv) ∪ (N.fv) :=
+theorem fv_syn_wsfin (M : Class) (N : Class) : (synWsfin M N).fv = (M.fv) ∪ (N.fv) :=
   by
   have fresh_a : freshVar (M.fv ∪ N.fv) 0 ∉ (M.fv ∪ N.fv) :=
     freshVar_not_mem (M.fv ∪ N.fv) 0
   simp only [Finset.mem_union] at fresh_a
   ext u
-  simp [syn_wsfin, Wff.fv, Class.fv]
+  simp [synWsfin, Wff.fv, Class.fv]
 
 @[simp]
-theorem fv_syn_cspfin : (syn_cspfin).fv = (∅ : Finset Var) :=
+theorem fv_syn_cspfin : (synCspfin).fv = (∅ : Finset Var) :=
   by
   have fresh_a : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -726,20 +726,20 @@ theorem fv_syn_cspfin : (syn_cspfin).fv = (∅ : Finset Var) :=
   have distinct_x_z : freshVar ((∅ : Finset Var)) 1 ≠ freshVar ((∅ : Finset Var)) 2 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_cspfin, Wff.fv, Class.fv]; aesop
+  simp [synCspfin, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cphi (A : Class) : (syn_cphi A).fv = A.fv :=
+theorem fv_syn_cphi (A : Class) : (synCphi A).fv = A.fv :=
   by
   have fresh_x : freshVar (A.fv) 0 ∉ (A.fv) := freshVar_not_mem (A.fv) 0
   have fresh_y : freshVar (A.fv) 1 ∉ (A.fv) := freshVar_not_mem (A.fv) 1
   have distinct_x_y : freshVar (A.fv) 0 ≠ freshVar (A.fv) 1 :=
     freshVar_injective (A.fv) (by decide)
   ext u
-  simp [syn_cphi, Wff.fv, Class.fv]; aesop
+  simp [synCphi, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cop (A : Class) (B : Class) : (syn_cop A B).fv = (A.fv) ∪ (B.fv) :=
+theorem fv_syn_cop (A : Class) (B : Class) : (synCop A B).fv = (A.fv) ∪ (B.fv) :=
   by
   have fresh_x : freshVar (A.fv ∪ B.fv) 0 ∉ (A.fv ∪ B.fv) :=
     freshVar_not_mem (A.fv ∪ B.fv) 0
@@ -750,25 +750,25 @@ theorem fv_syn_cop (A : Class) (B : Class) : (syn_cop A B).fv = (A.fv) ∪ (B.fv
   have distinct_x_y : freshVar (A.fv ∪ B.fv) 0 ≠ freshVar (A.fv ∪ B.fv) 1 :=
     freshVar_injective (A.fv ∪ B.fv) (by decide)
   ext u
-  simp [syn_cop, Wff.fv, Class.fv]; aesop
+  simp [synCop, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cproj1 (A : Class) : (syn_cproj1 A).fv = A.fv :=
+theorem fv_syn_cproj1 (A : Class) : (synCproj1 A).fv = A.fv :=
   by
   have fresh_x : freshVar (A.fv) 0 ∉ (A.fv) := freshVar_not_mem (A.fv) 0
   ext u
-  simp [syn_cproj1, Wff.fv, Class.fv]; aesop
+  simp [synCproj1, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cproj2 (A : Class) : (syn_cproj2 A).fv = A.fv :=
+theorem fv_syn_cproj2 (A : Class) : (synCproj2 A).fv = A.fv :=
   by
   have fresh_x : freshVar (A.fv) 0 ∉ (A.fv) := freshVar_not_mem (A.fv) 0
   ext u
-  simp [syn_cproj2, Wff.fv, Class.fv]; aesop
+  simp [synCproj2, Wff.fv, Class.fv]; aesop
 
 @[simp]
 theorem fv_syn_copab (x : Var) (y : Var) (ph : Wff) :
-    (syn_copab x y ph).fv =
+    (synCopab x y ph).fv =
       (((ph.fv).erase y).erase x) ∪ (((({ x } : Finset Var)).erase y).erase x) :=
   by
   have fresh_z :
@@ -777,17 +777,17 @@ theorem fv_syn_copab (x : Var) (y : Var) (ph : Wff) :
     freshVar_not_mem (({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ ph.fv) 0
   simp only [Finset.mem_union, Finset.mem_singleton] at fresh_z
   ext u
-  simp [syn_copab, Wff.fv, Class.fv]; aesop
+  simp [synCopab, Wff.fv, Class.fv]; aesop
 
 @[simp]
 theorem fv_syn_wbr (A : Class) (R : Class) (B : Class) :
-    (syn_wbr A R B).fv = (A.fv) ∪ (B.fv) ∪ (R.fv) :=
+    (synWbr A R B).fv = (A.fv) ∪ (B.fv) ∪ (R.fv) :=
   by
   ext u
-  simp [syn_wbr, Wff.fv]
+  simp [synWbr, Wff.fv]
 
 @[simp]
-theorem fv_syn_c1st : (syn_c1st).fv = (∅ : Finset Var) :=
+theorem fv_syn_c1st : (synC1st).fv = (∅ : Finset Var) :=
   by
   have fresh_x : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -802,10 +802,10 @@ theorem fv_syn_c1st : (syn_c1st).fv = (∅ : Finset Var) :=
   have distinct_y_z : freshVar ((∅ : Finset Var)) 1 ≠ freshVar ((∅ : Finset Var)) 2 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_c1st, Wff.fv, Class.fv]; aesop
+  simp [synC1st, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cswap : (syn_cswap).fv = (∅ : Finset Var) :=
+theorem fv_syn_cswap : (synCswap).fv = (∅ : Finset Var) :=
   by
   have fresh_w : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -828,10 +828,10 @@ theorem fv_syn_cswap : (syn_cswap).fv = (∅ : Finset Var) :=
   have distinct_y_z : freshVar ((∅ : Finset Var)) 2 ≠ freshVar ((∅ : Finset Var)) 3 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_cswap, Wff.fv, Class.fv]; aesop
+  simp [synCswap, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_csset : (syn_csset).fv = (∅ : Finset Var) :=
+theorem fv_syn_csset : (synCsset).fv = (∅ : Finset Var) :=
   by
   have fresh_x : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -840,10 +840,10 @@ theorem fv_syn_csset : (syn_csset).fv = (∅ : Finset Var) :=
   have distinct_x_y : freshVar ((∅ : Finset Var)) 0 ≠ freshVar ((∅ : Finset Var)) 1 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_csset, Class.fv]; aesop
+  simp [synCsset, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_ccom (A : Class) (B : Class) : (syn_ccom A B).fv = (A.fv) ∪ (B.fv) :=
+theorem fv_syn_ccom (A : Class) (B : Class) : (synCcom A B).fv = (A.fv) ∪ (B.fv) :=
   by
   have fresh_x : freshVar (A.fv ∪ B.fv) 0 ∉ (A.fv ∪ B.fv) :=
     freshVar_not_mem (A.fv ∪ B.fv) 0
@@ -861,10 +861,10 @@ theorem fv_syn_ccom (A : Class) (B : Class) : (syn_ccom A B).fv = (A.fv) ∪ (B.
   have distinct_y_z : freshVar (A.fv ∪ B.fv) 1 ≠ freshVar (A.fv ∪ B.fv) 2 :=
     freshVar_injective (A.fv ∪ B.fv) (by decide)
   ext u
-  simp [syn_ccom, Class.fv]; aesop
+  simp [synCcom, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cima (A : Class) (B : Class) : (syn_cima A B).fv = (A.fv) ∪ (B.fv) :=
+theorem fv_syn_cima (A : Class) (B : Class) : (synCima A B).fv = (A.fv) ∪ (B.fv) :=
   by
   have fresh_x : freshVar (A.fv ∪ B.fv) 0 ∉ (A.fv ∪ B.fv) :=
     freshVar_not_mem (A.fv ∪ B.fv) 0
@@ -875,10 +875,10 @@ theorem fv_syn_cima (A : Class) (B : Class) : (syn_cima A B).fv = (A.fv) ∪ (B.
   have distinct_x_y : freshVar (A.fv ∪ B.fv) 0 ≠ freshVar (A.fv ∪ B.fv) 1 :=
     freshVar_injective (A.fv ∪ B.fv) (by decide)
   ext u
-  simp [syn_cima, Class.fv]; aesop
+  simp [synCima, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_csi (A : Class) : (syn_csi A).fv = A.fv :=
+theorem fv_syn_csi (A : Class) : (synCsi A).fv = A.fv :=
   by
   have fresh_w : freshVar (A.fv) 0 ∉ (A.fv) := freshVar_not_mem (A.fv) 0
   have fresh_x : freshVar (A.fv) 1 ∉ (A.fv) := freshVar_not_mem (A.fv) 1
@@ -897,10 +897,10 @@ theorem fv_syn_csi (A : Class) : (syn_csi A).fv = A.fv :=
   have distinct_y_z : freshVar (A.fv) 2 ≠ freshVar (A.fv) 3 :=
     freshVar_injective (A.fv) (by decide)
   ext u
-  simp [syn_csi, Wff.fv, Class.fv]; aesop
+  simp [synCsi, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cid : (syn_cid).fv = (∅ : Finset Var) :=
+theorem fv_syn_cid : (synCid).fv = (∅ : Finset Var) :=
   by
   have fresh_x : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -909,10 +909,10 @@ theorem fv_syn_cid : (syn_cid).fv = (∅ : Finset Var) :=
   have distinct_x_y : freshVar ((∅ : Finset Var)) 0 ≠ freshVar ((∅ : Finset Var)) 1 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_cid, Wff.fv]; aesop
+  simp [synCid, Wff.fv]; aesop
 
 @[simp]
-theorem fv_syn_cxp (A : Class) (B : Class) : (syn_cxp A B).fv = (A.fv) ∪ (B.fv) :=
+theorem fv_syn_cxp (A : Class) (B : Class) : (synCxp A B).fv = (A.fv) ∪ (B.fv) :=
   by
   have fresh_x : freshVar (A.fv ∪ B.fv) 0 ∉ (A.fv ∪ B.fv) :=
     freshVar_not_mem (A.fv ∪ B.fv) 0
@@ -923,87 +923,87 @@ theorem fv_syn_cxp (A : Class) (B : Class) : (syn_cxp A B).fv = (A.fv) ∪ (B.fv
   have distinct_x_y : freshVar (A.fv ∪ B.fv) 0 ≠ freshVar (A.fv ∪ B.fv) 1 :=
     freshVar_injective (A.fv ∪ B.fv) (by decide)
   ext u
-  simp [syn_cxp, Wff.fv, Class.fv]; aesop
+  simp [synCxp, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_ccnv (A : Class) : (syn_ccnv A).fv = A.fv :=
+theorem fv_syn_ccnv (A : Class) : (synCcnv A).fv = A.fv :=
   by
   have fresh_x : freshVar (A.fv) 0 ∉ (A.fv) := freshVar_not_mem (A.fv) 0
   have fresh_y : freshVar (A.fv) 1 ∉ (A.fv) := freshVar_not_mem (A.fv) 1
   have distinct_x_y : freshVar (A.fv) 0 ≠ freshVar (A.fv) 1 :=
     freshVar_injective (A.fv) (by decide)
   ext u
-  simp [syn_ccnv, Class.fv]; aesop
+  simp [synCcnv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_crn (A : Class) : (syn_crn A).fv = A.fv :=
+theorem fv_syn_crn (A : Class) : (synCrn A).fv = A.fv :=
   by
   ext u
-  simp [syn_crn]
+  simp [synCrn]
 
 @[simp]
-theorem fv_syn_cdm (A : Class) : (syn_cdm A).fv = A.fv :=
+theorem fv_syn_cdm (A : Class) : (synCdm A).fv = A.fv :=
   by
   ext u
-  simp [syn_cdm]
+  simp [synCdm]
 
 @[simp]
-theorem fv_syn_cres (A : Class) (B : Class) : (syn_cres A B).fv = (A.fv) ∪ (B.fv) :=
+theorem fv_syn_cres (A : Class) (B : Class) : (synCres A B).fv = (A.fv) ∪ (B.fv) :=
   by
   ext u
-  simp [syn_cres]
+  simp [synCres]
 
 @[simp]
-theorem fv_syn_wfun (A : Class) : (syn_wfun A).fv = A.fv :=
+theorem fv_syn_wfun (A : Class) : (synWfun A).fv = A.fv :=
   by
   ext u
-  simp [syn_wfun]
+  simp [synWfun]
 
 @[simp]
-theorem fv_syn_wfn (A : Class) (B : Class) : (syn_wfn A B).fv = (A.fv) ∪ (B.fv) :=
+theorem fv_syn_wfn (A : Class) (B : Class) : (synWfn A B).fv = (A.fv) ∪ (B.fv) :=
   by
   ext u
-  simp [syn_wfn, Wff.fv]
+  simp [synWfn, Wff.fv]
 
 @[simp]
 theorem fv_syn_wf (F : Class) (A : Class) (B : Class) :
-    (syn_wf F A B).fv = (A.fv) ∪ (B.fv) ∪ (F.fv) :=
+    (synWf F A B).fv = (A.fv) ∪ (B.fv) ∪ (F.fv) :=
   by
   ext u
-  simp [syn_wf]; aesop
+  simp [synWf]; aesop
 
 @[simp]
 theorem fv_syn_wf1 (F : Class) (A : Class) (B : Class) :
-    (syn_wf1 F A B).fv = (A.fv) ∪ (B.fv) ∪ (F.fv) :=
+    (synWf1 F A B).fv = (A.fv) ∪ (B.fv) ∪ (F.fv) :=
   by
   ext u
-  simp [syn_wf1]
+  simp [synWf1]
 
 @[simp]
 theorem fv_syn_wfo (F : Class) (A : Class) (B : Class) :
-    (syn_wfo F A B).fv = (A.fv) ∪ (B.fv) ∪ (F.fv) :=
+    (synWfo F A B).fv = (A.fv) ∪ (B.fv) ∪ (F.fv) :=
   by
   ext u
-  simp [syn_wfo, Wff.fv]; aesop
+  simp [synWfo, Wff.fv]; aesop
 
 @[simp]
 theorem fv_syn_wf1o (F : Class) (A : Class) (B : Class) :
-    (syn_wf1o F A B).fv = (A.fv) ∪ (B.fv) ∪ (F.fv) :=
+    (synWf1o F A B).fv = (A.fv) ∪ (B.fv) ∪ (F.fv) :=
   by
   ext u
-  simp [syn_wf1o]
+  simp [synWf1o]
 
 @[simp]
-theorem fv_syn_cfv (F : Class) (A : Class) : (syn_cfv F A).fv = (A.fv) ∪ (F.fv) :=
+theorem fv_syn_cfv (F : Class) (A : Class) : (synCfv F A).fv = (A.fv) ∪ (F.fv) :=
   by
   have fresh_x : freshVar (F.fv ∪ A.fv) 0 ∉ (F.fv ∪ A.fv) :=
     freshVar_not_mem (F.fv ∪ A.fv) 0
   simp only [Finset.mem_union] at fresh_x
   ext u
-  simp [syn_cfv, Class.fv]; aesop
+  simp [synCfv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_c2nd : (syn_c2nd).fv = (∅ : Finset Var) :=
+theorem fv_syn_c2nd : (synC2nd).fv = (∅ : Finset Var) :=
   by
   have fresh_x : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -1018,18 +1018,18 @@ theorem fv_syn_c2nd : (syn_c2nd).fv = (∅ : Finset Var) :=
   have distinct_y_z : freshVar ((∅ : Finset Var)) 1 ≠ freshVar ((∅ : Finset Var)) 2 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_c2nd, Wff.fv, Class.fv]; aesop
+  simp [synC2nd, Wff.fv, Class.fv]; aesop
 
 @[simp]
 theorem fv_syn_co (A : Class) (F : Class) (B : Class) :
-    (syn_co A F B).fv = (A.fv) ∪ (B.fv) ∪ (F.fv) :=
+    (synCo A F B).fv = (A.fv) ∪ (B.fv) ∪ (F.fv) :=
   by
   ext u
-  simp [syn_co]
+  simp [synCo]
 
 @[simp]
 theorem fv_syn_coprab (x : Var) (y : Var) (z : Var) (ph : Wff) :
-    (syn_coprab x y z ph).fv =
+    (synCoprab x y z ph).fv =
       ((((ph.fv).erase z).erase y).erase x) ∪
           ((((({ x } : Finset Var)).erase z).erase y).erase x) ∪
         ((((({ y } : Finset Var)).erase z).erase y).erase x) :=
@@ -1042,11 +1042,11 @@ theorem fv_syn_coprab (x : Var) (y : Var) (z : Var) (ph : Wff) :
       (({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ ({ z } : Finset Var) ∪ ph.fv) 0
   simp only [Finset.mem_union, Finset.mem_singleton] at fresh_w
   ext u
-  simp [syn_coprab, Wff.fv, Class.fv]; aesop
+  simp [synCoprab, Wff.fv, Class.fv]; aesop
 
 @[simp]
 theorem fv_syn_cmpt (x : Var) (A : Class) (B : Class) :
-    (syn_cmpt x A B).fv = ((A.fv).erase x) ∪ ((B.fv).erase x) :=
+    (synCmpt x A B).fv = ((A.fv).erase x) ∪ ((B.fv).erase x) :=
   by
   have fresh_y :
     freshVar (({ x } : Finset Var) ∪ A.fv ∪ B.fv) 0 ∉
@@ -1054,11 +1054,11 @@ theorem fv_syn_cmpt (x : Var) (A : Class) (B : Class) :
     freshVar_not_mem (({ x } : Finset Var) ∪ A.fv ∪ B.fv) 0
   simp only [Finset.mem_union, Finset.mem_singleton] at fresh_y
   ext u
-  simp [syn_cmpt, Wff.fv, Class.fv]; aesop
+  simp [synCmpt, Wff.fv, Class.fv]; aesop
 
 @[simp]
 theorem fv_syn_cmpt2 (x : Var) (A : Class) (y : Var) (B : Class) (C : Class) :
-    (syn_cmpt2 x A y B C).fv =
+    (synCmpt2 x A y B C).fv =
       (((A.fv).erase y).erase x) ∪ (((B.fv).erase y).erase x) ∪
           (((C.fv).erase y).erase x) ∪
         (((({ x } : Finset Var)).erase y).erase x) :=
@@ -1069,34 +1069,22 @@ theorem fv_syn_cmpt2 (x : Var) (A : Class) (y : Var) (B : Class) (C : Class) :
     freshVar_not_mem (({ x } : Finset Var) ∪ A.fv ∪ ({ y } : Finset Var) ∪ B.fv ∪ C.fv) 0
   simp only [Finset.mem_union, Finset.mem_singleton] at fresh_z
   ext u
-  simp [syn_cmpt2, Wff.fv, Class.fv]; aesop
+  simp [synCmpt2, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_ctxp (A : Class) (B : Class) : (syn_ctxp A B).fv = (A.fv) ∪ (B.fv) :=
+theorem fv_syn_ctxp (A : Class) (B : Class) : (synCtxp A B).fv = (A.fv) ∪ (B.fv) :=
   by
   ext u
-  simp [syn_ctxp]
+  simp [synCtxp]
 
 @[simp]
-theorem fv_syn_cfix (A : Class) : (syn_cfix A).fv = A.fv :=
+theorem fv_syn_cfix (A : Class) : (synCfix A).fv = A.fv :=
   by
   ext u
-  simp [syn_cfix]
+  simp [synCfix]
 
 @[simp]
-theorem fv_syn_ccup : (syn_ccup).fv = (∅ : Finset Var) :=
-  by
-  have fresh_x : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
-    freshVar_not_mem ((∅ : Finset Var)) 0
-  have fresh_y : freshVar ((∅ : Finset Var)) 1 ∉ ((∅ : Finset Var)) :=
-    freshVar_not_mem ((∅ : Finset Var)) 1
-  have distinct_x_y : freshVar ((∅ : Finset Var)) 0 ≠ freshVar ((∅ : Finset Var)) 1 :=
-    freshVar_injective ((∅ : Finset Var)) (by decide)
-  ext u
-  simp [syn_ccup, Class.fv]; aesop
-
-@[simp]
-theorem fv_syn_cdisj : (syn_cdisj).fv = (∅ : Finset Var) :=
+theorem fv_syn_ccup : (synCcup).fv = (∅ : Finset Var) :=
   by
   have fresh_x : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -1105,10 +1093,10 @@ theorem fv_syn_cdisj : (syn_cdisj).fv = (∅ : Finset Var) :=
   have distinct_x_y : freshVar ((∅ : Finset Var)) 0 ≠ freshVar ((∅ : Finset Var)) 1 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_cdisj, Wff.fv, Class.fv]; aesop
+  simp [synCcup, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_caddcfn : (syn_caddcfn).fv = (∅ : Finset Var) :=
+theorem fv_syn_cdisj : (synCdisj).fv = (∅ : Finset Var) :=
   by
   have fresh_x : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -1117,10 +1105,10 @@ theorem fv_syn_caddcfn : (syn_caddcfn).fv = (∅ : Finset Var) :=
   have distinct_x_y : freshVar ((∅ : Finset Var)) 0 ≠ freshVar ((∅ : Finset Var)) 1 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_caddcfn, Class.fv]; aesop
+  simp [synCdisj, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_ccompose : (syn_ccompose).fv = (∅ : Finset Var) :=
+theorem fv_syn_caddcfn : (synCaddcfn).fv = (∅ : Finset Var) :=
   by
   have fresh_x : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -1129,48 +1117,60 @@ theorem fv_syn_ccompose : (syn_ccompose).fv = (∅ : Finset Var) :=
   have distinct_x_y : freshVar ((∅ : Finset Var)) 0 ≠ freshVar ((∅ : Finset Var)) 1 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_ccompose, Class.fv]; aesop
+  simp [synCaddcfn, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cins2 (A : Class) : (syn_cins2 A).fv = A.fv :=
+theorem fv_syn_ccompose : (synCcompose).fv = (∅ : Finset Var) :=
+  by
+  have fresh_x : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
+    freshVar_not_mem ((∅ : Finset Var)) 0
+  have fresh_y : freshVar ((∅ : Finset Var)) 1 ∉ ((∅ : Finset Var)) :=
+    freshVar_not_mem ((∅ : Finset Var)) 1
+  have distinct_x_y : freshVar ((∅ : Finset Var)) 0 ≠ freshVar ((∅ : Finset Var)) 1 :=
+    freshVar_injective ((∅ : Finset Var)) (by decide)
+  ext u
+  simp [synCcompose, Class.fv]; aesop
+
+@[simp]
+theorem fv_syn_cins2 (A : Class) : (synCins2 A).fv = A.fv :=
   by
   ext u
-  simp [syn_cins2]
+  simp [synCins2]
 
 @[simp]
-theorem fv_syn_cins3 (A : Class) : (syn_cins3 A).fv = A.fv :=
+theorem fv_syn_cins3 (A : Class) : (synCins3 A).fv = A.fv :=
   by
   ext u
-  simp [syn_cins3]
+  simp [synCins3]
 
 @[simp]
-theorem fv_syn_cimage (A : Class) : (syn_cimage A).fv = A.fv :=
+theorem fv_syn_cimage (A : Class) : (synCimage A).fv = A.fv :=
   by
   ext u
-  simp [syn_cimage]
+  simp [synCimage]
 
 @[simp]
-theorem fv_syn_cins4 (A : Class) : (syn_cins4 A).fv = A.fv :=
+theorem fv_syn_cins4 (A : Class) : (synCins4 A).fv = A.fv :=
   by
   ext u
-  simp [syn_cins4]
+  simp [synCins4]
 
 @[simp]
-theorem fv_syn_csi3 (A : Class) : (syn_csi3 A).fv = A.fv :=
+theorem fv_syn_csi3 (A : Class) : (synCsi3 A).fv = A.fv :=
   by
   ext u
-  simp [syn_csi3]
+  simp [synCsi3]
 
 @[simp]
-theorem fv_syn_cfuns : (syn_cfuns).fv = (∅ : Finset Var) :=
+theorem fv_syn_cfuns : (synCfuns).fv = (∅ : Finset Var) :=
   by
   have fresh_f : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
   ext u
-  simp [syn_cfuns, Class.fv]
+  simp [synCfuns, Class.fv]
 
 @[simp]
-theorem fv_syn_cfns : (syn_cfns).fv = (∅ : Finset Var) :=
+theorem fv_syn_cfns : (synCfns).fv = (∅ : Finset Var) :=
   by
   have fresh_a : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -1179,33 +1179,33 @@ theorem fv_syn_cfns : (syn_cfns).fv = (∅ : Finset Var) :=
   have distinct_a_f : freshVar ((∅ : Finset Var)) 0 ≠ freshVar ((∅ : Finset Var)) 1 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_cfns, Class.fv]; aesop
+  simp [synCfns, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cpw1fn : (syn_cpw1fn).fv = (∅ : Finset Var) :=
+theorem fv_syn_cpw1fn : (synCpw1fn).fv = (∅ : Finset Var) :=
   by
   have fresh_x : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
   ext u
-  simp [syn_cpw1fn, Class.fv]
+  simp [synCpw1fn, Class.fv]
 
 @[simp]
-theorem fv_syn_cfullfun (F : Class) : (syn_cfullfun F).fv = F.fv :=
+theorem fv_syn_cfullfun (F : Class) : (synCfullfun F).fv = F.fv :=
   by
   ext u
-  simp [syn_cfullfun]
+  simp [synCfullfun]
 
 @[simp]
-theorem fv_syn_cclos1 (S : Class) (R : Class) : (syn_cclos1 S R).fv = (R.fv) ∪ (S.fv) :=
+theorem fv_syn_cclos1 (S : Class) (R : Class) : (synCclos1 S R).fv = (R.fv) ∪ (S.fv) :=
   by
   have fresh_a : freshVar (S.fv ∪ R.fv) 0 ∉ (S.fv ∪ R.fv) :=
     freshVar_not_mem (S.fv ∪ R.fv) 0
   simp only [Finset.mem_union] at fresh_a
   ext u
-  simp [syn_cclos1, Class.fv]; aesop
+  simp [synCclos1, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_ctrans : (syn_ctrans).fv = (∅ : Finset Var) :=
+theorem fv_syn_ctrans : (synCtrans).fv = (∅ : Finset Var) :=
   by
   have fresh_a : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -1238,10 +1238,10 @@ theorem fv_syn_ctrans : (syn_ctrans).fv = (∅ : Finset Var) :=
   have distinct_y_z : freshVar ((∅ : Finset Var)) 3 ≠ freshVar ((∅ : Finset Var)) 4 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_ctrans, Wff.fv, Class.fv]; aesop
+  simp [synCtrans, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cref : (syn_cref).fv = (∅ : Finset Var) :=
+theorem fv_syn_cref : (synCref).fv = (∅ : Finset Var) :=
   by
   have fresh_a : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -1256,42 +1256,10 @@ theorem fv_syn_cref : (syn_cref).fv = (∅ : Finset Var) :=
   have distinct_r_x : freshVar ((∅ : Finset Var)) 1 ≠ freshVar ((∅ : Finset Var)) 2 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_cref, Class.fv]; aesop
+  simp [synCref, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cantisym : (syn_cantisym).fv = (∅ : Finset Var) :=
-  by
-  have fresh_a : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
-    freshVar_not_mem ((∅ : Finset Var)) 0
-  have fresh_r : freshVar ((∅ : Finset Var)) 1 ∉ ((∅ : Finset Var)) :=
-    freshVar_not_mem ((∅ : Finset Var)) 1
-  have fresh_x : freshVar ((∅ : Finset Var)) 2 ∉ ((∅ : Finset Var)) :=
-    freshVar_not_mem ((∅ : Finset Var)) 2
-  have fresh_y : freshVar ((∅ : Finset Var)) 3 ∉ ((∅ : Finset Var)) :=
-    freshVar_not_mem ((∅ : Finset Var)) 3
-  have distinct_a_r : freshVar ((∅ : Finset Var)) 0 ≠ freshVar ((∅ : Finset Var)) 1 :=
-    freshVar_injective ((∅ : Finset Var)) (by decide)
-  have distinct_a_x : freshVar ((∅ : Finset Var)) 0 ≠ freshVar ((∅ : Finset Var)) 2 :=
-    freshVar_injective ((∅ : Finset Var)) (by decide)
-  have distinct_a_y : freshVar ((∅ : Finset Var)) 0 ≠ freshVar ((∅ : Finset Var)) 3 :=
-    freshVar_injective ((∅ : Finset Var)) (by decide)
-  have distinct_r_x : freshVar ((∅ : Finset Var)) 1 ≠ freshVar ((∅ : Finset Var)) 2 :=
-    freshVar_injective ((∅ : Finset Var)) (by decide)
-  have distinct_r_y : freshVar ((∅ : Finset Var)) 1 ≠ freshVar ((∅ : Finset Var)) 3 :=
-    freshVar_injective ((∅ : Finset Var)) (by decide)
-  have distinct_x_y : freshVar ((∅ : Finset Var)) 2 ≠ freshVar ((∅ : Finset Var)) 3 :=
-    freshVar_injective ((∅ : Finset Var)) (by decide)
-  ext u
-  simp [syn_cantisym, Wff.fv, Class.fv]; aesop
-
-@[simp]
-theorem fv_syn_cpartial : (syn_cpartial).fv = (∅ : Finset Var) :=
-  by
-  ext u
-  simp [syn_cpartial]
-
-@[simp]
-theorem fv_syn_cconnex : (syn_cconnex).fv = (∅ : Finset Var) :=
+theorem fv_syn_cantisym : (synCantisym).fv = (∅ : Finset Var) :=
   by
   have fresh_a : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -1314,16 +1282,48 @@ theorem fv_syn_cconnex : (syn_cconnex).fv = (∅ : Finset Var) :=
   have distinct_x_y : freshVar ((∅ : Finset Var)) 2 ≠ freshVar ((∅ : Finset Var)) 3 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_cconnex, Class.fv]; aesop
+  simp [synCantisym, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cstrict : (syn_cstrict).fv = (∅ : Finset Var) :=
+theorem fv_syn_cpartial : (synCpartial).fv = (∅ : Finset Var) :=
   by
   ext u
-  simp [syn_cstrict]
+  simp [synCpartial]
 
 @[simp]
-theorem fv_syn_cfound : (syn_cfound).fv = (∅ : Finset Var) :=
+theorem fv_syn_cconnex : (synCconnex).fv = (∅ : Finset Var) :=
+  by
+  have fresh_a : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
+    freshVar_not_mem ((∅ : Finset Var)) 0
+  have fresh_r : freshVar ((∅ : Finset Var)) 1 ∉ ((∅ : Finset Var)) :=
+    freshVar_not_mem ((∅ : Finset Var)) 1
+  have fresh_x : freshVar ((∅ : Finset Var)) 2 ∉ ((∅ : Finset Var)) :=
+    freshVar_not_mem ((∅ : Finset Var)) 2
+  have fresh_y : freshVar ((∅ : Finset Var)) 3 ∉ ((∅ : Finset Var)) :=
+    freshVar_not_mem ((∅ : Finset Var)) 3
+  have distinct_a_r : freshVar ((∅ : Finset Var)) 0 ≠ freshVar ((∅ : Finset Var)) 1 :=
+    freshVar_injective ((∅ : Finset Var)) (by decide)
+  have distinct_a_x : freshVar ((∅ : Finset Var)) 0 ≠ freshVar ((∅ : Finset Var)) 2 :=
+    freshVar_injective ((∅ : Finset Var)) (by decide)
+  have distinct_a_y : freshVar ((∅ : Finset Var)) 0 ≠ freshVar ((∅ : Finset Var)) 3 :=
+    freshVar_injective ((∅ : Finset Var)) (by decide)
+  have distinct_r_x : freshVar ((∅ : Finset Var)) 1 ≠ freshVar ((∅ : Finset Var)) 2 :=
+    freshVar_injective ((∅ : Finset Var)) (by decide)
+  have distinct_r_y : freshVar ((∅ : Finset Var)) 1 ≠ freshVar ((∅ : Finset Var)) 3 :=
+    freshVar_injective ((∅ : Finset Var)) (by decide)
+  have distinct_x_y : freshVar ((∅ : Finset Var)) 2 ≠ freshVar ((∅ : Finset Var)) 3 :=
+    freshVar_injective ((∅ : Finset Var)) (by decide)
+  ext u
+  simp [synCconnex, Class.fv]; aesop
+
+@[simp]
+theorem fv_syn_cstrict : (synCstrict).fv = (∅ : Finset Var) :=
+  by
+  ext u
+  simp [synCstrict]
+
+@[simp]
+theorem fv_syn_cfound : (synCfound).fv = (∅ : Finset Var) :=
   by
   have fresh_a : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -1356,16 +1356,16 @@ theorem fv_syn_cfound : (syn_cfound).fv = (∅ : Finset Var) :=
   have distinct_y_z : freshVar ((∅ : Finset Var)) 3 ≠ freshVar ((∅ : Finset Var)) 4 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_cfound, Wff.fv, Class.fv]; aesop
+  simp [synCfound, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cwe : (syn_cwe).fv = (∅ : Finset Var) :=
+theorem fv_syn_cwe : (synCwe).fv = (∅ : Finset Var) :=
   by
   ext u
-  simp [syn_cwe]
+  simp [synCwe]
 
 @[simp]
-theorem fv_syn_csym : (syn_csym).fv = (∅ : Finset Var) :=
+theorem fv_syn_csym : (synCsym).fv = (∅ : Finset Var) :=
   by
   have fresh_a : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -1388,22 +1388,22 @@ theorem fv_syn_csym : (syn_csym).fv = (∅ : Finset Var) :=
   have distinct_x_y : freshVar ((∅ : Finset Var)) 2 ≠ freshVar ((∅ : Finset Var)) 3 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_csym, Wff.fv, Class.fv]; aesop
+  simp [synCsym, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cer : (syn_cer).fv = (∅ : Finset Var) :=
+theorem fv_syn_cer : (synCer).fv = (∅ : Finset Var) :=
   by
   ext u
-  simp [syn_cer]
+  simp [synCer]
 
 @[simp]
-theorem fv_syn_cec (A : Class) (R : Class) : (syn_cec A R).fv = (A.fv) ∪ (R.fv) :=
+theorem fv_syn_cec (A : Class) (R : Class) : (synCec A R).fv = (A.fv) ∪ (R.fv) :=
   by
   ext u
-  simp [syn_cec]; aesop
+  simp [synCec]; aesop
 
 @[simp]
-theorem fv_syn_cqs (A : Class) (R : Class) : (syn_cqs A R).fv = (A.fv) ∪ (R.fv) :=
+theorem fv_syn_cqs (A : Class) (R : Class) : (synCqs A R).fv = (A.fv) ∪ (R.fv) :=
   by
   have fresh_x : freshVar (A.fv ∪ R.fv) 0 ∉ (A.fv ∪ R.fv) :=
     freshVar_not_mem (A.fv ∪ R.fv) 0
@@ -1414,10 +1414,10 @@ theorem fv_syn_cqs (A : Class) (R : Class) : (syn_cqs A R).fv = (A.fv) ∪ (R.fv
   have distinct_x_y : freshVar (A.fv ∪ R.fv) 0 ≠ freshVar (A.fv ∪ R.fv) 1 :=
     freshVar_injective (A.fv ∪ R.fv) (by decide)
   ext u
-  simp [syn_cqs, Wff.fv, Class.fv]; aesop
+  simp [synCqs, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cmap : (syn_cmap).fv = (∅ : Finset Var) :=
+theorem fv_syn_cmap : (synCmap).fv = (∅ : Finset Var) :=
   by
   have fresh_f : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -1432,10 +1432,10 @@ theorem fv_syn_cmap : (syn_cmap).fv = (∅ : Finset Var) :=
   have distinct_x_y : freshVar ((∅ : Finset Var)) 1 ≠ freshVar ((∅ : Finset Var)) 2 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_cmap, Class.fv]; aesop
+  simp [synCmap, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cen : (syn_cen).fv = (∅ : Finset Var) :=
+theorem fv_syn_cen : (synCen).fv = (∅ : Finset Var) :=
   by
   have fresh_f : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -1450,16 +1450,16 @@ theorem fv_syn_cen : (syn_cen).fv = (∅ : Finset Var) :=
   have distinct_x_y : freshVar ((∅ : Finset Var)) 1 ≠ freshVar ((∅ : Finset Var)) 2 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_cen, Class.fv]; aesop
+  simp [synCen, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cncs : (syn_cncs).fv = (∅ : Finset Var) :=
+theorem fv_syn_cncs : (synCncs).fv = (∅ : Finset Var) :=
   by
   ext u
-  simp [syn_cncs]
+  simp [synCncs]
 
 @[simp]
-theorem fv_syn_clec : (syn_clec).fv = (∅ : Finset Var) :=
+theorem fv_syn_clec : (synClec).fv = (∅ : Finset Var) :=
   by
   have fresh_a : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -1482,44 +1482,44 @@ theorem fv_syn_clec : (syn_clec).fv = (∅ : Finset Var) :=
   have distinct_x_y : freshVar ((∅ : Finset Var)) 2 ≠ freshVar ((∅ : Finset Var)) 3 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_clec, Class.fv]; aesop
+  simp [synClec, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_cltc : (syn_cltc).fv = (∅ : Finset Var) :=
+theorem fv_syn_cltc : (synCltc).fv = (∅ : Finset Var) :=
   by
   ext u
-  simp [syn_cltc]
+  simp [synCltc]
 
 @[simp]
-theorem fv_syn_cnc (A : Class) : (syn_cnc A).fv = A.fv :=
+theorem fv_syn_cnc (A : Class) : (synCnc A).fv = A.fv :=
   by
   ext u
-  simp [syn_cnc]
+  simp [synCnc]
 
 @[simp]
-theorem fv_syn_ctc (A : Class) : (syn_ctc A).fv = A.fv :=
+theorem fv_syn_ctc (A : Class) : (synCtc A).fv = A.fv :=
   by
   have fresh_b : freshVar (A.fv) 0 ∉ (A.fv) := freshVar_not_mem (A.fv) 0
   have fresh_x : freshVar (A.fv) 1 ∉ (A.fv) := freshVar_not_mem (A.fv) 1
   have distinct_b_x : freshVar (A.fv) 0 ≠ freshVar (A.fv) 1 :=
     freshVar_injective (A.fv) (by decide)
   ext u
-  simp [syn_ctc, Wff.fv, Class.fv]; aesop
+  simp [synCtc, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_c2c : (syn_c2c).fv = (∅ : Finset Var) :=
+theorem fv_syn_c2c : (synC2c).fv = (∅ : Finset Var) :=
   by
   ext u
-  simp [syn_c2c]
+  simp [synC2c]
 
 @[simp]
-theorem fv_syn_c3c : (syn_c3c).fv = (∅ : Finset Var) :=
+theorem fv_syn_c3c : (synC3c).fv = (∅ : Finset Var) :=
   by
   ext u
-  simp [syn_c3c]
+  simp [synC3c]
 
 @[simp]
-theorem fv_syn_cce : (syn_cce).fv = (∅ : Finset Var) :=
+theorem fv_syn_cce : (synCce).fv = (∅ : Finset Var) :=
   by
   have fresh_a : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -1552,18 +1552,18 @@ theorem fv_syn_cce : (syn_cce).fv = (∅ : Finset Var) :=
   have distinct_m_n : freshVar ((∅ : Finset Var)) 3 ≠ freshVar ((∅ : Finset Var)) 4 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_cce, Wff.fv, Class.fv]; aesop
+  simp [synCce, Wff.fv, Class.fv]; aesop
 
 @[simp]
-theorem fv_syn_ctcfn : (syn_ctcfn).fv = (∅ : Finset Var) :=
+theorem fv_syn_ctcfn : (synCtcfn).fv = (∅ : Finset Var) :=
   by
   have fresh_x : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
   ext u
-  simp [syn_ctcfn, Class.fv]
+  simp [synCtcfn, Class.fv]
 
 @[simp]
-theorem fv_syn_cspac : (syn_cspac).fv = (∅ : Finset Var) :=
+theorem fv_syn_cspac : (synCspac).fv = (∅ : Finset Var) :=
   by
   have fresh_m : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -1578,6 +1578,6 @@ theorem fv_syn_cspac : (syn_cspac).fv = (∅ : Finset Var) :=
   have distinct_x_y : freshVar ((∅ : Finset Var)) 1 ≠ freshVar ((∅ : Finset Var)) 2 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_cspac, Wff.fv, Class.fv]; aesop
+  simp [synCspac, Wff.fv, Class.fv]; aesop
 
 end NFChoice.Compiler.CompactSyntaxFV

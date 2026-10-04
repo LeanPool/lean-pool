@@ -32,1031 +32,1181 @@ open NFChoice.DefinitionLeaves.AlphaFocusedFV
 open NFChoice.DirectNominalPrf
 open NFChoice.DirectNominalPrf.Nominal
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_000`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_000 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy000 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
   (freshVar ((R).fv ∪ (D).fv ∪ (S_cls).fv ∪ (E).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_001`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_001 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy001 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
   (freshVar ((R).fv ∪ (D).fv ∪ (S_cls).fv ∪ (E).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_002`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_002 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy002 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
   (freshVar ((R).fv ∪ (D).fv ∪ (S_cls).fv ∪ (E).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_003`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_003 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy003 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_000 D R S_cls E))).fv ∪ ((syn_cin R (syn_cxp
-                  (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid)))
-                      (syn_csn (Class.cv (nb095_alpha_dummy_002 D R S_cls E))))) (syn_cin D
-                    (syn_cima (syn_ccnv (syn_cdif R (syn_cid)))
-                      (syn_csn (Class.cv (nb095_alpha_dummy_002 D R S_cls E)))))))).fv ∪
-          ((syn_cin S_cls (syn_cxp (syn_cin E (syn_cima (syn_ccnv (syn_cdif S_cls (syn_cid)))
-                    (syn_csn (Class.cv (nb095_alpha_dummy_001 D R S_cls E))))) (syn_cin E
-                  (syn_cima (syn_ccnv (syn_cdif S_cls (syn_cid)))
-                    (syn_csn (Class.cv (nb095_alpha_dummy_001 D R S_cls E)))))))).fv ∪
-        ((syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid)))
-              (syn_csn (Class.cv (nb095_alpha_dummy_002 D R S_cls E)))))).fv ∪ ((syn_cin E
-          (syn_cima (syn_ccnv (syn_cdif S_cls (syn_cid)))
-            (syn_csn (Class.cv (nb095_alpha_dummy_001 D R S_cls E)))))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy000 D R S_cls E))).fv ∪ ((synCin R (synCxp
+                  (synCin D (synCima (synCcnv (synCdif R (synCid)))
+                      (synCsn (Class.cv (nb095AlphaDummy002 D R S_cls E))))) (synCin D
+                    (synCima (synCcnv (synCdif R (synCid)))
+                      (synCsn (Class.cv (nb095AlphaDummy002 D R S_cls E)))))))).fv ∪
+          ((synCin S_cls (synCxp (synCin E (synCima (synCcnv (synCdif S_cls (synCid)))
+                    (synCsn (Class.cv (nb095AlphaDummy001 D R S_cls E))))) (synCin E
+                  (synCima (synCcnv (synCdif S_cls (synCid)))
+                    (synCsn (Class.cv (nb095AlphaDummy001 D R S_cls E)))))))).fv ∪
+        ((synCin D (synCima (synCcnv (synCdif R (synCid)))
+              (synCsn (Class.cv (nb095AlphaDummy002 D R S_cls E)))))).fv ∪ ((synCin E
+          (synCima (synCcnv (synCdif S_cls (synCid)))
+            (synCsn (Class.cv (nb095AlphaDummy001 D R S_cls E)))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_004`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_004 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy004 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_000 D R S_cls E))).fv ∪ ((syn_cin R (syn_cxp
-                  (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid)))
-                      (syn_csn (Class.cv (nb095_alpha_dummy_002 D R S_cls E))))) (syn_cin D
-                    (syn_cima (syn_ccnv (syn_cdif R (syn_cid)))
-                      (syn_csn (Class.cv (nb095_alpha_dummy_002 D R S_cls E)))))))).fv ∪
-          ((syn_cin S_cls (syn_cxp (syn_cin E (syn_cima (syn_ccnv (syn_cdif S_cls (syn_cid)))
-                    (syn_csn (Class.cv (nb095_alpha_dummy_001 D R S_cls E))))) (syn_cin E
-                  (syn_cima (syn_ccnv (syn_cdif S_cls (syn_cid)))
-                    (syn_csn (Class.cv (nb095_alpha_dummy_001 D R S_cls E)))))))).fv ∪
-        ((syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid)))
-              (syn_csn (Class.cv (nb095_alpha_dummy_002 D R S_cls E)))))).fv ∪ ((syn_cin E
-          (syn_cima (syn_ccnv (syn_cdif S_cls (syn_cid)))
-            (syn_csn (Class.cv (nb095_alpha_dummy_001 D R S_cls E)))))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy000 D R S_cls E))).fv ∪ ((synCin R (synCxp
+                  (synCin D (synCima (synCcnv (synCdif R (synCid)))
+                      (synCsn (Class.cv (nb095AlphaDummy002 D R S_cls E))))) (synCin D
+                    (synCima (synCcnv (synCdif R (synCid)))
+                      (synCsn (Class.cv (nb095AlphaDummy002 D R S_cls E)))))))).fv ∪
+          ((synCin S_cls (synCxp (synCin E (synCima (synCcnv (synCdif S_cls (synCid)))
+                    (synCsn (Class.cv (nb095AlphaDummy001 D R S_cls E))))) (synCin E
+                  (synCima (synCcnv (synCdif S_cls (synCid)))
+                    (synCsn (Class.cv (nb095AlphaDummy001 D R S_cls E)))))))).fv ∪
+        ((synCin D (synCima (synCcnv (synCdif R (synCid)))
+              (synCsn (Class.cv (nb095AlphaDummy002 D R S_cls E)))))).fv ∪ ((synCin E
+          (synCima (synCcnv (synCdif S_cls (synCid)))
+            (synCsn (Class.cv (nb095AlphaDummy001 D R S_cls E)))))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_005`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_005 (x : Var) (u : Var) (D : Class) (R : Class)
+noncomputable def nb095AlphaDummy005 (x : Var) (u : Var) (D : Class) (R : Class)
     (S_cls : Class) (f : Var) (E : Class) : Var :=
-  (freshVar (((Class.cv f)).fv ∪ ((syn_cin R (syn_cxp (syn_cin D
-                    (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (Class.cv x))))
-                  (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid)))
-                      (syn_csn (Class.cv x))))))).fv ∪ ((syn_cin S_cls (syn_cxp (syn_cin E
-                  (syn_cima (syn_ccnv (syn_cdif S_cls (syn_cid))) (syn_csn (Class.cv u))))
-                (syn_cin E (syn_cima (syn_ccnv (syn_cdif S_cls (syn_cid)))
-                    (syn_csn (Class.cv u))))))).fv ∪ ((syn_cin D
-            (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (Class.cv x))))).fv ∪
-      ((syn_cin E (syn_cima (syn_ccnv (syn_cdif S_cls (syn_cid))) (syn_csn (Class.cv u))))).fv)
+  (freshVar (((Class.cv f)).fv ∪ ((synCin R (synCxp (synCin D
+                    (synCima (synCcnv (synCdif R (synCid))) (synCsn (Class.cv x))))
+                  (synCin D (synCima (synCcnv (synCdif R (synCid)))
+                      (synCsn (Class.cv x))))))).fv ∪ ((synCin S_cls (synCxp (synCin E
+                  (synCima (synCcnv (synCdif S_cls (synCid))) (synCsn (Class.cv u))))
+                (synCin E (synCima (synCcnv (synCdif S_cls (synCid)))
+                    (synCsn (Class.cv u))))))).fv ∪ ((synCin D
+            (synCima (synCcnv (synCdif R (synCid))) (synCsn (Class.cv x))))).fv ∪
+      ((synCin E (synCima (synCcnv (synCdif S_cls (synCid))) (synCsn (Class.cv u))))).fv)
     0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_006`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_006 (x : Var) (u : Var) (D : Class) (R : Class)
+noncomputable def nb095AlphaDummy006 (x : Var) (u : Var) (D : Class) (R : Class)
     (S_cls : Class) (f : Var) (E : Class) : Var :=
-  (freshVar (((Class.cv f)).fv ∪ ((syn_cin R (syn_cxp (syn_cin D
-                    (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (Class.cv x))))
-                  (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid)))
-                      (syn_csn (Class.cv x))))))).fv ∪ ((syn_cin S_cls (syn_cxp (syn_cin E
-                  (syn_cima (syn_ccnv (syn_cdif S_cls (syn_cid))) (syn_csn (Class.cv u))))
-                (syn_cin E (syn_cima (syn_ccnv (syn_cdif S_cls (syn_cid)))
-                    (syn_csn (Class.cv u))))))).fv ∪ ((syn_cin D
-            (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (Class.cv x))))).fv ∪
-      ((syn_cin E (syn_cima (syn_ccnv (syn_cdif S_cls (syn_cid))) (syn_csn (Class.cv u))))).fv)
+  (freshVar (((Class.cv f)).fv ∪ ((synCin R (synCxp (synCin D
+                    (synCima (synCcnv (synCdif R (synCid))) (synCsn (Class.cv x))))
+                  (synCin D (synCima (synCcnv (synCdif R (synCid)))
+                      (synCsn (Class.cv x))))))).fv ∪ ((synCin S_cls (synCxp (synCin E
+                  (synCima (synCcnv (synCdif S_cls (synCid))) (synCsn (Class.cv u))))
+                (synCin E (synCima (synCcnv (synCdif S_cls (synCid)))
+                    (synCsn (Class.cv u))))))).fv ∪ ((synCin D
+            (synCima (synCcnv (synCdif R (synCid))) (synCsn (Class.cv x))))).fv ∪
+      ((synCin E (synCima (synCcnv (synCdif S_cls (synCid))) (synCsn (Class.cv u))))).fv)
     1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_007`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_007 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy007 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cnin (syn_ccom (Class.cv (nb095_alpha_dummy_000 D R S_cls E))
-            (syn_ccnv (Class.cv (nb095_alpha_dummy_000 D R S_cls E)))) (syn_cid))).fv ∪
-      ((syn_cnin (syn_ccom (Class.cv (nb095_alpha_dummy_000 D R S_cls E))
-            (syn_ccnv (Class.cv (nb095_alpha_dummy_000 D R S_cls E)))) (syn_cid))).fv) 0)
+  (freshVar (((synCnin (synCcom (Class.cv (nb095AlphaDummy000 D R S_cls E))
+            (synCcnv (Class.cv (nb095AlphaDummy000 D R S_cls E)))) (synCid))).fv ∪
+      ((synCnin (synCcom (Class.cv (nb095AlphaDummy000 D R S_cls E))
+            (synCcnv (Class.cv (nb095AlphaDummy000 D R S_cls E)))) (synCid))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_008`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_008 (f : Var) : Var :=
-  (freshVar (((syn_cnin (syn_ccom (Class.cv f) (syn_ccnv (Class.cv f))) (syn_cid))).fv ∪
-      ((syn_cnin (syn_ccom (Class.cv f) (syn_ccnv (Class.cv f))) (syn_cid))).fv) 0)
+noncomputable def nb095AlphaDummy008 (f : Var) : Var :=
+  (freshVar (((synCnin (synCcom (Class.cv f) (synCcnv (Class.cv f))) (synCid))).fv ∪
+      ((synCnin (synCcom (Class.cv f) (synCcnv (Class.cv f))) (synCid))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_009`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_009 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy009 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccom (Class.cv (nb095_alpha_dummy_000 D R S_cls E))
-          (syn_ccnv (Class.cv (nb095_alpha_dummy_000 D R S_cls E))))).fv ∪ ((syn_cid)).fv) 0)
+  (freshVar (((synCcom (Class.cv (nb095AlphaDummy000 D R S_cls E))
+          (synCcnv (Class.cv (nb095AlphaDummy000 D R S_cls E))))).fv ∪ ((synCid)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_010`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_010 (f : Var) : Var :=
-  (freshVar (((syn_ccom (Class.cv f) (syn_ccnv (Class.cv f)))).fv ∪ ((syn_cid)).fv) 0)
+noncomputable def nb095AlphaDummy010 (f : Var) : Var :=
+  (freshVar (((synCcom (Class.cv f) (synCcnv (Class.cv f)))).fv ∪ ((synCid)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_011`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_011 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy011 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_000 D R S_cls E))).fv ∪
-      ((syn_ccnv (Class.cv (nb095_alpha_dummy_000 D R S_cls E)))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy000 D R S_cls E))).fv ∪
+      ((synCcnv (Class.cv (nb095AlphaDummy000 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_012`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_012 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy012 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_000 D R S_cls E))).fv ∪
-      ((syn_ccnv (Class.cv (nb095_alpha_dummy_000 D R S_cls E)))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy000 D R S_cls E))).fv ∪
+      ((synCcnv (Class.cv (nb095AlphaDummy000 D R S_cls E)))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_013`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_013 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy013 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_000 D R S_cls E))).fv ∪
-      ((syn_ccnv (Class.cv (nb095_alpha_dummy_000 D R S_cls E)))).fv) 2)
+  (freshVar (((Class.cv (nb095AlphaDummy000 D R S_cls E))).fv ∪
+      ((synCcnv (Class.cv (nb095AlphaDummy000 D R S_cls E)))).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_014`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_014 (f : Var) : Var :=
-  (freshVar (((Class.cv f)).fv ∪ ((syn_ccnv (Class.cv f))).fv) 0)
+noncomputable def nb095AlphaDummy014 (f : Var) : Var :=
+  (freshVar (((Class.cv f)).fv ∪ ((synCcnv (Class.cv f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_015`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_015 (f : Var) : Var :=
-  (freshVar (((Class.cv f)).fv ∪ ((syn_ccnv (Class.cv f))).fv) 1)
+noncomputable def nb095AlphaDummy015 (f : Var) : Var :=
+  (freshVar (((Class.cv f)).fv ∪ ((synCcnv (Class.cv f))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_016`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_016 (f : Var) : Var :=
-  (freshVar (((Class.cv f)).fv ∪ ((syn_ccnv (Class.cv f))).fv) 2)
+noncomputable def nb095AlphaDummy016 (f : Var) : Var :=
+  (freshVar (((Class.cv f)).fv ∪ ((synCcnv (Class.cv f))).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_017`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_017 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy017 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (({(nb095_alpha_dummy_011 D R S_cls E)} : Finset Var) ∪
-        ({(nb095_alpha_dummy_012 D R S_cls E)} : Finset Var) ∪
-      ((syn_wex (nb095_alpha_dummy_013 D R S_cls E) (syn_wa
-            (syn_wbr (Class.cv (nb095_alpha_dummy_011 D R S_cls E))
-              (syn_ccnv (Class.cv (nb095_alpha_dummy_000 D R S_cls E)))
-              (Class.cv (nb095_alpha_dummy_013 D R S_cls E)))
-            (syn_wbr (Class.cv (nb095_alpha_dummy_013 D R S_cls E))
-              (Class.cv (nb095_alpha_dummy_000 D R S_cls E))
-              (Class.cv (nb095_alpha_dummy_012 D R S_cls E)))))).fv) 0)
+  (freshVar (({(nb095AlphaDummy011 D R S_cls E)} : Finset Var) ∪
+        ({(nb095AlphaDummy012 D R S_cls E)} : Finset Var) ∪
+      ((synWex (nb095AlphaDummy013 D R S_cls E) (synWa
+            (synWbr (Class.cv (nb095AlphaDummy011 D R S_cls E))
+              (synCcnv (Class.cv (nb095AlphaDummy000 D R S_cls E)))
+              (Class.cv (nb095AlphaDummy013 D R S_cls E)))
+            (synWbr (Class.cv (nb095AlphaDummy013 D R S_cls E))
+              (Class.cv (nb095AlphaDummy000 D R S_cls E))
+              (Class.cv (nb095AlphaDummy012 D R S_cls E)))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_018`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_018 (f : Var) : Var :=
-  (freshVar (({(nb095_alpha_dummy_014 f)} : Finset Var) ∪
-        ({(nb095_alpha_dummy_015 f)} : Finset Var) ∪ ((syn_wex (nb095_alpha_dummy_016 f) (syn_wa
-            (syn_wbr (Class.cv (nb095_alpha_dummy_014 f)) (syn_ccnv (Class.cv f))
-              (Class.cv (nb095_alpha_dummy_016 f)))
-            (syn_wbr (Class.cv (nb095_alpha_dummy_016 f)) (Class.cv f)
-              (Class.cv (nb095_alpha_dummy_015 f)))))).fv) 0)
+noncomputable def nb095AlphaDummy018 (f : Var) : Var :=
+  (freshVar (({(nb095AlphaDummy014 f)} : Finset Var) ∪
+        ({(nb095AlphaDummy015 f)} : Finset Var) ∪ ((synWex (nb095AlphaDummy016 f) (synWa
+            (synWbr (Class.cv (nb095AlphaDummy014 f)) (synCcnv (Class.cv f))
+              (Class.cv (nb095AlphaDummy016 f)))
+            (synWbr (Class.cv (nb095AlphaDummy016 f)) (Class.cv f)
+              (Class.cv (nb095AlphaDummy015 f)))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_019`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_019 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy019 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_011 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_012 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy011 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy012 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_020`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_020 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy020 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_011 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_012 D R S_cls E))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy011 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy012 D R S_cls E))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_021`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_021 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_014 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_015 f))).fv) 0)
+noncomputable def nb095AlphaDummy021 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy014 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy015 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_022`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_022 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_014 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_015 f))).fv) 1)
+noncomputable def nb095AlphaDummy022 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy014 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy015 f))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_023`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_023 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy023 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb095_alpha_dummy_019 D R S_cls E)
-            (syn_wrex (nb095_alpha_dummy_020 D R S_cls E)
-              (Class.cv (nb095_alpha_dummy_011 D R S_cls E))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_019 D R S_cls E))
-                (syn_cphi (Class.cv (nb095_alpha_dummy_020 D R S_cls E)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb095_alpha_dummy_019 D R S_cls E)
-            (syn_wrex (nb095_alpha_dummy_020 D R S_cls E)
-              (Class.cv (nb095_alpha_dummy_012 D R S_cls E))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_019 D R S_cls E))
-                (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_020 D R S_cls E)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+  (freshVar (((synCcompl (Class.cab (nb095AlphaDummy019 D R S_cls E)
+            (synWrex (nb095AlphaDummy020 D R S_cls E)
+              (Class.cv (nb095AlphaDummy011 D R S_cls E))
+              (Wff.classEq (Class.cv (nb095AlphaDummy019 D R S_cls E))
+                (synCphi (Class.cv (nb095AlphaDummy020 D R S_cls E)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb095AlphaDummy019 D R S_cls E)
+            (synWrex (nb095AlphaDummy020 D R S_cls E)
+              (Class.cv (nb095AlphaDummy012 D R S_cls E))
+              (Wff.classEq (Class.cv (nb095AlphaDummy019 D R S_cls E))
+                (synCun (synCphi (Class.cv (nb095AlphaDummy020 D R S_cls E)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_024`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_024 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb095_alpha_dummy_021 f)
-            (syn_wrex (nb095_alpha_dummy_022 f) (Class.cv (nb095_alpha_dummy_014 f))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_021 f))
-                (syn_cphi (Class.cv (nb095_alpha_dummy_022 f)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb095_alpha_dummy_021 f)
-            (syn_wrex (nb095_alpha_dummy_022 f) (Class.cv (nb095_alpha_dummy_015 f))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_021 f))
-                (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_022 f)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+noncomputable def nb095AlphaDummy024 (f : Var) : Var :=
+  (freshVar (((synCcompl (Class.cab (nb095AlphaDummy021 f)
+            (synWrex (nb095AlphaDummy022 f) (Class.cv (nb095AlphaDummy014 f))
+              (Wff.classEq (Class.cv (nb095AlphaDummy021 f))
+                (synCphi (Class.cv (nb095AlphaDummy022 f)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb095AlphaDummy021 f)
+            (synWrex (nb095AlphaDummy022 f) (Class.cv (nb095AlphaDummy015 f))
+              (Wff.classEq (Class.cv (nb095AlphaDummy021 f))
+                (synCun (synCphi (Class.cv (nb095AlphaDummy022 f)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_025`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_025 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy025 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_019 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_020 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_011 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_019 D R S_cls E))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_020 D R S_cls E))))))).fv ∪
-      ((Class.cab (nb095_alpha_dummy_019 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_020 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_011 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_019 D R S_cls E))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_020 D R S_cls E))))))).fv) 0)
+  (freshVar (((Class.cab (nb095AlphaDummy019 D R S_cls E)
+          (synWrex (nb095AlphaDummy020 D R S_cls E)
+            (Class.cv (nb095AlphaDummy011 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy019 D R S_cls E))
+              (synCphi (Class.cv (nb095AlphaDummy020 D R S_cls E))))))).fv ∪
+      ((Class.cab (nb095AlphaDummy019 D R S_cls E)
+          (synWrex (nb095AlphaDummy020 D R S_cls E)
+            (Class.cv (nb095AlphaDummy011 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy019 D R S_cls E))
+              (synCphi (Class.cv (nb095AlphaDummy020 D R S_cls E))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_026`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_026 (f : Var) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_021 f)
-          (syn_wrex (nb095_alpha_dummy_022 f) (Class.cv (nb095_alpha_dummy_014 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_021 f))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_022 f))))))).fv ∪
-      ((Class.cab (nb095_alpha_dummy_021 f)
-          (syn_wrex (nb095_alpha_dummy_022 f) (Class.cv (nb095_alpha_dummy_014 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_021 f))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_022 f))))))).fv) 0)
+noncomputable def nb095AlphaDummy026 (f : Var) : Var :=
+  (freshVar (((Class.cab (nb095AlphaDummy021 f)
+          (synWrex (nb095AlphaDummy022 f) (Class.cv (nb095AlphaDummy014 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy021 f))
+              (synCphi (Class.cv (nb095AlphaDummy022 f))))))).fv ∪
+      ((Class.cab (nb095AlphaDummy021 f)
+          (synWrex (nb095AlphaDummy022 f) (Class.cv (nb095AlphaDummy014 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy021 f))
+              (synCphi (Class.cv (nb095AlphaDummy022 f))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_027`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_027 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy027 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_020 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy020 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_028`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_028 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy028 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_020 D R S_cls E))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy020 D R S_cls E))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_029`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_029 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_022 f))).fv) 0)
+noncomputable def nb095AlphaDummy029 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy022 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_030`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_030 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_022 f))).fv) 1)
+noncomputable def nb095AlphaDummy030 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy022 f))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_031`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_031 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy031 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb095_alpha_dummy_027 D R S_cls E)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb095_alpha_dummy_027 D R S_cls E)) (syn_c1c))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_027 D R S_cls E))).fv) 0)
+  (freshVar (((Wff.classMem (Class.cv (nb095AlphaDummy027 D R S_cls E)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb095AlphaDummy027 D R S_cls E)) (synC1c))).fv ∪
+      ((Class.cv (nb095AlphaDummy027 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_032`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_032 (f : Var) : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb095_alpha_dummy_029 f)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb095_alpha_dummy_029 f)) (syn_c1c))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_029 f))).fv) 0)
+noncomputable def nb095AlphaDummy032 (f : Var) : Var :=
+  (freshVar (((Wff.classMem (Class.cv (nb095AlphaDummy029 f)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb095AlphaDummy029 f)) (synC1c))).fv ∪
+      ((Class.cv (nb095AlphaDummy029 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_033`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_033 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy033 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_027 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy027 D R S_cls E))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_034`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_034 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy034 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_027 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy027 D R S_cls E))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_035`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_035 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy035 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_027 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 2)
+  (freshVar (((Class.cv (nb095AlphaDummy027 D R S_cls E))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_036`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_036 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_029 f))).fv ∪ ((syn_c1c)).fv) 0)
+noncomputable def nb095AlphaDummy036 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy029 f))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_037`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_037 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_029 f))).fv ∪ ((syn_c1c)).fv) 1)
+noncomputable def nb095AlphaDummy037 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy029 f))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_038`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_038 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_029 f))).fv ∪ ((syn_c1c)).fv) 2)
+noncomputable def nb095AlphaDummy038 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy029 f))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_039`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_039 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy039 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb095_alpha_dummy_034 D R S_cls E))
-          (Class.cv (nb095_alpha_dummy_035 D R S_cls E)))).fv ∪
-      ((syn_cnin (Class.cv (nb095_alpha_dummy_034 D R S_cls E))
-          (Class.cv (nb095_alpha_dummy_035 D R S_cls E)))).fv) 0)
+  (freshVar (((synCnin (Class.cv (nb095AlphaDummy034 D R S_cls E))
+          (Class.cv (nb095AlphaDummy035 D R S_cls E)))).fv ∪
+      ((synCnin (Class.cv (nb095AlphaDummy034 D R S_cls E))
+          (Class.cv (nb095AlphaDummy035 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_040`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_040 (f : Var) : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb095_alpha_dummy_037 f))
-          (Class.cv (nb095_alpha_dummy_038 f)))).fv ∪
-      ((syn_cnin (Class.cv (nb095_alpha_dummy_037 f)) (Class.cv (nb095_alpha_dummy_038 f)))).fv)
+noncomputable def nb095AlphaDummy040 (f : Var) : Var :=
+  (freshVar (((synCnin (Class.cv (nb095AlphaDummy037 f))
+          (Class.cv (nb095AlphaDummy038 f)))).fv ∪
+      ((synCnin (Class.cv (nb095AlphaDummy037 f)) (Class.cv (nb095AlphaDummy038 f)))).fv)
     0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_041`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_041 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy041 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_034 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_035 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy034 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy035 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_042`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_042 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_037 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_038 f))).fv) 0)
+noncomputable def nb095AlphaDummy042 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy037 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy038 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_043`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_043 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy043 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb095_alpha_dummy_034 D R S_cls E)))).fv ∪
-      ((syn_ccompl (Class.cv (nb095_alpha_dummy_035 D R S_cls E)))).fv) 0)
+  (freshVar (((synCcompl (Class.cv (nb095AlphaDummy034 D R S_cls E)))).fv ∪
+      ((synCcompl (Class.cv (nb095AlphaDummy035 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_044`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_044 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb095_alpha_dummy_037 f)))).fv ∪
-      ((syn_ccompl (Class.cv (nb095_alpha_dummy_038 f)))).fv) 0)
+noncomputable def nb095AlphaDummy044 (f : Var) : Var :=
+  (freshVar (((synCcompl (Class.cv (nb095AlphaDummy037 f)))).fv ∪
+      ((synCcompl (Class.cv (nb095AlphaDummy038 f)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_045`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_045 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy045 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_034 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_034 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy034 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy034 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_046`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_046 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_037 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_037 f))).fv) 0)
+noncomputable def nb095AlphaDummy046 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy037 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy037 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_047`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_047 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy047 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_035 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_035 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy035 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy035 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_048`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_048 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_038 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_038 f))).fv) 0)
+noncomputable def nb095AlphaDummy048 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy038 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy038 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_049`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_049 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy049 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_019 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_020 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_012 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_019 D R S_cls E))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_020 D R S_cls E)))
-                (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb095_alpha_dummy_019 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_020 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_012 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_019 D R S_cls E))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_020 D R S_cls E)))
-                (syn_csn (syn_c0c))))))).fv) 0)
+  (freshVar (((Class.cab (nb095AlphaDummy019 D R S_cls E)
+          (synWrex (nb095AlphaDummy020 D R S_cls E)
+            (Class.cv (nb095AlphaDummy012 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy019 D R S_cls E))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy020 D R S_cls E)))
+                (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb095AlphaDummy019 D R S_cls E)
+          (synWrex (nb095AlphaDummy020 D R S_cls E)
+            (Class.cv (nb095AlphaDummy012 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy019 D R S_cls E))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy020 D R S_cls E)))
+                (synCsn (synC0c))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_050`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_050 (f : Var) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_021 f)
-          (syn_wrex (nb095_alpha_dummy_022 f) (Class.cv (nb095_alpha_dummy_015 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_021 f))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_022 f)))
-                (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb095_alpha_dummy_021 f)
-          (syn_wrex (nb095_alpha_dummy_022 f) (Class.cv (nb095_alpha_dummy_015 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_021 f))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_022 f)))
-                (syn_csn (syn_c0c))))))).fv) 0)
+noncomputable def nb095AlphaDummy050 (f : Var) : Var :=
+  (freshVar (((Class.cab (nb095AlphaDummy021 f)
+          (synWrex (nb095AlphaDummy022 f) (Class.cv (nb095AlphaDummy015 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy021 f))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy022 f)))
+                (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb095AlphaDummy021 f)
+          (synWrex (nb095AlphaDummy022 f) (Class.cv (nb095AlphaDummy015 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy021 f))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy022 f)))
+                (synCsn (synC0c))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_051`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_051 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy051 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (syn_cphi (Class.cv (nb095_alpha_dummy_020 D R S_cls E))))).fv ∪
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
+  (freshVar (((synCcompl (synCphi (Class.cv (nb095AlphaDummy020 D R S_cls E))))).fv ∪
+      ((synCcompl (synCsn (synC0c)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_052`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_052 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (syn_cphi (Class.cv (nb095_alpha_dummy_022 f))))).fv ∪
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
+noncomputable def nb095AlphaDummy052 (f : Var) : Var :=
+  (freshVar (((synCcompl (synCphi (Class.cv (nb095AlphaDummy022 f))))).fv ∪
+      ((synCcompl (synCsn (synC0c)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_053`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_053 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy053 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cphi (Class.cv (nb095_alpha_dummy_020 D R S_cls E)))).fv ∪
-      ((syn_cphi (Class.cv (nb095_alpha_dummy_020 D R S_cls E)))).fv) 0)
+  (freshVar (((synCphi (Class.cv (nb095AlphaDummy020 D R S_cls E)))).fv ∪
+      ((synCphi (Class.cv (nb095AlphaDummy020 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_054`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_054 (f : Var) : Var :=
-  (freshVar (((syn_cphi (Class.cv (nb095_alpha_dummy_022 f)))).fv ∪
-      ((syn_cphi (Class.cv (nb095_alpha_dummy_022 f)))).fv) 0)
+noncomputable def nb095AlphaDummy054 (f : Var) : Var :=
+  (freshVar (((synCphi (Class.cv (nb095AlphaDummy022 f)))).fv ∪
+      ((synCphi (Class.cv (nb095AlphaDummy022 f)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_055`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_055 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy055 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_011 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_013 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy011 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy013 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_056`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_056 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy056 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_011 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_013 D R S_cls E))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy011 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy013 D R S_cls E))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_057`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_057 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_014 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_016 f))).fv) 0)
+noncomputable def nb095AlphaDummy057 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy014 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy016 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_058`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_058 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_014 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_016 f))).fv) 1)
+noncomputable def nb095AlphaDummy058 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy014 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy016 f))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_059`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_059 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy059 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb095_alpha_dummy_055 D R S_cls E)
-            (syn_wrex (nb095_alpha_dummy_056 D R S_cls E)
-              (Class.cv (nb095_alpha_dummy_011 D R S_cls E))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_055 D R S_cls E))
-                (syn_cphi (Class.cv (nb095_alpha_dummy_056 D R S_cls E)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb095_alpha_dummy_055 D R S_cls E)
-            (syn_wrex (nb095_alpha_dummy_056 D R S_cls E)
-              (Class.cv (nb095_alpha_dummy_013 D R S_cls E))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_055 D R S_cls E))
-                (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_056 D R S_cls E)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+  (freshVar (((synCcompl (Class.cab (nb095AlphaDummy055 D R S_cls E)
+            (synWrex (nb095AlphaDummy056 D R S_cls E)
+              (Class.cv (nb095AlphaDummy011 D R S_cls E))
+              (Wff.classEq (Class.cv (nb095AlphaDummy055 D R S_cls E))
+                (synCphi (Class.cv (nb095AlphaDummy056 D R S_cls E)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb095AlphaDummy055 D R S_cls E)
+            (synWrex (nb095AlphaDummy056 D R S_cls E)
+              (Class.cv (nb095AlphaDummy013 D R S_cls E))
+              (Wff.classEq (Class.cv (nb095AlphaDummy055 D R S_cls E))
+                (synCun (synCphi (Class.cv (nb095AlphaDummy056 D R S_cls E)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_060`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_060 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb095_alpha_dummy_057 f)
-            (syn_wrex (nb095_alpha_dummy_058 f) (Class.cv (nb095_alpha_dummy_014 f))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_057 f))
-                (syn_cphi (Class.cv (nb095_alpha_dummy_058 f)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb095_alpha_dummy_057 f)
-            (syn_wrex (nb095_alpha_dummy_058 f) (Class.cv (nb095_alpha_dummy_016 f))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_057 f))
-                (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_058 f)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+noncomputable def nb095AlphaDummy060 (f : Var) : Var :=
+  (freshVar (((synCcompl (Class.cab (nb095AlphaDummy057 f)
+            (synWrex (nb095AlphaDummy058 f) (Class.cv (nb095AlphaDummy014 f))
+              (Wff.classEq (Class.cv (nb095AlphaDummy057 f))
+                (synCphi (Class.cv (nb095AlphaDummy058 f)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb095AlphaDummy057 f)
+            (synWrex (nb095AlphaDummy058 f) (Class.cv (nb095AlphaDummy016 f))
+              (Wff.classEq (Class.cv (nb095AlphaDummy057 f))
+                (synCun (synCphi (Class.cv (nb095AlphaDummy058 f)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_061`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_061 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy061 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_055 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_056 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_011 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_055 D R S_cls E))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_056 D R S_cls E))))))).fv ∪
-      ((Class.cab (nb095_alpha_dummy_055 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_056 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_011 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_055 D R S_cls E))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_056 D R S_cls E))))))).fv) 0)
+  (freshVar (((Class.cab (nb095AlphaDummy055 D R S_cls E)
+          (synWrex (nb095AlphaDummy056 D R S_cls E)
+            (Class.cv (nb095AlphaDummy011 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy055 D R S_cls E))
+              (synCphi (Class.cv (nb095AlphaDummy056 D R S_cls E))))))).fv ∪
+      ((Class.cab (nb095AlphaDummy055 D R S_cls E)
+          (synWrex (nb095AlphaDummy056 D R S_cls E)
+            (Class.cv (nb095AlphaDummy011 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy055 D R S_cls E))
+              (synCphi (Class.cv (nb095AlphaDummy056 D R S_cls E))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_062`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_062 (f : Var) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_057 f)
-          (syn_wrex (nb095_alpha_dummy_058 f) (Class.cv (nb095_alpha_dummy_014 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_057 f))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_058 f))))))).fv ∪
-      ((Class.cab (nb095_alpha_dummy_057 f)
-          (syn_wrex (nb095_alpha_dummy_058 f) (Class.cv (nb095_alpha_dummy_014 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_057 f))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_058 f))))))).fv) 0)
+noncomputable def nb095AlphaDummy062 (f : Var) : Var :=
+  (freshVar (((Class.cab (nb095AlphaDummy057 f)
+          (synWrex (nb095AlphaDummy058 f) (Class.cv (nb095AlphaDummy014 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy057 f))
+              (synCphi (Class.cv (nb095AlphaDummy058 f))))))).fv ∪
+      ((Class.cab (nb095AlphaDummy057 f)
+          (synWrex (nb095AlphaDummy058 f) (Class.cv (nb095AlphaDummy014 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy057 f))
+              (synCphi (Class.cv (nb095AlphaDummy058 f))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_063`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_063 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy063 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_056 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy056 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_064`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_064 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy064 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_056 D R S_cls E))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy056 D R S_cls E))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_065`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_065 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_058 f))).fv) 0)
+noncomputable def nb095AlphaDummy065 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy058 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_066`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_066 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_058 f))).fv) 1)
+noncomputable def nb095AlphaDummy066 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy058 f))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_067`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_067 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy067 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb095_alpha_dummy_063 D R S_cls E)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb095_alpha_dummy_063 D R S_cls E)) (syn_c1c))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_063 D R S_cls E))).fv) 0)
+  (freshVar (((Wff.classMem (Class.cv (nb095AlphaDummy063 D R S_cls E)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb095AlphaDummy063 D R S_cls E)) (synC1c))).fv ∪
+      ((Class.cv (nb095AlphaDummy063 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_068`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_068 (f : Var) : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb095_alpha_dummy_065 f)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb095_alpha_dummy_065 f)) (syn_c1c))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_065 f))).fv) 0)
+noncomputable def nb095AlphaDummy068 (f : Var) : Var :=
+  (freshVar (((Wff.classMem (Class.cv (nb095AlphaDummy065 f)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb095AlphaDummy065 f)) (synC1c))).fv ∪
+      ((Class.cv (nb095AlphaDummy065 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_069`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_069 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy069 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_063 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy063 D R S_cls E))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_070`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_070 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy070 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_063 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy063 D R S_cls E))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_071`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_071 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy071 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_063 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 2)
+  (freshVar (((Class.cv (nb095AlphaDummy063 D R S_cls E))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_072`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_072 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_065 f))).fv ∪ ((syn_c1c)).fv) 0)
+noncomputable def nb095AlphaDummy072 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy065 f))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_073`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_073 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_065 f))).fv ∪ ((syn_c1c)).fv) 1)
+noncomputable def nb095AlphaDummy073 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy065 f))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_074`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_074 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_065 f))).fv ∪ ((syn_c1c)).fv) 2)
+noncomputable def nb095AlphaDummy074 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy065 f))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_075`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_075 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy075 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb095_alpha_dummy_070 D R S_cls E))
-          (Class.cv (nb095_alpha_dummy_071 D R S_cls E)))).fv ∪
-      ((syn_cnin (Class.cv (nb095_alpha_dummy_070 D R S_cls E))
-          (Class.cv (nb095_alpha_dummy_071 D R S_cls E)))).fv) 0)
+  (freshVar (((synCnin (Class.cv (nb095AlphaDummy070 D R S_cls E))
+          (Class.cv (nb095AlphaDummy071 D R S_cls E)))).fv ∪
+      ((synCnin (Class.cv (nb095AlphaDummy070 D R S_cls E))
+          (Class.cv (nb095AlphaDummy071 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_076`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_076 (f : Var) : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb095_alpha_dummy_073 f))
-          (Class.cv (nb095_alpha_dummy_074 f)))).fv ∪
-      ((syn_cnin (Class.cv (nb095_alpha_dummy_073 f)) (Class.cv (nb095_alpha_dummy_074 f)))).fv)
+noncomputable def nb095AlphaDummy076 (f : Var) : Var :=
+  (freshVar (((synCnin (Class.cv (nb095AlphaDummy073 f))
+          (Class.cv (nb095AlphaDummy074 f)))).fv ∪
+      ((synCnin (Class.cv (nb095AlphaDummy073 f)) (Class.cv (nb095AlphaDummy074 f)))).fv)
     0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_077`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_077 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy077 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_070 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_071 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy070 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy071 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_078`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_078 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_073 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_074 f))).fv) 0)
+noncomputable def nb095AlphaDummy078 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy073 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy074 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_079`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_079 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy079 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb095_alpha_dummy_070 D R S_cls E)))).fv ∪
-      ((syn_ccompl (Class.cv (nb095_alpha_dummy_071 D R S_cls E)))).fv) 0)
+  (freshVar (((synCcompl (Class.cv (nb095AlphaDummy070 D R S_cls E)))).fv ∪
+      ((synCcompl (Class.cv (nb095AlphaDummy071 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_080`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_080 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb095_alpha_dummy_073 f)))).fv ∪
-      ((syn_ccompl (Class.cv (nb095_alpha_dummy_074 f)))).fv) 0)
+noncomputable def nb095AlphaDummy080 (f : Var) : Var :=
+  (freshVar (((synCcompl (Class.cv (nb095AlphaDummy073 f)))).fv ∪
+      ((synCcompl (Class.cv (nb095AlphaDummy074 f)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_081`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_081 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy081 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_070 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_070 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy070 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy070 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_082`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_082 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_073 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_073 f))).fv) 0)
+noncomputable def nb095AlphaDummy082 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy073 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy073 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_083`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_083 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy083 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_071 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_071 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy071 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy071 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_084`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_084 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_074 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_074 f))).fv) 0)
+noncomputable def nb095AlphaDummy084 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy074 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy074 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_085`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_085 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy085 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_055 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_056 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_013 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_055 D R S_cls E))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_056 D R S_cls E)))
-                (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb095_alpha_dummy_055 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_056 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_013 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_055 D R S_cls E))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_056 D R S_cls E)))
-                (syn_csn (syn_c0c))))))).fv) 0)
+  (freshVar (((Class.cab (nb095AlphaDummy055 D R S_cls E)
+          (synWrex (nb095AlphaDummy056 D R S_cls E)
+            (Class.cv (nb095AlphaDummy013 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy055 D R S_cls E))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy056 D R S_cls E)))
+                (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb095AlphaDummy055 D R S_cls E)
+          (synWrex (nb095AlphaDummy056 D R S_cls E)
+            (Class.cv (nb095AlphaDummy013 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy055 D R S_cls E))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy056 D R S_cls E)))
+                (synCsn (synC0c))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_086`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_086 (f : Var) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_057 f)
-          (syn_wrex (nb095_alpha_dummy_058 f) (Class.cv (nb095_alpha_dummy_016 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_057 f))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_058 f)))
-                (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb095_alpha_dummy_057 f)
-          (syn_wrex (nb095_alpha_dummy_058 f) (Class.cv (nb095_alpha_dummy_016 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_057 f))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_058 f)))
-                (syn_csn (syn_c0c))))))).fv) 0)
+noncomputable def nb095AlphaDummy086 (f : Var) : Var :=
+  (freshVar (((Class.cab (nb095AlphaDummy057 f)
+          (synWrex (nb095AlphaDummy058 f) (Class.cv (nb095AlphaDummy016 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy057 f))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy058 f)))
+                (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb095AlphaDummy057 f)
+          (synWrex (nb095AlphaDummy058 f) (Class.cv (nb095AlphaDummy016 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy057 f))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy058 f)))
+                (synCsn (synC0c))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_087`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_087 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy087 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (syn_cphi (Class.cv (nb095_alpha_dummy_056 D R S_cls E))))).fv ∪
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
+  (freshVar (((synCcompl (synCphi (Class.cv (nb095AlphaDummy056 D R S_cls E))))).fv ∪
+      ((synCcompl (synCsn (synC0c)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_088`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_088 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (syn_cphi (Class.cv (nb095_alpha_dummy_058 f))))).fv ∪
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
+noncomputable def nb095AlphaDummy088 (f : Var) : Var :=
+  (freshVar (((synCcompl (synCphi (Class.cv (nb095AlphaDummy058 f))))).fv ∪
+      ((synCcompl (synCsn (synC0c)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_089`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_089 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy089 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cphi (Class.cv (nb095_alpha_dummy_056 D R S_cls E)))).fv ∪
-      ((syn_cphi (Class.cv (nb095_alpha_dummy_056 D R S_cls E)))).fv) 0)
+  (freshVar (((synCphi (Class.cv (nb095AlphaDummy056 D R S_cls E)))).fv ∪
+      ((synCphi (Class.cv (nb095AlphaDummy056 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_090`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_090 (f : Var) : Var :=
-  (freshVar (((syn_cphi (Class.cv (nb095_alpha_dummy_058 f)))).fv ∪
-      ((syn_cphi (Class.cv (nb095_alpha_dummy_058 f)))).fv) 0)
+noncomputable def nb095AlphaDummy090 (f : Var) : Var :=
+  (freshVar (((synCphi (Class.cv (nb095AlphaDummy058 f)))).fv ∪
+      ((synCphi (Class.cv (nb095AlphaDummy058 f)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_091`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_091 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy091 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_000 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy000 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_092`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_092 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy092 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_000 D R S_cls E))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy000 D R S_cls E))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_093`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_093 (f : Var) : Var :=
+noncomputable def nb095AlphaDummy093 (f : Var) : Var :=
   (freshVar (((Class.cv f)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_094`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_094 (f : Var) : Var :=
+noncomputable def nb095AlphaDummy094 (f : Var) : Var :=
   (freshVar (((Class.cv f)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_095`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_095 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy095 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (({(nb095_alpha_dummy_091 D R S_cls E)} : Finset Var) ∪
-        ({(nb095_alpha_dummy_092 D R S_cls E)} : Finset Var) ∪
-      ((syn_wbr (Class.cv (nb095_alpha_dummy_092 D R S_cls E))
-          (Class.cv (nb095_alpha_dummy_000 D R S_cls E))
-          (Class.cv (nb095_alpha_dummy_091 D R S_cls E)))).fv) 0)
+  (freshVar (({(nb095AlphaDummy091 D R S_cls E)} : Finset Var) ∪
+        ({(nb095AlphaDummy092 D R S_cls E)} : Finset Var) ∪
+      ((synWbr (Class.cv (nb095AlphaDummy092 D R S_cls E))
+          (Class.cv (nb095AlphaDummy000 D R S_cls E))
+          (Class.cv (nb095AlphaDummy091 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_096`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_096 (f : Var) : Var :=
-  (freshVar (({(nb095_alpha_dummy_093 f)} : Finset Var) ∪
-        ({(nb095_alpha_dummy_094 f)} : Finset Var) ∪
-      ((syn_wbr (Class.cv (nb095_alpha_dummy_094 f)) (Class.cv f)
-          (Class.cv (nb095_alpha_dummy_093 f)))).fv) 0)
+noncomputable def nb095AlphaDummy096 (f : Var) : Var :=
+  (freshVar (({(nb095AlphaDummy093 f)} : Finset Var) ∪
+        ({(nb095AlphaDummy094 f)} : Finset Var) ∪
+      ((synWbr (Class.cv (nb095AlphaDummy094 f)) (Class.cv f)
+          (Class.cv (nb095AlphaDummy093 f)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_097`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_097 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy097 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_091 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_092 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy091 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy092 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_098`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_098 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy098 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_091 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_092 D R S_cls E))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy091 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy092 D R S_cls E))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_099`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_099 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_093 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_094 f))).fv) 0)
+noncomputable def nb095AlphaDummy099 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy093 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy094 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_100`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_100 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_093 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_094 f))).fv) 1)
+noncomputable def nb095AlphaDummy100 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy093 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy094 f))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_101`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_101 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy101 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb095_alpha_dummy_097 D R S_cls E)
-            (syn_wrex (nb095_alpha_dummy_098 D R S_cls E)
-              (Class.cv (nb095_alpha_dummy_091 D R S_cls E))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_097 D R S_cls E))
-                (syn_cphi (Class.cv (nb095_alpha_dummy_098 D R S_cls E)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb095_alpha_dummy_097 D R S_cls E)
-            (syn_wrex (nb095_alpha_dummy_098 D R S_cls E)
-              (Class.cv (nb095_alpha_dummy_092 D R S_cls E))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_097 D R S_cls E))
-                (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_098 D R S_cls E)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+  (freshVar (((synCcompl (Class.cab (nb095AlphaDummy097 D R S_cls E)
+            (synWrex (nb095AlphaDummy098 D R S_cls E)
+              (Class.cv (nb095AlphaDummy091 D R S_cls E))
+              (Wff.classEq (Class.cv (nb095AlphaDummy097 D R S_cls E))
+                (synCphi (Class.cv (nb095AlphaDummy098 D R S_cls E)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb095AlphaDummy097 D R S_cls E)
+            (synWrex (nb095AlphaDummy098 D R S_cls E)
+              (Class.cv (nb095AlphaDummy092 D R S_cls E))
+              (Wff.classEq (Class.cv (nb095AlphaDummy097 D R S_cls E))
+                (synCun (synCphi (Class.cv (nb095AlphaDummy098 D R S_cls E)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_102`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_102 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb095_alpha_dummy_099 f)
-            (syn_wrex (nb095_alpha_dummy_100 f) (Class.cv (nb095_alpha_dummy_093 f))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_099 f))
-                (syn_cphi (Class.cv (nb095_alpha_dummy_100 f)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb095_alpha_dummy_099 f)
-            (syn_wrex (nb095_alpha_dummy_100 f) (Class.cv (nb095_alpha_dummy_094 f))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_099 f))
-                (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_100 f)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+noncomputable def nb095AlphaDummy102 (f : Var) : Var :=
+  (freshVar (((synCcompl (Class.cab (nb095AlphaDummy099 f)
+            (synWrex (nb095AlphaDummy100 f) (Class.cv (nb095AlphaDummy093 f))
+              (Wff.classEq (Class.cv (nb095AlphaDummy099 f))
+                (synCphi (Class.cv (nb095AlphaDummy100 f)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb095AlphaDummy099 f)
+            (synWrex (nb095AlphaDummy100 f) (Class.cv (nb095AlphaDummy094 f))
+              (Wff.classEq (Class.cv (nb095AlphaDummy099 f))
+                (synCun (synCphi (Class.cv (nb095AlphaDummy100 f)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_103`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_103 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy103 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_097 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_098 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_091 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_097 D R S_cls E))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_098 D R S_cls E))))))).fv ∪
-      ((Class.cab (nb095_alpha_dummy_097 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_098 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_091 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_097 D R S_cls E))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_098 D R S_cls E))))))).fv) 0)
+  (freshVar (((Class.cab (nb095AlphaDummy097 D R S_cls E)
+          (synWrex (nb095AlphaDummy098 D R S_cls E)
+            (Class.cv (nb095AlphaDummy091 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy097 D R S_cls E))
+              (synCphi (Class.cv (nb095AlphaDummy098 D R S_cls E))))))).fv ∪
+      ((Class.cab (nb095AlphaDummy097 D R S_cls E)
+          (synWrex (nb095AlphaDummy098 D R S_cls E)
+            (Class.cv (nb095AlphaDummy091 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy097 D R S_cls E))
+              (synCphi (Class.cv (nb095AlphaDummy098 D R S_cls E))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_104`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_104 (f : Var) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_099 f)
-          (syn_wrex (nb095_alpha_dummy_100 f) (Class.cv (nb095_alpha_dummy_093 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_099 f))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_100 f))))))).fv ∪
-      ((Class.cab (nb095_alpha_dummy_099 f)
-          (syn_wrex (nb095_alpha_dummy_100 f) (Class.cv (nb095_alpha_dummy_093 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_099 f))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_100 f))))))).fv) 0)
+noncomputable def nb095AlphaDummy104 (f : Var) : Var :=
+  (freshVar (((Class.cab (nb095AlphaDummy099 f)
+          (synWrex (nb095AlphaDummy100 f) (Class.cv (nb095AlphaDummy093 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy099 f))
+              (synCphi (Class.cv (nb095AlphaDummy100 f))))))).fv ∪
+      ((Class.cab (nb095AlphaDummy099 f)
+          (synWrex (nb095AlphaDummy100 f) (Class.cv (nb095AlphaDummy093 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy099 f))
+              (synCphi (Class.cv (nb095AlphaDummy100 f))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_105`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_105 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy105 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_098 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy098 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_106`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_106 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy106 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_098 D R S_cls E))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy098 D R S_cls E))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_107`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_107 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_100 f))).fv) 0)
+noncomputable def nb095AlphaDummy107 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy100 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_108`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_108 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_100 f))).fv) 1)
+noncomputable def nb095AlphaDummy108 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy100 f))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_109`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_109 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy109 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb095_alpha_dummy_105 D R S_cls E)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb095_alpha_dummy_105 D R S_cls E)) (syn_c1c))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_105 D R S_cls E))).fv) 0)
+  (freshVar (((Wff.classMem (Class.cv (nb095AlphaDummy105 D R S_cls E)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb095AlphaDummy105 D R S_cls E)) (synC1c))).fv ∪
+      ((Class.cv (nb095AlphaDummy105 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_110`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_110 (f : Var) : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb095_alpha_dummy_107 f)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb095_alpha_dummy_107 f)) (syn_c1c))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_107 f))).fv) 0)
+noncomputable def nb095AlphaDummy110 (f : Var) : Var :=
+  (freshVar (((Wff.classMem (Class.cv (nb095AlphaDummy107 f)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb095AlphaDummy107 f)) (synC1c))).fv ∪
+      ((Class.cv (nb095AlphaDummy107 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_111`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_111 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy111 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_105 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy105 D R S_cls E))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_112`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_112 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy112 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_105 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy105 D R S_cls E))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_113`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_113 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy113 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_105 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 2)
+  (freshVar (((Class.cv (nb095AlphaDummy105 D R S_cls E))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_114`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_114 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_107 f))).fv ∪ ((syn_c1c)).fv) 0)
+noncomputable def nb095AlphaDummy114 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy107 f))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_115`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_115 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_107 f))).fv ∪ ((syn_c1c)).fv) 1)
+noncomputable def nb095AlphaDummy115 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy107 f))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_116`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_116 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_107 f))).fv ∪ ((syn_c1c)).fv) 2)
+noncomputable def nb095AlphaDummy116 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy107 f))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_117`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_117 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy117 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb095_alpha_dummy_112 D R S_cls E))
-          (Class.cv (nb095_alpha_dummy_113 D R S_cls E)))).fv ∪
-      ((syn_cnin (Class.cv (nb095_alpha_dummy_112 D R S_cls E))
-          (Class.cv (nb095_alpha_dummy_113 D R S_cls E)))).fv) 0)
+  (freshVar (((synCnin (Class.cv (nb095AlphaDummy112 D R S_cls E))
+          (Class.cv (nb095AlphaDummy113 D R S_cls E)))).fv ∪
+      ((synCnin (Class.cv (nb095AlphaDummy112 D R S_cls E))
+          (Class.cv (nb095AlphaDummy113 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_118`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_118 (f : Var) : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb095_alpha_dummy_115 f))
-          (Class.cv (nb095_alpha_dummy_116 f)))).fv ∪
-      ((syn_cnin (Class.cv (nb095_alpha_dummy_115 f)) (Class.cv (nb095_alpha_dummy_116 f)))).fv)
+noncomputable def nb095AlphaDummy118 (f : Var) : Var :=
+  (freshVar (((synCnin (Class.cv (nb095AlphaDummy115 f))
+          (Class.cv (nb095AlphaDummy116 f)))).fv ∪
+      ((synCnin (Class.cv (nb095AlphaDummy115 f)) (Class.cv (nb095AlphaDummy116 f)))).fv)
     0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_119`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_119 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy119 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_112 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_113 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy112 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy113 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_120`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_120 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_115 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_116 f))).fv) 0)
+noncomputable def nb095AlphaDummy120 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy115 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy116 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_121`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_121 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy121 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb095_alpha_dummy_112 D R S_cls E)))).fv ∪
-      ((syn_ccompl (Class.cv (nb095_alpha_dummy_113 D R S_cls E)))).fv) 0)
+  (freshVar (((synCcompl (Class.cv (nb095AlphaDummy112 D R S_cls E)))).fv ∪
+      ((synCcompl (Class.cv (nb095AlphaDummy113 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_122`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_122 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb095_alpha_dummy_115 f)))).fv ∪
-      ((syn_ccompl (Class.cv (nb095_alpha_dummy_116 f)))).fv) 0)
+noncomputable def nb095AlphaDummy122 (f : Var) : Var :=
+  (freshVar (((synCcompl (Class.cv (nb095AlphaDummy115 f)))).fv ∪
+      ((synCcompl (Class.cv (nb095AlphaDummy116 f)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_123`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_123 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy123 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_112 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_112 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy112 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy112 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_124`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_124 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_115 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_115 f))).fv) 0)
+noncomputable def nb095AlphaDummy124 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy115 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy115 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_125`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_125 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy125 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_113 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_113 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy113 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy113 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_126`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_126 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_116 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_116 f))).fv) 0)
+noncomputable def nb095AlphaDummy126 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy116 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy116 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_127`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_127 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy127 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_097 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_098 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_092 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_097 D R S_cls E))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_098 D R S_cls E)))
-                (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb095_alpha_dummy_097 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_098 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_092 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_097 D R S_cls E))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_098 D R S_cls E)))
-                (syn_csn (syn_c0c))))))).fv) 0)
+  (freshVar (((Class.cab (nb095AlphaDummy097 D R S_cls E)
+          (synWrex (nb095AlphaDummy098 D R S_cls E)
+            (Class.cv (nb095AlphaDummy092 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy097 D R S_cls E))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy098 D R S_cls E)))
+                (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb095AlphaDummy097 D R S_cls E)
+          (synWrex (nb095AlphaDummy098 D R S_cls E)
+            (Class.cv (nb095AlphaDummy092 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy097 D R S_cls E))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy098 D R S_cls E)))
+                (synCsn (synC0c))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_128`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_128 (f : Var) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_099 f)
-          (syn_wrex (nb095_alpha_dummy_100 f) (Class.cv (nb095_alpha_dummy_094 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_099 f))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_100 f)))
-                (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb095_alpha_dummy_099 f)
-          (syn_wrex (nb095_alpha_dummy_100 f) (Class.cv (nb095_alpha_dummy_094 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_099 f))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_100 f)))
-                (syn_csn (syn_c0c))))))).fv) 0)
+noncomputable def nb095AlphaDummy128 (f : Var) : Var :=
+  (freshVar (((Class.cab (nb095AlphaDummy099 f)
+          (synWrex (nb095AlphaDummy100 f) (Class.cv (nb095AlphaDummy094 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy099 f))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy100 f)))
+                (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb095AlphaDummy099 f)
+          (synWrex (nb095AlphaDummy100 f) (Class.cv (nb095AlphaDummy094 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy099 f))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy100 f)))
+                (synCsn (synC0c))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_129`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_129 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy129 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (syn_cphi (Class.cv (nb095_alpha_dummy_098 D R S_cls E))))).fv ∪
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
+  (freshVar (((synCcompl (synCphi (Class.cv (nb095AlphaDummy098 D R S_cls E))))).fv ∪
+      ((synCcompl (synCsn (synC0c)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_130`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_130 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (syn_cphi (Class.cv (nb095_alpha_dummy_100 f))))).fv ∪
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
+noncomputable def nb095AlphaDummy130 (f : Var) : Var :=
+  (freshVar (((synCcompl (synCphi (Class.cv (nb095AlphaDummy100 f))))).fv ∪
+      ((synCcompl (synCsn (synC0c)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_131`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_131 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy131 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cphi (Class.cv (nb095_alpha_dummy_098 D R S_cls E)))).fv ∪
-      ((syn_cphi (Class.cv (nb095_alpha_dummy_098 D R S_cls E)))).fv) 0)
+  (freshVar (((synCphi (Class.cv (nb095AlphaDummy098 D R S_cls E)))).fv ∪
+      ((synCphi (Class.cv (nb095AlphaDummy098 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_132`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_132 (f : Var) : Var :=
-  (freshVar (((syn_cphi (Class.cv (nb095_alpha_dummy_100 f)))).fv ∪
-      ((syn_cphi (Class.cv (nb095_alpha_dummy_100 f)))).fv) 0)
+noncomputable def nb095AlphaDummy132 (f : Var) : Var :=
+  (freshVar (((synCphi (Class.cv (nb095AlphaDummy100 f)))).fv ∪
+      ((synCphi (Class.cv (nb095AlphaDummy100 f)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_133`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_133 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy133 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_092 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_091 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy092 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy091 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_134`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_134 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy134 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_092 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_091 D R S_cls E))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy092 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy091 D R S_cls E))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_135`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_135 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_094 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_093 f))).fv) 0)
+noncomputable def nb095AlphaDummy135 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy094 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy093 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_136`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_136 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_094 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_093 f))).fv) 1)
+noncomputable def nb095AlphaDummy136 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy094 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy093 f))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_137`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_137 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy137 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb095_alpha_dummy_133 D R S_cls E)
-            (syn_wrex (nb095_alpha_dummy_134 D R S_cls E)
-              (Class.cv (nb095_alpha_dummy_092 D R S_cls E))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_133 D R S_cls E))
-                (syn_cphi (Class.cv (nb095_alpha_dummy_134 D R S_cls E)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb095_alpha_dummy_133 D R S_cls E)
-            (syn_wrex (nb095_alpha_dummy_134 D R S_cls E)
-              (Class.cv (nb095_alpha_dummy_091 D R S_cls E))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_133 D R S_cls E))
-                (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_134 D R S_cls E)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+  (freshVar (((synCcompl (Class.cab (nb095AlphaDummy133 D R S_cls E)
+            (synWrex (nb095AlphaDummy134 D R S_cls E)
+              (Class.cv (nb095AlphaDummy092 D R S_cls E))
+              (Wff.classEq (Class.cv (nb095AlphaDummy133 D R S_cls E))
+                (synCphi (Class.cv (nb095AlphaDummy134 D R S_cls E)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb095AlphaDummy133 D R S_cls E)
+            (synWrex (nb095AlphaDummy134 D R S_cls E)
+              (Class.cv (nb095AlphaDummy091 D R S_cls E))
+              (Wff.classEq (Class.cv (nb095AlphaDummy133 D R S_cls E))
+                (synCun (synCphi (Class.cv (nb095AlphaDummy134 D R S_cls E)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_138`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_138 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb095_alpha_dummy_135 f)
-            (syn_wrex (nb095_alpha_dummy_136 f) (Class.cv (nb095_alpha_dummy_094 f))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_135 f))
-                (syn_cphi (Class.cv (nb095_alpha_dummy_136 f)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb095_alpha_dummy_135 f)
-            (syn_wrex (nb095_alpha_dummy_136 f) (Class.cv (nb095_alpha_dummy_093 f))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_135 f))
-                (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_136 f)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+noncomputable def nb095AlphaDummy138 (f : Var) : Var :=
+  (freshVar (((synCcompl (Class.cab (nb095AlphaDummy135 f)
+            (synWrex (nb095AlphaDummy136 f) (Class.cv (nb095AlphaDummy094 f))
+              (Wff.classEq (Class.cv (nb095AlphaDummy135 f))
+                (synCphi (Class.cv (nb095AlphaDummy136 f)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb095AlphaDummy135 f)
+            (synWrex (nb095AlphaDummy136 f) (Class.cv (nb095AlphaDummy093 f))
+              (Wff.classEq (Class.cv (nb095AlphaDummy135 f))
+                (synCun (synCphi (Class.cv (nb095AlphaDummy136 f)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_139`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_139 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy139 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_133 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_134 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_092 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_133 D R S_cls E))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_134 D R S_cls E))))))).fv ∪
-      ((Class.cab (nb095_alpha_dummy_133 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_134 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_092 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_133 D R S_cls E))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_134 D R S_cls E))))))).fv) 0)
+  (freshVar (((Class.cab (nb095AlphaDummy133 D R S_cls E)
+          (synWrex (nb095AlphaDummy134 D R S_cls E)
+            (Class.cv (nb095AlphaDummy092 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy133 D R S_cls E))
+              (synCphi (Class.cv (nb095AlphaDummy134 D R S_cls E))))))).fv ∪
+      ((Class.cab (nb095AlphaDummy133 D R S_cls E)
+          (synWrex (nb095AlphaDummy134 D R S_cls E)
+            (Class.cv (nb095AlphaDummy092 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy133 D R S_cls E))
+              (synCphi (Class.cv (nb095AlphaDummy134 D R S_cls E))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_140`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_140 (f : Var) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_135 f)
-          (syn_wrex (nb095_alpha_dummy_136 f) (Class.cv (nb095_alpha_dummy_094 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_135 f))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_136 f))))))).fv ∪
-      ((Class.cab (nb095_alpha_dummy_135 f)
-          (syn_wrex (nb095_alpha_dummy_136 f) (Class.cv (nb095_alpha_dummy_094 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_135 f))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_136 f))))))).fv) 0)
+noncomputable def nb095AlphaDummy140 (f : Var) : Var :=
+  (freshVar (((Class.cab (nb095AlphaDummy135 f)
+          (synWrex (nb095AlphaDummy136 f) (Class.cv (nb095AlphaDummy094 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy135 f))
+              (synCphi (Class.cv (nb095AlphaDummy136 f))))))).fv ∪
+      ((Class.cab (nb095AlphaDummy135 f)
+          (synWrex (nb095AlphaDummy136 f) (Class.cv (nb095AlphaDummy094 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy135 f))
+              (synCphi (Class.cv (nb095AlphaDummy136 f))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_141`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_141 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy141 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_134 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy134 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_142`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_142 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy142 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_134 D R S_cls E))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy134 D R S_cls E))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_143`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_143 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_136 f))).fv) 0)
+noncomputable def nb095AlphaDummy143 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy136 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_144`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_144 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_136 f))).fv) 1)
+noncomputable def nb095AlphaDummy144 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy136 f))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_145`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_145 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy145 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb095_alpha_dummy_141 D R S_cls E)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb095_alpha_dummy_141 D R S_cls E)) (syn_c1c))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_141 D R S_cls E))).fv) 0)
+  (freshVar (((Wff.classMem (Class.cv (nb095AlphaDummy141 D R S_cls E)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb095AlphaDummy141 D R S_cls E)) (synC1c))).fv ∪
+      ((Class.cv (nb095AlphaDummy141 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_146`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_146 (f : Var) : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb095_alpha_dummy_143 f)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb095_alpha_dummy_143 f)) (syn_c1c))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_143 f))).fv) 0)
+noncomputable def nb095AlphaDummy146 (f : Var) : Var :=
+  (freshVar (((Wff.classMem (Class.cv (nb095AlphaDummy143 f)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb095AlphaDummy143 f)) (synC1c))).fv ∪
+      ((Class.cv (nb095AlphaDummy143 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_147`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_147 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy147 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_141 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy141 D R S_cls E))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_148`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_148 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy148 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_141 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy141 D R S_cls E))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_149`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_149 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy149 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_141 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 2)
+  (freshVar (((Class.cv (nb095AlphaDummy141 D R S_cls E))).fv ∪ ((synC1c)).fv) 2)
 
 end NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired
 
@@ -1077,972 +1227,1122 @@ open NFChoice.DefinitionLeaves.AlphaFocusedFV
 open NFChoice.DirectNominalPrf
 open NFChoice.DirectNominalPrf.Nominal
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_150`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_150 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_143 f))).fv ∪ ((syn_c1c)).fv) 0)
+noncomputable def nb095AlphaDummy150 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy143 f))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_151`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_151 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_143 f))).fv ∪ ((syn_c1c)).fv) 1)
+noncomputable def nb095AlphaDummy151 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy143 f))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_152`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_152 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_143 f))).fv ∪ ((syn_c1c)).fv) 2)
+noncomputable def nb095AlphaDummy152 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy143 f))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_153`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_153 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy153 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb095_alpha_dummy_148 D R S_cls E))
-          (Class.cv (nb095_alpha_dummy_149 D R S_cls E)))).fv ∪
-      ((syn_cnin (Class.cv (nb095_alpha_dummy_148 D R S_cls E))
-          (Class.cv (nb095_alpha_dummy_149 D R S_cls E)))).fv) 0)
+  (freshVar (((synCnin (Class.cv (nb095AlphaDummy148 D R S_cls E))
+          (Class.cv (nb095AlphaDummy149 D R S_cls E)))).fv ∪
+      ((synCnin (Class.cv (nb095AlphaDummy148 D R S_cls E))
+          (Class.cv (nb095AlphaDummy149 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_154`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_154 (f : Var) : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb095_alpha_dummy_151 f))
-          (Class.cv (nb095_alpha_dummy_152 f)))).fv ∪
-      ((syn_cnin (Class.cv (nb095_alpha_dummy_151 f)) (Class.cv (nb095_alpha_dummy_152 f)))).fv)
+noncomputable def nb095AlphaDummy154 (f : Var) : Var :=
+  (freshVar (((synCnin (Class.cv (nb095AlphaDummy151 f))
+          (Class.cv (nb095AlphaDummy152 f)))).fv ∪
+      ((synCnin (Class.cv (nb095AlphaDummy151 f)) (Class.cv (nb095AlphaDummy152 f)))).fv)
     0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_155`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_155 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy155 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_148 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_149 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy148 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy149 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_156`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_156 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_151 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_152 f))).fv) 0)
+noncomputable def nb095AlphaDummy156 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy151 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy152 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_157`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_157 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy157 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb095_alpha_dummy_148 D R S_cls E)))).fv ∪
-      ((syn_ccompl (Class.cv (nb095_alpha_dummy_149 D R S_cls E)))).fv) 0)
+  (freshVar (((synCcompl (Class.cv (nb095AlphaDummy148 D R S_cls E)))).fv ∪
+      ((synCcompl (Class.cv (nb095AlphaDummy149 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_158`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_158 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb095_alpha_dummy_151 f)))).fv ∪
-      ((syn_ccompl (Class.cv (nb095_alpha_dummy_152 f)))).fv) 0)
+noncomputable def nb095AlphaDummy158 (f : Var) : Var :=
+  (freshVar (((synCcompl (Class.cv (nb095AlphaDummy151 f)))).fv ∪
+      ((synCcompl (Class.cv (nb095AlphaDummy152 f)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_159`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_159 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy159 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_148 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_148 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy148 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy148 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_160`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_160 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_151 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_151 f))).fv) 0)
+noncomputable def nb095AlphaDummy160 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy151 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy151 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_161`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_161 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy161 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_149 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_149 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy149 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy149 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_162`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_162 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_152 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_152 f))).fv) 0)
+noncomputable def nb095AlphaDummy162 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy152 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy152 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_163`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_163 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy163 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_133 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_134 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_091 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_133 D R S_cls E))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_134 D R S_cls E)))
-                (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb095_alpha_dummy_133 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_134 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_091 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_133 D R S_cls E))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_134 D R S_cls E)))
-                (syn_csn (syn_c0c))))))).fv) 0)
+  (freshVar (((Class.cab (nb095AlphaDummy133 D R S_cls E)
+          (synWrex (nb095AlphaDummy134 D R S_cls E)
+            (Class.cv (nb095AlphaDummy091 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy133 D R S_cls E))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy134 D R S_cls E)))
+                (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb095AlphaDummy133 D R S_cls E)
+          (synWrex (nb095AlphaDummy134 D R S_cls E)
+            (Class.cv (nb095AlphaDummy091 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy133 D R S_cls E))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy134 D R S_cls E)))
+                (synCsn (synC0c))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_164`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_164 (f : Var) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_135 f)
-          (syn_wrex (nb095_alpha_dummy_136 f) (Class.cv (nb095_alpha_dummy_093 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_135 f))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_136 f)))
-                (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb095_alpha_dummy_135 f)
-          (syn_wrex (nb095_alpha_dummy_136 f) (Class.cv (nb095_alpha_dummy_093 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_135 f))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_136 f)))
-                (syn_csn (syn_c0c))))))).fv) 0)
+noncomputable def nb095AlphaDummy164 (f : Var) : Var :=
+  (freshVar (((Class.cab (nb095AlphaDummy135 f)
+          (synWrex (nb095AlphaDummy136 f) (Class.cv (nb095AlphaDummy093 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy135 f))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy136 f)))
+                (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb095AlphaDummy135 f)
+          (synWrex (nb095AlphaDummy136 f) (Class.cv (nb095AlphaDummy093 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy135 f))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy136 f)))
+                (synCsn (synC0c))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_165`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_165 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy165 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (syn_cphi (Class.cv (nb095_alpha_dummy_134 D R S_cls E))))).fv ∪
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
+  (freshVar (((synCcompl (synCphi (Class.cv (nb095AlphaDummy134 D R S_cls E))))).fv ∪
+      ((synCcompl (synCsn (synC0c)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_166`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_166 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (syn_cphi (Class.cv (nb095_alpha_dummy_136 f))))).fv ∪
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
+noncomputable def nb095AlphaDummy166 (f : Var) : Var :=
+  (freshVar (((synCcompl (synCphi (Class.cv (nb095AlphaDummy136 f))))).fv ∪
+      ((synCcompl (synCsn (synC0c)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_167`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_167 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy167 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cphi (Class.cv (nb095_alpha_dummy_134 D R S_cls E)))).fv ∪
-      ((syn_cphi (Class.cv (nb095_alpha_dummy_134 D R S_cls E)))).fv) 0)
+  (freshVar (((synCphi (Class.cv (nb095AlphaDummy134 D R S_cls E)))).fv ∪
+      ((synCphi (Class.cv (nb095AlphaDummy134 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_168`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_168 (f : Var) : Var :=
-  (freshVar (((syn_cphi (Class.cv (nb095_alpha_dummy_136 f)))).fv ∪
-      ((syn_cphi (Class.cv (nb095_alpha_dummy_136 f)))).fv) 0)
+noncomputable def nb095AlphaDummy168 (f : Var) : Var :=
+  (freshVar (((synCphi (Class.cv (nb095AlphaDummy136 f)))).fv ∪
+      ((synCphi (Class.cv (nb095AlphaDummy136 f)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_169`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_169 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy169 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_013 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_012 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy013 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy012 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_170`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_170 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy170 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_013 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_012 D R S_cls E))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy013 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy012 D R S_cls E))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_171`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_171 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_016 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_015 f))).fv) 0)
+noncomputable def nb095AlphaDummy171 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy016 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy015 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_172`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_172 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_016 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_015 f))).fv) 1)
+noncomputable def nb095AlphaDummy172 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy016 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy015 f))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_173`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_173 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy173 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb095_alpha_dummy_169 D R S_cls E)
-            (syn_wrex (nb095_alpha_dummy_170 D R S_cls E)
-              (Class.cv (nb095_alpha_dummy_013 D R S_cls E))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_169 D R S_cls E))
-                (syn_cphi (Class.cv (nb095_alpha_dummy_170 D R S_cls E)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb095_alpha_dummy_169 D R S_cls E)
-            (syn_wrex (nb095_alpha_dummy_170 D R S_cls E)
-              (Class.cv (nb095_alpha_dummy_012 D R S_cls E))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_169 D R S_cls E))
-                (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_170 D R S_cls E)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+  (freshVar (((synCcompl (Class.cab (nb095AlphaDummy169 D R S_cls E)
+            (synWrex (nb095AlphaDummy170 D R S_cls E)
+              (Class.cv (nb095AlphaDummy013 D R S_cls E))
+              (Wff.classEq (Class.cv (nb095AlphaDummy169 D R S_cls E))
+                (synCphi (Class.cv (nb095AlphaDummy170 D R S_cls E)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb095AlphaDummy169 D R S_cls E)
+            (synWrex (nb095AlphaDummy170 D R S_cls E)
+              (Class.cv (nb095AlphaDummy012 D R S_cls E))
+              (Wff.classEq (Class.cv (nb095AlphaDummy169 D R S_cls E))
+                (synCun (synCphi (Class.cv (nb095AlphaDummy170 D R S_cls E)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_174`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_174 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb095_alpha_dummy_171 f)
-            (syn_wrex (nb095_alpha_dummy_172 f) (Class.cv (nb095_alpha_dummy_016 f))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_171 f))
-                (syn_cphi (Class.cv (nb095_alpha_dummy_172 f)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb095_alpha_dummy_171 f)
-            (syn_wrex (nb095_alpha_dummy_172 f) (Class.cv (nb095_alpha_dummy_015 f))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_171 f))
-                (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_172 f)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+noncomputable def nb095AlphaDummy174 (f : Var) : Var :=
+  (freshVar (((synCcompl (Class.cab (nb095AlphaDummy171 f)
+            (synWrex (nb095AlphaDummy172 f) (Class.cv (nb095AlphaDummy016 f))
+              (Wff.classEq (Class.cv (nb095AlphaDummy171 f))
+                (synCphi (Class.cv (nb095AlphaDummy172 f)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb095AlphaDummy171 f)
+            (synWrex (nb095AlphaDummy172 f) (Class.cv (nb095AlphaDummy015 f))
+              (Wff.classEq (Class.cv (nb095AlphaDummy171 f))
+                (synCun (synCphi (Class.cv (nb095AlphaDummy172 f)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_175`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_175 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy175 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_169 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_170 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_013 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_169 D R S_cls E))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_170 D R S_cls E))))))).fv ∪
-      ((Class.cab (nb095_alpha_dummy_169 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_170 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_013 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_169 D R S_cls E))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_170 D R S_cls E))))))).fv) 0)
+  (freshVar (((Class.cab (nb095AlphaDummy169 D R S_cls E)
+          (synWrex (nb095AlphaDummy170 D R S_cls E)
+            (Class.cv (nb095AlphaDummy013 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy169 D R S_cls E))
+              (synCphi (Class.cv (nb095AlphaDummy170 D R S_cls E))))))).fv ∪
+      ((Class.cab (nb095AlphaDummy169 D R S_cls E)
+          (synWrex (nb095AlphaDummy170 D R S_cls E)
+            (Class.cv (nb095AlphaDummy013 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy169 D R S_cls E))
+              (synCphi (Class.cv (nb095AlphaDummy170 D R S_cls E))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_176`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_176 (f : Var) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_171 f)
-          (syn_wrex (nb095_alpha_dummy_172 f) (Class.cv (nb095_alpha_dummy_016 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_171 f))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_172 f))))))).fv ∪
-      ((Class.cab (nb095_alpha_dummy_171 f)
-          (syn_wrex (nb095_alpha_dummy_172 f) (Class.cv (nb095_alpha_dummy_016 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_171 f))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_172 f))))))).fv) 0)
+noncomputable def nb095AlphaDummy176 (f : Var) : Var :=
+  (freshVar (((Class.cab (nb095AlphaDummy171 f)
+          (synWrex (nb095AlphaDummy172 f) (Class.cv (nb095AlphaDummy016 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy171 f))
+              (synCphi (Class.cv (nb095AlphaDummy172 f))))))).fv ∪
+      ((Class.cab (nb095AlphaDummy171 f)
+          (synWrex (nb095AlphaDummy172 f) (Class.cv (nb095AlphaDummy016 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy171 f))
+              (synCphi (Class.cv (nb095AlphaDummy172 f))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_177`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_177 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy177 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_170 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy170 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_178`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_178 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy178 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_170 D R S_cls E))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy170 D R S_cls E))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_179`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_179 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_172 f))).fv) 0)
+noncomputable def nb095AlphaDummy179 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy172 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_180`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_180 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_172 f))).fv) 1)
+noncomputable def nb095AlphaDummy180 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy172 f))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_181`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_181 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy181 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb095_alpha_dummy_177 D R S_cls E)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb095_alpha_dummy_177 D R S_cls E)) (syn_c1c))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_177 D R S_cls E))).fv) 0)
+  (freshVar (((Wff.classMem (Class.cv (nb095AlphaDummy177 D R S_cls E)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb095AlphaDummy177 D R S_cls E)) (synC1c))).fv ∪
+      ((Class.cv (nb095AlphaDummy177 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_182`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_182 (f : Var) : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb095_alpha_dummy_179 f)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb095_alpha_dummy_179 f)) (syn_c1c))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_179 f))).fv) 0)
+noncomputable def nb095AlphaDummy182 (f : Var) : Var :=
+  (freshVar (((Wff.classMem (Class.cv (nb095AlphaDummy179 f)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb095AlphaDummy179 f)) (synC1c))).fv ∪
+      ((Class.cv (nb095AlphaDummy179 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_183`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_183 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy183 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_177 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy177 D R S_cls E))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_184`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_184 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy184 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_177 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy177 D R S_cls E))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_185`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_185 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy185 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_177 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 2)
+  (freshVar (((Class.cv (nb095AlphaDummy177 D R S_cls E))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_186`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_186 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_179 f))).fv ∪ ((syn_c1c)).fv) 0)
+noncomputable def nb095AlphaDummy186 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy179 f))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_187`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_187 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_179 f))).fv ∪ ((syn_c1c)).fv) 1)
+noncomputable def nb095AlphaDummy187 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy179 f))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_188`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_188 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_179 f))).fv ∪ ((syn_c1c)).fv) 2)
+noncomputable def nb095AlphaDummy188 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy179 f))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_189`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_189 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy189 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb095_alpha_dummy_184 D R S_cls E))
-          (Class.cv (nb095_alpha_dummy_185 D R S_cls E)))).fv ∪
-      ((syn_cnin (Class.cv (nb095_alpha_dummy_184 D R S_cls E))
-          (Class.cv (nb095_alpha_dummy_185 D R S_cls E)))).fv) 0)
+  (freshVar (((synCnin (Class.cv (nb095AlphaDummy184 D R S_cls E))
+          (Class.cv (nb095AlphaDummy185 D R S_cls E)))).fv ∪
+      ((synCnin (Class.cv (nb095AlphaDummy184 D R S_cls E))
+          (Class.cv (nb095AlphaDummy185 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_190`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_190 (f : Var) : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb095_alpha_dummy_187 f))
-          (Class.cv (nb095_alpha_dummy_188 f)))).fv ∪
-      ((syn_cnin (Class.cv (nb095_alpha_dummy_187 f)) (Class.cv (nb095_alpha_dummy_188 f)))).fv)
+noncomputable def nb095AlphaDummy190 (f : Var) : Var :=
+  (freshVar (((synCnin (Class.cv (nb095AlphaDummy187 f))
+          (Class.cv (nb095AlphaDummy188 f)))).fv ∪
+      ((synCnin (Class.cv (nb095AlphaDummy187 f)) (Class.cv (nb095AlphaDummy188 f)))).fv)
     0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_191`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_191 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy191 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_184 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_185 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy184 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy185 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_192`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_192 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_187 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_188 f))).fv) 0)
+noncomputable def nb095AlphaDummy192 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy187 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy188 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_193`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_193 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy193 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb095_alpha_dummy_184 D R S_cls E)))).fv ∪
-      ((syn_ccompl (Class.cv (nb095_alpha_dummy_185 D R S_cls E)))).fv) 0)
+  (freshVar (((synCcompl (Class.cv (nb095AlphaDummy184 D R S_cls E)))).fv ∪
+      ((synCcompl (Class.cv (nb095AlphaDummy185 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_194`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_194 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb095_alpha_dummy_187 f)))).fv ∪
-      ((syn_ccompl (Class.cv (nb095_alpha_dummy_188 f)))).fv) 0)
+noncomputable def nb095AlphaDummy194 (f : Var) : Var :=
+  (freshVar (((synCcompl (Class.cv (nb095AlphaDummy187 f)))).fv ∪
+      ((synCcompl (Class.cv (nb095AlphaDummy188 f)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_195`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_195 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy195 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_184 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_184 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy184 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy184 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_196`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_196 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_187 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_187 f))).fv) 0)
+noncomputable def nb095AlphaDummy196 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy187 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy187 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_197`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_197 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy197 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_185 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_185 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy185 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy185 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_198`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_198 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_188 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_188 f))).fv) 0)
+noncomputable def nb095AlphaDummy198 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy188 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy188 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_199`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_199 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy199 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_169 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_170 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_012 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_169 D R S_cls E))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_170 D R S_cls E)))
-                (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb095_alpha_dummy_169 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_170 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_012 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_169 D R S_cls E))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_170 D R S_cls E)))
-                (syn_csn (syn_c0c))))))).fv) 0)
+  (freshVar (((Class.cab (nb095AlphaDummy169 D R S_cls E)
+          (synWrex (nb095AlphaDummy170 D R S_cls E)
+            (Class.cv (nb095AlphaDummy012 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy169 D R S_cls E))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy170 D R S_cls E)))
+                (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb095AlphaDummy169 D R S_cls E)
+          (synWrex (nb095AlphaDummy170 D R S_cls E)
+            (Class.cv (nb095AlphaDummy012 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy169 D R S_cls E))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy170 D R S_cls E)))
+                (synCsn (synC0c))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_200`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_200 (f : Var) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_171 f)
-          (syn_wrex (nb095_alpha_dummy_172 f) (Class.cv (nb095_alpha_dummy_015 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_171 f))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_172 f)))
-                (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb095_alpha_dummy_171 f)
-          (syn_wrex (nb095_alpha_dummy_172 f) (Class.cv (nb095_alpha_dummy_015 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_171 f))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_172 f)))
-                (syn_csn (syn_c0c))))))).fv) 0)
+noncomputable def nb095AlphaDummy200 (f : Var) : Var :=
+  (freshVar (((Class.cab (nb095AlphaDummy171 f)
+          (synWrex (nb095AlphaDummy172 f) (Class.cv (nb095AlphaDummy015 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy171 f))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy172 f)))
+                (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb095AlphaDummy171 f)
+          (synWrex (nb095AlphaDummy172 f) (Class.cv (nb095AlphaDummy015 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy171 f))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy172 f)))
+                (synCsn (synC0c))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_201`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_201 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy201 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (syn_cphi (Class.cv (nb095_alpha_dummy_170 D R S_cls E))))).fv ∪
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
+  (freshVar (((synCcompl (synCphi (Class.cv (nb095AlphaDummy170 D R S_cls E))))).fv ∪
+      ((synCcompl (synCsn (synC0c)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_202`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_202 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (syn_cphi (Class.cv (nb095_alpha_dummy_172 f))))).fv ∪
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
+noncomputable def nb095AlphaDummy202 (f : Var) : Var :=
+  (freshVar (((synCcompl (synCphi (Class.cv (nb095AlphaDummy172 f))))).fv ∪
+      ((synCcompl (synCsn (synC0c)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_203`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_203 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy203 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cphi (Class.cv (nb095_alpha_dummy_170 D R S_cls E)))).fv ∪
-      ((syn_cphi (Class.cv (nb095_alpha_dummy_170 D R S_cls E)))).fv) 0)
+  (freshVar (((synCphi (Class.cv (nb095AlphaDummy170 D R S_cls E)))).fv ∪
+      ((synCphi (Class.cv (nb095AlphaDummy170 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_204`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_204 (f : Var) : Var :=
-  (freshVar (((syn_cphi (Class.cv (nb095_alpha_dummy_172 f)))).fv ∪
-      ((syn_cphi (Class.cv (nb095_alpha_dummy_172 f)))).fv) 0)
+noncomputable def nb095AlphaDummy204 (f : Var) : Var :=
+  (freshVar (((synCphi (Class.cv (nb095AlphaDummy172 f)))).fv ∪
+      ((synCphi (Class.cv (nb095AlphaDummy172 f)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_205`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_205 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy205 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccnv (Class.cv (nb095_alpha_dummy_000 D R S_cls E)))).fv ∪ ((syn_cvv)).fv) 0)
+  (freshVar (((synCcnv (Class.cv (nb095AlphaDummy000 D R S_cls E)))).fv ∪ ((synCvv)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_206`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_206 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy206 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccnv (Class.cv (nb095_alpha_dummy_000 D R S_cls E)))).fv ∪ ((syn_cvv)).fv) 1)
+  (freshVar (((synCcnv (Class.cv (nb095AlphaDummy000 D R S_cls E)))).fv ∪ ((synCvv)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_207`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_207 (f : Var) : Var :=
-  (freshVar (((syn_ccnv (Class.cv f))).fv ∪ ((syn_cvv)).fv) 0)
+noncomputable def nb095AlphaDummy207 (f : Var) : Var :=
+  (freshVar (((synCcnv (Class.cv f))).fv ∪ ((synCvv)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_208`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_208 (f : Var) : Var :=
-  (freshVar (((syn_ccnv (Class.cv f))).fv ∪ ((syn_cvv)).fv) 1)
+noncomputable def nb095AlphaDummy208 (f : Var) : Var :=
+  (freshVar (((synCcnv (Class.cv f))).fv ∪ ((synCvv)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_209`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_209 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy209 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_206 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_205 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy206 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy205 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_210`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_210 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy210 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_206 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_205 D R S_cls E))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy206 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy205 D R S_cls E))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_211`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_211 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_208 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_207 f))).fv) 0)
+noncomputable def nb095AlphaDummy211 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy208 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy207 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_212`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_212 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_208 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_207 f))).fv) 1)
+noncomputable def nb095AlphaDummy212 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy208 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy207 f))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_213`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_213 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy213 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb095_alpha_dummy_209 D R S_cls E)
-            (syn_wrex (nb095_alpha_dummy_210 D R S_cls E)
-              (Class.cv (nb095_alpha_dummy_206 D R S_cls E))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_209 D R S_cls E))
-                (syn_cphi (Class.cv (nb095_alpha_dummy_210 D R S_cls E)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb095_alpha_dummy_209 D R S_cls E)
-            (syn_wrex (nb095_alpha_dummy_210 D R S_cls E)
-              (Class.cv (nb095_alpha_dummy_205 D R S_cls E))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_209 D R S_cls E))
-                (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_210 D R S_cls E)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+  (freshVar (((synCcompl (Class.cab (nb095AlphaDummy209 D R S_cls E)
+            (synWrex (nb095AlphaDummy210 D R S_cls E)
+              (Class.cv (nb095AlphaDummy206 D R S_cls E))
+              (Wff.classEq (Class.cv (nb095AlphaDummy209 D R S_cls E))
+                (synCphi (Class.cv (nb095AlphaDummy210 D R S_cls E)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb095AlphaDummy209 D R S_cls E)
+            (synWrex (nb095AlphaDummy210 D R S_cls E)
+              (Class.cv (nb095AlphaDummy205 D R S_cls E))
+              (Wff.classEq (Class.cv (nb095AlphaDummy209 D R S_cls E))
+                (synCun (synCphi (Class.cv (nb095AlphaDummy210 D R S_cls E)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_214`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_214 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb095_alpha_dummy_211 f)
-            (syn_wrex (nb095_alpha_dummy_212 f) (Class.cv (nb095_alpha_dummy_208 f))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_211 f))
-                (syn_cphi (Class.cv (nb095_alpha_dummy_212 f)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb095_alpha_dummy_211 f)
-            (syn_wrex (nb095_alpha_dummy_212 f) (Class.cv (nb095_alpha_dummy_207 f))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_211 f))
-                (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_212 f)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+noncomputable def nb095AlphaDummy214 (f : Var) : Var :=
+  (freshVar (((synCcompl (Class.cab (nb095AlphaDummy211 f)
+            (synWrex (nb095AlphaDummy212 f) (Class.cv (nb095AlphaDummy208 f))
+              (Wff.classEq (Class.cv (nb095AlphaDummy211 f))
+                (synCphi (Class.cv (nb095AlphaDummy212 f)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb095AlphaDummy211 f)
+            (synWrex (nb095AlphaDummy212 f) (Class.cv (nb095AlphaDummy207 f))
+              (Wff.classEq (Class.cv (nb095AlphaDummy211 f))
+                (synCun (synCphi (Class.cv (nb095AlphaDummy212 f)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_215`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_215 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy215 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_209 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_210 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_206 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_209 D R S_cls E))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_210 D R S_cls E))))))).fv ∪
-      ((Class.cab (nb095_alpha_dummy_209 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_210 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_206 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_209 D R S_cls E))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_210 D R S_cls E))))))).fv) 0)
+  (freshVar (((Class.cab (nb095AlphaDummy209 D R S_cls E)
+          (synWrex (nb095AlphaDummy210 D R S_cls E)
+            (Class.cv (nb095AlphaDummy206 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy209 D R S_cls E))
+              (synCphi (Class.cv (nb095AlphaDummy210 D R S_cls E))))))).fv ∪
+      ((Class.cab (nb095AlphaDummy209 D R S_cls E)
+          (synWrex (nb095AlphaDummy210 D R S_cls E)
+            (Class.cv (nb095AlphaDummy206 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy209 D R S_cls E))
+              (synCphi (Class.cv (nb095AlphaDummy210 D R S_cls E))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_216`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_216 (f : Var) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_211 f)
-          (syn_wrex (nb095_alpha_dummy_212 f) (Class.cv (nb095_alpha_dummy_208 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_211 f))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_212 f))))))).fv ∪
-      ((Class.cab (nb095_alpha_dummy_211 f)
-          (syn_wrex (nb095_alpha_dummy_212 f) (Class.cv (nb095_alpha_dummy_208 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_211 f))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_212 f))))))).fv) 0)
+noncomputable def nb095AlphaDummy216 (f : Var) : Var :=
+  (freshVar (((Class.cab (nb095AlphaDummy211 f)
+          (synWrex (nb095AlphaDummy212 f) (Class.cv (nb095AlphaDummy208 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy211 f))
+              (synCphi (Class.cv (nb095AlphaDummy212 f))))))).fv ∪
+      ((Class.cab (nb095AlphaDummy211 f)
+          (synWrex (nb095AlphaDummy212 f) (Class.cv (nb095AlphaDummy208 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy211 f))
+              (synCphi (Class.cv (nb095AlphaDummy212 f))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_217`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_217 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy217 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_210 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy210 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_218`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_218 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy218 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_210 D R S_cls E))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy210 D R S_cls E))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_219`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_219 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_212 f))).fv) 0)
+noncomputable def nb095AlphaDummy219 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy212 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_220`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_220 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_212 f))).fv) 1)
+noncomputable def nb095AlphaDummy220 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy212 f))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_221`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_221 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy221 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb095_alpha_dummy_217 D R S_cls E)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb095_alpha_dummy_217 D R S_cls E)) (syn_c1c))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_217 D R S_cls E))).fv) 0)
+  (freshVar (((Wff.classMem (Class.cv (nb095AlphaDummy217 D R S_cls E)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb095AlphaDummy217 D R S_cls E)) (synC1c))).fv ∪
+      ((Class.cv (nb095AlphaDummy217 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_222`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_222 (f : Var) : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb095_alpha_dummy_219 f)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb095_alpha_dummy_219 f)) (syn_c1c))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_219 f))).fv) 0)
+noncomputable def nb095AlphaDummy222 (f : Var) : Var :=
+  (freshVar (((Wff.classMem (Class.cv (nb095AlphaDummy219 f)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb095AlphaDummy219 f)) (synC1c))).fv ∪
+      ((Class.cv (nb095AlphaDummy219 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_223`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_223 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy223 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_217 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy217 D R S_cls E))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_224`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_224 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy224 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_217 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy217 D R S_cls E))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_225`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_225 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy225 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_217 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 2)
+  (freshVar (((Class.cv (nb095AlphaDummy217 D R S_cls E))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_226`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_226 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_219 f))).fv ∪ ((syn_c1c)).fv) 0)
+noncomputable def nb095AlphaDummy226 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy219 f))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_227`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_227 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_219 f))).fv ∪ ((syn_c1c)).fv) 1)
+noncomputable def nb095AlphaDummy227 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy219 f))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_228`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_228 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_219 f))).fv ∪ ((syn_c1c)).fv) 2)
+noncomputable def nb095AlphaDummy228 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy219 f))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_229`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_229 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy229 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb095_alpha_dummy_224 D R S_cls E))
-          (Class.cv (nb095_alpha_dummy_225 D R S_cls E)))).fv ∪
-      ((syn_cnin (Class.cv (nb095_alpha_dummy_224 D R S_cls E))
-          (Class.cv (nb095_alpha_dummy_225 D R S_cls E)))).fv) 0)
+  (freshVar (((synCnin (Class.cv (nb095AlphaDummy224 D R S_cls E))
+          (Class.cv (nb095AlphaDummy225 D R S_cls E)))).fv ∪
+      ((synCnin (Class.cv (nb095AlphaDummy224 D R S_cls E))
+          (Class.cv (nb095AlphaDummy225 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_230`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_230 (f : Var) : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb095_alpha_dummy_227 f))
-          (Class.cv (nb095_alpha_dummy_228 f)))).fv ∪
-      ((syn_cnin (Class.cv (nb095_alpha_dummy_227 f)) (Class.cv (nb095_alpha_dummy_228 f)))).fv)
+noncomputable def nb095AlphaDummy230 (f : Var) : Var :=
+  (freshVar (((synCnin (Class.cv (nb095AlphaDummy227 f))
+          (Class.cv (nb095AlphaDummy228 f)))).fv ∪
+      ((synCnin (Class.cv (nb095AlphaDummy227 f)) (Class.cv (nb095AlphaDummy228 f)))).fv)
     0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_231`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_231 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy231 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_224 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_225 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy224 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy225 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_232`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_232 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_227 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_228 f))).fv) 0)
+noncomputable def nb095AlphaDummy232 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy227 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy228 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_233`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_233 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy233 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb095_alpha_dummy_224 D R S_cls E)))).fv ∪
-      ((syn_ccompl (Class.cv (nb095_alpha_dummy_225 D R S_cls E)))).fv) 0)
+  (freshVar (((synCcompl (Class.cv (nb095AlphaDummy224 D R S_cls E)))).fv ∪
+      ((synCcompl (Class.cv (nb095AlphaDummy225 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_234`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_234 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb095_alpha_dummy_227 f)))).fv ∪
-      ((syn_ccompl (Class.cv (nb095_alpha_dummy_228 f)))).fv) 0)
+noncomputable def nb095AlphaDummy234 (f : Var) : Var :=
+  (freshVar (((synCcompl (Class.cv (nb095AlphaDummy227 f)))).fv ∪
+      ((synCcompl (Class.cv (nb095AlphaDummy228 f)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_235`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_235 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy235 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_224 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_224 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy224 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy224 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_236`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_236 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_227 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_227 f))).fv) 0)
+noncomputable def nb095AlphaDummy236 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy227 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy227 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_237`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_237 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy237 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_225 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_225 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy225 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy225 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_238`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_238 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_228 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_228 f))).fv) 0)
+noncomputable def nb095AlphaDummy238 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy228 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy228 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_239`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_239 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy239 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_209 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_210 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_205 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_209 D R S_cls E))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_210 D R S_cls E)))
-                (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb095_alpha_dummy_209 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_210 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_205 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_209 D R S_cls E))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_210 D R S_cls E)))
-                (syn_csn (syn_c0c))))))).fv) 0)
+  (freshVar (((Class.cab (nb095AlphaDummy209 D R S_cls E)
+          (synWrex (nb095AlphaDummy210 D R S_cls E)
+            (Class.cv (nb095AlphaDummy205 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy209 D R S_cls E))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy210 D R S_cls E)))
+                (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb095AlphaDummy209 D R S_cls E)
+          (synWrex (nb095AlphaDummy210 D R S_cls E)
+            (Class.cv (nb095AlphaDummy205 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy209 D R S_cls E))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy210 D R S_cls E)))
+                (synCsn (synC0c))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_240`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_240 (f : Var) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_211 f)
-          (syn_wrex (nb095_alpha_dummy_212 f) (Class.cv (nb095_alpha_dummy_207 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_211 f))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_212 f)))
-                (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb095_alpha_dummy_211 f)
-          (syn_wrex (nb095_alpha_dummy_212 f) (Class.cv (nb095_alpha_dummy_207 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_211 f))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_212 f)))
-                (syn_csn (syn_c0c))))))).fv) 0)
+noncomputable def nb095AlphaDummy240 (f : Var) : Var :=
+  (freshVar (((Class.cab (nb095AlphaDummy211 f)
+          (synWrex (nb095AlphaDummy212 f) (Class.cv (nb095AlphaDummy207 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy211 f))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy212 f)))
+                (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb095AlphaDummy211 f)
+          (synWrex (nb095AlphaDummy212 f) (Class.cv (nb095AlphaDummy207 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy211 f))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy212 f)))
+                (synCsn (synC0c))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_241`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_241 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy241 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (syn_cphi (Class.cv (nb095_alpha_dummy_210 D R S_cls E))))).fv ∪
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
+  (freshVar (((synCcompl (synCphi (Class.cv (nb095AlphaDummy210 D R S_cls E))))).fv ∪
+      ((synCcompl (synCsn (synC0c)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_242`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_242 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (syn_cphi (Class.cv (nb095_alpha_dummy_212 f))))).fv ∪
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
+noncomputable def nb095AlphaDummy242 (f : Var) : Var :=
+  (freshVar (((synCcompl (synCphi (Class.cv (nb095AlphaDummy212 f))))).fv ∪
+      ((synCcompl (synCsn (synC0c)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_243`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_243 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy243 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cphi (Class.cv (nb095_alpha_dummy_210 D R S_cls E)))).fv ∪
-      ((syn_cphi (Class.cv (nb095_alpha_dummy_210 D R S_cls E)))).fv) 0)
+  (freshVar (((synCphi (Class.cv (nb095AlphaDummy210 D R S_cls E)))).fv ∪
+      ((synCphi (Class.cv (nb095AlphaDummy210 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_244`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_244 (f : Var) : Var :=
-  (freshVar (((syn_cphi (Class.cv (nb095_alpha_dummy_212 f)))).fv ∪
-      ((syn_cphi (Class.cv (nb095_alpha_dummy_212 f)))).fv) 0)
+noncomputable def nb095AlphaDummy244 (f : Var) : Var :=
+  (freshVar (((synCphi (Class.cv (nb095AlphaDummy212 f)))).fv ∪
+      ((synCphi (Class.cv (nb095AlphaDummy212 f)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_245`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_245 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy245 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cnin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid)))
-            (syn_csn (Class.cv (nb095_alpha_dummy_002 D R S_cls E)))))).fv ∪ ((syn_cnin D
-          (syn_cima (syn_ccnv (syn_cdif R (syn_cid)))
-            (syn_csn (Class.cv (nb095_alpha_dummy_002 D R S_cls E)))))).fv) 0)
+  (freshVar (((synCnin D (synCima (synCcnv (synCdif R (synCid)))
+            (synCsn (Class.cv (nb095AlphaDummy002 D R S_cls E)))))).fv ∪ ((synCnin D
+          (synCima (synCcnv (synCdif R (synCid)))
+            (synCsn (Class.cv (nb095AlphaDummy002 D R S_cls E)))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_246`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_246 (x : Var) (D : Class) (R : Class) : Var :=
-  (freshVar (((syn_cnin D
-          (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (Class.cv x))))).fv ∪
-      ((syn_cnin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (Class.cv x))))).fv) 0)
+noncomputable def nb095AlphaDummy246 (x : Var) (D : Class) (R : Class) : Var :=
+  (freshVar (((synCnin D
+          (synCima (synCcnv (synCdif R (synCid))) (synCsn (Class.cv x))))).fv ∪
+      ((synCnin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (Class.cv x))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_247`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_247 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy247 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar ((D).fv ∪ ((syn_cima (syn_ccnv (syn_cdif R (syn_cid)))
-          (syn_csn (Class.cv (nb095_alpha_dummy_002 D R S_cls E))))).fv) 0)
+  (freshVar ((D).fv ∪ ((synCima (synCcnv (synCdif R (synCid)))
+          (synCsn (Class.cv (nb095AlphaDummy002 D R S_cls E))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_248`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_248 (x : Var) (D : Class) (R : Class) : Var :=
+noncomputable def nb095AlphaDummy248 (x : Var) (D : Class) (R : Class) : Var :=
   (freshVar
-    ((D).fv ∪ ((syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (Class.cv x)))).fv) 0)
+    ((D).fv ∪ ((synCima (synCcnv (synCdif R (synCid))) (synCsn (Class.cv x)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_249`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_249 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy249 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccnv (syn_cdif R (syn_cid)))).fv ∪
-      ((syn_csn (Class.cv (nb095_alpha_dummy_002 D R S_cls E)))).fv) 0)
+  (freshVar (((synCcnv (synCdif R (synCid)))).fv ∪
+      ((synCsn (Class.cv (nb095AlphaDummy002 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_250`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_250 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy250 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccnv (syn_cdif R (syn_cid)))).fv ∪
-      ((syn_csn (Class.cv (nb095_alpha_dummy_002 D R S_cls E)))).fv) 1)
+  (freshVar (((synCcnv (synCdif R (synCid)))).fv ∪
+      ((synCsn (Class.cv (nb095AlphaDummy002 D R S_cls E)))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_251`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_251 (x : Var) (R : Class) : Var :=
-  (freshVar (((syn_ccnv (syn_cdif R (syn_cid)))).fv ∪ ((syn_csn (Class.cv x))).fv) 0)
+noncomputable def nb095AlphaDummy251 (x : Var) (R : Class) : Var :=
+  (freshVar (((synCcnv (synCdif R (synCid)))).fv ∪ ((synCsn (Class.cv x))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_252`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_252 (x : Var) (R : Class) : Var :=
-  (freshVar (((syn_ccnv (syn_cdif R (syn_cid)))).fv ∪ ((syn_csn (Class.cv x))).fv) 1)
+noncomputable def nb095AlphaDummy252 (x : Var) (R : Class) : Var :=
+  (freshVar (((synCcnv (synCdif R (synCid)))).fv ∪ ((synCsn (Class.cv x))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_253`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_253 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy253 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_002 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy002 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_254`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_254 (x : Var) : Var :=
+noncomputable def nb095AlphaDummy254 (x : Var) : Var :=
   (freshVar (((Class.cv x)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_255`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_255 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy255 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_250 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_249 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy250 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy249 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_256`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_256 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy256 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_250 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_249 D R S_cls E))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy250 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy249 D R S_cls E))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_257`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_257 (x : Var) (R : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_252 x R))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_251 x R))).fv) 0)
+noncomputable def nb095AlphaDummy257 (x : Var) (R : Class) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy252 x R))).fv ∪
+      ((Class.cv (nb095AlphaDummy251 x R))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_258`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_258 (x : Var) (R : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_252 x R))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_251 x R))).fv) 1)
+noncomputable def nb095AlphaDummy258 (x : Var) (R : Class) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy252 x R))).fv ∪
+      ((Class.cv (nb095AlphaDummy251 x R))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_259`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_259 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy259 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb095_alpha_dummy_255 D R S_cls E)
-            (syn_wrex (nb095_alpha_dummy_256 D R S_cls E)
-              (Class.cv (nb095_alpha_dummy_250 D R S_cls E))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_255 D R S_cls E))
-                (syn_cphi (Class.cv (nb095_alpha_dummy_256 D R S_cls E)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb095_alpha_dummy_255 D R S_cls E)
-            (syn_wrex (nb095_alpha_dummy_256 D R S_cls E)
-              (Class.cv (nb095_alpha_dummy_249 D R S_cls E))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_255 D R S_cls E))
-                (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_256 D R S_cls E)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+  (freshVar (((synCcompl (Class.cab (nb095AlphaDummy255 D R S_cls E)
+            (synWrex (nb095AlphaDummy256 D R S_cls E)
+              (Class.cv (nb095AlphaDummy250 D R S_cls E))
+              (Wff.classEq (Class.cv (nb095AlphaDummy255 D R S_cls E))
+                (synCphi (Class.cv (nb095AlphaDummy256 D R S_cls E)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb095AlphaDummy255 D R S_cls E)
+            (synWrex (nb095AlphaDummy256 D R S_cls E)
+              (Class.cv (nb095AlphaDummy249 D R S_cls E))
+              (Wff.classEq (Class.cv (nb095AlphaDummy255 D R S_cls E))
+                (synCun (synCphi (Class.cv (nb095AlphaDummy256 D R S_cls E)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_260`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_260 (x : Var) (R : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb095_alpha_dummy_257 x R)
-            (syn_wrex (nb095_alpha_dummy_258 x R) (Class.cv (nb095_alpha_dummy_252 x R))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_257 x R))
-                (syn_cphi (Class.cv (nb095_alpha_dummy_258 x R)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb095_alpha_dummy_257 x R)
-            (syn_wrex (nb095_alpha_dummy_258 x R) (Class.cv (nb095_alpha_dummy_251 x R))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_257 x R))
-                (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_258 x R)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+noncomputable def nb095AlphaDummy260 (x : Var) (R : Class) : Var :=
+  (freshVar (((synCcompl (Class.cab (nb095AlphaDummy257 x R)
+            (synWrex (nb095AlphaDummy258 x R) (Class.cv (nb095AlphaDummy252 x R))
+              (Wff.classEq (Class.cv (nb095AlphaDummy257 x R))
+                (synCphi (Class.cv (nb095AlphaDummy258 x R)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb095AlphaDummy257 x R)
+            (synWrex (nb095AlphaDummy258 x R) (Class.cv (nb095AlphaDummy251 x R))
+              (Wff.classEq (Class.cv (nb095AlphaDummy257 x R))
+                (synCun (synCphi (Class.cv (nb095AlphaDummy258 x R)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_261`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_261 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy261 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_255 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_256 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_250 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_255 D R S_cls E))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_256 D R S_cls E))))))).fv ∪
-      ((Class.cab (nb095_alpha_dummy_255 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_256 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_250 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_255 D R S_cls E))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_256 D R S_cls E))))))).fv) 0)
+  (freshVar (((Class.cab (nb095AlphaDummy255 D R S_cls E)
+          (synWrex (nb095AlphaDummy256 D R S_cls E)
+            (Class.cv (nb095AlphaDummy250 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy255 D R S_cls E))
+              (synCphi (Class.cv (nb095AlphaDummy256 D R S_cls E))))))).fv ∪
+      ((Class.cab (nb095AlphaDummy255 D R S_cls E)
+          (synWrex (nb095AlphaDummy256 D R S_cls E)
+            (Class.cv (nb095AlphaDummy250 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy255 D R S_cls E))
+              (synCphi (Class.cv (nb095AlphaDummy256 D R S_cls E))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_262`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_262 (x : Var) (R : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_257 x R)
-          (syn_wrex (nb095_alpha_dummy_258 x R) (Class.cv (nb095_alpha_dummy_252 x R))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_257 x R))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_258 x R))))))).fv ∪
-      ((Class.cab (nb095_alpha_dummy_257 x R)
-          (syn_wrex (nb095_alpha_dummy_258 x R) (Class.cv (nb095_alpha_dummy_252 x R))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_257 x R))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_258 x R))))))).fv) 0)
+noncomputable def nb095AlphaDummy262 (x : Var) (R : Class) : Var :=
+  (freshVar (((Class.cab (nb095AlphaDummy257 x R)
+          (synWrex (nb095AlphaDummy258 x R) (Class.cv (nb095AlphaDummy252 x R))
+            (Wff.classEq (Class.cv (nb095AlphaDummy257 x R))
+              (synCphi (Class.cv (nb095AlphaDummy258 x R))))))).fv ∪
+      ((Class.cab (nb095AlphaDummy257 x R)
+          (synWrex (nb095AlphaDummy258 x R) (Class.cv (nb095AlphaDummy252 x R))
+            (Wff.classEq (Class.cv (nb095AlphaDummy257 x R))
+              (synCphi (Class.cv (nb095AlphaDummy258 x R))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_263`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_263 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy263 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_256 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy256 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_264`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_264 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy264 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_256 D R S_cls E))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy256 D R S_cls E))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_265`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_265 (x : Var) (R : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_258 x R))).fv) 0)
+noncomputable def nb095AlphaDummy265 (x : Var) (R : Class) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy258 x R))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_266`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_266 (x : Var) (R : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_258 x R))).fv) 1)
+noncomputable def nb095AlphaDummy266 (x : Var) (R : Class) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy258 x R))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_267`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_267 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy267 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb095_alpha_dummy_263 D R S_cls E)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb095_alpha_dummy_263 D R S_cls E)) (syn_c1c))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_263 D R S_cls E))).fv) 0)
+  (freshVar (((Wff.classMem (Class.cv (nb095AlphaDummy263 D R S_cls E)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb095AlphaDummy263 D R S_cls E)) (synC1c))).fv ∪
+      ((Class.cv (nb095AlphaDummy263 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_268`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_268 (x : Var) (R : Class) : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb095_alpha_dummy_265 x R)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb095_alpha_dummy_265 x R)) (syn_c1c))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_265 x R))).fv) 0)
+noncomputable def nb095AlphaDummy268 (x : Var) (R : Class) : Var :=
+  (freshVar (((Wff.classMem (Class.cv (nb095AlphaDummy265 x R)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb095AlphaDummy265 x R)) (synC1c))).fv ∪
+      ((Class.cv (nb095AlphaDummy265 x R))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_269`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_269 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy269 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_263 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy263 D R S_cls E))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_270`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_270 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy270 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_263 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy263 D R S_cls E))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_271`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_271 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy271 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_263 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 2)
+  (freshVar (((Class.cv (nb095AlphaDummy263 D R S_cls E))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_272`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_272 (x : Var) (R : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_265 x R))).fv ∪ ((syn_c1c)).fv) 0)
+noncomputable def nb095AlphaDummy272 (x : Var) (R : Class) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy265 x R))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_273`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_273 (x : Var) (R : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_265 x R))).fv ∪ ((syn_c1c)).fv) 1)
+noncomputable def nb095AlphaDummy273 (x : Var) (R : Class) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy265 x R))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_274`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_274 (x : Var) (R : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_265 x R))).fv ∪ ((syn_c1c)).fv) 2)
+noncomputable def nb095AlphaDummy274 (x : Var) (R : Class) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy265 x R))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_275`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_275 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy275 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb095_alpha_dummy_270 D R S_cls E))
-          (Class.cv (nb095_alpha_dummy_271 D R S_cls E)))).fv ∪
-      ((syn_cnin (Class.cv (nb095_alpha_dummy_270 D R S_cls E))
-          (Class.cv (nb095_alpha_dummy_271 D R S_cls E)))).fv) 0)
+  (freshVar (((synCnin (Class.cv (nb095AlphaDummy270 D R S_cls E))
+          (Class.cv (nb095AlphaDummy271 D R S_cls E)))).fv ∪
+      ((synCnin (Class.cv (nb095AlphaDummy270 D R S_cls E))
+          (Class.cv (nb095AlphaDummy271 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_276`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_276 (x : Var) (R : Class) : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb095_alpha_dummy_273 x R))
-          (Class.cv (nb095_alpha_dummy_274 x R)))).fv ∪
-      ((syn_cnin (Class.cv (nb095_alpha_dummy_273 x R))
-          (Class.cv (nb095_alpha_dummy_274 x R)))).fv) 0)
+noncomputable def nb095AlphaDummy276 (x : Var) (R : Class) : Var :=
+  (freshVar (((synCnin (Class.cv (nb095AlphaDummy273 x R))
+          (Class.cv (nb095AlphaDummy274 x R)))).fv ∪
+      ((synCnin (Class.cv (nb095AlphaDummy273 x R))
+          (Class.cv (nb095AlphaDummy274 x R)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_277`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_277 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy277 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_270 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_271 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy270 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy271 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_278`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_278 (x : Var) (R : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_273 x R))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_274 x R))).fv) 0)
+noncomputable def nb095AlphaDummy278 (x : Var) (R : Class) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy273 x R))).fv ∪
+      ((Class.cv (nb095AlphaDummy274 x R))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_279`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_279 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy279 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb095_alpha_dummy_270 D R S_cls E)))).fv ∪
-      ((syn_ccompl (Class.cv (nb095_alpha_dummy_271 D R S_cls E)))).fv) 0)
+  (freshVar (((synCcompl (Class.cv (nb095AlphaDummy270 D R S_cls E)))).fv ∪
+      ((synCcompl (Class.cv (nb095AlphaDummy271 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_280`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_280 (x : Var) (R : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb095_alpha_dummy_273 x R)))).fv ∪
-      ((syn_ccompl (Class.cv (nb095_alpha_dummy_274 x R)))).fv) 0)
+noncomputable def nb095AlphaDummy280 (x : Var) (R : Class) : Var :=
+  (freshVar (((synCcompl (Class.cv (nb095AlphaDummy273 x R)))).fv ∪
+      ((synCcompl (Class.cv (nb095AlphaDummy274 x R)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_281`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_281 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy281 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_270 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_270 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy270 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy270 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_282`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_282 (x : Var) (R : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_273 x R))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_273 x R))).fv) 0)
+noncomputable def nb095AlphaDummy282 (x : Var) (R : Class) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy273 x R))).fv ∪
+      ((Class.cv (nb095AlphaDummy273 x R))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_283`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_283 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy283 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_271 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_271 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy271 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy271 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_284`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_284 (x : Var) (R : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_274 x R))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_274 x R))).fv) 0)
+noncomputable def nb095AlphaDummy284 (x : Var) (R : Class) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy274 x R))).fv ∪
+      ((Class.cv (nb095AlphaDummy274 x R))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_285`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_285 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy285 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_255 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_256 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_249 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_255 D R S_cls E))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_256 D R S_cls E)))
-                (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb095_alpha_dummy_255 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_256 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_249 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_255 D R S_cls E))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_256 D R S_cls E)))
-                (syn_csn (syn_c0c))))))).fv) 0)
+  (freshVar (((Class.cab (nb095AlphaDummy255 D R S_cls E)
+          (synWrex (nb095AlphaDummy256 D R S_cls E)
+            (Class.cv (nb095AlphaDummy249 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy255 D R S_cls E))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy256 D R S_cls E)))
+                (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb095AlphaDummy255 D R S_cls E)
+          (synWrex (nb095AlphaDummy256 D R S_cls E)
+            (Class.cv (nb095AlphaDummy249 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy255 D R S_cls E))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy256 D R S_cls E)))
+                (synCsn (synC0c))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_286`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_286 (x : Var) (R : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_257 x R)
-          (syn_wrex (nb095_alpha_dummy_258 x R) (Class.cv (nb095_alpha_dummy_251 x R))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_257 x R))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_258 x R)))
-                (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb095_alpha_dummy_257 x R)
-          (syn_wrex (nb095_alpha_dummy_258 x R) (Class.cv (nb095_alpha_dummy_251 x R))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_257 x R))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_258 x R)))
-                (syn_csn (syn_c0c))))))).fv) 0)
+noncomputable def nb095AlphaDummy286 (x : Var) (R : Class) : Var :=
+  (freshVar (((Class.cab (nb095AlphaDummy257 x R)
+          (synWrex (nb095AlphaDummy258 x R) (Class.cv (nb095AlphaDummy251 x R))
+            (Wff.classEq (Class.cv (nb095AlphaDummy257 x R))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy258 x R)))
+                (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb095AlphaDummy257 x R)
+          (synWrex (nb095AlphaDummy258 x R) (Class.cv (nb095AlphaDummy251 x R))
+            (Wff.classEq (Class.cv (nb095AlphaDummy257 x R))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy258 x R)))
+                (synCsn (synC0c))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_287`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_287 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy287 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (syn_cphi (Class.cv (nb095_alpha_dummy_256 D R S_cls E))))).fv ∪
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
+  (freshVar (((synCcompl (synCphi (Class.cv (nb095AlphaDummy256 D R S_cls E))))).fv ∪
+      ((synCcompl (synCsn (synC0c)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_288`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_288 (x : Var) (R : Class) : Var :=
-  (freshVar (((syn_ccompl (syn_cphi (Class.cv (nb095_alpha_dummy_258 x R))))).fv ∪
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
+noncomputable def nb095AlphaDummy288 (x : Var) (R : Class) : Var :=
+  (freshVar (((synCcompl (synCphi (Class.cv (nb095AlphaDummy258 x R))))).fv ∪
+      ((synCcompl (synCsn (synC0c)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_289`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_289 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy289 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cphi (Class.cv (nb095_alpha_dummy_256 D R S_cls E)))).fv ∪
-      ((syn_cphi (Class.cv (nb095_alpha_dummy_256 D R S_cls E)))).fv) 0)
+  (freshVar (((synCphi (Class.cv (nb095AlphaDummy256 D R S_cls E)))).fv ∪
+      ((synCphi (Class.cv (nb095AlphaDummy256 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_290`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_290 (x : Var) (R : Class) : Var :=
-  (freshVar (((syn_cphi (Class.cv (nb095_alpha_dummy_258 x R)))).fv ∪
-      ((syn_cphi (Class.cv (nb095_alpha_dummy_258 x R)))).fv) 0)
+noncomputable def nb095AlphaDummy290 (x : Var) (R : Class) : Var :=
+  (freshVar (((synCphi (Class.cv (nb095AlphaDummy258 x R)))).fv ∪
+      ((synCphi (Class.cv (nb095AlphaDummy258 x R)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_291`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_291 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy291 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cnin (syn_crn (Class.cv (nb095_alpha_dummy_000 D R S_cls E))) (syn_cin E
-            (syn_cima (syn_ccnv (syn_cdif S_cls (syn_cid)))
-              (syn_csn (Class.cv (nb095_alpha_dummy_001 D R S_cls E))))))).fv ∪
-      ((syn_cnin (syn_crn (Class.cv (nb095_alpha_dummy_000 D R S_cls E))) (syn_cin E
-            (syn_cima (syn_ccnv (syn_cdif S_cls (syn_cid)))
-              (syn_csn (Class.cv (nb095_alpha_dummy_001 D R S_cls E))))))).fv) 0)
+  (freshVar (((synCnin (synCrn (Class.cv (nb095AlphaDummy000 D R S_cls E))) (synCin E
+            (synCima (synCcnv (synCdif S_cls (synCid)))
+              (synCsn (Class.cv (nb095AlphaDummy001 D R S_cls E))))))).fv ∪
+      ((synCnin (synCrn (Class.cv (nb095AlphaDummy000 D R S_cls E))) (synCin E
+            (synCima (synCcnv (synCdif S_cls (synCid)))
+              (synCsn (Class.cv (nb095AlphaDummy001 D R S_cls E))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_292`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_292 (u : Var) (S_cls : Class) (f : Var) (E : Class) :
+noncomputable def nb095AlphaDummy292 (u : Var) (S_cls : Class) (f : Var) (E : Class) :
     Var :=
-  (freshVar (((syn_cnin (syn_crn (Class.cv f)) (syn_cin E
-            (syn_cima (syn_ccnv (syn_cdif S_cls (syn_cid))) (syn_csn (Class.cv u)))))).fv ∪
-      ((syn_cnin (syn_crn (Class.cv f)) (syn_cin E
-            (syn_cima (syn_ccnv (syn_cdif S_cls (syn_cid))) (syn_csn (Class.cv u)))))).fv) 0)
+  (freshVar (((synCnin (synCrn (Class.cv f)) (synCin E
+            (synCima (synCcnv (synCdif S_cls (synCid))) (synCsn (Class.cv u)))))).fv ∪
+      ((synCnin (synCrn (Class.cv f)) (synCin E
+            (synCima (synCcnv (synCdif S_cls (synCid))) (synCsn (Class.cv u)))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_293`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_293 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy293 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_crn (Class.cv (nb095_alpha_dummy_000 D R S_cls E)))).fv ∪ ((syn_cin E
-          (syn_cima (syn_ccnv (syn_cdif S_cls (syn_cid)))
-            (syn_csn (Class.cv (nb095_alpha_dummy_001 D R S_cls E)))))).fv) 0)
+  (freshVar (((synCrn (Class.cv (nb095AlphaDummy000 D R S_cls E)))).fv ∪ ((synCin E
+          (synCima (synCcnv (synCdif S_cls (synCid)))
+            (synCsn (Class.cv (nb095AlphaDummy001 D R S_cls E)))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_294`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_294 (u : Var) (S_cls : Class) (f : Var) (E : Class) :
+noncomputable def nb095AlphaDummy294 (u : Var) (S_cls : Class) (f : Var) (E : Class) :
     Var :=
-  (freshVar (((syn_crn (Class.cv f))).fv ∪ ((syn_cin E
-          (syn_cima (syn_ccnv (syn_cdif S_cls (syn_cid))) (syn_csn (Class.cv u))))).fv) 0)
+  (freshVar (((synCrn (Class.cv f))).fv ∪ ((synCin E
+          (synCima (synCcnv (synCdif S_cls (synCid))) (synCsn (Class.cv u))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_295`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_295 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy295 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_000 D R S_cls E))).fv ∪ ((syn_cvv)).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy000 D R S_cls E))).fv ∪ ((synCvv)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_296`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_296 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy296 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_000 D R S_cls E))).fv ∪ ((syn_cvv)).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy000 D R S_cls E))).fv ∪ ((synCvv)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_297`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_297 (f : Var) : Var :=
-  (freshVar (((Class.cv f)).fv ∪ ((syn_cvv)).fv) 0)
+noncomputable def nb095AlphaDummy297 (f : Var) : Var :=
+  (freshVar (((Class.cv f)).fv ∪ ((synCvv)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_298`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_298 (f : Var) : Var :=
-  (freshVar (((Class.cv f)).fv ∪ ((syn_cvv)).fv) 1)
+noncomputable def nb095AlphaDummy298 (f : Var) : Var :=
+  (freshVar (((Class.cv f)).fv ∪ ((synCvv)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_299`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_299 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy299 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_296 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_295 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy296 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy295 D R S_cls E))).fv) 0)
 
 end NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired
 
@@ -2063,994 +2363,1144 @@ open NFChoice.DefinitionLeaves.AlphaFocusedFV
 open NFChoice.DirectNominalPrf
 open NFChoice.DirectNominalPrf.Nominal
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_300`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_300 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy300 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_296 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_295 D R S_cls E))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy296 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy295 D R S_cls E))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_301`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_301 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_298 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_297 f))).fv) 0)
+noncomputable def nb095AlphaDummy301 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy298 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy297 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_302`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_302 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_298 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_297 f))).fv) 1)
+noncomputable def nb095AlphaDummy302 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy298 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy297 f))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_303`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_303 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy303 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb095_alpha_dummy_299 D R S_cls E)
-            (syn_wrex (nb095_alpha_dummy_300 D R S_cls E)
-              (Class.cv (nb095_alpha_dummy_296 D R S_cls E))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_299 D R S_cls E))
-                (syn_cphi (Class.cv (nb095_alpha_dummy_300 D R S_cls E)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb095_alpha_dummy_299 D R S_cls E)
-            (syn_wrex (nb095_alpha_dummy_300 D R S_cls E)
-              (Class.cv (nb095_alpha_dummy_295 D R S_cls E))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_299 D R S_cls E))
-                (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_300 D R S_cls E)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+  (freshVar (((synCcompl (Class.cab (nb095AlphaDummy299 D R S_cls E)
+            (synWrex (nb095AlphaDummy300 D R S_cls E)
+              (Class.cv (nb095AlphaDummy296 D R S_cls E))
+              (Wff.classEq (Class.cv (nb095AlphaDummy299 D R S_cls E))
+                (synCphi (Class.cv (nb095AlphaDummy300 D R S_cls E)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb095AlphaDummy299 D R S_cls E)
+            (synWrex (nb095AlphaDummy300 D R S_cls E)
+              (Class.cv (nb095AlphaDummy295 D R S_cls E))
+              (Wff.classEq (Class.cv (nb095AlphaDummy299 D R S_cls E))
+                (synCun (synCphi (Class.cv (nb095AlphaDummy300 D R S_cls E)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_304`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_304 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb095_alpha_dummy_301 f)
-            (syn_wrex (nb095_alpha_dummy_302 f) (Class.cv (nb095_alpha_dummy_298 f))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_301 f))
-                (syn_cphi (Class.cv (nb095_alpha_dummy_302 f)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb095_alpha_dummy_301 f)
-            (syn_wrex (nb095_alpha_dummy_302 f) (Class.cv (nb095_alpha_dummy_297 f))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_301 f))
-                (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_302 f)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+noncomputable def nb095AlphaDummy304 (f : Var) : Var :=
+  (freshVar (((synCcompl (Class.cab (nb095AlphaDummy301 f)
+            (synWrex (nb095AlphaDummy302 f) (Class.cv (nb095AlphaDummy298 f))
+              (Wff.classEq (Class.cv (nb095AlphaDummy301 f))
+                (synCphi (Class.cv (nb095AlphaDummy302 f)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb095AlphaDummy301 f)
+            (synWrex (nb095AlphaDummy302 f) (Class.cv (nb095AlphaDummy297 f))
+              (Wff.classEq (Class.cv (nb095AlphaDummy301 f))
+                (synCun (synCphi (Class.cv (nb095AlphaDummy302 f)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_305`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_305 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy305 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_299 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_300 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_296 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_299 D R S_cls E))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_300 D R S_cls E))))))).fv ∪
-      ((Class.cab (nb095_alpha_dummy_299 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_300 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_296 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_299 D R S_cls E))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_300 D R S_cls E))))))).fv) 0)
+  (freshVar (((Class.cab (nb095AlphaDummy299 D R S_cls E)
+          (synWrex (nb095AlphaDummy300 D R S_cls E)
+            (Class.cv (nb095AlphaDummy296 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy299 D R S_cls E))
+              (synCphi (Class.cv (nb095AlphaDummy300 D R S_cls E))))))).fv ∪
+      ((Class.cab (nb095AlphaDummy299 D R S_cls E)
+          (synWrex (nb095AlphaDummy300 D R S_cls E)
+            (Class.cv (nb095AlphaDummy296 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy299 D R S_cls E))
+              (synCphi (Class.cv (nb095AlphaDummy300 D R S_cls E))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_306`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_306 (f : Var) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_301 f)
-          (syn_wrex (nb095_alpha_dummy_302 f) (Class.cv (nb095_alpha_dummy_298 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_301 f))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_302 f))))))).fv ∪
-      ((Class.cab (nb095_alpha_dummy_301 f)
-          (syn_wrex (nb095_alpha_dummy_302 f) (Class.cv (nb095_alpha_dummy_298 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_301 f))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_302 f))))))).fv) 0)
+noncomputable def nb095AlphaDummy306 (f : Var) : Var :=
+  (freshVar (((Class.cab (nb095AlphaDummy301 f)
+          (synWrex (nb095AlphaDummy302 f) (Class.cv (nb095AlphaDummy298 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy301 f))
+              (synCphi (Class.cv (nb095AlphaDummy302 f))))))).fv ∪
+      ((Class.cab (nb095AlphaDummy301 f)
+          (synWrex (nb095AlphaDummy302 f) (Class.cv (nb095AlphaDummy298 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy301 f))
+              (synCphi (Class.cv (nb095AlphaDummy302 f))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_307`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_307 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy307 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_300 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy300 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_308`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_308 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy308 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_300 D R S_cls E))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy300 D R S_cls E))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_309`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_309 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_302 f))).fv) 0)
+noncomputable def nb095AlphaDummy309 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy302 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_310`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_310 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_302 f))).fv) 1)
+noncomputable def nb095AlphaDummy310 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy302 f))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_311`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_311 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy311 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb095_alpha_dummy_307 D R S_cls E)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb095_alpha_dummy_307 D R S_cls E)) (syn_c1c))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_307 D R S_cls E))).fv) 0)
+  (freshVar (((Wff.classMem (Class.cv (nb095AlphaDummy307 D R S_cls E)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb095AlphaDummy307 D R S_cls E)) (synC1c))).fv ∪
+      ((Class.cv (nb095AlphaDummy307 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_312`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_312 (f : Var) : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb095_alpha_dummy_309 f)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb095_alpha_dummy_309 f)) (syn_c1c))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_309 f))).fv) 0)
+noncomputable def nb095AlphaDummy312 (f : Var) : Var :=
+  (freshVar (((Wff.classMem (Class.cv (nb095AlphaDummy309 f)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb095AlphaDummy309 f)) (synC1c))).fv ∪
+      ((Class.cv (nb095AlphaDummy309 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_313`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_313 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy313 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_307 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy307 D R S_cls E))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_314`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_314 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy314 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_307 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy307 D R S_cls E))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_315`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_315 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy315 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_307 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 2)
+  (freshVar (((Class.cv (nb095AlphaDummy307 D R S_cls E))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_316`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_316 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_309 f))).fv ∪ ((syn_c1c)).fv) 0)
+noncomputable def nb095AlphaDummy316 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy309 f))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_317`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_317 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_309 f))).fv ∪ ((syn_c1c)).fv) 1)
+noncomputable def nb095AlphaDummy317 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy309 f))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_318`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_318 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_309 f))).fv ∪ ((syn_c1c)).fv) 2)
+noncomputable def nb095AlphaDummy318 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy309 f))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_319`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_319 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy319 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb095_alpha_dummy_314 D R S_cls E))
-          (Class.cv (nb095_alpha_dummy_315 D R S_cls E)))).fv ∪
-      ((syn_cnin (Class.cv (nb095_alpha_dummy_314 D R S_cls E))
-          (Class.cv (nb095_alpha_dummy_315 D R S_cls E)))).fv) 0)
+  (freshVar (((synCnin (Class.cv (nb095AlphaDummy314 D R S_cls E))
+          (Class.cv (nb095AlphaDummy315 D R S_cls E)))).fv ∪
+      ((synCnin (Class.cv (nb095AlphaDummy314 D R S_cls E))
+          (Class.cv (nb095AlphaDummy315 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_320`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_320 (f : Var) : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb095_alpha_dummy_317 f))
-          (Class.cv (nb095_alpha_dummy_318 f)))).fv ∪
-      ((syn_cnin (Class.cv (nb095_alpha_dummy_317 f)) (Class.cv (nb095_alpha_dummy_318 f)))).fv)
+noncomputable def nb095AlphaDummy320 (f : Var) : Var :=
+  (freshVar (((synCnin (Class.cv (nb095AlphaDummy317 f))
+          (Class.cv (nb095AlphaDummy318 f)))).fv ∪
+      ((synCnin (Class.cv (nb095AlphaDummy317 f)) (Class.cv (nb095AlphaDummy318 f)))).fv)
     0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_321`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_321 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy321 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_314 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_315 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy314 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy315 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_322`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_322 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_317 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_318 f))).fv) 0)
+noncomputable def nb095AlphaDummy322 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy317 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy318 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_323`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_323 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy323 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb095_alpha_dummy_314 D R S_cls E)))).fv ∪
-      ((syn_ccompl (Class.cv (nb095_alpha_dummy_315 D R S_cls E)))).fv) 0)
+  (freshVar (((synCcompl (Class.cv (nb095AlphaDummy314 D R S_cls E)))).fv ∪
+      ((synCcompl (Class.cv (nb095AlphaDummy315 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_324`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_324 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb095_alpha_dummy_317 f)))).fv ∪
-      ((syn_ccompl (Class.cv (nb095_alpha_dummy_318 f)))).fv) 0)
+noncomputable def nb095AlphaDummy324 (f : Var) : Var :=
+  (freshVar (((synCcompl (Class.cv (nb095AlphaDummy317 f)))).fv ∪
+      ((synCcompl (Class.cv (nb095AlphaDummy318 f)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_325`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_325 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy325 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_314 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_314 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy314 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy314 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_326`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_326 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_317 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_317 f))).fv) 0)
+noncomputable def nb095AlphaDummy326 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy317 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy317 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_327`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_327 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy327 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_315 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_315 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy315 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy315 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_328`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_328 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_318 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_318 f))).fv) 0)
+noncomputable def nb095AlphaDummy328 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy318 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy318 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_329`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_329 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy329 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_299 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_300 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_295 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_299 D R S_cls E))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_300 D R S_cls E)))
-                (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb095_alpha_dummy_299 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_300 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_295 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_299 D R S_cls E))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_300 D R S_cls E)))
-                (syn_csn (syn_c0c))))))).fv) 0)
+  (freshVar (((Class.cab (nb095AlphaDummy299 D R S_cls E)
+          (synWrex (nb095AlphaDummy300 D R S_cls E)
+            (Class.cv (nb095AlphaDummy295 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy299 D R S_cls E))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy300 D R S_cls E)))
+                (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb095AlphaDummy299 D R S_cls E)
+          (synWrex (nb095AlphaDummy300 D R S_cls E)
+            (Class.cv (nb095AlphaDummy295 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy299 D R S_cls E))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy300 D R S_cls E)))
+                (synCsn (synC0c))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_330`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_330 (f : Var) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_301 f)
-          (syn_wrex (nb095_alpha_dummy_302 f) (Class.cv (nb095_alpha_dummy_297 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_301 f))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_302 f)))
-                (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb095_alpha_dummy_301 f)
-          (syn_wrex (nb095_alpha_dummy_302 f) (Class.cv (nb095_alpha_dummy_297 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_301 f))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_302 f)))
-                (syn_csn (syn_c0c))))))).fv) 0)
+noncomputable def nb095AlphaDummy330 (f : Var) : Var :=
+  (freshVar (((Class.cab (nb095AlphaDummy301 f)
+          (synWrex (nb095AlphaDummy302 f) (Class.cv (nb095AlphaDummy297 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy301 f))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy302 f)))
+                (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb095AlphaDummy301 f)
+          (synWrex (nb095AlphaDummy302 f) (Class.cv (nb095AlphaDummy297 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy301 f))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy302 f)))
+                (synCsn (synC0c))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_331`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_331 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy331 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (syn_cphi (Class.cv (nb095_alpha_dummy_300 D R S_cls E))))).fv ∪
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
+  (freshVar (((synCcompl (synCphi (Class.cv (nb095AlphaDummy300 D R S_cls E))))).fv ∪
+      ((synCcompl (synCsn (synC0c)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_332`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_332 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (syn_cphi (Class.cv (nb095_alpha_dummy_302 f))))).fv ∪
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
+noncomputable def nb095AlphaDummy332 (f : Var) : Var :=
+  (freshVar (((synCcompl (synCphi (Class.cv (nb095AlphaDummy302 f))))).fv ∪
+      ((synCcompl (synCsn (synC0c)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_333`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_333 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy333 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cphi (Class.cv (nb095_alpha_dummy_300 D R S_cls E)))).fv ∪
-      ((syn_cphi (Class.cv (nb095_alpha_dummy_300 D R S_cls E)))).fv) 0)
+  (freshVar (((synCphi (Class.cv (nb095AlphaDummy300 D R S_cls E)))).fv ∪
+      ((synCphi (Class.cv (nb095AlphaDummy300 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_334`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_334 (f : Var) : Var :=
-  (freshVar (((syn_cphi (Class.cv (nb095_alpha_dummy_302 f)))).fv ∪
-      ((syn_cphi (Class.cv (nb095_alpha_dummy_302 f)))).fv) 0)
+noncomputable def nb095AlphaDummy334 (f : Var) : Var :=
+  (freshVar (((synCphi (Class.cv (nb095AlphaDummy302 f)))).fv ∪
+      ((synCphi (Class.cv (nb095AlphaDummy302 f)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_335`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_335 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy335 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cnin E (syn_cima (syn_ccnv (syn_cdif S_cls (syn_cid)))
-            (syn_csn (Class.cv (nb095_alpha_dummy_001 D R S_cls E)))))).fv ∪ ((syn_cnin E
-          (syn_cima (syn_ccnv (syn_cdif S_cls (syn_cid)))
-            (syn_csn (Class.cv (nb095_alpha_dummy_001 D R S_cls E)))))).fv) 0)
+  (freshVar (((synCnin E (synCima (synCcnv (synCdif S_cls (synCid)))
+            (synCsn (Class.cv (nb095AlphaDummy001 D R S_cls E)))))).fv ∪ ((synCnin E
+          (synCima (synCcnv (synCdif S_cls (synCid)))
+            (synCsn (Class.cv (nb095AlphaDummy001 D R S_cls E)))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_336`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_336 (u : Var) (S_cls : Class) (E : Class) : Var :=
-  (freshVar (((syn_cnin E
-          (syn_cima (syn_ccnv (syn_cdif S_cls (syn_cid))) (syn_csn (Class.cv u))))).fv ∪
-      ((syn_cnin E (syn_cima (syn_ccnv (syn_cdif S_cls (syn_cid))) (syn_csn (Class.cv u))))).fv)
+noncomputable def nb095AlphaDummy336 (u : Var) (S_cls : Class) (E : Class) : Var :=
+  (freshVar (((synCnin E
+          (synCima (synCcnv (synCdif S_cls (synCid))) (synCsn (Class.cv u))))).fv ∪
+      ((synCnin E (synCima (synCcnv (synCdif S_cls (synCid))) (synCsn (Class.cv u))))).fv)
     0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_337`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_337 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy337 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar ((E).fv ∪ ((syn_cima (syn_ccnv (syn_cdif S_cls (syn_cid)))
-          (syn_csn (Class.cv (nb095_alpha_dummy_001 D R S_cls E))))).fv) 0)
+  (freshVar ((E).fv ∪ ((synCima (synCcnv (synCdif S_cls (synCid)))
+          (synCsn (Class.cv (nb095AlphaDummy001 D R S_cls E))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_338`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_338 (u : Var) (S_cls : Class) (E : Class) : Var :=
+noncomputable def nb095AlphaDummy338 (u : Var) (S_cls : Class) (E : Class) : Var :=
   (freshVar ((E).fv ∪
-      ((syn_cima (syn_ccnv (syn_cdif S_cls (syn_cid))) (syn_csn (Class.cv u)))).fv) 0)
+      ((synCima (synCcnv (synCdif S_cls (synCid))) (synCsn (Class.cv u)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_339`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_339 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy339 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccnv (syn_cdif S_cls (syn_cid)))).fv ∪
-      ((syn_csn (Class.cv (nb095_alpha_dummy_001 D R S_cls E)))).fv) 0)
+  (freshVar (((synCcnv (synCdif S_cls (synCid)))).fv ∪
+      ((synCsn (Class.cv (nb095AlphaDummy001 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_340`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_340 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy340 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccnv (syn_cdif S_cls (syn_cid)))).fv ∪
-      ((syn_csn (Class.cv (nb095_alpha_dummy_001 D R S_cls E)))).fv) 1)
+  (freshVar (((synCcnv (synCdif S_cls (synCid)))).fv ∪
+      ((synCsn (Class.cv (nb095AlphaDummy001 D R S_cls E)))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_341`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_341 (u : Var) (S_cls : Class) : Var :=
-  (freshVar (((syn_ccnv (syn_cdif S_cls (syn_cid)))).fv ∪ ((syn_csn (Class.cv u))).fv) 0)
+noncomputable def nb095AlphaDummy341 (u : Var) (S_cls : Class) : Var :=
+  (freshVar (((synCcnv (synCdif S_cls (synCid)))).fv ∪ ((synCsn (Class.cv u))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_342`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_342 (u : Var) (S_cls : Class) : Var :=
-  (freshVar (((syn_ccnv (syn_cdif S_cls (syn_cid)))).fv ∪ ((syn_csn (Class.cv u))).fv) 1)
+noncomputable def nb095AlphaDummy342 (u : Var) (S_cls : Class) : Var :=
+  (freshVar (((synCcnv (synCdif S_cls (synCid)))).fv ∪ ((synCsn (Class.cv u))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_343`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_343 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy343 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_001 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy001 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_344`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_344 (u : Var) : Var :=
+noncomputable def nb095AlphaDummy344 (u : Var) : Var :=
   (freshVar (((Class.cv u)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_345`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_345 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy345 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_340 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_339 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy340 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy339 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_346`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_346 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy346 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_340 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_339 D R S_cls E))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy340 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy339 D R S_cls E))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_347`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_347 (u : Var) (S_cls : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_342 u S_cls))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_341 u S_cls))).fv) 0)
+noncomputable def nb095AlphaDummy347 (u : Var) (S_cls : Class) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy342 u S_cls))).fv ∪
+      ((Class.cv (nb095AlphaDummy341 u S_cls))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_348`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_348 (u : Var) (S_cls : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_342 u S_cls))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_341 u S_cls))).fv) 1)
+noncomputable def nb095AlphaDummy348 (u : Var) (S_cls : Class) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy342 u S_cls))).fv ∪
+      ((Class.cv (nb095AlphaDummy341 u S_cls))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_349`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_349 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy349 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb095_alpha_dummy_345 D R S_cls E)
-            (syn_wrex (nb095_alpha_dummy_346 D R S_cls E)
-              (Class.cv (nb095_alpha_dummy_340 D R S_cls E))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_345 D R S_cls E))
-                (syn_cphi (Class.cv (nb095_alpha_dummy_346 D R S_cls E)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb095_alpha_dummy_345 D R S_cls E)
-            (syn_wrex (nb095_alpha_dummy_346 D R S_cls E)
-              (Class.cv (nb095_alpha_dummy_339 D R S_cls E))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_345 D R S_cls E))
-                (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_346 D R S_cls E)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+  (freshVar (((synCcompl (Class.cab (nb095AlphaDummy345 D R S_cls E)
+            (synWrex (nb095AlphaDummy346 D R S_cls E)
+              (Class.cv (nb095AlphaDummy340 D R S_cls E))
+              (Wff.classEq (Class.cv (nb095AlphaDummy345 D R S_cls E))
+                (synCphi (Class.cv (nb095AlphaDummy346 D R S_cls E)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb095AlphaDummy345 D R S_cls E)
+            (synWrex (nb095AlphaDummy346 D R S_cls E)
+              (Class.cv (nb095AlphaDummy339 D R S_cls E))
+              (Wff.classEq (Class.cv (nb095AlphaDummy345 D R S_cls E))
+                (synCun (synCphi (Class.cv (nb095AlphaDummy346 D R S_cls E)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_350`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_350 (u : Var) (S_cls : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb095_alpha_dummy_347 u S_cls)
-            (syn_wrex (nb095_alpha_dummy_348 u S_cls) (Class.cv (nb095_alpha_dummy_342 u S_cls))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_347 u S_cls))
-                (syn_cphi (Class.cv (nb095_alpha_dummy_348 u S_cls)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb095_alpha_dummy_347 u S_cls) (syn_wrex (nb095_alpha_dummy_348 u S_cls)
-              (Class.cv (nb095_alpha_dummy_341 u S_cls))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_347 u S_cls))
-                (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_348 u S_cls)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+noncomputable def nb095AlphaDummy350 (u : Var) (S_cls : Class) : Var :=
+  (freshVar (((synCcompl (Class.cab (nb095AlphaDummy347 u S_cls)
+            (synWrex (nb095AlphaDummy348 u S_cls) (Class.cv (nb095AlphaDummy342 u S_cls))
+              (Wff.classEq (Class.cv (nb095AlphaDummy347 u S_cls))
+                (synCphi (Class.cv (nb095AlphaDummy348 u S_cls)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb095AlphaDummy347 u S_cls) (synWrex (nb095AlphaDummy348 u S_cls)
+              (Class.cv (nb095AlphaDummy341 u S_cls))
+              (Wff.classEq (Class.cv (nb095AlphaDummy347 u S_cls))
+                (synCun (synCphi (Class.cv (nb095AlphaDummy348 u S_cls)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_351`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_351 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy351 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_345 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_346 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_340 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_345 D R S_cls E))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_346 D R S_cls E))))))).fv ∪
-      ((Class.cab (nb095_alpha_dummy_345 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_346 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_340 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_345 D R S_cls E))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_346 D R S_cls E))))))).fv) 0)
+  (freshVar (((Class.cab (nb095AlphaDummy345 D R S_cls E)
+          (synWrex (nb095AlphaDummy346 D R S_cls E)
+            (Class.cv (nb095AlphaDummy340 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy345 D R S_cls E))
+              (synCphi (Class.cv (nb095AlphaDummy346 D R S_cls E))))))).fv ∪
+      ((Class.cab (nb095AlphaDummy345 D R S_cls E)
+          (synWrex (nb095AlphaDummy346 D R S_cls E)
+            (Class.cv (nb095AlphaDummy340 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy345 D R S_cls E))
+              (synCphi (Class.cv (nb095AlphaDummy346 D R S_cls E))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_352`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_352 (u : Var) (S_cls : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_347 u S_cls)
-          (syn_wrex (nb095_alpha_dummy_348 u S_cls) (Class.cv (nb095_alpha_dummy_342 u S_cls))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_347 u S_cls))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_348 u S_cls))))))).fv ∪
-      ((Class.cab (nb095_alpha_dummy_347 u S_cls) (syn_wrex (nb095_alpha_dummy_348 u S_cls)
-            (Class.cv (nb095_alpha_dummy_342 u S_cls))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_347 u S_cls))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_348 u S_cls))))))).fv) 0)
+noncomputable def nb095AlphaDummy352 (u : Var) (S_cls : Class) : Var :=
+  (freshVar (((Class.cab (nb095AlphaDummy347 u S_cls)
+          (synWrex (nb095AlphaDummy348 u S_cls) (Class.cv (nb095AlphaDummy342 u S_cls))
+            (Wff.classEq (Class.cv (nb095AlphaDummy347 u S_cls))
+              (synCphi (Class.cv (nb095AlphaDummy348 u S_cls))))))).fv ∪
+      ((Class.cab (nb095AlphaDummy347 u S_cls) (synWrex (nb095AlphaDummy348 u S_cls)
+            (Class.cv (nb095AlphaDummy342 u S_cls))
+            (Wff.classEq (Class.cv (nb095AlphaDummy347 u S_cls))
+              (synCphi (Class.cv (nb095AlphaDummy348 u S_cls))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_353`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_353 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy353 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_346 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy346 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_354`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_354 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy354 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_346 D R S_cls E))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy346 D R S_cls E))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_355`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_355 (u : Var) (S_cls : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_348 u S_cls))).fv) 0)
+noncomputable def nb095AlphaDummy355 (u : Var) (S_cls : Class) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy348 u S_cls))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_356`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_356 (u : Var) (S_cls : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_348 u S_cls))).fv) 1)
+noncomputable def nb095AlphaDummy356 (u : Var) (S_cls : Class) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy348 u S_cls))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_357`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_357 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy357 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb095_alpha_dummy_353 D R S_cls E)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb095_alpha_dummy_353 D R S_cls E)) (syn_c1c))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_353 D R S_cls E))).fv) 0)
+  (freshVar (((Wff.classMem (Class.cv (nb095AlphaDummy353 D R S_cls E)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb095AlphaDummy353 D R S_cls E)) (synC1c))).fv ∪
+      ((Class.cv (nb095AlphaDummy353 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_358`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_358 (u : Var) (S_cls : Class) : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb095_alpha_dummy_355 u S_cls)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb095_alpha_dummy_355 u S_cls)) (syn_c1c))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_355 u S_cls))).fv) 0)
+noncomputable def nb095AlphaDummy358 (u : Var) (S_cls : Class) : Var :=
+  (freshVar (((Wff.classMem (Class.cv (nb095AlphaDummy355 u S_cls)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb095AlphaDummy355 u S_cls)) (synC1c))).fv ∪
+      ((Class.cv (nb095AlphaDummy355 u S_cls))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_359`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_359 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy359 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_353 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy353 D R S_cls E))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_360`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_360 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy360 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_353 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy353 D R S_cls E))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_361`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_361 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy361 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_353 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 2)
+  (freshVar (((Class.cv (nb095AlphaDummy353 D R S_cls E))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_362`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_362 (u : Var) (S_cls : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_355 u S_cls))).fv ∪ ((syn_c1c)).fv) 0)
+noncomputable def nb095AlphaDummy362 (u : Var) (S_cls : Class) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy355 u S_cls))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_363`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_363 (u : Var) (S_cls : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_355 u S_cls))).fv ∪ ((syn_c1c)).fv) 1)
+noncomputable def nb095AlphaDummy363 (u : Var) (S_cls : Class) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy355 u S_cls))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_364`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_364 (u : Var) (S_cls : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_355 u S_cls))).fv ∪ ((syn_c1c)).fv) 2)
+noncomputable def nb095AlphaDummy364 (u : Var) (S_cls : Class) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy355 u S_cls))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_365`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_365 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy365 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb095_alpha_dummy_360 D R S_cls E))
-          (Class.cv (nb095_alpha_dummy_361 D R S_cls E)))).fv ∪
-      ((syn_cnin (Class.cv (nb095_alpha_dummy_360 D R S_cls E))
-          (Class.cv (nb095_alpha_dummy_361 D R S_cls E)))).fv) 0)
+  (freshVar (((synCnin (Class.cv (nb095AlphaDummy360 D R S_cls E))
+          (Class.cv (nb095AlphaDummy361 D R S_cls E)))).fv ∪
+      ((synCnin (Class.cv (nb095AlphaDummy360 D R S_cls E))
+          (Class.cv (nb095AlphaDummy361 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_366`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_366 (u : Var) (S_cls : Class) : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb095_alpha_dummy_363 u S_cls))
-          (Class.cv (nb095_alpha_dummy_364 u S_cls)))).fv ∪
-      ((syn_cnin (Class.cv (nb095_alpha_dummy_363 u S_cls))
-          (Class.cv (nb095_alpha_dummy_364 u S_cls)))).fv) 0)
+noncomputable def nb095AlphaDummy366 (u : Var) (S_cls : Class) : Var :=
+  (freshVar (((synCnin (Class.cv (nb095AlphaDummy363 u S_cls))
+          (Class.cv (nb095AlphaDummy364 u S_cls)))).fv ∪
+      ((synCnin (Class.cv (nb095AlphaDummy363 u S_cls))
+          (Class.cv (nb095AlphaDummy364 u S_cls)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_367`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_367 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy367 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_360 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_361 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy360 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy361 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_368`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_368 (u : Var) (S_cls : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_363 u S_cls))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_364 u S_cls))).fv) 0)
+noncomputable def nb095AlphaDummy368 (u : Var) (S_cls : Class) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy363 u S_cls))).fv ∪
+      ((Class.cv (nb095AlphaDummy364 u S_cls))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_369`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_369 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy369 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb095_alpha_dummy_360 D R S_cls E)))).fv ∪
-      ((syn_ccompl (Class.cv (nb095_alpha_dummy_361 D R S_cls E)))).fv) 0)
+  (freshVar (((synCcompl (Class.cv (nb095AlphaDummy360 D R S_cls E)))).fv ∪
+      ((synCcompl (Class.cv (nb095AlphaDummy361 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_370`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_370 (u : Var) (S_cls : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb095_alpha_dummy_363 u S_cls)))).fv ∪
-      ((syn_ccompl (Class.cv (nb095_alpha_dummy_364 u S_cls)))).fv) 0)
+noncomputable def nb095AlphaDummy370 (u : Var) (S_cls : Class) : Var :=
+  (freshVar (((synCcompl (Class.cv (nb095AlphaDummy363 u S_cls)))).fv ∪
+      ((synCcompl (Class.cv (nb095AlphaDummy364 u S_cls)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_371`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_371 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy371 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_360 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_360 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy360 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy360 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_372`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_372 (u : Var) (S_cls : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_363 u S_cls))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_363 u S_cls))).fv) 0)
+noncomputable def nb095AlphaDummy372 (u : Var) (S_cls : Class) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy363 u S_cls))).fv ∪
+      ((Class.cv (nb095AlphaDummy363 u S_cls))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_373`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_373 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy373 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_361 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_361 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy361 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy361 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_374`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_374 (u : Var) (S_cls : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_364 u S_cls))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_364 u S_cls))).fv) 0)
+noncomputable def nb095AlphaDummy374 (u : Var) (S_cls : Class) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy364 u S_cls))).fv ∪
+      ((Class.cv (nb095AlphaDummy364 u S_cls))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_375`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_375 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy375 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_345 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_346 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_339 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_345 D R S_cls E))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_346 D R S_cls E)))
-                (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb095_alpha_dummy_345 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_346 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_339 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_345 D R S_cls E))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_346 D R S_cls E)))
-                (syn_csn (syn_c0c))))))).fv) 0)
+  (freshVar (((Class.cab (nb095AlphaDummy345 D R S_cls E)
+          (synWrex (nb095AlphaDummy346 D R S_cls E)
+            (Class.cv (nb095AlphaDummy339 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy345 D R S_cls E))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy346 D R S_cls E)))
+                (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb095AlphaDummy345 D R S_cls E)
+          (synWrex (nb095AlphaDummy346 D R S_cls E)
+            (Class.cv (nb095AlphaDummy339 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy345 D R S_cls E))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy346 D R S_cls E)))
+                (synCsn (synC0c))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_376`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_376 (u : Var) (S_cls : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_347 u S_cls)
-          (syn_wrex (nb095_alpha_dummy_348 u S_cls) (Class.cv (nb095_alpha_dummy_341 u S_cls))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_347 u S_cls))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_348 u S_cls)))
-                (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb095_alpha_dummy_347 u S_cls)
-          (syn_wrex (nb095_alpha_dummy_348 u S_cls) (Class.cv (nb095_alpha_dummy_341 u S_cls))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_347 u S_cls))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_348 u S_cls)))
-                (syn_csn (syn_c0c))))))).fv) 0)
+noncomputable def nb095AlphaDummy376 (u : Var) (S_cls : Class) : Var :=
+  (freshVar (((Class.cab (nb095AlphaDummy347 u S_cls)
+          (synWrex (nb095AlphaDummy348 u S_cls) (Class.cv (nb095AlphaDummy341 u S_cls))
+            (Wff.classEq (Class.cv (nb095AlphaDummy347 u S_cls))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy348 u S_cls)))
+                (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb095AlphaDummy347 u S_cls)
+          (synWrex (nb095AlphaDummy348 u S_cls) (Class.cv (nb095AlphaDummy341 u S_cls))
+            (Wff.classEq (Class.cv (nb095AlphaDummy347 u S_cls))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy348 u S_cls)))
+                (synCsn (synC0c))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_377`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_377 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy377 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (syn_cphi (Class.cv (nb095_alpha_dummy_346 D R S_cls E))))).fv ∪
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
+  (freshVar (((synCcompl (synCphi (Class.cv (nb095AlphaDummy346 D R S_cls E))))).fv ∪
+      ((synCcompl (synCsn (synC0c)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_378`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_378 (u : Var) (S_cls : Class) : Var :=
-  (freshVar (((syn_ccompl (syn_cphi (Class.cv (nb095_alpha_dummy_348 u S_cls))))).fv ∪
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
+noncomputable def nb095AlphaDummy378 (u : Var) (S_cls : Class) : Var :=
+  (freshVar (((synCcompl (synCphi (Class.cv (nb095AlphaDummy348 u S_cls))))).fv ∪
+      ((synCcompl (synCsn (synC0c)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_379`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_379 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy379 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cphi (Class.cv (nb095_alpha_dummy_346 D R S_cls E)))).fv ∪
-      ((syn_cphi (Class.cv (nb095_alpha_dummy_346 D R S_cls E)))).fv) 0)
+  (freshVar (((synCphi (Class.cv (nb095AlphaDummy346 D R S_cls E)))).fv ∪
+      ((synCphi (Class.cv (nb095AlphaDummy346 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_380`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_380 (u : Var) (S_cls : Class) : Var :=
-  (freshVar (((syn_cphi (Class.cv (nb095_alpha_dummy_348 u S_cls)))).fv ∪
-      ((syn_cphi (Class.cv (nb095_alpha_dummy_348 u S_cls)))).fv) 0)
+noncomputable def nb095AlphaDummy380 (u : Var) (S_cls : Class) : Var :=
+  (freshVar (((synCphi (Class.cv (nb095AlphaDummy348 u S_cls)))).fv ∪
+      ((synCphi (Class.cv (nb095AlphaDummy348 u S_cls)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_381`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_381 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy381 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cnin (syn_ccom (syn_ccnv (Class.cv (nb095_alpha_dummy_000 D R S_cls E)))
-            (syn_ccnv (syn_ccnv (Class.cv (nb095_alpha_dummy_000 D R S_cls E)))))
-          (syn_cid))).fv ∪ ((syn_cnin
-          (syn_ccom (syn_ccnv (Class.cv (nb095_alpha_dummy_000 D R S_cls E)))
-            (syn_ccnv (syn_ccnv (Class.cv (nb095_alpha_dummy_000 D R S_cls E)))))
-          (syn_cid))).fv) 0)
+  (freshVar (((synCnin (synCcom (synCcnv (Class.cv (nb095AlphaDummy000 D R S_cls E)))
+            (synCcnv (synCcnv (Class.cv (nb095AlphaDummy000 D R S_cls E)))))
+          (synCid))).fv ∪ ((synCnin
+          (synCcom (synCcnv (Class.cv (nb095AlphaDummy000 D R S_cls E)))
+            (synCcnv (synCcnv (Class.cv (nb095AlphaDummy000 D R S_cls E)))))
+          (synCid))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_382`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_382 (f : Var) : Var :=
-  (freshVar (((syn_cnin (syn_ccom (syn_ccnv (Class.cv f)) (syn_ccnv (syn_ccnv (Class.cv f))))
-          (syn_cid))).fv ∪
-      ((syn_cnin (syn_ccom (syn_ccnv (Class.cv f)) (syn_ccnv (syn_ccnv (Class.cv f))))
-          (syn_cid))).fv) 0)
+noncomputable def nb095AlphaDummy382 (f : Var) : Var :=
+  (freshVar (((synCnin (synCcom (synCcnv (Class.cv f)) (synCcnv (synCcnv (Class.cv f))))
+          (synCid))).fv ∪
+      ((synCnin (synCcom (synCcnv (Class.cv f)) (synCcnv (synCcnv (Class.cv f))))
+          (synCid))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_383`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_383 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy383 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccom (syn_ccnv (Class.cv (nb095_alpha_dummy_000 D R S_cls E)))
-          (syn_ccnv (syn_ccnv (Class.cv (nb095_alpha_dummy_000 D R S_cls E)))))).fv ∪
-      ((syn_cid)).fv) 0)
+  (freshVar (((synCcom (synCcnv (Class.cv (nb095AlphaDummy000 D R S_cls E)))
+          (synCcnv (synCcnv (Class.cv (nb095AlphaDummy000 D R S_cls E)))))).fv ∪
+      ((synCid)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_384`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_384 (f : Var) : Var :=
-  (freshVar (((syn_ccom (syn_ccnv (Class.cv f)) (syn_ccnv (syn_ccnv (Class.cv f))))).fv ∪
-      ((syn_cid)).fv) 0)
+noncomputable def nb095AlphaDummy384 (f : Var) : Var :=
+  (freshVar (((synCcom (synCcnv (Class.cv f)) (synCcnv (synCcnv (Class.cv f))))).fv ∪
+      ((synCid)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_385`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_385 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy385 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccnv (Class.cv (nb095_alpha_dummy_000 D R S_cls E)))).fv ∪
-      ((syn_ccnv (syn_ccnv (Class.cv (nb095_alpha_dummy_000 D R S_cls E))))).fv) 0)
+  (freshVar (((synCcnv (Class.cv (nb095AlphaDummy000 D R S_cls E)))).fv ∪
+      ((synCcnv (synCcnv (Class.cv (nb095AlphaDummy000 D R S_cls E))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_386`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_386 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy386 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccnv (Class.cv (nb095_alpha_dummy_000 D R S_cls E)))).fv ∪
-      ((syn_ccnv (syn_ccnv (Class.cv (nb095_alpha_dummy_000 D R S_cls E))))).fv) 1)
+  (freshVar (((synCcnv (Class.cv (nb095AlphaDummy000 D R S_cls E)))).fv ∪
+      ((synCcnv (synCcnv (Class.cv (nb095AlphaDummy000 D R S_cls E))))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_387`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_387 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy387 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccnv (Class.cv (nb095_alpha_dummy_000 D R S_cls E)))).fv ∪
-      ((syn_ccnv (syn_ccnv (Class.cv (nb095_alpha_dummy_000 D R S_cls E))))).fv) 2)
+  (freshVar (((synCcnv (Class.cv (nb095AlphaDummy000 D R S_cls E)))).fv ∪
+      ((synCcnv (synCcnv (Class.cv (nb095AlphaDummy000 D R S_cls E))))).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_388`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_388 (f : Var) : Var :=
-  (freshVar (((syn_ccnv (Class.cv f))).fv ∪ ((syn_ccnv (syn_ccnv (Class.cv f)))).fv) 0)
+noncomputable def nb095AlphaDummy388 (f : Var) : Var :=
+  (freshVar (((synCcnv (Class.cv f))).fv ∪ ((synCcnv (synCcnv (Class.cv f)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_389`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_389 (f : Var) : Var :=
-  (freshVar (((syn_ccnv (Class.cv f))).fv ∪ ((syn_ccnv (syn_ccnv (Class.cv f)))).fv) 1)
+noncomputable def nb095AlphaDummy389 (f : Var) : Var :=
+  (freshVar (((synCcnv (Class.cv f))).fv ∪ ((synCcnv (synCcnv (Class.cv f)))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_390`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_390 (f : Var) : Var :=
-  (freshVar (((syn_ccnv (Class.cv f))).fv ∪ ((syn_ccnv (syn_ccnv (Class.cv f)))).fv) 2)
+noncomputable def nb095AlphaDummy390 (f : Var) : Var :=
+  (freshVar (((synCcnv (Class.cv f))).fv ∪ ((synCcnv (synCcnv (Class.cv f)))).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_391`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_391 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy391 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (({(nb095_alpha_dummy_385 D R S_cls E)} : Finset Var) ∪
-        ({(nb095_alpha_dummy_386 D R S_cls E)} : Finset Var) ∪
-      ((syn_wex (nb095_alpha_dummy_387 D R S_cls E) (syn_wa
-            (syn_wbr (Class.cv (nb095_alpha_dummy_385 D R S_cls E))
-              (syn_ccnv (syn_ccnv (Class.cv (nb095_alpha_dummy_000 D R S_cls E))))
-              (Class.cv (nb095_alpha_dummy_387 D R S_cls E)))
-            (syn_wbr (Class.cv (nb095_alpha_dummy_387 D R S_cls E))
-              (syn_ccnv (Class.cv (nb095_alpha_dummy_000 D R S_cls E)))
-              (Class.cv (nb095_alpha_dummy_386 D R S_cls E)))))).fv) 0)
+  (freshVar (({(nb095AlphaDummy385 D R S_cls E)} : Finset Var) ∪
+        ({(nb095AlphaDummy386 D R S_cls E)} : Finset Var) ∪
+      ((synWex (nb095AlphaDummy387 D R S_cls E) (synWa
+            (synWbr (Class.cv (nb095AlphaDummy385 D R S_cls E))
+              (synCcnv (synCcnv (Class.cv (nb095AlphaDummy000 D R S_cls E))))
+              (Class.cv (nb095AlphaDummy387 D R S_cls E)))
+            (synWbr (Class.cv (nb095AlphaDummy387 D R S_cls E))
+              (synCcnv (Class.cv (nb095AlphaDummy000 D R S_cls E)))
+              (Class.cv (nb095AlphaDummy386 D R S_cls E)))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_392`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_392 (f : Var) : Var :=
-  (freshVar (({(nb095_alpha_dummy_388 f)} : Finset Var) ∪
-        ({(nb095_alpha_dummy_389 f)} : Finset Var) ∪ ((syn_wex (nb095_alpha_dummy_390 f) (syn_wa
-            (syn_wbr (Class.cv (nb095_alpha_dummy_388 f))
-              (syn_ccnv (syn_ccnv (Class.cv f))) (Class.cv (nb095_alpha_dummy_390 f)))
-            (syn_wbr (Class.cv (nb095_alpha_dummy_390 f)) (syn_ccnv (Class.cv f))
-              (Class.cv (nb095_alpha_dummy_389 f)))))).fv) 0)
+noncomputable def nb095AlphaDummy392 (f : Var) : Var :=
+  (freshVar (({(nb095AlphaDummy388 f)} : Finset Var) ∪
+        ({(nb095AlphaDummy389 f)} : Finset Var) ∪ ((synWex (nb095AlphaDummy390 f) (synWa
+            (synWbr (Class.cv (nb095AlphaDummy388 f))
+              (synCcnv (synCcnv (Class.cv f))) (Class.cv (nb095AlphaDummy390 f)))
+            (synWbr (Class.cv (nb095AlphaDummy390 f)) (synCcnv (Class.cv f))
+              (Class.cv (nb095AlphaDummy389 f)))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_393`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_393 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy393 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_385 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_386 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy385 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy386 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_394`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_394 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy394 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_385 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_386 D R S_cls E))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy385 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy386 D R S_cls E))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_395`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_395 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_388 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_389 f))).fv) 0)
+noncomputable def nb095AlphaDummy395 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy388 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy389 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_396`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_396 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_388 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_389 f))).fv) 1)
+noncomputable def nb095AlphaDummy396 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy388 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy389 f))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_397`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_397 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy397 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb095_alpha_dummy_393 D R S_cls E)
-            (syn_wrex (nb095_alpha_dummy_394 D R S_cls E)
-              (Class.cv (nb095_alpha_dummy_385 D R S_cls E))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_393 D R S_cls E))
-                (syn_cphi (Class.cv (nb095_alpha_dummy_394 D R S_cls E)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb095_alpha_dummy_393 D R S_cls E)
-            (syn_wrex (nb095_alpha_dummy_394 D R S_cls E)
-              (Class.cv (nb095_alpha_dummy_386 D R S_cls E))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_393 D R S_cls E))
-                (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_394 D R S_cls E)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+  (freshVar (((synCcompl (Class.cab (nb095AlphaDummy393 D R S_cls E)
+            (synWrex (nb095AlphaDummy394 D R S_cls E)
+              (Class.cv (nb095AlphaDummy385 D R S_cls E))
+              (Wff.classEq (Class.cv (nb095AlphaDummy393 D R S_cls E))
+                (synCphi (Class.cv (nb095AlphaDummy394 D R S_cls E)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb095AlphaDummy393 D R S_cls E)
+            (synWrex (nb095AlphaDummy394 D R S_cls E)
+              (Class.cv (nb095AlphaDummy386 D R S_cls E))
+              (Wff.classEq (Class.cv (nb095AlphaDummy393 D R S_cls E))
+                (synCun (synCphi (Class.cv (nb095AlphaDummy394 D R S_cls E)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_398`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_398 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb095_alpha_dummy_395 f)
-            (syn_wrex (nb095_alpha_dummy_396 f) (Class.cv (nb095_alpha_dummy_388 f))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_395 f))
-                (syn_cphi (Class.cv (nb095_alpha_dummy_396 f)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb095_alpha_dummy_395 f)
-            (syn_wrex (nb095_alpha_dummy_396 f) (Class.cv (nb095_alpha_dummy_389 f))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_395 f))
-                (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_396 f)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+noncomputable def nb095AlphaDummy398 (f : Var) : Var :=
+  (freshVar (((synCcompl (Class.cab (nb095AlphaDummy395 f)
+            (synWrex (nb095AlphaDummy396 f) (Class.cv (nb095AlphaDummy388 f))
+              (Wff.classEq (Class.cv (nb095AlphaDummy395 f))
+                (synCphi (Class.cv (nb095AlphaDummy396 f)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb095AlphaDummy395 f)
+            (synWrex (nb095AlphaDummy396 f) (Class.cv (nb095AlphaDummy389 f))
+              (Wff.classEq (Class.cv (nb095AlphaDummy395 f))
+                (synCun (synCphi (Class.cv (nb095AlphaDummy396 f)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_399`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_399 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy399 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_393 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_394 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_385 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_393 D R S_cls E))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_394 D R S_cls E))))))).fv ∪
-      ((Class.cab (nb095_alpha_dummy_393 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_394 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_385 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_393 D R S_cls E))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_394 D R S_cls E))))))).fv) 0)
+  (freshVar (((Class.cab (nb095AlphaDummy393 D R S_cls E)
+          (synWrex (nb095AlphaDummy394 D R S_cls E)
+            (Class.cv (nb095AlphaDummy385 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy393 D R S_cls E))
+              (synCphi (Class.cv (nb095AlphaDummy394 D R S_cls E))))))).fv ∪
+      ((Class.cab (nb095AlphaDummy393 D R S_cls E)
+          (synWrex (nb095AlphaDummy394 D R S_cls E)
+            (Class.cv (nb095AlphaDummy385 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy393 D R S_cls E))
+              (synCphi (Class.cv (nb095AlphaDummy394 D R S_cls E))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_400`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_400 (f : Var) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_395 f)
-          (syn_wrex (nb095_alpha_dummy_396 f) (Class.cv (nb095_alpha_dummy_388 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_395 f))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_396 f))))))).fv ∪
-      ((Class.cab (nb095_alpha_dummy_395 f)
-          (syn_wrex (nb095_alpha_dummy_396 f) (Class.cv (nb095_alpha_dummy_388 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_395 f))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_396 f))))))).fv) 0)
+noncomputable def nb095AlphaDummy400 (f : Var) : Var :=
+  (freshVar (((Class.cab (nb095AlphaDummy395 f)
+          (synWrex (nb095AlphaDummy396 f) (Class.cv (nb095AlphaDummy388 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy395 f))
+              (synCphi (Class.cv (nb095AlphaDummy396 f))))))).fv ∪
+      ((Class.cab (nb095AlphaDummy395 f)
+          (synWrex (nb095AlphaDummy396 f) (Class.cv (nb095AlphaDummy388 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy395 f))
+              (synCphi (Class.cv (nb095AlphaDummy396 f))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_401`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_401 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy401 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_394 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy394 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_402`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_402 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy402 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_394 D R S_cls E))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy394 D R S_cls E))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_403`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_403 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_396 f))).fv) 0)
+noncomputable def nb095AlphaDummy403 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy396 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_404`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_404 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_396 f))).fv) 1)
+noncomputable def nb095AlphaDummy404 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy396 f))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_405`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_405 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy405 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb095_alpha_dummy_401 D R S_cls E)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb095_alpha_dummy_401 D R S_cls E)) (syn_c1c))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_401 D R S_cls E))).fv) 0)
+  (freshVar (((Wff.classMem (Class.cv (nb095AlphaDummy401 D R S_cls E)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb095AlphaDummy401 D R S_cls E)) (synC1c))).fv ∪
+      ((Class.cv (nb095AlphaDummy401 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_406`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_406 (f : Var) : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb095_alpha_dummy_403 f)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb095_alpha_dummy_403 f)) (syn_c1c))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_403 f))).fv) 0)
+noncomputable def nb095AlphaDummy406 (f : Var) : Var :=
+  (freshVar (((Wff.classMem (Class.cv (nb095AlphaDummy403 f)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb095AlphaDummy403 f)) (synC1c))).fv ∪
+      ((Class.cv (nb095AlphaDummy403 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_407`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_407 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy407 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_401 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy401 D R S_cls E))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_408`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_408 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy408 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_401 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy401 D R S_cls E))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_409`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_409 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy409 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_401 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 2)
+  (freshVar (((Class.cv (nb095AlphaDummy401 D R S_cls E))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_410`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_410 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_403 f))).fv ∪ ((syn_c1c)).fv) 0)
+noncomputable def nb095AlphaDummy410 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy403 f))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_411`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_411 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_403 f))).fv ∪ ((syn_c1c)).fv) 1)
+noncomputable def nb095AlphaDummy411 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy403 f))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_412`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_412 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_403 f))).fv ∪ ((syn_c1c)).fv) 2)
+noncomputable def nb095AlphaDummy412 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy403 f))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_413`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_413 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy413 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb095_alpha_dummy_408 D R S_cls E))
-          (Class.cv (nb095_alpha_dummy_409 D R S_cls E)))).fv ∪
-      ((syn_cnin (Class.cv (nb095_alpha_dummy_408 D R S_cls E))
-          (Class.cv (nb095_alpha_dummy_409 D R S_cls E)))).fv) 0)
+  (freshVar (((synCnin (Class.cv (nb095AlphaDummy408 D R S_cls E))
+          (Class.cv (nb095AlphaDummy409 D R S_cls E)))).fv ∪
+      ((synCnin (Class.cv (nb095AlphaDummy408 D R S_cls E))
+          (Class.cv (nb095AlphaDummy409 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_414`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_414 (f : Var) : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb095_alpha_dummy_411 f))
-          (Class.cv (nb095_alpha_dummy_412 f)))).fv ∪
-      ((syn_cnin (Class.cv (nb095_alpha_dummy_411 f)) (Class.cv (nb095_alpha_dummy_412 f)))).fv)
+noncomputable def nb095AlphaDummy414 (f : Var) : Var :=
+  (freshVar (((synCnin (Class.cv (nb095AlphaDummy411 f))
+          (Class.cv (nb095AlphaDummy412 f)))).fv ∪
+      ((synCnin (Class.cv (nb095AlphaDummy411 f)) (Class.cv (nb095AlphaDummy412 f)))).fv)
     0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_415`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_415 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy415 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_408 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_409 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy408 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy409 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_416`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_416 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_411 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_412 f))).fv) 0)
+noncomputable def nb095AlphaDummy416 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy411 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy412 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_417`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_417 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy417 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb095_alpha_dummy_408 D R S_cls E)))).fv ∪
-      ((syn_ccompl (Class.cv (nb095_alpha_dummy_409 D R S_cls E)))).fv) 0)
+  (freshVar (((synCcompl (Class.cv (nb095AlphaDummy408 D R S_cls E)))).fv ∪
+      ((synCcompl (Class.cv (nb095AlphaDummy409 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_418`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_418 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb095_alpha_dummy_411 f)))).fv ∪
-      ((syn_ccompl (Class.cv (nb095_alpha_dummy_412 f)))).fv) 0)
+noncomputable def nb095AlphaDummy418 (f : Var) : Var :=
+  (freshVar (((synCcompl (Class.cv (nb095AlphaDummy411 f)))).fv ∪
+      ((synCcompl (Class.cv (nb095AlphaDummy412 f)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_419`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_419 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy419 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_408 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_408 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy408 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy408 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_420`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_420 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_411 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_411 f))).fv) 0)
+noncomputable def nb095AlphaDummy420 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy411 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy411 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_421`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_421 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy421 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_409 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_409 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy409 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy409 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_422`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_422 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_412 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_412 f))).fv) 0)
+noncomputable def nb095AlphaDummy422 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy412 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy412 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_423`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_423 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy423 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_393 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_394 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_386 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_393 D R S_cls E))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_394 D R S_cls E)))
-                (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb095_alpha_dummy_393 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_394 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_386 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_393 D R S_cls E))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_394 D R S_cls E)))
-                (syn_csn (syn_c0c))))))).fv) 0)
+  (freshVar (((Class.cab (nb095AlphaDummy393 D R S_cls E)
+          (synWrex (nb095AlphaDummy394 D R S_cls E)
+            (Class.cv (nb095AlphaDummy386 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy393 D R S_cls E))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy394 D R S_cls E)))
+                (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb095AlphaDummy393 D R S_cls E)
+          (synWrex (nb095AlphaDummy394 D R S_cls E)
+            (Class.cv (nb095AlphaDummy386 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy393 D R S_cls E))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy394 D R S_cls E)))
+                (synCsn (synC0c))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_424`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_424 (f : Var) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_395 f)
-          (syn_wrex (nb095_alpha_dummy_396 f) (Class.cv (nb095_alpha_dummy_389 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_395 f))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_396 f)))
-                (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb095_alpha_dummy_395 f)
-          (syn_wrex (nb095_alpha_dummy_396 f) (Class.cv (nb095_alpha_dummy_389 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_395 f))
-              (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_396 f)))
-                (syn_csn (syn_c0c))))))).fv) 0)
+noncomputable def nb095AlphaDummy424 (f : Var) : Var :=
+  (freshVar (((Class.cab (nb095AlphaDummy395 f)
+          (synWrex (nb095AlphaDummy396 f) (Class.cv (nb095AlphaDummy389 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy395 f))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy396 f)))
+                (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb095AlphaDummy395 f)
+          (synWrex (nb095AlphaDummy396 f) (Class.cv (nb095AlphaDummy389 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy395 f))
+              (synCun (synCphi (Class.cv (nb095AlphaDummy396 f)))
+                (synCsn (synC0c))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_425`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_425 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy425 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (syn_cphi (Class.cv (nb095_alpha_dummy_394 D R S_cls E))))).fv ∪
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
+  (freshVar (((synCcompl (synCphi (Class.cv (nb095AlphaDummy394 D R S_cls E))))).fv ∪
+      ((synCcompl (synCsn (synC0c)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_426`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_426 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (syn_cphi (Class.cv (nb095_alpha_dummy_396 f))))).fv ∪
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
+noncomputable def nb095AlphaDummy426 (f : Var) : Var :=
+  (freshVar (((synCcompl (synCphi (Class.cv (nb095AlphaDummy396 f))))).fv ∪
+      ((synCcompl (synCsn (synC0c)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_427`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_427 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy427 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cphi (Class.cv (nb095_alpha_dummy_394 D R S_cls E)))).fv ∪
-      ((syn_cphi (Class.cv (nb095_alpha_dummy_394 D R S_cls E)))).fv) 0)
+  (freshVar (((synCphi (Class.cv (nb095AlphaDummy394 D R S_cls E)))).fv ∪
+      ((synCphi (Class.cv (nb095AlphaDummy394 D R S_cls E)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_428`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_428 (f : Var) : Var :=
-  (freshVar (((syn_cphi (Class.cv (nb095_alpha_dummy_396 f)))).fv ∪
-      ((syn_cphi (Class.cv (nb095_alpha_dummy_396 f)))).fv) 0)
+noncomputable def nb095AlphaDummy428 (f : Var) : Var :=
+  (freshVar (((synCphi (Class.cv (nb095AlphaDummy396 f)))).fv ∪
+      ((synCphi (Class.cv (nb095AlphaDummy396 f)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_429`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_429 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy429 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_385 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_387 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy385 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy387 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_430`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_430 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy430 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_385 D R S_cls E))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_387 D R S_cls E))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy385 D R S_cls E))).fv ∪
+      ((Class.cv (nb095AlphaDummy387 D R S_cls E))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_431`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_431 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_388 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_390 f))).fv) 0)
+noncomputable def nb095AlphaDummy431 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy388 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy390 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_432`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_432 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_388 f))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_390 f))).fv) 1)
+noncomputable def nb095AlphaDummy432 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy388 f))).fv ∪
+      ((Class.cv (nb095AlphaDummy390 f))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_433`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_433 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy433 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb095_alpha_dummy_429 D R S_cls E)
-            (syn_wrex (nb095_alpha_dummy_430 D R S_cls E)
-              (Class.cv (nb095_alpha_dummy_385 D R S_cls E))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_429 D R S_cls E))
-                (syn_cphi (Class.cv (nb095_alpha_dummy_430 D R S_cls E)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb095_alpha_dummy_429 D R S_cls E)
-            (syn_wrex (nb095_alpha_dummy_430 D R S_cls E)
-              (Class.cv (nb095_alpha_dummy_387 D R S_cls E))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_429 D R S_cls E))
-                (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_430 D R S_cls E)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+  (freshVar (((synCcompl (Class.cab (nb095AlphaDummy429 D R S_cls E)
+            (synWrex (nb095AlphaDummy430 D R S_cls E)
+              (Class.cv (nb095AlphaDummy385 D R S_cls E))
+              (Wff.classEq (Class.cv (nb095AlphaDummy429 D R S_cls E))
+                (synCphi (Class.cv (nb095AlphaDummy430 D R S_cls E)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb095AlphaDummy429 D R S_cls E)
+            (synWrex (nb095AlphaDummy430 D R S_cls E)
+              (Class.cv (nb095AlphaDummy387 D R S_cls E))
+              (Wff.classEq (Class.cv (nb095AlphaDummy429 D R S_cls E))
+                (synCun (synCphi (Class.cv (nb095AlphaDummy430 D R S_cls E)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_434`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_434 (f : Var) : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb095_alpha_dummy_431 f)
-            (syn_wrex (nb095_alpha_dummy_432 f) (Class.cv (nb095_alpha_dummy_388 f))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_431 f))
-                (syn_cphi (Class.cv (nb095_alpha_dummy_432 f)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb095_alpha_dummy_431 f)
-            (syn_wrex (nb095_alpha_dummy_432 f) (Class.cv (nb095_alpha_dummy_390 f))
-              (Wff.classEq (Class.cv (nb095_alpha_dummy_431 f))
-                (syn_cun (syn_cphi (Class.cv (nb095_alpha_dummy_432 f)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+noncomputable def nb095AlphaDummy434 (f : Var) : Var :=
+  (freshVar (((synCcompl (Class.cab (nb095AlphaDummy431 f)
+            (synWrex (nb095AlphaDummy432 f) (Class.cv (nb095AlphaDummy388 f))
+              (Wff.classEq (Class.cv (nb095AlphaDummy431 f))
+                (synCphi (Class.cv (nb095AlphaDummy432 f)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb095AlphaDummy431 f)
+            (synWrex (nb095AlphaDummy432 f) (Class.cv (nb095AlphaDummy390 f))
+              (Wff.classEq (Class.cv (nb095AlphaDummy431 f))
+                (synCun (synCphi (Class.cv (nb095AlphaDummy432 f)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_435`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_435 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy435 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_429 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_430 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_385 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_429 D R S_cls E))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_430 D R S_cls E))))))).fv ∪
-      ((Class.cab (nb095_alpha_dummy_429 D R S_cls E)
-          (syn_wrex (nb095_alpha_dummy_430 D R S_cls E)
-            (Class.cv (nb095_alpha_dummy_385 D R S_cls E))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_429 D R S_cls E))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_430 D R S_cls E))))))).fv) 0)
+  (freshVar (((Class.cab (nb095AlphaDummy429 D R S_cls E)
+          (synWrex (nb095AlphaDummy430 D R S_cls E)
+            (Class.cv (nb095AlphaDummy385 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy429 D R S_cls E))
+              (synCphi (Class.cv (nb095AlphaDummy430 D R S_cls E))))))).fv ∪
+      ((Class.cab (nb095AlphaDummy429 D R S_cls E)
+          (synWrex (nb095AlphaDummy430 D R S_cls E)
+            (Class.cv (nb095AlphaDummy385 D R S_cls E))
+            (Wff.classEq (Class.cv (nb095AlphaDummy429 D R S_cls E))
+              (synCphi (Class.cv (nb095AlphaDummy430 D R S_cls E))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_436`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_436 (f : Var) : Var :=
-  (freshVar (((Class.cab (nb095_alpha_dummy_431 f)
-          (syn_wrex (nb095_alpha_dummy_432 f) (Class.cv (nb095_alpha_dummy_388 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_431 f))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_432 f))))))).fv ∪
-      ((Class.cab (nb095_alpha_dummy_431 f)
-          (syn_wrex (nb095_alpha_dummy_432 f) (Class.cv (nb095_alpha_dummy_388 f))
-            (Wff.classEq (Class.cv (nb095_alpha_dummy_431 f))
-              (syn_cphi (Class.cv (nb095_alpha_dummy_432 f))))))).fv) 0)
+noncomputable def nb095AlphaDummy436 (f : Var) : Var :=
+  (freshVar (((Class.cab (nb095AlphaDummy431 f)
+          (synWrex (nb095AlphaDummy432 f) (Class.cv (nb095AlphaDummy388 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy431 f))
+              (synCphi (Class.cv (nb095AlphaDummy432 f))))))).fv ∪
+      ((Class.cab (nb095AlphaDummy431 f)
+          (synWrex (nb095AlphaDummy432 f) (Class.cv (nb095AlphaDummy388 f))
+            (Wff.classEq (Class.cv (nb095AlphaDummy431 f))
+              (synCphi (Class.cv (nb095AlphaDummy432 f))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_437`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_437 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy437 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_430 D R S_cls E))).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy430 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_438`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_438 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy438 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_430 D R S_cls E))).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy430 D R S_cls E))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_439`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_439 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_432 f))).fv) 0)
+noncomputable def nb095AlphaDummy439 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy432 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_440`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_440 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_432 f))).fv) 1)
+noncomputable def nb095AlphaDummy440 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy432 f))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_441`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_441 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy441 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb095_alpha_dummy_437 D R S_cls E)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb095_alpha_dummy_437 D R S_cls E)) (syn_c1c))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_437 D R S_cls E))).fv) 0)
+  (freshVar (((Wff.classMem (Class.cv (nb095AlphaDummy437 D R S_cls E)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb095AlphaDummy437 D R S_cls E)) (synC1c))).fv ∪
+      ((Class.cv (nb095AlphaDummy437 D R S_cls E))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_442`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_442 (f : Var) : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb095_alpha_dummy_439 f)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb095_alpha_dummy_439 f)) (syn_c1c))).fv ∪
-      ((Class.cv (nb095_alpha_dummy_439 f))).fv) 0)
+noncomputable def nb095AlphaDummy442 (f : Var) : Var :=
+  (freshVar (((Wff.classMem (Class.cv (nb095AlphaDummy439 f)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb095AlphaDummy439 f)) (synC1c))).fv ∪
+      ((Class.cv (nb095AlphaDummy439 f))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_443`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_443 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy443 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_437 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 0)
+  (freshVar (((Class.cv (nb095AlphaDummy437 D R S_cls E))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_444`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_444 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy444 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_437 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 1)
+  (freshVar (((Class.cv (nb095AlphaDummy437 D R S_cls E))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_445`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_445 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy445 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_437 D R S_cls E))).fv ∪ ((syn_c1c)).fv) 2)
+  (freshVar (((Class.cv (nb095AlphaDummy437 D R S_cls E))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_446`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_446 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_439 f))).fv ∪ ((syn_c1c)).fv) 0)
+noncomputable def nb095AlphaDummy446 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy439 f))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_447`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_447 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_439 f))).fv ∪ ((syn_c1c)).fv) 1)
+noncomputable def nb095AlphaDummy447 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy439 f))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_448`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_448 (f : Var) : Var :=
-  (freshVar (((Class.cv (nb095_alpha_dummy_439 f))).fv ∪ ((syn_c1c)).fv) 2)
+noncomputable def nb095AlphaDummy448 (f : Var) : Var :=
+  (freshVar (((Class.cv (nb095AlphaDummy439 f))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb095_alpha_dummy_449`. -/
 @[expose]
-noncomputable def nb095_alpha_dummy_449 (D : Class) (R : Class) (S_cls : Class)
+noncomputable def nb095AlphaDummy449 (D : Class) (R : Class) (S_cls : Class)
     (E : Class) : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb095_alpha_dummy_444 D R S_cls E))
-          (Class.cv (nb095_alpha_dummy_445 D R S_cls E)))).fv ∪
-      ((syn_cnin (Class.cv (nb095_alpha_dummy_444 D R S_cls E))
-          (Class.cv (nb095_alpha_dummy_445 D R S_cls E)))).fv) 0)
+  (freshVar (((synCnin (Class.cv (nb095AlphaDummy444 D R S_cls E))
+          (Class.cv (nb095AlphaDummy445 D R S_cls E)))).fv ∪
+      ((synCnin (Class.cv (nb095AlphaDummy444 D R S_cls E))
+          (Class.cv (nb095AlphaDummy445 D R S_cls E)))).fv) 0)
 
 end NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired

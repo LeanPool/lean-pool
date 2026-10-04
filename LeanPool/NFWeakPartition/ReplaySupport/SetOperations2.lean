@@ -23,300 +23,314 @@ open NFChoice.SemanticCore
 open NFChoice.ReplaySupport
 open NFChoice.Compiler.CompactSourceSyntax
 
+/-- Checked nominal proof certificate identified upstream as `g_dedth2h`. -/
 @[expose]
-noncomputable def g_dedth2h (ph : Wff) (ps : Wff) (ch : Wff) (th : Wff) (ta : Wff)
+noncomputable def gDedth2h (ph : Wff) (ps : Wff) (ch : Wff) (th : Wff) (ta : Wff)
     (A : Class) (B : Class) (C : Class) (D : Class)
-    (hyp_dedth2h_1 : Nominal.NPrf (.imp (.classEq A (syn_cif ph A C)) (syn_wb ch th)))
-    (hyp_dedth2h_2 : Nominal.NPrf (.imp (.classEq B (syn_cif ps B D)) (syn_wb th ta)))
-    (hyp_dedth2h_3 : Nominal.NPrf ta) : Nominal.NPrf (.imp (syn_wa ph ps) ch) :=
+    (hyp_dedth2h_1 : Nominal.NPrf (.imp (.classEq A (synCif ph A C)) (synWb ch th)))
+    (hyp_dedth2h_2 : Nominal.NPrf (.imp (.classEq B (synCif ps B D)) (synWb th ta)))
+    (hyp_dedth2h_3 : Nominal.NPrf ta) : Nominal.NPrf (.imp (synWa ph ps) ch) :=
   by
-  have p0000 := @g_imbi2d (.classEq A (syn_cif ph A C)) ch th ps hyp_dedth2h_1
-  have p0001 := @g_dedth ps th ta B D hyp_dedth2h_2 hyp_dedth2h_3
-  have p0002 := @g_dedth ph (.imp ps ch) (.imp ps th) A C p0000 p0001
-  have p0003 := @g_imp ph ps ch p0002
+  have p0000 := @gImbi2d (.classEq A (synCif ph A C)) ch th ps hyp_dedth2h_1
+  have p0001 := @gDedth ps th ta B D hyp_dedth2h_2 hyp_dedth2h_3
+  have p0002 := @gDedth ph (.imp ps ch) (.imp ps th) A C p0000 p0001
+  have p0003 := @gImp ph ps ch p0002
   exact p0003
 
+/-- Checked nominal proof certificate identified upstream as `g_dedth3h`. -/
 @[expose]
-noncomputable def g_dedth3h (ph : Wff) (ps : Wff) (ch : Wff) (th : Wff) (ta : Wff)
+noncomputable def gDedth3h (ph : Wff) (ps : Wff) (ch : Wff) (th : Wff) (ta : Wff)
     (et : Wff) (ze : Wff) (A : Class) (B : Class) (C : Class) (D : Class) (R : Class)
     (S : Class)
-    (hyp_dedth3h_1 : Nominal.NPrf (.imp (.classEq A (syn_cif ph A D)) (syn_wb th ta)))
-    (hyp_dedth3h_2 : Nominal.NPrf (.imp (.classEq B (syn_cif ps B R)) (syn_wb ta et)))
-    (hyp_dedth3h_3 : Nominal.NPrf (.imp (.classEq C (syn_cif ch C S)) (syn_wb et ze)))
-    (hyp_dedth3h_4 : Nominal.NPrf ze) : Nominal.NPrf (.imp (syn_w3a ph ps ch) th) :=
+    (hyp_dedth3h_1 : Nominal.NPrf (.imp (.classEq A (synCif ph A D)) (synWb th ta)))
+    (hyp_dedth3h_2 : Nominal.NPrf (.imp (.classEq B (synCif ps B R)) (synWb ta et)))
+    (hyp_dedth3h_3 : Nominal.NPrf (.imp (.classEq C (synCif ch C S)) (synWb et ze)))
+    (hyp_dedth3h_4 : Nominal.NPrf ze) : Nominal.NPrf (.imp (synW3a ph ps ch) th) :=
   by
-  have p0000 := @g_imbi2d (.classEq A (syn_cif ph A D)) th ta (syn_wa ps ch) hyp_dedth3h_1
+  have p0000 := @gImbi2d (.classEq A (synCif ph A D)) th ta (synWa ps ch) hyp_dedth3h_1
   have p0001 :=
-    @g_dedth2h ps ch ta et ze B C R S hyp_dedth3h_2 hyp_dedth3h_3 hyp_dedth3h_4
+    @gDedth2h ps ch ta et ze B C R S hyp_dedth3h_2 hyp_dedth3h_3 hyp_dedth3h_4
   have p0002 :=
-    @g_dedth ph (.imp (syn_wa ps ch) th) (.imp (syn_wa ps ch) ta) A D p0000 p0001
-  have p0003 := @g_n_3impib ph ps ch th p0002
+    @gDedth ph (.imp (synWa ps ch) th) (.imp (synWa ps ch) ta) A D p0000 p0001
+  have p0003 := @gN3impib ph ps ch th p0002
   exact p0003
 
+/-- Checked nominal proof certificate identified upstream as `g_dedth4h`. -/
 @[expose]
-noncomputable def g_dedth4h (ph : Wff) (ps : Wff) (ch : Wff) (th : Wff) (ta : Wff)
+noncomputable def gDedth4h (ph : Wff) (ps : Wff) (ch : Wff) (th : Wff) (ta : Wff)
     (et : Wff) (ze : Wff) (si : Wff) (rh : Wff) (A : Class) (B : Class) (C : Class)
     (D : Class) (R : Class) (S : Class) (F : Class) (G : Class)
-    (hyp_dedth4h_1 : Nominal.NPrf (.imp (.classEq A (syn_cif ph A R)) (syn_wb ta et)))
-    (hyp_dedth4h_2 : Nominal.NPrf (.imp (.classEq B (syn_cif ps B S)) (syn_wb et ze)))
-    (hyp_dedth4h_3 : Nominal.NPrf (.imp (.classEq C (syn_cif ch C F)) (syn_wb ze si)))
-    (hyp_dedth4h_4 : Nominal.NPrf (.imp (.classEq D (syn_cif th D G)) (syn_wb si rh)))
+    (hyp_dedth4h_1 : Nominal.NPrf (.imp (.classEq A (synCif ph A R)) (synWb ta et)))
+    (hyp_dedth4h_2 : Nominal.NPrf (.imp (.classEq B (synCif ps B S)) (synWb et ze)))
+    (hyp_dedth4h_3 : Nominal.NPrf (.imp (.classEq C (synCif ch C F)) (synWb ze si)))
+    (hyp_dedth4h_4 : Nominal.NPrf (.imp (.classEq D (synCif th D G)) (synWb si rh)))
     (hyp_dedth4h_5 : Nominal.NPrf rh) :
-    Nominal.NPrf (.imp (syn_wa (syn_wa ph ps) (syn_wa ch th)) ta) :=
+    Nominal.NPrf (.imp (synWa (synWa ph ps) (synWa ch th)) ta) :=
   by
-  have p0000 := @g_imbi2d (.classEq A (syn_cif ph A R)) ta et (syn_wa ch th) hyp_dedth4h_1
-  have p0001 := @g_imbi2d (.classEq B (syn_cif ps B S)) et ze (syn_wa ch th) hyp_dedth4h_2
+  have p0000 := @gImbi2d (.classEq A (synCif ph A R)) ta et (synWa ch th) hyp_dedth4h_1
+  have p0001 := @gImbi2d (.classEq B (synCif ps B S)) et ze (synWa ch th) hyp_dedth4h_2
   have p0002 :=
-    @g_dedth2h ch th ze si rh C D F G hyp_dedth4h_3 hyp_dedth4h_4 hyp_dedth4h_5
+    @gDedth2h ch th ze si rh C D F G hyp_dedth4h_3 hyp_dedth4h_4 hyp_dedth4h_5
   have p0003 :=
-    @g_dedth2h ph ps (.imp (syn_wa ch th) ta) (.imp (syn_wa ch th) et)
-      (.imp (syn_wa ch th) ze) A B R S p0000 p0001 p0002
-  have p0004 := @g_imp (syn_wa ph ps) (syn_wa ch th) ta p0003
+    @gDedth2h ph ps (.imp (synWa ch th) ta) (.imp (synWa ch th) et)
+      (.imp (synWa ch th) ze) A B R S p0000 p0001 p0002
+  have p0004 := @gImp (synWa ph ps) (synWa ch th) ta p0003
   exact p0004
 
+/-- Checked nominal proof certificate identified upstream as `g_dedth2v`. -/
 @[expose]
-noncomputable def g_dedth2v (ph : Wff) (ps : Wff) (ch : Wff) (th : Wff) (A : Class)
+noncomputable def gDedth2v (ph : Wff) (ps : Wff) (ch : Wff) (th : Wff) (A : Class)
     (B : Class) (C : Class) (D : Class)
-    (hyp_dedth2v_1 : Nominal.NPrf (.imp (.classEq A (syn_cif ph A C)) (syn_wb ps ch)))
-    (hyp_dedth2v_2 : Nominal.NPrf (.imp (.classEq B (syn_cif ph B D)) (syn_wb ch th)))
+    (hyp_dedth2v_1 : Nominal.NPrf (.imp (.classEq A (synCif ph A C)) (synWb ps ch)))
+    (hyp_dedth2v_2 : Nominal.NPrf (.imp (.classEq B (synCif ph B D)) (synWb ch th)))
     (hyp_dedth2v_3 : Nominal.NPrf th) : Nominal.NPrf (.imp ph ps) :=
   by
   have p0000 :=
-    @g_dedth2h ph ph ps ch th A B C D hyp_dedth2v_1 hyp_dedth2v_2 hyp_dedth2v_3
-  have p0001 := @g_anidms ph ps p0000
+    @gDedth2h ph ph ps ch th A B C D hyp_dedth2v_1 hyp_dedth2v_2 hyp_dedth2v_3
+  have p0001 := @gAnidms ph ps p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_dedth3v`. -/
 @[expose]
-noncomputable def g_dedth3v (ph : Wff) (ps : Wff) (ch : Wff) (th : Wff) (ta : Wff)
+noncomputable def gDedth3v (ph : Wff) (ps : Wff) (ch : Wff) (th : Wff) (ta : Wff)
     (A : Class) (B : Class) (C : Class) (D : Class) (R : Class) (S : Class)
-    (hyp_dedth3v_1 : Nominal.NPrf (.imp (.classEq A (syn_cif ph A D)) (syn_wb ps ch)))
-    (hyp_dedth3v_2 : Nominal.NPrf (.imp (.classEq B (syn_cif ph B R)) (syn_wb ch th)))
-    (hyp_dedth3v_3 : Nominal.NPrf (.imp (.classEq C (syn_cif ph C S)) (syn_wb th ta)))
+    (hyp_dedth3v_1 : Nominal.NPrf (.imp (.classEq A (synCif ph A D)) (synWb ps ch)))
+    (hyp_dedth3v_2 : Nominal.NPrf (.imp (.classEq B (synCif ph B R)) (synWb ch th)))
+    (hyp_dedth3v_3 : Nominal.NPrf (.imp (.classEq C (synCif ph C S)) (synWb th ta)))
     (hyp_dedth3v_4 : Nominal.NPrf ta) : Nominal.NPrf (.imp ph ps) :=
   by
   have p0000 :=
-    @g_dedth3h ph ph ph ps ch th ta A B C D R S hyp_dedth3v_1 hyp_dedth3v_2 hyp_dedth3v_3
+    @gDedth3h ph ph ph ps ch th ta A B C D R S hyp_dedth3v_1 hyp_dedth3v_2 hyp_dedth3v_3
       hyp_dedth3v_4
-  have p0001 := @g_n_3anidm12 ph ph ps p0000
-  have p0002 := @g_anidms ph ps p0001
+  have p0001 := @gN3anidm12 ph ph ps p0000
+  have p0002 := @gAnidms ph ps p0001
   exact p0002
 
+/-- Checked nominal proof certificate identified upstream as `g_dedth4v`. -/
 @[expose]
-noncomputable def g_dedth4v (ph : Wff) (ps : Wff) (ch : Wff) (th : Wff) (ta : Wff)
+noncomputable def gDedth4v (ph : Wff) (ps : Wff) (ch : Wff) (th : Wff) (ta : Wff)
     (et : Wff) (A : Class) (B : Class) (C : Class) (D : Class) (R : Class) (S : Class)
     (T : Class) (U : Class)
-    (hyp_dedth4v_1 : Nominal.NPrf (.imp (.classEq A (syn_cif ph A R)) (syn_wb ps ch)))
-    (hyp_dedth4v_2 : Nominal.NPrf (.imp (.classEq B (syn_cif ph B S)) (syn_wb ch th)))
-    (hyp_dedth4v_3 : Nominal.NPrf (.imp (.classEq C (syn_cif ph C T)) (syn_wb th ta)))
-    (hyp_dedth4v_4 : Nominal.NPrf (.imp (.classEq D (syn_cif ph D U)) (syn_wb ta et)))
+    (hyp_dedth4v_1 : Nominal.NPrf (.imp (.classEq A (synCif ph A R)) (synWb ps ch)))
+    (hyp_dedth4v_2 : Nominal.NPrf (.imp (.classEq B (synCif ph B S)) (synWb ch th)))
+    (hyp_dedth4v_3 : Nominal.NPrf (.imp (.classEq C (synCif ph C T)) (synWb th ta)))
+    (hyp_dedth4v_4 : Nominal.NPrf (.imp (.classEq D (synCif ph D U)) (synWb ta et)))
     (hyp_dedth4v_5 : Nominal.NPrf et) : Nominal.NPrf (.imp ph ps) :=
   by
   have p0000 :=
-    @g_dedth4h ph ph ph ph ps ch th ta et A B C D R S T U hyp_dedth4v_1 hyp_dedth4v_2
+    @gDedth4h ph ph ph ph ps ch th ta et A B C D R S T U hyp_dedth4v_1 hyp_dedth4v_2
       hyp_dedth4v_3 hyp_dedth4v_4 hyp_dedth4v_5
-  have p0001 := @g_anidms (syn_wa ph ph) ps p0000
-  have p0002 := @g_anidms ph ps p0001
+  have p0001 := @gAnidms (synWa ph ph) ps p0000
+  have p0002 := @gAnidms ph ps p0001
   exact p0002
 
+/-- Checked nominal proof certificate identified upstream as `g_elimhyp2v`. -/
 @[expose]
-noncomputable def g_elimhyp2v (ph : Wff) (ch : Wff) (th : Wff) (ta : Wff) (et : Wff)
+noncomputable def gElimhyp2v (ph : Wff) (ch : Wff) (th : Wff) (ta : Wff) (et : Wff)
     (A : Class) (B : Class) (C : Class) (D : Class)
-    (hyp_elimhyp2v_1 : Nominal.NPrf (.imp (.classEq A (syn_cif ph A C)) (syn_wb ph ch)))
-    (hyp_elimhyp2v_2 : Nominal.NPrf (.imp (.classEq B (syn_cif ph B D)) (syn_wb ch th)))
-    (hyp_elimhyp2v_3 : Nominal.NPrf (.imp (.classEq C (syn_cif ph A C)) (syn_wb ta et)))
-    (hyp_elimhyp2v_4 : Nominal.NPrf (.imp (.classEq D (syn_cif ph B D)) (syn_wb et th)))
+    (hyp_elimhyp2v_1 : Nominal.NPrf (.imp (.classEq A (synCif ph A C)) (synWb ph ch)))
+    (hyp_elimhyp2v_2 : Nominal.NPrf (.imp (.classEq B (synCif ph B D)) (synWb ch th)))
+    (hyp_elimhyp2v_3 : Nominal.NPrf (.imp (.classEq C (synCif ph A C)) (synWb ta et)))
+    (hyp_elimhyp2v_4 : Nominal.NPrf (.imp (.classEq D (synCif ph B D)) (synWb et th)))
     (hyp_elimhyp2v_5 : Nominal.NPrf ta) : Nominal.NPrf th :=
   by
-  have p0000 := @g_iftrue ph A C
-  have p0001 := @g_eqcomd ph (syn_cif ph A C) A p0000
+  have p0000 := @gIftrue ph A C
+  have p0001 := @gEqcomd ph (synCif ph A C) A p0000
   have p0002 :=
-    @g_syl ph (.classEq A (syn_cif ph A C)) (syn_wb ph ch) p0001 hyp_elimhyp2v_1
-  have p0003 := @g_iftrue ph B D
-  have p0004 := @g_eqcomd ph (syn_cif ph B D) B p0003
+    @gSyl ph (.classEq A (synCif ph A C)) (synWb ph ch) p0001 hyp_elimhyp2v_1
+  have p0003 := @gIftrue ph B D
+  have p0004 := @gEqcomd ph (synCif ph B D) B p0003
   have p0005 :=
-    @g_syl ph (.classEq B (syn_cif ph B D)) (syn_wb ch th) p0004 hyp_elimhyp2v_2
-  have p0006 := @g_bitrd ph ph ch th p0002 p0005
-  have p0007 := @g_ibi ph th p0006
-  have p0008 := @g_iffalse ph A C
-  have p0009 := @g_eqcomd (.neg ph) (syn_cif ph A C) C p0008
+    @gSyl ph (.classEq B (synCif ph B D)) (synWb ch th) p0004 hyp_elimhyp2v_2
+  have p0006 := @gBitrd ph ph ch th p0002 p0005
+  have p0007 := @gIbi ph th p0006
+  have p0008 := @gIffalse ph A C
+  have p0009 := @gEqcomd (.neg ph) (synCif ph A C) C p0008
   have p0010 :=
-    @g_syl (.neg ph) (.classEq C (syn_cif ph A C)) (syn_wb ta et) p0009 hyp_elimhyp2v_3
-  have p0011 := @g_iffalse ph B D
-  have p0012 := @g_eqcomd (.neg ph) (syn_cif ph B D) D p0011
+    @gSyl (.neg ph) (.classEq C (synCif ph A C)) (synWb ta et) p0009 hyp_elimhyp2v_3
+  have p0011 := @gIffalse ph B D
+  have p0012 := @gEqcomd (.neg ph) (synCif ph B D) D p0011
   have p0013 :=
-    @g_syl (.neg ph) (.classEq D (syn_cif ph B D)) (syn_wb et th) p0012 hyp_elimhyp2v_4
-  have p0014 := @g_bitrd (.neg ph) ta et th p0010 p0013
-  have p0015 := @g_mpbii (.neg ph) ta th hyp_elimhyp2v_5 p0014
-  have p0016 := @g_pm2_61i ph th p0007 p0015
+    @gSyl (.neg ph) (.classEq D (synCif ph B D)) (synWb et th) p0012 hyp_elimhyp2v_4
+  have p0014 := @gBitrd (.neg ph) ta et th p0010 p0013
+  have p0015 := @gMpbii (.neg ph) ta th hyp_elimhyp2v_5 p0014
+  have p0016 := @gPm261i ph th p0007 p0015
   exact p0016
 
+/-- Checked nominal proof certificate identified upstream as `g_elimhyp3v`. -/
 @[expose]
-noncomputable def g_elimhyp3v (ph : Wff) (ch : Wff) (th : Wff) (ta : Wff) (et : Wff)
+noncomputable def gElimhyp3v (ph : Wff) (ch : Wff) (th : Wff) (ta : Wff) (et : Wff)
     (ze : Wff) (si : Wff) (A : Class) (B : Class) (C : Class) (D : Class) (R : Class)
     (S : Class)
-    (hyp_elimhyp3v_1 : Nominal.NPrf (.imp (.classEq A (syn_cif ph A D)) (syn_wb ph ch)))
-    (hyp_elimhyp3v_2 : Nominal.NPrf (.imp (.classEq B (syn_cif ph B R)) (syn_wb ch th)))
-    (hyp_elimhyp3v_3 : Nominal.NPrf (.imp (.classEq C (syn_cif ph C S)) (syn_wb th ta)))
-    (hyp_elimhyp3v_4 : Nominal.NPrf (.imp (.classEq D (syn_cif ph A D)) (syn_wb et ze)))
-    (hyp_elimhyp3v_5 : Nominal.NPrf (.imp (.classEq R (syn_cif ph B R)) (syn_wb ze si)))
-    (hyp_elimhyp3v_6 : Nominal.NPrf (.imp (.classEq S (syn_cif ph C S)) (syn_wb si ta)))
+    (hyp_elimhyp3v_1 : Nominal.NPrf (.imp (.classEq A (synCif ph A D)) (synWb ph ch)))
+    (hyp_elimhyp3v_2 : Nominal.NPrf (.imp (.classEq B (synCif ph B R)) (synWb ch th)))
+    (hyp_elimhyp3v_3 : Nominal.NPrf (.imp (.classEq C (synCif ph C S)) (synWb th ta)))
+    (hyp_elimhyp3v_4 : Nominal.NPrf (.imp (.classEq D (synCif ph A D)) (synWb et ze)))
+    (hyp_elimhyp3v_5 : Nominal.NPrf (.imp (.classEq R (synCif ph B R)) (synWb ze si)))
+    (hyp_elimhyp3v_6 : Nominal.NPrf (.imp (.classEq S (synCif ph C S)) (synWb si ta)))
     (hyp_elimhyp3v_7 : Nominal.NPrf et) : Nominal.NPrf ta :=
   by
-  have p0000 := @g_iftrue ph A D
-  have p0001 := @g_eqcomd ph (syn_cif ph A D) A p0000
+  have p0000 := @gIftrue ph A D
+  have p0001 := @gEqcomd ph (synCif ph A D) A p0000
   have p0002 :=
-    @g_syl ph (.classEq A (syn_cif ph A D)) (syn_wb ph ch) p0001 hyp_elimhyp3v_1
-  have p0003 := @g_iftrue ph B R
-  have p0004 := @g_eqcomd ph (syn_cif ph B R) B p0003
+    @gSyl ph (.classEq A (synCif ph A D)) (synWb ph ch) p0001 hyp_elimhyp3v_1
+  have p0003 := @gIftrue ph B R
+  have p0004 := @gEqcomd ph (synCif ph B R) B p0003
   have p0005 :=
-    @g_syl ph (.classEq B (syn_cif ph B R)) (syn_wb ch th) p0004 hyp_elimhyp3v_2
-  have p0006 := @g_iftrue ph C S
-  have p0007 := @g_eqcomd ph (syn_cif ph C S) C p0006
+    @gSyl ph (.classEq B (synCif ph B R)) (synWb ch th) p0004 hyp_elimhyp3v_2
+  have p0006 := @gIftrue ph C S
+  have p0007 := @gEqcomd ph (synCif ph C S) C p0006
   have p0008 :=
-    @g_syl ph (.classEq C (syn_cif ph C S)) (syn_wb th ta) p0007 hyp_elimhyp3v_3
-  have p0009 := @g_n_3bitrd ph ph ch th ta p0002 p0005 p0008
-  have p0010 := @g_ibi ph ta p0009
-  have p0011 := @g_iffalse ph A D
-  have p0012 := @g_eqcomd (.neg ph) (syn_cif ph A D) D p0011
+    @gSyl ph (.classEq C (synCif ph C S)) (synWb th ta) p0007 hyp_elimhyp3v_3
+  have p0009 := @gN3bitrd ph ph ch th ta p0002 p0005 p0008
+  have p0010 := @gIbi ph ta p0009
+  have p0011 := @gIffalse ph A D
+  have p0012 := @gEqcomd (.neg ph) (synCif ph A D) D p0011
   have p0013 :=
-    @g_syl (.neg ph) (.classEq D (syn_cif ph A D)) (syn_wb et ze) p0012 hyp_elimhyp3v_4
-  have p0014 := @g_iffalse ph B R
-  have p0015 := @g_eqcomd (.neg ph) (syn_cif ph B R) R p0014
+    @gSyl (.neg ph) (.classEq D (synCif ph A D)) (synWb et ze) p0012 hyp_elimhyp3v_4
+  have p0014 := @gIffalse ph B R
+  have p0015 := @gEqcomd (.neg ph) (synCif ph B R) R p0014
   have p0016 :=
-    @g_syl (.neg ph) (.classEq R (syn_cif ph B R)) (syn_wb ze si) p0015 hyp_elimhyp3v_5
-  have p0017 := @g_iffalse ph C S
-  have p0018 := @g_eqcomd (.neg ph) (syn_cif ph C S) S p0017
+    @gSyl (.neg ph) (.classEq R (synCif ph B R)) (synWb ze si) p0015 hyp_elimhyp3v_5
+  have p0017 := @gIffalse ph C S
+  have p0018 := @gEqcomd (.neg ph) (synCif ph C S) S p0017
   have p0019 :=
-    @g_syl (.neg ph) (.classEq S (syn_cif ph C S)) (syn_wb si ta) p0018 hyp_elimhyp3v_6
-  have p0020 := @g_n_3bitrd (.neg ph) et ze si ta p0013 p0016 p0019
-  have p0021 := @g_mpbii (.neg ph) et ta hyp_elimhyp3v_7 p0020
-  have p0022 := @g_pm2_61i ph ta p0010 p0021
+    @gSyl (.neg ph) (.classEq S (synCif ph C S)) (synWb si ta) p0018 hyp_elimhyp3v_6
+  have p0020 := @gN3bitrd (.neg ph) et ze si ta p0013 p0016 p0019
+  have p0021 := @gMpbii (.neg ph) et ta hyp_elimhyp3v_7 p0020
+  have p0022 := @gPm261i ph ta p0010 p0021
   exact p0022
 
+/-- Checked nominal proof certificate identified upstream as `g_elimhyp4v`. -/
 @[expose]
-noncomputable def g_elimhyp4v (ph : Wff) (ps : Wff) (ch : Wff) (th : Wff) (ta : Wff)
+noncomputable def gElimhyp4v (ph : Wff) (ps : Wff) (ch : Wff) (th : Wff) (ta : Wff)
     (et : Wff) (ze : Wff) (si : Wff) (rh : Wff) (A : Class) (B : Class) (C : Class)
     (D : Class) (R : Class) (S : Class) (F : Class) (G : Class)
-    (hyp_elimhyp4v_1 : Nominal.NPrf (.imp (.classEq A (syn_cif ph A D)) (syn_wb ph ch)))
-    (hyp_elimhyp4v_2 : Nominal.NPrf (.imp (.classEq B (syn_cif ph B R)) (syn_wb ch th)))
-    (hyp_elimhyp4v_3 : Nominal.NPrf (.imp (.classEq C (syn_cif ph C S)) (syn_wb th ta)))
-    (hyp_elimhyp4v_4 : Nominal.NPrf (.imp (.classEq F (syn_cif ph F G)) (syn_wb ta ps)))
-    (hyp_elimhyp4v_5 : Nominal.NPrf (.imp (.classEq D (syn_cif ph A D)) (syn_wb et ze)))
-    (hyp_elimhyp4v_6 : Nominal.NPrf (.imp (.classEq R (syn_cif ph B R)) (syn_wb ze si)))
-    (hyp_elimhyp4v_7 : Nominal.NPrf (.imp (.classEq S (syn_cif ph C S)) (syn_wb si rh)))
-    (hyp_elimhyp4v_8 : Nominal.NPrf (.imp (.classEq G (syn_cif ph F G)) (syn_wb rh ps)))
+    (hyp_elimhyp4v_1 : Nominal.NPrf (.imp (.classEq A (synCif ph A D)) (synWb ph ch)))
+    (hyp_elimhyp4v_2 : Nominal.NPrf (.imp (.classEq B (synCif ph B R)) (synWb ch th)))
+    (hyp_elimhyp4v_3 : Nominal.NPrf (.imp (.classEq C (synCif ph C S)) (synWb th ta)))
+    (hyp_elimhyp4v_4 : Nominal.NPrf (.imp (.classEq F (synCif ph F G)) (synWb ta ps)))
+    (hyp_elimhyp4v_5 : Nominal.NPrf (.imp (.classEq D (synCif ph A D)) (synWb et ze)))
+    (hyp_elimhyp4v_6 : Nominal.NPrf (.imp (.classEq R (synCif ph B R)) (synWb ze si)))
+    (hyp_elimhyp4v_7 : Nominal.NPrf (.imp (.classEq S (synCif ph C S)) (synWb si rh)))
+    (hyp_elimhyp4v_8 : Nominal.NPrf (.imp (.classEq G (synCif ph F G)) (synWb rh ps)))
     (hyp_elimhyp4v_9 : Nominal.NPrf et) : Nominal.NPrf ps :=
   by
-  have p0000 := @g_iftrue ph A D
-  have p0001 := @g_eqcomd ph (syn_cif ph A D) A p0000
+  have p0000 := @gIftrue ph A D
+  have p0001 := @gEqcomd ph (synCif ph A D) A p0000
   have p0002 :=
-    @g_syl ph (.classEq A (syn_cif ph A D)) (syn_wb ph ch) p0001 hyp_elimhyp4v_1
-  have p0003 := @g_iftrue ph B R
-  have p0004 := @g_eqcomd ph (syn_cif ph B R) B p0003
+    @gSyl ph (.classEq A (synCif ph A D)) (synWb ph ch) p0001 hyp_elimhyp4v_1
+  have p0003 := @gIftrue ph B R
+  have p0004 := @gEqcomd ph (synCif ph B R) B p0003
   have p0005 :=
-    @g_syl ph (.classEq B (syn_cif ph B R)) (syn_wb ch th) p0004 hyp_elimhyp4v_2
-  have p0006 := @g_bitrd ph ph ch th p0002 p0005
-  have p0007 := @g_iftrue ph C S
-  have p0008 := @g_eqcomd ph (syn_cif ph C S) C p0007
+    @gSyl ph (.classEq B (synCif ph B R)) (synWb ch th) p0004 hyp_elimhyp4v_2
+  have p0006 := @gBitrd ph ph ch th p0002 p0005
+  have p0007 := @gIftrue ph C S
+  have p0008 := @gEqcomd ph (synCif ph C S) C p0007
   have p0009 :=
-    @g_syl ph (.classEq C (syn_cif ph C S)) (syn_wb th ta) p0008 hyp_elimhyp4v_3
-  have p0010 := @g_iftrue ph F G
-  have p0011 := @g_eqcomd ph (syn_cif ph F G) F p0010
+    @gSyl ph (.classEq C (synCif ph C S)) (synWb th ta) p0008 hyp_elimhyp4v_3
+  have p0010 := @gIftrue ph F G
+  have p0011 := @gEqcomd ph (synCif ph F G) F p0010
   have p0012 :=
-    @g_syl ph (.classEq F (syn_cif ph F G)) (syn_wb ta ps) p0011 hyp_elimhyp4v_4
-  have p0013 := @g_n_3bitrd ph ph th ta ps p0006 p0009 p0012
-  have p0014 := @g_ibi ph ps p0013
-  have p0015 := @g_iffalse ph A D
-  have p0016 := @g_eqcomd (.neg ph) (syn_cif ph A D) D p0015
+    @gSyl ph (.classEq F (synCif ph F G)) (synWb ta ps) p0011 hyp_elimhyp4v_4
+  have p0013 := @gN3bitrd ph ph th ta ps p0006 p0009 p0012
+  have p0014 := @gIbi ph ps p0013
+  have p0015 := @gIffalse ph A D
+  have p0016 := @gEqcomd (.neg ph) (synCif ph A D) D p0015
   have p0017 :=
-    @g_syl (.neg ph) (.classEq D (syn_cif ph A D)) (syn_wb et ze) p0016 hyp_elimhyp4v_5
-  have p0018 := @g_iffalse ph B R
-  have p0019 := @g_eqcomd (.neg ph) (syn_cif ph B R) R p0018
+    @gSyl (.neg ph) (.classEq D (synCif ph A D)) (synWb et ze) p0016 hyp_elimhyp4v_5
+  have p0018 := @gIffalse ph B R
+  have p0019 := @gEqcomd (.neg ph) (synCif ph B R) R p0018
   have p0020 :=
-    @g_syl (.neg ph) (.classEq R (syn_cif ph B R)) (syn_wb ze si) p0019 hyp_elimhyp4v_6
-  have p0021 := @g_bitrd (.neg ph) et ze si p0017 p0020
-  have p0022 := @g_iffalse ph C S
-  have p0023 := @g_eqcomd (.neg ph) (syn_cif ph C S) S p0022
+    @gSyl (.neg ph) (.classEq R (synCif ph B R)) (synWb ze si) p0019 hyp_elimhyp4v_6
+  have p0021 := @gBitrd (.neg ph) et ze si p0017 p0020
+  have p0022 := @gIffalse ph C S
+  have p0023 := @gEqcomd (.neg ph) (synCif ph C S) S p0022
   have p0024 :=
-    @g_syl (.neg ph) (.classEq S (syn_cif ph C S)) (syn_wb si rh) p0023 hyp_elimhyp4v_7
-  have p0025 := @g_iffalse ph F G
-  have p0026 := @g_eqcomd (.neg ph) (syn_cif ph F G) G p0025
+    @gSyl (.neg ph) (.classEq S (synCif ph C S)) (synWb si rh) p0023 hyp_elimhyp4v_7
+  have p0025 := @gIffalse ph F G
+  have p0026 := @gEqcomd (.neg ph) (synCif ph F G) G p0025
   have p0027 :=
-    @g_syl (.neg ph) (.classEq G (syn_cif ph F G)) (syn_wb rh ps) p0026 hyp_elimhyp4v_8
-  have p0028 := @g_n_3bitrd (.neg ph) et si rh ps p0021 p0024 p0027
-  have p0029 := @g_mpbii (.neg ph) et ps hyp_elimhyp4v_9 p0028
-  have p0030 := @g_pm2_61i ph ps p0014 p0029
+    @gSyl (.neg ph) (.classEq G (synCif ph F G)) (synWb rh ps) p0026 hyp_elimhyp4v_8
+  have p0028 := @gN3bitrd (.neg ph) et si rh ps p0021 p0024 p0027
+  have p0029 := @gMpbii (.neg ph) et ps hyp_elimhyp4v_9 p0028
+  have p0030 := @gPm261i ph ps p0014 p0029
   exact p0030
 
+/-- Checked nominal proof certificate identified upstream as `g_keephyp`. -/
 @[expose]
-noncomputable def g_keephyp (ph : Wff) (ps : Wff) (ch : Wff) (th : Wff) (A : Class)
+noncomputable def gKeephyp (ph : Wff) (ps : Wff) (ch : Wff) (th : Wff) (A : Class)
     (B : Class)
-    (hyp_keephyp_1 : Nominal.NPrf (.imp (.classEq A (syn_cif ph A B)) (syn_wb ps th)))
-    (hyp_keephyp_2 : Nominal.NPrf (.imp (.classEq B (syn_cif ph A B)) (syn_wb ch th)))
+    (hyp_keephyp_1 : Nominal.NPrf (.imp (.classEq A (synCif ph A B)) (synWb ps th)))
+    (hyp_keephyp_2 : Nominal.NPrf (.imp (.classEq B (synCif ph A B)) (synWb ch th)))
     (hyp_keephyp_3 : Nominal.NPrf ps) (hyp_keephyp_4 : Nominal.NPrf ch) :
     Nominal.NPrf th :=
   by
-  have p0000 := @g_ifboth ph ps ch th A B hyp_keephyp_1 hyp_keephyp_2
-  have p0001 := @g_mp2an ps ch th hyp_keephyp_3 hyp_keephyp_4 p0000
+  have p0000 := @gIfboth ph ps ch th A B hyp_keephyp_1 hyp_keephyp_2
+  have p0001 := @gMp2an ps ch th hyp_keephyp_3 hyp_keephyp_4 p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_keephyp2v`. -/
 @[expose]
-noncomputable def g_keephyp2v (ph : Wff) (ps : Wff) (ch : Wff) (th : Wff) (ta : Wff)
+noncomputable def gKeephyp2v (ph : Wff) (ps : Wff) (ch : Wff) (th : Wff) (ta : Wff)
     (et : Wff) (A : Class) (B : Class) (C : Class) (D : Class)
-    (hyp_keephyp2v_1 : Nominal.NPrf (.imp (.classEq A (syn_cif ph A C)) (syn_wb ps ch)))
-    (hyp_keephyp2v_2 : Nominal.NPrf (.imp (.classEq B (syn_cif ph B D)) (syn_wb ch th)))
-    (hyp_keephyp2v_3 : Nominal.NPrf (.imp (.classEq C (syn_cif ph A C)) (syn_wb ta et)))
-    (hyp_keephyp2v_4 : Nominal.NPrf (.imp (.classEq D (syn_cif ph B D)) (syn_wb et th)))
+    (hyp_keephyp2v_1 : Nominal.NPrf (.imp (.classEq A (synCif ph A C)) (synWb ps ch)))
+    (hyp_keephyp2v_2 : Nominal.NPrf (.imp (.classEq B (synCif ph B D)) (synWb ch th)))
+    (hyp_keephyp2v_3 : Nominal.NPrf (.imp (.classEq C (synCif ph A C)) (synWb ta et)))
+    (hyp_keephyp2v_4 : Nominal.NPrf (.imp (.classEq D (synCif ph B D)) (synWb et th)))
     (hyp_keephyp2v_5 : Nominal.NPrf ps) (hyp_keephyp2v_6 : Nominal.NPrf ta) :
     Nominal.NPrf th := by
-  have p0000 := @g_iftrue ph A C
-  have p0001 := @g_eqcomd ph (syn_cif ph A C) A p0000
+  have p0000 := @gIftrue ph A C
+  have p0001 := @gEqcomd ph (synCif ph A C) A p0000
   have p0002 :=
-    @g_syl ph (.classEq A (syn_cif ph A C)) (syn_wb ps ch) p0001 hyp_keephyp2v_1
-  have p0003 := @g_iftrue ph B D
-  have p0004 := @g_eqcomd ph (syn_cif ph B D) B p0003
+    @gSyl ph (.classEq A (synCif ph A C)) (synWb ps ch) p0001 hyp_keephyp2v_1
+  have p0003 := @gIftrue ph B D
+  have p0004 := @gEqcomd ph (synCif ph B D) B p0003
   have p0005 :=
-    @g_syl ph (.classEq B (syn_cif ph B D)) (syn_wb ch th) p0004 hyp_keephyp2v_2
-  have p0006 := @g_bitrd ph ps ch th p0002 p0005
-  have p0007 := @g_mpbii ph ps th hyp_keephyp2v_5 p0006
-  have p0008 := @g_iffalse ph A C
-  have p0009 := @g_eqcomd (.neg ph) (syn_cif ph A C) C p0008
+    @gSyl ph (.classEq B (synCif ph B D)) (synWb ch th) p0004 hyp_keephyp2v_2
+  have p0006 := @gBitrd ph ps ch th p0002 p0005
+  have p0007 := @gMpbii ph ps th hyp_keephyp2v_5 p0006
+  have p0008 := @gIffalse ph A C
+  have p0009 := @gEqcomd (.neg ph) (synCif ph A C) C p0008
   have p0010 :=
-    @g_syl (.neg ph) (.classEq C (syn_cif ph A C)) (syn_wb ta et) p0009 hyp_keephyp2v_3
-  have p0011 := @g_iffalse ph B D
-  have p0012 := @g_eqcomd (.neg ph) (syn_cif ph B D) D p0011
+    @gSyl (.neg ph) (.classEq C (synCif ph A C)) (synWb ta et) p0009 hyp_keephyp2v_3
+  have p0011 := @gIffalse ph B D
+  have p0012 := @gEqcomd (.neg ph) (synCif ph B D) D p0011
   have p0013 :=
-    @g_syl (.neg ph) (.classEq D (syn_cif ph B D)) (syn_wb et th) p0012 hyp_keephyp2v_4
-  have p0014 := @g_bitrd (.neg ph) ta et th p0010 p0013
-  have p0015 := @g_mpbii (.neg ph) ta th hyp_keephyp2v_6 p0014
-  have p0016 := @g_pm2_61i ph th p0007 p0015
+    @gSyl (.neg ph) (.classEq D (synCif ph B D)) (synWb et th) p0012 hyp_keephyp2v_4
+  have p0014 := @gBitrd (.neg ph) ta et th p0010 p0013
+  have p0015 := @gMpbii (.neg ph) ta th hyp_keephyp2v_6 p0014
+  have p0016 := @gPm261i ph th p0007 p0015
   exact p0016
 
+/-- Checked nominal proof certificate identified upstream as `g_keepel`. -/
 @[expose]
-noncomputable def g_keepel (ph : Wff) (A : Class) (B : Class) (C : Class)
+noncomputable def gKeepel (ph : Wff) (A : Class) (B : Class) (C : Class)
     (hyp_keepel_1 : Nominal.NPrf (.classMem A C))
     (hyp_keepel_2 : Nominal.NPrf (.classMem B C)) :
-    Nominal.NPrf (.classMem (syn_cif ph A B) C) :=
+    Nominal.NPrf (.classMem (synCif ph A B) C) :=
   by
-  have p0000 := @g_eleq1 A (syn_cif ph A B) C
-  have p0001 := @g_eleq1 B (syn_cif ph A B) C
+  have p0000 := @gEleq1 A (synCif ph A B) C
+  have p0001 := @gEleq1 B (synCif ph A B) C
   have p0002 :=
-    @g_keephyp ph (.classMem A C) (.classMem B C) (.classMem (syn_cif ph A B) C) A B p0000
+    @gKeephyp ph (.classMem A C) (.classMem B C) (.classMem (synCif ph A B) C) A B p0000
       p0001 hyp_keepel_1 hyp_keepel_2
   exact p0002
 
+/-- Checked nominal proof certificate identified upstream as `g_ifex`. -/
 @[expose]
-noncomputable def g_ifex (ph : Wff) (A : Class) (B : Class)
-    (hyp_dedex_1 : Nominal.NPrf (.classMem A (syn_cvv)))
-    (hyp_dedex_2 : Nominal.NPrf (.classMem B (syn_cvv))) :
-    Nominal.NPrf (.classMem (syn_cif ph A B) (syn_cvv)) :=
+noncomputable def gIfex (ph : Wff) (A : Class) (B : Class)
+    (hyp_dedex_1 : Nominal.NPrf (.classMem A (synCvv)))
+    (hyp_dedex_2 : Nominal.NPrf (.classMem B (synCvv))) :
+    Nominal.NPrf (.classMem (synCif ph A B) (synCvv)) :=
   by
-  have p0000 := @g_keepel ph A B (syn_cvv) hyp_dedex_1 hyp_dedex_2
+  have p0000 := @gKeepel ph A B (synCvv) hyp_dedex_1 hyp_dedex_2
   exact p0000
 
+/-- Checked nominal proof certificate identified upstream as `g_pweq`. -/
 @[expose]
-noncomputable def g_pweq (A : Class) (B : Class) :
-    Nominal.NPrf (.imp (.classEq A B) (.classEq (syn_cpw A) (syn_cpw B))) :=
+noncomputable def gPweq (A : Class) (B : Class) :
+    Nominal.NPrf (.imp (.classEq A B) (.classEq (synCpw A) (synCpw B))) :=
   by
   let proofSupport : Finset Var := A.fv ∪ B.fv
   let x : Var := freshVar proofSupport 0
@@ -330,9 +344,9 @@ noncomputable def g_pweq (A : Class) (B : Class) :
   have fresh_x_not_B : x ∉ B.fv := by
     intro h
     exact fresh_x (Finset.mem_union_right _ (h))
-  have p0000 := @g_sseq2 A B (.cv x)
+  have p0000 := @gSseq2 A B (.cv x)
   have p0001 :=
-    @g_abbidv (.classEq A B) (syn_wss (.cv x) A) (syn_wss (.cv x) B) x
+    @gAbbidv (.classEq A B) (synWss (.cv x) A) (synWss (.cv x) B) x
       (by
         first
         |
@@ -344,43 +358,46 @@ noncomputable def g_pweq (A : Class) (B : Class) :
             aesop))
       p0000
   have p0002 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_pw x A
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfPw x A
       (by
         first
         | (aesop))
   have p0003 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_pw x B
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfPw x B
       (by
         first
         | (aesop))
   have p0004 :=
-    @g_n_3eqtr4g (.classEq A B) (.cab x (syn_wss (.cv x) A)) (.cab x (syn_wss (.cv x) B))
-      (syn_cpw A) (syn_cpw B) p0001 p0002 p0003
+    @gN3eqtr4g (.classEq A B) (.cab x (synWss (.cv x) A)) (.cab x (synWss (.cv x) B))
+      (synCpw A) (synCpw B) p0001 p0002 p0003
   exact p0004
 
+/-- Checked nominal proof certificate identified upstream as `g_pweqi`. -/
 @[expose]
-noncomputable def g_pweqi (A : Class) (B : Class)
+noncomputable def gPweqi (A : Class) (B : Class)
     (hyp_pweqi_1 : Nominal.NPrf (.classEq A B)) :
-    Nominal.NPrf (.classEq (syn_cpw A) (syn_cpw B)) :=
+    Nominal.NPrf (.classEq (synCpw A) (synCpw B)) :=
   by
-  have p0000 := @g_pweq A B
+  have p0000 := @gPweq A B
   have p0001 := Nominal.mp hyp_pweqi_1 p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_pweqd`. -/
 @[expose]
-noncomputable def g_pweqd (ph : Wff) (A : Class) (B : Class)
+noncomputable def gPweqd (ph : Wff) (A : Class) (B : Class)
     (hyp_pweqd_1 : Nominal.NPrf (.imp ph (.classEq A B))) :
-    Nominal.NPrf (.imp ph (.classEq (syn_cpw A) (syn_cpw B))) :=
+    Nominal.NPrf (.imp ph (.classEq (synCpw A) (synCpw B))) :=
   by
-  have p0000 := @g_pweq A B
+  have p0000 := @gPweq A B
   have p0001 :=
-    @g_syl ph (.classEq A B) (.classEq (syn_cpw A) (syn_cpw B)) hyp_pweqd_1 p0000
+    @gSyl ph (.classEq A B) (.classEq (synCpw A) (synCpw B)) hyp_pweqd_1 p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_elpw`. -/
 @[expose]
-noncomputable def g_elpw (A : Class) (B : Class)
-    (hyp_elpw_1 : Nominal.NPrf (.classMem A (syn_cvv))) :
-    Nominal.NPrf (syn_wb (.classMem A (syn_cpw B)) (syn_wss A B)) :=
+noncomputable def gElpw (A : Class) (B : Class)
+    (hyp_elpw_1 : Nominal.NPrf (.classMem A (synCvv))) :
+    Nominal.NPrf (synWb (.classMem A (synCpw B)) (synWss A B)) :=
   by
   let proofSupport : Finset Var := A.fv ∪ B.fv
   let x : Var := freshVar proofSupport 0
@@ -394,14 +411,14 @@ noncomputable def g_elpw (A : Class) (B : Class)
   have fresh_x_not_B : x ∉ B.fv := by
     intro h
     exact fresh_x (Finset.mem_union_right _ (h))
-  have p0000 := @g_sseq1 (.cv x) A B
+  have p0000 := @gSseq1 (.cv x) A B
   have p0001 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_pw x B
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfPw x B
       (by
         first
         | (aesop))
   have p0002 :=
-    @g_elab2 (syn_wss (.cv x) B) (syn_wss A B) x A (syn_cpw B)
+    @gElab2 (synWss (.cv x) B) (synWss A B) x A (synCpw B)
       (by
         first
         | (aesop))
@@ -417,10 +434,11 @@ noncomputable def g_elpw (A : Class) (B : Class)
       hyp_elpw_1 p0000 p0001
   exact p0002
 
+/-- Checked nominal proof certificate identified upstream as `g_elpwg`. -/
 @[expose]
-noncomputable def g_elpwg (A : Class) (B : Class) (V : Class) :
+noncomputable def gElpwg (A : Class) (B : Class) (V : Class) :
     Nominal.NPrf
-      (.imp (.classMem A V) (syn_wb (.classMem A (syn_cpw B)) (syn_wss A B))) :=
+      (.imp (.classMem A V) (synWb (.classMem A (synCpw B)) (synWss A B))) :=
   by
   let proofSupport : Finset Var := A.fv ∪ B.fv ∪ V.fv
   let x : Var := freshVar proofSupport 0
@@ -437,13 +455,13 @@ noncomputable def g_elpwg (A : Class) (B : Class) (V : Class) :
   have fresh_x_not_V : x ∉ V.fv := by
     intro h
     exact fresh_x (Finset.mem_union_right _ (h))
-  have p0000 := @g_eleq1 (.cv x) A (syn_cpw B)
-  have p0001 := @g_sseq1 (.cv x) A B
-  have p0002 := @g_vex x
-  have p0003 := @g_elpw (.cv x) B p0002
+  have p0000 := @gEleq1 (.cv x) A (synCpw B)
+  have p0001 := @gSseq1 (.cv x) A B
+  have p0002 := @gVex x
+  have p0003 := @gElpw (.cv x) B p0002
   have p0004 :=
-    @g_vtoclbg (.classMem (.cv x) (syn_cpw B)) (syn_wss (.cv x) B)
-      (.classMem A (syn_cpw B)) (syn_wss A B) x A V
+    @gVtoclbg (.classMem (.cv x) (synCpw B)) (synWss (.cv x) B)
+      (.classMem A (synCpw B)) (synWss A B) x A V
       (by
         first
         | (aesop))
@@ -469,9 +487,10 @@ noncomputable def g_elpwg (A : Class) (B : Class) (V : Class) :
       p0000 p0001 p0003
   exact p0004
 
+/-- Checked nominal proof certificate identified upstream as `g_sneq`. -/
 @[expose]
-noncomputable def g_sneq (A : Class) (B : Class) :
-    Nominal.NPrf (.imp (.classEq A B) (.classEq (syn_csn A) (syn_csn B))) :=
+noncomputable def gSneq (A : Class) (B : Class) :
+    Nominal.NPrf (.imp (.classEq A B) (.classEq (synCsn A) (synCsn B))) :=
   by
   let proofSupport : Finset Var := A.fv ∪ B.fv
   let x : Var := freshVar proofSupport 0
@@ -485,9 +504,9 @@ noncomputable def g_sneq (A : Class) (B : Class) :
   have fresh_x_not_B : x ∉ B.fv := by
     intro h
     exact fresh_x (Finset.mem_union_right _ (h))
-  have p0000 := @g_eqeq2 A B (.cv x)
+  have p0000 := @gEqeq2 A B (.cv x)
   have p0001 :=
-    @g_abbidv (.classEq A B) (.classEq (.cv x) A) (.classEq (.cv x) B) x
+    @gAbbidv (.classEq A B) (.classEq (.cv x) A) (.classEq (.cv x) B) x
       (by
         first
         |
@@ -499,91 +518,96 @@ noncomputable def g_sneq (A : Class) (B : Class) :
             aesop))
       p0000
   have p0002 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_sn x A
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfSn x A
       (by
         first
         | (aesop))
   have p0003 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_sn x B
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfSn x B
       (by
         first
         | (aesop))
   have p0004 :=
-    @g_n_3eqtr4g (.classEq A B) (.cab x (.classEq (.cv x) A))
-      (.cab x (.classEq (.cv x) B)) (syn_csn A) (syn_csn B) p0001 p0002 p0003
+    @gN3eqtr4g (.classEq A B) (.cab x (.classEq (.cv x) A))
+      (.cab x (.classEq (.cv x) B)) (synCsn A) (synCsn B) p0001 p0002 p0003
   exact p0004
 
+/-- Checked nominal proof certificate identified upstream as `g_sneqi`. -/
 @[expose]
-noncomputable def g_sneqi (A : Class) (B : Class)
+noncomputable def gSneqi (A : Class) (B : Class)
     (hyp_sneqi_1 : Nominal.NPrf (.classEq A B)) :
-    Nominal.NPrf (.classEq (syn_csn A) (syn_csn B)) :=
+    Nominal.NPrf (.classEq (synCsn A) (synCsn B)) :=
   by
-  have p0000 := @g_sneq A B
+  have p0000 := @gSneq A B
   have p0001 := Nominal.mp hyp_sneqi_1 p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_sneqd`. -/
 @[expose]
-noncomputable def g_sneqd (ph : Wff) (A : Class) (B : Class)
+noncomputable def gSneqd (ph : Wff) (A : Class) (B : Class)
     (hyp_sneqd_1 : Nominal.NPrf (.imp ph (.classEq A B))) :
-    Nominal.NPrf (.imp ph (.classEq (syn_csn A) (syn_csn B))) :=
+    Nominal.NPrf (.imp ph (.classEq (synCsn A) (synCsn B))) :=
   by
-  have p0000 := @g_sneq A B
+  have p0000 := @gSneq A B
   have p0001 :=
-    @g_syl ph (.classEq A B) (.classEq (syn_csn A) (syn_csn B)) hyp_sneqd_1 p0000
+    @gSyl ph (.classEq A B) (.classEq (synCsn A) (synCsn B)) hyp_sneqd_1 p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_dfsn2`. -/
 @[expose]
-noncomputable def g_dfsn2 (A : Class) :
-    Nominal.NPrf (.classEq (syn_csn A) (syn_cpr A A)) :=
+noncomputable def gDfsn2 (A : Class) :
+    Nominal.NPrf (.classEq (synCsn A) (synCpr A A)) :=
   by
-  have p0000 := (Nominal.classEqRefl (syn_cpr A A))
-  have p0001 := @g_unidm (syn_csn A)
+  have p0000 := (Nominal.classEqRefl (synCpr A A))
+  have p0001 := @gUnidm (synCsn A)
   have p0002 :=
-    @g_eqtr2i (syn_cpr A A) (syn_cun (syn_csn A) (syn_csn A)) (syn_csn A) p0000 p0001
+    @gEqtr2i (synCpr A A) (synCun (synCsn A) (synCsn A)) (synCsn A) p0000 p0001
   exact p0002
 
+/-- Checked nominal proof certificate identified upstream as `g_elsn`. -/
 @[expose]
-noncomputable def g_elsn (x : Var) (A : Class) (dv_A_x : x ∉ A.fv) :
-    Nominal.NPrf (syn_wb (.classMem (.cv x) (syn_csn A)) (.classEq (.cv x) A)) :=
+noncomputable def gElsn (x : Var) (A : Class) (dv_A_x : x ∉ A.fv) :
+    Nominal.NPrf (synWb (.classMem (.cv x) (synCsn A)) (.classEq (.cv x) A)) :=
   by
   let proofSupport : Finset Var := ({ x } : Finset Var) ∪ A.fv
   have p0000 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_sn x A
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfSn x A
       (by
         first
         | (aesop))
-  have p0001 := @g_eqabri (.classEq (.cv x) A) x (syn_csn A) p0000
+  have p0001 := @gEqabri (.classEq (.cv x) A) x (synCsn A) p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_dfpr2`. -/
 @[expose]
-noncomputable def g_dfpr2 (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv)
+noncomputable def gDfpr2 (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv)
     (dv_B_x : x ∉ B.fv) :
     Nominal.NPrf
-      (.classEq (syn_cpr A B) (.cab x (syn_wo (.classEq (.cv x) A) (.classEq (.cv x) B)))) :=
+      (.classEq (synCpr A B) (.cab x (synWo (.classEq (.cv x) A) (.classEq (.cv x) B)))) :=
   by
   let proofSupport : Finset Var := ({ x } : Finset Var) ∪ A.fv ∪ B.fv
-  have p0000 := (Nominal.classEqRefl (syn_cpr A B))
-  have p0001 := @g_elun (.cv x) (syn_csn A) (syn_csn B)
+  have p0000 := (Nominal.classEqRefl (synCpr A B))
+  have p0001 := @gElun (.cv x) (synCsn A) (synCsn B)
   have p0002 :=
-    @g_elsn x A
+    @gElsn x A
       (by
         first
         | (aesop))
   have p0003 :=
-    @g_elsn x B
+    @gElsn x B
       (by
         first
         | (aesop))
   have p0004 :=
-    @g_orbi12i (.classMem (.cv x) (syn_csn A)) (.classEq (.cv x) A)
-      (.classMem (.cv x) (syn_csn B)) (.classEq (.cv x) B) p0002 p0003
+    @gOrbi12i (.classMem (.cv x) (synCsn A)) (.classEq (.cv x) A)
+      (.classMem (.cv x) (synCsn B)) (.classEq (.cv x) B) p0002 p0003
   have p0005 :=
-    @g_bitri (.classMem (.cv x) (syn_cun (syn_csn A) (syn_csn B)))
-      (syn_wo (.classMem (.cv x) (syn_csn A)) (.classMem (.cv x) (syn_csn B)))
-      (syn_wo (.classEq (.cv x) A) (.classEq (.cv x) B)) p0001 p0004
+    @gBitri (.classMem (.cv x) (synCun (synCsn A) (synCsn B)))
+      (synWo (.classMem (.cv x) (synCsn A)) (.classMem (.cv x) (synCsn B)))
+      (synWo (.classEq (.cv x) A) (.classEq (.cv x) B)) p0001 p0004
   have p0006 :=
-    @g_eqabi (syn_wo (.classEq (.cv x) A) (.classEq (.cv x) B)) x
-      (syn_cun (syn_csn A) (syn_csn B))
+    @gEqabi (synWo (.classEq (.cv x) A) (.classEq (.cv x) B)) x
+      (synCun (synCsn A) (synCsn B))
       (by
         first
         |
@@ -596,15 +620,16 @@ noncomputable def g_dfpr2 (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv
             aesop))
       p0005
   have p0007 :=
-    @g_eqtri (syn_cpr A B) (syn_cun (syn_csn A) (syn_csn B))
-      (.cab x (syn_wo (.classEq (.cv x) A) (.classEq (.cv x) B))) p0000 p0006
+    @gEqtri (synCpr A B) (synCun (synCsn A) (synCsn B))
+      (.cab x (synWo (.classEq (.cv x) A) (.classEq (.cv x) B))) p0000 p0006
   exact p0007
 
+/-- Checked nominal proof certificate identified upstream as `g_elprg`. -/
 @[expose]
-noncomputable def g_elprg (A : Class) (B : Class) (C : Class) (V : Class) :
+noncomputable def gElprg (A : Class) (B : Class) (C : Class) (V : Class) :
     Nominal.NPrf
       (.imp (.classMem A V)
-        (syn_wb (.classMem A (syn_cpr B C)) (syn_wo (.classEq A B) (.classEq A C)))) :=
+        (synWb (.classMem A (synCpr B C)) (synWo (.classEq A B) (.classEq A C)))) :=
   by
   let proofSupport : Finset Var := A.fv ∪ B.fv ∪ C.fv ∪ V.fv
   let x : Var := freshVar proofSupport 0
@@ -628,13 +653,13 @@ noncomputable def g_elprg (A : Class) (B : Class) (C : Class) (V : Class) :
   have fresh_x_not_V : x ∉ V.fv := by
     intro h
     exact fresh_x (Finset.mem_union_right _ (h))
-  have p0000 := @g_eqeq1 (.cv x) A B
-  have p0001 := @g_eqeq1 (.cv x) A C
+  have p0000 := @gEqeq1 (.cv x) A B
+  have p0001 := @gEqeq1 (.cv x) A C
   have p0002 :=
-    @g_orbi12d (.classEq (.cv x) A) (.classEq (.cv x) B) (.classEq A B)
+    @gOrbi12d (.classEq (.cv x) A) (.classEq (.cv x) B) (.classEq A B)
       (.classEq (.cv x) C) (.classEq A C) p0000 p0001
   have p0003 :=
-    @g_dfpr2 x B C
+    @gDfpr2 x B C
       (by
         first
         | (aesop))
@@ -642,8 +667,8 @@ noncomputable def g_elprg (A : Class) (B : Class) (C : Class) (V : Class) :
         first
         | (aesop))
   have p0004 :=
-    @g_elab2g (syn_wo (.classEq (.cv x) B) (.classEq (.cv x) C))
-      (syn_wo (.classEq A B) (.classEq A C)) x A (syn_cpr B C) V
+    @gElab2g (synWo (.classEq (.cv x) B) (.classEq (.cv x) C))
+      (synWo (.classEq A B) (.classEq A C)) x A (synCpr B C) V
       (by
         first
         | (aesop))
@@ -659,51 +684,54 @@ noncomputable def g_elprg (A : Class) (B : Class) (C : Class) (V : Class) :
       p0002 p0003
   exact p0004
 
+/-- Checked nominal proof certificate identified upstream as `g_elpr`. -/
 @[expose]
-noncomputable def g_elpr (A : Class) (B : Class) (C : Class)
-    (hyp_elpr_1 : Nominal.NPrf (.classMem A (syn_cvv))) :
+noncomputable def gElpr (A : Class) (B : Class) (C : Class)
+    (hyp_elpr_1 : Nominal.NPrf (.classMem A (synCvv))) :
     Nominal.NPrf
-      (syn_wb (.classMem A (syn_cpr B C)) (syn_wo (.classEq A B) (.classEq A C))) :=
+      (synWb (.classMem A (synCpr B C)) (synWo (.classEq A B) (.classEq A C))) :=
   by
-  have p0000 := @g_elprg A B C (syn_cvv)
+  have p0000 := @gElprg A B C (synCvv)
   have p0001 := Nominal.mp hyp_elpr_1 p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_elpr2`. -/
 @[expose]
-noncomputable def g_elpr2 (A : Class) (B : Class) (C : Class)
-    (hyp_elpr2_1 : Nominal.NPrf (.classMem B (syn_cvv)))
-    (hyp_elpr2_2 : Nominal.NPrf (.classMem C (syn_cvv))) :
+noncomputable def gElpr2 (A : Class) (B : Class) (C : Class)
+    (hyp_elpr2_1 : Nominal.NPrf (.classMem B (synCvv)))
+    (hyp_elpr2_2 : Nominal.NPrf (.classMem C (synCvv))) :
     Nominal.NPrf
-      (syn_wb (.classMem A (syn_cpr B C)) (syn_wo (.classEq A B) (.classEq A C))) :=
+      (synWb (.classMem A (synCpr B C)) (synWo (.classEq A B) (.classEq A C))) :=
   by
-  have p0000 := @g_elprg A B C (syn_cpr B C)
+  have p0000 := @gElprg A B C (synCpr B C)
   have p0001 :=
-    @g_ibi (.classMem A (syn_cpr B C)) (syn_wo (.classEq A B) (.classEq A C)) p0000
-  have p0002 := @g_eleq1 A B (syn_cvv)
+    @gIbi (.classMem A (synCpr B C)) (synWo (.classEq A B) (.classEq A C)) p0000
+  have p0002 := @gEleq1 A B (synCvv)
   have p0003 :=
-    @g_mpbiri (.classEq A B) (.classMem A (syn_cvv)) (.classMem B (syn_cvv)) hyp_elpr2_1
+    @gMpbiri (.classEq A B) (.classMem A (synCvv)) (.classMem B (synCvv)) hyp_elpr2_1
       p0002
-  have p0004 := @g_eleq1 A C (syn_cvv)
+  have p0004 := @gEleq1 A C (synCvv)
   have p0005 :=
-    @g_mpbiri (.classEq A C) (.classMem A (syn_cvv)) (.classMem C (syn_cvv)) hyp_elpr2_2
+    @gMpbiri (.classEq A C) (.classMem A (synCvv)) (.classMem C (synCvv)) hyp_elpr2_2
       p0004
-  have p0006 := @g_jaoi (.classEq A B) (.classMem A (syn_cvv)) (.classEq A C) p0003 p0005
-  have p0007 := @g_elprg A B C (syn_cvv)
+  have p0006 := @gJaoi (.classEq A B) (.classMem A (synCvv)) (.classEq A C) p0003 p0005
+  have p0007 := @gElprg A B C (synCvv)
   have p0008 :=
-    @g_syl (syn_wo (.classEq A B) (.classEq A C)) (.classMem A (syn_cvv))
-      (syn_wb (.classMem A (syn_cpr B C)) (syn_wo (.classEq A B) (.classEq A C))) p0006
+    @gSyl (synWo (.classEq A B) (.classEq A C)) (.classMem A (synCvv))
+      (synWb (.classMem A (synCpr B C)) (synWo (.classEq A B) (.classEq A C))) p0006
       p0007
   have p0009 :=
-    @g_ibir (syn_wo (.classEq A B) (.classEq A C)) (.classMem A (syn_cpr B C)) p0008
+    @gIbir (synWo (.classEq A B) (.classEq A C)) (.classMem A (synCpr B C)) p0008
   have p0010 :=
-    @g_impbii (.classMem A (syn_cpr B C)) (syn_wo (.classEq A B) (.classEq A C)) p0001
+    @gImpbii (.classMem A (synCpr B C)) (synWo (.classEq A B) (.classEq A C)) p0001
       p0009
   exact p0010
 
+/-- Checked nominal proof certificate identified upstream as `g_elsncg`. -/
 @[expose]
-noncomputable def g_elsncg (A : Class) (B : Class) (V : Class) :
+noncomputable def gElsncg (A : Class) (B : Class) (V : Class) :
     Nominal.NPrf
-      (.imp (.classMem A V) (syn_wb (.classMem A (syn_csn B)) (.classEq A B))) :=
+      (.imp (.classMem A V) (synWb (.classMem A (synCsn B)) (.classEq A B))) :=
   by
   let proofSupport : Finset Var := A.fv ∪ B.fv ∪ V.fv
   let x : Var := freshVar proofSupport 0
@@ -720,14 +748,14 @@ noncomputable def g_elsncg (A : Class) (B : Class) (V : Class) :
   have fresh_x_not_V : x ∉ V.fv := by
     intro h
     exact fresh_x (Finset.mem_union_right _ (h))
-  have p0000 := @g_eqeq1 (.cv x) A B
+  have p0000 := @gEqeq1 (.cv x) A B
   have p0001 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_sn x B
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfSn x B
       (by
         first
         | (aesop))
   have p0002 :=
-    @g_elab2g (.classEq (.cv x) B) (.classEq A B) x A (syn_csn B) V
+    @gElab2g (.classEq (.cv x) B) (.classEq A B) x A (synCsn B) V
       (by
         first
         | (aesop))
@@ -743,122 +771,131 @@ noncomputable def g_elsncg (A : Class) (B : Class) (V : Class) :
       p0000 p0001
   exact p0002
 
+/-- Checked nominal proof certificate identified upstream as `g_elsnc`. -/
 @[expose]
-noncomputable def g_elsnc (A : Class) (B : Class)
-    (hyp_elsnc_1 : Nominal.NPrf (.classMem A (syn_cvv))) :
-    Nominal.NPrf (syn_wb (.classMem A (syn_csn B)) (.classEq A B)) :=
+noncomputable def gElsnc (A : Class) (B : Class)
+    (hyp_elsnc_1 : Nominal.NPrf (.classMem A (synCvv))) :
+    Nominal.NPrf (synWb (.classMem A (synCsn B)) (.classEq A B)) :=
   by
-  have p0000 := @g_elsncg A B (syn_cvv)
+  have p0000 := @gElsncg A B (synCvv)
   have p0001 := Nominal.mp hyp_elsnc_1 p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_elsni`. -/
 @[expose]
-noncomputable def g_elsni (A : Class) (B : Class) :
-    Nominal.NPrf (.imp (.classMem A (syn_csn B)) (.classEq A B)) :=
+noncomputable def gElsni (A : Class) (B : Class) :
+    Nominal.NPrf (.imp (.classMem A (synCsn B)) (.classEq A B)) :=
   by
-  have p0000 := @g_elsncg A B (syn_csn B)
-  have p0001 := @g_ibi (.classMem A (syn_csn B)) (.classEq A B) p0000
+  have p0000 := @gElsncg A B (synCsn B)
+  have p0001 := @gIbi (.classMem A (synCsn B)) (.classEq A B) p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_snidg`. -/
 @[expose]
-noncomputable def g_snidg (A : Class) (V : Class) :
-    Nominal.NPrf (.imp (.classMem A V) (.classMem A (syn_csn A))) :=
+noncomputable def gSnidg (A : Class) (V : Class) :
+    Nominal.NPrf (.imp (.classMem A V) (.classMem A (synCsn A))) :=
   by
-  have p0000 := @g_eqid A
-  have p0001 := @g_elsncg A A V
+  have p0000 := @gEqid A
+  have p0001 := @gElsncg A A V
   have p0002 :=
-    @g_mpbiri (.classMem A V) (.classMem A (syn_csn A)) (.classEq A A) p0000 p0001
+    @gMpbiri (.classMem A V) (.classMem A (synCsn A)) (.classEq A A) p0000 p0001
   exact p0002
 
+/-- Checked nominal proof certificate identified upstream as `g_snidb`. -/
 @[expose]
-noncomputable def g_snidb (A : Class) :
-    Nominal.NPrf (syn_wb (.classMem A (syn_cvv)) (.classMem A (syn_csn A))) :=
+noncomputable def gSnidb (A : Class) :
+    Nominal.NPrf (synWb (.classMem A (synCvv)) (.classMem A (synCsn A))) :=
   by
-  have p0000 := @g_snidg A (syn_cvv)
-  have p0001 := @g_elex A (syn_csn A)
-  have p0002 := @g_impbii (.classMem A (syn_cvv)) (.classMem A (syn_csn A)) p0000 p0001
+  have p0000 := @gSnidg A (synCvv)
+  have p0001 := @gElex A (synCsn A)
+  have p0002 := @gImpbii (.classMem A (synCvv)) (.classMem A (synCsn A)) p0000 p0001
   exact p0002
 
+/-- Checked nominal proof certificate identified upstream as `g_snid`. -/
 @[expose]
-noncomputable def g_snid (A : Class) (hyp_snid_1 : Nominal.NPrf (.classMem A (syn_cvv))) :
-    Nominal.NPrf (.classMem A (syn_csn A)) :=
+noncomputable def gSnid (A : Class) (hyp_snid_1 : Nominal.NPrf (.classMem A (synCvv))) :
+    Nominal.NPrf (.classMem A (synCsn A)) :=
   by
-  have p0000 := @g_snidb A
-  have p0001 := @g_mpbi (.classMem A (syn_cvv)) (.classMem A (syn_csn A)) hyp_snid_1 p0000
+  have p0000 := @gSnidb A
+  have p0001 := @gMpbi (.classMem A (synCvv)) (.classMem A (synCsn A)) hyp_snid_1 p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_elsnc2g`. -/
 @[expose]
-noncomputable def g_elsnc2g (A : Class) (B : Class) (V : Class) :
+noncomputable def gElsnc2g (A : Class) (B : Class) (V : Class) :
     Nominal.NPrf
-      (.imp (.classMem B V) (syn_wb (.classMem A (syn_csn B)) (.classEq A B))) :=
+      (.imp (.classMem B V) (synWb (.classMem A (synCsn B)) (.classEq A B))) :=
   by
-  have p0000 := @g_elsni A B
-  have p0001 := @g_snidg B V
-  have p0002 := @g_eleq1 A B (syn_csn B)
+  have p0000 := @gElsni A B
+  have p0001 := @gSnidg B V
+  have p0002 := @gEleq1 A B (synCsn B)
   have p0003 :=
-    @g_syl5ibrcom (.classMem B V) (.classMem A (syn_csn B)) (.classEq A B)
-      (.classMem B (syn_csn B)) p0001 p0002
+    @gSyl5ibrcom (.classMem B V) (.classMem A (synCsn B)) (.classEq A B)
+      (.classMem B (synCsn B)) p0001 p0002
   have p0004 :=
-    @g_impbid2 (.classMem B V) (.classMem A (syn_csn B)) (.classEq A B) p0000 p0003
+    @gImpbid2 (.classMem B V) (.classMem A (synCsn B)) (.classEq A B) p0000 p0003
   exact p0004
 
+/-- Checked nominal proof certificate identified upstream as `g_elsnc2`. -/
 @[expose]
-noncomputable def g_elsnc2 (A : Class) (B : Class)
-    (hyp_elsnc2_1 : Nominal.NPrf (.classMem B (syn_cvv))) :
-    Nominal.NPrf (syn_wb (.classMem A (syn_csn B)) (.classEq A B)) :=
+noncomputable def gElsnc2 (A : Class) (B : Class)
+    (hyp_elsnc2_1 : Nominal.NPrf (.classMem B (synCvv))) :
+    Nominal.NPrf (synWb (.classMem A (synCsn B)) (.classEq A B)) :=
   by
-  have p0000 := @g_elsnc2g A B (syn_cvv)
+  have p0000 := @gElsnc2g A B (synCvv)
   have p0001 := Nominal.mp hyp_elsnc2_1 p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_rexsns`. -/
 @[expose]
-noncomputable def g_rexsns (ph : Wff) (x : Var) (A : Class) (V : Class)
+noncomputable def gRexsns (ph : Wff) (x : Var) (A : Class) (V : Class)
     (dv_A_x : x ∉ A.fv) :
     Nominal.NPrf
-      (.imp (.classMem A V) (syn_wb (syn_wrex x (syn_csn A) ph) (syn_wsbc A x ph))) :=
+      (.imp (.classMem A V) (synWb (synWrex x (synCsn A) ph) (synWsbc A x ph))) :=
   by
   let proofSupport : Finset Var := ph.fv ∪ ({ x } : Finset Var) ∪ A.fv ∪ V.fv
   have p0000 :=
-    @g_sbc5 ph x A
+    @gSbc5 ph x A
       (by
         first
         | (aesop))
   have p0001 :=
-    @g_a1i (syn_wb (syn_wsbc A x ph) (syn_wex x (syn_wa (.classEq (.cv x) A) ph)))
+    @gA1i (synWb (synWsbc A x ph) (synWex x (synWa (.classEq (.cv x) A) ph)))
       (.classMem A V) p0000
-  have p0002 := (Nominal.biimpRefl (syn_wrex x (syn_csn A) ph))
+  have p0002 := (Nominal.biimpRefl (synWrex x (synCsn A) ph))
   have p0003 :=
-    @g_elsn x A
+    @gElsn x A
       (by
         first
         | (aesop))
-  have p0004 := @g_anbi1i (.classMem (.cv x) (syn_csn A)) (.classEq (.cv x) A) ph p0003
+  have p0004 := @gAnbi1i (.classMem (.cv x) (synCsn A)) (.classEq (.cv x) A) ph p0003
   have p0005 :=
-    @g_exbii (syn_wa (.classMem (.cv x) (syn_csn A)) ph) (syn_wa (.classEq (.cv x) A) ph)
+    @gExbii (synWa (.classMem (.cv x) (synCsn A)) ph) (synWa (.classEq (.cv x) A) ph)
       x p0004
   have p0006 :=
-    @g_bitri (syn_wrex x (syn_csn A) ph)
-      (syn_wex x (syn_wa (.classMem (.cv x) (syn_csn A)) ph))
-      (syn_wex x (syn_wa (.classEq (.cv x) A) ph)) p0002 p0005
+    @gBitri (synWrex x (synCsn A) ph)
+      (synWex x (synWa (.classMem (.cv x) (synCsn A)) ph))
+      (synWex x (synWa (.classEq (.cv x) A) ph)) p0002 p0005
   have p0007 :=
-    @g_syl6rbbr (.classMem A V) (syn_wsbc A x ph)
-      (syn_wex x (syn_wa (.classEq (.cv x) A) ph)) (syn_wrex x (syn_csn A) ph) p0001 p0006
+    @gSyl6rbbr (.classMem A V) (synWsbc A x ph)
+      (synWex x (synWa (.classEq (.cv x) A) ph)) (synWrex x (synCsn A) ph) p0001 p0006
   exact p0007
 
+/-- Checked nominal proof certificate identified upstream as `g_rexsng`. -/
 @[expose]
-noncomputable def g_rexsng (ph : Wff) (ps : Wff) (x : Var) (A : Class) (V : Class)
+noncomputable def gRexsng (ph : Wff) (ps : Wff) (x : Var) (A : Class) (V : Class)
     (dv_A_x : x ∉ A.fv) (dv_ps_x : x ∉ ps.fv)
-    (hyp_ralsng_1 : Nominal.NPrf (.imp (.classEq (.cv x) A) (syn_wb ph ps))) :
-    Nominal.NPrf (.imp (.classMem A V) (syn_wb (syn_wrex x (syn_csn A) ph) ps)) :=
+    (hyp_ralsng_1 : Nominal.NPrf (.imp (.classEq (.cv x) A) (synWb ph ps))) :
+    Nominal.NPrf (.imp (.classMem A V) (synWb (synWrex x (synCsn A) ph) ps)) :=
   by
   let proofSupport : Finset Var := ph.fv ∪ ps.fv ∪ ({ x } : Finset Var) ∪ A.fv ∪ V.fv
   have p0000 :=
-    @g_rexsns ph x A V
+    @gRexsns ph x A V
       (by
         first
         | (aesop))
   have p0001 :=
-    @g_sbcieg ph ps x A V
+    @gSbcieg ph ps x A V
       (by
         first
         | (aesop))
@@ -867,18 +904,19 @@ noncomputable def g_rexsng (ph : Wff) (ps : Wff) (x : Var) (A : Class) (V : Clas
         | (aesop))
       hyp_ralsng_1
   have p0002 :=
-    @g_bitrd (.classMem A V) (syn_wrex x (syn_csn A) ph) (syn_wsbc A x ph) ps p0000 p0001
+    @gBitrd (.classMem A V) (synWrex x (synCsn A) ph) (synWsbc A x ph) ps p0000 p0001
   exact p0002
 
+/-- Checked nominal proof certificate identified upstream as `g_rexsn`. -/
 @[expose]
-noncomputable def g_rexsn (ph : Wff) (ps : Wff) (x : Var) (A : Class) (dv_A_x : x ∉ A.fv)
-    (dv_ps_x : x ∉ ps.fv) (hyp_ralsn_1 : Nominal.NPrf (.classMem A (syn_cvv)))
-    (hyp_ralsn_2 : Nominal.NPrf (.imp (.classEq (.cv x) A) (syn_wb ph ps))) :
-    Nominal.NPrf (syn_wb (syn_wrex x (syn_csn A) ph) ps) :=
+noncomputable def gRexsn (ph : Wff) (ps : Wff) (x : Var) (A : Class) (dv_A_x : x ∉ A.fv)
+    (dv_ps_x : x ∉ ps.fv) (hyp_ralsn_1 : Nominal.NPrf (.classMem A (synCvv)))
+    (hyp_ralsn_2 : Nominal.NPrf (.imp (.classEq (.cv x) A) (synWb ph ps))) :
+    Nominal.NPrf (synWb (synWrex x (synCsn A) ph) ps) :=
   by
   let proofSupport : Finset Var := ph.fv ∪ ps.fv ∪ ({ x } : Finset Var) ∪ A.fv
   have p0000 :=
-    @g_rexsng ph ps x A (syn_cvv)
+    @gRexsng ph ps x A (synCvv)
       (by
         first
         | (aesop))
@@ -889,10 +927,11 @@ noncomputable def g_rexsn (ph : Wff) (ps : Wff) (x : Var) (A : Class) (dv_A_x : 
   have p0001 := Nominal.mp hyp_ralsn_1 p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_disjsn`. -/
 @[expose]
-noncomputable def g_disjsn (A : Class) (B : Class) :
+noncomputable def gDisjsn (A : Class) (B : Class) :
     Nominal.NPrf
-      (syn_wb (.classEq (syn_cin A (syn_csn B)) (syn_c0)) (.neg (.classMem B A))) :=
+      (synWb (.classEq (synCin A (synCsn B)) (synC0)) (.neg (.classMem B A))) :=
   by
   let proofSupport : Finset Var := A.fv ∪ B.fv
   let x : Var := freshVar proofSupport 0
@@ -907,7 +946,7 @@ noncomputable def g_disjsn (A : Class) (B : Class) :
     intro h
     exact fresh_x (Finset.mem_union_right _ (h))
   have p0000 :=
-    @g_disj1 x A (syn_csn B)
+    @gDisj1 x A (synCsn B)
       (by
         first
         | (aesop))
@@ -919,25 +958,25 @@ noncomputable def g_disjsn (A : Class) (B : Class) :
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn] at ⊢;
             aesop))
-  have p0001 := @g_con2b (.classMem (.cv x) A) (.classMem (.cv x) (syn_csn B))
+  have p0001 := @gCon2b (.classMem (.cv x) A) (.classMem (.cv x) (synCsn B))
   have p0002 :=
-    @g_elsn x B
+    @gElsn x B
       (by
         first
         | (aesop))
   have p0003 :=
-    @g_imbi1i (.classMem (.cv x) (syn_csn B)) (.classEq (.cv x) B)
+    @gImbi1i (.classMem (.cv x) (synCsn B)) (.classEq (.cv x) B)
       (.neg (.classMem (.cv x) A)) p0002
-  have p0004 := @g_imnan (.classEq (.cv x) B) (.classMem (.cv x) A)
+  have p0004 := @gImnan (.classEq (.cv x) B) (.classMem (.cv x) A)
   have p0005 :=
-    @g_n_3bitri (.imp (.classMem (.cv x) A) (.neg (.classMem (.cv x) (syn_csn B))))
-      (.imp (.classMem (.cv x) (syn_csn B)) (.neg (.classMem (.cv x) A)))
+    @gN3bitri (.imp (.classMem (.cv x) A) (.neg (.classMem (.cv x) (synCsn B))))
+      (.imp (.classMem (.cv x) (synCsn B)) (.neg (.classMem (.cv x) A)))
       (.imp (.classEq (.cv x) B) (.neg (.classMem (.cv x) A)))
-      (.neg (syn_wa (.classEq (.cv x) B) (.classMem (.cv x) A))) p0001 p0003 p0004
+      (.neg (synWa (.classEq (.cv x) B) (.classMem (.cv x) A))) p0001 p0003 p0004
   have p0006 :=
-    @g_albii (.imp (.classMem (.cv x) A) (.neg (.classMem (.cv x) (syn_csn B))))
-      (.neg (syn_wa (.classEq (.cv x) B) (.classMem (.cv x) A))) x p0005
-  have p0007 := @g_alnex (syn_wa (.classEq (.cv x) B) (.classMem (.cv x) A)) x
+    @gAlbii (.imp (.classMem (.cv x) A) (.neg (.classMem (.cv x) (synCsn B))))
+      (.neg (synWa (.classEq (.cv x) B) (.classMem (.cv x) A))) x p0005
+  have p0007 := @gAlnex (synWa (.classEq (.cv x) B) (.classMem (.cv x) A)) x
   have p0008 :=
     (NFChoice.DirectNominalPrf.Nominal.DefinitionLeafHandlersCanonical001.dfClelOfDV x B A (by
         first
@@ -945,20 +984,21 @@ noncomputable def g_disjsn (A : Class) (B : Class) :
         first
         | (aesop)))
   have p0009 :=
-    @g_xchbinxr (.all x (.neg (syn_wa (.classEq (.cv x) B) (.classMem (.cv x) A))))
-      (syn_wex x (syn_wa (.classEq (.cv x) B) (.classMem (.cv x) A))) (.classMem B A)
+    @gXchbinxr (.all x (.neg (synWa (.classEq (.cv x) B) (.classMem (.cv x) A))))
+      (synWex x (synWa (.classEq (.cv x) B) (.classMem (.cv x) A))) (.classMem B A)
       p0007 p0008
   have p0010 :=
-    @g_n_3bitri (.classEq (syn_cin A (syn_csn B)) (syn_c0))
-      (.all x (.imp (.classMem (.cv x) A) (.neg (.classMem (.cv x) (syn_csn B)))))
-      (.all x (.neg (syn_wa (.classEq (.cv x) B) (.classMem (.cv x) A))))
+    @gN3bitri (.classEq (synCin A (synCsn B)) (synC0))
+      (.all x (.imp (.classMem (.cv x) A) (.neg (.classMem (.cv x) (synCsn B)))))
+      (.all x (.neg (synWa (.classEq (.cv x) B) (.classMem (.cv x) A))))
       (.neg (.classMem B A)) p0000 p0006 p0009
   exact p0010
 
+/-- Checked nominal proof certificate identified upstream as `g_snprc`. -/
 @[expose]
-noncomputable def g_snprc (A : Class) :
+noncomputable def gSnprc (A : Class) :
     Nominal.NPrf
-      (syn_wb (.neg (.classMem A (syn_cvv))) (.classEq (syn_csn A) (syn_c0))) :=
+      (synWb (.neg (.classMem A (synCvv))) (.classEq (synCsn A) (synC0))) :=
   by
   let proofSupport : Finset Var := A.fv
   let x : Var := freshVar proofSupport 0
@@ -970,13 +1010,13 @@ noncomputable def g_snprc (A : Class) :
     intro h
     exact fresh_x (h)
   have p0000 :=
-    @g_elsn x A
+    @gElsn x A
       (by
         first
         | (aesop))
-  have p0001 := @g_exbii (.classMem (.cv x) (syn_csn A)) (.classEq (.cv x) A) x p0000
+  have p0001 := @gExbii (.classMem (.cv x) (synCsn A)) (.classEq (.cv x) A) x p0000
   have p0002 :=
-    @g_neq0 x (syn_csn A)
+    @gNeq0 x (synCsn A)
       (by
         first
         |
@@ -986,32 +1026,33 @@ noncomputable def g_snprc (A : Class) :
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn] at ⊢;
             aesop))
   have p0003 :=
-    @g_isset x A
+    @gIsset x A
       (by
         first
         | (aesop))
   have p0004 :=
-    @g_n_3bitr4i (syn_wex x (.classMem (.cv x) (syn_csn A)))
-      (syn_wex x (.classEq (.cv x) A)) (.neg (.classEq (syn_csn A) (syn_c0)))
-      (.classMem A (syn_cvv)) p0001 p0002 p0003
-  have p0005 := @g_con1bii (.classEq (syn_csn A) (syn_c0)) (.classMem A (syn_cvv)) p0004
+    @gN3bitr4i (synWex x (.classMem (.cv x) (synCsn A)))
+      (synWex x (.classEq (.cv x) A)) (.neg (.classEq (synCsn A) (synC0)))
+      (.classMem A (synCvv)) p0001 p0002 p0003
+  have p0005 := @gCon1bii (.classEq (synCsn A) (synC0)) (.classMem A (synCvv)) p0004
   exact p0005
 
+/-- Checked nominal proof certificate identified upstream as `g_rabsn`. -/
 @[expose]
-noncomputable def g_rabsn (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv)
+noncomputable def gRabsn (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv)
     (dv_B_x : x ∉ B.fv) :
     Nominal.NPrf
-      (.imp (.classMem B A) (.classEq (syn_crab x A (.classEq (.cv x) B)) (syn_csn B))) :=
+      (.imp (.classMem B A) (.classEq (synCrab x A (.classEq (.cv x) B)) (synCsn B))) :=
   by
   let proofSupport : Finset Var := ({ x } : Finset Var) ∪ A.fv ∪ B.fv
-  have p0000 := @g_eleq1 (.cv x) B A
+  have p0000 := @gEleq1 (.cv x) B A
   have p0001 :=
-    @g_pm5_32ri (.classEq (.cv x) B) (.classMem (.cv x) A) (.classMem B A) p0000
+    @gPm532ri (.classEq (.cv x) B) (.classMem (.cv x) A) (.classMem B A) p0000
   have p0002 :=
-    @g_baib (syn_wa (.classMem (.cv x) A) (.classEq (.cv x) B)) (.classMem B A)
+    @gBaib (synWa (.classMem (.cv x) A) (.classEq (.cv x) B)) (.classMem B A)
       (.classEq (.cv x) B) p0001
   have p0003 :=
-    @g_abbidv (.classMem B A) (syn_wa (.classMem (.cv x) A) (.classEq (.cv x) B))
+    @gAbbidv (.classMem B A) (synWa (.classMem (.cv x) A) (.classEq (.cv x) B))
       (.classEq (.cv x) B) x
       (by
         first
@@ -1023,134 +1064,145 @@ noncomputable def g_rabsn (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv
               Finset.mem_union] at ⊢;
             aesop))
       p0002
-  have p0004 := (Nominal.classEqRefl (syn_crab x A (.classEq (.cv x) B)))
+  have p0004 := (Nominal.classEqRefl (synCrab x A (.classEq (.cv x) B)))
   have p0005 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_sn x B
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfSn x B
       (by
         first
         | (aesop))
   have p0006 :=
-    @g_n_3eqtr4g (.classMem B A)
-      (.cab x (syn_wa (.classMem (.cv x) A) (.classEq (.cv x) B)))
-      (.cab x (.classEq (.cv x) B)) (syn_crab x A (.classEq (.cv x) B)) (syn_csn B) p0003
+    @gN3eqtr4g (.classMem B A)
+      (.cab x (synWa (.classMem (.cv x) A) (.classEq (.cv x) B)))
+      (.cab x (.classEq (.cv x) B)) (synCrab x A (.classEq (.cv x) B)) (synCsn B) p0003
       p0004 p0005
   exact p0006
 
+/-- Checked nominal proof certificate identified upstream as `g_prcom`. -/
 @[expose]
-noncomputable def g_prcom (A : Class) (B : Class) :
-    Nominal.NPrf (.classEq (syn_cpr A B) (syn_cpr B A)) :=
+noncomputable def gPrcom (A : Class) (B : Class) :
+    Nominal.NPrf (.classEq (synCpr A B) (synCpr B A)) :=
   by
-  have p0000 := @g_uncom (syn_csn A) (syn_csn B)
-  have p0001 := (Nominal.classEqRefl (syn_cpr A B))
-  have p0002 := (Nominal.classEqRefl (syn_cpr B A))
+  have p0000 := @gUncom (synCsn A) (synCsn B)
+  have p0001 := (Nominal.classEqRefl (synCpr A B))
+  have p0002 := (Nominal.classEqRefl (synCpr B A))
   have p0003 :=
-    @g_n_3eqtr4i (syn_cun (syn_csn A) (syn_csn B)) (syn_cun (syn_csn B) (syn_csn A))
-      (syn_cpr A B) (syn_cpr B A) p0000 p0001 p0002
+    @gN3eqtr4i (synCun (synCsn A) (synCsn B)) (synCun (synCsn B) (synCsn A))
+      (synCpr A B) (synCpr B A) p0000 p0001 p0002
   exact p0003
 
+/-- Checked nominal proof certificate identified upstream as `g_preq1`. -/
 @[expose]
-noncomputable def g_preq1 (A : Class) (B : Class) (C : Class) :
-    Nominal.NPrf (.imp (.classEq A B) (.classEq (syn_cpr A C) (syn_cpr B C))) :=
+noncomputable def gPreq1 (A : Class) (B : Class) (C : Class) :
+    Nominal.NPrf (.imp (.classEq A B) (.classEq (synCpr A C) (synCpr B C))) :=
   by
-  have p0000 := @g_sneq A B
-  have p0001 := @g_uneq1d (.classEq A B) (syn_csn A) (syn_csn B) (syn_csn C) p0000
-  have p0002 := (Nominal.classEqRefl (syn_cpr A C))
-  have p0003 := (Nominal.classEqRefl (syn_cpr B C))
+  have p0000 := @gSneq A B
+  have p0001 := @gUneq1d (.classEq A B) (synCsn A) (synCsn B) (synCsn C) p0000
+  have p0002 := (Nominal.classEqRefl (synCpr A C))
+  have p0003 := (Nominal.classEqRefl (synCpr B C))
   have p0004 :=
-    @g_n_3eqtr4g (.classEq A B) (syn_cun (syn_csn A) (syn_csn C))
-      (syn_cun (syn_csn B) (syn_csn C)) (syn_cpr A C) (syn_cpr B C) p0001 p0002 p0003
+    @gN3eqtr4g (.classEq A B) (synCun (synCsn A) (synCsn C))
+      (synCun (synCsn B) (synCsn C)) (synCpr A C) (synCpr B C) p0001 p0002 p0003
   exact p0004
 
+/-- Checked nominal proof certificate identified upstream as `g_preq2`. -/
 @[expose]
-noncomputable def g_preq2 (A : Class) (B : Class) (C : Class) :
-    Nominal.NPrf (.imp (.classEq A B) (.classEq (syn_cpr C A) (syn_cpr C B))) :=
+noncomputable def gPreq2 (A : Class) (B : Class) (C : Class) :
+    Nominal.NPrf (.imp (.classEq A B) (.classEq (synCpr C A) (synCpr C B))) :=
   by
-  have p0000 := @g_preq1 A B C
-  have p0001 := @g_prcom C A
-  have p0002 := @g_prcom C B
+  have p0000 := @gPreq1 A B C
+  have p0001 := @gPrcom C A
+  have p0002 := @gPrcom C B
   have p0003 :=
-    @g_n_3eqtr4g (.classEq A B) (syn_cpr A C) (syn_cpr B C) (syn_cpr C A) (syn_cpr C B)
+    @gN3eqtr4g (.classEq A B) (synCpr A C) (synCpr B C) (synCpr C A) (synCpr C B)
       p0000 p0001 p0002
   exact p0003
 
+/-- Checked nominal proof certificate identified upstream as `g_preq12`. -/
 @[expose]
-noncomputable def g_preq12 (A : Class) (B : Class) (C : Class) (D : Class) :
+noncomputable def gPreq12 (A : Class) (B : Class) (C : Class) (D : Class) :
     Nominal.NPrf
-      (.imp (syn_wa (.classEq A C) (.classEq B D)) (.classEq (syn_cpr A B) (syn_cpr C D))) :=
+      (.imp (synWa (.classEq A C) (.classEq B D)) (.classEq (synCpr A B) (synCpr C D))) :=
   by
-  have p0000 := @g_preq1 A C B
-  have p0001 := @g_preq2 B D C
+  have p0000 := @gPreq1 A C B
+  have p0001 := @gPreq2 B D C
   have p0002 :=
-    @g_sylan9eq (.classEq A C) (.classEq B D) (syn_cpr A B) (syn_cpr C B) (syn_cpr C D)
+    @gSylan9eq (.classEq A C) (.classEq B D) (synCpr A B) (synCpr C B) (synCpr C D)
       p0000 p0001
   exact p0002
 
+/-- Checked nominal proof certificate identified upstream as `g_preq2d`. -/
 @[expose]
-noncomputable def g_preq2d (ph : Wff) (A : Class) (B : Class) (C : Class)
+noncomputable def gPreq2d (ph : Wff) (A : Class) (B : Class) (C : Class)
     (hyp_preq1d_1 : Nominal.NPrf (.imp ph (.classEq A B))) :
-    Nominal.NPrf (.imp ph (.classEq (syn_cpr C A) (syn_cpr C B))) :=
+    Nominal.NPrf (.imp ph (.classEq (synCpr C A) (synCpr C B))) :=
   by
-  have p0000 := @g_preq2 A B C
+  have p0000 := @gPreq2 A B C
   have p0001 :=
-    @g_syl ph (.classEq A B) (.classEq (syn_cpr C A) (syn_cpr C B)) hyp_preq1d_1 p0000
+    @gSyl ph (.classEq A B) (.classEq (synCpr C A) (synCpr C B)) hyp_preq1d_1 p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_preq12d`. -/
 @[expose]
-noncomputable def g_preq12d (ph : Wff) (A : Class) (B : Class) (C : Class) (D : Class)
+noncomputable def gPreq12d (ph : Wff) (A : Class) (B : Class) (C : Class) (D : Class)
     (hyp_preq1d_1 : Nominal.NPrf (.imp ph (.classEq A B)))
     (hyp_preq12d_2 : Nominal.NPrf (.imp ph (.classEq C D))) :
-    Nominal.NPrf (.imp ph (.classEq (syn_cpr A C) (syn_cpr B D))) :=
+    Nominal.NPrf (.imp ph (.classEq (synCpr A C) (synCpr B D))) :=
   by
-  have p0000 := @g_preq12 A C B D
+  have p0000 := @gPreq12 A C B D
   have p0001 :=
-    @g_syl2anc ph (.classEq A B) (.classEq C D) (.classEq (syn_cpr A C) (syn_cpr B D))
+    @gSyl2anc ph (.classEq A B) (.classEq C D) (.classEq (synCpr A C) (synCpr B D))
       hyp_preq1d_1 hyp_preq12d_2 p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_prid1g`. -/
 @[expose]
-noncomputable def g_prid1g (A : Class) (B : Class) (V : Class) :
-    Nominal.NPrf (.imp (.classMem A V) (.classMem A (syn_cpr A B))) :=
+noncomputable def gPrid1g (A : Class) (B : Class) (V : Class) :
+    Nominal.NPrf (.imp (.classMem A V) (.classMem A (synCpr A B))) :=
   by
-  have p0000 := @g_eqid A
-  have p0001 := @g_orci (.classEq A A) (.classEq A B) p0000
-  have p0002 := @g_elprg A A B V
+  have p0000 := @gEqid A
+  have p0001 := @gOrci (.classEq A A) (.classEq A B) p0000
+  have p0002 := @gElprg A A B V
   have p0003 :=
-    @g_mpbiri (.classMem A V) (.classMem A (syn_cpr A B))
-      (syn_wo (.classEq A A) (.classEq A B)) p0001 p0002
+    @gMpbiri (.classMem A V) (.classMem A (synCpr A B))
+      (synWo (.classEq A A) (.classEq A B)) p0001 p0002
   exact p0003
 
+/-- Checked nominal proof certificate identified upstream as `g_prid1`. -/
 @[expose]
-noncomputable def g_prid1 (A : Class) (B : Class)
-    (hyp_prid1_1 : Nominal.NPrf (.classMem A (syn_cvv))) :
-    Nominal.NPrf (.classMem A (syn_cpr A B)) :=
+noncomputable def gPrid1 (A : Class) (B : Class)
+    (hyp_prid1_1 : Nominal.NPrf (.classMem A (synCvv))) :
+    Nominal.NPrf (.classMem A (synCpr A B)) :=
   by
-  have p0000 := @g_prid1g A B (syn_cvv)
+  have p0000 := @gPrid1g A B (synCvv)
   have p0001 := Nominal.mp hyp_prid1_1 p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_snnzg`. -/
 @[expose]
-noncomputable def g_snnzg (A : Class) (V : Class) :
-    Nominal.NPrf (.imp (.classMem A V) (syn_wne (syn_csn A) (syn_c0))) :=
+noncomputable def gSnnzg (A : Class) (V : Class) :
+    Nominal.NPrf (.imp (.classMem A V) (synWne (synCsn A) (synC0))) :=
   by
-  have p0000 := @g_snidg A V
-  have p0001 := @g_ne0i (syn_csn A) A
+  have p0000 := @gSnidg A V
+  have p0001 := @gNe0i (synCsn A) A
   have p0002 :=
-    @g_syl (.classMem A V) (.classMem A (syn_csn A)) (syn_wne (syn_csn A) (syn_c0)) p0000
+    @gSyl (.classMem A V) (.classMem A (synCsn A)) (synWne (synCsn A) (synC0)) p0000
       p0001
   exact p0002
 
+/-- Checked nominal proof certificate identified upstream as `g_snnz`. -/
 @[expose]
-noncomputable def g_snnz (A : Class) (hyp_snnz_1 : Nominal.NPrf (.classMem A (syn_cvv))) :
-    Nominal.NPrf (syn_wne (syn_csn A) (syn_c0)) :=
+noncomputable def gSnnz (A : Class) (hyp_snnz_1 : Nominal.NPrf (.classMem A (synCvv))) :
+    Nominal.NPrf (synWne (synCsn A) (synC0)) :=
   by
-  have p0000 := @g_snnzg A (syn_cvv)
+  have p0000 := @gSnnzg A (synCvv)
   have p0001 := Nominal.mp hyp_snnz_1 p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_snss`. -/
 @[expose]
-noncomputable def g_snss (A : Class) (B : Class)
-    (hyp_snss_1 : Nominal.NPrf (.classMem A (syn_cvv))) :
-    Nominal.NPrf (syn_wb (.classMem A B) (syn_wss (syn_csn A) B)) :=
+noncomputable def gSnss (A : Class) (B : Class)
+    (hyp_snss_1 : Nominal.NPrf (.classMem A (synCvv))) :
+    Nominal.NPrf (synWb (.classMem A B) (synWss (synCsn A) B)) :=
   by
   let proofSupport : Finset Var := A.fv ∪ B.fv
   let x : Var := freshVar proofSupport 0
@@ -1165,18 +1217,18 @@ noncomputable def g_snss (A : Class) (B : Class)
     intro h
     exact fresh_x (Finset.mem_union_right _ (h))
   have p0000 :=
-    @g_elsn x A
+    @gElsn x A
       (by
         first
         | (aesop))
   have p0001 :=
-    @g_imbi1i (.classMem (.cv x) (syn_csn A)) (.classEq (.cv x) A) (.classMem (.cv x) B)
+    @gImbi1i (.classMem (.cv x) (synCsn A)) (.classEq (.cv x) A) (.classMem (.cv x) B)
       p0000
   have p0002 :=
-    @g_albii (.imp (.classMem (.cv x) (syn_csn A)) (.classMem (.cv x) B))
+    @gAlbii (.imp (.classMem (.cv x) (synCsn A)) (.classMem (.cv x) B))
       (.imp (.classEq (.cv x) A) (.classMem (.cv x) B)) x p0001
   have p0003 :=
-    @g_dfss2 x (syn_csn A) B
+    @gDfss2 x (synCsn A) B
       (by
         first
         |
@@ -1189,7 +1241,7 @@ noncomputable def g_snss (A : Class) (B : Class)
         first
         | (aesop))
   have p0004 :=
-    @g_clel2 x A B
+    @gClel2 x A B
       (by
         first
         | (aesop))
@@ -1198,49 +1250,53 @@ noncomputable def g_snss (A : Class) (B : Class)
         | (aesop))
       hyp_snss_1
   have p0005 :=
-    @g_n_3bitr4ri (.all x (.imp (.classMem (.cv x) (syn_csn A)) (.classMem (.cv x) B)))
-      (.all x (.imp (.classEq (.cv x) A) (.classMem (.cv x) B))) (syn_wss (syn_csn A) B)
+    @gN3bitr4ri (.all x (.imp (.classMem (.cv x) (synCsn A)) (.classMem (.cv x) B)))
+      (.all x (.imp (.classEq (.cv x) A) (.classMem (.cv x) B))) (synWss (synCsn A) B)
       (.classMem A B) p0002 p0003 p0004
   exact p0005
 
+/-- Checked nominal proof certificate identified upstream as `g_eldifsn`. -/
 @[expose]
-noncomputable def g_eldifsn (A : Class) (B : Class) (C : Class) :
+noncomputable def gEldifsn (A : Class) (B : Class) (C : Class) :
     Nominal.NPrf
-      (syn_wb (.classMem A (syn_cdif B (syn_csn C))) (syn_wa (.classMem A B) (syn_wne A C))) :=
+      (synWb (.classMem A (synCdif B (synCsn C))) (synWa (.classMem A B) (synWne A C))) :=
   by
-  have p0000 := @g_eldif A B (syn_csn C)
-  have p0001 := @g_elsncg A C B
-  have p0002 := @g_necon3bbid (.classMem A B) (.classMem A (syn_csn C)) A C p0001
+  have p0000 := @gEldif A B (synCsn C)
+  have p0001 := @gElsncg A C B
+  have p0002 := @gNecon3bbid (.classMem A B) (.classMem A (synCsn C)) A C p0001
   have p0003 :=
-    @g_pm5_32i (.classMem A B) (.neg (.classMem A (syn_csn C))) (syn_wne A C) p0002
+    @gPm532i (.classMem A B) (.neg (.classMem A (synCsn C))) (synWne A C) p0002
   have p0004 :=
-    @g_bitri (.classMem A (syn_cdif B (syn_csn C)))
-      (syn_wa (.classMem A B) (.neg (.classMem A (syn_csn C))))
-      (syn_wa (.classMem A B) (syn_wne A C)) p0000 p0003
+    @gBitri (.classMem A (synCdif B (synCsn C)))
+      (synWa (.classMem A B) (.neg (.classMem A (synCsn C))))
+      (synWa (.classMem A B) (synWne A C)) p0000 p0003
   exact p0004
 
+/-- Checked nominal proof certificate identified upstream as `g_eldifsni`. -/
 @[expose]
-noncomputable def g_eldifsni (A : Class) (B : Class) (C : Class) :
-    Nominal.NPrf (.imp (.classMem A (syn_cdif B (syn_csn C))) (syn_wne A C)) :=
+noncomputable def gEldifsni (A : Class) (B : Class) (C : Class) :
+    Nominal.NPrf (.imp (.classMem A (synCdif B (synCsn C))) (synWne A C)) :=
   by
-  have p0000 := @g_eldifsn A B C
+  have p0000 := @gEldifsn A B C
   have p0001 :=
-    @g_simprbi (.classMem A (syn_cdif B (syn_csn C))) (.classMem A B) (syn_wne A C) p0000
+    @gSimprbi (.classMem A (synCdif B (synCsn C))) (.classMem A B) (synWne A C) p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_neldifsn`. -/
 @[expose]
-noncomputable def g_neldifsn (A : Class) (B : Class) :
-    Nominal.NPrf (.neg (.classMem A (syn_cdif B (syn_csn A)))) :=
+noncomputable def gNeldifsn (A : Class) (B : Class) :
+    Nominal.NPrf (.neg (.classMem A (synCdif B (synCsn A)))) :=
   by
-  have p0000 := @g_neirr A
-  have p0001 := @g_eldifsni A B A
-  have p0002 := @g_mto (.classMem A (syn_cdif B (syn_csn A))) (syn_wne A A) p0000 p0001
+  have p0000 := @gNeirr A
+  have p0001 := @gEldifsni A B A
+  have p0002 := @gMto (.classMem A (synCdif B (synCsn A))) (synWne A A) p0000 p0001
   exact p0002
 
+/-- Checked nominal proof certificate identified upstream as `g_snssg`. -/
 @[expose]
-noncomputable def g_snssg (A : Class) (B : Class) (V : Class) :
+noncomputable def gSnssg (A : Class) (B : Class) (V : Class) :
     Nominal.NPrf
-      (.imp (.classMem A V) (syn_wb (.classMem A B) (syn_wss (syn_csn A) B))) :=
+      (.imp (.classMem A V) (synWb (.classMem A B) (synWss (synCsn A) B))) :=
   by
   let proofSupport : Finset Var := A.fv ∪ B.fv ∪ V.fv
   let x : Var := freshVar proofSupport 0
@@ -1257,14 +1313,14 @@ noncomputable def g_snssg (A : Class) (B : Class) (V : Class) :
   have fresh_x_not_V : x ∉ V.fv := by
     intro h
     exact fresh_x (Finset.mem_union_right _ (h))
-  have p0000 := @g_eleq1 (.cv x) A B
-  have p0001 := @g_sneq (.cv x) A
-  have p0002 := @g_sseq1d (.classEq (.cv x) A) (syn_csn (.cv x)) (syn_csn A) B p0001
-  have p0003 := @g_vex x
-  have p0004 := @g_snss (.cv x) B p0003
+  have p0000 := @gEleq1 (.cv x) A B
+  have p0001 := @gSneq (.cv x) A
+  have p0002 := @gSseq1d (.classEq (.cv x) A) (synCsn (.cv x)) (synCsn A) B p0001
+  have p0003 := @gVex x
+  have p0004 := @gSnss (.cv x) B p0003
   have p0005 :=
-    @g_vtoclbg (.classMem (.cv x) B) (syn_wss (syn_csn (.cv x)) B) (.classMem A B)
-      (syn_wss (syn_csn A) B) x A V
+    @gVtoclbg (.classMem (.cv x) B) (synWss (synCsn (.cv x)) B) (.classMem A B)
+      (synWss (synCsn A) B) x A V
       (by
         first
         | (aesop))
@@ -1290,9 +1346,10 @@ noncomputable def g_snssg (A : Class) (B : Class) (V : Class) :
       p0000 p0002 p0004
   exact p0005
 
+/-- Checked nominal proof certificate identified upstream as `g_difsn`. -/
 @[expose]
-noncomputable def g_difsn (A : Class) (B : Class) :
-    Nominal.NPrf (.imp (.neg (.classMem A B)) (.classEq (syn_cdif B (syn_csn A)) B)) :=
+noncomputable def gDifsn (A : Class) (B : Class) :
+    Nominal.NPrf (.imp (.neg (.classMem A B)) (.classEq (synCdif B (synCsn A)) B)) :=
   by
   let proofSupport : Finset Var := A.fv ∪ B.fv
   let x : Var := freshVar proofSupport 0
@@ -1306,25 +1363,25 @@ noncomputable def g_difsn (A : Class) (B : Class) :
   have fresh_x_not_B : x ∉ B.fv := by
     intro h
     exact fresh_x (Finset.mem_union_right _ (h))
-  have p0000 := @g_eldifsn (.cv x) B A
-  have p0001 := @g_simpl (.classMem (.cv x) B) (syn_wne (.cv x) A)
-  have p0002 := @g_eleq1 (.cv x) A B
+  have p0000 := @gEldifsn (.cv x) B A
+  have p0001 := @gSimpl (.classMem (.cv x) B) (synWne (.cv x) A)
+  have p0002 := @gEleq1 (.cv x) A B
   have p0003 :=
-    @g_biimpcd (.classEq (.cv x) A) (.classMem (.cv x) B) (.classMem A B) p0002
-  have p0004 := @g_necon3bd (.classMem (.cv x) B) (.classMem A B) (.cv x) A p0003
+    @gBiimpcd (.classEq (.cv x) A) (.classMem (.cv x) B) (.classMem A B) p0002
+  have p0004 := @gNecon3bd (.classMem (.cv x) B) (.classMem A B) (.cv x) A p0003
   have p0005 :=
-    @g_com12 (.classMem (.cv x) B) (.neg (.classMem A B)) (syn_wne (.cv x) A) p0004
+    @gCom12 (.classMem (.cv x) B) (.neg (.classMem A B)) (synWne (.cv x) A) p0004
   have p0006 :=
-    @g_ancld (.neg (.classMem A B)) (.classMem (.cv x) B) (syn_wne (.cv x) A) p0005
+    @gAncld (.neg (.classMem A B)) (.classMem (.cv x) B) (synWne (.cv x) A) p0005
   have p0007 :=
-    @g_impbid2 (.neg (.classMem A B)) (syn_wa (.classMem (.cv x) B) (syn_wne (.cv x) A))
+    @gImpbid2 (.neg (.classMem A B)) (synWa (.classMem (.cv x) B) (synWne (.cv x) A))
       (.classMem (.cv x) B) p0001 p0006
   have p0008 :=
-    @g_syl5bb (.classMem (.cv x) (syn_cdif B (syn_csn A)))
-      (syn_wa (.classMem (.cv x) B) (syn_wne (.cv x) A)) (.neg (.classMem A B))
+    @gSyl5bb (.classMem (.cv x) (synCdif B (synCsn A)))
+      (synWa (.classMem (.cv x) B) (synWne (.cv x) A)) (.neg (.classMem A B))
       (.classMem (.cv x) B) p0000 p0007
   have p0009 :=
-    @g_eqrdv (.neg (.classMem A B)) x (syn_cdif B (syn_csn A)) B
+    @gEqrdv (.neg (.classMem A B)) x (synCdif B (synCsn A)) B
       (by
         first
         |
@@ -1348,47 +1405,51 @@ noncomputable def g_difsn (A : Class) (B : Class) :
       p0008
   exact p0009
 
+/-- Checked nominal proof certificate identified upstream as `g_snssi`. -/
 @[expose]
-noncomputable def g_snssi (A : Class) (B : Class) :
-    Nominal.NPrf (.imp (.classMem A B) (syn_wss (syn_csn A) B)) :=
+noncomputable def gSnssi (A : Class) (B : Class) :
+    Nominal.NPrf (.imp (.classMem A B) (synWss (synCsn A) B)) :=
   by
-  have p0000 := @g_snssg A B B
-  have p0001 := @g_ibi (.classMem A B) (syn_wss (syn_csn A) B) p0000
+  have p0000 := @gSnssg A B B
+  have p0001 := @gIbi (.classMem A B) (synWss (synCsn A) B) p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_snssd`. -/
 @[expose]
-noncomputable def g_snssd (ph : Wff) (A : Class) (B : Class)
+noncomputable def gSnssd (ph : Wff) (A : Class) (B : Class)
     (hyp_snssd_1 : Nominal.NPrf (.imp ph (.classMem A B))) :
-    Nominal.NPrf (.imp ph (syn_wss (syn_csn A) B)) :=
+    Nominal.NPrf (.imp ph (synWss (synCsn A) B)) :=
   by
-  have p0000 := @g_snssg A B B
+  have p0000 := @gSnssg A B B
   have p0001 :=
-    @g_syl ph (.classMem A B) (syn_wb (.classMem A B) (syn_wss (syn_csn A) B)) hyp_snssd_1
+    @gSyl ph (.classMem A B) (synWb (.classMem A B) (synWss (synCsn A) B)) hyp_snssd_1
       p0000
-  have p0002 := @g_mpbid ph (.classMem A B) (syn_wss (syn_csn A) B) hyp_snssd_1 p0001
+  have p0002 := @gMpbid ph (.classMem A B) (synWss (synCsn A) B) hyp_snssd_1 p0001
   exact p0002
 
+/-- Checked nominal proof certificate identified upstream as `g_difsnid`. -/
 @[expose]
-noncomputable def g_difsnid (A : Class) (B : Class) :
+noncomputable def gDifsnid (A : Class) (B : Class) :
     Nominal.NPrf
-      (.imp (.classMem B A) (.classEq (syn_cun (syn_cdif A (syn_csn B)) (syn_csn B)) A)) :=
+      (.imp (.classMem B A) (.classEq (synCun (synCdif A (synCsn B)) (synCsn B)) A)) :=
   by
-  have p0000 := @g_uncom (syn_cdif A (syn_csn B)) (syn_csn B)
-  have p0001 := @g_snssi B A
-  have p0002 := @g_undif (syn_csn B) A
+  have p0000 := @gUncom (synCdif A (synCsn B)) (synCsn B)
+  have p0001 := @gSnssi B A
+  have p0002 := @gUndif (synCsn B) A
   have p0003 :=
-    @g_sylib (.classMem B A) (syn_wss (syn_csn B) A)
-      (.classEq (syn_cun (syn_csn B) (syn_cdif A (syn_csn B))) A) p0001 p0002
+    @gSylib (.classMem B A) (synWss (synCsn B) A)
+      (.classEq (synCun (synCsn B) (synCdif A (synCsn B))) A) p0001 p0002
   have p0004 :=
-    @g_syl5eq (.classMem B A) (syn_cun (syn_cdif A (syn_csn B)) (syn_csn B))
-      (syn_cun (syn_csn B) (syn_cdif A (syn_csn B))) A p0000 p0003
+    @gSyl5eq (.classMem B A) (synCun (synCdif A (synCsn B)) (synCsn B))
+      (synCun (synCsn B) (synCdif A (synCsn B))) A p0000 p0003
   exact p0004
 
+/-- Checked nominal proof certificate identified upstream as `g_sssn`. -/
 @[expose]
-noncomputable def g_sssn (A : Class) (B : Class) :
+noncomputable def gSssn (A : Class) (B : Class) :
     Nominal.NPrf
-      (syn_wb (syn_wss A (syn_csn B))
-        (syn_wo (.classEq A (syn_c0)) (.classEq A (syn_csn B)))) :=
+      (synWb (synWss A (synCsn B))
+        (synWo (.classEq A (synC0)) (.classEq A (synCsn B)))) :=
   by
   let proofSupport : Finset Var := A.fv ∪ B.fv
   let x : Var := freshVar proofSupport 0
@@ -1403,22 +1464,22 @@ noncomputable def g_sssn (A : Class) (B : Class) :
     intro h
     exact fresh_x (Finset.mem_union_right _ (h))
   have p0000 :=
-    @g_neq0 x A
+    @gNeq0 x A
       (by
         first
         | (aesop))
-  have p0001 := @g_ssel A (syn_csn B) (.cv x)
-  have p0002 := @g_elsni (.cv x) B
+  have p0001 := @gSsel A (synCsn B) (.cv x)
+  have p0002 := @gElsni (.cv x) B
   have p0003 :=
-    @g_syl6 (syn_wss A (syn_csn B)) (.classMem (.cv x) A) (.classMem (.cv x) (syn_csn B))
+    @gSyl6 (synWss A (synCsn B)) (.classMem (.cv x) A) (.classMem (.cv x) (synCsn B))
       (.classEq (.cv x) B) p0001 p0002
-  have p0004 := @g_eleq1 (.cv x) B A
+  have p0004 := @gEleq1 (.cv x) B A
   have p0005 :=
-    @g_syl6 (syn_wss A (syn_csn B)) (.classMem (.cv x) A) (.classEq (.cv x) B)
-      (syn_wb (.classMem (.cv x) A) (.classMem B A)) p0003 p0004
-  have p0006 := @g_ibd (syn_wss A (syn_csn B)) (.classMem (.cv x) A) (.classMem B A) p0005
+    @gSyl6 (synWss A (synCsn B)) (.classMem (.cv x) A) (.classEq (.cv x) B)
+      (synWb (.classMem (.cv x) A) (.classMem B A)) p0003 p0004
+  have p0006 := @gIbd (synWss A (synCsn B)) (.classMem (.cv x) A) (.classMem B A) p0005
   have p0007 :=
-    @g_exlimdv (syn_wss A (syn_csn B)) (.classMem (.cv x) A) (.classMem B A) x
+    @gExlimdv (synWss A (synCsn B)) (.classMem (.cv x) A) (.classMem B A) x
       (by
         first
         |
@@ -1440,56 +1501,58 @@ noncomputable def g_sssn (A : Class) (B : Class) :
             aesop))
       p0006
   have p0008 :=
-    @g_syl5bi (.neg (.classEq A (syn_c0))) (syn_wex x (.classMem (.cv x) A))
-      (syn_wss A (syn_csn B)) (.classMem B A) p0000 p0007
-  have p0009 := @g_snssi B A
+    @gSyl5bi (.neg (.classEq A (synC0))) (synWex x (.classMem (.cv x) A))
+      (synWss A (synCsn B)) (.classMem B A) p0000 p0007
+  have p0009 := @gSnssi B A
   have p0010 :=
-    @g_syl6 (syn_wss A (syn_csn B)) (.neg (.classEq A (syn_c0))) (.classMem B A)
-      (syn_wss (syn_csn B) A) p0008 p0009
+    @gSyl6 (synWss A (synCsn B)) (.neg (.classEq A (synC0))) (.classMem B A)
+      (synWss (synCsn B) A) p0008 p0009
   have p0011 :=
-    @g_anc2li (syn_wss A (syn_csn B)) (.neg (.classEq A (syn_c0))) (syn_wss (syn_csn B) A)
+    @gAnc2li (synWss A (synCsn B)) (.neg (.classEq A (synC0))) (synWss (synCsn B) A)
       p0010
-  have p0012 := @g_eqss A (syn_csn B)
+  have p0012 := @gEqss A (synCsn B)
   have p0013 :=
-    @g_syl6ibr (syn_wss A (syn_csn B)) (.neg (.classEq A (syn_c0)))
-      (syn_wa (syn_wss A (syn_csn B)) (syn_wss (syn_csn B) A)) (.classEq A (syn_csn B))
+    @gSyl6ibr (synWss A (synCsn B)) (.neg (.classEq A (synC0)))
+      (synWa (synWss A (synCsn B)) (synWss (synCsn B) A)) (.classEq A (synCsn B))
       p0011 p0012
   have p0014 :=
-    @g_orrd (syn_wss A (syn_csn B)) (.classEq A (syn_c0)) (.classEq A (syn_csn B)) p0013
-  have p0015 := @g_n_0ss (syn_csn B)
-  have p0016 := @g_sseq1 A (syn_c0) (syn_csn B)
+    @gOrrd (synWss A (synCsn B)) (.classEq A (synC0)) (.classEq A (synCsn B)) p0013
+  have p0015 := @gN0ss (synCsn B)
+  have p0016 := @gSseq1 A (synC0) (synCsn B)
   have p0017 :=
-    @g_mpbiri (.classEq A (syn_c0)) (syn_wss A (syn_csn B)) (syn_wss (syn_c0) (syn_csn B))
+    @gMpbiri (.classEq A (synC0)) (synWss A (synCsn B)) (synWss (synC0) (synCsn B))
       p0015 p0016
-  have p0018 := @g_eqimss A (syn_csn B)
+  have p0018 := @gEqimss A (synCsn B)
   have p0019 :=
-    @g_jaoi (.classEq A (syn_c0)) (syn_wss A (syn_csn B)) (.classEq A (syn_csn B)) p0017
+    @gJaoi (.classEq A (synC0)) (synWss A (synCsn B)) (.classEq A (synCsn B)) p0017
       p0018
   have p0020 :=
-    @g_impbii (syn_wss A (syn_csn B))
-      (syn_wo (.classEq A (syn_c0)) (.classEq A (syn_csn B))) p0014 p0019
+    @gImpbii (synWss A (synCsn B))
+      (synWo (.classEq A (synC0)) (.classEq A (synCsn B))) p0014 p0019
   exact p0020
 
+/-- Checked nominal proof certificate identified upstream as `g_sneqr`. -/
 @[expose]
-noncomputable def g_sneqr (A : Class) (B : Class)
-    (hyp_sneqr_1 : Nominal.NPrf (.classMem A (syn_cvv))) :
-    Nominal.NPrf (.imp (.classEq (syn_csn A) (syn_csn B)) (.classEq A B)) :=
+noncomputable def gSneqr (A : Class) (B : Class)
+    (hyp_sneqr_1 : Nominal.NPrf (.classMem A (synCvv))) :
+    Nominal.NPrf (.imp (.classEq (synCsn A) (synCsn B)) (.classEq A B)) :=
   by
-  have p0000 := @g_snid A hyp_sneqr_1
-  have p0001 := @g_eleq2 (syn_csn A) (syn_csn B) A
+  have p0000 := @gSnid A hyp_sneqr_1
+  have p0001 := @gEleq2 (synCsn A) (synCsn B) A
   have p0002 :=
-    @g_mpbii (.classEq (syn_csn A) (syn_csn B)) (.classMem A (syn_csn A))
-      (.classMem A (syn_csn B)) p0000 p0001
-  have p0003 := @g_elsnc A B hyp_sneqr_1
+    @gMpbii (.classEq (synCsn A) (synCsn B)) (.classMem A (synCsn A))
+      (.classMem A (synCsn B)) p0000 p0001
+  have p0003 := @gElsnc A B hyp_sneqr_1
   have p0004 :=
-    @g_sylib (.classEq (syn_csn A) (syn_csn B)) (.classMem A (syn_csn B)) (.classEq A B)
+    @gSylib (.classEq (synCsn A) (synCsn B)) (.classMem A (synCsn B)) (.classEq A B)
       p0002 p0003
   exact p0004
 
+/-- Checked nominal proof certificate identified upstream as `g_sneqrg`. -/
 @[expose]
-noncomputable def g_sneqrg (A : Class) (B : Class) (V : Class) :
+noncomputable def gSneqrg (A : Class) (B : Class) (V : Class) :
     Nominal.NPrf
-      (.imp (.classMem A V) (.imp (.classEq (syn_csn A) (syn_csn B)) (.classEq A B))) :=
+      (.imp (.classMem A V) (.imp (.classEq (synCsn A) (synCsn B)) (.classEq A B))) :=
   by
   let proofSupport : Finset Var := A.fv ∪ B.fv ∪ V.fv
   let x : Var := freshVar proofSupport 0
@@ -1506,18 +1569,18 @@ noncomputable def g_sneqrg (A : Class) (B : Class) (V : Class) :
   have fresh_x_not_V : x ∉ V.fv := by
     intro h
     exact fresh_x (Finset.mem_union_right _ (h))
-  have p0000 := @g_sneq (.cv x) A
+  have p0000 := @gSneq (.cv x) A
   have p0001 :=
-    @g_eqeq1d (.classEq (.cv x) A) (syn_csn (.cv x)) (syn_csn A) (syn_csn B) p0000
-  have p0002 := @g_eqeq1 (.cv x) A B
+    @gEqeq1d (.classEq (.cv x) A) (synCsn (.cv x)) (synCsn A) (synCsn B) p0000
+  have p0002 := @gEqeq1 (.cv x) A B
   have p0003 :=
-    @g_imbi12d (.classEq (.cv x) A) (.classEq (syn_csn (.cv x)) (syn_csn B))
-      (.classEq (syn_csn A) (syn_csn B)) (.classEq (.cv x) B) (.classEq A B) p0001 p0002
-  have p0004 := @g_vex x
-  have p0005 := @g_sneqr (.cv x) B p0004
+    @gImbi12d (.classEq (.cv x) A) (.classEq (synCsn (.cv x)) (synCsn B))
+      (.classEq (synCsn A) (synCsn B)) (.classEq (.cv x) B) (.classEq A B) p0001 p0002
+  have p0004 := @gVex x
+  have p0005 := @gSneqr (.cv x) B p0004
   have p0006 :=
-    @g_vtoclg (.imp (.classEq (syn_csn (.cv x)) (syn_csn B)) (.classEq (.cv x) B))
-      (.imp (.classEq (syn_csn A) (syn_csn B)) (.classEq A B)) x A V
+    @gVtoclg (.imp (.classEq (synCsn (.cv x)) (synCsn B)) (.classEq (.cv x) B))
+      (.imp (.classEq (synCsn A) (synCsn B)) (.classEq A B)) x A V
       (by
         first
         | (aesop))
@@ -1533,29 +1596,32 @@ noncomputable def g_sneqrg (A : Class) (B : Class) (V : Class) :
       p0003 p0005
   exact p0006
 
+/-- Checked nominal proof certificate identified upstream as `g_sneqbg`. -/
 @[expose]
-noncomputable def g_sneqbg (A : Class) (B : Class) (V : Class) :
+noncomputable def gSneqbg (A : Class) (B : Class) (V : Class) :
     Nominal.NPrf
-      (.imp (.classMem A V) (syn_wb (.classEq (syn_csn A) (syn_csn B)) (.classEq A B))) :=
+      (.imp (.classMem A V) (synWb (.classEq (synCsn A) (synCsn B)) (.classEq A B))) :=
   by
-  have p0000 := @g_sneqrg A B V
-  have p0001 := @g_sneq A B
+  have p0000 := @gSneqrg A B V
+  have p0001 := @gSneq A B
   have p0002 :=
-    @g_impbid1 (.classMem A V) (.classEq (syn_csn A) (syn_csn B)) (.classEq A B) p0000
+    @gImpbid1 (.classMem A V) (.classEq (synCsn A) (synCsn B)) (.classEq A B) p0000
       p0001
   exact p0002
 
+/-- Checked nominal proof certificate identified upstream as `g_sneqb`. -/
 @[expose]
-noncomputable def g_sneqb (A : Class) (B : Class)
-    (hyp_sneqb_1 : Nominal.NPrf (.classMem A (syn_cvv))) :
-    Nominal.NPrf (syn_wb (.classEq (syn_csn A) (syn_csn B)) (.classEq A B)) :=
+noncomputable def gSneqb (A : Class) (B : Class)
+    (hyp_sneqb_1 : Nominal.NPrf (.classMem A (synCvv))) :
+    Nominal.NPrf (synWb (.classEq (synCsn A) (synCsn B)) (.classEq A B)) :=
   by
-  have p0000 := @g_sneqbg A B (syn_cvv)
+  have p0000 := @gSneqbg A B (synCvv)
   have p0001 := Nominal.mp hyp_sneqb_1 p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_pwv`. -/
 @[expose]
-noncomputable def g_pwv : Nominal.NPrf (.classEq (syn_cpw (syn_cvv)) (syn_cvv)) :=
+noncomputable def gPwv : Nominal.NPrf (.classEq (synCpw (synCvv)) (synCvv)) :=
   by
   let proofSupport : Finset Var := (∅ : Finset Var)
   let x : Var := freshVar proofSupport 0
@@ -1563,17 +1629,17 @@ noncomputable def g_pwv : Nominal.NPrf (.classEq (syn_cpw (syn_cvv)) (syn_cvv)) 
     by
     change freshVar proofSupport 0 ∉ proofSupport
     exact freshVar_not_mem proofSupport 0
-  have p0000 := @g_ssv (.cv x)
-  have p0001 := @g_vex x
-  have p0002 := @g_elpw (.cv x) (syn_cvv) p0001
+  have p0000 := @gSsv (.cv x)
+  have p0001 := @gVex x
+  have p0002 := @gElpw (.cv x) (synCvv) p0001
   have p0003 :=
-    @g_mpbir (.classMem (.cv x) (syn_cpw (syn_cvv))) (syn_wss (.cv x) (syn_cvv)) p0000
+    @gMpbir (.classMem (.cv x) (synCpw (synCvv))) (synWss (.cv x) (synCvv)) p0000
       p0002
   have p0004 :=
-    @g_n_2th (.classMem (.cv x) (syn_cpw (syn_cvv))) (.classMem (.cv x) (syn_cvv)) p0003
+    @gN2th (.classMem (.cv x) (synCpw (synCvv))) (.classMem (.cv x) (synCvv)) p0003
       p0001
   have p0005 :=
-    @g_eqriv x (syn_cpw (syn_cvv)) (syn_cvv)
+    @gEqriv x (synCpw (synCvv)) (synCvv)
       (by
         first
         |
@@ -1594,112 +1660,116 @@ noncomputable def g_pwv : Nominal.NPrf (.classEq (syn_cpw (syn_cvv)) (syn_cvv)) 
       p0004
   exact p0005
 
+/-- Checked nominal proof certificate identified upstream as `g_unsneqsn`. -/
 @[expose]
-noncomputable def g_unsneqsn (A : Class) (B : Class) (C : Class)
-    (hyp_unsneqsn_1 : Nominal.NPrf (.classMem B (syn_cvv))) :
+noncomputable def gUnsneqsn (A : Class) (B : Class) (C : Class)
+    (hyp_unsneqsn_1 : Nominal.NPrf (.classMem B (synCvv))) :
     Nominal.NPrf
-      (.imp (.classEq (syn_cun A (syn_csn B)) (syn_csn C))
-        (syn_wo (.classEq A (syn_c0)) (.classEq A (syn_csn B)))) :=
+      (.imp (.classEq (synCun A (synCsn B)) (synCsn C))
+        (synWo (.classEq A (synC0)) (.classEq A (synCsn B)))) :=
   by
-  have p0000 := @g_ssun2 (syn_csn B) A
-  have p0001 := @g_snid B hyp_unsneqsn_1
-  have p0002 := @g_sselii (syn_csn B) (syn_cun A (syn_csn B)) B p0000 p0001
-  have p0003 := @g_eleq2 (syn_cun A (syn_csn B)) (syn_csn C) B
+  have p0000 := @gSsun2 (synCsn B) A
+  have p0001 := @gSnid B hyp_unsneqsn_1
+  have p0002 := @gSselii (synCsn B) (synCun A (synCsn B)) B p0000 p0001
+  have p0003 := @gEleq2 (synCun A (synCsn B)) (synCsn C) B
   have p0004 :=
-    @g_mpbii (.classEq (syn_cun A (syn_csn B)) (syn_csn C))
-      (.classMem B (syn_cun A (syn_csn B))) (.classMem B (syn_csn C)) p0002 p0003
-  have p0005 := @g_elsni B C
+    @gMpbii (.classEq (synCun A (synCsn B)) (synCsn C))
+      (.classMem B (synCun A (synCsn B))) (.classMem B (synCsn C)) p0002 p0003
+  have p0005 := @gElsni B C
   have p0006 :=
-    @g_syl (.classEq (syn_cun A (syn_csn B)) (syn_csn C)) (.classMem B (syn_csn C))
+    @gSyl (.classEq (synCun A (synCsn B)) (synCsn C)) (.classMem B (synCsn C))
       (.classEq B C) p0004 p0005
-  have p0007 := @g_sneq B C
+  have p0007 := @gSneq B C
   have p0008 :=
-    @g_eqeq2d (.classEq B C) (syn_csn B) (syn_csn C) (syn_cun A (syn_csn B)) p0007
+    @gEqeq2d (.classEq B C) (synCsn B) (synCsn C) (synCun A (synCsn B)) p0007
   have p0009 :=
-    @g_biimprd (.classEq B C) (.classEq (syn_cun A (syn_csn B)) (syn_csn B))
-      (.classEq (syn_cun A (syn_csn B)) (syn_csn C)) p0008
+    @gBiimprd (.classEq B C) (.classEq (synCun A (synCsn B)) (synCsn B))
+      (.classEq (synCun A (synCsn B)) (synCsn C)) p0008
   have p0010 :=
-    @g_mpcom (.classEq B C) (.classEq (syn_cun A (syn_csn B)) (syn_csn C))
-      (.classEq (syn_cun A (syn_csn B)) (syn_csn B)) p0006 p0009
-  have p0011 := @g_ssequn1 A (syn_csn B)
+    @gMpcom (.classEq B C) (.classEq (synCun A (synCsn B)) (synCsn C))
+      (.classEq (synCun A (synCsn B)) (synCsn B)) p0006 p0009
+  have p0011 := @gSsequn1 A (synCsn B)
   have p0012 :=
-    @g_sylibr (.classEq (syn_cun A (syn_csn B)) (syn_csn C))
-      (.classEq (syn_cun A (syn_csn B)) (syn_csn B)) (syn_wss A (syn_csn B)) p0010 p0011
-  have p0013 := @g_sssn A B
+    @gSylibr (.classEq (synCun A (synCsn B)) (synCsn C))
+      (.classEq (synCun A (synCsn B)) (synCsn B)) (synWss A (synCsn B)) p0010 p0011
+  have p0013 := @gSssn A B
   have p0014 :=
-    @g_sylib (.classEq (syn_cun A (syn_csn B)) (syn_csn C)) (syn_wss A (syn_csn B))
-      (syn_wo (.classEq A (syn_c0)) (.classEq A (syn_csn B))) p0012 p0013
+    @gSylib (.classEq (synCun A (synCsn B)) (synCsn C)) (synWss A (synCsn B))
+      (synWo (.classEq A (synC0)) (.classEq A (synCsn B))) p0012 p0013
   exact p0014
 
+/-- Checked nominal proof certificate identified upstream as `g_dfpss4`. -/
 @[expose]
-noncomputable def g_dfpss4 (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv)
+noncomputable def gDfpss4 (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv)
     (dv_B_x : x ∉ B.fv) :
     Nominal.NPrf
-      (syn_wb (syn_wpss A B)
-        (syn_wa (syn_wss A B) (syn_wrex x B (.neg (.classMem (.cv x) A))))) :=
+      (synWb (synWpss A B)
+        (synWa (synWss A B) (synWrex x B (.neg (.classMem (.cv x) A))))) :=
   by
   let proofSupport : Finset Var := ({ x } : Finset Var) ∪ A.fv ∪ B.fv
-  have p0000 := @g_dfpss3 A B
+  have p0000 := @gDfpss3 A B
   have p0001 :=
-    @g_dfss3 x B A
+    @gDfss3 x B A
       (by
         first
         | (aesop))
       (by
         first
         | (aesop))
-  have p0002 := @g_dfral2 (.classMem (.cv x) A) x B
+  have p0002 := @gDfral2 (.classMem (.cv x) A) x B
   have p0003 :=
-    @g_bitr2i (syn_wss B A) (syn_wral x B (.classMem (.cv x) A))
-      (.neg (syn_wrex x B (.neg (.classMem (.cv x) A)))) p0001 p0002
-  have p0004 := @g_con1bii (syn_wrex x B (.neg (.classMem (.cv x) A))) (syn_wss B A) p0003
+    @gBitr2i (synWss B A) (synWral x B (.classMem (.cv x) A))
+      (.neg (synWrex x B (.neg (.classMem (.cv x) A)))) p0001 p0002
+  have p0004 := @gCon1bii (synWrex x B (.neg (.classMem (.cv x) A))) (synWss B A) p0003
   have p0005 :=
-    @g_anbi2i (.neg (syn_wss B A)) (syn_wrex x B (.neg (.classMem (.cv x) A)))
-      (syn_wss A B) p0004
+    @gAnbi2i (.neg (synWss B A)) (synWrex x B (.neg (.classMem (.cv x) A)))
+      (synWss A B) p0004
   have p0006 :=
-    @g_bitri (syn_wpss A B) (syn_wa (syn_wss A B) (.neg (syn_wss B A)))
-      (syn_wa (syn_wss A B) (syn_wrex x B (.neg (.classMem (.cv x) A)))) p0000 p0005
+    @gBitri (synWpss A B) (synWa (synWss A B) (.neg (synWss B A)))
+      (synWa (synWss A B) (synWrex x B (.neg (.classMem (.cv x) A)))) p0000 p0005
   exact p0006
 
+/-- Checked nominal proof certificate identified upstream as `g_adj11`. -/
 @[expose]
-noncomputable def g_adj11 (A : Class) (B : Class) (C : Class) :
+noncomputable def gAdj11 (A : Class) (B : Class) (C : Class) :
     Nominal.NPrf
-      (.imp (syn_wa (.neg (.classMem C A)) (.neg (.classMem C B)))
-        (syn_wb (.classEq (syn_cun A (syn_csn C)) (syn_cun B (syn_csn C))) (.classEq A B))) :=
+      (.imp (synWa (.neg (.classMem C A)) (.neg (.classMem C B)))
+        (synWb (.classEq (synCun A (synCsn C)) (synCun B (synCsn C))) (.classEq A B))) :=
   by
-  have p0000 := @g_difeq1 (syn_cun A (syn_csn C)) (syn_cun B (syn_csn C)) (syn_csn C)
-  have p0001 := @g_difun2 A (syn_csn C)
-  have p0002 := @g_difun2 B (syn_csn C)
+  have p0000 := @gDifeq1 (synCun A (synCsn C)) (synCun B (synCsn C)) (synCsn C)
+  have p0001 := @gDifun2 A (synCsn C)
+  have p0002 := @gDifun2 B (synCsn C)
   have p0003 :=
-    @g_n_3eqtr3g (.classEq (syn_cun A (syn_csn C)) (syn_cun B (syn_csn C)))
-      (syn_cdif (syn_cun A (syn_csn C)) (syn_csn C))
-      (syn_cdif (syn_cun B (syn_csn C)) (syn_csn C)) (syn_cdif A (syn_csn C))
-      (syn_cdif B (syn_csn C)) p0000 p0001 p0002
-  have p0004 := @g_difsn C A
-  have p0005 := @g_difsn C B
+    @gN3eqtr3g (.classEq (synCun A (synCsn C)) (synCun B (synCsn C)))
+      (synCdif (synCun A (synCsn C)) (synCsn C))
+      (synCdif (synCun B (synCsn C)) (synCsn C)) (synCdif A (synCsn C))
+      (synCdif B (synCsn C)) p0000 p0001 p0002
+  have p0004 := @gDifsn C A
+  have p0005 := @gDifsn C B
   have p0006 :=
-    @g_eqeqan12d (.neg (.classMem C A)) (.neg (.classMem C B)) (syn_cdif A (syn_csn C)) A
-      (syn_cdif B (syn_csn C)) B p0004 p0005
+    @gEqeqan12d (.neg (.classMem C A)) (.neg (.classMem C B)) (synCdif A (synCsn C)) A
+      (synCdif B (synCsn C)) B p0004 p0005
   have p0007 :=
-    @g_syl5ib (.classEq (syn_cun A (syn_csn C)) (syn_cun B (syn_csn C)))
-      (.classEq (syn_cdif A (syn_csn C)) (syn_cdif B (syn_csn C)))
-      (syn_wa (.neg (.classMem C A)) (.neg (.classMem C B))) (.classEq A B) p0003 p0006
-  have p0008 := @g_uneq1 A B (syn_csn C)
+    @gSyl5ib (.classEq (synCun A (synCsn C)) (synCun B (synCsn C)))
+      (.classEq (synCdif A (synCsn C)) (synCdif B (synCsn C)))
+      (synWa (.neg (.classMem C A)) (.neg (.classMem C B))) (.classEq A B) p0003 p0006
+  have p0008 := @gUneq1 A B (synCsn C)
   have p0009 :=
-    @g_impbid1 (syn_wa (.neg (.classMem C A)) (.neg (.classMem C B)))
-      (.classEq (syn_cun A (syn_csn C)) (syn_cun B (syn_csn C))) (.classEq A B) p0007
+    @gImpbid1 (synWa (.neg (.classMem C A)) (.neg (.classMem C B)))
+      (.classEq (synCun A (synCsn C)) (synCun B (synCsn C))) (.classEq A B) p0007
       p0008
   exact p0009
 
+/-- Checked nominal proof certificate identified upstream as `g_dfuni2`. -/
 @[expose]
-noncomputable def g_dfuni2 (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉ A.fv)
+noncomputable def gDfuni2 (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉ A.fv)
     (dv_A_y : y ∉ A.fv) (dv_x_y : x ≠ y) :
     Nominal.NPrf
-      (.classEq (syn_cuni A) (.cab x (syn_wrex y A (.classMem (.cv x) (.cv y))))) :=
+      (.classEq (synCuni A) (.cab x (synWrex y A (.classMem (.cv x) (.cv y))))) :=
   by
   let proofSupport : Finset Var := ({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ A.fv
   have p0000 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_uni x y A
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfUni x y A
       (by
         first
         | (aesop))
@@ -1709,22 +1779,22 @@ noncomputable def g_dfuni2 (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉ A.fv)
       (by
         first
         | (aesop))
-  have p0001 := @g_exancom (.classMem (.cv x) (.cv y)) (.classMem (.cv y) A) y
-  have p0002 := (Nominal.biimpRefl (syn_wrex y A (.classMem (.cv x) (.cv y))))
+  have p0001 := @gExancom (.classMem (.cv x) (.cv y)) (.classMem (.cv y) A) y
+  have p0002 := (Nominal.biimpRefl (synWrex y A (.classMem (.cv x) (.cv y))))
   have p0003 :=
-    @g_bitr4i (syn_wex y (syn_wa (.classMem (.cv x) (.cv y)) (.classMem (.cv y) A)))
-      (syn_wex y (syn_wa (.classMem (.cv y) A) (.classMem (.cv x) (.cv y))))
-      (syn_wrex y A (.classMem (.cv x) (.cv y))) p0001 p0002
+    @gBitr4i (synWex y (synWa (.classMem (.cv x) (.cv y)) (.classMem (.cv y) A)))
+      (synWex y (synWa (.classMem (.cv y) A) (.classMem (.cv x) (.cv y))))
+      (synWrex y A (.classMem (.cv x) (.cv y))) p0001 p0002
   have p0004 :=
-    @g_abbii (syn_wex y (syn_wa (.classMem (.cv x) (.cv y)) (.classMem (.cv y) A)))
-      (syn_wrex y A (.classMem (.cv x) (.cv y))) x p0003
+    @gAbbii (synWex y (synWa (.classMem (.cv x) (.cv y)) (.classMem (.cv y) A)))
+      (synWrex y A (.classMem (.cv x) (.cv y))) x p0003
   have p0005_e00_recanon :
     Nominal.NPrf
-      (.classEq (syn_cuni A) (.cab x
-          (syn_wex y (syn_wa (.classMem (.cv x) (.cv y)) (.classMem (.cv y) A))))) :=
+      (.classEq (synCuni A) (.cab x
+          (synWex y (synWa (.classMem (.cv x) (.cv y)) (.classMem (.cv y) A))))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_cuni syn_wex syn_wa
+        unfold synCuni synWex synWa
         simp (config := { failIfUnchanged := false }) only []
         apply Nominal.RecanonTransportDev.TRecanonWff.classEq
         · exact Nominal.RecanonTransportDev.TRecanonClass.same _
@@ -1738,17 +1808,18 @@ noncomputable def g_dfuni2 (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉ A.fv)
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0000
   have p0005 :=
-    @g_eqtri (syn_cuni A)
-      (.cab x (syn_wex y (syn_wa (.classMem (.cv x) (.cv y)) (.classMem (.cv y) A))))
-      (.cab x (syn_wrex y A (.classMem (.cv x) (.cv y)))) p0005_e00_recanon p0004
+    @gEqtri (synCuni A)
+      (.cab x (synWex y (synWa (.classMem (.cv x) (.cv y)) (.classMem (.cv y) A))))
+      (.cab x (synWrex y A (.classMem (.cv x) (.cv y)))) p0005_e00_recanon p0004
   exact p0005
 
+/-- Checked nominal proof certificate identified upstream as `g_eluni`. -/
 @[expose]
-noncomputable def g_eluni (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv)
+noncomputable def gEluni (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv)
     (dv_B_x : x ∉ B.fv) :
     Nominal.NPrf
-      (syn_wb (.classMem A (syn_cuni B))
-        (syn_wex x (syn_wa (.classMem A (.cv x)) (.classMem (.cv x) B)))) :=
+      (synWb (.classMem A (synCuni B))
+        (synWex x (synWa (.classMem A (.cv x)) (.classMem (.cv x) B)))) :=
   by
   let proofSupport : Finset Var := ({ x } : Finset Var) ∪ A.fv ∪ B.fv
   let y : Var := freshVar proofSupport 0
@@ -1768,13 +1839,13 @@ noncomputable def g_eluni (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv
   have fresh_y_not_B : y ∉ B.fv := by
     intro h
     exact fresh_y (Finset.mem_union_right _ (h))
-  have p0000 := @g_elex A (syn_cuni B)
-  have p0001 := @g_elex A (.cv x)
+  have p0000 := @gElex A (synCuni B)
+  have p0001 := @gElex A (.cv x)
   have p0002 :=
-    @g_adantr (.classMem A (.cv x)) (.classMem A (syn_cvv)) (.classMem (.cv x) B) p0001
+    @gAdantr (.classMem A (.cv x)) (.classMem A (synCvv)) (.classMem (.cv x) B) p0001
   have p0003 :=
-    @g_exlimiv (syn_wa (.classMem A (.cv x)) (.classMem (.cv x) B))
-      (.classMem A (syn_cvv)) x
+    @gExlimiv (synWa (.classMem A (.cv x)) (.classMem (.cv x) B))
+      (.classMem A (synCvv)) x
       (by
         first
         |
@@ -1786,14 +1857,14 @@ noncomputable def g_eluni (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv
               Finset.mem_union] at ⊢;
             aesop))
       p0002
-  have p0004 := @g_eleq1 (.cv y) A (.cv x)
+  have p0004 := @gEleq1 (.cv y) A (.cv x)
   have p0005 :=
-    @g_anbi1d (.classEq (.cv y) A) (.classMem (.cv y) (.cv x)) (.classMem A (.cv x))
+    @gAnbi1d (.classEq (.cv y) A) (.classMem (.cv y) (.cv x)) (.classMem A (.cv x))
       (.classMem (.cv x) B) p0004
   have p0006 :=
-    @g_exbidv (.classEq (.cv y) A)
-      (syn_wa (.classMem (.cv y) (.cv x)) (.classMem (.cv x) B))
-      (syn_wa (.classMem A (.cv x)) (.classMem (.cv x) B)) x
+    @gExbidv (.classEq (.cv y) A)
+      (synWa (.classMem (.cv y) (.cv x)) (.classMem (.cv x) B))
+      (synWa (.classMem A (.cv x)) (.classMem (.cv x) B)) x
       (by
         first
         |
@@ -1806,7 +1877,7 @@ noncomputable def g_eluni (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv
             aesop))
       p0005
   have p0007 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_uni y x B
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfUni y x B
       (by
         first
         | (aesop))
@@ -1818,11 +1889,11 @@ noncomputable def g_eluni (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv
         | (aesop))
   have p0008_e01_recanon :
     Nominal.NPrf
-      (.classEq (syn_cuni B) (.cab y
-          (syn_wex x (syn_wa (.classMem (.cv y) (.cv x)) (.classMem (.cv x) B))))) :=
+      (.classEq (synCuni B) (.cab y
+          (synWex x (synWa (.classMem (.cv y) (.cv x)) (.classMem (.cv x) B))))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_cuni syn_wex syn_wa
+        unfold synCuni synWex synWa
         simp (config := { failIfUnchanged := false }) only []
         apply Nominal.RecanonTransportDev.TRecanonWff.classEq
         · exact Nominal.RecanonTransportDev.TRecanonClass.same _
@@ -1836,9 +1907,9 @@ noncomputable def g_eluni (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0007
   have p0008 :=
-    @g_elab2g (syn_wex x (syn_wa (.classMem (.cv y) (.cv x)) (.classMem (.cv x) B)))
-      (syn_wex x (syn_wa (.classMem A (.cv x)) (.classMem (.cv x) B))) y A (syn_cuni B)
-      (syn_cvv)
+    @gElab2g (synWex x (synWa (.classMem (.cv y) (.cv x)) (.classMem (.cv x) B)))
+      (synWex x (synWa (.classMem A (.cv x)) (.classMem (.cv x) B))) y A (synCuni B)
+      (synCvv)
       (by
         first
         | (aesop))
@@ -1856,37 +1927,39 @@ noncomputable def g_eluni (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv
             aesop))
       p0006 p0008_e01_recanon
   have p0009 :=
-    @g_pm5_21nii (.classMem A (syn_cuni B)) (.classMem A (syn_cvv))
-      (syn_wex x (syn_wa (.classMem A (.cv x)) (.classMem (.cv x) B))) p0000 p0003 p0008
+    @gPm521nii (.classMem A (synCuni B)) (.classMem A (synCvv))
+      (synWex x (synWa (.classMem A (.cv x)) (.classMem (.cv x) B))) p0000 p0003 p0008
   exact p0009
 
+/-- Checked nominal proof certificate identified upstream as `g_eluni2`. -/
 @[expose]
-noncomputable def g_eluni2 (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv)
+noncomputable def gEluni2 (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv)
     (dv_B_x : x ∉ B.fv) :
     Nominal.NPrf
-      (syn_wb (.classMem A (syn_cuni B)) (syn_wrex x B (.classMem A (.cv x)))) :=
+      (synWb (.classMem A (synCuni B)) (synWrex x B (.classMem A (.cv x)))) :=
   by
   let proofSupport : Finset Var := ({ x } : Finset Var) ∪ A.fv ∪ B.fv
-  have p0000 := @g_exancom (.classMem A (.cv x)) (.classMem (.cv x) B) x
+  have p0000 := @gExancom (.classMem A (.cv x)) (.classMem (.cv x) B) x
   have p0001 :=
-    @g_eluni x A B
+    @gEluni x A B
       (by
         first
         | (aesop))
       (by
         first
         | (aesop))
-  have p0002 := (Nominal.biimpRefl (syn_wrex x B (.classMem A (.cv x))))
+  have p0002 := (Nominal.biimpRefl (synWrex x B (.classMem A (.cv x))))
   have p0003 :=
-    @g_n_3bitr4i (syn_wex x (syn_wa (.classMem A (.cv x)) (.classMem (.cv x) B)))
-      (syn_wex x (syn_wa (.classMem (.cv x) B) (.classMem A (.cv x))))
-      (.classMem A (syn_cuni B)) (syn_wrex x B (.classMem A (.cv x))) p0000 p0001 p0002
+    @gN3bitr4i (synWex x (synWa (.classMem A (.cv x)) (.classMem (.cv x) B)))
+      (synWex x (synWa (.classMem (.cv x) B) (.classMem A (.cv x))))
+      (.classMem A (synCuni B)) (synWrex x B (.classMem A (.cv x))) p0000 p0001 p0002
   exact p0003
 
+/-- Checked nominal proof certificate identified upstream as `g_elunii`. -/
 @[expose]
-noncomputable def g_elunii (A : Class) (B : Class) (C : Class) :
+noncomputable def gElunii (A : Class) (B : Class) (C : Class) :
     Nominal.NPrf
-      (.imp (syn_wa (.classMem A B) (.classMem B C)) (.classMem A (syn_cuni C))) :=
+      (.imp (synWa (.classMem A B) (.classMem B C)) (.classMem A (synCuni C))) :=
   by
   let proofSupport : Finset Var := A.fv ∪ B.fv ∪ C.fv
   let x : Var := freshVar proofSupport 0
@@ -1903,14 +1976,14 @@ noncomputable def g_elunii (A : Class) (B : Class) (C : Class) :
   have fresh_x_not_C : x ∉ C.fv := by
     intro h
     exact fresh_x (Finset.mem_union_right _ (h))
-  have p0000 := @g_eleq2 (.cv x) B A
-  have p0001 := @g_eleq1 (.cv x) B C
+  have p0000 := @gEleq2 (.cv x) B A
+  have p0001 := @gEleq1 (.cv x) B C
   have p0002 :=
-    @g_anbi12d (.classEq (.cv x) B) (.classMem A (.cv x)) (.classMem A B)
+    @gAnbi12d (.classEq (.cv x) B) (.classMem A (.cv x)) (.classMem A B)
       (.classMem (.cv x) C) (.classMem B C) p0000 p0001
   have p0003 :=
-    @g_spcegv (syn_wa (.classMem A (.cv x)) (.classMem (.cv x) C))
-      (syn_wa (.classMem A B) (.classMem B C)) x B C
+    @gSpcegv (synWa (.classMem A (.cv x)) (.classMem (.cv x) C))
+      (synWa (.classMem A B) (.classMem B C)) x B C
       (by
         first
         | (aesop))
@@ -1925,10 +1998,10 @@ noncomputable def g_elunii (A : Class) (B : Class) (C : Class) :
             aesop))
       p0002
   have p0004 :=
-    @g_anabsi7 (.classMem A B) (.classMem B C)
-      (syn_wex x (syn_wa (.classMem A (.cv x)) (.classMem (.cv x) C))) p0003
+    @gAnabsi7 (.classMem A B) (.classMem B C)
+      (synWex x (synWa (.classMem A (.cv x)) (.classMem (.cv x) C))) p0003
   have p0005 :=
-    @g_eluni x A C
+    @gEluni x A C
       (by
         first
         | (aesop))
@@ -1936,15 +2009,16 @@ noncomputable def g_elunii (A : Class) (B : Class) (C : Class) :
         first
         | (aesop))
   have p0006 :=
-    @g_sylibr (syn_wa (.classMem A B) (.classMem B C))
-      (syn_wex x (syn_wa (.classMem A (.cv x)) (.classMem (.cv x) C)))
-      (.classMem A (syn_cuni C)) p0004 p0005
+    @gSylibr (synWa (.classMem A B) (.classMem B C))
+      (synWex x (synWa (.classMem A (.cv x)) (.classMem (.cv x) C)))
+      (.classMem A (synCuni C)) p0004 p0005
   exact p0006
 
+/-- Checked nominal proof certificate identified upstream as `g_nfuni`. -/
 @[expose]
-noncomputable def g_nfuni (x : Var) (A : Class)
-    (hyp_nfuni_1 : Nominal.NPrf (syn_wnfc x A)) :
-    Nominal.NPrf (syn_wnfc x (syn_cuni A)) :=
+noncomputable def gNfuni (x : Var) (A : Class)
+    (hyp_nfuni_1 : Nominal.NPrf (synWnfc x A)) :
+    Nominal.NPrf (synWnfc x (synCuni A)) :=
   by
   let proofSupport : Finset Var := ({ x } : Finset Var) ∪ A.fv
   let y : Var := freshVar proofSupport 0
@@ -1977,7 +2051,7 @@ noncomputable def g_nfuni (x : Var) (A : Class)
     exact freshVar_injective proofSupport (i := 0) (j := 1) (by decide)
   have fresh_z_ne_y : z ≠ y := Ne.symm fresh_y_ne_z
   have p0000 :=
-    @g_dfuni2 y z A
+    @gDfuni2 y z A
       (by
         first
         | (aesop))
@@ -1988,7 +2062,7 @@ noncomputable def g_nfuni (x : Var) (A : Class)
         first
         | (aesop))
   have p0001 :=
-    @g_nfv (.classMem (.cv y) (.cv z)) x
+    @gNfv (.classMem (.cv y) (.cv z)) x
       (by
         first
         |
@@ -1999,16 +2073,17 @@ noncomputable def g_nfuni (x : Var) (A : Class)
               NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_union,
               Finset.mem_singleton] at ⊢;
             aesop))
-  have p0002 := @g_nfrex (.classMem (.cv y) (.cv z)) x z A hyp_nfuni_1 p0001
-  have p0003 := @g_nfab (syn_wrex z A (.classMem (.cv y) (.cv z))) x y p0002
+  have p0002 := @gNfrex (.classMem (.cv y) (.cv z)) x z A hyp_nfuni_1 p0001
+  have p0003 := @gNfab (synWrex z A (.classMem (.cv y) (.cv z))) x y p0002
   have p0004 :=
-    @g_nfcxfr x (syn_cuni A) (.cab y (syn_wrex z A (.classMem (.cv y) (.cv z)))) p0000
+    @gNfcxfr x (synCuni A) (.cab y (synWrex z A (.classMem (.cv y) (.cv z)))) p0000
       p0003
   exact p0004
 
+/-- Checked nominal proof certificate identified upstream as `g_unieq`. -/
 @[expose]
-noncomputable def g_unieq (A : Class) (B : Class) :
-    Nominal.NPrf (.imp (.classEq A B) (.classEq (syn_cuni A) (syn_cuni B))) :=
+noncomputable def gUnieq (A : Class) (B : Class) :
+    Nominal.NPrf (.imp (.classEq A B) (.classEq (synCuni A) (synCuni B))) :=
   by
   let proofSupport : Finset Var := A.fv ∪ B.fv
   let y : Var := freshVar proofSupport 0
@@ -2039,7 +2114,7 @@ noncomputable def g_unieq (A : Class) (B : Class) :
     exact freshVar_injective proofSupport (i := 0) (j := 1) (by decide)
   have fresh_x_ne_y : x ≠ y := Ne.symm fresh_y_ne_x
   have p0000 :=
-    @g_rexeq (.classMem (.cv y) (.cv x)) x A B
+    @gRexeq (.classMem (.cv y) (.cv x)) x A B
       (by
         first
         | (aesop))
@@ -2047,8 +2122,8 @@ noncomputable def g_unieq (A : Class) (B : Class) :
         first
         | (aesop))
   have p0001 :=
-    @g_abbidv (.classEq A B) (syn_wrex x A (.classMem (.cv y) (.cv x)))
-      (syn_wrex x B (.classMem (.cv y) (.cv x))) y
+    @gAbbidv (.classEq A B) (synWrex x A (.classMem (.cv y) (.cv x)))
+      (synWrex x B (.classMem (.cv y) (.cv x))) y
       (by
         first
         |
@@ -2060,7 +2135,7 @@ noncomputable def g_unieq (A : Class) (B : Class) :
             aesop))
       p0000
   have p0002 :=
-    @g_dfuni2 y x A
+    @gDfuni2 y x A
       (by
         first
         | (aesop))
@@ -2071,7 +2146,7 @@ noncomputable def g_unieq (A : Class) (B : Class) :
         first
         | (aesop))
   have p0003 :=
-    @g_dfuni2 y x B
+    @gDfuni2 y x B
       (by
         first
         | (aesop))
@@ -2082,35 +2157,38 @@ noncomputable def g_unieq (A : Class) (B : Class) :
         first
         | (aesop))
   have p0004 :=
-    @g_n_3eqtr4g (.classEq A B) (.cab y (syn_wrex x A (.classMem (.cv y) (.cv x))))
-      (.cab y (syn_wrex x B (.classMem (.cv y) (.cv x)))) (syn_cuni A) (syn_cuni B) p0001
+    @gN3eqtr4g (.classEq A B) (.cab y (synWrex x A (.classMem (.cv y) (.cv x))))
+      (.cab y (synWrex x B (.classMem (.cv y) (.cv x)))) (synCuni A) (synCuni B) p0001
       p0002 p0003
   exact p0004
 
+/-- Checked nominal proof certificate identified upstream as `g_unieqi`. -/
 @[expose]
-noncomputable def g_unieqi (A : Class) (B : Class)
+noncomputable def gUnieqi (A : Class) (B : Class)
     (hyp_unieqi_1 : Nominal.NPrf (.classEq A B)) :
-    Nominal.NPrf (.classEq (syn_cuni A) (syn_cuni B)) :=
+    Nominal.NPrf (.classEq (synCuni A) (synCuni B)) :=
   by
-  have p0000 := @g_unieq A B
+  have p0000 := @gUnieq A B
   have p0001 := Nominal.mp hyp_unieqi_1 p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_unieqd`. -/
 @[expose]
-noncomputable def g_unieqd (ph : Wff) (A : Class) (B : Class)
+noncomputable def gUnieqd (ph : Wff) (A : Class) (B : Class)
     (hyp_unieqd_1 : Nominal.NPrf (.imp ph (.classEq A B))) :
-    Nominal.NPrf (.imp ph (.classEq (syn_cuni A) (syn_cuni B))) :=
+    Nominal.NPrf (.imp ph (.classEq (synCuni A) (synCuni B))) :=
   by
-  have p0000 := @g_unieq A B
+  have p0000 := @gUnieq A B
   have p0001 :=
-    @g_syl ph (.classEq A B) (.classEq (syn_cuni A) (syn_cuni B)) hyp_unieqd_1 p0000
+    @gSyl ph (.classEq A B) (.classEq (synCuni A) (synCuni B)) hyp_unieqd_1 p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_eluniab`. -/
 @[expose]
-noncomputable def g_eluniab (ph : Wff) (x : Var) (A : Class) (dv_A_x : x ∉ A.fv) :
+noncomputable def gEluniab (ph : Wff) (x : Var) (A : Class) (dv_A_x : x ∉ A.fv) :
     Nominal.NPrf
-      (syn_wb (.classMem A (syn_cuni (.cab x ph)))
-        (syn_wex x (syn_wa (.classMem A (.cv x)) ph))) :=
+      (synWb (.classMem A (synCuni (.cab x ph)))
+        (synWex x (synWa (.classMem A (.cv x)) ph))) :=
   by
   let proofSupport : Finset Var := ph.fv ∪ ({ x } : Finset Var) ∪ A.fv
   let y : Var := freshVar proofSupport 0
@@ -2131,7 +2209,7 @@ noncomputable def g_eluniab (ph : Wff) (x : Var) (A : Class) (dv_A_x : x ∉ A.f
     intro h
     exact fresh_y (Finset.mem_union_right _ (h))
   have p0000 :=
-    @g_eluni y A (.cab x ph)
+    @gEluni y A (.cab x ph)
       (by
         first
         | (aesop))
@@ -2145,7 +2223,7 @@ noncomputable def g_eluniab (ph : Wff) (x : Var) (A : Class) (dv_A_x : x ∉ A.f
               Finset.mem_erase] at ⊢;
             aesop))
   have p0001 :=
-    @g_nfv (.classMem A (.cv y)) x
+    @gNfv (.classMem A (.cv y)) x
       (by
         first
         |
@@ -2157,14 +2235,14 @@ noncomputable def g_eluniab (ph : Wff) (x : Var) (A : Class) (dv_A_x : x ∉ A.f
               Finset.mem_singleton] at ⊢;
             aesop))
   have p0002 :=
-    @g_nfsab1 ph x y
+    @gNfsab1 ph x y
       (by
         first
         | (aesop))
   have p0003 :=
-    @g_nfan (.classMem A (.cv y)) (.classMem (.cv y) (.cab x ph)) x p0001 p0002
+    @gNfan (.classMem A (.cv y)) (.classMem (.cv y) (.cab x ph)) x p0001 p0002
   have p0004 :=
-    @g_nfv (syn_wa (.classMem A (.cv x)) ph) y
+    @gNfv (synWa (.classMem A (.cv x)) ph) y
       (by
         first
         |
@@ -2176,40 +2254,41 @@ noncomputable def g_eluniab (ph : Wff) (x : Var) (A : Class) (dv_A_x : x ∉ A.f
               NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_union,
               Finset.mem_singleton] at ⊢;
             aesop))
-  have p0005 := @g_eleq2 (.cv y) (.cv x) A
-  have p0006 := @g_eleq1 (.cv y) (.cv x) (.cab x ph)
-  have p0007 := @g_abid ph x
+  have p0005 := @gEleq2 (.cv y) (.cv x) A
+  have p0006 := @gEleq1 (.cv y) (.cv x) (.cab x ph)
+  have p0007 := @gAbid ph x
   have p0008 :=
-    @g_syl6bb (.classEq (.cv y) (.cv x)) (.classMem (.cv y) (.cab x ph))
+    @gSyl6bb (.classEq (.cv y) (.cv x)) (.classMem (.cv y) (.cab x ph))
       (.classMem (.cv x) (.cab x ph)) ph p0006 p0007
   have p0009 :=
-    @g_anbi12d (.classEq (.cv y) (.cv x)) (.classMem A (.cv y)) (.classMem A (.cv x))
+    @gAnbi12d (.classEq (.cv y) (.cv x)) (.classMem A (.cv y)) (.classMem A (.cv x))
       (.classMem (.cv y) (.cab x ph)) ph p0005 p0008
   have p0010_e02_recanon :
     Nominal.NPrf
-      (.imp (.objEq y x) (syn_wb (syn_wa (.classMem A (.cv y)) (.classMem (.cv y) (.cab x ph)))
-          (syn_wa (.classMem A (.cv x)) ph))) :=
+      (.imp (.objEq y x) (synWb (synWa (.classMem A (.cv y)) (.classMem (.cv y) (.cab x ph)))
+          (synWa (.classMem A (.cv x)) ph))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_wa
+        unfold synWb synWa
         apply Nominal.RecanonTransportDev.TRecanonWff.imp
         · exact Nominal.RecanonTransportDev.TRecanonWff.classEq_objEq _ _
         · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0009
   have p0010 :=
-    @g_cbvex (syn_wa (.classMem A (.cv y)) (.classMem (.cv y) (.cab x ph)))
-      (syn_wa (.classMem A (.cv x)) ph) y x p0003 p0004 p0010_e02_recanon
+    @gCbvex (synWa (.classMem A (.cv y)) (.classMem (.cv y) (.cab x ph)))
+      (synWa (.classMem A (.cv x)) ph) y x p0003 p0004 p0010_e02_recanon
   have p0011 :=
-    @g_bitri (.classMem A (syn_cuni (.cab x ph)))
-      (syn_wex y (syn_wa (.classMem A (.cv y)) (.classMem (.cv y) (.cab x ph))))
-      (syn_wex x (syn_wa (.classMem A (.cv x)) ph)) p0000 p0010
+    @gBitri (.classMem A (synCuni (.cab x ph)))
+      (synWex y (synWa (.classMem A (.cv y)) (.classMem (.cv y) (.cab x ph))))
+      (synWex x (synWa (.classMem A (.cv x)) ph)) p0000 p0010
   exact p0011
 
+/-- Checked nominal proof certificate identified upstream as `g_unipr`. -/
 @[expose]
-noncomputable def g_unipr (A : Class) (B : Class)
-    (hyp_unipr_1 : Nominal.NPrf (.classMem A (syn_cvv)))
-    (hyp_unipr_2 : Nominal.NPrf (.classMem B (syn_cvv))) :
-    Nominal.NPrf (.classEq (syn_cuni (syn_cpr A B)) (syn_cun A B)) :=
+noncomputable def gUnipr (A : Class) (B : Class)
+    (hyp_unipr_1 : Nominal.NPrf (.classMem A (synCvv)))
+    (hyp_unipr_2 : Nominal.NPrf (.classMem B (synCvv))) :
+    Nominal.NPrf (.classEq (synCuni (synCpr A B)) (synCun A B)) :=
   by
   let proofSupport : Finset Var := A.fv ∪ B.fv
   let x : Var := freshVar proofSupport 0
@@ -2239,35 +2318,35 @@ noncomputable def g_unipr (A : Class) (B : Class)
     change freshVar proofSupport 0 ≠ freshVar proofSupport 1
     exact freshVar_injective proofSupport (i := 0) (j := 1) (by decide)
   have fresh_y_ne_x : y ≠ x := Ne.symm fresh_x_ne_y
-  have p0000 := @g_vex y
-  have p0001 := @g_elpr (.cv y) A B p0000
+  have p0000 := @gVex y
+  have p0001 := @gElpr (.cv y) A B p0000
   have p0002 :=
-    @g_anbi2i (.classMem (.cv y) (syn_cpr A B))
-      (syn_wo (.classEq (.cv y) A) (.classEq (.cv y) B)) (.objMem x y) p0001
-  have p0003 := @g_andi (.objMem x y) (.classEq (.cv y) A) (.classEq (.cv y) B)
+    @gAnbi2i (.classMem (.cv y) (synCpr A B))
+      (synWo (.classEq (.cv y) A) (.classEq (.cv y) B)) (.objMem x y) p0001
+  have p0003 := @gAndi (.objMem x y) (.classEq (.cv y) A) (.classEq (.cv y) B)
   have p0004 :=
-    @g_bitri (syn_wa (.objMem x y) (.classMem (.cv y) (syn_cpr A B)))
-      (syn_wa (.objMem x y) (syn_wo (.classEq (.cv y) A) (.classEq (.cv y) B)))
-      (syn_wo (syn_wa (.objMem x y) (.classEq (.cv y) A))
-        (syn_wa (.objMem x y) (.classEq (.cv y) B)))
+    @gBitri (synWa (.objMem x y) (.classMem (.cv y) (synCpr A B)))
+      (synWa (.objMem x y) (synWo (.classEq (.cv y) A) (.classEq (.cv y) B)))
+      (synWo (synWa (.objMem x y) (.classEq (.cv y) A))
+        (synWa (.objMem x y) (.classEq (.cv y) B)))
       p0002 p0003
   have p0005 :=
-    @g_exbii (syn_wa (.objMem x y) (.classMem (.cv y) (syn_cpr A B)))
-      (syn_wo (syn_wa (.objMem x y) (.classEq (.cv y) A))
-        (syn_wa (.objMem x y) (.classEq (.cv y) B)))
+    @gExbii (synWa (.objMem x y) (.classMem (.cv y) (synCpr A B)))
+      (synWo (synWa (.objMem x y) (.classEq (.cv y) A))
+        (synWa (.objMem x y) (.classEq (.cv y) B)))
       y p0004
   have p0006 :=
-    @g_n_19_43 (syn_wa (.objMem x y) (.classEq (.cv y) A))
-      (syn_wa (.objMem x y) (.classEq (.cv y) B)) y
+    @gN1943 (synWa (.objMem x y) (.classEq (.cv y) A))
+      (synWa (.objMem x y) (.classEq (.cv y) B)) y
   have p0007 :=
-    @g_bitri (syn_wex y (syn_wa (.objMem x y) (.classMem (.cv y) (syn_cpr A B))))
-      (syn_wex y (syn_wo (syn_wa (.objMem x y) (.classEq (.cv y) A))
-          (syn_wa (.objMem x y) (.classEq (.cv y) B))))
-      (syn_wo (syn_wex y (syn_wa (.objMem x y) (.classEq (.cv y) A)))
-        (syn_wex y (syn_wa (.objMem x y) (.classEq (.cv y) B))))
+    @gBitri (synWex y (synWa (.objMem x y) (.classMem (.cv y) (synCpr A B))))
+      (synWex y (synWo (synWa (.objMem x y) (.classEq (.cv y) A))
+          (synWa (.objMem x y) (.classEq (.cv y) B))))
+      (synWo (synWex y (synWa (.objMem x y) (.classEq (.cv y) A)))
+        (synWex y (synWa (.objMem x y) (.classEq (.cv y) B))))
       p0005 p0006
   have p0008 :=
-    @g_eluni y (.cv x) (syn_cpr A B)
+    @gEluni y (.cv x) (synCpr A B)
       (by
         first
         |
@@ -2286,9 +2365,9 @@ noncomputable def g_unipr (A : Class) (B : Class)
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpr,
               Finset.mem_union] at ⊢;
             aesop))
-  have p0009 := @g_elun (.cv x) A B
+  have p0009 := @gElun (.cv x) A B
   have p0010 :=
-    @g_clel3 y (.cv x) A
+    @gClel3 y (.cv x) A
       (by
         first
         |
@@ -2302,13 +2381,13 @@ noncomputable def g_unipr (A : Class) (B : Class)
         first
         | (aesop))
       hyp_unipr_1
-  have p0011 := @g_exancom (.classEq (.cv y) A) (.objMem x y) y
+  have p0011 := @gExancom (.classEq (.cv y) A) (.objMem x y) y
   have p0012_e00_recanon :
     Nominal.NPrf
-      (syn_wb (.classMem (.cv x) A) (syn_wex y (syn_wa (.classEq (.cv y) A) (.objMem x y)))) :=
+      (synWb (.classMem (.cv x) A) (synWex y (synWa (.classEq (.cv y) A) (.objMem x y)))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_wex syn_wa
+        unfold synWb synWex synWa
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
         apply Nominal.RecanonTransportDev.TRecanonWff.imp
         · apply Nominal.RecanonTransportDev.TRecanonWff.imp
@@ -2334,10 +2413,10 @@ noncomputable def g_unipr (A : Class) (B : Class)
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0010
   have p0012 :=
-    @g_bitri (.classMem (.cv x) A) (syn_wex y (syn_wa (.classEq (.cv y) A) (.objMem x y)))
-      (syn_wex y (syn_wa (.objMem x y) (.classEq (.cv y) A))) p0012_e00_recanon p0011
+    @gBitri (.classMem (.cv x) A) (synWex y (synWa (.classEq (.cv y) A) (.objMem x y)))
+      (synWex y (synWa (.objMem x y) (.classEq (.cv y) A))) p0012_e00_recanon p0011
   have p0013 :=
-    @g_clel3 y (.cv x) B
+    @gClel3 y (.cv x) B
       (by
         first
         |
@@ -2351,13 +2430,13 @@ noncomputable def g_unipr (A : Class) (B : Class)
         first
         | (aesop))
       hyp_unipr_2
-  have p0014 := @g_exancom (.classEq (.cv y) B) (.objMem x y) y
+  have p0014 := @gExancom (.classEq (.cv y) B) (.objMem x y) y
   have p0015_e00_recanon :
     Nominal.NPrf
-      (syn_wb (.classMem (.cv x) B) (syn_wex y (syn_wa (.classEq (.cv y) B) (.objMem x y)))) :=
+      (synWb (.classMem (.cv x) B) (synWex y (synWa (.classEq (.cv y) B) (.objMem x y)))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_wex syn_wa
+        unfold synWb synWex synWa
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
         apply Nominal.RecanonTransportDev.TRecanonWff.imp
         · apply Nominal.RecanonTransportDev.TRecanonWff.imp
@@ -2383,26 +2462,26 @@ noncomputable def g_unipr (A : Class) (B : Class)
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0013
   have p0015 :=
-    @g_bitri (.classMem (.cv x) B) (syn_wex y (syn_wa (.classEq (.cv y) B) (.objMem x y)))
-      (syn_wex y (syn_wa (.objMem x y) (.classEq (.cv y) B))) p0015_e00_recanon p0014
+    @gBitri (.classMem (.cv x) B) (synWex y (synWa (.classEq (.cv y) B) (.objMem x y)))
+      (synWex y (synWa (.objMem x y) (.classEq (.cv y) B))) p0015_e00_recanon p0014
   have p0016 :=
-    @g_orbi12i (.classMem (.cv x) A)
-      (syn_wex y (syn_wa (.objMem x y) (.classEq (.cv y) A))) (.classMem (.cv x) B)
-      (syn_wex y (syn_wa (.objMem x y) (.classEq (.cv y) B))) p0012 p0015
+    @gOrbi12i (.classMem (.cv x) A)
+      (synWex y (synWa (.objMem x y) (.classEq (.cv y) A))) (.classMem (.cv x) B)
+      (synWex y (synWa (.objMem x y) (.classEq (.cv y) B))) p0012 p0015
   have p0017 :=
-    @g_bitri (.classMem (.cv x) (syn_cun A B))
-      (syn_wo (.classMem (.cv x) A) (.classMem (.cv x) B))
-      (syn_wo (syn_wex y (syn_wa (.objMem x y) (.classEq (.cv y) A)))
-        (syn_wex y (syn_wa (.objMem x y) (.classEq (.cv y) B))))
+    @gBitri (.classMem (.cv x) (synCun A B))
+      (synWo (.classMem (.cv x) A) (.classMem (.cv x) B))
+      (synWo (synWex y (synWa (.objMem x y) (.classEq (.cv y) A)))
+        (synWex y (synWa (.objMem x y) (.classEq (.cv y) B))))
       p0009 p0016
   have p0018_e01_recanon :
     Nominal.NPrf
-      (syn_wb (.classMem (.cv x) (syn_cuni (syn_cpr A B)))
-        (syn_wex y (syn_wa (.objMem x y) (.classMem (.cv y) (syn_cpr A B))))) :=
+      (synWb (.classMem (.cv x) (synCuni (synCpr A B)))
+        (synWex y (synWa (.objMem x y) (.classMem (.cv y) (synCpr A B))))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_cuni syn_wex syn_wa syn_cpr syn_cun syn_cnin syn_wnan syn_ccompl
-          syn_csn
+        unfold synWb synCuni synWex synWa synCpr synCun synCnin synWnan synCcompl
+          synCsn
         simp (config := { failIfUnchanged := false }) only []
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
         apply Nominal.RecanonTransportDev.TRecanonWff.imp
@@ -2427,13 +2506,13 @@ noncomputable def g_unipr (A : Class) (B : Class)
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0008
   have p0018 :=
-    @g_n_3bitr4i (syn_wex y (syn_wa (.objMem x y) (.classMem (.cv y) (syn_cpr A B))))
-      (syn_wo (syn_wex y (syn_wa (.objMem x y) (.classEq (.cv y) A)))
-        (syn_wex y (syn_wa (.objMem x y) (.classEq (.cv y) B))))
-      (.classMem (.cv x) (syn_cuni (syn_cpr A B))) (.classMem (.cv x) (syn_cun A B)) p0007
+    @gN3bitr4i (synWex y (synWa (.objMem x y) (.classMem (.cv y) (synCpr A B))))
+      (synWo (synWex y (synWa (.objMem x y) (.classEq (.cv y) A)))
+        (synWex y (synWa (.objMem x y) (.classEq (.cv y) B))))
+      (.classMem (.cv x) (synCuni (synCpr A B))) (.classMem (.cv x) (synCun A B)) p0007
       p0018_e01_recanon p0017
   have p0019 :=
-    @g_eqriv x (syn_cuni (syn_cpr A B)) (syn_cun A B)
+    @gEqriv x (synCuni (synCpr A B)) (synCun A B)
       (by
         first
         |
@@ -2456,17 +2535,18 @@ noncomputable def g_unipr (A : Class) (B : Class)
       p0018
   exact p0019
 
+/-- Checked nominal proof certificate identified upstream as `g_unisn`. -/
 @[expose]
-noncomputable def g_unisn (A : Class)
-    (hyp_unisn_1 : Nominal.NPrf (.classMem A (syn_cvv))) :
-    Nominal.NPrf (.classEq (syn_cuni (syn_csn A)) A) :=
+noncomputable def gUnisn (A : Class)
+    (hyp_unisn_1 : Nominal.NPrf (.classMem A (synCvv))) :
+    Nominal.NPrf (.classEq (synCuni (synCsn A)) A) :=
   by
-  have p0000 := @g_dfsn2 A
-  have p0001 := @g_unieqi (syn_csn A) (syn_cpr A A) p0000
-  have p0002 := @g_unipr A A hyp_unisn_1 hyp_unisn_1
-  have p0003 := @g_unidm A
+  have p0000 := @gDfsn2 A
+  have p0001 := @gUnieqi (synCsn A) (synCpr A A) p0000
+  have p0002 := @gUnipr A A hyp_unisn_1 hyp_unisn_1
+  have p0003 := @gUnidm A
   have p0004 :=
-    @g_n_3eqtri (syn_cuni (syn_csn A)) (syn_cuni (syn_cpr A A)) (syn_cun A A) A p0001
+    @gN3eqtri (synCuni (synCsn A)) (synCuni (synCpr A A)) (synCun A A) A p0001
       p0002 p0003
   exact p0004
 

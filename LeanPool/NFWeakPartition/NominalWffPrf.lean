@@ -23,38 +23,47 @@ open NFChoice.SemanticCore
 
 namespace Nominal
 
+/-- Proof-translation construction identified upstream as `liftRho`. -/
 @[expose]
 def liftRho (rho : Var → Nat) : Var → Nat := fun x => rho x + 1
 
+/-- Proof-translation construction identified upstream as `bindRho`. -/
 @[expose]
 def bindRho (rho : Var → Nat) (x : Var) : Var → Nat := fun y =>
   if y = x then 0 else rho y + 1
 
+/-- Proof-translation construction identified upstream as `updateRho`. -/
 @[expose]
 def updateRho (rho : Var → Nat) (x : Var) (value : Nat) : Var → Nat := fun y =>
   if y = x then value else rho y
 
+/-- Proof-translation construction identified upstream as `neg`. -/
 @[expose]
 def neg (p : Fol.formula LNF) : Fol.formula LNF :=
   Fol.preformula.imp p Fol.preformula.falsum
 
+/-- Proof-translation construction identified upstream as `conj`. -/
 @[expose]
 def conj (p q : Fol.formula LNF) : Fol.formula LNF :=
   neg (Fol.preformula.imp p (neg q))
 
+/-- Proof-translation construction identified upstream as `biimp`. -/
 @[expose]
 def biimp (p q : Fol.formula LNF) : Fol.formula LNF :=
   conj (Fol.preformula.imp p q) (Fol.preformula.imp q p)
 
+/-- Proof-translation construction identified upstream as `ex`. -/
 @[expose]
 def ex (p : Fol.formula LNF) : Fol.formula LNF :=
   neg (Fol.preformula.all (neg p))
 
 mutual
+  /-- Proof-translation construction identified upstream as `lowerClassPred`. -/
   @[expose]
   def lowerClassPred (rho : Var → Nat) (candidate : Nat) : Class → Fol.formula LNF
     | .cv x => GenericLogicalHandlers.nfMem (&candidate) (&(rho x))
     | .cab x p => lowerWff (updateRho rho x candidate) p
+  /-- Proof-translation construction identified upstream as `lowerWff`. -/
   @[expose]
   def lowerWff (rho : Var → Nat) : Wff → Fol.formula LNF
     | .falsum => Fol.preformula.falsum
@@ -71,30 +80,40 @@ mutual
               (lowerClassPred (liftRho (liftRho rho)) 0 A))) (lowerClassPred (liftRho rho) 0 B))
 end
 
+/-- Proof-translation construction identified upstream as `NPrf`. -/
 @[expose]
-def NPrf (p : Wff) : Type :=
+def _root_.NFChoice.DirectNominalPrf.Nominal.NPrf (p : Wff) : Type :=
   ∀ rho : Var → Nat, Fol.prf LiteralHailperinNF.fst (lowerWff rho p)
 
+/-- Proof-translation construction identified upstream as `mp`. -/
 @[expose]
-def mp {p q : Wff} (hp : NPrf p) (hpq : NPrf (.imp p q)) : NPrf q := fun rho =>
+def _root_.NFChoice.DirectNominalPrf.Nominal.mp
+    {p q : Wff} (hp : NPrf p) (hpq : NPrf (.imp p q)) : NPrf q := fun rho =>
   GenericLogicalHandlers.mp (hp rho) (hpq rho)
 
+/-- Proof-translation construction identified upstream as `ax1`. -/
 @[expose]
-def ax1 (p q : Wff) : NPrf (.imp p (.imp q p)) := fun rho =>
+def _root_.NFChoice.DirectNominalPrf.Nominal.ax1
+    (p q : Wff) : NPrf (.imp p (.imp q p)) := fun rho =>
   GenericLogicalHandlers.ax1 LiteralHailperinNF.fst (lowerWff rho p) (lowerWff rho q)
 
+/-- Proof-translation construction identified upstream as `ax2`. -/
 @[expose]
-def ax2 (p q r : Wff) : NPrf (.imp (.imp p (.imp q r)) (.imp (.imp p q) (.imp p r))) :=
+def _root_.NFChoice.DirectNominalPrf.Nominal.ax2
+    (p q r : Wff) : NPrf (.imp (.imp p (.imp q r)) (.imp (.imp p q) (.imp p r))) :=
   fun rho =>
   GenericLogicalHandlers.ax2 LiteralHailperinNF.fst (lowerWff rho p) (lowerWff rho q)
     (lowerWff rho r)
 
+/-- Proof-translation construction identified upstream as `ax3`. -/
 @[expose]
-def ax3 (p q : Wff) : NPrf (.imp (.imp (Wff.neg p) (Wff.neg q)) (.imp q p)) := fun rho =>
+def _root_.NFChoice.DirectNominalPrf.Nominal.ax3
+    (p q : Wff) : NPrf (.imp (.imp (Wff.neg p) (Wff.neg q)) (.imp q p)) := fun rho =>
   GenericLogicalHandlers.ax3 LiteralHailperinNF.fst (lowerWff rho p) (lowerWff rho q)
 
+/-- Proof-translation construction identified upstream as `axMeredith`. -/
 @[expose]
-def axMeredith (p q r s t : Wff) :
+def _root_.NFChoice.DirectNominalPrf.Nominal.axMeredith (p q r s t : Wff) :
     NPrf
       (.imp (.imp (.imp (.imp (.imp p q) (.imp (Wff.neg r) (Wff.neg s))) r) t)
         (.imp (.imp t p) (.imp s p))) :=
@@ -104,9 +123,10 @@ def axMeredith (p q r s t : Wff) :
 
 /-- A source definition becomes reflexivity after its constructor is unfolded. -/
 @[expose]
-noncomputable def biimpRefl (p : Wff) : NPrf (Wff.biimp p p) := fun rho => by
+noncomputable def _root_.NFChoice.DirectNominalPrf.Nominal.biimpRefl
+    (p : Wff) : NPrf (Wff.biimp p p) := fun rho => by
   simpa [Wff.biimp, Wff.conj, Wff.neg, lowerWff, Fol.biimp, Fol.and', Fol.not'] using
-    (Fol.biimp_refl LiteralHailperinNF.fst (lowerWff rho p))
+    (Fol.biimpReflCertificate LiteralHailperinNF.fst (lowerWff rho p))
 
 
 end Nominal

@@ -46,10 +46,10 @@ theorem EnvFresh.reflOn {env : BinderEnv} {support : Finset Var}
     (h : EnvFresh env support) : ReflOn env support :=
   by
   intro u hu
-  apply AlphaVar.refl_of_fresh env u
+  apply AlphaVar.reflOfFresh env u
   exact h.mono (by simpa using (Finset.singleton_subset_iff.mpr hu))
 
-theorem ReflOn.extend_same {env : BinderEnv} {support : Finset Var}
+theorem ReflOn.extendSame {env : BinderEnv} {support : Finset Var}
     (h : ReflOn env (support.erase x)) : ReflOn ((x, x) :: env) support :=
   by
   intro u hu
@@ -60,46 +60,48 @@ theorem ReflOn.extend_same {env : BinderEnv} {support : Finset Var}
 
 mutual
   /-- Reflexive class alpha certificate from semantic free-variable support. -/
-  theorem AlphaClass.refl_of_reflOn (env : BinderEnv) (A : Class) (h : ReflOn env A.fv) :
+  theorem AlphaClass.reflOfReflOn (env : BinderEnv) (A : Class) (h : ReflOn env A.fv) :
       AlphaClass env A A := by
     cases A with
     | cv x => exact .cv (h (by simp [Class.fv]))
     | cab x p =>
       apply AlphaClass.cab
-      exact AlphaWff.refl_of_reflOn ((x, x) :: env) p (ReflOn.extend_same h)
+      exact AlphaWff.reflOfReflOn ((x, x) :: env) p (ReflOn.extendSame h)
   /-- Reflexive formula alpha certificate from semantic free-variable support. -/
-  theorem AlphaWff.refl_of_reflOn (env : BinderEnv) (p : Wff) (h : ReflOn env p.fv) :
+  theorem AlphaWff.reflOfReflOn (env : BinderEnv) (p : Wff) (h : ReflOn env p.fv) :
       AlphaWff env p p := by
     cases p with
     | falsum => exact .falsum
     | imp p q =>
       apply AlphaWff.imp
-      · exact AlphaWff.refl_of_reflOn env p (h.mono (by intro u hu; simp [Wff.fv, hu]))
-      · exact AlphaWff.refl_of_reflOn env q (h.mono (by intro u hu; simp [Wff.fv, hu]))
+      · exact AlphaWff.reflOfReflOn env p (h.mono (by intro u hu; simp [Wff.fv, hu]))
+      · exact AlphaWff.reflOfReflOn env q (h.mono (by intro u hu; simp [Wff.fv, hu]))
     | all x p =>
       apply AlphaWff.all
-      exact AlphaWff.refl_of_reflOn ((x, x) :: env) p (ReflOn.extend_same h)
+      exact AlphaWff.reflOfReflOn ((x, x) :: env) p (ReflOn.extendSame h)
     | objEq x y => exact .objEq (h (by simp [Wff.fv])) (h (by simp [Wff.fv]))
     | objMem x y => exact .objMem (h (by simp [Wff.fv])) (h (by simp [Wff.fv]))
     | classEq A B =>
       apply AlphaWff.classEq
-      · exact AlphaClass.refl_of_reflOn env A (h.mono (by intro u hu; simp [Wff.fv, hu]))
-      · exact AlphaClass.refl_of_reflOn env B (h.mono (by intro u hu; simp [Wff.fv, hu]))
+      · exact AlphaClass.reflOfReflOn env A (h.mono (by intro u hu; simp [Wff.fv, hu]))
+      · exact AlphaClass.reflOfReflOn env B (h.mono (by intro u hu; simp [Wff.fv, hu]))
     | classMem A B =>
       apply AlphaWff.classMem
-      · exact AlphaClass.refl_of_reflOn env A (h.mono (by intro u hu; simp [Wff.fv, hu]))
-      · exact AlphaClass.refl_of_reflOn env B (h.mono (by intro u hu; simp [Wff.fv, hu]))
+      · exact AlphaClass.reflOfReflOn env A (h.mono (by intro u hu; simp [Wff.fv, hu]))
+      · exact AlphaClass.reflOfReflOn env B (h.mono (by intro u hu; simp [Wff.fv, hu]))
 end
 
 /-- Drop-in replacement for `AlphaClass.refl_of_fresh` using only `fv`. -/
-theorem AlphaClass.refl_of_fv_fresh (env : BinderEnv) (A : Class)
+theorem _root_.NFChoice.DefinitionLeaves.AlphaTransport.AlphaClass.reflOfFvFresh
+    (env : BinderEnv) (A : Class)
     (h : EnvFresh env A.fv) : AlphaClass env A A :=
-  AlphaClass.refl_of_reflOn env A h.reflOn
+  AlphaClass.reflOfReflOn env A h.reflOn
 
 /-- Drop-in replacement for `AlphaWff.refl_of_fresh` using only `fv`. -/
-theorem AlphaWff.refl_of_fv_fresh (env : BinderEnv) (p : Wff) (h : EnvFresh env p.fv) :
+theorem _root_.NFChoice.DefinitionLeaves.AlphaTransport.AlphaWff.reflOfFvFresh
+    (env : BinderEnv) (p : Wff) (h : EnvFresh env p.fv) :
     AlphaWff env p p :=
-  AlphaWff.refl_of_reflOn env p h.reflOn
+  AlphaWff.reflOfReflOn env p h.reflOn
 
 
 end NFChoice.DefinitionLeaves.AlphaTransport

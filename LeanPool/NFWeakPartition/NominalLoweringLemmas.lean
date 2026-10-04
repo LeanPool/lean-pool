@@ -25,10 +25,12 @@ by Flypitch's quantifier rules.
 -/
 
 
+/-- Proof-translation construction identified upstream as `shiftIndexAt`. -/
 @[expose]
 def shiftIndexAt (cutoff index : Nat) : Nat :=
   if cutoff ≤ index then index + 1 else index
 
+/-- Proof-translation construction identified upstream as `shiftRhoAt`. -/
 @[expose]
 def shiftRhoAt (rho : Var → Nat) (cutoff : Nat) : Var → Nat := fun x =>
   shiftIndexAt cutoff (rho x)
@@ -75,7 +77,7 @@ theorem shiftRhoAt_lift (rho : Var → Nat) (cutoff : Nat) :
 mutual
   theorem lowerClassPred_shiftAt (rho : Var → Nat) (candidate cutoff : Nat) (A : Class) :
       lowerClassPred (shiftRhoAt rho cutoff) (shiftIndexAt cutoff candidate) A =
-        Fol.lift_formula_at (lowerClassPred rho candidate A) 1 cutoff :=
+        Fol.liftFormulaAt (lowerClassPred rho candidate A) 1 cutoff :=
     by
     cases A with
     | cv x =>
@@ -86,15 +88,15 @@ mutual
       exact lowerWff_shiftAt (updateRho rho x candidate) cutoff p
   theorem lowerWff_shiftAt (rho : Var → Nat) (cutoff : Nat) (p : Wff) :
       lowerWff (shiftRhoAt rho cutoff) p =
-        Fol.lift_formula_at (lowerWff rho p) 1 cutoff :=
+        Fol.liftFormulaAt (lowerWff rho p) 1 cutoff :=
     by
     cases p with
     | falsum => rfl
     | imp p q =>
-      simp only [lowerWff, Fol.lift_formula_at]
+      simp only [lowerWff, Fol.liftFormulaAt]
       rw [lowerWff_shiftAt rho cutoff p, lowerWff_shiftAt rho cutoff q]
     | all x p =>
-      simp only [lowerWff, Fol.lift_formula_at]
+      simp only [lowerWff, Fol.liftFormulaAt]
       rw [← shiftRhoAt_bind]
       exact congrArg Fol.preformula.all (lowerWff_shiftAt (bindRho rho x) (cutoff + 1) p)
     | objEq x y => simp [lowerWff, shiftRhoAt, shiftIndexAt]
@@ -102,7 +104,7 @@ mutual
       simp [lowerWff, shiftRhoAt, shiftIndexAt, GenericLogicalHandlers.nfMem]
     | classEq A
       B =>
-      simp only [lowerWff, Fol.lift_formula_at, biimp, conj, neg]
+      simp only [lowerWff, Fol.liftFormulaAt, biimp, conj, neg]
       rw [← shiftRhoAt_lift rho cutoff]
       have hA := lowerClassPred_shiftAt (liftRho rho) 0 (cutoff + 1) A
       have hB := lowerClassPred_shiftAt (liftRho rho) 0 (cutoff + 1) B
@@ -110,7 +112,7 @@ mutual
       rw [hA, hB]
     | classMem A
       B =>
-      simp only [lowerWff, ex, conj, neg, biimp, Fol.lift_formula_at]
+      simp only [lowerWff, ex, conj, neg, biimp, Fol.liftFormulaAt]
       rw [← shiftRhoAt_lift rho cutoff]
       rw [← shiftRhoAt_lift (liftRho rho) (cutoff + 1)]
       have hA := lowerClassPred_shiftAt (liftRho (liftRho rho)) 0 (cutoff + 2) A
@@ -121,7 +123,8 @@ mutual
 end
 
 mutual
-  theorem lowerClassPred_congr_fv (rho sigma : Var → Nat) (candidate : Nat) (A : Class)
+  theorem _root_.NFChoice.DirectNominalPrf.Nominal.lowerClassPred_congr_fv
+      (rho sigma : Var → Nat) (candidate : Nat) (A : Class)
       (h : ∀ x, x ∈ A.fv → rho x = sigma x) :
       lowerClassPred rho candidate A = lowerClassPred sigma candidate A := by
     cases A with
@@ -137,7 +140,8 @@ mutual
       · subst hyx
         simp [updateRho]
       · simp [updateRho, hyx, h y (Finset.mem_erase.mpr ⟨hyx, hy⟩)]
-  theorem lowerWff_congr_fv (rho sigma : Var → Nat) (p : Wff)
+  theorem _root_.NFChoice.DirectNominalPrf.Nominal.lowerWff_congr_fv
+      (rho sigma : Var → Nat) (p : Wff)
       (h : ∀ x, x ∈ p.fv → rho x = sigma x) : lowerWff rho p = lowerWff sigma p := by
     cases p with
     | falsum => rfl
@@ -180,12 +184,14 @@ mutual
           (fun x hx => by simp [liftRho, h x (Or.inr hx)])]
 end
 
-theorem bindRho_eq_shiftRhoAt_zero_of_ne (rho : Var → Nat) {x y : Var} (hyx : y ≠ x) :
+theorem _root_.NFChoice.DirectNominalPrf.Nominal.bindRho_eq_shiftRhoAt_zero_of_ne
+    (rho : Var → Nat) {x y : Var} (hyx : y ≠ x) :
     bindRho rho x y = shiftRhoAt rho 0 y := by
   simp [bindRho, shiftRhoAt, shiftIndexAt, hyx]
 
-theorem lowerWff_bind_eq_lift_of_not_mem_fv (rho : Var → Nat) (x : Var) (p : Wff)
-    (hx : x ∉ p.fv) : lowerWff (bindRho rho x) p = Fol.lift_formula1 (lowerWff rho p) :=
+theorem _root_.NFChoice.DirectNominalPrf.Nominal.lowerWff_bind_eq_lift_of_not_mem_fv
+    (rho : Var → Nat) (x : Var) (p : Wff)
+    (hx : x ∉ p.fv) : lowerWff (bindRho rho x) p = Fol.liftFormula1 (lowerWff rho p) :=
   by
   calc
     lowerWff (bindRho rho x) p = lowerWff (shiftRhoAt rho 0) p :=
@@ -193,11 +199,13 @@ theorem lowerWff_bind_eq_lift_of_not_mem_fv (rho : Var → Nat) (x : Var) (p : W
       apply lowerWff_congr_fv
       intro y hy
       exact bindRho_eq_shiftRhoAt_zero_of_ne rho (fun hyx => hx (hyx ▸ hy))
-    _ = Fol.lift_formula_at (lowerWff rho p) 1 0 := (lowerWff_shiftAt rho 0 p)
-    _ = Fol.lift_formula1 (lowerWff rho p) := rfl
+    _ = Fol.liftFormulaAt (lowerWff rho p) 1 0 := (lowerWff_shiftAt rho 0 p)
+    _ = Fol.liftFormula1 (lowerWff rho p) := rfl
 
+/-- Proof-translation construction identified upstream as `ax17`. -/
 @[expose]
-def ax17 (p : Wff) (x : Var) (hx : x ∉ p.fv) : NPrf (.imp p (.all x p)) :=
+def _root_.NFChoice.DirectNominalPrf.Nominal.ax17
+    (p : Wff) (x : Var) (hx : x ∉ p.fv) : NPrf (.imp p (.all x p)) :=
   ax17OfShift p x (fun rho => lowerWff_bind_eq_lift_of_not_mem_fv rho x p hx)
 
 

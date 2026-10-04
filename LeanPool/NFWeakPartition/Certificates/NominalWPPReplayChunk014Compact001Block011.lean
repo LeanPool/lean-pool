@@ -26,13 +26,14 @@ open NFChoice.SemanticCore
 open NFChoice.ReplaySupport
 open NFChoice.Compiler.CompactSourceSyntax
 
+/-- Checked nominal proof certificate identified upstream as `g_hnwcutclassordcl`. -/
 @[expose]
-noncomputable def g_hnwcutclassordcl (B : Class) (D : Class) (R : Class)
+noncomputable def gHnwcutclassordcl (B : Class) (D : Class) (R : Class)
     (dv_D_R : Disjoint D.fv R.fv)
-    (hyp_hnwcutclassordcl_1 : Nominal.NPrf (syn_wbr R (syn_cwe) D)) :
+    (hyp_hnwcutclassordcl_1 : Nominal.NPrf (synWbr R (synCwe) D)) :
     Nominal.NPrf
       (.imp (.classMem B D)
-        (.classMem (syn_cec (syn_chnwcutcode R D B) (syn_chwniso D)) (syn_chnord D))) :=
+        (.classMem (synCec (synChnwcutcode R D B) (synChwniso D)) (synChnord D))) :=
   by
   let proofSupport : Finset Var := B.fv ∪ D.fv ∪ R.fv
   let x : Var := freshVar proofSupport 0
@@ -74,8 +75,8 @@ noncomputable def g_hnwcutclassordcl (B : Class) (D : Class) (R : Class)
         simp only [fresh_x_not_B, not_false_eq_true])
   have dv_cache_0004 :
     x ∉
-      ((Wff.imp (.classMem B D) (.classMem (syn_cec (syn_chnwcutcode R D B) (syn_chwniso D))
-            (syn_chnord D)))).fv :=
+      ((Wff.imp (.classMem B D) (.classMem (synCec (synChnwcutcode R D B) (synChwniso D))
+            (synChnord D)))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003
     exact
@@ -91,43 +92,44 @@ noncomputable def g_hnwcutclassordcl (B : Class) (D : Class) (R : Class)
           NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chwniso,
           NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chnord, Finset.mem_union,
           fresh_x_not_B, fresh_x_not_D, fresh_x_not_R, or_false, not_false_eq_true])
-  have p0000 := @g_elex B D
-  have p0001 := @g_eleq1 (.cv x) B D
-  have p0002 := @g_hnwcutcodeeq3 (.cv x) B D R dv_cache_0001
+  have p0000 := @gElex B D
+  have p0001 := @gEleq1 (.cv x) B D
+  have p0002 := @gHnwcutcodeeq3 (.cv x) B D R dv_cache_0001
   have p0003 :=
-    @g_eceq1 (syn_chnwcutcode R D (.cv x)) (syn_chnwcutcode R D B) (syn_chwniso D)
+    @gEceq1 (synChnwcutcode R D (.cv x)) (synChnwcutcode R D B) (synChwniso D)
   have p0004 :=
-    @g_syl (.classEq (.cv x) B)
-      (.classEq (syn_chnwcutcode R D (.cv x)) (syn_chnwcutcode R D B))
-      (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-        (syn_cec (syn_chnwcutcode R D B) (syn_chwniso D)))
+    @gSyl (.classEq (.cv x) B)
+      (.classEq (synChnwcutcode R D (.cv x)) (synChnwcutcode R D B))
+      (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+        (synCec (synChnwcutcode R D B) (synChwniso D)))
       p0002 p0003
   have p0005 :=
-    @g_eleq1d (.classEq (.cv x) B) (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-      (syn_cec (syn_chnwcutcode R D B) (syn_chwniso D)) (syn_chnord D) p0004
+    @gEleq1d (.classEq (.cv x) B) (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+      (synCec (synChnwcutcode R D B) (synChwniso D)) (synChnord D) p0004
   have p0006 :=
-    @g_imbi12d (.classEq (.cv x) B) (.classMem (.cv x) D) (.classMem B D)
-      (.classMem (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D)) (syn_chnord D))
-      (.classMem (syn_cec (syn_chnwcutcode R D B) (syn_chwniso D)) (syn_chnord D)) p0001
+    @gImbi12d (.classEq (.cv x) B) (.classMem (.cv x) D) (.classMem B D)
+      (.classMem (synCec (synChnwcutcode R D (.cv x)) (synChwniso D)) (synChnord D))
+      (.classMem (synCec (synChnwcutcode R D B) (synChwniso D)) (synChnord D)) p0001
       p0005
-  have p0007 := @g_hnwcutclassord x D R dv_cache_0002 hyp_hnwcutclassordcl_1
+  have p0007 := @gHnwcutclassord x D R dv_cache_0002 hyp_hnwcutclassordcl_1
   have p0008 :=
-    @g_vtoclg
+    @gVtoclg
       (.imp (.classMem (.cv x) D)
-        (.classMem (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D)) (syn_chnord D)))
+        (.classMem (synCec (synChnwcutcode R D (.cv x)) (synChwniso D)) (synChnord D)))
       (.imp (.classMem B D)
-        (.classMem (syn_cec (syn_chnwcutcode R D B) (syn_chwniso D)) (syn_chnord D)))
-      x B (syn_cvv) dv_cache_0003 dv_cache_0004 p0006 p0007
+        (.classMem (synCec (synChnwcutcode R D B) (synChwniso D)) (synChnord D)))
+      x B (synCvv) dv_cache_0003 dv_cache_0004 p0006 p0007
   have p0009 :=
-    @g_mpcom (.classMem B (syn_cvv)) (.classMem B D)
-      (.classMem (syn_cec (syn_chnwcutcode R D B) (syn_chwniso D)) (syn_chnord D)) p0000
+    @gMpcom (.classMem B (synCvv)) (.classMem B D)
+      (.classMem (synCec (synChnwcutcode R D B) (synChwniso D)) (synChnord D)) p0000
       p0008
   exact p0009
 
+/-- Checked nominal proof certificate identified upstream as `g_hnwcutmapf`. -/
 @[expose]
-noncomputable def g_hnwcutmapf (D : Class) (R : Class) (dv_D_R : Disjoint D.fv R.fv)
-    (hyp_hnwcutmapf_1 : Nominal.NPrf (syn_wbr R (syn_cwe) D)) :
-    Nominal.NPrf (syn_wf (syn_chnwcutmap R D) (syn_cpw1 (syn_cpw1 D)) (syn_chnord D)) :=
+noncomputable def gHnwcutmapf (D : Class) (R : Class) (dv_D_R : Disjoint D.fv R.fv)
+    (hyp_hnwcutmapf_1 : Nominal.NPrf (synWbr R (synCwe) D)) :
+    Nominal.NPrf (synWf (synChnwcutmap R D) (synCpw1 (synCpw1 D)) (synChnord D)) :=
   by
   let proofSupport : Finset Var := D.fv ∪ R.fv
   let p : Var := freshVar proofSupport 0
@@ -164,7 +166,7 @@ noncomputable def g_hnwcutmapf (D : Class) (R : Class) (dv_D_R : Disjoint D.fv R
     clear dv_cache_0001 dv_cache_0002
     exact
       (show Disjoint (D).fv (R).fv from (show Disjoint (D).fv (R).fv from (by exact dv_D_R)))
-  have dv_cache_0004 : p ∉ ((syn_cpw1 (syn_cpw1 D))).fv :=
+  have dv_cache_0004 : p ∉ ((synCpw1 (synCpw1 D))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003
     exact
@@ -175,7 +177,7 @@ noncomputable def g_hnwcutmapf (D : Class) (R : Class) (dv_D_R : Disjoint D.fv R
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1, fresh_p_not_D,
           not_false_eq_true])
-  have dv_cache_0005 : p ∉ ((syn_chnord D)).fv :=
+  have dv_cache_0005 : p ∉ ((synChnord D)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004
     exact
@@ -187,35 +189,36 @@ noncomputable def g_hnwcutmapf (D : Class) (R : Class) (dv_D_R : Disjoint D.fv R
         simp only [NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chnord,
           fresh_p_not_D, not_false_eq_true])
   have p0000 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_hnwcutmap D R p
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfHnwcutmap D R p
       dv_cache_0001 dv_cache_0002
-  have p0001 := @g_pw12argcl (.cv p) D
+  have p0001 := @gPw12argcl (.cv p) D
   have p0002 :=
-    @g_simpld (.classMem (.cv p) (syn_cpw1 (syn_cpw1 D)))
-      (.classMem (syn_cuni (syn_cuni (.cv p))) D)
-      (.classEq (.cv p) (syn_csn (syn_csn (syn_cuni (syn_cuni (.cv p)))))) p0001
+    @gSimpld (.classMem (.cv p) (synCpw1 (synCpw1 D)))
+      (.classMem (synCuni (synCuni (.cv p))) D)
+      (.classEq (.cv p) (synCsn (synCsn (synCuni (synCuni (.cv p)))))) p0001
   have p0003 :=
-    @g_hnwcutclassordcl (syn_cuni (syn_cuni (.cv p))) D R dv_cache_0003 hyp_hnwcutmapf_1
+    @gHnwcutclassordcl (synCuni (synCuni (.cv p))) D R dv_cache_0003 hyp_hnwcutmapf_1
   have p0004 :=
-    @g_syl (.classMem (.cv p) (syn_cpw1 (syn_cpw1 D)))
-      (.classMem (syn_cuni (syn_cuni (.cv p))) D)
-      (.classMem (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv p)))) (syn_chwniso D))
-        (syn_chnord D))
+    @gSyl (.classMem (.cv p) (synCpw1 (synCpw1 D)))
+      (.classMem (synCuni (synCuni (.cv p))) D)
+      (.classMem (synCec (synChnwcutcode R D (synCuni (synCuni (.cv p)))) (synChwniso D))
+        (synChnord D))
       p0002 p0003
   have p0005 :=
-    @g_fmpti p (syn_cpw1 (syn_cpw1 D)) (syn_chnord D)
-      (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv p)))) (syn_chwniso D))
-      (syn_chnwcutmap R D) dv_cache_0004 dv_cache_0005 p0000 p0004
+    @gFmpti p (synCpw1 (synCpw1 D)) (synChnord D)
+      (synCec (synChnwcutcode R D (synCuni (synCuni (.cv p)))) (synChwniso D))
+      (synChnwcutmap R D) dv_cache_0004 dv_cache_0005 p0000 p0004
   exact p0005
 
+/-- Checked nominal proof certificate identified upstream as `g_hnwcutmapval`. -/
 @[expose]
-noncomputable def g_hnwcutmapval (D : Class) (R : Class) (q : Var)
+noncomputable def gHnwcutmapval (D : Class) (R : Class) (q : Var)
     (dv_D_R : Disjoint D.fv R.fv)
-    (hyp_hnwcutmapval_1 : Nominal.NPrf (syn_wbr R (syn_cwe) D)) :
+    (hyp_hnwcutmapval_1 : Nominal.NPrf (synWbr R (synCwe) D)) :
     Nominal.NPrf
-      (.imp (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-        (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q))
-          (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv q)))) (syn_chwniso D)))) :=
+      (.imp (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+        (.classEq (synCfv (synChnwcutmap R D) (.cv q))
+          (synCec (synChnwcutcode R D (synCuni (synCuni (.cv q)))) (synChwniso D)))) :=
   by
   let proofSupport : Finset Var := D.fv ∪ R.fv ∪ ({ q } : Finset Var)
   let p : Var := freshVar proofSupport 0
@@ -250,14 +253,14 @@ noncomputable def g_hnwcutmapval (D : Class) (R : Class) (q : Var)
           intro hmem
           cases hmem
         simp only [fresh_p_not_R, not_false_eq_true])
-  have dv_cache_0003 : Disjoint ((syn_cuni (syn_cuni (.cv p)))).fv (R).fv :=
+  have dv_cache_0003 : Disjoint ((synCuni (synCuni (.cv p)))).fv (R).fv :=
     by
     clear dv_cache_0001 dv_cache_0002
     exact
-      (show Disjoint ((syn_cuni (syn_cuni (.cv p)))).fv (R).fv from (by
+      (show Disjoint ((synCuni (synCuni (.cv p)))).fv (R).fv from (by
           rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cuni];
           exact
-            (show Disjoint (((syn_cuni (.cv p))).fv) ((R).fv) from
+            (show Disjoint (((synCuni (.cv p))).fv) ((R).fv) from
               (by
                 rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cuni];
                 exact
@@ -286,7 +289,7 @@ noncomputable def g_hnwcutmapval (D : Class) (R : Class) (q : Var)
           fresh_p_ne_q, not_false_eq_true])
   have dv_cache_0006 :
     p ∉
-      ((syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv q)))) (syn_chwniso D))).fv :=
+      ((synCec (synChnwcutcode R D (synCuni (synCuni (.cv q)))) (synChwniso D))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
     exact
@@ -302,7 +305,7 @@ noncomputable def g_hnwcutmapval (D : Class) (R : Class) (q : Var)
           NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chwniso, Finset.mem_union,
           Finset.mem_singleton, fresh_p_ne_q, fresh_p_not_D, fresh_p_not_R, or_false,
           not_false_eq_true])
-  have dv_cache_0007 : p ∉ ((syn_cpw1 (syn_cpw1 D))).fv :=
+  have dv_cache_0007 : p ∉ ((synCpw1 (synCpw1 D))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006
@@ -314,7 +317,7 @@ noncomputable def g_hnwcutmapval (D : Class) (R : Class) (q : Var)
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1, fresh_p_not_D,
           not_false_eq_true])
-  have dv_cache_0008 : p ∉ ((Wff.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))).fv :=
+  have dv_cache_0008 : p ∉ ((Wff.classMem (.cv q) (synCpw1 (synCpw1 D)))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007
@@ -329,169 +332,171 @@ noncomputable def g_hnwcutmapval (D : Class) (R : Class) (q : Var)
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1, Finset.mem_union,
           Finset.mem_singleton, fresh_p_ne_q, fresh_p_not_D, or_false, not_false_eq_true])
   have p0000 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_hnwcutmap D R p
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfHnwcutmap D R p
       dv_cache_0001 dv_cache_0002
   have p0001 :=
-    @g_a1i
-      (.classEq (syn_chnwcutmap R D) (syn_cmpt p (syn_cpw1 (syn_cpw1 D))
-          (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv p)))) (syn_chwniso D))))
-      (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D))) p0000
-  have p0002 := @g_unieq (.cv p) (.cv q)
+    @gA1i
+      (.classEq (synChnwcutmap R D) (synCmpt p (synCpw1 (synCpw1 D))
+          (synCec (synChnwcutcode R D (synCuni (synCuni (.cv p)))) (synChwniso D))))
+      (.classMem (.cv q) (synCpw1 (synCpw1 D))) p0000
+  have p0002 := @gUnieq (.cv p) (.cv q)
   have p0003 :=
-    @g_unieqd (.classEq (.cv p) (.cv q)) (syn_cuni (.cv p)) (syn_cuni (.cv q)) p0002
+    @gUnieqd (.classEq (.cv p) (.cv q)) (synCuni (.cv p)) (synCuni (.cv q)) p0002
   have p0004 :=
-    @g_hnwcutcodeeq3 (syn_cuni (syn_cuni (.cv p))) (syn_cuni (syn_cuni (.cv q))) D R
+    @gHnwcutcodeeq3 (synCuni (synCuni (.cv p))) (synCuni (synCuni (.cv q))) D R
       dv_cache_0003
   have p0005 :=
-    @g_syl (.classEq (.cv p) (.cv q))
-      (.classEq (syn_cuni (syn_cuni (.cv p))) (syn_cuni (syn_cuni (.cv q))))
-      (.classEq (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv p))))
-        (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv q)))))
+    @gSyl (.classEq (.cv p) (.cv q))
+      (.classEq (synCuni (synCuni (.cv p))) (synCuni (synCuni (.cv q))))
+      (.classEq (synChnwcutcode R D (synCuni (synCuni (.cv p))))
+        (synChnwcutcode R D (synCuni (synCuni (.cv q)))))
       p0003 p0004
   have p0006 :=
-    @g_eceq1 (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv p))))
-      (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv q)))) (syn_chwniso D)
+    @gEceq1 (synChnwcutcode R D (synCuni (synCuni (.cv p))))
+      (synChnwcutcode R D (synCuni (synCuni (.cv q)))) (synChwniso D)
   have p0007 :=
-    @g_syl (.classEq (.cv p) (.cv q))
-      (.classEq (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv p))))
-        (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv q)))))
-      (.classEq (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv p)))) (syn_chwniso D))
-        (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv q)))) (syn_chwniso D)))
+    @gSyl (.classEq (.cv p) (.cv q))
+      (.classEq (synChnwcutcode R D (synCuni (synCuni (.cv p))))
+        (synChnwcutcode R D (synCuni (synCuni (.cv q)))))
+      (.classEq (synCec (synChnwcutcode R D (synCuni (synCuni (.cv p)))) (synChwniso D))
+        (synCec (synChnwcutcode R D (synCuni (synCuni (.cv q)))) (synChwniso D)))
       p0005 p0006
   have p0008 :=
-    @g_adantl (.classEq (.cv p) (.cv q))
-      (.classEq (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv p)))) (syn_chwniso D))
-        (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv q)))) (syn_chwniso D)))
-      (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D))) p0007
-  have p0009 := @g_id (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-  have p0010 := @g_pw12argcl (.cv q) D
+    @gAdantl (.classEq (.cv p) (.cv q))
+      (.classEq (synCec (synChnwcutcode R D (synCuni (synCuni (.cv p)))) (synChwniso D))
+        (synCec (synChnwcutcode R D (synCuni (synCuni (.cv q)))) (synChwniso D)))
+      (.classMem (.cv q) (synCpw1 (synCpw1 D))) p0007
+  have p0009 := @gId (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+  have p0010 := @gPw12argcl (.cv q) D
   have p0011 :=
-    @g_simpld (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-      (.classMem (syn_cuni (syn_cuni (.cv q))) D)
-      (.classEq (.cv q) (syn_csn (syn_csn (syn_cuni (syn_cuni (.cv q)))))) p0010
+    @gSimpld (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+      (.classMem (synCuni (synCuni (.cv q))) D)
+      (.classEq (.cv q) (synCsn (synCsn (synCuni (synCuni (.cv q)))))) p0010
   have p0012 :=
-    @g_hnwcutclassordcl (syn_cuni (syn_cuni (.cv q))) D R dv_cache_0004 hyp_hnwcutmapval_1
+    @gHnwcutclassordcl (synCuni (synCuni (.cv q))) D R dv_cache_0004 hyp_hnwcutmapval_1
   have p0013 :=
-    @g_syl (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-      (.classMem (syn_cuni (syn_cuni (.cv q))) D)
-      (.classMem (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv q)))) (syn_chwniso D))
-        (syn_chnord D))
+    @gSyl (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+      (.classMem (synCuni (synCuni (.cv q))) D)
+      (.classMem (synCec (synChnwcutcode R D (synCuni (synCuni (.cv q)))) (synChwniso D))
+        (synChnord D))
       p0011 p0012
   have p0014 :=
-    @g_elex (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv q)))) (syn_chwniso D))
-      (syn_chnord D)
+    @gElex (synCec (synChnwcutcode R D (synCuni (synCuni (.cv q)))) (synChwniso D))
+      (synChnord D)
   have p0015 :=
-    @g_syl (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-      (.classMem (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv q)))) (syn_chwniso D))
-        (syn_chnord D))
-      (.classMem (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv q)))) (syn_chwniso D))
-        (syn_cvv))
+    @gSyl (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+      (.classMem (synCec (synChnwcutcode R D (synCuni (synCuni (.cv q)))) (synChwniso D))
+        (synChnord D))
+      (.classMem (synCec (synChnwcutcode R D (synCuni (synCuni (.cv q)))) (synChwniso D))
+        (synCvv))
       p0013 p0014
   have p0016 :=
-    @g_fvmptd (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D))) p (.cv q)
-      (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv p)))) (syn_chwniso D))
-      (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv q)))) (syn_chwniso D))
-      (syn_cpw1 (syn_cpw1 D)) (syn_chnwcutmap R D) (syn_cvv) dv_cache_0005 dv_cache_0006
+    @gFvmptd (.classMem (.cv q) (synCpw1 (synCpw1 D))) p (.cv q)
+      (synCec (synChnwcutcode R D (synCuni (synCuni (.cv p)))) (synChwniso D))
+      (synCec (synChnwcutcode R D (synCuni (synCuni (.cv q)))) (synChwniso D))
+      (synCpw1 (synCpw1 D)) (synChnwcutmap R D) (synCvv) dv_cache_0005 dv_cache_0006
       dv_cache_0007 dv_cache_0008 p0001 p0008 p0009 p0015
   exact p0016
 
+/-- Checked nominal proof certificate identified upstream as `g_hnwcutcodeltnoiso`. -/
 @[expose]
-noncomputable def g_hnwcutcodeltnoiso (x : Var) (y : Var) (D : Class) (R : Class) :
+noncomputable def gHnwcutcodeltnoiso (x : Var) (y : Var) (D : Class) (R : Class) :
     Nominal.NPrf
-      (.imp (syn_wa (syn_wa (syn_wbr R (syn_cwe) D) (.classMem (.cv y) D)) (.classMem (.cv x)
-            (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y)))))) (.neg
-          (syn_wbr (syn_chnwcutcode R D (.cv x)) (syn_chwniso D)
-            (syn_chnwcutcode R D (.cv y))))) :=
+      (.imp (synWa (synWa (synWbr R (synCwe) D) (.classMem (.cv y) D)) (.classMem (.cv x)
+            (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y)))))) (.neg
+          (synWbr (synChnwcutcode R D (.cv x)) (synChwniso D)
+            (synChnwcutcode R D (.cv y))))) :=
   by
-  have p0000 := @g_strictseghwnisono x y D R
-  have p0001 := (Nominal.classEqRefl (syn_chnwcutcode R D (.cv x)))
+  have p0000 := @gStrictseghwnisono x y D R
+  have p0001 := (Nominal.classEqRefl (synChnwcutcode R D (.cv x)))
   have p0002 :=
-    @g_breq1 (syn_chnwcutcode R D (.cv x))
-      (syn_cop (syn_cin R (syn_cxp
-            (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x))))
-            (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x))))))
-        (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x)))))
-      (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)
+    @gBreq1 (synChnwcutcode R D (.cv x))
+      (synCop (synCin R (synCxp
+            (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x))))
+            (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x))))))
+        (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x)))))
+      (synChnwcutcode R D (.cv y)) (synChwniso D)
   have p0003 := Nominal.mp p0001 p0002
-  have p0004 := (Nominal.classEqRefl (syn_chnwcutcode R D (.cv y)))
+  have p0004 := (Nominal.classEqRefl (synChnwcutcode R D (.cv y)))
   have p0005 :=
-    @g_breq2 (syn_chnwcutcode R D (.cv y))
-      (syn_cop (syn_cin R (syn_cxp
-            (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))
-            (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))))
-        (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y)))))
-      (syn_cop (syn_cin R (syn_cxp
-            (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x))))
-            (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x))))))
-        (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x)))))
-      (syn_chwniso D)
+    @gBreq2 (synChnwcutcode R D (.cv y))
+      (synCop (synCin R (synCxp
+            (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))
+            (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))))
+        (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y)))))
+      (synCop (synCin R (synCxp
+            (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x))))
+            (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x))))))
+        (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x)))))
+      (synChwniso D)
   have p0006 := Nominal.mp p0004 p0005
   have p0007 :=
-    @g_bitri
-      (syn_wbr (syn_chnwcutcode R D (.cv x)) (syn_chwniso D) (syn_chnwcutcode R D (.cv y)))
-      (syn_wbr (syn_cop (syn_cin R (syn_cxp
-              (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x))))
-              (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x))))))
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x)))))
-        (syn_chwniso D) (syn_chnwcutcode R D (.cv y)))
-      (syn_wbr (syn_cop (syn_cin R (syn_cxp
-              (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x))))
-              (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x))))))
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x)))))
-        (syn_chwniso D) (syn_cop (syn_cin R (syn_cxp
-              (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))
-              (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))))
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))))
+    @gBitri
+      (synWbr (synChnwcutcode R D (.cv x)) (synChwniso D) (synChnwcutcode R D (.cv y)))
+      (synWbr (synCop (synCin R (synCxp
+              (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x))))
+              (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x))))))
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x)))))
+        (synChwniso D) (synChnwcutcode R D (.cv y)))
+      (synWbr (synCop (synCin R (synCxp
+              (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x))))
+              (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x))))))
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x)))))
+        (synChwniso D) (synCop (synCin R (synCxp
+              (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))
+              (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))))
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))))
       p0003 p0006
   have p0008 :=
-    @g_biimpi
-      (syn_wbr (syn_chnwcutcode R D (.cv x)) (syn_chwniso D) (syn_chnwcutcode R D (.cv y)))
-      (syn_wbr (syn_cop (syn_cin R (syn_cxp
-              (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x))))
-              (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x))))))
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x)))))
-        (syn_chwniso D) (syn_cop (syn_cin R (syn_cxp
-              (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))
-              (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))))
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))))
+    @gBiimpi
+      (synWbr (synChnwcutcode R D (.cv x)) (synChwniso D) (synChnwcutcode R D (.cv y)))
+      (synWbr (synCop (synCin R (synCxp
+              (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x))))
+              (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x))))))
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x)))))
+        (synChwniso D) (synCop (synCin R (synCxp
+              (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))
+              (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))))
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))))
       p0007
   have p0009 :=
-    @g_a1i
-      (.imp (syn_wbr (syn_chnwcutcode R D (.cv x)) (syn_chwniso D)
-          (syn_chnwcutcode R D (.cv y))) (syn_wbr (syn_cop (syn_cin R (syn_cxp
-                (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x))))
-                (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x))))))
-            (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x)))))
-          (syn_chwniso D) (syn_cop (syn_cin R (syn_cxp
-                (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))
-                (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))))
-            (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y)))))))
-      (syn_wa (syn_wa (syn_wbr R (syn_cwe) D) (.classMem (.cv y) D)) (.classMem (.cv x)
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))))
+    @gA1i
+      (.imp (synWbr (synChnwcutcode R D (.cv x)) (synChwniso D)
+          (synChnwcutcode R D (.cv y))) (synWbr (synCop (synCin R (synCxp
+                (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x))))
+                (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x))))))
+            (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x)))))
+          (synChwniso D) (synCop (synCin R (synCxp
+                (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))
+                (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))))
+            (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y)))))))
+      (synWa (synWa (synWbr R (synCwe) D) (.classMem (.cv y) D)) (.classMem (.cv x)
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))))
       p0008
   have p0010 :=
-    @g_mtod
-      (syn_wa (syn_wa (syn_wbr R (syn_cwe) D) (.classMem (.cv y) D)) (.classMem (.cv x)
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))))
-      (syn_wbr (syn_chnwcutcode R D (.cv x)) (syn_chwniso D) (syn_chnwcutcode R D (.cv y)))
-      (syn_wbr (syn_cop (syn_cin R (syn_cxp
-              (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x))))
-              (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x))))))
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x)))))
-        (syn_chwniso D) (syn_cop (syn_cin R (syn_cxp
-              (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))
-              (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))))
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))))
+    @gMtod
+      (synWa (synWa (synWbr R (synCwe) D) (.classMem (.cv y) D)) (.classMem (.cv x)
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))))
+      (synWbr (synChnwcutcode R D (.cv x)) (synChwniso D) (synChnwcutcode R D (.cv y)))
+      (synWbr (synCop (synCin R (synCxp
+              (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x))))
+              (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x))))))
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x)))))
+        (synChwniso D) (synCop (synCin R (synCxp
+              (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))
+              (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))))
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))))
       p0000 p0009
   exact p0010
 
+/-- Checked nominal proof certificate identified upstream as `g_hwnisoclasseqbcl`. -/
 @[expose]
-noncomputable def g_hwnisoclasseqbcl (A : Class) (B : Class) (C : Class)
-    (hyp_hwnisoclasseqbcl_1 : Nominal.NPrf (.classMem A (syn_cvv))) :
+noncomputable def gHwnisoclasseqbcl (A : Class) (B : Class) (C : Class)
+    (hyp_hwnisoclasseqbcl_1 : Nominal.NPrf (.classMem A (synCvv))) :
     Nominal.NPrf
-      (.imp (syn_wa (.classMem B (syn_chwcn A)) (.classMem C (syn_chwcn A)))
-        (syn_wb (.classEq (syn_cec B (syn_chwniso A)) (syn_cec C (syn_chwniso A)))
-          (syn_wbr B (syn_chwniso A) C))) :=
+      (.imp (synWa (.classMem B (synChwcn A)) (.classMem C (synChwcn A)))
+        (synWb (.classEq (synCec B (synChwniso A)) (synCec C (synChwniso A)))
+          (synWbr B (synChwniso A) C))) :=
   by
   let proofSupport : Finset Var := A.fv ∪ B.fv ∪ C.fv
   let u : Var := freshVar proofSupport 0
@@ -553,9 +558,9 @@ noncomputable def g_hwnisoclasseqbcl (A : Class) (B : Class) (C : Class)
         simp only [fresh_v_not_C, not_false_eq_true])
   have dv_cache_0004 :
     v ∉
-      ((Wff.imp (syn_wa (.classMem B (syn_chwcn A)) (.classMem C (syn_chwcn A)))
-          (syn_wb (.classEq (syn_cec B (syn_chwniso A)) (syn_cec C (syn_chwniso A)))
-            (syn_wbr B (syn_chwniso A) C)))).fv :=
+      ((Wff.imp (synWa (.classMem B (synChwcn A)) (.classMem C (synChwcn A)))
+          (synWb (.classEq (synCec B (synChwniso A)) (synCec C (synChwniso A)))
+            (synWbr B (synChwniso A) C)))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003
     exact
@@ -576,9 +581,9 @@ noncomputable def g_hwnisoclasseqbcl (A : Class) (B : Class) (C : Class)
           fresh_v_not_B, fresh_v_not_A, fresh_v_not_C, or_false, not_false_eq_true])
   have dv_cache_0005 :
     u ∉
-      ((Wff.imp (syn_wa (.classMem B (syn_chwcn A)) (.classMem (.cv v) (syn_chwcn A)))
-          (syn_wb (.classEq (syn_cec B (syn_chwniso A)) (syn_cec (.cv v) (syn_chwniso A)))
-            (syn_wbr B (syn_chwniso A) (.cv v))))).fv :=
+      ((Wff.imp (synWa (.classMem B (synChwcn A)) (.classMem (.cv v) (synChwcn A)))
+          (synWb (.classEq (synCec B (synChwniso A)) (synCec (.cv v) (synChwniso A)))
+            (synWbr B (synChwniso A) (.cv v))))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004
     exact
@@ -599,128 +604,129 @@ noncomputable def g_hwnisoclasseqbcl (A : Class) (B : Class) (C : Class)
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_wbr, Finset.mem_union,
           Finset.mem_singleton, fresh_u_not_B, fresh_u_not_A, fresh_u_ne_v, or_false,
           not_false_eq_true])
-  have p0000 := @g_simpl (.classMem B (syn_chwcn A)) (.classMem C (syn_chwcn A))
-  have p0001 := @g_elex B (syn_chwcn A)
+  have p0000 := @gSimpl (.classMem B (synChwcn A)) (.classMem C (synChwcn A))
+  have p0001 := @gElex B (synChwcn A)
   have p0002 :=
-    @g_syl (syn_wa (.classMem B (syn_chwcn A)) (.classMem C (syn_chwcn A)))
-      (.classMem B (syn_chwcn A)) (.classMem B (syn_cvv)) p0000 p0001
-  have p0003 := @g_simpr (.classMem B (syn_chwcn A)) (.classMem C (syn_chwcn A))
-  have p0004 := @g_elex C (syn_chwcn A)
+    @gSyl (synWa (.classMem B (synChwcn A)) (.classMem C (synChwcn A)))
+      (.classMem B (synChwcn A)) (.classMem B (synCvv)) p0000 p0001
+  have p0003 := @gSimpr (.classMem B (synChwcn A)) (.classMem C (synChwcn A))
+  have p0004 := @gElex C (synChwcn A)
   have p0005 :=
-    @g_syl (syn_wa (.classMem B (syn_chwcn A)) (.classMem C (syn_chwcn A)))
-      (.classMem C (syn_chwcn A)) (.classMem C (syn_cvv)) p0003 p0004
+    @gSyl (synWa (.classMem B (synChwcn A)) (.classMem C (synChwcn A)))
+      (.classMem C (synChwcn A)) (.classMem C (synCvv)) p0003 p0004
   have p0006 :=
-    @g_jca (syn_wa (.classMem B (syn_chwcn A)) (.classMem C (syn_chwcn A)))
-      (.classMem B (syn_cvv)) (.classMem C (syn_cvv)) p0002 p0005
-  have p0007 := @g_eleq1 (.cv u) B (syn_chwcn A)
-  have p0008 := @g_biid (.classMem (.cv v) (syn_chwcn A))
+    @gJca (synWa (.classMem B (synChwcn A)) (.classMem C (synChwcn A)))
+      (.classMem B (synCvv)) (.classMem C (synCvv)) p0002 p0005
+  have p0007 := @gEleq1 (.cv u) B (synChwcn A)
+  have p0008 := @gBiid (.classMem (.cv v) (synChwcn A))
   have p0009 :=
-    @g_a1i (syn_wb (.classMem (.cv v) (syn_chwcn A)) (.classMem (.cv v) (syn_chwcn A)))
+    @gA1i (synWb (.classMem (.cv v) (synChwcn A)) (.classMem (.cv v) (synChwcn A)))
       (.classEq (.cv u) B) p0008
   have p0010 :=
-    @g_anbi12d (.classEq (.cv u) B) (.classMem (.cv u) (syn_chwcn A))
-      (.classMem B (syn_chwcn A)) (.classMem (.cv v) (syn_chwcn A))
-      (.classMem (.cv v) (syn_chwcn A)) p0007 p0009
-  have p0011 := @g_eceq1 (.cv u) B (syn_chwniso A)
+    @gAnbi12d (.classEq (.cv u) B) (.classMem (.cv u) (synChwcn A))
+      (.classMem B (synChwcn A)) (.classMem (.cv v) (synChwcn A))
+      (.classMem (.cv v) (synChwcn A)) p0007 p0009
+  have p0011 := @gEceq1 (.cv u) B (synChwniso A)
   have p0012 :=
-    @g_eqeq1d (.classEq (.cv u) B) (syn_cec (.cv u) (syn_chwniso A))
-      (syn_cec B (syn_chwniso A)) (syn_cec (.cv v) (syn_chwniso A)) p0011
-  have p0013 := @g_breq1 (.cv u) B (.cv v) (syn_chwniso A)
+    @gEqeq1d (.classEq (.cv u) B) (synCec (.cv u) (synChwniso A))
+      (synCec B (synChwniso A)) (synCec (.cv v) (synChwniso A)) p0011
+  have p0013 := @gBreq1 (.cv u) B (.cv v) (synChwniso A)
   have p0014 :=
-    @g_bibi12d (.classEq (.cv u) B)
-      (.classEq (syn_cec (.cv u) (syn_chwniso A)) (syn_cec (.cv v) (syn_chwniso A)))
-      (.classEq (syn_cec B (syn_chwniso A)) (syn_cec (.cv v) (syn_chwniso A)))
-      (syn_wbr (.cv u) (syn_chwniso A) (.cv v)) (syn_wbr B (syn_chwniso A) (.cv v)) p0012
+    @gBibi12d (.classEq (.cv u) B)
+      (.classEq (synCec (.cv u) (synChwniso A)) (synCec (.cv v) (synChwniso A)))
+      (.classEq (synCec B (synChwniso A)) (synCec (.cv v) (synChwniso A)))
+      (synWbr (.cv u) (synChwniso A) (.cv v)) (synWbr B (synChwniso A) (.cv v)) p0012
       p0013
   have p0015 :=
-    @g_imbi12d (.classEq (.cv u) B)
-      (syn_wa (.classMem (.cv u) (syn_chwcn A)) (.classMem (.cv v) (syn_chwcn A)))
-      (syn_wa (.classMem B (syn_chwcn A)) (.classMem (.cv v) (syn_chwcn A)))
-      (syn_wb (.classEq (syn_cec (.cv u) (syn_chwniso A)) (syn_cec (.cv v) (syn_chwniso A)))
-        (syn_wbr (.cv u) (syn_chwniso A) (.cv v)))
-      (syn_wb (.classEq (syn_cec B (syn_chwniso A)) (syn_cec (.cv v) (syn_chwniso A)))
-        (syn_wbr B (syn_chwniso A) (.cv v)))
+    @gImbi12d (.classEq (.cv u) B)
+      (synWa (.classMem (.cv u) (synChwcn A)) (.classMem (.cv v) (synChwcn A)))
+      (synWa (.classMem B (synChwcn A)) (.classMem (.cv v) (synChwcn A)))
+      (synWb (.classEq (synCec (.cv u) (synChwniso A)) (synCec (.cv v) (synChwniso A)))
+        (synWbr (.cv u) (synChwniso A) (.cv v)))
+      (synWb (.classEq (synCec B (synChwniso A)) (synCec (.cv v) (synChwniso A)))
+        (synWbr B (synChwniso A) (.cv v)))
       p0010 p0014
-  have p0016 := @g_biid (.classMem B (syn_chwcn A))
+  have p0016 := @gBiid (.classMem B (synChwcn A))
   have p0017 :=
-    @g_a1i (syn_wb (.classMem B (syn_chwcn A)) (.classMem B (syn_chwcn A)))
+    @gA1i (synWb (.classMem B (synChwcn A)) (.classMem B (synChwcn A)))
       (.classEq (.cv v) C) p0016
-  have p0018 := @g_eleq1 (.cv v) C (syn_chwcn A)
+  have p0018 := @gEleq1 (.cv v) C (synChwcn A)
   have p0019 :=
-    @g_anbi12d (.classEq (.cv v) C) (.classMem B (syn_chwcn A))
-      (.classMem B (syn_chwcn A)) (.classMem (.cv v) (syn_chwcn A))
-      (.classMem C (syn_chwcn A)) p0017 p0018
-  have p0020 := @g_eceq1 (.cv v) C (syn_chwniso A)
+    @gAnbi12d (.classEq (.cv v) C) (.classMem B (synChwcn A))
+      (.classMem B (synChwcn A)) (.classMem (.cv v) (synChwcn A))
+      (.classMem C (synChwcn A)) p0017 p0018
+  have p0020 := @gEceq1 (.cv v) C (synChwniso A)
   have p0021 :=
-    @g_eqeq2d (.classEq (.cv v) C) (syn_cec (.cv v) (syn_chwniso A))
-      (syn_cec C (syn_chwniso A)) (syn_cec B (syn_chwniso A)) p0020
-  have p0022 := @g_breq2 (.cv v) C B (syn_chwniso A)
+    @gEqeq2d (.classEq (.cv v) C) (synCec (.cv v) (synChwniso A))
+      (synCec C (synChwniso A)) (synCec B (synChwniso A)) p0020
+  have p0022 := @gBreq2 (.cv v) C B (synChwniso A)
   have p0023 :=
-    @g_bibi12d (.classEq (.cv v) C)
-      (.classEq (syn_cec B (syn_chwniso A)) (syn_cec (.cv v) (syn_chwniso A)))
-      (.classEq (syn_cec B (syn_chwniso A)) (syn_cec C (syn_chwniso A)))
-      (syn_wbr B (syn_chwniso A) (.cv v)) (syn_wbr B (syn_chwniso A) C) p0021 p0022
+    @gBibi12d (.classEq (.cv v) C)
+      (.classEq (synCec B (synChwniso A)) (synCec (.cv v) (synChwniso A)))
+      (.classEq (synCec B (synChwniso A)) (synCec C (synChwniso A)))
+      (synWbr B (synChwniso A) (.cv v)) (synWbr B (synChwniso A) C) p0021 p0022
   have p0024 :=
-    @g_imbi12d (.classEq (.cv v) C)
-      (syn_wa (.classMem B (syn_chwcn A)) (.classMem (.cv v) (syn_chwcn A)))
-      (syn_wa (.classMem B (syn_chwcn A)) (.classMem C (syn_chwcn A)))
-      (syn_wb (.classEq (syn_cec B (syn_chwniso A)) (syn_cec (.cv v) (syn_chwniso A)))
-        (syn_wbr B (syn_chwniso A) (.cv v)))
-      (syn_wb (.classEq (syn_cec B (syn_chwniso A)) (syn_cec C (syn_chwniso A)))
-        (syn_wbr B (syn_chwniso A) C))
+    @gImbi12d (.classEq (.cv v) C)
+      (synWa (.classMem B (synChwcn A)) (.classMem (.cv v) (synChwcn A)))
+      (synWa (.classMem B (synChwcn A)) (.classMem C (synChwcn A)))
+      (synWb (.classEq (synCec B (synChwniso A)) (synCec (.cv v) (synChwniso A)))
+        (synWbr B (synChwniso A) (.cv v)))
+      (synWb (.classEq (synCec B (synChwniso A)) (synCec C (synChwniso A)))
+        (synWbr B (synChwniso A) C))
       p0019 p0023
   have p0025 :=
-    @g_a1i (.classMem A (syn_cvv))
-      (syn_wa (.classMem (.cv u) (syn_chwcn A)) (.classMem (.cv v) (syn_chwcn A)))
+    @gA1i (.classMem A (synCvv))
+      (synWa (.classMem (.cv u) (synChwcn A)) (.classMem (.cv v) (synChwcn A)))
       hyp_hwnisoclasseqbcl_1
   have p0026 :=
-    @g_id (syn_wa (.classMem (.cv u) (syn_chwcn A)) (.classMem (.cv v) (syn_chwcn A)))
+    @gId (synWa (.classMem (.cv u) (synChwcn A)) (.classMem (.cv v) (synChwcn A)))
   have p0027 :=
-    @g_jca (syn_wa (.classMem (.cv u) (syn_chwcn A)) (.classMem (.cv v) (syn_chwcn A)))
-      (.classMem A (syn_cvv))
-      (syn_wa (.classMem (.cv u) (syn_chwcn A)) (.classMem (.cv v) (syn_chwcn A))) p0025
+    @gJca (synWa (.classMem (.cv u) (synChwcn A)) (.classMem (.cv v) (synChwcn A)))
+      (.classMem A (synCvv))
+      (synWa (.classMem (.cv u) (synChwcn A)) (.classMem (.cv v) (synChwcn A))) p0025
       p0026
-  have p0028 := @g_hwnisoclasseqb v u A
+  have p0028 := @gHwnisoclasseqb v u A
   have p0029 :=
-    @g_syl (syn_wa (.classMem (.cv u) (syn_chwcn A)) (.classMem (.cv v) (syn_chwcn A)))
-      (syn_wa (.classMem A (syn_cvv))
-        (syn_wa (.classMem (.cv u) (syn_chwcn A)) (.classMem (.cv v) (syn_chwcn A))))
-      (syn_wb (.classEq (syn_cec (.cv u) (syn_chwniso A)) (syn_cec (.cv v) (syn_chwniso A)))
-        (syn_wbr (.cv u) (syn_chwniso A) (.cv v)))
+    @gSyl (synWa (.classMem (.cv u) (synChwcn A)) (.classMem (.cv v) (synChwcn A)))
+      (synWa (.classMem A (synCvv))
+        (synWa (.classMem (.cv u) (synChwcn A)) (.classMem (.cv v) (synChwcn A))))
+      (synWb (.classEq (synCec (.cv u) (synChwniso A)) (synCec (.cv v) (synChwniso A)))
+        (synWbr (.cv u) (synChwniso A) (.cv v)))
       p0027 p0028
   have p0030 :=
-    @g_vtocl2g
-      (.imp (syn_wa (.classMem (.cv u) (syn_chwcn A)) (.classMem (.cv v) (syn_chwcn A))) (syn_wb
-          (.classEq (syn_cec (.cv u) (syn_chwniso A)) (syn_cec (.cv v) (syn_chwniso A)))
-          (syn_wbr (.cv u) (syn_chwniso A) (.cv v))))
-      (.imp (syn_wa (.classMem B (syn_chwcn A)) (.classMem (.cv v) (syn_chwcn A)))
-        (syn_wb (.classEq (syn_cec B (syn_chwniso A)) (syn_cec (.cv v) (syn_chwniso A)))
-          (syn_wbr B (syn_chwniso A) (.cv v))))
-      (.imp (syn_wa (.classMem B (syn_chwcn A)) (.classMem C (syn_chwcn A)))
-        (syn_wb (.classEq (syn_cec B (syn_chwniso A)) (syn_cec C (syn_chwniso A)))
-          (syn_wbr B (syn_chwniso A) C)))
-      u v B C (syn_cvv) (syn_cvv) dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004
+    @gVtocl2g
+      (.imp (synWa (.classMem (.cv u) (synChwcn A)) (.classMem (.cv v) (synChwcn A))) (synWb
+          (.classEq (synCec (.cv u) (synChwniso A)) (synCec (.cv v) (synChwniso A)))
+          (synWbr (.cv u) (synChwniso A) (.cv v))))
+      (.imp (synWa (.classMem B (synChwcn A)) (.classMem (.cv v) (synChwcn A)))
+        (synWb (.classEq (synCec B (synChwniso A)) (synCec (.cv v) (synChwniso A)))
+          (synWbr B (synChwniso A) (.cv v))))
+      (.imp (synWa (.classMem B (synChwcn A)) (.classMem C (synChwcn A)))
+        (synWb (.classEq (synCec B (synChwniso A)) (synCec C (synChwniso A)))
+          (synWbr B (synChwniso A) C)))
+      u v B C (synCvv) (synCvv) dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004
       dv_cache_0005 p0015 p0024 p0029
   have p0031 :=
-    @g_syl (syn_wa (.classMem B (syn_chwcn A)) (.classMem C (syn_chwcn A)))
-      (syn_wa (.classMem B (syn_cvv)) (.classMem C (syn_cvv)))
-      (.imp (syn_wa (.classMem B (syn_chwcn A)) (.classMem C (syn_chwcn A)))
-        (syn_wb (.classEq (syn_cec B (syn_chwniso A)) (syn_cec C (syn_chwniso A)))
-          (syn_wbr B (syn_chwniso A) C)))
+    @gSyl (synWa (.classMem B (synChwcn A)) (.classMem C (synChwcn A)))
+      (synWa (.classMem B (synCvv)) (.classMem C (synCvv)))
+      (.imp (synWa (.classMem B (synChwcn A)) (.classMem C (synChwcn A)))
+        (synWb (.classEq (synCec B (synChwniso A)) (synCec C (synChwniso A)))
+          (synWbr B (synChwniso A) C)))
       p0006 p0030
   have p0032 :=
-    @g_pm2_43i (syn_wa (.classMem B (syn_chwcn A)) (.classMem C (syn_chwcn A)))
-      (syn_wb (.classEq (syn_cec B (syn_chwniso A)) (syn_cec C (syn_chwniso A)))
-        (syn_wbr B (syn_chwniso A) C))
+    @gPm243i (synWa (.classMem B (synChwcn A)) (.classMem C (synChwcn A)))
+      (synWb (.classEq (synCec B (synChwniso A)) (synCec C (synChwniso A)))
+        (synWbr B (synChwniso A) C))
       p0031
   exact p0032
 
+/-- Checked nominal proof certificate identified upstream as `g_hnwcutcodecncl`. -/
 @[expose]
-noncomputable def g_hnwcutcodecncl (B : Class) (D : Class) (R : Class)
+noncomputable def gHnwcutcodecncl (B : Class) (D : Class) (R : Class)
     (dv_D_R : Disjoint D.fv R.fv)
-    (hyp_hnwcutcodecncl_1 : Nominal.NPrf (syn_wbr R (syn_cwe) D)) :
+    (hyp_hnwcutcodecncl_1 : Nominal.NPrf (synWbr R (synCwe) D)) :
     Nominal.NPrf
-      (.imp (.classMem B D) (.classMem (syn_chnwcutcode R D B) (syn_chwcn D))) :=
+      (.imp (.classMem B D) (.classMem (synChnwcutcode R D B) (synChwcn D))) :=
   by
   let proofSupport : Finset Var := B.fv ∪ D.fv ∪ R.fv
   let x : Var := freshVar proofSupport 0
@@ -762,7 +768,7 @@ noncomputable def g_hnwcutcodecncl (B : Class) (D : Class) (R : Class)
         simp only [fresh_x_not_B, not_false_eq_true])
   have dv_cache_0004 :
     x ∉
-      ((Wff.imp (.classMem B D) (.classMem (syn_chnwcutcode R D B) (syn_chwcn D)))).fv :=
+      ((Wff.imp (.classMem B D) (.classMem (synChnwcutcode R D B) (synChwcn D)))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003
     exact
@@ -776,152 +782,153 @@ noncomputable def g_hnwcutcodecncl (B : Class) (D : Class) (R : Class)
           NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chnwcutcode,
           NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chwcn, Finset.mem_union,
           fresh_x_not_B, fresh_x_not_D, fresh_x_not_R, or_false, not_false_eq_true])
-  have p0000 := @g_elex B D
-  have p0001 := @g_eleq1 (.cv x) B D
-  have p0002 := @g_hnwcutcodeeq3 (.cv x) B D R dv_cache_0001
+  have p0000 := @gElex B D
+  have p0001 := @gEleq1 (.cv x) B D
+  have p0002 := @gHnwcutcodeeq3 (.cv x) B D R dv_cache_0001
   have p0003 :=
-    @g_eleq1d (.classEq (.cv x) B) (syn_chnwcutcode R D (.cv x)) (syn_chnwcutcode R D B)
-      (syn_chwcn D) p0002
+    @gEleq1d (.classEq (.cv x) B) (synChnwcutcode R D (.cv x)) (synChnwcutcode R D B)
+      (synChwcn D) p0002
   have p0004 :=
-    @g_imbi12d (.classEq (.cv x) B) (.classMem (.cv x) D) (.classMem B D)
-      (.classMem (syn_chnwcutcode R D (.cv x)) (syn_chwcn D))
-      (.classMem (syn_chnwcutcode R D B) (syn_chwcn D)) p0001 p0003
-  have p0005 := @g_hnwcutcodecn x D R dv_cache_0002 hyp_hnwcutcodecncl_1
+    @gImbi12d (.classEq (.cv x) B) (.classMem (.cv x) D) (.classMem B D)
+      (.classMem (synChnwcutcode R D (.cv x)) (synChwcn D))
+      (.classMem (synChnwcutcode R D B) (synChwcn D)) p0001 p0003
+  have p0005 := @gHnwcutcodecn x D R dv_cache_0002 hyp_hnwcutcodecncl_1
   have p0006 :=
-    @g_vtoclg
-      (.imp (.classMem (.cv x) D) (.classMem (syn_chnwcutcode R D (.cv x)) (syn_chwcn D)))
-      (.imp (.classMem B D) (.classMem (syn_chnwcutcode R D B) (syn_chwcn D))) x B
-      (syn_cvv) dv_cache_0003 dv_cache_0004 p0004 p0005
+    @gVtoclg
+      (.imp (.classMem (.cv x) D) (.classMem (synChnwcutcode R D (.cv x)) (synChwcn D)))
+      (.imp (.classMem B D) (.classMem (synChnwcutcode R D B) (synChwcn D))) x B
+      (synCvv) dv_cache_0003 dv_cache_0004 p0004 p0005
   have p0007 :=
-    @g_mpcom (.classMem B (syn_cvv)) (.classMem B D)
-      (.classMem (syn_chnwcutcode R D B) (syn_chwcn D)) p0000 p0006
+    @gMpcom (.classMem B (synCvv)) (.classMem B D)
+      (.classMem (synChnwcutcode R D B) (synChwcn D)) p0000 p0006
   exact p0007
 
+/-- Checked nominal proof certificate identified upstream as `g_hnwcutclassltne`. -/
 @[expose]
-noncomputable def g_hnwcutclassltne (x : Var) (y : Var) (D : Class) (R : Class)
+noncomputable def gHnwcutclassltne (x : Var) (y : Var) (D : Class) (R : Class)
     (dv_D_R : Disjoint D.fv R.fv)
-    (hyp_hnwcutclassltne_1 : Nominal.NPrf (syn_wbr R (syn_cwe) D)) :
+    (hyp_hnwcutclassltne_1 : Nominal.NPrf (synWbr R (synCwe) D)) :
     Nominal.NPrf
-      (.imp (syn_wa (.classMem (.cv y) D) (.classMem (.cv x)
-            (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y)))))) (.neg
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))) :=
+      (.imp (synWa (.classMem (.cv y) D) (.classMem (.cv x)
+            (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y)))))) (.neg
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))) :=
   by
   have dv_cache_0001 : Disjoint (D).fv (R).fv := by
     exact
       (show Disjoint (D).fv (R).fv from (show Disjoint (D).fv (R).fv from (by exact dv_D_R)))
   have p0000 :=
-    @g_a1i (syn_wbr R (syn_cwe) D)
-      (syn_wa (.classMem (.cv y) D) (.classMem (.cv x)
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))))
+    @gA1i (synWbr R (synCwe) D)
+      (synWa (.classMem (.cv y) D) (.classMem (.cv x)
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))))
       hyp_hnwcutclassltne_1
   have p0001 :=
-    @g_simpl (.classMem (.cv y) D)
+    @gSimpl (.classMem (.cv y) D)
       (.classMem (.cv x)
-        (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y)))))
+        (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y)))))
   have p0002 :=
-    @g_jca
-      (syn_wa (.classMem (.cv y) D) (.classMem (.cv x)
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))))
-      (syn_wbr R (syn_cwe) D) (.classMem (.cv y) D) p0000 p0001
+    @gJca
+      (synWa (.classMem (.cv y) D) (.classMem (.cv x)
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))))
+      (synWbr R (synCwe) D) (.classMem (.cv y) D) p0000 p0001
   have p0003 :=
-    @g_simpr (.classMem (.cv y) D)
+    @gSimpr (.classMem (.cv y) D)
       (.classMem (.cv x)
-        (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y)))))
+        (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y)))))
   have p0004 :=
-    @g_jca
-      (syn_wa (.classMem (.cv y) D) (.classMem (.cv x)
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))))
-      (syn_wa (syn_wbr R (syn_cwe) D) (.classMem (.cv y) D))
+    @gJca
+      (synWa (.classMem (.cv y) D) (.classMem (.cv x)
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))))
+      (synWa (synWbr R (synCwe) D) (.classMem (.cv y) D))
       (.classMem (.cv x)
-        (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y)))))
+        (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y)))))
       p0002 p0003
-  have p0005 := @g_hnwcutcodeltnoiso x y D R
+  have p0005 := @gHnwcutcodeltnoiso x y D R
   have p0006 :=
-    @g_syl
-      (syn_wa (.classMem (.cv y) D) (.classMem (.cv x)
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))))
-      (syn_wa (syn_wa (syn_wbr R (syn_cwe) D) (.classMem (.cv y) D)) (.classMem (.cv x)
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))))
-      (.neg (syn_wbr (syn_chnwcutcode R D (.cv x)) (syn_chwniso D)
-          (syn_chnwcutcode R D (.cv y))))
+    @gSyl
+      (synWa (.classMem (.cv y) D) (.classMem (.cv x)
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))))
+      (synWa (synWa (synWbr R (synCwe) D) (.classMem (.cv y) D)) (.classMem (.cv x)
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))))
+      (.neg (synWbr (synChnwcutcode R D (.cv x)) (synChwniso D)
+          (synChnwcutcode R D (.cv y))))
       p0004 p0005
-  have p0008 := @g_inss1 D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y)))
+  have p0008 := @gInss1 D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y)))
   have p0009 :=
-    @g_ssel (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y)))) D
+    @gSsel (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y)))) D
       (.cv x)
   have p0010 := Nominal.mp p0008 p0009
   have p0011 :=
-    @g_syl
-      (syn_wa (.classMem (.cv y) D) (.classMem (.cv x)
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))))
+    @gSyl
+      (synWa (.classMem (.cv y) D) (.classMem (.cv x)
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))))
       (.classMem (.cv x)
-        (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y)))))
+        (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y)))))
       (.classMem (.cv x) D) p0003 p0010
-  have p0012 := @g_hnwcutcodecncl (.cv x) D R dv_cache_0001 hyp_hnwcutclassltne_1
+  have p0012 := @gHnwcutcodecncl (.cv x) D R dv_cache_0001 hyp_hnwcutclassltne_1
   have p0013 :=
-    @g_syl
-      (syn_wa (.classMem (.cv y) D) (.classMem (.cv x)
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))))
-      (.classMem (.cv x) D) (.classMem (syn_chnwcutcode R D (.cv x)) (syn_chwcn D)) p0011
+    @gSyl
+      (synWa (.classMem (.cv y) D) (.classMem (.cv x)
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))))
+      (.classMem (.cv x) D) (.classMem (synChnwcutcode R D (.cv x)) (synChwcn D)) p0011
       p0012
-  have p0015 := @g_hnwcutcodecncl (.cv y) D R dv_cache_0001 hyp_hnwcutclassltne_1
+  have p0015 := @gHnwcutcodecncl (.cv y) D R dv_cache_0001 hyp_hnwcutclassltne_1
   have p0016 :=
-    @g_syl
-      (syn_wa (.classMem (.cv y) D) (.classMem (.cv x)
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))))
-      (.classMem (.cv y) D) (.classMem (syn_chnwcutcode R D (.cv y)) (syn_chwcn D)) p0001
+    @gSyl
+      (synWa (.classMem (.cv y) D) (.classMem (.cv x)
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))))
+      (.classMem (.cv y) D) (.classMem (synChnwcutcode R D (.cv y)) (synChwcn D)) p0001
       p0015
   have p0017 :=
-    @g_jca
-      (syn_wa (.classMem (.cv y) D) (.classMem (.cv x)
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))))
-      (.classMem (syn_chnwcutcode R D (.cv x)) (syn_chwcn D))
-      (.classMem (syn_chnwcutcode R D (.cv y)) (syn_chwcn D)) p0013 p0016
-  have p0018 := @g_brex R D (syn_cwe)
-  have p0019 := @g_simpr (.classMem R (syn_cvv)) (.classMem D (syn_cvv))
+    @gJca
+      (synWa (.classMem (.cv y) D) (.classMem (.cv x)
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))))
+      (.classMem (synChnwcutcode R D (.cv x)) (synChwcn D))
+      (.classMem (synChnwcutcode R D (.cv y)) (synChwcn D)) p0013 p0016
+  have p0018 := @gBrex R D (synCwe)
+  have p0019 := @gSimpr (.classMem R (synCvv)) (.classMem D (synCvv))
   have p0020 :=
-    @g_syl (syn_wbr R (syn_cwe) D)
-      (syn_wa (.classMem R (syn_cvv)) (.classMem D (syn_cvv))) (.classMem D (syn_cvv))
+    @gSyl (synWbr R (synCwe) D)
+      (synWa (.classMem R (synCvv)) (.classMem D (synCvv))) (.classMem D (synCvv))
       p0018 p0019
   have p0021 := Nominal.mp hyp_hnwcutclassltne_1 p0020
   have p0022 :=
-    @g_hwnisoclasseqbcl D (syn_chnwcutcode R D (.cv x)) (syn_chnwcutcode R D (.cv y))
+    @gHwnisoclasseqbcl D (synChnwcutcode R D (.cv x)) (synChnwcutcode R D (.cv y))
       p0021
   have p0023 :=
-    @g_syl
-      (syn_wa (.classMem (.cv y) D) (.classMem (.cv x)
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))))
-      (syn_wa (.classMem (syn_chnwcutcode R D (.cv x)) (syn_chwcn D))
-        (.classMem (syn_chnwcutcode R D (.cv y)) (syn_chwcn D)))
-      (syn_wb (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-          (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))
-        (syn_wbr (syn_chnwcutcode R D (.cv x)) (syn_chwniso D) (syn_chnwcutcode R D (.cv y))))
+    @gSyl
+      (synWa (.classMem (.cv y) D) (.classMem (.cv x)
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))))
+      (synWa (.classMem (synChnwcutcode R D (.cv x)) (synChwcn D))
+        (.classMem (synChnwcutcode R D (.cv y)) (synChwcn D)))
+      (synWb (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+          (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))
+        (synWbr (synChnwcutcode R D (.cv x)) (synChwniso D) (synChnwcutcode R D (.cv y))))
       p0017 p0022
   have p0024 :=
-    @g_biimpd
-      (syn_wa (.classMem (.cv y) D) (.classMem (.cv x)
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))))
-      (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-        (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))
-      (syn_wbr (syn_chnwcutcode R D (.cv x)) (syn_chwniso D) (syn_chnwcutcode R D (.cv y)))
+    @gBiimpd
+      (synWa (.classMem (.cv y) D) (.classMem (.cv x)
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))))
+      (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+        (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))
+      (synWbr (synChnwcutcode R D (.cv x)) (synChwniso D) (synChnwcutcode R D (.cv y)))
       p0023
   have p0025 :=
-    @g_con3d
-      (syn_wa (.classMem (.cv y) D) (.classMem (.cv x)
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))))
-      (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-        (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))
-      (syn_wbr (syn_chnwcutcode R D (.cv x)) (syn_chwniso D) (syn_chnwcutcode R D (.cv y)))
+    @gCon3d
+      (synWa (.classMem (.cv y) D) (.classMem (.cv x)
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))))
+      (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+        (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))
+      (synWbr (synChnwcutcode R D (.cv x)) (synChwniso D) (synChnwcutcode R D (.cv y)))
       p0024
   have p0026 :=
-    @g_mpd
-      (syn_wa (.classMem (.cv y) D) (.classMem (.cv x)
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))))
-      (.neg (syn_wbr (syn_chnwcutcode R D (.cv x)) (syn_chwniso D)
-          (syn_chnwcutcode R D (.cv y))))
-      (.neg (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-          (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))
+    @gMpd
+      (synWa (.classMem (.cv y) D) (.classMem (.cv x)
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))))
+      (.neg (synWbr (synChnwcutcode R D (.cv x)) (synChwniso D)
+          (synChnwcutcode R D (.cv y))))
+      (.neg (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+          (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))
       p0006 p0025
   exact p0026
 
@@ -943,404 +950,406 @@ open NFChoice.SemanticCore
 open NFChoice.ReplaySupport
 open NFChoice.Compiler.CompactSourceSyntax
 
+/-- Checked nominal proof certificate identified upstream as `g_hnwcutclassinj`. -/
 @[expose]
-noncomputable def g_hnwcutclassinj (x : Var) (y : Var) (D : Class) (R : Class)
+noncomputable def gHnwcutclassinj (x : Var) (y : Var) (D : Class) (R : Class)
     (dv_D_R : Disjoint D.fv R.fv)
-    (hyp_hnwcutclassinj_1 : Nominal.NPrf (syn_wbr R (syn_cwe) D)) :
+    (hyp_hnwcutclassinj_1 : Nominal.NPrf (synWbr R (synCwe) D)) :
     Nominal.NPrf
-      (.imp (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D)) (.imp
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))
+      (.imp (synWa (.classMem (.cv x) D) (.classMem (.cv y) D)) (.imp
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))
           (.classEq (.cv x) (.cv y)))) :=
   by
   have dv_cache_0001 : Disjoint (D).fv (R).fv := by
     exact
       (show Disjoint (D).fv (R).fv from (show Disjoint (D).fv (R).fv from (by exact dv_D_R)))
   have p0000 :=
-    @g_simpl
-      (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-        (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-          (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))
-      (syn_wne (.cv x) (.cv y))
+    @gSimpl
+      (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+        (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+          (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))
+      (synWne (.cv x) (.cv y))
   have p0001 :=
-    @g_simpr (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-      (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-        (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))
+    @gSimpr (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+      (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+        (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))
   have p0002 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))) (syn_wne (.cv x) (.cv y)))
-      (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-        (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-          (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))
-      (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-        (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))
+    @gSyl
+      (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))) (synWne (.cv x) (.cv y)))
+      (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+        (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+          (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))
+      (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+        (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))
       p0000 p0001
-  have p0003 := @g_wppweconnex D R
+  have p0003 := @gWppweconnex D R
   have p0004 := Nominal.mp hyp_hnwcutclassinj_1 p0003
   have p0005 :=
-    @g_a1i (syn_wbr R (syn_cconnex) D)
-      (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))) (syn_wne (.cv x) (.cv y)))
+    @gA1i (synWbr R (synCconnex) D)
+      (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))) (synWne (.cv x) (.cv y)))
       p0004
   have p0007 :=
-    @g_simpl (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-      (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-        (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))
-  have p0008 := @g_simpl (.classMem (.cv x) D) (.classMem (.cv y) D)
+    @gSimpl (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+      (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+        (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))
+  have p0008 := @gSimpl (.classMem (.cv x) D) (.classMem (.cv y) D)
   have p0009 :=
-    @g_syl
-      (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-        (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-          (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))
-      (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D)) (.classMem (.cv x) D) p0007
+    @gSyl
+      (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+        (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+          (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))
+      (synWa (.classMem (.cv x) D) (.classMem (.cv y) D)) (.classMem (.cv x) D) p0007
       p0008
   have p0010 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))) (syn_wne (.cv x) (.cv y)))
-      (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-        (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-          (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))
+    @gSyl
+      (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))) (synWne (.cv x) (.cv y)))
+      (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+        (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+          (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))
       (.classMem (.cv x) D) p0000 p0009
-  have p0013 := @g_simpr (.classMem (.cv x) D) (.classMem (.cv y) D)
+  have p0013 := @gSimpr (.classMem (.cv x) D) (.classMem (.cv y) D)
   have p0014 :=
-    @g_syl
-      (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-        (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-          (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))
-      (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D)) (.classMem (.cv y) D) p0007
+    @gSyl
+      (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+        (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+          (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))
+      (synWa (.classMem (.cv x) D) (.classMem (.cv y) D)) (.classMem (.cv y) D) p0007
       p0013
   have p0015 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))) (syn_wne (.cv x) (.cv y)))
-      (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-        (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-          (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))
+    @gSyl
+      (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))) (synWne (.cv x) (.cv y)))
+      (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+        (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+          (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))
       (.classMem (.cv y) D) p0000 p0014
   have p0016 :=
-    @g_connexd
-      (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))) (syn_wne (.cv x) (.cv y)))
+    @gConnexd
+      (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))) (synWne (.cv x) (.cv y)))
       D R (.cv x) (.cv y) p0005 p0010 p0015
   have p0017 :=
-    @g_simpl
-      (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))) (syn_wne (.cv x) (.cv y)))
-      (syn_wbr (.cv x) R (.cv y))
+    @gSimpl
+      (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))) (synWne (.cv x) (.cv y)))
+      (synWbr (.cv x) R (.cv y))
   have p0023 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-            (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-              (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))
-          (syn_wne (.cv x) (.cv y))) (syn_wbr (.cv x) R (.cv y)))
-      (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))) (syn_wne (.cv x) (.cv y)))
+    @gSyl
+      (synWa (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+            (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+              (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))
+          (synWne (.cv x) (.cv y))) (synWbr (.cv x) R (.cv y)))
+      (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))) (synWne (.cv x) (.cv y)))
       (.classMem (.cv x) D) p0017 p0010
   have p0024 :=
-    @g_simpr
-      (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))) (syn_wne (.cv x) (.cv y)))
-      (syn_wbr (.cv x) R (.cv y))
+    @gSimpr
+      (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))) (synWne (.cv x) (.cv y)))
+      (synWbr (.cv x) R (.cv y))
   have p0026 :=
-    @g_simpr
-      (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-        (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-          (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))
-      (syn_wne (.cv x) (.cv y))
+    @gSimpr
+      (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+        (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+          (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))
+      (synWne (.cv x) (.cv y))
   have p0027 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-            (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-              (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))
-          (syn_wne (.cv x) (.cv y))) (syn_wbr (.cv x) R (.cv y)))
-      (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))) (syn_wne (.cv x) (.cv y)))
-      (syn_wne (.cv x) (.cv y)) p0017 p0026
+    @gSyl
+      (synWa (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+            (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+              (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))
+          (synWne (.cv x) (.cv y))) (synWbr (.cv x) R (.cv y)))
+      (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))) (synWne (.cv x) (.cv y)))
+      (synWne (.cv x) (.cv y)) p0017 p0026
   have p0028 :=
-    @g_jca
-      (syn_wa (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-            (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-              (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))
-          (syn_wne (.cv x) (.cv y))) (syn_wbr (.cv x) R (.cv y)))
-      (syn_wbr (.cv x) R (.cv y)) (syn_wne (.cv x) (.cv y)) p0024 p0027
+    @gJca
+      (synWa (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+            (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+              (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))
+          (synWne (.cv x) (.cv y))) (synWbr (.cv x) R (.cv y)))
+      (synWbr (.cv x) R (.cv y)) (synWne (.cv x) (.cv y)) p0024 p0027
   have p0029 :=
-    @g_jca
-      (syn_wa (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-            (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-              (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))
-          (syn_wne (.cv x) (.cv y))) (syn_wbr (.cv x) R (.cv y)))
-      (.classMem (.cv x) D) (syn_wa (syn_wbr (.cv x) R (.cv y)) (syn_wne (.cv x) (.cv y)))
+    @gJca
+      (synWa (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+            (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+              (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))
+          (synWne (.cv x) (.cv y))) (synWbr (.cv x) R (.cv y)))
+      (.classMem (.cv x) D) (synWa (synWbr (.cv x) R (.cv y)) (synWne (.cv x) (.cv y)))
       p0023 p0028
-  have p0030 := @g_elstrictseg y x D R
+  have p0030 := @gElstrictseg y x D R
   have p0031 :=
-    @g_biimpri
+    @gBiimpri
       (.classMem (.cv x)
-        (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y)))))
-      (syn_wa (.classMem (.cv x) D)
-        (syn_wa (syn_wbr (.cv x) R (.cv y)) (syn_wne (.cv x) (.cv y))))
+        (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y)))))
+      (synWa (.classMem (.cv x) D)
+        (synWa (synWbr (.cv x) R (.cv y)) (synWne (.cv x) (.cv y))))
       p0030
   have p0032 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-            (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-              (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))
-          (syn_wne (.cv x) (.cv y))) (syn_wbr (.cv x) R (.cv y)))
-      (syn_wa (.classMem (.cv x) D)
-        (syn_wa (syn_wbr (.cv x) R (.cv y)) (syn_wne (.cv x) (.cv y))))
+    @gSyl
+      (synWa (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+            (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+              (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))
+          (synWne (.cv x) (.cv y))) (synWbr (.cv x) R (.cv y)))
+      (synWa (.classMem (.cv x) D)
+        (synWa (synWbr (.cv x) R (.cv y)) (synWne (.cv x) (.cv y))))
       (.classMem (.cv x)
-        (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y)))))
+        (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y)))))
       p0029 p0031
   have p0033 :=
-    @g_ex
-      (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))) (syn_wne (.cv x) (.cv y)))
-      (syn_wbr (.cv x) R (.cv y))
+    @gEx
+      (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))) (synWne (.cv x) (.cv y)))
+      (synWbr (.cv x) R (.cv y))
       (.classMem (.cv x)
-        (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y)))))
+        (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y)))))
       p0032
   have p0034 :=
-    @g_simpl
-      (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))) (syn_wne (.cv x) (.cv y)))
-      (syn_wbr (.cv y) R (.cv x))
+    @gSimpl
+      (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))) (synWne (.cv x) (.cv y)))
+      (synWbr (.cv y) R (.cv x))
   have p0040 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-            (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-              (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))
-          (syn_wne (.cv x) (.cv y))) (syn_wbr (.cv y) R (.cv x)))
-      (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))) (syn_wne (.cv x) (.cv y)))
+    @gSyl
+      (synWa (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+            (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+              (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))
+          (synWne (.cv x) (.cv y))) (synWbr (.cv y) R (.cv x)))
+      (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))) (synWne (.cv x) (.cv y)))
       (.classMem (.cv y) D) p0034 p0015
   have p0041 :=
-    @g_simpr
-      (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))) (syn_wne (.cv x) (.cv y)))
-      (syn_wbr (.cv y) R (.cv x))
+    @gSimpr
+      (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))) (synWne (.cv x) (.cv y)))
+      (synWbr (.cv y) R (.cv x))
   have p0044 :=
-    @g_necomd
-      (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))) (syn_wne (.cv x) (.cv y)))
+    @gNecomd
+      (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))) (synWne (.cv x) (.cv y)))
       (.cv x) (.cv y) p0026
   have p0045 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-            (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-              (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))
-          (syn_wne (.cv x) (.cv y))) (syn_wbr (.cv y) R (.cv x)))
-      (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))) (syn_wne (.cv x) (.cv y)))
-      (syn_wne (.cv y) (.cv x)) p0034 p0044
+    @gSyl
+      (synWa (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+            (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+              (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))
+          (synWne (.cv x) (.cv y))) (synWbr (.cv y) R (.cv x)))
+      (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))) (synWne (.cv x) (.cv y)))
+      (synWne (.cv y) (.cv x)) p0034 p0044
   have p0046 :=
-    @g_jca
-      (syn_wa (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-            (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-              (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))
-          (syn_wne (.cv x) (.cv y))) (syn_wbr (.cv y) R (.cv x)))
-      (syn_wbr (.cv y) R (.cv x)) (syn_wne (.cv y) (.cv x)) p0041 p0045
+    @gJca
+      (synWa (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+            (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+              (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))
+          (synWne (.cv x) (.cv y))) (synWbr (.cv y) R (.cv x)))
+      (synWbr (.cv y) R (.cv x)) (synWne (.cv y) (.cv x)) p0041 p0045
   have p0047 :=
-    @g_jca
-      (syn_wa (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-            (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-              (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))
-          (syn_wne (.cv x) (.cv y))) (syn_wbr (.cv y) R (.cv x)))
-      (.classMem (.cv y) D) (syn_wa (syn_wbr (.cv y) R (.cv x)) (syn_wne (.cv y) (.cv x)))
+    @gJca
+      (synWa (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+            (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+              (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))
+          (synWne (.cv x) (.cv y))) (synWbr (.cv y) R (.cv x)))
+      (.classMem (.cv y) D) (synWa (synWbr (.cv y) R (.cv x)) (synWne (.cv y) (.cv x)))
       p0040 p0046
-  have p0048 := @g_elstrictseg x y D R
+  have p0048 := @gElstrictseg x y D R
   have p0049 :=
-    @g_biimpri
+    @gBiimpri
       (.classMem (.cv y)
-        (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x)))))
-      (syn_wa (.classMem (.cv y) D)
-        (syn_wa (syn_wbr (.cv y) R (.cv x)) (syn_wne (.cv y) (.cv x))))
+        (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x)))))
+      (synWa (.classMem (.cv y) D)
+        (synWa (synWbr (.cv y) R (.cv x)) (synWne (.cv y) (.cv x))))
       p0048
   have p0050 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-            (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-              (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))
-          (syn_wne (.cv x) (.cv y))) (syn_wbr (.cv y) R (.cv x)))
-      (syn_wa (.classMem (.cv y) D)
-        (syn_wa (syn_wbr (.cv y) R (.cv x)) (syn_wne (.cv y) (.cv x))))
+    @gSyl
+      (synWa (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+            (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+              (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))
+          (synWne (.cv x) (.cv y))) (synWbr (.cv y) R (.cv x)))
+      (synWa (.classMem (.cv y) D)
+        (synWa (synWbr (.cv y) R (.cv x)) (synWne (.cv y) (.cv x))))
       (.classMem (.cv y)
-        (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x)))))
+        (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x)))))
       p0047 p0049
   have p0051 :=
-    @g_ex
-      (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))) (syn_wne (.cv x) (.cv y)))
-      (syn_wbr (.cv y) R (.cv x))
+    @gEx
+      (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))) (synWne (.cv x) (.cv y)))
+      (synWbr (.cv y) R (.cv x))
       (.classMem (.cv y)
-        (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x)))))
+        (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x)))))
       p0050
   have p0052 :=
-    @g_orim12d
-      (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))) (syn_wne (.cv x) (.cv y)))
-      (syn_wbr (.cv x) R (.cv y))
+    @gOrim12d
+      (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))) (synWne (.cv x) (.cv y)))
+      (synWbr (.cv x) R (.cv y))
       (.classMem (.cv x)
-        (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y)))))
-      (syn_wbr (.cv y) R (.cv x))
+        (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y)))))
+      (synWbr (.cv y) R (.cv x))
       (.classMem (.cv y)
-        (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x)))))
+        (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x)))))
       p0033 p0051
   have p0053 :=
-    @g_mpd
-      (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))) (syn_wne (.cv x) (.cv y)))
-      (syn_wo (syn_wbr (.cv x) R (.cv y)) (syn_wbr (.cv y) R (.cv x)))
-      (syn_wo (.classMem (.cv x)
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y)))))
+    @gMpd
+      (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))) (synWne (.cv x) (.cv y)))
+      (synWo (synWbr (.cv x) R (.cv y)) (synWbr (.cv y) R (.cv x)))
+      (synWo (.classMem (.cv x)
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y)))))
         (.classMem (.cv y)
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x))))))
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x))))))
       p0016 p0052
-  have p0059 := @g_hnwcutclassltne x y D R dv_cache_0001 hyp_hnwcutclassinj_1
+  have p0059 := @gHnwcutclassltne x y D R dv_cache_0001 hyp_hnwcutclassinj_1
   have p0060 :=
-    @g_ex (.classMem (.cv y) D)
+    @gEx (.classMem (.cv y) D)
       (.classMem (.cv x)
-        (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y)))))
-      (.neg (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-          (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))
+        (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y)))))
+      (.neg (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+          (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))
       p0059
   have p0061 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))) (syn_wne (.cv x) (.cv y)))
+    @gSyl
+      (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))) (synWne (.cv x) (.cv y)))
       (.classMem (.cv y) D)
       (.imp (.classMem (.cv x)
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y))))) (.neg
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))))
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y))))) (.neg
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))))
       p0015 p0060
-  have p0067 := @g_hnwcutclassltne y x D R dv_cache_0001 hyp_hnwcutclassinj_1
+  have p0067 := @gHnwcutclassltne y x D R dv_cache_0001 hyp_hnwcutclassinj_1
   have p0068 :=
-    @g_ex (.classMem (.cv x) D)
+    @gEx (.classMem (.cv x) D)
       (.classMem (.cv y)
-        (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x)))))
-      (.neg (.classEq (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))
-          (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))))
+        (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x)))))
+      (.neg (.classEq (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))
+          (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))))
       p0067
   have p0069 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))) (syn_wne (.cv x) (.cv y)))
+    @gSyl
+      (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))) (synWne (.cv x) (.cv y)))
       (.classMem (.cv x) D)
       (.imp (.classMem (.cv y)
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x))))) (.neg
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D)))))
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x))))) (.neg
+          (.classEq (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv x)) (synChwniso D)))))
       p0010 p0068
   have p0070 :=
-    @g_eqcom (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-      (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))
+    @gEqcom (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+      (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))
   have p0071 :=
-    @g_biimpi
-      (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-        (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))
-      (.classEq (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))
-        (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D)))
+    @gBiimpi
+      (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+        (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))
+      (.classEq (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))
+        (synCec (synChnwcutcode R D (.cv x)) (synChwniso D)))
       p0070
   have p0072 :=
-    @g_con3i
-      (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-        (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))
-      (.classEq (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))
-        (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D)))
+    @gCon3i
+      (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+        (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))
+      (.classEq (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))
+        (synCec (synChnwcutcode R D (.cv x)) (synChwniso D)))
       p0071
   have p0073 :=
-    @g_syl6
-      (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))) (syn_wne (.cv x) (.cv y)))
+    @gSyl6
+      (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))) (synWne (.cv x) (.cv y)))
       (.classMem (.cv y)
-        (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x)))))
-      (.neg (.classEq (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))
-          (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))))
-      (.neg (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-          (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))
+        (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x)))))
+      (.neg (.classEq (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))
+          (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))))
+      (.neg (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+          (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))
       p0069 p0072
   have p0074 :=
-    @g_jaod
-      (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))) (syn_wne (.cv x) (.cv y)))
+    @gJaod
+      (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))) (synWne (.cv x) (.cv y)))
       (.classMem (.cv x)
-        (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y)))))
-      (.neg (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-          (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))
+        (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y)))))
+      (.neg (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+          (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))
       (.classMem (.cv y)
-        (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x)))))
+        (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x)))))
       p0061 p0073
   have p0075 :=
-    @g_mpd
-      (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))) (syn_wne (.cv x) (.cv y)))
-      (syn_wo (.classMem (.cv x)
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv y)))))
+    @gMpd
+      (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))) (synWne (.cv x) (.cv y)))
+      (synWo (.classMem (.cv x)
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv y)))))
         (.classMem (.cv y)
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x))))))
-      (.neg (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-          (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x))))))
+      (.neg (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+          (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))
       p0053 p0074
   have p0076 :=
-    @g_pm2_21dd
-      (syn_wa (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))) (syn_wne (.cv x) (.cv y)))
-      (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-        (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))
-      (.neg (syn_wne (.cv x) (.cv y))) p0002 p0075
+    @gPm221dd
+      (synWa (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))) (synWne (.cv x) (.cv y)))
+      (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+        (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))
+      (.neg (synWne (.cv x) (.cv y))) p0002 p0075
   have p0077 :=
-    @g_pm2_01da
-      (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-        (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-          (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))
-      (syn_wne (.cv x) (.cv y)) p0076
-  have p0078 := @g_nne (.cv x) (.cv y)
+    @gPm201da
+      (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+        (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+          (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))
+      (synWne (.cv x) (.cv y)) p0076
+  have p0078 := @gNne (.cv x) (.cv y)
   have p0079 :=
-    @g_sylib
-      (syn_wa (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-        (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-          (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))))
-      (.neg (syn_wne (.cv x) (.cv y))) (.classEq (.cv x) (.cv y)) p0077 p0078
+    @gSylib
+      (synWa (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+        (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+          (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))))
+      (.neg (synWne (.cv x) (.cv y))) (.classEq (.cv x) (.cv y)) p0077 p0078
   have p0080 :=
-    @g_ex (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-      (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-        (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))
+    @gEx (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+      (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+        (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))
       (.classEq (.cv x) (.cv y)) p0079
   exact p0080
 
+/-- Checked nominal proof certificate identified upstream as `g_hnwcutclassinjcl`. -/
 @[expose]
-noncomputable def g_hnwcutclassinjcl (B : Class) (C : Class) (D : Class) (R : Class)
+noncomputable def gHnwcutclassinjcl (B : Class) (C : Class) (D : Class) (R : Class)
     (dv_D_R : Disjoint D.fv R.fv)
-    (hyp_hnwcutclassinjcl_1 : Nominal.NPrf (syn_wbr R (syn_cwe) D)) :
+    (hyp_hnwcutclassinjcl_1 : Nominal.NPrf (synWbr R (synCwe) D)) :
     Nominal.NPrf
-      (.imp (syn_wa (.classMem B D) (.classMem C D)) (.imp
-          (.classEq (syn_cec (syn_chnwcutcode R D B) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D C) (syn_chwniso D))) (.classEq B C))) :=
+      (.imp (synWa (.classMem B D) (.classMem C D)) (.imp
+          (.classEq (synCec (synChnwcutcode R D B) (synChwniso D))
+            (synCec (synChnwcutcode R D C) (synChwniso D))) (.classEq B C))) :=
   by
   let proofSupport : Finset Var := B.fv ∪ C.fv ∪ D.fv ∪ R.fv
   let x : Var := freshVar proofSupport 0
@@ -1439,9 +1448,9 @@ noncomputable def g_hnwcutclassinjcl (B : Class) (C : Class) (D : Class) (R : Cl
         simp only [fresh_y_not_C, not_false_eq_true])
   have dv_cache_0007 :
     y ∉
-      ((Wff.imp (syn_wa (.classMem B D) (.classMem C D)) (.imp
-            (.classEq (syn_cec (syn_chnwcutcode R D B) (syn_chwniso D))
-              (syn_cec (syn_chnwcutcode R D C) (syn_chwniso D))) (.classEq B C)))).fv :=
+      ((Wff.imp (synWa (.classMem B D) (.classMem C D)) (.imp
+            (.classEq (synCec (synChnwcutcode R D B) (synChwniso D))
+              (synCec (synChnwcutcode R D C) (synChwniso D))) (.classEq B C)))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006
@@ -1462,9 +1471,9 @@ noncomputable def g_hnwcutclassinjcl (B : Class) (C : Class) (D : Class) (R : Cl
           not_false_eq_true])
   have dv_cache_0008 :
     x ∉
-      ((Wff.imp (syn_wa (.classMem B D) (.classMem (.cv y) D)) (.imp
-            (.classEq (syn_cec (syn_chnwcutcode R D B) (syn_chwniso D))
-              (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))
+      ((Wff.imp (synWa (.classMem B D) (.classMem (.cv y) D)) (.imp
+            (.classEq (synCec (synChnwcutcode R D B) (synChwniso D))
+              (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))
             (.classEq B (.cv y))))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
@@ -1485,118 +1494,118 @@ noncomputable def g_hnwcutclassinjcl (B : Class) (C : Class) (D : Class) (R : Cl
           NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chwniso, Finset.mem_union,
           Finset.mem_singleton, fresh_x_not_B, fresh_x_not_D, fresh_x_ne_y, fresh_x_not_R,
           or_false, not_false_eq_true])
-  have p0000 := @g_simpl (.classMem B D) (.classMem C D)
-  have p0001 := @g_elex B D
+  have p0000 := @gSimpl (.classMem B D) (.classMem C D)
+  have p0001 := @gElex B D
   have p0002 :=
-    @g_syl (syn_wa (.classMem B D) (.classMem C D)) (.classMem B D)
-      (.classMem B (syn_cvv)) p0000 p0001
-  have p0003 := @g_simpr (.classMem B D) (.classMem C D)
-  have p0004 := @g_elex C D
+    @gSyl (synWa (.classMem B D) (.classMem C D)) (.classMem B D)
+      (.classMem B (synCvv)) p0000 p0001
+  have p0003 := @gSimpr (.classMem B D) (.classMem C D)
+  have p0004 := @gElex C D
   have p0005 :=
-    @g_syl (syn_wa (.classMem B D) (.classMem C D)) (.classMem C D)
-      (.classMem C (syn_cvv)) p0003 p0004
+    @gSyl (synWa (.classMem B D) (.classMem C D)) (.classMem C D)
+      (.classMem C (synCvv)) p0003 p0004
   have p0006 :=
-    @g_jca (syn_wa (.classMem B D) (.classMem C D)) (.classMem B (syn_cvv))
-      (.classMem C (syn_cvv)) p0002 p0005
-  have p0007 := @g_eleq1 (.cv x) B D
-  have p0008 := @g_biid (.classMem (.cv y) D)
+    @gJca (synWa (.classMem B D) (.classMem C D)) (.classMem B (synCvv))
+      (.classMem C (synCvv)) p0002 p0005
+  have p0007 := @gEleq1 (.cv x) B D
+  have p0008 := @gBiid (.classMem (.cv y) D)
   have p0009 :=
-    @g_a1i (syn_wb (.classMem (.cv y) D) (.classMem (.cv y) D)) (.classEq (.cv x) B) p0008
+    @gA1i (synWb (.classMem (.cv y) D) (.classMem (.cv y) D)) (.classEq (.cv x) B) p0008
   have p0010 :=
-    @g_anbi12d (.classEq (.cv x) B) (.classMem (.cv x) D) (.classMem B D)
+    @gAnbi12d (.classEq (.cv x) B) (.classMem (.cv x) D) (.classMem B D)
       (.classMem (.cv y) D) (.classMem (.cv y) D) p0007 p0009
-  have p0011 := @g_hnwcutcodeeq3 (.cv x) B D R dv_cache_0001
+  have p0011 := @gHnwcutcodeeq3 (.cv x) B D R dv_cache_0001
   have p0012 :=
-    @g_eceq1 (syn_chnwcutcode R D (.cv x)) (syn_chnwcutcode R D B) (syn_chwniso D)
+    @gEceq1 (synChnwcutcode R D (.cv x)) (synChnwcutcode R D B) (synChwniso D)
   have p0013 :=
-    @g_syl (.classEq (.cv x) B)
-      (.classEq (syn_chnwcutcode R D (.cv x)) (syn_chnwcutcode R D B))
-      (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-        (syn_cec (syn_chnwcutcode R D B) (syn_chwniso D)))
+    @gSyl (.classEq (.cv x) B)
+      (.classEq (synChnwcutcode R D (.cv x)) (synChnwcutcode R D B))
+      (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+        (synCec (synChnwcutcode R D B) (synChwniso D)))
       p0011 p0012
   have p0014 :=
-    @g_eqeq1d (.classEq (.cv x) B) (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-      (syn_cec (syn_chnwcutcode R D B) (syn_chwniso D))
-      (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)) p0013
-  have p0015 := @g_id (.classEq (.cv x) B)
-  have p0016 := @g_eqeq1d (.classEq (.cv x) B) (.cv x) B (.cv y) p0015
+    @gEqeq1d (.classEq (.cv x) B) (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+      (synCec (synChnwcutcode R D B) (synChwniso D))
+      (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)) p0013
+  have p0015 := @gId (.classEq (.cv x) B)
+  have p0016 := @gEqeq1d (.classEq (.cv x) B) (.cv x) B (.cv y) p0015
   have p0017 :=
-    @g_imbi12d (.classEq (.cv x) B)
-      (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-        (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))
-      (.classEq (syn_cec (syn_chnwcutcode R D B) (syn_chwniso D))
-        (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))
+    @gImbi12d (.classEq (.cv x) B)
+      (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+        (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))
+      (.classEq (synCec (synChnwcutcode R D B) (synChwniso D))
+        (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))
       (.classEq (.cv x) (.cv y)) (.classEq B (.cv y)) p0014 p0016
   have p0018 :=
-    @g_imbi12d (.classEq (.cv x) B) (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D))
-      (syn_wa (.classMem B D) (.classMem (.cv y) D))
-      (.imp (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-          (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))) (.classEq (.cv x) (.cv y)))
-      (.imp (.classEq (syn_cec (syn_chnwcutcode R D B) (syn_chwniso D))
-          (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))) (.classEq B (.cv y)))
+    @gImbi12d (.classEq (.cv x) B) (synWa (.classMem (.cv x) D) (.classMem (.cv y) D))
+      (synWa (.classMem B D) (.classMem (.cv y) D))
+      (.imp (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+          (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))) (.classEq (.cv x) (.cv y)))
+      (.imp (.classEq (synCec (synChnwcutcode R D B) (synChwniso D))
+          (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))) (.classEq B (.cv y)))
       p0010 p0017
-  have p0019 := @g_biid (.classMem B D)
-  have p0020 := @g_a1i (syn_wb (.classMem B D) (.classMem B D)) (.classEq (.cv y) C) p0019
-  have p0021 := @g_eleq1 (.cv y) C D
+  have p0019 := @gBiid (.classMem B D)
+  have p0020 := @gA1i (synWb (.classMem B D) (.classMem B D)) (.classEq (.cv y) C) p0019
+  have p0021 := @gEleq1 (.cv y) C D
   have p0022 :=
-    @g_anbi12d (.classEq (.cv y) C) (.classMem B D) (.classMem B D) (.classMem (.cv y) D)
+    @gAnbi12d (.classEq (.cv y) C) (.classMem B D) (.classMem B D) (.classMem (.cv y) D)
       (.classMem C D) p0020 p0021
-  have p0023 := @g_hnwcutcodeeq3 (.cv y) C D R dv_cache_0002
+  have p0023 := @gHnwcutcodeeq3 (.cv y) C D R dv_cache_0002
   have p0024 :=
-    @g_eceq1 (syn_chnwcutcode R D (.cv y)) (syn_chnwcutcode R D C) (syn_chwniso D)
+    @gEceq1 (synChnwcutcode R D (.cv y)) (synChnwcutcode R D C) (synChwniso D)
   have p0025 :=
-    @g_syl (.classEq (.cv y) C)
-      (.classEq (syn_chnwcutcode R D (.cv y)) (syn_chnwcutcode R D C))
-      (.classEq (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))
-        (syn_cec (syn_chnwcutcode R D C) (syn_chwniso D)))
+    @gSyl (.classEq (.cv y) C)
+      (.classEq (synChnwcutcode R D (.cv y)) (synChnwcutcode R D C))
+      (.classEq (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))
+        (synCec (synChnwcutcode R D C) (synChwniso D)))
       p0023 p0024
   have p0026 :=
-    @g_eqeq2d (.classEq (.cv y) C) (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))
-      (syn_cec (syn_chnwcutcode R D C) (syn_chwniso D))
-      (syn_cec (syn_chnwcutcode R D B) (syn_chwniso D)) p0025
-  have p0027 := @g_id (.classEq (.cv y) C)
-  have p0028 := @g_eqeq2d (.classEq (.cv y) C) (.cv y) C B p0027
+    @gEqeq2d (.classEq (.cv y) C) (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))
+      (synCec (synChnwcutcode R D C) (synChwniso D))
+      (synCec (synChnwcutcode R D B) (synChwniso D)) p0025
+  have p0027 := @gId (.classEq (.cv y) C)
+  have p0028 := @gEqeq2d (.classEq (.cv y) C) (.cv y) C B p0027
   have p0029 :=
-    @g_imbi12d (.classEq (.cv y) C)
-      (.classEq (syn_cec (syn_chnwcutcode R D B) (syn_chwniso D))
-        (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))
-      (.classEq (syn_cec (syn_chnwcutcode R D B) (syn_chwniso D))
-        (syn_cec (syn_chnwcutcode R D C) (syn_chwniso D)))
+    @gImbi12d (.classEq (.cv y) C)
+      (.classEq (synCec (synChnwcutcode R D B) (synChwniso D))
+        (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))
+      (.classEq (synCec (synChnwcutcode R D B) (synChwniso D))
+        (synCec (synChnwcutcode R D C) (synChwniso D)))
       (.classEq B (.cv y)) (.classEq B C) p0026 p0028
   have p0030 :=
-    @g_imbi12d (.classEq (.cv y) C) (syn_wa (.classMem B D) (.classMem (.cv y) D))
-      (syn_wa (.classMem B D) (.classMem C D))
-      (.imp (.classEq (syn_cec (syn_chnwcutcode R D B) (syn_chwniso D))
-          (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))) (.classEq B (.cv y)))
-      (.imp (.classEq (syn_cec (syn_chnwcutcode R D B) (syn_chwniso D))
-          (syn_cec (syn_chnwcutcode R D C) (syn_chwniso D))) (.classEq B C))
+    @gImbi12d (.classEq (.cv y) C) (synWa (.classMem B D) (.classMem (.cv y) D))
+      (synWa (.classMem B D) (.classMem C D))
+      (.imp (.classEq (synCec (synChnwcutcode R D B) (synChwniso D))
+          (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))) (.classEq B (.cv y)))
+      (.imp (.classEq (synCec (synChnwcutcode R D B) (synChwniso D))
+          (synCec (synChnwcutcode R D C) (synChwniso D))) (.classEq B C))
       p0022 p0029
-  have p0031 := @g_hnwcutclassinj x y D R dv_cache_0003 hyp_hnwcutclassinjcl_1
+  have p0031 := @gHnwcutclassinj x y D R dv_cache_0003 hyp_hnwcutclassinjcl_1
   have p0032 :=
-    @g_vtocl2g
-      (.imp (syn_wa (.classMem (.cv x) D) (.classMem (.cv y) D)) (.imp
-          (.classEq (syn_cec (syn_chnwcutcode R D (.cv x)) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D)))
+    @gVtocl2g
+      (.imp (synWa (.classMem (.cv x) D) (.classMem (.cv y) D)) (.imp
+          (.classEq (synCec (synChnwcutcode R D (.cv x)) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D)))
           (.classEq (.cv x) (.cv y))))
-      (.imp (syn_wa (.classMem B D) (.classMem (.cv y) D)) (.imp
-          (.classEq (syn_cec (syn_chnwcutcode R D B) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D (.cv y)) (syn_chwniso D))) (.classEq B (.cv y))))
-      (.imp (syn_wa (.classMem B D) (.classMem C D)) (.imp
-          (.classEq (syn_cec (syn_chnwcutcode R D B) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D C) (syn_chwniso D))) (.classEq B C)))
-      x y B C (syn_cvv) (syn_cvv) dv_cache_0004 dv_cache_0005 dv_cache_0006 dv_cache_0007
+      (.imp (synWa (.classMem B D) (.classMem (.cv y) D)) (.imp
+          (.classEq (synCec (synChnwcutcode R D B) (synChwniso D))
+            (synCec (synChnwcutcode R D (.cv y)) (synChwniso D))) (.classEq B (.cv y))))
+      (.imp (synWa (.classMem B D) (.classMem C D)) (.imp
+          (.classEq (synCec (synChnwcutcode R D B) (synChwniso D))
+            (synCec (synChnwcutcode R D C) (synChwniso D))) (.classEq B C)))
+      x y B C (synCvv) (synCvv) dv_cache_0004 dv_cache_0005 dv_cache_0006 dv_cache_0007
       dv_cache_0008 p0018 p0030 p0031
   have p0033 :=
-    @g_syl (syn_wa (.classMem B D) (.classMem C D))
-      (syn_wa (.classMem B (syn_cvv)) (.classMem C (syn_cvv)))
-      (.imp (syn_wa (.classMem B D) (.classMem C D)) (.imp
-          (.classEq (syn_cec (syn_chnwcutcode R D B) (syn_chwniso D))
-            (syn_cec (syn_chnwcutcode R D C) (syn_chwniso D))) (.classEq B C)))
+    @gSyl (synWa (.classMem B D) (.classMem C D))
+      (synWa (.classMem B (synCvv)) (.classMem C (synCvv)))
+      (.imp (synWa (.classMem B D) (.classMem C D)) (.imp
+          (.classEq (synCec (synChnwcutcode R D B) (synChwniso D))
+            (synCec (synChnwcutcode R D C) (synChwniso D))) (.classEq B C)))
       p0006 p0032
   have p0034 :=
-    @g_pm2_43i (syn_wa (.classMem B D) (.classMem C D))
-      (.imp (.classEq (syn_cec (syn_chnwcutcode R D B) (syn_chwniso D))
-          (syn_cec (syn_chnwcutcode R D C) (syn_chwniso D))) (.classEq B C))
+    @gPm243i (synWa (.classMem B D) (.classMem C D))
+      (.imp (.classEq (synCec (synChnwcutcode R D B) (synChwniso D))
+          (synCec (synChnwcutcode R D C) (synChwniso D))) (.classEq B C))
       p0033
   exact p0034
 
@@ -1618,10 +1627,11 @@ open NFChoice.SemanticCore
 open NFChoice.ReplaySupport
 open NFChoice.Compiler.CompactSourceSyntax
 
+/-- Checked nominal proof certificate identified upstream as `g_hnwcutmapf1`. -/
 @[expose]
-noncomputable def g_hnwcutmapf1 (D : Class) (R : Class) (dv_D_R : Disjoint D.fv R.fv)
-    (hyp_hnwcutmapf1_1 : Nominal.NPrf (syn_wbr R (syn_cwe) D)) :
-    Nominal.NPrf (syn_wf1 (syn_chnwcutmap R D) (syn_cpw1 (syn_cpw1 D)) (syn_chnord D)) :=
+noncomputable def gHnwcutmapf1 (D : Class) (R : Class) (dv_D_R : Disjoint D.fv R.fv)
+    (hyp_hnwcutmapf1_1 : Nominal.NPrf (synWbr R (synCwe) D)) :
+    Nominal.NPrf (synWf1 (synChnwcutmap R D) (synCpw1 (synCpw1 D)) (synChnord D)) :=
   by
   let proofSupport : Finset Var := D.fv ∪ R.fv
   let q : Var := freshVar proofSupport 0
@@ -1653,7 +1663,7 @@ noncomputable def g_hnwcutmapf1 (D : Class) (R : Class) (dv_D_R : Disjoint D.fv 
   have dv_cache_0001 : Disjoint (D).fv (R).fv := by
     exact
       (show Disjoint (D).fv (R).fv from (show Disjoint (D).fv (R).fv from (by exact dv_D_R)))
-  have dv_cache_0002 : r ∉ ((syn_cpw1 (syn_cpw1 D))).fv :=
+  have dv_cache_0002 : r ∉ ((synCpw1 (synCpw1 D))).fv :=
     by
     clear dv_cache_0001
     exact
@@ -1664,7 +1674,7 @@ noncomputable def g_hnwcutmapf1 (D : Class) (R : Class) (dv_D_R : Disjoint D.fv 
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1, fresh_r_not_D,
           not_false_eq_true])
-  have dv_cache_0003 : q ∉ ((syn_wbr R (syn_cwe) D)).fv :=
+  have dv_cache_0003 : q ∉ ((synWbr R (synCwe) D)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002
     exact
@@ -1677,7 +1687,7 @@ noncomputable def g_hnwcutmapf1 (D : Class) (R : Class) (dv_D_R : Disjoint D.fv 
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cwe, Finset.mem_union,
           fresh_q_not_R, fresh_q_not_D, compact_fv_not_mem_empty, or_false,
           not_false_eq_true])
-  have dv_cache_0004 : r ∉ ((syn_wbr R (syn_cwe) D)).fv :=
+  have dv_cache_0004 : r ∉ ((synWbr R (synCwe) D)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003
     exact
@@ -1694,7 +1704,7 @@ noncomputable def g_hnwcutmapf1 (D : Class) (R : Class) (dv_D_R : Disjoint D.fv 
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004
     exact (show q ≠ r from (by exact fresh_q_ne_r))
-  have dv_cache_0006 : q ∉ ((syn_cpw1 (syn_cpw1 D))).fv :=
+  have dv_cache_0006 : q ∉ ((synCpw1 (synCpw1 D))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
     exact
@@ -1705,7 +1715,7 @@ noncomputable def g_hnwcutmapf1 (D : Class) (R : Class) (dv_D_R : Disjoint D.fv 
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1, fresh_q_not_D,
           not_false_eq_true])
-  have dv_cache_0007 : q ∉ ((syn_chnwcutmap R D)).fv :=
+  have dv_cache_0007 : q ∉ ((synChnwcutmap R D)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006
@@ -1717,7 +1727,7 @@ noncomputable def g_hnwcutmapf1 (D : Class) (R : Class) (dv_D_R : Disjoint D.fv 
           cases hmem
         simp only [NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chnwcutmap,
           Finset.mem_union, fresh_q_not_D, fresh_q_not_R, or_false, not_false_eq_true])
-  have dv_cache_0008 : r ∉ ((syn_chnwcutmap R D)).fv :=
+  have dv_cache_0008 : r ∉ ((synChnwcutmap R D)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007
@@ -1729,308 +1739,308 @@ noncomputable def g_hnwcutmapf1 (D : Class) (R : Class) (dv_D_R : Disjoint D.fv 
           cases hmem
         simp only [NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chnwcutmap,
           Finset.mem_union, fresh_r_not_D, fresh_r_not_R, or_false, not_false_eq_true])
-  have p0000 := @g_hnwcutmapf D R dv_cache_0001 hyp_hnwcutmapf1_1
+  have p0000 := @gHnwcutmapf D R dv_cache_0001 hyp_hnwcutmapf1_1
   have p0001 :=
-    @g_simpl
-      (syn_wa (syn_wbr R (syn_cwe) D) (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-          (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-      (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q)) (syn_cfv (syn_chnwcutmap R D) (.cv r)))
+    @gSimpl
+      (synWa (synWbr R (synCwe) D) (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+          (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+      (.classEq (synCfv (synChnwcutmap R D) (.cv q)) (synCfv (synChnwcutmap R D) (.cv r)))
   have p0002 :=
-    @g_simpr (syn_wbr R (syn_cwe) D)
-      (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-        (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D))))
+    @gSimpr (synWbr R (synCwe) D)
+      (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+        (.classMem (.cv r) (synCpw1 (synCpw1 D))))
   have p0003 :=
-    @g_simpl (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-      (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))
+    @gSimpl (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+      (.classMem (.cv r) (synCpw1 (synCpw1 D)))
   have p0004 :=
-    @g_syl
-      (syn_wa (syn_wbr R (syn_cwe) D) (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-          (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-      (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-        (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D))))
-      (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D))) p0002 p0003
-  have p0005 := @g_pw12argcl (.cv q) D
+    @gSyl
+      (synWa (synWbr R (synCwe) D) (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+          (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+      (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+        (.classMem (.cv r) (synCpw1 (synCpw1 D))))
+      (.classMem (.cv q) (synCpw1 (synCpw1 D))) p0002 p0003
+  have p0005 := @gPw12argcl (.cv q) D
   have p0006 :=
-    @g_syl
-      (syn_wa (syn_wbr R (syn_cwe) D) (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-          (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-      (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-      (syn_wa (.classMem (syn_cuni (syn_cuni (.cv q))) D)
-        (.classEq (.cv q) (syn_csn (syn_csn (syn_cuni (syn_cuni (.cv q)))))))
+    @gSyl
+      (synWa (synWbr R (synCwe) D) (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+          (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+      (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+      (synWa (.classMem (synCuni (synCuni (.cv q))) D)
+        (.classEq (.cv q) (synCsn (synCsn (synCuni (synCuni (.cv q)))))))
       p0004 p0005
   have p0007 :=
-    @g_simprd
-      (syn_wa (syn_wbr R (syn_cwe) D) (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-          (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-      (.classMem (syn_cuni (syn_cuni (.cv q))) D)
-      (.classEq (.cv q) (syn_csn (syn_csn (syn_cuni (syn_cuni (.cv q)))))) p0006
+    @gSimprd
+      (synWa (synWbr R (synCwe) D) (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+          (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+      (.classMem (synCuni (synCuni (.cv q))) D)
+      (.classEq (.cv q) (synCsn (synCsn (synCuni (synCuni (.cv q)))))) p0006
   have p0008 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wbr R (syn_cwe) D)
-          (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-            (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-        (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q))
-          (syn_cfv (syn_chnwcutmap R D) (.cv r))))
-      (syn_wa (syn_wbr R (syn_cwe) D) (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-          (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-      (.classEq (.cv q) (syn_csn (syn_csn (syn_cuni (syn_cuni (.cv q)))))) p0001 p0007
-  have p0013 := @g_hnwcutmapval D R q dv_cache_0001 hyp_hnwcutmapf1_1
+    @gSyl
+      (synWa (synWa (synWbr R (synCwe) D)
+          (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+            (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+        (.classEq (synCfv (synChnwcutmap R D) (.cv q))
+          (synCfv (synChnwcutmap R D) (.cv r))))
+      (synWa (synWbr R (synCwe) D) (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+          (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+      (.classEq (.cv q) (synCsn (synCsn (synCuni (synCuni (.cv q)))))) p0001 p0007
+  have p0013 := @gHnwcutmapval D R q dv_cache_0001 hyp_hnwcutmapf1_1
   have p0014 :=
-    @g_syl
-      (syn_wa (syn_wbr R (syn_cwe) D) (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-          (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-      (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-      (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q))
-        (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv q)))) (syn_chwniso D)))
+    @gSyl
+      (synWa (synWbr R (synCwe) D) (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+          (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+      (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+      (.classEq (synCfv (synChnwcutmap R D) (.cv q))
+        (synCec (synChnwcutcode R D (synCuni (synCuni (.cv q)))) (synChwniso D)))
       p0004 p0013
   have p0015 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wbr R (syn_cwe) D)
-          (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-            (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-        (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q))
-          (syn_cfv (syn_chnwcutmap R D) (.cv r))))
-      (syn_wa (syn_wbr R (syn_cwe) D) (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-          (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-      (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q))
-        (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv q)))) (syn_chwniso D)))
+    @gSyl
+      (synWa (synWa (synWbr R (synCwe) D)
+          (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+            (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+        (.classEq (synCfv (synChnwcutmap R D) (.cv q))
+          (synCfv (synChnwcutmap R D) (.cv r))))
+      (synWa (synWbr R (synCwe) D) (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+          (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+      (.classEq (synCfv (synChnwcutmap R D) (.cv q))
+        (synCec (synChnwcutcode R D (synCuni (synCuni (.cv q)))) (synChwniso D)))
       p0001 p0014
   have p0016 :=
-    @g_eqcomd
-      (syn_wa (syn_wa (syn_wbr R (syn_cwe) D)
-          (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-            (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-        (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q))
-          (syn_cfv (syn_chnwcutmap R D) (.cv r))))
-      (syn_cfv (syn_chnwcutmap R D) (.cv q))
-      (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv q)))) (syn_chwniso D)) p0015
+    @gEqcomd
+      (synWa (synWa (synWbr R (synCwe) D)
+          (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+            (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+        (.classEq (synCfv (synChnwcutmap R D) (.cv q))
+          (synCfv (synChnwcutmap R D) (.cv r))))
+      (synCfv (synChnwcutmap R D) (.cv q))
+      (synCec (synChnwcutcode R D (synCuni (synCuni (.cv q)))) (synChwniso D)) p0015
   have p0017 :=
-    @g_simpr
-      (syn_wa (syn_wbr R (syn_cwe) D) (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-          (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-      (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q)) (syn_cfv (syn_chnwcutmap R D) (.cv r)))
+    @gSimpr
+      (synWa (synWbr R (synCwe) D) (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+          (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+      (.classEq (synCfv (synChnwcutmap R D) (.cv q)) (synCfv (synChnwcutmap R D) (.cv r)))
   have p0018 :=
-    @g_eqtrd
-      (syn_wa (syn_wa (syn_wbr R (syn_cwe) D)
-          (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-            (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-        (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q))
-          (syn_cfv (syn_chnwcutmap R D) (.cv r))))
-      (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv q)))) (syn_chwniso D))
-      (syn_cfv (syn_chnwcutmap R D) (.cv q)) (syn_cfv (syn_chnwcutmap R D) (.cv r)) p0016
+    @gEqtrd
+      (synWa (synWa (synWbr R (synCwe) D)
+          (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+            (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+        (.classEq (synCfv (synChnwcutmap R D) (.cv q))
+          (synCfv (synChnwcutmap R D) (.cv r))))
+      (synCec (synChnwcutcode R D (synCuni (synCuni (.cv q)))) (synChwniso D))
+      (synCfv (synChnwcutmap R D) (.cv q)) (synCfv (synChnwcutmap R D) (.cv r)) p0016
       p0017
   have p0021 :=
-    @g_simpr (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-      (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))
+    @gSimpr (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+      (.classMem (.cv r) (synCpw1 (synCpw1 D)))
   have p0022 :=
-    @g_syl
-      (syn_wa (syn_wbr R (syn_cwe) D) (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-          (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-      (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-        (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D))))
-      (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D))) p0002 p0021
-  have p0023 := @g_hnwcutmapval D R r dv_cache_0001 hyp_hnwcutmapf1_1
+    @gSyl
+      (synWa (synWbr R (synCwe) D) (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+          (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+      (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+        (.classMem (.cv r) (synCpw1 (synCpw1 D))))
+      (.classMem (.cv r) (synCpw1 (synCpw1 D))) p0002 p0021
+  have p0023 := @gHnwcutmapval D R r dv_cache_0001 hyp_hnwcutmapf1_1
   have p0024 :=
-    @g_syl
-      (syn_wa (syn_wbr R (syn_cwe) D) (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-          (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-      (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))
-      (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv r))
-        (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv r)))) (syn_chwniso D)))
+    @gSyl
+      (synWa (synWbr R (synCwe) D) (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+          (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+      (.classMem (.cv r) (synCpw1 (synCpw1 D)))
+      (.classEq (synCfv (synChnwcutmap R D) (.cv r))
+        (synCec (synChnwcutcode R D (synCuni (synCuni (.cv r)))) (synChwniso D)))
       p0022 p0023
   have p0025 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wbr R (syn_cwe) D)
-          (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-            (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-        (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q))
-          (syn_cfv (syn_chnwcutmap R D) (.cv r))))
-      (syn_wa (syn_wbr R (syn_cwe) D) (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-          (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-      (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv r))
-        (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv r)))) (syn_chwniso D)))
+    @gSyl
+      (synWa (synWa (synWbr R (synCwe) D)
+          (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+            (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+        (.classEq (synCfv (synChnwcutmap R D) (.cv q))
+          (synCfv (synChnwcutmap R D) (.cv r))))
+      (synWa (synWbr R (synCwe) D) (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+          (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+      (.classEq (synCfv (synChnwcutmap R D) (.cv r))
+        (synCec (synChnwcutcode R D (synCuni (synCuni (.cv r)))) (synChwniso D)))
       p0001 p0024
   have p0026 :=
-    @g_eqtrd
-      (syn_wa (syn_wa (syn_wbr R (syn_cwe) D)
-          (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-            (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-        (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q))
-          (syn_cfv (syn_chnwcutmap R D) (.cv r))))
-      (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv q)))) (syn_chwniso D))
-      (syn_cfv (syn_chnwcutmap R D) (.cv r))
-      (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv r)))) (syn_chwniso D)) p0018
+    @gEqtrd
+      (synWa (synWa (synWbr R (synCwe) D)
+          (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+            (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+        (.classEq (synCfv (synChnwcutmap R D) (.cv q))
+          (synCfv (synChnwcutmap R D) (.cv r))))
+      (synCec (synChnwcutcode R D (synCuni (synCuni (.cv q)))) (synChwniso D))
+      (synCfv (synChnwcutmap R D) (.cv r))
+      (synCec (synChnwcutcode R D (synCuni (synCuni (.cv r)))) (synChwniso D)) p0018
       p0025
   have p0033 :=
-    @g_simpld
-      (syn_wa (syn_wbr R (syn_cwe) D) (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-          (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-      (.classMem (syn_cuni (syn_cuni (.cv q))) D)
-      (.classEq (.cv q) (syn_csn (syn_csn (syn_cuni (syn_cuni (.cv q)))))) p0006
+    @gSimpld
+      (synWa (synWbr R (synCwe) D) (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+          (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+      (.classMem (synCuni (synCuni (.cv q))) D)
+      (.classEq (.cv q) (synCsn (synCsn (synCuni (synCuni (.cv q)))))) p0006
   have p0034 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wbr R (syn_cwe) D)
-          (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-            (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-        (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q))
-          (syn_cfv (syn_chnwcutmap R D) (.cv r))))
-      (syn_wa (syn_wbr R (syn_cwe) D) (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-          (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-      (.classMem (syn_cuni (syn_cuni (.cv q))) D) p0001 p0033
-  have p0039 := @g_pw12argcl (.cv r) D
+    @gSyl
+      (synWa (synWa (synWbr R (synCwe) D)
+          (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+            (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+        (.classEq (synCfv (synChnwcutmap R D) (.cv q))
+          (synCfv (synChnwcutmap R D) (.cv r))))
+      (synWa (synWbr R (synCwe) D) (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+          (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+      (.classMem (synCuni (synCuni (.cv q))) D) p0001 p0033
+  have p0039 := @gPw12argcl (.cv r) D
   have p0040 :=
-    @g_syl
-      (syn_wa (syn_wbr R (syn_cwe) D) (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-          (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-      (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))
-      (syn_wa (.classMem (syn_cuni (syn_cuni (.cv r))) D)
-        (.classEq (.cv r) (syn_csn (syn_csn (syn_cuni (syn_cuni (.cv r)))))))
+    @gSyl
+      (synWa (synWbr R (synCwe) D) (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+          (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+      (.classMem (.cv r) (synCpw1 (synCpw1 D)))
+      (synWa (.classMem (synCuni (synCuni (.cv r))) D)
+        (.classEq (.cv r) (synCsn (synCsn (synCuni (synCuni (.cv r)))))))
       p0022 p0039
   have p0041 :=
-    @g_simpld
-      (syn_wa (syn_wbr R (syn_cwe) D) (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-          (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-      (.classMem (syn_cuni (syn_cuni (.cv r))) D)
-      (.classEq (.cv r) (syn_csn (syn_csn (syn_cuni (syn_cuni (.cv r)))))) p0040
+    @gSimpld
+      (synWa (synWbr R (synCwe) D) (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+          (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+      (.classMem (synCuni (synCuni (.cv r))) D)
+      (.classEq (.cv r) (synCsn (synCsn (synCuni (synCuni (.cv r)))))) p0040
   have p0042 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wbr R (syn_cwe) D)
-          (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-            (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-        (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q))
-          (syn_cfv (syn_chnwcutmap R D) (.cv r))))
-      (syn_wa (syn_wbr R (syn_cwe) D) (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-          (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-      (.classMem (syn_cuni (syn_cuni (.cv r))) D) p0001 p0041
+    @gSyl
+      (synWa (synWa (synWbr R (synCwe) D)
+          (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+            (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+        (.classEq (synCfv (synChnwcutmap R D) (.cv q))
+          (synCfv (synChnwcutmap R D) (.cv r))))
+      (synWa (synWbr R (synCwe) D) (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+          (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+      (.classMem (synCuni (synCuni (.cv r))) D) p0001 p0041
   have p0043 :=
-    @g_jca
-      (syn_wa (syn_wa (syn_wbr R (syn_cwe) D)
-          (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-            (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-        (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q))
-          (syn_cfv (syn_chnwcutmap R D) (.cv r))))
-      (.classMem (syn_cuni (syn_cuni (.cv q))) D)
-      (.classMem (syn_cuni (syn_cuni (.cv r))) D) p0034 p0042
+    @gJca
+      (synWa (synWa (synWbr R (synCwe) D)
+          (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+            (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+        (.classEq (synCfv (synChnwcutmap R D) (.cv q))
+          (synCfv (synChnwcutmap R D) (.cv r))))
+      (.classMem (synCuni (synCuni (.cv q))) D)
+      (.classMem (synCuni (synCuni (.cv r))) D) p0034 p0042
   have p0044 :=
-    @g_hnwcutclassinjcl (syn_cuni (syn_cuni (.cv q))) (syn_cuni (syn_cuni (.cv r))) D R
+    @gHnwcutclassinjcl (synCuni (synCuni (.cv q))) (synCuni (synCuni (.cv r))) D R
       dv_cache_0001 hyp_hnwcutmapf1_1
   have p0045 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wbr R (syn_cwe) D)
-          (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-            (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-        (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q))
-          (syn_cfv (syn_chnwcutmap R D) (.cv r))))
-      (syn_wa (.classMem (syn_cuni (syn_cuni (.cv q))) D)
-        (.classMem (syn_cuni (syn_cuni (.cv r))) D))
+    @gSyl
+      (synWa (synWa (synWbr R (synCwe) D)
+          (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+            (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+        (.classEq (synCfv (synChnwcutmap R D) (.cv q))
+          (synCfv (synChnwcutmap R D) (.cv r))))
+      (synWa (.classMem (synCuni (synCuni (.cv q))) D)
+        (.classMem (synCuni (synCuni (.cv r))) D))
       (.imp (.classEq
-          (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv q)))) (syn_chwniso D))
-          (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv r)))) (syn_chwniso D)))
-        (.classEq (syn_cuni (syn_cuni (.cv q))) (syn_cuni (syn_cuni (.cv r)))))
+          (synCec (synChnwcutcode R D (synCuni (synCuni (.cv q)))) (synChwniso D))
+          (synCec (synChnwcutcode R D (synCuni (synCuni (.cv r)))) (synChwniso D)))
+        (.classEq (synCuni (synCuni (.cv q))) (synCuni (synCuni (.cv r)))))
       p0043 p0044
   have p0046 :=
-    @g_mpd
-      (syn_wa (syn_wa (syn_wbr R (syn_cwe) D)
-          (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-            (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-        (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q))
-          (syn_cfv (syn_chnwcutmap R D) (.cv r))))
-      (.classEq (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv q)))) (syn_chwniso D))
-        (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv r)))) (syn_chwniso D)))
-      (.classEq (syn_cuni (syn_cuni (.cv q))) (syn_cuni (syn_cuni (.cv r)))) p0026 p0045
+    @gMpd
+      (synWa (synWa (synWbr R (synCwe) D)
+          (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+            (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+        (.classEq (synCfv (synChnwcutmap R D) (.cv q))
+          (synCfv (synChnwcutmap R D) (.cv r))))
+      (.classEq (synCec (synChnwcutcode R D (synCuni (synCuni (.cv q)))) (synChwniso D))
+        (synCec (synChnwcutcode R D (synCuni (synCuni (.cv r)))) (synChwniso D)))
+      (.classEq (synCuni (synCuni (.cv q))) (synCuni (synCuni (.cv r)))) p0026 p0045
   have p0047 :=
-    @g_sneqd
-      (syn_wa (syn_wa (syn_wbr R (syn_cwe) D)
-          (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-            (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-        (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q))
-          (syn_cfv (syn_chnwcutmap R D) (.cv r))))
-      (syn_cuni (syn_cuni (.cv q))) (syn_cuni (syn_cuni (.cv r))) p0046
+    @gSneqd
+      (synWa (synWa (synWbr R (synCwe) D)
+          (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+            (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+        (.classEq (synCfv (synChnwcutmap R D) (.cv q))
+          (synCfv (synChnwcutmap R D) (.cv r))))
+      (synCuni (synCuni (.cv q))) (synCuni (synCuni (.cv r))) p0046
   have p0048 :=
-    @g_sneqd
-      (syn_wa (syn_wa (syn_wbr R (syn_cwe) D)
-          (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-            (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-        (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q))
-          (syn_cfv (syn_chnwcutmap R D) (.cv r))))
-      (syn_csn (syn_cuni (syn_cuni (.cv q)))) (syn_csn (syn_cuni (syn_cuni (.cv r))))
+    @gSneqd
+      (synWa (synWa (synWbr R (synCwe) D)
+          (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+            (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+        (.classEq (synCfv (synChnwcutmap R D) (.cv q))
+          (synCfv (synChnwcutmap R D) (.cv r))))
+      (synCsn (synCuni (synCuni (.cv q)))) (synCsn (synCuni (synCuni (.cv r))))
       p0047
   have p0049 :=
-    @g_eqtrd
-      (syn_wa (syn_wa (syn_wbr R (syn_cwe) D)
-          (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-            (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-        (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q))
-          (syn_cfv (syn_chnwcutmap R D) (.cv r))))
-      (.cv q) (syn_csn (syn_csn (syn_cuni (syn_cuni (.cv q)))))
-      (syn_csn (syn_csn (syn_cuni (syn_cuni (.cv r))))) p0008 p0048
+    @gEqtrd
+      (synWa (synWa (synWbr R (synCwe) D)
+          (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+            (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+        (.classEq (synCfv (synChnwcutmap R D) (.cv q))
+          (synCfv (synChnwcutmap R D) (.cv r))))
+      (.cv q) (synCsn (synCsn (synCuni (synCuni (.cv q)))))
+      (synCsn (synCsn (synCuni (synCuni (.cv r))))) p0008 p0048
   have p0056 :=
-    @g_simprd
-      (syn_wa (syn_wbr R (syn_cwe) D) (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-          (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-      (.classMem (syn_cuni (syn_cuni (.cv r))) D)
-      (.classEq (.cv r) (syn_csn (syn_csn (syn_cuni (syn_cuni (.cv r)))))) p0040
+    @gSimprd
+      (synWa (synWbr R (synCwe) D) (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+          (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+      (.classMem (synCuni (synCuni (.cv r))) D)
+      (.classEq (.cv r) (synCsn (synCsn (synCuni (synCuni (.cv r)))))) p0040
   have p0057 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wbr R (syn_cwe) D)
-          (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-            (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-        (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q))
-          (syn_cfv (syn_chnwcutmap R D) (.cv r))))
-      (syn_wa (syn_wbr R (syn_cwe) D) (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-          (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-      (.classEq (.cv r) (syn_csn (syn_csn (syn_cuni (syn_cuni (.cv r)))))) p0001 p0056
+    @gSyl
+      (synWa (synWa (synWbr R (synCwe) D)
+          (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+            (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+        (.classEq (synCfv (synChnwcutmap R D) (.cv q))
+          (synCfv (synChnwcutmap R D) (.cv r))))
+      (synWa (synWbr R (synCwe) D) (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+          (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+      (.classEq (.cv r) (synCsn (synCsn (synCuni (synCuni (.cv r)))))) p0001 p0056
   have p0058 :=
-    @g_eqcomd
-      (syn_wa (syn_wa (syn_wbr R (syn_cwe) D)
-          (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-            (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-        (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q))
-          (syn_cfv (syn_chnwcutmap R D) (.cv r))))
-      (.cv r) (syn_csn (syn_csn (syn_cuni (syn_cuni (.cv r))))) p0057
+    @gEqcomd
+      (synWa (synWa (synWbr R (synCwe) D)
+          (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+            (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+        (.classEq (synCfv (synChnwcutmap R D) (.cv q))
+          (synCfv (synChnwcutmap R D) (.cv r))))
+      (.cv r) (synCsn (synCsn (synCuni (synCuni (.cv r))))) p0057
   have p0059 :=
-    @g_eqtrd
-      (syn_wa (syn_wa (syn_wbr R (syn_cwe) D)
-          (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-            (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-        (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q))
-          (syn_cfv (syn_chnwcutmap R D) (.cv r))))
-      (.cv q) (syn_csn (syn_csn (syn_cuni (syn_cuni (.cv r))))) (.cv r) p0049 p0058
+    @gEqtrd
+      (synWa (synWa (synWbr R (synCwe) D)
+          (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+            (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+        (.classEq (synCfv (synChnwcutmap R D) (.cv q))
+          (synCfv (synChnwcutmap R D) (.cv r))))
+      (.cv q) (synCsn (synCsn (synCuni (synCuni (.cv r))))) (.cv r) p0049 p0058
   have p0060 :=
-    @g_ex
-      (syn_wa (syn_wbr R (syn_cwe) D) (syn_wa (.classMem (.cv q) (syn_cpw1 (syn_cpw1 D)))
-          (.classMem (.cv r) (syn_cpw1 (syn_cpw1 D)))))
-      (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q)) (syn_cfv (syn_chnwcutmap R D) (.cv r)))
+    @gEx
+      (synWa (synWbr R (synCwe) D) (synWa (.classMem (.cv q) (synCpw1 (synCpw1 D)))
+          (.classMem (.cv r) (synCpw1 (synCpw1 D)))))
+      (.classEq (synCfv (synChnwcutmap R D) (.cv q)) (synCfv (synChnwcutmap R D) (.cv r)))
       (.classEq (.cv q) (.cv r)) p0059
   have p0061 :=
-    @g_ralrimivva (syn_wbr R (syn_cwe) D)
-      (.imp (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q))
-          (syn_cfv (syn_chnwcutmap R D) (.cv r))) (.classEq (.cv q) (.cv r)))
-      q r (syn_cpw1 (syn_cpw1 D)) (syn_cpw1 (syn_cpw1 D)) dv_cache_0002 dv_cache_0003
+    @gRalrimivva (synWbr R (synCwe) D)
+      (.imp (.classEq (synCfv (synChnwcutmap R D) (.cv q))
+          (synCfv (synChnwcutmap R D) (.cv r))) (.classEq (.cv q) (.cv r)))
+      q r (synCpw1 (synCpw1 D)) (synCpw1 (synCpw1 D)) dv_cache_0002 dv_cache_0003
       dv_cache_0004 dv_cache_0005 p0060
   have p0062 := Nominal.mp hyp_hnwcutmapf1_1 p0061
   have p0063 :=
-    @g_pm3_2i (syn_wf (syn_chnwcutmap R D) (syn_cpw1 (syn_cpw1 D)) (syn_chnord D))
-      (syn_wral q (syn_cpw1 (syn_cpw1 D)) (syn_wral r (syn_cpw1 (syn_cpw1 D)) (.imp
-            (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q))
-              (syn_cfv (syn_chnwcutmap R D) (.cv r))) (.classEq (.cv q) (.cv r)))))
+    @gPm32i (synWf (synChnwcutmap R D) (synCpw1 (synCpw1 D)) (synChnord D))
+      (synWral q (synCpw1 (synCpw1 D)) (synWral r (synCpw1 (synCpw1 D)) (.imp
+            (.classEq (synCfv (synChnwcutmap R D) (.cv q))
+              (synCfv (synChnwcutmap R D) (.cv r))) (.classEq (.cv q) (.cv r)))))
       p0000 p0062
   have p0064 :=
-    @g_dff13 q r (syn_cpw1 (syn_cpw1 D)) (syn_chnord D) (syn_chnwcutmap R D) dv_cache_0006
+    @gDff13 q r (synCpw1 (synCpw1 D)) (synChnord D) (synChnwcutmap R D) dv_cache_0006
       dv_cache_0002 dv_cache_0007 dv_cache_0008 dv_cache_0005
   have p0065_e01_recanon :
     Nominal.NPrf
-      (syn_wb (syn_wf1 (syn_chnwcutmap R D) (syn_cpw1 (syn_cpw1 D)) (syn_chnord D))
-        (syn_wa (syn_wf (syn_chnwcutmap R D) (syn_cpw1 (syn_cpw1 D)) (syn_chnord D))
-          (syn_wral q (syn_cpw1 (syn_cpw1 D)) (syn_wral r (syn_cpw1 (syn_cpw1 D)) (.imp
-                (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q))
-                  (syn_cfv (syn_chnwcutmap R D) (.cv r))) (.classEq (.cv q) (.cv r))))))) :=
+      (synWb (synWf1 (synChnwcutmap R D) (synCpw1 (synCpw1 D)) (synChnord D))
+        (synWa (synWf (synChnwcutmap R D) (synCpw1 (synCpw1 D)) (synChnord D))
+          (synWral q (synCpw1 (synCpw1 D)) (synWral r (synCpw1 (synCpw1 D)) (.imp
+                (.classEq (synCfv (synChnwcutmap R D) (.cv q))
+                  (synCfv (synChnwcutmap R D) (.cv r))) (.classEq (.cv q) (.cv r))))))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_wf1 syn_wa syn_wf syn_wfun syn_wss syn_cin syn_ccompl syn_cnin
-          syn_wnan syn_ccom syn_copab syn_wex syn_ccnv syn_cid syn_chnwcutmap syn_cmpt
-          syn_cpw1 syn_cec syn_cima syn_wrex syn_wbr syn_cop syn_cun syn_csn
-          syn_chnwcutcode syn_cuni syn_chwniso syn_chnord syn_cqs syn_chwcn
+        unfold synWb synWf1 synWa synWf synWfun synWss synCin synCcompl synCnin
+          synWnan synCcom synCopab synWex synCcnv synCid synChnwcutmap synCmpt
+          synCpw1 synCec synCima synWrex synWbr synCop synCun synCsn
+          synChnwcutcode synCuni synChwniso synChnord synCqs synChwcn
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
@@ -2068,82 +2078,85 @@ noncomputable def g_hnwcutmapf1 (D : Class) (R : Class) (dv_D_R : Disjoint D.fv 
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0064
   have p0065 :=
-    @g_mpbir (syn_wf1 (syn_chnwcutmap R D) (syn_cpw1 (syn_cpw1 D)) (syn_chnord D))
-      (syn_wa (syn_wf (syn_chnwcutmap R D) (syn_cpw1 (syn_cpw1 D)) (syn_chnord D))
-        (syn_wral q (syn_cpw1 (syn_cpw1 D)) (syn_wral r (syn_cpw1 (syn_cpw1 D)) (.imp
-              (.classEq (syn_cfv (syn_chnwcutmap R D) (.cv q))
-                (syn_cfv (syn_chnwcutmap R D) (.cv r))) (.classEq (.cv q) (.cv r))))))
+    @gMpbir (synWf1 (synChnwcutmap R D) (synCpw1 (synCpw1 D)) (synChnord D))
+      (synWa (synWf (synChnwcutmap R D) (synCpw1 (synCpw1 D)) (synChnord D))
+        (synWral q (synCpw1 (synCpw1 D)) (synWral r (synCpw1 (synCpw1 D)) (.imp
+              (.classEq (synCfv (synChnwcutmap R D) (.cv q))
+                (synCfv (synChnwcutmap R D) (.cv r))) (.classEq (.cv q) (.cv r))))))
       p0063 p0065_e01_recanon
   exact p0065
 
+/-- Checked nominal proof certificate identified upstream as `g_hnqmap1exg`. -/
 @[expose]
-noncomputable def g_hnqmap1exg (A : Class) :
-    Nominal.NPrf (.imp (.classMem A (syn_cvv)) (.classMem (syn_chnqmap1 A) (syn_cvv))) :=
+noncomputable def gHnqmap1exg (A : Class) :
+    Nominal.NPrf (.imp (.classMem A (synCvv)) (.classMem (synChnqmap1 A) (synCvv))) :=
   by
-  have p0000 := (Nominal.classEqRefl (syn_chnqmap1 A))
-  have p0001 := @g_hwnisoexg A
-  have p0002 := @g_imageexg (syn_chwniso A) (syn_cvv)
+  have p0000 := (Nominal.classEqRefl (synChnqmap1 A))
+  have p0001 := @gHwnisoexg A
+  have p0002 := @gImageexg (synChwniso A) (synCvv)
   have p0003 :=
-    @g_syl (.classMem A (syn_cvv)) (.classMem (syn_chwniso A) (syn_cvv))
-      (.classMem (syn_cimage (syn_chwniso A)) (syn_cvv)) p0001 p0002
-  have p0004 := @g_hwcnexg A
-  have p0005 := @g_pw1exg (syn_chwcn A) (syn_cvv)
+    @gSyl (.classMem A (synCvv)) (.classMem (synChwniso A) (synCvv))
+      (.classMem (synCimage (synChwniso A)) (synCvv)) p0001 p0002
+  have p0004 := @gHwcnexg A
+  have p0005 := @gPw1exg (synChwcn A) (synCvv)
   have p0006 :=
-    @g_syl (.classMem A (syn_cvv)) (.classMem (syn_chwcn A) (syn_cvv))
-      (.classMem (syn_cpw1 (syn_chwcn A)) (syn_cvv)) p0004 p0005
+    @gSyl (.classMem A (synCvv)) (.classMem (synChwcn A) (synCvv))
+      (.classMem (synCpw1 (synChwcn A)) (synCvv)) p0004 p0005
   have p0007 :=
-    @g_jca (.classMem A (syn_cvv)) (.classMem (syn_cimage (syn_chwniso A)) (syn_cvv))
-      (.classMem (syn_cpw1 (syn_chwcn A)) (syn_cvv)) p0003 p0006
+    @gJca (.classMem A (synCvv)) (.classMem (synCimage (synChwniso A)) (synCvv))
+      (.classMem (synCpw1 (synChwcn A)) (synCvv)) p0003 p0006
   have p0008 :=
-    @g_resexg (syn_cimage (syn_chwniso A)) (syn_cpw1 (syn_chwcn A)) (syn_cvv) (syn_cvv)
+    @gResexg (synCimage (synChwniso A)) (synCpw1 (synChwcn A)) (synCvv) (synCvv)
   have p0009 :=
-    @g_syl (.classMem A (syn_cvv))
-      (syn_wa (.classMem (syn_cimage (syn_chwniso A)) (syn_cvv))
-        (.classMem (syn_cpw1 (syn_chwcn A)) (syn_cvv)))
-      (.classMem (syn_cres (syn_cimage (syn_chwniso A)) (syn_cpw1 (syn_chwcn A))) (syn_cvv))
+    @gSyl (.classMem A (synCvv))
+      (synWa (.classMem (synCimage (synChwniso A)) (synCvv))
+        (.classMem (synCpw1 (synChwcn A)) (synCvv)))
+      (.classMem (synCres (synCimage (synChwniso A)) (synCpw1 (synChwcn A))) (synCvv))
       p0007 p0008
   have p0010 :=
-    @g_syl5eqel (.classMem A (syn_cvv)) (syn_chnqmap1 A)
-      (syn_cres (syn_cimage (syn_chwniso A)) (syn_cpw1 (syn_chwcn A))) (syn_cvv) p0000
+    @gSyl5eqel (.classMem A (synCvv)) (synChnqmap1 A)
+      (synCres (synCimage (synChwniso A)) (synCpw1 (synChwcn A))) (synCvv) p0000
       p0009
   exact p0010
 
+/-- Checked nominal proof certificate identified upstream as `g_hnqmap1fn`. -/
 @[expose]
-noncomputable def g_hnqmap1fn (A : Class)
-    (hyp_hnqmap1fn_1 : Nominal.NPrf (.classMem A (syn_cvv))) :
-    Nominal.NPrf (syn_wfn (syn_chnqmap1 A) (syn_cpw1 (syn_chwcn A))) :=
+noncomputable def gHnqmap1fn (A : Class)
+    (hyp_hnqmap1fn_1 : Nominal.NPrf (.classMem A (synCvv))) :
+    Nominal.NPrf (synWfn (synChnqmap1 A) (synCpw1 (synChwcn A))) :=
   by
-  have p0000 := @g_hwnisoexg A
+  have p0000 := @gHwnisoexg A
   have p0001 := Nominal.mp hyp_hnqmap1fn_1 p0000
-  have p0002 := @g_wppimagefn (syn_chwniso A) p0001
-  have p0003 := @g_ssv (syn_cpw1 (syn_chwcn A))
+  have p0002 := @gWppimagefn (synChwniso A) p0001
+  have p0003 := @gSsv (synCpw1 (synChwcn A))
   have p0004 :=
-    @g_pm3_2i (syn_wfn (syn_cimage (syn_chwniso A)) (syn_cvv))
-      (syn_wss (syn_cpw1 (syn_chwcn A)) (syn_cvv)) p0002 p0003
-  have p0005 := @g_fnssres (syn_cvv) (syn_cpw1 (syn_chwcn A)) (syn_cimage (syn_chwniso A))
+    @gPm32i (synWfn (synCimage (synChwniso A)) (synCvv))
+      (synWss (synCpw1 (synChwcn A)) (synCvv)) p0002 p0003
+  have p0005 := @gFnssres (synCvv) (synCpw1 (synChwcn A)) (synCimage (synChwniso A))
   have p0006 := Nominal.mp p0004 p0005
-  have p0007 := (Nominal.classEqRefl (syn_chnqmap1 A))
+  have p0007 := (Nominal.classEqRefl (synChnqmap1 A))
   have p0008 :=
-    @g_fneq1i (syn_cpw1 (syn_chwcn A)) (syn_chnqmap1 A)
-      (syn_cres (syn_cimage (syn_chwniso A)) (syn_cpw1 (syn_chwcn A))) p0007
+    @gFneq1i (synCpw1 (synChwcn A)) (synChnqmap1 A)
+      (synCres (synCimage (synChwniso A)) (synCpw1 (synChwcn A))) p0007
   have p0009 :=
-    @g_mpbir (syn_wfn (syn_chnqmap1 A) (syn_cpw1 (syn_chwcn A)))
-      (syn_wfn (syn_cres (syn_cimage (syn_chwniso A)) (syn_cpw1 (syn_chwcn A)))
-        (syn_cpw1 (syn_chwcn A)))
+    @gMpbir (synWfn (synChnqmap1 A) (synCpw1 (synChwcn A)))
+      (synWfn (synCres (synCimage (synChwniso A)) (synCpw1 (synChwcn A)))
+        (synCpw1 (synChwcn A)))
       p0006 p0008
   exact p0009
 
+/-- Checked nominal proof certificate identified upstream as `g_hnqmap1val`. -/
 @[expose]
-noncomputable def g_hnqmap1val (u : Var) (A : Class) (dv_A_u : u ∉ A.fv)
-    (hyp_hnqmap1val_1 : Nominal.NPrf (.classMem A (syn_cvv))) :
+noncomputable def gHnqmap1val (u : Var) (A : Class) (dv_A_u : u ∉ A.fv)
+    (hyp_hnqmap1val_1 : Nominal.NPrf (.classMem A (synCvv))) :
     Nominal.NPrf
-      (.imp (.classMem (.cv u) (syn_chwcn A))
-        (.classEq (syn_cfv (syn_chnqmap1 A) (syn_csn (.cv u)))
-          (syn_cec (.cv u) (syn_chwniso A)))) :=
+      (.imp (.classMem (.cv u) (synChwcn A))
+        (.classEq (synCfv (synChnqmap1 A) (synCsn (.cv u)))
+          (synCec (.cv u) (synChwniso A)))) :=
   by
-  have dv_cache_0001 : Disjoint ((syn_csn (.cv u))).fv ((syn_chwniso A)).fv := by
+  have dv_cache_0001 : Disjoint ((synCsn (.cv u))).fv ((synChwniso A)).fv := by
     exact
-      (show Disjoint ((syn_csn (.cv u))).fv ((syn_chwniso A)).fv from (by
+      (show Disjoint ((synCsn (.cv u))).fv ((synChwniso A)).fv from (by
           rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn,
             NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chwniso];
           exact
@@ -2154,48 +2167,49 @@ noncomputable def g_hnqmap1val (u : Var) (A : Class) (dv_A_u : u ∉ A.fv)
                   (show Disjoint (({ u } : Finset Var)) ((A).fv) from
                     (Finset.disjoint_singleton_left.mpr
                       (show u ∉ (A).fv from (by exact dv_A_u))))))))
-  have p0000 := (Nominal.classEqRefl (syn_chnqmap1 A))
+  have p0000 := (Nominal.classEqRefl (synChnqmap1 A))
   have p0001 :=
-    @g_fveq1i (syn_csn (.cv u)) (syn_chnqmap1 A)
-      (syn_cres (syn_cimage (syn_chwniso A)) (syn_cpw1 (syn_chwcn A))) p0000
-  have p0002 := @g_snelpw1 (.cv u) (syn_chwcn A)
+    @gFveq1i (synCsn (.cv u)) (synChnqmap1 A)
+      (synCres (synCimage (synChwniso A)) (synCpw1 (synChwcn A))) p0000
+  have p0002 := @gSnelpw1 (.cv u) (synChwcn A)
   have p0003 :=
-    @g_biimpri (.classMem (syn_csn (.cv u)) (syn_cpw1 (syn_chwcn A)))
-      (.classMem (.cv u) (syn_chwcn A)) p0002
+    @gBiimpri (.classMem (synCsn (.cv u)) (synCpw1 (synChwcn A)))
+      (.classMem (.cv u) (synChwcn A)) p0002
   have p0004 :=
-    @g_fvres (syn_csn (.cv u)) (syn_cpw1 (syn_chwcn A)) (syn_cimage (syn_chwniso A))
+    @gFvres (synCsn (.cv u)) (synCpw1 (synChwcn A)) (synCimage (synChwniso A))
   have p0005 :=
-    @g_syl (.classMem (.cv u) (syn_chwcn A))
-      (.classMem (syn_csn (.cv u)) (syn_cpw1 (syn_chwcn A)))
-      (.classEq (syn_cfv (syn_cres (syn_cimage (syn_chwniso A)) (syn_cpw1 (syn_chwcn A)))
-          (syn_csn (.cv u))) (syn_cfv (syn_cimage (syn_chwniso A)) (syn_csn (.cv u))))
+    @gSyl (.classMem (.cv u) (synChwcn A))
+      (.classMem (synCsn (.cv u)) (synCpw1 (synChwcn A)))
+      (.classEq (synCfv (synCres (synCimage (synChwniso A)) (synCpw1 (synChwcn A)))
+          (synCsn (.cv u))) (synCfv (synCimage (synChwniso A)) (synCsn (.cv u))))
       p0003 p0004
   have p0006 :=
-    @g_syl5eq (.classMem (.cv u) (syn_chwcn A))
-      (syn_cfv (syn_chnqmap1 A) (syn_csn (.cv u)))
-      (syn_cfv (syn_cres (syn_cimage (syn_chwniso A)) (syn_cpw1 (syn_chwcn A)))
-        (syn_csn (.cv u)))
-      (syn_cfv (syn_cimage (syn_chwniso A)) (syn_csn (.cv u))) p0001 p0005
-  have p0007 := @g_hwnisoexg A
+    @gSyl5eq (.classMem (.cv u) (synChwcn A))
+      (synCfv (synChnqmap1 A) (synCsn (.cv u)))
+      (synCfv (synCres (synCimage (synChwniso A)) (synCpw1 (synChwcn A)))
+        (synCsn (.cv u)))
+      (synCfv (synCimage (synChwniso A)) (synCsn (.cv u))) p0001 p0005
+  have p0007 := @gHwnisoexg A
   have p0008 := Nominal.mp hyp_hnqmap1val_1 p0007
-  have p0009 := @g_snex (.cv u)
-  have p0010 := @g_wppfvimage (syn_csn (.cv u)) (syn_chwniso A) dv_cache_0001 p0008 p0009
-  have p0011 := (Nominal.classEqRefl (syn_cec (.cv u) (syn_chwniso A)))
+  have p0009 := @gSnex (.cv u)
+  have p0010 := @gWppfvimage (synCsn (.cv u)) (synChwniso A) dv_cache_0001 p0008 p0009
+  have p0011 := (Nominal.classEqRefl (synCec (.cv u) (synChwniso A)))
   have p0012 :=
-    @g_eqtr4i (syn_cfv (syn_cimage (syn_chwniso A)) (syn_csn (.cv u)))
-      (syn_cima (syn_chwniso A) (syn_csn (.cv u))) (syn_cec (.cv u) (syn_chwniso A)) p0010
+    @gEqtr4i (synCfv (synCimage (synChwniso A)) (synCsn (.cv u)))
+      (synCima (synChwniso A) (synCsn (.cv u))) (synCec (.cv u) (synChwniso A)) p0010
       p0011
   have p0013 :=
-    @g_syl6eq (.classMem (.cv u) (syn_chwcn A))
-      (syn_cfv (syn_chnqmap1 A) (syn_csn (.cv u)))
-      (syn_cfv (syn_cimage (syn_chwniso A)) (syn_csn (.cv u)))
-      (syn_cec (.cv u) (syn_chwniso A)) p0006 p0012
+    @gSyl6eq (.classMem (.cv u) (synChwcn A))
+      (synCfv (synChnqmap1 A) (synCsn (.cv u)))
+      (synCfv (synCimage (synChwniso A)) (synCsn (.cv u)))
+      (synCec (.cv u) (synChwniso A)) p0006 p0012
   exact p0013
 
+/-- Checked nominal proof certificate identified upstream as `g_hnqmap1f`. -/
 @[expose]
-noncomputable def g_hnqmap1f (A : Class)
-    (hyp_hnqmap1f_1 : Nominal.NPrf (.classMem A (syn_cvv))) :
-    Nominal.NPrf (syn_wf (syn_chnqmap1 A) (syn_cpw1 (syn_chwcn A)) (syn_chnord A)) :=
+noncomputable def gHnqmap1f (A : Class)
+    (hyp_hnqmap1f_1 : Nominal.NPrf (.classMem A (synCvv))) :
+    Nominal.NPrf (synWf (synChnqmap1 A) (synCpw1 (synChwcn A)) (synChnord A)) :=
   by
   let proofSupport : Finset Var := A.fv
   let q : Var := freshVar proofSupport 0
@@ -2228,7 +2242,7 @@ noncomputable def g_hnqmap1f (A : Class)
           cases hmem
         simp only [NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_singleton,
           fresh_u_ne_q, not_false_eq_true])
-  have dv_cache_0002 : u ∉ ((syn_chwcn A)).fv :=
+  have dv_cache_0002 : u ∉ ((synChwcn A)).fv :=
     by
     clear dv_cache_0001
     exact
@@ -2250,7 +2264,7 @@ noncomputable def g_hnqmap1f (A : Class)
           cases hmem
         simp only [fresh_u_not_A, not_false_eq_true])
   have dv_cache_0004 :
-    u ∉ ((Wff.classMem (syn_cfv (syn_chnqmap1 A) (.cv q)) (syn_chnord A))).fv :=
+    u ∉ ((Wff.classMem (synCfv (synChnqmap1 A) (.cv q)) (synChnord A))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003
     exact
@@ -2265,7 +2279,7 @@ noncomputable def g_hnqmap1f (A : Class)
           NFChoice.Compiler.CoreFVSimp.fv_class_cv,
           NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chnord, Finset.mem_union,
           Finset.mem_singleton, fresh_u_ne_q, fresh_u_not_A, or_false, not_false_eq_true])
-  have dv_cache_0005 : q ∉ ((syn_cpw1 (syn_chwcn A))).fv :=
+  have dv_cache_0005 : q ∉ ((synCpw1 (synChwcn A))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004
     exact
@@ -2277,7 +2291,7 @@ noncomputable def g_hnqmap1f (A : Class)
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1,
           NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chwcn, fresh_q_not_A,
           not_false_eq_true])
-  have dv_cache_0006 : q ∉ ((syn_chnord A)).fv :=
+  have dv_cache_0006 : q ∉ ((synChnord A)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
     exact
@@ -2288,7 +2302,7 @@ noncomputable def g_hnqmap1f (A : Class)
           cases hmem
         simp only [NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chnord,
           fresh_q_not_A, not_false_eq_true])
-  have dv_cache_0007 : q ∉ ((syn_chnqmap1 A)).fv :=
+  have dv_cache_0007 : q ∉ ((synChnqmap1 A)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006
@@ -2300,67 +2314,68 @@ noncomputable def g_hnqmap1f (A : Class)
           cases hmem
         simp only [NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chnqmap1,
           fresh_q_not_A, not_false_eq_true])
-  have p0000 := @g_hnqmap1fn A hyp_hnqmap1f_1
-  have p0002 := @g_elpw1 u (.cv q) (syn_chwcn A) dv_cache_0001 dv_cache_0002
+  have p0000 := @gHnqmap1fn A hyp_hnqmap1f_1
+  have p0002 := @gElpw1 u (.cv q) (synChwcn A) dv_cache_0001 dv_cache_0002
   have p0003 :=
-    @g_simpr (.classMem (.cv u) (syn_chwcn A)) (.classEq (.cv q) (syn_csn (.cv u)))
-  have p0004 := @g_fveq2 (.cv q) (syn_csn (.cv u)) (syn_chnqmap1 A)
+    @gSimpr (.classMem (.cv u) (synChwcn A)) (.classEq (.cv q) (synCsn (.cv u)))
+  have p0004 := @gFveq2 (.cv q) (synCsn (.cv u)) (synChnqmap1 A)
   have p0005 :=
-    @g_syl (syn_wa (.classMem (.cv u) (syn_chwcn A)) (.classEq (.cv q) (syn_csn (.cv u))))
-      (.classEq (.cv q) (syn_csn (.cv u)))
-      (.classEq (syn_cfv (syn_chnqmap1 A) (.cv q)) (syn_cfv (syn_chnqmap1 A) (syn_csn (.cv u))))
+    @gSyl (synWa (.classMem (.cv u) (synChwcn A)) (.classEq (.cv q) (synCsn (.cv u))))
+      (.classEq (.cv q) (synCsn (.cv u)))
+      (.classEq (synCfv (synChnqmap1 A) (.cv q)) (synCfv (synChnqmap1 A) (synCsn (.cv u))))
       p0003 p0004
-  have p0006 := @g_hnqmap1val u A dv_cache_0003 hyp_hnqmap1f_1
-  have p0007 := @g_hwnisoclasselhnord u A dv_cache_0003 hyp_hnqmap1f_1
+  have p0006 := @gHnqmap1val u A dv_cache_0003 hyp_hnqmap1f_1
+  have p0007 := @gHwnisoclasselhnord u A dv_cache_0003 hyp_hnqmap1f_1
   have p0008 :=
-    @g_eqeltrd (.classMem (.cv u) (syn_chwcn A))
-      (syn_cfv (syn_chnqmap1 A) (syn_csn (.cv u))) (syn_cec (.cv u) (syn_chwniso A))
-      (syn_chnord A) p0006 p0007
+    @gEqeltrd (.classMem (.cv u) (synChwcn A))
+      (synCfv (synChnqmap1 A) (synCsn (.cv u))) (synCec (.cv u) (synChwniso A))
+      (synChnord A) p0006 p0007
   have p0009 :=
-    @g_adantr (.classMem (.cv u) (syn_chwcn A))
-      (.classMem (syn_cfv (syn_chnqmap1 A) (syn_csn (.cv u))) (syn_chnord A))
-      (.classEq (.cv q) (syn_csn (.cv u))) p0008
+    @gAdantr (.classMem (.cv u) (synChwcn A))
+      (.classMem (synCfv (synChnqmap1 A) (synCsn (.cv u))) (synChnord A))
+      (.classEq (.cv q) (synCsn (.cv u))) p0008
   have p0010 :=
-    @g_eqeltrd
-      (syn_wa (.classMem (.cv u) (syn_chwcn A)) (.classEq (.cv q) (syn_csn (.cv u))))
-      (syn_cfv (syn_chnqmap1 A) (.cv q)) (syn_cfv (syn_chnqmap1 A) (syn_csn (.cv u)))
-      (syn_chnord A) p0005 p0009
+    @gEqeltrd
+      (synWa (.classMem (.cv u) (synChwcn A)) (.classEq (.cv q) (synCsn (.cv u))))
+      (synCfv (synChnqmap1 A) (.cv q)) (synCfv (synChnqmap1 A) (synCsn (.cv u)))
+      (synChnord A) p0005 p0009
   have p0011 :=
-    @g_rexlimiva (.classEq (.cv q) (syn_csn (.cv u)))
-      (.classMem (syn_cfv (syn_chnqmap1 A) (.cv q)) (syn_chnord A)) u (syn_chwcn A)
+    @gRexlimiva (.classEq (.cv q) (synCsn (.cv u)))
+      (.classMem (synCfv (synChnqmap1 A) (.cv q)) (synChnord A)) u (synChwcn A)
       dv_cache_0004 p0010
   have p0012 :=
-    @g_sylbi (.classMem (.cv q) (syn_cpw1 (syn_chwcn A)))
-      (syn_wrex u (syn_chwcn A) (.classEq (.cv q) (syn_csn (.cv u))))
-      (.classMem (syn_cfv (syn_chnqmap1 A) (.cv q)) (syn_chnord A)) p0002 p0011
+    @gSylbi (.classMem (.cv q) (synCpw1 (synChwcn A)))
+      (synWrex u (synChwcn A) (.classEq (.cv q) (synCsn (.cv u))))
+      (.classMem (synCfv (synChnqmap1 A) (.cv q)) (synChnord A)) p0002 p0011
   have p0013 :=
-    @g_rgen (.classMem (syn_cfv (syn_chnqmap1 A) (.cv q)) (syn_chnord A)) q
-      (syn_cpw1 (syn_chwcn A)) p0012
+    @gRgen (.classMem (synCfv (synChnqmap1 A) (.cv q)) (synChnord A)) q
+      (synCpw1 (synChwcn A)) p0012
   have p0014 :=
-    @g_pm3_2i (syn_wfn (syn_chnqmap1 A) (syn_cpw1 (syn_chwcn A)))
-      (syn_wral q (syn_cpw1 (syn_chwcn A))
-        (.classMem (syn_cfv (syn_chnqmap1 A) (.cv q)) (syn_chnord A)))
+    @gPm32i (synWfn (synChnqmap1 A) (synCpw1 (synChwcn A)))
+      (synWral q (synCpw1 (synChwcn A))
+        (.classMem (synCfv (synChnqmap1 A) (.cv q)) (synChnord A)))
       p0000 p0013
   have p0015 :=
-    @g_fnfvrnss q (syn_cpw1 (syn_chwcn A)) (syn_chnord A) (syn_chnqmap1 A) dv_cache_0005
+    @gFnfvrnss q (synCpw1 (synChwcn A)) (synChnord A) (synChnqmap1 A) dv_cache_0005
       dv_cache_0006 dv_cache_0007
   have p0016 := Nominal.mp p0014 p0015
   have p0017 :=
-    @g_pm3_2i (syn_wfn (syn_chnqmap1 A) (syn_cpw1 (syn_chwcn A)))
-      (syn_wss (syn_crn (syn_chnqmap1 A)) (syn_chnord A)) p0000 p0016
+    @gPm32i (synWfn (synChnqmap1 A) (synCpw1 (synChwcn A)))
+      (synWss (synCrn (synChnqmap1 A)) (synChnord A)) p0000 p0016
   have p0018 :=
-    (Nominal.biimpRefl (syn_wf (syn_chnqmap1 A) (syn_cpw1 (syn_chwcn A)) (syn_chnord A)))
+    (Nominal.biimpRefl (synWf (synChnqmap1 A) (synCpw1 (synChwcn A)) (synChnord A)))
   have p0019 :=
-    @g_mpbir (syn_wf (syn_chnqmap1 A) (syn_cpw1 (syn_chwcn A)) (syn_chnord A))
-      (syn_wa (syn_wfn (syn_chnqmap1 A) (syn_cpw1 (syn_chwcn A)))
-        (syn_wss (syn_crn (syn_chnqmap1 A)) (syn_chnord A)))
+    @gMpbir (synWf (synChnqmap1 A) (synCpw1 (synChwcn A)) (synChnord A))
+      (synWa (synWfn (synChnqmap1 A) (synCpw1 (synChwcn A)))
+        (synWss (synCrn (synChnqmap1 A)) (synChnord A)))
       p0017 p0018
   exact p0019
 
+/-- Checked nominal proof certificate identified upstream as `g_hnqmap1rn`. -/
 @[expose]
-noncomputable def g_hnqmap1rn (A : Class)
-    (hyp_hnqmap1rn_1 : Nominal.NPrf (.classMem A (syn_cvv))) :
-    Nominal.NPrf (.classEq (syn_crn (syn_chnqmap1 A)) (syn_chnord A)) :=
+noncomputable def gHnqmap1rn (A : Class)
+    (hyp_hnqmap1rn_1 : Nominal.NPrf (.classMem A (synCvv))) :
+    Nominal.NPrf (.classEq (synCrn (synChnqmap1 A)) (synChnord A)) :=
   by
   let proofSupport : Finset Var := A.fv
   let z : Var := freshVar proofSupport 0
@@ -2402,7 +2417,7 @@ noncomputable def g_hnqmap1rn (A : Class)
     change freshVar proofSupport 1 ≠ freshVar proofSupport 2
     exact freshVar_injective proofSupport (i := 1) (j := 2) (by decide)
   have fresh_u_ne_q : u ≠ q := Ne.symm fresh_q_ne_u
-  have dv_cache_0001 : u ∉ ((syn_chwcn A)).fv := by
+  have dv_cache_0001 : u ∉ ((synChwcn A)).fv := by
     exact
       (by
         have compact_fv_not_mem_empty : u ∉ (∅ : Finset Var) :=
@@ -2422,7 +2437,7 @@ noncomputable def g_hnqmap1rn (A : Class)
           cases hmem
         simp only [NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_singleton,
           fresh_u_ne_z, not_false_eq_true])
-  have dv_cache_0003 : u ∉ ((syn_chwniso A)).fv :=
+  have dv_cache_0003 : u ∉ ((synChwniso A)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002
     exact
@@ -2443,7 +2458,7 @@ noncomputable def g_hnqmap1rn (A : Class)
           intro hmem
           cases hmem
         simp only [fresh_u_not_A, not_false_eq_true])
-  have dv_cache_0005 : q ∉ ((syn_csn (.cv u))).fv :=
+  have dv_cache_0005 : q ∉ ((synCsn (.cv u))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004
     exact
@@ -2455,7 +2470,7 @@ noncomputable def g_hnqmap1rn (A : Class)
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn,
           NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_singleton, fresh_q_ne_u,
           not_false_eq_true])
-  have dv_cache_0006 : q ∉ ((syn_cpw1 (syn_chwcn A))).fv :=
+  have dv_cache_0006 : q ∉ ((synCpw1 (synChwcn A))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
     exact
@@ -2468,7 +2483,7 @@ noncomputable def g_hnqmap1rn (A : Class)
           NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chwcn, fresh_q_not_A,
           not_false_eq_true])
   have dv_cache_0007 :
-    q ∉ ((Wff.classEq (.cv z) (syn_cfv (syn_chnqmap1 A) (syn_csn (.cv u))))).fv :=
+    q ∉ ((Wff.classEq (.cv z) (synCfv (synChnqmap1 A) (synCsn (.cv u))))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006
@@ -2487,8 +2502,8 @@ noncomputable def g_hnqmap1rn (A : Class)
           not_false_eq_true])
   have dv_cache_0008 :
     u ∉
-      ((syn_wrex q (syn_cpw1 (syn_chwcn A))
-          (.classEq (.cv z) (syn_cfv (syn_chnqmap1 A) (.cv q))))).fv :=
+      ((synWrex q (synCpw1 (synChwcn A))
+          (.classEq (.cv z) (synCfv (synChnqmap1 A) (.cv q))))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007
@@ -2507,7 +2522,7 @@ noncomputable def g_hnqmap1rn (A : Class)
           NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chnqmap1, Finset.mem_union,
           Finset.mem_erase, Finset.mem_singleton, fresh_u_not_A, fresh_u_ne_z,
           fresh_u_ne_q, or_false, and_false, not_false_eq_true])
-  have dv_cache_0009 : z ∉ ((syn_cpw1 (syn_chwcn A))).fv :=
+  have dv_cache_0009 : z ∉ ((synCpw1 (synChwcn A))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008
@@ -2520,7 +2535,7 @@ noncomputable def g_hnqmap1rn (A : Class)
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1,
           NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chwcn, fresh_z_not_A,
           not_false_eq_true])
-  have dv_cache_0010 : q ∉ ((syn_chnord A)).fv :=
+  have dv_cache_0010 : q ∉ ((synChnord A)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009
@@ -2532,7 +2547,7 @@ noncomputable def g_hnqmap1rn (A : Class)
           cases hmem
         simp only [NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chnord,
           fresh_q_not_A, not_false_eq_true])
-  have dv_cache_0011 : z ∉ ((syn_chnord A)).fv :=
+  have dv_cache_0011 : z ∉ ((synChnord A)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010
@@ -2544,7 +2559,7 @@ noncomputable def g_hnqmap1rn (A : Class)
           cases hmem
         simp only [NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chnord,
           fresh_z_not_A, not_false_eq_true])
-  have dv_cache_0012 : q ∉ ((syn_chnqmap1 A)).fv :=
+  have dv_cache_0012 : q ∉ ((synChnqmap1 A)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -2556,7 +2571,7 @@ noncomputable def g_hnqmap1rn (A : Class)
           cases hmem
         simp only [NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chnqmap1,
           fresh_q_not_A, not_false_eq_true])
-  have dv_cache_0013 : z ∉ ((syn_chnqmap1 A)).fv :=
+  have dv_cache_0013 : z ∉ ((synChnqmap1 A)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -2575,145 +2590,148 @@ noncomputable def g_hnqmap1rn (A : Class)
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
       dv_cache_0012 dv_cache_0013
     exact (show q ≠ z from (by exact fresh_q_ne_z))
-  have p0000 := @g_hnqmap1f A hyp_hnqmap1rn_1
-  have p0001 := (Nominal.classEqRefl (syn_chnord A))
+  have p0000 := @gHnqmap1f A hyp_hnqmap1rn_1
+  have p0001 := (Nominal.classEqRefl (synChnord A))
   have p0002 :=
-    @g_eleq2i (syn_chnord A) (syn_cqs (syn_chwcn A) (syn_chwniso A)) (.cv z) p0001
+    @gEleq2i (synChnord A) (synCqs (synChwcn A) (synChwniso A)) (.cv z) p0001
   have p0003 :=
-    @g_biimpi (.classMem (.cv z) (syn_chnord A))
-      (.classMem (.cv z) (syn_cqs (syn_chwcn A) (syn_chwniso A))) p0002
+    @gBiimpi (.classMem (.cv z) (synChnord A))
+      (.classMem (.cv z) (synCqs (synChwcn A) (synChwniso A))) p0002
   have p0004 :=
-    @g_elqsi u (syn_chwcn A) (.cv z) (syn_chwniso A) dv_cache_0001 dv_cache_0002
+    @gElqsi u (synChwcn A) (.cv z) (synChwniso A) dv_cache_0001 dv_cache_0002
       dv_cache_0003
   have p0005 :=
-    @g_syl (.classMem (.cv z) (syn_chnord A))
-      (.classMem (.cv z) (syn_cqs (syn_chwcn A) (syn_chwniso A)))
-      (syn_wrex u (syn_chwcn A) (.classEq (.cv z) (syn_cec (.cv u) (syn_chwniso A))))
+    @gSyl (.classMem (.cv z) (synChnord A))
+      (.classMem (.cv z) (synCqs (synChwcn A) (synChwniso A)))
+      (synWrex u (synChwcn A) (.classEq (.cv z) (synCec (.cv u) (synChwniso A))))
       p0003 p0004
-  have p0006 := @g_snelpw1 (.cv u) (syn_chwcn A)
+  have p0006 := @gSnelpw1 (.cv u) (synChwcn A)
   have p0007 :=
-    @g_biimpri (.classMem (syn_csn (.cv u)) (syn_cpw1 (syn_chwcn A)))
-      (.classMem (.cv u) (syn_chwcn A)) p0006
+    @gBiimpri (.classMem (synCsn (.cv u)) (synCpw1 (synChwcn A)))
+      (.classMem (.cv u) (synChwcn A)) p0006
   have p0008 :=
-    @g_adantr (.classMem (.cv u) (syn_chwcn A))
-      (.classMem (syn_csn (.cv u)) (syn_cpw1 (syn_chwcn A)))
-      (.classEq (.cv z) (syn_cec (.cv u) (syn_chwniso A))) p0007
+    @gAdantr (.classMem (.cv u) (synChwcn A))
+      (.classMem (synCsn (.cv u)) (synCpw1 (synChwcn A)))
+      (.classEq (.cv z) (synCec (.cv u) (synChwniso A))) p0007
   have p0009 :=
-    @g_simpr (.classMem (.cv u) (syn_chwcn A))
-      (.classEq (.cv z) (syn_cec (.cv u) (syn_chwniso A)))
-  have p0010 := @g_hnqmap1val u A dv_cache_0004 hyp_hnqmap1rn_1
+    @gSimpr (.classMem (.cv u) (synChwcn A))
+      (.classEq (.cv z) (synCec (.cv u) (synChwniso A)))
+  have p0010 := @gHnqmap1val u A dv_cache_0004 hyp_hnqmap1rn_1
   have p0011 :=
-    @g_adantr (.classMem (.cv u) (syn_chwcn A))
-      (.classEq (syn_cfv (syn_chnqmap1 A) (syn_csn (.cv u))) (syn_cec (.cv u) (syn_chwniso A)))
-      (.classEq (.cv z) (syn_cec (.cv u) (syn_chwniso A))) p0010
+    @gAdantr (.classMem (.cv u) (synChwcn A))
+      (.classEq (synCfv (synChnqmap1 A) (synCsn (.cv u))) (synCec (.cv u) (synChwniso A)))
+      (.classEq (.cv z) (synCec (.cv u) (synChwniso A))) p0010
   have p0012 :=
-    @g_eqtr4d
-      (syn_wa (.classMem (.cv u) (syn_chwcn A))
-        (.classEq (.cv z) (syn_cec (.cv u) (syn_chwniso A))))
-      (.cv z) (syn_cec (.cv u) (syn_chwniso A))
-      (syn_cfv (syn_chnqmap1 A) (syn_csn (.cv u))) p0009 p0011
+    @gEqtr4d
+      (synWa (.classMem (.cv u) (synChwcn A))
+        (.classEq (.cv z) (synCec (.cv u) (synChwniso A))))
+      (.cv z) (synCec (.cv u) (synChwniso A))
+      (synCfv (synChnqmap1 A) (synCsn (.cv u))) p0009 p0011
   have p0013 :=
-    @g_jca
-      (syn_wa (.classMem (.cv u) (syn_chwcn A))
-        (.classEq (.cv z) (syn_cec (.cv u) (syn_chwniso A))))
-      (.classMem (syn_csn (.cv u)) (syn_cpw1 (syn_chwcn A)))
-      (.classEq (.cv z) (syn_cfv (syn_chnqmap1 A) (syn_csn (.cv u)))) p0008 p0012
-  have p0014 := @g_fveq2 (.cv q) (syn_csn (.cv u)) (syn_chnqmap1 A)
+    @gJca
+      (synWa (.classMem (.cv u) (synChwcn A))
+        (.classEq (.cv z) (synCec (.cv u) (synChwniso A))))
+      (.classMem (synCsn (.cv u)) (synCpw1 (synChwcn A)))
+      (.classEq (.cv z) (synCfv (synChnqmap1 A) (synCsn (.cv u)))) p0008 p0012
+  have p0014 := @gFveq2 (.cv q) (synCsn (.cv u)) (synChnqmap1 A)
   have p0015 :=
-    @g_eqeq2d (.classEq (.cv q) (syn_csn (.cv u))) (syn_cfv (syn_chnqmap1 A) (.cv q))
-      (syn_cfv (syn_chnqmap1 A) (syn_csn (.cv u))) (.cv z) p0014
+    @gEqeq2d (.classEq (.cv q) (synCsn (.cv u))) (synCfv (synChnqmap1 A) (.cv q))
+      (synCfv (synChnqmap1 A) (synCsn (.cv u))) (.cv z) p0014
   have p0016 :=
-    @g_rspcev (.classEq (.cv z) (syn_cfv (syn_chnqmap1 A) (.cv q)))
-      (.classEq (.cv z) (syn_cfv (syn_chnqmap1 A) (syn_csn (.cv u)))) q (syn_csn (.cv u))
-      (syn_cpw1 (syn_chwcn A)) dv_cache_0005 dv_cache_0006 dv_cache_0007 p0015
+    @gRspcev (.classEq (.cv z) (synCfv (synChnqmap1 A) (.cv q)))
+      (.classEq (.cv z) (synCfv (synChnqmap1 A) (synCsn (.cv u)))) q (synCsn (.cv u))
+      (synCpw1 (synChwcn A)) dv_cache_0005 dv_cache_0006 dv_cache_0007 p0015
   have p0017 :=
-    @g_syl
-      (syn_wa (.classMem (.cv u) (syn_chwcn A))
-        (.classEq (.cv z) (syn_cec (.cv u) (syn_chwniso A))))
-      (syn_wa (.classMem (syn_csn (.cv u)) (syn_cpw1 (syn_chwcn A)))
-        (.classEq (.cv z) (syn_cfv (syn_chnqmap1 A) (syn_csn (.cv u)))))
-      (syn_wrex q (syn_cpw1 (syn_chwcn A))
-        (.classEq (.cv z) (syn_cfv (syn_chnqmap1 A) (.cv q))))
+    @gSyl
+      (synWa (.classMem (.cv u) (synChwcn A))
+        (.classEq (.cv z) (synCec (.cv u) (synChwniso A))))
+      (synWa (.classMem (synCsn (.cv u)) (synCpw1 (synChwcn A)))
+        (.classEq (.cv z) (synCfv (synChnqmap1 A) (synCsn (.cv u)))))
+      (synWrex q (synCpw1 (synChwcn A))
+        (.classEq (.cv z) (synCfv (synChnqmap1 A) (.cv q))))
       p0013 p0016
   have p0018 :=
-    @g_rexlimiva (.classEq (.cv z) (syn_cec (.cv u) (syn_chwniso A)))
-      (syn_wrex q (syn_cpw1 (syn_chwcn A))
-        (.classEq (.cv z) (syn_cfv (syn_chnqmap1 A) (.cv q))))
-      u (syn_chwcn A) dv_cache_0008 p0017
+    @gRexlimiva (.classEq (.cv z) (synCec (.cv u) (synChwniso A)))
+      (synWrex q (synCpw1 (synChwcn A))
+        (.classEq (.cv z) (synCfv (synChnqmap1 A) (.cv q))))
+      u (synChwcn A) dv_cache_0008 p0017
   have p0019 :=
-    @g_syl (.classMem (.cv z) (syn_chnord A))
-      (syn_wrex u (syn_chwcn A) (.classEq (.cv z) (syn_cec (.cv u) (syn_chwniso A))))
-      (syn_wrex q (syn_cpw1 (syn_chwcn A))
-        (.classEq (.cv z) (syn_cfv (syn_chnqmap1 A) (.cv q))))
+    @gSyl (.classMem (.cv z) (synChnord A))
+      (synWrex u (synChwcn A) (.classEq (.cv z) (synCec (.cv u) (synChwniso A))))
+      (synWrex q (synCpw1 (synChwcn A))
+        (.classEq (.cv z) (synCfv (synChnqmap1 A) (.cv q))))
       p0005 p0018
   have p0020 :=
-    @g_rgen
-      (syn_wrex q (syn_cpw1 (syn_chwcn A))
-        (.classEq (.cv z) (syn_cfv (syn_chnqmap1 A) (.cv q))))
-      z (syn_chnord A) p0019
+    @gRgen
+      (synWrex q (synCpw1 (synChwcn A))
+        (.classEq (.cv z) (synCfv (synChnqmap1 A) (.cv q))))
+      z (synChnord A) p0019
   have p0021 :=
-    @g_pm3_2i (syn_wf (syn_chnqmap1 A) (syn_cpw1 (syn_chwcn A)) (syn_chnord A))
-      (syn_wral z (syn_chnord A) (syn_wrex q (syn_cpw1 (syn_chwcn A))
-          (.classEq (.cv z) (syn_cfv (syn_chnqmap1 A) (.cv q)))))
+    @gPm32i (synWf (synChnqmap1 A) (synCpw1 (synChwcn A)) (synChnord A))
+      (synWral z (synChnord A) (synWrex q (synCpw1 (synChwcn A))
+          (.classEq (.cv z) (synCfv (synChnqmap1 A) (.cv q)))))
       p0000 p0020
   have p0022 :=
-    @g_dffo3 q z (syn_cpw1 (syn_chwcn A)) (syn_chnord A) (syn_chnqmap1 A) dv_cache_0006
+    @gDffo3 q z (synCpw1 (synChwcn A)) (synChnord A) (synChnqmap1 A) dv_cache_0006
       dv_cache_0009 dv_cache_0010 dv_cache_0011 dv_cache_0012 dv_cache_0013 dv_cache_0014
   have p0023 :=
-    @g_mpbir (syn_wfo (syn_chnqmap1 A) (syn_cpw1 (syn_chwcn A)) (syn_chnord A))
-      (syn_wa (syn_wf (syn_chnqmap1 A) (syn_cpw1 (syn_chwcn A)) (syn_chnord A))
-        (syn_wral z (syn_chnord A) (syn_wrex q (syn_cpw1 (syn_chwcn A))
-            (.classEq (.cv z) (syn_cfv (syn_chnqmap1 A) (.cv q))))))
+    @gMpbir (synWfo (synChnqmap1 A) (synCpw1 (synChwcn A)) (synChnord A))
+      (synWa (synWf (synChnqmap1 A) (synCpw1 (synChwcn A)) (synChnord A))
+        (synWral z (synChnord A) (synWrex q (synCpw1 (synChwcn A))
+            (.classEq (.cv z) (synCfv (synChnqmap1 A) (.cv q))))))
       p0021 p0022
-  have p0024 := @g_dffo2 (syn_cpw1 (syn_chwcn A)) (syn_chnord A) (syn_chnqmap1 A)
+  have p0024 := @gDffo2 (synCpw1 (synChwcn A)) (synChnord A) (synChnqmap1 A)
   have p0025 :=
-    @g_mpbi (syn_wfo (syn_chnqmap1 A) (syn_cpw1 (syn_chwcn A)) (syn_chnord A))
-      (syn_wa (syn_wf (syn_chnqmap1 A) (syn_cpw1 (syn_chwcn A)) (syn_chnord A))
-        (.classEq (syn_crn (syn_chnqmap1 A)) (syn_chnord A)))
+    @gMpbi (synWfo (synChnqmap1 A) (synCpw1 (synChwcn A)) (synChnord A))
+      (synWa (synWf (synChnqmap1 A) (synCpw1 (synChwcn A)) (synChnord A))
+        (.classEq (synCrn (synChnqmap1 A)) (synChnord A)))
       p0023 p0024
   have p0026 :=
-    @g_simpri (syn_wf (syn_chnqmap1 A) (syn_cpw1 (syn_chwcn A)) (syn_chnord A))
-      (.classEq (syn_crn (syn_chnqmap1 A)) (syn_chnord A)) p0025
+    @gSimpri (synWf (synChnqmap1 A) (synCpw1 (synChwcn A)) (synChnord A))
+      (.classEq (synCrn (synChnqmap1 A)) (synChnord A)) p0025
   exact p0026
 
+/-- Checked nominal proof certificate identified upstream as `g_brlnker`. -/
 @[expose]
-noncomputable def g_brlnker (R : Class) (X : Class) (Y : Class) :
+noncomputable def gBrlnker (R : Class) (X : Class) (Y : Class) :
     Nominal.NPrf
-      (syn_wb (syn_wbr X (syn_clnker R) Y) (syn_wa (syn_wbr X R Y) (syn_wbr Y R X))) :=
+      (synWb (synWbr X (synClnker R) Y) (synWa (synWbr X R Y) (synWbr Y R X))) :=
   by
-  have p0000 := (Nominal.classEqRefl (syn_clnker R))
-  have p0001 := @g_breqi X Y (syn_clnker R) (syn_cin R (syn_ccnv R)) p0000
-  have p0002 := @g_brin X Y R (syn_ccnv R)
-  have p0003 := @g_brcnv X Y R
-  have p0004 := @g_anbi2i (syn_wbr X (syn_ccnv R) Y) (syn_wbr Y R X) (syn_wbr X R Y) p0003
+  have p0000 := (Nominal.classEqRefl (synClnker R))
+  have p0001 := @gBreqi X Y (synClnker R) (synCin R (synCcnv R)) p0000
+  have p0002 := @gBrin X Y R (synCcnv R)
+  have p0003 := @gBrcnv X Y R
+  have p0004 := @gAnbi2i (synWbr X (synCcnv R) Y) (synWbr Y R X) (synWbr X R Y) p0003
   have p0005 :=
-    @g_bitri (syn_wbr X (syn_cin R (syn_ccnv R)) Y)
-      (syn_wa (syn_wbr X R Y) (syn_wbr X (syn_ccnv R) Y))
-      (syn_wa (syn_wbr X R Y) (syn_wbr Y R X)) p0002 p0004
+    @gBitri (synWbr X (synCin R (synCcnv R)) Y)
+      (synWa (synWbr X R Y) (synWbr X (synCcnv R) Y))
+      (synWa (synWbr X R Y) (synWbr Y R X)) p0002 p0004
   have p0006 :=
-    @g_bitri (syn_wbr X (syn_clnker R) Y) (syn_wbr X (syn_cin R (syn_ccnv R)) Y)
-      (syn_wa (syn_wbr X R Y) (syn_wbr Y R X)) p0001 p0005
+    @gBitri (synWbr X (synClnker R) Y) (synWbr X (synCin R (synCcnv R)) Y)
+      (synWa (synWbr X R Y) (synWbr Y R X)) p0001 p0005
   exact p0006
 
+/-- Checked nominal proof certificate identified upstream as `g_lnkerex`. -/
 @[expose]
-noncomputable def g_lnkerex (R : Class)
-    (hyp_lnkerex_1 : Nominal.NPrf (.classMem R (syn_cvv))) :
-    Nominal.NPrf (.classMem (syn_clnker R) (syn_cvv)) :=
+noncomputable def gLnkerex (R : Class)
+    (hyp_lnkerex_1 : Nominal.NPrf (.classMem R (synCvv))) :
+    Nominal.NPrf (.classMem (synClnker R) (synCvv)) :=
   by
-  have p0000 := (Nominal.classEqRefl (syn_clnker R))
-  have p0001 := @g_cnvex R hyp_lnkerex_1
-  have p0002 := @g_inex R (syn_ccnv R) hyp_lnkerex_1 p0001
-  have p0003 := @g_eqeltri (syn_clnker R) (syn_cin R (syn_ccnv R)) (syn_cvv) p0000 p0002
+  have p0000 := (Nominal.classEqRefl (synClnker R))
+  have p0001 := @gCnvex R hyp_lnkerex_1
+  have p0002 := @gInex R (synCcnv R) hyp_lnkerex_1 p0001
+  have p0003 := @gEqeltri (synClnker R) (synCin R (synCcnv R)) (synCvv) p0000 p0002
   exact p0003
 
+/-- Checked nominal proof certificate identified upstream as `g_ellnquo`. -/
 @[expose]
-noncomputable def g_ellnquo (x : Var) (A : Class) (B : Class) (R : Class)
+noncomputable def gEllnquo (x : Var) (A : Class) (B : Class) (R : Class)
     (_dv_A_B : Disjoint A.fv B.fv) (_dv_A_R : Disjoint A.fv R.fv) (dv_A_x : x ∉ A.fv)
     (_dv_B_R : Disjoint B.fv R.fv) (dv_B_x : x ∉ B.fv) (dv_R_x : x ∉ R.fv)
-    (hyp_ellnquo_1 : Nominal.NPrf (.classMem B (syn_cvv))) :
+    (hyp_ellnquo_1 : Nominal.NPrf (.classMem B (synCvv))) :
     Nominal.NPrf
-      (syn_wb (.classMem B (syn_clnquo R A))
-        (syn_wrex x A (.classEq B (syn_cec (.cv x) (syn_clnker R))))) :=
+      (synWb (.classMem B (synClnquo R A))
+        (synWrex x A (.classEq B (synCec (.cv x) (synClnker R))))) :=
   by
   have dv_cache_0001 : x ∉ (A).fv := by
     exact
@@ -2733,7 +2751,7 @@ noncomputable def g_ellnquo (x : Var) (A : Class) (B : Class) (R : Class)
           intro hmem
           cases hmem
         simp only [dv_B_x, not_false_eq_true])
-  have dv_cache_0003 : x ∉ ((syn_clnker R)).fv :=
+  have dv_cache_0003 : x ∉ ((synClnker R)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002
     exact
@@ -2744,13 +2762,13 @@ noncomputable def g_ellnquo (x : Var) (A : Class) (B : Class) (R : Class)
           cases hmem
         simp only [NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_clnker, dv_R_x,
           not_false_eq_true])
-  have p0000 := (Nominal.classEqRefl (syn_clnquo R A))
-  have p0001 := @g_eleq2i (syn_clnquo R A) (syn_cqs A (syn_clnker R)) B p0000
+  have p0000 := (Nominal.classEqRefl (synClnquo R A))
+  have p0001 := @gEleq2i (synClnquo R A) (synCqs A (synClnker R)) B p0000
   have p0002 :=
-    @g_elqs x A B (syn_clnker R) dv_cache_0001 dv_cache_0002 dv_cache_0003 hyp_ellnquo_1
+    @gElqs x A B (synClnker R) dv_cache_0001 dv_cache_0002 dv_cache_0003 hyp_ellnquo_1
   have p0003 :=
-    @g_bitri (.classMem B (syn_clnquo R A)) (.classMem B (syn_cqs A (syn_clnker R)))
-      (syn_wrex x A (.classEq B (syn_cec (.cv x) (syn_clnker R)))) p0001 p0002
+    @gBitri (.classMem B (synClnquo R A)) (.classMem B (synCqs A (synClnker R)))
+      (synWrex x A (.classEq B (synCec (.cv x) (synClnker R)))) p0001 p0002
   exact p0003
 
 
@@ -2771,9 +2789,10 @@ open NFChoice.SemanticCore
 open NFChoice.ReplaySupport
 open NFChoice.Compiler.CompactSourceSyntax
 
+/-- Checked nominal proof certificate identified upstream as `g_lefinssvvk`. -/
 @[expose]
-noncomputable def g_lefinssvvk :
-    Nominal.NPrf (syn_wss (syn_clefin) (syn_cxpk (syn_cvv) (syn_cvv))) :=
+noncomputable def gLefinssvvk :
+    Nominal.NPrf (synWss (synClefin) (synCxpk (synCvv) (synCvv))) :=
   by
   let proofSupport : Finset Var := (∅ : Finset Var)
   let z : Var := freshVar proofSupport 0
@@ -2830,16 +2849,17 @@ noncomputable def g_lefinssvvk :
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
     exact (show y ≠ z from (by exact fresh_y_ne_z))
   have p0000 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_lefin x y z w
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfLefin x y z w
       dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005 dv_cache_0006
   have p0001 :=
-    @g_opkabssvvki (syn_wrex w (syn_cnnc) (.classEq (.cv z) (syn_cplc (.cv y) (.cv w)))) x
-      y z (syn_clefin) dv_cache_0004 dv_cache_0005 p0000
+    @gOpkabssvvki (synWrex w (synCnnc) (.classEq (.cv z) (synCplc (.cv y) (.cv w)))) x
+      y z (synClefin) dv_cache_0004 dv_cache_0005 p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_ltfinssvvk`. -/
 @[expose]
-noncomputable def g_ltfinssvvk :
-    Nominal.NPrf (syn_wss (syn_cltfin) (syn_cxpk (syn_cvv) (syn_cvv))) :=
+noncomputable def gLtfinssvvk :
+    Nominal.NPrf (synWss (synCltfin) (synCxpk (synCvv) (synCvv))) :=
   by
   let proofSupport : Finset Var := (∅ : Finset Var)
   let m : Var := freshVar proofSupport 0
@@ -2903,56 +2923,59 @@ noncomputable def g_ltfinssvvk :
       dv_cache_0006 dv_cache_0007
     exact (show x ≠ n from (by exact fresh_x_ne_n))
   have p0000 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_ltfin x m n p
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfLtfin x m n p
       dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005 dv_cache_0006
   have p0001 :=
-    @g_opkabssvvki
-      (syn_wa (syn_wne (.cv m) (syn_c0)) (syn_wrex p (syn_cnnc)
-          (.classEq (.cv n) (syn_cplc (syn_cplc (.cv m) (.cv p)) (syn_c1c)))))
-      x m n (syn_cltfin) dv_cache_0007 dv_cache_0008 p0000
+    @gOpkabssvvki
+      (synWa (synWne (.cv m) (synC0)) (synWrex p (synCnnc)
+          (.classEq (.cv n) (synCplc (synCplc (.cv m) (.cv p)) (synC1c)))))
+      x m n (synCltfin) dv_cache_0007 dv_cache_0008 p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_ltfinunidkssvvk`. -/
 @[expose]
-noncomputable def g_ltfinunidkssvvk :
+noncomputable def gLtfinunidkssvvk :
     Nominal.NPrf
-      (syn_wss (syn_cun (syn_cltfin) (syn_cidk)) (syn_cxpk (syn_cvv) (syn_cvv))) :=
+      (synWss (synCun (synCltfin) (synCidk)) (synCxpk (synCvv) (synCvv))) :=
   by
-  have p0000 := @g_ltfinssvvk
-  have p0001 := @g_idkssvvk
+  have p0000 := @gLtfinssvvk
+  have p0001 := @gIdkssvvk
   have p0002 :=
-    @g_unssi (syn_cltfin) (syn_cidk) (syn_cxpk (syn_cvv) (syn_cvv)) p0000 p0001
+    @gUnssi (synCltfin) (synCidk) (synCxpk (synCvv) (synCvv)) p0000 p0001
   exact p0002
 
+/-- Checked nominal proof certificate identified upstream as `g_ellefinunidk`. -/
 @[expose]
-noncomputable def g_ellefinunidk (A : Class) (B : Class) (V : Class) (W : Class) :
+noncomputable def gEllefinunidk (A : Class) (B : Class) (V : Class) (W : Class) :
     Nominal.NPrf
-      (.imp (syn_wa (.classMem A V) (.classMem B W))
-        (syn_wb (.classMem (syn_copk A B) (syn_cun (syn_cltfin) (syn_cidk)))
-          (syn_wo (.classMem (syn_copk A B) (syn_cltfin)) (.classEq A B)))) :=
+      (.imp (synWa (.classMem A V) (.classMem B W))
+        (synWb (.classMem (synCopk A B) (synCun (synCltfin) (synCidk)))
+          (synWo (.classMem (synCopk A B) (synCltfin)) (.classEq A B)))) :=
   by
-  have p0000 := @g_elun (syn_copk A B) (syn_cltfin) (syn_cidk)
+  have p0000 := @gElun (synCopk A B) (synCltfin) (synCidk)
   have p0001 :=
-    @g_a1i
-      (syn_wb (.classMem (syn_copk A B) (syn_cun (syn_cltfin) (syn_cidk)))
-        (syn_wo (.classMem (syn_copk A B) (syn_cltfin)) (.classMem (syn_copk A B) (syn_cidk))))
-      (syn_wa (.classMem A V) (.classMem B W)) p0000
-  have p0002 := @g_opkelidkg A B V W
+    @gA1i
+      (synWb (.classMem (synCopk A B) (synCun (synCltfin) (synCidk)))
+        (synWo (.classMem (synCopk A B) (synCltfin)) (.classMem (synCopk A B) (synCidk))))
+      (synWa (.classMem A V) (.classMem B W)) p0000
+  have p0002 := @gOpkelidkg A B V W
   have p0003 :=
-    @g_orbi2d (syn_wa (.classMem A V) (.classMem B W))
-      (.classMem (syn_copk A B) (syn_cidk)) (.classEq A B)
-      (.classMem (syn_copk A B) (syn_cltfin)) p0002
+    @gOrbi2d (synWa (.classMem A V) (.classMem B W))
+      (.classMem (synCopk A B) (synCidk)) (.classEq A B)
+      (.classMem (synCopk A B) (synCltfin)) p0002
   have p0004 :=
-    @g_bitrd (syn_wa (.classMem A V) (.classMem B W))
-      (.classMem (syn_copk A B) (syn_cun (syn_cltfin) (syn_cidk)))
-      (syn_wo (.classMem (syn_copk A B) (syn_cltfin)) (.classMem (syn_copk A B) (syn_cidk)))
-      (syn_wo (.classMem (syn_copk A B) (syn_cltfin)) (.classEq A B)) p0001 p0003
+    @gBitrd (synWa (.classMem A V) (.classMem B W))
+      (.classMem (synCopk A B) (synCun (synCltfin) (synCidk)))
+      (synWo (.classMem (synCopk A B) (synCltfin)) (.classMem (synCopk A B) (synCidk)))
+      (synWo (.classMem (synCopk A B) (synCltfin)) (.classEq A B)) p0001 p0003
   exact p0004
 
+/-- Checked nominal proof certificate identified upstream as `g_lefinlteq0`. -/
 @[expose]
-noncomputable def g_lefinlteq0 (A : Class) (B : Class) (V : Class) (W : Class) :
+noncomputable def gLefinlteq0 (A : Class) (B : Class) (V : Class) (W : Class) :
     Nominal.NPrf
-      (.imp (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
-        (syn_wb (.classMem (syn_copk A B) (syn_clefin)) (.classEq A B))) :=
+      (.imp (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
+        (synWb (.classMem (synCopk A B) (synClefin)) (.classEq A B))) :=
   by
   let proofSupport : Finset Var := A.fv ∪ B.fv ∪ V.fv ∪ W.fv
   let x : Var := freshVar proofSupport 0
@@ -3006,7 +3029,7 @@ noncomputable def g_lefinlteq0 (A : Class) (B : Class) (V : Class) (W : Class) :
         simp only [NFChoice.Compiler.CoreFVSimp.fv_wff_classEq, Finset.mem_union,
           fresh_x_not_A, fresh_x_not_B, or_false, not_false_eq_true])
   have dv_cache_0004 :
-    x ∉ ((syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))).fv :=
+    x ∉ ((synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003
     exact
@@ -3021,151 +3044,152 @@ noncomputable def g_lefinlteq0 (A : Class) (B : Class) (V : Class) (W : Class) :
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0, Finset.mem_union,
           fresh_x_not_A, fresh_x_not_V, fresh_x_not_B, fresh_x_not_W,
           compact_fv_not_mem_empty, or_false, not_false_eq_true])
-  have p0000 := @g_simp1 (.classMem A V) (.classMem B W) (.classEq A (syn_c0))
-  have p0001 := @g_simp2 (.classMem A V) (.classMem B W) (.classEq A (syn_c0))
+  have p0000 := @gSimp1 (.classMem A V) (.classMem B W) (.classEq A (synC0))
+  have p0001 := @gSimp2 (.classMem A V) (.classMem B W) (.classEq A (synC0))
   have p0002 :=
-    @g_jca (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0))) (.classMem A V)
+    @gJca (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0))) (.classMem A V)
       (.classMem B W) p0000 p0001
-  have p0003 := @g_opklefing x A B V W dv_cache_0001 dv_cache_0002
+  have p0003 := @gOpklefing x A B V W dv_cache_0001 dv_cache_0002
   have p0004 :=
-    @g_syl (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
-      (syn_wa (.classMem A V) (.classMem B W))
-      (syn_wb (.classMem (syn_copk A B) (syn_clefin))
-        (syn_wrex x (syn_cnnc) (.classEq B (syn_cplc A (.cv x)))))
+    @gSyl (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
+      (synWa (.classMem A V) (.classMem B W))
+      (synWb (.classMem (synCopk A B) (synClefin))
+        (synWrex x (synCnnc) (.classEq B (synCplc A (.cv x)))))
       p0002 p0003
   have p0005 :=
-    @g_simpl
-      (syn_wa (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
-        (.classMem (.cv x) (syn_cnnc)))
-      (.classEq B (syn_cplc A (.cv x)))
+    @gSimpl
+      (synWa (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
+        (.classMem (.cv x) (synCnnc)))
+      (.classEq B (synCplc A (.cv x)))
   have p0006 :=
-    @g_simpl (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
-      (.classMem (.cv x) (syn_cnnc))
-  have p0007 := @g_simp3 (.classMem A V) (.classMem B W) (.classEq A (syn_c0))
+    @gSimpl (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
+      (.classMem (.cv x) (synCnnc))
+  have p0007 := @gSimp3 (.classMem A V) (.classMem B W) (.classEq A (synC0))
   have p0008 :=
-    @g_syl
-      (syn_wa (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
-        (.classMem (.cv x) (syn_cnnc)))
-      (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
-      (.classEq A (syn_c0)) p0006 p0007
+    @gSyl
+      (synWa (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
+        (.classMem (.cv x) (synCnnc)))
+      (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
+      (.classEq A (synC0)) p0006 p0007
   have p0009 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
-          (.classMem (.cv x) (syn_cnnc))) (.classEq B (syn_cplc A (.cv x))))
-      (syn_wa (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
-        (.classMem (.cv x) (syn_cnnc)))
-      (.classEq A (syn_c0)) p0005 p0008
+    @gSyl
+      (synWa (synWa (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
+          (.classMem (.cv x) (synCnnc))) (.classEq B (synCplc A (.cv x))))
+      (synWa (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
+        (.classMem (.cv x) (synCnnc)))
+      (.classEq A (synC0)) p0005 p0008
   have p0010 :=
-    @g_simpr
-      (syn_wa (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
-        (.classMem (.cv x) (syn_cnnc)))
-      (.classEq B (syn_cplc A (.cv x)))
-  have p0012 := @g_addccom A (.cv x)
+    @gSimpr
+      (synWa (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
+        (.classMem (.cv x) (synCnnc)))
+      (.classEq B (synCplc A (.cv x)))
+  have p0012 := @gAddccom A (.cv x)
   have p0013 :=
-    @g_a1i (.classEq (syn_cplc A (.cv x)) (syn_cplc (.cv x) A))
-      (syn_wa (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
-        (.classMem (.cv x) (syn_cnnc)))
+    @gA1i (.classEq (synCplc A (.cv x)) (synCplc (.cv x) A))
+      (synWa (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
+        (.classMem (.cv x) (synCnnc)))
       p0012
   have p0017 :=
-    @g_addceq2d
-      (syn_wa (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
-        (.classMem (.cv x) (syn_cnnc)))
-      A (syn_c0) (.cv x) p0008
+    @gAddceq2d
+      (synWa (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
+        (.classMem (.cv x) (synCnnc)))
+      A (synC0) (.cv x) p0008
   have p0018 :=
-    @g_eqtrd
-      (syn_wa (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
-        (.classMem (.cv x) (syn_cnnc)))
-      (syn_cplc A (.cv x)) (syn_cplc (.cv x) A) (syn_cplc (.cv x) (syn_c0)) p0013 p0017
-  have p0019 := @g_addcnul1 (.cv x)
+    @gEqtrd
+      (synWa (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
+        (.classMem (.cv x) (synCnnc)))
+      (synCplc A (.cv x)) (synCplc (.cv x) A) (synCplc (.cv x) (synC0)) p0013 p0017
+  have p0019 := @gAddcnul1 (.cv x)
   have p0020 :=
-    @g_a1i (.classEq (syn_cplc (.cv x) (syn_c0)) (syn_c0))
-      (syn_wa (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
-        (.classMem (.cv x) (syn_cnnc)))
+    @gA1i (.classEq (synCplc (.cv x) (synC0)) (synC0))
+      (synWa (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
+        (.classMem (.cv x) (synCnnc)))
       p0019
   have p0021 :=
-    @g_eqtrd
-      (syn_wa (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
-        (.classMem (.cv x) (syn_cnnc)))
-      (syn_cplc A (.cv x)) (syn_cplc (.cv x) (syn_c0)) (syn_c0) p0018 p0020
+    @gEqtrd
+      (synWa (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
+        (.classMem (.cv x) (synCnnc)))
+      (synCplc A (.cv x)) (synCplc (.cv x) (synC0)) (synC0) p0018 p0020
   have p0022 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
-          (.classMem (.cv x) (syn_cnnc))) (.classEq B (syn_cplc A (.cv x))))
-      (syn_wa (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
-        (.classMem (.cv x) (syn_cnnc)))
-      (.classEq (syn_cplc A (.cv x)) (syn_c0)) p0005 p0021
+    @gSyl
+      (synWa (synWa (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
+          (.classMem (.cv x) (synCnnc))) (.classEq B (synCplc A (.cv x))))
+      (synWa (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
+        (.classMem (.cv x) (synCnnc)))
+      (.classEq (synCplc A (.cv x)) (synC0)) p0005 p0021
   have p0023 :=
-    @g_eqtrd
-      (syn_wa (syn_wa (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
-          (.classMem (.cv x) (syn_cnnc))) (.classEq B (syn_cplc A (.cv x))))
-      B (syn_cplc A (.cv x)) (syn_c0) p0010 p0022
+    @gEqtrd
+      (synWa (synWa (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
+          (.classMem (.cv x) (synCnnc))) (.classEq B (synCplc A (.cv x))))
+      B (synCplc A (.cv x)) (synC0) p0010 p0022
   have p0024 :=
-    @g_eqcomd
-      (syn_wa (syn_wa (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
-          (.classMem (.cv x) (syn_cnnc))) (.classEq B (syn_cplc A (.cv x))))
-      B (syn_c0) p0023
+    @gEqcomd
+      (synWa (synWa (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
+          (.classMem (.cv x) (synCnnc))) (.classEq B (synCplc A (.cv x))))
+      B (synC0) p0023
   have p0025 :=
-    @g_eqtrd
-      (syn_wa (syn_wa (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
-          (.classMem (.cv x) (syn_cnnc))) (.classEq B (syn_cplc A (.cv x))))
-      A (syn_c0) B p0009 p0024
+    @gEqtrd
+      (synWa (synWa (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
+          (.classMem (.cv x) (synCnnc))) (.classEq B (synCplc A (.cv x))))
+      A (synC0) B p0009 p0024
   have p0026 :=
-    @g_ex
-      (syn_wa (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
-        (.classMem (.cv x) (syn_cnnc)))
-      (.classEq B (syn_cplc A (.cv x))) (.classEq A B) p0025
+    @gEx
+      (synWa (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
+        (.classMem (.cv x) (synCnnc)))
+      (.classEq B (synCplc A (.cv x))) (.classEq A B) p0025
   have p0027 :=
-    @g_rexlimdva (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
-      (.classEq B (syn_cplc A (.cv x))) (.classEq A B) x (syn_cnnc) dv_cache_0003
+    @gRexlimdva (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
+      (.classEq B (synCplc A (.cv x))) (.classEq A B) x (synCnnc) dv_cache_0003
       dv_cache_0004 p0026
   have p0028 :=
-    @g_sylbid (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
-      (.classMem (syn_copk A B) (syn_clefin))
-      (syn_wrex x (syn_cnnc) (.classEq B (syn_cplc A (.cv x)))) (.classEq A B) p0004 p0027
+    @gSylbid (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
+      (.classMem (synCopk A B) (synClefin))
+      (synWrex x (synCnnc) (.classEq B (synCplc A (.cv x)))) (.classEq A B) p0004 p0027
   have p0029 :=
-    @g_simpl (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
+    @gSimpl (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
       (.classEq A B)
   have p0031 :=
-    @g_syl
-      (syn_wa (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0))) (.classEq A B))
-      (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0))) (.classMem A V)
+    @gSyl
+      (synWa (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0))) (.classEq A B))
+      (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0))) (.classMem A V)
       p0029 p0000
-  have p0032 := @g_lefinrflx A V
+  have p0032 := @gLefinrflx A V
   have p0033 :=
-    @g_syl
-      (syn_wa (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0))) (.classEq A B))
-      (.classMem A V) (.classMem (syn_copk A A) (syn_clefin)) p0031 p0032
+    @gSyl
+      (synWa (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0))) (.classEq A B))
+      (.classMem A V) (.classMem (synCopk A A) (synClefin)) p0031 p0032
   have p0034 :=
-    @g_simpr (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
+    @gSimpr (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
       (.classEq A B)
-  have p0035 := @g_opkeq2 A B A
+  have p0035 := @gOpkeq2 A B A
   have p0036 :=
-    @g_syl
-      (syn_wa (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0))) (.classEq A B))
-      (.classEq A B) (.classEq (syn_copk A A) (syn_copk A B)) p0034 p0035
+    @gSyl
+      (synWa (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0))) (.classEq A B))
+      (.classEq A B) (.classEq (synCopk A A) (synCopk A B)) p0034 p0035
   have p0037 :=
-    @g_eleq1d
-      (syn_wa (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0))) (.classEq A B))
-      (syn_copk A A) (syn_copk A B) (syn_clefin) p0036
+    @gEleq1d
+      (synWa (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0))) (.classEq A B))
+      (synCopk A A) (synCopk A B) (synClefin) p0036
   have p0038 :=
-    @g_mpbid
-      (syn_wa (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0))) (.classEq A B))
-      (.classMem (syn_copk A A) (syn_clefin)) (.classMem (syn_copk A B) (syn_clefin))
+    @gMpbid
+      (synWa (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0))) (.classEq A B))
+      (.classMem (synCopk A A) (synClefin)) (.classMem (synCopk A B) (synClefin))
       p0033 p0037
   have p0039 :=
-    @g_ex (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0))) (.classEq A B)
-      (.classMem (syn_copk A B) (syn_clefin)) p0038
+    @gEx (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0))) (.classEq A B)
+      (.classMem (synCopk A B) (synClefin)) p0038
   have p0040 :=
-    @g_impbid (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
-      (.classMem (syn_copk A B) (syn_clefin)) (.classEq A B) p0028 p0039
+    @gImpbid (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
+      (.classMem (synCopk A B) (synClefin)) (.classEq A B) p0028 p0039
   exact p0040
 
+/-- Checked nominal proof certificate identified upstream as `g_lefinlteqall`. -/
 @[expose]
-noncomputable def g_lefinlteqall (A : Class) (B : Class) (V : Class) (W : Class) :
+noncomputable def gLefinlteqall (A : Class) (B : Class) (V : Class) (W : Class) :
     Nominal.NPrf
-      (.imp (syn_wa (.classMem A V) (.classMem B W))
-        (syn_wb (.classMem (syn_copk A B) (syn_clefin))
-          (syn_wo (.classMem (syn_copk A B) (syn_cltfin)) (.classEq A B)))) :=
+      (.imp (synWa (.classMem A V) (.classMem B W))
+        (synWb (.classMem (synCopk A B) (synClefin))
+          (synWo (.classMem (synCopk A B) (synCltfin)) (.classEq A B)))) :=
   by
   let proofSupport : Finset Var := A.fv ∪ B.fv ∪ V.fv ∪ W.fv
   let x : Var := freshVar proofSupport 0
@@ -3201,112 +3225,113 @@ noncomputable def g_lefinlteqall (A : Class) (B : Class) (V : Class) (W : Class)
           intro hmem
           cases hmem
         simp only [fresh_x_not_B, not_false_eq_true])
-  have p0000 := @g_simpl (syn_wa (.classMem A V) (.classMem B W)) (syn_wne A (syn_c0))
-  have p0001 := @g_simpl (.classMem A V) (.classMem B W)
+  have p0000 := @gSimpl (synWa (.classMem A V) (.classMem B W)) (synWne A (synC0))
+  have p0001 := @gSimpl (.classMem A V) (.classMem B W)
   have p0002 :=
-    @g_syl (syn_wa (syn_wa (.classMem A V) (.classMem B W)) (syn_wne A (syn_c0)))
-      (syn_wa (.classMem A V) (.classMem B W)) (.classMem A V) p0000 p0001
-  have p0004 := @g_simpr (.classMem A V) (.classMem B W)
+    @gSyl (synWa (synWa (.classMem A V) (.classMem B W)) (synWne A (synC0)))
+      (synWa (.classMem A V) (.classMem B W)) (.classMem A V) p0000 p0001
+  have p0004 := @gSimpr (.classMem A V) (.classMem B W)
   have p0005 :=
-    @g_syl (syn_wa (syn_wa (.classMem A V) (.classMem B W)) (syn_wne A (syn_c0)))
-      (syn_wa (.classMem A V) (.classMem B W)) (.classMem B W) p0000 p0004
-  have p0006 := @g_simpr (syn_wa (.classMem A V) (.classMem B W)) (syn_wne A (syn_c0))
+    @gSyl (synWa (synWa (.classMem A V) (.classMem B W)) (synWne A (synC0)))
+      (synWa (.classMem A V) (.classMem B W)) (.classMem B W) p0000 p0004
+  have p0006 := @gSimpr (synWa (.classMem A V) (.classMem B W)) (synWne A (synC0))
   have p0007 :=
-    @g_n_3jca (syn_wa (syn_wa (.classMem A V) (.classMem B W)) (syn_wne A (syn_c0)))
-      (.classMem A V) (.classMem B W) (syn_wne A (syn_c0)) p0002 p0005 p0006
-  have p0008 := @g_lefinlteq A B V W
+    @gN3jca (synWa (synWa (.classMem A V) (.classMem B W)) (synWne A (synC0)))
+      (.classMem A V) (.classMem B W) (synWne A (synC0)) p0002 p0005 p0006
+  have p0008 := @gLefinlteq A B V W
   have p0009 :=
-    @g_syl (syn_wa (syn_wa (.classMem A V) (.classMem B W)) (syn_wne A (syn_c0)))
-      (syn_w3a (.classMem A V) (.classMem B W) (syn_wne A (syn_c0)))
-      (syn_wb (.classMem (syn_copk A B) (syn_clefin))
-        (syn_wo (.classMem (syn_copk A B) (syn_cltfin)) (.classEq A B)))
+    @gSyl (synWa (synWa (.classMem A V) (.classMem B W)) (synWne A (synC0)))
+      (synW3a (.classMem A V) (.classMem B W) (synWne A (synC0)))
+      (synWb (.classMem (synCopk A B) (synClefin))
+        (synWo (.classMem (synCopk A B) (synCltfin)) (.classEq A B)))
       p0007 p0008
   have p0010 :=
-    @g_ex (syn_wa (.classMem A V) (.classMem B W)) (syn_wne A (syn_c0))
-      (syn_wb (.classMem (syn_copk A B) (syn_clefin))
-        (syn_wo (.classMem (syn_copk A B) (syn_cltfin)) (.classEq A B)))
+    @gEx (synWa (.classMem A V) (.classMem B W)) (synWne A (synC0))
+      (synWb (.classMem (synCopk A B) (synClefin))
+        (synWo (.classMem (synCopk A B) (synCltfin)) (.classEq A B)))
       p0009
   have p0011 :=
-    @g_simpl (syn_wa (.classMem A V) (.classMem B W)) (.neg (syn_wne A (syn_c0)))
+    @gSimpl (synWa (.classMem A V) (.classMem B W)) (.neg (synWne A (synC0)))
   have p0013 :=
-    @g_syl (syn_wa (syn_wa (.classMem A V) (.classMem B W)) (.neg (syn_wne A (syn_c0))))
-      (syn_wa (.classMem A V) (.classMem B W)) (.classMem A V) p0011 p0001
+    @gSyl (synWa (synWa (.classMem A V) (.classMem B W)) (.neg (synWne A (synC0))))
+      (synWa (.classMem A V) (.classMem B W)) (.classMem A V) p0011 p0001
   have p0016 :=
-    @g_syl (syn_wa (syn_wa (.classMem A V) (.classMem B W)) (.neg (syn_wne A (syn_c0))))
-      (syn_wa (.classMem A V) (.classMem B W)) (.classMem B W) p0011 p0004
+    @gSyl (synWa (synWa (.classMem A V) (.classMem B W)) (.neg (synWne A (synC0))))
+      (synWa (.classMem A V) (.classMem B W)) (.classMem B W) p0011 p0004
   have p0017 :=
-    @g_simpr (syn_wa (.classMem A V) (.classMem B W)) (.neg (syn_wne A (syn_c0)))
-  have p0018 := @g_nne A (syn_c0)
+    @gSimpr (synWa (.classMem A V) (.classMem B W)) (.neg (synWne A (synC0)))
+  have p0018 := @gNne A (synC0)
   have p0019 :=
-    @g_a1i (syn_wb (.neg (syn_wne A (syn_c0))) (.classEq A (syn_c0)))
-      (syn_wa (syn_wa (.classMem A V) (.classMem B W)) (.neg (syn_wne A (syn_c0)))) p0018
+    @gA1i (synWb (.neg (synWne A (synC0))) (.classEq A (synC0)))
+      (synWa (synWa (.classMem A V) (.classMem B W)) (.neg (synWne A (synC0)))) p0018
   have p0020 :=
-    @g_mpbid (syn_wa (syn_wa (.classMem A V) (.classMem B W)) (.neg (syn_wne A (syn_c0))))
-      (.neg (syn_wne A (syn_c0))) (.classEq A (syn_c0)) p0017 p0019
+    @gMpbid (synWa (synWa (.classMem A V) (.classMem B W)) (.neg (synWne A (synC0))))
+      (.neg (synWne A (synC0))) (.classEq A (synC0)) p0017 p0019
   have p0021 :=
-    @g_n_3jca
-      (syn_wa (syn_wa (.classMem A V) (.classMem B W)) (.neg (syn_wne A (syn_c0))))
-      (.classMem A V) (.classMem B W) (.classEq A (syn_c0)) p0013 p0016 p0020
-  have p0022 := @g_lefinlteq0 A B V W
+    @gN3jca
+      (synWa (synWa (.classMem A V) (.classMem B W)) (.neg (synWne A (synC0))))
+      (.classMem A V) (.classMem B W) (.classEq A (synC0)) p0013 p0016 p0020
+  have p0022 := @gLefinlteq0 A B V W
   have p0023 :=
-    @g_syl (syn_wa (syn_wa (.classMem A V) (.classMem B W)) (.neg (syn_wne A (syn_c0))))
-      (syn_w3a (.classMem A V) (.classMem B W) (.classEq A (syn_c0)))
-      (syn_wb (.classMem (syn_copk A B) (syn_clefin)) (.classEq A B)) p0021 p0022
-  have p0026 := @g_opkltfing x A B V W dv_cache_0001 dv_cache_0002
+    @gSyl (synWa (synWa (.classMem A V) (.classMem B W)) (.neg (synWne A (synC0))))
+      (synW3a (.classMem A V) (.classMem B W) (.classEq A (synC0)))
+      (synWb (.classMem (synCopk A B) (synClefin)) (.classEq A B)) p0021 p0022
+  have p0026 := @gOpkltfing x A B V W dv_cache_0001 dv_cache_0002
   have p0027 :=
-    @g_syl (syn_wa (syn_wa (.classMem A V) (.classMem B W)) (.neg (syn_wne A (syn_c0))))
-      (syn_wa (.classMem A V) (.classMem B W))
-      (syn_wb (.classMem (syn_copk A B) (syn_cltfin)) (syn_wa (syn_wne A (syn_c0))
-          (syn_wrex x (syn_cnnc) (.classEq B (syn_cplc (syn_cplc A (.cv x)) (syn_c1c))))))
+    @gSyl (synWa (synWa (.classMem A V) (.classMem B W)) (.neg (synWne A (synC0))))
+      (synWa (.classMem A V) (.classMem B W))
+      (synWb (.classMem (synCopk A B) (synCltfin)) (synWa (synWne A (synC0))
+          (synWrex x (synCnnc) (.classEq B (synCplc (synCplc A (.cv x)) (synC1c))))))
       p0011 p0026
   have p0028 :=
-    @g_simpl (syn_wne A (syn_c0))
-      (syn_wrex x (syn_cnnc) (.classEq B (syn_cplc (syn_cplc A (.cv x)) (syn_c1c))))
+    @gSimpl (synWne A (synC0))
+      (synWrex x (synCnnc) (.classEq B (synCplc (synCplc A (.cv x)) (synC1c))))
   have p0029 :=
-    @g_a1i
-      (.imp (syn_wa (syn_wne A (syn_c0))
-          (syn_wrex x (syn_cnnc) (.classEq B (syn_cplc (syn_cplc A (.cv x)) (syn_c1c)))))
-        (syn_wne A (syn_c0)))
-      (syn_wa (syn_wa (.classMem A V) (.classMem B W)) (.neg (syn_wne A (syn_c0)))) p0028
+    @gA1i
+      (.imp (synWa (synWne A (synC0))
+          (synWrex x (synCnnc) (.classEq B (synCplc (synCplc A (.cv x)) (synC1c)))))
+        (synWne A (synC0)))
+      (synWa (synWa (.classMem A V) (.classMem B W)) (.neg (synWne A (synC0)))) p0028
   have p0030 :=
-    @g_sylbid
-      (syn_wa (syn_wa (.classMem A V) (.classMem B W)) (.neg (syn_wne A (syn_c0))))
-      (.classMem (syn_copk A B) (syn_cltfin))
-      (syn_wa (syn_wne A (syn_c0))
-        (syn_wrex x (syn_cnnc) (.classEq B (syn_cplc (syn_cplc A (.cv x)) (syn_c1c)))))
-      (syn_wne A (syn_c0)) p0027 p0029
+    @gSylbid
+      (synWa (synWa (.classMem A V) (.classMem B W)) (.neg (synWne A (synC0))))
+      (.classMem (synCopk A B) (synCltfin))
+      (synWa (synWne A (synC0))
+        (synWrex x (synCnnc) (.classEq B (synCplc (synCplc A (.cv x)) (synC1c)))))
+      (synWne A (synC0)) p0027 p0029
   have p0031 :=
-    @g_con3d (syn_wa (syn_wa (.classMem A V) (.classMem B W)) (.neg (syn_wne A (syn_c0))))
-      (.classMem (syn_copk A B) (syn_cltfin)) (syn_wne A (syn_c0)) p0030
+    @gCon3d (synWa (synWa (.classMem A V) (.classMem B W)) (.neg (synWne A (synC0))))
+      (.classMem (synCopk A B) (synCltfin)) (synWne A (synC0)) p0030
   have p0032 :=
-    @g_mpd (syn_wa (syn_wa (.classMem A V) (.classMem B W)) (.neg (syn_wne A (syn_c0))))
-      (.neg (syn_wne A (syn_c0))) (.neg (.classMem (syn_copk A B) (syn_cltfin))) p0017
+    @gMpd (synWa (synWa (.classMem A V) (.classMem B W)) (.neg (synWne A (synC0))))
+      (.neg (synWne A (synC0))) (.neg (.classMem (synCopk A B) (synCltfin))) p0017
       p0031
-  have p0033 := @g_biorf (.classMem (syn_copk A B) (syn_cltfin)) (.classEq A B)
+  have p0033 := @gBiorf (.classMem (synCopk A B) (synCltfin)) (.classEq A B)
   have p0034 :=
-    @g_syl (syn_wa (syn_wa (.classMem A V) (.classMem B W)) (.neg (syn_wne A (syn_c0))))
-      (.neg (.classMem (syn_copk A B) (syn_cltfin)))
-      (syn_wb (.classEq A B) (syn_wo (.classMem (syn_copk A B) (syn_cltfin)) (.classEq A B)))
+    @gSyl (synWa (synWa (.classMem A V) (.classMem B W)) (.neg (synWne A (synC0))))
+      (.neg (.classMem (synCopk A B) (synCltfin)))
+      (synWb (.classEq A B) (synWo (.classMem (synCopk A B) (synCltfin)) (.classEq A B)))
       p0032 p0033
   have p0035 :=
-    @g_bitrd (syn_wa (syn_wa (.classMem A V) (.classMem B W)) (.neg (syn_wne A (syn_c0))))
-      (.classMem (syn_copk A B) (syn_clefin)) (.classEq A B)
-      (syn_wo (.classMem (syn_copk A B) (syn_cltfin)) (.classEq A B)) p0023 p0034
+    @gBitrd (synWa (synWa (.classMem A V) (.classMem B W)) (.neg (synWne A (synC0))))
+      (.classMem (synCopk A B) (synClefin)) (.classEq A B)
+      (synWo (.classMem (synCopk A B) (synCltfin)) (.classEq A B)) p0023 p0034
   have p0036 :=
-    @g_ex (syn_wa (.classMem A V) (.classMem B W)) (.neg (syn_wne A (syn_c0)))
-      (syn_wb (.classMem (syn_copk A B) (syn_clefin))
-        (syn_wo (.classMem (syn_copk A B) (syn_cltfin)) (.classEq A B)))
+    @gEx (synWa (.classMem A V) (.classMem B W)) (.neg (synWne A (synC0)))
+      (synWb (.classMem (synCopk A B) (synClefin))
+        (synWo (.classMem (synCopk A B) (synCltfin)) (.classEq A B)))
       p0035
   have p0037 :=
-    @g_pm2_61d (syn_wa (.classMem A V) (.classMem B W)) (syn_wne A (syn_c0))
-      (syn_wb (.classMem (syn_copk A B) (syn_clefin))
-        (syn_wo (.classMem (syn_copk A B) (syn_cltfin)) (.classEq A B)))
+    @gPm261d (synWa (.classMem A V) (.classMem B W)) (synWne A (synC0))
+      (synWb (.classMem (synCopk A B) (synClefin))
+        (synWo (.classMem (synCopk A B) (synCltfin)) (.classEq A B)))
       p0010 p0036
   exact p0037
 
+/-- Checked nominal proof certificate identified upstream as `g_lefinunidk`. -/
 @[expose]
-noncomputable def g_lefinunidk :
-    Nominal.NPrf (.classEq (syn_clefin) (syn_cun (syn_cltfin) (syn_cidk))) :=
+noncomputable def gLefinunidk :
+    Nominal.NPrf (.classEq (synClefin) (synCun (synCltfin) (synCidk))) :=
   by
   let proofSupport : Finset Var := (∅ : Finset Var)
   let x : Var := freshVar proofSupport 0
@@ -3315,7 +3340,7 @@ noncomputable def g_lefinunidk :
     by
     change freshVar proofSupport 0 ≠ freshVar proofSupport 1
     exact freshVar_injective proofSupport (i := 0) (j := 1) (by decide)
-  have dv_cache_0001 : x ∉ ((syn_clefin)).fv := by
+  have dv_cache_0001 : x ∉ ((synClefin)).fv := by
     exact
       (by
         have compact_fv_not_mem_empty : x ∉ (∅ : Finset Var) :=
@@ -3324,7 +3349,7 @@ noncomputable def g_lefinunidk :
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_clefin,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have dv_cache_0002 : y ∉ ((syn_clefin)).fv :=
+  have dv_cache_0002 : y ∉ ((synClefin)).fv :=
     by
     clear dv_cache_0001
     exact
@@ -3335,7 +3360,7 @@ noncomputable def g_lefinunidk :
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_clefin,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have dv_cache_0003 : x ∉ ((syn_cun (syn_cltfin) (syn_cidk))).fv :=
+  have dv_cache_0003 : x ∉ ((synCun (synCltfin) (synCidk))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002
     exact
@@ -3348,7 +3373,7 @@ noncomputable def g_lefinunidk :
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cltfin,
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cidk, Finset.mem_union,
           compact_fv_not_mem_empty, or_false, not_false_eq_true])
-  have dv_cache_0004 : y ∉ ((syn_cun (syn_cltfin) (syn_cidk))).fv :=
+  have dv_cache_0004 : y ∉ ((synCun (synCltfin) (synCidk))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003
     exact
@@ -3365,46 +3390,48 @@ noncomputable def g_lefinunidk :
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004
     exact (show x ≠ y from (by exact fresh_x_ne_y))
-  have p0000 := @g_lefinssvvk
-  have p0001 := @g_ltfinunidkssvvk
-  have p0002 := @g_tru
-  have p0003 := @g_vex x
-  have p0004 := @g_a1i (.classMem (.cv x) (syn_cvv)) syn_wtru p0003
-  have p0005 := @g_vex y
-  have p0006 := @g_a1i (.classMem (.cv y) (syn_cvv)) syn_wtru p0005
+  have p0000 := @gLefinssvvk
+  have p0001 := @gLtfinunidkssvvk
+  have p0002 := @gTru
+  have p0003 := @gVex x
+  have p0004 := @gA1i (.classMem (.cv x) (synCvv)) synWtru p0003
+  have p0005 := @gVex y
+  have p0006 := @gA1i (.classMem (.cv y) (synCvv)) synWtru p0005
   have p0007 :=
-    @g_jca syn_wtru (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv)) p0004
+    @gJca synWtru (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv)) p0004
       p0006
   have p0008 := Nominal.mp p0002 p0007
-  have p0009 := @g_lefinlteqall (.cv x) (.cv y) (syn_cvv) (syn_cvv)
+  have p0009 := @gLefinlteqall (.cv x) (.cv y) (synCvv) (synCvv)
   have p0010 := Nominal.mp p0008 p0009
-  have p0018 := @g_ellefinunidk (.cv x) (.cv y) (syn_cvv) (syn_cvv)
+  have p0018 := @gEllefinunidk (.cv x) (.cv y) (synCvv) (synCvv)
   have p0019 := Nominal.mp p0008 p0018
   have p0020 :=
-    @g_bitr4i (.classMem (syn_copk (.cv x) (.cv y)) (syn_clefin))
-      (syn_wo (.classMem (syn_copk (.cv x) (.cv y)) (syn_cltfin)) (.classEq (.cv x) (.cv y)))
-      (.classMem (syn_copk (.cv x) (.cv y)) (syn_cun (syn_cltfin) (syn_cidk))) p0010 p0019
+    @gBitr4i (.classMem (synCopk (.cv x) (.cv y)) (synClefin))
+      (synWo (.classMem (synCopk (.cv x) (.cv y)) (synCltfin)) (.classEq (.cv x) (.cv y)))
+      (.classMem (synCopk (.cv x) (.cv y)) (synCun (synCltfin) (synCidk))) p0010 p0019
   have p0021 :=
-    @g_eqrelkriiv x y (syn_clefin) (syn_cun (syn_cltfin) (syn_cidk)) dv_cache_0001
+    @gEqrelkriiv x y (synClefin) (synCun (synCltfin) (synCidk)) dv_cache_0001
       dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005 p0000 p0001 p0020
   exact p0021
 
+/-- Checked nominal proof certificate identified upstream as `g_lefinex`. -/
 @[expose]
-noncomputable def g_lefinex : Nominal.NPrf (.classMem (syn_clefin) (syn_cvv)) :=
+noncomputable def gLefinex : Nominal.NPrf (.classMem (synClefin) (synCvv)) :=
   by
-  have p0000 := @g_lefinunidk
-  have p0001 := @g_ltfinex
-  have p0002 := @g_idkex
-  have p0003 := @g_unex (syn_cltfin) (syn_cidk) p0001 p0002
+  have p0000 := @gLefinunidk
+  have p0001 := @gLtfinex
+  have p0002 := @gIdkex
+  have p0003 := @gUnex (synCltfin) (synCidk) p0001 p0002
   have p0004 :=
-    @g_eqeltri (syn_clefin) (syn_cun (syn_cltfin) (syn_cidk)) (syn_cvv) p0000 p0003
+    @gEqeltri (synClefin) (synCun (synCltfin) (synCidk)) (synCvv) p0000 p0003
   exact p0004
 
+/-- Checked nominal proof certificate identified upstream as `g_kqrelbrg`. -/
 @[expose]
-noncomputable def g_kqrelbrg (A : Class) (B : Class) (C : Class) (V : Class) (W : Class) :
+noncomputable def gKqrelbrg (A : Class) (B : Class) (C : Class) (V : Class) (W : Class) :
     Nominal.NPrf
-      (.imp (syn_wa (.classMem B V) (.classMem C W))
-        (syn_wb (.classMem (syn_cop B C) (syn_ckqrel A)) (.classMem (syn_copk B C) A))) :=
+      (.imp (synWa (.classMem B V) (.classMem C W))
+        (synWb (.classMem (synCop B C) (synCkqrel A)) (.classMem (synCopk B C) A))) :=
   by
   let proofSupport : Finset Var := A.fv ∪ B.fv ∪ C.fv ∪ V.fv ∪ W.fv
   let x : Var := freshVar proofSupport 0
@@ -3518,7 +3545,7 @@ noncomputable def g_kqrelbrg (A : Class) (B : Class) (C : Class) (V : Class) (W 
           intro hmem
           cases hmem
         simp only [fresh_y_not_C, not_false_eq_true])
-  have dv_cache_0008 : x ∉ ((Wff.classMem (syn_copk B C) A)).fv :=
+  have dv_cache_0008 : x ∉ ((Wff.classMem (synCopk B C) A)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007
@@ -3531,7 +3558,7 @@ noncomputable def g_kqrelbrg (A : Class) (B : Class) (C : Class) (V : Class) (W 
         simp only [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem,
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk, Finset.mem_union,
           fresh_x_not_B, fresh_x_not_C, fresh_x_not_A, or_false, not_false_eq_true])
-  have dv_cache_0009 : y ∉ ((Wff.classMem (syn_copk B C) A)).fv :=
+  have dv_cache_0009 : y ∉ ((Wff.classMem (synCopk B C) A)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008
@@ -3545,300 +3572,302 @@ noncomputable def g_kqrelbrg (A : Class) (B : Class) (C : Class) (V : Class) (W 
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk, Finset.mem_union,
           fresh_y_not_B, fresh_y_not_C, fresh_y_not_A, or_false, not_false_eq_true])
   have p0000 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_kqrel x y A
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfKqrel x y A
       dv_cache_0001 dv_cache_0002 dv_cache_0003
   have p0001 :=
-    @g_eleq2i (syn_ckqrel A) (syn_copab x y (.classMem (syn_copk (.cv x) (.cv y)) A))
-      (syn_cop B C) p0000
+    @gEleq2i (synCkqrel A) (synCopab x y (.classMem (synCopk (.cv x) (.cv y)) A))
+      (synCop B C) p0000
   have p0002 :=
-    @g_a1i
-      (syn_wb (.classMem (syn_cop B C) (syn_ckqrel A)) (.classMem (syn_cop B C)
-          (syn_copab x y (.classMem (syn_copk (.cv x) (.cv y)) A))))
-      (syn_wa (.classMem B V) (.classMem C W)) p0001
-  have p0003 := @g_opkeq1 (.cv x) B (.cv y)
+    @gA1i
+      (synWb (.classMem (synCop B C) (synCkqrel A)) (.classMem (synCop B C)
+          (synCopab x y (.classMem (synCopk (.cv x) (.cv y)) A))))
+      (synWa (.classMem B V) (.classMem C W)) p0001
+  have p0003 := @gOpkeq1 (.cv x) B (.cv y)
   have p0004 :=
-    @g_eleq1d (.classEq (.cv x) B) (syn_copk (.cv x) (.cv y)) (syn_copk B (.cv y)) A p0003
-  have p0005 := @g_opkeq2 (.cv y) C B
-  have p0006 := @g_eleq1d (.classEq (.cv y) C) (syn_copk B (.cv y)) (syn_copk B C) A p0005
+    @gEleq1d (.classEq (.cv x) B) (synCopk (.cv x) (.cv y)) (synCopk B (.cv y)) A p0003
+  have p0005 := @gOpkeq2 (.cv y) C B
+  have p0006 := @gEleq1d (.classEq (.cv y) C) (synCopk B (.cv y)) (synCopk B C) A p0005
   have p0007 :=
-    @g_opelopabg (.classMem (syn_copk (.cv x) (.cv y)) A)
-      (.classMem (syn_copk B (.cv y)) A) (.classMem (syn_copk B C) A) x y B C V W
+    @gOpelopabg (.classMem (synCopk (.cv x) (.cv y)) A)
+      (.classMem (synCopk B (.cv y)) A) (.classMem (synCopk B C) A) x y B C V W
       dv_cache_0004 dv_cache_0005 dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009
       dv_cache_0003 p0004 p0006
   have p0008 :=
-    @g_bitrd (syn_wa (.classMem B V) (.classMem C W))
-      (.classMem (syn_cop B C) (syn_ckqrel A))
-      (.classMem (syn_cop B C) (syn_copab x y (.classMem (syn_copk (.cv x) (.cv y)) A)))
-      (.classMem (syn_copk B C) A) p0002 p0007
+    @gBitrd (synWa (.classMem B V) (.classMem C W))
+      (.classMem (synCop B C) (synCkqrel A))
+      (.classMem (synCop B C) (synCopab x y (.classMem (synCopk (.cv x) (.cv y)) A)))
+      (.classMem (synCopk B C) A) p0002 p0007
   exact p0008
 
+/-- Checked nominal proof certificate identified upstream as `g_kqlefinbr`. -/
 @[expose]
-noncomputable def g_kqlefinbr (A : Class) (B : Class) (V : Class) (W : Class) :
+noncomputable def gKqlefinbr (A : Class) (B : Class) (V : Class) (W : Class) :
     Nominal.NPrf
-      (.imp (syn_wa (.classMem A V) (.classMem B W))
-        (syn_wb (syn_wbr A (syn_ckqrel (syn_clefin)) B)
-          (.classMem (syn_copk A B) (syn_clefin)))) :=
+      (.imp (synWa (.classMem A V) (.classMem B W))
+        (synWb (synWbr A (synCkqrel (synClefin)) B)
+          (.classMem (synCopk A B) (synClefin)))) :=
   by
-  have p0000 := (Nominal.biimpRefl (syn_wbr A (syn_ckqrel (syn_clefin)) B))
+  have p0000 := (Nominal.biimpRefl (synWbr A (synCkqrel (synClefin)) B))
   have p0001 :=
-    @g_a1i
-      (syn_wb (syn_wbr A (syn_ckqrel (syn_clefin)) B)
-        (.classMem (syn_cop A B) (syn_ckqrel (syn_clefin))))
-      (syn_wa (.classMem A V) (.classMem B W)) p0000
-  have p0002 := @g_kqrelbrg (syn_clefin) A B V W
+    @gA1i
+      (synWb (synWbr A (synCkqrel (synClefin)) B)
+        (.classMem (synCop A B) (synCkqrel (synClefin))))
+      (synWa (.classMem A V) (.classMem B W)) p0000
+  have p0002 := @gKqrelbrg (synClefin) A B V W
   have p0003 :=
-    @g_bitrd (syn_wa (.classMem A V) (.classMem B W))
-      (syn_wbr A (syn_ckqrel (syn_clefin)) B)
-      (.classMem (syn_cop A B) (syn_ckqrel (syn_clefin)))
-      (.classMem (syn_copk A B) (syn_clefin)) p0001 p0002
+    @gBitrd (synWa (.classMem A V) (.classMem B W))
+      (synWbr A (synCkqrel (synClefin)) B)
+      (.classMem (synCop A B) (synCkqrel (synClefin)))
+      (.classMem (synCopk A B) (synClefin)) p0001 p0002
   exact p0003
 
+/-- Checked nominal proof certificate identified upstream as `g_lefintrnn`. -/
 @[expose]
-noncomputable def g_lefintrnn (A : Class) (B : Class) (C : Class) :
+noncomputable def gLefintrnn (A : Class) (B : Class) (C : Class) :
     Nominal.NPrf
-      (.imp (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)) (.classMem C (syn_cnnc)))
-        (.imp (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-            (.classMem (syn_copk B C) (syn_clefin)))
-          (.classMem (syn_copk A C) (syn_clefin)))) :=
+      (.imp (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc)) (.classMem C (synCnnc)))
+        (.imp (synWa (.classMem (synCopk A B) (synClefin))
+            (.classMem (synCopk B C) (synClefin)))
+          (.classMem (synCopk A C) (synClefin)))) :=
   by
   have p0000 :=
-    @g_simpr
-      (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)) (.classMem C (syn_cnnc)))
-      (syn_wa (.classMem (syn_copk A B) (syn_clefin)) (.classMem (syn_copk B C) (syn_clefin)))
+    @gSimpr
+      (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc)) (.classMem C (synCnnc)))
+      (synWa (.classMem (synCopk A B) (synClefin)) (.classMem (synCopk B C) (synClefin)))
   have p0001 :=
-    @g_simpr (.classMem (syn_copk A B) (syn_clefin))
-      (.classMem (syn_copk B C) (syn_clefin))
+    @gSimpr (.classMem (synCopk A B) (synClefin))
+      (.classMem (synCopk B C) (synClefin))
   have p0002 :=
-    @g_syl
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (syn_wa (.classMem (syn_copk A B) (syn_clefin)) (.classMem (syn_copk B C) (syn_clefin)))
-      (.classMem (syn_copk B C) (syn_clefin)) p0000 p0001
+    @gSyl
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (synWa (.classMem (synCopk A B) (synClefin)) (.classMem (synCopk B C) (synClefin)))
+      (.classMem (synCopk B C) (synClefin)) p0000 p0001
   have p0003 :=
-    @g_simpl
-      (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)) (.classMem C (syn_cnnc)))
-      (syn_wa (.classMem (syn_copk A B) (syn_clefin)) (.classMem (syn_copk B C) (syn_clefin)))
+    @gSimpl
+      (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc)) (.classMem C (synCnnc)))
+      (synWa (.classMem (synCopk A B) (synClefin)) (.classMem (synCopk B C) (synClefin)))
   have p0004 :=
-    @g_simp2 (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)) (.classMem C (syn_cnnc))
+    @gSimp2 (.classMem A (synCnnc)) (.classMem B (synCnnc)) (.classMem C (synCnnc))
   have p0005 :=
-    @g_syl
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)) (.classMem C (syn_cnnc)))
-      (.classMem B (syn_cnnc)) p0003 p0004
+    @gSyl
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc)) (.classMem C (synCnnc)))
+      (.classMem B (synCnnc)) p0003 p0004
   have p0007 :=
-    @g_simp3 (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)) (.classMem C (syn_cnnc))
+    @gSimp3 (.classMem A (synCnnc)) (.classMem B (synCnnc)) (.classMem C (synCnnc))
   have p0008 :=
-    @g_syl
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)) (.classMem C (syn_cnnc)))
-      (.classMem C (syn_cnnc)) p0003 p0007
+    @gSyl
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc)) (.classMem C (synCnnc)))
+      (.classMem C (synCnnc)) p0003 p0007
   have p0009 :=
-    @g_jca
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (.classMem B (syn_cnnc)) (.classMem C (syn_cnnc)) p0005 p0008
-  have p0010 := @g_lenltfin B C
+    @gJca
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (.classMem B (synCnnc)) (.classMem C (synCnnc)) p0005 p0008
+  have p0010 := @gLenltfin B C
   have p0011 :=
-    @g_syl
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (syn_wa (.classMem B (syn_cnnc)) (.classMem C (syn_cnnc)))
-      (syn_wb (.classMem (syn_copk B C) (syn_clefin))
-        (.neg (.classMem (syn_copk C B) (syn_cltfin))))
+    @gSyl
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (synWa (.classMem B (synCnnc)) (.classMem C (synCnnc)))
+      (synWb (.classMem (synCopk B C) (synClefin))
+        (.neg (.classMem (synCopk C B) (synCltfin))))
       p0009 p0010
   have p0012 :=
-    @g_biimpd
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (.classMem (syn_copk B C) (syn_clefin))
-      (.neg (.classMem (syn_copk C B) (syn_cltfin))) p0011
+    @gBiimpd
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (.classMem (synCopk B C) (synClefin))
+      (.neg (.classMem (synCopk C B) (synCltfin))) p0011
   have p0013 :=
-    @g_mpd
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (.classMem (syn_copk B C) (syn_clefin))
-      (.neg (.classMem (syn_copk C B) (syn_cltfin))) p0002 p0012
+    @gMpd
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (.classMem (synCopk B C) (synClefin))
+      (.neg (.classMem (synCopk C B) (synCltfin))) p0002 p0012
   have p0015 :=
-    @g_simpl (.classMem (syn_copk A B) (syn_clefin))
-      (.classMem (syn_copk B C) (syn_clefin))
+    @gSimpl (.classMem (synCopk A B) (synClefin))
+      (.classMem (synCopk B C) (synClefin))
   have p0016 :=
-    @g_syl
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (syn_wa (.classMem (syn_copk A B) (syn_clefin)) (.classMem (syn_copk B C) (syn_clefin)))
-      (.classMem (syn_copk A B) (syn_clefin)) p0000 p0015
+    @gSyl
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (synWa (.classMem (synCopk A B) (synClefin)) (.classMem (synCopk B C) (synClefin)))
+      (.classMem (synCopk A B) (synClefin)) p0000 p0015
   have p0018 :=
-    @g_simp1 (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)) (.classMem C (syn_cnnc))
+    @gSimp1 (.classMem A (synCnnc)) (.classMem B (synCnnc)) (.classMem C (synCnnc))
   have p0019 :=
-    @g_syl
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)) (.classMem C (syn_cnnc)))
-      (.classMem A (syn_cnnc)) p0003 p0018
-  have p0020 := @g_elex A (syn_cnnc)
+    @gSyl
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc)) (.classMem C (synCnnc)))
+      (.classMem A (synCnnc)) p0003 p0018
+  have p0020 := @gElex A (synCnnc)
   have p0021 :=
-    @g_syl
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (.classMem A (syn_cnnc)) (.classMem A (syn_cvv)) p0019 p0020
-  have p0025 := @g_elex B (syn_cnnc)
+    @gSyl
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (.classMem A (synCnnc)) (.classMem A (synCvv)) p0019 p0020
+  have p0025 := @gElex B (synCnnc)
   have p0026 :=
-    @g_syl
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (.classMem B (syn_cnnc)) (.classMem B (syn_cvv)) p0005 p0025
+    @gSyl
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (.classMem B (synCnnc)) (.classMem B (synCvv)) p0005 p0025
   have p0027 :=
-    @g_jca
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (.classMem A (syn_cvv)) (.classMem B (syn_cvv)) p0021 p0026
-  have p0028 := @g_lefinlteqall A B (syn_cvv) (syn_cvv)
+    @gJca
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (.classMem A (synCvv)) (.classMem B (synCvv)) p0021 p0026
+  have p0028 := @gLefinlteqall A B (synCvv) (synCvv)
   have p0029 :=
-    @g_syl
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (syn_wa (.classMem A (syn_cvv)) (.classMem B (syn_cvv)))
-      (syn_wb (.classMem (syn_copk A B) (syn_clefin))
-        (syn_wo (.classMem (syn_copk A B) (syn_cltfin)) (.classEq A B)))
+    @gSyl
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (synWa (.classMem A (synCvv)) (.classMem B (synCvv)))
+      (synWb (.classMem (synCopk A B) (synClefin))
+        (synWo (.classMem (synCopk A B) (synCltfin)) (.classEq A B)))
       p0027 p0028
   have p0030 :=
-    @g_biimpd
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (.classMem (syn_copk A B) (syn_clefin))
-      (syn_wo (.classMem (syn_copk A B) (syn_cltfin)) (.classEq A B)) p0029
+    @gBiimpd
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (.classMem (synCopk A B) (synClefin))
+      (synWo (.classMem (synCopk A B) (synCltfin)) (.classEq A B)) p0029
   have p0031 :=
-    @g_mpd
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (.classMem (syn_copk A B) (syn_clefin))
-      (syn_wo (.classMem (syn_copk A B) (syn_cltfin)) (.classEq A B)) p0016 p0030
+    @gMpd
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (.classMem (synCopk A B) (synClefin))
+      (synWo (.classMem (synCopk A B) (synCltfin)) (.classEq A B)) p0016 p0030
   have p0041 :=
-    @g_n_3jca
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (.classMem C (syn_cnnc)) (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)) p0008
+    @gN3jca
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (.classMem C (synCnnc)) (.classMem A (synCnnc)) (.classMem B (synCnnc)) p0008
       p0019 p0005
-  have p0042 := @g_ltfintr C A B
+  have p0042 := @gLtfintr C A B
   have p0043 :=
-    @g_syl
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (syn_w3a (.classMem C (syn_cnnc)) (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-      (.imp (syn_wa (.classMem (syn_copk C A) (syn_cltfin))
-          (.classMem (syn_copk A B) (syn_cltfin))) (.classMem (syn_copk C B) (syn_cltfin)))
+    @gSyl
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (synW3a (.classMem C (synCnnc)) (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+      (.imp (synWa (.classMem (synCopk C A) (synCltfin))
+          (.classMem (synCopk A B) (synCltfin))) (.classMem (synCopk C B) (synCltfin)))
       p0041 p0042
   have p0044 :=
-    @g_exp3a
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (.classMem (syn_copk C A) (syn_cltfin)) (.classMem (syn_copk A B) (syn_cltfin))
-      (.classMem (syn_copk C B) (syn_cltfin)) p0043
+    @gExp3a
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (.classMem (synCopk C A) (synCltfin)) (.classMem (synCopk A B) (synCltfin))
+      (.classMem (synCopk C B) (synCltfin)) p0043
   have p0045 :=
-    @g_com23
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (.classMem (syn_copk C A) (syn_cltfin)) (.classMem (syn_copk A B) (syn_cltfin))
-      (.classMem (syn_copk C B) (syn_cltfin)) p0044
-  have p0046 := @g_opkeq2 A B C
-  have p0047 := @g_eleq1d (.classEq A B) (syn_copk C A) (syn_copk C B) (syn_cltfin) p0046
+    @gCom23
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (.classMem (synCopk C A) (synCltfin)) (.classMem (synCopk A B) (synCltfin))
+      (.classMem (synCopk C B) (synCltfin)) p0044
+  have p0046 := @gOpkeq2 A B C
+  have p0047 := @gEleq1d (.classEq A B) (synCopk C A) (synCopk C B) (synCltfin) p0046
   have p0048 :=
-    @g_biimpd (.classEq A B) (.classMem (syn_copk C A) (syn_cltfin))
-      (.classMem (syn_copk C B) (syn_cltfin)) p0047
+    @gBiimpd (.classEq A B) (.classMem (synCopk C A) (synCltfin))
+      (.classMem (synCopk C B) (synCltfin)) p0047
   have p0049 :=
-    @g_a1i
-      (.imp (.classEq A B) (.imp (.classMem (syn_copk C A) (syn_cltfin))
-          (.classMem (syn_copk C B) (syn_cltfin))))
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
+    @gA1i
+      (.imp (.classEq A B) (.imp (.classMem (synCopk C A) (synCltfin))
+          (.classMem (synCopk C B) (synCltfin))))
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
       p0048
   have p0050 :=
-    @g_jaod
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (.classMem (syn_copk A B) (syn_cltfin))
-      (.imp (.classMem (syn_copk C A) (syn_cltfin)) (.classMem (syn_copk C B) (syn_cltfin)))
+    @gJaod
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (.classMem (synCopk A B) (synCltfin))
+      (.imp (.classMem (synCopk C A) (synCltfin)) (.classMem (synCopk C B) (synCltfin)))
       (.classEq A B) p0045 p0049
   have p0051 :=
-    @g_mpd
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (syn_wo (.classMem (syn_copk A B) (syn_cltfin)) (.classEq A B))
-      (.imp (.classMem (syn_copk C A) (syn_cltfin)) (.classMem (syn_copk C B) (syn_cltfin)))
+    @gMpd
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (synWo (.classMem (synCopk A B) (synCltfin)) (.classEq A B))
+      (.imp (.classMem (synCopk C A) (synCltfin)) (.classMem (synCopk C B) (synCltfin)))
       p0031 p0050
   have p0052 :=
-    @g_con3d
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (.classMem (syn_copk C A) (syn_cltfin)) (.classMem (syn_copk C B) (syn_cltfin))
+    @gCon3d
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (.classMem (synCopk C A) (synCltfin)) (.classMem (synCopk C B) (synCltfin))
       p0051
   have p0053 :=
-    @g_mpd
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (.neg (.classMem (syn_copk C B) (syn_cltfin)))
-      (.neg (.classMem (syn_copk C A) (syn_cltfin))) p0013 p0052
+    @gMpd
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (.neg (.classMem (synCopk C B) (synCltfin)))
+      (.neg (.classMem (synCopk C A) (synCltfin))) p0013 p0052
   have p0060 :=
-    @g_jca
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (.classMem A (syn_cnnc)) (.classMem C (syn_cnnc)) p0019 p0008
-  have p0061 := @g_lenltfin A C
+    @gJca
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (.classMem A (synCnnc)) (.classMem C (synCnnc)) p0019 p0008
+  have p0061 := @gLenltfin A C
   have p0062 :=
-    @g_syl
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (syn_wa (.classMem A (syn_cnnc)) (.classMem C (syn_cnnc)))
-      (syn_wb (.classMem (syn_copk A C) (syn_clefin))
-        (.neg (.classMem (syn_copk C A) (syn_cltfin))))
+    @gSyl
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (synWa (.classMem A (synCnnc)) (.classMem C (synCnnc)))
+      (synWb (.classMem (synCopk A C) (synClefin))
+        (.neg (.classMem (synCopk C A) (synCltfin))))
       p0060 p0061
   have p0063 :=
-    @g_biimprd
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (.classMem (syn_copk A C) (syn_clefin))
-      (.neg (.classMem (syn_copk C A) (syn_cltfin))) p0062
+    @gBiimprd
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (.classMem (synCopk A C) (synClefin))
+      (.neg (.classMem (synCopk C A) (synCltfin))) p0062
   have p0064 :=
-    @g_mpd
-      (syn_wa (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-          (.classMem C (syn_cnnc))) (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B C) (syn_clefin))))
-      (.neg (.classMem (syn_copk C A) (syn_cltfin)))
-      (.classMem (syn_copk A C) (syn_clefin)) p0053 p0063
+    @gMpd
+      (synWa (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc))
+          (.classMem C (synCnnc))) (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B C) (synClefin))))
+      (.neg (.classMem (synCopk C A) (synCltfin)))
+      (.classMem (synCopk A C) (synClefin)) p0053 p0063
   have p0065 :=
-    @g_ex
-      (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)) (.classMem C (syn_cnnc)))
-      (syn_wa (.classMem (syn_copk A B) (syn_clefin)) (.classMem (syn_copk B C) (syn_clefin)))
-      (.classMem (syn_copk A C) (syn_clefin)) p0064
+    @gEx
+      (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc)) (.classMem C (synCnnc)))
+      (synWa (.classMem (synCopk A B) (synClefin)) (.classMem (synCopk B C) (synClefin)))
+      (.classMem (synCopk A C) (synClefin)) p0064
   exact p0065
 
 
@@ -3859,379 +3888,382 @@ open NFChoice.SemanticCore
 open NFChoice.ReplaySupport
 open NFChoice.Compiler.CompactSourceSyntax
 
+/-- Checked nominal proof certificate identified upstream as `g_lefinantinn`. -/
 @[expose]
-noncomputable def g_lefinantinn (A : Class) (B : Class) :
+noncomputable def gLefinantinn (A : Class) (B : Class) :
     Nominal.NPrf
-      (.imp (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))) (.imp
-          (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-            (.classMem (syn_copk B A) (syn_clefin))) (.classEq A B))) :=
+      (.imp (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc))) (.imp
+          (synWa (.classMem (synCopk A B) (synClefin))
+            (.classMem (synCopk B A) (synClefin))) (.classEq A B))) :=
   by
   have p0000 :=
-    @g_simpl
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (syn_wne A (syn_c0))
+    @gSimpl
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (synWne A (synC0))
   have p0001 :=
-    @g_simpl (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-      (syn_wa (.classMem (syn_copk A B) (syn_clefin)) (.classMem (syn_copk B A) (syn_clefin)))
-  have p0002 := @g_simpl (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
+    @gSimpl (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+      (synWa (.classMem (synCopk A B) (synClefin)) (.classMem (synCopk B A) (synClefin)))
+  have p0002 := @gSimpl (.classMem A (synCnnc)) (.classMem B (synCnnc))
   have p0003 :=
-    @g_syl
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))) (.classMem A (syn_cnnc))
+    @gSyl
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc))) (.classMem A (synCnnc))
       p0001 p0002
   have p0004 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-          (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-            (.classMem (syn_copk B A) (syn_clefin)))) (syn_wne A (syn_c0)))
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (.classMem A (syn_cnnc)) p0000 p0003
-  have p0007 := @g_simpr (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
+    @gSyl
+      (synWa (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+          (synWa (.classMem (synCopk A B) (synClefin))
+            (.classMem (synCopk B A) (synClefin)))) (synWne A (synC0)))
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (.classMem A (synCnnc)) p0000 p0003
+  have p0007 := @gSimpr (.classMem A (synCnnc)) (.classMem B (synCnnc))
   have p0008 :=
-    @g_syl
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))) (.classMem B (syn_cnnc))
+    @gSyl
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc))) (.classMem B (synCnnc))
       p0001 p0007
   have p0009 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-          (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-            (.classMem (syn_copk B A) (syn_clefin)))) (syn_wne A (syn_c0)))
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (.classMem B (syn_cnnc)) p0000 p0008
+    @gSyl
+      (synWa (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+          (synWa (.classMem (synCopk A B) (synClefin))
+            (.classMem (synCopk B A) (synClefin)))) (synWne A (synC0)))
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (.classMem B (synCnnc)) p0000 p0008
   have p0010 :=
-    @g_simpr
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (syn_wne A (syn_c0))
+    @gSimpr
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (synWne A (synC0))
   have p0011 :=
-    @g_n_3jca
-      (syn_wa (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-          (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-            (.classMem (syn_copk B A) (syn_clefin)))) (syn_wne A (syn_c0)))
-      (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)) (syn_wne A (syn_c0)) p0004 p0009
+    @gN3jca
+      (synWa (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+          (synWa (.classMem (synCopk A B) (synClefin))
+            (.classMem (synCopk B A) (synClefin)))) (synWne A (synC0)))
+      (.classMem A (synCnnc)) (.classMem B (synCnnc)) (synWne A (synC0)) p0004 p0009
       p0010
-  have p0012 := @g_ltfintri A B
+  have p0012 := @gLtfintri A B
   have p0013 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-          (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-            (.classMem (syn_copk B A) (syn_clefin)))) (syn_wne A (syn_c0)))
-      (syn_w3a (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)) (syn_wne A (syn_c0)))
-      (syn_w3o (.classMem (syn_copk A B) (syn_cltfin)) (.classEq A B)
-        (.classMem (syn_copk B A) (syn_cltfin)))
+    @gSyl
+      (synWa (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+          (synWa (.classMem (synCopk A B) (synClefin))
+            (.classMem (synCopk B A) (synClefin)))) (synWne A (synC0)))
+      (synW3a (.classMem A (synCnnc)) (.classMem B (synCnnc)) (synWne A (synC0)))
+      (synW3o (.classMem (synCopk A B) (synCltfin)) (.classEq A B)
+        (.classMem (synCopk B A) (synCltfin)))
       p0011 p0012
   have p0015 :=
-    @g_simpr (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-      (syn_wa (.classMem (syn_copk A B) (syn_clefin)) (.classMem (syn_copk B A) (syn_clefin)))
+    @gSimpr (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+      (synWa (.classMem (synCopk A B) (synClefin)) (.classMem (synCopk B A) (synClefin)))
   have p0016 :=
-    @g_simpr (.classMem (syn_copk A B) (syn_clefin))
-      (.classMem (syn_copk B A) (syn_clefin))
+    @gSimpr (.classMem (synCopk A B) (synClefin))
+      (.classMem (synCopk B A) (synClefin))
   have p0017 :=
-    @g_syl
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (syn_wa (.classMem (syn_copk A B) (syn_clefin)) (.classMem (syn_copk B A) (syn_clefin)))
-      (.classMem (syn_copk B A) (syn_clefin)) p0015 p0016
+    @gSyl
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (synWa (.classMem (synCopk A B) (synClefin)) (.classMem (synCopk B A) (synClefin)))
+      (.classMem (synCopk B A) (synClefin)) p0015 p0016
   have p0021 :=
-    @g_jca (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-      (.classMem B (syn_cnnc)) (.classMem A (syn_cnnc)) p0007 p0002
+    @gJca (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+      (.classMem B (synCnnc)) (.classMem A (synCnnc)) p0007 p0002
   have p0022 :=
-    @g_syl
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-      (syn_wa (.classMem B (syn_cnnc)) (.classMem A (syn_cnnc))) p0001 p0021
-  have p0023 := @g_lenltfin B A
+    @gSyl
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+      (synWa (.classMem B (synCnnc)) (.classMem A (synCnnc))) p0001 p0021
+  have p0023 := @gLenltfin B A
   have p0024 :=
-    @g_syl
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (syn_wa (.classMem B (syn_cnnc)) (.classMem A (syn_cnnc)))
-      (syn_wb (.classMem (syn_copk B A) (syn_clefin))
-        (.neg (.classMem (syn_copk A B) (syn_cltfin))))
+    @gSyl
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (synWa (.classMem B (synCnnc)) (.classMem A (synCnnc)))
+      (synWb (.classMem (synCopk B A) (synClefin))
+        (.neg (.classMem (synCopk A B) (synCltfin))))
       p0022 p0023
   have p0025 :=
-    @g_biimpd
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (.classMem (syn_copk B A) (syn_clefin))
-      (.neg (.classMem (syn_copk A B) (syn_cltfin))) p0024
+    @gBiimpd
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (.classMem (synCopk B A) (synClefin))
+      (.neg (.classMem (synCopk A B) (synCltfin))) p0024
   have p0026 :=
-    @g_mpd
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (.classMem (syn_copk B A) (syn_clefin))
-      (.neg (.classMem (syn_copk A B) (syn_cltfin))) p0017 p0025
+    @gMpd
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (.classMem (synCopk B A) (synClefin))
+      (.neg (.classMem (synCopk A B) (synCltfin))) p0017 p0025
   have p0027 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-          (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-            (.classMem (syn_copk B A) (syn_clefin)))) (syn_wne A (syn_c0)))
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (.neg (.classMem (syn_copk A B) (syn_cltfin))) p0000 p0026
+    @gSyl
+      (synWa (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+          (synWa (.classMem (synCopk A B) (synClefin))
+            (.classMem (synCopk B A) (synClefin)))) (synWne A (synC0)))
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (.neg (.classMem (synCopk A B) (synCltfin))) p0000 p0026
   have p0028 :=
-    @g_pm2_21d
-      (syn_wa (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-          (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-            (.classMem (syn_copk B A) (syn_clefin)))) (syn_wne A (syn_c0)))
-      (.classMem (syn_copk A B) (syn_cltfin)) (.classEq A B) p0027
-  have p0029 := @g_id (.classEq A B)
+    @gPm221d
+      (synWa (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+          (synWa (.classMem (synCopk A B) (synClefin))
+            (.classMem (synCopk B A) (synClefin)))) (synWne A (synC0)))
+      (.classMem (synCopk A B) (synCltfin)) (.classEq A B) p0027
+  have p0029 := @gId (.classEq A B)
   have p0030 :=
-    @g_a1i (.imp (.classEq A B) (.classEq A B))
-      (syn_wa (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-          (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-            (.classMem (syn_copk B A) (syn_clefin)))) (syn_wne A (syn_c0)))
+    @gA1i (.imp (.classEq A B) (.classEq A B))
+      (synWa (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+          (synWa (.classMem (synCopk A B) (synClefin))
+            (.classMem (synCopk B A) (synClefin)))) (synWne A (synC0)))
       p0029
   have p0033 :=
-    @g_simpl (.classMem (syn_copk A B) (syn_clefin))
-      (.classMem (syn_copk B A) (syn_clefin))
+    @gSimpl (.classMem (synCopk A B) (synClefin))
+      (.classMem (synCopk B A) (synClefin))
   have p0034 :=
-    @g_syl
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (syn_wa (.classMem (syn_copk A B) (syn_clefin)) (.classMem (syn_copk B A) (syn_clefin)))
-      (.classMem (syn_copk A B) (syn_clefin)) p0015 p0033
-  have p0036 := @g_lenltfin A B
+    @gSyl
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (synWa (.classMem (synCopk A B) (synClefin)) (.classMem (synCopk B A) (synClefin)))
+      (.classMem (synCopk A B) (synClefin)) p0015 p0033
+  have p0036 := @gLenltfin A B
   have p0037 :=
-    @g_syl
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-      (syn_wb (.classMem (syn_copk A B) (syn_clefin))
-        (.neg (.classMem (syn_copk B A) (syn_cltfin))))
+    @gSyl
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+      (synWb (.classMem (synCopk A B) (synClefin))
+        (.neg (.classMem (synCopk B A) (synCltfin))))
       p0001 p0036
   have p0038 :=
-    @g_biimpd
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (.classMem (syn_copk A B) (syn_clefin))
-      (.neg (.classMem (syn_copk B A) (syn_cltfin))) p0037
+    @gBiimpd
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (.classMem (synCopk A B) (synClefin))
+      (.neg (.classMem (synCopk B A) (synCltfin))) p0037
   have p0039 :=
-    @g_mpd
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (.classMem (syn_copk A B) (syn_clefin))
-      (.neg (.classMem (syn_copk B A) (syn_cltfin))) p0034 p0038
+    @gMpd
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (.classMem (synCopk A B) (synClefin))
+      (.neg (.classMem (synCopk B A) (synCltfin))) p0034 p0038
   have p0040 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-          (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-            (.classMem (syn_copk B A) (syn_clefin)))) (syn_wne A (syn_c0)))
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (.neg (.classMem (syn_copk B A) (syn_cltfin))) p0000 p0039
+    @gSyl
+      (synWa (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+          (synWa (.classMem (synCopk A B) (synClefin))
+            (.classMem (synCopk B A) (synClefin)))) (synWne A (synC0)))
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (.neg (.classMem (synCopk B A) (synCltfin))) p0000 p0039
   have p0041 :=
-    @g_pm2_21d
-      (syn_wa (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-          (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-            (.classMem (syn_copk B A) (syn_clefin)))) (syn_wne A (syn_c0)))
-      (.classMem (syn_copk B A) (syn_cltfin)) (.classEq A B) p0040
+    @gPm221d
+      (synWa (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+          (synWa (.classMem (synCopk A B) (synClefin))
+            (.classMem (synCopk B A) (synClefin)))) (synWne A (synC0)))
+      (.classMem (synCopk B A) (synCltfin)) (.classEq A B) p0040
   have p0042 :=
-    @g_n_3jaod
-      (syn_wa (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-          (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-            (.classMem (syn_copk B A) (syn_clefin)))) (syn_wne A (syn_c0)))
-      (.classMem (syn_copk A B) (syn_cltfin)) (.classEq A B) (.classEq A B)
-      (.classMem (syn_copk B A) (syn_cltfin)) p0028 p0030 p0041
+    @gN3jaod
+      (synWa (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+          (synWa (.classMem (synCopk A B) (synClefin))
+            (.classMem (synCopk B A) (synClefin)))) (synWne A (synC0)))
+      (.classMem (synCopk A B) (synCltfin)) (.classEq A B) (.classEq A B)
+      (.classMem (synCopk B A) (synCltfin)) p0028 p0030 p0041
   have p0043 :=
-    @g_mpd
-      (syn_wa (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-          (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-            (.classMem (syn_copk B A) (syn_clefin)))) (syn_wne A (syn_c0)))
-      (syn_w3o (.classMem (syn_copk A B) (syn_cltfin)) (.classEq A B)
-        (.classMem (syn_copk B A) (syn_cltfin)))
+    @gMpd
+      (synWa (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+          (synWa (.classMem (synCopk A B) (synClefin))
+            (.classMem (synCopk B A) (synClefin)))) (synWne A (synC0)))
+      (synW3o (.classMem (synCopk A B) (synCltfin)) (.classEq A B)
+        (.classMem (synCopk B A) (synCltfin)))
       (.classEq A B) p0013 p0042
   have p0044 :=
-    @g_ex
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (syn_wne A (syn_c0)) (.classEq A B) p0043
+    @gEx
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (synWne A (synC0)) (.classEq A B) p0043
   have p0045 :=
-    @g_simpl
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (.neg (syn_wne A (syn_c0)))
+    @gSimpl
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (.neg (synWne A (synC0)))
   have p0049 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-          (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-            (.classMem (syn_copk B A) (syn_clefin)))) (.neg (syn_wne A (syn_c0))))
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (.classMem (syn_copk A B) (syn_clefin)) p0045 p0034
+    @gSyl
+      (synWa (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+          (synWa (.classMem (synCopk A B) (synClefin))
+            (.classMem (synCopk B A) (synClefin)))) (.neg (synWne A (synC0))))
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (.classMem (synCopk A B) (synClefin)) p0045 p0034
   have p0054 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-          (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-            (.classMem (syn_copk B A) (syn_clefin)))) (.neg (syn_wne A (syn_c0))))
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (.classMem A (syn_cnnc)) p0045 p0003
-  have p0055 := @g_elex A (syn_cnnc)
+    @gSyl
+      (synWa (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+          (synWa (.classMem (synCopk A B) (synClefin))
+            (.classMem (synCopk B A) (synClefin)))) (.neg (synWne A (synC0))))
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (.classMem A (synCnnc)) p0045 p0003
+  have p0055 := @gElex A (synCnnc)
   have p0056 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-          (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-            (.classMem (syn_copk B A) (syn_clefin)))) (.neg (syn_wne A (syn_c0))))
-      (.classMem A (syn_cnnc)) (.classMem A (syn_cvv)) p0054 p0055
+    @gSyl
+      (synWa (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+          (synWa (.classMem (synCopk A B) (synClefin))
+            (.classMem (synCopk B A) (synClefin)))) (.neg (synWne A (synC0))))
+      (.classMem A (synCnnc)) (.classMem A (synCvv)) p0054 p0055
   have p0061 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-          (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-            (.classMem (syn_copk B A) (syn_clefin)))) (.neg (syn_wne A (syn_c0))))
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (.classMem B (syn_cnnc)) p0045 p0008
-  have p0062 := @g_elex B (syn_cnnc)
+    @gSyl
+      (synWa (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+          (synWa (.classMem (synCopk A B) (synClefin))
+            (.classMem (synCopk B A) (synClefin)))) (.neg (synWne A (synC0))))
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (.classMem B (synCnnc)) p0045 p0008
+  have p0062 := @gElex B (synCnnc)
   have p0063 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-          (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-            (.classMem (syn_copk B A) (syn_clefin)))) (.neg (syn_wne A (syn_c0))))
-      (.classMem B (syn_cnnc)) (.classMem B (syn_cvv)) p0061 p0062
+    @gSyl
+      (synWa (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+          (synWa (.classMem (synCopk A B) (synClefin))
+            (.classMem (synCopk B A) (synClefin)))) (.neg (synWne A (synC0))))
+      (.classMem B (synCnnc)) (.classMem B (synCvv)) p0061 p0062
   have p0064 :=
-    @g_simpr
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (.neg (syn_wne A (syn_c0)))
-  have p0065 := @g_nne A (syn_c0)
+    @gSimpr
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (.neg (synWne A (synC0)))
+  have p0065 := @gNne A (synC0)
   have p0066 :=
-    @g_a1i (syn_wb (.neg (syn_wne A (syn_c0))) (.classEq A (syn_c0)))
-      (syn_wa (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-          (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-            (.classMem (syn_copk B A) (syn_clefin)))) (.neg (syn_wne A (syn_c0))))
+    @gA1i (synWb (.neg (synWne A (synC0))) (.classEq A (synC0)))
+      (synWa (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+          (synWa (.classMem (synCopk A B) (synClefin))
+            (.classMem (synCopk B A) (synClefin)))) (.neg (synWne A (synC0))))
       p0065
   have p0067 :=
-    @g_mpbid
-      (syn_wa (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-          (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-            (.classMem (syn_copk B A) (syn_clefin)))) (.neg (syn_wne A (syn_c0))))
-      (.neg (syn_wne A (syn_c0))) (.classEq A (syn_c0)) p0064 p0066
+    @gMpbid
+      (synWa (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+          (synWa (.classMem (synCopk A B) (synClefin))
+            (.classMem (synCopk B A) (synClefin)))) (.neg (synWne A (synC0))))
+      (.neg (synWne A (synC0))) (.classEq A (synC0)) p0064 p0066
   have p0068 :=
-    @g_n_3jca
-      (syn_wa (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-          (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-            (.classMem (syn_copk B A) (syn_clefin)))) (.neg (syn_wne A (syn_c0))))
-      (.classMem A (syn_cvv)) (.classMem B (syn_cvv)) (.classEq A (syn_c0)) p0056 p0063
+    @gN3jca
+      (synWa (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+          (synWa (.classMem (synCopk A B) (synClefin))
+            (.classMem (synCopk B A) (synClefin)))) (.neg (synWne A (synC0))))
+      (.classMem A (synCvv)) (.classMem B (synCvv)) (.classEq A (synC0)) p0056 p0063
       p0067
-  have p0069 := @g_lefinlteq0 A B (syn_cvv) (syn_cvv)
+  have p0069 := @gLefinlteq0 A B (synCvv) (synCvv)
   have p0070 :=
-    @g_syl
-      (syn_wa (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-          (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-            (.classMem (syn_copk B A) (syn_clefin)))) (.neg (syn_wne A (syn_c0))))
-      (syn_w3a (.classMem A (syn_cvv)) (.classMem B (syn_cvv)) (.classEq A (syn_c0)))
-      (syn_wb (.classMem (syn_copk A B) (syn_clefin)) (.classEq A B)) p0068 p0069
+    @gSyl
+      (synWa (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+          (synWa (.classMem (synCopk A B) (synClefin))
+            (.classMem (synCopk B A) (synClefin)))) (.neg (synWne A (synC0))))
+      (synW3a (.classMem A (synCvv)) (.classMem B (synCvv)) (.classEq A (synC0)))
+      (synWb (.classMem (synCopk A B) (synClefin)) (.classEq A B)) p0068 p0069
   have p0071 :=
-    @g_mpbid
-      (syn_wa (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-          (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-            (.classMem (syn_copk B A) (syn_clefin)))) (.neg (syn_wne A (syn_c0))))
-      (.classMem (syn_copk A B) (syn_clefin)) (.classEq A B) p0049 p0070
+    @gMpbid
+      (synWa (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+          (synWa (.classMem (synCopk A B) (synClefin))
+            (.classMem (synCopk B A) (synClefin)))) (.neg (synWne A (synC0))))
+      (.classMem (synCopk A B) (synClefin)) (.classEq A B) p0049 p0070
   have p0072 :=
-    @g_ex
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (.neg (syn_wne A (syn_c0))) (.classEq A B) p0071
+    @gEx
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (.neg (synWne A (synC0))) (.classEq A B) p0071
   have p0073 :=
-    @g_pm2_61d
-      (syn_wa (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wa (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin))))
-      (syn_wne A (syn_c0)) (.classEq A B) p0044 p0072
+    @gPm261d
+      (synWa (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWa (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin))))
+      (synWne A (synC0)) (.classEq A B) p0044 p0072
   have p0074 :=
-    @g_ex (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-      (syn_wa (.classMem (syn_copk A B) (syn_clefin)) (.classMem (syn_copk B A) (syn_clefin)))
+    @gEx (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+      (synWa (.classMem (synCopk A B) (synClefin)) (.classMem (synCopk B A) (synClefin)))
       (.classEq A B) p0073
   exact p0074
 
+/-- Checked nominal proof certificate identified upstream as `g_lefinconnexnn`. -/
 @[expose]
-noncomputable def g_lefinconnexnn (A : Class) (B : Class) :
+noncomputable def gLefinconnexnn (A : Class) (B : Class) :
     Nominal.NPrf
-      (.imp (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-        (syn_wo (.classMem (syn_copk A B) (syn_clefin))
-          (.classMem (syn_copk B A) (syn_clefin)))) :=
+      (.imp (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+        (synWo (.classMem (synCopk A B) (synClefin))
+          (.classMem (synCopk B A) (synClefin)))) :=
   by
-  have p0000 := @g_simpr (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-  have p0001 := @g_elex B (syn_cnnc)
+  have p0000 := @gSimpr (.classMem A (synCnnc)) (.classMem B (synCnnc))
+  have p0001 := @gElex B (synCnnc)
   have p0002 :=
-    @g_syl (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-      (.classMem B (syn_cnnc)) (.classMem B (syn_cvv)) p0000 p0001
-  have p0003 := @g_simpl (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc))
-  have p0004 := @g_elex A (syn_cnnc)
+    @gSyl (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+      (.classMem B (synCnnc)) (.classMem B (synCvv)) p0000 p0001
+  have p0003 := @gSimpl (.classMem A (synCnnc)) (.classMem B (synCnnc))
+  have p0004 := @gElex A (synCnnc)
   have p0005 :=
-    @g_syl (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-      (.classMem A (syn_cnnc)) (.classMem A (syn_cvv)) p0003 p0004
+    @gSyl (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+      (.classMem A (synCnnc)) (.classMem A (synCvv)) p0003 p0004
   have p0006 :=
-    @g_jca (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-      (.classMem B (syn_cvv)) (.classMem A (syn_cvv)) p0002 p0005
-  have p0007 := @g_ltlefin B A (syn_cvv) (syn_cvv)
+    @gJca (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+      (.classMem B (synCvv)) (.classMem A (synCvv)) p0002 p0005
+  have p0007 := @gLtlefin B A (synCvv) (synCvv)
   have p0008 :=
-    @g_syl (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-      (syn_wa (.classMem B (syn_cvv)) (.classMem A (syn_cvv)))
-      (.imp (.classMem (syn_copk B A) (syn_cltfin)) (.classMem (syn_copk B A) (syn_clefin)))
+    @gSyl (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+      (synWa (.classMem B (synCvv)) (.classMem A (synCvv)))
+      (.imp (.classMem (synCopk B A) (synCltfin)) (.classMem (synCopk B A) (synClefin)))
       p0006 p0007
   have p0009 :=
-    @g_olc (.classMem (syn_copk B A) (syn_clefin)) (.classMem (syn_copk A B) (syn_clefin))
+    @gOlc (.classMem (synCopk B A) (synClefin)) (.classMem (synCopk A B) (synClefin))
   have p0010 :=
-    @g_syl6 (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-      (.classMem (syn_copk B A) (syn_cltfin)) (.classMem (syn_copk B A) (syn_clefin))
-      (syn_wo (.classMem (syn_copk A B) (syn_clefin)) (.classMem (syn_copk B A) (syn_clefin)))
+    @gSyl6 (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+      (.classMem (synCopk B A) (synCltfin)) (.classMem (synCopk B A) (synClefin))
+      (synWo (.classMem (synCopk A B) (synClefin)) (.classMem (synCopk B A) (synClefin)))
       p0008 p0009
-  have p0011 := @g_lenltfin A B
+  have p0011 := @gLenltfin A B
   have p0012 :=
-    @g_biimprd (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-      (.classMem (syn_copk A B) (syn_clefin))
-      (.neg (.classMem (syn_copk B A) (syn_cltfin))) p0011
+    @gBiimprd (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+      (.classMem (synCopk A B) (synClefin))
+      (.neg (.classMem (synCopk B A) (synCltfin))) p0011
   have p0013 :=
-    @g_orc (.classMem (syn_copk A B) (syn_clefin)) (.classMem (syn_copk B A) (syn_clefin))
+    @gOrc (.classMem (synCopk A B) (synClefin)) (.classMem (synCopk B A) (synClefin))
   have p0014 :=
-    @g_syl6 (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-      (.neg (.classMem (syn_copk B A) (syn_cltfin)))
-      (.classMem (syn_copk A B) (syn_clefin))
-      (syn_wo (.classMem (syn_copk A B) (syn_clefin)) (.classMem (syn_copk B A) (syn_clefin)))
+    @gSyl6 (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+      (.neg (.classMem (synCopk B A) (synCltfin)))
+      (.classMem (synCopk A B) (synClefin))
+      (synWo (.classMem (synCopk A B) (synClefin)) (.classMem (synCopk B A) (synClefin)))
       p0012 p0013
   have p0015 :=
-    @g_pm2_61d (syn_wa (.classMem A (syn_cnnc)) (.classMem B (syn_cnnc)))
-      (.classMem (syn_copk B A) (syn_cltfin))
-      (syn_wo (.classMem (syn_copk A B) (syn_clefin)) (.classMem (syn_copk B A) (syn_clefin)))
+    @gPm261d (synWa (.classMem A (synCnnc)) (.classMem B (synCnnc)))
+      (.classMem (synCopk B A) (synCltfin))
+      (synWo (.classMem (synCopk A B) (synClefin)) (.classMem (synCopk B A) (synClefin)))
       p0010 p0014
   exact p0015
 
+/-- Checked nominal proof certificate identified upstream as `g_finleor`. -/
 @[expose]
-noncomputable def g_finleor :
-    Nominal.NPrf (syn_wbr (syn_ckqrel (syn_clefin)) (syn_cstrict) (syn_cnnc)) :=
+noncomputable def gFinleor :
+    Nominal.NPrf (synWbr (synCkqrel (synClefin)) (synCstrict) (synCnnc)) :=
   by
   let proofSupport : Finset Var := (∅ : Finset Var)
   let x : Var := freshVar proofSupport 0
@@ -4249,7 +4281,7 @@ noncomputable def g_finleor :
     by
     change freshVar proofSupport 1 ≠ freshVar proofSupport 2
     exact freshVar_injective proofSupport (i := 1) (j := 2) (by decide)
-  have dv_cache_0001 : x ∉ ((syn_cnnc)).fv := by
+  have dv_cache_0001 : x ∉ ((synCnnc)).fv := by
     exact
       (by
         have compact_fv_not_mem_empty : x ∉ (∅ : Finset Var) :=
@@ -4258,7 +4290,7 @@ noncomputable def g_finleor :
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnnc,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have dv_cache_0002 : y ∉ ((syn_cnnc)).fv :=
+  have dv_cache_0002 : y ∉ ((synCnnc)).fv :=
     by
     clear dv_cache_0001
     exact
@@ -4269,7 +4301,7 @@ noncomputable def g_finleor :
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnnc,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have dv_cache_0003 : z ∉ ((syn_cnnc)).fv :=
+  have dv_cache_0003 : z ∉ ((synCnnc)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002
     exact
@@ -4280,7 +4312,7 @@ noncomputable def g_finleor :
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnnc,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have dv_cache_0004 : x ∉ ((syn_ckqrel (syn_clefin))).fv :=
+  have dv_cache_0004 : x ∉ ((synCkqrel (synClefin))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003
     exact
@@ -4292,7 +4324,7 @@ noncomputable def g_finleor :
         simp only [NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_ckqrel,
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_clefin,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have dv_cache_0005 : y ∉ ((syn_ckqrel (syn_clefin))).fv :=
+  have dv_cache_0005 : y ∉ ((synCkqrel (synClefin))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004
     exact
@@ -4304,7 +4336,7 @@ noncomputable def g_finleor :
         simp only [NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_ckqrel,
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_clefin,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have dv_cache_0006 : z ∉ ((syn_ckqrel (syn_clefin))).fv :=
+  have dv_cache_0006 : z ∉ ((synCkqrel (synClefin))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
     exact
@@ -4316,7 +4348,7 @@ noncomputable def g_finleor :
         simp only [NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_ckqrel,
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_clefin,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have dv_cache_0007 : x ∉ (syn_wtru).fv :=
+  have dv_cache_0007 : x ∉ (synWtru).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006
@@ -4328,7 +4360,7 @@ noncomputable def g_finleor :
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_wtru,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have dv_cache_0008 : y ∉ (syn_wtru).fv :=
+  have dv_cache_0008 : y ∉ (synWtru).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007
@@ -4340,7 +4372,7 @@ noncomputable def g_finleor :
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_wtru,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have dv_cache_0009 : z ∉ (syn_wtru).fv :=
+  have dv_cache_0009 : z ∉ (synWtru).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008
@@ -4367,476 +4399,476 @@ noncomputable def g_finleor :
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
     exact (show y ≠ z from (by exact fresh_y_ne_z))
-  have p0000 := @g_tru
-  have p0001 := @g_lefinex
-  have p0002 := @g_kqrelex (syn_clefin) p0001
-  have p0003 := @g_a1i (.classMem (syn_ckqrel (syn_clefin)) (syn_cvv)) syn_wtru p0002
-  have p0004 := @g_nncex
-  have p0005 := @g_a1i (.classMem (syn_cnnc) (syn_cvv)) syn_wtru p0004
-  have p0006 := @g_simpr syn_wtru (.classMem (.cv x) (syn_cnnc))
-  have p0007 := @g_elex (.cv x) (syn_cnnc)
+  have p0000 := @gTru
+  have p0001 := @gLefinex
+  have p0002 := @gKqrelex (synClefin) p0001
+  have p0003 := @gA1i (.classMem (synCkqrel (synClefin)) (synCvv)) synWtru p0002
+  have p0004 := @gNncex
+  have p0005 := @gA1i (.classMem (synCnnc) (synCvv)) synWtru p0004
+  have p0006 := @gSimpr synWtru (.classMem (.cv x) (synCnnc))
+  have p0007 := @gElex (.cv x) (synCnnc)
   have p0008 :=
-    @g_syl (syn_wa syn_wtru (.classMem (.cv x) (syn_cnnc))) (.classMem (.cv x) (syn_cnnc))
-      (.classMem (.cv x) (syn_cvv)) p0006 p0007
-  have p0009 := @g_lefinrflx (.cv x) (syn_cvv)
+    @gSyl (synWa synWtru (.classMem (.cv x) (synCnnc))) (.classMem (.cv x) (synCnnc))
+      (.classMem (.cv x) (synCvv)) p0006 p0007
+  have p0009 := @gLefinrflx (.cv x) (synCvv)
   have p0010 :=
-    @g_syl (syn_wa syn_wtru (.classMem (.cv x) (syn_cnnc))) (.classMem (.cv x) (syn_cvv))
-      (.classMem (syn_copk (.cv x) (.cv x)) (syn_clefin)) p0008 p0009
+    @gSyl (synWa synWtru (.classMem (.cv x) (synCnnc))) (.classMem (.cv x) (synCvv))
+      (.classMem (synCopk (.cv x) (.cv x)) (synClefin)) p0008 p0009
   have p0017 :=
-    @g_jca (syn_wa syn_wtru (.classMem (.cv x) (syn_cnnc))) (.classMem (.cv x) (syn_cvv))
-      (.classMem (.cv x) (syn_cvv)) p0008 p0008
-  have p0018 := @g_kqlefinbr (.cv x) (.cv x) (syn_cvv) (syn_cvv)
+    @gJca (synWa synWtru (.classMem (.cv x) (synCnnc))) (.classMem (.cv x) (synCvv))
+      (.classMem (.cv x) (synCvv)) p0008 p0008
+  have p0018 := @gKqlefinbr (.cv x) (.cv x) (synCvv) (synCvv)
   have p0019 :=
-    @g_syl (syn_wa syn_wtru (.classMem (.cv x) (syn_cnnc)))
-      (syn_wa (.classMem (.cv x) (syn_cvv)) (.classMem (.cv x) (syn_cvv)))
-      (syn_wb (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv x))
-        (.classMem (syn_copk (.cv x) (.cv x)) (syn_clefin)))
+    @gSyl (synWa synWtru (.classMem (.cv x) (synCnnc)))
+      (synWa (.classMem (.cv x) (synCvv)) (.classMem (.cv x) (synCvv)))
+      (synWb (synWbr (.cv x) (synCkqrel (synClefin)) (.cv x))
+        (.classMem (synCopk (.cv x) (.cv x)) (synClefin)))
       p0017 p0018
   have p0020 :=
-    @g_mpbird (syn_wa syn_wtru (.classMem (.cv x) (syn_cnnc)))
-      (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv x))
-      (.classMem (syn_copk (.cv x) (.cv x)) (syn_clefin)) p0010 p0019
+    @gMpbird (synWa synWtru (.classMem (.cv x) (synCnnc)))
+      (synWbr (.cv x) (synCkqrel (synClefin)) (.cv x))
+      (.classMem (synCopk (.cv x) (.cv x)) (synClefin)) p0010 p0019
   have p0021 :=
-    @g_simp3 syn_wtru
-      (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-        (.classMem (.cv z) (syn_cnnc)))
-      (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-        (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z)))
+    @gSimp3 synWtru
+      (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+        (.classMem (.cv z) (synCnnc)))
+      (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+        (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z)))
   have p0022 :=
-    @g_simpl (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-      (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z))
+    @gSimpl (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+      (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z))
   have p0023 :=
-    @g_syl
-      (syn_w3a syn_wtru (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-          (.classMem (.cv z) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z))))
-      (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-        (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z)))
-      (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y)) p0021 p0022
+    @gSyl
+      (synW3a synWtru (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+          (.classMem (.cv z) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z))))
+      (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+        (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z)))
+      (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y)) p0021 p0022
   have p0024 :=
-    @g_simp2 syn_wtru
-      (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-        (.classMem (.cv z) (syn_cnnc)))
-      (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-        (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z)))
+    @gSimp2 synWtru
+      (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+        (.classMem (.cv z) (synCnnc)))
+      (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+        (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z)))
   have p0025 :=
-    @g_simp1 (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-      (.classMem (.cv z) (syn_cnnc))
+    @gSimp1 (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+      (.classMem (.cv z) (synCnnc))
   have p0026 :=
-    @g_syl
-      (syn_w3a syn_wtru (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-          (.classMem (.cv z) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z))))
-      (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-        (.classMem (.cv z) (syn_cnnc)))
-      (.classMem (.cv x) (syn_cnnc)) p0024 p0025
+    @gSyl
+      (synW3a synWtru (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+          (.classMem (.cv z) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z))))
+      (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+        (.classMem (.cv z) (synCnnc)))
+      (.classMem (.cv x) (synCnnc)) p0024 p0025
   have p0028 :=
-    @g_syl
-      (syn_w3a syn_wtru (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-          (.classMem (.cv z) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z))))
-      (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv x) (syn_cvv)) p0026 p0007
+    @gSyl
+      (synW3a synWtru (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+          (.classMem (.cv z) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z))))
+      (.classMem (.cv x) (synCnnc)) (.classMem (.cv x) (synCvv)) p0026 p0007
   have p0030 :=
-    @g_simp2 (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-      (.classMem (.cv z) (syn_cnnc))
+    @gSimp2 (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+      (.classMem (.cv z) (synCnnc))
   have p0031 :=
-    @g_syl
-      (syn_w3a syn_wtru (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-          (.classMem (.cv z) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z))))
-      (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-        (.classMem (.cv z) (syn_cnnc)))
-      (.classMem (.cv y) (syn_cnnc)) p0024 p0030
-  have p0032 := @g_elex (.cv y) (syn_cnnc)
+    @gSyl
+      (synW3a synWtru (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+          (.classMem (.cv z) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z))))
+      (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+        (.classMem (.cv z) (synCnnc)))
+      (.classMem (.cv y) (synCnnc)) p0024 p0030
+  have p0032 := @gElex (.cv y) (synCnnc)
   have p0033 :=
-    @g_syl
-      (syn_w3a syn_wtru (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-          (.classMem (.cv z) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z))))
-      (.classMem (.cv y) (syn_cnnc)) (.classMem (.cv y) (syn_cvv)) p0031 p0032
+    @gSyl
+      (synW3a synWtru (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+          (.classMem (.cv z) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z))))
+      (.classMem (.cv y) (synCnnc)) (.classMem (.cv y) (synCvv)) p0031 p0032
   have p0034 :=
-    @g_jca
-      (syn_w3a syn_wtru (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-          (.classMem (.cv z) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z))))
-      (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv)) p0028 p0033
-  have p0035 := @g_kqlefinbr (.cv x) (.cv y) (syn_cvv) (syn_cvv)
+    @gJca
+      (synW3a synWtru (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+          (.classMem (.cv z) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z))))
+      (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv)) p0028 p0033
+  have p0035 := @gKqlefinbr (.cv x) (.cv y) (synCvv) (synCvv)
   have p0036 :=
-    @g_syl
-      (syn_w3a syn_wtru (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-          (.classMem (.cv z) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z))))
-      (syn_wa (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv)))
-      (syn_wb (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-        (.classMem (syn_copk (.cv x) (.cv y)) (syn_clefin)))
+    @gSyl
+      (synW3a synWtru (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+          (.classMem (.cv z) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z))))
+      (synWa (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv)))
+      (synWb (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+        (.classMem (synCopk (.cv x) (.cv y)) (synClefin)))
       p0034 p0035
   have p0037 :=
-    @g_mpbid
-      (syn_w3a syn_wtru (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-          (.classMem (.cv z) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z))))
-      (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-      (.classMem (syn_copk (.cv x) (.cv y)) (syn_clefin)) p0023 p0036
+    @gMpbid
+      (synW3a synWtru (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+          (.classMem (.cv z) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z))))
+      (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+      (.classMem (synCopk (.cv x) (.cv y)) (synClefin)) p0023 p0036
   have p0039 :=
-    @g_simpr (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-      (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z))
+    @gSimpr (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+      (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z))
   have p0040 :=
-    @g_syl
-      (syn_w3a syn_wtru (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-          (.classMem (.cv z) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z))))
-      (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-        (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z)))
-      (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z)) p0021 p0039
+    @gSyl
+      (synW3a synWtru (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+          (.classMem (.cv z) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z))))
+      (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+        (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z)))
+      (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z)) p0021 p0039
   have p0047 :=
-    @g_simp3 (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-      (.classMem (.cv z) (syn_cnnc))
+    @gSimp3 (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+      (.classMem (.cv z) (synCnnc))
   have p0048 :=
-    @g_syl
-      (syn_w3a syn_wtru (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-          (.classMem (.cv z) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z))))
-      (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-        (.classMem (.cv z) (syn_cnnc)))
-      (.classMem (.cv z) (syn_cnnc)) p0024 p0047
-  have p0049 := @g_elex (.cv z) (syn_cnnc)
+    @gSyl
+      (synW3a synWtru (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+          (.classMem (.cv z) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z))))
+      (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+        (.classMem (.cv z) (synCnnc)))
+      (.classMem (.cv z) (synCnnc)) p0024 p0047
+  have p0049 := @gElex (.cv z) (synCnnc)
   have p0050 :=
-    @g_syl
-      (syn_w3a syn_wtru (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-          (.classMem (.cv z) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z))))
-      (.classMem (.cv z) (syn_cnnc)) (.classMem (.cv z) (syn_cvv)) p0048 p0049
+    @gSyl
+      (synW3a synWtru (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+          (.classMem (.cv z) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z))))
+      (.classMem (.cv z) (synCnnc)) (.classMem (.cv z) (synCvv)) p0048 p0049
   have p0051 :=
-    @g_jca
-      (syn_w3a syn_wtru (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-          (.classMem (.cv z) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z))))
-      (.classMem (.cv y) (syn_cvv)) (.classMem (.cv z) (syn_cvv)) p0033 p0050
-  have p0052 := @g_kqlefinbr (.cv y) (.cv z) (syn_cvv) (syn_cvv)
+    @gJca
+      (synW3a synWtru (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+          (.classMem (.cv z) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z))))
+      (.classMem (.cv y) (synCvv)) (.classMem (.cv z) (synCvv)) p0033 p0050
+  have p0052 := @gKqlefinbr (.cv y) (.cv z) (synCvv) (synCvv)
   have p0053 :=
-    @g_syl
-      (syn_w3a syn_wtru (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-          (.classMem (.cv z) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z))))
-      (syn_wa (.classMem (.cv y) (syn_cvv)) (.classMem (.cv z) (syn_cvv)))
-      (syn_wb (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z))
-        (.classMem (syn_copk (.cv y) (.cv z)) (syn_clefin)))
+    @gSyl
+      (synW3a synWtru (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+          (.classMem (.cv z) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z))))
+      (synWa (.classMem (.cv y) (synCvv)) (.classMem (.cv z) (synCvv)))
+      (synWb (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z))
+        (.classMem (synCopk (.cv y) (.cv z)) (synClefin)))
       p0051 p0052
   have p0054 :=
-    @g_mpbid
-      (syn_w3a syn_wtru (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-          (.classMem (.cv z) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z))))
-      (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z))
-      (.classMem (syn_copk (.cv y) (.cv z)) (syn_clefin)) p0040 p0053
+    @gMpbid
+      (synW3a synWtru (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+          (.classMem (.cv z) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z))))
+      (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z))
+      (.classMem (synCopk (.cv y) (.cv z)) (synClefin)) p0040 p0053
   have p0055 :=
-    @g_jca
-      (syn_w3a syn_wtru (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-          (.classMem (.cv z) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z))))
-      (.classMem (syn_copk (.cv x) (.cv y)) (syn_clefin))
-      (.classMem (syn_copk (.cv y) (.cv z)) (syn_clefin)) p0037 p0054
-  have p0057 := @g_lefintrnn (.cv x) (.cv y) (.cv z)
+    @gJca
+      (synW3a synWtru (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+          (.classMem (.cv z) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z))))
+      (.classMem (synCopk (.cv x) (.cv y)) (synClefin))
+      (.classMem (synCopk (.cv y) (.cv z)) (synClefin)) p0037 p0054
+  have p0057 := @gLefintrnn (.cv x) (.cv y) (.cv z)
   have p0058 :=
-    @g_syl
-      (syn_w3a syn_wtru (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-          (.classMem (.cv z) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z))))
-      (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-        (.classMem (.cv z) (syn_cnnc)))
-      (.imp (syn_wa (.classMem (syn_copk (.cv x) (.cv y)) (syn_clefin))
-          (.classMem (syn_copk (.cv y) (.cv z)) (syn_clefin)))
-        (.classMem (syn_copk (.cv x) (.cv z)) (syn_clefin)))
+    @gSyl
+      (synW3a synWtru (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+          (.classMem (.cv z) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z))))
+      (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+        (.classMem (.cv z) (synCnnc)))
+      (.imp (synWa (.classMem (synCopk (.cv x) (.cv y)) (synClefin))
+          (.classMem (synCopk (.cv y) (.cv z)) (synClefin)))
+        (.classMem (synCopk (.cv x) (.cv z)) (synClefin)))
       p0024 p0057
   have p0059 :=
-    @g_mpd
-      (syn_w3a syn_wtru (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-          (.classMem (.cv z) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z))))
-      (syn_wa (.classMem (syn_copk (.cv x) (.cv y)) (syn_clefin))
-        (.classMem (syn_copk (.cv y) (.cv z)) (syn_clefin)))
-      (.classMem (syn_copk (.cv x) (.cv z)) (syn_clefin)) p0055 p0058
+    @gMpd
+      (synW3a synWtru (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+          (.classMem (.cv z) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z))))
+      (synWa (.classMem (synCopk (.cv x) (.cv y)) (synClefin))
+        (.classMem (synCopk (.cv y) (.cv z)) (synClefin)))
+      (.classMem (synCopk (.cv x) (.cv z)) (synClefin)) p0055 p0058
   have p0070 :=
-    @g_jca
-      (syn_w3a syn_wtru (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-          (.classMem (.cv z) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z))))
-      (.classMem (.cv x) (syn_cvv)) (.classMem (.cv z) (syn_cvv)) p0028 p0050
-  have p0071 := @g_kqlefinbr (.cv x) (.cv z) (syn_cvv) (syn_cvv)
+    @gJca
+      (synW3a synWtru (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+          (.classMem (.cv z) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z))))
+      (.classMem (.cv x) (synCvv)) (.classMem (.cv z) (synCvv)) p0028 p0050
+  have p0071 := @gKqlefinbr (.cv x) (.cv z) (synCvv) (synCvv)
   have p0072 :=
-    @g_syl
-      (syn_w3a syn_wtru (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-          (.classMem (.cv z) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z))))
-      (syn_wa (.classMem (.cv x) (syn_cvv)) (.classMem (.cv z) (syn_cvv)))
-      (syn_wb (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv z))
-        (.classMem (syn_copk (.cv x) (.cv z)) (syn_clefin)))
+    @gSyl
+      (synW3a synWtru (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+          (.classMem (.cv z) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z))))
+      (synWa (.classMem (.cv x) (synCvv)) (.classMem (.cv z) (synCvv)))
+      (synWb (synWbr (.cv x) (synCkqrel (synClefin)) (.cv z))
+        (.classMem (synCopk (.cv x) (.cv z)) (synClefin)))
       p0070 p0071
   have p0073 :=
-    @g_mpbird
-      (syn_w3a syn_wtru (syn_w3a (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
-          (.classMem (.cv z) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv z))))
-      (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv z))
-      (.classMem (syn_copk (.cv x) (.cv z)) (syn_clefin)) p0059 p0072
+    @gMpbird
+      (synW3a synWtru (synW3a (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
+          (.classMem (.cv z) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv z))))
+      (synWbr (.cv x) (synCkqrel (synClefin)) (.cv z))
+      (.classMem (synCopk (.cv x) (.cv z)) (synClefin)) p0059 p0072
   have p0074 :=
-    @g_simp3 syn_wtru
-      (syn_wa (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-      (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-        (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x)))
+    @gSimp3 synWtru
+      (synWa (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+      (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+        (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x)))
   have p0075 :=
-    @g_simpl (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-      (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x))
+    @gSimpl (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+      (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x))
   have p0076 :=
-    @g_syl
-      (syn_w3a syn_wtru (syn_wa (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x))))
-      (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-        (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x)))
-      (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y)) p0074 p0075
+    @gSyl
+      (synW3a synWtru (synWa (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x))))
+      (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+        (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x)))
+      (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y)) p0074 p0075
   have p0077 :=
-    @g_simp2 syn_wtru
-      (syn_wa (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-      (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-        (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x)))
-  have p0078 := @g_simpl (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
+    @gSimp2 synWtru
+      (synWa (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+      (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+        (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x)))
+  have p0078 := @gSimpl (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
   have p0079 :=
-    @g_syl
-      (syn_w3a syn_wtru (syn_wa (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x))))
-      (syn_wa (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-      (.classMem (.cv x) (syn_cnnc)) p0077 p0078
+    @gSyl
+      (synW3a synWtru (synWa (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x))))
+      (synWa (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+      (.classMem (.cv x) (synCnnc)) p0077 p0078
   have p0081 :=
-    @g_syl
-      (syn_w3a syn_wtru (syn_wa (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x))))
-      (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv x) (syn_cvv)) p0079 p0007
-  have p0083 := @g_simpr (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
+    @gSyl
+      (synW3a synWtru (synWa (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x))))
+      (.classMem (.cv x) (synCnnc)) (.classMem (.cv x) (synCvv)) p0079 p0007
+  have p0083 := @gSimpr (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
   have p0084 :=
-    @g_syl
-      (syn_w3a syn_wtru (syn_wa (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x))))
-      (syn_wa (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-      (.classMem (.cv y) (syn_cnnc)) p0077 p0083
+    @gSyl
+      (synW3a synWtru (synWa (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x))))
+      (synWa (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+      (.classMem (.cv y) (synCnnc)) p0077 p0083
   have p0086 :=
-    @g_syl
-      (syn_w3a syn_wtru (syn_wa (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x))))
-      (.classMem (.cv y) (syn_cnnc)) (.classMem (.cv y) (syn_cvv)) p0084 p0032
+    @gSyl
+      (synW3a synWtru (synWa (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x))))
+      (.classMem (.cv y) (synCnnc)) (.classMem (.cv y) (synCvv)) p0084 p0032
   have p0087 :=
-    @g_jca
-      (syn_w3a syn_wtru (syn_wa (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x))))
-      (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv)) p0081 p0086
+    @gJca
+      (synW3a synWtru (synWa (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x))))
+      (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv)) p0081 p0086
   have p0089 :=
-    @g_syl
-      (syn_w3a syn_wtru (syn_wa (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x))))
-      (syn_wa (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv)))
-      (syn_wb (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-        (.classMem (syn_copk (.cv x) (.cv y)) (syn_clefin)))
+    @gSyl
+      (synW3a synWtru (synWa (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x))))
+      (synWa (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv)))
+      (synWb (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+        (.classMem (synCopk (.cv x) (.cv y)) (synClefin)))
       p0087 p0035
   have p0090 :=
-    @g_mpbid
-      (syn_w3a syn_wtru (syn_wa (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x))))
-      (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-      (.classMem (syn_copk (.cv x) (.cv y)) (syn_clefin)) p0076 p0089
+    @gMpbid
+      (synW3a synWtru (synWa (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x))))
+      (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+      (.classMem (synCopk (.cv x) (.cv y)) (synClefin)) p0076 p0089
   have p0092 :=
-    @g_simpr (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-      (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x))
+    @gSimpr (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+      (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x))
   have p0093 :=
-    @g_syl
-      (syn_w3a syn_wtru (syn_wa (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x))))
-      (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-        (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x)))
-      (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x)) p0074 p0092
+    @gSyl
+      (synW3a synWtru (synWa (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x))))
+      (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+        (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x)))
+      (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x)) p0074 p0092
   have p0104 :=
-    @g_jca
-      (syn_w3a syn_wtru (syn_wa (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x))))
-      (.classMem (.cv y) (syn_cvv)) (.classMem (.cv x) (syn_cvv)) p0086 p0081
-  have p0105 := @g_kqlefinbr (.cv y) (.cv x) (syn_cvv) (syn_cvv)
+    @gJca
+      (synW3a synWtru (synWa (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x))))
+      (.classMem (.cv y) (synCvv)) (.classMem (.cv x) (synCvv)) p0086 p0081
+  have p0105 := @gKqlefinbr (.cv y) (.cv x) (synCvv) (synCvv)
   have p0106 :=
-    @g_syl
-      (syn_w3a syn_wtru (syn_wa (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x))))
-      (syn_wa (.classMem (.cv y) (syn_cvv)) (.classMem (.cv x) (syn_cvv)))
-      (syn_wb (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x))
-        (.classMem (syn_copk (.cv y) (.cv x)) (syn_clefin)))
+    @gSyl
+      (synW3a synWtru (synWa (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x))))
+      (synWa (.classMem (.cv y) (synCvv)) (.classMem (.cv x) (synCvv)))
+      (synWb (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x))
+        (.classMem (synCopk (.cv y) (.cv x)) (synClefin)))
       p0104 p0105
   have p0107 :=
-    @g_mpbid
-      (syn_w3a syn_wtru (syn_wa (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x))))
-      (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x))
-      (.classMem (syn_copk (.cv y) (.cv x)) (syn_clefin)) p0093 p0106
+    @gMpbid
+      (synW3a synWtru (synWa (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x))))
+      (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x))
+      (.classMem (synCopk (.cv y) (.cv x)) (synClefin)) p0093 p0106
   have p0108 :=
-    @g_jca
-      (syn_w3a syn_wtru (syn_wa (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x))))
-      (.classMem (syn_copk (.cv x) (.cv y)) (syn_clefin))
-      (.classMem (syn_copk (.cv y) (.cv x)) (syn_clefin)) p0090 p0107
-  have p0110 := @g_lefinantinn (.cv x) (.cv y)
+    @gJca
+      (synW3a synWtru (synWa (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x))))
+      (.classMem (synCopk (.cv x) (.cv y)) (synClefin))
+      (.classMem (synCopk (.cv y) (.cv x)) (synClefin)) p0090 p0107
+  have p0110 := @gLefinantinn (.cv x) (.cv y)
   have p0111 :=
-    @g_syl
-      (syn_w3a syn_wtru (syn_wa (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x))))
-      (syn_wa (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-      (.imp (syn_wa (.classMem (syn_copk (.cv x) (.cv y)) (syn_clefin))
-          (.classMem (syn_copk (.cv y) (.cv x)) (syn_clefin))) (.classEq (.cv x) (.cv y)))
+    @gSyl
+      (synW3a synWtru (synWa (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x))))
+      (synWa (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+      (.imp (synWa (.classMem (synCopk (.cv x) (.cv y)) (synClefin))
+          (.classMem (synCopk (.cv y) (.cv x)) (synClefin))) (.classEq (.cv x) (.cv y)))
       p0077 p0110
   have p0112 :=
-    @g_mpd
-      (syn_w3a syn_wtru (syn_wa (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-        (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-          (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x))))
-      (syn_wa (.classMem (syn_copk (.cv x) (.cv y)) (syn_clefin))
-        (.classMem (syn_copk (.cv y) (.cv x)) (syn_clefin)))
+    @gMpd
+      (synW3a synWtru (synWa (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+        (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+          (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x))))
+      (synWa (.classMem (synCopk (.cv x) (.cv y)) (synClefin))
+        (.classMem (synCopk (.cv y) (.cv x)) (synClefin)))
       (.classEq (.cv x) (.cv y)) p0108 p0111
   have p0113 :=
-    @g_simp2 syn_wtru (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
+    @gSimp2 synWtru (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
   have p0114 :=
-    @g_simp3 syn_wtru (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc))
+    @gSimp3 synWtru (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc))
   have p0115 :=
-    @g_jca
-      (syn_w3a syn_wtru (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-      (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)) p0113 p0114
-  have p0116 := @g_lefinconnexnn (.cv x) (.cv y)
+    @gJca
+      (synW3a synWtru (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+      (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)) p0113 p0114
+  have p0116 := @gLefinconnexnn (.cv x) (.cv y)
   have p0117 :=
-    @g_syl
-      (syn_w3a syn_wtru (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-      (syn_wa (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-      (syn_wo (.classMem (syn_copk (.cv x) (.cv y)) (syn_clefin))
-        (.classMem (syn_copk (.cv y) (.cv x)) (syn_clefin)))
+    @gSyl
+      (synW3a synWtru (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+      (synWa (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+      (synWo (.classMem (synCopk (.cv x) (.cv y)) (synClefin))
+        (.classMem (synCopk (.cv y) (.cv x)) (synClefin)))
       p0115 p0116
   have p0120 :=
-    @g_syl
-      (syn_w3a syn_wtru (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-      (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv x) (syn_cvv)) p0113 p0007
+    @gSyl
+      (synW3a synWtru (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+      (.classMem (.cv x) (synCnnc)) (.classMem (.cv x) (synCvv)) p0113 p0007
   have p0123 :=
-    @g_syl
-      (syn_w3a syn_wtru (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-      (.classMem (.cv y) (syn_cnnc)) (.classMem (.cv y) (syn_cvv)) p0114 p0032
+    @gSyl
+      (synW3a synWtru (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+      (.classMem (.cv y) (synCnnc)) (.classMem (.cv y) (synCvv)) p0114 p0032
   have p0124 :=
-    @g_jca
-      (syn_w3a syn_wtru (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-      (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv)) p0120 p0123
+    @gJca
+      (synW3a synWtru (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+      (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv)) p0120 p0123
   have p0126 :=
-    @g_syl
-      (syn_w3a syn_wtru (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-      (syn_wa (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv)))
-      (syn_wb (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-        (.classMem (syn_copk (.cv x) (.cv y)) (syn_clefin)))
+    @gSyl
+      (synW3a synWtru (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+      (synWa (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv)))
+      (synWb (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+        (.classMem (synCopk (.cv x) (.cv y)) (synClefin)))
       p0124 p0035
   have p0127 :=
-    @g_biimprd
-      (syn_w3a syn_wtru (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-      (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-      (.classMem (syn_copk (.cv x) (.cv y)) (syn_clefin)) p0126
+    @gBiimprd
+      (synW3a synWtru (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+      (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+      (.classMem (synCopk (.cv x) (.cv y)) (synClefin)) p0126
   have p0128 :=
-    @g_orc (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-      (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x))
+    @gOrc (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+      (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x))
   have p0129 :=
-    @g_syl6
-      (syn_w3a syn_wtru (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-      (.classMem (syn_copk (.cv x) (.cv y)) (syn_clefin))
-      (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-      (syn_wo (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-        (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x)))
+    @gSyl6
+      (synW3a synWtru (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+      (.classMem (synCopk (.cv x) (.cv y)) (synClefin))
+      (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+      (synWo (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+        (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x)))
       p0127 p0128
   have p0136 :=
-    @g_jca
-      (syn_w3a syn_wtru (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-      (.classMem (.cv y) (syn_cvv)) (.classMem (.cv x) (syn_cvv)) p0123 p0120
+    @gJca
+      (synW3a synWtru (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+      (.classMem (.cv y) (synCvv)) (.classMem (.cv x) (synCvv)) p0123 p0120
   have p0138 :=
-    @g_syl
-      (syn_w3a syn_wtru (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-      (syn_wa (.classMem (.cv y) (syn_cvv)) (.classMem (.cv x) (syn_cvv)))
-      (syn_wb (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x))
-        (.classMem (syn_copk (.cv y) (.cv x)) (syn_clefin)))
+    @gSyl
+      (synW3a synWtru (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+      (synWa (.classMem (.cv y) (synCvv)) (.classMem (.cv x) (synCvv)))
+      (synWb (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x))
+        (.classMem (synCopk (.cv y) (.cv x)) (synClefin)))
       p0136 p0105
   have p0139 :=
-    @g_biimprd
-      (syn_w3a syn_wtru (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-      (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x))
-      (.classMem (syn_copk (.cv y) (.cv x)) (syn_clefin)) p0138
+    @gBiimprd
+      (synW3a synWtru (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+      (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x))
+      (.classMem (synCopk (.cv y) (.cv x)) (synClefin)) p0138
   have p0140 :=
-    @g_olc (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x))
-      (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
+    @gOlc (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x))
+      (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
   have p0141 :=
-    @g_syl6
-      (syn_w3a syn_wtru (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-      (.classMem (syn_copk (.cv y) (.cv x)) (syn_clefin))
-      (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x))
-      (syn_wo (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-        (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x)))
+    @gSyl6
+      (synW3a synWtru (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+      (.classMem (synCopk (.cv y) (.cv x)) (synClefin))
+      (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x))
+      (synWo (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+        (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x)))
       p0139 p0140
   have p0142 :=
-    @g_jaod
-      (syn_w3a syn_wtru (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-      (.classMem (syn_copk (.cv x) (.cv y)) (syn_clefin))
-      (syn_wo (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-        (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x)))
-      (.classMem (syn_copk (.cv y) (.cv x)) (syn_clefin)) p0129 p0141
+    @gJaod
+      (synW3a synWtru (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+      (.classMem (synCopk (.cv x) (.cv y)) (synClefin))
+      (synWo (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+        (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x)))
+      (.classMem (synCopk (.cv y) (.cv x)) (synClefin)) p0129 p0141
   have p0143 :=
-    @g_mpd
-      (syn_w3a syn_wtru (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-      (syn_wo (.classMem (syn_copk (.cv x) (.cv y)) (syn_clefin))
-        (.classMem (syn_copk (.cv y) (.cv x)) (syn_clefin)))
-      (syn_wo (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-        (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x)))
+    @gMpd
+      (synW3a synWtru (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+      (synWo (.classMem (synCopk (.cv x) (.cv y)) (synClefin))
+        (.classMem (synCopk (.cv y) (.cv x)) (synClefin)))
+      (synWo (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+        (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x)))
       p0117 p0142
   have p0144_e04_recanon :
     Nominal.NPrf
-      (.imp (syn_w3a syn_wtru
-          (syn_wa (.classMem (.cv x) (syn_cnnc)) (.classMem (.cv y) (syn_cnnc)))
-          (syn_wa (syn_wbr (.cv x) (syn_ckqrel (syn_clefin)) (.cv y))
-            (syn_wbr (.cv y) (syn_ckqrel (syn_clefin)) (.cv x)))) (.objEq x y)) :=
+      (.imp (synW3a synWtru
+          (synWa (.classMem (.cv x) (synCnnc)) (.classMem (.cv y) (synCnnc)))
+          (synWa (synWbr (.cv x) (synCkqrel (synClefin)) (.cv y))
+            (synWbr (.cv y) (synCkqrel (synClefin)) (.cv x)))) (.objEq x y)) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_w3a syn_wa syn_wtru
+        unfold synW3a synWa synWtru
         apply Nominal.RecanonTransportDev.TRecanonWff.imp
         · exact Nominal.RecanonTransportDev.TRecanonWff.same _
         · exact Nominal.RecanonTransportDev.TRecanonWff.classEq_objEq _ _)
       p0112
   have p0144 :=
-    @g_sod syn_wtru x y z (syn_cnnc) (syn_ckqrel (syn_clefin)) (syn_cvv) (syn_cvv)
+    @gSod synWtru x y z (synCnnc) (synCkqrel (synClefin)) (synCvv) (synCvv)
       dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005 dv_cache_0006
       dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011 dv_cache_0012
       p0003 p0005 p0020 p0073 p0144_e04_recanon p0143

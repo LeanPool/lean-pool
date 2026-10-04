@@ -36,1085 +36,1169 @@ open NFChoice.DefinitionLeaves.AlphaFocusedFV
 open NFChoice.DirectNominalPrf
 open NFChoice.DirectNominalPrf.Nominal
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_000`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_000 : Var :=
+noncomputable def nb052AlphaDummy000 : Var :=
   (freshVar ((∅ : Finset Var)) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_001`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_001 : Var :=
+noncomputable def nb052AlphaDummy001 : Var :=
   (freshVar ((∅ : Finset Var)) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_002`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_002 : Var :=
-  (freshVar (({(nb052_alpha_dummy_000)} : Finset Var) ∪ ((syn_cvv)).fv ∪
-          ({(nb052_alpha_dummy_001)} : Finset Var) ∪ ((syn_cvv)).fv ∪
-      ((syn_cun (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))).fv) 0)
+noncomputable def nb052AlphaDummy002 : Var :=
+  (freshVar (({(nb052AlphaDummy000)} : Finset Var) ∪ ((synCvv)).fv ∪
+          ({(nb052AlphaDummy001)} : Finset Var) ∪ ((synCvv)).fv ∪
+      ((synCun (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_003`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_003 (x : Var) (y : Var) : Var :=
-  (freshVar (({ x } : Finset Var) ∪ ((syn_cvv)).fv ∪ ({ y } : Finset Var) ∪ ((syn_cvv)).fv ∪
-      ((syn_cun (Class.cv x) (Class.cv y))).fv) 0)
+noncomputable def nb052AlphaDummy003 (x : Var) (y : Var) : Var :=
+  (freshVar (({ x } : Finset Var) ∪ ((synCvv)).fv ∪ ({ y } : Finset Var) ∪ ((synCvv)).fv ∪
+      ((synCun (Class.cv x) (Class.cv y))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_004`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_004 : Var :=
+noncomputable def nb052AlphaDummy004 : Var :=
   (freshVar
-    (({(nb052_alpha_dummy_000)} : Finset Var) ∪ ({(nb052_alpha_dummy_001)} : Finset Var) ∪
-        ({(nb052_alpha_dummy_002)} : Finset Var) ∪ ((syn_wa
-          (syn_wa (Wff.classMem (Class.cv (nb052_alpha_dummy_000)) (syn_cvv))
-            (Wff.classMem (Class.cv (nb052_alpha_dummy_001)) (syn_cvv)))
-          (Wff.classEq (Class.cv (nb052_alpha_dummy_002))
-            (syn_cun (Class.cv (nb052_alpha_dummy_000))
-              (Class.cv (nb052_alpha_dummy_001)))))).fv) 0)
+    (({(nb052AlphaDummy000)} : Finset Var) ∪ ({(nb052AlphaDummy001)} : Finset Var) ∪
+        ({(nb052AlphaDummy002)} : Finset Var) ∪ ((synWa
+          (synWa (Wff.classMem (Class.cv (nb052AlphaDummy000)) (synCvv))
+            (Wff.classMem (Class.cv (nb052AlphaDummy001)) (synCvv)))
+          (Wff.classEq (Class.cv (nb052AlphaDummy002))
+            (synCun (Class.cv (nb052AlphaDummy000))
+              (Class.cv (nb052AlphaDummy001)))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_005`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_005 (x : Var) (y : Var) : Var :=
+noncomputable def nb052AlphaDummy005 (x : Var) (y : Var) : Var :=
   (freshVar (({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪
-        ({(nb052_alpha_dummy_003 x y)} : Finset Var) ∪ ((syn_wa
-          (syn_wa (Wff.classMem (Class.cv x) (syn_cvv)) (Wff.classMem (Class.cv y) (syn_cvv)))
-          (Wff.classEq (Class.cv (nb052_alpha_dummy_003 x y))
-            (syn_cun (Class.cv x) (Class.cv y))))).fv) 0)
+        ({(nb052AlphaDummy003 x y)} : Finset Var) ∪ ((synWa
+          (synWa (Wff.classMem (Class.cv x) (synCvv)) (Wff.classMem (Class.cv y) (synCvv)))
+          (Wff.classEq (Class.cv (nb052AlphaDummy003 x y))
+            (synCun (Class.cv x) (Class.cv y))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_006`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_006 : Var :=
-  (freshVar (((syn_cop (Class.cv (nb052_alpha_dummy_000))
-          (Class.cv (nb052_alpha_dummy_001)))).fv ∪ ((Class.cv (nb052_alpha_dummy_002))).fv) 0)
+noncomputable def nb052AlphaDummy006 : Var :=
+  (freshVar (((synCop (Class.cv (nb052AlphaDummy000))
+          (Class.cv (nb052AlphaDummy001)))).fv ∪ ((Class.cv (nb052AlphaDummy002))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_007`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_007 : Var :=
-  (freshVar (((syn_cop (Class.cv (nb052_alpha_dummy_000))
-          (Class.cv (nb052_alpha_dummy_001)))).fv ∪ ((Class.cv (nb052_alpha_dummy_002))).fv) 1)
+noncomputable def nb052AlphaDummy007 : Var :=
+  (freshVar (((synCop (Class.cv (nb052AlphaDummy000))
+          (Class.cv (nb052AlphaDummy001)))).fv ∪ ((Class.cv (nb052AlphaDummy002))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_008`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_008 (x : Var) (y : Var) : Var :=
-  (freshVar (((syn_cop (Class.cv x) (Class.cv y))).fv ∪
-      ((Class.cv (nb052_alpha_dummy_003 x y))).fv) 0)
+noncomputable def nb052AlphaDummy008 (x : Var) (y : Var) : Var :=
+  (freshVar (((synCop (Class.cv x) (Class.cv y))).fv ∪
+      ((Class.cv (nb052AlphaDummy003 x y))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_009`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_009 (x : Var) (y : Var) : Var :=
-  (freshVar (((syn_cop (Class.cv x) (Class.cv y))).fv ∪
-      ((Class.cv (nb052_alpha_dummy_003 x y))).fv) 1)
+noncomputable def nb052AlphaDummy009 (x : Var) (y : Var) : Var :=
+  (freshVar (((synCop (Class.cv x) (Class.cv y))).fv ∪
+      ((Class.cv (nb052AlphaDummy003 x y))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_010`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_010 : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb052_alpha_dummy_006) (syn_wrex (nb052_alpha_dummy_007)
-              (syn_cop (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_007)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb052_alpha_dummy_006)
-            (syn_wrex (nb052_alpha_dummy_007) (Class.cv (nb052_alpha_dummy_002))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_007)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+noncomputable def nb052AlphaDummy010 : Var :=
+  (freshVar (((synCcompl (Class.cab (nb052AlphaDummy006) (synWrex (nb052AlphaDummy007)
+              (synCop (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))
+              (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                (synCphi (Class.cv (nb052AlphaDummy007)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb052AlphaDummy006)
+            (synWrex (nb052AlphaDummy007) (Class.cv (nb052AlphaDummy002))
+              (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy007)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_011`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_011 (x : Var) (y : Var) : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb052_alpha_dummy_008 x y)
-            (syn_wrex (nb052_alpha_dummy_009 x y) (syn_cop (Class.cv x) (Class.cv y))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb052_alpha_dummy_008 x y)
-            (syn_wrex (nb052_alpha_dummy_009 x y) (Class.cv (nb052_alpha_dummy_003 x y))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+noncomputable def nb052AlphaDummy011 (x : Var) (y : Var) : Var :=
+  (freshVar (((synCcompl (Class.cab (nb052AlphaDummy008 x y)
+            (synWrex (nb052AlphaDummy009 x y) (synCop (Class.cv x) (Class.cv y))
+              (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                (synCphi (Class.cv (nb052AlphaDummy009 x y)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb052AlphaDummy008 x y)
+            (synWrex (nb052AlphaDummy009 x y) (Class.cv (nb052AlphaDummy003 x y))
+              (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy009 x y)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_012`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_012 : Var :=
-  (freshVar (((Class.cab (nb052_alpha_dummy_006) (syn_wrex (nb052_alpha_dummy_007)
-            (syn_cop (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-              (syn_cphi (Class.cv (nb052_alpha_dummy_007))))))).fv ∪
-      ((Class.cab (nb052_alpha_dummy_006) (syn_wrex (nb052_alpha_dummy_007)
-            (syn_cop (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-              (syn_cphi (Class.cv (nb052_alpha_dummy_007))))))).fv) 0)
+noncomputable def nb052AlphaDummy012 : Var :=
+  (freshVar (((Class.cab (nb052AlphaDummy006) (synWrex (nb052AlphaDummy007)
+            (synCop (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))
+            (Wff.classEq (Class.cv (nb052AlphaDummy006))
+              (synCphi (Class.cv (nb052AlphaDummy007))))))).fv ∪
+      ((Class.cab (nb052AlphaDummy006) (synWrex (nb052AlphaDummy007)
+            (synCop (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))
+            (Wff.classEq (Class.cv (nb052AlphaDummy006))
+              (synCphi (Class.cv (nb052AlphaDummy007))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_013`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_013 (x : Var) (y : Var) : Var :=
-  (freshVar (((Class.cab (nb052_alpha_dummy_008 x y)
-          (syn_wrex (nb052_alpha_dummy_009 x y) (syn_cop (Class.cv x) (Class.cv y))
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-              (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y))))))).fv ∪
-      ((Class.cab (nb052_alpha_dummy_008 x y)
-          (syn_wrex (nb052_alpha_dummy_009 x y) (syn_cop (Class.cv x) (Class.cv y))
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-              (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y))))))).fv) 0)
+noncomputable def nb052AlphaDummy013 (x : Var) (y : Var) : Var :=
+  (freshVar (((Class.cab (nb052AlphaDummy008 x y)
+          (synWrex (nb052AlphaDummy009 x y) (synCop (Class.cv x) (Class.cv y))
+            (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+              (synCphi (Class.cv (nb052AlphaDummy009 x y))))))).fv ∪
+      ((Class.cab (nb052AlphaDummy008 x y)
+          (synWrex (nb052AlphaDummy009 x y) (synCop (Class.cv x) (Class.cv y))
+            (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+              (synCphi (Class.cv (nb052AlphaDummy009 x y))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_014`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_014 : Var :=
+noncomputable def nb052AlphaDummy014 : Var :=
   (freshVar
-    (((Class.cv (nb052_alpha_dummy_000))).fv ∪ ((Class.cv (nb052_alpha_dummy_001))).fv) 0)
+    (((Class.cv (nb052AlphaDummy000))).fv ∪ ((Class.cv (nb052AlphaDummy001))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_015`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_015 : Var :=
+noncomputable def nb052AlphaDummy015 : Var :=
   (freshVar
-    (((Class.cv (nb052_alpha_dummy_000))).fv ∪ ((Class.cv (nb052_alpha_dummy_001))).fv) 1)
+    (((Class.cv (nb052AlphaDummy000))).fv ∪ ((Class.cv (nb052AlphaDummy001))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_016`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_016 (x : Var) (y : Var) : Var :=
+noncomputable def nb052AlphaDummy016 (x : Var) (y : Var) : Var :=
   (freshVar (((Class.cv x)).fv ∪ ((Class.cv y)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_017`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_017 (x : Var) (y : Var) : Var :=
+noncomputable def nb052AlphaDummy017 (x : Var) (y : Var) : Var :=
   (freshVar (((Class.cv x)).fv ∪ ((Class.cv y)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_018`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_018 : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb052_alpha_dummy_014)
-            (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_000))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_015)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb052_alpha_dummy_014)
-            (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_001))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_015)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+noncomputable def nb052AlphaDummy018 : Var :=
+  (freshVar (((synCcompl (Class.cab (nb052AlphaDummy014)
+            (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy000))
+              (Wff.classEq (Class.cv (nb052AlphaDummy014))
+                (synCphi (Class.cv (nb052AlphaDummy015)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb052AlphaDummy014)
+            (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy001))
+              (Wff.classEq (Class.cv (nb052AlphaDummy014))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy015)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_019`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_019 (x : Var) (y : Var) : Var :=
-  (freshVar (((syn_ccompl (Class.cab (nb052_alpha_dummy_016 x y)
-            (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv x)
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))))))).fv ∪ ((syn_ccompl
-          (Class.cab (nb052_alpha_dummy_016 x y)
-            (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv y)
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))
-                  (syn_csn (syn_c0c)))))))).fv) 0)
+noncomputable def nb052AlphaDummy019 (x : Var) (y : Var) : Var :=
+  (freshVar (((synCcompl (Class.cab (nb052AlphaDummy016 x y)
+            (synWrex (nb052AlphaDummy017 x y) (Class.cv x)
+              (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+                (synCphi (Class.cv (nb052AlphaDummy017 x y)))))))).fv ∪ ((synCcompl
+          (Class.cab (nb052AlphaDummy016 x y)
+            (synWrex (nb052AlphaDummy017 x y) (Class.cv y)
+              (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy017 x y)))
+                  (synCsn (synC0c)))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_020`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_020 : Var :=
-  (freshVar (((Class.cab (nb052_alpha_dummy_014)
-          (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_000))
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-              (syn_cphi (Class.cv (nb052_alpha_dummy_015))))))).fv ∪
-      ((Class.cab (nb052_alpha_dummy_014)
-          (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_000))
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-              (syn_cphi (Class.cv (nb052_alpha_dummy_015))))))).fv) 0)
+noncomputable def nb052AlphaDummy020 : Var :=
+  (freshVar (((Class.cab (nb052AlphaDummy014)
+          (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy000))
+            (Wff.classEq (Class.cv (nb052AlphaDummy014))
+              (synCphi (Class.cv (nb052AlphaDummy015))))))).fv ∪
+      ((Class.cab (nb052AlphaDummy014)
+          (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy000))
+            (Wff.classEq (Class.cv (nb052AlphaDummy014))
+              (synCphi (Class.cv (nb052AlphaDummy015))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_021`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_021 (x : Var) (y : Var) : Var :=
-  (freshVar (((Class.cab (nb052_alpha_dummy_016 x y)
-          (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv x)
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-              (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y))))))).fv ∪
-      ((Class.cab (nb052_alpha_dummy_016 x y) (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv x)
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-              (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y))))))).fv) 0)
+noncomputable def nb052AlphaDummy021 (x : Var) (y : Var) : Var :=
+  (freshVar (((Class.cab (nb052AlphaDummy016 x y)
+          (synWrex (nb052AlphaDummy017 x y) (Class.cv x)
+            (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+              (synCphi (Class.cv (nb052AlphaDummy017 x y))))))).fv ∪
+      ((Class.cab (nb052AlphaDummy016 x y) (synWrex (nb052AlphaDummy017 x y) (Class.cv x)
+            (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+              (synCphi (Class.cv (nb052AlphaDummy017 x y))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_022`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_022 : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_015))).fv) 0)
+noncomputable def nb052AlphaDummy022 : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy015))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_023`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_023 : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_015))).fv) 1)
+noncomputable def nb052AlphaDummy023 : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy015))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_024`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_024 (x : Var) (y : Var) : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_017 x y))).fv) 0)
+noncomputable def nb052AlphaDummy024 (x : Var) (y : Var) : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy017 x y))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_025`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_025 (x : Var) (y : Var) : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_017 x y))).fv) 1)
+noncomputable def nb052AlphaDummy025 (x : Var) (y : Var) : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy017 x y))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_026`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_026 : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb052_alpha_dummy_022)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb052_alpha_dummy_022)) (syn_c1c))).fv ∪
-      ((Class.cv (nb052_alpha_dummy_022))).fv) 0)
+noncomputable def nb052AlphaDummy026 : Var :=
+  (freshVar (((Wff.classMem (Class.cv (nb052AlphaDummy022)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb052AlphaDummy022)) (synC1c))).fv ∪
+      ((Class.cv (nb052AlphaDummy022))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_027`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_027 (x : Var) (y : Var) : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb052_alpha_dummy_024 x y)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb052_alpha_dummy_024 x y)) (syn_c1c))).fv ∪
-      ((Class.cv (nb052_alpha_dummy_024 x y))).fv) 0)
+noncomputable def nb052AlphaDummy027 (x : Var) (y : Var) : Var :=
+  (freshVar (((Wff.classMem (Class.cv (nb052AlphaDummy024 x y)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb052AlphaDummy024 x y)) (synC1c))).fv ∪
+      ((Class.cv (nb052AlphaDummy024 x y))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_028`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_028 : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_022))).fv ∪ ((syn_c1c)).fv) 0)
+noncomputable def nb052AlphaDummy028 : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy022))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_029`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_029 : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_022))).fv ∪ ((syn_c1c)).fv) 1)
+noncomputable def nb052AlphaDummy029 : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy022))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_030`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_030 : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_022))).fv ∪ ((syn_c1c)).fv) 2)
+noncomputable def nb052AlphaDummy030 : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy022))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_031`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_031 (x : Var) (y : Var) : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_024 x y))).fv ∪ ((syn_c1c)).fv) 0)
+noncomputable def nb052AlphaDummy031 (x : Var) (y : Var) : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy024 x y))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_032`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_032 (x : Var) (y : Var) : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_024 x y))).fv ∪ ((syn_c1c)).fv) 1)
+noncomputable def nb052AlphaDummy032 (x : Var) (y : Var) : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy024 x y))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_033`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_033 (x : Var) (y : Var) : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_024 x y))).fv ∪ ((syn_c1c)).fv) 2)
+noncomputable def nb052AlphaDummy033 (x : Var) (y : Var) : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy024 x y))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_034`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_034 : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb052_alpha_dummy_029))
-          (Class.cv (nb052_alpha_dummy_030)))).fv ∪
-      ((syn_cnin (Class.cv (nb052_alpha_dummy_029)) (Class.cv (nb052_alpha_dummy_030)))).fv) 0)
+noncomputable def nb052AlphaDummy034 : Var :=
+  (freshVar (((synCnin (Class.cv (nb052AlphaDummy029))
+          (Class.cv (nb052AlphaDummy030)))).fv ∪
+      ((synCnin (Class.cv (nb052AlphaDummy029)) (Class.cv (nb052AlphaDummy030)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_035`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_035 (x : Var) (y : Var) : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb052_alpha_dummy_032 x y))
-          (Class.cv (nb052_alpha_dummy_033 x y)))).fv ∪
-      ((syn_cnin (Class.cv (nb052_alpha_dummy_032 x y))
-          (Class.cv (nb052_alpha_dummy_033 x y)))).fv) 0)
+noncomputable def nb052AlphaDummy035 (x : Var) (y : Var) : Var :=
+  (freshVar (((synCnin (Class.cv (nb052AlphaDummy032 x y))
+          (Class.cv (nb052AlphaDummy033 x y)))).fv ∪
+      ((synCnin (Class.cv (nb052AlphaDummy032 x y))
+          (Class.cv (nb052AlphaDummy033 x y)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_036`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_036 : Var :=
+noncomputable def nb052AlphaDummy036 : Var :=
   (freshVar
-    (((Class.cv (nb052_alpha_dummy_029))).fv ∪ ((Class.cv (nb052_alpha_dummy_030))).fv) 0)
+    (((Class.cv (nb052AlphaDummy029))).fv ∪ ((Class.cv (nb052AlphaDummy030))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_037`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_037 (x : Var) (y : Var) : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_032 x y))).fv ∪
-      ((Class.cv (nb052_alpha_dummy_033 x y))).fv) 0)
+noncomputable def nb052AlphaDummy037 (x : Var) (y : Var) : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy032 x y))).fv ∪
+      ((Class.cv (nb052AlphaDummy033 x y))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_038`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_038 : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb052_alpha_dummy_029)))).fv ∪
-      ((syn_ccompl (Class.cv (nb052_alpha_dummy_030)))).fv) 0)
+noncomputable def nb052AlphaDummy038 : Var :=
+  (freshVar (((synCcompl (Class.cv (nb052AlphaDummy029)))).fv ∪
+      ((synCcompl (Class.cv (nb052AlphaDummy030)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_039`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_039 (x : Var) (y : Var) : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb052_alpha_dummy_032 x y)))).fv ∪
-      ((syn_ccompl (Class.cv (nb052_alpha_dummy_033 x y)))).fv) 0)
+noncomputable def nb052AlphaDummy039 (x : Var) (y : Var) : Var :=
+  (freshVar (((synCcompl (Class.cv (nb052AlphaDummy032 x y)))).fv ∪
+      ((synCcompl (Class.cv (nb052AlphaDummy033 x y)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_040`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_040 : Var :=
+noncomputable def nb052AlphaDummy040 : Var :=
   (freshVar
-    (((Class.cv (nb052_alpha_dummy_029))).fv ∪ ((Class.cv (nb052_alpha_dummy_029))).fv) 0)
+    (((Class.cv (nb052AlphaDummy029))).fv ∪ ((Class.cv (nb052AlphaDummy029))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_041`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_041 (x : Var) (y : Var) : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_032 x y))).fv ∪
-      ((Class.cv (nb052_alpha_dummy_032 x y))).fv) 0)
+noncomputable def nb052AlphaDummy041 (x : Var) (y : Var) : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy032 x y))).fv ∪
+      ((Class.cv (nb052AlphaDummy032 x y))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_042`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_042 : Var :=
+noncomputable def nb052AlphaDummy042 : Var :=
   (freshVar
-    (((Class.cv (nb052_alpha_dummy_030))).fv ∪ ((Class.cv (nb052_alpha_dummy_030))).fv) 0)
+    (((Class.cv (nb052AlphaDummy030))).fv ∪ ((Class.cv (nb052AlphaDummy030))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_043`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_043 (x : Var) (y : Var) : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_033 x y))).fv ∪
-      ((Class.cv (nb052_alpha_dummy_033 x y))).fv) 0)
+noncomputable def nb052AlphaDummy043 (x : Var) (y : Var) : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy033 x y))).fv ∪
+      ((Class.cv (nb052AlphaDummy033 x y))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_044`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_044 : Var :=
-  (freshVar (((Class.cab (nb052_alpha_dummy_014)
-          (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_001))
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-              (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_015)))
-                (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb052_alpha_dummy_014)
-          (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_001))
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-              (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_015)))
-                (syn_csn (syn_c0c))))))).fv) 0)
+noncomputable def nb052AlphaDummy044 : Var :=
+  (freshVar (((Class.cab (nb052AlphaDummy014)
+          (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy001))
+            (Wff.classEq (Class.cv (nb052AlphaDummy014))
+              (synCun (synCphi (Class.cv (nb052AlphaDummy015)))
+                (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb052AlphaDummy014)
+          (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy001))
+            (Wff.classEq (Class.cv (nb052AlphaDummy014))
+              (synCun (synCphi (Class.cv (nb052AlphaDummy015)))
+                (synCsn (synC0c))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_045`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_045 (x : Var) (y : Var) : Var :=
-  (freshVar (((Class.cab (nb052_alpha_dummy_016 x y)
-          (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv y)
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-              (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))
-                (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb052_alpha_dummy_016 x y)
-          (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv y)
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-              (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))
-                (syn_csn (syn_c0c))))))).fv) 0)
+noncomputable def nb052AlphaDummy045 (x : Var) (y : Var) : Var :=
+  (freshVar (((Class.cab (nb052AlphaDummy016 x y)
+          (synWrex (nb052AlphaDummy017 x y) (Class.cv y)
+            (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+              (synCun (synCphi (Class.cv (nb052AlphaDummy017 x y)))
+                (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb052AlphaDummy016 x y)
+          (synWrex (nb052AlphaDummy017 x y) (Class.cv y)
+            (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+              (synCun (synCphi (Class.cv (nb052AlphaDummy017 x y)))
+                (synCsn (synC0c))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_046`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_046 : Var :=
-  (freshVar (((syn_ccompl (syn_cphi (Class.cv (nb052_alpha_dummy_015))))).fv ∪
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
+noncomputable def nb052AlphaDummy046 : Var :=
+  (freshVar (((synCcompl (synCphi (Class.cv (nb052AlphaDummy015))))).fv ∪
+      ((synCcompl (synCsn (synC0c)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_047`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_047 (x : Var) (y : Var) : Var :=
-  (freshVar (((syn_ccompl (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y))))).fv ∪
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
+noncomputable def nb052AlphaDummy047 (x : Var) (y : Var) : Var :=
+  (freshVar (((synCcompl (synCphi (Class.cv (nb052AlphaDummy017 x y))))).fv ∪
+      ((synCcompl (synCsn (synC0c)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_048`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_048 : Var :=
-  (freshVar (((syn_cphi (Class.cv (nb052_alpha_dummy_015)))).fv ∪
-      ((syn_cphi (Class.cv (nb052_alpha_dummy_015)))).fv) 0)
+noncomputable def nb052AlphaDummy048 : Var :=
+  (freshVar (((synCphi (Class.cv (nb052AlphaDummy015)))).fv ∪
+      ((synCphi (Class.cv (nb052AlphaDummy015)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_049`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_049 (x : Var) (y : Var) : Var :=
-  (freshVar (((syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))).fv ∪
-      ((syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))).fv) 0)
+noncomputable def nb052AlphaDummy049 (x : Var) (y : Var) : Var :=
+  (freshVar (((synCphi (Class.cv (nb052AlphaDummy017 x y)))).fv ∪
+      ((synCphi (Class.cv (nb052AlphaDummy017 x y)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_050`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_050 : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_007))).fv) 0)
+noncomputable def nb052AlphaDummy050 : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy007))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_051`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_051 : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_007))).fv) 1)
+noncomputable def nb052AlphaDummy051 : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy007))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_052`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_052 (x : Var) (y : Var) : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_009 x y))).fv) 0)
+noncomputable def nb052AlphaDummy052 (x : Var) (y : Var) : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy009 x y))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_053`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_053 (x : Var) (y : Var) : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_009 x y))).fv) 1)
+noncomputable def nb052AlphaDummy053 (x : Var) (y : Var) : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy009 x y))).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_054`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_054 : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb052_alpha_dummy_050)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb052_alpha_dummy_050)) (syn_c1c))).fv ∪
-      ((Class.cv (nb052_alpha_dummy_050))).fv) 0)
+noncomputable def nb052AlphaDummy054 : Var :=
+  (freshVar (((Wff.classMem (Class.cv (nb052AlphaDummy050)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb052AlphaDummy050)) (synC1c))).fv ∪
+      ((Class.cv (nb052AlphaDummy050))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_055`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_055 (x : Var) (y : Var) : Var :=
-  (freshVar (((Wff.classMem (Class.cv (nb052_alpha_dummy_052 x y)) (syn_cnnc))).fv ∪
-        ((syn_cplc (Class.cv (nb052_alpha_dummy_052 x y)) (syn_c1c))).fv ∪
-      ((Class.cv (nb052_alpha_dummy_052 x y))).fv) 0)
+noncomputable def nb052AlphaDummy055 (x : Var) (y : Var) : Var :=
+  (freshVar (((Wff.classMem (Class.cv (nb052AlphaDummy052 x y)) (synCnnc))).fv ∪
+        ((synCplc (Class.cv (nb052AlphaDummy052 x y)) (synC1c))).fv ∪
+      ((Class.cv (nb052AlphaDummy052 x y))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_056`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_056 : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_050))).fv ∪ ((syn_c1c)).fv) 0)
+noncomputable def nb052AlphaDummy056 : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy050))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_057`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_057 : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_050))).fv ∪ ((syn_c1c)).fv) 1)
+noncomputable def nb052AlphaDummy057 : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy050))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_058`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_058 : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_050))).fv ∪ ((syn_c1c)).fv) 2)
+noncomputable def nb052AlphaDummy058 : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy050))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_059`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_059 (x : Var) (y : Var) : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_052 x y))).fv ∪ ((syn_c1c)).fv) 0)
+noncomputable def nb052AlphaDummy059 (x : Var) (y : Var) : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy052 x y))).fv ∪ ((synC1c)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_060`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_060 (x : Var) (y : Var) : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_052 x y))).fv ∪ ((syn_c1c)).fv) 1)
+noncomputable def nb052AlphaDummy060 (x : Var) (y : Var) : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy052 x y))).fv ∪ ((synC1c)).fv) 1)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_061`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_061 (x : Var) (y : Var) : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_052 x y))).fv ∪ ((syn_c1c)).fv) 2)
+noncomputable def nb052AlphaDummy061 (x : Var) (y : Var) : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy052 x y))).fv ∪ ((synC1c)).fv) 2)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_062`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_062 : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb052_alpha_dummy_057))
-          (Class.cv (nb052_alpha_dummy_058)))).fv ∪
-      ((syn_cnin (Class.cv (nb052_alpha_dummy_057)) (Class.cv (nb052_alpha_dummy_058)))).fv) 0)
+noncomputable def nb052AlphaDummy062 : Var :=
+  (freshVar (((synCnin (Class.cv (nb052AlphaDummy057))
+          (Class.cv (nb052AlphaDummy058)))).fv ∪
+      ((synCnin (Class.cv (nb052AlphaDummy057)) (Class.cv (nb052AlphaDummy058)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_063`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_063 (x : Var) (y : Var) : Var :=
-  (freshVar (((syn_cnin (Class.cv (nb052_alpha_dummy_060 x y))
-          (Class.cv (nb052_alpha_dummy_061 x y)))).fv ∪
-      ((syn_cnin (Class.cv (nb052_alpha_dummy_060 x y))
-          (Class.cv (nb052_alpha_dummy_061 x y)))).fv) 0)
+noncomputable def nb052AlphaDummy063 (x : Var) (y : Var) : Var :=
+  (freshVar (((synCnin (Class.cv (nb052AlphaDummy060 x y))
+          (Class.cv (nb052AlphaDummy061 x y)))).fv ∪
+      ((synCnin (Class.cv (nb052AlphaDummy060 x y))
+          (Class.cv (nb052AlphaDummy061 x y)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_064`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_064 : Var :=
+noncomputable def nb052AlphaDummy064 : Var :=
   (freshVar
-    (((Class.cv (nb052_alpha_dummy_057))).fv ∪ ((Class.cv (nb052_alpha_dummy_058))).fv) 0)
+    (((Class.cv (nb052AlphaDummy057))).fv ∪ ((Class.cv (nb052AlphaDummy058))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_065`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_065 (x : Var) (y : Var) : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_060 x y))).fv ∪
-      ((Class.cv (nb052_alpha_dummy_061 x y))).fv) 0)
+noncomputable def nb052AlphaDummy065 (x : Var) (y : Var) : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy060 x y))).fv ∪
+      ((Class.cv (nb052AlphaDummy061 x y))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_066`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_066 : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb052_alpha_dummy_057)))).fv ∪
-      ((syn_ccompl (Class.cv (nb052_alpha_dummy_058)))).fv) 0)
+noncomputable def nb052AlphaDummy066 : Var :=
+  (freshVar (((synCcompl (Class.cv (nb052AlphaDummy057)))).fv ∪
+      ((synCcompl (Class.cv (nb052AlphaDummy058)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_067`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_067 (x : Var) (y : Var) : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb052_alpha_dummy_060 x y)))).fv ∪
-      ((syn_ccompl (Class.cv (nb052_alpha_dummy_061 x y)))).fv) 0)
+noncomputable def nb052AlphaDummy067 (x : Var) (y : Var) : Var :=
+  (freshVar (((synCcompl (Class.cv (nb052AlphaDummy060 x y)))).fv ∪
+      ((synCcompl (Class.cv (nb052AlphaDummy061 x y)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_068`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_068 : Var :=
+noncomputable def nb052AlphaDummy068 : Var :=
   (freshVar
-    (((Class.cv (nb052_alpha_dummy_057))).fv ∪ ((Class.cv (nb052_alpha_dummy_057))).fv) 0)
+    (((Class.cv (nb052AlphaDummy057))).fv ∪ ((Class.cv (nb052AlphaDummy057))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_069`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_069 (x : Var) (y : Var) : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_060 x y))).fv ∪
-      ((Class.cv (nb052_alpha_dummy_060 x y))).fv) 0)
+noncomputable def nb052AlphaDummy069 (x : Var) (y : Var) : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy060 x y))).fv ∪
+      ((Class.cv (nb052AlphaDummy060 x y))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_070`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_070 : Var :=
+noncomputable def nb052AlphaDummy070 : Var :=
   (freshVar
-    (((Class.cv (nb052_alpha_dummy_058))).fv ∪ ((Class.cv (nb052_alpha_dummy_058))).fv) 0)
+    (((Class.cv (nb052AlphaDummy058))).fv ∪ ((Class.cv (nb052AlphaDummy058))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_071`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_071 (x : Var) (y : Var) : Var :=
-  (freshVar (((Class.cv (nb052_alpha_dummy_061 x y))).fv ∪
-      ((Class.cv (nb052_alpha_dummy_061 x y))).fv) 0)
+noncomputable def nb052AlphaDummy071 (x : Var) (y : Var) : Var :=
+  (freshVar (((Class.cv (nb052AlphaDummy061 x y))).fv ∪
+      ((Class.cv (nb052AlphaDummy061 x y))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_072`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_072 : Var :=
-  (freshVar (((Class.cab (nb052_alpha_dummy_006)
-          (syn_wrex (nb052_alpha_dummy_007) (Class.cv (nb052_alpha_dummy_002))
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-              (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_007)))
-                (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb052_alpha_dummy_006)
-          (syn_wrex (nb052_alpha_dummy_007) (Class.cv (nb052_alpha_dummy_002))
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-              (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_007)))
-                (syn_csn (syn_c0c))))))).fv) 0)
+noncomputable def nb052AlphaDummy072 : Var :=
+  (freshVar (((Class.cab (nb052AlphaDummy006)
+          (synWrex (nb052AlphaDummy007) (Class.cv (nb052AlphaDummy002))
+            (Wff.classEq (Class.cv (nb052AlphaDummy006))
+              (synCun (synCphi (Class.cv (nb052AlphaDummy007)))
+                (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb052AlphaDummy006)
+          (synWrex (nb052AlphaDummy007) (Class.cv (nb052AlphaDummy002))
+            (Wff.classEq (Class.cv (nb052AlphaDummy006))
+              (synCun (synCphi (Class.cv (nb052AlphaDummy007)))
+                (synCsn (synC0c))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_073`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_073 (x : Var) (y : Var) : Var :=
-  (freshVar (((Class.cab (nb052_alpha_dummy_008 x y)
-          (syn_wrex (nb052_alpha_dummy_009 x y) (Class.cv (nb052_alpha_dummy_003 x y))
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-              (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))
-                (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb052_alpha_dummy_008 x y)
-          (syn_wrex (nb052_alpha_dummy_009 x y) (Class.cv (nb052_alpha_dummy_003 x y))
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-              (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))
-                (syn_csn (syn_c0c))))))).fv) 0)
+noncomputable def nb052AlphaDummy073 (x : Var) (y : Var) : Var :=
+  (freshVar (((Class.cab (nb052AlphaDummy008 x y)
+          (synWrex (nb052AlphaDummy009 x y) (Class.cv (nb052AlphaDummy003 x y))
+            (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+              (synCun (synCphi (Class.cv (nb052AlphaDummy009 x y)))
+                (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb052AlphaDummy008 x y)
+          (synWrex (nb052AlphaDummy009 x y) (Class.cv (nb052AlphaDummy003 x y))
+            (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+              (synCun (synCphi (Class.cv (nb052AlphaDummy009 x y)))
+                (synCsn (synC0c))))))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_074`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_074 : Var :=
-  (freshVar (((syn_ccompl (syn_cphi (Class.cv (nb052_alpha_dummy_007))))).fv ∪
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
+noncomputable def nb052AlphaDummy074 : Var :=
+  (freshVar (((synCcompl (synCphi (Class.cv (nb052AlphaDummy007))))).fv ∪
+      ((synCcompl (synCsn (synC0c)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_075`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_075 (x : Var) (y : Var) : Var :=
-  (freshVar (((syn_ccompl (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y))))).fv ∪
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
+noncomputable def nb052AlphaDummy075 (x : Var) (y : Var) : Var :=
+  (freshVar (((synCcompl (synCphi (Class.cv (nb052AlphaDummy009 x y))))).fv ∪
+      ((synCcompl (synCsn (synC0c)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_076`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_076 : Var :=
-  (freshVar (((syn_cphi (Class.cv (nb052_alpha_dummy_007)))).fv ∪
-      ((syn_cphi (Class.cv (nb052_alpha_dummy_007)))).fv) 0)
+noncomputable def nb052AlphaDummy076 : Var :=
+  (freshVar (((synCphi (Class.cv (nb052AlphaDummy007)))).fv ∪
+      ((synCphi (Class.cv (nb052AlphaDummy007)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_077`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_077 (x : Var) (y : Var) : Var :=
-  (freshVar (((syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))).fv ∪
-      ((syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))).fv) 0)
+noncomputable def nb052AlphaDummy077 (x : Var) (y : Var) : Var :=
+  (freshVar (((synCphi (Class.cv (nb052AlphaDummy009 x y)))).fv ∪
+      ((synCphi (Class.cv (nb052AlphaDummy009 x y)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_078`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_078 : Var :=
-  (freshVar (((syn_ccompl (Class.cv (nb052_alpha_dummy_000)))).fv ∪
-      ((syn_ccompl (Class.cv (nb052_alpha_dummy_001)))).fv) 0)
+noncomputable def nb052AlphaDummy078 : Var :=
+  (freshVar (((synCcompl (Class.cv (nb052AlphaDummy000)))).fv ∪
+      ((synCcompl (Class.cv (nb052AlphaDummy001)))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_079`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_079 (x : Var) (y : Var) : Var :=
-  (freshVar (((syn_ccompl (Class.cv x))).fv ∪ ((syn_ccompl (Class.cv y))).fv) 0)
+noncomputable def nb052AlphaDummy079 (x : Var) (y : Var) : Var :=
+  (freshVar (((synCcompl (Class.cv x))).fv ∪ ((synCcompl (Class.cv y))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_080`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_080 : Var :=
+noncomputable def nb052AlphaDummy080 : Var :=
   (freshVar
-    (((Class.cv (nb052_alpha_dummy_000))).fv ∪ ((Class.cv (nb052_alpha_dummy_000))).fv) 0)
+    (((Class.cv (nb052AlphaDummy000))).fv ∪ ((Class.cv (nb052AlphaDummy000))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_081`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_081 (x : Var) : Var :=
+noncomputable def nb052AlphaDummy081 (x : Var) : Var :=
   (freshVar (((Class.cv x)).fv ∪ ((Class.cv x)).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_082`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_082 : Var :=
+noncomputable def nb052AlphaDummy082 : Var :=
   (freshVar
-    (((Class.cv (nb052_alpha_dummy_001))).fv ∪ ((Class.cv (nb052_alpha_dummy_001))).fv) 0)
+    (((Class.cv (nb052AlphaDummy001))).fv ∪ ((Class.cv (nb052AlphaDummy001))).fv) 0)
 
+/-- Checked nominal proof certificate identified upstream as `nb052_alpha_dummy_083`. -/
 @[expose]
-noncomputable def nb052_alpha_dummy_083 (y : Var) : Var :=
+noncomputable def nb052AlphaDummy083 (y : Var) : Var :=
   (freshVar (((Class.cv y)).fv ∪ ((Class.cv y)).fv) 0)
 
 theorem nb052_fresh_000 :
-    (nb052_alpha_dummy_072) ∉
-      (((Class.cab (nb052_alpha_dummy_006)
-            (syn_wrex (nb052_alpha_dummy_007) (Class.cv (nb052_alpha_dummy_002))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_007)))
-                  (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb052_alpha_dummy_006)
-            (syn_wrex (nb052_alpha_dummy_007) (Class.cv (nb052_alpha_dummy_002))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_007)))
-                  (syn_csn (syn_c0c))))))).fv) :=
+    (nb052AlphaDummy072) ∉
+      (((Class.cab (nb052AlphaDummy006)
+            (synWrex (nb052AlphaDummy007) (Class.cv (nb052AlphaDummy002))
+              (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy007)))
+                  (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb052AlphaDummy006)
+            (synWrex (nb052AlphaDummy007) (Class.cv (nb052AlphaDummy002))
+              (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy007)))
+                  (synCsn (synC0c))))))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_072] using
+  simpa only [nb052AlphaDummy072] using
     freshVar_not_mem
-      (((Class.cab (nb052_alpha_dummy_006)
-            (syn_wrex (nb052_alpha_dummy_007) (Class.cv (nb052_alpha_dummy_002))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_007)))
-                  (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb052_alpha_dummy_006)
-            (syn_wrex (nb052_alpha_dummy_007) (Class.cv (nb052_alpha_dummy_002))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_007)))
-                  (syn_csn (syn_c0c))))))).fv)
+      (((Class.cab (nb052AlphaDummy006)
+            (synWrex (nb052AlphaDummy007) (Class.cv (nb052AlphaDummy002))
+              (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy007)))
+                  (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb052AlphaDummy006)
+            (synWrex (nb052AlphaDummy007) (Class.cv (nb052AlphaDummy002))
+              (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy007)))
+                  (synCsn (synC0c))))))).fv)
       0
 
 theorem nb052_fresh_001 :
-    (nb052_alpha_dummy_012) ∉
-      (((Class.cab (nb052_alpha_dummy_006) (syn_wrex (nb052_alpha_dummy_007)
-              (syn_cop (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_007))))))).fv ∪
-        ((Class.cab (nb052_alpha_dummy_006) (syn_wrex (nb052_alpha_dummy_007)
-              (syn_cop (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_007))))))).fv) :=
+    (nb052AlphaDummy012) ∉
+      (((Class.cab (nb052AlphaDummy006) (synWrex (nb052AlphaDummy007)
+              (synCop (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))
+              (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                (synCphi (Class.cv (nb052AlphaDummy007))))))).fv ∪
+        ((Class.cab (nb052AlphaDummy006) (synWrex (nb052AlphaDummy007)
+              (synCop (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))
+              (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                (synCphi (Class.cv (nb052AlphaDummy007))))))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_012] using
+  simpa only [nb052AlphaDummy012] using
     freshVar_not_mem
-      (((Class.cab (nb052_alpha_dummy_006) (syn_wrex (nb052_alpha_dummy_007)
-              (syn_cop (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_007))))))).fv ∪
-        ((Class.cab (nb052_alpha_dummy_006) (syn_wrex (nb052_alpha_dummy_007)
-              (syn_cop (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_007))))))).fv)
+      (((Class.cab (nb052AlphaDummy006) (synWrex (nb052AlphaDummy007)
+              (synCop (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))
+              (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                (synCphi (Class.cv (nb052AlphaDummy007))))))).fv ∪
+        ((Class.cab (nb052AlphaDummy006) (synWrex (nb052AlphaDummy007)
+              (synCop (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))
+              (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                (synCphi (Class.cv (nb052AlphaDummy007))))))).fv)
       0
 
 theorem nb052_fresh_002 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_073 x y) ∉
-      (((Class.cab (nb052_alpha_dummy_008 x y)
-            (syn_wrex (nb052_alpha_dummy_009 x y) (Class.cv (nb052_alpha_dummy_003 x y))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))
-                  (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb052_alpha_dummy_008 x y)
-            (syn_wrex (nb052_alpha_dummy_009 x y) (Class.cv (nb052_alpha_dummy_003 x y))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))
-                  (syn_csn (syn_c0c))))))).fv) :=
+    (nb052AlphaDummy073 x y) ∉
+      (((Class.cab (nb052AlphaDummy008 x y)
+            (synWrex (nb052AlphaDummy009 x y) (Class.cv (nb052AlphaDummy003 x y))
+              (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy009 x y)))
+                  (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb052AlphaDummy008 x y)
+            (synWrex (nb052AlphaDummy009 x y) (Class.cv (nb052AlphaDummy003 x y))
+              (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy009 x y)))
+                  (synCsn (synC0c))))))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_073] using
+  simpa only [nb052AlphaDummy073] using
     freshVar_not_mem
-      (((Class.cab (nb052_alpha_dummy_008 x y)
-            (syn_wrex (nb052_alpha_dummy_009 x y) (Class.cv (nb052_alpha_dummy_003 x y))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))
-                  (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb052_alpha_dummy_008 x y)
-            (syn_wrex (nb052_alpha_dummy_009 x y) (Class.cv (nb052_alpha_dummy_003 x y))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))
-                  (syn_csn (syn_c0c))))))).fv)
+      (((Class.cab (nb052AlphaDummy008 x y)
+            (synWrex (nb052AlphaDummy009 x y) (Class.cv (nb052AlphaDummy003 x y))
+              (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy009 x y)))
+                  (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb052AlphaDummy008 x y)
+            (synWrex (nb052AlphaDummy009 x y) (Class.cv (nb052AlphaDummy003 x y))
+              (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy009 x y)))
+                  (synCsn (synC0c))))))).fv)
       0
 
 theorem nb052_fresh_003 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_013 x y) ∉
-      (((Class.cab (nb052_alpha_dummy_008 x y)
-            (syn_wrex (nb052_alpha_dummy_009 x y) (syn_cop (Class.cv x) (Class.cv y))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y))))))).fv ∪
-        ((Class.cab (nb052_alpha_dummy_008 x y)
-            (syn_wrex (nb052_alpha_dummy_009 x y) (syn_cop (Class.cv x) (Class.cv y))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y))))))).fv) :=
+    (nb052AlphaDummy013 x y) ∉
+      (((Class.cab (nb052AlphaDummy008 x y)
+            (synWrex (nb052AlphaDummy009 x y) (synCop (Class.cv x) (Class.cv y))
+              (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                (synCphi (Class.cv (nb052AlphaDummy009 x y))))))).fv ∪
+        ((Class.cab (nb052AlphaDummy008 x y)
+            (synWrex (nb052AlphaDummy009 x y) (synCop (Class.cv x) (Class.cv y))
+              (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                (synCphi (Class.cv (nb052AlphaDummy009 x y))))))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_013] using
+  simpa only [nb052AlphaDummy013] using
     freshVar_not_mem
-      (((Class.cab (nb052_alpha_dummy_008 x y)
-            (syn_wrex (nb052_alpha_dummy_009 x y) (syn_cop (Class.cv x) (Class.cv y))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y))))))).fv ∪
-        ((Class.cab (nb052_alpha_dummy_008 x y)
-            (syn_wrex (nb052_alpha_dummy_009 x y) (syn_cop (Class.cv x) (Class.cv y))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y))))))).fv)
+      (((Class.cab (nb052AlphaDummy008 x y)
+            (synWrex (nb052AlphaDummy009 x y) (synCop (Class.cv x) (Class.cv y))
+              (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                (synCphi (Class.cv (nb052AlphaDummy009 x y))))))).fv ∪
+        ((Class.cab (nb052AlphaDummy008 x y)
+            (synWrex (nb052AlphaDummy009 x y) (synCop (Class.cv x) (Class.cv y))
+              (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                (synCphi (Class.cv (nb052AlphaDummy009 x y))))))).fv)
       0
 
 theorem nb052_fresh_004 :
-    (nb052_alpha_dummy_020) ∉
-      (((Class.cab (nb052_alpha_dummy_014)
-            (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_000))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_015))))))).fv ∪
-        ((Class.cab (nb052_alpha_dummy_014)
-            (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_000))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_015))))))).fv) :=
+    (nb052AlphaDummy020) ∉
+      (((Class.cab (nb052AlphaDummy014)
+            (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy000))
+              (Wff.classEq (Class.cv (nb052AlphaDummy014))
+                (synCphi (Class.cv (nb052AlphaDummy015))))))).fv ∪
+        ((Class.cab (nb052AlphaDummy014)
+            (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy000))
+              (Wff.classEq (Class.cv (nb052AlphaDummy014))
+                (synCphi (Class.cv (nb052AlphaDummy015))))))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_020] using
+  simpa only [nb052AlphaDummy020] using
     freshVar_not_mem
-      (((Class.cab (nb052_alpha_dummy_014)
-            (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_000))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_015))))))).fv ∪
-        ((Class.cab (nb052_alpha_dummy_014)
-            (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_000))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_015))))))).fv)
+      (((Class.cab (nb052AlphaDummy014)
+            (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy000))
+              (Wff.classEq (Class.cv (nb052AlphaDummy014))
+                (synCphi (Class.cv (nb052AlphaDummy015))))))).fv ∪
+        ((Class.cab (nb052AlphaDummy014)
+            (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy000))
+              (Wff.classEq (Class.cv (nb052AlphaDummy014))
+                (synCphi (Class.cv (nb052AlphaDummy015))))))).fv)
       0
 
 theorem nb052_fresh_005 :
-    (nb052_alpha_dummy_044) ∉
-      (((Class.cab (nb052_alpha_dummy_014)
-            (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_001))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_015)))
-                  (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb052_alpha_dummy_014)
-            (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_001))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_015)))
-                  (syn_csn (syn_c0c))))))).fv) :=
+    (nb052AlphaDummy044) ∉
+      (((Class.cab (nb052AlphaDummy014)
+            (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy001))
+              (Wff.classEq (Class.cv (nb052AlphaDummy014))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy015)))
+                  (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb052AlphaDummy014)
+            (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy001))
+              (Wff.classEq (Class.cv (nb052AlphaDummy014))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy015)))
+                  (synCsn (synC0c))))))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_044] using
+  simpa only [nb052AlphaDummy044] using
     freshVar_not_mem
-      (((Class.cab (nb052_alpha_dummy_014)
-            (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_001))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_015)))
-                  (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb052_alpha_dummy_014)
-            (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_001))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_015)))
-                  (syn_csn (syn_c0c))))))).fv)
+      (((Class.cab (nb052AlphaDummy014)
+            (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy001))
+              (Wff.classEq (Class.cv (nb052AlphaDummy014))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy015)))
+                  (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb052AlphaDummy014)
+            (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy001))
+              (Wff.classEq (Class.cv (nb052AlphaDummy014))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy015)))
+                  (synCsn (synC0c))))))).fv)
       0
 
 theorem nb052_fresh_006 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_021 x y) ∉
-      (((Class.cab (nb052_alpha_dummy_016 x y)
-            (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv x)
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y))))))).fv ∪
-        ((Class.cab (nb052_alpha_dummy_016 x y)
-            (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv x)
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y))))))).fv) :=
+    (nb052AlphaDummy021 x y) ∉
+      (((Class.cab (nb052AlphaDummy016 x y)
+            (synWrex (nb052AlphaDummy017 x y) (Class.cv x)
+              (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+                (synCphi (Class.cv (nb052AlphaDummy017 x y))))))).fv ∪
+        ((Class.cab (nb052AlphaDummy016 x y)
+            (synWrex (nb052AlphaDummy017 x y) (Class.cv x)
+              (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+                (synCphi (Class.cv (nb052AlphaDummy017 x y))))))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_021] using
+  simpa only [nb052AlphaDummy021] using
     freshVar_not_mem
-      (((Class.cab (nb052_alpha_dummy_016 x y)
-            (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv x)
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y))))))).fv ∪
-        ((Class.cab (nb052_alpha_dummy_016 x y)
-            (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv x)
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y))))))).fv)
+      (((Class.cab (nb052AlphaDummy016 x y)
+            (synWrex (nb052AlphaDummy017 x y) (Class.cv x)
+              (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+                (synCphi (Class.cv (nb052AlphaDummy017 x y))))))).fv ∪
+        ((Class.cab (nb052AlphaDummy016 x y)
+            (synWrex (nb052AlphaDummy017 x y) (Class.cv x)
+              (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+                (synCphi (Class.cv (nb052AlphaDummy017 x y))))))).fv)
       0
 
 theorem nb052_fresh_007 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_045 x y) ∉
-      (((Class.cab (nb052_alpha_dummy_016 x y)
-            (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv y)
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))
-                  (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb052_alpha_dummy_016 x y)
-            (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv y)
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))
-                  (syn_csn (syn_c0c))))))).fv) :=
+    (nb052AlphaDummy045 x y) ∉
+      (((Class.cab (nb052AlphaDummy016 x y)
+            (synWrex (nb052AlphaDummy017 x y) (Class.cv y)
+              (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy017 x y)))
+                  (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb052AlphaDummy016 x y)
+            (synWrex (nb052AlphaDummy017 x y) (Class.cv y)
+              (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy017 x y)))
+                  (synCsn (synC0c))))))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_045] using
+  simpa only [nb052AlphaDummy045] using
     freshVar_not_mem
-      (((Class.cab (nb052_alpha_dummy_016 x y)
-            (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv y)
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))
-                  (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb052_alpha_dummy_016 x y)
-            (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv y)
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))
-                  (syn_csn (syn_c0c))))))).fv)
+      (((Class.cab (nb052AlphaDummy016 x y)
+            (synWrex (nb052AlphaDummy017 x y) (Class.cv y)
+              (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy017 x y)))
+                  (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb052AlphaDummy016 x y)
+            (synWrex (nb052AlphaDummy017 x y) (Class.cv y)
+              (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy017 x y)))
+                  (synCsn (synC0c))))))).fv)
       0
 
 theorem nb052_fresh_008 :
-    (nb052_alpha_dummy_080) ∉
-      (((Class.cv (nb052_alpha_dummy_000))).fv ∪ ((Class.cv (nb052_alpha_dummy_000))).fv) :=
+    (nb052AlphaDummy080) ∉
+      (((Class.cv (nb052AlphaDummy000))).fv ∪ ((Class.cv (nb052AlphaDummy000))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_080] using
+  simpa only [nb052AlphaDummy080] using
     freshVar_not_mem
-      (((Class.cv (nb052_alpha_dummy_000))).fv ∪ ((Class.cv (nb052_alpha_dummy_000))).fv)
+      (((Class.cv (nb052AlphaDummy000))).fv ∪ ((Class.cv (nb052AlphaDummy000))).fv)
       0
 
 theorem nb052_fresh_009 :
-    (nb052_alpha_dummy_014) ∉
-      (((Class.cv (nb052_alpha_dummy_000))).fv ∪ ((Class.cv (nb052_alpha_dummy_001))).fv) :=
+    (nb052AlphaDummy014) ∉
+      (((Class.cv (nb052AlphaDummy000))).fv ∪ ((Class.cv (nb052AlphaDummy001))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_014] using
+  simpa only [nb052AlphaDummy014] using
     freshVar_not_mem
-      (((Class.cv (nb052_alpha_dummy_000))).fv ∪ ((Class.cv (nb052_alpha_dummy_001))).fv)
+      (((Class.cv (nb052AlphaDummy000))).fv ∪ ((Class.cv (nb052AlphaDummy001))).fv)
       0
 
 theorem nb052_fresh_010 :
-    (nb052_alpha_dummy_015) ∉
-      (((Class.cv (nb052_alpha_dummy_000))).fv ∪ ((Class.cv (nb052_alpha_dummy_001))).fv) :=
+    (nb052AlphaDummy015) ∉
+      (((Class.cv (nb052AlphaDummy000))).fv ∪ ((Class.cv (nb052AlphaDummy001))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_015] using
+  simpa only [nb052AlphaDummy015] using
     freshVar_not_mem
-      (((Class.cv (nb052_alpha_dummy_000))).fv ∪ ((Class.cv (nb052_alpha_dummy_001))).fv)
+      (((Class.cv (nb052AlphaDummy000))).fv ∪ ((Class.cv (nb052AlphaDummy001))).fv)
       1
 
-theorem nb052_distinct_011 : (nb052_alpha_dummy_014) ≠ (nb052_alpha_dummy_015) := by
-  simpa only [nb052_alpha_dummy_014, nb052_alpha_dummy_015] using
+theorem nb052_distinct_011 : (nb052AlphaDummy014) ≠ (nb052AlphaDummy015) := by
+  simpa only [nb052AlphaDummy014, nb052AlphaDummy015] using
     (freshVar_injective
-      (((Class.cv (nb052_alpha_dummy_000))).fv ∪ ((Class.cv (nb052_alpha_dummy_001))).fv)
+      (((Class.cv (nb052AlphaDummy000))).fv ∪ ((Class.cv (nb052AlphaDummy001))).fv)
       (i := 0) (j := 1) (by decide))
 
 theorem nb052_fresh_012 :
-    (nb052_alpha_dummy_082) ∉
-      (((Class.cv (nb052_alpha_dummy_001))).fv ∪ ((Class.cv (nb052_alpha_dummy_001))).fv) :=
+    (nb052AlphaDummy082) ∉
+      (((Class.cv (nb052AlphaDummy001))).fv ∪ ((Class.cv (nb052AlphaDummy001))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_082] using
+  simpa only [nb052AlphaDummy082] using
     freshVar_not_mem
-      (((Class.cv (nb052_alpha_dummy_001))).fv ∪ ((Class.cv (nb052_alpha_dummy_001))).fv)
+      (((Class.cv (nb052AlphaDummy001))).fv ∪ ((Class.cv (nb052AlphaDummy001))).fv)
       0
 
 theorem nb052_fresh_013 :
-    (nb052_alpha_dummy_050) ∉ (((Class.cv (nb052_alpha_dummy_007))).fv) := by
-  simpa only [nb052_alpha_dummy_050] using
-    freshVar_not_mem (((Class.cv (nb052_alpha_dummy_007))).fv) 0
+    (nb052AlphaDummy050) ∉ (((Class.cv (nb052AlphaDummy007))).fv) := by
+  simpa only [nb052AlphaDummy050] using
+    freshVar_not_mem (((Class.cv (nb052AlphaDummy007))).fv) 0
 
 theorem nb052_fresh_014 :
-    (nb052_alpha_dummy_051) ∉ (((Class.cv (nb052_alpha_dummy_007))).fv) := by
-  simpa only [nb052_alpha_dummy_051] using
-    freshVar_not_mem (((Class.cv (nb052_alpha_dummy_007))).fv) 1
+    (nb052AlphaDummy051) ∉ (((Class.cv (nb052AlphaDummy007))).fv) := by
+  simpa only [nb052AlphaDummy051] using
+    freshVar_not_mem (((Class.cv (nb052AlphaDummy007))).fv) 1
 
-theorem nb052_distinct_015 : (nb052_alpha_dummy_050) ≠ (nb052_alpha_dummy_051) := by
-  simpa only [nb052_alpha_dummy_050, nb052_alpha_dummy_051] using
-    (freshVar_injective (((Class.cv (nb052_alpha_dummy_007))).fv) (i := 0) (j := 1) (by decide))
+theorem nb052_distinct_015 : (nb052AlphaDummy050) ≠ (nb052AlphaDummy051) := by
+  simpa only [nb052AlphaDummy050, nb052AlphaDummy051] using
+    (freshVar_injective (((Class.cv (nb052AlphaDummy007))).fv) (i := 0) (j := 1) (by decide))
 
 theorem nb052_fresh_016 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_052 x y) ∉ (((Class.cv (nb052_alpha_dummy_009 x y))).fv) := by
-  simpa only [nb052_alpha_dummy_052] using
-    freshVar_not_mem (((Class.cv (nb052_alpha_dummy_009 x y))).fv) 0
+    (nb052AlphaDummy052 x y) ∉ (((Class.cv (nb052AlphaDummy009 x y))).fv) := by
+  simpa only [nb052AlphaDummy052] using
+    freshVar_not_mem (((Class.cv (nb052AlphaDummy009 x y))).fv) 0
 
 theorem nb052_fresh_017 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_053 x y) ∉ (((Class.cv (nb052_alpha_dummy_009 x y))).fv) := by
-  simpa only [nb052_alpha_dummy_053] using
-    freshVar_not_mem (((Class.cv (nb052_alpha_dummy_009 x y))).fv) 1
+    (nb052AlphaDummy053 x y) ∉ (((Class.cv (nb052AlphaDummy009 x y))).fv) := by
+  simpa only [nb052AlphaDummy053] using
+    freshVar_not_mem (((Class.cv (nb052AlphaDummy009 x y))).fv) 1
 
 theorem nb052_distinct_018 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_052 x y) ≠ (nb052_alpha_dummy_053 x y) := by
-  simpa only [nb052_alpha_dummy_052, nb052_alpha_dummy_053] using
-    (freshVar_injective (((Class.cv (nb052_alpha_dummy_009 x y))).fv) (i := 0) (j := 1)
+    (nb052AlphaDummy052 x y) ≠ (nb052AlphaDummy053 x y) := by
+  simpa only [nb052AlphaDummy052, nb052AlphaDummy053] using
+    (freshVar_injective (((Class.cv (nb052AlphaDummy009 x y))).fv) (i := 0) (j := 1)
       (by decide))
 
 theorem nb052_fresh_019 :
-    (nb052_alpha_dummy_022) ∉ (((Class.cv (nb052_alpha_dummy_015))).fv) := by
-  simpa only [nb052_alpha_dummy_022] using
-    freshVar_not_mem (((Class.cv (nb052_alpha_dummy_015))).fv) 0
+    (nb052AlphaDummy022) ∉ (((Class.cv (nb052AlphaDummy015))).fv) := by
+  simpa only [nb052AlphaDummy022] using
+    freshVar_not_mem (((Class.cv (nb052AlphaDummy015))).fv) 0
 
 theorem nb052_fresh_020 :
-    (nb052_alpha_dummy_023) ∉ (((Class.cv (nb052_alpha_dummy_015))).fv) := by
-  simpa only [nb052_alpha_dummy_023] using
-    freshVar_not_mem (((Class.cv (nb052_alpha_dummy_015))).fv) 1
+    (nb052AlphaDummy023) ∉ (((Class.cv (nb052AlphaDummy015))).fv) := by
+  simpa only [nb052AlphaDummy023] using
+    freshVar_not_mem (((Class.cv (nb052AlphaDummy015))).fv) 1
 
-theorem nb052_distinct_021 : (nb052_alpha_dummy_022) ≠ (nb052_alpha_dummy_023) := by
-  simpa only [nb052_alpha_dummy_022, nb052_alpha_dummy_023] using
-    (freshVar_injective (((Class.cv (nb052_alpha_dummy_015))).fv) (i := 0) (j := 1) (by decide))
+theorem nb052_distinct_021 : (nb052AlphaDummy022) ≠ (nb052AlphaDummy023) := by
+  simpa only [nb052AlphaDummy022, nb052AlphaDummy023] using
+    (freshVar_injective (((Class.cv (nb052AlphaDummy015))).fv) (i := 0) (j := 1) (by decide))
 
 theorem nb052_fresh_022 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_024 x y) ∉ (((Class.cv (nb052_alpha_dummy_017 x y))).fv) := by
-  simpa only [nb052_alpha_dummy_024] using
-    freshVar_not_mem (((Class.cv (nb052_alpha_dummy_017 x y))).fv) 0
+    (nb052AlphaDummy024 x y) ∉ (((Class.cv (nb052AlphaDummy017 x y))).fv) := by
+  simpa only [nb052AlphaDummy024] using
+    freshVar_not_mem (((Class.cv (nb052AlphaDummy017 x y))).fv) 0
 
 theorem nb052_fresh_023 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_025 x y) ∉ (((Class.cv (nb052_alpha_dummy_017 x y))).fv) := by
-  simpa only [nb052_alpha_dummy_025] using
-    freshVar_not_mem (((Class.cv (nb052_alpha_dummy_017 x y))).fv) 1
+    (nb052AlphaDummy025 x y) ∉ (((Class.cv (nb052AlphaDummy017 x y))).fv) := by
+  simpa only [nb052AlphaDummy025] using
+    freshVar_not_mem (((Class.cv (nb052AlphaDummy017 x y))).fv) 1
 
 theorem nb052_distinct_024 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_024 x y) ≠ (nb052_alpha_dummy_025 x y) := by
-  simpa only [nb052_alpha_dummy_024, nb052_alpha_dummy_025] using
-    (freshVar_injective (((Class.cv (nb052_alpha_dummy_017 x y))).fv) (i := 0) (j := 1)
+    (nb052AlphaDummy024 x y) ≠ (nb052AlphaDummy025 x y) := by
+  simpa only [nb052AlphaDummy024, nb052AlphaDummy025] using
+    (freshVar_injective (((Class.cv (nb052AlphaDummy017 x y))).fv) (i := 0) (j := 1)
       (by decide))
 
 theorem nb052_fresh_025 :
-    (nb052_alpha_dummy_028) ∉
-      (((Class.cv (nb052_alpha_dummy_022))).fv ∪ ((syn_c1c)).fv) :=
+    (nb052AlphaDummy028) ∉
+      (((Class.cv (nb052AlphaDummy022))).fv ∪ ((synC1c)).fv) :=
   by
-  simpa only [nb052_alpha_dummy_028] using
-    freshVar_not_mem (((Class.cv (nb052_alpha_dummy_022))).fv ∪ ((syn_c1c)).fv) 0
+  simpa only [nb052AlphaDummy028] using
+    freshVar_not_mem (((Class.cv (nb052AlphaDummy022))).fv ∪ ((synC1c)).fv) 0
 
 theorem nb052_fresh_026 :
-    (nb052_alpha_dummy_029) ∉
-      (((Class.cv (nb052_alpha_dummy_022))).fv ∪ ((syn_c1c)).fv) :=
+    (nb052AlphaDummy029) ∉
+      (((Class.cv (nb052AlphaDummy022))).fv ∪ ((synC1c)).fv) :=
   by
-  simpa only [nb052_alpha_dummy_029] using
-    freshVar_not_mem (((Class.cv (nb052_alpha_dummy_022))).fv ∪ ((syn_c1c)).fv) 1
+  simpa only [nb052AlphaDummy029] using
+    freshVar_not_mem (((Class.cv (nb052AlphaDummy022))).fv ∪ ((synC1c)).fv) 1
 
 theorem nb052_fresh_027 :
-    (nb052_alpha_dummy_030) ∉
-      (((Class.cv (nb052_alpha_dummy_022))).fv ∪ ((syn_c1c)).fv) :=
+    (nb052AlphaDummy030) ∉
+      (((Class.cv (nb052AlphaDummy022))).fv ∪ ((synC1c)).fv) :=
   by
-  simpa only [nb052_alpha_dummy_030] using
-    freshVar_not_mem (((Class.cv (nb052_alpha_dummy_022))).fv ∪ ((syn_c1c)).fv) 2
+  simpa only [nb052AlphaDummy030] using
+    freshVar_not_mem (((Class.cv (nb052AlphaDummy022))).fv ∪ ((synC1c)).fv) 2
 
-theorem nb052_distinct_028 : (nb052_alpha_dummy_028) ≠ (nb052_alpha_dummy_029) := by
-  simpa only [nb052_alpha_dummy_028, nb052_alpha_dummy_029] using
-    (freshVar_injective (((Class.cv (nb052_alpha_dummy_022))).fv ∪ ((syn_c1c)).fv) (i :=
+theorem nb052_distinct_028 : (nb052AlphaDummy028) ≠ (nb052AlphaDummy029) := by
+  simpa only [nb052AlphaDummy028, nb052AlphaDummy029] using
+    (freshVar_injective (((Class.cv (nb052AlphaDummy022))).fv ∪ ((synC1c)).fv) (i :=
       0) (j := 1) (by decide))
 
-theorem nb052_distinct_029 : (nb052_alpha_dummy_028) ≠ (nb052_alpha_dummy_030) := by
-  simpa only [nb052_alpha_dummy_028, nb052_alpha_dummy_030] using
-    (freshVar_injective (((Class.cv (nb052_alpha_dummy_022))).fv ∪ ((syn_c1c)).fv) (i :=
+theorem nb052_distinct_029 : (nb052AlphaDummy028) ≠ (nb052AlphaDummy030) := by
+  simpa only [nb052AlphaDummy028, nb052AlphaDummy030] using
+    (freshVar_injective (((Class.cv (nb052AlphaDummy022))).fv ∪ ((synC1c)).fv) (i :=
       0) (j := 2) (by decide))
 
-theorem nb052_distinct_030 : (nb052_alpha_dummy_029) ≠ (nb052_alpha_dummy_030) := by
-  simpa only [nb052_alpha_dummy_029, nb052_alpha_dummy_030] using
-    (freshVar_injective (((Class.cv (nb052_alpha_dummy_022))).fv ∪ ((syn_c1c)).fv) (i :=
+theorem nb052_distinct_030 : (nb052AlphaDummy029) ≠ (nb052AlphaDummy030) := by
+  simpa only [nb052AlphaDummy029, nb052AlphaDummy030] using
+    (freshVar_injective (((Class.cv (nb052AlphaDummy022))).fv ∪ ((synC1c)).fv) (i :=
       1) (j := 2) (by decide))
 
 theorem nb052_fresh_031 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_031 x y) ∉
-      (((Class.cv (nb052_alpha_dummy_024 x y))).fv ∪ ((syn_c1c)).fv) :=
+    (nb052AlphaDummy031 x y) ∉
+      (((Class.cv (nb052AlphaDummy024 x y))).fv ∪ ((synC1c)).fv) :=
   by
-  simpa only [nb052_alpha_dummy_031] using
-    freshVar_not_mem (((Class.cv (nb052_alpha_dummy_024 x y))).fv ∪ ((syn_c1c)).fv) 0
+  simpa only [nb052AlphaDummy031] using
+    freshVar_not_mem (((Class.cv (nb052AlphaDummy024 x y))).fv ∪ ((synC1c)).fv) 0
 
 theorem nb052_fresh_032 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_032 x y) ∉
-      (((Class.cv (nb052_alpha_dummy_024 x y))).fv ∪ ((syn_c1c)).fv) :=
+    (nb052AlphaDummy032 x y) ∉
+      (((Class.cv (nb052AlphaDummy024 x y))).fv ∪ ((synC1c)).fv) :=
   by
-  simpa only [nb052_alpha_dummy_032] using
-    freshVar_not_mem (((Class.cv (nb052_alpha_dummy_024 x y))).fv ∪ ((syn_c1c)).fv) 1
+  simpa only [nb052AlphaDummy032] using
+    freshVar_not_mem (((Class.cv (nb052AlphaDummy024 x y))).fv ∪ ((synC1c)).fv) 1
 
 theorem nb052_fresh_033 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_033 x y) ∉
-      (((Class.cv (nb052_alpha_dummy_024 x y))).fv ∪ ((syn_c1c)).fv) :=
+    (nb052AlphaDummy033 x y) ∉
+      (((Class.cv (nb052AlphaDummy024 x y))).fv ∪ ((synC1c)).fv) :=
   by
-  simpa only [nb052_alpha_dummy_033] using
-    freshVar_not_mem (((Class.cv (nb052_alpha_dummy_024 x y))).fv ∪ ((syn_c1c)).fv) 2
+  simpa only [nb052AlphaDummy033] using
+    freshVar_not_mem (((Class.cv (nb052AlphaDummy024 x y))).fv ∪ ((synC1c)).fv) 2
 
 theorem nb052_distinct_034 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_031 x y) ≠ (nb052_alpha_dummy_032 x y) := by
-  simpa only [nb052_alpha_dummy_031, nb052_alpha_dummy_032] using
-    (freshVar_injective (((Class.cv (nb052_alpha_dummy_024 x y))).fv ∪ ((syn_c1c)).fv)
+    (nb052AlphaDummy031 x y) ≠ (nb052AlphaDummy032 x y) := by
+  simpa only [nb052AlphaDummy031, nb052AlphaDummy032] using
+    (freshVar_injective (((Class.cv (nb052AlphaDummy024 x y))).fv ∪ ((synC1c)).fv)
       (i := 0) (j := 1) (by decide))
 
 theorem nb052_distinct_035 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_031 x y) ≠ (nb052_alpha_dummy_033 x y) := by
-  simpa only [nb052_alpha_dummy_031, nb052_alpha_dummy_033] using
-    (freshVar_injective (((Class.cv (nb052_alpha_dummy_024 x y))).fv ∪ ((syn_c1c)).fv)
+    (nb052AlphaDummy031 x y) ≠ (nb052AlphaDummy033 x y) := by
+  simpa only [nb052AlphaDummy031, nb052AlphaDummy033] using
+    (freshVar_injective (((Class.cv (nb052AlphaDummy024 x y))).fv ∪ ((synC1c)).fv)
       (i := 0) (j := 2) (by decide))
 
 theorem nb052_distinct_036 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_032 x y) ≠ (nb052_alpha_dummy_033 x y) := by
-  simpa only [nb052_alpha_dummy_032, nb052_alpha_dummy_033] using
-    (freshVar_injective (((Class.cv (nb052_alpha_dummy_024 x y))).fv ∪ ((syn_c1c)).fv)
+    (nb052AlphaDummy032 x y) ≠ (nb052AlphaDummy033 x y) := by
+  simpa only [nb052AlphaDummy032, nb052AlphaDummy033] using
+    (freshVar_injective (((Class.cv (nb052AlphaDummy024 x y))).fv ∪ ((synC1c)).fv)
       (i := 1) (j := 2) (by decide))
 
 theorem nb052_fresh_037 :
-    (nb052_alpha_dummy_040) ∉
-      (((Class.cv (nb052_alpha_dummy_029))).fv ∪ ((Class.cv (nb052_alpha_dummy_029))).fv) :=
+    (nb052AlphaDummy040) ∉
+      (((Class.cv (nb052AlphaDummy029))).fv ∪ ((Class.cv (nb052AlphaDummy029))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_040] using
+  simpa only [nb052AlphaDummy040] using
     freshVar_not_mem
-      (((Class.cv (nb052_alpha_dummy_029))).fv ∪ ((Class.cv (nb052_alpha_dummy_029))).fv)
+      (((Class.cv (nb052AlphaDummy029))).fv ∪ ((Class.cv (nb052AlphaDummy029))).fv)
       0
 
 theorem nb052_fresh_038 :
-    (nb052_alpha_dummy_036) ∉
-      (((Class.cv (nb052_alpha_dummy_029))).fv ∪ ((Class.cv (nb052_alpha_dummy_030))).fv) :=
+    (nb052AlphaDummy036) ∉
+      (((Class.cv (nb052AlphaDummy029))).fv ∪ ((Class.cv (nb052AlphaDummy030))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_036] using
+  simpa only [nb052AlphaDummy036] using
     freshVar_not_mem
-      (((Class.cv (nb052_alpha_dummy_029))).fv ∪ ((Class.cv (nb052_alpha_dummy_030))).fv)
+      (((Class.cv (nb052AlphaDummy029))).fv ∪ ((Class.cv (nb052AlphaDummy030))).fv)
       0
 
 theorem nb052_fresh_039 :
-    (nb052_alpha_dummy_042) ∉
-      (((Class.cv (nb052_alpha_dummy_030))).fv ∪ ((Class.cv (nb052_alpha_dummy_030))).fv) :=
+    (nb052AlphaDummy042) ∉
+      (((Class.cv (nb052AlphaDummy030))).fv ∪ ((Class.cv (nb052AlphaDummy030))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_042] using
+  simpa only [nb052AlphaDummy042] using
     freshVar_not_mem
-      (((Class.cv (nb052_alpha_dummy_030))).fv ∪ ((Class.cv (nb052_alpha_dummy_030))).fv)
+      (((Class.cv (nb052AlphaDummy030))).fv ∪ ((Class.cv (nb052AlphaDummy030))).fv)
       0
 
 theorem nb052_fresh_040 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_041 x y) ∉
-      (((Class.cv (nb052_alpha_dummy_032 x y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_032 x y))).fv) :=
+    (nb052AlphaDummy041 x y) ∉
+      (((Class.cv (nb052AlphaDummy032 x y))).fv ∪
+        ((Class.cv (nb052AlphaDummy032 x y))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_041] using
+  simpa only [nb052AlphaDummy041] using
     freshVar_not_mem
-      (((Class.cv (nb052_alpha_dummy_032 x y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_032 x y))).fv)
+      (((Class.cv (nb052AlphaDummy032 x y))).fv ∪
+        ((Class.cv (nb052AlphaDummy032 x y))).fv)
       0
 
 theorem nb052_fresh_041 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_037 x y) ∉
-      (((Class.cv (nb052_alpha_dummy_032 x y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_033 x y))).fv) :=
+    (nb052AlphaDummy037 x y) ∉
+      (((Class.cv (nb052AlphaDummy032 x y))).fv ∪
+        ((Class.cv (nb052AlphaDummy033 x y))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_037] using
+  simpa only [nb052AlphaDummy037] using
     freshVar_not_mem
-      (((Class.cv (nb052_alpha_dummy_032 x y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_033 x y))).fv)
+      (((Class.cv (nb052AlphaDummy032 x y))).fv ∪
+        ((Class.cv (nb052AlphaDummy033 x y))).fv)
       0
 
 theorem nb052_fresh_042 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_043 x y) ∉
-      (((Class.cv (nb052_alpha_dummy_033 x y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_033 x y))).fv) :=
+    (nb052AlphaDummy043 x y) ∉
+      (((Class.cv (nb052AlphaDummy033 x y))).fv ∪
+        ((Class.cv (nb052AlphaDummy033 x y))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_043] using
+  simpa only [nb052AlphaDummy043] using
     freshVar_not_mem
-      (((Class.cv (nb052_alpha_dummy_033 x y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_033 x y))).fv)
+      (((Class.cv (nb052AlphaDummy033 x y))).fv ∪
+        ((Class.cv (nb052AlphaDummy033 x y))).fv)
       0
 
 theorem nb052_fresh_043 :
-    (nb052_alpha_dummy_056) ∉
-      (((Class.cv (nb052_alpha_dummy_050))).fv ∪ ((syn_c1c)).fv) :=
+    (nb052AlphaDummy056) ∉
+      (((Class.cv (nb052AlphaDummy050))).fv ∪ ((synC1c)).fv) :=
   by
-  simpa only [nb052_alpha_dummy_056] using
-    freshVar_not_mem (((Class.cv (nb052_alpha_dummy_050))).fv ∪ ((syn_c1c)).fv) 0
+  simpa only [nb052AlphaDummy056] using
+    freshVar_not_mem (((Class.cv (nb052AlphaDummy050))).fv ∪ ((synC1c)).fv) 0
 
 theorem nb052_fresh_044 :
-    (nb052_alpha_dummy_057) ∉
-      (((Class.cv (nb052_alpha_dummy_050))).fv ∪ ((syn_c1c)).fv) :=
+    (nb052AlphaDummy057) ∉
+      (((Class.cv (nb052AlphaDummy050))).fv ∪ ((synC1c)).fv) :=
   by
-  simpa only [nb052_alpha_dummy_057] using
-    freshVar_not_mem (((Class.cv (nb052_alpha_dummy_050))).fv ∪ ((syn_c1c)).fv) 1
+  simpa only [nb052AlphaDummy057] using
+    freshVar_not_mem (((Class.cv (nb052AlphaDummy050))).fv ∪ ((synC1c)).fv) 1
 
 theorem nb052_fresh_045 :
-    (nb052_alpha_dummy_058) ∉
-      (((Class.cv (nb052_alpha_dummy_050))).fv ∪ ((syn_c1c)).fv) :=
+    (nb052AlphaDummy058) ∉
+      (((Class.cv (nb052AlphaDummy050))).fv ∪ ((synC1c)).fv) :=
   by
-  simpa only [nb052_alpha_dummy_058] using
-    freshVar_not_mem (((Class.cv (nb052_alpha_dummy_050))).fv ∪ ((syn_c1c)).fv) 2
+  simpa only [nb052AlphaDummy058] using
+    freshVar_not_mem (((Class.cv (nb052AlphaDummy050))).fv ∪ ((synC1c)).fv) 2
 
-theorem nb052_distinct_046 : (nb052_alpha_dummy_056) ≠ (nb052_alpha_dummy_057) := by
-  simpa only [nb052_alpha_dummy_056, nb052_alpha_dummy_057] using
-    (freshVar_injective (((Class.cv (nb052_alpha_dummy_050))).fv ∪ ((syn_c1c)).fv) (i :=
+theorem nb052_distinct_046 : (nb052AlphaDummy056) ≠ (nb052AlphaDummy057) := by
+  simpa only [nb052AlphaDummy056, nb052AlphaDummy057] using
+    (freshVar_injective (((Class.cv (nb052AlphaDummy050))).fv ∪ ((synC1c)).fv) (i :=
       0) (j := 1) (by decide))
 
-theorem nb052_distinct_047 : (nb052_alpha_dummy_056) ≠ (nb052_alpha_dummy_058) := by
-  simpa only [nb052_alpha_dummy_056, nb052_alpha_dummy_058] using
-    (freshVar_injective (((Class.cv (nb052_alpha_dummy_050))).fv ∪ ((syn_c1c)).fv) (i :=
+theorem nb052_distinct_047 : (nb052AlphaDummy056) ≠ (nb052AlphaDummy058) := by
+  simpa only [nb052AlphaDummy056, nb052AlphaDummy058] using
+    (freshVar_injective (((Class.cv (nb052AlphaDummy050))).fv ∪ ((synC1c)).fv) (i :=
       0) (j := 2) (by decide))
 
-theorem nb052_distinct_048 : (nb052_alpha_dummy_057) ≠ (nb052_alpha_dummy_058) := by
-  simpa only [nb052_alpha_dummy_057, nb052_alpha_dummy_058] using
-    (freshVar_injective (((Class.cv (nb052_alpha_dummy_050))).fv ∪ ((syn_c1c)).fv) (i :=
+theorem nb052_distinct_048 : (nb052AlphaDummy057) ≠ (nb052AlphaDummy058) := by
+  simpa only [nb052AlphaDummy057, nb052AlphaDummy058] using
+    (freshVar_injective (((Class.cv (nb052AlphaDummy050))).fv ∪ ((synC1c)).fv) (i :=
       1) (j := 2) (by decide))
 
 theorem nb052_fresh_049 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_059 x y) ∉
-      (((Class.cv (nb052_alpha_dummy_052 x y))).fv ∪ ((syn_c1c)).fv) :=
+    (nb052AlphaDummy059 x y) ∉
+      (((Class.cv (nb052AlphaDummy052 x y))).fv ∪ ((synC1c)).fv) :=
   by
-  simpa only [nb052_alpha_dummy_059] using
-    freshVar_not_mem (((Class.cv (nb052_alpha_dummy_052 x y))).fv ∪ ((syn_c1c)).fv) 0
+  simpa only [nb052AlphaDummy059] using
+    freshVar_not_mem (((Class.cv (nb052AlphaDummy052 x y))).fv ∪ ((synC1c)).fv) 0
 
 theorem nb052_fresh_050 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_060 x y) ∉
-      (((Class.cv (nb052_alpha_dummy_052 x y))).fv ∪ ((syn_c1c)).fv) :=
+    (nb052AlphaDummy060 x y) ∉
+      (((Class.cv (nb052AlphaDummy052 x y))).fv ∪ ((synC1c)).fv) :=
   by
-  simpa only [nb052_alpha_dummy_060] using
-    freshVar_not_mem (((Class.cv (nb052_alpha_dummy_052 x y))).fv ∪ ((syn_c1c)).fv) 1
+  simpa only [nb052AlphaDummy060] using
+    freshVar_not_mem (((Class.cv (nb052AlphaDummy052 x y))).fv ∪ ((synC1c)).fv) 1
 
 theorem nb052_fresh_051 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_061 x y) ∉
-      (((Class.cv (nb052_alpha_dummy_052 x y))).fv ∪ ((syn_c1c)).fv) :=
+    (nb052AlphaDummy061 x y) ∉
+      (((Class.cv (nb052AlphaDummy052 x y))).fv ∪ ((synC1c)).fv) :=
   by
-  simpa only [nb052_alpha_dummy_061] using
-    freshVar_not_mem (((Class.cv (nb052_alpha_dummy_052 x y))).fv ∪ ((syn_c1c)).fv) 2
+  simpa only [nb052AlphaDummy061] using
+    freshVar_not_mem (((Class.cv (nb052AlphaDummy052 x y))).fv ∪ ((synC1c)).fv) 2
 
 theorem nb052_distinct_052 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_059 x y) ≠ (nb052_alpha_dummy_060 x y) := by
-  simpa only [nb052_alpha_dummy_059, nb052_alpha_dummy_060] using
-    (freshVar_injective (((Class.cv (nb052_alpha_dummy_052 x y))).fv ∪ ((syn_c1c)).fv)
+    (nb052AlphaDummy059 x y) ≠ (nb052AlphaDummy060 x y) := by
+  simpa only [nb052AlphaDummy059, nb052AlphaDummy060] using
+    (freshVar_injective (((Class.cv (nb052AlphaDummy052 x y))).fv ∪ ((synC1c)).fv)
       (i := 0) (j := 1) (by decide))
 
 theorem nb052_distinct_053 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_059 x y) ≠ (nb052_alpha_dummy_061 x y) := by
-  simpa only [nb052_alpha_dummy_059, nb052_alpha_dummy_061] using
-    (freshVar_injective (((Class.cv (nb052_alpha_dummy_052 x y))).fv ∪ ((syn_c1c)).fv)
+    (nb052AlphaDummy059 x y) ≠ (nb052AlphaDummy061 x y) := by
+  simpa only [nb052AlphaDummy059, nb052AlphaDummy061] using
+    (freshVar_injective (((Class.cv (nb052AlphaDummy052 x y))).fv ∪ ((synC1c)).fv)
       (i := 0) (j := 2) (by decide))
 
 theorem nb052_distinct_054 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_060 x y) ≠ (nb052_alpha_dummy_061 x y) := by
-  simpa only [nb052_alpha_dummy_060, nb052_alpha_dummy_061] using
-    (freshVar_injective (((Class.cv (nb052_alpha_dummy_052 x y))).fv ∪ ((syn_c1c)).fv)
+    (nb052AlphaDummy060 x y) ≠ (nb052AlphaDummy061 x y) := by
+  simpa only [nb052AlphaDummy060, nb052AlphaDummy061] using
+    (freshVar_injective (((Class.cv (nb052AlphaDummy052 x y))).fv ∪ ((synC1c)).fv)
       (i := 1) (j := 2) (by decide))
 
 theorem nb052_fresh_055 :
-    (nb052_alpha_dummy_068) ∉
-      (((Class.cv (nb052_alpha_dummy_057))).fv ∪ ((Class.cv (nb052_alpha_dummy_057))).fv) :=
+    (nb052AlphaDummy068) ∉
+      (((Class.cv (nb052AlphaDummy057))).fv ∪ ((Class.cv (nb052AlphaDummy057))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_068] using
+  simpa only [nb052AlphaDummy068] using
     freshVar_not_mem
-      (((Class.cv (nb052_alpha_dummy_057))).fv ∪ ((Class.cv (nb052_alpha_dummy_057))).fv)
+      (((Class.cv (nb052AlphaDummy057))).fv ∪ ((Class.cv (nb052AlphaDummy057))).fv)
       0
 
 theorem nb052_fresh_056 :
-    (nb052_alpha_dummy_064) ∉
-      (((Class.cv (nb052_alpha_dummy_057))).fv ∪ ((Class.cv (nb052_alpha_dummy_058))).fv) :=
+    (nb052AlphaDummy064) ∉
+      (((Class.cv (nb052AlphaDummy057))).fv ∪ ((Class.cv (nb052AlphaDummy058))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_064] using
+  simpa only [nb052AlphaDummy064] using
     freshVar_not_mem
-      (((Class.cv (nb052_alpha_dummy_057))).fv ∪ ((Class.cv (nb052_alpha_dummy_058))).fv)
+      (((Class.cv (nb052AlphaDummy057))).fv ∪ ((Class.cv (nb052AlphaDummy058))).fv)
       0
 
 theorem nb052_fresh_057 :
-    (nb052_alpha_dummy_070) ∉
-      (((Class.cv (nb052_alpha_dummy_058))).fv ∪ ((Class.cv (nb052_alpha_dummy_058))).fv) :=
+    (nb052AlphaDummy070) ∉
+      (((Class.cv (nb052AlphaDummy058))).fv ∪ ((Class.cv (nb052AlphaDummy058))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_070] using
+  simpa only [nb052AlphaDummy070] using
     freshVar_not_mem
-      (((Class.cv (nb052_alpha_dummy_058))).fv ∪ ((Class.cv (nb052_alpha_dummy_058))).fv)
+      (((Class.cv (nb052AlphaDummy058))).fv ∪ ((Class.cv (nb052AlphaDummy058))).fv)
       0
 
 theorem nb052_fresh_058 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_069 x y) ∉
-      (((Class.cv (nb052_alpha_dummy_060 x y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_060 x y))).fv) :=
+    (nb052AlphaDummy069 x y) ∉
+      (((Class.cv (nb052AlphaDummy060 x y))).fv ∪
+        ((Class.cv (nb052AlphaDummy060 x y))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_069] using
+  simpa only [nb052AlphaDummy069] using
     freshVar_not_mem
-      (((Class.cv (nb052_alpha_dummy_060 x y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_060 x y))).fv)
+      (((Class.cv (nb052AlphaDummy060 x y))).fv ∪
+        ((Class.cv (nb052AlphaDummy060 x y))).fv)
       0
 
 theorem nb052_fresh_059 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_065 x y) ∉
-      (((Class.cv (nb052_alpha_dummy_060 x y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_061 x y))).fv) :=
+    (nb052AlphaDummy065 x y) ∉
+      (((Class.cv (nb052AlphaDummy060 x y))).fv ∪
+        ((Class.cv (nb052AlphaDummy061 x y))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_065] using
+  simpa only [nb052AlphaDummy065] using
     freshVar_not_mem
-      (((Class.cv (nb052_alpha_dummy_060 x y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_061 x y))).fv)
+      (((Class.cv (nb052AlphaDummy060 x y))).fv ∪
+        ((Class.cv (nb052AlphaDummy061 x y))).fv)
       0
 
 theorem nb052_fresh_060 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_071 x y) ∉
-      (((Class.cv (nb052_alpha_dummy_061 x y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_061 x y))).fv) :=
+    (nb052AlphaDummy071 x y) ∉
+      (((Class.cv (nb052AlphaDummy061 x y))).fv ∪
+        ((Class.cv (nb052AlphaDummy061 x y))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_071] using
+  simpa only [nb052AlphaDummy071] using
     freshVar_not_mem
-      (((Class.cv (nb052_alpha_dummy_061 x y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_061 x y))).fv)
+      (((Class.cv (nb052AlphaDummy061 x y))).fv ∪
+        ((Class.cv (nb052AlphaDummy061 x y))).fv)
       0
 
 theorem nb052_fresh_061 (x : Var) :
-    (nb052_alpha_dummy_081 x) ∉ (((Class.cv x)).fv ∪ ((Class.cv x)).fv) := by
-  simpa only [nb052_alpha_dummy_081] using
+    (nb052AlphaDummy081 x) ∉ (((Class.cv x)).fv ∪ ((Class.cv x)).fv) := by
+  simpa only [nb052AlphaDummy081] using
     freshVar_not_mem (((Class.cv x)).fv ∪ ((Class.cv x)).fv) 0
 
 theorem nb052_fresh_062 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_016 x y) ∉ (((Class.cv x)).fv ∪ ((Class.cv y)).fv) := by
-  simpa only [nb052_alpha_dummy_016] using
+    (nb052AlphaDummy016 x y) ∉ (((Class.cv x)).fv ∪ ((Class.cv y)).fv) := by
+  simpa only [nb052AlphaDummy016] using
     freshVar_not_mem (((Class.cv x)).fv ∪ ((Class.cv y)).fv) 0
 
 theorem nb052_fresh_063 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_017 x y) ∉ (((Class.cv x)).fv ∪ ((Class.cv y)).fv) := by
-  simpa only [nb052_alpha_dummy_017] using
+    (nb052AlphaDummy017 x y) ∉ (((Class.cv x)).fv ∪ ((Class.cv y)).fv) := by
+  simpa only [nb052AlphaDummy017] using
     freshVar_not_mem (((Class.cv x)).fv ∪ ((Class.cv y)).fv) 1
 
 theorem nb052_distinct_064 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_016 x y) ≠ (nb052_alpha_dummy_017 x y) := by
-  simpa only [nb052_alpha_dummy_016, nb052_alpha_dummy_017] using
+    (nb052AlphaDummy016 x y) ≠ (nb052AlphaDummy017 x y) := by
+  simpa only [nb052AlphaDummy016, nb052AlphaDummy017] using
     (freshVar_injective (((Class.cv x)).fv ∪ ((Class.cv y)).fv) (i := 0) (j := 1) (by decide))
 
 theorem nb052_fresh_065 (y : Var) :
-    (nb052_alpha_dummy_083 y) ∉ (((Class.cv y)).fv ∪ ((Class.cv y)).fv) := by
-  simpa only [nb052_alpha_dummy_083] using
+    (nb052AlphaDummy083 y) ∉ (((Class.cv y)).fv ∪ ((Class.cv y)).fv) := by
+  simpa only [nb052AlphaDummy083] using
     freshVar_not_mem (((Class.cv y)).fv ∪ ((Class.cv y)).fv) 0
 
 end NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired
@@ -1143,496 +1227,496 @@ open NFChoice.DirectNominalPrf
 open NFChoice.DirectNominalPrf.Nominal
 
 theorem nb052_fresh_066 :
-    (nb052_alpha_dummy_026) ∉
-      (((Wff.classMem (Class.cv (nb052_alpha_dummy_022)) (syn_cnnc))).fv ∪
-          ((syn_cplc (Class.cv (nb052_alpha_dummy_022)) (syn_c1c))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_022))).fv) :=
+    (nb052AlphaDummy026) ∉
+      (((Wff.classMem (Class.cv (nb052AlphaDummy022)) (synCnnc))).fv ∪
+          ((synCplc (Class.cv (nb052AlphaDummy022)) (synC1c))).fv ∪
+        ((Class.cv (nb052AlphaDummy022))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_026] using
+  simpa only [nb052AlphaDummy026] using
     freshVar_not_mem
-      (((Wff.classMem (Class.cv (nb052_alpha_dummy_022)) (syn_cnnc))).fv ∪
-          ((syn_cplc (Class.cv (nb052_alpha_dummy_022)) (syn_c1c))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_022))).fv)
+      (((Wff.classMem (Class.cv (nb052AlphaDummy022)) (synCnnc))).fv ∪
+          ((synCplc (Class.cv (nb052AlphaDummy022)) (synC1c))).fv ∪
+        ((Class.cv (nb052AlphaDummy022))).fv)
       0
 
 theorem nb052_fresh_067 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_027 x y) ∉
-      (((Wff.classMem (Class.cv (nb052_alpha_dummy_024 x y)) (syn_cnnc))).fv ∪
-          ((syn_cplc (Class.cv (nb052_alpha_dummy_024 x y)) (syn_c1c))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_024 x y))).fv) :=
+    (nb052AlphaDummy027 x y) ∉
+      (((Wff.classMem (Class.cv (nb052AlphaDummy024 x y)) (synCnnc))).fv ∪
+          ((synCplc (Class.cv (nb052AlphaDummy024 x y)) (synC1c))).fv ∪
+        ((Class.cv (nb052AlphaDummy024 x y))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_027] using
+  simpa only [nb052AlphaDummy027] using
     freshVar_not_mem
-      (((Wff.classMem (Class.cv (nb052_alpha_dummy_024 x y)) (syn_cnnc))).fv ∪
-          ((syn_cplc (Class.cv (nb052_alpha_dummy_024 x y)) (syn_c1c))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_024 x y))).fv)
+      (((Wff.classMem (Class.cv (nb052AlphaDummy024 x y)) (synCnnc))).fv ∪
+          ((synCplc (Class.cv (nb052AlphaDummy024 x y)) (synC1c))).fv ∪
+        ((Class.cv (nb052AlphaDummy024 x y))).fv)
       0
 
 theorem nb052_fresh_068 :
-    (nb052_alpha_dummy_054) ∉
-      (((Wff.classMem (Class.cv (nb052_alpha_dummy_050)) (syn_cnnc))).fv ∪
-          ((syn_cplc (Class.cv (nb052_alpha_dummy_050)) (syn_c1c))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_050))).fv) :=
+    (nb052AlphaDummy054) ∉
+      (((Wff.classMem (Class.cv (nb052AlphaDummy050)) (synCnnc))).fv ∪
+          ((synCplc (Class.cv (nb052AlphaDummy050)) (synC1c))).fv ∪
+        ((Class.cv (nb052AlphaDummy050))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_054] using
+  simpa only [nb052AlphaDummy054] using
     freshVar_not_mem
-      (((Wff.classMem (Class.cv (nb052_alpha_dummy_050)) (syn_cnnc))).fv ∪
-          ((syn_cplc (Class.cv (nb052_alpha_dummy_050)) (syn_c1c))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_050))).fv)
+      (((Wff.classMem (Class.cv (nb052AlphaDummy050)) (synCnnc))).fv ∪
+          ((synCplc (Class.cv (nb052AlphaDummy050)) (synC1c))).fv ∪
+        ((Class.cv (nb052AlphaDummy050))).fv)
       0
 
 theorem nb052_fresh_069 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_055 x y) ∉
-      (((Wff.classMem (Class.cv (nb052_alpha_dummy_052 x y)) (syn_cnnc))).fv ∪
-          ((syn_cplc (Class.cv (nb052_alpha_dummy_052 x y)) (syn_c1c))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_052 x y))).fv) :=
+    (nb052AlphaDummy055 x y) ∉
+      (((Wff.classMem (Class.cv (nb052AlphaDummy052 x y)) (synCnnc))).fv ∪
+          ((synCplc (Class.cv (nb052AlphaDummy052 x y)) (synC1c))).fv ∪
+        ((Class.cv (nb052AlphaDummy052 x y))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_055] using
+  simpa only [nb052AlphaDummy055] using
     freshVar_not_mem
-      (((Wff.classMem (Class.cv (nb052_alpha_dummy_052 x y)) (syn_cnnc))).fv ∪
-          ((syn_cplc (Class.cv (nb052_alpha_dummy_052 x y)) (syn_c1c))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_052 x y))).fv)
+      (((Wff.classMem (Class.cv (nb052AlphaDummy052 x y)) (synCnnc))).fv ∪
+          ((synCplc (Class.cv (nb052AlphaDummy052 x y)) (synC1c))).fv ∪
+        ((Class.cv (nb052AlphaDummy052 x y))).fv)
       0
 
 theorem nb052_fresh_070 :
-    (nb052_alpha_dummy_010) ∉
-      (((syn_ccompl (Class.cab (nb052_alpha_dummy_006) (syn_wrex (nb052_alpha_dummy_007)
-                (syn_cop (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                  (syn_cphi (Class.cv (nb052_alpha_dummy_007)))))))).fv ∪ ((syn_ccompl
-            (Class.cab (nb052_alpha_dummy_006)
-              (syn_wrex (nb052_alpha_dummy_007) (Class.cv (nb052_alpha_dummy_002))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                  (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_007)))
-                    (syn_csn (syn_c0c)))))))).fv) :=
+    (nb052AlphaDummy010) ∉
+      (((synCcompl (Class.cab (nb052AlphaDummy006) (synWrex (nb052AlphaDummy007)
+                (synCop (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))
+                (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                  (synCphi (Class.cv (nb052AlphaDummy007)))))))).fv ∪ ((synCcompl
+            (Class.cab (nb052AlphaDummy006)
+              (synWrex (nb052AlphaDummy007) (Class.cv (nb052AlphaDummy002))
+                (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                  (synCun (synCphi (Class.cv (nb052AlphaDummy007)))
+                    (synCsn (synC0c)))))))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_010] using
+  simpa only [nb052AlphaDummy010] using
     freshVar_not_mem
-      (((syn_ccompl (Class.cab (nb052_alpha_dummy_006) (syn_wrex (nb052_alpha_dummy_007)
-                (syn_cop (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                  (syn_cphi (Class.cv (nb052_alpha_dummy_007)))))))).fv ∪ ((syn_ccompl
-            (Class.cab (nb052_alpha_dummy_006)
-              (syn_wrex (nb052_alpha_dummy_007) (Class.cv (nb052_alpha_dummy_002))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                  (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_007)))
-                    (syn_csn (syn_c0c)))))))).fv)
+      (((synCcompl (Class.cab (nb052AlphaDummy006) (synWrex (nb052AlphaDummy007)
+                (synCop (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))
+                (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                  (synCphi (Class.cv (nb052AlphaDummy007)))))))).fv ∪ ((synCcompl
+            (Class.cab (nb052AlphaDummy006)
+              (synWrex (nb052AlphaDummy007) (Class.cv (nb052AlphaDummy002))
+                (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                  (synCun (synCphi (Class.cv (nb052AlphaDummy007)))
+                    (synCsn (synC0c)))))))).fv)
       0
 
 theorem nb052_fresh_071 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_011 x y) ∉
-      (((syn_ccompl (Class.cab (nb052_alpha_dummy_008 x y)
-              (syn_wrex (nb052_alpha_dummy_009 x y) (syn_cop (Class.cv x) (Class.cv y))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                  (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))))))).fv ∪ ((syn_ccompl
-            (Class.cab (nb052_alpha_dummy_008 x y)
-              (syn_wrex (nb052_alpha_dummy_009 x y) (Class.cv (nb052_alpha_dummy_003 x y))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                  (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))
-                    (syn_csn (syn_c0c)))))))).fv) :=
+    (nb052AlphaDummy011 x y) ∉
+      (((synCcompl (Class.cab (nb052AlphaDummy008 x y)
+              (synWrex (nb052AlphaDummy009 x y) (synCop (Class.cv x) (Class.cv y))
+                (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                  (synCphi (Class.cv (nb052AlphaDummy009 x y)))))))).fv ∪ ((synCcompl
+            (Class.cab (nb052AlphaDummy008 x y)
+              (synWrex (nb052AlphaDummy009 x y) (Class.cv (nb052AlphaDummy003 x y))
+                (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                  (synCun (synCphi (Class.cv (nb052AlphaDummy009 x y)))
+                    (synCsn (synC0c)))))))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_011] using
+  simpa only [nb052AlphaDummy011] using
     freshVar_not_mem
-      (((syn_ccompl (Class.cab (nb052_alpha_dummy_008 x y)
-              (syn_wrex (nb052_alpha_dummy_009 x y) (syn_cop (Class.cv x) (Class.cv y))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                  (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))))))).fv ∪ ((syn_ccompl
-            (Class.cab (nb052_alpha_dummy_008 x y)
-              (syn_wrex (nb052_alpha_dummy_009 x y) (Class.cv (nb052_alpha_dummy_003 x y))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                  (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))
-                    (syn_csn (syn_c0c)))))))).fv)
+      (((synCcompl (Class.cab (nb052AlphaDummy008 x y)
+              (synWrex (nb052AlphaDummy009 x y) (synCop (Class.cv x) (Class.cv y))
+                (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                  (synCphi (Class.cv (nb052AlphaDummy009 x y)))))))).fv ∪ ((synCcompl
+            (Class.cab (nb052AlphaDummy008 x y)
+              (synWrex (nb052AlphaDummy009 x y) (Class.cv (nb052AlphaDummy003 x y))
+                (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                  (synCun (synCphi (Class.cv (nb052AlphaDummy009 x y)))
+                    (synCsn (synC0c)))))))).fv)
       0
 
 theorem nb052_fresh_072 :
-    (nb052_alpha_dummy_018) ∉
-      (((syn_ccompl (Class.cab (nb052_alpha_dummy_014)
-              (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_000))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-                  (syn_cphi (Class.cv (nb052_alpha_dummy_015)))))))).fv ∪ ((syn_ccompl
-            (Class.cab (nb052_alpha_dummy_014)
-              (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_001))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-                  (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_015)))
-                    (syn_csn (syn_c0c)))))))).fv) :=
+    (nb052AlphaDummy018) ∉
+      (((synCcompl (Class.cab (nb052AlphaDummy014)
+              (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy000))
+                (Wff.classEq (Class.cv (nb052AlphaDummy014))
+                  (synCphi (Class.cv (nb052AlphaDummy015)))))))).fv ∪ ((synCcompl
+            (Class.cab (nb052AlphaDummy014)
+              (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy001))
+                (Wff.classEq (Class.cv (nb052AlphaDummy014))
+                  (synCun (synCphi (Class.cv (nb052AlphaDummy015)))
+                    (synCsn (synC0c)))))))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_018] using
+  simpa only [nb052AlphaDummy018] using
     freshVar_not_mem
-      (((syn_ccompl (Class.cab (nb052_alpha_dummy_014)
-              (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_000))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-                  (syn_cphi (Class.cv (nb052_alpha_dummy_015)))))))).fv ∪ ((syn_ccompl
-            (Class.cab (nb052_alpha_dummy_014)
-              (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_001))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-                  (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_015)))
-                    (syn_csn (syn_c0c)))))))).fv)
+      (((synCcompl (Class.cab (nb052AlphaDummy014)
+              (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy000))
+                (Wff.classEq (Class.cv (nb052AlphaDummy014))
+                  (synCphi (Class.cv (nb052AlphaDummy015)))))))).fv ∪ ((synCcompl
+            (Class.cab (nb052AlphaDummy014)
+              (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy001))
+                (Wff.classEq (Class.cv (nb052AlphaDummy014))
+                  (synCun (synCphi (Class.cv (nb052AlphaDummy015)))
+                    (synCsn (synC0c)))))))).fv)
       0
 
 theorem nb052_fresh_073 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_019 x y) ∉
-      (((syn_ccompl (Class.cab (nb052_alpha_dummy_016 x y)
-              (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv x)
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-                  (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))))))).fv ∪ ((syn_ccompl
-            (Class.cab (nb052_alpha_dummy_016 x y)
-              (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv y)
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-                  (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))
-                    (syn_csn (syn_c0c)))))))).fv) :=
+    (nb052AlphaDummy019 x y) ∉
+      (((synCcompl (Class.cab (nb052AlphaDummy016 x y)
+              (synWrex (nb052AlphaDummy017 x y) (Class.cv x)
+                (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+                  (synCphi (Class.cv (nb052AlphaDummy017 x y)))))))).fv ∪ ((synCcompl
+            (Class.cab (nb052AlphaDummy016 x y)
+              (synWrex (nb052AlphaDummy017 x y) (Class.cv y)
+                (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+                  (synCun (synCphi (Class.cv (nb052AlphaDummy017 x y)))
+                    (synCsn (synC0c)))))))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_019] using
+  simpa only [nb052AlphaDummy019] using
     freshVar_not_mem
-      (((syn_ccompl (Class.cab (nb052_alpha_dummy_016 x y)
-              (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv x)
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-                  (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))))))).fv ∪ ((syn_ccompl
-            (Class.cab (nb052_alpha_dummy_016 x y)
-              (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv y)
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-                  (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))
-                    (syn_csn (syn_c0c)))))))).fv)
+      (((synCcompl (Class.cab (nb052AlphaDummy016 x y)
+              (synWrex (nb052AlphaDummy017 x y) (Class.cv x)
+                (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+                  (synCphi (Class.cv (nb052AlphaDummy017 x y)))))))).fv ∪ ((synCcompl
+            (Class.cab (nb052AlphaDummy016 x y)
+              (synWrex (nb052AlphaDummy017 x y) (Class.cv y)
+                (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+                  (synCun (synCphi (Class.cv (nb052AlphaDummy017 x y)))
+                    (synCsn (synC0c)))))))).fv)
       0
 
 theorem nb052_fresh_074 :
-    (nb052_alpha_dummy_078) ∉
-      (((syn_ccompl (Class.cv (nb052_alpha_dummy_000)))).fv ∪
-        ((syn_ccompl (Class.cv (nb052_alpha_dummy_001)))).fv) :=
+    (nb052AlphaDummy078) ∉
+      (((synCcompl (Class.cv (nb052AlphaDummy000)))).fv ∪
+        ((synCcompl (Class.cv (nb052AlphaDummy001)))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_078] using
+  simpa only [nb052AlphaDummy078] using
     freshVar_not_mem
-      (((syn_ccompl (Class.cv (nb052_alpha_dummy_000)))).fv ∪
-        ((syn_ccompl (Class.cv (nb052_alpha_dummy_001)))).fv)
+      (((synCcompl (Class.cv (nb052AlphaDummy000)))).fv ∪
+        ((synCcompl (Class.cv (nb052AlphaDummy001)))).fv)
       0
 
 theorem nb052_fresh_075 :
-    (nb052_alpha_dummy_038) ∉
-      (((syn_ccompl (Class.cv (nb052_alpha_dummy_029)))).fv ∪
-        ((syn_ccompl (Class.cv (nb052_alpha_dummy_030)))).fv) :=
+    (nb052AlphaDummy038) ∉
+      (((synCcompl (Class.cv (nb052AlphaDummy029)))).fv ∪
+        ((synCcompl (Class.cv (nb052AlphaDummy030)))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_038] using
+  simpa only [nb052AlphaDummy038] using
     freshVar_not_mem
-      (((syn_ccompl (Class.cv (nb052_alpha_dummy_029)))).fv ∪
-        ((syn_ccompl (Class.cv (nb052_alpha_dummy_030)))).fv)
+      (((synCcompl (Class.cv (nb052AlphaDummy029)))).fv ∪
+        ((synCcompl (Class.cv (nb052AlphaDummy030)))).fv)
       0
 
 theorem nb052_fresh_076 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_039 x y) ∉
-      (((syn_ccompl (Class.cv (nb052_alpha_dummy_032 x y)))).fv ∪
-        ((syn_ccompl (Class.cv (nb052_alpha_dummy_033 x y)))).fv) :=
+    (nb052AlphaDummy039 x y) ∉
+      (((synCcompl (Class.cv (nb052AlphaDummy032 x y)))).fv ∪
+        ((synCcompl (Class.cv (nb052AlphaDummy033 x y)))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_039] using
+  simpa only [nb052AlphaDummy039] using
     freshVar_not_mem
-      (((syn_ccompl (Class.cv (nb052_alpha_dummy_032 x y)))).fv ∪
-        ((syn_ccompl (Class.cv (nb052_alpha_dummy_033 x y)))).fv)
+      (((synCcompl (Class.cv (nb052AlphaDummy032 x y)))).fv ∪
+        ((synCcompl (Class.cv (nb052AlphaDummy033 x y)))).fv)
       0
 
 theorem nb052_fresh_077 :
-    (nb052_alpha_dummy_066) ∉
-      (((syn_ccompl (Class.cv (nb052_alpha_dummy_057)))).fv ∪
-        ((syn_ccompl (Class.cv (nb052_alpha_dummy_058)))).fv) :=
+    (nb052AlphaDummy066) ∉
+      (((synCcompl (Class.cv (nb052AlphaDummy057)))).fv ∪
+        ((synCcompl (Class.cv (nb052AlphaDummy058)))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_066] using
+  simpa only [nb052AlphaDummy066] using
     freshVar_not_mem
-      (((syn_ccompl (Class.cv (nb052_alpha_dummy_057)))).fv ∪
-        ((syn_ccompl (Class.cv (nb052_alpha_dummy_058)))).fv)
+      (((synCcompl (Class.cv (nb052AlphaDummy057)))).fv ∪
+        ((synCcompl (Class.cv (nb052AlphaDummy058)))).fv)
       0
 
 theorem nb052_fresh_078 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_067 x y) ∉
-      (((syn_ccompl (Class.cv (nb052_alpha_dummy_060 x y)))).fv ∪
-        ((syn_ccompl (Class.cv (nb052_alpha_dummy_061 x y)))).fv) :=
+    (nb052AlphaDummy067 x y) ∉
+      (((synCcompl (Class.cv (nb052AlphaDummy060 x y)))).fv ∪
+        ((synCcompl (Class.cv (nb052AlphaDummy061 x y)))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_067] using
+  simpa only [nb052AlphaDummy067] using
     freshVar_not_mem
-      (((syn_ccompl (Class.cv (nb052_alpha_dummy_060 x y)))).fv ∪
-        ((syn_ccompl (Class.cv (nb052_alpha_dummy_061 x y)))).fv)
+      (((synCcompl (Class.cv (nb052AlphaDummy060 x y)))).fv ∪
+        ((synCcompl (Class.cv (nb052AlphaDummy061 x y)))).fv)
       0
 
 theorem nb052_fresh_079 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_079 x y) ∉
-      (((syn_ccompl (Class.cv x))).fv ∪ ((syn_ccompl (Class.cv y))).fv) :=
+    (nb052AlphaDummy079 x y) ∉
+      (((synCcompl (Class.cv x))).fv ∪ ((synCcompl (Class.cv y))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_079] using
-    freshVar_not_mem (((syn_ccompl (Class.cv x))).fv ∪ ((syn_ccompl (Class.cv y))).fv) 0
+  simpa only [nb052AlphaDummy079] using
+    freshVar_not_mem (((synCcompl (Class.cv x))).fv ∪ ((synCcompl (Class.cv y))).fv) 0
 
 theorem nb052_fresh_080 :
-    (nb052_alpha_dummy_074) ∉
-      (((syn_ccompl (syn_cphi (Class.cv (nb052_alpha_dummy_007))))).fv ∪
-        ((syn_ccompl (syn_csn (syn_c0c)))).fv) :=
+    (nb052AlphaDummy074) ∉
+      (((synCcompl (synCphi (Class.cv (nb052AlphaDummy007))))).fv ∪
+        ((synCcompl (synCsn (synC0c)))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_074] using
+  simpa only [nb052AlphaDummy074] using
     freshVar_not_mem
-      (((syn_ccompl (syn_cphi (Class.cv (nb052_alpha_dummy_007))))).fv ∪
-        ((syn_ccompl (syn_csn (syn_c0c)))).fv)
+      (((synCcompl (synCphi (Class.cv (nb052AlphaDummy007))))).fv ∪
+        ((synCcompl (synCsn (synC0c)))).fv)
       0
 
 theorem nb052_fresh_081 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_075 x y) ∉
-      (((syn_ccompl (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y))))).fv ∪
-        ((syn_ccompl (syn_csn (syn_c0c)))).fv) :=
+    (nb052AlphaDummy075 x y) ∉
+      (((synCcompl (synCphi (Class.cv (nb052AlphaDummy009 x y))))).fv ∪
+        ((synCcompl (synCsn (synC0c)))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_075] using
+  simpa only [nb052AlphaDummy075] using
     freshVar_not_mem
-      (((syn_ccompl (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y))))).fv ∪
-        ((syn_ccompl (syn_csn (syn_c0c)))).fv)
+      (((synCcompl (synCphi (Class.cv (nb052AlphaDummy009 x y))))).fv ∪
+        ((synCcompl (synCsn (synC0c)))).fv)
       0
 
 theorem nb052_fresh_082 :
-    (nb052_alpha_dummy_046) ∉
-      (((syn_ccompl (syn_cphi (Class.cv (nb052_alpha_dummy_015))))).fv ∪
-        ((syn_ccompl (syn_csn (syn_c0c)))).fv) :=
+    (nb052AlphaDummy046) ∉
+      (((synCcompl (synCphi (Class.cv (nb052AlphaDummy015))))).fv ∪
+        ((synCcompl (synCsn (synC0c)))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_046] using
+  simpa only [nb052AlphaDummy046] using
     freshVar_not_mem
-      (((syn_ccompl (syn_cphi (Class.cv (nb052_alpha_dummy_015))))).fv ∪
-        ((syn_ccompl (syn_csn (syn_c0c)))).fv)
+      (((synCcompl (synCphi (Class.cv (nb052AlphaDummy015))))).fv ∪
+        ((synCcompl (synCsn (synC0c)))).fv)
       0
 
 theorem nb052_fresh_083 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_047 x y) ∉
-      (((syn_ccompl (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y))))).fv ∪
-        ((syn_ccompl (syn_csn (syn_c0c)))).fv) :=
+    (nb052AlphaDummy047 x y) ∉
+      (((synCcompl (synCphi (Class.cv (nb052AlphaDummy017 x y))))).fv ∪
+        ((synCcompl (synCsn (synC0c)))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_047] using
+  simpa only [nb052AlphaDummy047] using
     freshVar_not_mem
-      (((syn_ccompl (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y))))).fv ∪
-        ((syn_ccompl (syn_csn (syn_c0c)))).fv)
+      (((synCcompl (synCphi (Class.cv (nb052AlphaDummy017 x y))))).fv ∪
+        ((synCcompl (synCsn (synC0c)))).fv)
       0
 
 theorem nb052_fresh_084 :
-    (nb052_alpha_dummy_034) ∉
-      (((syn_cnin (Class.cv (nb052_alpha_dummy_029)) (Class.cv (nb052_alpha_dummy_030)))).fv ∪
-        ((syn_cnin (Class.cv (nb052_alpha_dummy_029))
-            (Class.cv (nb052_alpha_dummy_030)))).fv) :=
+    (nb052AlphaDummy034) ∉
+      (((synCnin (Class.cv (nb052AlphaDummy029)) (Class.cv (nb052AlphaDummy030)))).fv ∪
+        ((synCnin (Class.cv (nb052AlphaDummy029))
+            (Class.cv (nb052AlphaDummy030)))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_034] using
+  simpa only [nb052AlphaDummy034] using
     freshVar_not_mem
-      (((syn_cnin (Class.cv (nb052_alpha_dummy_029)) (Class.cv (nb052_alpha_dummy_030)))).fv ∪
-        ((syn_cnin (Class.cv (nb052_alpha_dummy_029)) (Class.cv (nb052_alpha_dummy_030)))).fv)
+      (((synCnin (Class.cv (nb052AlphaDummy029)) (Class.cv (nb052AlphaDummy030)))).fv ∪
+        ((synCnin (Class.cv (nb052AlphaDummy029)) (Class.cv (nb052AlphaDummy030)))).fv)
       0
 
 theorem nb052_fresh_085 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_035 x y) ∉
-      (((syn_cnin (Class.cv (nb052_alpha_dummy_032 x y))
-            (Class.cv (nb052_alpha_dummy_033 x y)))).fv ∪
-        ((syn_cnin (Class.cv (nb052_alpha_dummy_032 x y))
-            (Class.cv (nb052_alpha_dummy_033 x y)))).fv) :=
+    (nb052AlphaDummy035 x y) ∉
+      (((synCnin (Class.cv (nb052AlphaDummy032 x y))
+            (Class.cv (nb052AlphaDummy033 x y)))).fv ∪
+        ((synCnin (Class.cv (nb052AlphaDummy032 x y))
+            (Class.cv (nb052AlphaDummy033 x y)))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_035] using
+  simpa only [nb052AlphaDummy035] using
     freshVar_not_mem
-      (((syn_cnin (Class.cv (nb052_alpha_dummy_032 x y))
-            (Class.cv (nb052_alpha_dummy_033 x y)))).fv ∪
-        ((syn_cnin (Class.cv (nb052_alpha_dummy_032 x y))
-            (Class.cv (nb052_alpha_dummy_033 x y)))).fv)
+      (((synCnin (Class.cv (nb052AlphaDummy032 x y))
+            (Class.cv (nb052AlphaDummy033 x y)))).fv ∪
+        ((synCnin (Class.cv (nb052AlphaDummy032 x y))
+            (Class.cv (nb052AlphaDummy033 x y)))).fv)
       0
 
 theorem nb052_fresh_086 :
-    (nb052_alpha_dummy_062) ∉
-      (((syn_cnin (Class.cv (nb052_alpha_dummy_057)) (Class.cv (nb052_alpha_dummy_058)))).fv ∪
-        ((syn_cnin (Class.cv (nb052_alpha_dummy_057))
-            (Class.cv (nb052_alpha_dummy_058)))).fv) :=
+    (nb052AlphaDummy062) ∉
+      (((synCnin (Class.cv (nb052AlphaDummy057)) (Class.cv (nb052AlphaDummy058)))).fv ∪
+        ((synCnin (Class.cv (nb052AlphaDummy057))
+            (Class.cv (nb052AlphaDummy058)))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_062] using
+  simpa only [nb052AlphaDummy062] using
     freshVar_not_mem
-      (((syn_cnin (Class.cv (nb052_alpha_dummy_057)) (Class.cv (nb052_alpha_dummy_058)))).fv ∪
-        ((syn_cnin (Class.cv (nb052_alpha_dummy_057)) (Class.cv (nb052_alpha_dummy_058)))).fv)
+      (((synCnin (Class.cv (nb052AlphaDummy057)) (Class.cv (nb052AlphaDummy058)))).fv ∪
+        ((synCnin (Class.cv (nb052AlphaDummy057)) (Class.cv (nb052AlphaDummy058)))).fv)
       0
 
 theorem nb052_fresh_087 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_063 x y) ∉
-      (((syn_cnin (Class.cv (nb052_alpha_dummy_060 x y))
-            (Class.cv (nb052_alpha_dummy_061 x y)))).fv ∪
-        ((syn_cnin (Class.cv (nb052_alpha_dummy_060 x y))
-            (Class.cv (nb052_alpha_dummy_061 x y)))).fv) :=
+    (nb052AlphaDummy063 x y) ∉
+      (((synCnin (Class.cv (nb052AlphaDummy060 x y))
+            (Class.cv (nb052AlphaDummy061 x y)))).fv ∪
+        ((synCnin (Class.cv (nb052AlphaDummy060 x y))
+            (Class.cv (nb052AlphaDummy061 x y)))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_063] using
+  simpa only [nb052AlphaDummy063] using
     freshVar_not_mem
-      (((syn_cnin (Class.cv (nb052_alpha_dummy_060 x y))
-            (Class.cv (nb052_alpha_dummy_061 x y)))).fv ∪
-        ((syn_cnin (Class.cv (nb052_alpha_dummy_060 x y))
-            (Class.cv (nb052_alpha_dummy_061 x y)))).fv)
+      (((synCnin (Class.cv (nb052AlphaDummy060 x y))
+            (Class.cv (nb052AlphaDummy061 x y)))).fv ∪
+        ((synCnin (Class.cv (nb052AlphaDummy060 x y))
+            (Class.cv (nb052AlphaDummy061 x y)))).fv)
       0
 
 theorem nb052_fresh_088 :
-    (nb052_alpha_dummy_006) ∉
-      (((syn_cop (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_002))).fv) :=
+    (nb052AlphaDummy006) ∉
+      (((synCop (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))).fv ∪
+        ((Class.cv (nb052AlphaDummy002))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_006] using
+  simpa only [nb052AlphaDummy006] using
     freshVar_not_mem
-      (((syn_cop (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_002))).fv)
+      (((synCop (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))).fv ∪
+        ((Class.cv (nb052AlphaDummy002))).fv)
       0
 
 theorem nb052_fresh_089 :
-    (nb052_alpha_dummy_007) ∉
-      (((syn_cop (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_002))).fv) :=
+    (nb052AlphaDummy007) ∉
+      (((synCop (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))).fv ∪
+        ((Class.cv (nb052AlphaDummy002))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_007] using
+  simpa only [nb052AlphaDummy007] using
     freshVar_not_mem
-      (((syn_cop (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_002))).fv)
+      (((synCop (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))).fv ∪
+        ((Class.cv (nb052AlphaDummy002))).fv)
       1
 
-theorem nb052_distinct_090 : (nb052_alpha_dummy_006) ≠ (nb052_alpha_dummy_007) := by
-  simpa only [nb052_alpha_dummy_006, nb052_alpha_dummy_007] using
-    (freshVar_injective (((syn_cop (Class.cv (nb052_alpha_dummy_000))
-            (Class.cv (nb052_alpha_dummy_001)))).fv ∪ ((Class.cv (nb052_alpha_dummy_002))).fv)
+theorem nb052_distinct_090 : (nb052AlphaDummy006) ≠ (nb052AlphaDummy007) := by
+  simpa only [nb052AlphaDummy006, nb052AlphaDummy007] using
+    (freshVar_injective (((synCop (Class.cv (nb052AlphaDummy000))
+            (Class.cv (nb052AlphaDummy001)))).fv ∪ ((Class.cv (nb052AlphaDummy002))).fv)
       (i := 0) (j := 1) (by decide))
 
 theorem nb052_fresh_091 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_008 x y) ∉
-      (((syn_cop (Class.cv x) (Class.cv y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_003 x y))).fv) :=
+    (nb052AlphaDummy008 x y) ∉
+      (((synCop (Class.cv x) (Class.cv y))).fv ∪
+        ((Class.cv (nb052AlphaDummy003 x y))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_008] using
+  simpa only [nb052AlphaDummy008] using
     freshVar_not_mem
-      (((syn_cop (Class.cv x) (Class.cv y))).fv ∪ ((Class.cv (nb052_alpha_dummy_003 x y))).fv)
+      (((synCop (Class.cv x) (Class.cv y))).fv ∪ ((Class.cv (nb052AlphaDummy003 x y))).fv)
       0
 
 theorem nb052_fresh_092 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_009 x y) ∉
-      (((syn_cop (Class.cv x) (Class.cv y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_003 x y))).fv) :=
+    (nb052AlphaDummy009 x y) ∉
+      (((synCop (Class.cv x) (Class.cv y))).fv ∪
+        ((Class.cv (nb052AlphaDummy003 x y))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_009] using
+  simpa only [nb052AlphaDummy009] using
     freshVar_not_mem
-      (((syn_cop (Class.cv x) (Class.cv y))).fv ∪ ((Class.cv (nb052_alpha_dummy_003 x y))).fv)
+      (((synCop (Class.cv x) (Class.cv y))).fv ∪ ((Class.cv (nb052AlphaDummy003 x y))).fv)
       1
 
 theorem nb052_distinct_093 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_008 x y) ≠ (nb052_alpha_dummy_009 x y) := by
-  simpa only [nb052_alpha_dummy_008, nb052_alpha_dummy_009] using
-    (freshVar_injective (((syn_cop (Class.cv x) (Class.cv y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_003 x y))).fv) (i := 0) (j := 1) (by decide))
+    (nb052AlphaDummy008 x y) ≠ (nb052AlphaDummy009 x y) := by
+  simpa only [nb052AlphaDummy008, nb052AlphaDummy009] using
+    (freshVar_injective (((synCop (Class.cv x) (Class.cv y))).fv ∪
+        ((Class.cv (nb052AlphaDummy003 x y))).fv) (i := 0) (j := 1) (by decide))
 
 theorem nb052_fresh_094 :
-    (nb052_alpha_dummy_076) ∉
-      (((syn_cphi (Class.cv (nb052_alpha_dummy_007)))).fv ∪
-        ((syn_cphi (Class.cv (nb052_alpha_dummy_007)))).fv) :=
+    (nb052AlphaDummy076) ∉
+      (((synCphi (Class.cv (nb052AlphaDummy007)))).fv ∪
+        ((synCphi (Class.cv (nb052AlphaDummy007)))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_076] using
+  simpa only [nb052AlphaDummy076] using
     freshVar_not_mem
-      (((syn_cphi (Class.cv (nb052_alpha_dummy_007)))).fv ∪
-        ((syn_cphi (Class.cv (nb052_alpha_dummy_007)))).fv)
+      (((synCphi (Class.cv (nb052AlphaDummy007)))).fv ∪
+        ((synCphi (Class.cv (nb052AlphaDummy007)))).fv)
       0
 
 theorem nb052_fresh_095 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_077 x y) ∉
-      (((syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))).fv ∪
-        ((syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))).fv) :=
+    (nb052AlphaDummy077 x y) ∉
+      (((synCphi (Class.cv (nb052AlphaDummy009 x y)))).fv ∪
+        ((synCphi (Class.cv (nb052AlphaDummy009 x y)))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_077] using
+  simpa only [nb052AlphaDummy077] using
     freshVar_not_mem
-      (((syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))).fv ∪
-        ((syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))).fv)
+      (((synCphi (Class.cv (nb052AlphaDummy009 x y)))).fv ∪
+        ((synCphi (Class.cv (nb052AlphaDummy009 x y)))).fv)
       0
 
 theorem nb052_fresh_096 :
-    (nb052_alpha_dummy_048) ∉
-      (((syn_cphi (Class.cv (nb052_alpha_dummy_015)))).fv ∪
-        ((syn_cphi (Class.cv (nb052_alpha_dummy_015)))).fv) :=
+    (nb052AlphaDummy048) ∉
+      (((synCphi (Class.cv (nb052AlphaDummy015)))).fv ∪
+        ((synCphi (Class.cv (nb052AlphaDummy015)))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_048] using
+  simpa only [nb052AlphaDummy048] using
     freshVar_not_mem
-      (((syn_cphi (Class.cv (nb052_alpha_dummy_015)))).fv ∪
-        ((syn_cphi (Class.cv (nb052_alpha_dummy_015)))).fv)
+      (((synCphi (Class.cv (nb052AlphaDummy015)))).fv ∪
+        ((synCphi (Class.cv (nb052AlphaDummy015)))).fv)
       0
 
 theorem nb052_fresh_097 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_049 x y) ∉
-      (((syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))).fv ∪
-        ((syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))).fv) :=
+    (nb052AlphaDummy049 x y) ∉
+      (((synCphi (Class.cv (nb052AlphaDummy017 x y)))).fv ∪
+        ((synCphi (Class.cv (nb052AlphaDummy017 x y)))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_049] using
+  simpa only [nb052AlphaDummy049] using
     freshVar_not_mem
-      (((syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))).fv ∪
-        ((syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))).fv)
+      (((synCphi (Class.cv (nb052AlphaDummy017 x y)))).fv ∪
+        ((synCphi (Class.cv (nb052AlphaDummy017 x y)))).fv)
       0
 
 theorem nb052_fresh_098 :
-    (nb052_alpha_dummy_002) ∉
-      (({(nb052_alpha_dummy_000)} : Finset Var) ∪ ((syn_cvv)).fv ∪
-            ({(nb052_alpha_dummy_001)} : Finset Var) ∪ ((syn_cvv)).fv ∪
-        ((syn_cun (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))).fv) :=
+    (nb052AlphaDummy002) ∉
+      (({(nb052AlphaDummy000)} : Finset Var) ∪ ((synCvv)).fv ∪
+            ({(nb052AlphaDummy001)} : Finset Var) ∪ ((synCvv)).fv ∪
+        ((synCun (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_002] using
+  simpa only [nb052AlphaDummy002] using
     freshVar_not_mem
-      (({(nb052_alpha_dummy_000)} : Finset Var) ∪ ((syn_cvv)).fv ∪
-            ({(nb052_alpha_dummy_001)} : Finset Var) ∪ ((syn_cvv)).fv ∪
-        ((syn_cun (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))).fv)
+      (({(nb052AlphaDummy000)} : Finset Var) ∪ ((synCvv)).fv ∪
+            ({(nb052AlphaDummy001)} : Finset Var) ∪ ((synCvv)).fv ∪
+        ((synCun (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))).fv)
       0
 
 theorem nb052_fresh_099 :
-    (nb052_alpha_dummy_004) ∉
-      (({(nb052_alpha_dummy_000)} : Finset Var) ∪ ({(nb052_alpha_dummy_001)} : Finset Var) ∪
-          ({(nb052_alpha_dummy_002)} : Finset Var) ∪ ((syn_wa
-            (syn_wa (Wff.classMem (Class.cv (nb052_alpha_dummy_000)) (syn_cvv))
-              (Wff.classMem (Class.cv (nb052_alpha_dummy_001)) (syn_cvv)))
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_002))
-              (syn_cun (Class.cv (nb052_alpha_dummy_000))
-                (Class.cv (nb052_alpha_dummy_001)))))).fv) :=
+    (nb052AlphaDummy004) ∉
+      (({(nb052AlphaDummy000)} : Finset Var) ∪ ({(nb052AlphaDummy001)} : Finset Var) ∪
+          ({(nb052AlphaDummy002)} : Finset Var) ∪ ((synWa
+            (synWa (Wff.classMem (Class.cv (nb052AlphaDummy000)) (synCvv))
+              (Wff.classMem (Class.cv (nb052AlphaDummy001)) (synCvv)))
+            (Wff.classEq (Class.cv (nb052AlphaDummy002))
+              (synCun (Class.cv (nb052AlphaDummy000))
+                (Class.cv (nb052AlphaDummy001)))))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_004] using
+  simpa only [nb052AlphaDummy004] using
     freshVar_not_mem
-      (({(nb052_alpha_dummy_000)} : Finset Var) ∪ ({(nb052_alpha_dummy_001)} : Finset Var) ∪
-          ({(nb052_alpha_dummy_002)} : Finset Var) ∪ ((syn_wa
-            (syn_wa (Wff.classMem (Class.cv (nb052_alpha_dummy_000)) (syn_cvv))
-              (Wff.classMem (Class.cv (nb052_alpha_dummy_001)) (syn_cvv)))
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_002))
-              (syn_cun (Class.cv (nb052_alpha_dummy_000))
-                (Class.cv (nb052_alpha_dummy_001)))))).fv)
+      (({(nb052AlphaDummy000)} : Finset Var) ∪ ({(nb052AlphaDummy001)} : Finset Var) ∪
+          ({(nb052AlphaDummy002)} : Finset Var) ∪ ((synWa
+            (synWa (Wff.classMem (Class.cv (nb052AlphaDummy000)) (synCvv))
+              (Wff.classMem (Class.cv (nb052AlphaDummy001)) (synCvv)))
+            (Wff.classEq (Class.cv (nb052AlphaDummy002))
+              (synCun (Class.cv (nb052AlphaDummy000))
+                (Class.cv (nb052AlphaDummy001)))))).fv)
       0
 
 theorem nb052_fresh_100 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_003 x y) ∉
-      (({ x } : Finset Var) ∪ ((syn_cvv)).fv ∪ ({ y } : Finset Var) ∪ ((syn_cvv)).fv ∪
-        ((syn_cun (Class.cv x) (Class.cv y))).fv) :=
+    (nb052AlphaDummy003 x y) ∉
+      (({ x } : Finset Var) ∪ ((synCvv)).fv ∪ ({ y } : Finset Var) ∪ ((synCvv)).fv ∪
+        ((synCun (Class.cv x) (Class.cv y))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_003] using
+  simpa only [nb052AlphaDummy003] using
     freshVar_not_mem
-      (({ x } : Finset Var) ∪ ((syn_cvv)).fv ∪ ({ y } : Finset Var) ∪ ((syn_cvv)).fv ∪
-        ((syn_cun (Class.cv x) (Class.cv y))).fv)
+      (({ x } : Finset Var) ∪ ((synCvv)).fv ∪ ({ y } : Finset Var) ∪ ((synCvv)).fv ∪
+        ((synCun (Class.cv x) (Class.cv y))).fv)
       0
 
 theorem nb052_fresh_101 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_005 x y) ∉
+    (nb052AlphaDummy005 x y) ∉
       (({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪
-          ({(nb052_alpha_dummy_003 x y)} : Finset Var) ∪ ((syn_wa
-            (syn_wa (Wff.classMem (Class.cv x) (syn_cvv)) (Wff.classMem (Class.cv y) (syn_cvv)))
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_003 x y))
-              (syn_cun (Class.cv x) (Class.cv y))))).fv) :=
+          ({(nb052AlphaDummy003 x y)} : Finset Var) ∪ ((synWa
+            (synWa (Wff.classMem (Class.cv x) (synCvv)) (Wff.classMem (Class.cv y) (synCvv)))
+            (Wff.classEq (Class.cv (nb052AlphaDummy003 x y))
+              (synCun (Class.cv x) (Class.cv y))))).fv) :=
   by
-  simpa only [nb052_alpha_dummy_005] using
+  simpa only [nb052AlphaDummy005] using
     freshVar_not_mem
       (({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪
-          ({(nb052_alpha_dummy_003 x y)} : Finset Var) ∪ ((syn_wa
-            (syn_wa (Wff.classMem (Class.cv x) (syn_cvv)) (Wff.classMem (Class.cv y) (syn_cvv)))
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_003 x y))
-              (syn_cun (Class.cv x) (Class.cv y))))).fv)
+          ({(nb052AlphaDummy003 x y)} : Finset Var) ∪ ((synWa
+            (synWa (Wff.classMem (Class.cv x) (synCvv)) (Wff.classMem (Class.cv y) (synCvv)))
+            (Wff.classEq (Class.cv (nb052AlphaDummy003 x y))
+              (synCun (Class.cv x) (Class.cv y))))).fv)
       0
 
-theorem nb052_fresh_102 : (nb052_alpha_dummy_000) ∉ ((∅ : Finset Var)) := by
-  simpa only [nb052_alpha_dummy_000] using freshVar_not_mem ((∅ : Finset Var)) 0
+theorem nb052_fresh_102 : (nb052AlphaDummy000) ∉ ((∅ : Finset Var)) := by
+  simpa only [nb052AlphaDummy000] using freshVar_not_mem ((∅ : Finset Var)) 0
 
-theorem nb052_fresh_103 : (nb052_alpha_dummy_001) ∉ ((∅ : Finset Var)) := by
-  simpa only [nb052_alpha_dummy_001] using freshVar_not_mem ((∅ : Finset Var)) 1
+theorem nb052_fresh_103 : (nb052AlphaDummy001) ∉ ((∅ : Finset Var)) := by
+  simpa only [nb052AlphaDummy001] using freshVar_not_mem ((∅ : Finset Var)) 1
 
-theorem nb052_distinct_104 : (nb052_alpha_dummy_000) ≠ (nb052_alpha_dummy_001) := by
-  simpa only [nb052_alpha_dummy_000, nb052_alpha_dummy_001] using
+theorem nb052_distinct_104 : (nb052AlphaDummy000) ≠ (nb052AlphaDummy001) := by
+  simpa only [nb052AlphaDummy000, nb052AlphaDummy001] using
     (freshVar_injective ((∅ : Finset Var)) (i := 0) (j := 1) (by decide))
 
 theorem nb052_support_mem_0000 :
-    (nb052_alpha_dummy_000) ∈
-      (({(nb052_alpha_dummy_000)} : Finset Var) ∪ ({(nb052_alpha_dummy_001)} : Finset Var) ∪
-          ({(nb052_alpha_dummy_002)} : Finset Var) ∪ ((syn_wa
-            (syn_wa (Wff.classMem (Class.cv (nb052_alpha_dummy_000)) (syn_cvv))
-              (Wff.classMem (Class.cv (nb052_alpha_dummy_001)) (syn_cvv)))
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_002))
-              (syn_cun (Class.cv (nb052_alpha_dummy_000))
-                (Class.cv (nb052_alpha_dummy_001)))))).fv) :=
+    (nb052AlphaDummy000) ∈
+      (({(nb052AlphaDummy000)} : Finset Var) ∪ ({(nb052AlphaDummy001)} : Finset Var) ∪
+          ({(nb052AlphaDummy002)} : Finset Var) ∪ ((synWa
+            (synWa (Wff.classMem (Class.cv (nb052AlphaDummy000)) (synCvv))
+              (Wff.classMem (Class.cv (nb052AlphaDummy001)) (synCvv)))
+            (Wff.classEq (Class.cv (nb052AlphaDummy002))
+              (synCun (Class.cv (nb052AlphaDummy000))
+                (Class.cv (nb052AlphaDummy001)))))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -1645,10 +1729,10 @@ theorem nb052_support_mem_0000 :
 theorem nb052_support_mem_0001 (x : Var) (y : Var) :
     x ∈
       (({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪
-          ({(nb052_alpha_dummy_003 x y)} : Finset Var) ∪ ((syn_wa
-            (syn_wa (Wff.classMem (Class.cv x) (syn_cvv)) (Wff.classMem (Class.cv y) (syn_cvv)))
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_003 x y))
-              (syn_cun (Class.cv x) (Class.cv y))))).fv) :=
+          ({(nb052AlphaDummy003 x y)} : Finset Var) ∪ ((synWa
+            (synWa (Wff.classMem (Class.cv x) (synCvv)) (Wff.classMem (Class.cv y) (synCvv)))
+            (Wff.classEq (Class.cv (nb052AlphaDummy003 x y))
+              (synCun (Class.cv x) (Class.cv y))))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -1659,14 +1743,14 @@ theorem nb052_support_mem_0001 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0002 :
-    (nb052_alpha_dummy_001) ∈
-      (({(nb052_alpha_dummy_000)} : Finset Var) ∪ ({(nb052_alpha_dummy_001)} : Finset Var) ∪
-          ({(nb052_alpha_dummy_002)} : Finset Var) ∪ ((syn_wa
-            (syn_wa (Wff.classMem (Class.cv (nb052_alpha_dummy_000)) (syn_cvv))
-              (Wff.classMem (Class.cv (nb052_alpha_dummy_001)) (syn_cvv)))
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_002))
-              (syn_cun (Class.cv (nb052_alpha_dummy_000))
-                (Class.cv (nb052_alpha_dummy_001)))))).fv) :=
+    (nb052AlphaDummy001) ∈
+      (({(nb052AlphaDummy000)} : Finset Var) ∪ ({(nb052AlphaDummy001)} : Finset Var) ∪
+          ({(nb052AlphaDummy002)} : Finset Var) ∪ ((synWa
+            (synWa (Wff.classMem (Class.cv (nb052AlphaDummy000)) (synCvv))
+              (Wff.classMem (Class.cv (nb052AlphaDummy001)) (synCvv)))
+            (Wff.classEq (Class.cv (nb052AlphaDummy002))
+              (synCun (Class.cv (nb052AlphaDummy000))
+                (Class.cv (nb052AlphaDummy001)))))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -1679,10 +1763,10 @@ theorem nb052_support_mem_0002 :
 theorem nb052_support_mem_0003 (x : Var) (y : Var) :
     y ∈
       (({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪
-          ({(nb052_alpha_dummy_003 x y)} : Finset Var) ∪ ((syn_wa
-            (syn_wa (Wff.classMem (Class.cv x) (syn_cvv)) (Wff.classMem (Class.cv y) (syn_cvv)))
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_003 x y))
-              (syn_cun (Class.cv x) (Class.cv y))))).fv) :=
+          ({(nb052AlphaDummy003 x y)} : Finset Var) ∪ ((synWa
+            (synWa (Wff.classMem (Class.cv x) (synCvv)) (Wff.classMem (Class.cv y) (synCvv)))
+            (Wff.classEq (Class.cv (nb052AlphaDummy003 x y))
+              (synCun (Class.cv x) (Class.cv y))))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -1693,14 +1777,14 @@ theorem nb052_support_mem_0003 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0004 :
-    (nb052_alpha_dummy_002) ∈
-      (({(nb052_alpha_dummy_000)} : Finset Var) ∪ ({(nb052_alpha_dummy_001)} : Finset Var) ∪
-          ({(nb052_alpha_dummy_002)} : Finset Var) ∪ ((syn_wa
-            (syn_wa (Wff.classMem (Class.cv (nb052_alpha_dummy_000)) (syn_cvv))
-              (Wff.classMem (Class.cv (nb052_alpha_dummy_001)) (syn_cvv)))
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_002))
-              (syn_cun (Class.cv (nb052_alpha_dummy_000))
-                (Class.cv (nb052_alpha_dummy_001)))))).fv) :=
+    (nb052AlphaDummy002) ∈
+      (({(nb052AlphaDummy000)} : Finset Var) ∪ ({(nb052AlphaDummy001)} : Finset Var) ∪
+          ({(nb052AlphaDummy002)} : Finset Var) ∪ ((synWa
+            (synWa (Wff.classMem (Class.cv (nb052AlphaDummy000)) (synCvv))
+              (Wff.classMem (Class.cv (nb052AlphaDummy001)) (synCvv)))
+            (Wff.classEq (Class.cv (nb052AlphaDummy002))
+              (synCun (Class.cv (nb052AlphaDummy000))
+                (Class.cv (nb052AlphaDummy001)))))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -1709,12 +1793,12 @@ theorem nb052_support_mem_0004 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0005 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_003 x y) ∈
+    (nb052AlphaDummy003 x y) ∈
       (({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪
-          ({(nb052_alpha_dummy_003 x y)} : Finset Var) ∪ ((syn_wa
-            (syn_wa (Wff.classMem (Class.cv x) (syn_cvv)) (Wff.classMem (Class.cv y) (syn_cvv)))
-            (Wff.classEq (Class.cv (nb052_alpha_dummy_003 x y))
-              (syn_cun (Class.cv x) (Class.cv y))))).fv) :=
+          ({(nb052AlphaDummy003 x y)} : Finset Var) ∪ ((synWa
+            (synWa (Wff.classMem (Class.cv x) (synCvv)) (Wff.classMem (Class.cv y) (synCvv)))
+            (Wff.classEq (Class.cv (nb052AlphaDummy003 x y))
+              (synCun (Class.cv x) (Class.cv y))))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -1723,10 +1807,10 @@ theorem nb052_support_mem_0005 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0006 :
-    (nb052_alpha_dummy_000) ∈
-      (({(nb052_alpha_dummy_000)} : Finset Var) ∪ ((syn_cvv)).fv ∪
-            ({(nb052_alpha_dummy_001)} : Finset Var) ∪ ((syn_cvv)).fv ∪
-        ((syn_cun (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))).fv) :=
+    (nb052AlphaDummy000) ∈
+      (({(nb052AlphaDummy000)} : Finset Var) ∪ ((synCvv)).fv ∪
+            ({(nb052AlphaDummy001)} : Finset Var) ∪ ((synCvv)).fv ∪
+        ((synCun (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -1740,8 +1824,8 @@ theorem nb052_support_mem_0006 :
 
 theorem nb052_support_mem_0007 (x : Var) (y : Var) :
     x ∈
-      (({ x } : Finset Var) ∪ ((syn_cvv)).fv ∪ ({ y } : Finset Var) ∪ ((syn_cvv)).fv ∪
-        ((syn_cun (Class.cv x) (Class.cv y))).fv) :=
+      (({ x } : Finset Var) ∪ ((synCvv)).fv ∪ ({ y } : Finset Var) ∪ ((synCvv)).fv ∪
+        ((synCun (Class.cv x) (Class.cv y))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -1754,9 +1838,9 @@ theorem nb052_support_mem_0007 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0008 :
-    (nb052_alpha_dummy_000) ∈
-      (((syn_cop (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_002))).fv) :=
+    (nb052AlphaDummy000) ∈
+      (((synCop (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))).fv ∪
+        ((Class.cv (nb052AlphaDummy002))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -1767,16 +1851,16 @@ theorem nb052_support_mem_0008 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0009 :
-    (nb052_alpha_dummy_000) ∈
-      (((syn_ccompl (Class.cab (nb052_alpha_dummy_006) (syn_wrex (nb052_alpha_dummy_007)
-                (syn_cop (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                  (syn_cphi (Class.cv (nb052_alpha_dummy_007)))))))).fv ∪ ((syn_ccompl
-            (Class.cab (nb052_alpha_dummy_006)
-              (syn_wrex (nb052_alpha_dummy_007) (Class.cv (nb052_alpha_dummy_002))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                  (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_007)))
-                    (syn_csn (syn_c0c)))))))).fv) :=
+    (nb052AlphaDummy000) ∈
+      (((synCcompl (Class.cab (nb052AlphaDummy006) (synWrex (nb052AlphaDummy007)
+                (synCop (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))
+                (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                  (synCphi (Class.cv (nb052AlphaDummy007)))))))).fv ∪ ((synCcompl
+            (Class.cab (nb052AlphaDummy006)
+              (synWrex (nb052AlphaDummy007) (Class.cv (nb052AlphaDummy002))
+                (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                  (synCun (synCphi (Class.cv (nb052AlphaDummy007)))
+                    (synCsn (synC0c)))))))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -1799,8 +1883,8 @@ theorem nb052_support_mem_0009 :
 
 theorem nb052_support_mem_0010 (x : Var) (y : Var) :
     x ∈
-      (((syn_cop (Class.cv x) (Class.cv y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_003 x y))).fv) :=
+      (((synCop (Class.cv x) (Class.cv y))).fv ∪
+        ((Class.cv (nb052AlphaDummy003 x y))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -1812,27 +1896,27 @@ theorem nb052_support_mem_0010 (x : Var) (y : Var) :
 
 theorem nb052_support_mem_0011 (x : Var) (y : Var) :
     x ∈
-      (((syn_ccompl (Class.cab (nb052_alpha_dummy_008 x y)
-              (syn_wrex (nb052_alpha_dummy_009 x y) (syn_cop (Class.cv x) (Class.cv y))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                  (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))))))).fv ∪ ((syn_ccompl
-            (Class.cab (nb052_alpha_dummy_008 x y)
-              (syn_wrex (nb052_alpha_dummy_009 x y) (Class.cv (nb052_alpha_dummy_003 x y))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                  (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))
-                    (syn_csn (syn_c0c)))))))).fv) :=
+      (((synCcompl (Class.cab (nb052AlphaDummy008 x y)
+              (synWrex (nb052AlphaDummy009 x y) (synCop (Class.cv x) (Class.cv y))
+                (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                  (synCphi (Class.cv (nb052AlphaDummy009 x y)))))))).fv ∪ ((synCcompl
+            (Class.cab (nb052AlphaDummy008 x y)
+              (synWrex (nb052AlphaDummy009 x y) (Class.cv (nb052AlphaDummy003 x y))
+                (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                  (synCun (synCphi (Class.cv (nb052AlphaDummy009 x y)))
+                    (synCsn (synC0c)))))))).fv) :=
   by
   with_reducible
     refine
-      Finset.mem_union_left (a := x) (s := ((syn_ccompl (Class.cab (nb052_alpha_dummy_008 x y)
-              (syn_wrex (nb052_alpha_dummy_009 x y) (syn_cop (Class.cv x) (Class.cv y))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                  (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))))))).fv)
-        ((syn_ccompl (Class.cab (nb052_alpha_dummy_008 x y)
-              (syn_wrex (nb052_alpha_dummy_009 x y) (Class.cv (nb052_alpha_dummy_003 x y))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                  (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))
-                    (syn_csn (syn_c0c)))))))).fv
+      Finset.mem_union_left (a := x) (s := ((synCcompl (Class.cab (nb052AlphaDummy008 x y)
+              (synWrex (nb052AlphaDummy009 x y) (synCop (Class.cv x) (Class.cv y))
+                (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                  (synCphi (Class.cv (nb052AlphaDummy009 x y)))))))).fv)
+        ((synCcompl (Class.cab (nb052AlphaDummy008 x y)
+              (synWrex (nb052AlphaDummy009 x y) (Class.cv (nb052AlphaDummy003 x y))
+                (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                  (synCun (synCphi (Class.cv (nb052AlphaDummy009 x y)))
+                    (synCsn (synC0c)))))))).fv
         ?_
   rw [fv_syn_ccompl]
   rw [fv_class_cab]
@@ -1852,15 +1936,15 @@ theorem nb052_support_mem_0011 (x : Var) (y : Var) :
       exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0012 :
-    (nb052_alpha_dummy_000) ∈
-      (((Class.cab (nb052_alpha_dummy_006) (syn_wrex (nb052_alpha_dummy_007)
-              (syn_cop (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_007))))))).fv ∪
-        ((Class.cab (nb052_alpha_dummy_006) (syn_wrex (nb052_alpha_dummy_007)
-              (syn_cop (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_007))))))).fv) :=
+    (nb052AlphaDummy000) ∈
+      (((Class.cab (nb052AlphaDummy006) (synWrex (nb052AlphaDummy007)
+              (synCop (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))
+              (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                (synCphi (Class.cv (nb052AlphaDummy007))))))).fv ∪
+        ((Class.cab (nb052AlphaDummy006) (synWrex (nb052AlphaDummy007)
+              (synCop (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))
+              (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                (synCphi (Class.cv (nb052AlphaDummy007))))))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -1882,14 +1966,14 @@ theorem nb052_support_mem_0012 :
 
 theorem nb052_support_mem_0013 (x : Var) (y : Var) :
     x ∈
-      (((Class.cab (nb052_alpha_dummy_008 x y)
-            (syn_wrex (nb052_alpha_dummy_009 x y) (syn_cop (Class.cv x) (Class.cv y))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y))))))).fv ∪
-        ((Class.cab (nb052_alpha_dummy_008 x y)
-            (syn_wrex (nb052_alpha_dummy_009 x y) (syn_cop (Class.cv x) (Class.cv y))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y))))))).fv) :=
+      (((Class.cab (nb052AlphaDummy008 x y)
+            (synWrex (nb052AlphaDummy009 x y) (synCop (Class.cv x) (Class.cv y))
+              (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                (synCphi (Class.cv (nb052AlphaDummy009 x y))))))).fv ∪
+        ((Class.cab (nb052AlphaDummy008 x y)
+            (synWrex (nb052AlphaDummy009 x y) (synCop (Class.cv x) (Class.cv y))
+              (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                (synCphi (Class.cv (nb052AlphaDummy009 x y))))))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -1910,8 +1994,8 @@ theorem nb052_support_mem_0013 (x : Var) (y : Var) :
       exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0014 :
-    (nb052_alpha_dummy_000) ∈
-      (((Class.cv (nb052_alpha_dummy_000))).fv ∪ ((Class.cv (nb052_alpha_dummy_001))).fv) :=
+    (nb052AlphaDummy000) ∈
+      (((Class.cv (nb052AlphaDummy000))).fv ∪ ((Class.cv (nb052AlphaDummy001))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -1919,16 +2003,16 @@ theorem nb052_support_mem_0014 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0015 :
-    (nb052_alpha_dummy_000) ∈
-      (((syn_ccompl (Class.cab (nb052_alpha_dummy_014)
-              (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_000))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-                  (syn_cphi (Class.cv (nb052_alpha_dummy_015)))))))).fv ∪ ((syn_ccompl
-            (Class.cab (nb052_alpha_dummy_014)
-              (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_001))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-                  (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_015)))
-                    (syn_csn (syn_c0c)))))))).fv) :=
+    (nb052AlphaDummy000) ∈
+      (((synCcompl (Class.cab (nb052AlphaDummy014)
+              (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy000))
+                (Wff.classEq (Class.cv (nb052AlphaDummy014))
+                  (synCphi (Class.cv (nb052AlphaDummy015)))))))).fv ∪ ((synCcompl
+            (Class.cab (nb052AlphaDummy014)
+              (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy001))
+                (Wff.classEq (Class.cv (nb052AlphaDummy014))
+                  (synCun (synCphi (Class.cv (nb052AlphaDummy015)))
+                    (synCsn (synC0c)))))))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -1956,15 +2040,15 @@ theorem nb052_support_mem_0016 (x : Var) (y : Var) :
 
 theorem nb052_support_mem_0017 (x : Var) (y : Var) :
     x ∈
-      (((syn_ccompl (Class.cab (nb052_alpha_dummy_016 x y)
-              (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv x)
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-                  (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))))))).fv ∪ ((syn_ccompl
-            (Class.cab (nb052_alpha_dummy_016 x y)
-              (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv y)
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-                  (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))
-                    (syn_csn (syn_c0c)))))))).fv) :=
+      (((synCcompl (Class.cab (nb052AlphaDummy016 x y)
+              (synWrex (nb052AlphaDummy017 x y) (Class.cv x)
+                (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+                  (synCphi (Class.cv (nb052AlphaDummy017 x y)))))))).fv ∪ ((synCcompl
+            (Class.cab (nb052AlphaDummy016 x y)
+              (synWrex (nb052AlphaDummy017 x y) (Class.cv y)
+                (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+                  (synCun (synCphi (Class.cv (nb052AlphaDummy017 x y)))
+                    (synCsn (synC0c)))))))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -1983,15 +2067,15 @@ theorem nb052_support_mem_0017 (x : Var) (y : Var) :
       exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0018 :
-    (nb052_alpha_dummy_000) ∈
-      (((Class.cab (nb052_alpha_dummy_014)
-            (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_000))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_015))))))).fv ∪
-        ((Class.cab (nb052_alpha_dummy_014)
-            (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_000))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_015))))))).fv) :=
+    (nb052AlphaDummy000) ∈
+      (((Class.cab (nb052AlphaDummy014)
+            (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy000))
+              (Wff.classEq (Class.cv (nb052AlphaDummy014))
+                (synCphi (Class.cv (nb052AlphaDummy015))))))).fv ∪
+        ((Class.cab (nb052AlphaDummy014)
+            (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy000))
+              (Wff.classEq (Class.cv (nb052AlphaDummy014))
+                (synCphi (Class.cv (nb052AlphaDummy015))))))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2010,14 +2094,14 @@ theorem nb052_support_mem_0018 :
 
 theorem nb052_support_mem_0019 (x : Var) (y : Var) :
     x ∈
-      (((Class.cab (nb052_alpha_dummy_016 x y)
-            (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv x)
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y))))))).fv ∪
-        ((Class.cab (nb052_alpha_dummy_016 x y)
-            (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv x)
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y))))))).fv) :=
+      (((Class.cab (nb052AlphaDummy016 x y)
+            (synWrex (nb052AlphaDummy017 x y) (Class.cv x)
+              (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+                (synCphi (Class.cv (nb052AlphaDummy017 x y))))))).fv ∪
+        ((Class.cab (nb052AlphaDummy016 x y)
+            (synWrex (nb052AlphaDummy017 x y) (Class.cv x)
+              (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+                (synCphi (Class.cv (nb052AlphaDummy017 x y))))))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2035,22 +2119,22 @@ theorem nb052_support_mem_0019 (x : Var) (y : Var) :
       exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0020 :
-    (nb052_alpha_dummy_015) ∈ (((Class.cv (nb052_alpha_dummy_015))).fv) :=
+    (nb052AlphaDummy015) ∈ (((Class.cv (nb052AlphaDummy015))).fv) :=
   by
   rw [fv_class_cv]
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0021 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_017 x y) ∈ (((Class.cv (nb052_alpha_dummy_017 x y))).fv) :=
+    (nb052AlphaDummy017 x y) ∈ (((Class.cv (nb052AlphaDummy017 x y))).fv) :=
   by
   rw [fv_class_cv]
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0022 :
-    (nb052_alpha_dummy_022) ∈
-      (((Wff.classMem (Class.cv (nb052_alpha_dummy_022)) (syn_cnnc))).fv ∪
-          ((syn_cplc (Class.cv (nb052_alpha_dummy_022)) (syn_c1c))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_022))).fv) :=
+    (nb052AlphaDummy022) ∈
+      (((Wff.classMem (Class.cv (nb052AlphaDummy022)) (synCnnc))).fv ∪
+          ((synCplc (Class.cv (nb052AlphaDummy022)) (synC1c))).fv ∪
+        ((Class.cv (nb052AlphaDummy022))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2063,10 +2147,10 @@ theorem nb052_support_mem_0022 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0023 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_024 x y) ∈
-      (((Wff.classMem (Class.cv (nb052_alpha_dummy_024 x y)) (syn_cnnc))).fv ∪
-          ((syn_cplc (Class.cv (nb052_alpha_dummy_024 x y)) (syn_c1c))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_024 x y))).fv) :=
+    (nb052AlphaDummy024 x y) ∈
+      (((Wff.classMem (Class.cv (nb052AlphaDummy024 x y)) (synCnnc))).fv ∪
+          ((synCplc (Class.cv (nb052AlphaDummy024 x y)) (synC1c))).fv ∪
+        ((Class.cv (nb052AlphaDummy024 x y))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2079,8 +2163,8 @@ theorem nb052_support_mem_0023 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0024 :
-    (nb052_alpha_dummy_022) ∈
-      (((Class.cv (nb052_alpha_dummy_022))).fv ∪ ((syn_c1c)).fv) :=
+    (nb052AlphaDummy022) ∈
+      (((Class.cv (nb052AlphaDummy022))).fv ∪ ((synC1c)).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2088,8 +2172,8 @@ theorem nb052_support_mem_0024 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0025 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_024 x y) ∈
-      (((Class.cv (nb052_alpha_dummy_024 x y))).fv ∪ ((syn_c1c)).fv) :=
+    (nb052AlphaDummy024 x y) ∈
+      (((Class.cv (nb052AlphaDummy024 x y))).fv ∪ ((synC1c)).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2097,10 +2181,10 @@ theorem nb052_support_mem_0025 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0026 :
-    (nb052_alpha_dummy_029) ∈
-      (((syn_cnin (Class.cv (nb052_alpha_dummy_029)) (Class.cv (nb052_alpha_dummy_030)))).fv ∪
-        ((syn_cnin (Class.cv (nb052_alpha_dummy_029))
-            (Class.cv (nb052_alpha_dummy_030)))).fv) :=
+    (nb052AlphaDummy029) ∈
+      (((synCnin (Class.cv (nb052AlphaDummy029)) (Class.cv (nb052AlphaDummy030)))).fv ∪
+        ((synCnin (Class.cv (nb052AlphaDummy029))
+            (Class.cv (nb052AlphaDummy030)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2111,11 +2195,11 @@ theorem nb052_support_mem_0026 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0027 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_032 x y) ∈
-      (((syn_cnin (Class.cv (nb052_alpha_dummy_032 x y))
-            (Class.cv (nb052_alpha_dummy_033 x y)))).fv ∪
-        ((syn_cnin (Class.cv (nb052_alpha_dummy_032 x y))
-            (Class.cv (nb052_alpha_dummy_033 x y)))).fv) :=
+    (nb052AlphaDummy032 x y) ∈
+      (((synCnin (Class.cv (nb052AlphaDummy032 x y))
+            (Class.cv (nb052AlphaDummy033 x y)))).fv ∪
+        ((synCnin (Class.cv (nb052AlphaDummy032 x y))
+            (Class.cv (nb052AlphaDummy033 x y)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2126,8 +2210,8 @@ theorem nb052_support_mem_0027 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0028 :
-    (nb052_alpha_dummy_029) ∈
-      (((Class.cv (nb052_alpha_dummy_029))).fv ∪ ((Class.cv (nb052_alpha_dummy_030))).fv) :=
+    (nb052AlphaDummy029) ∈
+      (((Class.cv (nb052AlphaDummy029))).fv ∪ ((Class.cv (nb052AlphaDummy030))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2135,9 +2219,9 @@ theorem nb052_support_mem_0028 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0029 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_032 x y) ∈
-      (((Class.cv (nb052_alpha_dummy_032 x y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_033 x y))).fv) :=
+    (nb052AlphaDummy032 x y) ∈
+      (((Class.cv (nb052AlphaDummy032 x y))).fv ∪
+        ((Class.cv (nb052AlphaDummy033 x y))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2145,10 +2229,10 @@ theorem nb052_support_mem_0029 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0030 :
-    (nb052_alpha_dummy_030) ∈
-      (((syn_cnin (Class.cv (nb052_alpha_dummy_029)) (Class.cv (nb052_alpha_dummy_030)))).fv ∪
-        ((syn_cnin (Class.cv (nb052_alpha_dummy_029))
-            (Class.cv (nb052_alpha_dummy_030)))).fv) :=
+    (nb052AlphaDummy030) ∈
+      (((synCnin (Class.cv (nb052AlphaDummy029)) (Class.cv (nb052AlphaDummy030)))).fv ∪
+        ((synCnin (Class.cv (nb052AlphaDummy029))
+            (Class.cv (nb052AlphaDummy030)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2159,11 +2243,11 @@ theorem nb052_support_mem_0030 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0031 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_033 x y) ∈
-      (((syn_cnin (Class.cv (nb052_alpha_dummy_032 x y))
-            (Class.cv (nb052_alpha_dummy_033 x y)))).fv ∪
-        ((syn_cnin (Class.cv (nb052_alpha_dummy_032 x y))
-            (Class.cv (nb052_alpha_dummy_033 x y)))).fv) :=
+    (nb052AlphaDummy033 x y) ∈
+      (((synCnin (Class.cv (nb052AlphaDummy032 x y))
+            (Class.cv (nb052AlphaDummy033 x y)))).fv ∪
+        ((synCnin (Class.cv (nb052AlphaDummy032 x y))
+            (Class.cv (nb052AlphaDummy033 x y)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2174,8 +2258,8 @@ theorem nb052_support_mem_0031 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0032 :
-    (nb052_alpha_dummy_030) ∈
-      (((Class.cv (nb052_alpha_dummy_029))).fv ∪ ((Class.cv (nb052_alpha_dummy_030))).fv) :=
+    (nb052AlphaDummy030) ∈
+      (((Class.cv (nb052AlphaDummy029))).fv ∪ ((Class.cv (nb052AlphaDummy030))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   right
@@ -2183,9 +2267,9 @@ theorem nb052_support_mem_0032 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0033 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_033 x y) ∈
-      (((Class.cv (nb052_alpha_dummy_032 x y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_033 x y))).fv) :=
+    (nb052AlphaDummy033 x y) ∈
+      (((Class.cv (nb052AlphaDummy032 x y))).fv ∪
+        ((Class.cv (nb052AlphaDummy033 x y))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   right
@@ -2193,9 +2277,9 @@ theorem nb052_support_mem_0033 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0034 :
-    (nb052_alpha_dummy_029) ∈
-      (((syn_ccompl (Class.cv (nb052_alpha_dummy_029)))).fv ∪
-        ((syn_ccompl (Class.cv (nb052_alpha_dummy_030)))).fv) :=
+    (nb052AlphaDummy029) ∈
+      (((synCcompl (Class.cv (nb052AlphaDummy029)))).fv ∪
+        ((synCcompl (Class.cv (nb052AlphaDummy030)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2204,9 +2288,9 @@ theorem nb052_support_mem_0034 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0035 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_032 x y) ∈
-      (((syn_ccompl (Class.cv (nb052_alpha_dummy_032 x y)))).fv ∪
-        ((syn_ccompl (Class.cv (nb052_alpha_dummy_033 x y)))).fv) :=
+    (nb052AlphaDummy032 x y) ∈
+      (((synCcompl (Class.cv (nb052AlphaDummy032 x y)))).fv ∪
+        ((synCcompl (Class.cv (nb052AlphaDummy033 x y)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2215,8 +2299,8 @@ theorem nb052_support_mem_0035 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0036 :
-    (nb052_alpha_dummy_029) ∈
-      (((Class.cv (nb052_alpha_dummy_029))).fv ∪ ((Class.cv (nb052_alpha_dummy_029))).fv) :=
+    (nb052AlphaDummy029) ∈
+      (((Class.cv (nb052AlphaDummy029))).fv ∪ ((Class.cv (nb052AlphaDummy029))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2224,9 +2308,9 @@ theorem nb052_support_mem_0036 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0037 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_032 x y) ∈
-      (((Class.cv (nb052_alpha_dummy_032 x y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_032 x y))).fv) :=
+    (nb052AlphaDummy032 x y) ∈
+      (((Class.cv (nb052AlphaDummy032 x y))).fv ∪
+        ((Class.cv (nb052AlphaDummy032 x y))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2234,9 +2318,9 @@ theorem nb052_support_mem_0037 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0038 :
-    (nb052_alpha_dummy_030) ∈
-      (((syn_ccompl (Class.cv (nb052_alpha_dummy_029)))).fv ∪
-        ((syn_ccompl (Class.cv (nb052_alpha_dummy_030)))).fv) :=
+    (nb052AlphaDummy030) ∈
+      (((synCcompl (Class.cv (nb052AlphaDummy029)))).fv ∪
+        ((synCcompl (Class.cv (nb052AlphaDummy030)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   right
@@ -2245,9 +2329,9 @@ theorem nb052_support_mem_0038 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0039 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_033 x y) ∈
-      (((syn_ccompl (Class.cv (nb052_alpha_dummy_032 x y)))).fv ∪
-        ((syn_ccompl (Class.cv (nb052_alpha_dummy_033 x y)))).fv) :=
+    (nb052AlphaDummy033 x y) ∈
+      (((synCcompl (Class.cv (nb052AlphaDummy032 x y)))).fv ∪
+        ((synCcompl (Class.cv (nb052AlphaDummy033 x y)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   right
@@ -2256,8 +2340,8 @@ theorem nb052_support_mem_0039 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0040 :
-    (nb052_alpha_dummy_030) ∈
-      (((Class.cv (nb052_alpha_dummy_030))).fv ∪ ((Class.cv (nb052_alpha_dummy_030))).fv) :=
+    (nb052AlphaDummy030) ∈
+      (((Class.cv (nb052AlphaDummy030))).fv ∪ ((Class.cv (nb052AlphaDummy030))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2265,9 +2349,9 @@ theorem nb052_support_mem_0040 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0041 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_033 x y) ∈
-      (((Class.cv (nb052_alpha_dummy_033 x y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_033 x y))).fv) :=
+    (nb052AlphaDummy033 x y) ∈
+      (((Class.cv (nb052AlphaDummy033 x y))).fv ∪
+        ((Class.cv (nb052AlphaDummy033 x y))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2275,10 +2359,10 @@ theorem nb052_support_mem_0041 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0042 :
-    (nb052_alpha_dummy_001) ∈
-      (({(nb052_alpha_dummy_000)} : Finset Var) ∪ ((syn_cvv)).fv ∪
-            ({(nb052_alpha_dummy_001)} : Finset Var) ∪ ((syn_cvv)).fv ∪
-        ((syn_cun (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))).fv) :=
+    (nb052AlphaDummy001) ∈
+      (({(nb052AlphaDummy000)} : Finset Var) ∪ ((synCvv)).fv ∪
+            ({(nb052AlphaDummy001)} : Finset Var) ∪ ((synCvv)).fv ∪
+        ((synCun (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2290,8 +2374,8 @@ theorem nb052_support_mem_0042 :
 
 theorem nb052_support_mem_0043 (x : Var) (y : Var) :
     y ∈
-      (({ x } : Finset Var) ∪ ((syn_cvv)).fv ∪ ({ y } : Finset Var) ∪ ((syn_cvv)).fv ∪
-        ((syn_cun (Class.cv x) (Class.cv y))).fv) :=
+      (({ x } : Finset Var) ∪ ((synCvv)).fv ∪ ({ y } : Finset Var) ∪ ((synCvv)).fv ∪
+        ((synCun (Class.cv x) (Class.cv y))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2302,9 +2386,9 @@ theorem nb052_support_mem_0043 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0044 :
-    (nb052_alpha_dummy_001) ∈
-      (((syn_cop (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_002))).fv) :=
+    (nb052AlphaDummy001) ∈
+      (((synCop (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))).fv ∪
+        ((Class.cv (nb052AlphaDummy002))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2315,16 +2399,16 @@ theorem nb052_support_mem_0044 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0045 :
-    (nb052_alpha_dummy_001) ∈
-      (((syn_ccompl (Class.cab (nb052_alpha_dummy_006) (syn_wrex (nb052_alpha_dummy_007)
-                (syn_cop (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                  (syn_cphi (Class.cv (nb052_alpha_dummy_007)))))))).fv ∪ ((syn_ccompl
-            (Class.cab (nb052_alpha_dummy_006)
-              (syn_wrex (nb052_alpha_dummy_007) (Class.cv (nb052_alpha_dummy_002))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                  (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_007)))
-                    (syn_csn (syn_c0c)))))))).fv) :=
+    (nb052AlphaDummy001) ∈
+      (((synCcompl (Class.cab (nb052AlphaDummy006) (synWrex (nb052AlphaDummy007)
+                (synCop (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))
+                (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                  (synCphi (Class.cv (nb052AlphaDummy007)))))))).fv ∪ ((synCcompl
+            (Class.cab (nb052AlphaDummy006)
+              (synWrex (nb052AlphaDummy007) (Class.cv (nb052AlphaDummy002))
+                (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                  (synCun (synCphi (Class.cv (nb052AlphaDummy007)))
+                    (synCsn (synC0c)))))))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2347,8 +2431,8 @@ theorem nb052_support_mem_0045 :
 
 theorem nb052_support_mem_0046 (x : Var) (y : Var) :
     y ∈
-      (((syn_cop (Class.cv x) (Class.cv y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_003 x y))).fv) :=
+      (((synCop (Class.cv x) (Class.cv y))).fv ∪
+        ((Class.cv (nb052AlphaDummy003 x y))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2360,27 +2444,27 @@ theorem nb052_support_mem_0046 (x : Var) (y : Var) :
 
 theorem nb052_support_mem_0047 (x : Var) (y : Var) :
     y ∈
-      (((syn_ccompl (Class.cab (nb052_alpha_dummy_008 x y)
-              (syn_wrex (nb052_alpha_dummy_009 x y) (syn_cop (Class.cv x) (Class.cv y))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                  (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))))))).fv ∪ ((syn_ccompl
-            (Class.cab (nb052_alpha_dummy_008 x y)
-              (syn_wrex (nb052_alpha_dummy_009 x y) (Class.cv (nb052_alpha_dummy_003 x y))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                  (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))
-                    (syn_csn (syn_c0c)))))))).fv) :=
+      (((synCcompl (Class.cab (nb052AlphaDummy008 x y)
+              (synWrex (nb052AlphaDummy009 x y) (synCop (Class.cv x) (Class.cv y))
+                (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                  (synCphi (Class.cv (nb052AlphaDummy009 x y)))))))).fv ∪ ((synCcompl
+            (Class.cab (nb052AlphaDummy008 x y)
+              (synWrex (nb052AlphaDummy009 x y) (Class.cv (nb052AlphaDummy003 x y))
+                (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                  (synCun (synCphi (Class.cv (nb052AlphaDummy009 x y)))
+                    (synCsn (synC0c)))))))).fv) :=
   by
   with_reducible
     refine
-      Finset.mem_union_left (a := y) (s := ((syn_ccompl (Class.cab (nb052_alpha_dummy_008 x y)
-              (syn_wrex (nb052_alpha_dummy_009 x y) (syn_cop (Class.cv x) (Class.cv y))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                  (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))))))).fv)
-        ((syn_ccompl (Class.cab (nb052_alpha_dummy_008 x y)
-              (syn_wrex (nb052_alpha_dummy_009 x y) (Class.cv (nb052_alpha_dummy_003 x y))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                  (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))
-                    (syn_csn (syn_c0c)))))))).fv
+      Finset.mem_union_left (a := y) (s := ((synCcompl (Class.cab (nb052AlphaDummy008 x y)
+              (synWrex (nb052AlphaDummy009 x y) (synCop (Class.cv x) (Class.cv y))
+                (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                  (synCphi (Class.cv (nb052AlphaDummy009 x y)))))))).fv)
+        ((synCcompl (Class.cab (nb052AlphaDummy008 x y)
+              (synWrex (nb052AlphaDummy009 x y) (Class.cv (nb052AlphaDummy003 x y))
+                (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                  (synCun (synCphi (Class.cv (nb052AlphaDummy009 x y)))
+                    (synCsn (synC0c)))))))).fv
         ?_
   rw [fv_syn_ccompl]
   rw [fv_class_cab]
@@ -2400,15 +2484,15 @@ theorem nb052_support_mem_0047 (x : Var) (y : Var) :
       exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0048 :
-    (nb052_alpha_dummy_001) ∈
-      (((Class.cab (nb052_alpha_dummy_006) (syn_wrex (nb052_alpha_dummy_007)
-              (syn_cop (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_007))))))).fv ∪
-        ((Class.cab (nb052_alpha_dummy_006) (syn_wrex (nb052_alpha_dummy_007)
-              (syn_cop (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_007))))))).fv) :=
+    (nb052AlphaDummy001) ∈
+      (((Class.cab (nb052AlphaDummy006) (synWrex (nb052AlphaDummy007)
+              (synCop (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))
+              (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                (synCphi (Class.cv (nb052AlphaDummy007))))))).fv ∪
+        ((Class.cab (nb052AlphaDummy006) (synWrex (nb052AlphaDummy007)
+              (synCop (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))
+              (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                (synCphi (Class.cv (nb052AlphaDummy007))))))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2430,14 +2514,14 @@ theorem nb052_support_mem_0048 :
 
 theorem nb052_support_mem_0049 (x : Var) (y : Var) :
     y ∈
-      (((Class.cab (nb052_alpha_dummy_008 x y)
-            (syn_wrex (nb052_alpha_dummy_009 x y) (syn_cop (Class.cv x) (Class.cv y))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y))))))).fv ∪
-        ((Class.cab (nb052_alpha_dummy_008 x y)
-            (syn_wrex (nb052_alpha_dummy_009 x y) (syn_cop (Class.cv x) (Class.cv y))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y))))))).fv) :=
+      (((Class.cab (nb052AlphaDummy008 x y)
+            (synWrex (nb052AlphaDummy009 x y) (synCop (Class.cv x) (Class.cv y))
+              (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                (synCphi (Class.cv (nb052AlphaDummy009 x y))))))).fv ∪
+        ((Class.cab (nb052AlphaDummy008 x y)
+            (synWrex (nb052AlphaDummy009 x y) (synCop (Class.cv x) (Class.cv y))
+              (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                (synCphi (Class.cv (nb052AlphaDummy009 x y))))))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2458,8 +2542,8 @@ theorem nb052_support_mem_0049 (x : Var) (y : Var) :
       exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0050 :
-    (nb052_alpha_dummy_001) ∈
-      (((Class.cv (nb052_alpha_dummy_000))).fv ∪ ((Class.cv (nb052_alpha_dummy_001))).fv) :=
+    (nb052AlphaDummy001) ∈
+      (((Class.cv (nb052AlphaDummy000))).fv ∪ ((Class.cv (nb052AlphaDummy001))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   right
@@ -2467,16 +2551,16 @@ theorem nb052_support_mem_0050 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0051 :
-    (nb052_alpha_dummy_001) ∈
-      (((syn_ccompl (Class.cab (nb052_alpha_dummy_014)
-              (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_000))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-                  (syn_cphi (Class.cv (nb052_alpha_dummy_015)))))))).fv ∪ ((syn_ccompl
-            (Class.cab (nb052_alpha_dummy_014)
-              (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_001))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-                  (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_015)))
-                    (syn_csn (syn_c0c)))))))).fv) :=
+    (nb052AlphaDummy001) ∈
+      (((synCcompl (Class.cab (nb052AlphaDummy014)
+              (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy000))
+                (Wff.classEq (Class.cv (nb052AlphaDummy014))
+                  (synCphi (Class.cv (nb052AlphaDummy015)))))))).fv ∪ ((synCcompl
+            (Class.cab (nb052AlphaDummy014)
+              (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy001))
+                (Wff.classEq (Class.cv (nb052AlphaDummy014))
+                  (synCun (synCphi (Class.cv (nb052AlphaDummy015)))
+                    (synCsn (synC0c)))))))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   right
@@ -2504,15 +2588,15 @@ theorem nb052_support_mem_0052 (x : Var) (y : Var) :
 
 theorem nb052_support_mem_0053 (x : Var) (y : Var) :
     y ∈
-      (((syn_ccompl (Class.cab (nb052_alpha_dummy_016 x y)
-              (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv x)
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-                  (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))))))).fv ∪ ((syn_ccompl
-            (Class.cab (nb052_alpha_dummy_016 x y)
-              (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv y)
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-                  (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))
-                    (syn_csn (syn_c0c)))))))).fv) :=
+      (((synCcompl (Class.cab (nb052AlphaDummy016 x y)
+              (synWrex (nb052AlphaDummy017 x y) (Class.cv x)
+                (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+                  (synCphi (Class.cv (nb052AlphaDummy017 x y)))))))).fv ∪ ((synCcompl
+            (Class.cab (nb052AlphaDummy016 x y)
+              (synWrex (nb052AlphaDummy017 x y) (Class.cv y)
+                (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+                  (synCun (synCphi (Class.cv (nb052AlphaDummy017 x y)))
+                    (synCsn (synC0c)))))))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   right
@@ -2531,16 +2615,16 @@ theorem nb052_support_mem_0053 (x : Var) (y : Var) :
       exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0054 :
-    (nb052_alpha_dummy_001) ∈
-      (((Class.cab (nb052_alpha_dummy_014)
-            (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_001))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_015)))
-                  (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb052_alpha_dummy_014)
-            (syn_wrex (nb052_alpha_dummy_015) (Class.cv (nb052_alpha_dummy_001))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_014))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_015)))
-                  (syn_csn (syn_c0c))))))).fv) :=
+    (nb052AlphaDummy001) ∈
+      (((Class.cab (nb052AlphaDummy014)
+            (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy001))
+              (Wff.classEq (Class.cv (nb052AlphaDummy014))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy015)))
+                  (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb052AlphaDummy014)
+            (synWrex (nb052AlphaDummy015) (Class.cv (nb052AlphaDummy001))
+              (Wff.classEq (Class.cv (nb052AlphaDummy014))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy015)))
+                  (synCsn (synC0c))))))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2559,15 +2643,15 @@ theorem nb052_support_mem_0054 :
 
 theorem nb052_support_mem_0055 (x : Var) (y : Var) :
     y ∈
-      (((Class.cab (nb052_alpha_dummy_016 x y)
-            (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv y)
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))
-                  (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb052_alpha_dummy_016 x y)
-            (syn_wrex (nb052_alpha_dummy_017 x y) (Class.cv y)
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_016 x y))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))
-                  (syn_csn (syn_c0c))))))).fv) :=
+      (((Class.cab (nb052AlphaDummy016 x y)
+            (synWrex (nb052AlphaDummy017 x y) (Class.cv y)
+              (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy017 x y)))
+                  (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb052AlphaDummy016 x y)
+            (synWrex (nb052AlphaDummy017 x y) (Class.cv y)
+              (Wff.classEq (Class.cv (nb052AlphaDummy016 x y))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy017 x y)))
+                  (synCsn (synC0c))))))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2585,9 +2669,9 @@ theorem nb052_support_mem_0055 (x : Var) (y : Var) :
       exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0056 :
-    (nb052_alpha_dummy_015) ∈
-      (((syn_ccompl (syn_cphi (Class.cv (nb052_alpha_dummy_015))))).fv ∪
-        ((syn_ccompl (syn_csn (syn_c0c)))).fv) :=
+    (nb052AlphaDummy015) ∈
+      (((synCcompl (synCphi (Class.cv (nb052AlphaDummy015))))).fv ∪
+        ((synCcompl (synCsn (synC0c)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2597,9 +2681,9 @@ theorem nb052_support_mem_0056 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0057 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_017 x y) ∈
-      (((syn_ccompl (syn_cphi (Class.cv (nb052_alpha_dummy_017 x y))))).fv ∪
-        ((syn_ccompl (syn_csn (syn_c0c)))).fv) :=
+    (nb052AlphaDummy017 x y) ∈
+      (((synCcompl (synCphi (Class.cv (nb052AlphaDummy017 x y))))).fv ∪
+        ((synCcompl (synCsn (synC0c)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2609,9 +2693,9 @@ theorem nb052_support_mem_0057 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0058 :
-    (nb052_alpha_dummy_015) ∈
-      (((syn_cphi (Class.cv (nb052_alpha_dummy_015)))).fv ∪
-        ((syn_cphi (Class.cv (nb052_alpha_dummy_015)))).fv) :=
+    (nb052AlphaDummy015) ∈
+      (((synCphi (Class.cv (nb052AlphaDummy015)))).fv ∪
+        ((synCphi (Class.cv (nb052AlphaDummy015)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2620,9 +2704,9 @@ theorem nb052_support_mem_0058 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0059 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_017 x y) ∈
-      (((syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))).fv ∪
-        ((syn_cphi (Class.cv (nb052_alpha_dummy_017 x y)))).fv) :=
+    (nb052AlphaDummy017 x y) ∈
+      (((synCphi (Class.cv (nb052AlphaDummy017 x y)))).fv ∪
+        ((synCphi (Class.cv (nb052AlphaDummy017 x y)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2631,22 +2715,22 @@ theorem nb052_support_mem_0059 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0060 :
-    (nb052_alpha_dummy_007) ∈ (((Class.cv (nb052_alpha_dummy_007))).fv) :=
+    (nb052AlphaDummy007) ∈ (((Class.cv (nb052AlphaDummy007))).fv) :=
   by
   rw [fv_class_cv]
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0061 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_009 x y) ∈ (((Class.cv (nb052_alpha_dummy_009 x y))).fv) :=
+    (nb052AlphaDummy009 x y) ∈ (((Class.cv (nb052AlphaDummy009 x y))).fv) :=
   by
   rw [fv_class_cv]
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0062 :
-    (nb052_alpha_dummy_050) ∈
-      (((Wff.classMem (Class.cv (nb052_alpha_dummy_050)) (syn_cnnc))).fv ∪
-          ((syn_cplc (Class.cv (nb052_alpha_dummy_050)) (syn_c1c))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_050))).fv) :=
+    (nb052AlphaDummy050) ∈
+      (((Wff.classMem (Class.cv (nb052AlphaDummy050)) (synCnnc))).fv ∪
+          ((synCplc (Class.cv (nb052AlphaDummy050)) (synC1c))).fv ∪
+        ((Class.cv (nb052AlphaDummy050))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2659,10 +2743,10 @@ theorem nb052_support_mem_0062 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0063 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_052 x y) ∈
-      (((Wff.classMem (Class.cv (nb052_alpha_dummy_052 x y)) (syn_cnnc))).fv ∪
-          ((syn_cplc (Class.cv (nb052_alpha_dummy_052 x y)) (syn_c1c))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_052 x y))).fv) :=
+    (nb052AlphaDummy052 x y) ∈
+      (((Wff.classMem (Class.cv (nb052AlphaDummy052 x y)) (synCnnc))).fv ∪
+          ((synCplc (Class.cv (nb052AlphaDummy052 x y)) (synC1c))).fv ∪
+        ((Class.cv (nb052AlphaDummy052 x y))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2675,8 +2759,8 @@ theorem nb052_support_mem_0063 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0064 :
-    (nb052_alpha_dummy_050) ∈
-      (((Class.cv (nb052_alpha_dummy_050))).fv ∪ ((syn_c1c)).fv) :=
+    (nb052AlphaDummy050) ∈
+      (((Class.cv (nb052AlphaDummy050))).fv ∪ ((synC1c)).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2684,8 +2768,8 @@ theorem nb052_support_mem_0064 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0065 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_052 x y) ∈
-      (((Class.cv (nb052_alpha_dummy_052 x y))).fv ∪ ((syn_c1c)).fv) :=
+    (nb052AlphaDummy052 x y) ∈
+      (((Class.cv (nb052AlphaDummy052 x y))).fv ∪ ((synC1c)).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2693,10 +2777,10 @@ theorem nb052_support_mem_0065 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0066 :
-    (nb052_alpha_dummy_057) ∈
-      (((syn_cnin (Class.cv (nb052_alpha_dummy_057)) (Class.cv (nb052_alpha_dummy_058)))).fv ∪
-        ((syn_cnin (Class.cv (nb052_alpha_dummy_057))
-            (Class.cv (nb052_alpha_dummy_058)))).fv) :=
+    (nb052AlphaDummy057) ∈
+      (((synCnin (Class.cv (nb052AlphaDummy057)) (Class.cv (nb052AlphaDummy058)))).fv ∪
+        ((synCnin (Class.cv (nb052AlphaDummy057))
+            (Class.cv (nb052AlphaDummy058)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2707,11 +2791,11 @@ theorem nb052_support_mem_0066 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0067 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_060 x y) ∈
-      (((syn_cnin (Class.cv (nb052_alpha_dummy_060 x y))
-            (Class.cv (nb052_alpha_dummy_061 x y)))).fv ∪
-        ((syn_cnin (Class.cv (nb052_alpha_dummy_060 x y))
-            (Class.cv (nb052_alpha_dummy_061 x y)))).fv) :=
+    (nb052AlphaDummy060 x y) ∈
+      (((synCnin (Class.cv (nb052AlphaDummy060 x y))
+            (Class.cv (nb052AlphaDummy061 x y)))).fv ∪
+        ((synCnin (Class.cv (nb052AlphaDummy060 x y))
+            (Class.cv (nb052AlphaDummy061 x y)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2722,8 +2806,8 @@ theorem nb052_support_mem_0067 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0068 :
-    (nb052_alpha_dummy_057) ∈
-      (((Class.cv (nb052_alpha_dummy_057))).fv ∪ ((Class.cv (nb052_alpha_dummy_058))).fv) :=
+    (nb052AlphaDummy057) ∈
+      (((Class.cv (nb052AlphaDummy057))).fv ∪ ((Class.cv (nb052AlphaDummy058))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2731,9 +2815,9 @@ theorem nb052_support_mem_0068 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0069 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_060 x y) ∈
-      (((Class.cv (nb052_alpha_dummy_060 x y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_061 x y))).fv) :=
+    (nb052AlphaDummy060 x y) ∈
+      (((Class.cv (nb052AlphaDummy060 x y))).fv ∪
+        ((Class.cv (nb052AlphaDummy061 x y))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2741,10 +2825,10 @@ theorem nb052_support_mem_0069 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0070 :
-    (nb052_alpha_dummy_058) ∈
-      (((syn_cnin (Class.cv (nb052_alpha_dummy_057)) (Class.cv (nb052_alpha_dummy_058)))).fv ∪
-        ((syn_cnin (Class.cv (nb052_alpha_dummy_057))
-            (Class.cv (nb052_alpha_dummy_058)))).fv) :=
+    (nb052AlphaDummy058) ∈
+      (((synCnin (Class.cv (nb052AlphaDummy057)) (Class.cv (nb052AlphaDummy058)))).fv ∪
+        ((synCnin (Class.cv (nb052AlphaDummy057))
+            (Class.cv (nb052AlphaDummy058)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2755,11 +2839,11 @@ theorem nb052_support_mem_0070 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0071 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_061 x y) ∈
-      (((syn_cnin (Class.cv (nb052_alpha_dummy_060 x y))
-            (Class.cv (nb052_alpha_dummy_061 x y)))).fv ∪
-        ((syn_cnin (Class.cv (nb052_alpha_dummy_060 x y))
-            (Class.cv (nb052_alpha_dummy_061 x y)))).fv) :=
+    (nb052AlphaDummy061 x y) ∈
+      (((synCnin (Class.cv (nb052AlphaDummy060 x y))
+            (Class.cv (nb052AlphaDummy061 x y)))).fv ∪
+        ((synCnin (Class.cv (nb052AlphaDummy060 x y))
+            (Class.cv (nb052AlphaDummy061 x y)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2770,8 +2854,8 @@ theorem nb052_support_mem_0071 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0072 :
-    (nb052_alpha_dummy_058) ∈
-      (((Class.cv (nb052_alpha_dummy_057))).fv ∪ ((Class.cv (nb052_alpha_dummy_058))).fv) :=
+    (nb052AlphaDummy058) ∈
+      (((Class.cv (nb052AlphaDummy057))).fv ∪ ((Class.cv (nb052AlphaDummy058))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   right
@@ -2779,9 +2863,9 @@ theorem nb052_support_mem_0072 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0073 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_061 x y) ∈
-      (((Class.cv (nb052_alpha_dummy_060 x y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_061 x y))).fv) :=
+    (nb052AlphaDummy061 x y) ∈
+      (((Class.cv (nb052AlphaDummy060 x y))).fv ∪
+        ((Class.cv (nb052AlphaDummy061 x y))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   right
@@ -2789,9 +2873,9 @@ theorem nb052_support_mem_0073 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0074 :
-    (nb052_alpha_dummy_057) ∈
-      (((syn_ccompl (Class.cv (nb052_alpha_dummy_057)))).fv ∪
-        ((syn_ccompl (Class.cv (nb052_alpha_dummy_058)))).fv) :=
+    (nb052AlphaDummy057) ∈
+      (((synCcompl (Class.cv (nb052AlphaDummy057)))).fv ∪
+        ((synCcompl (Class.cv (nb052AlphaDummy058)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2800,9 +2884,9 @@ theorem nb052_support_mem_0074 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0075 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_060 x y) ∈
-      (((syn_ccompl (Class.cv (nb052_alpha_dummy_060 x y)))).fv ∪
-        ((syn_ccompl (Class.cv (nb052_alpha_dummy_061 x y)))).fv) :=
+    (nb052AlphaDummy060 x y) ∈
+      (((synCcompl (Class.cv (nb052AlphaDummy060 x y)))).fv ∪
+        ((synCcompl (Class.cv (nb052AlphaDummy061 x y)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2811,8 +2895,8 @@ theorem nb052_support_mem_0075 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0076 :
-    (nb052_alpha_dummy_057) ∈
-      (((Class.cv (nb052_alpha_dummy_057))).fv ∪ ((Class.cv (nb052_alpha_dummy_057))).fv) :=
+    (nb052AlphaDummy057) ∈
+      (((Class.cv (nb052AlphaDummy057))).fv ∪ ((Class.cv (nb052AlphaDummy057))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2820,9 +2904,9 @@ theorem nb052_support_mem_0076 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0077 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_060 x y) ∈
-      (((Class.cv (nb052_alpha_dummy_060 x y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_060 x y))).fv) :=
+    (nb052AlphaDummy060 x y) ∈
+      (((Class.cv (nb052AlphaDummy060 x y))).fv ∪
+        ((Class.cv (nb052AlphaDummy060 x y))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2830,9 +2914,9 @@ theorem nb052_support_mem_0077 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0078 :
-    (nb052_alpha_dummy_058) ∈
-      (((syn_ccompl (Class.cv (nb052_alpha_dummy_057)))).fv ∪
-        ((syn_ccompl (Class.cv (nb052_alpha_dummy_058)))).fv) :=
+    (nb052AlphaDummy058) ∈
+      (((synCcompl (Class.cv (nb052AlphaDummy057)))).fv ∪
+        ((synCcompl (Class.cv (nb052AlphaDummy058)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   right
@@ -2841,9 +2925,9 @@ theorem nb052_support_mem_0078 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0079 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_061 x y) ∈
-      (((syn_ccompl (Class.cv (nb052_alpha_dummy_060 x y)))).fv ∪
-        ((syn_ccompl (Class.cv (nb052_alpha_dummy_061 x y)))).fv) :=
+    (nb052AlphaDummy061 x y) ∈
+      (((synCcompl (Class.cv (nb052AlphaDummy060 x y)))).fv ∪
+        ((synCcompl (Class.cv (nb052AlphaDummy061 x y)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   right
@@ -2852,8 +2936,8 @@ theorem nb052_support_mem_0079 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0080 :
-    (nb052_alpha_dummy_058) ∈
-      (((Class.cv (nb052_alpha_dummy_058))).fv ∪ ((Class.cv (nb052_alpha_dummy_058))).fv) :=
+    (nb052AlphaDummy058) ∈
+      (((Class.cv (nb052AlphaDummy058))).fv ∪ ((Class.cv (nb052AlphaDummy058))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2861,9 +2945,9 @@ theorem nb052_support_mem_0080 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0081 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_061 x y) ∈
-      (((Class.cv (nb052_alpha_dummy_061 x y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_061 x y))).fv) :=
+    (nb052AlphaDummy061 x y) ∈
+      (((Class.cv (nb052AlphaDummy061 x y))).fv ∪
+        ((Class.cv (nb052AlphaDummy061 x y))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -2871,9 +2955,9 @@ theorem nb052_support_mem_0081 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0082 :
-    (nb052_alpha_dummy_002) ∈
-      (((syn_cop (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_002))).fv) :=
+    (nb052AlphaDummy002) ∈
+      (((synCop (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))).fv ∪
+        ((Class.cv (nb052AlphaDummy002))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   right
@@ -2881,16 +2965,16 @@ theorem nb052_support_mem_0082 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0083 :
-    (nb052_alpha_dummy_002) ∈
-      (((syn_ccompl (Class.cab (nb052_alpha_dummy_006) (syn_wrex (nb052_alpha_dummy_007)
-                (syn_cop (Class.cv (nb052_alpha_dummy_000)) (Class.cv (nb052_alpha_dummy_001)))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                  (syn_cphi (Class.cv (nb052_alpha_dummy_007)))))))).fv ∪ ((syn_ccompl
-            (Class.cab (nb052_alpha_dummy_006)
-              (syn_wrex (nb052_alpha_dummy_007) (Class.cv (nb052_alpha_dummy_002))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                  (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_007)))
-                    (syn_csn (syn_c0c)))))))).fv) :=
+    (nb052AlphaDummy002) ∈
+      (((synCcompl (Class.cab (nb052AlphaDummy006) (synWrex (nb052AlphaDummy007)
+                (synCop (Class.cv (nb052AlphaDummy000)) (Class.cv (nb052AlphaDummy001)))
+                (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                  (synCphi (Class.cv (nb052AlphaDummy007)))))))).fv ∪ ((synCcompl
+            (Class.cab (nb052AlphaDummy006)
+              (synWrex (nb052AlphaDummy007) (Class.cv (nb052AlphaDummy002))
+                (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                  (synCun (synCphi (Class.cv (nb052AlphaDummy007)))
+                    (synCsn (synC0c)))))))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   right
@@ -2909,9 +2993,9 @@ theorem nb052_support_mem_0083 :
       exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0084 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_003 x y) ∈
-      (((syn_cop (Class.cv x) (Class.cv y))).fv ∪
-        ((Class.cv (nb052_alpha_dummy_003 x y))).fv) :=
+    (nb052AlphaDummy003 x y) ∈
+      (((synCop (Class.cv x) (Class.cv y))).fv ∪
+        ((Class.cv (nb052AlphaDummy003 x y))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   right
@@ -2919,29 +3003,29 @@ theorem nb052_support_mem_0084 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0085 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_003 x y) ∈
-      (((syn_ccompl (Class.cab (nb052_alpha_dummy_008 x y)
-              (syn_wrex (nb052_alpha_dummy_009 x y) (syn_cop (Class.cv x) (Class.cv y))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                  (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))))))).fv ∪ ((syn_ccompl
-            (Class.cab (nb052_alpha_dummy_008 x y)
-              (syn_wrex (nb052_alpha_dummy_009 x y) (Class.cv (nb052_alpha_dummy_003 x y))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                  (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))
-                    (syn_csn (syn_c0c)))))))).fv) :=
+    (nb052AlphaDummy003 x y) ∈
+      (((synCcompl (Class.cab (nb052AlphaDummy008 x y)
+              (synWrex (nb052AlphaDummy009 x y) (synCop (Class.cv x) (Class.cv y))
+                (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                  (synCphi (Class.cv (nb052AlphaDummy009 x y)))))))).fv ∪ ((synCcompl
+            (Class.cab (nb052AlphaDummy008 x y)
+              (synWrex (nb052AlphaDummy009 x y) (Class.cv (nb052AlphaDummy003 x y))
+                (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                  (synCun (synCphi (Class.cv (nb052AlphaDummy009 x y)))
+                    (synCsn (synC0c)))))))).fv) :=
   by
   with_reducible
     refine
-      Finset.mem_union_right (a := (nb052_alpha_dummy_003 x y)) (t := ((syn_ccompl
-            (Class.cab (nb052_alpha_dummy_008 x y)
-              (syn_wrex (nb052_alpha_dummy_009 x y) (Class.cv (nb052_alpha_dummy_003 x y))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                  (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))
-                    (syn_csn (syn_c0c)))))))).fv)
-        ((syn_ccompl (Class.cab (nb052_alpha_dummy_008 x y)
-              (syn_wrex (nb052_alpha_dummy_009 x y) (syn_cop (Class.cv x) (Class.cv y))
-                (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                  (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))))))).fv
+      Finset.mem_union_right (a := (nb052AlphaDummy003 x y)) (t := ((synCcompl
+            (Class.cab (nb052AlphaDummy008 x y)
+              (synWrex (nb052AlphaDummy009 x y) (Class.cv (nb052AlphaDummy003 x y))
+                (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                  (synCun (synCphi (Class.cv (nb052AlphaDummy009 x y)))
+                    (synCsn (synC0c)))))))).fv)
+        ((synCcompl (Class.cab (nb052AlphaDummy008 x y)
+              (synWrex (nb052AlphaDummy009 x y) (synCop (Class.cv x) (Class.cv y))
+                (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                  (synCphi (Class.cv (nb052AlphaDummy009 x y)))))))).fv
         ?_
   rw [fv_syn_ccompl]
   rw [fv_class_cab]
@@ -2958,16 +3042,16 @@ theorem nb052_support_mem_0085 (x : Var) (y : Var) :
       exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0086 :
-    (nb052_alpha_dummy_002) ∈
-      (((Class.cab (nb052_alpha_dummy_006)
-            (syn_wrex (nb052_alpha_dummy_007) (Class.cv (nb052_alpha_dummy_002))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_007)))
-                  (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb052_alpha_dummy_006)
-            (syn_wrex (nb052_alpha_dummy_007) (Class.cv (nb052_alpha_dummy_002))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_006))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_007)))
-                  (syn_csn (syn_c0c))))))).fv) :=
+    (nb052AlphaDummy002) ∈
+      (((Class.cab (nb052AlphaDummy006)
+            (synWrex (nb052AlphaDummy007) (Class.cv (nb052AlphaDummy002))
+              (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy007)))
+                  (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb052AlphaDummy006)
+            (synWrex (nb052AlphaDummy007) (Class.cv (nb052AlphaDummy002))
+              (Wff.classEq (Class.cv (nb052AlphaDummy006))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy007)))
+                  (synCsn (synC0c))))))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left

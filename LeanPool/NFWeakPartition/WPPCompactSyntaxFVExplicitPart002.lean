@@ -23,21 +23,21 @@ open NFChoice.Compiler.CompactSourceSyntax
 /-! Explicit-only FV equations for the WPP extension; no global simp attributes. -/
 
 
-theorem fv_syn_cdomfn : (syn_cdomfn).fv = (∅ : Finset Var) :=
+theorem fv_syn_cdomfn : (synCdomfn).fv = (∅ : Finset Var) :=
   by
   have fresh_x : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
   ext u
-  simp [syn_cdomfn, Class.fv]
+  simp [synCdomfn, Class.fv]
 
-theorem fv_syn_cranfn : (syn_cranfn).fv = (∅ : Finset Var) :=
+theorem fv_syn_cranfn : (synCranfn).fv = (∅ : Finset Var) :=
   by
   have fresh_x : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
   ext u
-  simp [syn_cranfn, Class.fv]
+  simp [synCranfn, Class.fv]
 
-theorem fv_syn_cmuc : (syn_cmuc).fv = (∅ : Finset Var) :=
+theorem fv_syn_cmuc : (synCmuc).fv = (∅ : Finset Var) :=
   by
   have fresh_a : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -70,6 +70,6 @@ theorem fv_syn_cmuc : (syn_cmuc).fv = (∅ : Finset Var) :=
   have distinct_m_n : freshVar ((∅ : Finset Var)) 3 ≠ freshVar ((∅ : Finset Var)) 4 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_cmuc, Class.fv]; aesop
+  simp [synCmuc, Class.fv]; aesop
 
 end NFChoice.Compiler.WPPCompactSyntaxFVExplicit

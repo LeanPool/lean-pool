@@ -26,11 +26,12 @@ open NFChoice.SemanticCore
 open NFChoice.ReplaySupport
 open NFChoice.Compiler.CompactSourceSyntax
 
+/-- Checked nominal proof certificate identified upstream as `g_vfinncsp`. -/
 @[expose]
-noncomputable def g_vfinncsp :
+noncomputable def gVfinncsp :
     Nominal.NPrf
-      (.imp (.classMem (syn_cvv) (syn_cfin)) (.classEq (syn_cncfin (syn_cspfin))
-          (syn_cplc (syn_ctfin (syn_cncfin (syn_cspfin))) (syn_c1c)))) :=
+      (.imp (.classMem (synCvv) (synCfin)) (.classEq (synCncfin (synCspfin))
+          (synCplc (synCtfin (synCncfin (synCspfin))) (synC1c)))) :=
   by
   let proofSupport : Finset Var := (∅ : Finset Var)
   let a : Var := freshVar proofSupport 0
@@ -54,19 +55,19 @@ noncomputable def g_vfinncsp :
   have dv_cache_0001 : a ≠ x := by exact (show a ≠ x from (by exact fresh_a_ne_x))
   have dv_cache_0002 :
     t ∉
-      ((syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif (syn_ccompl
-              (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cimak
-                      (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k (syn_cimak
-                            (syn_csymdif (syn_cins2k (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv))
-                                  (syn_cimak (syn_cin (syn_cins2k (syn_csik (syn_cssetk)))
-                                      (syn_cins3k (syn_cimak (syn_cin (syn_cins3k (syn_csik
-        (syn_cdif (syn_cxpk (syn_cpw (syn_c1c)) (syn_cvv)) (syn_cimak
-        (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_csik (syn_cssetk)))) (syn_cpw1
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))))) (syn_cins2k (syn_cssetk)))
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                              (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                      (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-            (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv))))).fv :=
+      ((synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif (synCcompl
+              (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCimak
+                      (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k (synCimak
+                            (synCsymdif (synCins2k (synCin (synCxpk (synCnnc) (synCvv))
+                                  (synCimak (synCin (synCins2k (synCsik (synCssetk)))
+                                      (synCins3k (synCimak (synCin (synCins3k (synCsik
+        (synCdif (synCxpk (synCpw (synC1c)) (synCvv)) (synCimak
+        (synCsymdif (synCins3k (synCssetk)) (synCins2k (synCsik (synCssetk)))) (synCpw1
+        (synCpw1 (synCpw1 (synC1c)))))))) (synCins2k (synCssetk)))
+        (synCpw1 (synCpw1 (synC1c)))))) (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                              (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                      (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+            (synCxpk (synCsn (synCsn (synC0))) (synCvv))))).fv :=
     by
     clear dv_cache_0001
     exact
@@ -96,7 +97,7 @@ noncomputable def g_vfinncsp :
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1,
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cidk, Finset.mem_union,
           compact_fv_not_mem_empty, or_false, not_false_eq_true])
-  have dv_cache_0003 : t ∉ ((syn_cpw1 (syn_cspfin))).fv :=
+  have dv_cache_0003 : t ∉ ((synCpw1 (synCspfin))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002
     exact
@@ -130,7 +131,7 @@ noncomputable def g_vfinncsp :
           cases hmem
         simp only [NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_singleton,
           fresh_x_ne_t, not_false_eq_true])
-  have dv_cache_0006 : x ∉ ((syn_cspfin)).fv :=
+  have dv_cache_0006 : x ∉ ((synCspfin)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
     exact
@@ -143,21 +144,21 @@ noncomputable def g_vfinncsp :
           compact_fv_not_mem_empty, not_false_eq_true])
   have dv_cache_0007 :
     x ∉
-      ((Wff.classMem (syn_copk (.cv t) (.cv a))
-          (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-              (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k
-                      (syn_cimak (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k
-                            (syn_cimak (syn_csymdif (syn_cins2k
-                                  (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv)) (syn_cimak
-                                      (syn_cin (syn_cins2k (syn_csik (syn_cssetk))) (syn_cins3k
-        (syn_cimak (syn_cin (syn_cins3k (syn_csik (syn_cdif (syn_cxpk (syn_cpw (syn_c1c))
-        (syn_cvv)) (syn_cimak (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k
-        (syn_csik (syn_cssetk)))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))))
-        (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                                      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                        (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-              (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv)))))).fv :=
+      ((Wff.classMem (synCopk (.cv t) (.cv a))
+          (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+              (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k
+                      (synCimak (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k
+                            (synCimak (synCsymdif (synCins2k
+                                  (synCin (synCxpk (synCnnc) (synCvv)) (synCimak
+                                      (synCin (synCins2k (synCsik (synCssetk))) (synCins3k
+        (synCimak (synCin (synCins3k (synCsik (synCdif (synCxpk (synCpw (synC1c))
+        (synCvv)) (synCimak (synCsymdif (synCins3k (synCssetk)) (synCins2k
+        (synCsik (synCssetk)))) (synCpw1 (synCpw1 (synCpw1 (synC1c))))))))
+        (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c))))))
+                                      (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                        (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+              (synCxpk (synCsn (synCsn (synC0))) (synCvv)))))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006
@@ -192,7 +193,7 @@ noncomputable def g_vfinncsp :
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cidk, Finset.mem_union,
           Finset.mem_singleton, fresh_x_ne_t, fresh_x_ne_a, compact_fv_not_mem_empty,
           or_false, not_false_eq_true])
-  have dv_cache_0008 : t ∉ ((syn_cspfin)).fv :=
+  have dv_cache_0008 : t ∉ ((synCspfin)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007
@@ -209,7 +210,7 @@ noncomputable def g_vfinncsp :
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008
     exact (show x ≠ t from (by exact fresh_x_ne_t))
-  have dv_cache_0010 : t ∉ ((syn_csn (.cv x))).fv :=
+  have dv_cache_0010 : t ∉ ((synCsn (.cv x))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009
@@ -224,21 +225,21 @@ noncomputable def g_vfinncsp :
           not_false_eq_true])
   have dv_cache_0011 :
     t ∉
-      ((Wff.classMem (syn_copk (syn_csn (.cv x)) (.cv a))
-          (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-              (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k
-                      (syn_cimak (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k
-                            (syn_cimak (syn_csymdif (syn_cins2k
-                                  (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv)) (syn_cimak
-                                      (syn_cin (syn_cins2k (syn_csik (syn_cssetk))) (syn_cins3k
-        (syn_cimak (syn_cin (syn_cins3k (syn_csik (syn_cdif (syn_cxpk (syn_cpw (syn_c1c))
-        (syn_cvv)) (syn_cimak (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k
-        (syn_csik (syn_cssetk)))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))))
-        (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                                      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                        (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-              (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv)))))).fv :=
+      ((Wff.classMem (synCopk (synCsn (.cv x)) (.cv a))
+          (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+              (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k
+                      (synCimak (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k
+                            (synCimak (synCsymdif (synCins2k
+                                  (synCin (synCxpk (synCnnc) (synCvv)) (synCimak
+                                      (synCin (synCins2k (synCsik (synCssetk))) (synCins3k
+        (synCimak (synCin (synCins3k (synCsik (synCdif (synCxpk (synCpw (synC1c))
+        (synCvv)) (synCimak (synCsymdif (synCins3k (synCssetk)) (synCins2k
+        (synCsik (synCssetk)))) (synCpw1 (synCpw1 (synCpw1 (synC1c))))))))
+        (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c))))))
+                                      (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                        (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+              (synCxpk (synCsn (synCsn (synC0))) (synCvv)))))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010
@@ -275,21 +276,21 @@ noncomputable def g_vfinncsp :
           or_false, not_false_eq_true])
   have dv_cache_0012 :
     a ∉
-      ((syn_cimak (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-              (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k
-                      (syn_cimak (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k
-                            (syn_cimak (syn_csymdif (syn_cins2k
-                                  (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv)) (syn_cimak
-                                      (syn_cin (syn_cins2k (syn_csik (syn_cssetk))) (syn_cins3k
-        (syn_cimak (syn_cin (syn_cins3k (syn_csik (syn_cdif (syn_cxpk (syn_cpw (syn_c1c))
-        (syn_cvv)) (syn_cimak (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k
-        (syn_csik (syn_cssetk)))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))))
-        (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                                      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                        (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-              (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv))))
-          (syn_cpw1 (syn_cspfin)))).fv :=
+      ((synCimak (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+              (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k
+                      (synCimak (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k
+                            (synCimak (synCsymdif (synCins2k
+                                  (synCin (synCxpk (synCnnc) (synCvv)) (synCimak
+                                      (synCin (synCins2k (synCsik (synCssetk))) (synCins3k
+        (synCimak (synCin (synCins3k (synCsik (synCdif (synCxpk (synCpw (synC1c))
+        (synCvv)) (synCimak (synCsymdif (synCins3k (synCssetk)) (synCins2k
+        (synCsik (synCssetk)))) (synCpw1 (synCpw1 (synCpw1 (synC1c))))))))
+        (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c))))))
+                                      (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                        (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+              (synCxpk (synCsn (synCsn (synC0))) (synCvv))))
+          (synCpw1 (synCspfin)))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -321,7 +322,7 @@ noncomputable def g_vfinncsp :
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cidk,
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cspfin, Finset.mem_union,
           compact_fv_not_mem_empty, or_false, not_false_eq_true])
-  have dv_cache_0013 : a ∉ ((syn_cspfin)).fv :=
+  have dv_cache_0013 : a ∉ ((synCspfin)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -334,7 +335,7 @@ noncomputable def g_vfinncsp :
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cspfin,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have dv_cache_0014 : a ∉ ((syn_cncfin (syn_cspfin))).fv :=
+  have dv_cache_0014 : a ∉ ((synCncfin (synCspfin))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -348,7 +349,7 @@ noncomputable def g_vfinncsp :
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cncfin,
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cspfin,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have dv_cache_0015 : x ∉ ((syn_cncfin (syn_cspfin))).fv :=
+  have dv_cache_0015 : x ∉ ((synCncfin (synCspfin))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -362,680 +363,680 @@ noncomputable def g_vfinncsp :
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cncfin,
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cspfin,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have p0000 := @g_vfinspeqtncv x a dv_cache_0001
+  have p0000 := @gVfinspeqtncv x a dv_cache_0001
   have p0001 :=
-    @g_ncfineq (syn_cspfin)
-      (syn_cun (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))
-        (syn_csn (syn_cncfin (syn_cvv))))
+    @gNcfineq (synCspfin)
+      (synCun (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))
+        (synCsn (synCncfin (synCvv))))
   have p0002 :=
-    @g_syl (.classMem (syn_cvv) (syn_cfin))
-      (.classEq (syn_cspfin)
-        (syn_cun (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))
-          (syn_csn (syn_cncfin (syn_cvv)))))
-      (.classEq (syn_cncfin (syn_cspfin)) (syn_cncfin (syn_cun
-            (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))
-            (syn_csn (syn_cncfin (syn_cvv))))))
+    @gSyl (.classMem (synCvv) (synCfin))
+      (.classEq (synCspfin)
+        (synCun (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))
+          (synCsn (synCncfin (synCvv)))))
+      (.classEq (synCncfin (synCspfin)) (synCncfin (synCun
+            (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))
+            (synCsn (synCncfin (synCvv))))))
       p0000 p0001
-  have p0003 := @g_vfinncvntsp x a dv_cache_0001
+  have p0003 := @gVfinncvntsp x a dv_cache_0001
   have p0004 :=
-    @g_disjsn (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))
-      (syn_cncfin (syn_cvv))
+    @gDisjsn (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))
+      (synCncfin (synCvv))
   have p0005 :=
-    @g_sylibr (.classMem (syn_cvv) (syn_cfin))
-      (.neg (.classMem (syn_cncfin (syn_cvv))
-          (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))))
+    @gSylibr (.classMem (synCvv) (synCfin))
+      (.neg (.classMem (synCncfin (synCvv))
+          (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))))
       (.classEq
-        (syn_cin (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))
-          (syn_csn (syn_cncfin (syn_cvv)))) (syn_c0))
+        (synCin (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))
+          (synCsn (synCncfin (synCvv)))) (synC0))
       p0003 p0004
-  have p0006 := @g_vex a
+  have p0006 := @gVex a
   have p0007 :=
-    @g_elimak t
-      (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif (syn_ccompl
-            (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cimak
-                    (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k (syn_cimak
-                          (syn_csymdif (syn_cins2k (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv))
-                                (syn_cimak (syn_cin (syn_cins2k (syn_csik (syn_cssetk)))
-                                    (syn_cins3k (syn_cimak (syn_cin (syn_cins3k (syn_csik
-        (syn_cdif (syn_cxpk (syn_cpw (syn_c1c)) (syn_cvv)) (syn_cimak
-        (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_csik (syn_cssetk)))) (syn_cpw1
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))))) (syn_cins2k (syn_cssetk)))
-                                        (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                                  (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                            (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                    (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-          (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv))))
-      (syn_cpw1 (syn_cspfin)) (.cv a) dv_cache_0002 dv_cache_0003 dv_cache_0004 p0006
+    @gElimak t
+      (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif (synCcompl
+            (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCimak
+                    (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k (synCimak
+                          (synCsymdif (synCins2k (synCin (synCxpk (synCnnc) (synCvv))
+                                (synCimak (synCin (synCins2k (synCsik (synCssetk)))
+                                    (synCins3k (synCimak (synCin (synCins3k (synCsik
+        (synCdif (synCxpk (synCpw (synC1c)) (synCvv)) (synCimak
+        (synCsymdif (synCins3k (synCssetk)) (synCins2k (synCsik (synCssetk)))) (synCpw1
+        (synCpw1 (synCpw1 (synC1c)))))))) (synCins2k (synCssetk)))
+                                        (synCpw1 (synCpw1 (synC1c))))))
+                                  (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                            (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                    (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+          (synCxpk (synCsn (synCsn (synC0))) (synCvv))))
+      (synCpw1 (synCspfin)) (.cv a) dv_cache_0002 dv_cache_0003 dv_cache_0004 p0006
   have p0008 :=
-    (Nominal.biimpRefl (syn_wrex t (syn_cpw1 (syn_cspfin)) (.classMem (syn_copk (.cv t) (.cv a))
-          (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-              (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k
-                      (syn_cimak (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k
-                            (syn_cimak (syn_csymdif (syn_cins2k
-                                  (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv)) (syn_cimak
-                                      (syn_cin (syn_cins2k (syn_csik (syn_cssetk))) (syn_cins3k
-        (syn_cimak (syn_cin (syn_cins3k (syn_csik (syn_cdif (syn_cxpk (syn_cpw (syn_c1c))
-        (syn_cvv)) (syn_cimak (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k
-        (syn_csik (syn_cssetk)))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))))
-        (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                                      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                        (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-              (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv)))))))
-  have p0009 := @g_elpw1 x (.cv t) (syn_cspfin) dv_cache_0005 dv_cache_0006
+    (Nominal.biimpRefl (synWrex t (synCpw1 (synCspfin)) (.classMem (synCopk (.cv t) (.cv a))
+          (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+              (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k
+                      (synCimak (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k
+                            (synCimak (synCsymdif (synCins2k
+                                  (synCin (synCxpk (synCnnc) (synCvv)) (synCimak
+                                      (synCin (synCins2k (synCsik (synCssetk))) (synCins3k
+        (synCimak (synCin (synCins3k (synCsik (synCdif (synCxpk (synCpw (synC1c))
+        (synCvv)) (synCimak (synCsymdif (synCins3k (synCssetk)) (synCins2k
+        (synCsik (synCssetk)))) (synCpw1 (synCpw1 (synCpw1 (synC1c))))))))
+        (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c))))))
+                                      (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                        (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+              (synCxpk (synCsn (synCsn (synC0))) (synCvv)))))))
+  have p0009 := @gElpw1 x (.cv t) (synCspfin) dv_cache_0005 dv_cache_0006
   have p0010 :=
-    @g_anbi1i (.classMem (.cv t) (syn_cpw1 (syn_cspfin)))
-      (syn_wrex x (syn_cspfin) (.classEq (.cv t) (syn_csn (.cv x))))
-      (.classMem (syn_copk (.cv t) (.cv a))
-        (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-            (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cimak
-                      (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k (syn_cimak
-                            (syn_csymdif (syn_cins2k (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv))
-                                  (syn_cimak (syn_cin (syn_cins2k (syn_csik (syn_cssetk)))
-                                      (syn_cins3k (syn_cimak (syn_cin (syn_cins3k (syn_csik
-        (syn_cdif (syn_cxpk (syn_cpw (syn_c1c)) (syn_cvv)) (syn_cimak
-        (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_csik (syn_cssetk)))) (syn_cpw1
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))))) (syn_cins2k (syn_cssetk)))
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                              (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                      (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-            (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv)))))
+    @gAnbi1i (.classMem (.cv t) (synCpw1 (synCspfin)))
+      (synWrex x (synCspfin) (.classEq (.cv t) (synCsn (.cv x))))
+      (.classMem (synCopk (.cv t) (.cv a))
+        (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+            (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCimak
+                      (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k (synCimak
+                            (synCsymdif (synCins2k (synCin (synCxpk (synCnnc) (synCvv))
+                                  (synCimak (synCin (synCins2k (synCsik (synCssetk)))
+                                      (synCins3k (synCimak (synCin (synCins3k (synCsik
+        (synCdif (synCxpk (synCpw (synC1c)) (synCvv)) (synCimak
+        (synCsymdif (synCins3k (synCssetk)) (synCins2k (synCsik (synCssetk)))) (synCpw1
+        (synCpw1 (synCpw1 (synC1c)))))))) (synCins2k (synCssetk)))
+        (synCpw1 (synCpw1 (synC1c)))))) (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                              (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                      (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+            (synCxpk (synCsn (synCsn (synC0))) (synCvv)))))
       p0009
   have p0011 :=
-    @g_r19_41v (.classEq (.cv t) (syn_csn (.cv x)))
-      (.classMem (syn_copk (.cv t) (.cv a))
-        (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-            (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cimak
-                      (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k (syn_cimak
-                            (syn_csymdif (syn_cins2k (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv))
-                                  (syn_cimak (syn_cin (syn_cins2k (syn_csik (syn_cssetk)))
-                                      (syn_cins3k (syn_cimak (syn_cin (syn_cins3k (syn_csik
-        (syn_cdif (syn_cxpk (syn_cpw (syn_c1c)) (syn_cvv)) (syn_cimak
-        (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_csik (syn_cssetk)))) (syn_cpw1
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))))) (syn_cins2k (syn_cssetk)))
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                              (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                      (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-            (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv)))))
-      x (syn_cspfin) dv_cache_0007
+    @gR1941v (.classEq (.cv t) (synCsn (.cv x)))
+      (.classMem (synCopk (.cv t) (.cv a))
+        (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+            (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCimak
+                      (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k (synCimak
+                            (synCsymdif (synCins2k (synCin (synCxpk (synCnnc) (synCvv))
+                                  (synCimak (synCin (synCins2k (synCsik (synCssetk)))
+                                      (synCins3k (synCimak (synCin (synCins3k (synCsik
+        (synCdif (synCxpk (synCpw (synC1c)) (synCvv)) (synCimak
+        (synCsymdif (synCins3k (synCssetk)) (synCins2k (synCsik (synCssetk)))) (synCpw1
+        (synCpw1 (synCpw1 (synC1c)))))))) (synCins2k (synCssetk)))
+        (synCpw1 (synCpw1 (synC1c)))))) (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                              (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                      (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+            (synCxpk (synCsn (synCsn (synC0))) (synCvv)))))
+      x (synCspfin) dv_cache_0007
   have p0012 :=
-    @g_bitr4i
-      (syn_wa (.classMem (.cv t) (syn_cpw1 (syn_cspfin))) (.classMem (syn_copk (.cv t) (.cv a))
-          (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-              (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k
-                      (syn_cimak (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k
-                            (syn_cimak (syn_csymdif (syn_cins2k
-                                  (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv)) (syn_cimak
-                                      (syn_cin (syn_cins2k (syn_csik (syn_cssetk))) (syn_cins3k
-        (syn_cimak (syn_cin (syn_cins3k (syn_csik (syn_cdif (syn_cxpk (syn_cpw (syn_c1c))
-        (syn_cvv)) (syn_cimak (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k
-        (syn_csik (syn_cssetk)))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))))
-        (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                                      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                        (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-              (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv))))))
-      (syn_wa (syn_wrex x (syn_cspfin) (.classEq (.cv t) (syn_csn (.cv x))))
-        (.classMem (syn_copk (.cv t) (.cv a))
-          (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-              (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k
-                      (syn_cimak (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k
-                            (syn_cimak (syn_csymdif (syn_cins2k
-                                  (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv)) (syn_cimak
-                                      (syn_cin (syn_cins2k (syn_csik (syn_cssetk))) (syn_cins3k
-        (syn_cimak (syn_cin (syn_cins3k (syn_csik (syn_cdif (syn_cxpk (syn_cpw (syn_c1c))
-        (syn_cvv)) (syn_cimak (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k
-        (syn_csik (syn_cssetk)))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))))
-        (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                                      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                        (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-              (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv))))))
-      (syn_wrex x (syn_cspfin) (syn_wa (.classEq (.cv t) (syn_csn (.cv x)))
-          (.classMem (syn_copk (.cv t) (.cv a))
-            (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-                (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k
-                        (syn_cimak (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k
-                              (syn_cimak (syn_csymdif (syn_cins2k
-                                    (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv)) (syn_cimak
-                                        (syn_cin (syn_cins2k (syn_csik (syn_cssetk)))
-        (syn_cins3k (syn_cimak (syn_cin (syn_cins3k (syn_csik (syn_cdif
-        (syn_cxpk (syn_cpw (syn_c1c)) (syn_cvv)) (syn_cimak (syn_csymdif
-        (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_csik (syn_cssetk)))) (syn_cpw1 (syn_cpw1
-        (syn_cpw1 (syn_c1c)))))))) (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                                        (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                  (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                          (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-                (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv)))))))
+    @gBitr4i
+      (synWa (.classMem (.cv t) (synCpw1 (synCspfin))) (.classMem (synCopk (.cv t) (.cv a))
+          (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+              (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k
+                      (synCimak (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k
+                            (synCimak (synCsymdif (synCins2k
+                                  (synCin (synCxpk (synCnnc) (synCvv)) (synCimak
+                                      (synCin (synCins2k (synCsik (synCssetk))) (synCins3k
+        (synCimak (synCin (synCins3k (synCsik (synCdif (synCxpk (synCpw (synC1c))
+        (synCvv)) (synCimak (synCsymdif (synCins3k (synCssetk)) (synCins2k
+        (synCsik (synCssetk)))) (synCpw1 (synCpw1 (synCpw1 (synC1c))))))))
+        (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c))))))
+                                      (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                        (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+              (synCxpk (synCsn (synCsn (synC0))) (synCvv))))))
+      (synWa (synWrex x (synCspfin) (.classEq (.cv t) (synCsn (.cv x))))
+        (.classMem (synCopk (.cv t) (.cv a))
+          (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+              (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k
+                      (synCimak (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k
+                            (synCimak (synCsymdif (synCins2k
+                                  (synCin (synCxpk (synCnnc) (synCvv)) (synCimak
+                                      (synCin (synCins2k (synCsik (synCssetk))) (synCins3k
+        (synCimak (synCin (synCins3k (synCsik (synCdif (synCxpk (synCpw (synC1c))
+        (synCvv)) (synCimak (synCsymdif (synCins3k (synCssetk)) (synCins2k
+        (synCsik (synCssetk)))) (synCpw1 (synCpw1 (synCpw1 (synC1c))))))))
+        (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c))))))
+                                      (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                        (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+              (synCxpk (synCsn (synCsn (synC0))) (synCvv))))))
+      (synWrex x (synCspfin) (synWa (.classEq (.cv t) (synCsn (.cv x)))
+          (.classMem (synCopk (.cv t) (.cv a))
+            (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+                (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k
+                        (synCimak (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k
+                              (synCimak (synCsymdif (synCins2k
+                                    (synCin (synCxpk (synCnnc) (synCvv)) (synCimak
+                                        (synCin (synCins2k (synCsik (synCssetk)))
+        (synCins3k (synCimak (synCin (synCins3k (synCsik (synCdif
+        (synCxpk (synCpw (synC1c)) (synCvv)) (synCimak (synCsymdif
+        (synCins3k (synCssetk)) (synCins2k (synCsik (synCssetk)))) (synCpw1 (synCpw1
+        (synCpw1 (synC1c)))))))) (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c))))))
+                                        (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                  (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                          (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+                (synCxpk (synCsn (synCsn (synC0))) (synCvv)))))))
       p0010 p0011
   have p0013 :=
-    @g_exbii
-      (syn_wa (.classMem (.cv t) (syn_cpw1 (syn_cspfin))) (.classMem (syn_copk (.cv t) (.cv a))
-          (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-              (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k
-                      (syn_cimak (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k
-                            (syn_cimak (syn_csymdif (syn_cins2k
-                                  (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv)) (syn_cimak
-                                      (syn_cin (syn_cins2k (syn_csik (syn_cssetk))) (syn_cins3k
-        (syn_cimak (syn_cin (syn_cins3k (syn_csik (syn_cdif (syn_cxpk (syn_cpw (syn_c1c))
-        (syn_cvv)) (syn_cimak (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k
-        (syn_csik (syn_cssetk)))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))))
-        (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                                      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                        (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-              (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv))))))
-      (syn_wrex x (syn_cspfin) (syn_wa (.classEq (.cv t) (syn_csn (.cv x)))
-          (.classMem (syn_copk (.cv t) (.cv a))
-            (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-                (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k
-                        (syn_cimak (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k
-                              (syn_cimak (syn_csymdif (syn_cins2k
-                                    (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv)) (syn_cimak
-                                        (syn_cin (syn_cins2k (syn_csik (syn_cssetk)))
-        (syn_cins3k (syn_cimak (syn_cin (syn_cins3k (syn_csik (syn_cdif
-        (syn_cxpk (syn_cpw (syn_c1c)) (syn_cvv)) (syn_cimak (syn_csymdif
-        (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_csik (syn_cssetk)))) (syn_cpw1 (syn_cpw1
-        (syn_cpw1 (syn_c1c)))))))) (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                                        (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                  (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                          (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-                (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv)))))))
+    @gExbii
+      (synWa (.classMem (.cv t) (synCpw1 (synCspfin))) (.classMem (synCopk (.cv t) (.cv a))
+          (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+              (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k
+                      (synCimak (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k
+                            (synCimak (synCsymdif (synCins2k
+                                  (synCin (synCxpk (synCnnc) (synCvv)) (synCimak
+                                      (synCin (synCins2k (synCsik (synCssetk))) (synCins3k
+        (synCimak (synCin (synCins3k (synCsik (synCdif (synCxpk (synCpw (synC1c))
+        (synCvv)) (synCimak (synCsymdif (synCins3k (synCssetk)) (synCins2k
+        (synCsik (synCssetk)))) (synCpw1 (synCpw1 (synCpw1 (synC1c))))))))
+        (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c))))))
+                                      (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                        (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+              (synCxpk (synCsn (synCsn (synC0))) (synCvv))))))
+      (synWrex x (synCspfin) (synWa (.classEq (.cv t) (synCsn (.cv x)))
+          (.classMem (synCopk (.cv t) (.cv a))
+            (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+                (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k
+                        (synCimak (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k
+                              (synCimak (synCsymdif (synCins2k
+                                    (synCin (synCxpk (synCnnc) (synCvv)) (synCimak
+                                        (synCin (synCins2k (synCsik (synCssetk)))
+        (synCins3k (synCimak (synCin (synCins3k (synCsik (synCdif
+        (synCxpk (synCpw (synC1c)) (synCvv)) (synCimak (synCsymdif
+        (synCins3k (synCssetk)) (synCins2k (synCsik (synCssetk)))) (synCpw1 (synCpw1
+        (synCpw1 (synC1c)))))))) (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c))))))
+                                        (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                  (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                          (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+                (synCxpk (synCsn (synCsn (synC0))) (synCvv)))))))
       t p0012
   have p0014 :=
-    @g_rexcom4
-      (syn_wa (.classEq (.cv t) (syn_csn (.cv x))) (.classMem (syn_copk (.cv t) (.cv a))
-          (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-              (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k
-                      (syn_cimak (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k
-                            (syn_cimak (syn_csymdif (syn_cins2k
-                                  (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv)) (syn_cimak
-                                      (syn_cin (syn_cins2k (syn_csik (syn_cssetk))) (syn_cins3k
-        (syn_cimak (syn_cin (syn_cins3k (syn_csik (syn_cdif (syn_cxpk (syn_cpw (syn_c1c))
-        (syn_cvv)) (syn_cimak (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k
-        (syn_csik (syn_cssetk)))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))))
-        (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                                      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                        (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-              (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv))))))
-      x t (syn_cspfin) dv_cache_0008 dv_cache_0009
+    @gRexcom4
+      (synWa (.classEq (.cv t) (synCsn (.cv x))) (.classMem (synCopk (.cv t) (.cv a))
+          (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+              (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k
+                      (synCimak (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k
+                            (synCimak (synCsymdif (synCins2k
+                                  (synCin (synCxpk (synCnnc) (synCvv)) (synCimak
+                                      (synCin (synCins2k (synCsik (synCssetk))) (synCins3k
+        (synCimak (synCin (synCins3k (synCsik (synCdif (synCxpk (synCpw (synC1c))
+        (synCvv)) (synCimak (synCsymdif (synCins3k (synCssetk)) (synCins2k
+        (synCsik (synCssetk)))) (synCpw1 (synCpw1 (synCpw1 (synC1c))))))))
+        (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c))))))
+                                      (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                        (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+              (synCxpk (synCsn (synCsn (synC0))) (synCvv))))))
+      x t (synCspfin) dv_cache_0008 dv_cache_0009
   have p0015 :=
-    @g_bitr4i
-      (syn_wex t (syn_wa (.classMem (.cv t) (syn_cpw1 (syn_cspfin)))
-          (.classMem (syn_copk (.cv t) (.cv a))
-            (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-                (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k
-                        (syn_cimak (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k
-                              (syn_cimak (syn_csymdif (syn_cins2k
-                                    (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv)) (syn_cimak
-                                        (syn_cin (syn_cins2k (syn_csik (syn_cssetk)))
-        (syn_cins3k (syn_cimak (syn_cin (syn_cins3k (syn_csik (syn_cdif
-        (syn_cxpk (syn_cpw (syn_c1c)) (syn_cvv)) (syn_cimak (syn_csymdif
-        (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_csik (syn_cssetk)))) (syn_cpw1 (syn_cpw1
-        (syn_cpw1 (syn_c1c)))))))) (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                                        (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                  (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                          (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-                (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv)))))))
-      (syn_wex t (syn_wrex x (syn_cspfin) (syn_wa (.classEq (.cv t) (syn_csn (.cv x)))
-            (.classMem (syn_copk (.cv t) (.cv a))
-              (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-                  (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k
-                          (syn_cimak (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k
-                                (syn_cimak (syn_csymdif (syn_cins2k
-                                      (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv)) (syn_cimak
-        (syn_cin (syn_cins2k (syn_csik (syn_cssetk))) (syn_cins3k (syn_cimak (syn_cin
-        (syn_cins3k (syn_csik (syn_cdif (syn_cxpk (syn_cpw (syn_c1c)) (syn_cvv)) (syn_cimak
-        (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_csik (syn_cssetk)))) (syn_cpw1
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))))) (syn_cins2k (syn_cssetk)))
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                    (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                            (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-                  (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv))))))))
-      (syn_wrex x (syn_cspfin) (syn_wex t (syn_wa (.classEq (.cv t) (syn_csn (.cv x)))
-            (.classMem (syn_copk (.cv t) (.cv a))
-              (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-                  (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k
-                          (syn_cimak (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k
-                                (syn_cimak (syn_csymdif (syn_cins2k
-                                      (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv)) (syn_cimak
-        (syn_cin (syn_cins2k (syn_csik (syn_cssetk))) (syn_cins3k (syn_cimak (syn_cin
-        (syn_cins3k (syn_csik (syn_cdif (syn_cxpk (syn_cpw (syn_c1c)) (syn_cvv)) (syn_cimak
-        (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_csik (syn_cssetk)))) (syn_cpw1
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))))) (syn_cins2k (syn_cssetk)))
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                    (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                            (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-                  (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv))))))))
+    @gBitr4i
+      (synWex t (synWa (.classMem (.cv t) (synCpw1 (synCspfin)))
+          (.classMem (synCopk (.cv t) (.cv a))
+            (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+                (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k
+                        (synCimak (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k
+                              (synCimak (synCsymdif (synCins2k
+                                    (synCin (synCxpk (synCnnc) (synCvv)) (synCimak
+                                        (synCin (synCins2k (synCsik (synCssetk)))
+        (synCins3k (synCimak (synCin (synCins3k (synCsik (synCdif
+        (synCxpk (synCpw (synC1c)) (synCvv)) (synCimak (synCsymdif
+        (synCins3k (synCssetk)) (synCins2k (synCsik (synCssetk)))) (synCpw1 (synCpw1
+        (synCpw1 (synC1c)))))))) (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c))))))
+                                        (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                  (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                          (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+                (synCxpk (synCsn (synCsn (synC0))) (synCvv)))))))
+      (synWex t (synWrex x (synCspfin) (synWa (.classEq (.cv t) (synCsn (.cv x)))
+            (.classMem (synCopk (.cv t) (.cv a))
+              (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+                  (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k
+                          (synCimak (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k
+                                (synCimak (synCsymdif (synCins2k
+                                      (synCin (synCxpk (synCnnc) (synCvv)) (synCimak
+        (synCin (synCins2k (synCsik (synCssetk))) (synCins3k (synCimak (synCin
+        (synCins3k (synCsik (synCdif (synCxpk (synCpw (synC1c)) (synCvv)) (synCimak
+        (synCsymdif (synCins3k (synCssetk)) (synCins2k (synCsik (synCssetk)))) (synCpw1
+        (synCpw1 (synCpw1 (synC1c)))))))) (synCins2k (synCssetk)))
+        (synCpw1 (synCpw1 (synC1c)))))) (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                    (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                            (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+                  (synCxpk (synCsn (synCsn (synC0))) (synCvv))))))))
+      (synWrex x (synCspfin) (synWex t (synWa (.classEq (.cv t) (synCsn (.cv x)))
+            (.classMem (synCopk (.cv t) (.cv a))
+              (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+                  (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k
+                          (synCimak (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k
+                                (synCimak (synCsymdif (synCins2k
+                                      (synCin (synCxpk (synCnnc) (synCvv)) (synCimak
+        (synCin (synCins2k (synCsik (synCssetk))) (synCins3k (synCimak (synCin
+        (synCins3k (synCsik (synCdif (synCxpk (synCpw (synC1c)) (synCvv)) (synCimak
+        (synCsymdif (synCins3k (synCssetk)) (synCins2k (synCsik (synCssetk)))) (synCpw1
+        (synCpw1 (synCpw1 (synC1c)))))))) (synCins2k (synCssetk)))
+        (synCpw1 (synCpw1 (synC1c)))))) (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                    (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                            (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+                  (synCxpk (synCsn (synCsn (synC0))) (synCvv))))))))
       p0013 p0014
   have p0016 :=
-    @g_bitri
-      (syn_wrex t (syn_cpw1 (syn_cspfin)) (.classMem (syn_copk (.cv t) (.cv a))
-          (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-              (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k
-                      (syn_cimak (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k
-                            (syn_cimak (syn_csymdif (syn_cins2k
-                                  (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv)) (syn_cimak
-                                      (syn_cin (syn_cins2k (syn_csik (syn_cssetk))) (syn_cins3k
-        (syn_cimak (syn_cin (syn_cins3k (syn_csik (syn_cdif (syn_cxpk (syn_cpw (syn_c1c))
-        (syn_cvv)) (syn_cimak (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k
-        (syn_csik (syn_cssetk)))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))))
-        (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                                      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                        (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-              (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv))))))
-      (syn_wex t (syn_wa (.classMem (.cv t) (syn_cpw1 (syn_cspfin)))
-          (.classMem (syn_copk (.cv t) (.cv a))
-            (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-                (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k
-                        (syn_cimak (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k
-                              (syn_cimak (syn_csymdif (syn_cins2k
-                                    (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv)) (syn_cimak
-                                        (syn_cin (syn_cins2k (syn_csik (syn_cssetk)))
-        (syn_cins3k (syn_cimak (syn_cin (syn_cins3k (syn_csik (syn_cdif
-        (syn_cxpk (syn_cpw (syn_c1c)) (syn_cvv)) (syn_cimak (syn_csymdif
-        (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_csik (syn_cssetk)))) (syn_cpw1 (syn_cpw1
-        (syn_cpw1 (syn_c1c)))))))) (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                                        (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                  (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                          (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-                (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv)))))))
-      (syn_wrex x (syn_cspfin) (syn_wex t (syn_wa (.classEq (.cv t) (syn_csn (.cv x)))
-            (.classMem (syn_copk (.cv t) (.cv a))
-              (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-                  (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k
-                          (syn_cimak (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k
-                                (syn_cimak (syn_csymdif (syn_cins2k
-                                      (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv)) (syn_cimak
-        (syn_cin (syn_cins2k (syn_csik (syn_cssetk))) (syn_cins3k (syn_cimak (syn_cin
-        (syn_cins3k (syn_csik (syn_cdif (syn_cxpk (syn_cpw (syn_c1c)) (syn_cvv)) (syn_cimak
-        (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_csik (syn_cssetk)))) (syn_cpw1
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))))) (syn_cins2k (syn_cssetk)))
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                    (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                            (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-                  (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv))))))))
+    @gBitri
+      (synWrex t (synCpw1 (synCspfin)) (.classMem (synCopk (.cv t) (.cv a))
+          (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+              (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k
+                      (synCimak (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k
+                            (synCimak (synCsymdif (synCins2k
+                                  (synCin (synCxpk (synCnnc) (synCvv)) (synCimak
+                                      (synCin (synCins2k (synCsik (synCssetk))) (synCins3k
+        (synCimak (synCin (synCins3k (synCsik (synCdif (synCxpk (synCpw (synC1c))
+        (synCvv)) (synCimak (synCsymdif (synCins3k (synCssetk)) (synCins2k
+        (synCsik (synCssetk)))) (synCpw1 (synCpw1 (synCpw1 (synC1c))))))))
+        (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c))))))
+                                      (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                        (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+              (synCxpk (synCsn (synCsn (synC0))) (synCvv))))))
+      (synWex t (synWa (.classMem (.cv t) (synCpw1 (synCspfin)))
+          (.classMem (synCopk (.cv t) (.cv a))
+            (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+                (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k
+                        (synCimak (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k
+                              (synCimak (synCsymdif (synCins2k
+                                    (synCin (synCxpk (synCnnc) (synCvv)) (synCimak
+                                        (synCin (synCins2k (synCsik (synCssetk)))
+        (synCins3k (synCimak (synCin (synCins3k (synCsik (synCdif
+        (synCxpk (synCpw (synC1c)) (synCvv)) (synCimak (synCsymdif
+        (synCins3k (synCssetk)) (synCins2k (synCsik (synCssetk)))) (synCpw1 (synCpw1
+        (synCpw1 (synC1c)))))))) (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c))))))
+                                        (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                  (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                          (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+                (synCxpk (synCsn (synCsn (synC0))) (synCvv)))))))
+      (synWrex x (synCspfin) (synWex t (synWa (.classEq (.cv t) (synCsn (.cv x)))
+            (.classMem (synCopk (.cv t) (.cv a))
+              (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+                  (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k
+                          (synCimak (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k
+                                (synCimak (synCsymdif (synCins2k
+                                      (synCin (synCxpk (synCnnc) (synCvv)) (synCimak
+        (synCin (synCins2k (synCsik (synCssetk))) (synCins3k (synCimak (synCin
+        (synCins3k (synCsik (synCdif (synCxpk (synCpw (synC1c)) (synCvv)) (synCimak
+        (synCsymdif (synCins3k (synCssetk)) (synCins2k (synCsik (synCssetk)))) (synCpw1
+        (synCpw1 (synCpw1 (synC1c)))))))) (synCins2k (synCssetk)))
+        (synCpw1 (synCpw1 (synC1c)))))) (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                    (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                            (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+                  (synCxpk (synCsn (synCsn (synC0))) (synCvv))))))))
       p0008 p0015
   have p0017 :=
-    @g_bitri
-      (.classMem (.cv a) (syn_cimak
-          (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-              (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k
-                      (syn_cimak (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k
-                            (syn_cimak (syn_csymdif (syn_cins2k
-                                  (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv)) (syn_cimak
-                                      (syn_cin (syn_cins2k (syn_csik (syn_cssetk))) (syn_cins3k
-        (syn_cimak (syn_cin (syn_cins3k (syn_csik (syn_cdif (syn_cxpk (syn_cpw (syn_c1c))
-        (syn_cvv)) (syn_cimak (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k
-        (syn_csik (syn_cssetk)))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))))
-        (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                                      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                        (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-              (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv)))) (syn_cpw1 (syn_cspfin))))
-      (syn_wrex t (syn_cpw1 (syn_cspfin)) (.classMem (syn_copk (.cv t) (.cv a))
-          (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-              (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k
-                      (syn_cimak (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k
-                            (syn_cimak (syn_csymdif (syn_cins2k
-                                  (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv)) (syn_cimak
-                                      (syn_cin (syn_cins2k (syn_csik (syn_cssetk))) (syn_cins3k
-        (syn_cimak (syn_cin (syn_cins3k (syn_csik (syn_cdif (syn_cxpk (syn_cpw (syn_c1c))
-        (syn_cvv)) (syn_cimak (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k
-        (syn_csik (syn_cssetk)))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))))
-        (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                                      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                        (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-              (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv))))))
-      (syn_wrex x (syn_cspfin) (syn_wex t (syn_wa (.classEq (.cv t) (syn_csn (.cv x)))
-            (.classMem (syn_copk (.cv t) (.cv a))
-              (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-                  (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k
-                          (syn_cimak (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k
-                                (syn_cimak (syn_csymdif (syn_cins2k
-                                      (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv)) (syn_cimak
-        (syn_cin (syn_cins2k (syn_csik (syn_cssetk))) (syn_cins3k (syn_cimak (syn_cin
-        (syn_cins3k (syn_csik (syn_cdif (syn_cxpk (syn_cpw (syn_c1c)) (syn_cvv)) (syn_cimak
-        (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_csik (syn_cssetk)))) (syn_cpw1
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))))) (syn_cins2k (syn_cssetk)))
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                    (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                            (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-                  (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv))))))))
+    @gBitri
+      (.classMem (.cv a) (synCimak
+          (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+              (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k
+                      (synCimak (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k
+                            (synCimak (synCsymdif (synCins2k
+                                  (synCin (synCxpk (synCnnc) (synCvv)) (synCimak
+                                      (synCin (synCins2k (synCsik (synCssetk))) (synCins3k
+        (synCimak (synCin (synCins3k (synCsik (synCdif (synCxpk (synCpw (synC1c))
+        (synCvv)) (synCimak (synCsymdif (synCins3k (synCssetk)) (synCins2k
+        (synCsik (synCssetk)))) (synCpw1 (synCpw1 (synCpw1 (synC1c))))))))
+        (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c))))))
+                                      (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                        (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+              (synCxpk (synCsn (synCsn (synC0))) (synCvv)))) (synCpw1 (synCspfin))))
+      (synWrex t (synCpw1 (synCspfin)) (.classMem (synCopk (.cv t) (.cv a))
+          (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+              (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k
+                      (synCimak (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k
+                            (synCimak (synCsymdif (synCins2k
+                                  (synCin (synCxpk (synCnnc) (synCvv)) (synCimak
+                                      (synCin (synCins2k (synCsik (synCssetk))) (synCins3k
+        (synCimak (synCin (synCins3k (synCsik (synCdif (synCxpk (synCpw (synC1c))
+        (synCvv)) (synCimak (synCsymdif (synCins3k (synCssetk)) (synCins2k
+        (synCsik (synCssetk)))) (synCpw1 (synCpw1 (synCpw1 (synC1c))))))))
+        (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c))))))
+                                      (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                        (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+              (synCxpk (synCsn (synCsn (synC0))) (synCvv))))))
+      (synWrex x (synCspfin) (synWex t (synWa (.classEq (.cv t) (synCsn (.cv x)))
+            (.classMem (synCopk (.cv t) (.cv a))
+              (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+                  (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k
+                          (synCimak (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k
+                                (synCimak (synCsymdif (synCins2k
+                                      (synCin (synCxpk (synCnnc) (synCvv)) (synCimak
+        (synCin (synCins2k (synCsik (synCssetk))) (synCins3k (synCimak (synCin
+        (synCins3k (synCsik (synCdif (synCxpk (synCpw (synC1c)) (synCvv)) (synCimak
+        (synCsymdif (synCins3k (synCssetk)) (synCins2k (synCsik (synCssetk)))) (synCpw1
+        (synCpw1 (synCpw1 (synC1c)))))))) (synCins2k (synCssetk)))
+        (synCpw1 (synCpw1 (synC1c)))))) (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                    (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                            (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+                  (synCxpk (synCsn (synCsn (synC0))) (synCvv))))))))
       p0007 p0016
-  have p0018 := @g_snex (.cv x)
-  have p0019 := @g_opkeq1 (.cv t) (syn_csn (.cv x)) (.cv a)
+  have p0018 := @gSnex (.cv x)
+  have p0019 := @gOpkeq1 (.cv t) (synCsn (.cv x)) (.cv a)
   have p0020 :=
-    @g_eleq1d (.classEq (.cv t) (syn_csn (.cv x))) (syn_copk (.cv t) (.cv a))
-      (syn_copk (syn_csn (.cv x)) (.cv a))
-      (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif (syn_ccompl
-            (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cimak
-                    (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k (syn_cimak
-                          (syn_csymdif (syn_cins2k (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv))
-                                (syn_cimak (syn_cin (syn_cins2k (syn_csik (syn_cssetk)))
-                                    (syn_cins3k (syn_cimak (syn_cin (syn_cins3k (syn_csik
-        (syn_cdif (syn_cxpk (syn_cpw (syn_c1c)) (syn_cvv)) (syn_cimak
-        (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_csik (syn_cssetk)))) (syn_cpw1
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))))) (syn_cins2k (syn_cssetk)))
-                                        (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                                  (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                            (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                    (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-          (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv))))
+    @gEleq1d (.classEq (.cv t) (synCsn (.cv x))) (synCopk (.cv t) (.cv a))
+      (synCopk (synCsn (.cv x)) (.cv a))
+      (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif (synCcompl
+            (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCimak
+                    (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k (synCimak
+                          (synCsymdif (synCins2k (synCin (synCxpk (synCnnc) (synCvv))
+                                (synCimak (synCin (synCins2k (synCsik (synCssetk)))
+                                    (synCins3k (synCimak (synCin (synCins3k (synCsik
+        (synCdif (synCxpk (synCpw (synC1c)) (synCvv)) (synCimak
+        (synCsymdif (synCins3k (synCssetk)) (synCins2k (synCsik (synCssetk)))) (synCpw1
+        (synCpw1 (synCpw1 (synC1c)))))))) (synCins2k (synCssetk)))
+                                        (synCpw1 (synCpw1 (synC1c))))))
+                                  (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                            (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                    (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+          (synCxpk (synCsn (synCsn (synC0))) (synCvv))))
       p0019
   have p0021 :=
-    @g_ceqsexv
-      (.classMem (syn_copk (.cv t) (.cv a))
-        (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-            (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cimak
-                      (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k (syn_cimak
-                            (syn_csymdif (syn_cins2k (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv))
-                                  (syn_cimak (syn_cin (syn_cins2k (syn_csik (syn_cssetk)))
-                                      (syn_cins3k (syn_cimak (syn_cin (syn_cins3k (syn_csik
-        (syn_cdif (syn_cxpk (syn_cpw (syn_c1c)) (syn_cvv)) (syn_cimak
-        (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_csik (syn_cssetk)))) (syn_cpw1
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))))) (syn_cins2k (syn_cssetk)))
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                              (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                      (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-            (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv)))))
-      (.classMem (syn_copk (syn_csn (.cv x)) (.cv a))
-        (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-            (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cimak
-                      (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k (syn_cimak
-                            (syn_csymdif (syn_cins2k (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv))
-                                  (syn_cimak (syn_cin (syn_cins2k (syn_csik (syn_cssetk)))
-                                      (syn_cins3k (syn_cimak (syn_cin (syn_cins3k (syn_csik
-        (syn_cdif (syn_cxpk (syn_cpw (syn_c1c)) (syn_cvv)) (syn_cimak
-        (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_csik (syn_cssetk)))) (syn_cpw1
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))))) (syn_cins2k (syn_cssetk)))
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                              (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                      (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-            (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv)))))
-      t (syn_csn (.cv x)) dv_cache_0010 dv_cache_0011 p0018 p0020
-  have p0022 := @g_vex x
-  have p0023 := @g_eqtfinrelk (.cv x) (.cv a) p0022 p0006
+    @gCeqsexv
+      (.classMem (synCopk (.cv t) (.cv a))
+        (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+            (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCimak
+                      (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k (synCimak
+                            (synCsymdif (synCins2k (synCin (synCxpk (synCnnc) (synCvv))
+                                  (synCimak (synCin (synCins2k (synCsik (synCssetk)))
+                                      (synCins3k (synCimak (synCin (synCins3k (synCsik
+        (synCdif (synCxpk (synCpw (synC1c)) (synCvv)) (synCimak
+        (synCsymdif (synCins3k (synCssetk)) (synCins2k (synCsik (synCssetk)))) (synCpw1
+        (synCpw1 (synCpw1 (synC1c)))))))) (synCins2k (synCssetk)))
+        (synCpw1 (synCpw1 (synC1c)))))) (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                              (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                      (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+            (synCxpk (synCsn (synCsn (synC0))) (synCvv)))))
+      (.classMem (synCopk (synCsn (.cv x)) (.cv a))
+        (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+            (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCimak
+                      (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k (synCimak
+                            (synCsymdif (synCins2k (synCin (synCxpk (synCnnc) (synCvv))
+                                  (synCimak (synCin (synCins2k (synCsik (synCssetk)))
+                                      (synCins3k (synCimak (synCin (synCins3k (synCsik
+        (synCdif (synCxpk (synCpw (synC1c)) (synCvv)) (synCimak
+        (synCsymdif (synCins3k (synCssetk)) (synCins2k (synCsik (synCssetk)))) (synCpw1
+        (synCpw1 (synCpw1 (synC1c)))))))) (synCins2k (synCssetk)))
+        (synCpw1 (synCpw1 (synC1c)))))) (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                              (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                      (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+            (synCxpk (synCsn (synCsn (synC0))) (synCvv)))))
+      t (synCsn (.cv x)) dv_cache_0010 dv_cache_0011 p0018 p0020
+  have p0022 := @gVex x
+  have p0023 := @gEqtfinrelk (.cv x) (.cv a) p0022 p0006
   have p0024 :=
-    @g_bitri
-      (syn_wex t (syn_wa (.classEq (.cv t) (syn_csn (.cv x)))
-          (.classMem (syn_copk (.cv t) (.cv a))
-            (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-                (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k
-                        (syn_cimak (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k
-                              (syn_cimak (syn_csymdif (syn_cins2k
-                                    (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv)) (syn_cimak
-                                        (syn_cin (syn_cins2k (syn_csik (syn_cssetk)))
-        (syn_cins3k (syn_cimak (syn_cin (syn_cins3k (syn_csik (syn_cdif
-        (syn_cxpk (syn_cpw (syn_c1c)) (syn_cvv)) (syn_cimak (syn_csymdif
-        (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_csik (syn_cssetk)))) (syn_cpw1 (syn_cpw1
-        (syn_cpw1 (syn_c1c)))))))) (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                                        (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                  (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                          (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-                (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv)))))))
-      (.classMem (syn_copk (syn_csn (.cv x)) (.cv a))
-        (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-            (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cimak
-                      (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k (syn_cimak
-                            (syn_csymdif (syn_cins2k (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv))
-                                  (syn_cimak (syn_cin (syn_cins2k (syn_csik (syn_cssetk)))
-                                      (syn_cins3k (syn_cimak (syn_cin (syn_cins3k (syn_csik
-        (syn_cdif (syn_cxpk (syn_cpw (syn_c1c)) (syn_cvv)) (syn_cimak
-        (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_csik (syn_cssetk)))) (syn_cpw1
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))))) (syn_cins2k (syn_cssetk)))
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                              (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                      (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-            (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv)))))
-      (.classEq (.cv a) (syn_ctfin (.cv x))) p0021 p0023
+    @gBitri
+      (synWex t (synWa (.classEq (.cv t) (synCsn (.cv x)))
+          (.classMem (synCopk (.cv t) (.cv a))
+            (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+                (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k
+                        (synCimak (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k
+                              (synCimak (synCsymdif (synCins2k
+                                    (synCin (synCxpk (synCnnc) (synCvv)) (synCimak
+                                        (synCin (synCins2k (synCsik (synCssetk)))
+        (synCins3k (synCimak (synCin (synCins3k (synCsik (synCdif
+        (synCxpk (synCpw (synC1c)) (synCvv)) (synCimak (synCsymdif
+        (synCins3k (synCssetk)) (synCins2k (synCsik (synCssetk)))) (synCpw1 (synCpw1
+        (synCpw1 (synC1c)))))))) (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c))))))
+                                        (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                  (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                          (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+                (synCxpk (synCsn (synCsn (synC0))) (synCvv)))))))
+      (.classMem (synCopk (synCsn (.cv x)) (.cv a))
+        (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+            (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCimak
+                      (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k (synCimak
+                            (synCsymdif (synCins2k (synCin (synCxpk (synCnnc) (synCvv))
+                                  (synCimak (synCin (synCins2k (synCsik (synCssetk)))
+                                      (synCins3k (synCimak (synCin (synCins3k (synCsik
+        (synCdif (synCxpk (synCpw (synC1c)) (synCvv)) (synCimak
+        (synCsymdif (synCins3k (synCssetk)) (synCins2k (synCsik (synCssetk)))) (synCpw1
+        (synCpw1 (synCpw1 (synC1c)))))))) (synCins2k (synCssetk)))
+        (synCpw1 (synCpw1 (synC1c)))))) (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                              (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                      (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+            (synCxpk (synCsn (synCsn (synC0))) (synCvv)))))
+      (.classEq (.cv a) (synCtfin (.cv x))) p0021 p0023
   have p0025 :=
-    @g_rexbii
-      (syn_wex t (syn_wa (.classEq (.cv t) (syn_csn (.cv x)))
-          (.classMem (syn_copk (.cv t) (.cv a))
-            (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-                (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k
-                        (syn_cimak (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k
-                              (syn_cimak (syn_csymdif (syn_cins2k
-                                    (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv)) (syn_cimak
-                                        (syn_cin (syn_cins2k (syn_csik (syn_cssetk)))
-        (syn_cins3k (syn_cimak (syn_cin (syn_cins3k (syn_csik (syn_cdif
-        (syn_cxpk (syn_cpw (syn_c1c)) (syn_cvv)) (syn_cimak (syn_csymdif
-        (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_csik (syn_cssetk)))) (syn_cpw1 (syn_cpw1
-        (syn_cpw1 (syn_c1c)))))))) (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                                        (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                  (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                          (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-                (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv)))))))
-      (.classEq (.cv a) (syn_ctfin (.cv x))) x (syn_cspfin) p0024
+    @gRexbii
+      (synWex t (synWa (.classEq (.cv t) (synCsn (.cv x)))
+          (.classMem (synCopk (.cv t) (.cv a))
+            (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+                (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k
+                        (synCimak (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k
+                              (synCimak (synCsymdif (synCins2k
+                                    (synCin (synCxpk (synCnnc) (synCvv)) (synCimak
+                                        (synCin (synCins2k (synCsik (synCssetk)))
+        (synCins3k (synCimak (synCin (synCins3k (synCsik (synCdif
+        (synCxpk (synCpw (synC1c)) (synCvv)) (synCimak (synCsymdif
+        (synCins3k (synCssetk)) (synCins2k (synCsik (synCssetk)))) (synCpw1 (synCpw1
+        (synCpw1 (synC1c)))))))) (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c))))))
+                                        (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                  (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                          (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+                (synCxpk (synCsn (synCsn (synC0))) (synCvv)))))))
+      (.classEq (.cv a) (synCtfin (.cv x))) x (synCspfin) p0024
   have p0026 :=
-    @g_bitri
-      (.classMem (.cv a) (syn_cimak
-          (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-              (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k
-                      (syn_cimak (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k
-                            (syn_cimak (syn_csymdif (syn_cins2k
-                                  (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv)) (syn_cimak
-                                      (syn_cin (syn_cins2k (syn_csik (syn_cssetk))) (syn_cins3k
-        (syn_cimak (syn_cin (syn_cins3k (syn_csik (syn_cdif (syn_cxpk (syn_cpw (syn_c1c))
-        (syn_cvv)) (syn_cimak (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k
-        (syn_csik (syn_cssetk)))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))))
-        (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                                      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                        (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-              (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv)))) (syn_cpw1 (syn_cspfin))))
-      (syn_wrex x (syn_cspfin) (syn_wex t (syn_wa (.classEq (.cv t) (syn_csn (.cv x)))
-            (.classMem (syn_copk (.cv t) (.cv a))
-              (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-                  (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k
-                          (syn_cimak (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k
-                                (syn_cimak (syn_csymdif (syn_cins2k
-                                      (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv)) (syn_cimak
-        (syn_cin (syn_cins2k (syn_csik (syn_cssetk))) (syn_cins3k (syn_cimak (syn_cin
-        (syn_cins3k (syn_csik (syn_cdif (syn_cxpk (syn_cpw (syn_c1c)) (syn_cvv)) (syn_cimak
-        (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_csik (syn_cssetk)))) (syn_cpw1
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))))) (syn_cins2k (syn_cssetk)))
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                    (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                            (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-                  (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv))))))))
-      (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))) p0017 p0025
+    @gBitri
+      (.classMem (.cv a) (synCimak
+          (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+              (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k
+                      (synCimak (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k
+                            (synCimak (synCsymdif (synCins2k
+                                  (synCin (synCxpk (synCnnc) (synCvv)) (synCimak
+                                      (synCin (synCins2k (synCsik (synCssetk))) (synCins3k
+        (synCimak (synCin (synCins3k (synCsik (synCdif (synCxpk (synCpw (synC1c))
+        (synCvv)) (synCimak (synCsymdif (synCins3k (synCssetk)) (synCins2k
+        (synCsik (synCssetk)))) (synCpw1 (synCpw1 (synCpw1 (synC1c))))))))
+        (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c))))))
+                                      (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                        (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+              (synCxpk (synCsn (synCsn (synC0))) (synCvv)))) (synCpw1 (synCspfin))))
+      (synWrex x (synCspfin) (synWex t (synWa (.classEq (.cv t) (synCsn (.cv x)))
+            (.classMem (synCopk (.cv t) (.cv a))
+              (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+                  (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k
+                          (synCimak (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k
+                                (synCimak (synCsymdif (synCins2k
+                                      (synCin (synCxpk (synCnnc) (synCvv)) (synCimak
+        (synCin (synCins2k (synCsik (synCssetk))) (synCins3k (synCimak (synCin
+        (synCins3k (synCsik (synCdif (synCxpk (synCpw (synC1c)) (synCvv)) (synCimak
+        (synCsymdif (synCins3k (synCssetk)) (synCins2k (synCsik (synCssetk)))) (synCpw1
+        (synCpw1 (synCpw1 (synC1c)))))))) (synCins2k (synCssetk)))
+        (synCpw1 (synCpw1 (synC1c)))))) (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                    (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                            (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+                  (synCxpk (synCsn (synCsn (synC0))) (synCvv))))))))
+      (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))) p0017 p0025
   have p0027 :=
-    @g_eqabi (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))) a
-      (syn_cimak (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-            (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cimak
-                      (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k (syn_cimak
-                            (syn_csymdif (syn_cins2k (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv))
-                                  (syn_cimak (syn_cin (syn_cins2k (syn_csik (syn_cssetk)))
-                                      (syn_cins3k (syn_cimak (syn_cin (syn_cins3k (syn_csik
-        (syn_cdif (syn_cxpk (syn_cpw (syn_c1c)) (syn_cvv)) (syn_cimak
-        (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_csik (syn_cssetk)))) (syn_cpw1
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))))) (syn_cins2k (syn_cssetk)))
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                              (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                      (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-            (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv)))) (syn_cpw1 (syn_cspfin)))
+    @gEqabi (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))) a
+      (synCimak (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+            (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCimak
+                      (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k (synCimak
+                            (synCsymdif (synCins2k (synCin (synCxpk (synCnnc) (synCvv))
+                                  (synCimak (synCin (synCins2k (synCsik (synCssetk)))
+                                      (synCins3k (synCimak (synCin (synCins3k (synCsik
+        (synCdif (synCxpk (synCpw (synC1c)) (synCvv)) (synCimak
+        (synCsymdif (synCins3k (synCssetk)) (synCins2k (synCsik (synCssetk)))) (synCpw1
+        (synCpw1 (synCpw1 (synC1c)))))))) (synCins2k (synCssetk)))
+        (synCpw1 (synCpw1 (synC1c)))))) (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                              (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                      (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+            (synCxpk (synCsn (synCsn (synC0))) (synCvv)))) (synCpw1 (synCspfin)))
       dv_cache_0012 p0026
-  have p0028 := @g_tfinrelkex
-  have p0029 := @g_spfinex
-  have p0030 := @g_pw1ex (syn_cspfin) p0029
+  have p0028 := @gTfinrelkex
+  have p0029 := @gSpfinex
+  have p0030 := @gPw1ex (synCspfin) p0029
   have p0031 :=
-    @g_imakex
-      (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif (syn_ccompl
-            (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cimak
-                    (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k (syn_cimak
-                          (syn_csymdif (syn_cins2k (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv))
-                                (syn_cimak (syn_cin (syn_cins2k (syn_csik (syn_cssetk)))
-                                    (syn_cins3k (syn_cimak (syn_cin (syn_cins3k (syn_csik
-        (syn_cdif (syn_cxpk (syn_cpw (syn_c1c)) (syn_cvv)) (syn_cimak
-        (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_csik (syn_cssetk)))) (syn_cpw1
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))))) (syn_cins2k (syn_cssetk)))
-                                        (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                                  (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                            (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                    (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-          (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv))))
-      (syn_cpw1 (syn_cspfin)) p0028 p0030
+    @gImakex
+      (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif (synCcompl
+            (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCimak
+                    (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k (synCimak
+                          (synCsymdif (synCins2k (synCin (synCxpk (synCnnc) (synCvv))
+                                (synCimak (synCin (synCins2k (synCsik (synCssetk)))
+                                    (synCins3k (synCimak (synCin (synCins3k (synCsik
+        (synCdif (synCxpk (synCpw (synC1c)) (synCvv)) (synCimak
+        (synCsymdif (synCins3k (synCssetk)) (synCins2k (synCsik (synCssetk)))) (synCpw1
+        (synCpw1 (synCpw1 (synC1c)))))))) (synCins2k (synCssetk)))
+                                        (synCpw1 (synCpw1 (synC1c))))))
+                                  (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                            (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                    (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+          (synCxpk (synCsn (synCsn (synC0))) (synCvv))))
+      (synCpw1 (synCspfin)) p0028 p0030
   have p0032 :=
-    @g_eqeltrri
-      (syn_cimak (syn_cun (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_csn (syn_c0))) (syn_cdif
-            (syn_ccompl (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cimak
-                      (syn_cdif (syn_cins3k (syn_ccnvk (syn_cssetk))) (syn_cins2k (syn_cimak
-                            (syn_csymdif (syn_cins2k (syn_cin (syn_cxpk (syn_cnnc) (syn_cvv))
-                                  (syn_cimak (syn_cin (syn_cins2k (syn_csik (syn_cssetk)))
-                                      (syn_cins3k (syn_cimak (syn_cin (syn_cins3k (syn_csik
-        (syn_cdif (syn_cxpk (syn_cpw (syn_c1c)) (syn_cvv)) (syn_cimak
-        (syn_csymdif (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_csik (syn_cssetk)))) (syn_cpw1
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))))) (syn_cins2k (syn_cssetk)))
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                              (syn_cins3k (syn_cidk))) (syn_cpw1 (syn_c1c)))))
-                      (syn_cpw1 (syn_c1c))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-            (syn_cxpk (syn_csn (syn_csn (syn_c0))) (syn_cvv)))) (syn_cpw1 (syn_cspfin)))
-      (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x))))) (syn_cvv)
+    @gEqeltrri
+      (synCimak (synCun (synCxpk (synCsn (synCsn (synC0))) (synCsn (synC0))) (synCdif
+            (synCcompl (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCimak
+                      (synCdif (synCins3k (synCcnvk (synCssetk))) (synCins2k (synCimak
+                            (synCsymdif (synCins2k (synCin (synCxpk (synCnnc) (synCvv))
+                                  (synCimak (synCin (synCins2k (synCsik (synCssetk)))
+                                      (synCins3k (synCimak (synCin (synCins3k (synCsik
+        (synCdif (synCxpk (synCpw (synC1c)) (synCvv)) (synCimak
+        (synCsymdif (synCins3k (synCssetk)) (synCins2k (synCsik (synCssetk)))) (synCpw1
+        (synCpw1 (synCpw1 (synC1c)))))))) (synCins2k (synCssetk)))
+        (synCpw1 (synCpw1 (synC1c)))))) (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                              (synCins3k (synCidk))) (synCpw1 (synC1c)))))
+                      (synCpw1 (synC1c))))) (synCpw1 (synCpw1 (synC1c)))))
+            (synCxpk (synCsn (synCsn (synC0))) (synCvv)))) (synCpw1 (synCspfin)))
+      (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x))))) (synCvv)
       p0027 p0031
-  have p0033 := @g_snex (syn_cncfin (syn_cvv))
+  have p0033 := @gSnex (synCncfin (synCvv))
   have p0034 :=
-    @g_ncfindi (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))
-      (syn_csn (syn_cncfin (syn_cvv))) (syn_cvv) (syn_cvv)
+    @gNcfindi (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))
+      (synCsn (synCncfin (synCvv))) (synCvv) (synCvv)
   have p0035 :=
-    @g_mp3an2
-      (syn_wa (.classMem (syn_cvv) (syn_cfin)) (.classMem
-          (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x))))) (syn_cvv)))
-      (.classMem (syn_csn (syn_cncfin (syn_cvv))) (syn_cvv))
+    @gMp3an2
+      (synWa (.classMem (synCvv) (synCfin)) (.classMem
+          (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x))))) (synCvv)))
+      (.classMem (synCsn (synCncfin (synCvv))) (synCvv))
       (.classEq
-        (syn_cin (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))
-          (syn_csn (syn_cncfin (syn_cvv)))) (syn_c0))
-      (.classEq (syn_cncfin (syn_cun
-            (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))
-            (syn_csn (syn_cncfin (syn_cvv))))) (syn_cplc (syn_cncfin
-            (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x))))))
-          (syn_cncfin (syn_csn (syn_cncfin (syn_cvv))))))
+        (synCin (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))
+          (synCsn (synCncfin (synCvv)))) (synC0))
+      (.classEq (synCncfin (synCun
+            (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))
+            (synCsn (synCncfin (synCvv))))) (synCplc (synCncfin
+            (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x))))))
+          (synCncfin (synCsn (synCncfin (synCvv))))))
       p0033 p0034
   have p0036 :=
-    @g_mpanl2 (.classMem (syn_cvv) (syn_cfin))
-      (.classMem (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))
-        (syn_cvv))
+    @gMpanl2 (.classMem (synCvv) (synCfin))
+      (.classMem (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))
+        (synCvv))
       (.classEq
-        (syn_cin (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))
-          (syn_csn (syn_cncfin (syn_cvv)))) (syn_c0))
-      (.classEq (syn_cncfin (syn_cun
-            (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))
-            (syn_csn (syn_cncfin (syn_cvv))))) (syn_cplc (syn_cncfin
-            (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x))))))
-          (syn_cncfin (syn_csn (syn_cncfin (syn_cvv))))))
+        (synCin (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))
+          (synCsn (synCncfin (synCvv)))) (synC0))
+      (.classEq (synCncfin (synCun
+            (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))
+            (synCsn (synCncfin (synCvv))))) (synCplc (synCncfin
+            (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x))))))
+          (synCncfin (synCsn (synCncfin (synCvv))))))
       p0032 p0035
   have p0037 :=
-    @g_mpdan (.classMem (syn_cvv) (syn_cfin))
+    @gMpdan (.classMem (synCvv) (synCfin))
       (.classEq
-        (syn_cin (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))
-          (syn_csn (syn_cncfin (syn_cvv)))) (syn_c0))
-      (.classEq (syn_cncfin (syn_cun
-            (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))
-            (syn_csn (syn_cncfin (syn_cvv))))) (syn_cplc (syn_cncfin
-            (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x))))))
-          (syn_cncfin (syn_csn (syn_cncfin (syn_cvv))))))
+        (synCin (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))
+          (synCsn (synCncfin (synCvv)))) (synC0))
+      (.classEq (synCncfin (synCun
+            (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))
+            (synCsn (synCncfin (synCvv))))) (synCplc (synCncfin
+            (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x))))))
+          (synCncfin (synCsn (synCncfin (synCvv))))))
       p0005 p0036
   have p0038 :=
-    @g_ncfinprop (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))
-      (syn_cvv)
+    @gNcfinprop (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))
+      (synCvv)
   have p0039 :=
-    @g_mpan2 (.classMem (syn_cvv) (syn_cfin))
-      (.classMem (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))
-        (syn_cvv))
-      (syn_wa (.classMem (syn_cncfin
-            (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x))))))
-          (syn_cnnc)) (.classMem
-          (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x))))) (syn_cncfin
-            (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x))))))))
+    @gMpan2 (.classMem (synCvv) (synCfin))
+      (.classMem (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))
+        (synCvv))
+      (synWa (.classMem (synCncfin
+            (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x))))))
+          (synCnnc)) (.classMem
+          (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x))))) (synCncfin
+            (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x))))))))
       p0032 p0038
   have p0040 :=
-    @g_simpld (.classMem (syn_cvv) (syn_cfin))
-      (.classMem (syn_cncfin
-          (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))) (syn_cnnc))
-      (.classMem (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))
-        (syn_cncfin (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))))
+    @gSimpld (.classMem (synCvv) (synCfin))
+      (.classMem (synCncfin
+          (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))) (synCnnc))
+      (.classMem (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))
+        (synCncfin (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))))
       p0039
-  have p0042 := @g_ncfinprop (syn_cspfin) (syn_cvv)
+  have p0042 := @gNcfinprop (synCspfin) (synCvv)
   have p0043 :=
-    @g_mpan2 (.classMem (syn_cvv) (syn_cfin)) (.classMem (syn_cspfin) (syn_cvv))
-      (syn_wa (.classMem (syn_cncfin (syn_cspfin)) (syn_cnnc))
-        (.classMem (syn_cspfin) (syn_cncfin (syn_cspfin))))
+    @gMpan2 (.classMem (synCvv) (synCfin)) (.classMem (synCspfin) (synCvv))
+      (synWa (.classMem (synCncfin (synCspfin)) (synCnnc))
+        (.classMem (synCspfin) (synCncfin (synCspfin))))
       p0029 p0042
   have p0044 :=
-    @g_simpld (.classMem (syn_cvv) (syn_cfin))
-      (.classMem (syn_cncfin (syn_cspfin)) (syn_cnnc))
-      (.classMem (syn_cspfin) (syn_cncfin (syn_cspfin))) p0043
-  have p0045 := @g_tfincl (syn_cncfin (syn_cspfin))
+    @gSimpld (.classMem (synCvv) (synCfin))
+      (.classMem (synCncfin (synCspfin)) (synCnnc))
+      (.classMem (synCspfin) (synCncfin (synCspfin))) p0043
+  have p0045 := @gTfincl (synCncfin (synCspfin))
   have p0046 :=
-    @g_syl (.classMem (syn_cvv) (syn_cfin))
-      (.classMem (syn_cncfin (syn_cspfin)) (syn_cnnc))
-      (.classMem (syn_ctfin (syn_cncfin (syn_cspfin))) (syn_cnnc)) p0044 p0045
+    @gSyl (.classMem (synCvv) (synCfin))
+      (.classMem (synCncfin (synCspfin)) (synCnnc))
+      (.classMem (synCtfin (synCncfin (synCspfin))) (synCnnc)) p0044 p0045
   have p0047 :=
-    @g_simprd (.classMem (syn_cvv) (syn_cfin))
-      (.classMem (syn_cncfin
-          (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))) (syn_cnnc))
-      (.classMem (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))
-        (syn_cncfin (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))))
+    @gSimprd (.classMem (synCvv) (synCfin))
+      (.classMem (synCncfin
+          (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))) (synCnnc))
+      (.classMem (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))
+        (synCncfin (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))))
       p0039
-  have p0048 := @g_vfinspnn
-  have p0049 := @g_difss (syn_cnnc) (syn_csn (syn_c0))
+  have p0048 := @gVfinspnn
+  have p0049 := @gDifss (synCnnc) (synCsn (synC0))
   have p0050 :=
-    @g_syl6ss (.classMem (syn_cvv) (syn_cfin)) (syn_cspfin)
-      (syn_cdif (syn_cnnc) (syn_csn (syn_c0))) (syn_cnnc) p0048 p0049
+    @gSyl6ss (.classMem (synCvv) (synCfin)) (synCspfin)
+      (synCdif (synCnnc) (synCsn (synC0))) (synCnnc) p0048 p0049
   have p0051 :=
-    @g_simprd (.classMem (syn_cvv) (syn_cfin))
-      (.classMem (syn_cncfin (syn_cspfin)) (syn_cnnc))
-      (.classMem (syn_cspfin) (syn_cncfin (syn_cspfin))) p0043
+    @gSimprd (.classMem (synCvv) (synCfin))
+      (.classMem (synCncfin (synCspfin)) (synCnnc))
+      (.classMem (synCspfin) (synCncfin (synCspfin))) p0043
   have p0052 :=
-    @g_tfinnn x (syn_cspfin) (syn_cncfin (syn_cspfin)) a dv_cache_0013 dv_cache_0006
+    @gTfinnn x (synCspfin) (synCncfin (synCspfin)) a dv_cache_0013 dv_cache_0006
       dv_cache_0014 dv_cache_0015 dv_cache_0001
   have p0053 :=
-    @g_syl3anc (.classMem (syn_cvv) (syn_cfin))
-      (.classMem (syn_cncfin (syn_cspfin)) (syn_cnnc)) (syn_wss (syn_cspfin) (syn_cnnc))
-      (.classMem (syn_cspfin) (syn_cncfin (syn_cspfin)))
-      (.classMem (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))
-        (syn_ctfin (syn_cncfin (syn_cspfin))))
+    @gSyl3anc (.classMem (synCvv) (synCfin))
+      (.classMem (synCncfin (synCspfin)) (synCnnc)) (synWss (synCspfin) (synCnnc))
+      (.classMem (synCspfin) (synCncfin (synCspfin)))
+      (.classMem (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))
+        (synCtfin (synCncfin (synCspfin))))
       p0044 p0050 p0051 p0052
   have p0054 :=
-    @g_nnceleq (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))
-      (syn_cncfin (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x))))))
-      (syn_ctfin (syn_cncfin (syn_cspfin)))
+    @gNnceleq (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))
+      (synCncfin (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x))))))
+      (synCtfin (synCncfin (synCspfin)))
   have p0055 :=
-    @g_syl22anc (.classMem (syn_cvv) (syn_cfin))
-      (.classMem (syn_cncfin
-          (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))) (syn_cnnc))
-      (.classMem (syn_ctfin (syn_cncfin (syn_cspfin))) (syn_cnnc))
-      (.classMem (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))
-        (syn_cncfin (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))))
-      (.classMem (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))
-        (syn_ctfin (syn_cncfin (syn_cspfin))))
-      (.classEq (syn_cncfin
-          (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x))))))
-        (syn_ctfin (syn_cncfin (syn_cspfin))))
+    @gSyl22anc (.classMem (synCvv) (synCfin))
+      (.classMem (synCncfin
+          (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))) (synCnnc))
+      (.classMem (synCtfin (synCncfin (synCspfin))) (synCnnc))
+      (.classMem (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))
+        (synCncfin (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))))
+      (.classMem (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))
+        (synCtfin (synCncfin (synCspfin))))
+      (.classEq (synCncfin
+          (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x))))))
+        (synCtfin (synCncfin (synCspfin))))
       p0040 p0046 p0047 p0053 p0054
-  have p0056 := @g_ncfinex (syn_cvv)
-  have p0057 := @g_ncfinsn (syn_cncfin (syn_cvv)) (syn_cvv)
+  have p0056 := @gNcfinex (synCvv)
+  have p0057 := @gNcfinsn (synCncfin (synCvv)) (synCvv)
   have p0058 :=
-    @g_mpan2 (.classMem (syn_cvv) (syn_cfin)) (.classMem (syn_cncfin (syn_cvv)) (syn_cvv))
-      (.classEq (syn_cncfin (syn_csn (syn_cncfin (syn_cvv)))) (syn_c1c)) p0056 p0057
+    @gMpan2 (.classMem (synCvv) (synCfin)) (.classMem (synCncfin (synCvv)) (synCvv))
+      (.classEq (synCncfin (synCsn (synCncfin (synCvv)))) (synC1c)) p0056 p0057
   have p0059 :=
-    @g_addceq12d (.classMem (syn_cvv) (syn_cfin))
-      (syn_cncfin (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x))))))
-      (syn_ctfin (syn_cncfin (syn_cspfin))) (syn_cncfin (syn_csn (syn_cncfin (syn_cvv))))
-      (syn_c1c) p0055 p0058
+    @gAddceq12d (.classMem (synCvv) (synCfin))
+      (synCncfin (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x))))))
+      (synCtfin (synCncfin (synCspfin))) (synCncfin (synCsn (synCncfin (synCvv))))
+      (synC1c) p0055 p0058
   have p0060 :=
-    @g_n_3eqtrd (.classMem (syn_cvv) (syn_cfin)) (syn_cncfin (syn_cspfin))
-      (syn_cncfin
-        (syn_cun (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x)))))
-          (syn_csn (syn_cncfin (syn_cvv)))))
-      (syn_cplc (syn_cncfin
-          (.cab a (syn_wrex x (syn_cspfin) (.classEq (.cv a) (syn_ctfin (.cv x))))))
-        (syn_cncfin (syn_csn (syn_cncfin (syn_cvv)))))
-      (syn_cplc (syn_ctfin (syn_cncfin (syn_cspfin))) (syn_c1c)) p0002 p0037 p0059
+    @gN3eqtrd (.classMem (synCvv) (synCfin)) (synCncfin (synCspfin))
+      (synCncfin
+        (synCun (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x)))))
+          (synCsn (synCncfin (synCvv)))))
+      (synCplc (synCncfin
+          (.cab a (synWrex x (synCspfin) (.classEq (.cv a) (synCtfin (.cv x))))))
+        (synCncfin (synCsn (synCncfin (synCvv)))))
+      (synCplc (synCtfin (synCncfin (synCspfin))) (synC1c)) p0002 p0037 p0059
   exact p0060
 
 
@@ -1056,161 +1057,163 @@ open NFChoice.SemanticCore
 open NFChoice.ReplaySupport
 open NFChoice.Compiler.CompactSourceSyntax
 
+/-- Checked nominal proof certificate identified upstream as `g_vinf`. -/
 @[expose]
-noncomputable def g_vinf : Nominal.NPrf (.neg (.classMem (syn_cvv) (syn_cfin))) :=
+noncomputable def gVinf : Nominal.NPrf (.neg (.classMem (synCvv) (synCfin))) :=
   by
-  have p0000 := @g_noel (syn_cncfin (syn_cspfin))
-  have p0001 := @g_spfinex
-  have p0002 := @g_ncfinprop (syn_cspfin) (syn_cvv)
+  have p0000 := @gNoel (synCncfin (synCspfin))
+  have p0001 := @gSpfinex
+  have p0002 := @gNcfinprop (synCspfin) (synCvv)
   have p0003 :=
-    @g_mpan2 (.classMem (syn_cvv) (syn_cfin)) (.classMem (syn_cspfin) (syn_cvv))
-      (syn_wa (.classMem (syn_cncfin (syn_cspfin)) (syn_cnnc))
-        (.classMem (syn_cspfin) (syn_cncfin (syn_cspfin))))
+    @gMpan2 (.classMem (synCvv) (synCfin)) (.classMem (synCspfin) (synCvv))
+      (synWa (.classMem (synCncfin (synCspfin)) (synCnnc))
+        (.classMem (synCspfin) (synCncfin (synCspfin))))
       p0001 p0002
-  have p0004 := @g_ne0i (syn_cncfin (syn_cspfin)) (syn_cspfin)
+  have p0004 := @gNe0i (synCncfin (synCspfin)) (synCspfin)
   have p0005 :=
-    @g_anim2i (.classMem (syn_cspfin) (syn_cncfin (syn_cspfin)))
-      (syn_wne (syn_cncfin (syn_cspfin)) (syn_c0))
-      (.classMem (syn_cncfin (syn_cspfin)) (syn_cnnc)) p0004
+    @gAnim2i (.classMem (synCspfin) (synCncfin (synCspfin)))
+      (synWne (synCncfin (synCspfin)) (synC0))
+      (.classMem (synCncfin (synCspfin)) (synCnnc)) p0004
   have p0006 :=
-    @g_syl (.classMem (syn_cvv) (syn_cfin))
-      (syn_wa (.classMem (syn_cncfin (syn_cspfin)) (syn_cnnc))
-        (.classMem (syn_cspfin) (syn_cncfin (syn_cspfin))))
-      (syn_wa (.classMem (syn_cncfin (syn_cspfin)) (syn_cnnc))
-        (syn_wne (syn_cncfin (syn_cspfin)) (syn_c0)))
+    @gSyl (.classMem (synCvv) (synCfin))
+      (synWa (.classMem (synCncfin (synCspfin)) (synCnnc))
+        (.classMem (synCspfin) (synCncfin (synCspfin))))
+      (synWa (.classMem (synCncfin (synCspfin)) (synCnnc))
+        (synWne (synCncfin (synCspfin)) (synC0)))
       p0003 p0005
-  have p0007 := @g_eldifsn (syn_cncfin (syn_cspfin)) (syn_cnnc) (syn_c0)
+  have p0007 := @gEldifsn (synCncfin (synCspfin)) (synCnnc) (synC0)
   have p0008 :=
-    @g_sylibr (.classMem (syn_cvv) (syn_cfin))
-      (syn_wa (.classMem (syn_cncfin (syn_cspfin)) (syn_cnnc))
-        (syn_wne (syn_cncfin (syn_cspfin)) (syn_c0)))
-      (.classMem (syn_cncfin (syn_cspfin)) (syn_cdif (syn_cnnc) (syn_csn (syn_c0)))) p0006
+    @gSylibr (.classMem (synCvv) (synCfin))
+      (synWa (.classMem (synCncfin (synCspfin)) (synCnnc))
+        (synWne (synCncfin (synCspfin)) (synC0)))
+      (.classMem (synCncfin (synCspfin)) (synCdif (synCnnc) (synCsn (synC0)))) p0006
       p0007
-  have p0009 := @g_evenoddnnnul
+  have p0009 := @gEvenoddnnnul
   have p0010 :=
-    @g_syl6eleqr (.classMem (syn_cvv) (syn_cfin)) (syn_cncfin (syn_cspfin))
-      (syn_cdif (syn_cnnc) (syn_csn (syn_c0))) (syn_cun (syn_cevenfin) (syn_coddfin))
+    @gSyl6eleqr (.classMem (synCvv) (synCfin)) (synCncfin (synCspfin))
+      (synCdif (synCnnc) (synCsn (synC0))) (synCun (synCevenfin) (synCoddfin))
       p0008 p0009
-  have p0011 := @g_vfinncsp
+  have p0011 := @gVfinncsp
   have p0012 :=
-    @g_adantr (.classMem (syn_cvv) (syn_cfin))
-      (.classEq (syn_cncfin (syn_cspfin))
-        (syn_cplc (syn_ctfin (syn_cncfin (syn_cspfin))) (syn_c1c)))
-      (.classMem (syn_cncfin (syn_cspfin)) (syn_cevenfin)) p0011
-  have p0013 := @g_eventfin (syn_cncfin (syn_cspfin))
+    @gAdantr (.classMem (synCvv) (synCfin))
+      (.classEq (synCncfin (synCspfin))
+        (synCplc (synCtfin (synCncfin (synCspfin))) (synC1c)))
+      (.classMem (synCncfin (synCspfin)) (synCevenfin)) p0011
+  have p0013 := @gEventfin (synCncfin (synCspfin))
   have p0014 :=
-    @g_adantl (.classMem (syn_cncfin (syn_cspfin)) (syn_cevenfin))
-      (.classMem (syn_ctfin (syn_cncfin (syn_cspfin))) (syn_cevenfin))
-      (.classMem (syn_cvv) (syn_cfin)) p0013
-  have p0015 := @g_evennnul (syn_cncfin (syn_cspfin))
+    @gAdantl (.classMem (synCncfin (synCspfin)) (synCevenfin))
+      (.classMem (synCtfin (synCncfin (synCspfin))) (synCevenfin))
+      (.classMem (synCvv) (synCfin)) p0013
+  have p0015 := @gEvennnul (synCncfin (synCspfin))
   have p0016 :=
-    @g_adantl (.classMem (syn_cncfin (syn_cspfin)) (syn_cevenfin))
-      (syn_wne (syn_cncfin (syn_cspfin)) (syn_c0)) (.classMem (syn_cvv) (syn_cfin)) p0015
+    @gAdantl (.classMem (synCncfin (synCspfin)) (synCevenfin))
+      (synWne (synCncfin (synCspfin)) (synC0)) (.classMem (synCvv) (synCfin)) p0015
   have p0017 :=
-    @g_eqnetrrd
-      (syn_wa (.classMem (syn_cvv) (syn_cfin))
-        (.classMem (syn_cncfin (syn_cspfin)) (syn_cevenfin)))
-      (syn_cncfin (syn_cspfin)) (syn_cplc (syn_ctfin (syn_cncfin (syn_cspfin))) (syn_c1c))
-      (syn_c0) p0012 p0016
-  have p0018 := @g_sucevenodd (syn_ctfin (syn_cncfin (syn_cspfin)))
+    @gEqnetrrd
+      (synWa (.classMem (synCvv) (synCfin))
+        (.classMem (synCncfin (synCspfin)) (synCevenfin)))
+      (synCncfin (synCspfin)) (synCplc (synCtfin (synCncfin (synCspfin))) (synC1c))
+      (synC0) p0012 p0016
+  have p0018 := @gSucevenodd (synCtfin (synCncfin (synCspfin)))
   have p0019 :=
-    @g_syl2anc
-      (syn_wa (.classMem (syn_cvv) (syn_cfin))
-        (.classMem (syn_cncfin (syn_cspfin)) (syn_cevenfin)))
-      (.classMem (syn_ctfin (syn_cncfin (syn_cspfin))) (syn_cevenfin))
-      (syn_wne (syn_cplc (syn_ctfin (syn_cncfin (syn_cspfin))) (syn_c1c)) (syn_c0))
-      (.classMem (syn_cplc (syn_ctfin (syn_cncfin (syn_cspfin))) (syn_c1c)) (syn_coddfin))
+    @gSyl2anc
+      (synWa (.classMem (synCvv) (synCfin))
+        (.classMem (synCncfin (synCspfin)) (synCevenfin)))
+      (.classMem (synCtfin (synCncfin (synCspfin))) (synCevenfin))
+      (synWne (synCplc (synCtfin (synCncfin (synCspfin))) (synC1c)) (synC0))
+      (.classMem (synCplc (synCtfin (synCncfin (synCspfin))) (synC1c)) (synCoddfin))
       p0014 p0017 p0018
   have p0020 :=
-    @g_eqeltrd
-      (syn_wa (.classMem (syn_cvv) (syn_cfin))
-        (.classMem (syn_cncfin (syn_cspfin)) (syn_cevenfin)))
-      (syn_cncfin (syn_cspfin)) (syn_cplc (syn_ctfin (syn_cncfin (syn_cspfin))) (syn_c1c))
-      (syn_coddfin) p0012 p0019
+    @gEqeltrd
+      (synWa (.classMem (synCvv) (synCfin))
+        (.classMem (synCncfin (synCspfin)) (synCevenfin)))
+      (synCncfin (synCspfin)) (synCplc (synCtfin (synCncfin (synCspfin))) (synC1c))
+      (synCoddfin) p0012 p0019
   have p0021 :=
-    @g_ex (.classMem (syn_cvv) (syn_cfin))
-      (.classMem (syn_cncfin (syn_cspfin)) (syn_cevenfin))
-      (.classMem (syn_cncfin (syn_cspfin)) (syn_coddfin)) p0020
+    @gEx (.classMem (synCvv) (synCfin))
+      (.classMem (synCncfin (synCspfin)) (synCevenfin))
+      (.classMem (synCncfin (synCspfin)) (synCoddfin)) p0020
   have p0022 :=
-    @g_ancld (.classMem (syn_cvv) (syn_cfin))
-      (.classMem (syn_cncfin (syn_cspfin)) (syn_cevenfin))
-      (.classMem (syn_cncfin (syn_cspfin)) (syn_coddfin)) p0021
+    @gAncld (.classMem (synCvv) (synCfin))
+      (.classMem (synCncfin (synCspfin)) (synCevenfin))
+      (.classMem (synCncfin (synCspfin)) (synCoddfin)) p0021
   have p0024 :=
-    @g_adantr (.classMem (syn_cvv) (syn_cfin))
-      (.classEq (syn_cncfin (syn_cspfin))
-        (syn_cplc (syn_ctfin (syn_cncfin (syn_cspfin))) (syn_c1c)))
-      (.classMem (syn_cncfin (syn_cspfin)) (syn_coddfin)) p0011
-  have p0025 := @g_oddtfin (syn_cncfin (syn_cspfin))
+    @gAdantr (.classMem (synCvv) (synCfin))
+      (.classEq (synCncfin (synCspfin))
+        (synCplc (synCtfin (synCncfin (synCspfin))) (synC1c)))
+      (.classMem (synCncfin (synCspfin)) (synCoddfin)) p0011
+  have p0025 := @gOddtfin (synCncfin (synCspfin))
   have p0026 :=
-    @g_adantl (.classMem (syn_cncfin (syn_cspfin)) (syn_coddfin))
-      (.classMem (syn_ctfin (syn_cncfin (syn_cspfin))) (syn_coddfin))
-      (.classMem (syn_cvv) (syn_cfin)) p0025
-  have p0027 := @g_oddnnul (syn_cncfin (syn_cspfin))
+    @gAdantl (.classMem (synCncfin (synCspfin)) (synCoddfin))
+      (.classMem (synCtfin (synCncfin (synCspfin))) (synCoddfin))
+      (.classMem (synCvv) (synCfin)) p0025
+  have p0027 := @gOddnnul (synCncfin (synCspfin))
   have p0028 :=
-    @g_adantl (.classMem (syn_cncfin (syn_cspfin)) (syn_coddfin))
-      (syn_wne (syn_cncfin (syn_cspfin)) (syn_c0)) (.classMem (syn_cvv) (syn_cfin)) p0027
+    @gAdantl (.classMem (synCncfin (synCspfin)) (synCoddfin))
+      (synWne (synCncfin (synCspfin)) (synC0)) (.classMem (synCvv) (synCfin)) p0027
   have p0029 :=
-    @g_eqnetrrd
-      (syn_wa (.classMem (syn_cvv) (syn_cfin))
-        (.classMem (syn_cncfin (syn_cspfin)) (syn_coddfin)))
-      (syn_cncfin (syn_cspfin)) (syn_cplc (syn_ctfin (syn_cncfin (syn_cspfin))) (syn_c1c))
-      (syn_c0) p0024 p0028
-  have p0030 := @g_sucoddeven (syn_ctfin (syn_cncfin (syn_cspfin)))
+    @gEqnetrrd
+      (synWa (.classMem (synCvv) (synCfin))
+        (.classMem (synCncfin (synCspfin)) (synCoddfin)))
+      (synCncfin (synCspfin)) (synCplc (synCtfin (synCncfin (synCspfin))) (synC1c))
+      (synC0) p0024 p0028
+  have p0030 := @gSucoddeven (synCtfin (synCncfin (synCspfin)))
   have p0031 :=
-    @g_syl2anc
-      (syn_wa (.classMem (syn_cvv) (syn_cfin))
-        (.classMem (syn_cncfin (syn_cspfin)) (syn_coddfin)))
-      (.classMem (syn_ctfin (syn_cncfin (syn_cspfin))) (syn_coddfin))
-      (syn_wne (syn_cplc (syn_ctfin (syn_cncfin (syn_cspfin))) (syn_c1c)) (syn_c0))
-      (.classMem (syn_cplc (syn_ctfin (syn_cncfin (syn_cspfin))) (syn_c1c)) (syn_cevenfin))
+    @gSyl2anc
+      (synWa (.classMem (synCvv) (synCfin))
+        (.classMem (synCncfin (synCspfin)) (synCoddfin)))
+      (.classMem (synCtfin (synCncfin (synCspfin))) (synCoddfin))
+      (synWne (synCplc (synCtfin (synCncfin (synCspfin))) (synC1c)) (synC0))
+      (.classMem (synCplc (synCtfin (synCncfin (synCspfin))) (synC1c)) (synCevenfin))
       p0026 p0029 p0030
   have p0032 :=
-    @g_eqeltrd
-      (syn_wa (.classMem (syn_cvv) (syn_cfin))
-        (.classMem (syn_cncfin (syn_cspfin)) (syn_coddfin)))
-      (syn_cncfin (syn_cspfin)) (syn_cplc (syn_ctfin (syn_cncfin (syn_cspfin))) (syn_c1c))
-      (syn_cevenfin) p0024 p0031
+    @gEqeltrd
+      (synWa (.classMem (synCvv) (synCfin))
+        (.classMem (synCncfin (synCspfin)) (synCoddfin)))
+      (synCncfin (synCspfin)) (synCplc (synCtfin (synCncfin (synCspfin))) (synC1c))
+      (synCevenfin) p0024 p0031
   have p0033 :=
-    @g_ex (.classMem (syn_cvv) (syn_cfin))
-      (.classMem (syn_cncfin (syn_cspfin)) (syn_coddfin))
-      (.classMem (syn_cncfin (syn_cspfin)) (syn_cevenfin)) p0032
+    @gEx (.classMem (synCvv) (synCfin))
+      (.classMem (synCncfin (synCspfin)) (synCoddfin))
+      (.classMem (synCncfin (synCspfin)) (synCevenfin)) p0032
   have p0034 :=
-    @g_ancrd (.classMem (syn_cvv) (syn_cfin))
-      (.classMem (syn_cncfin (syn_cspfin)) (syn_coddfin))
-      (.classMem (syn_cncfin (syn_cspfin)) (syn_cevenfin)) p0033
+    @gAncrd (.classMem (synCvv) (synCfin))
+      (.classMem (synCncfin (synCspfin)) (synCoddfin))
+      (.classMem (synCncfin (synCspfin)) (synCevenfin)) p0033
   have p0035 :=
-    @g_jaod (.classMem (syn_cvv) (syn_cfin))
-      (.classMem (syn_cncfin (syn_cspfin)) (syn_cevenfin))
-      (syn_wa (.classMem (syn_cncfin (syn_cspfin)) (syn_cevenfin))
-        (.classMem (syn_cncfin (syn_cspfin)) (syn_coddfin)))
-      (.classMem (syn_cncfin (syn_cspfin)) (syn_coddfin)) p0022 p0034
-  have p0036 := @g_elun (syn_cncfin (syn_cspfin)) (syn_cevenfin) (syn_coddfin)
-  have p0037 := @g_elin (syn_cncfin (syn_cspfin)) (syn_cevenfin) (syn_coddfin)
+    @gJaod (.classMem (synCvv) (synCfin))
+      (.classMem (synCncfin (synCspfin)) (synCevenfin))
+      (synWa (.classMem (synCncfin (synCspfin)) (synCevenfin))
+        (.classMem (synCncfin (synCspfin)) (synCoddfin)))
+      (.classMem (synCncfin (synCspfin)) (synCoddfin)) p0022 p0034
+  have p0036 := @gElun (synCncfin (synCspfin)) (synCevenfin) (synCoddfin)
+  have p0037 := @gElin (synCncfin (synCspfin)) (synCevenfin) (synCoddfin)
   have p0038 :=
-    @g_n_3imtr4g (.classMem (syn_cvv) (syn_cfin))
-      (syn_wo (.classMem (syn_cncfin (syn_cspfin)) (syn_cevenfin))
-        (.classMem (syn_cncfin (syn_cspfin)) (syn_coddfin)))
-      (syn_wa (.classMem (syn_cncfin (syn_cspfin)) (syn_cevenfin))
-        (.classMem (syn_cncfin (syn_cspfin)) (syn_coddfin)))
-      (.classMem (syn_cncfin (syn_cspfin)) (syn_cun (syn_cevenfin) (syn_coddfin)))
-      (.classMem (syn_cncfin (syn_cspfin)) (syn_cin (syn_cevenfin) (syn_coddfin))) p0035
+    @gN3imtr4g (.classMem (synCvv) (synCfin))
+      (synWo (.classMem (synCncfin (synCspfin)) (synCevenfin))
+        (.classMem (synCncfin (synCspfin)) (synCoddfin)))
+      (synWa (.classMem (synCncfin (synCspfin)) (synCevenfin))
+        (.classMem (synCncfin (synCspfin)) (synCoddfin)))
+      (.classMem (synCncfin (synCspfin)) (synCun (synCevenfin) (synCoddfin)))
+      (.classMem (synCncfin (synCspfin)) (synCin (synCevenfin) (synCoddfin))) p0035
       p0036 p0037
   have p0039 :=
-    @g_mpd (.classMem (syn_cvv) (syn_cfin))
-      (.classMem (syn_cncfin (syn_cspfin)) (syn_cun (syn_cevenfin) (syn_coddfin)))
-      (.classMem (syn_cncfin (syn_cspfin)) (syn_cin (syn_cevenfin) (syn_coddfin))) p0010
+    @gMpd (.classMem (synCvv) (synCfin))
+      (.classMem (synCncfin (synCspfin)) (synCun (synCevenfin) (synCoddfin)))
+      (.classMem (synCncfin (synCspfin)) (synCin (synCevenfin) (synCoddfin))) p0010
       p0038
-  have p0040 := @g_evenodddisj
+  have p0040 := @gEvenodddisj
   have p0041 :=
-    @g_syl6eleq (.classMem (syn_cvv) (syn_cfin)) (syn_cncfin (syn_cspfin))
-      (syn_cin (syn_cevenfin) (syn_coddfin)) (syn_c0) p0039 p0040
+    @gSyl6eleq (.classMem (synCvv) (synCfin)) (synCncfin (synCspfin))
+      (synCin (synCevenfin) (synCoddfin)) (synC0) p0039 p0040
   have p0042 :=
-    @g_mto (.classMem (syn_cvv) (syn_cfin)) (.classMem (syn_cncfin (syn_cspfin)) (syn_c0))
+    @gMto (.classMem (synCvv) (synCfin)) (.classMem (synCncfin (synCspfin)) (synC0))
       p0000 p0041
   exact p0042
 
+/-- Checked nominal proof certificate identified upstream as `g_nulnnn`. -/
 @[expose]
-noncomputable def g_nulnnn : Nominal.NPrf (.neg (.classMem (syn_c0) (syn_cnnc))) :=
+noncomputable def gNulnnn : Nominal.NPrf (.neg (.classMem (synC0) (synCnnc))) :=
   by
   let proofSupport : Finset Var := (∅ : Finset Var)
   let x : Var := freshVar proofSupport 0
@@ -1240,7 +1243,7 @@ noncomputable def g_nulnnn : Nominal.NPrf (.neg (.classMem (syn_c0) (syn_cnnc)))
     change freshVar proofSupport 2 ≠ freshVar proofSupport 3
     exact freshVar_injective proofSupport (i := 2) (j := 3) (by decide)
   have fresh_a_ne_m : a ≠ m := Ne.symm fresh_m_ne_a
-  have dv_cache_0001 : n ∉ ((syn_c0)).fv := by
+  have dv_cache_0001 : n ∉ ((synC0)).fv := by
     exact
       (by
         have compact_fv_not_mem_empty : n ∉ (∅ : Finset Var) :=
@@ -1260,7 +1263,7 @@ noncomputable def g_nulnnn : Nominal.NPrf (.neg (.classMem (syn_c0) (syn_cnnc)))
           cases hmem
         simp only [NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_singleton,
           fresh_a_ne_m, not_false_eq_true])
-  have dv_cache_0003 : x ∉ ((syn_ccompl (.cv a))).fv :=
+  have dv_cache_0003 : x ∉ ((synCcompl (.cv a))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002
     exact
@@ -1272,7 +1275,7 @@ noncomputable def g_nulnnn : Nominal.NPrf (.neg (.classMem (syn_c0) (syn_cnnc)))
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl,
           NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_singleton, fresh_x_ne_a,
           not_false_eq_true])
-  have dv_cache_0004 : x ∉ ((syn_wne (syn_cplc (.cv m) (syn_c1c)) (syn_c0))).fv :=
+  have dv_cache_0004 : x ∉ ((synWne (synCplc (.cv m) (synC1c)) (synC0))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003
     exact
@@ -1288,7 +1291,7 @@ noncomputable def g_nulnnn : Nominal.NPrf (.neg (.classMem (syn_c0) (syn_cnnc)))
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0, Finset.mem_union,
           Finset.mem_singleton, fresh_x_ne_m, compact_fv_not_mem_empty, or_false,
           not_false_eq_true])
-  have dv_cache_0005 : x ∉ ((syn_wa (.classMem (.cv m) (syn_cnnc)) (.objMem a m))).fv :=
+  have dv_cache_0005 : x ∉ ((synWa (.classMem (.cv m) (synCnnc)) (.objMem a m))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004
     exact
@@ -1304,7 +1307,7 @@ noncomputable def g_nulnnn : Nominal.NPrf (.neg (.classMem (syn_c0) (syn_cnnc)))
           NFChoice.Compiler.CoreFVSimp.fv_wff_objMem, Finset.mem_union, Finset.mem_insert,
           Finset.mem_singleton, fresh_x_ne_m, fresh_x_ne_a, compact_fv_not_mem_empty,
           or_false, not_false_eq_true])
-  have dv_cache_0006 : a ∉ ((syn_wne (syn_cplc (.cv m) (syn_c1c)) (syn_c0))).fv :=
+  have dv_cache_0006 : a ∉ ((synWne (synCplc (.cv m) (synC1c)) (synC0))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
     exact
@@ -1320,7 +1323,7 @@ noncomputable def g_nulnnn : Nominal.NPrf (.neg (.classMem (syn_c0) (syn_cnnc)))
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0, Finset.mem_union,
           Finset.mem_singleton, fresh_a_ne_m, compact_fv_not_mem_empty, or_false,
           not_false_eq_true])
-  have dv_cache_0007 : a ∉ ((Wff.classMem (.cv m) (syn_cnnc))).fv :=
+  have dv_cache_0007 : a ∉ ((Wff.classMem (.cv m) (synCnnc))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006
@@ -1347,7 +1350,7 @@ noncomputable def g_nulnnn : Nominal.NPrf (.neg (.classMem (syn_c0) (syn_cnnc)))
           cases hmem
         simp only [NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_singleton,
           fresh_n_ne_x, not_false_eq_true])
-  have dv_cache_0009 : n ∉ ((syn_wne (.cv m) (syn_c0))).fv :=
+  have dv_cache_0009 : n ∉ ((synWne (.cv m) (synC0))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008
@@ -1362,7 +1365,7 @@ noncomputable def g_nulnnn : Nominal.NPrf (.neg (.classMem (syn_c0) (syn_cnnc)))
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0, Finset.mem_union,
           Finset.mem_singleton, fresh_n_ne_m, compact_fv_not_mem_empty, or_false,
           not_false_eq_true])
-  have dv_cache_0010 : m ∉ ((syn_wne (.cv n) (syn_c0))).fv :=
+  have dv_cache_0010 : m ∉ ((synWne (.cv n) (synC0))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009
@@ -1377,7 +1380,7 @@ noncomputable def g_nulnnn : Nominal.NPrf (.neg (.classMem (syn_c0) (syn_cnnc)))
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0, Finset.mem_union,
           Finset.mem_singleton, fresh_m_ne_n, compact_fv_not_mem_empty, or_false,
           not_false_eq_true])
-  have dv_cache_0011 : n ∉ ((syn_wne (syn_c0c) (syn_c0))).fv :=
+  have dv_cache_0011 : n ∉ ((synWne (synC0c) (synC0))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010
@@ -1391,7 +1394,7 @@ noncomputable def g_nulnnn : Nominal.NPrf (.neg (.classMem (syn_c0) (syn_cnnc)))
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0c,
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0, Finset.mem_union,
           compact_fv_not_mem_empty, or_false, not_false_eq_true])
-  have dv_cache_0012 : n ∉ ((syn_wne (.cv x) (syn_c0))).fv :=
+  have dv_cache_0012 : n ∉ ((synWne (.cv x) (synC0))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -1406,7 +1409,7 @@ noncomputable def g_nulnnn : Nominal.NPrf (.neg (.classMem (syn_c0) (syn_cnnc)))
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0, Finset.mem_union,
           Finset.mem_singleton, fresh_n_ne_x, compact_fv_not_mem_empty, or_false,
           not_false_eq_true])
-  have dv_cache_0013 : n ∉ ((syn_wne (syn_cplc (.cv m) (syn_c1c)) (syn_c0))).fv :=
+  have dv_cache_0013 : n ∉ ((synWne (synCplc (.cv m) (synC1c)) (synC0))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -1430,7 +1433,7 @@ noncomputable def g_nulnnn : Nominal.NPrf (.neg (.classMem (syn_c0) (syn_cnnc)))
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
       dv_cache_0012 dv_cache_0013
     exact (show n ≠ m from (by exact fresh_n_ne_m))
-  have dv_cache_0015 : x ∉ ((syn_c0)).fv :=
+  have dv_cache_0015 : x ∉ ((synC0)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -1443,7 +1446,7 @@ noncomputable def g_nulnnn : Nominal.NPrf (.neg (.classMem (syn_c0) (syn_cnnc)))
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have dv_cache_0016 : x ∉ ((syn_cnnc)).fv :=
+  have dv_cache_0016 : x ∉ ((synCnnc)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -1456,54 +1459,54 @@ noncomputable def g_nulnnn : Nominal.NPrf (.neg (.classMem (syn_c0) (syn_cnnc)))
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnnc,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have p0000 := @g_complab (.classEq (.cv n) (syn_c0)) n
+  have p0000 := @gComplab (.classEq (.cv n) (synC0)) n
   have p0001 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_sn n (syn_c0)
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfSn n (synC0)
       dv_cache_0001
-  have p0002 := @g_compleqi (syn_csn (syn_c0)) (.cab n (.classEq (.cv n) (syn_c0))) p0001
-  have p0003 := (Nominal.biimpRefl (syn_wne (.cv n) (syn_c0)))
+  have p0002 := @gCompleqi (synCsn (synC0)) (.cab n (.classEq (.cv n) (synC0))) p0001
+  have p0003 := (Nominal.biimpRefl (synWne (.cv n) (synC0)))
   have p0004 :=
-    @g_abbii (syn_wne (.cv n) (syn_c0)) (.neg (.classEq (.cv n) (syn_c0))) n p0003
+    @gAbbii (synWne (.cv n) (synC0)) (.neg (.classEq (.cv n) (synC0))) n p0003
   have p0005 :=
-    @g_n_3eqtr4ri (syn_ccompl (.cab n (.classEq (.cv n) (syn_c0))))
-      (.cab n (.neg (.classEq (.cv n) (syn_c0)))) (syn_ccompl (syn_csn (syn_c0)))
-      (.cab n (syn_wne (.cv n) (syn_c0))) p0000 p0002 p0004
-  have p0006 := @g_snex (syn_c0)
-  have p0007 := @g_complex (syn_csn (syn_c0)) p0006
+    @gN3eqtr4ri (synCcompl (.cab n (.classEq (.cv n) (synC0))))
+      (.cab n (.neg (.classEq (.cv n) (synC0)))) (synCcompl (synCsn (synC0)))
+      (.cab n (synWne (.cv n) (synC0))) p0000 p0002 p0004
+  have p0006 := @gSnex (synC0)
+  have p0007 := @gComplex (synCsn (synC0)) p0006
   have p0008 :=
-    @g_eqeltri (.cab n (syn_wne (.cv n) (syn_c0))) (syn_ccompl (syn_csn (syn_c0)))
-      (syn_cvv) p0005 p0007
-  have p0009 := @g_neeq1 (.cv n) (syn_c0c) (syn_c0)
-  have p0010 := @g_neeq1 (.cv n) (.cv m) (syn_c0)
-  have p0011 := @g_neeq1 (.cv n) (syn_cplc (.cv m) (syn_c1c)) (syn_c0)
-  have p0012 := @g_neeq1 (.cv n) (.cv x) (syn_c0)
-  have p0013 := @g_nulel0c
-  have p0014 := @g_ne0i (syn_c0c) (syn_c0)
+    @gEqeltri (.cab n (synWne (.cv n) (synC0))) (synCcompl (synCsn (synC0)))
+      (synCvv) p0005 p0007
+  have p0009 := @gNeeq1 (.cv n) (synC0c) (synC0)
+  have p0010 := @gNeeq1 (.cv n) (.cv m) (synC0)
+  have p0011 := @gNeeq1 (.cv n) (synCplc (.cv m) (synC1c)) (synC0)
+  have p0012 := @gNeeq1 (.cv n) (.cv x) (synC0)
+  have p0013 := @gNulel0c
+  have p0014 := @gNe0i (synC0c) (synC0)
   have p0015 := Nominal.mp p0013 p0014
-  have p0016 := @g_n0 a (.cv m) dv_cache_0002
-  have p0017 := @g_vinf
-  have p0018 := @g_elunii (syn_cvv) (.cv m) (syn_cnnc)
+  have p0016 := @gN0 a (.cv m) dv_cache_0002
+  have p0017 := @gVinf
+  have p0018 := @gElunii (synCvv) (.cv m) (synCnnc)
   have p0019 :=
-    @g_ancoms (.classMem (syn_cvv) (.cv m)) (.classMem (.cv m) (syn_cnnc))
-      (.classMem (syn_cvv) (syn_cuni (syn_cnnc))) p0018
-  have p0020 := (Nominal.classEqRefl (syn_cfin))
+    @gAncoms (.classMem (synCvv) (.cv m)) (.classMem (.cv m) (synCnnc))
+      (.classMem (synCvv) (synCuni (synCnnc))) p0018
+  have p0020 := (Nominal.classEqRefl (synCfin))
   have p0021 :=
-    @g_syl6eleqr (syn_wa (.classMem (.cv m) (syn_cnnc)) (.classMem (syn_cvv) (.cv m)))
-      (syn_cvv) (syn_cuni (syn_cnnc)) (syn_cfin) p0019 p0020
+    @gSyl6eleqr (synWa (.classMem (.cv m) (synCnnc)) (.classMem (synCvv) (.cv m)))
+      (synCvv) (synCuni (synCnnc)) (synCfin) p0019 p0020
   have p0022 :=
-    @g_ex (.classMem (.cv m) (syn_cnnc)) (.classMem (syn_cvv) (.cv m))
-      (.classMem (syn_cvv) (syn_cfin)) p0021
+    @gEx (.classMem (.cv m) (synCnnc)) (.classMem (synCvv) (.cv m))
+      (.classMem (synCvv) (synCfin)) p0021
   have p0023 :=
-    @g_mtoi (.classMem (.cv m) (syn_cnnc)) (.classMem (syn_cvv) (.cv m))
-      (.classMem (syn_cvv) (syn_cfin)) p0017 p0022
-  have p0024 := @g_eleq1 (.cv a) (syn_cvv) (.cv m)
+    @gMtoi (.classMem (.cv m) (synCnnc)) (.classMem (synCvv) (.cv m))
+      (.classMem (synCvv) (synCfin)) p0017 p0022
+  have p0024 := @gEleq1 (.cv a) (synCvv) (.cv m)
   have p0025_e00_recanon :
     Nominal.NPrf
-      (.imp (.classEq (.cv a) (syn_cvv))
-        (syn_wb (.objMem a m) (.classMem (syn_cvv) (.cv m)))) :=
+      (.imp (.classEq (.cv a) (synCvv))
+        (synWb (.objMem a m) (.classMem (synCvv) (.cv m)))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_cvv syn_wb
+        unfold synCvv synWb
         simp (config := { failIfUnchanged := false }) only []
         apply Nominal.RecanonTransportDev.TRecanonWff.imp
         · exact Nominal.RecanonTransportDev.TRecanonWff.same _
@@ -1518,41 +1521,41 @@ noncomputable def g_nulnnn : Nominal.NPrf (.neg (.classMem (syn_c0) (syn_cnnc)))
             · exact Nominal.RecanonTransportDev.TRecanonWff.classMem_objMem _ _)
       p0024
   have p0025 :=
-    @g_notbid (.classEq (.cv a) (syn_cvv)) (.objMem a m) (.classMem (syn_cvv) (.cv m))
+    @gNotbid (.classEq (.cv a) (synCvv)) (.objMem a m) (.classMem (synCvv) (.cv m))
       p0025_e00_recanon
   have p0026 :=
-    @g_syl5ibrcom (.classMem (.cv m) (syn_cnnc)) (.neg (.objMem a m))
-      (.classEq (.cv a) (syn_cvv)) (.neg (.classMem (syn_cvv) (.cv m))) p0023 p0025
+    @gSyl5ibrcom (.classMem (.cv m) (synCnnc)) (.neg (.objMem a m))
+      (.classEq (.cv a) (synCvv)) (.neg (.classMem (synCvv) (.cv m))) p0023 p0025
   have p0027 :=
-    @g_necon2ad (.classMem (.cv m) (syn_cnnc)) (.objMem a m) (.cv a) (syn_cvv) p0026
+    @gNecon2ad (.classMem (.cv m) (synCnnc)) (.objMem a m) (.cv a) (synCvv) p0026
   have p0028 :=
-    @g_imp (.classMem (.cv m) (syn_cnnc)) (.objMem a m) (syn_wne (.cv a) (syn_cvv)) p0027
-  have p0029 := @g_compleqb (.cv a) (syn_cvv)
+    @gImp (.classMem (.cv m) (synCnnc)) (.objMem a m) (synWne (.cv a) (synCvv)) p0027
+  have p0029 := @gCompleqb (.cv a) (synCvv)
   have p0030 :=
-    @g_necon3bii (.cv a) (syn_cvv) (syn_ccompl (.cv a)) (syn_ccompl (syn_cvv)) p0029
+    @gNecon3bii (.cv a) (synCvv) (synCcompl (.cv a)) (synCcompl (synCvv)) p0029
   have p0031 :=
-    @g_sylib (syn_wa (.classMem (.cv m) (syn_cnnc)) (.objMem a m))
-      (syn_wne (.cv a) (syn_cvv)) (syn_wne (syn_ccompl (.cv a)) (syn_ccompl (syn_cvv)))
+    @gSylib (synWa (.classMem (.cv m) (synCnnc)) (.objMem a m))
+      (synWne (.cv a) (synCvv)) (synWne (synCcompl (.cv a)) (synCcompl (synCvv)))
       p0028 p0030
-  have p0032 := @g_complV
-  have p0033 := @g_neeq2i (syn_ccompl (syn_cvv)) (syn_c0) (syn_ccompl (.cv a)) p0032
+  have p0032 := @gComplV
+  have p0033 := @gNeeq2i (synCcompl (synCvv)) (synC0) (synCcompl (.cv a)) p0032
   have p0034 :=
-    @g_sylib (syn_wa (.classMem (.cv m) (syn_cnnc)) (.objMem a m))
-      (syn_wne (syn_ccompl (.cv a)) (syn_ccompl (syn_cvv)))
-      (syn_wne (syn_ccompl (.cv a)) (syn_c0)) p0031 p0033
-  have p0035 := @g_n0 x (syn_ccompl (.cv a)) dv_cache_0003
-  have p0036 := @g_vex x
-  have p0037 := @g_elcompl (.cv x) (.cv a) p0036
-  have p0038 := @g_elsuci (.cv a) (.cv m) (.cv x) p0036
-  have p0039 := @g_ne0i (syn_cplc (.cv m) (syn_c1c)) (syn_cun (.cv a) (syn_csn (.cv x)))
+    @gSylib (synWa (.classMem (.cv m) (synCnnc)) (.objMem a m))
+      (synWne (synCcompl (.cv a)) (synCcompl (synCvv)))
+      (synWne (synCcompl (.cv a)) (synC0)) p0031 p0033
+  have p0035 := @gN0 x (synCcompl (.cv a)) dv_cache_0003
+  have p0036 := @gVex x
+  have p0037 := @gElcompl (.cv x) (.cv a) p0036
+  have p0038 := @gElsuci (.cv a) (.cv m) (.cv x) p0036
+  have p0039 := @gNe0i (synCplc (.cv m) (synC1c)) (synCun (.cv a) (synCsn (.cv x)))
   have p0040_e00_recanon :
     Nominal.NPrf
-      (.imp (syn_wa (.objMem a m) (.neg (.objMem x a)))
-        (.classMem (syn_cun (.cv a) (syn_csn (.cv x))) (syn_cplc (.cv m) (syn_c1c)))) :=
+      (.imp (synWa (.objMem a m) (.neg (.objMem x a)))
+        (.classMem (synCun (.cv a) (synCsn (.cv x))) (synCplc (.cv m) (synC1c)))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wa syn_cun syn_cnin syn_wnan syn_ccompl syn_csn syn_cplc syn_wrex
-          syn_wex syn_c1c
+        unfold synWa synCun synCnin synWnan synCcompl synCsn synCplc synWrex
+          synWex synC1c
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.imp
@@ -1565,14 +1568,14 @@ noncomputable def g_nulnnn : Nominal.NPrf (.neg (.classMem (syn_c0) (syn_cnnc)))
         · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0038
   have p0040 :=
-    @g_syl (syn_wa (.objMem a m) (.neg (.objMem x a)))
-      (.classMem (syn_cun (.cv a) (syn_csn (.cv x))) (syn_cplc (.cv m) (syn_c1c)))
-      (syn_wne (syn_cplc (.cv m) (syn_c1c)) (syn_c0)) p0040_e00_recanon p0039
+    @gSyl (synWa (.objMem a m) (.neg (.objMem x a)))
+      (.classMem (synCun (.cv a) (synCsn (.cv x))) (synCplc (.cv m) (synC1c)))
+      (synWne (synCplc (.cv m) (synC1c)) (synC0)) p0040_e00_recanon p0039
   have p0041_e00_recanon :
-    Nominal.NPrf (syn_wb (.classMem (.cv x) (syn_ccompl (.cv a))) (.neg (.objMem x a))) :=
+    Nominal.NPrf (synWb (.classMem (.cv x) (synCcompl (.cv a))) (.neg (.objMem x a))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_ccompl syn_cnin syn_wnan syn_wa
+        unfold synWb synCcompl synCnin synWnan synWa
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
@@ -1588,41 +1591,41 @@ noncomputable def g_nulnnn : Nominal.NPrf (.neg (.classMem (syn_c0) (syn_cnnc)))
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0037
   have p0041 :=
-    @g_sylan2b (.classMem (.cv x) (syn_ccompl (.cv a))) (.objMem a m) (.neg (.objMem x a))
-      (syn_wne (syn_cplc (.cv m) (syn_c1c)) (syn_c0)) p0041_e00_recanon p0040
+    @gSylan2b (.classMem (.cv x) (synCcompl (.cv a))) (.objMem a m) (.neg (.objMem x a))
+      (synWne (synCplc (.cv m) (synC1c)) (synC0)) p0041_e00_recanon p0040
   have p0042 :=
-    @g_ex (.objMem a m) (.classMem (.cv x) (syn_ccompl (.cv a)))
-      (syn_wne (syn_cplc (.cv m) (syn_c1c)) (syn_c0)) p0041
+    @gEx (.objMem a m) (.classMem (.cv x) (synCcompl (.cv a)))
+      (synWne (synCplc (.cv m) (synC1c)) (synC0)) p0041
   have p0043 :=
-    @g_adantl (.objMem a m)
-      (.imp (.classMem (.cv x) (syn_ccompl (.cv a)))
-        (syn_wne (syn_cplc (.cv m) (syn_c1c)) (syn_c0)))
-      (.classMem (.cv m) (syn_cnnc)) p0042
+    @gAdantl (.objMem a m)
+      (.imp (.classMem (.cv x) (synCcompl (.cv a)))
+        (synWne (synCplc (.cv m) (synC1c)) (synC0)))
+      (.classMem (.cv m) (synCnnc)) p0042
   have p0044 :=
-    @g_exlimdv (syn_wa (.classMem (.cv m) (syn_cnnc)) (.objMem a m))
-      (.classMem (.cv x) (syn_ccompl (.cv a)))
-      (syn_wne (syn_cplc (.cv m) (syn_c1c)) (syn_c0)) x dv_cache_0004 dv_cache_0005 p0043
+    @gExlimdv (synWa (.classMem (.cv m) (synCnnc)) (.objMem a m))
+      (.classMem (.cv x) (synCcompl (.cv a)))
+      (synWne (synCplc (.cv m) (synC1c)) (synC0)) x dv_cache_0004 dv_cache_0005 p0043
   have p0045 :=
-    @g_syl5bi (syn_wne (syn_ccompl (.cv a)) (syn_c0))
-      (syn_wex x (.classMem (.cv x) (syn_ccompl (.cv a))))
-      (syn_wa (.classMem (.cv m) (syn_cnnc)) (.objMem a m))
-      (syn_wne (syn_cplc (.cv m) (syn_c1c)) (syn_c0)) p0035 p0044
+    @gSyl5bi (synWne (synCcompl (.cv a)) (synC0))
+      (synWex x (.classMem (.cv x) (synCcompl (.cv a))))
+      (synWa (.classMem (.cv m) (synCnnc)) (.objMem a m))
+      (synWne (synCplc (.cv m) (synC1c)) (synC0)) p0035 p0044
   have p0046 :=
-    @g_mpd (syn_wa (.classMem (.cv m) (syn_cnnc)) (.objMem a m))
-      (syn_wne (syn_ccompl (.cv a)) (syn_c0))
-      (syn_wne (syn_cplc (.cv m) (syn_c1c)) (syn_c0)) p0034 p0045
+    @gMpd (synWa (.classMem (.cv m) (synCnnc)) (.objMem a m))
+      (synWne (synCcompl (.cv a)) (synC0))
+      (synWne (synCplc (.cv m) (synC1c)) (synC0)) p0034 p0045
   have p0047 :=
-    @g_ex (.classMem (.cv m) (syn_cnnc)) (.objMem a m)
-      (syn_wne (syn_cplc (.cv m) (syn_c1c)) (syn_c0)) p0046
+    @gEx (.classMem (.cv m) (synCnnc)) (.objMem a m)
+      (synWne (synCplc (.cv m) (synC1c)) (synC0)) p0046
   have p0048 :=
-    @g_exlimdv (.classMem (.cv m) (syn_cnnc)) (.objMem a m)
-      (syn_wne (syn_cplc (.cv m) (syn_c1c)) (syn_c0)) a dv_cache_0006 dv_cache_0007 p0047
+    @gExlimdv (.classMem (.cv m) (synCnnc)) (.objMem a m)
+      (synWne (synCplc (.cv m) (synC1c)) (synC0)) a dv_cache_0006 dv_cache_0007 p0047
   have p0049_e00_recanon :
-    Nominal.NPrf (syn_wb (syn_wne (.cv m) (syn_c0)) (syn_wex a (.objMem a m))) :=
+    Nominal.NPrf (synWb (synWne (.cv m) (synC0)) (synWex a (.objMem a m))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_wne syn_c0 syn_cdif syn_cin syn_ccompl syn_cnin syn_wnan syn_wa
-          syn_cvv syn_wex
+        unfold synWb synWne synC0 synCdif synCin synCcompl synCnin synWnan synWa
+          synCvv synWex
         simp (config := { failIfUnchanged := false }) only []
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
         apply Nominal.RecanonTransportDev.TRecanonWff.imp
@@ -1641,136 +1644,140 @@ noncomputable def g_nulnnn : Nominal.NPrf (.neg (.classMem (syn_c0) (syn_cnnc)))
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0016
   have p0049 :=
-    @g_syl5bi (syn_wne (.cv m) (syn_c0)) (syn_wex a (.objMem a m))
-      (.classMem (.cv m) (syn_cnnc)) (syn_wne (syn_cplc (.cv m) (syn_c1c)) (syn_c0))
+    @gSyl5bi (synWne (.cv m) (synC0)) (synWex a (.objMem a m))
+      (.classMem (.cv m) (synCnnc)) (synWne (synCplc (.cv m) (synC1c)) (synC0))
       p0049_e00_recanon p0048
   have p0050_e02_recanon :
     Nominal.NPrf
-      (.imp (.objEq n m) (syn_wb (syn_wne (.cv n) (syn_c0)) (syn_wne (.cv m) (syn_c0)))) :=
+      (.imp (.objEq n m) (synWb (synWne (.cv n) (synC0)) (synWne (.cv m) (synC0)))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_wne syn_c0 syn_cdif syn_cin syn_ccompl syn_cnin syn_wnan syn_wa
-          syn_cvv
+        unfold synWb synWne synC0 synCdif synCin synCcompl synCnin synWnan synWa
+          synCvv
         simp (config := { failIfUnchanged := false }) only []
         apply Nominal.RecanonTransportDev.TRecanonWff.imp
         · exact Nominal.RecanonTransportDev.TRecanonWff.classEq_objEq _ _
         · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0010
   have p0050 :=
-    @g_finds (syn_wne (.cv n) (syn_c0)) (syn_wne (syn_c0c) (syn_c0))
-      (syn_wne (.cv m) (syn_c0)) (syn_wne (syn_cplc (.cv m) (syn_c1c)) (syn_c0))
-      (syn_wne (.cv x) (syn_c0)) n m (.cv x) dv_cache_0008 dv_cache_0009 dv_cache_0010
+    @gFinds (synWne (.cv n) (synC0)) (synWne (synC0c) (synC0))
+      (synWne (.cv m) (synC0)) (synWne (synCplc (.cv m) (synC1c)) (synC0))
+      (synWne (.cv x) (synC0)) n m (.cv x) dv_cache_0008 dv_cache_0009 dv_cache_0010
       dv_cache_0011 dv_cache_0012 dv_cache_0013 dv_cache_0014 p0008 p0009
       p0050_e02_recanon p0011 p0012 p0015 p0049
-  have p0051 := @g_neneqd (.classMem (.cv x) (syn_cnnc)) (.cv x) (syn_c0) p0050
-  have p0052 := @g_nrex (.classEq (.cv x) (syn_c0)) x (syn_cnnc) p0051
-  have p0053 := @g_risset x (syn_c0) (syn_cnnc) dv_cache_0015 dv_cache_0016
+  have p0051 := @gNeneqd (.classMem (.cv x) (synCnnc)) (.cv x) (synC0) p0050
+  have p0052 := @gNrex (.classEq (.cv x) (synC0)) x (synCnnc) p0051
+  have p0053 := @gRisset x (synC0) (synCnnc) dv_cache_0015 dv_cache_0016
   have p0054 :=
-    @g_mtbir (.classMem (syn_c0) (syn_cnnc))
-      (syn_wrex x (syn_cnnc) (.classEq (.cv x) (syn_c0))) p0052 p0053
+    @gMtbir (.classMem (synC0) (synCnnc))
+      (synWrex x (synCnnc) (.classEq (.cv x) (synC0))) p0052 p0053
   exact p0054
 
+/-- Checked nominal proof certificate identified upstream as `g_peano4`. -/
 @[expose]
-noncomputable def g_peano4 (M : Class) (N : Class) :
+noncomputable def gPeano4 (M : Class) (N : Class) :
     Nominal.NPrf
-      (.imp (syn_w3a (.classMem M (syn_cnnc)) (.classMem N (syn_cnnc))
-          (.classEq (syn_cplc M (syn_c1c)) (syn_cplc N (syn_c1c)))) (.classEq M N)) :=
+      (.imp (synW3a (.classMem M (synCnnc)) (.classMem N (synCnnc))
+          (.classEq (synCplc M (synC1c)) (synCplc N (synC1c)))) (.classEq M N)) :=
   by
   have p0000 :=
-    @g_n_3simpa (.classMem M (syn_cnnc)) (.classMem N (syn_cnnc))
-      (.classEq (syn_cplc M (syn_c1c)) (syn_cplc N (syn_c1c)))
+    @gN3simpa (.classMem M (synCnnc)) (.classMem N (synCnnc))
+      (.classEq (synCplc M (synC1c)) (synCplc N (synC1c)))
   have p0001 :=
-    @g_simp3 (.classMem M (syn_cnnc)) (.classMem N (syn_cnnc))
-      (.classEq (syn_cplc M (syn_c1c)) (syn_cplc N (syn_c1c)))
-  have p0002 := @g_peano2 M
-  have p0003 := @g_nulnnn
-  have p0004 := @g_eleq1 (syn_cplc M (syn_c1c)) (syn_c0) (syn_cnnc)
+    @gSimp3 (.classMem M (synCnnc)) (.classMem N (synCnnc))
+      (.classEq (synCplc M (synC1c)) (synCplc N (synC1c)))
+  have p0002 := @gPeano2 M
+  have p0003 := @gNulnnn
+  have p0004 := @gEleq1 (synCplc M (synC1c)) (synC0) (synCnnc)
   have p0005 :=
-    @g_mtbiri (.classEq (syn_cplc M (syn_c1c)) (syn_c0))
-      (.classMem (syn_cplc M (syn_c1c)) (syn_cnnc)) (.classMem (syn_c0) (syn_cnnc)) p0003
+    @gMtbiri (.classEq (synCplc M (synC1c)) (synC0))
+      (.classMem (synCplc M (synC1c)) (synCnnc)) (.classMem (synC0) (synCnnc)) p0003
       p0004
   have p0006 :=
-    @g_necon2ai (.classMem (syn_cplc M (syn_c1c)) (syn_cnnc)) (syn_cplc M (syn_c1c))
-      (syn_c0) p0005
+    @gNecon2ai (.classMem (synCplc M (synC1c)) (synCnnc)) (synCplc M (synC1c))
+      (synC0) p0005
   have p0007 :=
-    @g_syl (.classMem M (syn_cnnc)) (.classMem (syn_cplc M (syn_c1c)) (syn_cnnc))
-      (syn_wne (syn_cplc M (syn_c1c)) (syn_c0)) p0002 p0006
+    @gSyl (.classMem M (synCnnc)) (.classMem (synCplc M (synC1c)) (synCnnc))
+      (synWne (synCplc M (synC1c)) (synC0)) p0002 p0006
   have p0008 :=
-    @g_n_3ad2ant1 (.classMem M (syn_cnnc)) (.classMem N (syn_cnnc))
-      (syn_wne (syn_cplc M (syn_c1c)) (syn_c0))
-      (.classEq (syn_cplc M (syn_c1c)) (syn_cplc N (syn_c1c))) p0007
-  have p0009 := @g_prepeano4 M N
+    @gN3ad2ant1 (.classMem M (synCnnc)) (.classMem N (synCnnc))
+      (synWne (synCplc M (synC1c)) (synC0))
+      (.classEq (synCplc M (synC1c)) (synCplc N (synC1c))) p0007
+  have p0009 := @gPrepeano4 M N
   have p0010 :=
-    @g_syl12anc
-      (syn_w3a (.classMem M (syn_cnnc)) (.classMem N (syn_cnnc))
-        (.classEq (syn_cplc M (syn_c1c)) (syn_cplc N (syn_c1c))))
-      (syn_wa (.classMem M (syn_cnnc)) (.classMem N (syn_cnnc)))
-      (.classEq (syn_cplc M (syn_c1c)) (syn_cplc N (syn_c1c)))
-      (syn_wne (syn_cplc M (syn_c1c)) (syn_c0)) (.classEq M N) p0000 p0001 p0008 p0009
+    @gSyl12anc
+      (synW3a (.classMem M (synCnnc)) (.classMem N (synCnnc))
+        (.classEq (synCplc M (synC1c)) (synCplc N (synC1c))))
+      (synWa (.classMem M (synCnnc)) (.classMem N (synCnnc)))
+      (.classEq (synCplc M (synC1c)) (synCplc N (synC1c)))
+      (synWne (synCplc M (synC1c)) (synC0)) (.classEq M N) p0000 p0001 p0008 p0009
   exact p0010
 
+/-- Checked nominal proof certificate identified upstream as `g_suc11nnc`. -/
 @[expose]
-noncomputable def g_suc11nnc (M : Class) (N : Class) :
+noncomputable def gSuc11nnc (M : Class) (N : Class) :
     Nominal.NPrf
-      (.imp (syn_wa (.classMem M (syn_cnnc)) (.classMem N (syn_cnnc)))
-        (syn_wb (.classEq (syn_cplc M (syn_c1c)) (syn_cplc N (syn_c1c))) (.classEq M N))) :=
+      (.imp (synWa (.classMem M (synCnnc)) (.classMem N (synCnnc)))
+        (synWb (.classEq (synCplc M (synC1c)) (synCplc N (synC1c))) (.classEq M N))) :=
   by
-  have p0000 := @g_peano4 M N
+  have p0000 := @gPeano4 M N
   have p0001 :=
-    @g_n_3expia (.classMem M (syn_cnnc)) (.classMem N (syn_cnnc))
-      (.classEq (syn_cplc M (syn_c1c)) (syn_cplc N (syn_c1c))) (.classEq M N) p0000
-  have p0002 := @g_addceq1 M N (syn_c1c)
+    @gN3expia (.classMem M (synCnnc)) (.classMem N (synCnnc))
+      (.classEq (synCplc M (synC1c)) (synCplc N (synC1c))) (.classEq M N) p0000
+  have p0002 := @gAddceq1 M N (synC1c)
   have p0003 :=
-    @g_impbid1 (syn_wa (.classMem M (syn_cnnc)) (.classMem N (syn_cnnc)))
-      (.classEq (syn_cplc M (syn_c1c)) (syn_cplc N (syn_c1c))) (.classEq M N) p0001 p0002
+    @gImpbid1 (synWa (.classMem M (synCnnc)) (.classMem N (synCnnc)))
+      (.classEq (synCplc M (synC1c)) (synCplc N (synC1c))) (.classEq M N) p0001 p0002
   exact p0003
 
+/-- Checked nominal proof certificate identified upstream as `g_addccan2`. -/
 @[expose]
-noncomputable def g_addccan2 (P : Class) (M : Class) (N : Class) :
+noncomputable def gAddccan2 (P : Class) (M : Class) (N : Class) :
     Nominal.NPrf
-      (.imp (syn_w3a (.classMem M (syn_cnnc)) (.classMem N (syn_cnnc)) (.classMem P (syn_cnnc)))
-        (syn_wb (.classEq (syn_cplc M N) (syn_cplc M P)) (.classEq N P))) :=
+      (.imp (synW3a (.classMem M (synCnnc)) (.classMem N (synCnnc)) (.classMem P (synCnnc)))
+        (synWb (.classEq (synCplc M N) (synCplc M P)) (.classEq N P))) :=
   by
-  have p0000 := @g_nncaddccl M N
-  have p0001 := @g_nulnnn
-  have p0002 := @g_eleq1 (syn_cplc M N) (syn_c0) (syn_cnnc)
+  have p0000 := @gNncaddccl M N
+  have p0001 := @gNulnnn
+  have p0002 := @gEleq1 (synCplc M N) (synC0) (synCnnc)
   have p0003 :=
-    @g_mtbiri (.classEq (syn_cplc M N) (syn_c0)) (.classMem (syn_cplc M N) (syn_cnnc))
-      (.classMem (syn_c0) (syn_cnnc)) p0001 p0002
+    @gMtbiri (.classEq (synCplc M N) (synC0)) (.classMem (synCplc M N) (synCnnc))
+      (.classMem (synC0) (synCnnc)) p0001 p0002
   have p0004 :=
-    @g_necon2ai (.classMem (syn_cplc M N) (syn_cnnc)) (syn_cplc M N) (syn_c0) p0003
+    @gNecon2ai (.classMem (synCplc M N) (synCnnc)) (synCplc M N) (synC0) p0003
   have p0005 :=
-    @g_syl (syn_wa (.classMem M (syn_cnnc)) (.classMem N (syn_cnnc)))
-      (.classMem (syn_cplc M N) (syn_cnnc)) (syn_wne (syn_cplc M N) (syn_c0)) p0000 p0004
+    @gSyl (synWa (.classMem M (synCnnc)) (.classMem N (synCnnc)))
+      (.classMem (synCplc M N) (synCnnc)) (synWne (synCplc M N) (synC0)) p0000 p0004
   have p0006 :=
-    @g_n_3adant3 (.classMem M (syn_cnnc)) (.classMem N (syn_cnnc))
-      (syn_wne (syn_cplc M N) (syn_c0)) (.classMem P (syn_cnnc)) p0005
-  have p0007 := @g_preaddccan2 P M N
+    @gN3adant3 (.classMem M (synCnnc)) (.classMem N (synCnnc))
+      (synWne (synCplc M N) (synC0)) (.classMem P (synCnnc)) p0005
+  have p0007 := @gPreaddccan2 P M N
   have p0008 :=
-    @g_mpdan
-      (syn_w3a (.classMem M (syn_cnnc)) (.classMem N (syn_cnnc)) (.classMem P (syn_cnnc)))
-      (syn_wne (syn_cplc M N) (syn_c0))
-      (syn_wb (.classEq (syn_cplc M N) (syn_cplc M P)) (.classEq N P)) p0006 p0007
+    @gMpdan
+      (synW3a (.classMem M (synCnnc)) (.classMem N (synCnnc)) (.classMem P (synCnnc)))
+      (synWne (synCplc M N) (synC0))
+      (synWb (.classEq (synCplc M N) (synCplc M P)) (.classEq N P)) p0006 p0007
   exact p0008
 
+/-- Checked nominal proof certificate identified upstream as `g_addccan1`. -/
 @[expose]
-noncomputable def g_addccan1 (P : Class) (M : Class) (N : Class) :
+noncomputable def gAddccan1 (P : Class) (M : Class) (N : Class) :
     Nominal.NPrf
-      (.imp (syn_w3a (.classMem M (syn_cnnc)) (.classMem N (syn_cnnc)) (.classMem P (syn_cnnc)))
-        (syn_wb (.classEq (syn_cplc M P) (syn_cplc N P)) (.classEq M N))) :=
+      (.imp (synW3a (.classMem M (synCnnc)) (.classMem N (synCnnc)) (.classMem P (synCnnc)))
+        (synWb (.classEq (synCplc M P) (synCplc N P)) (.classEq M N))) :=
   by
-  have p0000 := @g_addccom M P
-  have p0001 := @g_addccom N P
+  have p0000 := @gAddccom M P
+  have p0001 := @gAddccom N P
   have p0002 :=
-    @g_eqeq12i (syn_cplc M P) (syn_cplc P M) (syn_cplc N P) (syn_cplc P N) p0000 p0001
-  have p0003 := @g_addccan2 N P M
+    @gEqeq12i (synCplc M P) (synCplc P M) (synCplc N P) (synCplc P N) p0000 p0001
+  have p0003 := @gAddccan2 N P M
   have p0004 :=
-    @g_n_3coml (.classMem P (syn_cnnc)) (.classMem M (syn_cnnc)) (.classMem N (syn_cnnc))
-      (syn_wb (.classEq (syn_cplc P M) (syn_cplc P N)) (.classEq M N)) p0003
+    @gN3coml (.classMem P (synCnnc)) (.classMem M (synCnnc)) (.classMem N (synCnnc))
+      (synWb (.classEq (synCplc P M) (synCplc P N)) (.classEq M N)) p0003
   have p0005 :=
-    @g_syl5bb (.classEq (syn_cplc M P) (syn_cplc N P))
-      (.classEq (syn_cplc P M) (syn_cplc P N))
-      (syn_w3a (.classMem M (syn_cnnc)) (.classMem N (syn_cnnc)) (.classMem P (syn_cnnc)))
+    @gSyl5bb (.classEq (synCplc M P) (synCplc N P))
+      (.classEq (synCplc P M) (synCplc P N))
+      (synW3a (.classMem M (synCnnc)) (.classMem N (synCnnc)) (.classMem P (synCnnc)))
       (.classEq M N) p0002 p0004
   exact p0005
 
@@ -1792,19 +1799,20 @@ open NFChoice.SemanticCore
 open NFChoice.ReplaySupport
 open NFChoice.Compiler.CompactSourceSyntax
 
+/-- Checked nominal proof certificate identified upstream as `g_dfphi2`. -/
 @[expose]
-noncomputable def g_dfphi2 (A : Class) :
+noncomputable def gDfphi2 (A : Class) :
     Nominal.NPrf
-      (.classEq (syn_cphi A) (syn_cimak (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif
-                    (syn_cins3k (syn_ccompl (syn_cimak
-                          (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                          (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                      (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                        (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                          (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                  (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-            (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))) A)) :=
+      (.classEq (synCphi A) (synCimak (synCun (synCin (synCimagek (synCimak (synCdif
+                    (synCins3k (synCcompl (synCimak
+                          (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                          (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                      (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                        (synCun (synCins2k (synCins3k (synCssetk)))
+                          (synCins3k (synCsik (synCsik (synCssetk))))))
+                      (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                  (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+            (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv)))) A)) :=
   by
   let proofSupport : Finset Var := A.fv
   let x : Var := freshVar proofSupport 0
@@ -1892,8 +1900,8 @@ noncomputable def g_dfphi2 (A : Class) :
           fresh_z_ne_x, not_false_eq_true])
   have dv_cache_0006 :
     z ∉
-      ((syn_wrex y A (.classEq (.cv x)
-            (syn_cif (.classMem (.cv y) (syn_cnnc)) (syn_cplc (.cv y) (syn_c1c))
+      ((synWrex y A (.classEq (.cv x)
+            (synCif (.classMem (.cv y) (synCnnc)) (synCplc (.cv y) (synC1c))
               (.cv y))))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
@@ -1915,15 +1923,15 @@ noncomputable def g_dfphi2 (A : Class) :
           fresh_z_ne_y, compact_fv_not_mem_empty, or_false, and_false, not_false_eq_true])
   have dv_cache_0007 :
     y ∉
-      ((syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl (syn_cimak
-                        (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                    (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                      (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                        (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                    (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-          (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))).fv :=
+      ((synCun (synCin (synCimagek (synCimak (synCdif (synCins3k (synCcompl (synCimak
+                        (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                        (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                    (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                      (synCun (synCins2k (synCins3k (synCssetk)))
+                        (synCins3k (synCsik (synCsik (synCssetk))))))
+                    (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+          (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006
@@ -1963,7 +1971,7 @@ noncomputable def g_dfphi2 (A : Class) :
           cases hmem
         simp only [NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_singleton,
           fresh_y_ne_x, not_false_eq_true])
-  have dv_cache_0009 : x ∉ ((syn_cphi A)).fv :=
+  have dv_cache_0009 : x ∉ ((synCphi A)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008
@@ -1977,15 +1985,15 @@ noncomputable def g_dfphi2 (A : Class) :
           not_false_eq_true])
   have dv_cache_0010 :
     x ∉
-      ((syn_cimak (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl
-                        (syn_cimak (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                          (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                      (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                        (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                          (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                  (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-            (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))) A)).fv :=
+      ((synCimak (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k (synCcompl
+                        (synCimak (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                          (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                      (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                        (synCun (synCins2k (synCins3k (synCssetk)))
+                          (synCins3k (synCsik (synCsik (synCssetk))))))
+                      (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                  (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+            (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv)))) A)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009
@@ -2014,88 +2022,88 @@ noncomputable def g_dfphi2 (A : Class) :
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cidk, Finset.mem_union,
           fresh_x_not_A, compact_fv_not_mem_empty, or_false, not_false_eq_true])
   have p0000 :=
-    @g_iftrue (.classMem (.cv y) (syn_cnnc)) (syn_cplc (.cv y) (syn_c1c)) (.cv y)
+    @gIftrue (.classMem (.cv y) (synCnnc)) (synCplc (.cv y) (synC1c)) (.cv y)
   have p0001 :=
-    @g_eqeq2d (.classMem (.cv y) (syn_cnnc))
-      (syn_cif (.classMem (.cv y) (syn_cnnc)) (syn_cplc (.cv y) (syn_c1c)) (.cv y))
-      (syn_cplc (.cv y) (syn_c1c)) (.cv x) p0000
+    @gEqeq2d (.classMem (.cv y) (synCnnc))
+      (synCif (.classMem (.cv y) (synCnnc)) (synCplc (.cv y) (synC1c)) (.cv y))
+      (synCplc (.cv y) (synC1c)) (.cv x) p0000
   have p0002 :=
-    @g_iba (.classMem (.cv y) (syn_cnnc)) (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c)))
-  have p0003 := @g_simpr (.objEq x y) (.neg (.classMem (.cv y) (syn_cnnc)))
+    @gIba (.classMem (.cv y) (synCnnc)) (.classEq (.cv x) (synCplc (.cv y) (synC1c)))
+  have p0003 := @gSimpr (.objEq x y) (.neg (.classMem (.cv y) (synCnnc)))
   have p0004 :=
-    @g_con2i (syn_wa (.objEq x y) (.neg (.classMem (.cv y) (syn_cnnc))))
-      (.classMem (.cv y) (syn_cnnc)) p0003
+    @gCon2i (synWa (.objEq x y) (.neg (.classMem (.cv y) (synCnnc))))
+      (.classMem (.cv y) (synCnnc)) p0003
   have p0005 :=
-    @g_biorf (syn_wa (.objEq x y) (.neg (.classMem (.cv y) (syn_cnnc))))
-      (syn_wa (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c))) (.classMem (.cv y) (syn_cnnc)))
+    @gBiorf (synWa (.objEq x y) (.neg (.classMem (.cv y) (synCnnc))))
+      (synWa (.classEq (.cv x) (synCplc (.cv y) (synC1c))) (.classMem (.cv y) (synCnnc)))
   have p0006 :=
-    @g_syl (.classMem (.cv y) (syn_cnnc))
-      (.neg (syn_wa (.objEq x y) (.neg (.classMem (.cv y) (syn_cnnc)))))
-      (syn_wb (syn_wa (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c)))
-          (.classMem (.cv y) (syn_cnnc)))
-        (syn_wo (syn_wa (.objEq x y) (.neg (.classMem (.cv y) (syn_cnnc))))
-          (syn_wa (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c)))
-            (.classMem (.cv y) (syn_cnnc)))))
+    @gSyl (.classMem (.cv y) (synCnnc))
+      (.neg (synWa (.objEq x y) (.neg (.classMem (.cv y) (synCnnc)))))
+      (synWb (synWa (.classEq (.cv x) (synCplc (.cv y) (synC1c)))
+          (.classMem (.cv y) (synCnnc)))
+        (synWo (synWa (.objEq x y) (.neg (.classMem (.cv y) (synCnnc))))
+          (synWa (.classEq (.cv x) (synCplc (.cv y) (synC1c)))
+            (.classMem (.cv y) (synCnnc)))))
       p0004 p0005
   have p0007 :=
-    @g_orcom (syn_wa (.objEq x y) (.neg (.classMem (.cv y) (syn_cnnc))))
-      (syn_wa (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c))) (.classMem (.cv y) (syn_cnnc)))
+    @gOrcom (synWa (.objEq x y) (.neg (.classMem (.cv y) (synCnnc))))
+      (synWa (.classEq (.cv x) (synCplc (.cv y) (synC1c))) (.classMem (.cv y) (synCnnc)))
   have p0008 :=
-    @g_syl6bb (.classMem (.cv y) (syn_cnnc))
-      (syn_wa (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c))) (.classMem (.cv y) (syn_cnnc)))
-      (syn_wo (syn_wa (.objEq x y) (.neg (.classMem (.cv y) (syn_cnnc))))
-        (syn_wa (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c))) (.classMem (.cv y) (syn_cnnc))))
-      (syn_wo (syn_wa (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c)))
-          (.classMem (.cv y) (syn_cnnc)))
-        (syn_wa (.objEq x y) (.neg (.classMem (.cv y) (syn_cnnc)))))
+    @gSyl6bb (.classMem (.cv y) (synCnnc))
+      (synWa (.classEq (.cv x) (synCplc (.cv y) (synC1c))) (.classMem (.cv y) (synCnnc)))
+      (synWo (synWa (.objEq x y) (.neg (.classMem (.cv y) (synCnnc))))
+        (synWa (.classEq (.cv x) (synCplc (.cv y) (synC1c))) (.classMem (.cv y) (synCnnc))))
+      (synWo (synWa (.classEq (.cv x) (synCplc (.cv y) (synC1c)))
+          (.classMem (.cv y) (synCnnc)))
+        (synWa (.objEq x y) (.neg (.classMem (.cv y) (synCnnc)))))
       p0006 p0007
   have p0009 :=
-    @g_n_3bitrd (.classMem (.cv y) (syn_cnnc))
+    @gN3bitrd (.classMem (.cv y) (synCnnc))
       (.classEq (.cv x)
-        (syn_cif (.classMem (.cv y) (syn_cnnc)) (syn_cplc (.cv y) (syn_c1c)) (.cv y)))
-      (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c)))
-      (syn_wa (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c))) (.classMem (.cv y) (syn_cnnc)))
-      (syn_wo (syn_wa (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c)))
-          (.classMem (.cv y) (syn_cnnc)))
-        (syn_wa (.objEq x y) (.neg (.classMem (.cv y) (syn_cnnc)))))
+        (synCif (.classMem (.cv y) (synCnnc)) (synCplc (.cv y) (synC1c)) (.cv y)))
+      (.classEq (.cv x) (synCplc (.cv y) (synC1c)))
+      (synWa (.classEq (.cv x) (synCplc (.cv y) (synC1c))) (.classMem (.cv y) (synCnnc)))
+      (synWo (synWa (.classEq (.cv x) (synCplc (.cv y) (synC1c)))
+          (.classMem (.cv y) (synCnnc)))
+        (synWa (.objEq x y) (.neg (.classMem (.cv y) (synCnnc)))))
       p0001 p0002 p0008
   have p0010 :=
-    @g_iffalse (.classMem (.cv y) (syn_cnnc)) (syn_cplc (.cv y) (syn_c1c)) (.cv y)
+    @gIffalse (.classMem (.cv y) (synCnnc)) (synCplc (.cv y) (synC1c)) (.cv y)
   have p0011 :=
-    @g_eqeq2d (.neg (.classMem (.cv y) (syn_cnnc)))
-      (syn_cif (.classMem (.cv y) (syn_cnnc)) (syn_cplc (.cv y) (syn_c1c)) (.cv y))
+    @gEqeq2d (.neg (.classMem (.cv y) (synCnnc)))
+      (synCif (.classMem (.cv y) (synCnnc)) (synCplc (.cv y) (synC1c)) (.cv y))
       (.cv y) (.cv x) p0010
-  have p0012 := @g_iba (.neg (.classMem (.cv y) (syn_cnnc))) (.objEq x y)
+  have p0012 := @gIba (.neg (.classMem (.cv y) (synCnnc))) (.objEq x y)
   have p0013 :=
-    @g_simpr (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c)))
-      (.classMem (.cv y) (syn_cnnc))
+    @gSimpr (.classEq (.cv x) (synCplc (.cv y) (synC1c)))
+      (.classMem (.cv y) (synCnnc))
   have p0014 :=
-    @g_con3i
-      (syn_wa (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c))) (.classMem (.cv y) (syn_cnnc)))
-      (.classMem (.cv y) (syn_cnnc)) p0013
+    @gCon3i
+      (synWa (.classEq (.cv x) (synCplc (.cv y) (synC1c))) (.classMem (.cv y) (synCnnc)))
+      (.classMem (.cv y) (synCnnc)) p0013
   have p0015 :=
-    @g_biorf
-      (syn_wa (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c))) (.classMem (.cv y) (syn_cnnc)))
-      (syn_wa (.objEq x y) (.neg (.classMem (.cv y) (syn_cnnc))))
+    @gBiorf
+      (synWa (.classEq (.cv x) (synCplc (.cv y) (synC1c))) (.classMem (.cv y) (synCnnc)))
+      (synWa (.objEq x y) (.neg (.classMem (.cv y) (synCnnc))))
   have p0016 :=
-    @g_syl (.neg (.classMem (.cv y) (syn_cnnc)))
-      (.neg (syn_wa (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c)))
-          (.classMem (.cv y) (syn_cnnc))))
-      (syn_wb (syn_wa (.objEq x y) (.neg (.classMem (.cv y) (syn_cnnc)))) (syn_wo
-          (syn_wa (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c)))
-            (.classMem (.cv y) (syn_cnnc)))
-          (syn_wa (.objEq x y) (.neg (.classMem (.cv y) (syn_cnnc))))))
+    @gSyl (.neg (.classMem (.cv y) (synCnnc)))
+      (.neg (synWa (.classEq (.cv x) (synCplc (.cv y) (synC1c)))
+          (.classMem (.cv y) (synCnnc))))
+      (synWb (synWa (.objEq x y) (.neg (.classMem (.cv y) (synCnnc)))) (synWo
+          (synWa (.classEq (.cv x) (synCplc (.cv y) (synC1c)))
+            (.classMem (.cv y) (synCnnc)))
+          (synWa (.objEq x y) (.neg (.classMem (.cv y) (synCnnc))))))
       p0014 p0015
   have p0017_e00_recanon :
     Nominal.NPrf
-      (.imp (.neg (.classMem (.cv y) (syn_cnnc))) (syn_wb (.classEq (.cv x)
-            (syn_cif (.classMem (.cv y) (syn_cnnc)) (syn_cplc (.cv y) (syn_c1c)) (.cv y)))
+      (.imp (.neg (.classMem (.cv y) (synCnnc))) (synWb (.classEq (.cv x)
+            (synCif (.classMem (.cv y) (synCnnc)) (synCplc (.cv y) (synC1c)) (.cv y)))
           (.objEq x y))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_cnnc syn_cint syn_wa syn_c0c syn_csn syn_c0 syn_cdif syn_cin syn_ccompl
-          syn_cnin syn_wnan syn_cvv syn_wral syn_cplc syn_wrex syn_wex syn_c1c syn_wb
-          syn_cif syn_wo
+        unfold synCnnc synCint synWa synC0c synCsn synC0 synCdif synCin synCcompl
+          synCnin synWnan synCvv synWral synCplc synWrex synWex synC1c synWb
+          synCif synWo
         simp (config :=
           {
             failIfUnchanged :=
@@ -2114,163 +2122,163 @@ noncomputable def g_dfphi2 (A : Class) :
             · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0011
   have p0017 :=
-    @g_n_3bitrd (.neg (.classMem (.cv y) (syn_cnnc)))
+    @gN3bitrd (.neg (.classMem (.cv y) (synCnnc)))
       (.classEq (.cv x)
-        (syn_cif (.classMem (.cv y) (syn_cnnc)) (syn_cplc (.cv y) (syn_c1c)) (.cv y)))
-      (.objEq x y) (syn_wa (.objEq x y) (.neg (.classMem (.cv y) (syn_cnnc))))
-      (syn_wo (syn_wa (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c)))
-          (.classMem (.cv y) (syn_cnnc)))
-        (syn_wa (.objEq x y) (.neg (.classMem (.cv y) (syn_cnnc)))))
+        (synCif (.classMem (.cv y) (synCnnc)) (synCplc (.cv y) (synC1c)) (.cv y)))
+      (.objEq x y) (synWa (.objEq x y) (.neg (.classMem (.cv y) (synCnnc))))
+      (synWo (synWa (.classEq (.cv x) (synCplc (.cv y) (synC1c)))
+          (.classMem (.cv y) (synCnnc)))
+        (synWa (.objEq x y) (.neg (.classMem (.cv y) (synCnnc)))))
       p0017_e00_recanon p0012 p0016
   have p0018 :=
-    @g_pm2_61i (.classMem (.cv y) (syn_cnnc))
-      (syn_wb (.classEq (.cv x)
-          (syn_cif (.classMem (.cv y) (syn_cnnc)) (syn_cplc (.cv y) (syn_c1c)) (.cv y))) (syn_wo
-          (syn_wa (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c)))
-            (.classMem (.cv y) (syn_cnnc)))
-          (syn_wa (.objEq x y) (.neg (.classMem (.cv y) (syn_cnnc))))))
+    @gPm261i (.classMem (.cv y) (synCnnc))
+      (synWb (.classEq (.cv x)
+          (synCif (.classMem (.cv y) (synCnnc)) (synCplc (.cv y) (synC1c)) (.cv y))) (synWo
+          (synWa (.classEq (.cv x) (synCplc (.cv y) (synC1c)))
+            (.classMem (.cv y) (synCnnc)))
+          (synWa (.objEq x y) (.neg (.classMem (.cv y) (synCnnc))))))
       p0009 p0017
-  have p0019 := @g_equcom y x
-  have p0020 := @g_vex y
-  have p0021 := @g_elcompl (.cv y) (syn_cnnc) p0020
+  have p0019 := @gEqucom y x
+  have p0020 := @gVex y
+  have p0021 := @gElcompl (.cv y) (synCnnc) p0020
   have p0022 :=
-    @g_anbi12i (.objEq y x) (.objEq x y) (.classMem (.cv y) (syn_ccompl (syn_cnnc)))
-      (.neg (.classMem (.cv y) (syn_cnnc))) p0019 p0021
+    @gAnbi12i (.objEq y x) (.objEq x y) (.classMem (.cv y) (synCcompl (synCnnc)))
+      (.neg (.classMem (.cv y) (synCnnc))) p0019 p0021
   have p0023 :=
-    @g_orbi2i (syn_wa (.objEq y x) (.classMem (.cv y) (syn_ccompl (syn_cnnc))))
-      (syn_wa (.objEq x y) (.neg (.classMem (.cv y) (syn_cnnc))))
-      (syn_wa (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c))) (.classMem (.cv y) (syn_cnnc)))
+    @gOrbi2i (synWa (.objEq y x) (.classMem (.cv y) (synCcompl (synCnnc))))
+      (synWa (.objEq x y) (.neg (.classMem (.cv y) (synCnnc))))
+      (synWa (.classEq (.cv x) (synCplc (.cv y) (synC1c))) (.classMem (.cv y) (synCnnc)))
       p0022
   have p0024 :=
-    @g_bitr4i
+    @gBitr4i
       (.classEq (.cv x)
-        (syn_cif (.classMem (.cv y) (syn_cnnc)) (syn_cplc (.cv y) (syn_c1c)) (.cv y)))
-      (syn_wo (syn_wa (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c)))
-          (.classMem (.cv y) (syn_cnnc)))
-        (syn_wa (.objEq x y) (.neg (.classMem (.cv y) (syn_cnnc)))))
-      (syn_wo (syn_wa (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c)))
-          (.classMem (.cv y) (syn_cnnc)))
-        (syn_wa (.objEq y x) (.classMem (.cv y) (syn_ccompl (syn_cnnc)))))
+        (synCif (.classMem (.cv y) (synCnnc)) (synCplc (.cv y) (synC1c)) (.cv y)))
+      (synWo (synWa (.classEq (.cv x) (synCplc (.cv y) (synC1c)))
+          (.classMem (.cv y) (synCnnc)))
+        (synWa (.objEq x y) (.neg (.classMem (.cv y) (synCnnc)))))
+      (synWo (synWa (.classEq (.cv x) (synCplc (.cv y) (synC1c)))
+          (.classMem (.cv y) (synCnnc)))
+        (synWa (.objEq y x) (.classMem (.cv y) (synCcompl (synCnnc)))))
       p0018 p0023
   have p0025 :=
-    @g_elun (syn_copk (.cv y) (.cv x))
-      (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl
-                  (syn_cimak (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                    (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                  (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                    (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-            (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-      (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))
+    @gElun (synCopk (.cv y) (.cv x))
+      (synCin (synCimagek (synCimak (synCdif (synCins3k (synCcompl
+                  (synCimak (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                    (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                  (synCun (synCins2k (synCins3k (synCssetk)))
+                    (synCins3k (synCsik (synCsik (synCssetk))))))
+                (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+            (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+      (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv)))
   have p0026 :=
-    @g_elin (syn_copk (.cv y) (.cv x))
-      (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl
-                (syn_cimak (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                  (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-              (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                  (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-              (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-          (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-      (syn_cxpk (syn_cnnc) (syn_cvv))
-  have p0027 := @g_vex x
+    @gElin (synCopk (.cv y) (.cv x))
+      (synCimagek (synCimak (synCdif (synCins3k (synCcompl
+                (synCimak (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                  (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+              (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                (synCun (synCins2k (synCins3k (synCssetk)))
+                  (synCins3k (synCsik (synCsik (synCssetk))))))
+              (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+          (synCpw1 (synCpw1 (synC1c)))))
+      (synCxpk (synCnnc) (synCvv))
+  have p0027 := @gVex x
   have p0028 :=
-    @g_opkelimagek (.cv y) (.cv x)
-      (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl
-              (syn_cimak (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-            (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-              (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-            (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-        (syn_cpw1 (syn_cpw1 (syn_c1c))))
+    @gOpkelimagek (.cv y) (.cv x)
+      (synCimak (synCdif (synCins3k (synCcompl
+              (synCimak (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+            (synCsymdif (synCins2k (synCins2k (synCssetk)))
+              (synCun (synCins2k (synCins3k (synCssetk)))
+                (synCins3k (synCsik (synCsik (synCssetk))))))
+            (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+        (synCpw1 (synCpw1 (synC1c))))
       p0020 p0027
-  have p0029 := @g_dfaddc2 (.cv y) (syn_c1c)
+  have p0029 := @gDfaddc2 (.cv y) (synC1c)
   have p0030 :=
-    @g_eqeq2i (syn_cplc (.cv y) (syn_c1c))
-      (syn_cimak (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl
-                (syn_cimak (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                  (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-              (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                  (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-              (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-          (syn_cpw1 (syn_cpw1 (syn_c1c)))) (.cv y))
+    @gEqeq2i (synCplc (.cv y) (synC1c))
+      (synCimak (synCimak (synCdif (synCins3k (synCcompl
+                (synCimak (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                  (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+              (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                (synCun (synCins2k (synCins3k (synCssetk)))
+                  (synCins3k (synCsik (synCsik (synCssetk))))))
+              (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+          (synCpw1 (synCpw1 (synC1c)))) (.cv y))
       (.cv x) p0029
   have p0031 :=
-    @g_bitr4i
-      (.classMem (syn_copk (.cv y) (.cv x)) (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k
-                (syn_ccompl
-                  (syn_cimak (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                    (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                  (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                    (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-            (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-      (.classEq (.cv x) (syn_cimak (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl
-                  (syn_cimak (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                    (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                  (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                    (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-            (syn_cpw1 (syn_cpw1 (syn_c1c)))) (.cv y)))
-      (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c))) p0028 p0030
-  have p0032 := @g_opkelxpk (.cv y) (.cv x) (syn_cnnc) (syn_cvv) p0020 p0027
+    @gBitr4i
+      (.classMem (synCopk (.cv y) (.cv x)) (synCimagek (synCimak (synCdif (synCins3k
+                (synCcompl
+                  (synCimak (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                    (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                  (synCun (synCins2k (synCins3k (synCssetk)))
+                    (synCins3k (synCsik (synCsik (synCssetk))))))
+                (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+            (synCpw1 (synCpw1 (synC1c))))))
+      (.classEq (.cv x) (synCimak (synCimak (synCdif (synCins3k (synCcompl
+                  (synCimak (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                    (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                  (synCun (synCins2k (synCins3k (synCssetk)))
+                    (synCins3k (synCsik (synCsik (synCssetk))))))
+                (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+            (synCpw1 (synCpw1 (synC1c)))) (.cv y)))
+      (.classEq (.cv x) (synCplc (.cv y) (synC1c))) p0028 p0030
+  have p0032 := @gOpkelxpk (.cv y) (.cv x) (synCnnc) (synCvv) p0020 p0027
   have p0033 :=
-    @g_mpbiran2 (.classMem (syn_copk (.cv y) (.cv x)) (syn_cxpk (syn_cnnc) (syn_cvv)))
-      (.classMem (.cv y) (syn_cnnc)) (.classMem (.cv x) (syn_cvv)) p0027 p0032
+    @gMpbiran2 (.classMem (synCopk (.cv y) (.cv x)) (synCxpk (synCnnc) (synCvv)))
+      (.classMem (.cv y) (synCnnc)) (.classMem (.cv x) (synCvv)) p0027 p0032
   have p0034 :=
-    @g_anbi12i
-      (.classMem (syn_copk (.cv y) (.cv x)) (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k
-                (syn_ccompl
-                  (syn_cimak (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                    (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                  (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                    (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-            (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-      (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c)))
-      (.classMem (syn_copk (.cv y) (.cv x)) (syn_cxpk (syn_cnnc) (syn_cvv)))
-      (.classMem (.cv y) (syn_cnnc)) p0031 p0033
+    @gAnbi12i
+      (.classMem (synCopk (.cv y) (.cv x)) (synCimagek (synCimak (synCdif (synCins3k
+                (synCcompl
+                  (synCimak (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                    (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                  (synCun (synCins2k (synCins3k (synCssetk)))
+                    (synCins3k (synCsik (synCsik (synCssetk))))))
+                (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+            (synCpw1 (synCpw1 (synC1c))))))
+      (.classEq (.cv x) (synCplc (.cv y) (synC1c)))
+      (.classMem (synCopk (.cv y) (.cv x)) (synCxpk (synCnnc) (synCvv)))
+      (.classMem (.cv y) (synCnnc)) p0031 p0033
   have p0035 :=
-    @g_bitri
-      (.classMem (syn_copk (.cv y) (.cv x)) (syn_cin (syn_cimagek (syn_cimak (syn_cdif
-                (syn_cins3k (syn_ccompl (syn_cimak
-                      (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                      (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                  (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                    (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                      (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                  (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-              (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv))))
-      (syn_wa (.classMem (syn_copk (.cv y) (.cv x)) (syn_cimagek (syn_cimak (syn_cdif
-                (syn_cins3k (syn_ccompl (syn_cimak
-                      (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                      (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                  (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                    (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                      (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                  (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-              (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-        (.classMem (syn_copk (.cv y) (.cv x)) (syn_cxpk (syn_cnnc) (syn_cvv))))
-      (syn_wa (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c))) (.classMem (.cv y) (syn_cnnc)))
+    @gBitri
+      (.classMem (synCopk (.cv y) (.cv x)) (synCin (synCimagek (synCimak (synCdif
+                (synCins3k (synCcompl (synCimak
+                      (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                      (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                  (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                    (synCun (synCins2k (synCins3k (synCssetk)))
+                      (synCins3k (synCsik (synCsik (synCssetk))))))
+                  (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+              (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv))))
+      (synWa (.classMem (synCopk (.cv y) (.cv x)) (synCimagek (synCimak (synCdif
+                (synCins3k (synCcompl (synCimak
+                      (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                      (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                  (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                    (synCun (synCins2k (synCins3k (synCssetk)))
+                      (synCins3k (synCsik (synCsik (synCssetk))))))
+                  (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+              (synCpw1 (synCpw1 (synC1c))))))
+        (.classMem (synCopk (.cv y) (.cv x)) (synCxpk (synCnnc) (synCvv))))
+      (synWa (.classEq (.cv x) (synCplc (.cv y) (synC1c))) (.classMem (.cv y) (synCnnc)))
       p0026 p0034
   have p0036 :=
-    @g_elin (syn_copk (.cv y) (.cv x)) (syn_cidk)
-      (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))
-  have p0037 := @g_opkelidkg (.cv y) (.cv x) (syn_cvv) (syn_cvv)
+    @gElin (synCopk (.cv y) (.cv x)) (synCidk)
+      (synCxpk (synCcompl (synCnnc)) (synCvv))
+  have p0037 := @gOpkelidkg (.cv y) (.cv x) (synCvv) (synCvv)
   have p0038_e02_recanon :
     Nominal.NPrf
-      (.imp (syn_wa (.classMem (.cv y) (syn_cvv)) (.classMem (.cv x) (syn_cvv)))
-        (syn_wb (.classMem (syn_copk (.cv y) (.cv x)) (syn_cidk)) (.objEq y x))) :=
+      (.imp (synWa (.classMem (.cv y) (synCvv)) (.classMem (.cv x) (synCvv)))
+        (synWb (.classMem (synCopk (.cv y) (.cv x)) (synCidk)) (.objEq y x))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wa syn_cvv syn_wb syn_copk syn_cpr syn_cun syn_cnin syn_wnan syn_ccompl
-          syn_csn syn_cidk syn_wex
+        unfold synWa synCvv synWb synCopk synCpr synCun synCnin synWnan synCcompl
+          synCsn synCidk synWex
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.imp
@@ -2286,114 +2294,114 @@ noncomputable def g_dfphi2 (A : Class) :
             · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0037
   have p0038 :=
-    @g_mp2an (.classMem (.cv y) (syn_cvv)) (.classMem (.cv x) (syn_cvv))
-      (syn_wb (.classMem (syn_copk (.cv y) (.cv x)) (syn_cidk)) (.objEq y x)) p0020 p0027
+    @gMp2an (.classMem (.cv y) (synCvv)) (.classMem (.cv x) (synCvv))
+      (synWb (.classMem (synCopk (.cv y) (.cv x)) (synCidk)) (.objEq y x)) p0020 p0027
       p0038_e02_recanon
-  have p0039 := @g_opkelxpk (.cv y) (.cv x) (syn_ccompl (syn_cnnc)) (syn_cvv) p0020 p0027
+  have p0039 := @gOpkelxpk (.cv y) (.cv x) (synCcompl (synCnnc)) (synCvv) p0020 p0027
   have p0040 :=
-    @g_mpbiran2
-      (.classMem (syn_copk (.cv y) (.cv x)) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))
-      (.classMem (.cv y) (syn_ccompl (syn_cnnc))) (.classMem (.cv x) (syn_cvv)) p0027
+    @gMpbiran2
+      (.classMem (synCopk (.cv y) (.cv x)) (synCxpk (synCcompl (synCnnc)) (synCvv)))
+      (.classMem (.cv y) (synCcompl (synCnnc))) (.classMem (.cv x) (synCvv)) p0027
       p0039
   have p0041 :=
-    @g_anbi12i (.classMem (syn_copk (.cv y) (.cv x)) (syn_cidk)) (.objEq y x)
-      (.classMem (syn_copk (.cv y) (.cv x)) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))
-      (.classMem (.cv y) (syn_ccompl (syn_cnnc))) p0038 p0040
+    @gAnbi12i (.classMem (synCopk (.cv y) (.cv x)) (synCidk)) (.objEq y x)
+      (.classMem (synCopk (.cv y) (.cv x)) (synCxpk (synCcompl (synCnnc)) (synCvv)))
+      (.classMem (.cv y) (synCcompl (synCnnc))) p0038 p0040
   have p0042 :=
-    @g_bitri
-      (.classMem (syn_copk (.cv y) (.cv x))
-        (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))
-      (syn_wa (.classMem (syn_copk (.cv y) (.cv x)) (syn_cidk))
-        (.classMem (syn_copk (.cv y) (.cv x)) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))
-      (syn_wa (.objEq y x) (.classMem (.cv y) (syn_ccompl (syn_cnnc)))) p0036 p0041
+    @gBitri
+      (.classMem (synCopk (.cv y) (.cv x))
+        (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))
+      (synWa (.classMem (synCopk (.cv y) (.cv x)) (synCidk))
+        (.classMem (synCopk (.cv y) (.cv x)) (synCxpk (synCcompl (synCnnc)) (synCvv))))
+      (synWa (.objEq y x) (.classMem (.cv y) (synCcompl (synCnnc)))) p0036 p0041
   have p0043 :=
-    @g_orbi12i
-      (.classMem (syn_copk (.cv y) (.cv x)) (syn_cin (syn_cimagek (syn_cimak (syn_cdif
-                (syn_cins3k (syn_ccompl (syn_cimak
-                      (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                      (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                  (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                    (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                      (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                  (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-              (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv))))
-      (syn_wa (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c))) (.classMem (.cv y) (syn_cnnc)))
-      (.classMem (syn_copk (.cv y) (.cv x))
-        (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))
-      (syn_wa (.objEq y x) (.classMem (.cv y) (syn_ccompl (syn_cnnc)))) p0035 p0042
+    @gOrbi12i
+      (.classMem (synCopk (.cv y) (.cv x)) (synCin (synCimagek (synCimak (synCdif
+                (synCins3k (synCcompl (synCimak
+                      (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                      (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                  (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                    (synCun (synCins2k (synCins3k (synCssetk)))
+                      (synCins3k (synCsik (synCsik (synCssetk))))))
+                  (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+              (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv))))
+      (synWa (.classEq (.cv x) (synCplc (.cv y) (synC1c))) (.classMem (.cv y) (synCnnc)))
+      (.classMem (synCopk (.cv y) (.cv x))
+        (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))
+      (synWa (.objEq y x) (.classMem (.cv y) (synCcompl (synCnnc)))) p0035 p0042
   have p0044 :=
-    @g_bitri
-      (.classMem (syn_copk (.cv y) (.cv x)) (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif
-                  (syn_cins3k (syn_ccompl (syn_cimak
-                        (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                    (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                      (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                        (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                    (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-          (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))))
-      (syn_wo (.classMem (syn_copk (.cv y) (.cv x)) (syn_cin (syn_cimagek (syn_cimak (syn_cdif
-                  (syn_cins3k (syn_ccompl (syn_cimak
-                        (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                    (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                      (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                        (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                    (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv))))
-        (.classMem (syn_copk (.cv y) (.cv x))
-          (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))))
-      (syn_wo (syn_wa (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c)))
-          (.classMem (.cv y) (syn_cnnc)))
-        (syn_wa (.objEq y x) (.classMem (.cv y) (syn_ccompl (syn_cnnc)))))
+    @gBitri
+      (.classMem (synCopk (.cv y) (.cv x)) (synCun (synCin (synCimagek (synCimak (synCdif
+                  (synCins3k (synCcompl (synCimak
+                        (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                        (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                    (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                      (synCun (synCins2k (synCins3k (synCssetk)))
+                        (synCins3k (synCsik (synCsik (synCssetk))))))
+                    (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+          (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv)))))
+      (synWo (.classMem (synCopk (.cv y) (.cv x)) (synCin (synCimagek (synCimak (synCdif
+                  (synCins3k (synCcompl (synCimak
+                        (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                        (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                    (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                      (synCun (synCins2k (synCins3k (synCssetk)))
+                        (synCins3k (synCsik (synCsik (synCssetk))))))
+                    (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv))))
+        (.classMem (synCopk (.cv y) (.cv x))
+          (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv)))))
+      (synWo (synWa (.classEq (.cv x) (synCplc (.cv y) (synC1c)))
+          (.classMem (.cv y) (synCnnc)))
+        (synWa (.objEq y x) (.classMem (.cv y) (synCcompl (synCnnc)))))
       p0025 p0043
   have p0045 :=
-    @g_bitr4i
+    @gBitr4i
       (.classEq (.cv x)
-        (syn_cif (.classMem (.cv y) (syn_cnnc)) (syn_cplc (.cv y) (syn_c1c)) (.cv y)))
-      (syn_wo (syn_wa (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c)))
-          (.classMem (.cv y) (syn_cnnc)))
-        (syn_wa (.objEq y x) (.classMem (.cv y) (syn_ccompl (syn_cnnc)))))
-      (.classMem (syn_copk (.cv y) (.cv x)) (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif
-                  (syn_cins3k (syn_ccompl (syn_cimak
-                        (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                    (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                      (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                        (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                    (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-          (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))))
+        (synCif (.classMem (.cv y) (synCnnc)) (synCplc (.cv y) (synC1c)) (.cv y)))
+      (synWo (synWa (.classEq (.cv x) (synCplc (.cv y) (synC1c)))
+          (.classMem (.cv y) (synCnnc)))
+        (synWa (.objEq y x) (.classMem (.cv y) (synCcompl (synCnnc)))))
+      (.classMem (synCopk (.cv y) (.cv x)) (synCun (synCin (synCimagek (synCimak (synCdif
+                  (synCins3k (synCcompl (synCimak
+                        (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                        (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                    (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                      (synCun (synCins2k (synCins3k (synCssetk)))
+                        (synCins3k (synCsik (synCsik (synCssetk))))))
+                    (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+          (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv)))))
       p0024 p0044
   have p0046 :=
-    @g_rexbii
+    @gRexbii
       (.classEq (.cv x)
-        (syn_cif (.classMem (.cv y) (syn_cnnc)) (syn_cplc (.cv y) (syn_c1c)) (.cv y)))
-      (.classMem (syn_copk (.cv y) (.cv x)) (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif
-                  (syn_cins3k (syn_ccompl (syn_cimak
-                        (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                    (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                      (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                        (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                    (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-          (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))))
+        (synCif (.classMem (.cv y) (synCnnc)) (synCplc (.cv y) (synC1c)) (.cv y)))
+      (.classMem (synCopk (.cv y) (.cv x)) (synCun (synCin (synCimagek (synCimak (synCdif
+                  (synCins3k (synCcompl (synCimak
+                        (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                        (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                    (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                      (synCun (synCins2k (synCins3k (synCssetk)))
+                        (synCins3k (synCsik (synCsik (synCssetk))))))
+                    (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+          (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv)))))
       y A p0045
   have p0047 :=
-    @g_eqeq1 (.cv z) (.cv x)
-      (syn_cif (.classMem (.cv y) (syn_cnnc)) (syn_cplc (.cv y) (syn_c1c)) (.cv y))
+    @gEqeq1 (.cv z) (.cv x)
+      (synCif (.classMem (.cv y) (synCnnc)) (synCplc (.cv y) (synC1c)) (.cv y))
   have p0048_e00_recanon :
     Nominal.NPrf
-      (.imp (.objEq z x) (syn_wb (.classEq (.cv z)
-            (syn_cif (.classMem (.cv y) (syn_cnnc)) (syn_cplc (.cv y) (syn_c1c)) (.cv y)))
-          (.classEq (.cv x) (syn_cif (.classMem (.cv y) (syn_cnnc)) (syn_cplc (.cv y) (syn_c1c))
+      (.imp (.objEq z x) (synWb (.classEq (.cv z)
+            (synCif (.classMem (.cv y) (synCnnc)) (synCplc (.cv y) (synC1c)) (.cv y)))
+          (.classEq (.cv x) (synCif (.classMem (.cv y) (synCnnc)) (synCplc (.cv y) (synC1c))
               (.cv y))))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_cif syn_wo syn_wa syn_cnnc syn_cint syn_cplc syn_wrex syn_wex
-          syn_c1c
+        unfold synWb synCif synWo synWa synCnnc synCint synCplc synWrex synWex
+          synC1c
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv,
           NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]
@@ -2402,26 +2410,26 @@ noncomputable def g_dfphi2 (A : Class) :
         · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0047
   have p0048 :=
-    @g_rexbidv (.objEq z x)
+    @gRexbidv (.objEq z x)
       (.classEq (.cv z)
-        (syn_cif (.classMem (.cv y) (syn_cnnc)) (syn_cplc (.cv y) (syn_c1c)) (.cv y)))
+        (synCif (.classMem (.cv y) (synCnnc)) (synCplc (.cv y) (synC1c)) (.cv y)))
       (.classEq (.cv x)
-        (syn_cif (.classMem (.cv y) (syn_cnnc)) (syn_cplc (.cv y) (syn_c1c)) (.cv y)))
+        (synCif (.classMem (.cv y) (synCnnc)) (synCplc (.cv y) (synC1c)) (.cv y)))
       y A dv_cache_0001 p0048_e00_recanon
   have p0049 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_phi y z A
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfPhi y z A
       dv_cache_0002 dv_cache_0003 dv_cache_0004
   have p0050_e01_recanon :
     Nominal.NPrf
-      (.imp (.classEq (.cv z) (.cv x)) (syn_wb (syn_wrex y A (.classEq (.cv z)
-              (syn_cif (.classMem (.cv y) (syn_cnnc)) (syn_cplc (.cv y) (syn_c1c)) (.cv y))))
-          (syn_wrex y A (.classEq (.cv x)
-              (syn_cif (.classMem (.cv y) (syn_cnnc)) (syn_cplc (.cv y) (syn_c1c))
+      (.imp (.classEq (.cv z) (.cv x)) (synWb (synWrex y A (.classEq (.cv z)
+              (synCif (.classMem (.cv y) (synCnnc)) (synCplc (.cv y) (synC1c)) (.cv y))))
+          (synWrex y A (.classEq (.cv x)
+              (synCif (.classMem (.cv y) (synCnnc)) (synCplc (.cv y) (synC1c))
                 (.cv y)))))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        simp only [syn_wb, syn_wrex, syn_wex, syn_wa, syn_cif, syn_wo, syn_cnnc, syn_cint,
-          syn_cplc, syn_c1c]
+        simp only [synWb, synWrex, synWex, synWa, synCif, synWo, synCnnc, synCint,
+          synCplc, synC1c]
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv,
           NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]
@@ -2430,219 +2438,222 @@ noncomputable def g_dfphi2 (A : Class) :
         · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0048
   have p0050 :=
-    @g_elab2
-      (syn_wrex y A (.classEq (.cv z)
-          (syn_cif (.classMem (.cv y) (syn_cnnc)) (syn_cplc (.cv y) (syn_c1c)) (.cv y))))
-      (syn_wrex y A (.classEq (.cv x)
-          (syn_cif (.classMem (.cv y) (syn_cnnc)) (syn_cplc (.cv y) (syn_c1c)) (.cv y))))
-      z (.cv x) (syn_cphi A) dv_cache_0005 dv_cache_0006 p0027 p0050_e01_recanon p0049
+    @gElab2
+      (synWrex y A (.classEq (.cv z)
+          (synCif (.classMem (.cv y) (synCnnc)) (synCplc (.cv y) (synC1c)) (.cv y))))
+      (synWrex y A (.classEq (.cv x)
+          (synCif (.classMem (.cv y) (synCnnc)) (synCplc (.cv y) (synC1c)) (.cv y))))
+      z (.cv x) (synCphi A) dv_cache_0005 dv_cache_0006 p0027 p0050_e01_recanon p0049
   have p0051 :=
-    @g_elimak y
-      (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl (syn_cimak
-                      (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                      (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                  (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                    (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                      (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                  (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-              (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-        (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))
+    @gElimak y
+      (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k (synCcompl (synCimak
+                      (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                      (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                  (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                    (synCun (synCins2k (synCins3k (synCssetk)))
+                      (synCins3k (synCsik (synCsik (synCssetk))))))
+                  (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+              (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+        (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))
       A (.cv x) dv_cache_0007 dv_cache_0002 dv_cache_0008 p0027
   have p0052 :=
-    @g_n_3bitr4i
-      (syn_wrex y A (.classEq (.cv x)
-          (syn_cif (.classMem (.cv y) (syn_cnnc)) (syn_cplc (.cv y) (syn_c1c)) (.cv y))))
-      (syn_wrex y A (.classMem (syn_copk (.cv y) (.cv x)) (syn_cun (syn_cin (syn_cimagek
-                (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl (syn_cimak
-                          (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                          (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                      (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                        (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                          (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                  (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-            (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-      (.classMem (.cv x) (syn_cphi A))
-      (.classMem (.cv x) (syn_cimak (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif
-                    (syn_cins3k (syn_ccompl (syn_cimak
-                          (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                          (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                      (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                        (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                          (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                  (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-            (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))) A))
+    @gN3bitr4i
+      (synWrex y A (.classEq (.cv x)
+          (synCif (.classMem (.cv y) (synCnnc)) (synCplc (.cv y) (synC1c)) (.cv y))))
+      (synWrex y A (.classMem (synCopk (.cv y) (.cv x)) (synCun (synCin (synCimagek
+                (synCimak (synCdif (synCins3k (synCcompl (synCimak
+                          (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                          (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                      (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                        (synCun (synCins2k (synCins3k (synCssetk)))
+                          (synCins3k (synCsik (synCsik (synCssetk))))))
+                      (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                  (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+            (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+      (.classMem (.cv x) (synCphi A))
+      (.classMem (.cv x) (synCimak (synCun (synCin (synCimagek (synCimak (synCdif
+                    (synCins3k (synCcompl (synCimak
+                          (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                          (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                      (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                        (synCun (synCins2k (synCins3k (synCssetk)))
+                          (synCins3k (synCsik (synCsik (synCssetk))))))
+                      (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                  (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+            (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv)))) A))
       p0046 p0050 p0051
   have p0053 :=
-    @g_eqriv x (syn_cphi A)
-      (syn_cimak (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl
-                      (syn_cimak (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                    (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                      (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                        (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                    (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-          (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))) A)
+    @gEqriv x (synCphi A)
+      (synCimak (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k (synCcompl
+                      (synCimak (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                        (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                    (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                      (synCun (synCins2k (synCins3k (synCssetk)))
+                        (synCins3k (synCsik (synCsik (synCssetk))))))
+                    (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+          (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv)))) A)
       dv_cache_0009 dv_cache_0010 p0052
   exact p0053
 
+/-- Checked nominal proof certificate identified upstream as `g_phieq`. -/
 @[expose]
-noncomputable def g_phieq (A : Class) (B : Class) :
-    Nominal.NPrf (.imp (.classEq A B) (.classEq (syn_cphi A) (syn_cphi B))) :=
+noncomputable def gPhieq (A : Class) (B : Class) :
+    Nominal.NPrf (.imp (.classEq A B) (.classEq (synCphi A) (synCphi B))) :=
   by
   have p0000 :=
-    @g_imakeq2 A B
-      (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl (syn_cimak
-                      (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                      (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                  (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                    (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                      (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                  (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-              (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-        (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))
-  have p0001 := @g_dfphi2 A
-  have p0002 := @g_dfphi2 B
+    @gImakeq2 A B
+      (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k (synCcompl (synCimak
+                      (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                      (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                  (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                    (synCun (synCins2k (synCins3k (synCssetk)))
+                      (synCins3k (synCsik (synCsik (synCssetk))))))
+                  (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+              (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+        (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))
+  have p0001 := @gDfphi2 A
+  have p0002 := @gDfphi2 B
   have p0003 :=
-    @g_n_3eqtr4g (.classEq A B)
-      (syn_cimak (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl
-                      (syn_cimak (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                    (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                      (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                        (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                    (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-          (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))) A)
-      (syn_cimak (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl
-                      (syn_cimak (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                    (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                      (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                        (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                    (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-          (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))) B)
-      (syn_cphi A) (syn_cphi B) p0000 p0001 p0002
+    @gN3eqtr4g (.classEq A B)
+      (synCimak (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k (synCcompl
+                      (synCimak (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                        (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                    (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                      (synCun (synCins2k (synCins3k (synCssetk)))
+                        (synCins3k (synCsik (synCsik (synCssetk))))))
+                    (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+          (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv)))) A)
+      (synCimak (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k (synCcompl
+                      (synCimak (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                        (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                    (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                      (synCun (synCins2k (synCins3k (synCssetk)))
+                        (synCins3k (synCsik (synCsik (synCssetk))))))
+                    (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+          (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv)))) B)
+      (synCphi A) (synCphi B) p0000 p0001 p0002
   exact p0003
 
+/-- Checked nominal proof certificate identified upstream as `g_phiexg`. -/
 @[expose]
-noncomputable def g_phiexg (A : Class) (V : Class) :
-    Nominal.NPrf (.imp (.classMem A V) (.classMem (syn_cphi A) (syn_cvv))) :=
+noncomputable def gPhiexg (A : Class) (V : Class) :
+    Nominal.NPrf (.imp (.classMem A V) (.classMem (synCphi A) (synCvv))) :=
   by
-  have p0000 := @g_dfphi2 A
-  have p0001 := @g_addcexlem
-  have p0002 := @g_n_1cex
-  have p0003 := @g_pw1ex (syn_c1c) p0002
-  have p0004 := @g_pw1ex (syn_cpw1 (syn_c1c)) p0003
+  have p0000 := @gDfphi2 A
+  have p0001 := @gAddcexlem
+  have p0002 := @gN1cex
+  have p0003 := @gPw1ex (synC1c) p0002
+  have p0004 := @gPw1ex (synCpw1 (synC1c)) p0003
   have p0005 :=
-    @g_imakex
-      (syn_cdif (syn_cins3k (syn_ccompl
-            (syn_cimak (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-              (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-          (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-            (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-              (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-          (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-      (syn_cpw1 (syn_cpw1 (syn_c1c))) p0001 p0004
+    @gImakex
+      (synCdif (synCins3k (synCcompl
+            (synCimak (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+              (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+          (synCsymdif (synCins2k (synCins2k (synCssetk)))
+            (synCun (synCins2k (synCins3k (synCssetk)))
+              (synCins3k (synCsik (synCsik (synCssetk))))))
+          (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+      (synCpw1 (synCpw1 (synC1c))) p0001 p0004
   have p0006 :=
-    @g_imagekex
-      (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl
-              (syn_cimak (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-            (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-              (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-            (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-        (syn_cpw1 (syn_cpw1 (syn_c1c))))
+    @gImagekex
+      (synCimak (synCdif (synCins3k (synCcompl
+              (synCimak (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+            (synCsymdif (synCins2k (synCins2k (synCssetk)))
+              (synCun (synCins2k (synCins3k (synCssetk)))
+                (synCins3k (synCsik (synCsik (synCssetk))))))
+            (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+        (synCpw1 (synCpw1 (synC1c))))
       p0005
-  have p0007 := @g_nncex
-  have p0008 := @g_vvex
-  have p0009 := @g_xpkex (syn_cnnc) (syn_cvv) p0007 p0008
+  have p0007 := @gNncex
+  have p0008 := @gVvex
+  have p0009 := @gXpkex (synCnnc) (synCvv) p0007 p0008
   have p0010 :=
-    @g_inex
-      (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl
-                (syn_cimak (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                  (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-              (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                  (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-              (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-          (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-      (syn_cxpk (syn_cnnc) (syn_cvv)) p0006 p0009
-  have p0011 := @g_idkex
-  have p0013 := @g_complex (syn_cnnc) p0007
-  have p0015 := @g_xpkex (syn_ccompl (syn_cnnc)) (syn_cvv) p0013 p0008
+    @gInex
+      (synCimagek (synCimak (synCdif (synCins3k (synCcompl
+                (synCimak (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                  (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+              (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                (synCun (synCins2k (synCins3k (synCssetk)))
+                  (synCins3k (synCsik (synCsik (synCssetk))))))
+              (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+          (synCpw1 (synCpw1 (synC1c)))))
+      (synCxpk (synCnnc) (synCvv)) p0006 p0009
+  have p0011 := @gIdkex
+  have p0013 := @gComplex (synCnnc) p0007
+  have p0015 := @gXpkex (synCcompl (synCnnc)) (synCvv) p0013 p0008
   have p0016 :=
-    @g_inex (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)) p0011 p0015
+    @gInex (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv)) p0011 p0015
   have p0017 :=
-    @g_unex
-      (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl
-                  (syn_cimak (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                    (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                  (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                    (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-            (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-      (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))) p0010 p0016
+    @gUnex
+      (synCin (synCimagek (synCimak (synCdif (synCins3k (synCcompl
+                  (synCimak (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                    (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                  (synCun (synCins2k (synCins3k (synCssetk)))
+                    (synCins3k (synCsik (synCsik (synCssetk))))))
+                (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+            (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+      (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))) p0010 p0016
   have p0018 :=
-    @g_imakexg
-      (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl (syn_cimak
-                      (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                      (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                  (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                    (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                      (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                  (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-              (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-        (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))
-      A (syn_cvv) V
+    @gImakexg
+      (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k (synCcompl (synCimak
+                      (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                      (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                  (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                    (synCun (synCins2k (synCins3k (synCssetk)))
+                      (synCins3k (synCsik (synCsik (synCssetk))))))
+                  (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+              (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+        (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))
+      A (synCvv) V
   have p0019 :=
-    @g_mpan
-      (.classMem (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl
-                      (syn_cimak (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                    (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                      (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                        (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                    (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-          (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))) (syn_cvv))
+    @gMpan
+      (.classMem (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k (synCcompl
+                      (synCimak (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                        (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                    (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                      (synCun (synCins2k (synCins3k (synCssetk)))
+                        (synCins3k (synCsik (synCsik (synCssetk))))))
+                    (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+          (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv)))) (synCvv))
       (.classMem A V)
-      (.classMem (syn_cimak (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k
-                      (syn_ccompl (syn_cimak
-                          (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                          (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                      (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                        (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                          (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                  (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-            (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))) A) (syn_cvv))
+      (.classMem (synCimak (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k
+                      (synCcompl (synCimak
+                          (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                          (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                      (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                        (synCun (synCins2k (synCins3k (synCssetk)))
+                          (synCins3k (synCsik (synCsik (synCssetk))))))
+                      (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                  (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+            (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv)))) A) (synCvv))
       p0017 p0018
   have p0020 :=
-    @g_syl5eqel (.classMem A V) (syn_cphi A)
-      (syn_cimak (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl
-                      (syn_cimak (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                    (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                      (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                        (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                    (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-          (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))) A)
-      (syn_cvv) p0000 p0019
+    @gSyl5eqel (.classMem A V) (synCphi A)
+      (synCimak (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k (synCcompl
+                      (synCimak (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                        (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                    (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                      (synCun (synCins2k (synCins3k (synCssetk)))
+                        (synCins3k (synCsik (synCsik (synCssetk))))))
+                    (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+          (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv)))) A)
+      (synCvv) p0000 p0019
   exact p0020
 
+/-- Checked nominal proof certificate identified upstream as `g_phiex`. -/
 @[expose]
-noncomputable def g_phiex (A : Class)
-    (hyp_phiex_1 : Nominal.NPrf (.classMem A (syn_cvv))) :
-    Nominal.NPrf (.classMem (syn_cphi A) (syn_cvv)) :=
+noncomputable def gPhiex (A : Class)
+    (hyp_phiex_1 : Nominal.NPrf (.classMem A (synCvv))) :
+    Nominal.NPrf (.classMem (synCphi A) (synCvv)) :=
   by
-  have p0000 := @g_phiexg A (syn_cvv)
+  have p0000 := @gPhiexg A (synCvv)
   have p0001 := Nominal.mp hyp_phiex_1 p0000
   exact p0001
 
@@ -2664,25 +2675,26 @@ open NFChoice.SemanticCore
 open NFChoice.ReplaySupport
 open NFChoice.Compiler.CompactSourceSyntax
 
+/-- Checked nominal proof certificate identified upstream as `g_dfop2lem1`. -/
 @[expose]
-noncomputable def g_dfop2lem1 (x : Var) (y : Var) (dv_x_y : x ≠ y) :
+noncomputable def gDfop2lem1 (x : Var) (y : Var) (dv_x_y : x ≠ y) :
     Nominal.NPrf
-      (syn_wb (.classMem (syn_copk (.cv x) (.cv y)) (syn_ccompl (syn_cimak
-              (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                        (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif
-                                    (syn_cins3k (syn_ccompl (syn_cimak
-        (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                      (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                        (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-        (syn_cins3k (syn_csik (syn_csik (syn_cssetk)))))) (syn_cpw1
-                                        (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                  (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-                              (syn_cxpk (syn_cnnc) (syn_cvv))) (syn_cin (syn_cidk)
-                              (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))))) (syn_cssetk))
-                    (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))))
-              (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-        (.classEq (.cv y) (syn_cun (syn_cphi (.cv x)) (syn_csn (syn_c0c))))) :=
+      (synWb (.classMem (synCopk (.cv x) (.cv y)) (synCcompl (synCimak
+              (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                        (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif
+                                    (synCins3k (synCcompl (synCimak
+        (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+        (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                      (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                        (synCun (synCins2k (synCins3k (synCssetk)))
+        (synCins3k (synCsik (synCsik (synCssetk)))))) (synCpw1
+                                        (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                  (synCpw1 (synCpw1 (synC1c)))))
+                              (synCxpk (synCnnc) (synCvv))) (synCin (synCidk)
+                              (synCxpk (synCcompl (synCnnc)) (synCvv)))))) (synCssetk))
+                    (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))))
+              (synCpw1 (synCpw1 (synC1c))))))
+        (.classEq (.cv y) (synCun (synCphi (.cv x)) (synCsn (synC0c))))) :=
   by
   let proofSupport : Finset Var := ({ x } : Finset Var) ∪ ({ y } : Finset Var)
   let z : Var := freshVar proofSupport 0
@@ -2715,18 +2727,18 @@ noncomputable def g_dfop2lem1 (x : Var) (y : Var) (dv_x_y : x ≠ y) :
   have fresh_t_ne_z : t ≠ z := Ne.symm fresh_z_ne_t
   have dv_cache_0001 :
     t ∉
-      ((syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                  (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k
-                                (syn_ccompl (syn_cimak (syn_cin (syn_cins3k (syn_cssetk))
-                                      (syn_cins2k (syn_cssetk)))
-                                    (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                  (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                    (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                            (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                      (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-                (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))))).fv :=
+      ((synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                  (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k
+                                (synCcompl (synCimak (synCin (synCins3k (synCssetk))
+                                      (synCins2k (synCssetk)))
+                                    (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                  (synCun (synCins2k (synCins3k (synCssetk)))
+                                    (synCins3k (synCsik (synCsik (synCssetk))))))
+                                (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                            (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                      (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+                (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))))).fv :=
     by
     exact
       (by
@@ -2756,7 +2768,7 @@ noncomputable def g_dfop2lem1 (x : Var) (y : Var) (dv_x_y : x ≠ y) :
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn,
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0c, Finset.mem_union,
           compact_fv_not_mem_empty, or_false, not_false_eq_true])
-  have dv_cache_0002 : t ∉ ((syn_cpw1 (syn_cpw1 (syn_c1c)))).fv :=
+  have dv_cache_0002 : t ∉ ((synCpw1 (synCpw1 (synC1c)))).fv :=
     by
     clear dv_cache_0001
     exact
@@ -2768,7 +2780,7 @@ noncomputable def g_dfop2lem1 (x : Var) (y : Var) (dv_x_y : x ≠ y) :
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1,
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c, compact_fv_not_mem_empty,
           not_false_eq_true])
-  have dv_cache_0003 : t ∉ ((syn_copk (.cv x) (.cv y))).fv :=
+  have dv_cache_0003 : t ∉ ((synCopk (.cv x) (.cv y))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002
     exact
@@ -2793,19 +2805,19 @@ noncomputable def g_dfop2lem1 (x : Var) (y : Var) (dv_x_y : x ≠ y) :
           fresh_z_ne_t, not_false_eq_true])
   have dv_cache_0005 :
     z ∉
-      ((Wff.classMem (syn_copk (.cv t) (syn_copk (.cv x) (.cv y)))
-          (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                    (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k
-                                  (syn_ccompl (syn_cimak (syn_cin (syn_cins3k (syn_cssetk))
-                                        (syn_cins2k (syn_cssetk)))
-                                      (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                  (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                    (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                      (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                  (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                              (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                        (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-                  (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv))))))).fv :=
+      ((Wff.classMem (synCopk (.cv t) (synCopk (.cv x) (.cv y)))
+          (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                    (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k
+                                  (synCcompl (synCimak (synCin (synCins3k (synCssetk))
+                                        (synCins2k (synCssetk)))
+                                      (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                  (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                    (synCun (synCins2k (synCins3k (synCssetk)))
+                                      (synCins3k (synCsik (synCsik (synCssetk))))))
+                                  (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                              (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                        (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+                  (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv))))))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004
     exact
@@ -2840,7 +2852,7 @@ noncomputable def g_dfop2lem1 (x : Var) (y : Var) (dv_x_y : x ≠ y) :
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0c, Finset.mem_union,
           Finset.mem_singleton, fresh_z_ne_t, fresh_z_ne_x, fresh_z_ne_y,
           compact_fv_not_mem_empty, or_false, not_false_eq_true])
-  have dv_cache_0006 : t ∉ ((syn_csn (syn_csn (syn_csn (.cv z))))).fv :=
+  have dv_cache_0006 : t ∉ ((synCsn (synCsn (synCsn (.cv z))))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
     exact
@@ -2854,19 +2866,19 @@ noncomputable def g_dfop2lem1 (x : Var) (y : Var) (dv_x_y : x ≠ y) :
           not_false_eq_true])
   have dv_cache_0007 :
     t ∉
-      ((Wff.classMem (syn_copk (syn_csn (syn_csn (syn_csn (.cv z)))) (syn_copk (.cv x) (.cv y)))
-          (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                    (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k
-                                  (syn_ccompl (syn_cimak (syn_cin (syn_cins3k (syn_cssetk))
-                                        (syn_cins2k (syn_cssetk)))
-                                      (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                  (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                    (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                      (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                  (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                              (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                        (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-                  (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv))))))).fv :=
+      ((Wff.classMem (synCopk (synCsn (synCsn (synCsn (.cv z)))) (synCopk (.cv x) (.cv y)))
+          (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                    (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k
+                                  (synCcompl (synCimak (synCin (synCins3k (synCssetk))
+                                        (synCins2k (synCssetk)))
+                                      (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                  (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                    (synCun (synCins2k (synCins3k (synCssetk)))
+                                      (synCins3k (synCsik (synCsik (synCssetk))))))
+                                  (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                              (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                        (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+                  (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv))))))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006
@@ -2902,7 +2914,7 @@ noncomputable def g_dfop2lem1 (x : Var) (y : Var) (dv_x_y : x ≠ y) :
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0c, Finset.mem_union,
           Finset.mem_singleton, fresh_t_ne_z, fresh_t_ne_x, fresh_t_ne_y,
           compact_fv_not_mem_empty, or_false, not_false_eq_true])
-  have dv_cache_0008 : y ∉ ((syn_csn (.cv z))).fv :=
+  have dv_cache_0008 : y ∉ ((synCsn (.cv z))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007
@@ -2929,16 +2941,16 @@ noncomputable def g_dfop2lem1 (x : Var) (y : Var) (dv_x_y : x ≠ y) :
           (Ne.symm dv_x_y), not_false_eq_true])
   have dv_cache_0010 :
     y ∉
-      ((syn_ccnvk (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k
-                        (syn_ccompl (syn_cimak
-                            (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                            (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                        (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                          (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                            (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                        (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                    (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-              (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))).fv :=
+      ((synCcnvk (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k
+                        (synCcompl (synCimak
+                            (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                            (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                        (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                          (synCun (synCins2k (synCins3k (synCssetk)))
+                            (synCins3k (synCsik (synCsik (synCssetk))))))
+                        (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                    (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+              (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009
@@ -2967,7 +2979,7 @@ noncomputable def g_dfop2lem1 (x : Var) (y : Var) (dv_x_y : x ≠ y) :
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv,
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cidk, Finset.mem_union,
           compact_fv_not_mem_empty, or_false, not_false_eq_true])
-  have dv_cache_0011 : y ∉ ((syn_cssetk)).fv :=
+  have dv_cache_0011 : y ∉ ((synCssetk)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010
@@ -2991,7 +3003,7 @@ noncomputable def g_dfop2lem1 (x : Var) (y : Var) (dv_x_y : x ≠ y) :
           cases hmem
         simp only [NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_singleton,
           fresh_y_ne_z, not_false_eq_true])
-  have dv_cache_0013 : y ∉ ((syn_cphi (.cv x))).fv :=
+  have dv_cache_0013 : y ∉ ((synCphi (.cv x))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -3018,7 +3030,7 @@ noncomputable def g_dfop2lem1 (x : Var) (y : Var) (dv_x_y : x ≠ y) :
           cases hmem
         simp only [NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_singleton,
           fresh_z_ne_y, not_false_eq_true])
-  have dv_cache_0015 : z ∉ ((syn_cun (syn_cphi (.cv x)) (syn_csn (syn_c0c)))).fv :=
+  have dv_cache_0015 : z ∉ ((synCun (synCphi (.cv x)) (synCsn (synC0c)))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -3036,307 +3048,307 @@ noncomputable def g_dfop2lem1 (x : Var) (y : Var) (dv_x_y : x ≠ y) :
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0c, Finset.mem_union,
           Finset.mem_singleton, fresh_z_ne_x, compact_fv_not_mem_empty, or_false,
           not_false_eq_true])
-  have p0000 := @g_opkex (.cv x) (.cv y)
+  have p0000 := @gOpkex (.cv x) (.cv y)
   have p0001 :=
-    @g_elimak t
-      (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k
-                              (syn_ccompl (syn_cimak (syn_cin (syn_cins3k (syn_cssetk))
-                                    (syn_cins2k (syn_cssetk)))
-                                  (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                              (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                  (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                              (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                          (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                    (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-              (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))))
-      (syn_cpw1 (syn_cpw1 (syn_c1c))) (syn_copk (.cv x) (.cv y)) dv_cache_0001
+    @gElimak t
+      (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k
+                              (synCcompl (synCimak (synCin (synCins3k (synCssetk))
+                                    (synCins2k (synCssetk)))
+                                  (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                              (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                (synCun (synCins2k (synCins3k (synCssetk)))
+                                  (synCins3k (synCsik (synCsik (synCssetk))))))
+                              (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                          (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                    (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+              (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))))
+      (synCpw1 (synCpw1 (synC1c))) (synCopk (.cv x) (.cv y)) dv_cache_0001
       dv_cache_0002 dv_cache_0003 p0000
-  have p0002 := @g_elpw121c z (.cv t) dv_cache_0004
+  have p0002 := @gElpw121c z (.cv t) dv_cache_0004
   have p0003 :=
-    @g_anbi1i (.classMem (.cv t) (syn_cpw1 (syn_cpw1 (syn_c1c))))
-      (syn_wex z (.classEq (.cv t) (syn_csn (syn_csn (syn_csn (.cv z))))))
-      (.classMem (syn_copk (.cv t) (syn_copk (.cv x) (.cv y)))
-        (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                  (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k
-                                (syn_ccompl (syn_cimak (syn_cin (syn_cins3k (syn_cssetk))
-                                      (syn_cins2k (syn_cssetk)))
-                                    (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                  (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                    (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                            (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                      (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-                (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv))))))
+    @gAnbi1i (.classMem (.cv t) (synCpw1 (synCpw1 (synC1c))))
+      (synWex z (.classEq (.cv t) (synCsn (synCsn (synCsn (.cv z))))))
+      (.classMem (synCopk (.cv t) (synCopk (.cv x) (.cv y)))
+        (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                  (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k
+                                (synCcompl (synCimak (synCin (synCins3k (synCssetk))
+                                      (synCins2k (synCssetk)))
+                                    (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                  (synCun (synCins2k (synCins3k (synCssetk)))
+                                    (synCins3k (synCsik (synCsik (synCssetk))))))
+                                (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                            (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                      (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+                (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv))))))
       p0002
   have p0004 :=
-    @g_n_19_41v (.classEq (.cv t) (syn_csn (syn_csn (syn_csn (.cv z)))))
-      (.classMem (syn_copk (.cv t) (syn_copk (.cv x) (.cv y)))
-        (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                  (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k
-                                (syn_ccompl (syn_cimak (syn_cin (syn_cins3k (syn_cssetk))
-                                      (syn_cins2k (syn_cssetk)))
-                                    (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                  (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                    (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                            (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                      (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-                (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv))))))
+    @gN1941v (.classEq (.cv t) (synCsn (synCsn (synCsn (.cv z)))))
+      (.classMem (synCopk (.cv t) (synCopk (.cv x) (.cv y)))
+        (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                  (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k
+                                (synCcompl (synCimak (synCin (synCins3k (synCssetk))
+                                      (synCins2k (synCssetk)))
+                                    (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                  (synCun (synCins2k (synCins3k (synCssetk)))
+                                    (synCins3k (synCsik (synCsik (synCssetk))))))
+                                (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                            (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                      (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+                (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv))))))
       z dv_cache_0005
   have p0005 :=
-    @g_bitr4i
-      (syn_wa (.classMem (.cv t) (syn_cpw1 (syn_cpw1 (syn_c1c))))
-        (.classMem (syn_copk (.cv t) (syn_copk (.cv x) (.cv y)))
-          (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                    (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k
-                                  (syn_ccompl (syn_cimak (syn_cin (syn_cins3k (syn_cssetk))
-                                        (syn_cins2k (syn_cssetk)))
-                                      (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                  (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                    (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                      (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                  (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                              (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                        (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-                  (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))))))
-      (syn_wa (syn_wex z (.classEq (.cv t) (syn_csn (syn_csn (syn_csn (.cv z))))))
-        (.classMem (syn_copk (.cv t) (syn_copk (.cv x) (.cv y)))
-          (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                    (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k
-                                  (syn_ccompl (syn_cimak (syn_cin (syn_cins3k (syn_cssetk))
-                                        (syn_cins2k (syn_cssetk)))
-                                      (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                  (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                    (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                      (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                  (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                              (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                        (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-                  (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))))))
-      (syn_wex z (syn_wa (.classEq (.cv t) (syn_csn (syn_csn (syn_csn (.cv z)))))
-          (.classMem (syn_copk (.cv t) (syn_copk (.cv x) (.cv y)))
-            (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                      (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif
-                                  (syn_cins3k (syn_ccompl (syn_cimak
-                                        (syn_cin (syn_cins3k (syn_cssetk))
-        (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                    (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                      (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                        (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                    (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-                            (syn_cxpk (syn_cnnc) (syn_cvv))) (syn_cin (syn_cidk)
-                            (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))))) (syn_cssetk))
-                  (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv))))))))
+    @gBitr4i
+      (synWa (.classMem (.cv t) (synCpw1 (synCpw1 (synC1c))))
+        (.classMem (synCopk (.cv t) (synCopk (.cv x) (.cv y)))
+          (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                    (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k
+                                  (synCcompl (synCimak (synCin (synCins3k (synCssetk))
+                                        (synCins2k (synCssetk)))
+                                      (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                  (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                    (synCun (synCins2k (synCins3k (synCssetk)))
+                                      (synCins3k (synCsik (synCsik (synCssetk))))))
+                                  (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                              (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                        (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+                  (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))))))
+      (synWa (synWex z (.classEq (.cv t) (synCsn (synCsn (synCsn (.cv z))))))
+        (.classMem (synCopk (.cv t) (synCopk (.cv x) (.cv y)))
+          (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                    (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k
+                                  (synCcompl (synCimak (synCin (synCins3k (synCssetk))
+                                        (synCins2k (synCssetk)))
+                                      (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                  (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                    (synCun (synCins2k (synCins3k (synCssetk)))
+                                      (synCins3k (synCsik (synCsik (synCssetk))))))
+                                  (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                              (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                        (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+                  (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))))))
+      (synWex z (synWa (.classEq (.cv t) (synCsn (synCsn (synCsn (.cv z)))))
+          (.classMem (synCopk (.cv t) (synCopk (.cv x) (.cv y)))
+            (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                      (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif
+                                  (synCins3k (synCcompl (synCimak
+                                        (synCin (synCins3k (synCssetk))
+        (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                    (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                      (synCun (synCins2k (synCins3k (synCssetk)))
+                                        (synCins3k (synCsik (synCsik (synCssetk))))))
+                                    (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                (synCpw1 (synCpw1 (synC1c)))))
+                            (synCxpk (synCnnc) (synCvv))) (synCin (synCidk)
+                            (synCxpk (synCcompl (synCnnc)) (synCvv)))))) (synCssetk))
+                  (synCxpk (synCsn (synCsn (synC0c))) (synCvv))))))))
       p0003 p0004
   have p0006 :=
-    @g_exbii
-      (syn_wa (.classMem (.cv t) (syn_cpw1 (syn_cpw1 (syn_c1c))))
-        (.classMem (syn_copk (.cv t) (syn_copk (.cv x) (.cv y)))
-          (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                    (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k
-                                  (syn_ccompl (syn_cimak (syn_cin (syn_cins3k (syn_cssetk))
-                                        (syn_cins2k (syn_cssetk)))
-                                      (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                  (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                    (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                      (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                  (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                              (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                        (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-                  (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))))))
-      (syn_wex z (syn_wa (.classEq (.cv t) (syn_csn (syn_csn (syn_csn (.cv z)))))
-          (.classMem (syn_copk (.cv t) (syn_copk (.cv x) (.cv y)))
-            (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                      (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif
-                                  (syn_cins3k (syn_ccompl (syn_cimak
-                                        (syn_cin (syn_cins3k (syn_cssetk))
-        (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                    (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                      (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                        (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                    (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-                            (syn_cxpk (syn_cnnc) (syn_cvv))) (syn_cin (syn_cidk)
-                            (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))))) (syn_cssetk))
-                  (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv))))))))
+    @gExbii
+      (synWa (.classMem (.cv t) (synCpw1 (synCpw1 (synC1c))))
+        (.classMem (synCopk (.cv t) (synCopk (.cv x) (.cv y)))
+          (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                    (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k
+                                  (synCcompl (synCimak (synCin (synCins3k (synCssetk))
+                                        (synCins2k (synCssetk)))
+                                      (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                  (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                    (synCun (synCins2k (synCins3k (synCssetk)))
+                                      (synCins3k (synCsik (synCsik (synCssetk))))))
+                                  (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                              (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                        (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+                  (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))))))
+      (synWex z (synWa (.classEq (.cv t) (synCsn (synCsn (synCsn (.cv z)))))
+          (.classMem (synCopk (.cv t) (synCopk (.cv x) (.cv y)))
+            (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                      (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif
+                                  (synCins3k (synCcompl (synCimak
+                                        (synCin (synCins3k (synCssetk))
+        (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                    (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                      (synCun (synCins2k (synCins3k (synCssetk)))
+                                        (synCins3k (synCsik (synCsik (synCssetk))))))
+                                    (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                (synCpw1 (synCpw1 (synC1c)))))
+                            (synCxpk (synCnnc) (synCvv))) (synCin (synCidk)
+                            (synCxpk (synCcompl (synCnnc)) (synCvv)))))) (synCssetk))
+                  (synCxpk (synCsn (synCsn (synC0c))) (synCvv))))))))
       t p0005
   have p0007 :=
-    (Nominal.biimpRefl (syn_wrex t (syn_cpw1 (syn_cpw1 (syn_c1c)))
-        (.classMem (syn_copk (.cv t) (syn_copk (.cv x) (.cv y)))
-          (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                    (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k
-                                  (syn_ccompl (syn_cimak (syn_cin (syn_cins3k (syn_cssetk))
-                                        (syn_cins2k (syn_cssetk)))
-                                      (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                  (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                    (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                      (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                  (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                              (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                        (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-                  (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv))))))))
+    (Nominal.biimpRefl (synWrex t (synCpw1 (synCpw1 (synC1c)))
+        (.classMem (synCopk (.cv t) (synCopk (.cv x) (.cv y)))
+          (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                    (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k
+                                  (synCcompl (synCimak (synCin (synCins3k (synCssetk))
+                                        (synCins2k (synCssetk)))
+                                      (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                  (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                    (synCun (synCins2k (synCins3k (synCssetk)))
+                                      (synCins3k (synCsik (synCsik (synCssetk))))))
+                                  (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                              (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                        (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+                  (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv))))))))
   have p0008 :=
-    @g_excom
-      (syn_wa (.classEq (.cv t) (syn_csn (syn_csn (syn_csn (.cv z)))))
-        (.classMem (syn_copk (.cv t) (syn_copk (.cv x) (.cv y)))
-          (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                    (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k
-                                  (syn_ccompl (syn_cimak (syn_cin (syn_cins3k (syn_cssetk))
-                                        (syn_cins2k (syn_cssetk)))
-                                      (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                  (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                    (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                      (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                  (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                              (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                        (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-                  (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))))))
+    @gExcom
+      (synWa (.classEq (.cv t) (synCsn (synCsn (synCsn (.cv z)))))
+        (.classMem (synCopk (.cv t) (synCopk (.cv x) (.cv y)))
+          (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                    (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k
+                                  (synCcompl (synCimak (synCin (synCins3k (synCssetk))
+                                        (synCins2k (synCssetk)))
+                                      (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                  (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                    (synCun (synCins2k (synCins3k (synCssetk)))
+                                      (synCins3k (synCsik (synCsik (synCssetk))))))
+                                  (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                              (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                        (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+                  (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))))))
       z t
   have p0009 :=
-    @g_n_3bitr4i
-      (syn_wex t (syn_wa (.classMem (.cv t) (syn_cpw1 (syn_cpw1 (syn_c1c))))
-          (.classMem (syn_copk (.cv t) (syn_copk (.cv x) (.cv y)))
-            (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                      (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif
-                                  (syn_cins3k (syn_ccompl (syn_cimak
-                                        (syn_cin (syn_cins3k (syn_cssetk))
-        (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                    (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                      (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                        (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                    (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-                            (syn_cxpk (syn_cnnc) (syn_cvv))) (syn_cin (syn_cidk)
-                            (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))))) (syn_cssetk))
-                  (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv))))))))
-      (syn_wex t (syn_wex z (syn_wa (.classEq (.cv t) (syn_csn (syn_csn (syn_csn (.cv z)))))
-            (.classMem (syn_copk (.cv t) (syn_copk (.cv x) (.cv y)))
-              (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                        (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif
-                                    (syn_cins3k (syn_ccompl (syn_cimak
-        (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                      (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                        (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-        (syn_cins3k (syn_csik (syn_csik (syn_cssetk)))))) (syn_cpw1
-                                        (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                  (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-                              (syn_cxpk (syn_cnnc) (syn_cvv))) (syn_cin (syn_cidk)
-                              (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))))) (syn_cssetk))
-                    (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))))))))
-      (syn_wrex t (syn_cpw1 (syn_cpw1 (syn_c1c)))
-        (.classMem (syn_copk (.cv t) (syn_copk (.cv x) (.cv y)))
-          (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                    (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k
-                                  (syn_ccompl (syn_cimak (syn_cin (syn_cins3k (syn_cssetk))
-                                        (syn_cins2k (syn_cssetk)))
-                                      (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                  (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                    (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                      (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                  (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                              (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                        (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-                  (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))))))
-      (syn_wex z (syn_wex t (syn_wa (.classEq (.cv t) (syn_csn (syn_csn (syn_csn (.cv z)))))
-            (.classMem (syn_copk (.cv t) (syn_copk (.cv x) (.cv y)))
-              (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                        (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif
-                                    (syn_cins3k (syn_ccompl (syn_cimak
-        (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                      (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                        (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-        (syn_cins3k (syn_csik (syn_csik (syn_cssetk)))))) (syn_cpw1
-                                        (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                  (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-                              (syn_cxpk (syn_cnnc) (syn_cvv))) (syn_cin (syn_cidk)
-                              (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))))) (syn_cssetk))
-                    (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))))))))
+    @gN3bitr4i
+      (synWex t (synWa (.classMem (.cv t) (synCpw1 (synCpw1 (synC1c))))
+          (.classMem (synCopk (.cv t) (synCopk (.cv x) (.cv y)))
+            (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                      (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif
+                                  (synCins3k (synCcompl (synCimak
+                                        (synCin (synCins3k (synCssetk))
+        (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                    (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                      (synCun (synCins2k (synCins3k (synCssetk)))
+                                        (synCins3k (synCsik (synCsik (synCssetk))))))
+                                    (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                (synCpw1 (synCpw1 (synC1c)))))
+                            (synCxpk (synCnnc) (synCvv))) (synCin (synCidk)
+                            (synCxpk (synCcompl (synCnnc)) (synCvv)))))) (synCssetk))
+                  (synCxpk (synCsn (synCsn (synC0c))) (synCvv))))))))
+      (synWex t (synWex z (synWa (.classEq (.cv t) (synCsn (synCsn (synCsn (.cv z)))))
+            (.classMem (synCopk (.cv t) (synCopk (.cv x) (.cv y)))
+              (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                        (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif
+                                    (synCins3k (synCcompl (synCimak
+        (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+        (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                      (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                        (synCun (synCins2k (synCins3k (synCssetk)))
+        (synCins3k (synCsik (synCsik (synCssetk)))))) (synCpw1
+                                        (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                  (synCpw1 (synCpw1 (synC1c)))))
+                              (synCxpk (synCnnc) (synCvv))) (synCin (synCidk)
+                              (synCxpk (synCcompl (synCnnc)) (synCvv)))))) (synCssetk))
+                    (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))))))))
+      (synWrex t (synCpw1 (synCpw1 (synC1c)))
+        (.classMem (synCopk (.cv t) (synCopk (.cv x) (.cv y)))
+          (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                    (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k
+                                  (synCcompl (synCimak (synCin (synCins3k (synCssetk))
+                                        (synCins2k (synCssetk)))
+                                      (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                  (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                    (synCun (synCins2k (synCins3k (synCssetk)))
+                                      (synCins3k (synCsik (synCsik (synCssetk))))))
+                                  (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                              (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                        (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+                  (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))))))
+      (synWex z (synWex t (synWa (.classEq (.cv t) (synCsn (synCsn (synCsn (.cv z)))))
+            (.classMem (synCopk (.cv t) (synCopk (.cv x) (.cv y)))
+              (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                        (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif
+                                    (synCins3k (synCcompl (synCimak
+        (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+        (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                      (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                        (synCun (synCins2k (synCins3k (synCssetk)))
+        (synCins3k (synCsik (synCsik (synCssetk)))))) (synCpw1
+                                        (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                  (synCpw1 (synCpw1 (synC1c)))))
+                              (synCxpk (synCnnc) (synCvv))) (synCin (synCidk)
+                              (synCxpk (synCcompl (synCnnc)) (synCvv)))))) (synCssetk))
+                    (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))))))))
       p0006 p0007 p0008
-  have p0010 := @g_snex (syn_csn (syn_csn (.cv z)))
+  have p0010 := @gSnex (synCsn (synCsn (.cv z)))
   have p0011 :=
-    @g_opkeq1 (.cv t) (syn_csn (syn_csn (syn_csn (.cv z)))) (syn_copk (.cv x) (.cv y))
+    @gOpkeq1 (.cv t) (synCsn (synCsn (synCsn (.cv z)))) (synCopk (.cv x) (.cv y))
   have p0012 :=
-    @g_eleq1d (.classEq (.cv t) (syn_csn (syn_csn (syn_csn (.cv z)))))
-      (syn_copk (.cv t) (syn_copk (.cv x) (.cv y)))
-      (syn_copk (syn_csn (syn_csn (syn_csn (.cv z)))) (syn_copk (.cv x) (.cv y)))
-      (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k
-                              (syn_ccompl (syn_cimak (syn_cin (syn_cins3k (syn_cssetk))
-                                    (syn_cins2k (syn_cssetk)))
-                                  (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                              (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                  (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                              (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                          (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                    (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-              (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))))
+    @gEleq1d (.classEq (.cv t) (synCsn (synCsn (synCsn (.cv z)))))
+      (synCopk (.cv t) (synCopk (.cv x) (.cv y)))
+      (synCopk (synCsn (synCsn (synCsn (.cv z)))) (synCopk (.cv x) (.cv y)))
+      (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k
+                              (synCcompl (synCimak (synCin (synCins3k (synCssetk))
+                                    (synCins2k (synCssetk)))
+                                  (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                              (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                (synCun (synCins2k (synCins3k (synCssetk)))
+                                  (synCins3k (synCsik (synCsik (synCssetk))))))
+                              (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                          (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                    (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+              (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))))
       p0011
   have p0013 :=
-    @g_ceqsexv
-      (.classMem (syn_copk (.cv t) (syn_copk (.cv x) (.cv y)))
-        (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                  (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k
-                                (syn_ccompl (syn_cimak (syn_cin (syn_cins3k (syn_cssetk))
-                                      (syn_cins2k (syn_cssetk)))
-                                    (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                  (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                    (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                            (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                      (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-                (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv))))))
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (.cv z)))) (syn_copk (.cv x) (.cv y)))
-        (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                  (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k
-                                (syn_ccompl (syn_cimak (syn_cin (syn_cins3k (syn_cssetk))
-                                      (syn_cins2k (syn_cssetk)))
-                                    (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                  (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                    (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                            (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                      (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-                (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv))))))
-      t (syn_csn (syn_csn (syn_csn (.cv z)))) dv_cache_0006 dv_cache_0007 p0010 p0012
+    @gCeqsexv
+      (.classMem (synCopk (.cv t) (synCopk (.cv x) (.cv y)))
+        (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                  (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k
+                                (synCcompl (synCimak (synCin (synCins3k (synCssetk))
+                                      (synCins2k (synCssetk)))
+                                    (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                  (synCun (synCins2k (synCins3k (synCssetk)))
+                                    (synCins3k (synCsik (synCsik (synCssetk))))))
+                                (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                            (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                      (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+                (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv))))))
+      (.classMem (synCopk (synCsn (synCsn (synCsn (.cv z)))) (synCopk (.cv x) (.cv y)))
+        (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                  (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k
+                                (synCcompl (synCimak (synCin (synCins3k (synCssetk))
+                                      (synCins2k (synCssetk)))
+                                    (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                  (synCun (synCins2k (synCins3k (synCssetk)))
+                                    (synCins3k (synCsik (synCsik (synCssetk))))))
+                                (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                            (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                      (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+                (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv))))))
+      t (synCsn (synCsn (synCsn (.cv z)))) dv_cache_0006 dv_cache_0007 p0010 p0012
   have p0014 :=
-    @g_elsymdif
-      (syn_copk (syn_csn (syn_csn (syn_csn (.cv z)))) (syn_copk (.cv x) (.cv y)))
-      (syn_cins2k (syn_cssetk))
-      (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk (syn_cimagek (syn_cun (syn_cin (syn_cimagek
-                      (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl (syn_cimak
-                                (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                                (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                            (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                              (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                            (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                        (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                  (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-            (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv))))
-  have p0015 := @g_snex (.cv z)
-  have p0016 := @g_vex x
-  have p0017 := @g_vex y
+    @gElsymdif
+      (synCopk (synCsn (synCsn (synCsn (.cv z)))) (synCopk (.cv x) (.cv y)))
+      (synCins2k (synCssetk))
+      (synCins3k (synCun (synCcomk (synCcnvk (synCimagek (synCun (synCin (synCimagek
+                      (synCimak (synCdif (synCins3k (synCcompl (synCimak
+                                (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                                (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                            (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                              (synCun (synCins2k (synCins3k (synCssetk)))
+                                (synCins3k (synCsik (synCsik (synCssetk))))))
+                            (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                        (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                  (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+            (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv))))
+  have p0015 := @gSnex (.cv z)
+  have p0016 := @gVex x
+  have p0017 := @gVex y
   have p0018 :=
-    @g_otkelins2k (syn_csn (.cv z)) (.cv x) (.cv y) (syn_cssetk) p0015 p0016 p0017
-  have p0019 := @g_vex z
-  have p0020 := @g_elssetk (.cv z) (.cv y) p0019 p0017
+    @gOtkelins2k (synCsn (.cv z)) (.cv x) (.cv y) (synCssetk) p0015 p0016 p0017
+  have p0019 := @gVex z
+  have p0020 := @gElssetk (.cv z) (.cv y) p0019 p0017
   have p0021_e01_recanon :
     Nominal.NPrf
-      (syn_wb (.classMem (syn_copk (syn_csn (.cv z)) (.cv y)) (syn_cssetk)) (.objMem z y)) :=
+      (synWb (.classMem (synCopk (synCsn (.cv z)) (.cv y)) (synCssetk)) (.objMem z y)) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_copk syn_cpr syn_cun syn_cnin syn_wnan syn_wa syn_ccompl syn_csn
-          syn_cssetk syn_wex
+        unfold synWb synCopk synCpr synCun synCnin synWnan synWa synCcompl synCsn
+          synCssetk synWex
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
@@ -3350,127 +3362,127 @@ noncomputable def g_dfop2lem1 (x : Var) (y : Var) (dv_x_y : x ≠ y) :
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0020
   have p0021 :=
-    @g_bitri
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (.cv z)))) (syn_copk (.cv x) (.cv y)))
-        (syn_cins2k (syn_cssetk)))
-      (.classMem (syn_copk (syn_csn (.cv z)) (.cv y)) (syn_cssetk)) (.objMem z y) p0018
+    @gBitri
+      (.classMem (synCopk (synCsn (synCsn (synCsn (.cv z)))) (synCopk (.cv x) (.cv y)))
+        (synCins2k (synCssetk)))
+      (.classMem (synCopk (synCsn (.cv z)) (.cv y)) (synCssetk)) (.objMem z y) p0018
       p0021_e01_recanon
   have p0022 :=
-    @g_otkelins3k (syn_csn (.cv z)) (.cv x) (.cv y)
-      (syn_cun (syn_ccomk (syn_ccnvk (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak
-                      (syn_cdif (syn_cins3k (syn_ccompl (syn_cimak
-                              (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                              (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                          (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                            (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                              (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                          (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                      (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-          (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))
+    @gOtkelins3k (synCsn (.cv z)) (.cv x) (.cv y)
+      (synCun (synCcomk (synCcnvk (synCimagek (synCun (synCin (synCimagek (synCimak
+                      (synCdif (synCins3k (synCcompl (synCimak
+                              (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                              (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                          (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                            (synCun (synCins2k (synCins3k (synCssetk)))
+                              (synCins3k (synCsik (synCsik (synCssetk))))))
+                          (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                      (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+          (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))
       p0015 p0016 p0017
   have p0023 :=
-    @g_elun (syn_copk (syn_csn (.cv z)) (.cv x))
-      (syn_ccomk (syn_ccnvk (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif
-                      (syn_cins3k (syn_ccompl (syn_cimak
-                            (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                            (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                        (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                          (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                            (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                        (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                    (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-              (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))))) (syn_cssetk))
-      (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv))
+    @gElun (synCopk (synCsn (.cv z)) (.cv x))
+      (synCcomk (synCcnvk (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif
+                      (synCins3k (synCcompl (synCimak
+                            (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                            (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                        (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                          (synCun (synCins2k (synCins3k (synCssetk)))
+                            (synCins3k (synCsik (synCsik (synCssetk))))))
+                        (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                    (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+              (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv)))))) (synCssetk))
+      (synCxpk (synCsn (synCsn (synC0c))) (synCvv))
   have p0024 :=
-    @g_ancom (.classMem (syn_copk (syn_csn (.cv z)) (.cv y)) (syn_cssetk))
-      (.classMem (syn_copk (.cv y) (.cv x)) (syn_ccnvk (syn_cimagek (syn_cun (syn_cin
-                (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl (syn_cimak
-                            (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                            (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                        (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                          (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                            (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                        (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                    (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-              (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))))))
+    @gAncom (.classMem (synCopk (synCsn (.cv z)) (.cv y)) (synCssetk))
+      (.classMem (synCopk (.cv y) (.cv x)) (synCcnvk (synCimagek (synCun (synCin
+                (synCimagek (synCimak (synCdif (synCins3k (synCcompl (synCimak
+                            (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                            (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                        (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                          (synCun (synCins2k (synCins3k (synCssetk)))
+                            (synCins3k (synCsik (synCsik (synCssetk))))))
+                        (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                    (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+              (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv)))))))
   have p0025 :=
-    @g_opkelimagek (.cv x) (.cv y)
-      (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl (syn_cimak
-                      (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                      (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                  (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                    (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                      (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                  (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-              (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-        (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))
+    @gOpkelimagek (.cv x) (.cv y)
+      (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k (synCcompl (synCimak
+                      (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                      (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                  (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                    (synCun (synCins2k (synCins3k (synCssetk)))
+                      (synCins3k (synCsik (synCsik (synCssetk))))))
+                  (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+              (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+        (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))
       p0016 p0017
   have p0026 :=
-    @g_opkelcnvk (.cv y) (.cv x)
-      (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl
-                      (syn_cimak (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                    (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                      (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                        (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                    (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-          (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))))
+    @gOpkelcnvk (.cv y) (.cv x)
+      (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k (synCcompl
+                      (synCimak (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                        (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                    (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                      (synCun (synCins2k (synCins3k (synCssetk)))
+                        (synCins3k (synCsik (synCsik (synCssetk))))))
+                    (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+          (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv)))))
       p0017 p0016
-  have p0027 := @g_dfphi2 (.cv x)
+  have p0027 := @gDfphi2 (.cv x)
   have p0028 :=
-    @g_eqeq2i (syn_cphi (.cv x))
-      (syn_cimak (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl
-                      (syn_cimak (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                    (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                      (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                        (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                    (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-          (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))) (.cv x))
+    @gEqeq2i (synCphi (.cv x))
+      (synCimak (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k (synCcompl
+                      (synCimak (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                        (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                    (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                      (synCun (synCins2k (synCins3k (synCssetk)))
+                        (synCins3k (synCsik (synCsik (synCssetk))))))
+                    (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+          (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv)))) (.cv x))
       (.cv y) p0027
   have p0029 :=
-    @g_n_3bitr4i
-      (.classMem (syn_copk (.cv x) (.cv y)) (syn_cimagek (syn_cun (syn_cin (syn_cimagek
-                (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl (syn_cimak
-                          (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                          (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                      (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                        (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                          (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                  (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-            (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-      (.classEq (.cv y) (syn_cimak (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif
-                    (syn_cins3k (syn_ccompl (syn_cimak
-                          (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                          (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                      (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                        (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                          (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                  (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-            (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))) (.cv x)))
-      (.classMem (syn_copk (.cv y) (.cv x)) (syn_ccnvk (syn_cimagek (syn_cun (syn_cin
-                (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl (syn_cimak
-                            (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                            (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                        (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                          (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                            (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                        (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                    (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-              (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))))))
-      (.classEq (.cv y) (syn_cphi (.cv x))) p0025 p0026 p0028
+    @gN3bitr4i
+      (.classMem (synCopk (.cv x) (.cv y)) (synCimagek (synCun (synCin (synCimagek
+                (synCimak (synCdif (synCins3k (synCcompl (synCimak
+                          (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                          (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                      (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                        (synCun (synCins2k (synCins3k (synCssetk)))
+                          (synCins3k (synCsik (synCsik (synCssetk))))))
+                      (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                  (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+            (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+      (.classEq (.cv y) (synCimak (synCun (synCin (synCimagek (synCimak (synCdif
+                    (synCins3k (synCcompl (synCimak
+                          (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                          (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                      (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                        (synCun (synCins2k (synCins3k (synCssetk)))
+                          (synCins3k (synCsik (synCsik (synCssetk))))))
+                      (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                  (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+            (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv)))) (.cv x)))
+      (.classMem (synCopk (.cv y) (.cv x)) (synCcnvk (synCimagek (synCun (synCin
+                (synCimagek (synCimak (synCdif (synCins3k (synCcompl (synCimak
+                            (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                            (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                        (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                          (synCun (synCins2k (synCins3k (synCssetk)))
+                            (synCins3k (synCsik (synCsik (synCssetk))))))
+                        (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                    (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+              (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv)))))))
+      (.classEq (.cv y) (synCphi (.cv x))) p0025 p0026 p0028
   have p0030_e01_recanon :
     Nominal.NPrf
-      (syn_wb (.classMem (syn_copk (syn_csn (.cv z)) (.cv y)) (syn_cssetk)) (.objMem z y)) :=
+      (synWb (.classMem (synCopk (synCsn (.cv z)) (.cv y)) (synCssetk)) (.objMem z y)) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_copk syn_cpr syn_cun syn_cnin syn_wnan syn_wa syn_ccompl syn_csn
-          syn_cssetk syn_wex
+        unfold synWb synCopk synCpr synCun synCnin synWnan synWa synCcompl synCsn
+          synCssetk synWex
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
@@ -3484,82 +3496,82 @@ noncomputable def g_dfop2lem1 (x : Var) (y : Var) (dv_x_y : x ≠ y) :
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0020
   have p0030 :=
-    @g_anbi12i
-      (.classMem (syn_copk (.cv y) (.cv x)) (syn_ccnvk (syn_cimagek (syn_cun (syn_cin
-                (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl (syn_cimak
-                            (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                            (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                        (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                          (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                            (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                        (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                    (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-              (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))))))
-      (.classEq (.cv y) (syn_cphi (.cv x)))
-      (.classMem (syn_copk (syn_csn (.cv z)) (.cv y)) (syn_cssetk)) (.objMem z y) p0029
+    @gAnbi12i
+      (.classMem (synCopk (.cv y) (.cv x)) (synCcnvk (synCimagek (synCun (synCin
+                (synCimagek (synCimak (synCdif (synCins3k (synCcompl (synCimak
+                            (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                            (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                        (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                          (synCun (synCins2k (synCins3k (synCssetk)))
+                            (synCins3k (synCsik (synCsik (synCssetk))))))
+                        (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                    (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+              (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv)))))))
+      (.classEq (.cv y) (synCphi (.cv x)))
+      (.classMem (synCopk (synCsn (.cv z)) (.cv y)) (synCssetk)) (.objMem z y) p0029
       p0030_e01_recanon
   have p0031 :=
-    @g_bitri
-      (syn_wa (.classMem (syn_copk (syn_csn (.cv z)) (.cv y)) (syn_cssetk))
-        (.classMem (syn_copk (.cv y) (.cv x)) (syn_ccnvk (syn_cimagek (syn_cun (syn_cin
-                  (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl (syn_cimak
-                              (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                              (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                          (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                            (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                              (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                          (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                      (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))))
-      (syn_wa (.classMem (syn_copk (.cv y) (.cv x)) (syn_ccnvk (syn_cimagek (syn_cun (syn_cin
-                  (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl (syn_cimak
-                              (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                              (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                          (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                            (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                              (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                          (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                      (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))))))
-        (.classMem (syn_copk (syn_csn (.cv z)) (.cv y)) (syn_cssetk)))
-      (syn_wa (.classEq (.cv y) (syn_cphi (.cv x))) (.objMem z y)) p0024 p0030
+    @gBitri
+      (synWa (.classMem (synCopk (synCsn (.cv z)) (.cv y)) (synCssetk))
+        (.classMem (synCopk (.cv y) (.cv x)) (synCcnvk (synCimagek (synCun (synCin
+                  (synCimagek (synCimak (synCdif (synCins3k (synCcompl (synCimak
+                              (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                              (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                          (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                            (synCun (synCins2k (synCins3k (synCssetk)))
+                              (synCins3k (synCsik (synCsik (synCssetk))))))
+                          (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                      (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))))
+      (synWa (.classMem (synCopk (.cv y) (.cv x)) (synCcnvk (synCimagek (synCun (synCin
+                  (synCimagek (synCimak (synCdif (synCins3k (synCcompl (synCimak
+                              (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                              (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                          (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                            (synCun (synCins2k (synCins3k (synCssetk)))
+                              (synCins3k (synCsik (synCsik (synCssetk))))))
+                          (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                      (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv)))))))
+        (.classMem (synCopk (synCsn (.cv z)) (.cv y)) (synCssetk)))
+      (synWa (.classEq (.cv y) (synCphi (.cv x))) (.objMem z y)) p0024 p0030
   have p0032 :=
-    @g_exbii
-      (syn_wa (.classMem (syn_copk (syn_csn (.cv z)) (.cv y)) (syn_cssetk))
-        (.classMem (syn_copk (.cv y) (.cv x)) (syn_ccnvk (syn_cimagek (syn_cun (syn_cin
-                  (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl (syn_cimak
-                              (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                              (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                          (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                            (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                              (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                          (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                      (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))))
-      (syn_wa (.classEq (.cv y) (syn_cphi (.cv x))) (.objMem z y)) y p0031
+    @gExbii
+      (synWa (.classMem (synCopk (synCsn (.cv z)) (.cv y)) (synCssetk))
+        (.classMem (synCopk (.cv y) (.cv x)) (synCcnvk (synCimagek (synCun (synCin
+                  (synCimagek (synCimak (synCdif (synCins3k (synCcompl (synCimak
+                              (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                              (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                          (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                            (synCun (synCins2k (synCins3k (synCssetk)))
+                              (synCins3k (synCsik (synCsik (synCssetk))))))
+                          (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                      (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))))
+      (synWa (.classEq (.cv y) (synCphi (.cv x))) (.objMem z y)) y p0031
   have p0033 :=
-    @g_opkelcok y (syn_csn (.cv z)) (.cv x)
-      (syn_ccnvk (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k
-                      (syn_ccompl (syn_cimak
-                          (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                          (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                      (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                        (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                          (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                  (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-            (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-      (syn_cssetk) dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011 p0015 p0016
-  have p0034 := @g_phiex (.cv x) p0016
-  have p0035 := @g_clel3 y (.cv z) (syn_cphi (.cv x)) dv_cache_0012 dv_cache_0013 p0034
+    @gOpkelcok y (synCsn (.cv z)) (.cv x)
+      (synCcnvk (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k
+                      (synCcompl (synCimak
+                          (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                          (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                      (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                        (synCun (synCins2k (synCins3k (synCssetk)))
+                          (synCins3k (synCsik (synCsik (synCssetk))))))
+                      (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                  (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+            (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+      (synCssetk) dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011 p0015 p0016
+  have p0034 := @gPhiex (.cv x) p0016
+  have p0035 := @gClel3 y (.cv z) (synCphi (.cv x)) dv_cache_0012 dv_cache_0013 p0034
   have p0036_e02_recanon :
     Nominal.NPrf
-      (syn_wb (.classMem (.cv z) (syn_cphi (.cv x)))
-        (syn_wex y (syn_wa (.classEq (.cv y) (syn_cphi (.cv x))) (.objMem z y)))) :=
+      (synWb (.classMem (.cv z) (synCphi (.cv x)))
+        (synWex y (synWa (.classEq (.cv y) (synCphi (.cv x))) (.objMem z y)))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_cphi syn_wrex syn_wex syn_wa syn_cif syn_wo syn_cnnc syn_cint
-          syn_cplc syn_c1c
+        unfold synWb synCphi synWrex synWex synWa synCif synWo synCnnc synCint
+          synCplc synC1c
         simp (config :=
           {
             failIfUnchanged :=
@@ -3590,336 +3602,336 @@ noncomputable def g_dfop2lem1 (x : Var) (y : Var) (dv_x_y : x ≠ y) :
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0035
   have p0036 :=
-    @g_n_3bitr4i
-      (syn_wex y (syn_wa (.classMem (syn_copk (syn_csn (.cv z)) (.cv y)) (syn_cssetk))
-          (.classMem (syn_copk (.cv y) (.cv x)) (syn_ccnvk (syn_cimagek (syn_cun (syn_cin
-                    (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl (syn_cimak
-                                (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                                (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                            (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                              (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                            (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                        (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                  (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))))))))
-      (syn_wex y (syn_wa (.classEq (.cv y) (syn_cphi (.cv x))) (.objMem z y)))
-      (.classMem (syn_copk (syn_csn (.cv z)) (.cv x)) (syn_ccomk (syn_ccnvk (syn_cimagek
-              (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl
-                            (syn_cimak (syn_cin (syn_cins3k (syn_cssetk))
-                                (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                        (syn_cimak (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                            (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                              (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                          (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                      (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-          (syn_cssetk)))
-      (.classMem (.cv z) (syn_cphi (.cv x))) p0032 p0033 p0036_e02_recanon
+    @gN3bitr4i
+      (synWex y (synWa (.classMem (synCopk (synCsn (.cv z)) (.cv y)) (synCssetk))
+          (.classMem (synCopk (.cv y) (.cv x)) (synCcnvk (synCimagek (synCun (synCin
+                    (synCimagek (synCimak (synCdif (synCins3k (synCcompl (synCimak
+                                (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                                (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                            (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                              (synCun (synCins2k (synCins3k (synCssetk)))
+                                (synCins3k (synCsik (synCsik (synCssetk))))))
+                            (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                        (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                  (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv)))))))))
+      (synWex y (synWa (.classEq (.cv y) (synCphi (.cv x))) (.objMem z y)))
+      (.classMem (synCopk (synCsn (.cv z)) (.cv x)) (synCcomk (synCcnvk (synCimagek
+              (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k (synCcompl
+                            (synCimak (synCin (synCins3k (synCssetk))
+                                (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c))))))
+                        (synCimak (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                            (synCun (synCins2k (synCins3k (synCssetk)))
+                              (synCins3k (synCsik (synCsik (synCssetk))))))
+                          (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                      (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+          (synCssetk)))
+      (.classMem (.cv z) (synCphi (.cv x))) p0032 p0033 p0036_e02_recanon
   have p0037 :=
-    @g_opkelxpk (syn_csn (.cv z)) (.cv x) (syn_csn (syn_csn (syn_c0c))) (syn_cvv) p0015
+    @gOpkelxpk (synCsn (.cv z)) (.cv x) (synCsn (synCsn (synC0c))) (synCvv) p0015
       p0016
   have p0038 :=
-    @g_mpbiran2
-      (.classMem (syn_copk (syn_csn (.cv z)) (.cv x))
-        (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))
-      (.classMem (syn_csn (.cv z)) (syn_csn (syn_csn (syn_c0c))))
-      (.classMem (.cv x) (syn_cvv)) p0016 p0037
-  have p0039 := @g_sneqb (.cv z) (syn_c0c) p0019
-  have p0040 := @g_elsnc (syn_csn (.cv z)) (syn_csn (syn_c0c)) p0015
-  have p0041 := @g_elsnc (.cv z) (syn_c0c) p0019
+    @gMpbiran2
+      (.classMem (synCopk (synCsn (.cv z)) (.cv x))
+        (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))
+      (.classMem (synCsn (.cv z)) (synCsn (synCsn (synC0c))))
+      (.classMem (.cv x) (synCvv)) p0016 p0037
+  have p0039 := @gSneqb (.cv z) (synC0c) p0019
+  have p0040 := @gElsnc (synCsn (.cv z)) (synCsn (synC0c)) p0015
+  have p0041 := @gElsnc (.cv z) (synC0c) p0019
   have p0042 :=
-    @g_n_3bitr4ri (.classEq (syn_csn (.cv z)) (syn_csn (syn_c0c)))
-      (.classEq (.cv z) (syn_c0c))
-      (.classMem (syn_csn (.cv z)) (syn_csn (syn_csn (syn_c0c))))
-      (.classMem (.cv z) (syn_csn (syn_c0c))) p0039 p0040 p0041
+    @gN3bitr4ri (.classEq (synCsn (.cv z)) (synCsn (synC0c)))
+      (.classEq (.cv z) (synC0c))
+      (.classMem (synCsn (.cv z)) (synCsn (synCsn (synC0c))))
+      (.classMem (.cv z) (synCsn (synC0c))) p0039 p0040 p0041
   have p0043 :=
-    @g_bitr4i
-      (.classMem (syn_copk (syn_csn (.cv z)) (.cv x))
-        (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))
-      (.classMem (syn_csn (.cv z)) (syn_csn (syn_csn (syn_c0c))))
-      (.classMem (.cv z) (syn_csn (syn_c0c))) p0038 p0042
+    @gBitr4i
+      (.classMem (synCopk (synCsn (.cv z)) (.cv x))
+        (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))
+      (.classMem (synCsn (.cv z)) (synCsn (synCsn (synC0c))))
+      (.classMem (.cv z) (synCsn (synC0c))) p0038 p0042
   have p0044 :=
-    @g_orbi12i
-      (.classMem (syn_copk (syn_csn (.cv z)) (.cv x)) (syn_ccomk (syn_ccnvk (syn_cimagek
-              (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl
-                            (syn_cimak (syn_cin (syn_cins3k (syn_cssetk))
-                                (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                        (syn_cimak (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                            (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                              (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                          (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                      (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-          (syn_cssetk)))
-      (.classMem (.cv z) (syn_cphi (.cv x)))
-      (.classMem (syn_copk (syn_csn (.cv z)) (.cv x))
-        (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))
-      (.classMem (.cv z) (syn_csn (syn_c0c))) p0036 p0043
-  have p0045 := @g_elun (.cv z) (syn_cphi (.cv x)) (syn_csn (syn_c0c))
+    @gOrbi12i
+      (.classMem (synCopk (synCsn (.cv z)) (.cv x)) (synCcomk (synCcnvk (synCimagek
+              (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k (synCcompl
+                            (synCimak (synCin (synCins3k (synCssetk))
+                                (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c))))))
+                        (synCimak (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                            (synCun (synCins2k (synCins3k (synCssetk)))
+                              (synCins3k (synCsik (synCsik (synCssetk))))))
+                          (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                      (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+          (synCssetk)))
+      (.classMem (.cv z) (synCphi (.cv x)))
+      (.classMem (synCopk (synCsn (.cv z)) (.cv x))
+        (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))
+      (.classMem (.cv z) (synCsn (synC0c))) p0036 p0043
+  have p0045 := @gElun (.cv z) (synCphi (.cv x)) (synCsn (synC0c))
   have p0046 :=
-    @g_bitr4i
-      (syn_wo (.classMem (syn_copk (syn_csn (.cv z)) (.cv x)) (syn_ccomk (syn_ccnvk (syn_cimagek
-                (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl
-                              (syn_cimak (syn_cin (syn_cins3k (syn_cssetk))
-                                  (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                          (syn_cimak (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                              (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                            (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                        (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                  (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-            (syn_cssetk))) (.classMem (syn_copk (syn_csn (.cv z)) (.cv x))
-          (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv))))
-      (syn_wo (.classMem (.cv z) (syn_cphi (.cv x))) (.classMem (.cv z) (syn_csn (syn_c0c))))
-      (.classMem (.cv z) (syn_cun (syn_cphi (.cv x)) (syn_csn (syn_c0c)))) p0044 p0045
+    @gBitr4i
+      (synWo (.classMem (synCopk (synCsn (.cv z)) (.cv x)) (synCcomk (synCcnvk (synCimagek
+                (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k (synCcompl
+                              (synCimak (synCin (synCins3k (synCssetk))
+                                  (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c))))))
+                          (synCimak (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                              (synCun (synCins2k (synCins3k (synCssetk)))
+                                (synCins3k (synCsik (synCsik (synCssetk))))))
+                            (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                        (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                  (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+            (synCssetk))) (.classMem (synCopk (synCsn (.cv z)) (.cv x))
+          (synCxpk (synCsn (synCsn (synC0c))) (synCvv))))
+      (synWo (.classMem (.cv z) (synCphi (.cv x))) (.classMem (.cv z) (synCsn (synC0c))))
+      (.classMem (.cv z) (synCun (synCphi (.cv x)) (synCsn (synC0c)))) p0044 p0045
   have p0047 :=
-    @g_n_3bitri
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (.cv z)))) (syn_copk (.cv x) (.cv y)))
-        (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk (syn_cimagek (syn_cun (syn_cin (syn_cimagek
-                        (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl (syn_cimak
-                                  (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                                  (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                              (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                  (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                              (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                          (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                    (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-              (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))))
-      (.classMem (syn_copk (syn_csn (.cv z)) (.cv x)) (syn_cun (syn_ccomk (syn_ccnvk
-              (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k
-                            (syn_ccompl (syn_cimak (syn_cin (syn_cins3k (syn_cssetk))
-                                  (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                          (syn_cimak (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                              (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                            (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                        (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                  (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-            (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv))))
-      (syn_wo (.classMem (syn_copk (syn_csn (.cv z)) (.cv x)) (syn_ccomk (syn_ccnvk (syn_cimagek
-                (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl
-                              (syn_cimak (syn_cin (syn_cins3k (syn_cssetk))
-                                  (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-                          (syn_cimak (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                              (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                            (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                        (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                  (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-            (syn_cssetk))) (.classMem (syn_copk (syn_csn (.cv z)) (.cv x))
-          (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv))))
-      (.classMem (.cv z) (syn_cun (syn_cphi (.cv x)) (syn_csn (syn_c0c)))) p0022 p0023
+    @gN3bitri
+      (.classMem (synCopk (synCsn (synCsn (synCsn (.cv z)))) (synCopk (.cv x) (.cv y)))
+        (synCins3k (synCun (synCcomk (synCcnvk (synCimagek (synCun (synCin (synCimagek
+                        (synCimak (synCdif (synCins3k (synCcompl (synCimak
+                                  (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                                  (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                              (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                (synCun (synCins2k (synCins3k (synCssetk)))
+                                  (synCins3k (synCsik (synCsik (synCssetk))))))
+                              (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                          (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                    (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+              (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))))
+      (.classMem (synCopk (synCsn (.cv z)) (.cv x)) (synCun (synCcomk (synCcnvk
+              (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k
+                            (synCcompl (synCimak (synCin (synCins3k (synCssetk))
+                                  (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c))))))
+                          (synCimak (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                              (synCun (synCins2k (synCins3k (synCssetk)))
+                                (synCins3k (synCsik (synCsik (synCssetk))))))
+                            (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                        (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                  (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+            (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv))))
+      (synWo (.classMem (synCopk (synCsn (.cv z)) (.cv x)) (synCcomk (synCcnvk (synCimagek
+                (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k (synCcompl
+                              (synCimak (synCin (synCins3k (synCssetk))
+                                  (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c))))))
+                          (synCimak (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                              (synCun (synCins2k (synCins3k (synCssetk)))
+                                (synCins3k (synCsik (synCsik (synCssetk))))))
+                            (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                        (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                  (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+            (synCssetk))) (.classMem (synCopk (synCsn (.cv z)) (.cv x))
+          (synCxpk (synCsn (synCsn (synC0c))) (synCvv))))
+      (.classMem (.cv z) (synCun (synCphi (.cv x)) (synCsn (synC0c)))) p0022 p0023
       p0046
   have p0048 :=
-    @g_bibi12i
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (.cv z)))) (syn_copk (.cv x) (.cv y)))
-        (syn_cins2k (syn_cssetk)))
+    @gBibi12i
+      (.classMem (synCopk (synCsn (synCsn (synCsn (.cv z)))) (synCopk (.cv x) (.cv y)))
+        (synCins2k (synCssetk)))
       (.objMem z y)
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (.cv z)))) (syn_copk (.cv x) (.cv y)))
-        (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk (syn_cimagek (syn_cun (syn_cin (syn_cimagek
-                        (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl (syn_cimak
-                                  (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-                                  (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                              (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                  (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                              (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                          (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                    (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-              (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))))
-      (.classMem (.cv z) (syn_cun (syn_cphi (.cv x)) (syn_csn (syn_c0c)))) p0021 p0047
+      (.classMem (synCopk (synCsn (synCsn (synCsn (.cv z)))) (synCopk (.cv x) (.cv y)))
+        (synCins3k (synCun (synCcomk (synCcnvk (synCimagek (synCun (synCin (synCimagek
+                        (synCimak (synCdif (synCins3k (synCcompl (synCimak
+                                  (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+                                  (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                              (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                (synCun (synCins2k (synCins3k (synCssetk)))
+                                  (synCins3k (synCsik (synCsik (synCssetk))))))
+                              (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                          (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                    (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+              (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))))
+      (.classMem (.cv z) (synCun (synCphi (.cv x)) (synCsn (synC0c)))) p0021 p0047
   have p0049 :=
-    @g_notbii
-      (syn_wb (.classMem
-          (syn_copk (syn_csn (syn_csn (syn_csn (.cv z)))) (syn_copk (.cv x) (.cv y)))
-          (syn_cins2k (syn_cssetk))) (.classMem
-          (syn_copk (syn_csn (syn_csn (syn_csn (.cv z)))) (syn_copk (.cv x) (.cv y)))
-          (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk (syn_cimagek (syn_cun (syn_cin (syn_cimagek
-                          (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl (syn_cimak
-                                    (syn_cin (syn_cins3k (syn_cssetk))
-                                      (syn_cins2k (syn_cssetk)))
-                                    (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                  (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                    (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                            (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                      (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-                (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv))))))
-      (syn_wb (.objMem z y)
-        (.classMem (.cv z) (syn_cun (syn_cphi (.cv x)) (syn_csn (syn_c0c)))))
+    @gNotbii
+      (synWb (.classMem
+          (synCopk (synCsn (synCsn (synCsn (.cv z)))) (synCopk (.cv x) (.cv y)))
+          (synCins2k (synCssetk))) (.classMem
+          (synCopk (synCsn (synCsn (synCsn (.cv z)))) (synCopk (.cv x) (.cv y)))
+          (synCins3k (synCun (synCcomk (synCcnvk (synCimagek (synCun (synCin (synCimagek
+                          (synCimak (synCdif (synCins3k (synCcompl (synCimak
+                                    (synCin (synCins3k (synCssetk))
+                                      (synCins2k (synCssetk)))
+                                    (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                  (synCun (synCins2k (synCins3k (synCssetk)))
+                                    (synCins3k (synCsik (synCsik (synCssetk))))))
+                                (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                            (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                      (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+                (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv))))))
+      (synWb (.objMem z y)
+        (.classMem (.cv z) (synCun (synCphi (.cv x)) (synCsn (synC0c)))))
       p0048
   have p0050 :=
-    @g_n_3bitri
-      (syn_wex t (syn_wa (.classEq (.cv t) (syn_csn (syn_csn (syn_csn (.cv z)))))
-          (.classMem (syn_copk (.cv t) (syn_copk (.cv x) (.cv y)))
-            (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                      (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif
-                                  (syn_cins3k (syn_ccompl (syn_cimak
-                                        (syn_cin (syn_cins3k (syn_cssetk))
-        (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                    (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                      (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                        (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                    (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-                            (syn_cxpk (syn_cnnc) (syn_cvv))) (syn_cin (syn_cidk)
-                            (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))))) (syn_cssetk))
-                  (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv))))))))
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (.cv z)))) (syn_copk (.cv x) (.cv y)))
-        (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                  (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k
-                                (syn_ccompl (syn_cimak (syn_cin (syn_cins3k (syn_cssetk))
-                                      (syn_cins2k (syn_cssetk)))
-                                    (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                  (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                    (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                            (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                      (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-                (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv))))))
-      (.neg (syn_wb (.classMem
-            (syn_copk (syn_csn (syn_csn (syn_csn (.cv z)))) (syn_copk (.cv x) (.cv y)))
-            (syn_cins2k (syn_cssetk))) (.classMem
-            (syn_copk (syn_csn (syn_csn (syn_csn (.cv z)))) (syn_copk (.cv x) (.cv y)))
-            (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk (syn_cimagek (syn_cun (syn_cin
-                          (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl (syn_cimak
-                                      (syn_cin (syn_cins3k (syn_cssetk))
-                                        (syn_cins2k (syn_cssetk)))
-                                      (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                  (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                    (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                      (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                  (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                              (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                        (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-                  (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))))))
-      (.neg (syn_wb (.objMem z y)
-          (.classMem (.cv z) (syn_cun (syn_cphi (.cv x)) (syn_csn (syn_c0c))))))
+    @gN3bitri
+      (synWex t (synWa (.classEq (.cv t) (synCsn (synCsn (synCsn (.cv z)))))
+          (.classMem (synCopk (.cv t) (synCopk (.cv x) (.cv y)))
+            (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                      (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif
+                                  (synCins3k (synCcompl (synCimak
+                                        (synCin (synCins3k (synCssetk))
+        (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                    (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                      (synCun (synCins2k (synCins3k (synCssetk)))
+                                        (synCins3k (synCsik (synCsik (synCssetk))))))
+                                    (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                (synCpw1 (synCpw1 (synC1c)))))
+                            (synCxpk (synCnnc) (synCvv))) (synCin (synCidk)
+                            (synCxpk (synCcompl (synCnnc)) (synCvv)))))) (synCssetk))
+                  (synCxpk (synCsn (synCsn (synC0c))) (synCvv))))))))
+      (.classMem (synCopk (synCsn (synCsn (synCsn (.cv z)))) (synCopk (.cv x) (.cv y)))
+        (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                  (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k
+                                (synCcompl (synCimak (synCin (synCins3k (synCssetk))
+                                      (synCins2k (synCssetk)))
+                                    (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                  (synCun (synCins2k (synCins3k (synCssetk)))
+                                    (synCins3k (synCsik (synCsik (synCssetk))))))
+                                (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                            (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                      (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+                (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv))))))
+      (.neg (synWb (.classMem
+            (synCopk (synCsn (synCsn (synCsn (.cv z)))) (synCopk (.cv x) (.cv y)))
+            (synCins2k (synCssetk))) (.classMem
+            (synCopk (synCsn (synCsn (synCsn (.cv z)))) (synCopk (.cv x) (.cv y)))
+            (synCins3k (synCun (synCcomk (synCcnvk (synCimagek (synCun (synCin
+                          (synCimagek (synCimak (synCdif (synCins3k (synCcompl (synCimak
+                                      (synCin (synCins3k (synCssetk))
+                                        (synCins2k (synCssetk)))
+                                      (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                  (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                    (synCun (synCins2k (synCins3k (synCssetk)))
+                                      (synCins3k (synCsik (synCsik (synCssetk))))))
+                                  (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                              (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                        (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+                  (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))))))
+      (.neg (synWb (.objMem z y)
+          (.classMem (.cv z) (synCun (synCphi (.cv x)) (synCsn (synC0c))))))
       p0013 p0014 p0049
   have p0051 :=
-    @g_exbii
-      (syn_wex t (syn_wa (.classEq (.cv t) (syn_csn (syn_csn (syn_csn (.cv z)))))
-          (.classMem (syn_copk (.cv t) (syn_copk (.cv x) (.cv y)))
-            (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                      (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif
-                                  (syn_cins3k (syn_ccompl (syn_cimak
-                                        (syn_cin (syn_cins3k (syn_cssetk))
-        (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                    (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                      (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                        (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                    (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-                            (syn_cxpk (syn_cnnc) (syn_cvv))) (syn_cin (syn_cidk)
-                            (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))))) (syn_cssetk))
-                  (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv))))))))
-      (.neg (syn_wb (.objMem z y)
-          (.classMem (.cv z) (syn_cun (syn_cphi (.cv x)) (syn_csn (syn_c0c))))))
+    @gExbii
+      (synWex t (synWa (.classEq (.cv t) (synCsn (synCsn (synCsn (.cv z)))))
+          (.classMem (synCopk (.cv t) (synCopk (.cv x) (.cv y)))
+            (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                      (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif
+                                  (synCins3k (synCcompl (synCimak
+                                        (synCin (synCins3k (synCssetk))
+        (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                    (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                      (synCun (synCins2k (synCins3k (synCssetk)))
+                                        (synCins3k (synCsik (synCsik (synCssetk))))))
+                                    (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                (synCpw1 (synCpw1 (synC1c)))))
+                            (synCxpk (synCnnc) (synCvv))) (synCin (synCidk)
+                            (synCxpk (synCcompl (synCnnc)) (synCvv)))))) (synCssetk))
+                  (synCxpk (synCsn (synCsn (synC0c))) (synCvv))))))))
+      (.neg (synWb (.objMem z y)
+          (.classMem (.cv z) (synCun (synCphi (.cv x)) (synCsn (synC0c))))))
       z p0050
   have p0052 :=
-    @g_n_3bitri
-      (.classMem (syn_copk (.cv x) (.cv y)) (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk))
-            (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk (syn_cimagek (syn_cun (syn_cin
-                          (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl (syn_cimak
-                                      (syn_cin (syn_cins3k (syn_cssetk))
-                                        (syn_cins2k (syn_cssetk)))
-                                      (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                  (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                    (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                      (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                  (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                              (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                        (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-                  (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))))
-          (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-      (syn_wrex t (syn_cpw1 (syn_cpw1 (syn_c1c)))
-        (.classMem (syn_copk (.cv t) (syn_copk (.cv x) (.cv y)))
-          (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                    (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k
-                                  (syn_ccompl (syn_cimak (syn_cin (syn_cins3k (syn_cssetk))
-                                        (syn_cins2k (syn_cssetk)))
-                                      (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                  (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                    (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                      (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                  (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                              (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                        (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-                  (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))))))
-      (syn_wex z (syn_wex t (syn_wa (.classEq (.cv t) (syn_csn (syn_csn (syn_csn (.cv z)))))
-            (.classMem (syn_copk (.cv t) (syn_copk (.cv x) (.cv y)))
-              (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                        (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif
-                                    (syn_cins3k (syn_ccompl (syn_cimak
-        (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                      (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                        (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-        (syn_cins3k (syn_csik (syn_csik (syn_cssetk)))))) (syn_cpw1
-                                        (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                  (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-                              (syn_cxpk (syn_cnnc) (syn_cvv))) (syn_cin (syn_cidk)
-                              (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))))) (syn_cssetk))
-                    (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))))))))
-      (syn_wex z (.neg (syn_wb (.objMem z y)
-            (.classMem (.cv z) (syn_cun (syn_cphi (.cv x)) (syn_csn (syn_c0c)))))))
+    @gN3bitri
+      (.classMem (synCopk (.cv x) (.cv y)) (synCimak (synCsymdif (synCins2k (synCssetk))
+            (synCins3k (synCun (synCcomk (synCcnvk (synCimagek (synCun (synCin
+                          (synCimagek (synCimak (synCdif (synCins3k (synCcompl (synCimak
+                                      (synCin (synCins3k (synCssetk))
+                                        (synCins2k (synCssetk)))
+                                      (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                  (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                    (synCun (synCins2k (synCins3k (synCssetk)))
+                                      (synCins3k (synCsik (synCsik (synCssetk))))))
+                                  (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                              (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                        (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+                  (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))))
+          (synCpw1 (synCpw1 (synC1c)))))
+      (synWrex t (synCpw1 (synCpw1 (synC1c)))
+        (.classMem (synCopk (.cv t) (synCopk (.cv x) (.cv y)))
+          (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                    (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif (synCins3k
+                                  (synCcompl (synCimak (synCin (synCins3k (synCssetk))
+                                        (synCins2k (synCssetk)))
+                                      (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                  (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                    (synCun (synCins2k (synCins3k (synCssetk)))
+                                      (synCins3k (synCsik (synCsik (synCssetk))))))
+                                  (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                              (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                        (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+                  (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))))))
+      (synWex z (synWex t (synWa (.classEq (.cv t) (synCsn (synCsn (synCsn (.cv z)))))
+            (.classMem (synCopk (.cv t) (synCopk (.cv x) (.cv y)))
+              (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                        (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif
+                                    (synCins3k (synCcompl (synCimak
+        (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+        (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                      (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                        (synCun (synCins2k (synCins3k (synCssetk)))
+        (synCins3k (synCsik (synCsik (synCssetk)))))) (synCpw1
+                                        (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                  (synCpw1 (synCpw1 (synC1c)))))
+                              (synCxpk (synCnnc) (synCvv))) (synCin (synCidk)
+                              (synCxpk (synCcompl (synCnnc)) (synCvv)))))) (synCssetk))
+                    (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))))))))
+      (synWex z (.neg (synWb (.objMem z y)
+            (.classMem (.cv z) (synCun (synCphi (.cv x)) (synCsn (synC0c)))))))
       p0001 p0009 p0051
   have p0053 :=
-    @g_notbii
-      (.classMem (syn_copk (.cv x) (.cv y)) (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk))
-            (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk (syn_cimagek (syn_cun (syn_cin
-                          (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl (syn_cimak
-                                      (syn_cin (syn_cins3k (syn_cssetk))
-                                        (syn_cins2k (syn_cssetk)))
-                                      (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                  (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                    (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                      (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                  (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                              (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                        (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-                  (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))))
-          (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-      (syn_wex z (.neg (syn_wb (.objMem z y)
-            (.classMem (.cv z) (syn_cun (syn_cphi (.cv x)) (syn_csn (syn_c0c)))))))
+    @gNotbii
+      (.classMem (synCopk (.cv x) (.cv y)) (synCimak (synCsymdif (synCins2k (synCssetk))
+            (synCins3k (synCun (synCcomk (synCcnvk (synCimagek (synCun (synCin
+                          (synCimagek (synCimak (synCdif (synCins3k (synCcompl (synCimak
+                                      (synCin (synCins3k (synCssetk))
+                                        (synCins2k (synCssetk)))
+                                      (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                  (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                    (synCun (synCins2k (synCins3k (synCssetk)))
+                                      (synCins3k (synCsik (synCsik (synCssetk))))))
+                                  (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                              (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                        (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+                  (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))))
+          (synCpw1 (synCpw1 (synC1c)))))
+      (synWex z (.neg (synWb (.objMem z y)
+            (.classMem (.cv z) (synCun (synCphi (.cv x)) (synCsn (synC0c)))))))
       p0052
   have p0054 :=
-    @g_elcompl (syn_copk (.cv x) (.cv y))
-      (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk
-                (syn_ccnvk (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif
-                              (syn_cins3k (syn_ccompl (syn_cimak
-                                    (syn_cin (syn_cins3k (syn_cssetk))
-                                      (syn_cins2k (syn_cssetk)))
-                                    (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                  (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                    (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                            (syn_cpw1 (syn_cpw1 (syn_c1c))))) (syn_cxpk (syn_cnnc) (syn_cvv)))
-                      (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))
-                (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))))
-        (syn_cpw1 (syn_cpw1 (syn_c1c))))
+    @gElcompl (synCopk (.cv x) (.cv y))
+      (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk
+                (synCcnvk (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif
+                              (synCins3k (synCcompl (synCimak
+                                    (synCin (synCins3k (synCssetk))
+                                      (synCins2k (synCssetk)))
+                                    (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                  (synCun (synCins2k (synCins3k (synCssetk)))
+                                    (synCins3k (synCsik (synCsik (synCssetk))))))
+                                (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                            (synCpw1 (synCpw1 (synC1c))))) (synCxpk (synCnnc) (synCvv)))
+                      (synCin (synCidk) (synCxpk (synCcompl (synCnnc)) (synCvv))))))
+                (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))))
+        (synCpw1 (synCpw1 (synC1c))))
       p0000
   have p0055 :=
-    @g_dfcleq z (.cv y) (syn_cun (syn_cphi (.cv x)) (syn_csn (syn_c0c))) dv_cache_0014
+    @gDfcleq z (.cv y) (synCun (synCphi (.cv x)) (synCsn (synC0c))) dv_cache_0014
       dv_cache_0015
   have p0056 :=
-    @g_alex
-      (syn_wb (.objMem z y)
-        (.classMem (.cv z) (syn_cun (syn_cphi (.cv x)) (syn_csn (syn_c0c)))))
+    @gAlex
+      (synWb (.objMem z y)
+        (.classMem (.cv z) (synCun (synCphi (.cv x)) (synCsn (synC0c)))))
       z
   have p0057_e00_recanon :
     Nominal.NPrf
-      (syn_wb (.classEq (.cv y) (syn_cun (syn_cphi (.cv x)) (syn_csn (syn_c0c)))) (.all z
-          (syn_wb (.objMem z y)
-            (.classMem (.cv z) (syn_cun (syn_cphi (.cv x)) (syn_csn (syn_c0c))))))) :=
+      (synWb (.classEq (.cv y) (synCun (synCphi (.cv x)) (synCsn (synC0c)))) (.all z
+          (synWb (.objMem z y)
+            (.classMem (.cv z) (synCun (synCphi (.cv x)) (synCsn (synC0c))))))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_cun syn_cnin syn_wnan syn_wa syn_ccompl syn_cphi syn_wrex
-          syn_wex syn_cif syn_wo syn_cnnc syn_cint syn_cplc syn_c1c syn_csn syn_c0c
+        unfold synWb synCun synCnin synWnan synWa synCcompl synCphi synWrex
+          synWex synCif synWo synCnnc synCint synCplc synC1c synCsn synC0c
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv,
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn,
@@ -3953,47 +3965,47 @@ noncomputable def g_dfop2lem1 (x : Var) (y : Var) (dv_x_y : x ≠ y) :
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0055
   have p0057 :=
-    @g_bitri (.classEq (.cv y) (syn_cun (syn_cphi (.cv x)) (syn_csn (syn_c0c))))
-      (.all z (syn_wb (.objMem z y)
-          (.classMem (.cv z) (syn_cun (syn_cphi (.cv x)) (syn_csn (syn_c0c))))))
-      (.neg (syn_wex z (.neg (syn_wb (.objMem z y)
-              (.classMem (.cv z) (syn_cun (syn_cphi (.cv x)) (syn_csn (syn_c0c))))))))
+    @gBitri (.classEq (.cv y) (synCun (synCphi (.cv x)) (synCsn (synC0c))))
+      (.all z (synWb (.objMem z y)
+          (.classMem (.cv z) (synCun (synCphi (.cv x)) (synCsn (synC0c))))))
+      (.neg (synWex z (.neg (synWb (.objMem z y)
+              (.classMem (.cv z) (synCun (synCphi (.cv x)) (synCsn (synC0c))))))))
       p0057_e00_recanon p0056
   have p0058 :=
-    @g_n_3bitr4i
-      (.neg (.classMem (syn_copk (.cv x) (.cv y)) (syn_cimak
-            (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                      (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif
-                                  (syn_cins3k (syn_ccompl (syn_cimak
-                                        (syn_cin (syn_cins3k (syn_cssetk))
-        (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                    (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                      (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                        (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                    (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-                            (syn_cxpk (syn_cnnc) (syn_cvv))) (syn_cin (syn_cidk)
-                            (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))))) (syn_cssetk))
-                  (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))))
-            (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-      (.neg (syn_wex z (.neg (syn_wb (.objMem z y)
-              (.classMem (.cv z) (syn_cun (syn_cphi (.cv x)) (syn_csn (syn_c0c))))))))
-      (.classMem (syn_copk (.cv x) (.cv y)) (syn_ccompl (syn_cimak
-            (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun (syn_ccomk (syn_ccnvk
-                      (syn_cimagek (syn_cun (syn_cin (syn_cimagek (syn_cimak (syn_cdif
-                                  (syn_cins3k (syn_ccompl (syn_cimak
-                                        (syn_cin (syn_cins3k (syn_cssetk))
-        (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                    (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                      (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                        (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                    (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-                            (syn_cxpk (syn_cnnc) (syn_cvv))) (syn_cin (syn_cidk)
-                            (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv)))))) (syn_cssetk))
-                  (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))))
-            (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-      (.classEq (.cv y) (syn_cun (syn_cphi (.cv x)) (syn_csn (syn_c0c)))) p0053 p0054
+    @gN3bitr4i
+      (.neg (.classMem (synCopk (.cv x) (.cv y)) (synCimak
+            (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                      (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif
+                                  (synCins3k (synCcompl (synCimak
+                                        (synCin (synCins3k (synCssetk))
+        (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                    (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                      (synCun (synCins2k (synCins3k (synCssetk)))
+                                        (synCins3k (synCsik (synCsik (synCssetk))))))
+                                    (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                (synCpw1 (synCpw1 (synC1c)))))
+                            (synCxpk (synCnnc) (synCvv))) (synCin (synCidk)
+                            (synCxpk (synCcompl (synCnnc)) (synCvv)))))) (synCssetk))
+                  (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))))
+            (synCpw1 (synCpw1 (synC1c))))))
+      (.neg (synWex z (.neg (synWb (.objMem z y)
+              (.classMem (.cv z) (synCun (synCphi (.cv x)) (synCsn (synC0c))))))))
+      (.classMem (synCopk (.cv x) (.cv y)) (synCcompl (synCimak
+            (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun (synCcomk (synCcnvk
+                      (synCimagek (synCun (synCin (synCimagek (synCimak (synCdif
+                                  (synCins3k (synCcompl (synCimak
+                                        (synCin (synCins3k (synCssetk))
+        (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                    (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                      (synCun (synCins2k (synCins3k (synCssetk)))
+                                        (synCins3k (synCsik (synCsik (synCssetk))))))
+                                    (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                (synCpw1 (synCpw1 (synC1c)))))
+                            (synCxpk (synCnnc) (synCvv))) (synCin (synCidk)
+                            (synCxpk (synCcompl (synCnnc)) (synCvv)))))) (synCssetk))
+                  (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))))
+            (synCpw1 (synCpw1 (synC1c))))))
+      (.classEq (.cv y) (synCun (synCphi (.cv x)) (synCsn (synC0c)))) p0053 p0054
       p0057
   exact p0058
 

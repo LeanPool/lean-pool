@@ -23,15 +23,15 @@ open NFChoice.Compiler.CompactSourceSyntax
 /-! Explicit-only FV equations for the WPP extension; no global simp attributes. -/
 
 
-theorem fv_syn_cfrec (F : Class) (I : Class) : (syn_cfrec F I).fv = (F.fv) ∪ (I.fv) :=
+theorem fv_syn_cfrec (F : Class) (I : Class) : (synCfrec F I).fv = (F.fv) ∪ (I.fv) :=
   by
   have fresh_x : freshVar (F.fv ∪ I.fv) 0 ∉ (F.fv ∪ I.fv) :=
     freshVar_not_mem (F.fv ∪ I.fv) 0
   simp only [Finset.mem_union] at fresh_x
   ext u
-  simp [syn_cfrec, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cpprod, Class.fv]
+  simp [synCfrec, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cpprod, Class.fv]
 
-theorem fv_syn_wwpp : (syn_wwpp).fv = (∅ : Finset Var) :=
+theorem fv_syn_wwpp : (synWwpp).fv = (∅ : Finset Var) :=
   by
   have fresh_f : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -64,9 +64,9 @@ theorem fv_syn_wwpp : (syn_wwpp).fv = (∅ : Finset Var) :=
   have distinct_x_y : freshVar ((∅ : Finset Var)) 3 ≠ freshVar ((∅ : Finset Var)) 4 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_wwpp, Wff.fv, Class.fv]; aesop
+  simp [synWwpp, Wff.fv, Class.fv]; aesop
 
-theorem fv_syn_cqkrel (A : Class) : (syn_cqkrel A).fv = A.fv :=
+theorem fv_syn_cqkrel (A : Class) : (synCqkrel A).fv = A.fv :=
   by
   have fresh_x : freshVar (A.fv) 0 ∉ (A.fv) := freshVar_not_mem (A.fv) 0
   have fresh_y : freshVar (A.fv) 1 ∉ (A.fv) := freshVar_not_mem (A.fv) 1
@@ -78,6 +78,6 @@ theorem fv_syn_cqkrel (A : Class) : (syn_cqkrel A).fv = A.fv :=
   have distinct_y_z : freshVar (A.fv) 1 ≠ freshVar (A.fv) 2 :=
     freshVar_injective (A.fv) (by decide)
   ext u
-  simp [syn_cqkrel, Wff.fv, Class.fv]; aesop
+  simp [synCqkrel, Wff.fv, Class.fv]; aesop
 
 end NFChoice.Compiler.WPPCompactSyntaxFVExplicit

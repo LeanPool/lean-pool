@@ -32,7 +32,7 @@ the exact literal Flypitch theory.
 /-- The displayed right-hand side of `df-eu`, with its source dummy exposed. -/
 @[expose]
 def euPrimitive (y x : Var) (p : Wff) : Wff :=
-  syn_wex y (.all x (syn_wb p (.objEq x y)))
+  synWex y (.all x (synWb p (.objEq x y)))
 
 /-- Two fresh outer dummies induce the same environment on the free variables
 of the body below the dummy and object-variable binders. -/
@@ -55,7 +55,7 @@ theorem lowerEuPrimitive_eq (rho : Var → Nat) (dummy y x : Var) (p : Wff)
     lowerWff rho (euPrimitive dummy x p) = lowerWff rho (euPrimitive y x p) :=
   by
   have hp := lowerWff_doubleBind_fresh rho dummy y x p hdummy_p hy_p
-  simp only [euPrimitive, syn_wex, syn_wb, Wff.neg, lowerWff]
+  simp only [euPrimitive, synWex, synWb, Wff.neg, lowerWff]
   rw [hp]
   simp [bindRho, hdummy_x, hy_x]
 
@@ -63,7 +63,7 @@ theorem lowerEuPrimitive_eq (rho : Var → Nat) (dummy y x : Var) (p : Wff)
 The hypotheses are exactly its two source `$d` obligations. -/
 @[expose]
 noncomputable def dfEu (x y : Var) (p : Wff) (hxy : x ≠ y) (hy_p : y ∉ p.fv) :
-    NPrf (syn_wb (syn_weu x p) (euPrimitive y x p)) := fun rho =>
+    NPrf (synWb (synWeu x p) (euPrimitive y x p)) := fun rho =>
   by
   let support : Finset Var := ({ x } : Finset Var) ∪ p.fv
   let dummy : Var := freshVar support 0

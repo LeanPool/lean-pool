@@ -32,11 +32,12 @@ open NFChoice.DefinitionLeaves.AlphaFocusedFV
 open NFChoice.DirectNominalPrf
 open NFChoice.DirectNominalPrf.Nominal
 
+/-- Checked nominal proof certificate identified upstream as `nominal_df_v`. -/
 @[expose]
-noncomputable def nominal_df_v (x : Var) :
-    Nominal.NPrf (.classEq (syn_cvv) (.cab x (.objEq x x))) :=
+noncomputable def nominalDfV (x : Var) :
+    Nominal.NPrf (.classEq (synCvv) (.cab x (.objEq x x))) :=
   by
-  let alpha_dummy_000 : Var := (freshVar ((∅ : Finset Var)) 0)
+  let alphaDummy000 : Var := (freshVar ((∅ : Finset Var)) 0)
   exact
     Nominal.alphaClassEq
       (TAlphaClass.cab (TAlphaWff.objEq (TAlphaVar.here _ _ _) (TAlphaVar.here _ _ _)))

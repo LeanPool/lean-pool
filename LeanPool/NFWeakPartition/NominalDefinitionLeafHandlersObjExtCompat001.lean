@@ -31,13 +31,14 @@ This type-valued certificate records only the object-to-class atomic
 recanonicalization.  It introduces no logical assumption.
 -/
 
+/-- Proof-translation construction identified upstream as `axExtObjClassRecanon`. -/
 @[expose]
 def axExtObjClassRecanon (x y z : Var) :
     RecanonTransportDev.TRecanonWff (NFLiteralHandlers.axExtGoal y z x)
       (.imp (.all x (Wff.biimp (.classMem (.cv x) (.cv y)) (.classMem (.cv x) (.cv z))))
         (.classEq (.cv y) (.cv z))) :=
   by
-  unfold NFLiteralHandlers.axExtGoal syn_wb Wff.biimp Wff.conj Wff.neg
+  unfold NFLiteralHandlers.axExtGoal synWb Wff.biimp Wff.conj Wff.neg
   apply RecanonTransportDev.TRecanonWff.imp
   · apply RecanonTransportDev.TRecanonWff.all
     apply RecanonTransportDev.TRecanonWff.imp
@@ -59,6 +60,7 @@ that the literal-axiom handler actually produces, transports it through the
 explicit certificate above, and then calls the already-audited class handler.
 -/
 
+/-- Proof-translation construction identified upstream as `dfCleqOfDVObjExt`. -/
 @[expose]
 noncomputable def dfCleqOfDVObjExt (x y z : Var) (A B : Class)
     (hAxExt : NPrf (NFLiteralHandlers.axExtGoal y z x)) (hxA : x ∉ A.fv)

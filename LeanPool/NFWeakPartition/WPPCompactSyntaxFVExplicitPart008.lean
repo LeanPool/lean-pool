@@ -24,61 +24,61 @@ open NFChoice.Compiler.CompactSourceSyntax
 
 
 theorem fv_syn_cwpphitfam (F : Class) (C : Class) :
-    (syn_cwpphitfam F C).fv = (C.fv) ∪ (F.fv) :=
+    (synCwpphitfam F C).fv = (C.fv) ∪ (F.fv) :=
   by
   ext u
-  simp [syn_cwpphitfam,
+  simp [synCwpphitfam,
     NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cwpppowlayerseq]
 
 theorem fv_syn_cwpppredmemrel (F : Class) (C : Class) :
-    (syn_cwpppredmemrel F C).fv = (C.fv) ∪ (F.fv) :=
+    (synCwpppredmemrel F C).fv = (C.fv) ∪ (F.fv) :=
   by
   ext u
-  simp [syn_cwpppredmemrel,
+  simp [synCwpppredmemrel,
     NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cwpppredfam]
 
 theorem fv_syn_cwpphitmemrel (F : Class) (C : Class) :
-    (syn_cwpphitmemrel F C).fv = (C.fv) ∪ (F.fv) :=
+    (synCwpphitmemrel F C).fv = (C.fv) ∪ (F.fv) :=
   by
   ext u
-  simp [syn_cwpphitmemrel, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cwpphitfam]
+  simp [synCwpphitmemrel, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cwpphitfam]
 
 theorem fv_syn_cwppreachincb (F : Class) (C : Class) :
-    (syn_cwppreachincb F C).fv = (C.fv) ∪ (F.fv) :=
+    (synCwppreachincb F C).fv = (C.fv) ∪ (F.fv) :=
   by
   ext u
-  simp [syn_cwppreachincb,
+  simp [synCwppreachincb,
     NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cwpphitmemrel,
     NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cwpppredmemrel]
 
-theorem fv_syn_cwppimageat (D : Class) : (syn_cwppimageat D).fv = D.fv :=
+theorem fv_syn_cwppimageat (D : Class) : (synCwppimageat D).fv = D.fv :=
   by
   ext u
-  simp [syn_cwppimageat, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_clnimageop]
+  simp [synCwppimageat, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_clnimageop]
 
 theorem fv_syn_cwpppowateq (F : Class) (D : Class) :
-    (syn_cwpppowateq F D).fv = (D.fv) ∪ (F.fv) :=
+    (synCwpppowateq F D).fv = (D.fv) ∪ (F.fv) :=
   by
   ext u
-  simp [syn_cwpppowateq, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cfrec,
+  simp [synCwpppowateq, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cfrec,
     NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cwppimageat,
     NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cwpppostcomp];
   aesop
 
-theorem fv_syn_cwppprecomp (F : Class) : (syn_cwppprecomp F).fv = F.fv :=
+theorem fv_syn_cwppprecomp (F : Class) : (synCwppprecomp F).fv = F.fv :=
   by
   ext u
-  simp [syn_cwppprecomp]
+  simp [synCwppprecomp]
 
-theorem fv_syn_cwpppowcommeq (F : Class) : (syn_cwpppowcommeq F).fv = F.fv :=
+theorem fv_syn_cwpppowcommeq (F : Class) : (synCwpppowcommeq F).fv = F.fv :=
   by
   ext u
-  simp [syn_cwpppowcommeq, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cfrec,
+  simp [synCwpppowcommeq, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cfrec,
     NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cwpppostcomp,
     NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cwppprecomp]
 
 theorem fv_syn_cwecutiso (R : Class) (D : Class) (S : Class) (E : Class) :
-    (syn_cwecutiso R D S E).fv = (D.fv) ∪ (E.fv) ∪ (R.fv) ∪ (S.fv) :=
+    (synCwecutiso R D S E).fv = (D.fv) ∪ (E.fv) ∪ (R.fv) ∪ (S.fv) :=
   by
   have fresh_f : freshVar (R.fv ∪ D.fv ∪ S.fv ∪ E.fv) 0 ∉ (R.fv ∪ D.fv ∪ S.fv ∪ E.fv) :=
     freshVar_not_mem (R.fv ∪ D.fv ∪ S.fv ∪ E.fv) 0
@@ -99,37 +99,37 @@ theorem fv_syn_cwecutiso (R : Class) (D : Class) (S : Class) (E : Class) :
     freshVar (R.fv ∪ D.fv ∪ S.fv ∪ E.fv) 1 ≠ freshVar (R.fv ∪ D.fv ∪ S.fv ∪ E.fv) 2 :=
     freshVar_injective (R.fv ∪ D.fv ∪ S.fv ∪ E.fv) (by decide)
   ext u
-  simp [syn_cwecutiso, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_wiso,
+  simp [synCwecutiso, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_wiso,
     Class.fv];
   aesop
 
 theorem fv_syn_cwecutisogen (R : Class) (D : Class) (S : Class) (E : Class) :
-    (syn_cwecutisogen R D S E).fv = (D.fv) ∪ (E.fv) ∪ (R.fv) ∪ (S.fv) :=
+    (synCwecutisogen R D S E).fv = (D.fv) ∪ (E.fv) ∪ (R.fv) ∪ (S.fv) :=
   by
   ext u
-  simp [syn_cwecutisogen, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chnwcutrel,
+  simp [synCwecutisogen, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chnwcutrel,
     NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chwbij,
     NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chwgen];
   aesop
 
 theorem fv_syn_cwecutcardfn (R : Class) (D : Class) :
-    (syn_cwecutcardfn R D).fv = (D.fv) ∪ (R.fv) :=
+    (synCwecutcardfn R D).fv = (D.fv) ∪ (R.fv) :=
   by
   have fresh_q : freshVar (R.fv ∪ D.fv) 0 ∉ (R.fv ∪ D.fv) :=
     freshVar_not_mem (R.fv ∪ D.fv) 0
   simp only [Finset.mem_union] at fresh_q
   ext u
-  simp [syn_cwecutcardfn, Class.fv]; aesop
+  simp [synCwecutcardfn, Class.fv]; aesop
 
 theorem fv_syn_cwecutcardfactor (R : Class) (D : Class) :
-    (syn_cwecutcardfactor R D).fv = (D.fv) ∪ (R.fv) :=
+    (synCwecutcardfactor R D).fv = (D.fv) ∪ (R.fv) :=
   by
   ext u
-  simp [syn_cwecutcardfactor,
+  simp [synCwecutcardfactor,
     NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chnwcutrel]
 
 theorem fv_syn_cwppgamma (F : Class) (C : Class) :
-    (syn_cwppgamma F C).fv = (C.fv) ∪ (F.fv) :=
+    (synCwppgamma F C).fv = (C.fv) ∪ (F.fv) :=
   by
   have fresh_k : freshVar (F.fv ∪ C.fv) 0 ∉ (F.fv ∪ C.fv) :=
     freshVar_not_mem (F.fv ∪ C.fv) 0
@@ -140,18 +140,18 @@ theorem fv_syn_cwppgamma (F : Class) (C : Class) :
   have distinct_k_m : freshVar (F.fv ∪ C.fv) 0 ≠ freshVar (F.fv ∪ C.fv) 1 :=
     freshVar_injective (F.fv ∪ C.fv) (by decide)
   ext u
-  simp [syn_cwppgamma, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cwppcand,
+  simp [synCwppgamma, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cwppcand,
     Wff.fv, Class.fv];
   aesop
 
-theorem fv_syn_cwppcardtfn : (syn_cwppcardtfn).fv = (∅ : Finset Var) :=
+theorem fv_syn_cwppcardtfn : (synCwppcardtfn).fv = (∅ : Finset Var) :=
   by
   ext u
-  simp [syn_cwppcardtfn]
+  simp [synCwppcardtfn]
 
-theorem fv_syn_cwppcardt2fn : (syn_cwppcardt2fn).fv = (∅ : Finset Var) :=
+theorem fv_syn_cwppcardt2fn : (synCwppcardt2fn).fv = (∅ : Finset Var) :=
   by
   ext u
-  simp [syn_cwppcardt2fn, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cwppcardtfn]
+  simp [synCwppcardt2fn, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cwppcardtfn]
 
 end NFChoice.Compiler.WPPCompactSyntaxFVExplicit

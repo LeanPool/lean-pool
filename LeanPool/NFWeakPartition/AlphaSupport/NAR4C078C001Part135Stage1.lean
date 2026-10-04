@@ -32,23 +32,23 @@ open NFChoice.DirectNominalPrf.Nominal
 
 theorem nb078_compact_envfresh_0372 (x : Var) (y : Var) (h : Var) :
     TEnvFresh
-      [((nb078_alpha_dummy_765), (nb078_alpha_dummy_766 h)),
-        ((nb078_alpha_dummy_763), (nb078_alpha_dummy_764 h)),
-        ((nb078_alpha_dummy_002), h), ((nb078_alpha_dummy_004), y),
-        ((nb078_alpha_dummy_003), x)]
-      ((syn_cid)).fv :=
+      [((nb078AlphaDummy765), (nb078AlphaDummy766 h)),
+        ((nb078AlphaDummy763), (nb078AlphaDummy764 h)),
+        ((nb078AlphaDummy002), h), ((nb078AlphaDummy004), y),
+        ((nb078AlphaDummy003), x)]
+      ((synCid)).fv :=
   by
   exact
-    (TEnvFresh.consFresh (nb078_alpha_dummy_765) (nb078_alpha_dummy_766 h)
+    (TEnvFresh.consFresh (nb078AlphaDummy765) (nb078AlphaDummy766 h)
       (nb078_wpp_notmem_2424) (nb078_wpp_notmem_2425 h)
-      (TEnvFresh.consFresh (nb078_alpha_dummy_763) (nb078_alpha_dummy_764 h)
+      (TEnvFresh.consFresh (nb078AlphaDummy763) (nb078AlphaDummy764 h)
         (nb078_wpp_notmem_2426) (nb078_wpp_notmem_2427 h)
-        (TEnvFresh.consFresh (nb078_alpha_dummy_002) h (nb078_wpp_notmem_2428)
+        (TEnvFresh.consFresh (nb078AlphaDummy002) h (nb078_wpp_notmem_2428)
           (nb078_wpp_notmem_2429 h)
-          (TEnvFresh.consFresh (nb078_alpha_dummy_004) y (nb078_wpp_notmem_0512)
+          (TEnvFresh.consFresh (nb078AlphaDummy004) y (nb078_wpp_notmem_0512)
             (nb078_wpp_notmem_0513 y)
-            (TEnvFresh.consFresh (nb078_alpha_dummy_003) x (nb078_wpp_notmem_0514)
-              (nb078_wpp_notmem_0515 x) (TEnvFresh.nil ((syn_cid)).fv))))))
+            (TEnvFresh.consFresh (nb078AlphaDummy003) x (nb078_wpp_notmem_0514)
+              (nb078_wpp_notmem_0515 x) (TEnvFresh.nil ((synCid)).fv))))))
 
 
 end NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired

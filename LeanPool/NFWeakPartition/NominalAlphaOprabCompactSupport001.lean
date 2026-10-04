@@ -25,8 +25,9 @@ open NFChoice.DirectNominalPrf.Nominal
 binders and one genuinely renamed binder used by `df-oprab`. -/
 
 
+/-- Checked nominal proof certificate identified upstream as `nb049_reflOn_self3_fresh`. -/
 @[expose]
-def nb049_reflOn_self3_fresh (x : Var) (y : Var) (z : Var) (a : Var) (w : Var)
+def nb049ReflOnSelf3Fresh (x : Var) (y : Var) (z : Var) (a : Var) (w : Var)
     (support : Finset Var) (ha : a ∉ support) (hw : w ∉ support) :
     TReflOn [(z, z), (y, y), (x, x), (a, w)] support :=
   by

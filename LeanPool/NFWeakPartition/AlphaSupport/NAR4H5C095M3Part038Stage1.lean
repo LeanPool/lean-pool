@@ -31,61 +31,61 @@ open NFChoice.DirectNominalPrf
 open NFChoice.DirectNominalPrf.Nominal
 
 theorem nb095_compact_fv_empty_0484 (D : Class) (R : Class) (S_cls : Class) (E : Class) :
-    (nb095_alpha_dummy_620 D R S_cls E) ∉ (∅ : Finset Var) :=
+    (nb095AlphaDummy620 D R S_cls E) ∉ (∅ : Finset Var) :=
   by
   intro hmem
   cases hmem
 
 theorem nb095_compact_fv_empty_0485 (x : Var) (D : Class) (R : Class) :
-    (nb095_alpha_dummy_622 x D R) ∉ (∅ : Finset Var) :=
+    (nb095AlphaDummy622 x D R) ∉ (∅ : Finset Var) :=
   by
   intro hmem
   cases hmem
 
 theorem nb095_compact_fv_empty_0486 (D : Class) (R : Class) (S_cls : Class) (E : Class) :
-    (nb095_alpha_dummy_619 D R S_cls E) ∉ (∅ : Finset Var) :=
+    (nb095AlphaDummy619 D R S_cls E) ∉ (∅ : Finset Var) :=
   by
   intro hmem
   cases hmem
 
 theorem nb095_compact_fv_empty_0487 (x : Var) (D : Class) (R : Class) :
-    (nb095_alpha_dummy_621 x D R) ∉ (∅ : Finset Var) :=
+    (nb095AlphaDummy621 x D R) ∉ (∅ : Finset Var) :=
   by
   intro hmem
   cases hmem
 
 theorem nb095_compact_fv_empty_0488 (D : Class) (R : Class) (S_cls : Class) (E : Class) :
-    (nb095_alpha_dummy_623 D R S_cls E) ∉ (∅ : Finset Var) :=
+    (nb095AlphaDummy623 D R S_cls E) ∉ (∅ : Finset Var) :=
   by
   intro hmem
   cases hmem
 
 theorem nb095_compact_fv_empty_0489 (x : Var) (D : Class) (R : Class) :
-    (nb095_alpha_dummy_624 x D R) ∉ (∅ : Finset Var) :=
+    (nb095AlphaDummy624 x D R) ∉ (∅ : Finset Var) :=
   by
   intro hmem
   cases hmem
 
 theorem nb095_compact_fv_empty_0490 (D : Class) (R : Class) (S_cls : Class) (E : Class) :
-    (nb095_alpha_dummy_617 D R S_cls E) ∉ (∅ : Finset Var) :=
+    (nb095AlphaDummy617 D R S_cls E) ∉ (∅ : Finset Var) :=
   by
   intro hmem
   cases hmem
 
 theorem nb095_compact_fv_empty_0491 (x : Var) (D : Class) (R : Class) :
-    (nb095_alpha_dummy_618 x D R) ∉ (∅ : Finset Var) :=
+    (nb095AlphaDummy618 x D R) ∉ (∅ : Finset Var) :=
   by
   intro hmem
   cases hmem
 
 theorem nb095_compact_fv_empty_0492 (D : Class) (R : Class) (S_cls : Class) (E : Class) :
-    (nb095_alpha_dummy_615 D R S_cls E) ∉ (∅ : Finset Var) :=
+    (nb095AlphaDummy615 D R S_cls E) ∉ (∅ : Finset Var) :=
   by
   intro hmem
   cases hmem
 
 theorem nb095_compact_fv_empty_0493 (x : Var) (D : Class) (R : Class) :
-    (nb095_alpha_dummy_616 x D R) ∉ (∅ : Finset Var) :=
+    (nb095AlphaDummy616 x D R) ∉ (∅ : Finset Var) :=
   by
   intro hmem
   cases hmem

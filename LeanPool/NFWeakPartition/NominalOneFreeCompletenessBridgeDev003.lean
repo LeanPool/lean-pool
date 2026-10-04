@@ -22,6 +22,7 @@ open NFChoice.SemanticCore
 open NFChoice.DirectNominalPrf.Nominal
 open NFChoice.DirectNominalPrf.Nominal.BoundedNominalLoweringBridgeDev004
 
+/-- Proof-translation construction identified upstream as `NFTheory`. -/
 abbrev NFTheory : Fol.SentTheory LNF :=
   NFChoice.Foundation.ExactLiteralTrial.LiteralHailperinNF
 
@@ -63,18 +64,19 @@ theorem oneFreeLoweringAsSubst (x : Var) (p : Wff) (hfv : p.fv ⊆ ({ x } : Fins
           0]f :=
       rfl
 
+/-- Proof-translation construction identified upstream as `oneFreeNPrfOfValidity`. -/
 @[expose]
 noncomputable def oneFreeNPrfOfValidity (x : Var) (p : Wff)
     (hfv : p.fv ⊆ ({ x } : Finset Var))
     (hvalid : ∀ (S : Fol.Structure LNF),
-        Nonempty S → Fol.all_realize_sentence S NFTheory → Wff.Valid S p) :
+        Nonempty S → Fol.allRealizeSentence S NFTheory → Wff.Valid S p) :
     NPrf p := by
   intro rho
   let f : Formula 1 :=
     NFChoice.SemanticCore.Lowering.lowerWff (fun _ : Var => (0 : Fin 1)) p
-  have hProv : NFTheory ⊢ₛ' Fol.bd_alls 1 f.toFlypitch :=
+  have hProv : NFTheory ⊢ₛ' Fol.bdAlls 1 f.toFlypitch :=
     by
-    apply (Fol.completeness NFTheory (Fol.bd_alls 1 f.toFlypitch)).2
+    apply (Fol.completeness NFTheory (Fol.bdAlls 1 f.toFlypitch)).2
     intro S hNonempty hNF
     rw [Fol.realize_sentence_bd_alls]
     intro xs

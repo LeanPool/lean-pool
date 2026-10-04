@@ -32,16 +32,17 @@ open NFChoice.DefinitionLeaves.AlphaFocusedFV
 open NFChoice.DirectNominalPrf
 open NFChoice.DirectNominalPrf.Nominal
 
+/-- Checked nominal proof certificate identified upstream as `nominal_df_sn`. -/
 @[expose]
-noncomputable def nominal_df_sn (x : Var) (A : Class) (dv_A_x : x ∉ A.fv) :
-    Nominal.NPrf (.classEq (syn_csn A) (.cab x (.classEq (.cv x) A))) :=
+noncomputable def nominalDfSn (x : Var) (A : Class) (dv_A_x : x ∉ A.fv) :
+    Nominal.NPrf (.classEq (synCsn A) (.cab x (.classEq (.cv x) A))) :=
   by
-  let alpha_dummy_000 : Var := (freshVar ((A).fv) 0)
-  have fresh_000 : alpha_dummy_000 ∉ ((A).fv) := by exact freshVar_not_mem ((A).fv) 0
+  let alphaDummy000 : Var := (freshVar ((A).fv) 0)
+  have fresh_000 : alphaDummy000 ∉ ((A).fv) := by exact freshVar_not_mem ((A).fv) 0
   exact
     Nominal.alphaClassEq
       (TAlphaClass.cab (TAlphaWff.classEq (TAlphaClass.cv (TAlphaVar.here _ _ _))
-          (TAlphaClass.refl_of_fv_fresh _ _ (by
+          (TAlphaClass.reflOfFvFresh _ _ (by
               intro a b h hne;
               simp only [List.mem_cons, List.not_mem_nil, or_false, Prod.mk.injEq] at h;
               repeat'

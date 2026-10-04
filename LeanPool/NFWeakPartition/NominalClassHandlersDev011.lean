@@ -24,6 +24,7 @@ open NFChoice.DirectCertificate.ClassBoundaryNormalizationDev005
 open NFChoice.DirectCertificate.ClassBoundaryCoreDev006
 open NFChoice.DirectCertificate.ClassBoundaryRawHandlersDev010
 
+/-- Proof-translation construction identified upstream as `Theory`. -/
 abbrev Theory : Fol.SentTheory LNF :=
   LiteralHailperinNF
 
@@ -101,7 +102,7 @@ noncomputable def dfClelOfShift (x : Var) (A B : Class)
     (hClassMem :
       ∀ rho, lowerWff rho (.classMem A B) = classMem (classPred rho A) (classPred rho B))
     (hEqA : ∀ rho, lowerWff (bindRho rho x) (.classEq (.cv x) A) =
-          represents (&0) (Fol.lift_formula_at (classPred rho A) 1 1))
+          represents (&0) (Fol.liftFormulaAt (classPred rho A) 1 1))
     (hMemB : ∀ rho, lowerWff (bindRho rho x) (.classMem (.cv x) B) =
           liftedClassMem (classPred rho B)) :
     NPrf (dfClelGoal x A B) := fun rho =>

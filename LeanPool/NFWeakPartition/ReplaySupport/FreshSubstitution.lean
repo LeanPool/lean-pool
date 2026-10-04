@@ -33,7 +33,7 @@ theorem not_mem_class_variable (a b : Var) (h : a ≠ b) : a ∉ (Class.cv b).fv
   simpa only [fv_class_cv, Finset.mem_singleton] using h
 
 theorem not_mem_syn_wsbc (v : Var) (A : Class) (x : Var) (ph : Wff) (hA : v ∉ A.fv)
-    (hph : v ∉ ph.fv) : v ∉ (syn_wsbc A x ph).fv :=
+    (hph : v ∉ ph.fv) : v ∉ (synWsbc A x ph).fv :=
   by
   rw [fv_syn_wsbc]
   intro membership

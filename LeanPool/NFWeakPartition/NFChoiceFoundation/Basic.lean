@@ -80,12 +80,12 @@ def ex {n : Nat} (p : Formula (n + 1)) : Formula n :=
 
 /-- Apply the sole binary relation symbol to two bounded variables. -/
 @[expose]
-def memToFlypitch {n : Nat} (x y : Fol.bounded_term LNF n) : Fol.bounded_formula LNF n :=
+def memToFlypitch {n : Nat} (x y : Fol.boundedTerm LNF n) : Fol.boundedFormula LNF n :=
   Fol.bd_apprel (Fol.bd_apprel (Fol.bd_rel LNFRelation.mem) x) y
 
 /-- Translate the small front end into Flypitch's bounded syntax. -/
 @[expose]
-def toFlypitch : {n : Nat} → Formula n → Fol.bounded_formula LNF n
+def toFlypitch : {n : Nat} → Formula n → Fol.boundedFormula LNF n
   | _, .falsum => Fol.bd_falsum
   | _, .equal x y => Fol.bd_equal (Fol.bd_var x) (Fol.bd_var y)
   | _, .mem x y => memToFlypitch (Fol.bd_var x) (Fol.bd_var y)
@@ -164,10 +164,12 @@ def pairSingletonSecondMem {n : Nat} (a z r : Fin n) : Formula n :=
 /-! The direct first-order well-order predicate used in `ChoiceNF`. -/
 
 
+/-- Proof-translation construction identified upstream as `reflexiveOn`. -/
 @[expose]
 def reflexiveOn {n : Nat} (r a : Fin n) : Formula n :=
   .all (.imp (.mem 0 (Fin.succ a)) (pairMem 0 0 (Fin.succ r)))
 
+/-- Proof-translation construction identified upstream as `transitiveOn`. -/
 @[expose]
 def transitiveOn {n : Nat} (r a : Fin n) : Formula n :=
   .all
@@ -177,6 +179,7 @@ def transitiveOn {n : Nat} (r a : Fin n) : Formula n :=
                   (pairMem 1 0 (Fin.succ (Fin.succ (Fin.succ r)))))
                 (pairMem 2 0 (Fin.succ (Fin.succ (Fin.succ r))))))))))
 
+/-- Proof-translation construction identified upstream as `antisymmetricOn`. -/
 @[expose]
 def antisymmetricOn {n : Nat} (r a : Fin n) : Formula n :=
   .all
@@ -184,12 +187,14 @@ def antisymmetricOn {n : Nat} (r a : Fin n) : Formula n :=
             (conj (pairMem 1 0 (Fin.succ (Fin.succ r))) (pairMem 0 1 (Fin.succ (Fin.succ r))))
             (.equal 1 0)))))
 
+/-- Proof-translation construction identified upstream as `connectedOn`. -/
 @[expose]
 def connectedOn {n : Nat} (r a : Fin n) : Formula n :=
   .all
     (.imp (.mem 0 (Fin.succ a)) (.all (.imp (.mem 0 (Fin.succ (Fin.succ a)))
           (disj (pairMem 1 0 (Fin.succ (Fin.succ r))) (pairMem 0 1 (Fin.succ (Fin.succ r)))))))
 
+/-- Proof-translation construction identified upstream as `foundedOn`. -/
 @[expose]
 def foundedOn {n : Nat} (r a : Fin n) : Formula n :=
   .all
@@ -213,58 +218,69 @@ and ordered pairs are expanded into equality and membership.
 -/
 
 
+/-- Proof-translation construction identified upstream as `axExt`. -/
 @[expose]
 def axExt : Sentence :=
   .all (.all (.imp (.all (Formula.biimp (.mem 0 2) (.mem 0 1))) (.equal 1 0)))
 
+/-- Proof-translation construction identified upstream as `axNin`. -/
 @[expose]
 def axNin : Sentence :=
   .all
     (.all (Formula.ex (.all
           (Formula.biimp (.mem 0 1) (Formula.neg (Formula.conj (.mem 0 3) (.mem 0 2)))))))
 
+/-- Proof-translation construction identified upstream as `axXp`. -/
 @[expose]
 def axXp : Sentence :=
   .all
     (Formula.ex (.all (Formula.biimp (.mem 0 1) (Formula.ex
             (Formula.ex (Formula.conj (Formula.equalKPair 2 1 0) (.mem 0 4)))))))
 
+/-- Proof-translation construction identified upstream as `axCnv`. -/
 @[expose]
 def axCnv : Sentence :=
   .all
     (Formula.ex (.all (.all (Formula.biimp (Formula.pairMem 1 0 2) (Formula.pairMem 0 1 3)))))
 
+/-- Proof-translation construction identified upstream as `ax1c`. -/
 @[expose]
 def ax1c : Sentence :=
   Formula.ex (.all (Formula.biimp (.mem 0 1) (Formula.isSomeSingleton 0)))
 
+/-- Proof-translation construction identified upstream as `axSset`. -/
 @[expose]
 def axSset : Sentence :=
   Formula.ex (.all (.all (Formula.biimp (Formula.pairMem 1 0 2) (Formula.subset 1 0))))
 
+/-- Proof-translation construction identified upstream as `axSi`. -/
 @[expose]
 def axSi : Sentence :=
   .all
     (Formula.ex (.all
         (.all (Formula.biimp (Formula.singletonPairMem 1 0 2) (Formula.pairMem 1 0 3)))))
 
+/-- Proof-translation construction identified upstream as `axIns2`. -/
 @[expose]
 def axIns2 : Sentence :=
   .all
     (Formula.ex (.all (.all (.all
             (Formula.biimp (Formula.insertedPairMem 2 1 0 3) (Formula.pairMem 2 0 4))))))
 
+/-- Proof-translation construction identified upstream as `axIns3`. -/
 @[expose]
 def axIns3 : Sentence :=
   .all
     (Formula.ex (.all (.all (.all
             (Formula.biimp (Formula.insertedPairMem 2 1 0 3) (Formula.pairMem 2 1 4))))))
 
+/-- Proof-translation construction identified upstream as `axTypeLower`. -/
 @[expose]
 def axTypeLower : Sentence :=
   .all
     (Formula.ex (.all (Formula.biimp (.mem 0 1) (.all (Formula.pairSingletonSecondMem 0 1 3)))))
 
+/-- Proof-translation construction identified upstream as `axSn`. -/
 @[expose]
 def axSn : Sentence :=
   .all (Formula.ex (.all (Formula.biimp (.mem 0 1) (.equal 0 2))))
@@ -327,23 +343,23 @@ def ChoiceNF : Fol.sentence LNF :=
 module supplies its concrete `SourceChoiceNF`; this foundation does not identify
 that sentence with the direct comparison sentence `ChoiceNF`.
 -/
-abbrev SourceNF_proves_not_choice_target (SourceChoiceNF : Fol.sentence LNF) : Prop :=
-  HailperinNF ⊢ₛ' (Fol.bd_not SourceChoiceNF)
+abbrev SourceNFProvesNotChoiceTarget (SourceChoiceNF : Fol.sentence LNF) : Prop :=
+  HailperinNF ⊢ₛ' (Fol.bdNot SourceChoiceNF)
 
 /-- The comparison target for the direct every-set-is-well-orderable sentence. -/
-abbrev DirectNF_proves_not_choice_target : Prop :=
-  SourceNF_proves_not_choice_target ChoiceNF
+abbrev DirectNFProvesNotChoiceTarget : Prop :=
+  SourceNFProvesNotChoiceTarget ChoiceNF
 
 /-- Completeness specialized to any exact source-generated choice sentence. -/
 theorem source_not_choice_completeness_bridge (SourceChoiceNF : Fol.sentence LNF) :
-    (HailperinNF ⊢ₛ' (Fol.bd_not SourceChoiceNF)) ↔
-      Fol.ssatisfied HailperinNF (Fol.bd_not SourceChoiceNF) :=
-  Fol.completeness HailperinNF (Fol.bd_not SourceChoiceNF)
+    (HailperinNF ⊢ₛ' (Fol.bdNot SourceChoiceNF)) ↔
+      Fol.ssatisfied HailperinNF (Fol.bdNot SourceChoiceNF) :=
+  Fol.completeness HailperinNF (Fol.bdNot SourceChoiceNF)
 
 /-- The exact syntactic/semantic bridge supplied by Gödel completeness. -/
 theorem NF_not_choice_completeness_bridge :
-    (HailperinNF ⊢ₛ' (Fol.bd_not ChoiceNF)) ↔
-      Fol.ssatisfied HailperinNF (Fol.bd_not ChoiceNF) :=
+    (HailperinNF ⊢ₛ' (Fol.bdNot ChoiceNF)) ↔
+      Fol.ssatisfied HailperinNF (Fol.bdNot ChoiceNF) :=
   source_not_choice_completeness_bridge ChoiceNF
 
 end NFChoice.Foundation

@@ -23,11 +23,13 @@ that do not reduce to reflexivity after deep source expansion.
 -/
 
 
+/-- Proof-translation construction identified upstream as `dfClabStructural`. -/
 @[expose]
 noncomputable def dfClabStructural (x y : Var) (p : Wff) :
     NPrf (NFChoice.DirectNominalPrf.Nominal.ClassHandlersDev011.dfClabGoal x y p) :=
   NFChoice.DirectNominalPrf.Nominal.DfClabStructuralDev005.dfClabStructural x y p
 
+/-- Proof-translation construction identified upstream as `dfCleqOfDV`. -/
 @[expose]
 noncomputable def dfCleqOfDV (x y z : Var) (A B : Class)
     (hAxExt : NPrf
@@ -38,6 +40,7 @@ noncomputable def dfCleqOfDV (x y z : Var) (A B : Class)
   NFChoice.DirectNominalPrf.Nominal.DefinitionLeafAdapterDev014.dfCleqOfDV x y z A B
     hAxExt hxA hxB
 
+/-- Proof-translation construction identified upstream as `dfClelOfDV`. -/
 @[expose]
 noncomputable def dfClelOfDV (x : Var) (A B : Class) (hxA : x ∉ A.fv) (hxB : x ∉ B.fv) :
     NPrf (NFChoice.DirectNominalPrf.Nominal.ClassHandlersDev011.dfClelGoal x A B) :=

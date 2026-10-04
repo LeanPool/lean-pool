@@ -19,6 +19,7 @@ open scoped Fol
 open NFChoice.Foundation
 open NFChoice.SemanticCore
 
+/-- Proof-translation construction identified upstream as `finValRho`. -/
 @[expose]
 def finValRho {n : Nat} (rho : Var → Fin n) : Var → Nat := fun x => (rho x).val
 
@@ -65,7 +66,7 @@ mutual
     | imp p
       q =>
       simp only [lowerWff, NFChoice.SemanticCore.Lowering.lowerWff, Formula.toFlypitch,
-        Fol.bounded_preformula.fst]
+        Fol.BoundedPreformula.fst]
       rw [lowerWff_toFlypitch rho p, lowerWff_toFlypitch rho q]
     | all x
       p =>
@@ -82,7 +83,7 @@ mutual
         lowerClassPred_toFlypitch (NFChoice.SemanticCore.Lowering.liftRho rho) 0 B
       simpa [lowerWff, NFChoice.SemanticCore.Lowering.lowerWff, Formula.toFlypitch,
         Formula.biimp, Formula.conj, Formula.neg, biimp, conj, neg, finVal_lift,
-        Fol.bounded_preformula.fst] using
+        Fol.BoundedPreformula.fst] using
         congrArg₂ (fun p q => Fol.preformula.all (biimp p q)) ihA ihB
     | classMem A
       B =>

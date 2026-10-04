@@ -33,7 +33,7 @@ only substantive shared construction is the usual Kuratowski ordered pair.
 
 section Constructors
 
-variable {S : Fol.Structure LNF} (hNF : Fol.all_realize_sentence S NF)
+variable {S : Fol.Structure LNF} (hNF : Fol.allRealizeSentence S NF)
 
 /-- The stratified predicate defining a singleton with one parameter. -/
 @[expose]
@@ -164,7 +164,7 @@ end Constructors
 
 section LiteralClasses
 
-variable {S : Fol.Structure LNF} (hNF : Fol.all_realize_sentence S NF)
+variable {S : Fol.Structure LNF} (hNF : Fol.allRealizeSentence S NF)
 
 /-- The actual set denoted by an exact literal class expression in an NF model. -/
 @[expose]
@@ -463,32 +463,39 @@ section ComprehensionPredicates
 /-! Strong unary predicates whose comprehension sets witness the eleven axioms. -/
 
 
+/-- Standard-NF model or stratification construction identified upstream as `ninPred`. -/
 @[expose]
 def ninPred : Formula 3 :=
   Formula.neg (Formula.conj (.mem 0 2) (.mem 0 1))
 
+/-- Standard-NF model or stratification construction identified upstream as `xpPred`. -/
 @[expose]
 def xpPred : Formula 2 :=
   Formula.ex (Formula.ex (Formula.conj (literalKPair 2 1 0) (.mem 0 3)))
 
+/-- Standard-NF model or stratification construction identified upstream as `oneCPred`. -/
 @[expose]
 def oneCPred : Formula 1 :=
   Formula.isSomeSingleton 0
 
+/-- Standard-NF model or stratification construction identified upstream as `cnvPred`. -/
 @[expose]
 def cnvPred : Formula 2 :=
   Formula.ex (Formula.ex (Formula.conj (literalKPair 2 1 0) (literalPairMem 0 1 3)))
 
+/-- Standard-NF model or stratification construction identified upstream as `ssetPred`. -/
 @[expose]
 def ssetPred : Formula 1 :=
   Formula.ex (Formula.ex (Formula.conj (literalKPair 2 1 0) (Formula.subset 1 0)))
 
+/-- Standard-NF model or stratification construction identified upstream as `siPred`. -/
 @[expose]
 def siPred : Formula 2 :=
   Formula.ex
     (Formula.ex (Formula.conj (LiteralClass.setEqClass 2
           (.kPair (.singleton (.setVar 1)) (.singleton (.setVar 0)))) (literalPairMem 1 0 3)))
 
+/-- Standard-NF model or stratification construction identified upstream as `ins2Pred`. -/
 @[expose]
 def ins2Pred : Formula 2 :=
   Formula.ex
@@ -496,6 +503,7 @@ def ins2Pred : Formula 2 :=
             (.kPair (.singleton (.singleton (.setVar 2))) (.kPair (.setVar 1) (.setVar 0))))
           (literalPairMem 2 0 4))))
 
+/-- Standard-NF model or stratification construction identified upstream as `ins3Pred`. -/
 @[expose]
 def ins3Pred : Formula 2 :=
   Formula.ex
@@ -503,6 +511,7 @@ def ins3Pred : Formula 2 :=
             (.kPair (.singleton (.singleton (.setVar 2))) (.kPair (.setVar 1) (.setVar 0))))
           (literalPairMem 2 1 4))))
 
+/-- Standard-NF model or stratification construction identified upstream as `typeLowerPred`. -/
 @[expose]
 def typeLowerPred : Formula 2 :=
   .all (literalPairSingletonSecondMem 0 1 2)
@@ -637,7 +646,7 @@ end ComprehensionPredicates
 
 section Satisfaction
 
-variable {S : Fol.Structure LNF} (hNF : Fol.all_realize_sentence S NF)
+variable {S : Fol.Structure LNF} (hNF : Fol.allRealizeSentence S NF)
 
 /-- A named choice of the set delivered by an NF comprehension instance. -/
 @[expose]
@@ -651,11 +660,11 @@ theorem mem_comprehensionObj {n : Nat} (p : Formula (n + 1)) (hp : p.Stratified)
     Mem S z (comprehensionObj hNF p hp xs) ↔ FormulaHolds S (DVec.cons z xs) p :=
   Classical.choose_spec (nf_comprehension hNF p hp xs) z
 
-theorem realizes_literalAxSn (hNF : Fol.all_realize_sentence S NF) :
-    Fol.realize_sentence S (literalAxiomFormula .axSn) :=
+theorem realizes_literalAxSn (hNF : Fol.allRealizeSentence S NF) :
+    Fol.realizeSentence S (literalAxiomFormula .axSn) :=
   by
   rw [literalAxiomFormula, literalAxiomSyntax]
-  change Fol.realize_bounded_formula DVec.nil (Formula.toFlypitch literalAxSn) DVec.nil
+  change Fol.realizeBoundedFormula DVec.nil (Formula.toFlypitch literalAxSn) DVec.nil
   rw [← formulaHolds_toFlypitch DVec.nil literalAxSn]
   simp only [literalAxSn, FormulaHolds, formulaHolds_ex, formulaHolds_biimp]
   intro x
@@ -663,11 +672,11 @@ theorem realizes_literalAxSn (hNF : Fol.all_realize_sentence S NF) :
   intro z
   simp [lookup, DVec.nth]
 
-theorem realizes_literalAxNin (hNF : Fol.all_realize_sentence S NF) :
-    Fol.realize_sentence S (literalAxiomFormula .axNin) :=
+theorem realizes_literalAxNin (hNF : Fol.allRealizeSentence S NF) :
+    Fol.realizeSentence S (literalAxiomFormula .axNin) :=
   by
   rw [literalAxiomFormula, literalAxiomSyntax]
-  change Fol.realize_bounded_formula DVec.nil (Formula.toFlypitch literalAxNin) DVec.nil
+  change Fol.realizeBoundedFormula DVec.nil (Formula.toFlypitch literalAxNin) DVec.nil
   rw [← formulaHolds_toFlypitch DVec.nil literalAxNin]
   simp only [literalAxNin, FormulaHolds, formulaHolds_ex, formulaHolds_biimp]
   intro x y
@@ -679,11 +688,11 @@ theorem realizes_literalAxNin (hNF : Fol.all_realize_sentence S NF) :
   rw [mem_comprehensionObj]
   simp [ninPred, FormulaHolds, lookup, DVec.nth]
 
-theorem realizes_literalAx1c (hNF : Fol.all_realize_sentence S NF) :
-    Fol.realize_sentence S (literalAxiomFormula .ax1c) :=
+theorem realizes_literalAx1c (hNF : Fol.allRealizeSentence S NF) :
+    Fol.realizeSentence S (literalAxiomFormula .ax1c) :=
   by
   rw [literalAxiomFormula, literalAxiomSyntax]
-  change Fol.realize_bounded_formula DVec.nil (Formula.toFlypitch literalAx1c) DVec.nil
+  change Fol.realizeBoundedFormula DVec.nil (Formula.toFlypitch literalAx1c) DVec.nil
   rw [← formulaHolds_toFlypitch DVec.nil literalAx1c]
   simp only [literalAx1c, formulaHolds_ex, FormulaHolds, formulaHolds_biimp]
   refine ⟨comprehensionObj hNF oneCPred oneCPred_stratified DVec.nil, ?_⟩
@@ -693,11 +702,11 @@ theorem realizes_literalAx1c (hNF : Fol.all_realize_sentence S NF) :
   simp [oneCPred, Formula.isSomeSingleton, Formula.singleton, FormulaHolds, lookup,
     DVec.nth]
 
-theorem realizes_literalAxXp (hNF : Fol.all_realize_sentence S NF) :
-    Fol.realize_sentence S (literalAxiomFormula .axXp) :=
+theorem realizes_literalAxXp (hNF : Fol.allRealizeSentence S NF) :
+    Fol.realizeSentence S (literalAxiomFormula .axXp) :=
   by
   rw [literalAxiomFormula, literalAxiomSyntax]
-  change Fol.realize_bounded_formula DVec.nil (Formula.toFlypitch literalAxXp) DVec.nil
+  change Fol.realizeBoundedFormula DVec.nil (Formula.toFlypitch literalAxXp) DVec.nil
   rw [← formulaHolds_toFlypitch DVec.nil literalAxXp]
   simp only [literalAxXp, FormulaHolds, formulaHolds_ex, formulaHolds_biimp]
   intro x
@@ -708,16 +717,16 @@ theorem realizes_literalAxXp (hNF : Fol.all_realize_sentence S NF) :
   simp [xpPred, literalKPair, FormulaHolds, formulaHolds_ex, formulaHolds_conj,
     formulaHolds_setEqClass_iff hNF, evalLiteralClass, kPairObj, lookup, DVec.nth]
 
-theorem realizes_literalAxExt (hNF : Fol.all_realize_sentence S NF) :
-    Fol.realize_sentence S (literalAxiomFormula .axExt) :=
+theorem realizes_literalAxExt (hNF : Fol.allRealizeSentence S NF) :
+    Fol.realizeSentence S (literalAxiomFormula .axExt) :=
   hNF extensionality_mem_NF
 
-theorem realizes_literalAxTypeLower (hNF : Fol.all_realize_sentence S NF) :
-    Fol.realize_sentence S (literalAxiomFormula .axTypeLower) :=
+theorem realizes_literalAxTypeLower (hNF : Fol.allRealizeSentence S NF) :
+    Fol.realizeSentence S (literalAxiomFormula .axTypeLower) :=
   by
   rw [literalAxiomFormula, literalAxiomSyntax]
   change
-    Fol.realize_bounded_formula DVec.nil (Formula.toFlypitch literalAxTypeLower) DVec.nil
+    Fol.realizeBoundedFormula DVec.nil (Formula.toFlypitch literalAxTypeLower) DVec.nil
   rw [← formulaHolds_toFlypitch DVec.nil literalAxTypeLower]
   simp only [literalAxTypeLower, FormulaHolds, formulaHolds_ex, formulaHolds_biimp]
   intro x
@@ -730,11 +739,11 @@ theorem realizes_literalAxTypeLower (hNF : Fol.all_realize_sentence S NF) :
   simp [typeLowerPred, literalPairSingletonSecondMem, FormulaHolds,
     formulaHolds_classMemSet_iff hNF, evalLiteralClass, kPairObj, lookup, DVec.nth]
 
-theorem realizes_literalAxCnv (hNF : Fol.all_realize_sentence S NF) :
-    Fol.realize_sentence S (literalAxiomFormula .axCnv) :=
+theorem realizes_literalAxCnv (hNF : Fol.allRealizeSentence S NF) :
+    Fol.realizeSentence S (literalAxiomFormula .axCnv) :=
   by
   rw [literalAxiomFormula, literalAxiomSyntax]
-  change Fol.realize_bounded_formula DVec.nil (Formula.toFlypitch literalAxCnv) DVec.nil
+  change Fol.realizeBoundedFormula DVec.nil (Formula.toFlypitch literalAxCnv) DVec.nil
   rw [← formulaHolds_toFlypitch DVec.nil literalAxCnv]
   simp only [literalAxCnv, FormulaHolds, formulaHolds_ex, formulaHolds_biimp]
   intro x
@@ -756,11 +765,11 @@ theorem realizes_literalAxCnv (hNF : Fol.all_realize_sentence S NF) :
   · intro hm
     exact ⟨z, w, rfl, hm⟩
 
-theorem realizes_literalAxSset (hNF : Fol.all_realize_sentence S NF) :
-    Fol.realize_sentence S (literalAxiomFormula .axSset) :=
+theorem realizes_literalAxSset (hNF : Fol.allRealizeSentence S NF) :
+    Fol.realizeSentence S (literalAxiomFormula .axSset) :=
   by
   rw [literalAxiomFormula, literalAxiomSyntax]
-  change Fol.realize_bounded_formula DVec.nil (Formula.toFlypitch literalAxSset) DVec.nil
+  change Fol.realizeBoundedFormula DVec.nil (Formula.toFlypitch literalAxSset) DVec.nil
   rw [← formulaHolds_toFlypitch DVec.nil literalAxSset]
   simp only [literalAxSset, FormulaHolds, formulaHolds_ex, formulaHolds_biimp]
   let r := comprehensionObj hNF ssetPred ssetPred_stratified DVec.nil
@@ -782,11 +791,11 @@ theorem realizes_literalAxSset (hNF : Fol.all_realize_sentence S NF) :
   · intro hs
     exact ⟨a, b, rfl, hs⟩
 
-theorem realizes_literalAxSi (hNF : Fol.all_realize_sentence S NF) :
-    Fol.realize_sentence S (literalAxiomFormula .axSi) :=
+theorem realizes_literalAxSi (hNF : Fol.allRealizeSentence S NF) :
+    Fol.realizeSentence S (literalAxiomFormula .axSi) :=
   by
   rw [literalAxiomFormula, literalAxiomSyntax]
-  change Fol.realize_bounded_formula DVec.nil (Formula.toFlypitch literalAxSi) DVec.nil
+  change Fol.realizeBoundedFormula DVec.nil (Formula.toFlypitch literalAxSi) DVec.nil
   rw [← formulaHolds_toFlypitch DVec.nil literalAxSi]
   simp only [literalAxSi, FormulaHolds, formulaHolds_ex, formulaHolds_biimp]
   intro x
@@ -810,11 +819,11 @@ theorem realizes_literalAxSi (hNF : Fol.all_realize_sentence S NF) :
   · intro hm
     exact ⟨z, w, rfl, hm⟩
 
-theorem realizes_literalAxIns2 (hNF : Fol.all_realize_sentence S NF) :
-    Fol.realize_sentence S (literalAxiomFormula .axIns2) :=
+theorem realizes_literalAxIns2 (hNF : Fol.allRealizeSentence S NF) :
+    Fol.realizeSentence S (literalAxiomFormula .axIns2) :=
   by
   rw [literalAxiomFormula, literalAxiomSyntax]
-  change Fol.realize_bounded_formula DVec.nil (Formula.toFlypitch literalAxIns2) DVec.nil
+  change Fol.realizeBoundedFormula DVec.nil (Formula.toFlypitch literalAxIns2) DVec.nil
   rw [← formulaHolds_toFlypitch DVec.nil literalAxIns2]
   simp only [literalAxIns2, FormulaHolds, formulaHolds_ex, formulaHolds_biimp]
   intro x
@@ -839,11 +848,11 @@ theorem realizes_literalAxIns2 (hNF : Fol.all_realize_sentence S NF) :
   · intro hm
     exact ⟨z, w, t, rfl, hm⟩
 
-theorem realizes_literalAxIns3 (hNF : Fol.all_realize_sentence S NF) :
-    Fol.realize_sentence S (literalAxiomFormula .axIns3) :=
+theorem realizes_literalAxIns3 (hNF : Fol.allRealizeSentence S NF) :
+    Fol.realizeSentence S (literalAxiomFormula .axIns3) :=
   by
   rw [literalAxiomFormula, literalAxiomSyntax]
-  change Fol.realize_bounded_formula DVec.nil (Formula.toFlypitch literalAxIns3) DVec.nil
+  change Fol.realizeBoundedFormula DVec.nil (Formula.toFlypitch literalAxIns3) DVec.nil
   rw [← formulaHolds_toFlypitch DVec.nil literalAxIns3]
   simp only [literalAxIns3, FormulaHolds, formulaHolds_ex, formulaHolds_biimp]
   intro x
@@ -870,8 +879,8 @@ theorem realizes_literalAxIns3 (hNF : Fol.all_realize_sentence S NF) :
     exact ⟨z, w, ⟨t, rfl⟩, hm⟩
 
 /-- Every model of ordinary NF satisfies all eleven literal Hailperin axioms. -/
-theorem nf_models_literalHailperin (hNF : Fol.all_realize_sentence S NF) :
-    Fol.all_realize_sentence S LiteralHailperinNF :=
+theorem nf_models_literalHailperin (hNF : Fol.allRealizeSentence S NF) :
+    Fol.allRealizeSentence S LiteralHailperinNF :=
   by
   intro f hf
   rcases hf with ⟨name, rfl⟩

@@ -23,7 +23,7 @@ open NFChoice.SemanticCore.Lowering
 
 section Coding
 
-variable {S : Fol.Structure LNF} (hH : Fol.all_realize_sentence S LiteralHailperinNF)
+variable {S : Fol.Structure LNF} (hH : Fol.allRealizeSentence S LiteralHailperinNF)
 
 /-! #### Exact products, cylindrification, and sections -/
 

@@ -30,28 +30,28 @@ open NFChoice.DefinitionLeaves.AlphaFocusedFV
 open NFChoice.DirectNominalPrf
 open NFChoice.DirectNominalPrf.Nominal
 
-theorem nb078_wpp_notmem_0515 (x : Var) : x ∉ ((syn_cid)).fv := by
+theorem nb078_wpp_notmem_0515 (x : Var) : x ∉ ((synCid)).fv := by
   simpa only [fv_syn_cid] using (nb078_compact_fv_empty_0035 x)
 
 theorem nb078_compact_envfresh_0035 (x : Var) (y : Var) (f : Var) :
     TEnvFresh
-      [((nb078_alpha_dummy_007), (nb078_alpha_dummy_008 f)),
-        ((nb078_alpha_dummy_005), (nb078_alpha_dummy_006 f)),
-        ((nb078_alpha_dummy_000), f), ((nb078_alpha_dummy_004), y),
-        ((nb078_alpha_dummy_003), x)]
-      ((syn_cid)).fv :=
+      [((nb078AlphaDummy007), (nb078AlphaDummy008 f)),
+        ((nb078AlphaDummy005), (nb078AlphaDummy006 f)),
+        ((nb078AlphaDummy000), f), ((nb078AlphaDummy004), y),
+        ((nb078AlphaDummy003), x)]
+      ((synCid)).fv :=
   by
   exact
-    (TEnvFresh.consFresh (nb078_alpha_dummy_007) (nb078_alpha_dummy_008 f)
+    (TEnvFresh.consFresh (nb078AlphaDummy007) (nb078AlphaDummy008 f)
       (nb078_wpp_notmem_0506) (nb078_wpp_notmem_0507 f)
-      (TEnvFresh.consFresh (nb078_alpha_dummy_005) (nb078_alpha_dummy_006 f)
+      (TEnvFresh.consFresh (nb078AlphaDummy005) (nb078AlphaDummy006 f)
         (nb078_wpp_notmem_0508) (nb078_wpp_notmem_0509 f)
-        (TEnvFresh.consFresh (nb078_alpha_dummy_000) f (nb078_wpp_notmem_0510)
+        (TEnvFresh.consFresh (nb078AlphaDummy000) f (nb078_wpp_notmem_0510)
           (nb078_wpp_notmem_0511 f)
-          (TEnvFresh.consFresh (nb078_alpha_dummy_004) y (nb078_wpp_notmem_0512)
+          (TEnvFresh.consFresh (nb078AlphaDummy004) y (nb078_wpp_notmem_0512)
             (nb078_wpp_notmem_0513 y)
-            (TEnvFresh.consFresh (nb078_alpha_dummy_003) x (nb078_wpp_notmem_0514)
-              (nb078_wpp_notmem_0515 x) (TEnvFresh.nil ((syn_cid)).fv))))))
+            (TEnvFresh.consFresh (nb078AlphaDummy003) x (nb078_wpp_notmem_0514)
+              (nb078_wpp_notmem_0515 x) (TEnvFresh.nil ((synCid)).fv))))))
 
 
 end NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired

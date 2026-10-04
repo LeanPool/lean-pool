@@ -68,10 +68,12 @@ end
 
 /-- Corresponding nominal variables have equal values in paired valuations. -/
 @[expose]
-def ValAgree {S : Type _} (env : BinderEnv) (v w : Var → S) : Prop :=
+def _root_.NFChoice.DefinitionLeaves.AlphaTransport.ValAgree
+    {S : Type _} (env : BinderEnv) (v w : Var → S) : Prop :=
   ∀ ⦃x y⦄, AlphaVar env x y → v x = w y
 
-theorem ValAgree.extend {S : Type _} {env : BinderEnv} {v w : Var → S}
+theorem _root_.NFChoice.DefinitionLeaves.AlphaTransport.ValAgree.extend
+    {S : Type _} {env : BinderEnv} {v w : Var → S}
     (h : ValAgree env v w) (x y : Var) (a : S) :
     ValAgree ((x, y) :: env) (update v x a) (update w y a) :=
   by
@@ -84,7 +86,8 @@ theorem ValAgree.extend {S : Type _} {env : BinderEnv} {v w : Var → S}
     have htail : AlphaVar env u u := AlphaVar.free hl.2 hr.2
     simpa [update_noteq, hl.1, hr.1] using h htail
 
-theorem valAgree_empty {S : Type _} (v : Var → S) : ValAgree [] v v :=
+theorem _root_.NFChoice.DefinitionLeaves.AlphaTransport.valAgree_empty
+    {S : Type _} (v : Var → S) : ValAgree [] v v :=
   by
   intro x y h
   cases h with
@@ -92,7 +95,8 @@ theorem valAgree_empty {S : Type _} (v : Var → S) : ValAgree [] v v :=
 
 mutual
   /-- Alpha-equivalent classes have identical denotations. -/
-  theorem AlphaClass.holds_iff {S : Fol.Structure LNF} {env : BinderEnv} {A B : Class}
+  theorem _root_.NFChoice.DefinitionLeaves.AlphaTransport.AlphaClass.holds_iff
+      {S : Fol.Structure LNF} {env : BinderEnv} {A B : Class}
       (h : AlphaClass env A B) {v w : Var → S} (hv : ValAgree env v w) (a : S) :
       Class.Holds S v A a ↔ Class.Holds S w B a := by
     cases h with
@@ -103,7 +107,8 @@ mutual
       simp only [Class.Holds]
       exact AlphaWff.holds_iff hp (hv.extend _ _ a)
   /-- Alpha-equivalent formulas have identical truth values. -/
-  theorem AlphaWff.holds_iff {S : Fol.Structure LNF} {env : BinderEnv} {p q : Wff}
+  theorem _root_.NFChoice.DefinitionLeaves.AlphaTransport.AlphaWff.holds_iff
+      {S : Fol.Structure LNF} {env : BinderEnv} {p q : Wff}
       (h : AlphaWff env p q) {v w : Var → S} (hv : ValAgree env v w) :
       Wff.Holds S v p ↔ Wff.Holds S w q := by
     cases h with
@@ -143,19 +148,23 @@ end
 
 namespace AlphaWff
 
-theorem neg {env : BinderEnv} {p q : Wff} (h : AlphaWff env p q) :
+theorem _root_.NFChoice.DefinitionLeaves.AlphaTransport.AlphaWff.neg
+    {env : BinderEnv} {p q : Wff} (h : AlphaWff env p q) :
     AlphaWff env (Wff.neg p) (Wff.neg q) :=
   .imp h .falsum
 
-theorem conj {env : BinderEnv} {p p' q q' : Wff} (hp : AlphaWff env p p')
+theorem _root_.NFChoice.DefinitionLeaves.AlphaTransport.AlphaWff.conj
+    {env : BinderEnv} {p p' q q' : Wff} (hp : AlphaWff env p p')
     (hq : AlphaWff env q q') : AlphaWff env (Wff.conj p q) (Wff.conj p' q') :=
   neg (.imp hp (neg hq))
 
-theorem biimp {env : BinderEnv} {p p' q q' : Wff} (hp : AlphaWff env p p')
+theorem _root_.NFChoice.DefinitionLeaves.AlphaTransport.AlphaWff.biimp
+    {env : BinderEnv} {p p' q q' : Wff} (hp : AlphaWff env p p')
     (hq : AlphaWff env q q') : AlphaWff env (Wff.biimp p q) (Wff.biimp p' q') :=
   conj (.imp hp hq) (.imp hq hp)
 
-theorem ex {env : BinderEnv} {x y : Var} {p q : Wff} (h : AlphaWff ((x, y) :: env) p q) :
+theorem _root_.NFChoice.DefinitionLeaves.AlphaTransport.AlphaWff.ex
+    {env : BinderEnv} {x y : Var} {p q : Wff} (h : AlphaWff ((x, y) :: env) p q) :
     AlphaWff env (Wff.ex x p) (Wff.ex y q) :=
   neg (.all (neg h))
 
@@ -163,17 +172,20 @@ end AlphaWff
 
 /-- A finite support is fresh for every genuinely renamed environment pair. -/
 @[expose]
-def EnvFresh (env : BinderEnv) (support : Finset Var) : Prop :=
+def _root_.NFChoice.DefinitionLeaves.AlphaTransport.EnvFresh
+    (env : BinderEnv) (support : Finset Var) : Prop :=
   ∀ ⦃x y⦄, (x, y) ∈ env → x ≠ y → x ∉ support ∧ y ∉ support
 
-theorem EnvFresh.mono {env : BinderEnv} {small large : Finset Var}
+theorem _root_.NFChoice.DefinitionLeaves.AlphaTransport.EnvFresh.mono
+    {env : BinderEnv} {small large : Finset Var}
     (h : EnvFresh env large) (hsub : small ⊆ large) : EnvFresh env small :=
   by
   intro x y hxy hne
   rcases h hxy hne with ⟨hx, hy⟩
   exact ⟨fun hm => hx (hsub hm), fun hm => hy (hsub hm)⟩
 
-theorem AlphaVar.refl_of_fresh (env : BinderEnv) (u : Var) (h : EnvFresh env { u }) :
+theorem _root_.NFChoice.DefinitionLeaves.AlphaTransport.AlphaVar.reflOfFresh
+    (env : BinderEnv) (u : Var) (h : EnvFresh env { u }) :
     AlphaVar env u u := by
   induction env with
   | nil => exact .free (by simp) (by simp)
@@ -196,16 +208,17 @@ theorem AlphaVar.refl_of_fresh (env : BinderEnv) (u : Var) (h : EnvFresh env { u
 
 mutual
   /-- Reflexive alpha certificate under externally fresh renamed binders. -/
-  theorem AlphaClass.refl_of_fresh (env : BinderEnv) (A : Class)
+  theorem _root_.NFChoice.DefinitionLeaves.AlphaTransport.AlphaClass.reflOfFresh
+      (env : BinderEnv) (A : Class)
       (h : EnvFresh env A.vars) : AlphaClass env A A := by
     cases A with
     | cv x =>
       apply AlphaClass.cv
-      apply AlphaVar.refl_of_fresh env x
+      apply AlphaVar.reflOfFresh env x
       exact h.mono (by simp [Class.vars])
     | cab x p =>
       apply AlphaClass.cab
-      apply AlphaWff.refl_of_fresh ((x, x) :: env) p
+      apply AlphaWff.reflOfFresh ((x, x) :: env) p
       intro a b hab hne
       rcases List.mem_cons.mp hab with hab | hab
       · cases hab
@@ -214,17 +227,18 @@ mutual
         simp only [Class.vars, Finset.mem_insert, not_or] at hf
         exact ⟨hf.1.2, hf.2.2⟩
   /-- Reflexive formula alpha certificate under externally fresh binders. -/
-  theorem AlphaWff.refl_of_fresh (env : BinderEnv) (p : Wff) (h : EnvFresh env p.vars) :
+  theorem _root_.NFChoice.DefinitionLeaves.AlphaTransport.AlphaWff.reflOfFresh
+      (env : BinderEnv) (p : Wff) (h : EnvFresh env p.vars) :
       AlphaWff env p p := by
     cases p with
     | falsum => exact .falsum
     | imp p q =>
       apply AlphaWff.imp
-      · exact AlphaWff.refl_of_fresh env p (h.mono (by intro u hu; simp [Wff.vars, hu]))
-      · exact AlphaWff.refl_of_fresh env q (h.mono (by intro u hu; simp [Wff.vars, hu]))
+      · exact AlphaWff.reflOfFresh env p (h.mono (by intro u hu; simp [Wff.vars, hu]))
+      · exact AlphaWff.reflOfFresh env q (h.mono (by intro u hu; simp [Wff.vars, hu]))
     | all x p =>
       apply AlphaWff.all
-      apply AlphaWff.refl_of_fresh ((x, x) :: env) p
+      apply AlphaWff.reflOfFresh ((x, x) :: env) p
       intro a b hab hne
       rcases List.mem_cons.mp hab with hab | hab
       · cases hab
@@ -234,28 +248,29 @@ mutual
         exact ⟨hf.1.2, hf.2.2⟩
     | objEq x y =>
       apply AlphaWff.objEq
-      · apply AlphaVar.refl_of_fresh env x
+      · apply AlphaVar.reflOfFresh env x
         exact h.mono (by simp [Wff.vars])
-      · apply AlphaVar.refl_of_fresh env y
+      · apply AlphaVar.reflOfFresh env y
         exact h.mono (by simp [Wff.vars])
     | objMem x y =>
       apply AlphaWff.objMem
-      · apply AlphaVar.refl_of_fresh env x
+      · apply AlphaVar.reflOfFresh env x
         exact h.mono (by simp [Wff.vars])
-      · apply AlphaVar.refl_of_fresh env y
+      · apply AlphaVar.reflOfFresh env y
         exact h.mono (by simp [Wff.vars])
     | classEq A B =>
       apply AlphaWff.classEq
-      · exact AlphaClass.refl_of_fresh env A (h.mono (by intro u hu; simp [Wff.vars, hu]))
-      · exact AlphaClass.refl_of_fresh env B (h.mono (by intro u hu; simp [Wff.vars, hu]))
+      · exact AlphaClass.reflOfFresh env A (h.mono (by intro u hu; simp [Wff.vars, hu]))
+      · exact AlphaClass.reflOfFresh env B (h.mono (by intro u hu; simp [Wff.vars, hu]))
     | classMem A B =>
       apply AlphaWff.classMem
-      · exact AlphaClass.refl_of_fresh env A (h.mono (by intro u hu; simp [Wff.vars, hu]))
-      · exact AlphaClass.refl_of_fresh env B (h.mono (by intro u hu; simp [Wff.vars, hu]))
+      · exact AlphaClass.reflOfFresh env A (h.mono (by intro u hu; simp [Wff.vars, hu]))
+      · exact AlphaClass.reflOfFresh env B (h.mono (by intro u hu; simp [Wff.vars, hu]))
 end
 
 /-- Semantic alpha transport for the Wff-definition leaves. -/
-theorem valid_biimp_of_alpha {S : Fol.Structure LNF} {p q : Wff} (h : AlphaWff [] p q) :
+theorem _root_.NFChoice.DefinitionLeaves.AlphaTransport.valid_biimp_of_alpha
+    {S : Fol.Structure LNF} {p q : Wff} (h : AlphaWff [] p q) :
     Wff.Valid S (Wff.biimp p q) :=
   by
   apply NFChoice.DefinitionLeaves.Wff.valid_biimp_of_holds_iff
@@ -263,7 +278,8 @@ theorem valid_biimp_of_alpha {S : Fol.Structure LNF} {p q : Wff} (h : AlphaWff [
   exact h.holds_iff (valAgree_empty v)
 
 /-- Semantic alpha transport for the class-definition leaves. -/
-theorem valid_classEq_of_alpha {S : Fol.Structure LNF} {A B : Class}
+theorem _root_.NFChoice.DefinitionLeaves.AlphaTransport.valid_classEq_of_alpha
+    {S : Fol.Structure LNF} {A B : Class}
     (h : AlphaClass [] A B) : Wff.Valid S (.classEq A B) :=
   by
   apply NFChoice.DefinitionLeaves.Class.valid_classEq_of_holds_iff

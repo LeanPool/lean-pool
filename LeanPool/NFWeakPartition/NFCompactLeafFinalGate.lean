@@ -27,15 +27,15 @@ theorem holds_xp_rhs {S : Fol.Structure LNF} (hExt : Extensional S) (v : Var →
     (x y z w t : Var) (hxw : x ≠ w) (hxt : x ≠ t) (_hyw : y ≠ w) (_hyt : y ≠ t)
     (hzw : z ≠ w) (hzt : z ≠ t) (hwt : w ≠ t) :
     Wff.Holds S v
-        (syn_wex w (syn_wex t
-            (syn_wa (.classEq (.cv z) (syn_copk (.cv w) (.cv t))) (.objMem t x)))) ↔
+        (synWex w (synWex t
+            (synWa (.classEq (.cv z) (synCopk (.cv w) (.cv t))) (.objMem t x)))) ↔
       FormulaHolds S (DVec.cons (v z) (DVec.cons (v y) (DVec.cons (v x) DVec.nil)))
         (Formula.ex (Formula.ex (Formula.conj (literalKPair 2 1 0) (.mem 0 4)))) :=
   by
   change
     Wff.Holds S v
         (Wff.ex w (Wff.ex t
-            (Wff.conj (.classEq (.cv z) (syn_copk (.cv w) (.cv t))) (.objMem t x)))) ↔
+            (Wff.conj (.classEq (.cv z) (synCopk (.cv w) (.cv t))) (.objMem t x)))) ↔
       _
   simp only [Wff.holds_ex, formulaHolds_ex]
   apply exists_congr
@@ -64,12 +64,12 @@ theorem holds_xp_rhs {S : Fol.Structure LNF} (hExt : Extensional S) (v : Var →
     rfl
 
 theorem axXpCompact {S : Fol.Structure LNF}
-    (hNF : Fol.all_realize_sentence S LiteralHailperinNF) (x y z w t : Var) (hxy : x ≠ y)
+    (hNF : Fol.allRealizeSentence S LiteralHailperinNF) (x y z w t : Var) (hxy : x ≠ y)
     (hxz : x ≠ z) (hxw : x ≠ w) (hxt : x ≠ t) (hyz : y ≠ z) (hyw : y ≠ w) (hyt : y ≠ t)
     (hzw : z ≠ w) (hzt : z ≠ t) (hwt : w ≠ t) :
     Wff.Valid S
-      (syn_wex y (.all z (syn_wb (.objMem z y) (syn_wex w (syn_wex t
-                (syn_wa (.classEq (.cv z) (syn_copk (.cv w) (.cv t))) (.objMem t x))))))) :=
+      (synWex y (.all z (synWb (.objMem z y) (synWex w (synWex t
+                (synWa (.classEq (.cv z) (synCopk (.cv w) (.cv t))) (.objMem t x))))))) :=
   by
   have hExt := NFChoice.ReplaySupport.extensional_of_literal_model hNF
   have hLit : FormulaHolds S DVec.nil literalAxXp :=
@@ -97,19 +97,19 @@ theorem axXpCompact {S : Fol.Structure LNF}
       hiff
     _ ↔
         Wff.Holds S (update (update v y Y) z Z)
-          (syn_wex w (syn_wex t
-              (syn_wa (.classEq (.cv z) (syn_copk (.cv w) (.cv t))) (.objMem t x)))) :=
+          (synWex w (synWex t
+              (synWa (.classEq (.cv z) (synCopk (.cv w) (.cv t))) (.objMem t x)))) :=
       by
       symm
       simpa [update_noteq, hxy, hxz, hyz] using
         (holds_xp_rhs hExt (update (update v y Y) z Z) x y z w t hxw hxt hyw hyt hzw hzt hwt)
 
 theorem axCnvCompact {S : Fol.Structure LNF}
-    (hNF : Fol.all_realize_sentence S LiteralHailperinNF) (x y z w : Var) (hxy : x ≠ y)
+    (hNF : Fol.allRealizeSentence S LiteralHailperinNF) (x y z w : Var) (hxy : x ≠ y)
     (hxz : x ≠ z) (hxw : x ≠ w) (hyz : y ≠ z) (hyw : y ≠ w) (hzw : z ≠ w) :
     Wff.Valid S
-      (syn_wex y (.all z (.all w (syn_wb (.classMem (syn_copk (.cv z) (.cv w)) (.cv y))
-              (.classMem (syn_copk (.cv w) (.cv z)) (.cv x)))))) :=
+      (synWex y (.all z (.all w (synWb (.classMem (synCopk (.cv z) (.cv w)) (.cv y))
+              (.classMem (synCopk (.cv w) (.cv z)) (.cv x)))))) :=
   by
   have hExt := NFChoice.ReplaySupport.extensional_of_literal_model hNF
   have hLit : FormulaHolds S DVec.nil literalAxCnv :=
@@ -144,11 +144,11 @@ theorem axCnvCompact {S : Fol.Structure LNF}
     change v x = v x
     rfl
   calc
-    Wff.Holds S v' (.classMem (syn_copk (.cv z) (.cv w)) (.cv y)) ↔
+    Wff.Holds S v' (.classMem (synCopk (.cv z) (.cv w)) (.cv y)) ↔
         FormulaHolds S xs (literalPairMem 1 0 2) :=
       holds_literalPairMem hExt v' xs z w y 1 0 2 hz hw hy
     _ ↔ FormulaHolds S xs (literalPairMem 0 1 3) := by simpa [xs] using hiff
-    _ ↔ Wff.Holds S v' (.classMem (syn_copk (.cv w) (.cv z)) (.cv x)) :=
+    _ ↔ Wff.Holds S v' (.classMem (synCopk (.cv w) (.cv z)) (.cv x)) :=
       (holds_literalPairMem hExt v' xs w z x 0 1 3 hw hz hx).symm
 
 theorem holds_literalSubset {S : Fol.Structure LNF} {n : Nat} (v : Var → S)
@@ -166,10 +166,10 @@ theorem holds_literalSubset {S : Fol.Structure LNF} {n : Nat} (v : Var → S)
   simp [update_same]
 
 theorem axSsetCompact {S : Fol.Structure LNF}
-    (hNF : Fol.all_realize_sentence S LiteralHailperinNF) (x y z w : Var) (hxy : x ≠ y)
+    (hNF : Fol.allRealizeSentence S LiteralHailperinNF) (x y z w : Var) (hxy : x ≠ y)
     (hxz : x ≠ z) (_hxw : x ≠ w) (hyz : y ≠ z) (hyw : y ≠ w) (hzw : z ≠ w) :
     Wff.Valid S
-      (syn_wex x (.all y (.all z (syn_wb (.classMem (syn_copk (.cv y) (.cv z)) (.cv x))
+      (synWex x (.all y (.all z (synWb (.classMem (synCopk (.cv y) (.cv z)) (.cv x))
               (.all w (.imp (.objMem w y) (.objMem w z))))))) :=
   by
   have hExt := NFChoice.ReplaySupport.extensional_of_literal_model hNF
@@ -199,7 +199,7 @@ theorem axSsetCompact {S : Fol.Structure LNF}
     change X = X
     rfl
   calc
-    Wff.Holds S v' (.classMem (syn_copk (.cv y) (.cv z)) (.cv x)) ↔
+    Wff.Holds S v' (.classMem (synCopk (.cv y) (.cv z)) (.cv x)) ↔
         FormulaHolds S xs (literalPairMem 1 0 2) :=
       holds_literalPairMem hExt v' xs y z x 1 0 2 hy hz hx
     _ ↔ FormulaHolds S xs (Formula.subset 1 0) := by simpa [xs] using hiff
@@ -207,12 +207,12 @@ theorem axSsetCompact {S : Fol.Structure LNF}
       (holds_literalSubset v' xs y z w 1 0 hy hz hyw hzw).symm
 
 theorem axSiCompact {S : Fol.Structure LNF}
-    (hNF : Fol.all_realize_sentence S LiteralHailperinNF) (x y z w : Var) (hxy : x ≠ y)
+    (hNF : Fol.allRealizeSentence S LiteralHailperinNF) (x y z w : Var) (hxy : x ≠ y)
     (hxz : x ≠ z) (hxw : x ≠ w) (hyz : y ≠ z) (hyw : y ≠ w) (hzw : z ≠ w) :
     Wff.Valid S
-      (syn_wex y (.all z (.all w
-            (syn_wb (.classMem (syn_copk (syn_csn (.cv z)) (syn_csn (.cv w))) (.cv y))
-              (.classMem (syn_copk (.cv z) (.cv w)) (.cv x)))))) :=
+      (synWex y (.all z (.all w
+            (synWb (.classMem (synCopk (synCsn (.cv z)) (synCsn (.cv w))) (.cv y))
+              (.classMem (synCopk (.cv z) (.cv w)) (.cv x)))))) :=
   by
   have hExt := NFChoice.ReplaySupport.extensional_of_literal_model hNF
   have hLit : FormulaHolds S DVec.nil literalAxSi :=
@@ -247,21 +247,21 @@ theorem axSiCompact {S : Fol.Structure LNF}
     change v x = v x
     rfl
   calc
-    Wff.Holds S v' (.classMem (syn_copk (syn_csn (.cv z)) (syn_csn (.cv w))) (.cv y)) ↔
+    Wff.Holds S v' (.classMem (synCopk (synCsn (.cv z)) (synCsn (.cv w))) (.cv y)) ↔
         FormulaHolds S xs (literalSingletonPairMem 1 0 2) :=
       holds_literalSingletonPairMem hExt v' xs z w y 1 0 2 hz hw hy
     _ ↔ FormulaHolds S xs (literalPairMem 1 0 3) := by simpa [xs] using hiff
-    _ ↔ Wff.Holds S v' (.classMem (syn_copk (.cv z) (.cv w)) (.cv x)) :=
+    _ ↔ Wff.Holds S v' (.classMem (synCopk (.cv z) (.cv w)) (.cv x)) :=
       (holds_literalPairMem hExt v' xs z w x 1 0 3 hz hw hx).symm
 
 theorem axIns2Compact {S : Fol.Structure LNF}
-    (hNF : Fol.all_realize_sentence S LiteralHailperinNF) (x y z w t : Var) (hxy : x ≠ y)
+    (hNF : Fol.allRealizeSentence S LiteralHailperinNF) (x y z w t : Var) (hxy : x ≠ y)
     (hxz : x ≠ z) (hxw : x ≠ w) (hxt : x ≠ t) (hyz : y ≠ z) (hyw : y ≠ w) (hyt : y ≠ t)
     (hzw : z ≠ w) (hzt : z ≠ t) (hwt : w ≠ t) :
     Wff.Valid S
-      (syn_wex y (.all z (.all w (.all t (syn_wb (.classMem
-                  (syn_copk (syn_csn (syn_csn (.cv z))) (syn_copk (.cv w) (.cv t))) (.cv y))
-                (.classMem (syn_copk (.cv z) (.cv t)) (.cv x))))))) :=
+      (synWex y (.all z (.all w (.all t (synWb (.classMem
+                  (synCopk (synCsn (synCsn (.cv z))) (synCopk (.cv w) (.cv t))) (.cv y))
+                (.classMem (synCopk (.cv z) (.cv t)) (.cv x))))))) :=
   by
   have hExt := NFChoice.ReplaySupport.extensional_of_literal_model hNF
   have hLit : FormulaHolds S DVec.nil literalAxIns2 :=
@@ -304,22 +304,22 @@ theorem axIns2Compact {S : Fol.Structure LNF}
     rfl
   calc
     Wff.Holds S v'
-          (.classMem (syn_copk (syn_csn (syn_csn (.cv z))) (syn_copk (.cv w) (.cv t)))
+          (.classMem (synCopk (synCsn (synCsn (.cv z))) (synCopk (.cv w) (.cv t)))
             (.cv y)) ↔
         FormulaHolds S xs (literalInsertedPairMem 2 1 0 3) :=
       holds_literalInsertedPairMem hExt v' xs z w t y 2 1 0 3 hz hw ht hy
     _ ↔ FormulaHolds S xs (literalPairMem 2 0 4) := by simpa [xs] using hiff
-    _ ↔ Wff.Holds S v' (.classMem (syn_copk (.cv z) (.cv t)) (.cv x)) :=
+    _ ↔ Wff.Holds S v' (.classMem (synCopk (.cv z) (.cv t)) (.cv x)) :=
       (holds_literalPairMem hExt v' xs z t x 2 0 4 hz ht hx).symm
 
 theorem axIns3Compact {S : Fol.Structure LNF}
-    (hNF : Fol.all_realize_sentence S LiteralHailperinNF) (x y z w t : Var) (hxy : x ≠ y)
+    (hNF : Fol.allRealizeSentence S LiteralHailperinNF) (x y z w t : Var) (hxy : x ≠ y)
     (hxz : x ≠ z) (hxw : x ≠ w) (hxt : x ≠ t) (hyz : y ≠ z) (hyw : y ≠ w) (hyt : y ≠ t)
     (hzw : z ≠ w) (hzt : z ≠ t) (hwt : w ≠ t) :
     Wff.Valid S
-      (syn_wex y (.all z (.all w (.all t (syn_wb (.classMem
-                  (syn_copk (syn_csn (syn_csn (.cv z))) (syn_copk (.cv w) (.cv t))) (.cv y))
-                (.classMem (syn_copk (.cv z) (.cv w)) (.cv x))))))) :=
+      (synWex y (.all z (.all w (.all t (synWb (.classMem
+                  (synCopk (synCsn (synCsn (.cv z))) (synCopk (.cv w) (.cv t))) (.cv y))
+                (.classMem (synCopk (.cv z) (.cv w)) (.cv x))))))) :=
   by
   have hExt := NFChoice.ReplaySupport.extensional_of_literal_model hNF
   have hLit : FormulaHolds S DVec.nil literalAxIns3 :=
@@ -362,17 +362,17 @@ theorem axIns3Compact {S : Fol.Structure LNF}
     rfl
   calc
     Wff.Holds S v'
-          (.classMem (syn_copk (syn_csn (syn_csn (.cv z))) (syn_copk (.cv w) (.cv t)))
+          (.classMem (synCopk (synCsn (synCsn (.cv z))) (synCopk (.cv w) (.cv t)))
             (.cv y)) ↔
         FormulaHolds S xs (literalInsertedPairMem 2 1 0 3) :=
       holds_literalInsertedPairMem hExt v' xs z w t y 2 1 0 3 hz hw ht hy
     _ ↔ FormulaHolds S xs (literalPairMem 2 1 4) := by simpa [xs] using hiff
-    _ ↔ Wff.Holds S v' (.classMem (syn_copk (.cv z) (.cv w)) (.cv x)) :=
+    _ ↔ Wff.Holds S v' (.classMem (synCopk (.cv z) (.cv w)) (.cv x)) :=
       (holds_literalPairMem hExt v' xs z w x 2 1 4 hz hw hx).symm
 
 theorem holds_typlower_rhs {S : Fol.Structure LNF} (hExt : Extensional S) (v : Var → S)
     (x y z w : Var) (hxw : x ≠ w) (hzw : z ≠ w) :
-    Wff.Holds S v (.all w (.classMem (syn_copk (.cv w) (syn_csn (.cv z))) (.cv x))) ↔
+    Wff.Holds S v (.all w (.classMem (synCopk (.cv w) (synCsn (.cv z))) (.cv x))) ↔
       FormulaHolds S (DVec.cons (v z) (DVec.cons (v y) (DVec.cons (v x) DVec.nil)))
         (.all (literalPairSingletonSecondMem 0 1 3)) :=
   by
@@ -392,11 +392,11 @@ theorem holds_typlower_rhs {S : Fol.Structure LNF} (hExt : Extensional S) (v : V
     rfl
 
 theorem axTypeLowerCompact {S : Fol.Structure LNF}
-    (hNF : Fol.all_realize_sentence S LiteralHailperinNF) (x y z w : Var) (hxy : x ≠ y)
+    (hNF : Fol.allRealizeSentence S LiteralHailperinNF) (x y z w : Var) (hxy : x ≠ y)
     (hxz : x ≠ z) (hxw : x ≠ w) (hyz : y ≠ z) (_hyw : y ≠ w) (hzw : z ≠ w) :
     Wff.Valid S
-      (syn_wex y (.all z (syn_wb (.objMem z y)
-            (.all w (.classMem (syn_copk (.cv w) (syn_csn (.cv z))) (.cv x)))))) :=
+      (synWex y (.all z (synWb (.objMem z y)
+            (.all w (.classMem (synCopk (.cv w) (synCsn (.cv z))) (.cv x)))))) :=
   by
   have hExt := NFChoice.ReplaySupport.extensional_of_literal_model hNF
   have hLit : FormulaHolds S DVec.nil literalAxTypeLower :=
@@ -422,7 +422,7 @@ theorem axTypeLowerCompact {S : Fol.Structure LNF}
       simpa [xs] using hiff
     _ ↔
         Wff.Holds S v'
-          (.all w (.classMem (syn_copk (.cv w) (syn_csn (.cv z))) (.cv x))) :=
+          (.all w (.classMem (synCopk (.cv w) (synCsn (.cv z))) (.cv x))) :=
       by
       symm
       simpa [v', xs, update_noteq, hxy, hxz, hyz] using

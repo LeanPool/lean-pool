@@ -21,7 +21,7 @@ open NFChoice.SemanticCore
 
 section Coding
 
-variable {S : Fol.Structure LNF} (hH : Fol.all_realize_sentence S LiteralHailperinNF)
+variable {S : Fol.Structure LNF} (hH : Fol.allRealizeSentence S LiteralHailperinNF)
 
 /-! `typeLower` turns a relation-like object `R` into the set of `z` for which
 every pair `⟨w,{z}⟩` belongs to `R`.  Taking `R = V × (V \ A)` and then a

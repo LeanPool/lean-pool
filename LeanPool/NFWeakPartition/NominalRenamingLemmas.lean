@@ -52,6 +52,7 @@ def renameFormula (sigma : Nat → Nat) :
   | _, .imp p q => .imp (renameFormula sigma p) (renameFormula sigma q)
   | _, .all p => .all (renameFormula (underBinder sigma) p)
 
+/-- Proof-translation construction identified upstream as `renameRho`. -/
 @[expose]
 def renameRho (sigma : Nat → Nat) (rho : Var → Nat) : Var → Nat := fun x => sigma (rho x)
 

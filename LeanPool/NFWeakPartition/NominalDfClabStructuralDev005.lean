@@ -26,6 +26,7 @@ open NFChoice.DirectNominalPrf.Nominal.ClassHandlersDev011
 open NFChoice.DirectNominalPrf.Nominal.DefinitionLeafAdapterDev014
 open NFChoice.DirectNominalPrf.Nominal.DfClabProperSubstitutionCoreDev003
 
+/-- Proof-translation construction identified upstream as `Theory`. -/
 abbrev Theory : Fol.SentTheory LNF :=
   LiteralHailperinNF
 
@@ -79,7 +80,7 @@ theorem updateRho_lift_zero_eq_bind (rho : Var → Nat) (x : Var) :
 theorem classPred_cv (rho : Var → Nat) (x : Var) :
     classPred rho (.cv x) = cvPred (&(rho x)) := by
   simp [classPred, lowerClassPred, cvPred, mem, liftRho, GenericLogicalHandlers.nfMem,
-    Fol.lift_term1]
+    Fol.liftTerm1]
 
 theorem classPred_cab (rho : Var → Nat) (x : Var) (p : Wff) :
     classPred rho (.cab x p) = lowerWff (bindRho rho x) p :=
@@ -95,7 +96,7 @@ theorem lowerWff_sbDefiniens_ne (rho : Var → Nat) (x y : Var) (p : Wff) (hxy :
   rw [updateRho_self] at hOriginal
   simp only [sbDefiniens, Wff.conj, Wff.ex, Wff.neg, lowerWff]
   rw [← hOriginal]
-  simp [properSubstRhs, bindRho, hxy, Fol.and', Fol.not', Fol.ex', Fol.lift_term1]
+  simp [properSubstRhs, bindRho, hxy, Fol.and', Fol.not', Fol.ex', Fol.liftTerm1]
 
 theorem lowerWff_sbDefiniens_same (rho : Var → Nat) (x : Var) (p : Wff) :
     lowerWff rho (sbDefiniens x x p) =
@@ -107,6 +108,7 @@ theorem lowerWff_sbDefiniens_same (rho : Var → Nat) (x : Var) (p : Wff) :
   rw [← hOriginal]
   simp [coincidentSubstRhs, bindRho, Fol.and', Fol.not', Fol.ex']
 
+/-- Proof-translation construction identified upstream as `dfClabStructural`. -/
 @[expose]
 noncomputable def dfClabStructural (x y : Var) (p : Wff) : NPrf (dfClabGoal x y p) :=
   fun rho =>
@@ -119,11 +121,11 @@ noncomputable def dfClabStructural (x y : Var) (p : Wff) : NPrf (dfClabGoal x y 
   · subst y
     rw [lowerWff_sbDefiniens_same]
     exact
-      Fol.biimp_trans (classMemCv (&(rho x)) (lowerWff (bindRho rho x) p))
+      Fol.biimpTrans (classMemCv (&(rho x)) (lowerWff (bindRho rho x) p))
         (coincidentSubstCore (lowerWff (bindRho rho x) p) (&(rho x)))
   · rw [lowerWff_sbDefiniens_ne rho x y p hxy]
     exact
-      Fol.biimp_trans (classMemCv (&(rho x)) (lowerWff (bindRho rho y) p))
+      Fol.biimpTrans (classMemCv (&(rho x)) (lowerWff (bindRho rho y) p))
         (properSubstCore (lowerWff (bindRho rho y) p) (&(rho x)) (&(rho y)))
 
 

@@ -33,7 +33,7 @@ def DeductivelyEquivalent (T U : Fol.SentTheory LNF) : Prop :=
 /-- Semantic inclusion of model classes transfers every formal consequence. -/
 theorem consequence_of_model_inclusion {T U : Fol.SentTheory LNF} {f : Fol.sentence LNF}
     (hmodels : ∀ (S : Fol.Structure LNF),
-        Fol.all_realize_sentence S U → Fol.all_realize_sentence S T)
+        Fol.allRealizeSentence S U → Fol.allRealizeSentence S T)
     (hf : T ⊢ₛ' f) : U ⊢ₛ' f :=
   by
   apply (Fol.completeness U f).2
@@ -43,7 +43,7 @@ theorem consequence_of_model_inclusion {T U : Fol.SentTheory LNF} {f : Fol.sente
 /-- Theories with the same models have exactly the same formal consequences. -/
 theorem deductivelyEquivalent_of_models_iff {T U : Fol.SentTheory LNF}
     (hmodels : ∀ (S : Fol.Structure LNF),
-        Fol.all_realize_sentence S T ↔ Fol.all_realize_sentence S U) :
+        Fol.allRealizeSentence S T ↔ Fol.allRealizeSentence S U) :
     DeductivelyEquivalent T U := by
   intro f
   constructor

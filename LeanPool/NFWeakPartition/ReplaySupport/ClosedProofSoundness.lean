@@ -25,7 +25,7 @@ open NFChoice.DirectNominalPrf.Nominal.BoundedNominalLoweringBridgeDev004
 /-- Every closed nominal proof is valid in every literal Hailperin model. -/
 theorem valid_closed_of_nominal_proof (p : Wff) (closed : p.fv = ∅)
     (proof : Nominal.NPrf p) {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) : Wff.Valid S p :=
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) : Wff.Valid S p :=
   by
   intro v
   let a : S := v 0
@@ -34,7 +34,7 @@ theorem valid_closed_of_nominal_proof (p : Wff) (closed : p.fv = ∅)
   let v0 : Var → S := fun _ => a
   have hprf : Fol.prf LiteralHailperinNF.fst (Nominal.lowerWff (finValRho rho) p) :=
     proof (finValRho rho)
-  have hs : Fol.realize_formula v0 (Nominal.lowerWff (finValRho rho) p) DVec.nil :=
+  have hs : Fol.realizeFormula v0 (Nominal.lowerWff (finValRho rho) p) DVec.nil :=
     by
     apply Fol.formula_soundness hprf S v0
     intro f hf
@@ -48,7 +48,7 @@ theorem valid_closed_of_nominal_proof (p : Wff) (closed : p.fv = ∅)
     subst k
     simp [xs, v0, a]
   have hb :
-    Fol.realize_bounded_formula xs (Formula.toFlypitch (Lowering.lowerWff rho p))
+    Fol.realizeBoundedFormula xs (Formula.toFlypitch (Lowering.lowerWff rho p))
       DVec.nil :=
     (Fol.realize_bounded_formula_iff hv _ DVec.nil).2 hs
   have hconst : Wff.Holds S v0 p :=

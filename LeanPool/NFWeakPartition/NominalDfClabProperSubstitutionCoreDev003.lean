@@ -20,15 +20,18 @@ open NFChoice.Foundation
 open NFChoice.Foundation.ExactLiteralTrial
 open NFChoice.SemanticCore
 
+/-- Proof-translation construction identified upstream as `Theory`. -/
 abbrev Theory : Fol.SentTheory LNF :=
   LiteralHailperinNF
 
+/-- Proof-translation construction identified upstream as `properSubstRhs`. -/
 @[expose]
 def properSubstRhs (F : Fol.formula LNF) (replacement original : Fol.term LNF) :
     Fol.formula LNF :=
   ((original ≃ replacement) ⟹ F [original // 0]f) ⊓'
-    ∃'(((&0) ≃ Fol.lift_term1 replacement) ⊓' F)
+    ∃'(((&0) ≃ Fol.liftTerm1 replacement) ⊓' F)
 
+/-- Proof-translation construction identified upstream as `coincidentSubstRhs`. -/
 @[expose]
 def coincidentSubstRhs (F : Fol.formula LNF) (source : Fol.term LNF) : Fol.formula LNF :=
   ((source ≃ source) ⟹ F [source // 0]f) ⊓' ∃'(((&0) ≃ (&0)) ⊓' F)
@@ -52,29 +55,29 @@ noncomputable def properSubstCore (F : Fol.formula LNF)
         Fol.axm1
       have hSource' :
         insert (original ≃ replacement) (insert source Theory.fst) ⊢ source := Fol.axm2
-      exact Fol.prf.subst₂ replacement original F (Fol.prf_symm hEq) hSource'
-    have hEx : insert source Theory.fst ⊢ ∃'(((&0) ≃ Fol.lift_term1 replacement) ⊓' F) :=
+      exact Fol.prf.subst₂ replacement original F (Fol.prfSymm hEq) hSource'
+    have hEx : insert source Theory.fst ⊢ ∃'(((&0) ≃ Fol.liftTerm1 replacement) ⊓' F) :=
       by
       apply Fol.exI replacement
-      simpa [Fol.and', Fol.not', Fol.subst_formula, Fol.subst_formula_equal,
+      simpa [Fol.and', Fol.not', Fol.substFormula, Fol.subst_formula_equal,
         Fol.lift_term1_subst_term, Fol.subst_term_var0] using
         (Fol.andI (Fol.prf.ref (insert source Theory.fst) replacement) hSource)
     exact Fol.andI hImp hEx
   · let rhs := properSubstRhs F replacement original
     have hRhs : insert rhs Theory.fst ⊢ rhs := Fol.axm1
-    have hEx : insert rhs Theory.fst ⊢ ∃'(((&0) ≃ Fol.lift_term1 replacement) ⊓' F) :=
+    have hEx : insert rhs Theory.fst ⊢ ∃'(((&0) ≃ Fol.liftTerm1 replacement) ⊓' F) :=
       Fol.andE2 ((original ≃ replacement) ⟹ F [original // 0]f) hRhs
     apply Fol.exE hEx
-    let body := ((&0) ≃ Fol.lift_term1 replacement) ⊓' F
-    have hBody : insert body (Fol.lift_formula1 '' insert rhs Theory.fst) ⊢ body :=
+    let body := ((&0) ≃ Fol.liftTerm1 replacement) ⊓' F
+    have hBody : insert body (Fol.liftFormula1 '' insert rhs Theory.fst) ⊢ body :=
       Fol.axm1
     have hEq :
-      insert body (Fol.lift_formula1 '' insert rhs Theory.fst) ⊢
-        (&0) ≃ Fol.lift_term1 replacement :=
+      insert body (Fol.liftFormula1 '' insert rhs Theory.fst) ⊢
+        (&0) ≃ Fol.liftTerm1 replacement :=
       Fol.andE1 F hBody
-    have hF : insert body (Fol.lift_formula1 '' insert rhs Theory.fst) ⊢ F :=
-      Fol.andE2 ((&0) ≃ Fol.lift_term1 replacement) hBody
-    apply Fol.prf_subst (Fol.lift_formula_at F 1 1) hEq
+    have hF : insert body (Fol.liftFormula1 '' insert rhs Theory.fst) ⊢ F :=
+      Fol.andE2 ((&0) ≃ Fol.liftTerm1 replacement) hBody
+    apply Fol.prfSubst (Fol.liftFormulaAt F 1 1) hEq
     · simpa only [Fol.lift_subst_formula_cancel] using hF
     · exact Fol.lift_at_subst_formula_small0 F replacement 1 0
 
@@ -94,7 +97,7 @@ noncomputable def coincidentSubstCore (F : Fol.formula LNF) (sourceTerm : Fol.te
     have hEx : insert source Theory.fst ⊢ ∃'(((&0) ≃ (&0)) ⊓' F) :=
       by
       apply Fol.exI sourceTerm
-      simpa [Fol.and', Fol.not', Fol.subst_formula, Fol.subst_formula_equal,
+      simpa [Fol.and', Fol.not', Fol.substFormula, Fol.subst_formula_equal,
         Fol.subst_term_var0] using
         (Fol.andI (Fol.prf.ref (insert source Theory.fst) sourceTerm) hSource)
     exact Fol.andI hImp hEx

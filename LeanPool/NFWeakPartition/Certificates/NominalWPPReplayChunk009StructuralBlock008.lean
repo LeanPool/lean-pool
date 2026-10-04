@@ -26,12 +26,13 @@ open NFChoice.SemanticCore
 open NFChoice.ReplaySupport
 open NFChoice.Compiler.CompactSourceSyntax
 
+/-- Checked nominal proof certificate identified upstream as `g_lefinlteq`. -/
 @[expose]
-noncomputable def g_lefinlteq (A : Class) (B : Class) (V : Class) (W : Class) :
+noncomputable def gLefinlteq (A : Class) (B : Class) (V : Class) (W : Class) :
     Nominal.NPrf
-      (.imp (syn_w3a (.classMem A V) (.classMem B W) (syn_wne A (syn_c0)))
-        (syn_wb (.classMem (syn_copk A B) (syn_clefin))
-          (syn_wo (.classMem (syn_copk A B) (syn_cltfin)) (.classEq A B)))) :=
+      (.imp (synW3a (.classMem A V) (.classMem B W) (synWne A (synC0)))
+        (synWb (.classMem (synCopk A B) (synClefin))
+          (synWo (.classMem (synCopk A B) (synCltfin)) (.classEq A B)))) :=
   by
   let proofSupport : Finset Var := A.fv ∪ B.fv ∪ V.fv ∪ W.fv
   let x : Var := freshVar proofSupport 0
@@ -72,70 +73,70 @@ noncomputable def g_lefinlteq (A : Class) (B : Class) (V : Class) (W : Class) :
   have freeVariableCertificate0 : y ∉ ((Class.cv x)).fv := by
     simp only [NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_singleton,
       fresh_y_ne_x, not_false_eq_true]
-  have p0000 := @g_nnc0suc y (.cv x) freeVariableCertificate0
-  have p0001 := @g_addceq2 (.cv x) (syn_c0c) A
-  have p0002 := @g_addcid1 A
+  have p0000 := @gNnc0suc y (.cv x) freeVariableCertificate0
+  have p0001 := @gAddceq2 (.cv x) (synC0c) A
+  have p0002 := @gAddcid1 A
   have p0003 :=
-    @g_syl6req (.classEq (.cv x) (syn_c0c)) (syn_cplc A (.cv x)) (syn_cplc A (syn_c0c)) A
+    @gSyl6req (.classEq (.cv x) (synC0c)) (synCplc A (.cv x)) (synCplc A (synC0c)) A
       p0001 p0002
-  have p0004 := @g_addceq2 (.cv x) (syn_cplc (.cv y) (syn_c1c)) A
-  have p0005 := @g_addcass A (.cv y) (syn_c1c)
+  have p0004 := @gAddceq2 (.cv x) (synCplc (.cv y) (synC1c)) A
+  have p0005 := @gAddcass A (.cv y) (synC1c)
   have p0006 :=
-    @g_syl6eqr (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c))) (syn_cplc A (.cv x))
-      (syn_cplc A (syn_cplc (.cv y) (syn_c1c))) (syn_cplc (syn_cplc A (.cv y)) (syn_c1c))
+    @gSyl6eqr (.classEq (.cv x) (synCplc (.cv y) (synC1c))) (synCplc A (.cv x))
+      (synCplc A (synCplc (.cv y) (synC1c))) (synCplc (synCplc A (.cv y)) (synC1c))
       p0004 p0005
   have p0007 :=
-    @g_reximi (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c)))
-      (.classEq (syn_cplc A (.cv x)) (syn_cplc (syn_cplc A (.cv y)) (syn_c1c))) y
-      (syn_cnnc) p0006
+    @gReximi (.classEq (.cv x) (synCplc (.cv y) (synC1c)))
+      (.classEq (synCplc A (.cv x)) (synCplc (synCplc A (.cv y)) (synC1c))) y
+      (synCnnc) p0006
   have p0008 :=
-    @g_orim12i (.classEq (.cv x) (syn_c0c)) (.classEq A (syn_cplc A (.cv x)))
-      (syn_wrex y (syn_cnnc) (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c))))
-      (syn_wrex y (syn_cnnc)
-        (.classEq (syn_cplc A (.cv x)) (syn_cplc (syn_cplc A (.cv y)) (syn_c1c))))
+    @gOrim12i (.classEq (.cv x) (synC0c)) (.classEq A (synCplc A (.cv x)))
+      (synWrex y (synCnnc) (.classEq (.cv x) (synCplc (.cv y) (synC1c))))
+      (synWrex y (synCnnc)
+        (.classEq (synCplc A (.cv x)) (synCplc (synCplc A (.cv y)) (synC1c))))
       p0003 p0007
   have p0009 :=
-    @g_sylbi (.classMem (.cv x) (syn_cnnc))
-      (syn_wo (.classEq (.cv x) (syn_c0c))
-        (syn_wrex y (syn_cnnc) (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c)))))
-      (syn_wo (.classEq A (syn_cplc A (.cv x))) (syn_wrex y (syn_cnnc)
-          (.classEq (syn_cplc A (.cv x)) (syn_cplc (syn_cplc A (.cv y)) (syn_c1c)))))
+    @gSylbi (.classMem (.cv x) (synCnnc))
+      (synWo (.classEq (.cv x) (synC0c))
+        (synWrex y (synCnnc) (.classEq (.cv x) (synCplc (.cv y) (synC1c)))))
+      (synWo (.classEq A (synCplc A (.cv x))) (synWrex y (synCnnc)
+          (.classEq (synCplc A (.cv x)) (synCplc (synCplc A (.cv y)) (synC1c)))))
       p0000 p0008
   have p0010 :=
-    @g_orcomd (.classMem (.cv x) (syn_cnnc)) (.classEq A (syn_cplc A (.cv x)))
-      (syn_wrex y (syn_cnnc)
-        (.classEq (syn_cplc A (.cv x)) (syn_cplc (syn_cplc A (.cv y)) (syn_c1c))))
+    @gOrcomd (.classMem (.cv x) (synCnnc)) (.classEq A (synCplc A (.cv x)))
+      (synWrex y (synCnnc)
+        (.classEq (synCplc A (.cv x)) (synCplc (synCplc A (.cv y)) (synC1c))))
       p0009
-  have p0011 := @g_eqeq1 B (syn_cplc A (.cv x)) (syn_cplc (syn_cplc A (.cv y)) (syn_c1c))
-  have freeVariableCertificate1 : y ∉ ((Wff.classEq B (syn_cplc A (.cv x)))).fv := by
+  have p0011 := @gEqeq1 B (synCplc A (.cv x)) (synCplc (synCplc A (.cv y)) (synC1c))
+  have freeVariableCertificate1 : y ∉ ((Wff.classEq B (synCplc A (.cv x)))).fv := by
     simp only [NFChoice.Compiler.CoreFVSimp.fv_wff_classEq,
       NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cplc,
       NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_union, Finset.mem_singleton,
       fresh_y_not_B, fresh_y_not_A, fresh_y_ne_x, or_false, not_false_eq_true]
   have p0012 :=
-    @g_rexbidv (.classEq B (syn_cplc A (.cv x)))
-      (.classEq B (syn_cplc (syn_cplc A (.cv y)) (syn_c1c)))
-      (.classEq (syn_cplc A (.cv x)) (syn_cplc (syn_cplc A (.cv y)) (syn_c1c))) y
-      (syn_cnnc) freeVariableCertificate1 p0011
-  have p0013 := @g_eqeq2 B (syn_cplc A (.cv x)) A
+    @gRexbidv (.classEq B (synCplc A (.cv x)))
+      (.classEq B (synCplc (synCplc A (.cv y)) (synC1c)))
+      (.classEq (synCplc A (.cv x)) (synCplc (synCplc A (.cv y)) (synC1c))) y
+      (synCnnc) freeVariableCertificate1 p0011
+  have p0013 := @gEqeq2 B (synCplc A (.cv x)) A
   have p0014 :=
-    @g_orbi12d (.classEq B (syn_cplc A (.cv x)))
-      (syn_wrex y (syn_cnnc) (.classEq B (syn_cplc (syn_cplc A (.cv y)) (syn_c1c))))
-      (syn_wrex y (syn_cnnc)
-        (.classEq (syn_cplc A (.cv x)) (syn_cplc (syn_cplc A (.cv y)) (syn_c1c))))
-      (.classEq A B) (.classEq A (syn_cplc A (.cv x))) p0012 p0013
+    @gOrbi12d (.classEq B (synCplc A (.cv x)))
+      (synWrex y (synCnnc) (.classEq B (synCplc (synCplc A (.cv y)) (synC1c))))
+      (synWrex y (synCnnc)
+        (.classEq (synCplc A (.cv x)) (synCplc (synCplc A (.cv y)) (synC1c))))
+      (.classEq A B) (.classEq A (synCplc A (.cv x))) p0012 p0013
   have p0015 :=
-    @g_syl5ibrcom (.classMem (.cv x) (syn_cnnc))
-      (syn_wo (syn_wrex y (syn_cnnc) (.classEq B (syn_cplc (syn_cplc A (.cv y)) (syn_c1c))))
+    @gSyl5ibrcom (.classMem (.cv x) (synCnnc))
+      (synWo (synWrex y (synCnnc) (.classEq B (synCplc (synCplc A (.cv y)) (synC1c))))
         (.classEq A B))
-      (.classEq B (syn_cplc A (.cv x)))
-      (syn_wo (syn_wrex y (syn_cnnc)
-          (.classEq (syn_cplc A (.cv x)) (syn_cplc (syn_cplc A (.cv y)) (syn_c1c))))
-        (.classEq A (syn_cplc A (.cv x))))
+      (.classEq B (synCplc A (.cv x)))
+      (synWo (synWrex y (synCnnc)
+          (.classEq (synCplc A (.cv x)) (synCplc (synCplc A (.cv y)) (synC1c))))
+        (.classEq A (synCplc A (.cv x))))
       p0010 p0014
   have freeVariableCertificate2 :
     x ∉
-      ((syn_wo (syn_wrex y (syn_cnnc) (.classEq B (syn_cplc (syn_cplc A (.cv y)) (syn_c1c))))
+      ((synWo (synWrex y (synCnnc) (.classEq B (synCplc (synCplc A (.cv y)) (synC1c))))
           (.classEq A B))).fv :=
     by
     simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_wo,
@@ -148,25 +149,25 @@ noncomputable def g_lefinlteq (A : Class) (B : Class) (V : Class) (W : Class) :
       Finset.mem_erase, Finset.mem_singleton, Finset.notMem_empty, fresh_x_not_B,
       fresh_x_not_A, fresh_x_ne_y, or_false, and_false, not_false_eq_true]
   have p0016 :=
-    @g_rexlimiv (.classEq B (syn_cplc A (.cv x)))
-      (syn_wo (syn_wrex y (syn_cnnc) (.classEq B (syn_cplc (syn_cplc A (.cv y)) (syn_c1c))))
+    @gRexlimiv (.classEq B (synCplc A (.cv x)))
+      (synWo (synWrex y (synCnnc) (.classEq B (synCplc (synCplc A (.cv y)) (synC1c))))
         (.classEq A B))
-      x (syn_cnnc) freeVariableCertificate2 p0015
+      x (synCnnc) freeVariableCertificate2 p0015
   have p0017 :=
-    @g_eqeq2i (syn_cplc (syn_cplc A (.cv y)) (syn_c1c))
-      (syn_cplc A (syn_cplc (.cv y) (syn_c1c))) B p0005
-  have p0018 := @g_peano2 (.cv y)
+    @gEqeq2i (synCplc (synCplc A (.cv y)) (synC1c))
+      (synCplc A (synCplc (.cv y) (synC1c))) B p0005
+  have p0018 := @gPeano2 (.cv y)
   have p0019 :=
-    @g_eqeq2d (.classEq (.cv x) (syn_cplc (.cv y) (syn_c1c))) (syn_cplc A (.cv x))
-      (syn_cplc A (syn_cplc (.cv y) (syn_c1c))) B p0004
-  have freeVariableCertificate3 : x ∉ ((syn_cplc (.cv y) (syn_c1c))).fv := by
+    @gEqeq2d (.classEq (.cv x) (synCplc (.cv y) (synC1c))) (synCplc A (.cv x))
+      (synCplc A (synCplc (.cv y) (synC1c))) B p0004
+  have freeVariableCertificate3 : x ∉ ((synCplc (.cv y) (synC1c))).fv := by
     simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cplc,
       NFChoice.Compiler.CoreFVSimp.fv_class_cv,
       NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c, Finset.mem_union,
       Finset.mem_singleton, Finset.notMem_empty, fresh_x_ne_y, or_false,
       not_false_eq_true]
   have freeVariableCertificate4 :
-    x ∉ ((Wff.classEq B (syn_cplc A (syn_cplc (.cv y) (syn_c1c))))).fv := by
+    x ∉ ((Wff.classEq B (synCplc A (synCplc (.cv y) (synC1c))))).fv := by
     simp only [NFChoice.Compiler.CoreFVSimp.fv_wff_classEq,
       NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cplc,
       NFChoice.Compiler.CoreFVSimp.fv_class_cv,
@@ -174,28 +175,28 @@ noncomputable def g_lefinlteq (A : Class) (B : Class) (V : Class) (W : Class) :
       Finset.mem_singleton, Finset.notMem_empty, fresh_x_not_B, fresh_x_not_A,
       fresh_x_ne_y, or_false, not_false_eq_true]
   have p0020 :=
-    @g_rspcev (.classEq B (syn_cplc A (.cv x)))
-      (.classEq B (syn_cplc A (syn_cplc (.cv y) (syn_c1c)))) x
-      (syn_cplc (.cv y) (syn_c1c)) (syn_cnnc) freeVariableCertificate3
+    @gRspcev (.classEq B (synCplc A (.cv x)))
+      (.classEq B (synCplc A (synCplc (.cv y) (synC1c)))) x
+      (synCplc (.cv y) (synC1c)) (synCnnc) freeVariableCertificate3
       (by
         exact
-          (show x ∉ ((syn_cnnc)).fv from
+          (show x ∉ ((synCnnc)).fv from
             (by
               rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnnc];
               exact (show x ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))))
       freeVariableCertificate4 p0019
   have p0021 :=
-    @g_sylan (.classMem (.cv y) (syn_cnnc))
-      (.classMem (syn_cplc (.cv y) (syn_c1c)) (syn_cnnc))
-      (.classEq B (syn_cplc A (syn_cplc (.cv y) (syn_c1c))))
-      (syn_wrex x (syn_cnnc) (.classEq B (syn_cplc A (.cv x)))) p0018 p0020
+    @gSylan (.classMem (.cv y) (synCnnc))
+      (.classMem (synCplc (.cv y) (synC1c)) (synCnnc))
+      (.classEq B (synCplc A (synCplc (.cv y) (synC1c))))
+      (synWrex x (synCnnc) (.classEq B (synCplc A (.cv x)))) p0018 p0020
   have p0022 :=
-    @g_sylan2b (.classEq B (syn_cplc (syn_cplc A (.cv y)) (syn_c1c)))
-      (.classMem (.cv y) (syn_cnnc))
-      (.classEq B (syn_cplc A (syn_cplc (.cv y) (syn_c1c))))
-      (syn_wrex x (syn_cnnc) (.classEq B (syn_cplc A (.cv x)))) p0017 p0021
+    @gSylan2b (.classEq B (synCplc (synCplc A (.cv y)) (synC1c)))
+      (.classMem (.cv y) (synCnnc))
+      (.classEq B (synCplc A (synCplc (.cv y) (synC1c))))
+      (synWrex x (synCnnc) (.classEq B (synCplc A (.cv x)))) p0017 p0021
   have freeVariableCertificate5 :
-    y ∉ ((syn_wrex x (syn_cnnc) (.classEq B (syn_cplc A (.cv x))))).fv := by
+    y ∉ ((synWrex x (synCnnc) (.classEq B (synCplc A (.cv x))))).fv := by
     simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_wrex,
       NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnnc,
       NFChoice.Compiler.CoreFVSimp.fv_wff_classEq,
@@ -204,112 +205,112 @@ noncomputable def g_lefinlteq (A : Class) (B : Class) (V : Class) (W : Class) :
       Finset.mem_singleton, Finset.notMem_empty, fresh_y_not_B, fresh_y_not_A,
       fresh_y_ne_x, or_false, and_false, not_false_eq_true]
   have p0023 :=
-    @g_rexlimiva (.classEq B (syn_cplc (syn_cplc A (.cv y)) (syn_c1c)))
-      (syn_wrex x (syn_cnnc) (.classEq B (syn_cplc A (.cv x)))) y (syn_cnnc)
+    @gRexlimiva (.classEq B (synCplc (synCplc A (.cv y)) (synC1c)))
+      (synWrex x (synCnnc) (.classEq B (synCplc A (.cv x)))) y (synCnnc)
       freeVariableCertificate5 p0022
-  have p0024 := @g_peano1
-  have p0025 := @g_eqcomi (syn_cplc A (syn_c0c)) A p0002
+  have p0024 := @gPeano1
+  have p0025 := @gEqcomi (synCplc A (synC0c)) A p0002
   have p0026 :=
-    @g_eqeq2d (.classEq (.cv x) (syn_c0c)) (syn_cplc A (.cv x)) (syn_cplc A (syn_c0c)) A
+    @gEqeq2d (.classEq (.cv x) (synC0c)) (synCplc A (.cv x)) (synCplc A (synC0c)) A
       p0001
-  have freeVariableCertificate6 : x ∉ ((Wff.classEq A (syn_cplc A (syn_c0c)))).fv := by
+  have freeVariableCertificate6 : x ∉ ((Wff.classEq A (synCplc A (synC0c)))).fv := by
     simp only [NFChoice.Compiler.CoreFVSimp.fv_wff_classEq,
       NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cplc,
       NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0c, Finset.mem_union,
       Finset.notMem_empty, fresh_x_not_A, or_false, not_false_eq_true]
   have p0027 :=
-    @g_rspcev (.classEq A (syn_cplc A (.cv x))) (.classEq A (syn_cplc A (syn_c0c))) x
-      (syn_c0c) (syn_cnnc)
+    @gRspcev (.classEq A (synCplc A (.cv x))) (.classEq A (synCplc A (synC0c))) x
+      (synC0c) (synCnnc)
       (by
         exact
-          (show x ∉ ((syn_c0c)).fv from
+          (show x ∉ ((synC0c)).fv from
             (by
               rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0c];
               exact (show x ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))))
       (by
         exact
-          (show x ∉ ((syn_cnnc)).fv from
+          (show x ∉ ((synCnnc)).fv from
             (by
               rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnnc];
               exact (show x ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))))
       freeVariableCertificate6 p0026
   have p0028 :=
-    @g_mp2an (.classMem (syn_c0c) (syn_cnnc)) (.classEq A (syn_cplc A (syn_c0c)))
-      (syn_wrex x (syn_cnnc) (.classEq A (syn_cplc A (.cv x)))) p0024 p0025 p0027
-  have p0029 := @g_eqeq1 A B (syn_cplc A (.cv x))
+    @gMp2an (.classMem (synC0c) (synCnnc)) (.classEq A (synCplc A (synC0c)))
+      (synWrex x (synCnnc) (.classEq A (synCplc A (.cv x)))) p0024 p0025 p0027
+  have p0029 := @gEqeq1 A B (synCplc A (.cv x))
   have freeVariableCertificate7 : x ∉ ((Wff.classEq A B)).fv := by
     simp only [NFChoice.Compiler.CoreFVSimp.fv_wff_classEq, Finset.mem_union,
       fresh_x_not_A, fresh_x_not_B, or_false, not_false_eq_true]
   have p0030 :=
-    @g_rexbidv (.classEq A B) (.classEq A (syn_cplc A (.cv x)))
-      (.classEq B (syn_cplc A (.cv x))) x (syn_cnnc) freeVariableCertificate7 p0029
+    @gRexbidv (.classEq A B) (.classEq A (synCplc A (.cv x)))
+      (.classEq B (synCplc A (.cv x))) x (synCnnc) freeVariableCertificate7 p0029
   have p0031 :=
-    @g_mpbii (.classEq A B) (syn_wrex x (syn_cnnc) (.classEq A (syn_cplc A (.cv x))))
-      (syn_wrex x (syn_cnnc) (.classEq B (syn_cplc A (.cv x)))) p0028 p0030
+    @gMpbii (.classEq A B) (synWrex x (synCnnc) (.classEq A (synCplc A (.cv x))))
+      (synWrex x (synCnnc) (.classEq B (synCplc A (.cv x)))) p0028 p0030
   have p0032 :=
-    @g_jaoi (syn_wrex y (syn_cnnc) (.classEq B (syn_cplc (syn_cplc A (.cv y)) (syn_c1c))))
-      (syn_wrex x (syn_cnnc) (.classEq B (syn_cplc A (.cv x)))) (.classEq A B) p0023 p0031
+    @gJaoi (synWrex y (synCnnc) (.classEq B (synCplc (synCplc A (.cv y)) (synC1c))))
+      (synWrex x (synCnnc) (.classEq B (synCplc A (.cv x)))) (.classEq A B) p0023 p0031
   have p0033 :=
-    @g_impbii (syn_wrex x (syn_cnnc) (.classEq B (syn_cplc A (.cv x))))
-      (syn_wo (syn_wrex y (syn_cnnc) (.classEq B (syn_cplc (syn_cplc A (.cv y)) (syn_c1c))))
+    @gImpbii (synWrex x (synCnnc) (.classEq B (synCplc A (.cv x))))
+      (synWo (synWrex y (synCnnc) (.classEq B (synCplc (synCplc A (.cv y)) (synC1c))))
         (.classEq A B))
       p0016 p0032
   have p0034 :=
-    @g_a1i
-      (syn_wb (syn_wrex x (syn_cnnc) (.classEq B (syn_cplc A (.cv x)))) (syn_wo
-          (syn_wrex y (syn_cnnc) (.classEq B (syn_cplc (syn_cplc A (.cv y)) (syn_c1c))))
+    @gA1i
+      (synWb (synWrex x (synCnnc) (.classEq B (synCplc A (.cv x)))) (synWo
+          (synWrex y (synCnnc) (.classEq B (synCplc (synCplc A (.cv y)) (synC1c))))
           (.classEq A B)))
-      (syn_w3a (.classMem A V) (.classMem B W) (syn_wne A (syn_c0))) p0033
+      (synW3a (.classMem A V) (.classMem B W) (synWne A (synC0))) p0033
   have p0035 :=
-    @g_opklefing x A B V W (by exact (show x ∉ (A).fv from (by exact fresh_x_not_A)))
+    @gOpklefing x A B V W (by exact (show x ∉ (A).fv from (by exact fresh_x_not_A)))
       (by exact (show x ∉ (B).fv from (by exact fresh_x_not_B)))
   have p0036 :=
-    @g_n_3adant3 (.classMem A V) (.classMem B W)
-      (syn_wb (.classMem (syn_copk A B) (syn_clefin))
-        (syn_wrex x (syn_cnnc) (.classEq B (syn_cplc A (.cv x)))))
-      (syn_wne A (syn_c0)) p0035
+    @gN3adant3 (.classMem A V) (.classMem B W)
+      (synWb (.classMem (synCopk A B) (synClefin))
+        (synWrex x (synCnnc) (.classEq B (synCplc A (.cv x)))))
+      (synWne A (synC0)) p0035
   have p0037 :=
-    @g_opkltfing y A B V W (by exact (show y ∉ (A).fv from (by exact fresh_y_not_A)))
+    @gOpkltfing y A B V W (by exact (show y ∉ (A).fv from (by exact fresh_y_not_A)))
       (by exact (show y ∉ (B).fv from (by exact fresh_y_not_B)))
   have p0038 :=
-    @g_adantr (syn_wa (.classMem A V) (.classMem B W))
-      (syn_wb (.classMem (syn_copk A B) (syn_cltfin)) (syn_wa (syn_wne A (syn_c0))
-          (syn_wrex y (syn_cnnc) (.classEq B (syn_cplc (syn_cplc A (.cv y)) (syn_c1c))))))
-      (syn_wne A (syn_c0)) p0037
+    @gAdantr (synWa (.classMem A V) (.classMem B W))
+      (synWb (.classMem (synCopk A B) (synCltfin)) (synWa (synWne A (synC0))
+          (synWrex y (synCnnc) (.classEq B (synCplc (synCplc A (.cv y)) (synC1c))))))
+      (synWne A (synC0)) p0037
   have p0039 :=
-    @g_ibar (syn_wne A (syn_c0))
-      (syn_wrex y (syn_cnnc) (.classEq B (syn_cplc (syn_cplc A (.cv y)) (syn_c1c))))
+    @gIbar (synWne A (synC0))
+      (synWrex y (synCnnc) (.classEq B (synCplc (synCplc A (.cv y)) (synC1c))))
   have p0040 :=
-    @g_adantl (syn_wne A (syn_c0))
-      (syn_wb (syn_wrex y (syn_cnnc) (.classEq B (syn_cplc (syn_cplc A (.cv y)) (syn_c1c))))
-        (syn_wa (syn_wne A (syn_c0))
-          (syn_wrex y (syn_cnnc) (.classEq B (syn_cplc (syn_cplc A (.cv y)) (syn_c1c))))))
-      (syn_wa (.classMem A V) (.classMem B W)) p0039
+    @gAdantl (synWne A (synC0))
+      (synWb (synWrex y (synCnnc) (.classEq B (synCplc (synCplc A (.cv y)) (synC1c))))
+        (synWa (synWne A (synC0))
+          (synWrex y (synCnnc) (.classEq B (synCplc (synCplc A (.cv y)) (synC1c))))))
+      (synWa (.classMem A V) (.classMem B W)) p0039
   have p0041 :=
-    @g_bitr4d (syn_wa (syn_wa (.classMem A V) (.classMem B W)) (syn_wne A (syn_c0)))
-      (.classMem (syn_copk A B) (syn_cltfin))
-      (syn_wa (syn_wne A (syn_c0))
-        (syn_wrex y (syn_cnnc) (.classEq B (syn_cplc (syn_cplc A (.cv y)) (syn_c1c)))))
-      (syn_wrex y (syn_cnnc) (.classEq B (syn_cplc (syn_cplc A (.cv y)) (syn_c1c)))) p0038
+    @gBitr4d (synWa (synWa (.classMem A V) (.classMem B W)) (synWne A (synC0)))
+      (.classMem (synCopk A B) (synCltfin))
+      (synWa (synWne A (synC0))
+        (synWrex y (synCnnc) (.classEq B (synCplc (synCplc A (.cv y)) (synC1c)))))
+      (synWrex y (synCnnc) (.classEq B (synCplc (synCplc A (.cv y)) (synC1c)))) p0038
       p0040
   have p0042 :=
-    @g_orbi1d (syn_wa (syn_wa (.classMem A V) (.classMem B W)) (syn_wne A (syn_c0)))
-      (.classMem (syn_copk A B) (syn_cltfin))
-      (syn_wrex y (syn_cnnc) (.classEq B (syn_cplc (syn_cplc A (.cv y)) (syn_c1c))))
+    @gOrbi1d (synWa (synWa (.classMem A V) (.classMem B W)) (synWne A (synC0)))
+      (.classMem (synCopk A B) (synCltfin))
+      (synWrex y (synCnnc) (.classEq B (synCplc (synCplc A (.cv y)) (synC1c))))
       (.classEq A B) p0041
   have p0043 :=
-    @g_n_3impa (.classMem A V) (.classMem B W) (syn_wne A (syn_c0))
-      (syn_wb (syn_wo (.classMem (syn_copk A B) (syn_cltfin)) (.classEq A B)) (syn_wo
-          (syn_wrex y (syn_cnnc) (.classEq B (syn_cplc (syn_cplc A (.cv y)) (syn_c1c))))
+    @gN3impa (.classMem A V) (.classMem B W) (synWne A (synC0))
+      (synWb (synWo (.classMem (synCopk A B) (synCltfin)) (.classEq A B)) (synWo
+          (synWrex y (synCnnc) (.classEq B (synCplc (synCplc A (.cv y)) (synC1c))))
           (.classEq A B)))
       p0042
   have p0044 :=
-    @g_n_3bitr4d (syn_w3a (.classMem A V) (.classMem B W) (syn_wne A (syn_c0)))
-      (syn_wrex x (syn_cnnc) (.classEq B (syn_cplc A (.cv x))))
-      (syn_wo (syn_wrex y (syn_cnnc) (.classEq B (syn_cplc (syn_cplc A (.cv y)) (syn_c1c))))
+    @gN3bitr4d (synW3a (.classMem A V) (.classMem B W) (synWne A (synC0)))
+      (synWrex x (synCnnc) (.classEq B (synCplc A (.cv x))))
+      (synWo (synWrex y (synCnnc) (.classEq B (synCplc (synCplc A (.cv y)) (synC1c))))
         (.classEq A B))
-      (.classMem (syn_copk A B) (syn_clefin))
-      (syn_wo (.classMem (syn_copk A B) (syn_cltfin)) (.classEq A B)) p0034 p0036 p0043
+      (.classMem (synCopk A B) (synClefin))
+      (synWo (.classMem (synCopk A B) (synCltfin)) (.classEq A B)) p0034 p0036 p0043
   exact p0044
 
 
@@ -330,8 +331,9 @@ open NFChoice.SemanticCore
 open NFChoice.ReplaySupport
 open NFChoice.Compiler.CompactSourceSyntax
 
+/-- Checked nominal proof certificate identified upstream as `g_ltfinex`. -/
 @[expose]
-noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
+noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   by
   let proofSupport : Finset Var := (∅ : Finset Var)
   let x : Var := freshVar proofSupport 0
@@ -507,279 +509,279 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     exact freshVar_injective proofSupport (i := 7) (j := 8) (by decide)
   have fresh_d_ne_b : d ≠ b := Ne.symm fresh_b_ne_d
   let syntaxClass0000 : Class :=
-    (syn_cimak (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-      (syn_cpw1 (syn_cpw1 (syn_c1c))))
-  let syntaxClass0001 : Class := (syn_ccompl syntaxClass0000)
-  let syntaxClass0002 : Class := (syn_csik syntaxClass0001)
-  let syntaxClass0003 : Class := (syn_csik syntaxClass0002)
-  let syntaxClass0004 : Class := (syn_csik syntaxClass0003)
-  let syntaxClass0005 : Class := (syn_csik syntaxClass0004)
-  let syntaxClass0006 : Class := (syn_csik syntaxClass0005)
-  let syntaxClass0007 : Class := (syn_csik syntaxClass0006)
-  let syntaxClass0008 : Class := (syn_csik syntaxClass0007)
-  let syntaxClass0009 : Class := (syn_cins3k syntaxClass0008)
+    (synCimak (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+      (synCpw1 (synCpw1 (synC1c))))
+  let syntaxClass0001 : Class := (synCcompl syntaxClass0000)
+  let syntaxClass0002 : Class := (synCsik syntaxClass0001)
+  let syntaxClass0003 : Class := (synCsik syntaxClass0002)
+  let syntaxClass0004 : Class := (synCsik syntaxClass0003)
+  let syntaxClass0005 : Class := (synCsik syntaxClass0004)
+  let syntaxClass0006 : Class := (synCsik syntaxClass0005)
+  let syntaxClass0007 : Class := (synCsik syntaxClass0006)
+  let syntaxClass0008 : Class := (synCsik syntaxClass0007)
+  let syntaxClass0009 : Class := (synCins3k syntaxClass0008)
   let syntaxClass0010 : Class :=
-    (syn_cins3k (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))))
-  let syntaxClass0011 : Class := (syn_cins2k syntaxClass0010)
-  let syntaxClass0012 : Class := (syn_cins2k syntaxClass0011)
+    (synCins3k (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))))
+  let syntaxClass0011 : Class := (synCins2k syntaxClass0010)
+  let syntaxClass0012 : Class := (synCins2k syntaxClass0011)
   let syntaxClass0013 : Class :=
-    (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))))
-  let syntaxClass0014 : Class := (syn_csik syntaxClass0013)
-  let syntaxClass0015 : Class := (syn_csik syntaxClass0014)
-  let syntaxClass0016 : Class := (syn_cins3k syntaxClass0015)
-  let syntaxClass0017 : Class := (syn_cins3k syntaxClass0013)
-  let syntaxClass0018 : Class := (syn_cins2k syntaxClass0017)
-  let syntaxClass0019 : Class := (syn_cun syntaxClass0016 syntaxClass0018)
-  let syntaxClass0020 : Class := (syn_csymdif syntaxClass0012 syntaxClass0019)
+    (synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk))))))))
+  let syntaxClass0014 : Class := (synCsik syntaxClass0013)
+  let syntaxClass0015 : Class := (synCsik syntaxClass0014)
+  let syntaxClass0016 : Class := (synCins3k syntaxClass0015)
+  let syntaxClass0017 : Class := (synCins3k syntaxClass0013)
+  let syntaxClass0018 : Class := (synCins2k syntaxClass0017)
+  let syntaxClass0019 : Class := (synCun syntaxClass0016 syntaxClass0018)
+  let syntaxClass0020 : Class := (synCsymdif syntaxClass0012 syntaxClass0019)
   let syntaxClass0021 : Class :=
-    (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))))
-  let syntaxClass0022 : Class := (syn_cpw1 syntaxClass0021)
-  let syntaxClass0023 : Class := (syn_cpw1 syntaxClass0022)
-  let syntaxClass0024 : Class := (syn_cpw1 syntaxClass0023)
-  let syntaxClass0025 : Class := (syn_cpw1 syntaxClass0024)
-  let syntaxClass0026 : Class := (syn_cimak syntaxClass0020 syntaxClass0025)
-  let syntaxClass0027 : Class := (syn_ccompl syntaxClass0026)
-  let syntaxClass0028 : Class := (syn_cin syntaxClass0009 syntaxClass0027)
+    (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))))))
+  let syntaxClass0022 : Class := (synCpw1 syntaxClass0021)
+  let syntaxClass0023 : Class := (synCpw1 syntaxClass0022)
+  let syntaxClass0024 : Class := (synCpw1 syntaxClass0023)
+  let syntaxClass0025 : Class := (synCpw1 syntaxClass0024)
+  let syntaxClass0026 : Class := (synCimak syntaxClass0020 syntaxClass0025)
+  let syntaxClass0027 : Class := (synCcompl syntaxClass0026)
+  let syntaxClass0028 : Class := (synCin syntaxClass0009 syntaxClass0027)
   let syntaxClass0029 : Class :=
-    (syn_cin (syn_cins2k (syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk))))) syntaxClass0028)
-  let syntaxClass0030 : Class := (syn_cimak syntaxClass0029 syntaxClass0022)
+    (synCin (synCins2k (synCins2k (synCins2k (synCins3k (synCssetk))))) syntaxClass0028)
+  let syntaxClass0030 : Class := (synCimak syntaxClass0029 syntaxClass0022)
   let syntaxClass0031 : Class :=
-    (syn_cin (syn_cins2k (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))) syntaxClass0030)
+    (synCin (synCins2k (synCins3k (synCsik (synCsik (synCssetk))))) syntaxClass0030)
   let syntaxClass0032 : Class :=
-    (syn_cimak syntaxClass0031
-      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))))
-  let syntaxClass0033 : Class := (syn_cins2k syntaxClass0032)
+    (synCimak syntaxClass0031
+      (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))))))
+  let syntaxClass0033 : Class := (synCins2k syntaxClass0032)
   let syntaxClass0034 : Class :=
-    (syn_csymdif (syn_cins3k (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))
+    (synCsymdif (synCins3k (synCsik (synCsik (synCsik (synCsik (synCssetk))))))
       syntaxClass0033)
   let syntaxClass0035 : Class :=
-    (syn_cimak syntaxClass0034
-      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))))
-  let syntaxClass0036 : Class := (syn_ccompl syntaxClass0035)
-  let syntaxClass0037 : Class := (syn_cins3k syntaxClass0001)
+    (synCimak syntaxClass0034
+      (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))))))
+  let syntaxClass0036 : Class := (synCcompl syntaxClass0035)
+  let syntaxClass0037 : Class := (synCins3k syntaxClass0001)
   let syntaxClass0038 : Class :=
-    (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-      (syn_cins3k (syn_csik (syn_csik (syn_cssetk)))))
+    (synCun (synCins2k (synCins3k (synCssetk)))
+      (synCins3k (synCsik (synCsik (synCssetk)))))
   let syntaxClass0039 : Class :=
-    (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk))) syntaxClass0038)
+    (synCsymdif (synCins2k (synCins2k (synCssetk))) syntaxClass0038)
   let syntaxClass0040 : Class :=
-    (syn_cimak syntaxClass0039 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))
-  let syntaxClass0041 : Class := (syn_cdif syntaxClass0037 syntaxClass0040)
+    (synCimak syntaxClass0039 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))))
+  let syntaxClass0041 : Class := (synCdif syntaxClass0037 syntaxClass0040)
   let syntaxClass0042 : Class :=
-    (syn_cimak syntaxClass0041 (syn_cpw1 (syn_cpw1 (syn_c1c))))
-  let syntaxClass0043 : Class := (syn_cimagek syntaxClass0042)
-  let syntaxClass0044 : Class := (syn_cins2k syntaxClass0043)
-  let syntaxClass0045 : Class := (syn_cins2k syntaxClass0044)
-  let syntaxClass0046 : Class := (syn_cin syntaxClass0036 syntaxClass0045)
+    (synCimak syntaxClass0041 (synCpw1 (synCpw1 (synC1c))))
+  let syntaxClass0043 : Class := (synCimagek syntaxClass0042)
+  let syntaxClass0044 : Class := (synCins2k syntaxClass0043)
+  let syntaxClass0045 : Class := (synCins2k syntaxClass0044)
+  let syntaxClass0046 : Class := (synCin syntaxClass0036 syntaxClass0045)
   let syntaxClass0047 : Class :=
-    (syn_cimak syntaxClass0046 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))
+    (synCimak syntaxClass0046 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))
   let syntaxClass0048 : Class :=
-    (syn_cimak syntaxClass0047 (syn_cpw1 (syn_cpw1 (syn_cnnc))))
+    (synCimak syntaxClass0047 (synCpw1 (synCpw1 (synCnnc))))
   let syntaxClass0049 : Class :=
-    (syn_cdif syntaxClass0048 (syn_cxpk (syn_csn (syn_c0)) (syn_cvv)))
+    (synCdif syntaxClass0048 (synCxpk (synCsn (synC0)) (synCvv)))
   let syntaxFormula0050 : Wff := (.classMem (.cv x) syntaxClass0049)
   let syntaxFormula0051 : Wff := (Wff.classMem (.cv x) syntaxClass0049)
   let syntaxFormula0052 : Wff :=
-    (.classMem (syn_copk (.cv t) (syn_copk (.cv y) (.cv z))) syntaxClass0047)
+    (.classMem (synCopk (.cv t) (synCopk (.cv y) (.cv z))) syntaxClass0047)
   let syntaxFormula0053 : Wff :=
-    (syn_wa (.classMem (.cv t) (syn_cpw1 (syn_cpw1 (syn_cnnc)))) syntaxFormula0052)
+    (synWa (.classMem (.cv t) (synCpw1 (synCpw1 (synCnnc)))) syntaxFormula0052)
   let syntaxFormula0054 : Wff :=
-    (syn_wa (.classEq (.cv t) (syn_csn (syn_csn (.cv w)))) syntaxFormula0052)
-  let syntaxFormula0055 : Wff := (syn_wrex w (syn_cnnc) syntaxFormula0054)
+    (synWa (.classEq (.cv t) (synCsn (synCsn (.cv w)))) syntaxFormula0052)
+  let syntaxFormula0055 : Wff := (synWrex w (synCnnc) syntaxFormula0054)
   let syntaxFormula0056 : Wff :=
-    (syn_wrex t (syn_cpw1 (syn_cpw1 (syn_cnnc))) syntaxFormula0052)
-  let syntaxFormula0057 : Wff := (syn_wex t syntaxFormula0054)
-  let syntaxFormula0058 : Wff := (syn_wrex w (syn_cnnc) syntaxFormula0057)
+    (synWrex t (synCpw1 (synCpw1 (synCnnc))) syntaxFormula0052)
+  let syntaxFormula0057 : Wff := (synWex t syntaxFormula0054)
+  let syntaxFormula0058 : Wff := (synWrex w (synCnnc) syntaxFormula0057)
   let syntaxFormula0059 : Wff :=
-    (.classMem (syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z)))
+    (.classMem (synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))
       syntaxClass0047)
   let syntaxClass0060 : Class :=
-    (syn_copk (.cv t) (syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z))))
+    (synCopk (.cv t) (synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z))))
   let syntaxFormula0061 : Wff := (.classMem syntaxClass0060 syntaxClass0046)
   let syntaxFormula0062 : Wff :=
-    (syn_wa (.classMem (.cv t) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))) syntaxFormula0061)
+    (synWa (.classMem (.cv t) (synCpw1 (synCpw1 (synCpw1 (synC1c))))) syntaxFormula0061)
   let syntaxFormula0063 : Wff :=
-    (syn_wa (.classEq (.cv t) (syn_csn (syn_csn (syn_csn (syn_csn (.cv x))))))
+    (synWa (.classEq (.cv t) (synCsn (synCsn (synCsn (synCsn (.cv x))))))
       syntaxFormula0061)
-  let syntaxFormula0064 : Wff := (syn_wex x syntaxFormula0063)
+  let syntaxFormula0064 : Wff := (synWex x syntaxFormula0063)
   let syntaxFormula0065 : Wff :=
-    (syn_wrex t (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))) syntaxFormula0061)
-  let syntaxFormula0066 : Wff := (syn_wex t syntaxFormula0063)
-  let syntaxFormula0067 : Wff := (syn_wex x syntaxFormula0066)
+    (synWrex t (synCpw1 (synCpw1 (synCpw1 (synC1c)))) syntaxFormula0061)
+  let syntaxFormula0066 : Wff := (synWex t syntaxFormula0063)
+  let syntaxFormula0067 : Wff := (synWex x syntaxFormula0066)
   let syntaxClass0068 : Class :=
-    (syn_copk (syn_csn (syn_csn (syn_csn (syn_csn (.cv x)))))
-      (syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z))))
+    (synCopk (synCsn (synCsn (synCsn (synCsn (.cv x)))))
+      (synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z))))
   let syntaxFormula0069 : Wff := (.classMem syntaxClass0068 syntaxClass0046)
   let syntaxFormula0070 : Wff :=
     (.classMem (.cv t)
-      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))))
+      (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))))))
   let syntaxFormula0071 : Wff :=
     (.classEq (.cv t)
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c)))))))))
-  let syntaxClass0072 : Class := (syn_copk (.cv t) syntaxClass0068)
+      (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv c)))))))))
+  let syntaxClass0072 : Class := (synCopk (.cv t) syntaxClass0068)
   let syntaxFormula0073 : Wff := (.classMem syntaxClass0072 syntaxClass0034)
-  let syntaxFormula0074 : Wff := (syn_wa syntaxFormula0070 syntaxFormula0073)
-  let syntaxFormula0075 : Wff := (syn_wa syntaxFormula0071 syntaxFormula0073)
-  let syntaxFormula0076 : Wff := (syn_wex c syntaxFormula0075)
+  let syntaxFormula0074 : Wff := (synWa syntaxFormula0070 syntaxFormula0073)
+  let syntaxFormula0075 : Wff := (synWa syntaxFormula0071 syntaxFormula0073)
+  let syntaxFormula0076 : Wff := (synWex c syntaxFormula0075)
   let syntaxFormula0077 : Wff :=
-    (syn_wrex t (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
+    (synWrex t (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
       syntaxFormula0073)
-  let syntaxFormula0078 : Wff := (syn_wex t syntaxFormula0075)
-  let syntaxFormula0079 : Wff := (syn_wex c syntaxFormula0078)
+  let syntaxFormula0078 : Wff := (synWex t syntaxFormula0075)
+  let syntaxFormula0079 : Wff := (synWex c syntaxFormula0078)
   let syntaxClass0080 : Class :=
-    (syn_copk (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c))))))))
+    (synCopk (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))))
       syntaxClass0068)
   let syntaxFormula0081 : Wff := (.classMem syntaxClass0080 syntaxClass0034)
   let syntaxFormula0082 : Wff :=
     (.classMem syntaxClass0080
-      (syn_cins3k (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))))
+      (synCins3k (synCsik (synCsik (synCsik (synCsik (synCssetk)))))))
   let syntaxClass0083 : Class :=
-    (syn_copk (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c))))))
-      (syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z))))
+    (synCopk (synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))
+      (synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z))))
   let syntaxFormula0084 : Wff :=
     (.classEq (.cv t)
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b)))))))))
-  let syntaxClass0085 : Class := (syn_copk (.cv t) syntaxClass0083)
+      (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b)))))))))
+  let syntaxClass0085 : Class := (synCopk (.cv t) syntaxClass0083)
   let syntaxFormula0086 : Wff := (.classMem syntaxClass0085 syntaxClass0031)
-  let syntaxFormula0087 : Wff := (syn_wa syntaxFormula0070 syntaxFormula0086)
-  let syntaxFormula0088 : Wff := (syn_wa syntaxFormula0084 syntaxFormula0086)
-  let syntaxFormula0089 : Wff := (syn_wex b syntaxFormula0088)
+  let syntaxFormula0087 : Wff := (synWa syntaxFormula0070 syntaxFormula0086)
+  let syntaxFormula0088 : Wff := (synWa syntaxFormula0084 syntaxFormula0086)
+  let syntaxFormula0089 : Wff := (synWex b syntaxFormula0088)
   let syntaxFormula0090 : Wff :=
-    (syn_wrex t (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
+    (synWrex t (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
       syntaxFormula0086)
-  let syntaxFormula0091 : Wff := (syn_wex t syntaxFormula0088)
-  let syntaxFormula0092 : Wff := (syn_wex b syntaxFormula0091)
+  let syntaxFormula0091 : Wff := (synWex t syntaxFormula0088)
+  let syntaxFormula0092 : Wff := (synWex b syntaxFormula0091)
   let syntaxClass0093 : Class :=
-    (syn_copk (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))))
+    (synCopk (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))))
       syntaxClass0083)
   let syntaxFormula0094 : Wff := (.classMem syntaxClass0093 syntaxClass0031)
   let syntaxFormula0095 : Wff :=
-    (.classMem syntaxClass0093 (syn_cins2k (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
+    (.classMem syntaxClass0093 (synCins2k (synCins3k (synCsik (synCsik (synCssetk))))))
   let syntaxFormula0096 : Wff := (.classMem (.cv t) syntaxClass0022)
   let syntaxClass0097 : Class :=
-    (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a)))))))))
-  let syntaxClass0098 : Class := (syn_csn syntaxClass0097)
+    (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a)))))))))
+  let syntaxClass0098 : Class := (synCsn syntaxClass0097)
   let syntaxFormula0099 : Wff := (.classEq (.cv t) syntaxClass0098)
-  let syntaxClass0100 : Class := (syn_copk (.cv t) syntaxClass0093)
+  let syntaxClass0100 : Class := (synCopk (.cv t) syntaxClass0093)
   let syntaxFormula0101 : Wff := (.classMem syntaxClass0100 syntaxClass0029)
-  let syntaxFormula0102 : Wff := (syn_wa syntaxFormula0096 syntaxFormula0101)
-  let syntaxFormula0103 : Wff := (syn_wa syntaxFormula0099 syntaxFormula0101)
-  let syntaxFormula0104 : Wff := (syn_wex a syntaxFormula0103)
-  let syntaxFormula0105 : Wff := (syn_wrex t syntaxClass0022 syntaxFormula0101)
-  let syntaxFormula0106 : Wff := (syn_wex t syntaxFormula0103)
-  let syntaxFormula0107 : Wff := (syn_wex a syntaxFormula0106)
-  let syntaxClass0108 : Class := (syn_copk syntaxClass0098 syntaxClass0093)
+  let syntaxFormula0102 : Wff := (synWa syntaxFormula0096 syntaxFormula0101)
+  let syntaxFormula0103 : Wff := (synWa syntaxFormula0099 syntaxFormula0101)
+  let syntaxFormula0104 : Wff := (synWex a syntaxFormula0103)
+  let syntaxFormula0105 : Wff := (synWrex t syntaxClass0022 syntaxFormula0101)
+  let syntaxFormula0106 : Wff := (synWex t syntaxFormula0103)
+  let syntaxFormula0107 : Wff := (synWex a syntaxFormula0106)
+  let syntaxClass0108 : Class := (synCopk syntaxClass0098 syntaxClass0093)
   let syntaxFormula0109 : Wff := (.classMem syntaxClass0108 syntaxClass0029)
   let syntaxFormula0110 : Wff :=
-    (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a))))))
-        (syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z))))
-      (syn_cins2k (syn_cins3k (syn_cssetk))))
+    (.classMem (synCopk (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a))))))
+        (synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z))))
+      (synCins2k (synCins3k (synCssetk))))
   let syntaxFormula0111 : Wff :=
-    (.classMem syntaxClass0108 (syn_cins2k (syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk))))))
+    (.classMem syntaxClass0108 (synCins2k (synCins2k (synCins2k (synCins3k (synCssetk))))))
   let syntaxFormula0112 : Wff :=
-    (.classMem (syn_copk (syn_csn (syn_csn (.cv a))) (syn_csn (syn_csn (.cv b))))
+    (.classMem (synCopk (synCsn (synCsn (.cv a))) (synCsn (synCsn (.cv b))))
       syntaxClass0003)
   let syntaxFormula0113 : Wff :=
-    (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (syn_csn (.cv a)))))
-        (syn_csn (syn_csn (syn_csn (syn_csn (.cv b)))))) syntaxClass0005)
+    (.classMem (synCopk (synCsn (synCsn (synCsn (synCsn (.cv a)))))
+        (synCsn (synCsn (synCsn (synCsn (.cv b)))))) syntaxClass0005)
   let syntaxFormula0114 : Wff :=
-    (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a)))))))
-        (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b)))))))) syntaxClass0007)
+    (.classMem (synCopk (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a)))))))
+        (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b)))))))) syntaxClass0007)
   let syntaxFormula0115 : Wff := (.classMem syntaxClass0108 syntaxClass0009)
   let syntaxFormula0116 : Wff := (.classMem (.cv t) syntaxClass0025)
   let syntaxClass0117 : Class :=
-    (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv d)))))))))
-  let syntaxClass0118 : Class := (syn_csn syntaxClass0117)
-  let syntaxClass0119 : Class := (syn_csn syntaxClass0118)
-  let syntaxClass0120 : Class := (syn_csn syntaxClass0119)
-  let syntaxClass0121 : Class := (syn_csn syntaxClass0120)
+    (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv d)))))))))
+  let syntaxClass0118 : Class := (synCsn syntaxClass0117)
+  let syntaxClass0119 : Class := (synCsn syntaxClass0118)
+  let syntaxClass0120 : Class := (synCsn syntaxClass0119)
+  let syntaxClass0121 : Class := (synCsn syntaxClass0120)
   let syntaxFormula0122 : Wff := (.classEq (.cv t) syntaxClass0121)
-  let syntaxClass0123 : Class := (syn_copk (.cv t) syntaxClass0108)
+  let syntaxClass0123 : Class := (synCopk (.cv t) syntaxClass0108)
   let syntaxFormula0124 : Wff := (.classMem syntaxClass0123 syntaxClass0020)
-  let syntaxFormula0125 : Wff := (syn_wa syntaxFormula0116 syntaxFormula0124)
-  let syntaxFormula0126 : Wff := (syn_wa syntaxFormula0122 syntaxFormula0124)
-  let syntaxFormula0127 : Wff := (syn_wex d syntaxFormula0126)
-  let syntaxFormula0128 : Wff := (syn_wrex t syntaxClass0025 syntaxFormula0124)
-  let syntaxFormula0129 : Wff := (syn_wex t syntaxFormula0126)
-  let syntaxFormula0130 : Wff := (syn_wex d syntaxFormula0129)
-  let syntaxClass0131 : Class := (syn_copk syntaxClass0121 syntaxClass0108)
+  let syntaxFormula0125 : Wff := (synWa syntaxFormula0116 syntaxFormula0124)
+  let syntaxFormula0126 : Wff := (synWa syntaxFormula0122 syntaxFormula0124)
+  let syntaxFormula0127 : Wff := (synWex d syntaxFormula0126)
+  let syntaxFormula0128 : Wff := (synWrex t syntaxClass0025 syntaxFormula0124)
+  let syntaxFormula0129 : Wff := (synWex t syntaxFormula0126)
+  let syntaxFormula0130 : Wff := (synWex d syntaxFormula0129)
+  let syntaxClass0131 : Class := (synCopk syntaxClass0121 syntaxClass0108)
   let syntaxFormula0132 : Wff := (.classMem syntaxClass0131 syntaxClass0020)
   let syntaxFormula0133 : Wff :=
-    (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv d))))))
-        (syn_csn (syn_csn (syn_csn (syn_csn (.cv c))))))
-      (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))
-  let syntaxClass0134 : Class := (syn_copk syntaxClass0117 syntaxClass0083)
+    (.classMem (synCopk (synCsn (synCsn (synCsn (synCsn (synCsn (.cv d))))))
+        (synCsn (synCsn (synCsn (synCsn (.cv c))))))
+      (synCsik (synCsik (synCsik (synCsik (synCssetk))))))
+  let syntaxClass0134 : Class := (synCopk syntaxClass0117 syntaxClass0083)
   let syntaxFormula0135 : Wff := (.classMem syntaxClass0134 syntaxClass0010)
   let syntaxFormula0136 : Wff := (.classMem syntaxClass0131 syntaxClass0012)
-  let syntaxClass0137 : Class := (syn_copk syntaxClass0119 syntaxClass0093)
+  let syntaxClass0137 : Class := (synCopk syntaxClass0119 syntaxClass0093)
   let syntaxFormula0138 : Wff :=
-    (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv d))))))
-        (syn_csn (syn_csn (syn_csn (syn_csn (.cv a))))))
-      (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))
+    (.classMem (synCopk (synCsn (synCsn (synCsn (synCsn (synCsn (.cv d))))))
+        (synCsn (synCsn (synCsn (synCsn (.cv a))))))
+      (synCsik (synCsik (synCsik (synCsik (synCssetk))))))
   let syntaxFormula0139 : Wff :=
-    (.classMem (syn_copk
-        (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv d))))))))
-        (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a))))))))
-      (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))))
-  let syntaxClass0140 : Class := (syn_copk syntaxClass0118 syntaxClass0097)
+    (.classMem (synCopk
+        (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv d))))))))
+        (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a))))))))
+      (synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk))))))))
+  let syntaxClass0140 : Class := (synCopk syntaxClass0118 syntaxClass0097)
   let syntaxFormula0141 : Wff := (.classMem syntaxClass0140 syntaxClass0014)
   let syntaxFormula0142 : Wff := (.classMem syntaxClass0131 syntaxClass0016)
   let syntaxFormula0143 : Wff :=
-    (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv d)))))))
-        (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b)))))))
-      (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))))
+    (.classMem (synCopk (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv d)))))))
+        (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b)))))))
+      (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))))
   let syntaxClass0144 : Class :=
-    (syn_copk syntaxClass0117
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b)))))))))
+    (synCopk syntaxClass0117
+      (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b)))))))))
   let syntaxFormula0145 : Wff := (.classMem syntaxClass0144 syntaxClass0013)
   let syntaxFormula0146 : Wff := (.classMem syntaxClass0131 syntaxClass0018)
   let syntaxFormula0147 : Wff := (.classMem syntaxClass0131 syntaxClass0019)
-  let syntaxFormula0148 : Wff := (syn_wb syntaxFormula0136 syntaxFormula0147)
+  let syntaxFormula0148 : Wff := (synWb syntaxFormula0136 syntaxFormula0147)
   let syntaxFormula0149 : Wff := (.classMem syntaxClass0108 syntaxClass0026)
   let syntaxFormula0150 : Wff := (.classMem syntaxClass0108 syntaxClass0027)
   let syntaxFormula0151 : Wff := (.classMem syntaxClass0108 syntaxClass0028)
   let syntaxFormula0152 : Wff :=
-    (syn_wa (.classEq (syn_cin (.cv a) (.cv b)) (syn_c0))
-      (.classEq (.cv c) (syn_cun (.cv a) (.cv b))))
+    (synWa (.classEq (synCin (.cv a) (.cv b)) (synC0))
+      (.classEq (.cv c) (synCun (.cv a) (.cv b))))
   let syntaxFormula0153 : Wff := (.classMem syntaxClass0093 syntaxClass0030)
-  let syntaxFormula0154 : Wff := (syn_wrex a (.cv y) syntaxFormula0152)
+  let syntaxFormula0154 : Wff := (synWrex a (.cv y) syntaxFormula0152)
   let syntaxFormula0155 : Wff := (.classMem syntaxClass0083 syntaxClass0032)
-  let syntaxFormula0156 : Wff := (syn_wrex b (.cv w) syntaxFormula0154)
-  let syntaxFormula0157 : Wff := (syn_wrex b (.cv w) syntaxFormula0152)
-  let syntaxFormula0158 : Wff := (syn_wrex a (.cv y) syntaxFormula0157)
+  let syntaxFormula0156 : Wff := (synWrex b (.cv w) syntaxFormula0154)
+  let syntaxFormula0157 : Wff := (synWrex b (.cv w) syntaxFormula0152)
+  let syntaxFormula0158 : Wff := (synWrex a (.cv y) syntaxFormula0157)
   let syntaxFormula0159 : Wff := (.classMem syntaxClass0080 syntaxClass0033)
-  let syntaxFormula0160 : Wff := (syn_wb syntaxFormula0082 syntaxFormula0159)
+  let syntaxFormula0160 : Wff := (synWb syntaxFormula0082 syntaxFormula0159)
   let syntaxFormula0161 : Wff := (.classMem syntaxClass0068 syntaxClass0035)
   let syntaxClass0162 : Class := (.cab c syntaxFormula0158)
   let syntaxFormula0163 : Wff := (.classEq (.cv x) syntaxClass0162)
   let syntaxFormula0164 : Wff := (.classMem syntaxClass0068 syntaxClass0036)
-  let syntaxClass0165 : Class := (syn_cimak syntaxClass0042 (.cv x))
-  let syntaxFormula0166 : Wff := (.classMem (syn_copk (.cv x) (.cv z)) syntaxClass0043)
+  let syntaxClass0165 : Class := (synCimak syntaxClass0042 (.cv x))
+  let syntaxFormula0166 : Wff := (.classMem (synCopk (.cv x) (.cv z)) syntaxClass0043)
   let syntaxFormula0167 : Wff := (.classMem syntaxClass0068 syntaxClass0045)
   let syntaxFormula0168 : Wff :=
-    (syn_wa (.classEq (.cv x) (syn_cplc (.cv y) (.cv w)))
-      (.classEq (.cv z) (syn_cplc (.cv x) (syn_c1c))))
-  let syntaxFormula0169 : Wff := (.classMem (syn_copk (.cv y) (.cv z)) syntaxClass0048)
+    (synWa (.classEq (.cv x) (synCplc (.cv y) (.cv w)))
+      (.classEq (.cv z) (synCplc (.cv x) (synC1c))))
+  let syntaxFormula0169 : Wff := (.classMem (synCopk (.cv y) (.cv z)) syntaxClass0048)
   let syntaxFormula0170 : Wff :=
-    (syn_wrex w (syn_cnnc) (.classEq (.cv z) (syn_cplc (syn_cplc (.cv y) (.cv w)) (syn_c1c))))
-  let syntaxFormula0171 : Wff := (syn_wa (syn_wne (.cv y) (syn_c0)) syntaxFormula0170)
-  let syntaxFormula0172 : Wff := (.classMem (syn_copk (.cv y) (.cv z)) syntaxClass0049)
+    (synWrex w (synCnnc) (.classEq (.cv z) (synCplc (synCplc (.cv y) (.cv w)) (synC1c))))
+  let syntaxFormula0171 : Wff := (synWa (synWne (.cv y) (synC0)) syntaxFormula0170)
+  let syntaxFormula0172 : Wff := (.classMem (synCopk (.cv y) (.cv z)) syntaxClass0049)
   let syntaxFormula0173 : Wff :=
-    (syn_wa (.classEq (.cv x) (syn_copk (.cv y) (.cv z))) syntaxFormula0050)
+    (synWa (.classEq (.cv x) (synCopk (.cv y) (.cv z))) syntaxFormula0050)
   let syntaxFormula0174 : Wff :=
-    (syn_wa (.classEq (.cv x) (syn_copk (.cv y) (.cv z))) syntaxFormula0171)
+    (synWa (.classEq (.cv x) (synCopk (.cv y) (.cv z))) syntaxFormula0171)
   let syntaxFormula0175 : Wff :=
-    (syn_wa (syn_wex y (syn_wex z (.classEq (.cv x) (syn_copk (.cv y) (.cv z)))))
+    (synWa (synWex y (synWex z (.classEq (.cv x) (synCopk (.cv y) (.cv z)))))
       syntaxFormula0050)
-  let syntaxFormula0176 : Wff := (syn_wex z syntaxFormula0174)
-  let syntaxFormula0177 : Wff := (syn_wex y syntaxFormula0176)
-  let syntaxClass0178 : Class := (syn_cin (syn_cxpk (syn_cvv) (syn_cvv)) syntaxClass0049)
+  let syntaxFormula0176 : Wff := (synWex z syntaxFormula0174)
+  let syntaxFormula0177 : Wff := (synWex y syntaxFormula0176)
+  let syntaxClass0178 : Class := (synCin (synCxpk (synCvv) (synCvv)) syntaxClass0049)
   have p0000 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_ltfin x y z w
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfLtfin x y z w
       (show y ≠ z from (by exact fresh_y_ne_z)) (show y ≠ w from (by exact fresh_y_ne_w))
       (show y ≠ x from (by exact fresh_y_ne_x)) (show z ≠ w from (by exact fresh_z_ne_w))
       (show z ≠ x from (by exact fresh_z_ne_x)) (show w ≠ x from (by exact fresh_w_ne_x))
-  have p0001 := @g_elin (.cv x) (syn_cxpk (syn_cvv) (syn_cvv)) syntaxClass0049
+  have p0001 := @gElin (.cv x) (synCxpk (synCvv) (synCvv)) syntaxClass0049
   have freshnessCertificate0000 : y ∉ ((Class.cv x)).fv :=
     (by
       rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
@@ -797,98 +799,98 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
             simpa only [Finset.mem_singleton] using
               (show z ≠ x from (by exact fresh_z_ne_x)))))
   have p0002 :=
-    @g_elvvk y z (.cv x) (by exact freshnessCertificate0000)
+    @gElvvk y z (.cv x) (by exact freshnessCertificate0000)
       (by exact freshnessCertificate0001) (show y ≠ z from (by exact fresh_y_ne_z))
   have p0003 :=
-    @g_anbi1i (.classMem (.cv x) (syn_cxpk (syn_cvv) (syn_cvv)))
-      (syn_wex y (syn_wex z (.classEq (.cv x) (syn_copk (.cv y) (.cv z)))))
+    @gAnbi1i (.classMem (.cv x) (synCxpk (synCvv) (synCvv)))
+      (synWex y (synWex z (.classEq (.cv x) (synCopk (.cv y) (.cv z)))))
       syntaxFormula0050 p0002
-  have freshnessCertificate0002 : y ∉ ((syn_cssetk)).fv :=
+  have freshnessCertificate0002 : y ∉ ((synCssetk)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
       exact (show y ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0003 : y ∉ ((syn_csik (syn_cssetk))).fv :=
+  have freshnessCertificate0003 : y ∉ ((synCsik (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0002)
-  have freshnessCertificate0004 : y ∉ ((syn_csik (syn_csik (syn_cssetk)))).fv :=
+  have freshnessCertificate0004 : y ∉ ((synCsik (synCsik (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0003)
   have freshnessCertificate0005 :
-    y ∉ ((syn_csik (syn_csik (syn_csik (syn_cssetk))))).fv :=
+    y ∉ ((synCsik (synCsik (synCsik (synCssetk))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0004)
   have freshnessCertificate0006 :
-    y ∉ ((syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))).fv :=
+    y ∉ ((synCsik (synCsik (synCsik (synCsik (synCssetk)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0005)
   have freshnessCertificate0007 :
-    y ∉ ((syn_cins3k (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))).fv :=
+    y ∉ ((synCins3k (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0006)
   have freshnessCertificate0008 :
-    y ∉ ((syn_cins3k (syn_csik (syn_csik (syn_cssetk))))).fv :=
+    y ∉ ((synCins3k (synCsik (synCsik (synCssetk))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0004)
   have freshnessCertificate0009 :
-    y ∉ ((syn_cins2k (syn_cins3k (syn_csik (syn_csik (syn_cssetk)))))).fv :=
+    y ∉ ((synCins2k (synCins3k (synCsik (synCsik (synCssetk)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0008)
-  have freshnessCertificate0010 : y ∉ ((syn_cins3k (syn_cssetk))).fv :=
+  have freshnessCertificate0010 : y ∉ ((synCins3k (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0002)
-  have freshnessCertificate0011 : y ∉ ((syn_cins2k (syn_cins3k (syn_cssetk)))).fv :=
+  have freshnessCertificate0011 : y ∉ ((synCins2k (synCins3k (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0010)
   have freshnessCertificate0012 :
-    y ∉ ((syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk))))).fv :=
+    y ∉ ((synCins2k (synCins2k (synCins3k (synCssetk))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0011)
   have freshnessCertificate0013 :
-    y ∉ ((syn_cins2k (syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk)))))).fv :=
+    y ∉ ((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0012)
-  have freshnessCertificate0014 : y ∉ ((syn_cins2k (syn_cssetk))).fv :=
+  have freshnessCertificate0014 : y ∉ ((synCins2k (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0002)
   have freshnessCertificate0015 :
-    y ∉ (((syn_cins3k (syn_cssetk))).fv) ∪ (((syn_cins2k (syn_cssetk))).fv) :=
+    y ∉ (((synCins3k (synCssetk))).fv) ∪ (((synCins2k (synCssetk))).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0010 freshnessCertificate0014))
   have freshnessCertificate0016 :
-    y ∉ ((syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))).fv :=
+    y ∉ ((synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0015)
-  have freshnessCertificate0017 : y ∉ ((syn_c1c)).fv :=
+  have freshnessCertificate0017 : y ∉ ((synC1c)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c];
       exact (show y ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0018 : y ∉ ((syn_cpw1 (syn_c1c))).fv :=
+  have freshnessCertificate0018 : y ∉ ((synCpw1 (synC1c))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0017)
-  have freshnessCertificate0019 : y ∉ ((syn_cpw1 (syn_cpw1 (syn_c1c)))).fv :=
+  have freshnessCertificate0019 : y ∉ ((synCpw1 (synCpw1 (synC1c)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0018)
   have freshnessCertificate0020 :
     y ∉
-      (((syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))).fv) ∪
-        (((syn_cpw1 (syn_cpw1 (syn_c1c)))).fv) :=
+      (((synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))).fv) ∪
+        (((synCpw1 (synCpw1 (synC1c)))).fv) :=
     (by
       with_reducible
         exact
@@ -934,7 +936,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0029)
   have freshnessCertificate0031 :
-    y ∉ ((syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))).fv :=
+    y ∉ ((synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0006)
@@ -952,7 +954,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0033)
   have freshnessCertificate0035 :
     y ∉
-      ((syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))))).fv :=
+      ((synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0031)
@@ -998,23 +1000,23 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0044)
-  have freshnessCertificate0046 : y ∉ ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))).fv :=
+  have freshnessCertificate0046 : y ∉ ((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0019)
   have freshnessCertificate0047 :
-    y ∉ ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))).fv :=
+    y ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0046)
   have freshnessCertificate0048 :
-    y ∉ ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))).fv :=
+    y ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0047)
   have freshnessCertificate0049 :
     y ∉
-      ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))).fv :=
+      ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0048)
@@ -1062,7 +1064,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0058)
   have freshnessCertificate0060 :
     y ∉
-      (((syn_cins2k (syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk)))))).fv) ∪
+      (((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv) ∪
         ((syntaxClass0028).fv) :=
     (by
       with_reducible
@@ -1083,7 +1085,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0062)
   have freshnessCertificate0064 :
     y ∉
-      (((syn_cins2k (syn_cins3k (syn_csik (syn_csik (syn_cssetk)))))).fv) ∪
+      (((synCins2k (synCins3k (synCsik (synCsik (synCssetk)))))).fv) ∪
         ((syntaxClass0030).fv) :=
     (by
       with_reducible
@@ -1096,7 +1098,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
   have freshnessCertificate0066 :
     y ∉
       ((syntaxClass0031).fv) ∪
-        (((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))).fv) :=
+        (((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv) :=
     (by
       with_reducible
         exact
@@ -1111,7 +1113,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0067)
   have freshnessCertificate0069 :
     y ∉
-      (((syn_cins3k (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))).fv) ∪
+      (((synCins3k (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv) ∪
         ((syntaxClass0033).fv) :=
     (by
       with_reducible
@@ -1124,7 +1126,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
   have freshnessCertificate0071 :
     y ∉
       ((syntaxClass0034).fv) ∪
-        (((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))).fv) :=
+        (((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv) :=
     (by
       with_reducible
         exact
@@ -1141,14 +1143,14 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0022)
-  have freshnessCertificate0075 : y ∉ ((syn_cins2k (syn_cins2k (syn_cssetk)))).fv :=
+  have freshnessCertificate0075 : y ∉ ((synCins2k (synCins2k (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0014)
   have freshnessCertificate0076 :
     y ∉
-      (((syn_cins2k (syn_cins3k (syn_cssetk)))).fv) ∪
-        (((syn_cins3k (syn_csik (syn_csik (syn_cssetk))))).fv) :=
+      (((synCins2k (synCins3k (synCssetk)))).fv) ∪
+        (((synCins3k (synCsik (synCsik (synCssetk))))).fv) :=
     (by
       with_reducible
         exact
@@ -1158,7 +1160,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
       exact freshnessCertificate0076)
   have freshnessCertificate0078 :
-    y ∉ (((syn_cins2k (syn_cins2k (syn_cssetk)))).fv) ∪ ((syntaxClass0038).fv) :=
+    y ∉ (((synCins2k (synCins2k (synCssetk)))).fv) ∪ ((syntaxClass0038).fv) :=
     (by
       with_reducible
         exact
@@ -1170,7 +1172,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
   have freshnessCertificate0080 :
     y ∉
       ((syntaxClass0039).fv) ∪
-        (((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))).fv) :=
+        (((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))).fv) :=
     (by
       with_reducible
         exact
@@ -1189,7 +1191,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cdif];
       exact freshnessCertificate0082)
   have freshnessCertificate0084 :
-    y ∉ ((syntaxClass0041).fv) ∪ (((syn_cpw1 (syn_cpw1 (syn_c1c)))).fv) :=
+    y ∉ ((syntaxClass0041).fv) ∪ (((synCpw1 (synCpw1 (synC1c)))).fv) :=
     (by
       with_reducible
         exact
@@ -1220,7 +1222,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0089)
   have freshnessCertificate0091 :
-    y ∉ ((syntaxClass0046).fv) ∪ (((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))).fv) :=
+    y ∉ ((syntaxClass0046).fv) ∪ (((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv) :=
     (by
       with_reducible
         exact
@@ -1229,20 +1231,20 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0091)
-  have freshnessCertificate0093 : y ∉ ((syn_cnnc)).fv :=
+  have freshnessCertificate0093 : y ∉ ((synCnnc)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnnc];
       exact (show y ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0094 : y ∉ ((syn_cpw1 (syn_cnnc))).fv :=
+  have freshnessCertificate0094 : y ∉ ((synCpw1 (synCnnc))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0093)
-  have freshnessCertificate0095 : y ∉ ((syn_cpw1 (syn_cpw1 (syn_cnnc)))).fv :=
+  have freshnessCertificate0095 : y ∉ ((synCpw1 (synCpw1 (synCnnc)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0094)
   have freshnessCertificate0096 :
-    y ∉ ((syntaxClass0047).fv) ∪ (((syn_cpw1 (syn_cpw1 (syn_cnnc)))).fv) :=
+    y ∉ ((syntaxClass0047).fv) ∪ (((synCpw1 (synCpw1 (synCnnc)))).fv) :=
     (by
       with_reducible
         exact
@@ -1251,29 +1253,29 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0096)
-  have freshnessCertificate0098 : y ∉ ((syn_c0)).fv :=
+  have freshnessCertificate0098 : y ∉ ((synC0)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0];
       exact (show y ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0099 : y ∉ ((syn_csn (syn_c0))).fv :=
+  have freshnessCertificate0099 : y ∉ ((synCsn (synC0))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0098)
-  have freshnessCertificate0100 : y ∉ ((syn_cvv)).fv :=
+  have freshnessCertificate0100 : y ∉ ((synCvv)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv];
       exact (show y ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0101 : y ∉ (((syn_csn (syn_c0))).fv) ∪ (((syn_cvv)).fv) :=
+  have freshnessCertificate0101 : y ∉ (((synCsn (synC0))).fv) ∪ (((synCvv)).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0099 freshnessCertificate0100))
-  have freshnessCertificate0102 : y ∉ ((syn_cxpk (syn_csn (syn_c0)) (syn_cvv))).fv :=
+  have freshnessCertificate0102 : y ∉ ((synCxpk (synCsn (synC0)) (synCvv))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cxpk];
       exact freshnessCertificate0101)
   have freshnessCertificate0103 :
-    y ∉ ((syntaxClass0048).fv) ∪ (((syn_cxpk (syn_csn (syn_c0)) (syn_cvv))).fv) :=
+    y ∉ ((syntaxClass0048).fv) ∪ (((synCxpk (synCsn (synC0)) (synCvv))).fv) :=
     (by
       with_reducible
         exact
@@ -1289,92 +1291,92 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0000 freshnessCertificate0104))
   have freshnessCertificate0106 : y ∉ (syntaxFormula0051).fv :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0105)
-  have freshnessCertificate0107 : z ∉ ((syn_cssetk)).fv :=
+  have freshnessCertificate0107 : z ∉ ((synCssetk)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
       exact (show z ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0108 : z ∉ ((syn_csik (syn_cssetk))).fv :=
+  have freshnessCertificate0108 : z ∉ ((synCsik (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0107)
-  have freshnessCertificate0109 : z ∉ ((syn_csik (syn_csik (syn_cssetk)))).fv :=
+  have freshnessCertificate0109 : z ∉ ((synCsik (synCsik (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0108)
   have freshnessCertificate0110 :
-    z ∉ ((syn_csik (syn_csik (syn_csik (syn_cssetk))))).fv :=
+    z ∉ ((synCsik (synCsik (synCsik (synCssetk))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0109)
   have freshnessCertificate0111 :
-    z ∉ ((syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))).fv :=
+    z ∉ ((synCsik (synCsik (synCsik (synCsik (synCssetk)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0110)
   have freshnessCertificate0112 :
-    z ∉ ((syn_cins3k (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))).fv :=
+    z ∉ ((synCins3k (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0111)
   have freshnessCertificate0113 :
-    z ∉ ((syn_cins3k (syn_csik (syn_csik (syn_cssetk))))).fv :=
+    z ∉ ((synCins3k (synCsik (synCsik (synCssetk))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0109)
   have freshnessCertificate0114 :
-    z ∉ ((syn_cins2k (syn_cins3k (syn_csik (syn_csik (syn_cssetk)))))).fv :=
+    z ∉ ((synCins2k (synCins3k (synCsik (synCsik (synCssetk)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0113)
-  have freshnessCertificate0115 : z ∉ ((syn_cins3k (syn_cssetk))).fv :=
+  have freshnessCertificate0115 : z ∉ ((synCins3k (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0107)
-  have freshnessCertificate0116 : z ∉ ((syn_cins2k (syn_cins3k (syn_cssetk)))).fv :=
+  have freshnessCertificate0116 : z ∉ ((synCins2k (synCins3k (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0115)
   have freshnessCertificate0117 :
-    z ∉ ((syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk))))).fv :=
+    z ∉ ((synCins2k (synCins2k (synCins3k (synCssetk))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0116)
   have freshnessCertificate0118 :
-    z ∉ ((syn_cins2k (syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk)))))).fv :=
+    z ∉ ((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0117)
-  have freshnessCertificate0119 : z ∉ ((syn_cins2k (syn_cssetk))).fv :=
+  have freshnessCertificate0119 : z ∉ ((synCins2k (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0107)
   have freshnessCertificate0120 :
-    z ∉ (((syn_cins3k (syn_cssetk))).fv) ∪ (((syn_cins2k (syn_cssetk))).fv) :=
+    z ∉ (((synCins3k (synCssetk))).fv) ∪ (((synCins2k (synCssetk))).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0115 freshnessCertificate0119))
   have freshnessCertificate0121 :
-    z ∉ ((syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))).fv :=
+    z ∉ ((synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0120)
-  have freshnessCertificate0122 : z ∉ ((syn_c1c)).fv :=
+  have freshnessCertificate0122 : z ∉ ((synC1c)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c];
       exact (show z ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0123 : z ∉ ((syn_cpw1 (syn_c1c))).fv :=
+  have freshnessCertificate0123 : z ∉ ((synCpw1 (synC1c))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0122)
-  have freshnessCertificate0124 : z ∉ ((syn_cpw1 (syn_cpw1 (syn_c1c)))).fv :=
+  have freshnessCertificate0124 : z ∉ ((synCpw1 (synCpw1 (synC1c)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0123)
   have freshnessCertificate0125 :
     z ∉
-      (((syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))).fv) ∪
-        (((syn_cpw1 (syn_cpw1 (syn_c1c)))).fv) :=
+      (((synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))).fv) ∪
+        (((synCpw1 (synCpw1 (synC1c)))).fv) :=
     (by
       with_reducible
         exact
@@ -1420,7 +1422,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0134)
   have freshnessCertificate0136 :
-    z ∉ ((syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))).fv :=
+    z ∉ ((synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0111)
@@ -1438,7 +1440,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0138)
   have freshnessCertificate0140 :
     z ∉
-      ((syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))))).fv :=
+      ((synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0136)
@@ -1484,23 +1486,23 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0149)
-  have freshnessCertificate0151 : z ∉ ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))).fv :=
+  have freshnessCertificate0151 : z ∉ ((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0124)
   have freshnessCertificate0152 :
-    z ∉ ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))).fv :=
+    z ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0151)
   have freshnessCertificate0153 :
-    z ∉ ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))).fv :=
+    z ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0152)
   have freshnessCertificate0154 :
     z ∉
-      ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))).fv :=
+      ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0153)
@@ -1548,7 +1550,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0163)
   have freshnessCertificate0165 :
     z ∉
-      (((syn_cins2k (syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk)))))).fv) ∪
+      (((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv) ∪
         ((syntaxClass0028).fv) :=
     (by
       with_reducible
@@ -1569,7 +1571,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0167)
   have freshnessCertificate0169 :
     z ∉
-      (((syn_cins2k (syn_cins3k (syn_csik (syn_csik (syn_cssetk)))))).fv) ∪
+      (((synCins2k (synCins3k (synCsik (synCsik (synCssetk)))))).fv) ∪
         ((syntaxClass0030).fv) :=
     (by
       with_reducible
@@ -1582,7 +1584,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
   have freshnessCertificate0171 :
     z ∉
       ((syntaxClass0031).fv) ∪
-        (((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))).fv) :=
+        (((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv) :=
     (by
       with_reducible
         exact
@@ -1597,7 +1599,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0172)
   have freshnessCertificate0174 :
     z ∉
-      (((syn_cins3k (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))).fv) ∪
+      (((synCins3k (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv) ∪
         ((syntaxClass0033).fv) :=
     (by
       with_reducible
@@ -1610,7 +1612,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
   have freshnessCertificate0176 :
     z ∉
       ((syntaxClass0034).fv) ∪
-        (((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))).fv) :=
+        (((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv) :=
     (by
       with_reducible
         exact
@@ -1627,14 +1629,14 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0127)
-  have freshnessCertificate0180 : z ∉ ((syn_cins2k (syn_cins2k (syn_cssetk)))).fv :=
+  have freshnessCertificate0180 : z ∉ ((synCins2k (synCins2k (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0119)
   have freshnessCertificate0181 :
     z ∉
-      (((syn_cins2k (syn_cins3k (syn_cssetk)))).fv) ∪
-        (((syn_cins3k (syn_csik (syn_csik (syn_cssetk))))).fv) :=
+      (((synCins2k (synCins3k (synCssetk)))).fv) ∪
+        (((synCins3k (synCsik (synCsik (synCssetk))))).fv) :=
     (by
       with_reducible
         exact
@@ -1644,7 +1646,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
       exact freshnessCertificate0181)
   have freshnessCertificate0183 :
-    z ∉ (((syn_cins2k (syn_cins2k (syn_cssetk)))).fv) ∪ ((syntaxClass0038).fv) :=
+    z ∉ (((synCins2k (synCins2k (synCssetk)))).fv) ∪ ((syntaxClass0038).fv) :=
     (by
       with_reducible
         exact
@@ -1656,7 +1658,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
   have freshnessCertificate0185 :
     z ∉
       ((syntaxClass0039).fv) ∪
-        (((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))).fv) :=
+        (((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))).fv) :=
     (by
       with_reducible
         exact
@@ -1675,7 +1677,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cdif];
       exact freshnessCertificate0187)
   have freshnessCertificate0189 :
-    z ∉ ((syntaxClass0041).fv) ∪ (((syn_cpw1 (syn_cpw1 (syn_c1c)))).fv) :=
+    z ∉ ((syntaxClass0041).fv) ∪ (((synCpw1 (synCpw1 (synC1c)))).fv) :=
     (by
       with_reducible
         exact
@@ -1706,7 +1708,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0194)
   have freshnessCertificate0196 :
-    z ∉ ((syntaxClass0046).fv) ∪ (((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))).fv) :=
+    z ∉ ((syntaxClass0046).fv) ∪ (((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv) :=
     (by
       with_reducible
         exact
@@ -1715,20 +1717,20 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0196)
-  have freshnessCertificate0198 : z ∉ ((syn_cnnc)).fv :=
+  have freshnessCertificate0198 : z ∉ ((synCnnc)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnnc];
       exact (show z ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0199 : z ∉ ((syn_cpw1 (syn_cnnc))).fv :=
+  have freshnessCertificate0199 : z ∉ ((synCpw1 (synCnnc))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0198)
-  have freshnessCertificate0200 : z ∉ ((syn_cpw1 (syn_cpw1 (syn_cnnc)))).fv :=
+  have freshnessCertificate0200 : z ∉ ((synCpw1 (synCpw1 (synCnnc)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0199)
   have freshnessCertificate0201 :
-    z ∉ ((syntaxClass0047).fv) ∪ (((syn_cpw1 (syn_cpw1 (syn_cnnc)))).fv) :=
+    z ∉ ((syntaxClass0047).fv) ∪ (((synCpw1 (synCpw1 (synCnnc)))).fv) :=
     (by
       with_reducible
         exact
@@ -1737,29 +1739,29 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0201)
-  have freshnessCertificate0203 : z ∉ ((syn_c0)).fv :=
+  have freshnessCertificate0203 : z ∉ ((synC0)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0];
       exact (show z ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0204 : z ∉ ((syn_csn (syn_c0))).fv :=
+  have freshnessCertificate0204 : z ∉ ((synCsn (synC0))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0203)
-  have freshnessCertificate0205 : z ∉ ((syn_cvv)).fv :=
+  have freshnessCertificate0205 : z ∉ ((synCvv)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv];
       exact (show z ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0206 : z ∉ (((syn_csn (syn_c0))).fv) ∪ (((syn_cvv)).fv) :=
+  have freshnessCertificate0206 : z ∉ (((synCsn (synC0))).fv) ∪ (((synCvv)).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0204 freshnessCertificate0205))
-  have freshnessCertificate0207 : z ∉ ((syn_cxpk (syn_csn (syn_c0)) (syn_cvv))).fv :=
+  have freshnessCertificate0207 : z ∉ ((synCxpk (synCsn (synC0)) (synCvv))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cxpk];
       exact freshnessCertificate0206)
   have freshnessCertificate0208 :
-    z ∉ ((syntaxClass0048).fv) ∪ (((syn_cxpk (syn_csn (syn_c0)) (syn_cvv))).fv) :=
+    z ∉ ((syntaxClass0048).fv) ∪ (((synCxpk (synCsn (synC0)) (synCvv))).fv) :=
     (by
       with_reducible
         exact
@@ -1776,96 +1778,96 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
   have freshnessCertificate0211 : z ∉ (syntaxFormula0051).fv :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0210)
   have p0004 :=
-    @g_n_19_41vv (.classEq (.cv x) (syn_copk (.cv y) (.cv z))) syntaxFormula0050 y z
+    @gN1941vv (.classEq (.cv x) (synCopk (.cv y) (.cv z))) syntaxFormula0050 y z
       (by exact freshnessCertificate0106) (by exact freshnessCertificate0211)
-  have p0005 := @g_eleq1 (.cv x) (syn_copk (.cv y) (.cv z)) syntaxClass0049
-  have p0006 := @g_opkex (.cv y) (.cv z)
-  have freshnessCertificate0212 : t ∉ ((syn_cssetk)).fv :=
+  have p0005 := @gEleq1 (.cv x) (synCopk (.cv y) (.cv z)) syntaxClass0049
+  have p0006 := @gOpkex (.cv y) (.cv z)
+  have freshnessCertificate0212 : t ∉ ((synCssetk)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
       exact (show t ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0213 : t ∉ ((syn_csik (syn_cssetk))).fv :=
+  have freshnessCertificate0213 : t ∉ ((synCsik (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0212)
-  have freshnessCertificate0214 : t ∉ ((syn_csik (syn_csik (syn_cssetk)))).fv :=
+  have freshnessCertificate0214 : t ∉ ((synCsik (synCsik (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0213)
   have freshnessCertificate0215 :
-    t ∉ ((syn_csik (syn_csik (syn_csik (syn_cssetk))))).fv :=
+    t ∉ ((synCsik (synCsik (synCsik (synCssetk))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0214)
   have freshnessCertificate0216 :
-    t ∉ ((syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))).fv :=
+    t ∉ ((synCsik (synCsik (synCsik (synCsik (synCssetk)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0215)
   have freshnessCertificate0217 :
-    t ∉ ((syn_cins3k (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))).fv :=
+    t ∉ ((synCins3k (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0216)
   have freshnessCertificate0218 :
-    t ∉ ((syn_cins3k (syn_csik (syn_csik (syn_cssetk))))).fv :=
+    t ∉ ((synCins3k (synCsik (synCsik (synCssetk))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0214)
   have freshnessCertificate0219 :
-    t ∉ ((syn_cins2k (syn_cins3k (syn_csik (syn_csik (syn_cssetk)))))).fv :=
+    t ∉ ((synCins2k (synCins3k (synCsik (synCsik (synCssetk)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0218)
-  have freshnessCertificate0220 : t ∉ ((syn_cins3k (syn_cssetk))).fv :=
+  have freshnessCertificate0220 : t ∉ ((synCins3k (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0212)
-  have freshnessCertificate0221 : t ∉ ((syn_cins2k (syn_cins3k (syn_cssetk)))).fv :=
+  have freshnessCertificate0221 : t ∉ ((synCins2k (synCins3k (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0220)
   have freshnessCertificate0222 :
-    t ∉ ((syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk))))).fv :=
+    t ∉ ((synCins2k (synCins2k (synCins3k (synCssetk))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0221)
   have freshnessCertificate0223 :
-    t ∉ ((syn_cins2k (syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk)))))).fv :=
+    t ∉ ((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0222)
-  have freshnessCertificate0224 : t ∉ ((syn_cins2k (syn_cssetk))).fv :=
+  have freshnessCertificate0224 : t ∉ ((synCins2k (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0212)
   have freshnessCertificate0225 :
-    t ∉ (((syn_cins3k (syn_cssetk))).fv) ∪ (((syn_cins2k (syn_cssetk))).fv) :=
+    t ∉ (((synCins3k (synCssetk))).fv) ∪ (((synCins2k (synCssetk))).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0220 freshnessCertificate0224))
   have freshnessCertificate0226 :
-    t ∉ ((syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))).fv :=
+    t ∉ ((synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0225)
-  have freshnessCertificate0227 : t ∉ ((syn_c1c)).fv :=
+  have freshnessCertificate0227 : t ∉ ((synC1c)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c];
       exact (show t ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0228 : t ∉ ((syn_cpw1 (syn_c1c))).fv :=
+  have freshnessCertificate0228 : t ∉ ((synCpw1 (synC1c))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0227)
-  have freshnessCertificate0229 : t ∉ ((syn_cpw1 (syn_cpw1 (syn_c1c)))).fv :=
+  have freshnessCertificate0229 : t ∉ ((synCpw1 (synCpw1 (synC1c)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0228)
   have freshnessCertificate0230 :
     t ∉
-      (((syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))).fv) ∪
-        (((syn_cpw1 (syn_cpw1 (syn_c1c)))).fv) :=
+      (((synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))).fv) ∪
+        (((synCpw1 (synCpw1 (synC1c)))).fv) :=
     (by
       with_reducible
         exact
@@ -1911,7 +1913,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0239)
   have freshnessCertificate0241 :
-    t ∉ ((syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))).fv :=
+    t ∉ ((synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0216)
@@ -1929,7 +1931,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0243)
   have freshnessCertificate0245 :
     t ∉
-      ((syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))))).fv :=
+      ((synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0241)
@@ -1975,23 +1977,23 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0254)
-  have freshnessCertificate0256 : t ∉ ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))).fv :=
+  have freshnessCertificate0256 : t ∉ ((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0229)
   have freshnessCertificate0257 :
-    t ∉ ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))).fv :=
+    t ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0256)
   have freshnessCertificate0258 :
-    t ∉ ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))).fv :=
+    t ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0257)
   have freshnessCertificate0259 :
     t ∉
-      ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))).fv :=
+      ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0258)
@@ -2039,7 +2041,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0268)
   have freshnessCertificate0270 :
     t ∉
-      (((syn_cins2k (syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk)))))).fv) ∪
+      (((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv) ∪
         ((syntaxClass0028).fv) :=
     (by
       with_reducible
@@ -2060,7 +2062,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0272)
   have freshnessCertificate0274 :
     t ∉
-      (((syn_cins2k (syn_cins3k (syn_csik (syn_csik (syn_cssetk)))))).fv) ∪
+      (((synCins2k (synCins3k (synCsik (synCsik (synCssetk)))))).fv) ∪
         ((syntaxClass0030).fv) :=
     (by
       with_reducible
@@ -2073,7 +2075,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
   have freshnessCertificate0276 :
     t ∉
       ((syntaxClass0031).fv) ∪
-        (((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))).fv) :=
+        (((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv) :=
     (by
       with_reducible
         exact
@@ -2088,7 +2090,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0277)
   have freshnessCertificate0279 :
     t ∉
-      (((syn_cins3k (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))).fv) ∪
+      (((synCins3k (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv) ∪
         ((syntaxClass0033).fv) :=
     (by
       with_reducible
@@ -2101,7 +2103,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
   have freshnessCertificate0281 :
     t ∉
       ((syntaxClass0034).fv) ∪
-        (((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))).fv) :=
+        (((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv) :=
     (by
       with_reducible
         exact
@@ -2118,14 +2120,14 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0232)
-  have freshnessCertificate0285 : t ∉ ((syn_cins2k (syn_cins2k (syn_cssetk)))).fv :=
+  have freshnessCertificate0285 : t ∉ ((synCins2k (synCins2k (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0224)
   have freshnessCertificate0286 :
     t ∉
-      (((syn_cins2k (syn_cins3k (syn_cssetk)))).fv) ∪
-        (((syn_cins3k (syn_csik (syn_csik (syn_cssetk))))).fv) :=
+      (((synCins2k (synCins3k (synCssetk)))).fv) ∪
+        (((synCins3k (synCsik (synCsik (synCssetk))))).fv) :=
     (by
       with_reducible
         exact
@@ -2135,7 +2137,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
       exact freshnessCertificate0286)
   have freshnessCertificate0288 :
-    t ∉ (((syn_cins2k (syn_cins2k (syn_cssetk)))).fv) ∪ ((syntaxClass0038).fv) :=
+    t ∉ (((synCins2k (synCins2k (synCssetk)))).fv) ∪ ((syntaxClass0038).fv) :=
     (by
       with_reducible
         exact
@@ -2147,7 +2149,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
   have freshnessCertificate0290 :
     t ∉
       ((syntaxClass0039).fv) ∪
-        (((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))).fv) :=
+        (((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))).fv) :=
     (by
       with_reducible
         exact
@@ -2166,7 +2168,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cdif];
       exact freshnessCertificate0292)
   have freshnessCertificate0294 :
-    t ∉ ((syntaxClass0041).fv) ∪ (((syn_cpw1 (syn_cpw1 (syn_c1c)))).fv) :=
+    t ∉ ((syntaxClass0041).fv) ∪ (((synCpw1 (synCpw1 (synC1c)))).fv) :=
     (by
       with_reducible
         exact
@@ -2197,7 +2199,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0299)
   have freshnessCertificate0301 :
-    t ∉ ((syntaxClass0046).fv) ∪ (((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))).fv) :=
+    t ∉ ((syntaxClass0046).fv) ∪ (((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv) :=
     (by
       with_reducible
         exact
@@ -2206,15 +2208,15 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0301)
-  have freshnessCertificate0303 : t ∉ ((syn_cnnc)).fv :=
+  have freshnessCertificate0303 : t ∉ ((synCnnc)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnnc];
       exact (show t ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0304 : t ∉ ((syn_cpw1 (syn_cnnc))).fv :=
+  have freshnessCertificate0304 : t ∉ ((synCpw1 (synCnnc))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0303)
-  have freshnessCertificate0305 : t ∉ ((syn_cpw1 (syn_cpw1 (syn_cnnc)))).fv :=
+  have freshnessCertificate0305 : t ∉ ((synCpw1 (synCpw1 (synCnnc)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0304)
@@ -2239,13 +2241,13 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0306 freshnessCertificate0307))
-  have freshnessCertificate0309 : t ∉ ((syn_copk (.cv y) (.cv z))).fv :=
+  have freshnessCertificate0309 : t ∉ ((synCopk (.cv y) (.cv z))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0308)
   have p0007 :=
-    @g_elimak t syntaxClass0047 (syn_cpw1 (syn_cpw1 (syn_cnnc)))
-      (syn_copk (.cv y) (.cv z)) (by exact freshnessCertificate0302)
+    @gElimak t syntaxClass0047 (synCpw1 (synCpw1 (synCnnc)))
+      (synCopk (.cv y) (.cv z)) (by exact freshnessCertificate0302)
       (by exact freshnessCertificate0305) (by exact freshnessCertificate0309) p0006
   have freshnessCertificate0310 : w ∉ ((Class.cv t)).fv :=
     (by
@@ -2255,16 +2257,16 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (by
             simpa only [Finset.mem_singleton] using
               (show w ≠ t from (by exact fresh_w_ne_t)))))
-  have freshnessCertificate0311 : w ∉ ((syn_cnnc)).fv :=
+  have freshnessCertificate0311 : w ∉ ((synCnnc)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnnc];
       exact (show w ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have p0008 :=
-    @g_elpw12 w (.cv t) (syn_cnnc) (by exact freshnessCertificate0310)
+    @gElpw12 w (.cv t) (synCnnc) (by exact freshnessCertificate0310)
       (by exact freshnessCertificate0311)
   have p0009 :=
-    @g_anbi1i (.classMem (.cv t) (syn_cpw1 (syn_cpw1 (syn_cnnc))))
-      (syn_wrex w (syn_cnnc) (.classEq (.cv t) (syn_csn (syn_csn (.cv w)))))
+    @gAnbi1i (.classMem (.cv t) (synCpw1 (synCpw1 (synCnnc))))
+      (synWrex w (synCnnc) (.classEq (.cv t) (synCsn (synCsn (.cv w)))))
       syntaxFormula0052 p0008
   have freshnessCertificate0312 : w ∉ ((Class.cv y)).fv :=
     (by
@@ -2287,107 +2289,107 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0312 freshnessCertificate0313))
-  have freshnessCertificate0315 : w ∉ ((syn_copk (.cv y) (.cv z))).fv :=
+  have freshnessCertificate0315 : w ∉ ((synCopk (.cv y) (.cv z))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0314)
   have freshnessCertificate0316 :
-    w ∉ (((Class.cv t)).fv) ∪ (((syn_copk (.cv y) (.cv z))).fv) :=
+    w ∉ (((Class.cv t)).fv) ∪ (((synCopk (.cv y) (.cv z))).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0310 freshnessCertificate0315))
   have freshnessCertificate0317 :
-    w ∉ ((syn_copk (.cv t) (syn_copk (.cv y) (.cv z)))).fv :=
+    w ∉ ((synCopk (.cv t) (synCopk (.cv y) (.cv z)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0316)
-  have freshnessCertificate0318 : w ∉ ((syn_cssetk)).fv :=
+  have freshnessCertificate0318 : w ∉ ((synCssetk)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
       exact (show w ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0319 : w ∉ ((syn_csik (syn_cssetk))).fv :=
+  have freshnessCertificate0319 : w ∉ ((synCsik (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0318)
-  have freshnessCertificate0320 : w ∉ ((syn_csik (syn_csik (syn_cssetk)))).fv :=
+  have freshnessCertificate0320 : w ∉ ((synCsik (synCsik (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0319)
   have freshnessCertificate0321 :
-    w ∉ ((syn_csik (syn_csik (syn_csik (syn_cssetk))))).fv :=
+    w ∉ ((synCsik (synCsik (synCsik (synCssetk))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0320)
   have freshnessCertificate0322 :
-    w ∉ ((syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))).fv :=
+    w ∉ ((synCsik (synCsik (synCsik (synCsik (synCssetk)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0321)
   have freshnessCertificate0323 :
-    w ∉ ((syn_cins3k (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))).fv :=
+    w ∉ ((synCins3k (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0322)
   have freshnessCertificate0324 :
-    w ∉ ((syn_cins3k (syn_csik (syn_csik (syn_cssetk))))).fv :=
+    w ∉ ((synCins3k (synCsik (synCsik (synCssetk))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0320)
   have freshnessCertificate0325 :
-    w ∉ ((syn_cins2k (syn_cins3k (syn_csik (syn_csik (syn_cssetk)))))).fv :=
+    w ∉ ((synCins2k (synCins3k (synCsik (synCsik (synCssetk)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0324)
-  have freshnessCertificate0326 : w ∉ ((syn_cins3k (syn_cssetk))).fv :=
+  have freshnessCertificate0326 : w ∉ ((synCins3k (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0318)
-  have freshnessCertificate0327 : w ∉ ((syn_cins2k (syn_cins3k (syn_cssetk)))).fv :=
+  have freshnessCertificate0327 : w ∉ ((synCins2k (synCins3k (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0326)
   have freshnessCertificate0328 :
-    w ∉ ((syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk))))).fv :=
+    w ∉ ((synCins2k (synCins2k (synCins3k (synCssetk))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0327)
   have freshnessCertificate0329 :
-    w ∉ ((syn_cins2k (syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk)))))).fv :=
+    w ∉ ((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0328)
-  have freshnessCertificate0330 : w ∉ ((syn_cins2k (syn_cssetk))).fv :=
+  have freshnessCertificate0330 : w ∉ ((synCins2k (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0318)
   have freshnessCertificate0331 :
-    w ∉ (((syn_cins3k (syn_cssetk))).fv) ∪ (((syn_cins2k (syn_cssetk))).fv) :=
+    w ∉ (((synCins3k (synCssetk))).fv) ∪ (((synCins2k (synCssetk))).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0326 freshnessCertificate0330))
   have freshnessCertificate0332 :
-    w ∉ ((syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))).fv :=
+    w ∉ ((synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0331)
-  have freshnessCertificate0333 : w ∉ ((syn_c1c)).fv :=
+  have freshnessCertificate0333 : w ∉ ((synC1c)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c];
       exact (show w ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0334 : w ∉ ((syn_cpw1 (syn_c1c))).fv :=
+  have freshnessCertificate0334 : w ∉ ((synCpw1 (synC1c))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0333)
-  have freshnessCertificate0335 : w ∉ ((syn_cpw1 (syn_cpw1 (syn_c1c)))).fv :=
+  have freshnessCertificate0335 : w ∉ ((synCpw1 (synCpw1 (synC1c)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0334)
   have freshnessCertificate0336 :
     w ∉
-      (((syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))).fv) ∪
-        (((syn_cpw1 (syn_cpw1 (syn_c1c)))).fv) :=
+      (((synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))).fv) ∪
+        (((synCpw1 (synCpw1 (synC1c)))).fv) :=
     (by
       with_reducible
         exact
@@ -2433,7 +2435,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0345)
   have freshnessCertificate0347 :
-    w ∉ ((syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))).fv :=
+    w ∉ ((synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0322)
@@ -2451,7 +2453,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0349)
   have freshnessCertificate0351 :
     w ∉
-      ((syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))))).fv :=
+      ((synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0347)
@@ -2497,23 +2499,23 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0360)
-  have freshnessCertificate0362 : w ∉ ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))).fv :=
+  have freshnessCertificate0362 : w ∉ ((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0335)
   have freshnessCertificate0363 :
-    w ∉ ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))).fv :=
+    w ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0362)
   have freshnessCertificate0364 :
-    w ∉ ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))).fv :=
+    w ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0363)
   have freshnessCertificate0365 :
     w ∉
-      ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))).fv :=
+      ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0364)
@@ -2561,7 +2563,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0374)
   have freshnessCertificate0376 :
     w ∉
-      (((syn_cins2k (syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk)))))).fv) ∪
+      (((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv) ∪
         ((syntaxClass0028).fv) :=
     (by
       with_reducible
@@ -2582,7 +2584,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0378)
   have freshnessCertificate0380 :
     w ∉
-      (((syn_cins2k (syn_cins3k (syn_csik (syn_csik (syn_cssetk)))))).fv) ∪
+      (((synCins2k (synCins3k (synCsik (synCsik (synCssetk)))))).fv) ∪
         ((syntaxClass0030).fv) :=
     (by
       with_reducible
@@ -2595,7 +2597,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
   have freshnessCertificate0382 :
     w ∉
       ((syntaxClass0031).fv) ∪
-        (((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))).fv) :=
+        (((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv) :=
     (by
       with_reducible
         exact
@@ -2610,7 +2612,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0383)
   have freshnessCertificate0385 :
     w ∉
-      (((syn_cins3k (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))).fv) ∪
+      (((synCins3k (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv) ∪
         ((syntaxClass0033).fv) :=
     (by
       with_reducible
@@ -2623,7 +2625,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
   have freshnessCertificate0387 :
     w ∉
       ((syntaxClass0034).fv) ∪
-        (((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))).fv) :=
+        (((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv) :=
     (by
       with_reducible
         exact
@@ -2640,14 +2642,14 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0338)
-  have freshnessCertificate0391 : w ∉ ((syn_cins2k (syn_cins2k (syn_cssetk)))).fv :=
+  have freshnessCertificate0391 : w ∉ ((synCins2k (synCins2k (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0330)
   have freshnessCertificate0392 :
     w ∉
-      (((syn_cins2k (syn_cins3k (syn_cssetk)))).fv) ∪
-        (((syn_cins3k (syn_csik (syn_csik (syn_cssetk))))).fv) :=
+      (((synCins2k (synCins3k (synCssetk)))).fv) ∪
+        (((synCins3k (synCsik (synCsik (synCssetk))))).fv) :=
     (by
       with_reducible
         exact
@@ -2657,7 +2659,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
       exact freshnessCertificate0392)
   have freshnessCertificate0394 :
-    w ∉ (((syn_cins2k (syn_cins2k (syn_cssetk)))).fv) ∪ ((syntaxClass0038).fv) :=
+    w ∉ (((synCins2k (synCins2k (synCssetk)))).fv) ∪ ((syntaxClass0038).fv) :=
     (by
       with_reducible
         exact
@@ -2669,7 +2671,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
   have freshnessCertificate0396 :
     w ∉
       ((syntaxClass0039).fv) ∪
-        (((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))).fv) :=
+        (((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))).fv) :=
     (by
       with_reducible
         exact
@@ -2688,7 +2690,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cdif];
       exact freshnessCertificate0398)
   have freshnessCertificate0400 :
-    w ∉ ((syntaxClass0041).fv) ∪ (((syn_cpw1 (syn_cpw1 (syn_c1c)))).fv) :=
+    w ∉ ((syntaxClass0041).fv) ∪ (((synCpw1 (synCpw1 (synC1c)))).fv) :=
     (by
       with_reducible
         exact
@@ -2719,7 +2721,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0405)
   have freshnessCertificate0407 :
-    w ∉ ((syntaxClass0046).fv) ∪ (((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))).fv) :=
+    w ∉ ((syntaxClass0046).fv) ∪ (((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv) :=
     (by
       with_reducible
         exact
@@ -2729,37 +2731,37 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0407)
   have freshnessCertificate0409 :
-    w ∉ (((syn_copk (.cv t) (syn_copk (.cv y) (.cv z)))).fv) ∪ ((syntaxClass0047).fv) :=
+    w ∉ (((synCopk (.cv t) (synCopk (.cv y) (.cv z)))).fv) ∪ ((syntaxClass0047).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0317 freshnessCertificate0408))
   have freshnessCertificate0410 :
     w ∉
-      ((Wff.classMem (syn_copk (.cv t) (syn_copk (.cv y) (.cv z))) syntaxClass0047)).fv :=
+      ((Wff.classMem (synCopk (.cv t) (synCopk (.cv y) (.cv z))) syntaxClass0047)).fv :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0409)
   have p0010 :=
-    @g_r19_41v (.classEq (.cv t) (syn_csn (syn_csn (.cv w)))) syntaxFormula0052 w
-      (syn_cnnc) (by exact freshnessCertificate0410)
+    @gR1941v (.classEq (.cv t) (synCsn (synCsn (.cv w)))) syntaxFormula0052 w
+      (synCnnc) (by exact freshnessCertificate0410)
   have p0011 :=
-    @g_bitr4i syntaxFormula0053
-      (syn_wa (syn_wrex w (syn_cnnc) (.classEq (.cv t) (syn_csn (syn_csn (.cv w)))))
+    @gBitr4i syntaxFormula0053
+      (synWa (synWrex w (synCnnc) (.classEq (.cv t) (synCsn (synCsn (.cv w)))))
         syntaxFormula0052)
       syntaxFormula0055 p0009 p0010
-  have p0012 := @g_exbii syntaxFormula0053 syntaxFormula0055 t p0011
+  have p0012 := @gExbii syntaxFormula0053 syntaxFormula0055 t p0011
   have p0013 := (Nominal.biimpRefl syntaxFormula0056)
   have p0014 :=
-    @g_rexcom4 syntaxFormula0054 w t (syn_cnnc) (by exact freshnessCertificate0303)
+    @gRexcom4 syntaxFormula0054 w t (synCnnc) (by exact freshnessCertificate0303)
       (show w ≠ t from (by exact fresh_w_ne_t))
   have p0015 :=
-    @g_n_3bitr4i (syn_wex t syntaxFormula0053) (syn_wex t syntaxFormula0055)
+    @gN3bitr4i (synWex t syntaxFormula0053) (synWex t syntaxFormula0055)
       syntaxFormula0056 syntaxFormula0058 p0012 p0013 p0014
-  have p0016 := @g_snex (syn_csn (.cv w))
-  have p0017 := @g_opkeq1 (.cv t) (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z))
+  have p0016 := @gSnex (synCsn (.cv w))
+  have p0017 := @gOpkeq1 (.cv t) (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z))
   have p0018 :=
-    @g_eleq1d (.classEq (.cv t) (syn_csn (syn_csn (.cv w))))
-      (syn_copk (.cv t) (syn_copk (.cv y) (.cv z)))
-      (syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z))) syntaxClass0047
+    @gEleq1d (.classEq (.cv t) (synCsn (synCsn (.cv w))))
+      (synCopk (.cv t) (synCopk (.cv y) (.cv z)))
+      (synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z))) syntaxClass0047
       p0017
   have freshnessCertificate0411 : t ∉ ((Class.cv w)).fv :=
     (by
@@ -2769,28 +2771,28 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (by
             simpa only [Finset.mem_singleton] using
               (show t ≠ w from (by exact fresh_t_ne_w)))))
-  have freshnessCertificate0412 : t ∉ ((syn_csn (.cv w))).fv :=
+  have freshnessCertificate0412 : t ∉ ((synCsn (.cv w))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0411)
-  have freshnessCertificate0413 : t ∉ ((syn_csn (syn_csn (.cv w)))).fv :=
+  have freshnessCertificate0413 : t ∉ ((synCsn (synCsn (.cv w)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0412)
   have freshnessCertificate0414 :
-    t ∉ (((syn_csn (syn_csn (.cv w)))).fv) ∪ (((syn_copk (.cv y) (.cv z))).fv) :=
+    t ∉ (((synCsn (synCsn (.cv w)))).fv) ∪ (((synCopk (.cv y) (.cv z))).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0413 freshnessCertificate0309))
   have freshnessCertificate0415 :
-    t ∉ ((syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z)))).fv :=
+    t ∉ ((synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0414)
   have freshnessCertificate0416 :
     t ∉
-      (((syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z)))).fv) ∪
+      (((synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))).fv) ∪
         ((syntaxClass0047).fv) :=
     (by
       with_reducible
@@ -2798,16 +2800,16 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0415 freshnessCertificate0302))
   have freshnessCertificate0417 :
     t ∉
-      ((Wff.classMem (syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z)))
+      ((Wff.classMem (synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))
           syntaxClass0047)).fv :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0416)
   have p0019 :=
-    @g_ceqsexv syntaxFormula0052 syntaxFormula0059 t (syn_csn (syn_csn (.cv w)))
+    @gCeqsexv syntaxFormula0052 syntaxFormula0059 t (synCsn (synCsn (.cv w)))
       (by exact freshnessCertificate0413) (by exact freshnessCertificate0417) p0016 p0018
-  have p0020 := @g_opkex (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z))
+  have p0020 := @gOpkex (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z))
   have p0021 :=
-    @g_elimak t syntaxClass0046 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))
-      (syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z)))
+    @gElimak t syntaxClass0046 (synCpw1 (synCpw1 (synCpw1 (synC1c))))
+      (synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))
       (by exact freshnessCertificate0300) (by exact freshnessCertificate0256)
       (by exact freshnessCertificate0415) p0020
   have freshnessCertificate0418 : x ∉ ((Class.cv t)).fv :=
@@ -2818,10 +2820,10 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (by
             simpa only [Finset.mem_singleton] using
               (show x ≠ t from (by exact fresh_x_ne_t)))))
-  have p0022 := @g_elpw131c x (.cv t) (by exact freshnessCertificate0418)
+  have p0022 := @gElpw131c x (.cv t) (by exact freshnessCertificate0418)
   have p0023 :=
-    @g_anbi1i (.classMem (.cv t) (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-      (syn_wex x (.classEq (.cv t) (syn_csn (syn_csn (syn_csn (syn_csn (.cv x)))))))
+    @gAnbi1i (.classMem (.cv t) (synCpw1 (synCpw1 (synCpw1 (synC1c)))))
+      (synWex x (.classEq (.cv t) (synCsn (synCsn (synCsn (synCsn (.cv x)))))))
       syntaxFormula0061 p0022
   have freshnessCertificate0419 : x ∉ ((Class.cv w)).fv :=
     (by
@@ -2831,11 +2833,11 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (by
             simpa only [Finset.mem_singleton] using
               (show x ≠ w from (by exact fresh_x_ne_w)))))
-  have freshnessCertificate0420 : x ∉ ((syn_csn (.cv w))).fv :=
+  have freshnessCertificate0420 : x ∉ ((synCsn (.cv w))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0419)
-  have freshnessCertificate0421 : x ∉ ((syn_csn (syn_csn (.cv w)))).fv :=
+  have freshnessCertificate0421 : x ∉ ((synCsn (synCsn (.cv w)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0420)
@@ -2860,25 +2862,25 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0422 freshnessCertificate0423))
-  have freshnessCertificate0425 : x ∉ ((syn_copk (.cv y) (.cv z))).fv :=
+  have freshnessCertificate0425 : x ∉ ((synCopk (.cv y) (.cv z))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0424)
   have freshnessCertificate0426 :
-    x ∉ (((syn_csn (syn_csn (.cv w)))).fv) ∪ (((syn_copk (.cv y) (.cv z))).fv) :=
+    x ∉ (((synCsn (synCsn (.cv w)))).fv) ∪ (((synCopk (.cv y) (.cv z))).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0421 freshnessCertificate0425))
   have freshnessCertificate0427 :
-    x ∉ ((syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z)))).fv :=
+    x ∉ ((synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0426)
   have freshnessCertificate0428 :
     x ∉
       (((Class.cv t)).fv) ∪
-        (((syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z)))).fv) :=
+        (((synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))).fv) :=
     (by
       with_reducible
         exact
@@ -2887,92 +2889,92 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0428)
-  have freshnessCertificate0430 : x ∉ ((syn_cssetk)).fv :=
+  have freshnessCertificate0430 : x ∉ ((synCssetk)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
       exact (show x ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0431 : x ∉ ((syn_csik (syn_cssetk))).fv :=
+  have freshnessCertificate0431 : x ∉ ((synCsik (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0430)
-  have freshnessCertificate0432 : x ∉ ((syn_csik (syn_csik (syn_cssetk)))).fv :=
+  have freshnessCertificate0432 : x ∉ ((synCsik (synCsik (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0431)
   have freshnessCertificate0433 :
-    x ∉ ((syn_csik (syn_csik (syn_csik (syn_cssetk))))).fv :=
+    x ∉ ((synCsik (synCsik (synCsik (synCssetk))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0432)
   have freshnessCertificate0434 :
-    x ∉ ((syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))).fv :=
+    x ∉ ((synCsik (synCsik (synCsik (synCsik (synCssetk)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0433)
   have freshnessCertificate0435 :
-    x ∉ ((syn_cins3k (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))).fv :=
+    x ∉ ((synCins3k (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0434)
   have freshnessCertificate0436 :
-    x ∉ ((syn_cins3k (syn_csik (syn_csik (syn_cssetk))))).fv :=
+    x ∉ ((synCins3k (synCsik (synCsik (synCssetk))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0432)
   have freshnessCertificate0437 :
-    x ∉ ((syn_cins2k (syn_cins3k (syn_csik (syn_csik (syn_cssetk)))))).fv :=
+    x ∉ ((synCins2k (synCins3k (synCsik (synCsik (synCssetk)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0436)
-  have freshnessCertificate0438 : x ∉ ((syn_cins3k (syn_cssetk))).fv :=
+  have freshnessCertificate0438 : x ∉ ((synCins3k (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0430)
-  have freshnessCertificate0439 : x ∉ ((syn_cins2k (syn_cins3k (syn_cssetk)))).fv :=
+  have freshnessCertificate0439 : x ∉ ((synCins2k (synCins3k (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0438)
   have freshnessCertificate0440 :
-    x ∉ ((syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk))))).fv :=
+    x ∉ ((synCins2k (synCins2k (synCins3k (synCssetk))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0439)
   have freshnessCertificate0441 :
-    x ∉ ((syn_cins2k (syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk)))))).fv :=
+    x ∉ ((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0440)
-  have freshnessCertificate0442 : x ∉ ((syn_cins2k (syn_cssetk))).fv :=
+  have freshnessCertificate0442 : x ∉ ((synCins2k (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0430)
   have freshnessCertificate0443 :
-    x ∉ (((syn_cins3k (syn_cssetk))).fv) ∪ (((syn_cins2k (syn_cssetk))).fv) :=
+    x ∉ (((synCins3k (synCssetk))).fv) ∪ (((synCins2k (synCssetk))).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0438 freshnessCertificate0442))
   have freshnessCertificate0444 :
-    x ∉ ((syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))).fv :=
+    x ∉ ((synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0443)
-  have freshnessCertificate0445 : x ∉ ((syn_c1c)).fv :=
+  have freshnessCertificate0445 : x ∉ ((synC1c)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c];
       exact (show x ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0446 : x ∉ ((syn_cpw1 (syn_c1c))).fv :=
+  have freshnessCertificate0446 : x ∉ ((synCpw1 (synC1c))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0445)
-  have freshnessCertificate0447 : x ∉ ((syn_cpw1 (syn_cpw1 (syn_c1c)))).fv :=
+  have freshnessCertificate0447 : x ∉ ((synCpw1 (synCpw1 (synC1c)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0446)
   have freshnessCertificate0448 :
     x ∉
-      (((syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))).fv) ∪
-        (((syn_cpw1 (syn_cpw1 (syn_c1c)))).fv) :=
+      (((synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))).fv) ∪
+        (((synCpw1 (synCpw1 (synC1c)))).fv) :=
     (by
       with_reducible
         exact
@@ -3018,7 +3020,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0457)
   have freshnessCertificate0459 :
-    x ∉ ((syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))).fv :=
+    x ∉ ((synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0434)
@@ -3036,7 +3038,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0461)
   have freshnessCertificate0463 :
     x ∉
-      ((syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))))).fv :=
+      ((synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0459)
@@ -3082,23 +3084,23 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0472)
-  have freshnessCertificate0474 : x ∉ ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))).fv :=
+  have freshnessCertificate0474 : x ∉ ((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0447)
   have freshnessCertificate0475 :
-    x ∉ ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))).fv :=
+    x ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0474)
   have freshnessCertificate0476 :
-    x ∉ ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))).fv :=
+    x ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0475)
   have freshnessCertificate0477 :
     x ∉
-      ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))).fv :=
+      ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0476)
@@ -3146,7 +3148,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0486)
   have freshnessCertificate0488 :
     x ∉
-      (((syn_cins2k (syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk)))))).fv) ∪
+      (((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv) ∪
         ((syntaxClass0028).fv) :=
     (by
       with_reducible
@@ -3167,7 +3169,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0490)
   have freshnessCertificate0492 :
     x ∉
-      (((syn_cins2k (syn_cins3k (syn_csik (syn_csik (syn_cssetk)))))).fv) ∪
+      (((synCins2k (synCins3k (synCsik (synCsik (synCssetk)))))).fv) ∪
         ((syntaxClass0030).fv) :=
     (by
       with_reducible
@@ -3180,7 +3182,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
   have freshnessCertificate0494 :
     x ∉
       ((syntaxClass0031).fv) ∪
-        (((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))).fv) :=
+        (((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv) :=
     (by
       with_reducible
         exact
@@ -3195,7 +3197,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0495)
   have freshnessCertificate0497 :
     x ∉
-      (((syn_cins3k (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))).fv) ∪
+      (((synCins3k (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv) ∪
         ((syntaxClass0033).fv) :=
     (by
       with_reducible
@@ -3208,7 +3210,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
   have freshnessCertificate0499 :
     x ∉
       ((syntaxClass0034).fv) ∪
-        (((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))).fv) :=
+        (((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv) :=
     (by
       with_reducible
         exact
@@ -3225,14 +3227,14 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0450)
-  have freshnessCertificate0503 : x ∉ ((syn_cins2k (syn_cins2k (syn_cssetk)))).fv :=
+  have freshnessCertificate0503 : x ∉ ((synCins2k (synCins2k (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0442)
   have freshnessCertificate0504 :
     x ∉
-      (((syn_cins2k (syn_cins3k (syn_cssetk)))).fv) ∪
-        (((syn_cins3k (syn_csik (syn_csik (syn_cssetk))))).fv) :=
+      (((synCins2k (synCins3k (synCssetk)))).fv) ∪
+        (((synCins3k (synCsik (synCsik (synCssetk))))).fv) :=
     (by
       with_reducible
         exact
@@ -3242,7 +3244,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
       exact freshnessCertificate0504)
   have freshnessCertificate0506 :
-    x ∉ (((syn_cins2k (syn_cins2k (syn_cssetk)))).fv) ∪ ((syntaxClass0038).fv) :=
+    x ∉ (((synCins2k (synCins2k (synCssetk)))).fv) ∪ ((syntaxClass0038).fv) :=
     (by
       with_reducible
         exact
@@ -3254,7 +3256,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
   have freshnessCertificate0508 :
     x ∉
       ((syntaxClass0039).fv) ∪
-        (((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))).fv) :=
+        (((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))).fv) :=
     (by
       with_reducible
         exact
@@ -3273,7 +3275,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cdif];
       exact freshnessCertificate0510)
   have freshnessCertificate0512 :
-    x ∉ ((syntaxClass0041).fv) ∪ (((syn_cpw1 (syn_cpw1 (syn_c1c)))).fv) :=
+    x ∉ ((syntaxClass0041).fv) ∪ (((synCpw1 (synCpw1 (synC1c)))).fv) :=
     (by
       with_reducible
         exact
@@ -3312,25 +3314,25 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     x ∉ ((Wff.classMem syntaxClass0060 syntaxClass0046)).fv :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0519)
   have p0024 :=
-    @g_n_19_41v (.classEq (.cv t) (syn_csn (syn_csn (syn_csn (syn_csn (.cv x))))))
+    @gN1941v (.classEq (.cv t) (synCsn (synCsn (synCsn (synCsn (.cv x))))))
       syntaxFormula0061 x (by exact freshnessCertificate0520)
   have p0025 :=
-    @g_bitr4i syntaxFormula0062
-      (syn_wa (syn_wex x (.classEq (.cv t) (syn_csn (syn_csn (syn_csn (syn_csn (.cv x)))))))
+    @gBitr4i syntaxFormula0062
+      (synWa (synWex x (.classEq (.cv t) (synCsn (synCsn (synCsn (synCsn (.cv x)))))))
         syntaxFormula0061)
       syntaxFormula0064 p0023 p0024
-  have p0026 := @g_exbii syntaxFormula0062 syntaxFormula0064 t p0025
+  have p0026 := @gExbii syntaxFormula0062 syntaxFormula0064 t p0025
   have p0027 := (Nominal.biimpRefl syntaxFormula0065)
-  have p0028 := @g_excom syntaxFormula0063 x t
+  have p0028 := @gExcom syntaxFormula0063 x t
   have p0029 :=
-    @g_n_3bitr4i (syn_wex t syntaxFormula0062) (syn_wex t syntaxFormula0064)
+    @gN3bitr4i (synWex t syntaxFormula0062) (synWex t syntaxFormula0064)
       syntaxFormula0065 syntaxFormula0067 p0026 p0027 p0028
-  have p0030 := @g_snex (syn_csn (syn_csn (syn_csn (.cv x))))
+  have p0030 := @gSnex (synCsn (synCsn (synCsn (.cv x))))
   have p0031 :=
-    @g_opkeq1 (.cv t) (syn_csn (syn_csn (syn_csn (syn_csn (.cv x)))))
-      (syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z)))
+    @gOpkeq1 (.cv t) (synCsn (synCsn (synCsn (synCsn (.cv x)))))
+      (synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))
   have p0032 :=
-    @g_eleq1d (.classEq (.cv t) (syn_csn (syn_csn (syn_csn (syn_csn (.cv x))))))
+    @gEleq1d (.classEq (.cv t) (synCsn (synCsn (synCsn (synCsn (.cv x))))))
       syntaxClass0060 syntaxClass0068 syntaxClass0046 p0031
   have freshnessCertificate0521 : t ∉ ((Class.cv x)).fv :=
     (by
@@ -3340,27 +3342,27 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (by
             simpa only [Finset.mem_singleton] using
               (show t ≠ x from (by exact fresh_t_ne_x)))))
-  have freshnessCertificate0522 : t ∉ ((syn_csn (.cv x))).fv :=
+  have freshnessCertificate0522 : t ∉ ((synCsn (.cv x))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0521)
-  have freshnessCertificate0523 : t ∉ ((syn_csn (syn_csn (.cv x)))).fv :=
+  have freshnessCertificate0523 : t ∉ ((synCsn (synCsn (.cv x)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0522)
-  have freshnessCertificate0524 : t ∉ ((syn_csn (syn_csn (syn_csn (.cv x))))).fv :=
+  have freshnessCertificate0524 : t ∉ ((synCsn (synCsn (synCsn (.cv x))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0523)
   have freshnessCertificate0525 :
-    t ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (.cv x)))))).fv :=
+    t ∉ ((synCsn (synCsn (synCsn (synCsn (.cv x)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0524)
   have freshnessCertificate0526 :
     t ∉
-      (((syn_csn (syn_csn (syn_csn (syn_csn (.cv x)))))).fv) ∪
-        (((syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z)))).fv) :=
+      (((synCsn (synCsn (synCsn (synCsn (.cv x)))))).fv) ∪
+        (((synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))).fv) :=
     (by
       with_reducible
         exact
@@ -3378,16 +3380,16 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     t ∉ ((Wff.classMem syntaxClass0068 syntaxClass0046)).fv :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0528)
   have p0033 :=
-    @g_ceqsexv syntaxFormula0061 syntaxFormula0069 t
-      (syn_csn (syn_csn (syn_csn (syn_csn (.cv x))))) (by exact freshnessCertificate0525)
+    @gCeqsexv syntaxFormula0061 syntaxFormula0069 t
+      (synCsn (synCsn (synCsn (synCsn (.cv x))))) (by exact freshnessCertificate0525)
       (by exact freshnessCertificate0529) p0030 p0032
-  have p0034 := @g_elin syntaxClass0068 syntaxClass0036 syntaxClass0045
+  have p0034 := @gElin syntaxClass0068 syntaxClass0036 syntaxClass0045
   have p0035 :=
-    @g_opkex (syn_csn (syn_csn (syn_csn (syn_csn (.cv x)))))
-      (syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z)))
+    @gOpkex (synCsn (synCsn (synCsn (synCsn (.cv x)))))
+      (synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))
   have p0036 :=
-    @g_elimak t syntaxClass0034
-      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
+    @gElimak t syntaxClass0034
+      (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
       syntaxClass0068 (by exact freshnessCertificate0280)
       (by exact freshnessCertificate0259) (by exact freshnessCertificate0527) p0035
   have freshnessCertificate0530 : c ∉ ((Class.cv t)).fv :=
@@ -3398,9 +3400,9 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (by
             simpa only [Finset.mem_singleton] using
               (show c ≠ t from (by exact fresh_c_ne_t)))))
-  have p0037 := @g_elpw161c c (.cv t) (by exact freshnessCertificate0530)
+  have p0037 := @gElpw161c c (.cv t) (by exact freshnessCertificate0530)
   have p0038 :=
-    @g_anbi1i syntaxFormula0070 (syn_wex c syntaxFormula0071) syntaxFormula0073 p0037
+    @gAnbi1i syntaxFormula0070 (synWex c syntaxFormula0071) syntaxFormula0073 p0037
   have freshnessCertificate0531 : c ∉ ((Class.cv x)).fv :=
     (by
       rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
@@ -3409,20 +3411,20 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (by
             simpa only [Finset.mem_singleton] using
               (show c ≠ x from (by exact fresh_c_ne_x)))))
-  have freshnessCertificate0532 : c ∉ ((syn_csn (.cv x))).fv :=
+  have freshnessCertificate0532 : c ∉ ((synCsn (.cv x))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0531)
-  have freshnessCertificate0533 : c ∉ ((syn_csn (syn_csn (.cv x)))).fv :=
+  have freshnessCertificate0533 : c ∉ ((synCsn (synCsn (.cv x)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0532)
-  have freshnessCertificate0534 : c ∉ ((syn_csn (syn_csn (syn_csn (.cv x))))).fv :=
+  have freshnessCertificate0534 : c ∉ ((synCsn (synCsn (synCsn (.cv x))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0533)
   have freshnessCertificate0535 :
-    c ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (.cv x)))))).fv :=
+    c ∉ ((synCsn (synCsn (synCsn (synCsn (.cv x)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0534)
@@ -3434,11 +3436,11 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (by
             simpa only [Finset.mem_singleton] using
               (show c ≠ w from (by exact fresh_c_ne_w)))))
-  have freshnessCertificate0537 : c ∉ ((syn_csn (.cv w))).fv :=
+  have freshnessCertificate0537 : c ∉ ((synCsn (.cv w))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0536)
-  have freshnessCertificate0538 : c ∉ ((syn_csn (syn_csn (.cv w)))).fv :=
+  have freshnessCertificate0538 : c ∉ ((synCsn (synCsn (.cv w)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0537)
@@ -3463,25 +3465,25 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0539 freshnessCertificate0540))
-  have freshnessCertificate0542 : c ∉ ((syn_copk (.cv y) (.cv z))).fv :=
+  have freshnessCertificate0542 : c ∉ ((synCopk (.cv y) (.cv z))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0541)
   have freshnessCertificate0543 :
-    c ∉ (((syn_csn (syn_csn (.cv w)))).fv) ∪ (((syn_copk (.cv y) (.cv z))).fv) :=
+    c ∉ (((synCsn (synCsn (.cv w)))).fv) ∪ (((synCopk (.cv y) (.cv z))).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0538 freshnessCertificate0542))
   have freshnessCertificate0544 :
-    c ∉ ((syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z)))).fv :=
+    c ∉ ((synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0543)
   have freshnessCertificate0545 :
     c ∉
-      (((syn_csn (syn_csn (syn_csn (syn_csn (.cv x)))))).fv) ∪
-        (((syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z)))).fv) :=
+      (((synCsn (synCsn (synCsn (synCsn (.cv x)))))).fv) ∪
+        (((synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))).fv) :=
     (by
       with_reducible
         exact
@@ -3499,92 +3501,92 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0547)
-  have freshnessCertificate0549 : c ∉ ((syn_cssetk)).fv :=
+  have freshnessCertificate0549 : c ∉ ((synCssetk)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
       exact (show c ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0550 : c ∉ ((syn_csik (syn_cssetk))).fv :=
+  have freshnessCertificate0550 : c ∉ ((synCsik (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0549)
-  have freshnessCertificate0551 : c ∉ ((syn_csik (syn_csik (syn_cssetk)))).fv :=
+  have freshnessCertificate0551 : c ∉ ((synCsik (synCsik (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0550)
   have freshnessCertificate0552 :
-    c ∉ ((syn_csik (syn_csik (syn_csik (syn_cssetk))))).fv :=
+    c ∉ ((synCsik (synCsik (synCsik (synCssetk))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0551)
   have freshnessCertificate0553 :
-    c ∉ ((syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))).fv :=
+    c ∉ ((synCsik (synCsik (synCsik (synCsik (synCssetk)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0552)
   have freshnessCertificate0554 :
-    c ∉ ((syn_cins3k (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))).fv :=
+    c ∉ ((synCins3k (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0553)
   have freshnessCertificate0555 :
-    c ∉ ((syn_cins3k (syn_csik (syn_csik (syn_cssetk))))).fv :=
+    c ∉ ((synCins3k (synCsik (synCsik (synCssetk))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0551)
   have freshnessCertificate0556 :
-    c ∉ ((syn_cins2k (syn_cins3k (syn_csik (syn_csik (syn_cssetk)))))).fv :=
+    c ∉ ((synCins2k (synCins3k (synCsik (synCsik (synCssetk)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0555)
-  have freshnessCertificate0557 : c ∉ ((syn_cins3k (syn_cssetk))).fv :=
+  have freshnessCertificate0557 : c ∉ ((synCins3k (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0549)
-  have freshnessCertificate0558 : c ∉ ((syn_cins2k (syn_cins3k (syn_cssetk)))).fv :=
+  have freshnessCertificate0558 : c ∉ ((synCins2k (synCins3k (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0557)
   have freshnessCertificate0559 :
-    c ∉ ((syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk))))).fv :=
+    c ∉ ((synCins2k (synCins2k (synCins3k (synCssetk))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0558)
   have freshnessCertificate0560 :
-    c ∉ ((syn_cins2k (syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk)))))).fv :=
+    c ∉ ((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0559)
-  have freshnessCertificate0561 : c ∉ ((syn_cins2k (syn_cssetk))).fv :=
+  have freshnessCertificate0561 : c ∉ ((synCins2k (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0549)
   have freshnessCertificate0562 :
-    c ∉ (((syn_cins3k (syn_cssetk))).fv) ∪ (((syn_cins2k (syn_cssetk))).fv) :=
+    c ∉ (((synCins3k (synCssetk))).fv) ∪ (((synCins2k (synCssetk))).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0557 freshnessCertificate0561))
   have freshnessCertificate0563 :
-    c ∉ ((syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))).fv :=
+    c ∉ ((synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0562)
-  have freshnessCertificate0564 : c ∉ ((syn_c1c)).fv :=
+  have freshnessCertificate0564 : c ∉ ((synC1c)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c];
       exact (show c ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0565 : c ∉ ((syn_cpw1 (syn_c1c))).fv :=
+  have freshnessCertificate0565 : c ∉ ((synCpw1 (synC1c))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0564)
-  have freshnessCertificate0566 : c ∉ ((syn_cpw1 (syn_cpw1 (syn_c1c)))).fv :=
+  have freshnessCertificate0566 : c ∉ ((synCpw1 (synCpw1 (synC1c)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0565)
   have freshnessCertificate0567 :
     c ∉
-      (((syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))).fv) ∪
-        (((syn_cpw1 (syn_cpw1 (syn_c1c)))).fv) :=
+      (((synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))).fv) ∪
+        (((synCpw1 (synCpw1 (synC1c)))).fv) :=
     (by
       with_reducible
         exact
@@ -3630,7 +3632,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0576)
   have freshnessCertificate0578 :
-    c ∉ ((syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))).fv :=
+    c ∉ ((synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0553)
@@ -3648,7 +3650,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0580)
   have freshnessCertificate0582 :
     c ∉
-      ((syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))))).fv :=
+      ((synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0578)
@@ -3694,23 +3696,23 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0591)
-  have freshnessCertificate0593 : c ∉ ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))).fv :=
+  have freshnessCertificate0593 : c ∉ ((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0566)
   have freshnessCertificate0594 :
-    c ∉ ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))).fv :=
+    c ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0593)
   have freshnessCertificate0595 :
-    c ∉ ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))).fv :=
+    c ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0594)
   have freshnessCertificate0596 :
     c ∉
-      ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))).fv :=
+      ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0595)
@@ -3758,7 +3760,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0605)
   have freshnessCertificate0607 :
     c ∉
-      (((syn_cins2k (syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk)))))).fv) ∪
+      (((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv) ∪
         ((syntaxClass0028).fv) :=
     (by
       with_reducible
@@ -3779,7 +3781,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0609)
   have freshnessCertificate0611 :
     c ∉
-      (((syn_cins2k (syn_cins3k (syn_csik (syn_csik (syn_cssetk)))))).fv) ∪
+      (((synCins2k (synCins3k (synCsik (synCsik (synCssetk)))))).fv) ∪
         ((syntaxClass0030).fv) :=
     (by
       with_reducible
@@ -3792,7 +3794,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
   have freshnessCertificate0613 :
     c ∉
       ((syntaxClass0031).fv) ∪
-        (((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))).fv) :=
+        (((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv) :=
     (by
       with_reducible
         exact
@@ -3807,7 +3809,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0614)
   have freshnessCertificate0616 :
     c ∉
-      (((syn_cins3k (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))).fv) ∪
+      (((synCins3k (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv) ∪
         ((syntaxClass0033).fv) :=
     (by
       with_reducible
@@ -3826,24 +3828,24 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     c ∉ ((Wff.classMem syntaxClass0072 syntaxClass0034)).fv :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0618)
   have p0039 :=
-    @g_n_19_41v syntaxFormula0071 syntaxFormula0073 c (by exact freshnessCertificate0619)
+    @gN1941v syntaxFormula0071 syntaxFormula0073 c (by exact freshnessCertificate0619)
   have p0040 :=
-    @g_bitr4i syntaxFormula0074 (syn_wa (syn_wex c syntaxFormula0071) syntaxFormula0073)
+    @gBitr4i syntaxFormula0074 (synWa (synWex c syntaxFormula0071) syntaxFormula0073)
       syntaxFormula0076 p0038 p0039
-  have p0041 := @g_exbii syntaxFormula0074 syntaxFormula0076 t p0040
+  have p0041 := @gExbii syntaxFormula0074 syntaxFormula0076 t p0040
   have p0042 := (Nominal.biimpRefl syntaxFormula0077)
-  have p0043 := @g_excom syntaxFormula0075 c t
+  have p0043 := @gExcom syntaxFormula0075 c t
   have p0044 :=
-    @g_n_3bitr4i (syn_wex t syntaxFormula0074) (syn_wex t syntaxFormula0076)
+    @gN3bitr4i (synWex t syntaxFormula0074) (synWex t syntaxFormula0076)
       syntaxFormula0077 syntaxFormula0079 p0041 p0042 p0043
   have p0045 :=
-    @g_snex (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c)))))))
+    @gSnex (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv c)))))))
   have p0046 :=
-    @g_opkeq1 (.cv t)
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c))))))))
+    @gOpkeq1 (.cv t)
+      (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))))
       syntaxClass0068
   have p0047 :=
-    @g_eleq1d syntaxFormula0071 syntaxClass0072 syntaxClass0080 syntaxClass0034 p0046
+    @gEleq1d syntaxFormula0071 syntaxClass0072 syntaxClass0080 syntaxClass0034 p0046
   have freshnessCertificate0620 : t ∉ ((Class.cv c)).fv :=
     (by
       rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
@@ -3852,42 +3854,42 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (by
             simpa only [Finset.mem_singleton] using
               (show t ≠ c from (by exact fresh_t_ne_c)))))
-  have freshnessCertificate0621 : t ∉ ((syn_csn (.cv c))).fv :=
+  have freshnessCertificate0621 : t ∉ ((synCsn (.cv c))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0620)
-  have freshnessCertificate0622 : t ∉ ((syn_csn (syn_csn (.cv c)))).fv :=
+  have freshnessCertificate0622 : t ∉ ((synCsn (synCsn (.cv c)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0621)
-  have freshnessCertificate0623 : t ∉ ((syn_csn (syn_csn (syn_csn (.cv c))))).fv :=
+  have freshnessCertificate0623 : t ∉ ((synCsn (synCsn (synCsn (.cv c))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0622)
   have freshnessCertificate0624 :
-    t ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (.cv c)))))).fv :=
+    t ∉ ((synCsn (synCsn (synCsn (synCsn (.cv c)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0623)
   have freshnessCertificate0625 :
-    t ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c))))))).fv :=
+    t ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0624)
   have freshnessCertificate0626 :
-    t ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c)))))))).fv :=
+    t ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv c)))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0625)
   have freshnessCertificate0627 :
     t ∉
-      ((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c))))))))).fv :=
+      ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0626)
   have freshnessCertificate0628 :
     t ∉
-      (((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c))))))))).fv) ∪
+      (((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))))).fv) ∪
         ((syntaxClass0068).fv) :=
     (by
       with_reducible
@@ -3906,47 +3908,47 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     t ∉ ((Wff.classMem syntaxClass0080 syntaxClass0034)).fv :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0630)
   have p0048 :=
-    @g_ceqsexv syntaxFormula0073 syntaxFormula0081 t
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c))))))))
+    @gCeqsexv syntaxFormula0073 syntaxFormula0081 t
+      (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))))
       (by exact freshnessCertificate0627) (by exact freshnessCertificate0631) p0045 p0047
   have p0049 :=
-    @g_elsymdif syntaxClass0080
-      (syn_cins3k (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))
+    @gElsymdif syntaxClass0080
+      (synCins3k (synCsik (synCsik (synCsik (synCsik (synCssetk))))))
       syntaxClass0033
-  have p0050 := @g_snex (syn_csn (syn_csn (syn_csn (syn_csn (.cv c)))))
+  have p0050 := @gSnex (synCsn (synCsn (synCsn (synCsn (.cv c)))))
   have p0051 :=
-    @g_otkelins3k (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c))))))
-      (syn_csn (syn_csn (syn_csn (syn_csn (.cv x)))))
-      (syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z)))
-      (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))) p0050 p0030 p0020
-  have p0052 := @g_snex (syn_csn (syn_csn (syn_csn (.cv c))))
-  have p0053 := @g_snex (syn_csn (syn_csn (.cv x)))
+    @gOtkelins3k (synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))
+      (synCsn (synCsn (synCsn (synCsn (.cv x)))))
+      (synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))
+      (synCsik (synCsik (synCsik (synCsik (synCssetk))))) p0050 p0030 p0020
+  have p0052 := @gSnex (synCsn (synCsn (synCsn (.cv c))))
+  have p0053 := @gSnex (synCsn (synCsn (.cv x)))
   have p0054 :=
-    @g_opksnelsik (syn_csn (syn_csn (syn_csn (syn_csn (.cv c)))))
-      (syn_csn (syn_csn (syn_csn (.cv x)))) (syn_csik (syn_csik (syn_csik (syn_cssetk))))
+    @gOpksnelsik (synCsn (synCsn (synCsn (synCsn (.cv c)))))
+      (synCsn (synCsn (synCsn (.cv x)))) (synCsik (synCsik (synCsik (synCssetk))))
       p0052 p0053
-  have p0055 := @g_snex (syn_csn (syn_csn (.cv c)))
-  have p0056 := @g_snex (syn_csn (.cv x))
+  have p0055 := @gSnex (synCsn (synCsn (.cv c)))
+  have p0056 := @gSnex (synCsn (.cv x))
   have p0057 :=
-    @g_opksnelsik (syn_csn (syn_csn (syn_csn (.cv c)))) (syn_csn (syn_csn (.cv x)))
-      (syn_csik (syn_csik (syn_cssetk))) p0055 p0056
-  have p0058 := @g_snex (syn_csn (.cv c))
-  have p0059 := @g_snex (.cv x)
+    @gOpksnelsik (synCsn (synCsn (synCsn (.cv c)))) (synCsn (synCsn (.cv x)))
+      (synCsik (synCsik (synCssetk))) p0055 p0056
+  have p0058 := @gSnex (synCsn (.cv c))
+  have p0059 := @gSnex (.cv x)
   have p0060 :=
-    @g_opksnelsik (syn_csn (syn_csn (.cv c))) (syn_csn (.cv x)) (syn_csik (syn_cssetk))
+    @gOpksnelsik (synCsn (synCsn (.cv c))) (synCsn (.cv x)) (synCsik (synCssetk))
       p0058 p0059
-  have p0061 := @g_snex (.cv c)
-  have p0062 := @g_vex x
-  have p0063 := @g_opksnelsik (syn_csn (.cv c)) (.cv x) (syn_cssetk) p0061 p0062
-  have p0064 := @g_vex c
-  have p0065 := @g_elssetk (.cv c) (.cv x) p0064 p0062
+  have p0061 := @gSnex (.cv c)
+  have p0062 := @gVex x
+  have p0063 := @gOpksnelsik (synCsn (.cv c)) (.cv x) (synCssetk) p0061 p0062
+  have p0064 := @gVex c
+  have p0065 := @gElssetk (.cv c) (.cv x) p0064 p0062
   have p0066_e01_recanon :
     Nominal.NPrf
-      (syn_wb (.classMem (syn_copk (syn_csn (.cv c)) (.cv x)) (syn_cssetk)) (.objMem c x)) :=
+      (synWb (.classMem (synCopk (synCsn (.cv c)) (.cv x)) (synCssetk)) (.objMem c x)) :=
     Nominal.RecanonTransportDev.transport
       (by
-        simp only [syn_wb, syn_copk, syn_cpr, syn_cun, syn_cnin, syn_wnan, syn_wa,
-          syn_ccompl, syn_csn, syn_cssetk, syn_wex]
+        simp only [synWb, synCopk, synCpr, synCun, synCnin, synWnan, synWa,
+          synCcompl, synCsn, synCssetk, synWex]
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
@@ -3960,35 +3962,35 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0065
   have p0066 :=
-    @g_bitri
-      (.classMem (syn_copk (syn_csn (syn_csn (.cv c))) (syn_csn (.cv x)))
-        (syn_csik (syn_cssetk)))
-      (.classMem (syn_copk (syn_csn (.cv c)) (.cv x)) (syn_cssetk)) (.objMem c x) p0063
+    @gBitri
+      (.classMem (synCopk (synCsn (synCsn (.cv c))) (synCsn (.cv x)))
+        (synCsik (synCssetk)))
+      (.classMem (synCopk (synCsn (.cv c)) (.cv x)) (synCssetk)) (.objMem c x) p0063
       p0066_e01_recanon
   have p0067 :=
-    @g_n_3bitri
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (syn_csn (.cv c)))))
-          (syn_csn (syn_csn (syn_csn (.cv x))))) (syn_csik (syn_csik (syn_csik (syn_cssetk)))))
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (.cv c)))) (syn_csn (syn_csn (.cv x))))
-        (syn_csik (syn_csik (syn_cssetk))))
-      (.classMem (syn_copk (syn_csn (syn_csn (.cv c))) (syn_csn (.cv x)))
-        (syn_csik (syn_cssetk)))
+    @gN3bitri
+      (.classMem (synCopk (synCsn (synCsn (synCsn (synCsn (.cv c)))))
+          (synCsn (synCsn (synCsn (.cv x))))) (synCsik (synCsik (synCsik (synCssetk)))))
+      (.classMem (synCopk (synCsn (synCsn (synCsn (.cv c)))) (synCsn (synCsn (.cv x))))
+        (synCsik (synCsik (synCssetk))))
+      (.classMem (synCopk (synCsn (synCsn (.cv c))) (synCsn (.cv x)))
+        (synCsik (synCssetk)))
       (.objMem c x) p0057 p0060 p0066
   have p0068 :=
-    @g_n_3bitri syntaxFormula0082
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c))))))
-          (syn_csn (syn_csn (syn_csn (syn_csn (.cv x))))))
-        (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (syn_csn (.cv c)))))
-          (syn_csn (syn_csn (syn_csn (.cv x))))) (syn_csik (syn_csik (syn_csik (syn_cssetk)))))
+    @gN3bitri syntaxFormula0082
+      (.classMem (synCopk (synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))
+          (synCsn (synCsn (synCsn (synCsn (.cv x))))))
+        (synCsik (synCsik (synCsik (synCsik (synCssetk))))))
+      (.classMem (synCopk (synCsn (synCsn (synCsn (synCsn (.cv c)))))
+          (synCsn (synCsn (synCsn (.cv x))))) (synCsik (synCsik (synCsik (synCssetk)))))
       (.objMem c x) p0051 p0054 p0067
   have p0069 :=
-    @g_opkex (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c))))))
-      (syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z)))
+    @gOpkex (synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))
+      (synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))
   have freshnessCertificate0632 :
     t ∉
-      (((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c))))))).fv) ∪
-        (((syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z)))).fv) :=
+      (((synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))).fv) ∪
+        (((synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))).fv) :=
     (by
       with_reducible
         exact
@@ -3998,8 +4000,8 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0632)
   have p0070 :=
-    @g_elimak t syntaxClass0031
-      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
+    @gElimak t syntaxClass0031
+      (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
       syntaxClass0083 (by exact freshnessCertificate0275)
       (by exact freshnessCertificate0259) (by exact freshnessCertificate0633) p0069
   have freshnessCertificate0634 : b ∉ ((Class.cv t)).fv :=
@@ -4010,9 +4012,9 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (by
             simpa only [Finset.mem_singleton] using
               (show b ≠ t from (by exact fresh_b_ne_t)))))
-  have p0071 := @g_elpw161c b (.cv t) (by exact freshnessCertificate0634)
+  have p0071 := @gElpw161c b (.cv t) (by exact freshnessCertificate0634)
   have p0072 :=
-    @g_anbi1i syntaxFormula0070 (syn_wex b syntaxFormula0084) syntaxFormula0086 p0071
+    @gAnbi1i syntaxFormula0070 (synWex b syntaxFormula0084) syntaxFormula0086 p0071
   have freshnessCertificate0635 : b ∉ ((Class.cv c)).fv :=
     (by
       rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
@@ -4021,25 +4023,25 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (by
             simpa only [Finset.mem_singleton] using
               (show b ≠ c from (by exact fresh_b_ne_c)))))
-  have freshnessCertificate0636 : b ∉ ((syn_csn (.cv c))).fv :=
+  have freshnessCertificate0636 : b ∉ ((synCsn (.cv c))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0635)
-  have freshnessCertificate0637 : b ∉ ((syn_csn (syn_csn (.cv c)))).fv :=
+  have freshnessCertificate0637 : b ∉ ((synCsn (synCsn (.cv c)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0636)
-  have freshnessCertificate0638 : b ∉ ((syn_csn (syn_csn (syn_csn (.cv c))))).fv :=
+  have freshnessCertificate0638 : b ∉ ((synCsn (synCsn (synCsn (.cv c))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0637)
   have freshnessCertificate0639 :
-    b ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (.cv c)))))).fv :=
+    b ∉ ((synCsn (synCsn (synCsn (synCsn (.cv c)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0638)
   have freshnessCertificate0640 :
-    b ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c))))))).fv :=
+    b ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0639)
@@ -4051,11 +4053,11 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (by
             simpa only [Finset.mem_singleton] using
               (show b ≠ w from (by exact fresh_b_ne_w)))))
-  have freshnessCertificate0642 : b ∉ ((syn_csn (.cv w))).fv :=
+  have freshnessCertificate0642 : b ∉ ((synCsn (.cv w))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0641)
-  have freshnessCertificate0643 : b ∉ ((syn_csn (syn_csn (.cv w)))).fv :=
+  have freshnessCertificate0643 : b ∉ ((synCsn (synCsn (.cv w)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0642)
@@ -4080,25 +4082,25 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0644 freshnessCertificate0645))
-  have freshnessCertificate0647 : b ∉ ((syn_copk (.cv y) (.cv z))).fv :=
+  have freshnessCertificate0647 : b ∉ ((synCopk (.cv y) (.cv z))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0646)
   have freshnessCertificate0648 :
-    b ∉ (((syn_csn (syn_csn (.cv w)))).fv) ∪ (((syn_copk (.cv y) (.cv z))).fv) :=
+    b ∉ (((synCsn (synCsn (.cv w)))).fv) ∪ (((synCopk (.cv y) (.cv z))).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0643 freshnessCertificate0647))
   have freshnessCertificate0649 :
-    b ∉ ((syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z)))).fv :=
+    b ∉ ((synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0648)
   have freshnessCertificate0650 :
     b ∉
-      (((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c))))))).fv) ∪
-        (((syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z)))).fv) :=
+      (((synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))).fv) ∪
+        (((synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))).fv) :=
     (by
       with_reducible
         exact
@@ -4116,77 +4118,77 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0652)
-  have freshnessCertificate0654 : b ∉ ((syn_cssetk)).fv :=
+  have freshnessCertificate0654 : b ∉ ((synCssetk)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
       exact (show b ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0655 : b ∉ ((syn_csik (syn_cssetk))).fv :=
+  have freshnessCertificate0655 : b ∉ ((synCsik (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0654)
-  have freshnessCertificate0656 : b ∉ ((syn_csik (syn_csik (syn_cssetk)))).fv :=
+  have freshnessCertificate0656 : b ∉ ((synCsik (synCsik (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0655)
   have freshnessCertificate0657 :
-    b ∉ ((syn_cins3k (syn_csik (syn_csik (syn_cssetk))))).fv :=
+    b ∉ ((synCins3k (synCsik (synCsik (synCssetk))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0656)
   have freshnessCertificate0658 :
-    b ∉ ((syn_cins2k (syn_cins3k (syn_csik (syn_csik (syn_cssetk)))))).fv :=
+    b ∉ ((synCins2k (synCins3k (synCsik (synCsik (synCssetk)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0657)
-  have freshnessCertificate0659 : b ∉ ((syn_cins3k (syn_cssetk))).fv :=
+  have freshnessCertificate0659 : b ∉ ((synCins3k (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0654)
-  have freshnessCertificate0660 : b ∉ ((syn_cins2k (syn_cins3k (syn_cssetk)))).fv :=
+  have freshnessCertificate0660 : b ∉ ((synCins2k (synCins3k (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0659)
   have freshnessCertificate0661 :
-    b ∉ ((syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk))))).fv :=
+    b ∉ ((synCins2k (synCins2k (synCins3k (synCssetk))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0660)
   have freshnessCertificate0662 :
-    b ∉ ((syn_cins2k (syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk)))))).fv :=
+    b ∉ ((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0661)
-  have freshnessCertificate0663 : b ∉ ((syn_cins2k (syn_cssetk))).fv :=
+  have freshnessCertificate0663 : b ∉ ((synCins2k (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0654)
   have freshnessCertificate0664 :
-    b ∉ (((syn_cins3k (syn_cssetk))).fv) ∪ (((syn_cins2k (syn_cssetk))).fv) :=
+    b ∉ (((synCins3k (synCssetk))).fv) ∪ (((synCins2k (synCssetk))).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0659 freshnessCertificate0663))
   have freshnessCertificate0665 :
-    b ∉ ((syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))).fv :=
+    b ∉ ((synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0664)
-  have freshnessCertificate0666 : b ∉ ((syn_c1c)).fv :=
+  have freshnessCertificate0666 : b ∉ ((synC1c)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c];
       exact (show b ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0667 : b ∉ ((syn_cpw1 (syn_c1c))).fv :=
+  have freshnessCertificate0667 : b ∉ ((synCpw1 (synC1c))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0666)
-  have freshnessCertificate0668 : b ∉ ((syn_cpw1 (syn_cpw1 (syn_c1c)))).fv :=
+  have freshnessCertificate0668 : b ∉ ((synCpw1 (synCpw1 (synC1c)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0667)
   have freshnessCertificate0669 :
     b ∉
-      (((syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))).fv) ∪
-        (((syn_cpw1 (syn_cpw1 (syn_c1c)))).fv) :=
+      (((synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))).fv) ∪
+        (((synCpw1 (synCpw1 (synC1c)))).fv) :=
     (by
       with_reducible
         exact
@@ -4232,17 +4234,17 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0678)
   have freshnessCertificate0680 :
-    b ∉ ((syn_csik (syn_csik (syn_csik (syn_cssetk))))).fv :=
+    b ∉ ((synCsik (synCsik (synCsik (synCssetk))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0656)
   have freshnessCertificate0681 :
-    b ∉ ((syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))).fv :=
+    b ∉ ((synCsik (synCsik (synCsik (synCsik (synCssetk)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0680)
   have freshnessCertificate0682 :
-    b ∉ ((syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))).fv :=
+    b ∉ ((synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0681)
@@ -4260,7 +4262,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0684)
   have freshnessCertificate0686 :
     b ∉
-      ((syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))))).fv :=
+      ((synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0682)
@@ -4306,23 +4308,23 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0695)
-  have freshnessCertificate0697 : b ∉ ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))).fv :=
+  have freshnessCertificate0697 : b ∉ ((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0668)
   have freshnessCertificate0698 :
-    b ∉ ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))).fv :=
+    b ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0697)
   have freshnessCertificate0699 :
-    b ∉ ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))).fv :=
+    b ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0698)
   have freshnessCertificate0700 :
     b ∉
-      ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))).fv :=
+      ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0699)
@@ -4370,7 +4372,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0709)
   have freshnessCertificate0711 :
     b ∉
-      (((syn_cins2k (syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk)))))).fv) ∪
+      (((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv) ∪
         ((syntaxClass0028).fv) :=
     (by
       with_reducible
@@ -4391,7 +4393,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0713)
   have freshnessCertificate0715 :
     b ∉
-      (((syn_cins2k (syn_cins3k (syn_csik (syn_csik (syn_cssetk)))))).fv) ∪
+      (((synCins2k (synCins3k (synCsik (synCsik (synCssetk)))))).fv) ∪
         ((syntaxClass0030).fv) :=
     (by
       with_reducible
@@ -4410,24 +4412,24 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     b ∉ ((Wff.classMem syntaxClass0085 syntaxClass0031)).fv :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0717)
   have p0073 :=
-    @g_n_19_41v syntaxFormula0084 syntaxFormula0086 b (by exact freshnessCertificate0718)
+    @gN1941v syntaxFormula0084 syntaxFormula0086 b (by exact freshnessCertificate0718)
   have p0074 :=
-    @g_bitr4i syntaxFormula0087 (syn_wa (syn_wex b syntaxFormula0084) syntaxFormula0086)
+    @gBitr4i syntaxFormula0087 (synWa (synWex b syntaxFormula0084) syntaxFormula0086)
       syntaxFormula0089 p0072 p0073
-  have p0075 := @g_exbii syntaxFormula0087 syntaxFormula0089 t p0074
+  have p0075 := @gExbii syntaxFormula0087 syntaxFormula0089 t p0074
   have p0076 := (Nominal.biimpRefl syntaxFormula0090)
-  have p0077 := @g_excom syntaxFormula0088 b t
+  have p0077 := @gExcom syntaxFormula0088 b t
   have p0078 :=
-    @g_n_3bitr4i (syn_wex t syntaxFormula0087) (syn_wex t syntaxFormula0089)
+    @gN3bitr4i (synWex t syntaxFormula0087) (synWex t syntaxFormula0089)
       syntaxFormula0090 syntaxFormula0092 p0075 p0076 p0077
   have p0079 :=
-    @g_snex (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b)))))))
+    @gSnex (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b)))))))
   have p0080 :=
-    @g_opkeq1 (.cv t)
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))))
+    @gOpkeq1 (.cv t)
+      (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))))
       syntaxClass0083
   have p0081 :=
-    @g_eleq1d syntaxFormula0084 syntaxClass0085 syntaxClass0093 syntaxClass0031 p0080
+    @gEleq1d syntaxFormula0084 syntaxClass0085 syntaxClass0093 syntaxClass0031 p0080
   have freshnessCertificate0719 : t ∉ ((Class.cv b)).fv :=
     (by
       rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
@@ -4436,42 +4438,42 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (by
             simpa only [Finset.mem_singleton] using
               (show t ≠ b from (by exact fresh_t_ne_b)))))
-  have freshnessCertificate0720 : t ∉ ((syn_csn (.cv b))).fv :=
+  have freshnessCertificate0720 : t ∉ ((synCsn (.cv b))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0719)
-  have freshnessCertificate0721 : t ∉ ((syn_csn (syn_csn (.cv b)))).fv :=
+  have freshnessCertificate0721 : t ∉ ((synCsn (synCsn (.cv b)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0720)
-  have freshnessCertificate0722 : t ∉ ((syn_csn (syn_csn (syn_csn (.cv b))))).fv :=
+  have freshnessCertificate0722 : t ∉ ((synCsn (synCsn (synCsn (.cv b))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0721)
   have freshnessCertificate0723 :
-    t ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (.cv b)))))).fv :=
+    t ∉ ((synCsn (synCsn (synCsn (synCsn (.cv b)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0722)
   have freshnessCertificate0724 :
-    t ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))).fv :=
+    t ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0723)
   have freshnessCertificate0725 :
-    t ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b)))))))).fv :=
+    t ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b)))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0724)
   have freshnessCertificate0726 :
     t ∉
-      ((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))))).fv :=
+      ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0725)
   have freshnessCertificate0727 :
     t ∉
-      (((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))))).fv) ∪
+      (((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))))).fv) ∪
         ((syntaxClass0083).fv) :=
     (by
       with_reducible
@@ -4490,39 +4492,39 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     t ∉ ((Wff.classMem syntaxClass0093 syntaxClass0031)).fv :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0729)
   have p0082 :=
-    @g_ceqsexv syntaxFormula0086 syntaxFormula0094 t
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))))
+    @gCeqsexv syntaxFormula0086 syntaxFormula0094 t
+      (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))))
       (by exact freshnessCertificate0726) (by exact freshnessCertificate0730) p0079 p0081
   have p0083 :=
-    @g_elin syntaxClass0093 (syn_cins2k (syn_cins3k (syn_csik (syn_csik (syn_cssetk)))))
+    @gElin syntaxClass0093 (synCins2k (synCins3k (synCsik (synCsik (synCssetk)))))
       syntaxClass0030
-  have p0084 := @g_snex (syn_csn (syn_csn (syn_csn (syn_csn (.cv b)))))
+  have p0084 := @gSnex (synCsn (synCsn (synCsn (synCsn (.cv b)))))
   have p0085 :=
-    @g_otkelins2k (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c))))))
-      (syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z)))
-      (syn_cins3k (syn_csik (syn_csik (syn_cssetk)))) p0084 p0050 p0020
-  have p0086 := @g_snex (syn_csn (syn_csn (.cv b)))
+    @gOtkelins2k (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))
+      (synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))
+      (synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))
+      (synCins3k (synCsik (synCsik (synCssetk)))) p0084 p0050 p0020
+  have p0086 := @gSnex (synCsn (synCsn (.cv b)))
   have p0087 :=
-    @g_otkelins3k (syn_csn (syn_csn (syn_csn (.cv b)))) (syn_csn (syn_csn (.cv w)))
-      (syn_copk (.cv y) (.cv z)) (syn_csik (syn_csik (syn_cssetk))) p0086 p0016 p0006
-  have p0088 := @g_snex (syn_csn (.cv b))
-  have p0089 := @g_snex (.cv w)
+    @gOtkelins3k (synCsn (synCsn (synCsn (.cv b)))) (synCsn (synCsn (.cv w)))
+      (synCopk (.cv y) (.cv z)) (synCsik (synCsik (synCssetk))) p0086 p0016 p0006
+  have p0088 := @gSnex (synCsn (.cv b))
+  have p0089 := @gSnex (.cv w)
   have p0090 :=
-    @g_opksnelsik (syn_csn (syn_csn (.cv b))) (syn_csn (.cv w)) (syn_csik (syn_cssetk))
+    @gOpksnelsik (synCsn (synCsn (.cv b))) (synCsn (.cv w)) (synCsik (synCssetk))
       p0088 p0089
-  have p0091 := @g_snex (.cv b)
-  have p0092 := @g_vex w
-  have p0093 := @g_opksnelsik (syn_csn (.cv b)) (.cv w) (syn_cssetk) p0091 p0092
-  have p0094 := @g_vex b
-  have p0095 := @g_elssetk (.cv b) (.cv w) p0094 p0092
+  have p0091 := @gSnex (.cv b)
+  have p0092 := @gVex w
+  have p0093 := @gOpksnelsik (synCsn (.cv b)) (.cv w) (synCssetk) p0091 p0092
+  have p0094 := @gVex b
+  have p0095 := @gElssetk (.cv b) (.cv w) p0094 p0092
   have p0096_e02_recanon :
     Nominal.NPrf
-      (syn_wb (.classMem (syn_copk (syn_csn (.cv b)) (.cv w)) (syn_cssetk)) (.objMem b w)) :=
+      (synWb (.classMem (synCopk (synCsn (.cv b)) (.cv w)) (synCssetk)) (.objMem b w)) :=
     Nominal.RecanonTransportDev.transport
       (by
-        simp only [syn_wb, syn_copk, syn_cpr, syn_cun, syn_cnin, syn_wnan, syn_wa,
-          syn_ccompl, syn_csn, syn_cssetk, syn_wex]
+        simp only [synWb, synCopk, synCpr, synCun, synCnin, synWnan, synWa,
+          synCcompl, synCsn, synCssetk, synWex]
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
@@ -4536,26 +4538,26 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0095
   have p0096 :=
-    @g_n_3bitri
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (.cv b)))) (syn_csn (syn_csn (.cv w))))
-        (syn_csik (syn_csik (syn_cssetk))))
-      (.classMem (syn_copk (syn_csn (syn_csn (.cv b))) (syn_csn (.cv w)))
-        (syn_csik (syn_cssetk)))
-      (.classMem (syn_copk (syn_csn (.cv b)) (.cv w)) (syn_cssetk)) (.objMem b w) p0090
+    @gN3bitri
+      (.classMem (synCopk (synCsn (synCsn (synCsn (.cv b)))) (synCsn (synCsn (.cv w))))
+        (synCsik (synCsik (synCssetk))))
+      (.classMem (synCopk (synCsn (synCsn (.cv b))) (synCsn (.cv w)))
+        (synCsik (synCssetk)))
+      (.classMem (synCopk (synCsn (.cv b)) (.cv w)) (synCssetk)) (.objMem b w) p0090
       p0093 p0096_e02_recanon
   have p0097 :=
-    @g_n_3bitri syntaxFormula0095
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))
-          (syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z))))
-        (syn_cins3k (syn_csik (syn_csik (syn_cssetk)))))
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (.cv b)))) (syn_csn (syn_csn (.cv w))))
-        (syn_csik (syn_csik (syn_cssetk))))
+    @gN3bitri syntaxFormula0095
+      (.classMem (synCopk (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))
+          (synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z))))
+        (synCins3k (synCsik (synCsik (synCssetk)))))
+      (.classMem (synCopk (synCsn (synCsn (synCsn (.cv b)))) (synCsn (synCsn (.cv w))))
+        (synCsik (synCsik (synCssetk))))
       (.objMem b w) p0085 p0087 p0096
   have p0098 :=
-    @g_opkex (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))))
+    @gOpkex (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))))
       syntaxClass0083
   have p0099 :=
-    @g_elimak t syntaxClass0029 syntaxClass0022 syntaxClass0093
+    @gElimak t syntaxClass0029 syntaxClass0022 syntaxClass0093
       (by exact freshnessCertificate0271) (by exact freshnessCertificate0261)
       (by exact freshnessCertificate0728) p0098
   have freshnessCertificate0731 : a ∉ ((Class.cv t)).fv :=
@@ -4566,9 +4568,9 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (by
             simpa only [Finset.mem_singleton] using
               (show a ≠ t from (by exact fresh_a_ne_t)))))
-  have p0100 := @g_elpw181c a (.cv t) (by exact freshnessCertificate0731)
+  have p0100 := @gElpw181c a (.cv t) (by exact freshnessCertificate0731)
   have p0101 :=
-    @g_anbi1i syntaxFormula0096 (syn_wex a syntaxFormula0099) syntaxFormula0101 p0100
+    @gAnbi1i syntaxFormula0096 (synWex a syntaxFormula0099) syntaxFormula0101 p0100
   have freshnessCertificate0732 : a ∉ ((Class.cv b)).fv :=
     (by
       rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
@@ -4577,36 +4579,36 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (by
             simpa only [Finset.mem_singleton] using
               (show a ≠ b from (by exact fresh_a_ne_b)))))
-  have freshnessCertificate0733 : a ∉ ((syn_csn (.cv b))).fv :=
+  have freshnessCertificate0733 : a ∉ ((synCsn (.cv b))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0732)
-  have freshnessCertificate0734 : a ∉ ((syn_csn (syn_csn (.cv b)))).fv :=
+  have freshnessCertificate0734 : a ∉ ((synCsn (synCsn (.cv b)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0733)
-  have freshnessCertificate0735 : a ∉ ((syn_csn (syn_csn (syn_csn (.cv b))))).fv :=
+  have freshnessCertificate0735 : a ∉ ((synCsn (synCsn (synCsn (.cv b))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0734)
   have freshnessCertificate0736 :
-    a ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (.cv b)))))).fv :=
+    a ∉ ((synCsn (synCsn (synCsn (synCsn (.cv b)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0735)
   have freshnessCertificate0737 :
-    a ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))).fv :=
+    a ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0736)
   have freshnessCertificate0738 :
-    a ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b)))))))).fv :=
+    a ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b)))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0737)
   have freshnessCertificate0739 :
     a ∉
-      ((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))))).fv :=
+      ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0738)
@@ -4618,25 +4620,25 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (by
             simpa only [Finset.mem_singleton] using
               (show a ≠ c from (by exact fresh_a_ne_c)))))
-  have freshnessCertificate0741 : a ∉ ((syn_csn (.cv c))).fv :=
+  have freshnessCertificate0741 : a ∉ ((synCsn (.cv c))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0740)
-  have freshnessCertificate0742 : a ∉ ((syn_csn (syn_csn (.cv c)))).fv :=
+  have freshnessCertificate0742 : a ∉ ((synCsn (synCsn (.cv c)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0741)
-  have freshnessCertificate0743 : a ∉ ((syn_csn (syn_csn (syn_csn (.cv c))))).fv :=
+  have freshnessCertificate0743 : a ∉ ((synCsn (synCsn (synCsn (.cv c))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0742)
   have freshnessCertificate0744 :
-    a ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (.cv c)))))).fv :=
+    a ∉ ((synCsn (synCsn (synCsn (synCsn (.cv c)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0743)
   have freshnessCertificate0745 :
-    a ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c))))))).fv :=
+    a ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0744)
@@ -4648,11 +4650,11 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (by
             simpa only [Finset.mem_singleton] using
               (show a ≠ w from (by exact fresh_a_ne_w)))))
-  have freshnessCertificate0747 : a ∉ ((syn_csn (.cv w))).fv :=
+  have freshnessCertificate0747 : a ∉ ((synCsn (.cv w))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0746)
-  have freshnessCertificate0748 : a ∉ ((syn_csn (syn_csn (.cv w)))).fv :=
+  have freshnessCertificate0748 : a ∉ ((synCsn (synCsn (.cv w)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0747)
@@ -4677,25 +4679,25 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0749 freshnessCertificate0750))
-  have freshnessCertificate0752 : a ∉ ((syn_copk (.cv y) (.cv z))).fv :=
+  have freshnessCertificate0752 : a ∉ ((synCopk (.cv y) (.cv z))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0751)
   have freshnessCertificate0753 :
-    a ∉ (((syn_csn (syn_csn (.cv w)))).fv) ∪ (((syn_copk (.cv y) (.cv z))).fv) :=
+    a ∉ (((synCsn (synCsn (.cv w)))).fv) ∪ (((synCopk (.cv y) (.cv z))).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0748 freshnessCertificate0752))
   have freshnessCertificate0754 :
-    a ∉ ((syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z)))).fv :=
+    a ∉ ((synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0753)
   have freshnessCertificate0755 :
     a ∉
-      (((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c))))))).fv) ∪
-        (((syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z)))).fv) :=
+      (((synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))).fv) ∪
+        (((synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))).fv) :=
     (by
       with_reducible
         exact
@@ -4706,7 +4708,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0755)
   have freshnessCertificate0757 :
     a ∉
-      (((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))))).fv) ∪
+      (((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))))).fv) ∪
         ((syntaxClass0083).fv) :=
     (by
       with_reducible
@@ -4725,59 +4727,59 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0759)
-  have freshnessCertificate0761 : a ∉ ((syn_cssetk)).fv :=
+  have freshnessCertificate0761 : a ∉ ((synCssetk)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
       exact (show a ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0762 : a ∉ ((syn_cins3k (syn_cssetk))).fv :=
+  have freshnessCertificate0762 : a ∉ ((synCins3k (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0761)
-  have freshnessCertificate0763 : a ∉ ((syn_cins2k (syn_cins3k (syn_cssetk)))).fv :=
+  have freshnessCertificate0763 : a ∉ ((synCins2k (synCins3k (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0762)
   have freshnessCertificate0764 :
-    a ∉ ((syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk))))).fv :=
+    a ∉ ((synCins2k (synCins2k (synCins3k (synCssetk))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0763)
   have freshnessCertificate0765 :
-    a ∉ ((syn_cins2k (syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk)))))).fv :=
+    a ∉ ((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0764)
-  have freshnessCertificate0766 : a ∉ ((syn_cins2k (syn_cssetk))).fv :=
+  have freshnessCertificate0766 : a ∉ ((synCins2k (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0761)
   have freshnessCertificate0767 :
-    a ∉ (((syn_cins3k (syn_cssetk))).fv) ∪ (((syn_cins2k (syn_cssetk))).fv) :=
+    a ∉ (((synCins3k (synCssetk))).fv) ∪ (((synCins2k (synCssetk))).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0762 freshnessCertificate0766))
   have freshnessCertificate0768 :
-    a ∉ ((syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))).fv :=
+    a ∉ ((synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0767)
-  have freshnessCertificate0769 : a ∉ ((syn_c1c)).fv :=
+  have freshnessCertificate0769 : a ∉ ((synC1c)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c];
       exact (show a ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0770 : a ∉ ((syn_cpw1 (syn_c1c))).fv :=
+  have freshnessCertificate0770 : a ∉ ((synCpw1 (synC1c))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0769)
-  have freshnessCertificate0771 : a ∉ ((syn_cpw1 (syn_cpw1 (syn_c1c)))).fv :=
+  have freshnessCertificate0771 : a ∉ ((synCpw1 (synCpw1 (synC1c)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0770)
   have freshnessCertificate0772 :
     a ∉
-      (((syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))).fv) ∪
-        (((syn_cpw1 (syn_cpw1 (syn_c1c)))).fv) :=
+      (((synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))).fv) ∪
+        (((synCpw1 (synCpw1 (synC1c)))).fv) :=
     (by
       with_reducible
         exact
@@ -4822,26 +4824,26 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0781)
-  have freshnessCertificate0783 : a ∉ ((syn_csik (syn_cssetk))).fv :=
+  have freshnessCertificate0783 : a ∉ ((synCsik (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0761)
-  have freshnessCertificate0784 : a ∉ ((syn_csik (syn_csik (syn_cssetk)))).fv :=
+  have freshnessCertificate0784 : a ∉ ((synCsik (synCsik (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0783)
   have freshnessCertificate0785 :
-    a ∉ ((syn_csik (syn_csik (syn_csik (syn_cssetk))))).fv :=
+    a ∉ ((synCsik (synCsik (synCsik (synCssetk))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0784)
   have freshnessCertificate0786 :
-    a ∉ ((syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))).fv :=
+    a ∉ ((synCsik (synCsik (synCsik (synCsik (synCssetk)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0785)
   have freshnessCertificate0787 :
-    a ∉ ((syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))).fv :=
+    a ∉ ((synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0786)
@@ -4859,7 +4861,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0789)
   have freshnessCertificate0791 :
     a ∉
-      ((syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))))).fv :=
+      ((synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0787)
@@ -4905,23 +4907,23 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0800)
-  have freshnessCertificate0802 : a ∉ ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))).fv :=
+  have freshnessCertificate0802 : a ∉ ((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0771)
   have freshnessCertificate0803 :
-    a ∉ ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))).fv :=
+    a ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0802)
   have freshnessCertificate0804 :
-    a ∉ ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))).fv :=
+    a ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0803)
   have freshnessCertificate0805 :
     a ∉
-      ((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))).fv :=
+      ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0804)
@@ -4969,7 +4971,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0814)
   have freshnessCertificate0816 :
     a ∉
-      (((syn_cins2k (syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk)))))).fv) ∪
+      (((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv) ∪
         ((syntaxClass0028).fv) :=
     (by
       with_reducible
@@ -4988,20 +4990,20 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     a ∉ ((Wff.classMem syntaxClass0100 syntaxClass0029)).fv :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0818)
   have p0102 :=
-    @g_n_19_41v syntaxFormula0099 syntaxFormula0101 a (by exact freshnessCertificate0819)
+    @gN1941v syntaxFormula0099 syntaxFormula0101 a (by exact freshnessCertificate0819)
   have p0103 :=
-    @g_bitr4i syntaxFormula0102 (syn_wa (syn_wex a syntaxFormula0099) syntaxFormula0101)
+    @gBitr4i syntaxFormula0102 (synWa (synWex a syntaxFormula0099) syntaxFormula0101)
       syntaxFormula0104 p0101 p0102
-  have p0104 := @g_exbii syntaxFormula0102 syntaxFormula0104 t p0103
+  have p0104 := @gExbii syntaxFormula0102 syntaxFormula0104 t p0103
   have p0105 := (Nominal.biimpRefl syntaxFormula0105)
-  have p0106 := @g_excom syntaxFormula0103 a t
+  have p0106 := @gExcom syntaxFormula0103 a t
   have p0107 :=
-    @g_n_3bitr4i (syn_wex t syntaxFormula0102) (syn_wex t syntaxFormula0104)
+    @gN3bitr4i (synWex t syntaxFormula0102) (synWex t syntaxFormula0104)
       syntaxFormula0105 syntaxFormula0107 p0104 p0105 p0106
-  have p0108 := @g_snex syntaxClass0097
-  have p0109 := @g_opkeq1 (.cv t) syntaxClass0098 syntaxClass0093
+  have p0108 := @gSnex syntaxClass0097
+  have p0109 := @gOpkeq1 (.cv t) syntaxClass0098 syntaxClass0093
   have p0110 :=
-    @g_eleq1d syntaxFormula0099 syntaxClass0100 syntaxClass0108 syntaxClass0029 p0109
+    @gEleq1d syntaxFormula0099 syntaxClass0100 syntaxClass0108 syntaxClass0029 p0109
   have freshnessCertificate0820 : t ∉ ((Class.cv a)).fv :=
     (by
       rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
@@ -5010,36 +5012,36 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (by
             simpa only [Finset.mem_singleton] using
               (show t ≠ a from (by exact fresh_t_ne_a)))))
-  have freshnessCertificate0821 : t ∉ ((syn_csn (.cv a))).fv :=
+  have freshnessCertificate0821 : t ∉ ((synCsn (.cv a))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0820)
-  have freshnessCertificate0822 : t ∉ ((syn_csn (syn_csn (.cv a)))).fv :=
+  have freshnessCertificate0822 : t ∉ ((synCsn (synCsn (.cv a)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0821)
-  have freshnessCertificate0823 : t ∉ ((syn_csn (syn_csn (syn_csn (.cv a))))).fv :=
+  have freshnessCertificate0823 : t ∉ ((synCsn (synCsn (synCsn (.cv a))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0822)
   have freshnessCertificate0824 :
-    t ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (.cv a)))))).fv :=
+    t ∉ ((synCsn (synCsn (synCsn (synCsn (.cv a)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0823)
   have freshnessCertificate0825 :
-    t ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a))))))).fv :=
+    t ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (.cv a))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0824)
   have freshnessCertificate0826 :
-    t ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a)))))))).fv :=
+    t ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a)))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0825)
   have freshnessCertificate0827 :
     t ∉
-      ((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a))))))))).fv :=
+      ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a))))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0826)
@@ -5069,43 +5071,43 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     t ∉ ((Wff.classMem syntaxClass0108 syntaxClass0029)).fv :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0832)
   have p0111 :=
-    @g_ceqsexv syntaxFormula0101 syntaxFormula0109 t syntaxClass0098
+    @gCeqsexv syntaxFormula0101 syntaxFormula0109 t syntaxClass0098
       (by exact freshnessCertificate0829) (by exact freshnessCertificate0833) p0108 p0110
   have p0112 :=
-    @g_elin syntaxClass0108
-      (syn_cins2k (syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk))))) syntaxClass0028
+    @gElin syntaxClass0108
+      (synCins2k (synCins2k (synCins2k (synCins3k (synCssetk))))) syntaxClass0028
   have p0113 :=
-    @g_snex (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a)))))))
+    @gSnex (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a)))))))
   have p0114 :=
-    @g_otkelins2k
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a))))))))
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))))
-      syntaxClass0083 (syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk)))) p0113 p0079
+    @gOtkelins2k
+      (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a))))))))
+      (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))))
+      syntaxClass0083 (synCins2k (synCins2k (synCins3k (synCssetk)))) p0113 p0079
       p0069
-  have p0115 := @g_snex (syn_csn (syn_csn (syn_csn (syn_csn (.cv a)))))
+  have p0115 := @gSnex (synCsn (synCsn (synCsn (synCsn (.cv a)))))
   have p0116 :=
-    @g_otkelins2k (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a))))))
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c))))))
-      (syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z)))
-      (syn_cins2k (syn_cins3k (syn_cssetk))) p0115 p0050 p0020
-  have p0117 := @g_snex (syn_csn (syn_csn (.cv a)))
+    @gOtkelins2k (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a))))))
+      (synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))
+      (synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))
+      (synCins2k (synCins3k (synCssetk))) p0115 p0050 p0020
+  have p0117 := @gSnex (synCsn (synCsn (.cv a)))
   have p0118 :=
-    @g_otkelins2k (syn_csn (syn_csn (syn_csn (.cv a)))) (syn_csn (syn_csn (.cv w)))
-      (syn_copk (.cv y) (.cv z)) (syn_cins3k (syn_cssetk)) p0117 p0016 p0006
-  have p0119 := @g_snex (.cv a)
-  have p0120 := @g_vex y
-  have p0121 := @g_vex z
+    @gOtkelins2k (synCsn (synCsn (synCsn (.cv a)))) (synCsn (synCsn (.cv w)))
+      (synCopk (.cv y) (.cv z)) (synCins3k (synCssetk)) p0117 p0016 p0006
+  have p0119 := @gSnex (.cv a)
+  have p0120 := @gVex y
+  have p0121 := @gVex z
   have p0122 :=
-    @g_otkelins3k (syn_csn (.cv a)) (.cv y) (.cv z) (syn_cssetk) p0119 p0120 p0121
-  have p0123 := @g_vex a
-  have p0124 := @g_elssetk (.cv a) (.cv y) p0123 p0120
+    @gOtkelins3k (synCsn (.cv a)) (.cv y) (.cv z) (synCssetk) p0119 p0120 p0121
+  have p0123 := @gVex a
+  have p0124 := @gElssetk (.cv a) (.cv y) p0123 p0120
   have p0125_e02_recanon :
     Nominal.NPrf
-      (syn_wb (.classMem (syn_copk (syn_csn (.cv a)) (.cv y)) (syn_cssetk)) (.objMem a y)) :=
+      (synWb (.classMem (synCopk (synCsn (.cv a)) (.cv y)) (synCssetk)) (.objMem a y)) :=
     Nominal.RecanonTransportDev.transport
       (by
-        simp only [syn_wb, syn_copk, syn_cpr, syn_cun, syn_cnin, syn_wnan, syn_wa,
-          syn_ccompl, syn_csn, syn_cssetk, syn_wex]
+        simp only [synWb, synCopk, synCpr, synCun, synCnin, synWnan, synWa,
+          synCcompl, synCsn, synCssetk, synWex]
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
@@ -5119,88 +5121,88 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0124
   have p0125 :=
-    @g_n_3bitri syntaxFormula0110
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (.cv a)))) (syn_copk (.cv y) (.cv z)))
-        (syn_cins3k (syn_cssetk)))
-      (.classMem (syn_copk (syn_csn (.cv a)) (.cv y)) (syn_cssetk)) (.objMem a y) p0118
+    @gN3bitri syntaxFormula0110
+      (.classMem (synCopk (synCsn (synCsn (synCsn (.cv a)))) (synCopk (.cv y) (.cv z)))
+        (synCins3k (synCssetk)))
+      (.classMem (synCopk (synCsn (.cv a)) (.cv y)) (synCssetk)) (.objMem a y) p0118
       p0122 p0125_e02_recanon
   have p0126 :=
-    @g_n_3bitri syntaxFormula0111
-      (.classMem (syn_copk
-          (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a))))))))
-          syntaxClass0083) (syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk)))))
+    @gN3bitri syntaxFormula0111
+      (.classMem (synCopk
+          (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a))))))))
+          syntaxClass0083) (synCins2k (synCins2k (synCins3k (synCssetk)))))
       syntaxFormula0110 (.objMem a y) p0114 p0116 p0125
-  have p0127 := @g_elin syntaxClass0108 syntaxClass0009 syntaxClass0027
+  have p0127 := @gElin syntaxClass0108 syntaxClass0009 syntaxClass0027
   have p0128 :=
-    @g_otkelins3k
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a))))))))
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))))
+    @gOtkelins3k
+      (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a))))))))
+      (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))))
       syntaxClass0083 syntaxClass0008 p0113 p0079 p0069
-  have p0129 := @g_snex (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a))))))
-  have p0130 := @g_snex (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))
+  have p0129 := @gSnex (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a))))))
+  have p0130 := @gSnex (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))
   have p0131 :=
-    @g_opksnelsik (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a)))))))
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))) syntaxClass0007
+    @gOpksnelsik (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a)))))))
+      (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))) syntaxClass0007
       p0129 p0130
   have p0132 :=
-    @g_opksnelsik (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a))))))
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b)))))) syntaxClass0006 p0115
+    @gOpksnelsik (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a))))))
+      (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b)))))) syntaxClass0006 p0115
       p0084
-  have p0133 := @g_snex (syn_csn (syn_csn (syn_csn (.cv a))))
-  have p0134 := @g_snex (syn_csn (syn_csn (syn_csn (.cv b))))
+  have p0133 := @gSnex (synCsn (synCsn (synCsn (.cv a))))
+  have p0134 := @gSnex (synCsn (synCsn (synCsn (.cv b))))
   have p0135 :=
-    @g_opksnelsik (syn_csn (syn_csn (syn_csn (syn_csn (.cv a)))))
-      (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))) syntaxClass0005 p0133 p0134
+    @gOpksnelsik (synCsn (synCsn (synCsn (synCsn (.cv a)))))
+      (synCsn (synCsn (synCsn (synCsn (.cv b))))) syntaxClass0005 p0133 p0134
   have p0136 :=
-    @g_opksnelsik (syn_csn (syn_csn (syn_csn (.cv a))))
-      (syn_csn (syn_csn (syn_csn (.cv b)))) syntaxClass0004 p0117 p0086
-  have p0137 := @g_snex (syn_csn (.cv a))
+    @gOpksnelsik (synCsn (synCsn (synCsn (.cv a))))
+      (synCsn (synCsn (synCsn (.cv b)))) syntaxClass0004 p0117 p0086
+  have p0137 := @gSnex (synCsn (.cv a))
   have p0138 :=
-    @g_opksnelsik (syn_csn (syn_csn (.cv a))) (syn_csn (syn_csn (.cv b))) syntaxClass0003
+    @gOpksnelsik (synCsn (synCsn (.cv a))) (synCsn (synCsn (.cv b))) syntaxClass0003
       p0137 p0088
   have p0139 :=
-    @g_opksnelsik (syn_csn (.cv a)) (syn_csn (.cv b)) syntaxClass0002 p0119 p0091
-  have p0140 := @g_opksnelsik (.cv a) (.cv b) syntaxClass0001 p0123 p0094
-  have p0141 := @g_ndisjrelk (.cv a) (.cv b) p0123 p0094
+    @gOpksnelsik (synCsn (.cv a)) (synCsn (.cv b)) syntaxClass0002 p0119 p0091
+  have p0140 := @gOpksnelsik (.cv a) (.cv b) syntaxClass0001 p0123 p0094
+  have p0141 := @gNdisjrelk (.cv a) (.cv b) p0123 p0094
   have p0142 :=
-    @g_notbii (.classMem (syn_copk (.cv a) (.cv b)) syntaxClass0000)
-      (syn_wne (syn_cin (.cv a) (.cv b)) (syn_c0)) p0141
-  have p0143 := @g_opkex (.cv a) (.cv b)
-  have p0144 := @g_elcompl (syn_copk (.cv a) (.cv b)) syntaxClass0000 p0143
-  have p0145 := (Nominal.biimpRefl (syn_wne (syn_cin (.cv a) (.cv b)) (syn_c0)))
+    @gNotbii (.classMem (synCopk (.cv a) (.cv b)) syntaxClass0000)
+      (synWne (synCin (.cv a) (.cv b)) (synC0)) p0141
+  have p0143 := @gOpkex (.cv a) (.cv b)
+  have p0144 := @gElcompl (synCopk (.cv a) (.cv b)) syntaxClass0000 p0143
+  have p0145 := (Nominal.biimpRefl (synWne (synCin (.cv a) (.cv b)) (synC0)))
   have p0146 :=
-    @g_con2bii (syn_wne (syn_cin (.cv a) (.cv b)) (syn_c0))
-      (.classEq (syn_cin (.cv a) (.cv b)) (syn_c0)) p0145
+    @gCon2bii (synWne (synCin (.cv a) (.cv b)) (synC0))
+      (.classEq (synCin (.cv a) (.cv b)) (synC0)) p0145
   have p0147 :=
-    @g_n_3bitr4i (.neg (.classMem (syn_copk (.cv a) (.cv b)) syntaxClass0000))
-      (.neg (syn_wne (syn_cin (.cv a) (.cv b)) (syn_c0)))
-      (.classMem (syn_copk (.cv a) (.cv b)) syntaxClass0001)
-      (.classEq (syn_cin (.cv a) (.cv b)) (syn_c0)) p0142 p0144 p0146
+    @gN3bitr4i (.neg (.classMem (synCopk (.cv a) (.cv b)) syntaxClass0000))
+      (.neg (synWne (synCin (.cv a) (.cv b)) (synC0)))
+      (.classMem (synCopk (.cv a) (.cv b)) syntaxClass0001)
+      (.classEq (synCin (.cv a) (.cv b)) (synC0)) p0142 p0144 p0146
   have p0148 :=
-    @g_n_3bitri syntaxFormula0112
-      (.classMem (syn_copk (syn_csn (.cv a)) (syn_csn (.cv b))) syntaxClass0002)
-      (.classMem (syn_copk (.cv a) (.cv b)) syntaxClass0001)
-      (.classEq (syn_cin (.cv a) (.cv b)) (syn_c0)) p0139 p0140 p0147
+    @gN3bitri syntaxFormula0112
+      (.classMem (synCopk (synCsn (.cv a)) (synCsn (.cv b))) syntaxClass0002)
+      (.classMem (synCopk (.cv a) (.cv b)) syntaxClass0001)
+      (.classEq (synCin (.cv a) (.cv b)) (synC0)) p0139 p0140 p0147
   have p0149 :=
-    @g_n_3bitri syntaxFormula0113
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (.cv a))))
-          (syn_csn (syn_csn (syn_csn (.cv b))))) syntaxClass0004)
-      syntaxFormula0112 (.classEq (syn_cin (.cv a) (.cv b)) (syn_c0)) p0136 p0138 p0148
+    @gN3bitri syntaxFormula0113
+      (.classMem (synCopk (synCsn (synCsn (synCsn (.cv a))))
+          (synCsn (synCsn (synCsn (.cv b))))) syntaxClass0004)
+      syntaxFormula0112 (.classEq (synCin (.cv a) (.cv b)) (synC0)) p0136 p0138 p0148
   have p0150 :=
-    @g_n_3bitri syntaxFormula0114
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a))))))
-          (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))) syntaxClass0006)
-      syntaxFormula0113 (.classEq (syn_cin (.cv a) (.cv b)) (syn_c0)) p0132 p0135 p0149
+    @gN3bitri syntaxFormula0114
+      (.classMem (synCopk (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a))))))
+          (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))) syntaxClass0006)
+      syntaxFormula0113 (.classEq (synCin (.cv a) (.cv b)) (synC0)) p0132 p0135 p0149
   have p0151 :=
-    @g_n_3bitri syntaxFormula0115
-      (.classMem (syn_copk
-          (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a))))))))
-          (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b)))))))))
+    @gN3bitri syntaxFormula0115
+      (.classMem (synCopk
+          (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a))))))))
+          (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b)))))))))
         syntaxClass0008)
-      syntaxFormula0114 (.classEq (syn_cin (.cv a) (.cv b)) (syn_c0)) p0128 p0131 p0150
-  have p0152 := @g_opkex syntaxClass0098 syntaxClass0093
+      syntaxFormula0114 (.classEq (synCin (.cv a) (.cv b)) (synC0)) p0128 p0131 p0150
+  have p0152 := @gOpkex syntaxClass0098 syntaxClass0093
   have p0153 :=
-    @g_elimak t syntaxClass0020 syntaxClass0025 syntaxClass0108
+    @gElimak t syntaxClass0020 syntaxClass0025 syntaxClass0108
       (by exact freshnessCertificate0255) (by exact freshnessCertificate0264)
       (by exact freshnessCertificate0831) p0152
   have freshnessCertificate0834 : d ∉ ((Class.cv t)).fv :=
@@ -5211,9 +5213,9 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (by
             simpa only [Finset.mem_singleton] using
               (show d ≠ t from (by exact fresh_d_ne_t)))))
-  have p0154 := @g_elpw1111c d (.cv t) (by exact freshnessCertificate0834)
+  have p0154 := @gElpw1111c d (.cv t) (by exact freshnessCertificate0834)
   have p0155 :=
-    @g_anbi1i syntaxFormula0116 (syn_wex d syntaxFormula0122) syntaxFormula0124 p0154
+    @gAnbi1i syntaxFormula0116 (synWex d syntaxFormula0122) syntaxFormula0124 p0154
   have freshnessCertificate0835 : d ∉ ((Class.cv a)).fv :=
     (by
       rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
@@ -5222,36 +5224,36 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (by
             simpa only [Finset.mem_singleton] using
               (show d ≠ a from (by exact fresh_d_ne_a)))))
-  have freshnessCertificate0836 : d ∉ ((syn_csn (.cv a))).fv :=
+  have freshnessCertificate0836 : d ∉ ((synCsn (.cv a))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0835)
-  have freshnessCertificate0837 : d ∉ ((syn_csn (syn_csn (.cv a)))).fv :=
+  have freshnessCertificate0837 : d ∉ ((synCsn (synCsn (.cv a)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0836)
-  have freshnessCertificate0838 : d ∉ ((syn_csn (syn_csn (syn_csn (.cv a))))).fv :=
+  have freshnessCertificate0838 : d ∉ ((synCsn (synCsn (synCsn (.cv a))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0837)
   have freshnessCertificate0839 :
-    d ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (.cv a)))))).fv :=
+    d ∉ ((synCsn (synCsn (synCsn (synCsn (.cv a)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0838)
   have freshnessCertificate0840 :
-    d ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a))))))).fv :=
+    d ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (.cv a))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0839)
   have freshnessCertificate0841 :
-    d ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a)))))))).fv :=
+    d ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a)))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0840)
   have freshnessCertificate0842 :
     d ∉
-      ((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a))))))))).fv :=
+      ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a))))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0841)
@@ -5271,36 +5273,36 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (by
             simpa only [Finset.mem_singleton] using
               (show d ≠ b from (by exact fresh_d_ne_b)))))
-  have freshnessCertificate0846 : d ∉ ((syn_csn (.cv b))).fv :=
+  have freshnessCertificate0846 : d ∉ ((synCsn (.cv b))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0845)
-  have freshnessCertificate0847 : d ∉ ((syn_csn (syn_csn (.cv b)))).fv :=
+  have freshnessCertificate0847 : d ∉ ((synCsn (synCsn (.cv b)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0846)
-  have freshnessCertificate0848 : d ∉ ((syn_csn (syn_csn (syn_csn (.cv b))))).fv :=
+  have freshnessCertificate0848 : d ∉ ((synCsn (synCsn (synCsn (.cv b))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0847)
   have freshnessCertificate0849 :
-    d ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (.cv b)))))).fv :=
+    d ∉ ((synCsn (synCsn (synCsn (synCsn (.cv b)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0848)
   have freshnessCertificate0850 :
-    d ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))).fv :=
+    d ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0849)
   have freshnessCertificate0851 :
-    d ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b)))))))).fv :=
+    d ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b)))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0850)
   have freshnessCertificate0852 :
     d ∉
-      ((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))))).fv :=
+      ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0851)
@@ -5312,25 +5314,25 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (by
             simpa only [Finset.mem_singleton] using
               (show d ≠ c from (by exact fresh_d_ne_c)))))
-  have freshnessCertificate0854 : d ∉ ((syn_csn (.cv c))).fv :=
+  have freshnessCertificate0854 : d ∉ ((synCsn (.cv c))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0853)
-  have freshnessCertificate0855 : d ∉ ((syn_csn (syn_csn (.cv c)))).fv :=
+  have freshnessCertificate0855 : d ∉ ((synCsn (synCsn (.cv c)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0854)
-  have freshnessCertificate0856 : d ∉ ((syn_csn (syn_csn (syn_csn (.cv c))))).fv :=
+  have freshnessCertificate0856 : d ∉ ((synCsn (synCsn (synCsn (.cv c))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0855)
   have freshnessCertificate0857 :
-    d ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (.cv c)))))).fv :=
+    d ∉ ((synCsn (synCsn (synCsn (synCsn (.cv c)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0856)
   have freshnessCertificate0858 :
-    d ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c))))))).fv :=
+    d ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0857)
@@ -5342,11 +5344,11 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (by
             simpa only [Finset.mem_singleton] using
               (show d ≠ w from (by exact fresh_d_ne_w)))))
-  have freshnessCertificate0860 : d ∉ ((syn_csn (.cv w))).fv :=
+  have freshnessCertificate0860 : d ∉ ((synCsn (.cv w))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0859)
-  have freshnessCertificate0861 : d ∉ ((syn_csn (syn_csn (.cv w)))).fv :=
+  have freshnessCertificate0861 : d ∉ ((synCsn (synCsn (.cv w)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0860)
@@ -5371,25 +5373,25 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0862 freshnessCertificate0863))
-  have freshnessCertificate0865 : d ∉ ((syn_copk (.cv y) (.cv z))).fv :=
+  have freshnessCertificate0865 : d ∉ ((synCopk (.cv y) (.cv z))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0864)
   have freshnessCertificate0866 :
-    d ∉ (((syn_csn (syn_csn (.cv w)))).fv) ∪ (((syn_copk (.cv y) (.cv z))).fv) :=
+    d ∉ (((synCsn (synCsn (.cv w)))).fv) ∪ (((synCopk (.cv y) (.cv z))).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0861 freshnessCertificate0865))
   have freshnessCertificate0867 :
-    d ∉ ((syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z)))).fv :=
+    d ∉ ((synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0866)
   have freshnessCertificate0868 :
     d ∉
-      (((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c))))))).fv) ∪
-        (((syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z)))).fv) :=
+      (((synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))).fv) ∪
+        (((synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))).fv) :=
     (by
       with_reducible
         exact
@@ -5400,7 +5402,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0868)
   have freshnessCertificate0870 :
     d ∉
-      (((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))))).fv) ∪
+      (((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))))).fv) ∪
         ((syntaxClass0083).fv) :=
     (by
       with_reducible
@@ -5428,30 +5430,30 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0874)
-  have freshnessCertificate0876 : d ∉ ((syn_cssetk)).fv :=
+  have freshnessCertificate0876 : d ∉ ((synCssetk)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
       exact (show d ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0877 : d ∉ ((syn_csik (syn_cssetk))).fv :=
+  have freshnessCertificate0877 : d ∉ ((synCsik (synCssetk))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0876)
-  have freshnessCertificate0878 : d ∉ ((syn_csik (syn_csik (syn_cssetk)))).fv :=
+  have freshnessCertificate0878 : d ∉ ((synCsik (synCsik (synCssetk)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0877)
   have freshnessCertificate0879 :
-    d ∉ ((syn_csik (syn_csik (syn_csik (syn_cssetk))))).fv :=
+    d ∉ ((synCsik (synCsik (synCsik (synCssetk))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0878)
   have freshnessCertificate0880 :
-    d ∉ ((syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))).fv :=
+    d ∉ ((synCsik (synCsik (synCsik (synCsik (synCssetk)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0879)
   have freshnessCertificate0881 :
-    d ∉ ((syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))).fv :=
+    d ∉ ((synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0880)
@@ -5469,7 +5471,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       exact freshnessCertificate0883)
   have freshnessCertificate0885 :
     d ∉
-      ((syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))))).fv :=
+      ((synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0881)
@@ -5524,20 +5526,20 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     d ∉ ((Wff.classMem syntaxClass0123 syntaxClass0020)).fv :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0896)
   have p0156 :=
-    @g_n_19_41v syntaxFormula0122 syntaxFormula0124 d (by exact freshnessCertificate0897)
+    @gN1941v syntaxFormula0122 syntaxFormula0124 d (by exact freshnessCertificate0897)
   have p0157 :=
-    @g_bitr4i syntaxFormula0125 (syn_wa (syn_wex d syntaxFormula0122) syntaxFormula0124)
+    @gBitr4i syntaxFormula0125 (synWa (synWex d syntaxFormula0122) syntaxFormula0124)
       syntaxFormula0127 p0155 p0156
-  have p0158 := @g_exbii syntaxFormula0125 syntaxFormula0127 t p0157
+  have p0158 := @gExbii syntaxFormula0125 syntaxFormula0127 t p0157
   have p0159 := (Nominal.biimpRefl syntaxFormula0128)
-  have p0160 := @g_excom syntaxFormula0126 d t
+  have p0160 := @gExcom syntaxFormula0126 d t
   have p0161 :=
-    @g_n_3bitr4i (syn_wex t syntaxFormula0125) (syn_wex t syntaxFormula0127)
+    @gN3bitr4i (synWex t syntaxFormula0125) (synWex t syntaxFormula0127)
       syntaxFormula0128 syntaxFormula0130 p0158 p0159 p0160
-  have p0162 := @g_snex syntaxClass0120
-  have p0163 := @g_opkeq1 (.cv t) syntaxClass0121 syntaxClass0108
+  have p0162 := @gSnex syntaxClass0120
+  have p0163 := @gOpkeq1 (.cv t) syntaxClass0121 syntaxClass0108
   have p0164 :=
-    @g_eleq1d syntaxFormula0122 syntaxClass0123 syntaxClass0131 syntaxClass0020 p0163
+    @gEleq1d syntaxFormula0122 syntaxClass0123 syntaxClass0131 syntaxClass0020 p0163
   have freshnessCertificate0898 : t ∉ ((Class.cv d)).fv :=
     (by
       rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
@@ -5546,36 +5548,36 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           (by
             simpa only [Finset.mem_singleton] using
               (show t ≠ d from (by exact fresh_t_ne_d)))))
-  have freshnessCertificate0899 : t ∉ ((syn_csn (.cv d))).fv :=
+  have freshnessCertificate0899 : t ∉ ((synCsn (.cv d))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0898)
-  have freshnessCertificate0900 : t ∉ ((syn_csn (syn_csn (.cv d)))).fv :=
+  have freshnessCertificate0900 : t ∉ ((synCsn (synCsn (.cv d)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0899)
-  have freshnessCertificate0901 : t ∉ ((syn_csn (syn_csn (syn_csn (.cv d))))).fv :=
+  have freshnessCertificate0901 : t ∉ ((synCsn (synCsn (synCsn (.cv d))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0900)
   have freshnessCertificate0902 :
-    t ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (.cv d)))))).fv :=
+    t ∉ ((synCsn (synCsn (synCsn (synCsn (.cv d)))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0901)
   have freshnessCertificate0903 :
-    t ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv d))))))).fv :=
+    t ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (.cv d))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0902)
   have freshnessCertificate0904 :
-    t ∉ ((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv d)))))))).fv :=
+    t ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv d)))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0903)
   have freshnessCertificate0905 :
     t ∉
-      ((syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv d))))))))).fv :=
+      ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv d))))))))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0904)
@@ -5617,55 +5619,55 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     t ∉ ((Wff.classMem syntaxClass0131 syntaxClass0020)).fv :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0913)
   have p0165 :=
-    @g_ceqsexv syntaxFormula0124 syntaxFormula0132 t syntaxClass0121
+    @gCeqsexv syntaxFormula0124 syntaxFormula0132 t syntaxClass0121
       (by exact freshnessCertificate0910) (by exact freshnessCertificate0914) p0162 p0164
-  have p0166 := @g_elsymdif syntaxClass0131 syntaxClass0012 syntaxClass0019
-  have p0167 := @g_snex syntaxClass0118
+  have p0166 := @gElsymdif syntaxClass0131 syntaxClass0012 syntaxClass0019
+  have p0167 := @gSnex syntaxClass0118
   have p0168 :=
-    @g_otkelins2k syntaxClass0119 syntaxClass0098 syntaxClass0093 syntaxClass0011 p0167
+    @gOtkelins2k syntaxClass0119 syntaxClass0098 syntaxClass0093 syntaxClass0011 p0167
       p0108 p0098
   have p0169 :=
-    @g_snex (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv d))))))))
+    @gSnex (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv d))))))))
   have p0170 :=
-    @g_otkelins2k syntaxClass0117
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))))
+    @gOtkelins2k syntaxClass0117
+      (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))))
       syntaxClass0083 syntaxClass0010 p0169 p0079 p0069
-  have p0171 := @g_snex (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv d))))))
+  have p0171 := @gSnex (synCsn (synCsn (synCsn (synCsn (synCsn (.cv d))))))
   have p0172 :=
-    @g_otkelins3k (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv d)))))))
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c))))))
-      (syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z)))
-      (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))) p0171 p0050
+    @gOtkelins3k (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv d)))))))
+      (synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))
+      (synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))
+      (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))) p0171 p0050
       p0020
-  have p0173 := @g_snex (syn_csn (syn_csn (syn_csn (syn_csn (.cv d)))))
+  have p0173 := @gSnex (synCsn (synCsn (synCsn (synCsn (.cv d)))))
   have p0174 :=
-    @g_opksnelsik (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv d))))))
-      (syn_csn (syn_csn (syn_csn (syn_csn (.cv c)))))
-      (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))) p0173 p0052
-  have p0175 := @g_snex (syn_csn (syn_csn (syn_csn (.cv d))))
+    @gOpksnelsik (synCsn (synCsn (synCsn (synCsn (synCsn (.cv d))))))
+      (synCsn (synCsn (synCsn (synCsn (.cv c)))))
+      (synCsik (synCsik (synCsik (synCsik (synCssetk))))) p0173 p0052
+  have p0175 := @gSnex (synCsn (synCsn (synCsn (.cv d))))
   have p0176 :=
-    @g_opksnelsik (syn_csn (syn_csn (syn_csn (syn_csn (.cv d)))))
-      (syn_csn (syn_csn (syn_csn (.cv c)))) (syn_csik (syn_csik (syn_csik (syn_cssetk))))
+    @gOpksnelsik (synCsn (synCsn (synCsn (synCsn (.cv d)))))
+      (synCsn (synCsn (synCsn (.cv c)))) (synCsik (synCsik (synCsik (synCssetk))))
       p0175 p0055
-  have p0177 := @g_snex (syn_csn (syn_csn (.cv d)))
+  have p0177 := @gSnex (synCsn (synCsn (.cv d)))
   have p0178 :=
-    @g_opksnelsik (syn_csn (syn_csn (syn_csn (.cv d)))) (syn_csn (syn_csn (.cv c)))
-      (syn_csik (syn_csik (syn_cssetk))) p0177 p0058
-  have p0179 := @g_snex (syn_csn (.cv d))
+    @gOpksnelsik (synCsn (synCsn (synCsn (.cv d)))) (synCsn (synCsn (.cv c)))
+      (synCsik (synCsik (synCssetk))) p0177 p0058
+  have p0179 := @gSnex (synCsn (.cv d))
   have p0180 :=
-    @g_opksnelsik (syn_csn (syn_csn (.cv d))) (syn_csn (.cv c)) (syn_csik (syn_cssetk))
+    @gOpksnelsik (synCsn (synCsn (.cv d))) (synCsn (.cv c)) (synCsik (synCssetk))
       p0179 p0061
-  have p0181 := @g_snex (.cv d)
-  have p0182 := @g_opksnelsik (syn_csn (.cv d)) (.cv c) (syn_cssetk) p0181 p0064
-  have p0183 := @g_vex d
-  have p0184 := @g_elssetk (.cv d) (.cv c) p0183 p0064
+  have p0181 := @gSnex (.cv d)
+  have p0182 := @gOpksnelsik (synCsn (.cv d)) (.cv c) (synCssetk) p0181 p0064
+  have p0183 := @gVex d
+  have p0184 := @gElssetk (.cv d) (.cv c) p0183 p0064
   have p0185_e02_recanon :
     Nominal.NPrf
-      (syn_wb (.classMem (syn_copk (syn_csn (.cv d)) (.cv c)) (syn_cssetk)) (.objMem d c)) :=
+      (synWb (.classMem (synCopk (synCsn (.cv d)) (.cv c)) (synCssetk)) (.objMem d c)) :=
     Nominal.RecanonTransportDev.transport
       (by
-        simp only [syn_wb, syn_copk, syn_cpr, syn_cun, syn_cnin, syn_wnan, syn_wa,
-          syn_ccompl, syn_csn, syn_cssetk, syn_wex]
+        simp only [synWb, synCopk, synCpr, synCun, synCnin, synWnan, synWa,
+          synCcompl, synCsn, synCssetk, synWex]
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
@@ -5679,75 +5681,75 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0184
   have p0185 :=
-    @g_n_3bitri
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (.cv d)))) (syn_csn (syn_csn (.cv c))))
-        (syn_csik (syn_csik (syn_cssetk))))
-      (.classMem (syn_copk (syn_csn (syn_csn (.cv d))) (syn_csn (.cv c)))
-        (syn_csik (syn_cssetk)))
-      (.classMem (syn_copk (syn_csn (.cv d)) (.cv c)) (syn_cssetk)) (.objMem d c) p0180
+    @gN3bitri
+      (.classMem (synCopk (synCsn (synCsn (synCsn (.cv d)))) (synCsn (synCsn (.cv c))))
+        (synCsik (synCsik (synCssetk))))
+      (.classMem (synCopk (synCsn (synCsn (.cv d))) (synCsn (.cv c)))
+        (synCsik (synCssetk)))
+      (.classMem (synCopk (synCsn (.cv d)) (.cv c)) (synCssetk)) (.objMem d c) p0180
       p0182 p0185_e02_recanon
   have p0186 :=
-    @g_n_3bitri syntaxFormula0133
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (syn_csn (.cv d)))))
-          (syn_csn (syn_csn (syn_csn (.cv c))))) (syn_csik (syn_csik (syn_csik (syn_cssetk)))))
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (.cv d)))) (syn_csn (syn_csn (.cv c))))
-        (syn_csik (syn_csik (syn_cssetk))))
+    @gN3bitri syntaxFormula0133
+      (.classMem (synCopk (synCsn (synCsn (synCsn (synCsn (.cv d)))))
+          (synCsn (synCsn (synCsn (.cv c))))) (synCsik (synCsik (synCsik (synCssetk)))))
+      (.classMem (synCopk (synCsn (synCsn (synCsn (.cv d)))) (synCsn (synCsn (.cv c))))
+        (synCsik (synCsik (synCssetk))))
       (.objMem d c) p0176 p0178 p0185
   have p0187 :=
-    @g_n_3bitri syntaxFormula0135
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv d)))))))
-          (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c)))))))
-        (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))))
+    @gN3bitri syntaxFormula0135
+      (.classMem (synCopk (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv d)))))))
+          (synCsn (synCsn (synCsn (synCsn (synCsn (.cv c)))))))
+        (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))))
       syntaxFormula0133 (.objMem d c) p0172 p0174 p0186
   have p0188 :=
-    @g_n_3bitri syntaxFormula0136 (.classMem syntaxClass0137 syntaxClass0011)
+    @gN3bitri syntaxFormula0136 (.classMem syntaxClass0137 syntaxClass0011)
       syntaxFormula0135 (.objMem d c) p0168 p0170 p0187
   have p0189 :=
-    @g_otkelins3k syntaxClass0119 syntaxClass0098 syntaxClass0093 syntaxClass0015 p0167
+    @gOtkelins3k syntaxClass0119 syntaxClass0098 syntaxClass0093 syntaxClass0015 p0167
       p0108 p0098
-  have p0190 := @g_snex syntaxClass0117
+  have p0190 := @gSnex syntaxClass0117
   have p0191 :=
-    @g_snex (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a))))))))
-  have p0192 := @g_opksnelsik syntaxClass0118 syntaxClass0097 syntaxClass0014 p0190 p0191
+    @gSnex (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a))))))))
+  have p0192 := @gOpksnelsik syntaxClass0118 syntaxClass0097 syntaxClass0014 p0190 p0191
   have p0193 :=
-    @g_opksnelsik syntaxClass0117
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a))))))))
+    @gOpksnelsik syntaxClass0117
+      (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a))))))))
       syntaxClass0013 p0169 p0113
   have p0194 :=
-    @g_snex (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv d)))))))
+    @gSnex (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv d)))))))
   have p0195 :=
-    @g_opksnelsik
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv d))))))))
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a)))))))
-      (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))) p0194
+    @gOpksnelsik
+      (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv d))))))))
+      (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a)))))))
+      (synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk))))))) p0194
       p0129
   have p0196 :=
-    @g_opksnelsik (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv d)))))))
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a))))))
-      (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))) p0171 p0115
+    @gOpksnelsik (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv d)))))))
+      (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a))))))
+      (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))) p0171 p0115
   have p0197 :=
-    @g_opksnelsik (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv d))))))
-      (syn_csn (syn_csn (syn_csn (syn_csn (.cv a)))))
-      (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))) p0173 p0133
+    @gOpksnelsik (synCsn (synCsn (synCsn (synCsn (synCsn (.cv d))))))
+      (synCsn (synCsn (synCsn (synCsn (.cv a)))))
+      (synCsik (synCsik (synCsik (synCsik (synCssetk))))) p0173 p0133
   have p0198 :=
-    @g_opksnelsik (syn_csn (syn_csn (syn_csn (syn_csn (.cv d)))))
-      (syn_csn (syn_csn (syn_csn (.cv a)))) (syn_csik (syn_csik (syn_csik (syn_cssetk))))
+    @gOpksnelsik (synCsn (synCsn (synCsn (synCsn (.cv d)))))
+      (synCsn (synCsn (synCsn (.cv a)))) (synCsik (synCsik (synCsik (synCssetk))))
       p0175 p0117
   have p0199 :=
-    @g_opksnelsik (syn_csn (syn_csn (syn_csn (.cv d)))) (syn_csn (syn_csn (.cv a)))
-      (syn_csik (syn_csik (syn_cssetk))) p0177 p0137
+    @gOpksnelsik (synCsn (synCsn (synCsn (.cv d)))) (synCsn (synCsn (.cv a)))
+      (synCsik (synCsik (synCssetk))) p0177 p0137
   have p0200 :=
-    @g_opksnelsik (syn_csn (syn_csn (.cv d))) (syn_csn (.cv a)) (syn_csik (syn_cssetk))
+    @gOpksnelsik (synCsn (synCsn (.cv d))) (synCsn (.cv a)) (synCsik (synCssetk))
       p0179 p0119
-  have p0201 := @g_opksnelsik (syn_csn (.cv d)) (.cv a) (syn_cssetk) p0181 p0123
-  have p0202 := @g_elssetk (.cv d) (.cv a) p0183 p0123
+  have p0201 := @gOpksnelsik (synCsn (.cv d)) (.cv a) (synCssetk) p0181 p0123
+  have p0202 := @gElssetk (.cv d) (.cv a) p0183 p0123
   have p0203_e02_recanon :
     Nominal.NPrf
-      (syn_wb (.classMem (syn_copk (syn_csn (.cv d)) (.cv a)) (syn_cssetk)) (.objMem d a)) :=
+      (synWb (.classMem (synCopk (synCsn (.cv d)) (.cv a)) (synCssetk)) (.objMem d a)) :=
     Nominal.RecanonTransportDev.transport
       (by
-        simp only [syn_wb, syn_copk, syn_cpr, syn_cun, syn_cnin, syn_wnan, syn_wa,
-          syn_ccompl, syn_csn, syn_cssetk, syn_wex]
+        simp only [synWb, synCopk, synCpr, synCun, synCnin, synWnan, synWa,
+          synCcompl, synCsn, synCssetk, synWex]
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
@@ -5761,76 +5763,76 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0202
   have p0203 :=
-    @g_n_3bitri
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (.cv d)))) (syn_csn (syn_csn (.cv a))))
-        (syn_csik (syn_csik (syn_cssetk))))
-      (.classMem (syn_copk (syn_csn (syn_csn (.cv d))) (syn_csn (.cv a)))
-        (syn_csik (syn_cssetk)))
-      (.classMem (syn_copk (syn_csn (.cv d)) (.cv a)) (syn_cssetk)) (.objMem d a) p0200
+    @gN3bitri
+      (.classMem (synCopk (synCsn (synCsn (synCsn (.cv d)))) (synCsn (synCsn (.cv a))))
+        (synCsik (synCsik (synCssetk))))
+      (.classMem (synCopk (synCsn (synCsn (.cv d))) (synCsn (.cv a)))
+        (synCsik (synCssetk)))
+      (.classMem (synCopk (synCsn (.cv d)) (.cv a)) (synCssetk)) (.objMem d a) p0200
       p0201 p0203_e02_recanon
   have p0204 :=
-    @g_n_3bitri syntaxFormula0138
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (syn_csn (.cv d)))))
-          (syn_csn (syn_csn (syn_csn (.cv a))))) (syn_csik (syn_csik (syn_csik (syn_cssetk)))))
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (.cv d)))) (syn_csn (syn_csn (.cv a))))
-        (syn_csik (syn_csik (syn_cssetk))))
+    @gN3bitri syntaxFormula0138
+      (.classMem (synCopk (synCsn (synCsn (synCsn (synCsn (.cv d)))))
+          (synCsn (synCsn (synCsn (.cv a))))) (synCsik (synCsik (synCsik (synCssetk)))))
+      (.classMem (synCopk (synCsn (synCsn (synCsn (.cv d)))) (synCsn (synCsn (.cv a))))
+        (synCsik (synCsik (synCssetk))))
       (.objMem d a) p0198 p0199 p0203
   have p0205 :=
-    @g_n_3bitri syntaxFormula0139
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv d)))))))
-          (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a)))))))
-        (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))))
+    @gN3bitri syntaxFormula0139
+      (.classMem (synCopk (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv d)))))))
+          (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a)))))))
+        (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))))
       syntaxFormula0138 (.objMem d a) p0196 p0197 p0204
   have p0206 :=
-    @g_n_3bitri syntaxFormula0141
-      (.classMem (syn_copk syntaxClass0117
-          (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv a)))))))))
+    @gN3bitri syntaxFormula0141
+      (.classMem (synCopk syntaxClass0117
+          (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a)))))))))
         syntaxClass0013)
       syntaxFormula0139 (.objMem d a) p0193 p0195 p0205
   have p0207 :=
-    @g_n_3bitri syntaxFormula0142
-      (.classMem (syn_copk syntaxClass0119 syntaxClass0098) syntaxClass0015)
+    @gN3bitri syntaxFormula0142
+      (.classMem (synCopk syntaxClass0119 syntaxClass0098) syntaxClass0015)
       syntaxFormula0141 (.objMem d a) p0189 p0192 p0206
   have p0208 :=
-    @g_otkelins2k syntaxClass0119 syntaxClass0098 syntaxClass0093 syntaxClass0017 p0167
+    @gOtkelins2k syntaxClass0119 syntaxClass0098 syntaxClass0093 syntaxClass0017 p0167
       p0108 p0098
   have p0209 :=
-    @g_otkelins3k syntaxClass0117
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))))
+    @gOtkelins3k syntaxClass0117
+      (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))))
       syntaxClass0083 syntaxClass0013 p0169 p0079 p0069
   have p0210 :=
-    @g_opksnelsik
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv d))))))))
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b)))))))
-      (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))) p0194
+    @gOpksnelsik
+      (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv d))))))))
+      (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b)))))))
+      (synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk))))))) p0194
       p0130
   have p0211 :=
-    @g_opksnelsik (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv d)))))))
-      (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))
-      (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))) p0171 p0084
+    @gOpksnelsik (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv d)))))))
+      (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))
+      (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))) p0171 p0084
   have p0212 :=
-    @g_opksnelsik (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv d))))))
-      (syn_csn (syn_csn (syn_csn (syn_csn (.cv b)))))
-      (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))) p0173 p0134
+    @gOpksnelsik (synCsn (synCsn (synCsn (synCsn (synCsn (.cv d))))))
+      (synCsn (synCsn (synCsn (synCsn (.cv b)))))
+      (synCsik (synCsik (synCsik (synCsik (synCssetk))))) p0173 p0134
   have p0213 :=
-    @g_opksnelsik (syn_csn (syn_csn (syn_csn (syn_csn (.cv d)))))
-      (syn_csn (syn_csn (syn_csn (.cv b)))) (syn_csik (syn_csik (syn_csik (syn_cssetk))))
+    @gOpksnelsik (synCsn (synCsn (synCsn (synCsn (.cv d)))))
+      (synCsn (synCsn (synCsn (.cv b)))) (synCsik (synCsik (synCsik (synCssetk))))
       p0175 p0086
   have p0214 :=
-    @g_opksnelsik (syn_csn (syn_csn (syn_csn (.cv d)))) (syn_csn (syn_csn (.cv b)))
-      (syn_csik (syn_csik (syn_cssetk))) p0177 p0088
+    @gOpksnelsik (synCsn (synCsn (synCsn (.cv d)))) (synCsn (synCsn (.cv b)))
+      (synCsik (synCsik (synCssetk))) p0177 p0088
   have p0215 :=
-    @g_opksnelsik (syn_csn (syn_csn (.cv d))) (syn_csn (.cv b)) (syn_csik (syn_cssetk))
+    @gOpksnelsik (synCsn (synCsn (.cv d))) (synCsn (.cv b)) (synCsik (synCssetk))
       p0179 p0091
-  have p0216 := @g_opksnelsik (syn_csn (.cv d)) (.cv b) (syn_cssetk) p0181 p0094
-  have p0217 := @g_elssetk (.cv d) (.cv b) p0183 p0094
+  have p0216 := @gOpksnelsik (synCsn (.cv d)) (.cv b) (synCssetk) p0181 p0094
+  have p0217 := @gElssetk (.cv d) (.cv b) p0183 p0094
   have p0218_e01_recanon :
     Nominal.NPrf
-      (syn_wb (.classMem (syn_copk (syn_csn (.cv d)) (.cv b)) (syn_cssetk)) (.objMem d b)) :=
+      (synWb (.classMem (synCopk (synCsn (.cv d)) (.cv b)) (synCssetk)) (.objMem d b)) :=
     Nominal.RecanonTransportDev.transport
       (by
-        simp only [syn_wb, syn_copk, syn_cpr, syn_cun, syn_cnin, syn_wnan, syn_wa,
-          syn_ccompl, syn_csn, syn_cssetk, syn_wex]
+        simp only [synWb, synCopk, synCpr, synCun, synCnin, synWnan, synWa,
+          synCcompl, synCsn, synCssetk, synWex]
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
@@ -5844,49 +5846,49 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0217
   have p0218 :=
-    @g_bitri
-      (.classMem (syn_copk (syn_csn (syn_csn (.cv d))) (syn_csn (.cv b)))
-        (syn_csik (syn_cssetk)))
-      (.classMem (syn_copk (syn_csn (.cv d)) (.cv b)) (syn_cssetk)) (.objMem d b) p0216
+    @gBitri
+      (.classMem (synCopk (synCsn (synCsn (.cv d))) (synCsn (.cv b)))
+        (synCsik (synCssetk)))
+      (.classMem (synCopk (synCsn (.cv d)) (.cv b)) (synCssetk)) (.objMem d b) p0216
       p0218_e01_recanon
   have p0219 :=
-    @g_n_3bitri
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (syn_csn (.cv d)))))
-          (syn_csn (syn_csn (syn_csn (.cv b))))) (syn_csik (syn_csik (syn_csik (syn_cssetk)))))
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (.cv d)))) (syn_csn (syn_csn (.cv b))))
-        (syn_csik (syn_csik (syn_cssetk))))
-      (.classMem (syn_copk (syn_csn (syn_csn (.cv d))) (syn_csn (.cv b)))
-        (syn_csik (syn_cssetk)))
+    @gN3bitri
+      (.classMem (synCopk (synCsn (synCsn (synCsn (synCsn (.cv d)))))
+          (synCsn (synCsn (synCsn (.cv b))))) (synCsik (synCsik (synCsik (synCssetk)))))
+      (.classMem (synCopk (synCsn (synCsn (synCsn (.cv d)))) (synCsn (synCsn (.cv b))))
+        (synCsik (synCsik (synCssetk))))
+      (.classMem (synCopk (synCsn (synCsn (.cv d))) (synCsn (.cv b)))
+        (synCsik (synCssetk)))
       (.objMem d b) p0214 p0215 p0218
   have p0220 :=
-    @g_n_3bitri syntaxFormula0143
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv d))))))
-          (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))
-        (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))
-      (.classMem (syn_copk (syn_csn (syn_csn (syn_csn (syn_csn (.cv d)))))
-          (syn_csn (syn_csn (syn_csn (.cv b))))) (syn_csik (syn_csik (syn_csik (syn_cssetk)))))
+    @gN3bitri syntaxFormula0143
+      (.classMem (synCopk (synCsn (synCsn (synCsn (synCsn (synCsn (.cv d))))))
+          (synCsn (synCsn (synCsn (synCsn (.cv b))))))
+        (synCsik (synCsik (synCsik (synCsik (synCssetk))))))
+      (.classMem (synCopk (synCsn (synCsn (synCsn (synCsn (.cv d)))))
+          (synCsn (synCsn (synCsn (.cv b))))) (synCsik (synCsik (synCsik (synCssetk)))))
       (.objMem d b) p0212 p0213 p0219
   have p0221 :=
-    @g_n_3bitri syntaxFormula0145
-      (.classMem (syn_copk
-          (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv d))))))))
-          (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv b))))))))
-        (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))))
+    @gN3bitri syntaxFormula0145
+      (.classMem (synCopk
+          (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv d))))))))
+          (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))))
+        (synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk))))))))
       syntaxFormula0143 (.objMem d b) p0210 p0211 p0220
   have p0222 :=
-    @g_n_3bitri syntaxFormula0146 (.classMem syntaxClass0137 syntaxClass0017)
+    @gN3bitri syntaxFormula0146 (.classMem syntaxClass0137 syntaxClass0017)
       syntaxFormula0145 (.objMem d b) p0208 p0209 p0221
   have p0223 :=
-    @g_orbi12i syntaxFormula0142 (.objMem d a) syntaxFormula0146 (.objMem d b) p0207 p0222
-  have p0224 := @g_elun syntaxClass0131 syntaxClass0016 syntaxClass0018
-  have p0225 := @g_elun (.cv d) (.cv a) (.cv b)
+    @gOrbi12i syntaxFormula0142 (.objMem d a) syntaxFormula0146 (.objMem d b) p0207 p0222
+  have p0224 := @gElun syntaxClass0131 syntaxClass0016 syntaxClass0018
+  have p0225 := @gElun (.cv d) (.cv a) (.cv b)
   have p0226_e02_recanon :
     Nominal.NPrf
-      (syn_wb (.classMem (.cv d) (syn_cun (.cv a) (.cv b)))
-        (syn_wo (.objMem d a) (.objMem d b))) :=
+      (synWb (.classMem (.cv d) (synCun (.cv a) (.cv b)))
+        (synWo (.objMem d a) (.objMem d b))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        simp only [syn_wb, syn_cun, syn_cnin, syn_wnan, syn_wa, syn_ccompl, syn_wo]
+        simp only [synWb, synCun, synCnin, synWnan, synWa, synCcompl, synWo]
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
@@ -5906,52 +5908,52 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0225
   have p0226 :=
-    @g_n_3bitr4i (syn_wo syntaxFormula0142 syntaxFormula0146)
-      (syn_wo (.objMem d a) (.objMem d b)) syntaxFormula0147
-      (.classMem (.cv d) (syn_cun (.cv a) (.cv b))) p0223 p0224 p0226_e02_recanon
+    @gN3bitr4i (synWo syntaxFormula0142 syntaxFormula0146)
+      (synWo (.objMem d a) (.objMem d b)) syntaxFormula0147
+      (.classMem (.cv d) (synCun (.cv a) (.cv b))) p0223 p0224 p0226_e02_recanon
   have p0227 :=
-    @g_bibi12i syntaxFormula0136 (.objMem d c) syntaxFormula0147
-      (.classMem (.cv d) (syn_cun (.cv a) (.cv b))) p0188 p0226
+    @gBibi12i syntaxFormula0136 (.objMem d c) syntaxFormula0147
+      (.classMem (.cv d) (synCun (.cv a) (.cv b))) p0188 p0226
   have p0228 :=
-    @g_notbii syntaxFormula0148
-      (syn_wb (.objMem d c) (.classMem (.cv d) (syn_cun (.cv a) (.cv b)))) p0227
+    @gNotbii syntaxFormula0148
+      (synWb (.objMem d c) (.classMem (.cv d) (synCun (.cv a) (.cv b)))) p0227
   have p0229 :=
-    @g_n_3bitri syntaxFormula0129 syntaxFormula0132 (.neg syntaxFormula0148)
-      (.neg (syn_wb (.objMem d c) (.classMem (.cv d) (syn_cun (.cv a) (.cv b))))) p0165
+    @gN3bitri syntaxFormula0129 syntaxFormula0132 (.neg syntaxFormula0148)
+      (.neg (synWb (.objMem d c) (.classMem (.cv d) (synCun (.cv a) (.cv b))))) p0165
       p0166 p0228
   have p0230 :=
-    @g_exbii syntaxFormula0129
-      (.neg (syn_wb (.objMem d c) (.classMem (.cv d) (syn_cun (.cv a) (.cv b))))) d p0229
+    @gExbii syntaxFormula0129
+      (.neg (synWb (.objMem d c) (.classMem (.cv d) (synCun (.cv a) (.cv b))))) d p0229
   have p0231 :=
-    @g_n_3bitri syntaxFormula0149 syntaxFormula0128 syntaxFormula0130
-      (syn_wex d (.neg (syn_wb (.objMem d c) (.classMem (.cv d) (syn_cun (.cv a) (.cv b))))))
+    @gN3bitri syntaxFormula0149 syntaxFormula0128 syntaxFormula0130
+      (synWex d (.neg (synWb (.objMem d c) (.classMem (.cv d) (synCun (.cv a) (.cv b))))))
       p0153 p0161 p0230
   have p0232 :=
-    @g_notbii syntaxFormula0149
-      (syn_wex d (.neg (syn_wb (.objMem d c) (.classMem (.cv d) (syn_cun (.cv a) (.cv b))))))
+    @gNotbii syntaxFormula0149
+      (synWex d (.neg (synWb (.objMem d c) (.classMem (.cv d) (synCun (.cv a) (.cv b))))))
       p0231
-  have p0233 := @g_elcompl syntaxClass0108 syntaxClass0026 p0152
+  have p0233 := @gElcompl syntaxClass0108 syntaxClass0026 p0152
   have freshnessCertificate0915 : d ∉ (((Class.cv a)).fv) ∪ (((Class.cv b)).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0835 freshnessCertificate0845))
-  have freshnessCertificate0916 : d ∉ ((syn_cun (.cv a) (.cv b))).fv :=
+  have freshnessCertificate0916 : d ∉ ((synCun (.cv a) (.cv b))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
       exact freshnessCertificate0915)
   have p0234 :=
-    @g_dfcleq d (.cv c) (syn_cun (.cv a) (.cv b)) (by exact freshnessCertificate0853)
+    @gDfcleq d (.cv c) (synCun (.cv a) (.cv b)) (by exact freshnessCertificate0853)
       (by exact freshnessCertificate0916)
   have p0235 :=
-    @g_alex (syn_wb (.objMem d c) (.classMem (.cv d) (syn_cun (.cv a) (.cv b)))) d
+    @gAlex (synWb (.objMem d c) (.classMem (.cv d) (synCun (.cv a) (.cv b)))) d
   have p0236_e00_recanon :
     Nominal.NPrf
-      (syn_wb (.classEq (.cv c) (syn_cun (.cv a) (.cv b)))
-        (.all d (syn_wb (.objMem d c) (.classMem (.cv d) (syn_cun (.cv a) (.cv b)))))) :=
+      (synWb (.classEq (.cv c) (synCun (.cv a) (.cv b)))
+        (.all d (synWb (.objMem d c) (.classMem (.cv d) (synCun (.cv a) (.cv b)))))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        simp only [syn_wb, syn_cun, syn_cnin, syn_wnan, syn_wa, syn_ccompl]
+        simp only [synWb, synCun, synCnin, synWnan, synWa, synCcompl]
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
@@ -5983,41 +5985,41 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0234
   have p0236 :=
-    @g_bitri (.classEq (.cv c) (syn_cun (.cv a) (.cv b)))
-      (.all d (syn_wb (.objMem d c) (.classMem (.cv d) (syn_cun (.cv a) (.cv b)))))
-      (.neg (syn_wex d
-          (.neg (syn_wb (.objMem d c) (.classMem (.cv d) (syn_cun (.cv a) (.cv b)))))))
+    @gBitri (.classEq (.cv c) (synCun (.cv a) (.cv b)))
+      (.all d (synWb (.objMem d c) (.classMem (.cv d) (synCun (.cv a) (.cv b)))))
+      (.neg (synWex d
+          (.neg (synWb (.objMem d c) (.classMem (.cv d) (synCun (.cv a) (.cv b)))))))
       p0236_e00_recanon p0235
   have p0237 :=
-    @g_n_3bitr4i (.neg syntaxFormula0149)
-      (.neg (syn_wex d
-          (.neg (syn_wb (.objMem d c) (.classMem (.cv d) (syn_cun (.cv a) (.cv b)))))))
-      syntaxFormula0150 (.classEq (.cv c) (syn_cun (.cv a) (.cv b))) p0232 p0233 p0236
+    @gN3bitr4i (.neg syntaxFormula0149)
+      (.neg (synWex d
+          (.neg (synWb (.objMem d c) (.classMem (.cv d) (synCun (.cv a) (.cv b)))))))
+      syntaxFormula0150 (.classEq (.cv c) (synCun (.cv a) (.cv b))) p0232 p0233 p0236
   have p0238 :=
-    @g_anbi12i syntaxFormula0115 (.classEq (syn_cin (.cv a) (.cv b)) (syn_c0))
-      syntaxFormula0150 (.classEq (.cv c) (syn_cun (.cv a) (.cv b))) p0151 p0237
+    @gAnbi12i syntaxFormula0115 (.classEq (synCin (.cv a) (.cv b)) (synC0))
+      syntaxFormula0150 (.classEq (.cv c) (synCun (.cv a) (.cv b))) p0151 p0237
   have p0239 :=
-    @g_bitri syntaxFormula0151 (syn_wa syntaxFormula0115 syntaxFormula0150)
+    @gBitri syntaxFormula0151 (synWa syntaxFormula0115 syntaxFormula0150)
       syntaxFormula0152 p0127 p0238
   have p0240 :=
-    @g_anbi12i syntaxFormula0111 (.objMem a y) syntaxFormula0151 syntaxFormula0152 p0126
+    @gAnbi12i syntaxFormula0111 (.objMem a y) syntaxFormula0151 syntaxFormula0152 p0126
       p0239
   have p0241 :=
-    @g_n_3bitri syntaxFormula0106 syntaxFormula0109
-      (syn_wa syntaxFormula0111 syntaxFormula0151)
-      (syn_wa (.objMem a y) syntaxFormula0152) p0111 p0112 p0240
+    @gN3bitri syntaxFormula0106 syntaxFormula0109
+      (synWa syntaxFormula0111 syntaxFormula0151)
+      (synWa (.objMem a y) syntaxFormula0152) p0111 p0112 p0240
   have p0242 :=
-    @g_exbii syntaxFormula0106 (syn_wa (.objMem a y) syntaxFormula0152) a p0241
+    @gExbii syntaxFormula0106 (synWa (.objMem a y) syntaxFormula0152) a p0241
   have p0243 :=
-    @g_n_3bitri syntaxFormula0153 syntaxFormula0105 syntaxFormula0107
-      (syn_wex a (syn_wa (.objMem a y) syntaxFormula0152)) p0099 p0107 p0242
+    @gN3bitri syntaxFormula0153 syntaxFormula0105 syntaxFormula0107
+      (synWex a (synWa (.objMem a y) syntaxFormula0152)) p0099 p0107 p0242
   have p0244 := (Nominal.biimpRefl syntaxFormula0154)
   have p0245_e01_recanon :
     Nominal.NPrf
-      (syn_wb syntaxFormula0154 (syn_wex a (syn_wa (.objMem a y) syntaxFormula0152))) :=
+      (synWb syntaxFormula0154 (synWex a (synWa (.objMem a y) syntaxFormula0152))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        simp only [syn_wb, syn_wex, syn_wa]
+        simp only [synWb, synWex, synWa]
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
         apply Nominal.RecanonTransportDev.TRecanonWff.imp
         · apply Nominal.RecanonTransportDev.TRecanonWff.imp
@@ -6041,35 +6043,35 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0244
   have p0245 :=
-    @g_bitr4i syntaxFormula0153 (syn_wex a (syn_wa (.objMem a y) syntaxFormula0152))
+    @gBitr4i syntaxFormula0153 (synWex a (synWa (.objMem a y) syntaxFormula0152))
       syntaxFormula0154 p0243 p0245_e01_recanon
   have p0246 :=
-    @g_anbi12i syntaxFormula0095 (.objMem b w) syntaxFormula0153 syntaxFormula0154 p0097
+    @gAnbi12i syntaxFormula0095 (.objMem b w) syntaxFormula0153 syntaxFormula0154 p0097
       p0245
   have p0247 :=
-    @g_n_3bitri syntaxFormula0091 syntaxFormula0094
-      (syn_wa syntaxFormula0095 syntaxFormula0153)
-      (syn_wa (.objMem b w) syntaxFormula0154) p0082 p0083 p0246
+    @gN3bitri syntaxFormula0091 syntaxFormula0094
+      (synWa syntaxFormula0095 syntaxFormula0153)
+      (synWa (.objMem b w) syntaxFormula0154) p0082 p0083 p0246
   have p0248 :=
-    @g_exbii syntaxFormula0091 (syn_wa (.objMem b w) syntaxFormula0154) b p0247
+    @gExbii syntaxFormula0091 (synWa (.objMem b w) syntaxFormula0154) b p0247
   have p0249 :=
-    @g_n_3bitri syntaxFormula0155 syntaxFormula0090 syntaxFormula0092
-      (syn_wex b (syn_wa (.objMem b w) syntaxFormula0154)) p0070 p0078 p0248
+    @gN3bitri syntaxFormula0155 syntaxFormula0090 syntaxFormula0092
+      (synWex b (synWa (.objMem b w) syntaxFormula0154)) p0070 p0078 p0248
   have p0250 :=
-    @g_otkelins2k (syn_csn (syn_csn (syn_csn (syn_csn (syn_csn (.cv c))))))
-      (syn_csn (syn_csn (syn_csn (syn_csn (.cv x)))))
-      (syn_copk (syn_csn (syn_csn (.cv w))) (syn_copk (.cv y) (.cv z))) syntaxClass0032
+    @gOtkelins2k (synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))
+      (synCsn (synCsn (synCsn (synCsn (.cv x)))))
+      (synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z))) syntaxClass0032
       p0050 p0030 p0020
   have p0251 :=
-    @g_rexcom syntaxFormula0152 a b (.cv y) (.cv w) (by exact freshnessCertificate0644)
+    @gRexcom syntaxFormula0152 a b (.cv y) (.cv w) (by exact freshnessCertificate0644)
       (by exact freshnessCertificate0746) (show a ≠ b from (by exact fresh_a_ne_b))
   have p0252 := (Nominal.biimpRefl syntaxFormula0156)
   have p0253_e01_recanon :
     Nominal.NPrf
-      (syn_wb syntaxFormula0156 (syn_wex b (syn_wa (.objMem b w) syntaxFormula0154))) :=
+      (synWb syntaxFormula0156 (synWex b (synWa (.objMem b w) syntaxFormula0154))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        simp only [syn_wb, syn_wex, syn_wa]
+        simp only [synWb, synWex, synWa]
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
         apply Nominal.RecanonTransportDev.TRecanonWff.imp
         · apply Nominal.RecanonTransportDev.TRecanonWff.imp
@@ -6093,43 +6095,43 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0252
   have p0253 :=
-    @g_bitri syntaxFormula0158 syntaxFormula0156
-      (syn_wex b (syn_wa (.objMem b w) syntaxFormula0154)) p0251 p0253_e01_recanon
+    @gBitri syntaxFormula0158 syntaxFormula0156
+      (synWex b (synWa (.objMem b w) syntaxFormula0154)) p0251 p0253_e01_recanon
   have p0254 :=
-    @g_n_3bitr4i syntaxFormula0155 (syn_wex b (syn_wa (.objMem b w) syntaxFormula0154))
+    @gN3bitr4i syntaxFormula0155 (synWex b (synWa (.objMem b w) syntaxFormula0154))
       syntaxFormula0159 syntaxFormula0158 p0249 p0250 p0253
   have p0255 :=
-    @g_bibi12i syntaxFormula0082 (.objMem c x) syntaxFormula0159 syntaxFormula0158 p0068
+    @gBibi12i syntaxFormula0082 (.objMem c x) syntaxFormula0159 syntaxFormula0158 p0068
       p0254
-  have p0256 := @g_notbii syntaxFormula0160 (syn_wb (.objMem c x) syntaxFormula0158) p0255
+  have p0256 := @gNotbii syntaxFormula0160 (synWb (.objMem c x) syntaxFormula0158) p0255
   have p0257 :=
-    @g_n_3bitri syntaxFormula0078 syntaxFormula0081 (.neg syntaxFormula0160)
-      (.neg (syn_wb (.objMem c x) syntaxFormula0158)) p0048 p0049 p0256
+    @gN3bitri syntaxFormula0078 syntaxFormula0081 (.neg syntaxFormula0160)
+      (.neg (synWb (.objMem c x) syntaxFormula0158)) p0048 p0049 p0256
   have p0258 :=
-    @g_exbii syntaxFormula0078 (.neg (syn_wb (.objMem c x) syntaxFormula0158)) c p0257
+    @gExbii syntaxFormula0078 (.neg (synWb (.objMem c x) syntaxFormula0158)) c p0257
   have p0259 :=
-    @g_n_3bitri syntaxFormula0161 syntaxFormula0077 syntaxFormula0079
-      (syn_wex c (.neg (syn_wb (.objMem c x) syntaxFormula0158))) p0036 p0044 p0258
+    @gN3bitri syntaxFormula0161 syntaxFormula0077 syntaxFormula0079
+      (synWex c (.neg (synWb (.objMem c x) syntaxFormula0158))) p0036 p0044 p0258
   have p0260 :=
-    @g_notbii syntaxFormula0161
-      (syn_wex c (.neg (syn_wb (.objMem c x) syntaxFormula0158))) p0259
-  have p0261 := @g_elcompl syntaxClass0068 syntaxClass0035 p0035
+    @gNotbii syntaxFormula0161
+      (synWex c (.neg (synWb (.objMem c x) syntaxFormula0158))) p0259
+  have p0261 := @gElcompl syntaxClass0068 syntaxClass0035 p0035
   have p0262 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_addc c a b (.cv y)
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfAddc c a b (.cv y)
       (.cv w) (by exact freshnessCertificate0539) (by exact freshnessCertificate0749)
       (by exact freshnessCertificate0644) (by exact freshnessCertificate0536)
       (by exact freshnessCertificate0746) (by exact freshnessCertificate0641)
       (show c ≠ a from (by exact fresh_c_ne_a)) (show c ≠ b from (by exact fresh_c_ne_b))
       (show a ≠ b from (by exact fresh_a_ne_b))
-  have p0263 := @g_eqeq2i (syn_cplc (.cv y) (.cv w)) syntaxClass0162 (.cv x) p0262
-  have p0264 := @g_eqabb syntaxFormula0158 c (.cv x) (by exact freshnessCertificate0531)
-  have p0265 := @g_alex (syn_wb (.objMem c x) syntaxFormula0158) c
+  have p0263 := @gEqeq2i (synCplc (.cv y) (.cv w)) syntaxClass0162 (.cv x) p0262
+  have p0264 := @gEqabb syntaxFormula0158 c (.cv x) (by exact freshnessCertificate0531)
+  have p0265 := @gAlex (synWb (.objMem c x) syntaxFormula0158) c
   have p0266_e01_recanon :
     Nominal.NPrf
-      (syn_wb syntaxFormula0163 (.all c (syn_wb (.objMem c x) syntaxFormula0158))) :=
+      (synWb syntaxFormula0163 (.all c (synWb (.objMem c x) syntaxFormula0158))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        simp only [syn_wb]
+        simp only [synWb]
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
         apply Nominal.RecanonTransportDev.TRecanonWff.imp
         · apply Nominal.RecanonTransportDev.TRecanonWff.imp
@@ -6159,152 +6161,152 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0264
   have p0266 :=
-    @g_n_3bitri (.classEq (.cv x) (syn_cplc (.cv y) (.cv w))) syntaxFormula0163
-      (.all c (syn_wb (.objMem c x) syntaxFormula0158))
-      (.neg (syn_wex c (.neg (syn_wb (.objMem c x) syntaxFormula0158)))) p0263
+    @gN3bitri (.classEq (.cv x) (synCplc (.cv y) (.cv w))) syntaxFormula0163
+      (.all c (synWb (.objMem c x) syntaxFormula0158))
+      (.neg (synWex c (.neg (synWb (.objMem c x) syntaxFormula0158)))) p0263
       p0266_e01_recanon p0265
   have p0267 :=
-    @g_n_3bitr4i (.neg syntaxFormula0161)
-      (.neg (syn_wex c (.neg (syn_wb (.objMem c x) syntaxFormula0158)))) syntaxFormula0164
-      (.classEq (.cv x) (syn_cplc (.cv y) (.cv w))) p0260 p0261 p0266
+    @gN3bitr4i (.neg syntaxFormula0161)
+      (.neg (synWex c (.neg (synWb (.objMem c x) syntaxFormula0158)))) syntaxFormula0164
+      (.classEq (.cv x) (synCplc (.cv y) (.cv w))) p0260 p0261 p0266
   have p0268 :=
-    @g_otkelins2k (syn_csn (syn_csn (.cv x))) (syn_csn (syn_csn (.cv w)))
-      (syn_copk (.cv y) (.cv z)) syntaxClass0044 p0056 p0016 p0006
-  have p0269 := @g_otkelins2k (.cv x) (.cv y) (.cv z) syntaxClass0043 p0062 p0120 p0121
-  have p0270 := @g_opkelimagek (.cv x) (.cv z) syntaxClass0042 p0062 p0121
-  have p0271 := @g_dfaddc2 (.cv x) (syn_c1c)
-  have p0272 := @g_eqeq2i (syn_cplc (.cv x) (syn_c1c)) syntaxClass0165 (.cv z) p0271
+    @gOtkelins2k (synCsn (synCsn (.cv x))) (synCsn (synCsn (.cv w)))
+      (synCopk (.cv y) (.cv z)) syntaxClass0044 p0056 p0016 p0006
+  have p0269 := @gOtkelins2k (.cv x) (.cv y) (.cv z) syntaxClass0043 p0062 p0120 p0121
+  have p0270 := @gOpkelimagek (.cv x) (.cv z) syntaxClass0042 p0062 p0121
+  have p0271 := @gDfaddc2 (.cv x) (synC1c)
+  have p0272 := @gEqeq2i (synCplc (.cv x) (synC1c)) syntaxClass0165 (.cv z) p0271
   have p0273 :=
-    @g_bitr4i syntaxFormula0166 (.classEq (.cv z) syntaxClass0165)
-      (.classEq (.cv z) (syn_cplc (.cv x) (syn_c1c))) p0270 p0272
+    @gBitr4i syntaxFormula0166 (.classEq (.cv z) syntaxClass0165)
+      (.classEq (.cv z) (synCplc (.cv x) (synC1c))) p0270 p0272
   have p0274 :=
-    @g_n_3bitri syntaxFormula0167
-      (.classMem (syn_copk (syn_csn (syn_csn (.cv x))) (syn_copk (.cv y) (.cv z)))
+    @gN3bitri syntaxFormula0167
+      (.classMem (synCopk (synCsn (synCsn (.cv x))) (synCopk (.cv y) (.cv z)))
         syntaxClass0044)
-      syntaxFormula0166 (.classEq (.cv z) (syn_cplc (.cv x) (syn_c1c))) p0268 p0269 p0273
+      syntaxFormula0166 (.classEq (.cv z) (synCplc (.cv x) (synC1c))) p0268 p0269 p0273
   have p0275 :=
-    @g_anbi12i syntaxFormula0164 (.classEq (.cv x) (syn_cplc (.cv y) (.cv w)))
-      syntaxFormula0167 (.classEq (.cv z) (syn_cplc (.cv x) (syn_c1c))) p0267 p0274
+    @gAnbi12i syntaxFormula0164 (.classEq (.cv x) (synCplc (.cv y) (.cv w)))
+      syntaxFormula0167 (.classEq (.cv z) (synCplc (.cv x) (synC1c))) p0267 p0274
   have p0276 :=
-    @g_n_3bitri syntaxFormula0066 syntaxFormula0069
-      (syn_wa syntaxFormula0164 syntaxFormula0167) syntaxFormula0168 p0033 p0034 p0275
-  have p0277 := @g_exbii syntaxFormula0066 syntaxFormula0168 x p0276
+    @gN3bitri syntaxFormula0066 syntaxFormula0069
+      (synWa syntaxFormula0164 syntaxFormula0167) syntaxFormula0168 p0033 p0034 p0275
+  have p0277 := @gExbii syntaxFormula0066 syntaxFormula0168 x p0276
   have p0278 :=
-    @g_n_3bitri syntaxFormula0059 syntaxFormula0065 syntaxFormula0067
-      (syn_wex x syntaxFormula0168) p0021 p0029 p0277
-  have p0279 := @g_addcex (.cv y) (.cv w) p0120 p0092
-  have p0280 := @g_addceq1 (.cv x) (syn_cplc (.cv y) (.cv w)) (syn_c1c)
+    @gN3bitri syntaxFormula0059 syntaxFormula0065 syntaxFormula0067
+      (synWex x syntaxFormula0168) p0021 p0029 p0277
+  have p0279 := @gAddcex (.cv y) (.cv w) p0120 p0092
+  have p0280 := @gAddceq1 (.cv x) (synCplc (.cv y) (.cv w)) (synC1c)
   have p0281 :=
-    @g_eqeq2d (.classEq (.cv x) (syn_cplc (.cv y) (.cv w))) (syn_cplc (.cv x) (syn_c1c))
-      (syn_cplc (syn_cplc (.cv y) (.cv w)) (syn_c1c)) (.cv z) p0280
+    @gEqeq2d (.classEq (.cv x) (synCplc (.cv y) (.cv w))) (synCplc (.cv x) (synC1c))
+      (synCplc (synCplc (.cv y) (.cv w)) (synC1c)) (.cv z) p0280
   have freshnessCertificate0917 : x ∉ (((Class.cv y)).fv) ∪ (((Class.cv w)).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0422 freshnessCertificate0419))
-  have freshnessCertificate0918 : x ∉ ((syn_cplc (.cv y) (.cv w))).fv :=
+  have freshnessCertificate0918 : x ∉ ((synCplc (.cv y) (.cv w))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cplc];
       exact freshnessCertificate0917)
   have freshnessCertificate0919 :
-    x ∉ (((syn_cplc (.cv y) (.cv w))).fv) ∪ (((syn_c1c)).fv) :=
+    x ∉ (((synCplc (.cv y) (.cv w))).fv) ∪ (((synC1c)).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0918 freshnessCertificate0445))
   have freshnessCertificate0920 :
-    x ∉ ((syn_cplc (syn_cplc (.cv y) (.cv w)) (syn_c1c))).fv :=
+    x ∉ ((synCplc (synCplc (.cv y) (.cv w)) (synC1c))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cplc];
       exact freshnessCertificate0919)
   have freshnessCertificate0921 :
-    x ∉ (((Class.cv z)).fv) ∪ (((syn_cplc (syn_cplc (.cv y) (.cv w)) (syn_c1c))).fv) :=
+    x ∉ (((Class.cv z)).fv) ∪ (((synCplc (synCplc (.cv y) (.cv w)) (synC1c))).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0423 freshnessCertificate0920))
   have freshnessCertificate0922 :
-    x ∉ ((Wff.classEq (.cv z) (syn_cplc (syn_cplc (.cv y) (.cv w)) (syn_c1c)))).fv :=
+    x ∉ ((Wff.classEq (.cv z) (synCplc (synCplc (.cv y) (.cv w)) (synC1c)))).fv :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classEq]; exact freshnessCertificate0921)
   have p0282 :=
-    @g_ceqsexv (.classEq (.cv z) (syn_cplc (.cv x) (syn_c1c)))
-      (.classEq (.cv z) (syn_cplc (syn_cplc (.cv y) (.cv w)) (syn_c1c))) x
-      (syn_cplc (.cv y) (.cv w)) (by exact freshnessCertificate0918)
+    @gCeqsexv (.classEq (.cv z) (synCplc (.cv x) (synC1c)))
+      (.classEq (.cv z) (synCplc (synCplc (.cv y) (.cv w)) (synC1c))) x
+      (synCplc (.cv y) (.cv w)) (by exact freshnessCertificate0918)
       (by exact freshnessCertificate0922) p0279 p0281
   have p0283 :=
-    @g_n_3bitri syntaxFormula0057 syntaxFormula0059 (syn_wex x syntaxFormula0168)
-      (.classEq (.cv z) (syn_cplc (syn_cplc (.cv y) (.cv w)) (syn_c1c))) p0019 p0278 p0282
+    @gN3bitri syntaxFormula0057 syntaxFormula0059 (synWex x syntaxFormula0168)
+      (.classEq (.cv z) (synCplc (synCplc (.cv y) (.cv w)) (synC1c))) p0019 p0278 p0282
   have p0284 :=
-    @g_rexbii syntaxFormula0057
-      (.classEq (.cv z) (syn_cplc (syn_cplc (.cv y) (.cv w)) (syn_c1c))) w (syn_cnnc)
+    @gRexbii syntaxFormula0057
+      (.classEq (.cv z) (synCplc (synCplc (.cv y) (.cv w)) (synC1c))) w (synCnnc)
       p0283
   have p0285 :=
-    @g_n_3bitri syntaxFormula0169 syntaxFormula0056 syntaxFormula0058 syntaxFormula0170
+    @gN3bitri syntaxFormula0169 syntaxFormula0056 syntaxFormula0058 syntaxFormula0170
       p0007 p0015 p0284
-  have p0286 := @g_opkelxpk (.cv y) (.cv z) (syn_csn (syn_c0)) (syn_cvv) p0120 p0121
+  have p0286 := @gOpkelxpk (.cv y) (.cv z) (synCsn (synC0)) (synCvv) p0120 p0121
   have p0287 :=
-    @g_mpbiran2
-      (.classMem (syn_copk (.cv y) (.cv z)) (syn_cxpk (syn_csn (syn_c0)) (syn_cvv)))
-      (.classMem (.cv y) (syn_csn (syn_c0))) (.classMem (.cv z) (syn_cvv)) p0121 p0286
-  have p0288 := @g_elsnc (.cv y) (syn_c0) p0120
+    @gMpbiran2
+      (.classMem (synCopk (.cv y) (.cv z)) (synCxpk (synCsn (synC0)) (synCvv)))
+      (.classMem (.cv y) (synCsn (synC0))) (.classMem (.cv z) (synCvv)) p0121 p0286
+  have p0288 := @gElsnc (.cv y) (synC0) p0120
   have p0289 :=
-    @g_bitri
-      (.classMem (syn_copk (.cv y) (.cv z)) (syn_cxpk (syn_csn (syn_c0)) (syn_cvv)))
-      (.classMem (.cv y) (syn_csn (syn_c0))) (.classEq (.cv y) (syn_c0)) p0287 p0288
+    @gBitri
+      (.classMem (synCopk (.cv y) (.cv z)) (synCxpk (synCsn (synC0)) (synCvv)))
+      (.classMem (.cv y) (synCsn (synC0))) (.classEq (.cv y) (synC0)) p0287 p0288
   have p0290 :=
-    @g_notbii
-      (.classMem (syn_copk (.cv y) (.cv z)) (syn_cxpk (syn_csn (syn_c0)) (syn_cvv)))
-      (.classEq (.cv y) (syn_c0)) p0289
+    @gNotbii
+      (.classMem (synCopk (.cv y) (.cv z)) (synCxpk (synCsn (synC0)) (synCvv)))
+      (.classEq (.cv y) (synC0)) p0289
   have p0291 :=
-    @g_anbi12i syntaxFormula0169 syntaxFormula0170
-      (.neg (.classMem (syn_copk (.cv y) (.cv z)) (syn_cxpk (syn_csn (syn_c0)) (syn_cvv))))
-      (.neg (.classEq (.cv y) (syn_c0))) p0285 p0290
+    @gAnbi12i syntaxFormula0169 syntaxFormula0170
+      (.neg (.classMem (synCopk (.cv y) (.cv z)) (synCxpk (synCsn (synC0)) (synCvv))))
+      (.neg (.classEq (.cv y) (synC0))) p0285 p0290
   have p0292 :=
-    @g_eldif (syn_copk (.cv y) (.cv z)) syntaxClass0048
-      (syn_cxpk (syn_csn (syn_c0)) (syn_cvv))
-  have p0293 := @g_ancom (syn_wne (.cv y) (syn_c0)) syntaxFormula0170
-  have p0294 := (Nominal.biimpRefl (syn_wne (.cv y) (syn_c0)))
+    @gEldif (synCopk (.cv y) (.cv z)) syntaxClass0048
+      (synCxpk (synCsn (synC0)) (synCvv))
+  have p0293 := @gAncom (synWne (.cv y) (synC0)) syntaxFormula0170
+  have p0294 := (Nominal.biimpRefl (synWne (.cv y) (synC0)))
   have p0295 :=
-    @g_anbi2i (syn_wne (.cv y) (syn_c0)) (.neg (.classEq (.cv y) (syn_c0)))
+    @gAnbi2i (synWne (.cv y) (synC0)) (.neg (.classEq (.cv y) (synC0)))
       syntaxFormula0170 p0294
   have p0296 :=
-    @g_bitri syntaxFormula0171 (syn_wa syntaxFormula0170 (syn_wne (.cv y) (syn_c0)))
-      (syn_wa syntaxFormula0170 (.neg (.classEq (.cv y) (syn_c0)))) p0293 p0295
+    @gBitri syntaxFormula0171 (synWa syntaxFormula0170 (synWne (.cv y) (synC0)))
+      (synWa syntaxFormula0170 (.neg (.classEq (.cv y) (synC0)))) p0293 p0295
   have p0297 :=
-    @g_n_3bitr4i
-      (syn_wa syntaxFormula0169 (.neg
-          (.classMem (syn_copk (.cv y) (.cv z)) (syn_cxpk (syn_csn (syn_c0)) (syn_cvv)))))
-      (syn_wa syntaxFormula0170 (.neg (.classEq (.cv y) (syn_c0)))) syntaxFormula0172
+    @gN3bitr4i
+      (synWa syntaxFormula0169 (.neg
+          (.classMem (synCopk (.cv y) (.cv z)) (synCxpk (synCsn (synC0)) (synCvv)))))
+      (synWa syntaxFormula0170 (.neg (.classEq (.cv y) (synC0)))) syntaxFormula0172
       syntaxFormula0171 p0291 p0292 p0296
   have p0298 :=
-    @g_syl6bb (.classEq (.cv x) (syn_copk (.cv y) (.cv z))) syntaxFormula0050
+    @gSyl6bb (.classEq (.cv x) (synCopk (.cv y) (.cv z))) syntaxFormula0050
       syntaxFormula0172 syntaxFormula0171 p0005 p0297
   have p0299 :=
-    @g_pm5_32i (.classEq (.cv x) (syn_copk (.cv y) (.cv z))) syntaxFormula0050
+    @gPm532i (.classEq (.cv x) (synCopk (.cv y) (.cv z))) syntaxFormula0050
       syntaxFormula0171 p0298
-  have p0300 := @g_n_2exbii syntaxFormula0173 syntaxFormula0174 y z p0299
+  have p0300 := @gN2exbii syntaxFormula0173 syntaxFormula0174 y z p0299
   have p0301 :=
-    @g_bitr3i syntaxFormula0175 (syn_wex y (syn_wex z syntaxFormula0173))
+    @gBitr3i syntaxFormula0175 (synWex y (synWex z syntaxFormula0173))
       syntaxFormula0177 p0004 p0300
   have p0302 :=
-    @g_n_3bitri (.classMem (.cv x) syntaxClass0178)
-      (syn_wa (.classMem (.cv x) (syn_cxpk (syn_cvv) (syn_cvv))) syntaxFormula0050)
+    @gN3bitri (.classMem (.cv x) syntaxClass0178)
+      (synWa (.classMem (.cv x) (synCxpk (synCvv) (synCvv))) syntaxFormula0050)
       syntaxFormula0175 syntaxFormula0177 p0001 p0003 p0301
-  have freshnessCertificate0923 : x ∉ ((syn_cvv)).fv :=
+  have freshnessCertificate0923 : x ∉ ((synCvv)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv];
       exact (show x ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0924 : x ∉ (((syn_cvv)).fv) ∪ (((syn_cvv)).fv) :=
+  have freshnessCertificate0924 : x ∉ (((synCvv)).fv) ∪ (((synCvv)).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0923 freshnessCertificate0923))
-  have freshnessCertificate0925 : x ∉ ((syn_cxpk (syn_cvv) (syn_cvv))).fv :=
+  have freshnessCertificate0925 : x ∉ ((synCxpk (synCvv) (synCvv))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cxpk];
       exact freshnessCertificate0924)
   have freshnessCertificate0926 :
-    x ∉ ((syntaxClass0046).fv) ∪ (((syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))).fv) :=
+    x ∉ ((syntaxClass0046).fv) ∪ (((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv) :=
     (by
       with_reducible
         exact
@@ -6313,20 +6315,20 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0926)
-  have freshnessCertificate0928 : x ∉ ((syn_cnnc)).fv :=
+  have freshnessCertificate0928 : x ∉ ((synCnnc)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnnc];
       exact (show x ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0929 : x ∉ ((syn_cpw1 (syn_cnnc))).fv :=
+  have freshnessCertificate0929 : x ∉ ((synCpw1 (synCnnc))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0928)
-  have freshnessCertificate0930 : x ∉ ((syn_cpw1 (syn_cpw1 (syn_cnnc)))).fv :=
+  have freshnessCertificate0930 : x ∉ ((synCpw1 (synCpw1 (synCnnc)))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0929)
   have freshnessCertificate0931 :
-    x ∉ ((syntaxClass0047).fv) ∪ (((syn_cpw1 (syn_cpw1 (syn_cnnc)))).fv) :=
+    x ∉ ((syntaxClass0047).fv) ∪ (((synCpw1 (synCpw1 (synCnnc)))).fv) :=
     (by
       with_reducible
         exact
@@ -6335,25 +6337,25 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0931)
-  have freshnessCertificate0933 : x ∉ ((syn_c0)).fv :=
+  have freshnessCertificate0933 : x ∉ ((synC0)).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0];
       exact (show x ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
-  have freshnessCertificate0934 : x ∉ ((syn_csn (syn_c0))).fv :=
+  have freshnessCertificate0934 : x ∉ ((synCsn (synC0))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0933)
-  have freshnessCertificate0935 : x ∉ (((syn_csn (syn_c0))).fv) ∪ (((syn_cvv)).fv) :=
+  have freshnessCertificate0935 : x ∉ (((synCsn (synC0))).fv) ∪ (((synCvv)).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0934 freshnessCertificate0923))
-  have freshnessCertificate0936 : x ∉ ((syn_cxpk (syn_csn (syn_c0)) (syn_cvv))).fv :=
+  have freshnessCertificate0936 : x ∉ ((synCxpk (synCsn (synC0)) (synCvv))).fv :=
     (by
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cxpk];
       exact freshnessCertificate0935)
   have freshnessCertificate0937 :
-    x ∉ ((syntaxClass0048).fv) ∪ (((syn_cxpk (syn_csn (syn_c0)) (syn_cvv))).fv) :=
+    x ∉ ((syntaxClass0048).fv) ∪ (((synCxpk (synCsn (synC0)) (synCvv))).fv) :=
     (by
       with_reducible
         exact
@@ -6363,7 +6365,7 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cdif];
       exact freshnessCertificate0937)
   have freshnessCertificate0939 :
-    x ∉ (((syn_cxpk (syn_cvv) (syn_cvv))).fv) ∪ ((syntaxClass0049).fv) :=
+    x ∉ (((synCxpk (synCvv) (synCvv))).fv) ∪ ((syntaxClass0049).fv) :=
     (by
       with_reducible
         exact
@@ -6373,110 +6375,110 @@ noncomputable def g_ltfinex : Nominal.NPrf (.classMem (syn_cltfin) (syn_cvv)) :=
       rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0939)
   have p0303 :=
-    @g_eqabi syntaxFormula0177 x syntaxClass0178 (by exact freshnessCertificate0940) p0302
+    @gEqabi syntaxFormula0177 x syntaxClass0178 (by exact freshnessCertificate0940) p0302
   have p0304 :=
-    @g_eqtr4i (syn_cltfin) (.cab x syntaxFormula0177) syntaxClass0178 p0000 p0303
-  have p0305 := @g_vvex
-  have p0307 := @g_xpkex (syn_cvv) (syn_cvv) p0305 p0305
-  have p0308 := @g_ssetkex
-  have p0309 := @g_sikex (syn_cssetk) p0308
-  have p0310 := @g_sikex (syn_csik (syn_cssetk)) p0309
-  have p0311 := @g_sikex (syn_csik (syn_csik (syn_cssetk))) p0310
-  have p0312 := @g_sikex (syn_csik (syn_csik (syn_csik (syn_cssetk)))) p0311
-  have p0313 := @g_ins3kex (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))) p0312
-  have p0314 := @g_ins3kex (syn_csik (syn_csik (syn_cssetk))) p0310
-  have p0315 := @g_ins2kex (syn_cins3k (syn_csik (syn_csik (syn_cssetk)))) p0314
-  have p0317 := @g_ins3kex (syn_cssetk) p0308
-  have p0318 := @g_ins2kex (syn_cins3k (syn_cssetk)) p0317
-  have p0319 := @g_ins2kex (syn_cins2k (syn_cins3k (syn_cssetk))) p0318
-  have p0320 := @g_ins2kex (syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk)))) p0319
-  have p0322 := @g_ins2kex (syn_cssetk) p0308
-  have p0323 := @g_inex (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)) p0317 p0322
-  have p0324 := @g_n_1cex
-  have p0325 := @g_pw1ex (syn_c1c) p0324
-  have p0326 := @g_pw1ex (syn_cpw1 (syn_c1c)) p0325
+    @gEqtr4i (synCltfin) (.cab x syntaxFormula0177) syntaxClass0178 p0000 p0303
+  have p0305 := @gVvex
+  have p0307 := @gXpkex (synCvv) (synCvv) p0305 p0305
+  have p0308 := @gSsetkex
+  have p0309 := @gSikex (synCssetk) p0308
+  have p0310 := @gSikex (synCsik (synCssetk)) p0309
+  have p0311 := @gSikex (synCsik (synCsik (synCssetk))) p0310
+  have p0312 := @gSikex (synCsik (synCsik (synCsik (synCssetk)))) p0311
+  have p0313 := @gIns3kex (synCsik (synCsik (synCsik (synCsik (synCssetk))))) p0312
+  have p0314 := @gIns3kex (synCsik (synCsik (synCssetk))) p0310
+  have p0315 := @gIns2kex (synCins3k (synCsik (synCsik (synCssetk)))) p0314
+  have p0317 := @gIns3kex (synCssetk) p0308
+  have p0318 := @gIns2kex (synCins3k (synCssetk)) p0317
+  have p0319 := @gIns2kex (synCins2k (synCins3k (synCssetk))) p0318
+  have p0320 := @gIns2kex (synCins2k (synCins2k (synCins3k (synCssetk)))) p0319
+  have p0322 := @gIns2kex (synCssetk) p0308
+  have p0323 := @gInex (synCins3k (synCssetk)) (synCins2k (synCssetk)) p0317 p0322
+  have p0324 := @gN1cex
+  have p0325 := @gPw1ex (synC1c) p0324
+  have p0326 := @gPw1ex (synCpw1 (synC1c)) p0325
   have p0327 :=
-    @g_imakex (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-      (syn_cpw1 (syn_cpw1 (syn_c1c))) p0323 p0326
-  have p0328 := @g_complex syntaxClass0000 p0327
-  have p0329 := @g_sikex syntaxClass0001 p0328
-  have p0330 := @g_sikex syntaxClass0002 p0329
-  have p0331 := @g_sikex syntaxClass0003 p0330
-  have p0332 := @g_sikex syntaxClass0004 p0331
-  have p0333 := @g_sikex syntaxClass0005 p0332
-  have p0334 := @g_sikex syntaxClass0006 p0333
-  have p0335 := @g_sikex syntaxClass0007 p0334
-  have p0336 := @g_ins3kex syntaxClass0008 p0335
-  have p0337 := @g_sikex (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))) p0312
+    @gImakex (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+      (synCpw1 (synCpw1 (synC1c))) p0323 p0326
+  have p0328 := @gComplex syntaxClass0000 p0327
+  have p0329 := @gSikex syntaxClass0001 p0328
+  have p0330 := @gSikex syntaxClass0002 p0329
+  have p0331 := @gSikex syntaxClass0003 p0330
+  have p0332 := @gSikex syntaxClass0004 p0331
+  have p0333 := @gSikex syntaxClass0005 p0332
+  have p0334 := @gSikex syntaxClass0006 p0333
+  have p0335 := @gSikex syntaxClass0007 p0334
+  have p0336 := @gIns3kex syntaxClass0008 p0335
+  have p0337 := @gSikex (synCsik (synCsik (synCsik (synCsik (synCssetk))))) p0312
   have p0338 :=
-    @g_ins3kex (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))) p0337
-  have p0339 := @g_ins2kex syntaxClass0010 p0338
-  have p0340 := @g_ins2kex syntaxClass0011 p0339
+    @gIns3kex (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))) p0337
+  have p0339 := @gIns2kex syntaxClass0010 p0338
+  have p0340 := @gIns2kex syntaxClass0011 p0339
   have p0341 :=
-    @g_sikex (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk)))))) p0337
+    @gSikex (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))) p0337
   have p0342 :=
-    @g_sikex
-      (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))) p0341
-  have p0343 := @g_sikex syntaxClass0013 p0342
-  have p0344 := @g_sikex syntaxClass0014 p0343
-  have p0345 := @g_ins3kex syntaxClass0015 p0344
-  have p0346 := @g_ins3kex syntaxClass0013 p0342
-  have p0347 := @g_ins2kex syntaxClass0017 p0346
-  have p0348 := @g_unex syntaxClass0016 syntaxClass0018 p0345 p0347
-  have p0349 := @g_symdifex syntaxClass0012 syntaxClass0019 p0340 p0348
-  have p0350 := @g_pw1ex (syn_cpw1 (syn_cpw1 (syn_c1c))) p0326
-  have p0351 := @g_pw1ex (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))) p0350
-  have p0352 := @g_pw1ex (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))) p0351
+    @gSikex
+      (synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk))))))) p0341
+  have p0343 := @gSikex syntaxClass0013 p0342
+  have p0344 := @gSikex syntaxClass0014 p0343
+  have p0345 := @gIns3kex syntaxClass0015 p0344
+  have p0346 := @gIns3kex syntaxClass0013 p0342
+  have p0347 := @gIns2kex syntaxClass0017 p0346
+  have p0348 := @gUnex syntaxClass0016 syntaxClass0018 p0345 p0347
+  have p0349 := @gSymdifex syntaxClass0012 syntaxClass0019 p0340 p0348
+  have p0350 := @gPw1ex (synCpw1 (synCpw1 (synC1c))) p0326
+  have p0351 := @gPw1ex (synCpw1 (synCpw1 (synCpw1 (synC1c)))) p0350
+  have p0352 := @gPw1ex (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))) p0351
   have p0353 :=
-    @g_pw1ex (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))) p0352
+    @gPw1ex (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))) p0352
   have p0354 :=
-    @g_pw1ex (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
+    @gPw1ex (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
       p0353
-  have p0355 := @g_pw1ex syntaxClass0021 p0354
-  have p0356 := @g_pw1ex syntaxClass0022 p0355
-  have p0357 := @g_pw1ex syntaxClass0023 p0356
-  have p0358 := @g_pw1ex syntaxClass0024 p0357
-  have p0359 := @g_imakex syntaxClass0020 syntaxClass0025 p0349 p0358
-  have p0360 := @g_complex syntaxClass0026 p0359
-  have p0361 := @g_inex syntaxClass0009 syntaxClass0027 p0336 p0360
+  have p0355 := @gPw1ex syntaxClass0021 p0354
+  have p0356 := @gPw1ex syntaxClass0022 p0355
+  have p0357 := @gPw1ex syntaxClass0023 p0356
+  have p0358 := @gPw1ex syntaxClass0024 p0357
+  have p0359 := @gImakex syntaxClass0020 syntaxClass0025 p0349 p0358
+  have p0360 := @gComplex syntaxClass0026 p0359
+  have p0361 := @gInex syntaxClass0009 syntaxClass0027 p0336 p0360
   have p0362 :=
-    @g_inex (syn_cins2k (syn_cins2k (syn_cins2k (syn_cins3k (syn_cssetk)))))
+    @gInex (synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))
       syntaxClass0028 p0320 p0361
-  have p0363 := @g_imakex syntaxClass0029 syntaxClass0022 p0362 p0355
+  have p0363 := @gImakex syntaxClass0029 syntaxClass0022 p0362 p0355
   have p0364 :=
-    @g_inex (syn_cins2k (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))) syntaxClass0030
+    @gInex (synCins2k (synCins3k (synCsik (synCsik (synCssetk))))) syntaxClass0030
       p0315 p0363
   have p0365 :=
-    @g_imakex syntaxClass0031
-      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))) p0364
+    @gImakex syntaxClass0031
+      (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))))) p0364
       p0353
-  have p0366 := @g_ins2kex syntaxClass0032 p0365
+  have p0366 := @gIns2kex syntaxClass0032 p0365
   have p0367 :=
-    @g_symdifex (syn_cins3k (syn_csik (syn_csik (syn_csik (syn_csik (syn_cssetk))))))
+    @gSymdifex (synCins3k (synCsik (synCsik (synCsik (synCsik (synCssetk))))))
       syntaxClass0033 p0313 p0366
   have p0368 :=
-    @g_imakex syntaxClass0034
-      (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))) p0367
+    @gImakex syntaxClass0034
+      (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))))) p0367
       p0353
-  have p0369 := @g_complex syntaxClass0035 p0368
-  have p0370 := @g_addcexlem
-  have p0371 := @g_imakex syntaxClass0041 (syn_cpw1 (syn_cpw1 (syn_c1c))) p0370 p0326
-  have p0372 := @g_imagekex syntaxClass0042 p0371
-  have p0373 := @g_ins2kex syntaxClass0043 p0372
-  have p0374 := @g_ins2kex syntaxClass0044 p0373
-  have p0375 := @g_inex syntaxClass0036 syntaxClass0045 p0369 p0374
+  have p0369 := @gComplex syntaxClass0035 p0368
+  have p0370 := @gAddcexlem
+  have p0371 := @gImakex syntaxClass0041 (synCpw1 (synCpw1 (synC1c))) p0370 p0326
+  have p0372 := @gImagekex syntaxClass0042 p0371
+  have p0373 := @gIns2kex syntaxClass0043 p0372
+  have p0374 := @gIns2kex syntaxClass0044 p0373
+  have p0375 := @gInex syntaxClass0036 syntaxClass0045 p0369 p0374
   have p0376 :=
-    @g_imakex syntaxClass0046 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))) p0375 p0350
-  have p0377 := @g_nncex
-  have p0378 := @g_pw1ex (syn_cnnc) p0377
-  have p0379 := @g_pw1ex (syn_cpw1 (syn_cnnc)) p0378
-  have p0380 := @g_imakex syntaxClass0047 (syn_cpw1 (syn_cpw1 (syn_cnnc))) p0376 p0379
-  have p0381 := @g_snex (syn_c0)
-  have p0383 := @g_xpkex (syn_csn (syn_c0)) (syn_cvv) p0381 p0305
+    @gImakex syntaxClass0046 (synCpw1 (synCpw1 (synCpw1 (synC1c)))) p0375 p0350
+  have p0377 := @gNncex
+  have p0378 := @gPw1ex (synCnnc) p0377
+  have p0379 := @gPw1ex (synCpw1 (synCnnc)) p0378
+  have p0380 := @gImakex syntaxClass0047 (synCpw1 (synCpw1 (synCnnc))) p0376 p0379
+  have p0381 := @gSnex (synC0)
+  have p0383 := @gXpkex (synCsn (synC0)) (synCvv) p0381 p0305
   have p0384 :=
-    @g_difex syntaxClass0048 (syn_cxpk (syn_csn (syn_c0)) (syn_cvv)) p0380 p0383
-  have p0385 := @g_inex (syn_cxpk (syn_cvv) (syn_cvv)) syntaxClass0049 p0307 p0384
-  have p0386 := @g_eqeltri (syn_cltfin) syntaxClass0178 (syn_cvv) p0304 p0385
+    @gDifex syntaxClass0048 (synCxpk (synCsn (synC0)) (synCvv)) p0380 p0383
+  have p0385 := @gInex (synCxpk (synCvv) (synCvv)) syntaxClass0049 p0307 p0384
+  have p0386 := @gEqeltri (synCltfin) syntaxClass0178 (synCvv) p0304 p0385
   exact p0386
 
 
@@ -6497,12 +6499,13 @@ open NFChoice.SemanticCore
 open NFChoice.ReplaySupport
 open NFChoice.Compiler.CompactSourceSyntax
 
+/-- Checked nominal proof certificate identified upstream as `g_ltfintrilem1`. -/
 @[expose]
-noncomputable def g_ltfintrilem1 (m : Var) (n : Var) (dv_m_n : m ≠ n) :
+noncomputable def gLtfintrilem1 (m : Var) (n : Var) (dv_m_n : m ≠ n) :
     Nominal.NPrf
-      (.classMem (.cab m (.imp (.classMem (.cv n) (syn_cnnc)) (.imp (syn_wne (.cv m) (syn_c0))
-              (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-                (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin)))))) (syn_cvv)) :=
+      (.classMem (.cab m (.imp (.classMem (.cv n) (synCnnc)) (.imp (synWne (.cv m) (synC0))
+              (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+                (.classMem (synCopk (.cv n) (.cv m)) (synCltfin)))))) (synCvv)) :=
   by
   let proofSupport : Finset Var := ({ m } : Finset Var) ∪ ({ n } : Finset Var)
   let t : Var := freshVar proofSupport 0
@@ -6517,28 +6520,28 @@ noncomputable def g_ltfintrilem1 (m : Var) (n : Var) (dv_m_n : m ≠ n) :
     intro h
     exact fresh_t (Finset.mem_union_right _ (Finset.mem_singleton.mpr h))
   have p0000 :=
-    @g_unab (.neg (.classMem (.cv n) (syn_cnnc)))
-      (syn_wo (.classEq (.cv m) (syn_c0))
-        (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-          (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin))))
+    @gUnab (.neg (.classMem (.cv n) (synCnnc)))
+      (synWo (.classEq (.cv m) (synC0))
+        (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+          (.classMem (synCopk (.cv n) (.cv m)) (synCltfin))))
       m
   have p0001 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_sn m (syn_c0)
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfSn m (synC0)
       (by
         exact
-          (show m ∉ ((syn_c0)).fv from
+          (show m ∉ ((synC0)).fv from
             (by
               rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0];
               exact (show m ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))))
   have p0002 :=
-    @g_elun (.cv m) (syn_cimak (syn_ccnvk (syn_cltfin)) (syn_csn (.cv n)))
-      (syn_csn (.cv n))
-  have p0003 := @g_vex m
-  have freeVariableCertificate0 : t ∉ ((syn_ccnvk (syn_cltfin))).fv := by
+    @gElun (.cv m) (synCimak (synCcnvk (synCltfin)) (synCsn (.cv n)))
+      (synCsn (.cv n))
+  have p0003 := @gVex m
+  have freeVariableCertificate0 : t ∉ ((synCcnvk (synCltfin))).fv := by
     simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccnvk,
       NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cltfin, Finset.notMem_empty,
       not_false_eq_true]
-  have freeVariableCertificate1 : t ∉ ((syn_csn (.cv n))).fv := by
+  have freeVariableCertificate1 : t ∉ ((synCsn (.cv n))).fv := by
     simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn,
       NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_singleton, fresh_t_ne_n,
       not_false_eq_true]
@@ -6546,16 +6549,16 @@ noncomputable def g_ltfintrilem1 (m : Var) (n : Var) (dv_m_n : m ≠ n) :
     simp only [NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_singleton,
       fresh_t_ne_m, not_false_eq_true]
   have p0004 :=
-    @g_elimak t (syn_ccnvk (syn_cltfin)) (syn_csn (.cv n)) (.cv m)
+    @gElimak t (synCcnvk (synCltfin)) (synCsn (.cv n)) (.cv m)
       freeVariableCertificate0 freeVariableCertificate1 freeVariableCertificate2 p0003
-  have p0005 := @g_vex n
-  have p0006 := @g_opkeq1 (.cv t) (.cv n) (.cv m)
+  have p0005 := @gVex n
+  have p0006 := @gOpkeq1 (.cv t) (.cv n) (.cv m)
   have p0007_e00_recanon :
     Nominal.NPrf
-      (.imp (.objEq t n) (.classEq (syn_copk (.cv t) (.cv m)) (syn_copk (.cv n) (.cv m)))) :=
+      (.imp (.objEq t n) (.classEq (synCopk (.cv t) (.cv m)) (synCopk (.cv n) (.cv m)))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_copk syn_cpr syn_cun syn_cnin syn_wnan syn_wa syn_ccompl syn_csn
+        unfold synCopk synCpr synCun synCnin synWnan synWa synCcompl synCsn
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.imp
@@ -6563,17 +6566,17 @@ noncomputable def g_ltfintrilem1 (m : Var) (n : Var) (dv_m_n : m ≠ n) :
         · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0006
   have p0007 :=
-    @g_eleq1d (.objEq t n) (syn_copk (.cv t) (.cv m)) (syn_copk (.cv n) (.cv m))
-      (syn_ccnvk (syn_cltfin)) p0007_e00_recanon
+    @gEleq1d (.objEq t n) (synCopk (.cv t) (.cv m)) (synCopk (.cv n) (.cv m))
+      (synCcnvk (synCltfin)) p0007_e00_recanon
   have p0008_e01_recanon :
     Nominal.NPrf
       (.imp (.classEq (.cv t) (.cv n))
-        (syn_wb (.classMem (syn_copk (.cv t) (.cv m)) (syn_ccnvk (syn_cltfin)))
-          (.classMem (syn_copk (.cv n) (.cv m)) (syn_ccnvk (syn_cltfin))))) :=
+        (synWb (.classMem (synCopk (.cv t) (.cv m)) (synCcnvk (synCltfin)))
+          (.classMem (synCopk (.cv n) (.cv m)) (synCcnvk (synCltfin))))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_copk syn_cpr syn_cun syn_cnin syn_wnan syn_wa syn_ccompl syn_csn
-          syn_ccnvk syn_wex syn_cltfin
+        unfold synWb synCopk synCpr synCun synCnin synWnan synWa synCcompl synCsn
+          synCcnvk synWex synCltfin
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.imp
@@ -6584,7 +6587,7 @@ noncomputable def g_ltfintrilem1 (m : Var) (n : Var) (dv_m_n : m ≠ n) :
     simp only [NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_singleton,
       fresh_t_ne_n, not_false_eq_true]
   have freeVariableCertificate4 :
-    t ∉ ((Wff.classMem (syn_copk (.cv n) (.cv m)) (syn_ccnvk (syn_cltfin)))).fv := by
+    t ∉ ((Wff.classMem (synCopk (.cv n) (.cv m)) (synCcnvk (synCltfin)))).fv := by
     simp only [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem,
       NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk,
       NFChoice.Compiler.CoreFVSimp.fv_class_cv,
@@ -6593,25 +6596,25 @@ noncomputable def g_ltfintrilem1 (m : Var) (n : Var) (dv_m_n : m ≠ n) :
       Finset.mem_singleton, Finset.notMem_empty, fresh_t_ne_n, fresh_t_ne_m, or_false,
       not_false_eq_true]
   have p0008 :=
-    @g_rexsn (.classMem (syn_copk (.cv t) (.cv m)) (syn_ccnvk (syn_cltfin)))
-      (.classMem (syn_copk (.cv n) (.cv m)) (syn_ccnvk (syn_cltfin))) t (.cv n)
+    @gRexsn (.classMem (synCopk (.cv t) (.cv m)) (synCcnvk (synCltfin)))
+      (.classMem (synCopk (.cv n) (.cv m)) (synCcnvk (synCltfin))) t (.cv n)
       freeVariableCertificate3 freeVariableCertificate4 p0005 p0008_e01_recanon
   have p0009 :=
-    @g_bitri (.classMem (.cv m) (syn_cimak (syn_ccnvk (syn_cltfin)) (syn_csn (.cv n))))
-      (syn_wrex t (syn_csn (.cv n))
-        (.classMem (syn_copk (.cv t) (.cv m)) (syn_ccnvk (syn_cltfin))))
-      (.classMem (syn_copk (.cv n) (.cv m)) (syn_ccnvk (syn_cltfin))) p0004 p0008
-  have p0010 := @g_opkelcnvk (.cv n) (.cv m) (syn_cltfin) p0005 p0003
+    @gBitri (.classMem (.cv m) (synCimak (synCcnvk (synCltfin)) (synCsn (.cv n))))
+      (synWrex t (synCsn (.cv n))
+        (.classMem (synCopk (.cv t) (.cv m)) (synCcnvk (synCltfin))))
+      (.classMem (synCopk (.cv n) (.cv m)) (synCcnvk (synCltfin))) p0004 p0008
+  have p0010 := @gOpkelcnvk (.cv n) (.cv m) (synCltfin) p0005 p0003
   have p0011 :=
-    @g_bitri (.classMem (.cv m) (syn_cimak (syn_ccnvk (syn_cltfin)) (syn_csn (.cv n))))
-      (.classMem (syn_copk (.cv n) (.cv m)) (syn_ccnvk (syn_cltfin)))
-      (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) p0009 p0010
-  have p0012 := @g_elsnc (.cv m) (.cv n) p0003
+    @gBitri (.classMem (.cv m) (synCimak (synCcnvk (synCltfin)) (synCsn (.cv n))))
+      (.classMem (synCopk (.cv n) (.cv m)) (synCcnvk (synCltfin)))
+      (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) p0009 p0010
+  have p0012 := @gElsnc (.cv m) (.cv n) p0003
   have p0013_e01_recanon :
-    Nominal.NPrf (syn_wb (.classMem (.cv m) (syn_csn (.cv n))) (.objEq m n)) :=
+    Nominal.NPrf (synWb (.classMem (.cv m) (synCsn (.cv n))) (.objEq m n)) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_csn
+        unfold synWb synCsn
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
@@ -6625,32 +6628,32 @@ noncomputable def g_ltfintrilem1 (m : Var) (n : Var) (dv_m_n : m ≠ n) :
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0012
   have p0013 :=
-    @g_orbi12i (.classMem (.cv m) (syn_cimak (syn_ccnvk (syn_cltfin)) (syn_csn (.cv n))))
-      (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin))
-      (.classMem (.cv m) (syn_csn (.cv n))) (.objEq m n) p0011 p0013_e01_recanon
+    @gOrbi12i (.classMem (.cv m) (synCimak (synCcnvk (synCltfin)) (synCsn (.cv n))))
+      (.classMem (synCopk (.cv m) (.cv n)) (synCltfin))
+      (.classMem (.cv m) (synCsn (.cv n))) (.objEq m n) p0011 p0013_e01_recanon
   have p0014 :=
-    @g_bitri
-      (.classMem (.cv m) (syn_cun (syn_cimak (syn_ccnvk (syn_cltfin)) (syn_csn (.cv n)))
-          (syn_csn (.cv n))))
-      (syn_wo (.classMem (.cv m) (syn_cimak (syn_ccnvk (syn_cltfin)) (syn_csn (.cv n))))
-        (.classMem (.cv m) (syn_csn (.cv n))))
-      (syn_wo (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)) p0002
+    @gBitri
+      (.classMem (.cv m) (synCun (synCimak (synCcnvk (synCltfin)) (synCsn (.cv n)))
+          (synCsn (.cv n))))
+      (synWo (.classMem (.cv m) (synCimak (synCcnvk (synCltfin)) (synCsn (.cv n))))
+        (.classMem (.cv m) (synCsn (.cv n))))
+      (synWo (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)) p0002
       p0013
   have p0015 :=
-    @g_elimak t (syn_cltfin) (syn_csn (.cv n)) (.cv m)
+    @gElimak t (synCltfin) (synCsn (.cv n)) (.cv m)
       (by
         exact
-          (show t ∉ ((syn_cltfin)).fv from
+          (show t ∉ ((synCltfin)).fv from
             (by
               rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cltfin];
               exact (show t ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))))
       freeVariableCertificate1 freeVariableCertificate2 p0003
   have p0016_e00_recanon :
     Nominal.NPrf
-      (.imp (.objEq t n) (.classEq (syn_copk (.cv t) (.cv m)) (syn_copk (.cv n) (.cv m)))) :=
+      (.imp (.objEq t n) (.classEq (synCopk (.cv t) (.cv m)) (synCopk (.cv n) (.cv m)))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_copk syn_cpr syn_cun syn_cnin syn_wnan syn_wa syn_ccompl syn_csn
+        unfold synCopk synCpr synCun synCnin synWnan synWa synCcompl synCsn
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.imp
@@ -6658,17 +6661,17 @@ noncomputable def g_ltfintrilem1 (m : Var) (n : Var) (dv_m_n : m ≠ n) :
         · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0006
   have p0016 :=
-    @g_eleq1d (.objEq t n) (syn_copk (.cv t) (.cv m)) (syn_copk (.cv n) (.cv m))
-      (syn_cltfin) p0016_e00_recanon
+    @gEleq1d (.objEq t n) (synCopk (.cv t) (.cv m)) (synCopk (.cv n) (.cv m))
+      (synCltfin) p0016_e00_recanon
   have p0017_e01_recanon :
     Nominal.NPrf
       (.imp (.classEq (.cv t) (.cv n))
-        (syn_wb (.classMem (syn_copk (.cv t) (.cv m)) (syn_cltfin))
-          (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin)))) :=
+        (synWb (.classMem (synCopk (.cv t) (.cv m)) (synCltfin))
+          (.classMem (synCopk (.cv n) (.cv m)) (synCltfin)))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_copk syn_cpr syn_cun syn_cnin syn_wnan syn_wa syn_ccompl syn_csn
-          syn_cltfin syn_wex
+        unfold synWb synCopk synCpr synCun synCnin synWnan synWa synCcompl synCsn
+          synCltfin synWex
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.imp
@@ -6676,7 +6679,7 @@ noncomputable def g_ltfintrilem1 (m : Var) (n : Var) (dv_m_n : m ≠ n) :
         · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0016
   have freeVariableCertificate5 :
-    t ∉ ((Wff.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin))).fv := by
+    t ∉ ((Wff.classMem (synCopk (.cv n) (.cv m)) (synCltfin))).fv := by
     simp only [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem,
       NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk,
       NFChoice.Compiler.CoreFVSimp.fv_class_cv,
@@ -6684,43 +6687,43 @@ noncomputable def g_ltfintrilem1 (m : Var) (n : Var) (dv_m_n : m ≠ n) :
       Finset.mem_singleton, Finset.notMem_empty, fresh_t_ne_n, fresh_t_ne_m, or_false,
       not_false_eq_true]
   have p0017 :=
-    @g_rexsn (.classMem (syn_copk (.cv t) (.cv m)) (syn_cltfin))
-      (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin)) t (.cv n)
+    @gRexsn (.classMem (synCopk (.cv t) (.cv m)) (synCltfin))
+      (.classMem (synCopk (.cv n) (.cv m)) (synCltfin)) t (.cv n)
       freeVariableCertificate3 freeVariableCertificate5 p0005 p0017_e01_recanon
   have p0018 :=
-    @g_bitri (.classMem (.cv m) (syn_cimak (syn_cltfin) (syn_csn (.cv n))))
-      (syn_wrex t (syn_csn (.cv n)) (.classMem (syn_copk (.cv t) (.cv m)) (syn_cltfin)))
-      (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin)) p0015 p0017
+    @gBitri (.classMem (.cv m) (synCimak (synCltfin) (synCsn (.cv n))))
+      (synWrex t (synCsn (.cv n)) (.classMem (synCopk (.cv t) (.cv m)) (synCltfin)))
+      (.classMem (synCopk (.cv n) (.cv m)) (synCltfin)) p0015 p0017
   have p0019 :=
-    @g_orbi12i
-      (.classMem (.cv m) (syn_cun (syn_cimak (syn_ccnvk (syn_cltfin)) (syn_csn (.cv n)))
-          (syn_csn (.cv n))))
-      (syn_wo (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n))
-      (.classMem (.cv m) (syn_cimak (syn_cltfin) (syn_csn (.cv n))))
-      (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin)) p0014 p0018
+    @gOrbi12i
+      (.classMem (.cv m) (synCun (synCimak (synCcnvk (synCltfin)) (synCsn (.cv n)))
+          (synCsn (.cv n))))
+      (synWo (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n))
+      (.classMem (.cv m) (synCimak (synCltfin) (synCsn (.cv n))))
+      (.classMem (synCopk (.cv n) (.cv m)) (synCltfin)) p0014 p0018
   have p0020 :=
-    @g_elun (.cv m)
-      (syn_cun (syn_cimak (syn_ccnvk (syn_cltfin)) (syn_csn (.cv n))) (syn_csn (.cv n)))
-      (syn_cimak (syn_cltfin) (syn_csn (.cv n)))
+    @gElun (.cv m)
+      (synCun (synCimak (synCcnvk (synCltfin)) (synCsn (.cv n))) (synCsn (.cv n)))
+      (synCimak (synCltfin) (synCsn (.cv n)))
   have p0021 :=
-    (Nominal.biimpRefl (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-        (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin))))
+    (Nominal.biimpRefl (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+        (.classMem (synCopk (.cv n) (.cv m)) (synCltfin))))
   have p0022 :=
-    @g_n_3bitr4i
-      (syn_wo (.classMem (.cv m) (syn_cun (syn_cimak (syn_ccnvk (syn_cltfin)) (syn_csn (.cv n)))
-            (syn_csn (.cv n)))) (.classMem (.cv m) (syn_cimak (syn_cltfin) (syn_csn (.cv n)))))
-      (syn_wo (syn_wo (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n))
-        (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin)))
-      (.classMem (.cv m) (syn_cun
-          (syn_cun (syn_cimak (syn_ccnvk (syn_cltfin)) (syn_csn (.cv n))) (syn_csn (.cv n)))
-          (syn_cimak (syn_cltfin) (syn_csn (.cv n)))))
-      (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-        (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin)))
+    @gN3bitr4i
+      (synWo (.classMem (.cv m) (synCun (synCimak (synCcnvk (synCltfin)) (synCsn (.cv n)))
+            (synCsn (.cv n)))) (.classMem (.cv m) (synCimak (synCltfin) (synCsn (.cv n)))))
+      (synWo (synWo (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n))
+        (.classMem (synCopk (.cv n) (.cv m)) (synCltfin)))
+      (.classMem (.cv m) (synCun
+          (synCun (synCimak (synCcnvk (synCltfin)) (synCsn (.cv n))) (synCsn (.cv n)))
+          (synCimak (synCltfin) (synCsn (.cv n)))))
+      (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+        (.classMem (synCopk (.cv n) (.cv m)) (synCltfin)))
       p0019 p0020 p0021
   have freeVariableCertificate6 :
     m ∉
-      ((syn_cun (syn_cun (syn_cimak (syn_ccnvk (syn_cltfin)) (syn_csn (.cv n)))
-            (syn_csn (.cv n))) (syn_cimak (syn_cltfin) (syn_csn (.cv n))))).fv :=
+      ((synCun (synCun (synCimak (synCcnvk (synCltfin)) (synCsn (.cv n)))
+            (synCsn (.cv n))) (synCimak (synCltfin) (synCsn (.cv n))))).fv :=
     by
     simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun,
       NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak,
@@ -6730,162 +6733,162 @@ noncomputable def g_ltfintrilem1 (m : Var) (n : Var) (dv_m_n : m ≠ n) :
       NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_union, Finset.mem_singleton,
       Finset.notMem_empty, dv_m_n, or_false, not_false_eq_true]
   have p0023 :=
-    @g_eqabi
-      (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-        (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin)))
+    @gEqabi
+      (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+        (.classMem (synCopk (.cv n) (.cv m)) (synCltfin)))
       m
-      (syn_cun
-        (syn_cun (syn_cimak (syn_ccnvk (syn_cltfin)) (syn_csn (.cv n))) (syn_csn (.cv n)))
-        (syn_cimak (syn_cltfin) (syn_csn (.cv n))))
+      (synCun
+        (synCun (synCimak (synCcnvk (synCltfin)) (synCsn (.cv n))) (synCsn (.cv n)))
+        (synCimak (synCltfin) (synCsn (.cv n))))
       freeVariableCertificate6 p0022
   have p0024 :=
-    @g_uneq12i (syn_csn (syn_c0)) (.cab m (.classEq (.cv m) (syn_c0)))
-      (syn_cun
-        (syn_cun (syn_cimak (syn_ccnvk (syn_cltfin)) (syn_csn (.cv n))) (syn_csn (.cv n)))
-        (syn_cimak (syn_cltfin) (syn_csn (.cv n))))
-      (.cab m (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-          (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin))))
+    @gUneq12i (synCsn (synC0)) (.cab m (.classEq (.cv m) (synC0)))
+      (synCun
+        (synCun (synCimak (synCcnvk (synCltfin)) (synCsn (.cv n))) (synCsn (.cv n)))
+        (synCimak (synCltfin) (synCsn (.cv n))))
+      (.cab m (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+          (.classMem (synCopk (.cv n) (.cv m)) (synCltfin))))
       p0001 p0023
   have p0025 :=
-    @g_unab (.classEq (.cv m) (syn_c0))
-      (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-        (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin)))
+    @gUnab (.classEq (.cv m) (synC0))
+      (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+        (.classMem (synCopk (.cv n) (.cv m)) (synCltfin)))
       m
   have p0026 :=
-    @g_eqtri
-      (syn_cun (syn_csn (syn_c0)) (syn_cun
-          (syn_cun (syn_cimak (syn_ccnvk (syn_cltfin)) (syn_csn (.cv n))) (syn_csn (.cv n)))
-          (syn_cimak (syn_cltfin) (syn_csn (.cv n)))))
-      (syn_cun (.cab m (.classEq (.cv m) (syn_c0))) (.cab m
-          (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-            (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin)))))
-      (.cab m (syn_wo (.classEq (.cv m) (syn_c0))
-          (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-            (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin)))))
+    @gEqtri
+      (synCun (synCsn (synC0)) (synCun
+          (synCun (synCimak (synCcnvk (synCltfin)) (synCsn (.cv n))) (synCsn (.cv n)))
+          (synCimak (synCltfin) (synCsn (.cv n)))))
+      (synCun (.cab m (.classEq (.cv m) (synC0))) (.cab m
+          (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+            (.classMem (synCopk (.cv n) (.cv m)) (synCltfin)))))
+      (.cab m (synWo (.classEq (.cv m) (synC0))
+          (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+            (.classMem (synCopk (.cv n) (.cv m)) (synCltfin)))))
       p0024 p0025
   have p0027 :=
-    @g_uneq2i
-      (syn_cun (syn_csn (syn_c0)) (syn_cun
-          (syn_cun (syn_cimak (syn_ccnvk (syn_cltfin)) (syn_csn (.cv n))) (syn_csn (.cv n)))
-          (syn_cimak (syn_cltfin) (syn_csn (.cv n)))))
-      (.cab m (syn_wo (.classEq (.cv m) (syn_c0))
-          (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-            (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin)))))
-      (.cab m (.neg (.classMem (.cv n) (syn_cnnc)))) p0026
+    @gUneq2i
+      (synCun (synCsn (synC0)) (synCun
+          (synCun (synCimak (synCcnvk (synCltfin)) (synCsn (.cv n))) (synCsn (.cv n)))
+          (synCimak (synCltfin) (synCsn (.cv n)))))
+      (.cab m (synWo (.classEq (.cv m) (synC0))
+          (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+            (.classMem (synCopk (.cv n) (.cv m)) (synCltfin)))))
+      (.cab m (.neg (.classMem (.cv n) (synCnnc)))) p0026
   have p0028 :=
-    @g_imor (.classMem (.cv n) (syn_cnnc))
-      (.imp (syn_wne (.cv m) (syn_c0))
-        (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-          (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin))))
-  have p0029 := (Nominal.biimpRefl (syn_wne (.cv m) (syn_c0)))
+    @gImor (.classMem (.cv n) (synCnnc))
+      (.imp (synWne (.cv m) (synC0))
+        (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+          (.classMem (synCopk (.cv n) (.cv m)) (synCltfin))))
+  have p0029 := (Nominal.biimpRefl (synWne (.cv m) (synC0)))
   have p0030 :=
-    @g_imbi1i (syn_wne (.cv m) (syn_c0)) (.neg (.classEq (.cv m) (syn_c0)))
-      (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-        (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin)))
+    @gImbi1i (synWne (.cv m) (synC0)) (.neg (.classEq (.cv m) (synC0)))
+      (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+        (.classMem (synCopk (.cv n) (.cv m)) (synCltfin)))
       p0029
   have p0031 :=
-    (Nominal.biimpRefl (syn_wo (.classEq (.cv m) (syn_c0))
-        (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-          (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin)))))
+    (Nominal.biimpRefl (synWo (.classEq (.cv m) (synC0))
+        (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+          (.classMem (synCopk (.cv n) (.cv m)) (synCltfin)))))
   have p0032 :=
-    @g_bitr4i
-      (.imp (syn_wne (.cv m) (syn_c0))
-        (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-          (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin))))
-      (.imp (.neg (.classEq (.cv m) (syn_c0)))
-        (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-          (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin))))
-      (syn_wo (.classEq (.cv m) (syn_c0))
-        (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-          (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin))))
+    @gBitr4i
+      (.imp (synWne (.cv m) (synC0))
+        (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+          (.classMem (synCopk (.cv n) (.cv m)) (synCltfin))))
+      (.imp (.neg (.classEq (.cv m) (synC0)))
+        (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+          (.classMem (synCopk (.cv n) (.cv m)) (synCltfin))))
+      (synWo (.classEq (.cv m) (synC0))
+        (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+          (.classMem (synCopk (.cv n) (.cv m)) (synCltfin))))
       p0030 p0031
   have p0033 :=
-    @g_orbi2i
-      (.imp (syn_wne (.cv m) (syn_c0))
-        (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-          (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin))))
-      (syn_wo (.classEq (.cv m) (syn_c0))
-        (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-          (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin))))
-      (.neg (.classMem (.cv n) (syn_cnnc))) p0032
+    @gOrbi2i
+      (.imp (synWne (.cv m) (synC0))
+        (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+          (.classMem (synCopk (.cv n) (.cv m)) (synCltfin))))
+      (synWo (.classEq (.cv m) (synC0))
+        (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+          (.classMem (synCopk (.cv n) (.cv m)) (synCltfin))))
+      (.neg (.classMem (.cv n) (synCnnc))) p0032
   have p0034 :=
-    @g_bitri
-      (.imp (.classMem (.cv n) (syn_cnnc)) (.imp (syn_wne (.cv m) (syn_c0))
-          (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-            (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin)))))
-      (syn_wo (.neg (.classMem (.cv n) (syn_cnnc))) (.imp (syn_wne (.cv m) (syn_c0))
-          (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-            (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin)))))
-      (syn_wo (.neg (.classMem (.cv n) (syn_cnnc))) (syn_wo (.classEq (.cv m) (syn_c0))
-          (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-            (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin)))))
+    @gBitri
+      (.imp (.classMem (.cv n) (synCnnc)) (.imp (synWne (.cv m) (synC0))
+          (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+            (.classMem (synCopk (.cv n) (.cv m)) (synCltfin)))))
+      (synWo (.neg (.classMem (.cv n) (synCnnc))) (.imp (synWne (.cv m) (synC0))
+          (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+            (.classMem (synCopk (.cv n) (.cv m)) (synCltfin)))))
+      (synWo (.neg (.classMem (.cv n) (synCnnc))) (synWo (.classEq (.cv m) (synC0))
+          (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+            (.classMem (synCopk (.cv n) (.cv m)) (synCltfin)))))
       p0028 p0033
   have p0035 :=
-    @g_abbii
-      (.imp (.classMem (.cv n) (syn_cnnc)) (.imp (syn_wne (.cv m) (syn_c0))
-          (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-            (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin)))))
-      (syn_wo (.neg (.classMem (.cv n) (syn_cnnc))) (syn_wo (.classEq (.cv m) (syn_c0))
-          (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-            (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin)))))
+    @gAbbii
+      (.imp (.classMem (.cv n) (synCnnc)) (.imp (synWne (.cv m) (synC0))
+          (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+            (.classMem (synCopk (.cv n) (.cv m)) (synCltfin)))))
+      (synWo (.neg (.classMem (.cv n) (synCnnc))) (synWo (.classEq (.cv m) (synC0))
+          (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+            (.classMem (synCopk (.cv n) (.cv m)) (synCltfin)))))
       m p0034
   have p0036 :=
-    @g_n_3eqtr4i
-      (syn_cun (.cab m (.neg (.classMem (.cv n) (syn_cnnc)))) (.cab m
-          (syn_wo (.classEq (.cv m) (syn_c0))
-            (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-              (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin))))))
-      (.cab m (syn_wo (.neg (.classMem (.cv n) (syn_cnnc))) (syn_wo (.classEq (.cv m) (syn_c0))
-            (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-              (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin))))))
-      (syn_cun (.cab m (.neg (.classMem (.cv n) (syn_cnnc)))) (syn_cun (syn_csn (syn_c0))
-          (syn_cun (syn_cun (syn_cimak (syn_ccnvk (syn_cltfin)) (syn_csn (.cv n)))
-              (syn_csn (.cv n))) (syn_cimak (syn_cltfin) (syn_csn (.cv n))))))
-      (.cab m (.imp (.classMem (.cv n) (syn_cnnc)) (.imp (syn_wne (.cv m) (syn_c0))
-            (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-              (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin))))))
+    @gN3eqtr4i
+      (synCun (.cab m (.neg (.classMem (.cv n) (synCnnc)))) (.cab m
+          (synWo (.classEq (.cv m) (synC0))
+            (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+              (.classMem (synCopk (.cv n) (.cv m)) (synCltfin))))))
+      (.cab m (synWo (.neg (.classMem (.cv n) (synCnnc))) (synWo (.classEq (.cv m) (synC0))
+            (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+              (.classMem (synCopk (.cv n) (.cv m)) (synCltfin))))))
+      (synCun (.cab m (.neg (.classMem (.cv n) (synCnnc)))) (synCun (synCsn (synC0))
+          (synCun (synCun (synCimak (synCcnvk (synCltfin)) (synCsn (.cv n)))
+              (synCsn (.cv n))) (synCimak (synCltfin) (synCsn (.cv n))))))
+      (.cab m (.imp (.classMem (.cv n) (synCnnc)) (.imp (synWne (.cv m) (synC0))
+            (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+              (.classMem (synCopk (.cv n) (.cv m)) (synCltfin))))))
       p0000 p0027 p0035
-  have freeVariableCertificate7 : m ∉ ((Wff.neg (.classMem (.cv n) (syn_cnnc)))).fv := by
+  have freeVariableCertificate7 : m ∉ ((Wff.neg (.classMem (.cv n) (synCnnc)))).fv := by
     simp only [NFChoice.Compiler.CoreFVSimp.fv_wff_neg,
       NFChoice.Compiler.CoreFVSimp.fv_wff_classMem,
       NFChoice.Compiler.CoreFVSimp.fv_class_cv,
       NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnnc, Finset.mem_union,
       Finset.mem_singleton, Finset.notMem_empty, dv_m_n, or_false, not_false_eq_true]
-  have p0037 := @g_abexv (.neg (.classMem (.cv n) (syn_cnnc))) m freeVariableCertificate7
-  have p0038 := @g_snex (syn_c0)
-  have p0039 := @g_ltfinex
-  have p0040 := @g_cnvkex (syn_cltfin) p0039
-  have p0041 := @g_snex (.cv n)
-  have p0042 := @g_imakex (syn_ccnvk (syn_cltfin)) (syn_csn (.cv n)) p0040 p0041
+  have p0037 := @gAbexv (.neg (.classMem (.cv n) (synCnnc))) m freeVariableCertificate7
+  have p0038 := @gSnex (synC0)
+  have p0039 := @gLtfinex
+  have p0040 := @gCnvkex (synCltfin) p0039
+  have p0041 := @gSnex (.cv n)
+  have p0042 := @gImakex (synCcnvk (synCltfin)) (synCsn (.cv n)) p0040 p0041
   have p0043 :=
-    @g_unex (syn_cimak (syn_ccnvk (syn_cltfin)) (syn_csn (.cv n))) (syn_csn (.cv n)) p0042
+    @gUnex (synCimak (synCcnvk (synCltfin)) (synCsn (.cv n))) (synCsn (.cv n)) p0042
       p0041
-  have p0045 := @g_imakex (syn_cltfin) (syn_csn (.cv n)) p0039 p0041
+  have p0045 := @gImakex (synCltfin) (synCsn (.cv n)) p0039 p0041
   have p0046 :=
-    @g_unex
-      (syn_cun (syn_cimak (syn_ccnvk (syn_cltfin)) (syn_csn (.cv n))) (syn_csn (.cv n)))
-      (syn_cimak (syn_cltfin) (syn_csn (.cv n))) p0043 p0045
+    @gUnex
+      (synCun (synCimak (synCcnvk (synCltfin)) (synCsn (.cv n))) (synCsn (.cv n)))
+      (synCimak (synCltfin) (synCsn (.cv n))) p0043 p0045
   have p0047 :=
-    @g_unex (syn_csn (syn_c0))
-      (syn_cun
-        (syn_cun (syn_cimak (syn_ccnvk (syn_cltfin)) (syn_csn (.cv n))) (syn_csn (.cv n)))
-        (syn_cimak (syn_cltfin) (syn_csn (.cv n))))
+    @gUnex (synCsn (synC0))
+      (synCun
+        (synCun (synCimak (synCcnvk (synCltfin)) (synCsn (.cv n))) (synCsn (.cv n)))
+        (synCimak (synCltfin) (synCsn (.cv n))))
       p0038 p0046
   have p0048 :=
-    @g_unex (.cab m (.neg (.classMem (.cv n) (syn_cnnc))))
-      (syn_cun (syn_csn (syn_c0)) (syn_cun
-          (syn_cun (syn_cimak (syn_ccnvk (syn_cltfin)) (syn_csn (.cv n))) (syn_csn (.cv n)))
-          (syn_cimak (syn_cltfin) (syn_csn (.cv n)))))
+    @gUnex (.cab m (.neg (.classMem (.cv n) (synCnnc))))
+      (synCun (synCsn (synC0)) (synCun
+          (synCun (synCimak (synCcnvk (synCltfin)) (synCsn (.cv n))) (synCsn (.cv n)))
+          (synCimak (synCltfin) (synCsn (.cv n)))))
       p0037 p0047
   have p0049 :=
-    @g_eqeltrri
-      (syn_cun (.cab m (.neg (.classMem (.cv n) (syn_cnnc)))) (syn_cun (syn_csn (syn_c0))
-          (syn_cun (syn_cun (syn_cimak (syn_ccnvk (syn_cltfin)) (syn_csn (.cv n)))
-              (syn_csn (.cv n))) (syn_cimak (syn_cltfin) (syn_csn (.cv n))))))
-      (.cab m (.imp (.classMem (.cv n) (syn_cnnc)) (.imp (syn_wne (.cv m) (syn_c0))
-            (syn_w3o (.classMem (syn_copk (.cv m) (.cv n)) (syn_cltfin)) (.objEq m n)
-              (.classMem (syn_copk (.cv n) (.cv m)) (syn_cltfin))))))
-      (syn_cvv) p0036 p0048
+    @gEqeltrri
+      (synCun (.cab m (.neg (.classMem (.cv n) (synCnnc)))) (synCun (synCsn (synC0))
+          (synCun (synCun (synCimak (synCcnvk (synCltfin)) (synCsn (.cv n)))
+              (synCsn (.cv n))) (synCimak (synCltfin) (synCsn (.cv n))))))
+      (.cab m (.imp (.classMem (.cv n) (synCnnc)) (.imp (synWne (.cv m) (synC0))
+            (synW3o (.classMem (synCopk (.cv m) (.cv n)) (synCltfin)) (.objEq m n)
+              (.classMem (synCopk (.cv n) (.cv m)) (synCltfin))))))
+      (synCvv) p0036 p0048
   exact p0049
 
 

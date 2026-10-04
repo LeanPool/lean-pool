@@ -38,26 +38,26 @@ theorem underBinder_substIndexAt (replacement depth : Nat) :
 theorem renameTerm_substIndexAt (replacement depth : Nat) :
     ∀ {l : Nat} (t : Fol.preterm LNF l),
       renameTerm (fun index => substIndexAt index replacement depth) t =
-        Fol.subst_term t (&replacement) depth :=
+        Fol.substTerm t (&replacement) depth :=
   by
   intro l t
   induction t with
   | var index => simp [renameTerm, substTerm_var_var]
   | func f => rfl
-  | app t s iht ihs => simp [renameTerm, Fol.subst_term, iht, ihs]
+  | app t s iht ihs => simp [renameTerm, Fol.substTerm, iht, ihs]
 
 theorem renameFormula_substIndexAt :
     ∀ (replacement depth : Nat) {l : Nat} (p : @Fol.preformula LNF l),
       renameFormula (fun index => substIndexAt index replacement depth) p =
-        Fol.subst_formula p (&replacement) depth :=
+        Fol.substFormula p (&replacement) depth :=
   by
   intro replacement depth l p
   induction p generalizing depth with
   | falsum => rfl
-  | equal s t => simp [renameFormula, Fol.subst_formula, renameTerm_substIndexAt]
+  | equal s t => simp [renameFormula, Fol.substFormula, renameTerm_substIndexAt]
   | rel r => rfl
-  | apprel p t ih => simp [renameFormula, Fol.subst_formula, ih, renameTerm_substIndexAt]
-  | imp p q ihp ihq => simp [renameFormula, Fol.subst_formula, ihp, ihq]
+  | apprel p t ih => simp [renameFormula, Fol.substFormula, ih, renameTerm_substIndexAt]
+  | imp p q ihp ihq => simp [renameFormula, Fol.substFormula, ihp, ihq]
   | all p ih =>
     rw [renameFormula]
     rw [underBinder_substIndexAt]
@@ -121,7 +121,7 @@ theorem ax11Inst_lowerWff (rho : Var → Nat) (y : Var) (p : Wff) :
       simp [updateRho, liftRho]
     · simp [updateRho, hz]
   rw [hUpdate] at h
-  simpa [Fol.lift_term1, Fol.lift_term_at, liftIndexAt] using h
+  simpa [Fol.liftTerm1, Fol.liftTermAt, liftIndexAt] using h
 
 /-- Total kernel-checked nominal implementation of Metamath `ax-11`. -/
 @[expose]
@@ -133,7 +133,7 @@ noncomputable def ax11Structural (x y : Var) (p : Wff) :
         GenericLogicalHandlers.ax11Inst (lowerWff (bindRho rho y) p) (&(rho y)) =
             lowerWff (liftRho rho) p :=
           ax11Inst_lowerWff rho y p
-        _ = (lowerWff (bindRho (liftRho rho) x) p) [Fol.lift_term1 (&(rho x)) // 0]f :=
+        _ = (lowerWff (bindRho (liftRho rho) x) p) [Fol.liftTerm1 (&(rho x)) // 0]f :=
           by
           symm
           have h := lowerWff_template_subst rho x (rho x + 1) p
@@ -145,7 +145,7 @@ noncomputable def ax11Structural (x y : Var) (p : Wff) :
               simp [updateRho, liftRho]
             · simp [updateRho, hz]
           rw [hUpdate] at h
-          simpa [Fol.lift_term1, Fol.lift_term_at, liftIndexAt] using h)
+          simpa [Fol.liftTerm1, Fol.liftTermAt, liftIndexAt] using h)
     (fun rho _hyx => by
       have h := lowerWff_template_subst rho x 0 p
       rw [show updateRho (liftRho rho) x 0 = bindRho rho x from rfl] at h

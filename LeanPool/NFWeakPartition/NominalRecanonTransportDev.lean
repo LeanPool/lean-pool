@@ -25,6 +25,7 @@ open NFChoice.DirectCertificate.ClassBoundaryBiimpDev009
 open NFChoice.DirectCertificate.ClassBoundaryRawHandlersDev010
 open NFChoice.DirectNominalPrf.Nominal.AtomicRecanonDev
 
+/-- Proof-translation construction identified upstream as `Theory`. -/
 abbrev Theory : Fol.SentTheory LNF :=
   LiteralHailperinNF
 
@@ -35,10 +36,12 @@ in `Type`; the source emitter produces it directly.
 -/
 
 mutual
+  /-- Proof-translation construction identified upstream as `TRecanonClass`. -/
   inductive TRecanonClass : Class → Class → Type where
     | same (A : Class) : TRecanonClass A A
     |
     cab {x : Var} {p q : Wff} (h : TRecanonWff p q) : TRecanonClass (.cab x p) (.cab x q)
+  /-- Proof-translation construction identified upstream as `TRecanonWff`. -/
   inductive TRecanonWff : Wff → Wff → Type where
     | same (p : Wff) : TRecanonWff p p
     |
@@ -57,15 +60,19 @@ mutual
       TRecanonWff (.classMem A B) (.classMem A' B')
 end
 
+/-- Proof-translation construction identified upstream as `liftedTheoryBiimp`. -/
 @[expose]
-noncomputable def liftedTheoryBiimp {p q : Fol.formula LNF} (h : Theory.fst ⊢ p ⇔ q) :
-    Fol.lift_formula1 '' Theory.fst ⊢ p ⇔ q :=
+noncomputable def _root_.NFChoice.DirectNominalPrf.Nominal.RecanonTransportDev.liftedTheoryBiimp
+    {p q : Fol.formula LNF} (h : Theory.fst ⊢ p ⇔ q) :
+    Fol.liftFormula1 '' Theory.fst ⊢ p ⇔ q :=
   by
   rw [Fol.SentTheory.lift_irrel Theory]
   exact h
 
+/-- Proof-translation construction identified upstream as `impCongr`. -/
 @[expose]
-noncomputable def impCongr {L : Fol.Language} {Γ : Set (Fol.formula L)}
+noncomputable def _root_.NFChoice.DirectNominalPrf.Nominal.RecanonTransportDev.impCongr
+    {L : Fol.Language} {Γ : Set (Fol.formula L)}
     {p p' q q' : Fol.formula L} (hp : Γ ⊢ p ⇔ p') (hq : Γ ⊢ q ⇔ q') :
     Γ ⊢ (p ⟹ q) ⇔ (p' ⟹ q') := by
   apply Fol.biimpI
@@ -104,8 +111,10 @@ noncomputable def impCongr {L : Fol.Language} {Γ : Set (Fol.formula L)}
     have hp0 : Δ ⊢ p := Fol.axm1
     exact biimpBackward hqΔ (Fol.prf.impE p' hImp (biimpForward hpΔ hp0))
 
+/-- Proof-translation construction identified upstream as `andCongr`. -/
 @[expose]
-noncomputable def andCongr {L : Fol.Language} {Γ : Set (Fol.formula L)}
+noncomputable def _root_.NFChoice.DirectNominalPrf.Nominal.RecanonTransportDev.andCongr
+    {L : Fol.Language} {Γ : Set (Fol.formula L)}
     {p p' q q' : Fol.formula L} (hp : Γ ⊢ p ⇔ p') (hq : Γ ⊢ q ⇔ q') :
     Γ ⊢ (p ⊓' q) ⇔ (p' ⊓' q') := by
   apply Fol.biimpI
@@ -125,43 +134,45 @@ noncomputable def andCongr {L : Fol.Language} {Γ : Set (Fol.formula L)}
         (biimpBackward hqΔ (Fol.andE2 p' hSource))
 
 mutual
+  /-- Proof-translation construction identified upstream as `classBridge`. -/
   @[expose]
-  noncomputable def classBridge :
+  noncomputable def _root_.NFChoice.DirectNominalPrf.Nominal.RecanonTransportDev.classBridge :
       {A B : Class} →
         TRecanonClass A B →
           ∀ (rho : Var → Nat) (candidate : Nat),
             Theory.fst ⊢ lowerClassPred rho candidate A ⇔ lowerClassPred rho candidate B
     | _, _, .same A => fun rho candidate =>
-      Fol.biimp_refl Theory.fst (lowerClassPred rho candidate A)
+      Fol.biimpReflCertificate Theory.fst (lowerClassPred rho candidate A)
     | _, _, .cab h => fun rho candidate => wffBridge h (updateRho rho _ candidate)
+  /-- Proof-translation construction identified upstream as `wffBridge`. -/
   @[expose]
-  noncomputable def wffBridge :
+  noncomputable def _root_.NFChoice.DirectNominalPrf.Nominal.RecanonTransportDev.wffBridge :
       {p q : Wff} →
         TRecanonWff p q → ∀ rho : Var → Nat, Theory.fst ⊢ lowerWff rho p ⇔ lowerWff rho q
-    | _, _, .same p => fun rho => Fol.biimp_refl Theory.fst (lowerWff rho p)
+    | _, _, .same p => fun rho => Fol.biimpReflCertificate Theory.fst (lowerWff rho p)
     | _, _, .imp hp hq => fun rho => impCongr (wffBridge hp rho) (wffBridge hq rho)
     | _, _, .all h => fun rho => by
       exact allCongr (liftedTheoryBiimp (wffBridge h (bindRho rho _)))
     | _, _, .objEq_classEq x y => fun rho => by
       simpa [biimp, conj, neg, Fol.biimp, Fol.ex', Fol.and', Fol.not', lowerWff,
         lowerClassPred, liftRho, classEq, cvPred, GenericLogicalHandlers.nfMem, mem,
-        Fol.lift_term1, Fol.lift_term_at] using (objEqClassEqBiimp (&(rho x)) (&(rho y)))
+        Fol.liftTerm1, Fol.liftTermAt] using (objEqClassEqBiimp (&(rho x)) (&(rho y)))
     | _, _, .classEq_objEq x y => fun rho => by
       simpa [biimp, conj, neg, Fol.biimp, Fol.ex', Fol.and', Fol.not', lowerWff,
         lowerClassPred, liftRho, classEq, cvPred, GenericLogicalHandlers.nfMem, mem,
-        Fol.lift_term1, Fol.lift_term_at] using
+        Fol.liftTerm1, Fol.liftTermAt] using
         (biimpSymm (objEqClassEqBiimp (&(rho x)) (&(rho y))))
     | _, _, .objMem_classMem x y => fun rho => by
       simpa [biimp, conj, neg, Fol.biimp, Fol.ex', Fol.and', Fol.not', lowerWff,
         lowerClassPred, liftRho, classMem, cvPred, applyPred, represents,
         GenericLogicalHandlers.nfMem, mem, ex, conj, neg, biimp, Fol.and', Fol.not',
-        Fol.lift_term1, Fol.lift_term_at] using
+        Fol.liftTerm1, Fol.liftTermAt] using
         (objMemClassMemBiimp (&(rho x)) (&(rho y)))
     | _, _, .classMem_objMem x y => fun rho => by
       simpa [biimp, conj, neg, Fol.biimp, Fol.ex', Fol.and', Fol.not', lowerWff,
         lowerClassPred, liftRho, classMem, cvPred, applyPred, represents,
         GenericLogicalHandlers.nfMem, mem, ex, conj, neg, biimp, Fol.and', Fol.not',
-        Fol.lift_term1, Fol.lift_term_at] using
+        Fol.liftTerm1, Fol.liftTermAt] using
         (biimpSymm (objMemClassMemBiimp (&(rho x)) (&(rho y))))
     | _, _, .classEq hA hB => fun rho =>
       by
@@ -175,7 +186,7 @@ mutual
         Theory.fst ⊢
           GenericLogicalHandlers.nfMem (&0) (&1) ⇔
             GenericLogicalHandlers.nfMem (&0) (&1) :=
-        Fol.biimp_refl _ _
+        Fol.biimpReflCertificate _ _
       have hRepBody := biimpCongr hFixed (classBridge hA (liftRho (liftRho rho)) 0)
       have hRep := allCongr (liftedTheoryBiimp hRepBody)
       have hBody := andCongr hRep (classBridge hB (liftRho rho) 0)
@@ -183,8 +194,10 @@ mutual
         neg, biimp, Fol.and', Fol.not'] using (exCongr (liftedTheoryBiimp hBody))
 end
 
+/-- Proof-translation construction identified upstream as `transport`. -/
 @[expose]
-noncomputable def transport {p q : Wff} (h : TRecanonWff p q) (hp : NPrf p) : NPrf q :=
+noncomputable def _root_.NFChoice.DirectNominalPrf.Nominal.RecanonTransportDev.transport
+    {p q : Wff} (h : TRecanonWff p q) (hp : NPrf p) : NPrf q :=
   fun rho => biimpForward (wffBridge h rho) (hp rho)
 
 

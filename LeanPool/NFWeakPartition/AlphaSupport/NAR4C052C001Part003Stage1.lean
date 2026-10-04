@@ -31,16 +31,16 @@ open NFChoice.DirectNominalPrf
 open NFChoice.DirectNominalPrf.Nominal
 
 theorem nb052_support_mem_0087 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_003 x y) ∈
-      (((Class.cab (nb052_alpha_dummy_008 x y)
-            (syn_wrex (nb052_alpha_dummy_009 x y) (Class.cv (nb052_alpha_dummy_003 x y))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))
-                  (syn_csn (syn_c0c))))))).fv ∪ ((Class.cab (nb052_alpha_dummy_008 x y)
-            (syn_wrex (nb052_alpha_dummy_009 x y) (Class.cv (nb052_alpha_dummy_003 x y))
-              (Wff.classEq (Class.cv (nb052_alpha_dummy_008 x y))
-                (syn_cun (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))
-                  (syn_csn (syn_c0c))))))).fv) :=
+    (nb052AlphaDummy003 x y) ∈
+      (((Class.cab (nb052AlphaDummy008 x y)
+            (synWrex (nb052AlphaDummy009 x y) (Class.cv (nb052AlphaDummy003 x y))
+              (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy009 x y)))
+                  (synCsn (synC0c))))))).fv ∪ ((Class.cab (nb052AlphaDummy008 x y)
+            (synWrex (nb052AlphaDummy009 x y) (Class.cv (nb052AlphaDummy003 x y))
+              (Wff.classEq (Class.cv (nb052AlphaDummy008 x y))
+                (synCun (synCphi (Class.cv (nb052AlphaDummy009 x y)))
+                  (synCsn (synC0c))))))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -58,9 +58,9 @@ theorem nb052_support_mem_0087 (x : Var) (y : Var) :
       exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0088 :
-    (nb052_alpha_dummy_007) ∈
-      (((syn_ccompl (syn_cphi (Class.cv (nb052_alpha_dummy_007))))).fv ∪
-        ((syn_ccompl (syn_csn (syn_c0c)))).fv) :=
+    (nb052AlphaDummy007) ∈
+      (((synCcompl (synCphi (Class.cv (nb052AlphaDummy007))))).fv ∪
+        ((synCcompl (synCsn (synC0c)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -70,9 +70,9 @@ theorem nb052_support_mem_0088 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0089 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_009 x y) ∈
-      (((syn_ccompl (syn_cphi (Class.cv (nb052_alpha_dummy_009 x y))))).fv ∪
-        ((syn_ccompl (syn_csn (syn_c0c)))).fv) :=
+    (nb052AlphaDummy009 x y) ∈
+      (((synCcompl (synCphi (Class.cv (nb052AlphaDummy009 x y))))).fv ∪
+        ((synCcompl (synCsn (synC0c)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -82,9 +82,9 @@ theorem nb052_support_mem_0089 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0090 :
-    (nb052_alpha_dummy_007) ∈
-      (((syn_cphi (Class.cv (nb052_alpha_dummy_007)))).fv ∪
-        ((syn_cphi (Class.cv (nb052_alpha_dummy_007)))).fv) :=
+    (nb052AlphaDummy007) ∈
+      (((synCphi (Class.cv (nb052AlphaDummy007)))).fv ∪
+        ((synCphi (Class.cv (nb052AlphaDummy007)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -93,9 +93,9 @@ theorem nb052_support_mem_0090 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0091 (x : Var) (y : Var) :
-    (nb052_alpha_dummy_009 x y) ∈
-      (((syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))).fv ∪
-        ((syn_cphi (Class.cv (nb052_alpha_dummy_009 x y)))).fv) :=
+    (nb052AlphaDummy009 x y) ∈
+      (((synCphi (Class.cv (nb052AlphaDummy009 x y)))).fv ∪
+        ((synCphi (Class.cv (nb052AlphaDummy009 x y)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -104,9 +104,9 @@ theorem nb052_support_mem_0091 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0092 :
-    (nb052_alpha_dummy_000) ∈
-      (((syn_ccompl (Class.cv (nb052_alpha_dummy_000)))).fv ∪
-        ((syn_ccompl (Class.cv (nb052_alpha_dummy_001)))).fv) :=
+    (nb052AlphaDummy000) ∈
+      (((synCcompl (Class.cv (nb052AlphaDummy000)))).fv ∪
+        ((synCcompl (Class.cv (nb052AlphaDummy001)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -115,7 +115,7 @@ theorem nb052_support_mem_0092 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0093 (x : Var) (y : Var) :
-    x ∈ (((syn_ccompl (Class.cv x))).fv ∪ ((syn_ccompl (Class.cv y))).fv) :=
+    x ∈ (((synCcompl (Class.cv x))).fv ∪ ((synCcompl (Class.cv y))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -124,8 +124,8 @@ theorem nb052_support_mem_0093 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0094 :
-    (nb052_alpha_dummy_000) ∈
-      (((Class.cv (nb052_alpha_dummy_000))).fv ∪ ((Class.cv (nb052_alpha_dummy_000))).fv) :=
+    (nb052AlphaDummy000) ∈
+      (((Class.cv (nb052AlphaDummy000))).fv ∪ ((Class.cv (nb052AlphaDummy000))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left
@@ -140,9 +140,9 @@ theorem nb052_support_mem_0095 (x : Var) : x ∈ (((Class.cv x)).fv ∪ ((Class.
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0096 :
-    (nb052_alpha_dummy_001) ∈
-      (((syn_ccompl (Class.cv (nb052_alpha_dummy_000)))).fv ∪
-        ((syn_ccompl (Class.cv (nb052_alpha_dummy_001)))).fv) :=
+    (nb052AlphaDummy001) ∈
+      (((synCcompl (Class.cv (nb052AlphaDummy000)))).fv ∪
+        ((synCcompl (Class.cv (nb052AlphaDummy001)))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   right
@@ -151,7 +151,7 @@ theorem nb052_support_mem_0096 :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0097 (x : Var) (y : Var) :
-    y ∈ (((syn_ccompl (Class.cv x))).fv ∪ ((syn_ccompl (Class.cv y))).fv) :=
+    y ∈ (((synCcompl (Class.cv x))).fv ∪ ((synCcompl (Class.cv y))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   right
@@ -160,8 +160,8 @@ theorem nb052_support_mem_0097 (x : Var) (y : Var) :
   exact Finset.mem_singleton_self _
 
 theorem nb052_support_mem_0098 :
-    (nb052_alpha_dummy_001) ∈
-      (((Class.cv (nb052_alpha_dummy_001))).fv ∪ ((Class.cv (nb052_alpha_dummy_001))).fv) :=
+    (nb052AlphaDummy001) ∈
+      (((Class.cv (nb052AlphaDummy001))).fv ∪ ((Class.cv (nb052AlphaDummy001))).fv) :=
   by
   with_reducible rw [Finset.mem_union]
   left

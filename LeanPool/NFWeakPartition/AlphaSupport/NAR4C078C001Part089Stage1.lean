@@ -30,24 +30,24 @@ open NFChoice.DefinitionLeaves.AlphaFocusedFV
 open NFChoice.DirectNominalPrf
 open NFChoice.DirectNominalPrf.Nominal
 
-theorem nb078_compact_fv_empty_0454 : (nb078_alpha_dummy_567) ∉ (∅ : Finset Var) :=
+theorem nb078_compact_fv_empty_0454 : (nb078AlphaDummy567) ∉ (∅ : Finset Var) :=
   by
   intro hmem
   cases hmem
 
 theorem nb078_compact_fv_empty_0455 (g : Var) :
-    (nb078_alpha_dummy_568 g) ∉ (∅ : Finset Var) :=
+    (nb078AlphaDummy568 g) ∉ (∅ : Finset Var) :=
   by
   intro hmem
   cases hmem
 
-theorem nb078_compact_fv_empty_0456 : (nb078_alpha_dummy_565) ∉ (∅ : Finset Var) :=
+theorem nb078_compact_fv_empty_0456 : (nb078AlphaDummy565) ∉ (∅ : Finset Var) :=
   by
   intro hmem
   cases hmem
 
 theorem nb078_compact_fv_empty_0457 (g : Var) :
-    (nb078_alpha_dummy_566 g) ∉ (∅ : Finset Var) :=
+    (nb078AlphaDummy566 g) ∉ (∅ : Finset Var) :=
   by
   intro hmem
   cases hmem

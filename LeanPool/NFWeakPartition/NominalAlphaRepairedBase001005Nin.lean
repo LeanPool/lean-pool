@@ -32,21 +32,22 @@ open NFChoice.DefinitionLeaves.AlphaFocusedFV
 open NFChoice.DirectNominalPrf
 open NFChoice.DirectNominalPrf.Nominal
 
+/-- Checked nominal proof certificate identified upstream as `nominal_df_nin`. -/
 @[expose]
-noncomputable def nominal_df_nin (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv)
+noncomputable def nominalDfNin (x : Var) (A : Class) (B : Class) (dv_A_x : x ∉ A.fv)
     (dv_B_x : x ∉ B.fv) :
     Nominal.NPrf
-      (.classEq (syn_cnin A B)
-        (.cab x (syn_wnan (.classMem (.cv x) A) (.classMem (.cv x) B)))) :=
+      (.classEq (synCnin A B)
+        (.cab x (synWnan (.classMem (.cv x) A) (.classMem (.cv x) B)))) :=
   by
-  let alpha_dummy_000 : Var := (freshVar ((A).fv ∪ (B).fv) 0)
-  have fresh_000 : alpha_dummy_000 ∉ ((A).fv ∪ (B).fv) := by
+  let alphaDummy000 : Var := (freshVar ((A).fv ∪ (B).fv) 0)
+  have fresh_000 : alphaDummy000 ∉ ((A).fv ∪ (B).fv) := by
     exact freshVar_not_mem ((A).fv ∪ (B).fv) 0
   exact
     Nominal.alphaClassEq
       (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
             (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
-              (TAlphaClass.refl_of_fv_fresh _ _ (by
+              (TAlphaClass.reflOfFvFresh _ _ (by
                   intro a b h hne;
                   simp only [List.mem_cons, List.not_mem_nil, or_false,
                     Prod.mk.injEq] at h;
@@ -55,7 +56,7 @@ noncomputable def nominal_df_nin (x : Var) (A : Class) (B : Class) (dv_A_x : x �
                       | (rcases h with ⟨rfl, rfl⟩));
                     all_goals aesop)))
             (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
-              (TAlphaClass.refl_of_fv_fresh _ _ (by
+              (TAlphaClass.reflOfFvFresh _ _ (by
                   intro a b h hne;
                   simp only [List.mem_cons, List.not_mem_nil, or_false,
                     Prod.mk.injEq] at h;

@@ -31,18 +31,19 @@ open NFChoice.DefinitionLeaves.AlphaFocusedFV
 open NFChoice.DirectNominalPrf
 open NFChoice.DirectNominalPrf.Nominal
 
+/-- Checked nominal proof certificate identified upstream as `nb095_focused_refl_0007`. -/
 @[expose]
-noncomputable def nb095_focused_refl_0007 (x : Var) (u : Var) (D : Class) (R : Class)
+noncomputable def nb095FocusedRefl0007 (x : Var) (u : Var) (D : Class) (R : Class)
     (S_cls : Class) (f : Var) (E : Class) (dv_R_f : f ∉ R.fv) (dv_R_u : u ∉ R.fv)
     (dv_R_x : x ∉ R.fv) :
     TReflOn
-      [((nb095_alpha_dummy_617 D R S_cls E), (nb095_alpha_dummy_618 x D R)),
-        ((nb095_alpha_dummy_615 D R S_cls E), (nb095_alpha_dummy_616 x D R)),
-        ((nb095_alpha_dummy_004 D R S_cls E), (nb095_alpha_dummy_006 x u D R S_cls f E)),
-        ((nb095_alpha_dummy_003 D R S_cls E), (nb095_alpha_dummy_005 x u D R S_cls f E)),
-        ((nb095_alpha_dummy_001 D R S_cls E), u),
-        ((nb095_alpha_dummy_002 D R S_cls E), x),
-        ((nb095_alpha_dummy_000 D R S_cls E), f)]
+      [((nb095AlphaDummy617 D R S_cls E), (nb095AlphaDummy618 x D R)),
+        ((nb095AlphaDummy615 D R S_cls E), (nb095AlphaDummy616 x D R)),
+        ((nb095AlphaDummy004 D R S_cls E), (nb095AlphaDummy006 x u D R S_cls f E)),
+        ((nb095AlphaDummy003 D R S_cls E), (nb095AlphaDummy005 x u D R S_cls f E)),
+        ((nb095AlphaDummy001 D R S_cls E), u),
+        ((nb095AlphaDummy002 D R S_cls E), x),
+        ((nb095AlphaDummy000 D R S_cls E), f)]
       R.fv :=
   TEnvFresh.reflOn (nb095_compact_envfresh_0290 x u D R S_cls f E dv_R_f dv_R_u dv_R_x)
 

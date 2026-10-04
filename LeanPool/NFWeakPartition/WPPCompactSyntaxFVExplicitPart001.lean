@@ -25,7 +25,7 @@ open NFChoice.Compiler.CompactSourceSyntax
 
 
 theorem fv_syn_wiso (H : Class) (R : Class) (S : Class) (A : Class) (B : Class) :
-    (syn_wiso H R S A B).fv = (A.fv) ∪ (B.fv) ∪ (H.fv) ∪ (R.fv) ∪ (S.fv) :=
+    (synWiso H R S A B).fv = (A.fv) ∪ (B.fv) ∪ (H.fv) ∪ (R.fv) ∪ (S.fv) :=
   by
   have fresh_x :
     freshVar (H.fv ∪ R.fv ∪ S.fv ∪ A.fv ∪ B.fv) 0 ∉ (H.fv ∪ R.fv ∪ S.fv ∪ A.fv ∪ B.fv) :=
@@ -40,14 +40,14 @@ theorem fv_syn_wiso (H : Class) (R : Class) (S : Class) (A : Class) (B : Class) 
       freshVar (H.fv ∪ R.fv ∪ S.fv ∪ A.fv ∪ B.fv) 1 :=
     freshVar_injective (H.fv ∪ R.fv ∪ S.fv ∪ A.fv ∪ B.fv) (by decide)
   ext u
-  simp [syn_wiso, Class.fv]; aesop
+  simp [synWiso, Class.fv]; aesop
 
-theorem fv_syn_cpprod (A : Class) (B : Class) : (syn_cpprod A B).fv = (A.fv) ∪ (B.fv) :=
+theorem fv_syn_cpprod (A : Class) (B : Class) : (synCpprod A B).fv = (A.fv) ∪ (B.fv) :=
   by
   ext u
-  simp [syn_cpprod]
+  simp [synCpprod]
 
-theorem fv_syn_ccross : (syn_ccross).fv = (∅ : Finset Var) :=
+theorem fv_syn_ccross : (synCcross).fv = (∅ : Finset Var) :=
   by
   have fresh_x : freshVar ((∅ : Finset Var)) 0 ∉ ((∅ : Finset Var)) :=
     freshVar_not_mem ((∅ : Finset Var)) 0
@@ -56,6 +56,6 @@ theorem fv_syn_ccross : (syn_ccross).fv = (∅ : Finset Var) :=
   have distinct_x_y : freshVar ((∅ : Finset Var)) 0 ≠ freshVar ((∅ : Finset Var)) 1 :=
     freshVar_injective ((∅ : Finset Var)) (by decide)
   ext u
-  simp [syn_ccross, Class.fv]; aesop
+  simp [synCcross, Class.fv]; aesop
 
 end NFChoice.Compiler.WPPCompactSyntaxFVExplicit

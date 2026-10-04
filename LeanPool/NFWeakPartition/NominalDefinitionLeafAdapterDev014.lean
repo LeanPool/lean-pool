@@ -40,7 +40,7 @@ theorem shiftRhoAt_lift_one (rho : Var → Nat) :
 
 theorem classPred_double_lift (rho : Var → Nat) (A : Class) :
     lowerClassPred (liftRho (liftRho rho)) 0 A =
-      Fol.lift_formula_at (classPred rho A) 1 1 :=
+      Fol.liftFormulaAt (classPred rho A) 1 1 :=
   by
   unfold classPred
   rw [← shiftRhoAt_lift_one]
@@ -49,7 +49,7 @@ theorem classPred_double_lift (rho : Var → Nat) (A : Class) :
 theorem classPred_bind_eq_lift_of_not_mem_fv (rho : Var → Nat) (x : Var) (A : Class)
     (hx : x ∉ A.fv) :
     lowerClassPred (liftRho (bindRho rho x)) 0 A =
-      Fol.lift_formula_at (classPred rho A) 1 1 :=
+      Fol.liftFormulaAt (classPred rho A) 1 1 :=
   by
   unfold classPred
   calc
@@ -63,13 +63,13 @@ theorem classPred_bind_eq_lift_of_not_mem_fv (rho : Var → Nat) (x : Var) (A : 
         subst y
         exact hx hy
       simp [liftRho, bindRho, shiftRhoAt, shiftIndexAt, hyx]
-    _ = Fol.lift_formula_at (lowerClassPred (liftRho rho) 0 A) 1 1 := by
+    _ = Fol.liftFormulaAt (lowerClassPred (liftRho rho) 0 A) 1 1 := by
       simpa [shiftIndexAt] using (lowerClassPred_shiftAt (liftRho rho) 0 1 A)
 
 theorem classPred_bind_cv_self (rho : Var → Nat) (x : Var) :
     classPred (bindRho rho x) (.cv x) = cvPred (&0) := by
   simp [classPred, lowerClassPred, liftRho, bindRho, cvPred, mem,
-    GenericLogicalHandlers.nfMem, Fol.lift_term1]
+    GenericLogicalHandlers.nfMem, Fol.liftTerm1]
 
 theorem lowerClassPred_bind_cv_self (rho : Var → Nat) (x : Var) :
     lowerClassPred (liftRho (bindRho rho x)) 0 (.cv x) = cvPred (&0) := by
@@ -95,7 +95,7 @@ theorem lowerWff_bind_classMem_cv_of_not_mem_fv (rho : Var → Nat) (x : Var) (A
 theorem lowerWff_bind_classEq_cv_of_not_mem_fv (rho : Var → Nat) (x : Var) (A : Class)
     (hx : x ∉ A.fv) :
     lowerWff (bindRho rho x) (.classEq (.cv x) A) =
-      represents (&0) (Fol.lift_formula_at (classPred rho A) 1 1) :=
+      represents (&0) (Fol.liftFormulaAt (classPred rho A) 1 1) :=
   by
   rw [lowerWff, represents, classPred_bind_eq_lift_of_not_mem_fv rho x A hx,
     lowerClassPred_bind_cv_self]

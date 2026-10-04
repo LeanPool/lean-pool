@@ -25,6 +25,7 @@ namespace Nominal
 /-! Coincident-variable branches erased by the MM0 Lean exporter. -/
 
 
+/-- Proof-translation construction identified upstream as `impRefl`. -/
 @[expose]
 def impRefl {L : Fol.Language} (Γ : Set (Fol.formula L)) (p : Fol.formula L) :
     Γ ⊢ p ⟹ p := by
@@ -59,7 +60,7 @@ def ax9SelfCore (Γ : Set (Fol.formula LNF)) : Γ ⊢ ∼(∀'(∼((&0) ≃ (&0)
     Fol.prf.axm (Set.mem_insert _ _)
   have hInst := Fol.prf.allE₂ (∼((&0) ≃ (&0))) (&0) hAll
   have hNotRef : Fol.prf (insert (∀'(∼((&0) ≃ (&0)))) Γ) (∼((&0) ≃ (&0))) := by
-    simpa [Fol.not', Fol.subst_formula, Fol.subst_formula_equal,
+    simpa [Fol.not', Fol.substFormula, Fol.subst_formula_equal,
       Fol.subst_term_var0] using hInst
   exact
     Fol.prf.impE ((&0) ≃ (&0)) hNotRef (Fol.prf.ref (insert (∀'(∼((&0) ≃ (&0)))) Γ) (&0))
@@ -96,7 +97,7 @@ noncomputable def ax12SameXZCore (Γ : Set (Fol.formula LNF)) (s t : Fol.term LN
   apply Fol.exfalso
   apply Fol.prf.impE (s ≃ t)
   · exact Fol.prf.axm (Set.mem_insert_of_mem (t ≃ s) (Set.mem_insert _ _))
-  · apply Fol.prf_symm
+  · apply Fol.prfSymm
     exact Fol.prf.axm (Set.mem_insert _ _)
 
 /-- Total Metamath `ax-12`, including every bundled-variable coincidence. -/
@@ -118,8 +119,8 @@ noncomputable def ax12 (x y z : Var) :
           (lowerWff rho (.all x (.objEq y x))))
     · apply ax12OfShift x y z
       intro rho
-      simp [lowerWff, bindRho, Ne.symm hxy, Ne.symm hxz, Fol.lift_formula1,
-        Fol.lift_formula_at, Fol.lift_term_at]
+      simp [lowerWff, bindRho, Ne.symm hxy, Ne.symm hxz, Fol.liftFormula1,
+        Fol.liftFormulaAt, Fol.liftTermAt]
 
 /-- `ax-11` when its two bundled source names coincide. -/
 @[expose]
@@ -131,12 +132,12 @@ def ax11SameCore (Γ : Set (Fol.formula LNF)) (s : Fol.term LNF) (body : Fol.for
   apply Fol.prf.allI
   apply Fol.prf.impI
   let liftedContext : Set (Fol.formula LNF) :=
-    Fol.lift_formula1 '' insert (∀'body) (insert (s ≃ s) Γ)
-  have hAll : Fol.prf (insert ((&0) ≃ (&0)) liftedContext) (Fol.lift_formula1 (∀'body)) :=
+    Fol.liftFormula1 '' insert (∀'body) (insert (s ≃ s) Γ)
+  have hAll : Fol.prf (insert ((&0) ≃ (&0)) liftedContext) (Fol.liftFormula1 (∀'body)) :=
     Fol.prf.axm
       (Set.mem_insert_of_mem ((&0) ≃ (&0))
-        (Set.mem_image_of_mem Fol.lift_formula1 (Set.mem_insert _ _)))
-  have hInst := Fol.prf.allE₂ (Fol.lift_formula_at body 1 1) (&0) hAll
+        (Set.mem_image_of_mem Fol.liftFormula1 (Set.mem_insert _ _)))
+  have hInst := Fol.prf.allE₂ (Fol.liftFormulaAt body 1 1) (&0) hAll
   simpa only [Fol.lift_subst_formula_cancel] using hInst
 
 /-- Nominal `ax-11` coincident branch. -/
@@ -154,7 +155,7 @@ two bundled source names differ.
 noncomputable def ax11 (x y : Var) (p : Wff) (template : (Var → Nat) → Fol.formula LNF)
     (hSource : ∀ rho, y ≠ x →
           GenericLogicalHandlers.ax11Inst (lowerWff (bindRho rho y) p) (&(rho y)) =
-            (template rho) [Fol.lift_term1 (&(rho x)) // 0]f)
+            (template rho) [Fol.liftTerm1 (&(rho x)) // 0]f)
     (hTarget : ∀ rho, y ≠ x → (template rho) [(&0) // 0]f = lowerWff (bindRho rho x) p) :
     NPrf (.imp (.objEq x y) (.imp (.all y p) (.all x (.imp (.objEq x y) p)))) :=
   by

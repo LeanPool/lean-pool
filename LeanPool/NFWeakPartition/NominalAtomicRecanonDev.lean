@@ -24,44 +24,48 @@ open NFChoice.DirectCertificate.ClassBoundaryNormalizationDev005
 open NFChoice.DirectCertificate.ClassBoundaryCoreDev006
 open NFChoice.DirectCertificate.ClassBoundaryRawHandlersDev010
 
+/-- Proof-translation construction identified upstream as `Theory`. -/
 abbrev Theory : Fol.SentTheory LNF :=
   LiteralHailperinNF
 
 /-! Atomic syntactic bridges for the two Metamath print ambiguities. -/
 
 
+/-- Proof-translation construction identified upstream as `representsCvSelf`. -/
 @[expose]
 noncomputable def representsCvSelf (s : Fol.term LNF) :
     Theory.fst ⊢ represents s (cvPred s) :=
   by
   apply Fol.prf.allI
-  exact Fol.biimp_refl _ (mem (&0) (Fol.lift_term1 s))
+  exact Fol.biimpReflCertificate _ (mem (&0) (Fol.liftTerm1 s))
 
 theorem representsCvTemplateSubst (s t : Fol.term LNF) :
-    (represents (Fol.lift_term1 s) (cvPred (&0))) [t // 0]f = represents s (cvPred t) :=
+    (represents (Fol.liftTerm1 s) (cvPred (&0))) [t // 0]f = represents s (cvPred t) :=
   by
-  simp only [represents, mem, Nat.reduceAdd, Fol.lift_term1, cvPred,
-    Fol.lift_term_at.eq_1, Std.le_refl, ↓reduceIte, Nat.zero_add, Fol.subst_formula,
+  simp only [represents, mem, Nat.reduceAdd, Fol.liftTerm1, cvPred,
+    Fol.liftTermAt.eq_1, Std.le_refl, ↓reduceIte, Nat.zero_add, Fol.substFormula,
     Fol.subst_formula_biimp, zero_lt_one, Fol.subst_term_var_lt, Fol.subst_term_var_eq,
     Fol.lift_term_def, Fol.preformula.all.injEq]
   have hDouble : (s ↑1) ↑1 = s ↑2 :=
     by
-    change Fol.lift_term_at (Fol.lift_term_at s 1 0) 1 0 = Fol.lift_term_at s 2 0
+    change Fol.liftTermAt (Fol.liftTermAt s 1 0) 1 0 = Fol.liftTermAt s 2 0
     exact Fol.lift_term_at2_medium s 1 (n := 1) (m := 0) (m' := 0) (by omega) (by omega)
   rw [hDouble]
   rw [liftTwoSubstOne]
 
+/-- Proof-translation construction identified upstream as `eqToRepresentsCv`. -/
 @[expose]
 noncomputable def eqToRepresentsCv (s t : Fol.term LNF) :
     Theory.fst ⊢ (s ≃ t) ⟹ represents s (cvPred t) :=
   by
   apply Fol.prf.impI
-  apply Fol.prf_subst (represents (Fol.lift_term1 s) (cvPred (&0))) (s := s) (t := t)
+  apply Fol.prfSubst (represents (Fol.liftTerm1 s) (cvPred (&0))) (s := s) (t := t)
   · exact Fol.axm1
   · simpa [representsCvTemplateSubst] using
       (Fol.weakening (Set.subset_insert _ _) (representsCvSelf s))
   · exact representsCvTemplateSubst s t
 
+/-- Proof-translation construction identified upstream as `objEqClassEqBiimp`. -/
 @[expose]
 noncomputable def objEqClassEqBiimp (s t : Fol.term LNF) :
     Theory.fst ⊢ (s ≃ t) ⇔ classEq (cvPred s) (cvPred t) :=
@@ -85,13 +89,14 @@ noncomputable def objEqClassEqBiimp (s t : Fol.term LNF) :
                 classEq (cvPred s) (cvPred t)))
     exact Fol.prf.impE (represents s (cvPred t)) hImp hRep
 
+/-- Proof-translation construction identified upstream as `objMemClassMemBiimp`. -/
 @[expose]
 noncomputable def objMemClassMemBiimp (s t : Fol.term LNF) :
     Theory.fst ⊢ mem s t ⇔ classMem (cvPred s) (cvPred t) := by
   exact
     biimpSymm
       (by
-        simpa [applyPred, cvPred, mem, Fol.subst_formula, Fol.lift_term1_subst_term,
+        simpa [applyPred, cvPred, mem, Fol.substFormula, Fol.lift_term1_subst_term,
           Fol.subst_term_var0] using (classMemCv s (cvPred t)))
 
 

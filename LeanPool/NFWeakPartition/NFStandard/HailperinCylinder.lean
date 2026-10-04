@@ -32,7 +32,7 @@ levels for every ordered-pair layer below it.
 
 section Coding
 
-variable {S : Fol.Structure LNF} (hH : Fol.all_realize_sentence S LiteralHailperinNF)
+variable {S : Fol.Structure LNF} (hH : Fol.allRealizeSentence S LiteralHailperinNF)
 
 /-! #### Iterated singleton raising -/
 
@@ -51,7 +51,6 @@ theorem raise_zero (a : S) : raise hH 0 a = a :=
 theorem raise_succ (m : Nat) (a : S) : raise hH (m + 1) a = singleton hH (raise hH m a) :=
   rfl
 
-@[simp]
 theorem mem_raise_succ (m : Nat) (a z : S) :
     Mem S z (raise hH (m + 1) a) ↔ z = raise hH m a := by simp [raise]
 
@@ -154,7 +153,6 @@ theorem htuple_nil : htuple hH (DVec.nil : DVec S 0) = oneC hH :=
 theorem htuple_one (a : S) : htuple hH (DVec.cons a DVec.nil) = a :=
   rfl
 
-@[simp]
 theorem htuple_two (a b : S) :
     htuple hH (DVec.cons a (DVec.cons b DVec.nil)) = kPair hH a b := by rfl
 
@@ -364,7 +362,6 @@ theorem mem_identityRel (a b : S) : Mem S (kPair hH a b) (identityRel hH) ↔ a 
     exact ⟨fun _ hz => hz, fun _ hz => hz⟩
 
 /-- Inclusion of a singleton is ordinary membership. -/
-@[simp]
 theorem mem_sset_singleton (a b : S) :
     Mem S (kPair hH (singleton hH a) b) (sset hH) ↔ Mem S a b :=
   by
@@ -377,14 +374,12 @@ theorem mem_sset_singleton (a b : S) :
     simpa [hza] using hab
 
 /-- Equality relation after raising both inputs to the cap. -/
-@[simp]
 theorem mem_raisedIdentity (m : Nat) (a b : S) :
     Mem S (kPair hH (raise hH m a) (raise hH m b)) (siIter hH m (identityRel hH)) ↔
       a = b :=
   by rw [mem_siIter, mem_identityRel]
 
 /-- Membership relation after normalizing source and target to one cap. -/
-@[simp]
 theorem mem_raisedMembership (m : Nat) (a b : S) :
     Mem S (kPair hH (raise hH (m + 1) a) (raise hH m b)) (siIter hH m (sset hH)) ↔
       Mem S a b :=
@@ -402,7 +397,6 @@ of the generated Metamath replay.
 
 
 /-- Membership in the primitive `V × B` constructor on a genuine pair. -/
-@[simp]
 theorem mem_xp_kPair (B a b : S) : Mem S (kPair hH a b) (xp hH B) ↔ Mem S b B :=
   by
   rw [mem_xp]
@@ -414,7 +408,6 @@ theorem mem_xp_kPair (B a b : S) : Mem S (kPair hH a b) (xp hH B) ↔ Mem S b B 
     exact ⟨a, b, rfl, hb⟩
 
 /-- Membership in `B × V`, obtained by conversing `V × B`. -/
-@[simp]
 theorem mem_cnv_xp_kPair (B a b : S) :
     Mem S (kPair hH a b) (cnv hH (xp hH B)) ↔ Mem S a B := by rw [mem_cnv, mem_xp_kPair]
 
@@ -431,7 +424,6 @@ theorem mem_oneC_iff_eq_singleton (w : S) :
   · rintro ⟨y, rfl⟩
     exact ⟨y, fun z => mem_singleton hH y z⟩
 
-@[simp]
 theorem mem_oneC_singleton (y : S) : Mem S (singleton hH y) (oneC hH) :=
   (mem_oneC_iff_eq_singleton hH (singleton hH y)).2 ⟨y, rfl⟩
 
@@ -556,7 +548,6 @@ theorem mem_raiseImage (m : Nat) (A z : S) :
     · rintro ⟨x, hx, rfl⟩
       exact ⟨raise hH m x, (ih (raise hH m x)).mpr ⟨x, hx, rfl⟩, rfl⟩
 
-@[simp]
 theorem mem_raiseImage_exact (m : Nat) (A x : S) :
     Mem S (raise hH m x) (raiseImage hH m A) ↔ Mem S x A :=
   by

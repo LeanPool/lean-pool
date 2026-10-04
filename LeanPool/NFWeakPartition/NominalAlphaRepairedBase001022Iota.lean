@@ -32,64 +32,65 @@ open NFChoice.DefinitionLeaves.AlphaFocusedFV
 open NFChoice.DirectNominalPrf
 open NFChoice.DirectNominalPrf.Nominal
 
+/-- Checked nominal proof certificate identified upstream as `nominal_df_iota`. -/
 @[expose]
-noncomputable def nominal_df_iota (ph : Wff) (x : Var) (y : Var) (dv_ph_y : y ∉ ph.fv)
+noncomputable def nominalDfIota (ph : Wff) (x : Var) (y : Var) (dv_ph_y : y ∉ ph.fv)
     (dv_x_y : x ≠ y) :
     Nominal.NPrf
-      (.classEq (syn_cio x ph) (syn_cuni (.cab y (.classEq (.cab x ph) (syn_csn (.cv y)))))) :=
+      (.classEq (synCio x ph) (synCuni (.cab y (.classEq (.cab x ph) (synCsn (.cv y)))))) :=
   by
-  let alpha_dummy_000 : Var := (freshVar (({ x } : Finset Var) ∪ (ph).fv) 0)
-  let alpha_dummy_001 : Var :=
-    (freshVar (((Class.cab alpha_dummy_000
-          (Wff.classEq (Class.cab x ph) (syn_csn (Class.cv alpha_dummy_000))))).fv) 0)
-  let alpha_dummy_002 : Var :=
-    (freshVar (((Class.cab alpha_dummy_000
-          (Wff.classEq (Class.cab x ph) (syn_csn (Class.cv alpha_dummy_000))))).fv) 1)
-  let alpha_dummy_003 : Var :=
-    (freshVar (((Class.cab y (Wff.classEq (Class.cab x ph) (syn_csn (Class.cv y))))).fv) 0)
-  let alpha_dummy_004 : Var :=
-    (freshVar (((Class.cab y (Wff.classEq (Class.cab x ph) (syn_csn (Class.cv y))))).fv) 1)
-  let alpha_dummy_005 : Var := (freshVar (((Class.cv alpha_dummy_000)).fv) 0)
-  let alpha_dummy_006 : Var := (freshVar (((Class.cv y)).fv) 0)
+  let alphaDummy000 : Var := (freshVar (({ x } : Finset Var) ∪ (ph).fv) 0)
+  let alphaDummy001 : Var :=
+    (freshVar (((Class.cab alphaDummy000
+          (Wff.classEq (Class.cab x ph) (synCsn (Class.cv alphaDummy000))))).fv) 0)
+  let alphaDummy002 : Var :=
+    (freshVar (((Class.cab alphaDummy000
+          (Wff.classEq (Class.cab x ph) (synCsn (Class.cv alphaDummy000))))).fv) 1)
+  let alphaDummy003 : Var :=
+    (freshVar (((Class.cab y (Wff.classEq (Class.cab x ph) (synCsn (Class.cv y))))).fv) 0)
+  let alphaDummy004 : Var :=
+    (freshVar (((Class.cab y (Wff.classEq (Class.cab x ph) (synCsn (Class.cv y))))).fv) 1)
+  let alphaDummy005 : Var := (freshVar (((Class.cv alphaDummy000)).fv) 0)
+  let alphaDummy006 : Var := (freshVar (((Class.cv y)).fv) 0)
   have fresh_000 :
-    alpha_dummy_001 ∉
-      (((Class.cab alpha_dummy_000
-          (Wff.classEq (Class.cab x ph) (syn_csn (Class.cv alpha_dummy_000))))).fv) :=
+    alphaDummy001 ∉
+      (((Class.cab alphaDummy000
+          (Wff.classEq (Class.cab x ph) (synCsn (Class.cv alphaDummy000))))).fv) :=
     by
     exact
       freshVar_not_mem
-        (((Class.cab alpha_dummy_000
-            (Wff.classEq (Class.cab x ph) (syn_csn (Class.cv alpha_dummy_000))))).fv)
+        (((Class.cab alphaDummy000
+            (Wff.classEq (Class.cab x ph) (synCsn (Class.cv alphaDummy000))))).fv)
         0
   have fresh_001 :
-    alpha_dummy_002 ∉
-      (((Class.cab alpha_dummy_000
-          (Wff.classEq (Class.cab x ph) (syn_csn (Class.cv alpha_dummy_000))))).fv) :=
+    alphaDummy002 ∉
+      (((Class.cab alphaDummy000
+          (Wff.classEq (Class.cab x ph) (synCsn (Class.cv alphaDummy000))))).fv) :=
     by
     exact
       freshVar_not_mem
-        (((Class.cab alpha_dummy_000
-            (Wff.classEq (Class.cab x ph) (syn_csn (Class.cv alpha_dummy_000))))).fv)
+        (((Class.cab alphaDummy000
+            (Wff.classEq (Class.cab x ph) (synCsn (Class.cv alphaDummy000))))).fv)
         1
   have fresh_003 :
-    alpha_dummy_003 ∉
-      (((Class.cab y (Wff.classEq (Class.cab x ph) (syn_csn (Class.cv y))))).fv) :=
+    alphaDummy003 ∉
+      (((Class.cab y (Wff.classEq (Class.cab x ph) (synCsn (Class.cv y))))).fv) :=
     by
     exact
       freshVar_not_mem
-        (((Class.cab y (Wff.classEq (Class.cab x ph) (syn_csn (Class.cv y))))).fv) 0
+        (((Class.cab y (Wff.classEq (Class.cab x ph) (synCsn (Class.cv y))))).fv) 0
   have fresh_004 :
-    alpha_dummy_004 ∉
-      (((Class.cab y (Wff.classEq (Class.cab x ph) (syn_csn (Class.cv y))))).fv) :=
+    alphaDummy004 ∉
+      (((Class.cab y (Wff.classEq (Class.cab x ph) (synCsn (Class.cv y))))).fv) :=
     by
     exact
       freshVar_not_mem
-        (((Class.cab y (Wff.classEq (Class.cab x ph) (syn_csn (Class.cv y))))).fv) 1
-  have fresh_008 : alpha_dummy_000 ∉ (({ x } : Finset Var) ∪ (ph).fv) := by
+        (((Class.cab y (Wff.classEq (Class.cab x ph) (synCsn (Class.cv y))))).fv) 1
+  have fresh_008 : alphaDummy000 ∉ (({ x } : Finset Var) ∪ (ph).fv) := by
     exact freshVar_not_mem (({ x } : Finset Var) ∪ (ph).fv) 0
-  have support_part_0000 : alpha_dummy_000 ∈ (((Class.cv alpha_dummy_000)).fv) := by
+  have support_part_0000 : alphaDummy000 ∈ (((Class.cv alphaDummy000)).fv) := by
     simp only [Finset.mem_singleton, fv_class_cv, eq_self]
-  have support_mem_0000 : alpha_dummy_000 ∈ (((Class.cv alpha_dummy_000)).fv) := by
+  have support_mem_0000 : alphaDummy000 ∈ (((Class.cv alphaDummy000)).fv) := by
     exact support_part_0000
   have support_part_0001 : y ∈ (((Class.cv y)).fv) := by
     simp only [Finset.mem_singleton, fv_class_cv, eq_self]
@@ -97,13 +98,13 @@ noncomputable def nominal_df_iota (ph : Wff) (x : Var) (y : Var) (dv_ph_y : y �
   exact
     Nominal.alphaClassEq
       (TAlphaClass.cab (TAlphaWff.ex (TAlphaWff.conj (TAlphaWff.objMem (TAlphaVar.there
-                (freshVar_injective (((Class.cab alpha_dummy_000 (Wff.classEq (Class.cab x ph)
-                        (syn_csn (Class.cv alpha_dummy_000))))).fv) (by decide))
+                (freshVar_injective (((Class.cab alphaDummy000 (Wff.classEq (Class.cab x ph)
+                        (synCsn (Class.cv alphaDummy000))))).fv) (by decide))
                 (freshVar_injective (((Class.cab y
-                      (Wff.classEq (Class.cab x ph) (syn_csn (Class.cv y))))).fv) (by decide))
+                      (Wff.classEq (Class.cab x ph) (synCsn (Class.cv y))))).fv) (by decide))
                 (TAlphaVar.here _ _ _)) (TAlphaVar.here _ _ _))
             (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
-                (TAlphaWff.classEq (TAlphaClass.cab (TAlphaWff.refl_of_fv_fresh _ _ (by
+                (TAlphaWff.classEq (TAlphaClass.cab (TAlphaWff.reflOfFvFresh _ _ (by
                         intro a b h hne;
                         simp only [List.mem_cons, List.not_mem_nil, or_false,
                           Prod.mk.injEq] at h;

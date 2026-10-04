@@ -31,19 +31,19 @@ open NFChoice.DirectNominalPrf
 open NFChoice.DirectNominalPrf.Nominal
 
 theorem nb090_compact_fv_empty_0341 (h : Var) :
-    (nb090_alpha_dummy_422 h) ∉ (∅ : Finset Var) :=
+    (nb090AlphaDummy422 h) ∉ (∅ : Finset Var) :=
   by
   intro hmem
   cases hmem
 
 theorem nb090_compact_fv_empty_0342 (A : Class) :
-    (nb090_alpha_dummy_419 A) ∉ (∅ : Finset Var) :=
+    (nb090AlphaDummy419 A) ∉ (∅ : Finset Var) :=
   by
   intro hmem
   cases hmem
 
 theorem nb090_compact_fv_empty_0343 (h : Var) :
-    (nb090_alpha_dummy_420 h) ∉ (∅ : Finset Var) :=
+    (nb090AlphaDummy420 h) ∉ (∅ : Finset Var) :=
   by
   intro hmem
   cases hmem

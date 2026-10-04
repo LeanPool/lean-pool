@@ -126,7 +126,9 @@ theorem exists_stratifiedByBelow :
 
 /-- A selected global cap and capped certificate for a stratified formula. -/
 structure CappedStratification {n : Nat} (p : Formula n) where
+  /-- The `cap` component of the corresponding first-order structure. -/
   cap : Int
+  /-- The `ty` component of the corresponding first-order structure. -/
   ty : Fin n → Int
   bounded : ∀ i, ty i ≤ cap
   certificate : StratifiedByBelow cap ty p
@@ -159,13 +161,21 @@ tail valuation when a quantifier is crossed.
 
 /-- Operations sufficient to compile globally capped stratified formulas. -/
 structure CylinderAlgebra (S : Fol.Structure LNF) where
+  /-- The code operation of this NF model presentation. -/
   code : {n : Nat} → Int → (Fin n → Int) → DVec S n → S
+  /-- The empty operation of this NF model presentation. -/
   empty : Int → (n : Nat) → S
+  /-- The compl operation of this NF model presentation. -/
   compl : Int → (n : Nat) → S → S
+  /-- The inter operation of this NF model presentation. -/
   inter : Int → (n : Nat) → S → S → S
+  /-- The eq Set operation of this NF model presentation. -/
   eqSet : {n : Nat} → Int → (ty : Fin n → Int) → (i j : Fin n) → S
+  /-- The mem Set operation of this NF model presentation. -/
   memSet : {n : Nat} → Int → (ty : Fin n → Int) → (i j : Fin n) → S
+  /-- The exists Set operation of this NF model presentation. -/
   existsSet : {n : Nat} → Int → (ty : Fin n → Int) → Int → S → S
+  /-- The slice operation of this NF model presentation. -/
   slice : {n : Nat} → Int → (ty : Fin (n + 1) → Int) → S → DVec S n → S
   mem_empty :
     ∀ {n : Nat} (cap : Int) (ty : Fin n → Int) (_hcap : ∀ i, ty i ≤ cap) (xs : DVec S n),

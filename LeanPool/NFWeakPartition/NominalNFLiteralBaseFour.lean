@@ -29,11 +29,12 @@ theorem axExtLowering (x y z : Var) (_hxy : x ≠ y) (hxz : x ≠ z) (hyz : y �
         openAll2 (literalAxiomFormula .axExt).fst (&(rho x)) (&(rho y)) :=
   by
   intro rho
-  simp [axExtGoal, syn_wb, openAll, openAll2, literalAxiomFormula, literalAxiomSyntax,
+  simp [axExtGoal, synWb, openAll, openAll2, literalAxiomFormula, literalAxiomSyntax,
     literalAxExt, lowerWff, bindRho, Wff.neg, Formula.toFlypitch, Formula.biimp,
     Formula.conj, Formula.neg, GenericLogicalHandlers.nfMem, hxz, hyz]
   aesop
 
+/-- Proof-translation construction identified upstream as `axExt`. -/
 @[expose]
 noncomputable def axExt (x y z : Var) (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z) :
     NPrf (axExtGoal x y z) :=
@@ -46,12 +47,13 @@ theorem axNinLowering (x y z w : Var) (_hxy : x ≠ y) (hxz : x ≠ z) (hxw : x 
         openAll2 (literalAxiomFormula .axNin).fst (&(rho x)) (&(rho y)) :=
   by
   intro rho
-  simp [axNinGoal, syn_wex, syn_wb, syn_wnan, syn_wa, openAll, openAll2,
+  simp [axNinGoal, synWex, synWb, synWnan, synWa, openAll, openAll2,
     literalAxiomFormula, literalAxiomSyntax, literalAxNin, lowerWff, bindRho, Wff.neg,
     Formula.toFlypitch, Formula.ex, Formula.biimp, Formula.conj, Formula.neg,
     GenericLogicalHandlers.nfMem, hxz, hxw, hyz, hyw, hzw]
   aesop
 
+/-- Proof-translation construction identified upstream as `axNin`. -/
 @[expose]
 noncomputable def axNin (x y z w : Var) (hxy : x ≠ y) (hxz : x ≠ z) (hxw : x ≠ w)
     (hyz : y ≠ z) (hyw : y ≠ w) (hzw : z ≠ w) : NPrf (axNinGoal x y z w) :=
@@ -64,11 +66,12 @@ theorem axSnLowering (x y z : Var) (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ 
         openAll (literalAxiomFormula .axSn).fst (&(rho x)) :=
   by
   intro rho
-  simp [axSnGoal, syn_wex, syn_wb, openAll, literalAxiomFormula, literalAxiomSyntax,
+  simp [axSnGoal, synWex, synWb, openAll, literalAxiomFormula, literalAxiomSyntax,
     literalAxSn, lowerWff, bindRho, Wff.neg, Formula.toFlypitch, Formula.ex,
     Formula.biimp, Formula.conj, Formula.neg, hxy, hxz, hyz]
   aesop
 
+/-- Proof-translation construction identified upstream as `axSn`. -/
 @[expose]
 noncomputable def axSn (x y z : Var) (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z) :
     NPrf (axSnGoal x y z) :=
@@ -79,11 +82,12 @@ theorem ax1cLowering (x y z w : Var) (hxy : x ≠ y) (_hxz : x ≠ z) (_hxw : x 
     ∀ rho, lowerWff rho (ax1cGoal x y z w) = (literalAxiomFormula .ax1c).fst :=
   by
   intro rho
-  simp [ax1cGoal, syn_wex, syn_wb, literalAxiomFormula, literalAxiomSyntax, literalAx1c,
+  simp [ax1cGoal, synWex, synWb, literalAxiomFormula, literalAxiomSyntax, literalAx1c,
     lowerWff, bindRho, Wff.neg, Formula.toFlypitch, Formula.ex, Formula.biimp,
     Formula.conj, Formula.neg, GenericLogicalHandlers.nfMem, hxy, hyz, hyw, hzw]
   aesop
 
+/-- Proof-translation construction identified upstream as `ax1c`. -/
 @[expose]
 noncomputable def ax1c (x y z w : Var) (hxy : x ≠ y) (hxz : x ≠ z) (hxw : x ≠ w)
     (hyz : y ≠ z) (hyw : y ≠ w) (hzw : z ≠ w) : NPrf (ax1cGoal x y z w) :=

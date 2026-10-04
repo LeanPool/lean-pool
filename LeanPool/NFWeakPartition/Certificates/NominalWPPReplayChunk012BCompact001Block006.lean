@@ -26,14 +26,15 @@ open NFChoice.SemanticCore
 open NFChoice.ReplaySupport
 open NFChoice.Compiler.CompactSourceSyntax
 
+/-- Checked nominal proof certificate identified upstream as `g_otsnelsi3`. -/
 @[expose]
-noncomputable def g_otsnelsi3 (A : Class) (B : Class) (C : Class) (R : Class)
-    (hyp_otsnelsi3_1 : Nominal.NPrf (.classMem A (syn_cvv)))
-    (hyp_otsnelsi3_2 : Nominal.NPrf (.classMem B (syn_cvv)))
-    (hyp_otsnelsi3_3 : Nominal.NPrf (.classMem C (syn_cvv))) :
+noncomputable def gOtsnelsi3 (A : Class) (B : Class) (C : Class) (R : Class)
+    (hyp_otsnelsi3_1 : Nominal.NPrf (.classMem A (synCvv)))
+    (hyp_otsnelsi3_2 : Nominal.NPrf (.classMem B (synCvv)))
+    (hyp_otsnelsi3_3 : Nominal.NPrf (.classMem C (synCvv))) :
     Nominal.NPrf
-      (syn_wb (.classMem (syn_cop (syn_csn A) (syn_cop (syn_csn B) (syn_csn C))) (syn_csi3 R))
-        (.classMem (syn_cop A (syn_cop B C)) R)) :=
+      (synWb (.classMem (synCop (synCsn A) (synCop (synCsn B) (synCsn C))) (synCsi3 R))
+        (.classMem (synCop A (synCop B C)) R)) :=
   by
   let proofSupport : Finset Var := A.fv ∪ B.fv ∪ C.fv ∪ R.fv
   let p : Var := freshVar proofSupport 0
@@ -75,7 +76,7 @@ noncomputable def g_otsnelsi3 (A : Class) (B : Class) (C : Class) (R : Class)
     change freshVar proofSupport 0 ≠ freshVar proofSupport 1
     exact freshVar_injective proofSupport (i := 0) (j := 1) (by decide)
   have fresh_x_ne_p : x ≠ p := Ne.symm fresh_p_ne_x
-  have dv_cache_0001 : p ∉ ((syn_cop (syn_csn A) (syn_cop (syn_csn B) (syn_csn C)))).fv :=
+  have dv_cache_0001 : p ∉ ((synCop (synCsn A) (synCop (synCsn B) (synCsn C)))).fv :=
     by
     exact
       (by
@@ -88,8 +89,8 @@ noncomputable def g_otsnelsi3 (A : Class) (B : Class) (C : Class) (R : Class)
           fresh_p_not_A, fresh_p_not_B, fresh_p_not_C, or_false, not_false_eq_true])
   have dv_cache_0002 :
     p ∉
-      ((syn_ctxp (syn_csi (syn_c1st)) (syn_ctxp (syn_csi (syn_ccom (syn_c1st) (syn_c2nd)))
-            (syn_csi (syn_ccom (syn_c2nd) (syn_c2nd)))))).fv :=
+      ((synCtxp (synCsi (synC1st)) (synCtxp (synCsi (synCcom (synC1st) (synC2nd)))
+            (synCsi (synCcom (synC2nd) (synC2nd)))))).fv :=
     by
     clear dv_cache_0001
     exact
@@ -135,7 +136,7 @@ noncomputable def g_otsnelsi3 (A : Class) (B : Class) (C : Class) (R : Class)
           intro hmem
           cases hmem
         simp only [fresh_x_not_B, not_false_eq_true])
-  have dv_cache_0006 : x ∉ ((syn_c1st)).fv :=
+  have dv_cache_0006 : x ∉ ((synC1st)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
     exact
@@ -146,7 +147,7 @@ noncomputable def g_otsnelsi3 (A : Class) (B : Class) (C : Class) (R : Class)
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1st,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have dv_cache_0007 : x ∉ ((syn_c2nd)).fv :=
+  have dv_cache_0007 : x ∉ ((synC2nd)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006
@@ -158,7 +159,7 @@ noncomputable def g_otsnelsi3 (A : Class) (B : Class) (C : Class) (R : Class)
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c2nd,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have dv_cache_0008 : x ∉ ((syn_cproj2 (.cv p))).fv :=
+  have dv_cache_0008 : x ∉ ((synCproj2 (.cv p))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007
@@ -171,7 +172,7 @@ noncomputable def g_otsnelsi3 (A : Class) (B : Class) (C : Class) (R : Class)
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cproj2,
           NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_singleton, fresh_x_ne_p,
           not_false_eq_true])
-  have dv_cache_0009 : x ∉ ((syn_wbr (syn_cproj2 (.cv p)) (syn_c1st) B)).fv :=
+  have dv_cache_0009 : x ∉ ((synWbr (synCproj2 (.cv p)) (synC1st) B)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008
@@ -198,7 +199,7 @@ noncomputable def g_otsnelsi3 (A : Class) (B : Class) (C : Class) (R : Class)
           intro hmem
           cases hmem
         simp only [fresh_x_not_C, not_false_eq_true])
-  have dv_cache_0011 : x ∉ ((syn_wbr (syn_cproj2 (.cv p)) (syn_c2nd) C)).fv :=
+  have dv_cache_0011 : x ∉ ((synWbr (synCproj2 (.cv p)) (synC2nd) C)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010
@@ -214,7 +215,7 @@ noncomputable def g_otsnelsi3 (A : Class) (B : Class) (C : Class) (R : Class)
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c2nd, Finset.mem_union,
           Finset.mem_singleton, fresh_x_ne_p, fresh_x_not_C, compact_fv_not_mem_empty,
           or_false, not_false_eq_true])
-  have dv_cache_0012 : p ∉ ((syn_cop A (syn_cop B C))).fv :=
+  have dv_cache_0012 : p ∉ ((synCop A (synCop B C))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -226,236 +227,238 @@ noncomputable def g_otsnelsi3 (A : Class) (B : Class) (C : Class) (R : Class)
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cop, Finset.mem_union,
           fresh_p_not_A, fresh_p_not_B, fresh_p_not_C, or_false, not_false_eq_true])
-  have p0000 := (Nominal.classEqRefl (syn_csi3 R))
+  have p0000 := (Nominal.classEqRefl (synCsi3 R))
   have p0001 :=
-    @g_eleq2i (syn_csi3 R)
-      (syn_cima (syn_ctxp (syn_csi (syn_c1st))
-          (syn_ctxp (syn_csi (syn_ccom (syn_c1st) (syn_c2nd)))
-            (syn_csi (syn_ccom (syn_c2nd) (syn_c2nd))))) (syn_cpw1 R))
-      (syn_cop (syn_csn A) (syn_cop (syn_csn B) (syn_csn C))) p0000
+    @gEleq2i (synCsi3 R)
+      (synCima (synCtxp (synCsi (synC1st))
+          (synCtxp (synCsi (synCcom (synC1st) (synC2nd)))
+            (synCsi (synCcom (synC2nd) (synC2nd))))) (synCpw1 R))
+      (synCop (synCsn A) (synCop (synCsn B) (synCsn C))) p0000
   have p0002 :=
-    @g_elimapw1 p (syn_cop (syn_csn A) (syn_cop (syn_csn B) (syn_csn C)))
-      (syn_ctxp (syn_csi (syn_c1st)) (syn_ctxp (syn_csi (syn_ccom (syn_c1st) (syn_c2nd)))
-          (syn_csi (syn_ccom (syn_c2nd) (syn_c2nd)))))
+    @gElimapw1 p (synCop (synCsn A) (synCop (synCsn B) (synCsn C)))
+      (synCtxp (synCsi (synC1st)) (synCtxp (synCsi (synCcom (synC1st) (synC2nd)))
+          (synCsi (synCcom (synC2nd) (synC2nd)))))
       R dv_cache_0001 dv_cache_0002 dv_cache_0003
   have p0003 :=
-    @g_oteltxp (syn_csn (.cv p)) (syn_csn A) (syn_cop (syn_csn B) (syn_csn C))
-      (syn_csi (syn_c1st))
-      (syn_ctxp (syn_csi (syn_ccom (syn_c1st) (syn_c2nd)))
-        (syn_csi (syn_ccom (syn_c2nd) (syn_c2nd))))
-  have p0004 := @g_vex p
-  have p0005 := @g_opsnelsi (.cv p) A (syn_c1st) p0004 hyp_otsnelsi3_1
-  have p0006 := (Nominal.biimpRefl (syn_wbr (.cv p) (syn_c1st) A))
+    @gOteltxp (synCsn (.cv p)) (synCsn A) (synCop (synCsn B) (synCsn C))
+      (synCsi (synC1st))
+      (synCtxp (synCsi (synCcom (synC1st) (synC2nd)))
+        (synCsi (synCcom (synC2nd) (synC2nd))))
+  have p0004 := @gVex p
+  have p0005 := @gOpsnelsi (.cv p) A (synC1st) p0004 hyp_otsnelsi3_1
+  have p0006 := (Nominal.biimpRefl (synWbr (.cv p) (synC1st) A))
   have p0007 :=
-    @g_bitr4i (.classMem (syn_cop (syn_csn (.cv p)) (syn_csn A)) (syn_csi (syn_c1st)))
-      (.classMem (syn_cop (.cv p) A) (syn_c1st)) (syn_wbr (.cv p) (syn_c1st) A) p0005
+    @gBitr4i (.classMem (synCop (synCsn (.cv p)) (synCsn A)) (synCsi (synC1st)))
+      (.classMem (synCop (.cv p) A) (synC1st)) (synWbr (.cv p) (synC1st) A) p0005
       p0006
   have p0008 :=
-    @g_oteltxp (syn_csn (.cv p)) (syn_csn B) (syn_csn C)
-      (syn_csi (syn_ccom (syn_c1st) (syn_c2nd)))
-      (syn_csi (syn_ccom (syn_c2nd) (syn_c2nd)))
+    @gOteltxp (synCsn (.cv p)) (synCsn B) (synCsn C)
+      (synCsi (synCcom (synC1st) (synC2nd)))
+      (synCsi (synCcom (synC2nd) (synC2nd)))
   have p0009 :=
-    @g_opsnelsi (.cv p) B (syn_ccom (syn_c1st) (syn_c2nd)) p0004 hyp_otsnelsi3_2
+    @gOpsnelsi (.cv p) B (synCcom (synC1st) (synC2nd)) p0004 hyp_otsnelsi3_2
   have p0010 :=
-    @g_opelco x (.cv p) B (syn_c1st) (syn_c2nd) dv_cache_0004 dv_cache_0005 dv_cache_0006
+    @gOpelco x (.cv p) B (synC1st) (synC2nd) dv_cache_0004 dv_cache_0005 dv_cache_0006
       dv_cache_0007
-  have p0011 := @g_opeq (.cv p)
+  have p0011 := @gOpeq (.cv p)
   have p0012 :=
-    @g_breq1i (.cv p) (syn_cop (syn_cproj1 (.cv p)) (syn_cproj2 (.cv p))) (.cv x)
-      (syn_c2nd) p0011
-  have p0013 := @g_proj1ex (.cv p) p0004
-  have p0014 := @g_proj2ex (.cv p) p0004
-  have p0015 := @g_opbr2nd (syn_cproj1 (.cv p)) (syn_cproj2 (.cv p)) (.cv x) p0013 p0014
-  have p0016 := @g_eqcom (syn_cproj2 (.cv p)) (.cv x)
+    @gBreq1i (.cv p) (synCop (synCproj1 (.cv p)) (synCproj2 (.cv p))) (.cv x)
+      (synC2nd) p0011
+  have p0013 := @gProj1ex (.cv p) p0004
+  have p0014 := @gProj2ex (.cv p) p0004
+  have p0015 := @gOpbr2nd (synCproj1 (.cv p)) (synCproj2 (.cv p)) (.cv x) p0013 p0014
+  have p0016 := @gEqcom (synCproj2 (.cv p)) (.cv x)
   have p0017 :=
-    @g_n_3bitri (syn_wbr (.cv p) (syn_c2nd) (.cv x))
-      (syn_wbr (syn_cop (syn_cproj1 (.cv p)) (syn_cproj2 (.cv p))) (syn_c2nd) (.cv x))
-      (.classEq (syn_cproj2 (.cv p)) (.cv x)) (.classEq (.cv x) (syn_cproj2 (.cv p)))
+    @gN3bitri (synWbr (.cv p) (synC2nd) (.cv x))
+      (synWbr (synCop (synCproj1 (.cv p)) (synCproj2 (.cv p))) (synC2nd) (.cv x))
+      (.classEq (synCproj2 (.cv p)) (.cv x)) (.classEq (.cv x) (synCproj2 (.cv p)))
       p0012 p0015 p0016
   have p0018 :=
-    @g_anbi1i (syn_wbr (.cv p) (syn_c2nd) (.cv x)) (.classEq (.cv x) (syn_cproj2 (.cv p)))
-      (syn_wbr (.cv x) (syn_c1st) B) p0017
+    @gAnbi1i (synWbr (.cv p) (synC2nd) (.cv x)) (.classEq (.cv x) (synCproj2 (.cv p)))
+      (synWbr (.cv x) (synC1st) B) p0017
   have p0019 :=
-    @g_exbii (syn_wa (syn_wbr (.cv p) (syn_c2nd) (.cv x)) (syn_wbr (.cv x) (syn_c1st) B))
-      (syn_wa (.classEq (.cv x) (syn_cproj2 (.cv p))) (syn_wbr (.cv x) (syn_c1st) B)) x
+    @gExbii (synWa (synWbr (.cv p) (synC2nd) (.cv x)) (synWbr (.cv x) (synC1st) B))
+      (synWa (.classEq (.cv x) (synCproj2 (.cv p))) (synWbr (.cv x) (synC1st) B)) x
       p0018
-  have p0020 := @g_breq1 (.cv x) (syn_cproj2 (.cv p)) B (syn_c1st)
+  have p0020 := @gBreq1 (.cv x) (synCproj2 (.cv p)) B (synC1st)
   have p0021 :=
-    @g_ceqsexv (syn_wbr (.cv x) (syn_c1st) B) (syn_wbr (syn_cproj2 (.cv p)) (syn_c1st) B)
-      x (syn_cproj2 (.cv p)) dv_cache_0008 dv_cache_0009 p0014 p0020
+    @gCeqsexv (synWbr (.cv x) (synC1st) B) (synWbr (synCproj2 (.cv p)) (synC1st) B)
+      x (synCproj2 (.cv p)) dv_cache_0008 dv_cache_0009 p0014 p0020
   have p0022 :=
-    @g_bitri
-      (syn_wex x (syn_wa (syn_wbr (.cv p) (syn_c2nd) (.cv x)) (syn_wbr (.cv x) (syn_c1st) B)))
-      (syn_wex x
-        (syn_wa (.classEq (.cv x) (syn_cproj2 (.cv p))) (syn_wbr (.cv x) (syn_c1st) B)))
-      (syn_wbr (syn_cproj2 (.cv p)) (syn_c1st) B) p0019 p0021
+    @gBitri
+      (synWex x (synWa (synWbr (.cv p) (synC2nd) (.cv x)) (synWbr (.cv x) (synC1st) B)))
+      (synWex x
+        (synWa (.classEq (.cv x) (synCproj2 (.cv p))) (synWbr (.cv x) (synC1st) B)))
+      (synWbr (synCproj2 (.cv p)) (synC1st) B) p0019 p0021
   have p0023 :=
-    @g_n_3bitri
-      (.classMem (syn_cop (syn_csn (.cv p)) (syn_csn B))
-        (syn_csi (syn_ccom (syn_c1st) (syn_c2nd))))
-      (.classMem (syn_cop (.cv p) B) (syn_ccom (syn_c1st) (syn_c2nd)))
-      (syn_wex x (syn_wa (syn_wbr (.cv p) (syn_c2nd) (.cv x)) (syn_wbr (.cv x) (syn_c1st) B)))
-      (syn_wbr (syn_cproj2 (.cv p)) (syn_c1st) B) p0009 p0010 p0022
+    @gN3bitri
+      (.classMem (synCop (synCsn (.cv p)) (synCsn B))
+        (synCsi (synCcom (synC1st) (synC2nd))))
+      (.classMem (synCop (.cv p) B) (synCcom (synC1st) (synC2nd)))
+      (synWex x (synWa (synWbr (.cv p) (synC2nd) (.cv x)) (synWbr (.cv x) (synC1st) B)))
+      (synWbr (synCproj2 (.cv p)) (synC1st) B) p0009 p0010 p0022
   have p0024 :=
-    @g_opsnelsi (.cv p) C (syn_ccom (syn_c2nd) (syn_c2nd)) p0004 hyp_otsnelsi3_3
+    @gOpsnelsi (.cv p) C (synCcom (synC2nd) (synC2nd)) p0004 hyp_otsnelsi3_3
   have p0025 :=
-    @g_opelco x (.cv p) C (syn_c2nd) (syn_c2nd) dv_cache_0004 dv_cache_0010 dv_cache_0007
+    @gOpelco x (.cv p) C (synC2nd) (synC2nd) dv_cache_0004 dv_cache_0010 dv_cache_0007
       dv_cache_0007
   have p0026 :=
-    @g_anbi1i (syn_wbr (.cv p) (syn_c2nd) (.cv x)) (.classEq (.cv x) (syn_cproj2 (.cv p)))
-      (syn_wbr (.cv x) (syn_c2nd) C) p0017
+    @gAnbi1i (synWbr (.cv p) (synC2nd) (.cv x)) (.classEq (.cv x) (synCproj2 (.cv p)))
+      (synWbr (.cv x) (synC2nd) C) p0017
   have p0027 :=
-    @g_exbii (syn_wa (syn_wbr (.cv p) (syn_c2nd) (.cv x)) (syn_wbr (.cv x) (syn_c2nd) C))
-      (syn_wa (.classEq (.cv x) (syn_cproj2 (.cv p))) (syn_wbr (.cv x) (syn_c2nd) C)) x
+    @gExbii (synWa (synWbr (.cv p) (synC2nd) (.cv x)) (synWbr (.cv x) (synC2nd) C))
+      (synWa (.classEq (.cv x) (synCproj2 (.cv p))) (synWbr (.cv x) (synC2nd) C)) x
       p0026
-  have p0028 := @g_breq1 (.cv x) (syn_cproj2 (.cv p)) C (syn_c2nd)
+  have p0028 := @gBreq1 (.cv x) (synCproj2 (.cv p)) C (synC2nd)
   have p0029 :=
-    @g_ceqsexv (syn_wbr (.cv x) (syn_c2nd) C) (syn_wbr (syn_cproj2 (.cv p)) (syn_c2nd) C)
-      x (syn_cproj2 (.cv p)) dv_cache_0008 dv_cache_0011 p0014 p0028
+    @gCeqsexv (synWbr (.cv x) (synC2nd) C) (synWbr (synCproj2 (.cv p)) (synC2nd) C)
+      x (synCproj2 (.cv p)) dv_cache_0008 dv_cache_0011 p0014 p0028
   have p0030 :=
-    @g_bitri
-      (syn_wex x (syn_wa (syn_wbr (.cv p) (syn_c2nd) (.cv x)) (syn_wbr (.cv x) (syn_c2nd) C)))
-      (syn_wex x
-        (syn_wa (.classEq (.cv x) (syn_cproj2 (.cv p))) (syn_wbr (.cv x) (syn_c2nd) C)))
-      (syn_wbr (syn_cproj2 (.cv p)) (syn_c2nd) C) p0027 p0029
+    @gBitri
+      (synWex x (synWa (synWbr (.cv p) (synC2nd) (.cv x)) (synWbr (.cv x) (synC2nd) C)))
+      (synWex x
+        (synWa (.classEq (.cv x) (synCproj2 (.cv p))) (synWbr (.cv x) (synC2nd) C)))
+      (synWbr (synCproj2 (.cv p)) (synC2nd) C) p0027 p0029
   have p0031 :=
-    @g_n_3bitri
-      (.classMem (syn_cop (syn_csn (.cv p)) (syn_csn C))
-        (syn_csi (syn_ccom (syn_c2nd) (syn_c2nd))))
-      (.classMem (syn_cop (.cv p) C) (syn_ccom (syn_c2nd) (syn_c2nd)))
-      (syn_wex x (syn_wa (syn_wbr (.cv p) (syn_c2nd) (.cv x)) (syn_wbr (.cv x) (syn_c2nd) C)))
-      (syn_wbr (syn_cproj2 (.cv p)) (syn_c2nd) C) p0024 p0025 p0030
+    @gN3bitri
+      (.classMem (synCop (synCsn (.cv p)) (synCsn C))
+        (synCsi (synCcom (synC2nd) (synC2nd))))
+      (.classMem (synCop (.cv p) C) (synCcom (synC2nd) (synC2nd)))
+      (synWex x (synWa (synWbr (.cv p) (synC2nd) (.cv x)) (synWbr (.cv x) (synC2nd) C)))
+      (synWbr (synCproj2 (.cv p)) (synC2nd) C) p0024 p0025 p0030
   have p0032 :=
-    @g_anbi12i
-      (.classMem (syn_cop (syn_csn (.cv p)) (syn_csn B))
-        (syn_csi (syn_ccom (syn_c1st) (syn_c2nd))))
-      (syn_wbr (syn_cproj2 (.cv p)) (syn_c1st) B)
-      (.classMem (syn_cop (syn_csn (.cv p)) (syn_csn C))
-        (syn_csi (syn_ccom (syn_c2nd) (syn_c2nd))))
-      (syn_wbr (syn_cproj2 (.cv p)) (syn_c2nd) C) p0023 p0031
+    @gAnbi12i
+      (.classMem (synCop (synCsn (.cv p)) (synCsn B))
+        (synCsi (synCcom (synC1st) (synC2nd))))
+      (synWbr (synCproj2 (.cv p)) (synC1st) B)
+      (.classMem (synCop (synCsn (.cv p)) (synCsn C))
+        (synCsi (synCcom (synC2nd) (synC2nd))))
+      (synWbr (synCproj2 (.cv p)) (synC2nd) C) p0023 p0031
   have p0033 :=
-    @g_opbr2nd (syn_cproj1 (.cv p)) (syn_cproj2 (.cv p)) (syn_cop B C) p0013 p0014
+    @gOpbr2nd (synCproj1 (.cv p)) (synCproj2 (.cv p)) (synCop B C) p0013 p0014
   have p0034 :=
-    @g_breq1i (.cv p) (syn_cop (syn_cproj1 (.cv p)) (syn_cproj2 (.cv p))) (syn_cop B C)
-      (syn_c2nd) p0011
-  have p0035 := @g_op1st2nd B C (syn_cproj2 (.cv p)) hyp_otsnelsi3_2 hyp_otsnelsi3_3
+    @gBreq1i (.cv p) (synCop (synCproj1 (.cv p)) (synCproj2 (.cv p))) (synCop B C)
+      (synC2nd) p0011
+  have p0035 := @gOp1st2nd B C (synCproj2 (.cv p)) hyp_otsnelsi3_2 hyp_otsnelsi3_3
   have p0036 :=
-    @g_n_3bitr4ri
-      (syn_wbr (syn_cop (syn_cproj1 (.cv p)) (syn_cproj2 (.cv p))) (syn_c2nd) (syn_cop B C))
-      (.classEq (syn_cproj2 (.cv p)) (syn_cop B C))
-      (syn_wbr (.cv p) (syn_c2nd) (syn_cop B C))
-      (syn_wa (syn_wbr (syn_cproj2 (.cv p)) (syn_c1st) B)
-        (syn_wbr (syn_cproj2 (.cv p)) (syn_c2nd) C))
+    @gN3bitr4ri
+      (synWbr (synCop (synCproj1 (.cv p)) (synCproj2 (.cv p))) (synC2nd) (synCop B C))
+      (.classEq (synCproj2 (.cv p)) (synCop B C))
+      (synWbr (.cv p) (synC2nd) (synCop B C))
+      (synWa (synWbr (synCproj2 (.cv p)) (synC1st) B)
+        (synWbr (synCproj2 (.cv p)) (synC2nd) C))
       p0033 p0034 p0035
   have p0037 :=
-    @g_n_3bitri
-      (.classMem (syn_cop (syn_csn (.cv p)) (syn_cop (syn_csn B) (syn_csn C)))
-        (syn_ctxp (syn_csi (syn_ccom (syn_c1st) (syn_c2nd)))
-          (syn_csi (syn_ccom (syn_c2nd) (syn_c2nd)))))
-      (syn_wa (.classMem (syn_cop (syn_csn (.cv p)) (syn_csn B))
-          (syn_csi (syn_ccom (syn_c1st) (syn_c2nd))))
-        (.classMem (syn_cop (syn_csn (.cv p)) (syn_csn C))
-          (syn_csi (syn_ccom (syn_c2nd) (syn_c2nd)))))
-      (syn_wa (syn_wbr (syn_cproj2 (.cv p)) (syn_c1st) B)
-        (syn_wbr (syn_cproj2 (.cv p)) (syn_c2nd) C))
-      (syn_wbr (.cv p) (syn_c2nd) (syn_cop B C)) p0008 p0032 p0036
+    @gN3bitri
+      (.classMem (synCop (synCsn (.cv p)) (synCop (synCsn B) (synCsn C)))
+        (synCtxp (synCsi (synCcom (synC1st) (synC2nd)))
+          (synCsi (synCcom (synC2nd) (synC2nd)))))
+      (synWa (.classMem (synCop (synCsn (.cv p)) (synCsn B))
+          (synCsi (synCcom (synC1st) (synC2nd))))
+        (.classMem (synCop (synCsn (.cv p)) (synCsn C))
+          (synCsi (synCcom (synC2nd) (synC2nd)))))
+      (synWa (synWbr (synCproj2 (.cv p)) (synC1st) B)
+        (synWbr (synCproj2 (.cv p)) (synC2nd) C))
+      (synWbr (.cv p) (synC2nd) (synCop B C)) p0008 p0032 p0036
   have p0038 :=
-    @g_anbi12i (.classMem (syn_cop (syn_csn (.cv p)) (syn_csn A)) (syn_csi (syn_c1st)))
-      (syn_wbr (.cv p) (syn_c1st) A)
-      (.classMem (syn_cop (syn_csn (.cv p)) (syn_cop (syn_csn B) (syn_csn C)))
-        (syn_ctxp (syn_csi (syn_ccom (syn_c1st) (syn_c2nd)))
-          (syn_csi (syn_ccom (syn_c2nd) (syn_c2nd)))))
-      (syn_wbr (.cv p) (syn_c2nd) (syn_cop B C)) p0007 p0037
-  have p0039 := @g_opex B C hyp_otsnelsi3_2 hyp_otsnelsi3_3
-  have p0040 := @g_op1st2nd A (syn_cop B C) (.cv p) hyp_otsnelsi3_1 p0039
+    @gAnbi12i (.classMem (synCop (synCsn (.cv p)) (synCsn A)) (synCsi (synC1st)))
+      (synWbr (.cv p) (synC1st) A)
+      (.classMem (synCop (synCsn (.cv p)) (synCop (synCsn B) (synCsn C)))
+        (synCtxp (synCsi (synCcom (synC1st) (synC2nd)))
+          (synCsi (synCcom (synC2nd) (synC2nd)))))
+      (synWbr (.cv p) (synC2nd) (synCop B C)) p0007 p0037
+  have p0039 := @gOpex B C hyp_otsnelsi3_2 hyp_otsnelsi3_3
+  have p0040 := @gOp1st2nd A (synCop B C) (.cv p) hyp_otsnelsi3_1 p0039
   have p0041 :=
-    @g_n_3bitri
-      (.classMem (syn_cop (syn_csn (.cv p))
-          (syn_cop (syn_csn A) (syn_cop (syn_csn B) (syn_csn C))))
-        (syn_ctxp (syn_csi (syn_c1st)) (syn_ctxp (syn_csi (syn_ccom (syn_c1st) (syn_c2nd)))
-            (syn_csi (syn_ccom (syn_c2nd) (syn_c2nd))))))
-      (syn_wa (.classMem (syn_cop (syn_csn (.cv p)) (syn_csn A)) (syn_csi (syn_c1st)))
-        (.classMem (syn_cop (syn_csn (.cv p)) (syn_cop (syn_csn B) (syn_csn C)))
-          (syn_ctxp (syn_csi (syn_ccom (syn_c1st) (syn_c2nd)))
-            (syn_csi (syn_ccom (syn_c2nd) (syn_c2nd))))))
-      (syn_wa (syn_wbr (.cv p) (syn_c1st) A) (syn_wbr (.cv p) (syn_c2nd) (syn_cop B C)))
-      (.classEq (.cv p) (syn_cop A (syn_cop B C))) p0003 p0038 p0040
+    @gN3bitri
+      (.classMem (synCop (synCsn (.cv p))
+          (synCop (synCsn A) (synCop (synCsn B) (synCsn C))))
+        (synCtxp (synCsi (synC1st)) (synCtxp (synCsi (synCcom (synC1st) (synC2nd)))
+            (synCsi (synCcom (synC2nd) (synC2nd))))))
+      (synWa (.classMem (synCop (synCsn (.cv p)) (synCsn A)) (synCsi (synC1st)))
+        (.classMem (synCop (synCsn (.cv p)) (synCop (synCsn B) (synCsn C)))
+          (synCtxp (synCsi (synCcom (synC1st) (synC2nd)))
+            (synCsi (synCcom (synC2nd) (synC2nd))))))
+      (synWa (synWbr (.cv p) (synC1st) A) (synWbr (.cv p) (synC2nd) (synCop B C)))
+      (.classEq (.cv p) (synCop A (synCop B C))) p0003 p0038 p0040
   have p0042 :=
-    @g_rexbii
-      (.classMem (syn_cop (syn_csn (.cv p))
-          (syn_cop (syn_csn A) (syn_cop (syn_csn B) (syn_csn C))))
-        (syn_ctxp (syn_csi (syn_c1st)) (syn_ctxp (syn_csi (syn_ccom (syn_c1st) (syn_c2nd)))
-            (syn_csi (syn_ccom (syn_c2nd) (syn_c2nd))))))
-      (.classEq (.cv p) (syn_cop A (syn_cop B C))) p R p0041
-  have p0043 := @g_risset p (syn_cop A (syn_cop B C)) R dv_cache_0012 dv_cache_0003
+    @gRexbii
+      (.classMem (synCop (synCsn (.cv p))
+          (synCop (synCsn A) (synCop (synCsn B) (synCsn C))))
+        (synCtxp (synCsi (synC1st)) (synCtxp (synCsi (synCcom (synC1st) (synC2nd)))
+            (synCsi (synCcom (synC2nd) (synC2nd))))))
+      (.classEq (.cv p) (synCop A (synCop B C))) p R p0041
+  have p0043 := @gRisset p (synCop A (synCop B C)) R dv_cache_0012 dv_cache_0003
   have p0044 :=
-    @g_bitr4i
-      (syn_wrex p R (.classMem (syn_cop (syn_csn (.cv p))
-            (syn_cop (syn_csn A) (syn_cop (syn_csn B) (syn_csn C))))
-          (syn_ctxp (syn_csi (syn_c1st)) (syn_ctxp (syn_csi (syn_ccom (syn_c1st) (syn_c2nd)))
-              (syn_csi (syn_ccom (syn_c2nd) (syn_c2nd)))))))
-      (syn_wrex p R (.classEq (.cv p) (syn_cop A (syn_cop B C))))
-      (.classMem (syn_cop A (syn_cop B C)) R) p0042 p0043
+    @gBitr4i
+      (synWrex p R (.classMem (synCop (synCsn (.cv p))
+            (synCop (synCsn A) (synCop (synCsn B) (synCsn C))))
+          (synCtxp (synCsi (synC1st)) (synCtxp (synCsi (synCcom (synC1st) (synC2nd)))
+              (synCsi (synCcom (synC2nd) (synC2nd)))))))
+      (synWrex p R (.classEq (.cv p) (synCop A (synCop B C))))
+      (.classMem (synCop A (synCop B C)) R) p0042 p0043
   have p0045 :=
-    @g_n_3bitri
-      (.classMem (syn_cop (syn_csn A) (syn_cop (syn_csn B) (syn_csn C))) (syn_csi3 R))
-      (.classMem (syn_cop (syn_csn A) (syn_cop (syn_csn B) (syn_csn C))) (syn_cima
-          (syn_ctxp (syn_csi (syn_c1st)) (syn_ctxp (syn_csi (syn_ccom (syn_c1st) (syn_c2nd)))
-              (syn_csi (syn_ccom (syn_c2nd) (syn_c2nd))))) (syn_cpw1 R)))
-      (syn_wrex p R (.classMem (syn_cop (syn_csn (.cv p))
-            (syn_cop (syn_csn A) (syn_cop (syn_csn B) (syn_csn C))))
-          (syn_ctxp (syn_csi (syn_c1st)) (syn_ctxp (syn_csi (syn_ccom (syn_c1st) (syn_c2nd)))
-              (syn_csi (syn_ccom (syn_c2nd) (syn_c2nd)))))))
-      (.classMem (syn_cop A (syn_cop B C)) R) p0001 p0002 p0044
+    @gN3bitri
+      (.classMem (synCop (synCsn A) (synCop (synCsn B) (synCsn C))) (synCsi3 R))
+      (.classMem (synCop (synCsn A) (synCop (synCsn B) (synCsn C))) (synCima
+          (synCtxp (synCsi (synC1st)) (synCtxp (synCsi (synCcom (synC1st) (synC2nd)))
+              (synCsi (synCcom (synC2nd) (synC2nd))))) (synCpw1 R)))
+      (synWrex p R (.classMem (synCop (synCsn (.cv p))
+            (synCop (synCsn A) (synCop (synCsn B) (synCsn C))))
+          (synCtxp (synCsi (synC1st)) (synCtxp (synCsi (synCcom (synC1st) (synC2nd)))
+              (synCsi (synCcom (synC2nd) (synC2nd)))))))
+      (.classMem (synCop A (synCop B C)) R) p0001 p0002 p0044
   exact p0045
 
+/-- Checked nominal proof certificate identified upstream as `g_si3ex`. -/
 @[expose]
-noncomputable def g_si3ex (A : Class)
-    (hyp_si3ex_1 : Nominal.NPrf (.classMem A (syn_cvv))) :
-    Nominal.NPrf (.classMem (syn_csi3 A) (syn_cvv)) :=
+noncomputable def gSi3ex (A : Class)
+    (hyp_si3ex_1 : Nominal.NPrf (.classMem A (synCvv))) :
+    Nominal.NPrf (.classMem (synCsi3 A) (synCvv)) :=
   by
-  have p0000 := (Nominal.classEqRefl (syn_csi3 A))
-  have p0001 := @g_n_1stex
-  have p0002 := @g_siex (syn_c1st) p0001
-  have p0004 := @g_n_2ndex
-  have p0005 := @g_coex (syn_c1st) (syn_c2nd) p0001 p0004
-  have p0006 := @g_siex (syn_ccom (syn_c1st) (syn_c2nd)) p0005
-  have p0009 := @g_coex (syn_c2nd) (syn_c2nd) p0004 p0004
-  have p0010 := @g_siex (syn_ccom (syn_c2nd) (syn_c2nd)) p0009
+  have p0000 := (Nominal.classEqRefl (synCsi3 A))
+  have p0001 := @gN1stex
+  have p0002 := @gSiex (synC1st) p0001
+  have p0004 := @gN2ndex
+  have p0005 := @gCoex (synC1st) (synC2nd) p0001 p0004
+  have p0006 := @gSiex (synCcom (synC1st) (synC2nd)) p0005
+  have p0009 := @gCoex (synC2nd) (synC2nd) p0004 p0004
+  have p0010 := @gSiex (synCcom (synC2nd) (synC2nd)) p0009
   have p0011 :=
-    @g_txpex (syn_csi (syn_ccom (syn_c1st) (syn_c2nd)))
-      (syn_csi (syn_ccom (syn_c2nd) (syn_c2nd))) p0006 p0010
+    @gTxpex (synCsi (synCcom (synC1st) (synC2nd)))
+      (synCsi (synCcom (synC2nd) (synC2nd))) p0006 p0010
   have p0012 :=
-    @g_txpex (syn_csi (syn_c1st))
-      (syn_ctxp (syn_csi (syn_ccom (syn_c1st) (syn_c2nd)))
-        (syn_csi (syn_ccom (syn_c2nd) (syn_c2nd))))
+    @gTxpex (synCsi (synC1st))
+      (synCtxp (synCsi (synCcom (synC1st) (synC2nd)))
+        (synCsi (synCcom (synC2nd) (synC2nd))))
       p0002 p0011
-  have p0013 := @g_pw1ex A hyp_si3ex_1
+  have p0013 := @gPw1ex A hyp_si3ex_1
   have p0014 :=
-    @g_imaex
-      (syn_ctxp (syn_csi (syn_c1st)) (syn_ctxp (syn_csi (syn_ccom (syn_c1st) (syn_c2nd)))
-          (syn_csi (syn_ccom (syn_c2nd) (syn_c2nd)))))
-      (syn_cpw1 A) p0012 p0013
+    @gImaex
+      (synCtxp (synCsi (synC1st)) (synCtxp (synCsi (synCcom (synC1st) (synC2nd)))
+          (synCsi (synCcom (synC2nd) (synC2nd)))))
+      (synCpw1 A) p0012 p0013
   have p0015 :=
-    @g_eqeltri (syn_csi3 A)
-      (syn_cima (syn_ctxp (syn_csi (syn_c1st))
-          (syn_ctxp (syn_csi (syn_ccom (syn_c1st) (syn_c2nd)))
-            (syn_csi (syn_ccom (syn_c2nd) (syn_c2nd))))) (syn_cpw1 A))
-      (syn_cvv) p0000 p0014
+    @gEqeltri (synCsi3 A)
+      (synCima (synCtxp (synCsi (synC1st))
+          (synCtxp (synCsi (synCcom (synC1st) (synC2nd)))
+            (synCsi (synCcom (synC2nd) (synC2nd))))) (synCpw1 A))
+      (synCvv) p0000 p0014
   exact p0015
 
+/-- Checked nominal proof certificate identified upstream as `g_releqel`. -/
 @[expose]
-noncomputable def g_releqel (x : Var) (y : Var) (A : Class) (R : Class) (T : Class)
+noncomputable def gReleqel (x : Var) (y : Var) (A : Class) (R : Class) (T : Class)
     (dv_A_y : y ∉ A.fv) (dv_R_y : y ∉ R.fv) (dv_T_y : y ∉ T.fv) (dv_x_y : x ≠ y)
-    (hyp_releqel_1 : Nominal.NPrf (.classMem T (syn_cvv)))
+    (hyp_releqel_1 : Nominal.NPrf (.classMem T (synCvv)))
     (hyp_releqel_2 : Nominal.NPrf
-        (syn_wb (.classMem (syn_cop (syn_csn (.cv y)) T) R) (.classMem (.cv y) A))) :
+        (synWb (.classMem (synCop (synCsn (.cv y)) T) R) (.classMem (.cv y) A))) :
     Nominal.NPrf
-      (syn_wb (.classMem (syn_cop (.cv x) T) (syn_ccompl
-            (syn_cima (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)) (syn_c1c))))
+      (synWb (.classMem (synCop (.cv x) T) (synCcompl
+            (synCima (synCsymdif (synCins3 (synCsset)) (synCins2 R)) (synC1c))))
         (.classEq (.cv x) A)) :=
   by
-  have dv_cache_0001 : y ∉ ((syn_cop (.cv x) T)).fv := by
+  have dv_cache_0001 : y ∉ ((synCop (.cv x) T)).fv := by
     exact
       (by
         have compact_fv_not_mem_empty : y ∉ (∅ : Finset Var) :=
@@ -465,7 +468,7 @@ noncomputable def g_releqel (x : Var) (y : Var) (A : Class) (R : Class) (T : Cla
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cop,
           NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_union,
           Finset.mem_singleton, (Ne.symm dv_x_y), dv_T_y, or_false, not_false_eq_true])
-  have dv_cache_0002 : y ∉ ((syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R))).fv :=
+  have dv_cache_0002 : y ∉ ((synCsymdif (synCins3 (synCsset)) (synCins2 R))).fv :=
     by
     clear dv_cache_0001
     exact
@@ -501,22 +504,22 @@ noncomputable def g_releqel (x : Var) (y : Var) (A : Class) (R : Class) (T : Cla
           cases hmem
         simp only [dv_A_y, not_false_eq_true])
   have p0000 :=
-    @g_elima1c y (syn_cop (.cv x) T) (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R))
+    @gElima1c y (synCop (.cv x) T) (synCsymdif (synCins3 (synCsset)) (synCins2 R))
       dv_cache_0001 dv_cache_0002
   have p0001 :=
-    @g_elsymdif (syn_cop (syn_csn (.cv y)) (syn_cop (.cv x) T)) (syn_cins3 (syn_csset))
-      (syn_cins2 R)
-  have p0002 := @g_otelins3 (syn_csn (.cv y)) (.cv x) T (syn_csset) hyp_releqel_1
-  have p0003 := @g_vex y
-  have p0004 := @g_vex x
-  have p0005 := @g_opelssetsn (.cv y) (.cv x) p0003 p0004
+    @gElsymdif (synCop (synCsn (.cv y)) (synCop (.cv x) T)) (synCins3 (synCsset))
+      (synCins2 R)
+  have p0002 := @gOtelins3 (synCsn (.cv y)) (.cv x) T (synCsset) hyp_releqel_1
+  have p0003 := @gVex y
+  have p0004 := @gVex x
+  have p0005 := @gOpelssetsn (.cv y) (.cv x) p0003 p0004
   have p0006_e01_recanon :
     Nominal.NPrf
-      (syn_wb (.classMem (syn_cop (syn_csn (.cv y)) (.cv x)) (syn_csset)) (.objMem y x)) :=
+      (synWb (.classMem (synCop (synCsn (.cv y)) (.cv x)) (synCsset)) (.objMem y x)) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_cop syn_cun syn_cnin syn_wnan syn_wa syn_ccompl syn_wrex syn_wex
-          syn_cphi syn_csn syn_csset syn_copab syn_wss syn_cin
+        unfold synWb synCop synCun synCnin synWnan synWa synCcompl synWrex synWex
+          synCphi synCsn synCsset synCopab synWss synCin
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
@@ -530,59 +533,59 @@ noncomputable def g_releqel (x : Var) (y : Var) (A : Class) (R : Class) (T : Cla
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0005
   have p0006 :=
-    @g_bitri
-      (.classMem (syn_cop (syn_csn (.cv y)) (syn_cop (.cv x) T)) (syn_cins3 (syn_csset)))
-      (.classMem (syn_cop (syn_csn (.cv y)) (.cv x)) (syn_csset)) (.objMem y x) p0002
+    @gBitri
+      (.classMem (synCop (synCsn (.cv y)) (synCop (.cv x) T)) (synCins3 (synCsset)))
+      (.classMem (synCop (synCsn (.cv y)) (.cv x)) (synCsset)) (.objMem y x) p0002
       p0006_e01_recanon
-  have p0007 := @g_otelins2 (syn_csn (.cv y)) (.cv x) T R p0004
+  have p0007 := @gOtelins2 (synCsn (.cv y)) (.cv x) T R p0004
   have p0008 :=
-    @g_bitri (.classMem (syn_cop (syn_csn (.cv y)) (syn_cop (.cv x) T)) (syn_cins2 R))
-      (.classMem (syn_cop (syn_csn (.cv y)) T) R) (.classMem (.cv y) A) p0007
+    @gBitri (.classMem (synCop (synCsn (.cv y)) (synCop (.cv x) T)) (synCins2 R))
+      (.classMem (synCop (synCsn (.cv y)) T) R) (.classMem (.cv y) A) p0007
       hyp_releqel_2
   have p0009 :=
-    @g_bibi12i
-      (.classMem (syn_cop (syn_csn (.cv y)) (syn_cop (.cv x) T)) (syn_cins3 (syn_csset)))
+    @gBibi12i
+      (.classMem (synCop (synCsn (.cv y)) (synCop (.cv x) T)) (synCins3 (synCsset)))
       (.objMem y x)
-      (.classMem (syn_cop (syn_csn (.cv y)) (syn_cop (.cv x) T)) (syn_cins2 R))
+      (.classMem (synCop (synCsn (.cv y)) (synCop (.cv x) T)) (synCins2 R))
       (.classMem (.cv y) A) p0006 p0008
   have p0010 :=
-    @g_xchbinx
-      (.classMem (syn_cop (syn_csn (.cv y)) (syn_cop (.cv x) T))
-        (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)))
-      (syn_wb (.classMem (syn_cop (syn_csn (.cv y)) (syn_cop (.cv x) T))
-          (syn_cins3 (syn_csset)))
-        (.classMem (syn_cop (syn_csn (.cv y)) (syn_cop (.cv x) T)) (syn_cins2 R)))
-      (syn_wb (.objMem y x) (.classMem (.cv y) A)) p0001 p0009
+    @gXchbinx
+      (.classMem (synCop (synCsn (.cv y)) (synCop (.cv x) T))
+        (synCsymdif (synCins3 (synCsset)) (synCins2 R)))
+      (synWb (.classMem (synCop (synCsn (.cv y)) (synCop (.cv x) T))
+          (synCins3 (synCsset)))
+        (.classMem (synCop (synCsn (.cv y)) (synCop (.cv x) T)) (synCins2 R)))
+      (synWb (.objMem y x) (.classMem (.cv y) A)) p0001 p0009
   have p0011 :=
-    @g_exbii
-      (.classMem (syn_cop (syn_csn (.cv y)) (syn_cop (.cv x) T))
-        (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)))
-      (.neg (syn_wb (.objMem y x) (.classMem (.cv y) A))) y p0010
-  have p0012 := @g_exnal (syn_wb (.objMem y x) (.classMem (.cv y) A)) y
+    @gExbii
+      (.classMem (synCop (synCsn (.cv y)) (synCop (.cv x) T))
+        (synCsymdif (synCins3 (synCsset)) (synCins2 R)))
+      (.neg (synWb (.objMem y x) (.classMem (.cv y) A))) y p0010
+  have p0012 := @gExnal (synWb (.objMem y x) (.classMem (.cv y) A)) y
   have p0013 :=
-    @g_n_3bitrri
-      (.classMem (syn_cop (.cv x) T)
-        (syn_cima (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)) (syn_c1c)))
-      (syn_wex y (.classMem (syn_cop (syn_csn (.cv y)) (syn_cop (.cv x) T))
-          (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R))))
-      (syn_wex y (.neg (syn_wb (.objMem y x) (.classMem (.cv y) A))))
-      (.neg (.all y (syn_wb (.objMem y x) (.classMem (.cv y) A)))) p0000 p0011 p0012
+    @gN3bitrri
+      (.classMem (synCop (.cv x) T)
+        (synCima (synCsymdif (synCins3 (synCsset)) (synCins2 R)) (synC1c)))
+      (synWex y (.classMem (synCop (synCsn (.cv y)) (synCop (.cv x) T))
+          (synCsymdif (synCins3 (synCsset)) (synCins2 R))))
+      (synWex y (.neg (synWb (.objMem y x) (.classMem (.cv y) A))))
+      (.neg (.all y (synWb (.objMem y x) (.classMem (.cv y) A)))) p0000 p0011 p0012
   have p0014 :=
-    @g_con1bii (.all y (syn_wb (.objMem y x) (.classMem (.cv y) A)))
-      (.classMem (syn_cop (.cv x) T)
-        (syn_cima (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)) (syn_c1c)))
+    @gCon1bii (.all y (synWb (.objMem y x) (.classMem (.cv y) A)))
+      (.classMem (synCop (.cv x) T)
+        (synCima (synCsymdif (synCins3 (synCsset)) (synCins2 R)) (synC1c)))
       p0013
-  have p0015 := @g_opex (.cv x) T p0004 hyp_releqel_1
+  have p0015 := @gOpex (.cv x) T p0004 hyp_releqel_1
   have p0016 :=
-    @g_elcompl (syn_cop (.cv x) T)
-      (syn_cima (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)) (syn_c1c)) p0015
-  have p0017 := @g_dfcleq y (.cv x) A dv_cache_0003 dv_cache_0004
+    @gElcompl (synCop (.cv x) T)
+      (synCima (synCsymdif (synCins3 (synCsset)) (synCins2 R)) (synC1c)) p0015
+  have p0017 := @gDfcleq y (.cv x) A dv_cache_0003 dv_cache_0004
   have p0018_e02_recanon :
     Nominal.NPrf
-      (syn_wb (.classEq (.cv x) A) (.all y (syn_wb (.objMem y x) (.classMem (.cv y) A)))) :=
+      (synWb (.classEq (.cv x) A) (.all y (synWb (.objMem y x) (.classMem (.cv y) A)))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb
+        unfold synWb
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
         apply Nominal.RecanonTransportDev.TRecanonWff.imp
         · apply Nominal.RecanonTransportDev.TRecanonWff.imp
@@ -612,25 +615,26 @@ noncomputable def g_releqel (x : Var) (y : Var) (A : Class) (R : Class) (T : Cla
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0017
   have p0018 :=
-    @g_n_3bitr4i
-      (.neg (.classMem (syn_cop (.cv x) T)
-          (syn_cima (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)) (syn_c1c))))
-      (.all y (syn_wb (.objMem y x) (.classMem (.cv y) A)))
-      (.classMem (syn_cop (.cv x) T) (syn_ccompl
-          (syn_cima (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)) (syn_c1c))))
+    @gN3bitr4i
+      (.neg (.classMem (synCop (.cv x) T)
+          (synCima (synCsymdif (synCins3 (synCsset)) (synCins2 R)) (synC1c))))
+      (.all y (synWb (.objMem y x) (.classMem (.cv y) A)))
+      (.classMem (synCop (.cv x) T) (synCcompl
+          (synCima (synCsymdif (synCins3 (synCsset)) (synCins2 R)) (synC1c))))
       (.classEq (.cv x) A) p0014 p0016 p0018_e02_recanon
   exact p0018
 
+/-- Checked nominal proof certificate identified upstream as `g_releqmpt`. -/
 @[expose]
-noncomputable def g_releqmpt (x : Var) (y : Var) (A : Class) (R : Class) (V : Class)
+noncomputable def gReleqmpt (x : Var) (y : Var) (A : Class) (R : Class) (V : Class)
     (dv_A_x : x ∉ A.fv) (dv_R_x : x ∉ R.fv) (dv_R_y : y ∉ R.fv) (dv_V_y : y ∉ V.fv)
     (dv_x_y : x ≠ y)
-    (hyp_releqmpt_1 : Nominal.NPrf (syn_wb (.classMem (syn_cop (syn_csn (.cv y)) (.cv x)) R)
+    (hyp_releqmpt_1 : Nominal.NPrf (synWb (.classMem (synCop (synCsn (.cv y)) (.cv x)) R)
           (.classMem (.cv y) V))) :
     Nominal.NPrf
-      (.classEq (syn_cin (syn_cxp A (syn_cvv)) (syn_ccnv (syn_ccompl
-              (syn_cima (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)) (syn_c1c)))))
-        (syn_cmpt x A V)) :=
+      (.classEq (synCin (synCxp A (synCvv)) (synCcnv (synCcompl
+              (synCima (synCsymdif (synCins3 (synCsset)) (synCins2 R)) (synC1c)))))
+        (synCmpt x A V)) :=
   by
   let proofSupport : Finset Var :=
     ({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ A.fv ∪ R.fv ∪ V.fv
@@ -698,8 +702,8 @@ noncomputable def g_releqmpt (x : Var) (y : Var) (A : Class) (R : Class) (V : Cl
     exact (show z ≠ y from (by exact fresh_z_ne_y))
   have dv_cache_0005 :
     x ∉
-      ((syn_cin (syn_cxp A (syn_cvv)) (syn_ccnv (syn_ccompl
-              (syn_cima (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)) (syn_c1c)))))).fv :=
+      ((synCin (synCxp A (synCvv)) (synCcnv (synCcompl
+              (synCima (synCsymdif (synCins3 (synCsset)) (synCins2 R)) (synC1c)))))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004
     exact
@@ -722,8 +726,8 @@ noncomputable def g_releqmpt (x : Var) (y : Var) (A : Class) (R : Class) (V : Cl
           dv_R_x, compact_fv_not_mem_empty, or_false, not_false_eq_true])
   have dv_cache_0006 :
     z ∉
-      ((syn_cin (syn_cxp A (syn_cvv)) (syn_ccnv (syn_ccompl
-              (syn_cima (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)) (syn_c1c)))))).fv :=
+      ((synCin (synCxp A (synCvv)) (synCcnv (synCcompl
+              (synCima (synCsymdif (synCins3 (synCsset)) (synCins2 R)) (synC1c)))))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
     exact
@@ -773,70 +777,71 @@ noncomputable def g_releqmpt (x : Var) (y : Var) (A : Class) (R : Class) (V : Cl
           cases hmem
         simp only [fresh_z_not_V, not_false_eq_true])
   have p0000 :=
-    @g_elin (syn_cop (.cv x) (.cv z)) (syn_cxp A (syn_cvv))
-      (syn_ccnv (syn_ccompl
-          (syn_cima (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)) (syn_c1c))))
-  have p0001 := @g_vex z
-  have p0002 := @g_opelxp (.cv x) (.cv z) A (syn_cvv)
+    @gElin (synCop (.cv x) (.cv z)) (synCxp A (synCvv))
+      (synCcnv (synCcompl
+          (synCima (synCsymdif (synCins3 (synCsset)) (synCins2 R)) (synC1c))))
+  have p0001 := @gVex z
+  have p0002 := @gOpelxp (.cv x) (.cv z) A (synCvv)
   have p0003 :=
-    @g_mpbiran2 (.classMem (syn_cop (.cv x) (.cv z)) (syn_cxp A (syn_cvv)))
-      (.classMem (.cv x) A) (.classMem (.cv z) (syn_cvv)) p0001 p0002
+    @gMpbiran2 (.classMem (synCop (.cv x) (.cv z)) (synCxp A (synCvv)))
+      (.classMem (.cv x) A) (.classMem (.cv z) (synCvv)) p0001 p0002
   have p0004 :=
-    @g_opelcnv (.cv x) (.cv z)
-      (syn_ccompl (syn_cima (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)) (syn_c1c)))
-  have p0005 := @g_vex x
+    @gOpelcnv (.cv x) (.cv z)
+      (synCcompl (synCima (synCsymdif (synCins3 (synCsset)) (synCins2 R)) (synC1c)))
+  have p0005 := @gVex x
   have p0006 :=
-    @g_releqel z y V R (.cv x) dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004
+    @gReleqel z y V R (.cv x) dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004
       p0005 hyp_releqmpt_1
   have p0007 :=
-    @g_bitri
-      (.classMem (syn_cop (.cv x) (.cv z)) (syn_ccnv (syn_ccompl
-            (syn_cima (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)) (syn_c1c)))))
-      (.classMem (syn_cop (.cv z) (.cv x)) (syn_ccompl
-          (syn_cima (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)) (syn_c1c))))
+    @gBitri
+      (.classMem (synCop (.cv x) (.cv z)) (synCcnv (synCcompl
+            (synCima (synCsymdif (synCins3 (synCsset)) (synCins2 R)) (synC1c)))))
+      (.classMem (synCop (.cv z) (.cv x)) (synCcompl
+          (synCima (synCsymdif (synCins3 (synCsset)) (synCins2 R)) (synC1c))))
       (.classEq (.cv z) V) p0004 p0006
   have p0008 :=
-    @g_anbi12i (.classMem (syn_cop (.cv x) (.cv z)) (syn_cxp A (syn_cvv)))
+    @gAnbi12i (.classMem (synCop (.cv x) (.cv z)) (synCxp A (synCvv)))
       (.classMem (.cv x) A)
-      (.classMem (syn_cop (.cv x) (.cv z)) (syn_ccnv (syn_ccompl
-            (syn_cima (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)) (syn_c1c)))))
+      (.classMem (synCop (.cv x) (.cv z)) (synCcnv (synCcompl
+            (synCima (synCsymdif (synCins3 (synCsset)) (synCins2 R)) (synC1c)))))
       (.classEq (.cv z) V) p0003 p0007
   have p0009 :=
-    @g_bitri
-      (.classMem (syn_cop (.cv x) (.cv z)) (syn_cin (syn_cxp A (syn_cvv)) (syn_ccnv (syn_ccompl
-              (syn_cima (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)) (syn_c1c))))))
-      (syn_wa (.classMem (syn_cop (.cv x) (.cv z)) (syn_cxp A (syn_cvv)))
-        (.classMem (syn_cop (.cv x) (.cv z)) (syn_ccnv (syn_ccompl
-              (syn_cima (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)) (syn_c1c))))))
-      (syn_wa (.classMem (.cv x) A) (.classEq (.cv z) V)) p0000 p0008
+    @gBitri
+      (.classMem (synCop (.cv x) (.cv z)) (synCin (synCxp A (synCvv)) (synCcnv (synCcompl
+              (synCima (synCsymdif (synCins3 (synCsset)) (synCins2 R)) (synC1c))))))
+      (synWa (.classMem (synCop (.cv x) (.cv z)) (synCxp A (synCvv)))
+        (.classMem (synCop (.cv x) (.cv z)) (synCcnv (synCcompl
+              (synCima (synCsymdif (synCins3 (synCsset)) (synCins2 R)) (synC1c))))))
+      (synWa (.classMem (.cv x) A) (.classEq (.cv z) V)) p0000 p0008
   have p0010 :=
-    @g_opabbi2i (syn_wa (.classMem (.cv x) A) (.classEq (.cv z) V)) x z
-      (syn_cin (syn_cxp A (syn_cvv)) (syn_ccnv (syn_ccompl
-            (syn_cima (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)) (syn_c1c)))))
+    @gOpabbi2i (synWa (.classMem (.cv x) A) (.classEq (.cv z) V)) x z
+      (synCin (synCxp A (synCvv)) (synCcnv (synCcompl
+            (synCima (synCsymdif (synCins3 (synCsset)) (synCins2 R)) (synC1c)))))
       dv_cache_0005 dv_cache_0006 dv_cache_0007 p0009
   have p0011 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_mpt x z A V
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfMpt x z A V
       dv_cache_0008 dv_cache_0009 dv_cache_0007
   have p0012 :=
-    @g_eqtr4i
-      (syn_cin (syn_cxp A (syn_cvv)) (syn_ccnv (syn_ccompl
-            (syn_cima (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)) (syn_c1c)))))
-      (syn_copab x z (syn_wa (.classMem (.cv x) A) (.classEq (.cv z) V))) (syn_cmpt x A V)
+    @gEqtr4i
+      (synCin (synCxp A (synCvv)) (synCcnv (synCcompl
+            (synCima (synCsymdif (synCins3 (synCsset)) (synCins2 R)) (synC1c)))))
+      (synCopab x z (synWa (.classMem (.cv x) A) (.classEq (.cv z) V))) (synCmpt x A V)
       p0010 p0011
   exact p0012
 
+/-- Checked nominal proof certificate identified upstream as `g_releqmpt2`. -/
 @[expose]
-noncomputable def g_releqmpt2 (x : Var) (y : Var) (z : Var) (A : Class) (B : Class)
+noncomputable def gReleqmpt2 (x : Var) (y : Var) (z : Var) (A : Class) (B : Class)
     (R : Class) (V : Class) (dv_A_x : x ∉ A.fv) (dv_A_y : y ∉ A.fv) (dv_B_x : x ∉ B.fv)
     (dv_B_y : y ∉ B.fv) (dv_R_x : x ∉ R.fv) (dv_R_y : y ∉ R.fv) (dv_R_z : z ∉ R.fv)
     (dv_V_z : z ∉ V.fv) (dv_x_y : x ≠ y) (dv_x_z : x ≠ z) (dv_y_z : y ≠ z)
     (hyp_releqmpt2_1 : Nominal.NPrf
-        (syn_wb (.classMem (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))) R)
+        (synWb (.classMem (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))) R)
           (.classMem (.cv z) V))) :
     Nominal.NPrf
-      (.classEq (syn_cdif (syn_cxp (syn_cxp A B) (syn_cvv))
-          (syn_cima (syn_csymdif (syn_cins2 (syn_csset)) (syn_cins3 R)) (syn_c1c)))
-        (syn_cmpt2 x A y B V)) :=
+      (.classEq (synCdif (synCxp (synCxp A B) (synCvv))
+          (synCima (synCsymdif (synCins2 (synCsset)) (synCins3 R)) (synC1c)))
+        (synCmpt2 x A y B V)) :=
   by
   let proofSupport : Finset Var :=
     ({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ ({ z } : Finset Var) ∪ A.fv ∪ B.fv ∪
@@ -907,7 +912,7 @@ noncomputable def g_releqmpt2 (x : Var) (y : Var) (z : Var) (A : Class) (B : Cla
           intro hmem
           cases hmem
         simp only [dv_V_z, not_false_eq_true])
-  have dv_cache_0003 : z ∉ ((syn_cop (syn_cop (.cv x) (.cv y)) (.cv w))).fv :=
+  have dv_cache_0003 : z ∉ ((synCop (synCop (.cv x) (.cv y)) (.cv w))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002
     exact
@@ -920,7 +925,7 @@ noncomputable def g_releqmpt2 (x : Var) (y : Var) (z : Var) (A : Class) (B : Cla
           NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_union,
           Finset.mem_singleton, (Ne.symm dv_x_z), (Ne.symm dv_y_z), fresh_z_ne_w,
           or_false, not_false_eq_true])
-  have dv_cache_0004 : z ∉ ((syn_csymdif (syn_cins2 (syn_csset)) (syn_cins3 R))).fv :=
+  have dv_cache_0004 : z ∉ ((synCsymdif (synCins2 (synCsset)) (synCins3 R))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003
     exact
@@ -936,8 +941,8 @@ noncomputable def g_releqmpt2 (x : Var) (y : Var) (z : Var) (A : Class) (B : Cla
           dv_R_z, compact_fv_not_mem_empty, or_false, not_false_eq_true])
   have dv_cache_0005 :
     x ∉
-      ((syn_cdif (syn_cxp (syn_cxp A B) (syn_cvv))
-          (syn_cima (syn_csymdif (syn_cins2 (syn_csset)) (syn_cins3 R)) (syn_c1c)))).fv :=
+      ((synCdif (synCxp (synCxp A B) (synCvv))
+          (synCima (synCsymdif (synCins2 (synCsset)) (synCins3 R)) (synC1c)))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004
     exact
@@ -958,8 +963,8 @@ noncomputable def g_releqmpt2 (x : Var) (y : Var) (z : Var) (A : Class) (B : Cla
           dv_B_x, dv_R_x, compact_fv_not_mem_empty, or_false, not_false_eq_true])
   have dv_cache_0006 :
     y ∉
-      ((syn_cdif (syn_cxp (syn_cxp A B) (syn_cvv))
-          (syn_cima (syn_csymdif (syn_cins2 (syn_csset)) (syn_cins3 R)) (syn_c1c)))).fv :=
+      ((synCdif (synCxp (synCxp A B) (synCvv))
+          (synCima (synCsymdif (synCins2 (synCsset)) (synCins3 R)) (synC1c)))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
     exact
@@ -980,8 +985,8 @@ noncomputable def g_releqmpt2 (x : Var) (y : Var) (z : Var) (A : Class) (B : Cla
           dv_B_y, dv_R_y, compact_fv_not_mem_empty, or_false, not_false_eq_true])
   have dv_cache_0007 :
     w ∉
-      ((syn_cdif (syn_cxp (syn_cxp A B) (syn_cvv))
-          (syn_cima (syn_csymdif (syn_cins2 (syn_csset)) (syn_cins3 R)) (syn_c1c)))).fv :=
+      ((synCdif (synCxp (synCxp A B) (synCvv))
+          (synCima (synCsymdif (synCins2 (synCsset)) (synCins3 R)) (synC1c)))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006
@@ -1052,42 +1057,42 @@ noncomputable def g_releqmpt2 (x : Var) (y : Var) (z : Var) (A : Class) (B : Cla
           cases hmem
         simp only [fresh_w_not_V, not_false_eq_true])
   have p0000 :=
-    @g_eldif (syn_cop (syn_cop (.cv x) (.cv y)) (.cv w)) (syn_cxp (syn_cxp A B) (syn_cvv))
-      (syn_cima (syn_csymdif (syn_cins2 (syn_csset)) (syn_cins3 R)) (syn_c1c))
-  have p0001 := @g_vex w
-  have p0002 := @g_opelxp (syn_cop (.cv x) (.cv y)) (.cv w) (syn_cxp A B) (syn_cvv)
+    @gEldif (synCop (synCop (.cv x) (.cv y)) (.cv w)) (synCxp (synCxp A B) (synCvv))
+      (synCima (synCsymdif (synCins2 (synCsset)) (synCins3 R)) (synC1c))
+  have p0001 := @gVex w
+  have p0002 := @gOpelxp (synCop (.cv x) (.cv y)) (.cv w) (synCxp A B) (synCvv)
   have p0003 :=
-    @g_mpbiran2
-      (.classMem (syn_cop (syn_cop (.cv x) (.cv y)) (.cv w)) (syn_cxp (syn_cxp A B) (syn_cvv)))
-      (.classMem (syn_cop (.cv x) (.cv y)) (syn_cxp A B)) (.classMem (.cv w) (syn_cvv))
+    @gMpbiran2
+      (.classMem (synCop (synCop (.cv x) (.cv y)) (.cv w)) (synCxp (synCxp A B) (synCvv)))
+      (.classMem (synCop (.cv x) (.cv y)) (synCxp A B)) (.classMem (.cv w) (synCvv))
       p0001 p0002
-  have p0004 := @g_opelxp (.cv x) (.cv y) A B
+  have p0004 := @gOpelxp (.cv x) (.cv y) A B
   have p0005 :=
-    @g_bitri
-      (.classMem (syn_cop (syn_cop (.cv x) (.cv y)) (.cv w)) (syn_cxp (syn_cxp A B) (syn_cvv)))
-      (.classMem (syn_cop (.cv x) (.cv y)) (syn_cxp A B))
-      (syn_wa (.classMem (.cv x) A) (.classMem (.cv y) B)) p0003 p0004
-  have p0006 := @g_dfcleq z (.cv w) V dv_cache_0001 dv_cache_0002
+    @gBitri
+      (.classMem (synCop (synCop (.cv x) (.cv y)) (.cv w)) (synCxp (synCxp A B) (synCvv)))
+      (.classMem (synCop (.cv x) (.cv y)) (synCxp A B))
+      (synWa (.classMem (.cv x) A) (.classMem (.cv y) B)) p0003 p0004
+  have p0006 := @gDfcleq z (.cv w) V dv_cache_0001 dv_cache_0002
   have p0007 :=
-    @g_elima1c z (syn_cop (syn_cop (.cv x) (.cv y)) (.cv w))
-      (syn_csymdif (syn_cins2 (syn_csset)) (syn_cins3 R)) dv_cache_0003 dv_cache_0004
+    @gElima1c z (synCop (synCop (.cv x) (.cv y)) (.cv w))
+      (synCsymdif (synCins2 (synCsset)) (synCins3 R)) dv_cache_0003 dv_cache_0004
   have p0008 :=
-    @g_elsymdif (syn_cop (syn_csn (.cv z)) (syn_cop (syn_cop (.cv x) (.cv y)) (.cv w)))
-      (syn_cins2 (syn_csset)) (syn_cins3 R)
-  have p0009 := @g_vex x
-  have p0010 := @g_vex y
-  have p0011 := @g_opex (.cv x) (.cv y) p0009 p0010
+    @gElsymdif (synCop (synCsn (.cv z)) (synCop (synCop (.cv x) (.cv y)) (.cv w)))
+      (synCins2 (synCsset)) (synCins3 R)
+  have p0009 := @gVex x
+  have p0010 := @gVex y
+  have p0011 := @gOpex (.cv x) (.cv y) p0009 p0010
   have p0012 :=
-    @g_otelins2 (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)) (.cv w) (syn_csset) p0011
-  have p0013 := @g_vex z
-  have p0014 := @g_opelssetsn (.cv z) (.cv w) p0013 p0001
+    @gOtelins2 (synCsn (.cv z)) (synCop (.cv x) (.cv y)) (.cv w) (synCsset) p0011
+  have p0013 := @gVex z
+  have p0014 := @gOpelssetsn (.cv z) (.cv w) p0013 p0001
   have p0015_e01_recanon :
     Nominal.NPrf
-      (syn_wb (.classMem (syn_cop (syn_csn (.cv z)) (.cv w)) (syn_csset)) (.objMem z w)) :=
+      (synWb (.classMem (synCop (synCsn (.cv z)) (.cv w)) (synCsset)) (.objMem z w)) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_cop syn_cun syn_cnin syn_wnan syn_wa syn_ccompl syn_wrex syn_wex
-          syn_cphi syn_csn syn_csset syn_copab syn_wss syn_cin
+        unfold synWb synCop synCun synCnin synWnan synWa synCcompl synWrex synWex
+          synCphi synCsn synCsset synCopab synWss synCin
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
@@ -1101,61 +1106,61 @@ noncomputable def g_releqmpt2 (x : Var) (y : Var) (z : Var) (A : Class) (B : Cla
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0014
   have p0015 :=
-    @g_bitri
-      (.classMem (syn_cop (syn_csn (.cv z)) (syn_cop (syn_cop (.cv x) (.cv y)) (.cv w)))
-        (syn_cins2 (syn_csset)))
-      (.classMem (syn_cop (syn_csn (.cv z)) (.cv w)) (syn_csset)) (.objMem z w) p0012
+    @gBitri
+      (.classMem (synCop (synCsn (.cv z)) (synCop (synCop (.cv x) (.cv y)) (.cv w)))
+        (synCins2 (synCsset)))
+      (.classMem (synCop (synCsn (.cv z)) (.cv w)) (synCsset)) (.objMem z w) p0012
       p0015_e01_recanon
-  have p0016 := @g_otelins3 (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)) (.cv w) R p0001
+  have p0016 := @gOtelins3 (synCsn (.cv z)) (synCop (.cv x) (.cv y)) (.cv w) R p0001
   have p0017 :=
-    @g_bitri
-      (.classMem (syn_cop (syn_csn (.cv z)) (syn_cop (syn_cop (.cv x) (.cv y)) (.cv w)))
-        (syn_cins3 R))
-      (.classMem (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))) R)
+    @gBitri
+      (.classMem (synCop (synCsn (.cv z)) (synCop (synCop (.cv x) (.cv y)) (.cv w)))
+        (synCins3 R))
+      (.classMem (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))) R)
       (.classMem (.cv z) V) p0016 hyp_releqmpt2_1
   have p0018 :=
-    @g_bibi12i
-      (.classMem (syn_cop (syn_csn (.cv z)) (syn_cop (syn_cop (.cv x) (.cv y)) (.cv w)))
-        (syn_cins2 (syn_csset)))
+    @gBibi12i
+      (.classMem (synCop (synCsn (.cv z)) (synCop (synCop (.cv x) (.cv y)) (.cv w)))
+        (synCins2 (synCsset)))
       (.objMem z w)
-      (.classMem (syn_cop (syn_csn (.cv z)) (syn_cop (syn_cop (.cv x) (.cv y)) (.cv w)))
-        (syn_cins3 R))
+      (.classMem (synCop (synCsn (.cv z)) (synCop (synCop (.cv x) (.cv y)) (.cv w)))
+        (synCins3 R))
       (.classMem (.cv z) V) p0015 p0017
   have p0019 :=
-    @g_xchbinx
-      (.classMem (syn_cop (syn_csn (.cv z)) (syn_cop (syn_cop (.cv x) (.cv y)) (.cv w)))
-        (syn_csymdif (syn_cins2 (syn_csset)) (syn_cins3 R)))
-      (syn_wb (.classMem (syn_cop (syn_csn (.cv z)) (syn_cop (syn_cop (.cv x) (.cv y)) (.cv w)))
-          (syn_cins2 (syn_csset)))
-        (.classMem (syn_cop (syn_csn (.cv z)) (syn_cop (syn_cop (.cv x) (.cv y)) (.cv w)))
-          (syn_cins3 R)))
-      (syn_wb (.objMem z w) (.classMem (.cv z) V)) p0008 p0018
+    @gXchbinx
+      (.classMem (synCop (synCsn (.cv z)) (synCop (synCop (.cv x) (.cv y)) (.cv w)))
+        (synCsymdif (synCins2 (synCsset)) (synCins3 R)))
+      (synWb (.classMem (synCop (synCsn (.cv z)) (synCop (synCop (.cv x) (.cv y)) (.cv w)))
+          (synCins2 (synCsset)))
+        (.classMem (synCop (synCsn (.cv z)) (synCop (synCop (.cv x) (.cv y)) (.cv w)))
+          (synCins3 R)))
+      (synWb (.objMem z w) (.classMem (.cv z) V)) p0008 p0018
   have p0020 :=
-    @g_exbii
-      (.classMem (syn_cop (syn_csn (.cv z)) (syn_cop (syn_cop (.cv x) (.cv y)) (.cv w)))
-        (syn_csymdif (syn_cins2 (syn_csset)) (syn_cins3 R)))
-      (.neg (syn_wb (.objMem z w) (.classMem (.cv z) V))) z p0019
-  have p0021 := @g_exnal (syn_wb (.objMem z w) (.classMem (.cv z) V)) z
+    @gExbii
+      (.classMem (synCop (synCsn (.cv z)) (synCop (synCop (.cv x) (.cv y)) (.cv w)))
+        (synCsymdif (synCins2 (synCsset)) (synCins3 R)))
+      (.neg (synWb (.objMem z w) (.classMem (.cv z) V))) z p0019
+  have p0021 := @gExnal (synWb (.objMem z w) (.classMem (.cv z) V)) z
   have p0022 :=
-    @g_n_3bitri
-      (.classMem (syn_cop (syn_cop (.cv x) (.cv y)) (.cv w))
-        (syn_cima (syn_csymdif (syn_cins2 (syn_csset)) (syn_cins3 R)) (syn_c1c)))
-      (syn_wex z
-        (.classMem (syn_cop (syn_csn (.cv z)) (syn_cop (syn_cop (.cv x) (.cv y)) (.cv w)))
-          (syn_csymdif (syn_cins2 (syn_csset)) (syn_cins3 R))))
-      (syn_wex z (.neg (syn_wb (.objMem z w) (.classMem (.cv z) V))))
-      (.neg (.all z (syn_wb (.objMem z w) (.classMem (.cv z) V)))) p0007 p0020 p0021
+    @gN3bitri
+      (.classMem (synCop (synCop (.cv x) (.cv y)) (.cv w))
+        (synCima (synCsymdif (synCins2 (synCsset)) (synCins3 R)) (synC1c)))
+      (synWex z
+        (.classMem (synCop (synCsn (.cv z)) (synCop (synCop (.cv x) (.cv y)) (.cv w)))
+          (synCsymdif (synCins2 (synCsset)) (synCins3 R))))
+      (synWex z (.neg (synWb (.objMem z w) (.classMem (.cv z) V))))
+      (.neg (.all z (synWb (.objMem z w) (.classMem (.cv z) V)))) p0007 p0020 p0021
   have p0023 :=
-    @g_con2bii
-      (.classMem (syn_cop (syn_cop (.cv x) (.cv y)) (.cv w))
-        (syn_cima (syn_csymdif (syn_cins2 (syn_csset)) (syn_cins3 R)) (syn_c1c)))
-      (.all z (syn_wb (.objMem z w) (.classMem (.cv z) V))) p0022
+    @gCon2bii
+      (.classMem (synCop (synCop (.cv x) (.cv y)) (.cv w))
+        (synCima (synCsymdif (synCins2 (synCsset)) (synCins3 R)) (synC1c)))
+      (.all z (synWb (.objMem z w) (.classMem (.cv z) V))) p0022
   have p0024_e00_recanon :
     Nominal.NPrf
-      (syn_wb (.classEq (.cv w) V) (.all z (syn_wb (.objMem z w) (.classMem (.cv z) V)))) :=
+      (synWb (.classEq (.cv w) V) (.all z (synWb (.objMem z w) (.classMem (.cv z) V)))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb
+        unfold synWb
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
         apply Nominal.RecanonTransportDev.TRecanonWff.imp
         · apply Nominal.RecanonTransportDev.TRecanonWff.imp
@@ -1185,77 +1190,78 @@ noncomputable def g_releqmpt2 (x : Var) (y : Var) (z : Var) (A : Class) (B : Cla
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0006
   have p0024 :=
-    @g_bitr2i (.classEq (.cv w) V) (.all z (syn_wb (.objMem z w) (.classMem (.cv z) V)))
-      (.neg (.classMem (syn_cop (syn_cop (.cv x) (.cv y)) (.cv w))
-          (syn_cima (syn_csymdif (syn_cins2 (syn_csset)) (syn_cins3 R)) (syn_c1c))))
+    @gBitr2i (.classEq (.cv w) V) (.all z (synWb (.objMem z w) (.classMem (.cv z) V)))
+      (.neg (.classMem (synCop (synCop (.cv x) (.cv y)) (.cv w))
+          (synCima (synCsymdif (synCins2 (synCsset)) (synCins3 R)) (synC1c))))
       p0024_e00_recanon p0023
   have p0025 :=
-    @g_anbi12i
-      (.classMem (syn_cop (syn_cop (.cv x) (.cv y)) (.cv w)) (syn_cxp (syn_cxp A B) (syn_cvv)))
-      (syn_wa (.classMem (.cv x) A) (.classMem (.cv y) B))
-      (.neg (.classMem (syn_cop (syn_cop (.cv x) (.cv y)) (.cv w))
-          (syn_cima (syn_csymdif (syn_cins2 (syn_csset)) (syn_cins3 R)) (syn_c1c))))
+    @gAnbi12i
+      (.classMem (synCop (synCop (.cv x) (.cv y)) (.cv w)) (synCxp (synCxp A B) (synCvv)))
+      (synWa (.classMem (.cv x) A) (.classMem (.cv y) B))
+      (.neg (.classMem (synCop (synCop (.cv x) (.cv y)) (.cv w))
+          (synCima (synCsymdif (synCins2 (synCsset)) (synCins3 R)) (synC1c))))
       (.classEq (.cv w) V) p0005 p0024
   have p0026 :=
-    @g_bitri
-      (.classMem (syn_cop (syn_cop (.cv x) (.cv y)) (.cv w))
-        (syn_cdif (syn_cxp (syn_cxp A B) (syn_cvv))
-          (syn_cima (syn_csymdif (syn_cins2 (syn_csset)) (syn_cins3 R)) (syn_c1c))))
-      (syn_wa (.classMem (syn_cop (syn_cop (.cv x) (.cv y)) (.cv w))
-          (syn_cxp (syn_cxp A B) (syn_cvv))) (.neg
-          (.classMem (syn_cop (syn_cop (.cv x) (.cv y)) (.cv w))
-            (syn_cima (syn_csymdif (syn_cins2 (syn_csset)) (syn_cins3 R)) (syn_c1c)))))
-      (syn_wa (syn_wa (.classMem (.cv x) A) (.classMem (.cv y) B)) (.classEq (.cv w) V))
+    @gBitri
+      (.classMem (synCop (synCop (.cv x) (.cv y)) (.cv w))
+        (synCdif (synCxp (synCxp A B) (synCvv))
+          (synCima (synCsymdif (synCins2 (synCsset)) (synCins3 R)) (synC1c))))
+      (synWa (.classMem (synCop (synCop (.cv x) (.cv y)) (.cv w))
+          (synCxp (synCxp A B) (synCvv))) (.neg
+          (.classMem (synCop (synCop (.cv x) (.cv y)) (.cv w))
+            (synCima (synCsymdif (synCins2 (synCsset)) (synCins3 R)) (synC1c)))))
+      (synWa (synWa (.classMem (.cv x) A) (.classMem (.cv y) B)) (.classEq (.cv w) V))
       p0000 p0025
   have p0027 :=
-    @g_oprabbi2i
-      (syn_wa (syn_wa (.classMem (.cv x) A) (.classMem (.cv y) B)) (.classEq (.cv w) V)) x
+    @gOprabbi2i
+      (synWa (synWa (.classMem (.cv x) A) (.classMem (.cv y) B)) (.classEq (.cv w) V)) x
       y w
-      (syn_cdif (syn_cxp (syn_cxp A B) (syn_cvv))
-        (syn_cima (syn_csymdif (syn_cins2 (syn_csset)) (syn_cins3 R)) (syn_c1c)))
+      (synCdif (synCxp (synCxp A B) (synCvv))
+        (synCima (synCsymdif (synCins2 (synCsset)) (synCins3 R)) (synC1c)))
       dv_cache_0005 dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010
       p0026
   have p0028 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_mpt2 x y w A B V
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfMpt2 x y w A B V
       dv_cache_0011 dv_cache_0012 dv_cache_0013 dv_cache_0009 dv_cache_0010
   have p0029 :=
-    @g_eqtr4i
-      (syn_cdif (syn_cxp (syn_cxp A B) (syn_cvv))
-        (syn_cima (syn_csymdif (syn_cins2 (syn_csset)) (syn_cins3 R)) (syn_c1c)))
-      (syn_coprab x y w (syn_wa (syn_wa (.classMem (.cv x) A) (.classMem (.cv y) B))
+    @gEqtr4i
+      (synCdif (synCxp (synCxp A B) (synCvv))
+        (synCima (synCsymdif (synCins2 (synCsset)) (synCins3 R)) (synC1c)))
+      (synCoprab x y w (synWa (synWa (.classMem (.cv x) A) (.classMem (.cv y) B))
           (.classEq (.cv w) V)))
-      (syn_cmpt2 x A y B V) p0027 p0028
+      (synCmpt2 x A y B V) p0027 p0028
   exact p0029
 
+/-- Checked nominal proof certificate identified upstream as `g_mptexlem`. -/
 @[expose]
-noncomputable def g_mptexlem (A : Class) (R : Class)
-    (hyp_mptexlem_1 : Nominal.NPrf (.classMem A (syn_cvv)))
-    (hyp_mptexlem_2 : Nominal.NPrf (.classMem R (syn_cvv))) :
+noncomputable def gMptexlem (A : Class) (R : Class)
+    (hyp_mptexlem_1 : Nominal.NPrf (.classMem A (synCvv)))
+    (hyp_mptexlem_2 : Nominal.NPrf (.classMem R (synCvv))) :
     Nominal.NPrf
-      (.classMem (syn_cin (syn_cxp A (syn_cvv)) (syn_ccnv (syn_ccompl
-              (syn_cima (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)) (syn_c1c)))))
-        (syn_cvv)) :=
+      (.classMem (synCin (synCxp A (synCvv)) (synCcnv (synCcompl
+              (synCima (synCsymdif (synCins3 (synCsset)) (synCins2 R)) (synC1c)))))
+        (synCvv)) :=
   by
-  have p0000 := @g_vvex
-  have p0001 := @g_xpex A (syn_cvv) hyp_mptexlem_1 p0000
-  have p0002 := @g_ssetex
-  have p0003 := @g_ins3ex (syn_csset) p0002
-  have p0004 := @g_ins2ex R hyp_mptexlem_2
-  have p0005 := @g_symdifex (syn_cins3 (syn_csset)) (syn_cins2 R) p0003 p0004
-  have p0006 := @g_n_1cex
+  have p0000 := @gVvex
+  have p0001 := @gXpex A (synCvv) hyp_mptexlem_1 p0000
+  have p0002 := @gSsetex
+  have p0003 := @gIns3ex (synCsset) p0002
+  have p0004 := @gIns2ex R hyp_mptexlem_2
+  have p0005 := @gSymdifex (synCins3 (synCsset)) (synCins2 R) p0003 p0004
+  have p0006 := @gN1cex
   have p0007 :=
-    @g_imaex (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)) (syn_c1c) p0005 p0006
+    @gImaex (synCsymdif (synCins3 (synCsset)) (synCins2 R)) (synC1c) p0005 p0006
   have p0008 :=
-    @g_complex (syn_cima (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)) (syn_c1c))
+    @gComplex (synCima (synCsymdif (synCins3 (synCsset)) (synCins2 R)) (synC1c))
       p0007
   have p0009 :=
-    @g_cnvex
-      (syn_ccompl (syn_cima (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)) (syn_c1c)))
+    @gCnvex
+      (synCcompl (synCima (synCsymdif (synCins3 (synCsset)) (synCins2 R)) (synC1c)))
       p0008
   have p0010 :=
-    @g_inex (syn_cxp A (syn_cvv))
-      (syn_ccnv (syn_ccompl
-          (syn_cima (syn_csymdif (syn_cins3 (syn_csset)) (syn_cins2 R)) (syn_c1c))))
+    @gInex (synCxp A (synCvv))
+      (synCcnv (synCcompl
+          (synCima (synCsymdif (synCins3 (synCsset)) (synCins2 R)) (synC1c))))
       p0001 p0009
   exact p0010
 
@@ -1277,36 +1283,38 @@ open NFChoice.SemanticCore
 open NFChoice.ReplaySupport
 open NFChoice.Compiler.CompactSourceSyntax
 
+/-- Checked nominal proof certificate identified upstream as `g_mpt2exlem`. -/
 @[expose]
-noncomputable def g_mpt2exlem (A : Class) (B : Class) (R : Class)
-    (hyp_mpt2exlem_1 : Nominal.NPrf (.classMem A (syn_cvv)))
-    (hyp_mpt2exlem_2 : Nominal.NPrf (.classMem B (syn_cvv)))
-    (hyp_mpt2exlem_3 : Nominal.NPrf (.classMem R (syn_cvv))) :
+noncomputable def gMpt2exlem (A : Class) (B : Class) (R : Class)
+    (hyp_mpt2exlem_1 : Nominal.NPrf (.classMem A (synCvv)))
+    (hyp_mpt2exlem_2 : Nominal.NPrf (.classMem B (synCvv)))
+    (hyp_mpt2exlem_3 : Nominal.NPrf (.classMem R (synCvv))) :
     Nominal.NPrf
-      (.classMem (syn_cdif (syn_cxp (syn_cxp A B) (syn_cvv))
-          (syn_cima (syn_csymdif (syn_cins2 (syn_csset)) (syn_cins3 R)) (syn_c1c)))
-        (syn_cvv)) :=
+      (.classMem (synCdif (synCxp (synCxp A B) (synCvv))
+          (synCima (synCsymdif (synCins2 (synCsset)) (synCins3 R)) (synC1c)))
+        (synCvv)) :=
   by
-  have p0000 := @g_xpex A B hyp_mpt2exlem_1 hyp_mpt2exlem_2
-  have p0001 := @g_vvex
-  have p0002 := @g_xpex (syn_cxp A B) (syn_cvv) p0000 p0001
-  have p0003 := @g_ssetex
-  have p0004 := @g_ins2ex (syn_csset) p0003
-  have p0005 := @g_ins3ex R hyp_mpt2exlem_3
-  have p0006 := @g_symdifex (syn_cins2 (syn_csset)) (syn_cins3 R) p0004 p0005
-  have p0007 := @g_n_1cex
+  have p0000 := @gXpex A B hyp_mpt2exlem_1 hyp_mpt2exlem_2
+  have p0001 := @gVvex
+  have p0002 := @gXpex (synCxp A B) (synCvv) p0000 p0001
+  have p0003 := @gSsetex
+  have p0004 := @gIns2ex (synCsset) p0003
+  have p0005 := @gIns3ex R hyp_mpt2exlem_3
+  have p0006 := @gSymdifex (synCins2 (synCsset)) (synCins3 R) p0004 p0005
+  have p0007 := @gN1cex
   have p0008 :=
-    @g_imaex (syn_csymdif (syn_cins2 (syn_csset)) (syn_cins3 R)) (syn_c1c) p0006 p0007
+    @gImaex (synCsymdif (synCins2 (synCsset)) (synCins3 R)) (synC1c) p0006 p0007
   have p0009 :=
-    @g_difex (syn_cxp (syn_cxp A B) (syn_cvv))
-      (syn_cima (syn_csymdif (syn_cins2 (syn_csset)) (syn_cins3 R)) (syn_c1c)) p0002 p0008
+    @gDifex (synCxp (synCxp A B) (synCvv))
+      (synCima (synCsymdif (synCins2 (synCsset)) (synCins3 R)) (synC1c)) p0002 p0008
   exact p0009
 
+/-- Checked nominal proof certificate identified upstream as `g_cupvalg`. -/
 @[expose]
-noncomputable def g_cupvalg (A : Class) (B : Class) (V : Class) (W : Class) :
+noncomputable def gCupvalg (A : Class) (B : Class) (V : Class) (W : Class) :
     Nominal.NPrf
-      (.imp (syn_wa (.classMem A V) (.classMem B W))
-        (.classEq (syn_co A (syn_ccup) B) (syn_cun A B))) :=
+      (.imp (synWa (.classMem A V) (.classMem B W))
+        (.classEq (synCo A (synCcup) B) (synCun A B))) :=
   by
   let proofSupport : Finset Var := A.fv ∪ B.fv ∪ V.fv ∪ W.fv
   let x : Var := freshVar proofSupport 0
@@ -1384,7 +1392,7 @@ noncomputable def g_cupvalg (A : Class) (B : Class) (V : Class) (W : Class) :
           intro hmem
           cases hmem
         simp only [fresh_y_not_B, not_false_eq_true])
-  have dv_cache_0006 : x ∉ ((syn_cvv)).fv :=
+  have dv_cache_0006 : x ∉ ((synCvv)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
     exact
@@ -1395,7 +1403,7 @@ noncomputable def g_cupvalg (A : Class) (B : Class) (V : Class) (W : Class) :
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have dv_cache_0007 : y ∉ ((syn_cvv)).fv :=
+  have dv_cache_0007 : y ∉ ((synCvv)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006
@@ -1407,7 +1415,7 @@ noncomputable def g_cupvalg (A : Class) (B : Class) (V : Class) (W : Class) :
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have dv_cache_0008 : x ∉ ((syn_cun A (.cv y))).fv :=
+  have dv_cache_0008 : x ∉ ((synCun A (.cv y))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007
@@ -1420,7 +1428,7 @@ noncomputable def g_cupvalg (A : Class) (B : Class) (V : Class) (W : Class) :
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun,
           NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_union,
           Finset.mem_singleton, fresh_x_not_A, fresh_x_ne_y, or_false, not_false_eq_true])
-  have dv_cache_0009 : x ∉ ((syn_cun A B)).fv :=
+  have dv_cache_0009 : x ∉ ((synCun A B)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008
@@ -1432,7 +1440,7 @@ noncomputable def g_cupvalg (A : Class) (B : Class) (V : Class) (W : Class) :
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun, Finset.mem_union,
           fresh_x_not_A, fresh_x_not_B, or_false, not_false_eq_true])
-  have dv_cache_0010 : y ∉ ((syn_cun A B)).fv :=
+  have dv_cache_0010 : y ∉ ((synCun A B)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009
@@ -1444,30 +1452,31 @@ noncomputable def g_cupvalg (A : Class) (B : Class) (V : Class) (W : Class) :
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun, Finset.mem_union,
           fresh_y_not_A, fresh_y_not_B, or_false, not_false_eq_true])
-  have p0000 := @g_elex A V
-  have p0001 := @g_elex B W
-  have p0002 := @g_unexg A B (syn_cvv) (syn_cvv)
-  have p0003 := @g_uneq1 (.cv x) A (.cv y)
-  have p0004 := @g_uneq2 (.cv y) B A
+  have p0000 := @gElex A V
+  have p0001 := @gElex B W
+  have p0002 := @gUnexg A B (synCvv) (synCvv)
+  have p0003 := @gUneq1 (.cv x) A (.cv y)
+  have p0004 := @gUneq2 (.cv y) B A
   have p0005 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_cup x y
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfCup x y
       dv_cache_0001
   have p0006 :=
-    @g_ovmpt2g x y A B (syn_cvv) (syn_cvv) (syn_cun (.cv x) (.cv y)) (syn_cun A B)
-      (syn_ccup) (syn_cun A (.cv y)) (syn_cvv) dv_cache_0002 dv_cache_0003 dv_cache_0004
+    @gOvmpt2g x y A B (synCvv) (synCvv) (synCun (.cv x) (.cv y)) (synCun A B)
+      (synCcup) (synCun A (.cv y)) (synCvv) dv_cache_0002 dv_cache_0003 dv_cache_0004
       dv_cache_0005 dv_cache_0006 dv_cache_0007 dv_cache_0006 dv_cache_0007 dv_cache_0008
       dv_cache_0009 dv_cache_0010 dv_cache_0001 p0003 p0004 p0005
   have p0007 :=
-    @g_mpd3an3 (.classMem A (syn_cvv)) (.classMem B (syn_cvv))
-      (.classMem (syn_cun A B) (syn_cvv)) (.classEq (syn_co A (syn_ccup) B) (syn_cun A B))
+    @gMpd3an3 (.classMem A (synCvv)) (.classMem B (synCvv))
+      (.classMem (synCun A B) (synCvv)) (.classEq (synCo A (synCcup) B) (synCun A B))
       p0002 p0006
   have p0008 :=
-    @g_syl2an (.classMem A V) (.classMem A (syn_cvv)) (.classMem B (syn_cvv))
-      (.classEq (syn_co A (syn_ccup) B) (syn_cun A B)) (.classMem B W) p0000 p0001 p0007
+    @gSyl2an (.classMem A V) (.classMem A (synCvv)) (.classMem B (synCvv))
+      (.classEq (synCo A (synCcup) B) (synCun A B)) (.classMem B W) p0000 p0001 p0007
   exact p0008
 
+/-- Checked nominal proof certificate identified upstream as `g_fncup`. -/
 @[expose]
-noncomputable def g_fncup : Nominal.NPrf (syn_wfn (syn_ccup) (syn_cvv)) :=
+noncomputable def gFncup : Nominal.NPrf (synWfn (synCcup) (synCvv)) :=
   by
   let proofSupport : Finset Var := (∅ : Finset Var)
   let x : Var := freshVar proofSupport 0
@@ -1477,7 +1486,7 @@ noncomputable def g_fncup : Nominal.NPrf (syn_wfn (syn_ccup) (syn_cvv)) :=
     change freshVar proofSupport 0 ≠ freshVar proofSupport 1
     exact freshVar_injective proofSupport (i := 0) (j := 1) (by decide)
   have dv_cache_0001 : x ≠ y := by exact (show x ≠ y from (by exact fresh_x_ne_y))
-  have dv_cache_0002 : x ∉ ((syn_cvv)).fv :=
+  have dv_cache_0002 : x ∉ ((synCvv)).fv :=
     by
     clear dv_cache_0001
     exact
@@ -1488,7 +1497,7 @@ noncomputable def g_fncup : Nominal.NPrf (syn_wfn (syn_ccup) (syn_cvv)) :=
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have dv_cache_0003 : y ∉ ((syn_cvv)).fv :=
+  have dv_cache_0003 : y ∉ ((synCvv)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002
     exact
@@ -1500,71 +1509,74 @@ noncomputable def g_fncup : Nominal.NPrf (syn_wfn (syn_ccup) (syn_cvv)) :=
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv,
           compact_fv_not_mem_empty, not_false_eq_true])
   have p0000 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_cup x y
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfCup x y
       dv_cache_0001
-  have p0001 := @g_vex x
-  have p0002 := @g_vex y
-  have p0003 := @g_unex (.cv x) (.cv y) p0001 p0002
+  have p0001 := @gVex x
+  have p0002 := @gVex y
+  have p0003 := @gUnex (.cv x) (.cv y) p0001 p0002
   have p0004 :=
-    @g_fnmpt2i x y (syn_cvv) (syn_cvv) (syn_cun (.cv x) (.cv y)) (syn_ccup) dv_cache_0002
+    @gFnmpt2i x y (synCvv) (synCvv) (synCun (.cv x) (.cv y)) (synCcup) dv_cache_0002
       dv_cache_0003 dv_cache_0002 dv_cache_0003 dv_cache_0001 p0000 p0003
-  have p0005 := @g_xpvv
-  have p0006 := @g_fneq2i (syn_cxp (syn_cvv) (syn_cvv)) (syn_cvv) (syn_ccup) p0005
+  have p0005 := @gXpvv
+  have p0006 := @gFneq2i (synCxp (synCvv) (synCvv)) (synCvv) (synCcup) p0005
   have p0007 :=
-    @g_mpbi (syn_wfn (syn_ccup) (syn_cxp (syn_cvv) (syn_cvv)))
-      (syn_wfn (syn_ccup) (syn_cvv)) p0004 p0006
+    @gMpbi (synWfn (synCcup) (synCxp (synCvv) (synCvv)))
+      (synWfn (synCcup) (synCvv)) p0004 p0006
   exact p0007
 
+/-- Checked nominal proof certificate identified upstream as `g_brcupg`. -/
 @[expose]
-noncomputable def g_brcupg (A : Class) (B : Class) (C : Class) (V : Class) (W : Class) :
+noncomputable def gBrcupg (A : Class) (B : Class) (C : Class) (V : Class) (W : Class) :
     Nominal.NPrf
-      (.imp (syn_wa (.classMem A V) (.classMem B W))
-        (syn_wb (syn_wbr (syn_cop A B) (syn_ccup) C) (.classEq C (syn_cun A B)))) :=
+      (.imp (synWa (.classMem A V) (.classMem B W))
+        (synWb (synWbr (synCop A B) (synCcup) C) (.classEq C (synCun A B)))) :=
   by
-  have p0000 := @g_fncup
-  have p0001 := @g_opexg A B V W
-  have p0002 := @g_fnbrfvb (syn_cvv) (syn_cop A B) C (syn_ccup)
+  have p0000 := @gFncup
+  have p0001 := @gOpexg A B V W
+  have p0002 := @gFnbrfvb (synCvv) (synCop A B) C (synCcup)
   have p0003 :=
-    @g_sylancr (syn_wa (.classMem A V) (.classMem B W)) (syn_wfn (syn_ccup) (syn_cvv))
-      (.classMem (syn_cop A B) (syn_cvv))
-      (syn_wb (.classEq (syn_cfv (syn_ccup) (syn_cop A B)) C)
-        (syn_wbr (syn_cop A B) (syn_ccup) C))
+    @gSylancr (synWa (.classMem A V) (.classMem B W)) (synWfn (synCcup) (synCvv))
+      (.classMem (synCop A B) (synCvv))
+      (synWb (.classEq (synCfv (synCcup) (synCop A B)) C)
+        (synWbr (synCop A B) (synCcup) C))
       p0000 p0001 p0002
-  have p0004 := @g_cupvalg A B V W
+  have p0004 := @gCupvalg A B V W
   have p0005 :=
-    @g_eqeq1d (syn_wa (.classMem A V) (.classMem B W)) (syn_co A (syn_ccup) B)
-      (syn_cun A B) C p0004
-  have p0006 := (Nominal.classEqRefl (syn_co A (syn_ccup) B))
+    @gEqeq1d (synWa (.classMem A V) (.classMem B W)) (synCo A (synCcup) B)
+      (synCun A B) C p0004
+  have p0006 := (Nominal.classEqRefl (synCo A (synCcup) B))
   have p0007 :=
-    @g_eqeq1i (syn_co A (syn_ccup) B) (syn_cfv (syn_ccup) (syn_cop A B)) C p0006
-  have p0008 := @g_eqcom (syn_cun A B) C
+    @gEqeq1i (synCo A (synCcup) B) (synCfv (synCcup) (synCop A B)) C p0006
+  have p0008 := @gEqcom (synCun A B) C
   have p0009 :=
-    @g_n_3bitr3g (syn_wa (.classMem A V) (.classMem B W))
-      (.classEq (syn_co A (syn_ccup) B) C) (.classEq (syn_cun A B) C)
-      (.classEq (syn_cfv (syn_ccup) (syn_cop A B)) C) (.classEq C (syn_cun A B)) p0005
+    @gN3bitr3g (synWa (.classMem A V) (.classMem B W))
+      (.classEq (synCo A (synCcup) B) C) (.classEq (synCun A B) C)
+      (.classEq (synCfv (synCcup) (synCop A B)) C) (.classEq C (synCun A B)) p0005
       p0007 p0008
   have p0010 :=
-    @g_bitr3d (syn_wa (.classMem A V) (.classMem B W))
-      (.classEq (syn_cfv (syn_ccup) (syn_cop A B)) C) (syn_wbr (syn_cop A B) (syn_ccup) C)
-      (.classEq C (syn_cun A B)) p0003 p0009
+    @gBitr3d (synWa (.classMem A V) (.classMem B W))
+      (.classEq (synCfv (synCcup) (synCop A B)) C) (synWbr (synCop A B) (synCcup) C)
+      (.classEq C (synCun A B)) p0003 p0009
   exact p0010
 
+/-- Checked nominal proof certificate identified upstream as `g_brcup`. -/
 @[expose]
-noncomputable def g_brcup (A : Class) (B : Class) (C : Class)
-    (hyp_brcup_1 : Nominal.NPrf (.classMem A (syn_cvv)))
-    (hyp_brcup_2 : Nominal.NPrf (.classMem B (syn_cvv))) :
+noncomputable def gBrcup (A : Class) (B : Class) (C : Class)
+    (hyp_brcup_1 : Nominal.NPrf (.classMem A (synCvv)))
+    (hyp_brcup_2 : Nominal.NPrf (.classMem B (synCvv))) :
     Nominal.NPrf
-      (syn_wb (syn_wbr (syn_cop A B) (syn_ccup) C) (.classEq C (syn_cun A B))) :=
+      (synWb (synWbr (synCop A B) (synCcup) C) (.classEq C (synCun A B))) :=
   by
-  have p0000 := @g_brcupg A B C (syn_cvv) (syn_cvv)
+  have p0000 := @gBrcupg A B C (synCvv) (synCvv)
   have p0001 :=
-    @g_mp2an (.classMem A (syn_cvv)) (.classMem B (syn_cvv))
-      (syn_wb (syn_wbr (syn_cop A B) (syn_ccup) C) (.classEq C (syn_cun A B))) hyp_brcup_1
+    @gMp2an (.classMem A (synCvv)) (.classMem B (synCvv))
+      (synWb (synWbr (synCop A B) (synCcup) C) (.classEq C (synCun A B))) hyp_brcup_1
       hyp_brcup_2 p0000
   exact p0001
 
+/-- Checked nominal proof certificate identified upstream as `g_cupex`. -/
 @[expose]
-noncomputable def g_cupex : Nominal.NPrf (.classMem (syn_ccup) (syn_cvv)) :=
+noncomputable def gCupex : Nominal.NPrf (.classMem (synCcup) (synCvv)) :=
   by
   let proofSupport : Finset Var := (∅ : Finset Var)
   let x : Var := freshVar proofSupport 0
@@ -1585,7 +1597,7 @@ noncomputable def g_cupex : Nominal.NPrf (.classMem (syn_ccup) (syn_cvv)) :=
     exact freshVar_injective proofSupport (i := 1) (j := 2) (by decide)
   have fresh_z_ne_y : z ≠ y := Ne.symm fresh_y_ne_z
   have dv_cache_0001 : x ≠ y := by exact (show x ≠ y from (by exact fresh_x_ne_y))
-  have dv_cache_0002 : x ∉ ((syn_cvv)).fv :=
+  have dv_cache_0002 : x ∉ ((synCvv)).fv :=
     by
     clear dv_cache_0001
     exact
@@ -1596,7 +1608,7 @@ noncomputable def g_cupex : Nominal.NPrf (.classMem (syn_ccup) (syn_cvv)) :=
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have dv_cache_0003 : y ∉ ((syn_cvv)).fv :=
+  have dv_cache_0003 : y ∉ ((synCvv)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002
     exact
@@ -1608,7 +1620,7 @@ noncomputable def g_cupex : Nominal.NPrf (.classMem (syn_ccup) (syn_cvv)) :=
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv,
           compact_fv_not_mem_empty, not_false_eq_true])
   have dv_cache_0004 :
-    x ∉ ((syn_cun (syn_cins3 (syn_csset)) (syn_cins2 (syn_csset)))).fv :=
+    x ∉ ((synCun (synCins3 (synCsset)) (synCins2 (synCsset)))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003
     exact
@@ -1623,7 +1635,7 @@ noncomputable def g_cupex : Nominal.NPrf (.classMem (syn_ccup) (syn_cvv)) :=
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2, Finset.mem_union,
           compact_fv_not_mem_empty, or_false, not_false_eq_true])
   have dv_cache_0005 :
-    y ∉ ((syn_cun (syn_cins3 (syn_csset)) (syn_cins2 (syn_csset)))).fv :=
+    y ∉ ((synCun (synCins3 (synCsset)) (synCins2 (synCsset)))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004
     exact
@@ -1638,7 +1650,7 @@ noncomputable def g_cupex : Nominal.NPrf (.classMem (syn_ccup) (syn_cvv)) :=
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2, Finset.mem_union,
           compact_fv_not_mem_empty, or_false, not_false_eq_true])
   have dv_cache_0006 :
-    z ∉ ((syn_cun (syn_cins3 (syn_csset)) (syn_cins2 (syn_csset)))).fv :=
+    z ∉ ((synCun (synCins3 (synCsset)) (synCins2 (synCsset)))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
     exact
@@ -1652,7 +1664,7 @@ noncomputable def g_cupex : Nominal.NPrf (.classMem (syn_ccup) (syn_cvv)) :=
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csset,
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2, Finset.mem_union,
           compact_fv_not_mem_empty, or_false, not_false_eq_true])
-  have dv_cache_0007 : z ∉ ((syn_cun (.cv x) (.cv y))).fv :=
+  have dv_cache_0007 : z ∉ ((synCun (.cv x) (.cv y))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006
@@ -1676,20 +1688,20 @@ noncomputable def g_cupex : Nominal.NPrf (.classMem (syn_ccup) (syn_cvv)) :=
       dv_cache_0006 dv_cache_0007 dv_cache_0008
     exact (show y ≠ z from (by exact fresh_y_ne_z))
   have p0000 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_cup x y
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfCup x y
       dv_cache_0001
-  have p0001 := @g_vex y
-  have p0002 := @g_otelins3 (syn_csn (.cv z)) (.cv x) (.cv y) (syn_csset) p0001
-  have p0003 := @g_vex z
-  have p0004 := @g_vex x
-  have p0005 := @g_opelssetsn (.cv z) (.cv x) p0003 p0004
+  have p0001 := @gVex y
+  have p0002 := @gOtelins3 (synCsn (.cv z)) (.cv x) (.cv y) (synCsset) p0001
+  have p0003 := @gVex z
+  have p0004 := @gVex x
+  have p0005 := @gOpelssetsn (.cv z) (.cv x) p0003 p0004
   have p0006_e01_recanon :
     Nominal.NPrf
-      (syn_wb (.classMem (syn_cop (syn_csn (.cv z)) (.cv x)) (syn_csset)) (.objMem z x)) :=
+      (synWb (.classMem (synCop (synCsn (.cv z)) (.cv x)) (synCsset)) (.objMem z x)) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_cop syn_cun syn_cnin syn_wnan syn_wa syn_ccompl syn_wrex syn_wex
-          syn_cphi syn_csn syn_csset syn_copab syn_wss syn_cin
+        unfold synWb synCop synCun synCnin synWnan synWa synCcompl synWrex synWex
+          synCphi synCsn synCsset synCopab synWss synCin
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
@@ -1703,19 +1715,19 @@ noncomputable def g_cupex : Nominal.NPrf (.classMem (syn_ccup) (syn_cvv)) :=
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0005
   have p0006 :=
-    @g_bitri
-      (.classMem (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))) (syn_cins3 (syn_csset)))
-      (.classMem (syn_cop (syn_csn (.cv z)) (.cv x)) (syn_csset)) (.objMem z x) p0002
+    @gBitri
+      (.classMem (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))) (synCins3 (synCsset)))
+      (.classMem (synCop (synCsn (.cv z)) (.cv x)) (synCsset)) (.objMem z x) p0002
       p0006_e01_recanon
-  have p0007 := @g_otelins2 (syn_csn (.cv z)) (.cv x) (.cv y) (syn_csset) p0004
-  have p0008 := @g_opelssetsn (.cv z) (.cv y) p0003 p0001
+  have p0007 := @gOtelins2 (synCsn (.cv z)) (.cv x) (.cv y) (synCsset) p0004
+  have p0008 := @gOpelssetsn (.cv z) (.cv y) p0003 p0001
   have p0009_e01_recanon :
     Nominal.NPrf
-      (syn_wb (.classMem (syn_cop (syn_csn (.cv z)) (.cv y)) (syn_csset)) (.objMem z y)) :=
+      (synWb (.classMem (synCop (synCsn (.cv z)) (.cv y)) (synCsset)) (.objMem z y)) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_cop syn_cun syn_cnin syn_wnan syn_wa syn_ccompl syn_wrex syn_wex
-          syn_cphi syn_csn syn_csset syn_copab syn_wss syn_cin
+        unfold synWb synCop synCun synCnin synWnan synWa synCcompl synWrex synWex
+          synCphi synCsn synCsset synCopab synWss synCin
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
@@ -1729,27 +1741,27 @@ noncomputable def g_cupex : Nominal.NPrf (.classMem (syn_ccup) (syn_cvv)) :=
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0008
   have p0009 :=
-    @g_bitri
-      (.classMem (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))) (syn_cins2 (syn_csset)))
-      (.classMem (syn_cop (syn_csn (.cv z)) (.cv y)) (syn_csset)) (.objMem z y) p0007
+    @gBitri
+      (.classMem (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))) (synCins2 (synCsset)))
+      (.classMem (synCop (synCsn (.cv z)) (.cv y)) (synCsset)) (.objMem z y) p0007
       p0009_e01_recanon
   have p0010 :=
-    @g_orbi12i
-      (.classMem (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))) (syn_cins3 (syn_csset)))
+    @gOrbi12i
+      (.classMem (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))) (synCins3 (synCsset)))
       (.objMem z x)
-      (.classMem (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))) (syn_cins2 (syn_csset)))
+      (.classMem (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))) (synCins2 (synCsset)))
       (.objMem z y) p0006 p0009
   have p0011 :=
-    @g_elun (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))) (syn_cins3 (syn_csset))
-      (syn_cins2 (syn_csset))
-  have p0012 := @g_elun (.cv z) (.cv x) (.cv y)
+    @gElun (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))) (synCins3 (synCsset))
+      (synCins2 (synCsset))
+  have p0012 := @gElun (.cv z) (.cv x) (.cv y)
   have p0013_e02_recanon :
     Nominal.NPrf
-      (syn_wb (.classMem (.cv z) (syn_cun (.cv x) (.cv y)))
-        (syn_wo (.objMem z x) (.objMem z y))) :=
+      (synWb (.classMem (.cv z) (synCun (.cv x) (.cv y)))
+        (synWo (.objMem z x) (.objMem z y))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_cun syn_cnin syn_wnan syn_wa syn_ccompl syn_wo
+        unfold synWb synCun synCnin synWnan synWa synCcompl synWo
         simp (config := { failIfUnchanged := false }) only []
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
         apply Nominal.RecanonTransportDev.TRecanonWff.imp
@@ -1768,47 +1780,48 @@ noncomputable def g_cupex : Nominal.NPrf (.classMem (syn_ccup) (syn_cvv)) :=
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0012
   have p0013 :=
-    @g_n_3bitr4i
-      (syn_wo (.classMem (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))
-          (syn_cins3 (syn_csset)))
-        (.classMem (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))
-          (syn_cins2 (syn_csset))))
-      (syn_wo (.objMem z x) (.objMem z y))
-      (.classMem (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))
-        (syn_cun (syn_cins3 (syn_csset)) (syn_cins2 (syn_csset))))
-      (.classMem (.cv z) (syn_cun (.cv x) (.cv y))) p0010 p0011 p0013_e02_recanon
+    @gN3bitr4i
+      (synWo (.classMem (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))
+          (synCins3 (synCsset)))
+        (.classMem (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))
+          (synCins2 (synCsset))))
+      (synWo (.objMem z x) (.objMem z y))
+      (.classMem (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))
+        (synCun (synCins3 (synCsset)) (synCins2 (synCsset))))
+      (.classMem (.cv z) (synCun (.cv x) (.cv y))) p0010 p0011 p0013_e02_recanon
   have p0014 :=
-    @g_releqmpt2 x y z (syn_cvv) (syn_cvv)
-      (syn_cun (syn_cins3 (syn_csset)) (syn_cins2 (syn_csset))) (syn_cun (.cv x) (.cv y))
+    @gReleqmpt2 x y z (synCvv) (synCvv)
+      (synCun (synCins3 (synCsset)) (synCins2 (synCsset))) (synCun (.cv x) (.cv y))
       dv_cache_0002 dv_cache_0003 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0001 dv_cache_0008 dv_cache_0009 p0013
   have p0015 :=
-    @g_eqtr4i (syn_ccup) (syn_cmpt2 x (syn_cvv) y (syn_cvv) (syn_cun (.cv x) (.cv y)))
-      (syn_cdif (syn_cxp (syn_cxp (syn_cvv) (syn_cvv)) (syn_cvv)) (syn_cima
-          (syn_csymdif (syn_cins2 (syn_csset))
-            (syn_cins3 (syn_cun (syn_cins3 (syn_csset)) (syn_cins2 (syn_csset))))) (syn_c1c)))
+    @gEqtr4i (synCcup) (synCmpt2 x (synCvv) y (synCvv) (synCun (.cv x) (.cv y)))
+      (synCdif (synCxp (synCxp (synCvv) (synCvv)) (synCvv)) (synCima
+          (synCsymdif (synCins2 (synCsset))
+            (synCins3 (synCun (synCins3 (synCsset)) (synCins2 (synCsset))))) (synC1c)))
       p0000 p0014
-  have p0016 := @g_vvex
-  have p0018 := @g_ssetex
-  have p0019 := @g_ins3ex (syn_csset) p0018
-  have p0021 := @g_ins2ex (syn_csset) p0018
-  have p0022 := @g_unex (syn_cins3 (syn_csset)) (syn_cins2 (syn_csset)) p0019 p0021
+  have p0016 := @gVvex
+  have p0018 := @gSsetex
+  have p0019 := @gIns3ex (synCsset) p0018
+  have p0021 := @gIns2ex (synCsset) p0018
+  have p0022 := @gUnex (synCins3 (synCsset)) (synCins2 (synCsset)) p0019 p0021
   have p0023 :=
-    @g_mpt2exlem (syn_cvv) (syn_cvv)
-      (syn_cun (syn_cins3 (syn_csset)) (syn_cins2 (syn_csset))) p0016 p0016 p0022
+    @gMpt2exlem (synCvv) (synCvv)
+      (synCun (synCins3 (synCsset)) (synCins2 (synCsset))) p0016 p0016 p0022
   have p0024 :=
-    @g_eqeltri (syn_ccup)
-      (syn_cdif (syn_cxp (syn_cxp (syn_cvv) (syn_cvv)) (syn_cvv)) (syn_cima
-          (syn_csymdif (syn_cins2 (syn_csset))
-            (syn_cins3 (syn_cun (syn_cins3 (syn_csset)) (syn_cins2 (syn_csset))))) (syn_c1c)))
-      (syn_cvv) p0015 p0023
+    @gEqeltri (synCcup)
+      (synCdif (synCxp (synCxp (synCvv) (synCvv)) (synCvv)) (synCima
+          (synCsymdif (synCins2 (synCsset))
+            (synCins3 (synCun (synCins3 (synCsset)) (synCins2 (synCsset))))) (synC1c)))
+      (synCvv) p0015 p0023
   exact p0024
 
+/-- Checked nominal proof certificate identified upstream as `g_composevalg`. -/
 @[expose]
-noncomputable def g_composevalg (A : Class) (B : Class) (V : Class) (W : Class) :
+noncomputable def gComposevalg (A : Class) (B : Class) (V : Class) (W : Class) :
     Nominal.NPrf
-      (.imp (syn_wa (.classMem A V) (.classMem B W))
-        (.classEq (syn_co A (syn_ccompose) B) (syn_ccom A B))) :=
+      (.imp (synWa (.classMem A V) (.classMem B W))
+        (.classEq (synCo A (synCcompose) B) (synCcom A B))) :=
   by
   let proofSupport : Finset Var := A.fv ∪ B.fv ∪ V.fv ∪ W.fv
   let x : Var := freshVar proofSupport 0
@@ -1886,7 +1899,7 @@ noncomputable def g_composevalg (A : Class) (B : Class) (V : Class) (W : Class) 
           intro hmem
           cases hmem
         simp only [fresh_y_not_B, not_false_eq_true])
-  have dv_cache_0006 : x ∉ ((syn_cvv)).fv :=
+  have dv_cache_0006 : x ∉ ((synCvv)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
     exact
@@ -1897,7 +1910,7 @@ noncomputable def g_composevalg (A : Class) (B : Class) (V : Class) (W : Class) 
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have dv_cache_0007 : y ∉ ((syn_cvv)).fv :=
+  have dv_cache_0007 : y ∉ ((synCvv)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006
@@ -1909,7 +1922,7 @@ noncomputable def g_composevalg (A : Class) (B : Class) (V : Class) (W : Class) 
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have dv_cache_0008 : x ∉ ((syn_ccom A (.cv y))).fv :=
+  have dv_cache_0008 : x ∉ ((synCcom A (.cv y))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007
@@ -1922,7 +1935,7 @@ noncomputable def g_composevalg (A : Class) (B : Class) (V : Class) (W : Class) 
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccom,
           NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_union,
           Finset.mem_singleton, fresh_x_not_A, fresh_x_ne_y, or_false, not_false_eq_true])
-  have dv_cache_0009 : x ∉ ((syn_ccom A B)).fv :=
+  have dv_cache_0009 : x ∉ ((synCcom A B)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008
@@ -1934,7 +1947,7 @@ noncomputable def g_composevalg (A : Class) (B : Class) (V : Class) (W : Class) 
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccom,
           Finset.mem_union, fresh_x_not_A, fresh_x_not_B, or_false, not_false_eq_true])
-  have dv_cache_0010 : y ∉ ((syn_ccom A B)).fv :=
+  have dv_cache_0010 : y ∉ ((synCcom A B)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009
@@ -1946,29 +1959,30 @@ noncomputable def g_composevalg (A : Class) (B : Class) (V : Class) (W : Class) 
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccom,
           Finset.mem_union, fresh_y_not_A, fresh_y_not_B, or_false, not_false_eq_true])
-  have p0000 := @g_elex A V
-  have p0001 := @g_adantr (.classMem A V) (.classMem A (syn_cvv)) (.classMem B W) p0000
-  have p0002 := @g_elex B W
-  have p0003 := @g_adantl (.classMem B W) (.classMem B (syn_cvv)) (.classMem A V) p0002
-  have p0004 := @g_coexg A B V W
-  have p0005 := @g_coeq1 (.cv x) A (.cv y)
-  have p0006 := @g_coeq2 (.cv y) B A
+  have p0000 := @gElex A V
+  have p0001 := @gAdantr (.classMem A V) (.classMem A (synCvv)) (.classMem B W) p0000
+  have p0002 := @gElex B W
+  have p0003 := @gAdantl (.classMem B W) (.classMem B (synCvv)) (.classMem A V) p0002
+  have p0004 := @gCoexg A B V W
+  have p0005 := @gCoeq1 (.cv x) A (.cv y)
+  have p0006 := @gCoeq2 (.cv y) B A
   have p0007 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_compose x y
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfCompose x y
       dv_cache_0001
   have p0008 :=
-    @g_ovmpt2g x y A B (syn_cvv) (syn_cvv) (syn_ccom (.cv x) (.cv y)) (syn_ccom A B)
-      (syn_ccompose) (syn_ccom A (.cv y)) (syn_cvv) dv_cache_0002 dv_cache_0003
+    @gOvmpt2g x y A B (synCvv) (synCvv) (synCcom (.cv x) (.cv y)) (synCcom A B)
+      (synCcompose) (synCcom A (.cv y)) (synCvv) dv_cache_0002 dv_cache_0003
       dv_cache_0004 dv_cache_0005 dv_cache_0006 dv_cache_0007 dv_cache_0006 dv_cache_0007
       dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0001 p0005 p0006 p0007
   have p0009 :=
-    @g_syl3anc (syn_wa (.classMem A V) (.classMem B W)) (.classMem A (syn_cvv))
-      (.classMem B (syn_cvv)) (.classMem (syn_ccom A B) (syn_cvv))
-      (.classEq (syn_co A (syn_ccompose) B) (syn_ccom A B)) p0001 p0003 p0004 p0008
+    @gSyl3anc (synWa (.classMem A V) (.classMem B W)) (.classMem A (synCvv))
+      (.classMem B (synCvv)) (.classMem (synCcom A B) (synCvv))
+      (.classEq (synCo A (synCcompose) B) (synCcom A B)) p0001 p0003 p0004 p0008
   exact p0009
 
+/-- Checked nominal proof certificate identified upstream as `g_composefn`. -/
 @[expose]
-noncomputable def g_composefn : Nominal.NPrf (syn_wfn (syn_ccompose) (syn_cvv)) :=
+noncomputable def gComposefn : Nominal.NPrf (synWfn (synCcompose) (synCvv)) :=
   by
   let proofSupport : Finset Var := (∅ : Finset Var)
   let x : Var := freshVar proofSupport 0
@@ -1988,7 +2002,7 @@ noncomputable def g_composefn : Nominal.NPrf (syn_wfn (syn_ccompose) (syn_cvv)) 
     change freshVar proofSupport 1 ≠ freshVar proofSupport 2
     exact freshVar_injective proofSupport (i := 1) (j := 2) (by decide)
   have fresh_z_ne_y : z ≠ y := Ne.symm fresh_y_ne_z
-  have dv_cache_0001 : z ∉ ((syn_ccom (.cv x) (.cv y))).fv := by
+  have dv_cache_0001 : z ∉ ((synCcom (.cv x) (.cv y))).fv := by
     exact
       (by
         have compact_fv_not_mem_empty : z ∉ (∅ : Finset Var) :=
@@ -1999,7 +2013,7 @@ noncomputable def g_composefn : Nominal.NPrf (syn_wfn (syn_ccompose) (syn_cvv)) 
           NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_union,
           Finset.mem_singleton, fresh_z_ne_x, fresh_z_ne_y, or_false, not_false_eq_true])
   have dv_cache_0002 :
-    z ∉ ((syn_wa (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv)))).fv :=
+    z ∉ ((synWa (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv)))).fv :=
     by
     clear dv_cache_0001
     exact
@@ -2026,7 +2040,7 @@ noncomputable def g_composefn : Nominal.NPrf (syn_wfn (syn_ccompose) (syn_cvv)) 
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004
     exact (show y ≠ z from (by exact fresh_y_ne_z))
-  have dv_cache_0006 : z ∉ ((syn_cvv)).fv :=
+  have dv_cache_0006 : z ∉ ((synCvv)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
     exact
@@ -2037,7 +2051,7 @@ noncomputable def g_composefn : Nominal.NPrf (syn_wfn (syn_ccompose) (syn_cvv)) 
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have dv_cache_0007 : x ∉ ((syn_cvv)).fv :=
+  have dv_cache_0007 : x ∉ ((synCvv)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006
@@ -2049,7 +2063,7 @@ noncomputable def g_composefn : Nominal.NPrf (syn_wfn (syn_ccompose) (syn_cvv)) 
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have dv_cache_0008 : y ∉ ((syn_cvv)).fv :=
+  have dv_cache_0008 : y ∉ ((synCvv)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007
@@ -2061,115 +2075,116 @@ noncomputable def g_composefn : Nominal.NPrf (syn_wfn (syn_ccompose) (syn_cvv)) 
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have p0000 := @g_vex x
-  have p0001 := @g_vex y
-  have p0002 := @g_coex (.cv x) (.cv y) p0000 p0001
-  have p0003 := @g_eueq1 z (syn_ccom (.cv x) (.cv y)) dv_cache_0001 p0002
+  have p0000 := @gVex x
+  have p0001 := @gVex y
+  have p0002 := @gCoex (.cv x) (.cv y) p0000 p0001
+  have p0003 := @gEueq1 z (synCcom (.cv x) (.cv y)) dv_cache_0001 p0002
   have p0004 :=
-    @g_a1i (syn_weu z (.classEq (.cv z) (syn_ccom (.cv x) (.cv y))))
-      (syn_wa (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv))) p0003
+    @gA1i (synWeu z (.classEq (.cv z) (synCcom (.cv x) (.cv y))))
+      (synWa (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv))) p0003
   have p0005 :=
-    @g_fnoprab (syn_wa (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv)))
-      (.classEq (.cv z) (syn_ccom (.cv x) (.cv y))) x y z dv_cache_0002 dv_cache_0003
+    @gFnoprab (synWa (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv)))
+      (.classEq (.cv z) (synCcom (.cv x) (.cv y))) x y z dv_cache_0002 dv_cache_0003
       dv_cache_0004 dv_cache_0005 p0004
   have p0006 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_compose x y
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfCompose x y
       dv_cache_0003
   have p0007 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_mpt2 x y z (syn_cvv)
-      (syn_cvv) (syn_ccom (.cv x) (.cv y)) dv_cache_0006 dv_cache_0006 dv_cache_0001
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfMpt2 x y z (synCvv)
+      (synCvv) (synCcom (.cv x) (.cv y)) dv_cache_0006 dv_cache_0006 dv_cache_0001
       dv_cache_0004 dv_cache_0005
   have p0008 :=
-    @g_eqtri (syn_ccompose) (syn_cmpt2 x (syn_cvv) y (syn_cvv) (syn_ccom (.cv x) (.cv y)))
-      (syn_coprab x y z
-        (syn_wa (syn_wa (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv)))
-          (.classEq (.cv z) (syn_ccom (.cv x) (.cv y)))))
+    @gEqtri (synCcompose) (synCmpt2 x (synCvv) y (synCvv) (synCcom (.cv x) (.cv y)))
+      (synCoprab x y z
+        (synWa (synWa (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv)))
+          (.classEq (.cv z) (synCcom (.cv x) (.cv y)))))
       p0006 p0007
-  have p0009 := @g_xpvv
+  have p0009 := @gXpvv
   have p0010 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_xp x y (syn_cvv)
-      (syn_cvv) dv_cache_0007 dv_cache_0008 dv_cache_0007 dv_cache_0008 dv_cache_0003
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfXp x y (synCvv)
+      (synCvv) dv_cache_0007 dv_cache_0008 dv_cache_0007 dv_cache_0008 dv_cache_0003
   have p0011 :=
-    @g_eqtr3i (syn_cxp (syn_cvv) (syn_cvv)) (syn_cvv)
-      (syn_copab x y (syn_wa (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv))))
+    @gEqtr3i (synCxp (synCvv) (synCvv)) (synCvv)
+      (synCopab x y (synWa (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv))))
       p0009 p0010
   have p0012 :=
-    @g_fneq1 (syn_cvv) (syn_ccompose)
-      (syn_coprab x y z
-        (syn_wa (syn_wa (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv)))
-          (.classEq (.cv z) (syn_ccom (.cv x) (.cv y)))))
+    @gFneq1 (synCvv) (synCcompose)
+      (synCoprab x y z
+        (synWa (synWa (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv)))
+          (.classEq (.cv z) (synCcom (.cv x) (.cv y)))))
   have p0013 :=
-    @g_fneq2 (syn_cvv)
-      (syn_copab x y (syn_wa (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv))))
-      (syn_coprab x y z
-        (syn_wa (syn_wa (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv)))
-          (.classEq (.cv z) (syn_ccom (.cv x) (.cv y)))))
+    @gFneq2 (synCvv)
+      (synCopab x y (synWa (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv))))
+      (synCoprab x y z
+        (synWa (synWa (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv)))
+          (.classEq (.cv z) (synCcom (.cv x) (.cv y)))))
   have p0014 :=
-    @g_sylan9bb
-      (.classEq (syn_ccompose) (syn_coprab x y z
-          (syn_wa (syn_wa (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv)))
-            (.classEq (.cv z) (syn_ccom (.cv x) (.cv y))))))
-      (syn_wfn (syn_ccompose) (syn_cvv))
-      (syn_wfn (syn_coprab x y z
-          (syn_wa (syn_wa (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv)))
-            (.classEq (.cv z) (syn_ccom (.cv x) (.cv y))))) (syn_cvv))
-      (.classEq (syn_cvv) (syn_copab x y
-          (syn_wa (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv)))))
-      (syn_wfn (syn_coprab x y z
-          (syn_wa (syn_wa (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv)))
-            (.classEq (.cv z) (syn_ccom (.cv x) (.cv y))))) (syn_copab x y
-          (syn_wa (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv)))))
+    @gSylan9bb
+      (.classEq (synCcompose) (synCoprab x y z
+          (synWa (synWa (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv)))
+            (.classEq (.cv z) (synCcom (.cv x) (.cv y))))))
+      (synWfn (synCcompose) (synCvv))
+      (synWfn (synCoprab x y z
+          (synWa (synWa (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv)))
+            (.classEq (.cv z) (synCcom (.cv x) (.cv y))))) (synCvv))
+      (.classEq (synCvv) (synCopab x y
+          (synWa (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv)))))
+      (synWfn (synCoprab x y z
+          (synWa (synWa (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv)))
+            (.classEq (.cv z) (synCcom (.cv x) (.cv y))))) (synCopab x y
+          (synWa (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv)))))
       p0012 p0013
   have p0015 :=
-    @g_mp2an
-      (.classEq (syn_ccompose) (syn_coprab x y z
-          (syn_wa (syn_wa (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv)))
-            (.classEq (.cv z) (syn_ccom (.cv x) (.cv y))))))
-      (.classEq (syn_cvv) (syn_copab x y
-          (syn_wa (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv)))))
-      (syn_wb (syn_wfn (syn_ccompose) (syn_cvv)) (syn_wfn (syn_coprab x y z
-            (syn_wa (syn_wa (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv)))
-              (.classEq (.cv z) (syn_ccom (.cv x) (.cv y))))) (syn_copab x y
-            (syn_wa (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv))))))
+    @gMp2an
+      (.classEq (synCcompose) (synCoprab x y z
+          (synWa (synWa (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv)))
+            (.classEq (.cv z) (synCcom (.cv x) (.cv y))))))
+      (.classEq (synCvv) (synCopab x y
+          (synWa (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv)))))
+      (synWb (synWfn (synCcompose) (synCvv)) (synWfn (synCoprab x y z
+            (synWa (synWa (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv)))
+              (.classEq (.cv z) (synCcom (.cv x) (.cv y))))) (synCopab x y
+            (synWa (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv))))))
       p0008 p0011 p0014
   have p0016 :=
-    @g_mpbir (syn_wfn (syn_ccompose) (syn_cvv))
-      (syn_wfn (syn_coprab x y z
-          (syn_wa (syn_wa (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv)))
-            (.classEq (.cv z) (syn_ccom (.cv x) (.cv y))))) (syn_copab x y
-          (syn_wa (.classMem (.cv x) (syn_cvv)) (.classMem (.cv y) (syn_cvv)))))
+    @gMpbir (synWfn (synCcompose) (synCvv))
+      (synWfn (synCoprab x y z
+          (synWa (synWa (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv)))
+            (.classEq (.cv z) (synCcom (.cv x) (.cv y))))) (synCopab x y
+          (synWa (.classMem (.cv x) (synCvv)) (.classMem (.cv y) (synCvv)))))
       p0005 p0015
   exact p0016
 
+/-- Checked nominal proof certificate identified upstream as `g_brcomposeg`. -/
 @[expose]
-noncomputable def g_brcomposeg (A : Class) (B : Class) (C : Class) (V : Class)
+noncomputable def gBrcomposeg (A : Class) (B : Class) (C : Class) (V : Class)
     (W : Class) :
     Nominal.NPrf
-      (.imp (syn_wa (.classMem A V) (.classMem B W))
-        (syn_wb (syn_wbr (syn_cop A B) (syn_ccompose) C) (.classEq (syn_ccom A B) C))) :=
+      (.imp (synWa (.classMem A V) (.classMem B W))
+        (synWb (synWbr (synCop A B) (synCcompose) C) (.classEq (synCcom A B) C))) :=
   by
-  have p0000 := @g_composefn
-  have p0001 := @g_opexg A B V W
-  have p0002 := @g_fnbrfvb (syn_cvv) (syn_cop A B) C (syn_ccompose)
+  have p0000 := @gComposefn
+  have p0001 := @gOpexg A B V W
+  have p0002 := @gFnbrfvb (synCvv) (synCop A B) C (synCcompose)
   have p0003 :=
-    @g_sylancr (syn_wa (.classMem A V) (.classMem B W)) (syn_wfn (syn_ccompose) (syn_cvv))
-      (.classMem (syn_cop A B) (syn_cvv))
-      (syn_wb (.classEq (syn_cfv (syn_ccompose) (syn_cop A B)) C)
-        (syn_wbr (syn_cop A B) (syn_ccompose) C))
+    @gSylancr (synWa (.classMem A V) (.classMem B W)) (synWfn (synCcompose) (synCvv))
+      (.classMem (synCop A B) (synCvv))
+      (synWb (.classEq (synCfv (synCcompose) (synCop A B)) C)
+        (synWbr (synCop A B) (synCcompose) C))
       p0000 p0001 p0002
-  have p0004 := (Nominal.classEqRefl (syn_co A (syn_ccompose) B))
-  have p0005 := @g_composevalg A B V W
+  have p0004 := (Nominal.classEqRefl (synCo A (synCcompose) B))
+  have p0005 := @gComposevalg A B V W
   have p0006 :=
-    @g_syl5eqr (syn_wa (.classMem A V) (.classMem B W))
-      (syn_cfv (syn_ccompose) (syn_cop A B)) (syn_co A (syn_ccompose) B) (syn_ccom A B)
+    @gSyl5eqr (synWa (.classMem A V) (.classMem B W))
+      (synCfv (synCcompose) (synCop A B)) (synCo A (synCcompose) B) (synCcom A B)
       p0004 p0005
   have p0007 :=
-    @g_eqeq1d (syn_wa (.classMem A V) (.classMem B W))
-      (syn_cfv (syn_ccompose) (syn_cop A B)) (syn_ccom A B) C p0006
+    @gEqeq1d (synWa (.classMem A V) (.classMem B W))
+      (synCfv (synCcompose) (synCop A B)) (synCcom A B) C p0006
   have p0008 :=
-    @g_bitr3d (syn_wa (.classMem A V) (.classMem B W))
-      (.classEq (syn_cfv (syn_ccompose) (syn_cop A B)) C)
-      (syn_wbr (syn_cop A B) (syn_ccompose) C) (.classEq (syn_ccom A B) C) p0003 p0007
+    @gBitr3d (synWa (.classMem A V) (.classMem B W))
+      (.classEq (synCfv (synCcompose) (synCop A B)) C)
+      (synWbr (synCop A B) (synCcompose) C) (.classEq (synCcom A B) C) p0003 p0007
   exact p0008
 
 
@@ -2190,8 +2205,9 @@ open NFChoice.SemanticCore
 open NFChoice.ReplaySupport
 open NFChoice.Compiler.CompactSourceSyntax
 
+/-- Checked nominal proof certificate identified upstream as `g_composeex`. -/
 @[expose]
-noncomputable def g_composeex : Nominal.NPrf (.classMem (syn_ccompose) (syn_cvv)) :=
+noncomputable def gComposeex : Nominal.NPrf (.classMem (synCcompose) (synCvv)) :=
   by
   let proofSupport : Finset Var := (∅ : Finset Var)
   let x : Var := freshVar proofSupport 0
@@ -2412,7 +2428,7 @@ noncomputable def g_composeex : Nominal.NPrf (.classMem (syn_ccompose) (syn_cvv)
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
     exact (show t ≠ u from (by exact fresh_t_ne_u))
-  have dv_cache_0013 : w ∉ ((syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))).fv :=
+  have dv_cache_0013 : w ∉ ((synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -2430,14 +2446,14 @@ noncomputable def g_composeex : Nominal.NPrf (.classMem (syn_ccompose) (syn_cvv)
           not_false_eq_true])
   have dv_cache_0014 :
     w ∉
-      ((syn_cima (syn_cin (syn_cins4 (syn_csi3
-                (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-                  (syn_cins2 (syn_ccnv (syn_c2nd)))))) (syn_cima (syn_cin (syn_cins2 (syn_cima
-                    (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                      (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-                (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid))) (syn_cins2
-                      (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset))))))) (syn_c1c)))
-              (syn_c1c))) (syn_c1c))).fv :=
+      ((synCima (synCin (synCins4 (synCsi3
+                (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+                  (synCins2 (synCcnv (synC2nd)))))) (synCima (synCin (synCins2 (synCima
+                    (synCin (synCins4 (synCsi3 (synCswap)))
+                      (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+                (synCima (synCin (synCins4 (synCsi3 (synCid))) (synCins2
+                      (synCins2 (synCins2 (synCins2 (synCins3 (synCsset))))))) (synC1c)))
+              (synC1c))) (synC1c))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -2466,7 +2482,7 @@ noncomputable def g_composeex : Nominal.NPrf (.classMem (syn_ccompose) (syn_cvv)
           compact_fv_not_mem_empty, or_false, not_false_eq_true])
   have dv_cache_0015 :
     t ∉
-      ((syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))).fv :=
+      ((synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -2484,13 +2500,13 @@ noncomputable def g_composeex : Nominal.NPrf (.classMem (syn_ccompose) (syn_cvv)
           or_false, not_false_eq_true])
   have dv_cache_0016 :
     t ∉
-      ((syn_cin (syn_cins4 (syn_csi3 (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-                (syn_cins2 (syn_ccnv (syn_c2nd)))))) (syn_cima (syn_cin (syn_cins2 (syn_cima
-                  (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                    (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-              (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-                  (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-                (syn_c1c))) (syn_c1c)))).fv :=
+      ((synCin (synCins4 (synCsi3 (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+                (synCins2 (synCcnv (synC2nd)))))) (synCima (synCin (synCins2 (synCima
+                  (synCin (synCins4 (synCsi3 (synCswap)))
+                    (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+              (synCima (synCin (synCins4 (synCsi3 (synCid)))
+                  (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+                (synC1c))) (synC1c)))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -2519,8 +2535,8 @@ noncomputable def g_composeex : Nominal.NPrf (.classMem (syn_ccompose) (syn_cvv)
           compact_fv_not_mem_empty, or_false, not_false_eq_true])
   have dv_cache_0017 :
     u ∉
-      ((syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv w))
-            (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))))).fv :=
+      ((synCop (synCsn (.cv t)) (synCop (synCsn (.cv w))
+            (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -2538,11 +2554,11 @@ noncomputable def g_composeex : Nominal.NPrf (.classMem (syn_ccompose) (syn_cvv)
           fresh_u_ne_y, or_false, not_false_eq_true])
   have dv_cache_0018 :
     u ∉
-      ((syn_cin (syn_cins2 (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-          (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-              (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-            (syn_c1c)))).fv :=
+      ((synCin (synCins2 (synCima (synCin (synCins4 (synCsi3 (synCswap)))
+                (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+          (synCima (synCin (synCins4 (synCsi3 (synCid)))
+              (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+            (synC1c)))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -2564,7 +2580,7 @@ noncomputable def g_composeex : Nominal.NPrf (.classMem (syn_ccompose) (syn_cvv)
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cid,
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3, Finset.mem_union,
           compact_fv_not_mem_empty, or_false, not_false_eq_true])
-  have dv_cache_0019 : t ∉ ((syn_cop (.cv w) (.cv u))).fv :=
+  have dv_cache_0019 : t ∉ ((synCop (.cv w) (.cv u))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -2581,8 +2597,8 @@ noncomputable def g_composeex : Nominal.NPrf (.classMem (syn_ccompose) (syn_cvv)
           Finset.mem_singleton, fresh_t_ne_w, fresh_t_ne_u, or_false, not_false_eq_true])
   have dv_cache_0020 :
     t ∉
-      ((syn_cop (syn_csn (.cv u)) (syn_cop (syn_csn (.cv w))
-            (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))))).fv :=
+      ((synCop (synCsn (.cv u)) (synCop (synCsn (.cv w))
+            (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -2601,8 +2617,8 @@ noncomputable def g_composeex : Nominal.NPrf (.classMem (syn_ccompose) (syn_cvv)
           fresh_t_ne_y, or_false, not_false_eq_true])
   have dv_cache_0021 :
     t ∉
-      ((syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-          (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset))))))).fv :=
+      ((synCin (synCins4 (synCsi3 (synCswap)))
+          (synCins2 (synCins2 (synCins2 (synCins2 (synCsset))))))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -2621,7 +2637,7 @@ noncomputable def g_composeex : Nominal.NPrf (.classMem (syn_ccompose) (syn_cvv)
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2,
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csset, Finset.mem_union,
           compact_fv_not_mem_empty, or_false, not_false_eq_true])
-  have dv_cache_0022 : v ∉ ((syn_cop (.cv u) (.cv t))).fv :=
+  have dv_cache_0022 : v ∉ ((synCop (.cv u) (.cv t))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -2652,8 +2668,8 @@ noncomputable def g_composeex : Nominal.NPrf (.classMem (syn_ccompose) (syn_cvv)
           fresh_v_ne_x, not_false_eq_true])
   have dv_cache_0024 :
     v ∉
-      ((syn_cop (syn_csn (.cv u)) (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv w))
-              (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))))).fv :=
+      ((synCop (synCsn (.cv u)) (synCop (synCsn (.cv t)) (synCop (synCsn (.cv w))
+              (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -2672,8 +2688,8 @@ noncomputable def g_composeex : Nominal.NPrf (.classMem (syn_ccompose) (syn_cvv)
           fresh_v_ne_x, fresh_v_ne_y, or_false, not_false_eq_true])
   have dv_cache_0025 :
     v ∉
-      ((syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-          (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))).fv :=
+      ((synCin (synCins4 (synCsi3 (synCid)))
+          (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -2694,7 +2710,7 @@ noncomputable def g_composeex : Nominal.NPrf (.classMem (syn_ccompose) (syn_cvv)
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3,
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csset, Finset.mem_union,
           compact_fv_not_mem_empty, or_false, not_false_eq_true])
-  have dv_cache_0026 : x ∉ ((syn_cvv)).fv :=
+  have dv_cache_0026 : x ∉ ((synCvv)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -2709,7 +2725,7 @@ noncomputable def g_composeex : Nominal.NPrf (.classMem (syn_ccompose) (syn_cvv)
           cases hmem
         simp only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv,
           compact_fv_not_mem_empty, not_false_eq_true])
-  have dv_cache_0027 : y ∉ ((syn_cvv)).fv :=
+  have dv_cache_0027 : y ∉ ((synCvv)).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -2726,14 +2742,14 @@ noncomputable def g_composeex : Nominal.NPrf (.classMem (syn_ccompose) (syn_cvv)
           compact_fv_not_mem_empty, not_false_eq_true])
   have dv_cache_0028 :
     x ∉
-      ((syn_cima (syn_cima (syn_cin (syn_cins4 (syn_csi3
-                  (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-                    (syn_cins2 (syn_ccnv (syn_c2nd)))))) (syn_cima (syn_cin (syn_cins2 (syn_cima
-                      (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                        (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-                  (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid))) (syn_cins2
-                        (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-                    (syn_c1c))) (syn_c1c))) (syn_c1c)) (syn_c1c))).fv :=
+      ((synCima (synCima (synCin (synCins4 (synCsi3
+                  (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+                    (synCins2 (synCcnv (synC2nd)))))) (synCima (synCin (synCins2 (synCima
+                      (synCin (synCins4 (synCsi3 (synCswap)))
+                        (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+                  (synCima (synCin (synCins4 (synCsi3 (synCid))) (synCins2
+                        (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+                    (synC1c))) (synC1c))) (synC1c)) (synC1c))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -2764,14 +2780,14 @@ noncomputable def g_composeex : Nominal.NPrf (.classMem (syn_ccompose) (syn_cvv)
           compact_fv_not_mem_empty, or_false, not_false_eq_true])
   have dv_cache_0029 :
     y ∉
-      ((syn_cima (syn_cima (syn_cin (syn_cins4 (syn_csi3
-                  (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-                    (syn_cins2 (syn_ccnv (syn_c2nd)))))) (syn_cima (syn_cin (syn_cins2 (syn_cima
-                      (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                        (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-                  (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid))) (syn_cins2
-                        (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-                    (syn_c1c))) (syn_c1c))) (syn_c1c)) (syn_c1c))).fv :=
+      ((synCima (synCima (synCin (synCins4 (synCsi3
+                  (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+                    (synCins2 (synCcnv (synC2nd)))))) (synCima (synCin (synCins2 (synCima
+                      (synCin (synCins4 (synCsi3 (synCswap)))
+                        (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+                  (synCima (synCin (synCins4 (synCsi3 (synCid))) (synCins2
+                        (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+                    (synC1c))) (synC1c))) (synC1c)) (synC1c))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -2802,14 +2818,14 @@ noncomputable def g_composeex : Nominal.NPrf (.classMem (syn_ccompose) (syn_cvv)
           compact_fv_not_mem_empty, or_false, not_false_eq_true])
   have dv_cache_0030 :
     z ∉
-      ((syn_cima (syn_cima (syn_cin (syn_cins4 (syn_csi3
-                  (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-                    (syn_cins2 (syn_ccnv (syn_c2nd)))))) (syn_cima (syn_cin (syn_cins2 (syn_cima
-                      (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                        (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-                  (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid))) (syn_cins2
-                        (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-                    (syn_c1c))) (syn_c1c))) (syn_c1c)) (syn_c1c))).fv :=
+      ((synCima (synCima (synCin (synCins4 (synCsi3
+                  (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+                    (synCins2 (synCcnv (synC2nd)))))) (synCima (synCin (synCins2 (synCima
+                      (synCin (synCins4 (synCsi3 (synCswap)))
+                        (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+                  (synCima (synCin (synCins4 (synCsi3 (synCid))) (synCins2
+                        (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+                    (synC1c))) (synC1c))) (synC1c)) (synC1c))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -2838,7 +2854,7 @@ noncomputable def g_composeex : Nominal.NPrf (.classMem (syn_ccompose) (syn_cvv)
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cid,
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3, Finset.mem_union,
           compact_fv_not_mem_empty, or_false, not_false_eq_true])
-  have dv_cache_0031 : z ∉ ((syn_ccom (.cv x) (.cv y))).fv :=
+  have dv_cache_0031 : z ∉ ((synCcom (.cv x) (.cv y))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006 dv_cache_0007 dv_cache_0008 dv_cache_0009 dv_cache_0010 dv_cache_0011
@@ -2874,216 +2890,216 @@ noncomputable def g_composeex : Nominal.NPrf (.classMem (syn_ccompose) (syn_cvv)
       dv_cache_0030 dv_cache_0031 dv_cache_0032
     exact (show y ≠ z from (by exact fresh_y_ne_z))
   have p0000 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_compose x y
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfCompose x y
       dv_cache_0001
   have p0001 :=
-    @g_elopab
-      (syn_wex u (syn_wa (syn_wbr (.cv w) (.cv y) (.cv u)) (syn_wbr (.cv u) (.cv x) (.cv t))))
+    @gElopab
+      (synWex u (synWa (synWbr (.cv w) (.cv y) (.cv u)) (synWbr (.cv u) (.cv x) (.cv t))))
       w t (.cv z) dv_cache_0002 dv_cache_0003
   have p0002 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_co w t u (.cv x)
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfCo w t u (.cv x)
       (.cv y) dv_cache_0004 dv_cache_0005 dv_cache_0006 dv_cache_0007 dv_cache_0008
       dv_cache_0009 dv_cache_0010 dv_cache_0011 dv_cache_0012
   have p0003 :=
-    @g_eleq2i (syn_ccom (.cv x) (.cv y))
-      (syn_copab w t (syn_wex u
-          (syn_wa (syn_wbr (.cv w) (.cv y) (.cv u)) (syn_wbr (.cv u) (.cv x) (.cv t)))))
+    @gEleq2i (synCcom (.cv x) (.cv y))
+      (synCopab w t (synWex u
+          (synWa (synWbr (.cv w) (.cv y) (.cv u)) (synWbr (.cv u) (.cv x) (.cv t)))))
       (.cv z) p0002
   have p0004 :=
-    @g_elima1c w (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))
-      (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-                (syn_cins2 (syn_ccnv (syn_c2nd)))))) (syn_cima (syn_cin (syn_cins2 (syn_cima
-                  (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                    (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-              (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-                  (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-                (syn_c1c))) (syn_c1c))) (syn_c1c))
+    @gElima1c w (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))
+      (synCima (synCin (synCins4 (synCsi3 (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+                (synCins2 (synCcnv (synC2nd)))))) (synCima (synCin (synCins2 (synCima
+                  (synCin (synCins4 (synCsi3 (synCswap)))
+                    (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+              (synCima (synCin (synCins4 (synCsi3 (synCid)))
+                  (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+                (synC1c))) (synC1c))) (synC1c))
       dv_cache_0013 dv_cache_0014
   have p0005 :=
-    @g_elima1c t
-      (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))
-      (syn_cin (syn_cins4 (syn_csi3 (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-              (syn_cins2 (syn_ccnv (syn_c2nd)))))) (syn_cima (syn_cin (syn_cins2 (syn_cima
-                (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                  (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-            (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-                (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-              (syn_c1c))) (syn_c1c)))
+    @gElima1c t
+      (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))
+      (synCin (synCins4 (synCsi3 (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+              (synCins2 (synCcnv (synC2nd)))))) (synCima (synCin (synCins2 (synCima
+                (synCin (synCins4 (synCsi3 (synCswap)))
+                  (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+            (synCima (synCin (synCins4 (synCsi3 (synCid)))
+                (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+              (synC1c))) (synC1c)))
       dv_cache_0015 dv_cache_0016
   have p0006 :=
-    @g_elin
-      (syn_cop (syn_csn (.cv t))
-        (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))))
-      (syn_cins4 (syn_csi3 (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-            (syn_cins2 (syn_ccnv (syn_c2nd))))))
-      (syn_cima (syn_cin (syn_cins2 (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-          (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-              (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-            (syn_c1c))) (syn_c1c))
-  have p0007 := @g_vex x
-  have p0008 := @g_vex y
-  have p0009 := @g_opex (.cv x) (.cv y) p0007 p0008
+    @gElin
+      (synCop (synCsn (.cv t))
+        (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))))
+      (synCins4 (synCsi3 (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+            (synCins2 (synCcnv (synC2nd))))))
+      (synCima (synCin (synCins2 (synCima (synCin (synCins4 (synCsi3 (synCswap)))
+                (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+          (synCima (synCin (synCins4 (synCsi3 (synCid)))
+              (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+            (synC1c))) (synC1c))
+  have p0007 := @gVex x
+  have p0008 := @gVex y
+  have p0009 := @gOpex (.cv x) (.cv y) p0007 p0008
   have p0010 :=
-    @g_oqelins4 (syn_csn (.cv t)) (syn_csn (.cv w)) (syn_csn (.cv z))
-      (syn_cop (.cv x) (.cv y))
-      (syn_csi3 (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-          (syn_cins2 (syn_ccnv (syn_c2nd)))))
+    @gOqelins4 (synCsn (.cv t)) (synCsn (.cv w)) (synCsn (.cv z))
+      (synCop (.cv x) (.cv y))
+      (synCsi3 (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+          (synCins2 (synCcnv (synC2nd)))))
       p0009
-  have p0011 := @g_vex t
-  have p0012 := @g_vex w
-  have p0013 := @g_vex z
+  have p0011 := @gVex t
+  have p0012 := @gVex w
+  have p0013 := @gVex z
   have p0014 :=
-    @g_otsnelsi3 (.cv t) (.cv w) (.cv z)
-      (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st))) (syn_cins2 (syn_ccnv (syn_c2nd))))
+    @gOtsnelsi3 (.cv t) (.cv w) (.cv z)
+      (synCin (synCxp (synCvv) (synCcnv (synC1st))) (synCins2 (synCcnv (synC2nd))))
       p0011 p0012 p0013
   have p0015 :=
-    @g_elin (syn_cop (.cv t) (syn_cop (.cv w) (.cv z)))
-      (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st))) (syn_cins2 (syn_ccnv (syn_c2nd)))
+    @gElin (synCop (.cv t) (synCop (.cv w) (.cv z)))
+      (synCxp (synCvv) (synCcnv (synC1st))) (synCins2 (synCcnv (synC2nd)))
   have p0016 :=
-    @g_opelxp (.cv t) (syn_cop (.cv w) (.cv z)) (syn_cvv) (syn_ccnv (syn_c1st))
+    @gOpelxp (.cv t) (synCop (.cv w) (.cv z)) (synCvv) (synCcnv (synC1st))
   have p0017 :=
-    @g_mpbiran
-      (.classMem (syn_cop (.cv t) (syn_cop (.cv w) (.cv z)))
-        (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st))))
-      (.classMem (.cv t) (syn_cvv))
-      (.classMem (syn_cop (.cv w) (.cv z)) (syn_ccnv (syn_c1st))) p0011 p0016
-  have p0018 := (Nominal.biimpRefl (syn_wbr (.cv w) (syn_ccnv (syn_c1st)) (.cv z)))
-  have p0019 := @g_brcnv (.cv w) (.cv z) (syn_c1st)
+    @gMpbiran
+      (.classMem (synCop (.cv t) (synCop (.cv w) (.cv z)))
+        (synCxp (synCvv) (synCcnv (synC1st))))
+      (.classMem (.cv t) (synCvv))
+      (.classMem (synCop (.cv w) (.cv z)) (synCcnv (synC1st))) p0011 p0016
+  have p0018 := (Nominal.biimpRefl (synWbr (.cv w) (synCcnv (synC1st)) (.cv z)))
+  have p0019 := @gBrcnv (.cv w) (.cv z) (synC1st)
   have p0020 :=
-    @g_n_3bitr2i
-      (.classMem (syn_cop (.cv t) (syn_cop (.cv w) (.cv z)))
-        (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st))))
-      (.classMem (syn_cop (.cv w) (.cv z)) (syn_ccnv (syn_c1st)))
-      (syn_wbr (.cv w) (syn_ccnv (syn_c1st)) (.cv z)) (syn_wbr (.cv z) (syn_c1st) (.cv w))
+    @gN3bitr2i
+      (.classMem (synCop (.cv t) (synCop (.cv w) (.cv z)))
+        (synCxp (synCvv) (synCcnv (synC1st))))
+      (.classMem (synCop (.cv w) (.cv z)) (synCcnv (synC1st)))
+      (synWbr (.cv w) (synCcnv (synC1st)) (.cv z)) (synWbr (.cv z) (synC1st) (.cv w))
       p0017 p0018 p0019
-  have p0021 := @g_otelins2 (.cv t) (.cv w) (.cv z) (syn_ccnv (syn_c2nd)) p0012
-  have p0022 := (Nominal.biimpRefl (syn_wbr (.cv t) (syn_ccnv (syn_c2nd)) (.cv z)))
-  have p0023 := @g_brcnv (.cv t) (.cv z) (syn_c2nd)
+  have p0021 := @gOtelins2 (.cv t) (.cv w) (.cv z) (synCcnv (synC2nd)) p0012
+  have p0022 := (Nominal.biimpRefl (synWbr (.cv t) (synCcnv (synC2nd)) (.cv z)))
+  have p0023 := @gBrcnv (.cv t) (.cv z) (synC2nd)
   have p0024 :=
-    @g_n_3bitr2i
-      (.classMem (syn_cop (.cv t) (syn_cop (.cv w) (.cv z))) (syn_cins2 (syn_ccnv (syn_c2nd))))
-      (.classMem (syn_cop (.cv t) (.cv z)) (syn_ccnv (syn_c2nd)))
-      (syn_wbr (.cv t) (syn_ccnv (syn_c2nd)) (.cv z)) (syn_wbr (.cv z) (syn_c2nd) (.cv t))
+    @gN3bitr2i
+      (.classMem (synCop (.cv t) (synCop (.cv w) (.cv z))) (synCins2 (synCcnv (synC2nd))))
+      (.classMem (synCop (.cv t) (.cv z)) (synCcnv (synC2nd)))
+      (synWbr (.cv t) (synCcnv (synC2nd)) (.cv z)) (synWbr (.cv z) (synC2nd) (.cv t))
       p0021 p0022 p0023
   have p0025 :=
-    @g_anbi12i
-      (.classMem (syn_cop (.cv t) (syn_cop (.cv w) (.cv z)))
-        (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st))))
-      (syn_wbr (.cv z) (syn_c1st) (.cv w))
-      (.classMem (syn_cop (.cv t) (syn_cop (.cv w) (.cv z))) (syn_cins2 (syn_ccnv (syn_c2nd))))
-      (syn_wbr (.cv z) (syn_c2nd) (.cv t)) p0020 p0024
-  have p0026 := @g_op1st2nd (.cv w) (.cv t) (.cv z) p0012 p0011
+    @gAnbi12i
+      (.classMem (synCop (.cv t) (synCop (.cv w) (.cv z)))
+        (synCxp (synCvv) (synCcnv (synC1st))))
+      (synWbr (.cv z) (synC1st) (.cv w))
+      (.classMem (synCop (.cv t) (synCop (.cv w) (.cv z))) (synCins2 (synCcnv (synC2nd))))
+      (synWbr (.cv z) (synC2nd) (.cv t)) p0020 p0024
+  have p0026 := @gOp1st2nd (.cv w) (.cv t) (.cv z) p0012 p0011
   have p0027 :=
-    @g_n_3bitri
-      (.classMem (syn_cop (.cv t) (syn_cop (.cv w) (.cv z)))
-        (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st))) (syn_cins2 (syn_ccnv (syn_c2nd)))))
-      (syn_wa (.classMem (syn_cop (.cv t) (syn_cop (.cv w) (.cv z)))
-          (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st))))
-        (.classMem (syn_cop (.cv t) (syn_cop (.cv w) (.cv z)))
-          (syn_cins2 (syn_ccnv (syn_c2nd)))))
-      (syn_wa (syn_wbr (.cv z) (syn_c1st) (.cv w)) (syn_wbr (.cv z) (syn_c2nd) (.cv t)))
-      (.classEq (.cv z) (syn_cop (.cv w) (.cv t))) p0015 p0025 p0026
+    @gN3bitri
+      (.classMem (synCop (.cv t) (synCop (.cv w) (.cv z)))
+        (synCin (synCxp (synCvv) (synCcnv (synC1st))) (synCins2 (synCcnv (synC2nd)))))
+      (synWa (.classMem (synCop (.cv t) (synCop (.cv w) (.cv z)))
+          (synCxp (synCvv) (synCcnv (synC1st))))
+        (.classMem (synCop (.cv t) (synCop (.cv w) (.cv z)))
+          (synCins2 (synCcnv (synC2nd)))))
+      (synWa (synWbr (.cv z) (synC1st) (.cv w)) (synWbr (.cv z) (synC2nd) (.cv t)))
+      (.classEq (.cv z) (synCop (.cv w) (.cv t))) p0015 p0025 p0026
   have p0028 :=
-    @g_n_3bitri
-      (.classMem (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv w))
-            (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))) (syn_cins4 (syn_csi3
-            (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-              (syn_cins2 (syn_ccnv (syn_c2nd)))))))
-      (.classMem (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv w)) (syn_csn (.cv z))))
-        (syn_csi3 (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-            (syn_cins2 (syn_ccnv (syn_c2nd))))))
-      (.classMem (syn_cop (.cv t) (syn_cop (.cv w) (.cv z)))
-        (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st))) (syn_cins2 (syn_ccnv (syn_c2nd)))))
-      (.classEq (.cv z) (syn_cop (.cv w) (.cv t))) p0010 p0014 p0027
+    @gN3bitri
+      (.classMem (synCop (synCsn (.cv t)) (synCop (synCsn (.cv w))
+            (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))) (synCins4 (synCsi3
+            (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+              (synCins2 (synCcnv (synC2nd)))))))
+      (.classMem (synCop (synCsn (.cv t)) (synCop (synCsn (.cv w)) (synCsn (.cv z))))
+        (synCsi3 (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+            (synCins2 (synCcnv (synC2nd))))))
+      (.classMem (synCop (.cv t) (synCop (.cv w) (.cv z)))
+        (synCin (synCxp (synCvv) (synCcnv (synC1st))) (synCins2 (synCcnv (synC2nd)))))
+      (.classEq (.cv z) (synCop (.cv w) (.cv t))) p0010 p0014 p0027
   have p0029 :=
-    @g_elima1c u
-      (syn_cop (syn_csn (.cv t))
-        (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))))
-      (syn_cin (syn_cins2 (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-              (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c))) (syn_cima
-          (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-            (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset))))))) (syn_c1c)))
+    @gElima1c u
+      (synCop (synCsn (.cv t))
+        (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))))
+      (synCin (synCins2 (synCima (synCin (synCins4 (synCsi3 (synCswap)))
+              (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c))) (synCima
+          (synCin (synCins4 (synCsi3 (synCid)))
+            (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset))))))) (synC1c)))
       dv_cache_0017 dv_cache_0018
   have p0030 :=
-    @g_elin
-      (syn_cop (syn_csn (.cv u)) (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv w))
-            (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))))
-      (syn_cins2 (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-            (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-      (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-          (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset))))))) (syn_c1c))
-  have p0031 := @g_snex (.cv t)
+    @gElin
+      (synCop (synCsn (.cv u)) (synCop (synCsn (.cv t)) (synCop (synCsn (.cv w))
+            (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))))
+      (synCins2 (synCima (synCin (synCins4 (synCsi3 (synCswap)))
+            (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+      (synCima (synCin (synCins4 (synCsi3 (synCid)))
+          (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset))))))) (synC1c))
+  have p0031 := @gSnex (.cv t)
   have p0032 :=
-    @g_otelins2 (syn_csn (.cv u)) (syn_csn (.cv t))
-      (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))
-      (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-          (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c))
+    @gOtelins2 (synCsn (.cv u)) (synCsn (.cv t))
+      (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))
+      (synCima (synCin (synCins4 (synCsi3 (synCswap)))
+          (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c))
       p0031
   have p0033 :=
     (NFChoice.DirectNominalPrf.Nominal.DefinitionLeafHandlersCanonical001.dfClelOfDV t
-      (syn_cop (.cv w) (.cv u)) (.cv y) dv_cache_0019 dv_cache_0008)
-  have p0034 := (Nominal.biimpRefl (syn_wbr (.cv w) (.cv y) (.cv u)))
+      (synCop (.cv w) (.cv u)) (.cv y) dv_cache_0019 dv_cache_0008)
+  have p0034 := (Nominal.biimpRefl (synWbr (.cv w) (.cv y) (.cv u)))
   have p0035 :=
-    @g_elima1c t
-      (syn_cop (syn_csn (.cv u))
-        (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))))
-      (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-        (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset))))))
+    @gElima1c t
+      (synCop (synCsn (.cv u))
+        (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))))
+      (synCin (synCins4 (synCsi3 (synCswap)))
+        (synCins2 (synCins2 (synCins2 (synCins2 (synCsset))))))
       dv_cache_0020 dv_cache_0021
   have p0036 :=
-    @g_elin
-      (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv u)) (syn_cop (syn_csn (.cv w))
-            (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))))
-      (syn_cins4 (syn_csi3 (syn_cswap)))
-      (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))
-  have p0037 := @g_snex (.cv z)
-  have p0038 := @g_opex (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)) p0037 p0009
+    @gElin
+      (synCop (synCsn (.cv t)) (synCop (synCsn (.cv u)) (synCop (synCsn (.cv w))
+            (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))))
+      (synCins4 (synCsi3 (synCswap)))
+      (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))
+  have p0037 := @gSnex (.cv z)
+  have p0038 := @gOpex (synCsn (.cv z)) (synCop (.cv x) (.cv y)) p0037 p0009
   have p0039 :=
-    @g_oqelins4 (syn_csn (.cv t)) (syn_csn (.cv u)) (syn_csn (.cv w))
-      (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))) (syn_csi3 (syn_cswap)) p0038
-  have p0040 := @g_vex u
-  have p0041 := @g_otsnelsi3 (.cv t) (.cv u) (.cv w) (syn_cswap) p0011 p0040 p0012
+    @gOqelins4 (synCsn (.cv t)) (synCsn (.cv u)) (synCsn (.cv w))
+      (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))) (synCsi3 (synCswap)) p0038
+  have p0040 := @gVex u
+  have p0041 := @gOtsnelsi3 (.cv t) (.cv u) (.cv w) (synCswap) p0011 p0040 p0012
   have p0042 :=
-    (Nominal.biimpRefl (syn_wbr (.cv t) (syn_cswap) (syn_cop (.cv u) (.cv w))))
-  have p0043 := @g_brswap2 (.cv t) (.cv u) (.cv w) p0040 p0012
+    (Nominal.biimpRefl (synWbr (.cv t) (synCswap) (synCop (.cv u) (.cv w))))
+  have p0043 := @gBrswap2 (.cv t) (.cv u) (.cv w) p0040 p0012
   have p0044 :=
-    @g_n_3bitr2i
-      (.classMem (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv u)) (syn_csn (.cv w))))
-        (syn_csi3 (syn_cswap)))
-      (.classMem (syn_cop (.cv t) (syn_cop (.cv u) (.cv w))) (syn_cswap))
-      (syn_wbr (.cv t) (syn_cswap) (syn_cop (.cv u) (.cv w)))
-      (.classEq (.cv t) (syn_cop (.cv w) (.cv u))) p0041 p0042 p0043
+    @gN3bitr2i
+      (.classMem (synCop (synCsn (.cv t)) (synCop (synCsn (.cv u)) (synCsn (.cv w))))
+        (synCsi3 (synCswap)))
+      (.classMem (synCop (.cv t) (synCop (.cv u) (.cv w))) (synCswap))
+      (synWbr (.cv t) (synCswap) (synCop (.cv u) (.cv w)))
+      (.classEq (.cv t) (synCop (.cv w) (.cv u))) p0041 p0042 p0043
   have p0045 :=
-    @g_bitri
-      (.classMem (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv u))
-            (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))))
-        (syn_cins4 (syn_csi3 (syn_cswap))))
-      (.classMem (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv u)) (syn_csn (.cv w))))
-        (syn_csi3 (syn_cswap)))
-      (.classEq (.cv t) (syn_cop (.cv w) (.cv u))) p0039 p0044
-  have p0046 := @g_snex (.cv u)
+    @gBitri
+      (.classMem (synCop (synCsn (.cv t)) (synCop (synCsn (.cv u))
+            (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))))
+        (synCins4 (synCsi3 (synCswap))))
+      (.classMem (synCop (synCsn (.cv t)) (synCop (synCsn (.cv u)) (synCsn (.cv w))))
+        (synCsi3 (synCswap)))
+      (.classEq (.cv t) (synCop (.cv w) (.cv u))) p0039 p0044
+  have p0046 := @gSnex (.cv u)
   have p0047 :=
-    @g_otelins2 (syn_csn (.cv t)) (syn_csn (.cv u))
-      (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))
-      (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))) p0046
-  have p0048 := @g_snex (.cv w)
+    @gOtelins2 (synCsn (.cv t)) (synCsn (.cv u))
+      (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))
+      (synCins2 (synCins2 (synCins2 (synCsset)))) p0046
+  have p0048 := @gSnex (.cv w)
   have p0049 :=
-    @g_otelins2 (syn_csn (.cv t)) (syn_csn (.cv w))
-      (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))
-      (syn_cins2 (syn_cins2 (syn_csset))) p0048
+    @gOtelins2 (synCsn (.cv t)) (synCsn (.cv w))
+      (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))
+      (synCins2 (synCins2 (synCsset))) p0048
   have p0050 :=
-    @g_otelins2 (syn_csn (.cv t)) (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))
-      (syn_cins2 (syn_csset)) p0037
-  have p0051 := @g_otelins2 (syn_csn (.cv t)) (.cv x) (.cv y) (syn_csset) p0007
-  have p0052 := @g_opelssetsn (.cv t) (.cv y) p0011 p0008
+    @gOtelins2 (synCsn (.cv t)) (synCsn (.cv z)) (synCop (.cv x) (.cv y))
+      (synCins2 (synCsset)) p0037
+  have p0051 := @gOtelins2 (synCsn (.cv t)) (.cv x) (.cv y) (synCsset) p0007
+  have p0052 := @gOpelssetsn (.cv t) (.cv y) p0011 p0008
   have p0053_e02_recanon :
     Nominal.NPrf
-      (syn_wb (.classMem (syn_cop (syn_csn (.cv t)) (.cv y)) (syn_csset)) (.objMem t y)) :=
+      (synWb (.classMem (synCop (synCsn (.cv t)) (.cv y)) (synCsset)) (.objMem t y)) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_cop syn_cun syn_cnin syn_wnan syn_wa syn_ccompl syn_wrex syn_wex
-          syn_cphi syn_csn syn_csset syn_copab syn_wss syn_cin
+        unfold synWb synCop synCun synCnin synWnan synWa synCcompl synWrex synWex
+          synCphi synCsn synCsset synCopab synWss synCin
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
@@ -3097,77 +3113,77 @@ noncomputable def g_composeex : Nominal.NPrf (.classMem (syn_ccompose) (syn_cvv)
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0052
   have p0053 :=
-    @g_n_3bitri
+    @gN3bitri
       (.classMem
-        (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))
-        (syn_cins2 (syn_cins2 (syn_csset))))
-      (.classMem (syn_cop (syn_csn (.cv t)) (syn_cop (.cv x) (.cv y))) (syn_cins2 (syn_csset)))
-      (.classMem (syn_cop (syn_csn (.cv t)) (.cv y)) (syn_csset)) (.objMem t y) p0050
+        (synCop (synCsn (.cv t)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))
+        (synCins2 (synCins2 (synCsset))))
+      (.classMem (synCop (synCsn (.cv t)) (synCop (.cv x) (.cv y))) (synCins2 (synCsset)))
+      (.classMem (synCop (synCsn (.cv t)) (.cv y)) (synCsset)) (.objMem t y) p0050
       p0051 p0053_e02_recanon
   have p0054 :=
-    @g_n_3bitri
-      (.classMem (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv u))
-            (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))))
-        (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset))))))
-      (.classMem (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv w))
-            (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))))
-        (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))
+    @gN3bitri
+      (.classMem (synCop (synCsn (.cv t)) (synCop (synCsn (.cv u))
+            (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))))
+        (synCins2 (synCins2 (synCins2 (synCins2 (synCsset))))))
+      (.classMem (synCop (synCsn (.cv t)) (synCop (synCsn (.cv w))
+            (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))))
+        (synCins2 (synCins2 (synCins2 (synCsset)))))
       (.classMem
-        (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))
-        (syn_cins2 (syn_cins2 (syn_csset))))
+        (synCop (synCsn (.cv t)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))
+        (synCins2 (synCins2 (synCsset))))
       (.objMem t y) p0047 p0049 p0053
   have p0055 :=
-    @g_anbi12i
-      (.classMem (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv u))
-            (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))))
-        (syn_cins4 (syn_csi3 (syn_cswap))))
-      (.classEq (.cv t) (syn_cop (.cv w) (.cv u)))
-      (.classMem (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv u))
-            (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))))
-        (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset))))))
+    @gAnbi12i
+      (.classMem (synCop (synCsn (.cv t)) (synCop (synCsn (.cv u))
+            (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))))
+        (synCins4 (synCsi3 (synCswap))))
+      (.classEq (.cv t) (synCop (.cv w) (.cv u)))
+      (.classMem (synCop (synCsn (.cv t)) (synCop (synCsn (.cv u))
+            (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))))
+        (synCins2 (synCins2 (synCins2 (synCins2 (synCsset))))))
       (.objMem t y) p0045 p0054
   have p0056 :=
-    @g_bitri
-      (.classMem (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv u))
-            (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))))
-        (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-          (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))))
-      (syn_wa (.classMem (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv u))
-              (syn_cop (syn_csn (.cv w))
-                (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))))
-          (syn_cins4 (syn_csi3 (syn_cswap)))) (.classMem (syn_cop (syn_csn (.cv t))
-            (syn_cop (syn_csn (.cv u)) (syn_cop (syn_csn (.cv w))
-                (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))))
-          (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))))
-      (syn_wa (.classEq (.cv t) (syn_cop (.cv w) (.cv u))) (.objMem t y)) p0036 p0055
+    @gBitri
+      (.classMem (synCop (synCsn (.cv t)) (synCop (synCsn (.cv u))
+            (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))))
+        (synCin (synCins4 (synCsi3 (synCswap)))
+          (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))))
+      (synWa (.classMem (synCop (synCsn (.cv t)) (synCop (synCsn (.cv u))
+              (synCop (synCsn (.cv w))
+                (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))))
+          (synCins4 (synCsi3 (synCswap)))) (.classMem (synCop (synCsn (.cv t))
+            (synCop (synCsn (.cv u)) (synCop (synCsn (.cv w))
+                (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))))
+          (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))))
+      (synWa (.classEq (.cv t) (synCop (.cv w) (.cv u))) (.objMem t y)) p0036 p0055
   have p0057 :=
-    @g_exbii
-      (.classMem (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv u))
-            (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))))
-        (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-          (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))))
-      (syn_wa (.classEq (.cv t) (syn_cop (.cv w) (.cv u))) (.objMem t y)) t p0056
+    @gExbii
+      (.classMem (synCop (synCsn (.cv t)) (synCop (synCsn (.cv u))
+            (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))))
+        (synCin (synCins4 (synCsi3 (synCswap)))
+          (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))))
+      (synWa (.classEq (.cv t) (synCop (.cv w) (.cv u))) (.objMem t y)) t p0056
   have p0058 :=
-    @g_bitri
-      (.classMem (syn_cop (syn_csn (.cv u)) (syn_cop (syn_csn (.cv w))
-            (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))) (syn_cima
-          (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-            (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-      (syn_wex t (.classMem (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv u))
-              (syn_cop (syn_csn (.cv w))
-                (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))))
-          (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-            (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset))))))))
-      (syn_wex t (syn_wa (.classEq (.cv t) (syn_cop (.cv w) (.cv u))) (.objMem t y)))
+    @gBitri
+      (.classMem (synCop (synCsn (.cv u)) (synCop (synCsn (.cv w))
+            (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))) (synCima
+          (synCin (synCins4 (synCsi3 (synCswap)))
+            (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+      (synWex t (.classMem (synCop (synCsn (.cv t)) (synCop (synCsn (.cv u))
+              (synCop (synCsn (.cv w))
+                (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))))
+          (synCin (synCins4 (synCsi3 (synCswap)))
+            (synCins2 (synCins2 (synCins2 (synCins2 (synCsset))))))))
+      (synWex t (synWa (.classEq (.cv t) (synCop (.cv w) (.cv u))) (.objMem t y)))
       p0035 p0057
   have p0059_e00_recanon :
     Nominal.NPrf
-      (syn_wb (.classMem (syn_cop (.cv w) (.cv u)) (.cv y)) (syn_wex t
-          (syn_wa (.classEq (.cv t) (syn_cop (.cv w) (.cv u))) (.objMem t y)))) :=
+      (synWb (.classMem (synCop (.cv w) (.cv u)) (.cv y)) (synWex t
+          (synWa (.classEq (.cv t) (synCop (.cv w) (.cv u))) (.objMem t y)))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_cop syn_cun syn_cnin syn_wnan syn_wa syn_ccompl syn_wrex syn_wex
-          syn_cphi
+        unfold synWb synCop synCun synCnin synWnan synWa synCcompl synWrex synWex
+          synCphi
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
@@ -3195,95 +3211,95 @@ noncomputable def g_composeex : Nominal.NPrf (.classMem (syn_ccompose) (syn_cvv)
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0033
   have p0059 :=
-    @g_n_3bitr4ri (.classMem (syn_cop (.cv w) (.cv u)) (.cv y))
-      (syn_wex t (syn_wa (.classEq (.cv t) (syn_cop (.cv w) (.cv u))) (.objMem t y)))
-      (syn_wbr (.cv w) (.cv y) (.cv u))
-      (.classMem (syn_cop (syn_csn (.cv u)) (syn_cop (syn_csn (.cv w))
-            (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))) (syn_cima
-          (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-            (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
+    @gN3bitr4ri (.classMem (synCop (.cv w) (.cv u)) (.cv y))
+      (synWex t (synWa (.classEq (.cv t) (synCop (.cv w) (.cv u))) (.objMem t y)))
+      (synWbr (.cv w) (.cv y) (.cv u))
+      (.classMem (synCop (synCsn (.cv u)) (synCop (synCsn (.cv w))
+            (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))) (synCima
+          (synCin (synCins4 (synCsi3 (synCswap)))
+            (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
       p0059_e00_recanon p0034 p0058
   have p0060 :=
-    @g_bitri
-      (.classMem (syn_cop (syn_csn (.cv u)) (syn_cop (syn_csn (.cv t))
-            (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))))
-        (syn_cins2 (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-              (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c))))
-      (.classMem (syn_cop (syn_csn (.cv u)) (syn_cop (syn_csn (.cv w))
-            (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))) (syn_cima
-          (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-            (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-      (syn_wbr (.cv w) (.cv y) (.cv u)) p0032 p0059
+    @gBitri
+      (.classMem (synCop (synCsn (.cv u)) (synCop (synCsn (.cv t))
+            (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))))
+        (synCins2 (synCima (synCin (synCins4 (synCsi3 (synCswap)))
+              (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c))))
+      (.classMem (synCop (synCsn (.cv u)) (synCop (synCsn (.cv w))
+            (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))) (synCima
+          (synCin (synCins4 (synCsi3 (synCswap)))
+            (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+      (synWbr (.cv w) (.cv y) (.cv u)) p0032 p0059
   have p0061 :=
     (NFChoice.DirectNominalPrf.Nominal.DefinitionLeafHandlersCanonical001.dfClelOfDV v
-      (syn_cop (.cv u) (.cv t)) (.cv x) dv_cache_0022 dv_cache_0023)
-  have p0062 := (Nominal.biimpRefl (syn_wbr (.cv u) (.cv x) (.cv t)))
+      (synCop (.cv u) (.cv t)) (.cv x) dv_cache_0022 dv_cache_0023)
+  have p0062 := (Nominal.biimpRefl (synWbr (.cv u) (.cv x) (.cv t)))
   have p0063 :=
-    @g_elima1c v
-      (syn_cop (syn_csn (.cv u)) (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv w))
-            (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))))
-      (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-        (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
+    @gElima1c v
+      (synCop (synCsn (.cv u)) (synCop (synCsn (.cv t)) (synCop (synCsn (.cv w))
+            (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))))
+      (synCin (synCins4 (synCsi3 (synCid)))
+        (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
       dv_cache_0024 dv_cache_0025
   have p0064 :=
-    @g_elin
-      (syn_cop (syn_csn (.cv v)) (syn_cop (syn_csn (.cv u)) (syn_cop (syn_csn (.cv t))
-            (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))))))
-      (syn_cins4 (syn_csi3 (syn_cid)))
-      (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset))))))
+    @gElin
+      (synCop (synCsn (.cv v)) (synCop (synCsn (.cv u)) (synCop (synCsn (.cv t))
+            (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))))))
+      (synCins4 (synCsi3 (synCid)))
+      (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset))))))
   have p0065 :=
-    @g_opex (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))) p0048
+    @gOpex (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))) p0048
       p0038
   have p0066 :=
-    @g_oqelins4 (syn_csn (.cv v)) (syn_csn (.cv u)) (syn_csn (.cv t))
-      (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))
-      (syn_csi3 (syn_cid)) p0065
-  have p0067 := @g_vex v
-  have p0068 := @g_otsnelsi3 (.cv v) (.cv u) (.cv t) (syn_cid) p0067 p0040 p0011
-  have p0069 := (Nominal.biimpRefl (syn_wbr (.cv v) (syn_cid) (syn_cop (.cv u) (.cv t))))
-  have p0070 := @g_opex (.cv u) (.cv t) p0040 p0011
-  have p0071 := @g_ideq (.cv v) (syn_cop (.cv u) (.cv t)) p0070
+    @gOqelins4 (synCsn (.cv v)) (synCsn (.cv u)) (synCsn (.cv t))
+      (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))
+      (synCsi3 (synCid)) p0065
+  have p0067 := @gVex v
+  have p0068 := @gOtsnelsi3 (.cv v) (.cv u) (.cv t) (synCid) p0067 p0040 p0011
+  have p0069 := (Nominal.biimpRefl (synWbr (.cv v) (synCid) (synCop (.cv u) (.cv t))))
+  have p0070 := @gOpex (.cv u) (.cv t) p0040 p0011
+  have p0071 := @gIdeq (.cv v) (synCop (.cv u) (.cv t)) p0070
   have p0072 :=
-    @g_n_3bitr2i
-      (.classMem (syn_cop (syn_csn (.cv v)) (syn_cop (syn_csn (.cv u)) (syn_csn (.cv t))))
-        (syn_csi3 (syn_cid)))
-      (.classMem (syn_cop (.cv v) (syn_cop (.cv u) (.cv t))) (syn_cid))
-      (syn_wbr (.cv v) (syn_cid) (syn_cop (.cv u) (.cv t)))
-      (.classEq (.cv v) (syn_cop (.cv u) (.cv t))) p0068 p0069 p0071
+    @gN3bitr2i
+      (.classMem (synCop (synCsn (.cv v)) (synCop (synCsn (.cv u)) (synCsn (.cv t))))
+        (synCsi3 (synCid)))
+      (.classMem (synCop (.cv v) (synCop (.cv u) (.cv t))) (synCid))
+      (synWbr (.cv v) (synCid) (synCop (.cv u) (.cv t)))
+      (.classEq (.cv v) (synCop (.cv u) (.cv t))) p0068 p0069 p0071
   have p0073 :=
-    @g_bitri
-      (.classMem (syn_cop (syn_csn (.cv v)) (syn_cop (syn_csn (.cv u))
-            (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv w))
-                (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))))))
-        (syn_cins4 (syn_csi3 (syn_cid))))
-      (.classMem (syn_cop (syn_csn (.cv v)) (syn_cop (syn_csn (.cv u)) (syn_csn (.cv t))))
-        (syn_csi3 (syn_cid)))
-      (.classEq (.cv v) (syn_cop (.cv u) (.cv t))) p0066 p0072
+    @gBitri
+      (.classMem (synCop (synCsn (.cv v)) (synCop (synCsn (.cv u))
+            (synCop (synCsn (.cv t)) (synCop (synCsn (.cv w))
+                (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))))))
+        (synCins4 (synCsi3 (synCid))))
+      (.classMem (synCop (synCsn (.cv v)) (synCop (synCsn (.cv u)) (synCsn (.cv t))))
+        (synCsi3 (synCid)))
+      (.classEq (.cv v) (synCop (.cv u) (.cv t))) p0066 p0072
   have p0074 :=
-    @g_otelins2 (syn_csn (.cv v)) (syn_csn (.cv u))
-      (syn_cop (syn_csn (.cv t))
-        (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))))
-      (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset))))) p0046
+    @gOtelins2 (synCsn (.cv v)) (synCsn (.cv u))
+      (synCop (synCsn (.cv t))
+        (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))))
+      (synCins2 (synCins2 (synCins2 (synCins3 (synCsset))))) p0046
   have p0075 :=
-    @g_otelins2 (syn_csn (.cv v)) (syn_csn (.cv t))
-      (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))
-      (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))) p0031
+    @gOtelins2 (synCsn (.cv v)) (synCsn (.cv t))
+      (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))
+      (synCins2 (synCins2 (synCins3 (synCsset)))) p0031
   have p0076 :=
-    @g_otelins2 (syn_csn (.cv v)) (syn_csn (.cv w))
-      (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))
-      (syn_cins2 (syn_cins3 (syn_csset))) p0048
+    @gOtelins2 (synCsn (.cv v)) (synCsn (.cv w))
+      (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))
+      (synCins2 (synCins3 (synCsset))) p0048
   have p0077 :=
-    @g_otelins2 (syn_csn (.cv v)) (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))
-      (syn_cins3 (syn_csset)) p0037
-  have p0078 := @g_otelins3 (syn_csn (.cv v)) (.cv x) (.cv y) (syn_csset) p0008
-  have p0079 := @g_opelssetsn (.cv v) (.cv x) p0067 p0007
+    @gOtelins2 (synCsn (.cv v)) (synCsn (.cv z)) (synCop (.cv x) (.cv y))
+      (synCins3 (synCsset)) p0037
+  have p0078 := @gOtelins3 (synCsn (.cv v)) (.cv x) (.cv y) (synCsset) p0008
+  have p0079 := @gOpelssetsn (.cv v) (.cv x) p0067 p0007
   have p0080_e01_recanon :
     Nominal.NPrf
-      (syn_wb (.classMem (syn_cop (syn_csn (.cv v)) (.cv x)) (syn_csset)) (.objMem v x)) :=
+      (synWb (.classMem (synCop (synCsn (.cv v)) (.cv x)) (synCsset)) (.objMem v x)) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_cop syn_cun syn_cnin syn_wnan syn_wa syn_ccompl syn_wrex syn_wex
-          syn_cphi syn_csn syn_csset syn_copab syn_wss syn_cin
+        unfold synWb synCop synCun synCnin synWnan synWa synCcompl synWrex synWex
+          synCphi synCsn synCsset synCopab synWss synCin
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
@@ -3297,89 +3313,89 @@ noncomputable def g_composeex : Nominal.NPrf (.classMem (syn_ccompose) (syn_cvv)
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0079
   have p0080 :=
-    @g_bitri
-      (.classMem (syn_cop (syn_csn (.cv v)) (syn_cop (.cv x) (.cv y))) (syn_cins3 (syn_csset)))
-      (.classMem (syn_cop (syn_csn (.cv v)) (.cv x)) (syn_csset)) (.objMem v x) p0078
+    @gBitri
+      (.classMem (synCop (synCsn (.cv v)) (synCop (.cv x) (.cv y))) (synCins3 (synCsset)))
+      (.classMem (synCop (synCsn (.cv v)) (.cv x)) (synCsset)) (.objMem v x) p0078
       p0080_e01_recanon
   have p0081 :=
-    @g_n_3bitri
-      (.classMem (syn_cop (syn_csn (.cv v)) (syn_cop (syn_csn (.cv w))
-            (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))))
-        (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))
+    @gN3bitri
+      (.classMem (synCop (synCsn (.cv v)) (synCop (synCsn (.cv w))
+            (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))))
+        (synCins2 (synCins2 (synCins3 (synCsset)))))
       (.classMem
-        (syn_cop (syn_csn (.cv v)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))
-        (syn_cins2 (syn_cins3 (syn_csset))))
-      (.classMem (syn_cop (syn_csn (.cv v)) (syn_cop (.cv x) (.cv y))) (syn_cins3 (syn_csset)))
+        (synCop (synCsn (.cv v)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))
+        (synCins2 (synCins3 (synCsset))))
+      (.classMem (synCop (synCsn (.cv v)) (synCop (.cv x) (.cv y))) (synCins3 (synCsset)))
       (.objMem v x) p0076 p0077 p0080
   have p0082 :=
-    @g_n_3bitri
-      (.classMem (syn_cop (syn_csn (.cv v)) (syn_cop (syn_csn (.cv u))
-            (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv w))
-                (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))))))
-        (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-      (.classMem (syn_cop (syn_csn (.cv v)) (syn_cop (syn_csn (.cv t))
-            (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))))
-        (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset))))))
-      (.classMem (syn_cop (syn_csn (.cv v)) (syn_cop (syn_csn (.cv w))
-            (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))))
-        (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))
+    @gN3bitri
+      (.classMem (synCop (synCsn (.cv v)) (synCop (synCsn (.cv u))
+            (synCop (synCsn (.cv t)) (synCop (synCsn (.cv w))
+                (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))))))
+        (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+      (.classMem (synCop (synCsn (.cv v)) (synCop (synCsn (.cv t))
+            (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))))
+        (synCins2 (synCins2 (synCins2 (synCins3 (synCsset))))))
+      (.classMem (synCop (synCsn (.cv v)) (synCop (synCsn (.cv w))
+            (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))))
+        (synCins2 (synCins2 (synCins3 (synCsset)))))
       (.objMem v x) p0074 p0075 p0081
   have p0083 :=
-    @g_anbi12i
-      (.classMem (syn_cop (syn_csn (.cv v)) (syn_cop (syn_csn (.cv u))
-            (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv w))
-                (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))))))
-        (syn_cins4 (syn_csi3 (syn_cid))))
-      (.classEq (.cv v) (syn_cop (.cv u) (.cv t)))
-      (.classMem (syn_cop (syn_csn (.cv v)) (syn_cop (syn_csn (.cv u))
-            (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv w))
-                (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))))))
-        (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
+    @gAnbi12i
+      (.classMem (synCop (synCsn (.cv v)) (synCop (synCsn (.cv u))
+            (synCop (synCsn (.cv t)) (synCop (synCsn (.cv w))
+                (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))))))
+        (synCins4 (synCsi3 (synCid))))
+      (.classEq (.cv v) (synCop (.cv u) (.cv t)))
+      (.classMem (synCop (synCsn (.cv v)) (synCop (synCsn (.cv u))
+            (synCop (synCsn (.cv t)) (synCop (synCsn (.cv w))
+                (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))))))
+        (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
       (.objMem v x) p0073 p0082
   have p0084 :=
-    @g_bitri
-      (.classMem (syn_cop (syn_csn (.cv v)) (syn_cop (syn_csn (.cv u))
-            (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv w))
-                (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))))))
-        (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-          (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset))))))))
-      (syn_wa (.classMem (syn_cop (syn_csn (.cv v)) (syn_cop (syn_csn (.cv u))
-              (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv w))
-                  (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))))))
-          (syn_cins4 (syn_csi3 (syn_cid)))) (.classMem (syn_cop (syn_csn (.cv v))
-            (syn_cop (syn_csn (.cv u)) (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv w))
-                  (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))))))
-          (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset))))))))
-      (syn_wa (.classEq (.cv v) (syn_cop (.cv u) (.cv t))) (.objMem v x)) p0064 p0083
+    @gBitri
+      (.classMem (synCop (synCsn (.cv v)) (synCop (synCsn (.cv u))
+            (synCop (synCsn (.cv t)) (synCop (synCsn (.cv w))
+                (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))))))
+        (synCin (synCins4 (synCsi3 (synCid)))
+          (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset))))))))
+      (synWa (.classMem (synCop (synCsn (.cv v)) (synCop (synCsn (.cv u))
+              (synCop (synCsn (.cv t)) (synCop (synCsn (.cv w))
+                  (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))))))
+          (synCins4 (synCsi3 (synCid)))) (.classMem (synCop (synCsn (.cv v))
+            (synCop (synCsn (.cv u)) (synCop (synCsn (.cv t)) (synCop (synCsn (.cv w))
+                  (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))))))
+          (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset))))))))
+      (synWa (.classEq (.cv v) (synCop (.cv u) (.cv t))) (.objMem v x)) p0064 p0083
   have p0085 :=
-    @g_exbii
-      (.classMem (syn_cop (syn_csn (.cv v)) (syn_cop (syn_csn (.cv u))
-            (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv w))
-                (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))))))
-        (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-          (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset))))))))
-      (syn_wa (.classEq (.cv v) (syn_cop (.cv u) (.cv t))) (.objMem v x)) v p0084
+    @gExbii
+      (.classMem (synCop (synCsn (.cv v)) (synCop (synCsn (.cv u))
+            (synCop (synCsn (.cv t)) (synCop (synCsn (.cv w))
+                (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))))))
+        (synCin (synCins4 (synCsi3 (synCid)))
+          (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset))))))))
+      (synWa (.classEq (.cv v) (synCop (.cv u) (.cv t))) (.objMem v x)) v p0084
   have p0086 :=
-    @g_bitri
-      (.classMem (syn_cop (syn_csn (.cv u)) (syn_cop (syn_csn (.cv t))
-            (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))))
-        (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-            (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset))))))) (syn_c1c)))
-      (syn_wex v (.classMem (syn_cop (syn_csn (.cv v)) (syn_cop (syn_csn (.cv u))
-              (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv w))
-                  (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))))))
-          (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-            (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))))
-      (syn_wex v (syn_wa (.classEq (.cv v) (syn_cop (.cv u) (.cv t))) (.objMem v x)))
+    @gBitri
+      (.classMem (synCop (synCsn (.cv u)) (synCop (synCsn (.cv t))
+            (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))))
+        (synCima (synCin (synCins4 (synCsi3 (synCid)))
+            (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset))))))) (synC1c)))
+      (synWex v (.classMem (synCop (synCsn (.cv v)) (synCop (synCsn (.cv u))
+              (synCop (synCsn (.cv t)) (synCop (synCsn (.cv w))
+                  (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))))))
+          (synCin (synCins4 (synCsi3 (synCid)))
+            (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))))
+      (synWex v (synWa (.classEq (.cv v) (synCop (.cv u) (.cv t))) (.objMem v x)))
       p0063 p0085
   have p0087_e00_recanon :
     Nominal.NPrf
-      (syn_wb (.classMem (syn_cop (.cv u) (.cv t)) (.cv x)) (syn_wex v
-          (syn_wa (.classEq (.cv v) (syn_cop (.cv u) (.cv t))) (.objMem v x)))) :=
+      (synWb (.classMem (synCop (.cv u) (.cv t)) (.cv x)) (synWex v
+          (synWa (.classEq (.cv v) (synCop (.cv u) (.cv t))) (.objMem v x)))) :=
     Nominal.RecanonTransportDev.transport
       (by
-        unfold syn_wb syn_cop syn_cun syn_cnin syn_wnan syn_wa syn_ccompl syn_wrex syn_wex
-          syn_cphi
+        unfold synWb synCop synCun synCnin synWnan synWa synCcompl synWrex synWex
+          synCphi
         simp (config :=
           { failIfUnchanged := false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv]
         apply Nominal.RecanonTransportDev.TRecanonWff.neg
@@ -3407,361 +3423,361 @@ noncomputable def g_composeex : Nominal.NPrf (.classMem (syn_ccompose) (syn_cvv)
           · exact Nominal.RecanonTransportDev.TRecanonWff.same _)
       p0061
   have p0087 :=
-    @g_n_3bitr4ri (.classMem (syn_cop (.cv u) (.cv t)) (.cv x))
-      (syn_wex v (syn_wa (.classEq (.cv v) (syn_cop (.cv u) (.cv t))) (.objMem v x)))
-      (syn_wbr (.cv u) (.cv x) (.cv t))
-      (.classMem (syn_cop (syn_csn (.cv u)) (syn_cop (syn_csn (.cv t))
-            (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))))
-        (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-            (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset))))))) (syn_c1c)))
+    @gN3bitr4ri (.classMem (synCop (.cv u) (.cv t)) (.cv x))
+      (synWex v (synWa (.classEq (.cv v) (synCop (.cv u) (.cv t))) (.objMem v x)))
+      (synWbr (.cv u) (.cv x) (.cv t))
+      (.classMem (synCop (synCsn (.cv u)) (synCop (synCsn (.cv t))
+            (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))))
+        (synCima (synCin (synCins4 (synCsi3 (synCid)))
+            (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset))))))) (synC1c)))
       p0087_e00_recanon p0062 p0086
   have p0088 :=
-    @g_anbi12i
-      (.classMem (syn_cop (syn_csn (.cv u)) (syn_cop (syn_csn (.cv t))
-            (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))))
-        (syn_cins2 (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-              (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c))))
-      (syn_wbr (.cv w) (.cv y) (.cv u))
-      (.classMem (syn_cop (syn_csn (.cv u)) (syn_cop (syn_csn (.cv t))
-            (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))))
-        (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-            (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset))))))) (syn_c1c)))
-      (syn_wbr (.cv u) (.cv x) (.cv t)) p0060 p0087
+    @gAnbi12i
+      (.classMem (synCop (synCsn (.cv u)) (synCop (synCsn (.cv t))
+            (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))))
+        (synCins2 (synCima (synCin (synCins4 (synCsi3 (synCswap)))
+              (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c))))
+      (synWbr (.cv w) (.cv y) (.cv u))
+      (.classMem (synCop (synCsn (.cv u)) (synCop (synCsn (.cv t))
+            (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))))
+        (synCima (synCin (synCins4 (synCsi3 (synCid)))
+            (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset))))))) (synC1c)))
+      (synWbr (.cv u) (.cv x) (.cv t)) p0060 p0087
   have p0089 :=
-    @g_bitri
-      (.classMem (syn_cop (syn_csn (.cv u)) (syn_cop (syn_csn (.cv t))
-            (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))))
-        (syn_cin (syn_cins2 (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-          (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-              (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-            (syn_c1c))))
-      (syn_wa (.classMem (syn_cop (syn_csn (.cv u)) (syn_cop (syn_csn (.cv t))
-              (syn_cop (syn_csn (.cv w))
-                (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))))) (syn_cins2 (syn_cima
-              (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c))))
-        (.classMem (syn_cop (syn_csn (.cv u)) (syn_cop (syn_csn (.cv t))
-              (syn_cop (syn_csn (.cv w))
-                (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))))) (syn_cima
-            (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-              (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-            (syn_c1c))))
-      (syn_wa (syn_wbr (.cv w) (.cv y) (.cv u)) (syn_wbr (.cv u) (.cv x) (.cv t))) p0030
+    @gBitri
+      (.classMem (synCop (synCsn (.cv u)) (synCop (synCsn (.cv t))
+            (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))))
+        (synCin (synCins2 (synCima (synCin (synCins4 (synCsi3 (synCswap)))
+                (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+          (synCima (synCin (synCins4 (synCsi3 (synCid)))
+              (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+            (synC1c))))
+      (synWa (.classMem (synCop (synCsn (.cv u)) (synCop (synCsn (.cv t))
+              (synCop (synCsn (.cv w))
+                (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))))) (synCins2 (synCima
+              (synCin (synCins4 (synCsi3 (synCswap)))
+                (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c))))
+        (.classMem (synCop (synCsn (.cv u)) (synCop (synCsn (.cv t))
+              (synCop (synCsn (.cv w))
+                (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))))) (synCima
+            (synCin (synCins4 (synCsi3 (synCid)))
+              (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+            (synC1c))))
+      (synWa (synWbr (.cv w) (.cv y) (.cv u)) (synWbr (.cv u) (.cv x) (.cv t))) p0030
       p0088
   have p0090 :=
-    @g_exbii
-      (.classMem (syn_cop (syn_csn (.cv u)) (syn_cop (syn_csn (.cv t))
-            (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))))
-        (syn_cin (syn_cins2 (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-          (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-              (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-            (syn_c1c))))
-      (syn_wa (syn_wbr (.cv w) (.cv y) (.cv u)) (syn_wbr (.cv u) (.cv x) (.cv t))) u p0089
+    @gExbii
+      (.classMem (synCop (synCsn (.cv u)) (synCop (synCsn (.cv t))
+            (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))))
+        (synCin (synCins2 (synCima (synCin (synCins4 (synCsi3 (synCswap)))
+                (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+          (synCima (synCin (synCins4 (synCsi3 (synCid)))
+              (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+            (synC1c))))
+      (synWa (synWbr (.cv w) (.cv y) (.cv u)) (synWbr (.cv u) (.cv x) (.cv t))) u p0089
   have p0091 :=
-    @g_bitri
-      (.classMem (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv w))
-            (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))) (syn_cima (syn_cin
-            (syn_cins2 (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                  (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-            (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-                (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-              (syn_c1c))) (syn_c1c)))
-      (syn_wex u (.classMem (syn_cop (syn_csn (.cv u)) (syn_cop (syn_csn (.cv t))
-              (syn_cop (syn_csn (.cv w))
-                (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))))) (syn_cin (syn_cins2
-              (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                  (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-            (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-                (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-              (syn_c1c)))))
-      (syn_wex u (syn_wa (syn_wbr (.cv w) (.cv y) (.cv u)) (syn_wbr (.cv u) (.cv x) (.cv t))))
+    @gBitri
+      (.classMem (synCop (synCsn (.cv t)) (synCop (synCsn (.cv w))
+            (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))) (synCima (synCin
+            (synCins2 (synCima (synCin (synCins4 (synCsi3 (synCswap)))
+                  (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+            (synCima (synCin (synCins4 (synCsi3 (synCid)))
+                (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+              (synC1c))) (synC1c)))
+      (synWex u (.classMem (synCop (synCsn (.cv u)) (synCop (synCsn (.cv t))
+              (synCop (synCsn (.cv w))
+                (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))))) (synCin (synCins2
+              (synCima (synCin (synCins4 (synCsi3 (synCswap)))
+                  (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+            (synCima (synCin (synCins4 (synCsi3 (synCid)))
+                (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+              (synC1c)))))
+      (synWex u (synWa (synWbr (.cv w) (.cv y) (.cv u)) (synWbr (.cv u) (.cv x) (.cv t))))
       p0029 p0090
   have p0092 :=
-    @g_anbi12i
-      (.classMem (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv w))
-            (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))) (syn_cins4 (syn_csi3
-            (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-              (syn_cins2 (syn_ccnv (syn_c2nd)))))))
-      (.classEq (.cv z) (syn_cop (.cv w) (.cv t)))
-      (.classMem (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv w))
-            (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))) (syn_cima (syn_cin
-            (syn_cins2 (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                  (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-            (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-                (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-              (syn_c1c))) (syn_c1c)))
-      (syn_wex u (syn_wa (syn_wbr (.cv w) (.cv y) (.cv u)) (syn_wbr (.cv u) (.cv x) (.cv t))))
+    @gAnbi12i
+      (.classMem (synCop (synCsn (.cv t)) (synCop (synCsn (.cv w))
+            (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))) (synCins4 (synCsi3
+            (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+              (synCins2 (synCcnv (synC2nd)))))))
+      (.classEq (.cv z) (synCop (.cv w) (.cv t)))
+      (.classMem (synCop (synCsn (.cv t)) (synCop (synCsn (.cv w))
+            (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))) (synCima (synCin
+            (synCins2 (synCima (synCin (synCins4 (synCsi3 (synCswap)))
+                  (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+            (synCima (synCin (synCins4 (synCsi3 (synCid)))
+                (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+              (synC1c))) (synC1c)))
+      (synWex u (synWa (synWbr (.cv w) (.cv y) (.cv u)) (synWbr (.cv u) (.cv x) (.cv t))))
       p0028 p0091
   have p0093 :=
-    @g_bitri
-      (.classMem (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv w))
-            (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))) (syn_cin (syn_cins4
-            (syn_csi3 (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-                (syn_cins2 (syn_ccnv (syn_c2nd)))))) (syn_cima (syn_cin (syn_cins2 (syn_cima
-                  (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                    (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-              (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-                  (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-                (syn_c1c))) (syn_c1c))))
-      (syn_wa (.classMem (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv w))
-              (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))) (syn_cins4 (syn_csi3
-              (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-                (syn_cins2 (syn_ccnv (syn_c2nd))))))) (.classMem (syn_cop (syn_csn (.cv t))
-            (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))))
-          (syn_cima (syn_cin (syn_cins2 (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                    (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-              (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-                  (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-                (syn_c1c))) (syn_c1c))))
-      (syn_wa (.classEq (.cv z) (syn_cop (.cv w) (.cv t))) (syn_wex u
-          (syn_wa (syn_wbr (.cv w) (.cv y) (.cv u)) (syn_wbr (.cv u) (.cv x) (.cv t)))))
+    @gBitri
+      (.classMem (synCop (synCsn (.cv t)) (synCop (synCsn (.cv w))
+            (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))) (synCin (synCins4
+            (synCsi3 (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+                (synCins2 (synCcnv (synC2nd)))))) (synCima (synCin (synCins2 (synCima
+                  (synCin (synCins4 (synCsi3 (synCswap)))
+                    (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+              (synCima (synCin (synCins4 (synCsi3 (synCid)))
+                  (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+                (synC1c))) (synC1c))))
+      (synWa (.classMem (synCop (synCsn (.cv t)) (synCop (synCsn (.cv w))
+              (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))) (synCins4 (synCsi3
+              (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+                (synCins2 (synCcnv (synC2nd))))))) (.classMem (synCop (synCsn (.cv t))
+            (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))))
+          (synCima (synCin (synCins2 (synCima (synCin (synCins4 (synCsi3 (synCswap)))
+                    (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+              (synCima (synCin (synCins4 (synCsi3 (synCid)))
+                  (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+                (synC1c))) (synC1c))))
+      (synWa (.classEq (.cv z) (synCop (.cv w) (.cv t))) (synWex u
+          (synWa (synWbr (.cv w) (.cv y) (.cv u)) (synWbr (.cv u) (.cv x) (.cv t)))))
       p0006 p0092
   have p0094 :=
-    @g_exbii
-      (.classMem (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv w))
-            (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))) (syn_cin (syn_cins4
-            (syn_csi3 (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-                (syn_cins2 (syn_ccnv (syn_c2nd)))))) (syn_cima (syn_cin (syn_cins2 (syn_cima
-                  (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                    (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-              (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-                  (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-                (syn_c1c))) (syn_c1c))))
-      (syn_wa (.classEq (.cv z) (syn_cop (.cv w) (.cv t))) (syn_wex u
-          (syn_wa (syn_wbr (.cv w) (.cv y) (.cv u)) (syn_wbr (.cv u) (.cv x) (.cv t)))))
+    @gExbii
+      (.classMem (synCop (synCsn (.cv t)) (synCop (synCsn (.cv w))
+            (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))) (synCin (synCins4
+            (synCsi3 (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+                (synCins2 (synCcnv (synC2nd)))))) (synCima (synCin (synCins2 (synCima
+                  (synCin (synCins4 (synCsi3 (synCswap)))
+                    (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+              (synCima (synCin (synCins4 (synCsi3 (synCid)))
+                  (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+                (synC1c))) (synC1c))))
+      (synWa (.classEq (.cv z) (synCop (.cv w) (.cv t))) (synWex u
+          (synWa (synWbr (.cv w) (.cv y) (.cv u)) (synWbr (.cv u) (.cv x) (.cv t)))))
       t p0093
   have p0095 :=
-    @g_bitri
+    @gBitri
       (.classMem
-        (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))
-        (syn_cima (syn_cin (syn_cins4 (syn_csi3
-                (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-                  (syn_cins2 (syn_ccnv (syn_c2nd)))))) (syn_cima (syn_cin (syn_cins2 (syn_cima
-                    (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                      (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-                (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid))) (syn_cins2
-                      (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset))))))) (syn_c1c)))
-              (syn_c1c))) (syn_c1c)))
-      (syn_wex t (.classMem (syn_cop (syn_csn (.cv t)) (syn_cop (syn_csn (.cv w))
-              (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))) (syn_cin (syn_cins4
-              (syn_csi3 (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-                  (syn_cins2 (syn_ccnv (syn_c2nd)))))) (syn_cima (syn_cin (syn_cins2 (syn_cima
-                    (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                      (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-                (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid))) (syn_cins2
-                      (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset))))))) (syn_c1c)))
-              (syn_c1c)))))
-      (syn_wex t (syn_wa (.classEq (.cv z) (syn_cop (.cv w) (.cv t))) (syn_wex u
-            (syn_wa (syn_wbr (.cv w) (.cv y) (.cv u)) (syn_wbr (.cv u) (.cv x) (.cv t))))))
+        (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))
+        (synCima (synCin (synCins4 (synCsi3
+                (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+                  (synCins2 (synCcnv (synC2nd)))))) (synCima (synCin (synCins2 (synCima
+                    (synCin (synCins4 (synCsi3 (synCswap)))
+                      (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+                (synCima (synCin (synCins4 (synCsi3 (synCid))) (synCins2
+                      (synCins2 (synCins2 (synCins2 (synCins3 (synCsset))))))) (synC1c)))
+              (synC1c))) (synC1c)))
+      (synWex t (.classMem (synCop (synCsn (.cv t)) (synCop (synCsn (.cv w))
+              (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))) (synCin (synCins4
+              (synCsi3 (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+                  (synCins2 (synCcnv (synC2nd)))))) (synCima (synCin (synCins2 (synCima
+                    (synCin (synCins4 (synCsi3 (synCswap)))
+                      (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+                (synCima (synCin (synCins4 (synCsi3 (synCid))) (synCins2
+                      (synCins2 (synCins2 (synCins2 (synCins3 (synCsset))))))) (synC1c)))
+              (synC1c)))))
+      (synWex t (synWa (.classEq (.cv z) (synCop (.cv w) (.cv t))) (synWex u
+            (synWa (synWbr (.cv w) (.cv y) (.cv u)) (synWbr (.cv u) (.cv x) (.cv t))))))
       p0005 p0094
   have p0096 :=
-    @g_exbii
+    @gExbii
       (.classMem
-        (syn_cop (syn_csn (.cv w)) (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))))
-        (syn_cima (syn_cin (syn_cins4 (syn_csi3
-                (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-                  (syn_cins2 (syn_ccnv (syn_c2nd)))))) (syn_cima (syn_cin (syn_cins2 (syn_cima
-                    (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                      (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-                (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid))) (syn_cins2
-                      (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset))))))) (syn_c1c)))
-              (syn_c1c))) (syn_c1c)))
-      (syn_wex t (syn_wa (.classEq (.cv z) (syn_cop (.cv w) (.cv t))) (syn_wex u
-            (syn_wa (syn_wbr (.cv w) (.cv y) (.cv u)) (syn_wbr (.cv u) (.cv x) (.cv t))))))
+        (synCop (synCsn (.cv w)) (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))))
+        (synCima (synCin (synCins4 (synCsi3
+                (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+                  (synCins2 (synCcnv (synC2nd)))))) (synCima (synCin (synCins2 (synCima
+                    (synCin (synCins4 (synCsi3 (synCswap)))
+                      (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+                (synCima (synCin (synCins4 (synCsi3 (synCid))) (synCins2
+                      (synCins2 (synCins2 (synCins2 (synCins3 (synCsset))))))) (synC1c)))
+              (synC1c))) (synC1c)))
+      (synWex t (synWa (.classEq (.cv z) (synCop (.cv w) (.cv t))) (synWex u
+            (synWa (synWbr (.cv w) (.cv y) (.cv u)) (synWbr (.cv u) (.cv x) (.cv t))))))
       w p0095
   have p0097 :=
-    @g_bitri
-      (.classMem (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))) (syn_cima (syn_cima
-            (syn_cin (syn_cins4 (syn_csi3 (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-                    (syn_cins2 (syn_ccnv (syn_c2nd)))))) (syn_cima (syn_cin (syn_cins2 (syn_cima
-                      (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                        (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-                  (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid))) (syn_cins2
-                        (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-                    (syn_c1c))) (syn_c1c))) (syn_c1c)) (syn_c1c)))
-      (syn_wex w (.classMem (syn_cop (syn_csn (.cv w))
-            (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y)))) (syn_cima (syn_cin (syn_cins4
-                (syn_csi3 (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-                    (syn_cins2 (syn_ccnv (syn_c2nd)))))) (syn_cima (syn_cin (syn_cins2 (syn_cima
-                      (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                        (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-                  (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid))) (syn_cins2
-                        (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-                    (syn_c1c))) (syn_c1c))) (syn_c1c))))
-      (syn_wex w (syn_wex t (syn_wa (.classEq (.cv z) (syn_cop (.cv w) (.cv t))) (syn_wex u
-              (syn_wa (syn_wbr (.cv w) (.cv y) (.cv u)) (syn_wbr (.cv u) (.cv x) (.cv t)))))))
+    @gBitri
+      (.classMem (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))) (synCima (synCima
+            (synCin (synCins4 (synCsi3 (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+                    (synCins2 (synCcnv (synC2nd)))))) (synCima (synCin (synCins2 (synCima
+                      (synCin (synCins4 (synCsi3 (synCswap)))
+                        (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+                  (synCima (synCin (synCins4 (synCsi3 (synCid))) (synCins2
+                        (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+                    (synC1c))) (synC1c))) (synC1c)) (synC1c)))
+      (synWex w (.classMem (synCop (synCsn (.cv w))
+            (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y)))) (synCima (synCin (synCins4
+                (synCsi3 (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+                    (synCins2 (synCcnv (synC2nd)))))) (synCima (synCin (synCins2 (synCima
+                      (synCin (synCins4 (synCsi3 (synCswap)))
+                        (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+                  (synCima (synCin (synCins4 (synCsi3 (synCid))) (synCins2
+                        (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+                    (synC1c))) (synC1c))) (synC1c))))
+      (synWex w (synWex t (synWa (.classEq (.cv z) (synCop (.cv w) (.cv t))) (synWex u
+              (synWa (synWbr (.cv w) (.cv y) (.cv u)) (synWbr (.cv u) (.cv x) (.cv t)))))))
       p0004 p0096
   have p0098 :=
-    @g_n_3bitr4ri
-      (.classMem (.cv z) (syn_copab w t (syn_wex u (syn_wa (syn_wbr (.cv w) (.cv y) (.cv u))
-              (syn_wbr (.cv u) (.cv x) (.cv t))))))
-      (syn_wex w (syn_wex t (syn_wa (.classEq (.cv z) (syn_cop (.cv w) (.cv t))) (syn_wex u
-              (syn_wa (syn_wbr (.cv w) (.cv y) (.cv u)) (syn_wbr (.cv u) (.cv x) (.cv t)))))))
-      (.classMem (.cv z) (syn_ccom (.cv x) (.cv y)))
-      (.classMem (syn_cop (syn_csn (.cv z)) (syn_cop (.cv x) (.cv y))) (syn_cima (syn_cima
-            (syn_cin (syn_cins4 (syn_csi3 (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-                    (syn_cins2 (syn_ccnv (syn_c2nd)))))) (syn_cima (syn_cin (syn_cins2 (syn_cima
-                      (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                        (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-                  (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid))) (syn_cins2
-                        (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-                    (syn_c1c))) (syn_c1c))) (syn_c1c)) (syn_c1c)))
+    @gN3bitr4ri
+      (.classMem (.cv z) (synCopab w t (synWex u (synWa (synWbr (.cv w) (.cv y) (.cv u))
+              (synWbr (.cv u) (.cv x) (.cv t))))))
+      (synWex w (synWex t (synWa (.classEq (.cv z) (synCop (.cv w) (.cv t))) (synWex u
+              (synWa (synWbr (.cv w) (.cv y) (.cv u)) (synWbr (.cv u) (.cv x) (.cv t)))))))
+      (.classMem (.cv z) (synCcom (.cv x) (.cv y)))
+      (.classMem (synCop (synCsn (.cv z)) (synCop (.cv x) (.cv y))) (synCima (synCima
+            (synCin (synCins4 (synCsi3 (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+                    (synCins2 (synCcnv (synC2nd)))))) (synCima (synCin (synCins2 (synCima
+                      (synCin (synCins4 (synCsi3 (synCswap)))
+                        (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+                  (synCima (synCin (synCins4 (synCsi3 (synCid))) (synCins2
+                        (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+                    (synC1c))) (synC1c))) (synC1c)) (synC1c)))
       p0001 p0003 p0097
   have p0099 :=
-    @g_releqmpt2 x y z (syn_cvv) (syn_cvv)
-      (syn_cima (syn_cima (syn_cin (syn_cins4 (syn_csi3
-                (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-                  (syn_cins2 (syn_ccnv (syn_c2nd)))))) (syn_cima (syn_cin (syn_cins2 (syn_cima
-                    (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                      (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-                (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid))) (syn_cins2
-                      (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset))))))) (syn_c1c)))
-              (syn_c1c))) (syn_c1c)) (syn_c1c))
-      (syn_ccom (.cv x) (.cv y)) dv_cache_0026 dv_cache_0027 dv_cache_0026 dv_cache_0027
+    @gReleqmpt2 x y z (synCvv) (synCvv)
+      (synCima (synCima (synCin (synCins4 (synCsi3
+                (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+                  (synCins2 (synCcnv (synC2nd)))))) (synCima (synCin (synCins2 (synCima
+                    (synCin (synCins4 (synCsi3 (synCswap)))
+                      (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+                (synCima (synCin (synCins4 (synCsi3 (synCid))) (synCins2
+                      (synCins2 (synCins2 (synCins2 (synCins3 (synCsset))))))) (synC1c)))
+              (synC1c))) (synC1c)) (synC1c))
+      (synCcom (.cv x) (.cv y)) dv_cache_0026 dv_cache_0027 dv_cache_0026 dv_cache_0027
       dv_cache_0028 dv_cache_0029 dv_cache_0030 dv_cache_0031 dv_cache_0001 dv_cache_0032
       dv_cache_0033 p0098
   have p0100 :=
-    @g_eqtr4i (syn_ccompose)
-      (syn_cmpt2 x (syn_cvv) y (syn_cvv) (syn_ccom (.cv x) (.cv y)))
-      (syn_cdif (syn_cxp (syn_cxp (syn_cvv) (syn_cvv)) (syn_cvv)) (syn_cima
-          (syn_csymdif (syn_cins2 (syn_csset)) (syn_cins3 (syn_cima (syn_cima (syn_cin
-                    (syn_cins4 (syn_csi3 (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-                          (syn_cins2 (syn_ccnv (syn_c2nd)))))) (syn_cima (syn_cin (syn_cins2
-                          (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                              (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset))))))
-                            (syn_c1c))) (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-                            (syn_cins2 (syn_cins2
-                                (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset))))))) (syn_c1c)))
-                      (syn_c1c))) (syn_c1c)) (syn_c1c)))) (syn_c1c)))
+    @gEqtr4i (synCcompose)
+      (synCmpt2 x (synCvv) y (synCvv) (synCcom (.cv x) (.cv y)))
+      (synCdif (synCxp (synCxp (synCvv) (synCvv)) (synCvv)) (synCima
+          (synCsymdif (synCins2 (synCsset)) (synCins3 (synCima (synCima (synCin
+                    (synCins4 (synCsi3 (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+                          (synCins2 (synCcnv (synC2nd)))))) (synCima (synCin (synCins2
+                          (synCima (synCin (synCins4 (synCsi3 (synCswap)))
+                              (synCins2 (synCins2 (synCins2 (synCins2 (synCsset))))))
+                            (synC1c))) (synCima (synCin (synCins4 (synCsi3 (synCid)))
+                            (synCins2 (synCins2
+                                (synCins2 (synCins2 (synCins3 (synCsset))))))) (synC1c)))
+                      (synC1c))) (synC1c)) (synC1c)))) (synC1c)))
       p0000 p0099
-  have p0101 := @g_vvex
-  have p0104 := @g_n_1stex
-  have p0105 := @g_cnvex (syn_c1st) p0104
-  have p0106 := @g_xpex (syn_cvv) (syn_ccnv (syn_c1st)) p0101 p0105
-  have p0107 := @g_n_2ndex
-  have p0108 := @g_cnvex (syn_c2nd) p0107
-  have p0109 := @g_ins2ex (syn_ccnv (syn_c2nd)) p0108
+  have p0101 := @gVvex
+  have p0104 := @gN1stex
+  have p0105 := @gCnvex (synC1st) p0104
+  have p0106 := @gXpex (synCvv) (synCcnv (synC1st)) p0101 p0105
+  have p0107 := @gN2ndex
+  have p0108 := @gCnvex (synC2nd) p0107
+  have p0109 := @gIns2ex (synCcnv (synC2nd)) p0108
   have p0110 :=
-    @g_inex (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st))) (syn_cins2 (syn_ccnv (syn_c2nd)))
+    @gInex (synCxp (synCvv) (synCcnv (synC1st))) (synCins2 (synCcnv (synC2nd)))
       p0106 p0109
   have p0111 :=
-    @g_si3ex
-      (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st))) (syn_cins2 (syn_ccnv (syn_c2nd))))
+    @gSi3ex
+      (synCin (synCxp (synCvv) (synCcnv (synC1st))) (synCins2 (synCcnv (synC2nd))))
       p0110
   have p0112 :=
-    @g_ins4ex
-      (syn_csi3 (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-          (syn_cins2 (syn_ccnv (syn_c2nd)))))
+    @gIns4ex
+      (synCsi3 (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+          (synCins2 (synCcnv (synC2nd)))))
       p0111
-  have p0113 := @g_swapex
-  have p0114 := @g_si3ex (syn_cswap) p0113
-  have p0115 := @g_ins4ex (syn_csi3 (syn_cswap)) p0114
-  have p0116 := @g_ssetex
-  have p0117 := @g_ins2ex (syn_csset) p0116
-  have p0118 := @g_ins2ex (syn_cins2 (syn_csset)) p0117
-  have p0119 := @g_ins2ex (syn_cins2 (syn_cins2 (syn_csset))) p0118
-  have p0120 := @g_ins2ex (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))) p0119
+  have p0113 := @gSwapex
+  have p0114 := @gSi3ex (synCswap) p0113
+  have p0115 := @gIns4ex (synCsi3 (synCswap)) p0114
+  have p0116 := @gSsetex
+  have p0117 := @gIns2ex (synCsset) p0116
+  have p0118 := @gIns2ex (synCins2 (synCsset)) p0117
+  have p0119 := @gIns2ex (synCins2 (synCins2 (synCsset))) p0118
+  have p0120 := @gIns2ex (synCins2 (synCins2 (synCins2 (synCsset)))) p0119
   have p0121 :=
-    @g_inex (syn_cins4 (syn_csi3 (syn_cswap)))
-      (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset))))) p0115 p0120
-  have p0122 := @g_n_1cex
+    @gInex (synCins4 (synCsi3 (synCswap)))
+      (synCins2 (synCins2 (synCins2 (synCins2 (synCsset))))) p0115 p0120
+  have p0122 := @gN1cex
   have p0123 :=
-    @g_imaex
-      (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-        (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset))))))
-      (syn_c1c) p0121 p0122
+    @gImaex
+      (synCin (synCins4 (synCsi3 (synCswap)))
+        (synCins2 (synCins2 (synCins2 (synCins2 (synCsset))))))
+      (synC1c) p0121 p0122
   have p0124 :=
-    @g_ins2ex
-      (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-          (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c))
+    @gIns2ex
+      (synCima (synCin (synCins4 (synCsi3 (synCswap)))
+          (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c))
       p0123
-  have p0125 := @g_idex
-  have p0126 := @g_si3ex (syn_cid) p0125
-  have p0127 := @g_ins4ex (syn_csi3 (syn_cid)) p0126
-  have p0129 := @g_ins3ex (syn_csset) p0116
-  have p0130 := @g_ins2ex (syn_cins3 (syn_csset)) p0129
-  have p0131 := @g_ins2ex (syn_cins2 (syn_cins3 (syn_csset))) p0130
-  have p0132 := @g_ins2ex (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))) p0131
+  have p0125 := @gIdex
+  have p0126 := @gSi3ex (synCid) p0125
+  have p0127 := @gIns4ex (synCsi3 (synCid)) p0126
+  have p0129 := @gIns3ex (synCsset) p0116
+  have p0130 := @gIns2ex (synCins3 (synCsset)) p0129
+  have p0131 := @gIns2ex (synCins2 (synCins3 (synCsset))) p0130
+  have p0132 := @gIns2ex (synCins2 (synCins2 (synCins3 (synCsset)))) p0131
   have p0133 :=
-    @g_ins2ex (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset))))) p0132
+    @gIns2ex (synCins2 (synCins2 (synCins2 (synCins3 (synCsset))))) p0132
   have p0134 :=
-    @g_inex (syn_cins4 (syn_csi3 (syn_cid)))
-      (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))) p0127 p0133
+    @gInex (synCins4 (synCsi3 (synCid)))
+      (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))) p0127 p0133
   have p0136 :=
-    @g_imaex
-      (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-        (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-      (syn_c1c) p0134 p0122
+    @gImaex
+      (synCin (synCins4 (synCsi3 (synCid)))
+        (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+      (synC1c) p0134 p0122
   have p0137 :=
-    @g_inex
-      (syn_cins2 (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-            (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-      (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-          (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset))))))) (syn_c1c))
+    @gInex
+      (synCins2 (synCima (synCin (synCins4 (synCsi3 (synCswap)))
+            (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+      (synCima (synCin (synCins4 (synCsi3 (synCid)))
+          (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset))))))) (synC1c))
       p0124 p0136
   have p0139 :=
-    @g_imaex
-      (syn_cin (syn_cins2 (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-              (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c))) (syn_cima
-          (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-            (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset))))))) (syn_c1c)))
-      (syn_c1c) p0137 p0122
+    @gImaex
+      (synCin (synCins2 (synCima (synCin (synCins4 (synCsi3 (synCswap)))
+              (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c))) (synCima
+          (synCin (synCins4 (synCsi3 (synCid)))
+            (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset))))))) (synC1c)))
+      (synC1c) p0137 p0122
   have p0140 :=
-    @g_inex
-      (syn_cins4 (syn_csi3 (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-            (syn_cins2 (syn_ccnv (syn_c2nd))))))
-      (syn_cima (syn_cin (syn_cins2 (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-          (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-              (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-            (syn_c1c))) (syn_c1c))
+    @gInex
+      (synCins4 (synCsi3 (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+            (synCins2 (synCcnv (synC2nd))))))
+      (synCima (synCin (synCins2 (synCima (synCin (synCins4 (synCsi3 (synCswap)))
+                (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+          (synCima (synCin (synCins4 (synCsi3 (synCid)))
+              (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+            (synC1c))) (synC1c))
       p0112 p0139
   have p0142 :=
-    @g_imaex
-      (syn_cin (syn_cins4 (syn_csi3 (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-              (syn_cins2 (syn_ccnv (syn_c2nd)))))) (syn_cima (syn_cin (syn_cins2 (syn_cima
-                (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                  (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-            (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-                (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-              (syn_c1c))) (syn_c1c)))
-      (syn_c1c) p0140 p0122
+    @gImaex
+      (synCin (synCins4 (synCsi3 (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+              (synCins2 (synCcnv (synC2nd)))))) (synCima (synCin (synCins2 (synCima
+                (synCin (synCins4 (synCsi3 (synCswap)))
+                  (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+            (synCima (synCin (synCins4 (synCsi3 (synCid)))
+                (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+              (synC1c))) (synC1c)))
+      (synC1c) p0140 p0122
   have p0144 :=
-    @g_imaex
-      (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-                (syn_cins2 (syn_ccnv (syn_c2nd)))))) (syn_cima (syn_cin (syn_cins2 (syn_cima
-                  (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                    (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-              (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-                  (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset)))))))
-                (syn_c1c))) (syn_c1c))) (syn_c1c))
-      (syn_c1c) p0142 p0122
+    @gImaex
+      (synCima (synCin (synCins4 (synCsi3 (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+                (synCins2 (synCcnv (synC2nd)))))) (synCima (synCin (synCins2 (synCima
+                  (synCin (synCins4 (synCsi3 (synCswap)))
+                    (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+              (synCima (synCin (synCins4 (synCsi3 (synCid)))
+                  (synCins2 (synCins2 (synCins2 (synCins2 (synCins3 (synCsset)))))))
+                (synC1c))) (synC1c))) (synC1c))
+      (synC1c) p0142 p0122
   have p0145 :=
-    @g_mpt2exlem (syn_cvv) (syn_cvv)
-      (syn_cima (syn_cima (syn_cin (syn_cins4 (syn_csi3
-                (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-                  (syn_cins2 (syn_ccnv (syn_c2nd)))))) (syn_cima (syn_cin (syn_cins2 (syn_cima
-                    (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                      (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset)))))) (syn_c1c)))
-                (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid))) (syn_cins2
-                      (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset))))))) (syn_c1c)))
-              (syn_c1c))) (syn_c1c)) (syn_c1c))
+    @gMpt2exlem (synCvv) (synCvv)
+      (synCima (synCima (synCin (synCins4 (synCsi3
+                (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+                  (synCins2 (synCcnv (synC2nd)))))) (synCima (synCin (synCins2 (synCima
+                    (synCin (synCins4 (synCsi3 (synCswap)))
+                      (synCins2 (synCins2 (synCins2 (synCins2 (synCsset)))))) (synC1c)))
+                (synCima (synCin (synCins4 (synCsi3 (synCid))) (synCins2
+                      (synCins2 (synCins2 (synCins2 (synCins3 (synCsset))))))) (synC1c)))
+              (synC1c))) (synC1c)) (synC1c))
       p0101 p0101 p0144
   have p0146 :=
-    @g_eqeltri (syn_ccompose)
-      (syn_cdif (syn_cxp (syn_cxp (syn_cvv) (syn_cvv)) (syn_cvv)) (syn_cima
-          (syn_csymdif (syn_cins2 (syn_csset)) (syn_cins3 (syn_cima (syn_cima (syn_cin
-                    (syn_cins4 (syn_csi3 (syn_cin (syn_cxp (syn_cvv) (syn_ccnv (syn_c1st)))
-                          (syn_cins2 (syn_ccnv (syn_c2nd)))))) (syn_cima (syn_cin (syn_cins2
-                          (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cswap)))
-                              (syn_cins2 (syn_cins2 (syn_cins2 (syn_cins2 (syn_csset))))))
-                            (syn_c1c))) (syn_cima (syn_cin (syn_cins4 (syn_csi3 (syn_cid)))
-                            (syn_cins2 (syn_cins2
-                                (syn_cins2 (syn_cins2 (syn_cins3 (syn_csset))))))) (syn_c1c)))
-                      (syn_c1c))) (syn_c1c)) (syn_c1c)))) (syn_c1c)))
-      (syn_cvv) p0100 p0145
+    @gEqeltri (synCcompose)
+      (synCdif (synCxp (synCxp (synCvv) (synCvv)) (synCvv)) (synCima
+          (synCsymdif (synCins2 (synCsset)) (synCins3 (synCima (synCima (synCin
+                    (synCins4 (synCsi3 (synCin (synCxp (synCvv) (synCcnv (synC1st)))
+                          (synCins2 (synCcnv (synC2nd)))))) (synCima (synCin (synCins2
+                          (synCima (synCin (synCins4 (synCsi3 (synCswap)))
+                              (synCins2 (synCins2 (synCins2 (synCins2 (synCsset))))))
+                            (synC1c))) (synCima (synCin (synCins4 (synCsi3 (synCid)))
+                            (synCins2 (synCins2
+                                (synCins2 (synCins2 (synCins3 (synCsset))))))) (synC1c)))
+                      (synC1c))) (synC1c)) (synC1c)))) (synC1c)))
+      (synCvv) p0100 p0145
   exact p0146
 
 
@@ -3782,11 +3798,12 @@ open NFChoice.SemanticCore
 open NFChoice.ReplaySupport
 open NFChoice.Compiler.CompactSourceSyntax
 
+/-- Checked nominal proof certificate identified upstream as `g_brdisjg`. -/
 @[expose]
-noncomputable def g_brdisjg (A : Class) (B : Class) (V : Class) (W : Class) :
+noncomputable def gBrdisjg (A : Class) (B : Class) (V : Class) (W : Class) :
     Nominal.NPrf
-      (.imp (syn_wa (.classMem A V) (.classMem B W))
-        (syn_wb (syn_wbr A (syn_cdisj) B) (.classEq (syn_cin A B) (syn_c0)))) :=
+      (.imp (synWa (.classMem A V) (.classMem B W))
+        (synWb (synWbr A (synCdisj) B) (.classEq (synCin A B) (synC0)))) :=
   by
   let proofSupport : Finset Var := A.fv ∪ B.fv ∪ V.fv ∪ W.fv
   let x : Var := freshVar proofSupport 0
@@ -3864,7 +3881,7 @@ noncomputable def g_brdisjg (A : Class) (B : Class) (V : Class) (W : Class) :
           intro hmem
           cases hmem
         simp only [fresh_y_not_B, not_false_eq_true])
-  have dv_cache_0006 : x ∉ ((Wff.classEq (syn_cin A B) (syn_c0))).fv :=
+  have dv_cache_0006 : x ∉ ((Wff.classEq (synCin A B) (synC0))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
     exact
@@ -3878,7 +3895,7 @@ noncomputable def g_brdisjg (A : Class) (B : Class) (V : Class) (W : Class) :
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0, Finset.mem_union,
           fresh_x_not_A, fresh_x_not_B, compact_fv_not_mem_empty, or_false,
           not_false_eq_true])
-  have dv_cache_0007 : y ∉ ((Wff.classEq (syn_cin A B) (syn_c0))).fv :=
+  have dv_cache_0007 : y ∉ ((Wff.classEq (synCin A B) (synC0))).fv :=
     by
     clear dv_cache_0001 dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005
       dv_cache_0006
@@ -3893,20 +3910,20 @@ noncomputable def g_brdisjg (A : Class) (B : Class) (V : Class) (W : Class) :
           NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0, Finset.mem_union,
           fresh_y_not_A, fresh_y_not_B, compact_fv_not_mem_empty, or_false,
           not_false_eq_true])
-  have p0000 := @g_ineq1 (.cv x) A (.cv y)
+  have p0000 := @gIneq1 (.cv x) A (.cv y)
   have p0001 :=
-    @g_eqeq1d (.classEq (.cv x) A) (syn_cin (.cv x) (.cv y)) (syn_cin A (.cv y)) (syn_c0)
+    @gEqeq1d (.classEq (.cv x) A) (synCin (.cv x) (.cv y)) (synCin A (.cv y)) (synC0)
       p0000
-  have p0002 := @g_ineq2 (.cv y) B A
+  have p0002 := @gIneq2 (.cv y) B A
   have p0003 :=
-    @g_eqeq1d (.classEq (.cv y) B) (syn_cin A (.cv y)) (syn_cin A B) (syn_c0) p0002
+    @gEqeq1d (.classEq (.cv y) B) (synCin A (.cv y)) (synCin A B) (synC0) p0002
   have p0004 :=
-    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominal_df_disj x y
+    NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfDisj x y
       dv_cache_0001
   have p0005 :=
-    @g_brabg (.classEq (syn_cin (.cv x) (.cv y)) (syn_c0))
-      (.classEq (syn_cin A (.cv y)) (syn_c0)) (.classEq (syn_cin A B) (syn_c0)) x y A B V
-      W (syn_cdisj) dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005 dv_cache_0006
+    @gBrabg (.classEq (synCin (.cv x) (.cv y)) (synC0))
+      (.classEq (synCin A (.cv y)) (synC0)) (.classEq (synCin A B) (synC0)) x y A B V
+      W (synCdisj) dv_cache_0002 dv_cache_0003 dv_cache_0004 dv_cache_0005 dv_cache_0006
       dv_cache_0007 dv_cache_0001 p0001 p0003 p0004
   exact p0005
 

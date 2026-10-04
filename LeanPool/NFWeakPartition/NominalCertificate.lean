@@ -31,10 +31,12 @@ The exact repaired-source trace sidecar has SHA-256
 -/
 
 
+/-- Proof-translation construction identified upstream as `sourceMmSha256`. -/
 @[expose]
 def sourceMmSha256 : String :=
   "868DF831E63E28AA924CC099510CD9E5D3BE18CD8416A20B335F5BBF3B42ED3F"
 
+/-- Proof-translation construction identified upstream as `exactSliceSha256`. -/
 @[expose]
 def exactSliceSha256 : String :=
   "89E80799B18269313FED986238AAEEEB1BE0DBAD2D7F28C3469521701A837E80"
@@ -80,6 +82,7 @@ abbrev Packed {L : Fol.Language} [DecidableEq Var] (theory : Fol.SentTheory L)
     (atomFormula : (Var → Nat) → Atom → Fol.formula L) :=
   Σ code : Code Var Atom, NPrf theory atomFormula code
 
+/-- Proof-translation construction identified upstream as `Step`. -/
 inductive Step (Var Atom : Type) where
   | input : Nat → Step Var Atom
   | ref : Var → Step Var Atom
@@ -88,6 +91,7 @@ inductive Step (Var Atom : Type) where
   | gen : Var → Nat → Step Var Atom
   deriving DecidableEq, Repr
 
+/-- Proof-translation construction identified upstream as `castNPrf`. -/
 @[expose]
 def castNPrf {L : Fol.Language} [DecidableEq Var] {theory : Fol.SentTheory L}
     {atomFormula : (Var → Nat) → Atom → Fol.formula L} {p q : Code Var Atom} (h : p = q)
@@ -96,6 +100,7 @@ def castNPrf {L : Fol.Language} [DecidableEq Var] {theory : Fol.SentTheory L}
   cases h
   exact proof
 
+/-- Proof-translation construction identified upstream as `execStep`. -/
 @[expose]
 def execStep {L : Fol.Language} [DecidableEq Var] [DecidableEq Atom]
     (theory : Fol.SentTheory L) (atomFormula : (Var → Nat) → Atom → Fol.formula L)
@@ -145,6 +150,7 @@ def run {L : Fol.Language} [DecidableEq Var] [DecidableEq Atom]
     | none => none
     | some proof => run theory atomFormula inputs rest (state.push proof)
 
+/-- Proof-translation construction identified upstream as `extract`. -/
 @[expose]
 def extract {L : Fol.Language} [DecidableEq Var] [DecidableEq Atom]
     (theory : Fol.SentTheory L) (atomFormula : (Var → Nat) → Atom → Fol.formula L)
@@ -157,20 +163,25 @@ def extract {L : Fol.Language} [DecidableEq Var] [DecidableEq Atom]
 /-! ### Exact real-source slices -/
 
 
+/-- Proof-translation construction identified upstream as `SourceVar`. -/
 inductive SourceVar
   | x
   | y
   deriving DecidableEq, Repr
 
+/-- Proof-translation construction identified upstream as `NoAtom`. -/
 inductive NoAtom
   deriving DecidableEq, Repr
 
+/-- Proof-translation construction identified upstream as `noAtomFormula`. -/
 @[expose]
 def noAtomFormula (_ : SourceVar → Nat) (atom : NoAtom) : Fol.formula LNF :=
   nomatch atom
 
+/-- Proof-translation construction identified upstream as `eqxx`. -/
 abbrev eqxx : Code SourceVar NoAtom :=
   .equal .x .x
+/-- Proof-translation construction identified upstream as `allEqxx`. -/
 abbrev allEqxx : Code SourceVar NoAtom :=
   .all .x eqxx
 
@@ -179,23 +190,29 @@ abbrev allEqxx : Code SourceVar NoAtom :=
 def stdpc6Certificate : List (Step SourceVar NoAtom) :=
   [.ref .x, .gen .x 0]
 
+/-- Proof-translation construction identified upstream as `stdpc6Result`. -/
 @[expose]
 def stdpc6Result : Option (NPrf LiteralHailperinNF noAtomFormula allEqxx) := do
   let state ← run LiteralHailperinNF noAtomFormula #[] stdpc6Certificate #[]
   extract LiteralHailperinNF noAtomFormula state 1 allEqxx
 
+/-- Proof-translation construction identified upstream as `stdpc6Proof`. -/
 @[expose]
 def stdpc6Proof : NPrf LiteralHailperinNF noAtomFormula allEqxx :=
   stdpc6Result.get (by rfl)
 
+/-- Proof-translation construction identified upstream as `SchematicAtom`. -/
 inductive SchematicAtom
   | ph
   deriving DecidableEq, Repr
 
+/-- Proof-translation construction identified upstream as `ph`. -/
 abbrev ph : Code SourceVar SchematicAtom :=
   .atom .ph
+/-- Proof-translation construction identified upstream as `allYPh`. -/
 abbrev allYPh : Code SourceVar SchematicAtom :=
   .all .y ph
+/-- Proof-translation construction identified upstream as `allXAllYPh`. -/
 abbrev allXAllYPh : Code SourceVar SchematicAtom :=
   .all .x allYPh
 
@@ -204,6 +221,7 @@ abbrev allXAllYPh : Code SourceVar SchematicAtom :=
 def gen2Certificate : List (Step SourceVar SchematicAtom) :=
   [.input 0, .gen .y 0, .gen .x 1]
 
+/-- Proof-translation construction identified upstream as `gen2Result`. -/
 @[expose]
 def gen2Result (atomFormula : (SourceVar → Nat) → SchematicAtom → Fol.formula LNF)
     (hypothesis : NPrf LiteralHailperinNF atomFormula ph) :
@@ -212,6 +230,7 @@ def gen2Result (atomFormula : (SourceVar → Nat) → SchematicAtom → Fol.form
   let state ← run LiteralHailperinNF atomFormula inputs gen2Certificate #[]
   extract LiteralHailperinNF atomFormula state 2 allXAllYPh
 
+/-- Proof-translation construction identified upstream as `gen2Proof`. -/
 @[expose]
 def gen2Proof (atomFormula : (SourceVar → Nat) → SchematicAtom → Fol.formula LNF)
     (hypothesis : NPrf LiteralHailperinNF atomFormula ph) :

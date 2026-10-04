@@ -22,13 +22,13 @@ open NFChoice.Compiler.CompactSourceSyntax
 /-- The closed intrinsic formula obtained by lowering the accepted WPP source. -/
 @[expose]
 def WPPSyntax : Sentence :=
-  (lowerClosed syn_wwpp).getD .falsum
+  (lowerClosed synWwpp).getD .falsum
 
 /- The accepted nominal WPP source lowers successfully to `WPPSyntax`. -/
 
-theorem lowerClosed_syn_wwpp : lowerClosed syn_wwpp = some WPPSyntax :=
-  option_eq_some_getD (lowerClosed syn_wwpp) .falsum
-    (lowerClosed_exists syn_wwpp NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_wwpp)
+theorem lowerClosed_syn_wwpp : lowerClosed synWwpp = some WPPSyntax :=
+  option_eq_some_getD (lowerClosed synWwpp) .falsum
+    (lowerClosed_exists synWwpp NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_wwpp)
 
 /-- WPP as a Flypitch sentence, exactly lowered from the accepted source. -/
 @[expose]

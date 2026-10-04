@@ -38,18 +38,19 @@ fresh binder is renamed.  This certificate therefore works uniformly even
 when any of `x`, `y`, and `z` coincide. -/
 
 
+/-- Checked nominal proof certificate identified upstream as `nb049_oprab_alpha_certificate`. -/
 @[expose]
-noncomputable def nb049_oprab_alpha_certificate (ph : Wff) (x : Var) (y : Var) (z : Var)
+noncomputable def nb049OprabAlphaCertificate (ph : Wff) (x : Var) (y : Var) (z : Var)
     (w : Var) (dv_ph_w : w ∉ ph.fv) (dv_w_x : w ≠ x) (dv_w_y : w ≠ y) (dv_w_z : w ≠ z) :
-    TAlphaClass [] (syn_coprab x y z ph)
-      (.cab w (syn_wex x (syn_wex y (syn_wex z
-              (syn_wa (.classEq (.cv w) (syn_cop (syn_cop (.cv x) (.cv y)) (.cv z))) ph))))) :=
+    TAlphaClass [] (synCoprab x y z ph)
+      (.cab w (synWex x (synWex y (synWex z
+              (synWa (.classEq (.cv w) (synCop (synCop (.cv x) (.cv y)) (.cv z))) ph))))) :=
   by
-  let alpha_dummy_000 : Var :=
+  let alphaDummy000 : Var :=
     freshVar (({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ ({ z } : Finset Var) ∪ ph.fv)
       0
   have fresh_000 :
-    alpha_dummy_000 ∉
+    alphaDummy000 ∉
       (({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪ ({ z } : Finset Var) ∪ ph.fv) :=
     by
     change
@@ -85,25 +86,25 @@ noncomputable def nb049_oprab_alpha_certificate (ph : Wff) (x : Var) (y : Var) (
     with_reducible rw [Finset.mem_union]
     right
     exact Finset.mem_singleton_self _
-  have alpha_ne_x : alpha_dummy_000 ≠ x :=
+  have alpha_ne_x : alphaDummy000 ≠ x :=
     Ne.symm (Nat.ne_of_lt (mem_lt_freshVar support_mem_x 0))
-  have alpha_ne_y : alpha_dummy_000 ≠ y :=
+  have alpha_ne_y : alphaDummy000 ≠ y :=
     Ne.symm (Nat.ne_of_lt (mem_lt_freshVar support_mem_y 0))
-  have alpha_ne_z : alpha_dummy_000 ≠ z :=
+  have alpha_ne_z : alphaDummy000 ≠ z :=
     Ne.symm (Nat.ne_of_lt (mem_lt_freshVar support_mem_z 0))
   have triple_dummy_notmem :
-    alpha_dummy_000 ∉ (syn_cop (syn_cop (Class.cv x) (Class.cv y)) (Class.cv z)).fv := by
+    alphaDummy000 ∉ (synCop (synCop (Class.cv x) (Class.cv y)) (Class.cv z)).fv := by
     simp only [fv_syn_cop, fv_class_cv, Finset.mem_union, Finset.mem_singleton,
       alpha_ne_x, alpha_ne_y, alpha_ne_z, or_false, not_false_eq_true]
   have triple_w_notmem :
-    w ∉ (syn_cop (syn_cop (Class.cv x) (Class.cv y)) (Class.cv z)).fv := by
+    w ∉ (synCop (synCop (Class.cv x) (Class.cv y)) (Class.cv z)).fv := by
     simp only [fv_syn_cop, fv_class_cv, Finset.mem_union, Finset.mem_singleton, dv_w_x,
       dv_w_y, dv_w_z, or_false, not_false_eq_true]
   have triple_refl :
-    TReflOn [(z, z), (y, y), (x, x), (alpha_dummy_000, w)]
-      (syn_cop (syn_cop (Class.cv x) (Class.cv y)) (Class.cv z)).fv :=
-    nb049_reflOn_self3_fresh x y z alpha_dummy_000 w _ triple_dummy_notmem triple_w_notmem
-  have focused_dummy_notmem : alpha_dummy_000 ∉ ph.fv :=
+    TReflOn [(z, z), (y, y), (x, x), (alphaDummy000, w)]
+      (synCop (synCop (Class.cv x) (Class.cv y)) (Class.cv z)).fv :=
+    nb049ReflOnSelf3Fresh x y z alphaDummy000 w _ triple_dummy_notmem triple_w_notmem
+  have focused_dummy_notmem : alphaDummy000 ∉ ph.fv :=
     by
     change
       freshVar
@@ -112,22 +113,22 @@ noncomputable def nb049_oprab_alpha_certificate (ph : Wff) (x : Var) (y : Var) (
     exact
       NFChoice.DefinitionLeaves.AlphaFocusedSupport.freshVar_not_mem_of_subset 0
         (fun _ hu => Finset.mem_union_right _ hu)
-  have neg_dummy_notmem : alpha_dummy_000 ∉ (Wff.neg ph).fv := by
+  have neg_dummy_notmem : alphaDummy000 ∉ (Wff.neg ph).fv := by
     exact fun hmem => focused_dummy_notmem ((fv_wff_neg ph) ▸ hmem)
   have neg_w_notmem : w ∉ (Wff.neg ph).fv := by
     exact fun hmem => dv_ph_w ((fv_wff_neg ph) ▸ hmem)
   have neg_refl :
-    TReflOn [(z, z), (y, y), (x, x), (alpha_dummy_000, w)] (Wff.neg ph).fv :=
-    nb049_reflOn_self3_fresh x y z alpha_dummy_000 w _ neg_dummy_notmem neg_w_notmem
+    TReflOn [(z, z), (y, y), (x, x), (alphaDummy000, w)] (Wff.neg ph).fv :=
+    nb049ReflOnSelf3Fresh x y z alphaDummy000 w _ neg_dummy_notmem neg_w_notmem
   exact
     TAlphaClass.cab
       (TAlphaWff.ex (TAlphaWff.ex (TAlphaWff.ex (TAlphaWff.neg (TAlphaWff.imp (TAlphaWff.classEq
                   (TAlphaClass.cv (TAlphaVar.there alpha_ne_z dv_w_z
                       (TAlphaVar.there alpha_ne_y dv_w_y
                         (TAlphaVar.there alpha_ne_x dv_w_x (TAlphaVar.here _ _ _)))))
-                  (TAlphaClass.refl_of_reflOn [(z, z), (y, y), (x, x), (alpha_dummy_000, w)]
-                    (syn_cop (syn_cop (Class.cv x) (Class.cv y)) (Class.cv z)) triple_refl))
-                (TAlphaWff.refl_of_reflOn [(z, z), (y, y), (x, x), (alpha_dummy_000, w)]
+                  (TAlphaClass.reflOfReflOn [(z, z), (y, y), (x, x), (alphaDummy000, w)]
+                    (synCop (synCop (Class.cv x) (Class.cv y)) (Class.cv z)) triple_refl))
+                (TAlphaWff.reflOfReflOn [(z, z), (y, y), (x, x), (alphaDummy000, w)]
                   (Wff.neg ph) neg_refl))))))
 
 end NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired

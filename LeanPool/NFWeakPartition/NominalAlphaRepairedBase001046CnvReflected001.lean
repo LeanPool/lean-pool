@@ -32,265 +32,266 @@ open NFChoice.DefinitionLeaves.AlphaFocusedFV
 open NFChoice.DirectNominalPrf
 open NFChoice.DirectNominalPrf.Nominal
 
+/-- Checked nominal proof certificate identified upstream as `nominal_df_cnv`. -/
 @[expose]
-noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉ A.fv)
+noncomputable def nominalDfCnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉ A.fv)
     (dv_A_y : y ∉ A.fv) (dv_x_y : x ≠ y) :
-    Nominal.NPrf (.classEq (syn_ccnv A) (syn_copab x y (syn_wbr (.cv y) A (.cv x)))) :=
+    Nominal.NPrf (.classEq (synCcnv A) (synCopab x y (synWbr (.cv y) A (.cv x)))) :=
   by
-  let alpha_dummy_000 : Var := (freshVar ((A).fv) 0)
-  let alpha_dummy_001 : Var := (freshVar ((A).fv) 1)
-  let alpha_dummy_002 : Var :=
-    (freshVar (({ alpha_dummy_000 } : Finset Var) ∪ ({ alpha_dummy_001 } : Finset Var) ∪
-        ((syn_wbr (Class.cv alpha_dummy_001) A (Class.cv alpha_dummy_000))).fv) 0)
-  let alpha_dummy_003 : Var :=
+  let alphaDummy000 : Var := (freshVar ((A).fv) 0)
+  let alphaDummy001 : Var := (freshVar ((A).fv) 1)
+  let alphaDummy002 : Var :=
+    (freshVar (({ alphaDummy000 } : Finset Var) ∪ ({ alphaDummy001 } : Finset Var) ∪
+        ((synWbr (Class.cv alphaDummy001) A (Class.cv alphaDummy000))).fv) 0)
+  let alphaDummy003 : Var :=
     (freshVar (({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪
-        ((syn_wbr (Class.cv y) A (Class.cv x))).fv) 0)
-  let alpha_dummy_004 : Var :=
-    (freshVar (((Class.cv alpha_dummy_000)).fv ∪ ((Class.cv alpha_dummy_001)).fv) 0)
-  let alpha_dummy_005 : Var :=
-    (freshVar (((Class.cv alpha_dummy_000)).fv ∪ ((Class.cv alpha_dummy_001)).fv) 1)
-  let alpha_dummy_006 : Var := (freshVar (((Class.cv x)).fv ∪ ((Class.cv y)).fv) 0)
-  let alpha_dummy_007 : Var := (freshVar (((Class.cv x)).fv ∪ ((Class.cv y)).fv) 1)
-  let alpha_dummy_008 : Var :=
-    (freshVar (((syn_ccompl (Class.cab alpha_dummy_004
-              (syn_wrex alpha_dummy_005 (Class.cv alpha_dummy_000)
-                (Wff.classEq (Class.cv alpha_dummy_004)
-                  (syn_cphi (Class.cv alpha_dummy_005))))))).fv ∪ ((syn_ccompl
-            (Class.cab alpha_dummy_004 (syn_wrex alpha_dummy_005 (Class.cv alpha_dummy_001)
-                (Wff.classEq (Class.cv alpha_dummy_004)
-                  (syn_cun (syn_cphi (Class.cv alpha_dummy_005)) (syn_csn (syn_c0c)))))))).fv)
+        ((synWbr (Class.cv y) A (Class.cv x))).fv) 0)
+  let alphaDummy004 : Var :=
+    (freshVar (((Class.cv alphaDummy000)).fv ∪ ((Class.cv alphaDummy001)).fv) 0)
+  let alphaDummy005 : Var :=
+    (freshVar (((Class.cv alphaDummy000)).fv ∪ ((Class.cv alphaDummy001)).fv) 1)
+  let alphaDummy006 : Var := (freshVar (((Class.cv x)).fv ∪ ((Class.cv y)).fv) 0)
+  let alphaDummy007 : Var := (freshVar (((Class.cv x)).fv ∪ ((Class.cv y)).fv) 1)
+  let alphaDummy008 : Var :=
+    (freshVar (((synCcompl (Class.cab alphaDummy004
+              (synWrex alphaDummy005 (Class.cv alphaDummy000)
+                (Wff.classEq (Class.cv alphaDummy004)
+                  (synCphi (Class.cv alphaDummy005))))))).fv ∪ ((synCcompl
+            (Class.cab alphaDummy004 (synWrex alphaDummy005 (Class.cv alphaDummy001)
+                (Wff.classEq (Class.cv alphaDummy004)
+                  (synCun (synCphi (Class.cv alphaDummy005)) (synCsn (synC0c)))))))).fv)
       0)
-  let alpha_dummy_009 : Var :=
-    (freshVar (((syn_ccompl (Class.cab alpha_dummy_006 (syn_wrex alpha_dummy_007 (Class.cv x)
-                (Wff.classEq (Class.cv alpha_dummy_006)
-                  (syn_cphi (Class.cv alpha_dummy_007))))))).fv ∪ ((syn_ccompl
-            (Class.cab alpha_dummy_006 (syn_wrex alpha_dummy_007 (Class.cv y)
-                (Wff.classEq (Class.cv alpha_dummy_006)
-                  (syn_cun (syn_cphi (Class.cv alpha_dummy_007)) (syn_csn (syn_c0c)))))))).fv)
+  let alphaDummy009 : Var :=
+    (freshVar (((synCcompl (Class.cab alphaDummy006 (synWrex alphaDummy007 (Class.cv x)
+                (Wff.classEq (Class.cv alphaDummy006)
+                  (synCphi (Class.cv alphaDummy007))))))).fv ∪ ((synCcompl
+            (Class.cab alphaDummy006 (synWrex alphaDummy007 (Class.cv y)
+                (Wff.classEq (Class.cv alphaDummy006)
+                  (synCun (synCphi (Class.cv alphaDummy007)) (synCsn (synC0c)))))))).fv)
       0)
-  let alpha_dummy_010 : Var :=
-    (freshVar (((Class.cab alpha_dummy_004 (syn_wrex alpha_dummy_005 (Class.cv alpha_dummy_000)
-              (Wff.classEq (Class.cv alpha_dummy_004)
-                (syn_cphi (Class.cv alpha_dummy_005)))))).fv ∪ ((Class.cab alpha_dummy_004
-            (syn_wrex alpha_dummy_005 (Class.cv alpha_dummy_000)
-              (Wff.classEq (Class.cv alpha_dummy_004)
-                (syn_cphi (Class.cv alpha_dummy_005)))))).fv) 0)
-  let alpha_dummy_011 : Var :=
-    (freshVar (((Class.cab alpha_dummy_006 (syn_wrex alpha_dummy_007 (Class.cv x)
-              (Wff.classEq (Class.cv alpha_dummy_006)
-                (syn_cphi (Class.cv alpha_dummy_007)))))).fv ∪ ((Class.cab alpha_dummy_006
-            (syn_wrex alpha_dummy_007 (Class.cv x) (Wff.classEq (Class.cv alpha_dummy_006)
-                (syn_cphi (Class.cv alpha_dummy_007)))))).fv) 0)
-  let alpha_dummy_012 : Var := (freshVar (((Class.cv alpha_dummy_005)).fv) 0)
-  let alpha_dummy_013 : Var := (freshVar (((Class.cv alpha_dummy_005)).fv) 1)
-  let alpha_dummy_014 : Var := (freshVar (((Class.cv alpha_dummy_007)).fv) 0)
-  let alpha_dummy_015 : Var := (freshVar (((Class.cv alpha_dummy_007)).fv) 1)
-  let alpha_dummy_016 : Var :=
-    (freshVar (((Wff.classMem (Class.cv alpha_dummy_012) (syn_cnnc))).fv ∪
-          ((syn_cplc (Class.cv alpha_dummy_012) (syn_c1c))).fv ∪
-        ((Class.cv alpha_dummy_012)).fv) 0)
-  let alpha_dummy_017 : Var :=
-    (freshVar (((Wff.classMem (Class.cv alpha_dummy_014) (syn_cnnc))).fv ∪
-          ((syn_cplc (Class.cv alpha_dummy_014) (syn_c1c))).fv ∪
-        ((Class.cv alpha_dummy_014)).fv) 0)
-  let alpha_dummy_018 : Var :=
-    (freshVar (((Class.cv alpha_dummy_012)).fv ∪ ((syn_c1c)).fv) 0)
-  let alpha_dummy_019 : Var :=
-    (freshVar (((Class.cv alpha_dummy_012)).fv ∪ ((syn_c1c)).fv) 1)
-  let alpha_dummy_020 : Var :=
-    (freshVar (((Class.cv alpha_dummy_012)).fv ∪ ((syn_c1c)).fv) 2)
-  let alpha_dummy_021 : Var :=
-    (freshVar (((Class.cv alpha_dummy_014)).fv ∪ ((syn_c1c)).fv) 0)
-  let alpha_dummy_022 : Var :=
-    (freshVar (((Class.cv alpha_dummy_014)).fv ∪ ((syn_c1c)).fv) 1)
-  let alpha_dummy_023 : Var :=
-    (freshVar (((Class.cv alpha_dummy_014)).fv ∪ ((syn_c1c)).fv) 2)
-  let alpha_dummy_024 : Var :=
-    (freshVar (((syn_cnin (Class.cv alpha_dummy_019) (Class.cv alpha_dummy_020))).fv ∪
-        ((syn_cnin (Class.cv alpha_dummy_019) (Class.cv alpha_dummy_020))).fv) 0)
-  let alpha_dummy_025 : Var :=
-    (freshVar (((syn_cnin (Class.cv alpha_dummy_022) (Class.cv alpha_dummy_023))).fv ∪
-        ((syn_cnin (Class.cv alpha_dummy_022) (Class.cv alpha_dummy_023))).fv) 0)
-  let alpha_dummy_026 : Var :=
-    (freshVar (((Class.cv alpha_dummy_019)).fv ∪ ((Class.cv alpha_dummy_020)).fv) 0)
-  let alpha_dummy_027 : Var :=
-    (freshVar (((Class.cv alpha_dummy_022)).fv ∪ ((Class.cv alpha_dummy_023)).fv) 0)
-  let alpha_dummy_028 : Var :=
-    (freshVar (((syn_ccompl (Class.cv alpha_dummy_019))).fv ∪
-        ((syn_ccompl (Class.cv alpha_dummy_020))).fv) 0)
-  let alpha_dummy_029 : Var :=
-    (freshVar (((syn_ccompl (Class.cv alpha_dummy_022))).fv ∪
-        ((syn_ccompl (Class.cv alpha_dummy_023))).fv) 0)
-  let alpha_dummy_030 : Var :=
-    (freshVar (((Class.cv alpha_dummy_019)).fv ∪ ((Class.cv alpha_dummy_019)).fv) 0)
-  let alpha_dummy_031 : Var :=
-    (freshVar (((Class.cv alpha_dummy_022)).fv ∪ ((Class.cv alpha_dummy_022)).fv) 0)
-  let alpha_dummy_032 : Var :=
-    (freshVar (((Class.cv alpha_dummy_020)).fv ∪ ((Class.cv alpha_dummy_020)).fv) 0)
-  let alpha_dummy_033 : Var :=
-    (freshVar (((Class.cv alpha_dummy_023)).fv ∪ ((Class.cv alpha_dummy_023)).fv) 0)
-  let alpha_dummy_034 : Var :=
-    (freshVar (((Class.cab alpha_dummy_004 (syn_wrex alpha_dummy_005 (Class.cv alpha_dummy_001)
-              (Wff.classEq (Class.cv alpha_dummy_004)
-                (syn_cun (syn_cphi (Class.cv alpha_dummy_005)) (syn_csn (syn_c0c))))))).fv ∪
-        ((Class.cab alpha_dummy_004 (syn_wrex alpha_dummy_005 (Class.cv alpha_dummy_001)
-              (Wff.classEq (Class.cv alpha_dummy_004)
-                (syn_cun (syn_cphi (Class.cv alpha_dummy_005)) (syn_csn (syn_c0c))))))).fv) 0)
-  let alpha_dummy_035 : Var :=
-    (freshVar (((Class.cab alpha_dummy_006 (syn_wrex alpha_dummy_007 (Class.cv y)
-              (Wff.classEq (Class.cv alpha_dummy_006)
-                (syn_cun (syn_cphi (Class.cv alpha_dummy_007)) (syn_csn (syn_c0c))))))).fv ∪
-        ((Class.cab alpha_dummy_006 (syn_wrex alpha_dummy_007 (Class.cv y)
-              (Wff.classEq (Class.cv alpha_dummy_006)
-                (syn_cun (syn_cphi (Class.cv alpha_dummy_007)) (syn_csn (syn_c0c))))))).fv) 0)
-  let alpha_dummy_036 : Var :=
-    (freshVar (((syn_ccompl (syn_cphi (Class.cv alpha_dummy_005)))).fv ∪
-        ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
-  let alpha_dummy_037 : Var :=
-    (freshVar (((syn_ccompl (syn_cphi (Class.cv alpha_dummy_007)))).fv ∪
-        ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
-  let alpha_dummy_038 : Var :=
-    (freshVar (((syn_cphi (Class.cv alpha_dummy_005))).fv ∪
-        ((syn_cphi (Class.cv alpha_dummy_005))).fv) 0)
-  let alpha_dummy_039 : Var :=
-    (freshVar (((syn_cphi (Class.cv alpha_dummy_007))).fv ∪
-        ((syn_cphi (Class.cv alpha_dummy_007))).fv) 0)
-  let alpha_dummy_040 : Var :=
-    (freshVar (((Class.cv alpha_dummy_001)).fv ∪ ((Class.cv alpha_dummy_000)).fv) 0)
-  let alpha_dummy_041 : Var :=
-    (freshVar (((Class.cv alpha_dummy_001)).fv ∪ ((Class.cv alpha_dummy_000)).fv) 1)
-  let alpha_dummy_042 : Var := (freshVar (((Class.cv y)).fv ∪ ((Class.cv x)).fv) 0)
-  let alpha_dummy_043 : Var := (freshVar (((Class.cv y)).fv ∪ ((Class.cv x)).fv) 1)
-  let alpha_dummy_044 : Var :=
-    (freshVar (((syn_ccompl (Class.cab alpha_dummy_040
-              (syn_wrex alpha_dummy_041 (Class.cv alpha_dummy_001)
-                (Wff.classEq (Class.cv alpha_dummy_040)
-                  (syn_cphi (Class.cv alpha_dummy_041))))))).fv ∪ ((syn_ccompl
-            (Class.cab alpha_dummy_040 (syn_wrex alpha_dummy_041 (Class.cv alpha_dummy_000)
-                (Wff.classEq (Class.cv alpha_dummy_040)
-                  (syn_cun (syn_cphi (Class.cv alpha_dummy_041)) (syn_csn (syn_c0c)))))))).fv)
+  let alphaDummy010 : Var :=
+    (freshVar (((Class.cab alphaDummy004 (synWrex alphaDummy005 (Class.cv alphaDummy000)
+              (Wff.classEq (Class.cv alphaDummy004)
+                (synCphi (Class.cv alphaDummy005)))))).fv ∪ ((Class.cab alphaDummy004
+            (synWrex alphaDummy005 (Class.cv alphaDummy000)
+              (Wff.classEq (Class.cv alphaDummy004)
+                (synCphi (Class.cv alphaDummy005)))))).fv) 0)
+  let alphaDummy011 : Var :=
+    (freshVar (((Class.cab alphaDummy006 (synWrex alphaDummy007 (Class.cv x)
+              (Wff.classEq (Class.cv alphaDummy006)
+                (synCphi (Class.cv alphaDummy007)))))).fv ∪ ((Class.cab alphaDummy006
+            (synWrex alphaDummy007 (Class.cv x) (Wff.classEq (Class.cv alphaDummy006)
+                (synCphi (Class.cv alphaDummy007)))))).fv) 0)
+  let alphaDummy012 : Var := (freshVar (((Class.cv alphaDummy005)).fv) 0)
+  let alphaDummy013 : Var := (freshVar (((Class.cv alphaDummy005)).fv) 1)
+  let alphaDummy014 : Var := (freshVar (((Class.cv alphaDummy007)).fv) 0)
+  let alphaDummy015 : Var := (freshVar (((Class.cv alphaDummy007)).fv) 1)
+  let alphaDummy016 : Var :=
+    (freshVar (((Wff.classMem (Class.cv alphaDummy012) (synCnnc))).fv ∪
+          ((synCplc (Class.cv alphaDummy012) (synC1c))).fv ∪
+        ((Class.cv alphaDummy012)).fv) 0)
+  let alphaDummy017 : Var :=
+    (freshVar (((Wff.classMem (Class.cv alphaDummy014) (synCnnc))).fv ∪
+          ((synCplc (Class.cv alphaDummy014) (synC1c))).fv ∪
+        ((Class.cv alphaDummy014)).fv) 0)
+  let alphaDummy018 : Var :=
+    (freshVar (((Class.cv alphaDummy012)).fv ∪ ((synC1c)).fv) 0)
+  let alphaDummy019 : Var :=
+    (freshVar (((Class.cv alphaDummy012)).fv ∪ ((synC1c)).fv) 1)
+  let alphaDummy020 : Var :=
+    (freshVar (((Class.cv alphaDummy012)).fv ∪ ((synC1c)).fv) 2)
+  let alphaDummy021 : Var :=
+    (freshVar (((Class.cv alphaDummy014)).fv ∪ ((synC1c)).fv) 0)
+  let alphaDummy022 : Var :=
+    (freshVar (((Class.cv alphaDummy014)).fv ∪ ((synC1c)).fv) 1)
+  let alphaDummy023 : Var :=
+    (freshVar (((Class.cv alphaDummy014)).fv ∪ ((synC1c)).fv) 2)
+  let alphaDummy024 : Var :=
+    (freshVar (((synCnin (Class.cv alphaDummy019) (Class.cv alphaDummy020))).fv ∪
+        ((synCnin (Class.cv alphaDummy019) (Class.cv alphaDummy020))).fv) 0)
+  let alphaDummy025 : Var :=
+    (freshVar (((synCnin (Class.cv alphaDummy022) (Class.cv alphaDummy023))).fv ∪
+        ((synCnin (Class.cv alphaDummy022) (Class.cv alphaDummy023))).fv) 0)
+  let alphaDummy026 : Var :=
+    (freshVar (((Class.cv alphaDummy019)).fv ∪ ((Class.cv alphaDummy020)).fv) 0)
+  let alphaDummy027 : Var :=
+    (freshVar (((Class.cv alphaDummy022)).fv ∪ ((Class.cv alphaDummy023)).fv) 0)
+  let alphaDummy028 : Var :=
+    (freshVar (((synCcompl (Class.cv alphaDummy019))).fv ∪
+        ((synCcompl (Class.cv alphaDummy020))).fv) 0)
+  let alphaDummy029 : Var :=
+    (freshVar (((synCcompl (Class.cv alphaDummy022))).fv ∪
+        ((synCcompl (Class.cv alphaDummy023))).fv) 0)
+  let alphaDummy030 : Var :=
+    (freshVar (((Class.cv alphaDummy019)).fv ∪ ((Class.cv alphaDummy019)).fv) 0)
+  let alphaDummy031 : Var :=
+    (freshVar (((Class.cv alphaDummy022)).fv ∪ ((Class.cv alphaDummy022)).fv) 0)
+  let alphaDummy032 : Var :=
+    (freshVar (((Class.cv alphaDummy020)).fv ∪ ((Class.cv alphaDummy020)).fv) 0)
+  let alphaDummy033 : Var :=
+    (freshVar (((Class.cv alphaDummy023)).fv ∪ ((Class.cv alphaDummy023)).fv) 0)
+  let alphaDummy034 : Var :=
+    (freshVar (((Class.cab alphaDummy004 (synWrex alphaDummy005 (Class.cv alphaDummy001)
+              (Wff.classEq (Class.cv alphaDummy004)
+                (synCun (synCphi (Class.cv alphaDummy005)) (synCsn (synC0c))))))).fv ∪
+        ((Class.cab alphaDummy004 (synWrex alphaDummy005 (Class.cv alphaDummy001)
+              (Wff.classEq (Class.cv alphaDummy004)
+                (synCun (synCphi (Class.cv alphaDummy005)) (synCsn (synC0c))))))).fv) 0)
+  let alphaDummy035 : Var :=
+    (freshVar (((Class.cab alphaDummy006 (synWrex alphaDummy007 (Class.cv y)
+              (Wff.classEq (Class.cv alphaDummy006)
+                (synCun (synCphi (Class.cv alphaDummy007)) (synCsn (synC0c))))))).fv ∪
+        ((Class.cab alphaDummy006 (synWrex alphaDummy007 (Class.cv y)
+              (Wff.classEq (Class.cv alphaDummy006)
+                (synCun (synCphi (Class.cv alphaDummy007)) (synCsn (synC0c))))))).fv) 0)
+  let alphaDummy036 : Var :=
+    (freshVar (((synCcompl (synCphi (Class.cv alphaDummy005)))).fv ∪
+        ((synCcompl (synCsn (synC0c)))).fv) 0)
+  let alphaDummy037 : Var :=
+    (freshVar (((synCcompl (synCphi (Class.cv alphaDummy007)))).fv ∪
+        ((synCcompl (synCsn (synC0c)))).fv) 0)
+  let alphaDummy038 : Var :=
+    (freshVar (((synCphi (Class.cv alphaDummy005))).fv ∪
+        ((synCphi (Class.cv alphaDummy005))).fv) 0)
+  let alphaDummy039 : Var :=
+    (freshVar (((synCphi (Class.cv alphaDummy007))).fv ∪
+        ((synCphi (Class.cv alphaDummy007))).fv) 0)
+  let alphaDummy040 : Var :=
+    (freshVar (((Class.cv alphaDummy001)).fv ∪ ((Class.cv alphaDummy000)).fv) 0)
+  let alphaDummy041 : Var :=
+    (freshVar (((Class.cv alphaDummy001)).fv ∪ ((Class.cv alphaDummy000)).fv) 1)
+  let alphaDummy042 : Var := (freshVar (((Class.cv y)).fv ∪ ((Class.cv x)).fv) 0)
+  let alphaDummy043 : Var := (freshVar (((Class.cv y)).fv ∪ ((Class.cv x)).fv) 1)
+  let alphaDummy044 : Var :=
+    (freshVar (((synCcompl (Class.cab alphaDummy040
+              (synWrex alphaDummy041 (Class.cv alphaDummy001)
+                (Wff.classEq (Class.cv alphaDummy040)
+                  (synCphi (Class.cv alphaDummy041))))))).fv ∪ ((synCcompl
+            (Class.cab alphaDummy040 (synWrex alphaDummy041 (Class.cv alphaDummy000)
+                (Wff.classEq (Class.cv alphaDummy040)
+                  (synCun (synCphi (Class.cv alphaDummy041)) (synCsn (synC0c)))))))).fv)
       0)
-  let alpha_dummy_045 : Var :=
-    (freshVar (((syn_ccompl (Class.cab alpha_dummy_042 (syn_wrex alpha_dummy_043 (Class.cv y)
-                (Wff.classEq (Class.cv alpha_dummy_042)
-                  (syn_cphi (Class.cv alpha_dummy_043))))))).fv ∪ ((syn_ccompl
-            (Class.cab alpha_dummy_042 (syn_wrex alpha_dummy_043 (Class.cv x)
-                (Wff.classEq (Class.cv alpha_dummy_042)
-                  (syn_cun (syn_cphi (Class.cv alpha_dummy_043)) (syn_csn (syn_c0c)))))))).fv)
+  let alphaDummy045 : Var :=
+    (freshVar (((synCcompl (Class.cab alphaDummy042 (synWrex alphaDummy043 (Class.cv y)
+                (Wff.classEq (Class.cv alphaDummy042)
+                  (synCphi (Class.cv alphaDummy043))))))).fv ∪ ((synCcompl
+            (Class.cab alphaDummy042 (synWrex alphaDummy043 (Class.cv x)
+                (Wff.classEq (Class.cv alphaDummy042)
+                  (synCun (synCphi (Class.cv alphaDummy043)) (synCsn (synC0c)))))))).fv)
       0)
-  let alpha_dummy_046 : Var :=
-    (freshVar (((Class.cab alpha_dummy_040 (syn_wrex alpha_dummy_041 (Class.cv alpha_dummy_001)
-              (Wff.classEq (Class.cv alpha_dummy_040)
-                (syn_cphi (Class.cv alpha_dummy_041)))))).fv ∪ ((Class.cab alpha_dummy_040
-            (syn_wrex alpha_dummy_041 (Class.cv alpha_dummy_001)
-              (Wff.classEq (Class.cv alpha_dummy_040)
-                (syn_cphi (Class.cv alpha_dummy_041)))))).fv) 0)
-  let alpha_dummy_047 : Var :=
-    (freshVar (((Class.cab alpha_dummy_042 (syn_wrex alpha_dummy_043 (Class.cv y)
-              (Wff.classEq (Class.cv alpha_dummy_042)
-                (syn_cphi (Class.cv alpha_dummy_043)))))).fv ∪ ((Class.cab alpha_dummy_042
-            (syn_wrex alpha_dummy_043 (Class.cv y) (Wff.classEq (Class.cv alpha_dummy_042)
-                (syn_cphi (Class.cv alpha_dummy_043)))))).fv) 0)
-  let alpha_dummy_048 : Var := (freshVar (((Class.cv alpha_dummy_041)).fv) 0)
-  let alpha_dummy_049 : Var := (freshVar (((Class.cv alpha_dummy_041)).fv) 1)
-  let alpha_dummy_050 : Var := (freshVar (((Class.cv alpha_dummy_043)).fv) 0)
-  let alpha_dummy_051 : Var := (freshVar (((Class.cv alpha_dummy_043)).fv) 1)
-  let alpha_dummy_052 : Var :=
-    (freshVar (((Wff.classMem (Class.cv alpha_dummy_048) (syn_cnnc))).fv ∪
-          ((syn_cplc (Class.cv alpha_dummy_048) (syn_c1c))).fv ∪
-        ((Class.cv alpha_dummy_048)).fv) 0)
-  let alpha_dummy_053 : Var :=
-    (freshVar (((Wff.classMem (Class.cv alpha_dummy_050) (syn_cnnc))).fv ∪
-          ((syn_cplc (Class.cv alpha_dummy_050) (syn_c1c))).fv ∪
-        ((Class.cv alpha_dummy_050)).fv) 0)
-  let alpha_dummy_054 : Var :=
-    (freshVar (((Class.cv alpha_dummy_048)).fv ∪ ((syn_c1c)).fv) 0)
-  let alpha_dummy_055 : Var :=
-    (freshVar (((Class.cv alpha_dummy_048)).fv ∪ ((syn_c1c)).fv) 1)
-  let alpha_dummy_056 : Var :=
-    (freshVar (((Class.cv alpha_dummy_048)).fv ∪ ((syn_c1c)).fv) 2)
-  let alpha_dummy_057 : Var :=
-    (freshVar (((Class.cv alpha_dummy_050)).fv ∪ ((syn_c1c)).fv) 0)
-  let alpha_dummy_058 : Var :=
-    (freshVar (((Class.cv alpha_dummy_050)).fv ∪ ((syn_c1c)).fv) 1)
-  let alpha_dummy_059 : Var :=
-    (freshVar (((Class.cv alpha_dummy_050)).fv ∪ ((syn_c1c)).fv) 2)
-  let alpha_dummy_060 : Var :=
-    (freshVar (((syn_cnin (Class.cv alpha_dummy_055) (Class.cv alpha_dummy_056))).fv ∪
-        ((syn_cnin (Class.cv alpha_dummy_055) (Class.cv alpha_dummy_056))).fv) 0)
-  let alpha_dummy_061 : Var :=
-    (freshVar (((syn_cnin (Class.cv alpha_dummy_058) (Class.cv alpha_dummy_059))).fv ∪
-        ((syn_cnin (Class.cv alpha_dummy_058) (Class.cv alpha_dummy_059))).fv) 0)
-  let alpha_dummy_062 : Var :=
-    (freshVar (((Class.cv alpha_dummy_055)).fv ∪ ((Class.cv alpha_dummy_056)).fv) 0)
-  let alpha_dummy_063 : Var :=
-    (freshVar (((Class.cv alpha_dummy_058)).fv ∪ ((Class.cv alpha_dummy_059)).fv) 0)
-  let alpha_dummy_064 : Var :=
-    (freshVar (((syn_ccompl (Class.cv alpha_dummy_055))).fv ∪
-        ((syn_ccompl (Class.cv alpha_dummy_056))).fv) 0)
-  let alpha_dummy_065 : Var :=
-    (freshVar (((syn_ccompl (Class.cv alpha_dummy_058))).fv ∪
-        ((syn_ccompl (Class.cv alpha_dummy_059))).fv) 0)
+  let alphaDummy046 : Var :=
+    (freshVar (((Class.cab alphaDummy040 (synWrex alphaDummy041 (Class.cv alphaDummy001)
+              (Wff.classEq (Class.cv alphaDummy040)
+                (synCphi (Class.cv alphaDummy041)))))).fv ∪ ((Class.cab alphaDummy040
+            (synWrex alphaDummy041 (Class.cv alphaDummy001)
+              (Wff.classEq (Class.cv alphaDummy040)
+                (synCphi (Class.cv alphaDummy041)))))).fv) 0)
+  let alphaDummy047 : Var :=
+    (freshVar (((Class.cab alphaDummy042 (synWrex alphaDummy043 (Class.cv y)
+              (Wff.classEq (Class.cv alphaDummy042)
+                (synCphi (Class.cv alphaDummy043)))))).fv ∪ ((Class.cab alphaDummy042
+            (synWrex alphaDummy043 (Class.cv y) (Wff.classEq (Class.cv alphaDummy042)
+                (synCphi (Class.cv alphaDummy043)))))).fv) 0)
+  let alphaDummy048 : Var := (freshVar (((Class.cv alphaDummy041)).fv) 0)
+  let alphaDummy049 : Var := (freshVar (((Class.cv alphaDummy041)).fv) 1)
+  let alphaDummy050 : Var := (freshVar (((Class.cv alphaDummy043)).fv) 0)
+  let alphaDummy051 : Var := (freshVar (((Class.cv alphaDummy043)).fv) 1)
+  let alphaDummy052 : Var :=
+    (freshVar (((Wff.classMem (Class.cv alphaDummy048) (synCnnc))).fv ∪
+          ((synCplc (Class.cv alphaDummy048) (synC1c))).fv ∪
+        ((Class.cv alphaDummy048)).fv) 0)
+  let alphaDummy053 : Var :=
+    (freshVar (((Wff.classMem (Class.cv alphaDummy050) (synCnnc))).fv ∪
+          ((synCplc (Class.cv alphaDummy050) (synC1c))).fv ∪
+        ((Class.cv alphaDummy050)).fv) 0)
+  let alphaDummy054 : Var :=
+    (freshVar (((Class.cv alphaDummy048)).fv ∪ ((synC1c)).fv) 0)
+  let alphaDummy055 : Var :=
+    (freshVar (((Class.cv alphaDummy048)).fv ∪ ((synC1c)).fv) 1)
+  let alphaDummy056 : Var :=
+    (freshVar (((Class.cv alphaDummy048)).fv ∪ ((synC1c)).fv) 2)
+  let alphaDummy057 : Var :=
+    (freshVar (((Class.cv alphaDummy050)).fv ∪ ((synC1c)).fv) 0)
+  let alphaDummy058 : Var :=
+    (freshVar (((Class.cv alphaDummy050)).fv ∪ ((synC1c)).fv) 1)
+  let alphaDummy059 : Var :=
+    (freshVar (((Class.cv alphaDummy050)).fv ∪ ((synC1c)).fv) 2)
+  let alphaDummy060 : Var :=
+    (freshVar (((synCnin (Class.cv alphaDummy055) (Class.cv alphaDummy056))).fv ∪
+        ((synCnin (Class.cv alphaDummy055) (Class.cv alphaDummy056))).fv) 0)
+  let alphaDummy061 : Var :=
+    (freshVar (((synCnin (Class.cv alphaDummy058) (Class.cv alphaDummy059))).fv ∪
+        ((synCnin (Class.cv alphaDummy058) (Class.cv alphaDummy059))).fv) 0)
+  let alphaDummy062 : Var :=
+    (freshVar (((Class.cv alphaDummy055)).fv ∪ ((Class.cv alphaDummy056)).fv) 0)
+  let alphaDummy063 : Var :=
+    (freshVar (((Class.cv alphaDummy058)).fv ∪ ((Class.cv alphaDummy059)).fv) 0)
+  let alphaDummy064 : Var :=
+    (freshVar (((synCcompl (Class.cv alphaDummy055))).fv ∪
+        ((synCcompl (Class.cv alphaDummy056))).fv) 0)
+  let alphaDummy065 : Var :=
+    (freshVar (((synCcompl (Class.cv alphaDummy058))).fv ∪
+        ((synCcompl (Class.cv alphaDummy059))).fv) 0)
   let alpha_dummy_066 : Var :=
-    (freshVar (((Class.cv alpha_dummy_055)).fv ∪ ((Class.cv alpha_dummy_055)).fv) 0)
+    (freshVar (((Class.cv alphaDummy055)).fv ∪ ((Class.cv alphaDummy055)).fv) 0)
   let alpha_dummy_067 : Var :=
-    (freshVar (((Class.cv alpha_dummy_058)).fv ∪ ((Class.cv alpha_dummy_058)).fv) 0)
+    (freshVar (((Class.cv alphaDummy058)).fv ∪ ((Class.cv alphaDummy058)).fv) 0)
   let alpha_dummy_068 : Var :=
-    (freshVar (((Class.cv alpha_dummy_056)).fv ∪ ((Class.cv alpha_dummy_056)).fv) 0)
+    (freshVar (((Class.cv alphaDummy056)).fv ∪ ((Class.cv alphaDummy056)).fv) 0)
   let alpha_dummy_069 : Var :=
-    (freshVar (((Class.cv alpha_dummy_059)).fv ∪ ((Class.cv alpha_dummy_059)).fv) 0)
+    (freshVar (((Class.cv alphaDummy059)).fv ∪ ((Class.cv alphaDummy059)).fv) 0)
   let alpha_dummy_070 : Var :=
-    (freshVar (((Class.cab alpha_dummy_040 (syn_wrex alpha_dummy_041 (Class.cv alpha_dummy_000)
-              (Wff.classEq (Class.cv alpha_dummy_040)
-                (syn_cun (syn_cphi (Class.cv alpha_dummy_041)) (syn_csn (syn_c0c))))))).fv ∪
-        ((Class.cab alpha_dummy_040 (syn_wrex alpha_dummy_041 (Class.cv alpha_dummy_000)
-              (Wff.classEq (Class.cv alpha_dummy_040)
-                (syn_cun (syn_cphi (Class.cv alpha_dummy_041)) (syn_csn (syn_c0c))))))).fv) 0)
-  let alpha_dummy_071 : Var :=
-    (freshVar (((Class.cab alpha_dummy_042 (syn_wrex alpha_dummy_043 (Class.cv x)
-              (Wff.classEq (Class.cv alpha_dummy_042)
-                (syn_cun (syn_cphi (Class.cv alpha_dummy_043)) (syn_csn (syn_c0c))))))).fv ∪
-        ((Class.cab alpha_dummy_042 (syn_wrex alpha_dummy_043 (Class.cv x)
-              (Wff.classEq (Class.cv alpha_dummy_042)
-                (syn_cun (syn_cphi (Class.cv alpha_dummy_043)) (syn_csn (syn_c0c))))))).fv) 0)
-  let alpha_dummy_072 : Var :=
-    (freshVar (((syn_ccompl (syn_cphi (Class.cv alpha_dummy_041)))).fv ∪
-        ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
-  let alpha_dummy_073 : Var :=
-    (freshVar (((syn_ccompl (syn_cphi (Class.cv alpha_dummy_043)))).fv ∪
-        ((syn_ccompl (syn_csn (syn_c0c)))).fv) 0)
-  let alpha_dummy_074 : Var :=
-    (freshVar (((syn_cphi (Class.cv alpha_dummy_041))).fv ∪
-        ((syn_cphi (Class.cv alpha_dummy_041))).fv) 0)
-  let alpha_dummy_075 : Var :=
-    (freshVar (((syn_cphi (Class.cv alpha_dummy_043))).fv ∪
-        ((syn_cphi (Class.cv alpha_dummy_043))).fv) 0)
-  have fresh_092 : alpha_dummy_000 ∉ ((A).fv) := by exact freshVar_not_mem ((A).fv) 0
-  have fresh_093 : alpha_dummy_001 ∉ ((A).fv) := by exact freshVar_not_mem ((A).fv) 1
+    (freshVar (((Class.cab alphaDummy040 (synWrex alphaDummy041 (Class.cv alphaDummy000)
+              (Wff.classEq (Class.cv alphaDummy040)
+                (synCun (synCphi (Class.cv alphaDummy041)) (synCsn (synC0c))))))).fv ∪
+        ((Class.cab alphaDummy040 (synWrex alphaDummy041 (Class.cv alphaDummy000)
+              (Wff.classEq (Class.cv alphaDummy040)
+                (synCun (synCphi (Class.cv alphaDummy041)) (synCsn (synC0c))))))).fv) 0)
+  let alphaDummy071 : Var :=
+    (freshVar (((Class.cab alphaDummy042 (synWrex alphaDummy043 (Class.cv x)
+              (Wff.classEq (Class.cv alphaDummy042)
+                (synCun (synCphi (Class.cv alphaDummy043)) (synCsn (synC0c))))))).fv ∪
+        ((Class.cab alphaDummy042 (synWrex alphaDummy043 (Class.cv x)
+              (Wff.classEq (Class.cv alphaDummy042)
+                (synCun (synCphi (Class.cv alphaDummy043)) (synCsn (synC0c))))))).fv) 0)
+  let alphaDummy072 : Var :=
+    (freshVar (((synCcompl (synCphi (Class.cv alphaDummy041)))).fv ∪
+        ((synCcompl (synCsn (synC0c)))).fv) 0)
+  let alphaDummy073 : Var :=
+    (freshVar (((synCcompl (synCphi (Class.cv alphaDummy043)))).fv ∪
+        ((synCcompl (synCsn (synC0c)))).fv) 0)
+  let alphaDummy074 : Var :=
+    (freshVar (((synCphi (Class.cv alphaDummy041))).fv ∪
+        ((synCphi (Class.cv alphaDummy041))).fv) 0)
+  let alphaDummy075 : Var :=
+    (freshVar (((synCphi (Class.cv alphaDummy043))).fv ∪
+        ((synCphi (Class.cv alphaDummy043))).fv) 0)
+  have fresh_092 : alphaDummy000 ∉ ((A).fv) := by exact freshVar_not_mem ((A).fv) 0
+  have fresh_093 : alphaDummy001 ∉ ((A).fv) := by exact freshVar_not_mem ((A).fv) 1
   have fresh_095 :
-    alpha_dummy_002 ∉
-      (({ alpha_dummy_000 } : Finset Var) ∪ ({ alpha_dummy_001 } : Finset Var) ∪
-        ((syn_wbr (Class.cv alpha_dummy_001) A (Class.cv alpha_dummy_000))).fv) :=
+    alphaDummy002 ∉
+      (({ alphaDummy000 } : Finset Var) ∪ ({ alphaDummy001 } : Finset Var) ∪
+        ((synWbr (Class.cv alphaDummy001) A (Class.cv alphaDummy000))).fv) :=
     by
     exact
       freshVar_not_mem
-        (({ alpha_dummy_000 } : Finset Var) ∪ ({ alpha_dummy_001 } : Finset Var) ∪
-          ((syn_wbr (Class.cv alpha_dummy_001) A (Class.cv alpha_dummy_000))).fv)
+        (({ alphaDummy000 } : Finset Var) ∪ ({ alphaDummy001 } : Finset Var) ∪
+          ((synWbr (Class.cv alphaDummy001) A (Class.cv alphaDummy000))).fv)
         0
   have fresh_096 :
-    alpha_dummy_003 ∉
+    alphaDummy003 ∉
       (({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪
-        ((syn_wbr (Class.cv y) A (Class.cv x))).fv) :=
+        ((synWbr (Class.cv y) A (Class.cv x))).fv) :=
     by
     exact
       freshVar_not_mem
         (({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪
-          ((syn_wbr (Class.cv y) A (Class.cv x))).fv)
+          ((synWbr (Class.cv y) A (Class.cv x))).fv)
         0
   have support_mem_0000 :
-    alpha_dummy_000 ∈
-      (({ alpha_dummy_000 } : Finset Var) ∪ ({ alpha_dummy_001 } : Finset Var) ∪
-        ((syn_wbr (Class.cv alpha_dummy_001) A (Class.cv alpha_dummy_000))).fv) :=
+    alphaDummy000 ∈
+      (({ alphaDummy000 } : Finset Var) ∪ ({ alphaDummy001 } : Finset Var) ∪
+        ((synWbr (Class.cv alphaDummy001) A (Class.cv alphaDummy000))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -300,7 +301,7 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
   have support_mem_0001 :
     x ∈
       (({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪
-        ((syn_wbr (Class.cv y) A (Class.cv x))).fv) :=
+        ((synWbr (Class.cv y) A (Class.cv x))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -308,9 +309,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     left
     exact Finset.mem_singleton_self _
   have support_mem_0002 :
-    alpha_dummy_001 ∈
-      (({ alpha_dummy_000 } : Finset Var) ∪ ({ alpha_dummy_001 } : Finset Var) ∪
-        ((syn_wbr (Class.cv alpha_dummy_001) A (Class.cv alpha_dummy_000))).fv) :=
+    alphaDummy001 ∈
+      (({ alphaDummy000 } : Finset Var) ∪ ({ alphaDummy001 } : Finset Var) ∪
+        ((synWbr (Class.cv alphaDummy001) A (Class.cv alphaDummy000))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -320,7 +321,7 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
   have support_mem_0003 :
     y ∈
       (({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪
-        ((syn_wbr (Class.cv y) A (Class.cv x))).fv) :=
+        ((synWbr (Class.cv y) A (Class.cv x))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -328,23 +329,23 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     right
     exact Finset.mem_singleton_self _
   have support_mem_0004 :
-    alpha_dummy_000 ∈
-      (((Class.cv alpha_dummy_000)).fv ∪ ((Class.cv alpha_dummy_001)).fv) :=
+    alphaDummy000 ∈
+      (((Class.cv alphaDummy000)).fv ∪ ((Class.cv alphaDummy001)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0005 :
-    alpha_dummy_000 ∈
-      (((syn_ccompl (Class.cab alpha_dummy_004
-              (syn_wrex alpha_dummy_005 (Class.cv alpha_dummy_000)
-                (Wff.classEq (Class.cv alpha_dummy_004)
-                  (syn_cphi (Class.cv alpha_dummy_005))))))).fv ∪ ((syn_ccompl
-            (Class.cab alpha_dummy_004 (syn_wrex alpha_dummy_005 (Class.cv alpha_dummy_001)
-                (Wff.classEq (Class.cv alpha_dummy_004)
-                  (syn_cun (syn_cphi (Class.cv alpha_dummy_005))
-                    (syn_csn (syn_c0c)))))))).fv) :=
+    alphaDummy000 ∈
+      (((synCcompl (Class.cab alphaDummy004
+              (synWrex alphaDummy005 (Class.cv alphaDummy000)
+                (Wff.classEq (Class.cv alphaDummy004)
+                  (synCphi (Class.cv alphaDummy005))))))).fv ∪ ((synCcompl
+            (Class.cab alphaDummy004 (synWrex alphaDummy005 (Class.cv alphaDummy001)
+                (Wff.classEq (Class.cv alphaDummy004)
+                  (synCun (synCphi (Class.cv alphaDummy005))
+                    (synCsn (synC0c)))))))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -369,13 +370,13 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     exact Finset.mem_singleton_self _
   have support_mem_0007 :
     x ∈
-      (((syn_ccompl (Class.cab alpha_dummy_006 (syn_wrex alpha_dummy_007 (Class.cv x)
-                (Wff.classEq (Class.cv alpha_dummy_006)
-                  (syn_cphi (Class.cv alpha_dummy_007))))))).fv ∪ ((syn_ccompl
-            (Class.cab alpha_dummy_006 (syn_wrex alpha_dummy_007 (Class.cv y)
-                (Wff.classEq (Class.cv alpha_dummy_006)
-                  (syn_cun (syn_cphi (Class.cv alpha_dummy_007))
-                    (syn_csn (syn_c0c)))))))).fv) :=
+      (((synCcompl (Class.cab alphaDummy006 (synWrex alphaDummy007 (Class.cv x)
+                (Wff.classEq (Class.cv alphaDummy006)
+                  (synCphi (Class.cv alphaDummy007))))))).fv ∪ ((synCcompl
+            (Class.cab alphaDummy006 (synWrex alphaDummy007 (Class.cv y)
+                (Wff.classEq (Class.cv alphaDummy006)
+                  (synCun (synCphi (Class.cv alphaDummy007))
+                    (synCsn (synC0c)))))))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -393,13 +394,13 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
       · rw [fv_class_cv]
         exact Finset.mem_singleton_self _
   have support_mem_0008 :
-    alpha_dummy_000 ∈
-      (((Class.cab alpha_dummy_004 (syn_wrex alpha_dummy_005 (Class.cv alpha_dummy_000)
-              (Wff.classEq (Class.cv alpha_dummy_004)
-                (syn_cphi (Class.cv alpha_dummy_005)))))).fv ∪ ((Class.cab alpha_dummy_004
-            (syn_wrex alpha_dummy_005 (Class.cv alpha_dummy_000)
-              (Wff.classEq (Class.cv alpha_dummy_004)
-                (syn_cphi (Class.cv alpha_dummy_005)))))).fv) :=
+    alphaDummy000 ∈
+      (((Class.cab alphaDummy004 (synWrex alphaDummy005 (Class.cv alphaDummy000)
+              (Wff.classEq (Class.cv alphaDummy004)
+                (synCphi (Class.cv alphaDummy005)))))).fv ∪ ((Class.cab alphaDummy004
+            (synWrex alphaDummy005 (Class.cv alphaDummy000)
+              (Wff.classEq (Class.cv alphaDummy004)
+                (synCphi (Class.cv alphaDummy005)))))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -417,11 +418,11 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
         exact Finset.mem_singleton_self _
   have support_mem_0009 :
     x ∈
-      (((Class.cab alpha_dummy_006 (syn_wrex alpha_dummy_007 (Class.cv x)
-              (Wff.classEq (Class.cv alpha_dummy_006)
-                (syn_cphi (Class.cv alpha_dummy_007)))))).fv ∪ ((Class.cab alpha_dummy_006
-            (syn_wrex alpha_dummy_007 (Class.cv x) (Wff.classEq (Class.cv alpha_dummy_006)
-                (syn_cphi (Class.cv alpha_dummy_007)))))).fv) :=
+      (((Class.cab alphaDummy006 (synWrex alphaDummy007 (Class.cv x)
+              (Wff.classEq (Class.cv alphaDummy006)
+                (synCphi (Class.cv alphaDummy007)))))).fv ∪ ((Class.cab alphaDummy006
+            (synWrex alphaDummy007 (Class.cv x) (Wff.classEq (Class.cv alphaDummy006)
+                (synCphi (Class.cv alphaDummy007)))))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -437,19 +438,19 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
       · exact (Nat.ne_of_lt (mem_lt_freshVar support_mem_0006 1))
       · rw [fv_class_cv]
         exact Finset.mem_singleton_self _
-  have support_mem_0010 : alpha_dummy_005 ∈ (((Class.cv alpha_dummy_005)).fv) :=
+  have support_mem_0010 : alphaDummy005 ∈ (((Class.cv alphaDummy005)).fv) :=
     by
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
-  have support_mem_0011 : alpha_dummy_007 ∈ (((Class.cv alpha_dummy_007)).fv) :=
+  have support_mem_0011 : alphaDummy007 ∈ (((Class.cv alphaDummy007)).fv) :=
     by
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0012 :
-    alpha_dummy_012 ∈
-      (((Wff.classMem (Class.cv alpha_dummy_012) (syn_cnnc))).fv ∪
-          ((syn_cplc (Class.cv alpha_dummy_012) (syn_c1c))).fv ∪
-        ((Class.cv alpha_dummy_012)).fv) :=
+    alphaDummy012 ∈
+      (((Wff.classMem (Class.cv alphaDummy012) (synCnnc))).fv ∪
+          ((synCplc (Class.cv alphaDummy012) (synC1c))).fv ∪
+        ((Class.cv alphaDummy012)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -461,10 +462,10 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0013 :
-    alpha_dummy_014 ∈
-      (((Wff.classMem (Class.cv alpha_dummy_014) (syn_cnnc))).fv ∪
-          ((syn_cplc (Class.cv alpha_dummy_014) (syn_c1c))).fv ∪
-        ((Class.cv alpha_dummy_014)).fv) :=
+    alphaDummy014 ∈
+      (((Wff.classMem (Class.cv alphaDummy014) (synCnnc))).fv ∪
+          ((synCplc (Class.cv alphaDummy014) (synC1c))).fv ∪
+        ((Class.cv alphaDummy014)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -476,23 +477,23 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0014 :
-    alpha_dummy_012 ∈ (((Class.cv alpha_dummy_012)).fv ∪ ((syn_c1c)).fv) :=
+    alphaDummy012 ∈ (((Class.cv alphaDummy012)).fv ∪ ((synC1c)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0015 :
-    alpha_dummy_014 ∈ (((Class.cv alpha_dummy_014)).fv ∪ ((syn_c1c)).fv) :=
+    alphaDummy014 ∈ (((Class.cv alphaDummy014)).fv ∪ ((synC1c)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0016 :
-    alpha_dummy_019 ∈
-      (((syn_cnin (Class.cv alpha_dummy_019) (Class.cv alpha_dummy_020))).fv ∪
-        ((syn_cnin (Class.cv alpha_dummy_019) (Class.cv alpha_dummy_020))).fv) :=
+    alphaDummy019 ∈
+      (((synCnin (Class.cv alphaDummy019) (Class.cv alphaDummy020))).fv ∪
+        ((synCnin (Class.cv alphaDummy019) (Class.cv alphaDummy020))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -502,9 +503,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0017 :
-    alpha_dummy_022 ∈
-      (((syn_cnin (Class.cv alpha_dummy_022) (Class.cv alpha_dummy_023))).fv ∪
-        ((syn_cnin (Class.cv alpha_dummy_022) (Class.cv alpha_dummy_023))).fv) :=
+    alphaDummy022 ∈
+      (((synCnin (Class.cv alphaDummy022) (Class.cv alphaDummy023))).fv ∪
+        ((synCnin (Class.cv alphaDummy022) (Class.cv alphaDummy023))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -514,25 +515,25 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0018 :
-    alpha_dummy_019 ∈
-      (((Class.cv alpha_dummy_019)).fv ∪ ((Class.cv alpha_dummy_020)).fv) :=
+    alphaDummy019 ∈
+      (((Class.cv alphaDummy019)).fv ∪ ((Class.cv alphaDummy020)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0019 :
-    alpha_dummy_022 ∈
-      (((Class.cv alpha_dummy_022)).fv ∪ ((Class.cv alpha_dummy_023)).fv) :=
+    alphaDummy022 ∈
+      (((Class.cv alphaDummy022)).fv ∪ ((Class.cv alphaDummy023)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0020 :
-    alpha_dummy_020 ∈
-      (((syn_cnin (Class.cv alpha_dummy_019) (Class.cv alpha_dummy_020))).fv ∪
-        ((syn_cnin (Class.cv alpha_dummy_019) (Class.cv alpha_dummy_020))).fv) :=
+    alphaDummy020 ∈
+      (((synCnin (Class.cv alphaDummy019) (Class.cv alphaDummy020))).fv ∪
+        ((synCnin (Class.cv alphaDummy019) (Class.cv alphaDummy020))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -542,9 +543,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0021 :
-    alpha_dummy_023 ∈
-      (((syn_cnin (Class.cv alpha_dummy_022) (Class.cv alpha_dummy_023))).fv ∪
-        ((syn_cnin (Class.cv alpha_dummy_022) (Class.cv alpha_dummy_023))).fv) :=
+    alphaDummy023 ∈
+      (((synCnin (Class.cv alphaDummy022) (Class.cv alphaDummy023))).fv ∪
+        ((synCnin (Class.cv alphaDummy022) (Class.cv alphaDummy023))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -554,25 +555,25 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0022 :
-    alpha_dummy_020 ∈
-      (((Class.cv alpha_dummy_019)).fv ∪ ((Class.cv alpha_dummy_020)).fv) :=
+    alphaDummy020 ∈
+      (((Class.cv alphaDummy019)).fv ∪ ((Class.cv alphaDummy020)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     right
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0023 :
-    alpha_dummy_023 ∈
-      (((Class.cv alpha_dummy_022)).fv ∪ ((Class.cv alpha_dummy_023)).fv) :=
+    alphaDummy023 ∈
+      (((Class.cv alphaDummy022)).fv ∪ ((Class.cv alphaDummy023)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     right
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0024 :
-    alpha_dummy_019 ∈
-      (((syn_ccompl (Class.cv alpha_dummy_019))).fv ∪
-        ((syn_ccompl (Class.cv alpha_dummy_020))).fv) :=
+    alphaDummy019 ∈
+      (((synCcompl (Class.cv alphaDummy019))).fv ∪
+        ((synCcompl (Class.cv alphaDummy020))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -580,9 +581,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0025 :
-    alpha_dummy_022 ∈
-      (((syn_ccompl (Class.cv alpha_dummy_022))).fv ∪
-        ((syn_ccompl (Class.cv alpha_dummy_023))).fv) :=
+    alphaDummy022 ∈
+      (((synCcompl (Class.cv alphaDummy022))).fv ∪
+        ((synCcompl (Class.cv alphaDummy023))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -590,25 +591,25 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0026 :
-    alpha_dummy_019 ∈
-      (((Class.cv alpha_dummy_019)).fv ∪ ((Class.cv alpha_dummy_019)).fv) :=
+    alphaDummy019 ∈
+      (((Class.cv alphaDummy019)).fv ∪ ((Class.cv alphaDummy019)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0027 :
-    alpha_dummy_022 ∈
-      (((Class.cv alpha_dummy_022)).fv ∪ ((Class.cv alpha_dummy_022)).fv) :=
+    alphaDummy022 ∈
+      (((Class.cv alphaDummy022)).fv ∪ ((Class.cv alphaDummy022)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0028 :
-    alpha_dummy_020 ∈
-      (((syn_ccompl (Class.cv alpha_dummy_019))).fv ∪
-        ((syn_ccompl (Class.cv alpha_dummy_020))).fv) :=
+    alphaDummy020 ∈
+      (((synCcompl (Class.cv alphaDummy019))).fv ∪
+        ((synCcompl (Class.cv alphaDummy020))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     right
@@ -616,9 +617,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0029 :
-    alpha_dummy_023 ∈
-      (((syn_ccompl (Class.cv alpha_dummy_022))).fv ∪
-        ((syn_ccompl (Class.cv alpha_dummy_023))).fv) :=
+    alphaDummy023 ∈
+      (((synCcompl (Class.cv alphaDummy022))).fv ∪
+        ((synCcompl (Class.cv alphaDummy023))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     right
@@ -626,39 +627,39 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0030 :
-    alpha_dummy_020 ∈
-      (((Class.cv alpha_dummy_020)).fv ∪ ((Class.cv alpha_dummy_020)).fv) :=
+    alphaDummy020 ∈
+      (((Class.cv alphaDummy020)).fv ∪ ((Class.cv alphaDummy020)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0031 :
-    alpha_dummy_023 ∈
-      (((Class.cv alpha_dummy_023)).fv ∪ ((Class.cv alpha_dummy_023)).fv) :=
+    alphaDummy023 ∈
+      (((Class.cv alphaDummy023)).fv ∪ ((Class.cv alphaDummy023)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0032 :
-    alpha_dummy_001 ∈
-      (((Class.cv alpha_dummy_000)).fv ∪ ((Class.cv alpha_dummy_001)).fv) :=
+    alphaDummy001 ∈
+      (((Class.cv alphaDummy000)).fv ∪ ((Class.cv alphaDummy001)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     right
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0033 :
-    alpha_dummy_001 ∈
-      (((syn_ccompl (Class.cab alpha_dummy_004
-              (syn_wrex alpha_dummy_005 (Class.cv alpha_dummy_000)
-                (Wff.classEq (Class.cv alpha_dummy_004)
-                  (syn_cphi (Class.cv alpha_dummy_005))))))).fv ∪ ((syn_ccompl
-            (Class.cab alpha_dummy_004 (syn_wrex alpha_dummy_005 (Class.cv alpha_dummy_001)
-                (Wff.classEq (Class.cv alpha_dummy_004)
-                  (syn_cun (syn_cphi (Class.cv alpha_dummy_005))
-                    (syn_csn (syn_c0c)))))))).fv) :=
+    alphaDummy001 ∈
+      (((synCcompl (Class.cab alphaDummy004
+              (synWrex alphaDummy005 (Class.cv alphaDummy000)
+                (Wff.classEq (Class.cv alphaDummy004)
+                  (synCphi (Class.cv alphaDummy005))))))).fv ∪ ((synCcompl
+            (Class.cab alphaDummy004 (synWrex alphaDummy005 (Class.cv alphaDummy001)
+                (Wff.classEq (Class.cv alphaDummy004)
+                  (synCun (synCphi (Class.cv alphaDummy005))
+                    (synCsn (synC0c)))))))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     right
@@ -683,13 +684,13 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     exact Finset.mem_singleton_self _
   have support_mem_0035 :
     y ∈
-      (((syn_ccompl (Class.cab alpha_dummy_006 (syn_wrex alpha_dummy_007 (Class.cv x)
-                (Wff.classEq (Class.cv alpha_dummy_006)
-                  (syn_cphi (Class.cv alpha_dummy_007))))))).fv ∪ ((syn_ccompl
-            (Class.cab alpha_dummy_006 (syn_wrex alpha_dummy_007 (Class.cv y)
-                (Wff.classEq (Class.cv alpha_dummy_006)
-                  (syn_cun (syn_cphi (Class.cv alpha_dummy_007))
-                    (syn_csn (syn_c0c)))))))).fv) :=
+      (((synCcompl (Class.cab alphaDummy006 (synWrex alphaDummy007 (Class.cv x)
+                (Wff.classEq (Class.cv alphaDummy006)
+                  (synCphi (Class.cv alphaDummy007))))))).fv ∪ ((synCcompl
+            (Class.cab alphaDummy006 (synWrex alphaDummy007 (Class.cv y)
+                (Wff.classEq (Class.cv alphaDummy006)
+                  (synCun (synCphi (Class.cv alphaDummy007))
+                    (synCsn (synC0c)))))))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     right
@@ -707,13 +708,13 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
       · rw [fv_class_cv]
         exact Finset.mem_singleton_self _
   have support_mem_0036 :
-    alpha_dummy_001 ∈
-      (((Class.cab alpha_dummy_004 (syn_wrex alpha_dummy_005 (Class.cv alpha_dummy_001)
-              (Wff.classEq (Class.cv alpha_dummy_004)
-                (syn_cun (syn_cphi (Class.cv alpha_dummy_005)) (syn_csn (syn_c0c))))))).fv ∪
-        ((Class.cab alpha_dummy_004 (syn_wrex alpha_dummy_005 (Class.cv alpha_dummy_001)
-              (Wff.classEq (Class.cv alpha_dummy_004)
-                (syn_cun (syn_cphi (Class.cv alpha_dummy_005)) (syn_csn (syn_c0c))))))).fv) :=
+    alphaDummy001 ∈
+      (((Class.cab alphaDummy004 (synWrex alphaDummy005 (Class.cv alphaDummy001)
+              (Wff.classEq (Class.cv alphaDummy004)
+                (synCun (synCphi (Class.cv alphaDummy005)) (synCsn (synC0c))))))).fv ∪
+        ((Class.cab alphaDummy004 (synWrex alphaDummy005 (Class.cv alphaDummy001)
+              (Wff.classEq (Class.cv alphaDummy004)
+                (synCun (synCphi (Class.cv alphaDummy005)) (synCsn (synC0c))))))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -731,12 +732,12 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
         exact Finset.mem_singleton_self _
   have support_mem_0037 :
     y ∈
-      (((Class.cab alpha_dummy_006 (syn_wrex alpha_dummy_007 (Class.cv y)
-              (Wff.classEq (Class.cv alpha_dummy_006)
-                (syn_cun (syn_cphi (Class.cv alpha_dummy_007)) (syn_csn (syn_c0c))))))).fv ∪
-        ((Class.cab alpha_dummy_006 (syn_wrex alpha_dummy_007 (Class.cv y)
-              (Wff.classEq (Class.cv alpha_dummy_006)
-                (syn_cun (syn_cphi (Class.cv alpha_dummy_007)) (syn_csn (syn_c0c))))))).fv) :=
+      (((Class.cab alphaDummy006 (synWrex alphaDummy007 (Class.cv y)
+              (Wff.classEq (Class.cv alphaDummy006)
+                (synCun (synCphi (Class.cv alphaDummy007)) (synCsn (synC0c))))))).fv ∪
+        ((Class.cab alphaDummy006 (synWrex alphaDummy007 (Class.cv y)
+              (Wff.classEq (Class.cv alphaDummy006)
+                (synCun (synCphi (Class.cv alphaDummy007)) (synCsn (synC0c))))))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -753,9 +754,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
       · rw [fv_class_cv]
         exact Finset.mem_singleton_self _
   have support_mem_0038 :
-    alpha_dummy_005 ∈
-      (((syn_ccompl (syn_cphi (Class.cv alpha_dummy_005)))).fv ∪
-        ((syn_ccompl (syn_csn (syn_c0c)))).fv) :=
+    alphaDummy005 ∈
+      (((synCcompl (synCphi (Class.cv alphaDummy005)))).fv ∪
+        ((synCcompl (synCsn (synC0c)))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -764,9 +765,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0039 :
-    alpha_dummy_007 ∈
-      (((syn_ccompl (syn_cphi (Class.cv alpha_dummy_007)))).fv ∪
-        ((syn_ccompl (syn_csn (syn_c0c)))).fv) :=
+    alphaDummy007 ∈
+      (((synCcompl (synCphi (Class.cv alphaDummy007)))).fv ∪
+        ((synCcompl (synCsn (synC0c)))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -775,9 +776,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0040 :
-    alpha_dummy_005 ∈
-      (((syn_cphi (Class.cv alpha_dummy_005))).fv ∪
-        ((syn_cphi (Class.cv alpha_dummy_005))).fv) :=
+    alphaDummy005 ∈
+      (((synCphi (Class.cv alphaDummy005))).fv ∪
+        ((synCphi (Class.cv alphaDummy005))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -785,9 +786,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0041 :
-    alpha_dummy_007 ∈
-      (((syn_cphi (Class.cv alpha_dummy_007))).fv ∪
-        ((syn_cphi (Class.cv alpha_dummy_007))).fv) :=
+    alphaDummy007 ∈
+      (((synCphi (Class.cv alphaDummy007))).fv ∪
+        ((synCphi (Class.cv alphaDummy007))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -795,23 +796,23 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0042 :
-    alpha_dummy_001 ∈
-      (((Class.cv alpha_dummy_001)).fv ∪ ((Class.cv alpha_dummy_000)).fv) :=
+    alphaDummy001 ∈
+      (((Class.cv alphaDummy001)).fv ∪ ((Class.cv alphaDummy000)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0043 :
-    alpha_dummy_001 ∈
-      (((syn_ccompl (Class.cab alpha_dummy_040
-              (syn_wrex alpha_dummy_041 (Class.cv alpha_dummy_001)
-                (Wff.classEq (Class.cv alpha_dummy_040)
-                  (syn_cphi (Class.cv alpha_dummy_041))))))).fv ∪ ((syn_ccompl
-            (Class.cab alpha_dummy_040 (syn_wrex alpha_dummy_041 (Class.cv alpha_dummy_000)
-                (Wff.classEq (Class.cv alpha_dummy_040)
-                  (syn_cun (syn_cphi (Class.cv alpha_dummy_041))
-                    (syn_csn (syn_c0c)))))))).fv) :=
+    alphaDummy001 ∈
+      (((synCcompl (Class.cab alphaDummy040
+              (synWrex alphaDummy041 (Class.cv alphaDummy001)
+                (Wff.classEq (Class.cv alphaDummy040)
+                  (synCphi (Class.cv alphaDummy041))))))).fv ∪ ((synCcompl
+            (Class.cab alphaDummy040 (synWrex alphaDummy041 (Class.cv alphaDummy000)
+                (Wff.classEq (Class.cv alphaDummy040)
+                  (synCun (synCphi (Class.cv alphaDummy041))
+                    (synCsn (synC0c)))))))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -836,13 +837,13 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     exact Finset.mem_singleton_self _
   have support_mem_0045 :
     y ∈
-      (((syn_ccompl (Class.cab alpha_dummy_042 (syn_wrex alpha_dummy_043 (Class.cv y)
-                (Wff.classEq (Class.cv alpha_dummy_042)
-                  (syn_cphi (Class.cv alpha_dummy_043))))))).fv ∪ ((syn_ccompl
-            (Class.cab alpha_dummy_042 (syn_wrex alpha_dummy_043 (Class.cv x)
-                (Wff.classEq (Class.cv alpha_dummy_042)
-                  (syn_cun (syn_cphi (Class.cv alpha_dummy_043))
-                    (syn_csn (syn_c0c)))))))).fv) :=
+      (((synCcompl (Class.cab alphaDummy042 (synWrex alphaDummy043 (Class.cv y)
+                (Wff.classEq (Class.cv alphaDummy042)
+                  (synCphi (Class.cv alphaDummy043))))))).fv ∪ ((synCcompl
+            (Class.cab alphaDummy042 (synWrex alphaDummy043 (Class.cv x)
+                (Wff.classEq (Class.cv alphaDummy042)
+                  (synCun (synCphi (Class.cv alphaDummy043))
+                    (synCsn (synC0c)))))))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -860,13 +861,13 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
       · rw [fv_class_cv]
         exact Finset.mem_singleton_self _
   have support_mem_0046 :
-    alpha_dummy_001 ∈
-      (((Class.cab alpha_dummy_040 (syn_wrex alpha_dummy_041 (Class.cv alpha_dummy_001)
-              (Wff.classEq (Class.cv alpha_dummy_040)
-                (syn_cphi (Class.cv alpha_dummy_041)))))).fv ∪ ((Class.cab alpha_dummy_040
-            (syn_wrex alpha_dummy_041 (Class.cv alpha_dummy_001)
-              (Wff.classEq (Class.cv alpha_dummy_040)
-                (syn_cphi (Class.cv alpha_dummy_041)))))).fv) :=
+    alphaDummy001 ∈
+      (((Class.cab alphaDummy040 (synWrex alphaDummy041 (Class.cv alphaDummy001)
+              (Wff.classEq (Class.cv alphaDummy040)
+                (synCphi (Class.cv alphaDummy041)))))).fv ∪ ((Class.cab alphaDummy040
+            (synWrex alphaDummy041 (Class.cv alphaDummy001)
+              (Wff.classEq (Class.cv alphaDummy040)
+                (synCphi (Class.cv alphaDummy041)))))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -884,11 +885,11 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
         exact Finset.mem_singleton_self _
   have support_mem_0047 :
     y ∈
-      (((Class.cab alpha_dummy_042 (syn_wrex alpha_dummy_043 (Class.cv y)
-              (Wff.classEq (Class.cv alpha_dummy_042)
-                (syn_cphi (Class.cv alpha_dummy_043)))))).fv ∪ ((Class.cab alpha_dummy_042
-            (syn_wrex alpha_dummy_043 (Class.cv y) (Wff.classEq (Class.cv alpha_dummy_042)
-                (syn_cphi (Class.cv alpha_dummy_043)))))).fv) :=
+      (((Class.cab alphaDummy042 (synWrex alphaDummy043 (Class.cv y)
+              (Wff.classEq (Class.cv alphaDummy042)
+                (synCphi (Class.cv alphaDummy043)))))).fv ∪ ((Class.cab alphaDummy042
+            (synWrex alphaDummy043 (Class.cv y) (Wff.classEq (Class.cv alphaDummy042)
+                (synCphi (Class.cv alphaDummy043)))))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -904,19 +905,19 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
       · exact (Nat.ne_of_lt (mem_lt_freshVar support_mem_0044 1))
       · rw [fv_class_cv]
         exact Finset.mem_singleton_self _
-  have support_mem_0048 : alpha_dummy_041 ∈ (((Class.cv alpha_dummy_041)).fv) :=
+  have support_mem_0048 : alphaDummy041 ∈ (((Class.cv alphaDummy041)).fv) :=
     by
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
-  have support_mem_0049 : alpha_dummy_043 ∈ (((Class.cv alpha_dummy_043)).fv) :=
+  have support_mem_0049 : alphaDummy043 ∈ (((Class.cv alphaDummy043)).fv) :=
     by
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0050 :
-    alpha_dummy_048 ∈
-      (((Wff.classMem (Class.cv alpha_dummy_048) (syn_cnnc))).fv ∪
-          ((syn_cplc (Class.cv alpha_dummy_048) (syn_c1c))).fv ∪
-        ((Class.cv alpha_dummy_048)).fv) :=
+    alphaDummy048 ∈
+      (((Wff.classMem (Class.cv alphaDummy048) (synCnnc))).fv ∪
+          ((synCplc (Class.cv alphaDummy048) (synC1c))).fv ∪
+        ((Class.cv alphaDummy048)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -928,10 +929,10 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0051 :
-    alpha_dummy_050 ∈
-      (((Wff.classMem (Class.cv alpha_dummy_050) (syn_cnnc))).fv ∪
-          ((syn_cplc (Class.cv alpha_dummy_050) (syn_c1c))).fv ∪
-        ((Class.cv alpha_dummy_050)).fv) :=
+    alphaDummy050 ∈
+      (((Wff.classMem (Class.cv alphaDummy050) (synCnnc))).fv ∪
+          ((synCplc (Class.cv alphaDummy050) (synC1c))).fv ∪
+        ((Class.cv alphaDummy050)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -943,23 +944,23 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0052 :
-    alpha_dummy_048 ∈ (((Class.cv alpha_dummy_048)).fv ∪ ((syn_c1c)).fv) :=
+    alphaDummy048 ∈ (((Class.cv alphaDummy048)).fv ∪ ((synC1c)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0053 :
-    alpha_dummy_050 ∈ (((Class.cv alpha_dummy_050)).fv ∪ ((syn_c1c)).fv) :=
+    alphaDummy050 ∈ (((Class.cv alphaDummy050)).fv ∪ ((synC1c)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0054 :
-    alpha_dummy_055 ∈
-      (((syn_cnin (Class.cv alpha_dummy_055) (Class.cv alpha_dummy_056))).fv ∪
-        ((syn_cnin (Class.cv alpha_dummy_055) (Class.cv alpha_dummy_056))).fv) :=
+    alphaDummy055 ∈
+      (((synCnin (Class.cv alphaDummy055) (Class.cv alphaDummy056))).fv ∪
+        ((synCnin (Class.cv alphaDummy055) (Class.cv alphaDummy056))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -969,9 +970,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0055 :
-    alpha_dummy_058 ∈
-      (((syn_cnin (Class.cv alpha_dummy_058) (Class.cv alpha_dummy_059))).fv ∪
-        ((syn_cnin (Class.cv alpha_dummy_058) (Class.cv alpha_dummy_059))).fv) :=
+    alphaDummy058 ∈
+      (((synCnin (Class.cv alphaDummy058) (Class.cv alphaDummy059))).fv ∪
+        ((synCnin (Class.cv alphaDummy058) (Class.cv alphaDummy059))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -981,25 +982,25 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0056 :
-    alpha_dummy_055 ∈
-      (((Class.cv alpha_dummy_055)).fv ∪ ((Class.cv alpha_dummy_056)).fv) :=
+    alphaDummy055 ∈
+      (((Class.cv alphaDummy055)).fv ∪ ((Class.cv alphaDummy056)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0057 :
-    alpha_dummy_058 ∈
-      (((Class.cv alpha_dummy_058)).fv ∪ ((Class.cv alpha_dummy_059)).fv) :=
+    alphaDummy058 ∈
+      (((Class.cv alphaDummy058)).fv ∪ ((Class.cv alphaDummy059)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0058 :
-    alpha_dummy_056 ∈
-      (((syn_cnin (Class.cv alpha_dummy_055) (Class.cv alpha_dummy_056))).fv ∪
-        ((syn_cnin (Class.cv alpha_dummy_055) (Class.cv alpha_dummy_056))).fv) :=
+    alphaDummy056 ∈
+      (((synCnin (Class.cv alphaDummy055) (Class.cv alphaDummy056))).fv ∪
+        ((synCnin (Class.cv alphaDummy055) (Class.cv alphaDummy056))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -1009,9 +1010,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0059 :
-    alpha_dummy_059 ∈
-      (((syn_cnin (Class.cv alpha_dummy_058) (Class.cv alpha_dummy_059))).fv ∪
-        ((syn_cnin (Class.cv alpha_dummy_058) (Class.cv alpha_dummy_059))).fv) :=
+    alphaDummy059 ∈
+      (((synCnin (Class.cv alphaDummy058) (Class.cv alphaDummy059))).fv ∪
+        ((synCnin (Class.cv alphaDummy058) (Class.cv alphaDummy059))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -1021,25 +1022,25 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0060 :
-    alpha_dummy_056 ∈
-      (((Class.cv alpha_dummy_055)).fv ∪ ((Class.cv alpha_dummy_056)).fv) :=
+    alphaDummy056 ∈
+      (((Class.cv alphaDummy055)).fv ∪ ((Class.cv alphaDummy056)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     right
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0061 :
-    alpha_dummy_059 ∈
-      (((Class.cv alpha_dummy_058)).fv ∪ ((Class.cv alpha_dummy_059)).fv) :=
+    alphaDummy059 ∈
+      (((Class.cv alphaDummy058)).fv ∪ ((Class.cv alphaDummy059)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     right
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0062 :
-    alpha_dummy_055 ∈
-      (((syn_ccompl (Class.cv alpha_dummy_055))).fv ∪
-        ((syn_ccompl (Class.cv alpha_dummy_056))).fv) :=
+    alphaDummy055 ∈
+      (((synCcompl (Class.cv alphaDummy055))).fv ∪
+        ((synCcompl (Class.cv alphaDummy056))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -1047,9 +1048,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0063 :
-    alpha_dummy_058 ∈
-      (((syn_ccompl (Class.cv alpha_dummy_058))).fv ∪
-        ((syn_ccompl (Class.cv alpha_dummy_059))).fv) :=
+    alphaDummy058 ∈
+      (((synCcompl (Class.cv alphaDummy058))).fv ∪
+        ((synCcompl (Class.cv alphaDummy059))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -1057,25 +1058,25 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0064 :
-    alpha_dummy_055 ∈
-      (((Class.cv alpha_dummy_055)).fv ∪ ((Class.cv alpha_dummy_055)).fv) :=
+    alphaDummy055 ∈
+      (((Class.cv alphaDummy055)).fv ∪ ((Class.cv alphaDummy055)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0065 :
-    alpha_dummy_058 ∈
-      (((Class.cv alpha_dummy_058)).fv ∪ ((Class.cv alpha_dummy_058)).fv) :=
+    alphaDummy058 ∈
+      (((Class.cv alphaDummy058)).fv ∪ ((Class.cv alphaDummy058)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0066 :
-    alpha_dummy_056 ∈
-      (((syn_ccompl (Class.cv alpha_dummy_055))).fv ∪
-        ((syn_ccompl (Class.cv alpha_dummy_056))).fv) :=
+    alphaDummy056 ∈
+      (((synCcompl (Class.cv alphaDummy055))).fv ∪
+        ((synCcompl (Class.cv alphaDummy056))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     right
@@ -1083,9 +1084,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0067 :
-    alpha_dummy_059 ∈
-      (((syn_ccompl (Class.cv alpha_dummy_058))).fv ∪
-        ((syn_ccompl (Class.cv alpha_dummy_059))).fv) :=
+    alphaDummy059 ∈
+      (((synCcompl (Class.cv alphaDummy058))).fv ∪
+        ((synCcompl (Class.cv alphaDummy059))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     right
@@ -1093,39 +1094,39 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0068 :
-    alpha_dummy_056 ∈
-      (((Class.cv alpha_dummy_056)).fv ∪ ((Class.cv alpha_dummy_056)).fv) :=
+    alphaDummy056 ∈
+      (((Class.cv alphaDummy056)).fv ∪ ((Class.cv alphaDummy056)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0069 :
-    alpha_dummy_059 ∈
-      (((Class.cv alpha_dummy_059)).fv ∪ ((Class.cv alpha_dummy_059)).fv) :=
+    alphaDummy059 ∈
+      (((Class.cv alphaDummy059)).fv ∪ ((Class.cv alphaDummy059)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0070 :
-    alpha_dummy_000 ∈
-      (((Class.cv alpha_dummy_001)).fv ∪ ((Class.cv alpha_dummy_000)).fv) :=
+    alphaDummy000 ∈
+      (((Class.cv alphaDummy001)).fv ∪ ((Class.cv alphaDummy000)).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     right
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0071 :
-    alpha_dummy_000 ∈
-      (((syn_ccompl (Class.cab alpha_dummy_040
-              (syn_wrex alpha_dummy_041 (Class.cv alpha_dummy_001)
-                (Wff.classEq (Class.cv alpha_dummy_040)
-                  (syn_cphi (Class.cv alpha_dummy_041))))))).fv ∪ ((syn_ccompl
-            (Class.cab alpha_dummy_040 (syn_wrex alpha_dummy_041 (Class.cv alpha_dummy_000)
-                (Wff.classEq (Class.cv alpha_dummy_040)
-                  (syn_cun (syn_cphi (Class.cv alpha_dummy_041))
-                    (syn_csn (syn_c0c)))))))).fv) :=
+    alphaDummy000 ∈
+      (((synCcompl (Class.cab alphaDummy040
+              (synWrex alphaDummy041 (Class.cv alphaDummy001)
+                (Wff.classEq (Class.cv alphaDummy040)
+                  (synCphi (Class.cv alphaDummy041))))))).fv ∪ ((synCcompl
+            (Class.cab alphaDummy040 (synWrex alphaDummy041 (Class.cv alphaDummy000)
+                (Wff.classEq (Class.cv alphaDummy040)
+                  (synCun (synCphi (Class.cv alphaDummy041))
+                    (synCsn (synC0c)))))))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     right
@@ -1150,13 +1151,13 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     exact Finset.mem_singleton_self _
   have support_mem_0073 :
     x ∈
-      (((syn_ccompl (Class.cab alpha_dummy_042 (syn_wrex alpha_dummy_043 (Class.cv y)
-                (Wff.classEq (Class.cv alpha_dummy_042)
-                  (syn_cphi (Class.cv alpha_dummy_043))))))).fv ∪ ((syn_ccompl
-            (Class.cab alpha_dummy_042 (syn_wrex alpha_dummy_043 (Class.cv x)
-                (Wff.classEq (Class.cv alpha_dummy_042)
-                  (syn_cun (syn_cphi (Class.cv alpha_dummy_043))
-                    (syn_csn (syn_c0c)))))))).fv) :=
+      (((synCcompl (Class.cab alphaDummy042 (synWrex alphaDummy043 (Class.cv y)
+                (Wff.classEq (Class.cv alphaDummy042)
+                  (synCphi (Class.cv alphaDummy043))))))).fv ∪ ((synCcompl
+            (Class.cab alphaDummy042 (synWrex alphaDummy043 (Class.cv x)
+                (Wff.classEq (Class.cv alphaDummy042)
+                  (synCun (synCphi (Class.cv alphaDummy043))
+                    (synCsn (synC0c)))))))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     right
@@ -1174,13 +1175,13 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
       · rw [fv_class_cv]
         exact Finset.mem_singleton_self _
   have support_mem_0074 :
-    alpha_dummy_000 ∈
-      (((Class.cab alpha_dummy_040 (syn_wrex alpha_dummy_041 (Class.cv alpha_dummy_000)
-              (Wff.classEq (Class.cv alpha_dummy_040)
-                (syn_cun (syn_cphi (Class.cv alpha_dummy_041)) (syn_csn (syn_c0c))))))).fv ∪
-        ((Class.cab alpha_dummy_040 (syn_wrex alpha_dummy_041 (Class.cv alpha_dummy_000)
-              (Wff.classEq (Class.cv alpha_dummy_040)
-                (syn_cun (syn_cphi (Class.cv alpha_dummy_041)) (syn_csn (syn_c0c))))))).fv) :=
+    alphaDummy000 ∈
+      (((Class.cab alphaDummy040 (synWrex alphaDummy041 (Class.cv alphaDummy000)
+              (Wff.classEq (Class.cv alphaDummy040)
+                (synCun (synCphi (Class.cv alphaDummy041)) (synCsn (synC0c))))))).fv ∪
+        ((Class.cab alphaDummy040 (synWrex alphaDummy041 (Class.cv alphaDummy000)
+              (Wff.classEq (Class.cv alphaDummy040)
+                (synCun (synCphi (Class.cv alphaDummy041)) (synCsn (synC0c))))))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -1198,12 +1199,12 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
         exact Finset.mem_singleton_self _
   have support_mem_0075 :
     x ∈
-      (((Class.cab alpha_dummy_042 (syn_wrex alpha_dummy_043 (Class.cv x)
-              (Wff.classEq (Class.cv alpha_dummy_042)
-                (syn_cun (syn_cphi (Class.cv alpha_dummy_043)) (syn_csn (syn_c0c))))))).fv ∪
-        ((Class.cab alpha_dummy_042 (syn_wrex alpha_dummy_043 (Class.cv x)
-              (Wff.classEq (Class.cv alpha_dummy_042)
-                (syn_cun (syn_cphi (Class.cv alpha_dummy_043)) (syn_csn (syn_c0c))))))).fv) :=
+      (((Class.cab alphaDummy042 (synWrex alphaDummy043 (Class.cv x)
+              (Wff.classEq (Class.cv alphaDummy042)
+                (synCun (synCphi (Class.cv alphaDummy043)) (synCsn (synC0c))))))).fv ∪
+        ((Class.cab alphaDummy042 (synWrex alphaDummy043 (Class.cv x)
+              (Wff.classEq (Class.cv alphaDummy042)
+                (synCun (synCphi (Class.cv alphaDummy043)) (synCsn (synC0c))))))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -1220,9 +1221,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
       · rw [fv_class_cv]
         exact Finset.mem_singleton_self _
   have support_mem_0076 :
-    alpha_dummy_041 ∈
-      (((syn_ccompl (syn_cphi (Class.cv alpha_dummy_041)))).fv ∪
-        ((syn_ccompl (syn_csn (syn_c0c)))).fv) :=
+    alphaDummy041 ∈
+      (((synCcompl (synCphi (Class.cv alphaDummy041)))).fv ∪
+        ((synCcompl (synCsn (synC0c)))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -1231,9 +1232,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0077 :
-    alpha_dummy_043 ∈
-      (((syn_ccompl (syn_cphi (Class.cv alpha_dummy_043)))).fv ∪
-        ((syn_ccompl (syn_csn (syn_c0c)))).fv) :=
+    alphaDummy043 ∈
+      (((synCcompl (synCphi (Class.cv alphaDummy043)))).fv ∪
+        ((synCcompl (synCsn (synC0c)))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -1242,9 +1243,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0078 :
-    alpha_dummy_041 ∈
-      (((syn_cphi (Class.cv alpha_dummy_041))).fv ∪
-        ((syn_cphi (Class.cv alpha_dummy_041))).fv) :=
+    alphaDummy041 ∈
+      (((synCphi (Class.cv alphaDummy041))).fv ∪
+        ((synCphi (Class.cv alphaDummy041))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
@@ -1252,76 +1253,76 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
   have support_mem_0079 :
-    alpha_dummy_043 ∈
-      (((syn_cphi (Class.cv alpha_dummy_043))).fv ∪
-        ((syn_cphi (Class.cv alpha_dummy_043))).fv) :=
+    alphaDummy043 ∈
+      (((synCphi (Class.cv alphaDummy043))).fv ∪
+        ((synCphi (Class.cv alphaDummy043))).fv) :=
     by
     with_reducible rw [Finset.mem_union]
     left
     rw [fv_syn_cphi]
     rw [fv_class_cv]
     exact Finset.mem_singleton_self _
-  have wpp_notmem_0000 : alpha_dummy_002 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0000 : alphaDummy002 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0001 : alpha_dummy_003 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0001 : alphaDummy003 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0002 : alpha_dummy_000 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0002 : alphaDummy000 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0003 : x ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0003 : x ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0004 : alpha_dummy_001 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0004 : alphaDummy001 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0005 : y ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0005 : y ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0006 : alpha_dummy_008 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0006 : alphaDummy008 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0007 : alpha_dummy_009 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0007 : alphaDummy009 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0008 : alpha_dummy_010 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0008 : alphaDummy010 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0009 : alpha_dummy_011 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0009 : alphaDummy011 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0010 : alpha_dummy_004 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0010 : alphaDummy004 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0011 : alpha_dummy_006 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0011 : alphaDummy006 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0012 : alpha_dummy_005 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0012 : alphaDummy005 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0013 : alpha_dummy_007 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0013 : alphaDummy007 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0014 : alpha_dummy_013 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0014 : alphaDummy013 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0015 : alpha_dummy_015 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0015 : alphaDummy015 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0016 : alpha_dummy_012 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0016 : alphaDummy012 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0017 : alpha_dummy_014 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0017 : alphaDummy014 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0018 : alpha_dummy_016 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0018 : alphaDummy016 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0019 : alpha_dummy_017 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0019 : alphaDummy017 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0020 : alpha_dummy_018 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0020 : alphaDummy018 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0021 : alpha_dummy_021 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0021 : alphaDummy021 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0022 : alpha_dummy_019 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0022 : alphaDummy019 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0023 : alpha_dummy_022 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0023 : alphaDummy022 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0024 : alpha_dummy_020 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0024 : alphaDummy020 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0025 : alpha_dummy_023 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0025 : alphaDummy023 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
   have wpp_refl_0000 :
     TReflOn
-      [(alpha_dummy_020, alpha_dummy_023), (alpha_dummy_019, alpha_dummy_022),
-        (alpha_dummy_018, alpha_dummy_021), (alpha_dummy_016, alpha_dummy_017),
-        (alpha_dummy_012, alpha_dummy_014), (alpha_dummy_013, alpha_dummy_015),
-        (alpha_dummy_005, alpha_dummy_007), (alpha_dummy_004, alpha_dummy_006),
-        (alpha_dummy_010, alpha_dummy_011), (alpha_dummy_008, alpha_dummy_009),
-        (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-      ((syn_c1c)).fv :=
+      [(alphaDummy020, alphaDummy023), (alphaDummy019, alphaDummy022),
+        (alphaDummy018, alphaDummy021), (alphaDummy016, alphaDummy017),
+        (alphaDummy012, alphaDummy014), (alphaDummy013, alphaDummy015),
+        (alphaDummy005, alphaDummy007), (alphaDummy004, alphaDummy006),
+        (alphaDummy010, alphaDummy011), (alphaDummy008, alphaDummy009),
+        (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+      ((synC1c)).fv :=
     by
     intro u hu
     exact
@@ -1352,67 +1353,67 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                               (TAlphaVar.there (fun h_eq => (wpp_notmem_0000) (h_eq ▸ hu))
                                 (fun h_eq => (wpp_notmem_0001) (h_eq ▸ hu))
                                 (TAlphaVar.free (by simp) (by simp)))))))))))))))
-  have wpp_notmem_0026 : alpha_dummy_002 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0026 : alphaDummy002 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0027 : alpha_dummy_003 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0027 : alphaDummy003 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0028 : alpha_dummy_000 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0028 : alphaDummy000 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0029 : x ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0029 : x ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0030 : alpha_dummy_001 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0030 : alphaDummy001 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0031 : y ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0031 : y ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0032 : alpha_dummy_008 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0032 : alphaDummy008 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0033 : alpha_dummy_009 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0033 : alphaDummy009 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0034 : alpha_dummy_010 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0034 : alphaDummy010 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0035 : alpha_dummy_011 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0035 : alphaDummy011 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0036 : alpha_dummy_004 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0036 : alphaDummy004 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0037 : alpha_dummy_006 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0037 : alphaDummy006 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0038 : alpha_dummy_005 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0038 : alphaDummy005 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0039 : alpha_dummy_007 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0039 : alphaDummy007 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0040 : alpha_dummy_013 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0040 : alphaDummy013 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0041 : alpha_dummy_015 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0041 : alphaDummy015 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0042 : alpha_dummy_012 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0042 : alphaDummy012 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0043 : alpha_dummy_014 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0043 : alphaDummy014 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0044 : alpha_dummy_016 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0044 : alphaDummy016 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0045 : alpha_dummy_017 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0045 : alphaDummy017 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0046 : alpha_dummy_018 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0046 : alphaDummy018 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0047 : alpha_dummy_021 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0047 : alphaDummy021 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0048 : alpha_dummy_019 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0048 : alphaDummy019 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0049 : alpha_dummy_022 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0049 : alphaDummy022 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0050 : alpha_dummy_020 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0050 : alphaDummy020 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0051 : alpha_dummy_023 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0051 : alphaDummy023 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
   have wpp_refl_0001 :
     TReflOn
-      [(alpha_dummy_020, alpha_dummy_023), (alpha_dummy_019, alpha_dummy_022),
-        (alpha_dummy_018, alpha_dummy_021), (alpha_dummy_016, alpha_dummy_017),
-        (alpha_dummy_012, alpha_dummy_014), (alpha_dummy_013, alpha_dummy_015),
-        (alpha_dummy_005, alpha_dummy_007), (alpha_dummy_004, alpha_dummy_006),
-        (alpha_dummy_010, alpha_dummy_011), (alpha_dummy_008, alpha_dummy_009),
-        (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-      ((syn_c0)).fv :=
+      [(alphaDummy020, alphaDummy023), (alphaDummy019, alphaDummy022),
+        (alphaDummy018, alphaDummy021), (alphaDummy016, alphaDummy017),
+        (alphaDummy012, alphaDummy014), (alphaDummy013, alphaDummy015),
+        (alphaDummy005, alphaDummy007), (alphaDummy004, alphaDummy006),
+        (alphaDummy010, alphaDummy011), (alphaDummy008, alphaDummy009),
+        (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+      ((synC0)).fv :=
     by
     intro u hu
     exact
@@ -1443,20 +1444,20 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                               (TAlphaVar.there (fun h_eq => (wpp_notmem_0026) (h_eq ▸ hu))
                                 (fun h_eq => (wpp_notmem_0027) (h_eq ▸ hu))
                                 (TAlphaVar.free (by simp) (by simp)))))))))))))))
-  have split_alpha_0000 :
+  have splitAlpha0000 :
     TAlphaWff
-      [(alpha_dummy_020, alpha_dummy_023), (alpha_dummy_019, alpha_dummy_022),
-        (alpha_dummy_018, alpha_dummy_021), (alpha_dummy_016, alpha_dummy_017),
-        (alpha_dummy_012, alpha_dummy_014), (alpha_dummy_013, alpha_dummy_015),
-        (alpha_dummy_005, alpha_dummy_007), (alpha_dummy_004, alpha_dummy_006),
-        (alpha_dummy_010, alpha_dummy_011), (alpha_dummy_008, alpha_dummy_009),
-        (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-      (Wff.imp (Wff.classEq (syn_cin (Class.cv alpha_dummy_019) (Class.cv alpha_dummy_020))
-          (syn_c0)) (Wff.neg (Wff.classEq (Class.cv alpha_dummy_018)
-            (syn_cun (Class.cv alpha_dummy_019) (Class.cv alpha_dummy_020)))))
-      (Wff.imp (Wff.classEq (syn_cin (Class.cv alpha_dummy_022) (Class.cv alpha_dummy_023))
-          (syn_c0)) (Wff.neg (Wff.classEq (Class.cv alpha_dummy_021)
-            (syn_cun (Class.cv alpha_dummy_022) (Class.cv alpha_dummy_023))))) :=
+      [(alphaDummy020, alphaDummy023), (alphaDummy019, alphaDummy022),
+        (alphaDummy018, alphaDummy021), (alphaDummy016, alphaDummy017),
+        (alphaDummy012, alphaDummy014), (alphaDummy013, alphaDummy015),
+        (alphaDummy005, alphaDummy007), (alphaDummy004, alphaDummy006),
+        (alphaDummy010, alphaDummy011), (alphaDummy008, alphaDummy009),
+        (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+      (Wff.imp (Wff.classEq (synCin (Class.cv alphaDummy019) (Class.cv alphaDummy020))
+          (synC0)) (Wff.neg (Wff.classEq (Class.cv alphaDummy018)
+            (synCun (Class.cv alphaDummy019) (Class.cv alphaDummy020)))))
+      (Wff.imp (Wff.classEq (synCin (Class.cv alphaDummy022) (Class.cv alphaDummy023))
+          (synC0)) (Wff.neg (Wff.classEq (Class.cv alphaDummy021)
+            (synCun (Class.cv alphaDummy022) (Class.cv alphaDummy023))))) :=
     (TAlphaWff.imp (TAlphaWff.classEq (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
               (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
                   (TAlphaWff.neg (TAlphaWff.conj
@@ -1467,9 +1468,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0016 0))
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0017 0))
                               (TAlphaVar.there (freshVar_injective
-                                  (((Class.cv alpha_dummy_012)).fv ∪ ((syn_c1c)).fv)
+                                  (((Class.cv alphaDummy012)).fv ∪ ((synC1c)).fv)
                                   (by decide)) (freshVar_injective
-                                  (((Class.cv alpha_dummy_014)).fv ∪ ((syn_c1c)).fv)
+                                  (((Class.cv alphaDummy014)).fv ∪ ((synC1c)).fv)
                                   (by decide)) (TAlphaVar.here _ _ _))))))
                       (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                         (TAlphaClass.cv (TAlphaVar.there
@@ -1487,9 +1488,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0016 0))
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0017 0))
                               (TAlphaVar.there (freshVar_injective
-                                  (((Class.cv alpha_dummy_012)).fv ∪ ((syn_c1c)).fv)
+                                  (((Class.cv alphaDummy012)).fv ∪ ((synC1c)).fv)
                                   (by decide)) (freshVar_injective
-                                  (((Class.cv alpha_dummy_014)).fv ∪ ((syn_c1c)).fv)
+                                  (((Class.cv alphaDummy014)).fv ∪ ((synC1c)).fv)
                                   (by decide)) (TAlphaVar.here _ _ _))))))
                       (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                         (TAlphaClass.cv (TAlphaVar.there
@@ -1497,22 +1498,22 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                             (Nat.ne_of_lt (mem_lt_freshVar support_mem_0023 0)) (TAlphaVar.there
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0020 0))
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0021 0))
-                              (TAlphaVar.here _ _ _)))))))))))) (TAlphaClass.refl_of_closed
-          [(alpha_dummy_020, alpha_dummy_023), (alpha_dummy_019, alpha_dummy_022),
-            (alpha_dummy_018, alpha_dummy_021), (alpha_dummy_016, alpha_dummy_017),
-            (alpha_dummy_012, alpha_dummy_014), (alpha_dummy_013, alpha_dummy_015),
-            (alpha_dummy_005, alpha_dummy_007), (alpha_dummy_004, alpha_dummy_006),
-            (alpha_dummy_010, alpha_dummy_011), (alpha_dummy_008, alpha_dummy_009),
-            (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-          (syn_c0) (by simp only [fv_syn_c0]))) (TAlphaWff.neg (TAlphaWff.classEq
+                              (TAlphaVar.here _ _ _)))))))))))) (TAlphaClass.reflOfClosed
+          [(alphaDummy020, alphaDummy023), (alphaDummy019, alphaDummy022),
+            (alphaDummy018, alphaDummy021), (alphaDummy016, alphaDummy017),
+            (alphaDummy012, alphaDummy014), (alphaDummy013, alphaDummy015),
+            (alphaDummy005, alphaDummy007), (alphaDummy004, alphaDummy006),
+            (alphaDummy010, alphaDummy011), (alphaDummy008, alphaDummy009),
+            (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+          (synC0) (by simp only [fv_syn_c0]))) (TAlphaWff.neg (TAlphaWff.classEq
           (TAlphaClass.cv (TAlphaVar.there
-              (freshVar_injective (((Class.cv alpha_dummy_012)).fv ∪ ((syn_c1c)).fv)
+              (freshVar_injective (((Class.cv alphaDummy012)).fv ∪ ((synC1c)).fv)
                 (by decide))
-              (freshVar_injective (((Class.cv alpha_dummy_014)).fv ∪ ((syn_c1c)).fv)
+              (freshVar_injective (((Class.cv alphaDummy014)).fv ∪ ((synC1c)).fv)
                 (by decide)) (TAlphaVar.there
-                (freshVar_injective (((Class.cv alpha_dummy_012)).fv ∪ ((syn_c1c)).fv)
+                (freshVar_injective (((Class.cv alphaDummy012)).fv ∪ ((synC1c)).fv)
                   (by decide))
-                (freshVar_injective (((Class.cv alpha_dummy_014)).fv ∪ ((syn_c1c)).fv)
+                (freshVar_injective (((Class.cv alphaDummy014)).fv ∪ ((synC1c)).fv)
                   (by decide)) (TAlphaVar.here _ _ _)))) (TAlphaClass.cab (TAlphaWff.neg
               (TAlphaWff.conj (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                   (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
@@ -1524,9 +1525,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0024 0))
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0025 0))
                                 (TAlphaVar.there (freshVar_injective
-                                    (((Class.cv alpha_dummy_012)).fv ∪ ((syn_c1c)).fv)
+                                    (((Class.cv alphaDummy012)).fv ∪ ((synC1c)).fv)
                                     (by decide)) (freshVar_injective
-                                    (((Class.cv alpha_dummy_014)).fv ∪ ((syn_c1c)).fv)
+                                    (((Class.cv alphaDummy014)).fv ∪ ((synC1c)).fv)
                                     (by decide)) (TAlphaVar.here _ _ _))))))
                         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                           (TAlphaClass.cv (TAlphaVar.there
@@ -1536,9 +1537,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0024 0))
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0025 0))
                                 (TAlphaVar.there (freshVar_injective
-                                    (((Class.cv alpha_dummy_012)).fv ∪ ((syn_c1c)).fv)
+                                    (((Class.cv alphaDummy012)).fv ∪ ((synC1c)).fv)
                                     (by decide)) (freshVar_injective
-                                    (((Class.cv alpha_dummy_014)).fv ∪ ((syn_c1c)).fv)
+                                    (((Class.cv alphaDummy014)).fv ∪ ((synC1c)).fv)
                                     (by decide)) (TAlphaVar.here _ _ _))))))))))
                 (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
                     (TAlphaWff.neg (TAlphaWff.conj
@@ -1558,54 +1559,54 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0028 0))
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0029 0))
                                 (TAlphaVar.here _ _ _)))))))))))))))
-  have wpp_notmem_0052 : alpha_dummy_002 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0052 : alphaDummy002 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0053 : alpha_dummy_003 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0053 : alphaDummy003 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0054 : alpha_dummy_000 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0054 : alphaDummy000 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0055 : x ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0055 : x ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0056 : alpha_dummy_001 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0056 : alphaDummy001 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0057 : y ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0057 : y ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0058 : alpha_dummy_008 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0058 : alphaDummy008 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0059 : alpha_dummy_009 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0059 : alphaDummy009 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0060 : alpha_dummy_010 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0060 : alphaDummy010 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0061 : alpha_dummy_011 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0061 : alphaDummy011 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0062 : alpha_dummy_004 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0062 : alphaDummy004 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0063 : alpha_dummy_006 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0063 : alphaDummy006 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0064 : alpha_dummy_005 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0064 : alphaDummy005 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0065 : alpha_dummy_007 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0065 : alphaDummy007 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0066 : alpha_dummy_013 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0066 : alphaDummy013 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0067 : alpha_dummy_015 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0067 : alphaDummy015 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0068 : alpha_dummy_012 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0068 : alphaDummy012 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0069 : alpha_dummy_014 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0069 : alphaDummy014 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0070 : alpha_dummy_016 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0070 : alphaDummy016 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0071 : alpha_dummy_017 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0071 : alphaDummy017 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
   have wpp_refl_0002 :
     TReflOn
-      [(alpha_dummy_016, alpha_dummy_017), (alpha_dummy_012, alpha_dummy_014),
-        (alpha_dummy_013, alpha_dummy_015), (alpha_dummy_005, alpha_dummy_007),
-        (alpha_dummy_004, alpha_dummy_006), (alpha_dummy_010, alpha_dummy_011),
-        (alpha_dummy_008, alpha_dummy_009), (alpha_dummy_001, y), (alpha_dummy_000, x),
-        (alpha_dummy_002, alpha_dummy_003)]
-      ((syn_cnnc)).fv :=
+      [(alphaDummy016, alphaDummy017), (alphaDummy012, alphaDummy014),
+        (alphaDummy013, alphaDummy015), (alphaDummy005, alphaDummy007),
+        (alphaDummy004, alphaDummy006), (alphaDummy010, alphaDummy011),
+        (alphaDummy008, alphaDummy009), (alphaDummy001, y), (alphaDummy000, x),
+        (alphaDummy002, alphaDummy003)]
+      ((synCnnc)).fv :=
     by
     intro u hu
     exact
@@ -1630,15 +1631,15 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                         (TAlphaVar.there (fun h_eq => (wpp_notmem_0052) (h_eq ▸ hu))
                           (fun h_eq => (wpp_notmem_0053) (h_eq ▸ hu))
                           (TAlphaVar.free (by simp) (by simp))))))))))))
-  have split_alpha_0001 :
+  have splitAlpha0001 :
     TAlphaWff
-      [(alpha_dummy_005, alpha_dummy_007), (alpha_dummy_004, alpha_dummy_006),
-        (alpha_dummy_010, alpha_dummy_011), (alpha_dummy_008, alpha_dummy_009),
-        (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-      (Wff.imp (Wff.classMem (Class.cv alpha_dummy_005) (Class.cv alpha_dummy_000)) (Wff.neg
-          (Wff.classEq (Class.cv alpha_dummy_004) (syn_cphi (Class.cv alpha_dummy_005)))))
-      (Wff.imp (Wff.classMem (Class.cv alpha_dummy_007) (Class.cv x)) (Wff.neg
-          (Wff.classEq (Class.cv alpha_dummy_006) (syn_cphi (Class.cv alpha_dummy_007))))) :=
+      [(alphaDummy005, alphaDummy007), (alphaDummy004, alphaDummy006),
+        (alphaDummy010, alphaDummy011), (alphaDummy008, alphaDummy009),
+        (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+      (Wff.imp (Wff.classMem (Class.cv alphaDummy005) (Class.cv alphaDummy000)) (Wff.neg
+          (Wff.classEq (Class.cv alphaDummy004) (synCphi (Class.cv alphaDummy005)))))
+      (Wff.imp (Wff.classMem (Class.cv alphaDummy007) (Class.cv x)) (Wff.neg
+          (Wff.classEq (Class.cv alphaDummy006) (synCphi (Class.cv alphaDummy007))))) :=
     (TAlphaWff.imp (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
           (TAlphaVar.there (Nat.ne_of_lt (mem_lt_freshVar support_mem_0004 1))
             (Nat.ne_of_lt (mem_lt_freshVar support_mem_0006 1))
@@ -1651,7 +1652,7 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                   (TAlphaVar.there (freshVar_injective ((A).fv) (by decide)) dv_x_y
                     (TAlphaVar.here _ _ _)))))))) (TAlphaWff.neg (TAlphaWff.classEq
           (TAlphaClass.cv (TAlphaVar.there (freshVar_injective
-                (((Class.cv alpha_dummy_000)).fv ∪ ((Class.cv alpha_dummy_001)).fv) (by decide))
+                (((Class.cv alphaDummy000)).fv ∪ ((Class.cv alphaDummy001)).fv) (by decide))
               (freshVar_injective (((Class.cv x)).fv ∪ ((Class.cv y)).fv) (by decide))
               (TAlphaVar.here _ _ _))) (TAlphaClass.cab (TAlphaWff.ex (TAlphaWff.conj
                 (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
@@ -1661,8 +1662,8 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                         (Nat.ne_of_lt (mem_lt_freshVar support_mem_0011 1))
                         (TAlphaVar.here _ _ _))))) (TAlphaWff.classEq (TAlphaClass.cv
                     (TAlphaVar.there
-                      (freshVar_injective (((Class.cv alpha_dummy_005)).fv) (by decide))
-                      (freshVar_injective (((Class.cv alpha_dummy_007)).fv) (by decide))
+                      (freshVar_injective (((Class.cv alphaDummy005)).fv) (by decide))
+                      (freshVar_injective (((Class.cv alphaDummy007)).fv) (by decide))
                       (TAlphaVar.here _ _ _))) (TAlphaClass.cab (TAlphaWff.imp (TAlphaWff.neg
                         (TAlphaWff.conj
                           (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
@@ -1677,27 +1678,27 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
         (mem_lt_freshVar support_mem_0013 0)) (TAlphaVar.here _ _ _)))))) (TAlphaWff.ex
                                     (TAlphaWff.conj (TAlphaWff.classMem
                                         (TAlphaClass.cv (TAlphaVar.here _ _ _))
-                                        (TAlphaClass.refl_of_closed
-        [(alpha_dummy_020, alpha_dummy_023), (alpha_dummy_019, alpha_dummy_022),
-        (alpha_dummy_018, alpha_dummy_021), (alpha_dummy_016, alpha_dummy_017),
-        (alpha_dummy_012, alpha_dummy_014), (alpha_dummy_013, alpha_dummy_015),
-        (alpha_dummy_005, alpha_dummy_007), (alpha_dummy_004, alpha_dummy_006),
-        (alpha_dummy_010, alpha_dummy_011), (alpha_dummy_008, alpha_dummy_009),
-        (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-        (syn_c1c) (by simp only [fv_syn_c1c]))) (TAlphaWff.neg split_alpha_0000)))))))
+                                        (TAlphaClass.reflOfClosed
+        [(alphaDummy020, alphaDummy023), (alphaDummy019, alphaDummy022),
+        (alphaDummy018, alphaDummy021), (alphaDummy016, alphaDummy017),
+        (alphaDummy012, alphaDummy014), (alphaDummy013, alphaDummy015),
+        (alphaDummy005, alphaDummy007), (alphaDummy004, alphaDummy006),
+        (alphaDummy010, alphaDummy011), (alphaDummy008, alphaDummy009),
+        (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+        (synC1c) (by simp only [fv_syn_c1c]))) (TAlphaWff.neg splitAlpha0000)))))))
                           (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.there
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0012 0))
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0013 0))
-                                (TAlphaVar.here _ _ _))) (TAlphaClass.refl_of_closed
-                              [(alpha_dummy_016, alpha_dummy_017),
-                                (alpha_dummy_012, alpha_dummy_014),
-                                (alpha_dummy_013, alpha_dummy_015),
-                                (alpha_dummy_005, alpha_dummy_007),
-                                (alpha_dummy_004, alpha_dummy_006),
-                                (alpha_dummy_010, alpha_dummy_011),
-                                (alpha_dummy_008, alpha_dummy_009), (alpha_dummy_001, y),
-                                (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-                              (syn_cnnc) (by simp only [fv_syn_cnnc]))))) (TAlphaWff.conj
+                                (TAlphaVar.here _ _ _))) (TAlphaClass.reflOfClosed
+                              [(alphaDummy016, alphaDummy017),
+                                (alphaDummy012, alphaDummy014),
+                                (alphaDummy013, alphaDummy015),
+                                (alphaDummy005, alphaDummy007),
+                                (alphaDummy004, alphaDummy006),
+                                (alphaDummy010, alphaDummy011),
+                                (alphaDummy008, alphaDummy009), (alphaDummy001, y),
+                                (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+                              (synCnnc) (by simp only [fv_syn_cnnc]))))) (TAlphaWff.conj
                         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                           (TAlphaClass.cv (TAlphaVar.there
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0012 0))
@@ -1706,38 +1707,38 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                             (TAlphaClass.cv (TAlphaVar.there
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0012 0))
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0013 0))
-                                (TAlphaVar.here _ _ _))) (TAlphaClass.refl_of_closed
-                              [(alpha_dummy_016, alpha_dummy_017),
-                                (alpha_dummy_012, alpha_dummy_014),
-                                (alpha_dummy_013, alpha_dummy_015),
-                                (alpha_dummy_005, alpha_dummy_007),
-                                (alpha_dummy_004, alpha_dummy_006),
-                                (alpha_dummy_010, alpha_dummy_011),
-                                (alpha_dummy_008, alpha_dummy_009), (alpha_dummy_001, y),
-                                (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-                              (syn_cnnc) (by simp only [fv_syn_cnnc]))))))))))))))
-  have wpp_notmem_0072 : alpha_dummy_034 ∉ ((syn_c1c)).fv := by
+                                (TAlphaVar.here _ _ _))) (TAlphaClass.reflOfClosed
+                              [(alphaDummy016, alphaDummy017),
+                                (alphaDummy012, alphaDummy014),
+                                (alphaDummy013, alphaDummy015),
+                                (alphaDummy005, alphaDummy007),
+                                (alphaDummy004, alphaDummy006),
+                                (alphaDummy010, alphaDummy011),
+                                (alphaDummy008, alphaDummy009), (alphaDummy001, y),
+                                (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+                              (synCnnc) (by simp only [fv_syn_cnnc]))))))))))))))
+  have wpp_notmem_0072 : alphaDummy034 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0073 : alpha_dummy_035 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0073 : alphaDummy035 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0074 : alpha_dummy_036 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0074 : alphaDummy036 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0075 : alpha_dummy_037 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0075 : alphaDummy037 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0076 : alpha_dummy_038 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0076 : alphaDummy038 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0077 : alpha_dummy_039 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0077 : alphaDummy039 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
   have wpp_refl_0003 :
     TReflOn
-      [(alpha_dummy_020, alpha_dummy_023), (alpha_dummy_019, alpha_dummy_022),
-        (alpha_dummy_018, alpha_dummy_021), (alpha_dummy_016, alpha_dummy_017),
-        (alpha_dummy_012, alpha_dummy_014), (alpha_dummy_013, alpha_dummy_015),
-        (alpha_dummy_038, alpha_dummy_039), (alpha_dummy_036, alpha_dummy_037),
-        (alpha_dummy_005, alpha_dummy_007), (alpha_dummy_004, alpha_dummy_006),
-        (alpha_dummy_034, alpha_dummy_035), (alpha_dummy_008, alpha_dummy_009),
-        (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-      ((syn_c1c)).fv :=
+      [(alphaDummy020, alphaDummy023), (alphaDummy019, alphaDummy022),
+        (alphaDummy018, alphaDummy021), (alphaDummy016, alphaDummy017),
+        (alphaDummy012, alphaDummy014), (alphaDummy013, alphaDummy015),
+        (alphaDummy038, alphaDummy039), (alphaDummy036, alphaDummy037),
+        (alphaDummy005, alphaDummy007), (alphaDummy004, alphaDummy006),
+        (alphaDummy034, alphaDummy035), (alphaDummy008, alphaDummy009),
+        (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+      ((synC1c)).fv :=
     by
     intro u hu
     exact
@@ -1772,28 +1773,28 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                                     (fun h_eq => (wpp_notmem_0000) (h_eq ▸ hu))
                                     (fun h_eq => (wpp_notmem_0001) (h_eq ▸ hu))
                                     (TAlphaVar.free (by simp) (by simp)))))))))))))))))
-  have wpp_notmem_0078 : alpha_dummy_034 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0078 : alphaDummy034 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0079 : alpha_dummy_035 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0079 : alphaDummy035 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0080 : alpha_dummy_036 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0080 : alphaDummy036 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0081 : alpha_dummy_037 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0081 : alphaDummy037 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0082 : alpha_dummy_038 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0082 : alphaDummy038 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0083 : alpha_dummy_039 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0083 : alphaDummy039 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
   have wpp_refl_0004 :
     TReflOn
-      [(alpha_dummy_020, alpha_dummy_023), (alpha_dummy_019, alpha_dummy_022),
-        (alpha_dummy_018, alpha_dummy_021), (alpha_dummy_016, alpha_dummy_017),
-        (alpha_dummy_012, alpha_dummy_014), (alpha_dummy_013, alpha_dummy_015),
-        (alpha_dummy_038, alpha_dummy_039), (alpha_dummy_036, alpha_dummy_037),
-        (alpha_dummy_005, alpha_dummy_007), (alpha_dummy_004, alpha_dummy_006),
-        (alpha_dummy_034, alpha_dummy_035), (alpha_dummy_008, alpha_dummy_009),
-        (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-      ((syn_c0)).fv :=
+      [(alphaDummy020, alphaDummy023), (alphaDummy019, alphaDummy022),
+        (alphaDummy018, alphaDummy021), (alphaDummy016, alphaDummy017),
+        (alphaDummy012, alphaDummy014), (alphaDummy013, alphaDummy015),
+        (alphaDummy038, alphaDummy039), (alphaDummy036, alphaDummy037),
+        (alphaDummy005, alphaDummy007), (alphaDummy004, alphaDummy006),
+        (alphaDummy034, alphaDummy035), (alphaDummy008, alphaDummy009),
+        (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+      ((synC0)).fv :=
     by
     intro u hu
     exact
@@ -1828,21 +1829,21 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                                     (fun h_eq => (wpp_notmem_0026) (h_eq ▸ hu))
                                     (fun h_eq => (wpp_notmem_0027) (h_eq ▸ hu))
                                     (TAlphaVar.free (by simp) (by simp)))))))))))))))))
-  have split_alpha_0002 :
+  have splitAlpha0002 :
     TAlphaWff
-      [(alpha_dummy_020, alpha_dummy_023), (alpha_dummy_019, alpha_dummy_022),
-        (alpha_dummy_018, alpha_dummy_021), (alpha_dummy_016, alpha_dummy_017),
-        (alpha_dummy_012, alpha_dummy_014), (alpha_dummy_013, alpha_dummy_015),
-        (alpha_dummy_038, alpha_dummy_039), (alpha_dummy_036, alpha_dummy_037),
-        (alpha_dummy_005, alpha_dummy_007), (alpha_dummy_004, alpha_dummy_006),
-        (alpha_dummy_034, alpha_dummy_035), (alpha_dummy_008, alpha_dummy_009),
-        (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-      (Wff.imp (Wff.classEq (syn_cin (Class.cv alpha_dummy_019) (Class.cv alpha_dummy_020))
-          (syn_c0)) (Wff.neg (Wff.classEq (Class.cv alpha_dummy_018)
-            (syn_cun (Class.cv alpha_dummy_019) (Class.cv alpha_dummy_020)))))
-      (Wff.imp (Wff.classEq (syn_cin (Class.cv alpha_dummy_022) (Class.cv alpha_dummy_023))
-          (syn_c0)) (Wff.neg (Wff.classEq (Class.cv alpha_dummy_021)
-            (syn_cun (Class.cv alpha_dummy_022) (Class.cv alpha_dummy_023))))) :=
+      [(alphaDummy020, alphaDummy023), (alphaDummy019, alphaDummy022),
+        (alphaDummy018, alphaDummy021), (alphaDummy016, alphaDummy017),
+        (alphaDummy012, alphaDummy014), (alphaDummy013, alphaDummy015),
+        (alphaDummy038, alphaDummy039), (alphaDummy036, alphaDummy037),
+        (alphaDummy005, alphaDummy007), (alphaDummy004, alphaDummy006),
+        (alphaDummy034, alphaDummy035), (alphaDummy008, alphaDummy009),
+        (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+      (Wff.imp (Wff.classEq (synCin (Class.cv alphaDummy019) (Class.cv alphaDummy020))
+          (synC0)) (Wff.neg (Wff.classEq (Class.cv alphaDummy018)
+            (synCun (Class.cv alphaDummy019) (Class.cv alphaDummy020)))))
+      (Wff.imp (Wff.classEq (synCin (Class.cv alphaDummy022) (Class.cv alphaDummy023))
+          (synC0)) (Wff.neg (Wff.classEq (Class.cv alphaDummy021)
+            (synCun (Class.cv alphaDummy022) (Class.cv alphaDummy023))))) :=
     (TAlphaWff.imp (TAlphaWff.classEq (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
               (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
                   (TAlphaWff.neg (TAlphaWff.conj
@@ -1853,9 +1854,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0016 0))
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0017 0))
                               (TAlphaVar.there (freshVar_injective
-                                  (((Class.cv alpha_dummy_012)).fv ∪ ((syn_c1c)).fv)
+                                  (((Class.cv alphaDummy012)).fv ∪ ((synC1c)).fv)
                                   (by decide)) (freshVar_injective
-                                  (((Class.cv alpha_dummy_014)).fv ∪ ((syn_c1c)).fv)
+                                  (((Class.cv alphaDummy014)).fv ∪ ((synC1c)).fv)
                                   (by decide)) (TAlphaVar.here _ _ _))))))
                       (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                         (TAlphaClass.cv (TAlphaVar.there
@@ -1873,9 +1874,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0016 0))
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0017 0))
                               (TAlphaVar.there (freshVar_injective
-                                  (((Class.cv alpha_dummy_012)).fv ∪ ((syn_c1c)).fv)
+                                  (((Class.cv alphaDummy012)).fv ∪ ((synC1c)).fv)
                                   (by decide)) (freshVar_injective
-                                  (((Class.cv alpha_dummy_014)).fv ∪ ((syn_c1c)).fv)
+                                  (((Class.cv alphaDummy014)).fv ∪ ((synC1c)).fv)
                                   (by decide)) (TAlphaVar.here _ _ _))))))
                       (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                         (TAlphaClass.cv (TAlphaVar.there
@@ -1883,23 +1884,23 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                             (Nat.ne_of_lt (mem_lt_freshVar support_mem_0023 0)) (TAlphaVar.there
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0020 0))
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0021 0))
-                              (TAlphaVar.here _ _ _)))))))))))) (TAlphaClass.refl_of_closed
-          [(alpha_dummy_020, alpha_dummy_023), (alpha_dummy_019, alpha_dummy_022),
-            (alpha_dummy_018, alpha_dummy_021), (alpha_dummy_016, alpha_dummy_017),
-            (alpha_dummy_012, alpha_dummy_014), (alpha_dummy_013, alpha_dummy_015),
-            (alpha_dummy_038, alpha_dummy_039), (alpha_dummy_036, alpha_dummy_037),
-            (alpha_dummy_005, alpha_dummy_007), (alpha_dummy_004, alpha_dummy_006),
-            (alpha_dummy_034, alpha_dummy_035), (alpha_dummy_008, alpha_dummy_009),
-            (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-          (syn_c0) (by simp only [fv_syn_c0]))) (TAlphaWff.neg (TAlphaWff.classEq
+                              (TAlphaVar.here _ _ _)))))))))))) (TAlphaClass.reflOfClosed
+          [(alphaDummy020, alphaDummy023), (alphaDummy019, alphaDummy022),
+            (alphaDummy018, alphaDummy021), (alphaDummy016, alphaDummy017),
+            (alphaDummy012, alphaDummy014), (alphaDummy013, alphaDummy015),
+            (alphaDummy038, alphaDummy039), (alphaDummy036, alphaDummy037),
+            (alphaDummy005, alphaDummy007), (alphaDummy004, alphaDummy006),
+            (alphaDummy034, alphaDummy035), (alphaDummy008, alphaDummy009),
+            (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+          (synC0) (by simp only [fv_syn_c0]))) (TAlphaWff.neg (TAlphaWff.classEq
           (TAlphaClass.cv (TAlphaVar.there
-              (freshVar_injective (((Class.cv alpha_dummy_012)).fv ∪ ((syn_c1c)).fv)
+              (freshVar_injective (((Class.cv alphaDummy012)).fv ∪ ((synC1c)).fv)
                 (by decide))
-              (freshVar_injective (((Class.cv alpha_dummy_014)).fv ∪ ((syn_c1c)).fv)
+              (freshVar_injective (((Class.cv alphaDummy014)).fv ∪ ((synC1c)).fv)
                 (by decide)) (TAlphaVar.there
-                (freshVar_injective (((Class.cv alpha_dummy_012)).fv ∪ ((syn_c1c)).fv)
+                (freshVar_injective (((Class.cv alphaDummy012)).fv ∪ ((synC1c)).fv)
                   (by decide))
-                (freshVar_injective (((Class.cv alpha_dummy_014)).fv ∪ ((syn_c1c)).fv)
+                (freshVar_injective (((Class.cv alphaDummy014)).fv ∪ ((synC1c)).fv)
                   (by decide)) (TAlphaVar.here _ _ _)))) (TAlphaClass.cab (TAlphaWff.neg
               (TAlphaWff.conj (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                   (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
@@ -1911,9 +1912,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0024 0))
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0025 0))
                                 (TAlphaVar.there (freshVar_injective
-                                    (((Class.cv alpha_dummy_012)).fv ∪ ((syn_c1c)).fv)
+                                    (((Class.cv alphaDummy012)).fv ∪ ((synC1c)).fv)
                                     (by decide)) (freshVar_injective
-                                    (((Class.cv alpha_dummy_014)).fv ∪ ((syn_c1c)).fv)
+                                    (((Class.cv alphaDummy014)).fv ∪ ((synC1c)).fv)
                                     (by decide)) (TAlphaVar.here _ _ _))))))
                         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                           (TAlphaClass.cv (TAlphaVar.there
@@ -1923,9 +1924,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0024 0))
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0025 0))
                                 (TAlphaVar.there (freshVar_injective
-                                    (((Class.cv alpha_dummy_012)).fv ∪ ((syn_c1c)).fv)
+                                    (((Class.cv alphaDummy012)).fv ∪ ((synC1c)).fv)
                                     (by decide)) (freshVar_injective
-                                    (((Class.cv alpha_dummy_014)).fv ∪ ((syn_c1c)).fv)
+                                    (((Class.cv alphaDummy014)).fv ∪ ((synC1c)).fv)
                                     (by decide)) (TAlphaVar.here _ _ _))))))))))
                 (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
                     (TAlphaWff.neg (TAlphaWff.conj
@@ -1945,27 +1946,27 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0028 0))
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0029 0))
                                 (TAlphaVar.here _ _ _)))))))))))))))
-  have wpp_notmem_0084 : alpha_dummy_034 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0084 : alphaDummy034 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0085 : alpha_dummy_035 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0085 : alphaDummy035 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0086 : alpha_dummy_036 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0086 : alphaDummy036 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0087 : alpha_dummy_037 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0087 : alphaDummy037 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0088 : alpha_dummy_038 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0088 : alphaDummy038 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0089 : alpha_dummy_039 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0089 : alphaDummy039 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
   have wpp_refl_0005 :
     TReflOn
-      [(alpha_dummy_016, alpha_dummy_017), (alpha_dummy_012, alpha_dummy_014),
-        (alpha_dummy_013, alpha_dummy_015), (alpha_dummy_038, alpha_dummy_039),
-        (alpha_dummy_036, alpha_dummy_037), (alpha_dummy_005, alpha_dummy_007),
-        (alpha_dummy_004, alpha_dummy_006), (alpha_dummy_034, alpha_dummy_035),
-        (alpha_dummy_008, alpha_dummy_009), (alpha_dummy_001, y), (alpha_dummy_000, x),
-        (alpha_dummy_002, alpha_dummy_003)]
-      ((syn_cnnc)).fv :=
+      [(alphaDummy016, alphaDummy017), (alphaDummy012, alphaDummy014),
+        (alphaDummy013, alphaDummy015), (alphaDummy038, alphaDummy039),
+        (alphaDummy036, alphaDummy037), (alphaDummy005, alphaDummy007),
+        (alphaDummy004, alphaDummy006), (alphaDummy034, alphaDummy035),
+        (alphaDummy008, alphaDummy009), (alphaDummy001, y), (alphaDummy000, x),
+        (alphaDummy002, alphaDummy003)]
+      ((synCnnc)).fv :=
     by
     intro u hu
     exact
@@ -1994,18 +1995,18 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                             (TAlphaVar.there (fun h_eq => (wpp_notmem_0052) (h_eq ▸ hu))
                               (fun h_eq => (wpp_notmem_0053) (h_eq ▸ hu))
                               (TAlphaVar.free (by simp) (by simp))))))))))))))
-  have split_alpha_0003 :
+  have splitAlpha0003 :
     TAlphaWff
-      [(alpha_dummy_038, alpha_dummy_039), (alpha_dummy_036, alpha_dummy_037),
-        (alpha_dummy_005, alpha_dummy_007), (alpha_dummy_004, alpha_dummy_006),
-        (alpha_dummy_034, alpha_dummy_035), (alpha_dummy_008, alpha_dummy_009),
-        (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-      (Wff.imp (Wff.classMem (Class.cv alpha_dummy_038) (syn_cphi (Class.cv alpha_dummy_005)))
-        (Wff.neg (Wff.classMem (Class.cv alpha_dummy_038)
-            (syn_cphi (Class.cv alpha_dummy_005)))))
-      (Wff.imp (Wff.classMem (Class.cv alpha_dummy_039) (syn_cphi (Class.cv alpha_dummy_007)))
-        (Wff.neg (Wff.classMem (Class.cv alpha_dummy_039)
-            (syn_cphi (Class.cv alpha_dummy_007))))) :=
+      [(alphaDummy038, alphaDummy039), (alphaDummy036, alphaDummy037),
+        (alphaDummy005, alphaDummy007), (alphaDummy004, alphaDummy006),
+        (alphaDummy034, alphaDummy035), (alphaDummy008, alphaDummy009),
+        (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+      (Wff.imp (Wff.classMem (Class.cv alphaDummy038) (synCphi (Class.cv alphaDummy005)))
+        (Wff.neg (Wff.classMem (Class.cv alphaDummy038)
+            (synCphi (Class.cv alphaDummy005)))))
+      (Wff.imp (Wff.classMem (Class.cv alphaDummy039) (synCphi (Class.cv alphaDummy007)))
+        (Wff.neg (Wff.classMem (Class.cv alphaDummy039)
+            (synCphi (Class.cv alphaDummy007))))) :=
     (TAlphaWff.imp (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
           (TAlphaWff.ex (TAlphaWff.conj
               (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
@@ -2019,8 +2020,8 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                           (Nat.ne_of_lt (mem_lt_freshVar support_mem_0039 0))
                           (TAlphaVar.here _ _ _))))))) (TAlphaWff.classEq (TAlphaClass.cv
                   (TAlphaVar.there
-                    (freshVar_injective (((Class.cv alpha_dummy_005)).fv) (by decide))
-                    (freshVar_injective (((Class.cv alpha_dummy_007)).fv) (by decide))
+                    (freshVar_injective (((Class.cv alphaDummy005)).fv) (by decide))
+                    (freshVar_injective (((Class.cv alphaDummy007)).fv) (by decide))
                     (TAlphaVar.here _ _ _))) (TAlphaClass.cab (TAlphaWff.imp (TAlphaWff.neg
                       (TAlphaWff.conj
                         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
@@ -2036,31 +2037,31 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
         (mem_lt_freshVar support_mem_0013 0)) (TAlphaVar.here _ _ _)))))) (TAlphaWff.ex
                                   (TAlphaWff.conj (TAlphaWff.classMem
                                       (TAlphaClass.cv (TAlphaVar.here _ _ _))
-                                      (TAlphaClass.refl_of_closed
-                                        [(alpha_dummy_020, alpha_dummy_023),
-        (alpha_dummy_019, alpha_dummy_022), (alpha_dummy_018, alpha_dummy_021),
-        (alpha_dummy_016, alpha_dummy_017), (alpha_dummy_012, alpha_dummy_014),
-        (alpha_dummy_013, alpha_dummy_015), (alpha_dummy_038, alpha_dummy_039),
-        (alpha_dummy_036, alpha_dummy_037), (alpha_dummy_005, alpha_dummy_007),
-        (alpha_dummy_004, alpha_dummy_006), (alpha_dummy_034, alpha_dummy_035),
-        (alpha_dummy_008, alpha_dummy_009), (alpha_dummy_001, y), (alpha_dummy_000, x),
-        (alpha_dummy_002, alpha_dummy_003)] (syn_c1c) (by simp only [fv_syn_c1c])))
-                                    (TAlphaWff.neg split_alpha_0002))))))) (TAlphaWff.classMem
+                                      (TAlphaClass.reflOfClosed
+                                        [(alphaDummy020, alphaDummy023),
+        (alphaDummy019, alphaDummy022), (alphaDummy018, alphaDummy021),
+        (alphaDummy016, alphaDummy017), (alphaDummy012, alphaDummy014),
+        (alphaDummy013, alphaDummy015), (alphaDummy038, alphaDummy039),
+        (alphaDummy036, alphaDummy037), (alphaDummy005, alphaDummy007),
+        (alphaDummy004, alphaDummy006), (alphaDummy034, alphaDummy035),
+        (alphaDummy008, alphaDummy009), (alphaDummy001, y), (alphaDummy000, x),
+        (alphaDummy002, alphaDummy003)] (synC1c) (by simp only [fv_syn_c1c])))
+                                    (TAlphaWff.neg splitAlpha0002))))))) (TAlphaWff.classMem
                           (TAlphaClass.cv (TAlphaVar.there
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0012 0))
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0013 0))
-                              (TAlphaVar.here _ _ _))) (TAlphaClass.refl_of_closed
-                            [(alpha_dummy_016, alpha_dummy_017),
-                              (alpha_dummy_012, alpha_dummy_014),
-                              (alpha_dummy_013, alpha_dummy_015),
-                              (alpha_dummy_038, alpha_dummy_039),
-                              (alpha_dummy_036, alpha_dummy_037),
-                              (alpha_dummy_005, alpha_dummy_007),
-                              (alpha_dummy_004, alpha_dummy_006),
-                              (alpha_dummy_034, alpha_dummy_035),
-                              (alpha_dummy_008, alpha_dummy_009), (alpha_dummy_001, y),
-                              (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-                            (syn_cnnc) (by simp only [fv_syn_cnnc]))))) (TAlphaWff.conj
+                              (TAlphaVar.here _ _ _))) (TAlphaClass.reflOfClosed
+                            [(alphaDummy016, alphaDummy017),
+                              (alphaDummy012, alphaDummy014),
+                              (alphaDummy013, alphaDummy015),
+                              (alphaDummy038, alphaDummy039),
+                              (alphaDummy036, alphaDummy037),
+                              (alphaDummy005, alphaDummy007),
+                              (alphaDummy004, alphaDummy006),
+                              (alphaDummy034, alphaDummy035),
+                              (alphaDummy008, alphaDummy009), (alphaDummy001, y),
+                              (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+                            (synCnnc) (by simp only [fv_syn_cnnc]))))) (TAlphaWff.conj
                       (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                         (TAlphaClass.cv (TAlphaVar.there
                             (Nat.ne_of_lt (mem_lt_freshVar support_mem_0012 0))
@@ -2069,18 +2070,18 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                           (TAlphaClass.cv (TAlphaVar.there
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0012 0))
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0013 0))
-                              (TAlphaVar.here _ _ _))) (TAlphaClass.refl_of_closed
-                            [(alpha_dummy_016, alpha_dummy_017),
-                              (alpha_dummy_012, alpha_dummy_014),
-                              (alpha_dummy_013, alpha_dummy_015),
-                              (alpha_dummy_038, alpha_dummy_039),
-                              (alpha_dummy_036, alpha_dummy_037),
-                              (alpha_dummy_005, alpha_dummy_007),
-                              (alpha_dummy_004, alpha_dummy_006),
-                              (alpha_dummy_034, alpha_dummy_035),
-                              (alpha_dummy_008, alpha_dummy_009), (alpha_dummy_001, y),
-                              (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-                            (syn_cnnc) (by simp only [fv_syn_cnnc])))))))))))) (TAlphaWff.neg
+                              (TAlphaVar.here _ _ _))) (TAlphaClass.reflOfClosed
+                            [(alphaDummy016, alphaDummy017),
+                              (alphaDummy012, alphaDummy014),
+                              (alphaDummy013, alphaDummy015),
+                              (alphaDummy038, alphaDummy039),
+                              (alphaDummy036, alphaDummy037),
+                              (alphaDummy005, alphaDummy007),
+                              (alphaDummy004, alphaDummy006),
+                              (alphaDummy034, alphaDummy035),
+                              (alphaDummy008, alphaDummy009), (alphaDummy001, y),
+                              (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+                            (synCnnc) (by simp only [fv_syn_cnnc])))))))))))) (TAlphaWff.neg
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
             (TAlphaWff.ex (TAlphaWff.conj
                 (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
@@ -2094,8 +2095,8 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                             (Nat.ne_of_lt (mem_lt_freshVar support_mem_0039 0))
                             (TAlphaVar.here _ _ _))))))) (TAlphaWff.classEq (TAlphaClass.cv
                     (TAlphaVar.there
-                      (freshVar_injective (((Class.cv alpha_dummy_005)).fv) (by decide))
-                      (freshVar_injective (((Class.cv alpha_dummy_007)).fv) (by decide))
+                      (freshVar_injective (((Class.cv alphaDummy005)).fv) (by decide))
+                      (freshVar_injective (((Class.cv alphaDummy007)).fv) (by decide))
                       (TAlphaVar.here _ _ _))) (TAlphaClass.cab (TAlphaWff.imp (TAlphaWff.neg
                         (TAlphaWff.conj
                           (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
@@ -2110,30 +2111,30 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
         (mem_lt_freshVar support_mem_0013 0)) (TAlphaVar.here _ _ _)))))) (TAlphaWff.ex
                                     (TAlphaWff.conj (TAlphaWff.classMem
                                         (TAlphaClass.cv (TAlphaVar.here _ _ _))
-                                        (TAlphaClass.refl_of_closed
-        [(alpha_dummy_020, alpha_dummy_023), (alpha_dummy_019, alpha_dummy_022),
-        (alpha_dummy_018, alpha_dummy_021), (alpha_dummy_016, alpha_dummy_017),
-        (alpha_dummy_012, alpha_dummy_014), (alpha_dummy_013, alpha_dummy_015),
-        (alpha_dummy_038, alpha_dummy_039), (alpha_dummy_036, alpha_dummy_037),
-        (alpha_dummy_005, alpha_dummy_007), (alpha_dummy_004, alpha_dummy_006),
-        (alpha_dummy_034, alpha_dummy_035), (alpha_dummy_008, alpha_dummy_009),
-        (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-        (syn_c1c) (by simp only [fv_syn_c1c]))) (TAlphaWff.neg split_alpha_0002)))))))
+                                        (TAlphaClass.reflOfClosed
+        [(alphaDummy020, alphaDummy023), (alphaDummy019, alphaDummy022),
+        (alphaDummy018, alphaDummy021), (alphaDummy016, alphaDummy017),
+        (alphaDummy012, alphaDummy014), (alphaDummy013, alphaDummy015),
+        (alphaDummy038, alphaDummy039), (alphaDummy036, alphaDummy037),
+        (alphaDummy005, alphaDummy007), (alphaDummy004, alphaDummy006),
+        (alphaDummy034, alphaDummy035), (alphaDummy008, alphaDummy009),
+        (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+        (synC1c) (by simp only [fv_syn_c1c]))) (TAlphaWff.neg splitAlpha0002)))))))
                           (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.there
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0012 0))
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0013 0))
-                                (TAlphaVar.here _ _ _))) (TAlphaClass.refl_of_closed
-                              [(alpha_dummy_016, alpha_dummy_017),
-                                (alpha_dummy_012, alpha_dummy_014),
-                                (alpha_dummy_013, alpha_dummy_015),
-                                (alpha_dummy_038, alpha_dummy_039),
-                                (alpha_dummy_036, alpha_dummy_037),
-                                (alpha_dummy_005, alpha_dummy_007),
-                                (alpha_dummy_004, alpha_dummy_006),
-                                (alpha_dummy_034, alpha_dummy_035),
-                                (alpha_dummy_008, alpha_dummy_009), (alpha_dummy_001, y),
-                                (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-                              (syn_cnnc) (by simp only [fv_syn_cnnc]))))) (TAlphaWff.conj
+                                (TAlphaVar.here _ _ _))) (TAlphaClass.reflOfClosed
+                              [(alphaDummy016, alphaDummy017),
+                                (alphaDummy012, alphaDummy014),
+                                (alphaDummy013, alphaDummy015),
+                                (alphaDummy038, alphaDummy039),
+                                (alphaDummy036, alphaDummy037),
+                                (alphaDummy005, alphaDummy007),
+                                (alphaDummy004, alphaDummy006),
+                                (alphaDummy034, alphaDummy035),
+                                (alphaDummy008, alphaDummy009), (alphaDummy001, y),
+                                (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+                              (synCnnc) (by simp only [fv_syn_cnnc]))))) (TAlphaWff.conj
                         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                           (TAlphaClass.cv (TAlphaVar.there
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0012 0))
@@ -2142,105 +2143,105 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                             (TAlphaClass.cv (TAlphaVar.there
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0012 0))
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0013 0))
-                                (TAlphaVar.here _ _ _))) (TAlphaClass.refl_of_closed
-                              [(alpha_dummy_016, alpha_dummy_017),
-                                (alpha_dummy_012, alpha_dummy_014),
-                                (alpha_dummy_013, alpha_dummy_015),
-                                (alpha_dummy_038, alpha_dummy_039),
-                                (alpha_dummy_036, alpha_dummy_037),
-                                (alpha_dummy_005, alpha_dummy_007),
-                                (alpha_dummy_004, alpha_dummy_006),
-                                (alpha_dummy_034, alpha_dummy_035),
-                                (alpha_dummy_008, alpha_dummy_009), (alpha_dummy_001, y),
-                                (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-                              (syn_cnnc) (by simp only [fv_syn_cnnc]))))))))))))))
-  have wpp_notmem_0090 : alpha_dummy_002 ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+                                (TAlphaVar.here _ _ _))) (TAlphaClass.reflOfClosed
+                              [(alphaDummy016, alphaDummy017),
+                                (alphaDummy012, alphaDummy014),
+                                (alphaDummy013, alphaDummy015),
+                                (alphaDummy038, alphaDummy039),
+                                (alphaDummy036, alphaDummy037),
+                                (alphaDummy005, alphaDummy007),
+                                (alphaDummy004, alphaDummy006),
+                                (alphaDummy034, alphaDummy035),
+                                (alphaDummy008, alphaDummy009), (alphaDummy001, y),
+                                (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+                              (synCnnc) (by simp only [fv_syn_cnnc]))))))))))))))
+  have wpp_notmem_0090 : alphaDummy002 ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
-  have wpp_notmem_0091 : alpha_dummy_003 ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
+  have wpp_notmem_0091 : alphaDummy003 ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
-  have wpp_notmem_0092 : alpha_dummy_000 ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
+  have wpp_notmem_0092 : alphaDummy000 ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
-  have wpp_notmem_0093 : x ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
+  have wpp_notmem_0093 : x ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
-  have wpp_notmem_0094 : alpha_dummy_001 ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
+  have wpp_notmem_0094 : alphaDummy001 ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
-  have wpp_notmem_0095 : y ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
+  have wpp_notmem_0095 : y ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
-  have wpp_notmem_0096 : alpha_dummy_008 ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
+  have wpp_notmem_0096 : alphaDummy008 ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
-  have wpp_notmem_0097 : alpha_dummy_009 ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
+  have wpp_notmem_0097 : alphaDummy009 ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
-  have wpp_notmem_0098 : alpha_dummy_034 ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
+  have wpp_notmem_0098 : alphaDummy034 ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
-  have wpp_notmem_0099 : alpha_dummy_035 ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
+  have wpp_notmem_0099 : alphaDummy035 ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
-  have wpp_notmem_0100 : alpha_dummy_004 ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
+  have wpp_notmem_0100 : alphaDummy004 ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
-  have wpp_notmem_0101 : alpha_dummy_006 ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
+  have wpp_notmem_0101 : alphaDummy006 ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
-  have wpp_notmem_0102 : alpha_dummy_005 ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
+  have wpp_notmem_0102 : alphaDummy005 ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
-  have wpp_notmem_0103 : alpha_dummy_007 ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
+  have wpp_notmem_0103 : alphaDummy007 ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
-  have wpp_notmem_0104 : alpha_dummy_036 ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
+  have wpp_notmem_0104 : alphaDummy036 ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
-  have wpp_notmem_0105 : alpha_dummy_037 ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
+  have wpp_notmem_0105 : alphaDummy037 ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
   have wpp_refl_0006 :
     TReflOn
-      [(alpha_dummy_036, alpha_dummy_037), (alpha_dummy_005, alpha_dummy_007),
-        (alpha_dummy_004, alpha_dummy_006), (alpha_dummy_034, alpha_dummy_035),
-        (alpha_dummy_008, alpha_dummy_009), (alpha_dummy_001, y), (alpha_dummy_000, x),
-        (alpha_dummy_002, alpha_dummy_003)]
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv :=
+      [(alphaDummy036, alphaDummy037), (alphaDummy005, alphaDummy007),
+        (alphaDummy004, alphaDummy006), (alphaDummy034, alphaDummy035),
+        (alphaDummy008, alphaDummy009), (alphaDummy001, y), (alphaDummy000, x),
+        (alphaDummy002, alphaDummy003)]
+      ((synCcompl (synCsn (synC0c)))).fv :=
     by
     intro u hu
     exact
@@ -2261,12 +2262,12 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                     (TAlphaVar.there (fun h_eq => (wpp_notmem_0090) (h_eq ▸ hu))
                       (fun h_eq => (wpp_notmem_0091) (h_eq ▸ hu))
                       (TAlphaVar.free (by simp) (by simp))))))))))
-  have split_alpha_0004 :
+  have splitAlpha0004 :
     TAlphaWff
-      [(alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-      (Wff.classEq (Class.cv alpha_dummy_002)
-        (syn_cop (Class.cv alpha_dummy_000) (Class.cv alpha_dummy_001)))
-      (Wff.classEq (Class.cv alpha_dummy_003) (syn_cop (Class.cv x) (Class.cv y))) :=
+      [(alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+      (Wff.classEq (Class.cv alphaDummy002)
+        (synCop (Class.cv alphaDummy000) (Class.cv alphaDummy001)))
+      (Wff.classEq (Class.cv alphaDummy003) (synCop (Class.cv x) (Class.cv y))) :=
     (TAlphaWff.classEq (TAlphaClass.cv
         (TAlphaVar.there (Ne.symm (Nat.ne_of_lt (mem_lt_freshVar support_mem_0002 0)))
           (Ne.symm (Nat.ne_of_lt (mem_lt_freshVar support_mem_0003 0)))
@@ -2276,9 +2277,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
             (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
                 (TAlphaWff.neg (TAlphaWff.conj
                     (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
-                      (TAlphaClass.cab (TAlphaWff.ex (TAlphaWff.neg split_alpha_0001))))
+                      (TAlphaClass.cab (TAlphaWff.ex (TAlphaWff.neg splitAlpha0001))))
                     (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
-                        (TAlphaWff.ex (TAlphaWff.neg split_alpha_0001))))))))
+                        (TAlphaWff.ex (TAlphaWff.neg splitAlpha0001))))))))
             (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
                 (TAlphaWff.neg (TAlphaWff.conj
                     (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
@@ -2297,21 +2298,21 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
         (mem_lt_freshVar support_mem_0033 0)) (Nat.ne_of_lt
         (mem_lt_freshVar support_mem_0035 0)) (TAlphaVar.here _ _ _))))))) (TAlphaWff.classEq
                               (TAlphaClass.cv (TAlphaVar.there (freshVar_injective
-                                    (((Class.cv alpha_dummy_000)).fv ∪
-                                      ((Class.cv alpha_dummy_001)).fv) (by decide))
+                                    (((Class.cv alphaDummy000)).fv ∪
+                                      ((Class.cv alphaDummy001)).fv) (by decide))
                                   (freshVar_injective
                                     (((Class.cv x)).fv ∪ ((Class.cv y)).fv) (by decide))
                                   (TAlphaVar.here _ _ _))) (TAlphaClass.cab (TAlphaWff.neg
                                   (TAlphaWff.conj (TAlphaWff.classMem
                                       (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
-                                        (TAlphaWff.neg (TAlphaWff.neg split_alpha_0003))))
+                                        (TAlphaWff.neg (TAlphaWff.neg splitAlpha0003))))
                                     (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
-                                      (TAlphaClass.refl_of_closed
-                                        [(alpha_dummy_036, alpha_dummy_037),
-        (alpha_dummy_005, alpha_dummy_007), (alpha_dummy_004, alpha_dummy_006),
-        (alpha_dummy_034, alpha_dummy_035), (alpha_dummy_008, alpha_dummy_009),
-        (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-                                        (syn_ccompl (syn_csn (syn_c0c))) (by
+                                      (TAlphaClass.reflOfClosed
+                                        [(alphaDummy036, alphaDummy037),
+        (alphaDummy005, alphaDummy007), (alphaDummy004, alphaDummy006),
+        (alphaDummy034, alphaDummy035), (alphaDummy008, alphaDummy009),
+        (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+                                        (synCcompl (synCsn (synC0c))) (by
                                           simp only [fv_syn_ccompl, fv_syn_csn,
                                             fv_syn_c0c])))))))))))
                     (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
@@ -2330,72 +2331,72 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
         (mem_lt_freshVar support_mem_0033 0)) (Nat.ne_of_lt
         (mem_lt_freshVar support_mem_0035 0)) (TAlphaVar.here _ _ _))))))) (TAlphaWff.classEq
                               (TAlphaClass.cv (TAlphaVar.there (freshVar_injective
-                                    (((Class.cv alpha_dummy_000)).fv ∪
-                                      ((Class.cv alpha_dummy_001)).fv) (by decide))
+                                    (((Class.cv alphaDummy000)).fv ∪
+                                      ((Class.cv alphaDummy001)).fv) (by decide))
                                   (freshVar_injective
                                     (((Class.cv x)).fv ∪ ((Class.cv y)).fv) (by decide))
                                   (TAlphaVar.here _ _ _))) (TAlphaClass.cab (TAlphaWff.neg
                                   (TAlphaWff.conj (TAlphaWff.classMem
                                       (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
-                                        (TAlphaWff.neg (TAlphaWff.neg split_alpha_0003))))
+                                        (TAlphaWff.neg (TAlphaWff.neg splitAlpha0003))))
                                     (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
-                                      (TAlphaClass.refl_of_closed
-                                        [(alpha_dummy_036, alpha_dummy_037),
-        (alpha_dummy_005, alpha_dummy_007), (alpha_dummy_004, alpha_dummy_006),
-        (alpha_dummy_034, alpha_dummy_035), (alpha_dummy_008, alpha_dummy_009),
-        (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-                                        (syn_ccompl (syn_csn (syn_c0c))) (by
+                                      (TAlphaClass.reflOfClosed
+                                        [(alphaDummy036, alphaDummy037),
+        (alphaDummy005, alphaDummy007), (alphaDummy004, alphaDummy006),
+        (alphaDummy034, alphaDummy035), (alphaDummy008, alphaDummy009),
+        (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+                                        (synCcompl (synCsn (synC0c))) (by
                                           simp only [fv_syn_ccompl, fv_syn_csn,
                                             fv_syn_c0c])))))))))))))))))))
-  have wpp_notmem_0106 : alpha_dummy_044 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0106 : alphaDummy044 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0107 : alpha_dummy_045 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0107 : alphaDummy045 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0108 : alpha_dummy_046 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0108 : alphaDummy046 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0109 : alpha_dummy_047 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0109 : alphaDummy047 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0110 : alpha_dummy_040 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0110 : alphaDummy040 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0111 : alpha_dummy_042 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0111 : alphaDummy042 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0112 : alpha_dummy_041 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0112 : alphaDummy041 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0113 : alpha_dummy_043 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0113 : alphaDummy043 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0114 : alpha_dummy_049 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0114 : alphaDummy049 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0115 : alpha_dummy_051 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0115 : alphaDummy051 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0116 : alpha_dummy_048 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0116 : alphaDummy048 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0117 : alpha_dummy_050 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0117 : alphaDummy050 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0118 : alpha_dummy_052 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0118 : alphaDummy052 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0119 : alpha_dummy_053 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0119 : alphaDummy053 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0120 : alpha_dummy_054 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0120 : alphaDummy054 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0121 : alpha_dummy_057 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0121 : alphaDummy057 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0122 : alpha_dummy_055 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0122 : alphaDummy055 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0123 : alpha_dummy_058 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0123 : alphaDummy058 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0124 : alpha_dummy_056 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0124 : alphaDummy056 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0125 : alpha_dummy_059 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0125 : alphaDummy059 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
   have wpp_refl_0007 :
     TReflOn
-      [(alpha_dummy_056, alpha_dummy_059), (alpha_dummy_055, alpha_dummy_058),
-        (alpha_dummy_054, alpha_dummy_057), (alpha_dummy_052, alpha_dummy_053),
-        (alpha_dummy_048, alpha_dummy_050), (alpha_dummy_049, alpha_dummy_051),
-        (alpha_dummy_041, alpha_dummy_043), (alpha_dummy_040, alpha_dummy_042),
-        (alpha_dummy_046, alpha_dummy_047), (alpha_dummy_044, alpha_dummy_045),
-        (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-      ((syn_c1c)).fv :=
+      [(alphaDummy056, alphaDummy059), (alphaDummy055, alphaDummy058),
+        (alphaDummy054, alphaDummy057), (alphaDummy052, alphaDummy053),
+        (alphaDummy048, alphaDummy050), (alphaDummy049, alphaDummy051),
+        (alphaDummy041, alphaDummy043), (alphaDummy040, alphaDummy042),
+        (alphaDummy046, alphaDummy047), (alphaDummy044, alphaDummy045),
+        (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+      ((synC1c)).fv :=
     by
     intro u hu
     exact
@@ -2426,55 +2427,55 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                               (TAlphaVar.there (fun h_eq => (wpp_notmem_0000) (h_eq ▸ hu))
                                 (fun h_eq => (wpp_notmem_0001) (h_eq ▸ hu))
                                 (TAlphaVar.free (by simp) (by simp)))))))))))))))
-  have wpp_notmem_0126 : alpha_dummy_044 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0126 : alphaDummy044 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0127 : alpha_dummy_045 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0127 : alphaDummy045 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0128 : alpha_dummy_046 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0128 : alphaDummy046 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0129 : alpha_dummy_047 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0129 : alphaDummy047 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0130 : alpha_dummy_040 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0130 : alphaDummy040 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0131 : alpha_dummy_042 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0131 : alphaDummy042 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0132 : alpha_dummy_041 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0132 : alphaDummy041 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0133 : alpha_dummy_043 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0133 : alphaDummy043 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0134 : alpha_dummy_049 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0134 : alphaDummy049 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0135 : alpha_dummy_051 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0135 : alphaDummy051 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0136 : alpha_dummy_048 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0136 : alphaDummy048 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0137 : alpha_dummy_050 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0137 : alphaDummy050 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0138 : alpha_dummy_052 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0138 : alphaDummy052 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0139 : alpha_dummy_053 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0139 : alphaDummy053 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0140 : alpha_dummy_054 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0140 : alphaDummy054 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0141 : alpha_dummy_057 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0141 : alphaDummy057 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0142 : alpha_dummy_055 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0142 : alphaDummy055 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0143 : alpha_dummy_058 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0143 : alphaDummy058 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0144 : alpha_dummy_056 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0144 : alphaDummy056 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0145 : alpha_dummy_059 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0145 : alphaDummy059 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
   have wpp_refl_0008 :
     TReflOn
-      [(alpha_dummy_056, alpha_dummy_059), (alpha_dummy_055, alpha_dummy_058),
-        (alpha_dummy_054, alpha_dummy_057), (alpha_dummy_052, alpha_dummy_053),
-        (alpha_dummy_048, alpha_dummy_050), (alpha_dummy_049, alpha_dummy_051),
-        (alpha_dummy_041, alpha_dummy_043), (alpha_dummy_040, alpha_dummy_042),
-        (alpha_dummy_046, alpha_dummy_047), (alpha_dummy_044, alpha_dummy_045),
-        (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-      ((syn_c0)).fv :=
+      [(alphaDummy056, alphaDummy059), (alphaDummy055, alphaDummy058),
+        (alphaDummy054, alphaDummy057), (alphaDummy052, alphaDummy053),
+        (alphaDummy048, alphaDummy050), (alphaDummy049, alphaDummy051),
+        (alphaDummy041, alphaDummy043), (alphaDummy040, alphaDummy042),
+        (alphaDummy046, alphaDummy047), (alphaDummy044, alphaDummy045),
+        (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+      ((synC0)).fv :=
     by
     intro u hu
     exact
@@ -2505,20 +2506,20 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                               (TAlphaVar.there (fun h_eq => (wpp_notmem_0026) (h_eq ▸ hu))
                                 (fun h_eq => (wpp_notmem_0027) (h_eq ▸ hu))
                                 (TAlphaVar.free (by simp) (by simp)))))))))))))))
-  have split_alpha_0005 :
+  have splitAlpha0005 :
     TAlphaWff
-      [(alpha_dummy_056, alpha_dummy_059), (alpha_dummy_055, alpha_dummy_058),
-        (alpha_dummy_054, alpha_dummy_057), (alpha_dummy_052, alpha_dummy_053),
-        (alpha_dummy_048, alpha_dummy_050), (alpha_dummy_049, alpha_dummy_051),
-        (alpha_dummy_041, alpha_dummy_043), (alpha_dummy_040, alpha_dummy_042),
-        (alpha_dummy_046, alpha_dummy_047), (alpha_dummy_044, alpha_dummy_045),
-        (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-      (Wff.imp (Wff.classEq (syn_cin (Class.cv alpha_dummy_055) (Class.cv alpha_dummy_056))
-          (syn_c0)) (Wff.neg (Wff.classEq (Class.cv alpha_dummy_054)
-            (syn_cun (Class.cv alpha_dummy_055) (Class.cv alpha_dummy_056)))))
-      (Wff.imp (Wff.classEq (syn_cin (Class.cv alpha_dummy_058) (Class.cv alpha_dummy_059))
-          (syn_c0)) (Wff.neg (Wff.classEq (Class.cv alpha_dummy_057)
-            (syn_cun (Class.cv alpha_dummy_058) (Class.cv alpha_dummy_059))))) :=
+      [(alphaDummy056, alphaDummy059), (alphaDummy055, alphaDummy058),
+        (alphaDummy054, alphaDummy057), (alphaDummy052, alphaDummy053),
+        (alphaDummy048, alphaDummy050), (alphaDummy049, alphaDummy051),
+        (alphaDummy041, alphaDummy043), (alphaDummy040, alphaDummy042),
+        (alphaDummy046, alphaDummy047), (alphaDummy044, alphaDummy045),
+        (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+      (Wff.imp (Wff.classEq (synCin (Class.cv alphaDummy055) (Class.cv alphaDummy056))
+          (synC0)) (Wff.neg (Wff.classEq (Class.cv alphaDummy054)
+            (synCun (Class.cv alphaDummy055) (Class.cv alphaDummy056)))))
+      (Wff.imp (Wff.classEq (synCin (Class.cv alphaDummy058) (Class.cv alphaDummy059))
+          (synC0)) (Wff.neg (Wff.classEq (Class.cv alphaDummy057)
+            (synCun (Class.cv alphaDummy058) (Class.cv alphaDummy059))))) :=
     (TAlphaWff.imp (TAlphaWff.classEq (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
               (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
                   (TAlphaWff.neg (TAlphaWff.conj
@@ -2529,9 +2530,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0054 0))
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0055 0))
                               (TAlphaVar.there (freshVar_injective
-                                  (((Class.cv alpha_dummy_048)).fv ∪ ((syn_c1c)).fv)
+                                  (((Class.cv alphaDummy048)).fv ∪ ((synC1c)).fv)
                                   (by decide)) (freshVar_injective
-                                  (((Class.cv alpha_dummy_050)).fv ∪ ((syn_c1c)).fv)
+                                  (((Class.cv alphaDummy050)).fv ∪ ((synC1c)).fv)
                                   (by decide)) (TAlphaVar.here _ _ _))))))
                       (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                         (TAlphaClass.cv (TAlphaVar.there
@@ -2549,9 +2550,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0054 0))
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0055 0))
                               (TAlphaVar.there (freshVar_injective
-                                  (((Class.cv alpha_dummy_048)).fv ∪ ((syn_c1c)).fv)
+                                  (((Class.cv alphaDummy048)).fv ∪ ((synC1c)).fv)
                                   (by decide)) (freshVar_injective
-                                  (((Class.cv alpha_dummy_050)).fv ∪ ((syn_c1c)).fv)
+                                  (((Class.cv alphaDummy050)).fv ∪ ((synC1c)).fv)
                                   (by decide)) (TAlphaVar.here _ _ _))))))
                       (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                         (TAlphaClass.cv (TAlphaVar.there
@@ -2559,22 +2560,22 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                             (Nat.ne_of_lt (mem_lt_freshVar support_mem_0061 0)) (TAlphaVar.there
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0058 0))
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0059 0))
-                              (TAlphaVar.here _ _ _)))))))))))) (TAlphaClass.refl_of_closed
-          [(alpha_dummy_056, alpha_dummy_059), (alpha_dummy_055, alpha_dummy_058),
-            (alpha_dummy_054, alpha_dummy_057), (alpha_dummy_052, alpha_dummy_053),
-            (alpha_dummy_048, alpha_dummy_050), (alpha_dummy_049, alpha_dummy_051),
-            (alpha_dummy_041, alpha_dummy_043), (alpha_dummy_040, alpha_dummy_042),
-            (alpha_dummy_046, alpha_dummy_047), (alpha_dummy_044, alpha_dummy_045),
-            (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-          (syn_c0) (by simp only [fv_syn_c0]))) (TAlphaWff.neg (TAlphaWff.classEq
+                              (TAlphaVar.here _ _ _)))))))))))) (TAlphaClass.reflOfClosed
+          [(alphaDummy056, alphaDummy059), (alphaDummy055, alphaDummy058),
+            (alphaDummy054, alphaDummy057), (alphaDummy052, alphaDummy053),
+            (alphaDummy048, alphaDummy050), (alphaDummy049, alphaDummy051),
+            (alphaDummy041, alphaDummy043), (alphaDummy040, alphaDummy042),
+            (alphaDummy046, alphaDummy047), (alphaDummy044, alphaDummy045),
+            (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+          (synC0) (by simp only [fv_syn_c0]))) (TAlphaWff.neg (TAlphaWff.classEq
           (TAlphaClass.cv (TAlphaVar.there
-              (freshVar_injective (((Class.cv alpha_dummy_048)).fv ∪ ((syn_c1c)).fv)
+              (freshVar_injective (((Class.cv alphaDummy048)).fv ∪ ((synC1c)).fv)
                 (by decide))
-              (freshVar_injective (((Class.cv alpha_dummy_050)).fv ∪ ((syn_c1c)).fv)
+              (freshVar_injective (((Class.cv alphaDummy050)).fv ∪ ((synC1c)).fv)
                 (by decide)) (TAlphaVar.there
-                (freshVar_injective (((Class.cv alpha_dummy_048)).fv ∪ ((syn_c1c)).fv)
+                (freshVar_injective (((Class.cv alphaDummy048)).fv ∪ ((synC1c)).fv)
                   (by decide))
-                (freshVar_injective (((Class.cv alpha_dummy_050)).fv ∪ ((syn_c1c)).fv)
+                (freshVar_injective (((Class.cv alphaDummy050)).fv ∪ ((synC1c)).fv)
                   (by decide)) (TAlphaVar.here _ _ _)))) (TAlphaClass.cab (TAlphaWff.neg
               (TAlphaWff.conj (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                   (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
@@ -2586,9 +2587,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0062 0))
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0063 0))
                                 (TAlphaVar.there (freshVar_injective
-                                    (((Class.cv alpha_dummy_048)).fv ∪ ((syn_c1c)).fv)
+                                    (((Class.cv alphaDummy048)).fv ∪ ((synC1c)).fv)
                                     (by decide)) (freshVar_injective
-                                    (((Class.cv alpha_dummy_050)).fv ∪ ((syn_c1c)).fv)
+                                    (((Class.cv alphaDummy050)).fv ∪ ((synC1c)).fv)
                                     (by decide)) (TAlphaVar.here _ _ _))))))
                         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                           (TAlphaClass.cv (TAlphaVar.there
@@ -2598,9 +2599,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0062 0))
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0063 0))
                                 (TAlphaVar.there (freshVar_injective
-                                    (((Class.cv alpha_dummy_048)).fv ∪ ((syn_c1c)).fv)
+                                    (((Class.cv alphaDummy048)).fv ∪ ((synC1c)).fv)
                                     (by decide)) (freshVar_injective
-                                    (((Class.cv alpha_dummy_050)).fv ∪ ((syn_c1c)).fv)
+                                    (((Class.cv alphaDummy050)).fv ∪ ((synC1c)).fv)
                                     (by decide)) (TAlphaVar.here _ _ _))))))))))
                 (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
                     (TAlphaWff.neg (TAlphaWff.conj
@@ -2620,42 +2621,42 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0066 0))
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0067 0))
                                 (TAlphaVar.here _ _ _)))))))))))))))
-  have wpp_notmem_0146 : alpha_dummy_044 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0146 : alphaDummy044 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0147 : alpha_dummy_045 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0147 : alphaDummy045 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0148 : alpha_dummy_046 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0148 : alphaDummy046 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0149 : alpha_dummy_047 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0149 : alphaDummy047 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0150 : alpha_dummy_040 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0150 : alphaDummy040 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0151 : alpha_dummy_042 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0151 : alphaDummy042 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0152 : alpha_dummy_041 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0152 : alphaDummy041 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0153 : alpha_dummy_043 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0153 : alphaDummy043 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0154 : alpha_dummy_049 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0154 : alphaDummy049 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0155 : alpha_dummy_051 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0155 : alphaDummy051 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0156 : alpha_dummy_048 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0156 : alphaDummy048 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0157 : alpha_dummy_050 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0157 : alphaDummy050 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0158 : alpha_dummy_052 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0158 : alphaDummy052 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0159 : alpha_dummy_053 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0159 : alphaDummy053 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
   have wpp_refl_0009 :
     TReflOn
-      [(alpha_dummy_052, alpha_dummy_053), (alpha_dummy_048, alpha_dummy_050),
-        (alpha_dummy_049, alpha_dummy_051), (alpha_dummy_041, alpha_dummy_043),
-        (alpha_dummy_040, alpha_dummy_042), (alpha_dummy_046, alpha_dummy_047),
-        (alpha_dummy_044, alpha_dummy_045), (alpha_dummy_001, y), (alpha_dummy_000, x),
-        (alpha_dummy_002, alpha_dummy_003)]
-      ((syn_cnnc)).fv :=
+      [(alphaDummy052, alphaDummy053), (alphaDummy048, alphaDummy050),
+        (alphaDummy049, alphaDummy051), (alphaDummy041, alphaDummy043),
+        (alphaDummy040, alphaDummy042), (alphaDummy046, alphaDummy047),
+        (alphaDummy044, alphaDummy045), (alphaDummy001, y), (alphaDummy000, x),
+        (alphaDummy002, alphaDummy003)]
+      ((synCnnc)).fv :=
     by
     intro u hu
     exact
@@ -2680,15 +2681,15 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                         (TAlphaVar.there (fun h_eq => (wpp_notmem_0052) (h_eq ▸ hu))
                           (fun h_eq => (wpp_notmem_0053) (h_eq ▸ hu))
                           (TAlphaVar.free (by simp) (by simp))))))))))))
-  have split_alpha_0006 :
+  have splitAlpha0006 :
     TAlphaWff
-      [(alpha_dummy_041, alpha_dummy_043), (alpha_dummy_040, alpha_dummy_042),
-        (alpha_dummy_046, alpha_dummy_047), (alpha_dummy_044, alpha_dummy_045),
-        (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-      (Wff.imp (Wff.classMem (Class.cv alpha_dummy_041) (Class.cv alpha_dummy_001)) (Wff.neg
-          (Wff.classEq (Class.cv alpha_dummy_040) (syn_cphi (Class.cv alpha_dummy_041)))))
-      (Wff.imp (Wff.classMem (Class.cv alpha_dummy_043) (Class.cv y)) (Wff.neg
-          (Wff.classEq (Class.cv alpha_dummy_042) (syn_cphi (Class.cv alpha_dummy_043))))) :=
+      [(alphaDummy041, alphaDummy043), (alphaDummy040, alphaDummy042),
+        (alphaDummy046, alphaDummy047), (alphaDummy044, alphaDummy045),
+        (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+      (Wff.imp (Wff.classMem (Class.cv alphaDummy041) (Class.cv alphaDummy001)) (Wff.neg
+          (Wff.classEq (Class.cv alphaDummy040) (synCphi (Class.cv alphaDummy041)))))
+      (Wff.imp (Wff.classMem (Class.cv alphaDummy043) (Class.cv y)) (Wff.neg
+          (Wff.classEq (Class.cv alphaDummy042) (synCphi (Class.cv alphaDummy043))))) :=
     (TAlphaWff.imp (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
           (TAlphaVar.there (Nat.ne_of_lt (mem_lt_freshVar support_mem_0042 1))
             (Nat.ne_of_lt (mem_lt_freshVar support_mem_0044 1))
@@ -2700,7 +2701,7 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                   (Nat.ne_of_lt (mem_lt_freshVar support_mem_0045 0))
                   (TAlphaVar.here _ _ _))))))) (TAlphaWff.neg (TAlphaWff.classEq (TAlphaClass.cv
             (TAlphaVar.there (freshVar_injective
-                (((Class.cv alpha_dummy_001)).fv ∪ ((Class.cv alpha_dummy_000)).fv) (by decide))
+                (((Class.cv alphaDummy001)).fv ∪ ((Class.cv alphaDummy000)).fv) (by decide))
               (freshVar_injective (((Class.cv y)).fv ∪ ((Class.cv x)).fv) (by decide))
               (TAlphaVar.here _ _ _))) (TAlphaClass.cab (TAlphaWff.ex (TAlphaWff.conj
                 (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
@@ -2710,8 +2711,8 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                         (Nat.ne_of_lt (mem_lt_freshVar support_mem_0049 1))
                         (TAlphaVar.here _ _ _))))) (TAlphaWff.classEq (TAlphaClass.cv
                     (TAlphaVar.there
-                      (freshVar_injective (((Class.cv alpha_dummy_041)).fv) (by decide))
-                      (freshVar_injective (((Class.cv alpha_dummy_043)).fv) (by decide))
+                      (freshVar_injective (((Class.cv alphaDummy041)).fv) (by decide))
+                      (freshVar_injective (((Class.cv alphaDummy043)).fv) (by decide))
                       (TAlphaVar.here _ _ _))) (TAlphaClass.cab (TAlphaWff.imp (TAlphaWff.neg
                         (TAlphaWff.conj
                           (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
@@ -2726,27 +2727,27 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
         (mem_lt_freshVar support_mem_0051 0)) (TAlphaVar.here _ _ _)))))) (TAlphaWff.ex
                                     (TAlphaWff.conj (TAlphaWff.classMem
                                         (TAlphaClass.cv (TAlphaVar.here _ _ _))
-                                        (TAlphaClass.refl_of_closed
-        [(alpha_dummy_056, alpha_dummy_059), (alpha_dummy_055, alpha_dummy_058),
-        (alpha_dummy_054, alpha_dummy_057), (alpha_dummy_052, alpha_dummy_053),
-        (alpha_dummy_048, alpha_dummy_050), (alpha_dummy_049, alpha_dummy_051),
-        (alpha_dummy_041, alpha_dummy_043), (alpha_dummy_040, alpha_dummy_042),
-        (alpha_dummy_046, alpha_dummy_047), (alpha_dummy_044, alpha_dummy_045),
-        (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-        (syn_c1c) (by simp only [fv_syn_c1c]))) (TAlphaWff.neg split_alpha_0005)))))))
+                                        (TAlphaClass.reflOfClosed
+        [(alphaDummy056, alphaDummy059), (alphaDummy055, alphaDummy058),
+        (alphaDummy054, alphaDummy057), (alphaDummy052, alphaDummy053),
+        (alphaDummy048, alphaDummy050), (alphaDummy049, alphaDummy051),
+        (alphaDummy041, alphaDummy043), (alphaDummy040, alphaDummy042),
+        (alphaDummy046, alphaDummy047), (alphaDummy044, alphaDummy045),
+        (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+        (synC1c) (by simp only [fv_syn_c1c]))) (TAlphaWff.neg splitAlpha0005)))))))
                           (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.there
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0050 0))
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0051 0))
-                                (TAlphaVar.here _ _ _))) (TAlphaClass.refl_of_closed
-                              [(alpha_dummy_052, alpha_dummy_053),
-                                (alpha_dummy_048, alpha_dummy_050),
-                                (alpha_dummy_049, alpha_dummy_051),
-                                (alpha_dummy_041, alpha_dummy_043),
-                                (alpha_dummy_040, alpha_dummy_042),
-                                (alpha_dummy_046, alpha_dummy_047),
-                                (alpha_dummy_044, alpha_dummy_045), (alpha_dummy_001, y),
-                                (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-                              (syn_cnnc) (by simp only [fv_syn_cnnc]))))) (TAlphaWff.conj
+                                (TAlphaVar.here _ _ _))) (TAlphaClass.reflOfClosed
+                              [(alphaDummy052, alphaDummy053),
+                                (alphaDummy048, alphaDummy050),
+                                (alphaDummy049, alphaDummy051),
+                                (alphaDummy041, alphaDummy043),
+                                (alphaDummy040, alphaDummy042),
+                                (alphaDummy046, alphaDummy047),
+                                (alphaDummy044, alphaDummy045), (alphaDummy001, y),
+                                (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+                              (synCnnc) (by simp only [fv_syn_cnnc]))))) (TAlphaWff.conj
                         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                           (TAlphaClass.cv (TAlphaVar.there
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0050 0))
@@ -2755,38 +2756,38 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                             (TAlphaClass.cv (TAlphaVar.there
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0050 0))
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0051 0))
-                                (TAlphaVar.here _ _ _))) (TAlphaClass.refl_of_closed
-                              [(alpha_dummy_052, alpha_dummy_053),
-                                (alpha_dummy_048, alpha_dummy_050),
-                                (alpha_dummy_049, alpha_dummy_051),
-                                (alpha_dummy_041, alpha_dummy_043),
-                                (alpha_dummy_040, alpha_dummy_042),
-                                (alpha_dummy_046, alpha_dummy_047),
-                                (alpha_dummy_044, alpha_dummy_045), (alpha_dummy_001, y),
-                                (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-                              (syn_cnnc) (by simp only [fv_syn_cnnc]))))))))))))))
-  have wpp_notmem_0160 : alpha_dummy_070 ∉ ((syn_c1c)).fv := by
+                                (TAlphaVar.here _ _ _))) (TAlphaClass.reflOfClosed
+                              [(alphaDummy052, alphaDummy053),
+                                (alphaDummy048, alphaDummy050),
+                                (alphaDummy049, alphaDummy051),
+                                (alphaDummy041, alphaDummy043),
+                                (alphaDummy040, alphaDummy042),
+                                (alphaDummy046, alphaDummy047),
+                                (alphaDummy044, alphaDummy045), (alphaDummy001, y),
+                                (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+                              (synCnnc) (by simp only [fv_syn_cnnc]))))))))))))))
+  have wpp_notmem_0160 : alpha_dummy_070 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0161 : alpha_dummy_071 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0161 : alphaDummy071 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0162 : alpha_dummy_072 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0162 : alphaDummy072 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0163 : alpha_dummy_073 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0163 : alphaDummy073 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0164 : alpha_dummy_074 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0164 : alphaDummy074 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
-  have wpp_notmem_0165 : alpha_dummy_075 ∉ ((syn_c1c)).fv := by
+  have wpp_notmem_0165 : alphaDummy075 ∉ ((synC1c)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c1c) ▸ h_mem))
   have wpp_refl_0010 :
     TReflOn
-      [(alpha_dummy_056, alpha_dummy_059), (alpha_dummy_055, alpha_dummy_058),
-        (alpha_dummy_054, alpha_dummy_057), (alpha_dummy_052, alpha_dummy_053),
-        (alpha_dummy_048, alpha_dummy_050), (alpha_dummy_049, alpha_dummy_051),
-        (alpha_dummy_074, alpha_dummy_075), (alpha_dummy_072, alpha_dummy_073),
-        (alpha_dummy_041, alpha_dummy_043), (alpha_dummy_040, alpha_dummy_042),
-        (alpha_dummy_070, alpha_dummy_071), (alpha_dummy_044, alpha_dummy_045),
-        (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-      ((syn_c1c)).fv :=
+      [(alphaDummy056, alphaDummy059), (alphaDummy055, alphaDummy058),
+        (alphaDummy054, alphaDummy057), (alphaDummy052, alphaDummy053),
+        (alphaDummy048, alphaDummy050), (alphaDummy049, alphaDummy051),
+        (alphaDummy074, alphaDummy075), (alphaDummy072, alphaDummy073),
+        (alphaDummy041, alphaDummy043), (alphaDummy040, alphaDummy042),
+        (alpha_dummy_070, alphaDummy071), (alphaDummy044, alphaDummy045),
+        (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+      ((synC1c)).fv :=
     by
     intro u hu
     exact
@@ -2821,28 +2822,28 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                                     (fun h_eq => (wpp_notmem_0000) (h_eq ▸ hu))
                                     (fun h_eq => (wpp_notmem_0001) (h_eq ▸ hu))
                                     (TAlphaVar.free (by simp) (by simp)))))))))))))))))
-  have wpp_notmem_0166 : alpha_dummy_070 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0166 : alpha_dummy_070 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0167 : alpha_dummy_071 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0167 : alphaDummy071 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0168 : alpha_dummy_072 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0168 : alphaDummy072 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0169 : alpha_dummy_073 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0169 : alphaDummy073 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0170 : alpha_dummy_074 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0170 : alphaDummy074 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
-  have wpp_notmem_0171 : alpha_dummy_075 ∉ ((syn_c0)).fv := by
+  have wpp_notmem_0171 : alphaDummy075 ∉ ((synC0)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0) ▸ h_mem))
   have wpp_refl_0011 :
     TReflOn
-      [(alpha_dummy_056, alpha_dummy_059), (alpha_dummy_055, alpha_dummy_058),
-        (alpha_dummy_054, alpha_dummy_057), (alpha_dummy_052, alpha_dummy_053),
-        (alpha_dummy_048, alpha_dummy_050), (alpha_dummy_049, alpha_dummy_051),
-        (alpha_dummy_074, alpha_dummy_075), (alpha_dummy_072, alpha_dummy_073),
-        (alpha_dummy_041, alpha_dummy_043), (alpha_dummy_040, alpha_dummy_042),
-        (alpha_dummy_070, alpha_dummy_071), (alpha_dummy_044, alpha_dummy_045),
-        (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-      ((syn_c0)).fv :=
+      [(alphaDummy056, alphaDummy059), (alphaDummy055, alphaDummy058),
+        (alphaDummy054, alphaDummy057), (alphaDummy052, alphaDummy053),
+        (alphaDummy048, alphaDummy050), (alphaDummy049, alphaDummy051),
+        (alphaDummy074, alphaDummy075), (alphaDummy072, alphaDummy073),
+        (alphaDummy041, alphaDummy043), (alphaDummy040, alphaDummy042),
+        (alpha_dummy_070, alphaDummy071), (alphaDummy044, alphaDummy045),
+        (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+      ((synC0)).fv :=
     by
     intro u hu
     exact
@@ -2877,21 +2878,21 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                                     (fun h_eq => (wpp_notmem_0026) (h_eq ▸ hu))
                                     (fun h_eq => (wpp_notmem_0027) (h_eq ▸ hu))
                                     (TAlphaVar.free (by simp) (by simp)))))))))))))))))
-  have split_alpha_0007 :
+  have splitAlpha0007 :
     TAlphaWff
-      [(alpha_dummy_056, alpha_dummy_059), (alpha_dummy_055, alpha_dummy_058),
-        (alpha_dummy_054, alpha_dummy_057), (alpha_dummy_052, alpha_dummy_053),
-        (alpha_dummy_048, alpha_dummy_050), (alpha_dummy_049, alpha_dummy_051),
-        (alpha_dummy_074, alpha_dummy_075), (alpha_dummy_072, alpha_dummy_073),
-        (alpha_dummy_041, alpha_dummy_043), (alpha_dummy_040, alpha_dummy_042),
-        (alpha_dummy_070, alpha_dummy_071), (alpha_dummy_044, alpha_dummy_045),
-        (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-      (Wff.imp (Wff.classEq (syn_cin (Class.cv alpha_dummy_055) (Class.cv alpha_dummy_056))
-          (syn_c0)) (Wff.neg (Wff.classEq (Class.cv alpha_dummy_054)
-            (syn_cun (Class.cv alpha_dummy_055) (Class.cv alpha_dummy_056)))))
-      (Wff.imp (Wff.classEq (syn_cin (Class.cv alpha_dummy_058) (Class.cv alpha_dummy_059))
-          (syn_c0)) (Wff.neg (Wff.classEq (Class.cv alpha_dummy_057)
-            (syn_cun (Class.cv alpha_dummy_058) (Class.cv alpha_dummy_059))))) :=
+      [(alphaDummy056, alphaDummy059), (alphaDummy055, alphaDummy058),
+        (alphaDummy054, alphaDummy057), (alphaDummy052, alphaDummy053),
+        (alphaDummy048, alphaDummy050), (alphaDummy049, alphaDummy051),
+        (alphaDummy074, alphaDummy075), (alphaDummy072, alphaDummy073),
+        (alphaDummy041, alphaDummy043), (alphaDummy040, alphaDummy042),
+        (alpha_dummy_070, alphaDummy071), (alphaDummy044, alphaDummy045),
+        (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+      (Wff.imp (Wff.classEq (synCin (Class.cv alphaDummy055) (Class.cv alphaDummy056))
+          (synC0)) (Wff.neg (Wff.classEq (Class.cv alphaDummy054)
+            (synCun (Class.cv alphaDummy055) (Class.cv alphaDummy056)))))
+      (Wff.imp (Wff.classEq (synCin (Class.cv alphaDummy058) (Class.cv alphaDummy059))
+          (synC0)) (Wff.neg (Wff.classEq (Class.cv alphaDummy057)
+            (synCun (Class.cv alphaDummy058) (Class.cv alphaDummy059))))) :=
     (TAlphaWff.imp (TAlphaWff.classEq (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
               (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
                   (TAlphaWff.neg (TAlphaWff.conj
@@ -2902,9 +2903,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0054 0))
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0055 0))
                               (TAlphaVar.there (freshVar_injective
-                                  (((Class.cv alpha_dummy_048)).fv ∪ ((syn_c1c)).fv)
+                                  (((Class.cv alphaDummy048)).fv ∪ ((synC1c)).fv)
                                   (by decide)) (freshVar_injective
-                                  (((Class.cv alpha_dummy_050)).fv ∪ ((syn_c1c)).fv)
+                                  (((Class.cv alphaDummy050)).fv ∪ ((synC1c)).fv)
                                   (by decide)) (TAlphaVar.here _ _ _))))))
                       (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                         (TAlphaClass.cv (TAlphaVar.there
@@ -2922,9 +2923,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0054 0))
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0055 0))
                               (TAlphaVar.there (freshVar_injective
-                                  (((Class.cv alpha_dummy_048)).fv ∪ ((syn_c1c)).fv)
+                                  (((Class.cv alphaDummy048)).fv ∪ ((synC1c)).fv)
                                   (by decide)) (freshVar_injective
-                                  (((Class.cv alpha_dummy_050)).fv ∪ ((syn_c1c)).fv)
+                                  (((Class.cv alphaDummy050)).fv ∪ ((synC1c)).fv)
                                   (by decide)) (TAlphaVar.here _ _ _))))))
                       (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                         (TAlphaClass.cv (TAlphaVar.there
@@ -2932,23 +2933,23 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                             (Nat.ne_of_lt (mem_lt_freshVar support_mem_0061 0)) (TAlphaVar.there
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0058 0))
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0059 0))
-                              (TAlphaVar.here _ _ _)))))))))))) (TAlphaClass.refl_of_closed
-          [(alpha_dummy_056, alpha_dummy_059), (alpha_dummy_055, alpha_dummy_058),
-            (alpha_dummy_054, alpha_dummy_057), (alpha_dummy_052, alpha_dummy_053),
-            (alpha_dummy_048, alpha_dummy_050), (alpha_dummy_049, alpha_dummy_051),
-            (alpha_dummy_074, alpha_dummy_075), (alpha_dummy_072, alpha_dummy_073),
-            (alpha_dummy_041, alpha_dummy_043), (alpha_dummy_040, alpha_dummy_042),
-            (alpha_dummy_070, alpha_dummy_071), (alpha_dummy_044, alpha_dummy_045),
-            (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-          (syn_c0) (by simp only [fv_syn_c0]))) (TAlphaWff.neg (TAlphaWff.classEq
+                              (TAlphaVar.here _ _ _)))))))))))) (TAlphaClass.reflOfClosed
+          [(alphaDummy056, alphaDummy059), (alphaDummy055, alphaDummy058),
+            (alphaDummy054, alphaDummy057), (alphaDummy052, alphaDummy053),
+            (alphaDummy048, alphaDummy050), (alphaDummy049, alphaDummy051),
+            (alphaDummy074, alphaDummy075), (alphaDummy072, alphaDummy073),
+            (alphaDummy041, alphaDummy043), (alphaDummy040, alphaDummy042),
+            (alpha_dummy_070, alphaDummy071), (alphaDummy044, alphaDummy045),
+            (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+          (synC0) (by simp only [fv_syn_c0]))) (TAlphaWff.neg (TAlphaWff.classEq
           (TAlphaClass.cv (TAlphaVar.there
-              (freshVar_injective (((Class.cv alpha_dummy_048)).fv ∪ ((syn_c1c)).fv)
+              (freshVar_injective (((Class.cv alphaDummy048)).fv ∪ ((synC1c)).fv)
                 (by decide))
-              (freshVar_injective (((Class.cv alpha_dummy_050)).fv ∪ ((syn_c1c)).fv)
+              (freshVar_injective (((Class.cv alphaDummy050)).fv ∪ ((synC1c)).fv)
                 (by decide)) (TAlphaVar.there
-                (freshVar_injective (((Class.cv alpha_dummy_048)).fv ∪ ((syn_c1c)).fv)
+                (freshVar_injective (((Class.cv alphaDummy048)).fv ∪ ((synC1c)).fv)
                   (by decide))
-                (freshVar_injective (((Class.cv alpha_dummy_050)).fv ∪ ((syn_c1c)).fv)
+                (freshVar_injective (((Class.cv alphaDummy050)).fv ∪ ((synC1c)).fv)
                   (by decide)) (TAlphaVar.here _ _ _)))) (TAlphaClass.cab (TAlphaWff.neg
               (TAlphaWff.conj (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                   (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
@@ -2960,9 +2961,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0062 0))
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0063 0))
                                 (TAlphaVar.there (freshVar_injective
-                                    (((Class.cv alpha_dummy_048)).fv ∪ ((syn_c1c)).fv)
+                                    (((Class.cv alphaDummy048)).fv ∪ ((synC1c)).fv)
                                     (by decide)) (freshVar_injective
-                                    (((Class.cv alpha_dummy_050)).fv ∪ ((syn_c1c)).fv)
+                                    (((Class.cv alphaDummy050)).fv ∪ ((synC1c)).fv)
                                     (by decide)) (TAlphaVar.here _ _ _))))))
                         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                           (TAlphaClass.cv (TAlphaVar.there
@@ -2972,9 +2973,9 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0062 0))
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0063 0))
                                 (TAlphaVar.there (freshVar_injective
-                                    (((Class.cv alpha_dummy_048)).fv ∪ ((syn_c1c)).fv)
+                                    (((Class.cv alphaDummy048)).fv ∪ ((synC1c)).fv)
                                     (by decide)) (freshVar_injective
-                                    (((Class.cv alpha_dummy_050)).fv ∪ ((syn_c1c)).fv)
+                                    (((Class.cv alphaDummy050)).fv ∪ ((synC1c)).fv)
                                     (by decide)) (TAlphaVar.here _ _ _))))))))))
                 (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
                     (TAlphaWff.neg (TAlphaWff.conj
@@ -2994,27 +2995,27 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0066 0))
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0067 0))
                                 (TAlphaVar.here _ _ _)))))))))))))))
-  have wpp_notmem_0172 : alpha_dummy_070 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0172 : alpha_dummy_070 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0173 : alpha_dummy_071 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0173 : alphaDummy071 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0174 : alpha_dummy_072 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0174 : alphaDummy072 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0175 : alpha_dummy_073 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0175 : alphaDummy073 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0176 : alpha_dummy_074 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0176 : alphaDummy074 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
-  have wpp_notmem_0177 : alpha_dummy_075 ∉ ((syn_cnnc)).fv := by
+  have wpp_notmem_0177 : alphaDummy075 ∉ ((synCnnc)).fv := by
     exact (fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_cnnc) ▸ h_mem))
   have wpp_refl_0012 :
     TReflOn
-      [(alpha_dummy_052, alpha_dummy_053), (alpha_dummy_048, alpha_dummy_050),
-        (alpha_dummy_049, alpha_dummy_051), (alpha_dummy_074, alpha_dummy_075),
-        (alpha_dummy_072, alpha_dummy_073), (alpha_dummy_041, alpha_dummy_043),
-        (alpha_dummy_040, alpha_dummy_042), (alpha_dummy_070, alpha_dummy_071),
-        (alpha_dummy_044, alpha_dummy_045), (alpha_dummy_001, y), (alpha_dummy_000, x),
-        (alpha_dummy_002, alpha_dummy_003)]
-      ((syn_cnnc)).fv :=
+      [(alphaDummy052, alphaDummy053), (alphaDummy048, alphaDummy050),
+        (alphaDummy049, alphaDummy051), (alphaDummy074, alphaDummy075),
+        (alphaDummy072, alphaDummy073), (alphaDummy041, alphaDummy043),
+        (alphaDummy040, alphaDummy042), (alpha_dummy_070, alphaDummy071),
+        (alphaDummy044, alphaDummy045), (alphaDummy001, y), (alphaDummy000, x),
+        (alphaDummy002, alphaDummy003)]
+      ((synCnnc)).fv :=
     by
     intro u hu
     exact
@@ -3043,18 +3044,18 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                             (TAlphaVar.there (fun h_eq => (wpp_notmem_0052) (h_eq ▸ hu))
                               (fun h_eq => (wpp_notmem_0053) (h_eq ▸ hu))
                               (TAlphaVar.free (by simp) (by simp))))))))))))))
-  have split_alpha_0008 :
+  have splitAlpha0008 :
     TAlphaWff
-      [(alpha_dummy_074, alpha_dummy_075), (alpha_dummy_072, alpha_dummy_073),
-        (alpha_dummy_041, alpha_dummy_043), (alpha_dummy_040, alpha_dummy_042),
-        (alpha_dummy_070, alpha_dummy_071), (alpha_dummy_044, alpha_dummy_045),
-        (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-      (Wff.imp (Wff.classMem (Class.cv alpha_dummy_074) (syn_cphi (Class.cv alpha_dummy_041)))
-        (Wff.neg (Wff.classMem (Class.cv alpha_dummy_074)
-            (syn_cphi (Class.cv alpha_dummy_041)))))
-      (Wff.imp (Wff.classMem (Class.cv alpha_dummy_075) (syn_cphi (Class.cv alpha_dummy_043)))
-        (Wff.neg (Wff.classMem (Class.cv alpha_dummy_075)
-            (syn_cphi (Class.cv alpha_dummy_043))))) :=
+      [(alphaDummy074, alphaDummy075), (alphaDummy072, alphaDummy073),
+        (alphaDummy041, alphaDummy043), (alphaDummy040, alphaDummy042),
+        (alpha_dummy_070, alphaDummy071), (alphaDummy044, alphaDummy045),
+        (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+      (Wff.imp (Wff.classMem (Class.cv alphaDummy074) (synCphi (Class.cv alphaDummy041)))
+        (Wff.neg (Wff.classMem (Class.cv alphaDummy074)
+            (synCphi (Class.cv alphaDummy041)))))
+      (Wff.imp (Wff.classMem (Class.cv alphaDummy075) (synCphi (Class.cv alphaDummy043)))
+        (Wff.neg (Wff.classMem (Class.cv alphaDummy075)
+            (synCphi (Class.cv alphaDummy043))))) :=
     (TAlphaWff.imp (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
           (TAlphaWff.ex (TAlphaWff.conj
               (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
@@ -3068,8 +3069,8 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                           (Nat.ne_of_lt (mem_lt_freshVar support_mem_0077 0))
                           (TAlphaVar.here _ _ _))))))) (TAlphaWff.classEq (TAlphaClass.cv
                   (TAlphaVar.there
-                    (freshVar_injective (((Class.cv alpha_dummy_041)).fv) (by decide))
-                    (freshVar_injective (((Class.cv alpha_dummy_043)).fv) (by decide))
+                    (freshVar_injective (((Class.cv alphaDummy041)).fv) (by decide))
+                    (freshVar_injective (((Class.cv alphaDummy043)).fv) (by decide))
                     (TAlphaVar.here _ _ _))) (TAlphaClass.cab (TAlphaWff.imp (TAlphaWff.neg
                       (TAlphaWff.conj
                         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
@@ -3085,31 +3086,31 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
         (mem_lt_freshVar support_mem_0051 0)) (TAlphaVar.here _ _ _)))))) (TAlphaWff.ex
                                   (TAlphaWff.conj (TAlphaWff.classMem
                                       (TAlphaClass.cv (TAlphaVar.here _ _ _))
-                                      (TAlphaClass.refl_of_closed
-                                        [(alpha_dummy_056, alpha_dummy_059),
-        (alpha_dummy_055, alpha_dummy_058), (alpha_dummy_054, alpha_dummy_057),
-        (alpha_dummy_052, alpha_dummy_053), (alpha_dummy_048, alpha_dummy_050),
-        (alpha_dummy_049, alpha_dummy_051), (alpha_dummy_074, alpha_dummy_075),
-        (alpha_dummy_072, alpha_dummy_073), (alpha_dummy_041, alpha_dummy_043),
-        (alpha_dummy_040, alpha_dummy_042), (alpha_dummy_070, alpha_dummy_071),
-        (alpha_dummy_044, alpha_dummy_045), (alpha_dummy_001, y), (alpha_dummy_000, x),
-        (alpha_dummy_002, alpha_dummy_003)] (syn_c1c) (by simp only [fv_syn_c1c])))
-                                    (TAlphaWff.neg split_alpha_0007))))))) (TAlphaWff.classMem
+                                      (TAlphaClass.reflOfClosed
+                                        [(alphaDummy056, alphaDummy059),
+        (alphaDummy055, alphaDummy058), (alphaDummy054, alphaDummy057),
+        (alphaDummy052, alphaDummy053), (alphaDummy048, alphaDummy050),
+        (alphaDummy049, alphaDummy051), (alphaDummy074, alphaDummy075),
+        (alphaDummy072, alphaDummy073), (alphaDummy041, alphaDummy043),
+        (alphaDummy040, alphaDummy042), (alpha_dummy_070, alphaDummy071),
+        (alphaDummy044, alphaDummy045), (alphaDummy001, y), (alphaDummy000, x),
+        (alphaDummy002, alphaDummy003)] (synC1c) (by simp only [fv_syn_c1c])))
+                                    (TAlphaWff.neg splitAlpha0007))))))) (TAlphaWff.classMem
                           (TAlphaClass.cv (TAlphaVar.there
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0050 0))
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0051 0))
-                              (TAlphaVar.here _ _ _))) (TAlphaClass.refl_of_closed
-                            [(alpha_dummy_052, alpha_dummy_053),
-                              (alpha_dummy_048, alpha_dummy_050),
-                              (alpha_dummy_049, alpha_dummy_051),
-                              (alpha_dummy_074, alpha_dummy_075),
-                              (alpha_dummy_072, alpha_dummy_073),
-                              (alpha_dummy_041, alpha_dummy_043),
-                              (alpha_dummy_040, alpha_dummy_042),
-                              (alpha_dummy_070, alpha_dummy_071),
-                              (alpha_dummy_044, alpha_dummy_045), (alpha_dummy_001, y),
-                              (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-                            (syn_cnnc) (by simp only [fv_syn_cnnc]))))) (TAlphaWff.conj
+                              (TAlphaVar.here _ _ _))) (TAlphaClass.reflOfClosed
+                            [(alphaDummy052, alphaDummy053),
+                              (alphaDummy048, alphaDummy050),
+                              (alphaDummy049, alphaDummy051),
+                              (alphaDummy074, alphaDummy075),
+                              (alphaDummy072, alphaDummy073),
+                              (alphaDummy041, alphaDummy043),
+                              (alphaDummy040, alphaDummy042),
+                              (alpha_dummy_070, alphaDummy071),
+                              (alphaDummy044, alphaDummy045), (alphaDummy001, y),
+                              (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+                            (synCnnc) (by simp only [fv_syn_cnnc]))))) (TAlphaWff.conj
                       (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                         (TAlphaClass.cv (TAlphaVar.there
                             (Nat.ne_of_lt (mem_lt_freshVar support_mem_0050 0))
@@ -3118,18 +3119,18 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                           (TAlphaClass.cv (TAlphaVar.there
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0050 0))
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0051 0))
-                              (TAlphaVar.here _ _ _))) (TAlphaClass.refl_of_closed
-                            [(alpha_dummy_052, alpha_dummy_053),
-                              (alpha_dummy_048, alpha_dummy_050),
-                              (alpha_dummy_049, alpha_dummy_051),
-                              (alpha_dummy_074, alpha_dummy_075),
-                              (alpha_dummy_072, alpha_dummy_073),
-                              (alpha_dummy_041, alpha_dummy_043),
-                              (alpha_dummy_040, alpha_dummy_042),
-                              (alpha_dummy_070, alpha_dummy_071),
-                              (alpha_dummy_044, alpha_dummy_045), (alpha_dummy_001, y),
-                              (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-                            (syn_cnnc) (by simp only [fv_syn_cnnc])))))))))))) (TAlphaWff.neg
+                              (TAlphaVar.here _ _ _))) (TAlphaClass.reflOfClosed
+                            [(alphaDummy052, alphaDummy053),
+                              (alphaDummy048, alphaDummy050),
+                              (alphaDummy049, alphaDummy051),
+                              (alphaDummy074, alphaDummy075),
+                              (alphaDummy072, alphaDummy073),
+                              (alphaDummy041, alphaDummy043),
+                              (alphaDummy040, alphaDummy042),
+                              (alpha_dummy_070, alphaDummy071),
+                              (alphaDummy044, alphaDummy045), (alphaDummy001, y),
+                              (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+                            (synCnnc) (by simp only [fv_syn_cnnc])))))))))))) (TAlphaWff.neg
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
             (TAlphaWff.ex (TAlphaWff.conj
                 (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
@@ -3143,8 +3144,8 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                             (Nat.ne_of_lt (mem_lt_freshVar support_mem_0077 0))
                             (TAlphaVar.here _ _ _))))))) (TAlphaWff.classEq (TAlphaClass.cv
                     (TAlphaVar.there
-                      (freshVar_injective (((Class.cv alpha_dummy_041)).fv) (by decide))
-                      (freshVar_injective (((Class.cv alpha_dummy_043)).fv) (by decide))
+                      (freshVar_injective (((Class.cv alphaDummy041)).fv) (by decide))
+                      (freshVar_injective (((Class.cv alphaDummy043)).fv) (by decide))
                       (TAlphaVar.here _ _ _))) (TAlphaClass.cab (TAlphaWff.imp (TAlphaWff.neg
                         (TAlphaWff.conj
                           (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
@@ -3159,30 +3160,30 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
         (mem_lt_freshVar support_mem_0051 0)) (TAlphaVar.here _ _ _)))))) (TAlphaWff.ex
                                     (TAlphaWff.conj (TAlphaWff.classMem
                                         (TAlphaClass.cv (TAlphaVar.here _ _ _))
-                                        (TAlphaClass.refl_of_closed
-        [(alpha_dummy_056, alpha_dummy_059), (alpha_dummy_055, alpha_dummy_058),
-        (alpha_dummy_054, alpha_dummy_057), (alpha_dummy_052, alpha_dummy_053),
-        (alpha_dummy_048, alpha_dummy_050), (alpha_dummy_049, alpha_dummy_051),
-        (alpha_dummy_074, alpha_dummy_075), (alpha_dummy_072, alpha_dummy_073),
-        (alpha_dummy_041, alpha_dummy_043), (alpha_dummy_040, alpha_dummy_042),
-        (alpha_dummy_070, alpha_dummy_071), (alpha_dummy_044, alpha_dummy_045),
-        (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-        (syn_c1c) (by simp only [fv_syn_c1c]))) (TAlphaWff.neg split_alpha_0007)))))))
+                                        (TAlphaClass.reflOfClosed
+        [(alphaDummy056, alphaDummy059), (alphaDummy055, alphaDummy058),
+        (alphaDummy054, alphaDummy057), (alphaDummy052, alphaDummy053),
+        (alphaDummy048, alphaDummy050), (alphaDummy049, alphaDummy051),
+        (alphaDummy074, alphaDummy075), (alphaDummy072, alphaDummy073),
+        (alphaDummy041, alphaDummy043), (alphaDummy040, alphaDummy042),
+        (alpha_dummy_070, alphaDummy071), (alphaDummy044, alphaDummy045),
+        (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+        (synC1c) (by simp only [fv_syn_c1c]))) (TAlphaWff.neg splitAlpha0007)))))))
                           (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.there
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0050 0))
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0051 0))
-                                (TAlphaVar.here _ _ _))) (TAlphaClass.refl_of_closed
-                              [(alpha_dummy_052, alpha_dummy_053),
-                                (alpha_dummy_048, alpha_dummy_050),
-                                (alpha_dummy_049, alpha_dummy_051),
-                                (alpha_dummy_074, alpha_dummy_075),
-                                (alpha_dummy_072, alpha_dummy_073),
-                                (alpha_dummy_041, alpha_dummy_043),
-                                (alpha_dummy_040, alpha_dummy_042),
-                                (alpha_dummy_070, alpha_dummy_071),
-                                (alpha_dummy_044, alpha_dummy_045), (alpha_dummy_001, y),
-                                (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-                              (syn_cnnc) (by simp only [fv_syn_cnnc]))))) (TAlphaWff.conj
+                                (TAlphaVar.here _ _ _))) (TAlphaClass.reflOfClosed
+                              [(alphaDummy052, alphaDummy053),
+                                (alphaDummy048, alphaDummy050),
+                                (alphaDummy049, alphaDummy051),
+                                (alphaDummy074, alphaDummy075),
+                                (alphaDummy072, alphaDummy073),
+                                (alphaDummy041, alphaDummy043),
+                                (alphaDummy040, alphaDummy042),
+                                (alpha_dummy_070, alphaDummy071),
+                                (alphaDummy044, alphaDummy045), (alphaDummy001, y),
+                                (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+                              (synCnnc) (by simp only [fv_syn_cnnc]))))) (TAlphaWff.conj
                         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                           (TAlphaClass.cv (TAlphaVar.there
                               (Nat.ne_of_lt (mem_lt_freshVar support_mem_0050 0))
@@ -3191,75 +3192,75 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                             (TAlphaClass.cv (TAlphaVar.there
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0050 0))
                                 (Nat.ne_of_lt (mem_lt_freshVar support_mem_0051 0))
-                                (TAlphaVar.here _ _ _))) (TAlphaClass.refl_of_closed
-                              [(alpha_dummy_052, alpha_dummy_053),
-                                (alpha_dummy_048, alpha_dummy_050),
-                                (alpha_dummy_049, alpha_dummy_051),
-                                (alpha_dummy_074, alpha_dummy_075),
-                                (alpha_dummy_072, alpha_dummy_073),
-                                (alpha_dummy_041, alpha_dummy_043),
-                                (alpha_dummy_040, alpha_dummy_042),
-                                (alpha_dummy_070, alpha_dummy_071),
-                                (alpha_dummy_044, alpha_dummy_045), (alpha_dummy_001, y),
-                                (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-                              (syn_cnnc) (by simp only [fv_syn_cnnc]))))))))))))))
-  have wpp_notmem_0178 : alpha_dummy_044 ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+                                (TAlphaVar.here _ _ _))) (TAlphaClass.reflOfClosed
+                              [(alphaDummy052, alphaDummy053),
+                                (alphaDummy048, alphaDummy050),
+                                (alphaDummy049, alphaDummy051),
+                                (alphaDummy074, alphaDummy075),
+                                (alphaDummy072, alphaDummy073),
+                                (alphaDummy041, alphaDummy043),
+                                (alphaDummy040, alphaDummy042),
+                                (alpha_dummy_070, alphaDummy071),
+                                (alphaDummy044, alphaDummy045), (alphaDummy001, y),
+                                (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+                              (synCnnc) (by simp only [fv_syn_cnnc]))))))))))))))
+  have wpp_notmem_0178 : alphaDummy044 ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
-  have wpp_notmem_0179 : alpha_dummy_045 ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
+  have wpp_notmem_0179 : alphaDummy045 ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
-  have wpp_notmem_0180 : alpha_dummy_070 ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
+  have wpp_notmem_0180 : alpha_dummy_070 ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
-  have wpp_notmem_0181 : alpha_dummy_071 ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
+  have wpp_notmem_0181 : alphaDummy071 ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
-  have wpp_notmem_0182 : alpha_dummy_040 ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
+  have wpp_notmem_0182 : alphaDummy040 ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
-  have wpp_notmem_0183 : alpha_dummy_042 ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
+  have wpp_notmem_0183 : alphaDummy042 ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
-  have wpp_notmem_0184 : alpha_dummy_041 ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
+  have wpp_notmem_0184 : alphaDummy041 ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
-  have wpp_notmem_0185 : alpha_dummy_043 ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
+  have wpp_notmem_0185 : alphaDummy043 ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
-  have wpp_notmem_0186 : alpha_dummy_072 ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
+  have wpp_notmem_0186 : alphaDummy072 ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
-  have wpp_notmem_0187 : alpha_dummy_073 ∉ ((syn_ccompl (syn_csn (syn_c0c)))).fv := by
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
+  have wpp_notmem_0187 : alphaDummy073 ∉ ((synCcompl (synCsn (synC0c)))).fv := by
     exact
       (fun h_mem => ((fun h_mem =>
             ((fun h_mem => ((fun h_mem => (by simp at h_mem))) ((fv_syn_c0c) ▸ h_mem)))
-              ((fv_syn_csn (syn_c0c)) ▸ h_mem))) ((fv_syn_ccompl (syn_csn (syn_c0c))) ▸ h_mem))
+              ((fv_syn_csn (synC0c)) ▸ h_mem))) ((fv_syn_ccompl (synCsn (synC0c))) ▸ h_mem))
   have wpp_refl_0013 :
     TReflOn
-      [(alpha_dummy_072, alpha_dummy_073), (alpha_dummy_041, alpha_dummy_043),
-        (alpha_dummy_040, alpha_dummy_042), (alpha_dummy_070, alpha_dummy_071),
-        (alpha_dummy_044, alpha_dummy_045), (alpha_dummy_001, y), (alpha_dummy_000, x),
-        (alpha_dummy_002, alpha_dummy_003)]
-      ((syn_ccompl (syn_csn (syn_c0c)))).fv :=
+      [(alphaDummy072, alphaDummy073), (alphaDummy041, alphaDummy043),
+        (alphaDummy040, alphaDummy042), (alpha_dummy_070, alphaDummy071),
+        (alphaDummy044, alphaDummy045), (alphaDummy001, y), (alphaDummy000, x),
+        (alphaDummy002, alphaDummy003)]
+      ((synCcompl (synCsn (synC0c)))).fv :=
     by
     intro u hu
     exact
@@ -3280,52 +3281,52 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
                     (TAlphaVar.there (fun h_eq => (wpp_notmem_0090) (h_eq ▸ hu))
                       (fun h_eq => (wpp_notmem_0091) (h_eq ▸ hu))
                       (TAlphaVar.free (by simp) (by simp))))))))))
-  have focused_notmem_0000 : alpha_dummy_002 ∉ A.fv :=
+  have focused_notmem_0000 : alphaDummy002 ∉ A.fv :=
     by
     change
       freshVar
-          (({ alpha_dummy_000 } : Finset Var) ∪ ({ alpha_dummy_001 } : Finset Var) ∪
-            ((syn_wbr (Class.cv alpha_dummy_001) A (Class.cv alpha_dummy_000))).fv)
+          (({ alphaDummy000 } : Finset Var) ∪ ({ alphaDummy001 } : Finset Var) ∪
+            ((synWbr (Class.cv alphaDummy001) A (Class.cv alphaDummy000))).fv)
           0 ∉
         A.fv
     exact
       NFChoice.DefinitionLeaves.AlphaFocusedSupport.freshVar_not_mem_of_subset 0
         (fun u hu => Finset.mem_union_right _
-            (((fv_syn_wbr (Class.cv alpha_dummy_001) A (Class.cv alpha_dummy_000)).symm ▸
+            (((fv_syn_wbr (Class.cv alphaDummy001) A (Class.cv alphaDummy000)).symm ▸
               (Finset.mem_union_right _ (hu)))))
-  have wpp_notmem_0188 : alpha_dummy_002 ∉ (A).fv := by exact focused_notmem_0000
-  have focused_notmem_0001 : alpha_dummy_003 ∉ A.fv :=
+  have wpp_notmem_0188 : alphaDummy002 ∉ (A).fv := by exact focused_notmem_0000
+  have focused_notmem_0001 : alphaDummy003 ∉ A.fv :=
     by
     change
       freshVar
           (({ x } : Finset Var) ∪ ({ y } : Finset Var) ∪
-            ((syn_wbr (Class.cv y) A (Class.cv x))).fv)
+            ((synWbr (Class.cv y) A (Class.cv x))).fv)
           0 ∉
         A.fv
     exact
       NFChoice.DefinitionLeaves.AlphaFocusedSupport.freshVar_not_mem_of_subset 0
         (fun u hu => Finset.mem_union_right _ (((fv_syn_wbr (Class.cv y) A (Class.cv x)).symm ▸
               (Finset.mem_union_right _ (hu)))))
-  have wpp_notmem_0189 : alpha_dummy_003 ∉ (A).fv := by exact focused_notmem_0001
-  have focused_notmem_0002 : alpha_dummy_000 ∉ A.fv :=
+  have wpp_notmem_0189 : alphaDummy003 ∉ (A).fv := by exact focused_notmem_0001
+  have focused_notmem_0002 : alphaDummy000 ∉ A.fv :=
     by
     change freshVar ((A).fv) 0 ∉ A.fv
     exact
       NFChoice.DefinitionLeaves.AlphaFocusedSupport.freshVar_not_mem_of_subset 0
         (fun u hu => hu)
-  have wpp_notmem_0190 : alpha_dummy_000 ∉ (A).fv := by exact focused_notmem_0002
+  have wpp_notmem_0190 : alphaDummy000 ∉ (A).fv := by exact focused_notmem_0002
   have wpp_notmem_0191 : x ∉ (A).fv := by exact dv_A_x
-  have focused_notmem_0003 : alpha_dummy_001 ∉ A.fv :=
+  have focused_notmem_0003 : alphaDummy001 ∉ A.fv :=
     by
     change freshVar ((A).fv) 1 ∉ A.fv
     exact
       NFChoice.DefinitionLeaves.AlphaFocusedSupport.freshVar_not_mem_of_subset 1
         (fun u hu => hu)
-  have wpp_notmem_0192 : alpha_dummy_001 ∉ (A).fv := by exact focused_notmem_0003
+  have wpp_notmem_0192 : alphaDummy001 ∉ (A).fv := by exact focused_notmem_0003
   have wpp_notmem_0193 : y ∉ (A).fv := by exact dv_A_y
-  have wpp_refl_0014 :
+  have wppRefl0014 :
     TReflOn
-      [(alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
+      [(alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
       (A).fv :=
     by
     intro u hu
@@ -3336,18 +3337,18 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
           (fun h_eq => (wpp_notmem_0191) (h_eq ▸ hu))
           (TAlphaVar.there (fun h_eq => (wpp_notmem_0188) (h_eq ▸ hu))
             (fun h_eq => (wpp_notmem_0189) (h_eq ▸ hu)) (TAlphaVar.free (by simp) (by simp)))))
-  have split_alpha_0009 :
+  have splitAlpha0009 :
     TAlphaWff
-      [(alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-      (Wff.classMem (syn_cop (Class.cv alpha_dummy_001) (Class.cv alpha_dummy_000)) A)
-      (Wff.classMem (syn_cop (Class.cv y) (Class.cv x)) A) :=
+      [(alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+      (Wff.classMem (synCop (Class.cv alphaDummy001) (Class.cv alphaDummy000)) A)
+      (Wff.classMem (synCop (Class.cv y) (Class.cv x)) A) :=
     (TAlphaWff.classMem (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
             (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
                 (TAlphaWff.neg (TAlphaWff.conj
                     (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
-                      (TAlphaClass.cab (TAlphaWff.ex (TAlphaWff.neg split_alpha_0006))))
+                      (TAlphaClass.cab (TAlphaWff.ex (TAlphaWff.neg splitAlpha0006))))
                     (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
-                        (TAlphaWff.ex (TAlphaWff.neg split_alpha_0006))))))))
+                        (TAlphaWff.ex (TAlphaWff.neg splitAlpha0006))))))))
             (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
                 (TAlphaWff.neg (TAlphaWff.conj
                     (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
@@ -3367,21 +3368,21 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
         (mem_lt_freshVar support_mem_0073 0)) (TAlphaVar.there
         (freshVar_injective ((A).fv) (by decide)) dv_x_y (TAlphaVar.here _ _ _))))))))
                             (TAlphaWff.classEq (TAlphaClass.cv (TAlphaVar.there
-                                  (freshVar_injective (((Class.cv alpha_dummy_001)).fv ∪
-                                      ((Class.cv alpha_dummy_000)).fv) (by decide))
+                                  (freshVar_injective (((Class.cv alphaDummy001)).fv ∪
+                                      ((Class.cv alphaDummy000)).fv) (by decide))
                                   (freshVar_injective
                                     (((Class.cv y)).fv ∪ ((Class.cv x)).fv) (by decide))
                                   (TAlphaVar.here _ _ _))) (TAlphaClass.cab (TAlphaWff.neg
                                   (TAlphaWff.conj (TAlphaWff.classMem
                                       (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
-                                        (TAlphaWff.neg (TAlphaWff.neg split_alpha_0008))))
+                                        (TAlphaWff.neg (TAlphaWff.neg splitAlpha0008))))
                                     (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
-                                      (TAlphaClass.refl_of_closed
-                                        [(alpha_dummy_072, alpha_dummy_073),
-        (alpha_dummy_041, alpha_dummy_043), (alpha_dummy_040, alpha_dummy_042),
-        (alpha_dummy_070, alpha_dummy_071), (alpha_dummy_044, alpha_dummy_045),
-        (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-                                        (syn_ccompl (syn_csn (syn_c0c))) (by
+                                      (TAlphaClass.reflOfClosed
+                                        [(alphaDummy072, alphaDummy073),
+        (alphaDummy041, alphaDummy043), (alphaDummy040, alphaDummy042),
+        (alpha_dummy_070, alphaDummy071), (alphaDummy044, alphaDummy045),
+        (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+                                        (synCcompl (synCsn (synC0c))) (by
                                           simp only [fv_syn_ccompl, fv_syn_csn,
                                             fv_syn_c0c])))))))))))
                     (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
@@ -3401,29 +3402,29 @@ noncomputable def nominal_df_cnv (x : Var) (y : Var) (A : Class) (dv_A_x : x ∉
         (mem_lt_freshVar support_mem_0073 0)) (TAlphaVar.there
         (freshVar_injective ((A).fv) (by decide)) dv_x_y (TAlphaVar.here _ _ _))))))))
                             (TAlphaWff.classEq (TAlphaClass.cv (TAlphaVar.there
-                                  (freshVar_injective (((Class.cv alpha_dummy_001)).fv ∪
-                                      ((Class.cv alpha_dummy_000)).fv) (by decide))
+                                  (freshVar_injective (((Class.cv alphaDummy001)).fv ∪
+                                      ((Class.cv alphaDummy000)).fv) (by decide))
                                   (freshVar_injective
                                     (((Class.cv y)).fv ∪ ((Class.cv x)).fv) (by decide))
                                   (TAlphaVar.here _ _ _))) (TAlphaClass.cab (TAlphaWff.neg
                                   (TAlphaWff.conj (TAlphaWff.classMem
                                       (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
-                                        (TAlphaWff.neg (TAlphaWff.neg split_alpha_0008))))
+                                        (TAlphaWff.neg (TAlphaWff.neg splitAlpha0008))))
                                     (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
-                                      (TAlphaClass.refl_of_closed
-                                        [(alpha_dummy_072, alpha_dummy_073),
-        (alpha_dummy_041, alpha_dummy_043), (alpha_dummy_040, alpha_dummy_042),
-        (alpha_dummy_070, alpha_dummy_071), (alpha_dummy_044, alpha_dummy_045),
-        (alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)]
-                                        (syn_ccompl (syn_csn (syn_c0c))) (by
+                                      (TAlphaClass.reflOfClosed
+                                        [(alphaDummy072, alphaDummy073),
+        (alphaDummy041, alphaDummy043), (alphaDummy040, alphaDummy042),
+        (alpha_dummy_070, alphaDummy071), (alphaDummy044, alphaDummy045),
+        (alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)]
+                                        (synCcompl (synCsn (synC0c))) (by
                                           simp only [fv_syn_ccompl, fv_syn_csn,
                                             fv_syn_c0c]))))))))))))))))))
-      (TAlphaClass.refl_of_reflOn
-        [(alpha_dummy_001, y), (alpha_dummy_000, x), (alpha_dummy_002, alpha_dummy_003)] A
-        wpp_refl_0014))
+      (TAlphaClass.reflOfReflOn
+        [(alphaDummy001, y), (alphaDummy000, x), (alphaDummy002, alphaDummy003)] A
+        wppRefl0014))
   exact
     Nominal.alphaClassEq
       (TAlphaClass.cab
-        (TAlphaWff.ex (TAlphaWff.ex (TAlphaWff.conj split_alpha_0004 split_alpha_0009))))
+        (TAlphaWff.ex (TAlphaWff.ex (TAlphaWff.conj splitAlpha0004 splitAlpha0009))))
 
 end NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired

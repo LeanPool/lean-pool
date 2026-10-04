@@ -34,187 +34,188 @@ open NFChoice.DefinitionLeaves.AlphaFocusedFV
 open NFChoice.DirectNominalPrf
 open NFChoice.DirectNominalPrf.Nominal
 
+/-- Checked nominal proof certificate identified upstream as `nb078_split_alpha_0131`. -/
 @[expose]
-noncomputable def nb078_split_alpha_0131 (x : Var) (y : Var) (h : Var) :
+noncomputable def nb078SplitAlpha0131 (x : Var) (y : Var) (h : Var) :
     TAlphaWff
-      [((nb078_alpha_dummy_1041), (nb078_alpha_dummy_1042 h)),
-        ((nb078_alpha_dummy_1010), (nb078_alpha_dummy_1012 h)),
-        ((nb078_alpha_dummy_1009), (nb078_alpha_dummy_1011 h)),
-        ((nb078_alpha_dummy_1039), (nb078_alpha_dummy_1040 h)),
-        ((nb078_alpha_dummy_1013), (nb078_alpha_dummy_1014 h)),
-        ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)),
-        ((nb078_alpha_dummy_1005), (nb078_alpha_dummy_1007 h)),
-        ((nb078_alpha_dummy_1003), (nb078_alpha_dummy_1004 y h)),
-        ((nb078_alpha_dummy_1001), (nb078_alpha_dummy_1002 y h)),
-        ((nb078_alpha_dummy_002), h), ((nb078_alpha_dummy_004), y),
-        ((nb078_alpha_dummy_003), x)]
-      (Wff.imp (Wff.classMem (Class.cv (nb078_alpha_dummy_1041))
-          (syn_ccompl (syn_cphi (Class.cv (nb078_alpha_dummy_1010))))) (Wff.neg
-          (Wff.classMem (Class.cv (nb078_alpha_dummy_1041)) (syn_ccompl (syn_csn (syn_c0c))))))
-      (Wff.imp (Wff.classMem (Class.cv (nb078_alpha_dummy_1042 h))
-          (syn_ccompl (syn_cphi (Class.cv (nb078_alpha_dummy_1012 h))))) (Wff.neg
-          (Wff.classMem (Class.cv (nb078_alpha_dummy_1042 h))
-            (syn_ccompl (syn_csn (syn_c0c)))))) :=
+      [((nb078AlphaDummy1041), (nb078AlphaDummy1042 h)),
+        ((nb078AlphaDummy1010), (nb078AlphaDummy1012 h)),
+        ((nb078AlphaDummy1009), (nb078AlphaDummy1011 h)),
+        ((nb078AlphaDummy1039), (nb078AlphaDummy1040 h)),
+        ((nb078AlphaDummy1013), (nb078AlphaDummy1014 h)),
+        ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)),
+        ((nb078AlphaDummy1005), (nb078AlphaDummy1007 h)),
+        ((nb078AlphaDummy1003), (nb078AlphaDummy1004 y h)),
+        ((nb078AlphaDummy1001), (nb078AlphaDummy1002 y h)),
+        ((nb078AlphaDummy002), h), ((nb078AlphaDummy004), y),
+        ((nb078AlphaDummy003), x)]
+      (Wff.imp (Wff.classMem (Class.cv (nb078AlphaDummy1041))
+          (synCcompl (synCphi (Class.cv (nb078AlphaDummy1010))))) (Wff.neg
+          (Wff.classMem (Class.cv (nb078AlphaDummy1041)) (synCcompl (synCsn (synC0c))))))
+      (Wff.imp (Wff.classMem (Class.cv (nb078AlphaDummy1042 h))
+          (synCcompl (synCphi (Class.cv (nb078AlphaDummy1012 h))))) (Wff.neg
+          (Wff.classMem (Class.cv (nb078AlphaDummy1042 h))
+            (synCcompl (synCsn (synC0c)))))) :=
   (TAlphaWff.imp (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
         (TAlphaWff.neg (TAlphaWff.conj
             (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
                 (TAlphaWff.ex (TAlphaWff.conj
                     (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
                         (TAlphaVar.there
-                          (show (nb078_alpha_dummy_1010) ≠ (nb078_alpha_dummy_1017) from (by
-                              unfold nb078_alpha_dummy_1017;
+                          (show (nb078AlphaDummy1010) ≠ (nb078AlphaDummy1017) from (by
+                              unfold nb078AlphaDummy1017;
                               with_reducible
                                 exact
                                   (Nat.ne_of_lt
                                     (mem_lt_freshVar (nb078_support_mem_1054) 0))))
-                          (show (nb078_alpha_dummy_1012 h) ≠ (nb078_alpha_dummy_1019 h) from (by
-                              unfold nb078_alpha_dummy_1019;
+                          (show (nb078AlphaDummy1012 h) ≠ (nb078AlphaDummy1019 h) from (by
+                              unfold nb078AlphaDummy1019;
                               with_reducible
                                 exact
                                   (Nat.ne_of_lt
                                     (mem_lt_freshVar (nb078_support_mem_1055 h) 0))))
                           (TAlphaVar.there
-                            (show (nb078_alpha_dummy_1010) ≠ (nb078_alpha_dummy_1018) from (by
-                                unfold nb078_alpha_dummy_1018;
+                            (show (nb078AlphaDummy1010) ≠ (nb078AlphaDummy1018) from (by
+                                unfold nb078AlphaDummy1018;
                                 with_reducible
                                   exact
                                     (Nat.ne_of_lt
                                       (mem_lt_freshVar (nb078_support_mem_1054) 1))))
-                            (show (nb078_alpha_dummy_1012 h) ≠ (nb078_alpha_dummy_1020 h) from
+                            (show (nb078AlphaDummy1012 h) ≠ (nb078AlphaDummy1020 h) from
                               (by
-                                unfold nb078_alpha_dummy_1020;
+                                unfold nb078AlphaDummy1020;
                                 with_reducible
                                   exact
                                     (Nat.ne_of_lt
                                       (mem_lt_freshVar (nb078_support_mem_1055 h) 1))))
                             (TAlphaVar.there
-                              (show (nb078_alpha_dummy_1010) ≠ (nb078_alpha_dummy_1043) from (by
-                                  unfold nb078_alpha_dummy_1043;
+                              (show (nb078AlphaDummy1010) ≠ (nb078AlphaDummy1043) from (by
+                                  unfold nb078AlphaDummy1043;
                                   with_reducible
                                     exact
                                       (Nat.ne_of_lt
                                         (mem_lt_freshVar (nb078_support_mem_1084) 0)))) (show
-                                (nb078_alpha_dummy_1012 h) ≠ (nb078_alpha_dummy_1044 h) from (by
-                                  unfold nb078_alpha_dummy_1044;
+                                (nb078AlphaDummy1012 h) ≠ (nb078AlphaDummy1044 h) from (by
+                                  unfold nb078AlphaDummy1044;
                                   with_reducible
                                     exact
                                       (Nat.ne_of_lt
                                         (mem_lt_freshVar (nb078_support_mem_1085 h) 0))))
                               (TAlphaVar.there
-                                (show (nb078_alpha_dummy_1010) ≠ (nb078_alpha_dummy_1041) from
+                                (show (nb078AlphaDummy1010) ≠ (nb078AlphaDummy1041) from
                                   (by
-                                    unfold nb078_alpha_dummy_1041;
+                                    unfold nb078AlphaDummy1041;
                                     with_reducible
                                       exact
                                         (Nat.ne_of_lt
                                           (mem_lt_freshVar (nb078_support_mem_1082) 0)))) (show
-                                  (nb078_alpha_dummy_1012 h) ≠ (nb078_alpha_dummy_1042 h) from
+                                  (nb078AlphaDummy1012 h) ≠ (nb078AlphaDummy1042 h) from
                                   (by
-                                    unfold nb078_alpha_dummy_1042;
+                                    unfold nb078AlphaDummy1042;
                                     with_reducible
                                       exact
                                         (Nat.ne_of_lt
                                           (mem_lt_freshVar (nb078_support_mem_1083 h)
                                             0)))) (TAlphaVar.here _ _ _)))))))
                     (TAlphaWff.classEq (TAlphaClass.cv (TAlphaVar.there
-                          (freshVar_injective (((Class.cv (nb078_alpha_dummy_1010))).fv)
+                          (freshVar_injective (((Class.cv (nb078AlphaDummy1010))).fv)
                             (by decide))
-                          (freshVar_injective (((Class.cv (nb078_alpha_dummy_1012 h))).fv)
+                          (freshVar_injective (((Class.cv (nb078AlphaDummy1012 h))).fv)
                             (by decide)) (TAlphaVar.here _ _ _))) (TAlphaClass.cab
                         (TAlphaWff.imp (TAlphaWff.neg (TAlphaWff.conj
                               (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                                 (TAlphaClass.cab (TAlphaWff.ex (TAlphaWff.conj
                                       (TAlphaWff.classMem
                                         (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1017) ≠ (nb078_alpha_dummy_1024) from (by
-          unfold nb078_alpha_dummy_1024;
+        (TAlphaVar.there (show (nb078AlphaDummy1017) ≠ (nb078AlphaDummy1024) from (by
+          unfold nb078AlphaDummy1024;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
-                  (nb078_support_mem_1058) 1)))) (show (nb078_alpha_dummy_1019 h) ≠
-        (nb078_alpha_dummy_1027 h) from (by
-          unfold nb078_alpha_dummy_1027;
+                  (nb078_support_mem_1058) 1)))) (show (nb078AlphaDummy1019 h) ≠
+        (nb078AlphaDummy1027 h) from (by
+          unfold nb078AlphaDummy1027;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1059 h) 1)))) (TAlphaVar.there (show
-        (nb078_alpha_dummy_1017) ≠ (nb078_alpha_dummy_1023) from (by
-          unfold nb078_alpha_dummy_1023;
+        (nb078AlphaDummy1017) ≠ (nb078AlphaDummy1023) from (by
+          unfold nb078AlphaDummy1023;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
-                  (nb078_support_mem_1058) 0)))) (show (nb078_alpha_dummy_1019 h) ≠
-        (nb078_alpha_dummy_1026 h) from (by
-          unfold nb078_alpha_dummy_1026;
+                  (nb078_support_mem_1058) 0)))) (show (nb078AlphaDummy1019 h) ≠
+        (nb078AlphaDummy1026 h) from (by
+          unfold nb078AlphaDummy1026;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1059 h) 0)))) (TAlphaVar.there (show
-        (nb078_alpha_dummy_1017) ≠ (nb078_alpha_dummy_1021) from (by
-          unfold nb078_alpha_dummy_1021;
+        (nb078AlphaDummy1017) ≠ (nb078AlphaDummy1021) from (by
+          unfold nb078AlphaDummy1021;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
-                  (nb078_support_mem_1056) 0)))) (show (nb078_alpha_dummy_1019 h) ≠
-        (nb078_alpha_dummy_1022 h) from (by
-          unfold nb078_alpha_dummy_1022;
+                  (nb078_support_mem_1056) 0)))) (show (nb078AlphaDummy1019 h) ≠
+        (nb078AlphaDummy1022 h) from (by
+          unfold nb078AlphaDummy1022;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1057 h)
                   0)))) (TAlphaVar.here _ _ _)))))) (TAlphaWff.ex (TAlphaWff.conj
-        (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.refl_of_closed
-        [((nb078_alpha_dummy_1025), (nb078_alpha_dummy_1028 h)), ((nb078_alpha_dummy_1024),
-        (nb078_alpha_dummy_1027 h)), ((nb078_alpha_dummy_1023), (nb078_alpha_dummy_1026 h)),
-        ((nb078_alpha_dummy_1021), (nb078_alpha_dummy_1022 h)), ((nb078_alpha_dummy_1017),
-        (nb078_alpha_dummy_1019 h)), ((nb078_alpha_dummy_1018), (nb078_alpha_dummy_1020 h)),
-        ((nb078_alpha_dummy_1043), (nb078_alpha_dummy_1044 h)), ((nb078_alpha_dummy_1041),
-        (nb078_alpha_dummy_1042 h)), ((nb078_alpha_dummy_1010), (nb078_alpha_dummy_1012 h)),
-        ((nb078_alpha_dummy_1009), (nb078_alpha_dummy_1011 h)), ((nb078_alpha_dummy_1039),
-        (nb078_alpha_dummy_1040 h)), ((nb078_alpha_dummy_1013), (nb078_alpha_dummy_1014 h)),
-        ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)), ((nb078_alpha_dummy_1005),
-        (nb078_alpha_dummy_1007 h)), ((nb078_alpha_dummy_1003), (nb078_alpha_dummy_1004 y h)),
-        ((nb078_alpha_dummy_1001), (nb078_alpha_dummy_1002 y h)), ((nb078_alpha_dummy_002), h),
-        ((nb078_alpha_dummy_004), y), ((nb078_alpha_dummy_003), x)]
-        (syn_c1c) (by simp only [fv_syn_c1c]))) (TAlphaWff.conj (TAlphaWff.classEq
+        (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.reflOfClosed
+        [((nb078AlphaDummy1025), (nb078AlphaDummy1028 h)), ((nb078AlphaDummy1024),
+        (nb078AlphaDummy1027 h)), ((nb078AlphaDummy1023), (nb078AlphaDummy1026 h)),
+        ((nb078AlphaDummy1021), (nb078AlphaDummy1022 h)), ((nb078AlphaDummy1017),
+        (nb078AlphaDummy1019 h)), ((nb078AlphaDummy1018), (nb078AlphaDummy1020 h)),
+        ((nb078AlphaDummy1043), (nb078AlphaDummy1044 h)), ((nb078AlphaDummy1041),
+        (nb078AlphaDummy1042 h)), ((nb078AlphaDummy1010), (nb078AlphaDummy1012 h)),
+        ((nb078AlphaDummy1009), (nb078AlphaDummy1011 h)), ((nb078AlphaDummy1039),
+        (nb078AlphaDummy1040 h)), ((nb078AlphaDummy1013), (nb078AlphaDummy1014 h)),
+        ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)), ((nb078AlphaDummy1005),
+        (nb078AlphaDummy1007 h)), ((nb078AlphaDummy1003), (nb078AlphaDummy1004 y h)),
+        ((nb078AlphaDummy1001), (nb078AlphaDummy1002 y h)), ((nb078AlphaDummy002), h),
+        ((nb078AlphaDummy004), y), ((nb078AlphaDummy003), x)]
+        (synC1c) (by simp only [fv_syn_c1c]))) (TAlphaWff.conj (TAlphaWff.classEq
         (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠ (nb078_alpha_dummy_1031) from (by
+        (TAlphaVar.there (show (nb078AlphaDummy1024) ≠ (nb078AlphaDummy1031) from (by
           unfold
-            nb078_alpha_dummy_1031;
+            nb078AlphaDummy1031;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1062)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1032 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1032 h) from (by
           unfold
-            nb078_alpha_dummy_1032;
+            nb078AlphaDummy1032;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1063
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1029) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1029) from (by
           unfold
-            nb078_alpha_dummy_1029;
+            nb078AlphaDummy1029;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1060)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1030 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1030 h) from (by
           unfold
-            nb078_alpha_dummy_1030;
+            nb078AlphaDummy1030;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -222,39 +223,39 @@ noncomputable def nb078_split_alpha_0131 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1061
                     h)
                   0)))) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by decide)) (freshVar_injective
-        (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪ ((syn_c1c)).fv) (by decide))
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by decide)) (freshVar_injective
+        (((Class.cv (nb078AlphaDummy1019 h))).fv ∪ ((synC1c)).fv) (by decide))
         (TAlphaVar.here _ _ _)))))) (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
-        (TAlphaClass.cv (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1031) from (by
+        (TAlphaClass.cv (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1031) from (by
           unfold
-            nb078_alpha_dummy_1031;
+            nb078AlphaDummy1031;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1066)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1032 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1032 h) from (by
           unfold
-            nb078_alpha_dummy_1032;
+            nb078AlphaDummy1032;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1067
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1029) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1029) from (by
           unfold
-            nb078_alpha_dummy_1029;
+            nb078AlphaDummy1029;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1064)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1030 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1030 h) from (by
           unfold
-            nb078_alpha_dummy_1030;
+            nb078AlphaDummy1030;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -264,35 +265,35 @@ noncomputable def nb078_split_alpha_0131 (x : Var) (y : Var) (h : Var) :
                   0)))) (TAlphaVar.here _ _ _))))))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠ (nb078_alpha_dummy_1031) from (by
+        (TAlphaVar.there (show (nb078AlphaDummy1024) ≠ (nb078AlphaDummy1031) from (by
           unfold
-            nb078_alpha_dummy_1031;
+            nb078AlphaDummy1031;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1062)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1032 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1032 h) from (by
           unfold
-            nb078_alpha_dummy_1032;
+            nb078AlphaDummy1032;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1063
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1029) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1029) from (by
           unfold
-            nb078_alpha_dummy_1029;
+            nb078AlphaDummy1029;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1060)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1030 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1030 h) from (by
           unfold
-            nb078_alpha_dummy_1030;
+            nb078AlphaDummy1030;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -300,97 +301,97 @@ noncomputable def nb078_split_alpha_0131 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1061
                     h)
                   0)))) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by decide)) (freshVar_injective
-        (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪ ((syn_c1c)).fv) (by decide))
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by decide)) (freshVar_injective
+        (((Class.cv (nb078AlphaDummy1019 h))).fv ∪ ((synC1c)).fv) (by decide))
         (TAlphaVar.here _ _ _)))))) (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
-        (TAlphaClass.cv (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1031) from (by
+        (TAlphaClass.cv (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1031) from (by
           unfold
-            nb078_alpha_dummy_1031;
+            nb078AlphaDummy1031;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1066)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1032 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1032 h) from (by
           unfold
-            nb078_alpha_dummy_1032;
+            nb078AlphaDummy1032;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1067
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1029) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1029) from (by
           unfold
-            nb078_alpha_dummy_1029;
+            nb078AlphaDummy1029;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1064)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1030 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1030 h) from (by
           unfold
-            nb078_alpha_dummy_1030;
+            nb078AlphaDummy1030;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1065
                     h)
-                  0)))) (TAlphaVar.here _ _ _)))))))))))) (TAlphaClass.refl_of_closed
-        [((nb078_alpha_dummy_1025), (nb078_alpha_dummy_1028 h)), ((nb078_alpha_dummy_1024),
-        (nb078_alpha_dummy_1027 h)), ((nb078_alpha_dummy_1023), (nb078_alpha_dummy_1026 h)),
-        ((nb078_alpha_dummy_1021), (nb078_alpha_dummy_1022 h)), ((nb078_alpha_dummy_1017),
-        (nb078_alpha_dummy_1019 h)), ((nb078_alpha_dummy_1018), (nb078_alpha_dummy_1020 h)),
-        ((nb078_alpha_dummy_1043), (nb078_alpha_dummy_1044 h)), ((nb078_alpha_dummy_1041),
-        (nb078_alpha_dummy_1042 h)), ((nb078_alpha_dummy_1010), (nb078_alpha_dummy_1012 h)),
-        ((nb078_alpha_dummy_1009), (nb078_alpha_dummy_1011 h)), ((nb078_alpha_dummy_1039),
-        (nb078_alpha_dummy_1040 h)), ((nb078_alpha_dummy_1013), (nb078_alpha_dummy_1014 h)),
-        ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)), ((nb078_alpha_dummy_1005),
-        (nb078_alpha_dummy_1007 h)), ((nb078_alpha_dummy_1003), (nb078_alpha_dummy_1004 y h)),
-        ((nb078_alpha_dummy_1001), (nb078_alpha_dummy_1002 y h)), ((nb078_alpha_dummy_002), h),
-        ((nb078_alpha_dummy_004), y), ((nb078_alpha_dummy_003), x)]
-        (syn_c0) (by simp only [fv_syn_c0]))) (TAlphaWff.classEq (TAlphaClass.cv
-        (TAlphaVar.there (freshVar_injective (((Class.cv (nb078_alpha_dummy_1017))).fv ∪
-        ((syn_c1c)).fv) (by decide)) (freshVar_injective (((Class.cv (nb078_alpha_dummy_1019
-        h))).fv ∪ ((syn_c1c)).fv) (by decide)) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by decide)) (freshVar_injective
-        (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪ ((syn_c1c)).fv) (by decide))
+                  0)))) (TAlphaVar.here _ _ _)))))))))))) (TAlphaClass.reflOfClosed
+        [((nb078AlphaDummy1025), (nb078AlphaDummy1028 h)), ((nb078AlphaDummy1024),
+        (nb078AlphaDummy1027 h)), ((nb078AlphaDummy1023), (nb078AlphaDummy1026 h)),
+        ((nb078AlphaDummy1021), (nb078AlphaDummy1022 h)), ((nb078AlphaDummy1017),
+        (nb078AlphaDummy1019 h)), ((nb078AlphaDummy1018), (nb078AlphaDummy1020 h)),
+        ((nb078AlphaDummy1043), (nb078AlphaDummy1044 h)), ((nb078AlphaDummy1041),
+        (nb078AlphaDummy1042 h)), ((nb078AlphaDummy1010), (nb078AlphaDummy1012 h)),
+        ((nb078AlphaDummy1009), (nb078AlphaDummy1011 h)), ((nb078AlphaDummy1039),
+        (nb078AlphaDummy1040 h)), ((nb078AlphaDummy1013), (nb078AlphaDummy1014 h)),
+        ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)), ((nb078AlphaDummy1005),
+        (nb078AlphaDummy1007 h)), ((nb078AlphaDummy1003), (nb078AlphaDummy1004 y h)),
+        ((nb078AlphaDummy1001), (nb078AlphaDummy1002 y h)), ((nb078AlphaDummy002), h),
+        ((nb078AlphaDummy004), y), ((nb078AlphaDummy003), x)]
+        (synC0) (by simp only [fv_syn_c0]))) (TAlphaWff.classEq (TAlphaClass.cv
+        (TAlphaVar.there (freshVar_injective (((Class.cv (nb078AlphaDummy1017))).fv ∪
+        ((synC1c)).fv) (by decide)) (freshVar_injective (((Class.cv (nb078AlphaDummy1019
+        h))).fv ∪ ((synC1c)).fv) (by decide)) (TAlphaVar.there (freshVar_injective (((Class.cv
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by decide)) (freshVar_injective
+        (((Class.cv (nb078AlphaDummy1019 h))).fv ∪ ((synC1c)).fv) (by decide))
         (TAlphaVar.here _ _ _)))) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
         (TAlphaWff.neg (TAlphaWff.conj (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1024) ≠ (nb078_alpha_dummy_1035) from (by
+        (nb078AlphaDummy1024) ≠ (nb078AlphaDummy1035) from (by
           unfold
-            nb078_alpha_dummy_1035;
+            nb078AlphaDummy1035;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1070)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1036 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1036 h) from (by
           unfold
-            nb078_alpha_dummy_1036;
+            nb078AlphaDummy1036;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1071
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1033) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1033) from (by
           unfold
-            nb078_alpha_dummy_1033;
+            nb078AlphaDummy1033;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1068)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1034 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1034 h) from (by
           unfold
-            nb078_alpha_dummy_1034;
+            nb078AlphaDummy1034;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -398,39 +399,39 @@ noncomputable def nb078_split_alpha_0131 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1069
                     h)
                   0)))) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by decide)) (freshVar_injective
-        (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪ ((syn_c1c)).fv) (by decide))
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by decide)) (freshVar_injective
+        (((Class.cv (nb078AlphaDummy1019 h))).fv ∪ ((synC1c)).fv) (by decide))
         (TAlphaVar.here _ _ _)))))) (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
-        (TAlphaClass.cv (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1035) from (by
+        (TAlphaClass.cv (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1035) from (by
           unfold
-            nb078_alpha_dummy_1035;
+            nb078AlphaDummy1035;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1070)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1036 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1036 h) from (by
           unfold
-            nb078_alpha_dummy_1036;
+            nb078AlphaDummy1036;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1071
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1033) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1033) from (by
           unfold
-            nb078_alpha_dummy_1033;
+            nb078AlphaDummy1033;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1068)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1034 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1034 h) from (by
           unfold
-            nb078_alpha_dummy_1034;
+            nb078AlphaDummy1034;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -438,40 +439,40 @@ noncomputable def nb078_split_alpha_0131 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1069
                     h)
                   0)))) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by decide)) (freshVar_injective
-        (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪ ((syn_c1c)).fv) (by decide))
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by decide)) (freshVar_injective
+        (((Class.cv (nb078AlphaDummy1019 h))).fv ∪ ((synC1c)).fv) (by decide))
         (TAlphaVar.here _ _ _)))))))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠ (nb078_alpha_dummy_1037) from (by
+        (TAlphaVar.there (show (nb078AlphaDummy1025) ≠ (nb078AlphaDummy1037) from (by
           unfold
-            nb078_alpha_dummy_1037;
+            nb078AlphaDummy1037;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1074)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1038 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1038 h) from (by
           unfold
-            nb078_alpha_dummy_1038;
+            nb078AlphaDummy1038;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1075
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1033) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1033) from (by
           unfold
-            nb078_alpha_dummy_1033;
+            nb078AlphaDummy1033;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1072)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1034 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1034 h) from (by
           unfold
-            nb078_alpha_dummy_1034;
+            nb078AlphaDummy1034;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -480,35 +481,35 @@ noncomputable def nb078_split_alpha_0131 (x : Var) (y : Var) (h : Var) :
                     h)
                   0)))) (TAlphaVar.here _ _ _))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1025) ≠ (nb078_alpha_dummy_1037) from (by
+        (nb078AlphaDummy1025) ≠ (nb078AlphaDummy1037) from (by
           unfold
-            nb078_alpha_dummy_1037;
+            nb078AlphaDummy1037;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1074)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1038 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1038 h) from (by
           unfold
-            nb078_alpha_dummy_1038;
+            nb078AlphaDummy1038;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1075
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1033) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1033) from (by
           unfold
-            nb078_alpha_dummy_1033;
+            nb078AlphaDummy1033;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1072)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1034 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1034 h) from (by
           unfold
-            nb078_alpha_dummy_1034;
+            nb078AlphaDummy1034;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -517,245 +518,245 @@ noncomputable def nb078_split_alpha_0131 (x : Var) (y : Var) (h : Var) :
                     h)
                   0)))) (TAlphaVar.here _ _ _)))))))))))))))))))) (TAlphaWff.classMem
                                 (TAlphaClass.cv (TAlphaVar.there (show
-                                      (nb078_alpha_dummy_1017) ≠ (nb078_alpha_dummy_1021) from
+                                      (nb078AlphaDummy1017) ≠ (nb078AlphaDummy1021) from
                                       (by
-                                        unfold nb078_alpha_dummy_1021;
+                                        unfold nb078AlphaDummy1021;
                                         with_reducible
                                           exact
                                             (Nat.ne_of_lt
                                               (mem_lt_freshVar (nb078_support_mem_1056)
-                                                0)))) (show (nb078_alpha_dummy_1019 h) ≠
-                                        (nb078_alpha_dummy_1022 h) from (by
-                                        unfold nb078_alpha_dummy_1022;
+                                                0)))) (show (nb078AlphaDummy1019 h) ≠
+                                        (nb078AlphaDummy1022 h) from (by
+                                        unfold nb078AlphaDummy1022;
                                         with_reducible
                                           exact
                                             (Nat.ne_of_lt
                                               (mem_lt_freshVar (nb078_support_mem_1057 h)
                                                 0)))) (TAlphaVar.here _ _ _)))
-                                (TAlphaClass.refl_of_closed
-                                  [((nb078_alpha_dummy_1021), (nb078_alpha_dummy_1022 h)),
-                                    ((nb078_alpha_dummy_1017), (nb078_alpha_dummy_1019 h)),
-                                    ((nb078_alpha_dummy_1018), (nb078_alpha_dummy_1020 h)),
-                                    ((nb078_alpha_dummy_1043), (nb078_alpha_dummy_1044 h)),
-                                    ((nb078_alpha_dummy_1041), (nb078_alpha_dummy_1042 h)),
-                                    ((nb078_alpha_dummy_1010), (nb078_alpha_dummy_1012 h)),
-                                    ((nb078_alpha_dummy_1009), (nb078_alpha_dummy_1011 h)),
-                                    ((nb078_alpha_dummy_1039), (nb078_alpha_dummy_1040 h)),
-                                    ((nb078_alpha_dummy_1013), (nb078_alpha_dummy_1014 h)),
-                                    ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)),
-                                    ((nb078_alpha_dummy_1005), (nb078_alpha_dummy_1007 h)),
-                                    ((nb078_alpha_dummy_1003), (nb078_alpha_dummy_1004 y h)),
-                                    ((nb078_alpha_dummy_1001), (nb078_alpha_dummy_1002 y h)),
-                                    ((nb078_alpha_dummy_002), h), ((nb078_alpha_dummy_004), y),
-                                    ((nb078_alpha_dummy_003), x)]
-                                  (syn_cnnc) (by simp only [fv_syn_cnnc]))))) (TAlphaWff.conj
+                                (TAlphaClass.reflOfClosed
+                                  [((nb078AlphaDummy1021), (nb078AlphaDummy1022 h)),
+                                    ((nb078AlphaDummy1017), (nb078AlphaDummy1019 h)),
+                                    ((nb078AlphaDummy1018), (nb078AlphaDummy1020 h)),
+                                    ((nb078AlphaDummy1043), (nb078AlphaDummy1044 h)),
+                                    ((nb078AlphaDummy1041), (nb078AlphaDummy1042 h)),
+                                    ((nb078AlphaDummy1010), (nb078AlphaDummy1012 h)),
+                                    ((nb078AlphaDummy1009), (nb078AlphaDummy1011 h)),
+                                    ((nb078AlphaDummy1039), (nb078AlphaDummy1040 h)),
+                                    ((nb078AlphaDummy1013), (nb078AlphaDummy1014 h)),
+                                    ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)),
+                                    ((nb078AlphaDummy1005), (nb078AlphaDummy1007 h)),
+                                    ((nb078AlphaDummy1003), (nb078AlphaDummy1004 y h)),
+                                    ((nb078AlphaDummy1001), (nb078AlphaDummy1002 y h)),
+                                    ((nb078AlphaDummy002), h), ((nb078AlphaDummy004), y),
+                                    ((nb078AlphaDummy003), x)]
+                                  (synCnnc) (by simp only [fv_syn_cnnc]))))) (TAlphaWff.conj
                             (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                               (TAlphaClass.cv (TAlphaVar.there (show
-                                    (nb078_alpha_dummy_1017) ≠ (nb078_alpha_dummy_1021) from (by
-                                      unfold nb078_alpha_dummy_1021;
+                                    (nb078AlphaDummy1017) ≠ (nb078AlphaDummy1021) from (by
+                                      unfold nb078AlphaDummy1021;
                                       with_reducible
                                         exact
                                           (Nat.ne_of_lt
                                             (mem_lt_freshVar (nb078_support_mem_1056)
-                                              0)))) (show (nb078_alpha_dummy_1019 h) ≠
-                                      (nb078_alpha_dummy_1022 h) from (by
-                                      unfold nb078_alpha_dummy_1022;
+                                              0)))) (show (nb078AlphaDummy1019 h) ≠
+                                      (nb078AlphaDummy1022 h) from (by
+                                      unfold nb078AlphaDummy1022;
                                       with_reducible
                                         exact
                                           (Nat.ne_of_lt
                                             (mem_lt_freshVar (nb078_support_mem_1057 h)
                                               0)))) (TAlphaVar.here _ _ _)))) (TAlphaWff.neg
                               (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.there (show
-                                      (nb078_alpha_dummy_1017) ≠ (nb078_alpha_dummy_1021) from
+                                      (nb078AlphaDummy1017) ≠ (nb078AlphaDummy1021) from
                                       (by
-                                        unfold nb078_alpha_dummy_1021;
+                                        unfold nb078AlphaDummy1021;
                                         with_reducible
                                           exact
                                             (Nat.ne_of_lt
                                               (mem_lt_freshVar (nb078_support_mem_1056)
-                                                0)))) (show (nb078_alpha_dummy_1019 h) ≠
-                                        (nb078_alpha_dummy_1022 h) from (by
-                                        unfold nb078_alpha_dummy_1022;
+                                                0)))) (show (nb078AlphaDummy1019 h) ≠
+                                        (nb078AlphaDummy1022 h) from (by
+                                        unfold nb078AlphaDummy1022;
                                         with_reducible
                                           exact
                                             (Nat.ne_of_lt
                                               (mem_lt_freshVar (nb078_support_mem_1057 h)
                                                 0)))) (TAlphaVar.here _ _ _)))
-                                (TAlphaClass.refl_of_closed
-                                  [((nb078_alpha_dummy_1021), (nb078_alpha_dummy_1022 h)),
-                                    ((nb078_alpha_dummy_1017), (nb078_alpha_dummy_1019 h)),
-                                    ((nb078_alpha_dummy_1018), (nb078_alpha_dummy_1020 h)),
-                                    ((nb078_alpha_dummy_1043), (nb078_alpha_dummy_1044 h)),
-                                    ((nb078_alpha_dummy_1041), (nb078_alpha_dummy_1042 h)),
-                                    ((nb078_alpha_dummy_1010), (nb078_alpha_dummy_1012 h)),
-                                    ((nb078_alpha_dummy_1009), (nb078_alpha_dummy_1011 h)),
-                                    ((nb078_alpha_dummy_1039), (nb078_alpha_dummy_1040 h)),
-                                    ((nb078_alpha_dummy_1013), (nb078_alpha_dummy_1014 h)),
-                                    ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)),
-                                    ((nb078_alpha_dummy_1005), (nb078_alpha_dummy_1007 h)),
-                                    ((nb078_alpha_dummy_1003), (nb078_alpha_dummy_1004 y h)),
-                                    ((nb078_alpha_dummy_1001), (nb078_alpha_dummy_1002 y h)),
-                                    ((nb078_alpha_dummy_002), h), ((nb078_alpha_dummy_004), y),
-                                    ((nb078_alpha_dummy_003), x)]
-                                  (syn_cnnc) (by simp only [fv_syn_cnnc]))))))))))))
+                                (TAlphaClass.reflOfClosed
+                                  [((nb078AlphaDummy1021), (nb078AlphaDummy1022 h)),
+                                    ((nb078AlphaDummy1017), (nb078AlphaDummy1019 h)),
+                                    ((nb078AlphaDummy1018), (nb078AlphaDummy1020 h)),
+                                    ((nb078AlphaDummy1043), (nb078AlphaDummy1044 h)),
+                                    ((nb078AlphaDummy1041), (nb078AlphaDummy1042 h)),
+                                    ((nb078AlphaDummy1010), (nb078AlphaDummy1012 h)),
+                                    ((nb078AlphaDummy1009), (nb078AlphaDummy1011 h)),
+                                    ((nb078AlphaDummy1039), (nb078AlphaDummy1040 h)),
+                                    ((nb078AlphaDummy1013), (nb078AlphaDummy1014 h)),
+                                    ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)),
+                                    ((nb078AlphaDummy1005), (nb078AlphaDummy1007 h)),
+                                    ((nb078AlphaDummy1003), (nb078AlphaDummy1004 y h)),
+                                    ((nb078AlphaDummy1001), (nb078AlphaDummy1002 y h)),
+                                    ((nb078AlphaDummy002), h), ((nb078AlphaDummy004), y),
+                                    ((nb078AlphaDummy003), x)]
+                                  (synCnnc) (by simp only [fv_syn_cnnc]))))))))))))
             (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
                 (TAlphaWff.ex (TAlphaWff.conj
                     (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
                         (TAlphaVar.there
-                          (show (nb078_alpha_dummy_1010) ≠ (nb078_alpha_dummy_1017) from (by
-                              unfold nb078_alpha_dummy_1017;
+                          (show (nb078AlphaDummy1010) ≠ (nb078AlphaDummy1017) from (by
+                              unfold nb078AlphaDummy1017;
                               with_reducible
                                 exact
                                   (Nat.ne_of_lt
                                     (mem_lt_freshVar (nb078_support_mem_1054) 0))))
-                          (show (nb078_alpha_dummy_1012 h) ≠ (nb078_alpha_dummy_1019 h) from (by
-                              unfold nb078_alpha_dummy_1019;
+                          (show (nb078AlphaDummy1012 h) ≠ (nb078AlphaDummy1019 h) from (by
+                              unfold nb078AlphaDummy1019;
                               with_reducible
                                 exact
                                   (Nat.ne_of_lt
                                     (mem_lt_freshVar (nb078_support_mem_1055 h) 0))))
                           (TAlphaVar.there
-                            (show (nb078_alpha_dummy_1010) ≠ (nb078_alpha_dummy_1018) from (by
-                                unfold nb078_alpha_dummy_1018;
+                            (show (nb078AlphaDummy1010) ≠ (nb078AlphaDummy1018) from (by
+                                unfold nb078AlphaDummy1018;
                                 with_reducible
                                   exact
                                     (Nat.ne_of_lt
                                       (mem_lt_freshVar (nb078_support_mem_1054) 1))))
-                            (show (nb078_alpha_dummy_1012 h) ≠ (nb078_alpha_dummy_1020 h) from
+                            (show (nb078AlphaDummy1012 h) ≠ (nb078AlphaDummy1020 h) from
                               (by
-                                unfold nb078_alpha_dummy_1020;
+                                unfold nb078AlphaDummy1020;
                                 with_reducible
                                   exact
                                     (Nat.ne_of_lt
                                       (mem_lt_freshVar (nb078_support_mem_1055 h) 1))))
                             (TAlphaVar.there
-                              (show (nb078_alpha_dummy_1010) ≠ (nb078_alpha_dummy_1043) from (by
-                                  unfold nb078_alpha_dummy_1043;
+                              (show (nb078AlphaDummy1010) ≠ (nb078AlphaDummy1043) from (by
+                                  unfold nb078AlphaDummy1043;
                                   with_reducible
                                     exact
                                       (Nat.ne_of_lt
                                         (mem_lt_freshVar (nb078_support_mem_1084) 0)))) (show
-                                (nb078_alpha_dummy_1012 h) ≠ (nb078_alpha_dummy_1044 h) from (by
-                                  unfold nb078_alpha_dummy_1044;
+                                (nb078AlphaDummy1012 h) ≠ (nb078AlphaDummy1044 h) from (by
+                                  unfold nb078AlphaDummy1044;
                                   with_reducible
                                     exact
                                       (Nat.ne_of_lt
                                         (mem_lt_freshVar (nb078_support_mem_1085 h) 0))))
                               (TAlphaVar.there
-                                (show (nb078_alpha_dummy_1010) ≠ (nb078_alpha_dummy_1041) from
+                                (show (nb078AlphaDummy1010) ≠ (nb078AlphaDummy1041) from
                                   (by
-                                    unfold nb078_alpha_dummy_1041;
+                                    unfold nb078AlphaDummy1041;
                                     with_reducible
                                       exact
                                         (Nat.ne_of_lt
                                           (mem_lt_freshVar (nb078_support_mem_1082) 0)))) (show
-                                  (nb078_alpha_dummy_1012 h) ≠ (nb078_alpha_dummy_1042 h) from
+                                  (nb078AlphaDummy1012 h) ≠ (nb078AlphaDummy1042 h) from
                                   (by
-                                    unfold nb078_alpha_dummy_1042;
+                                    unfold nb078AlphaDummy1042;
                                     with_reducible
                                       exact
                                         (Nat.ne_of_lt
                                           (mem_lt_freshVar (nb078_support_mem_1083 h)
                                             0)))) (TAlphaVar.here _ _ _)))))))
                     (TAlphaWff.classEq (TAlphaClass.cv (TAlphaVar.there
-                          (freshVar_injective (((Class.cv (nb078_alpha_dummy_1010))).fv)
+                          (freshVar_injective (((Class.cv (nb078AlphaDummy1010))).fv)
                             (by decide))
-                          (freshVar_injective (((Class.cv (nb078_alpha_dummy_1012 h))).fv)
+                          (freshVar_injective (((Class.cv (nb078AlphaDummy1012 h))).fv)
                             (by decide)) (TAlphaVar.here _ _ _))) (TAlphaClass.cab
                         (TAlphaWff.imp (TAlphaWff.neg (TAlphaWff.conj
                               (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                                 (TAlphaClass.cab (TAlphaWff.ex (TAlphaWff.conj
                                       (TAlphaWff.classMem
                                         (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1017) ≠ (nb078_alpha_dummy_1024) from (by
-          unfold nb078_alpha_dummy_1024;
+        (TAlphaVar.there (show (nb078AlphaDummy1017) ≠ (nb078AlphaDummy1024) from (by
+          unfold nb078AlphaDummy1024;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
-                  (nb078_support_mem_1058) 1)))) (show (nb078_alpha_dummy_1019 h) ≠
-        (nb078_alpha_dummy_1027 h) from (by
-          unfold nb078_alpha_dummy_1027;
+                  (nb078_support_mem_1058) 1)))) (show (nb078AlphaDummy1019 h) ≠
+        (nb078AlphaDummy1027 h) from (by
+          unfold nb078AlphaDummy1027;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1059 h) 1)))) (TAlphaVar.there (show
-        (nb078_alpha_dummy_1017) ≠ (nb078_alpha_dummy_1023) from (by
-          unfold nb078_alpha_dummy_1023;
+        (nb078AlphaDummy1017) ≠ (nb078AlphaDummy1023) from (by
+          unfold nb078AlphaDummy1023;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
-                  (nb078_support_mem_1058) 0)))) (show (nb078_alpha_dummy_1019 h) ≠
-        (nb078_alpha_dummy_1026 h) from (by
-          unfold nb078_alpha_dummy_1026;
+                  (nb078_support_mem_1058) 0)))) (show (nb078AlphaDummy1019 h) ≠
+        (nb078AlphaDummy1026 h) from (by
+          unfold nb078AlphaDummy1026;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1059 h) 0)))) (TAlphaVar.there (show
-        (nb078_alpha_dummy_1017) ≠ (nb078_alpha_dummy_1021) from (by
-          unfold nb078_alpha_dummy_1021;
+        (nb078AlphaDummy1017) ≠ (nb078AlphaDummy1021) from (by
+          unfold nb078AlphaDummy1021;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
-                  (nb078_support_mem_1056) 0)))) (show (nb078_alpha_dummy_1019 h) ≠
-        (nb078_alpha_dummy_1022 h) from (by
-          unfold nb078_alpha_dummy_1022;
+                  (nb078_support_mem_1056) 0)))) (show (nb078AlphaDummy1019 h) ≠
+        (nb078AlphaDummy1022 h) from (by
+          unfold nb078AlphaDummy1022;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1057 h)
                   0)))) (TAlphaVar.here _ _ _)))))) (TAlphaWff.ex (TAlphaWff.conj
-        (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.refl_of_closed
-        [((nb078_alpha_dummy_1025), (nb078_alpha_dummy_1028 h)), ((nb078_alpha_dummy_1024),
-        (nb078_alpha_dummy_1027 h)), ((nb078_alpha_dummy_1023), (nb078_alpha_dummy_1026 h)),
-        ((nb078_alpha_dummy_1021), (nb078_alpha_dummy_1022 h)), ((nb078_alpha_dummy_1017),
-        (nb078_alpha_dummy_1019 h)), ((nb078_alpha_dummy_1018), (nb078_alpha_dummy_1020 h)),
-        ((nb078_alpha_dummy_1043), (nb078_alpha_dummy_1044 h)), ((nb078_alpha_dummy_1041),
-        (nb078_alpha_dummy_1042 h)), ((nb078_alpha_dummy_1010), (nb078_alpha_dummy_1012 h)),
-        ((nb078_alpha_dummy_1009), (nb078_alpha_dummy_1011 h)), ((nb078_alpha_dummy_1039),
-        (nb078_alpha_dummy_1040 h)), ((nb078_alpha_dummy_1013), (nb078_alpha_dummy_1014 h)),
-        ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)), ((nb078_alpha_dummy_1005),
-        (nb078_alpha_dummy_1007 h)), ((nb078_alpha_dummy_1003), (nb078_alpha_dummy_1004 y h)),
-        ((nb078_alpha_dummy_1001), (nb078_alpha_dummy_1002 y h)), ((nb078_alpha_dummy_002), h),
-        ((nb078_alpha_dummy_004), y), ((nb078_alpha_dummy_003), x)]
-        (syn_c1c) (by simp only [fv_syn_c1c]))) (TAlphaWff.conj (TAlphaWff.classEq
+        (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.reflOfClosed
+        [((nb078AlphaDummy1025), (nb078AlphaDummy1028 h)), ((nb078AlphaDummy1024),
+        (nb078AlphaDummy1027 h)), ((nb078AlphaDummy1023), (nb078AlphaDummy1026 h)),
+        ((nb078AlphaDummy1021), (nb078AlphaDummy1022 h)), ((nb078AlphaDummy1017),
+        (nb078AlphaDummy1019 h)), ((nb078AlphaDummy1018), (nb078AlphaDummy1020 h)),
+        ((nb078AlphaDummy1043), (nb078AlphaDummy1044 h)), ((nb078AlphaDummy1041),
+        (nb078AlphaDummy1042 h)), ((nb078AlphaDummy1010), (nb078AlphaDummy1012 h)),
+        ((nb078AlphaDummy1009), (nb078AlphaDummy1011 h)), ((nb078AlphaDummy1039),
+        (nb078AlphaDummy1040 h)), ((nb078AlphaDummy1013), (nb078AlphaDummy1014 h)),
+        ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)), ((nb078AlphaDummy1005),
+        (nb078AlphaDummy1007 h)), ((nb078AlphaDummy1003), (nb078AlphaDummy1004 y h)),
+        ((nb078AlphaDummy1001), (nb078AlphaDummy1002 y h)), ((nb078AlphaDummy002), h),
+        ((nb078AlphaDummy004), y), ((nb078AlphaDummy003), x)]
+        (synC1c) (by simp only [fv_syn_c1c]))) (TAlphaWff.conj (TAlphaWff.classEq
         (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠ (nb078_alpha_dummy_1031) from (by
+        (TAlphaVar.there (show (nb078AlphaDummy1024) ≠ (nb078AlphaDummy1031) from (by
           unfold
-            nb078_alpha_dummy_1031;
+            nb078AlphaDummy1031;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1062)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1032 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1032 h) from (by
           unfold
-            nb078_alpha_dummy_1032;
+            nb078AlphaDummy1032;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1063
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1029) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1029) from (by
           unfold
-            nb078_alpha_dummy_1029;
+            nb078AlphaDummy1029;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1060)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1030 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1030 h) from (by
           unfold
-            nb078_alpha_dummy_1030;
+            nb078AlphaDummy1030;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -763,39 +764,39 @@ noncomputable def nb078_split_alpha_0131 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1061
                     h)
                   0)))) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by decide)) (freshVar_injective
-        (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪ ((syn_c1c)).fv) (by decide))
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by decide)) (freshVar_injective
+        (((Class.cv (nb078AlphaDummy1019 h))).fv ∪ ((synC1c)).fv) (by decide))
         (TAlphaVar.here _ _ _)))))) (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
-        (TAlphaClass.cv (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1031) from (by
+        (TAlphaClass.cv (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1031) from (by
           unfold
-            nb078_alpha_dummy_1031;
+            nb078AlphaDummy1031;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1066)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1032 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1032 h) from (by
           unfold
-            nb078_alpha_dummy_1032;
+            nb078AlphaDummy1032;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1067
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1029) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1029) from (by
           unfold
-            nb078_alpha_dummy_1029;
+            nb078AlphaDummy1029;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1064)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1030 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1030 h) from (by
           unfold
-            nb078_alpha_dummy_1030;
+            nb078AlphaDummy1030;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -805,35 +806,35 @@ noncomputable def nb078_split_alpha_0131 (x : Var) (y : Var) (h : Var) :
                   0)))) (TAlphaVar.here _ _ _))))))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠ (nb078_alpha_dummy_1031) from (by
+        (TAlphaVar.there (show (nb078AlphaDummy1024) ≠ (nb078AlphaDummy1031) from (by
           unfold
-            nb078_alpha_dummy_1031;
+            nb078AlphaDummy1031;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1062)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1032 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1032 h) from (by
           unfold
-            nb078_alpha_dummy_1032;
+            nb078AlphaDummy1032;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1063
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1029) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1029) from (by
           unfold
-            nb078_alpha_dummy_1029;
+            nb078AlphaDummy1029;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1060)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1030 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1030 h) from (by
           unfold
-            nb078_alpha_dummy_1030;
+            nb078AlphaDummy1030;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -841,97 +842,97 @@ noncomputable def nb078_split_alpha_0131 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1061
                     h)
                   0)))) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by decide)) (freshVar_injective
-        (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪ ((syn_c1c)).fv) (by decide))
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by decide)) (freshVar_injective
+        (((Class.cv (nb078AlphaDummy1019 h))).fv ∪ ((synC1c)).fv) (by decide))
         (TAlphaVar.here _ _ _)))))) (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
-        (TAlphaClass.cv (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1031) from (by
+        (TAlphaClass.cv (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1031) from (by
           unfold
-            nb078_alpha_dummy_1031;
+            nb078AlphaDummy1031;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1066)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1032 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1032 h) from (by
           unfold
-            nb078_alpha_dummy_1032;
+            nb078AlphaDummy1032;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1067
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1029) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1029) from (by
           unfold
-            nb078_alpha_dummy_1029;
+            nb078AlphaDummy1029;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1064)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1030 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1030 h) from (by
           unfold
-            nb078_alpha_dummy_1030;
+            nb078AlphaDummy1030;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1065
                     h)
-                  0)))) (TAlphaVar.here _ _ _)))))))))))) (TAlphaClass.refl_of_closed
-        [((nb078_alpha_dummy_1025), (nb078_alpha_dummy_1028 h)), ((nb078_alpha_dummy_1024),
-        (nb078_alpha_dummy_1027 h)), ((nb078_alpha_dummy_1023), (nb078_alpha_dummy_1026 h)),
-        ((nb078_alpha_dummy_1021), (nb078_alpha_dummy_1022 h)), ((nb078_alpha_dummy_1017),
-        (nb078_alpha_dummy_1019 h)), ((nb078_alpha_dummy_1018), (nb078_alpha_dummy_1020 h)),
-        ((nb078_alpha_dummy_1043), (nb078_alpha_dummy_1044 h)), ((nb078_alpha_dummy_1041),
-        (nb078_alpha_dummy_1042 h)), ((nb078_alpha_dummy_1010), (nb078_alpha_dummy_1012 h)),
-        ((nb078_alpha_dummy_1009), (nb078_alpha_dummy_1011 h)), ((nb078_alpha_dummy_1039),
-        (nb078_alpha_dummy_1040 h)), ((nb078_alpha_dummy_1013), (nb078_alpha_dummy_1014 h)),
-        ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)), ((nb078_alpha_dummy_1005),
-        (nb078_alpha_dummy_1007 h)), ((nb078_alpha_dummy_1003), (nb078_alpha_dummy_1004 y h)),
-        ((nb078_alpha_dummy_1001), (nb078_alpha_dummy_1002 y h)), ((nb078_alpha_dummy_002), h),
-        ((nb078_alpha_dummy_004), y), ((nb078_alpha_dummy_003), x)]
-        (syn_c0) (by simp only [fv_syn_c0]))) (TAlphaWff.classEq (TAlphaClass.cv
-        (TAlphaVar.there (freshVar_injective (((Class.cv (nb078_alpha_dummy_1017))).fv ∪
-        ((syn_c1c)).fv) (by decide)) (freshVar_injective (((Class.cv (nb078_alpha_dummy_1019
-        h))).fv ∪ ((syn_c1c)).fv) (by decide)) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by decide)) (freshVar_injective
-        (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪ ((syn_c1c)).fv) (by decide))
+                  0)))) (TAlphaVar.here _ _ _)))))))))))) (TAlphaClass.reflOfClosed
+        [((nb078AlphaDummy1025), (nb078AlphaDummy1028 h)), ((nb078AlphaDummy1024),
+        (nb078AlphaDummy1027 h)), ((nb078AlphaDummy1023), (nb078AlphaDummy1026 h)),
+        ((nb078AlphaDummy1021), (nb078AlphaDummy1022 h)), ((nb078AlphaDummy1017),
+        (nb078AlphaDummy1019 h)), ((nb078AlphaDummy1018), (nb078AlphaDummy1020 h)),
+        ((nb078AlphaDummy1043), (nb078AlphaDummy1044 h)), ((nb078AlphaDummy1041),
+        (nb078AlphaDummy1042 h)), ((nb078AlphaDummy1010), (nb078AlphaDummy1012 h)),
+        ((nb078AlphaDummy1009), (nb078AlphaDummy1011 h)), ((nb078AlphaDummy1039),
+        (nb078AlphaDummy1040 h)), ((nb078AlphaDummy1013), (nb078AlphaDummy1014 h)),
+        ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)), ((nb078AlphaDummy1005),
+        (nb078AlphaDummy1007 h)), ((nb078AlphaDummy1003), (nb078AlphaDummy1004 y h)),
+        ((nb078AlphaDummy1001), (nb078AlphaDummy1002 y h)), ((nb078AlphaDummy002), h),
+        ((nb078AlphaDummy004), y), ((nb078AlphaDummy003), x)]
+        (synC0) (by simp only [fv_syn_c0]))) (TAlphaWff.classEq (TAlphaClass.cv
+        (TAlphaVar.there (freshVar_injective (((Class.cv (nb078AlphaDummy1017))).fv ∪
+        ((synC1c)).fv) (by decide)) (freshVar_injective (((Class.cv (nb078AlphaDummy1019
+        h))).fv ∪ ((synC1c)).fv) (by decide)) (TAlphaVar.there (freshVar_injective (((Class.cv
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by decide)) (freshVar_injective
+        (((Class.cv (nb078AlphaDummy1019 h))).fv ∪ ((synC1c)).fv) (by decide))
         (TAlphaVar.here _ _ _)))) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
         (TAlphaWff.neg (TAlphaWff.conj (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1024) ≠ (nb078_alpha_dummy_1035) from (by
+        (nb078AlphaDummy1024) ≠ (nb078AlphaDummy1035) from (by
           unfold
-            nb078_alpha_dummy_1035;
+            nb078AlphaDummy1035;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1070)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1036 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1036 h) from (by
           unfold
-            nb078_alpha_dummy_1036;
+            nb078AlphaDummy1036;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1071
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1033) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1033) from (by
           unfold
-            nb078_alpha_dummy_1033;
+            nb078AlphaDummy1033;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1068)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1034 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1034 h) from (by
           unfold
-            nb078_alpha_dummy_1034;
+            nb078AlphaDummy1034;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -939,39 +940,39 @@ noncomputable def nb078_split_alpha_0131 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1069
                     h)
                   0)))) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by decide)) (freshVar_injective
-        (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪ ((syn_c1c)).fv) (by decide))
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by decide)) (freshVar_injective
+        (((Class.cv (nb078AlphaDummy1019 h))).fv ∪ ((synC1c)).fv) (by decide))
         (TAlphaVar.here _ _ _)))))) (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
-        (TAlphaClass.cv (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1035) from (by
+        (TAlphaClass.cv (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1035) from (by
           unfold
-            nb078_alpha_dummy_1035;
+            nb078AlphaDummy1035;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1070)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1036 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1036 h) from (by
           unfold
-            nb078_alpha_dummy_1036;
+            nb078AlphaDummy1036;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1071
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1033) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1033) from (by
           unfold
-            nb078_alpha_dummy_1033;
+            nb078AlphaDummy1033;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1068)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1034 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1034 h) from (by
           unfold
-            nb078_alpha_dummy_1034;
+            nb078AlphaDummy1034;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -979,40 +980,40 @@ noncomputable def nb078_split_alpha_0131 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1069
                     h)
                   0)))) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by decide)) (freshVar_injective
-        (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪ ((syn_c1c)).fv) (by decide))
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by decide)) (freshVar_injective
+        (((Class.cv (nb078AlphaDummy1019 h))).fv ∪ ((synC1c)).fv) (by decide))
         (TAlphaVar.here _ _ _)))))))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠ (nb078_alpha_dummy_1037) from (by
+        (TAlphaVar.there (show (nb078AlphaDummy1025) ≠ (nb078AlphaDummy1037) from (by
           unfold
-            nb078_alpha_dummy_1037;
+            nb078AlphaDummy1037;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1074)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1038 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1038 h) from (by
           unfold
-            nb078_alpha_dummy_1038;
+            nb078AlphaDummy1038;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1075
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1033) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1033) from (by
           unfold
-            nb078_alpha_dummy_1033;
+            nb078AlphaDummy1033;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1072)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1034 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1034 h) from (by
           unfold
-            nb078_alpha_dummy_1034;
+            nb078AlphaDummy1034;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -1021,35 +1022,35 @@ noncomputable def nb078_split_alpha_0131 (x : Var) (y : Var) (h : Var) :
                     h)
                   0)))) (TAlphaVar.here _ _ _))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1025) ≠ (nb078_alpha_dummy_1037) from (by
+        (nb078AlphaDummy1025) ≠ (nb078AlphaDummy1037) from (by
           unfold
-            nb078_alpha_dummy_1037;
+            nb078AlphaDummy1037;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1074)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1038 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1038 h) from (by
           unfold
-            nb078_alpha_dummy_1038;
+            nb078AlphaDummy1038;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1075
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1033) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1033) from (by
           unfold
-            nb078_alpha_dummy_1033;
+            nb078AlphaDummy1033;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1072)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1034 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1034 h) from (by
           unfold
-            nb078_alpha_dummy_1034;
+            nb078AlphaDummy1034;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -1058,99 +1059,99 @@ noncomputable def nb078_split_alpha_0131 (x : Var) (y : Var) (h : Var) :
                     h)
                   0)))) (TAlphaVar.here _ _ _)))))))))))))))))))) (TAlphaWff.classMem
                                 (TAlphaClass.cv (TAlphaVar.there (show
-                                      (nb078_alpha_dummy_1017) ≠ (nb078_alpha_dummy_1021) from
+                                      (nb078AlphaDummy1017) ≠ (nb078AlphaDummy1021) from
                                       (by
-                                        unfold nb078_alpha_dummy_1021;
+                                        unfold nb078AlphaDummy1021;
                                         with_reducible
                                           exact
                                             (Nat.ne_of_lt
                                               (mem_lt_freshVar (nb078_support_mem_1056)
-                                                0)))) (show (nb078_alpha_dummy_1019 h) ≠
-                                        (nb078_alpha_dummy_1022 h) from (by
-                                        unfold nb078_alpha_dummy_1022;
+                                                0)))) (show (nb078AlphaDummy1019 h) ≠
+                                        (nb078AlphaDummy1022 h) from (by
+                                        unfold nb078AlphaDummy1022;
                                         with_reducible
                                           exact
                                             (Nat.ne_of_lt
                                               (mem_lt_freshVar (nb078_support_mem_1057 h)
                                                 0)))) (TAlphaVar.here _ _ _)))
-                                (TAlphaClass.refl_of_closed
-                                  [((nb078_alpha_dummy_1021), (nb078_alpha_dummy_1022 h)),
-                                    ((nb078_alpha_dummy_1017), (nb078_alpha_dummy_1019 h)),
-                                    ((nb078_alpha_dummy_1018), (nb078_alpha_dummy_1020 h)),
-                                    ((nb078_alpha_dummy_1043), (nb078_alpha_dummy_1044 h)),
-                                    ((nb078_alpha_dummy_1041), (nb078_alpha_dummy_1042 h)),
-                                    ((nb078_alpha_dummy_1010), (nb078_alpha_dummy_1012 h)),
-                                    ((nb078_alpha_dummy_1009), (nb078_alpha_dummy_1011 h)),
-                                    ((nb078_alpha_dummy_1039), (nb078_alpha_dummy_1040 h)),
-                                    ((nb078_alpha_dummy_1013), (nb078_alpha_dummy_1014 h)),
-                                    ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)),
-                                    ((nb078_alpha_dummy_1005), (nb078_alpha_dummy_1007 h)),
-                                    ((nb078_alpha_dummy_1003), (nb078_alpha_dummy_1004 y h)),
-                                    ((nb078_alpha_dummy_1001), (nb078_alpha_dummy_1002 y h)),
-                                    ((nb078_alpha_dummy_002), h), ((nb078_alpha_dummy_004), y),
-                                    ((nb078_alpha_dummy_003), x)]
-                                  (syn_cnnc) (by simp only [fv_syn_cnnc]))))) (TAlphaWff.conj
+                                (TAlphaClass.reflOfClosed
+                                  [((nb078AlphaDummy1021), (nb078AlphaDummy1022 h)),
+                                    ((nb078AlphaDummy1017), (nb078AlphaDummy1019 h)),
+                                    ((nb078AlphaDummy1018), (nb078AlphaDummy1020 h)),
+                                    ((nb078AlphaDummy1043), (nb078AlphaDummy1044 h)),
+                                    ((nb078AlphaDummy1041), (nb078AlphaDummy1042 h)),
+                                    ((nb078AlphaDummy1010), (nb078AlphaDummy1012 h)),
+                                    ((nb078AlphaDummy1009), (nb078AlphaDummy1011 h)),
+                                    ((nb078AlphaDummy1039), (nb078AlphaDummy1040 h)),
+                                    ((nb078AlphaDummy1013), (nb078AlphaDummy1014 h)),
+                                    ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)),
+                                    ((nb078AlphaDummy1005), (nb078AlphaDummy1007 h)),
+                                    ((nb078AlphaDummy1003), (nb078AlphaDummy1004 y h)),
+                                    ((nb078AlphaDummy1001), (nb078AlphaDummy1002 y h)),
+                                    ((nb078AlphaDummy002), h), ((nb078AlphaDummy004), y),
+                                    ((nb078AlphaDummy003), x)]
+                                  (synCnnc) (by simp only [fv_syn_cnnc]))))) (TAlphaWff.conj
                             (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                               (TAlphaClass.cv (TAlphaVar.there (show
-                                    (nb078_alpha_dummy_1017) ≠ (nb078_alpha_dummy_1021) from (by
-                                      unfold nb078_alpha_dummy_1021;
+                                    (nb078AlphaDummy1017) ≠ (nb078AlphaDummy1021) from (by
+                                      unfold nb078AlphaDummy1021;
                                       with_reducible
                                         exact
                                           (Nat.ne_of_lt
                                             (mem_lt_freshVar (nb078_support_mem_1056)
-                                              0)))) (show (nb078_alpha_dummy_1019 h) ≠
-                                      (nb078_alpha_dummy_1022 h) from (by
-                                      unfold nb078_alpha_dummy_1022;
+                                              0)))) (show (nb078AlphaDummy1019 h) ≠
+                                      (nb078AlphaDummy1022 h) from (by
+                                      unfold nb078AlphaDummy1022;
                                       with_reducible
                                         exact
                                           (Nat.ne_of_lt
                                             (mem_lt_freshVar (nb078_support_mem_1057 h)
                                               0)))) (TAlphaVar.here _ _ _)))) (TAlphaWff.neg
                               (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.there (show
-                                      (nb078_alpha_dummy_1017) ≠ (nb078_alpha_dummy_1021) from
+                                      (nb078AlphaDummy1017) ≠ (nb078AlphaDummy1021) from
                                       (by
-                                        unfold nb078_alpha_dummy_1021;
+                                        unfold nb078AlphaDummy1021;
                                         with_reducible
                                           exact
                                             (Nat.ne_of_lt
                                               (mem_lt_freshVar (nb078_support_mem_1056)
-                                                0)))) (show (nb078_alpha_dummy_1019 h) ≠
-                                        (nb078_alpha_dummy_1022 h) from (by
-                                        unfold nb078_alpha_dummy_1022;
+                                                0)))) (show (nb078AlphaDummy1019 h) ≠
+                                        (nb078AlphaDummy1022 h) from (by
+                                        unfold nb078AlphaDummy1022;
                                         with_reducible
                                           exact
                                             (Nat.ne_of_lt
                                               (mem_lt_freshVar (nb078_support_mem_1057 h)
                                                 0)))) (TAlphaVar.here _ _ _)))
-                                (TAlphaClass.refl_of_closed
-                                  [((nb078_alpha_dummy_1021), (nb078_alpha_dummy_1022 h)),
-                                    ((nb078_alpha_dummy_1017), (nb078_alpha_dummy_1019 h)),
-                                    ((nb078_alpha_dummy_1018), (nb078_alpha_dummy_1020 h)),
-                                    ((nb078_alpha_dummy_1043), (nb078_alpha_dummy_1044 h)),
-                                    ((nb078_alpha_dummy_1041), (nb078_alpha_dummy_1042 h)),
-                                    ((nb078_alpha_dummy_1010), (nb078_alpha_dummy_1012 h)),
-                                    ((nb078_alpha_dummy_1009), (nb078_alpha_dummy_1011 h)),
-                                    ((nb078_alpha_dummy_1039), (nb078_alpha_dummy_1040 h)),
-                                    ((nb078_alpha_dummy_1013), (nb078_alpha_dummy_1014 h)),
-                                    ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)),
-                                    ((nb078_alpha_dummy_1005), (nb078_alpha_dummy_1007 h)),
-                                    ((nb078_alpha_dummy_1003), (nb078_alpha_dummy_1004 y h)),
-                                    ((nb078_alpha_dummy_1001), (nb078_alpha_dummy_1002 y h)),
-                                    ((nb078_alpha_dummy_002), h), ((nb078_alpha_dummy_004), y),
-                                    ((nb078_alpha_dummy_003), x)]
-                                  (syn_cnnc) (by simp only [fv_syn_cnnc]))))))))))))))))
+                                (TAlphaClass.reflOfClosed
+                                  [((nb078AlphaDummy1021), (nb078AlphaDummy1022 h)),
+                                    ((nb078AlphaDummy1017), (nb078AlphaDummy1019 h)),
+                                    ((nb078AlphaDummy1018), (nb078AlphaDummy1020 h)),
+                                    ((nb078AlphaDummy1043), (nb078AlphaDummy1044 h)),
+                                    ((nb078AlphaDummy1041), (nb078AlphaDummy1042 h)),
+                                    ((nb078AlphaDummy1010), (nb078AlphaDummy1012 h)),
+                                    ((nb078AlphaDummy1009), (nb078AlphaDummy1011 h)),
+                                    ((nb078AlphaDummy1039), (nb078AlphaDummy1040 h)),
+                                    ((nb078AlphaDummy1013), (nb078AlphaDummy1014 h)),
+                                    ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)),
+                                    ((nb078AlphaDummy1005), (nb078AlphaDummy1007 h)),
+                                    ((nb078AlphaDummy1003), (nb078AlphaDummy1004 y h)),
+                                    ((nb078AlphaDummy1001), (nb078AlphaDummy1002 y h)),
+                                    ((nb078AlphaDummy002), h), ((nb078AlphaDummy004), y),
+                                    ((nb078AlphaDummy003), x)]
+                                  (synCnnc) (by simp only [fv_syn_cnnc]))))))))))))))))
     (TAlphaWff.neg (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
-        (TAlphaClass.refl_of_closed [((nb078_alpha_dummy_1041), (nb078_alpha_dummy_1042 h)),
-            ((nb078_alpha_dummy_1010), (nb078_alpha_dummy_1012 h)),
-            ((nb078_alpha_dummy_1009), (nb078_alpha_dummy_1011 h)),
-            ((nb078_alpha_dummy_1039), (nb078_alpha_dummy_1040 h)),
-            ((nb078_alpha_dummy_1013), (nb078_alpha_dummy_1014 h)),
-            ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)),
-            ((nb078_alpha_dummy_1005), (nb078_alpha_dummy_1007 h)),
-            ((nb078_alpha_dummy_1003), (nb078_alpha_dummy_1004 y h)),
-            ((nb078_alpha_dummy_1001), (nb078_alpha_dummy_1002 y h)),
-            ((nb078_alpha_dummy_002), h), ((nb078_alpha_dummy_004), y),
-            ((nb078_alpha_dummy_003), x)] (syn_ccompl (syn_csn (syn_c0c)))
+        (TAlphaClass.reflOfClosed [((nb078AlphaDummy1041), (nb078AlphaDummy1042 h)),
+            ((nb078AlphaDummy1010), (nb078AlphaDummy1012 h)),
+            ((nb078AlphaDummy1009), (nb078AlphaDummy1011 h)),
+            ((nb078AlphaDummy1039), (nb078AlphaDummy1040 h)),
+            ((nb078AlphaDummy1013), (nb078AlphaDummy1014 h)),
+            ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)),
+            ((nb078AlphaDummy1005), (nb078AlphaDummy1007 h)),
+            ((nb078AlphaDummy1003), (nb078AlphaDummy1004 y h)),
+            ((nb078AlphaDummy1001), (nb078AlphaDummy1002 y h)),
+            ((nb078AlphaDummy002), h), ((nb078AlphaDummy004), y),
+            ((nb078AlphaDummy003), x)] (synCcompl (synCsn (synC0c)))
           (by simp only [fv_syn_ccompl, fv_syn_csn, fv_syn_c0c])))))
 
 
@@ -1179,69 +1180,70 @@ open NFChoice.DefinitionLeaves.AlphaFocusedFV
 open NFChoice.DirectNominalPrf
 open NFChoice.DirectNominalPrf.Nominal
 
+/-- Checked nominal proof certificate identified upstream as `nb078_split_alpha_0132`. -/
 @[expose]
-noncomputable def nb078_split_alpha_0132 (x : Var) (y : Var) (h : Var) :
+noncomputable def nb078SplitAlpha0132 (x : Var) (y : Var) (h : Var) :
     TAlphaWff
-      [((nb078_alpha_dummy_1010), (nb078_alpha_dummy_1012 h)),
-        ((nb078_alpha_dummy_1009), (nb078_alpha_dummy_1011 h)),
-        ((nb078_alpha_dummy_1039), (nb078_alpha_dummy_1040 h)),
-        ((nb078_alpha_dummy_1013), (nb078_alpha_dummy_1014 h)),
-        ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)),
-        ((nb078_alpha_dummy_1005), (nb078_alpha_dummy_1007 h)),
-        ((nb078_alpha_dummy_002), h), ((nb078_alpha_dummy_004), y),
-        ((nb078_alpha_dummy_003), x)]
-      (Wff.imp (Wff.classMem (Class.cv (nb078_alpha_dummy_1010))
-          (Class.cv (nb078_alpha_dummy_1005))) (Wff.neg
-          (Wff.classEq (Class.cv (nb078_alpha_dummy_1009))
-            (syn_cun (syn_cphi (Class.cv (nb078_alpha_dummy_1010))) (syn_csn (syn_c0c))))))
-      (Wff.imp (Wff.classMem (Class.cv (nb078_alpha_dummy_1012 h))
-          (Class.cv (nb078_alpha_dummy_1007 h))) (Wff.neg
-          (Wff.classEq (Class.cv (nb078_alpha_dummy_1011 h))
-            (syn_cun (syn_cphi (Class.cv (nb078_alpha_dummy_1012 h))) (syn_csn (syn_c0c)))))) :=
+      [((nb078AlphaDummy1010), (nb078AlphaDummy1012 h)),
+        ((nb078AlphaDummy1009), (nb078AlphaDummy1011 h)),
+        ((nb078AlphaDummy1039), (nb078AlphaDummy1040 h)),
+        ((nb078AlphaDummy1013), (nb078AlphaDummy1014 h)),
+        ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)),
+        ((nb078AlphaDummy1005), (nb078AlphaDummy1007 h)),
+        ((nb078AlphaDummy002), h), ((nb078AlphaDummy004), y),
+        ((nb078AlphaDummy003), x)]
+      (Wff.imp (Wff.classMem (Class.cv (nb078AlphaDummy1010))
+          (Class.cv (nb078AlphaDummy1005))) (Wff.neg
+          (Wff.classEq (Class.cv (nb078AlphaDummy1009))
+            (synCun (synCphi (Class.cv (nb078AlphaDummy1010))) (synCsn (synC0c))))))
+      (Wff.imp (Wff.classMem (Class.cv (nb078AlphaDummy1012 h))
+          (Class.cv (nb078AlphaDummy1007 h))) (Wff.neg
+          (Wff.classEq (Class.cv (nb078AlphaDummy1011 h))
+            (synCun (synCphi (Class.cv (nb078AlphaDummy1012 h))) (synCsn (synC0c)))))) :=
   (TAlphaWff.imp (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1005) ≠ (nb078_alpha_dummy_1010) from (by
-              unfold nb078_alpha_dummy_1010;
+        (TAlphaVar.there (show (nb078AlphaDummy1005) ≠ (nb078AlphaDummy1010) from (by
+              unfold nb078AlphaDummy1010;
               with_reducible
                 exact (Nat.ne_of_lt (mem_lt_freshVar (nb078_support_mem_1076) 1))))
-          (show (nb078_alpha_dummy_1007 h) ≠ (nb078_alpha_dummy_1012 h) from (by
-              unfold nb078_alpha_dummy_1012;
+          (show (nb078AlphaDummy1007 h) ≠ (nb078AlphaDummy1012 h) from (by
+              unfold nb078AlphaDummy1012;
               with_reducible
                 exact (Nat.ne_of_lt (mem_lt_freshVar (nb078_support_mem_1078 h) 1))))
-          (TAlphaVar.there (show (nb078_alpha_dummy_1005) ≠ (nb078_alpha_dummy_1009) from (by
-                unfold nb078_alpha_dummy_1009;
+          (TAlphaVar.there (show (nb078AlphaDummy1005) ≠ (nb078AlphaDummy1009) from (by
+                unfold nb078AlphaDummy1009;
                 with_reducible
                   exact (Nat.ne_of_lt (mem_lt_freshVar (nb078_support_mem_1076) 0))))
-            (show (nb078_alpha_dummy_1007 h) ≠ (nb078_alpha_dummy_1011 h) from (by
-                unfold nb078_alpha_dummy_1011;
+            (show (nb078AlphaDummy1007 h) ≠ (nb078AlphaDummy1011 h) from (by
+                unfold nb078AlphaDummy1011;
                 with_reducible
                   exact (Nat.ne_of_lt (mem_lt_freshVar (nb078_support_mem_1078 h) 0))))
-            (TAlphaVar.there (show (nb078_alpha_dummy_1005) ≠ (nb078_alpha_dummy_1039) from (by
-                  unfold nb078_alpha_dummy_1039;
+            (TAlphaVar.there (show (nb078AlphaDummy1005) ≠ (nb078AlphaDummy1039) from (by
+                  unfold nb078AlphaDummy1039;
                   with_reducible
                     exact (Nat.ne_of_lt (mem_lt_freshVar (nb078_support_mem_1080) 0))))
-              (show (nb078_alpha_dummy_1007 h) ≠ (nb078_alpha_dummy_1040 h) from (by
-                  unfold nb078_alpha_dummy_1040;
+              (show (nb078AlphaDummy1007 h) ≠ (nb078AlphaDummy1040 h) from (by
+                  unfold nb078AlphaDummy1040;
                   with_reducible
                     exact (Nat.ne_of_lt (mem_lt_freshVar (nb078_support_mem_1081 h) 0))))
-              (TAlphaVar.there (show (nb078_alpha_dummy_1005) ≠ (nb078_alpha_dummy_1013) from
+              (TAlphaVar.there (show (nb078AlphaDummy1005) ≠ (nb078AlphaDummy1013) from
                   (by
-                    unfold nb078_alpha_dummy_1013;
+                    unfold nb078AlphaDummy1013;
                     with_reducible
                       exact (Nat.ne_of_lt (mem_lt_freshVar (nb078_support_mem_1077) 0))))
-                (show (nb078_alpha_dummy_1007 h) ≠ (nb078_alpha_dummy_1014 h) from (by
-                    unfold nb078_alpha_dummy_1014;
+                (show (nb078AlphaDummy1007 h) ≠ (nb078AlphaDummy1014 h) from (by
+                    unfold nb078AlphaDummy1014;
                     with_reducible
                       exact
                         (Nat.ne_of_lt (mem_lt_freshVar (nb078_support_mem_1079 h) 0))))
                 (TAlphaVar.there (freshVar_injective
-                    (((Class.cv (nb078_alpha_dummy_002))).fv ∪ ((syn_cvv)).fv) (by decide))
-                  (freshVar_injective (((Class.cv h)).fv ∪ ((syn_cvv)).fv) (by decide))
+                    (((Class.cv (nb078AlphaDummy002))).fv ∪ ((synCvv)).fv) (by decide))
+                  (freshVar_injective (((Class.cv h)).fv ∪ ((synCvv)).fv) (by decide))
                   (TAlphaVar.here _ _ _)))))))) (TAlphaWff.neg (TAlphaWff.classEq
         (TAlphaClass.cv (TAlphaVar.there (freshVar_injective
-              (((Class.cv (nb078_alpha_dummy_1006))).fv ∪
-                ((Class.cv (nb078_alpha_dummy_1005))).fv) (by decide)) (freshVar_injective
-              (((Class.cv (nb078_alpha_dummy_1008 h))).fv ∪
-                ((Class.cv (nb078_alpha_dummy_1007 h))).fv) (by decide))
+              (((Class.cv (nb078AlphaDummy1006))).fv ∪
+                ((Class.cv (nb078AlphaDummy1005))).fv) (by decide)) (freshVar_injective
+              (((Class.cv (nb078AlphaDummy1008 h))).fv ∪
+                ((Class.cv (nb078AlphaDummy1007 h))).fv) (by decide))
             (TAlphaVar.here _ _ _))) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
               (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
                   (TAlphaWff.neg (TAlphaWff.conj
@@ -1249,60 +1251,60 @@ noncomputable def nb078_split_alpha_0132 (x : Var) (y : Var) (h : Var) :
                         (TAlphaClass.cab (TAlphaWff.ex (TAlphaWff.conj
                               (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                                 (TAlphaClass.cv (TAlphaVar.there (show
-                                      (nb078_alpha_dummy_1010) ≠ (nb078_alpha_dummy_1017) from
+                                      (nb078AlphaDummy1010) ≠ (nb078AlphaDummy1017) from
                                       (by
-                                        unfold nb078_alpha_dummy_1017;
+                                        unfold nb078AlphaDummy1017;
                                         with_reducible
                                           exact
                                             (Nat.ne_of_lt
                                               (mem_lt_freshVar (nb078_support_mem_1054)
-                                                0)))) (show (nb078_alpha_dummy_1012 h) ≠
-                                        (nb078_alpha_dummy_1019 h) from (by
-                                        unfold nb078_alpha_dummy_1019;
+                                                0)))) (show (nb078AlphaDummy1012 h) ≠
+                                        (nb078AlphaDummy1019 h) from (by
+                                        unfold nb078AlphaDummy1019;
                                         with_reducible
                                           exact
                                             (Nat.ne_of_lt
                                               (mem_lt_freshVar (nb078_support_mem_1055 h)
                                                 0)))) (TAlphaVar.there (show
-                                        (nb078_alpha_dummy_1010) ≠ (nb078_alpha_dummy_1018) from
+                                        (nb078AlphaDummy1010) ≠ (nb078AlphaDummy1018) from
                                         (by
-                                          unfold nb078_alpha_dummy_1018;
+                                          unfold nb078AlphaDummy1018;
                                           with_reducible
                                             exact
                                               (Nat.ne_of_lt
                                                 (mem_lt_freshVar (nb078_support_mem_1054)
-                                                  1)))) (show (nb078_alpha_dummy_1012 h) ≠
-        (nb078_alpha_dummy_1020 h) from (by
-                                          unfold nb078_alpha_dummy_1020;
+                                                  1)))) (show (nb078AlphaDummy1012 h) ≠
+        (nb078AlphaDummy1020 h) from (by
+                                          unfold nb078AlphaDummy1020;
                                           with_reducible
                                             exact
                                               (Nat.ne_of_lt
                                                 (mem_lt_freshVar
                                                   (nb078_support_mem_1055 h) 1))))
-                                      (TAlphaVar.there (show (nb078_alpha_dummy_1010) ≠
-        (nb078_alpha_dummy_1043) from (by
-          unfold nb078_alpha_dummy_1043;
+                                      (TAlphaVar.there (show (nb078AlphaDummy1010) ≠
+        (nb078AlphaDummy1043) from (by
+          unfold nb078AlphaDummy1043;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
-                  (nb078_support_mem_1084) 0)))) (show (nb078_alpha_dummy_1012 h) ≠
-        (nb078_alpha_dummy_1044 h) from (by
-          unfold nb078_alpha_dummy_1044;
+                  (nb078_support_mem_1084) 0)))) (show (nb078AlphaDummy1012 h) ≠
+        (nb078AlphaDummy1044 h) from (by
+          unfold nb078AlphaDummy1044;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1085 h) 0)))) (TAlphaVar.there (show
-        (nb078_alpha_dummy_1010) ≠ (nb078_alpha_dummy_1041) from (by
-          unfold nb078_alpha_dummy_1041;
+        (nb078AlphaDummy1010) ≠ (nb078AlphaDummy1041) from (by
+          unfold nb078AlphaDummy1041;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
-                  (nb078_support_mem_1082) 0)))) (show (nb078_alpha_dummy_1012 h) ≠
-        (nb078_alpha_dummy_1042 h) from (by
-          unfold nb078_alpha_dummy_1042;
+                  (nb078_support_mem_1082) 0)))) (show (nb078AlphaDummy1012 h) ≠
+        (nb078AlphaDummy1042 h) from (by
+          unfold nb078AlphaDummy1042;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -1310,56 +1312,56 @@ noncomputable def nb078_split_alpha_0132 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1083 h) 0)))) (TAlphaVar.here _ _ _)))))))
                               (TAlphaWff.classEq (TAlphaClass.cv (TAlphaVar.there
                                     (freshVar_injective
-                                      (((Class.cv (nb078_alpha_dummy_1010))).fv) (by decide))
+                                      (((Class.cv (nb078AlphaDummy1010))).fv) (by decide))
                                     (freshVar_injective
-                                      (((Class.cv (nb078_alpha_dummy_1012 h))).fv) (by decide))
+                                      (((Class.cv (nb078AlphaDummy1012 h))).fv) (by decide))
                                     (TAlphaVar.here _ _ _))) (TAlphaClass.cab (TAlphaWff.imp
                                     (TAlphaWff.neg (TAlphaWff.conj (TAlphaWff.classMem
         (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab (TAlphaWff.ex (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1017) ≠ (nb078_alpha_dummy_1024) from (by
-          unfold nb078_alpha_dummy_1024;
+        (TAlphaVar.there (show (nb078AlphaDummy1017) ≠ (nb078AlphaDummy1024) from (by
+          unfold nb078AlphaDummy1024;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1058)
-                  1)))) (show (nb078_alpha_dummy_1019 h) ≠ (nb078_alpha_dummy_1027 h) from (by
-          unfold nb078_alpha_dummy_1027;
+                  1)))) (show (nb078AlphaDummy1019 h) ≠ (nb078AlphaDummy1027 h) from (by
+          unfold nb078AlphaDummy1027;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1059
                     h)
-                  1)))) (TAlphaVar.there (show (nb078_alpha_dummy_1017) ≠
-        (nb078_alpha_dummy_1023) from (by
-          unfold nb078_alpha_dummy_1023;
+                  1)))) (TAlphaVar.there (show (nb078AlphaDummy1017) ≠
+        (nb078AlphaDummy1023) from (by
+          unfold nb078AlphaDummy1023;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1058)
-                  0)))) (show (nb078_alpha_dummy_1019 h) ≠ (nb078_alpha_dummy_1026 h) from (by
-          unfold nb078_alpha_dummy_1026;
+                  0)))) (show (nb078AlphaDummy1019 h) ≠ (nb078AlphaDummy1026 h) from (by
+          unfold nb078AlphaDummy1026;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1059
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1017) ≠
-        (nb078_alpha_dummy_1021) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1017) ≠
+        (nb078AlphaDummy1021) from (by
           unfold
-            nb078_alpha_dummy_1021;
+            nb078AlphaDummy1021;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1056)
-                  0)))) (show (nb078_alpha_dummy_1019 h) ≠ (nb078_alpha_dummy_1022 h) from (by
+                  0)))) (show (nb078AlphaDummy1019 h) ≠ (nb078AlphaDummy1022 h) from (by
           unfold
-            nb078_alpha_dummy_1022;
+            nb078AlphaDummy1022;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -1367,50 +1369,50 @@ noncomputable def nb078_split_alpha_0132 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1057
                     h)
                   0)))) (TAlphaVar.here _ _ _)))))) (TAlphaWff.ex (TAlphaWff.conj
-        (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.refl_of_closed
-        [((nb078_alpha_dummy_1025), (nb078_alpha_dummy_1028 h)), ((nb078_alpha_dummy_1024),
-        (nb078_alpha_dummy_1027 h)), ((nb078_alpha_dummy_1023), (nb078_alpha_dummy_1026 h)),
-        ((nb078_alpha_dummy_1021), (nb078_alpha_dummy_1022 h)), ((nb078_alpha_dummy_1017),
-        (nb078_alpha_dummy_1019 h)), ((nb078_alpha_dummy_1018), (nb078_alpha_dummy_1020 h)),
-        ((nb078_alpha_dummy_1043), (nb078_alpha_dummy_1044 h)), ((nb078_alpha_dummy_1041),
-        (nb078_alpha_dummy_1042 h)), ((nb078_alpha_dummy_1010), (nb078_alpha_dummy_1012 h)),
-        ((nb078_alpha_dummy_1009), (nb078_alpha_dummy_1011 h)), ((nb078_alpha_dummy_1039),
-        (nb078_alpha_dummy_1040 h)), ((nb078_alpha_dummy_1013), (nb078_alpha_dummy_1014 h)),
-        ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)), ((nb078_alpha_dummy_1005),
-        (nb078_alpha_dummy_1007 h)), ((nb078_alpha_dummy_002), h), ((nb078_alpha_dummy_004), y),
-        ((nb078_alpha_dummy_003), x)] (syn_c1c) (by simp only [fv_syn_c1c]))) (TAlphaWff.conj
+        (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.reflOfClosed
+        [((nb078AlphaDummy1025), (nb078AlphaDummy1028 h)), ((nb078AlphaDummy1024),
+        (nb078AlphaDummy1027 h)), ((nb078AlphaDummy1023), (nb078AlphaDummy1026 h)),
+        ((nb078AlphaDummy1021), (nb078AlphaDummy1022 h)), ((nb078AlphaDummy1017),
+        (nb078AlphaDummy1019 h)), ((nb078AlphaDummy1018), (nb078AlphaDummy1020 h)),
+        ((nb078AlphaDummy1043), (nb078AlphaDummy1044 h)), ((nb078AlphaDummy1041),
+        (nb078AlphaDummy1042 h)), ((nb078AlphaDummy1010), (nb078AlphaDummy1012 h)),
+        ((nb078AlphaDummy1009), (nb078AlphaDummy1011 h)), ((nb078AlphaDummy1039),
+        (nb078AlphaDummy1040 h)), ((nb078AlphaDummy1013), (nb078AlphaDummy1014 h)),
+        ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)), ((nb078AlphaDummy1005),
+        (nb078AlphaDummy1007 h)), ((nb078AlphaDummy002), h), ((nb078AlphaDummy004), y),
+        ((nb078AlphaDummy003), x)] (synC1c) (by simp only [fv_syn_c1c]))) (TAlphaWff.conj
         (TAlphaWff.classEq (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj (TAlphaWff.classMem
         (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠ (nb078_alpha_dummy_1031) from (by
+        (TAlphaVar.there (show (nb078AlphaDummy1024) ≠ (nb078AlphaDummy1031) from (by
           unfold
-            nb078_alpha_dummy_1031;
+            nb078AlphaDummy1031;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1062)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1032 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1032 h) from (by
           unfold
-            nb078_alpha_dummy_1032;
+            nb078AlphaDummy1032;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1063
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1029) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1029) from (by
           unfold
-            nb078_alpha_dummy_1029;
+            nb078AlphaDummy1029;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1060)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1030 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1030 h) from (by
           unfold
-            nb078_alpha_dummy_1030;
+            nb078AlphaDummy1030;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -1418,40 +1420,40 @@ noncomputable def nb078_split_alpha_0132 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1061
                     h)
                   0)))) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by
-          decide)) (freshVar_injective (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪
-        ((syn_c1c)).fv) (by
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by
+          decide)) (freshVar_injective (((Class.cv (nb078AlphaDummy1019 h))).fv ∪
+        ((synC1c)).fv) (by
           decide)) (TAlphaVar.here _ _ _)))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1025) ≠ (nb078_alpha_dummy_1031) from (by
+        (nb078AlphaDummy1025) ≠ (nb078AlphaDummy1031) from (by
           unfold
-            nb078_alpha_dummy_1031;
+            nb078AlphaDummy1031;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1066)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1032 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1032 h) from (by
           unfold
-            nb078_alpha_dummy_1032;
+            nb078AlphaDummy1032;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1067
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1029) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1029) from (by
           unfold
-            nb078_alpha_dummy_1029;
+            nb078AlphaDummy1029;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1064)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1030 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1030 h) from (by
           unfold
-            nb078_alpha_dummy_1030;
+            nb078AlphaDummy1030;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -1461,35 +1463,35 @@ noncomputable def nb078_split_alpha_0132 (x : Var) (y : Var) (h : Var) :
                   0)))) (TAlphaVar.here _ _ _))))))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠ (nb078_alpha_dummy_1031) from (by
+        (TAlphaVar.there (show (nb078AlphaDummy1024) ≠ (nb078AlphaDummy1031) from (by
           unfold
-            nb078_alpha_dummy_1031;
+            nb078AlphaDummy1031;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1062)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1032 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1032 h) from (by
           unfold
-            nb078_alpha_dummy_1032;
+            nb078AlphaDummy1032;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1063
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1029) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1029) from (by
           unfold
-            nb078_alpha_dummy_1029;
+            nb078AlphaDummy1029;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1060)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1030 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1030 h) from (by
           unfold
-            nb078_alpha_dummy_1030;
+            nb078AlphaDummy1030;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -1497,96 +1499,96 @@ noncomputable def nb078_split_alpha_0132 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1061
                     h)
                   0)))) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by
-          decide)) (freshVar_injective (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪
-        ((syn_c1c)).fv) (by
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by
+          decide)) (freshVar_injective (((Class.cv (nb078AlphaDummy1019 h))).fv ∪
+        ((synC1c)).fv) (by
           decide)) (TAlphaVar.here _ _ _)))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1025) ≠ (nb078_alpha_dummy_1031) from (by
+        (nb078AlphaDummy1025) ≠ (nb078AlphaDummy1031) from (by
           unfold
-            nb078_alpha_dummy_1031;
+            nb078AlphaDummy1031;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1066)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1032 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1032 h) from (by
           unfold
-            nb078_alpha_dummy_1032;
+            nb078AlphaDummy1032;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1067
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1029) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1029) from (by
           unfold
-            nb078_alpha_dummy_1029;
+            nb078AlphaDummy1029;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1064)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1030 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1030 h) from (by
           unfold
-            nb078_alpha_dummy_1030;
+            nb078AlphaDummy1030;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1065
                     h)
-                  0)))) (TAlphaVar.here _ _ _)))))))))))) (TAlphaClass.refl_of_closed
-        [((nb078_alpha_dummy_1025), (nb078_alpha_dummy_1028 h)), ((nb078_alpha_dummy_1024),
-        (nb078_alpha_dummy_1027 h)), ((nb078_alpha_dummy_1023), (nb078_alpha_dummy_1026 h)),
-        ((nb078_alpha_dummy_1021), (nb078_alpha_dummy_1022 h)), ((nb078_alpha_dummy_1017),
-        (nb078_alpha_dummy_1019 h)), ((nb078_alpha_dummy_1018), (nb078_alpha_dummy_1020 h)),
-        ((nb078_alpha_dummy_1043), (nb078_alpha_dummy_1044 h)), ((nb078_alpha_dummy_1041),
-        (nb078_alpha_dummy_1042 h)), ((nb078_alpha_dummy_1010), (nb078_alpha_dummy_1012 h)),
-        ((nb078_alpha_dummy_1009), (nb078_alpha_dummy_1011 h)), ((nb078_alpha_dummy_1039),
-        (nb078_alpha_dummy_1040 h)), ((nb078_alpha_dummy_1013), (nb078_alpha_dummy_1014 h)),
-        ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)), ((nb078_alpha_dummy_1005),
-        (nb078_alpha_dummy_1007 h)), ((nb078_alpha_dummy_002), h), ((nb078_alpha_dummy_004), y),
-        ((nb078_alpha_dummy_003), x)] (syn_c0) (by simp only [fv_syn_c0]))) (TAlphaWff.classEq
+                  0)))) (TAlphaVar.here _ _ _)))))))))))) (TAlphaClass.reflOfClosed
+        [((nb078AlphaDummy1025), (nb078AlphaDummy1028 h)), ((nb078AlphaDummy1024),
+        (nb078AlphaDummy1027 h)), ((nb078AlphaDummy1023), (nb078AlphaDummy1026 h)),
+        ((nb078AlphaDummy1021), (nb078AlphaDummy1022 h)), ((nb078AlphaDummy1017),
+        (nb078AlphaDummy1019 h)), ((nb078AlphaDummy1018), (nb078AlphaDummy1020 h)),
+        ((nb078AlphaDummy1043), (nb078AlphaDummy1044 h)), ((nb078AlphaDummy1041),
+        (nb078AlphaDummy1042 h)), ((nb078AlphaDummy1010), (nb078AlphaDummy1012 h)),
+        ((nb078AlphaDummy1009), (nb078AlphaDummy1011 h)), ((nb078AlphaDummy1039),
+        (nb078AlphaDummy1040 h)), ((nb078AlphaDummy1013), (nb078AlphaDummy1014 h)),
+        ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)), ((nb078AlphaDummy1005),
+        (nb078AlphaDummy1007 h)), ((nb078AlphaDummy002), h), ((nb078AlphaDummy004), y),
+        ((nb078AlphaDummy003), x)] (synC0) (by simp only [fv_syn_c0]))) (TAlphaWff.classEq
         (TAlphaClass.cv (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by decide)) (freshVar_injective
-        (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪ ((syn_c1c)).fv) (by decide))
-        (TAlphaVar.there (freshVar_injective (((Class.cv (nb078_alpha_dummy_1017))).fv ∪
-        ((syn_c1c)).fv) (by decide)) (freshVar_injective (((Class.cv (nb078_alpha_dummy_1019
-        h))).fv ∪ ((syn_c1c)).fv) (by decide)) (TAlphaVar.here _ _ _)))) (TAlphaClass.cab
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by decide)) (freshVar_injective
+        (((Class.cv (nb078AlphaDummy1019 h))).fv ∪ ((synC1c)).fv) (by decide))
+        (TAlphaVar.there (freshVar_injective (((Class.cv (nb078AlphaDummy1017))).fv ∪
+        ((synC1c)).fv) (by decide)) (freshVar_injective (((Class.cv (nb078AlphaDummy1019
+        h))).fv ∪ ((synC1c)).fv) (by decide)) (TAlphaVar.here _ _ _)))) (TAlphaClass.cab
         (TAlphaWff.neg (TAlphaWff.conj (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠ (nb078_alpha_dummy_1035) from (by
+        (TAlphaVar.there (show (nb078AlphaDummy1024) ≠ (nb078AlphaDummy1035) from (by
           unfold
-            nb078_alpha_dummy_1035;
+            nb078AlphaDummy1035;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1070)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1036 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1036 h) from (by
           unfold
-            nb078_alpha_dummy_1036;
+            nb078AlphaDummy1036;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1071
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1033) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1033) from (by
           unfold
-            nb078_alpha_dummy_1033;
+            nb078AlphaDummy1033;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1068)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1034 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1034 h) from (by
           unfold
-            nb078_alpha_dummy_1034;
+            nb078AlphaDummy1034;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -1594,40 +1596,40 @@ noncomputable def nb078_split_alpha_0132 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1069
                     h)
                   0)))) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by
-          decide)) (freshVar_injective (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪
-        ((syn_c1c)).fv) (by
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by
+          decide)) (freshVar_injective (((Class.cv (nb078AlphaDummy1019 h))).fv ∪
+        ((synC1c)).fv) (by
           decide)) (TAlphaVar.here _ _ _)))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1024) ≠ (nb078_alpha_dummy_1035) from (by
+        (nb078AlphaDummy1024) ≠ (nb078AlphaDummy1035) from (by
           unfold
-            nb078_alpha_dummy_1035;
+            nb078AlphaDummy1035;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1070)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1036 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1036 h) from (by
           unfold
-            nb078_alpha_dummy_1036;
+            nb078AlphaDummy1036;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1071
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1033) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1033) from (by
           unfold
-            nb078_alpha_dummy_1033;
+            nb078AlphaDummy1033;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1068)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1034 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1034 h) from (by
           unfold
-            nb078_alpha_dummy_1034;
+            nb078AlphaDummy1034;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -1635,41 +1637,41 @@ noncomputable def nb078_split_alpha_0132 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1069
                     h)
                   0)))) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by
-          decide)) (freshVar_injective (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪
-        ((syn_c1c)).fv) (by
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by
+          decide)) (freshVar_injective (((Class.cv (nb078AlphaDummy1019 h))).fv ∪
+        ((synC1c)).fv) (by
           decide)) (TAlphaVar.here _ _ _)))))))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠ (nb078_alpha_dummy_1037) from (by
+        (TAlphaVar.there (show (nb078AlphaDummy1025) ≠ (nb078AlphaDummy1037) from (by
           unfold
-            nb078_alpha_dummy_1037;
+            nb078AlphaDummy1037;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1074)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1038 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1038 h) from (by
           unfold
-            nb078_alpha_dummy_1038;
+            nb078AlphaDummy1038;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1075
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1033) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1033) from (by
           unfold
-            nb078_alpha_dummy_1033;
+            nb078AlphaDummy1033;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1072)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1034 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1034 h) from (by
           unfold
-            nb078_alpha_dummy_1034;
+            nb078AlphaDummy1034;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -1678,35 +1680,35 @@ noncomputable def nb078_split_alpha_0132 (x : Var) (y : Var) (h : Var) :
                     h)
                   0)))) (TAlphaVar.here _ _ _))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1025) ≠ (nb078_alpha_dummy_1037) from (by
+        (nb078AlphaDummy1025) ≠ (nb078AlphaDummy1037) from (by
           unfold
-            nb078_alpha_dummy_1037;
+            nb078AlphaDummy1037;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1074)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1038 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1038 h) from (by
           unfold
-            nb078_alpha_dummy_1038;
+            nb078AlphaDummy1038;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1075
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1033) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1033) from (by
           unfold
-            nb078_alpha_dummy_1033;
+            nb078AlphaDummy1033;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1072)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1034 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1034 h) from (by
           unfold
-            nb078_alpha_dummy_1034;
+            nb078AlphaDummy1034;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -1714,129 +1716,129 @@ noncomputable def nb078_split_alpha_0132 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1073
                     h)
                   0)))) (TAlphaVar.here _ _ _)))))))))))))))))))) (TAlphaWff.classMem
-        (TAlphaClass.cv (TAlphaVar.there (show (nb078_alpha_dummy_1017) ≠
-        (nb078_alpha_dummy_1021) from (by
-          unfold nb078_alpha_dummy_1021;
+        (TAlphaClass.cv (TAlphaVar.there (show (nb078AlphaDummy1017) ≠
+        (nb078AlphaDummy1021) from (by
+          unfold nb078AlphaDummy1021;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
-                  (nb078_support_mem_1056) 0)))) (show (nb078_alpha_dummy_1019 h) ≠
-        (nb078_alpha_dummy_1022 h) from (by
-          unfold nb078_alpha_dummy_1022;
+                  (nb078_support_mem_1056) 0)))) (show (nb078AlphaDummy1019 h) ≠
+        (nb078AlphaDummy1022 h) from (by
+          unfold nb078AlphaDummy1022;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1057 h) 0)))) (TAlphaVar.here _ _ _)))
-        (TAlphaClass.refl_of_closed [((nb078_alpha_dummy_1021), (nb078_alpha_dummy_1022 h)),
-        ((nb078_alpha_dummy_1017), (nb078_alpha_dummy_1019 h)), ((nb078_alpha_dummy_1018),
-        (nb078_alpha_dummy_1020 h)), ((nb078_alpha_dummy_1043), (nb078_alpha_dummy_1044 h)),
-        ((nb078_alpha_dummy_1041), (nb078_alpha_dummy_1042 h)), ((nb078_alpha_dummy_1010),
-        (nb078_alpha_dummy_1012 h)), ((nb078_alpha_dummy_1009), (nb078_alpha_dummy_1011 h)),
-        ((nb078_alpha_dummy_1039), (nb078_alpha_dummy_1040 h)), ((nb078_alpha_dummy_1013),
-        (nb078_alpha_dummy_1014 h)), ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)),
-        ((nb078_alpha_dummy_1005), (nb078_alpha_dummy_1007 h)), ((nb078_alpha_dummy_002), h),
-        ((nb078_alpha_dummy_004), y), ((nb078_alpha_dummy_003), x)]
-        (syn_cnnc) (by simp only [fv_syn_cnnc]))))) (TAlphaWff.conj (TAlphaWff.classMem
+        (TAlphaClass.reflOfClosed [((nb078AlphaDummy1021), (nb078AlphaDummy1022 h)),
+        ((nb078AlphaDummy1017), (nb078AlphaDummy1019 h)), ((nb078AlphaDummy1018),
+        (nb078AlphaDummy1020 h)), ((nb078AlphaDummy1043), (nb078AlphaDummy1044 h)),
+        ((nb078AlphaDummy1041), (nb078AlphaDummy1042 h)), ((nb078AlphaDummy1010),
+        (nb078AlphaDummy1012 h)), ((nb078AlphaDummy1009), (nb078AlphaDummy1011 h)),
+        ((nb078AlphaDummy1039), (nb078AlphaDummy1040 h)), ((nb078AlphaDummy1013),
+        (nb078AlphaDummy1014 h)), ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)),
+        ((nb078AlphaDummy1005), (nb078AlphaDummy1007 h)), ((nb078AlphaDummy002), h),
+        ((nb078AlphaDummy004), y), ((nb078AlphaDummy003), x)]
+        (synCnnc) (by simp only [fv_syn_cnnc]))))) (TAlphaWff.conj (TAlphaWff.classMem
                                         (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1017) ≠ (nb078_alpha_dummy_1021) from (by
-          unfold nb078_alpha_dummy_1021;
+        (TAlphaVar.there (show (nb078AlphaDummy1017) ≠ (nb078AlphaDummy1021) from (by
+          unfold nb078AlphaDummy1021;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
-                  (nb078_support_mem_1056) 0)))) (show (nb078_alpha_dummy_1019 h) ≠
-        (nb078_alpha_dummy_1022 h) from (by
-          unfold nb078_alpha_dummy_1022;
+                  (nb078_support_mem_1056) 0)))) (show (nb078AlphaDummy1019 h) ≠
+        (nb078AlphaDummy1022 h) from (by
+          unfold nb078AlphaDummy1022;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1057 h) 0)))) (TAlphaVar.here _ _ _)))) (TAlphaWff.neg
                                         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.there
-        (show (nb078_alpha_dummy_1017) ≠ (nb078_alpha_dummy_1021) from (by
-          unfold nb078_alpha_dummy_1021;
+        (show (nb078AlphaDummy1017) ≠ (nb078AlphaDummy1021) from (by
+          unfold nb078AlphaDummy1021;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
-                  (nb078_support_mem_1056) 0)))) (show (nb078_alpha_dummy_1019 h) ≠
-        (nb078_alpha_dummy_1022 h) from (by
-          unfold nb078_alpha_dummy_1022;
+                  (nb078_support_mem_1056) 0)))) (show (nb078AlphaDummy1019 h) ≠
+        (nb078AlphaDummy1022 h) from (by
+          unfold nb078AlphaDummy1022;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1057 h) 0)))) (TAlphaVar.here _ _ _)))
-        (TAlphaClass.refl_of_closed [((nb078_alpha_dummy_1021), (nb078_alpha_dummy_1022 h)),
-        ((nb078_alpha_dummy_1017), (nb078_alpha_dummy_1019 h)), ((nb078_alpha_dummy_1018),
-        (nb078_alpha_dummy_1020 h)), ((nb078_alpha_dummy_1043), (nb078_alpha_dummy_1044 h)),
-        ((nb078_alpha_dummy_1041), (nb078_alpha_dummy_1042 h)), ((nb078_alpha_dummy_1010),
-        (nb078_alpha_dummy_1012 h)), ((nb078_alpha_dummy_1009), (nb078_alpha_dummy_1011 h)),
-        ((nb078_alpha_dummy_1039), (nb078_alpha_dummy_1040 h)), ((nb078_alpha_dummy_1013),
-        (nb078_alpha_dummy_1014 h)), ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)),
-        ((nb078_alpha_dummy_1005), (nb078_alpha_dummy_1007 h)), ((nb078_alpha_dummy_002), h),
-        ((nb078_alpha_dummy_004), y), ((nb078_alpha_dummy_003), x)] (syn_cnnc)
+        (TAlphaClass.reflOfClosed [((nb078AlphaDummy1021), (nb078AlphaDummy1022 h)),
+        ((nb078AlphaDummy1017), (nb078AlphaDummy1019 h)), ((nb078AlphaDummy1018),
+        (nb078AlphaDummy1020 h)), ((nb078AlphaDummy1043), (nb078AlphaDummy1044 h)),
+        ((nb078AlphaDummy1041), (nb078AlphaDummy1042 h)), ((nb078AlphaDummy1010),
+        (nb078AlphaDummy1012 h)), ((nb078AlphaDummy1009), (nb078AlphaDummy1011 h)),
+        ((nb078AlphaDummy1039), (nb078AlphaDummy1040 h)), ((nb078AlphaDummy1013),
+        (nb078AlphaDummy1014 h)), ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)),
+        ((nb078AlphaDummy1005), (nb078AlphaDummy1007 h)), ((nb078AlphaDummy002), h),
+        ((nb078AlphaDummy004), y), ((nb078AlphaDummy003), x)] (synCnnc)
         (by simp only [fv_syn_cnnc]))))))))))))
                       (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                         (TAlphaClass.cab (TAlphaWff.ex (TAlphaWff.conj
                               (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                                 (TAlphaClass.cv (TAlphaVar.there (show
-                                      (nb078_alpha_dummy_1010) ≠ (nb078_alpha_dummy_1017) from
+                                      (nb078AlphaDummy1010) ≠ (nb078AlphaDummy1017) from
                                       (by
-                                        unfold nb078_alpha_dummy_1017;
+                                        unfold nb078AlphaDummy1017;
                                         with_reducible
                                           exact
                                             (Nat.ne_of_lt
                                               (mem_lt_freshVar (nb078_support_mem_1054)
-                                                0)))) (show (nb078_alpha_dummy_1012 h) ≠
-                                        (nb078_alpha_dummy_1019 h) from (by
-                                        unfold nb078_alpha_dummy_1019;
+                                                0)))) (show (nb078AlphaDummy1012 h) ≠
+                                        (nb078AlphaDummy1019 h) from (by
+                                        unfold nb078AlphaDummy1019;
                                         with_reducible
                                           exact
                                             (Nat.ne_of_lt
                                               (mem_lt_freshVar (nb078_support_mem_1055 h)
                                                 0)))) (TAlphaVar.there (show
-                                        (nb078_alpha_dummy_1010) ≠ (nb078_alpha_dummy_1018) from
+                                        (nb078AlphaDummy1010) ≠ (nb078AlphaDummy1018) from
                                         (by
-                                          unfold nb078_alpha_dummy_1018;
+                                          unfold nb078AlphaDummy1018;
                                           with_reducible
                                             exact
                                               (Nat.ne_of_lt
                                                 (mem_lt_freshVar (nb078_support_mem_1054)
-                                                  1)))) (show (nb078_alpha_dummy_1012 h) ≠
-        (nb078_alpha_dummy_1020 h) from (by
-                                          unfold nb078_alpha_dummy_1020;
+                                                  1)))) (show (nb078AlphaDummy1012 h) ≠
+        (nb078AlphaDummy1020 h) from (by
+                                          unfold nb078AlphaDummy1020;
                                           with_reducible
                                             exact
                                               (Nat.ne_of_lt
                                                 (mem_lt_freshVar
                                                   (nb078_support_mem_1055 h) 1))))
-                                      (TAlphaVar.there (show (nb078_alpha_dummy_1010) ≠
-        (nb078_alpha_dummy_1043) from (by
-          unfold nb078_alpha_dummy_1043;
+                                      (TAlphaVar.there (show (nb078AlphaDummy1010) ≠
+        (nb078AlphaDummy1043) from (by
+          unfold nb078AlphaDummy1043;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
-                  (nb078_support_mem_1084) 0)))) (show (nb078_alpha_dummy_1012 h) ≠
-        (nb078_alpha_dummy_1044 h) from (by
-          unfold nb078_alpha_dummy_1044;
+                  (nb078_support_mem_1084) 0)))) (show (nb078AlphaDummy1012 h) ≠
+        (nb078AlphaDummy1044 h) from (by
+          unfold nb078AlphaDummy1044;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1085 h) 0)))) (TAlphaVar.there (show
-        (nb078_alpha_dummy_1010) ≠ (nb078_alpha_dummy_1041) from (by
-          unfold nb078_alpha_dummy_1041;
+        (nb078AlphaDummy1010) ≠ (nb078AlphaDummy1041) from (by
+          unfold nb078AlphaDummy1041;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
-                  (nb078_support_mem_1082) 0)))) (show (nb078_alpha_dummy_1012 h) ≠
-        (nb078_alpha_dummy_1042 h) from (by
-          unfold nb078_alpha_dummy_1042;
+                  (nb078_support_mem_1082) 0)))) (show (nb078AlphaDummy1012 h) ≠
+        (nb078AlphaDummy1042 h) from (by
+          unfold nb078AlphaDummy1042;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -1844,56 +1846,56 @@ noncomputable def nb078_split_alpha_0132 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1083 h) 0)))) (TAlphaVar.here _ _ _)))))))
                               (TAlphaWff.classEq (TAlphaClass.cv (TAlphaVar.there
                                     (freshVar_injective
-                                      (((Class.cv (nb078_alpha_dummy_1010))).fv) (by decide))
+                                      (((Class.cv (nb078AlphaDummy1010))).fv) (by decide))
                                     (freshVar_injective
-                                      (((Class.cv (nb078_alpha_dummy_1012 h))).fv) (by decide))
+                                      (((Class.cv (nb078AlphaDummy1012 h))).fv) (by decide))
                                     (TAlphaVar.here _ _ _))) (TAlphaClass.cab (TAlphaWff.imp
                                     (TAlphaWff.neg (TAlphaWff.conj (TAlphaWff.classMem
         (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab (TAlphaWff.ex (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1017) ≠ (nb078_alpha_dummy_1024) from (by
-          unfold nb078_alpha_dummy_1024;
+        (TAlphaVar.there (show (nb078AlphaDummy1017) ≠ (nb078AlphaDummy1024) from (by
+          unfold nb078AlphaDummy1024;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1058)
-                  1)))) (show (nb078_alpha_dummy_1019 h) ≠ (nb078_alpha_dummy_1027 h) from (by
-          unfold nb078_alpha_dummy_1027;
+                  1)))) (show (nb078AlphaDummy1019 h) ≠ (nb078AlphaDummy1027 h) from (by
+          unfold nb078AlphaDummy1027;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1059
                     h)
-                  1)))) (TAlphaVar.there (show (nb078_alpha_dummy_1017) ≠
-        (nb078_alpha_dummy_1023) from (by
-          unfold nb078_alpha_dummy_1023;
+                  1)))) (TAlphaVar.there (show (nb078AlphaDummy1017) ≠
+        (nb078AlphaDummy1023) from (by
+          unfold nb078AlphaDummy1023;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1058)
-                  0)))) (show (nb078_alpha_dummy_1019 h) ≠ (nb078_alpha_dummy_1026 h) from (by
-          unfold nb078_alpha_dummy_1026;
+                  0)))) (show (nb078AlphaDummy1019 h) ≠ (nb078AlphaDummy1026 h) from (by
+          unfold nb078AlphaDummy1026;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1059
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1017) ≠
-        (nb078_alpha_dummy_1021) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1017) ≠
+        (nb078AlphaDummy1021) from (by
           unfold
-            nb078_alpha_dummy_1021;
+            nb078AlphaDummy1021;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1056)
-                  0)))) (show (nb078_alpha_dummy_1019 h) ≠ (nb078_alpha_dummy_1022 h) from (by
+                  0)))) (show (nb078AlphaDummy1019 h) ≠ (nb078AlphaDummy1022 h) from (by
           unfold
-            nb078_alpha_dummy_1022;
+            nb078AlphaDummy1022;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -1901,50 +1903,50 @@ noncomputable def nb078_split_alpha_0132 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1057
                     h)
                   0)))) (TAlphaVar.here _ _ _)))))) (TAlphaWff.ex (TAlphaWff.conj
-        (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.refl_of_closed
-        [((nb078_alpha_dummy_1025), (nb078_alpha_dummy_1028 h)), ((nb078_alpha_dummy_1024),
-        (nb078_alpha_dummy_1027 h)), ((nb078_alpha_dummy_1023), (nb078_alpha_dummy_1026 h)),
-        ((nb078_alpha_dummy_1021), (nb078_alpha_dummy_1022 h)), ((nb078_alpha_dummy_1017),
-        (nb078_alpha_dummy_1019 h)), ((nb078_alpha_dummy_1018), (nb078_alpha_dummy_1020 h)),
-        ((nb078_alpha_dummy_1043), (nb078_alpha_dummy_1044 h)), ((nb078_alpha_dummy_1041),
-        (nb078_alpha_dummy_1042 h)), ((nb078_alpha_dummy_1010), (nb078_alpha_dummy_1012 h)),
-        ((nb078_alpha_dummy_1009), (nb078_alpha_dummy_1011 h)), ((nb078_alpha_dummy_1039),
-        (nb078_alpha_dummy_1040 h)), ((nb078_alpha_dummy_1013), (nb078_alpha_dummy_1014 h)),
-        ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)), ((nb078_alpha_dummy_1005),
-        (nb078_alpha_dummy_1007 h)), ((nb078_alpha_dummy_002), h), ((nb078_alpha_dummy_004), y),
-        ((nb078_alpha_dummy_003), x)] (syn_c1c) (by simp only [fv_syn_c1c]))) (TAlphaWff.conj
+        (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.reflOfClosed
+        [((nb078AlphaDummy1025), (nb078AlphaDummy1028 h)), ((nb078AlphaDummy1024),
+        (nb078AlphaDummy1027 h)), ((nb078AlphaDummy1023), (nb078AlphaDummy1026 h)),
+        ((nb078AlphaDummy1021), (nb078AlphaDummy1022 h)), ((nb078AlphaDummy1017),
+        (nb078AlphaDummy1019 h)), ((nb078AlphaDummy1018), (nb078AlphaDummy1020 h)),
+        ((nb078AlphaDummy1043), (nb078AlphaDummy1044 h)), ((nb078AlphaDummy1041),
+        (nb078AlphaDummy1042 h)), ((nb078AlphaDummy1010), (nb078AlphaDummy1012 h)),
+        ((nb078AlphaDummy1009), (nb078AlphaDummy1011 h)), ((nb078AlphaDummy1039),
+        (nb078AlphaDummy1040 h)), ((nb078AlphaDummy1013), (nb078AlphaDummy1014 h)),
+        ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)), ((nb078AlphaDummy1005),
+        (nb078AlphaDummy1007 h)), ((nb078AlphaDummy002), h), ((nb078AlphaDummy004), y),
+        ((nb078AlphaDummy003), x)] (synC1c) (by simp only [fv_syn_c1c]))) (TAlphaWff.conj
         (TAlphaWff.classEq (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj (TAlphaWff.classMem
         (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠ (nb078_alpha_dummy_1031) from (by
+        (TAlphaVar.there (show (nb078AlphaDummy1024) ≠ (nb078AlphaDummy1031) from (by
           unfold
-            nb078_alpha_dummy_1031;
+            nb078AlphaDummy1031;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1062)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1032 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1032 h) from (by
           unfold
-            nb078_alpha_dummy_1032;
+            nb078AlphaDummy1032;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1063
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1029) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1029) from (by
           unfold
-            nb078_alpha_dummy_1029;
+            nb078AlphaDummy1029;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1060)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1030 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1030 h) from (by
           unfold
-            nb078_alpha_dummy_1030;
+            nb078AlphaDummy1030;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -1952,40 +1954,40 @@ noncomputable def nb078_split_alpha_0132 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1061
                     h)
                   0)))) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by
-          decide)) (freshVar_injective (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪
-        ((syn_c1c)).fv) (by
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by
+          decide)) (freshVar_injective (((Class.cv (nb078AlphaDummy1019 h))).fv ∪
+        ((synC1c)).fv) (by
           decide)) (TAlphaVar.here _ _ _)))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1025) ≠ (nb078_alpha_dummy_1031) from (by
+        (nb078AlphaDummy1025) ≠ (nb078AlphaDummy1031) from (by
           unfold
-            nb078_alpha_dummy_1031;
+            nb078AlphaDummy1031;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1066)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1032 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1032 h) from (by
           unfold
-            nb078_alpha_dummy_1032;
+            nb078AlphaDummy1032;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1067
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1029) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1029) from (by
           unfold
-            nb078_alpha_dummy_1029;
+            nb078AlphaDummy1029;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1064)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1030 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1030 h) from (by
           unfold
-            nb078_alpha_dummy_1030;
+            nb078AlphaDummy1030;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -1995,35 +1997,35 @@ noncomputable def nb078_split_alpha_0132 (x : Var) (y : Var) (h : Var) :
                   0)))) (TAlphaVar.here _ _ _))))))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠ (nb078_alpha_dummy_1031) from (by
+        (TAlphaVar.there (show (nb078AlphaDummy1024) ≠ (nb078AlphaDummy1031) from (by
           unfold
-            nb078_alpha_dummy_1031;
+            nb078AlphaDummy1031;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1062)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1032 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1032 h) from (by
           unfold
-            nb078_alpha_dummy_1032;
+            nb078AlphaDummy1032;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1063
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1029) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1029) from (by
           unfold
-            nb078_alpha_dummy_1029;
+            nb078AlphaDummy1029;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1060)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1030 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1030 h) from (by
           unfold
-            nb078_alpha_dummy_1030;
+            nb078AlphaDummy1030;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -2031,96 +2033,96 @@ noncomputable def nb078_split_alpha_0132 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1061
                     h)
                   0)))) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by
-          decide)) (freshVar_injective (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪
-        ((syn_c1c)).fv) (by
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by
+          decide)) (freshVar_injective (((Class.cv (nb078AlphaDummy1019 h))).fv ∪
+        ((synC1c)).fv) (by
           decide)) (TAlphaVar.here _ _ _)))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1025) ≠ (nb078_alpha_dummy_1031) from (by
+        (nb078AlphaDummy1025) ≠ (nb078AlphaDummy1031) from (by
           unfold
-            nb078_alpha_dummy_1031;
+            nb078AlphaDummy1031;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1066)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1032 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1032 h) from (by
           unfold
-            nb078_alpha_dummy_1032;
+            nb078AlphaDummy1032;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1067
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1029) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1029) from (by
           unfold
-            nb078_alpha_dummy_1029;
+            nb078AlphaDummy1029;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1064)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1030 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1030 h) from (by
           unfold
-            nb078_alpha_dummy_1030;
+            nb078AlphaDummy1030;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1065
                     h)
-                  0)))) (TAlphaVar.here _ _ _)))))))))))) (TAlphaClass.refl_of_closed
-        [((nb078_alpha_dummy_1025), (nb078_alpha_dummy_1028 h)), ((nb078_alpha_dummy_1024),
-        (nb078_alpha_dummy_1027 h)), ((nb078_alpha_dummy_1023), (nb078_alpha_dummy_1026 h)),
-        ((nb078_alpha_dummy_1021), (nb078_alpha_dummy_1022 h)), ((nb078_alpha_dummy_1017),
-        (nb078_alpha_dummy_1019 h)), ((nb078_alpha_dummy_1018), (nb078_alpha_dummy_1020 h)),
-        ((nb078_alpha_dummy_1043), (nb078_alpha_dummy_1044 h)), ((nb078_alpha_dummy_1041),
-        (nb078_alpha_dummy_1042 h)), ((nb078_alpha_dummy_1010), (nb078_alpha_dummy_1012 h)),
-        ((nb078_alpha_dummy_1009), (nb078_alpha_dummy_1011 h)), ((nb078_alpha_dummy_1039),
-        (nb078_alpha_dummy_1040 h)), ((nb078_alpha_dummy_1013), (nb078_alpha_dummy_1014 h)),
-        ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)), ((nb078_alpha_dummy_1005),
-        (nb078_alpha_dummy_1007 h)), ((nb078_alpha_dummy_002), h), ((nb078_alpha_dummy_004), y),
-        ((nb078_alpha_dummy_003), x)] (syn_c0) (by simp only [fv_syn_c0]))) (TAlphaWff.classEq
+                  0)))) (TAlphaVar.here _ _ _)))))))))))) (TAlphaClass.reflOfClosed
+        [((nb078AlphaDummy1025), (nb078AlphaDummy1028 h)), ((nb078AlphaDummy1024),
+        (nb078AlphaDummy1027 h)), ((nb078AlphaDummy1023), (nb078AlphaDummy1026 h)),
+        ((nb078AlphaDummy1021), (nb078AlphaDummy1022 h)), ((nb078AlphaDummy1017),
+        (nb078AlphaDummy1019 h)), ((nb078AlphaDummy1018), (nb078AlphaDummy1020 h)),
+        ((nb078AlphaDummy1043), (nb078AlphaDummy1044 h)), ((nb078AlphaDummy1041),
+        (nb078AlphaDummy1042 h)), ((nb078AlphaDummy1010), (nb078AlphaDummy1012 h)),
+        ((nb078AlphaDummy1009), (nb078AlphaDummy1011 h)), ((nb078AlphaDummy1039),
+        (nb078AlphaDummy1040 h)), ((nb078AlphaDummy1013), (nb078AlphaDummy1014 h)),
+        ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)), ((nb078AlphaDummy1005),
+        (nb078AlphaDummy1007 h)), ((nb078AlphaDummy002), h), ((nb078AlphaDummy004), y),
+        ((nb078AlphaDummy003), x)] (synC0) (by simp only [fv_syn_c0]))) (TAlphaWff.classEq
         (TAlphaClass.cv (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by decide)) (freshVar_injective
-        (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪ ((syn_c1c)).fv) (by decide))
-        (TAlphaVar.there (freshVar_injective (((Class.cv (nb078_alpha_dummy_1017))).fv ∪
-        ((syn_c1c)).fv) (by decide)) (freshVar_injective (((Class.cv (nb078_alpha_dummy_1019
-        h))).fv ∪ ((syn_c1c)).fv) (by decide)) (TAlphaVar.here _ _ _)))) (TAlphaClass.cab
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by decide)) (freshVar_injective
+        (((Class.cv (nb078AlphaDummy1019 h))).fv ∪ ((synC1c)).fv) (by decide))
+        (TAlphaVar.there (freshVar_injective (((Class.cv (nb078AlphaDummy1017))).fv ∪
+        ((synC1c)).fv) (by decide)) (freshVar_injective (((Class.cv (nb078AlphaDummy1019
+        h))).fv ∪ ((synC1c)).fv) (by decide)) (TAlphaVar.here _ _ _)))) (TAlphaClass.cab
         (TAlphaWff.neg (TAlphaWff.conj (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠ (nb078_alpha_dummy_1035) from (by
+        (TAlphaVar.there (show (nb078AlphaDummy1024) ≠ (nb078AlphaDummy1035) from (by
           unfold
-            nb078_alpha_dummy_1035;
+            nb078AlphaDummy1035;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1070)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1036 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1036 h) from (by
           unfold
-            nb078_alpha_dummy_1036;
+            nb078AlphaDummy1036;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1071
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1033) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1033) from (by
           unfold
-            nb078_alpha_dummy_1033;
+            nb078AlphaDummy1033;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1068)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1034 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1034 h) from (by
           unfold
-            nb078_alpha_dummy_1034;
+            nb078AlphaDummy1034;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -2128,40 +2130,40 @@ noncomputable def nb078_split_alpha_0132 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1069
                     h)
                   0)))) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by
-          decide)) (freshVar_injective (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪
-        ((syn_c1c)).fv) (by
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by
+          decide)) (freshVar_injective (((Class.cv (nb078AlphaDummy1019 h))).fv ∪
+        ((synC1c)).fv) (by
           decide)) (TAlphaVar.here _ _ _)))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1024) ≠ (nb078_alpha_dummy_1035) from (by
+        (nb078AlphaDummy1024) ≠ (nb078AlphaDummy1035) from (by
           unfold
-            nb078_alpha_dummy_1035;
+            nb078AlphaDummy1035;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1070)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1036 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1036 h) from (by
           unfold
-            nb078_alpha_dummy_1036;
+            nb078AlphaDummy1036;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1071
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1033) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1033) from (by
           unfold
-            nb078_alpha_dummy_1033;
+            nb078AlphaDummy1033;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1068)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1034 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1034 h) from (by
           unfold
-            nb078_alpha_dummy_1034;
+            nb078AlphaDummy1034;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -2169,41 +2171,41 @@ noncomputable def nb078_split_alpha_0132 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1069
                     h)
                   0)))) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by
-          decide)) (freshVar_injective (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪
-        ((syn_c1c)).fv) (by
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by
+          decide)) (freshVar_injective (((Class.cv (nb078AlphaDummy1019 h))).fv ∪
+        ((synC1c)).fv) (by
           decide)) (TAlphaVar.here _ _ _)))))))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠ (nb078_alpha_dummy_1037) from (by
+        (TAlphaVar.there (show (nb078AlphaDummy1025) ≠ (nb078AlphaDummy1037) from (by
           unfold
-            nb078_alpha_dummy_1037;
+            nb078AlphaDummy1037;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1074)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1038 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1038 h) from (by
           unfold
-            nb078_alpha_dummy_1038;
+            nb078AlphaDummy1038;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1075
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1033) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1033) from (by
           unfold
-            nb078_alpha_dummy_1033;
+            nb078AlphaDummy1033;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1072)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1034 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1034 h) from (by
           unfold
-            nb078_alpha_dummy_1034;
+            nb078AlphaDummy1034;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -2212,35 +2214,35 @@ noncomputable def nb078_split_alpha_0132 (x : Var) (y : Var) (h : Var) :
                     h)
                   0)))) (TAlphaVar.here _ _ _))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1025) ≠ (nb078_alpha_dummy_1037) from (by
+        (nb078AlphaDummy1025) ≠ (nb078AlphaDummy1037) from (by
           unfold
-            nb078_alpha_dummy_1037;
+            nb078AlphaDummy1037;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1074)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1038 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1038 h) from (by
           unfold
-            nb078_alpha_dummy_1038;
+            nb078AlphaDummy1038;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1075
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1033) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1033) from (by
           unfold
-            nb078_alpha_dummy_1033;
+            nb078AlphaDummy1033;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1072)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1034 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1034 h) from (by
           unfold
-            nb078_alpha_dummy_1034;
+            nb078AlphaDummy1034;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -2248,262 +2250,263 @@ noncomputable def nb078_split_alpha_0132 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1073
                     h)
                   0)))) (TAlphaVar.here _ _ _)))))))))))))))))))) (TAlphaWff.classMem
-        (TAlphaClass.cv (TAlphaVar.there (show (nb078_alpha_dummy_1017) ≠
-        (nb078_alpha_dummy_1021) from (by
-          unfold nb078_alpha_dummy_1021;
+        (TAlphaClass.cv (TAlphaVar.there (show (nb078AlphaDummy1017) ≠
+        (nb078AlphaDummy1021) from (by
+          unfold nb078AlphaDummy1021;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
-                  (nb078_support_mem_1056) 0)))) (show (nb078_alpha_dummy_1019 h) ≠
-        (nb078_alpha_dummy_1022 h) from (by
-          unfold nb078_alpha_dummy_1022;
+                  (nb078_support_mem_1056) 0)))) (show (nb078AlphaDummy1019 h) ≠
+        (nb078AlphaDummy1022 h) from (by
+          unfold nb078AlphaDummy1022;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1057 h) 0)))) (TAlphaVar.here _ _ _)))
-        (TAlphaClass.refl_of_closed [((nb078_alpha_dummy_1021), (nb078_alpha_dummy_1022 h)),
-        ((nb078_alpha_dummy_1017), (nb078_alpha_dummy_1019 h)), ((nb078_alpha_dummy_1018),
-        (nb078_alpha_dummy_1020 h)), ((nb078_alpha_dummy_1043), (nb078_alpha_dummy_1044 h)),
-        ((nb078_alpha_dummy_1041), (nb078_alpha_dummy_1042 h)), ((nb078_alpha_dummy_1010),
-        (nb078_alpha_dummy_1012 h)), ((nb078_alpha_dummy_1009), (nb078_alpha_dummy_1011 h)),
-        ((nb078_alpha_dummy_1039), (nb078_alpha_dummy_1040 h)), ((nb078_alpha_dummy_1013),
-        (nb078_alpha_dummy_1014 h)), ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)),
-        ((nb078_alpha_dummy_1005), (nb078_alpha_dummy_1007 h)), ((nb078_alpha_dummy_002), h),
-        ((nb078_alpha_dummy_004), y), ((nb078_alpha_dummy_003), x)]
-        (syn_cnnc) (by simp only [fv_syn_cnnc]))))) (TAlphaWff.conj (TAlphaWff.classMem
+        (TAlphaClass.reflOfClosed [((nb078AlphaDummy1021), (nb078AlphaDummy1022 h)),
+        ((nb078AlphaDummy1017), (nb078AlphaDummy1019 h)), ((nb078AlphaDummy1018),
+        (nb078AlphaDummy1020 h)), ((nb078AlphaDummy1043), (nb078AlphaDummy1044 h)),
+        ((nb078AlphaDummy1041), (nb078AlphaDummy1042 h)), ((nb078AlphaDummy1010),
+        (nb078AlphaDummy1012 h)), ((nb078AlphaDummy1009), (nb078AlphaDummy1011 h)),
+        ((nb078AlphaDummy1039), (nb078AlphaDummy1040 h)), ((nb078AlphaDummy1013),
+        (nb078AlphaDummy1014 h)), ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)),
+        ((nb078AlphaDummy1005), (nb078AlphaDummy1007 h)), ((nb078AlphaDummy002), h),
+        ((nb078AlphaDummy004), y), ((nb078AlphaDummy003), x)]
+        (synCnnc) (by simp only [fv_syn_cnnc]))))) (TAlphaWff.conj (TAlphaWff.classMem
                                         (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1017) ≠ (nb078_alpha_dummy_1021) from (by
-          unfold nb078_alpha_dummy_1021;
+        (TAlphaVar.there (show (nb078AlphaDummy1017) ≠ (nb078AlphaDummy1021) from (by
+          unfold nb078AlphaDummy1021;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
-                  (nb078_support_mem_1056) 0)))) (show (nb078_alpha_dummy_1019 h) ≠
-        (nb078_alpha_dummy_1022 h) from (by
-          unfold nb078_alpha_dummy_1022;
+                  (nb078_support_mem_1056) 0)))) (show (nb078AlphaDummy1019 h) ≠
+        (nb078AlphaDummy1022 h) from (by
+          unfold nb078AlphaDummy1022;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1057 h) 0)))) (TAlphaVar.here _ _ _)))) (TAlphaWff.neg
                                         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.there
-        (show (nb078_alpha_dummy_1017) ≠ (nb078_alpha_dummy_1021) from (by
-          unfold nb078_alpha_dummy_1021;
+        (show (nb078AlphaDummy1017) ≠ (nb078AlphaDummy1021) from (by
+          unfold nb078AlphaDummy1021;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
-                  (nb078_support_mem_1056) 0)))) (show (nb078_alpha_dummy_1019 h) ≠
-        (nb078_alpha_dummy_1022 h) from (by
-          unfold nb078_alpha_dummy_1022;
+                  (nb078_support_mem_1056) 0)))) (show (nb078AlphaDummy1019 h) ≠
+        (nb078AlphaDummy1022 h) from (by
+          unfold nb078AlphaDummy1022;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1057 h) 0)))) (TAlphaVar.here _ _ _)))
-        (TAlphaClass.refl_of_closed [((nb078_alpha_dummy_1021), (nb078_alpha_dummy_1022 h)),
-        ((nb078_alpha_dummy_1017), (nb078_alpha_dummy_1019 h)), ((nb078_alpha_dummy_1018),
-        (nb078_alpha_dummy_1020 h)), ((nb078_alpha_dummy_1043), (nb078_alpha_dummy_1044 h)),
-        ((nb078_alpha_dummy_1041), (nb078_alpha_dummy_1042 h)), ((nb078_alpha_dummy_1010),
-        (nb078_alpha_dummy_1012 h)), ((nb078_alpha_dummy_1009), (nb078_alpha_dummy_1011 h)),
-        ((nb078_alpha_dummy_1039), (nb078_alpha_dummy_1040 h)), ((nb078_alpha_dummy_1013),
-        (nb078_alpha_dummy_1014 h)), ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)),
-        ((nb078_alpha_dummy_1005), (nb078_alpha_dummy_1007 h)), ((nb078_alpha_dummy_002), h),
-        ((nb078_alpha_dummy_004), y), ((nb078_alpha_dummy_003), x)] (syn_cnnc)
+        (TAlphaClass.reflOfClosed [((nb078AlphaDummy1021), (nb078AlphaDummy1022 h)),
+        ((nb078AlphaDummy1017), (nb078AlphaDummy1019 h)), ((nb078AlphaDummy1018),
+        (nb078AlphaDummy1020 h)), ((nb078AlphaDummy1043), (nb078AlphaDummy1044 h)),
+        ((nb078AlphaDummy1041), (nb078AlphaDummy1042 h)), ((nb078AlphaDummy1010),
+        (nb078AlphaDummy1012 h)), ((nb078AlphaDummy1009), (nb078AlphaDummy1011 h)),
+        ((nb078AlphaDummy1039), (nb078AlphaDummy1040 h)), ((nb078AlphaDummy1013),
+        (nb078AlphaDummy1014 h)), ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)),
+        ((nb078AlphaDummy1005), (nb078AlphaDummy1007 h)), ((nb078AlphaDummy002), h),
+        ((nb078AlphaDummy004), y), ((nb078AlphaDummy003), x)] (synCnnc)
         (by simp only [fv_syn_cnnc]))))))))))))))))
               (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
-                (TAlphaClass.refl_of_closed
-                  [((nb078_alpha_dummy_1041), (nb078_alpha_dummy_1042 h)),
-                    ((nb078_alpha_dummy_1010), (nb078_alpha_dummy_1012 h)),
-                    ((nb078_alpha_dummy_1009), (nb078_alpha_dummy_1011 h)),
-                    ((nb078_alpha_dummy_1039), (nb078_alpha_dummy_1040 h)),
-                    ((nb078_alpha_dummy_1013), (nb078_alpha_dummy_1014 h)),
-                    ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)),
-                    ((nb078_alpha_dummy_1005), (nb078_alpha_dummy_1007 h)),
-                    ((nb078_alpha_dummy_002), h), ((nb078_alpha_dummy_004), y),
-                    ((nb078_alpha_dummy_003), x)] (syn_ccompl (syn_csn (syn_c0c)))
+                (TAlphaClass.reflOfClosed
+                  [((nb078AlphaDummy1041), (nb078AlphaDummy1042 h)),
+                    ((nb078AlphaDummy1010), (nb078AlphaDummy1012 h)),
+                    ((nb078AlphaDummy1009), (nb078AlphaDummy1011 h)),
+                    ((nb078AlphaDummy1039), (nb078AlphaDummy1040 h)),
+                    ((nb078AlphaDummy1013), (nb078AlphaDummy1014 h)),
+                    ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)),
+                    ((nb078AlphaDummy1005), (nb078AlphaDummy1007 h)),
+                    ((nb078AlphaDummy002), h), ((nb078AlphaDummy004), y),
+                    ((nb078AlphaDummy003), x)] (synCcompl (synCsn (synC0c)))
                   (by simp only [fv_syn_ccompl, fv_syn_csn, fv_syn_c0c])))))))))
 
+/-- Checked nominal proof certificate identified upstream as `nb078_split_alpha_0133`. -/
 @[expose]
-noncomputable def nb078_split_alpha_0133 (x : Var) (y : Var) (h : Var) :
+noncomputable def nb078SplitAlpha0133 (x : Var) (y : Var) (h : Var) :
     TAlphaWff
-      [((nb078_alpha_dummy_1013), (nb078_alpha_dummy_1014 h)),
-        ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)),
-        ((nb078_alpha_dummy_1005), (nb078_alpha_dummy_1007 h)),
-        ((nb078_alpha_dummy_002), h), ((nb078_alpha_dummy_004), y),
-        ((nb078_alpha_dummy_003), x)]
-      (Wff.imp (Wff.classMem (Class.cv (nb078_alpha_dummy_1013)) (syn_ccompl
-            (Class.cab (nb078_alpha_dummy_1009)
-              (syn_wrex (nb078_alpha_dummy_1010) (Class.cv (nb078_alpha_dummy_1006))
-                (Wff.classEq (Class.cv (nb078_alpha_dummy_1009))
-                  (syn_cphi (Class.cv (nb078_alpha_dummy_1010)))))))) (Wff.neg
-          (Wff.classMem (Class.cv (nb078_alpha_dummy_1013)) (syn_ccompl
-              (Class.cab (nb078_alpha_dummy_1009)
-                (syn_wrex (nb078_alpha_dummy_1010) (Class.cv (nb078_alpha_dummy_1005))
-                  (Wff.classEq (Class.cv (nb078_alpha_dummy_1009))
-                    (syn_cun (syn_cphi (Class.cv (nb078_alpha_dummy_1010)))
-                      (syn_csn (syn_c0c))))))))))
-      (Wff.imp (Wff.classMem (Class.cv (nb078_alpha_dummy_1014 h)) (syn_ccompl
-            (Class.cab (nb078_alpha_dummy_1011 h)
-              (syn_wrex (nb078_alpha_dummy_1012 h) (Class.cv (nb078_alpha_dummy_1008 h))
-                (Wff.classEq (Class.cv (nb078_alpha_dummy_1011 h))
-                  (syn_cphi (Class.cv (nb078_alpha_dummy_1012 h)))))))) (Wff.neg
-          (Wff.classMem (Class.cv (nb078_alpha_dummy_1014 h)) (syn_ccompl
-              (Class.cab (nb078_alpha_dummy_1011 h)
-                (syn_wrex (nb078_alpha_dummy_1012 h) (Class.cv (nb078_alpha_dummy_1007 h))
-                  (Wff.classEq (Class.cv (nb078_alpha_dummy_1011 h))
-                    (syn_cun (syn_cphi (Class.cv (nb078_alpha_dummy_1012 h)))
-                      (syn_csn (syn_c0c)))))))))) :=
+      [((nb078AlphaDummy1013), (nb078AlphaDummy1014 h)),
+        ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)),
+        ((nb078AlphaDummy1005), (nb078AlphaDummy1007 h)),
+        ((nb078AlphaDummy002), h), ((nb078AlphaDummy004), y),
+        ((nb078AlphaDummy003), x)]
+      (Wff.imp (Wff.classMem (Class.cv (nb078AlphaDummy1013)) (synCcompl
+            (Class.cab (nb078AlphaDummy1009)
+              (synWrex (nb078AlphaDummy1010) (Class.cv (nb078AlphaDummy1006))
+                (Wff.classEq (Class.cv (nb078AlphaDummy1009))
+                  (synCphi (Class.cv (nb078AlphaDummy1010)))))))) (Wff.neg
+          (Wff.classMem (Class.cv (nb078AlphaDummy1013)) (synCcompl
+              (Class.cab (nb078AlphaDummy1009)
+                (synWrex (nb078AlphaDummy1010) (Class.cv (nb078AlphaDummy1005))
+                  (Wff.classEq (Class.cv (nb078AlphaDummy1009))
+                    (synCun (synCphi (Class.cv (nb078AlphaDummy1010)))
+                      (synCsn (synC0c))))))))))
+      (Wff.imp (Wff.classMem (Class.cv (nb078AlphaDummy1014 h)) (synCcompl
+            (Class.cab (nb078AlphaDummy1011 h)
+              (synWrex (nb078AlphaDummy1012 h) (Class.cv (nb078AlphaDummy1008 h))
+                (Wff.classEq (Class.cv (nb078AlphaDummy1011 h))
+                  (synCphi (Class.cv (nb078AlphaDummy1012 h)))))))) (Wff.neg
+          (Wff.classMem (Class.cv (nb078AlphaDummy1014 h)) (synCcompl
+              (Class.cab (nb078AlphaDummy1011 h)
+                (synWrex (nb078AlphaDummy1012 h) (Class.cv (nb078AlphaDummy1007 h))
+                  (Wff.classEq (Class.cv (nb078AlphaDummy1011 h))
+                    (synCun (synCphi (Class.cv (nb078AlphaDummy1012 h)))
+                      (synCsn (synC0c)))))))))) :=
   (TAlphaWff.imp (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
         (TAlphaWff.neg (TAlphaWff.conj
             (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
                 (TAlphaWff.ex (TAlphaWff.conj
                     (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
                         (TAlphaVar.there
-                          (show (nb078_alpha_dummy_1006) ≠ (nb078_alpha_dummy_1010) from (by
-                              unfold nb078_alpha_dummy_1010;
+                          (show (nb078AlphaDummy1006) ≠ (nb078AlphaDummy1010) from (by
+                              unfold nb078AlphaDummy1010;
                               with_reducible
                                 exact
                                   (Nat.ne_of_lt
                                     (mem_lt_freshVar (nb078_support_mem_1048) 1))))
-                          (show (nb078_alpha_dummy_1008 h) ≠ (nb078_alpha_dummy_1012 h) from (by
-                              unfold nb078_alpha_dummy_1012;
+                          (show (nb078AlphaDummy1008 h) ≠ (nb078AlphaDummy1012 h) from (by
+                              unfold nb078AlphaDummy1012;
                               with_reducible
                                 exact
                                   (Nat.ne_of_lt
                                     (mem_lt_freshVar (nb078_support_mem_1050 h) 1))))
                           (TAlphaVar.there
-                            (show (nb078_alpha_dummy_1006) ≠ (nb078_alpha_dummy_1009) from (by
-                                unfold nb078_alpha_dummy_1009;
+                            (show (nb078AlphaDummy1006) ≠ (nb078AlphaDummy1009) from (by
+                                unfold nb078AlphaDummy1009;
                                 with_reducible
                                   exact
                                     (Nat.ne_of_lt
                                       (mem_lt_freshVar (nb078_support_mem_1048) 0))))
-                            (show (nb078_alpha_dummy_1008 h) ≠ (nb078_alpha_dummy_1011 h) from
+                            (show (nb078AlphaDummy1008 h) ≠ (nb078AlphaDummy1011 h) from
                               (by
-                                unfold nb078_alpha_dummy_1011;
+                                unfold nb078AlphaDummy1011;
                                 with_reducible
                                   exact
                                     (Nat.ne_of_lt
                                       (mem_lt_freshVar (nb078_support_mem_1050 h) 0))))
                             (TAlphaVar.there
-                              (show (nb078_alpha_dummy_1006) ≠ (nb078_alpha_dummy_1015) from (by
-                                  unfold nb078_alpha_dummy_1015;
+                              (show (nb078AlphaDummy1006) ≠ (nb078AlphaDummy1015) from (by
+                                  unfold nb078AlphaDummy1015;
                                   with_reducible
                                     exact
                                       (Nat.ne_of_lt
                                         (mem_lt_freshVar (nb078_support_mem_1052) 0)))) (show
-                                (nb078_alpha_dummy_1008 h) ≠ (nb078_alpha_dummy_1016 h) from (by
-                                  unfold nb078_alpha_dummy_1016;
+                                (nb078AlphaDummy1008 h) ≠ (nb078AlphaDummy1016 h) from (by
+                                  unfold nb078AlphaDummy1016;
                                   with_reducible
                                     exact
                                       (Nat.ne_of_lt
                                         (mem_lt_freshVar (nb078_support_mem_1053 h) 0))))
                               (TAlphaVar.there
-                                (show (nb078_alpha_dummy_1006) ≠ (nb078_alpha_dummy_1013) from
+                                (show (nb078AlphaDummy1006) ≠ (nb078AlphaDummy1013) from
                                   (by
-                                    unfold nb078_alpha_dummy_1013;
+                                    unfold nb078AlphaDummy1013;
                                     with_reducible
                                       exact
                                         (Nat.ne_of_lt
                                           (mem_lt_freshVar (nb078_support_mem_1049) 0)))) (show
-                                  (nb078_alpha_dummy_1008 h) ≠ (nb078_alpha_dummy_1014 h) from
+                                  (nb078AlphaDummy1008 h) ≠ (nb078AlphaDummy1014 h) from
                                   (by
-                                    unfold nb078_alpha_dummy_1014;
+                                    unfold nb078AlphaDummy1014;
                                     with_reducible
                                       exact
                                         (Nat.ne_of_lt
                                           (mem_lt_freshVar (nb078_support_mem_1051 h)
                                             0)))) (TAlphaVar.here _ _ _)))))))
                     (TAlphaWff.classEq (TAlphaClass.cv (TAlphaVar.there (freshVar_injective
-                            (((Class.cv (nb078_alpha_dummy_1006))).fv ∪
-                              ((Class.cv (nb078_alpha_dummy_1005))).fv) (by decide))
-                          (freshVar_injective (((Class.cv (nb078_alpha_dummy_1008 h))).fv ∪
-                              ((Class.cv (nb078_alpha_dummy_1007 h))).fv) (by decide))
+                            (((Class.cv (nb078AlphaDummy1006))).fv ∪
+                              ((Class.cv (nb078AlphaDummy1005))).fv) (by decide))
+                          (freshVar_injective (((Class.cv (nb078AlphaDummy1008 h))).fv ∪
+                              ((Class.cv (nb078AlphaDummy1007 h))).fv) (by decide))
                           (TAlphaVar.here _ _ _))) (TAlphaClass.cab (TAlphaWff.ex
                           (TAlphaWff.conj
                             (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                               (TAlphaClass.cv (TAlphaVar.there (show
-                                    (nb078_alpha_dummy_1010) ≠ (nb078_alpha_dummy_1017) from (by
-                                      unfold nb078_alpha_dummy_1017;
+                                    (nb078AlphaDummy1010) ≠ (nb078AlphaDummy1017) from (by
+                                      unfold nb078AlphaDummy1017;
                                       with_reducible
                                         exact
                                           (Nat.ne_of_lt
                                             (mem_lt_freshVar (nb078_support_mem_1054)
-                                              0)))) (show (nb078_alpha_dummy_1012 h) ≠
-                                      (nb078_alpha_dummy_1019 h) from (by
-                                      unfold nb078_alpha_dummy_1019;
+                                              0)))) (show (nb078AlphaDummy1012 h) ≠
+                                      (nb078AlphaDummy1019 h) from (by
+                                      unfold nb078AlphaDummy1019;
                                       with_reducible
                                         exact
                                           (Nat.ne_of_lt
                                             (mem_lt_freshVar (nb078_support_mem_1055 h)
                                               0)))) (TAlphaVar.there (show
-                                      (nb078_alpha_dummy_1010) ≠ (nb078_alpha_dummy_1018) from
+                                      (nb078AlphaDummy1010) ≠ (nb078AlphaDummy1018) from
                                       (by
-                                        unfold nb078_alpha_dummy_1018;
+                                        unfold nb078AlphaDummy1018;
                                         with_reducible
                                           exact
                                             (Nat.ne_of_lt
                                               (mem_lt_freshVar (nb078_support_mem_1054)
-                                                1)))) (show (nb078_alpha_dummy_1012 h) ≠
-                                        (nb078_alpha_dummy_1020 h) from (by
-                                        unfold nb078_alpha_dummy_1020;
+                                                1)))) (show (nb078AlphaDummy1012 h) ≠
+                                        (nb078AlphaDummy1020 h) from (by
+                                        unfold nb078AlphaDummy1020;
                                         with_reducible
                                           exact
                                             (Nat.ne_of_lt
                                               (mem_lt_freshVar (nb078_support_mem_1055 h)
                                                 1)))) (TAlphaVar.here _ _ _)))))
                             (TAlphaWff.classEq (TAlphaClass.cv (TAlphaVar.there
-                                  (freshVar_injective (((Class.cv (nb078_alpha_dummy_1010))).fv)
+                                  (freshVar_injective (((Class.cv (nb078AlphaDummy1010))).fv)
                                     (by decide)) (freshVar_injective
-                                    (((Class.cv (nb078_alpha_dummy_1012 h))).fv) (by decide))
+                                    (((Class.cv (nb078AlphaDummy1012 h))).fv) (by decide))
                                   (TAlphaVar.here _ _ _))) (TAlphaClass.cab (TAlphaWff.imp
                                   (TAlphaWff.neg (TAlphaWff.conj (TAlphaWff.classMem
                                         (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
         (TAlphaWff.ex (TAlphaWff.conj (TAlphaWff.classMem
         (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1017) ≠ (nb078_alpha_dummy_1024) from (by
-          unfold nb078_alpha_dummy_1024;
+        (nb078AlphaDummy1017) ≠ (nb078AlphaDummy1024) from (by
+          unfold nb078AlphaDummy1024;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1058)
-                  1)))) (show (nb078_alpha_dummy_1019 h) ≠ (nb078_alpha_dummy_1027 h) from (by
-          unfold nb078_alpha_dummy_1027;
+                  1)))) (show (nb078AlphaDummy1019 h) ≠ (nb078AlphaDummy1027 h) from (by
+          unfold nb078AlphaDummy1027;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1059 h)
-                  1)))) (TAlphaVar.there (show (nb078_alpha_dummy_1017) ≠
-        (nb078_alpha_dummy_1023) from (by
-          unfold nb078_alpha_dummy_1023;
+                  1)))) (TAlphaVar.there (show (nb078AlphaDummy1017) ≠
+        (nb078AlphaDummy1023) from (by
+          unfold nb078AlphaDummy1023;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1058)
-                  0)))) (show (nb078_alpha_dummy_1019 h) ≠ (nb078_alpha_dummy_1026 h) from (by
-          unfold nb078_alpha_dummy_1026;
+                  0)))) (show (nb078AlphaDummy1019 h) ≠ (nb078AlphaDummy1026 h) from (by
+          unfold nb078AlphaDummy1026;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1059
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1017) ≠
-        (nb078_alpha_dummy_1021) from (by
-          unfold nb078_alpha_dummy_1021;
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1017) ≠
+        (nb078AlphaDummy1021) from (by
+          unfold nb078AlphaDummy1021;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1056)
-                  0)))) (show (nb078_alpha_dummy_1019 h) ≠ (nb078_alpha_dummy_1022 h) from (by
-          unfold nb078_alpha_dummy_1022;
+                  0)))) (show (nb078AlphaDummy1019 h) ≠ (nb078AlphaDummy1022 h) from (by
+          unfold nb078AlphaDummy1022;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -2511,49 +2514,49 @@ noncomputable def nb078_split_alpha_0133 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1057
                     h)
                   0)))) (TAlphaVar.here _ _ _)))))) (TAlphaWff.ex (TAlphaWff.conj
-        (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.refl_of_closed
-        [((nb078_alpha_dummy_1025), (nb078_alpha_dummy_1028 h)), ((nb078_alpha_dummy_1024),
-        (nb078_alpha_dummy_1027 h)), ((nb078_alpha_dummy_1023), (nb078_alpha_dummy_1026 h)),
-        ((nb078_alpha_dummy_1021), (nb078_alpha_dummy_1022 h)), ((nb078_alpha_dummy_1017),
-        (nb078_alpha_dummy_1019 h)), ((nb078_alpha_dummy_1018), (nb078_alpha_dummy_1020 h)),
-        ((nb078_alpha_dummy_1010), (nb078_alpha_dummy_1012 h)), ((nb078_alpha_dummy_1009),
-        (nb078_alpha_dummy_1011 h)), ((nb078_alpha_dummy_1015), (nb078_alpha_dummy_1016 h)),
-        ((nb078_alpha_dummy_1013), (nb078_alpha_dummy_1014 h)), ((nb078_alpha_dummy_1006),
-        (nb078_alpha_dummy_1008 h)), ((nb078_alpha_dummy_1005), (nb078_alpha_dummy_1007 h)),
-        ((nb078_alpha_dummy_002), h), ((nb078_alpha_dummy_004), y),
-        ((nb078_alpha_dummy_003), x)] (syn_c1c) (by simp only [fv_syn_c1c]))) (TAlphaWff.conj
+        (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.reflOfClosed
+        [((nb078AlphaDummy1025), (nb078AlphaDummy1028 h)), ((nb078AlphaDummy1024),
+        (nb078AlphaDummy1027 h)), ((nb078AlphaDummy1023), (nb078AlphaDummy1026 h)),
+        ((nb078AlphaDummy1021), (nb078AlphaDummy1022 h)), ((nb078AlphaDummy1017),
+        (nb078AlphaDummy1019 h)), ((nb078AlphaDummy1018), (nb078AlphaDummy1020 h)),
+        ((nb078AlphaDummy1010), (nb078AlphaDummy1012 h)), ((nb078AlphaDummy1009),
+        (nb078AlphaDummy1011 h)), ((nb078AlphaDummy1015), (nb078AlphaDummy1016 h)),
+        ((nb078AlphaDummy1013), (nb078AlphaDummy1014 h)), ((nb078AlphaDummy1006),
+        (nb078AlphaDummy1008 h)), ((nb078AlphaDummy1005), (nb078AlphaDummy1007 h)),
+        ((nb078AlphaDummy002), h), ((nb078AlphaDummy004), y),
+        ((nb078AlphaDummy003), x)] (synC1c) (by simp only [fv_syn_c1c]))) (TAlphaWff.conj
         (TAlphaWff.classEq (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj (TAlphaWff.classMem
         (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠ (nb078_alpha_dummy_1031) from (by
+        (TAlphaVar.there (show (nb078AlphaDummy1024) ≠ (nb078AlphaDummy1031) from (by
           unfold
-            nb078_alpha_dummy_1031;
+            nb078AlphaDummy1031;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1062)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1032 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1032 h) from (by
           unfold
-            nb078_alpha_dummy_1032;
+            nb078AlphaDummy1032;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1063
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1029) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1029) from (by
           unfold
-            nb078_alpha_dummy_1029;
+            nb078AlphaDummy1029;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1060)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1030 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1030 h) from (by
           unfold
-            nb078_alpha_dummy_1030;
+            nb078AlphaDummy1030;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -2561,40 +2564,40 @@ noncomputable def nb078_split_alpha_0133 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1061
                     h)
                   0)))) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by
-          decide)) (freshVar_injective (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪
-        ((syn_c1c)).fv) (by
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by
+          decide)) (freshVar_injective (((Class.cv (nb078AlphaDummy1019 h))).fv ∪
+        ((synC1c)).fv) (by
           decide)) (TAlphaVar.here _ _ _)))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1025) ≠ (nb078_alpha_dummy_1031) from (by
+        (nb078AlphaDummy1025) ≠ (nb078AlphaDummy1031) from (by
           unfold
-            nb078_alpha_dummy_1031;
+            nb078AlphaDummy1031;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1066)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1032 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1032 h) from (by
           unfold
-            nb078_alpha_dummy_1032;
+            nb078AlphaDummy1032;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1067
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1029) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1029) from (by
           unfold
-            nb078_alpha_dummy_1029;
+            nb078AlphaDummy1029;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1064)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1030 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1030 h) from (by
           unfold
-            nb078_alpha_dummy_1030;
+            nb078AlphaDummy1030;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -2604,35 +2607,35 @@ noncomputable def nb078_split_alpha_0133 (x : Var) (y : Var) (h : Var) :
                   0)))) (TAlphaVar.here _ _ _))))))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠ (nb078_alpha_dummy_1031) from (by
+        (TAlphaVar.there (show (nb078AlphaDummy1024) ≠ (nb078AlphaDummy1031) from (by
           unfold
-            nb078_alpha_dummy_1031;
+            nb078AlphaDummy1031;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1062)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1032 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1032 h) from (by
           unfold
-            nb078_alpha_dummy_1032;
+            nb078AlphaDummy1032;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1063
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1029) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1029) from (by
           unfold
-            nb078_alpha_dummy_1029;
+            nb078AlphaDummy1029;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1060)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1030 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1030 h) from (by
           unfold
-            nb078_alpha_dummy_1030;
+            nb078AlphaDummy1030;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -2640,95 +2643,95 @@ noncomputable def nb078_split_alpha_0133 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1061
                     h)
                   0)))) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by
-          decide)) (freshVar_injective (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪
-        ((syn_c1c)).fv) (by
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by
+          decide)) (freshVar_injective (((Class.cv (nb078AlphaDummy1019 h))).fv ∪
+        ((synC1c)).fv) (by
           decide)) (TAlphaVar.here _ _ _)))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1025) ≠ (nb078_alpha_dummy_1031) from (by
+        (nb078AlphaDummy1025) ≠ (nb078AlphaDummy1031) from (by
           unfold
-            nb078_alpha_dummy_1031;
+            nb078AlphaDummy1031;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1066)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1032 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1032 h) from (by
           unfold
-            nb078_alpha_dummy_1032;
+            nb078AlphaDummy1032;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1067
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1029) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1029) from (by
           unfold
-            nb078_alpha_dummy_1029;
+            nb078AlphaDummy1029;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1064)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1030 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1030 h) from (by
           unfold
-            nb078_alpha_dummy_1030;
+            nb078AlphaDummy1030;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1065
                     h)
-                  0)))) (TAlphaVar.here _ _ _)))))))))))) (TAlphaClass.refl_of_closed
-        [((nb078_alpha_dummy_1025), (nb078_alpha_dummy_1028 h)), ((nb078_alpha_dummy_1024),
-        (nb078_alpha_dummy_1027 h)), ((nb078_alpha_dummy_1023), (nb078_alpha_dummy_1026 h)),
-        ((nb078_alpha_dummy_1021), (nb078_alpha_dummy_1022 h)), ((nb078_alpha_dummy_1017),
-        (nb078_alpha_dummy_1019 h)), ((nb078_alpha_dummy_1018), (nb078_alpha_dummy_1020 h)),
-        ((nb078_alpha_dummy_1010), (nb078_alpha_dummy_1012 h)), ((nb078_alpha_dummy_1009),
-        (nb078_alpha_dummy_1011 h)), ((nb078_alpha_dummy_1015), (nb078_alpha_dummy_1016 h)),
-        ((nb078_alpha_dummy_1013), (nb078_alpha_dummy_1014 h)), ((nb078_alpha_dummy_1006),
-        (nb078_alpha_dummy_1008 h)), ((nb078_alpha_dummy_1005), (nb078_alpha_dummy_1007 h)),
-        ((nb078_alpha_dummy_002), h), ((nb078_alpha_dummy_004), y),
-        ((nb078_alpha_dummy_003), x)] (syn_c0) (by simp only [fv_syn_c0]))) (TAlphaWff.classEq
+                  0)))) (TAlphaVar.here _ _ _)))))))))))) (TAlphaClass.reflOfClosed
+        [((nb078AlphaDummy1025), (nb078AlphaDummy1028 h)), ((nb078AlphaDummy1024),
+        (nb078AlphaDummy1027 h)), ((nb078AlphaDummy1023), (nb078AlphaDummy1026 h)),
+        ((nb078AlphaDummy1021), (nb078AlphaDummy1022 h)), ((nb078AlphaDummy1017),
+        (nb078AlphaDummy1019 h)), ((nb078AlphaDummy1018), (nb078AlphaDummy1020 h)),
+        ((nb078AlphaDummy1010), (nb078AlphaDummy1012 h)), ((nb078AlphaDummy1009),
+        (nb078AlphaDummy1011 h)), ((nb078AlphaDummy1015), (nb078AlphaDummy1016 h)),
+        ((nb078AlphaDummy1013), (nb078AlphaDummy1014 h)), ((nb078AlphaDummy1006),
+        (nb078AlphaDummy1008 h)), ((nb078AlphaDummy1005), (nb078AlphaDummy1007 h)),
+        ((nb078AlphaDummy002), h), ((nb078AlphaDummy004), y),
+        ((nb078AlphaDummy003), x)] (synC0) (by simp only [fv_syn_c0]))) (TAlphaWff.classEq
         (TAlphaClass.cv (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by decide)) (freshVar_injective
-        (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪ ((syn_c1c)).fv) (by decide))
-        (TAlphaVar.there (freshVar_injective (((Class.cv (nb078_alpha_dummy_1017))).fv ∪
-        ((syn_c1c)).fv) (by decide)) (freshVar_injective (((Class.cv (nb078_alpha_dummy_1019
-        h))).fv ∪ ((syn_c1c)).fv) (by decide)) (TAlphaVar.here _ _ _)))) (TAlphaClass.cab
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by decide)) (freshVar_injective
+        (((Class.cv (nb078AlphaDummy1019 h))).fv ∪ ((synC1c)).fv) (by decide))
+        (TAlphaVar.there (freshVar_injective (((Class.cv (nb078AlphaDummy1017))).fv ∪
+        ((synC1c)).fv) (by decide)) (freshVar_injective (((Class.cv (nb078AlphaDummy1019
+        h))).fv ∪ ((synC1c)).fv) (by decide)) (TAlphaVar.here _ _ _)))) (TAlphaClass.cab
         (TAlphaWff.neg (TAlphaWff.conj (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠ (nb078_alpha_dummy_1035) from (by
+        (TAlphaVar.there (show (nb078AlphaDummy1024) ≠ (nb078AlphaDummy1035) from (by
           unfold
-            nb078_alpha_dummy_1035;
+            nb078AlphaDummy1035;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1070)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1036 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1036 h) from (by
           unfold
-            nb078_alpha_dummy_1036;
+            nb078AlphaDummy1036;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1071
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1033) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1033) from (by
           unfold
-            nb078_alpha_dummy_1033;
+            nb078AlphaDummy1033;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1068)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1034 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1034 h) from (by
           unfold
-            nb078_alpha_dummy_1034;
+            nb078AlphaDummy1034;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -2736,40 +2739,40 @@ noncomputable def nb078_split_alpha_0133 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1069
                     h)
                   0)))) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by
-          decide)) (freshVar_injective (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪
-        ((syn_c1c)).fv) (by
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by
+          decide)) (freshVar_injective (((Class.cv (nb078AlphaDummy1019 h))).fv ∪
+        ((synC1c)).fv) (by
           decide)) (TAlphaVar.here _ _ _)))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1024) ≠ (nb078_alpha_dummy_1035) from (by
+        (nb078AlphaDummy1024) ≠ (nb078AlphaDummy1035) from (by
           unfold
-            nb078_alpha_dummy_1035;
+            nb078AlphaDummy1035;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1070)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1036 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1036 h) from (by
           unfold
-            nb078_alpha_dummy_1036;
+            nb078AlphaDummy1036;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1071
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1033) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1033) from (by
           unfold
-            nb078_alpha_dummy_1033;
+            nb078AlphaDummy1033;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1068)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1034 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1034 h) from (by
           unfold
-            nb078_alpha_dummy_1034;
+            nb078AlphaDummy1034;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -2777,41 +2780,41 @@ noncomputable def nb078_split_alpha_0133 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1069
                     h)
                   0)))) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by
-          decide)) (freshVar_injective (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪
-        ((syn_c1c)).fv) (by
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by
+          decide)) (freshVar_injective (((Class.cv (nb078AlphaDummy1019 h))).fv ∪
+        ((synC1c)).fv) (by
           decide)) (TAlphaVar.here _ _ _)))))))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠ (nb078_alpha_dummy_1037) from (by
+        (TAlphaVar.there (show (nb078AlphaDummy1025) ≠ (nb078AlphaDummy1037) from (by
           unfold
-            nb078_alpha_dummy_1037;
+            nb078AlphaDummy1037;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1074)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1038 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1038 h) from (by
           unfold
-            nb078_alpha_dummy_1038;
+            nb078AlphaDummy1038;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1075
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1033) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1033) from (by
           unfold
-            nb078_alpha_dummy_1033;
+            nb078AlphaDummy1033;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1072)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1034 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1034 h) from (by
           unfold
-            nb078_alpha_dummy_1034;
+            nb078AlphaDummy1034;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -2820,35 +2823,35 @@ noncomputable def nb078_split_alpha_0133 (x : Var) (y : Var) (h : Var) :
                     h)
                   0)))) (TAlphaVar.here _ _ _))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1025) ≠ (nb078_alpha_dummy_1037) from (by
+        (nb078AlphaDummy1025) ≠ (nb078AlphaDummy1037) from (by
           unfold
-            nb078_alpha_dummy_1037;
+            nb078AlphaDummy1037;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1074)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1038 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1038 h) from (by
           unfold
-            nb078_alpha_dummy_1038;
+            nb078AlphaDummy1038;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1075
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1033) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1033) from (by
           unfold
-            nb078_alpha_dummy_1033;
+            nb078AlphaDummy1033;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1072)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1034 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1034 h) from (by
           unfold
-            nb078_alpha_dummy_1034;
+            nb078AlphaDummy1034;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -2857,215 +2860,215 @@ noncomputable def nb078_split_alpha_0133 (x : Var) (y : Var) (h : Var) :
                     h)
                   0)))) (TAlphaVar.here _ _ _)))))))))))))))))))) (TAlphaWff.classMem
                                         (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1017) ≠ (nb078_alpha_dummy_1021) from (by
-          unfold nb078_alpha_dummy_1021;
+        (nb078AlphaDummy1017) ≠ (nb078AlphaDummy1021) from (by
+          unfold nb078AlphaDummy1021;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
-                  (nb078_support_mem_1056) 0)))) (show (nb078_alpha_dummy_1019 h) ≠
-        (nb078_alpha_dummy_1022 h) from (by
-          unfold nb078_alpha_dummy_1022;
+                  (nb078_support_mem_1056) 0)))) (show (nb078AlphaDummy1019 h) ≠
+        (nb078AlphaDummy1022 h) from (by
+          unfold nb078AlphaDummy1022;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1057 h) 0)))) (TAlphaVar.here _ _ _)))
-                                        (TAlphaClass.refl_of_closed [((nb078_alpha_dummy_1021),
-        (nb078_alpha_dummy_1022 h)), ((nb078_alpha_dummy_1017), (nb078_alpha_dummy_1019 h)),
-        ((nb078_alpha_dummy_1018), (nb078_alpha_dummy_1020 h)), ((nb078_alpha_dummy_1010),
-        (nb078_alpha_dummy_1012 h)), ((nb078_alpha_dummy_1009), (nb078_alpha_dummy_1011 h)),
-        ((nb078_alpha_dummy_1015), (nb078_alpha_dummy_1016 h)), ((nb078_alpha_dummy_1013),
-        (nb078_alpha_dummy_1014 h)), ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)),
-        ((nb078_alpha_dummy_1005), (nb078_alpha_dummy_1007 h)), ((nb078_alpha_dummy_002), h),
-        ((nb078_alpha_dummy_004), y), ((nb078_alpha_dummy_003), x)]
-        (syn_cnnc) (by simp only [fv_syn_cnnc]))))) (TAlphaWff.conj (TAlphaWff.classMem
+                                        (TAlphaClass.reflOfClosed [((nb078AlphaDummy1021),
+        (nb078AlphaDummy1022 h)), ((nb078AlphaDummy1017), (nb078AlphaDummy1019 h)),
+        ((nb078AlphaDummy1018), (nb078AlphaDummy1020 h)), ((nb078AlphaDummy1010),
+        (nb078AlphaDummy1012 h)), ((nb078AlphaDummy1009), (nb078AlphaDummy1011 h)),
+        ((nb078AlphaDummy1015), (nb078AlphaDummy1016 h)), ((nb078AlphaDummy1013),
+        (nb078AlphaDummy1014 h)), ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)),
+        ((nb078AlphaDummy1005), (nb078AlphaDummy1007 h)), ((nb078AlphaDummy002), h),
+        ((nb078AlphaDummy004), y), ((nb078AlphaDummy003), x)]
+        (synCnnc) (by simp only [fv_syn_cnnc]))))) (TAlphaWff.conj (TAlphaWff.classMem
                                       (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-                                        (TAlphaVar.there (show (nb078_alpha_dummy_1017) ≠
-        (nb078_alpha_dummy_1021) from (by
-          unfold nb078_alpha_dummy_1021;
+                                        (TAlphaVar.there (show (nb078AlphaDummy1017) ≠
+        (nb078AlphaDummy1021) from (by
+          unfold nb078AlphaDummy1021;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
-                  (nb078_support_mem_1056) 0)))) (show (nb078_alpha_dummy_1019 h) ≠
-        (nb078_alpha_dummy_1022 h) from (by
-          unfold nb078_alpha_dummy_1022;
+                  (nb078_support_mem_1056) 0)))) (show (nb078AlphaDummy1019 h) ≠
+        (nb078AlphaDummy1022 h) from (by
+          unfold nb078AlphaDummy1022;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1057 h) 0)))) (TAlphaVar.here _ _ _)))) (TAlphaWff.neg
                                       (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1017) ≠ (nb078_alpha_dummy_1021) from (by
-          unfold nb078_alpha_dummy_1021;
+        (nb078AlphaDummy1017) ≠ (nb078AlphaDummy1021) from (by
+          unfold nb078AlphaDummy1021;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
-                  (nb078_support_mem_1056) 0)))) (show (nb078_alpha_dummy_1019 h) ≠
-        (nb078_alpha_dummy_1022 h) from (by
-          unfold nb078_alpha_dummy_1022;
+                  (nb078_support_mem_1056) 0)))) (show (nb078AlphaDummy1019 h) ≠
+        (nb078AlphaDummy1022 h) from (by
+          unfold nb078AlphaDummy1022;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1057 h) 0)))) (TAlphaVar.here _ _ _)))
-                                        (TAlphaClass.refl_of_closed [((nb078_alpha_dummy_1021),
-        (nb078_alpha_dummy_1022 h)), ((nb078_alpha_dummy_1017), (nb078_alpha_dummy_1019 h)),
-        ((nb078_alpha_dummy_1018), (nb078_alpha_dummy_1020 h)), ((nb078_alpha_dummy_1010),
-        (nb078_alpha_dummy_1012 h)), ((nb078_alpha_dummy_1009), (nb078_alpha_dummy_1011 h)),
-        ((nb078_alpha_dummy_1015), (nb078_alpha_dummy_1016 h)), ((nb078_alpha_dummy_1013),
-        (nb078_alpha_dummy_1014 h)), ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)),
-        ((nb078_alpha_dummy_1005), (nb078_alpha_dummy_1007 h)), ((nb078_alpha_dummy_002), h),
-        ((nb078_alpha_dummy_004), y), ((nb078_alpha_dummy_003), x)] (syn_cnnc)
+                                        (TAlphaClass.reflOfClosed [((nb078AlphaDummy1021),
+        (nb078AlphaDummy1022 h)), ((nb078AlphaDummy1017), (nb078AlphaDummy1019 h)),
+        ((nb078AlphaDummy1018), (nb078AlphaDummy1020 h)), ((nb078AlphaDummy1010),
+        (nb078AlphaDummy1012 h)), ((nb078AlphaDummy1009), (nb078AlphaDummy1011 h)),
+        ((nb078AlphaDummy1015), (nb078AlphaDummy1016 h)), ((nb078AlphaDummy1013),
+        (nb078AlphaDummy1014 h)), ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)),
+        ((nb078AlphaDummy1005), (nb078AlphaDummy1007 h)), ((nb078AlphaDummy002), h),
+        ((nb078AlphaDummy004), y), ((nb078AlphaDummy003), x)] (synCnnc)
         (by simp only [fv_syn_cnnc]))))))))))))))))
             (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
                 (TAlphaWff.ex (TAlphaWff.conj
                     (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
                         (TAlphaVar.there
-                          (show (nb078_alpha_dummy_1006) ≠ (nb078_alpha_dummy_1010) from (by
-                              unfold nb078_alpha_dummy_1010;
+                          (show (nb078AlphaDummy1006) ≠ (nb078AlphaDummy1010) from (by
+                              unfold nb078AlphaDummy1010;
                               with_reducible
                                 exact
                                   (Nat.ne_of_lt
                                     (mem_lt_freshVar (nb078_support_mem_1048) 1))))
-                          (show (nb078_alpha_dummy_1008 h) ≠ (nb078_alpha_dummy_1012 h) from (by
-                              unfold nb078_alpha_dummy_1012;
+                          (show (nb078AlphaDummy1008 h) ≠ (nb078AlphaDummy1012 h) from (by
+                              unfold nb078AlphaDummy1012;
                               with_reducible
                                 exact
                                   (Nat.ne_of_lt
                                     (mem_lt_freshVar (nb078_support_mem_1050 h) 1))))
                           (TAlphaVar.there
-                            (show (nb078_alpha_dummy_1006) ≠ (nb078_alpha_dummy_1009) from (by
-                                unfold nb078_alpha_dummy_1009;
+                            (show (nb078AlphaDummy1006) ≠ (nb078AlphaDummy1009) from (by
+                                unfold nb078AlphaDummy1009;
                                 with_reducible
                                   exact
                                     (Nat.ne_of_lt
                                       (mem_lt_freshVar (nb078_support_mem_1048) 0))))
-                            (show (nb078_alpha_dummy_1008 h) ≠ (nb078_alpha_dummy_1011 h) from
+                            (show (nb078AlphaDummy1008 h) ≠ (nb078AlphaDummy1011 h) from
                               (by
-                                unfold nb078_alpha_dummy_1011;
+                                unfold nb078AlphaDummy1011;
                                 with_reducible
                                   exact
                                     (Nat.ne_of_lt
                                       (mem_lt_freshVar (nb078_support_mem_1050 h) 0))))
                             (TAlphaVar.there
-                              (show (nb078_alpha_dummy_1006) ≠ (nb078_alpha_dummy_1015) from (by
-                                  unfold nb078_alpha_dummy_1015;
+                              (show (nb078AlphaDummy1006) ≠ (nb078AlphaDummy1015) from (by
+                                  unfold nb078AlphaDummy1015;
                                   with_reducible
                                     exact
                                       (Nat.ne_of_lt
                                         (mem_lt_freshVar (nb078_support_mem_1052) 0)))) (show
-                                (nb078_alpha_dummy_1008 h) ≠ (nb078_alpha_dummy_1016 h) from (by
-                                  unfold nb078_alpha_dummy_1016;
+                                (nb078AlphaDummy1008 h) ≠ (nb078AlphaDummy1016 h) from (by
+                                  unfold nb078AlphaDummy1016;
                                   with_reducible
                                     exact
                                       (Nat.ne_of_lt
                                         (mem_lt_freshVar (nb078_support_mem_1053 h) 0))))
                               (TAlphaVar.there
-                                (show (nb078_alpha_dummy_1006) ≠ (nb078_alpha_dummy_1013) from
+                                (show (nb078AlphaDummy1006) ≠ (nb078AlphaDummy1013) from
                                   (by
-                                    unfold nb078_alpha_dummy_1013;
+                                    unfold nb078AlphaDummy1013;
                                     with_reducible
                                       exact
                                         (Nat.ne_of_lt
                                           (mem_lt_freshVar (nb078_support_mem_1049) 0)))) (show
-                                  (nb078_alpha_dummy_1008 h) ≠ (nb078_alpha_dummy_1014 h) from
+                                  (nb078AlphaDummy1008 h) ≠ (nb078AlphaDummy1014 h) from
                                   (by
-                                    unfold nb078_alpha_dummy_1014;
+                                    unfold nb078AlphaDummy1014;
                                     with_reducible
                                       exact
                                         (Nat.ne_of_lt
                                           (mem_lt_freshVar (nb078_support_mem_1051 h)
                                             0)))) (TAlphaVar.here _ _ _)))))))
                     (TAlphaWff.classEq (TAlphaClass.cv (TAlphaVar.there (freshVar_injective
-                            (((Class.cv (nb078_alpha_dummy_1006))).fv ∪
-                              ((Class.cv (nb078_alpha_dummy_1005))).fv) (by decide))
-                          (freshVar_injective (((Class.cv (nb078_alpha_dummy_1008 h))).fv ∪
-                              ((Class.cv (nb078_alpha_dummy_1007 h))).fv) (by decide))
+                            (((Class.cv (nb078AlphaDummy1006))).fv ∪
+                              ((Class.cv (nb078AlphaDummy1005))).fv) (by decide))
+                          (freshVar_injective (((Class.cv (nb078AlphaDummy1008 h))).fv ∪
+                              ((Class.cv (nb078AlphaDummy1007 h))).fv) (by decide))
                           (TAlphaVar.here _ _ _))) (TAlphaClass.cab (TAlphaWff.ex
                           (TAlphaWff.conj
                             (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _))
                               (TAlphaClass.cv (TAlphaVar.there (show
-                                    (nb078_alpha_dummy_1010) ≠ (nb078_alpha_dummy_1017) from (by
-                                      unfold nb078_alpha_dummy_1017;
+                                    (nb078AlphaDummy1010) ≠ (nb078AlphaDummy1017) from (by
+                                      unfold nb078AlphaDummy1017;
                                       with_reducible
                                         exact
                                           (Nat.ne_of_lt
                                             (mem_lt_freshVar (nb078_support_mem_1054)
-                                              0)))) (show (nb078_alpha_dummy_1012 h) ≠
-                                      (nb078_alpha_dummy_1019 h) from (by
-                                      unfold nb078_alpha_dummy_1019;
+                                              0)))) (show (nb078AlphaDummy1012 h) ≠
+                                      (nb078AlphaDummy1019 h) from (by
+                                      unfold nb078AlphaDummy1019;
                                       with_reducible
                                         exact
                                           (Nat.ne_of_lt
                                             (mem_lt_freshVar (nb078_support_mem_1055 h)
                                               0)))) (TAlphaVar.there (show
-                                      (nb078_alpha_dummy_1010) ≠ (nb078_alpha_dummy_1018) from
+                                      (nb078AlphaDummy1010) ≠ (nb078AlphaDummy1018) from
                                       (by
-                                        unfold nb078_alpha_dummy_1018;
+                                        unfold nb078AlphaDummy1018;
                                         with_reducible
                                           exact
                                             (Nat.ne_of_lt
                                               (mem_lt_freshVar (nb078_support_mem_1054)
-                                                1)))) (show (nb078_alpha_dummy_1012 h) ≠
-                                        (nb078_alpha_dummy_1020 h) from (by
-                                        unfold nb078_alpha_dummy_1020;
+                                                1)))) (show (nb078AlphaDummy1012 h) ≠
+                                        (nb078AlphaDummy1020 h) from (by
+                                        unfold nb078AlphaDummy1020;
                                         with_reducible
                                           exact
                                             (Nat.ne_of_lt
                                               (mem_lt_freshVar (nb078_support_mem_1055 h)
                                                 1)))) (TAlphaVar.here _ _ _)))))
                             (TAlphaWff.classEq (TAlphaClass.cv (TAlphaVar.there
-                                  (freshVar_injective (((Class.cv (nb078_alpha_dummy_1010))).fv)
+                                  (freshVar_injective (((Class.cv (nb078AlphaDummy1010))).fv)
                                     (by decide)) (freshVar_injective
-                                    (((Class.cv (nb078_alpha_dummy_1012 h))).fv) (by decide))
+                                    (((Class.cv (nb078AlphaDummy1012 h))).fv) (by decide))
                                   (TAlphaVar.here _ _ _))) (TAlphaClass.cab (TAlphaWff.imp
                                   (TAlphaWff.neg (TAlphaWff.conj (TAlphaWff.classMem
                                         (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
         (TAlphaWff.ex (TAlphaWff.conj (TAlphaWff.classMem
         (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1017) ≠ (nb078_alpha_dummy_1024) from (by
-          unfold nb078_alpha_dummy_1024;
+        (nb078AlphaDummy1017) ≠ (nb078AlphaDummy1024) from (by
+          unfold nb078AlphaDummy1024;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1058)
-                  1)))) (show (nb078_alpha_dummy_1019 h) ≠ (nb078_alpha_dummy_1027 h) from (by
-          unfold nb078_alpha_dummy_1027;
+                  1)))) (show (nb078AlphaDummy1019 h) ≠ (nb078AlphaDummy1027 h) from (by
+          unfold nb078AlphaDummy1027;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1059 h)
-                  1)))) (TAlphaVar.there (show (nb078_alpha_dummy_1017) ≠
-        (nb078_alpha_dummy_1023) from (by
-          unfold nb078_alpha_dummy_1023;
+                  1)))) (TAlphaVar.there (show (nb078AlphaDummy1017) ≠
+        (nb078AlphaDummy1023) from (by
+          unfold nb078AlphaDummy1023;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1058)
-                  0)))) (show (nb078_alpha_dummy_1019 h) ≠ (nb078_alpha_dummy_1026 h) from (by
-          unfold nb078_alpha_dummy_1026;
+                  0)))) (show (nb078AlphaDummy1019 h) ≠ (nb078AlphaDummy1026 h) from (by
+          unfold nb078AlphaDummy1026;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1059
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1017) ≠
-        (nb078_alpha_dummy_1021) from (by
-          unfold nb078_alpha_dummy_1021;
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1017) ≠
+        (nb078AlphaDummy1021) from (by
+          unfold nb078AlphaDummy1021;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1056)
-                  0)))) (show (nb078_alpha_dummy_1019 h) ≠ (nb078_alpha_dummy_1022 h) from (by
-          unfold nb078_alpha_dummy_1022;
+                  0)))) (show (nb078AlphaDummy1019 h) ≠ (nb078AlphaDummy1022 h) from (by
+          unfold nb078AlphaDummy1022;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -3073,49 +3076,49 @@ noncomputable def nb078_split_alpha_0133 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1057
                     h)
                   0)))) (TAlphaVar.here _ _ _)))))) (TAlphaWff.ex (TAlphaWff.conj
-        (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.refl_of_closed
-        [((nb078_alpha_dummy_1025), (nb078_alpha_dummy_1028 h)), ((nb078_alpha_dummy_1024),
-        (nb078_alpha_dummy_1027 h)), ((nb078_alpha_dummy_1023), (nb078_alpha_dummy_1026 h)),
-        ((nb078_alpha_dummy_1021), (nb078_alpha_dummy_1022 h)), ((nb078_alpha_dummy_1017),
-        (nb078_alpha_dummy_1019 h)), ((nb078_alpha_dummy_1018), (nb078_alpha_dummy_1020 h)),
-        ((nb078_alpha_dummy_1010), (nb078_alpha_dummy_1012 h)), ((nb078_alpha_dummy_1009),
-        (nb078_alpha_dummy_1011 h)), ((nb078_alpha_dummy_1015), (nb078_alpha_dummy_1016 h)),
-        ((nb078_alpha_dummy_1013), (nb078_alpha_dummy_1014 h)), ((nb078_alpha_dummy_1006),
-        (nb078_alpha_dummy_1008 h)), ((nb078_alpha_dummy_1005), (nb078_alpha_dummy_1007 h)),
-        ((nb078_alpha_dummy_002), h), ((nb078_alpha_dummy_004), y),
-        ((nb078_alpha_dummy_003), x)] (syn_c1c) (by simp only [fv_syn_c1c]))) (TAlphaWff.conj
+        (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.reflOfClosed
+        [((nb078AlphaDummy1025), (nb078AlphaDummy1028 h)), ((nb078AlphaDummy1024),
+        (nb078AlphaDummy1027 h)), ((nb078AlphaDummy1023), (nb078AlphaDummy1026 h)),
+        ((nb078AlphaDummy1021), (nb078AlphaDummy1022 h)), ((nb078AlphaDummy1017),
+        (nb078AlphaDummy1019 h)), ((nb078AlphaDummy1018), (nb078AlphaDummy1020 h)),
+        ((nb078AlphaDummy1010), (nb078AlphaDummy1012 h)), ((nb078AlphaDummy1009),
+        (nb078AlphaDummy1011 h)), ((nb078AlphaDummy1015), (nb078AlphaDummy1016 h)),
+        ((nb078AlphaDummy1013), (nb078AlphaDummy1014 h)), ((nb078AlphaDummy1006),
+        (nb078AlphaDummy1008 h)), ((nb078AlphaDummy1005), (nb078AlphaDummy1007 h)),
+        ((nb078AlphaDummy002), h), ((nb078AlphaDummy004), y),
+        ((nb078AlphaDummy003), x)] (synC1c) (by simp only [fv_syn_c1c]))) (TAlphaWff.conj
         (TAlphaWff.classEq (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj (TAlphaWff.classMem
         (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠ (nb078_alpha_dummy_1031) from (by
+        (TAlphaVar.there (show (nb078AlphaDummy1024) ≠ (nb078AlphaDummy1031) from (by
           unfold
-            nb078_alpha_dummy_1031;
+            nb078AlphaDummy1031;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1062)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1032 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1032 h) from (by
           unfold
-            nb078_alpha_dummy_1032;
+            nb078AlphaDummy1032;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1063
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1029) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1029) from (by
           unfold
-            nb078_alpha_dummy_1029;
+            nb078AlphaDummy1029;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1060)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1030 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1030 h) from (by
           unfold
-            nb078_alpha_dummy_1030;
+            nb078AlphaDummy1030;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -3123,40 +3126,40 @@ noncomputable def nb078_split_alpha_0133 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1061
                     h)
                   0)))) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by
-          decide)) (freshVar_injective (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪
-        ((syn_c1c)).fv) (by
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by
+          decide)) (freshVar_injective (((Class.cv (nb078AlphaDummy1019 h))).fv ∪
+        ((synC1c)).fv) (by
           decide)) (TAlphaVar.here _ _ _)))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1025) ≠ (nb078_alpha_dummy_1031) from (by
+        (nb078AlphaDummy1025) ≠ (nb078AlphaDummy1031) from (by
           unfold
-            nb078_alpha_dummy_1031;
+            nb078AlphaDummy1031;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1066)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1032 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1032 h) from (by
           unfold
-            nb078_alpha_dummy_1032;
+            nb078AlphaDummy1032;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1067
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1029) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1029) from (by
           unfold
-            nb078_alpha_dummy_1029;
+            nb078AlphaDummy1029;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1064)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1030 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1030 h) from (by
           unfold
-            nb078_alpha_dummy_1030;
+            nb078AlphaDummy1030;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -3166,35 +3169,35 @@ noncomputable def nb078_split_alpha_0133 (x : Var) (y : Var) (h : Var) :
                   0)))) (TAlphaVar.here _ _ _))))))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠ (nb078_alpha_dummy_1031) from (by
+        (TAlphaVar.there (show (nb078AlphaDummy1024) ≠ (nb078AlphaDummy1031) from (by
           unfold
-            nb078_alpha_dummy_1031;
+            nb078AlphaDummy1031;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1062)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1032 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1032 h) from (by
           unfold
-            nb078_alpha_dummy_1032;
+            nb078AlphaDummy1032;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1063
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1029) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1029) from (by
           unfold
-            nb078_alpha_dummy_1029;
+            nb078AlphaDummy1029;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1060)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1030 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1030 h) from (by
           unfold
-            nb078_alpha_dummy_1030;
+            nb078AlphaDummy1030;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -3202,95 +3205,95 @@ noncomputable def nb078_split_alpha_0133 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1061
                     h)
                   0)))) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by
-          decide)) (freshVar_injective (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪
-        ((syn_c1c)).fv) (by
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by
+          decide)) (freshVar_injective (((Class.cv (nb078AlphaDummy1019 h))).fv ∪
+        ((synC1c)).fv) (by
           decide)) (TAlphaVar.here _ _ _)))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1025) ≠ (nb078_alpha_dummy_1031) from (by
+        (nb078AlphaDummy1025) ≠ (nb078AlphaDummy1031) from (by
           unfold
-            nb078_alpha_dummy_1031;
+            nb078AlphaDummy1031;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1066)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1032 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1032 h) from (by
           unfold
-            nb078_alpha_dummy_1032;
+            nb078AlphaDummy1032;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1067
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1029) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1029) from (by
           unfold
-            nb078_alpha_dummy_1029;
+            nb078AlphaDummy1029;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1064)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1030 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1030 h) from (by
           unfold
-            nb078_alpha_dummy_1030;
+            nb078AlphaDummy1030;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1065
                     h)
-                  0)))) (TAlphaVar.here _ _ _)))))))))))) (TAlphaClass.refl_of_closed
-        [((nb078_alpha_dummy_1025), (nb078_alpha_dummy_1028 h)), ((nb078_alpha_dummy_1024),
-        (nb078_alpha_dummy_1027 h)), ((nb078_alpha_dummy_1023), (nb078_alpha_dummy_1026 h)),
-        ((nb078_alpha_dummy_1021), (nb078_alpha_dummy_1022 h)), ((nb078_alpha_dummy_1017),
-        (nb078_alpha_dummy_1019 h)), ((nb078_alpha_dummy_1018), (nb078_alpha_dummy_1020 h)),
-        ((nb078_alpha_dummy_1010), (nb078_alpha_dummy_1012 h)), ((nb078_alpha_dummy_1009),
-        (nb078_alpha_dummy_1011 h)), ((nb078_alpha_dummy_1015), (nb078_alpha_dummy_1016 h)),
-        ((nb078_alpha_dummy_1013), (nb078_alpha_dummy_1014 h)), ((nb078_alpha_dummy_1006),
-        (nb078_alpha_dummy_1008 h)), ((nb078_alpha_dummy_1005), (nb078_alpha_dummy_1007 h)),
-        ((nb078_alpha_dummy_002), h), ((nb078_alpha_dummy_004), y),
-        ((nb078_alpha_dummy_003), x)] (syn_c0) (by simp only [fv_syn_c0]))) (TAlphaWff.classEq
+                  0)))) (TAlphaVar.here _ _ _)))))))))))) (TAlphaClass.reflOfClosed
+        [((nb078AlphaDummy1025), (nb078AlphaDummy1028 h)), ((nb078AlphaDummy1024),
+        (nb078AlphaDummy1027 h)), ((nb078AlphaDummy1023), (nb078AlphaDummy1026 h)),
+        ((nb078AlphaDummy1021), (nb078AlphaDummy1022 h)), ((nb078AlphaDummy1017),
+        (nb078AlphaDummy1019 h)), ((nb078AlphaDummy1018), (nb078AlphaDummy1020 h)),
+        ((nb078AlphaDummy1010), (nb078AlphaDummy1012 h)), ((nb078AlphaDummy1009),
+        (nb078AlphaDummy1011 h)), ((nb078AlphaDummy1015), (nb078AlphaDummy1016 h)),
+        ((nb078AlphaDummy1013), (nb078AlphaDummy1014 h)), ((nb078AlphaDummy1006),
+        (nb078AlphaDummy1008 h)), ((nb078AlphaDummy1005), (nb078AlphaDummy1007 h)),
+        ((nb078AlphaDummy002), h), ((nb078AlphaDummy004), y),
+        ((nb078AlphaDummy003), x)] (synC0) (by simp only [fv_syn_c0]))) (TAlphaWff.classEq
         (TAlphaClass.cv (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by decide)) (freshVar_injective
-        (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪ ((syn_c1c)).fv) (by decide))
-        (TAlphaVar.there (freshVar_injective (((Class.cv (nb078_alpha_dummy_1017))).fv ∪
-        ((syn_c1c)).fv) (by decide)) (freshVar_injective (((Class.cv (nb078_alpha_dummy_1019
-        h))).fv ∪ ((syn_c1c)).fv) (by decide)) (TAlphaVar.here _ _ _)))) (TAlphaClass.cab
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by decide)) (freshVar_injective
+        (((Class.cv (nb078AlphaDummy1019 h))).fv ∪ ((synC1c)).fv) (by decide))
+        (TAlphaVar.there (freshVar_injective (((Class.cv (nb078AlphaDummy1017))).fv ∪
+        ((synC1c)).fv) (by decide)) (freshVar_injective (((Class.cv (nb078AlphaDummy1019
+        h))).fv ∪ ((synC1c)).fv) (by decide)) (TAlphaVar.here _ _ _)))) (TAlphaClass.cab
         (TAlphaWff.neg (TAlphaWff.conj (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠ (nb078_alpha_dummy_1035) from (by
+        (TAlphaVar.there (show (nb078AlphaDummy1024) ≠ (nb078AlphaDummy1035) from (by
           unfold
-            nb078_alpha_dummy_1035;
+            nb078AlphaDummy1035;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1070)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1036 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1036 h) from (by
           unfold
-            nb078_alpha_dummy_1036;
+            nb078AlphaDummy1036;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1071
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1033) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1033) from (by
           unfold
-            nb078_alpha_dummy_1033;
+            nb078AlphaDummy1033;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1068)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1034 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1034 h) from (by
           unfold
-            nb078_alpha_dummy_1034;
+            nb078AlphaDummy1034;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -3298,40 +3301,40 @@ noncomputable def nb078_split_alpha_0133 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1069
                     h)
                   0)))) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by
-          decide)) (freshVar_injective (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪
-        ((syn_c1c)).fv) (by
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by
+          decide)) (freshVar_injective (((Class.cv (nb078AlphaDummy1019 h))).fv ∪
+        ((synC1c)).fv) (by
           decide)) (TAlphaVar.here _ _ _)))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1024) ≠ (nb078_alpha_dummy_1035) from (by
+        (nb078AlphaDummy1024) ≠ (nb078AlphaDummy1035) from (by
           unfold
-            nb078_alpha_dummy_1035;
+            nb078AlphaDummy1035;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1070)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1036 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1036 h) from (by
           unfold
-            nb078_alpha_dummy_1036;
+            nb078AlphaDummy1036;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1071
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1024) ≠
-        (nb078_alpha_dummy_1033) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1024) ≠
+        (nb078AlphaDummy1033) from (by
           unfold
-            nb078_alpha_dummy_1033;
+            nb078AlphaDummy1033;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1068)
-                  0)))) (show (nb078_alpha_dummy_1027 h) ≠ (nb078_alpha_dummy_1034 h) from (by
+                  0)))) (show (nb078AlphaDummy1027 h) ≠ (nb078AlphaDummy1034 h) from (by
           unfold
-            nb078_alpha_dummy_1034;
+            nb078AlphaDummy1034;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -3339,41 +3342,41 @@ noncomputable def nb078_split_alpha_0133 (x : Var) (y : Var) (h : Var) :
                   (nb078_support_mem_1069
                     h)
                   0)))) (TAlphaVar.there (freshVar_injective (((Class.cv
-        (nb078_alpha_dummy_1017))).fv ∪ ((syn_c1c)).fv) (by
-          decide)) (freshVar_injective (((Class.cv (nb078_alpha_dummy_1019 h))).fv ∪
-        ((syn_c1c)).fv) (by
+        (nb078AlphaDummy1017))).fv ∪ ((synC1c)).fv) (by
+          decide)) (freshVar_injective (((Class.cv (nb078AlphaDummy1019 h))).fv ∪
+        ((synC1c)).fv) (by
           decide)) (TAlphaVar.here _ _ _)))))))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cab (TAlphaWff.neg (TAlphaWff.conj
         (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-        (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠ (nb078_alpha_dummy_1037) from (by
+        (TAlphaVar.there (show (nb078AlphaDummy1025) ≠ (nb078AlphaDummy1037) from (by
           unfold
-            nb078_alpha_dummy_1037;
+            nb078AlphaDummy1037;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1074)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1038 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1038 h) from (by
           unfold
-            nb078_alpha_dummy_1038;
+            nb078AlphaDummy1038;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1075
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1033) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1033) from (by
           unfold
-            nb078_alpha_dummy_1033;
+            nb078AlphaDummy1033;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1072)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1034 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1034 h) from (by
           unfold
-            nb078_alpha_dummy_1034;
+            nb078AlphaDummy1034;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -3382,35 +3385,35 @@ noncomputable def nb078_split_alpha_0133 (x : Var) (y : Var) (h : Var) :
                     h)
                   0)))) (TAlphaVar.here _ _ _))))) (TAlphaWff.classMem (TAlphaClass.cv
         (TAlphaVar.here _ _ _)) (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1025) ≠ (nb078_alpha_dummy_1037) from (by
+        (nb078AlphaDummy1025) ≠ (nb078AlphaDummy1037) from (by
           unfold
-            nb078_alpha_dummy_1037;
+            nb078AlphaDummy1037;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1074)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1038 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1038 h) from (by
           unfold
-            nb078_alpha_dummy_1038;
+            nb078AlphaDummy1038;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1075
                     h)
-                  0)))) (TAlphaVar.there (show (nb078_alpha_dummy_1025) ≠
-        (nb078_alpha_dummy_1033) from (by
+                  0)))) (TAlphaVar.there (show (nb078AlphaDummy1025) ≠
+        (nb078AlphaDummy1033) from (by
           unfold
-            nb078_alpha_dummy_1033;
+            nb078AlphaDummy1033;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1072)
-                  0)))) (show (nb078_alpha_dummy_1028 h) ≠ (nb078_alpha_dummy_1034 h) from (by
+                  0)))) (show (nb078AlphaDummy1028 h) ≠ (nb078AlphaDummy1034 h) from (by
           unfold
-            nb078_alpha_dummy_1034;
+            nb078AlphaDummy1034;
           with_reducible
             exact
               (Nat.ne_of_lt
@@ -3419,75 +3422,75 @@ noncomputable def nb078_split_alpha_0133 (x : Var) (y : Var) (h : Var) :
                     h)
                   0)))) (TAlphaVar.here _ _ _)))))))))))))))))))) (TAlphaWff.classMem
                                         (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1017) ≠ (nb078_alpha_dummy_1021) from (by
-          unfold nb078_alpha_dummy_1021;
+        (nb078AlphaDummy1017) ≠ (nb078AlphaDummy1021) from (by
+          unfold nb078AlphaDummy1021;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
-                  (nb078_support_mem_1056) 0)))) (show (nb078_alpha_dummy_1019 h) ≠
-        (nb078_alpha_dummy_1022 h) from (by
-          unfold nb078_alpha_dummy_1022;
+                  (nb078_support_mem_1056) 0)))) (show (nb078AlphaDummy1019 h) ≠
+        (nb078AlphaDummy1022 h) from (by
+          unfold nb078AlphaDummy1022;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1057 h) 0)))) (TAlphaVar.here _ _ _)))
-                                        (TAlphaClass.refl_of_closed [((nb078_alpha_dummy_1021),
-        (nb078_alpha_dummy_1022 h)), ((nb078_alpha_dummy_1017), (nb078_alpha_dummy_1019 h)),
-        ((nb078_alpha_dummy_1018), (nb078_alpha_dummy_1020 h)), ((nb078_alpha_dummy_1010),
-        (nb078_alpha_dummy_1012 h)), ((nb078_alpha_dummy_1009), (nb078_alpha_dummy_1011 h)),
-        ((nb078_alpha_dummy_1015), (nb078_alpha_dummy_1016 h)), ((nb078_alpha_dummy_1013),
-        (nb078_alpha_dummy_1014 h)), ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)),
-        ((nb078_alpha_dummy_1005), (nb078_alpha_dummy_1007 h)), ((nb078_alpha_dummy_002), h),
-        ((nb078_alpha_dummy_004), y), ((nb078_alpha_dummy_003), x)]
-        (syn_cnnc) (by simp only [fv_syn_cnnc]))))) (TAlphaWff.conj (TAlphaWff.classMem
+                                        (TAlphaClass.reflOfClosed [((nb078AlphaDummy1021),
+        (nb078AlphaDummy1022 h)), ((nb078AlphaDummy1017), (nb078AlphaDummy1019 h)),
+        ((nb078AlphaDummy1018), (nb078AlphaDummy1020 h)), ((nb078AlphaDummy1010),
+        (nb078AlphaDummy1012 h)), ((nb078AlphaDummy1009), (nb078AlphaDummy1011 h)),
+        ((nb078AlphaDummy1015), (nb078AlphaDummy1016 h)), ((nb078AlphaDummy1013),
+        (nb078AlphaDummy1014 h)), ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)),
+        ((nb078AlphaDummy1005), (nb078AlphaDummy1007 h)), ((nb078AlphaDummy002), h),
+        ((nb078AlphaDummy004), y), ((nb078AlphaDummy003), x)]
+        (synCnnc) (by simp only [fv_syn_cnnc]))))) (TAlphaWff.conj (TAlphaWff.classMem
                                       (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cv
-                                        (TAlphaVar.there (show (nb078_alpha_dummy_1017) ≠
-        (nb078_alpha_dummy_1021) from (by
-          unfold nb078_alpha_dummy_1021;
+                                        (TAlphaVar.there (show (nb078AlphaDummy1017) ≠
+        (nb078AlphaDummy1021) from (by
+          unfold nb078AlphaDummy1021;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
-                  (nb078_support_mem_1056) 0)))) (show (nb078_alpha_dummy_1019 h) ≠
-        (nb078_alpha_dummy_1022 h) from (by
-          unfold nb078_alpha_dummy_1022;
+                  (nb078_support_mem_1056) 0)))) (show (nb078AlphaDummy1019 h) ≠
+        (nb078AlphaDummy1022 h) from (by
+          unfold nb078AlphaDummy1022;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1057 h) 0)))) (TAlphaVar.here _ _ _)))) (TAlphaWff.neg
                                       (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.there (show
-        (nb078_alpha_dummy_1017) ≠ (nb078_alpha_dummy_1021) from (by
-          unfold nb078_alpha_dummy_1021;
+        (nb078AlphaDummy1017) ≠ (nb078AlphaDummy1021) from (by
+          unfold nb078AlphaDummy1021;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
-                  (nb078_support_mem_1056) 0)))) (show (nb078_alpha_dummy_1019 h) ≠
-        (nb078_alpha_dummy_1022 h) from (by
-          unfold nb078_alpha_dummy_1022;
+                  (nb078_support_mem_1056) 0)))) (show (nb078AlphaDummy1019 h) ≠
+        (nb078AlphaDummy1022 h) from (by
+          unfold nb078AlphaDummy1022;
           with_reducible
             exact
               (Nat.ne_of_lt
                 (mem_lt_freshVar
                   (nb078_support_mem_1057 h) 0)))) (TAlphaVar.here _ _ _)))
-                                        (TAlphaClass.refl_of_closed [((nb078_alpha_dummy_1021),
-        (nb078_alpha_dummy_1022 h)), ((nb078_alpha_dummy_1017), (nb078_alpha_dummy_1019 h)),
-        ((nb078_alpha_dummy_1018), (nb078_alpha_dummy_1020 h)), ((nb078_alpha_dummy_1010),
-        (nb078_alpha_dummy_1012 h)), ((nb078_alpha_dummy_1009), (nb078_alpha_dummy_1011 h)),
-        ((nb078_alpha_dummy_1015), (nb078_alpha_dummy_1016 h)), ((nb078_alpha_dummy_1013),
-        (nb078_alpha_dummy_1014 h)), ((nb078_alpha_dummy_1006), (nb078_alpha_dummy_1008 h)),
-        ((nb078_alpha_dummy_1005), (nb078_alpha_dummy_1007 h)), ((nb078_alpha_dummy_002), h),
-        ((nb078_alpha_dummy_004), y), ((nb078_alpha_dummy_003), x)] (syn_cnnc)
+                                        (TAlphaClass.reflOfClosed [((nb078AlphaDummy1021),
+        (nb078AlphaDummy1022 h)), ((nb078AlphaDummy1017), (nb078AlphaDummy1019 h)),
+        ((nb078AlphaDummy1018), (nb078AlphaDummy1020 h)), ((nb078AlphaDummy1010),
+        (nb078AlphaDummy1012 h)), ((nb078AlphaDummy1009), (nb078AlphaDummy1011 h)),
+        ((nb078AlphaDummy1015), (nb078AlphaDummy1016 h)), ((nb078AlphaDummy1013),
+        (nb078AlphaDummy1014 h)), ((nb078AlphaDummy1006), (nb078AlphaDummy1008 h)),
+        ((nb078AlphaDummy1005), (nb078AlphaDummy1007 h)), ((nb078AlphaDummy002), h),
+        ((nb078AlphaDummy004), y), ((nb078AlphaDummy003), x)] (synCnnc)
         (by simp only [fv_syn_cnnc])))))))))))))))))))) (TAlphaWff.neg
       (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
           (TAlphaWff.neg (TAlphaWff.conj
               (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
-                  (TAlphaWff.ex (TAlphaWff.neg (nb078_split_alpha_0132 x y h)))))
+                  (TAlphaWff.ex (TAlphaWff.neg (nb078SplitAlpha0132 x y h)))))
               (TAlphaWff.classMem (TAlphaClass.cv (TAlphaVar.here _ _ _)) (TAlphaClass.cab
-                  (TAlphaWff.ex (TAlphaWff.neg (nb078_split_alpha_0132 x y h)))))))))))
+                  (TAlphaWff.ex (TAlphaWff.neg (nb078SplitAlpha0132 x y h)))))))))))
 
 
 end NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired

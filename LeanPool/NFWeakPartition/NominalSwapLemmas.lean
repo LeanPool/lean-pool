@@ -27,27 +27,28 @@ open NFChoice.SemanticCore
 def swapIndexAt (depth index : Nat) : Nat :=
   if index = depth then depth + 1 else if index = depth + 1 then depth else index
 
+/-- Proof-translation construction identified upstream as `liftIndexAt`. -/
 @[expose]
 def liftIndexAt (index amount cutoff : Nat) : Nat :=
   if cutoff ≤ index then index + amount else index
 
+/-- Proof-translation construction identified upstream as `substIndexAt`. -/
 @[expose]
 def substIndexAt (index replacement target : Nat) : Nat :=
   if index < target then index
   else if target < index then index - 1 else replacement + target
 
-@[simp]
 theorem liftTermAt_var (index amount cutoff : Nat) :
-    Fol.lift_term_at (&index : Fol.term LNF) amount cutoff =
+    Fol.liftTermAt (&index : Fol.term LNF) amount cutoff =
       &(liftIndexAt index amount cutoff) :=
   by rfl
 
 @[simp]
 theorem substTerm_var_var (index replacement target : Nat) :
-    Fol.subst_term (&index : Fol.term LNF) (&replacement) target =
+    Fol.substTerm (&index : Fol.term LNF) (&replacement) target =
       &(substIndexAt index replacement target) :=
   by
-  simp [Fol.subst_term, Fol.subst_realize, substIndexAt]
+  simp [Fol.substTerm, Fol.substRealize, substIndexAt]
   split_ifs <;> rfl
 
 theorem swapIndexAt_numeric (depth index : Nat) :
@@ -63,8 +64,8 @@ theorem swapIndexAt_numeric (depth index : Nat) :
 /-- Flypitch's lift/substitute presentation of the same term permutation. -/
 @[expose]
 def swapTermAt (depth : Nat) {l : Nat} (t : Fol.preterm LNF l) : Fol.preterm LNF l :=
-  Fol.subst_term
-    (Fol.subst_term (Fol.lift_term_at (Fol.lift_term_at t 1 (depth + 2)) 1 (depth + 2))
+  Fol.substTerm
+    (Fol.substTerm (Fol.liftTermAt (Fol.liftTermAt t 1 (depth + 2)) 1 (depth + 2))
       (&0) (depth + 1))
     (&1) depth
 
@@ -72,9 +73,9 @@ def swapTermAt (depth : Nat) {l : Nat} (t : Fol.preterm LNF l) : Fol.preterm LNF
 @[expose]
 def swapFormulaAt (depth : Nat) {l : Nat} (p : @Fol.preformula LNF l) :
     @Fol.preformula LNF l :=
-  Fol.subst_formula
-    (Fol.subst_formula
-      (Fol.lift_formula_at (Fol.lift_formula_at p 1 (depth + 2)) 1 (depth + 2)) (&0)
+  Fol.substFormula
+    (Fol.substFormula
+      (Fol.liftFormulaAt (Fol.liftFormulaAt p 1 (depth + 2)) 1 (depth + 2)) (&0)
       (depth + 1))
     (&1) depth
 
@@ -99,7 +100,7 @@ theorem renameTerm_swapIndexAt (depth : Nat) :
     simp only [renameTerm, swapTermAt, liftTermAt_var, substTerm_var_var]
     exact congrArg Fol.preterm.var (swapIndexAt_numeric depth index)
   | func f => rfl
-  | app t s iht ihs => simp [renameTerm, swapTermAt, Fol.lift_term_at, iht, ihs]
+  | app t s iht ihs => simp [renameTerm, swapTermAt, Fol.liftTermAt, iht, ihs]
 
 theorem renameFormula_swapIndexAt :
     ∀ (depth : Nat) {l : Nat} (p : @Fol.preformula LNF l),
@@ -109,19 +110,19 @@ theorem renameFormula_swapIndexAt :
   induction p generalizing depth with
   | falsum => rfl
   | equal s t =>
-    simp [renameFormula, swapFormulaAt, Fol.lift_formula_at, Fol.subst_formula,
+    simp [renameFormula, swapFormulaAt, Fol.liftFormulaAt, Fol.substFormula,
       swapTermAt, renameTerm_swapIndexAt]
   | rel r => rfl
   | apprel p t ih =>
-    simp [renameFormula, swapFormulaAt, Fol.lift_formula_at, Fol.subst_formula,
+    simp [renameFormula, swapFormulaAt, Fol.liftFormulaAt, Fol.substFormula,
       swapTermAt, ih, renameTerm_swapIndexAt]
   | imp p q ihp ihq =>
-    simp [renameFormula, swapFormulaAt, Fol.lift_formula_at, Fol.subst_formula, ihp, ihq]
+    simp [renameFormula, swapFormulaAt, Fol.liftFormulaAt, Fol.substFormula, ihp, ihq]
   | all p ih =>
     rw [renameFormula]
     rw [underBinder_swapIndexAt]
     rw [ih (depth + 1)]
-    simp [swapFormulaAt, Fol.lift_formula_at, Fol.subst_formula, Nat.add_assoc]
+    simp [swapFormulaAt, Fol.liftFormulaAt, Fol.substFormula, Nat.add_assoc]
 
 theorem renameFormula_swap01 (p : Fol.formula LNF) :
     renameFormula (swapIndexAt 0) p = GenericLogicalHandlers.swap01 p := by

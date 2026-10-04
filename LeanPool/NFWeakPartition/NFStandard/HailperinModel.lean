@@ -31,14 +31,14 @@ axioms; their API exposes only extensional membership laws.
 
 /-- The intrinsic formula underlying any literal axiom holds in its model. -/
 theorem formulaHolds_literal_axiom {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (name : HailperinAxiomName) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (name : HailperinAxiomName) :
     FormulaHolds S DVec.nil (literalAxiomSyntax name) :=
   (formulaHolds_toFlypitch DVec.nil (literalAxiomSyntax name)).2
     (realizes_literal_axiom hH name)
 
 /-- Raw semantic content of `ax-nin`. -/
 theorem exists_nin {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x y : S) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x y : S) :
     ∃ a : S, ∀ z : S, Mem S z a ↔ ¬(Mem S z x ∧ Mem S z y) :=
   by
   have h := formulaHolds_literal_axiom hH .axNin
@@ -47,18 +47,18 @@ theorem exists_nin {S : Fol.Structure LNF}
 /-- A selected NAND set supplied by `ax-nin`. -/
 @[expose]
 noncomputable def nin {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x y : S) : S :=
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x y : S) : S :=
   Classical.choose (exists_nin hH x y)
 
 @[simp]
 theorem mem_nin {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x y z : S) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x y z : S) :
     Mem S z (nin hH x y) ↔ ¬(Mem S z x ∧ Mem S z y) :=
   Classical.choose_spec (exists_nin hH x y) z
 
 /-- Raw semantic content of `ax-sn`. -/
 theorem exists_singleton {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x : S) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x : S) :
     ∃ a : S, ∀ z : S, Mem S z a ↔ z = x :=
   by
   have h := formulaHolds_literal_axiom hH .axSn
@@ -67,35 +67,35 @@ theorem exists_singleton {S : Fol.Structure LNF}
 /-- A selected singleton supplied by `ax-sn`. -/
 @[expose]
 noncomputable def singleton {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x : S) : S :=
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x : S) : S :=
   Classical.choose (exists_singleton hH x)
 
 @[simp]
 theorem mem_singleton {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x z : S) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x z : S) :
     Mem S z (singleton hH x) ↔ z = x :=
   Classical.choose_spec (exists_singleton hH x) z
 
 /-- Complement, derived from NAND. -/
 @[expose]
 noncomputable def complement {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x : S) : S :=
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x : S) : S :=
   nin hH x x
 
 @[simp]
 theorem mem_complement {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x z : S) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x z : S) :
     Mem S z (complement hH x) ↔ ¬Mem S z x := by simp [complement]
 
 /-- Binary union, derived by De Morgan from NAND. -/
 @[expose]
 noncomputable def union {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x y : S) : S :=
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x y : S) : S :=
   nin hH (complement hH x) (complement hH y)
 
 @[simp]
 theorem mem_union {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x y z : S) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x y z : S) :
     Mem S z (union hH x y) ↔ Mem S z x ∨ Mem S z y :=
   by
   simp [union]
@@ -104,23 +104,23 @@ theorem mem_union {S : Fol.Structure LNF}
 /-- Unordered pair, derived as the union of two selected singletons. -/
 @[expose]
 noncomputable def unorderedPair {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x y : S) : S :=
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x y : S) : S :=
   union hH (singleton hH x) (singleton hH y)
 
 @[simp]
 theorem mem_unorderedPair {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x y z : S) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x y z : S) :
     Mem S z (unorderedPair hH x y) ↔ z = x ∨ z = y := by simp [unorderedPair]
 
 /-- The selected Kuratowski ordered pair. -/
 @[expose]
 noncomputable def kPair {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x y : S) : S :=
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x y : S) : S :=
   unorderedPair hH (singleton hH x) (unorderedPair hH x y)
 
 @[simp]
 theorem mem_kPair {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x y z : S) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x y z : S) :
     Mem S z (kPair hH x y) ↔ z = singleton hH x ∨ z = unorderedPair hH x y := by
   simp [kPair]
 
@@ -144,7 +144,7 @@ theorem representsLiteral_setVar {S : Fol.Structure LNF} {n : Nat} (xs : DVec S 
   rfl
 
 theorem representsLiteral_singleton {S : Fol.Structure LNF} {n : Nat}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) {xs : DVec S n}
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) {xs : DVec S n}
     {A : LiteralClass n} {a : S} (ha : RepresentsLiteral xs A a) :
     RepresentsLiteral xs (.singleton A) (singleton hH a) :=
   by
@@ -158,7 +158,7 @@ theorem representsLiteral_singleton {S : Fol.Structure LNF} {n : Nat}
     exact representsLiteral_unique (extensional_of_literal_model hH) hz ha
 
 theorem representsLiteral_unorderedPair {S : Fol.Structure LNF} {n : Nat}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) {xs : DVec S n}
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) {xs : DVec S n}
     {A B : LiteralClass n} {a b : S} (ha : RepresentsLiteral xs A a)
     (hb : RepresentsLiteral xs B b) :
     RepresentsLiteral xs (.unorderedPair A B) (unorderedPair hH a b) :=
@@ -175,7 +175,7 @@ theorem representsLiteral_unorderedPair {S : Fol.Structure LNF} {n : Nat}
     · exact Or.inr (representsLiteral_unique (extensional_of_literal_model hH) hz hb)
 
 theorem representsLiteral_kPair {S : Fol.Structure LNF} {n : Nat}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) {xs : DVec S n}
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) {xs : DVec S n}
     {A B : LiteralClass n} {a b : S} (ha : RepresentsLiteral xs A a)
     (hb : RepresentsLiteral xs B b) : RepresentsLiteral xs (.kPair A B) (kPair hH a b) :=
   by
@@ -196,7 +196,7 @@ theorem representsLiteral_kPair {S : Fol.Structure LNF} {n : Nat}
 
 /-- A literal set-equality formula identifies the canonical representative. -/
 theorem formulaHolds_setEqClass_iff_eq {S : Fol.Structure LNF} {n : Nat}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (xs : DVec S n) (r : Fin n)
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (xs : DVec S n) (r : Fin n)
     (A : LiteralClass n) (a : S) (ha : RepresentsLiteral xs A a) :
     FormulaHolds S xs (LiteralClass.setEqClass r A) ↔ lookup xs r = a :=
   by
@@ -211,7 +211,7 @@ theorem formulaHolds_setEqClass_iff_eq {S : Fol.Structure LNF} {n : Nat}
 
 /-- A literal class-membership formula is membership of its canonical representative. -/
 theorem formulaHolds_classMemSet_iff_mem {S : Fol.Structure LNF} {n : Nat}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (xs : DVec S n)
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (xs : DVec S n)
     (A : LiteralClass n) (r : Fin n) (a : S) (ha : RepresentsLiteral xs A a) :
     FormulaHolds S xs (LiteralClass.classMemSet A r) ↔ Mem S a (lookup xs r) :=
   by
@@ -225,7 +225,7 @@ theorem formulaHolds_classMemSet_iff_mem {S : Fol.Structure LNF} {n : Nat}
 
 @[simp]
 theorem formulaHolds_literalKPair_iff {S : Fol.Structure LNF} {n : Nat}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (xs : DVec S n)
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (xs : DVec S n)
     (ip ia ib : Fin n) :
     FormulaHolds S xs (literalKPair ip ia ib) ↔
       lookup xs ip = kPair hH (lookup xs ia) (lookup xs ib) :=
@@ -237,7 +237,7 @@ theorem formulaHolds_literalKPair_iff {S : Fol.Structure LNF} {n : Nat}
 
 @[simp]
 theorem formulaHolds_literalPairMem_iff {S : Fol.Structure LNF} {n : Nat}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (xs : DVec S n)
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (xs : DVec S n)
     (ia ib ir : Fin n) :
     FormulaHolds S xs (literalPairMem ia ib ir) ↔
       Mem S (kPair hH (lookup xs ia) (lookup xs ib)) (lookup xs ir) :=
@@ -249,7 +249,7 @@ theorem formulaHolds_literalPairMem_iff {S : Fol.Structure LNF} {n : Nat}
 
 @[simp]
 theorem formulaHolds_literalSingletonPairMem_iff {S : Fol.Structure LNF} {n : Nat}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (xs : DVec S n)
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (xs : DVec S n)
     (ia ib ir : Fin n) :
     FormulaHolds S xs (literalSingletonPairMem ia ib ir) ↔
       Mem S (kPair hH (singleton hH (lookup xs ia)) (singleton hH (lookup xs ib)))
@@ -263,7 +263,7 @@ theorem formulaHolds_literalSingletonPairMem_iff {S : Fol.Structure LNF} {n : Na
 
 @[simp]
 theorem formulaHolds_literalInsertedPairMem_iff {S : Fol.Structure LNF} {n : Nat}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (xs : DVec S n)
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (xs : DVec S n)
     (iz iw it ir : Fin n) :
     FormulaHolds S xs (literalInsertedPairMem iz iw it ir) ↔
       Mem S
@@ -281,7 +281,7 @@ theorem formulaHolds_literalInsertedPairMem_iff {S : Fol.Structure LNF} {n : Nat
 
 @[simp]
 theorem formulaHolds_literalPairSingletonSecondMem_iff {S : Fol.Structure LNF} {n : Nat}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (xs : DVec S n)
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (xs : DVec S n)
     (ia iz ir : Fin n) :
     FormulaHolds S xs (literalPairSingletonSecondMem ia iz ir) ↔
       Mem S (kPair hH (lookup xs ia) (singleton hH (lookup xs iz))) (lookup xs ir) :=
@@ -295,7 +295,7 @@ theorem formulaHolds_literalPairSingletonSecondMem_iff {S : Fol.Structure LNF} {
 
 
 theorem exists_xp {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x : S) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x : S) :
     ∃ y : S, ∀ z : S, Mem S z y ↔ ∃ w t : S, z = kPair hH w t ∧ Mem S t x :=
   by
   have h := formulaHolds_literal_axiom hH .axXp
@@ -303,7 +303,7 @@ theorem exists_xp {S : Fol.Structure LNF}
     formulaHolds_literalKPair_iff hH] using h x
 
 theorem exists_cnv {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x : S) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x : S) :
     ∃ y : S, ∀ z w : S, Mem S (kPair hH z w) y ↔ Mem S (kPair hH w z) x :=
   by
   have h := formulaHolds_literal_axiom hH .axCnv
@@ -311,7 +311,7 @@ theorem exists_cnv {S : Fol.Structure LNF}
     formulaHolds_literalPairMem_iff hH] using h x
 
 theorem exists_oneC {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) :
     ∃ x : S, ∀ y : S, Mem S y x ↔ ∃ z : S, ∀ w : S, Mem S w y ↔ w = z :=
   by
   have h := formulaHolds_literal_axiom hH .ax1c
@@ -319,7 +319,7 @@ theorem exists_oneC {S : Fol.Structure LNF}
     FormulaHolds, lookup, DVec.nth] using h
 
 theorem exists_sset {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) :
     ∃ x : S, ∀ y z : S, Mem S (kPair hH y z) x ↔ ∀ w : S, Mem S w y → Mem S w z :=
   by
   have h := formulaHolds_literal_axiom hH .axSset
@@ -327,7 +327,7 @@ theorem exists_sset {S : Fol.Structure LNF}
     DVec.nth, formulaHolds_literalPairMem_iff hH] using h
 
 theorem exists_si {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x : S) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x : S) :
     ∃ y : S,
       ∀ z w : S,
         Mem S (kPair hH (singleton hH z) (singleton hH w)) y ↔ Mem S (kPair hH z w) x :=
@@ -338,7 +338,7 @@ theorem exists_si {S : Fol.Structure LNF}
     h x
 
 theorem exists_ins2 {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x : S) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x : S) :
     ∃ y : S,
       ∀ z w t : S,
         Mem S (kPair hH (singleton hH (singleton hH z)) (kPair hH w t)) y ↔
@@ -350,7 +350,7 @@ theorem exists_ins2 {S : Fol.Structure LNF}
     h x
 
 theorem exists_ins3 {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x : S) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x : S) :
     ∃ y : S,
       ∀ z w t : S,
         Mem S (kPair hH (singleton hH (singleton hH z)) (kPair hH w t)) y ↔
@@ -362,7 +362,7 @@ theorem exists_ins3 {S : Fol.Structure LNF}
     h x
 
 theorem exists_typeLower {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x : S) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x : S) :
     ∃ y : S, ∀ z : S, Mem S z y ↔ ∀ w : S, Mem S (kPair hH w (singleton hH z)) x :=
   by
   have h := formulaHolds_literal_axiom hH .axTypeLower
@@ -372,60 +372,60 @@ theorem exists_typeLower {S : Fol.Structure LNF}
 /-- Cartesian-product/range constructor selected from `ax-xp`. -/
 @[expose]
 noncomputable def xp {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x : S) : S :=
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x : S) : S :=
   Classical.choose (exists_xp hH x)
 
 @[simp]
 theorem mem_xp {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x z : S) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x z : S) :
     Mem S z (xp hH x) ↔ ∃ w t : S, z = kPair hH w t ∧ Mem S t x :=
   Classical.choose_spec (exists_xp hH x) z
 
 /-- Converse-relation constructor selected from `ax-cnv`. -/
 @[expose]
 noncomputable def cnv {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x : S) : S :=
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x : S) : S :=
   Classical.choose (exists_cnv hH x)
 
 @[simp]
 theorem mem_cnv {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x z w : S) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x z w : S) :
     Mem S (kPair hH z w) (cnv hH x) ↔ Mem S (kPair hH w z) x :=
   Classical.choose_spec (exists_cnv hH x) z w
 
 /-- The set of all singleton sets selected from `ax-1c`. -/
 @[expose]
 noncomputable def oneC {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) : S :=
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) : S :=
   Classical.choose (exists_oneC hH)
 
 @[simp]
 theorem mem_oneC {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (y : S) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (y : S) :
     Mem S y (oneC hH) ↔ ∃ z : S, ∀ w : S, Mem S w y ↔ w = z :=
   Classical.choose_spec (exists_oneC hH) y
 
 /-- The subset relation selected from `ax-sset`. -/
 @[expose]
 noncomputable def sset {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) : S :=
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) : S :=
   Classical.choose (exists_sset hH)
 
 @[simp]
 theorem mem_sset {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (y z : S) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (y z : S) :
     Mem S (kPair hH y z) (sset hH) ↔ ∀ w : S, Mem S w y → Mem S w z :=
   Classical.choose_spec (exists_sset hH) y z
 
 /-- Singleton-image relation transformer selected from `ax-si`. -/
 @[expose]
 noncomputable def si {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x : S) : S :=
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x : S) : S :=
   Classical.choose (exists_si hH x)
 
 @[simp]
 theorem mem_si {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x z w : S) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x z w : S) :
     Mem S (kPair hH (singleton hH z) (singleton hH w)) (si hH x) ↔
       Mem S (kPair hH z w) x :=
   Classical.choose_spec (exists_si hH x) z w
@@ -433,12 +433,12 @@ theorem mem_si {S : Fol.Structure LNF}
 /-- Second inserted-pair transformer selected from `ax-ins2`. -/
 @[expose]
 noncomputable def ins2 {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x : S) : S :=
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x : S) : S :=
   Classical.choose (exists_ins2 hH x)
 
 @[simp]
 theorem mem_ins2 {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x z w t : S) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x z w t : S) :
     Mem S (kPair hH (singleton hH (singleton hH z)) (kPair hH w t)) (ins2 hH x) ↔
       Mem S (kPair hH z t) x :=
   Classical.choose_spec (exists_ins2 hH x) z w t
@@ -446,12 +446,12 @@ theorem mem_ins2 {S : Fol.Structure LNF}
 /-- Third inserted-pair transformer selected from `ax-ins3`. -/
 @[expose]
 noncomputable def ins3 {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x : S) : S :=
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x : S) : S :=
   Classical.choose (exists_ins3 hH x)
 
 @[simp]
 theorem mem_ins3 {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x z w t : S) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x z w t : S) :
     Mem S (kPair hH (singleton hH (singleton hH z)) (kPair hH w t)) (ins3 hH x) ↔
       Mem S (kPair hH z w) x :=
   Classical.choose_spec (exists_ins3 hH x) z w t
@@ -459,12 +459,12 @@ theorem mem_ins3 {S : Fol.Structure LNF}
 /-- Type-lowering transformer selected from `ax-typlower`. -/
 @[expose]
 noncomputable def typeLower {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x : S) : S :=
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x : S) : S :=
   Classical.choose (exists_typeLower hH x)
 
 @[simp]
 theorem mem_typeLower {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) (x z : S) :
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) (x z : S) :
     Mem S z (typeLower hH x) ↔ ∀ w : S, Mem S (kPair hH w (singleton hH z)) x :=
   Classical.choose_spec (exists_typeLower hH x) z
 
@@ -477,47 +477,61 @@ constructors record that no additional choices were made for them.
 -/
 structure HailperinModel (S : Fol.Structure LNF) where
   extensional : Extensional S
+  /-- The nin operation of this NF model presentation. -/
   nin : S → S → S
   mem_nin : ∀ x y z, Mem S z (nin x y) ↔ ¬(Mem S z x ∧ Mem S z y)
+  /-- The singleton operation of this NF model presentation. -/
   singleton : S → S
   mem_singleton : ∀ x z, Mem S z (singleton x) ↔ z = x
+  /-- The complement operation of this NF model presentation. -/
   complement : S → S
   complement_eq : ∀ x, complement x = nin x x
   mem_complement : ∀ x z, Mem S z (complement x) ↔ ¬Mem S z x
+  /-- The union operation of this NF model presentation. -/
   union : S → S → S
   union_eq : ∀ x y, union x y = nin (complement x) (complement y)
   mem_union : ∀ x y z, Mem S z (union x y) ↔ Mem S z x ∨ Mem S z y
+  /-- The unordered Pair operation of this NF model presentation. -/
   unorderedPair : S → S → S
   unorderedPair_eq : ∀ x y, unorderedPair x y = union (singleton x) (singleton y)
   mem_unorderedPair : ∀ x y z, Mem S z (unorderedPair x y) ↔ z = x ∨ z = y
+  /-- The k Pair operation of this NF model presentation. -/
   kPair : S → S → S
   kPair_eq : ∀ x y, kPair x y = unorderedPair (singleton x) (unorderedPair x y)
   mem_kPair : ∀ x y z, Mem S z (kPair x y) ↔ z = singleton x ∨ z = unorderedPair x y
+  /-- The xp operation of this NF model presentation. -/
   xp : S → S
   mem_xp : ∀ x z, Mem S z (xp x) ↔ ∃ w t, z = kPair w t ∧ Mem S t x
+  /-- The cnv operation of this NF model presentation. -/
   cnv : S → S
   mem_cnv : ∀ x z w, Mem S (kPair z w) (cnv x) ↔ Mem S (kPair w z) x
+  /-- The one C operation of this NF model presentation. -/
   oneC : S
   mem_oneC : ∀ y, Mem S y oneC ↔ ∃ z, ∀ w, Mem S w y ↔ w = z
+  /-- The sset operation of this NF model presentation. -/
   sset : S
   mem_sset : ∀ y z, Mem S (kPair y z) sset ↔ ∀ w, Mem S w y → Mem S w z
+  /-- The si operation of this NF model presentation. -/
   si : S → S
   mem_si : ∀ x z w, Mem S (kPair (singleton z) (singleton w)) (si x) ↔ Mem S (kPair z w) x
+  /-- The ins2 operation of this NF model presentation. -/
   ins2 : S → S
   mem_ins2 :
     ∀ x z w t,
       Mem S (kPair (singleton (singleton z)) (kPair w t)) (ins2 x) ↔ Mem S (kPair z t) x
+  /-- The ins3 operation of this NF model presentation. -/
   ins3 : S → S
   mem_ins3 :
     ∀ x z w t,
       Mem S (kPair (singleton (singleton z)) (kPair w t)) (ins3 x) ↔ Mem S (kPair z w) x
+  /-- The type Lower operation of this NF model presentation. -/
   typeLower : S → S
   mem_typeLower : ∀ x z, Mem S z (typeLower x) ↔ ∀ w, Mem S (kPair w (singleton z)) x
 
 /-- Extract the complete semantic Skolem kernel from a literal Hailperin model. -/
 @[expose]
 noncomputable def HailperinModel.ofLiteralModel {S : Fol.Structure LNF}
-    (hH : Fol.all_realize_sentence S LiteralHailperinNF) : HailperinModel S
+    (hH : Fol.allRealizeSentence S LiteralHailperinNF) : HailperinModel S
     where
   extensional := extensional_of_literal_model hH
   nin := NFChoice.Foundation.NFStandard.nin hH

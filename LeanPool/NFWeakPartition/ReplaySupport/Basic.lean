@@ -52,13 +52,13 @@ theorem freshVar_injective (support : Finset Var) {i j : Nat} (hij : i ≠ j) :
 
 /-- Every exact Hailperin axiom is available in a model of the literal theory. -/
 theorem realizes_literal_axiom {S : Fol.Structure LNF}
-    (hNF : Fol.all_realize_sentence S LiteralHailperinNF) (name : HailperinAxiomName) :
-    Fol.realize_sentence S (literalAxiomFormula name) :=
+    (hNF : Fol.allRealizeSentence S LiteralHailperinNF) (name : HailperinAxiomName) :
+    Fol.realizeSentence S (literalAxiomFormula name) :=
   hNF (literalAxiom_mem name)
 
 /-- Extensionality extracted from the exact `ax-ext` member of the theory. -/
 theorem extensional_of_literal_model {S : Fol.Structure LNF}
-    (hNF : Fol.all_realize_sentence S LiteralHailperinNF) : Extensional S :=
+    (hNF : Fol.allRealizeSentence S LiteralHailperinNF) : Extensional S :=
   (extensional_iff_literal_axExt S).2 (realizes_literal_axiom hNF .axExt)
 
 /-- Generic bridge used by generated concrete NF-leaf certificates.  The generated
@@ -66,7 +66,7 @@ file supplies only a finite support inclusion and a reduction-checkable
 lowering equation for the universally closed source instance.
 -/
 theorem valid_literal_leaf {S : Fol.Structure LNF}
-    (hNF : Fol.all_realize_sentence S LiteralHailperinNF) (name : HailperinAxiomName)
+    (hNF : Fol.allRealizeSentence S LiteralHailperinNF) (name : HailperinAxiomName)
     (names : List Var) (p : Wff) (hcover : p.fv ⊆ names.toFinset)
     (hlower : lowerClosed (closeNames names p) = some (literalAxiomSyntax name)) :
     Wff.Valid S p :=
@@ -80,16 +80,16 @@ theorem produces the requested object-level first-order derivability result.
 theorem derives_not_of_nominal_validity (p : Wff) (f : Sentence) (hpClosed : p.fv = ∅)
     (hlower : lowerClosed p = some f)
     (hsemantic : ∀ (S : Fol.Structure LNF), Nonempty S →
-          Fol.all_realize_sentence S LiteralHailperinNF → Wff.Valid S (Wff.neg p)) :
-    LiteralHailperinNF ⊢ₛ' Fol.bd_not (Formula.toFlypitch f) :=
+          Fol.allRealizeSentence S LiteralHailperinNF → Wff.Valid S (Wff.neg p)) :
+    LiteralHailperinNF ⊢ₛ' Fol.bdNot (Formula.toFlypitch f) :=
   by
-  apply (Fol.completeness LiteralHailperinNF (Fol.bd_not (Formula.toFlypitch f))).2
+  apply (Fol.completeness LiteralHailperinNF (Fol.bdNot (Formula.toFlypitch f))).2
   intro S hNonempty hNF
   let a : S := Classical.choice hNonempty
   let v : Var → S := fun _ => a
   have hnot : Wff.Holds S v (Wff.neg p) := hsemantic S hNonempty hNF v
   have hiff := lowerClosed_realize_iff p f hpClosed hlower v
-  change ¬Fol.realize_sentence S (Formula.toFlypitch f)
+  change ¬Fol.realizeSentence S (Formula.toFlypitch f)
   intro hrealize
   exact hnot (hiff.mpr hrealize)
 

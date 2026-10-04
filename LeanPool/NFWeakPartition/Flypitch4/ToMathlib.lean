@@ -111,11 +111,17 @@ variable {α : Type u} {β : Type v} {γ : Type w} {n : ℕ}
 protected theorem zero_eq : ∀ (xs : DVec α 0), xs = DVec.nil
   | DVec.nil => rfl
 
+/-- Flypitch construction `concat`, retained by the first-order soundness and completeness
+development.
+-/
 @[simp, expose]
 protected def concat : ∀ {n : ℕ}, DVec α n → α → DVec α (n + 1)
   | _, DVec.nil, x' => DVec.cons x' DVec.nil
   | _, DVec.cons x xs, x' => DVec.cons x (DVec.concat xs x')
 
+/-- Flypitch construction `nth`, retained by the first-order soundness and completeness
+development.
+-/
 @[simp, expose]
 protected def nth : ∀ {n : ℕ}, DVec α n → (m : ℕ) → m < n → α
   | _, DVec.nil, m, h => absurd h (Nat.not_lt_zero m)
@@ -126,19 +132,31 @@ protected theorem nth_cons {n : ℕ} (x : α) (xs : DVec α n) (m : ℕ) (h : m 
     DVec.nth (DVec.cons x xs) (m + 1) (Nat.succ_lt_succ h) = DVec.nth xs m h :=
   rfl
 
+/-- Flypitch construction `last`, retained by the first-order soundness and completeness
+development.
+-/
 @[reducible, simp, expose]
 protected def last {n : ℕ} (xs : DVec α (n + 1)) : α :=
   xs.nth n (Nat.lt_succ_self n)
 
+/-- Flypitch construction `nth'`, retained by the first-order soundness and completeness
+development.
+-/
 @[expose]
 protected def nth' {n : ℕ} (xs : DVec α n) (m : Fin n) : α :=
   xs.nth m.1 m.2
 
+/-- Flypitch construction `nth''`, retained by the first-order soundness and completeness
+development.
+-/
 @[expose]
 protected def nth'' : ∀ {n : ℕ}, DVec α n → DFin n → α
   | _, DVec.cons x _, DFin.fz => x
   | _, DVec.cons _ xs, DFin.fs m => DVec.nth'' xs m
 
+/-- Flypitch construction `mem`, retained by the first-order soundness and completeness
+development.
+-/
 @[expose]
 protected def mem : ∀ {n : ℕ}, α → DVec α n → Prop
   | _, _, DVec.nil => False
@@ -147,6 +165,9 @@ protected def mem : ∀ {n : ℕ}, α → DVec α n → Prop
 instance membershipDVec {n : ℕ} : Membership α (DVec α n) :=
   ⟨fun xs a => DVec.mem a xs⟩
 
+/-- Flypitch construction `pmem`, retained by the first-order soundness and completeness
+development.
+-/
 @[expose]
 protected def pmem : ∀ {n : ℕ}, α → DVec α n → Type
   | _, _, DVec.nil => Empty
@@ -160,11 +181,17 @@ protected theorem mem_of_pmem : ∀ {n : ℕ} {x : α} {xs : DVec α n}, DVec.pm
     change DVec.mem x (DVec.cons x' xs)
     exact hx.casesOn (fun h => Or.inl h) (fun h => Or.inr (DVec.mem_of_pmem h))
 
+/-- Flypitch construction `map`, retained by the first-order soundness and completeness
+development.
+-/
 @[simp, expose]
 protected def map (f : α → β) : ∀ {n : ℕ}, DVec α n → DVec β n
   | _, DVec.nil => DVec.nil
   | _, DVec.cons x xs => DVec.cons (f x) (DVec.map f xs)
 
+/-- Flypitch construction `map2`, retained by the first-order soundness and completeness
+development.
+-/
 @[simp, expose]
 protected def map2 (f : α → β → γ) : ∀ {n : ℕ}, DVec α n → DVec β n → DVec γ n
   | _, DVec.nil, DVec.nil => DVec.nil
@@ -175,7 +202,6 @@ protected theorem map_id : ∀ {n : ℕ} (xs : DVec α n), DVec.map (fun x => x)
   | _, DVec.nil => rfl
   | _, DVec.cons _ xs => by simp [DVec.map, DVec.map_id xs]
 
-@[simp]
 protected theorem map_congr_pmem {f g : α → β} :
     ∀ {n : ℕ} {xs : DVec α n},
       (∀ x, DVec.pmem x xs → f x = g x) → DVec.map f xs = DVec.map g xs
@@ -186,12 +212,10 @@ protected theorem map_congr_pmem {f g : α → β} :
     · exact h x (PSum.inl rfl)
     · exact DVec.map_congr_pmem (fun x' hx' => h x' (PSum.inr hx'))
 
-@[simp]
 protected theorem map_congr_mem {f g : α → β} {n : ℕ} {xs : DVec α n}
     (h : ∀ x, x ∈ xs → f x = g x) : DVec.map f xs = DVec.map g xs :=
   DVec.map_congr_pmem (fun x hx => h x (DVec.mem_of_pmem hx))
 
-@[simp]
 protected theorem map_congr {f g : α → β} (h : ∀ x, f x = g x) :
     ∀ {n : ℕ} (xs : DVec α n), DVec.map f xs = DVec.map g xs
   | _, DVec.nil => rfl
@@ -247,17 +271,22 @@ protected theorem concat_nth_last :
   | _, DVec.cons _ xs, x', h => by
     simp [DVec.concat, DVec.nth, DVec.concat_nth_last xs x']
 
-@[simp]
 protected theorem concat_nth_last' :
     ∀ {n : ℕ} (xs : DVec α n) (x : α) (_h : n < n + 1),
       DVec.last (DVec.concat xs x) = x :=
   DVec.concat_nth_last
 
+/-- Flypitch construction `append`, retained by the first-order soundness and completeness
+development.
+-/
 @[simp, expose]
 protected def append : ∀ {n m : ℕ}, DVec α n → DVec α m → DVec α (m + n)
   | _, _, DVec.nil, xs => xs
   | _, _, DVec.cons x' xs, xs' => DVec.cons x' (DVec.append xs xs')
 
+/-- Flypitch construction `insert`, retained by the first-order soundness and completeness
+development.
+-/
 @[simp, expose]
 protected def insert : ∀ {n : ℕ}, α → ℕ → DVec α n → DVec α (n + 1)
   | _n, x, 0, xs => DVec.cons x xs
@@ -341,6 +370,9 @@ protected theorem nth_irrel1 {n k : ℕ} {h : k < n + 1} {h' : k < n + 1 + 1}
     change DVec.nth (DVec.trunc n _ v) k _ = DVec.nth v k _
     rw [DVec.trunc_nth]
 
+/-- Flypitch construction `cast`, retained by the first-order soundness and completeness
+development.
+-/
 @[expose]
 protected def cast {n m} (p : n = m) (v : DVec α n) : DVec α m :=
   p ▸ v
@@ -350,7 +382,6 @@ protected theorem cast_irrel {n m} {p p' : n = m} {v : DVec α n} :
     DVec.cast p v = DVec.cast p' v :=
   rfl
 
-@[simp]
 protected theorem cast_rfl {n m} {p : n = m} {q : m = n} {v : DVec α n} :
     DVec.cast q (DVec.cast p v) = v := by subst p; rfl
 
@@ -375,12 +406,18 @@ theorem cast_append_nil :
     congr 1
     exact cast_append_nil v (by omega)
 
+/-- Flypitch construction `remove_mth`, retained by the first-order soundness and completeness
+development.
+-/
 @[simp, expose]
-protected def remove_mth : ∀ {n : ℕ}, ℕ → DVec α (n + 1) → DVec α n
+protected def removeMth : ∀ {n : ℕ}, ℕ → DVec α (n + 1) → DVec α n
   | 0, _, _ => DVec.nil
   | _n, 0, DVec.cons _ ys => ys
-  | n + 1, k + 1, DVec.cons y ys => DVec.cons y (DVec.remove_mth k ys)
+  | n + 1, k + 1, DVec.cons y ys => DVec.cons y (DVec.removeMth k ys)
 
+/-- Flypitch construction `replace`, retained by the first-order soundness and completeness
+development.
+-/
 @[simp, expose]
 protected def replace : ∀ {n : ℕ}, α → ℕ → DVec α n → DVec α n
   | _, x, 0, DVec.cons _ ys => DVec.cons x ys
@@ -457,11 +494,17 @@ lemma replace_neck {n x y z} {xs : DVec α n} :
     DVec.replace z 1 (DVec.cons x (DVec.cons y xs)) = DVec.cons x (DVec.cons z xs) :=
   rfl
 
+/-- Flypitch construction `foldr`, retained by the first-order soundness and completeness
+development.
+-/
 @[simp, expose]
 def foldr (f : α → β → β) (b : β) : ∀ {n}, DVec α n → β
   | _, DVec.nil => b
   | _, DVec.cons a l => f a (DVec.foldr f b l)
 
+/-- Flypitch construction `zip`, retained by the first-order soundness and completeness
+development.
+-/
 @[simp, expose]
 def zip : ∀ {n}, DVec α n → DVec β n → DVec (α × β) n
   | _, DVec.nil, DVec.nil => DVec.nil
@@ -526,14 +569,17 @@ protected theorem rel_trans {α : Type u} [Setoid α] {n} {xs₁ xs₂ xs₃ : D
 instance setoidInst {α : Type u} [Setoid α] {n : ℕ} : Setoid (DVec α n) :=
   ⟨DVecRel, DVec.rel_refl, DVec.rel_symm, DVec.rel_trans⟩
 
+/-- Flypitch construction `quotient_lift`, retained by the first-order soundness and
+completeness development.
+-/
 @[expose]
-noncomputable def quotient_lift {α : Type u} {β : Sort v} {R : Setoid α} :
+noncomputable def quotientLift {α : Type u} {β : Sort v} {R : Setoid α} :
     ∀ {n} (f : DVec α n → β) (_h : ∀ {xs xs' : DVec α n}, xs ≈ xs' → f xs = f xs')
       (_qs : DVec (Quotient R) n), β
   | 0, f, _, DVec.nil => f DVec.nil
   | n + 1, f, h, DVec.cons q qs =>
     Quotient.lift
-      (fun x => DVec.quotient_lift (fun xs => f (DVec.cons x xs))
+      (fun x => DVec.quotientLift (fun xs => f (DVec.cons x xs))
           (fun hxs => h (DVecRel.rcons (Setoid.refl x) hxs)) qs)
       (fun x x' hx => by
         congr 1; apply funext; intro xs
@@ -542,11 +588,11 @@ noncomputable def quotient_lift {α : Type u} {β : Sort v} {R : Setoid α} :
 
 theorem quotient_beta {α : Type u} {β : Sort v} {R : Setoid α} :
     ∀ {n} (f : DVec α n → β) (h : ∀ {xs xs' : DVec α n}, xs ≈ xs' → f xs = f xs')
-      (xs : DVec α n), DVec.quotient_lift f h (DVec.map Quotient.mk'' xs) = f xs
+      (xs : DVec α n), DVec.quotientLift f h (DVec.map Quotient.mk'' xs) = f xs
   | 0, f, h, DVec.nil => rfl
   | n + 1, f, h, DVec.cons x xs =>
     by
-    simp only [DVec.map, DVec.quotient_lift, Quotient.lift_mk]
+    simp only [DVec.map, DVec.quotientLift, Quotient.lift_mk]
     exact
       quotient_beta (fun xs' => f (DVec.cons x xs'))
         (fun hxs => h (DVecRel.rcons (Setoid.refl x) hxs)) xs
@@ -563,7 +609,6 @@ open _root_.Set
 theorem disjoint_iff_eq_empty {α} {s t : Set α} : Disjoint s t ↔ s ∩ t = ∅ := by
   rw [Set.disjoint_iff_inter_eq_empty]
 
-@[simp]
 theorem not_nonempty_iff {α} {s : Set α} : ¬Nonempty s ↔ s = ∅ := by
   rw [Set.nonempty_coe_sort, Set.not_nonempty_iff_eq_empty]
 
@@ -580,7 +625,6 @@ theorem neq_neg_of_nonempty {α : Type*} {P : Set α} (H_nonempty : Nonempty α)
     rw [← H_eq] at this
     exact HP this
 
-@[simp]
 theorem subset_biInter_iff {α β} {s : Set α} {t : Set β} {u : α → Set β} :
     t ⊆ ⋂ x ∈ s, u x ↔ ∀ x ∈ s, t ⊆ u x :=
   Set.subset_iInter₂_iff
@@ -619,8 +663,11 @@ namespace Classical
 
 open _root_.Classical
 
+/-- Flypitch construction `psigma_of_exists`, retained by the first-order soundness and
+completeness development.
+-/
 @[expose]
-noncomputable def psigma_of_exists {α : Type u} {p : α → Prop} (h : ∃ x, p x) :
+noncomputable def psigmaOfExists {α : Type u} {p : α → Prop} (h : ∃ x, p x) :
     Σ' x, p x :=
   ⟨Classical.choose h, Classical.choose_spec h⟩
 
@@ -647,6 +694,9 @@ namespace List
 
 open _root_.List
 
+/-- Flypitch construction `toSet`, retained by the first-order soundness and completeness
+development.
+-/
 @[simp, expose]
 protected def toSet {α : Type u} (l : List α) : Set α :=
   {x | x ∈ l}
@@ -721,7 +771,6 @@ theorem inter_sUnion_ne_empty_of_exists_mem {b : Set α} {𝓕 : Set (Set α)}
   obtain ⟨x, hx1, hx2⟩ := h
   exact ⟨x, hx1, Set.mem_sUnion.mpr ⟨f, hf, hx2⟩⟩
 
-@[simp]
 theorem mem_image_univ {f : α → β} {x} : f x ∈ f '' Set.univ :=
   ⟨x, Set.mem_univ x, rfl⟩
 
@@ -745,6 +794,9 @@ theorem subset_union2_left {s t u : Set α} : s ⊆ s ∪ t ∪ u :=
 theorem subset_union2_middle {s t u : Set α} : t ⊆ s ∪ t ∪ u :=
   Set.subset_union_right.trans Set.subset_union_left
 
+/-- Flypitch construction `change`, retained by the first-order soundness and completeness
+development.
+-/
 @[expose]
 def change {π : α → Type*} [DecidableEq α] (f : ∀ a, π a) {x : α} (z : π x) (y : α) :
     π y :=
@@ -807,52 +859,73 @@ def Arity' (α β : Type u) : ℕ → Type u
 
 namespace Arity'
 
+/-- Flypitch construction `arity'_constant`, retained by the first-order soundness and
+completeness development.
+-/
 @[expose]
-def arity'_constant {α β : Type u} : ∀ {n : ℕ}, β → Arity' α β n
+def arity'Constant {α β : Type u} : ∀ {n : ℕ}, β → Arity' α β n
   | 0, b => b
-  | _ + 1, b => fun _ => arity'_constant b
+  | _ + 1, b => fun _ => arity'Constant b
 
+/-- Flypitch construction `of_dvector_map`, retained by the first-order soundness and
+completeness development.
+-/
 @[simp, expose]
-def of_dvector_map {α β : Type u} : ∀ {l} (_f : DVec α l → β), Arity' α β l
+def ofDvectorMap {α β : Type u} : ∀ {l} (_f : DVec α l → β), Arity' α β l
   | 0, f => f DVec.nil
-  | _l + 1, f => fun x => of_dvector_map (fun xs => f (DVec.cons x xs))
+  | _l + 1, f => fun x => ofDvectorMap (fun xs => f (DVec.cons x xs))
 
+/-- Flypitch construction `arity'_app`, retained by the first-order soundness and completeness
+development.
+-/
 @[simp, expose]
-def arity'_app {α β : Type u} : ∀ {l}, Arity' α β l → DVec α l → β
+def arity'App {α β : Type u} : ∀ {l}, Arity' α β l → DVec α l → β
   | _, b, DVec.nil => b
-  | _, f, DVec.cons x xs => arity'_app (f x) xs
+  | _, f, DVec.cons x xs => arity'App (f x) xs
 
 @[simp]
 theorem arity'_app_zero {α β : Type u} (f : Arity' α β 0) (xs : DVec α 0) :
-    arity'_app f xs = f := by cases xs; rfl
+    arity'App f xs = f := by cases xs; rfl
 
+/-- Flypitch construction `arity'_postcompose`, retained by the first-order soundness and
+completeness development.
+-/
 @[expose]
-def arity'_postcompose {α β γ : Type u} (g : β → γ) :
+def arity'Postcompose {α β γ : Type u} (g : β → γ) :
     ∀ {n} (_f : Arity' α β n), Arity' α γ n
   | 0, b => g b
-  | _n + 1, f => fun x => arity'_postcompose g (f x)
+  | _n + 1, f => fun x => arity'Postcompose g (f x)
 
+/-- Flypitch construction `arity'_postcompose2`, retained by the first-order soundness and
+completeness development.
+-/
 @[expose]
-def arity'_postcompose2 {α β γ δ : Type u} (h : β → γ → δ) :
+def arity'Postcompose2 {α β γ δ : Type u} (h : β → γ → δ) :
     ∀ {n} (_f : Arity' α β n) (_g : Arity' α γ n), Arity' α δ n
   | 0, b, c => h b c
-  | _n + 1, f, g => fun x => arity'_postcompose2 h (f x) (g x)
+  | _n + 1, f, g => fun x => arity'Postcompose2 h (f x) (g x)
 
+/-- Flypitch construction `arity'_precompose`, retained by the first-order soundness and
+completeness development.
+-/
 @[expose]
-def arity'_precompose {α β γ : Type u} :
+def arity'Precompose {α β γ : Type u} :
     ∀ {n} (_g : Arity' β γ n) (_f : α → β), Arity' α γ n
   | 0, c, _ => c
-  | _n + 1, g, f => fun x => arity'_precompose (g (f x)) f
+  | _n + 1, g, f => fun x => arity'Precompose (g (f x)) f
 
-inductive arity'_respect_setoid {α β : Type u} [R : Setoid α] :
+/-- Flypitch construction `arity'_respect_setoid`, retained by the first-order soundness and
+completeness development.
+-/
+inductive Arity'RespectSetoid {α β : Type u} [R : Setoid α] :
     ∀ {n}, Arity' α β n → Type u
-  | r_zero (b : β) : @arity'_respect_setoid _ _ _ 0 b
+  | r_zero (b : β) : @Arity'RespectSetoid _ _ _ 0 b
   |
   r_succ (n : ℕ) (f : Arity' α β (n + 1)) (h₁ : ∀ {a a'}, a ≈ a' → f a = f a')
-    (h₂ : ∀ a, arity'_respect_setoid (f a)) : arity'_respect_setoid f
+    (h₂ : ∀ a, Arity'RespectSetoid (f a)) : Arity'RespectSetoid f
 
 instance subsingleton_arity'_respect_setoid {α β : Type u} [R : Setoid α] {n}
-    (f : Arity' α β n) : Subsingleton (arity'_respect_setoid f) :=
+    (f : Arity' α β n) : Subsingleton (Arity'RespectSetoid f) :=
   by
   constructor
   intro h h'
@@ -862,34 +935,46 @@ instance subsingleton_arity'_respect_setoid {α β : Type u} [R : Setoid α] {n}
     cases h' with
     | r_succ => congr; funext x; exact ih x _
 
+/-- Flypitch construction `for_all`, retained by the first-order soundness and completeness
+development.
+-/
 @[expose]
-def for_all {α : Type u} (P : α → Prop) : Prop :=
+def forAll {α : Type u} (P : α → Prop) : Prop :=
   ∀ x, P x
 
+/-- Flypitch construction `arity'_map2`, retained by the first-order soundness and completeness
+development.
+-/
 @[simp, expose]
-def arity'_map2 {α β : Type u} (q : (α → β) → β) (f : β → β → β) :
+def arity'Map2 {α β : Type u} (q : (α → β) → β) (f : β → β → β) :
     ∀ {n}, Arity' α β n → Arity' α β n → β
   | 0, x, y => f x y
-  | _n + 1, x, y => q (fun z => arity'_map2 q f (x z) (y z))
+  | _n + 1, x, y => q (fun z => arity'Map2 q f (x z) (y z))
 
 @[simp]
 theorem arity'_map2_refl {α : Type} {f : Prop → Prop → Prop} (r : ∀ A, f A A) :
-    ∀ {n} (x : Arity' α Prop n), arity'_map2 for_all f x x
+    ∀ {n} (x : Arity' α Prop n), arity'Map2 forAll f x x
   | 0, x => r x
   | _n + 1, x => fun y => arity'_map2_refl r (x y)
 
+/-- Flypitch construction `arity'_imp`, retained by the first-order soundness and completeness
+development.
+-/
 @[expose]
-def arity'_imp {α : Type} {n : ℕ} (f₁ f₂ : Arity' α Prop n) : Prop :=
-  arity'_map2 for_all (fun P Q => P → Q) f₁ f₂
+def arity'Imp {α : Type} {n : ℕ} (f₁ f₂ : Arity' α Prop n) : Prop :=
+  arity'Map2 forAll (fun P Q => P → Q) f₁ f₂
 
+/-- Flypitch construction `arity'_iff`, retained by the first-order soundness and completeness
+development.
+-/
 @[expose]
-def arity'_iff {α : Type} {n : ℕ} (f₁ f₂ : Arity' α Prop n) : Prop :=
-  arity'_map2 for_all Iff f₁ f₂
+def arity'Iff {α : Type} {n : ℕ} (f₁ f₂ : Arity' α Prop n) : Prop :=
+  arity'Map2 forAll Iff f₁ f₂
 
-theorem arity'_iff_refl {α : Type} {n : ℕ} (f : Arity' α Prop n) : arity'_iff f f :=
+theorem arity'_iff_refl {α : Type} {n : ℕ} (f : Arity' α Prop n) : arity'Iff f f :=
   arity'_map2_refl Iff.refl f
 
-theorem arity'_iff_rfl {α : Type} {n : ℕ} {f : Arity' α Prop n} : arity'_iff f f :=
+theorem arity'_iff_rfl {α : Type} {n : ℕ} {f : Arity' α Prop n} : arity'Iff f f :=
   arity'_iff_refl f
 
 end Arity'
@@ -897,7 +982,6 @@ end Arity'
 /-! ## Miscellaneous lemmas -/
 
 
-@[simp]
 theorem lt_irrefl' {α} [Preorder α] {Γ : α} (H_lt : Γ < Γ) : False :=
   lt_irrefl _ H_lt
 

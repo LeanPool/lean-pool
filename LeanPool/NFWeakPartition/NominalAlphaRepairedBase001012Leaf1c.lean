@@ -32,18 +32,19 @@ open NFChoice.DefinitionLeaves.AlphaFocusedFV
 open NFChoice.DirectNominalPrf
 open NFChoice.DirectNominalPrf.Nominal
 
+/-- Checked nominal proof certificate identified upstream as `nominal_df_1c`. -/
 @[expose]
-noncomputable def nominal_df_1c (x : Var) (y : Var) (dv_x_y : x ≠ y) :
+noncomputable def nominalDf1c (x : Var) (y : Var) (dv_x_y : x ≠ y) :
     Nominal.NPrf
-      (.classEq (syn_c1c) (.cab x (syn_wex y (.classEq (.cv x) (syn_csn (.cv y)))))) :=
+      (.classEq (synC1c) (.cab x (synWex y (.classEq (.cv x) (synCsn (.cv y)))))) :=
   by
-  let alpha_dummy_000 : Var := (freshVar ((∅ : Finset Var)) 0)
-  let alpha_dummy_001 : Var := (freshVar ((∅ : Finset Var)) 1)
-  let alpha_dummy_002 : Var := (freshVar (((Class.cv alpha_dummy_001)).fv) 0)
-  let alpha_dummy_003 : Var := (freshVar (((Class.cv y)).fv) 0)
-  have support_part_0000 : alpha_dummy_001 ∈ (((Class.cv alpha_dummy_001)).fv) := by
+  let alphaDummy000 : Var := (freshVar ((∅ : Finset Var)) 0)
+  let alphaDummy001 : Var := (freshVar ((∅ : Finset Var)) 1)
+  let alphaDummy002 : Var := (freshVar (((Class.cv alphaDummy001)).fv) 0)
+  let alphaDummy003 : Var := (freshVar (((Class.cv y)).fv) 0)
+  have support_part_0000 : alphaDummy001 ∈ (((Class.cv alphaDummy001)).fv) := by
     simp only [Finset.mem_singleton, fv_class_cv, eq_self]
-  have support_mem_0000 : alpha_dummy_001 ∈ (((Class.cv alpha_dummy_001)).fv) := by
+  have support_mem_0000 : alphaDummy001 ∈ (((Class.cv alphaDummy001)).fv) := by
     exact support_part_0000
   have support_part_0001 : y ∈ (((Class.cv y)).fv) := by
     simp only [Finset.mem_singleton, fv_class_cv, eq_self]

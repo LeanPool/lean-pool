@@ -27,7 +27,7 @@ extensionally; no representative set for a nested class term is postulated.
 
 /-- The literal trial's ax-ext sentence realizes exactly structure extensionality. -/
 theorem extensional_iff_literal_axExt (S : Fol.Structure LNF) :
-    Extensional S ↔ Fol.realize_sentence S (literalAxiomFormula .axExt) := by
+    Extensional S ↔ Fol.realizeSentence S (literalAxiomFormula .axExt) := by
   simpa [literalAxiomFormula, literalAxiomSyntax, literalAxExt, axiomFormula, axiomSyntax,
     axExt] using extensional_iff_foundation_axExt S
 

@@ -39,7 +39,7 @@ Metamath before substitution.
 
 
 theorem source_ax_nin {S : Fol.Structure LNF}
-    (hNF : Fol.all_realize_sentence S LiteralHailperinNF) (x y z w : Var) (_hxy : x ≠ y)
+    (hNF : Fol.allRealizeSentence S LiteralHailperinNF) (x y z w : Var) (_hxy : x ≠ y)
     (_hxz : x ≠ z) (_hxw : x ≠ w) (_hyz : y ≠ z) (_hyw : y ≠ w) (_hzw : z ≠ w) (p : Wff)
     (hcover : p.fv ⊆ [x, y].toFinset)
     (hlower : lowerClosed (closeNames [x, y] p) = some literalAxNin) : Wff.Valid S p :=
@@ -48,7 +48,7 @@ theorem source_ax_nin {S : Fol.Structure LNF}
   simpa [literalAxiomSyntax] using hlower
 
 theorem source_ax_xp {S : Fol.Structure LNF}
-    (hNF : Fol.all_realize_sentence S LiteralHailperinNF) (x y z w t : Var) (_hxy : x ≠ y)
+    (hNF : Fol.allRealizeSentence S LiteralHailperinNF) (x y z w t : Var) (_hxy : x ≠ y)
     (_hxz : x ≠ z) (_hxw : x ≠ w) (_hxt : x ≠ t) (_hyz : y ≠ z) (_hyw : y ≠ w)
     (_hyt : y ≠ t) (_hzw : z ≠ w) (_hzt : z ≠ t) (_hwt : w ≠ t) (p : Wff)
     (hcover : p.fv ⊆ [x].toFinset)
@@ -58,7 +58,7 @@ theorem source_ax_xp {S : Fol.Structure LNF}
   simpa [literalAxiomSyntax] using hlower
 
 theorem source_ax_cnv {S : Fol.Structure LNF}
-    (hNF : Fol.all_realize_sentence S LiteralHailperinNF) (x y z w : Var) (_hxy : x ≠ y)
+    (hNF : Fol.allRealizeSentence S LiteralHailperinNF) (x y z w : Var) (_hxy : x ≠ y)
     (_hxz : x ≠ z) (_hxw : x ≠ w) (_hyz : y ≠ z) (_hyw : y ≠ w) (_hzw : z ≠ w) (p : Wff)
     (hcover : p.fv ⊆ [x].toFinset)
     (hlower : lowerClosed (closeNames [x] p) = some literalAxCnv) : Wff.Valid S p :=
@@ -67,7 +67,7 @@ theorem source_ax_cnv {S : Fol.Structure LNF}
   simpa [literalAxiomSyntax] using hlower
 
 theorem source_ax_1c {S : Fol.Structure LNF}
-    (hNF : Fol.all_realize_sentence S LiteralHailperinNF) (x y z w : Var) (_hxy : x ≠ y)
+    (hNF : Fol.allRealizeSentence S LiteralHailperinNF) (x y z w : Var) (_hxy : x ≠ y)
     (_hxz : x ≠ z) (_hxw : x ≠ w) (_hyz : y ≠ z) (_hyw : y ≠ w) (_hzw : z ≠ w) (p : Wff)
     (hcover : p.fv ⊆ ([] : List Var).toFinset)
     (hlower : lowerClosed (closeNames [] p) = some literalAx1c) : Wff.Valid S p :=
@@ -76,7 +76,7 @@ theorem source_ax_1c {S : Fol.Structure LNF}
   simpa [literalAxiomSyntax] using hlower
 
 theorem source_ax_sset {S : Fol.Structure LNF}
-    (hNF : Fol.all_realize_sentence S LiteralHailperinNF) (x y z w : Var) (_hxy : x ≠ y)
+    (hNF : Fol.allRealizeSentence S LiteralHailperinNF) (x y z w : Var) (_hxy : x ≠ y)
     (_hxz : x ≠ z) (_hxw : x ≠ w) (_hyz : y ≠ z) (_hyw : y ≠ w) (_hzw : z ≠ w) (p : Wff)
     (hcover : p.fv ⊆ ([] : List Var).toFinset)
     (hlower : lowerClosed (closeNames [] p) = some literalAxSset) : Wff.Valid S p :=
@@ -85,7 +85,7 @@ theorem source_ax_sset {S : Fol.Structure LNF}
   simpa [literalAxiomSyntax] using hlower
 
 theorem source_ax_si {S : Fol.Structure LNF}
-    (hNF : Fol.all_realize_sentence S LiteralHailperinNF) (x y z w : Var) (_hxy : x ≠ y)
+    (hNF : Fol.allRealizeSentence S LiteralHailperinNF) (x y z w : Var) (_hxy : x ≠ y)
     (_hxz : x ≠ z) (_hxw : x ≠ w) (_hyz : y ≠ z) (_hyw : y ≠ w) (_hzw : z ≠ w) (p : Wff)
     (hcover : p.fv ⊆ [x].toFinset)
     (hlower : lowerClosed (closeNames [x] p) = some literalAxSi) : Wff.Valid S p :=
@@ -94,7 +94,7 @@ theorem source_ax_si {S : Fol.Structure LNF}
   simpa [literalAxiomSyntax] using hlower
 
 theorem source_ax_ins2 {S : Fol.Structure LNF}
-    (hNF : Fol.all_realize_sentence S LiteralHailperinNF) (x y z w t : Var) (_hxy : x ≠ y)
+    (hNF : Fol.allRealizeSentence S LiteralHailperinNF) (x y z w t : Var) (_hxy : x ≠ y)
     (_hxz : x ≠ z) (_hxw : x ≠ w) (_hxt : x ≠ t) (_hyz : y ≠ z) (_hyw : y ≠ w)
     (_hyt : y ≠ t) (_hzw : z ≠ w) (_hzt : z ≠ t) (_hwt : w ≠ t) (p : Wff)
     (hcover : p.fv ⊆ [x].toFinset)
@@ -104,7 +104,7 @@ theorem source_ax_ins2 {S : Fol.Structure LNF}
   simpa [literalAxiomSyntax] using hlower
 
 theorem source_ax_ins3 {S : Fol.Structure LNF}
-    (hNF : Fol.all_realize_sentence S LiteralHailperinNF) (x y z w t : Var) (_hxy : x ≠ y)
+    (hNF : Fol.allRealizeSentence S LiteralHailperinNF) (x y z w t : Var) (_hxy : x ≠ y)
     (_hxz : x ≠ z) (_hxw : x ≠ w) (_hxt : x ≠ t) (_hyz : y ≠ z) (_hyw : y ≠ w)
     (_hyt : y ≠ t) (_hzw : z ≠ w) (_hzt : z ≠ t) (_hwt : w ≠ t) (p : Wff)
     (hcover : p.fv ⊆ [x].toFinset)
@@ -114,7 +114,7 @@ theorem source_ax_ins3 {S : Fol.Structure LNF}
   simpa [literalAxiomSyntax] using hlower
 
 theorem source_ax_typlower {S : Fol.Structure LNF}
-    (hNF : Fol.all_realize_sentence S LiteralHailperinNF) (x y z w : Var) (_hxy : x ≠ y)
+    (hNF : Fol.allRealizeSentence S LiteralHailperinNF) (x y z w : Var) (_hxy : x ≠ y)
     (_hxz : x ≠ z) (_hxw : x ≠ w) (_hyz : y ≠ z) (_hyw : y ≠ w) (_hzw : z ≠ w) (p : Wff)
     (hcover : p.fv ⊆ [x].toFinset)
     (hlower : lowerClosed (closeNames [x] p) = some literalAxTypeLower) : Wff.Valid S p :=
@@ -123,7 +123,7 @@ theorem source_ax_typlower {S : Fol.Structure LNF}
   simpa [literalAxiomSyntax] using hlower
 
 theorem source_ax_sn {S : Fol.Structure LNF}
-    (hNF : Fol.all_realize_sentence S LiteralHailperinNF) (x y z : Var) (_hxy : x ≠ y)
+    (hNF : Fol.allRealizeSentence S LiteralHailperinNF) (x y z : Var) (_hxy : x ≠ y)
     (_hxz : x ≠ z) (_hyz : y ≠ z) (p : Wff) (hcover : p.fv ⊆ [x].toFinset)
     (hlower : lowerClosed (closeNames [x] p) = some literalAxSn) : Wff.Valid S p :=
   by

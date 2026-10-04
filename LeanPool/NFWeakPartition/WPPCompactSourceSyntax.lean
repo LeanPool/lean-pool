@@ -22,715 +22,858 @@ open NFChoice.ReplaySupport
 /-! Compact constructors added by the repaired WPP endpoint. -/
 
 
+/-- Compact nominal syntax for the upstream `wiso` operator. -/
 @[expose]
-def syn_wiso (H : Class) (R : Class) (S : Class) (A : Class) (B : Class) : Wff :=
+def synWiso (H : Class) (R : Class) (S : Class) (A : Class) (B : Class) : Wff :=
   let x : Var := freshVar ((H).fv ∪ (R).fv ∪ (S).fv ∪ (A).fv ∪ (B).fv) 0
   let y : Var := freshVar ((H).fv ∪ (R).fv ∪ (S).fv ∪ (A).fv ∪ (B).fv) 1
-  (syn_wa (syn_wf1o H A B) (syn_wral x A (syn_wral y A (syn_wb (syn_wbr (.cv x) R (.cv y))
-          (syn_wbr (syn_cfv H (.cv x)) S (syn_cfv H (.cv y)))))))
+  (synWa (synWf1o H A B) (synWral x A (synWral y A (synWb (synWbr (.cv x) R (.cv y))
+          (synWbr (synCfv H (.cv x)) S (synCfv H (.cv y)))))))
 
+/-- Compact nominal syntax for the upstream `cpprod` operator. -/
 @[expose]
-def syn_cpprod (A : Class) (B : Class) : Class :=
-  (syn_ctxp (syn_ccom A (syn_c1st)) (syn_ccom B (syn_c2nd)))
+def synCpprod (A : Class) (B : Class) : Class :=
+  (synCtxp (synCcom A (synC1st)) (synCcom B (synC2nd)))
 
+/-- Compact nominal syntax for the upstream `ccross` operator. -/
 @[expose]
-def syn_ccross : Class :=
+def synCcross : Class :=
   let x : Var := freshVar ((∅ : Finset Var)) 0
   let y : Var := freshVar ((∅ : Finset Var)) 1
-  (syn_cmpt2 x (syn_cvv) y (syn_cvv) (syn_cxp (.cv x) (.cv y)))
+  (synCmpt2 x (synCvv) y (synCvv) (synCxp (.cv x) (.cv y)))
 
+/-- Compact nominal syntax for the upstream `cdomfn` operator. -/
 @[expose]
-def syn_cdomfn : Class :=
+def synCdomfn : Class :=
   let x : Var := freshVar ((∅ : Finset Var)) 0
-  (syn_cmpt x (syn_cvv) (syn_cdm (.cv x)))
+  (synCmpt x (synCvv) (synCdm (.cv x)))
 
+/-- Compact nominal syntax for the upstream `cranfn` operator. -/
 @[expose]
-def syn_cranfn : Class :=
+def synCranfn : Class :=
   let x : Var := freshVar ((∅ : Finset Var)) 0
-  (syn_cmpt x (syn_cvv) (syn_crn (.cv x)))
+  (synCmpt x (synCvv) (synCrn (.cv x)))
 
+/-- Compact nominal syntax for the upstream `cmuc` operator. -/
 @[expose]
-def syn_cmuc : Class :=
+def synCmuc : Class :=
   let a : Var := freshVar ((∅ : Finset Var)) 0
   let b : Var := freshVar ((∅ : Finset Var)) 1
   let g : Var := freshVar ((∅ : Finset Var)) 2
   let m : Var := freshVar ((∅ : Finset Var)) 3
   let n : Var := freshVar ((∅ : Finset Var)) 4
-  (syn_cmpt2 m (syn_cncs) n (syn_cncs) (.cab a (syn_wrex b (.cv m)
-        (syn_wrex g (.cv n) (syn_wbr (.cv a) (syn_cen) (syn_cxp (.cv b) (.cv g)))))))
+  (synCmpt2 m (synCncs) n (synCncs) (.cab a (synWrex b (.cv m)
+        (synWrex g (.cv n) (synWbr (.cv a) (synCen) (synCxp (.cv b) (.cv g)))))))
 
+/-- Compact nominal syntax for the upstream `cfrec` operator. -/
 @[expose]
-def syn_cfrec (F : Class) (I : Class) : Class :=
+def synCfrec (F : Class) (I : Class) : Class :=
   let x : Var := freshVar ((F).fv ∪ (I).fv) 0
-  (syn_cclos1 (syn_csn (syn_cop (syn_c0c) I))
-    (syn_cpprod (syn_cmpt x (syn_cvv) (syn_cplc (.cv x) (syn_c1c))) F))
+  (synCclos1 (synCsn (synCop (synC0c) I))
+    (synCpprod (synCmpt x (synCvv) (synCplc (.cv x) (synC1c))) F))
 
+/-- Compact nominal syntax for the upstream `wwpp` operator. -/
 @[expose]
-def syn_wwpp : Wff :=
+def synWwpp : Wff :=
   let f : Var := freshVar ((∅ : Finset Var)) 0
   let g : Var := freshVar ((∅ : Finset Var)) 1
   let h : Var := freshVar ((∅ : Finset Var)) 2
   let x : Var := freshVar ((∅ : Finset Var)) 3
   let y : Var := freshVar ((∅ : Finset Var)) 4
-  (.all x (.all y (.imp (syn_wa (syn_wex f (syn_wfo (.cv f) (.cv y) (.cv x)))
-          (syn_wex g (syn_wf1 (.cv g) (.cv y) (.cv x))))
-        (syn_wex h (syn_wf1 (.cv h) (.cv x) (.cv y))))))
+  (.all x (.all y (.imp (synWa (synWex f (synWfo (.cv f) (.cv y) (.cv x)))
+          (synWex g (synWf1 (.cv g) (.cv y) (.cv x))))
+        (synWex h (synWf1 (.cv h) (.cv x) (.cv y))))))
 
+/-- Compact nominal syntax for the upstream `cqkrel` operator. -/
 @[expose]
-def syn_cqkrel (A : Class) : Class :=
+def synCqkrel (A : Class) : Class :=
   let x : Var := freshVar ((A).fv) 0
   let y : Var := freshVar ((A).fv) 1
   let z : Var := freshVar ((A).fv) 2
-  (.cab z (syn_wex x (syn_wex y (syn_wa (.classEq (.cv z) (syn_copk (.cv x) (.cv y)))
-          (.classMem (syn_cop (.cv x) (.cv y)) A)))))
+  (.cab z (synWex x (synWex y (synWa (.classEq (.cv z) (synCopk (.cv x) (.cv y)))
+          (.classMem (synCop (.cv x) (.cv y)) A)))))
 
+/-- Compact nominal syntax for the upstream `cfdmem` operator. -/
 @[expose]
-def syn_cfdmem : Class :=
-  (syn_ccnvk (syn_csik (syn_cssetk)))
+def synCfdmem : Class :=
+  (synCcnvk (synCsik (synCssetk)))
 
+/-- Compact nominal syntax for the upstream `cfdprj0` operator. -/
 @[expose]
-def syn_cfdprj0 : Class :=
-  (syn_cins3k (syn_cidk))
+def synCfdprj0 : Class :=
+  (synCins3k (synCidk))
 
+/-- Compact nominal syntax for the upstream `cfdprj1` operator. -/
 @[expose]
-def syn_cfdprj1 : Class :=
-  (syn_cins2k (syn_cidk))
+def synCfdprj1 : Class :=
+  (synCins2k (synCidk))
 
+/-- Compact nominal syntax for the upstream `cfddom` operator. -/
 @[expose]
-def syn_cfddom (A : Class) (B : Class) : Class :=
-  (syn_cxpk (syn_cpw1 A) (syn_cxpk B B))
+def synCfddom (A : Class) (B : Class) : Class :=
+  (synCxpk (synCpw1 A) (synCxpk B B))
 
+/-- Compact nominal syntax for the upstream `cfde0` operator. -/
 @[expose]
-def syn_cfde0 (A : Class) (B : Class) : Class :=
-  (syn_cin (syn_ccomk (syn_cfdprj0) (syn_cfdmem)) (syn_cfddom A B))
+def synCfde0 (A : Class) (B : Class) : Class :=
+  (synCin (synCcomk (synCfdprj0) (synCfdmem)) (synCfddom A B))
 
+/-- Compact nominal syntax for the upstream `cfde1` operator. -/
 @[expose]
-def syn_cfde1 (A : Class) (B : Class) : Class :=
-  (syn_cin (syn_ccomk (syn_cfdprj1) (syn_cfdmem)) (syn_cfddom A B))
+def synCfde1 (A : Class) (B : Class) : Class :=
+  (synCin (synCcomk (synCfdprj1) (synCfdmem)) (synCfddom A B))
 
+/-- Compact nominal syntax for the upstream `cfdsep` operator. -/
 @[expose]
-def syn_cfdsep (A : Class) (B : Class) : Class :=
-  (syn_csymdif (syn_cfde0 A B) (syn_cfde1 A B))
+def synCfdsep (A : Class) (B : Class) : Class :=
+  (synCsymdif (synCfde0 A B) (synCfde1 A B))
 
+/-- Compact nominal syntax for the upstream `cfdlift` operator. -/
 @[expose]
-def syn_cfdlift (R : Class) : Class :=
-  (syn_csik (syn_cqkrel R))
+def synCfdlift (R : Class) : Class :=
+  (synCsik (synCqkrel R))
 
+/-- Compact nominal syntax for the upstream `cfdnonmin` operator. -/
 @[expose]
-def syn_cfdnonmin (R : Class) (A : Class) (B : Class) : Class :=
-  (syn_ccomk (syn_cfdsep A B) (syn_ccnvk (syn_cfdlift (syn_cdif R (syn_cid)))))
+def synCfdnonmin (R : Class) (A : Class) (B : Class) : Class :=
+  (synCcomk (synCfdsep A B) (synCcnvk (synCfdlift (synCdif R (synCid)))))
 
+/-- Compact nominal syntax for the upstream `cfdminsep` operator. -/
 @[expose]
-def syn_cfdminsep (R : Class) (A : Class) (B : Class) : Class :=
-  (syn_cdif (syn_cfdsep A B) (syn_cfdnonmin R A B))
+def synCfdminsep (R : Class) (A : Class) (B : Class) : Class :=
+  (synCdif (synCfdsep A B) (synCfdnonmin R A B))
 
+/-- Compact nominal syntax for the upstream `csep2` operator. -/
 @[expose]
-def syn_csep2 (A : Class) (B : Class) : Class :=
+def synCsep2 (A : Class) (B : Class) : Class :=
   let z : Var := freshVar ((A).fv ∪ (B).fv) 0
-  (.cab z (syn_wo (syn_wa (.classMem A (.cv z)) (.neg (.classMem B (.cv z))))
-      (syn_wa (.classMem B (.cv z)) (.neg (.classMem A (.cv z))))))
+  (.cab z (synWo (synWa (.classMem A (.cv z)) (.neg (.classMem B (.cv z))))
+      (synWa (.classMem B (.cv z)) (.neg (.classMem A (.cv z))))))
 
+/-- Compact nominal syntax for the upstream `ckqrel` operator. -/
 @[expose]
-def syn_ckqrel (A : Class) : Class :=
+def synCkqrel (A : Class) : Class :=
   let x : Var := freshVar ((A).fv) 0
   let y : Var := freshVar ((A).fv) 1
-  (syn_copab x y (.classMem (syn_copk (.cv x) (.cv y)) A))
+  (synCopab x y (.classMem (synCopk (.cv x) (.cv y)) A))
 
+/-- Compact nominal syntax for the upstream `cfdminvalp` operator. -/
 @[expose]
-def syn_cfdminvalp (R : Class) (A : Class) (B : Class) (C : Class) : Class :=
-  (syn_cuni1 (syn_cimak (syn_ccnvk (syn_cfdminsep R A B)) (syn_csn C)))
+def synCfdminvalp (R : Class) (A : Class) (B : Class) (C : Class) : Class :=
+  (synCuni1 (synCimak (synCcnvk (synCfdminsep R A B)) (synCsn C)))
 
+/-- Compact nominal syntax for the upstream `cfdminq` operator. -/
 @[expose]
-def syn_cfdminq (R : Class) (A : Class) (B : Class) : Class :=
-  (syn_ckqrel (syn_cfdminsep R A B))
+def synCfdminq (R : Class) (A : Class) (B : Class) : Class :=
+  (synCkqrel (synCfdminsep R A B))
 
+/-- Compact nominal syntax for the upstream `cfdpivmap2` operator. -/
 @[expose]
-def syn_cfdpivmap2 (R : Class) (A : Class) (B : Class) : Class :=
+def synCfdpivmap2 (R : Class) (A : Class) (B : Class) : Class :=
   let p : Var := freshVar ((R).fv ∪ (A).fv ∪ (B).fv) 0
-  (syn_cmpt p (syn_cxpk B B) (syn_cfdminvalp R A B (.cv p)))
+  (synCmpt p (synCxpk B B) (synCfdminvalp R A B (.cv p)))
 
+/-- Compact nominal syntax for the upstream `cfdpivrange2` operator. -/
 @[expose]
-def syn_cfdpivrange2 (R : Class) (A : Class) (B : Class) : Class :=
-  (syn_crn (syn_cfdpivmap2 R A B))
+def synCfdpivrange2 (R : Class) (A : Class) (B : Class) : Class :=
+  (synCrn (synCfdpivmap2 R A B))
 
+/-- Compact nominal syntax for the upstream `cfpiv` operator. -/
 @[expose]
-def syn_cfpiv (R : Class) (A : Class) (B : Class) (C : Class) : Class :=
+def synCfpiv (R : Class) (A : Class) (B : Class) (C : Class) : Class :=
   let b : Var := freshVar ((R).fv ∪ (A).fv ∪ (B).fv ∪ (C).fv) 0
   let c : Var := freshVar ((R).fv ∪ (A).fv ∪ (B).fv ∪ (C).fv) 1
-  (syn_crab b A (syn_wa (.classMem (.cv b) (syn_csep2 B C)) (syn_wral c A
-        (.imp (.classMem (.cv c) (syn_csep2 B C)) (syn_wbr (.cv b) R (.cv c))))))
+  (synCrab b A (synWa (.classMem (.cv b) (synCsep2 B C)) (synWral c A
+        (.imp (.classMem (.cv c) (synCsep2 B C)) (synWbr (.cv b) R (.cv c))))))
 
+/-- Compact nominal syntax for the upstream `cfdif` operator. -/
 @[expose]
-def syn_cfdif (R : Class) (A : Class) (B : Class) : Class :=
+def synCfdif (R : Class) (A : Class) (B : Class) : Class :=
   let d : Var := freshVar ((R).fv ∪ (A).fv ∪ (B).fv) 0
   let x : Var := freshVar ((R).fv ∪ (A).fv ∪ (B).fv) 1
   let y : Var := freshVar ((R).fv ∪ (A).fv ∪ (B).fv) 2
-  (syn_crab d A
-    (syn_wrex x B (syn_wrex y B (.classMem (.cv d) (syn_cfpiv R A (.cv x) (.cv y))))))
+  (synCrab d A
+    (synWrex x B (synWrex y B (.classMem (.cv d) (synCfpiv R A (.cv x) (.cv y))))))
 
+/-- Compact nominal syntax for the upstream `cfdrow` operator. -/
 @[expose]
-def syn_cfdrow (R : Class) (A : Class) (B : Class) (C : Class) : Class :=
+def synCfdrow (R : Class) (A : Class) (B : Class) (C : Class) : Class :=
   let d : Var := freshVar ((R).fv ∪ (A).fv ∪ (B).fv ∪ (C).fv) 0
-  (syn_crab d (syn_cfdif R A B) (.classMem C (.cv d)))
+  (synCrab d (synCfdif R A B) (.classMem C (.cv d)))
 
+/-- Compact nominal syntax for the upstream `cfdcode` operator. -/
 @[expose]
-def syn_cfdcode (R : Class) (A : Class) (B : Class) (C : Class) : Class :=
+def synCfdcode (R : Class) (A : Class) (B : Class) (C : Class) : Class :=
   let q : Var := freshVar ((R).fv ∪ (A).fv ∪ (B).fv ∪ (C).fv) 0
   let x : Var := freshVar ((R).fv ∪ (A).fv ∪ (B).fv ∪ (C).fv) 1
-  (.cab q (syn_wrex x C (.classEq (.cv q) (syn_cfdrow R A B (.cv x)))))
+  (.cab q (synWrex x C (.classEq (.cv q) (synCfdrow R A B (.cv x)))))
 
+/-- Compact nominal syntax for the upstream `cfdrowrel` operator. -/
 @[expose]
-def syn_cfdrowrel (R : Class) (A : Class) (B : Class) : Class :=
-  (syn_cres (syn_ckqrel (syn_cfdmem)) (syn_cpw1 (syn_cfdif R A B)))
+def synCfdrowrel (R : Class) (A : Class) (B : Class) : Class :=
+  (synCres (synCkqrel (synCfdmem)) (synCpw1 (synCfdif R A B)))
 
+/-- Compact nominal syntax for the upstream `cfdrowfib` operator. -/
 @[expose]
-def syn_cfdrowfib (R : Class) (A : Class) (B : Class) (C : Class) : Class :=
+def synCfdrowfib (R : Class) (A : Class) (B : Class) (C : Class) : Class :=
   let d : Var := freshVar ((R).fv ∪ (A).fv ∪ (B).fv ∪ (C).fv) 0
-  (.cab d (.classMem (syn_cop (syn_csn (.cv d)) C) (syn_cfdrowrel R A B)))
+  (.cab d (.classMem (synCop (synCsn (.cv d)) C) (synCfdrowrel R A B)))
 
+/-- Compact nominal syntax for the upstream `cfdcodemap2` operator. -/
 @[expose]
-def syn_cfdcodemap2 (R : Class) (A : Class) (B : Class) (C : Class) : Class :=
+def synCfdcodemap2 (R : Class) (A : Class) (B : Class) (C : Class) : Class :=
   let u : Var := freshVar ((R).fv ∪ (A).fv ∪ (B).fv ∪ (C).fv) 0
-  (syn_cmpt u (syn_cpw1 (syn_cpw1 C)) (syn_cfdrowfib R A B (.cv u)))
+  (synCmpt u (synCpw1 (synCpw1 C)) (synCfdrowfib R A B (.cv u)))
 
+/-- Compact nominal syntax for the upstream `cfdpointrel` operator. -/
 @[expose]
-def syn_cfdpointrel (A : Class) : Class :=
-  (syn_cin (syn_ckqrel (syn_cfdmem)) (syn_cxp (syn_cvv) (syn_cpw1 (syn_cpw1 (syn_cuni A)))))
+def synCfdpointrel (A : Class) : Class :=
+  (synCin (synCkqrel (synCfdmem)) (synCxp (synCvv) (synCpw1 (synCpw1 (synCuni A)))))
 
+/-- Compact nominal syntax for the upstream `cfdglobalrowmap` operator. -/
 @[expose]
-def syn_cfdglobalrowmap (R : Class) (A : Class) (B : Class) : Class :=
+def synCfdglobalrowmap (R : Class) (A : Class) (B : Class) : Class :=
   let u : Var := freshVar ((R).fv ∪ (A).fv ∪ (B).fv) 0
-  (syn_cif (syn_wbr R (syn_cwe) A)
-    (syn_cmpt u (syn_cpw1 (syn_cpw1 (syn_cuni A))) (syn_cfdrowfib R A B (.cv u))) (syn_c0))
+  (synCif (synWbr R (synCwe) A)
+    (synCmpt u (synCpw1 (synCpw1 (synCuni A))) (synCfdrowfib R A B (.cv u))) (synC0))
 
+/-- Compact nominal syntax for the upstream `cfdcolcodemap` operator. -/
 @[expose]
-def syn_cfdcolcodemap (R : Class) (A : Class) (B : Class) : Class :=
-  (syn_cres (syn_ccom (syn_cimage (syn_cfdglobalrowmap R A B)) (syn_cimage (syn_cfdpointrel A)))
-    (syn_cpw1 (syn_cpw1 A)))
+def synCfdcolcodemap (R : Class) (A : Class) (B : Class) : Class :=
+  (synCres (synCcom (synCimage (synCfdglobalrowmap R A B)) (synCimage (synCfdpointrel A)))
+    (synCpw1 (synCpw1 A)))
 
+/-- Compact nominal syntax for the upstream `chwcodes` operator. -/
 @[expose]
-def syn_chwcodes (A : Class) : Class :=
-  (syn_cin (syn_cwe) (syn_cxp (syn_cvv) (syn_cpw A)))
+def synChwcodes (A : Class) : Class :=
+  (synCin (synCwe) (synCxp (synCvv) (synCpw A)))
 
+/-- Compact nominal syntax for the upstream `chwiso` operator. -/
 @[expose]
-def syn_chwiso (A : Class) : Class :=
+def synChwiso (A : Class) : Class :=
   let h : Var := freshVar ((A).fv) 0
   let u : Var := freshVar ((A).fv) 1
   let v : Var := freshVar ((A).fv) 2
-  (syn_copab u v (syn_wa
-      (syn_wa (.classMem (.cv u) (syn_chwcodes A)) (.classMem (.cv v) (syn_chwcodes A)))
-      (syn_wex h (syn_wiso (.cv h) (syn_cfv (syn_c1st) (.cv u)) (syn_cfv (syn_c1st) (.cv v))
-          (syn_cfv (syn_c2nd) (.cv u)) (syn_cfv (syn_c2nd) (.cv v))))))
+  (synCopab u v (synWa
+      (synWa (.classMem (.cv u) (synChwcodes A)) (.classMem (.cv v) (synChwcodes A)))
+      (synWex h (synWiso (.cv h) (synCfv (synC1st) (.cv u)) (synCfv (synC1st) (.cv v))
+          (synCfv (synC2nd) (.cv u)) (synCfv (synC2nd) (.cv v))))))
 
+/-- Compact nominal syntax for the upstream `chwrels` operator. -/
 @[expose]
-def syn_chwrels : Class :=
-  (syn_cima (syn_ccnv
-      (syn_ctxp (syn_c1st) (syn_ccom (syn_ccross) (syn_ctxp (syn_c2nd) (syn_c2nd)))))
-    (syn_csset))
+def synChwrels : Class :=
+  (synCima (synCcnv
+      (synCtxp (synC1st) (synCcom (synCcross) (synCtxp (synC2nd) (synC2nd)))))
+    (synCsset))
 
+/-- Compact nominal syntax for the upstream `chwbij` operator. -/
 @[expose]
-def syn_chwbij : Class :=
-  (syn_cin (syn_cfuns) (syn_cima (syn_ccnv (syn_cimage (syn_cswap))) (syn_cfuns)))
+def synChwbij : Class :=
+  (synCin (synCfuns) (synCima (synCcnv (synCimage (synCswap))) (synCfuns)))
 
+/-- Compact nominal syntax for the upstream `chwtrn` operator. -/
 @[expose]
-def syn_chwtrn : Class :=
-  (syn_ccom (syn_ccompose) (syn_ctxp (syn_ccom (syn_ccompose) (syn_ctxp (syn_c1st) (syn_c2nd)))
-      (syn_ccom (syn_cimage (syn_cswap)) (syn_c1st))))
+def synChwtrn : Class :=
+  (synCcom (synCcompose) (synCtxp (synCcom (synCcompose) (synCtxp (synC1st) (synC2nd)))
+      (synCcom (synCimage (synCswap)) (synC1st))))
 
+/-- Compact nominal syntax for the upstream `chwgen` operator. -/
 @[expose]
-def syn_chwgen : Class :=
-  (syn_ctxp (syn_ctxp (syn_c2nd) (syn_ccom (syn_cdomfn) (syn_c1st)))
-    (syn_ctxp (syn_chwtrn) (syn_ccom (syn_cranfn) (syn_c1st))))
+def synChwgen : Class :=
+  (synCtxp (synCtxp (synC2nd) (synCcom (synCdomfn) (synC1st)))
+    (synCtxp (synChwtrn) (synCcom (synCranfn) (synC1st))))
 
+/-- Compact nominal syntax for the upstream `chwcn` operator. -/
 @[expose]
-def syn_chwcn (A : Class) : Class :=
-  (syn_cin (syn_chwcodes A) (syn_chwrels))
+def synChwcn (A : Class) : Class :=
+  (synCin (synChwcodes A) (synChwrels))
 
+/-- Compact nominal syntax for the upstream `chwniso` operator. -/
 @[expose]
-def syn_chwniso (A : Class) : Class :=
-  (syn_cin (syn_cima (syn_chwgen) (syn_cxp (syn_chwbij) (syn_cvv)))
-    (syn_cxp (syn_chwcn A) (syn_chwcn A)))
+def synChwniso (A : Class) : Class :=
+  (synCin (synCima (synChwgen) (synCxp (synChwbij) (synCvv)))
+    (synCxp (synChwcn A) (synChwcn A)))
 
+/-- Compact nominal syntax for the upstream `chnord` operator. -/
 @[expose]
-def syn_chnord (A : Class) : Class :=
-  (syn_cqs (syn_chwcn A) (syn_chwniso A))
+def synChnord (A : Class) : Class :=
+  (synCqs (synChwcn A) (synChwniso A))
 
+/-- Compact nominal syntax for the upstream `chncard` operator. -/
 @[expose]
-def syn_chncard (A : Class) : Class :=
-  (syn_cnc (syn_chnord A))
+def synChncard (A : Class) : Class :=
+  (synCnc (synChnord A))
 
+/-- Compact nominal syntax for the upstream `chwbases` operator. -/
 @[expose]
-def syn_chwbases (A : Class) : Class :=
-  (syn_cima (syn_c2nd) (syn_chwcn A))
+def synChwbases (A : Class) : Class :=
+  (synCima (synC2nd) (synChwcn A))
 
+/-- Compact nominal syntax for the upstream `chwcards` operator. -/
 @[expose]
-def syn_chwcards (A : Class) : Class :=
-  (syn_cqs (syn_chwbases A) (syn_cen))
+def synChwcards (A : Class) : Class :=
+  (synCqs (synChwbases A) (synCen))
 
+/-- Compact nominal syntax for the upstream `chnwcutcode` operator. -/
 @[expose]
-def syn_chnwcutcode (R : Class) (D : Class) (C : Class) : Class :=
-  (syn_cop (syn_cin R
-      (syn_cxp (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn C)))
-        (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn C)))))
-    (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn C))))
+def synChnwcutcode (R : Class) (D : Class) (C : Class) : Class :=
+  (synCop (synCin R
+      (synCxp (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn C)))
+        (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn C)))))
+    (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn C))))
 
+/-- Compact nominal syntax for the upstream `chnwcutmap` operator. -/
 @[expose]
-def syn_chnwcutmap (R : Class) (D : Class) : Class :=
+def synChnwcutmap (R : Class) (D : Class) : Class :=
   let p : Var := freshVar ((R).fv ∪ (D).fv) 0
-  (syn_cmpt p (syn_cpw1 (syn_cpw1 D))
-    (syn_cec (syn_chnwcutcode R D (syn_cuni (syn_cuni (.cv p)))) (syn_chwniso D)))
+  (synCmpt p (synCpw1 (synCpw1 D))
+    (synCec (synChnwcutcode R D (synCuni (synCuni (.cv p)))) (synChwniso D)))
 
+/-- Compact nominal syntax for the upstream `chnqmap1` operator. -/
 @[expose]
-def syn_chnqmap1 (A : Class) : Class :=
-  (syn_cres (syn_cimage (syn_chwniso A)) (syn_cpw1 (syn_chwcn A)))
+def synChnqmap1 (A : Class) : Class :=
+  (synCres (synCimage (synChwniso A)) (synCpw1 (synChwcn A)))
 
+/-- Compact nominal syntax for the upstream `clntp` operator. -/
 @[expose]
-def syn_clntp : Class :=
-  (syn_cin (syn_cin (syn_cref) (syn_ctrans)) (syn_cconnex))
+def synClntp : Class :=
+  (synCin (synCin (synCref) (synCtrans)) (synCconnex))
 
+/-- Compact nominal syntax for the upstream `clntpc` operator. -/
 @[expose]
-def syn_clntpc (A : Class) : Class :=
-  (syn_cin (syn_cin (syn_clntp) (syn_chwrels)) (syn_cxp (syn_cvv) (syn_csn A)))
+def synClntpc (A : Class) : Class :=
+  (synCin (synCin (synClntp) (synChwrels)) (synCxp (synCvv) (synCsn A)))
 
+/-- Compact nominal syntax for the upstream `clnker` operator. -/
 @[expose]
-def syn_clnker (R : Class) : Class :=
-  (syn_cin R (syn_ccnv R))
+def synClnker (R : Class) : Class :=
+  (synCin R (synCcnv R))
 
+/-- Compact nominal syntax for the upstream `clnquo` operator. -/
 @[expose]
-def syn_clnquo (R : Class) (A : Class) : Class :=
-  (syn_cqs A (syn_clnker R))
+def synClnquo (R : Class) (A : Class) : Class :=
+  (synCqs A (synClnker R))
 
+/-- Compact nominal syntax for the upstream `cwpphit` operator. -/
 @[expose]
-def syn_cwpphit (F : Class) (I : Class) (C : Class) : Class :=
-  (syn_cima (syn_ccnv (syn_cfrec F I)) (syn_cima (syn_clec) (syn_csn C)))
+def synCwpphit (F : Class) (I : Class) (C : Class) : Class :=
+  (synCima (synCcnv (synCfrec F I)) (synCima (synClec) (synCsn C)))
 
+/-- Compact nominal syntax for the upstream `chnwsegfn` operator. -/
 @[expose]
-def syn_chnwsegfn (R : Class) (D : Class) : Class :=
-  (syn_ccom (syn_cimage (syn_cres (syn_cid) D)) (syn_cimage (syn_ccnv (syn_cdif R (syn_cid)))))
+def synChnwsegfn (R : Class) (D : Class) : Class :=
+  (synCcom (synCimage (synCres (synCid) D)) (synCimage (synCcnv (synCdif R (synCid)))))
 
+/-- Compact nominal syntax for the upstream `chnwcodefn` operator. -/
 @[expose]
-def syn_chnwcodefn (R : Class) : Class :=
-  (syn_ctxp (syn_ccom (syn_cimage (syn_cres (syn_cid) R))
-      (syn_ccom (syn_ccross) (syn_ctxp (syn_cid) (syn_cid)))) (syn_cid))
+def synChnwcodefn (R : Class) : Class :=
+  (synCtxp (synCcom (synCimage (synCres (synCid) R))
+      (synCcom (synCcross) (synCtxp (synCid) (synCid)))) (synCid))
 
+/-- Compact nominal syntax for the upstream `chnwcutfn` operator. -/
 @[expose]
-def syn_chnwcutfn (R : Class) (D : Class) : Class :=
-  (syn_ccom (syn_chnwcodefn R) (syn_chnwsegfn R D))
+def synChnwcutfn (R : Class) (D : Class) : Class :=
+  (synCcom (synChnwcodefn R) (synChnwsegfn R D))
 
+/-- Compact nominal syntax for the upstream `chnwcutrel` operator. -/
 @[expose]
-def syn_chnwcutrel (R : Class) (D : Class) : Class :=
-  (syn_cres (syn_chnwcutfn R D) (syn_cpw1 D))
+def synChnwcutrel (R : Class) (D : Class) : Class :=
+  (synCres (synChnwcutfn R D) (synCpw1 D))
 
+/-- Compact nominal syntax for the upstream `clnqrel` operator. -/
 @[expose]
-def syn_clnqrel (R : Class) : Class :=
+def synClnqrel (R : Class) : Class :=
   let a : Var := freshVar ((R).fv) 0
   let b : Var := freshVar ((R).fv) 1
   let x : Var := freshVar ((R).fv) 2
   let y : Var := freshVar ((R).fv) 3
-  (syn_copab a b (syn_wrex x (.cv a) (syn_wrex y (.cv b) (syn_wbr (.cv x) R (.cv y)))))
+  (synCopab a b (synWrex x (.cv a) (synWrex y (.cv b) (synWbr (.cv x) R (.cv y)))))
 
+/-- Compact nominal syntax for the upstream `clnqord` operator. -/
 @[expose]
-def syn_clnqord (R : Class) (C : Class) : Class :=
-  (syn_cin (syn_clnqrel R) (syn_cxp (syn_clnquo R C) (syn_clnquo R C)))
+def synClnqord (R : Class) (C : Class) : Class :=
+  (synCin (synClnqrel R) (synCxp (synClnquo R C) (synClnquo R C)))
 
+/-- Compact nominal syntax for the upstream `clnpwc` operator. -/
 @[expose]
-def syn_clnpwc (A : Class) : Class :=
+def synClnpwc (A : Class) : Class :=
   let d : Var := freshVar ((A).fv) 0
   let r : Var := freshVar ((A).fv) 1
-  (syn_cin (syn_clntpc A)
-    (syn_copab r d (syn_wbr (syn_cdif (.cv r) (syn_ccnv (.cv r))) (syn_cfound) (.cv d))))
+  (synCin (synClntpc A)
+    (synCopab r d (synWbr (synCdif (.cv r) (synCcnv (.cv r))) (synCfound) (.cv d))))
 
+/-- Compact nominal syntax for the upstream `cfrecteq` operator. -/
 @[expose]
-def syn_cfrecteq (F : Class) (G : Class) (I : Class) : Class :=
-  (syn_cuni1 (syn_cfix (syn_ccom (syn_ccnv (syn_ccom (syn_ctcfn) (syn_csi (syn_cfrec F I))))
-        (syn_ccom (syn_cfrec G (syn_ctc I)) (syn_ctcfn)))))
+def synCfrecteq (F : Class) (G : Class) (I : Class) : Class :=
+  (synCuni1 (synCfix (synCcom (synCcnv (synCcom (synCtcfn) (synCsi (synCfrec F I))))
+        (synCcom (synCfrec G (synCtc I)) (synCtcfn)))))
 
+/-- Compact nominal syntax for the upstream `chnqinc` operator. -/
 @[expose]
-def syn_chnqinc (D : Class) (A : Class) : Class :=
-  (syn_ccom (syn_chnqmap1 A) (syn_ccnv (syn_chnqmap1 D)))
+def synChnqinc (D : Class) (A : Class) : Class :=
+  (synCcom (synChnqmap1 A) (synCcnv (synChnqmap1 D)))
 
+/-- Compact nominal syntax for the upstream `clndifop` operator. -/
 @[expose]
-def syn_clndifop : Class :=
+def synClndifop : Class :=
   let x : Var := freshVar ((∅ : Finset Var)) 0
   let y : Var := freshVar ((∅ : Finset Var)) 1
-  (syn_cmpt2 x (syn_cvv) y (syn_cvv) (syn_cdif (.cv x) (.cv y)))
+  (synCmpt2 x (synCvv) y (synCvv) (synCdif (.cv x) (.cv y)))
 
+/-- Compact nominal syntax for the upstream `clnpwasymfn` operator. -/
 @[expose]
-def syn_clnpwasymfn : Class :=
-  (syn_ccom (syn_clndifop) (syn_ctxp (syn_c1st) (syn_ccom (syn_cimage (syn_cswap)) (syn_c1st))))
+def synClnpwasymfn : Class :=
+  (synCcom (synClndifop) (synCtxp (synC1st) (synCcom (synCimage (synCswap)) (synC1st))))
 
+/-- Compact nominal syntax for the upstream `cfdord` operator. -/
 @[expose]
-def syn_cfdord (R : Class) (A : Class) (B : Class) : Class :=
-  (syn_cin R (syn_cxp (syn_cfdif R A B) (syn_cfdif R A B)))
+def synCfdord (R : Class) (A : Class) (B : Class) : Class :=
+  (synCin R (synCxp (synCfdif R A B) (synCfdif R A B)))
 
+/-- Compact nominal syntax for the upstream `ctcnn` operator. -/
 @[expose]
-def syn_ctcnn : Class :=
-  (syn_crn (syn_cres (syn_ctcfn) (syn_cpw1 (syn_cnnc))))
+def synCtcnn : Class :=
+  (synCrn (synCres (synCtcfn) (synCpw1 (synCnnc))))
 
+/-- Compact nominal syntax for the upstream `cpwpull` operator. -/
 @[expose]
-def syn_cpwpull (F : Class) (R : Class) : Class :=
-  (syn_ccom (syn_ccom (syn_ccnv F) R) F)
+def synCpwpull (F : Class) (R : Class) : Class :=
+  (synCcom (synCcom (synCcnv F) R) F)
 
+/-- Compact nominal syntax for the upstream `clnpwkerfn` operator. -/
 @[expose]
-def syn_clnpwkerfn : Class :=
-  (syn_ccom (syn_clndifop) (syn_ctxp (syn_c1st) (syn_clnpwasymfn)))
+def synClnpwkerfn : Class :=
+  (synCcom (synClndifop) (synCtxp (synC1st) (synClnpwasymfn)))
 
+/-- Compact nominal syntax for the upstream `clninterop` operator. -/
 @[expose]
-def syn_clninterop : Class :=
-  (syn_ccom (syn_clndifop) (syn_ctxp (syn_c1st) (syn_clndifop)))
+def synClninterop : Class :=
+  (synCcom (synClndifop) (synCtxp (synC1st) (synClndifop)))
 
+/-- Compact nominal syntax for the upstream `clnimagecrossfn` operator. -/
 @[expose]
-def syn_clnimagecrossfn : Class :=
-  (syn_ccom (syn_ccross) (syn_ctxp (syn_c2nd) (syn_cxp (syn_cvv) (syn_csn (syn_cvv)))))
+def synClnimagecrossfn : Class :=
+  (synCcom (synCcross) (synCtxp (synC2nd) (synCxp (synCvv) (synCsn (synCvv)))))
 
+/-- Compact nominal syntax for the upstream `clnimageresfn` operator. -/
 @[expose]
-def syn_clnimageresfn : Class :=
-  (syn_ccom (syn_clninterop) (syn_ctxp (syn_c1st) (syn_clnimagecrossfn)))
+def synClnimageresfn : Class :=
+  (synCcom (synClninterop) (synCtxp (synC1st) (synClnimagecrossfn)))
 
+/-- Compact nominal syntax for the upstream `clnimageop` operator. -/
 @[expose]
-def syn_clnimageop : Class :=
-  (syn_ccom (syn_cranfn) (syn_clnimageresfn))
+def synClnimageop : Class :=
+  (synCcom (synCranfn) (synClnimageresfn))
 
+/-- Compact nominal syntax for the upstream `clnpwcnvkerfn` operator. -/
 @[expose]
-def syn_clnpwcnvkerfn : Class :=
-  (syn_ccom (syn_cimage (syn_cswap)) (syn_clnpwkerfn))
+def synClnpwcnvkerfn : Class :=
+  (synCcom (synCimage (synCswap)) (synClnpwkerfn))
 
+/-- Compact nominal syntax for the upstream `clnpwclasspairfn` operator. -/
 @[expose]
-def syn_clnpwclasspairfn : Class :=
-  (syn_ctxp (syn_ccom (syn_clnpwcnvkerfn) (syn_c1st)) (syn_c2nd))
+def synClnpwclasspairfn : Class :=
+  (synCtxp (synCcom (synClnpwcnvkerfn) (synC1st)) (synC2nd))
 
+/-- Compact nominal syntax for the upstream `clnpwclassfn` operator. -/
 @[expose]
-def syn_clnpwclassfn : Class :=
-  (syn_ccom (syn_clnimageop) (syn_clnpwclasspairfn))
+def synClnpwclassfn : Class :=
+  (synCcom (synClnimageop) (synClnpwclasspairfn))
 
+/-- Compact nominal syntax for the upstream `clnpwpw1secondfn` operator. -/
 @[expose]
-def syn_clnpwpw1secondfn : Class :=
-  (syn_ccom (syn_cfullfun (syn_cpw1fn)) (syn_cimage (syn_c2nd)))
+def synClnpwpw1secondfn : Class :=
+  (synCcom (synCfullfun (synCpw1fn)) (synCimage (synC2nd)))
 
+/-- Compact nominal syntax for the upstream `clnpwquoinputfn` operator. -/
 @[expose]
-def syn_clnpwquoinputfn : Class :=
-  (syn_ccom (syn_ccross) (syn_ctxp (syn_cid) (syn_clnpwpw1secondfn)))
+def synClnpwquoinputfn : Class :=
+  (synCcom (synCcross) (synCtxp (synCid) (synClnpwpw1secondfn)))
 
+/-- Compact nominal syntax for the upstream `clnpwquofn` operator. -/
 @[expose]
-def syn_clnpwquofn : Class :=
-  (syn_ccom (syn_cimage (syn_clnpwclassfn)) (syn_clnpwquoinputfn))
+def synClnpwquofn : Class :=
+  (synCcom (synCimage (synClnpwclassfn)) (synClnpwquoinputfn))
 
+/-- Compact nominal syntax for the upstream `clnpairraisefn` operator. -/
 @[expose]
-def syn_clnpairraisefn : Class :=
-  (syn_ctxp (syn_cimage (syn_c1st)) (syn_cimage (syn_c2nd)))
+def synClnpairraisefn : Class :=
+  (synCtxp (synCimage (synC1st)) (synCimage (synC2nd)))
 
+/-- Compact nominal syntax for the upstream `clnsifn` operator. -/
 @[expose]
-def syn_clnsifn : Class :=
-  (syn_ccom (syn_cimage (syn_clnpairraisefn)) (syn_cfullfun (syn_cpw1fn)))
+def synClnsifn : Class :=
+  (synCcom (synCimage (synClnpairraisefn)) (synCfullfun (synCpw1fn)))
 
+/-- Compact nominal syntax for the upstream `clnpwsirelfn` operator. -/
 @[expose]
-def syn_clnpwsirelfn : Class :=
-  (syn_ccom (syn_clnsifn) (syn_cimage (syn_c1st)))
+def synClnpwsirelfn : Class :=
+  (synCcom (synClnsifn) (synCimage (synC1st)))
 
+/-- Compact nominal syntax for the upstream `cwppreach` operator. -/
 @[expose]
-def syn_cwppreach (F : Class) (C : Class) : Class :=
-  (syn_cuni (syn_crn (syn_cfrec (syn_cimage (syn_ccnv F)) (syn_cima (syn_clec) (syn_csn C)))))
+def synCwppreach (F : Class) (C : Class) : Class :=
+  (synCuni (synCrn (synCfrec (synCimage (synCcnv F)) (synCima (synClec) (synCsn C)))))
 
+/-- Compact nominal syntax for the upstream `cwppcand` operator. -/
 @[expose]
-def syn_cwppcand (F : Class) (C : Class) : Class :=
-  (syn_cin (syn_cin (syn_chwcards (syn_cvv)) (syn_cima (syn_ccnv (syn_clec)) (syn_csn C)))
-    (syn_cwppreach F C))
+def synCwppcand (F : Class) (C : Class) : Class :=
+  (synCin (synCin (synChwcards (synCvv)) (synCima (synCcnv (synClec)) (synCsn C)))
+    (synCwppreach F C))
 
+/-- Compact nominal syntax for the upstream `cwpppredfam` operator. -/
 @[expose]
-def syn_cwpppredfam (F : Class) (C : Class) : Class :=
-  (syn_ccom (syn_cimage (syn_ccnv
-        (syn_ccom (syn_cfrec (syn_cimage (syn_ccnv F)) (syn_cima (syn_clec) (syn_csn C)))
-          (syn_ctcfn)))) (syn_cimage (syn_csset)))
+def synCwpppredfam (F : Class) (C : Class) : Class :=
+  (synCcom (synCimage (synCcnv
+        (synCcom (synCfrec (synCimage (synCcnv F)) (synCima (synClec) (synCsn C)))
+          (synCtcfn)))) (synCimage (synCsset)))
 
+/-- Compact nominal syntax for the upstream `cwpppostcomp` operator. -/
 @[expose]
-def syn_cwpppostcomp (F : Class) : Class :=
-  (syn_ccom (syn_ccompose) (syn_ctxp (syn_cxp (syn_cvv) (syn_csn F)) (syn_cid)))
+def synCwpppostcomp (F : Class) : Class :=
+  (synCcom (synCcompose) (synCtxp (synCxp (synCvv) (synCsn F)) (synCid)))
 
+/-- Compact nominal syntax for the upstream `cwppupperpreop` operator. -/
 @[expose]
-def syn_cwppupperpreop (C : Class) : Class :=
-  (syn_ccom (syn_clnimageop) (syn_ctxp (syn_cimage (syn_cswap))
-      (syn_cxp (syn_cvv) (syn_csn (syn_cima (syn_clec) (syn_csn C))))))
+def synCwppupperpreop (C : Class) : Class :=
+  (synCcom (synClnimageop) (synCtxp (synCimage (synCswap))
+      (synCxp (synCvv) (synCsn (synCima (synClec) (synCsn C))))))
 
+/-- Compact nominal syntax for the upstream `cwpppowlayerseq` operator. -/
 @[expose]
-def syn_cwpppowlayerseq (F : Class) (C : Class) : Class :=
-  (syn_ccom (syn_cwppupperpreop C)
-    (syn_ccom (syn_cfrec (syn_cwpppostcomp F) (syn_cid)) (syn_ctcfn)))
+def synCwpppowlayerseq (F : Class) (C : Class) : Class :=
+  (synCcom (synCwppupperpreop C)
+    (synCcom (synCfrec (synCwpppostcomp F) (synCid)) (synCtcfn)))
 
+/-- Compact nominal syntax for the upstream `cwpphitfam` operator. -/
 @[expose]
-def syn_cwpphitfam (F : Class) (C : Class) : Class :=
-  (syn_ccom (syn_cimage (syn_ccnv (syn_cwpppowlayerseq F C))) (syn_cimage (syn_csset)))
+def synCwpphitfam (F : Class) (C : Class) : Class :=
+  (synCcom (synCimage (synCcnv (synCwpppowlayerseq F C))) (synCimage (synCsset)))
 
+/-- Compact nominal syntax for the upstream `cwpppredmemrel` operator. -/
 @[expose]
-def syn_cwpppredmemrel (F : Class) (C : Class) : Class :=
-  (syn_ccom (syn_ccnv (syn_csset)) (syn_cwpppredfam F C))
+def synCwpppredmemrel (F : Class) (C : Class) : Class :=
+  (synCcom (synCcnv (synCsset)) (synCwpppredfam F C))
 
+/-- Compact nominal syntax for the upstream `cwpphitmemrel` operator. -/
 @[expose]
-def syn_cwpphitmemrel (F : Class) (C : Class) : Class :=
-  (syn_ccom (syn_ccnv (syn_csset)) (syn_cwpphitfam F C))
+def synCwpphitmemrel (F : Class) (C : Class) : Class :=
+  (synCcom (synCcnv (synCsset)) (synCwpphitfam F C))
 
+/-- Compact nominal syntax for the upstream `cwppreachincb` operator. -/
 @[expose]
-def syn_cwppreachincb (F : Class) (C : Class) : Class :=
-  (syn_cuni1 (syn_cuni1 (syn_cdif (syn_cpw1 (syn_cpw1 (syn_cnnc))) (syn_crn
-          (syn_cres (syn_csymdif (syn_cwpppredmemrel F C) (syn_cwpphitmemrel F C))
-            (syn_cpw1 (syn_cpw1 (syn_cdm F))))))))
+def synCwppreachincb (F : Class) (C : Class) : Class :=
+  (synCuni1 (synCuni1 (synCdif (synCpw1 (synCpw1 (synCnnc))) (synCrn
+          (synCres (synCsymdif (synCwpppredmemrel F C) (synCwpphitmemrel F C))
+            (synCpw1 (synCpw1 (synCdm F))))))))
 
+/-- Compact nominal syntax for the upstream `cwppimageat` operator. -/
 @[expose]
-def syn_cwppimageat (D : Class) : Class :=
-  (syn_ccom (syn_clnimageop) (syn_ctxp (syn_cid) (syn_cxp (syn_cvv) (syn_csn (syn_csn D)))))
+def synCwppimageat (D : Class) : Class :=
+  (synCcom (synClnimageop) (synCtxp (synCid) (synCxp (synCvv) (synCsn (synCsn D)))))
 
+/-- Compact nominal syntax for the upstream `cwpppowateq` operator. -/
 @[expose]
-def syn_cwpppowateq (F : Class) (D : Class) : Class :=
-  (syn_cuni1 (syn_cfix (syn_ccom (syn_ccnv (syn_ccom (syn_cwppimageat D)
-            (syn_ccom (syn_cfrec (syn_cwpppostcomp F) (syn_cid)) (syn_ctcfn))))
-        (syn_csi (syn_cfrec F D)))))
+def synCwpppowateq (F : Class) (D : Class) : Class :=
+  (synCuni1 (synCfix (synCcom (synCcnv (synCcom (synCwppimageat D)
+            (synCcom (synCfrec (synCwpppostcomp F) (synCid)) (synCtcfn))))
+        (synCsi (synCfrec F D)))))
 
+/-- Compact nominal syntax for the upstream `cwppprecomp` operator. -/
 @[expose]
-def syn_cwppprecomp (F : Class) : Class :=
-  (syn_ccom (syn_ccompose) (syn_ctxp (syn_cid) (syn_cxp (syn_cvv) (syn_csn F))))
+def synCwppprecomp (F : Class) : Class :=
+  (synCcom (synCcompose) (synCtxp (synCid) (synCxp (synCvv) (synCsn F))))
 
+/-- Compact nominal syntax for the upstream `cwpppowcommeq` operator. -/
 @[expose]
-def syn_cwpppowcommeq (F : Class) : Class :=
-  (syn_cfix (syn_ccom
-      (syn_ccnv (syn_ccom (syn_cwppprecomp F) (syn_cfrec (syn_cwpppostcomp F) (syn_cid))))
-      (syn_ccom (syn_cwpppostcomp F) (syn_cfrec (syn_cwpppostcomp F) (syn_cid)))))
+def synCwpppowcommeq (F : Class) : Class :=
+  (synCfix (synCcom
+      (synCcnv (synCcom (synCwppprecomp F) (synCfrec (synCwpppostcomp F) (synCid))))
+      (synCcom (synCwpppostcomp F) (synCfrec (synCwpppostcomp F) (synCid)))))
 
+/-- Compact nominal syntax for the upstream `cwecutiso` operator. -/
 @[expose]
-def syn_cwecutiso (R : Class) (D : Class) (S : Class) (E : Class) : Class :=
+def synCwecutiso (R : Class) (D : Class) (S : Class) (E : Class) : Class :=
   let f : Var := freshVar ((R).fv ∪ (D).fv ∪ (S).fv ∪ (E).fv) 0
   let u : Var := freshVar ((R).fv ∪ (D).fv ∪ (S).fv ∪ (E).fv) 1
   let x : Var := freshVar ((R).fv ∪ (D).fv ∪ (S).fv ∪ (E).fv) 2
-  (.cab f (syn_wrex x D (syn_wrex u E (syn_wiso (.cv f) (syn_cin R (syn_cxp
-              (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x))))
-              (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x))))))
-          (syn_cin S (syn_cxp
-              (syn_cin E (syn_cima (syn_ccnv (syn_cdif S (syn_cid))) (syn_csn (.cv u))))
-              (syn_cin E (syn_cima (syn_ccnv (syn_cdif S (syn_cid))) (syn_csn (.cv u))))))
-          (syn_cin D (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (.cv x))))
-          (syn_cin E (syn_cima (syn_ccnv (syn_cdif S (syn_cid))) (syn_csn (.cv u))))))))
+  (.cab f (synWrex x D (synWrex u E (synWiso (.cv f) (synCin R (synCxp
+              (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x))))
+              (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x))))))
+          (synCin S (synCxp
+              (synCin E (synCima (synCcnv (synCdif S (synCid))) (synCsn (.cv u))))
+              (synCin E (synCima (synCcnv (synCdif S (synCid))) (synCsn (.cv u))))))
+          (synCin D (synCima (synCcnv (synCdif R (synCid))) (synCsn (.cv x))))
+          (synCin E (synCima (synCcnv (synCdif S (synCid))) (synCsn (.cv u))))))))
 
+/-- Compact nominal syntax for the upstream `cwecutisogen` operator. -/
 @[expose]
-def syn_cwecutisogen (R : Class) (D : Class) (S : Class) (E : Class) : Class :=
-  (syn_cdm (syn_cin (syn_cxp (syn_chwbij) (syn_cvv)) (syn_cima (syn_ccnv (syn_chwgen))
-        (syn_cxp (syn_crn (syn_chnwcutrel R D)) (syn_crn (syn_chnwcutrel S E))))))
+def synCwecutisogen (R : Class) (D : Class) (S : Class) (E : Class) : Class :=
+  (synCdm (synCin (synCxp (synChwbij) (synCvv)) (synCima (synCcnv (synChwgen))
+        (synCxp (synCrn (synChnwcutrel R D)) (synCrn (synChnwcutrel S E))))))
 
+/-- Compact nominal syntax for the upstream `cwecutcardfn` operator. -/
 @[expose]
-def syn_cwecutcardfn (R : Class) (D : Class) : Class :=
+def synCwecutcardfn (R : Class) (D : Class) : Class :=
   let q : Var := freshVar ((R).fv ∪ (D).fv) 0
-  (syn_cmpt q (syn_cpw1 (syn_cpw1 D)) (syn_cnc (syn_cin D
-        (syn_cima (syn_ccnv (syn_cdif R (syn_cid))) (syn_csn (syn_cuni (syn_cuni (.cv q))))))))
+  (synCmpt q (synCpw1 (synCpw1 D)) (synCnc (synCin D
+        (synCima (synCcnv (synCdif R (synCid))) (synCsn (synCuni (synCuni (.cv q))))))))
 
+/-- Compact nominal syntax for the upstream `cwecutcardfactor` operator. -/
 @[expose]
-def syn_cwecutcardfactor (R : Class) (D : Class) : Class :=
-  (syn_ccom (syn_cimage (syn_cen)) (syn_csi (syn_ccom (syn_c2nd) (syn_chnwcutrel R D))))
+def synCwecutcardfactor (R : Class) (D : Class) : Class :=
+  (synCcom (synCimage (synCen)) (synCsi (synCcom (synC2nd) (synChnwcutrel R D))))
 
+/-- Compact nominal syntax for the upstream `cwppgamma` operator. -/
 @[expose]
-def syn_cwppgamma (F : Class) (C : Class) : Class :=
+def synCwppgamma (F : Class) (C : Class) : Class :=
   let k : Var := freshVar ((F).fv ∪ (C).fv) 0
   let m : Var := freshVar ((F).fv ∪ (C).fv) 1
-  (syn_cio m (syn_wa (.classMem (.cv m) (syn_cwppcand F C))
-      (syn_wral k (syn_cwppcand F C) (syn_wbr (.cv m) (syn_clec) (.cv k)))))
+  (synCio m (synWa (.classMem (.cv m) (synCwppcand F C))
+      (synWral k (synCwppcand F C) (synWbr (.cv m) (synClec) (.cv k)))))
 
+/-- Compact nominal syntax for the upstream `cwppcardtfn` operator. -/
 @[expose]
-def syn_cwppcardtfn : Class :=
-  (syn_cres (syn_ctcfn) (syn_cpw1 (syn_cncs)))
+def synCwppcardtfn : Class :=
+  (synCres (synCtcfn) (synCpw1 (synCncs)))
 
+/-- Compact nominal syntax for the upstream `cwppcardt2fn` operator. -/
 @[expose]
-def syn_cwppcardt2fn : Class :=
-  (syn_ccom (syn_cwppcardtfn) (syn_csi (syn_cwppcardtfn)))
+def synCwppcardt2fn : Class :=
+  (synCcom (synCwppcardtfn) (synCsi (synCwppcardtfn)))
 
+/-- Compact nominal syntax for the upstream `chnbaseresfn` operator. -/
 @[expose]
-def syn_chnbaseresfn (F : Class) : Class :=
-  (syn_ccom (syn_clnimageresfn) (syn_ctxp (syn_cxp (syn_cvv) (syn_csn F)) (syn_c2nd)))
+def synChnbaseresfn (F : Class) : Class :=
+  (synCcom (synClnimageresfn) (synCtxp (synCxp (synCvv) (synCsn F)) (synC2nd)))
 
+/-- Compact nominal syntax for the upstream `chncodetrnfn` operator. -/
 @[expose]
-def syn_chncodetrnfn (F : Class) : Class :=
-  (syn_ccom (syn_c2nd) (syn_ccom (syn_chwgen) (syn_ctxp (syn_chnbaseresfn F) (syn_c1st))))
+def synChncodetrnfn (F : Class) : Class :=
+  (synCcom (synC2nd) (synCcom (synChwgen) (synCtxp (synChnbaseresfn F) (synC1st))))
 
+/-- Compact nominal syntax for the upstream `cwppcardt4fn` operator. -/
 @[expose]
-def syn_cwppcardt4fn : Class :=
-  (syn_ccom (syn_cwppcardt2fn) (syn_csi (syn_csi (syn_cwppcardt2fn))))
+def synCwppcardt4fn : Class :=
+  (synCcom (synCwppcardt2fn) (synCsi (synCsi (synCwppcardt2fn))))
 
+/-- Compact nominal syntax for the upstream `cwpppowsetfn` operator. -/
 @[expose]
-def syn_cwpppowsetfn : Class :=
-  (syn_cimage (syn_ccnv (syn_csset)))
+def synCwpppowsetfn : Class :=
+  (synCimage (synCcnv (synCsset)))
 
+/-- Compact nominal syntax for the upstream `cwpphwcnsetfn` operator. -/
 @[expose]
-def syn_cwpphwcnsetfn : Class :=
-  (syn_ccom (syn_cimage (syn_cswap)) (syn_ccom (syn_clnimageresfn)
-      (syn_ctxp (syn_cxp (syn_cvv) (syn_csn (syn_ccnv (syn_chwcn (syn_cvv)))))
-        (syn_cwpppowsetfn))))
+def synCwpphwcnsetfn : Class :=
+  (synCcom (synCimage (synCswap)) (synCcom (synClnimageresfn)
+      (synCtxp (synCxp (synCvv) (synCsn (synCcnv (synChwcn (synCvv)))))
+        (synCwpppowsetfn))))
 
+/-- Compact nominal syntax for the upstream `cwpphwgendomfn` operator. -/
 @[expose]
-def syn_cwpphwgendomfn : Class :=
-  (syn_ccom (syn_clnimageresfn) (syn_ctxp (syn_cxp (syn_cvv)
-        (syn_csn (syn_cima (syn_chwgen) (syn_cxp (syn_chwbij) (syn_cvv)))))
-      (syn_cwpphwcnsetfn)))
+def synCwpphwgendomfn : Class :=
+  (synCcom (synClnimageresfn) (synCtxp (synCxp (synCvv)
+        (synCsn (synCima (synChwgen) (synCxp (synChwbij) (synCvv)))))
+      (synCwpphwcnsetfn)))
 
+/-- Compact nominal syntax for the upstream `cwpphwgencnvfn` operator. -/
 @[expose]
-def syn_cwpphwgencnvfn : Class :=
-  (syn_ccom (syn_cimage (syn_cswap)) (syn_cwpphwgendomfn))
+def synCwpphwgencnvfn : Class :=
+  (synCcom (synCimage (synCswap)) (synCwpphwgendomfn))
 
+/-- Compact nominal syntax for the upstream `cwpphwnisosetfn` operator. -/
 @[expose]
-def syn_cwpphwnisosetfn : Class :=
-  (syn_ccom (syn_cimage (syn_cswap))
-    (syn_ccom (syn_clnimageresfn) (syn_ctxp (syn_cwpphwgencnvfn) (syn_cwpphwcnsetfn))))
+def synCwpphwnisosetfn : Class :=
+  (synCcom (synCimage (synCswap))
+    (synCcom (synClnimageresfn) (synCtxp (synCwpphwgencnvfn) (synCwpphwcnsetfn))))
 
+/-- Compact nominal syntax for the upstream `cwpphnpairfn` operator. -/
 @[expose]
-def syn_cwpphnpairfn : Class :=
-  (syn_ctxp (syn_cwpphwnisosetfn) (syn_cwpphwcnsetfn))
+def synCwpphnpairfn : Class :=
+  (synCtxp (synCwpphwnisosetfn) (synCwpphwcnsetfn))
 
+/-- Compact nominal syntax for the upstream `cwpphninputfn` operator. -/
 @[expose]
-def syn_cwpphninputfn : Class :=
-  (syn_csi (syn_cwpphnpairfn))
+def synCwpphninputfn : Class :=
+  (synCsi (synCwpphnpairfn))
 
+/-- Compact nominal syntax for the upstream `cwppqkrelkernel` operator. -/
 @[expose]
-def syn_cwppqkrelkernel : Class :=
-  (syn_cin (syn_cxpk (syn_cvv) (syn_cxpk (syn_cvv) (syn_cvv))) (syn_ccompl (syn_cimak
-        (syn_csymdif (syn_cins3k (syn_csik (syn_csik (syn_cssetk)))) (syn_cins2k (syn_cun
-              (syn_cins3k (syn_ccomk (syn_cssetk) (syn_csik (syn_ccnvk (syn_cimagek (syn_cun
-                          (syn_cin (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl
-                                      (syn_cimak (syn_cin (syn_cins3k (syn_cssetk))
-        (syn_cins2k (syn_cssetk))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak
-                                    (syn_csymdif (syn_cins2k (syn_cins2k (syn_cssetk)))
-                                      (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk)))
-                                        (syn_cins3k (syn_csik (syn_csik (syn_cssetk))))))
-                                    (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c)))))))
-                                (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-                            (syn_cxpk (syn_cnnc) (syn_cvv))) (syn_cin (syn_cidk)
-                            (syn_cxpk (syn_ccompl (syn_cnnc)) (syn_cvv))))))))) (syn_cins2k
-                (syn_cimak (syn_cin (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_csik (syn_ccompl
-                          (syn_cimak (syn_csymdif (syn_cins2k (syn_cssetk)) (syn_cins3k (syn_cun
-                                  (syn_ccomk (syn_ccnvk (syn_cimagek (syn_cun (syn_cin
-        (syn_cimagek (syn_cimak (syn_cdif (syn_cins3k (syn_ccompl (syn_cimak
-        (syn_cin (syn_cins3k (syn_cssetk)) (syn_cins2k (syn_cssetk)))
-        (syn_cpw1 (syn_cpw1 (syn_c1c)))))) (syn_cimak (syn_csymdif (syn_cins2k
-        (syn_cins2k (syn_cssetk))) (syn_cun (syn_cins2k (syn_cins3k (syn_cssetk))) (syn_cins3k
-        (syn_csik (syn_csik (syn_cssetk)))))) (syn_cpw1 (syn_cpw1 (syn_cpw1
-        (syn_cpw1 (syn_c1c))))))) (syn_cpw1 (syn_cpw1 (syn_c1c)))))
-        (syn_cxpk (syn_cnnc) (syn_cvv))) (syn_cin (syn_cidk) (syn_cxpk (syn_ccompl (syn_cnnc))
-        (syn_cvv)))))) (syn_cssetk)) (syn_cxpk (syn_csn (syn_csn (syn_c0c))) (syn_cvv)))))
-                            (syn_cpw1 (syn_cpw1 (syn_c1c))))))))
-                  (syn_cpw1 (syn_cpw1 (syn_c1c))))))))
-        (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_cpw1 (syn_c1c))))))))
+def synCwppqkrelkernel : Class :=
+  (synCin (synCxpk (synCvv) (synCxpk (synCvv) (synCvv))) (synCcompl (synCimak
+        (synCsymdif (synCins3k (synCsik (synCsik (synCssetk)))) (synCins2k (synCun
+              (synCins3k (synCcomk (synCssetk) (synCsik (synCcnvk (synCimagek (synCun
+                          (synCin (synCimagek (synCimak (synCdif (synCins3k (synCcompl
+                                      (synCimak (synCin (synCins3k (synCssetk))
+        (synCins2k (synCssetk))) (synCpw1 (synCpw1 (synC1c)))))) (synCimak
+                                    (synCsymdif (synCins2k (synCins2k (synCssetk)))
+                                      (synCun (synCins2k (synCins3k (synCssetk)))
+                                        (synCins3k (synCsik (synCsik (synCssetk))))))
+                                    (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
+                                (synCpw1 (synCpw1 (synC1c)))))
+                            (synCxpk (synCnnc) (synCvv))) (synCin (synCidk)
+                            (synCxpk (synCcompl (synCnnc)) (synCvv))))))))) (synCins2k
+                (synCimak (synCin (synCins2k (synCssetk)) (synCins3k (synCsik (synCcompl
+                          (synCimak (synCsymdif (synCins2k (synCssetk)) (synCins3k (synCun
+                                  (synCcomk (synCcnvk (synCimagek (synCun (synCin
+        (synCimagek (synCimak (synCdif (synCins3k (synCcompl (synCimak
+        (synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))
+        (synCpw1 (synCpw1 (synC1c)))))) (synCimak (synCsymdif (synCins2k
+        (synCins2k (synCssetk))) (synCun (synCins2k (synCins3k (synCssetk))) (synCins3k
+        (synCsik (synCsik (synCssetk)))))) (synCpw1 (synCpw1 (synCpw1
+        (synCpw1 (synC1c))))))) (synCpw1 (synCpw1 (synC1c)))))
+        (synCxpk (synCnnc) (synCvv))) (synCin (synCidk) (synCxpk (synCcompl (synCnnc))
+        (synCvv)))))) (synCssetk)) (synCxpk (synCsn (synCsn (synC0c))) (synCvv)))))
+                            (synCpw1 (synCpw1 (synC1c))))))))
+                  (synCpw1 (synCpw1 (synC1c))))))))
+        (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))))))
 
+/-- Compact nominal syntax for the upstream `cwpplitphnordpointfn` operator. -/
 @[expose]
-def syn_cwpplitphnordpointfn : Class :=
-  (syn_ccom (syn_clnpwquofn) (syn_cwpphninputfn))
+def synCwpplitphnordpointfn : Class :=
+  (synCcom (synClnpwquofn) (synCwpphninputfn))
 
+/-- Compact nominal syntax for the upstream `cwpppowset2fn` operator. -/
 @[expose]
-def syn_cwpppowset2fn : Class :=
-  (syn_ccom (syn_cwpppowsetfn) (syn_csi (syn_cwpppowsetfn)))
+def synCwpppowset2fn : Class :=
+  (synCcom (synCwpppowsetfn) (synCsi (synCwpppowsetfn)))
 
+/-- Compact nominal syntax for the upstream `cwppfamilyrep2fn` operator. -/
 @[expose]
-def syn_cwppfamilyrep2fn : Class :=
-  (syn_cimage (syn_cfdpointrel (syn_cvv)))
+def synCwppfamilyrep2fn : Class :=
+  (synCimage (synCfdpointrel (synCvv)))
 
+/-- Compact nominal syntax for the upstream `cwppdirecte2famfn` operator. -/
 @[expose]
-def syn_cwppdirecte2famfn : Class :=
-  (syn_ccom (syn_cimage (syn_cwpppowset2fn)) (syn_cwppfamilyrep2fn))
+def synCwppdirecte2famfn : Class :=
+  (synCcom (synCimage (synCwpppowset2fn)) (synCwppfamilyrep2fn))
 
+/-- Compact nominal syntax for the upstream `cwppdirecth1famfn` operator. -/
 @[expose]
-def syn_cwppdirecth1famfn : Class :=
-  (syn_ccom (syn_ccom (syn_cimage (syn_cwpplitphnordpointfn)) (syn_cwppfamilyrep2fn))
-    (syn_csi (syn_csi (syn_cwppdirecte2famfn))))
+def synCwppdirecth1famfn : Class :=
+  (synCcom (synCcom (synCimage (synCwpplitphnordpointfn)) (synCwppfamilyrep2fn))
+    (synCsi (synCsi (synCwppdirecte2famfn))))
 
+/-- Compact nominal syntax for the upstream `cwppdirecth2famfn` operator. -/
 @[expose]
-def syn_cwppdirecth2famfn : Class :=
-  (syn_ccom (syn_ccom (syn_cimage (syn_cwpplitphnordpointfn)) (syn_cwppfamilyrep2fn))
-    (syn_csi (syn_csi (syn_cwppdirecth1famfn))))
+def synCwppdirecth2famfn : Class :=
+  (synCcom (synCcom (synCimage (synCwpplitphnordpointfn)) (synCwppfamilyrep2fn))
+    (synCsi (synCsi (synCwppdirecth1famfn))))
 
+/-- Compact nominal syntax for the upstream `cwppconcrete6codefn` operator. -/
 @[expose]
-def syn_cwppconcrete6codefn : Class :=
-  (syn_ccom (syn_cimage (syn_cen)) (syn_cwppdirecth2famfn))
+def synCwppconcrete6codefn : Class :=
+  (synCcom (synCimage (synCen)) (synCwppdirecth2famfn))
 
+/-- Compact nominal syntax for the upstream `cwppcardt6fn` operator. -/
 @[expose]
-def syn_cwppcardt6fn : Class :=
-  (syn_ccom (syn_cwppcardt2fn) (syn_csi (syn_csi (syn_cwppcardt4fn))))
+def synCwppcardt6fn : Class :=
+  (synCcom (synCwppcardt2fn) (synCsi (synCsi (synCwppcardt4fn))))
 
+/-- Compact nominal syntax for the upstream `cwppconcrete6fn` operator. -/
 @[expose]
-def syn_cwppconcrete6fn : Class :=
-  (syn_ccom (syn_cwppconcrete6codefn) (syn_ccnv (syn_cwppcardt6fn)))
+def synCwppconcrete6fn : Class :=
+  (synCcom (synCwppconcrete6codefn) (synCcnv (synCwppcardt6fn)))
 
+/-- Compact nominal syntax for the upstream `chnsicodeliftfn` operator. -/
 @[expose]
-def syn_chnsicodeliftfn : Class :=
-  (syn_ctxp (syn_clnpwsirelfn) (syn_clnpwpw1secondfn))
+def synChnsicodeliftfn : Class :=
+  (synCtxp (synClnpwsirelfn) (synClnpwpw1secondfn))
 
+/-- Compact nominal syntax for the upstream `chnsicodemap` operator. -/
 @[expose]
-def syn_chnsicodemap (A : Class) : Class :=
-  (syn_cres (syn_chnsicodeliftfn) (syn_cpw1 (syn_chwcn A)))
+def synChnsicodemap (A : Class) : Class :=
+  (synCres (synChnsicodeliftfn) (synCpw1 (synChwcn A)))
 
+/-- Compact nominal syntax for the upstream `chnsiquomap` operator. -/
 @[expose]
-def syn_chnsiquomap (A : Class) : Class :=
-  (syn_cres (syn_ccom (syn_cimage (syn_chnsicodemap A)) (syn_cpw1fn)) (syn_cpw1 (syn_chnord A)))
+def synChnsiquomap (A : Class) : Class :=
+  (synCres (synCcom (synCimage (synChnsicodemap A)) (synCpw1fn)) (synCpw1 (synChnord A)))
 
+/-- Compact nominal syntax for the upstream `chncodestrictfn` operator. -/
 @[expose]
-def syn_chncodestrictfn : Class :=
-  (syn_ccom (syn_clndifop)
-    (syn_ctxp (syn_ccom (syn_c1st) (syn_c1st)) (syn_cxp (syn_cvv) (syn_csn (syn_cid)))))
+def synChncodestrictfn : Class :=
+  (synCcom (synClndifop)
+    (synCtxp (synCcom (synC1st) (synC1st)) (synCxp (synCvv) (synCsn (synCid)))))
 
+/-- Compact nominal syntax for the upstream `chncodepredfn` operator. -/
 @[expose]
-def syn_chncodepredfn : Class :=
-  (syn_ccom (syn_clnimageop)
-    (syn_ctxp (syn_ccom (syn_cimage (syn_cswap)) (syn_chncodestrictfn)) (syn_c2nd)))
+def synChncodepredfn : Class :=
+  (synCcom (synClnimageop)
+    (synCtxp (synCcom (synCimage (synCswap)) (synChncodestrictfn)) (synC2nd)))
 
+/-- Compact nominal syntax for the upstream `chncodecarrierfn` operator. -/
 @[expose]
-def syn_chncodecarrierfn : Class :=
-  (syn_ccom (syn_clninterop) (syn_ctxp (syn_ccom (syn_c2nd) (syn_c1st)) (syn_chncodepredfn)))
+def synChncodecarrierfn : Class :=
+  (synCcom (synClninterop) (synCtxp (synCcom (synC2nd) (synC1st)) (synChncodepredfn)))
 
+/-- Compact nominal syntax for the upstream `chncodesquarefn` operator. -/
 @[expose]
-def syn_chncodesquarefn : Class :=
-  (syn_ccom (syn_ccross) (syn_ctxp (syn_chncodecarrierfn) (syn_chncodecarrierfn)))
+def synChncodesquarefn : Class :=
+  (synCcom (synCcross) (synCtxp (synChncodecarrierfn) (synChncodecarrierfn)))
 
+/-- Compact nominal syntax for the upstream `chncoderelfn` operator. -/
 @[expose]
-def syn_chncoderelfn : Class :=
-  (syn_ccom (syn_clninterop) (syn_ctxp (syn_ccom (syn_c1st) (syn_c1st)) (syn_chncodesquarefn)))
+def synChncoderelfn : Class :=
+  (synCcom (synClninterop) (synCtxp (synCcom (synC1st) (synC1st)) (synChncodesquarefn)))
 
+/-- Compact nominal syntax for the upstream `chncodecutfn` operator. -/
 @[expose]
-def syn_chncodecutfn : Class :=
-  (syn_ctxp (syn_chncoderelfn) (syn_chncodecarrierfn))
+def synChncodecutfn : Class :=
+  (synCtxp (synChncoderelfn) (synChncodecarrierfn))
 
+/-- Compact nominal syntax for the upstream `chncodecutpairfn` operator. -/
 @[expose]
-def syn_chncodecutpairfn : Class :=
-  (syn_ctxp (syn_chncodecutfn) (syn_c1st))
+def synChncodecutpairfn : Class :=
+  (synCtxp (synChncodecutfn) (synC1st))
 
+/-- Compact nominal syntax for the upstream `chncodecutinputs` operator. -/
 @[expose]
-def syn_chncodecutinputs (A : Class) : Class :=
-  (syn_cuni (syn_cima (syn_clnpwquoinputfn) (syn_cpw1 (syn_chwcn A))))
+def synChncodecutinputs (A : Class) : Class :=
+  (synCuni (synCima (synClnpwquoinputfn) (synCpw1 (synChwcn A))))
 
+/-- Compact nominal syntax for the upstream `chncodecutrel` operator. -/
 @[expose]
-def syn_chncodecutrel (A : Class) : Class :=
-  (syn_cima (syn_chncodecutpairfn) (syn_chncodecutinputs A))
+def synChncodecutrel (A : Class) : Class :=
+  (synCima (synChncodecutpairfn) (synChncodecutinputs A))
 
+/-- Compact nominal syntax for the upstream `chncodecmpset` operator. -/
 @[expose]
-def syn_chncodecmpset (A : Class) : Class :=
-  (syn_cun (syn_chwniso A) (syn_ccom (syn_chncodecutrel A) (syn_chwniso A)))
+def synChncodecmpset (A : Class) : Class :=
+  (synCun (synChwniso A) (synCcom (synChncodecutrel A) (synChwniso A)))
 
+/-- Compact nominal syntax for the upstream `chncodepredinputs` operator. -/
 @[expose]
-def syn_chncodepredinputs (A : Class) (X : Class) (v : Var) : Class :=
-  (syn_cin (syn_cxp (syn_csn (.cv v)) (syn_cpw1 (syn_cfv (syn_c2nd) (.cv v))))
-    (syn_cima (syn_ccnv (syn_chncodecutfn)) (syn_cima (syn_chwniso A) X)))
+def synChncodepredinputs (A : Class) (X : Class) (v : Var) : Class :=
+  (synCin (synCxp (synCsn (.cv v)) (synCpw1 (synCfv (synC2nd) (.cv v))))
+    (synCima (synCcnv (synChncodecutfn)) (synCima (synChwniso A) X)))
 
+/-- Compact nominal syntax for the upstream `chncodepredends` operator. -/
 @[expose]
-def syn_chncodepredends (A : Class) (X : Class) (v : Var) : Class :=
-  (syn_cuni (syn_cima (syn_c2nd) (syn_chncodepredinputs A X v)))
+def synChncodepredends (A : Class) (X : Class) (v : Var) : Class :=
+  (synCuni (synCima (synC2nd) (synChncodepredinputs A X v)))
 
+/-- Compact nominal syntax for the upstream `cwppstopact` operator. -/
 @[expose]
-def syn_cwppstopact (F : Class) (C : Class) : Class :=
-  (syn_cin (syn_cdm F)
-    (syn_cin (syn_chwcards (syn_cvv)) (syn_cima (syn_ccnv (syn_clec)) (syn_csn C))))
+def synCwppstopact (F : Class) (C : Class) : Class :=
+  (synCin (synCdm F)
+    (synCin (synChwcards (synCvv)) (synCima (synCcnv (synClec)) (synCsn C))))
 
+/-- Compact nominal syntax for the upstream `cwppstopstep` operator. -/
 @[expose]
-def syn_cwppstopstep (F : Class) (C : Class) : Class :=
-  (syn_cun (syn_cres F (syn_cwppstopact F C))
-    (syn_cres (syn_cid) (syn_cdif (syn_chwcards (syn_cvv)) (syn_cwppstopact F C))))
+def synCwppstopstep (F : Class) (C : Class) : Class :=
+  (synCun (synCres F (synCwppstopact F C))
+    (synCres (synCid) (synCdif (synChwcards (synCvv)) (synCwppstopact F C))))
 
+/-- Compact nominal syntax for the upstream `cwppfreceq` operator. -/
 @[expose]
-def syn_cwppfreceq (F : Class) (G : Class) (I : Class) : Class :=
-  (syn_cfix (syn_ccom (syn_ccnv (syn_cfrec F I)) (syn_cfrec G I)))
+def synCwppfreceq (F : Class) (G : Class) (I : Class) : Class :=
+  (synCfix (synCcom (synCcnv (synCfrec F I)) (synCfrec G I)))
 
+/-- Compact nominal syntax for the upstream `cwppfrecprefixeq` operator. -/
 @[expose]
-def syn_cwppfrecprefixeq (F : Class) (G : Class) (I : Class) (k : Var) : Class :=
-  (syn_cun (syn_cdif (syn_cnnc)
-      (syn_cima (syn_ccnv (syn_ckqrel (syn_clefin))) (syn_csn (.cv k)))) (syn_cwppfreceq F G I))
+def synCwppfrecprefixeq (F : Class) (G : Class) (I : Class) (k : Var) : Class :=
+  (synCun (synCdif (synCnnc)
+      (synCima (synCcnv (synCkqrel (synClefin))) (synCsn (.cv k)))) (synCwppfreceq F G I))
 
 end NFChoice.Compiler.CompactSourceSyntax

@@ -49,7 +49,7 @@ coincide trivially.
 
 
 lemma completeness_for_inconsistent_theories (T : SentTheory L) (ψ : sentence L)
-    (h_inconsis : ¬T.is_consistent) : (T ⊢ₛ' ψ) ↔ ssatisfied T ψ :=
+    (h_inconsis : ¬T.isConsistent) : (T ⊢ₛ' ψ) ↔ ssatisfied T ψ :=
   by
   constructor
   · intro h; exact satisfied_of_provable T ψ h
@@ -58,7 +58,7 @@ lemma completeness_for_inconsistent_theories (T : SentTheory L) (ψ : sentence L
         -- T is inconsistent means T ⊢ₛ' bd_falsum
     have h_prov : T ⊢ₛ' (bd_falsum : sentence L) :=
       by
-      simp only [SentTheory.is_consistent, not_not] at h_inconsis
+      simp only [SentTheory.isConsistent, not_not] at h_inconsis
       exact h_inconsis
     exact sfalsumE h_prov
 
@@ -68,22 +68,22 @@ T is consistent iff there is a nonempty model of T.
 
 
 theorem model_existence (T : SentTheory L) :
-    T.is_consistent ↔ ∃ M : Structure L, Nonempty M.carrier ∧ all_realize_sentence M T :=
+    T.isConsistent ↔ ∃ M : Structure L, Nonempty M.carrier ∧ allRealizeSentence M T :=
   by
   constructor
   · intro hT
     let M' :=
       term_model (completion_of_henkinization_complete hT)
         (completion_of_henkinization_is_henkin hT)
-    let M : Structure L := Lhom.reduct (henkin_language_canonical_map 0) M'
+    let M : Structure L := Lhom.reduct (henkinLanguageCanonicalMap 0) M'
     refine ⟨M, ?_, ?_⟩
     -- nonemptiness: term_model' T = Quotient (closed_term L) (term_setoid T) is nonempty
     -- We get a constant from has_enough_constants: use bd_const c as
     -- a witness
     · rw [show M.carrier = M'.carrier from Lhom.reduct_coe M']
-      change Nonempty (term_model' (completion_of_henkinization hT))
+      change Nonempty (termModel' (completionOfHenkinization hT))
       obtain ⟨C, _⟩ := completion_of_henkinization_is_henkin hT
-      exact ⟨@Quotient.mk'' _ (term_setoid _) (bd_const (C bd_falsum))⟩
+      exact ⟨@Quotient.mk'' _ (term_setoid _) (bdConst (C bd_falsum))⟩
     · -- T satisfaction
       exact reduct_of_complete_henkinization_models_T hT
   · intro h_ex
@@ -97,9 +97,12 @@ A consistent theory has a nonempty model.
 -/
 
 
+/-- Flypitch construction `nonempty_model_of_consis`, retained by the first-order soundness and
+completeness development.
+-/
 @[expose]
-noncomputable def nonempty_model_of_consis {T : SentTheory L} (hT : T.is_consistent) :
-    Σ' M : Structure L, Nonempty M.carrier ∧ all_realize_sentence M T :=
+noncomputable def nonemptyModelOfConsis {T : SentTheory L} (hT : T.isConsistent) :
+    Σ' M : Structure L, Nonempty M.carrier ∧ allRealizeSentence M T :=
   by
   have := (model_existence T).mp hT
   exact ⟨this.choose, this.choose_spec.1, this.choose_spec.2⟩
@@ -115,15 +118,15 @@ theorem completeness (T : SentTheory L) (ψ : sentence L) : (T ⊢ₛ' ψ) ↔ s
   · exact satisfied_of_provable T ψ
   · intro H
     by_contra h_not_prov
-    have h_consis : (insert (bd_not ψ) T).is_consistent :=
+    have h_consis : (insert (bdNot ψ) T).isConsistent :=
       consis_not_of_not_provable h_not_prov
-    obtain ⟨M, H_nonempty, H_sat⟩ := nonempty_model_of_consis h_consis
-    have H_T : all_realize_sentence M T :=
+    obtain ⟨M, H_nonempty, H_sat⟩ := nonemptyModelOfConsis h_consis
+    have H_T : allRealizeSentence M T :=
       all_realize_sentence_of_subset H_sat
         (Set.subset_insert _ _)
           -- M satisfies ψ (from the semantic entailment hypothesis)
     have H_ψ : M ⊨ₘ ψ := H H_nonempty H_T
-    have H_nψ : M ⊨ₘ (bd_not ψ : sentence L) :=
+    have H_nψ : M ⊨ₘ (bdNot ψ : sentence L) :=
       H_sat
         (Set.mem_insert _ _)
           -- Contradiction: ψ and ¬ψ both hold
