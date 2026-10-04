@@ -999,7 +999,6 @@ private lemma energy_commutator_bound {d : ℕ} {Ω : Set (EuclideanSpace ℝ (F
   let Xi : ℝ := (exists_abs_bound hξ).choose
   have hXidef : Xi = (exists_abs_bound hξ).choose := rfl
   let Wq : Fin d → ℝ := fun j => (exists_abs_bound_partialD (isTestFn_mul hξ hξ) j).choose
-
   have hWqdef : Wq = fun j => (exists_abs_bound_partialD (isTestFn_mul hξ hξ) j).choose
     := rfl
   have hWqnn : ∀ j, (0 : ℝ) ≤ Wq j := fun j =>
@@ -1418,7 +1417,6 @@ theorem interior_diffQuot_energy_bound (Op : FullEllipticOp d) (hΩm : Measurabl
   let Cc : ℝ := 2 * (Op.Csup * (exists_abs_bound hξ).choose) ^ 2 / A.lam
       + Op.Csup * (exists_abs_bound_partialD (isTestFn_mul hξ hξ) k).choose / 2
       + Op.Csup * (exists_abs_bound_partialD (isTestFn_mul hξ hξ) k).choose / (4 * A.lam)
-
   let Ccr : ℝ := (d : ℝ) * ((2 * A.Λ * ∑ j : Fin d, (exists_abs_bound_partialD hξ j).choose) ^ 2
         / (2 * (A.lam / 4))) / (2 * A.lam)
   let Cre : ℝ := ((∑ j : Fin d, (((exists_abs_bound hξ).choose * hA.A1) ^ 2 * (2 * (d : ℝ) / A.lam)
