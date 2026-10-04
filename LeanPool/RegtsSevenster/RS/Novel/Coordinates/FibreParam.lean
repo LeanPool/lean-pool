@@ -124,6 +124,7 @@ theorem colouringOf_isEven (W : ClosedFragment)
 
 /-- The diagonal partner of a colour: even colours repeat, odd
 colours pair symplectically. -/
+@[expose]
 def diagPartner (x : Fin k ⊕ Fin (2 * ℓ)) :
     Fin k ⊕ Fin (2 * ℓ) :=
   match x with
