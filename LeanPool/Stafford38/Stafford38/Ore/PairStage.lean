@@ -51,10 +51,12 @@ def pairCoefficient : B →+* PairStage (B := B) :=
   (normalCoefficient outerDerivation).comp (normalCoefficient innerDerivation)
 
 /-- The newly adjoined coordinate. -/
+@[expose]
 def pairCoordinate : PairStage (B := B) :=
   normalCoefficient outerDerivation (normalVariable innerDerivation)
 
 /-- The newly adjoined momentum. -/
+@[expose]
 def pairMomentum : PairStage (B := B) :=
   normalVariable outerDerivation
 

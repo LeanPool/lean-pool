@@ -230,6 +230,7 @@ theorem normalForm_smul (c : k) (p : Polynomial B) :
 
 /-- Ore normal forms are linearly equivalent to ordinary coefficient-left
 polynomials. -/
+@[expose]
 def normalFormLinearEquiv : Polynomial B ≃ₗ[k] NormalOre D :=
   { normalFormAddEquiv D with
     map_smul' := normalForm_smul D hAlg }

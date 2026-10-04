@@ -38,6 +38,7 @@ structure RingStage where
 variable (B : Type u) [Ring B]
 
 /-- The recursively constructed ring data after adjoining `n` Weyl pairs. -/
+@[expose]
 def iteratedPairData : Nat → RingStage
   | 0 => ⟨B, inferInstance⟩
   | n + 1 =>
@@ -47,6 +48,7 @@ def iteratedPairData : Nat → RingStage
 
 /-- The ring obtained from `B` after recursively adjoining `n` checked
 coordinate-momentum pairs. -/
+@[expose]
 def IteratedPairStage (n : Nat) : Type u :=
   (iteratedPairData B n).carrier
 
