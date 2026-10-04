@@ -3,6 +3,8 @@ Copyright (c) 2026 Alejandro Soto Franco. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Alejandro Soto Franco
 -/
+
+-- Adapted for Lean Pool's pinned Lean and Mathlib; upstream commit is recorded in projects.yml.
 module
 
 public import LeanPool.EllipticPDE.Sobolev.Coefficients
@@ -59,9 +61,7 @@ lemma integrable_sq {Ω : Set (EuclideanSpace ℝ (Fin d))} (p : L2D Ω) :
 /-- `∫_Ω (p)² = ‖p‖²` for an `L²` class `p`. -/
 lemma sq_integral_eq_norm_sq {Ω : Set (EuclideanSpace ℝ (Fin d))} (p : L2D Ω) :
     ∫ x in Ω, (p x : ℝ) ^ 2 = ‖p‖ ^ 2 := by
-  rw [← real_inner_self_eq_norm_sq, L2.inner_def]
-  refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-  simp only [Real.inner_apply, pow_two]
+  exact (norm_sq_L2_eq p).symm
 
 /-- The triple product `aᵢⱼ · p · q` of bounded coefficient and two `L²` classes is
 integrable on `Ω`. -/

@@ -3,9 +3,11 @@ Copyright (c) 2026 Alejandro Soto Franco. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Alejandro Soto Franco
 -/
+
+-- Adapted for Lean Pool's pinned Lean and Mathlib; upstream commit is recorded in projects.yml.
 module
 
-public import Mathlib.MeasureTheory.Function.L2Space
+public import LeanPool.EllipticPDE.Analysis.L2Norm
 public import Mathlib.MeasureTheory.Function.LpSpace.Indicator
 public import Mathlib.MeasureTheory.Integral.Prod
 public import Mathlib.MeasureTheory.Group.Integral
@@ -128,9 +130,7 @@ variable {n : ℕ}
 
 /-- The squared `L²` norm is the integral of the square. -/
 theorem norm_sq_eq_integral_sq (g : EucL2 n) : ‖g‖ ^ 2 = ∫ x, (g x) ^ 2 := by
-  rw [← real_inner_self_eq_norm_sq, L2.inner_def]
-  simp only [RCLike.inner_apply, conj_trivial]
-  simp_rw [pow_two]
+  exact EllipticPdes.Sobolev.norm_sq_L2_eq g
 
 /-- Translation by `h` as a linear isometry of `L²(ℝⁿ)`. -/
 def transL2 (h : EuclideanSpace ℝ (Fin n)) : EucL2 n →ₗᵢ[ℝ] EucL2 n :=
@@ -144,11 +144,7 @@ theorem coeFn_transL2 (h : EuclideanSpace ℝ (Fin n)) (g : EucL2 n) :
 /-- The squared `L²` norm of a translation difference, as an integral. -/
 theorem norm_sq_transL2_sub (h : EuclideanSpace ℝ (Fin n)) (g : EucL2 n) :
     ‖transL2 h g - g‖ ^ 2 = ∫ x, (g (x + h) - g x) ^ 2 := by
-  have hnorm : ‖transL2 h g - g‖ ^ 2 = ∫ x, ((transL2 h g - g) x) ^ 2 := by
-    rw [← real_inner_self_eq_norm_sq, L2.inner_def]
-    simp only [RCLike.inner_apply, conj_trivial]
-    simp_rw [pow_two]
-  rw [hnorm]
+  rw [norm_sq_eq_integral_sq]
   refine integral_congr_ae ?_
   filter_upwards [Lp.coeFn_sub (transL2 h g) g, coeFn_transL2 h g] with x hx hx1
   rw [hx]; simp only [Pi.sub_apply]; rw [hx1]

@@ -3,6 +3,8 @@ Copyright (c) 2026 Alejandro Soto Franco. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Alejandro Soto Franco
 -/
+
+-- Adapted for Lean Pool's pinned Lean and Mathlib; upstream commit is recorded in projects.yml.
 module
 
 public import LeanPool.EllipticPDE.Spectrum.Spectrum
@@ -37,13 +39,6 @@ noncomputable section
 namespace EllipticPdes.Sobolev
 
 variable {d : ℕ}
-
-/-- The squared `L²` norm of any class is the integral of its square. -/
-lemma norm_sq_L2_eq {α : Type*} [MeasurableSpace α] {μ : Measure α} (f : Lp ℝ 2 μ) :
-    ‖f‖ ^ 2 = ∫ x, (f x) ^ 2 ∂μ := by
-  rw [← real_inner_self_eq_norm_sq, L2.inner_def]
-  simp only [RCLike.inner_apply, conj_trivial]
-  simp_rw [pow_two]
 
 /-- **Extension of a test class is the function.** The extension by zero of the `L²(Ω)` class of a
 test function `φ` equals `φ` almost everywhere on `ℝᵈ`, since `φ` is supported in `Ω`. -/

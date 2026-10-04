@@ -11,6 +11,7 @@ public import LeanPool.EllipticPDE.Analysis.Dilation
 public import LeanPool.EllipticPDE.Analysis.DirectMethodForm
 public import LeanPool.EllipticPDE.Analysis.EuclideanFunctionalNorm
 public import LeanPool.EllipticPDE.Analysis.FrechetKolmogorov
+public import LeanPool.EllipticPDE.Analysis.L2Norm
 public import LeanPool.EllipticPDE.Analysis.LpExtendByZero
 public import LeanPool.EllipticPDE.Analysis.LpInterpolation
 public import LeanPool.EllipticPDE.Analysis.LpTranslation

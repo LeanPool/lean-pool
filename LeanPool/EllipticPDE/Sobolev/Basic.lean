@@ -3,9 +3,11 @@ Copyright (c) 2026 Alejandro Soto Franco. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Alejandro Soto Franco
 -/
+
+-- Adapted for Lean Pool's pinned Lean and Mathlib; upstream commit is recorded in projects.yml.
 module
 
-public import Mathlib.MeasureTheory.Function.L2Space
+public import LeanPool.EllipticPDE.Analysis.L2Norm
 public import Mathlib.MeasureTheory.Function.LpSpace.Indicator
 public import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
 public import Mathlib.Analysis.InnerProductSpace.PiL2

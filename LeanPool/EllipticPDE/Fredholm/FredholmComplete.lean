@@ -3,6 +3,8 @@ Copyright (c) 2026 Alejandro Soto Franco. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Alejandro Soto Franco
 -/
+
+-- Adapted for Lean Pool's pinned Lean and Mathlib; upstream commit is recorded in projects.yml.
 module
 
 public import LeanPool.EllipticPDE.Fredholm.Fredholm
@@ -16,7 +18,7 @@ Evans §6.2.3, Theorem 4.
 
 `Fredholm.lean` reduces the weak problem `Lu = f` to the compact-operator equation
 `(1 - opK)u = h` through the factorisation `opA = opE ∘ (1 - opK)` and derives the
-dichotomy. This module begins the *quantitative* part of Evans's Theorem 4(ii)
+dichotomy. This module completes the *quantitative* part of Evans's Theorem 4(ii)
 (§6.2.3): the space
 
   `N = {u ∈ H₀¹(Ω) : B[u, v] = 0 for all v}`
@@ -27,9 +29,9 @@ compact operator `opK` at the eigenvalue `1`, and eigenspaces of compact operato
 nonzero eigenvalues are finite-dimensional
 (`ContinuousLinearMap.finite_dimensional_eigenspace`, the Riesz theory input).
 
-Remaining for the full Theorem 4(ii)/(iii) statement (planned here): closed range of
-`1 - opK`, the adjoint problem via the transpose form `B(·, v)`, the solvability
-criterion `Lu = f` solvable ↔ `f ⊥ N*`, and `dim N = dim N*`.
+It also proves closed range of `1 - opK`, formulates the adjoint problem via the
+transpose form `B(·, v)`, and derives the solvability criterion
+`Lu = f` solvable ↔ `f ⊥ N*` and `dim N = dim N*`.
 -/
 
 @[expose] public section
