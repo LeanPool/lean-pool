@@ -65,15 +65,18 @@ theorem iteratedPairStage_succ (n : Nat) :
       PairStage (B := IteratedPairStage B n) := rfl
 
 /-- The canonical embedding from stage `n` into stage `n + 1`. -/
+@[expose]
 def stageEmbedding (n : Nat) :
     IteratedPairStage B n →+* IteratedPairStage B (n + 1) :=
   pairCoefficient (B := IteratedPairStage B n)
 
 /-- The coordinate introduced at the successor of stage `n`. -/
+@[expose]
 def stageCoordinate (n : Nat) : IteratedPairStage B (n + 1) :=
   pairCoordinate (B := IteratedPairStage B n)
 
 /-- The momentum introduced at the successor of stage `n`. -/
+@[expose]
 def stageMomentum (n : Nat) : IteratedPairStage B (n + 1) :=
   pairMomentum (B := IteratedPairStage B n)
 

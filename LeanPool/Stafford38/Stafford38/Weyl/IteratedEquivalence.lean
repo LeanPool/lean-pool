@@ -68,6 +68,7 @@ def stageAlgHom (n : Nat) :
     rfl
 
 /-- Coordinates in the final stage, ordered from newest to oldest. -/
+@[expose]
 def iteratedCoordinate :
     (n : Nat) → Fin n → IteratedPairStage k n
   | 0, i => Fin.elim0 i
@@ -76,6 +77,7 @@ def iteratedCoordinate :
         (fun j => stageAlgHom k n (iteratedCoordinate n j)) i
 
 /-- Momenta in the final stage, ordered from newest to oldest. -/
+@[expose]
 def iteratedMomentum :
     (n : Nat) → Fin n → IteratedPairStage k n
   | 0, i => Fin.elim0 i

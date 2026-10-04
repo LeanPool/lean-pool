@@ -54,6 +54,7 @@ noncomputable def starFlagEnum (W : ClosedFragment) :
 
 /-- The vertex assignment of the star union: each slot's original
 flag sits at its vertex. -/
+@[expose]
 noncomputable def starAssign (W : ClosedFragment) :
     Fin (edgeCount W + edgeCount W) → W.Vertex :=
   fun i => ClosedFragment.vertexOf W ((starFlagEnum W).symm i)

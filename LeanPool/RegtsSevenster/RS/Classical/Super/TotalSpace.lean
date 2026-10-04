@@ -64,6 +64,7 @@ theorem tot_zero (V W : SuperVect) : tot (0 : V ⟶ W) = 0 := by
   ext v <;> rfl
 
 /-- Forgetting the grading preserves the endomorphism algebra. -/
+@[expose]
 def totAlgHom (V : SuperVect) : End V →ₐ[ℂ] Module.End ℂ (Tot V) where
   toFun := tot
   map_one' := tot_id V
@@ -75,6 +76,7 @@ def totAlgHom (V : SuperVect) : End V →ₐ[ℂ] Module.End ℂ (Tot V) where
     rw [tot_smul, tot_id]
 
 /-- A super isomorphism induces a linear equivalence of total spaces. -/
+@[expose]
 def totIso {V W : SuperVect} (e : V ≅ W) : Tot V ≃ₗ[ℂ] Tot W where
   __ := tot e.hom
   invFun := tot e.inv
