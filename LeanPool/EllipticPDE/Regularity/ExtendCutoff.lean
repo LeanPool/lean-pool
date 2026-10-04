@@ -13,7 +13,7 @@ public import LeanPool.EllipticPDE.Regularity.MulIterated
 /-!
 # Cutoff transport of weak derivatives to the ambient domain
 
-The induction of Guo, *Partial Differential Equations I and II* (Course Lecture Notes), Theorem
+The induction of Guo, *Partial Differential Equations* (Course Lecture Notes), Theorem
 VIII.3.2 (p. 65) runs on a pair `V ⋐ W ⋐ Ω`. The order-`k` conclusion is available on the
 compact `W`, and the datum the induction hypothesis consumes needs its weak derivatives on all
 of `Ω`. `EllipticPdes.Regularity.HasIteratedWeakDerivOn.restrict` moves a family the other way,

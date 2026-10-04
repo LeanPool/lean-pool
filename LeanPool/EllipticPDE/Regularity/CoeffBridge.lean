@@ -18,7 +18,7 @@ public import Mathlib.Analysis.Calculus.FDeriv.CompCLM
 `EllipticPdes.Regularity.IsCkCoeff` states the coefficient hypothesis of Evans, *Partial
 Differential Equations* (2nd ed.), §6.3.1, Theorem 2: every entry is `Cᵏ` with a uniform bound
 on each `iteratedFDeriv`. `EllipticPdes.Regularity.IsWkInftyCoeff` states the weaker hypothesis
-of Guo, *Partial Differential Equations I and II* (Course Lecture Notes), Theorem VIII.3.2
+of Guo, *Partial Differential Equations* (Course Lecture Notes), Theorem VIII.3.2
 (p. 65): weak derivatives up to order `k`, essentially bounded. This file connects them, so
 that a theorem proved under Guo's hypothesis applies to smooth coefficients with no further
 work.
@@ -201,7 +201,7 @@ theorem hasWeakPartial_partialD {f : EuclideanSpace ℝ (Fin d) → ℝ}
 partial derivatives serve as the weak derivative family, each step is integration by parts,
 and the pointwise `iteratedFDeriv` bound of `IsCkCoeff` is in particular an essential bound.
 
-Guo, *Partial Differential Equations I and II* (Course Lecture Notes), Theorem VIII.3.2
+Guo, *Partial Differential Equations* (Course Lecture Notes), Theorem VIII.3.2
 (p. 65) is therefore no weaker than Evans, *Partial Differential Equations* (2nd ed.), §6.3.1,
 Theorem 2 as far as the coefficients go, and a result proved under `IsWkInftyCoeff` applies
 to smooth coefficients through this map. -/

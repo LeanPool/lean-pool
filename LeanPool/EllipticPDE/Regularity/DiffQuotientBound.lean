@@ -7,6 +7,7 @@ Authors: Alejandro Soto Franco
 -- Adapted for Lean Pool's pinned Lean and Mathlib; upstream commit is recorded in projects.yml.
 module
 
+public import LeanPool.EllipticPDE.Analysis.SegmentCalculus
 public import LeanPool.EllipticPDE.Regularity.DifferenceQuotient
 public import LeanPool.EllipticPDE.Sobolev.Basic
 public import Mathlib.MeasureTheory.Measure.QuasiMeasurePreserving
@@ -44,6 +45,9 @@ noncomputable section
 
 namespace EllipticPdes.Regularity
 
+open EllipticPdes.Analysis
+  (continuous_squared_segment_deriv sq_sub_translation_le sub_translation_eq_integral)
+
 open EllipticPdes.Sobolev (partialD)
 
 variable {d : ℕ}
@@ -55,51 +59,6 @@ def HasWeakDeriv (k : Fin d) (g g' : EucL2 d) : Prop :=
     ∫ x, (g x) * (partialD k φ x) = - ∫ x, (g' x) * (φ x)
 
 /-! ### Smooth compactly supported case -/
-
-/-- The segment path `t ↦ φ (x + t • v)` has derivative `(fderiv ℝ φ (x + t • v)) v`
-at every `t`, for `φ` smooth. -/
-private theorem hasDerivAt_comp_segment {φ : EuclideanSpace ℝ (Fin d) → ℝ}
-    (hφ : ContDiff ℝ (⊤ : ℕ∞) φ) (x v : EuclideanSpace ℝ (Fin d)) (t : ℝ) :
-    HasDerivAt (fun s : ℝ => φ (x + s • v)) ((fderiv ℝ φ (x + t • v)) v) t := by
-  have hline : HasDerivAt (fun s : ℝ => x + s • v) v t := by
-    simpa using ((hasDerivAt_id t).smul_const v).const_add x
-  have hφ' : HasFDerivAt φ (fderiv ℝ φ (x + t • v)) (x + t • v) :=
-    (hφ.differentiable (by simp)).differentiableAt.hasFDerivAt
-  exact hφ'.comp_hasDerivAt t hline
-
-/-- Continuity of the segment derivative `t ↦ (fderiv ℝ φ (x + t • v)) v`. -/
-private theorem continuous_segment_deriv {φ : EuclideanSpace ℝ (Fin d) → ℝ}
-    (hφ : ContDiff ℝ (⊤ : ℕ∞) φ) (x v : EuclideanSpace ℝ (Fin d)) :
-    Continuous (fun t : ℝ => (fderiv ℝ φ (x + t • v)) v) :=
-  ((hφ.continuous_fderiv (by simp)).comp (by fun_prop)).clm_apply continuous_const
-
-/-- Joint continuity of `(x, t) ↦ ((fderiv ℝ φ (x + t • v)) v) ^ 2`. -/
-private theorem continuous_uncurry_segment {φ : EuclideanSpace ℝ (Fin d) → ℝ}
-    (hφ : ContDiff ℝ (⊤ : ℕ∞) φ) (v : EuclideanSpace ℝ (Fin d)) :
-    Continuous (Function.uncurry fun (x : EuclideanSpace ℝ (Fin d)) (t : ℝ) =>
-        ((fderiv ℝ φ (x + t • v)) v) ^ 2) :=
-  (((hφ.continuous_fderiv (by simp)).comp (by fun_prop : Continuous
-    fun p : EuclideanSpace ℝ (Fin d) × ℝ => p.1 + p.2 • v)).clm_apply continuous_const).pow 2
-
-/-- Fundamental theorem of calculus along the segment from `x` to `x + v`. -/
-private theorem sub_translation_eq_integral {φ : EuclideanSpace ℝ (Fin d) → ℝ}
-    (hφ : ContDiff ℝ (⊤ : ℕ∞) φ) (x v : EuclideanSpace ℝ (Fin d)) :
-    φ (x + v) - φ x = ∫ t in (0 : ℝ)..1, (fderiv ℝ φ (x + t • v)) v := by
-  rw [intervalIntegral.integral_eq_sub_of_hasDerivAt
-        (fun t _ => hasDerivAt_comp_segment hφ x v t)
-        (continuous_segment_deriv hφ x v).continuousOn.intervalIntegrable]
-  simp
-
-/-- Pointwise square estimate: `(φ (x + v) - φ x) ^ 2` is at most the `[0, 1]`
-integral of the squared segment derivative. -/
-private theorem sq_sub_translation_le {φ : EuclideanSpace ℝ (Fin d) → ℝ}
-    (hφ : ContDiff ℝ (⊤ : ℕ∞) φ) (x v : EuclideanSpace ℝ (Fin d)) :
-    (φ (x + v) - φ x) ^ 2 ≤ ∫ t in (0 : ℝ)..1, ((fderiv ℝ φ (x + t • v)) v) ^ 2 := by
-  rw [sub_translation_eq_integral hφ x v]
-  have h01 : (0 : ℝ) ≤ 1 := by norm_num
-  have := MeasureTheory.sq_intervalIntegral_le h01
-    (continuous_segment_deriv hφ x v).continuousOn
-  simpa using this
 
 /-- The integrand `(x, t) ↦ ((fderiv ℝ φ (x + t • v)) v) ^ 2` is integrable for the
 product of Lebesgue measure with the unit-interval slice. -/
@@ -113,7 +72,7 @@ private theorem integrable_uncurry_segment {φ : EuclideanSpace ℝ (Fin d) → 
       ((fderiv ℝ φ (x + t • v)) v) ^ 2 with hg
   set ρ : Measure (EuclideanSpace ℝ (Fin d) × ℝ) :=
     volume.prod (volume.restrict (Ioc (0 : ℝ) 1)) with hρ
-  have hcont : Continuous g := continuous_uncurry_segment hφ v
+  have hcont : Continuous g := continuous_squared_segment_deriv (hφ.of_le (by simp)) v
   obtain ⟨R, hR⟩ := (hcs.fderiv ℝ).isCompact.isBounded.subset_closedBall 0
   -- The joint support sits inside the compact slab `C`.
   set C : Set (EuclideanSpace ℝ (Fin d) × ℝ) := closedBall 0 (R + ‖v‖) ×ˢ Icc 0 1 with hC
@@ -193,7 +152,7 @@ theorem norm_diffQuot_le_of_contDiff (k : Fin d) (h : ℝ) (φ : EuclideanSpace 
   -- Step A: integrate the pointwise square bound.
   have stepA : ∫ x, (φ (x + v) - φ x) ^ 2
       ≤ ∫ x, ∫ t in (0 : ℝ)..1, ((fderiv ℝ φ (x + t • v)) v) ^ 2 :=
-    integral_mono hLHS_int hRHS_int (fun x => sq_sub_translation_le hφ x v)
+    integral_mono hLHS_int hRHS_int (fun x => sq_sub_translation_le (hφ.of_le (by simp)) x v)
   -- Step B: swap the order of integration (Tonelli).
   have stepB : (∫ x, ∫ t in (0 : ℝ)..1, ((fderiv ℝ φ (x + t • v)) v) ^ 2)
       = ∫ t in (0 : ℝ)..1, ∫ x, ((fderiv ℝ φ (x + t • v)) v) ^ 2 := by
@@ -385,7 +344,7 @@ private theorem sq_norm_diffQuot_sub_le (k : Fin d) {φ : EuclideanSpace ℝ (Fi
       (hψc.comp (by fun_prop)).intervalIntegrable _ _
     have hI2 : IntervalIntegrable (fun _ : ℝ => ψ x) volume 0 1 := intervalIntegrable_const
     have hnum : φ (x + v) - φ x = h * ∫ t in (0 : ℝ)..1, ψ (x + t • v) := by
-      rw [sub_translation_eq_integral hφ x v,
+      rw [sub_translation_eq_integral (hφ.of_le (by simp)) x v,
           show (fun t : ℝ => (fderiv ℝ φ (x + t • v)) v) = fun t => h * ψ (x + t • v) from
             funext fun t => hfv (x + t • v),
           intervalIntegral.integral_const_mul]
@@ -719,7 +678,7 @@ private theorem inner_diffQuot_eq_integral_smooth (k : Fin d) (g g' : EucL2 d)
       = ∫ t in (0 : ℝ)..1, partialD k ζ (x - t • v) := by
     intro x
     have h1 : ζ (x + (-v)) - ζ x = ∫ t in (0 : ℝ)..1, (-h) * partialD k ζ (x - t • v) := by
-      rw [sub_translation_eq_integral hζcd x (-v)]
+      rw [sub_translation_eq_integral (hζcd.of_le (by simp)) x (-v)]
       refine intervalIntegral.integral_congr (fun t _ => ?_)
       rw [hlin (x + t • (-v))]
       congr 2

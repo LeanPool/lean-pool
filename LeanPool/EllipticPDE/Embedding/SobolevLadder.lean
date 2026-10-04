@@ -65,25 +65,6 @@ namespace EllipticPdes.Embedding
 
 variable {d : ℕ}
 
-/-! ### Reciprocal arithmetic
-
-The ladder is bookkeeping on reciprocals, and every exponent it constructs is `Real.toNNReal` of
-one. These three facts are all it asks of them, kept apart so the induction's own context stays
-small.
--/
-
-private theorem inv_antitone_aux {a b : ℝ} (ha : 0 < a) (h : a ≤ b) : b⁻¹ ≤ a⁻¹ := by
-  have hb : 0 < b := lt_of_lt_of_le ha h
-  nlinarith [mul_inv_cancel₀ ha.ne', mul_inv_cancel₀ hb.ne', inv_pos.mpr ha, inv_pos.mpr hb]
-
-private theorem le_of_inv_le_inv_aux {a b : ℝ} (ha : 0 < a) (hb : 0 < b) (h : a⁻¹ ≤ b⁻¹) :
-    b ≤ a := by
-  nlinarith [mul_inv_cancel₀ ha.ne', mul_inv_cancel₀ hb.ne', inv_pos.mpr ha, inv_pos.mpr hb]
-
-private theorem coe_toNNReal_inv_aux {t : ℝ} (ht : 0 < t) :
-    ((Real.toNNReal t⁻¹ : ℝ≥0) : ℝ) = t⁻¹ :=
-  Real.coe_toNNReal _ (inv_nonneg.mpr ht.le)
-
 /-! ### Ladder -/
 
 /-- **Sobolev ladder on a family closed under differentiation.** Let `F` assign a function to
@@ -114,7 +95,7 @@ theorem memLp_of_gradClosed (hd : 0 < d) (c : EuclideanSpace ℝ (Fin d))
     -- At the bottom rung the exponent is `2` itself, since `1/q ≥ 1/2` caps it there.
     have hq2' : q ≤ 2 := by
       rw [← NNReal.coe_le_coe, NNReal.coe_ofNat]
-      refine le_of_inv_le_inv_aux (by norm_num) hq0 ?_
+      refine (inv_le_inv₀ (by norm_num) hq0).mp ?_
       simpa using hqs
     have : IsFiniteMeasure (volume.restrict (Metric.ball c r)) :=
       ⟨by rw [Measure.restrict_apply_univ]; exact measure_ball_lt_top⟩
@@ -128,7 +109,7 @@ theorem memLp_of_gradClosed (hd : 0 < d) (c : EuclideanSpace ℝ (Fin d))
     have hd2 : (2 : ℝ) ≤ (d : ℝ) := by exact_mod_cast hd2n
     have hdpos : (0 : ℝ) < (d : ℝ) := by linarith
     have hdinv : (d : ℝ)⁻¹ ≤ 2⁻¹ := by
-      have := inv_antitone_aux (a := (2 : ℝ)) (by norm_num) hd2
+      have := inv_anti₀ (b := (2 : ℝ)) (by norm_num) hd2
       simpa using this
     have hdinv0 : (0 : ℝ) < (d : ℝ)⁻¹ := inv_pos.mpr hdpos
     have hqinv0 : (0 : ℝ) < (q : ℝ)⁻¹ := by
@@ -138,7 +119,7 @@ theorem memLp_of_gradClosed (hd : 0 < d) (c : EuclideanSpace ℝ (Fin d))
     have hqinv : (q : ℝ)⁻¹ ≤ 2⁻¹ := by
       have h2q : ((2 : ℝ≥0) : ℝ) ≤ (q : ℝ) := NNReal.coe_le_coe.mpr hq2
       simp only [NNReal.coe_ofNat] at h2q
-      have := inv_antitone_aux (a := (2 : ℝ)) (by norm_num) h2q
+      have := inv_anti₀ (b := (2 : ℝ)) (by norm_num) h2q
       simpa using this
     push_cast at hqs
     -- The midpoint of the gap, so that the rung shrinks the ball without leaving `r`.
@@ -158,30 +139,34 @@ theorem memLp_of_gradClosed (hd : 0 < d) (c : EuclideanSpace ℝ (Fin d))
       have : 0 ≤ (s : ℝ) * (d : ℝ)⁻¹ := by positivity
       rw [ht_def]; linarith
     set Q : ℝ≥0 := Real.toNNReal t⁻¹ with hQ_def
-    have hQcoe : ((Q : ℝ≥0) : ℝ) = t⁻¹ := by rw [hQ_def]; exact coe_toNNReal_inv_aux ht0
+    have hQcoe : ((Q : ℝ≥0) : ℝ) = t⁻¹ := by
+      rw [hQ_def]
+      exact Real.coe_toNNReal _ (inv_nonneg.mpr ht0.le)
     have hQ0 : (0 : ℝ) < (Q : ℝ) := by rw [hQcoe]; exact inv_pos.mpr ht0
     have hQinv : ((Q : ℝ≥0) : ℝ)⁻¹ = t := by rw [hQcoe, inv_inv]
     have hQ2 : (2 : ℝ≥0) ≤ Q := by
       rw [← NNReal.coe_le_coe, NNReal.coe_ofNat, hQcoe]
-      have := inv_antitone_aux ht0 ht2
+      have := inv_anti₀ ht0 ht2
       simpa using this
     -- The exponent the inequality is applied at, `1/p = 1/q + 1/d`.
     set u : ℝ := (q : ℝ)⁻¹ + (d : ℝ)⁻¹ with hu_def
     have hu0 : 0 < u := by rw [hu_def]; linarith
     have hu1 : u ≤ 1 := by rw [hu_def]; linarith
     set p : ℝ≥0 := Real.toNNReal u⁻¹ with hp_def
-    have hpcoe : ((p : ℝ≥0) : ℝ) = u⁻¹ := by rw [hp_def]; exact coe_toNNReal_inv_aux hu0
+    have hpcoe : ((p : ℝ≥0) : ℝ) = u⁻¹ := by
+      rw [hp_def]
+      exact Real.coe_toNNReal _ (inv_nonneg.mpr hu0.le)
     have hp0 : (0 : ℝ) < (p : ℝ) := by rw [hpcoe]; exact inv_pos.mpr hu0
     have hpinv : ((p : ℝ≥0) : ℝ)⁻¹ = u := by rw [hpcoe, inv_inv]
     have hp1 : (1 : ℝ≥0) ≤ p := by
       rw [← NNReal.coe_le_coe, NNReal.coe_one, hpcoe]
-      have := inv_antitone_aux hu0 hu1
+      have := inv_anti₀ hu0 hu1
       simpa using this
     -- The half-step is what keeps the applied exponent below the rung's own.
     have htu : t ≤ u := by rw [ht_def, hu_def]; linarith
     have hpQ : p ≤ Q := by
       rw [← NNReal.coe_le_coe]
-      refine le_of_inv_le_inv_aux hQ0 hp0 ?_
+      refine (inv_le_inv₀ hQ0 hp0).mp ?_
       rw [hQinv, hpinv]; exact htu
     have hpp' : ((q : ℝ≥0) : ℝ)⁻¹ = ((p : ℝ≥0) : ℝ)⁻¹ - (d : ℝ)⁻¹ := by
       rw [hpinv, hu_def]; ring
