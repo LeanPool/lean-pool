@@ -28,6 +28,7 @@ open CategoryTheory
 variable {k ℓ : ℕ}
 
 /-- The colour-side braiding word. -/
+@[expose]
 noncomputable def colourSwapWord (k ℓ : ℕ) {n : ℕ} :
     List (Fin n) →
       (colourPower k ℓ (n + 1) ⟶ colourPower k ℓ (n + 1))
