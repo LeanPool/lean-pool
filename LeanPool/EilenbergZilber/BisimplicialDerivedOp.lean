@@ -243,10 +243,6 @@ lemma realize_single_id {q : ℕ} (X : BisimplicialObject C) :
 noncomputable def D0op (q : ℕ) : DerivedOp q (q + 1) :=
   Finsupp.single ⟨SimplexCategory.σ 0, SimplexCategory.σ 0⟩ 1
 
-/-- The `i`-th diagonal degeneracy operator `Dᵢ = sᵢ × sᵢ : (K×L)_q → (K×L)_{q+1}`. -/
-noncomputable def degenOp (q : ℕ) (i : Fin (q + 1)) : DerivedOp q (q + 1) :=
-  Finsupp.single ⟨SimplexCategory.σ i, SimplexCategory.σ i⟩ 1
-
 /-- The `i`-th face operator `F_i = δ_i × δ_i : (K×L)_{q+1} → (K×L)_q`. -/
 noncomputable def faceOp (q : ℕ) (i : Fin (q + 2)) : DerivedOp (q + 1) q :=
   Finsupp.single ⟨SimplexCategory.δ i, SimplexCategory.δ i⟩ 1
@@ -277,15 +273,6 @@ frontal in this strong sense (`prime_frontal`). It is what the homotopy identity
 (via `prime_comp_D0_of_frontal`). -/
 def DerivedOp.Frontal {s q : ℕ} (M : DerivedOp s q) : Prop :=
   ∀ l ∈ M.support, IsFrontalHom l.fst ∧ IsFrontalHom l.snd
-
-/-- An operator is **first-variable frontal** if every letter's horizontal (`K`-side) map is
-frontal. This is the *weaker* property that `h = ∇f` actually has (EM line 213: in `f` the `0`-th
-face `F₀` is always in the second factor, so only the first-variable maps `β` are frontal). Note
-the vertical maps of `h` are **not** frontal in general (they begin with `ιBack`, which sends
-`0 ↦ p`). This weaker notion is only needed for the optional annihilation property `fΦ = 0` (2.4),
-not for the homotopy identity (2.3). -/
-def DerivedOp.FrontalFst {s q : ℕ} (M : DerivedOp s q) : Prop :=
-  ∀ l ∈ M.support, IsFrontalHom l.fst
 
 /-! ### The realized operators agree with the chain-complex data
 
@@ -435,13 +422,6 @@ lemma primeHom_σ {q : ℕ} (i : Fin (q + 1)) :
   simp only [SimplexCategory.len_mk] at hj
   simp only [Fin.lt_def, Fin.val_castSucc, Fin.val_succ]
   split_ifs <;> simp_all only [Fin.val_pred, Fin.coe_castPred] <;> omega
-
-/-- **`prime` shifts degeneracies**: `prime(σ_i) = σ_{i+1}` (`D_i = (D_{i-1})'`).
-The operator-level input to EM (2.12): a diagonal degeneracy `D_i` for `i ≥ 1` is the `prime` of
-the lower `D_{i-1}`. -/
-lemma prime_degenOp (q : ℕ) (i : Fin (q + 1)) :
-    (degenOp q i).prime = degenOp (q + 1) i.succ := by
-  simp only [degenOp, DerivedOp.prime, Finsupp.mapDomain_single, OpLetter.prime, primeHom_σ]
 
 /-- `prime` bundled as an additive hom, so it distributes over `Finset.sum` (`map_sum`) and
 `zsmul` (`map_zsmul`). -/
@@ -833,41 +813,6 @@ lemma DerivedOp.Frontal.add {s q : ℕ} {M N : DerivedOp s q} (hM : M.Frontal) (
   · exact hM l h
   · exact hN l h
 
-/-- Frontality is preserved by right composition with a single frontal letter. -/
-lemma DerivedOp.Frontal.comp_single {s q r : ℕ} {M : DerivedOp q r} (hM : M.Frontal)
-    (l₁ : OpLetter s q) (c₁ : ℤ) (hl₁ : IsFrontalHom l₁.fst ∧ IsFrontalHom l₁.snd) :
-    (M.comp (Finsupp.single l₁ c₁)).Frontal := by
-  induction M using Finsupp.induction with
-  | zero =>
-      rw [show DerivedOp.comp (0 : DerivedOp q r) (Finsupp.single l₁ c₁) = 0 from by
-        simp [DerivedOp.comp]]
-      exact DerivedOp.Frontal.zero
-  | single_add l₂ c₂ g hlg hc₂ ih =>
-      have hl₂ := hM l₂ (by
-        rw [Finsupp.mem_support_iff, Finsupp.add_apply, Finsupp.single_eq_same,
-          Finsupp.notMem_support_iff.mp hlg, add_zero]
-        exact hc₂)
-      have hg : DerivedOp.Frontal g := fun l' hl' => hM l' (by
-        rw [Finsupp.mem_support_iff, Finsupp.add_apply,
-          Finsupp.single_eq_of_ne (by rintro rfl; exact hlg hl'), zero_add,
-          ← Finsupp.mem_support_iff]
-        exact hl')
-      rw [DerivedOp.add_comp, DerivedOp.single_comp_single]
-      exact (DerivedOp.Frontal.single (l₂.comp l₁) (c₁ * c₂)
-        ⟨hl₂.1.comp hl₁.1, hl₂.2.comp hl₁.2⟩).add (ih hg)
-
-/-- `Φ` is frontal: `Φ₀ = 0` is vacuously frontal; the step `Φ_{q+1} = −Φ'_q + h'_{q+1} D₀` is a
-sum of a primed operator (frontal by `prime_frontal`, no induction hypothesis needed) and a primed
-operator composed with the frontal degeneracy `D₀ = ⟨σ₀,σ₀⟩`. -/
-lemma phiOp_frontal (q : ℕ) : (phiOp q).Frontal := by
-  cases q with
-  | zero => exact DerivedOp.Frontal.zero
-  | succ q =>
-      have hσ : IsFrontalHom (SimplexCategory.σ (0 : Fin (q + 1 + 1))) := by
-        simp [IsFrontalHom, SimplexCategory.σ, Fin.predAbove]
-      rw [phiOp, D0op]
-      exact ((prime_frontal _).neg).add ((prime_frontal _).comp_single _ 1 ⟨hσ, hσ⟩)
-
 /-! ### Packaging the homotopy on `F₂` (raw, modulo norms) -/
 
 /-- `Φ` packaged as a degree-`+1` `Homotopy.hom` family on `F₂.obj X` (the unnormalized diagonal):
@@ -875,10 +820,6 @@ lemma phiOp_frontal (q : ℕ) : (phiOp q).Frontal := by
 noncomputable def phiHomRaw (X : BisimplicialObject C) (i j : ℕ) :
     (F₂.obj X).X i ⟶ (F₂.obj X).X j :=
   if h : j = i + 1 then (phiOp i).realize X ≫ eqToHom (by rw [h]) else 0
-
-lemma phiHomRaw_zero (X : BisimplicialObject C) (i j : ℕ)
-    (hij : ¬ (ComplexShape.down ℕ).Rel j i) : phiHomRaw X i j = 0 :=
-  dite_eq_right fun h => hij (by rw [ComplexShape.down_Rel]; omega)
 
 /-- `prevD` of `phiHomRaw` is the realized operator `∂Φ` (apply `Φ` then `∂`):
 `prevD n (phiHomRaw X) = (phiOp n).realize X ≫ (boundaryOp n).realize X`. -/
@@ -1090,26 +1031,6 @@ lemma DerivedOp.comp_assoc {s q r p : ℕ} (M₃ : DerivedOp r p) (M₂ : Derive
 @[simp] lemma DerivedOp.zero_comp {s q r : ℕ} (N : DerivedOp s q) :
     DerivedOp.comp (0 : DerivedOp q r) N = 0 := by simp [DerivedOp.comp]
 
-/-- `k`-fold derived operator `M ↦ M'⋯'`. (`prime` is type-changing, so this is a manual recursion,
-not `Function.iterate`.) -/
-noncomputable def DerivedOp.primeIter {s q : ℕ} :
-    (k : ℕ) → DerivedOp s q → DerivedOp (s + k) (q + k)
-  | 0, M => M
-  | k + 1, M => (DerivedOp.primeIter k M).prime
-
-@[simp] lemma DerivedOp.primeIter_succ {s q : ℕ} (k : ℕ) (M : DerivedOp s q) :
-    DerivedOp.primeIter (k + 1) M = (DerivedOp.primeIter k M).prime := rfl
-
-/-- `primeIter` distributes over `comp` (iterated `prime_comp`): `(M₂ ∘ M₁)⁽ᵏ⁾ = M₂⁽ᵏ⁾ ∘ M₁⁽ᵏ⁾`. -/
-lemma DerivedOp.primeIter_comp {s q r : ℕ} (k : ℕ) (M₂ : DerivedOp q r) (M₁ : DerivedOp s q) :
-    DerivedOp.primeIter k (M₂.comp M₁)
-      = (DerivedOp.primeIter k M₂).comp (DerivedOp.primeIter k M₁) := by
-  induction k with
-  | zero => rfl
-  | succ k ih =>
-      rw [DerivedOp.primeIter_succ, ih, prime_comp, DerivedOp.primeIter_succ,
-        DerivedOp.primeIter_succ]
-
 /-- Structural norm class for diagonal degeneracies, closed under `+` and `neg`.
 
 The point of this definition is that closure under `prime` is formal, so the induction can be run
@@ -1242,9 +1163,6 @@ noncomputable def diagPInfty (X : BisimplicialObject C) (n : ℕ) :
     (X.obj (Opposite.op ⦋n⦌)).obj (Opposite.op ⦋n⦌) ⟶
       (X.obj (Opposite.op ⦋n⦌)).obj (Opposite.op ⦋n⦌) :=
   (PInfty : F₂.obj X ⟶ F₂.obj X).f n
-
-lemma diagPInfty_eq (X : BisimplicialObject C) (n : ℕ) :
-    diagPInfty X n = (PInfty : F₂.obj X ⟶ F₂.obj X).f n := rfl
 
 /-- **Shared per-summand kill (degeneracy ⟹ diagonal degeneracy).** A single Eilenberg–Zilber
 summand `(X_⦋s⦌).map v.op ≫ (X.map h.op)_⦋n+1⦌`, in which the horizontal leg `h` and the vertical
@@ -1547,31 +1465,6 @@ lemma retractionN₁_inclusionN₁_shuffleMap_retractionN₂ (X : BisimplicialOb
   erw [PInftyToNormalizedMooreComplex_comp_inclusionOfMooreComplexMap]
   simp only [Functor.comp_obj,
     retractionN₁_inclusionN₁_shuffleMap_PInfty X]
-
-/-- **Realized `F₀`-naturality of `prime`** (the realize-level `realize_prime` characterization).
-The realization of EM's Lemma I.3.3 operator identity `lastFace_comp_prime` (`F₀ M' = M F₀`): the
-primed operator `M'` intertwines the bottom face `F₀ = realize (lastFaceOp _)` with `M`. Together
-with frontality of `M'` (`prime_frontal`: `M'` fixes the bottom vertex `0`), this **characterizes**
-`realize X M.prime` — it is the unique frontal lift of `realize X M` along `F₀`.
-
-Provable in one step: `← realize_comp` on both sides, then `lastFace_comp_prime`. -/
-lemma realize_prime_comp_lastFace {s q : ℕ} (X : BisimplicialObject C) (M : DerivedOp s q) :
-    DerivedOp.realize X M.prime ≫ DerivedOp.realize X (lastFaceOp q)
-      = DerivedOp.realize X (lastFaceOp s) ≫ DerivedOp.realize X M := by
-  simp only [← realize_comp, lastFace_comp_prime]
-
-/-- A `subtraction` convenience: `IsNorm M → IsNorm N → IsNorm (M - N)`. -/
-lemma IsNorm.sub {s q : ℕ} {M N : DerivedOp s q} (hM : IsNorm M) (hN : IsNorm N) :
-    IsNorm (M - N) := by rw [sub_eq_add_neg]; exact hM.add hN.neg
-
-/-- A norm absorbs arbitrary right composition (the degeneracy stays on the output side). -/
-lemma IsNorm.comp_right {s s' q : ℕ} {M : DerivedOp s q} (hM : IsNorm M) (N : DerivedOp s' s) :
-    IsNorm (M.comp N) := by
-  induction hM generalizing s' with
-  | zero => rw [DerivedOp.zero_comp]; exact IsNorm.zero
-  | add _ _ ihM ihN => rw [DerivedOp.add_comp]; exact (ihM N).add (ihN N)
-  | neg _ ihM => rw [DerivedOp.neg_comp]; exact (ihM N).neg
-  | diagDegen θ hθ N₀ => rw [DerivedOp.comp_assoc]; exact IsNorm.diagDegen θ hθ _
 
 /-- **Every norm dies under `retractionN₂`** (for every `X`). Structural induction: linear cases are
 `realize`-linearity; the two generators are the (2)-diagonal kill and EM (2.12). -/

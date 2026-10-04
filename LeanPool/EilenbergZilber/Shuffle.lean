@@ -38,14 +38,6 @@ abbrev Shuffle (p q : ℕ) :=
 
 namespace Shuffle
 
-/-- Canonical inclusion of `Fin p` into `Fin (p + q)`. -/
-def left {p q : ℕ} (_μ : Shuffle p q) : Fin p → Fin (p + q) := fun i =>
-  ⟨i, by omega⟩
-
-/-- Canonical inclusion of `Fin q` into `Fin (p + q)` shifted by `p`. -/
-def right {p q : ℕ} (_μ : Shuffle p q) : Fin q → Fin (p + q) := fun j =>
-  ⟨p + j, by omega⟩
-
 /-- There are finitely many (p,q)-shuffles: exactly `Nat.choose (p + q) p`. -/
 noncomputable instance instFintype (p q : ℕ) : Fintype (Shuffle p q) := by
   classical
@@ -275,24 +267,6 @@ private lemma invCount_swap_eq {p q : ℕ} (u : Shuffle p q) :
     Fin.ext (by simp [finCongr])
   simp_rw [hcs, hss]
 
-/-- Telescoping sum for ℕ-valued functions. -/
-private lemma nat_sum_telescope : ∀ (n : ℕ) (g : ℕ → ℕ), (∀ i, i < n → g i ≤ g (i + 1)) →
-    ∑ i ∈ Finset.range n, (g (i + 1) - g i) = g n - g 0 := by
-  intro n
-  induction n with
-  | zero => intro g _; simp
-  | succ k ih =>
-    intro g hg
-    rw [Finset.sum_range_succ, ih g (fun m hm => hg m (by omega))]
-    have h1 := hg k (by omega)
-    have h2 : g 0 ≤ g k := by
-      suffices h : ∀ j, j ≤ k → g 0 ≤ g j from h k le_rfl
-      intro j hj
-      induction j with
-      | zero => exact le_refl _
-      | succ m ihm => exact le_trans (ihm (Nat.le_of_succ_le hj)) (hg m (by omega))
-    omega
-
 /- Total inversions of a shuffle and its swap equal `p * q`. -/
 section
 
@@ -410,15 +384,6 @@ lemma unique_0_0 (μ : Shuffle 0 0) :
 /-- There is exactly one `(0,0)`-shuffle. -/
 instance subsingleton_0_0 : Subsingleton (Shuffle 0 0) :=
   ⟨fun μ ν => Subtype.ext (by rw [unique_0_0 μ, unique_0_0 ν])⟩
-
-/-- The unique `(0,0)`-shuffle. -/
-def defaultZeroZero : Shuffle 0 0 :=
-  ⟨⟨fun _ => (0, 0), fun _ _ _ => le_refl _⟩,
-    fun _ _ _ => Fin.ext (by simp [Fin.eq_zero])⟩
-
-/-- The unique `(0,0)`-shuffle has sign 1. -/
-lemma sign_0_0 : (defaultZeroZero : Shuffle 0 0).sign = 1 := by
-  simp [sign, invCount]
 
 /-- The **staircase** `(r,m)`-shuffle `k ↦ (min(k,r), k - r)`: it goes right `r` steps then up
 `m` steps (the lexicographically smallest shuffle path). Its front-`r` face and back-`m` face
@@ -632,22 +597,6 @@ private lemma insertRightIndex_iff {p q : ℕ} (ν : Shuffle p q) (k : Fin (q + 
       (by simp +decide [])
 
 /-! ##### Insertion maps (RHS → LHS direction) -/
-
-/-- For an order-preserving injection into a product, the first component at consecutive
-indices can increase by at most 1. -/
-lemma shuffle_fst_succ_le {p q : ℕ} (ν : Shuffle p q) (i : Fin (p + q + 1))
-    (hi : i.val + 1 < p + q + 1) :
-    (ν.1 ⟨i.val + 1, by omega⟩).1.val ≤ (ν.1 ⟨i.val, i.isLt⟩).1.val + 1 := by
-  -- By definition of `Shuffle`, we know that the first component is strictly increasing.
-  have h_strict_mono : ∀ r : Fin (p + q), (ν.1 (Fin.castSucc r)).fst.val + 1 ≥ (ν.1 (Fin.succ
-      r)).fst.val := by
-    intro r
-    have := coordSum_eq ν (Fin.castSucc r)
-    have := coordSum_eq ν (Fin.succ r)
-    simp at *;
-    linarith [ show ( ν.1 ( Fin.castSucc r ) |>.2 : ℕ ) ≤ ( ν.1 ( Fin.succ r ) |>.2 : ℕ ) from
-        by exact ( ν.1.monotone ( Nat.le_succ _ ) ) |>.2 ];
-  exact h_strict_mono ⟨ i, by linarith ⟩
 
 /-- The underlying piecewise map for `insertLeftStep`: before the insertion point,
 embed the original vertex via `succAbove j`; at the insertion point, place `(j, t-j)`;
@@ -1619,17 +1568,6 @@ def removeRightFun {p q : ℕ} (μ : Shuffle p (q + 1)) (r : Fin (p + q + 2)) : 
     let val := μ.1 k_mapped
     (val.1, finRemove (μ.1 r').2 val.2)
 
-lemma finRemove_succAbove {n : ℕ} (p : Fin (n + 2)) (j : Fin (n + 1)) :
-    finRemove p (p.succAbove j) = j := by
-  unfold finRemove
-  by_cases hj : j.castSucc < p
-  · rw [Fin.succAbove_of_castSucc_lt _ _ hj, dite_eq_left hj]
-    rfl
-  · rw [Fin.succAbove_of_le_castSucc _ _ (not_lt.mp hj),
-      dite_eq_right fun h => hj (Fin.castSucc_lt_succ.trans h)]
-    ext
-    simp
-
 lemma succAbove_finRemove {n : ℕ} (p : Fin (n + 2)) (i : Fin (n + 2)) (h : i ≠ p) :
     p.succAbove (finRemove p i) = i := by
   unfold finRemove
@@ -1891,116 +1829,63 @@ lemma insertIndex_removeLeft {p q : ℕ} {μ : Shuffle (p + 1) q} {r : Fin (p + 
         · exact absurd ‹_› ( not_le_of_gt ( Nat.lt_of_succ_le hi ) );
       · simp +contextual [ Fin.ext_iff ]
 
+/-- `insertLeftStep` before the insertion index: the vertex of `ν`, with its first coordinate
+pushed past `j`. -/
+private lemma insertLeftStep_apply_of_lt {p q : ℕ} (ν : Shuffle p q) (j : Fin (p + 2))
+    (k : Fin ((p + 1) + q + 1)) (hk : k.val < (insertLeftIndex ν j).val) :
+    (insertLeftStep ν j).1 k =
+      (j.succAbove (ν.1 ⟨k, by have := (insertLeftIndex ν j).isLt; omega⟩).1,
+        (ν.1 ⟨k, by have := (insertLeftIndex ν j).isLt; omega⟩).2) := by
+  simp [insertLeftStep, insertLeftStepFun, hk]
+
+/-- `insertLeftStep` at the insertion index: the new vertex `(j, t - j)`. -/
+private lemma insertLeftStep_apply_of_eq {p q : ℕ} (ν : Shuffle p q) (j : Fin (p + 2))
+    (k : Fin ((p + 1) + q + 1)) (hk : k.val = (insertLeftIndex ν j).val) :
+    (insertLeftStep ν j).1 k = (j, ⟨k.val - j.val, by have := insertLeftIndex_le ν j; omega⟩) := by
+  simp [insertLeftStep, insertLeftStepFun, hk]
+
+/-- `insertLeftStep` after the insertion index: the previous vertex of `ν`, with its first
+coordinate pushed past `j`. -/
+private lemma insertLeftStep_apply_of_gt {p q : ℕ} (ν : Shuffle p q) (j : Fin (p + 2))
+    (k : Fin ((p + 1) + q + 1)) (hk : (insertLeftIndex ν j).val < k.val) :
+    (insertLeftStep ν j).1 k =
+      (j.succAbove (ν.1 ⟨k - 1, by omega⟩).1, (ν.1 ⟨k - 1, by omega⟩).2) := by
+  simp [insertLeftStep, insertLeftStepFun, hk.not_gt, hk.ne']
+
+/-- Every vertex of `removeLeft μ r h`, with its first coordinate pushed back past `(μ r).1`, is
+the corresponding vertex of `μ` away from `r`. -/
+private lemma succAbove_removeLeft_apply {p q : ℕ} {μ : Shuffle (p + 1) q} {r : Fin (p + q + 2)}
+    (h : isLeftVertex μ (r.cast (by omega))) (i : Index (p + q)) :
+    ((μ.1 (r.cast (by omega))).1.succAbove ((removeLeft μ r h).1 i).1,
+        ((removeLeft μ r h).1 i).2) =
+      μ.1 ((r.cast (by omega) : Index (p + 1 + q)).succAbove (i.cast (by omega))) :=
+  Prod.ext (succAbove_finRemove _ _ (ne_fst_of_isLeftVertex h _ (Fin.succAbove_ne _ _))) rfl
+
 lemma insertLeft_removeLeft {p q : ℕ} {μ : Shuffle (p + 1) q} {r : Fin (p + q + 2)}
     (h : isLeftVertex μ (r.cast (by omega))) :
     insertLeftStep (removeLeft μ r h) (μ.1 (r.cast (by omega))).1 = μ := by
-      -- By definition of `removeLeft`, we know that `μ.1 (Fin.cast (by omega) r)` is the left index
-      -- of `μ`.
-      set ν := removeLeft μ r h
-      set j := (μ.1 (Fin.cast (by omega) r)).1
-      have h_insert : insertLeftStep ν j = μ := by
-        -- By definition of `insertLeftStep`, we know that `insertLeftStep ν j` is equal to `μ`.
-        have h_insert : insertLeftIndex ν j = Fin.cast (by omega) r := by
-          exact insertIndex_removeLeft h
-        generalize_proofs at *;
-        exact (by
-          have h_eq : ∀ k : Fin ((p + 1) + q + 1), (insertLeftStep ν j).1 k = μ.1 k := by
-            intro k
-            by_cases hk : k.val < (insertLeftIndex ν j).val
-            · generalize_proofs at *; (
-              -- By definition of `insertLeftStep`, when `k < t`, the first component is
-              -- `j.succAbove (ν.1 k).fst`.
-              simp only [insertLeftStep, OrderHom.coe_mk];
-              simp only [insertLeftStepFun, h_insert, Fin.cast_eq_self]
-              generalize_proofs at *; (
-              split_ifs <;> simp_all +decide only [Fin.cast_eq_self, Fin.ext_iff,
-                  Order.lt_add_one_iff, tsub_le_iff_right, lt_self_iff_false]
-              generalize_proofs at *; (
-              have h_eq : (μ.1 k).1 < j := by
-                have h_eq : (μ.1 k).1 ≠ (μ.1 (Fin.cast (by omega) r)).1 := by
-                  exact ne_fst_of_isLeftVertex h k (by simpa [Fin.ext_iff] using by omega) |>
-                    fun h => by simpa [Fin.ext_iff] using h
-                generalize_proofs at *; (
-                exact lt_of_le_of_ne
-                  (μ.1.monotone (show k ≤ Fin.cast (by omega) r from Nat.le_of_lt ‹_›)).1 h_eq)
-              generalize_proofs at *; (
-              have h_eq : (ν.1 ⟨k.val, by omega⟩).1 = finRemove j (μ.1 k).1 := by
-                simp only [removeLeft, OrderHom.coe_mk, removeLeftFun, Fin.cast_mk, Fin.ext_iff, ν];
-                congr! 1
-                (generalize_proofs at *; (
-                congr! 1
-                generalize_proofs at *; (
-                congr! 1
-                generalize_proofs at *; (
-                congr! 1
-                generalize_proofs at *; (
-                simp +decide only [Fin.succAbove, Fin.castSucc_mk, Fin.eta, Fin.succ_mk,
-                    ite_eq_left_iff, not_lt];
-                exact fun h => False.elim <| h.not_gt <| Nat.lt_of_le_of_lt ( Nat.le_refl _
-                    ) ‹_›;)))))
-              generalize_proofs at *; (
-              have h_eq : Fin.succAbove j (finRemove j (μ.1 k).1) = (μ.1 k).1 := by
-                convert succAbove_finRemove j _ _ using 1
-                generalize_proofs at *; (
-                exact ne_of_lt ‹_›)
-              generalize_proofs at *; (
-              have h_eq : (ν.1 ⟨k.val, by omega⟩).2 = (μ.1 k).2 := by
-                simp only [Order.lt_add_one_iff, removeLeft, OrderHom.coe_mk,
-                    ν] at *; (
-                simp only [Fin.succAbove, removeLeftFun, Fin.cast_mk, Fin.castSucc_mk, Fin.eta,
-                    Fin.succ_mk] at *; (
-                rw [ite_eq_left (Fin.lt_def.mpr (by
-                  simpa [Fin.val_cast] using ‹(k : ℕ) < r›))]))
-              generalize_proofs at *; (
-              aesop)))))));
-            by_cases hk' : k.val = (insertLeftIndex ν j).val
-            · -- Case k = insertLeftIndex (= r)
-              have hk'_eq : k.val = r.val := by simpa [h_insert] using hk'
-              rw [show k = ⟨r.val, by linarith [Fin.is_lt r]⟩ from Fin.ext hk'_eq]
-              have hr_cast : (⟨r.val, by omega⟩ : Fin (p + 1 + q + 1)) =
-                  Fin.cast (by omega) r := Fin.ext (by simp [Fin.val_cast])
-              simp only [insertLeftStep, insertLeftStepFun, h_insert, Fin.cast_eq_self,
-                  OrderHom.coe_mk, lt_self_iff_false, ↓reduceDIte]
-              have hμ : μ.1 ⟨r.val, by omega⟩ = μ.1 (Fin.cast (by omega) r) :=
-                congrArg _ hr_cast
-              rw [hμ]
-              refine Prod.ext rfl ?_
-              exact Fin.ext (by
-                have hsum := coordSum_eq μ (Fin.cast (by omega) r)
-                simp [j, Fin.val_cast] at hsum ⊢
-                omega)
-            · -- Case k > insertLeftIndex (= r)
-              have h_eq : ν.1 (Fin.mk (k.val - 1) (by omega)) =
-                  (finRemove j (μ.1 k).1, (μ.1 k).2) := by
-                have h_eq : Fin.succAbove (Fin.cast (by omega) r)
-                    (Fin.mk (k.val - 1) (by omega)) = k := by
-                  rw [Fin.succAbove_of_le_castSucc]
-                  · exact Fin.ext (by simp; omega)
-                  · simp only [Fin.le_def, Fin.val_cast, Fin.val_castSucc]
-                    have : (insertLeftIndex ν j).val = r.val := by
-                      simpa [Fin.val_cast] using congrArg Fin.val h_insert
-                    omega
-                simpa [ν, removeLeft, removeLeftFun] using
-                  congr_arg (fun x : Index (p + 1 + q) =>
-                    (finRemove j (μ.1 x).1, (μ.1 x).2)) h_eq
-              have h_eq_fun : j.succAbove (finRemove j (μ.1 k).1) = (μ.1 k).1 := by
-                apply succAbove_finRemove
-                apply ne_fst_of_isLeftVertex h k
-                intro hkr
-                apply hk'
-                simpa [Fin.ext_iff, h_insert] using congr_arg Fin.val hkr
-              have h_eq_fun : (insertLeftStep ν j).1 k =
-                  (j.succAbove (ν.1 (Fin.mk (k.val - 1) (by omega))).1,
-                    (ν.1 (Fin.mk (k.val - 1) (by omega))).2) := by
-                simp [insertLeftStep, insertLeftStepFun, hk, hk']
-              aesop (simp_config := { singlePass := true })
-          exact (by
-            have h_eq_fun : (insertLeftStep ν j).1 = μ.1 := by
-              exact funext h_eq |> fun h => by simpa using h;
-            exact Subtype.ext h_eq_fun
-          )
-        )
-      exact h_insert
+  have ht : (insertLeftIndex (removeLeft μ r h) (μ.1 (r.cast (by omega))).1).val = r.val := by
+    simpa using congrArg Fin.val (insertIndex_removeLeft h)
+  refine Subtype.ext (OrderHom.ext _ _ (funext fun k => ?_))
+  rcases lt_trichotomy k.val r.val with hk | hk | hk
+  · -- before `r`: the vertex is unchanged by `succAbove r`
+    rw [insertLeftStep_apply_of_lt _ _ k (by omega), succAbove_removeLeft_apply h]
+    congr 1
+    rw [Fin.succAbove_of_castSucc_lt _ _ (by simp [Fin.lt_def]; omega)]
+    exact Fin.ext (by simp)
+  · -- at `r`: the inserted vertex is `(μ r).1` paired with the complementary coordinate
+    rw [insertLeftStep_apply_of_eq _ _ k (by omega)]
+    have hkr : r.cast (by omega) = k := Fin.ext (by simp [hk])
+    have h1 := congrArg (fun x => ((μ.1 x).1 : ℕ)) hkr
+    have h2 := coordSum_eq μ k
+    refine Prod.ext (congrArg (fun x => (μ.1 x).1) hkr) (Fin.ext ?_)
+    dsimp only at h1 ⊢
+    omega
+  · -- after `r`: `succAbove r` shifts the preceding vertex back up to `k`
+    rw [insertLeftStep_apply_of_gt _ _ k (by omega), succAbove_removeLeft_apply h]
+    congr 1
+    rw [Fin.succAbove_of_le_castSucc _ _ (by simp [Fin.le_def]; omega)]
+    exact Fin.ext (by simp; omega)
 
 lemma insertIndex_removeRight {p q : ℕ} {μ : Shuffle p (q + 1)} {r : Fin (p + q + 2)}
     (h : isRightVertex μ (r.cast (by omega))) :
@@ -2187,62 +2072,6 @@ lemma nondiag_mem_insertLeft_or_insertRight {p q : ℕ}
       convert hIL.symm using 2
       rfl
     · simpa [hr_eq] using congrArg Fin.val (insertIndex_removeRight h')
-
-
-/- The images of `insertLeftStep` and `insertRightStep` are disjoint:
-no `(p+1,q+1)`-shuffle with a given vertex index can arise from both
-a left insertion and a right insertion. -/
-section
-
-/-
-At the insertion index `t`, `insertRightStep` does not have a left step (i.e., it has a right step).
--/
-lemma insertRightStep_not_isLeftStep_at {p q : ℕ}
-    (ν : Shuffle p q) (k : Fin (q + 2))
-    (ht : (insertRightIndex ν k).val < p + q + 1) :
-    ¬ isLeftStep (insertRightStep ν k) ⟨(insertRightIndex ν k).val, ht⟩ := by
-      unfold isLeftStep;
-      simp +decide only [insertRightStep, Fin.castSucc, Fin.castAdd_mk, Fin.eta, OrderHom.coe_mk,
-          Fin.succ, Fin.val_fin_lt, not_lt] at *;
-      unfold insertRightStepFun; simp +decide [ * ] ;
-      have := coordSum_eq ν ⟨ ( ν.insertRightIndex k : ℕ ), by omega ⟩ ; simp_all +decide [] ;
-      have := insertRightIndex_ge ν k; simp_all +decide [ Fin.le_def, Nat.le_sub_iff_add_le ] ;
-      linarith [ show ( ν.1 ⟨ ( ν.insertRightIndex k : ℕ ), ht ⟩ |>.2 : ℕ ) ≥ k from by
-                  have := insertRightIndex_iff ν k ⟨ ( ν.insertRightIndex k : ℕ ), ht ⟩ ; aesop; ]
-
-end
-/-- The images of `insertLeftStep` and `insertRightStep` are disjoint:
-no `(p+1,q+1)`-shuffle with a given vertex index can arise from both
-a left insertion and a right insertion. -/
-lemma insertLeft_insertRight_disjoint {p q : ℕ}
-    (j : Fin (p + 2)) (ν₁ : Shuffle p (q + 1))
-    (k : Fin (q + 2)) (ν₂ : Shuffle (p + 1) q)
-    (hμ : insertLeftStep ν₁ j = insertRightStep ν₂ k)
-    (hr : (insertLeftIndex ν₁ j).val = (insertRightIndex ν₂ k).val) :
-    False := by
-  by_cases ht : (ν₁.insertLeftIndex j).val < p + 1 + (q + 1);
-  · have := insertLeftStep_isLeftStep_at ν₁ j ht; have := insertRightStep_not_isLeftStep_at ν₂ k (
-        by linarith ) ; simp_all +decide [ isLeftStep ] ;
-  · have h_last : (ν₁.insertLeftIndex j).val = p + 1 + (q + 1) ∧ (ν₂.insertRightIndex
-        k).val = p + 1 + (q + 1) := by
-      exact ⟨ by linarith [ Fin.is_lt ( ν₁.insertLeftIndex j ) ],
-          by linarith [ Fin.is_lt ( ν₂.insertRightIndex k ) ] ⟩;
-    have h_last : j = Fin.last (p + 1) ∧ k = Fin.last (q + 1) := by
-      have h_last : j.val = p + 1 ∧ k.val = q + 1 := by
-        have h_last : (ν₁.insertLeftIndex j).val ≤ j.val + (q + 1) ∧ (ν₂.insertRightIndex
-            k).val ≤ (p + 1) + k.val := by
-          exact ⟨ insertLeftIndex_le ν₁ j, insertRightIndex_le ν₂ k ⟩;
-        constructor <;> linarith [ Fin.is_lt j, Fin.is_lt k ];
-      exact ⟨ Fin.ext h_last.1, Fin.ext h_last.2 ⟩;
-    have := hμ; replace := congr_arg ( fun f => f.1.1 ⟨ ( p + 1 + ( q + 1 ) - 1 ),
-        by omega ⟩ ) this; simp +decide only [h_last, Nat.add_succ_sub_one,
-        OrderHom.toFun_eq_coe] at this;
-    unfold insertLeftStep insertRightStep at this; simp +decide only [OrderHom.coe_mk] at this;
-    unfold insertLeftStepFun insertRightStepFun at this; simp +decide [] at this;
-    have := Shuffle.apply_last ν₁; have := Shuffle.apply_last ν₂; simp_all +decide [ add_comm,
-        add_left_comm] ;
-    simp_all +decide [ add_comm, add_left_comm, Fin.last ]
-
 
 /-- Left insertion produces a left-type vertex: the step at (or just before)
 the inserted vertex is a left step.  Here `isLeftType` checks `isLeftStep`
@@ -2985,19 +2814,6 @@ lemma swapDiagonalSteps_involutive {p q : ℕ}
     aesop;
   · rfl
 
-/-- The swap preserves the underlying OrderHom when composed with any OrderHom
-that avoids the diagonal vertex. -/
-lemma swapDiagonalSteps_same_map {p q n : ℕ}
-    (μ : Shuffle (p) (q)) (r : Index (p + (q)))
-    (hr : isDiagonalVertex μ r) (φ : Fin n →o Index (p + (q)))
-    (hφ : ∀ k, φ k ≠ r) :
-    (swapDiagonalSteps μ r hr).1.comp φ = μ.1.comp φ := by
-  have h_swap_fun : ∀ i : Fin n, swapDiagonalStepsFun μ r hr (φ i) = μ.1 (φ i) := by
-    intro i; unfold swapDiagonalStepsFun; aesop;
-  ext i <;> simp only [OrderHom.comp_coe, Function.comp_apply]
-  · exact congr_arg Fin.val ( congr_arg Prod.fst ( h_swap_fun i ) );
-  · exact congr_arg Fin.val ( congr_arg Prod.snd ( h_swap_fun i ) )
-
 
 /-- The sum `invCount(μ') + invCount(μ)` is odd, where `μ' = swapDiagonalSteps μ r hr`.
 
@@ -3201,12 +3017,6 @@ instance uniqueShuffleNZero {n : ℕ} : Unique (Shuffle n 0) where
     · simp
 
 attribute [grind =] OrderHom.coe_mk
-
-@[grind =]
-lemma OrderHom.coe_apply {α β : Type} [Preorder α] [Preorder β] (f : α → β) (hf : Monotone f) (x :
-    α) :
-   DFunLike.coe (OrderHom.mk f hf) x = f x := by
-  simp only [OrderHom.coe_mk]
 
 
 instance uniqueShuffleZeroN {n : ℕ} : Unique (Shuffle 0 n) where

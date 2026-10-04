@@ -13020,6 +13020,10 @@ projects:
           simplicial directions is chain homotopy equivalent to the alternating face
           map complex of the diagonal simplicial object of X.
         source_ref: >-
+          Generalized Eilenberg–Zilber theorem for bisimplicial objects in an abelian
+          category: Dold–Puppe, "Homologie nicht-additiver Funktoren. Anwendungen",
+          Ann. Inst. Fourier 11 (1961), §2; Weibel, An Introduction to Homological
+          Algebra (1994), Theorem 8.5.1. The product case X_{p,q} = K_p ⊗ L_q is
           Eilenberg–Zilber, "On products of complexes", Amer. J. Math. 75 (1953).
       - declaration: LeanPool.EilenbergZilber.BisimplicialObject.eilenbergZilberNormalized
         informal: >-
@@ -13028,8 +13032,9 @@ projects:
           shuffle and Alexander–Whitney maps; shuffle followed by Alexander–Whitney is
           the identity.
         source_ref: >-
-          Eilenberg–Mac Lane, "On the groups H(Π, n), I", Ann. of Math. 58 (1953),
-          Theorem 2.1a.
+          Eilenberg–Mac Lane, "On the groups H(Π, n), II", Ann. of Math. 60 (1954),
+          Theorem 2.1a, stated there for products of complexes and generalized here to
+          an arbitrary bisimplicial object in an abelian category.
     tags:
       - eilenberg-zilber
       - bisimplicial-objects

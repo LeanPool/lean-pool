@@ -49,9 +49,6 @@ namespace BisimplicialObject
 def diag : BisimplicialObject C ⥤ SimplicialObject C :=
   Functor.uncurry ⋙ (Functor.whiskeringLeft _ _ _).obj (Functor.diag _)
 
-lemma diag_obj_obj_eq (X : BisimplicialObject C) (n : SimplexCategoryᵒᵖ) :
-    (diag.obj X).obj n = (X.obj n).obj n := rfl
-
 variable [Abelian C]
 
 -- -- SimplicialObject is a `def` (not `abbrev`), so typeclass search doesn't
@@ -590,7 +587,7 @@ horizontal boundary terms. -/
 
 /-- Left insertion face factorization (fst component):
 `δ_{insertLeftIndex} ≫ eqToHom ≫ fstHom(insertLeftStep ν j) = fstHom(ν) ≫ δ(j)`. -/
-private lemma fstHom_insertLeftStep_comp_δ {p q n : ℕ}
+lemma fstHom_insertLeftStep_comp_δ {p q n : ℕ}
     (ν : Shuffle p q) (j : Fin (p + 2)) (hn : n + 1 = (p + 1) + q) :
     SimplexCategory.δ ((ν.insertLeftIndex j).cast (by omega)) ≫
       eqToHom (congrArg SimplexCategory.mk hn) ≫
@@ -665,7 +662,7 @@ private lemma fstHom_insertRightStep_comp_δ {p q n : ℕ}
 
 /-- Right insertion face factorization (snd component):
 `δ_{insertRightIndex} ≫ eqToHom ≫ sndHom(insertRightStep ν k) = sndHom(ν) ≫ δ(k)`. -/
-private lemma sndHom_insertRightStep_comp_δ {p q n : ℕ}
+lemma sndHom_insertRightStep_comp_δ {p q n : ℕ}
     (ν : Shuffle p q) (k : Fin (q + 2)) (hn : n + 1 = p + (q + 1)) :
     SimplexCategory.δ ((ν.insertRightIndex k).cast (by omega)) ≫
       eqToHom (congrArg SimplexCategory.mk hn) ≫
@@ -1327,6 +1324,12 @@ noncomputable def mooreRetraction :
     alternatingFaceMapComplex C ⟶ normalizedMooreComplex C where
   app Y := PInftyToNormalizedMooreComplex Y
   naturality _ _ f := PInftyToNormalizedMooreComplex_naturality f
+
+/-- The Moore inclusion is a section of the Dold–Kan retraction. -/
+lemma mooreInclusion_comp_mooreRetraction :
+    mooreInclusion ≫ mooreRetraction = 𝟙 (normalizedMooreComplex C) := by
+  ext Y : 2
+  exact (splitMonoInclusionOfMooreComplexMap Y).id
 
 variable (X : BisimplicialObject C)
 

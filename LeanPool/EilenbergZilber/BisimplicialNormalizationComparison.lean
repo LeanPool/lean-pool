@@ -114,11 +114,6 @@ lemma inclusionM₁_comp_retractionM₁ :
     ((congrArg (HomologicalComplex₂.totalFunctor _ _ _ _).map h).trans
         (CategoryTheory.Functor.map_id _ _))
 
-private lemma mooreInclusion_comp_mooreRetraction :
-    mooreInclusion ≫ mooreRetraction = 𝟙 (normalizedMooreComplex C) := by
-  ext Y : 2
-  exact (splitMonoInclusionOfMooreComplexMap Y).id
-
 @[reassoc]
 lemma inclusionF₁_comp_retractionF₁ :
     inclusionF₁ X ≫ retractionF₁ X = 𝟙 (M₁ X) := by

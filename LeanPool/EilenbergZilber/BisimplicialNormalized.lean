@@ -36,11 +36,6 @@ namespace BisimplicialObject
 
 variable {C : Type*} [Category* C] [Abelian C]
 
-private lemma mooreInclusion_comp_mooreRetraction :
-    mooreInclusion ≫ mooreRetraction = 𝟙 (normalizedMooreComplex C) := by
-  ext Y : 2
-  exact (splitMonoInclusionOfMooreComplexMap Y).id
-
 /-- **Glue (split mono, lifted to the total complex).** The bi-normalized inclusion is a section
 of the retraction. This lifts the Mathlib split-mono identity `(splitMonoInclusionOfMooreComplexMap
 _).id` through `totalFunctor` in both simplicial directions. (Reused by
@@ -104,52 +99,6 @@ private lemma shuffleFstHom_zero_right {p : ℕ} (x : Shuffle p 0) :
   have hsum := Shuffle.coordSum_eq x r
   have hfst : ((x.1 r).1 : ℕ) = r.val := by omega
   simpa using hfst
-
-private lemma fstHom_insertLeftStep_comp_δ {p q n : ℕ}
-    (ν : Shuffle p q) (j : Fin (p + 2)) (hn : n + 1 = (p + 1) + q) :
-    SimplexCategory.δ ((ν.insertLeftIndex j).cast (by omega)) ≫
-      eqToHom (congrArg SimplexCategory.mk hn) ≫
-      shuffleFstHom (ν.insertLeftStep j) =
-    eqToHom (congrArg SimplexCategory.mk (by omega : n = p + q)) ≫
-      shuffleFstHom ν ≫ SimplexCategory.δ j := by
-  ext ⟨i, hi⟩
-  simp only [SimplexCategory.comp_toOrderHom, OrderHom.comp_coe, Function.comp_apply,
-    SimplexCategory.Hom.toOrderHom_mk, SimplexCategory.eqToHom_toOrderHom,
-    SimplexCategory.len_mk, shuffleFstHom]
-  simp only at hi
-  have hface := Shuffle.insertLeftStep_face ν j ⟨i, by omega⟩
-  suffices harg : ∀ (a b : Fin ((p + 1) + q + 1)), a.val = b.val →
-      (ν.insertLeftStep j).1 a = (ν.insertLeftStep j).1 b from
-    congrArg (fun x => (x.1 : ℕ)) ((harg _ _ (by
-      dsimp [SimplexCategory.δ, Fin.succAboveOrderEmb, SimplexCategory.comp_toOrderHom,
-        SimplexCategory.eqToHom_toOrderHom, Fin.castOrderIso]
-      simp only [Fin.succAbove, Fin.lt_def, Fin.val_castSucc]
-      split_ifs <;> simp_all [Fin.succAbove, Fin.lt_def]; split_ifs <;> simp_all; omega)).trans
-        hface)
-  exact fun _ _ h => congr_arg _ (Fin.ext h)
-
-private lemma sndHom_insertRightStep_comp_δ {p q n : ℕ}
-    (ν : Shuffle p q) (k : Fin (q + 2)) (hn : n + 1 = p + (q + 1)) :
-    SimplexCategory.δ ((ν.insertRightIndex k).cast (by omega)) ≫
-      eqToHom (congrArg SimplexCategory.mk hn) ≫
-      shuffleSndHom (ν.insertRightStep k) =
-    eqToHom (congrArg SimplexCategory.mk (by omega : n = p + q)) ≫
-      shuffleSndHom ν ≫ SimplexCategory.δ k := by
-  ext ⟨i, hi⟩
-  simp only [SimplexCategory.comp_toOrderHom, OrderHom.comp_coe, Function.comp_apply,
-    SimplexCategory.Hom.toOrderHom_mk, SimplexCategory.eqToHom_toOrderHom,
-    SimplexCategory.len_mk, shuffleSndHom]
-  simp only at hi
-  have hface := Shuffle.insertRightStep_face ν k ⟨i, by omega⟩
-  suffices harg : ∀ (a b : Fin (p + (q + 1) + 1)), a.val = b.val →
-      (ν.insertRightStep k).1 a = (ν.insertRightStep k).1 b from
-    congrArg (fun x => (x.2 : ℕ)) ((harg _ _ (by
-      dsimp [SimplexCategory.δ, Fin.succAboveOrderEmb, SimplexCategory.comp_toOrderHom,
-        SimplexCategory.eqToHom_toOrderHom, Fin.castOrderIso]
-      simp only [Fin.succAbove, Fin.lt_def, Fin.val_castSucc]
-      split_ifs <;> simp_all [Fin.succAbove, Fin.lt_def]; split_ifs <;> simp_all; omega)).trans
-        hface)
-  exact fun _ _ h => congr_arg _ (Fin.ext h)
 
 private lemma nondiag_sndHom_or_fstHom_comp_δ_not_surjective
     {p q n : ℕ} (x : Shuffle p q) (hpq : p + q = n + 1) (j : Fin (n + 1))
@@ -525,13 +474,14 @@ private lemma outer_map_op_comp_retraction_eq_zero (X : BisimplicialObject C) {r
     (Category.assoc _ _ _).trans <| (congrArg (_ ≫ ·) e).trans comp_zero
 
 /-- **Combinatorial core.** Any shuffle other than the staircase `trivialShuffle` has a degenerate
-front or back face: either its outer face `α_x = ιFront ≫ shuffleFstHom x` or its inner face
-`β_x = ιBack ≫ shuffleSndHom x` is non-mono (non-injective). Proved from `coordSum_eq`: both faces
-mono forces the staircase coordinates `x.1 k = (min(k,r), k - r)`. -/
-private lemma shuffle_ne_trivialShuffle_not_mono (r m : ℕ) (x : Shuffle r m)
+front face: its outer face `α_x = ιFront ≫ shuffleFstHom x` is non-mono (non-injective). Proved
+from `coordSum_eq`: a mono front face forces the staircase coordinates
+`x.1 k = (min(k,r), k - r)`. -/
+private lemma not_mono_ιFront_comp_shuffleFstHom (r m : ℕ) (x : Shuffle r m)
     (hx : x ≠ Shuffle.trivialShuffle r m) :
-    ¬ Mono (ιFront r m ≫ shuffleFstHom x) ∨ ¬ Mono (ιBack r m ≫ shuffleSndHom x) := by
-  refine Or.inl (fun hmono => hx ?_)
+    ¬ Mono (ιFront r m ≫ shuffleFstHom x) := by
+  intro hmono
+  apply hx
   rw [SimplexCategory.mono_iff_injective] at hmono
   set f := (ιFront r m ≫ shuffleFstHom x).toOrderHom with hf
   have hfi : ∀ i : Fin (r + 1), (f i).val = (x.1 ⟨i.val, by omega⟩).1.val := by
@@ -609,7 +559,7 @@ shuffle/Alexander–Whitney pairing `ezComponent ≫ awComponent` is the identit
 cross-terms; the bi-normalized retraction component `R'` (the Dold–Kan `PInfty` projection in
 both simplicial directions, taken at bidegree `(r,m)`) annihilates the degenerate part, so
 `ez ≫ aw ≫ R' = R'`. Non-staircase summands vanish via `ezawSummand_merge`, the combinatorial
-non-mono dichotomy, and the dual inner/outer kill lemmas. This is the combinatorial heart of
+non-mono front face, and the outer kill lemma. This is the combinatorial heart of
 `(A)`. -/
 lemma ezComponent_awComponent_comp_retraction (X : BisimplicialObject C) (r m : ℕ) :
     X.ezComponent r m ≫ X.awComponent r m ≫
@@ -626,9 +576,8 @@ lemma ezComponent_awComponent_comp_retraction (X : BisimplicialObject C) (r m : 
   rw [Finset.sum_eq_single (Shuffle.trivialShuffle r m)
       (fun x _ hx => by
         rw [reassoc_of% ezawSummand_merge X r m x]
-        rcases shuffle_ne_trivialShuffle_not_mono r m x hx with hα | hβ
-        · rw [outer_map_op_comp_retraction_eq_zero X _ hα, comp_zero, smul_zero]
-        · rw [inner_map_op_comp_retraction_eq_zero X _ _ hβ, smul_zero])
+        rw [outer_map_op_comp_retraction_eq_zero X _
+          (not_mono_ιFront_comp_shuffleFstHom r m x hx), comp_zero, smul_zero])
       (fun h => absurd (Finset.mem_univ _) h),
     Shuffle.sign_trivialShuffle, one_zsmul, reassoc_of% ezawSummand_trivial X r m]
 
