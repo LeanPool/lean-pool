@@ -9,13 +9,18 @@ This file is a concatenation of README.md and CONTRIBUTING.md.
 [![Lean Action CI](https://github.com/Vilin97/lean-pool/actions/workflows/lean_action_ci.yml/badge.svg)](https://github.com/Vilin97/lean-pool/actions/workflows/lean_action_ci.yml)
 [![Documentation](https://img.shields.io/badge/docs-online-blue)](https://vilin97.github.io/lean-pool/)
 [![Exposition](https://img.shields.io/badge/exposition-online-8a4fff)](https://vilin97.github.io/lean-pool/exposition/)
+[![Zulip](https://img.shields.io/badge/Zulip-Lean_Pool-6492FE?logo=zulip&logoColor=white)](https://leanprover.zulipchat.com/#narrow/channel/619231-Lean-Pool)
+[![Semantic Search](https://img.shields.io/badge/semantic_search-Octo-2f80ed)](https://octo.axiomatic-ai.com/search?scopes=repo%3AVilin97%2Flean-pool)
 [![License](https://img.shields.io/github/license/Vilin97/lean-pool)](LICENSE)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20513444.svg)](https://doi.org/10.5281/zenodo.20513444)
+[![arXiv](https://img.shields.io/badge/arXiv-2609.25199-b31b1b)](https://arxiv.org/abs/2609.25199)
 
 Lean Pool sits between [`mathlib`](https://github.com/leanprover-community/mathlib4) and [`merely-true`](https://github.com/merely-true/merely-true), preserving Lean 4 formalizations that don't fit mathlib's scope. Instead of mathlib's high-bar human review, it relies on deterministic linters and LLM judgment, so it can grow faster while staying `sorry`-free and pinned to the latest Mathlib. See [`MOTIVATION.md`](MOTIVATION.md) for the why, browse the API docs at <https://vilin97.github.io/lean-pool/>, and explore each project's dependency graph and declarations in the [exposition site](https://vilin97.github.io/lean-pool/exposition/).
 
+Semantic search is also available via the [API](https://search.octo.axiomatic-ai.com/api/search).
+
 <!-- BEGIN STATS -->
-**159** formalization projects · **1,373,827** lines of Lean · **2** open challenges
+**273** formalization projects · **5,801,081** lines of Lean
 <!-- END STATS -->
 
 <sub>(stats above are refreshed automatically by the [generated-metadata workflow](.github/workflows/notice.yml) — edit [`python/lean_pool/stats.py`](python/lean_pool/stats.py), not the numbers)</sub>
@@ -37,24 +42,25 @@ make setup    # pull Mathlib oleans, build the whole pool (~1.5h), install Pytho
 To work on a single project you don't need the whole pool built — see the
 [fast per-project build](CONTRIBUTING.md#dev-setup) in `CONTRIBUTING.md`.
 
-### Challenge mode
+To regenerate the preserved Zeta5 numerical certificates, see the
+[certificate reproduction guide](scripts/zeta5-certificates/README.md).
 
-[`Challenge/`](Challenge/) is the other half of the pool: open *statements* rather than finished proofs. A challenge is a theorem written in Mathlib vocabulary and left as `sorry`, registered in [`Challenge/challenges.yml`](Challenge/challenges.yml) alongside the English statement it is supposed to say. It is the only place `sorry` is allowed, and only for the declarations the registry lists — everything else in the file must be closed, and every other gate still applies.
-
-Anyone can propose one. The [LLM reviewer](.github/CHALLENGE_REVIEW_RULES.md) judges a challenge on different grounds than a project: whether the problem is significant, whether the Lean faithfully says what the prose says, whether a cited known result is stated the way its source states it, whether the statement is vacuous or gameable, and how many lines of Lean a solution would take.
-
-Anyone can answer one, too. A solution lands in [`Solution/`](Solution/), restating the statement and proving it, and [`leanprover/comparator`](https://github.com/leanprover/comparator) settles whether it counts: [CI](.github/workflows/challenge-verify.yml) exports the challenge and solution environments separately, checks that the statements agree, and replays the proof through the Lean kernel with no axiom beyond `propext`/`Quot.sound`/`Classical.choice`. Because a kernel decides correctness, the [solution review](.github/SOLUTION_REVIEW_RULES.md) is short — and is skipped entirely when the PR adds nothing but the answer.
-
-```bash
-make challenges              # what's on the board
-make verify-challenge C=<slug>  # replay a solution locally
-```
-
-See [Challenge mode](CONTRIBUTING.md#challenge-mode) in `CONTRIBUTING.md`.
+The [moving-sofa certificate recipe](python/lean_pool/sofa_certificates/README.md)
+regenerates its optimized certificate modules from pinned public inputs.
 
 ### Contributing
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+The PR author or a maintainer can comment `/profile` to request an advisory
+compile-cost report. Failed or zero-phase timed runs show unavailable timing
+and are excluded from totals; errors and any successfully measured heartbeat
+counts remain visible.
+
+Import PRs can be refreshed automatically after other projects merge. The
+[rebase helper](python/lean_pool/rebase.py) resolves conflicts in the project registry
+and generated index, preserving module headers and public imports when the index uses them.
+Conflicts in proof files require a manual rebase.
 
 ### Credits
 
@@ -66,6 +72,30 @@ Created as part of the [UW Lean Hackathon](https://uw2026leanhackathon.github.io
 - Lean Pool accepts human-written projects, not just AI projects.
 - Lean Pool is not a unified library like mathlib. Most projects are independent of each other.
 - Lean Pool only accepts completed formalization projects.
+
+[Palomar Registry](https://palomar-registry.org/) is also similar to Lean Pool. The differences are:
+- Lean Pool maintains accepted projects.
+- Lean Pool provides tools like search and documentation.
+- Palomar is a registry, not a unified repository.
+
+Projects accepted to the Palomar Registry may be submitted to Lean Pool, and priority will be given to them.
+
+### Citation
+
+To cite Lean Pool, use the [paper](https://arxiv.org/abs/2609.25199):
+
+```bibtex
+@misc{ilin2026leanpool,
+  title = {{Lean Pool}: An {AI}-Maintained Archive of Formalized Mathematics},
+  author = {Vasily Ilin},
+  year = {2026},
+  eprint = {2609.25199},
+  archivePrefix = {arXiv},
+  primaryClass = {cs.AI},
+  doi = {10.48550/arXiv.2609.25199},
+  url = {https://arxiv.org/abs/2609.25199}
+}
+```
 
 # Contributing to Lean Pool
 
@@ -80,44 +110,9 @@ If you would like to withdraw your project from Lean Pool, open an issue.
 There are two paths:
 
 - **Propose a repo.** Open an issue with the GitHub URL and a maintainer can import it. Repos that Reservoir does not index can be added to [`candidates/manual.txt`](candidates/manual.txt).
-- **Open a content PR.** Add your project under `LeanPool/<YourProject>/`, register it in [`LeanPool/projects.yml`](LeanPool/projects.yml) — the card must declare `provenance` (`human`, `AI`, or `mix`; see below) — and regenerate the index with `lake exe mk_all`.
+- **Open a content PR.** Add your project under `LeanPool/<YourProject>/`, register it in [`LeanPool/projects.yml`](LeanPool/projects.yml) — the card must declare `provenance` (`human`, `AI`, or `mix`; see below) — and regenerate the indexes with `lake exe mk_all`. Commit `LeanPool/<YourProject>/Imports.lean`, which publicly imports every project source, and the single project import added to `LeanPool.lean`.
 
 Either way the result must pass CI (build, linters, and quality checks — see [Linting and testing](#linting-and-testing)) and an [LLM review](.github/REVIEW_RULES.md) of fit and significance. Accepted projects must be `sorry`-free, introduce no axioms beyond `Classical.choice`/`propext`/`Quot.sound`, and avoid `unsafe`/`partial`. Each project card must also declare its **provenance** — who wrote the Lean proofs — as `human` (written by people), `AI` (mostly produced by an AI system), or `mix` (both contributed substantially). (Proof profiling via `/profile` is available but informational, not a gate: added files get an absolute profile, while modified files get a base→head compile-cost comparison — useful for checking that a refactor doesn't regress compile time.)
-
-## Challenge mode
-
-A **challenge** is the mirror image of a project: instead of a finished proof, it is an open *statement* — a theorem written in Mathlib vocabulary, left as `sorry`, that the pool is asking someone to prove. Challenges live in [`Challenge/`](Challenge/), the only place in the repository where `sorry` is allowed. Browse the board with `make challenges`.
-
-Anyone can submit one. Open a content PR that adds:
-
-- `Challenge/<YourChallenge>.lean` — the statement, with the standard four-line file header, imports **only** from `Mathlib.*`, and each open declaration proved by exactly `:= sorry`;
-- an entry in [`Challenge/challenges.yml`](Challenge/challenges.yml) — `slug`, `title`, `summary`, `branch`, `entry_module`, `proposers`, `source`, `license`, `provenance`, `status: open`, `statements` (each with a `declaration` and its `informal` English statement), `tags`, `msc`, plus optional `definitions` (definition holes) and `estimated_lines`;
-- the regenerated indexes: `lake exe mk_all` and `cd python && uv run python -m lean_pool.quality --repo .. --write-challenge-cards`.
-
-The gates then enforce that the board stays honest: `sorry` appears only as the whole proof body of a declaration the registry lists, every *other* declaration in the file is closed (checked with `#print axioms`, so scaffolding can't hide behind an open statement), the registered statements really are open, imports are Mathlib-only, and the generated card matches the registry. Everything else — headers, `set_option`, axioms, the option-backdoor audit, size caps — applies exactly as it does to pooled projects.
-
-A challenge PR gets its own [LLM review](.github/CHALLENGE_REVIEW_RULES.md), which asks a different question than the project review: is the problem significant (both informally and as formalized), does the Lean statement faithfully say what the prose says, does a cited known result match its source, is the statement vacuous or gameable, and roughly how many lines of Lean would a solution take.
-
-## Solving a challenge
-
-A challenge statement never changes once merged: it is the text every solution is judged against. So a solution goes in [`Solution/`](Solution/) as its own module, which **restates** the statement under the same name and proves it. It must not import the challenge module — comparator exports the two environments separately and checks that the statements agree, and importing would defeat exactly that check (a gate enforces it).
-
-Open a content PR that adds `Solution/<Challenge>.lean` and flips the registry entry to `status: solved` with a `solution:` block (`module:`, plus optional `authors:`, `project:`, and `verified:`), then regenerate the index and cards. The challenge statement file is **not** touched by any of that: its card carries the contract (source, proposers, open declarations, the informal statement) and never the lifecycle, so solving a challenge leaves it byte-identical. A solution that needs real work should prove it in a pooled project under `LeanPool/` and leave a thin bridge here.
-
-Correctness is decided by [`leanprover/comparator`](https://github.com/leanprover/comparator), which replays the solution through the Lean kernel and checks that it proves *the same* statement with no axiom beyond `propext`/`Quot.sound`/`Classical.choice`. [`challenge-verify.yml`](.github/workflows/challenge-verify.yml) runs it on every solved challenge in CI, with `landrun`, `lean4export`, and comparator pinned to exact commits. Locally:
-
-```bash
-make comparator                       # one-time: build the judge
-make verify-challenge C=<slug>        # replay a solution
-```
-
-`make comparator` also builds a `lean4export` at this repository's toolchain (comparator pins a newer one, which cannot read our oleans). Sandboxing needs [`landrun`](https://github.com/Zouuup/landrun), which is Linux-only; elsewhere pass `--insecure-no-sandbox` to `scripts/challenge/verify-solution.sh` and understand that compiling a solution runs its code. `python -m lean_pool.challenge config <slug>` prints the JSON configuration if you want to drive comparator yourself.
-
-A failed verification is loud rather than tidy: a solution missing the theorem ends in a `lean4export` panic ("Constant … not found in environment"), a weakened statement in `Challenge and solution theorem statement do not match`, and one that still leans on `sorry` in `Illegal axiom detected: 'sorryAx'`. All are rejections — the script exits non-zero and prints the `Verified:` line only on success.
-
-A green comparator run is necessary, not sufficient: a solution is still content entering the repository, so it gets the same `/profile` compile-cost comment as any other Lean change, and can be sent back for being too large, too messy, or too slow to build. Because a kernel decides correctness, the [solution review](.github/SOLUTION_REVIEW_RULES.md) is deliberately thin, and is skipped altogether when the PR touches nothing but the answer, the generated index, and the registry entry. It runs when there is something a machine cannot settle: a definition hole, a pooled project to judge as a project, or anything else in the diff. Editing a challenge statement in the same PR as a solution is rejected outright by the PR guard.
-
-**Definition holes.** A challenge may leave a `def ... := sorry` for the solver to fill in (register it under `definitions:`). Comparator only checks that the name, type, universes, and safety level match, so a hole can be gamed — a solution may define it in terms of the very object the challenge asks about. Holes always need human review on top of a green comparator run.
 
 ## Dev setup
 
@@ -134,20 +129,19 @@ cd python && uv sync  # Python tooling only; add `--group test` for pytest
 lake exe cache get                # prebuilt Mathlib oleans (fast)
 lake build LeanPool.YourProject   # builds only your project — minutes, not hours
 # or: make build-project P=YourProject
-lake build Challenge              # the whole challenge board — seconds
 ```
 
 The whole-library checks (`lake exe runLinter LeanPool`, `lake exe lint-style LeanPool`, the quality checker) do need the full pool built, but CI runs them on your PR — you don't have to reproduce them locally.
 
 ## Pull requests
 
-- **Don't mix content and non-content changes.** A content PR may modify **only** `LeanPool.lean`, `LeanPool/**/*.lean`, `LeanPool/projects.yml`, `Challenge.lean`, `Challenge/**/*.lean`, `Challenge/challenges.yml`, `Solution.lean`, and `Solution/**/*.lean`. Infra / CI / tooling / doc changes may touch other files, but must not be bundled with content. The same guard rejects a PR that edits a challenge statement alongside a solution. Both are enforced by [`content-pr-guard.yml`](.github/workflows/content-pr-guard.yml).
+- **Don't mix content and non-content changes.** A content PR may modify **only** `LeanPool.lean`, `LeanPool/**/*.lean`, and `LeanPool/projects.yml`. Infra / CI / tooling / doc changes may touch other files, but must not be bundled with content. This is enforced by [`content-pr-guard.yml`](.github/workflows/content-pr-guard.yml).
 - **Never change the checks or gates.** Do not modify `.github/workflows/`, `.github/CODE_QUALITY.md`, `python/lean_pool/quality.py`, `scripts/nolints-style.txt`, the `[leanOptions]`/lint settings in `lakefile.toml`, or any other CI step or linter config — and do not add a waiver of any kind (a `size-limit-ok` comment, a `nolints-style.txt` entry, `set_option linter.X false`, etc.) — unless explicitly asked. If a check fails, fix the code, not the check. This applies to everyone, and especially to AI agents.
 - **Branches.** `yourname/description` for solo work; `feature/`/`fix/` prefixes when shared. Open PRs early (draft + `WIP` is fine) and use `Closes #123` to link issues.
 
 ## Linting and testing
 
-**Lean.** CI runs `lake exe mk_all --check`, `lake build LeanPool`, `scripts/ci/build-challenges.sh` (the `Challenge`/`Solution` build, where only the expected `sorry` notices are tolerated), `lake exe runLinter` and `lake exe lint-style` on all three libraries, the quality checker (see [`lean_action_ci.yml`](.github/workflows/lean_action_ci.yml)), and comparator on every solved challenge (see [`challenge-verify.yml`](.github/workflows/challenge-verify.yml)). Conventions live in [`.github/CODE_QUALITY.md`](.github/CODE_QUALITY.md).
+**Lean.** CI runs `lake exe mk_all --check`, `lake build LeanPool`, `lake exe runLinter` and `lake exe lint-style` on `LeanPool`, the quality checker (see [`lean_action_ci.yml`](.github/workflows/lean_action_ci.yml)). Conventions live in [`.github/CODE_QUALITY.md`](.github/CODE_QUALITY.md).
 
 **Python.** From `python/`: `uv run ruff check`, `uv run ruff format`, and `uv run --group test pytest`.
 
