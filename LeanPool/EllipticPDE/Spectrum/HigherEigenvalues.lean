@@ -36,7 +36,7 @@ plus a combination of the `wᵢ`, and both `B[U, wᵢ]` and `⟪U, wᵢ⟫_{L²}
 
 ## References
 
-L. C. Evans, *Partial Differential Equations* (2nd ed.), §6.5.1, Theorem 1; Y. Guo, *Partial
+L. C. Evans, *Partial Differential Equations* (2nd ed.), §6.5.1, Theorem 1; James Guo, *Partial
 Differential Equations*, Section IX.1.
 -/
 

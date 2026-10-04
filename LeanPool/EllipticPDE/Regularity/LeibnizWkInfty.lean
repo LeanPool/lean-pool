@@ -391,7 +391,7 @@ theorem tendsto_setIntegral_mul_convolution_of_measurable
 `a'`, then `a·g` has weak `ℓ`-derivative `a'·g + a·g'` on `V`.
 
 This is `HasWeakDerivOn.mul_contDiff_left` with the `C¹` hypothesis on the weight removed, which
-is what Guo, *Partial Differential Equations I and II* (Course Lecture Notes), Theorem VIII.3.2
+is what Guo, *Partial Differential Equations* (Course Lecture Notes), Theorem VIII.3.2
 (p. 65) asks for. The weight is mollified, the smooth case
 `weakDerivOn_smul_test_contDiff` gives the identity at every radius, and
 `tendsto_setIntegral_mul_convolution_of_measurable` sends each of the three terms to its

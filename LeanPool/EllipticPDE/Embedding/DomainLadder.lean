@@ -41,7 +41,7 @@ what `EllipticPdes.Embedding.memLp_of_gradClosed_general` separates on a ball.
 
 ## References
 
-Y. Guo, *Partial Differential Equations I and II* (Course Lecture Notes), Theorem IV.2.3 case
+James Guo, *Partial Differential Equations* (Course Lecture Notes), Theorem IV.2.3 case
 (i); L. C. Evans, *Partial Differential Equations* (2nd ed.), §5.6.3 Theorem 6 clause (i).
 -/
 
@@ -57,18 +57,6 @@ namespace EllipticPdes.Embedding
 open EllipticPdes.Extension (HasC1Boundary)
 
 variable {d : ℕ}
-
-private theorem inv_anti_dom {a b : ℝ} (ha : 0 < a) (h : a ≤ b) : b⁻¹ ≤ a⁻¹ := by
-  have hb : 0 < b := lt_of_lt_of_le ha h
-  nlinarith [mul_inv_cancel₀ ha.ne', mul_inv_cancel₀ hb.ne', inv_pos.mpr ha, inv_pos.mpr hb]
-
-private theorem le_of_inv_le_inv_dom {a b : ℝ} (ha : 0 < a) (hb : 0 < b) (h : a⁻¹ ≤ b⁻¹) :
-    b ≤ a := by
-  nlinarith [mul_inv_cancel₀ ha.ne', mul_inv_cancel₀ hb.ne', inv_pos.mpr ha, inv_pos.mpr hb]
-
-private theorem coe_toNNReal_inv_dom {t : ℝ} (ht : 0 < t) :
-    ((Real.toNNReal t⁻¹ : ℝ≥0) : ℝ) = t⁻¹ :=
-  Real.coe_toNNReal _ (inv_nonneg.mpr ht.le)
 
 /-- **Lowering an exponent on a domain of finite measure.** The factor is
 `|Ω|^{1/a - 1/b}`, finite because the exponent is nonnegative and the domain bounded. -/
@@ -123,7 +111,7 @@ theorem exists_const_memLp_of_gradClosed_domain (hd : 1 < d)
   have hp₀1 : (1 : ℝ) ≤ (p₀ : ℝ) := by exact_mod_cast hp₀
   have hp₀0 : (0 : ℝ) < (p₀ : ℝ) := by linarith
   have hp₀inv : (p₀ : ℝ)⁻¹ ≤ 1 := by
-    have := inv_anti_dom (a := (1 : ℝ)) one_pos hp₀1
+    have := inv_anti₀ (b := (1 : ℝ)) one_pos hp₀1
     simpa using this
   intro s
   induction s with
@@ -132,7 +120,7 @@ theorem exists_const_memLp_of_gradClosed_domain (hd : 1 < d)
     have hq0 : (0 : ℝ) < (q : ℝ) := lt_of_lt_of_le hp₀0 (by exact_mod_cast hpq)
     have hqp : q ≤ p₀ := by
       rw [← NNReal.coe_le_coe]
-      refine le_of_inv_le_inv_dom hp₀0 hq0 ?_
+      refine (inv_le_inv₀ hp₀0 hq0).mp ?_
       simpa using hqs
     have hqE : (q : ℝ≥0∞) ≤ (p₀ : ℝ≥0∞) := by exact_mod_cast hqp
     obtain ⟨A, hA⟩ := exists_const_eLpNorm_mono_exponent_domain hΩb hq0 hqp
@@ -167,12 +155,14 @@ theorem exists_const_memLp_of_gradClosed_domain (hd : 1 < d)
       have : 0 ≤ (s : ℝ) * (d : ℝ)⁻¹ := by positivity
       rw [ht_def]; linarith
     set Q : ℝ≥0 := Real.toNNReal t⁻¹ with hQ_def
-    have hQcoe : ((Q : ℝ≥0) : ℝ) = t⁻¹ := by rw [hQ_def]; exact coe_toNNReal_inv_dom ht0
+    have hQcoe : ((Q : ℝ≥0) : ℝ) = t⁻¹ := by
+      rw [hQ_def]
+      exact Real.coe_toNNReal _ (inv_nonneg.mpr ht0.le)
     have hQ0 : (0 : ℝ) < (Q : ℝ) := by rw [hQcoe]; exact inv_pos.mpr ht0
     have hQinv : ((Q : ℝ≥0) : ℝ)⁻¹ = t := by rw [hQcoe, inv_inv]
     have hp₀Q : p₀ ≤ Q := by
       rw [← NNReal.coe_le_coe, hQcoe]
-      have := inv_anti_dom ht0 ht_le
+      have := inv_anti₀ ht0 ht_le
       simpa using this
     obtain ⟨KQ, hKQ⟩ := ih hsdprev hp₀Q (le_of_eq hQinv.symm)
     by_cases hu1 : (q : ℝ)⁻¹ + (d : ℝ)⁻¹ ≤ 1
@@ -180,17 +170,19 @@ theorem exists_const_memLp_of_gradClosed_domain (hd : 1 < d)
       set u : ℝ := (q : ℝ)⁻¹ + (d : ℝ)⁻¹ with hu_def
       have hu0 : 0 < u := by rw [hu_def]; positivity
       set p : ℝ≥0 := Real.toNNReal u⁻¹ with hp_def
-      have hpcoe : ((p : ℝ≥0) : ℝ) = u⁻¹ := by rw [hp_def]; exact coe_toNNReal_inv_dom hu0
+      have hpcoe : ((p : ℝ≥0) : ℝ) = u⁻¹ := by
+        rw [hp_def]
+        exact Real.coe_toNNReal _ (inv_nonneg.mpr hu0.le)
       have hp0 : (0 : ℝ) < (p : ℝ) := by rw [hpcoe]; exact inv_pos.mpr hu0
       have hpinv : ((p : ℝ≥0) : ℝ)⁻¹ = u := by rw [hpcoe, inv_inv]
       have hp1 : (1 : ℝ≥0) ≤ p := by
         rw [← NNReal.coe_le_coe, NNReal.coe_one, hpcoe]
-        have := inv_anti_dom hu0 hu1
+        have := inv_anti₀ hu0 hu1
         simpa using this
       have htu : t ≤ u := by rw [ht_def, hu_def]; linarith
       have hpQ : p ≤ Q := by
         rw [← NNReal.coe_le_coe]
-        refine le_of_inv_le_inv_dom hQ0 hp0 ?_
+        refine (inv_le_inv₀ hQ0 hp0).mp ?_
         rw [hQinv, hpinv]; exact htu
       have hpp' : ((q : ℝ≥0) : ℝ)⁻¹ = ((p : ℝ≥0) : ℝ)⁻¹ - (d : ℝ)⁻¹ := by
         rw [hpinv, hu_def]; ring
@@ -226,22 +218,24 @@ theorem exists_const_memLp_of_gradClosed_domain (hd : 1 < d)
         by_contra hcon
         have hcon' : t₁ ≤ 0 := le_of_not_gt hcon
         have hple : (d : ℝ)⁻¹ ≥ (p₀ : ℝ)⁻¹ := by rw [ht₁_def] at hcon'; linarith
-        have hdp : (d : ℝ) ≤ (p₀ : ℝ) := le_of_inv_le_inv_dom hp₀0 hdpos hple
+        have hdp : (d : ℝ) ≤ (p₀ : ℝ) := (inv_le_inv₀ hp₀0 hdpos).mp hple
         have hqge : (p₀ : ℝ) ≤ (q : ℝ) := by exact_mod_cast hpq
-        have hqinv' : (q : ℝ)⁻¹ ≤ (d : ℝ)⁻¹ := inv_anti_dom hdpos (le_trans hdp hqge)
+        have hqinv' : (q : ℝ)⁻¹ ≤ (d : ℝ)⁻¹ := inv_anti₀ hdpos (le_trans hdp hqge)
         have hdd : (d : ℝ)⁻¹ ≤ 2⁻¹ := by
-          have := inv_anti_dom (a := (2 : ℝ)) (by norm_num) hd2R
+          have := inv_anti₀ (b := (2 : ℝ)) (by norm_num) hd2R
           simpa using this
         linarith
       set P : ℝ≥0 := Real.toNNReal t₁⁻¹ with hP_def
-      have hPcoe : ((P : ℝ≥0) : ℝ) = t₁⁻¹ := by rw [hP_def]; exact coe_toNNReal_inv_dom ht₁0
+      have hPcoe : ((P : ℝ≥0) : ℝ) = t₁⁻¹ := by
+        rw [hP_def]
+        exact Real.coe_toNNReal _ (inv_nonneg.mpr ht₁0.le)
       have hP0 : (0 : ℝ) < (P : ℝ) := by rw [hPcoe]; exact inv_pos.mpr ht₁0
       have hPinv : ((P : ℝ≥0) : ℝ)⁻¹ = t₁ := by rw [hPcoe, inv_inv]
       have hp₀P : ((P : ℝ≥0) : ℝ)⁻¹ = ((p₀ : ℝ≥0) : ℝ)⁻¹ - (d : ℝ)⁻¹ := by
         rw [hPinv, ht₁_def]
       have hqP : q ≤ P := by
         rw [← NNReal.coe_le_coe]
-        refine le_of_inv_le_inv_dom hP0 hq0 ?_
+        refine (inv_le_inv₀ hP0 hq0).mp ?_
         rw [hPinv, ht₁_def]
         have hs0 : 0 ≤ (s : ℝ) * (d : ℝ)⁻¹ := by positivity
         linarith
