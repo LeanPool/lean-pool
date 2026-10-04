@@ -36,7 +36,7 @@ family rather than part of its definition. Nothing here presumes it.
 * `HasIteratedWeakDerivOn.mono`: an order-`k` family is an order-`l` family for `l ≤ k`.
 * `HasIteratedWeakDerivOn.deriv`: the order-`k` family of a first derivative, extracted from an
   order-`k+1` family by appending the direction on the right. This is the step the induction
-  of Guo, *Partial Differential Equations I and II* (Course Lecture Notes), Theorem VIII.3.2
+  of Guo, *Partial Differential Equations* (Course Lecture Notes), Theorem VIII.3.2
   (p. 65) runs on.
 * `IteratedL2Bound`: a uniform bound on every member of the family up to order `k`.
 -/

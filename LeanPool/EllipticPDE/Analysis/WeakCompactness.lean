@@ -42,7 +42,7 @@ working inside the closed span of the sequence.
 
 ## References
 
-Y. Guo, *Partial Differential Equations*, Theorem V.2.5.
+James Guo, *Partial Differential Equations*, Theorem V.2.5.
 -/
 
 @[expose] public section

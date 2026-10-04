@@ -36,7 +36,7 @@ through an integral, which is where the integrability hypotheses enter.
 ## References
 
 L. C. Evans, *Partial Differential Equations* (2nd ed.), §C.1 (p. 665), where the relabelling
-and reorientation of the axes appears; Y. Guo, *Partial Differential Equations I and II*
+and reorientation of the axes appears; James Guo, *Partial Differential Equations*
 (Course Lecture Notes), Theorem III.2.2 (p. 20).
 -/
 

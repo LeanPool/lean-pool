@@ -27,7 +27,7 @@ dilated family keeps its `L^{p⋆}` norm while its `L²` norm tends to zero.
 
 ## References
 
-Y. Guo, *Partial Differential Equations*, Example IV.2.11.
+James Guo, *Partial Differential Equations*, Example IV.2.11.
 -/
 
 @[expose] public section

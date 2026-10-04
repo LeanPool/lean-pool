@@ -58,20 +58,6 @@ namespace EllipticPdes.Embedding
 
 variable {d : ℕ}
 
-/-! ### Reciprocal arithmetic -/
-
-private theorem inv_anti_gen {a b : ℝ} (ha : 0 < a) (h : a ≤ b) : b⁻¹ ≤ a⁻¹ := by
-  have hb : 0 < b := lt_of_lt_of_le ha h
-  nlinarith [mul_inv_cancel₀ ha.ne', mul_inv_cancel₀ hb.ne', inv_pos.mpr ha, inv_pos.mpr hb]
-
-private theorem le_of_inv_le_inv_gen {a b : ℝ} (ha : 0 < a) (hb : 0 < b) (h : a⁻¹ ≤ b⁻¹) :
-    b ≤ a := by
-  nlinarith [mul_inv_cancel₀ ha.ne', mul_inv_cancel₀ hb.ne', inv_pos.mpr ha, inv_pos.mpr hb]
-
-private theorem coe_toNNReal_inv_gen {t : ℝ} (ht : 0 < t) :
-    ((Real.toNNReal t⁻¹ : ℝ≥0) : ℝ) = t⁻¹ :=
-  Real.coe_toNNReal _ (inv_nonneg.mpr ht.le)
-
 /-! ### The ladder -/
 
 /-- **Sobolev ladder from a general base exponent.** Let `F` assign a function to each index
@@ -95,7 +81,7 @@ theorem memLp_of_gradClosed_general (hd : 1 < d) (c : EuclideanSpace ℝ (Fin d)
   have hp₀1 : (1 : ℝ) ≤ (p₀ : ℝ) := by exact_mod_cast hp₀
   have hp₀0 : (0 : ℝ) < (p₀ : ℝ) := by linarith
   have hp₀inv : (p₀ : ℝ)⁻¹ ≤ 1 := by
-    have := inv_anti_gen (a := (1 : ℝ)) one_pos hp₀1
+    have := inv_anti₀ (b := (1 : ℝ)) one_pos hp₀1
     simpa using this
   intro s
   induction s with
@@ -104,7 +90,7 @@ theorem memLp_of_gradClosed_general (hd : 1 < d) (c : EuclideanSpace ℝ (Fin d)
     have hq0 : (0 : ℝ) < (q : ℝ) := lt_of_lt_of_le hp₀0 (by exact_mod_cast hpq)
     have hqp : q ≤ p₀ := by
       rw [← NNReal.coe_le_coe]
-      refine le_of_inv_le_inv_gen hp₀0 hq0 ?_
+      refine (inv_le_inv₀ hp₀0 hq0).mp ?_
       simpa using hqs
     have : IsFiniteMeasure (volume.restrict (Metric.ball c r)) :=
       ⟨by rw [Measure.restrict_apply_univ]; exact measure_ball_lt_top⟩
@@ -115,7 +101,7 @@ theorem memLp_of_gradClosed_general (hd : 1 < d) (c : EuclideanSpace ℝ (Fin d)
     intro q r R hsd hpq hqs hr hrR hgrad hmem i hi
     have hq0 : (0 : ℝ) < (q : ℝ) := lt_of_lt_of_le hp₀0 (by exact_mod_cast hpq)
     have hqinv0 : (0 : ℝ) < (q : ℝ)⁻¹ := inv_pos.mpr hq0
-    have hqinv : (q : ℝ)⁻¹ ≤ (p₀ : ℝ)⁻¹ := inv_anti_gen hp₀0 (by exact_mod_cast hpq)
+    have hqinv : (q : ℝ)⁻¹ ≤ (p₀ : ℝ)⁻¹ := inv_anti₀ hp₀0 (by exact_mod_cast hpq)
     have hsdR : (p₀ : ℝ) * ((s : ℝ) + 1) ≤ (d : ℝ) := by push_cast at hsd; linarith
     have hsdprev : (p₀ : ℝ) * (s : ℝ) ≤ (d : ℝ) := by nlinarith
     push_cast at hqs
@@ -140,12 +126,14 @@ theorem memLp_of_gradClosed_general (hd : 1 < d) (c : EuclideanSpace ℝ (Fin d)
       have : 0 ≤ (s : ℝ) * (d : ℝ)⁻¹ := by positivity
       rw [ht_def]; linarith
     set Q : ℝ≥0 := Real.toNNReal t⁻¹ with hQ_def
-    have hQcoe : ((Q : ℝ≥0) : ℝ) = t⁻¹ := by rw [hQ_def]; exact coe_toNNReal_inv_gen ht0
+    have hQcoe : ((Q : ℝ≥0) : ℝ) = t⁻¹ := by
+      rw [hQ_def]
+      exact Real.coe_toNNReal _ (inv_nonneg.mpr ht0.le)
     have hQ0 : (0 : ℝ) < (Q : ℝ) := by rw [hQcoe]; exact inv_pos.mpr ht0
     have hQinv : ((Q : ℝ≥0) : ℝ)⁻¹ = t := by rw [hQcoe, inv_inv]
     have hp₀Q : p₀ ≤ Q := by
       rw [← NNReal.coe_le_coe, hQcoe]
-      have := inv_anti_gen ht0 ht_le
+      have := inv_anti₀ ht0 ht_le
       simpa using this
     have hQmem : ∀ j, dep j + s ≤ m → MemLp (F j) Q (volume.restrict (Metric.ball c r')) :=
       ih hsdprev hp₀Q (le_of_eq hQinv.symm) hr' hr'R hgrad hmem
@@ -154,17 +142,19 @@ theorem memLp_of_gradClosed_general (hd : 1 < d) (c : EuclideanSpace ℝ (Fin d)
       set u : ℝ := (q : ℝ)⁻¹ + (d : ℝ)⁻¹ with hu_def
       have hu0 : 0 < u := by rw [hu_def]; linarith
       set p : ℝ≥0 := Real.toNNReal u⁻¹ with hp_def
-      have hpcoe : ((p : ℝ≥0) : ℝ) = u⁻¹ := by rw [hp_def]; exact coe_toNNReal_inv_gen hu0
+      have hpcoe : ((p : ℝ≥0) : ℝ) = u⁻¹ := by
+        rw [hp_def]
+        exact Real.coe_toNNReal _ (inv_nonneg.mpr hu0.le)
       have hp0 : (0 : ℝ) < (p : ℝ) := by rw [hpcoe]; exact inv_pos.mpr hu0
       have hpinv : ((p : ℝ≥0) : ℝ)⁻¹ = u := by rw [hpcoe, inv_inv]
       have hp1 : (1 : ℝ≥0) ≤ p := by
         rw [← NNReal.coe_le_coe, NNReal.coe_one, hpcoe]
-        have := inv_anti_gen hu0 hu1
+        have := inv_anti₀ hu0 hu1
         simpa using this
       have htu : t ≤ u := by rw [ht_def, hu_def]; linarith
       have hpQ : p ≤ Q := by
         rw [← NNReal.coe_le_coe]
-        refine le_of_inv_le_inv_gen hQ0 hp0 ?_
+        refine (inv_le_inv₀ hQ0 hp0).mp ?_
         rw [hQinv, hpinv]; exact htu
       have hpp' : ((q : ℝ≥0) : ℝ)⁻¹ = ((p : ℝ≥0) : ℝ)⁻¹ - (d : ℝ)⁻¹ := by
         rw [hpinv, hu_def]; ring
@@ -183,18 +173,20 @@ theorem memLp_of_gradClosed_general (hd : 1 < d) (c : EuclideanSpace ℝ (Fin d)
         by_contra hcon
         have hcon' : t₁ ≤ 0 := le_of_not_gt hcon
         have hple : (d : ℝ)⁻¹ ≥ (p₀ : ℝ)⁻¹ := by rw [ht₁_def] at hcon'; linarith
-        have hdp : (d : ℝ) ≤ (p₀ : ℝ) := le_of_inv_le_inv_gen hp₀0 hdpos hple
+        have hdp : (d : ℝ) ≤ (p₀ : ℝ) := (inv_le_inv₀ hp₀0 hdpos).mp hple
         have hqge : (p₀ : ℝ) ≤ (q : ℝ) := by exact_mod_cast hpq
         have hqinv' : (q : ℝ)⁻¹ ≤ (d : ℝ)⁻¹ :=
-          inv_anti_gen hdpos (le_trans hdp hqge)
+          inv_anti₀ hdpos (le_trans hdp hqge)
         have : (1 : ℝ) < 2 * (d : ℝ)⁻¹ := by linarith
         have hdd : (d : ℝ)⁻¹ ≤ 2⁻¹ := by
-          have := inv_anti_gen (a := (2 : ℝ)) (by norm_num) hd2R
+          have := inv_anti₀ (b := (2 : ℝ)) (by norm_num) hd2R
           simpa using this
         linarith
       have ht₁_le : t₁ ≤ (p₀ : ℝ)⁻¹ := by rw [ht₁_def]; linarith
       set P : ℝ≥0 := Real.toNNReal t₁⁻¹ with hP_def
-      have hPcoe : ((P : ℝ≥0) : ℝ) = t₁⁻¹ := by rw [hP_def]; exact coe_toNNReal_inv_gen ht₁0
+      have hPcoe : ((P : ℝ≥0) : ℝ) = t₁⁻¹ := by
+        rw [hP_def]
+        exact Real.coe_toNNReal _ (inv_nonneg.mpr ht₁0.le)
       have hP0 : (0 : ℝ) < (P : ℝ) := by rw [hPcoe]; exact inv_pos.mpr ht₁0
       have hPinv : ((P : ℝ≥0) : ℝ)⁻¹ = t₁ := by rw [hPcoe, inv_inv]
       have hp₀P : ((P : ℝ≥0) : ℝ)⁻¹ = ((p₀ : ℝ≥0) : ℝ)⁻¹ - (d : ℝ)⁻¹ := by
@@ -211,7 +203,7 @@ theorem memLp_of_gradClosed_general (hd : 1 < d) (c : EuclideanSpace ℝ (Fin d)
           ((hgrad i (by omega)).mono (Metric.ball_subset_ball hr'R.le))).1
       have hqP : q ≤ P := by
         rw [← NNReal.coe_le_coe]
-        refine le_of_inv_le_inv_gen hP0 hq0 ?_
+        refine (inv_le_inv₀ hP0 hq0).mp ?_
         rw [hPinv, ht₁_def]
         have hs0 : 0 ≤ (s : ℝ) * (d : ℝ)⁻¹ := by positivity
         linarith
@@ -250,11 +242,11 @@ theorem memLp_of_gradClosed_general_ideal (hd : 1 < d) (c : EuclideanSpace ℝ (
   have ht_le : t ≤ (p₀ : ℝ)⁻¹ := by
     have : 0 ≤ (s : ℝ) * (d : ℝ)⁻¹ := by positivity
     rw [ht_def]; linarith
-  have hqcoe : ((Real.toNNReal t⁻¹ : ℝ≥0) : ℝ) = t⁻¹ := coe_toNNReal_inv_gen ht0
+  have hqcoe : ((Real.toNNReal t⁻¹ : ℝ≥0) : ℝ) = t⁻¹ := Real.coe_toNNReal _ (inv_nonneg.mpr ht0.le)
   have hqinv : ((Real.toNNReal t⁻¹ : ℝ≥0) : ℝ)⁻¹ = t := by rw [hqcoe, inv_inv]
   have hp₀q : p₀ ≤ Real.toNNReal t⁻¹ := by
     rw [← NNReal.coe_le_coe, hqcoe]
-    have := inv_anti_gen ht0 ht_le
+    have := inv_anti₀ ht0 ht_le
     simpa using this
   exact memLp_of_gradClosed_general hd c hp₀ hdep s (le_of_lt hsd) hp₀q
     (le_of_eq hqinv.symm) hr hrR hgrad hmem i hi
