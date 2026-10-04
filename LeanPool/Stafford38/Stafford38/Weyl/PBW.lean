@@ -161,6 +161,7 @@ theorem flattenPairSymbols_monomial (n a p : ℕ) (r : SymbolRing k n) :
 
 /-- The finite exponent vector with coordinate exponents `a` and momentum
 exponents `p`. -/
+@[expose]
 def phaseExponent {n : ℕ} (a p : Fin n → ℕ) : PhaseVar n →₀ ℕ :=
   Finsupp.equivFunOnFinite.symm (Sum.elim a p)
 

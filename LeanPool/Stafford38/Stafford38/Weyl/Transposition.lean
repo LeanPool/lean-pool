@@ -171,6 +171,7 @@ theorem transpositionHom_comp_opComm_transpositionHom (n : Nat) :
 
 /-- Transposition is a scalar-preserving equivalence with the opposite Weyl
 algebra. -/
+@[expose]
 def transpositionEquiv (n : Nat) :
     PresentedWeyl k n ≃ₐ[k] (PresentedWeyl k n)ᵐᵒᵖ :=
   AlgEquiv.ofAlgHom (transpositionHom k n) (AlgHom.opComm (transpositionHom k n))
@@ -234,7 +235,7 @@ theorem transpose_injective (n : Nat) : Function.Injective (transpose k n) := by
 
 /-- A right `PresentedWeyl`-module becomes a left module by restriction of
 scalars along transposition. -/
-@[instance_reducible]
+@[expose, instance_reducible]
 def transposedLeftModule (n : Nat) (M : Type v) [AddCommMonoid M]
     [Module (PresentedWeyl k n)ᵐᵒᵖ M] : Module (PresentedWeyl k n) M :=
   Module.compHom M (transpositionEquiv k n).toRingEquiv.toRingHom

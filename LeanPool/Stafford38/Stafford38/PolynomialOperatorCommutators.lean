@@ -29,6 +29,7 @@ abbrev Operator := Module.End k (PolynomialRing k n)
 abbrev OperatorEnd := Module.End k (Operator k n)
 
 /-- The linear map sending an operator to its commutator with a coordinate multiplication. -/
+@[expose]
 def coordinateCommutator (i : Fin n) : OperatorEnd k n where
   toFun P := commutator P (MvPolynomial.X i)
   map_add' P Q := by
@@ -57,6 +58,7 @@ theorem coordinateCommutator_comm (i j : Fin n) :
   abel
 
 /-- The composition of coordinate-commutator maps in the order specified by a list. -/
+@[expose]
 def iteratedCoordinateCommutator (l : List (Fin n)) : OperatorEnd k n :=
   l.foldr (fun i T => coordinateCommutator k n i * T) 1
 
