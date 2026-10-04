@@ -46,6 +46,7 @@ abbrev outerDerivation : OreDivisionDerivation (CoordinateStage (B := B)) :=
   coordinateDerivation
 
 /-- Embed the old coefficient ring through both Ore stages. -/
+@[expose]
 def pairCoefficient : B →+* PairStage (B := B) :=
   (normalCoefficient outerDerivation).comp (normalCoefficient innerDerivation)
 
@@ -115,7 +116,7 @@ section Scalars
 variable {k : Type*} [CommRing k] [Algebra k B]
 
 /-- The scalar algebra structure on the central-coordinate stage. -/
-@[instance_reducible]
+@[expose, instance_reducible]
 def coordinateStageAlgebra : Algebra k (CoordinateStage (B := B)) :=
   Stafford38.OreScalarAlgebra.normalOreAlgebra innerDerivation fun c => by
     exact zeroDerivation_apply (algebraMap k B c)
@@ -128,7 +129,7 @@ theorem coordinateDerivation_algebraMap (c : k) :
   exact coordinateDerivation_coefficient (algebraMap k B c)
 
 /-- The scalar algebra structure on the full coordinate-momentum pair. -/
-@[instance_reducible]
+@[expose, instance_reducible]
 def pairStageAlgebra : Algebra k (PairStage (B := B)) := by
   letI : Algebra k (CoordinateStage (B := B)) := coordinateStageAlgebra
   exact Stafford38.OreScalarAlgebra.normalOreAlgebra outerDerivation
