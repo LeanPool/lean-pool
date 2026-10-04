@@ -41,7 +41,7 @@ gradient on the open set `Ω`.
 ## References
 
 L. C. Evans, *Partial Differential Equations* (2nd ed.), §5.3.3 Theorem 3 (p. 266);
-Y. Guo, *Partial Differential Equations I and II* (Course Lecture Notes), Theorem III.1.3.
+James Guo, *Partial Differential Equations* (Course Lecture Notes), Theorem III.1.3.
 -/
 
 @[expose] public section

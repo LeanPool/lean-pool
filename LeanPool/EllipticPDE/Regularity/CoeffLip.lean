@@ -14,7 +14,7 @@ public import LeanPool.EllipticPDE.Regularity.CoeffC1
 # `W^{1,∞}` principal coefficients
 
 Evans, *Partial Differential Equations* (2nd ed.), §6.3.1, Theorem 1 asks `aᵢⱼ ∈ C¹` for the
-interior `H²` estimate, where Guo, *Partial Differential Equations I and II* (Course Lecture
+interior `H²` estimate, where Guo, *Partial Differential Equations* (Course Lecture
 Notes), Theorem VIII.3.2 (p. 65) asks `aᵢⱼ ∈ W^{1,∞}`. On `ℝᵈ` a `W^{1,∞}` function is one
 with a Lipschitz representative, so in its pointwise form the hypothesis is the Lipschitz
 estimate of `IsLipCoeff` below.

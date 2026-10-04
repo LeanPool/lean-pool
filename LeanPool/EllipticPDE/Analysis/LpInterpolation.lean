@@ -37,7 +37,7 @@ step Guo's proof of Rellich-Kondrachov takes between `L¹` and `L^{p⋆}`.
 
 ## References
 
-Y. Guo, *Partial Differential Equations*, proof of Theorem IV.2.10; H. Brezis, *Functional
+James Guo, *Partial Differential Equations*, proof of Theorem IV.2.10; H. Brezis, *Functional
 Analysis, Sobolev Spaces and Partial Differential Equations*, Remark 2 after Theorem 4.16.
 -/
 
