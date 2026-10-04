@@ -46,7 +46,7 @@ rule through `x ↦ x^{2/q}` turns that into the derivative of the squared `L^q`
 
 ## References
 
-Y. Guo, *Partial Differential Equations*, Section IX.1; L. C. Evans, *Partial Differential
+James Guo, *Partial Differential Equations*, Section IX.1; L. C. Evans, *Partial Differential
 Equations* (2nd ed.), §8.4.1.
 -/
 
