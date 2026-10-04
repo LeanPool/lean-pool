@@ -230,7 +230,8 @@ private theorem smul_mem_of_add_mem_iSup (hv : IsHighestWeightVector b lam v)
     have hd : d ≠ 0 := pow_ne_zero _ (sub_ne_zero.mpr (Ne.symm hx))
     have hcd := ih _ _ hm'mem hcmN
     have hfinal := Submodule.smul_mem (N : Submodule K M) d⁻¹ hcd
-    have hscalar : d⁻¹ * (c * d) = c := by field_simp
+    have hscalar : d⁻¹ * (c * d) = c := by
+      rw [mul_left_comm, inv_mul_cancel₀ hd, mul_one]
     rwa [smul_smul, hscalar] at hfinal
 
 /-- **A Lie submodule of a highest weight module which misses the generator misses the whole top

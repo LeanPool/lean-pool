@@ -330,7 +330,7 @@ theorem sum_trace_raiseLowerEnd_of_ne_zero {ι : Type*} [DecidableEq ι] [Fintyp
       rw [IsKilling.lie_eq_killingForm_smul_of_mem_rootSpace_of_mem_rootSpace_neg
         (genWeightSpaceProjection_apply_mem chi (killingDualBasis bs i))
         (genWeightSpaceProjection_apply_mem (-chi) (bs i))]
-      simp [hc, halpha]
+      rfl
     refine (trace_raiseLowerEnd_eq_sum_weightString_erase_zero (M := M) hchi
       (genWeightSpaceProjection_apply_mem chi (killingDualBasis bs i))
       (genWeightSpaceProjection_apply_mem (-chi) (bs i)) hz).trans
