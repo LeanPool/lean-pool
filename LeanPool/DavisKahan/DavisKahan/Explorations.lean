@@ -6,7 +6,6 @@ Authors: Jon Crall, Edward Wang
 module
 
 
-public import LeanPool.DavisKahan.DavisKahan.Explorations.SourceUnitaryInvariantNormFanDominance
 
 /-! Supporting modules for Davis–Kahan rotation of eigenvectors. -/
 

@@ -50,6 +50,24 @@ def projectionBlock
     (K : E →L[𝕜] E) : E →L[𝕜] E :=
   Ω.starProjection ∘L K ∘L Γ.starProjection
 
+section RealComplexificationTransport
+
+open TauCeti.RealComplexification
+open TauCeti.DavisKahan.Foundation.RealComplexification
+
+/-- Complexification preserves an ambient directed projection block. -/
+theorem projectionBlock_complexifySubmodule
+    {Eᵣ : Type v} [NormedAddCommGroup Eᵣ] [InnerProductSpace ℝ Eᵣ]
+    (U : Submodule ℝ Eᵣ) [U.HasOrthogonalProjection] (K : Eᵣ →L[ℝ] Eᵣ) :
+    projectionBlock (complexifySubmodule U)ᗮ (complexifySubmodule U)
+        (complexify K) =
+      complexify (projectionBlock Uᗮ U K) := by
+  rw [projectionBlock, projectionBlock,
+    starProjection_complexifySubmodule_orthogonal, starProjection_complexifySubmodule,
+    complexify_comp, complexify_comp]
+
+end RealComplexificationTransport
+
 /-- The compression of `K` to the block coordinates `Γ → Ω`. -/
 def blockCompression
     (Ω Γ : Submodule 𝕜 E)

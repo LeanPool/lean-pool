@@ -13141,22 +13141,24 @@ projects:
       Rayleigh–Ritz trial data with residual orthogonal to the trial subspace.
     branch: operator theory
     main_declarations:
-    - RotationOfEigenvectors.sinTheta
+    - RotationOfEigenvectors.sinTheta_mem_and_bound
     - RotationOfEigenvectors.tanTwoTheta
     main_results:
-    - declaration: RotationOfEigenvectors.sinTheta
-      informal: A spectral gap controls the symmetric norm of the sine of the subspace angle by the
-        corresponding residual norm.
+    - declaration: RotationOfEigenvectors.sinTheta_mem_and_bound
+      informal: With finite symmetric residual norm, a spectral gap gives sine-angle ideal membership
+        and controls its symmetric norm by the corresponding residual norm.
     - declaration: RotationOfEigenvectors.tanTheta
       informal: For Rayleigh–Ritz trial data with residual orthogonal to the trial subspace,
         a positive directed spectral gap between the trial compression and the unwanted
         reducing block gives the symmetric-norm tangent-angle residual estimate and
         tangent pole exclusion, assuming the residual has finite symmetric norm.
-    - declaration: RotationOfEigenvectors.sinTwoTheta_directed
-      informal: Under the printed oriented gap and common-domain self-adjointness hypotheses, twice
-        the residual norm bounds the gap times the sine-double-angle norm.
-    - declaration: RotationOfEigenvectors.sinTwoTheta_ambient
-      informal: The whole-space perturbation gives the ambient sine-double-angle bound.
+    - declaration: RotationOfEigenvectors.sinTwoTheta_directed_mem_and_bound
+      informal: Under the printed oriented gap and common-domain self-adjointness hypotheses, finite
+        symmetric residual norm gives directed sine-double-angle ideal membership, and twice the
+        residual norm bounds the gap times its norm.
+    - declaration: RotationOfEigenvectors.sinTwoTheta_ambient_mem_and_bound
+      informal: Finite symmetric perturbation norm gives ambient sine-double-angle ideal membership
+        and the whole-space gap bound under the theorem's reducing and perturbed-gap hypotheses.
     - declaration: RotationOfEigenvectors.tanTwoTheta
       informal: The residual tangent-double-angle estimate holds with the theorem’s source-facing block
         hypotheses.

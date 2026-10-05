@@ -5,85 +5,6 @@ Authors: Jon Crall, OpenAI GPT-5.6 Sol
 -/
 module
 
-
-
-/-
-# HANDOFF: normalized symmetric ideal families / Fan dominance (2026-09-08)
-
-**2026-09-09 scope note.** The handoff below is historical. In the current base
-record, where-defined Fan comparison is already an explicit field. Consequently
-its public accessor is not an independent derivation from the norm and ideal
-laws. The earlier statement below that the base record contains no Fan dominance
-must be read as the pre-field state. Unconditional membership-transferring Fan
-dominance is still distinct. Preserve the probes as exploration history; do not
-count a field projection as closure of a bare-UI-norm representation obligation.
-
-
-This file is intentionally a **standalone compile probe**.  Nothing imports it.
-The user compiled Probes 1--43 cleanly before the naming cleanup that renamed the
-base record from its previous provenance-based name to the
-mathematical `NormalizedSymmetricOperatorIdealFamily`. Probes 44--46 were added on
-2026-09-09 to test the repaired real/complex/RCLike maintenance boundary for
-`sin Θ` and `sin 2Θ`. Probes 44 and 45 compiled on the first run. The original
-Probe 46 compiled after this standalone file opened the repository's scoped
-`TauCeti.CompleteSubspace` instance.  That successful norm-layer probe was then
-replaced by production-conformance Probes 46 and 47 after the scalar-generic
-directed residual engine was factored into production; those current probes
-still require a compiler run.
-
-Compile this file with:
-
-```text
-lake env lean \
-  DavisKahan/Explorations/SourceUnitaryInvariantNormFanDominance.lean
-```
-
-## Result of the exploration
-
-The base mathematical object is now:
-
-```text
-NormalizedSymmetricOperatorIdealFamily
-```
-
-It is a `SymmetricOperatorIdealFamily` together with the rank-one normalization.
-It does not contain Fan dominance.  `NormalizedUnitaryInvariantNorm` remains the
-stronger implementation record whose underlying `FanDominantIdealFamily` carries
-unconditional `ENNReal` Fan dominance.
-
-Probes 17--24 construct a finite-rank/operator-norm family with gauge `∞` outside
-the finite-rank ideal.  It satisfies the base record and where-defined Fan
-monotonicity but refutes unconditional Fan dominance.  The failure is exactly
-membership transfer: Ky-Fan domination by an ideal member need not force the
-dominated operator into this ideal.
-
-Probes 25--30 separate memberwise symmetric-norming representation from total
-ideal-domain representation.  Memberwise representation is enough for
-where-defined Fan comparison; total/domain representation additionally gives the
-membership-transfer property bundled into unconditional `ENNReal` dominance.
-
-Probes 31--37 express the source's "vacuous when the norm does not exist"
-convention directly and show that the Davis--Kahan sine-theta analytic theorem
-can be presented at the where-defined boundary.
-
-Probes 38--43 finish the theorem-signature test.  They show that:
-
-* vacuous comparison is exactly the ordinary real-valued inequality conditional
-  on both displayed norms existing;
-* the finite-rank countermodel is not in the image of
-  `NormalizedUnitaryInvariantNorm.toNormalizedSymmetricOperatorIdealFamily`;
-* the actual sine-theta theorem still holds for that excluded family at the
-  vacuous/where-defined boundary; and
-* the candidate public norm quantifier requires no caller-visible membership
-  premise and concludes no membership transfer.
-
-The source/literature audit therefore points to where-defined Fan comparison as
-the source-facing boundary.  The next production step is separate from this
-naming cleanup: put the where-defined comparison at the reusable mathematical
-layer and retarget the canonical Davis--Kahan façades to the vacuous conclusion.
-Do not attempt to prove unconditional `HasFanDominance` from the base record;
-the countermodel proves that implication false.
--/
 public import LeanPool.DavisKahan.DavisKahan.OperatorIdeal.NormalizedUnitaryInvariantNorm
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.OperatorIdeal.Family.SymmetricGauge
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.OperatorIdeal.ApproximationNumber.PrescribedSequence
@@ -106,31 +27,23 @@ public import LeanPool.DavisKahan.DavisKahan.Sources.DavisKahan1970.SinTwoThetaD
 public import LeanPool.DavisKahan.DavisKahan.Sources.DavisKahan1970.SectionTwo
 
 /-!
-# Exploration: Fan dominance at the Davis--Kahan source norm boundary
+# Fan-dominance boundaries for normalized operator ideals
 
-This file is deliberately standalone.  Nothing imports it, and it does not
-change `NormalizedSymmetricOperatorIdealFamily`, `NormalizedUnitaryInvariantNorm`, or any
-production theorem signature.
+This production module separates where-defined gauge comparison from membership
+transfer. It retains finite-dimensional membership, isometric/modulus/stabilization
+transport, symmetric-gauge representation reductions, and the finite-rank
+operator-norm countermodel to unconditional Fan dominance. Separability and
+representation hypotheses remain explicit wherever required.
 
-The question being tested is narrower than "formalize Calkin's theorem":
+Concrete consumers include the sine-theta partial-norm façade, its finite-rank
+countermodel specialization, and the equivalence between the class-wide sine
+estimate and its expanded partial-norm implication. These reuse the analytic
+sine-theta producer instead of repeating its proof.
 
-1. Davis--Kahan work on separable Hilbert spaces.
-2. Their source norm class is represented by `NormalizedSymmetricOperatorIdealFamily`.
-3. The source-facing theorem should not require an extra `HasFanDominance`
-   argument if Fan dominance is a theorem of that source class.
-4. Existing `ForTauCeti` infrastructure already proves that a gauge obtained
-   from a symmetric sequence gauge is Fan dominant.
-
-The compile probes below progressively narrow the missing implication.  Probe 1
-checks that a separable symmetric-gauge representation would suffice, but later
-probes deliberately avoid assuming that representation: the printed source
-class can contain norms with an essential/Calkin contribution invisible to
-finite-rank gauge recovery.  The later probes instead isolate what follows from
-the raw source ideal laws, what can be reduced to one infinite-dimensional
-separable model space, and which genuinely infinite-dimensional obligations
-remain.
-
-No `sorry`, `axiom`, or replacement source structure is introduced here.
+The legacy `FanDominanceExploration` namespace and the three useful sine façade
+names ending in `_probe` are retained for source compatibility. They are supported
+mathematical consequences here, not compilation or conformance probes. Historical
+handoffs and the four duplicated scalar-generic conformance declarations are absent.
 -/
 
 @[expose] public section
@@ -149,8 +62,7 @@ universe v
 /-- Fan dominance restricted to the separable Hilbert-space scope used by the
 Davis--Kahan paper.
 
-This is intentionally a local exploration predicate rather than a field added
-to `NormalizedSymmetricOperatorIdealFamily`. -/
+This predicate isolates the separable scope without strengthening the norm-family record. -/
 def HasFanDominanceSeparable (N : NormalizedSymmetricOperatorIdealFamily.{0, v} ℂ) : Prop :=
   ∀ {E F E' F' : Type v}
     [NormedAddCommGroup E] [InnerProductSpace ℂ E] [CompleteSpace E]
@@ -166,13 +78,12 @@ def HasFanDominanceSeparable (N : NormalizedSymmetricOperatorIdealFamily.{0, v} 
       N.toSymmetricOperatorIdealFamily.gauge A ≤
         N.toSymmetricOperatorIdealFamily.gauge B
 
-/-- A separable Calkin-style representation statement, stated only as strongly
-as this exploration needs it.
+/-- A separable symmetric-gauge representation with one gauge across all source/target pairs.
 
 The same symmetric sequence gauge must represent the source norm on every
-separable source/target pair.  This is the missing mathematical bridge we want
-to investigate; it is a proposition here, not an assumption added to the source
-norm structure. -/
+separable source/target pair.  It is a separate representation hypothesis, not an extra field in the
+norm-family record. -/
+
 def HasSymmetricGaugeRepresentationSeparable
     (N : NormalizedSymmetricOperatorIdealFamily.{0, v} ℂ) : Prop :=
   ∃ Φ : TauCeti.SymmetricGauge,
@@ -194,7 +105,7 @@ theorem hasFanDominanceSeparable_of_hasFanDominance
   intro E F E' F' _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ A B hAB
   exact h hAB
 
-/-- **Main reduction probe.**
+/-- **Symmetric-gauge reduction.**
 
 If a source norm has one symmetric sequence gauge representing it on every
 separable Hilbert-space pair, then it has Fan dominance on exactly that
@@ -207,8 +118,7 @@ The proof uses only infrastructure already present in `ForTauCeti`:
 * `SymmetricGauge.extend_le_extend_of_forall_sum_le`, the proved weak-majorization
   monotonicity of the extended symmetric gauge.
 
-Thus a successful compile isolates the remaining gap to the representation
-step. -/
+The representation hypothesis therefore suffices for the separable comparison. -/
 theorem hasFanDominanceSeparable_of_symmetricGaugeRepresentation
     (N : NormalizedSymmetricOperatorIdealFamily.{0, v} ℂ)
     (hrep : HasSymmetricGaugeRepresentationSeparable N) :
@@ -233,26 +143,7 @@ theorem hasFanDominanceSeparable_of_symmetricGaugeRepresentation
       rfl]
   exact ENNReal.ofReal_le_ofReal hk
 
-/-!
-## Probe 2: recover finite-dimensional Fan dominance directly from the source laws
-
-The symmetric-gauge representation above is deliberately stronger than we
-should expect for the entire source class.  In particular, this repository
-already records source-like norms with a Calkin-quotient contribution: those
-need not equal the maximal extension of their restriction to finite-rank
-operators.
-
-The next probe therefore avoids any infinite symmetric-gauge representation.
-It asks only whether the source gauge, restricted to finite-dimensional
-operator spaces, is already enough to feed the proved finite-dimensional Fan
-dominance theorem.
-
-There is one local hypothesis below: every finite-dimensional operator belongs
-to the source ideal.  Rank-one normalization plus the ideal laws should imply
-that hypothesis; keeping it separate in this probe lets the compiler test the
-majorization route independently of the finite-rank decomposition needed to
-prove membership.
--/
+/-! ## Finite-dimensional gauge comparison -/
 
 /-- Finite-dimensional complex inner-product spaces are complete. -/
 local instance instCompleteSpaceFiniteFanDominance
@@ -263,8 +154,7 @@ local instance instCompleteSpaceFiniteFanDominance
 /-- Every operator between finite-dimensional complex Hilbert spaces belongs to
 this source ideal.
 
-This is an exploration predicate, not a new field.  The next probe will try to
-derive it from rank-one normalization. -/
+This predicate is derived below from rank-one normalization and the ideal laws. -/
 def HasFiniteDimensionalMembership
     (N : NormalizedSymmetricOperatorIdealFamily.{0, v} ℂ) : Prop :=
   ∀ {E F : Type v}
@@ -274,8 +164,7 @@ def HasFiniteDimensionalMembership
     N.toSymmetricOperatorIdealFamily.Mem A
 
 /-- A linear isometric equivalence is a contraction.  Local copy of the tiny
-fact used by the production source-norm façade; kept here so this exploration
-does not depend on any Fan-dominant wrapper. -/
+fact used by the source-norm façade; it uses no Fan-dominance hypothesis. -/
 private theorem norm_isometryEquiv_le_one_finite
     {X Y : Type v}
     [NormedAddCommGroup X] [InnerProductSpace ℂ X]
@@ -441,19 +330,7 @@ theorem finiteDimensional_fanDominance
   apply (ENNReal.toReal_le_toReal hA hB).mp
   exact finiteDimensional_fanDominance_real N hfinite hAB
 
-/-!
-## Probe 3: finite-dimensional membership follows from the source laws
-
-Probe 2 isolated one temporary hypothesis: that every operator between finite-
-dimensional Hilbert spaces belongs to the source ideal.  This probe attempts to
-remove that hypothesis without changing any production structure.
-
-The argument is elementary.  A finite-dimensional operator has a finite
-singular-value decomposition into scalar multiples of rank-one operators.  For
-each nonzero singular term, both singular vectors have norm one, so the source's
-rank-one normalization says the underlying rank-one operator has finite gauge.
-The ideal is a submodule, hence it contains scalar multiples and finite sums.
--/
+/-! ## Finite-dimensional membership -/
 
 /-- The source normalization itself forces a norm-one rank-at-most-one operator
 to be a member of the source ideal: an infinite `ENNReal` gauge would have
@@ -497,7 +374,7 @@ private theorem rankOne_rank_le_one
       Submodule.rank_mono hle
     _ ≤ 1 := by simpa using rank_span_le ({u} : Set F)
 
-/-- **Probe 3 main statement.**  Every bounded operator between finite-
+/-- **Finite-dimensional membership.**  Every bounded operator between finite-
 dimensional complex Hilbert spaces belongs to a source ideal using only the
 source rank-one normalization and the ideal's submodule laws.
 
@@ -543,8 +420,8 @@ theorem source_hasFiniteDimensionalMembership
       (TauCeti.rightSingularBasis L i))
     simpa [S] using source_mem_rankOne_unit N hnorm hrank
 
-/-- Probe 2's temporary finite-dimensional-membership hypothesis is therefore
-unnecessary: finite-dimensional Fan dominance follows directly from the source
+/-- A separate finite-dimensional-membership hypothesis is unnecessary: finite-dimensional Fan
+dominance follows directly from the source
 laws and the already-formalized rectangular majorization theorem. -/
 theorem finiteDimensional_fanDominance_of_sourceLaws
     (N : NormalizedSymmetricOperatorIdealFamily.{0, v} ℂ)
@@ -557,45 +434,7 @@ theorem finiteDimensional_fanDominance_of_sourceLaws
       N.toSymmetricOperatorIdealFamily.gauge B :=
   finiteDimensional_fanDominance N (source_hasFiniteDimensionalMembership N) hAB
 
-/-!
-## What remains after Probe 3
-
-If Probe 3 compiles, the finite-dimensional part of the Fan-dominance boundary
-is closed from the current `NormalizedSymmetricOperatorIdealFamily` laws themselves.  The
-remaining source-level question is then genuinely infinite-dimensional:
-
-* can finite-dimensional compressions/approximants transfer the source gauge
-  inequality to arbitrary operators on the separable Hilbert spaces used by
-  Davis--Kahan; or
-* does that transfer require an additional regularity property (for example
-  lower semicontinuity/order continuity) not encoded by the current source
-  abstraction?
-
-The next probe should attack exactly that finite-to-separable passage.  It
-should not modify `NormalizedSymmetricOperatorIdealFamily`, and it should not assume a full
-symmetric-gauge representation unless the source mathematics forces one.
--/
-
-
-/-!
-## Probe 4: what the source ideal laws already say about infinite-dimensional corners
-
-The finite-dimensional probes above should not be mistaken for the source-level
-result we need.  Before introducing any continuity or sequence-space hypothesis,
-we can still ask exactly what follows from the source ideal law on an arbitrary
-Hilbert space.
-
-Two useful facts do follow with no Fan dominance:
-
-* compression by an orthogonal projection cannot increase the source gauge;
-* extension by zero across an orthogonal summand preserves the source gauge
-  exactly.
-
-The second fact is especially useful diagnostically.  It says that merely
-changing the ambient Hilbert space by adding a zero summand is not the missing
-infinite-dimensional step.  The missing step has to concern genuinely different
-operators with the same or majorized approximation-number data.
--/
+/-! ## Gauge transport under isometries, compression, and the modulus -/
 
 private theorem subtypeL_enorm_le_one
     {E : Type v}
@@ -612,7 +451,6 @@ private theorem orthogonalProjectionOnto_enorm_le_one
     ‖W.orthogonalProjectionOnto‖ₑ ≤ 1 := by
   rw [← ofReal_norm, ← ENNReal.ofReal_one]
   exact ENNReal.ofReal_le_ofReal W.orthogonalProjectionOnto_norm_le
-
 
 private theorem isometryEquiv_enorm_le_one
     {E F : Type v}
@@ -761,18 +599,7 @@ theorem source_zeroExtension_sameSequence_and_gauge
       W A n).symm
   · exact (source_gauge_zeroExtension_eq N W A).symm
 
-/-!
-## Probe 5: every approximation-number sequence has a representative on one infinite model
-
-The next reduction is genuinely infinite-dimensional.  On any fixed
-infinite-dimensional Hilbert space `H`, the existing prescribed-sequence theorem
-realises the complete approximation-number sequence of *any* bounded operator
-as the sequence of a square operator on `H`.
-
-This avoids choosing `ℓ²` as a global model (the pinned Mathlib does not expose a
-`SeparableSpace` instance for its `lp` model) and keeps the universe of the model
-space aligned with the source norm family.
--/
+/-! ## Approximation sequences on a fixed Hilbert model -/
 
 /-- Every bounded operator has a square representative with exactly the same
 approximation-number sequence on any chosen infinite-dimensional Hilbert space. -/
@@ -794,19 +621,6 @@ theorem exists_sameApproximationNumbers_on_infiniteHilbert
   rw [ContinuousLinearMap.hasSameApproximationNumbers_iff]
   intro n
   exact (hD n).symm
-
-/-!
-## Probe 6: isolate approximation-sequence invariance
-
-The source laws certainly make the gauge invariant under explicit unitary
-transport and, by Probe 4, under zero extension.  A much stronger statement is
-that *any* two separable-space operators with the same complete approximation-
-number sequence have the same source gauge.
-
-This property is not assumed below to follow from the source laws.  It is named
-as a local proposition so we can determine exactly how much of the full Fan-
-dominance theorem would follow from it.
--/
 
 /-- The source gauge factors through the complete approximation-number sequence
 on separable Hilbert spaces. -/
@@ -854,7 +668,7 @@ theorem hasApproximationNumberGaugeInvarianceSeparable_of_hasFanDominance
     (hasFanDominanceSeparable_of_hasFanDominance N hfan)
 
 /-- A symmetric-gauge representation implies sequence invariance directly.
-This reconnects Probe 1 with the weaker intermediate property isolated here. -/
+This connects symmetric-gauge representation to the intermediate transport property. -/
 theorem hasApproximationNumberGaugeInvarianceSeparable_of_symmetricGaugeRepresentation
     (N : NormalizedSymmetricOperatorIdealFamily.{0, v} ℂ)
     (hrep : HasSymmetricGaugeRepresentationSeparable N) :
@@ -867,20 +681,7 @@ theorem hasApproximationNumberGaugeInvarianceSeparable_of_symmetricGaugeRepresen
   apply congrArg ENNReal.ofReal
   exact (ContinuousLinearMap.hasSameApproximationNumbers_iff A B).mp hsame n
 
-/-!
-## Probe 6b: a genuinely infinite-dimensional compact subclass
-
-There is already an infinite-dimensional classification theorem in `ForTauCeti`:
-compact positive self-adjoint operators with trivial kernel and the same complete
-approximation-number sequence are unitarily equivalent.  Combining that theorem
-with the source-law unitary invariance from Probe 4 gives sequence invariance on
-this compact subclass *without* Fan dominance.
-
-This is useful because it shows that the remaining sequence-invariance problem
-is not simply "infinite dimension".  The hard part is extending beyond a class
-where the full operator is classified by its discrete singular data, especially
-toward noncompact operators carrying essential/Calkin information.
--/
+/-! ## Positive compact operators and sequence invariance -/
 
 /-- Source-gauge sequence invariance for compact positive self-adjoint square
 operators with trivial kernel. -/
@@ -922,19 +723,6 @@ def HasFanDominanceOnSquare
     (∀ k, kyFanApproximationGauge k A ≤ kyFanApproximationGauge k B) →
       N.toSymmetricOperatorIdealFamily.gauge A ≤
         N.toSymmetricOperatorIdealFamily.gauge B
-
-/-!
-## Probe 6c: reduce the one-space problem to positive operators
-
-Probe 4 showed that the source gauge itself is unchanged by the operator
-modulus.  Approximation numbers are also unchanged by the modulus.  Therefore
-Fan dominance for arbitrary square operators on a fixed Hilbert space is
-already equivalent to Fan dominance for positive square operators there.
-
-This removes polar decomposition from the remaining hard theorem: after this
-probe the one-space obstruction is a comparison theorem for positive operators,
-where spectral/diagonal approximation machinery is the natural next target.
--/
 
 /-- Fan dominance restricted to positive square operators on one fixed Hilbert
 space. -/
@@ -995,19 +783,7 @@ theorem fanDominanceOnSquare_iff_positive
   · exact hasFanDominanceOnPositiveSquare_of_square N
   · exact hasFanDominanceOnSquare_of_positive N
 
-/-!
-## Probe 7: reduce the entire separable problem to one infinite model space
-
-For a chosen infinite-dimensional separable Hilbert space `H`, define the
-remaining dominance problem only for square operators on `H`.  Probe 5 lets us
-move the complete approximation-number sequence of arbitrary rectangular
-operators onto `H`.  Therefore, if the source gauge is sequence-invariant, Fan
-dominance on this one model space is enough for the full heterogeneous separable
-statement.
-
-This is the main infinite-dimensional reduction probe.  It does not use the
-finite-dimensional result at all.
--/
+/-! ## Separable model-space reductions -/
 
 /-- The full separable target trivially contains the one-model-space target. -/
 theorem hasFanDominanceOnSquare_of_fanDominanceSeparable
@@ -1066,7 +842,7 @@ separable Fan-dominance problem is equivalent to exactly two obligations:
    sequence; and
 2. Fan dominance for square operators on that one model space.
 
-This equivalence is the main output of the new probes. -/
+Both obligations and the converse reduction are explicit. -/
 theorem fanDominanceSeparable_iff_sequenceInvariance_and_modelSpace
     (N : NormalizedSymmetricOperatorIdealFamily.{0, v} ℂ)
     {H : Type v}
@@ -1085,7 +861,7 @@ theorem fanDominanceSeparable_iff_sequenceInvariance_and_modelSpace
       N hinf hseq hH
 
 /-- Combining the model-space and modulus reductions gives the sharpest
-factorization found by these probes: on any chosen infinite-dimensional
+factorization: on any chosen infinite-dimensional
 separable model space, full separable Fan dominance is equivalent to sequence
 invariance plus Fan dominance only for positive operators on that model. -/
 theorem fanDominanceSeparable_iff_sequenceInvariance_and_positiveModel
@@ -1099,19 +875,6 @@ theorem fanDominanceSeparable_iff_sequenceInvariance_and_positiveModel
         HasFanDominanceOnPositiveSquare N H := by
   rw [fanDominanceSeparable_iff_sequenceInvariance_and_modelSpace N hinf,
     fanDominanceOnSquare_iff_positive N]
-
-/-!
-## Probe 8: a conditional one-space criterion
-
-The previous equivalence suggests a useful next implementation boundary.  If we
-can prove sequence invariance from the source UIN laws, the heterogeneous
-Davis--Kahan norm problem collapses to a theorem about square operators on one
-infinite-dimensional separable Hilbert space.  Conversely, proving only the
-one-space theorem is not enough unless sequence invariance is also established.
-
-This final probe records both implications explicitly so later experiments can
-attack them independently without changing the source structure.
--/
 
 /-- Once sequence invariance has been established, one-space Fan dominance and
 the full separable statement are equivalent. -/
@@ -1128,48 +891,6 @@ theorem fanDominanceSeparable_iff_modelSpace_of_sequenceInvariance
   · intro hH
     exact hasFanDominanceSeparable_of_sequenceInvariance_and_modelSpace
       N hinf hseq hH
-
-/-!
-## What these probes are intended to decide
-
-A clean compile would establish the following reduction map without changing
-any production definition:
-
-```
-source UIN laws
-   │
-   ├─ finite-dimensional Fan dominance                         [Probe 3: proved]
-   │
-   ├─ compression ≤ ambient gauge; zero extension = same gauge [Probe 4]
-   │
-   └─ arbitrary separable Fan dominance
-          ⇕   (for any chosen infinite-dimensional separable H)
-      sequence invariance
-          +
-      Fan dominance on positive square operators H → H         [Probes 5--8]
-```
-
-The important point is negative as well as positive: none of Probes 4--8 claims
-that finite-dimensional corners recover the value of an arbitrary source UIN.
-That recovery would exclude source-class examples with a genuine essential or
-Calkin contribution.  The next mathematical attack, after compilation, should
-therefore target the two obligations exposed by Probe 7 rather than return to
-finite-dimensional density.
--/
-
-/-!
-## Probe 9: rectangular operators already reduce to their positive modulus
-
-Probe 6c used the modulus only for square operators.  That leaves an avoidable
-artifact in the later model-space reduction, because the Davis--Kahan norm
-comparisons themselves are rectangular.  The polar decomposition is already
-rectangular: for `T : E → F`, `T = W |T|` and `|T| = W⋆ T`, with both `W` and
-`W⋆` contractions.  Hence the raw source ideal laws identify the gauge of `T`
-with the gauge of the positive square operator `|T|` on its domain.
-
-This probe is important because it makes the codomain dimension irrelevant to
-the remaining Fan-dominance problem.
--/
 
 private theorem norm_polarPartial_le_one_rectangular
     {E F : Type v}
@@ -1219,19 +940,6 @@ theorem source_gauge_modulus_eq_rectangular
         rw [T.polarPartial_comp_modulus]
       _ ≤ S.gauge T.modulus :=
         S.gauge_comp_left_le_of_norm_le_one hnorms.1 T.modulus
-
-/-!
-## Probe 10: exact transport between infinite separable Hilbert spaces
-
-The repository already proves the Hilbert-space classification theorem needed
-here: any two infinite-dimensional separable Hilbert spaces over the same field
-are linearly isometrically equivalent.  Consequently, on the all-infinite part
-of the source scope we do not need the approximation-sequence-invariance
-hypothesis from Probe 7 merely to move operators to a common model space.
-
-The two local lemmas below record that a unitary coordinate change preserves
-both the source gauge and every approximation number.
--/
 
 private theorem isometryEquiv_norm_le_one
     {E F : Type v}
@@ -1318,16 +1026,6 @@ theorem source_conjugation_sameSequence_and_gauge
     intro n
     exact approximationNumber_comp_isometryEquiv_eq U U.symm A n
   · exact source_gauge_comp_isometryEquiv N U U.symm A
-
-/-!
-## Probe 11: the all-infinite source scope needs no sequence-invariance axiom
-
-After the rectangular modulus reduction, only the *domains* of the two compared
-operators matter.  If both are infinite-dimensional and separable, Hilbert-space
-classification moves their positive moduli to one fixed infinite separable model
-space by honest unitary equivalence.  This is stronger than Probe 7: no arbitrary
-same-sequence replacement is used.
--/
 
 /-- Fan dominance restricted to comparisons whose two operator domains are
 infinite-dimensional separable Hilbert spaces.  The codomains remain arbitrary
@@ -1443,23 +1141,7 @@ theorem fanDominanceInfiniteSeparable_iff_positiveModel
   rw [fanDominanceInfiniteSeparable_iff_modelSpace N hHinf,
     fanDominanceOnSquare_iff_positive N]
 
-/-!
-## Probe 12: isolate the cross-dimensional comparisons
-
-The previous probe removes sequence invariance from the all-infinite case.  The
-full separable source statement still allows the two domains to have different
-Hilbert dimensions.  Rather than bury that issue inside a global same-sequence
-axiom, this probe splits the target into three disjoint pieces:
-
-* both domains finite-dimensional;
-* both domains infinite-dimensional; and
-* exactly one domain finite-dimensional.
-
-This is a logical decomposition, but it is useful because only the third class
-can no longer be transported to a common model by a unitary equivalence.  Those
-mixed comparisons are therefore the next place where an essential/Calkin
-contribution or an infinite-completion issue can actually matter.
--/
+/-! ## Cross-dimensional comparison -/
 
 /-- Fan dominance when both operator domains are finite-dimensional. -/
 def HasFanDominanceOnFiniteSeparableDomains
@@ -1529,8 +1211,8 @@ theorem fanDominanceSeparable_iff_dimensionSplit
       · exact hmixed (Or.inr ⟨hE, hE'⟩) hAB
       · exact hinf hE hE' hAB
 
-/-- Combining the dimension split with Probe 11 identifies a smaller remaining
-boundary: after choosing one infinite separable model space, the full source
+/-- Combining the dimension split with model-space transport identifies the boundary: after choosing
+one infinite separable model space, the full source
 claim consists of the positive-model theorem plus the finite/finite and mixed
 cross-dimensional cases. -/
 theorem fanDominanceSeparable_iff_finite_mixed_positiveModel
@@ -1547,43 +1229,7 @@ theorem fanDominanceSeparable_iff_finite_mixed_positiveModel
     fanDominanceInfiniteSeparable_iff_positiveModel N hHinf]
   tauto
 
-/-!
-## Updated boundary after Probes 9--12
-
-If these probes compile, the earlier `sequence invariance + one model` factor
-is no longer the sharpest reduction.  The source laws themselves give the
-rectangular modulus reduction, and separability classifies every
-infinite-dimensional domain up to unitary equivalence.  The full problem then
-splits as
-
-```
-full separable Fan dominance
-        ⇕
-finite/finite comparisons
-    + mixed finite/infinite comparisons
-    + positive Fan dominance on one infinite separable H.
-```
-
-The mixed case is now exposed explicitly instead of being hidden inside a
-blanket approximation-sequence-invariance hypothesis.  A later probe can ask
-which mixed orientation follows from finite-rank reduction and which one really
-requires an infinite-completion/full-symmetry theorem.
--/
-
-
-/-!
-## Probe 13: stabilization by a zero Hilbert summand is invisible
-
-Probe 12 exposed finite/infinite mixed comparisons only because finite- and
-infinite-dimensional domains are not unitarily equivalent.  A cheaper move is
-to *stabilize* every square operator by adjoining the same infinite-dimensional
-zero summand.  The resulting domains are all infinite-dimensional, while both
-the source gauge and every approximation number should remain unchanged.
-
-This probe proves that invisibility directly from the source ideal laws and the
-existing approximation-number contraction estimates.  It does not assume Fan
-dominance.
--/
+/-! ## Zero stabilization and positive model-space reduction -/
 
 private theorem blockInl_enorm_le_one_stabilization
     {E H : Type v}
@@ -1707,13 +1353,6 @@ theorem source_blockSum_zero_right_sameSequence_and_gauge
             (norm_fstL_le (𝕜 := ℂ) (F₀ := E) (F₁ := H)) n
   · exact (source_gauge_blockSum_zero_right_eq N (H := H) A).symm
 
-/-!
-## Probe 14: stabilization forces every domain into the all-infinite lane
-
-If `H` is infinite-dimensional, then `E ⊕₂ H` is infinite-dimensional for every
-`E`.  This is the only dimension fact stabilization needs.
--/
-
 private theorem blockInr_injective_stabilization
     {E H : Type v}
     [NormedAddCommGroup E] [InnerProductSpace ℂ E]
@@ -1739,16 +1378,6 @@ theorem stabilization_infinite_of_right_infinite
   exact FiniteDimensional.of_injective
     (blockInr (𝕜 := ℂ) (E₀ := E) (E₁ := H)).toLinearMap
     blockInr_injective_stabilization
-
-/-!
-## Probe 15: one infinite model controls *all* separable square pairs
-
-Stabilization removes the mixed-dimensional obstruction from Probe 12.  Given
-square operators on arbitrary separable `E` and `E'`, append the same infinite
-zero summand `H` to both.  Their approximation sequences and source gauges are
-unchanged, while both stabilized domains are now infinite-dimensional.  Probe
-11 can therefore compare them.
--/
 
 /-- Fan dominance for arbitrary pairs of square operators on separable Hilbert
 spaces, with no dimension restriction. -/
@@ -1809,16 +1438,6 @@ theorem hasFanDominanceOnSeparableSquarePairs_of_infiniteDomains
         N.toSymmetricOperatorIdealFamily.gauge ZA := hZAgauge
     _ ≤ N.toSymmetricOperatorIdealFamily.gauge ZB := hstab
     _ = N.toSymmetricOperatorIdealFamily.gauge B := hZBgauge.symm
-
-/-!
-## Probe 16: the whole separable Fan theorem reduces to one positive model
-
-Rectangular modulus reduction (Probe 9) turns arbitrary source comparisons into
-square positive comparisons on their domains.  Probe 15 then removes every
-dimension distinction by stabilization.  Consequently the complete separable
-Fan-dominance statement should be equivalent to positive Fan dominance on one
-fixed infinite-dimensional separable Hilbert space.
--/
 
 /-- Square-pair dominance is enough for the full rectangular separable source
 statement, because both the gauge and approximation numbers are unchanged by
@@ -1920,56 +1539,9 @@ theorem fanDominanceSeparable_iff_positiveModel_stabilized
   · exact hasFanDominanceOnPositiveSquare_of_fanDominanceSeparable N
   · exact hasFanDominanceSeparable_of_positiveModel_stabilized N hHinf
 
-/-!
-## Boundary after Probes 13--16
+/-! ## The finite-rank operator-norm countermodel -/
 
-If these compile, the finite/infinite split from Probe 12 is bookkeeping rather
-than an essential obstruction.  Zero stabilization moves every separable square
-operator into the all-infinite lane without changing either side of the Fan
-comparison.  Together with rectangular modulus reduction, the entire source
-problem becomes one theorem:
-
-```
-positive Fan dominance
-on one fixed infinite-dimensional separable Hilbert space.
-```
-
-No finite-dimensional membership issue, mixed-dimensional adapter, or blanket
-same-approximation-sequence axiom remains in that reduction.  The next probes
-should therefore attack this positive infinite-dimensional model theorem itself,
-and in particular determine whether the raw source ideal laws imply the needed
-infinite limiting/majorization step or whether the current source abstraction is
-missing a standard regularity assumption.
--/
-
-
-/-!
-## Probes 17--24: test whether the raw source laws can imply unconditional Fan dominance
-
-Probes 13--16 reduce the separable problem to positive Fan dominance on one fixed
-infinite-dimensional separable Hilbert space.  Before attempting the remaining
-infinite-dimensional majorization proof, there is a more basic question to
-settle: is the current raw `NormalizedSymmetricOperatorIdealFamily` abstraction itself
-strong enough for the unconditional `ENNReal`-valued Fan-dominance property?
-
-The source gauge uses `∞` outside its ideal.  Therefore
-`HasFanDominanceSeparable` contains two logically different assertions:
-
-1. **where-defined norm monotonicity** -- if both displayed norms exist, Ky Fan
-   domination implies the source-norm inequality;
-2. **membership transfer** -- if the right-hand operator belongs to the ideal,
-   then every operator weakly majorized by it also belongs to the ideal.
-
-A finite-rank ideal equipped with the operator norm is a useful stress test.  It
-satisfies the raw symmetric ideal laws and the rank-one normalization, while an
-infinite-rank compact diagonal can be weakly majorized by a rank-one operator.
-If the following probes compile, the current raw source laws do **not** imply the
-unconditional Fan-dominance property.  That would not by itself decide the
-correct Davis--Kahan source interpretation; it would identify the exact semantic
-boundary that has to be resolved.
--/
-
-/-- Exploration-only finite-rank predicate, expressed with a natural rank bound
+/-- Finite-rank predicate, expressed with a natural rank bound
 so the existing rank-composition and adjoint lemmas apply directly. -/
 def ProbeFiniteRank
     {E F : Type v}
@@ -2069,8 +1641,6 @@ private theorem probeFiniteRank_adjoint_iff
     simpa using h'
   · exact probeFiniteRank_adjoint
 
-/-! ### Probe 17: a raw source model on the finite-rank ideal -/
-
 /-- Operator norm on finite-rank maps and `∞` elsewhere. -/
 noncomputable def finiteRankOperatorNormGauge
     {E F : Type v}
@@ -2080,8 +1650,9 @@ noncomputable def finiteRankOperatorNormGauge
   classical
   exact if ProbeFiniteRank A then ‖A‖ₑ else ⊤
 
-/-- The finite-rank ideal with the operator norm, as an exploration-only ideal
-family.  The proof deliberately mirrors the existing compact-operator family. -/
+/-- The finite-rank ideal with the operator norm as an operator-ideal family.  The proof
+deliberately mirrors the existing compact-operator family. -/
+
 noncomputable def finiteRankOperatorNormIdealFamily :
     OperatorIdealFamily.{0, v, v} ℂ where
   gauge A := finiteRankOperatorNormGauge A
@@ -2227,8 +1798,6 @@ noncomputable def finiteRankNormalizedSymmetricOperatorIdealFamily :
     rw [← ofReal_norm, ← ofReal_norm]
     exact ENNReal.ofReal_le_ofReal h1
 
-/-! ### Probe 18: expose the exact carrier/gauge boundary -/
-
 @[simp]
 theorem finiteRankOperatorNormGauge_eq_top_iff
     {E F : Type v}
@@ -2242,7 +1811,6 @@ theorem finiteRankOperatorNormGauge_eq_top_iff
     simp [hA]
   · rw [finiteRankOperatorNormGauge, ite_eq_right hA]
     simp [hA]
-
 
 theorem finiteRankOperatorNormGauge_ne_top_iff
     {E F : Type v}
@@ -2261,8 +1829,6 @@ theorem finiteRankOperatorNormGauge_of_finiteRank
     {A : E →L[ℂ] F} (hA : ProbeFiniteRank A) :
     finiteRankOperatorNormGauge A = ‖A‖ₑ := by
   rw [finiteRankOperatorNormGauge, ite_eq_left hA]
-
-/-! ### Probes 19--20: an infinite-rank diagonal below a rank-one Ky Fan profile -/
 
 /-- The complex square-summable sequence space supporting the diagonal Fan-profile example. -/
 abbrev FanCounterexampleSpace := lp (fun _ : ℕ => ℂ) 2
@@ -2397,8 +1963,6 @@ theorem fanCounterexample_kyFan_domination :
   · rw [fanCounterexampleB_kyFan_succ]
     exact fanCounterexampleA_kyFan_le_one (k + 1)
 
-/-! ### Probe 21: the raw source laws do not imply unconditional Fan dominance -/
-
 @[simp]
 theorem finiteRankNormalizedSymmetricOperatorIdealFamily_gauge_A :
     (finiteRankNormalizedSymmetricOperatorIdealFamily.{0}).toSymmetricOperatorIdealFamily.gauge
@@ -2417,7 +1981,7 @@ theorem finiteRankNormalizedSymmetricOperatorIdealFamily_gauge_B :
     norm_fanCounterexampleB]
   norm_num
 
-/-- **Decisive unrestricted countermodel probe.**  The raw source laws do not
+/-- **Unrestricted countermodel.**  The raw source laws do not
 imply the current production `HasFanDominance` property.  This theorem does not
 need a separability instance for the concrete `lp` model. -/
 theorem finiteRankNormalizedSymmetricOperatorIdealFamily_not_fanDominant :
@@ -2458,9 +2022,9 @@ theorem normalizedSymmetricFamilyLaws_do_not_imply_fanDominanceSeparable
   ⟨finiteRankNormalizedSymmetricOperatorIdealFamily.{0},
     finiteRankNormalizedSymmetricOperatorIdealFamily_not_fanDominantSeparable⟩
 
-/-! ### Probe 22: split the exact current production property -/
+/-! ## Where-defined dominance and membership transfer -/
 
-/-- Exploration spelling of the now-production where-defined Fan property. -/
+/-- Compatibility spelling of the norm-family's where-defined Fan property. -/
 abbrev HasFanDominanceWhereDefined
     (N : NormalizedSymmetricOperatorIdealFamily.{0, v} ℂ) : Prop :=
   N.HasFanDominanceWhereDefined
@@ -2535,10 +2099,9 @@ theorem finiteRankNormalizedSymmetricOperatorIdealFamily_not_membershipTransfer_
   rw [finiteRankNormalizedSymmetricOperatorIdealFamily_gauge_A] at hA
   exact hA rfl
 
-/-! ### Probes 23--24: repeat the split on the separable source scope -/
+/-- Fan dominance only where both source norms exist.  This predicate keeps separability explicit
+without changing the norm-family record. -/
 
-/-- Fan dominance only where both source norms exist.  This is an exploration
-predicate, not a proposed production replacement. -/
 def HasFanDominanceSeparableWhereDefined
     (N : NormalizedSymmetricOperatorIdealFamily.{0, v} ℂ) : Prop :=
   ∀ {E F E' F' : Type v}
@@ -2636,42 +2199,7 @@ theorem finiteRankNormalizedSymmetricOperatorIdealFamily_not_membershipTransfer
   rw [finiteRankNormalizedSymmetricOperatorIdealFamily_gauge_A] at hA
   exact hA rfl
 
-/-!
-## Boundary after Probes 17--24 -- COMPILED
-
-This batch compiled cleanly on 2026-09-08.  It is now machine-checked that the
-current raw `NormalizedSymmetricOperatorIdealFamily` fields do **not** imply the current
-unconditional `HasFanDominance` property.  The finite-rank/operator-norm source
-is a counterexample.  The same source satisfies the norm inequality whenever
-both norms are defined; what fails is weak-majorization membership transfer.
-
-That result changes the exploration target.  We no longer ask Lean to prove a
-false implication from the raw fields.  The next probes ask what different
-formal readings of the source's "symmetric gauge function" sentence buy us and
-how that interacts with the paper-wide convention that results are vacuous when
-a displayed norm fails to exist.
--/
-
-/-!
-## Probes 25--31: separate value representation, domain representation, and vacuity
-
-The source language can be read at two different strengths:
-
-* **memberwise/value representation:** on operators for which a source norm
-  exists, its value is given by one coherent symmetric norming function;
-* **total/domain representation:** the canonical extended symmetric norming
-  function agrees with the source extended gauge on every bounded operator, so
-  it determines both values and the ideal domain.
-
-The finite-rank/operator-norm countermodel is designed to distinguish them.  On
-finite-rank members its value is exactly the first Ky Fan norm, hence it has the
-weak/memberwise representation.  But its extended gauge is `∞` on an
-infinite-rank compact diagonal even though the first Ky Fan gauge is finite.
-
-The probes below also spell out a total-gauge formulation of the source's
-"vacuous when norms fail to exist" convention.  This is exploration-only
-semantics; no production theorem is changed here.
--/
+/-! ## Memberwise and total gauge representations -/
 
 /-- Cross-space finite-prefix dominance for a coherent symmetric norming
 function.  The production theorem currently has same source/target types; this
@@ -2740,8 +2268,6 @@ theorem symmetricNorming_extendedGauge_le_cross
     (ENNReal.ofReal_le_ofReal (symmetricNorming_prefixGauge_le_cross M h n))
     (le_iSup (fun m : ℕ => ENNReal.ofReal (M.prefixGauge m B)) n)
 
-/-! ### Probe 25: a weak/memberwise reading of "obtained as a symmetric gauge" -/
-
 /-- One coherent symmetric norming function gives the source norm value on every
 operator where that source norm is actually defined.  No claim is made about the
 canonical extension away from the source ideal. -/
@@ -2755,7 +2281,7 @@ def HasMemberwiseSymmetricNormingRepresentation
       N.toSymmetricOperatorIdealFamily.gauge A ≠ ⊤ →
         N.toSymmetricOperatorIdealFamily.gauge A = M.extendedGauge A
 
-/-- The compiled finite-rank/operator-norm countermodel has a memberwise
+/-- The finite-rank/operator-norm countermodel has a memberwise
 symmetric-norming representation: on its domain it is just the first Ky Fan norm.
 Thus a value-only reading of the source's symmetric-gauge sentence does not by
 itself rule out the countermodel. -/
@@ -2775,8 +2301,6 @@ theorem
     kyFanNormingFunction_extendedGauge,
     kyFanApproximationGauge_one, ← ofReal_norm]
 
-/-! ### Probe 26: memberwise representation gives exactly the where-defined Fan inequality -/
-
 /-- Once one coherent symmetric norming function represents the values on the
 source ideal, ordinary Fan dominance follows whenever both displayed norms
 exist.  No membership-transfer conclusion is used. -/
@@ -2790,7 +2314,7 @@ theorem fanDominantWhereDefined_of_memberwiseSymmetricNormingRepresentation
   exact symmetricNorming_extendedGauge_le_cross M hAB
 
 /-- The value-only symmetric-norming statement is strictly weaker than the
-current production `HasFanDominance`: the compiled finite-rank source satisfies
+current production `HasFanDominance`: the finite-rank source satisfies
 the former and refutes the latter. -/
 theorem memberwiseSymmetricNormingRepresentation_does_not_imply_fanDominance :
     ∃ N : NormalizedSymmetricOperatorIdealFamily.{0, 0} ℂ,
@@ -2799,11 +2323,9 @@ theorem memberwiseSymmetricNormingRepresentation_does_not_imply_fanDominance :
     finiteRankNormalizedSymmetricOperatorIdealFamily_hasMemberwiseSymmetricNormingRepresentation,
     finiteRankNormalizedSymmetricOperatorIdealFamily_not_fanDominant⟩
 
-/-! ### Probe 27: formalize the source's paper-wide vacuity convention -/
-
 /-- Total-gauge form of: if one of the displayed source norms does not exist,
 the comparison is treated as vacuous; otherwise the Fan inequality must hold.
-This is an exploration predicate, not a production proposal. -/
+This proposition records the partial-norm convention explicitly. -/
 def HasFanDominanceWithVacuity
     (N : NormalizedSymmetricOperatorIdealFamily.{0, v} ℂ) : Prop :=
   ∀ {E F E' F' : Type v}
@@ -2847,8 +2369,6 @@ theorem fanDominanceWithVacuity_of_memberwiseSymmetricNormingRepresentation
   rw [fanDominanceWithVacuity_iff_whereDefined]
   exact fanDominantWhereDefined_of_memberwiseSymmetricNormingRepresentation N hrep
 
-/-! ### Probe 28: a strong/total reading of "obtained as a symmetric gauge" -/
-
 /-- Strong reading: one canonical symmetric-norming extension agrees with the
 source's total `ENNReal` gauge on *every* bounded operator.  Unlike the
 memberwise statement, this fixes the ideal domain as well as norm values. -/
@@ -2883,8 +2403,6 @@ theorem memberwiseSymmetricNormingRepresentation_of_total
   intro E F _ _ _ _ _ _ A _
   exact hM A
 
-/-! ### Probes 29--30: identify the exact extra content of the production property -/
-
 /-- Once memberwise symmetric-norming representation is granted, the only extra
 content of current unconditional Fan dominance is Ky-Fan membership transfer. -/
 theorem fanDominance_iff_membershipTransfer_of_memberwiseRepresentation
@@ -2900,7 +2418,7 @@ theorem fanDominance_iff_membershipTransfer_of_memberwiseRepresentation
     exact (fanDominance_iff_whereDefined_and_membershipTransfer N).mpr
       ⟨hwhere, htransfer⟩
 
-/-- A compact witness to the semantic split established by this exploration:
+/-- A compact witness to the distinction between value comparison and membership transfer:
 there exists a raw source norm with a coherent symmetric-norming formula on its
 entire domain and with the explicit-vacuity Fan property, yet without the
 current unconditional production property. -/
@@ -2916,34 +2434,7 @@ theorem exists_memberwise_vacuous_but_not_unconditional_fanDominance :
     finiteRankNormalizedSymmetricOperatorIdealFamily.{0}
     finiteRankNormalizedSymmetricOperatorIdealFamily_hasMemberwiseSymmetricNormingRepresentation
 
-/-!
-## Boundary after Probes 25--30
-
-If this batch compiles, the exploration has isolated a precise semantic fork.
-The already-compiled countermodel is compatible with all of the following:
-
-* the current raw source ideal/norm laws;
-* a single coherent symmetric-norming formula for every value on its domain;
-* Ky Fan monotonicity whenever the two displayed norms exist; and
-* an explicit formalization of the paper-wide convention that a comparison is
-  vacuous when a displayed norm fails to exist.
-
-It still fails current production `HasFanDominance`, solely because that total
-`ENNReal` inequality additionally forces weak-majorization closure of the norm's
-**domain**.  In contrast, a total/canonical symmetric-norming representation of
-the extended gauge *does* imply the production property.
-
-Therefore the next source-exactness decision should be made from the meaning of
-Davis--Kahan's Section 1 sentence that every unitary-invariant norm is obtained
-as a symmetric gauge function, together with their explicit vacuity convention
-and the cited Ky Fan theorem.  The key question is no longer whether Fan
-monotonicity is true; it is whether the source imports **domain solidity** as
-part of the mathematical notion of its norm ideal.  Do not modify production
-structures until that question is settled.
--/
-
-
-/-! ### Probe 31: state the source's class-level Fan sentence with vacuity -/
+/-! ## Class-wide comparisons and Ky Fan norms -/
 
 /-- Pairwise source-norm comparison with the paper-wide convention made
 explicit: if either displayed norm does not exist, the comparison is vacuous;
@@ -2989,8 +2480,6 @@ theorem everySourceVacuousGaugeLe_of_kyFan
   intro N
   exact ((fanDominanceWithVacuity_iff_whereDefined N).2 (hclass N)) hAB
 
-/-! ### Probe 32: put the Ky Fan norms themselves into the raw source class -/
-
 /-- The `k`-th Ky Fan norm, projected from the already-constructed normalized
 source member down to the raw printed-law structure. -/
 noncomputable def kyFanNormalizedSymmetricOperatorIdealFamily (k : ℕ) (hk : 0 < k) :
@@ -3025,8 +2514,6 @@ theorem mem_kyFanNormalizedSymmetricOperatorIdealFamily
   rw [gauge_kyFanNormalizedSymmetricOperatorIdealFamily]
   exact ENNReal.ofReal_ne_top
 
-/-! ### Probe 33: recover every Ky Fan inequality from the class-level sentence -/
-
 /-- The converse half of the source's strong Fan sentence needs no dominance
 assumption: because the source class itself contains every finite Ky Fan norm,
 a comparison valid for every source norm implies every Ky Fan comparison. -/
@@ -3054,8 +2541,8 @@ theorem kyFan_le_of_everySourceVacuousGaugeLe
       exact (ENNReal.ofReal_le_ofReal_iff
         (kyFanApproximationGauge_nonneg k B)).mp hle
 
-/-- Under exactly the missing external theorem -- where-defined Fan dominance
-for every source norm -- the paper's class-level "every UIN iff every Ky Fan
+/-- Under the stated class-wide where-defined Fan-dominance hypothesis, the paper's class-level
+"every UIN iff every Ky Fan
 norm" sentence becomes a literal Lean equivalence with vacuity explicit. -/
 theorem everySourceVacuousGaugeLe_iff_everyKyFan_le
     {E F E' F' : Type v}
@@ -3072,7 +2559,7 @@ theorem everySourceVacuousGaugeLe_iff_everyKyFan_le
   · exact kyFan_le_of_everySourceVacuousGaugeLe
   · exact everySourceVacuousGaugeLe_of_kyFan hclass
 
-/-! ### Probe 34: scaled where-defined Fan dominance -/
+/-! ## Scaled partial-norm comparison -/
 
 /-- The scaled form actually consumed by Davis--Kahan estimates.  It follows
 from ordinary where-defined Fan dominance by applying that theorem to `c • A`.
@@ -3107,8 +2594,6 @@ theorem mul_gaugeReal_le_of_all_mul_kyFan_le_whereDefined
   rw [S.gaugeReal_smul (c : ℂ) hA, Complex.norm_real, Real.norm_eq_abs,
     abs_of_nonneg hc.le] at hreal
   exact hreal
-
-/-! ### Probe 35: scaled estimates with the paper's vacuity convention -/
 
 /-- A source estimate `c ‖A‖ ≤ ‖B‖` with the paper-wide "norm may fail to
 exist" convention made explicit. -/
@@ -3148,8 +2633,6 @@ theorem scaledSourceEstimateWithVacuity_of_all_mul_kyFan_le
         (mul_gaugeReal_le_of_all_mul_kyFan_le_whereDefined
           N hfan hc hA hB hky)
 
-/-! ### Probe 36: the class-wide scaled bridge -/
-
 /-- Once the external Fan theorem is available in its where-defined form for the
 source class, a scaled Ky Fan estimate transports to every source norm with the
 paper's vacuity semantics and without any membership-transfer theorem. -/
@@ -3171,20 +2654,20 @@ theorem everySource_scaledEstimateWithVacuity_of_all_mul_kyFan_le
   exact scaledSourceEstimateWithVacuity_of_all_mul_kyFan_le
     N (hclass N) hc hky
 
-/-! ### Probe 37: a source-vacuous sine-theta façade -/
+/-! ## Concrete partial-norm sine-theta consumers -/
 
-/-- Exploration-only Section 2 façade with the source norm represented by the
+/-- Section 2 partial-norm façade with the source norm represented by the
 raw printed-law structure plus the *where-defined* external Fan theorem.
 
-Unlike the current production `..._sourceExact_complex` façade, this prototype
-has no residual-membership premise and no membership-transfer conclusion.  The
+This façade has no residual-membership premise and no membership-transfer conclusion.  The
 paper's global convention is instead visible in `ScaledSourceEstimateWithVacuity`:
 if either displayed norm does not exist the conclusion is vacuous, and otherwise
 it is exactly `δ · N(sin Θ₀) ≤ N(R)`.
 
 The proof deliberately reuses the already-proved analytic sine-theta theorem only
-to obtain the Ky Fan inequalities.  Thus this probe tests theorem-boundary
-semantics rather than rebuilding the Davis--Kahan argument. -/
+to obtain the Ky Fan inequalities.  It supplies a concrete consumer of the scaled partial-norm
+comparison. -/
+
 theorem sinTheta_unbounded_formGap_sourceVacuous_complex_probe
     {E F G H : Type v}
     [NormedAddCommGroup E] [InnerProductSpace ℂ E] [CompleteSpace E]
@@ -3221,37 +2704,7 @@ theorem sinTheta_unbounded_formGap_sourceVacuous_complex_probe
   change ScaledSourceEstimateWithVacuity N δ X R
   exact scaledSourceEstimateWithVacuity_of_all_mul_kyFan_le N hfan hδ hky
 
-/-!
-## Boundary after Probes 31--37 -- COMPILED
-
-The user compiled Probes 31--37 cleanly on 2026-09-08.  They mechanically
-separate the public Davis--Kahan inequality from the stronger domain-solidity
-property currently bundled into production `HasFanDominance`.
-
-The source/literature audit performed after that compile gives a concrete reason
-to test the vacuous boundary as the source-facing one:
-
-* Davis--Kahan explicitly say that some results are vacuous when the relevant
-  norms fail to exist.
-* In Section 1 they cite Gohberg--Krein, Chapter III, Section 3 for the Ky Fan
-  theorem.  That section is the symmetric-norming-function section; the
-  construction of symmetrically normed ideals generated by a symmetric norming
-  function is the following Section 4.
-* The historical operator-ideal theory distinguishes the value formula supplied
-  by a symmetric norming function from the choice of ideal/domain.  Thus the
-  membership-transfer assertion should not be silently inserted into the
-  printed theorem merely because it is available for a canonical generated
-  domain.
-
-The next probes therefore do not attempt another infinite-dimensional dominance
-proof.  They verify that the proposed vacuity proposition is exactly a partial
-norm inequality, exhibit the actual sine-theta theorem at that boundary on the
-compiled countermodel, prove that this countermodel cannot come from the current
-normalized production class, and package the exact class-level source-facing
-conclusion.  These are theorem-signature probes, not production changes.
--/
-
-/-! ### Probe 38: vacuity is exactly a partial-norm implication -/
+/-! ## Exact semantics and countermodel applications -/
 
 /-- `SourceVacuousGaugeLe` is not an extra inequality.  It is exactly the
 ordinary gauge comparison conditional on both displayed source norms existing. -/
@@ -3312,8 +2765,6 @@ theorem scaledSourceEstimateWithVacuity_iff_defined_implication
       · exact Or.inl (Or.inr hB)
       · exact Or.inr (h hA hB)
 
-/-! ### Probe 39: normalized source norms imply only more than we need -/
-
 /-- Any current production normalized norm supplies the where-defined Fan
 property after forgetting its stronger membership-transfer field. -/
 theorem normalizedUnitaryInvariantNorm_hasFanDominanceWhereDefined
@@ -3323,7 +2774,7 @@ theorem normalizedUnitaryInvariantNorm_hasFanDominanceWhereDefined
     N.toNormalizedSymmetricOperatorIdealFamily).mp
     N.toNormalizedSymmetricOperatorIdealFamily_hasFanDominance).1
 
-/-- The compiled finite-rank source norm is outside the image of the current
+/-- The finite-rank source norm is outside the image of the current
 normalized production class.  Thus a theorem quantifying only over normalized
 norms genuinely excludes raw source norms that satisfy the printed-law
 abstraction and where-defined Fan comparison. -/
@@ -3336,8 +2787,6 @@ theorem finiteRankNormalizedSymmetricOperatorIdealFamily_not_from_normalizedUnit
     N.toNormalizedSymmetricOperatorIdealFamily_hasFanDominance
   rw [hN] at hfan
   exact finiteRankNormalizedSymmetricOperatorIdealFamily_not_fanDominant hfan
-
-/-! ### Probe 40: the actual sine theorem survives on the countermodel -/
 
 /-- The Section 2 sine-theta statement, with the paper's vacuity convention,
 holds for the finite-rank/operator-norm source countermodel even though that
@@ -3367,8 +2816,6 @@ theorem sinTheta_unbounded_formGap_finiteRankSourceVacuous_complex_probe
     finiteRankNormalizedSymmetricOperatorIdealFamily_fanDominantWhereDefined_unrestricted
     A A₀ Λ₁ E₀ F₀ F₁ R hA hA₀ hΛ₁ htrial hexact hδ hgap
 
-/-! ### Probe 41: normalized norms also admit the weaker source boundary -/
-
 /-- Even if the implementation continues to prove the stronger normalized
 theorem internally, its source-facing wrapper need not expose residual
 membership or a membership-transfer conclusion. -/
@@ -3395,9 +2842,7 @@ theorem sinTheta_unbounded_formGap_normalizedAsSourceVacuous_complex_probe
       (normalizedUnitaryInvariantNorm_hasFanDominanceWhereDefined N)
     A A₀ Λ₁ E₀ F₀ F₁ R hA hA₀ hΛ₁ htrial hexact hδ hgap
 
-/-! ### Probe 42: package the literal source-facing norm quantifier -/
-
-/-- Exploration-only proposition matching the norm part of the printed sine
+/-- Proposition expressing the partial-norm sine
 theorem: for every source UIN, the displayed inequality holds whenever its two
 displayed norms exist, and is otherwise vacuous.
 
@@ -3414,12 +2859,9 @@ def EverySourceSinThetaEstimateWithVacuity
     ScaledSourceEstimateWithVacuity N δ
       ((ContinuousLinearMap.id ℂ E - F₀ ∘L F₀.adjoint) ∘L E₀) R
 
-/-- If the historical Ky Fan theorem supplies the still-missing class theorem at
-the where-defined scope, the exact public norm quantifier follows with no
-membership hypotheses or conclusions.
-
-This theorem isolates the sole remaining mathematical obligation from the
-source-facing Davis--Kahan statement. -/
+/-- The stated class-wide where-defined comparison yields the partial-norm quantifier
+without membership hypotheses or conclusions. The class-wide comparison stays
+explicit in this reduction; it is not asserted to follow from weaker ideal laws. -/
 theorem everySourceSinThetaEstimateWithVacuity_of_whereDefinedFanClass
     {E F G H : Type v}
     [NormedAddCommGroup E] [InnerProductSpace ℂ E] [CompleteSpace E]
@@ -3443,9 +2885,7 @@ theorem everySourceSinThetaEstimateWithVacuity_of_whereDefinedFanClass
     N (hclass N) A A₀ Λ₁ E₀ F₀ F₁ R
     hA hA₀ hΛ₁ htrial hexact hδ hgap
 
-/-! ### Probe 43: the candidate source signature has no hidden membership data -/
-
-/-- Expanded characterization of the candidate class-level conclusion.  This
+/-- Expanded characterization of the class-level partial-norm conclusion.  This
 keeps the exact theorem boundary auditable: the only norm-side hypotheses are
 that both displayed partial norms exist, and those hypotheses occur under the
 universal norm quantifier rather than as caller-visible theorem premises. -/
@@ -3471,202 +2911,6 @@ theorem everySourceSinThetaEstimateWithVacuity_iff
   · intro h N
     exact (scaledSourceEstimateWithVacuity_iff_defined_implication
       (N := N)).mpr (h N)
-
-/-! ### Probes 44--46: keep the source norm boundary scalar-generic
-
-These probes were added after a source-review failure mode became visible in the
-public API: a repair would land at `ℂ` while the `ℝ` sibling or shared `RCLike`
-surface remained on an older statement boundary.  The three surfaces must be
-reviewed together.
-
-Probes 44 and 45 compiled on 2026-09-09 and were then promoted to production.
-The original Probe 46 also compiled after opening the repository's intentionally scoped
-completeness instance for projected subspaces.  The directed residual engine was then
-factored over `RCLike`; the current Probes 46 and 47 call that production directed endpoint
-and the complete `SectionTwo.sinTwoTheta` endpoint respectively.  They are conformance
-probes and have not yet been compiler-validated in this revision.
-
-The theorem names below deliberately do **not** say `sourceExact`.  Fidelity is
-metadata owned by the result ledger; these declarations are only compile probes.
--/
-
-open scoped TauCeti.CompleteSubspace
-
-universe u
-
-/-- **Probe 44: the repaired sine-theta norm boundary is available at arbitrary
-`RCLike` scalar field.**
-
-This is the scalar-generic counterpart of the fixed-field where-defined wrappers:
-no residual-membership premise is needed to invoke the theorem, and no membership
-transfer is concluded.  The two `N.Mem` arrows are the source's convention that
-the displayed inequality is asserted where both partial norms are defined. -/
-theorem sinTheta_unbounded_formGap_whereDefinedUIN_rclike_probe
-    {𝕜 : Type u} [RCLike 𝕜]
-    {E F G H : Type v}
-    [NormedAddCommGroup E] [InnerProductSpace 𝕜 E] [CompleteSpace E]
-    [NormedAddCommGroup F] [InnerProductSpace 𝕜 F] [CompleteSpace F]
-    [NormedAddCommGroup G] [InnerProductSpace 𝕜 G] [CompleteSpace G]
-    [NormedAddCommGroup H] [InnerProductSpace 𝕜 H] [CompleteSpace H]
-    (N : NormalizedSymmetricOperatorIdealFamily.{u, v} 𝕜)
-    (A : E →ₗ.[𝕜] E) (A₀ : F →ₗ.[𝕜] F) (Λ₁ : G →ₗ.[𝕜] G)
-    (E₀ : F →L[𝕜] E) (F₀ : H →L[𝕜] E) (F₁ : G →L[𝕜] E) (R : F →L[𝕜] E)
-    (hA : IsSelfAdjoint A) (hA₀ : IsSelfAdjoint A₀) (hΛ₁ : IsSelfAdjoint Λ₁)
-    (htrial : TauCeti.DavisKahan1970.IsTrialResidual A A₀ E₀ R)
-    (hexact : TauCeti.DavisKahan1970.IsExactSpectralDecomposition A Λ₁ F₀ F₁)
-    {δ : ℝ} (hδ : 0 < δ)
-    (hgap : TauCeti.DavisKahan.Sylvester.FormBoundedSylvesterGap A₀ Λ₁ δ) :
-    N.Mem ((ContinuousLinearMap.id 𝕜 E - F₀ ∘L F₀.adjoint) ∘L E₀) →
-    N.Mem R →
-      δ * N.gaugeReal ((ContinuousLinearMap.id 𝕜 E - F₀ ∘L F₀.adjoint) ∘L E₀) ≤
-        N.gaugeReal R := by
-  exact TauCeti.DavisKahan1970.sinTheta_unbounded_formGap_whereDefinedUIN_rclike
-    (𝕜 := 𝕜) N A A₀ Λ₁ E₀ F₀ F₁ R hA hA₀ hΛ₁ htrial hexact hδ hgap
-
-/-- **Probe 45: the ambient `sin 2Θ` clause has the same where-defined RCLike
-boundary.**
-
-The existing analytic theorem is already scalar-generic.  This probe changes only
-the norm boundary, using every Ky Fan norm and then where-defined Fan dominance.
-The factor two is handled by proving the equivalent `(δ / 2)` estimate first. -/
-theorem sinTwoTheta_ambient_unbounded_perturbedGap_whereDefinedUIN_rclike_probe
-    {𝕜 : Type u} [RCLike 𝕜]
-    {E : Type v} [NormedAddCommGroup E] [InnerProductSpace 𝕜 E] [CompleteSpace E]
-    (N : NormalizedSymmetricOperatorIdealFamily.{u, v} 𝕜)
-    {A : E →ₗ.[𝕜] E} (hA : IsSelfAdjoint A)
-    (Hop : E →L[𝕜] E) (hHop : Hop.IsSymmetric)
-    {P Q : Submodule 𝕜 E} [P.HasOrthogonalProjection] [Q.HasOrthogonalProjection]
-    (hPred : TauCeti.LinearPMap.ReducesSubspace A P)
-    (hQred : TauCeti.LinearPMap.ReducesSubspace
-      (TauCeti.LinearPMap.addBounded A Hop) Q)
-    {δ : ℝ} (hδ : 0 < δ)
-    (hgap : TauCeti.DavisKahan.Sylvester.FormBoundedSylvesterGap
-      (TauCeti.LinearPMap.reducingRestriction
-        (TauCeti.LinearPMap.addBounded A Hop) Q hQred)
-      (TauCeti.LinearPMap.reducingRestriction
-        (TauCeti.LinearPMap.addBounded A Hop) Qᗮ hQred.orthogonal) δ) :
-    N.Mem (TauCeti.DavisKahan.Angle.sinTwoAngleOperator P Q) →
-    N.Mem Hop →
-      δ * N.gaugeReal (TauCeti.DavisKahan.Angle.sinTwoAngleOperator P Q) ≤
-        2 * N.gaugeReal Hop := by
-  exact TauCeti.DavisKahan1970.sinTwoTheta_ambient_unbounded_perturbedGap_whereDefinedUIN_rclike
-    (𝕜 := 𝕜) N hA Hop hHop hPred hQred hδ hgap
-
-/-- **Probe 46: the production directed `sin 2Θ₀` theorem is scalar-generic.**
-
-This is now a conformance probe rather than an assumed-core probe.  It exercises the
-production reducing-subspace/residual engine all the way through the where-defined UIN
-boundary over arbitrary `RCLike`. -/
-theorem sinTwoTheta_directed_whereDefinedUIN_rclike_production_probe
-    {𝕜 : Type u} [RCLike 𝕜]
-    {E : Type v} [NormedAddCommGroup E] [InnerProductSpace 𝕜 E] [CompleteSpace E]
-    (N : NormalizedSymmetricOperatorIdealFamily.{u, v} 𝕜)
-    {A : E →ₗ.[𝕜] E} (hA : IsSelfAdjoint A)
-    {trial gapCarrier : Submodule 𝕜 E}
-    [trial.HasOrthogonalProjection] [gapCarrier.HasOrthogonalProjection]
-    {M : trial →L[𝕜] trial} {R : trial →L[𝕜] E}
-    (hred : TauCeti.LinearPMap.ReducesSubspace A gapCarrier)
-    (htrialDom : ∀ v : trial, (v : E) ∈ A.domain)
-    (hres : ∀ v : trial, A ⟨(v : E), htrialDom v⟩ = R v + ((M v : trial) : E))
-    {δ : ℝ} (hδ : 0 < δ)
-    (hgap : TauCeti.DavisKahan.Sylvester.FormBoundedSylvesterGap
-      (TauCeti.LinearPMap.reducingRestriction A gapCarrier hred)
-      (TauCeti.LinearPMap.reducingRestriction A gapCarrierᗮ hred.orthogonal) δ) :
-    N.Mem (TauCeti.DavisKahan.Angle.directedSinTwoAngleOperator trial gapCarrier) →
-    N.Mem R →
-      δ * N.gaugeReal
-          (TauCeti.DavisKahan.Angle.directedSinTwoAngleOperator trial gapCarrier) ≤
-        2 * N.gaugeReal R := by
-  exact
-    TauCeti.DavisKahan1970.sinTwoTheta_directed_unboundedResidual_reducing_whereDefinedUIN_rclike
-    N hA hred htrialDom hres hδ hgap
-
-/-- **Probe 47: the complete short `SectionTwo.sinTwoTheta` API is scalar-generic.**
-
-This probe exercises both printed clauses under one shared source setup: the unperturbed
-reducing subspace, the perturbed reducing subspace, the trial residual of `A + H`, and the
-gap on the two perturbed reducing restrictions. -/
-theorem sinTwoTheta_complete_whereDefinedUIN_rclike_production_probe
-    {𝕜 : Type u} [RCLike 𝕜]
-    {E : Type v} [NormedAddCommGroup E] [InnerProductSpace 𝕜 E] [CompleteSpace E]
-    (N : NormalizedSymmetricOperatorIdealFamily.{u, v} 𝕜)
-    {A : E →ₗ.[𝕜] E} (hA : IsSelfAdjoint A)
-    (Hop : E →L[𝕜] E) (hHop : Hop.IsSymmetric)
-    {P Q : Submodule 𝕜 E} [P.HasOrthogonalProjection] [Q.HasOrthogonalProjection]
-    (hPred : TauCeti.LinearPMap.ReducesSubspace A P)
-    (hQred : TauCeti.LinearPMap.ReducesSubspace
-      (TauCeti.LinearPMap.addBounded A Hop) Q)
-    {M : P →L[𝕜] P} {R : P →L[𝕜] E}
-    (hPdom : ∀ p : P, (p : E) ∈ (TauCeti.LinearPMap.addBounded A Hop).domain)
-    (hres : ∀ p : P,
-      (TauCeti.LinearPMap.addBounded A Hop) ⟨(p : E), hPdom p⟩ =
-        R p + ((M p : P) : E))
-    {δ : ℝ} (hδ : 0 < δ)
-    (hgap : TauCeti.DavisKahan.Sylvester.FormBoundedSylvesterGap
-      (TauCeti.LinearPMap.reducingRestriction
-        (TauCeti.LinearPMap.addBounded A Hop) Q hQred)
-      (TauCeti.LinearPMap.reducingRestriction
-        (TauCeti.LinearPMap.addBounded A Hop) Qᗮ hQred.orthogonal) δ) :
-    (N.Mem (TauCeti.DavisKahan.Angle.directedSinTwoAngleOperator P Q) →
-      N.Mem R →
-        δ * N.gaugeReal (TauCeti.DavisKahan.Angle.directedSinTwoAngleOperator P Q) ≤
-          2 * N.gaugeReal R) ∧
-    (N.Mem (TauCeti.DavisKahan.Angle.sinTwoAngleOperator P Q) →
-      N.Mem Hop →
-        δ * N.gaugeReal (TauCeti.DavisKahan.Angle.sinTwoAngleOperator P Q) ≤
-          2 * N.gaugeReal Hop) := by
-  constructor
-  · exact
-      TauCeti.DavisKahan1970.sinTwoTheta_directed_unboundedResidual_reducing_whereDefinedUIN_rclike
-      N (DavisKahan.addBounded_isSelfAdjoint A hA Hop hHop) hQred hPdom hres hδ hgap
-  · exact TauCeti.DavisKahan1970.sinTwoTheta_ambient_unbounded_perturbedGap_whereDefinedUIN_rclike
-      N hA Hop hHop hPred hQred hδ hgap
-
-/-!
-## Boundary after Probes 44--47
-
-Probes 44 and 45 are conformance checks for the promoted scalar-generic `sin Θ` and ambient
-`sin 2Θ` endpoints.  Probe 46 now calls the production scalar-generic directed residual
-engine directly; there is no assumed fixed-field core.  Probe 47 calls the complete
-`SectionTwo.sinTwoTheta` API carrying both boxed Section 2 conclusions under one shared
-setup.  Fidelity remains attested by the result ledger rather than by these probe names.
--/
-
-/-!
-## Boundary after Probes 38--43
-
-If this batch compiles, the Lean exploration has finished the theorem-signature
-part of the source audit.
-
-* Probe 38 certifies that the proposed vacuity wrappers are exactly partial-norm
-  implications, not a weakened numerical estimate hidden behind `ENNReal`.
-* Probe 39 proves that the current normalized quantifier is genuinely narrower
-  than the raw source quantifier: the finite-rank source countermodel cannot be
-  the `toNormalizedSymmetricOperatorIdealFamily` of any `NormalizedUnitaryInvariantNorm`.
-* Probe 40 applies the actual Davis--Kahan sine-theta analytic result to that
-  excluded raw source norm at the vacuous/where-defined boundary.
-* Probe 41 shows that no proof strength is lost internally by presenting a
-  normalized theorem through the weaker source boundary.
-* Probes 42--43 package and expand the candidate public quantifier.  There is no
-  caller-visible `N.Mem R`, no `N.Mem sinTheta` conclusion, and no hidden
-  membership transfer.  The remaining foundation theorem is exactly
-  `∀ N : NormalizedSymmetricOperatorIdealFamily, HasFanDominanceWhereDefined N`.
-
-The source audit now points to this boundary as the semantically aligned one.
-Davis--Kahan's explicit "vacuous when certain norms fail to exist" convention is
-represented literally, while their cited Ky Fan result supplies the comparison
-of norm values.  A stronger generated/maximal ideal interpretation may still be
-useful internally, but its domain-solidity consequence should not appear in the
-source-facing theorem type unless a historical source is found that makes that
-extra domain assertion part of Davis--Kahan's quantifier.
-
-Do not edit production in the same commit as this probe batch.  First compile
-this file.  After a clean compile, the production change should be a separate,
-reviewable step: introduce the source partial/vacuous comparison at the
-appropriate reusable layer, prove the historical where-defined Fan theorem for
-the intended source UIN representation, and retarget the canonical Davis--Kahan
-facades to the class-level source proposition above.
--/
 
 end
 

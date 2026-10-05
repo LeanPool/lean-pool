@@ -57,7 +57,6 @@ public import LeanPool.DavisKahan.DavisKahan.DoubleAngle.Unbounded
 public import LeanPool.DavisKahan.DavisKahan.DoubleAngle.UnboundedIdeal
 public import LeanPool.DavisKahan.DavisKahan.DoubleAngle.UnboundedIdealFormGap
 public import LeanPool.DavisKahan.DavisKahan.Explorations
-public import LeanPool.DavisKahan.DavisKahan.Explorations.SourceUnitaryInvariantNormFanDominance
 public import LeanPool.DavisKahan.DavisKahan.FiniteDimensional
 public import LeanPool.DavisKahan.DavisKahan.FiniteDimensional.All
 public import LeanPool.DavisKahan.DavisKahan.FiniteDimensional.Core
@@ -256,6 +255,7 @@ public import LeanPool.DavisKahan.DavisKahan.OperatorIdeal.ApproximationNumbers.
 public import LeanPool.DavisKahan.DavisKahan.OperatorIdeal.ApproximationNumbers.ScalarGeneric
 public import LeanPool.DavisKahan.DavisKahan.OperatorIdeal.CanonicalRealView
 public import LeanPool.DavisKahan.DavisKahan.OperatorIdeal.ComplexificationApproximation
+public import LeanPool.DavisKahan.DavisKahan.OperatorIdeal.FanDominanceBoundary
 public import LeanPool.DavisKahan.DavisKahan.OperatorIdeal.Majorization
 public import LeanPool.DavisKahan.DavisKahan.OperatorIdeal.Majorization.All
 public import LeanPool.DavisKahan.DavisKahan.OperatorIdeal.Majorization.WeakSubmajorization

@@ -47,7 +47,6 @@ public import LeanPool.DavisKahan.DavisKahan.DoubleAngle.TangentTransport
 public import LeanPool.DavisKahan.DavisKahan.DoubleAngle.Unbounded
 public import LeanPool.DavisKahan.DavisKahan.DoubleAngle.UnboundedIdeal
 public import LeanPool.DavisKahan.DavisKahan.DoubleAngle.UnboundedIdealFormGap
-public import LeanPool.DavisKahan.DavisKahan.Explorations.SourceUnitaryInvariantNormFanDominance
 public import LeanPool.DavisKahan.DavisKahan.FiniteDimensional.All
 public import LeanPool.DavisKahan.DavisKahan.FiniteDimensional.Core.All
 public import LeanPool.DavisKahan.DavisKahan.FiniteDimensional.Core.AngleOperatorBlockSum
@@ -223,6 +222,7 @@ public import LeanPool.DavisKahan.DavisKahan.OperatorIdeal.ApproximationNumbers.
 public import LeanPool.DavisKahan.DavisKahan.OperatorIdeal.ApproximationNumbers.ScalarGeneric
 public import LeanPool.DavisKahan.DavisKahan.OperatorIdeal.CanonicalRealView
 public import LeanPool.DavisKahan.DavisKahan.OperatorIdeal.ComplexificationApproximation
+public import LeanPool.DavisKahan.DavisKahan.OperatorIdeal.FanDominanceBoundary
 public import LeanPool.DavisKahan.DavisKahan.OperatorIdeal.Majorization.All
 public import LeanPool.DavisKahan.DavisKahan.OperatorIdeal.Majorization.WeakSubmajorization
 public import LeanPool.DavisKahan.DavisKahan.OperatorIdeal.NormalizedUnitaryInvariantNorm
@@ -967,7 +967,7 @@ public import LeanPool.DavisKahan.TauCeti.MeasureTheory.Integral.ExpDecay
 Source: url:https://github.com/aiq-kitware/aiq-davis-kahan-1970-rotation-eigenvectgors-perturbation-formalization
 Authors: Jon Crall, Edward Wang
 Status: verified
-Main declarations: `RotationOfEigenvectors.sinTheta`, `RotationOfEigenvectors.tanTwoTheta`
+Main declarations: `RotationOfEigenvectors.sinTheta_mem_and_bound`, `RotationOfEigenvectors.tanTwoTheta`
 Tags: operator-theory, spectral-perturbation, hilbert-spaces
 MSC: 47A55, 47A15, 15A42
 -/

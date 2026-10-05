@@ -522,17 +522,12 @@ section CornerGauge
 variable (U : Submodule ℝ E) [U.HasOrthogonalProjection]
 
 omit [CompleteSpace E] in
-/-- The ambient directed projection block commutes with complexification.
-
-TODO(dedupe): `AmbientReal.projectionBlock_complexifySubmodule_real` states the same
-equality with the same proof; neither module imports the other.  One should go. -/
+/-- The ambient directed projection block commutes with complexification. -/
 theorem projectionBlock_complexifySubmodule (K : E →L[ℝ] E) :
     projectionBlock (complexifySubmodule U)ᗮ (complexifySubmodule U)
         (complexify K) =
       complexify (projectionBlock Uᗮ U K) := by
-  rw [projectionBlock, projectionBlock,
-    starProjection_complexifySubmodule_orthogonal, starProjection_complexifySubmodule,
-    complexify_comp, complexify_comp]
+  exact TauCeti.DavisKahan.ExactSinTheta.projectionBlock_complexifySubmodule U K
 
 /-- **The Ky Fan gauge of a directed corner is preserved on the nose by
 complexification.**  This is the single numerical fact the descent needs. -/

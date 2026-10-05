@@ -193,9 +193,7 @@ theorem projectionBlock_complexifySubmodule_real
     projectionBlock (complexifySubmodule U)ᗮ (complexifySubmodule U)
         (complexify K) =
       complexify (projectionBlock Uᗮ U K) := by
-  rw [projectionBlock, projectionBlock,
-    starProjection_complexifySubmodule_orthogonal, starProjection_complexifySubmodule,
-    complexify_comp, complexify_comp]
+  exact TauCeti.DavisKahan.ExactSinTheta.projectionBlock_complexifySubmodule U K
 
 /-! ### The three ambient theorems over a real Hilbert space -/
 

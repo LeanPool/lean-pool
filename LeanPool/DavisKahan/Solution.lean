@@ -363,9 +363,11 @@ end ReducingBridge
 
 /-! ## 8. The four theorem families of Section 2
 
-The Palomar surface contains five ordinary theorem declarations.  The two
-whole-space tangent bounds are consequences in the source proof and are not
-repeated here; the two `sin 2Θ` clauses remain separate.
+The Palomar surface has five source-facing clauses. Three membership-and-bound
+variants expose the sine conclusions without assuming angle membership, alongside
+the five retained compatibility declarations. The two whole-space tangent bounds
+are consequences in the source proof and are not repeated here; the two `sin 2Θ`
+clauses remain separate.
 -/
 
 section Theorems
@@ -377,6 +379,26 @@ variable {E F G K : Type v}
   [NormedAddCommGroup G] [InnerProductSpace 𝕜 G] [CompleteSpace G]
   [NormedAddCommGroup K] [InnerProductSpace 𝕜 K] [CompleteSpace K]
 
+/-- Residual ideal membership gives sine-angle membership and its gap bound. -/
+theorem sinTheta_mem_and_bound (N : SymmetricNormingFunction)
+    {A : E →ₗ.[𝕜] E} {A₀ : F →ₗ.[𝕜] F} {Λ₁ : G →ₗ.[𝕜] G}
+    {E₀ : F →L[𝕜] E} {F₀ : K →L[𝕜] E} {F₁ : G →L[𝕜] E} {R : F →L[𝕜] E}
+    (hA : IsSelfAdjoint A) (hA₀ : IsSelfAdjoint A₀) (hΛ₁ : IsSelfAdjoint Λ₁)
+    (hres : IsTrialResidual A A₀ E₀ R) (hdec : IsExactDecomposition A Λ₁ F₀ F₁)
+    {δ : ℝ} (hδ : 0 < δ) (hgap : SylvesterGap A₀ Λ₁ δ)
+    (hR : N.Finite R) :
+    N.Finite (directedSine E₀ F₀) ∧
+      δ * N.norm (directedSine E₀ F₀) ≤ N.norm R := by
+  have hsrc :=
+    _root_.TauCeti.DavisKahan1970.sinTheta_unbounded_formGap_symmetricNorming_rclike
+      N.toSourceNorm A A₀ Λ₁ E₀ F₀ F₁ R hA hA₀ hΛ₁
+      ((isTrialResidual_iff A A₀ E₀ R).1 hres)
+      ((isExactDecomposition_iff A Λ₁ F₀ F₁).1 hdec)
+      hδ ((sylvesterGap_iff A₀ Λ₁ δ).1 hgap) ((N.finite_iff R).1 hR)
+  refine ⟨(N.finite_iff _).2 hsrc.1, ?_⟩
+  rw [N.norm_eq, N.norm_eq]
+  exact hsrc.2
+
 /-- **The `sin Θ` theorem, at the source where-defined norm boundary.** -/
 theorem sinTheta (N : SymmetricNormingFunction)
     {A : E →ₗ.[𝕜] E} {A₀ : F →ₗ.[𝕜] F} {Λ₁ : G →ₗ.[𝕜] G}
@@ -386,14 +408,7 @@ theorem sinTheta (N : SymmetricNormingFunction)
     {δ : ℝ} (hδ : 0 < δ) (hgap : SylvesterGap A₀ Λ₁ δ)
     (_hSin : N.Finite (directedSine E₀ F₀)) (hR : N.Finite R) :
     δ * N.norm (directedSine E₀ F₀) ≤ N.norm R := by
-  have hsrc :=
-    _root_.TauCeti.DavisKahan1970.sinTheta_unbounded_formGap_symmetricNorming_rclike
-      N.toSourceNorm A A₀ Λ₁ E₀ F₀ F₁ R hA hA₀ hΛ₁
-      ((isTrialResidual_iff A A₀ E₀ R).1 hres)
-      ((isExactDecomposition_iff A Λ₁ F₀ F₁).1 hdec)
-      hδ ((sylvesterGap_iff A₀ Λ₁ δ).1 hgap) ((N.finite_iff R).1 hR)
-  rw [N.norm_eq, N.norm_eq]
-  exact hsrc.2
+  exact (sinTheta_mem_and_bound N hA hA₀ hΛ₁ hres hdec hδ hgap hR).2
 
 /-- **The `tan Θ` theorem, in its stronger residual form, for Rayleigh--Ritz trial data.**
 The residual is orthogonal to the trial subspace, as required by
@@ -442,9 +457,8 @@ theorem tanTheta (N : SymmetricNormingFunction)
     rw [heval, N.norm_eq]
     exact hbound
 
-/-- **The residual clause of the `sin 2Θ` theorem, at the source common-domain
-scope.** -/
-theorem sinTwoTheta_directed (N : SymmetricNormingFunction)
+/-- Residual ideal membership gives directed double-angle membership and its gap bound. -/
+theorem sinTwoTheta_directed_mem_and_bound (N : SymmetricNormingFunction)
     {A T : E →ₗ.[𝕜] E} (hA : IsSelfAdjoint A) (hT : IsSelfAdjoint T)
     (hdom : T.domain = A.domain)
     {U : Submodule 𝕜 E} [U.HasOrthogonalProjection] (hU : Reduces A U)
@@ -455,8 +469,9 @@ theorem sinTwoTheta_directed (N : SymmetricNormingFunction)
         A ⟨(u : E), by rw [← hdom]; exact hu⟩ + R u)
     {δ : ℝ} (hδ : 0 < δ)
     (hgap : SinTwoThetaGap (block T V hV) (block T Vᗮ hV.orthogonal) δ)
-    (_hAngle : N.Finite (directedDoubleSine V U)) (hR : N.Finite R) :
-    δ * N.norm (directedDoubleSine V U) ≤ 2 * N.norm R := by
+    (hR : N.Finite R) :
+    N.Finite (directedDoubleSine V U) ∧
+      δ * N.norm (directedDoubleSine V U) ≤ 2 * N.norm R := by
   have hUred : TauCeti.LinearPMap.ReducesSubspace A U := (reduces_iff A U).1 hU
   have hVred : TauCeti.LinearPMap.ReducesSubspace T V := (reduces_iff T V).1 hV
   have hgap' : FormBoundedSylvesterGap
@@ -492,15 +507,33 @@ theorem sinTwoTheta_directed (N : SymmetricNormingFunction)
     rcases ENNReal.mul_eq_top.mp htop with ⟨_, h⟩ | ⟨h, _⟩
     · exact hR0src h
     · exact absurd h (by simp)
-  obtain ⟨_, hle⟩ := N.toSourceNorm.mul_gauge_le_of_all_mul_kyFan_le
+  obtain ⟨hmem, hle⟩ := N.toSourceNorm.mul_gauge_le_of_all_mul_kyFan_le
     hδ hMem2 hscaled
   rw [N.toSourceNorm.gauge_smul _ hR0src, htwo, hgaugeR] at hle
-  rw [directedDoubleSine_eq, N.norm_eq, N.norm_eq]
-  exact hle
+  refine ⟨(N.finite_iff _).2 ?_, ?_⟩
+  · simpa only [directedDoubleSine_eq] using hmem
+  · rw [directedDoubleSine_eq, N.norm_eq, N.norm_eq]
+    exact hle
 
-/-- **The whole-space clause of the `sin 2Θ` theorem, with the printed
-operator roles.** -/
-theorem sinTwoTheta_ambient (N : SymmetricNormingFunction)
+/-- **The residual clause of the `sin 2Θ` theorem, at the source common-domain
+scope.** -/
+theorem sinTwoTheta_directed (N : SymmetricNormingFunction)
+    {A T : E →ₗ.[𝕜] E} (hA : IsSelfAdjoint A) (hT : IsSelfAdjoint T)
+    (hdom : T.domain = A.domain)
+    {U : Submodule 𝕜 E} [U.HasOrthogonalProjection] (hU : Reduces A U)
+    {V : Submodule 𝕜 E} [V.HasOrthogonalProjection] (hV : Reduces T V)
+    (R : U →L[𝕜] E)
+    (hres : ∀ u : U, ∀ hu : (u : E) ∈ T.domain,
+      T ⟨(u : E), hu⟩ =
+        A ⟨(u : E), by rw [← hdom]; exact hu⟩ + R u)
+    {δ : ℝ} (hδ : 0 < δ)
+    (hgap : SinTwoThetaGap (block T V hV) (block T Vᗮ hV.orthogonal) δ)
+    (_hAngle : N.Finite (directedDoubleSine V U)) (hR : N.Finite R) :
+    δ * N.norm (directedDoubleSine V U) ≤ 2 * N.norm R := by
+  exact (sinTwoTheta_directed_mem_and_bound N hA hT hdom hU hV R hres hδ hgap hR).2
+
+/-- Perturbation ideal membership gives ambient double-angle membership and its gap bound. -/
+theorem sinTwoTheta_ambient_mem_and_bound (N : SymmetricNormingFunction)
     {A : E →ₗ.[𝕜] E} (hA : IsSelfAdjoint A)
     {U : Submodule 𝕜 E} [U.HasOrthogonalProjection] (hU : Reduces A U)
     (H : E →L[𝕜] E) (hH : IsSelfAdjoint H)
@@ -510,8 +543,9 @@ theorem sinTwoTheta_ambient (N : SymmetricNormingFunction)
     (hgap : SinTwoThetaGap
       (block (addBounded A H) V hV)
       (block (addBounded A H) Vᗮ hV.orthogonal) δ)
-    (_hAngle : N.Finite (ambientDoubleSine U V)) (hHmem : N.Finite H) :
-    δ * N.norm (ambientDoubleSine U V) ≤ 2 * N.norm H := by
+    (hHmem : N.Finite H) :
+    N.Finite (ambientDoubleSine U V) ∧
+      δ * N.norm (ambientDoubleSine U V) ≤ 2 * N.norm H := by
   have hUred : TauCeti.LinearPMap.ReducesSubspace A U := (reduces_iff A U).1 hU
   have hVredLocal : TauCeti.LinearPMap.ReducesSubspace (addBounded A H) V :=
     (reduces_iff (addBounded A H) V).1 hV
@@ -539,14 +573,31 @@ theorem sinTwoTheta_ambient (N : SymmetricNormingFunction)
   have hsame :=
     _root_.TauCeti.DavisKahan.Angle.sinTwoAngleOperator_hasSameApproximationNumbers
       (𝕜 := 𝕜) U V
-  obtain ⟨_, hgauge⟩ :=
+  obtain ⟨hmem, hgauge⟩ :=
     SameApproximationSingularSequence.normingMem_iff_and_gauge_eq N.toSourceNorm hsame
+  refine ⟨(N.finite_iff _).2 (hmem.mp hsrc.1), ?_⟩
   rw [N.norm_eq, N.norm_eq]
   change δ * N.toSourceNorm.gauge
       ((U.map (V.reflection.toLinearEquiv : E →ₗ[𝕜] E)).starProjection - U.starProjection) ≤
     2 * N.toSourceNorm.gauge H
   rw [← hgauge]
   exact hsrc.2
+
+/-- **The whole-space clause of the `sin 2Θ` theorem, with the printed
+operator roles.** -/
+theorem sinTwoTheta_ambient (N : SymmetricNormingFunction)
+    {A : E →ₗ.[𝕜] E} (hA : IsSelfAdjoint A)
+    {U : Submodule 𝕜 E} [U.HasOrthogonalProjection] (hU : Reduces A U)
+    (H : E →L[𝕜] E) (hH : IsSelfAdjoint H)
+    {V : Submodule 𝕜 E} [V.HasOrthogonalProjection]
+    (hV : Reduces (addBounded A H) V)
+    {δ : ℝ} (hδ : 0 < δ)
+    (hgap : SinTwoThetaGap
+      (block (addBounded A H) V hV)
+      (block (addBounded A H) Vᗮ hV.orthogonal) δ)
+    (_hAngle : N.Finite (ambientDoubleSine U V)) (hHmem : N.Finite H) :
+    δ * N.norm (ambientDoubleSine U V) ≤ 2 * N.norm H := by
+  exact (sinTwoTheta_ambient_mem_and_bound N hA hU H hH hV hδ hgap hHmem).2
 
 /-- **The `tan 2Θ` theorem, in its stronger residual form.** -/
 theorem tanTwoTheta (N : SymmetricNormingFunction)
