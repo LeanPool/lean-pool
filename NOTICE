@@ -81,6 +81,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/EcTateLean                https://github.com/KisaraBlue/ec-tate-lean
   LeanPool/Egrs75                    https://github.com/lyfar/egrs75-lean
   LeanPool/EhrhartVolumeInequality   https://github.com/openai/ten-proofs
+  LeanPool/EilenbergZilber           https://github.com/jeffrey-dot-li/lean-homology
   LeanPool/EllipticPDE               https://github.com/alejandro-soto-franco/EllipticPDE
   LeanPool/Erdos1196                 https://github.com/math-inc/Erdos1196
   LeanPool/Erdos132ConvexK3          https://github.com/lyfar/erdos-132-convex-k3-lean
