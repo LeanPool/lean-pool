@@ -8,6 +8,11 @@ If you would like to withdraw your project from Lean Pool, open an issue.
 
 ## Submitting a project
 
+Do not vendor projects that are already in TauCeti or Mathlib. Both are Lake
+dependencies: reuse their modules directly, and submit independent formalizations
+or substantive extensions instead. Novelty review compares against Mathlib, Tau
+Ceti, and the pool.
+
 There are two paths:
 
 - **Propose a repo.** Open an issue with the GitHub URL and a maintainer can import it. Repos that Reservoir does not index can be added to [`candidates/manual.txt`](candidates/manual.txt).

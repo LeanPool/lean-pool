@@ -83,7 +83,7 @@ from urllib.parse import quote
 
 from openai import APIStatusError, BadRequestError, OpenAI, RateLimitError
 
-from lean_pool import codex_review, prior_art, review_portions
+from lean_pool import codex_review, prior_art, review_portions, tauceti_prior_art
 
 logger = logging.getLogger(__name__)
 
@@ -311,7 +311,7 @@ class RubricSpec:
         blocking: Whether this rubric's ``block`` can force
             ``request_changes``. An advisory rubric's ``block`` is
             recorded as ``discuss`` — it informs, it does not veto.
-        wants_prior_art: Whether the pre-computed Mathlib/pool search
+        wants_prior_art: Whether the pre-computed Mathlib/Tau Ceti/pool search
             evidence is included in this rubric's prompt.
     """
 
@@ -1761,7 +1761,7 @@ def fetch_file_at(path: str, ref: str, repo_full_name: str) -> str:
 
 
 def gather_prior_art(kind: str, head_sha: str, repo_full_name: str) -> str | None:
-    """Search Mathlib and the pool for what this PR claims is new.
+    """Compare Mathlib, Tau Ceti, and the pool with what this PR claims is new.
 
     Only project PRs add new headlines; refactors change projects whose
     prior art was settled when they merged. A search that cannot run degrades to a
@@ -1789,7 +1789,9 @@ def gather_prior_art(kind: str, head_sha: str, repo_full_name: str) -> str | Non
     projects_text = (REPO_ROOT / "LeanPool" / "projects.yml").read_text(
         encoding="utf-8"
     )
-    return prior_art.render(claims, hits, projects_text, unavailable)
+    sections = [prior_art.render(claims, hits, projects_text, unavailable)]
+    sections.append(tauceti_prior_art.gather(claims, run_gh))
+    return "\n\n".join(section for section in sections if section)
 
 
 def render_infra_skip_comment(reviewed_head_sha: str) -> str:
