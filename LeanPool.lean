@@ -215,6 +215,7 @@ public import LeanPool.Polytopes.Imports
 public import LeanPool.Puiseux.Imports
 public import LeanPool.PumpingCfg.Imports
 public import LeanPool.PythagoreanPolynomialParametrization.Imports
+public import LeanPool.QECCertificates.Imports
 public import LeanPool.QuadraticCarleson.Imports
 public import LeanPool.QuadraticIterates.Imports
 public import LeanPool.QuantumParallelRepetition.Imports
