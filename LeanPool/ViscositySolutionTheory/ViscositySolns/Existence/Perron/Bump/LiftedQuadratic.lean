@@ -31,7 +31,7 @@ positive vertical lift of the touching quadratic whose operator value remains
 strictly negative near the contact.
 
 This is the Perron-shaped version of the local quadratic continuity step in
-Lemma 4.2. The remaining bump work is to localize/glue this lifted quadratic
+Lemma 4.4. The remaining bump work is to localize/glue this lifted quadratic
 against the Perron family.
 -/
 theorem OperatorContinuous.exists_pos_eventually_lowerEnvelope_quadratic_lift_lt_of_neg
@@ -199,7 +199,7 @@ theorem OperatorContinuous.exists_pos_pos_eventually_lowerEnvelope_bentQuadratic
 /--
 Local lifted-quadratic data at a failed lower-envelope subjet inequality.
 
-The data records the first analytic move in the source proof of Lemma 4.2:
+The data records the first analytic move in the source proof of Lemma 4.4:
 after the lower-envelope viscosity inequality fails, one can lift the touching
 quadratic by a positive height so that it is strictly above `W_*` at the
 contact and still has strictly negative operator value in a relative
@@ -227,7 +227,7 @@ def PerronLowerEnvelopeLiftedQuadraticNegativeAt
 Lifted-quadratic negativity at every failed lower-envelope subjet inequality.
 
 This is the continuity-only input to the later gluing/localization step of
-Lemma 4.2.
+Lemma 4.4.
 -/
 def PerronLowerEnvelopeLiftedQuadraticNegative
     (C boundary : Set (Point n)) (F : Operator n) (g : Point n -> Real)

@@ -66,7 +66,7 @@ def PerronLowerEnvelopeBumpContradiction
 Localized improvement output of the Perron bump construction at one failed
 lower-envelope contact.
 
-This is a direct Lean version of the payload of CIL Lemma 4.2: construct a
+This is a direct Lean version of the payload of CIL Lemma 4.4: construct a
 Dirichlet subsolution above the lower barrier that is strictly above the
 Perron envelope at points arbitrarily close to the failed contact. Comparison
 with the upper barrier turns this Dirichlet subsolution into a Perron-class
@@ -193,7 +193,7 @@ def PerronLowerEnvelopeNeighborhoodImprovement
 /--
 Source-shaped strict patch data at a failed lower-envelope contact.
 
-This is the part of Lemma 4.2 that is actually needed for Perron's
+This is the part of Lemma 4.4 that is actually needed for Perron's
 contradiction: construct an admissible Perron-class member that lies above a
 strict level on a relative neighborhood of the contact point, where that level
 is above the lower envelope value `W_* x`.
@@ -211,7 +211,7 @@ def PerronLowerEnvelopeStrictPatchAt
 Source-shaped strict bump data before applying comparison with the upper
 barrier.
 
-Lemma 4.2 constructs a Dirichlet subsolution patch. In Perron's method, the
+Lemma 4.4 constructs a Dirichlet subsolution patch. In Perron's method, the
 upper-barrier bound needed for membership in the Perron class comes from the
 abstract comparison principle.
 -/
@@ -527,7 +527,7 @@ theorem DirichletBarrierPair.strictActiveDirichletBumpAt_of_interior_quadraticMo
 Source-shaped interior quadratic bump data at every failed lower-envelope
 subjet inequality.
 
-This packages the analytic payload of the quadratic part of Lemma 4.2: from a
+This packages the analytic payload of the quadratic part of Lemma 4.4: from a
 failed lower-envelope subjet inequality, produce a quadratic bump that is
 strictly above the lower envelope at the contact, satisfies the differential
 subsolution inequality throughout `C`, obeys the boundary condition, and has

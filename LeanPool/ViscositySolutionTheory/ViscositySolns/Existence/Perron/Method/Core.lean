@@ -466,7 +466,7 @@ theorem PerronMethodExistenceTheorem.of_upperHalfRelaxed_and_bumpContradiction
       (B.perronEnvelope_isBoundedUnder_ge (hlowerBddBelow x hx))
 
 /--
-Perron's method from the source-shaped strict patch form of Lemma 4.2.
+Perron's method from the source-shaped strict patch form of Lemma 4.4.
 
 The lower-side analytic input says that each failed lower-envelope subjet
 inequality produces an admissible Perron-class member that is strictly above a
@@ -505,7 +505,7 @@ theorem PerronMethodExistenceTheorem.of_upperHalfRelaxed_and_strictPatch
     hpatch
 
 /--
-Perron's method from the source-shaped bumped-subsolution form of Lemma 4.2.
+Perron's method from the source-shaped bumped-subsolution form of Lemma 4.4.
 
 Here the bump lemma only has to construct a Dirichlet subsolution patch above
 the lower barrier. The upper-barrier bound needed for Perron-class membership

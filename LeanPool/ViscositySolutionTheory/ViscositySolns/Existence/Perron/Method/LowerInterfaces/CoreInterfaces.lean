@@ -155,7 +155,7 @@ theorem PerronMethodExistenceTheorem.of_perronFamily_top_and_bumpContradiction
 Perron's method with the canonical Perron-family upper side and the localized
 improvement form of the lower bump lemma.
 
-This is close to the payload of CIL Lemma 4.2: every failed lower-envelope
+This is close to the payload of CIL Lemma 4.4: every failed lower-envelope
 subjet inequality produces a Dirichlet subsolution above the lower barrier
 that beats the Perron envelope at points arbitrarily near the failed contact.
 -/

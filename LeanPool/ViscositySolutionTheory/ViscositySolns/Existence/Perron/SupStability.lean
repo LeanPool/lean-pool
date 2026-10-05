@@ -13,7 +13,7 @@ Ported for Lean Pool: imports relocated and code adapted to Lean/Mathlib v4.34.0
 
 # Supremum stability for Perron's method
 
-This file should house the formal version of Section 4, Lemma 4.1: the upper
+This file should house the formal version of Section 4, Lemma 4.2: the upper
 semicontinuous envelope of a locally bounded supremum of subsolutions is again
 a subsolution. It may reuse the half-relaxed-limit semijet approximation
 machinery, but it must not depend on the concrete comparison proof.

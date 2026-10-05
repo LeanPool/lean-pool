@@ -394,7 +394,7 @@ theorem PerronMethodExistenceTheorem.of_perronFamily_top_and_strictActiveDirichl
 Perron's method with the canonical Perron-family upper side and source-shaped
 interior quadratic bump data for the lower side.
 
-This is the quadratic-bump version of the lower Lemma 4.2 interface: each
+This is the quadratic-bump version of the lower Lemma 4.4 interface: each
 failed lower-envelope subjet inequality supplies a certified quadratic bump,
 and the Perron assembly turns that into existence using only the abstract
 comparison principle.
