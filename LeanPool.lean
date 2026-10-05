@@ -69,6 +69,7 @@ public import LeanPool.Duality.Imports
 public import LeanPool.EcTateLean.Imports
 public import LeanPool.Egrs75.Imports
 public import LeanPool.EhrhartVolumeInequality.Imports
+public import LeanPool.EilenbergZilber.Imports
 public import LeanPool.EllipticPDE.Imports
 public import LeanPool.Erdos1196.Imports
 public import LeanPool.Erdos132ConvexK3.Imports

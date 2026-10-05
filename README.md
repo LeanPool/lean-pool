@@ -18,7 +18,7 @@ Lean Pool sits between [`mathlib`](https://github.com/leanprover-community/mathl
 Semantic search is also available via the [API](https://search.octo.axiomatic-ai.com/api/search).
 
 <!-- BEGIN STATS -->
-**277** formalization projects · **5,968,030** lines of Lean
+**278** formalization projects · **5,970,910** lines of Lean
 <!-- END STATS -->
 
 <sub>(stats above are refreshed automatically by the [generated-metadata workflow](.github/workflows/notice.yml) — edit [`python/lean_pool/stats.py`](python/lean_pool/stats.py), not the numbers)</sub>
