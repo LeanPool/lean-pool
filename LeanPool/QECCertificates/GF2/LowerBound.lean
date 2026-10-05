@@ -43,8 +43,8 @@ No SAT solver, no `native_decide`, and no custom axiom is needed.
 
 ## Main results
 
-* `lightSet_card_zero_iff`: `(lightSet M₁ M₂ d).card = 0` is **literally equivalent** to
-  the lower-bound statement.
+* `lowerHyp_of_lightSet_card_zero`: an empty set of light operators implies the
+  per-operator lower bound.
 * `le_minWeight_of_lightSet_card_zero`: the **lower-bound certificate**; an empty set
   gives the code distance lower bound `d`.
 * `eq_minWeight_of_decide`: the **checkable certificate form of the exact distance**,
