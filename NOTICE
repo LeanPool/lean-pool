@@ -215,6 +215,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/PythagoreanPolynomialParametrization
                                      https://github.com/epfl-lara/AutoformalizedProjects
   LeanPool/QECCertificates           https://github.com/QCL-SUAT/QECCertificates
+  LeanPool/QuadraticCarleson         https://github.com/anastasiosfragkosmath/quadratic-carleson-palomar-submission
   LeanPool/QuadraticIterates         https://github.com/MichaelStollBayreuth/QuadraticIterates
   LeanPool/QuantumParallelRepetition https://github.com/openai/ten-proofs
   LeanPool/QuantumQuery              https://github.com/troyjlee/quantum-query-complexity
