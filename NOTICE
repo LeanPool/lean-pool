@@ -245,6 +245,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/SpherePacking             https://github.com/openai/ten-proofs
   LeanPool/Stafford38                https://github.com/itpplasma/stafford38-formal
   LeanPool/StallingsFolding          https://github.com/Arthur742Ramos/stallings-folding
+  LeanPool/StructuralGraphClasses    https://github.com/jtraverso/lean-pool
   LeanPool/SumDifferenceExponent     https://github.com/linhaowei1/sum-diff-proof
   LeanPool/SumsThreeSquares          https://github.com/pitmonticone/SumsThreeSquares
   LeanPool/Sundogcert                https://github.com/humiliati/sundogcert
