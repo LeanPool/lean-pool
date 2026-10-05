@@ -22,7 +22,9 @@ def _tree(paths: list[str], *, truncated: bool = False) -> str:
 
 def test_ado_candidate_beats_generic_lie_modules() -> None:
     """A distinctive theorem name finds its source among generic words."""
-    paths = [ADO] + [f"TauCeti/Algebra/Lie/Basic{i}.lean" for i in range(10)]
+    paths = [ADO, "TauCeti/AdicSpace/SheafForEveryPresentation.lean"] + [
+        f"TauCeti/Algebra/Lie/Basic{i}.lean" for i in range(10)
+    ]
     claim = Claim("Ado.adoCharZero", "Every Lie algebra has a faithful representation")
     assert tauceti_prior_art.candidates(claim, paths)[0] == ADO
 

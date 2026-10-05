@@ -13,12 +13,42 @@ from lean_pool.prior_art import Claim
 REPOSITORY = "TauCetiProject/TauCeti"
 MAX_MODULES = 8
 SOURCE_CHARACTERS = 12_000
+STOP_WORDS = {
+    "admits",
+    "all",
+    "and",
+    "any",
+    "are",
+    "can",
+    "each",
+    "every",
+    "for",
+    "from",
+    "has",
+    "have",
+    "into",
+    "its",
+    "over",
+    "such",
+    "that",
+    "the",
+    "their",
+    "there",
+    "these",
+    "this",
+    "under",
+    "where",
+    "which",
+    "with",
+}
 
 
 def _words(text: str) -> set[str]:
     """Split prose, module paths, and Lean names into comparable words."""
     separated = re.sub(r"([a-z])([A-Z])", r"\1 \2", text)
-    return {word.lower() for word in re.findall(r"[A-Za-z]{3,}", separated)}
+    return {
+        word.lower() for word in re.findall(r"[A-Za-z]{3,}", separated)
+    } - STOP_WORDS
 
 
 def candidates(claim: Claim, paths: list[str]) -> list[str]:
@@ -62,6 +92,8 @@ def _source(path: str, revision: str, run_gh: Callable[..., str]) -> str:
 def _inventory(run_gh: Callable[..., str]) -> tuple[str, list[str]]:
     """Read a complete module inventory at an immutable library revision."""
     tree = json.loads(run_gh("api", f"repos/{REPOSITORY}/git/trees/main?recursive=1"))
+    if not isinstance(tree, dict):
+        raise ValueError("GitHub returned a malformed source inventory")
     if tree.get("truncated"):
         raise ValueError("GitHub returned a truncated source inventory")
     paths = [
