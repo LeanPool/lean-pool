@@ -83,7 +83,6 @@ def HasFanDominanceSeparable (N : NormalizedSymmetricOperatorIdealFamily.{0, v} 
 The same symmetric sequence gauge must represent the source norm on every
 separable source/target pair.  It is a separate representation hypothesis, not an extra field in the
 norm-family record. -/
-
 def HasSymmetricGaugeRepresentationSeparable
     (N : NormalizedSymmetricOperatorIdealFamily.{0, v} ℂ) : Prop :=
   ∃ Φ : TauCeti.SymmetricGauge,
@@ -1652,7 +1651,6 @@ noncomputable def finiteRankOperatorNormGauge
 
 /-- The finite-rank ideal with the operator norm as an operator-ideal family.  The proof
 deliberately mirrors the existing compact-operator family. -/
-
 noncomputable def finiteRankOperatorNormIdealFamily :
     OperatorIdealFamily.{0, v, v} ℂ where
   gauge A := finiteRankOperatorNormGauge A
@@ -2101,7 +2099,6 @@ theorem finiteRankNormalizedSymmetricOperatorIdealFamily_not_membershipTransfer_
 
 /-- Fan dominance only where both source norms exist.  This predicate keeps separability explicit
 without changing the norm-family record. -/
-
 def HasFanDominanceSeparableWhereDefined
     (N : NormalizedSymmetricOperatorIdealFamily.{0, v} ℂ) : Prop :=
   ∀ {E F E' F' : Type v}
@@ -2667,7 +2664,6 @@ it is exactly `δ · N(sin Θ₀) ≤ N(R)`.
 The proof deliberately reuses the already-proved analytic sine-theta theorem only
 to obtain the Ky Fan inequalities.  It supplies a concrete consumer of the scaled partial-norm
 comparison. -/
-
 theorem sinTheta_unbounded_formGap_sourceVacuous_complex_probe
     {E F G H : Type v}
     [NormedAddCommGroup E] [InnerProductSpace ℂ E] [CompleteSpace E]

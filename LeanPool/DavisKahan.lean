@@ -967,7 +967,7 @@ public import LeanPool.DavisKahan.TauCeti.MeasureTheory.Integral.ExpDecay
 Source: url:https://github.com/aiq-kitware/aiq-davis-kahan-1970-rotation-eigenvectgors-perturbation-formalization
 Authors: Jon Crall, Edward Wang
 Status: verified
-Main declarations: `RotationOfEigenvectors.sinTheta_mem_and_bound`, `RotationOfEigenvectors.tanTwoTheta`
+Main declarations: `RotationOfEigenvectors.sinTheta_mem_and_bound`
 Tags: operator-theory, spectral-perturbation, hilbert-spaces
 MSC: 47A55, 47A15, 15A42
 -/

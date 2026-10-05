@@ -13287,7 +13287,6 @@ projects:
     branch: operator theory
     main_declarations:
     - RotationOfEigenvectors.sinTheta_mem_and_bound
-    - RotationOfEigenvectors.tanTwoTheta
     main_results:
     - declaration: RotationOfEigenvectors.sinTheta_mem_and_bound
       informal: With finite symmetric residual norm, a spectral gap gives sine-angle ideal membership
