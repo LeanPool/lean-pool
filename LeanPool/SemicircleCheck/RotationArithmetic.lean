@@ -41,7 +41,7 @@ lemma involution_reverse (hsq : π ^ 2 = 1) (hadj : π i = γi) :
     π γi = i := by
   have h2 : π * π = 1 := by rwa [← sq]
   have h3 : π (π i) = i := by
-    change (π * π) i = i; simp [h2]
+    change (π * π) i = i; simp only [h2, coe_one, id_eq]
   rwa [hadj] at h3
 
 /-- Conjugation sends a to b when ρ, π, and the adjacency align.
