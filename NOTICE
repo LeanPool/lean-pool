@@ -160,6 +160,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/LowWeightPauliDynamics    https://github.com/Jue-Xu/Lean4LPD
   LeanPool/MRiscX                    https://github.com/JulsDE/MRiscX
   LeanPool/Malliavin                 https://github.com/savarin/lean-malliavin
+  LeanPool/MarkoffModP               https://github.com/yuma-mizuno/markoff-modp
   LeanPool/MarkovProcess             https://github.com/scottnarmstrong/markovprocess
   LeanPool/MarshallHall              https://github.com/arthur742ramos/marshallhalltheorem
   LeanPool/MassFormula               https://github.com/0stellensatz/MassFormula
