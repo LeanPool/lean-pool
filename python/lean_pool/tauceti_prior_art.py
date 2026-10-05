@@ -91,7 +91,10 @@ def _source(path: str, revision: str, run_gh: Callable[..., str]) -> str:
 
 def _inventory(run_gh: Callable[..., str]) -> tuple[str, list[str]]:
     """Read a complete module inventory at an immutable library revision."""
-    tree = json.loads(run_gh("api", f"repos/{REPOSITORY}/git/trees/main?recursive=1"))
+    revision = run_gh("api", f"repos/{REPOSITORY}/commits/main", "--jq", ".sha").strip()
+    tree = json.loads(
+        run_gh("api", f"repos/{REPOSITORY}/git/trees/{revision}?recursive=1")
+    )
     if not isinstance(tree, dict):
         raise ValueError("GitHub returned a malformed source inventory")
     if tree.get("truncated"):
@@ -105,7 +108,7 @@ def _inventory(run_gh: Callable[..., str]) -> tuple[str, list[str]]:
     ]
     if not paths:
         raise ValueError("Tau Ceti source inventory is empty")
-    return tree["sha"], paths
+    return revision, paths
 
 
 def gather(claims: list[Claim], run_gh: Callable[..., str]) -> str:

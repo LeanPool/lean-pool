@@ -13,7 +13,7 @@ def _tree(paths: list[str], *, truncated: bool = False) -> str:
     """Build a GitHub inventory response without contacting GitHub."""
     return json.dumps(
         {
-            "sha": "fixed-commit",
+            "sha": "tree-object-not-a-commit",
             "truncated": truncated,
             "tree": [{"path": path, "type": "blob"} for path in paths],
         }
@@ -35,13 +35,16 @@ def test_evidence_fetches_sources_at_inventory_revision() -> None:
 
     def run_gh(*args):
         calls.append(args)
+        if "commits/main" in args[1]:
+            return "fixed-commit\n"
         if "git/trees" in args[1]:
             return _tree([ADO])
         return "theorem Ado.adoCharZero : True := trivial"
 
     section = tauceti_prior_art.gather([Claim("Ado.adoCharZero", "")], run_gh)
     assert "Ado.adoCharZero : True" in section
-    assert "?ref=fixed-commit" in calls[1][1]
+    assert "git/trees/fixed-commit?" in calls[1][1]
+    assert "?ref=fixed-commit" in calls[2][1]
     assert "blob/fixed-commit/" in section
     assert "untrusted" in section
     assert "not a complete semantic search" in section
@@ -50,7 +53,12 @@ def test_evidence_fetches_sources_at_inventory_revision() -> None:
 def test_truncated_inventory_is_unchecked() -> None:
     """A partial GitHub tree must not be mistaken for a complete search."""
     section = tauceti_prior_art.gather(
-        [Claim("Ado.adoCharZero", "")], lambda *args: _tree([ADO], truncated=True)
+        [Claim("Ado.adoCharZero", "")],
+        lambda *args: (
+            "fixed-commit"
+            if "commits/main" in args[1]
+            else _tree([ADO], truncated=True)
+        ),
     )
     assert "Not searched" in section
     assert "unchecked" in section
@@ -71,6 +79,8 @@ def test_failed_source_fetch_and_missing_match_remain_unverifiable() -> None:
     """Neither a failed fetch nor lexical silence proves novelty."""
 
     def run_gh(*args):
+        if "commits/main" in args[1]:
+            return "fixed-commit"
         if "git/trees" in args[1]:
             return _tree([ADO])
         raise subprocess.CalledProcessError(1, "gh")
@@ -124,7 +134,9 @@ def test_project_review_receives_tauceti_even_without_mathlib_key(
         review,
         "run_gh",
         lambda *args: (
-            _tree([ADO])
+            "fixed-commit"
+            if "commits/main" in args[1]
+            else _tree([ADO])
             if "git/trees" in args[1]
             else "theorem TauCeti.adoCharZero : True := trivial"
         ),
