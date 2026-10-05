@@ -143,14 +143,10 @@ append and build, and **three laws**. Changing the representation, from `Array` 
 balanced tree, is therefore an **instantiation**, not a re-proof of a load-bearing
 module.
 
-**Why the interface is opened up** (measured in this library). Inside the **kernel**,
-`Array`'s `push` and `get?` are both **linear in the index**, so each step of `rupCheck`
-costs more than the last and the whole certificate is quadratic in the number of steps,
-whereas a balanced tree is logarithmic. Measured in **reduction steps**, which are
-deterministic and free of start-up noise, for $N = 200 \to 400$: `Array` 40,803 to
-161,603 (3.96×) and `Std.TreeMap` 4,757 to 11,066 (2.33×, against a theoretical 2.26×).
-Extrapolated to the 570,883 steps of the replay, the two differ by about a factor of
-9,400.
+The representation matters for kernel reduction: array accesses and appends can repeatedly
+traverse prior entries, whereas balanced trees avoid that pattern. Both implementations
+below satisfy the same soundness interface. Concrete replay datasets and upstream
+benchmarks are outside this import.
 -/
 
 /-- **The clause database interface**: `rupCheck` and `checkAux` use only these four
@@ -181,8 +177,7 @@ structure ClauseDB (Carrier : Type) where
 
 namespace ClauseDB
 
-/-- The `Array` version: the **verbatim** representation from before the interface was
-opened, and the one the downstream `LRATData` uses. -/
+/-- The clause database represented by an array. -/
 def array : ClauseDB (Array Clause) where
   get? := fun d i => d[i]?
   size := Array.size

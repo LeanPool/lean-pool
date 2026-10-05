@@ -13003,7 +13003,8 @@ projects:
       bounds; and CSS orthogonality of lifted products over finite groups.
       Includes a Pauli expression translation modulo global phase, a Boolean
       encoding with proved soundness and model extension, and sound checking
-      of RUP additions in LRAT certificates. Concrete code-family datasets,
+      of RUP additions in LRAT certificates, bridged to matrix-level distance bounds.
+      Concrete code-family datasets,
       large certificate replays and measurement protocols are outside this import.
     branch: quantum information and coding theory
     entry_module: LeanPool.QECCertificates
@@ -13079,6 +13080,11 @@ projects:
           at a0855f8a6374c1dda2097bbf07f33ba53760fdcd (Apache-2.0), credited to
           Mattias Ehatamm, Yi Lee, Xiaodi Wu and Runzhou Tao, and their paper
           End-to-End Formalization of Quantum Error Correction, arXiv:2605.16523.
+      - declaration: QECCertificates.LRAT.le_minWeight_of_unsat
+        informal: >-
+          An unsatisfiable Boolean encoding gives a matrix-level distance lower bound,
+          with explicit support-row correspondence, nonemptiness, index bounds, and
+          duplicate-free hypotheses. This composes with kernel-checked RUP replay.
     tags:
       - quantum-error-correction
       - coding-theory

@@ -9,11 +9,10 @@ public import LeanPool.QECCertificates.Reflect.LRAT
 /-!
 # Encoding fidelity: a model of the CNF is a light logical operator
 
-`Reflect/LRAT.lean` turns "the kernel recomputation succeeds" into "that CNF is
-unsatisfiable", and `Reflect/LRATData.lean` moves the output of this package's pipeline (an
-external encoder together with cadical's LRAT) into the kernel. Together, however, those two
-steps still yield a statement **about the CNF**. This module supplies the step that
-translates them into a statement **about the code**.
+`Reflect/LRAT.lean` turns successful kernel replay into unsatisfiability of a CNF.
+This module supplies Boolean semantic soundness of the encoder; `Reflect/Complete`
+proves the converse, and `Reflect/Distance` connects these semantics to binary matrices
+and Hamming weight. Concrete solver output and replay data are outside this import.
 
 What the encoder asserts is (see the module note of the external encoder)
 

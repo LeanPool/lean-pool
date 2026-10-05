@@ -75,7 +75,7 @@ what makes the structure theorem require no relabelling:
 * rows of $H_X$: `(Fin m_A x Fin m_B) x G`; rows of $H_Z$: `(Fin n_A x Fin n_B) x G`
 * the columns of both are `((Fin n_A x Fin m_B) x G) (+) ((Fin m_A x Fin n_B) x G)`.
 
-Flattening to `Fin` (instantiation) is left to `Matrix.reindex`; see `Codes/LPAnchor.lean`.
+Flattening to `Fin` for an instance is left to `Matrix.reindex`.
 -/
 
 @[expose] public section

@@ -13,7 +13,7 @@ public import LeanPool.QECCertificates.GF2.LiftedProduct
 public import LeanPool.QECCertificates.GF2.LowerBound
 public import LeanPool.QECCertificates.GF2.RankEchelon
 public import LeanPool.QECCertificates.Pauli.Expr
-public import LeanPool.QECCertificates.Reflect.Complete
+public import LeanPool.QECCertificates.Reflect.Distance
 
 /-!
 # Quantum code certificates and hypergraph-product theory

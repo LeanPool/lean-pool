@@ -23,10 +23,9 @@ the first structural theorem:
   **arbitrary** inputs $H_1, H_2$, and the proof is purely algebraic (the two blocks each
   contribute $H_1 \otimes H_2^\top$, which cancel over GF(2)); it enumerates nothing.
 
-The tensor argument for the transposed-code bound ($d \ge \min(d_1, d_2)$) and the tensor
-formula for the rank and the dimension are not covered here. An instance anchor (the
-3-cycle, giving the $3\times3$ toric code $[[18,2,3]]$) is the `toric3` case matrix of
-`Codes/CaseMatrix.lean`.
+The distance bounds are proved in `GF2/HGPCleaning` and `GF2/HGPCleaningDual`;
+`GF2/HGPKunneth` supplies the rank and dimension formula. Concrete code instances from
+upstream are outside this import.
 
 ## Index conventions
 

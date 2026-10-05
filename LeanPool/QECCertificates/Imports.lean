@@ -28,6 +28,7 @@ public import LeanPool.QECCertificates.GF2.WeightEnum
 public import LeanPool.QECCertificates.GF2.Witness
 public import LeanPool.QECCertificates.Pauli.Expr
 public import LeanPool.QECCertificates.Reflect.Complete
+public import LeanPool.QECCertificates.Reflect.Distance
 public import LeanPool.QECCertificates.Reflect.Encode
 public import LeanPool.QECCertificates.Reflect.LRAT
 public import LeanPool.QECCertificates.RowspaceKernel

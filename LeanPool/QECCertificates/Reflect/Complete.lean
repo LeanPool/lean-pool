@@ -43,9 +43,7 @@ an earlier one untouched.
 
 Here a light logical operator is still only a **semantic condition** (a weight bound,
 kernels on the two sides, and a pairing equal to 1); the step that turns it into a statement
-about codes is spelled out in the module documentation of `Reflect/Encode.lean`, and both
-sides use the same set of conditions, so composing the equivalence needs no further
-translation between them.
+about binary matrices and Hamming weight is proved in `Reflect/Distance.lean`.
 -/
 
 @[expose] public section
@@ -1044,9 +1042,9 @@ theorem xorChain_complete {xs : List Nat} {w : Bool} {c : Nat} {σ : Assign}
 satisfiable — **with the witness pinned down on the input variables**.
 
 Together with `buildPair_sat` of `Reflect/Encode.lean` (soundness) this composes into
-**"a light logical operator exists if and only if the encoding is satisfiable"**; adding the
-soundness theorem of `Reflect/LRAT.lean`, an unsatisfiability verdict then **directly gives a
-distance lower bound**, so both directions are now inside the kernel.
+**an equivalence with the Boolean semantic conditions**. `Reflect/Distance.lean` bridges
+these conditions to binary matrices and Hamming weight. Composing that bridge with the
+soundness theorem of `Reflect/LRAT.lean` gives a matrix-level distance lower bound.
 
 The **agreement clause** `∀ t, t < 2 * n → τ t = σ t` is what an assembly needs and what a bare
 "there exists a model" cannot supply: the base part is followed by other clause blocks, and to
