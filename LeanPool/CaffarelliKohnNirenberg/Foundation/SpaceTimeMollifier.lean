@@ -34,9 +34,11 @@ open Function Filter MeasureTheory Set Topology
 open scoped ENNReal Convolution Pointwise
 open CKN.Foundation.Parabolic
 
+noncomputable section
+
 namespace CKN
 
-noncomputable section
+section
 
 local instance spaceTimeVolumeIsAddHaarMeasure :
     Measure.IsAddHaarMeasure (volume : Measure (Vec3 × ℝ)) := by
@@ -689,3 +691,5 @@ theorem tendsto_eLpNorm_sub_zero_spaceTimeMollify
 
 
 end CKN
+
+end

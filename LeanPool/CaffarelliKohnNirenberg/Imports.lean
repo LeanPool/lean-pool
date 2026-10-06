@@ -830,6 +830,7 @@ public import LeanPool.CaffarelliKohnNirenberg.Leray.LerayHopfLimitWeakContinuit
 public import LeanPool.CaffarelliKohnNirenberg.Leray.LerayHopfLimitWeakLower
 public import LeanPool.CaffarelliKohnNirenberg.Leray.LerayLimitAssemblySupport
 public import LeanPool.CaffarelliKohnNirenberg.Leray.LerayLimitCompactness
+public import LeanPool.CaffarelliKohnNirenberg.Leray.LerayLimitConditions
 public import LeanPool.CaffarelliKohnNirenberg.Leray.LerayLimitConvergence
 public import LeanPool.CaffarelliKohnNirenberg.Leray.LerayLimitEveryTime
 public import LeanPool.CaffarelliKohnNirenberg.Leray.LerayLimitInitialTail
