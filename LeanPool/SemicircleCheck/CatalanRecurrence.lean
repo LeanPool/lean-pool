@@ -8,8 +8,6 @@ module
 public import LeanPool.SemicircleCheck.GenusNoncrossing
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 import LeanPool.SemicircleCheck.EvenCard
-import LeanPool.SemicircleCheck.FinRotateLemmas
-import LeanPool.SemicircleCheck.RotationArithmetic
 
 /-!
   THE CATALAN SCALPEL
@@ -93,7 +91,7 @@ private lemma exists_lt_partner {n : ℕ} (p : Pairing (n + 1)) :
   by_contra h; push Not at h
   have := lt_of_le_of_ne (h ⟨0, by omega⟩)
     (fun heq => p.property.2 ⟨0, by omega⟩ (Fin.ext heq))
-  simp at this
+  simp only [Fin.zero_eta, not_lt_zero] at this
 
 /-- General shadow closure: if p has no crossings and v < x < p(v) (with v < p(v)),
     then v < p(x) < p(v). -/
@@ -136,7 +134,7 @@ private lemma no_crossing_has_adjacent {n : ℕ} (p : Pairing (n + 1))
     have hgap1 : (p.val v).val = v.val + 1 := by omega
     have hv_not_last : v.val ≠ 2*(n+1) - 1 := by have := (p.val v).isLt; omega
     have hfr : (finRotate (2*(n+1)) v).val = v.val + 1 := by
-      rw [finRotate_val' (by omega)]; simp [hv_not_last]
+      rw [finRotate_val' (by omega)]; simp only [hv_not_last, ↓reduceIte]
     exact h_no_adj v (show p.val v = finRotate _ v from Fin.ext (by omega))
   obtain ⟨v, hv_mem, hv_min⟩ := Finset.exists_min_image S
     (fun v => (p.val v).val - v.val) hS_ne
@@ -174,7 +172,7 @@ private lemma HasCrossing_conj_forward {m : ℕ} (_hm : 2 ≤ m) (p : Equiv.Perm
   intro ⟨a, b, hab, hbpa, hpapb⟩ ρ
   have hm' : 0 < m := by omega
   have conj_rho : ∀ x : Fin m, (ρ * p * ρ⁻¹) (ρ x) = ρ (p x) := by
-    intro x; simp [mul_apply]
+    intro x; simp only [mul_apply, coe_inv, symm_apply_apply]
   have rho_val : ∀ x : Fin m, (ρ x).val = (x.val + k) % m := by
     intro x; exact congr_arg Fin.val (finRotate_pow_apply' hm' k x)
   set av := a.val; set bv := b.val; set pav := (p a).val; set pbv := (p b).val
@@ -254,12 +252,12 @@ private lemma HasCrossing_of_conj {m : ℕ} (hm : 2 ≤ m) (p : Equiv.Perm (Fin 
   rcases Nat.eq_zero_or_pos k with rfl | hk_pos
   · -- ρ = (finRotate m)^0 = 1, so ρ*p*ρ⁻¹ = p
     have hρ_eq : ∀ x, (ρ * p * ρ⁻¹) x = p x := by
-      intro x; simp [ρ]
+      intro x; simp only [pow_zero, one_mul, inv_one, mul_one, ρ]
     obtain ⟨a, b, hab, h1, h2⟩ := hcross
     exact ⟨a, b, hab, by rwa [hρ_eq] at h1, by rwa [hρ_eq] at h2⟩
   -- When k > 0, k' = m - k satisfies k' < m.
   have hinv' : ∀ x, (ρ * p * ρ⁻¹) ((ρ * p * ρ⁻¹) x) = x := by
-    intro x; simp [ρ, mul_apply, hinv]
+    intro x; simp only [mul_apply, coe_inv, symm_apply_apply, hinv, apply_symm_apply, ρ]
   set k' := m - k
   have hk'_lt : k' < m := by omega
   have hconj : (finRotate m) ^ k' * (ρ * p * ρ⁻¹) * ((finRotate m) ^ k')⁻¹ = p := by
@@ -284,7 +282,8 @@ private lemma contractZeroOne_val {n : ℕ} (p : Equiv.Perm (Fin (2 * (n + 1))))
     (j : Fin (2 * n)) :
     (SemicircleCore.contractZeroOne p h₀ h₁ j).val =
       (p ⟨j.val + 2, by omega⟩).val - 2 := by
-  simp [SemicircleCore.contractZeroOne, SemicircleCore.shiftTwoEquiv]
+  simp only [SemicircleCore.contractZeroOne, SemicircleCore.shiftTwoEquiv, symm_mk,
+    trans_apply, coe_fn_mk]
 
 /-- Crossing in contractZeroOne lifts to crossing in the original permutation. -/
 private lemma contraction_crossing_lifts {n : ℕ} (p : Equiv.Perm (Fin (2 * (n + 1))))
@@ -373,9 +372,7 @@ private lemma crossing_avoids_adjacent {n : ℕ} (p : Pairing (n + 1))
     a ≠ i ∧ a ≠ finRotate _ i ∧ b ≠ i ∧ b ≠ finRotate _ i := by
   have hfr := finRotate_val' (show 0 < 2*(n+1) by omega) i
   -- hadj : p.val i = finRotate (2*(n+1)) i
-  have hinv : ∀ y, p.val (p.val y) = y := by
-    intro y; have hh : p.val * p.val = 1 := by have := p.property.1; rwa [sq] at this
-    change (p.val * p.val) y = y; simp [hh]
+  have hinv : ∀ y, p.val (p.val y) = y := fun y => involution_reverse p.property.1 rfl
   -- p(finRotate i) = i since p is involution and p(i) = finRotate(i)
   have hadj_back : p.val (finRotate _ i) = i := by
     have := congr_arg p.val hadj; rw [hinv] at this; exact this.symm
@@ -446,17 +443,17 @@ private lemma contraction_crossing_forward {n : ℕ} (p : Equiv.Perm (Fin (2 * (
   set a' : Fin (2*n) := ⟨a.val - 2, by omega⟩
   set b' : Fin (2*n) := ⟨b.val - 2, by omega⟩
   have ha_eq : (⟨a.val - 2 + 2, by omega⟩ : Fin (2*(n+1))) = a :=
-    Fin.ext (by simp; omega)
+    Fin.ext (by simp only; omega)
   have hb_eq : (⟨b.val - 2 + 2, by omega⟩ : Fin (2*(n+1))) = b :=
-    Fin.ext (by simp; omega)
+    Fin.ext (by simp only; omega)
   have hqa : (q a').val = (p a).val - 2 := by
     change (q ⟨a.val - 2, _⟩).val = _
     rw [contractZeroOne_val, ha_eq]
   have hqb : (q b').val = (p b).val - 2 := by
     change (q ⟨b.val - 2, _⟩).val = _
     rw [contractZeroOne_val, hb_eq]
-  exact ⟨a', b', by simp [a', b']; omega,
-    by rw [hqa]; simp [b']; omega,
+  exact ⟨a', b', by simp only [b', a']; omega,
+    by rw [hqa]; simp only [b']; omega,
     by rw [hqa, hqb]; omega⟩
 
 /-- Rotation preserves crossings (forward direction), with tracking:
@@ -478,7 +475,7 @@ private lemma HasCrossing_conj_forward_tracked {m : ℕ} (hm : 2 ≤ m)
   intro ρ p'
   have hm' : 0 < m := by omega
   have conj_rho : ∀ x : Fin m, p' (ρ x) = ρ (p x) := by
-    intro x; change (ρ * p * ρ⁻¹) (ρ x) = ρ (p x); simp [mul_apply]
+    intro x; change (ρ * p * ρ⁻¹) (ρ x) = ρ (p x); simp only [mul_apply, coe_inv, symm_apply_apply]
   have rho_val : ∀ x : Fin m, (ρ x).val = (x.val + k) % m := by
     intro x; exact congr_arg Fin.val (finRotate_pow_apply' hm' k x)
   set av := a.val; set bv := b.val; set pav := (p a).val; set pbv := (p b).val
@@ -512,9 +509,9 @@ private lemma HasCrossing_conj_forward_tracked {m : ℕ} (hm : 2 ≤ m)
   have hp'a_mem : p' (ρ a) = ρ (p a) := conj_rho a
   have hp'b_mem : p' (ρ b) = ρ (p b) := conj_rho b
   have hp'pa_mem : p' (ρ (p a)) = ρ a := by
-    change (ρ * p * ρ⁻¹) (ρ (p a)) = ρ a; simp [mul_apply, hinv]
+    change (ρ * p * ρ⁻¹) (ρ (p a)) = ρ a; simp only [mul_apply, coe_inv, symm_apply_apply, hinv]
   have hp'pb_mem : p' (ρ (p b)) = ρ b := by
-    change (ρ * p * ρ⁻¹) (ρ (p b)) = ρ b; simp [mul_apply, hinv]
+    change (ρ * p * ρ⁻¹) (ρ (p b)) = ρ b; simp only [mul_apply, coe_inv, symm_apply_apply, hinv]
   -- Now 5-case analysis on wrapping, same as HasCrossing_conj_forward
   by_cases hpb_wrap : pbv + k ≥ m
   · by_cases hpa_wrap : pav + k ≥ m
@@ -596,7 +593,7 @@ private lemma deleteAdjacent_crossing_projects {n : ℕ} (p : Pairing (n + 1))
   let p' : Equiv.Perm (Fin (2*(n+1))) := ρ * p.val * ρ⁻¹
   have hinv : ∀ x, p.val (p.val x) = x := by
     intro y; have hh : p.val * p.val = 1 := by have := p.property.1; rwa [sq] at this
-    change (p.val * p.val) y = y; simp [hh]
+    change (p.val * p.val) y = y; simp only [hh, coe_one, id_eq]
   -- The rotation sends i↦0, finRotate(i)↦1
   have hρi : ρ i = ⟨0, by omega⟩ :=
     rotate_self_eq_zero (2*(n+1)) (by omega) i
@@ -658,7 +655,7 @@ private lemma deleteAdjacent_crossing_projects {n : ℕ} (p : Pairing (n + 1))
     have hpb_ge2 : 2 ≤ (p.val b).val := by
       have := hρ_id (p.val b); rw [this] at hρpb_ge2; exact hρpb_ge2
     have hp'_eq : ∀ x, p' x = p.val x := fun x => by
-      change (ρ * p.val * ρ⁻¹) x = p.val x; rw [hρ_one]; simp
+      change (ρ * p.val * ρ⁻¹) x = p.val x; rw [hρ_one]; simp only [one_mul, inv_one, mul_one]
     rw [Pairing.HasCrossing, hperm_eq]
     have hbpa' : b.val < (p' a).val := by rw [hp'_eq]; exact hbpa
     have hpapb' : (p' a).val < (p' b).val := by rw [hp'_eq, hp'_eq]; exact hpapb
@@ -1660,10 +1657,10 @@ private lemma assemblePerm_isPairing (n : ℕ) (k : Fin (n + 1))
   · -- Involution: assembleF is involutive, and assemblePerm is its toPerm
     have hinv_in : ∀ y : Fin (2 * k.val), p_in.val (p_in.val y) = y := by
       intro y; have h := p_in.property.1; rw [sq] at h
-      change (p_in.val * p_in.val) y = y; simp [h]
+      change (p_in.val * p_in.val) y = y; simp only [h, coe_one, id_eq]
     have hinv_out : ∀ y : Fin (2 * (n - k.val)), p_out.val (p_out.val y) = y := by
       intro y; have h := p_out.property.1; rw [sq] at h
-      change (p_out.val * p_out.val) y = y; simp [h]
+      change (p_out.val * p_out.val) y = y; simp only [h, coe_one, id_eq]
     have hinvol := assembleF_involutive n k p_in.val p_out.val hinv_in hinv_out
     -- assemblePerm * assemblePerm = 1 means (assemblePerm x)(assemblePerm x y) = y
     -- assemblePerm is h.toPerm, so assemblePerm y = assembleF ... y by definition
@@ -1683,11 +1680,11 @@ private lemma assemblePerm_isPairing (n : ℕ) (k : Fin (n + 1))
     unfold assembleF at hfix
     split_ifs at hfix with h0 ht hin
     · -- x = 0 → f(x) = 2k+1 ≠ 0 (unless k = ... but 2k+1 ≥ 1)
-      have := congr_arg Fin.val hfix; simp at this; omega
+      have := congr_arg Fin.val hfix; simp only at this; omega
     · -- x = 2k+1 → f(x) = 0 ≠ 2k+1
-      have := congr_arg Fin.val hfix; simp at this; omega
+      have := congr_arg Fin.val hfix; simp only at this; omega
     · -- Inside: f(x) = p_in(x-1)+1 = x means p_in(x-1) = x-1, contradicting p_in's FPF
-      have heq := congr_arg Fin.val hfix; simp at heq
+      have heq := congr_arg Fin.val hfix; simp only at heq
       have : (p_in.val ⟨x.val - 1, by omega⟩).val = x.val - 1 := by omega
       have : p_in.val ⟨x.val - 1, by omega⟩ = ⟨x.val - 1, by omega⟩ := Fin.ext this
       exact p_in.property.2 ⟨x.val - 1, by omega⟩ this
@@ -1705,7 +1702,8 @@ private lemma assemblePerm_zero (n : ℕ) (k : Fin (n + 1))
     (hinv_in : ∀ x, p_in.val (p_in.val x) = x) (hinv_out : ∀ x, p_out.val (p_out.val x) = x) :
     (assemblePerm n k p_in.val p_out.val hinv_in hinv_out) ⟨0, by omega⟩ =
       ⟨2 * k.val + 1, by omega⟩ := by
-  simp [assemblePerm, Function.Involutive.toPerm, assembleF]
+  simp only [assemblePerm, Function.Involutive.toPerm, Fin.zero_eta, coe_fn_mk, assembleF,
+    Fin.coe_ofNat_eq_mod, Nat.zero_mod, ↓reduceDIte]
 
 /-- The assembled pairing is noncrossing. -/
 private lemma assemblePerm_isNoncrossing (n : ℕ) (k : Fin (n + 1))
@@ -1913,7 +1911,8 @@ private lemma extractK_of_assemble (n : ℕ) (k : Fin (n + 1))
   have h0 : (ap ⟨0, by omega⟩).val = 2 * k.val + 1 := by
     change (Function.Involutive.toPerm (assembleF n k p_in.val.val p_out.val.val)
       (assembleF_involutive n k p_in.val.val p_out.val.val hinv_in hinv_out) ⟨0, _⟩).val = _
-    simp [Function.Involutive.toPerm, assembleF]
+    simp only [Function.Involutive.toPerm, Fin.zero_eta, coe_fn_mk, assembleF,
+      Fin.coe_ofNat_eq_mod, Nat.zero_mod, ↓reduceDIte]
   -- pairing.val = ap
   have : (pairing.val ⟨0, by omega⟩).val = (ap ⟨0, by omega⟩).val := rfl
   rw [this, h0]; omega
@@ -1969,8 +1968,7 @@ private lemma catalanEquiv_right_inv (n : ℕ)
   apply sigma_ncp_ext (extractK_of_assemble n k p_in p_out)
   · -- insidePairing round-trip: restrictInsidePerm(assembled)(j).val = (p_in.val.val j').val
     intro j
-    simp only [catalanAssemble, insidePairing,
-               restrictInsidePerm, Equiv.coe_fn_mk, Fin.val_mk]
+    simp only [catalanAssemble, insidePairing, restrictInsidePerm, Equiv.coe_fn_mk, Fin.val_mk]
     -- j : Fin (2 * (extractK assembled h_nc).val)
     -- Need: (assembled ⟨j.val + 1, _⟩).val - 1 = (p_in.val.val ⟨j.val, _⟩).val
     -- assembled = assemblePerm = toPerm(assembleF)
@@ -1988,12 +1986,12 @@ private lemma catalanEquiv_right_inv (n : ℕ)
       (p_in.val.val ⟨j.val, by omega⟩).val
     simp only [assembleF, h0, ht, hin, ↓reduceDIte, Fin.val_mk]
     have hfin : (⟨j.val + 1 - 1, by omega⟩ : Fin (2 * k.val)) = ⟨j.val, by omega⟩ :=
-      Fin.ext (by simp)
+      Fin.ext (by simp only [add_tsub_cancel_right])
     simp only [hfin]; omega
   · -- outsidePairing round-trip
     intro j
-    simp only [catalanAssemble, outsidePairing,
-               restrictOutsidePerm, Equiv.coe_fn_mk, Fin.val_mk]
+    simp only [catalanAssemble, outsidePairing, restrictOutsidePerm, Equiv.coe_fn_mk,
+      Fin.val_mk]
     have hek :
       (extractK _ ((private_decl% (assemblePerm_isNoncrossing n k p_in p_out)))).val = k.val :=
       congr_arg Fin.val (extractK_of_assemble n k p_in p_out)
@@ -2015,7 +2013,7 @@ private lemma catalanEquiv_right_inv (n : ℕ)
     simp only [assembleF, h0, ht, hout, ↓reduceDIte, Fin.val_mk]
     have hfin : (⟨ov - (2 * k.val + 2), by omega⟩ :
         Fin (2 * (n - k.val))) = ⟨j.val, by omega⟩ :=
-      Fin.ext (by simp [hek, hov])
+      Fin.ext (by simp only [hov, hek, Nat.reduceSubDiff, add_tsub_cancel_right])
     simp only [hfin]; omega
 
 /-- The Catalan decomposition: a noncrossing pairing on 2(n+1) points
