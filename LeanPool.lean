@@ -52,6 +52,7 @@ public import LeanPool.ConcentrationInequalities.Imports
 public import LeanPool.ConnesKreimer.Imports
 public import LeanPool.ConnesRigidity.Imports
 public import LeanPool.ConwayRefinement.Imports
+public import LeanPool.ConwaySoifer.Imports
 public import LeanPool.CramerWold.Imports
 public import LeanPool.CriticalPortraits.Imports
 public import LeanPool.CutAndProject.Imports
