@@ -7,7 +7,6 @@ module
 
 public import Mathlib.GroupTheory.Perm.Cycle.Type
 public import LeanPool.SemicircleCheck.ShiftTwoEquiv
-public import Mathlib.Logic.Equiv.Fin.Rotate
 public import LeanPool.SemicircleCheck.FinRotateLemmas
 public import LeanPool.SemicircleCheck.RotationArithmetic
 import Mathlib.GroupTheory.Perm.Fin
@@ -335,7 +334,7 @@ private lemma numCycles_swap_mul_le_aux {α : Type*} [Fintype α] [DecidableEq �
           -- Apply numCycles_swap_mul_of_apply to swap a b * σ at a:
           -- numCycles(swap(a,b) * swap(a,b) * σ) = numCycles(swap a b * σ) + 1
           -- i.e., numCycles σ = numCycles(swap a b * σ) + 1
-          have h_app : (swap a b * σ) a = b := by simp [mul_apply, hσa_a, swap_apply_left]
+          have h_app : (swap a b * σ) a = b := by simp only [mul_apply, hσa_a, swap_apply_left]
           have h_ne : (swap a b * σ) a ≠ a := by rw [h_app]; exact Ne.symm hab
           have h1 := numCycles_swap_mul_of_apply (swap a b * σ) a h_ne
           conv at h1 => lhs; rw [h_app]
@@ -350,7 +349,7 @@ private lemma numCycles_swap_mul_le_aux {α : Type*} [Fintype α] [DecidableEq �
           -- numCycles(swap(σ a, b) * ρ) ≤ numCycles(ρ) + 1 = numCycles(σ) + 2
           -- Therefore numCycles(swap a b * σ) + 1 ≤ numCycles(σ) + 2
           have h_app : (swap a b * σ) a = σ a := by
-            simp [mul_apply, swap_apply_of_ne_of_ne hσa_a hσa_b]
+            simp only [mul_apply, swap_apply_of_ne_of_ne hσa_a hσa_b]
           have h_ne : (swap a b * σ) a ≠ a := by rw [h_app]; exact hσa_a
           have h1 := numCycles_swap_mul_of_apply (swap a b * σ) a h_ne
           conv at h1 => lhs; rw [h_app]
@@ -407,12 +406,12 @@ private lemma numCycles_longCycle {n : ℕ} (hn : 1 ≤ n) :
 
 private lemma support_eq_univ_of_fpf {α : Type*} [Fintype α] [DecidableEq α]
     (π : Perm α) (hfpf : ∀ x, π x ≠ x) : π.support = Finset.univ := by
-  ext x; simp [Equiv.Perm.mem_support, hfpf]
+  ext x; simp only [mem_support, ne_eq, hfpf, not_false_eq_true, Finset.mem_univ]
 
 private lemma multiset_sum_const {s : Multiset ℕ} {k : ℕ}
     (h : ∀ c ∈ s, c = k) : s.sum = k * s.card := by
   induction s using Multiset.induction with
-  | empty => simp
+  | empty => simp only [Multiset.sum_zero, Multiset.card_zero, mul_zero]
   | cons a s ih =>
     simp only [Multiset.sum_cons, Multiset.card_cons]
     rw [h a (Multiset.mem_cons_self a s), ih fun c hc => h c (Multiset.mem_cons_of_mem hc)]
@@ -466,7 +465,8 @@ private lemma pairing_swap_factorization {n : ℕ} (p : Pairing n) :
         s.noncommProd id comm = l.prod := by
       intro s hs comm
       subst hs
-      exact (Finset.noncommProd_toFinset l id comm hl_nodup).trans (by simp)
+      exact (Finset.noncommProd_toFinset l id comm hl_nodup).trans (by simp only [List.map_id_fun,
+        id_eq])
     exact (key _ hl_eq.symm _).symm.trans (Equiv.Perm.cycleFactorsFinset_noncommProd _)
   · -- l.length = n
     have hlen : l.length = p.val.cycleFactorsFinset.card := by
@@ -474,7 +474,7 @@ private lemma pairing_swap_factorization {n : ℕ} (p : Pairing n) :
     rw [hlen]
     -- cycleFactorsFinset.card = cycleType.card = n
     rw [show p.val.cycleFactorsFinset.card = p.val.cycleType.card from by
-      simp [Equiv.Perm.cycleType_def]]
+      simp only [cycleType_def, Function.comp_apply, Multiset.card_map, Finset.card_val]]
     exact hcard
   · -- all elements are swaps
     intro g hg
@@ -518,14 +518,14 @@ private lemma sign_longCycle (n : ℕ) (hn : 1 ≤ n) :
   have h2k : 2 * (k + 1) = 2 * k + 2 := by ring
   conv_lhs => rw [h2k]
   rw [(@isCycle_finRotate (2 * k)).sign, support_finRotate, Finset.card_univ, card_fin]
-  simp [pow_add, pow_mul]
+  simp only [pow_add, pow_mul, even_two, Even.neg_pow, one_pow, mul_one]
 
 private lemma sign_pairing {n : ℕ} (p : Pairing n) :
     Equiv.Perm.sign p.val = (-1) ^ n := by
   rw [Equiv.Perm.sign_of_cycleType, Equiv.Perm.sum_cycleType,
       support_eq_univ_of_fpf p.val p.property.2, Finset.card_univ, card_fin,
       pairing_cycleType_card p]
-  simp [pow_add, pow_mul]
+  simp only [pow_add, pow_mul, even_two, Even.neg_pow, one_pow, one_mul]
 
 private theorem numCycles_parity_even {n : ℕ} (p : Pairing n) (hn : 1 ≤ n) :
     2 ∣ ((n + 1) - numCycles (longCycle n * p.val)) := by
@@ -543,7 +543,7 @@ private theorem numCycles_parity_even {n : ℕ} (p : Pairing n) (hn : 1 ≤ n) :
     rw [Equiv.Perm.card_fixedPoints, card_fin, Equiv.Perm.sum_cycleType]
   have hsupp_le : σ.support.card ≤ 2 * n :=
     calc σ.support.card ≤ Finset.univ.card := Finset.card_le_card (Finset.subset_univ _)
-      _ = 2 * n := by simp [card_fin]
+      _ = 2 * n := by simp only [Finset.card_univ, card_fin]
   have hle := p.numCycles_le
   omega
 
@@ -878,17 +878,17 @@ private theorem numCycles_split_normalized {n : ℕ} (hn : 1 ≤ n)
     unfold longCycle
     have := finRotate_pow_apply' (by omega : 0 < 2 * (n + 1)) 1 ⟨0, by omega⟩
     simp only [pow_one] at this; rw [this]; ext
-    simp [Nat.mod_eq_of_lt (show 1 < 2 * (n + 1) by omega)]
+    simp only [zero_add, Nat.mod_eq_of_lt (show 1 < 2 * (n + 1) by omega)]
   have hγ1 : longCycle (n + 1) ⟨1, by omega⟩ = (⟨2, by omega⟩ : Fin (2 * (n + 1))) := by
     unfold longCycle
     have := finRotate_pow_apply' (by omega : 0 < 2 * (n + 1)) 1 ⟨1, by omega⟩
     simp only [pow_one] at this; convert this using 1
-    ext; simp [Nat.mod_eq_of_lt (show 2 < 2 * (n + 1) by omega)]
+    ext; simp only [Nat.reduceAdd, Nat.mod_eq_of_lt (show 2 < 2 * (n + 1) by omega)]
   -- γ * p' = swap(1,2) * (γ * q) via mul_swap_eq_swap_mul
   have hγp_eq : longCycle (n + 1) * p' =
       swap ⟨1, by omega⟩ ⟨2, by omega⟩ * (longCycle (n + 1) * q) := by
     have hsw : p' = swap ⟨0, by omega⟩ ⟨1, by omega⟩ * q := by
-      simp [hq_def]
+      simp only [Fin.zero_eta, Fin.mk_one, hq_def, swap_mul_self_mul]
     rw [hsw, ← mul_assoc, Equiv.mul_swap_eq_swap_mul, hγ0, hγ1, mul_assoc]
   -- q fixes 1, and (γ*q)(1) = γ(1) = 2
   have hq1 : q ⟨1, by omega⟩ = (⟨1, by omega⟩ : Fin (2 * (n + 1))) := by
@@ -898,7 +898,8 @@ private theorem numCycles_split_normalized {n : ℕ} (hn : 1 ≤ n)
   have hgq1 : (longCycle (n + 1) * q) ⟨1, by omega⟩ = (⟨2, by omega⟩ : Fin (2 * (n + 1))) := by
     simp only [mul_apply, hq1]; exact hγ1
   have hgq1_ne : (longCycle (n + 1) * q) ⟨1, by omega⟩ ≠ ⟨1, by omega⟩ := by
-    rw [hgq1]; simp [Fin.ext_iff, Nat.mod_eq_of_lt (show 1 < 2 * (n + 1) by omega)]
+    rw [hgq1]; simp only [Fin.mk_one, ne_eq, Fin.ext_iff, Fin.coe_ofNat_eq_mod,
+      Nat.mod_eq_of_lt (show 1 < 2 * (n + 1) by omega), OfNat.ofNat_ne_one, not_false_eq_true]
   -- Apply swap lemma + orbit absorption
   rw [hγp_eq, ← hgq1,
       numCycles_swap_mul_of_apply _ _ hgq1_ne,
@@ -925,20 +926,13 @@ theorem numCycles_delete_adjacent {n : ℕ} (hn : 1 ≤ n) (p : Pairing (n + 1))
   have hconj_eq : ρ * (longCycle (n + 1) * p.val) * ρ⁻¹ = longCycle (n + 1) * p' := by
     change ρ * (longCycle (n + 1) * p.val) * ρ⁻¹ = longCycle (n + 1) * (ρ * p.val * ρ⁻¹)
     calc ρ * (longCycle (n + 1) * p.val) * ρ⁻¹
-        = (ρ * longCycle (n + 1)) * p.val * ρ⁻¹ := by group
+        = (ρ * longCycle (n + 1)) * p.val * ρ⁻¹ := by simp only [mul_assoc]
       _ = (longCycle (n + 1) * ρ) * p.val * ρ⁻¹ := by rw [hρ_comm]
-      _ = longCycle (n + 1) * (ρ * p.val * ρ⁻¹) := by group
+      _ = longCycle (n + 1) * (ρ * p.val * ρ⁻¹) := by simp only [mul_assoc]
   -- Conjugation preserves numCycles
   have hconj_nc : numCycles (longCycle (n + 1) * p.val) =
       numCycles (longCycle (n + 1) * p') := by
-    have : longCycle (n + 1) * p.val =
-        ρ⁻¹ * (longCycle (n + 1) * p') * (ρ⁻¹)⁻¹ := by
-      rw [inv_inv]
-      have := hconj_eq
-      calc longCycle (n + 1) * p.val
-          = ρ⁻¹ * (ρ * (longCycle (n + 1) * p.val) * ρ⁻¹) * ρ := by group
-        _ = ρ⁻¹ * (longCycle (n + 1) * p') * ρ := by rw [hconj_eq]
-    rw [this, numCycles_conj]
+    rw [← hconj_eq, numCycles_conj]
   -- Step 2: Establish that p' satisfies the normalized conditions
   have hρ0 : ρ i = ⟨0, by omega⟩ :=
     rotate_self_eq_zero (2 * (n + 1)) (by omega) i
@@ -949,13 +943,8 @@ theorem numCycles_delete_adjacent {n : ℕ} (hn : 1 ≤ n) (p : Pairing (n + 1))
   have h₁' : p' ⟨1, by omega⟩ = ⟨0, by omega⟩ :=
     conjugate_sends_back hρ0 hρ1 p.property.1 h
   have hinv' : p' ^ 2 = 1 := by
-    have hππ : p.val * p.val = 1 := by have := p.property.1; rwa [sq] at this
     change (ρ * p.val * ρ⁻¹) ^ 2 = 1
-    rw [sq]
-    calc (ρ * p.val * ρ⁻¹) * (ρ * p.val * ρ⁻¹)
-        = ρ * (p.val * p.val) * ρ⁻¹ := by group
-      _ = ρ * 1 * ρ⁻¹ := by rw [hππ]
-      _ = 1 := by group
+    rw [conj_pow, p.property.1, mul_one, mul_inv_cancel]
   have hfpf' : ∀ x, p' x ≠ x := by
     intro x hfix
     have hfix' : (ρ * p.val * ρ⁻¹) x = x := hfix
@@ -1002,7 +991,7 @@ private lemma has_fixedPoint_of_maxCycles {n : ℕ} (p : Pairing (n + 1))
     (fun c hc => Equiv.Perm.two_le_of_mem_cycleType hc : ∀ c ∈ σ.cycleType, 2 ≤ c)
   have hsupp_le : σ.support.card ≤ 2 * (n + 1) := by
     calc σ.support.card ≤ Finset.univ.card := Finset.card_le_card (Finset.subset_univ _)
-      _ = 2 * (n + 1) := by simp [card_fin]
+      _ = 2 * (n + 1) := by simp only [Finset.card_univ, card_fin]
   unfold Equiv.Perm.numCycles at h
   rw [hfp_card, card_fin, hsum] at h
   have hfp_pos : 0 < card (Function.fixedPoints σ) := by
@@ -1018,22 +1007,12 @@ private lemma fixedPoint_gives_adjacent {n : ℕ} (p : Pairing (n + 1))
     (x : Fin (2 * (n + 1)))
     (hfp : (longCycle (n + 1) * p.val) x = x) :
     p.hasAdjacentAt ((longCycle (n + 1) : Perm (Fin (2 * (n + 1))))⁻¹ x) := by
-  set γ : Perm (Fin (2 * (n + 1))) := longCycle (n + 1) with hγ_def
-  unfold Pairing.hasAdjacentAt
-  -- From hfp: γ (p.val x) = x, so p.val x = γ.symm x
-  have hgpx : γ (p.val x) = x := by change (γ * p.val) x = x; exact hfp
-  have h1 : p.val x = γ.symm x := by
-    apply_fun γ.symm at hgpx; simp only [symm_apply_apply] at hgpx; exact hgpx
-  -- p.val is an involution: p.val (p.val y) = y for all y
-  have hinv : ∀ y, p.val (p.val y) = y := by
-    intro y
-    have hsq : p.val * p.val = 1 := by have := p.property.1; rwa [sq] at this
-    exact congr_fun (congr_arg DFunLike.coe hsq) y
-  -- Substituting h1: p.val (γ.symm x) = x
-  have h2 : p.val (γ.symm x) = x := by rw [← h1]; exact hinv x
-  -- Goal: p.val (γ⁻¹ x) = finRotate _ (γ⁻¹ x), where γ⁻¹ = γ.symm
-  change p.val (γ.symm x) = finRotate (2 * (n + 1)) (γ.symm x)
-  rw [h2, hγ_def, longCycle, Equiv.apply_symm_apply]
+  have hgpx : longCycle (n + 1) (p.val x) = x := hfp
+  have hpx : p.val x = (longCycle (n + 1)).symm x :=
+    ((longCycle (n + 1)).eq_symm_apply).mpr hgpx
+  change p.val ((longCycle (n + 1)).symm x) =
+    longCycle (n + 1) ((longCycle (n + 1)).symm x)
+  rw [involution_reverse p.property.1 hpx, Equiv.apply_symm_apply]
 
 /-- Stage B: If the cycle count achieves its maximum, the pairing
     is noncrossing.
@@ -1101,7 +1080,10 @@ theorem Pairing.noncrossing_imp_maxCycles {n : ℕ} (p : Pairing n)
         rcases this with rfl | rfl
         · rw [h0]; rfl
         · rw [h1]; rfl
-      rw [hgp]; simp [numCycles]
+      rw [hgp]
+      simp only [numCycles, Nat.reduceAdd, Nat.reduceMul, cycleType_one, Multiset.card_zero,
+        coe_one, Function.fixedPoints_id, Set.fintypeCard_eq_ncard, Set.ncard_univ,
+        Nat.card_eq_fintype_card, card_fin, zero_add]
     | succ k =>
       -- n = k + 2: use cycle-splitting lemma and inductive hypothesis
       have hda := numCycles_delete_adjacent (by omega : 1 ≤ k + 1) p i hi
