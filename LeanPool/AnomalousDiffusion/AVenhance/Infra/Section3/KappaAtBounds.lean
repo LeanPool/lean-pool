@@ -5,8 +5,8 @@ Authors: Scott Armstrong and Vlad Vicol
 -/
 module
 
-public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section3.FluxTimeRegularity
-public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section3.KhomSymmetry
+import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section3.FluxTimeRegularity
+import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section3.KhomSymmetry
 public import LeanPool.AnomalousDiffusion.AVenhance.Statements.Section3.KappaAt
 
 /-! Elementary positivity and monotonicity facts for the diffusivity chain. -/
