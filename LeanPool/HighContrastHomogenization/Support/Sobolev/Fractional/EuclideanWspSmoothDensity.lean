@@ -69,7 +69,7 @@ public noncomputable def cubeEuclideanWspConvexApproxSmoothField {d : ℕ}
   fun x i => convexApproxSmoothRepresentative (openCubeSet Q)
     (unitConvexApproxKernel (d := d)) (fun y => F.toField y i) x0 r ε x
 
-private theorem contDiff_cubeEuclideanWspConvexApproxSmoothField {d : ℕ}
+theorem contDiff_cubeEuclideanWspConvexApproxSmoothField {d : ℕ}
     {Q : TriadicCube d} {s : FractionalOrder} {p : FiniteLpExponent}
     (F : CubeEuclideanWspField Q s p) (x0 : Vec d) {r ε : ℝ}
     (hr : 0 < r) (hε : 0 < ε) :

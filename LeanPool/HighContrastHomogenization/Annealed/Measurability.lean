@@ -72,7 +72,7 @@ field of the exact coarse-source carrier: a measurable field that is uniformly
 elliptic on every ball with reciprocal constants.  The sample's ellipticity
 constants on that ball supply the reciprocal constant, once normalized to lie in
 `(0, 1]`. -/
-private theorem exists_sourceCarrier_ae_eq (a : CoeffSpace d) :
+theorem exists_sourceCarrier_ae_eq (a : CoeffSpace d) :
     ∃ b : Source.Coarse.Carrier d,
       (⇑a.1 : Vec d → Mat d) =ᵐ[volume] (b.1 : CoeffField d) := by
   obtain ⟨f, hmeas, hae, hloc⟩ :=

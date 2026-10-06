@@ -118,7 +118,7 @@ public noncomputable def localGradientRestrictLinear {d m n : ℕ} (hmn : m ≤ 
         ((Lp.coeFn_smul c f).filter_mono (ae_mono hmu))).trans
       (MemLp.toLp_const_smul c ((Lp.memLp f).mono_measure hmu))
 
-private theorem localGradientRestrictLinear_norm_le {d m n : ℕ} (hmn : m ≤ n)
+theorem localGradientRestrictLinear_norm_le {d m n : ℕ} (hmn : m ≤ n)
     (g : LocalGradientL2 d n) :
     ‖localGradientRestrictLinear hmn g‖ ≤ ‖g‖ := by
   let hmu : volumeMeasureOn (localGradientCube d m) ≤

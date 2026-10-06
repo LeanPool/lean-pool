@@ -114,7 +114,7 @@ theorem existsUnique_canonFactor {E : FullBlockMat d} (hE : E.PosDef) :
 
 /-- The hedged existential behind the canonical pair: on positive data it is
 `existsUnique_canonFactor`, elsewhere it is a junk witness. -/
-private theorem canonFactor_exists (E : FullBlockMat d) :
+theorem canonFactor_exists (E : FullBlockMat d) :
     ∃ p : Mat d × Mat d, E.PosDef →
       (p.1.PosDef ∧ (p.2)ᴴ = -p.2 ∧ canonBlock E = schurBlock p.1 p.1 p.2) := by
   by_cases hE : E.PosDef

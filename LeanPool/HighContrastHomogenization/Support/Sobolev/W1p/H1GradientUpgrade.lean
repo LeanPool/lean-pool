@@ -163,7 +163,7 @@ private theorem gradientCoordLpSeminormSum_cast_exponent
   subst q
   rfl
 
-private theorem unitConvexApproxScale_pos' (n : ℕ) :
+theorem unitConvexApproxScale_pos' (n : ℕ) :
     0 < unitConvexApproxScale n :=
   W1pFunction.unitConvexApproxScale_pos n
 
@@ -393,7 +393,7 @@ private theorem eventually_valueLpSeminorm_convexApproxSmoothH1W1p_le
       add_le_add hsubbound (mul_le_mul_of_nonneg_right havgbound hM)
     _ = B := rfl
 
-private theorem memLp_of_gradMemLp_on_isOpenBoundedConvexDomain
+theorem memLp_of_gradMemLp_on_isOpenBoundedConvexDomain
     {d : ℕ} [NeZero d] {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     (u : H1Function U) (p : FiniteLpExponent)
     (hgrad : GradMemLpOn U p.exponent u.grad) :

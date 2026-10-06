@@ -65,7 +65,7 @@ end H1Function
 
 namespace H10Function
 
-private theorem tendsto_eLpNorm_downgrade_of_two
+theorem tendsto_eLpNorm_downgrade_of_two
     {d : ℕ} {U : Set (Vec d)}
     [MeasureTheory.IsFiniteMeasure (MeasureTheory.volume.restrict U)]
     {p : FiniteLpExponent} (hp : p.exponent ≤ 2)

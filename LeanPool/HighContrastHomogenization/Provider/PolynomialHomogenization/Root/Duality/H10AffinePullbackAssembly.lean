@@ -59,7 +59,7 @@ private theorem matVecMul_sub_apply (A : Mat d) (x y : Vec d) (i : Fin d) :
 /-- The gradient `L²` condition transports with the transpose matrix.  (The
 proof of `exists_h1Function_affinePullback` uses a private lemma of the
 same content; it is reproved here rather than imported.) -/
-private theorem gradMemL2On_affinePullbackTranspose {L : Mat d} (hL : IsUnit L.det)
+theorem gradMemL2On_affinePullbackTranspose {L : Mat d} (hL : IsUnit L.det)
     {U : Set (Vec d)} (hU : MeasurableSet U) {Du : Vec d → Vec d}
     (hDu : GradMemL2On U Du) :
     GradMemL2On (matImage L⁻¹ U)
@@ -102,7 +102,7 @@ private theorem aestronglyMeasurable_approxGrad_sub {U : Set (Vec d)}
     (u.toH1Function.gradMemL2 j).aestronglyMeasurable
 
 /-- The scalar convergence field of the pulled-back `H¹₀` witness. -/
-private theorem tendsto_pullback_approx {L : Mat d} (hL : IsUnit L.det)
+theorem tendsto_pullback_approx {L : Mat d} (hL : IsUnit L.det)
     {U : Set (Vec d)} (hU : MeasurableSet U) (u : H10Function U) :
     Tendsto (fun n => eLpNorm
         (fun y => u.approx n (matVecMul L y) -
@@ -113,7 +113,7 @@ private theorem tendsto_pullback_approx {L : Mat d} (hL : IsUnit L.det)
     (fun n => aestronglyMeasurable_approx_sub u n) u.tendsto_approx
 
 /-- The gradient convergence field of the pulled-back `H¹₀` witness. -/
-private theorem tendsto_pullback_approx_grad {L : Mat d} (hL : IsUnit L.det)
+theorem tendsto_pullback_approx_grad {L : Mat d} (hL : IsUnit L.det)
     {U : Set (Vec d)} (hU : MeasurableSet U) (u : H10Function U) (i : Fin d) :
     Tendsto (fun n => eLpNorm
         (fun y => (fderiv ℝ (fun x => u.approx n (matVecMul L x)) y) (basisVec i) -

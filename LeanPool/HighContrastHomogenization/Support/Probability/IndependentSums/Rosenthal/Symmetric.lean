@@ -360,8 +360,8 @@ theorem lintegral_abs_finsetSum_rpow_le_rosenthal_of_identDistrib_neg
     dsimp [sigmaSq]
     refine Finset.sum_nonneg ?_
     intro i hi
-    simp only [absTruncation_apply, absTailIndicator_apply]
-    positivity
+    rw [ProbabilityTheory.moment]
+    exact integral_nonneg (fun ω => sq_nonneg _)
   have hS_meas : Measurable S := by
     dsimp [S]
     refine Finset.measurable_sum s ?_
@@ -408,8 +408,8 @@ theorem lintegral_abs_finsetSum_rpow_le_rosenthal_of_identDistrib_neg
             dsimp [truncVar]
             refine Finset.sum_nonneg ?_
             intro i hi
-            simp only [absTruncation_apply, absTailIndicator_apply]
-            positivity
+            rw [ProbabilityTheory.moment]
+            exact integral_nonneg (fun ω => sq_nonneg _)
           have htrunc_zero : truncVar = 0 := le_antisymm (le_of_not_gt hTrunc_pos) htrunc_nonneg
           have htrunc_term_zero :
               ∀ i ∈ s,
@@ -419,8 +419,8 @@ theorem lintegral_abs_finsetSum_rpow_le_rosenthal_of_identDistrib_neg
                 ∀ j ∈ s, 0 ≤ ProbabilityTheory.moment (fun ω => absTruncation (X j) (t / p) ω) 2
                   μ := by
               intro j hj
-              simp only [absTruncation_apply, absTailIndicator_apply]
-              positivity
+              rw [ProbabilityTheory.moment]
+              exact integral_nonneg (fun ω => sq_nonneg _)
             exact (Finset.sum_eq_zero_iff_of_nonneg hnonneg_terms).1
               (by simpa [truncVar] using htrunc_zero) i hi
           have htrunc_sq_int :
@@ -610,8 +610,8 @@ theorem lintegral_abs_finsetSum_rpow_le_rosenthal_of_identDistrib_neg
       intro i hi
       have hnonneg_terms : ∀ j ∈ s, 0 ≤ ProbabilityTheory.moment (X j) 2 μ := by
         intro j hj
-        simp [ProbabilityTheory.moment]
-        positivity
+        rw [ProbabilityTheory.moment]
+        exact integral_nonneg (fun ω => sq_nonneg _)
       exact (Finset.sum_eq_zero_iff_of_nonneg hnonneg_terms).1 (by simpa [sigmaSq] using
         hSigma_zero) i hi
     have hsum_zero_ae : S =ᵐ[μ] 0 := by
@@ -768,8 +768,8 @@ theorem integral_abs_finsetSum_rpow_le_rosenthal_of_identDistrib_neg
   have hSigma_nonneg : 0 ≤ ∑ i ∈ s, ProbabilityTheory.moment (X i) 2 μ := by
     refine Finset.sum_nonneg ?_
     intro i hi
-    simp [ProbabilityTheory.moment]
-    positivity
+    rw [ProbabilityTheory.moment]
+    exact integral_nonneg (fun ω => sq_nonneg _)
   have hC_nonneg : 0 ≤ C := by
     have hRB_nonneg : 0 ≤ rosenthalBennettIntegralConst := by
       dsimp [rosenthalBennettIntegralConst]

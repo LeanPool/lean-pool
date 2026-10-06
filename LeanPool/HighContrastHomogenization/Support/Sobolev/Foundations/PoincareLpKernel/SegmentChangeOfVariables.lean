@@ -43,6 +43,7 @@ because the variable-block instance is in scope for typeclass search. -/
 private instance instNontrivialVecSegCV (d : ℕ) [NeZero d] :
     Nontrivial (Vec d) := inferInstance
 
+omit [NeZero d] in
 theorem setIntegral_segmentBlend_mul_norm_sub_eq_inv_pow_mul_setIntegral_scaled
     {U : Set (Vec d)} (hU_meas : MeasurableSet U)
     {x : Vec d} {t : ℝ} (ht1 : t < 1)

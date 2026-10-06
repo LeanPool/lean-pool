@@ -84,7 +84,7 @@ public noncomputable def localValueRestrictLinear {d m n : ℕ} (hmn : m ≤ n) 
         ((Lp.coeFn_smul c f).filter_mono (ae_mono hmu))).trans
       (MemLp.toLp_const_smul c ((Lp.memLp f).mono_measure hmu))
 
-private theorem localValueRestrictLinear_norm_le {d m n : ℕ} (hmn : m ≤ n)
+theorem localValueRestrictLinear_norm_le {d m n : ℕ} (hmn : m ≤ n)
     (f : LocalValueL2 d n) :
     ‖localValueRestrictLinear hmn f‖ ≤ ‖f‖ := by
   let hmu : volumeMeasureOn (localGradientCube d m) ≤
@@ -552,7 +552,7 @@ private theorem localGradientRestrict_normalizedLocalPair {d : ℕ}
     localGradientRestrict_gradToHilbertVectorL2,
     restrictLocalH1_normalizedLocalH1]
 
-private theorem localValueRestrict_normalizedLocalPairLimit {d : ℕ}
+theorem localValueRestrict_normalizedLocalPairLimit {d : ℕ}
     (u : ∀ q, H1Function (localGradientCube d q))
     (hgrad : NormalizedLocalGradientCauchy u)
     {m n : ℕ} (hmn : m ≤ n) :
@@ -586,7 +586,7 @@ private theorem localValueRestrict_normalizedLocalPairLimit {d : ℕ}
     simpa only [localValueRestrict_normalizedLocalPair] using hshift
   exact tendsto_nhds_unique hleft hright
 
-private theorem localGradientRestrict_normalizedLocalPairLimit {d : ℕ}
+theorem localGradientRestrict_normalizedLocalPairLimit {d : ℕ}
     (u : ∀ q, H1Function (localGradientCube d q))
     (hgrad : NormalizedLocalGradientCauchy u)
     {m n : ℕ} (hmn : m ≤ n) :
@@ -682,7 +682,7 @@ components. -/
 
 end NormalizedLocalH1Carrier
 
-private theorem normalizedLocalPairLimit_mem_h1Graph {d : ℕ}
+theorem normalizedLocalPairLimit_mem_h1Graph {d : ℕ}
     (u : ∀ q, H1Function (localGradientCube d q))
     (hgrad : NormalizedLocalGradientCauchy u) (n : ℕ) :
     normalizedLocalPairLimit u hgrad n ∈
@@ -703,7 +703,7 @@ private theorem scalarIntegral_normalizedLocalPair_zero {d : ℕ}
   exact
     (integral_congr_ae (normalizedLocalH1 u 0 k).coeFn_toScalarL2).trans hmean
 
-private theorem normalizedLocalPairLimit_unitMeanZero {d : ℕ}
+theorem normalizedLocalPairLimit_unitMeanZero {d : ℕ}
     (u : ∀ q, H1Function (localGradientCube d q))
     (hgrad : NormalizedLocalGradientCauchy u) :
     scalarIntegralCLM (U := localGradientCube d 0)

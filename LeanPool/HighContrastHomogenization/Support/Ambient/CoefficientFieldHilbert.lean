@@ -294,7 +294,7 @@ public noncomputable def matToHilbertOperator (d : ℕ) :
   ⟨matToHilbertOperatorLinear d,
     (matToHilbertOperatorLinear d).continuous_of_finiteDimensional⟩
 
-private theorem measurable_matToHilbertOperator {d : ℕ} {α : Type*}
+theorem measurable_matToHilbertOperator {d : ℕ} {α : Type*}
     [MeasurableSpace α] {A : α → Mat d} (hA : Measurable A) :
     Measurable (fun x => matToHilbertOperator d (A x)) := by
   exact (matToHilbertOperator d).continuous.measurable.comp hA

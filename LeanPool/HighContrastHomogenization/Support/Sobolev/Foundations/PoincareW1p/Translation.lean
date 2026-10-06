@@ -116,7 +116,7 @@ public noncomputable def untranslateForPoincare (z : Vec d)
     (untranslateForPoincare z u).grad x = u.grad (x + z) := by
   simp [untranslateForPoincare, W1pFunction.translate, sub_eq_add_neg]
 
-private theorem valueLpSeminorm_untranslateForPoincare_eq (z : Vec d)
+theorem valueLpSeminorm_untranslateForPoincare_eq (z : Vec d)
     (u : W1pFunction (translateSet z U) p) :
     (untranslateForPoincare z u).valueLpSeminorm = u.valueLpSeminorm := by
   let V : Set (Vec d) := translateSet z U
@@ -132,7 +132,7 @@ private theorem valueLpSeminorm_untranslateForPoincare_eq (z : Vec d)
       (MeasureTheory.eLpNorm_comp_measurePreserving
         (g := u.toFun) (p := p) u.memLp.aestronglyMeasurable hμ))
 
-private theorem gradientCoordLpSeminormSum_untranslateForPoincare_eq (z : Vec d)
+theorem gradientCoordLpSeminormSum_untranslateForPoincare_eq (z : Vec d)
     (u : W1pFunction (translateSet z U) p) :
     (untranslateForPoincare z u).gradientCoordLpSeminormSum = u.gradientCoordLpSeminormSum := by
   unfold gradientCoordLpSeminormSum gradCoordLpSeminorm

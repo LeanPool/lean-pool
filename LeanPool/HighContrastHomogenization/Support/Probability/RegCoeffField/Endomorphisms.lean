@@ -89,7 +89,7 @@ theorem continuous_matVecMul (R : Mat d) : Continuous (fun x : Vec d => matVecMu
   exact continuous_pi fun i =>
     continuous_finsetSum Finset.univ fun j _ => continuous_const.mul (continuous_apply j)
 
-private theorem matVecMul_one' (x : Vec d) : matVecMul (1 : Mat d) x = x := by
+theorem matVecMul_one' (x : Vec d) : matVecMul (1 : Mat d) x = x := by
   funext i; simp [matVecMul, Matrix.one_apply, Finset.sum_ite_eq]
 
 /-- A signed permutation acts as a homeomorphism of the base space. -/

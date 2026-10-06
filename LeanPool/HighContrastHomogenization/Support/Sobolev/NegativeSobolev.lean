@@ -80,7 +80,7 @@ def MeanZeroTestAdmissible (p : ENNReal) (hp_one : 1 < p) (hp_top : p ≠ ∞)
   meanZeroTestSeminorm hU hne p hp_one hp_top φ ≤ 1
 
 omit [NeZero d] in
-private theorem smoothTest_memLp_normalized (p : ENNReal) (φ : SmoothTestFunction hU) :
+theorem smoothTest_memLp_normalized (p : ENNReal) (φ : SmoothTestFunction hU) :
     MeasureTheory.MemLp (φ : Vec d → ℝ) p (domain hU hne).normalizedVolume := by
   refine ((domain hU hne).memLp_normalizedVolume_iff p _).mpr ?_
   change MeasureTheory.MemLp (φ : Vec d → ℝ) p (MeasureTheory.volume.restrict U)
@@ -88,7 +88,7 @@ private theorem smoothTest_memLp_normalized (p : ENNReal) (φ : SmoothTestFuncti
     (φ.toW1pFunction hU.toOpens p).memLp
 
 omit [NeZero d] in
-private theorem meanZeroTest_memLp_normalized (p : ENNReal)
+theorem meanZeroTest_memLp_normalized (p : ENNReal)
     (φ : MeanZeroW1pTestFunction hU hne p) :
     MeasureTheory.MemLp φ.toW1pFunction.toFun p (domain hU hne).normalizedVolume := by
   refine ((domain hU hne).memLp_normalizedVolume_iff p _).mpr ?_
@@ -96,7 +96,7 @@ private theorem meanZeroTest_memLp_normalized (p : ENNReal)
   exact φ.toW1pFunction.memLp
 
 omit [NeZero d] in
-private theorem pairing_integrable (p : ENNReal) (hp_one : 1 < p)
+theorem pairing_integrable (p : ENNReal) (hp_one : 1 < p)
     (f : Vec d → ℝ)
     (hf : MeasureTheory.MemLp f (ENNReal.conjExponent p) (domain hU hne).normalizedVolume)
     (g : Vec d → ℝ) (hg : MeasureTheory.MemLp g p (domain hU hne).normalizedVolume) :

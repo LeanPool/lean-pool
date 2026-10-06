@@ -263,24 +263,24 @@ theorem cubeBesovDualPartialSeminorm_le_cubeBesovDualPartialNorm_of_bddAbove {d 
   have hNonempty : (cubeBesovDualPartialSeminormValueSet Q s p q N f).Nonempty := by
     refine ⟨0, ?_⟩
     refine ⟨fun _ => (0 : ℝ), ?_, ?_⟩
-    refine ⟨?_, by simpa using cubeAverage_const Q (0 : ℝ), ?_⟩
-    · unfold cubeBesovDualTestSeminorm
-      by_cases hq : cubeBesovConjExponent q = ∞
-      · rw [ite_eq_left hq]
-        rw [cubeBesovPartialSeminormTop_zero (Q := Q) (s := s) (p := cubeBesovConjExponent p)
-          (N := N) hp0 hpTop]
-        norm_num
-      · have hq0 : cubeBesovConjExponent q ≠ 0 := cubeBesovConjExponent_ne_zero q
-        rw [ite_eq_right hq]
-        rw [cubeBesovPartialSeminorm_zero (Q := Q) (s := s) (p := cubeBesovConjExponent p)
-          (q := cubeBesovConjExponent q) (N := N) hp0 hpTop hq0 hq]
-        norm_num
-    · intro j hj R hR
-      rw [cubeFluctuation_zero]
-      exact
-        (MeasureTheory.memLp_const (0 : ℝ) :
-          MeasureTheory.MemLp (fun _ : Vec d => (0 : ℝ))
-            (cubeBesovConjExponent p) (normalizedCubeMeasure R))
+    · refine ⟨?_, by simpa using cubeAverage_const Q (0 : ℝ), ?_⟩
+      · unfold cubeBesovDualTestSeminorm
+        by_cases hq : cubeBesovConjExponent q = ∞
+        · rw [ite_eq_left hq]
+          rw [cubeBesovPartialSeminormTop_zero (Q := Q) (s := s) (p := cubeBesovConjExponent p)
+            (N := N) hp0 hpTop]
+          norm_num
+        · have hq0 : cubeBesovConjExponent q ≠ 0 := cubeBesovConjExponent_ne_zero q
+          rw [ite_eq_right hq]
+          rw [cubeBesovPartialSeminorm_zero (Q := Q) (s := s) (p := cubeBesovConjExponent p)
+            (q := cubeBesovConjExponent q) (N := N) hp0 hpTop hq0 hq]
+          norm_num
+      · intro j hj R hR
+        rw [cubeFluctuation_zero]
+        exact
+          (MeasureTheory.memLp_const (0 : ℝ) :
+            MeasureTheory.MemLp (fun _ : Vec d => (0 : ℝ))
+              (cubeBesovConjExponent p) (normalizedCubeMeasure R))
     · unfold cubeBesovPairing
       rw [show (fun x => f x * (0 : ℝ)) = fun _ => (0 : ℝ) by
         funext x

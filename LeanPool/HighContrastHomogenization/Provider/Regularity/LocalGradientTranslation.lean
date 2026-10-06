@@ -43,7 +43,7 @@ variable {d : ℕ}
 
 /-! ## The cube-index shift of a translation -/
 
-private theorem exists_translationDepth (z : Vec d) :
+theorem exists_translationDepth (z : Vec d) :
     ∃ N : ℕ, 1 + 2 * ‖z‖ ≤ (3 : ℝ) ^ N :=
   ((tendsto_pow_atTop_atTop_of_one_lt
     (by norm_num : (1 : ℝ) < 3)).eventually_ge_atTop (1 + 2 * ‖z‖)).exists

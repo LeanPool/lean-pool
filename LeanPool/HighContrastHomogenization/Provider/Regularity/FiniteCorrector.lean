@@ -50,7 +50,7 @@ public noncomputable def finiteAffinePointwiseCoeff {d : ℕ}
   Internal.Ch02.BookCh02.pointwiseCoeffOn
     (Book.Ch02.cubeDomain (originCube d m)) (a.coeffOn (originCube d m))
 
-private theorem finiteAffinePointwiseCoeff_isElliptic {d : ℕ}
+theorem finiteAffinePointwiseCoeff_isElliptic {d : ℕ}
     (a : Book.Ch02.TriadicCoeffFamily d) (m : ℤ) :
     IsEllipticFieldOn (finiteAffinePointwiseCoeff a m).lam
       (finiteAffinePointwiseCoeff a m).Lam
@@ -416,7 +416,7 @@ private theorem finiteAffineH1_isHarmonic_pointwise {d : ℕ} [NeZero d]
         rw [hneg, integral_neg]
         ring
 
-private theorem finiteAffineH1_isHarmonic {d : ℕ} [NeZero d]
+theorem finiteAffineH1_isHarmonic {d : ℕ} [NeZero d]
     (a : Book.Ch02.TriadicCoeffFamily d) (m : ℤ) (e : Vec d) :
     IsAHarmonicGradient (a.coeffOn (originCube d m)).toCoeffField
       (Book.Ch02.cubeDomain (originCube d m) : Set (Vec d))
@@ -697,7 +697,7 @@ private theorem scaleNormalizedPositiveBesovVectorNormTwo_const
     Book.Ch03.scaleNormalizedPositiveBesovVectorSeminormTwo euclideanNorm
   rw [cubeAverageVec_const, hsemi, add_zero]
 
-private theorem finiteAffineBoundaryH1_isConstantCoeffForcedEquation
+theorem finiteAffineBoundaryH1_isConstantCoeffForcedEquation
     {d : ℕ} [NeZero d] (m : ℤ) (e : Vec d) :
     Book.Ch03.IsConstantCoeffForcedEquation (originCube d m)
       (identityConstantCoeffMatrix d) (finiteAffineBoundaryH1 m e)

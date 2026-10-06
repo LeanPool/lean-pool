@@ -66,7 +66,7 @@ private theorem section53CoarseFluctuationBetaCoreParams_le_sum_gap {d : ℕ}
   unfold section53CoarseFluctuationBetaCoreParams
   exact min_le_left _ _
 
-private theorem twoBetaShiftedParams_sum_lt_one {d : ℕ}
+theorem twoBetaShiftedParams_sum_lt_one {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     (params.sUpper + 2 * section53CoarseFluctuationBetaParams params) +
         (params.sLower + 2 * section53CoarseFluctuationBetaParams params) < 1 := by
@@ -75,7 +75,7 @@ private theorem twoBetaShiftedParams_sum_lt_one {d : ℕ}
   unfold section53CoarseFluctuationBetaParams
   nlinarith
 
-private theorem twoBetaShiftedParams_sUpper_lt_one {d : ℕ}
+theorem twoBetaShiftedParams_sUpper_lt_one {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     params.sUpper + 2 * section53CoarseFluctuationBetaParams params < 1 := by
   have hsum := twoBetaShiftedParams_sum_lt_one params
@@ -85,7 +85,7 @@ private theorem twoBetaShiftedParams_sUpper_lt_one {d : ℕ}
     nlinarith [params.sLower_nonneg]
   nlinarith
 
-private theorem twoBetaShiftedParams_sLower_lt_one {d : ℕ}
+theorem twoBetaShiftedParams_sLower_lt_one {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     params.sLower + 2 * section53CoarseFluctuationBetaParams params < 1 := by
   have hsum := twoBetaShiftedParams_sum_lt_one params

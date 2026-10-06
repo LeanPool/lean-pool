@@ -55,7 +55,7 @@ public noncomputable def inwardApproximation
   inwardMollification (unitConvexApproxKernel (d := d)) u.zeroExtension
     x0 r (unitConvexApproxScale n)
 
-private theorem inwardApproximation_properties
+theorem inwardApproximation_properties
     {d : ℕ} {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     (u : H10Function U) {x0 : Vec d} {r : ℝ}
     (hball : Metric.closedBall x0 r ⊆ U) (hr : 0 < r) (n : ℕ) :
@@ -65,7 +65,7 @@ private theorem inwardApproximation_properties
   exact u.inwardMollification_unit_properties hU hball hr
     (W1pFunction.unitConvexApproxScale_pos n)
 
-private theorem tendsto_inwardApproximation_value
+theorem tendsto_inwardApproximation_value
     {d : ℕ} {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     (u : H10Function U) (p : FiniteLpExponent)
     (hu : MemLpOn U p.exponent u.toH1Function.toFun)
@@ -99,7 +99,7 @@ private theorem tendsto_inwardApproximation_value
     rfl
   exact hrestricted.congr' heq
 
-private theorem tendsto_inwardApproximation_grad
+theorem tendsto_inwardApproximation_grad
     {d : ℕ} {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     (u : H10Function U) (p : FiniteLpExponent)
     (hgrad : GradMemLpOn U p.exponent u.toH1Function.grad)

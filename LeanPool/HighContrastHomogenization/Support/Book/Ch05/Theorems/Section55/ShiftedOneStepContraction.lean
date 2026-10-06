@@ -44,7 +44,7 @@ private theorem section53CoarseFluctuationBetaCoreParams_pos {d : ℕ}
   exact lt_min hgap
     (lt_min hupper (lt_min hlower (lt_min hupper_gain hlower_gain)))
 
-private theorem section53CoarseFluctuationBetaParams_pos {d : ℕ}
+theorem section53CoarseFluctuationBetaParams_pos {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     0 < section53CoarseFluctuationBetaParams params := by
   unfold section53CoarseFluctuationBetaParams
@@ -57,7 +57,7 @@ private theorem section53CoarseFluctuationBetaCoreParams_le_sum_gap {d : ℕ}
   unfold section53CoarseFluctuationBetaCoreParams
   exact min_le_left _ _
 
-private theorem betaShiftedParams_sUpper_lt_one {d : ℕ}
+theorem betaShiftedParams_sUpper_lt_one {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     params.sUpper + section53CoarseFluctuationBetaParams params < 1 := by
   have hcore_le := section53CoarseFluctuationBetaCoreParams_le_sum_gap params
@@ -66,7 +66,7 @@ private theorem betaShiftedParams_sUpper_lt_one {d : ℕ}
   unfold section53CoarseFluctuationBetaParams
   linarith
 
-private theorem betaShiftedParams_sLower_lt_one {d : ℕ}
+theorem betaShiftedParams_sLower_lt_one {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     params.sLower + section53CoarseFluctuationBetaParams params < 1 := by
   have hcore_le := section53CoarseFluctuationBetaCoreParams_le_sum_gap params
@@ -75,7 +75,7 @@ private theorem betaShiftedParams_sLower_lt_one {d : ℕ}
   unfold section53CoarseFluctuationBetaParams
   linarith
 
-private theorem betaShiftedParams_sum_lt_one {d : ℕ}
+theorem betaShiftedParams_sum_lt_one {d : ℕ}
     (params : QuantitativeCoarseGrainedEllipticityParams d) :
     (params.sUpper + section53CoarseFluctuationBetaParams params) +
         (params.sLower + section53CoarseFluctuationBetaParams params) < 1 := by

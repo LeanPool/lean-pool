@@ -34,7 +34,7 @@ open MeasureTheory
 
 noncomputable section
 
-private theorem originCube_mem_descendantsAtDepth_succ {d : ℕ} (m : ℤ) :
+theorem originCube_mem_descendantsAtDepth_succ {d : ℕ} (m : ℤ) :
     originCube d m ∈ descendantsAtDepth (originCube d (m + 1)) 1 := by
   rw [descendantsAtDepth_one]
   simpa [originCube] using!
@@ -90,7 +90,7 @@ noncomputable def finiteAffineSuccessorRestriction {d : ℕ} [NeZero d]
       (finiteAffineCubeSolution a (m + 1) e).toH1.grad := by
   rfl
 
-private theorem cubeSolution_weakFluxIntegrable {d : ℕ}
+theorem cubeSolution_weakFluxIntegrable {d : ℕ}
     {Q : TriadicCube d} {a : Book.Ch02.TriadicCoeffFamily d}
     (u : Book.Ch03.CubeSolution Q a) :
     weakFluxIntegrable (Book.Ch02.cubeDomain Q).carrier

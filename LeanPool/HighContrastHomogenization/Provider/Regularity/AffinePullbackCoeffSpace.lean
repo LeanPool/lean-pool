@@ -34,7 +34,7 @@ noncomputable section
 
 variable {d : ℕ}
 
-private theorem affinePullback_quasiMeasurePreserving
+theorem affinePullback_quasiMeasurePreserving
     (L : Mat d) (hL : IsUnit L.det) :
     Measure.QuasiMeasurePreserving (matVecMul L) volume volume := by
   refine ⟨(continuous_matVecMul L).measurable, ?_⟩
@@ -43,7 +43,7 @@ private theorem affinePullback_quasiMeasurePreserving
   rw [hmap]
   exact Measure.smul_absolutelyContinuous
 
-private theorem affinePullback_aestronglyMeasurable
+theorem affinePullback_aestronglyMeasurable
     (L : Mat d) (hL : IsUnit L.det) {b : CoeffField d}
     (hb : AEStronglyMeasurable b volume) :
     AEStronglyMeasurable (affineCoefficient L hL b) volume := by
@@ -56,7 +56,7 @@ private theorem affinePullback_aestronglyMeasurable
     (continuous_const.matrix_mul continuous_id).matrix_mul continuous_const
   exact hcont.comp_aestronglyMeasurable hcomp
 
-private theorem affinePullback_isEllipticMatrix
+theorem affinePullback_isEllipticMatrix
     (L : Mat d) (hL : IsUnit L.det) {b : CoeffField d}
     {lam Lam : ℝ} {y : Vec d}
     (hb : IsEllipticMatrix lam Lam (b (matVecMul L y))) :

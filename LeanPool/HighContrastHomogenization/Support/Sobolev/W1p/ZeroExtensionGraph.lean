@@ -120,7 +120,7 @@ private theorem fderiv_approx_apply_eq_zero_of_not_mem {d : ℕ} {U : Set (Vec d
   rw [hzero.fderiv_eq]
   simp only [fderiv_zero, Pi.zero_apply, zero_apply]
 
-private theorem approx_sub_zeroExtension_eq_indicator_sub {d : ℕ} {U : Set (Vec d)}
+theorem approx_sub_zeroExtension_eq_indicator_sub {d : ℕ} {U : Set (Vec d)}
     (u : H10Function U) (n : ℕ) :
     (fun x => u.approx n x - u.zeroExtension x) =
       Set.indicator U (fun x => u.approx n x - u.toH1Function.toFun x) := by
@@ -130,7 +130,7 @@ private theorem approx_sub_zeroExtension_eq_indicator_sub {d : ℕ} {U : Set (Ve
   · rw [Set.indicator_of_notMem hx, u.zeroExtension_apply_of_not_mem hx,
       sub_zero, u.approx_eq_zero_of_not_mem n hx]
 
-private theorem fderiv_approx_sub_zeroExtensionGrad_eq_indicator_sub
+theorem fderiv_approx_sub_zeroExtensionGrad_eq_indicator_sub
     {d : ℕ} {U : Set (Vec d)} (u : H10Function U) (n : ℕ) (i : Fin d) :
     (fun x => (fderiv ℝ (u.approx n) x) (basisVec i) - u.zeroExtensionGrad x i) =
       Set.indicator U

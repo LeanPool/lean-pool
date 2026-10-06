@@ -93,7 +93,7 @@ theorem normalizedAffineCandidateError_sub_le_add
           cubeBesovScaleWeight 1 Q * cubeLpNorm Q (2 : ℝ≥0∞) r₂ := by
       ring
 
-private theorem cubeSolution_weakFluxIntegrable {d : ℕ}
+theorem cubeSolution_weakFluxIntegrable {d : ℕ}
     {Q : TriadicCube d} {a : Book.Ch02.TriadicCoeffFamily d}
     (u : Book.Ch03.CubeSolution Q a) :
     weakFluxIntegrable (Book.Ch02.cubeDomain Q : Set (Vec d))

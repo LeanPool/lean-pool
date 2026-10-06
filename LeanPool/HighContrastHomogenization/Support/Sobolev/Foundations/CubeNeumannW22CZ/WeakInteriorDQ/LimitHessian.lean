@@ -93,7 +93,7 @@ private theorem support_mul_fderiv_apply_basisVec_subset_of_tsupport_subset
     simp [hzero]
   exact support_fderiv_apply_basisVec_subset_of_tsupport_subset j hφ_sub hderiv_ne
 
-private theorem openCubeInnerOpenCubeLimitHessianPairing_eq_of_toScalarL2_eq
+theorem openCubeInnerOpenCubeLimitHessianPairing_eq_of_toScalarL2_eq
     {Q : TriadicCube d} {uQ : H1Function (openCubeSet Q)} {f : Vec d → ℝ}
     (h : WeakPoissonEquationOn (openCubeSet Q) uQ f)
     (hf : MemScalarL2 (openCubeSet Q) f)
@@ -129,7 +129,7 @@ private theorem openCubeInnerOpenCubeLimitHessianPairing_eq_of_toScalarL2_eq
         hσ₁_lt_one hσ₂_nonneg hσ₂_lt_one (hstep_abs n) φ ψ hφψ
   exact tendsto_nhds_unique (hlim φ) (by simpa [hseq] using hlim ψ)
 
-private theorem openCubeInnerOpenCubeLimitHessianPairing_add
+theorem openCubeInnerOpenCubeLimitHessianPairing_add
     {Q : TriadicCube d} {uQ : H1Function (openCubeSet Q)}
     (hV : IsOpenBoundedConvexDomain V)
     (stepSeq : ℕ → ℝ) (i j : Fin d)
@@ -191,7 +191,7 @@ private theorem openCubeInnerOpenCubeLimitHessianPairing_add
     simpa [hseq] using (hlim φ).add (hlim ψ)
   exact tendsto_nhds_unique (hlim (φ.add ψ)) hsum
 
-private theorem openCubeInnerOpenCubeLimitHessianPairing_smul
+theorem openCubeInnerOpenCubeLimitHessianPairing_smul
     {Q : TriadicCube d} {uQ : H1Function (openCubeSet Q)}
     (hV : IsOpenBoundedConvexDomain V)
     (stepSeq : ℕ → ℝ) (i j : Fin d)

@@ -36,7 +36,7 @@ private theorem continuous_euclideanNorm {d : ℕ} :
   simp_rw [euclideanNorm_eq_norm_ofVec]
   exact (PiLp.continuous_toLp 2 fun _ : Fin d => ℝ).norm
 
-private theorem locallyIntegrable_coarse_entry {d : ℕ} (a : Carrier d)
+theorem locallyIntegrable_coarse_entry {d : ℕ} (a : Carrier d)
     (i j : Fin d) : LocallyIntegrable (fun x : Vec d => a x i j) volume := by
   rw [locallyIntegrable_iff]
   intro K hK

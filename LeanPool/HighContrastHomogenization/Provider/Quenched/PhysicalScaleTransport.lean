@@ -36,7 +36,7 @@ noncomputable section
 
 variable {d : ℕ}
 
-private theorem quasiMeasurePreserving_triadicDilateVec (N : ℕ) :
+theorem quasiMeasurePreserving_triadicDilateVec (N : ℕ) :
     Measure.QuasiMeasurePreserving (triadicDilateVec (d := d) N) volume volume := by
   simpa [triadicDilateVec, Pi.smul_apply, smul_eq_mul] using!
     (Measure.quasiMeasurePreserving_smul (μ := volume)
@@ -54,7 +54,7 @@ private theorem norm_triadicDilateVec_le (N : ℕ) (x : Vec d) :
 
 /-- The triadic dilation carries the ball of radius `R` into the ball of radius
 `3^N R`, so a locally uniformly elliptic field stays one under rescaling. -/
-private theorem isAELocallyUniformlyElliptic_rescaleCoeffField (N : ℕ)
+theorem isAELocallyUniformlyElliptic_rescaleCoeffField (N : ℕ)
     (a : CoeffSpace d) :
     IsAELocallyUniformlyElliptic (rescaleCoeffField N (⇑a.1)) := by
   intro R hR
@@ -70,7 +70,7 @@ private theorem isAELocallyUniformlyElliptic_rescaleCoeffField (N : ℕ)
 
 /-- The triadic dilation carries the open cube shrunk by `N` generations into
 the open cube. -/
-private theorem triadicDilateVec_mem_openCubeSet (N : ℕ) (Q : TriadicCube d)
+theorem triadicDilateVec_mem_openCubeSet (N : ℕ) (Q : TriadicCube d)
     {x : Vec d} (hx : x ∈ openCubeSet (dilateCube (-(N : ℤ)) Q)) :
     triadicDilateVec N x ∈ openCubeSet Q := by
   intro i

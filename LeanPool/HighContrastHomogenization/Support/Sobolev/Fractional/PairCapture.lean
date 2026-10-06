@@ -101,7 +101,7 @@ theorem mem_childCubes_of_scale_eq_of_index_range {P T : TriadicCube d}
       ((⟨(T.index i - 3 * P.index i + 1).toNat, hlt i⟩ : Fin 3) : ℤ) =
         T.index i - 3 * P.index i + 1 := by
     simp [Int.toNat_of_nonneg h.1]
-  show T.index i =
+  change T.index i =
     3 * P.index i +
       ((⟨(T.index i - 3 * P.index i + 1).toNat, hlt i⟩ : Fin 3) : ℤ) - 1
   rw [hcast]
@@ -131,7 +131,7 @@ theorem index_range_of_mem_descendantsAtDepth {Q : TriadicCube d} :
       have hkey : (3 : ℤ) ^ (m + 1) * Q.index i = 3 * (3 ^ m * Q.index i) := by
         ring
       rw [halfRange_succ, hkey]
-      show 3 * (3 ^ m * Q.index i) - (3 * halfRange m + 1) ≤
+      change 3 * (3 ^ m * Q.index i) - (3 * halfRange m + 1) ≤
           3 * R.index i + (digits i : ℤ) - 1 ∧
         3 * R.index i + (digits i : ℤ) - 1 ≤
           3 * (3 ^ m * Q.index i) + (3 * halfRange m + 1)
@@ -176,7 +176,7 @@ theorem mem_descendantsAtDepth_of_index_range {Q : TriadicCube d} :
           push_cast
           ring
         · intro i
-          show 0 ≤ T.index i - 3 * ((T.index i + 1) / 3) + 1 ∧
+          change 0 ≤ T.index i - 3 * ((T.index i + 1) / 3) + 1 ∧
             T.index i - 3 * ((T.index i + 1) / 3) + 1 < 3
           omega
       exact mem_descendantsAtDepth_succ_iff.mpr ⟨_, hPmem, hchild⟩

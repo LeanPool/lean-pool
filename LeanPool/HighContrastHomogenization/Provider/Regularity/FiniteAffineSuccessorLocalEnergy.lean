@@ -59,7 +59,7 @@ private theorem centralDescendant_originCube_two {d : ℕ} (m : ℤ) :
     simp [CubeCalderonZygmund.centralDescendant,
       CubeCalderonZygmund.centralChild, originCube]
 
-private theorem originCube_sub_two_mem_descendantsAtDepth {d : ℕ} (m : ℤ) :
+theorem originCube_sub_two_mem_descendantsAtDepth {d : ℕ} (m : ℤ) :
     originCube d (m - 2) ∈ descendantsAtDepth (originCube d m) 2 := by
   rw [← centralDescendant_originCube_two (d := d) m]
   exact CubeCalderonZygmund.centralDescendant_mem_descendantsAtDepth

@@ -285,8 +285,8 @@ theorem mgf_le_exp_bennett_of_abs_le_of_integral_eq_zero
         ((ProbabilityTheory.moment X 2 μ / y ^ (2 : ℕ)) *
           (Real.exp (l * y) - 1 - l * y)) := by
   have hmoment_nonneg : 0 ≤ ProbabilityTheory.moment X 2 μ := by
-    simp [ProbabilityTheory.moment]
-    positivity
+    rw [ProbabilityTheory.moment]
+    exact integral_nonneg (fun ω => sq_nonneg _)
   have hgap_nonneg : 0 ≤ Real.exp (l * y) - 1 - l * y := by
     have h := Real.add_one_le_exp (l * y)
     linarith

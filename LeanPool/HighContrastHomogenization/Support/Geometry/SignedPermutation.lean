@@ -34,7 +34,7 @@ def IsSignedPermutationMatrix {d : ℕ} (R : Mat d) : Prop :=
     (∀ i, s i = 1 ∨ s i = -1) ∧
       ∀ i j, R i j = if i = σ j then s j else 0
 
-private theorem matVecMul_one {d : ℕ} (x : Vec d) :
+theorem matVecMul_one {d : ℕ} (x : Vec d) :
     matVecMul (1 : Mat d) x = x := by
   ext i
   unfold matVecMul
@@ -178,7 +178,7 @@ theorem IsSignedPermutationMatrix.abs_det_eq_one {d : ℕ} {R : Mat d}
     rw [← abs_mul, hsquare, abs_one]
   nlinarith
 
-private theorem continuous_matVecMul {d : ℕ} (R : Mat d) :
+theorem continuous_matVecMul {d : ℕ} (R : Mat d) :
     Continuous (fun x : Vec d => matVecMul R x) := by
   change Continuous fun x : Fin d → ℝ => fun i => ∑ j, R i j * x j
   exact continuous_pi fun i =>

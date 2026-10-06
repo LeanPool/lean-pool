@@ -52,7 +52,7 @@ public noncomputable def finiteAffineHarmonicGradient
     (finiteCubeSolutionRestriction a hnm
       (finiteAffineCubeSolution a m e)).toPointwiseAHarmonic
 
-private theorem finiteAffineHarmonicGradient_add
+theorem finiteAffineHarmonicGradient_add
     {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
     {n m : ℤ} (hnm : n ≤ m) (e e' : Vec d) :
     finiteAffineHarmonicGradient a hnm (e + e') =
@@ -94,7 +94,7 @@ private theorem finiteAffineHarmonicGradient_add
   rw [haddx]
   simp
 
-private theorem finiteAffineHarmonicGradient_smul
+theorem finiteAffineHarmonicGradient_smul
     {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
     {n m : ℤ} (hnm : n ≤ m) (c : ℝ) (e : Vec d) :
     finiteAffineHarmonicGradient a hnm (c • e) =

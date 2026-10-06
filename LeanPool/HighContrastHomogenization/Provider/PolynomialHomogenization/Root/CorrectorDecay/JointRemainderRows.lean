@@ -26,7 +26,7 @@ open MeasureTheory Set
 
 noncomputable section
 
-private theorem cubeSolution_weakFluxIntegrable
+theorem cubeSolution_weakFluxIntegrable
     {d : ℕ} {Q : TriadicCube d} {a : Book.Ch02.TriadicCoeffFamily d}
     (u : Book.Ch03.CubeSolution Q a) :
     weakFluxIntegrable (Book.Ch02.cubeDomain Q : Set (Vec d))

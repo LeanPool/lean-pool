@@ -47,7 +47,7 @@ theorem exactDualConjExponent_one_lt (p : ℝ) (hp : 1 < p) :
 theorem exactDualConjExponent_one_le (p : ℝ) (hp : 1 < p) :
     1 ≤ exactDualConjExponent p :=
   (exactDualConjExponent_one_lt p hp).le
-private theorem exactDualHolderConjugateENNReal (p : ℝ) (hp : 1 < p) :
+theorem exactDualHolderConjugateENNReal (p : ℝ) (hp : 1 < p) :
     ENNReal.HolderConjugate (ENNReal.ofReal p)
       (ENNReal.ofReal (exactDualConjExponent p)) := by
   let h := exactDualConjExponent_holder p hp
@@ -505,7 +505,7 @@ private theorem exactDualDepthTerm_zero {d : ℕ} (Q : TriadicCube d)
   rw [exactDualDepthAverage_zero Q p hp hu j,
     ENNReal.zero_rpow_of_pos (inv_pos.mpr hp), mul_zero]
 
-private theorem exactDualFiniteSeminorm_zero {d : ℕ} (P : ExactOverlapFiniteParameters)
+theorem exactDualFiniteSeminorm_zero {d : ℕ} (P : ExactOverlapFiniteParameters)
     (Q : TriadicCube d) (hu : ExactOverlapIntegrable Q (fun _ : Vec d => (0 : ℝ))) :
     exactOverlapFiniteSeminorm P Q (fun _ => (0 : ℝ)) hu = 0 := by
   rw [exactOverlapFiniteSeminorm_eq]
@@ -516,7 +516,7 @@ private theorem exactDualFiniteSeminorm_zero {d : ℕ} (P : ExactOverlapFinitePa
   rw [tsum_zero, ENNReal.zero_rpow_of_pos]
   exact inv_pos.mpr hq
 
-private theorem exactDualTopSeminorm_zero {d : ℕ} (P : ExactOverlapTopParameters)
+theorem exactDualTopSeminorm_zero {d : ℕ} (P : ExactOverlapTopParameters)
     (Q : TriadicCube d) (hu : ExactOverlapIntegrable Q (fun _ : Vec d => (0 : ℝ))) :
     exactOverlapTopSeminorm P Q (fun _ => (0 : ℝ)) hu = 0 := by
   rw [exactOverlapTopSeminorm_eq]
@@ -524,14 +524,14 @@ private theorem exactDualTopSeminorm_zero {d : ℕ} (P : ExactOverlapTopParamete
   simp_rw [exactDualDepthTerm_zero Q P.s P.p hp hu]
   exact iSup_const
 
-private theorem exactDualFiniteNorm_zero {d : ℕ} (P : ExactOverlapFiniteParameters)
+theorem exactDualFiniteNorm_zero {d : ℕ} (P : ExactOverlapFiniteParameters)
     (Q : TriadicCube d) (hu : ExactOverlapIntegrable Q (fun _ : Vec d => (0 : ℝ))) :
     exactOverlapFiniteNorm P Q (fun _ => (0 : ℝ)) hu = 0 := by
   rw [exactOverlapFiniteNorm_eq, exactDualFiniteSeminorm_zero P Q hu,
     exactOverlapRootMean_zero]
   simp only [abs_zero, ENNReal.ofReal_zero, mul_zero, add_zero]
 
-private theorem exactDualTopNorm_zero {d : ℕ} (P : ExactOverlapTopParameters)
+theorem exactDualTopNorm_zero {d : ℕ} (P : ExactOverlapTopParameters)
     (Q : TriadicCube d) (hu : ExactOverlapIntegrable Q (fun _ : Vec d => (0 : ℝ))) :
     exactOverlapTopNorm P Q (fun _ => (0 : ℝ)) hu = 0 := by
   rw [exactOverlapTopNorm_eq, exactDualTopSeminorm_zero P Q hu,

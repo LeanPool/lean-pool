@@ -51,7 +51,7 @@ public noncomputable def finiteTrialHarmonicGradient
       (by exact_mod_cast hqm)
       (finiteAffineCubeSolution a (m : ℤ) e)).toPointwiseAHarmonic
 
-private theorem finiteTrialHarmonicGradient_add
+theorem finiteTrialHarmonicGradient_add
     {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
     {q m : ℕ} (hqm : q ≤ m) (e e' : Vec d) :
     finiteTrialHarmonicGradient a hqm (e + e') =
@@ -93,7 +93,7 @@ private theorem finiteTrialHarmonicGradient_add
   rw [haddx]
   simp
 
-private theorem finiteTrialHarmonicGradient_smul
+theorem finiteTrialHarmonicGradient_smul
     {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
     {q m : ℕ} (hqm : q ≤ m) (c : ℝ) (e : Vec d) :
     finiteTrialHarmonicGradient a hqm (c • e) =

@@ -164,7 +164,7 @@ private theorem measurePreserving_swapVecContinuousLinearEquiv {d : ℕ} (i j : 
     (MeasureTheory.volume_measurePreserving_piCongrLeft
       (fun _ : Fin d => ℝ) (Equiv.swap i j))
 
-private theorem measurePreserving_signFlipVecContinuousLinearEquiv_restrict_openCubeSet_originCube
+theorem measurePreserving_signFlipVecContinuousLinearEquiv_restrict_openCubeSet_originCube
     {d : ℕ} (i : Fin d) (n : ℤ) :
     MeasureTheory.MeasurePreserving (signFlipVecContinuousLinearEquiv i)
       (MeasureTheory.volume.restrict (openCubeSet (originCube d n)))
@@ -177,7 +177,7 @@ private theorem measurePreserving_signFlipVecContinuousLinearEquiv_restrict_open
     (measurePreserving_signFlipVecContinuousLinearEquiv i).restrict_preimage_emb
       (signFlipVecContinuousLinearEquiv i).toHomeomorph.measurableEmbedding U
 
-private theorem measurePreserving_swapVecContinuousLinearEquiv_restrict_openCubeSet_originCube
+theorem measurePreserving_swapVecContinuousLinearEquiv_restrict_openCubeSet_originCube
     {d : ℕ} (i j : Fin d) (n : ℤ) :
     MeasureTheory.MeasurePreserving (swapVecContinuousLinearEquiv i j)
       (MeasureTheory.volume.restrict (openCubeSet (originCube d n)))
@@ -210,7 +210,7 @@ theorem setIntegral_comp_swapVecContinuousLinearEquiv_openCubeSet_originCube
   simpa [U] using
     (hμ.integral_comp (swapVecContinuousLinearEquiv i j).toHomeomorph.measurableEmbedding f)
 
-private theorem fderiv_comp_signFlipVecContinuousLinearEquiv_apply_basisVec {d : ℕ}
+theorem fderiv_comp_signFlipVecContinuousLinearEquiv_apply_basisVec {d : ℕ}
     (i k : Fin d) {φ : Vec d → ℝ} {x : Vec d}
     (hφ : DifferentiableAt ℝ φ (signFlipVecContinuousLinearEquiv i x)) :
     (fderiv ℝ (fun y => φ (signFlipVecContinuousLinearEquiv i y)) x) (basisVec k) =
@@ -244,7 +244,7 @@ private theorem fderiv_comp_signFlipVecContinuousLinearEquiv_apply_basisVec {d :
         (fderiv ℝ φ (signFlipVecContinuousLinearEquiv i x)) (basisVec k) := by
           simp [T]
 
-private theorem fderiv_comp_swapVecContinuousLinearEquiv_apply_basisVec {d : ℕ}
+theorem fderiv_comp_swapVecContinuousLinearEquiv_apply_basisVec {d : ℕ}
     (i j k : Fin d) {φ : Vec d → ℝ} {x : Vec d}
     (hφ : DifferentiableAt ℝ φ (swapVecContinuousLinearEquiv i j x)) :
     (fderiv ℝ (fun y => φ (swapVecContinuousLinearEquiv i j y)) x) (basisVec (Equiv.swap i j k)) =
@@ -283,7 +283,7 @@ private theorem tsupport_comp_homeomorph_eq_preimage {α β : Type*}
   ext x
   simp [Function.support]
 
-private theorem tsupport_comp_signFlip_subset_openCubeSet_originCube {d : ℕ}
+theorem tsupport_comp_signFlip_subset_openCubeSet_originCube {d : ℕ}
     {f : Vec d → ℝ} (i : Fin d) (n : ℤ)
     (hsub : tsupport f ⊆ openCubeSet (originCube d n)) :
     tsupport (fun x => f (signFlipVecContinuousLinearEquiv i x)) ⊆
@@ -303,7 +303,7 @@ private theorem tsupport_comp_signFlip_subset_openCubeSet_originCube {d : ℕ}
   simpa [U] using
     (mem_openCubeSet_originCube_signFlipMatrix_iff (m := n) (i := i) (x := x)).1 hTx'
 
-private theorem tsupport_comp_swap_subset_openCubeSet_originCube {d : ℕ}
+theorem tsupport_comp_swap_subset_openCubeSet_originCube {d : ℕ}
     {f : Vec d → ℝ} (i j : Fin d) (n : ℤ)
     (hsub : tsupport f ⊆ openCubeSet (originCube d n)) :
     tsupport (fun x => f (swapVecContinuousLinearEquiv i j x)) ⊆

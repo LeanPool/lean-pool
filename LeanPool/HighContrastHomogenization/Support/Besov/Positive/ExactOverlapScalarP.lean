@@ -48,7 +48,7 @@ private theorem ne_top (p : FiniteLpExponent) : p.exponent ≠ ∞ :=
 private theorem toReal_pos (p : FiniteLpExponent) : 0 < p.exponent.toReal :=
   ENNReal.toReal_pos p.ne_zero p.ne_top
 
-private theorem one_le_toReal (p : FiniteLpExponent) : 1 ≤ p.exponent.toReal := by
+theorem one_le_toReal (p : FiniteLpExponent) : 1 ≤ p.exponent.toReal := by
   rw [← ENNReal.toReal_one]
   exact (ENNReal.toReal_le_toReal (by norm_num) p.ne_top).mpr p.one_le
 

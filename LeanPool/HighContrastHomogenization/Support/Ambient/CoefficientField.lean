@@ -466,7 +466,8 @@ theorem abs_apply_symmPartInv_le_of_isEllipticMatrix {d : ℕ} {lam Lam : ℝ} {
     · intro k _ hkj
       simp [e, Pi.single_eq_of_ne hkj]
     · simp [e]
-  have hcoord_sq : (((symmPart A)⁻¹ : Mat d) i j) ^ 2 ≤ vecNormSq (matVecMul ((symmPart A)⁻¹) e) := by
+  have hcoord_sq : (((symmPart A)⁻¹ : Mat d) i j) ^ 2 ≤ vecNormSq (matVecMul ((symmPart A)⁻¹) e)
+    := by
     calc
       (((symmPart A)⁻¹ : Mat d) i j) ^ 2 = (matVecMul ((symmPart A)⁻¹) e i) ^ 2 := by
         rw [hentry]
@@ -847,7 +848,8 @@ theorem memVectorL2_matVecMul_skewPart_of_isEllipticFieldOn {d : ℕ} {lam Lam :
   simpa using MeasureTheory.MemLp.of_le_mul hfj hterm_meas hbound
 
 @[expose]
-noncomputable def restrictCoeffField {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) : CoeffField d := by
+noncomputable def restrictCoeffField {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) : CoeffField d
+  := by
   classical
   exact fun x => if x ∈ U then a x else 0
 

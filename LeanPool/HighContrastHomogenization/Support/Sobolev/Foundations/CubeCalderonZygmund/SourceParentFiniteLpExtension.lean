@@ -52,7 +52,7 @@ private theorem cubeVolume_originCube_succ {d : ℕ} (m : ℤ) :
   rw [mul_pow]
   ring
 
-private theorem normalizedCubeMeasure_parent_restrict_source
+theorem normalizedCubeMeasure_parent_restrict_source
     {d : ℕ} (m : ℤ) :
     (normalizedCubeMeasure (originCube d (m + 1))).restrict
         (openCubeSet (originCube d m)) =

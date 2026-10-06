@@ -50,7 +50,7 @@ noncomputable def deriv (φ : H1WeakTestFunction U) (i : Fin d) : Vec d → ℝ 
 private theorem continuous (φ : H1WeakTestFunction U) : Continuous φ :=
   (φ.smooth.differentiable (by simp)).continuous
 
-private theorem memScalarL2 (φ : H1WeakTestFunction U) : MemScalarL2 U φ := by
+theorem memScalarL2 (φ : H1WeakTestFunction U) : MemScalarL2 U φ := by
   simpa [MemScalarL2, volumeMeasureOn] using
     (φ.continuous.memLp_of_hasCompactSupport φ.compactSupport).restrict U
 
@@ -64,7 +64,7 @@ private theorem deriv_compactSupport (φ : H1WeakTestFunction U) (i : Fin d) :
   simpa [H1WeakTestFunction.deriv] using!
     φ.compactSupport.fderiv_apply (𝕜 := ℝ) (basisVec i)
 
-private theorem deriv_memScalarL2 (φ : H1WeakTestFunction U) (i : Fin d) :
+theorem deriv_memScalarL2 (φ : H1WeakTestFunction U) (i : Fin d) :
     MemScalarL2 U (φ.deriv i) := by
   simpa [MemScalarL2, volumeMeasureOn] using
     ((φ.deriv_continuous i).memLp_of_hasCompactSupport (φ.deriv_compactSupport i)).restrict U

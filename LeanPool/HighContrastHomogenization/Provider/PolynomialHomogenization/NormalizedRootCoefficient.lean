@@ -44,7 +44,7 @@ noncomputable section
 
 variable {d : ℕ}
 
-private theorem isEllipticMatrix_positive_smul {lam Lam c : ℝ}
+theorem isEllipticMatrix_positive_smul {lam Lam c : ℝ}
     {A : Mat d} (hc : 0 < c) (hA : IsEllipticMatrix lam Lam A) :
     IsEllipticMatrix (c * lam) (c * Lam) (c • A) := by
   rcases hA with ⟨hlam, hlamLam, hlower, hupper⟩

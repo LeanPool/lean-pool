@@ -67,7 +67,7 @@ public noncomputable def originCubeAffineH1OfCoefficients
   simp only [originCubeAffineH1OfCoefficients, H1Function.add_grad,
     H1Function.grad_const, H1Function.affineOnIsSobolevRegularDomain_grad, zero_add]
 
-private theorem originCubeAffineH1OfCoefficients_add
+theorem originCubeAffineH1OfCoefficients_add
     (d : ℕ) [NeZero d] (k : ℤ)
     (p q : AffineCoefficients d) :
     originCubeAffineH1OfCoefficients d k (p + q) =
@@ -81,7 +81,7 @@ private theorem originCubeAffineH1OfCoefficients_add
   · funext x
     simp only [originCubeAffineH1OfCoefficients_grad, H1Function.add_grad, Prod.snd_add]
 
-private theorem originCubeAffineH1OfCoefficients_smul
+theorem originCubeAffineH1OfCoefficients_smul
     (d : ℕ) [NeZero d] (k : ℤ) (r : ℝ)
     (p : AffineCoefficients d) :
     originCubeAffineH1OfCoefficients d k (r • p) =

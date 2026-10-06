@@ -153,7 +153,7 @@ private theorem isAELocallyUniformlyElliptic_affineCoefficient
   filter_upwards [hell] with y hy hyb
   exact isEllipticMatrix_affineCoefficient L hL (hy hyb)
 
-private theorem exists_affineCoeffSpace (L : Mat d) (hL : IsUnit L.det)
+theorem exists_affineCoeffSpace (L : Mat d) (hL : IsUnit L.det)
     (a : CoeffSpace d) :
     ∃ b : CoeffSpace d,
       (⇑b.1 : CoeffField d) =ᵐ[volume] affineCoefficient L hL (⇑a.1) := by
@@ -284,7 +284,7 @@ private theorem isLocalTest_affinePullback
   simpa [Pi.smul_apply, smul_eq_mul] using!
     hcomp.hasCompactSupport.smul_left (f := fun _ : Vec d ↦ |L.det|⁻¹)
 
-private theorem measurable_affineCoeffSpace (L : Mat d) (hL : IsUnit L.det) :
+theorem measurable_affineCoeffSpace (L : Mat d) (hL : IsUnit L.det) :
     Measurable (affineCoeffSpace L hL : CoeffSpace d → CoeffSpace d) := by
   change @Measurable (CoeffSpace d) (CoeffSpace d) (coeffSigma d Set.univ)
     (MeasurableSpace.generateFrom
@@ -596,7 +596,7 @@ private theorem affineCoefficient_inv_affineCoefficient
     Matrix.nonsing_inv_mul _ hLT, Matrix.mul_one, Matrix.mul_nonsing_inv L hL,
     Matrix.one_mul]
 
-private theorem affineCoeffSpace_inv_affineCoeffSpace
+theorem affineCoeffSpace_inv_affineCoeffSpace
     (L : Mat d) (hL : IsUnit L.det) (a : CoeffSpace d) :
     affineCoeffSpace L⁻¹ (Matrix.isUnit_nonsing_inv_det L hL)
         (affineCoeffSpace L hL a) = a := by

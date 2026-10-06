@@ -122,7 +122,8 @@ theorem rieszKernel_integrableOn_ball {R : ℝ} (_hR : 0 < R) :
       (Metric.ball (0 : Vec d) R) MeasureTheory.volume := by
   let g : ℝ → ℝ := fun r => if r < R then r ^ (1 - (d : ℝ)) else 0
   have hag :
-      (fun x : Vec d => ‖x‖ ^ (1 - (d : ℝ))) =ᵐ[MeasureTheory.volume.restrict (Metric.ball (0 : Vec d) R)]
+      (fun x : Vec d => ‖x‖ ^ (1 - (d : ℝ))) =ᵐ[MeasureTheory.volume.restrict (Metric.ball (0 :
+        Vec d) R)]
         (g ∘ (‖·‖)) := by
     filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_ball] with x hx
     simp only [Function.comp_apply, g, Metric.mem_ball, dist_zero_right] at hx ⊢
@@ -189,7 +190,7 @@ theorem integrableOn_rieszKernel_ball
     exact (rieszKernel_integrableOn_ball (d := d) (by linarith : 0 < 2 * R)).congr
       (Filter.Eventually.of_forall (fun z => by
         unfold rieszKernel
-        show ‖z‖ ^ (1 - (d : ℝ)) = ‖x - (z + x)‖ ^ (1 - (d : ℝ))
+        change ‖z‖ ^ (1 - (d : ℝ)) = ‖x - (z + x)‖ ^ (1 - (d : ℝ))
         simp [norm_neg]))
   exact hBigInt.mono_set hBsub
 
@@ -210,7 +211,8 @@ theorem integral_rieszKernel_ball_le
   calc
     ∫ y in Metric.ball (0 : Vec d) R, rieszKernel x y ∂MeasureTheory.volume
         ≤ ∫ z in Metric.ball (0 : Vec d) (2 * R), ‖z‖ ^ (1 - (d : ℝ)) ∂MeasureTheory.volume := by
-            have hmp := MeasureTheory.measurePreserving_add_right (MeasureTheory.volume : Measure (Vec d)) x
+            have hmp := MeasureTheory.measurePreserving_add_right (MeasureTheory.volume :
+              Measure (Vec d)) x
             have hemb := (MeasurableEquiv.addRight x : Vec d ≃ᵐ Vec d).measurableEmbedding
             have hpre :
                 (· + x) ⁻¹' Metric.ball x (2 * R) = Metric.ball (0 : Vec d) (2 * R) := by
@@ -218,7 +220,8 @@ theorem integral_rieszKernel_ball_le
               simp [Metric.mem_ball]
             have htrans :
                 ∫ y in Metric.ball x (2 * R), rieszKernel x y ∂MeasureTheory.volume =
-                  ∫ z in Metric.ball (0 : Vec d) (2 * R), ‖z‖ ^ (1 - (d : ℝ)) ∂MeasureTheory.volume := by
+                  ∫ z in Metric.ball (0 : Vec d) (2 * R), ‖z‖ ^ (1 - (d : ℝ))
+                    ∂MeasureTheory.volume := by
               rw [← hmp.setIntegral_preimage_emb hemb, hpre]
               congr 1 with z
               unfold rieszKernel
@@ -232,7 +235,7 @@ theorem integral_rieszKernel_ball_le
               exact (rieszKernel_integrableOn_ball (d := d) h2R).congr
                 (Filter.Eventually.of_forall (fun z => by
                   unfold rieszKernel
-                  show ‖z‖ ^ (1 - (d : ℝ)) = ‖x - (z + x)‖ ^ (1 - (d : ℝ))
+                  change ‖z‖ ^ (1 - (d : ℝ)) = ‖x - (z + x)‖ ^ (1 - (d : ℝ))
                   simp [norm_neg]))
             calc
               ∫ y in Metric.ball (0 : Vec d) R, rieszKernel x y ∂MeasureTheory.volume
@@ -240,7 +243,8 @@ theorem integral_rieszKernel_ball_le
                       apply MeasureTheory.setIntegral_mono_set hinteg
                       · exact Filter.Eventually.of_forall (fun y => rieszKernel_nonneg x y)
                       · exact hBsub.eventuallyLE
-              _ = ∫ z in Metric.ball (0 : Vec d) (2 * R), ‖z‖ ^ (1 - (d : ℝ)) ∂MeasureTheory.volume :=
+              _ = ∫ z in Metric.ball (0 : Vec d) (2 * R), ‖z‖ ^ (1 - (d : ℝ))
+                ∂MeasureTheory.volume :=
                     htrans
     _ = (d : ℝ) * (MeasureTheory.volume (Metric.ball (0 : Vec d) 1)).toReal * (2 * R) := by
           exact integral_norm_rpow_one_sub_dim_ball (d := d) (by linarith)

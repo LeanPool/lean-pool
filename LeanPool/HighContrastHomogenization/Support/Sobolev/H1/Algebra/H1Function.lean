@@ -282,6 +282,149 @@ noncomputable instance {d : ℕ} {U : Set (Vec d)} : Module ℝ (H1Function U) :
     (toFunGrad_injective (d := d) (U := U))
     (fun _ _ => rfl)
 
+/-- The weak product rule for a smooth scalar multiplier on an `H¹` function. -/
+theorem hasWeakGradient_mulContDiff {d : ℕ} {U : Set (Vec d)}
+    (u : H1Function U) {φ : Vec d → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ) :
+    HasWeakGradientOn U (fun x => φ x * u x)
+      (fun x i => φ x * u.grad x i + u x * (fderiv ℝ φ x) (basisVec i)) := by
+  let μU : MeasureTheory.Measure (Vec d) := MeasureTheory.volume.restrict U
+  have hφ_cont : Continuous φ := hφ.continuous
+  intro i ψ hψ_smooth hψ_compact hψ_sub
+  let ei : Vec d := basisVec i
+  let dφ : Vec d → ℝ := fun x => (fderiv ℝ φ x) ei
+  let dψ : Vec d → ℝ := fun x => (fderiv ℝ ψ x) ei
+  let ψφ : Vec d → ℝ := fun x => φ x * ψ x
+  change
+    ∫ x, (φ x * u x) * dψ x ∂μU =
+      -∫ x, (φ x * u.grad x i + u x * dφ x) * ψ x ∂μU
+  have hψ_cont : Continuous ψ := hψ_smooth.continuous
+  have hdφ_cont : Continuous dφ := by
+    simpa [dφ] using
+      (hφ.continuous_fderiv (by simp)).clm_apply continuous_const
+  have hdψ_cont : Continuous dψ := by
+    simpa [dψ] using
+      (hψ_smooth.continuous_fderiv (by simp)).clm_apply continuous_const
+  have hdψ_compact : HasCompactSupport dψ := by
+    simpa [dψ] using hψ_compact.fderiv_apply (𝕜 := ℝ) ei
+  have hψφ_smooth : ContDiff ℝ (⊤ : ℕ∞) ψφ := hφ.mul hψ_smooth
+  have hψφ_compact : HasCompactSupport ψφ := by
+    simpa [ψφ] using! hψ_compact.mul_left (f := φ)
+  have hdψφ_cont : Continuous (fun x => (fderiv ℝ ψφ x) ei) := by
+    simpa [ei] using
+      (hψφ_smooth.continuous_fderiv (by simp)).clm_apply continuous_const
+  have hdψφ_compact : HasCompactSupport (fun x => (fderiv ℝ ψφ x) ei) := by
+    simpa [ei] using hψφ_compact.fderiv_apply (𝕜 := ℝ) ei
+  have hψφ_sub : tsupport ψφ ⊆ U := by
+    exact (tsupport_mul_subset_right (f := φ) (g := ψ)).trans hψ_sub
+  have hu_eq :
+      ∫ x, u x * (fderiv ℝ ψφ x) ei ∂μU =
+        -∫ x, u.grad x i * ψφ x ∂μU := by
+    simpa [μU] using u.hasWeakGradient i ψφ hψφ_smooth hψφ_compact hψφ_sub
+  have hu_loc : MeasureTheory.LocallyIntegrable u μU :=
+    u.memL2.locallyIntegrable (by norm_num)
+  have hgrad_loc : MeasureTheory.LocallyIntegrable (fun x => u.grad x i) μU :=
+    (u.gradMemL2 i).locallyIntegrable (by norm_num)
+  have hmul1_cont : Continuous (fun x => φ x * dψ x) := hφ_cont.mul hdψ_cont
+  have hmul1_compact : HasCompactSupport (fun x => φ x * dψ x) := by
+    simpa using! hdψ_compact.mul_left (f := φ)
+  have hu_mul1_int :
+      MeasureTheory.Integrable (fun x => u x * (φ x * dψ x)) μU := by
+    simpa [smul_eq_mul, μU, mul_assoc] using
+      hu_loc.integrable_smul_right_of_hasCompactSupport hmul1_cont hmul1_compact
+  have hmul2_cont : Continuous (fun x => ψ x * dφ x) := hψ_cont.mul hdφ_cont
+  have hmul2_compact : HasCompactSupport (fun x => ψ x * dφ x) := by
+    simpa using! hψ_compact.mul_right (f' := dφ)
+  have hu_mul2_int :
+      MeasureTheory.Integrable (fun x => u x * (ψ x * dφ x)) μU := by
+    simpa [smul_eq_mul, μU, mul_assoc] using
+      hu_loc.integrable_smul_right_of_hasCompactSupport hmul2_cont hmul2_compact
+  have hu_ψφ_int :
+      MeasureTheory.Integrable (fun x => u x * (fderiv ℝ ψφ x) ei) μU := by
+    simpa [smul_eq_mul, μU] using
+      hu_loc.integrable_smul_right_of_hasCompactSupport hdψφ_cont hdψφ_compact
+  have hgrad_mul1_int :
+      MeasureTheory.Integrable (fun x => u.grad x i * (φ x * ψ x)) μU := by
+    simpa [smul_eq_mul, μU, mul_assoc] using
+      hgrad_loc.integrable_smul_right_of_hasCompactSupport
+        (hφ_cont.mul hψ_cont) hψφ_compact
+  have hu_mul2ψ_int :
+      MeasureTheory.Integrable (fun x => (u x * dφ x) * ψ x) μU := by
+    simpa [smul_eq_mul, μU, mul_assoc, mul_left_comm, mul_comm] using
+      hu_loc.integrable_smul_right_of_hasCompactSupport hmul2_cont hmul2_compact
+  have hprod_deriv :
+      ∀ x, (fderiv ℝ ψφ x) ei = φ x * dψ x + ψ x * dφ x := by
+    intro x
+    have hφ_diff : DifferentiableAt ℝ φ x :=
+      (hφ.contDiffAt).differentiableAt (by simp)
+    have hψ_diff : DifferentiableAt ℝ ψ x :=
+      (hψ_smooth.contDiffAt).differentiableAt (by simp)
+    rw [show ψφ = φ * ψ by rfl, fderiv_mul hφ_diff hψ_diff]
+    simp [dφ, dψ, ei, smul_eq_mul]
+  have hleft_eq :
+      ∫ x, (φ x * u x) * dψ x ∂μU =
+        ∫ x, u x * (φ x * dψ x) ∂μU := by
+    refine MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall ?_)
+    intro x
+    ring
+  have hsplit :
+      ∫ x, u x * (φ x * dψ x) ∂μU =
+        ∫ x, u x * (fderiv ℝ ψφ x) ei ∂μU -
+          ∫ x, u x * (ψ x * dφ x) ∂μU := by
+    calc
+      ∫ x, u x * (φ x * dψ x) ∂μU
+          = ∫ x, (u x * (fderiv ℝ ψφ x) ei) - u x * (ψ x * dφ x) ∂μU := by
+              refine MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall ?_)
+              intro x
+              have hx :
+                  u x * (φ x * dψ x) =
+                    u x * (fderiv ℝ ψφ x) ei - u x * (ψ x * dφ x) := by
+                rw [hprod_deriv x]
+                ring
+              exact hx
+      _ = ∫ x, u x * (fderiv ℝ ψφ x) ei ∂μU -
+            ∫ x, u x * (ψ x * dφ x) ∂μU := by
+              rw [MeasureTheory.integral_sub hu_ψφ_int hu_mul2_int]
+  have hright_eq :
+      -∫ x, u.grad x i * ψφ x ∂μU -
+          ∫ x, u x * (ψ x * dφ x) ∂μU =
+        -∫ x, (φ x * u.grad x i + u x * dφ x) * ψ x ∂μU := by
+    have hgrad_term :
+        ∫ x, u.grad x i * ψφ x ∂μU =
+          ∫ x, u.grad x i * (φ x * ψ x) ∂μU := by
+      refine MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall ?_)
+      intro x
+      simp [ψφ]
+    have hu_term :
+        ∫ x, u x * (ψ x * dφ x) ∂μU =
+          ∫ x, (u x * dφ x) * ψ x ∂μU := by
+      refine MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall ?_)
+      intro x
+      ring
+    have hsum :
+        ∫ x, (φ x * u.grad x i + u x * dφ x) * ψ x ∂μU =
+          ∫ x, u.grad x i * (φ x * ψ x) ∂μU +
+            ∫ x, (u x * dφ x) * ψ x ∂μU := by
+      calc
+        ∫ x, (φ x * u.grad x i + u x * dφ x) * ψ x ∂μU
+            = ∫ x, u.grad x i * (φ x * ψ x) + (u x * dφ x) * ψ x ∂μU := by
+                refine MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall ?_)
+                intro x
+                ring
+        _ = ∫ x, u.grad x i * (φ x * ψ x) ∂μU +
+              ∫ x, (u x * dφ x) * ψ x ∂μU := by
+                rw [MeasureTheory.integral_add hgrad_mul1_int hu_mul2ψ_int]
+    rw [hgrad_term, hu_term, hsum]
+    ring
+  calc
+    ∫ x, (φ x * u x) * dψ x ∂μU
+        = ∫ x, u x * (φ x * dψ x) ∂μU := hleft_eq
+    _ = ∫ x, u x * (fderiv ℝ ψφ x) ei ∂μU -
+          ∫ x, u x * (ψ x * dφ x) ∂μU := hsplit
+    _ = -∫ x, u.grad x i * ψφ x ∂μU -
+          ∫ x, u x * (ψ x * dφ x) ∂μU := by
+          rw [hu_eq]
+    _ = -∫ x, (φ x * u.grad x i + u x * dφ x) * ψ x ∂μU := hright_eq
+
 /-- Multiplication of an `H¹` function by a smooth scalar multiplier which is
 bounded, together with its first derivatives, on the underlying domain.  This
 is the non-compact-support variant of `mulContDiffHasCompactSupport`; the test
@@ -295,7 +438,6 @@ noncomputable def mulContDiffMemLpTop {d : ℕ} {U : Set (Vec d)}
         (⊤ : ENNReal) (MeasureTheory.volume.restrict U)) : H1Function U := by
   let μU : MeasureTheory.Measure (Vec d) := MeasureTheory.volume.restrict U
   let Dφ : Vec d → Vec d := fun x i => (fderiv ℝ φ x) (basisVec i)
-  have hφ_cont : Continuous φ := hφ.continuous
   refine
     { toFun := fun x => φ x * u x
       grad := fun x i => φ x * u.grad x i + u x * Dφ x i
@@ -312,141 +454,7 @@ noncomputable def mulContDiffMemLpTop {d : ℕ} {U : Set (Vec d)}
         MeasureTheory.MemLp (fun x => u x * dφ x) 2 μU := by
       simpa [dφ, Dφ, μU, mul_comm] using (hdφ_memTop i).fun_mul (r := 2) u.memL2
     simpa [dφ, Dφ, Pi.add_apply] using! hfirst.add hsecond
-  · intro i ψ hψ_smooth hψ_compact hψ_sub
-    let ei : Vec d := basisVec i
-    let dφ : Vec d → ℝ := fun x => (fderiv ℝ φ x) ei
-    let dψ : Vec d → ℝ := fun x => (fderiv ℝ ψ x) ei
-    let ψφ : Vec d → ℝ := fun x => φ x * ψ x
-    change
-      ∫ x, (φ x * u x) * dψ x ∂μU =
-        -∫ x, (φ x * u.grad x i + u x * dφ x) * ψ x ∂μU
-    have hψ_cont : Continuous ψ := hψ_smooth.continuous
-    have hdφ_cont : Continuous dφ := by
-      simpa [dφ] using
-        (hφ.continuous_fderiv (by simp)).clm_apply continuous_const
-    have hdψ_cont : Continuous dψ := by
-      simpa [dψ] using
-        (hψ_smooth.continuous_fderiv (by simp)).clm_apply continuous_const
-    have hdψ_compact : HasCompactSupport dψ := by
-      simpa [dψ] using hψ_compact.fderiv_apply (𝕜 := ℝ) ei
-    have hψφ_smooth : ContDiff ℝ (⊤ : ℕ∞) ψφ := hφ.mul hψ_smooth
-    have hψφ_compact : HasCompactSupport ψφ := by
-      simpa [ψφ] using! hψ_compact.mul_left (f := φ)
-    have hdψφ_cont : Continuous (fun x => (fderiv ℝ ψφ x) ei) := by
-      simpa [ei] using
-        (hψφ_smooth.continuous_fderiv (by simp)).clm_apply continuous_const
-    have hdψφ_compact : HasCompactSupport (fun x => (fderiv ℝ ψφ x) ei) := by
-      simpa [ei] using hψφ_compact.fderiv_apply (𝕜 := ℝ) ei
-    have hψφ_sub : tsupport ψφ ⊆ U := by
-      exact (tsupport_mul_subset_right (f := φ) (g := ψ)).trans hψ_sub
-    have hu_eq :
-        ∫ x, u x * (fderiv ℝ ψφ x) ei ∂μU =
-          -∫ x, u.grad x i * ψφ x ∂μU := by
-      simpa [μU] using u.hasWeakGradient i ψφ hψφ_smooth hψφ_compact hψφ_sub
-    have hu_loc : MeasureTheory.LocallyIntegrable u μU :=
-      u.memL2.locallyIntegrable (by norm_num)
-    have hgrad_loc : MeasureTheory.LocallyIntegrable (fun x => u.grad x i) μU :=
-      (u.gradMemL2 i).locallyIntegrable (by norm_num)
-    have hmul1_cont : Continuous (fun x => φ x * dψ x) := hφ_cont.mul hdψ_cont
-    have hmul1_compact : HasCompactSupport (fun x => φ x * dψ x) := by
-      simpa using! hdψ_compact.mul_left (f := φ)
-    have hu_mul1_int :
-        MeasureTheory.Integrable (fun x => u x * (φ x * dψ x)) μU := by
-      simpa [smul_eq_mul, μU, mul_assoc] using
-        hu_loc.integrable_smul_right_of_hasCompactSupport hmul1_cont hmul1_compact
-    have hmul2_cont : Continuous (fun x => ψ x * dφ x) := hψ_cont.mul hdφ_cont
-    have hmul2_compact : HasCompactSupport (fun x => ψ x * dφ x) := by
-      simpa using! hψ_compact.mul_right (f' := dφ)
-    have hu_mul2_int :
-        MeasureTheory.Integrable (fun x => u x * (ψ x * dφ x)) μU := by
-      simpa [smul_eq_mul, μU, mul_assoc] using
-        hu_loc.integrable_smul_right_of_hasCompactSupport hmul2_cont hmul2_compact
-    have hu_ψφ_int :
-        MeasureTheory.Integrable (fun x => u x * (fderiv ℝ ψφ x) ei) μU := by
-      simpa [smul_eq_mul, μU] using
-        hu_loc.integrable_smul_right_of_hasCompactSupport hdψφ_cont hdψφ_compact
-    have hgrad_mul1_int :
-        MeasureTheory.Integrable (fun x => u.grad x i * (φ x * ψ x)) μU := by
-      simpa [smul_eq_mul, μU, mul_assoc] using
-        hgrad_loc.integrable_smul_right_of_hasCompactSupport
-          (hφ_cont.mul hψ_cont) hψφ_compact
-    have hu_mul2ψ_int :
-        MeasureTheory.Integrable (fun x => (u x * dφ x) * ψ x) μU := by
-      simpa [smul_eq_mul, μU, mul_assoc, mul_left_comm, mul_comm] using
-        hu_loc.integrable_smul_right_of_hasCompactSupport hmul2_cont hmul2_compact
-    have hprod_deriv :
-        ∀ x, (fderiv ℝ ψφ x) ei = φ x * dψ x + ψ x * dφ x := by
-      intro x
-      have hφ_diff : DifferentiableAt ℝ φ x :=
-        (hφ.contDiffAt).differentiableAt (by simp)
-      have hψ_diff : DifferentiableAt ℝ ψ x :=
-        (hψ_smooth.contDiffAt).differentiableAt (by simp)
-      rw [show ψφ = φ * ψ by rfl, fderiv_mul hφ_diff hψ_diff]
-      simp [dφ, dψ, ei, smul_eq_mul]
-    have hleft_eq :
-        ∫ x, (φ x * u x) * dψ x ∂μU =
-          ∫ x, u x * (φ x * dψ x) ∂μU := by
-      refine MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall ?_)
-      intro x
-      ring
-    have hsplit :
-        ∫ x, u x * (φ x * dψ x) ∂μU =
-          ∫ x, u x * (fderiv ℝ ψφ x) ei ∂μU -
-            ∫ x, u x * (ψ x * dφ x) ∂μU := by
-      calc
-        ∫ x, u x * (φ x * dψ x) ∂μU
-            = ∫ x, (u x * (fderiv ℝ ψφ x) ei) - u x * (ψ x * dφ x) ∂μU := by
-                refine MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall ?_)
-                intro x
-                have hx :
-                    u x * (φ x * dψ x) =
-                      u x * (fderiv ℝ ψφ x) ei - u x * (ψ x * dφ x) := by
-                  rw [hprod_deriv x]
-                  ring
-                exact hx
-        _ = ∫ x, u x * (fderiv ℝ ψφ x) ei ∂μU -
-              ∫ x, u x * (ψ x * dφ x) ∂μU := by
-                rw [MeasureTheory.integral_sub hu_ψφ_int hu_mul2_int]
-    have hright_eq :
-        -∫ x, u.grad x i * ψφ x ∂μU -
-            ∫ x, u x * (ψ x * dφ x) ∂μU =
-          -∫ x, (φ x * u.grad x i + u x * dφ x) * ψ x ∂μU := by
-      have hgrad_term :
-          ∫ x, u.grad x i * ψφ x ∂μU =
-            ∫ x, u.grad x i * (φ x * ψ x) ∂μU := by
-        refine MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall ?_)
-        intro x
-        simp [ψφ]
-      have hu_term :
-          ∫ x, u x * (ψ x * dφ x) ∂μU =
-            ∫ x, (u x * dφ x) * ψ x ∂μU := by
-        refine MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall ?_)
-        intro x
-        ring
-      have hsum :
-          ∫ x, (φ x * u.grad x i + u x * dφ x) * ψ x ∂μU =
-            ∫ x, u.grad x i * (φ x * ψ x) ∂μU +
-              ∫ x, (u x * dφ x) * ψ x ∂μU := by
-        calc
-          ∫ x, (φ x * u.grad x i + u x * dφ x) * ψ x ∂μU
-              = ∫ x, u.grad x i * (φ x * ψ x) + (u x * dφ x) * ψ x ∂μU := by
-                  refine MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall ?_)
-                  intro x
-                  ring
-          _ = ∫ x, u.grad x i * (φ x * ψ x) ∂μU +
-                ∫ x, (u x * dφ x) * ψ x ∂μU := by
-                  rw [MeasureTheory.integral_add hgrad_mul1_int hu_mul2ψ_int]
-      rw [hgrad_term, hu_term, hsum]
-      ring
-    calc
-      ∫ x, (φ x * u x) * dψ x ∂μU
-          = ∫ x, u x * (φ x * dψ x) ∂μU := hleft_eq
-      _ = ∫ x, u x * (fderiv ℝ ψφ x) ei ∂μU -
-            ∫ x, u x * (ψ x * dφ x) ∂μU := hsplit
-      _ = -∫ x, u.grad x i * ψφ x ∂μU -
-            ∫ x, u x * (ψ x * dφ x) ∂μU := by
-            rw [hu_eq]
-      _ = -∫ x, (φ x * u.grad x i + u x * dφ x) * ψ x ∂μU := hright_eq
+  · exact hasWeakGradient_mulContDiff u hφ
 
 @[simp] theorem mulContDiffMemLpTop_toFun {d : ℕ} {U : Set (Vec d)}
     (u : H1Function U) {φ : Vec d → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)

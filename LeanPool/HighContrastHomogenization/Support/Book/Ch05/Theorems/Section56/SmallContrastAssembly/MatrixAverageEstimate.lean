@@ -34,14 +34,14 @@ namespace SmallContrastAssembly
 
 open Section54.VarianceBoundGoodScale
 
-private theorem fullBlockQuadratic_add
+theorem fullBlockQuadratic_add
     {d : ℕ} (M N : FullBlockMat d) (q : FullBlockVec d) :
     fullBlockQuadratic (M + N) q =
       fullBlockQuadratic M q + fullBlockQuadratic N q := by
   unfold fullBlockQuadratic
   rw [Matrix.add_mulVec, dotProduct_add]
 
-private theorem fullBlockQuadratic_smul
+theorem fullBlockQuadratic_smul
     {d : ℕ} (c : ℝ) (M : FullBlockMat d) (q : FullBlockVec d) :
     fullBlockQuadratic (c • M) q = c * fullBlockQuadratic M q := by
   unfold fullBlockQuadratic

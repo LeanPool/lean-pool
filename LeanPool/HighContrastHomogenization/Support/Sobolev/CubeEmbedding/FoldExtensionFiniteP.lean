@@ -41,7 +41,7 @@ variable {d : ℕ}
 private theorem finiteLpExponent_ne_zero' (p : FiniteLpExponent) : p.exponent ≠ 0 :=
   (zero_lt_one.trans p.one_lt).ne'
 
-private theorem tendsto_eLpNorm_convexApproxSmoothW1p {U : Set (Vec d)}
+theorem tendsto_eLpNorm_convexApproxSmoothW1p {U : Set (Vec d)}
     (hU : IsOpenBoundedConvexDomain U) (p : FiniteLpExponent)
     (u : W1pFunction U p.exponent) {x0 : Vec d} {r : ℝ}
     (hball : Metric.closedBall x0 r ⊆ U) (hr : 0 < r) :
@@ -91,7 +91,7 @@ private theorem tendsto_eLpNorm_convexApproxSmoothW1p {U : Set (Vec d)}
     W1pFunction.ofContDiffOnIsOpenBoundedConvexDomain,
     W1pFunction.ofContDiffOnIsSobolevRegularDomain]
 
-private theorem tendsto_eLpNorm_grad_convexApproxSmoothW1p {U : Set (Vec d)}
+theorem tendsto_eLpNorm_grad_convexApproxSmoothW1p {U : Set (Vec d)}
     (hU : IsOpenBoundedConvexDomain U) (p : FiniteLpExponent)
     (u : W1pFunction U p.exponent) {x0 : Vec d} {r : ℝ}
     (hball : Metric.closedBall x0 r ⊆ U) (hr : 0 < r) (i : Fin d) :
@@ -259,7 +259,7 @@ private theorem HasWeakPartialDerivOn.of_tendsto_eLpNorm_finiteLp
     rw [heq_n n]
   exact tendsto_nhds_unique hlhs' hrhs.neg
 
-private theorem HasWeakGradientOn.of_tendsto_eLpNorm_finiteLp
+theorem HasWeakGradientOn.of_tendsto_eLpNorm_finiteLp
     {U : Set (Vec d)} (p : FiniteLpExponent)
     {u : Vec d → ℝ} {Du : Vec d → Vec d}
     {u_n : ℕ → Vec d → ℝ} {Du_n : ℕ → Vec d → Vec d}
@@ -294,7 +294,7 @@ structure FoldExtensionFiniteP (lo hi : Vec d) (p : FiniteLpExponent)
       ≤ ((3 : ℝ≥0∞) ^ d) ^ (1 / p.exponent.toReal) *
         eLpNorm (fun x => u.grad x i) p.exponent (volume.restrict (Box lo hi))
 
-private theorem finiteLpExponent_toReal_pos' (p : FiniteLpExponent) :
+theorem finiteLpExponent_toReal_pos' (p : FiniteLpExponent) :
     0 < p.exponent.toReal :=
   ENNReal.toReal_pos (finiteLpExponent_ne_zero' p) p.lt_top.ne
 

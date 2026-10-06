@@ -275,7 +275,7 @@ public noncomputable def smoothPoincareConst
     (hU : IsOpenBoundedConvexDomain U) : ℝ :=
   Real.sqrt (smoothPoincareSqConst (d := d) (U := U) hU)
 
-private theorem smoothPoincareConst_nonneg
+theorem smoothPoincareConst_nonneg
     (hU : IsOpenBoundedConvexDomain U) :
     0 ≤ smoothPoincareConst (d := d) (U := U) hU := by
   exact Real.sqrt_nonneg _
@@ -422,7 +422,7 @@ private theorem norm_toScalarL2_subAverage_le_smoothPoincareConst_mul_gradientCo
   change ‖u.subAverage.toScalarL2‖ ≤ C * u.gradientCoordL2NormSum
   exact le_of_sq_le_sq htarget_sq hright_nonneg
 
-private theorem unitConvexApproxScale_pos (n : ℕ) :
+theorem unitConvexApproxScale_pos (n : ℕ) :
     0 < unitConvexApproxScale n := by
   dsimp [unitConvexApproxScale]
   positivity
@@ -757,7 +757,7 @@ private theorem norm_toScalarL2_subAverage_le_smoothPoincareConst_mul_gradientCo
 
 /-- Positive-dimensional, positive-volume bounded open convex domains satisfy
 the mean-zero `L²` Poincare estimate. -/
-private theorem h1MeanZero_valueL2Norm_le_smoothPoincareConst_mul_gradientL2Norm
+theorem h1MeanZero_valueL2Norm_le_smoothPoincareConst_mul_gradientL2Norm
     [NeZero d] [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : IsOpenBoundedConvexDomain U) (hvol : 0 < (MeasureTheory.volume U).toReal)
     (u : H1MeanZeroFunction U) :
@@ -793,7 +793,7 @@ private theorem h1MeanZero_valueL2Norm_le_smoothPoincareConst_mul_gradientL2Norm
     _ = (C * d) * u.gradientL2Norm := by
       ring
 
-private theorem h1MeanZero_valueL2Norm_eq_zero_of_volume_toReal_eq_zero
+theorem h1MeanZero_valueL2Norm_eq_zero_of_volume_toReal_eq_zero
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hvol : (MeasureTheory.volume U).toReal = 0) (u : H1MeanZeroFunction U) :
     u.valueL2Norm = 0 := by
@@ -814,7 +814,7 @@ private theorem h1MeanZero_valueL2Norm_eq_zero_of_volume_toReal_eq_zero
   rw [hμ0, MeasureTheory.eLpNorm_measure_zero]
   rfl
 
-private theorem h1MeanZero_valueL2Norm_eq_zero_of_dim_zero
+theorem h1MeanZero_valueL2Norm_eq_zero_of_dim_zero
     {U : Set (Vec 0)} [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hvol : 0 < (MeasureTheory.volume U).toReal) (u : H1MeanZeroFunction U) :
     u.valueL2Norm = 0 := by

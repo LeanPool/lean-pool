@@ -43,7 +43,7 @@ instance instIsFiniteMeasureVolumeMeasureOnCubeSet_rhs {d : ℕ} (Q : TriadicCub
     MeasureTheory.IsFiniteMeasure (volumeMeasureOn (cubeSet Q)) :=
   isFiniteMeasureVolumeMeasureOnCubeSet_rhs Q
 
-private theorem openCubeSet_nonempty_rhs {d : ℕ} (Q : TriadicCube d) :
+theorem openCubeSet_nonempty_rhs {d : ℕ} (Q : TriadicCube d) :
     Set.Nonempty (openCubeSet Q) := by
   refine ⟨fun i => (Q.index i : ℝ) * cubeScaleFactor Q, ?_⟩
   intro i

@@ -100,7 +100,7 @@ private theorem enorm_cubeEuclideanWspGraphPointOfField {d : ℕ}
   unfold cubeEuclideanWspFullENorm
   rw [add_comm]
 
-private theorem cubeEuclideanWspKernel_sub {d : ℕ} (s : FractionalOrder)
+theorem cubeEuclideanWspKernel_sub {d : ℕ} (s : FractionalOrder)
     (p : FiniteLpExponent) (F G : Vec d → Vec d) :
     cubeEuclideanWspKernel s p (fun x => F x - G x) =
       fun z => cubeEuclideanWspKernel s p F z - cubeEuclideanWspKernel s p G z := by

@@ -44,7 +44,7 @@ private theorem triadicCube_ext {d : ℕ} {Q R : TriadicCube d}
   cases hindex
   rfl
 
-private theorem originCube_mem_descendantsAtDepth_of_int_le
+theorem originCube_mem_descendantsAtDepth_of_int_le
     {d : ℕ} {k m : ℤ} (hkm : k ≤ m) :
     originCube d k ∈
       descendantsAtDepth (originCube d m) (Int.toNat (m - k)) := by
@@ -98,7 +98,7 @@ unchanged. -/
       (finiteAffineSolution a m e).toH1.grad :=
   rfl
 
-private theorem finiteAffineSolutionInnerH1_toFun_add_ae
+theorem finiteAffineSolutionInnerH1_toFun_add_ae
     {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
     (k m : ℤ) (hkm : k ≤ m) (e e' : Vec d) :
     (finiteAffineSolutionInnerH1 a k m hkm (e + e')).toFun
@@ -115,7 +115,7 @@ private theorem finiteAffineSolutionInnerH1_toFun_add_ae
   simpa only [volumeMeasureOn, Book.Ch02.cubeDomain_coe,
     finiteAffineSolutionInnerH1_toFun] using! hinner
 
-private theorem finiteAffineSolutionInnerH1_toFun_smul_ae
+theorem finiteAffineSolutionInnerH1_toFun_smul_ae
     {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
     (k m : ℤ) (hkm : k ≤ m) (r : ℝ) (e : Vec d) :
     (finiteAffineSolutionInnerH1 a k m hkm (r • e)).toFun
@@ -130,7 +130,7 @@ private theorem finiteAffineSolutionInnerH1_toFun_smul_ae
   simpa only [volumeMeasureOn, Book.Ch02.cubeDomain_coe,
     finiteAffineSolutionInnerH1_toFun] using! hinner
 
-private theorem h1_toScalarL2_eq_of_ae_eq
+theorem h1_toScalarL2_eq_of_ae_eq
     {d : ℕ} {U : Set (Vec d)} (u v : H1Function U)
     (huv : u.toFun =ᵐ[volumeMeasureOn U] v.toFun) :
     u.toScalarL2 = v.toScalarL2 := by

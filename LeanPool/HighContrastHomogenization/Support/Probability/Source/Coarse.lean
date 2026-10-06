@@ -68,7 +68,7 @@ def IsLocalObservable {d : ℕ} (U : Set (Vec d)) (hU : MeasurableSet U)
     {β : Type*} [MeasurableSpace β] (X : Carrier d → β) : Prop :=
   @Measurable (Carrier d) β (localSigma U hU) _ X
 
-private theorem euclideanNorm_add_le {d : ℕ} (x y : Vec d) :
+theorem euclideanNorm_add_le {d : ℕ} (x y : Vec d) :
     euclideanNorm (x + y) ≤ euclideanNorm x + euclideanNorm y := by
   rw [euclideanNorm_eq_norm_ofVec, euclideanNorm_eq_norm_ofVec,
     euclideanNorm_eq_norm_ofVec]
@@ -108,14 +108,14 @@ private theorem vecNormSq_matVecMul_signedPermutation {d : ℕ} {R : Mat d}
         rcases hs j with hj | hj <;> rw [hj] <;> ring
   simpa [vecNormSq, vecDot, pow_two] using hsq
 
-private theorem euclideanNorm_matVecMul_signedPermutation {d : ℕ} {R : Mat d}
+theorem euclideanNorm_matVecMul_signedPermutation {d : ℕ} {R : Mat d}
     (hR : IsSignedPermutationMatrix R) (x : Vec d) :
     euclideanNorm (matVecMul R x) = euclideanNorm x := by
   rw [← sq_eq_sq₀ (euclideanNorm_nonneg _) (euclideanNorm_nonneg _),
     euclideanNorm_sq, euclideanNorm_sq]
   simpa [vecNormSq, vecDot, pow_two] using vecNormSq_matVecMul_signedPermutation hR x
 
-private theorem isEllipticMatrix_rotate {d : ℕ} {lam Lam : ℝ} {R A : Mat d}
+theorem isEllipticMatrix_rotate {d : ℕ} {lam Lam : ℝ} {R A : Mat d}
     (hR : IsSignedPermutationMatrix R) (hA : IsEllipticMatrix lam Lam A) :
     IsEllipticMatrix lam Lam (matTranspose R * A * R) := by
   have hdetA : IsUnit A.det := isUnit_det_of_isEllipticMatrix hA

@@ -73,7 +73,7 @@ public noncomputable def finiteAffineNormalizedLocalFullH1
     exact finiteAffineBoundaryH1 (n : ℤ) e) +
     normalizedLocalH1 (finiteAffineCorrectionLocalSequence a e) n k
 
-private theorem finiteAffineNormalizedLocalFullH1_grad_eq
+theorem finiteAffineNormalizedLocalFullH1_grad_eq
     {d : ℕ} [NeZero d] (a : Book.Ch02.TriadicCoeffFamily d)
     (e : Vec d) (n k : ℕ) :
     (finiteAffineNormalizedLocalFullH1 a e n k).grad =

@@ -83,6 +83,41 @@ private theorem tendsto_eLpNorm_one_of_tendsto_eLpNorm_two
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds
     hscaled (fun _ ↦ zero_le) hbound
 
+private theorem ae_eq_of_tendsto_eLpNorm_one
+    {α : Type*} [MeasurableSpace α] {μ : Measure α} {f g : α → ℝ}
+    {v : ℕ → α → ℝ}
+    (hf : Tendsto (fun n ↦ eLpNorm (fun x ↦ v n x - f x) 1 μ)
+      atTop (nhds 0))
+    (hg : Tendsto (fun n ↦ eLpNorm (fun x ↦ v n x - g x) 1 μ)
+      atTop (nhds 0)) :
+    f =ᵐ[μ] g := by
+  have hsum : Tendsto
+      (fun n ↦ eLpNorm (fun x ↦ v n x - f x) 1 μ +
+        eLpNorm (fun x ↦ v n x - g x) 1 μ) atTop (nhds 0) := by
+    simpa using hf.add hg
+  have hzero : eLpNorm (fun x ↦ f x - g x) 1 μ = 0 := by
+    apply le_antisymm ?_ (zero_le)
+    exact le_of_tendsto_of_tendsto' tendsto_const_nhds hsum (fun n ↦ by
+      calc
+        eLpNorm (fun x ↦ f x - g x) 1 μ =
+            eLpNorm ((fun x ↦ f x - v n x) + (fun x ↦ v n x - g x)) 1 μ := by
+          congr 1
+          funext x
+          change f x - g x = (f x - v n x) + (v n x - g x)
+          ring
+        _ ≤ eLpNorm (fun x ↦ f x - v n x) 1 μ +
+            eLpNorm (fun x ↦ v n x - g x) 1 μ :=
+          eLpNorm_add_le (by norm_num)
+        _ = eLpNorm (fun x ↦ v n x - f x) 1 μ +
+            eLpNorm (fun x ↦ v n x - g x) 1 μ := by
+          congr 1
+          simpa only [Pi.sub_apply] using!
+            (eLpNorm_sub_comm f (v n) 1 μ))
+  have hzero' := (eLpNorm_eq_zero_iff
+    (by norm_num : (1 : ENNReal) ≠ 0)).mp hzero
+  filter_upwards [hzero'] with x hx
+  exact sub_eq_zero.mp hx
+
 /-- On a bounded open convex domain, every coefficient-weighted zero-trace
 pair is represented, with its literal scalar and gradient fields, by an actual
 `H¹₀` function. -/
@@ -225,42 +260,8 @@ theorem exists_h10Function_of_memH1a0 [NeZero d]
     intro x
     rw [← ofReal_norm]
     simp only [Real.norm_eq_abs]
-  have hsum : Tendsto
-      (fun n ↦ eLpNorm (fun x ↦ v n x - w0.toH1Function.toFun x) 1
-          (volume.restrict U) +
-        eLpNorm (fun x ↦ v n x - u x) 1 (volume.restrict U))
-      atTop (nhds 0) := by
-    simpa using hvalueL1.add hsourceL1
-  have hvalueZero : eLpNorm
-      (fun x ↦ w0.toH1Function.toFun x - u x) 1 (volume.restrict U) = 0 := by
-    apply le_antisymm ?_ (zero_le)
-    exact le_of_tendsto_of_tendsto' tendsto_const_nhds hsum (fun n ↦ by
-      calc
-        eLpNorm (fun x ↦ w0.toH1Function.toFun x - u x) 1
-            (volume.restrict U) =
-            eLpNorm ((fun x ↦ w0.toH1Function.toFun x - v n x) +
-              (fun x ↦ v n x - u x)) 1 (volume.restrict U) := by
-                congr 1
-                funext x
-                change w0.toH1Function.toFun x - u x =
-                  (w0.toH1Function.toFun x - v n x) + (v n x - u x)
-                ring
-        _ ≤ eLpNorm (fun x ↦ w0.toH1Function.toFun x - v n x) 1
-              (volume.restrict U) +
-            eLpNorm (fun x ↦ v n x - u x) 1 (volume.restrict U) :=
-          eLpNorm_add_le (by norm_num)
-        _ = eLpNorm (fun x ↦ v n x - w0.toH1Function.toFun x) 1
-              (volume.restrict U) +
-            eLpNorm (fun x ↦ v n x - u x) 1 (volume.restrict U) := by
-          congr 1
-          simpa only [Pi.sub_apply] using!
-            (eLpNorm_sub_comm w0.toH1Function.toFun (v n) 1
-              (volume.restrict U)))
-  have hvalueAE : w0.toH1Function.toFun =ᵐ[volume.restrict U] u := by
-    have hzero := (eLpNorm_eq_zero_iff
-      (by norm_num : (1 : ENNReal) ≠ 0)).mp hvalueZero
-    filter_upwards [hzero] with x hx
-    exact sub_eq_zero.mp hx
+  have hvalueAE : w0.toH1Function.toFun =ᵐ[volume.restrict U] u :=
+    ae_eq_of_tendsto_eLpNorm_one hvalueL1 hsourceL1
   have huL2 : MemScalarL2 U u :=
     w0.toH1Function.memL2.ae_eq hvalueAE
   have hDuL2 : ∀ i, MemScalarL2 U (fun x ↦ Du x i) := by

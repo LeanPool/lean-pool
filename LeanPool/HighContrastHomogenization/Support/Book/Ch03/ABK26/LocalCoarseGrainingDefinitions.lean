@@ -37,7 +37,7 @@ open scoped BigOperators ENNReal
 
 noncomputable section
 
-private theorem memLp_hilbertify_normalizedCube_of_memVectorL2 {d : ℕ}
+theorem memLp_hilbertify_normalizedCube_of_memVectorL2 {d : ℕ}
     {Q : TriadicCube d} {F : Vec d → Vec d}
     (hF : MemVectorL2 (openCubeSet Q) F) :
     MemLp (fun x => HilbertVec.ofVec (F x)) 2 (normalizedCubeMeasure Q) := by
@@ -48,7 +48,7 @@ private theorem memLp_hilbertify_normalizedCube_of_memVectorL2 {d : ℕ}
     volume_restrict_cubeSet_eq_volume_restrict_openCubeSet] using
     hHilbert.smul_measure ENNReal.ofReal_ne_top
 
-private theorem memVectorL2_matVecMul_pointwiseCoeffOn {d : ℕ}
+theorem memVectorL2_matVecMul_pointwiseCoeffOn {d : ℕ}
     (Q : TriadicCube d) (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain Q))
     (u : H1Function (openCubeSet Q)) :
     MemVectorL2 (openCubeSet Q)
@@ -69,7 +69,7 @@ private theorem memVectorL2_matVecMul_pointwiseCoeffOn {d : ℕ}
   filter_upwards [hba] with x hx
   simp only [hx]
 
-private theorem memVectorL2_localFluxDefect {d : ℕ}
+theorem memVectorL2_localFluxDefect {d : ℕ}
     {Q R : TriadicCube d}
     (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain Q))
     (hRQ : openCubeSet R ⊆ openCubeSet Q) (sigma0 : ℝ)

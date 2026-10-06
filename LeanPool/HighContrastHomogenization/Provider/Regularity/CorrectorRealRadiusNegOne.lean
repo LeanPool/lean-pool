@@ -84,7 +84,7 @@ public noncomputable def localHilbertVectorL2RestrictLinear {d : ℕ}
         ((Lp.coeFn_smul c F).filter_mono (ae_mono hμ))).trans
       (MemLp.toLp_const_smul c ((Lp.memLp F).mono_measure hμ))
 
-private theorem localHilbertVectorL2RestrictLinear_norm_le {d : ℕ}
+theorem localHilbertVectorL2RestrictLinear_norm_le {d : ℕ}
     {U V : Set (Vec d)} (hUV : U ⊆ V) (F : HilbertVectorL2 V) :
     ‖localHilbertVectorL2RestrictLinear hUV F‖ ≤ ‖F‖ := by
   let hμ : volumeMeasureOn U ≤ volumeMeasureOn V :=

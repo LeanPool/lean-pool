@@ -781,14 +781,6 @@ theorem aCoarse_dilate {d : ℕ} {k : ℤ} {Q : TriadicCube d}
   unfold aCoarse
   rw [coarseMatrices_dilate hCoeff]
 
-theorem aStarCoarse_dilate {d : ℕ} {k : ℤ} {Q : TriadicCube d}
-    {a : CoeffOn (cubeDomain Q)}
-    {b : CoeffOn (cubeDomain (dilateCube k Q))}
-    (hCoeff : CoeffOn.IsCubeDilation k a b) :
-    aStarCoarse (cubeDomain (dilateCube k Q)) b =
-      aStarCoarse (cubeDomain Q) a := by
-  simp [aStarCoarse, sigmaStarCoarse_dilate hCoeff, kappaCoarse_dilate hCoeff]
-
 /-- One-cube public dilation statements.  These are the Chapter 3-facing facts:
 solutions dilate to solutions, scalar and doubled response values are
 unchanged, and all canonical one-cube coarse matrices are unchanged. -/
@@ -1026,6 +1018,15 @@ be imported by Chapter 3 scale-normalization arguments. -/
 structure DilationTheory (d : ℕ) [NeZero d] : Prop where
   cube : CubeDilationTheory d
   multiscale : MultiscaleDilationTheory d
+
+theorem aStarCoarse_dilate {d : ℕ} {k : ℤ} {Q : TriadicCube d}
+    {a : CoeffOn (cubeDomain Q)}
+    {b : CoeffOn (cubeDomain (dilateCube k Q))}
+    (hCoeff : CoeffOn.IsCubeDilation k a b) :
+    aStarCoarse (cubeDomain (dilateCube k Q)) b =
+      aStarCoarse (cubeDomain Q) a := by
+  simp [aStarCoarse, sigmaStarCoarse_dilate hCoeff, kappaCoarse_dilate hCoeff]
+
 
 end
 

@@ -84,7 +84,7 @@ public noncomputable def originCubeL2RestrictLinear {d : ℕ}
         ((Lp.coeFn_smul c f).filter_mono (ae_mono hμ))).trans
       (MemLp.toLp_const_smul c ((Lp.memLp f).mono_measure hμ))
 
-private theorem originCubeL2RestrictLinear_norm_le {d : ℕ}
+theorem originCubeL2RestrictLinear_norm_le {d : ℕ}
     {n m : ℤ} (hnm : n ≤ m)
     (g : HilbertVectorL2 (openCubeSet (originCube d m))) :
     ‖originCubeL2RestrictLinear hnm g‖ ≤ ‖g‖ := by
@@ -259,7 +259,7 @@ private instance originCubeFiniteMeasure (d : ℕ) (n : ℤ) :
     (isOpenBoundedConvexDomain_openCubeSet
       (originCube d n)).isFiniteMeasure_restrict_volume
 
-private theorem memVectorL2_const_originCube {d : ℕ}
+theorem memVectorL2_const_originCube {d : ℕ}
     (e : Vec d) (n : ℤ) :
     MemVectorL2 (openCubeSet (originCube d n)) (fun _ => e) := by
   simpa using

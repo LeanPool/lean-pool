@@ -188,7 +188,7 @@ theorem exists_translateCoeff_affineAdjointSubSkewResponseJ
 
 /-! ## Stationary cancellation -/
 
-private theorem subSkew_neg_subSkew
+theorem subSkew_neg_subSkew
     (a : CoeffSpace d) (g : Mat d) (hg : IsSkewMat g) :
     (a.subSkew g hg).subSkew (-g) (isSkewMat_neg hg) = a := by
   apply Subtype.ext

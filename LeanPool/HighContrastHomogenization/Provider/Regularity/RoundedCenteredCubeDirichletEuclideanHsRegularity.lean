@@ -53,7 +53,7 @@ private theorem centeredOpenCube_eq_smul_unitCenteredOpenCube_rounded
   simpa only [centeredCubeScale, cubeScaleFactor_originCube] using
     openCubeSet_originCube_eq_smul_originCube_zero (d := d) m
 
-private theorem unitCenteredOpenCube_eq_inv_smul_centeredOpenCube_rounded
+theorem unitCenteredOpenCube_eq_inv_smul_centeredOpenCube_rounded
     (m : ℤ) :
     openCubeSet (originCube d 0) =
       (centeredCubeScale m)⁻¹ • openCubeSet (originCube d m) := by

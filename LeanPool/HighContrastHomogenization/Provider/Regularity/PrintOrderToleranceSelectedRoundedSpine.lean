@@ -32,7 +32,7 @@ open scoped Matrix MatrixOrder Matrix.Norms.L2Operator
 
 noncomputable section
 
-private theorem sharp_order_bounds_of_selected_defect
+theorem sharp_order_bounds_of_selected_defect
     {d : ℕ} {A : Mat d} (hA : A.PosDef)
     (hdefect : ‖A - 1‖ ≤ (1 / 100 : ℝ)) :
     (99 / 100 : ℝ) • (1 : Mat d) ≤ A ∧

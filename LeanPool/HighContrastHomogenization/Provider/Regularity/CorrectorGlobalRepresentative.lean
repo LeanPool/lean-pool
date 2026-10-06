@@ -116,7 +116,7 @@ theorem iUnion_localGradientShell (d : ℕ) :
   obtain ⟨n, hxn⟩ := Set.mem_iUnion.mp hx
   exact hcube n hxn
 
-private theorem localGradientShell_compat
+theorem localGradientShell_compat
     {d : ℕ} {E : Type*}
     (f : ∀ n, localGradientShell d n → E)
     (i j : ℕ) (x : Vec d)

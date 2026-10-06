@@ -34,7 +34,7 @@ open scoped Topology
 
 noncomputable section
 
-private theorem memVectorL2_const_varyingSlope {d : ℕ}
+theorem memVectorL2_const_varyingSlope {d : ℕ}
     (e : Vec d) (q : ℕ) :
     MemVectorL2 (openCubeSet (originCube d (q : ℤ))) (fun _ => e) := by
   simpa using

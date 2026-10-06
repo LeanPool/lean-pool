@@ -32,13 +32,13 @@ private instance openCubeFiniteMeasure (d : ℕ) (Q : TriadicCube d) :
   simpa only [volumeMeasureOn] using
     (isOpenBoundedConvexDomain_openCubeSet Q).isFiniteMeasure_restrict_volume
 
-private theorem openCube_h1_grad_memVectorL2
+theorem openCube_h1_grad_memVectorL2
     {d : ℕ} {Q : TriadicCube d}
     (u : H1Function (Book.Ch02.cubeDomain Q)) :
     MemVectorL2 (openCubeSet Q) u.grad := by
   simpa only [Book.Ch02.cubeDomain_coe] using u.grad_memVectorL2
 
-private theorem openCube_const_memVectorL2
+theorem openCube_const_memVectorL2
     {d : ℕ} (Q : TriadicCube d) (e : Vec d) :
     MemVectorL2 (openCubeSet Q) (fun _ ↦ e) := by
   exact memVectorL2_const e

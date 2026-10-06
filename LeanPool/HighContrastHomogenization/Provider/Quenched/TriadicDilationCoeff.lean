@@ -39,7 +39,7 @@ noncomputable section
 
 variable {d : ℕ}
 
-private theorem quasiMeasurePreserving_const_smul (r : ℝ) (hr : r ≠ 0) :
+theorem quasiMeasurePreserving_const_smul (r : ℝ) (hr : r ≠ 0) :
     Measure.QuasiMeasurePreserving (fun x : Vec d => r • x) volume volume :=
   Measure.quasiMeasurePreserving_smul volume hr
 

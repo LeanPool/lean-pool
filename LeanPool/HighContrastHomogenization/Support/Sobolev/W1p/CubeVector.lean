@@ -200,7 +200,7 @@ noncomputable def toCubeEuclideanLpField
     F.toCubeEuclideanLpField.toField = F.toField :=
   rfl
 
-private theorem weakHessianRowGradMemLpOn [NeZero d]
+theorem weakHessianRowGradMemLpOn [NeZero d]
     {u : H1Function (openCubeSet Q)}
     (H : HasWeakHessianOn (openCubeSet Q) u)
     (hrows : ∀ i : Fin d,

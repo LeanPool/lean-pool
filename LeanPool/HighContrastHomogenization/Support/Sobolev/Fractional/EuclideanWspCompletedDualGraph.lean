@@ -96,7 +96,7 @@ public noncomputable def graphKernelComponent {d : ℕ} {Q : TriadicCube d}
   h.toCubeEuclideanWspField.euclideanMemWsp.toLp
     (cubeEuclideanWspKernel s p h.toField)
 
-private theorem graphFieldComponent_add {d : ℕ} {Q : TriadicCube d}
+theorem graphFieldComponent_add {d : ℕ} {Q : TriadicCube d}
     {s : FractionalOrder} {p : FiniteLpExponent}
     (h k : CubeEuclideanWspSmoothTest Q s p) :
     graphFieldComponent (h + k) = graphFieldComponent h + graphFieldComponent k := by
@@ -120,7 +120,7 @@ private theorem graphFieldComponent_add {d : ℕ} {Q : TriadicCube d}
       rw [← hh', ← hk']
       exact hadd.symm
 
-private theorem graphFieldComponent_smul {d : ℕ} {Q : TriadicCube d}
+theorem graphFieldComponent_smul {d : ℕ} {Q : TriadicCube d}
     {s : FractionalOrder} {p : FiniteLpExponent} (c : ℝ)
     (h : CubeEuclideanWspSmoothTest Q s p) :
     graphFieldComponent (c • h) = c • graphFieldComponent h := by
@@ -178,7 +178,7 @@ private theorem cubeEuclideanWspKernel_smoothTest_smul {d : ℕ} {Q : TriadicCub
   rw [(HilbertVec.ofVecL d).map_smul, smul_smul, smul_smul, mul_comm]
   simp only [HilbertVec.ofVecL_apply]
 
-private theorem graphKernelComponent_add {d : ℕ} {Q : TriadicCube d}
+theorem graphKernelComponent_add {d : ℕ} {Q : TriadicCube d}
     {s : FractionalOrder} {p : FiniteLpExponent}
     (h k : CubeEuclideanWspSmoothTest Q s p) :
     graphKernelComponent (h + k) = graphKernelComponent h + graphKernelComponent k := by
@@ -199,7 +199,7 @@ private theorem graphKernelComponent_add {d : ℕ} {Q : TriadicCube d}
       rw [← hh', ← hk']
       exact hadd.symm
 
-private theorem graphKernelComponent_smul {d : ℕ} {Q : TriadicCube d}
+theorem graphKernelComponent_smul {d : ℕ} {Q : TriadicCube d}
     {s : FractionalOrder} {p : FiniteLpExponent} (c : ℝ)
     (h : CubeEuclideanWspSmoothTest Q s p) :
     graphKernelComponent (c • h) = c • graphKernelComponent h := by

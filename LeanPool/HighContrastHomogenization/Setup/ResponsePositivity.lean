@@ -75,7 +75,7 @@ theorem aeLocallyUniformlyEllipticField_of_pointwise {lam Lam : ℝ} {f : CoeffF
 
 /-- A measurable scalar field bounded on every ball around the origin is locally
 integrable: a compact set lies in such a ball. -/
-private theorem locallyIntegrable_of_ball_bounded_measurable {f : Vec d → ℝ}
+theorem locallyIntegrable_of_ball_bounded_measurable {f : Vec d → ℝ}
     (hf : Measurable f)
     (hbd : ∀ R : ℝ, 0 < R → ∃ C : ℝ, ∀ x ∈ Metric.ball (0 : Vec d) R, |f x| ≤ C) :
     LocallyIntegrable f volume := by

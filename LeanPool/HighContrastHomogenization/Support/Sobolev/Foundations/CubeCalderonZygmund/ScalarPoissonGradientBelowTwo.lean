@@ -66,7 +66,7 @@ private theorem castH10Function_grad {d : ℕ} {U V : Set (Vec d)}
   subst V
   rfl
 
-private theorem centeredOpenCube_eq_smul_unitCenteredOpenCube
+theorem centeredOpenCube_eq_smul_unitCenteredOpenCube
     {d : ℕ} (m : ℤ) :
     openCubeSet (originCube d m) =
       centeredCubeScale m • openCubeSet (originCube d 0) := by
