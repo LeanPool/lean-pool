@@ -793,9 +793,8 @@ theorem LMN_zero_unit_average_bounds {β : ℝ} (I : Ingredients β)
       (N : ℝ) * (∫ t in (0 : ℝ)..T, f t) ≤ (N : ℝ) * (T * ρ⁻¹) :=
         mul_le_mul_of_nonneg_left hperiodUpper hNnonneg
       _ = ρ⁻¹ := by rw [← mul_assoc, hNperiod]; ring
-  have hN_eq : (N : ℝ) = 1 / T := by
-    apply (eq_div_iff hT.ne').2
-    nlinarith [hNperiod]
+  have hN_eq : (N : ℝ) = 1 / T :=
+    (eq_div_iff hT.ne').2 hNperiod
   have hunitLower :
       ((1 / T) * (T - 5 * P)) * ((1 - Real.exp (-ρ * P)) / ρ) ≤
         (∫ t in (0 : ℝ)..1, f t) := by
