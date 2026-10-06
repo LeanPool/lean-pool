@@ -10692,7 +10692,8 @@ projects:
       measure of the singular set. Includes the supporting Sobolev, singular
       integral, pressure, heat-potential and parabolic Morrey infrastructure,
       equivalence of suitable-solution formulations, and a nonzero shear-flow
-      example. Imports the dependency closure of these completed results.
+      example. Includes the completed Leray, pressure, and linear regularity support needed
+      by further Navier–Stokes regularity projects.
     branch: Analysis
     entry_module: LeanPool.CaffarelliKohnNirenberg
     authors:
@@ -10700,7 +10701,7 @@ projects:
       - Vlad Vicol
     source:
       github_repo: scottnarmstrong/CaffarelliKohnNirenberg
-      url: https://github.com/scottnarmstrong/CaffarelliKohnNirenberg/tree/635fa6376aa3d46ae5251cb1d276a8589163f332
+      url: https://github.com/scottnarmstrong/CaffarelliKohnNirenberg/tree/381d658ead0f03a18361965cc0427ce3fa5844ab
     license: Apache-2.0
     status: verified
     provenance: AI
