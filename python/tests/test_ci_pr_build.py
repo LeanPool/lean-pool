@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import io
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -13,6 +14,18 @@ from pathlib import Path
 import pytest
 
 from lean_pool import ci_pr_build, rebase_fastpath
+
+TOOLCHAIN = (Path(__file__).resolve().parents[2] / "lean-toolchain").read_text().strip()
+
+
+def _lake() -> Path:
+    toolchain = TOOLCHAIN.replace("/", "--").replace(":", "---")
+    executable = Path.home() / ".elan/toolchains" / toolchain / "bin/lake"
+    if not executable.is_file():
+        if os.environ.get("LEAN_POOL_REQUIRE_TEST_TOOLCHAIN") == "1":
+            pytest.fail(f"required pinned Lean toolchain unavailable: {TOOLCHAIN}")
+        pytest.skip("pinned Lean toolchain unavailable")
+    return executable
 
 
 def _git(root: Path, *arguments: str) -> str:
@@ -39,7 +52,7 @@ def repository(tmp_path: Path) -> tuple[Path, str, str]:
         "module\n@[expose] public def value : Nat := 1\n"
     )
     (root / "LeanPool/projects.yml").write_text("projects:\n  - slug: a\n")
-    (root / "lean-toolchain").write_text("leanprover/lean4:v4.35.0-rc3\n")
+    (root / "lean-toolchain").write_text(TOOLCHAIN + "\n")
     (root / "lakefile.toml").write_text(
         'name = "fixture"\nrequiresModuleSystem = true\n'
         '\n[[lean_lib]]\nname = "LeanPool"\n'
@@ -198,7 +211,7 @@ def test_latest_failed_attempt_and_other_pr_are_not_sources(monkeypatch):
     monkeypatch.setattr(
         rebase_fastpath, "github_json", lambda _: {"workflow_runs": runs}
     )
-    assert ci_pr_build.prior_runs("owner/repo", 42, "pr", 10) == [runs[-1]]
+    assert list(ci_pr_build.prior_runs("owner/repo", 42, "pr", 10)) == [runs[-1]]
 
 
 def test_unrelated_history_does_not_download(repository, monkeypatch):
@@ -265,9 +278,7 @@ def test_lake_rebuilds_changed_dependency_and_rejects_invalid_proof(
 ):
     """A real old olean cannot conceal a proof broken by a changed imported module."""
     root, base, previous = repository
-    lake = Path.home() / ".elan/toolchains/leanprover--lean4---v4.35.0-rc3/bin/lake"
-    if not lake.is_file():
-        pytest.skip("pinned Lean toolchain unavailable")
+    lake = _lake()
     subprocess.run(
         [str(lake), "build", "LeanPool.B"], cwd=root, check=True, capture_output=True
     )
@@ -297,9 +308,7 @@ def test_lake_rebuilds_changed_dependency_and_rejects_invalid_proof(
 def test_lake_keeps_unchanged_proof_after_metadata_edit(repository, monkeypatch):
     """Lake accepts matching artifacts without recompiling unchanged proofs."""
     root, base, previous = repository
-    lake = Path.home() / ".elan/toolchains/leanprover--lean4---v4.35.0-rc3/bin/lake"
-    if not lake.is_file():
-        pytest.skip("pinned Lean toolchain unavailable")
+    lake = _lake()
     subprocess.run(
         [str(lake), "build", "LeanPool.B"], cwd=root, check=True, capture_output=True
     )
@@ -331,3 +340,94 @@ def test_untracked_source_inventory_rejected_before_overlay(repository, monkeypa
         root, "owner/repo", 42, "pr", previous, base
     )
     assert not compiled.exists()
+
+
+def test_broken_archive_preserves_existing_build(repository, monkeypatch):
+    """An unreadable project archive leaves existing compiled files intact."""
+    root, base, previous = repository
+    archive, compiled = _archive(root, base, previous)
+    archive.write_bytes(b"broken archive")
+    compiled.write_text("existing build")
+    _download(monkeypatch, archive, previous)
+    assert not ci_pr_build.restore_prior_build(
+        root, "owner/repo", 42, "pr", previous, base
+    )
+    assert compiled.read_text() == "existing build"
+
+
+def test_main_recovery_failure_still_reuses_pr_build(repository, monkeypatch):
+    """Missing merged-project evidence does not block a matching own build."""
+    root, base, previous = repository
+    archive, compiled = _archive(root, base, previous)
+    _download(monkeypatch, archive, previous)
+
+    def unavailable(*args, **kwargs):
+        raise ValueError("merged artifact unavailable")
+
+    monkeypatch.setattr(rebase_fastpath, "restore_new_main_projects", unavailable)
+    assert ci_pr_build.restore_prior_build(root, "owner/repo", 42, "pr", previous, base)
+    assert compiled.read_text() == "prior compiled B"
+
+
+def test_older_successful_run_found_on_later_page(monkeypatch):
+    """Long PR histories remain reusable without reviving a superseded failure."""
+    newer = [
+        {
+            "id": 1000 + number,
+            "head_sha": f"{number:040x}",
+            "conclusion": "failure",
+            "pull_requests": [{"number": 42}],
+        }
+        for number in range(100)
+    ]
+    older = [
+        {
+            "id": 2,
+            "head_sha": newer[0]["head_sha"],
+            "conclusion": "success",
+            "pull_requests": [{"number": 42}],
+        },
+        {
+            "id": 1,
+            "head_sha": "a" * 40,
+            "conclusion": "success",
+            "pull_requests": [{"number": 42}],
+        },
+    ]
+    calls = []
+
+    def read(endpoint):
+        calls.append(endpoint)
+        return {"workflow_runs": older if "page=2" in endpoint else newer}
+
+    monkeypatch.setattr(rebase_fastpath, "github_json", read)
+    assert list(ci_pr_build.prior_runs("owner/repo", 42, "pr", 0)) == [older[-1]]
+    assert len(calls) == 2
+
+
+def test_failed_extraction_never_overlays_partial_files(repository, monkeypatch):
+    """A late extraction error cannot overwrite any of the existing build."""
+    root, base, previous = repository
+    archive, compiled = _archive(root, base, previous)
+    compiled.write_text("existing build")
+    _download(monkeypatch, archive, previous)
+
+    def interrupted(archive, path, **kwargs):
+        partial = Path(path) / compiled.relative_to(root)
+        partial.parent.mkdir(parents=True, exist_ok=True)
+        partial.write_text("partial extraction")
+        raise OSError("simulated extraction failure")
+
+    monkeypatch.setattr(rebase_fastpath.tarfile.TarFile, "extractall", interrupted)
+    assert not ci_pr_build.restore_prior_build(
+        root, "owner/repo", 42, "pr", previous, base
+    )
+    assert compiled.read_text() == "existing build"
+
+
+def test_required_toolchain_cannot_be_silently_skipped(monkeypatch):
+    """The real-Lean CI lane must fail if its installed toolchain is absent."""
+    monkeypatch.setenv("LEAN_POOL_REQUIRE_TEST_TOOLCHAIN", "1")
+    monkeypatch.setattr(Path, "is_file", lambda path: False)
+    with pytest.raises(pytest.fail.Exception, match="required pinned Lean"):
+        _lake()

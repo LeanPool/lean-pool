@@ -5,7 +5,7 @@ permissions:
   contents: read
   actions: read
 concurrency:
-  group: ci-pr-build-reuse-measurement
+  group: ci-pr-build-reuse-measurement-${{ github.run_id }}
   cancel-in-progress: false
 jobs:
   benchmark:
@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        variant: [baseline, optimized]
+        variant: [optimized]
     env:
       GH_TOKEN: ${{ github.token }}
       PR_NUMBER: '604'
@@ -74,6 +74,8 @@ jobs:
           --event pull_request --head "$PR_HEAD" --previous-run 37477321705
       - name: Check dependency safety with actual Lean
         if: matrix.variant == 'optimized'
+        env:
+          LEAN_POOL_REQUIRE_TEST_TOOLCHAIN: '1'
         run: >-
           uv run --project measurement-helpers/python --group test pytest -q
           measurement-helpers/python/tests/test_ci_pr_build.py
