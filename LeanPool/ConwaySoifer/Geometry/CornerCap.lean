@@ -239,6 +239,75 @@ theorem cornerCap_aux {σ : ℝ} (hσ : 0 < σ) (hσ1 : σ ≤ 1) (u : Point) (h
 
 /-! ### The midpoint cost for a labelled triangle -/
 
+private theorem midpoint_bottom_cap_bound {σ : ℝ} (hσ : 0 < σ) (u : Point)
+    (hu : u ≠ 0) {a b c : Point} (hdet : triangleDet a b c ≠ 0)
+    (hvol : volume (convexHull ℝ {a, b, c}) = ENNReal.ofReal (σ ^ 2 / 2))
+    (hc32 : 3 / 2 ≤ cross u c) (hR : cross u c - cross u b < 1 / 2)
+    (hS76 : cross u c - cross u a ≤ 7 / 6) :
+    (volume (convexHull ℝ {a, b, c} ∩ {p | cross u p ≤ 1})).toReal ≤
+      3 / 4 * (σ ^ 2 / 2) := by
+  set ma := cross u a with hma_def
+  set mb := cross u b with hmb_def
+  set mc := cross u c with hmc_def
+  set S := mc - ma with hS_def
+  have hmb1 : 1 < mb := by linarith
+  by_cases hma : 1 ≤ ma
+  · have hsub : convexHull ℝ {a, b, c} ∩ {p | cross u p ≤ 1} ⊆ {p | cross u p = 1} := by
+      rintro q ⟨hq, hq1⟩
+      simp only [Set.mem_ofPred_eq] at hq1 ⊢
+      have := hull_level_ge u hq (m := 1) hma hmb1.le (by linarith)
+      linarith
+    have := measure_mono_null hsub (volume_level_line u hu 1)
+    rw [this, ENNReal.toReal_zero]
+    positivity
+  · push Not at hma
+    have hsub := cap_subset (-u) (-1) (a := b) (b := c) (c := a)
+      (by rw [triangleDet_rotate]; exact hdet)
+      (by rw [cross_neg_left]; linarith) (by rw [cross_neg_left]; linarith)
+      (by rw [cross_neg_left]; linarith)
+    have hset : convexHull ℝ {a, b, c} ∩ {p | cross u p ≤ 1} =
+        convexHull ℝ {b, c, a} ∩ {p | -1 ≤ cross (-u) p} := by
+      rw [hull3_rotate]
+      congr 1
+      ext q; simp only [Set.mem_ofPred_eq, cross_neg_left]; constructor <;> intro h <;> linarith
+    rw [hset]
+    have hcap := volume_capTriangle (-u) (-1) b c a
+    have hdet' : |triangleDet b c a| = σ ^ 2 := by
+      rw [triangleDet_rotate]; exact det_of_volume hσ hvol
+    rw [hdet', cross_neg_left, cross_neg_left, cross_neg_left] at hcap
+    set p := mb - ma with hp_def
+    have hp0 : 0 < p := by
+      rw [hp_def]; linarith
+    have hS0 : 0 < S := by
+      rw [hS_def]; linarith
+    have hα : |(-ma - -1) / (-ma - -mb)| = (1 - ma) / p := by
+      rw [abs_of_nonneg (div_nonneg (by linarith) (by linarith))]
+      rw [hp_def]; ring
+    have hβ : |(-ma - -1) / (-ma - -mc)| = (1 - ma) / S := by
+      rw [abs_of_nonneg (div_nonneg (by linarith) (by linarith))]
+      rw [hS_def]; ring
+    rw [hα, hβ] at hcap
+    have h1ma0 : 0 < 1 - ma := by
+      linarith
+    have hx : 0 ≤ (1 - ma) / p * ((1 - ma) / S) * (σ ^ 2 / 2) :=
+      mul_nonneg (mul_nonneg (div_nonneg h1ma0.le hp0.le) (div_nonneg h1ma0.le hS0.le))
+        (by positivity)
+    have hle := toReal_le_of_subset hsub hx hcap
+    refine le_trans hle ?_
+    have h1ma : 1 - ma ≤ S - 1 / 2 := by
+      rw [hS_def]; linarith
+    have hS12 : 1 / 2 < S := by
+      linarith
+    have hsq : (1 - ma) ^ 2 ≤ (S - 1 / 2) ^ 2 := pow_le_pow_left₀ h1ma0.le h1ma 2
+    have hpSR : p = S - (mc - mb) := by
+      rw [hp_def, hS_def]; ring
+    have hkey := mid_ineq hR hS76 hS12
+    rw [← hpSR] at hkey
+    have hfrac : (1 - ma) / p * ((1 - ma) / S) ≤ 3 / 4 := by
+      rw [div_mul_div_comm, div_le_iff₀ (mul_pos hp0 hS0)]
+      nlinarith [hsq, hkey]
+    exact mul_le_mul_of_nonneg_right hfrac (by positivity)
+
 theorem midpointCost_aux {σ : ℝ} (hσ : 0 < σ) (hσ1 : σ ≤ 1) (u : Point) (hu : u ≠ 0)
     {a b c : Point} (hdet : triangleDet a b c ≠ 0)
     (hvol : volume (convexHull ℝ {a, b, c}) = ENNReal.ofReal (σ ^ 2 / 2))
@@ -320,8 +389,6 @@ theorem midpointCost_aux {σ : ℝ} (hσ : 0 < σ) (hσ1 : σ ≤ 1) (u : Point)
     apply div_le_div_of_nonneg_left (by positivity) (by positivity)
     nlinarith
   · push Not at hR
-    have hmb1 : 1 < mb := by
-      linarith
     -- complement of the bottom cap
     have hsplit : volume (convexHull ℝ {a, b, c} ∩ {p | 1 < cross u p}) +
         volume (convexHull ℝ {a, b, c} \ {p | 1 < cross u p}) =
@@ -339,64 +406,7 @@ theorem midpointCost_aux {σ : ℝ} (hσ : 0 < σ) (hσ1 : σ ≤ 1) (u : Point)
         (volume (convexHull ℝ {a, b, c} ∩ {p | cross u p ≤ 1})).toReal = σ ^ 2 / 2 := by
       rw [← ENNReal.toReal_add hfinI hfinC, hsplit, hvol, ENNReal.toReal_ofReal (by positivity)]
     -- bound the bottom cap
-    have hcapbound : (volume (convexHull ℝ {a, b, c} ∩ {p | cross u p ≤ 1})).toReal ≤
-        3 / 4 * (σ ^ 2 / 2) := by
-      by_cases hma : 1 ≤ ma
-      · have hsub : convexHull ℝ {a, b, c} ∩ {p | cross u p ≤ 1} ⊆ {p | cross u p = 1} := by
-          rintro q ⟨hq, hq1⟩
-          simp only [Set.mem_ofPred_eq] at hq1 ⊢
-          have := hull_level_ge u hq (m := 1) hma hmb1.le (by linarith)
-          linarith
-        have := measure_mono_null hsub (volume_level_line u hu 1)
-        rw [this, ENNReal.toReal_zero]
-        positivity
-      · push Not at hma
-        have hsub := cap_subset (-u) (-1) (a := b) (b := c) (c := a)
-          (by rw [triangleDet_rotate]; exact hdet)
-          (by rw [cross_neg_left]; linarith) (by rw [cross_neg_left]; linarith)
-          (by rw [cross_neg_left]; linarith)
-        have hset : convexHull ℝ {a, b, c} ∩ {p | cross u p ≤ 1} =
-            convexHull ℝ {b, c, a} ∩ {p | -1 ≤ cross (-u) p} := by
-          rw [hull3_rotate]
-          congr 1
-          ext q; simp only [Set.mem_ofPred_eq, cross_neg_left]; constructor <;> intro h <;> linarith
-        rw [hset]
-        have hcap := volume_capTriangle (-u) (-1) b c a
-        have hdet' : |triangleDet b c a| = σ ^ 2 := by
-          rw [triangleDet_rotate]; exact det_of_volume hσ hvol
-        rw [hdet', cross_neg_left, cross_neg_left, cross_neg_left] at hcap
-        set p := mb - ma with hp_def
-        have hp0 : 0 < p := by
-          rw [hp_def]; linarith
-        have hS0 : 0 < S := by
-          rw [hS_def]; linarith
-        have hα : |(-ma - -1) / (-ma - -mb)| = (1 - ma) / p := by
-          rw [abs_of_nonneg (div_nonneg (by linarith) (by linarith))]
-          rw [hp_def]; ring
-        have hβ : |(-ma - -1) / (-ma - -mc)| = (1 - ma) / S := by
-          rw [abs_of_nonneg (div_nonneg (by linarith) (by linarith))]
-          rw [hS_def]; ring
-        rw [hα, hβ] at hcap
-        have h1ma0 : 0 < 1 - ma := by
-          linarith
-        have hx : 0 ≤ (1 - ma) / p * ((1 - ma) / S) * (σ ^ 2 / 2) :=
-          mul_nonneg (mul_nonneg (div_nonneg h1ma0.le hp0.le) (div_nonneg h1ma0.le hS0.le))
-            (by positivity)
-        have hle := toReal_le_of_subset hsub hx hcap
-        refine le_trans hle ?_
-        have h1ma : 1 - ma ≤ S - 1 / 2 := by
-          rw [hS_def]; linarith
-        have hS12 : 1 / 2 < S := by
-          linarith
-        have hsq : (1 - ma) ^ 2 ≤ (S - 1 / 2) ^ 2 := pow_le_pow_left₀ h1ma0.le h1ma 2
-        have hpSR : p = S - R := by
-          rw [hp_def, hS_def, hR_def]; ring
-        have hkey := mid_ineq hR hS76 hS12
-        rw [← hpSR] at hkey
-        have hfrac : (1 - ma) / p * ((1 - ma) / S) ≤ 3 / 4 := by
-          rw [div_mul_div_comm, div_le_iff₀ (mul_pos hp0 hS0)]
-          nlinarith [hsq, hkey]
-        exact mul_le_mul_of_nonneg_right hfrac (by positivity)
+    have hcapbound := midpoint_bottom_cap_bound hσ u hu hdet hvol hc32 hR hS76
     linarith
 
 end ConwaySoifer

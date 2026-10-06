@@ -262,12 +262,12 @@ it is written only after every process, state/step comparison, witness expansion
 comparison succeeds. Runtime files and logs remain in the external output directory. The
 driver never edits the checkout. Reports count only the files emitted by the current run;
 older files in a reused output directory are ignored. The sampled --certificate option is
-for diagnosis; the default run covers the complete corpus. Regeneration evidence does not replace the ordinary
-kernel acceptance/replay proofs or the complete build, linters, style and quality/trust gates.
+for diagnosis; the default run covers the complete corpus. Regeneration evidence does not replace
+the kernel acceptance/replay proofs or the complete build, linters, style and quality/trust gates.
 
 The exact embedded driver was executed with four workers: all 100 certificates, 3,288 states,
 3,188 steps, 28,792 exclusions and 739 emitted files passed the complete comparison in
-434.77 seconds. Its sorted file/hash record has SHA-256
+384.64 seconds in a reused output directory. Its sorted file/hash record has SHA-256
 1879985340d4368caa2aba8695f22d6a8336def34cac0d49cc7e884602dbbf2a.
 This is a corpus reproduction measurement, not a controlled compile-time comparison.
 
@@ -275,7 +275,7 @@ The retained generated corpus is a sizeable certificate cache. Its maintenance t
 accepted here because the underlying research theorem, shared geometric interfaces and verified
 interval checker are substantive, the consumer schema is small, the complete cache has a
 reproducible round trip, and measured witness/state sharing reduced controlled compilation by
-53.95%. Keeping exact rational inputs and checked replay makes the result independently
+48.78%. Keeping exact rational inputs and checked replay makes the result independently
 inspectable even when the historical search software is unavailable. No source-size exception,
 trusted native result or relaxed gate is needed.
 

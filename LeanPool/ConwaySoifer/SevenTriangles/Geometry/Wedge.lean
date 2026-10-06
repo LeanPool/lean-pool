@@ -637,9 +637,9 @@ theorem quad_core_strong (s X c₁ a b : ℝ) (hs : 0 < s) (hX : 0 < X) (ha : 0 
         nlinarith [hcore]
       rcases le_total (a ^ 2) (b ^ 2) with hm | hm
       · rw [max_eq_right hm]
-        nlinarith
+        nlinarith only [hsq, hQb]
       · rw [max_eq_left hm]
-        nlinarith
+        nlinarith only [hsq, hQa]
   · -- type 2a: `Z = -c₁ > 0`
     have hZ : 0 < -c₁ := by
       linarith
@@ -656,9 +656,9 @@ theorem quad_core_strong (s X c₁ a b : ℝ) (hs : 0 < s) (hX : 0 < X) (ha : 0 
       nlinarith [hcore]
     rcases le_total (a ^ 2) (b ^ 2) with hm | hm
     · rw [max_eq_right hm]
-      nlinarith
+      nlinarith only [hsq, hQb]
     · rw [max_eq_left hm]
-      nlinarith
+      nlinarith only [hsq, hQa]
 
 /-- Pentagon, weak bound: `D · min ≤ Q'` with `Q' = X C a² + 2 X Z a b + Z C b²`, `C = X + Z`. -/
 theorem pent_core_weak (X Z a b : ℝ) (hX : 0 < X) (hZ : 0 < Z) (ha : 0 < a) (hb : 0 < b) :
