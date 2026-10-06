@@ -32,10 +32,49 @@ noncomputable section
 
 namespace ESS
 
+private theorem pvLocal_split_slice_bound
+    {a : Vec3 → Vec3} (ha : MemLp a 2 volume) {σ : ℝ}
+    {U Z : ParabolicPoint → Vec3} {K : ℝ≥0∞} (hK : K ≠ ⊤)
+    (hZslice : ∀ᵐ s ∂(volume.restrict (Ioo 0 σ)),
+      ∫⁻ x : Vec3, ‖Z (x, s)‖ₑ ^ (2 : ℝ) ≤ K)
+    (hUeq : ∀ z : ParabolicPoint, z.2 ≠ 0 → U z = heatOrbit a z + Z z) :
+    essSup (fun s : ℝ => ∫⁻ x : Vec3, ‖U (x, s)‖ₑ ^ (2 : ℝ))
+      (volume.restrict (Ioo 0 σ)) < ⊤ := by
+  set Kh : ℝ≥0∞ := ∑ i : Fin 3, eLpNorm (fun y => a y i) 2 volume ^ (2 : ℝ)
+  have hKh : Kh ≠ ⊤ := ENNReal.sum_ne_top.2 fun i _ =>
+    ENNReal.rpow_ne_top_of_nonneg (by norm_num) (memLp_pi_iff.1 ha i).eLpNorm_ne_top
+  have hbound : ∀ᵐ s ∂(volume.restrict (Ioo 0 σ)),
+      ∫⁻ x : Vec3, ‖U (x, s)‖ₑ ^ (2 : ℝ) ≤ 2 * (Kh + K) := by
+    filter_upwards [hZslice, ae_restrict_mem measurableSet_Ioo] with s hZs hs
+    have hhc : Continuous (fun x : Vec3 => heatOrbit a (x, s)) :=
+      continuous_pi fun i => heatOrbit_slice_continuous ha hs.1 i
+    have hpt (x : Vec3) : ‖U (x, s)‖ₑ ^ (2 : ℝ) ≤
+        2 * (‖heatOrbit a (x, s)‖ₑ ^ (2 : ℝ) + ‖Z (x, s)‖ₑ ^ (2 : ℝ)) := by
+      rw [hUeq (x, s) hs.1.ne']
+      have h1 := ENNReal.rpow_add_le_mul_rpow_add_rpow ‖heatOrbit a (x, s)‖ₑ ‖Z (x, s)‖ₑ
+        (p := 2) (by norm_num)
+      rw [show (2 : ℝ) - 1 = 1 by norm_num, ENNReal.rpow_one] at h1
+      exact (ENNReal.rpow_le_rpow (enorm_add_le _ _) (by norm_num)).trans h1
+    calc
+      ∫⁻ x : Vec3, ‖U (x, s)‖ₑ ^ (2 : ℝ) ≤
+          ∫⁻ x : Vec3, 2 * (‖heatOrbit a (x, s)‖ₑ ^ (2 : ℝ) + ‖Z (x, s)‖ₑ ^ (2 : ℝ)) :=
+        lintegral_mono hpt
+      _ = 2 * ((∫⁻ x : Vec3, ‖heatOrbit a (x, s)‖ₑ ^ (2 : ℝ)) +
+          ∫⁻ x : Vec3, ‖Z (x, s)‖ₑ ^ (2 : ℝ)) := by
+        rw [lintegral_const_mul' _ _ (by norm_num),
+          lintegral_add_left' (hhc.aestronglyMeasurable.enorm.pow_const _)]
+      _ ≤ 2 * (Kh + K) :=
+        by
+          gcongr
+          · exact heatOrbit_slice_lintegral_le ha hs.1
+          · exact hZs
+  refine lt_of_le_of_lt (essSup_le_of_ae_le _ hbound) ?_
+  exact ENNReal.mul_lt_top (by norm_num) (ENNReal.add_lt_top.2 ⟨hKh.lt_top, hK.lt_top⟩)
+
 /-- The Duhamel fixed point of `prop:pv-local-solution` is a finite-energy weak
 solution with the canonical pressure. The `L³` bound of the datum enters only
 through the construction of the fixed point and is not used here. -/
-theorem pvLocal_bundle {a : Vec3 → Vec3} (ha : IsInJ a)
+theorem pvLocal_canonical_bundle {a : Vec3 → Vec3} (ha : IsInJ a)
     {σ : ℝ} (hσ : 0 < σ) {U : ParabolicPoint → Vec3}
     (hU5 : MemLp U (ENNReal.ofReal 5)
       (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 σ))))
@@ -43,8 +82,8 @@ theorem pvLocal_bundle {a : Vec3 → Vec3} (ha : IsInJ a)
       (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 σ))))
     (hfix : ∀ z : ParabolicPoint, z.2 ≠ 0 → U z = pvLocalMap a σ U z)
     (hinit : ∀ x : Vec3, U (x, 0) = a x) :
-    ∃ DU : ParabolicPoint → Fin 3 → Vec3, ∃ p : ParabolicPoint → ℝ,
-      IsSerrinWeakSolution σ a U DU p := by
+    ∃ DU : ParabolicPoint → Fin 3 → Vec3,
+      IsSerrinWeakSolution σ a U DU (pvSlabPressure σ U) := by
   set Q : Set ParabolicPoint := spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 σ) with hQdef
   have hQm : MeasurableSet Q := MeasurableSet.univ.prod measurableSet_Ioo
   set G := pvSlabForce σ U with hGdef
@@ -65,17 +104,14 @@ theorem pvLocal_bundle {a : Vec3 → Vec3} (ha : IsInJ a)
   have hUeq (z : ParabolicPoint) (hz : z.2 ≠ 0) : U z = heatOrbit a z + Z z := hfix z hz
   have hUQ (z : ParabolicPoint) (hz : z ∈ Q) : U z = heatOrbit a z + Z z :=
     hUeq z hz.2.1.ne'
-  have hU2 : MemLp U 2 (volume.restrict Q) := by
-    refine MemLp.ae_eq ?_ (hh2.add hZ2)
-    filter_upwards [ae_restrict_mem hQm] with z hz
-    exact (hUQ z hz).symm
+  have hU2 : MemLp U 2 (volume.restrict Q) := MemLp.ae_eq
+    ((ae_restrict_mem hQm).mono fun z hz => (hUQ z hz).symm) (hh2.add hZ2)
   have hDZ2 : MemLp (fun z => fun i j => DZ i j z) 2 (volume.restrict Q) :=
     memLp_pi_iff.2 fun i => memLp_pi_iff.2 fun j => hDZ i j
   let DU : ParabolicPoint → Fin 3 → Vec3 := fun z i j =>
     spatialDeriv (fun y => heatOrbit a (y, z.2) i) j z.1 + DZ i j z
   have hDU2 : MemLp DU 2 (volume.restrict Q) := hDh2.add hDZ2
-  refine ⟨DU, pvSlabPressure σ U, ?_⟩
-  refine
+  refine ⟨DU,
     { pos := hσ
       datum := ha.1
       meas_u := hU2.aestronglyMeasurable
@@ -87,38 +123,8 @@ theorem pvLocal_bundle {a : Vec3 → Vec3} (ha : IsInJ a)
       pressure := pvSlabPressure_memLp_fiveThirds hU2 hU4
       momentum := ?_
       weak_cont := ?_
-      initial := ?_ }
-  · -- the slices are uniformly square integrable
-    set Kh : ℝ≥0∞ := ∑ i : Fin 3, eLpNorm (fun y => a y i) 2 volume ^ (2 : ℝ)
-    have hKh : Kh ≠ ⊤ := ENNReal.sum_ne_top.2 fun i _ =>
-      ENNReal.rpow_ne_top_of_nonneg (by norm_num) (memLp_pi_iff.1 ha.1 i).eLpNorm_ne_top
-    have hbound : ∀ᵐ s ∂(volume.restrict (Ioo 0 σ)),
-        ∫⁻ x : Vec3, ‖U (x, s)‖ₑ ^ (2 : ℝ) ≤ 2 * (Kh + K) := by
-      filter_upwards [hZslice, ae_restrict_mem measurableSet_Ioo] with s hZs hs
-      have hhc : Continuous (fun x : Vec3 => heatOrbit a (x, s)) :=
-        continuous_pi fun i => heatOrbit_slice_continuous ha.1 hs.1 i
-      have hpt (x : Vec3) : ‖U (x, s)‖ₑ ^ (2 : ℝ) ≤
-          2 * (‖heatOrbit a (x, s)‖ₑ ^ (2 : ℝ) + ‖Z (x, s)‖ₑ ^ (2 : ℝ)) := by
-        rw [hUeq (x, s) hs.1.ne']
-        have h1 := ENNReal.rpow_add_le_mul_rpow_add_rpow ‖heatOrbit a (x, s)‖ₑ ‖Z (x, s)‖ₑ
-          (p := 2) (by norm_num)
-        rw [show (2 : ℝ) - 1 = 1 by norm_num, ENNReal.rpow_one] at h1
-        exact (ENNReal.rpow_le_rpow (enorm_add_le _ _) (by norm_num)).trans h1
-      calc
-        ∫⁻ x : Vec3, ‖U (x, s)‖ₑ ^ (2 : ℝ) ≤
-            ∫⁻ x : Vec3, 2 * (‖heatOrbit a (x, s)‖ₑ ^ (2 : ℝ) + ‖Z (x, s)‖ₑ ^ (2 : ℝ)) :=
-          lintegral_mono hpt
-        _ = 2 * ((∫⁻ x : Vec3, ‖heatOrbit a (x, s)‖ₑ ^ (2 : ℝ)) +
-            ∫⁻ x : Vec3, ‖Z (x, s)‖ₑ ^ (2 : ℝ)) := by
-          rw [lintegral_const_mul' _ _ (by norm_num),
-            lintegral_add_left' (hhc.aestronglyMeasurable.enorm.pow_const _)]
-        _ ≤ 2 * (Kh + K) :=
-          by
-            gcongr
-            · exact heatOrbit_slice_lintegral_le ha.1 hs.1
-            · exact hZs.2
-    refine lt_of_le_of_lt (essSup_le_of_ae_le _ hbound) ?_
-    exact ENNReal.mul_lt_top (by norm_num) (ENNReal.add_lt_top.2 ⟨hKh.lt_top, hK.lt_top⟩)
+      initial := ?_ }⟩
+  · exact pvLocal_split_slice_bound ha.1 hK (hZslice.mono fun _ h => h.2) hUeq
   · -- finite energy
     rw [lintegral_add_left' (hU2.aestronglyMeasurable.enorm.pow_const _)]
     exact ENNReal.add_lt_top.2 ⟨(memLp_two_iff_lintegral_enorm_sq hU2.aestronglyMeasurable).1 hU2,
@@ -228,7 +234,8 @@ theorem pvLocal_bundle {a : Vec3 → Vec3} (ha : IsInJ a)
       simp only [DU, Pi.add_apply, Pi.zero_apply, zero_mul, Finset.sum_const_zero, sub_zero,
         Fin.sum_univ_three]
       ring
-    rw [setIntegral_congr_fun hQm hpt, integral_add hAint (integrable_finsetSum _ fun i _ => hBint i),
+    rw [setIntegral_congr_fun hQm hpt, integral_add hAint (integrable_finsetSum _ fun i _ =>
+      hBint i),
       integral_finsetSum _ fun i _ => hBint i, hh6, Finset.sum_eq_zero fun i _ => hZw i, add_zero]
   · -- time continuity of the pairings
     intro ψ hψ hψc
@@ -279,6 +286,20 @@ theorem pvLocal_bundle {a : Vec3 → Vec3} (ha : IsInJ a)
   · -- the initial datum
     intro ψ _ _
     simp only [hinit]
+
+/-- The local Duhamel fixed point has a finite-energy weak solution bundle. -/
+theorem pvLocal_bundle {a : Vec3 → Vec3} (ha : IsInJ a)
+    {σ : ℝ} (hσ : 0 < σ) {U : ParabolicPoint → Vec3}
+    (hU5 : MemLp U (ENNReal.ofReal 5)
+      (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 σ))))
+    (hU4 : MemLp U (ENNReal.ofReal 4)
+      (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 σ))))
+    (hfix : ∀ z : ParabolicPoint, z.2 ≠ 0 → U z = pvLocalMap a σ U z)
+    (hinit : ∀ x : Vec3, U (x, 0) = a x) :
+    ∃ DU : ParabolicPoint → Fin 3 → Vec3, ∃ p : ParabolicPoint → ℝ,
+      IsSerrinWeakSolution σ a U DU p := by
+  obtain ⟨DU, hDU⟩ := pvLocal_canonical_bundle ha hσ hU5 hU4 hfix hinit
+  exact ⟨DU, pvSlabPressure σ U, hDU⟩
 
 end ESS
 

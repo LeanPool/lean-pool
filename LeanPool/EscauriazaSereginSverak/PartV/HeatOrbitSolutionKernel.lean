@@ -108,7 +108,8 @@ theorem heatKernel_eLpNorm_two_uniform {δ : ℝ} (hδ : 0 < δ) :
     linarith only [this]
   refine ⟨?_, fun j => ?_⟩
   · have hmeas : AEStronglyMeasurable (fun y : Vec3 => heatKernel y t) volume :=
-      (heatKernel_vecTime_measurable.comp (measurable_id.prodMk measurable_const)).aestronglyMeasurable
+      (heatKernel_vecTime_measurable.comp (measurable_id.prodMk
+        measurable_const)).aestronglyMeasurable
     refine eLpNorm_mono_real hmeas fun y => ?_
     rw [Real.norm_eq_abs, abs_of_nonneg (heatKernel_nonneg y t)]
     calc

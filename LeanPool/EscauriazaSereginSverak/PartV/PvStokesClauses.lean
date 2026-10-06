@@ -161,7 +161,8 @@ variable {τ : ℝ} {F : Fin 3 → Fin 3 → ParabolicPoint → ℝ}
 theorem pvStokesForce_pairing_eq {z : ParabolicPoint}
     (hz : z ∈ spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 τ)) (a : Fin 3 → Fin 3 → ℝ) :
     ∑ i : Fin 3, ∑ j : Fin 3, pvStokesForce τ F i j z * a i j =
-      ∑ i : Fin 3, ∑ j : Fin 3, F i j z * a j i - pvStokesPressureSlab τ F z * ∑ j : Fin 3, a j j := by
+      ∑ i : Fin 3, ∑ j : Fin 3, F i j z * a j i - pvStokesPressureSlab τ F z * ∑ j : Fin 3, a j
+        j := by
   simp only [pvStokesForce_of_mem hz, Fin.sum_univ_three]
   simp
   ring

@@ -73,7 +73,8 @@ theorem pvSlabPressure_sub_eLpNorm_le {σ r : ℝ} (hr : 1 < r) {U V : Parabolic
         ∑ i : Fin 3, ∑ j : Fin 3,
           eLpNorm (pvSlabTensor σ U U i j - pvSlabTensor σ V V i j) (ENNReal.ofReal r) volume := by
   have hae : pvSlabPressure σ U - pvSlabPressure σ V =ᵐ[volume]
-      (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 σ)).indicator (CKN.Leray.rieszPressureSpaceTime r hr (pvSlabTensor σ U U) hUr -
+      (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 σ)).indicator (CKN.Leray.rieszPressureSpaceTime
+        r hr (pvSlabTensor σ U U) hUr -
         CKN.Leray.rieszPressureSpaceTime r hr (pvSlabTensor σ V V) hVr) := by
     filter_upwards [pvSlabPressure_ae_eq_indicator hr hU2 hUr,
       pvSlabPressure_ae_eq_indicator hr hV2 hVr] with z h1 h2

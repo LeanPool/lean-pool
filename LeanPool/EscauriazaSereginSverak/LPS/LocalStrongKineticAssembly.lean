@@ -98,7 +98,8 @@ theorem lps_strong_kinetic_slice
       MemLp (fun x : Vec3 => D2u (x, t) i j j) 2 volume :=
     ae_all_iff.2 fun i => ae_all_iff.2 fun j => lps_slab_slice_memLp_aem (hD2 i j)
   have hsliceP := lps_slab_slice_memLp_aem hp
-  have hM : ∀ᵐ t ∂(volume.restrict (Ioo t₀ T)), ∀ (n : ℕ) (i : Fin 3), ∀ᵐ x ∂(volume : Measure Vec3),
+  have hM : ∀ᵐ t ∂(volume.restrict (Ioo t₀ T)), ∀ (n : ℕ) (i : Fin 3), ∀ᵐ x ∂(volume : Measure
+    Vec3),
       vlConv (vlMoll n) (fun y : Vec3 => Dtu (y, t) i) x +
         ∑ j : Fin 3, vlConv (vlDeriv (vlMoll n) j)
           (fun y : Vec3 => u (y, t) i * u (y, t) j) x -
@@ -141,7 +142,8 @@ theorem lps_strong_kinetic_slice
     (H := fun i j x => D2u (x, t) i j j) (F := fun i j x => u (x, t) i * u (x, t) j)
     (P := fun x => p (x, t)) hUi hW hGij hH hFij hP hMt hG1t hH1t
     (fun n => Eventually.of_forall fun x => lps_conv_div_free hdiv (vlMoll_kernel n) x)
-  have htrans : ∑ i : Fin 3, ∑ j : Fin 3, ∫ x : Vec3, u (x, t) i * u (x, t) j * Du (x, t) i j = 0 := by
+  have htrans : ∑ i : Fin 3, ∑ j : Fin 3, ∫ x : Vec3, u (x, t) i * u (x, t) j * Du (x, t) i j =
+    0 := by
     have h := lps_slice_self_transport_four hSerrin hu4
     have hint : ∀ i j : Fin 3, Integrable
         (fun x : Vec3 => u (x, t) i * u (x, t) j * Du (x, t) i j) volume :=

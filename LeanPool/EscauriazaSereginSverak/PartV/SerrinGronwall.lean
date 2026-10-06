@@ -9,6 +9,13 @@ module
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.AbsolutelyContinuousFun
 public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
+/-!
+# Integral Gronwall inequality with a time dependent coefficient
+
+An integral inequality with an integrable nonnegative coefficient forces a
+nonnegative function to vanish when its initial contribution is zero.
+-/
+
 public section
 
 open MeasureTheory Set Filter

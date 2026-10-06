@@ -123,8 +123,10 @@ theorem lps_strong_solution_glue {a b c : ℝ}
       lps_glue_l2_continuity hab hbc (F := lpsGlue b DU DW) (fun z hz => lpsGlue_of_le hz)
         (fun z hz => lpsGlue_of_gt hz) (fun t ht => (hC₁ t ht).2) (fun t ht => (hC₂ t ht).2)
         hgrad t ht⟩
-  · refine ⟨ESS.LPS.lps_locallyIntegrableOn_of_memLp hu, ESS.LPS.lps_locallyIntegrableOn_of_memLp hDu,
-      ESS.LPS.lps_locallyIntegrableOn_of_memLp hD2, ESS.LPS.lps_locallyIntegrableOn_of_memLp hDt, ?_⟩
+  · refine ⟨ESS.LPS.lps_locallyIntegrableOn_of_memLp hu,
+    ESS.LPS.lps_locallyIntegrableOn_of_memLp hDu,
+      ESS.LPS.lps_locallyIntegrableOn_of_memLp hD2, ESS.LPS.lps_locallyIntegrableOn_of_memLp
+        hDt, ?_⟩
     intro φ hφ
     refine ⟨fun i j => ?_, fun i j k => ?_, fun i => ?_⟩
     · exact lps_spatial_weak_glue hab hbc (F₁ := fun z => U z i) (F₂ := fun z => W z i)

@@ -290,7 +290,8 @@ theorem lps_strong_form_orthogonal_J_ae
   refine abs_nonpos_iff.mp ?_
   refine le_of_forall_pos_le_add fun δ hδ => ?_
   rw [zero_add]
-  obtain ⟨ψ, hψD, hψlt⟩ := hDdense w hw (ENNReal.ofReal (δ / (3 * (eLpNorm Ft 2 volume).toReal + 1)))
+  obtain ⟨ψ, hψD, hψlt⟩ := hDdense w hw (ENNReal.ofReal (δ / (3 * (eLpNorm Ft 2 volume).toReal +
+    1)))
     (ENNReal.ofReal_pos.mpr (by positivity))
   have hψ2 : MemLp ψ 2 volume := by
     obtain ⟨hψs, hψc, -⟩ := hDS hψD

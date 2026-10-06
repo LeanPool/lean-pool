@@ -194,7 +194,8 @@ theorem lps_endpoint_boundary_right {a b ℓ : ℝ} (hab : a < b)
     refine tendsto_integral_filter_of_dominated_convergence (fun q => ‖F1 q‖) ?_ ?_
       hF1.norm ?_
     · filter_upwards [self_mem_nhdsWithin] with ε hε
-      exact (((lpsCutoffRight_contDiff b ε).continuous.comp continuous_snd).aestronglyMeasurable).mul
+      exact (((lpsCutoffRight_contDiff b ε).continuous.comp
+        continuous_snd).aestronglyMeasurable).mul
         hF1.aestronglyMeasurable
     · filter_upwards [self_mem_nhdsWithin] with ε hε
       refine Eventually.of_forall fun q => ?_

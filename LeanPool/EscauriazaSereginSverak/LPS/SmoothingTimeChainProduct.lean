@@ -298,7 +298,8 @@ theorem lpsSlotCLM_leray {M : ℕ} (F : Fin 3 → lpsSobolevSpace M) (i : Fin 3)
 
 /-- The right-hand side of the projected Navier–Stokes equation, from `H^(n+3)` fields to
 `H^(n+1)` fields: `N(v)_i = Σ_k ∂_k ∂_k v_i - P(Σ_j v_j ∂_j v)_i` (`prop:lps-smoothing`). -/
-@[expose] def lpsNSMap (n : ℕ) (v : Fin 3 → lpsSobolevSpace (n + 2 + 1)) : Fin 3 → lpsSobolevSpace (n + 1) :=
+@[expose] def lpsNSMap (n : ℕ) (v : Fin 3 → lpsSobolevSpace (n + 2 + 1)) : Fin 3 →
+  lpsSobolevSpace (n + 1) :=
   fun i => (∑ k, lpsDerivCLM (n + 1) k (lpsDerivCLM (n + 2) k (v i))) -
     lpsLerayCLM (n + 1) (fun i' => lpsInclCLM (n + 1)
       (∑ j, lpsMulCLM (n + 2) (by omega) (lpsInclCLM (n + 2) (v j))

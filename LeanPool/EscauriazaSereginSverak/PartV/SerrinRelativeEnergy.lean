@@ -67,6 +67,44 @@ theorem serrin_relative_slice_bound_ae {T : ℝ} {a b : Vec3 → Vec3}
   refine (le_abs_self _).trans (h.trans_eq ?_)
   simp only [Pi.sub_apply]
 
+private theorem serrin_distance_slice_norm_bound_ae
+    {T : ℝ} {a : Vec3 → Vec3}
+    {u v : ParabolicPoint → Vec3} {Du Dv : ParabolicPoint → Fin 3 → Vec3}
+    {pu pv : ParabolicPoint → ℝ}
+    (hU : IsSerrinWeakSolution T a u Du pu) (hV : IsSerrinWeakSolution T a v Dv pv)
+    {Bu Bv : ℝ}
+    (hBu : ∀ᵐ τ ∂(volume.restrict (Ioo 0 T)), ∫ x : Vec3, ∑ k : Fin 3, u (x, τ) k ^ 2 ≤ Bu)
+    (hBv : ∀ᵐ τ ∂(volume.restrict (Ioo 0 T)), ∫ x : Vec3, ∑ k : Fin 3, v (x, τ) k ^ 2 ≤ Bv) :
+    ∀ᵐ τ ∂(volume.restrict (Ioo 0 T)),
+      ‖∫ x : Vec3, ∑ k : Fin 3, (v (x, τ) k - u (x, τ) k) ^ 2‖ ≤ 2 * (Bu + Bv) := by
+  let E : ℝ → ℝ := fun τ => ∫ x : Vec3, ∑ k : Fin 3, (v (x, τ) k - u (x, τ) k) ^ 2
+  filter_upwards [hBu, hBv, serrinWeak_slices_ae hU, serrinWeak_slices_ae hV]
+    with τ hu hv hsu hsv
+  have hu2' := hsu.1
+  have hv2' := hsv.1
+  have hiu : Integrable (fun x => ∑ k : Fin 3, u (x, τ) k ^ 2) volume :=
+    integrable_finsetSum _ fun k _ => (memLp_two_iff_integrable_sq_norm
+      (hu2'.eval k).aestronglyMeasurable).mp (hu2'.eval k) |>.congr
+        (Eventually.of_forall fun x => by simp)
+  have hiv : Integrable (fun x => ∑ k : Fin 3, v (x, τ) k ^ 2) volume :=
+    integrable_finsetSum _ fun k _ => (memLp_two_iff_integrable_sq_norm
+      (hv2'.eval k).aestronglyMeasurable).mp (hv2'.eval k) |>.congr
+        (Eventually.of_forall fun x => by simp)
+  have hE0 : 0 ≤ E τ := integral_nonneg fun x => Finset.sum_nonneg fun k _ => sq_nonneg _
+  rw [Real.norm_eq_abs, abs_of_nonneg hE0]
+  calc
+    E τ ≤ ∫ x : Vec3, 2 * (∑ k : Fin 3, u (x, τ) k ^ 2) + 2 * ∑ k : Fin 3, v (x, τ) k ^ 2 := by
+      refine integral_mono_of_nonneg (Eventually.of_forall fun x =>
+        Finset.sum_nonneg fun k _ => sq_nonneg _) ((hiu.const_mul 2).add (hiv.const_mul 2))
+        (Eventually.of_forall fun x => ?_)
+      simp only [Finset.mul_sum, ← Finset.sum_add_distrib]
+      exact Finset.sum_le_sum fun k _ => by nlinarith only [sq_nonneg (v (x, τ) k + u (x, τ) k)]
+    _ = 2 * (∫ x : Vec3, ∑ k : Fin 3, u (x, τ) k ^ 2) +
+        2 * ∫ x : Vec3, ∑ k : Fin 3, v (x, τ) k ^ 2 := by
+      rw [integral_add (hiu.const_mul 2) (hiv.const_mul 2), integral_const_mul,
+        integral_const_mul]
+    _ ≤ 2 * (Bu + Bv) := by linarith only [hu, hv]
+
 /-- The relative energy inequality at almost every time. -/
 theorem serrin_relative_energy_inequality {T : ℝ} {a : Vec3 → Vec3}
     {u v : ParabolicPoint → Vec3} {Du Dv : ParabolicPoint → Fin 3 → Vec3}
@@ -149,33 +187,7 @@ theorem serrin_relative_energy_inequality {T : ℝ} {a : Vec3 → Vec3}
   have hEm := serrin_distance_aestronglyMeasurable hU hV
   obtain ⟨Bu, hBu⟩ := serrinWeak_slice_energy_bound hU
   obtain ⟨Bv, hBv⟩ := serrinWeak_slice_energy_bound hV
-  have hEb : ∀ᵐ τ ∂(volume.restrict (Ioo 0 T)), ‖E τ‖ ≤ 2 * (Bu + Bv) := by
-    filter_upwards [hBu, hBv, serrinWeak_slices_ae hU, serrinWeak_slices_ae hV]
-      with τ hu hv hsu hsv
-    have hu2' := hsu.1
-    have hv2' := hsv.1
-    have hiu : Integrable (fun x => ∑ k : Fin 3, u (x, τ) k ^ 2) volume :=
-      integrable_finsetSum _ fun k _ => (memLp_two_iff_integrable_sq_norm
-        (hu2'.eval k).aestronglyMeasurable).mp (hu2'.eval k) |>.congr
-          (Eventually.of_forall fun x => by simp)
-    have hiv : Integrable (fun x => ∑ k : Fin 3, v (x, τ) k ^ 2) volume :=
-      integrable_finsetSum _ fun k _ => (memLp_two_iff_integrable_sq_norm
-        (hv2'.eval k).aestronglyMeasurable).mp (hv2'.eval k) |>.congr
-          (Eventually.of_forall fun x => by simp)
-    have hE0 : 0 ≤ E τ := integral_nonneg fun x => Finset.sum_nonneg fun k _ => sq_nonneg _
-    rw [Real.norm_eq_abs, abs_of_nonneg hE0]
-    calc
-      E τ ≤ ∫ x : Vec3, 2 * (∑ k : Fin 3, u (x, τ) k ^ 2) + 2 * ∑ k : Fin 3, v (x, τ) k ^ 2 := by
-        refine integral_mono_of_nonneg (Eventually.of_forall fun x =>
-          Finset.sum_nonneg fun k _ => sq_nonneg _) ((hiu.const_mul 2).add (hiv.const_mul 2))
-          (Eventually.of_forall fun x => ?_)
-        simp only [Finset.mul_sum, ← Finset.sum_add_distrib]
-        exact Finset.sum_le_sum fun k _ => by nlinarith only [sq_nonneg (v (x, τ) k + u (x, τ) k)]
-      _ = 2 * (∫ x : Vec3, ∑ k : Fin 3, u (x, τ) k ^ 2) +
-          2 * ∫ x : Vec3, ∑ k : Fin 3, v (x, τ) k ^ 2 := by
-        rw [integral_add (hiu.const_mul 2) (hiv.const_mul 2), integral_const_mul,
-          integral_const_mul]
-      _ ≤ 2 * (Bu + Bv) := by linarith only [hu, hv]
+  have hEb := serrin_distance_slice_norm_bound_ae hU hV hBu hBv
   have hmE : IntegrableOn (fun τ => m τ * E τ) (Ioo 0 T) :=
     hm.mul_bdd (c := 2 * (Bu + Bv)) hEm hEb
   have hcross := serrin_cross_identity hU hV hu5 hv103

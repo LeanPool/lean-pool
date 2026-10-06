@@ -11,6 +11,13 @@ public import LeanPool.EscauriazaSereginSverak.PartV.HeatConvolution
 public import LeanPool.EscauriazaSereginSverak.PartV.HeatEntropyTime
 public import Mathlib.MeasureTheory.Function.StronglyMeasurable.Basic
 
+/-!
+# Heat Critical Measurable
+
+The smooth-data heat orbit extended to nonpositive times by its initial
+value, for use in `lem:pv-heat-critical`.
+-/
+
 public section
 
 open MeasureTheory Filter Set

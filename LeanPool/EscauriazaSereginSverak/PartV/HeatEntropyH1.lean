@@ -8,6 +8,12 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.PartV.HeatEntropy
 
+/-!
+# Heat Entropy H1
+
+The regularized entropy profile of smooth heat data is in whole-space `H¹`.
+-/
+
 public section
 
 open MeasureTheory Filter

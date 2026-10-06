@@ -367,6 +367,213 @@ theorem lps_regR12_slice_memLp_bounds
   · intro i j
     exact ⟨hDscalar i j, hDbound i j⟩
 
+private lemma lps_vector_weak_slice_scalar
+    {v : ℕ → Vec3 → Vec3} {U : Vec3 → Vec3}
+    (hweak : ∀ w : Vec3 → Vec3, MemLp w 2 volume →
+      Tendsto (fun n => ∫ x : Vec3, ∑ i : Fin 3, v n x i * w x i)
+        atTop (nhds (∫ x : Vec3, ∑ i : Fin 3, U x i * w x i)))
+    (i : Fin 3) (w : Vec3 → ℝ) (hw : MemLp w 2 volume) :
+    Tendsto (fun n => ∫ x : Vec3, v n x i * w x) atTop
+      (nhds (∫ x : Vec3, U x i * w x)) := by
+  let W : Vec3 → Vec3 := fun x k => if k = i then w x else 0
+  have hW : MemLp W 2 volume := by
+    apply memLp_pi_iff.mpr
+    intro k
+    by_cases hk : k = i
+    · subst k
+      simpa [W] using hw
+    · simp [W, hk]
+  have hconv := hweak W hW
+  have hsource (n : ℕ) :
+      (∫ x : Vec3, ∑ k : Fin 3,
+        v n x k * W x k) =
+        ∫ x : Vec3, v n x i * w x := by
+    congr 1
+    funext x
+    simp [W]
+  have htarget : (∫ x : Vec3, ∑ k : Fin 3, U x k * W x k) =
+      ∫ x : Vec3, U x i * w x := by
+    congr 1
+    funext x
+    simp [W]
+  simpa only [hsource, htarget] using hconv
+
+private lemma lps_weak_vector_limit_eLpNorm_bound
+    {v : ℕ → Vec3 → Vec3} {U : Vec3 → Vec3} (M : ℝ)
+    (hv : ∀ n, MemLp (v n) 2 volume) (hU : MemLp U 2 volume)
+    (hbound : ∀ n,
+      ‖(CKN.Leray.lerayHopfLimit_toLp_memLp (hv n)).toLp
+        (fun x => (WithLp.toLp 2 (v n x) : L2Vec3))‖ ≤ 3 * Real.sqrt M)
+    (hweak : ∀ w : Vec3 → Vec3, MemLp w 2 volume →
+      Tendsto (fun n => ∫ x : Vec3, ∑ i : Fin 3, v n x i * w x i)
+        atTop (nhds (∫ x : Vec3, ∑ i : Fin 3, U x i * w x i))) :
+    eLpNorm U 2 volume ≤ (9 : ℝ≥0∞) * ENNReal.ofReal (Real.sqrt M) := by
+  let V : Vec3 → L2Vec3 := fun x => WithLp.toLp 2 (U x)
+  have hVmem : MemLp V 2 volume := by
+    have h := hU.continuousLinearMap_comp
+      (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)).symm.toContinuousLinearMap
+    change MemLp (fun x : Vec3 => (WithLp.toLp 2 (U x) : L2Vec3)) 2 volume
+    exact h
+  let Vlp := (CKN.Leray.lerayHopfLimit_toLp_memLp hU).toLp V
+  have hVbound : ‖Vlp‖ ≤ 3 * Real.sqrt M := by
+    simpa only [V, Vlp] using
+      CKN.Leray.norm_le_of_weak_tendsto_of_uniform_bound
+        (by positivity) hbound (by
+          intro y
+          let w : Vec3 → Vec3 := fun x => WithLp.ofLp (y x)
+          have hw : MemLp w 2 volume := (Lp.memLp y).continuousLinearMap_comp
+            (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)).toContinuousLinearMap
+          have hyeq :
+              (CKN.Leray.lerayHopfLimit_toLp_memLp hw).toLp
+                (fun x => (WithLp.toLp 2 (w x) : L2Vec3)) = y := by
+            refine Lp.ext ?_
+            filter_upwards [
+              (CKN.Leray.lerayHopfLimit_toLp_memLp hw).coeFn_toLp] with x hx
+            rw [hx]
+          have htarget := CKN.Leray.lerayHopfLimit_inner_toLp_eq hU hw
+          have hsource (n : ℕ) :=
+            CKN.Leray.lerayHopfLimit_inner_toLp_eq (hv n) hw
+          have hpair : ∀ n, inner ℝ
+              ((CKN.Leray.lerayHopfLimit_toLp_memLp (hv n)).toLp
+                (fun x => (WithLp.toLp 2 (v n x) : L2Vec3))) y =
+              ∫ x : Vec3, ∑ i : Fin 3, v n x i * w x i := by
+            intro n
+            rw [← hyeq]
+            exact hsource n
+          have hpairLimit : inner ℝ
+              ((CKN.Leray.lerayHopfLimit_toLp_memLp hU).toLp
+                (fun x => (WithLp.toLp 2 (U x) : L2Vec3))) y =
+              ∫ x : Vec3, ∑ i : Fin 3, U x i * w x i := by
+            rw [← hyeq]
+            exact htarget
+          have hpairEq :
+              (fun n => inner ℝ
+                ((CKN.Leray.lerayHopfLimit_toLp_memLp (hv n)).toLp
+                  (fun x => (WithLp.toLp 2 (v n x) : L2Vec3))) y) =
+              (fun n => ∫ x : Vec3,
+                ∑ i : Fin 3, v n x i * w x i) := by
+            funext n
+            exact hpair n
+          simpa only [hpairEq, hpairLimit] using hweak w hw)
+  have hVboundENN : eLpNorm V 2 volume ≤
+      ENNReal.ofReal (3 * Real.sqrt M) := by
+    exact lps_scalar_eLpNorm_bound_of_toLp hVmem (by positivity) hVbound
+  have hpoint (x : Vec3) : ‖U x‖ ≤ ‖V x‖ := by
+    change ‖U x‖ ≤ ‖WithLp.toLp 2 (U x)‖
+    rw [← vec3EuclideanNorm_eq_l2]
+    exact norm_le_vec3EuclideanNorm _
+  have hpi : eLpNorm (fun x : Vec3 => U x) 2 volume ≤
+      eLpNorm (fun x : Vec3 => ‖V x‖) 2 volume :=
+    eLpNorm_mono_ae_real (p := (2 : ℝ≥0∞)) hU.aestronglyMeasurable
+      (Filter.Eventually.of_forall hpoint)
+  have hVnorm : eLpNorm (fun x : Vec3 => ‖V x‖) 2 volume =
+      eLpNorm V 2 volume := eLpNorm_norm V hVmem.aestronglyMeasurable
+  calc
+    eLpNorm (fun x : Vec3 => U x) 2 volume ≤
+        eLpNorm (fun x : Vec3 => ‖V x‖) 2 volume := hpi
+    _ = eLpNorm V 2 volume := hVnorm
+    _ ≤ ENNReal.ofReal (3 * Real.sqrt M) := hVboundENN
+    _ ≤ (9 : ℝ≥0∞) * ENNReal.ofReal (Real.sqrt M) := by
+      rw [ENNReal.ofReal_mul (by positivity : 0 ≤ (3 : ℝ))]
+      gcongr
+      norm_num
+
+private lemma lps_vector_h1_weak_limit
+    (v : ℕ → Vec3 → Vec3) (D : ℕ → Vec3 → Fin 3 → Vec3)
+    (U : Vec3 → Vec3) (B : ℝ) (hB : 0 ≤ B)
+    (hmem : ∀ n i j, MemLp (fun x => D n x i j) 2 volume)
+    (hbound : ∀ n i j, ‖(hmem n i j).toLp (fun x => D n x i j)‖ ≤ B)
+    (hweak : ∀ i w, MemLp w 2 volume →
+      Tendsto (fun n => ∫ x : Vec3, v n x i * w x) atTop
+        (nhds (∫ x : Vec3, U x i * w x)))
+    (hgradient : ∀ n i, HasWeakGradientOn (Set.univ : Set Vec3)
+      (fun x => v n x i) (fun x => D n x i)) :
+    ∃ G : Fin 3 → Vec3 → Vec3,
+      ∀ i : Fin 3, ∃ hG : MemLp (G i) 2 volume,
+        HasWeakGradientOn (Set.univ : Set Vec3) (fun x => U x i) (G i) ∧
+        ∀ j : Fin 3,
+          ‖((memLp_pi_iff.mp hG) j).toLp (fun x => G i x j)‖ ≤ B := by
+  have hcomponent (i : Fin 3) : ∃ G : Vec3 → Vec3, ∃ hG : MemLp G 2 volume,
+      HasWeakGradientOn (Set.univ : Set Vec3) (fun x => U x i) G ∧
+      ∀ j : Fin 3, ‖((memLp_pi_iff.mp hG) j).toLp (fun x => G x j)‖ ≤ B :=
+    lps_h1_scalar_weak_limit (fun n x => v n x i) (fun n x => D n x i)
+      (fun x => U x i) B hB (fun n j => hmem n i j)
+      (fun n j => hbound n i j) (hweak i) (fun n => hgradient n i)
+  choose G hGmem hGweak hGbound using hcomponent
+  exact ⟨G, fun i => ⟨hGmem i, hGweak i, hGbound i⟩⟩
+
+private lemma lps_weak_gradient_h1_matrix_bound
+    {U : Vec3 → Vec3} {D : Vec3 → Fin 3 → Vec3} {G : Fin 3 → Vec3 → Vec3}
+    (M : ℝ) (hU : MemLp U 2 volume)
+    (hGdata : ∀ i : Fin 3, ∃ hG : MemLp (G i) 2 volume,
+      HasWeakGradientOn (Set.univ : Set Vec3) (fun x => U x i) (G i) ∧
+      ∀ j : Fin 3,
+        ‖((memLp_pi_iff.mp hG) j).toLp (fun x => G i x j)‖ ≤ Real.sqrt M)
+    (hEq : ∀ x i j, D x i j = G i x j) :
+    (∀ i : Fin 3, ∃ h : H1Function (Set.univ : Set Vec3),
+      h.toFun = (fun x : Vec3 => U x i) ∧ h.grad = (fun x : Vec3 => D x i)) ∧
+    MemLp D 2 volume ∧ eLpNorm D 2 volume ≤
+      (9 : ℝ≥0∞) * ENNReal.ofReal (Real.sqrt M) := by
+  have hDsliceMem : MemLp (fun x : Vec3 => D x) 2 volume := by
+    apply memLp_pi_iff.mpr
+    intro i
+    apply memLp_pi_iff.mpr
+    intro j
+    rcases hGdata i with ⟨hmem, _hweak, _hbound⟩
+    have hcoord := (memLp_pi_iff.mp hmem) j
+    have hDsliceAt (x : Vec3) : D x i j = G i x j := hEq x i j
+    simpa only [hDsliceAt] using hcoord
+  have hDsliceBound : eLpNorm (fun x : Vec3 => D x) 2 volume ≤
+      (9 : ℝ≥0∞) * ENNReal.ofReal (Real.sqrt M) := by
+    have hsum := lps_eLpNorm_matrix_le_sum_coordinates hDsliceMem
+    have hcoord (i j : Fin 3) :
+        eLpNorm (fun x : Vec3 => D x i j) 2 volume ≤
+          ENNReal.ofReal (Real.sqrt M) := by
+      rcases hGdata i with ⟨hGmem, _hweak, hbound⟩
+      have hmem : MemLp (fun x : Vec3 => D x i j) 2 volume :=
+        (memLp_pi_iff.mp (memLp_pi_iff.mp hDsliceMem i)) j
+      have hGcoord : MemLp (fun x : Vec3 => G i x j) 2 volume :=
+        (memLp_pi_iff.mp hGmem) j
+      have hnorm : ‖hGcoord.toLp (fun x => G i x j)‖ ≤ Real.sqrt M :=
+        hbound j
+      have hscalar := lps_scalar_eLpNorm_bound_of_toLp hGcoord
+        (Real.sqrt_nonneg M) hnorm
+      have hDsliceAt (x : Vec3) : D x i j = G i x j := hEq x i j
+      simpa only [hDsliceAt] using hscalar
+    calc
+      eLpNorm (fun x : Vec3 => D x) 2 volume ≤
+          ∑ i : Fin 3, ∑ j : Fin 3,
+            eLpNorm (fun x : Vec3 => D x i j) 2 volume := hsum
+      _ ≤ ∑ _i : Fin 3, ∑ _j : Fin 3, ENNReal.ofReal (Real.sqrt M) :=
+        Finset.sum_le_sum fun i hi => Finset.sum_le_sum fun j hj => hcoord i j
+      _ = (9 : ℝ≥0∞) * ENNReal.ofReal (Real.sqrt M) := by
+        simp only [Finset.sum_const, nsmul_eq_mul]
+        rw [← mul_assoc]
+        norm_num
+  have hH1 : ∀ i : Fin 3, ∃ h : H1Function (Set.univ : Set Vec3),
+      h.toFun = (fun x : Vec3 => U x i) ∧
+      h.grad = (fun x : Vec3 => D x i) := by
+    intro i
+    rcases hGdata i with ⟨hGi, hGweak, _hGbound⟩
+    let hi : H1Function (Set.univ : Set Vec3) := {
+      toFun := fun x => U x i
+      grad := G i
+      memL2 := by
+        have hcomp := (memLp_pi_iff.mp hU) i
+        simpa [CKN.MemL2On, CKN.MemLpOn, CKN.volumeOn,
+          Measure.restrict_univ] using hcomp
+      gradMemL2 := by
+        intro j
+        have hcomp := (memLp_pi_iff.mp hGi) j
+        simpa [CKN.GradMemLpOn, CKN.MemLpOn, CKN.volumeOn,
+          Measure.restrict_univ] using hcomp
+      hasWeakGradient := hGweak
+    }
+    refine ⟨hi, rfl, ?_⟩
+    funext x j
+    exact (hEq x i j).symm
+  exact ⟨hH1, hDsliceMem, hDsliceBound⟩
+
 /-- Uniform regularized `H¹` bounds pass to every positive-time slice of the
 selected Leray limit. The slices belong to `H¹ ∩ J`, and the same bounds give
 the finite-slab `L²` control used for the velocity tensor. -/
@@ -441,31 +648,8 @@ theorem lps_strong_limit_all_time_h1_slices
       ∀ w : Vec3 → ℝ, MemLp w 2 volume →
         Tendsto (fun n => ∫ x : Vec3,
           CKN.Leray.regR12Uε ρ b hb.2 (εseq (σ n)) (x, t) i * w x)
-          atTop (nhds (∫ x : Vec3, u (x, t) i * w x)) := by
-    intro w hw
-    let W : Vec3 → Vec3 := fun x k => if k = i then w x else 0
-    have hW : MemLp W 2 volume := by
-      apply memLp_pi_iff.mpr
-      intro k
-      by_cases hk : k = i
-      · subst k
-        simpa [W] using hw
-      · simp [W, hk]
-    have hconv := hweakSlice t ht W hW
-    have hsource (n : ℕ) :
-        (∫ x : Vec3, ∑ k : Fin 3,
-          CKN.Leray.regR12Uε ρ b hb.2 (εseq (σ n)) (x, t) k * W x k) =
-          ∫ x : Vec3, CKN.Leray.regR12Uε ρ b hb.2
-            (εseq (σ n)) (x, t) i * w x := by
-      congr 1
-      funext x
-      simp [W]
-    have htarget : (∫ x : Vec3, ∑ k : Fin 3, u (x, t) k * W x k) =
-        ∫ x : Vec3, u (x, t) i * w x := by
-      congr 1
-      funext x
-      simp [W]
-    simpa only [hsource, htarget, εseq, Function.comp_def] using hconv
+          atTop (nhds (∫ x : Vec3, u (x, t) i * w x)) :=
+    lps_vector_weak_slice_scalar (hweakSlice t ht) i
   have hregWeakGradient (t : ℝ) (ht : 0 < t) (i : Fin 3) (n : ℕ) :
       HasWeakGradientOn (Set.univ : Set Vec3)
         (fun x => CKN.Leray.regR12Uε ρ b hb.2 (εseq (σ n)) (x, t) i)
@@ -483,40 +667,20 @@ theorem lps_strong_limit_all_time_h1_slices
           ∀ j : Fin 3,
             ‖((memLp_pi_iff.mp hG) j).toLp
               (fun x => G i x j)‖ ≤ Real.sqrt M := by
-    have hcomponent (i : Fin 3) :
-        ∃ G : Vec3 → Vec3, ∃ hG : MemLp G 2 volume,
-          HasWeakGradientOn (Set.univ : Set Vec3) (fun x => u (x, t) i) G ∧
-          ∀ j : Fin 3, ‖((memLp_pi_iff.mp hG) j).toLp
-            (fun x => G x j)‖ ≤ Real.sqrt M := by
-      let fseq : ℕ → Vec3 → ℝ := fun n x =>
-        CKN.Leray.regR12Velocity ρ (εseq (σ n)) (hεpos n) b hb.2
-          (x, t) i
-      let gseq : ℕ → Vec3 → Vec3 := fun n x j =>
-        spatialPartial (fun y => CKN.Leray.regR12Velocity ρ
-          (εseq (σ n)) (hεpos n) b hb.2
-          y i) j (x, t)
-      let f : Vec3 → ℝ := fun x => u (x, t) i
-      have hgseq (n : ℕ) (j : Fin 3) : MemLp (fun x => gseq n x j) 2 volume := by
-        exact (memLp_pi_iff.mp (memLp_pi_iff.mp
-          (hregBounds t ⟨ht.1.le, ht.2⟩ n).2.1 i)) j
-      have hbound (n : ℕ) (j : Fin 3) :
-          ‖(hgseq n j).toLp (fun x => gseq n x j)‖ ≤ Real.sqrt M := by
-        rcases (hregBounds t ⟨ht.1.le, ht.2⟩ n).2.2.2 i j with ⟨hmem, hnorm⟩
-        simpa only [hgseq, gseq] using hnorm
-      have hweakf (w : Vec3 → ℝ) (hw : MemLp w 2 volume) :
-          Tendsto (fun n => ∫ x : Vec3, fseq n x * w x)
-            atTop (nhds (∫ x : Vec3, f x * w x)) := by
-        simpa only [fseq, f, hUeq] using hweakScalar t ht.1 i w hw
-      have hweakD (n : ℕ) : HasWeakGradientOn (Set.univ : Set Vec3)
-          (fseq n) (gseq n) := by
-        simpa only [fseq, gseq, hUeq] using hregWeakGradient t ht.1 i n
-      simpa only [fseq, gseq, f] using
-        lps_h1_scalar_weak_limit fseq gseq f (Real.sqrt M)
-          (Real.sqrt_nonneg M) hgseq hbound hweakf hweakD
-    choose G hGmem hGweak hGbound using hcomponent
-    refine ⟨G, ?_⟩
-    intro i
-    exact ⟨hGmem i, hGweak i, hGbound i⟩
+    apply lps_vector_h1_weak_limit
+      (fun n x => CKN.Leray.regR12Uε ρ b hb.2 (εseq (σ n)) (x, t))
+      (fun n x i j => spatialPartial
+        (fun y => CKN.Leray.regR12Uε ρ b hb.2 (εseq (σ n)) y i) j (x, t))
+      (fun x => u (x, t)) (Real.sqrt M) (Real.sqrt_nonneg M)
+    · intro n i j
+      simpa only [hUeq] using
+        (memLp_pi_iff.mp (memLp_pi_iff.mp (hregBounds t ⟨ht.1.le, ht.2⟩ n).2.1 i)) j
+    · intro n i j
+      rcases (hregBounds t ⟨ht.1.le, ht.2⟩ n).2.2.2 i j with ⟨hmem, hnorm⟩
+      simpa only [hUeq] using hnorm
+    · exact hweakScalar t ht.1
+    · intro n i
+      exact hregWeakGradient t ht.1 i n
   let Dslice : ParabolicPoint → Fin 3 → Vec3 := fun z i j =>
     if ht : z.2 ∈ Ioc 0 T then (Classical.choose (hgradAll z.2 ht)) i z.1 j
     else 0
@@ -591,148 +755,16 @@ theorem lps_strong_limit_all_time_h1_slices
       hweakVector
   have hJ : IsInJ (fun x : Vec3 => u (x, t)) :=
     CKN.weakDivFreeL2_isInJ ⟨huSlice, hdivSlice⟩
-  have hDsliceMem : MemLp (fun x : Vec3 => Dslice (x, t)) 2 volume := by
-    apply memLp_pi_iff.mpr
-    intro i
-    apply memLp_pi_iff.mpr
-    intro j
-    rcases hGdata i with ⟨hmem, _hweak, _hbound⟩
-    have hcoord := (memLp_pi_iff.mp hmem) j
-    have hDsliceAt (x : Vec3) : Dslice (x, t) i j = G i x j := by
+  obtain ⟨hH1, hDsliceMem, hDsliceBound⟩ :=
+    lps_weak_gradient_h1_matrix_bound M huSlice hGdata (D := fun x => Dslice (x, t)) (by
+      intro x i j
       dsimp only [Dslice]
       simp only [dite_eq_left ht]
       change (Classical.choose (hgradAll t ht)) i x j = G i x j
-      rfl
-    simpa only [hDsliceAt] using hcoord
-  have hDsliceBound : eLpNorm (fun x : Vec3 => Dslice (x, t)) 2 volume ≤
-      (9 : ℝ≥0∞) * ENNReal.ofReal (Real.sqrt M) := by
-    have hsum := lps_eLpNorm_matrix_le_sum_coordinates hDsliceMem
-    have hcoord (i j : Fin 3) :
-        eLpNorm (fun x : Vec3 => Dslice (x, t) i j) 2 volume ≤
-          ENNReal.ofReal (Real.sqrt M) := by
-      rcases hGdata i with ⟨hGmem, _hweak, hbound⟩
-      have hmem : MemLp (fun x : Vec3 => Dslice (x, t) i j) 2 volume :=
-        (memLp_pi_iff.mp (memLp_pi_iff.mp hDsliceMem i)) j
-      have hGcoord : MemLp (fun x : Vec3 => G i x j) 2 volume :=
-        (memLp_pi_iff.mp hGmem) j
-      have hnorm : ‖hGcoord.toLp (fun x => G i x j)‖ ≤ Real.sqrt M :=
-        hbound j
-      have hscalar := lps_scalar_eLpNorm_bound_of_toLp hGcoord
-        (Real.sqrt_nonneg M) hnorm
-      have hDsliceAt (x : Vec3) : Dslice (x, t) i j = G i x j := by
-        dsimp only [Dslice]
-        simp only [dite_eq_left ht]
-        change (Classical.choose (hgradAll t ht)) i x j = G i x j
-        rfl
-      simpa only [hDsliceAt] using hscalar
-    calc
-      eLpNorm (fun x : Vec3 => Dslice (x, t)) 2 volume ≤
-          ∑ i : Fin 3, ∑ j : Fin 3,
-            eLpNorm (fun x : Vec3 => Dslice (x, t) i j) 2 volume := hsum
-      _ ≤ ∑ _i : Fin 3, ∑ _j : Fin 3, ENNReal.ofReal (Real.sqrt M) :=
-        Finset.sum_le_sum fun i hi => Finset.sum_le_sum fun j hj => hcoord i j
-      _ = (9 : ℝ≥0∞) * ENNReal.ofReal (Real.sqrt M) := by
-        simp only [Finset.sum_const, nsmul_eq_mul]
-        rw [← mul_assoc]
-        norm_num
+      rfl)
   have hValueBound : eLpNorm (fun x : Vec3 => u (x, t)) 2 volume ≤
-      (9 : ℝ≥0∞) * ENNReal.ofReal (Real.sqrt M) := by
-    let V : Vec3 → L2Vec3 := fun x => WithLp.toLp 2 (u (x, t))
-    have hVmem : MemLp V 2 volume := by
-      have h := huSlice.continuousLinearMap_comp
-        (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)).symm.toContinuousLinearMap
-      change MemLp (fun x : Vec3 => (WithLp.toLp 2 (u (x, t)) : L2Vec3)) 2 volume
-      exact h
-    let Vlp := (CKN.Leray.lerayHopfLimit_toLp_memLp huSlice).toLp V
-    have hVbound : ‖Vlp‖ ≤ 3 * Real.sqrt M := by
-      simpa only [V, Vlp] using
-        CKN.Leray.norm_le_of_weak_tendsto_of_uniform_bound
-          (by positivity) hsequenceClassBound (by
-            intro y
-            let w : Vec3 → Vec3 := fun x => WithLp.ofLp (y x)
-            have hw : MemLp w 2 volume := (Lp.memLp y).continuousLinearMap_comp
-              (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)).toContinuousLinearMap
-            have hyeq :
-                (CKN.Leray.lerayHopfLimit_toLp_memLp hw).toLp
-                  (fun x => (WithLp.toLp 2 (w x) : L2Vec3)) = y := by
-              refine Lp.ext ?_
-              filter_upwards [
-                (CKN.Leray.lerayHopfLimit_toLp_memLp hw).coeFn_toLp] with x hx
-              rw [hx]
-            have htarget := CKN.Leray.lerayHopfLimit_inner_toLp_eq huSlice hw
-            have hsource (n : ℕ) :=
-              CKN.Leray.lerayHopfLimit_inner_toLp_eq (hsliceSeq n) hw
-            have hpair : ∀ n, inner ℝ
-                ((CKN.Leray.lerayHopfLimit_toLp_memLp (hsliceSeq n)).toLp
-                  (fun x => (WithLp.toLp 2 (Useq n (x, t)) : L2Vec3))) y =
-                ∫ x : Vec3, ∑ i : Fin 3, Useq n (x, t) i * w x i := by
-              intro n
-              rw [← hyeq]
-              exact hsource n
-            have hpairLimit : inner ℝ
-                ((CKN.Leray.lerayHopfLimit_toLp_memLp huSlice).toLp
-                  (fun x => (WithLp.toLp 2 (u (x, t)) : L2Vec3))) y =
-                ∫ x : Vec3, ∑ i : Fin 3, u (x, t) i * w x i := by
-              rw [← hyeq]
-              exact htarget
-            have hpairEq :
-                (fun n => inner ℝ
-                  ((CKN.Leray.lerayHopfLimit_toLp_memLp (hsliceSeq n)).toLp
-                    (fun x => (WithLp.toLp 2 (Useq n (x, t)) : L2Vec3))) y) =
-                (fun n => ∫ x : Vec3,
-                  ∑ i : Fin 3, Useq n (x, t) i * w x i) := by
-              funext n
-              exact hpair n
-            simpa only [hpairEq, hpairLimit] using hweakVector w hw)
-    have hVboundENN : eLpNorm V 2 volume ≤
-        ENNReal.ofReal (3 * Real.sqrt M) := by
-      exact lps_scalar_eLpNorm_bound_of_toLp hVmem (by positivity) hVbound
-    have hpoint (x : Vec3) : ‖u (x, t)‖ ≤ ‖V x‖ := by
-      change ‖u (x, t)‖ ≤ ‖WithLp.toLp 2 (u (x, t))‖
-      rw [← vec3EuclideanNorm_eq_l2]
-      exact norm_le_vec3EuclideanNorm _
-    have hpi : eLpNorm (fun x : Vec3 => u (x, t)) 2 volume ≤
-        eLpNorm (fun x : Vec3 => ‖V x‖) 2 volume :=
-      eLpNorm_mono_ae_real (p := (2 : ℝ≥0∞)) huSlice.aestronglyMeasurable
-        (Filter.Eventually.of_forall hpoint)
-    have hVnorm : eLpNorm (fun x : Vec3 => ‖V x‖) 2 volume =
-        eLpNorm V 2 volume := eLpNorm_norm V hVmem.aestronglyMeasurable
-    calc
-      eLpNorm (fun x : Vec3 => u (x, t)) 2 volume ≤
-          eLpNorm (fun x : Vec3 => ‖V x‖) 2 volume := hpi
-      _ = eLpNorm V 2 volume := hVnorm
-      _ ≤ ENNReal.ofReal (3 * Real.sqrt M) := hVboundENN
-      _ ≤ (9 : ℝ≥0∞) * ENNReal.ofReal (Real.sqrt M) := by
-        rw [ENNReal.ofReal_mul (by positivity : 0 ≤ (3 : ℝ))]
-        gcongr
-        norm_num
-  have hH1 : ∀ i : Fin 3, ∃ h : H1Function (Set.univ : Set Vec3),
-      h.toFun = (fun x : Vec3 => u (x, t) i) ∧
-      h.grad = (fun x : Vec3 => Dslice (x, t) i) := by
-    intro i
-    rcases hGdata i with ⟨hGi, hGweak, _hGbound⟩
-    let hi : H1Function (Set.univ : Set Vec3) := {
-      toFun := fun x => u (x, t) i
-      grad := G i
-      memL2 := by
-        have hcomp := (memLp_pi_iff.mp huSlice) i
-        simpa [CKN.MemL2On, CKN.MemLpOn, CKN.volumeOn,
-          Measure.restrict_univ] using hcomp
-      gradMemL2 := by
-        intro j
-        have hcomp := (memLp_pi_iff.mp hGi) j
-        simpa [CKN.GradMemLpOn, CKN.MemLpOn, CKN.volumeOn,
-          Measure.restrict_univ] using hcomp
-      hasWeakGradient := hGweak
-    }
-    refine ⟨hi, rfl, ?_⟩
-    funext x j
-    have hDsliceAt (x : Vec3) : Dslice (x, t) i j = G i x j := by
-      dsimp only [Dslice]
-      simp only [dite_eq_left ht]
-      change (Classical.choose (hgradAll t ht)) i x j = G i x j
-      rfl
-    exact (hDsliceAt x).symm
+      (9 : ℝ≥0∞) * ENNReal.ofReal (Real.sqrt M) :=
+    lps_weak_vector_limit_eLpNorm_bound M hsliceSeq huSlice hsequenceClassBound hweakVector
   refine ⟨⟨hH1, hJ⟩, hValueBound, hDsliceBound⟩
 
 /-- The initial trace and the datum's `H¹ ∩ J` representative fill in the

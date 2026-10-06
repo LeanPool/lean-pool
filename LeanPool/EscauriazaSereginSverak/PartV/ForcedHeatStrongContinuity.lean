@@ -42,6 +42,68 @@ noncomputable section
 
 namespace ESS
 
+private lemma forcedHeat_uniformCauchy_of_error_bound
+    {E : Type*} [PseudoMetricSpace E] {S : Set ℝ} {F : ℕ → ℝ → E}
+    (C : ℝ) (hC : 0 ≤ C) (err : ℕ → ℝ)
+    (herr : Tendsto err atTop (𝓝 0))
+    (hFdist : ∀ n m t, t ∈ S → dist (F n t) (F m t) ≤ C * (err n + err m)) :
+    UniformCauchySeqOn F atTop S := by
+  apply Metric.uniformCauchySeqOn_iff.2
+  intro ε hε
+  let δ : ℝ := ε / (2 * (C + 1))
+  have hden : 0 < 2 * (C + 1) := by positivity
+  have hδ : 0 < δ := by dsimp [δ]; positivity
+  have hsmall : ∀ᶠ n in atTop, err n < δ :=
+    herr.eventually (isOpen_Iio.mem_nhds hδ)
+  obtain ⟨N, hN⟩ := Filter.eventually_atTop.1 hsmall
+  refine ⟨N, fun n hn m hm t ht => ?_⟩
+  have hn' := hN n hn
+  have hm' := hN m hm
+  have hdist := hFdist n m t ht
+  have hcoeff : C * (δ + δ) < ε := by
+    have hfrac : C / (C + 1) < 1 := (div_lt_one (by positivity)).2 (by linarith only)
+    calc
+      C * (δ + δ) = ε * (C / (C + 1)) := by
+        dsimp [δ]
+        field_simp [ne_of_gt hden]
+        ring
+      _ < ε * 1 := mul_lt_mul_of_pos_left hfrac hε
+      _ = ε := by ring
+  calc
+    dist (F n t) (F m t) ≤ C * (err n + err m) := hdist
+    _ ≤ C * (δ + δ) := mul_le_mul_of_nonneg_left
+      (add_le_add hn'.le hm'.le) hC
+    _ < ε := hcoeff
+
+private lemma forcedHeat_eLpNorm_difference_triangle
+    {α : Type*} [MeasurableSpace α] {μ : Measure α} {q : ℝ≥0∞}
+    (hq : 1 ≤ q) (f g a : α → ℝ) :
+    eLpNorm (fun z => f z - g z) q μ ≤
+      eLpNorm (fun z => f z - a z) q μ + eLpNorm (fun z => g z - a z) q μ := by
+  have heq : (fun z => f z - g z) = (fun z => (f z - a z) - (g z - a z)) := by
+    funext z
+    ring
+  rw [heq]
+  exact eLpNorm_sub_le hq
+
+private lemma forcedHeat_smooth_difference
+    {G H : Fin 3 → Fin 3 → ParabolicPoint → ℝ}
+    (hG : ∀ i j, ContDiff ℝ (⊤ : ℕ∞) (fun p : Vec3 × ℝ => G i j p))
+    (hGc : ∀ i j, HasCompactSupport (fun p : Vec3 × ℝ => G i j p))
+    (hH : ∀ i j, ContDiff ℝ (⊤ : ℕ∞) (fun p : Vec3 × ℝ => H i j p))
+    (hHc : ∀ i j, HasCompactSupport (fun p : Vec3 × ℝ => H i j p))
+    (z : ParabolicPoint) :
+    forcedHeat (G - H) z = forcedHeat G z - forcedHeat H z := by
+  have hsource : G - H + H = G := sub_add_cancel G H
+  have hadd : forcedHeat (G - H + H) z = forcedHeat (G - H) z + forcedHeat H z :=
+    forcedHeat_add
+      (fun i j => forcedHeat_integrand_integrable
+        (fun i j => (hG i j).sub (hH i j))
+        (fun i j => (hGc i j).sub (hHc i j)) z i j)
+      (fun i j => forcedHeat_integrand_integrable hH hHc z i j)
+  rw [hsource] at hadd
+  exact eq_sub_of_add_eq hadd.symm
+
 /-- The strong-continuity theorem for a generic smooth-data slice estimate. -/
 private theorem forcedHeat_lp_approx_limit {τ : ℝ}
     {r : ℝ} (hr : 2 ≤ r) [Fact (1 ≤ ENNReal.ofReal r)]
@@ -87,12 +149,9 @@ private theorem forcedHeat_lp_approx_limit {τ : ℝ}
   have hGnMem (n : ℕ) (i j : Fin 3) : MemLp (Gn n i j) q volume := by
     rw [hvol]
     exact (hGn n i j).continuous.memLp_of_hasCompactSupport (hGnc n i j)
-  have herrMem (n : ℕ) (i j : Fin 3) :
-      MemLp (fun z : ParabolicPoint => Gn n i j z - G i j z) q volume :=
-    (hGnMem n i j).sub (hGq i j)
   have herrTop (n : ℕ) (i j : Fin 3) :
       eLpNorm (fun z : ParabolicPoint => Gn n i j z - G i j z) q volume < ⊤ :=
-    (herrMem n i j).eLpNorm_lt_top
+    ((hGnMem n i j).sub (hGq i j)).eLpNorm_lt_top
   have herrTop' (n : ℕ) : err n < ⊤ := by
     simpa [err] using
       (ENNReal.sum_lt_top.mpr fun i (_ : i ∈ Finset.univ) =>
@@ -134,12 +193,7 @@ private theorem forcedHeat_lp_approx_limit {τ : ℝ}
       eLpNorm (fun z : ParabolicPoint => Gn n i j z - Gn m i j z) q volume ≤
         eLpNorm (fun z : ParabolicPoint => Gn n i j z - G i j z) q volume +
         eLpNorm (fun z : ParabolicPoint => Gn m i j z - G i j z) q volume := by
-    have heq : (fun z : ParabolicPoint => Gn n i j z - Gn m i j z) =
-        (fun z => (Gn n i j z - G i j z) - (Gn m i j z - G i j z)) := by
-      funext z
-      ring
-    rw [heq]
-    exact eLpNorm_sub_le hq
+    exact forcedHeat_eLpNorm_difference_triangle hq (Gn n i j) (Gn m i j) (G i j)
   let H : ℕ → ℕ → Fin 3 → Fin 3 → ParabolicPoint → ℝ :=
     fun n m i j z => Gn n i j z - Gn m i j z
   let Hprod : ℕ → ℕ → Fin 3 → Fin 3 → Vec3 × ℝ → ℝ :=
@@ -179,18 +233,7 @@ private theorem forcedHeat_lp_approx_limit {τ : ℝ}
           _ = err n + err m := by simp [err, Finset.sum_add_distrib]
   have hHrep (n m : ℕ) (z : ParabolicPoint) :
       forcedHeat (H n m) z = forcedHeat (Gn n) z - forcedHeat (Gn m) z := by
-    have hsource : H n m + Gn m = Gn n := by
-      funext i j w
-      dsimp [H]
-      ring
-    have hadd : forcedHeat (H n m + Gn m) z =
-        forcedHeat (H n m) z + forcedHeat (Gn m) z := by
-      simpa [Hprod] using forcedHeat_add (z := z)
-        (fun i j => forcedHeat_integrand_integrable (hHs n m) (hHc n m) z i j)
-        (fun i j => forcedHeat_integrand_integrable (hGn m) (hGnc m) z i j)
-    rw [← hsource, hadd]
-    ext i
-    simp
+    exact forcedHeat_smooth_difference (hGn n) (hGnc n) (hGn m) (hGnc m) z
   let F : ℕ → ℝ → Lp Vec3 p volume := fun n t =>
     (forcedHeat_smooth_slice_memLp (hGn n) (hGnc n) hr t).toLp
       (fun x : Vec3 => forcedHeat (Gn n) (x, t))
@@ -219,33 +262,8 @@ private theorem forcedHeat_lp_approx_limit {τ : ℝ}
     change (eLpNorm (fun x : Vec3 => (F n t) x - (F m t) x) p volume).toReal ≤ _
     rw [eLpNorm_congr_ae hdiff]
     exact hreal
-  have hUniformCauchy : UniformCauchySeqOn F atTop (Icc 0 τ) := by
-    apply Metric.uniformCauchySeqOn_iff.2
-    intro ε hε
-    let δ : ℝ := ε / (2 * (C + 1))
-    have hden : 0 < 2 * (C + 1) := by positivity
-    have hδ : 0 < δ := by dsimp [δ]; positivity
-    have hsmall : ∀ᶠ n in atTop, (err n).toReal < δ :=
-      herrToReal.eventually (isOpen_Iio.mem_nhds hδ)
-    obtain ⟨N, hN⟩ := Filter.eventually_atTop.1 hsmall
-    refine ⟨N, fun n hn m hm t ht => ?_⟩
-    have hn' := hN n hn
-    have hm' := hN m hm
-    have hdist := hFdist n m t ht
-    have hcoeff : C * (δ + δ) < ε := by
-      have hfrac : C / (C + 1) < 1 := (div_lt_one (by positivity)).2 (by linarith only)
-      calc
-        C * (δ + δ) = ε * (C / (C + 1)) := by
-          dsimp [δ]
-          field_simp [ne_of_gt hden]
-          ring
-        _ < ε * 1 := mul_lt_mul_of_pos_left hfrac hε
-        _ = ε := by ring
-    calc
-      dist (F n t) (F m t) ≤ C * ((err n).toReal + (err m).toReal) := hdist
-      _ ≤ C * (δ + δ) := mul_le_mul_of_nonneg_left
-        (add_le_add hn'.le hm'.le) hC
-      _ < ε := hcoeff
+  have hUniformCauchy : UniformCauchySeqOn F atTop (Icc 0 τ) :=
+    forcedHeat_uniformCauchy_of_error_bound C hC (fun n => (err n).toReal) herrToReal hFdist
   have hPointCauchy (t : ℝ) (ht : t ∈ Icc 0 τ) : CauchySeq (fun n => F n t) := by
     apply Metric.cauchySeq_iff.2
     intro ε hε
@@ -280,7 +298,8 @@ private theorem forcedHeat_lp_approx_limit {τ : ℝ}
       have hsmooth := hEstimate (Gn n) (hGn n) (hGnc n) (hGnpos n) t ht
       exact hsmooth.trans
         (mul_le_mul_of_nonneg_left (hsourceBound n) (by positivity))
-    have hsourceTop (n : ℕ) : eLpNorm (fun z : ParabolicPoint => fun i j => Gn n i j z) q μQ < ⊤ := by
+    have hsourceTop (n : ℕ) : eLpNorm (fun z : ParabolicPoint => fun i j => Gn n i j z) q μQ < ⊤
+      := by
       exact lt_of_le_of_lt (hsourceBound n) (ENNReal.add_lt_top.2 ⟨hGtensorTop, herrTop' n⟩)
     have hrespTop (n : ℕ) : eLpNorm (fun x : Vec3 => forcedHeat (Gn n) (x, t)) p volume < ⊤ :=
       lt_of_le_of_lt (hrespBound n) (ENNReal.mul_lt_top ENNReal.ofReal_lt_top

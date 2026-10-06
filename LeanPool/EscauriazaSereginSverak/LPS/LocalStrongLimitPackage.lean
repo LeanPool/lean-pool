@@ -97,7 +97,8 @@ theorem lps_strong_limit_weak_derivatives
     · filter_upwards [hslice] with s hs
       exact hs i j
     · intro a' b' ha hab hb'
-      exact ((memLp_pi_iff.1 huMem) i).mono_measure (Measure.restrict_mono (hsub a' b' ha hb') le_rfl)
+      exact ((memLp_pi_iff.1 huMem) i).mono_measure (Measure.restrict_mono (hsub a' b' ha hb')
+        le_rfl)
     · intro a' b' ha hab hb'
       exact ((memLp_pi_iff.1 ((memLp_pi_iff.1 hDuMem) i)) j).mono_measure
         (Measure.restrict_mono (hsub a' b' ha hb') le_rfl)

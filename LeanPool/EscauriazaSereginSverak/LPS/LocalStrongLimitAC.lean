@@ -221,7 +221,7 @@ theorem lps_ac_family_sq_integrable
         refine integral_mono_of_nonneg (ae_of_all _ fun r => norm_nonneg _)
           (integrable_const _) ?_
         refine (ae_restrict_iff' measurableSet_Ioc).2 (Eventually.of_forall fun r hr => ?_)
-        show ‖f x r ^ 2‖ ≤ H x
+        change ‖f x r ^ 2‖ ≤ H x
         rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
         exact hx r (Ioc_subset_Icc_self hr)
       _ = (b - a) * H x := by

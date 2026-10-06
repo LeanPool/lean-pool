@@ -15,6 +15,12 @@ public import Mathlib.Analysis.Calculus.FDeriv.Mul
 public import Mathlib.Analysis.Calculus.FDeriv.Pow
 public import Mathlib.MeasureTheory.Function.L2Space
 
+/-!
+# Heat Entropy
+
+The squared regularized magnitude used in `lem:pv-heat-critical`.
+-/
+
 public section
 
 open CKN

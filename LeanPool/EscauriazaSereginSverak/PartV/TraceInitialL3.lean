@@ -12,6 +12,13 @@ public import Mathlib.MeasureTheory.Function.LpSpace.Complete
 public import Mathlib.MeasureTheory.Integral.Prod
 public import LeanPool.CaffarelliKohnNirenberg.Foundation.Parabolic.Vec3Norm
 
+/-!
+# Trace Initial L3
+
+The strong initial trace inherits an almost-every-time critical `L³` bound
+(paper label `lem:pv-initial-l3`).
+-/
+
 public section
 
 open MeasureTheory Set Filter

@@ -221,7 +221,8 @@ theorem lps_concat_equation {T s s' : ℝ} {a : Vec3 → Vec3} {u : ParabolicPoi
   have hℓ : (∫ x : Vec3, ∑ i : Fin 3, W (x, s) i * φ (x, s) i) =
       ∫ x : Vec3, ∑ i : Fin 3, u (x, s) i * φ (x, s) i := by
     have hφmemS (i : Fin 3) : MemLp (fun x : Vec3 => φ (x, s) i) 2 volume :=
-      ((contDiff_pi.mp hφs i).continuous.comp (continuous_id.prodMk continuous_const)).memLp_of_hasCompactSupport (by
+      ((contDiff_pi.mp hφs i).continuous.comp (continuous_id.prodMk
+        continuous_const)).memLp_of_hasCompactSupport (by
         refine IsCompact.of_isClosed_subset
           ((hφc.comp_left (g := fun v : Vec3 => v i) (by simp)).image continuous_fst)
           (isClosed_tsupport _) ?_

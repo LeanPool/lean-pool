@@ -9,6 +9,12 @@ module
 public import LeanPool.EscauriazaSereginSverak.PartV.HeatOrbit
 public import LeanPool.CaffarelliKohnNirenberg.Foundation.Harmonic.Newtonian
 
+/-!
+# Heat PDE
+
+A smooth compact input evolves by the heat equation under Gaussian convolution.
+-/
+
 public section
 
 open MeasureTheory

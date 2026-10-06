@@ -53,7 +53,8 @@ end ESS.LPS
 
 namespace ESS
 
-/-- `prop:lps-local-strong`: for every solenoidal `H¹` datum there is a strong solution on `[t₀, t₀ + τ]`
+/-- `prop:lps-local-strong`: for every solenoidal `H¹` datum there is a strong solution on `[t₀,
+t₀ + τ]`
 with `τ ≥ c (1 + ‖b‖_{H¹})⁻⁴` for an absolute constant `c`, with its initial trace, the energy
 equality between any two times, and the Leray--Hopf property. The solution is the limit of the
 regularized solutions of `lem:lps-regularized-Hk-start`, translated in time. -/

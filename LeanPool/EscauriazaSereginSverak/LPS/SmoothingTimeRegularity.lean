@@ -8,3 +8,9 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.LPS.SmoothingTimeRegularityCore
 public import LeanPool.EscauriazaSereginSverak.LPS.SmoothingTimeRegularitySpatial
+
+/-!
+# Smoothing Time Regularity
+
+This module proves the stated slice and evolution properties used by the ESS formalization.
+-/

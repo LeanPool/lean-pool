@@ -14,8 +14,8 @@ public import LeanPool.EscauriazaSereginSverak.LPS.GoodTimes
 # Bookkeeping for the limit strong solution
 
 Square integrability of the components of a good-time slice, scalar weak continuity from the vector
-weak continuity of a Leray--Hopf solution, and the replacement of the specified gradient by an almost
-everywhere equal field in the space-time weak derivatives and in the equation
+weak continuity of a Leray--Hopf solution, and the replacement of the specified gradient by an
+almost everywhere equal field in the space-time weak derivatives and in the equation
 (`prop:lps-local-strong`).
 -/
 

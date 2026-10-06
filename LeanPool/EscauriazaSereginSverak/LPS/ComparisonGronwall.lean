@@ -8,6 +8,14 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.PartV.SerrinGronwall
 
+/-!
+# Comparison Gronwall
+
+A nonnegative relative energy that is bounded in time and satisfies an
+integral inequality with an integrable nonnegative coefficient vanishes almost
+everywhere (`lem:lps-comparison`).
+-/
+
 public section
 
 open MeasureTheory Set Filter

@@ -9,6 +9,13 @@ module
 public import LeanPool.EscauriazaSereginSverak.PartV.SerrinEstimate
 public import LeanPool.CaffarelliKohnNirenberg.Leray.JSpaceFourierLimit
 
+/-!
+# Good Times
+
+A positive-time slice in `H¹ ∩ J` with the specified weak gradient,
+as in `lem:lps-good-times`.
+-/
+
 public section
 
 open MeasureTheory Set Filter

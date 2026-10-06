@@ -102,7 +102,8 @@ theorem lps_slices_ae_eq_of_slab {a b : ℝ} {E : Type} {F G : ParabolicPoint �
 
 /-- Almost-everywhere equality of almost every pair of time slices gives
 almost-everywhere equality on the slab, for square-integrable fields. -/
-theorem lps_slab_ae_eq_of_slices {a b : ℝ} {E : Type} [NormedAddCommGroup E] [MeasurableSpace E] [BorelSpace E]
+theorem lps_slab_ae_eq_of_slices {a b : ℝ} {E : Type} [NormedAddCommGroup E] [MeasurableSpace E]
+  [BorelSpace E]
     [SecondCountableTopology E] {F G : ParabolicPoint → E}
     (hF : MemLp F 2 (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo a b))))
     (hG : MemLp G 2 (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo a b))))

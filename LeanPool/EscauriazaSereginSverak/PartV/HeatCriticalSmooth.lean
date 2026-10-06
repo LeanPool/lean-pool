@@ -10,6 +10,13 @@ public import LeanPool.EscauriazaSereginSverak.PartV.HeatEntropyTime
 public import LeanPool.CaffarelliKohnNirenberg.Foundation.GagliardoNirenberg
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
+/-!
+# Heat Critical Smooth
+
+A continuous function with sixth-order polynomial decay is integrable on
+the whole space, as used in `lem:pv-heat-critical`.
+-/
+
 public section
 
 open MeasureTheory Filter Set

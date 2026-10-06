@@ -193,7 +193,8 @@ theorem heatOrbit_grad_aestronglyMeasurable {a : Vec3 → Vec3} (ha : IsInJ a) (
       (stronglyMeasurable_integral_kernel_mul_sub heatKernel_vecTime_measurable
         (hai i).aestronglyMeasurable).measurable
   refine ⟨hh.aestronglyMeasurable, ?_⟩
-  have hG : Measurable (fun z : ParabolicPoint => fun i j => heatConvGrad z.2 (fun y => a y i) j z.1) :=
+  have hG : Measurable (fun z : ParabolicPoint => fun i j => heatConvGrad z.2 (fun y => a y i) j
+    z.1) :=
     measurable_pi_iff.2 fun i => measurable_pi_iff.2 fun j =>
       (stronglyMeasurable_integral_kernel_mul_sub
         (heatKernelSpaceDerivative_vecTime_measurable j) (hai i).aestronglyMeasurable).measurable
@@ -213,7 +214,8 @@ theorem heatOrbit_hasWeakGradientOn {a : Vec3 → Vec3} (ha : IsInJ a) {t : ℝ}
   have hai : MemLp (fun y => a y i) 2 volume := memLp_pi_iff.1 ha.1 i
   obtain ⟨M, hM, hbound⟩ := heatConv_heatConvGrad_bound ht hai
   set u : Vec3 → ℝ := heatConv t (fun y => a y i) with hu
-  have hdiff : Differentiable ℝ u := fun x => (heatConv_hasFDerivAt_of_memLp hai ht x).differentiableAt
+  have hdiff : Differentiable ℝ u := fun x => (heatConv_hasFDerivAt_of_memLp hai ht
+    x).differentiableAt
   intro j φ hφ hφc _
   simp only [Measure.restrict_univ]
   change ∫ x, u x * fderiv ℝ φ x (basisVec j) = -∫ x, fderiv ℝ u x (basisVec j) * φ x
@@ -271,7 +273,8 @@ theorem heatOrbit_div_eq_zero {a : Vec3 → Vec3} (ha : IsInJ a) {t : ℝ} (ht :
     intro i _
     have hA : eLpNorm (fun y : Vec3 => heatKernelSpaceDerivative y t i) 2 volume ≠ ∞ :=
       (hD i).eLpNorm_ne_top
-    have hbd : Tendsto (fun k => eLpNorm (fun y : Vec3 => heatKernelSpaceDerivative y t i) 2 volume *
+    have hbd : Tendsto (fun k => eLpNorm (fun y : Vec3 => heatKernelSpaceDerivative y t i) 2
+      volume *
         eLpNorm ((fun x => aSeq k x i) - fun x => a x i) 2 volume) atTop (𝓝 0) := by
       simpa using ENNReal.Tendsto.const_mul (hlim i) (Or.inr hA)
     rw [tendsto_iff_edist_tendsto_0]
@@ -294,7 +297,8 @@ theorem heatOrbit_weak_div_eq_zero {a : Vec3 → Vec3} (ha : IsInJ a) {t : ℝ} 
   have hψI : Integrable ψ.toFun volume :=
     ψ.contDiff.continuous.integrable_of_hasCompactSupport ψ.hasCompactSupport
   have hdψI (i : Fin 3) : Integrable (ψ.partialDeriv i) volume :=
-    ((ψ.contDiff.continuous_fderiv (by simp)).clm_apply continuous_const).integrable_of_hasCompactSupport
+    ((ψ.contDiff.continuous_fderiv (by simp)).clm_apply
+      continuous_const).integrable_of_hasCompactSupport
       (ψ.hasCompactSupport.fderiv_apply (𝕜 := ℝ) (basisVec i))
   have hterm (i : Fin 3) :
       Integrable (fun x => heatOrbit a (x, t) i * ψ.partialDeriv i x) volume ∧

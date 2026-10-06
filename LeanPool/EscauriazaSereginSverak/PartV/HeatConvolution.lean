@@ -16,6 +16,13 @@ public import Mathlib.Analysis.SpecialFunctions.JapaneseBracket
 public import Mathlib.MeasureTheory.Function.L2Space
 public import Mathlib.Topology.MetricSpace.Bounded
 
+/-!
+# Heat Convolution
+
+A smooth compactly supported input has a smooth Gaussian heat orbit at
+every positive time.
+-/
+
 public section
 
 open MeasureTheory
@@ -131,7 +138,8 @@ theorem heatConv_abs_le_spatial_decay {f : Vec3 → ℝ}
             vec3EuclideanNorm (x - z) ≤ Real.sqrt 3 * ‖x - z‖ :=
               vec3EuclideanNorm_le_sqrt_three_mul_norm (x - z)
             _ ≤ 2 * R := by
-              have hsqrt : Real.sqrt 3 ≤ 2 := by nlinarith only [Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 3)]
+              have hsqrt : Real.sqrt 3 ≤ 2 := by nlinarith only [Real.sq_sqrt (by norm_num : (0
+                : ℝ) ≤ 3)]
               exact mul_le_mul hsqrt hysup (norm_nonneg _) (by norm_num)
         have hxadd : x = z + (x - z) := by
           ext i

@@ -8,6 +8,12 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.PartV.HeatEntropyH1
 
+/-!
+# Heat Entropy Time
+
+The regularized entropy integral differentiates along a smooth heat orbit.
+-/
+
 public section
 
 open MeasureTheory Filter
@@ -57,6 +63,83 @@ private theorem heatRegEnergy_comp_time_deriv {b : Vec3 → Vec3}
   rw [← heq]
   exact hcomp
 
+private theorem heatConvVec3_contDiff
+    {b : Vec3 → Vec3}
+    (hb : ∀ i : Fin 3, ContDiff ℝ (⊤ : ℕ∞) (fun x => b x i))
+    (hbc : ∀ i : Fin 3, HasCompactSupport (fun x => b x i))
+    {s : ℝ} (hs : 0 < s) : ContDiff ℝ (⊤ : ℕ∞) (heatConvVec3 s b) := by
+  rw [contDiff_pi]
+  intro i
+  simpa [heatConvVec3] using heatConv_smooth_input (hb i) (hbc i) hs
+
+private theorem heatRegEnergy_decay_bound
+    {η M : ℝ} (hη : 0 < η) (hM : 0 ≤ M) (v : Vec3 → Vec3)
+    (htailBound : ∀ x, vec3EuclideanNorm (v x) ≤ M / (1 + vec3EuclideanNorm x) ^ 3) :
+    ∀ x, heatRegEnergy η (v x) ≤
+      (3 * ((3 * η + 2 * M) / 6) * M ^ 2) * (1 + ‖x‖) ^ (-(6 : ℝ)) := by
+  let K : ℝ := (3 * η + 2 * M) / 6
+  let CE : ℝ := 3 * K * M ^ 2
+  have hK : 0 ≤ K := by dsimp [K]; positivity
+  have hCE : 0 ≤ CE := by dsimp [CE]; positivity
+  have hdenpow (x : Vec3) (k : ℕ) : 1 ≤ (1 + vec3EuclideanNorm x) ^ k :=
+    one_le_pow₀ (by linarith only [vec3EuclideanNorm_nonneg x])
+  have hdenNorm (x : Vec3) : 1 + ‖x‖ ≤ 1 + vec3EuclideanNorm x := by
+    simpa only [add_comm] using add_le_add_right (norm_le_vec3EuclideanNorm x) (1 : ℝ)
+  have henergyBound (x : Vec3) :
+      heatRegEnergy η (v x) ≤
+        CE / (1 + vec3EuclideanNorm x) ^ 6 := by
+    have htail := htailBound x
+    have hsq : (vec3EuclideanNorm (v x)) ^ 2 ≤
+        (M / (1 + vec3EuclideanNorm x) ^ 3) ^ 2 :=
+      pow_le_pow_left₀ (vec3EuclideanNorm_nonneg _) htail 2
+    have hsum : (∑ i : Fin 3, (v x i) ^ 2) =
+        (vec3EuclideanNorm (v x)) ^ 2 := by
+      unfold vec3EuclideanNorm
+      rw [Real.sq_sqrt (Finset.sum_nonneg fun i _ => sq_nonneg _)]
+    have hpoint := heatRegEnergy_le_mul_sum_sq hη hM
+      (v x) (by
+        have hdenone := hdenpow x 3
+        have hquot : M / (1 + vec3EuclideanNorm x) ^ 3 ≤ M := by
+          apply (div_le_iff₀ (by positivity)).2
+          calc
+            M = M * 1 := by ring
+            _ ≤ M * (1 + vec3EuclideanNorm x) ^ 3 :=
+              mul_le_mul_of_nonneg_left hdenone hM
+        exact htail.trans hquot)
+    have hKform : ((3 * η + 2 * M) / 6) = K := rfl
+    calc
+      heatRegEnergy η (v x) ≤
+          ((3 * η + 2 * M) / 6) *
+            ∑ i : Fin 3, (v x i) ^ 2 := hpoint
+      _ = K * (vec3EuclideanNorm (v x)) ^ 2 := by
+        rw [hsum, hKform]
+      _ ≤ K * (M / (1 + vec3EuclideanNorm x) ^ 3) ^ 2 :=
+        mul_le_mul_of_nonneg_left hsq hK
+      _ ≤ CE / (1 + vec3EuclideanNorm x) ^ 6 := by
+        have hcoeff : K * M ^ 2 ≤ CE := by
+          dsimp [CE]
+          nlinarith only [hK, sq_nonneg M]
+        calc
+          K * (M / (1 + vec3EuclideanNorm x) ^ 3) ^ 2 =
+              K * (M ^ 2 / (1 + vec3EuclideanNorm x) ^ 6) := by
+                rw [div_pow, ← pow_mul]
+          _ = K * M ^ 2 / (1 + vec3EuclideanNorm x) ^ 6 := by ring
+          _ ≤ CE / (1 + vec3EuclideanNorm x) ^ 6 :=
+            div_le_div_of_nonneg_right hcoeff (by positivity)
+  have henergyWeight (x : Vec3) :
+      heatRegEnergy η (v x) ≤
+        CE * (1 + ‖x‖) ^ (-(6 : ℝ)) := by
+    calc
+      heatRegEnergy η (v x) ≤
+          CE / (1 + vec3EuclideanNorm x) ^ 6 := henergyBound x
+      _ ≤ CE / (1 + ‖x‖) ^ 6 := by
+        exact div_le_div_of_nonneg_left hCE (by positivity)
+          (pow_le_pow_left₀ (by positivity) (hdenNorm x) 6)
+      _ = CE * (1 + ‖x‖) ^ (-(6 : ℝ)) := by
+        rw [Real.rpow_neg (by positivity), div_eq_mul_inv]
+        rw [Real.rpow_ofNat]
+  exact henergyWeight
+
 /-- The regularized entropy integral differentiates along a smooth heat orbit. -/
 theorem heatRegEnergy_integral_hasDerivAt {b : Vec3 → Vec3}
     (hb : ∀ i : Fin 3, ContDiff ℝ (⊤ : ℕ∞) (fun x => b x i))
@@ -92,16 +175,8 @@ theorem heatRegEnergy_integral_hasDerivAt {b : Vec3 → Vec3}
   have hSpos {s : ℝ} (hs : s ∈ S) : 0 < s := by
     dsimp [S] at hs
     linarith only [hs.1, ht]
-  have hprofile (s : ℝ) (hs : 0 < s) :
-      ContDiff ℝ (⊤ : ℕ∞) (heatConvVec3 s b) := by
-    rw [contDiff_pi]
-    intro i
-    simpa [heatConvVec3] using heatConv_smooth_input (hb i) (hbc i) hs
-  have hprofileLap (s : ℝ) (hs : 0 < s) :
-      ContDiff ℝ (⊤ : ℕ∞) (heatConvVec3 s bLap) := by
-    rw [contDiff_pi]
-    intro i
-    simpa [heatConvVec3] using heatConv_smooth_input (hbLap i) (hbcLap i) hs
+  have hprofile (s : ℝ) (hs : 0 < s) := heatConvVec3_contDiff hb hbc hs
+  have hprofileLap (s : ℝ) (hs : 0 < s) := heatConvVec3_contDiff hbLap hbcLap hs
   have hFmeas : ∀ᶠ s in nhds t, AEStronglyMeasurable (F s) volume := by
     filter_upwards [hS] with s hs
     have hcont : Continuous (F s) := by
@@ -124,61 +199,7 @@ theorem heatRegEnergy_integral_hasDerivAt {b : Vec3 → Vec3}
     exact integrable_one_add_norm (μ := volume) (E := Vec3) (r := 6) hfin
   let K : ℝ := (3 * η + 2 * M) / 6
   let CE : ℝ := 3 * K * M ^ 2
-  have hK : 0 ≤ K := by dsimp [K]; positivity
-  have hCE : 0 ≤ CE := by dsimp [CE]; positivity
-  have henergyBound (x : Vec3) :
-      heatRegEnergy η (heatConvVec3 t b x) ≤
-        CE / (1 + vec3EuclideanNorm x) ^ 6 := by
-    have htail := hMtail (t := t) ht x
-    have hsq : (vec3EuclideanNorm (heatConvVec3 t b x)) ^ 2 ≤
-        (M / (1 + vec3EuclideanNorm x) ^ 3) ^ 2 :=
-      pow_le_pow_left₀ (vec3EuclideanNorm_nonneg _) htail 2
-    have hsum : (∑ i : Fin 3, (heatConvVec3 t b x i) ^ 2) =
-        (vec3EuclideanNorm (heatConvVec3 t b x)) ^ 2 := by
-      unfold vec3EuclideanNorm
-      rw [Real.sq_sqrt (Finset.sum_nonneg fun i _ => sq_nonneg _)]
-    have hpoint := heatRegEnergy_le_mul_sum_sq hη hM
-      (heatConvVec3 t b x) (by
-        have hdenone := hdenpow x 3
-        have hquot : M / (1 + vec3EuclideanNorm x) ^ 3 ≤ M := by
-          apply (div_le_iff₀ (by positivity)).2
-          calc
-            M = M * 1 := by ring
-            _ ≤ M * (1 + vec3EuclideanNorm x) ^ 3 :=
-              mul_le_mul_of_nonneg_left hdenone hM
-        exact htail.trans hquot)
-    have hKform : ((3 * η + 2 * M) / 6) = K := rfl
-    calc
-      heatRegEnergy η (heatConvVec3 t b x) ≤
-          ((3 * η + 2 * M) / 6) *
-            ∑ i : Fin 3, (heatConvVec3 t b x i) ^ 2 := hpoint
-      _ = K * (vec3EuclideanNorm (heatConvVec3 t b x)) ^ 2 := by
-        rw [hsum, hKform]
-      _ ≤ K * (M / (1 + vec3EuclideanNorm x) ^ 3) ^ 2 :=
-        mul_le_mul_of_nonneg_left hsq hK
-      _ ≤ CE / (1 + vec3EuclideanNorm x) ^ 6 := by
-        have hcoeff : K * M ^ 2 ≤ CE := by
-          dsimp [CE]
-          nlinarith only [hK, sq_nonneg M]
-        calc
-          K * (M / (1 + vec3EuclideanNorm x) ^ 3) ^ 2 =
-              K * (M ^ 2 / (1 + vec3EuclideanNorm x) ^ 6) := by
-                rw [div_pow, ← pow_mul]
-          _ = K * M ^ 2 / (1 + vec3EuclideanNorm x) ^ 6 := by ring
-          _ ≤ CE / (1 + vec3EuclideanNorm x) ^ 6 :=
-            div_le_div_of_nonneg_right hcoeff (by positivity)
-  have henergyWeight (x : Vec3) :
-      heatRegEnergy η (heatConvVec3 t b x) ≤
-        CE * (1 + ‖x‖) ^ (-(6 : ℝ)) := by
-    calc
-      heatRegEnergy η (heatConvVec3 t b x) ≤
-          CE / (1 + vec3EuclideanNorm x) ^ 6 := henergyBound x
-      _ ≤ CE / (1 + ‖x‖) ^ 6 := by
-        exact div_le_div_of_nonneg_left hCE (by positivity)
-          (pow_le_pow_left₀ (by positivity) (hdenNorm x) 6)
-      _ = CE * (1 + ‖x‖) ^ (-(6 : ℝ)) := by
-        rw [Real.rpow_neg (by positivity), div_eq_mul_inv]
-        rw [Real.rpow_ofNat]
+  have henergyWeight := heatRegEnergy_decay_bound hη hM (heatConvVec3 t b) (hMtail ht)
   have henergyMajorant : Integrable
       (fun x : Vec3 => CE * (1 + ‖x‖) ^ (-(6 : ℝ))) volume := by
     simpa only [mul_comm] using hweight.const_mul CE

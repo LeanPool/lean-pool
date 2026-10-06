@@ -59,7 +59,8 @@ theorem tendsto_eLpNorm_truncation {f : Vec3 × ℝ → ℝ} {p : ℝ≥0∞} (h
     rw [htop, ENNReal.top_rpow_of_pos (by positivity)] at hbound
     exact lt_irrefl _ hbound
   have hpoint (k : ℕ) (z : Vec3 × ℝ) :
-      ((positiveTimeTruncation k).indicator f - f) z = -(positiveTimeTruncation k)ᶜ.indicator f z := by
+      ((positiveTimeTruncation k).indicator f - f) z = -(positiveTimeTruncation k)ᶜ.indicator f
+        z := by
     by_cases hz : z ∈ positiveTimeTruncation k
     · simp [hz]
     · simp [hz]

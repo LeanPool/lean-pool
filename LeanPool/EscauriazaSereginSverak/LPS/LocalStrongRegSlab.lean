@@ -37,7 +37,8 @@ theorem lps_slab_integrable_of_slice_bound {a τ : ℝ} {F : Vec3 × ℝ → ℝ
       (∫ x, F (x, t)) ≤ g t) :
     Integrable F (volume.restrict (vlSlab a τ)) ∧
       (∫ z in vlSlab a τ, F z) ≤ ∫ t in Ioo a τ, g t := by
-  have hmeas : AEStronglyMeasurable F ((volume : Measure Vec3).prod (volume.restrict (Ioo a τ))) := by
+  have hmeas : AEStronglyMeasurable F ((volume : Measure Vec3).prod (volume.restrict (Ioo a τ)))
+    := by
     rw [← vlSlab_measure]; exact hF
   have hint : Integrable F (volume.restrict (vlSlab a τ)) := by
     rw [vlSlab_measure]

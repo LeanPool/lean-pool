@@ -133,6 +133,104 @@ private theorem lps_h1_convection_laplacian_pointwise
         _ = 3 * U * L * H := by rfl
     _ = 3 * U * H * L := by ring
 
+private theorem lps_h1_convection_laplacian_aestronglyMeasurable
+    {u : Vec3 → Vec3} {Du : Vec3 → Fin 3 → Vec3}
+    {D2u : Vec3 → Fin 3 → Fin 3 → Vec3} {lap : Vec3 → Vec3}
+    (huMeas : AEStronglyMeasurable u volume)
+    (hDu2 : MemLp Du 2 volume) (hD2u2 : MemLp D2u 2 volume)
+    (hlap : ∀ x i, lap x i = ∑ j : Fin 3, D2u x i j j) :
+    AEStronglyMeasurable (fun x : Vec3 => ∑ i : Fin 3,
+      (∑ j : Fin 3, u x j * Du x i j) * lap x i) volume := by
+  apply lps_h1_aesm_finset_sum
+  intro i
+  have hSumMeas : AEStronglyMeasurable
+      (fun x : Vec3 => ∑ j : Fin 3, u x j * Du x i j) volume := by
+    apply lps_h1_aesm_finset_sum
+    intro j
+    exact ((ContinuousLinearMap.proj (R := ℝ) j).continuous.comp_aestronglyMeasurable
+      huMeas).mul
+        ((hDu2.eval i).eval j).aestronglyMeasurable
+  have hlapMeas : AEStronglyMeasurable (fun x : Vec3 => lap x i) volume := by
+    rw [show (fun x : Vec3 => lap x i) =
+      (fun x => ∑ j : Fin 3, D2u x i j j) by funext x; exact hlap x i]
+    apply lps_h1_aesm_finset_sum
+    intro j
+    exact (((hD2u2.eval i).eval j).eval j).aestronglyMeasurable
+  exact hSumMeas.mul hlapMeas
+
+private theorem lps_h1_convection_hessian_pointwise
+    {u : Vec3 → Vec3} {Du : Vec3 → Fin 3 → Vec3}
+    {D2u : Vec3 → Fin 3 → Fin 3 → Vec3} {lap : Vec3 → Vec3}
+    (hlap : ∀ x i, lap x i = ∑ j : Fin 3, D2u x i j j) (x : Vec3) :
+    ‖∑ i : Fin 3, (∑ j : Fin 3, u x j * Du x i j) * lap x i‖ ≤
+      27 * ((vec3EuclideanNorm (u x) * ∑ i : Fin 3, ‖Du x i‖) * ‖D2u x‖) := by
+  let U : Vec3 → ℝ := fun y => vec3EuclideanNorm (u y)
+  let H : Vec3 → ℝ := fun y => ∑ i : Fin 3, ‖Du y i‖
+  let F : Vec3 → ℝ := fun y => U y * H y
+  let L : Vec3 → ℝ := fun y => ‖D2u y‖
+  have hpoint := lps_h1_convection_laplacian_pointwise
+    (u := u) (Du := Du) (lap := lap) x
+  have hD2entry (i j : Fin 3) : |D2u x i j j| ≤ ‖D2u x‖ := by
+    calc
+      |D2u x i j j| = ‖D2u x i j j‖ := Real.norm_eq_abs _
+      _ ≤ ‖D2u x i j‖ := norm_le_pi_norm (D2u x i j) j
+      _ ≤ ‖D2u x i‖ := norm_le_pi_norm (D2u x i) j
+      _ ≤ ‖D2u x‖ := norm_le_pi_norm (D2u x) i
+  have hLapCoord (i : Fin 3) : |lap x i| ≤ 3 * ‖D2u x‖ := by
+    rw [hlap x i]
+    calc
+      |∑ j : Fin 3, D2u x i j j| ≤ ∑ j : Fin 3, |D2u x i j j| :=
+        Finset.abs_sum_le_sum_abs _ _
+      _ ≤ ∑ _j : Fin 3, ‖D2u x‖ :=
+        Finset.sum_le_sum fun j _ => hD2entry i j
+      _ = 3 * ‖D2u x‖ := by simp [Finset.sum_const, Finset.card_univ, Fintype.card_fin]
+  have hLapNorm : vec3EuclideanNorm (lap x) ≤ 9 * ‖D2u x‖ := by
+    calc
+      vec3EuclideanNorm (lap x) ≤ ∑ i : Fin 3, |lap x i| :=
+        CKN.Foundation.Parabolic.vec3EuclideanNorm_le_sum_abs _
+      _ ≤ ∑ _i : Fin 3, 3 * ‖D2u x‖ :=
+        Finset.sum_le_sum fun i _ => hLapCoord i
+      _ = 9 * ‖D2u x‖ := by
+        simp [Finset.sum_const, Finset.card_univ, Fintype.card_fin]
+        ring
+  calc
+    ‖∑ i : Fin 3, (∑ j : Fin 3, u x j * Du x i j) * lap x i‖ ≤
+        3 * U x * H x * vec3EuclideanNorm (lap x) := by
+      simpa [U, H, Real.norm_eq_abs] using hpoint
+    _ ≤ 3 * U x * H x * (9 * ‖D2u x‖) := by
+      exact mul_le_mul_of_nonneg_left hLapNorm
+        (mul_nonneg (mul_nonneg (by norm_num) (vec3EuclideanNorm_nonneg _))
+          (Finset.sum_nonneg fun i _ => norm_nonneg _))
+    _ = 27 * (F x * L x) := by dsimp [F, L]; ring
+
+private theorem lps_h1_integral_mul_le_real_l2_norms
+    {F L : Vec3 → ℝ} (hF : MemLp F (ENNReal.ofReal 2) volume)
+    (hL : MemLp L (ENNReal.ofReal 2) volume)
+    (hF0 : ∀ x, 0 ≤ F x) (hL0 : ∀ x, 0 ≤ L x) :
+    ∫ x : Vec3, F x * L x ≤
+      (eLpNorm F (ENNReal.ofReal 2) volume).toReal *
+        (eLpNorm L (ENNReal.ofReal 2) volume).toReal := by
+  have hHolder22 : (2 : ℝ).HolderConjugate 2 := by
+    rw [Real.holderConjugate_iff]
+    norm_num
+  have hHolderIntegral := integral_mul_norm_le_Lp_mul_Lq hHolder22 hF hL
+  have hLpNorm_two {f : Vec3 → ℝ} (hf : MemLp f (ENNReal.ofReal 2) volume) :
+      (eLpNorm f (ENNReal.ofReal 2) volume).toReal =
+        (∫ x : Vec3, ‖f x‖ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) := by
+    rw [toReal_eLpNorm,
+      lpNorm_eq_integral_norm_rpow_toReal (p := ENNReal.ofReal 2)
+        (by norm_num) (by norm_num)
+        hf.aestronglyMeasurable]
+    norm_num
+  calc
+    ∫ x : Vec3, F x * L x = ∫ x : Vec3, ‖F x‖ * ‖L x‖ := by
+      apply integral_congr_ae
+      filter_upwards [] with x
+      simp only [Real.norm_eq_abs, abs_of_nonneg (hF0 x), abs_of_nonneg (hL0 x)]
+    _ ≤ (∫ x : Vec3, ‖F x‖ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) *
+          (∫ x : Vec3, ‖L x‖ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) := hHolderIntegral
+    _ = _ := by rw [← hLpNorm_two hF, ← hLpNorm_two hL]
+
 /-- At almost every strong `H²` slice, the finite Serrin interpolation bounds
 the convection term paired with the Laplacian. This is the spatial estimate
 used before Young absorption in `lem:lps-H1-estimate`. -/
@@ -238,69 +336,16 @@ theorem lps_h1_finite_nonlinear_pairing_bound
       norm_num
     exact memLp_one_iff_integrable.mp
       (MemLp.mul hF hL (hpqr := hHolder.ennrealOfReal))
-  have hPmeas : AEStronglyMeasurable
-      (fun x : Vec3 => ∑ i : Fin 3,
-        (∑ j : Fin 3, u x j * Du x i j) * lap x i) volume := by
-    apply lps_h1_aesm_finset_sum
-    intro i
-    have hSumMeas : AEStronglyMeasurable
-        (fun x : Vec3 => ∑ j : Fin 3, u x j * Du x i j) volume := by
-      apply lps_h1_aesm_finset_sum
-      intro j
-      exact ((ContinuousLinearMap.proj (R := ℝ) j).continuous.comp_aestronglyMeasurable
-        huMeas).mul
-          ((hDu2.eval i).eval j).aestronglyMeasurable
-    have hlapMeas : AEStronglyMeasurable (fun x : Vec3 => lap x i) volume := by
-      rw [show (fun x : Vec3 => lap x i) =
-        (fun x => ∑ j : Fin 3, D2u x i j j) by funext x; exact hlap x i]
-      apply lps_h1_aesm_finset_sum
-      intro j
-      exact (((hD2u2.eval i).eval j).eval j).aestronglyMeasurable
-    exact hSumMeas.mul hlapMeas
+  have hPmeas := lps_h1_convection_laplacian_aestronglyMeasurable huMeas hDu2 hD2u2 hlap
   have hPbound : ∀ x : Vec3,
       ‖∑ i : Fin 3,
-        (∑ j : Fin 3, u x j * Du x i j) * lap x i‖ ≤ 27 * (F x * L x) := by
-    intro x
-    have hpoint := lps_h1_convection_laplacian_pointwise
-      (u := u) (Du := Du) (lap := lap) x
-    have hD2entry (i j : Fin 3) : |D2u x i j j| ≤ ‖D2u x‖ := by
-      calc
-        |D2u x i j j| = ‖D2u x i j j‖ := Real.norm_eq_abs _
-        _ ≤ ‖D2u x i j‖ := norm_le_pi_norm (D2u x i j) j
-        _ ≤ ‖D2u x i‖ := norm_le_pi_norm (D2u x i) j
-        _ ≤ ‖D2u x‖ := norm_le_pi_norm (D2u x) i
-    have hLapCoord (i : Fin 3) : |lap x i| ≤ 3 * ‖D2u x‖ := by
-      rw [hlap x i]
-      calc
-        |∑ j : Fin 3, D2u x i j j| ≤ ∑ j : Fin 3, |D2u x i j j| :=
-          Finset.abs_sum_le_sum_abs _ _
-        _ ≤ ∑ _j : Fin 3, ‖D2u x‖ :=
-          Finset.sum_le_sum fun j _ => hD2entry i j
-        _ = 3 * ‖D2u x‖ := by simp [Finset.sum_const, Finset.card_univ, Fintype.card_fin]
-    have hLapNorm : vec3EuclideanNorm (lap x) ≤ 9 * ‖D2u x‖ := by
-      calc
-        vec3EuclideanNorm (lap x) ≤ ∑ i : Fin 3, |lap x i| :=
-          CKN.Foundation.Parabolic.vec3EuclideanNorm_le_sum_abs _
-        _ ≤ ∑ _i : Fin 3, 3 * ‖D2u x‖ :=
-          Finset.sum_le_sum fun i _ => hLapCoord i
-        _ = 9 * ‖D2u x‖ := by
-          simp [Finset.sum_const, Finset.card_univ, Fintype.card_fin]
-          ring
-    calc
-      ‖∑ i : Fin 3, (∑ j : Fin 3, u x j * Du x i j) * lap x i‖ ≤
-          3 * U x * H x * vec3EuclideanNorm (lap x) := by
-        simpa [U, H, Real.norm_eq_abs] using hpoint
-      _ ≤ 3 * U x * H x * (9 * ‖D2u x‖) := by
-        exact mul_le_mul_of_nonneg_left hLapNorm
-          (mul_nonneg (mul_nonneg (by norm_num) (vec3EuclideanNorm_nonneg _))
-            (Finset.sum_nonneg fun i _ => norm_nonneg _))
-      _ = 27 * (F x * L x) := by dsimp [F, L]; ring
+        (∑ j : Fin 3, u x j * Du x i j) * lap x i‖ ≤ 27 * (F x * L x) :=
+    lps_h1_convection_hessian_pointwise hlap
   have hPint : Integrable
       (fun x : Vec3 => ∑ i : Fin 3,
-        (∑ j : Fin 3, u x j * Du x i j) * lap x i) volume := by
-    apply (hProd.const_mul 27).mono' hPmeas
-    filter_upwards [] with x
-    simpa only [Real.norm_eq_abs] using hPbound x
+        (∑ j : Fin 3, u x j * Du x i j) * lap x i) volume :=
+    (hProd.const_mul 27).mono' hPmeas (Eventually.of_forall fun x => by
+      simpa only [Real.norm_eq_abs] using hPbound x)
   have hPabs : |∫ x : Vec3,
       ∑ i : Fin 3, (∑ j : Fin 3, u x j * Du x i j) * lap x i| ≤
         ∫ x : Vec3, |∑ i : Fin 3,
@@ -317,44 +362,9 @@ theorem lps_h1_finite_nonlinear_pairing_bound
     apply integral_mono_ae hPint.norm hMajorInt
     filter_upwards [] with x
     simpa only [Real.norm_eq_abs] using hPbound x
-  have hHolder22 : (2 : ℝ).HolderConjugate 2 := by
-    rw [Real.holderConjugate_iff]
-    norm_num
-  have hHolderIntegral := integral_mul_norm_le_Lp_mul_Lq hHolder22 hF hL
-  have hLpNorm_two {f : Vec3 → ℝ} (hf : MemLp f (ENNReal.ofReal 2) volume) :
-      (eLpNorm f (ENNReal.ofReal 2) volume).toReal =
-        (∫ x : Vec3, ‖f x‖ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) := by
-    rw [toReal_eLpNorm,
-      lpNorm_eq_integral_norm_rpow_toReal (p := ENNReal.ofReal 2)
-        (by norm_num) (by norm_num)
-        hf.aestronglyMeasurable]
-    norm_num
-  have hFNorm := hLpNorm_two hF
-  have hLNorm := hLpNorm_two hL
-  have hholderSimple : ∫ x : Vec3, F x * L x ≤
-      (eLpNorm F (ENNReal.ofReal 2) volume).toReal *
-        (eLpNorm L (ENNReal.ofReal 2) volume).toReal := by
-    calc
-      ∫ x : Vec3, F x * L x =
-          ∫ x : Vec3, ‖F x‖ * ‖L x‖ := by
-            apply integral_congr_ae
-            filter_upwards [] with x
-            simp only [F, U, H, L, Real.norm_eq_abs]
-            rw [abs_of_nonneg (mul_nonneg (vec3EuclideanNorm_nonneg _)
-              (Finset.sum_nonneg fun i _ => norm_nonneg _)),
-              abs_of_nonneg (norm_nonneg _)]
-      _ ≤ (∫ x : Vec3, ‖F x‖ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) *
-            (∫ x : Vec3, ‖L x‖ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) :=
-        hHolderIntegral
-      _ = _ := by
-        calc
-          _ = (eLpNorm F (ENNReal.ofReal 2) volume).toReal *
-              (∫ x : Vec3, ‖L x‖ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) :=
-            congrArg (fun z : ℝ => z * (∫ x : Vec3, ‖L x‖ ^ (2 : ℝ)) ^ (1 / 2 : ℝ))
-              hFNorm.symm
-          _ = _ := congrArg
-            (fun z : ℝ => (eLpNorm F (ENNReal.ofReal 2) volume).toReal * z)
-            hLNorm.symm
+  have hholderSimple := lps_h1_integral_mul_le_real_l2_norms hF hL
+    (fun x => mul_nonneg (vec3EuclideanNorm_nonneg _)
+      (Finset.sum_nonneg fun i _ => norm_nonneg _)) (fun x => norm_nonneg _)
   have hHtoReal : (eLpNorm H (ENNReal.ofReal q) volume).toReal ≤
       ((9 : ℝ≥0∞) * gagliardoNirenbergSobolevConstant ^ (3 / s) *
         (2 : ℝ≥0∞) ^ (3 / s) * (eLpNorm Du 2 volume) ^ θ₀ *
@@ -398,7 +408,6 @@ theorem lps_h1_finite_nonlinear_pairing_bound
     rw [htoRealConstant] at hHtoReal
     exact hHtoReal
   have hEU : 0 ≤ (eLpNorm U (ENNReal.ofReal s) volume).toReal := ENNReal.toReal_nonneg
-  have hEH : 0 ≤ (eLpNorm H (ENNReal.ofReal q) volume).toReal := ENNReal.toReal_nonneg
   have hED : 0 ≤ (eLpNorm D2u 2 volume).toReal := ENNReal.toReal_nonneg
   have hbase' :
       |∫ x : Vec3, ∑ i : Fin 3,
@@ -408,48 +417,6 @@ theorem lps_h1_finite_nonlinear_pairing_bound
           (eLpNorm U (ENNReal.ofReal s) volume).toReal *
           (eLpNorm Du 2 volume).toReal ^ θ₀ *
           (eLpNorm D2u 2 volume).toReal ^ (1 + θ₁) := by
-    have hbase₁ :
-        |∫ x : Vec3, ∑ i : Fin 3,
-          (∑ j : Fin 3, u x j * Du x i j) * lap x i| ≤
-          27 * (eLpNorm F (ENNReal.ofReal 2) volume).toReal *
-            (eLpNorm D2u 2 volume).toReal := by
-      calc
-        _ ≤ 27 * ∫ x : Vec3, F x * L x := hbase
-        _ ≤ 27 * ((eLpNorm F (ENNReal.ofReal 2) volume).toReal *
-            (eLpNorm L (ENNReal.ofReal 2) volume).toReal) :=
-          mul_le_mul_of_nonneg_left hholderSimple (by norm_num)
-        _ = _ := by rw [hLtoReal]; ring
-    have hFirst :
-        27 * (eLpNorm F (ENNReal.ofReal 2) volume).toReal *
-            (eLpNorm D2u 2 volume).toReal ≤
-          27 * ((eLpNorm U (ENNReal.ofReal s) volume).toReal *
-            (eLpNorm H (ENNReal.ofReal q) volume).toReal) *
-            (eLpNorm D2u 2 volume).toReal := by
-      have h27 : 0 ≤ (27 : ℝ) := by norm_num
-      have hFscaled := mul_le_mul_of_nonneg_left hFtoReal
-        h27
-      calc
-        _ = (27 * (eLpNorm F (ENNReal.ofReal 2) volume).toReal) *
-            (eLpNorm D2u 2 volume).toReal := by ring
-        _ ≤ _ := mul_le_mul_of_nonneg_right hFscaled hED
-    have hSecond :
-        27 * ((eLpNorm U (ENNReal.ofReal s) volume).toReal *
-            (eLpNorm H (ENNReal.ofReal q) volume).toReal) *
-            (eLpNorm D2u 2 volume).toReal ≤
-          27 * ((eLpNorm U (ENNReal.ofReal s) volume).toReal *
-            (9 * gagliardoNirenbergSobolevConstant.toReal ^ (3 / s) *
-              (2 : ℝ) ^ (3 / s) * (eLpNorm Du 2 volume).toReal ^ θ₀ *
-              (eLpNorm D2u 2 volume).toReal ^ θ₁)) *
-            (eLpNorm D2u 2 volume).toReal := by
-      have h27 : 0 ≤ (27 : ℝ) := by norm_num
-      have h := mul_le_mul_of_nonneg_left hHboundReal
-        (mul_nonneg (mul_nonneg h27 hEU) hED)
-      calc
-        _ = (27 * (eLpNorm U (ENNReal.ofReal s) volume).toReal *
-            (eLpNorm D2u 2 volume).toReal) *
-            (eLpNorm H (ENNReal.ofReal q) volume).toReal := by ring
-        _ ≤ _ := h
-        _ = _ := by ring
     have hPow : (eLpNorm D2u 2 volume).toReal ^ θ₁ *
         (eLpNorm D2u 2 volume).toReal =
         (eLpNorm D2u 2 volume).toReal ^ (1 + θ₁) := by
@@ -465,38 +432,26 @@ theorem lps_h1_finite_nonlinear_pairing_bound
             congr 1
             ring
     calc
-      _ ≤ 27 * (eLpNorm U (ENNReal.ofReal s) volume).toReal *
-          (eLpNorm H (ENNReal.ofReal q) volume).toReal *
-          (eLpNorm D2u 2 volume).toReal := by
-            have hbase₂ := hbase₁.trans hFirst
-            calc
-              _ ≤ 27 * ((eLpNorm U (ENNReal.ofReal s) volume).toReal *
-                  (eLpNorm H (ENNReal.ofReal q) volume).toReal) *
-                  (eLpNorm D2u 2 volume).toReal := hbase₂
-              _ = _ := by ring
+      _ ≤ 27 * ∫ x : Vec3, F x * L x := hbase
+      _ ≤ 27 * ((eLpNorm F (ENNReal.ofReal 2) volume).toReal *
+          (eLpNorm L (ENNReal.ofReal 2) volume).toReal) :=
+        mul_le_mul_of_nonneg_left hholderSimple (by norm_num)
+      _ = 27 * (eLpNorm F (ENNReal.ofReal 2) volume).toReal *
+          (eLpNorm D2u 2 volume).toReal := by rw [hLtoReal]; ring
+      _ ≤ 27 * ((eLpNorm U (ENNReal.ofReal s) volume).toReal *
+          (eLpNorm H (ENNReal.ofReal q) volume).toReal) *
+          (eLpNorm D2u 2 volume).toReal :=
+        mul_le_mul_of_nonneg_right
+          (mul_le_mul_of_nonneg_left hFtoReal (by norm_num)) hED
       _ ≤ 27 * ((eLpNorm U (ENNReal.ofReal s) volume).toReal *
           (9 * gagliardoNirenbergSobolevConstant.toReal ^ (3 / s) *
             (2 : ℝ) ^ (3 / s) * (eLpNorm Du 2 volume).toReal ^ θ₀ *
             (eLpNorm D2u 2 volume).toReal ^ θ₁)) *
-          (eLpNorm D2u 2 volume).toReal := by
-        calc
-          _ = 27 * ((eLpNorm U (ENNReal.ofReal s) volume).toReal *
-              (eLpNorm H (ENNReal.ofReal q) volume).toReal) *
-              (eLpNorm D2u 2 volume).toReal := by ring
-          _ ≤ _ := hSecond
-      _ = 243 * gagliardoNirenbergSobolevConstant.toReal ^ (3 / s) *
-          (2 : ℝ) ^ (3 / s) *
-          (eLpNorm U (ENNReal.ofReal s) volume).toReal *
-          (eLpNorm Du 2 volume).toReal ^ θ₀ *
-          (eLpNorm D2u 2 volume).toReal ^ (1 + θ₁) := by
-        calc
-          _ = 243 * gagliardoNirenbergSobolevConstant.toReal ^ (3 / s) *
-              (2 : ℝ) ^ (3 / s) *
-              (eLpNorm U (ENNReal.ofReal s) volume).toReal *
-              (eLpNorm Du 2 volume).toReal ^ θ₀ *
-              ((eLpNorm D2u 2 volume).toReal ^ θ₁ *
-                (eLpNorm D2u 2 volume).toReal) := by ring
-          _ = _ := by rw [hPow]
+          (eLpNorm D2u 2 volume).toReal :=
+        mul_le_mul_of_nonneg_right
+          (mul_le_mul_of_nonneg_left
+            (mul_le_mul_of_nonneg_left hHboundReal hEU) (by norm_num)) hED
+      _ = _ := by rw [← hPow]; ring
   simpa [θ₀, θ₁, U] using hbase'
 
 /-- The endpoint (`s = ∞`) convection term paired with the vector Laplacian is

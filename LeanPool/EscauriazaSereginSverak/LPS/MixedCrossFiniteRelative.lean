@@ -30,32 +30,19 @@ noncomputable section
 
 namespace ESS
 
-/-- The finite Serrin cross-testings combine into the relative cross identity.
-The two oriented densities are `u · ((v · ∇)v)` and `v · ((u · ∇)u)`;
-their cancellation uses only the integrable products in the slice lemma. -/
-theorem lps_finite_relative_cross_identity
-    {T s : ℝ} {a : Vec3 → Vec3}
-    {u v : ParabolicPoint → Vec3}
-    {Du Dv : ParabolicPoint → Fin 3 → Vec3}
-    {pu pv : ParabolicPoint → ℝ}
-    (hULH : IsLerayHopfSolution T a u Du)
-    (hVLH : IsLerayHopfSolution T a v Dv)
-    (hU : IsSerrinWeakSolution T a u Du pu)
-    (hV : IsSerrinWeakSolution T a v Dv pv)
-    (hs : 3 < s)
-    (hmix : (∫⁻ t in Ioo (0 : ℝ) T,
-      (∫⁻ x : Vec3,
-        ENNReal.ofReal (vec3EuclideanNorm (u (x,t))) ^ s) ^
-          ((2 * s / (s - 3)) / s)) < ⊤) :
-    (∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
-      (∫ x : Vec3, ∑ k : Fin 3, v (x,t) k * u (x,t) k) -
-          (∫ x : Vec3, ∑ k : Fin 3, a x k * a x k) =
-        -(∫ z in spaceTimeSet Set.univ (Ioo 0 t),
-            lpsRelativeConvection u v Du Dv z) -
-          2 * ∫ z in spaceTimeSet Set.univ (Ioo 0 t),
-            ∑ k : Fin 3, ∑ j : Fin 3, Du z k j * Dv z k j) ∧
-      Integrable (lpsRelativeConvection u v Du Dv)
-        (volume.restrict (spaceTimeSet Set.univ (Ioo 0 T))) := by
+private lemma lps_finite_cross_exponent_relations {s : ℝ} (hs : 3 < s) :
+    let ell : ℝ := 2 * s / (s - 3)
+    let qE : ℝ := 2 * s / (s - 2)
+    let pE : ℝ := 2 * s / 3
+    let qN : ℝ := s / (s - 1)
+    let pN : ℝ := 2 * s / (s + 3)
+    let qNS : ℝ := 2 * s / (s + 2)
+    let pNS : ℝ := 2 * s / (2 * s - 3)
+    1 ≤ qE ∧ 1 ≤ pE ∧ 1 ≤ qN ∧ 1 ≤ pN ∧ 1 ≤ qNS ∧ 1 ≤ pNS ∧
+    qE⁻¹ + (2 : ℝ)⁻¹ = qN⁻¹ ∧ pE⁻¹ + (2 : ℝ)⁻¹ = pN⁻¹ ∧
+    s⁻¹ + (2 : ℝ)⁻¹ = qNS⁻¹ ∧ ell⁻¹ + (2 : ℝ)⁻¹ = pNS⁻¹ ∧
+    s.HolderConjugate qN ∧ ell.HolderConjugate pN ∧
+    qE.HolderConjugate qNS ∧ pE.HolderConjugate pNS := by
   let ell : ℝ := 2 * s / (s - 3)
   let qE : ℝ := 2 * s / (s - 2)
   let pE : ℝ := 2 * s / 3
@@ -134,6 +121,176 @@ theorem lps_finite_relative_cross_identity
     lps_real_holder_pair (by positivity) (by positivity) hUVspace
   have hHolderUVtime : pE.HolderConjugate pNS :=
     lps_real_holder_pair (by positivity) (by positivity) hUVtime
+  exact ⟨hqE1, hpE1, hqN1, hpN1, hqNS1, hpNS1, hSpaceE, hTimeE,
+    hSpaceS, hTimeS, hHolderZVspace, hHolderZVtime, hHolderUVspace, hHolderUVtime⟩
+
+private lemma lps_mixed_difference_moment
+    {T p q : ℝ} {f g : ParabolicPoint → ℝ} (hp : 1 ≤ p) (hq : 1 ≤ q)
+    (hfm : AEStronglyMeasurable f volume) (hgm : AEStronglyMeasurable g volume)
+    (hf : (∀ᵐ t ∂(volume.restrict (Ioo 0 T)), MemLp (fun x : Vec3 => f (x,t))
+      (ENNReal.ofReal q) volume) ∧
+      (∫⁻ t in Ioo 0 T, eLpNorm (fun x : Vec3 => f (x,t)) (ENNReal.ofReal q) volume ^ p) < ⊤)
+    (hg : (∀ᵐ t ∂(volume.restrict (Ioo 0 T)), MemLp (fun x : Vec3 => g (x,t))
+      (ENNReal.ofReal q) volume) ∧
+      (∫⁻ t in Ioo 0 T, eLpNorm (fun x : Vec3 => g (x,t)) (ENNReal.ofReal q) volume ^ p) < ⊤) :
+    (∀ᵐ t ∂(volume.restrict (Ioo 0 T)), MemLp (fun x : Vec3 => f (x,t) - g (x,t))
+      (ENNReal.ofReal q) volume) ∧
+      (∫⁻ t in Ioo 0 T, eLpNorm (fun x : Vec3 => f (x,t) - g (x,t))
+        (ENNReal.ofReal q) volume ^ p) < ⊤ := by
+  let summands : Fin 3 → ParabolicPoint → ℝ := fun i =>
+    if i = 0 then fun z => f z else if i = 1 then fun z => -g z
+      else fun _ => (0 : ℝ)
+  have hsum := lps_mixed_sum_three_moment (T := T) (p := p) (q := q)
+    (f := summands) hp hq
+    (by
+      intro i
+      fin_cases i
+      · exact hfm
+      · exact hgm.neg
+      · exact aestronglyMeasurable_zero)
+    (by
+      intro i
+      fin_cases i
+      · simpa [summands] using hf.1
+      · filter_upwards [hg.1] with t ht
+        change MemLp (fun x : Vec3 => -g ((x,t) : ParabolicPoint))
+          (ENNReal.ofReal q) volume
+        have hneg : (fun x : Vec3 => -g ((x,t) : ParabolicPoint)) =
+            -(fun x : Vec3 => g ((x,t) : ParabolicPoint)) := by
+          funext x
+          rfl
+        rw [hneg]
+        simpa [q] using ht.neg
+      · filter_upwards [] with t
+        change MemLp (fun _ : Vec3 => (0 : ℝ)) (ENNReal.ofReal q) volume
+        exact MemLp.zero)
+    (by
+      intro i
+      fin_cases i
+      · simpa [summands] using hf.2
+      · have hneg (t : ℝ) : (fun x : Vec3 => -g ((x,t) : ParabolicPoint)) =
+            -(fun x : Vec3 => g ((x,t) : ParabolicPoint)) := by
+          funext x
+          rfl
+        change (∫⁻ t in Ioo 0 T,
+          eLpNorm (fun x : Vec3 => -g ((x,t) : ParabolicPoint))
+            (ENNReal.ofReal q) volume ^ p) < ⊤
+        simp_rw [hneg, eLpNorm_neg]
+        simpa [q, p] using hg.2
+      · change (∫⁻ t in Ioo 0 T,
+          (eLpNorm (0 : Vec3 → ℝ) (ENNReal.ofReal q) volume) ^ p) < ⊤
+        rw [eLpNorm_zero]
+        rw [ENNReal.zero_rpow_of_pos (by linarith only [hp])]
+        simp)
+  have hsumEq (t : ℝ) : (fun x : Vec3 => ∑ i : Fin 3, summands i (x,t)) =
+      (fun x => f (x,t) - g (x,t)) := by
+    funext x
+    simp [summands, Fin.sum_univ_three]
+    ring
+  constructor
+  · filter_upwards [hsum.1] with t ht
+    rw [← hsumEq t]
+    exact ht
+  · have hEq : (fun t : ℝ => eLpNorm
+        (fun x : Vec3 => ∑ i : Fin 3, summands i (x,t))
+        (ENNReal.ofReal q) volume ^ p) =ᵐ[volume.restrict (Ioo 0 T)]
+        (fun t => eLpNorm (fun x : Vec3 => f (x,t) - g (x,t))
+          (ENNReal.ofReal q) volume ^ p) := by
+      filter_upwards [] with t
+      rw [hsumEq t]
+    rw [← lintegral_congr_ae hEq]
+    exact hsum.2
+
+private lemma lps_finite_relative_density_cancellation
+    {T s : ℝ} {a : Vec3 → Vec3}
+    {u v : ParabolicPoint → Vec3}
+    {Du Dv : ParabolicPoint → Fin 3 → Vec3}
+    {pu pv : ParabolicPoint → ℝ}
+    (hULH : IsLerayHopfSolution T a u Du)
+    (hVLH : IsLerayHopfSolution T a v Dv)
+    (hU : IsSerrinWeakSolution T a u Du pu)
+    (hV : IsSerrinWeakSolution T a v Dv pv)
+    (hs : 3 < s)
+    (hmix : (∫⁻ t in Ioo (0 : ℝ) T,
+      (∫⁻ x : Vec3,
+        ENNReal.ofReal (vec3EuclideanNorm (u (x,t))) ^ s) ^
+          ((2 * s / (s - 3)) / s)) < ⊤) :
+    ∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
+      ∫ x : Vec3,
+        (∑ k : Fin 3, u (x,t) k * ∑ j : Fin 3, v (x,t) j * Dv (x,t) k j) +
+        (∑ k : Fin 3, v (x,t) k * ∑ j : Fin 3, u (x,t) j * Du (x,t) k j) -
+          lpsRelativeConvection u v Du Dv (x,t) = 0 := by
+  let qE : ℝ := 2 * s / (s - 2)
+  have hUserrin := lps_finite_coordinate_mixed_data hU hs hmix
+  have hslU := serrinWeak_slice_ae hU
+  have hslV := serrinWeak_slice_ae hV
+  filter_upwards [hslU, hslV,
+    (hUserrin 0).1, (hUserrin 1).1, (hUserrin 2).1,
+    (lps_energy_coordinate_mixed_data hULH hU hs 0).1,
+    (lps_energy_coordinate_mixed_data hULH hU hs 1).1,
+    (lps_energy_coordinate_mixed_data hULH hU hs 2).1,
+    (lps_energy_coordinate_mixed_data hVLH hV hs 0).1,
+    (lps_energy_coordinate_mixed_data hVLH hV hs 1).1,
+    (lps_energy_coordinate_mixed_data hVLH hV hs 2).1] with
+    t hu hv huS0 huS1 huS2 hu0 hu1 hu2 hv0 hv1 hv2
+  have huQ : MemLp (fun x : Vec3 => u (x,t)) (ENNReal.ofReal qE) volume := by
+    apply memLp_pi_iff.mpr
+    intro k
+    fin_cases k <;> assumption
+  have hvQ : MemLp (fun x : Vec3 => v (x,t)) (ENNReal.ofReal qE) volume := by
+    apply memLp_pi_iff.mpr
+    intro k
+    fin_cases k <;> assumption
+  have huSvec : MemLp (fun x : Vec3 => u (x,t)) (ENNReal.ofReal s) volume := by
+    apply memLp_pi_iff.mpr
+    intro k
+    fin_cases k <;> assumption
+  have hcancel := lps_slice_relative_cancellation hs hu huSvec huQ hv hvQ
+  simpa [lpsRelativeConvection] using hcancel
+
+/-- The finite Serrin cross-testings combine into the relative cross identity.
+The two oriented densities are `u · ((v · ∇)v)` and `v · ((u · ∇)u)`;
+their cancellation uses only the integrable products in the slice lemma. -/
+theorem lps_finite_relative_cross_identity
+    {T s : ℝ} {a : Vec3 → Vec3}
+    {u v : ParabolicPoint → Vec3}
+    {Du Dv : ParabolicPoint → Fin 3 → Vec3}
+    {pu pv : ParabolicPoint → ℝ}
+    (hULH : IsLerayHopfSolution T a u Du)
+    (hVLH : IsLerayHopfSolution T a v Dv)
+    (hU : IsSerrinWeakSolution T a u Du pu)
+    (hV : IsSerrinWeakSolution T a v Dv pv)
+    (hs : 3 < s)
+    (hmix : (∫⁻ t in Ioo (0 : ℝ) T,
+      (∫⁻ x : Vec3,
+        ENNReal.ofReal (vec3EuclideanNorm (u (x,t))) ^ s) ^
+          ((2 * s / (s - 3)) / s)) < ⊤) :
+    (∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
+      (∫ x : Vec3, ∑ k : Fin 3, v (x,t) k * u (x,t) k) -
+          (∫ x : Vec3, ∑ k : Fin 3, a x k * a x k) =
+        -(∫ z in spaceTimeSet Set.univ (Ioo 0 t),
+            lpsRelativeConvection u v Du Dv z) -
+          2 * ∫ z in spaceTimeSet Set.univ (Ioo 0 t),
+            ∑ k : Fin 3, ∑ j : Fin 3, Du z k j * Dv z k j) ∧
+      Integrable (lpsRelativeConvection u v Du Dv)
+        (volume.restrict (spaceTimeSet Set.univ (Ioo 0 T))) := by
+  let ell : ℝ := 2 * s / (s - 3)
+  let qE : ℝ := 2 * s / (s - 2)
+  let pE : ℝ := 2 * s / 3
+  let qN : ℝ := s / (s - 1)
+  let pN : ℝ := 2 * s / (s + 3)
+  let qNS : ℝ := 2 * s / (s + 2)
+  let pNS : ℝ := 2 * s / (2 * s - 3)
+  have hs0 : 0 < s := by linarith only [hs]
+  have hs1 : 0 < s - 1 := by linarith only [hs]
+  have hs2 : 0 < s - 2 := by linarith only [hs]
+  have hs3 : 0 < s - 3 := by linarith only [hs]
+  have hsplus2 : 0 < s + 2 := by positivity
+  have hsplus3 : 0 < s + 3 := by positivity
+  have h2sminus3 : 0 < 2 * s - 3 := by linarith only [hs]
+  obtain ⟨hqE1, hpE1, hqN1, hpN1, hqNS1, hpNS1, hSpaceE, hTimeE,
+    hSpaceS, hTimeS, hHolderZVspace, hHolderZVtime, hHolderUVspace, hHolderUVtime⟩ :=
+    lps_finite_cross_exponent_relations hs
   have hUserrin := lps_finite_coordinate_mixed_data hU hs hmix
   have hUenergy := lps_energy_coordinate_mixed_data hULH hU hs
   have hVenergy := lps_energy_coordinate_mixed_data hVLH hV hs
@@ -153,69 +310,9 @@ theorem lps_finite_relative_cross_identity
         eLpNorm (fun x : Vec3 => v (x,t) j - u (x,t) j)
           (ENNReal.ofReal qE) volume ^ pE) < ⊤ := by
     intro j
-    let f : Fin 3 → ParabolicPoint → ℝ := fun i =>
-      if i = 0 then fun z => v z j else if i = 1 then fun z => -u z j
-        else fun _ => (0 : ℝ)
-    have hsum := lps_mixed_sum_three_moment (T := T) (p := pE) (q := qE)
-      (f := f) hpE1 hqE1
-      (by
-        intro i
-        fin_cases i
-        · exact (lps_coordinate_aesm hV.meas_u j)
-        · exact (lps_coordinate_aesm hU.meas_u j).neg
-        · exact aestronglyMeasurable_zero)
-      (by
-        intro i
-        fin_cases i
-        · simpa [f] using (hVenergy j).1
-        · filter_upwards [(hUenergy j).1] with t ht
-          change MemLp (fun x : Vec3 => -u ((x,t) : ParabolicPoint) j)
-            (ENNReal.ofReal qE) volume
-          have hneg : (fun x : Vec3 => -u ((x,t) : ParabolicPoint) j) =
-              -(fun x : Vec3 => u ((x,t) : ParabolicPoint) j) := by
-            funext x
-            rfl
-          rw [hneg]
-          simpa [qE] using ht.neg
-        · filter_upwards [] with t
-          change MemLp (fun _ : Vec3 => (0 : ℝ)) (ENNReal.ofReal qE) volume
-          exact MemLp.zero)
-      (by
-        intro i
-        fin_cases i
-        · simpa [f] using (hVenergy j).2
-        · have hneg (t : ℝ) : (fun x : Vec3 => -u ((x,t) : ParabolicPoint) j) =
-              -(fun x : Vec3 => u ((x,t) : ParabolicPoint) j) := by
-            funext x
-            rfl
-          change (∫⁻ t in Ioo 0 T,
-            eLpNorm (fun x : Vec3 => -u ((x,t) : ParabolicPoint) j)
-              (ENNReal.ofReal qE) volume ^ pE) < ⊤
-          simp_rw [hneg, eLpNorm_neg]
-          simpa [qE, pE] using (hUenergy j).2
-        · change (∫⁻ t in Ioo 0 T,
-            (eLpNorm (0 : Vec3 → ℝ) (ENNReal.ofReal qE) volume) ^ pE) < ⊤
-          rw [eLpNorm_zero]
-          rw [ENNReal.zero_rpow_of_pos (by linarith only [hpE1])]
-          simp)
-    have hsumEq (t : ℝ) : (fun x : Vec3 => ∑ i : Fin 3, f i (x,t)) =
-        (fun x => v (x,t) j - u (x,t) j) := by
-      funext x
-      simp [f, Fin.sum_univ_three]
-      ring
-    constructor
-    · filter_upwards [hsum.1] with t ht
-      rw [← hsumEq t]
-      exact ht
-    · have hEq : (fun t : ℝ => eLpNorm
-          (fun x : Vec3 => ∑ i : Fin 3, f i (x,t))
-          (ENNReal.ofReal qE) volume ^ pE) =ᵐ[volume.restrict (Ioo 0 T)]
-          (fun t => eLpNorm (fun x : Vec3 => v (x,t) j - u (x,t) j)
-            (ENNReal.ofReal qE) volume ^ pE) := by
-        filter_upwards [] with t
-        rw [hsumEq t]
-      rw [← lintegral_congr_ae hEq]
-      exact hsum.2
+    exact lps_mixed_difference_moment hpE1 hqE1
+      (lps_coordinate_aesm hV.meas_u j) (lps_coordinate_aesm hU.meas_u j)
+      (hVenergy j) (hUenergy j)
   have hDiff2 : MemLp (fun z : ParabolicPoint => Dv z - Du z) 2
       (volume.restrict (spaceTimeSet Set.univ (Ioo 0 T))) := hDV2.sub hDU2
   have hConvW := lps_mixed_convection_moment hqE1 hpE1 hqN1 hpN1
@@ -273,33 +370,9 @@ theorem lps_finite_relative_cross_identity
   have hFint : Integrable F μT := by
     exact (hAall.add hBall).sub hRall |>.congr
       (Eventually.of_forall fun z => by simp [F])
-  have hCancel : ∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
-      ∫ x : Vec3, F (x,t) = 0 := by
-    have hslU := serrinWeak_slice_ae hU
-    have hslV := serrinWeak_slice_ae hV
-    filter_upwards [hslU, hslV,
-      (hUserrin 0).1, (hUserrin 1).1, (hUserrin 2).1,
-      (lps_energy_coordinate_mixed_data hULH hU hs 0).1,
-      (lps_energy_coordinate_mixed_data hULH hU hs 1).1,
-      (lps_energy_coordinate_mixed_data hULH hU hs 2).1,
-      (lps_energy_coordinate_mixed_data hVLH hV hs 0).1,
-      (lps_energy_coordinate_mixed_data hVLH hV hs 1).1,
-      (lps_energy_coordinate_mixed_data hVLH hV hs 2).1] with
-      t hu hv huS0 huS1 huS2 hu0 hu1 hu2 hv0 hv1 hv2
-    have huQ : MemLp (fun x : Vec3 => u (x,t)) (ENNReal.ofReal qE) volume := by
-      apply memLp_pi_iff.mpr
-      intro k
-      fin_cases k <;> assumption
-    have hvQ : MemLp (fun x : Vec3 => v (x,t)) (ENNReal.ofReal qE) volume := by
-      apply memLp_pi_iff.mpr
-      intro k
-      fin_cases k <;> assumption
-    have huSvec : MemLp (fun x : Vec3 => u (x,t)) (ENNReal.ofReal s) volume := by
-      apply memLp_pi_iff.mpr
-      intro k
-      fin_cases k <;> assumption
-    have hcancel := lps_slice_relative_cancellation hs hu huSvec huQ hv hvQ
-    simpa [F, lpsRelativeConvection] using hcancel
+  have hCancel : ∀ᵐ t ∂(volume.restrict (Ioo 0 T)), ∫ x : Vec3, F (x,t) = 0 := by
+    simpa only [F] using
+      lps_finite_relative_density_cancellation hULH hVLH hU hV hs hmix
   refine ⟨?_, hRall⟩
   have hDens := lps_mixed_cross_density_limits_finite
     hULH hVLH hU hV hs hmix

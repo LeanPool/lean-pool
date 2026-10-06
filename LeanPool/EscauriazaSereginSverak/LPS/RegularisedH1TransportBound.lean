@@ -33,7 +33,10 @@ noncomputable section
 
 namespace ESS.LPS
 
-/-- Interpolation between the whole-space `L²` and `L⁶` norms at the `L³` exponent (`eq:lps-uniform-H1`). -/
+/--
+Interpolation between the whole-space `L²` and `L⁶` norms at the `L³` exponent
+(`eq:lps-uniform-H1`).
+-/
 theorem lps_eLpNorm_three_le_two_six {f : Vec3 → ℝ}
     (hf : AEStronglyMeasurable f volume) :
     eLpNorm f 3 volume ≤
@@ -165,7 +168,8 @@ theorem lps_gradNorm_memLp_and_integral {g : Vec3 → ℝ} (hg : ContDiff ℝ (�
     refine (memLp_finsetSum (Finset.univ : Finset (Fin 3)) fun k _ => (hgd k).norm).mono'
       hhcont.aestronglyMeasurable (Filter.Eventually.of_forall fun x => ?_)
     have h1 : h x ≤ ∑ k : Fin 3, |spatialDeriv g k x| := by
-      have hs : (∑ k : Fin 3, spatialDeriv g k x ^ 2) ≤ (∑ k : Fin 3, |spatialDeriv g k x|) ^ 2 := by
+      have hs : (∑ k : Fin 3, spatialDeriv g k x ^ 2) ≤ (∑ k : Fin 3, |spatialDeriv g k x|) ^ 2
+        := by
         simp only [Fin.sum_univ_three]
         nlinarith only [abs_nonneg (spatialDeriv g 0 x), abs_nonneg (spatialDeriv g 1 x),
           abs_nonneg (spatialDeriv g 2 x), sq_abs (spatialDeriv g 0 x),
@@ -218,7 +222,8 @@ theorem lps_transport_term_le {V d L : Vec3 → ℝ}
     (hd : ContDiff ℝ (⊤ : ℕ∞) d) (hd2 : MemLp d 2 volume)
     (hdd : ∀ k, MemLp (spatialDeriv d k) 2 volume) (hL : MemLp L 2 volume) :
     |∫ x, V x * d x * L x| ≤
-      gagliardoNirenbergSobolevConstant.toReal * Real.sqrt (∑ k : Fin 3, ∫ x, spatialDeriv V k x ^ 2) *
+      gagliardoNirenbergSobolevConstant.toReal * Real.sqrt (∑ k : Fin 3, ∫ x, spatialDeriv V k x
+        ^ 2) *
         (Real.sqrt (∫ x, d x ^ 2) ^ (1 / 2 : ℝ) *
           (gagliardoNirenbergSobolevConstant.toReal *
             Real.sqrt (∑ k : Fin 3, ∫ x, spatialDeriv d k x ^ 2)) ^ (1 / 2 : ℝ)) *
@@ -228,7 +233,8 @@ theorem lps_transport_term_le {V d L : Vec3 → ℝ}
   have hd6 := lps_smooth_memLp_six hd hd2 hdd
   have hdm : AEStronglyMeasurable d volume := hd.continuous.aestronglyMeasurable
   have hVm : AEStronglyMeasurable V volume := hV.continuous.aestronglyMeasurable
-  have hd3 : eLpNorm d 3 volume ≤ eLpNorm d 2 volume ^ (1 / 2 : ℝ) * eLpNorm d 6 volume ^ (1 / 2 : ℝ) :=
+  have hd3 : eLpNorm d 3 volume ≤ eLpNorm d 2 volume ^ (1 / 2 : ℝ) * eLpNorm d 6 volume ^ (1 / 2
+    : ℝ) :=
     lps_eLpNorm_three_le_two_six hdm
   have hd3fin : eLpNorm d 3 volume ≠ ⊤ := by
     refine ne_top_of_le_ne_top ?_ hd3
@@ -290,7 +296,8 @@ theorem lps_core_rpow {S y h : ℝ} (hS : 0 ≤ S) (hy : 0 ≤ y) (hh : 0 ≤ h)
     rcases hS.eq_or_lt with h0 | h0
     · rw [← h0]; simp
     · rw [← Real.rpow_one_add' hS (by norm_num)]; norm_num
-  calc S * y ^ (1 / 2 : ℝ) * ((y ^ (1 / 2 : ℝ)) ^ (1 / 2 : ℝ) * (S ^ (1 / 2 : ℝ) * (h ^ (1 / 2 : ℝ)) ^ (1 / 2 : ℝ))) * h ^ (1 / 2 : ℝ)
+  calc S * y ^ (1 / 2 : ℝ) * ((y ^ (1 / 2 : ℝ)) ^ (1 / 2 : ℝ) * (S ^ (1 / 2 : ℝ) * (h ^ (1 / 2 :
+    ℝ)) ^ (1 / 2 : ℝ))) * h ^ (1 / 2 : ℝ)
       = (S * S ^ (1 / 2 : ℝ)) * ((y ^ (1 / 2 : ℝ)) * (y ^ (1 / 2 : ℝ)) ^ (1 / 2 : ℝ)) *
         ((h ^ (1 / 2 : ℝ)) ^ (1 / 2 : ℝ) * h ^ (1 / 2 : ℝ)) := by ring
     _ = _ := by rw [a1, a2, a3]
@@ -306,7 +313,8 @@ theorem lps_transport_term_le' {V d L : Vec3 → ℝ}
     (h1 : (∑ k : Fin 3, ∫ x, spatialDeriv V k x ^ 2) ≤ y0) (h2 : (∫ x, d x ^ 2) ≤ y0)
     (h3 : (∑ k : Fin 3, ∫ x, spatialDeriv d k x ^ 2) ≤ h0) (h4 : (∫ x, L x ^ 2) ≤ h0) :
     |∫ x, V x * d x * L x| ≤
-      gagliardoNirenbergSobolevConstant.toReal ^ (3 / 2 : ℝ) * y0 ^ (3 / 4 : ℝ) * h0 ^ (3 / 4 : ℝ) := by
+      gagliardoNirenbergSobolevConstant.toReal ^ (3 / 2 : ℝ) * y0 ^ (3 / 4 : ℝ) * h0 ^ (3 / 4 :
+        ℝ) := by
   have hS0 : 0 ≤ gagliardoNirenbergSobolevConstant.toReal := ENNReal.toReal_nonneg
   refine (lps_transport_term_le hV hV2 hVd hd hd2 hdd hL).trans ?_
   rw [← lps_core_rpow hS0 hy hh]
@@ -376,7 +384,8 @@ theorem lps_regR12_transportPairing_le {t : ℝ} (ht : 0 ≤ t) :
       (d := fun x => spatialDeriv (fun y => lpsRegU ρ ε hε b hb (y, t) i) k x)
       (L := lpsRegLap ρ ε hε b hb i t) (hVs k) (hVL2 k [])
       (fun j => hVL2 k [j])
-      (by simpa [wordDeriv] using contDiff_wordDeriv (lps_regR12_slice_smooth ρ ε hε b hb t ht i) [k])
+      (by simpa [wordDeriv] using contDiff_wordDeriv (lps_regR12_slice_smooth ρ ε hε b hb t ht
+        i) [k])
       (lps_regR12_slice_memLp ρ ε hε b hb t ht i [k])
       (fun j => lps_regR12_slice_memLp ρ ε hε b hb t ht i [k, j])
       (lps_regR12_lap_memLp ρ ε hε b hb t ht i) hy0 hDd0 ?_ ?_ ?_ ?_
@@ -404,7 +413,8 @@ theorem lps_regR12_transportPairing_le {t : ℝ} (ht : 0 ≤ t) :
             (fun y => lpsRegU ρ ε hε b hb (y, t) i) k) j x ^ 2)
           ≤ ∑ k' : Fin 3, ∑ j : Fin 3, ∫ x, spatialDeriv (spatialDeriv
             (fun y => lpsRegU ρ ε hε b hb (y, t) i) k') j x ^ 2 :=
-            Finset.single_le_sum (f := fun k' : Fin 3 => ∑ j : Fin 3, ∫ x, spatialDeriv (spatialDeriv
+            Finset.single_le_sum (f := fun k' : Fin 3 => ∑ j : Fin 3, ∫ x, spatialDeriv
+              (spatialDeriv
               (fun y => lpsRegU ρ ε hε b hb (y, t) i) k') j x ^ 2)
               (fun k' _ => Finset.sum_nonneg fun j _ => integral_nonneg fun x => sq_nonneg _)
               (Finset.mem_univ k)

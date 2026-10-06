@@ -11,7 +11,8 @@ public import LeanPool.EscauriazaSereginSverak.LPS.RegularisedH1TimeContinuity
 /-!
 # The differentiated energy identity for the regularized velocity
 
-The squared gradient norm `‖∇U_ε(t)‖₂²` of the regularized velocity is differentiable at every positive
+The squared gradient norm `‖∇U_ε(t)‖₂²` of the regularized velocity is differentiable at every
+positive
 time, with derivative `-2‖∇²U_ε‖₂² + 2⟨(J_ε U_ε · ∇) U_ε, ΔU_ε⟩`. The pressure does not enter
 (`eq:lps-uniform-H1`, `lem:lps-regularized-Hk-start`).
 -/
@@ -57,7 +58,11 @@ theorem lps_regR12_negLap_path_continuousAt {a : ℝ} (ha : 0 < a) (i : Fin 3) :
 @[expose] def lpsRegNegLapPath (i : Fin 3) : ℝ → Lp ℝ 2 (volume : Measure Vec3) :=
   lpsPath (lpsRegNegLap ρ ε hε b hb i) (fun _ hs => lps_regR12_negLap_memLp ρ ε hε b hb hs i)
 
-/-- The pairing of the pressure-free right-hand side against `-Δ(U_ε(a) + U_ε(c))` equals that of the full momentum right-hand side, because the pressure gradient is orthogonal to this solenoidal field (`lem:lps-regularized-Hk-start`). -/
+/--
+The pairing of the pressure-free right-hand side against `-Δ(U_ε(a) + U_ε(c))` equals that of
+the full momentum right-hand side, because the pressure gradient is orthogonal to this
+solenoidal field (`lem:lps-regularized-Hk-start`).
+-/
 theorem lps_regR12_inner_eq_Q_pairing {a c r : ℝ} (ha : 0 < a) (hc : 0 < c) (hr : 0 < r) :
     ∑ i : Fin 3, inner ℝ (lpsRegRPath ρ ε hε b hb i r)
       (lpsRegNegLapPath ρ ε hε b hb i a + lpsRegNegLapPath ρ ε hε b hb i c) =
@@ -82,9 +87,11 @@ theorem lps_regR12_inner_eq_Q_pairing {a c r : ℝ} (ha : 0 < a) (hc : 0 < c) (h
     unfold lpsRegRPath lpsRegNegLapPath
     rw [inner_add_right, lps_inner_lpsPath, lps_inner_lpsPath, max_eq_left hr.le,
       max_eq_left ha.le, max_eq_left hc.le]
-    have i1 : Integrable (fun x => lpsRegR ρ ε hε b hb i r x * lpsRegNegLap ρ ε hε b hb i a x) volume :=
+    have i1 : Integrable (fun x => lpsRegR ρ ε hε b hb i r x * lpsRegNegLap ρ ε hε b hb i a x)
+      volume :=
       (hR i).integrable_mul (lps_regR12_negLap_memLp ρ ε hε b hb ha.le i)
-    have i2 : Integrable (fun x => lpsRegR ρ ε hε b hb i r x * lpsRegNegLap ρ ε hε b hb i c x) volume :=
+    have i2 : Integrable (fun x => lpsRegR ρ ε hε b hb i r x * lpsRegNegLap ρ ε hε b hb i c x)
+      volume :=
       (hR i).integrable_mul (lps_regR12_negLap_memLp ρ ε hε b hb hc.le i)
     rw [← integral_add i1 i2]
     congr 1; funext x
@@ -116,7 +123,11 @@ theorem lps_regR12_inner_eq_Q_pairing {a c r : ℝ} (ha : 0 < a) (hc : 0 < c) (h
   simp only [e1, e2]
   rw [Finset.sum_sub_distrib, hpz, sub_zero]
 
-/-- The increment of the squared gradient norm of the regularized velocity between two positive times, in either order, is the time integral of the paired pressure-free right-hand side (`prop:lps-local-strong`). -/
+/--
+The increment of the squared gradient norm of the regularized velocity between two positive
+times, in either order, is the time integral of the paired pressure-free right-hand side
+(`prop:lps-local-strong`).
+-/
 theorem lps_regR12_gradient_energy_increment_any {a c : ℝ} (ha : 0 < a) (hc : 0 < c) :
     IntervalIntegrable (fun r => ∑ i : Fin 3, inner ℝ (lpsRegRPath ρ ε hε b hb i r)
       (lpsRegNegLapPath ρ ε hε b hb i a + lpsRegNegLapPath ρ ε hε b hb i c)) volume a c ∧
@@ -154,7 +165,11 @@ theorem lps_regR12_gradient_energy_increment_any {a c : ℝ} (ha : 0 < a) (hc : 
         rcases Set.mem_uIcc.mp hr with h | h <;> linarith only [h.1, ha, hc]
       exact (lps_regR12_inner_eq_Q_pairing ρ ε hε b hb hc ha hr0).symm
 
-/-- The squared gradient norm of the regularized velocity is differentiable at every positive time, with derivative twice the pairing of the pressure-free right-hand side against `-ΔU_ε` (`eq:lps-uniform-H1`). -/
+/--
+The squared gradient norm of the regularized velocity is differentiable at every positive time,
+with derivative twice the pairing of the pressure-free right-hand side against `-ΔU_ε`
+(`eq:lps-uniform-H1`).
+-/
 theorem lps_regR12_gradient_energy_hasDerivAt {a : ℝ} (ha : 0 < a) :
     HasDerivAt (lpsRegGradEnergy ρ ε hε b hb)
       (2 * ∑ i : Fin 3, ∫ x : Vec3, lpsRegR ρ ε hε b hb i a x *
@@ -178,7 +193,9 @@ theorem lps_regR12_gradient_energy_hasDerivAt {a : ℝ} (ha : 0 < a) :
 
 end
 
-/-- The squared `L²` norm of the second spatial derivatives of the regularized velocity at time `t`. -/
+/--
+The squared `L²` norm of the second spatial derivatives of the regularized velocity at time `t`.
+-/
 @[expose] def lpsRegHessEnergy (ρ : CKN.Leray.RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
     (b : Vec3 → Vec3) (hb : CKN.IsInJ b) (t : ℝ) : ℝ :=
   ∑ i : Fin 3, ∑ j : Fin 3, ∑ k : Fin 3,
@@ -194,7 +211,10 @@ section
 variable (ρ : CKN.Leray.RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
   (b : Vec3 → Vec3) (hb : CKN.IsInJ b)
 
-/-- The squared `L²` norm of the Laplacian of the regularized velocity is the squared `L²` norm of its second derivatives. -/
+/--
+The squared `L²` norm of the Laplacian of the regularized velocity is the squared `L²` norm of
+its second derivatives.
+-/
 theorem lps_regR12_lap_sq_eq_hess {t : ℝ} (ht : 0 ≤ t) :
     (∑ i : Fin 3, ∫ x : Vec3, lpsRegLap ρ ε hε b hb i t x ^ 2) =
       lpsRegHessEnergy ρ ε hε b hb t := by
@@ -203,7 +223,10 @@ theorem lps_regR12_lap_sq_eq_hess {t : ℝ} (ht : 0 ≤ t) :
   exact lps_laplacian_sq_eq_hessian_sq (lps_regR12_slice_smooth ρ ε hε b hb t ht i)
     (fun α _ => lps_regR12_slice_memLp ρ ε hε b hb t ht i α)
 
-/-- The derivative of the squared gradient norm of the regularized velocity is `-2‖∇²U_ε‖₂² + 2⟨(J_ε U_ε · ∇) U_ε, ΔU_ε⟩` (`eq:lps-uniform-H1`). -/
+/--
+The derivative of the squared gradient norm of the regularized velocity is `-2‖∇²U_ε‖₂² + 2⟨(J_ε
+U_ε · ∇) U_ε, ΔU_ε⟩` (`eq:lps-uniform-H1`).
+-/
 theorem lps_regR12_gradient_energy_deriv_eq {t : ℝ} (ht : 0 ≤ t) :
     2 * ∑ i : Fin 3, ∫ x : Vec3, lpsRegR ρ ε hε b hb i t x * (-lpsRegLap ρ ε hε b hb i t x) =
       -2 * lpsRegHessEnergy ρ ε hε b hb t + 2 * lpsRegTransportPairing ρ ε hε b hb t := by

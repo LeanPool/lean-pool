@@ -48,7 +48,8 @@ theorem lps_strong_isHeatSolution {t₀ T : ℝ} {u : ParabolicPoint → Vec3}
   have hψt : ψ ∈ spaceTimeTestFunction (V := ℝ) (Set.univ : Set Vec3) (Ioo t₀ T) :=
     ⟨hψ, hψc, hψI⟩
   -- the first spatial partial of the test is again a test
-  have hdt : ∀ j : Fin 3, (fun z : ParabolicPoint => spatialPartial (fun p : ParabolicPoint => ψ p) j z) ∈
+  have hdt : ∀ j : Fin 3, (fun z : ParabolicPoint => spatialPartial (fun p : ParabolicPoint => ψ
+    p) j z) ∈
       spaceTimeTestFunction (V := ℝ) (Set.univ : Set Vec3) (Ioo t₀ T) := by
     intro j
     refine ⟨vorticityHeatSmooth_spatialPartial_contDiff hψ j,
@@ -76,7 +77,8 @@ theorem lps_strong_isHeatSolution {t₀ T : ℝ} {u : ParabolicPoint → Vec3}
     have h1 := (hweak _ (hdt j)).1 i j
     have h2 := (hweak ψ hψt).2.1 i j j
     change (∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo t₀ T),
-        u z i * spatialPartial (fun w => spatialPartial (fun p : ParabolicPoint => ψ p) j w) j z) = _
+        u z i * spatialPartial (fun w => spatialPartial (fun p : ParabolicPoint => ψ p) j w) j
+          z) = _
     rw [h1]
     have h3 : (∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo t₀ T),
         Du z i j * spatialPartial (fun p : ParabolicPoint => ψ p) j z) =
@@ -108,7 +110,8 @@ theorem lps_strong_isHeatSolution {t₀ T : ℝ} {u : ParabolicPoint → Vec3}
     rw [integral_congr_ae (ae_of_all _ this)]
     rw [integral_sub hL1 (integrable_finsetSum _ fun j _ => hL2 j), integral_neg,
       integral_finsetSum _ fun j _ => hL2 j]
-  have hrhs : (∫ z in (Set.univ : Set Vec3) ×ˢ Ioo t₀ T, (Dtu z i - ∑ j : Fin 3, D2u z i j j) * ψ z) =
+  have hrhs : (∫ z in (Set.univ : Set Vec3) ×ˢ Ioo t₀ T, (Dtu z i - ∑ j : Fin 3, D2u z i j j) *
+    ψ z) =
       (∫ z in (Set.univ : Set Vec3) ×ˢ Ioo t₀ T, Dtu z i * ψ z) -
         ∑ j : Fin 3, ∫ z in (Set.univ : Set Vec3) ×ˢ Ioo t₀ T, D2u z i j j * ψ z := by
     have : ∀ z : Vec3 × ℝ, (Dtu z i - ∑ j : Fin 3, D2u z i j j) * ψ z =

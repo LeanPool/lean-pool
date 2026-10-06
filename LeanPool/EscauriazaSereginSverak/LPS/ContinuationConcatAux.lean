@@ -119,7 +119,8 @@ theorem lps_pairing_continuousOn_of_l2 {α β : ℝ} {u : ParabolicPoint → Vec
       (Eventually.of_forall fun _ => memLp_pi_iff.1 hw i)
       (lps_component_l2_tendsto (f := fun s x => u (x, s)) hm (hcont t ht) i) ?_
     · filter_upwards [self_mem_nhdsWithin] with s hs using memLp_pi_iff.1 (hmem s hs) i
-    · simpa using (tendsto_const_nhds : Tendsto (fun _ : ℝ => (0 : ℝ≥0∞)) (nhdsWithin t (Icc α β)) (nhds 0))
+    · simpa using (tendsto_const_nhds : Tendsto (fun _ : ℝ => (0 : ℝ≥0∞)) (nhdsWithin t (Icc α
+      β)) (nhds 0))
   have hsum := tendsto_finsetSum (Finset.univ : Finset (Fin 3)) fun i _ => hcomp i
   rw [ContinuousWithinAt, hint t ht]
   refine hsum.congr' ?_

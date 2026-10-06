@@ -159,7 +159,8 @@ theorem lpsLerayApply_gradient {q : Vec3 → ℝ} {G : Fin 3 → Vec3 → ℝ}
 theorem lpsLerayApply_weakPartial {g G : Fin 3 → Vec3 → ℝ} (hg : ∀ j, MemLp (g j) 2 volume)
     (hG : ∀ j, MemLp (G j) 2 volume) (k : Fin 3)
     (h : ∀ j, HasWeakPartialDerivOn (Set.univ : Set Vec3) k (g j) (G j)) (i : Fin 3) :
-    HasWeakPartialDerivOn (Set.univ : Set Vec3) k (lpsLerayApply g hg i) (lpsLerayApply G hG i) := by
+    HasWeakPartialDerivOn (Set.univ : Set Vec3) k (lpsLerayApply g hg i) (lpsLerayApply G hG i)
+      := by
   rw [lpsLerayApply_eq hg, lpsLerayApply_eq hG]
   refine lpsLerayP_weakPartial k (fun j => ?_) i
   refine lps_hasWeakPartialDerivOn_congr (h j) ?_ ?_

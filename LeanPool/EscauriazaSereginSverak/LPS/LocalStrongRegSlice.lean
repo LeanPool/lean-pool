@@ -15,7 +15,8 @@ public import LeanPool.EscauriazaSereginSverak.LPS.SmoothingRegularizedMomentum
 
 At a positive time the regularized momentum right-hand side is the Laplacian minus the transport
 term minus the pressure gradient. The pressure gradient is bounded by the transport term in `L²`
-(`lem:lps-regularized-Hk-start`, the pressure equation), so the time derivative has `L²` norm squared
+(`lem:lps-regularized-Hk-start`, the pressure equation), so the time derivative has `L²` norm
+squared
 at most `3 ‖∇²U_ε‖² + C ‖∇U_ε‖₂³ ‖∇²U_ε‖₂` on each slice.
 -/
 
@@ -94,7 +95,8 @@ theorem lps_regR12_transport_sq_sum_le {t : ℝ} (ht : 0 ≤ t) :
         lpsRegGradEnergy ρ ε hε b hb t ^ (3 / 2 : ℝ) *
         lpsRegHessEnergy ρ ε hε b hb t ^ (1 / 2 : ℝ) with hC0
   have hi (i : Fin 3) : (∫ x, lpsRegTransport ρ ε hε b hb i t x ^ 2) ≤ 9 * C0 := by
-    have hT (k : Fin 3) : Integrable (fun x => lpsRegTransportTerm ρ ε hε b hb k i t x ^ 2) volume :=
+    have hT (k : Fin 3) : Integrable (fun x => lpsRegTransportTerm ρ ε hε b hb k i t x ^ 2)
+      volume :=
       (lps_regR12_transportTerm_memLp ρ ε hε b hb ht k i).integrable_sq
     calc (∫ x, lpsRegTransport ρ ε hε b hb i t x ^ 2)
         ≤ ∫ x, 3 * ∑ k : Fin 3, lpsRegTransportTerm ρ ε hε b hb k i t x ^ 2 := by

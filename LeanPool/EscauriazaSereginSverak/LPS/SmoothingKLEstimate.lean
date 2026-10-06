@@ -69,7 +69,8 @@ theorem lps_kl_energy_identity {t₀ T h : ℝ} (hh : 0 < h) (hhT : h < T - t₀
     ESS.LPS.lps_time_difference_quotient hh hderiv hu hDu hD2u hDtu hp heq hdiv
   have hcd : t₀ < T - h := by linarith only [hhT]
   have hslice' : ∀ t ∈ Icc t₀ (T - h), MemLp (fun x : Vec3 =>
-      ((1 / h) • (u ((x, t + h) : ParabolicPoint) - u ((x, t) : ParabolicPoint)) : Vec3)) 2 volume := by
+      ((1 / h) • (u ((x, t + h) : ParabolicPoint) - u ((x, t) : ParabolicPoint)) : Vec3)) 2
+        volume := by
     intro t ht
     have h1 := hslice (t + h) ⟨by linarith only [ht.1, hh], by linarith only [ht.2]⟩
     have h2 := hslice t ⟨ht.1, by linarith only [ht.2, hh]⟩
@@ -77,7 +78,8 @@ theorem lps_kl_energy_identity {t₀ T h : ℝ} (hh : 0 < h) (hhT : h < T - t₀
   have hcont' : ∀ t ∈ Icc t₀ (T - h), Tendsto
       (fun s : ℝ => eLpNorm (fun x : Vec3 =>
         ((1 / h) • (u ((x, s + h) : ParabolicPoint) - u ((x, s) : ParabolicPoint)) : Vec3) -
-        ((1 / h) • (u ((x, t + h) : ParabolicPoint) - u ((x, t) : ParabolicPoint)) : Vec3)) 2 volume)
+        ((1 / h) • (u ((x, t + h) : ParabolicPoint) - u ((x, t) : ParabolicPoint)) : Vec3)) 2
+          volume)
       (𝓝[Icc t₀ (T - h)] t) (𝓝 0) := by
     intro t ht
     have htT : t ∈ Icc t₀ T := ⟨ht.1, by linarith only [ht.2, hh]⟩
@@ -94,10 +96,12 @@ theorem lps_kl_energy_identity {t₀ T h : ℝ} (hh : 0 < h) (hhT : h < T - t₀
     have hA := (hcont t htT).comp hmap1
     have hB := (hcont (t + h) htT').comp hmap2
     have hsum : Tendsto (fun s : ℝ => ‖(1 / h : ℝ)‖ₑ * (eLpNorm (fun x : Vec3 =>
-        u (x, s + h) - u (x, t + h)) 2 volume + eLpNorm (fun x : Vec3 => u (x, s) - u (x, t)) 2 volume))
+        u (x, s + h) - u (x, t + h)) 2 volume + eLpNorm (fun x : Vec3 => u (x, s) - u (x, t)) 2
+          volume))
         (𝓝[Icc t₀ (T - h)] t) (𝓝 0) := by
       have h0 : Tendsto (fun s : ℝ => eLpNorm (fun x : Vec3 =>
-          u (x, s + h) - u (x, t + h)) 2 volume + eLpNorm (fun x : Vec3 => u (x, s) - u (x, t)) 2 volume)
+          u (x, s + h) - u (x, t + h)) 2 volume + eLpNorm (fun x : Vec3 => u (x, s) - u (x, t))
+            2 volume)
           (𝓝[Icc t₀ (T - h)] t) (𝓝 (0 + 0)) := hB.add hA
       rw [add_zero] at h0
       have := ENNReal.Tendsto.const_mul h0 (Or.inr (by simp : (‖(1 / h : ℝ)‖ₑ) ≠ ⊤))
@@ -120,10 +124,12 @@ theorem lps_kl_energy_identity {t₀ T h : ℝ} (hh : 0 < h) (hhT : h < T - t₀
   have hcontfun : ∀ t ∈ Icc t₀ (T - h), Tendsto
       (fun s : ℝ => eLpNorm (fun x : Vec3 =>
         ((fun z : ParabolicPoint => (1 / h) • (u ((z.1, z.2 + h) : ParabolicPoint) - u z)) (x, s)) -
-        ((fun z : ParabolicPoint => (1 / h) • (u ((z.1, z.2 + h) : ParabolicPoint) - u z)) (x, t))) 2 volume)
+        ((fun z : ParabolicPoint => (1 / h) • (u ((z.1, z.2 + h) : ParabolicPoint) - u z)) (x,
+          t))) 2 volume)
       (𝓝[Icc t₀ (T - h)] t) (𝓝 0) := hcont'
   have hmain := lps_energy_eq_intervalIntegral (H := fun z i j => (1 / h) *
-      (u ((z.1, z.2 + h) : ParabolicPoint) i * u ((z.1, z.2 + h) : ParabolicPoint) j - u z i * u z j))
+      (u ((z.1, z.2 + h) : ParabolicPoint) i * u ((z.1, z.2 + h) : ParabolicPoint) j - u z i * u
+        z j))
     hcd hd hv hDv hD2v hDtv hH hq hdivv heqv hslice' hcontfun
   intro s t hs hst ht
   have := hmain s t hs hst ht

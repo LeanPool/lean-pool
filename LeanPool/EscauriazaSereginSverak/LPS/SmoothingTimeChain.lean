@@ -284,8 +284,10 @@ theorem lps_time_chain {a T : ℝ} (hab : a < T) {u : ParabolicPoint → Vec3}
   have hZcd : ∀ (m : ℕ) (i : Fin 3) (t : ℝ) (α : List (Fin 3)), t ∈ Icc a T →
       Zc m i t α = Zm m i t α := fun m i t α ht => by
     simp only [Zc, hZc t ht]
-  refine lps_time_chain_of_family hab (u := u) (Dtu := Dtu) Zc (fun m i t => hfam m i _ (Subtype.property _))
-    (fun m i α hα t ht => ?_) (fun m m' i α hα hα' t ht => ?_) ?_ (fun i ψ hψ hψc s t hs hst ht => ?_)
+  refine lps_time_chain_of_family hab (u := u) (Dtu := Dtu) Zc (fun m i t => hfam m i _
+    (Subtype.property _))
+    (fun m i α hα t ht => ?_) (fun m m' i α hα hα' t ht => ?_) ?_ (fun i ψ hψ hψc s t hs hst ht
+      => ?_)
     ?_
   · refine (hcont m i α hα t ht).congr' ?_
     filter_upwards [self_mem_nhdsWithin] with s hs

@@ -51,7 +51,8 @@ theorem pv_energyDensity_slab_lt_top {T : ℝ} {u : ParabolicPoint → Vec3}
       (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T))) :=
     ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
       (ENNReal.measurable_ofReal.comp_aemeasurable
-        (CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.comp_aestronglyMeasurable hU).aemeasurable)
+        (CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.comp_aestronglyMeasurable
+          hU).aemeasurable)
   have hPm : AEMeasurable (fun z => ENNReal.ofReal |p z| ^ (3 / 2 : ℝ))
       (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T))) := by
     have h : AEMeasurable (fun z => ‖p z‖ₑ ^ (3 / 2 : ℝ))
@@ -91,7 +92,8 @@ theorem pv_tail_goodPointEnergy_small {T : ℝ} {u : ParabolicPoint → Vec3}
     spaceTimeSet {x : Vec3 | (n : ℝ) ≤ vec3EuclideanNorm x} (Ioo 0 T)
   let μ : Measure ParabolicPoint := volume.withDensity H
   have hmeas : ∀ n, MeasurableSet (s n) := fun n =>
-    (measurableSet_le measurable_const CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.measurable).prod
+    (measurableSet_le measurable_const
+      CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.measurable).prod
       measurableSet_Ioo
   have hanti : Antitone s := by
     intro n m hnm z hz

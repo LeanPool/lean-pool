@@ -33,7 +33,7 @@ namespace ESS
 
 /-- Vectors of `L²(ℝ³)` classes indexed by the ordered derivative words of length at most `M`
 (`prop:lps-smoothing`). -/
-@[expose] abbrev LpsSlots (M : ℕ) : Type :=
+abbrev LpsSlots (M : ℕ) : Type :=
   {α : List (Fin 3) // α ∈ sobolevWords M} → Lp ℝ 2 (volume : Measure Vec3)
 
 /-- The `L²` pairing with a fixed square-integrable function (`prop:lps-smoothing`). -/

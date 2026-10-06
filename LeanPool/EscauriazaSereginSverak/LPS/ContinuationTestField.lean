@@ -146,7 +146,8 @@ theorem lps_test_slice_l2_tendsto {φ : Vec3 × ℝ → ℝ} (hφ : Continuous �
         hvol.ne
     · refine Eventually.of_forall fun x => ?_
       have hx : Tendsto (fun t : ℝ => φ (x, t) - φ (x, b)) (𝓝 b) (𝓝 0) := by
-        have hc : Continuous fun t : ℝ => φ (x, t) := hφ.comp (continuous_const.prodMk continuous_id)
+        have hc : Continuous fun t : ℝ => φ (x, t) := hφ.comp (continuous_const.prodMk
+          continuous_id)
         have := (hc.tendsto b).sub_const (φ (x, b))
         simpa using this
       have hx' : Tendsto (fun t : ℝ => ‖φ (x, t) - φ (x, b)‖ₑ) (𝓝 b) (𝓝 0) := by

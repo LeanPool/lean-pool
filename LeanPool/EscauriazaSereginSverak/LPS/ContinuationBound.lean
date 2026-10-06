@@ -246,7 +246,8 @@ theorem lps_continuation_bound {T t₀ : ℝ} {a : Vec3 → Vec3} {u : Parabolic
       intervalIntegral.integral_mono_interval le_rfl hle ht₁
         (Eventually.of_forall fun τ => sq_nonneg _)
         ((intervalIntegrable_iff_integrableOn_Ioo_of_le (hle.trans ht₁)).2 hIu)
-    have hexp : Real.exp (C * ∫ τ in t₀..t₁, (eLpNorm (fun x : Vec3 => vec3EuclideanNorm (U (x, τ))) ⊤
+    have hexp : Real.exp (C * ∫ τ in t₀..t₁, (eLpNorm (fun x : Vec3 => vec3EuclideanNorm (U (x,
+      τ))) ⊤
         volume).toReal ^ 2) ≤ Real.exp (C * I₀) := by
       rw [hcongr]
       exact Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_left hmono hC)

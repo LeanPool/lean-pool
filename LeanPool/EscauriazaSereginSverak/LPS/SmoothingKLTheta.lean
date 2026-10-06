@@ -94,7 +94,8 @@ theorem lps_initial_layer_bound {t₀ T δ h : ℝ} (hT : t₀ < T) (hδ : 0 < �
       mul_le_mul_of_nonneg_left (by simpa using h1) (by positivity)
     calc _ ≤ (1 / h) ^ 2 * (h * ∫ σ in τ..(τ + h), f σ) := h2
       _ = (1 / h) * ∫ σ in τ..(τ + h), f σ := by field_simp
-  have hwinI : IntervalIntegrable (fun τ => (1 / h) * ∫ σ in τ..(τ + h), f σ) volume t₀ (t₀ + δ) := by
+  have hwinI : IntervalIntegrable (fun τ => (1 / h) * ∫ σ in τ..(τ + h), f σ) volume t₀ (t₀ + δ)
+    := by
     refine ContinuousOn.intervalIntegrable ?_
     rw [uIcc_of_le (by linarith only [hδ])]
     refine continuousOn_const.mul ?_

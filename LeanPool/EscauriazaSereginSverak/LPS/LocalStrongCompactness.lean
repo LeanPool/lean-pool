@@ -378,6 +378,47 @@ theorem lps_strong_limit_compactness_base
   · intro z hz
     exact hrep z hz
 
+private theorem lps_hessian_coordinate_square_le
+    (D : Fin 3 → Fin 3 → Vec3) (i j k : Fin 3) :
+    D i j k ^ (2 : ℕ) ≤ ∑ p : Fin 3, ∑ q : Fin 3,
+      vec3EuclideanNorm (D p q) ^ (2 : ℕ) := by
+  have hrow : (D i j k) ^ (2 : ℕ) ≤
+      ∑ l : Fin 3, (D i j l) ^ (2 : ℕ) :=
+    Finset.single_le_sum (fun l _ => sq_nonneg (D i j l))
+      (Finset.mem_univ k)
+  have hrowEq :
+      ∑ l : Fin 3, (D i j l) ^ (2 : ℕ) =
+        vec3EuclideanNorm (fun l => D i j l) ^ (2 : ℕ) :=
+    (lps_vec3EuclideanNorm_sq_eq_sum_sq _).symm
+  have hcol : vec3EuclideanNorm (fun l => D i j l) ^ (2 : ℕ) ≤
+      ∑ q : Fin 3,
+        vec3EuclideanNorm (fun l => D i q l) ^ (2 : ℕ) :=
+    Finset.single_le_sum
+      (f := fun q => vec3EuclideanNorm (fun l => D i q l) ^ (2 : ℕ))
+      (fun q _ => sq_nonneg
+        (vec3EuclideanNorm (fun l => D i q l)))
+      (Finset.mem_univ j)
+  have hrowAll :
+      (∑ q : Fin 3,
+        vec3EuclideanNorm (fun l => D i q l) ^ (2 : ℕ)) ≤
+      (∑ p : Fin 3, ∑ q : Fin 3, vec3EuclideanNorm (D p q) ^ (2 : ℕ)) := by
+    change (∑ q : Fin 3,
+        vec3EuclideanNorm (fun l => D i q l) ^ (2 : ℕ)) ≤
+      ∑ p : Fin 3, ∑ q : Fin 3,
+        vec3EuclideanNorm (fun l => D p q l) ^ (2 : ℕ)
+    exact Finset.single_le_sum
+      (f := fun p => ∑ q : Fin 3,
+        vec3EuclideanNorm (fun l => D p q l) ^ (2 : ℕ))
+      (fun p _ => Finset.sum_nonneg fun q _ =>
+        sq_nonneg (vec3EuclideanNorm (fun l => D p q l)))
+      (Finset.mem_univ i)
+  calc
+    _ ≤ ∑ l : Fin 3, (D i j l) ^ (2 : ℕ) := hrow
+    _ = vec3EuclideanNorm (fun l => D i j l) ^ (2 : ℕ) := hrowEq
+    _ ≤ ∑ q : Fin 3,
+        vec3EuclideanNorm (fun l => D i q l) ^ (2 : ℕ) := hcol
+    _ ≤ (∑ p : Fin 3, ∑ q : Fin 3, vec3EuclideanNorm (D p q) ^ (2 : ℕ)) := hrowAll
+
 /-- On a finite slab, the regularized ordered Hessians have one global
 space-time weak `L²` limit along a further subsequence of the Leray limit. -/
 theorem lps_strong_limit_hessian_weak_compactness
@@ -505,43 +546,8 @@ theorem lps_strong_limit_hessian_weak_compactness
     have h := hH2 n
     simpa only [μ, energy, D2seq, εseq] using h
   have hcomponentLe (n : ℕ) (i j k : Fin 3) (z : ParabolicPoint) :
-      (D2seq n z i j k) ^ (2 : ℕ) ≤ energy n z := by
-    have hrow : (D2seq n z i j k) ^ (2 : ℕ) ≤
-        ∑ l : Fin 3, (D2seq n z i j l) ^ (2 : ℕ) :=
-      Finset.single_le_sum (fun l _ => sq_nonneg (D2seq n z i j l))
-        (Finset.mem_univ k)
-    have hrowEq :
-        ∑ l : Fin 3, (D2seq n z i j l) ^ (2 : ℕ) =
-          vec3EuclideanNorm (fun l => D2seq n z i j l) ^ (2 : ℕ) :=
-      (lps_vec3EuclideanNorm_sq_eq_sum_sq _).symm
-    have hcol : vec3EuclideanNorm (fun l => D2seq n z i j l) ^ (2 : ℕ) ≤
-        ∑ q : Fin 3,
-          vec3EuclideanNorm (fun l => D2seq n z i q l) ^ (2 : ℕ) :=
-      Finset.single_le_sum
-        (f := fun q => vec3EuclideanNorm (fun l => D2seq n z i q l) ^ (2 : ℕ))
-        (fun q _ => sq_nonneg
-          (vec3EuclideanNorm (fun l => D2seq n z i q l)))
-        (Finset.mem_univ j)
-    have hrowAll :
-        (∑ q : Fin 3,
-          vec3EuclideanNorm (fun l => D2seq n z i q l) ^ (2 : ℕ)) ≤
-        energy n z := by
-      change (∑ q : Fin 3,
-          vec3EuclideanNorm (fun l => D2seq n z i q l) ^ (2 : ℕ)) ≤
-        ∑ p : Fin 3, ∑ q : Fin 3,
-          vec3EuclideanNorm (fun l => D2seq n z p q l) ^ (2 : ℕ)
-      exact Finset.single_le_sum
-        (f := fun p => ∑ q : Fin 3,
-          vec3EuclideanNorm (fun l => D2seq n z p q l) ^ (2 : ℕ))
-        (fun p _ => Finset.sum_nonneg fun q _ =>
-          sq_nonneg (vec3EuclideanNorm (fun l => D2seq n z p q l)))
-        (Finset.mem_univ i)
-    calc
-      _ ≤ ∑ l : Fin 3, (D2seq n z i j l) ^ (2 : ℕ) := hrow
-      _ = vec3EuclideanNorm (fun l => D2seq n z i j l) ^ (2 : ℕ) := hrowEq
-      _ ≤ ∑ q : Fin 3,
-          vec3EuclideanNorm (fun l => D2seq n z i q l) ^ (2 : ℕ) := hcol
-      _ ≤ energy n z := hrowAll
+      (D2seq n z i j k) ^ (2 : ℕ) ≤ energy n z :=
+    lps_hessian_coordinate_square_le (D2seq n z) i j k
   have hD2bound (n : ℕ) (i j k : Fin 3) :
       ‖(hD2coord n i j k).toLp (fun z => D2seq n z i j k)‖ ≤ Real.sqrt M :=
     lps_hessian_component_norm_le hM (hD2coord n i j k)

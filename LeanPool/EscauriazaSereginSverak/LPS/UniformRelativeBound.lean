@@ -9,6 +9,13 @@ module
 public import LeanPool.EscauriazaSereginSverak.PartV.SerrinSliceBound
 public import LeanPool.EscauriazaSereginSverak.LPS.RegularisedH1Convection
 
+/-!
+# Uniform Relative Bound
+
+The coefficient in Young's inequality for the conjugate exponents
+2 / (1 + θ) and 2 / (1 - θ).
+-/
+
 public section
 
 open MeasureTheory Set Filter
@@ -60,7 +67,8 @@ private theorem lps_eLpNorm_interpolate_two_six
       ← ENNReal.ofReal_add (by positivity) (by positivity), hrecip]
   have hw : AEStronglyMeasurable (fun x => ‖f x‖ ^ (1 - θ)) μ := by
     simpa [Function.comp_def] using
-      ((Real.continuous_rpow_const (q := 1 - θ) (by linarith only [hθ1])).aemeasurable.comp_aemeasurable
+      ((Real.continuous_rpow_const (q := 1 - θ) (by linarith only
+        [hθ1])).aemeasurable.comp_aemeasurable
         hf.aemeasurable.norm).aestronglyMeasurable
   have hv : AEStronglyMeasurable (fun x => ‖f x‖ ^ θ) μ := by
     simpa [Function.comp_def] using

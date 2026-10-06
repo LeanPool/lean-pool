@@ -11,6 +11,13 @@ public import LeanPool.EscauriazaSereginSverak.PartV.SerrinSpaceTimeMollify
 public import Mathlib.MeasureTheory.Function.L1Space.Integrable
 public import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
 
+/-!
+# Mixed Norm Serrin
+
+The finite Serrin exponents satisfy the critical scaling relation in
+`thm:lps`.
+-/
+
 public section
 
 open MeasureTheory Set Filter

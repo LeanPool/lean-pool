@@ -70,7 +70,8 @@ theorem lps_vector_pairing_tendsto {S : Set ℝ} {t₀ : ℝ} {u : ParabolicPoin
       (nhdsWithin t₀ S) (nhds (∫ x : Vec3, u (x, t₀) i * φ (x, t₀) i)) := by
     refine lps_pairing_tendsto (l := nhdsWithin t₀ S) (f := fun s x => u (x, s) i)
       (g := fun s x => φ (x, s) i) (memLp_pi_iff.1 hmem₀ i) (hφmemS i t₀) ?_
-      (Eventually.of_forall (hφmemS i)) (lps_component_l2_tendsto (f := fun s x => u (x, s)) hm hcont i) ?_
+      (Eventually.of_forall (hφmemS i)) (lps_component_l2_tendsto (f := fun s x => u (x, s)) hm
+        hcont i) ?_
     · filter_upwards [self_mem_nhdsWithin] with s hs using memLp_pi_iff.1 (hmem s hs) i
     · exact (lps_test_slice_l2_tendsto (hφi i) (hφic i) t₀).mono_left nhdsWithin_le_nhds
   have hsum : Tendsto (fun t : ℝ => ∑ i : Fin 3, ∫ x : Vec3, u (x, t) i * φ (x, t) i)

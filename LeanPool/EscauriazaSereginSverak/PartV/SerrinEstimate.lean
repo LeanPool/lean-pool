@@ -12,6 +12,12 @@ public import Mathlib.Analysis.MeanInequalities
 public import Mathlib.MeasureTheory.Function.LpSpace.Basic
 public import Mathlib.MeasureTheory.Function.LpSeminorm.TriangleInequality
 
+/-!
+# Serrin Estimate
+
+The weak derivative identity is stable under subtraction of `L²` fields.
+-/
+
 public section
 
 open MeasureTheory Set Filter

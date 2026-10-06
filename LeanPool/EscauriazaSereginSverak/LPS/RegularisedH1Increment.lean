@@ -84,7 +84,10 @@ theorem lps_scalar_test_pairing_interval_increment
       exact Filter.Eventually.of_forall hpoint
     _ = ∫ t in a..b, ∫ x : Vec3, g x t * w x := hswap
 
-/-- The regularized velocity has, at every positive time, the classical time derivative given by the regularized momentum right-hand side (`lem:lps-regularized-Hk-start`). -/
+/--
+The regularized velocity has, at every positive time, the classical time derivative given by the
+regularized momentum right-hand side (`lem:lps-regularized-Hk-start`).
+-/
 theorem lps_regR12_hasDerivAt_time
     (ρ : CKN.Leray.RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
     (b : Vec3 → Vec3) (hb : CKN.IsInJ b) :
@@ -103,7 +106,10 @@ theorem lps_regR12_hasDerivAt_time
     CKN.Leray.regularisedR12_timeDerivative
 
 
-/-- The regularized momentum right-hand side is continuous on positive times and square-integrable on every positive-time slab (`lem:lps-regularized-Hk-start`). -/
+/--
+The regularized momentum right-hand side is continuous on positive times and square-integrable
+on every positive-time slab (`lem:lps-regularized-Hk-start`).
+-/
 theorem lps_regR12_Q_facts
     (ρ : CKN.Leray.RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
     (b : Vec3 → Vec3) (hb : CKN.IsInJ b) :
@@ -134,7 +140,11 @@ theorem lps_regR12_Q_facts
   filter_upwards [ae_restrict_mem hslab] with z hz
   exact hEq z (hδ.trans hz.2.1) i
 
-/-- Fubini form of the pairing increment: pointwise differentiability in time together with slab square-integrability of the derivative gives the integrated increment against a fixed `L²` test function. -/
+/--
+Fubini form of the pairing increment: pointwise differentiability in time together with slab
+square-integrability of the derivative gives the integrated increment against a fixed `L²` test
+function.
+-/
 theorem lps_pairing_increment_of_slab
     {f g : Vec3 → ℝ → ℝ} {W : Vec3 → ℝ} {a b : ℝ} (hab : a ≤ b)
     (hderiv : ∀ x, ∀ t ∈ Icc a b, HasDerivAt (f x) (g x t) t)
@@ -180,7 +190,10 @@ theorem lps_pairing_increment_of_slab
     simpa [Measure.restrict_univ] using hprod'
   exact (intervalIntegrable_iff_integrableOn_Ioc_of_le hab).2 hprod''
 
-/-- The pairing of the regularized velocity increment against a fixed `L²` test function equals the time integral of the pairing of the momentum right-hand side (`lem:lps-regularized-Hk-start`). -/
+/--
+The pairing of the regularized velocity increment against a fixed `L²` test function equals the
+time integral of the pairing of the momentum right-hand side (`lem:lps-regularized-Hk-start`).
+-/
 theorem lps_regR12_time_pairing_increment
     (ρ : CKN.Leray.RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
     (b : Vec3 → Vec3) (hb : CKN.IsInJ b) {a c : ℝ} (ha : 0 < a) (hac : a ≤ c)

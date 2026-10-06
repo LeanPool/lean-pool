@@ -15,7 +15,8 @@ public import LeanPool.CaffarelliKohnNirenberg.Foundation.LocalSobolevMollify
 The Leray projection used in the proof of `prop:lps-smoothing`: the
 orthogonal projection `P` onto the weakly divergence-free fields is a
 contraction, is self-adjoint, fixes weakly divergence-free fields, annihilates
-gradients of `H¹` functions, and commutes with weak partial derivatives. The last property follows from the commutation
+gradients of `H¹` functions, and commutes with weak partial derivatives. The last property follows
+from the commutation
 of `P` with convolutions: a weak derivative is moved onto the kernel of a
 mollifier and the mollifier is then removed in the limit.
 -/

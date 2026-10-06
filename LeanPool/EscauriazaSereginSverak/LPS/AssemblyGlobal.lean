@@ -11,6 +11,13 @@ public import LeanPool.CaffarelliKohnNirenberg.Foundation.Parabolic.Topology
 public import Mathlib.MeasureTheory.Measure.OpenPos
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
 
+/-!
+# Assembly Global
+
+Patch compatible smooth representatives from later-than-zero intervals into
+one representative on the whole positive-time slab (`thm:lps`).
+-/
+
 public section
 
 open MeasureTheory Set Filter Topology
@@ -22,10 +29,10 @@ noncomputable section
 
 namespace ESS
 
-@[expose] abbrev lpsAssemblySlab (a b : ℝ) :=
+abbrev lpsAssemblySlab (a b : ℝ) :=
   spaceTimeSet (Set.univ : Set Vec3) (Ioo a b)
 
-@[expose] abbrev lpsAssemblyTopSlab (a b : ℝ) :=
+abbrev lpsAssemblyTopSlab (a b : ℝ) :=
   spaceTimeSet (Set.univ : Set Vec3) (Ioc a b)
 
 private instance : Measure.IsOpenPosMeasure (volume : Measure ParabolicPoint) where
@@ -120,6 +127,21 @@ private theorem lps_eventuallyEq_of_eqOn_open_intersection
   filter_upwards [hoWithin, self_mem_nhdsWithin] with y hyo hys
   exact hfg y ⟨hyo, hys⟩
 
+private theorem lps_slab_covered_by_later_intervals
+    {T : ℝ} (t : ℕ → ℝ) (htBase : t 0 < T / 2)
+    (hCover : ∀ s, 0 < s → s < T / 2 → ∃ n, t n < s) :
+    ∀ z, z ∈ lpsAssemblySlab 0 T → ∃ n, z ∈ lpsAssemblySlab (t n) T := by
+  intro z hz
+  rcases hz with ⟨-, hzt⟩
+  have hpos : 0 < z.2 := hzt.1
+  have hlt : z.2 < T := hzt.2
+  by_cases hhalf : T / 2 ≤ z.2
+  · refine ⟨0, ?_⟩
+    refine ⟨by simp, ?_⟩
+    exact ⟨lt_of_lt_of_le htBase hhalf, hlt⟩
+  · obtain ⟨n, hn⟩ := hCover z.2 hpos (lt_of_not_ge hhalf)
+    exact ⟨n, ⟨by simp, hn, hlt⟩⟩
+
 /-- Patch compatible smooth representatives from later-than-zero intervals into
 one representative on the whole positive-time slab (`thm:lps`). -/
 theorem lps_patch_smooth_representatives
@@ -141,9 +163,8 @@ theorem lps_patch_smooth_representatives
   let hsel : ∀ s, 0 < s → s < T / 2 → ℕ := fun s hs hsT =>
     Classical.choose (hCover s hs hsT)
   have hsel_lt : ∀ s (hs : 0 < s) (hsT : s < T / 2),
-      t (hsel s hs hsT) < s := by
-    intro s hs hsT
-    exact (Classical.choose_spec (hCover s hs hsT))
+      t (hsel s hs hsT) < s :=
+    fun s hs hsT => Classical.choose_spec (hCover s hs hsT)
   let uSmooth : ParabolicPoint → Vec3 := fun z =>
     if hz : z.2 ∈ Ioc (0 : ℝ) T then
       if hhalf : T / 2 ≤ z.2 then v 0 z
@@ -180,27 +201,12 @@ theorem lps_patch_smooth_representatives
   have hpatchAe : ∀ n,
       uSmooth =ᵐ[volume.restrict (lpsAssemblySlab (t n) T)] u := by
     intro n
-    filter_upwards [hvEq n, ae_restrict_mem (by
-      change MeasurableSet ((Set.univ : Set Vec3) ×ˢ Ioo (t n) T)
-      exact MeasurableSet.prod MeasurableSet.univ measurableSet_Ioo)] with z hz hmem
-    exact (hpatch n z hmem).trans hz
+    exact (ae_restrict_mem (MeasurableSet.univ.prod measurableSet_Ioo)).mono
+      (fun z hz => hpatch n z hz) |>.trans (hvEq n)
   have hAll : ∀ᵐ z ∂volume,
-      ∀ n, z ∈ lpsAssemblySlab (t n) T → uSmooth z = u z := by
-    rw [ae_all_iff]
-    intro n
-    exact ae_imp_of_ae_restrict (hpatchAe n)
-  have hCoverSlab : ∀ z, z ∈ lpsAssemblySlab 0 T →
-      ∃ n, z ∈ lpsAssemblySlab (t n) T := by
-    intro z hz
-    rcases hz with ⟨-, hzt⟩
-    have hpos : 0 < z.2 := hzt.1
-    have hlt : z.2 < T := hzt.2
-    by_cases hhalf : T / 2 ≤ z.2
-    · refine ⟨0, ?_⟩
-      refine ⟨by simp, ?_⟩
-      exact ⟨lt_of_lt_of_le htBase hhalf, hlt⟩
-    · obtain ⟨n, hn⟩ := hCover z.2 hpos (lt_of_not_ge hhalf)
-      exact ⟨n, ⟨by simp, hn, hlt⟩⟩
+      ∀ n, z ∈ lpsAssemblySlab (t n) T → uSmooth z = u z :=
+    ae_all_iff.2 (fun n => ae_imp_of_ae_restrict (hpatchAe n))
+  have hCoverSlab := lps_slab_covered_by_later_intervals t htBase hCover
   have hGlobal : uSmooth =ᵐ[volume.restrict (lpsAssemblySlab 0 T)] u := by
     have hAllRestrict : ∀ᵐ z ∂(volume.restrict (lpsAssemblySlab 0 T)),
         ∀ n, z ∈ lpsAssemblySlab (t n) T → uSmooth z = u z :=

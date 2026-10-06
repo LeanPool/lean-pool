@@ -116,7 +116,8 @@ theorem lps_ae_slice_test_eq_zero {a b : ℝ} {N : ℕ} {T : Type*} [AddCommGrou
   obtain ⟨C, hCR, hCcount, hCdense⟩ := hR.exists_countable_dense_subset
   -- a countable set of tests
   choose ψc hψc using fun c : C => hCR c.2
-  have hae_count : ∀ᵐ t ∂(volume.restrict (Ioo a b)), ∀ c : C, ∫ x, ∑ k, A k (x, t) * ι (ψc c) k x = 0 := by
+  have hae_count : ∀ᵐ t ∂(volume.restrict (Ioo a b)), ∀ c : C, ∫ x, ∑ k, A k (x, t) * ι (ψc c) k
+    x = 0 := by
     have : Countable C := hCcount.to_subtype
     rw [ae_all_iff]
     intro c

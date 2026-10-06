@@ -298,7 +298,8 @@ theorem testKernelPairing_abs_le {ψ : Vec3 → Vec3}
   refine ⟨M, hM0, fun y r => ?_⟩
   by_cases hr : 0 < r
   · rw [testKernelPairing_eq_neg_heatConv hψ hψc i j y hr, abs_neg, heatConv_eq_integral]
-    have hsub : (∫ w : Vec3, heatKernel w r * φ (y - w)) = ∫ x : Vec3, heatKernel (x - y) r * φ x := by
+    have hsub : (∫ w : Vec3, heatKernel w r * φ (y - w)) = ∫ x : Vec3, heatKernel (x - y) r * φ
+      x := by
       rw [← integral_sub_left_eq_self (fun x : Vec3 => heatKernel (x - y) r * φ x) volume y]
       congr 1
       funext w

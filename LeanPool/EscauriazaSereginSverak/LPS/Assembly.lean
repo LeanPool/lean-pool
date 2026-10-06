@@ -10,6 +10,14 @@ public import LeanPool.EscauriazaSereginSverak.LPS.EnergyEquality
 public import LeanPool.EscauriazaSereginSverak.LPS.GoodTimes
 public import LeanPool.EscauriazaSereginSverak.LPS.StrongSolution
 
+/-!
+# Assembly
+
+A positive-time restart may be chosen where both the good-slice
+conditions and the almost-every-time energy equality hold (`lem:lps-good-times`
+and `lem:lps-energy-equality`).
+-/
+
 public section
 
 open MeasureTheory Set Filter

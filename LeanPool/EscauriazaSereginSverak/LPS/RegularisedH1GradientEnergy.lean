@@ -19,7 +19,8 @@ public import LeanPool.EscauriazaSereginSverak.LPS.SmoothingMollifierPhysical
 /-!
 # Increment of the regularized gradient energy
 
-For the regularized velocity `U_ε` of `thm:regularised` of the CKN manuscript, the increment of `‖∇U_ε‖₂²` over a positive
+For the regularized velocity `U_ε` of `thm:regularised` of the CKN manuscript, the increment of
+`‖∇U_ε‖₂²` over a positive
 time interval is the time integral of the pairing of the momentum right-hand side against
 `-Δ(U_ε(a) + U_ε(c))`, and the pressure part of this pairing vanishes
 (`lem:lps-regularized-Hk-start`, `prop:lps-local-strong`).
@@ -37,22 +38,22 @@ noncomputable section
 namespace ESS.LPS
 
 /-- The regularized velocity of `thm:regularised` of the CKN manuscript for the datum `b`. -/
-@[expose] abbrev lpsRegU (ρ : CKN.Leray.RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
+abbrev lpsRegU (ρ : CKN.Leray.RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
     (b : Vec3 → Vec3) (hb : CKN.IsInJ b) : ParabolicPoint → Vec3 :=
   CKN.Leray.regR12Velocity ρ ε hε b hb
 
 /-- The canonical regularized pressure of `thm:regularised` of the CKN manuscript. -/
-@[expose] abbrev lpsRegP (ρ : CKN.Leray.RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
+abbrev lpsRegP (ρ : CKN.Leray.RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
     (b : Vec3 → Vec3) (hb : CKN.IsInJ b) : ParabolicPoint → ℝ :=
   CKN.Leray.forcedQuadPressure ρ ε hε (CKN.Leray.regR12Curve ρ ε hε b hb)
 
 /-- The mollified transport velocity `J_ε U_ε`. -/
-@[expose] abbrev lpsRegV (ρ : CKN.Leray.RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
+abbrev lpsRegV (ρ : CKN.Leray.RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
     (b : Vec3 → Vec3) (hb : CKN.IsInJ b) : ParabolicPoint → Vec3 :=
   CKN.Leray.regUniformMollifiedVelocity ρ ε hε (lpsRegU ρ ε hε b hb)
 
 /-- The time derivative field of the regularized velocity. -/
-@[expose] abbrev lpsRegQ (ρ : CKN.Leray.RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
+abbrev lpsRegQ (ρ : CKN.Leray.RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
     (b : Vec3 → Vec3) (hb : CKN.IsInJ b) : ParabolicPoint → Vec3 :=
   fun z i => CKN.Leray.regR12TimeRHS ρ ε hε (lpsRegU ρ ε hε b hb) (lpsRegP ρ ε hε b hb) z i
 
@@ -72,12 +73,18 @@ theorem lps_regR12_slice_smooth (t : ℝ) (ht : 0 ≤ t) (i : Fin 3) :
     ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec3 => lpsRegU ρ ε hε b hb (x, t) i) :=
   lps_regR12Velocity_slice_contDiff ρ ε hε b hb t ht i
 
-/-- Every ordered spatial derivative of a nonnegative-time slice of the regularized velocity is square integrable. -/
+/--
+Every ordered spatial derivative of a nonnegative-time slice of the regularized velocity is
+square integrable.
+-/
 theorem lps_regR12_slice_memLp (t : ℝ) (ht : 0 ≤ t) (i : Fin 3) (α : List (Fin 3)) :
     MemLp (wordDeriv α (fun x : Vec3 => lpsRegU ρ ε hε b hb (x, t) i)) 2 volume :=
   lps_regR12Velocity_all_word_memLp_slice ρ ε hε b hb t ht i α
 
-/-- Change of the squared gradient norm of one velocity component between two times, as a pairing against minus the Laplacian of the sum. -/
+/--
+Change of the squared gradient norm of one velocity component between two times, as a pairing
+against minus the Laplacian of the sum.
+-/
 theorem lps_regR12_gradient_energy_difference (a c : ℝ) (ha : 0 ≤ a) (hc : 0 ≤ c) (i : Fin 3) :
     (∫ x : Vec3, (lpsRegU ρ ε hε b hb (x, c) i - lpsRegU ρ ε hε b hb (x, a) i) *
       (-(spatialLaplacian (fun y => lpsRegU ρ ε hε b hb (y, a) i) x +
@@ -99,7 +106,11 @@ theorem lps_regR12_lap_memLp (t : ℝ) (ht : 0 ≤ t) (i : Fin 3) :
   unfold spatialLaplacian
   exact memLp_finsetSum _ fun j _ => lps_regR12_slice_memLp ρ ε hε b hb t ht i [j, j]
 
-/-- The increment of the squared gradient norm of the regularized velocity between positive times is the time integral of the pairing of the momentum right-hand side against minus the Laplacian of the sum (`prop:lps-local-strong`). -/
+/--
+The increment of the squared gradient norm of the regularized velocity between positive times is
+the time integral of the pairing of the momentum right-hand side against minus the Laplacian of
+the sum (`prop:lps-local-strong`).
+-/
 theorem lps_regR12_gradient_energy_increment {a c : ℝ} (ha : 0 < a) (hac : a ≤ c) :
     IntervalIntegrable (fun r => ∑ i : Fin 3, ∫ x : Vec3, lpsRegQ ρ ε hε b hb (x, r) i *
       (-(spatialLaplacian (fun y => lpsRegU ρ ε hε b hb (y, a) i) x +
@@ -138,7 +149,10 @@ end slice
   fun x => ∑ k : Fin 3, lpsRegV ρ ε hε b hb (x, t) k *
     spatialDeriv (fun y => lpsRegU ρ ε hε b hb (y, t) i) k x
 
-/-- The momentum right-hand side is the Laplacian minus the transport term minus the pressure gradient. -/
+/--
+The momentum right-hand side is the Laplacian minus the transport term minus the pressure
+gradient.
+-/
 theorem lps_regR12_Q_eq (ρ : CKN.Leray.RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
     (b : Vec3 → Vec3) (hb : CKN.IsInJ b) (x : Vec3) (t : ℝ) (i : Fin 3) :
     lpsRegQ ρ ε hε b hb (x, t) i =
@@ -161,7 +175,10 @@ theorem lps_spatialDeriv_neg_add {f g : Vec3 → ℝ} (hf : ContDiff ℝ (⊤ : 
   rw [fderiv_fun_neg, fderiv_fun_add hfd hgd]
   simp
 
-/-- The pressure gradient pairs to zero with the solenoidal field `-Δ(U_ε(a) + U_ε(c))` (`lem:lps-regularized-Hk-start`). -/
+/--
+The pressure gradient pairs to zero with the solenoidal field `-Δ(U_ε(a) + U_ε(c))`
+(`lem:lps-regularized-Hk-start`).
+-/
 theorem lps_regR12_pressure_pairing_zero {a c r : ℝ} (ha : 0 ≤ a) (hc : 0 ≤ c) (hr : 0 < r) :
     ∑ i : Fin 3, ∫ x : Vec3, spatialDeriv (fun y => lpsRegP ρ ε hε b hb (y, r)) i x *
       (-(spatialLaplacian (fun y => lpsRegU ρ ε hε b hb (y, a) i) x +

@@ -11,6 +11,13 @@ public import Mathlib.MeasureTheory.Integral.Prod
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.DerivIntegrable
 public import Mathlib.Analysis.Calculus.FDeriv.Measurable
 
+/-!
+# Heat Critical Estimate
+
+The regularized entropy density of a smooth heat orbit is integrable at
+each positive time, as used in `lem:pv-heat-critical`.
+-/
+
 public section
 
 open MeasureTheory Filter Set

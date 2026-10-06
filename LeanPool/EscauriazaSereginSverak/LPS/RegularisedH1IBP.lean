@@ -29,7 +29,10 @@ noncomputable section
 
 namespace ESS.LPS
 
-/-- Whole-space pairing of a smooth field with the Laplacian of another moves both derivatives: `∫ f Δg = -∑ⱼ ∫ ∂ⱼf ∂ⱼg` (`prop:lps-local-strong`). -/
+/--
+Whole-space pairing of a smooth field with the Laplacian of another moves both derivatives: `∫ f
+Δg = -∑ⱼ ∫ ∂ⱼf ∂ⱼg` (`prop:lps-local-strong`).
+-/
 theorem lps_pairing_laplacian
     {f g : Vec3 → ℝ} (hf : ContDiff ℝ (⊤ : ℕ∞) f) (hg : ContDiff ℝ (⊤ : ℕ∞) g)
     (hf0 : MemLp f 2 volume) (hf1 : ∀ j, MemLp (spatialDeriv f j) 2 volume)
@@ -53,7 +56,10 @@ theorem lps_pairing_laplacian
         rw [Finset.sum_neg_distrib]
 
 
-/-- For a smooth field with square-integrable derivatives through order three, `‖Δg‖₂² = ‖∇²g‖₂²` (`prop:lps-local-strong`). -/
+/--
+For a smooth field with square-integrable derivatives through order three, `‖Δg‖₂² = ‖∇²g‖₂²`
+(`prop:lps-local-strong`).
+-/
 theorem lps_laplacian_sq_eq_hessian_sq
     {g : Vec3 → ℝ} (hg : ContDiff ℝ (⊤ : ℕ∞) g)
     (hL2 : ∀ α : List (Fin 3), α.length ≤ 3 → MemLp (wordDeriv α g) 2 volume) :
@@ -175,14 +181,20 @@ theorem lps_spatialDeriv_spatialLaplacian {f : Vec3 → ℝ} (hf : ContDiff ℝ 
   rw [lps_spatialLaplacian_eq_words]
   exact h
 
-/-- A derivative of the Laplacian of a smooth function with square-integrable derivatives through order three is square integrable. -/
+/--
+A derivative of the Laplacian of a smooth function with square-integrable derivatives through
+order three is square integrable.
+-/
 theorem lps_spatialDeriv_spatialLaplacian_memLp {f : Vec3 → ℝ} (hf : ContDiff ℝ (⊤ : ℕ∞) f)
     (hL2 : ∀ α : List (Fin 3), α.length ≤ 3 → MemLp (wordDeriv α f) 2 volume) (i : Fin 3) :
     MemLp (spatialDeriv (spatialLaplacian f) i) 2 volume := by
   rw [lps_spatialDeriv_spatialLaplacian hf i]
   exact memLp_finsetSum _ fun j _ => hL2 [j, j, i] (by simp)
 
-/-- The componentwise Laplacian of a smooth solenoidal field is solenoidal (`prop:lps-local-strong`). -/
+/--
+The componentwise Laplacian of a smooth solenoidal field is solenoidal
+(`prop:lps-local-strong`).
+-/
 theorem lps_spatialLaplacian_solenoidal {u : Vec3 → Vec3}
     (hu : ∀ i : Fin 3, ContDiff ℝ (⊤ : ℕ∞) (fun x => u x i))
     (hdiv : ∀ x : Vec3, ∑ i : Fin 3, spatialDeriv (fun y => u y i) i x = 0) (x : Vec3) :

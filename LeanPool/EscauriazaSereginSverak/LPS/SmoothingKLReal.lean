@@ -106,7 +106,8 @@ theorem lps_energy_uniform_bound {a T' δ Θ Λ : ℝ} (hδ : 0 < δ) (haδ : a 
     have hst : IntervalIntegrable κ volume s t := hκ.mono_set (by
       rw [uIcc_of_le ht.1, uIcc_of_le (hsa.trans hsT)]; exact Icc_subset_Icc hsa ht.2)
     have htT : IntervalIntegrable κ volume t T' := hκ.mono_set (by
-      rw [uIcc_of_le ht.2, uIcc_of_le (hsa.trans hsT)]; exact Icc_subset_Icc (hsa.trans ht.1) le_rfl)
+      rw [uIcc_of_le ht.2, uIcc_of_le (hsa.trans hsT)]; exact Icc_subset_Icc (hsa.trans ht.1)
+        le_rfl)
     have h1 := intervalIntegral.integral_add_adjacent_intervals hsat hst
     have h2 := intervalIntegral.integral_add_adjacent_intervals (hsat.trans hst) htT
     have hn1 : 0 ≤ ∫ τ in a..s, κ τ :=

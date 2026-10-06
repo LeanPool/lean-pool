@@ -32,7 +32,11 @@ noncomputable section
 
 namespace ESS.LPS
 
-/-- A scalar function whose increments over `[a,c]` are the integrals of the pairing of a path `R`, continuous at `a`, against `Θ a + Θ c`, with `Θ` continuous at `a`, has derivative `2 ⟪R a, Θ a⟫` at `a` (`prop:lps-local-strong`). -/
+/--
+A scalar function whose increments over `[a,c]` are the integrals of the pairing of a path `R`,
+continuous at `a`, against `Θ a + Θ c`, with `Θ` continuous at `a`, has derivative `2 ⟪R a, Θ
+a⟫` at `a` (`prop:lps-local-strong`).
+-/
 theorem lps_hasDerivAt_of_pair_increment
     {ι E : Type*} [Fintype ι] [NormedAddCommGroup E] [InnerProductSpace ℝ E]
     {φ : ℝ → ℝ} {R Θ : ι → ℝ → E} {a : ℝ}
@@ -68,7 +72,8 @@ theorem lps_hasDerivAt_of_pair_increment
       have hc' : dist c a < δ := hc
       rw [Real.dist_eq] at hc' ⊢
       rw [abs_lt] at hc' ⊢
-      rcases hr2 with ⟨h1, h2⟩ | ⟨h1, h2⟩ <;> constructor <;> linarith only [h1, h2, hc'.1, hc'.2, hδ]
+      rcases hr2 with ⟨h1, h2⟩ | ⟨h1, h2⟩ <;> constructor <;> linarith only [h1, h2, hc'.1,
+        hc'.2, hδ]
     have := hsub (y := (r, c)) (by
       rw [Prod.dist_eq]
       exact max_lt (by simpa using hr') (by simpa using hc))
@@ -79,7 +84,9 @@ theorem lps_hasDerivAt_of_pair_increment
     ← hφ] at h1
   simpa [Real.norm_eq_abs, smul_eq_mul, mul_comm] using h1
 
-/-- The squared `L²` norm of the class of a square-integrable function is its integral of squares. -/
+/--
+The squared `L²` norm of the class of a square-integrable function is its integral of squares.
+-/
 theorem lps_lp_norm_sq_eq_integral {f : Vec3 → ℝ} (hf : MemLp f 2 volume) :
     ‖hf.toLp f‖ ^ 2 = ∫ x, f x ^ 2 := by
   rw [← real_inner_self_eq_norm_sq, MeasureTheory.L2.inner_def]
@@ -87,7 +94,10 @@ theorem lps_lp_norm_sq_eq_integral {f : Vec3 → ℝ} (hf : MemLp f 2 volume) :
   filter_upwards [hf.coeFn_toLp] with x hx
   simp [hx, sq]
 
-/-- The squared distance of two `L²` classes is the integral of the squared difference of representatives. -/
+/--
+The squared distance of two `L²` classes is the integral of the squared difference of
+representatives.
+-/
 theorem lps_lp_dist_sq_eq_integral {f g : Vec3 → ℝ} (hf : MemLp f 2 volume)
     (hg : MemLp g 2 volume) :
     ‖hf.toLp f - hg.toLp g‖ ^ 2 = ∫ x, (f x - g x) ^ 2 := by
@@ -109,7 +119,10 @@ theorem lps_continuousAt_toLp_of_sq_tendsto {f : ℝ → Vec3 → ℝ}
   have h3 := h2.sqrt
   simpa [Real.sqrt_sq (norm_nonneg _)] using h3
 
-/-- Continuity of an `L²` path gives convergence of the squared `L²` distances of its representatives. -/
+/--
+Continuity of an `L²` path gives convergence of the squared `L²` distances of its
+representatives.
+-/
 theorem lps_sq_tendsto_of_continuousAt_toLp {f : ℝ → Vec3 → ℝ}
     (hmem : ∀ r, MemLp (f r) 2 volume) {a : ℝ}
     (h : ContinuousAt (fun r => (hmem r).toLp (f r)) a) :
@@ -121,7 +134,10 @@ theorem lps_sq_tendsto_of_continuousAt_toLp {f : ℝ → Vec3 → ℝ}
   exact lps_lp_dist_sq_eq_integral (hmem r) (hmem a)
 
 
-/-- The product of a uniformly bounded, uniformly convergent factor with an `L²`-convergent factor converges in `L²`. -/
+/--
+The product of a uniformly bounded, uniformly convergent factor with an `L²`-convergent factor
+converges in `L²`.
+-/
 theorem lps_sq_tendsto_mul {A B : ℝ → Vec3 → ℝ} {a M : ℝ} {ν : ℝ → ℝ}
     (hBa : MemLp (B a) 2 volume) (hB : ∀ᶠ r in 𝓝 a, MemLp (B r) 2 volume)
     (hBt : Tendsto (fun r => ∫ x, (B r x - B a x) ^ 2) (𝓝 a) (𝓝 0))
@@ -171,7 +187,10 @@ theorem lps_sq_tendsto_mul {A B : ℝ → Vec3 → ℝ} {a M : ℝ} {ν : ℝ �
         rw [integral_add (hint1.const_mul _) (hint2.const_mul _), integral_const_mul,
           integral_const_mul]
 
-/-- The pointwise difference of two convolutions with a fixed `L²` kernel is bounded by the kernel's `L²` norm times the `L²` distance of the two arguments. -/
+/--
+The pointwise difference of two convolutions with a fixed `L²` kernel is bounded by the kernel's
+`L²` norm times the `L²` distance of the two arguments.
+-/
 theorem lps_convolution_diff_abs_le {κ f g : Vec3 → ℝ}
     (hκ : MemLp κ 2 volume) (hf : MemLp f 2 volume) (hg : MemLp g 2 volume) (x : Vec3) :
     |(convolution κ f (ContinuousLinearMap.lsmul ℝ ℝ) volume) x -
@@ -225,7 +244,10 @@ theorem lps_lpsPath_coeFn {f : ℝ → Vec3 → ℝ} {hf : ∀ s, 0 ≤ s → Me
   rw [lps_lpsPath_apply hr]
   exact (hf r hr).coeFn_toLp
 
-/-- A clamped `L²` path is continuous at a positive time where it agrees near that time with an `L²`-continuous path. -/
+/--
+A clamped `L²` path is continuous at a positive time where it agrees near that time with an
+`L²`-continuous path.
+-/
 theorem lps_continuousAt_lpsPath_of_path {f : ℝ → Vec3 → ℝ}
     {hf : ∀ s, 0 ≤ s → MemLp (f s) 2 volume} {a : ℝ}
     {F : ℝ → Lp ℝ 2 (volume : Measure Vec3)} (ha : 0 < a) (hF : ContinuousAt F a)
@@ -283,7 +305,10 @@ theorem lps_lpsPath_neg {f h : ℝ → Vec3 → ℝ}
     Lp.coeFn_neg (lpsPath f hf r)] with x h1 h2 h4
   rw [h1, h4, Pi.neg_apply, h2, hneg]
 
-/-- The inner product of two clamped `L²` paths is the integral of the product of the functions at the clamped times. -/
+/--
+The inner product of two clamped `L²` paths is the integral of the product of the functions at
+the clamped times.
+-/
 theorem lps_inner_lpsPath {f g : ℝ → Vec3 → ℝ}
     {hf : ∀ t, 0 ≤ t → MemLp (f t) 2 volume} {hg : ∀ t, 0 ≤ t → MemLp (g t) 2 volume}
     (r c : ℝ) :

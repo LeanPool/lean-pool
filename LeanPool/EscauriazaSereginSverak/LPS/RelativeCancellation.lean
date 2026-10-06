@@ -8,6 +8,14 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.PartV.SerrinSliceTrilinear
 
+/-!
+# Relative Cancellation
+
+The advective cross terms reduce to the relative convection form for a
+finite Serrin pair. The proof uses only the integrable products
+`|u||v||Du|`, `|u|²|Du|`, and `|v||u||Du|` (`lem:lps-comparison`).
+-/
+
 public section
 
 open MeasureTheory Set Filter

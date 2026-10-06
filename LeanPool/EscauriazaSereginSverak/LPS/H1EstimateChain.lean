@@ -81,7 +81,7 @@ theorem lps_h1_chain_density_integrable
   have hslab :
       (volume.restrict (spaceTimeSet Set.univ (Ioo a b)) :
         Measure (Vec3 × ℝ)) = μ := by
-    show (volume : Measure (Vec3 × ℝ)).restrict
+    change (volume : Measure (Vec3 × ℝ)).restrict
         ((Set.univ : Set Vec3) ×ˢ Ioo a b) = μ
     rw [Measure.volume_eq_prod, ← Measure.prod_restrict, Measure.restrict_univ]
   have hprodSlab :

@@ -65,12 +65,14 @@ theorem lps_l2SobolevFamily_unique {M M' : ℕ} {I : Set ℝ} (hI : IsOpen I)
         integral_congr_ae (by filter_upwards [ih'] with p hp using by rw [hp])
       have hi1 : Integrable (fun p => D (β ++ [j]) p * g p) μ := by
         have := (hL _ (h.memL2 (β ++ [j])
-          (by rw [List.length_append, List.length_singleton]; omega))).integrable_smul_left_of_hasCompactSupport
+          (by rw [List.length_append, List.length_singleton];
+            omega))).integrable_smul_left_of_hasCompactSupport
           hg.continuous hgc
         simpa [smul_eq_mul, mul_comm] using this
       have hi2 : Integrable (fun p => D' (β ++ [j]) p * g p) μ := by
         have := (hL _ (h'.memL2 (β ++ [j])
-          (by rw [List.length_append, List.length_singleton]; omega))).integrable_smul_left_of_hasCompactSupport
+          (by rw [List.length_append, List.length_singleton];
+            omega))).integrable_smul_left_of_hasCompactSupport
           hg.continuous hgc
         simpa [smul_eq_mul, mul_comm] using this
       have : ∫ p, g p • (D (β ++ [j]) - D' (β ++ [j])) p ∂μ =

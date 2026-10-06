@@ -28,7 +28,8 @@ noncomputable section
 
 namespace ESS.LPS
 
-/-- The product of two smooth functions with square integrable gradients is square integrable, with the
+/-- The product of two smooth functions with square integrable gradients is square integrable,
+with the
 `L²` norm bounded by `S ‖∇V‖₂ ‖d‖₂^{1/2} (S ‖∇d‖₂)^{1/2}`, `S` the Sobolev constant. -/
 theorem lps_smooth_mul_memLp_two_norm_le {V d : Vec3 → ℝ}
     (hV : ContDiff ℝ (⊤ : ℕ∞) V) (hV2 : MemLp V 2 volume)

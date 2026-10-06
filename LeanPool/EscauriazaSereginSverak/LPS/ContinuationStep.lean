@@ -101,7 +101,8 @@ theorem lps_continuation_step {c : ℝ} (hc : 0 ≤ c)
         h.toFun = (fun x : Vec3 => W (x, t₁) i) ∧ h.grad = (fun x j => DW (x, t₁) i j) :=
       (hW.2.1 t₁ ⟨le_rfl, by linarith only [hτ]⟩).2
     have := lps_h1_gradient_ae_eq_of_slice_ae_eq hWt hUt hW0
-    have h2 : ∀ i : Fin 3, (fun x : Vec3 => DW (x, t₁) i) =ᵐ[volume] (fun x : Vec3 => DU (x, t₁) i) := by
+    have h2 : ∀ i : Fin 3, (fun x : Vec3 => DW (x, t₁) i) =ᵐ[volume] (fun x : Vec3 => DU (x, t₁)
+      i) := by
       intro i
       filter_upwards [ae_all_iff.2 (this i)] with x hx
       exact funext hx
@@ -207,7 +208,8 @@ theorem lps_continuation_base {c : ℝ} (hc : 0 ≤ c)
         h.toFun = (fun x : Vec3 => W (x, t₀) i) ∧ h.grad = (fun x j => DW (x, t₀) i j) :=
       (hW.2.1 t₀ ⟨le_rfl, by linarith only [hτ]⟩).2
     have := lps_h1_gradient_ae_eq_of_slice_ae_eq hWt hUt hW0
-    have h2 : ∀ i : Fin 3, (fun x : Vec3 => DW (x, t₀) i) =ᵐ[volume] (fun x : Vec3 => Du (x, t₀) i) := by
+    have h2 : ∀ i : Fin 3, (fun x : Vec3 => DW (x, t₀) i) =ᵐ[volume] (fun x : Vec3 => Du (x, t₀)
+      i) := by
       intro i
       filter_upwards [ae_all_iff.2 (this i)] with x hx
       exact funext hx

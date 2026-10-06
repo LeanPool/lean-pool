@@ -14,7 +14,8 @@ public import LeanPool.EscauriazaSereginSverak.LPS.SmoothingSliceTest
 # The pressure equation on almost every time slice
 
 `prop:lps-smoothing`: let `u` be a strong solution with square-integrable space-time weak
-derivatives `∇u`, `∇²u`, `∂ₜu` and pressure `p`. Testing the equation against separated fields `χ(t) ψ(x)`
+derivatives `∇u`, `∇²u`, `∂ₜu` and pressure `p`. Testing the equation against separated fields
+`χ(t) ψ(x)`
 shows that for almost every time, and for every smooth compactly supported spatial field `ψ`,
 `∫ (∂ₜu - Δu + (u·∇)u)(t) · ψ = ∫ p(t) div ψ`.
 The nonlinear term is moved onto `(u·∇)u` slice by slice, where `u(t) ∈ H²` is solenoidal.

@@ -84,7 +84,8 @@ theorem lps_essSup_norm_slice_aemeasurable {a b : ℝ} {u : ParabolicPoint → V
   let u' : ℝ × Vec3 → Vec3 := hs.mk _
   have hu'meas : Measurable u' := hs.stronglyMeasurable_mk.measurable
   have hG : Measurable (fun z : ℝ × Vec3 => ENNReal.ofReal (vec3EuclideanNorm (u' z))) :=
-    ENNReal.measurable_ofReal.comp (CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.measurable.comp hu'meas)
+    ENNReal.measurable_ofReal.comp
+      (CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.measurable.comp hu'meas)
   refine (lps_essSup_slice_measurable hG).aemeasurable.congr ?_
   filter_upwards [Measure.ae_ae_of_ae_prod hs.ae_eq_mk] with t ht
   refine essSup_congr_ae ?_

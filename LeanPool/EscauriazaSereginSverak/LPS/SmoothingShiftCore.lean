@@ -236,19 +236,22 @@ theorem lps_hasSpaceTimeWeakDerivs_forwardShift {a b c d h : ℝ}
   have hv := fun (z : ParabolicPoint) hz => lps_test_vanish hφs (z := z) hz
   refine ⟨fun i j => ?_, fun i j k => ?_, fun i => ?_⟩
   · have e := h1 i j
-    rw [htr (fun z => u z i * spatialPartial (fun w : ParabolicPoint => φ ((w.1, w.2 - h) : ParabolicPoint)) j z)
+    rw [htr (fun z => u z i * spatialPartial (fun w : ParabolicPoint => φ ((w.1, w.2 - h) :
+      ParabolicPoint)) j z)
         (fun z hz => mul_eq_zero_of_right _ ((hv z hz).2.1 j)),
       htr (fun z => Du z i j * φ ((z.1, z.2 - h) : ParabolicPoint))
         (fun z hz => mul_eq_zero_of_right _ (hv z hz).1)] at e
     simpa only [lps_backShift_spatialPartial, lps_backShift_value] using e
   · have e := h2 i j k
-    rw [htr (fun z => Du z i j * spatialPartial (fun w : ParabolicPoint => φ ((w.1, w.2 - h) : ParabolicPoint)) k z)
+    rw [htr (fun z => Du z i j * spatialPartial (fun w : ParabolicPoint => φ ((w.1, w.2 - h) :
+      ParabolicPoint)) k z)
         (fun z hz => mul_eq_zero_of_right _ ((hv z hz).2.1 k)),
       htr (fun z => D2u z i j k * φ ((z.1, z.2 - h) : ParabolicPoint))
         (fun z hz => mul_eq_zero_of_right _ (hv z hz).1)] at e
     simpa only [lps_backShift_spatialPartial, lps_backShift_value] using e
   · have e := h3 i
-    rw [htr (fun z => u z i * timePartial (fun w : ParabolicPoint => φ ((w.1, w.2 - h) : ParabolicPoint)) z)
+    rw [htr (fun z => u z i * timePartial (fun w : ParabolicPoint => φ ((w.1, w.2 - h) :
+      ParabolicPoint)) z)
         (fun z hz => mul_eq_zero_of_right _ (hv z hz).2.2),
       htr (fun z => Dtu z i * φ ((z.1, z.2 - h) : ParabolicPoint))
         (fun z hz => mul_eq_zero_of_right _ (hv z hz).1)] at e
@@ -271,7 +274,8 @@ theorem lps_weakEquation_forwardShift {a b c d h : ℝ} (hac : a ≤ c + h) (hdb
         (∑ i, A ((z.1, z.2 + h) : ParabolicPoint) i * φ z i
           - ∑ i, ∑ j, F ((z.1, z.2 + h) : ParabolicPoint) i j * spatialPartial (fun y => φ y i) j z
           + ∑ i, ∑ j, G ((z.1, z.2 + h) : ParabolicPoint) i j * spatialPartial (fun y => φ y i) j z
-          - q ((z.1, z.2 + h) : ParabolicPoint) * ∑ i, spatialPartial (fun y => φ y i) i z) = 0 := by
+          - q ((z.1, z.2 + h) : ParabolicPoint) * ∑ i, spatialPartial (fun y => φ y i) i z) = 0
+            := by
   intro φ hφ
   have hφs := lps_testFunction_backShift (V := Vec3) h hφ
   have hφb := lps_testFunction_slab_mono (V := Vec3) hac hdb hφs

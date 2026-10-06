@@ -237,7 +237,8 @@ theorem lps_pointwise_time_identity {a b : ℝ} {Z Z' : ℝ → Vec3 → ℝ} {B
   -- the limit of the right-hand sides
   have hcs : ∀ u ∈ Icc a b, ContinuousOn (fun τ => B' τ x₀) (Icc a b) := by
     intro u _
-    have := hW'.comp (f := fun τ : ℝ => (x₀, τ)) (continuous_const.prodMk continuous_id).continuousOn
+    have := hW'.comp (f := fun τ : ℝ => (x₀, τ)) (continuous_const.prodMk
+      continuous_id).continuousOn
       (fun τ hτ => ⟨mem_univ _, hτ⟩)
     exact this
   have hqc := fun n => lps_pairing_continuousOn hmem' hcont' (hψm n)

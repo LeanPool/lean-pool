@@ -8,6 +8,12 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.PartV.HeatConvolution
 
+/-!
+# Heat Orbit
+
+The componentwise Gaussian convolution of a vector field at a fixed time.
+-/
+
 public section
 
 open CKN.Foundation.Heat CKN.Foundation.Parabolic

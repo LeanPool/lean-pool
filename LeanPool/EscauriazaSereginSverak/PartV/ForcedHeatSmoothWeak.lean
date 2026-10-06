@@ -68,7 +68,8 @@ theorem response_weak_equation {g : Fin 3 → Fin 3 → Vec3 × ℝ → ℝ}
     (hf.mul hψ.continuous).integrable_of_hasCompactSupport hψc.mul_left
   have hcs' {f : Vec3 × ℝ → ℝ} (hf : Continuous f) (v : Vec3 × ℝ) :
       Integrable (fun p => f p * fderiv ℝ ψ p v) :=
-    (hf.mul ((hψ.continuous_fderiv (by simp)).clm_apply continuous_const)).integrable_of_hasCompactSupport
+    (hf.mul ((hψ.continuous_fderiv (by simp)).clm_apply
+      continuous_const)).integrable_of_hasCompactSupport
       (hψc.fderiv_apply (𝕜 := ℝ) v).mul_left
   have hDc (F : Vec3 × ℝ → ℝ) (hF : ContDiff ℝ (⊤ : ℕ∞) F) (v : Vec3 × ℝ) :
       Continuous (fun p => fderiv ℝ F p v) :=

@@ -34,12 +34,12 @@ noncomputable section
 namespace ESS
 
 /-- `L²(ℝ³; ℝ³)` as three real `L²(ℝ³)` components (`prop:lps-smoothing`). -/
-@[expose] abbrev LpsL2Field : Type :=
+abbrev LpsL2Field : Type :=
   PiLp 2 (fun _ : Fin 3 => Lp ℝ 2 (volume : Measure Vec3))
 
 /-- Smooth compactly supported scalar test functions on `ℝ³`
 (`prop:lps-smoothing`). -/
-@[expose] abbrev LpsTestFunction : Type :=
+abbrev LpsTestFunction : Type :=
   {φ : Vec3 → ℝ // ContDiff ℝ (⊤ : ℕ∞) φ ∧ HasCompactSupport φ}
 
 /-- Partial derivatives of test functions are square integrable

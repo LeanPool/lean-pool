@@ -63,7 +63,8 @@ theorem lps_eqIntegrand_cutoff {u : ParabolicPoint → Vec3} {Du : ParabolicPoin
         η z.2 * ∑ i : Fin 3, u z i * timePartial (fun y => φ y i) z := by
     rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
     exact Finset.sum_congr rfl fun i _ => by ring
-  have e2 : ∑ i : Fin 3, ∑ j : Fin 3, u z i * u z j * (η z.2 * spatialPartial (fun y => φ y i) j z) =
+  have e2 : ∑ i : Fin 3, ∑ j : Fin 3, u z i * u z j * (η z.2 * spatialPartial (fun y => φ y i) j
+    z) =
       η z.2 * ∑ i : Fin 3, ∑ j : Fin 3, u z i * u z j * spatialPartial (fun y => φ y i) j z := by
     rw [Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_

@@ -36,7 +36,8 @@ private instance lpsShiftParabolicVolumeIsLocallyFinite :
 /-- The time translation preserves Lebesgue measure on space-time. -/
 theorem lps_timeShift_measurePreserving (a : ℝ) :
     MeasurePreserving (lpsTimeShift a) (volume : Measure ParabolicPoint) volume := by
-  have h := (MeasurePreserving.id (volume : Measure Vec3)).prod (measurePreserving_sub_right (volume : Measure ℝ) a)
+  have h := (MeasurePreserving.id (volume : Measure Vec3)).prod (measurePreserving_sub_right
+    (volume : Measure ℝ) a)
   rw [← Measure.volume_eq_prod] at h
   exact h
 
@@ -95,8 +96,10 @@ theorem lps_testFunction_shift {V : Type} [NormedAddCommGroup V] [NormedSpace �
     exact ⟨Set.mem_univ _, by constructor <;> linarith only [h2.1, h2.2]⟩
 
 /-- Spatial partial derivatives commute with time translation. -/
-theorem lps_spatialPartial_timeTranslate (a : ℝ) (g : ParabolicPoint → ℝ) (j : Fin 3) (z : ParabolicPoint) :
-    spatialPartial (fun w : ParabolicPoint => g (w.1, w.2 + a)) j z = spatialPartial g j (z.1, z.2 + a) :=
+theorem lps_spatialPartial_timeTranslate (a : ℝ) (g : ParabolicPoint → ℝ) (j : Fin 3) (z :
+  ParabolicPoint) :
+    spatialPartial (fun w : ParabolicPoint => g (w.1, w.2 + a)) j z = spatialPartial g j (z.1,
+      z.2 + a) :=
   rfl
 
 /-- The time partial derivative commutes with time translation. -/
@@ -141,7 +144,8 @@ theorem lps_phiShift_spatial (a : ℝ) (φ : ParabolicPoint → ℝ) (j : Fin 3)
 
 /-- Time derivative of a translated test function. -/
 theorem lps_phiShift_time (a : ℝ) (φ : ParabolicPoint → ℝ) (z : ParabolicPoint) :
-    timePartial (fun w : ParabolicPoint => φ (w.1, w.2 + a)) (lpsTimeShift a z) = timePartial φ z := by
+    timePartial (fun w : ParabolicPoint => φ (w.1, w.2 + a)) (lpsTimeShift a z) = timePartial φ
+      z := by
   rw [lps_timePartial_timeTranslate]
   simp [lpsTimeShift]
   rfl
@@ -174,23 +178,28 @@ theorem lps_hasSpaceTimeWeakDerivs_shift {a τ : ℝ} {u : ParabolicPoint → Ve
   obtain ⟨h1, h2, h3⟩ := hid _ hφ'
   refine ⟨fun i j => ?_, fun i j k => ?_, fun i => ?_⟩
   · have e := h1 i j
-    rw [← lps_shift_integral a τ (fun w => u w i * spatialPartial (fun w : ParabolicPoint => φ (w.1, w.2 + a)) j w)
+    rw [← lps_shift_integral a τ (fun w => u w i * spatialPartial (fun w : ParabolicPoint => φ
+      (w.1, w.2 + a)) j w)
         (fun z => u (lpsTimeShift a z) i * spatialPartial φ j z)
         (fun z => by rw [lps_phiShift_spatial])] at e
-    rw [← lps_shift_integral a τ (fun w => Du w i j * (fun w : ParabolicPoint => φ (w.1, w.2 + a)) w)
+    rw [← lps_shift_integral a τ (fun w => Du w i j * (fun w : ParabolicPoint => φ (w.1, w.2 +
+      a)) w)
         (fun z => Du (lpsTimeShift a z) i j * φ z)
         (fun z => by rw [lps_phiShift_value])] at e
     exact e
   · have e := h2 i j k
-    rw [← lps_shift_integral a τ (fun w => Du w i j * spatialPartial (fun w : ParabolicPoint => φ (w.1, w.2 + a)) k w)
+    rw [← lps_shift_integral a τ (fun w => Du w i j * spatialPartial (fun w : ParabolicPoint =>
+      φ (w.1, w.2 + a)) k w)
         (fun z => Du (lpsTimeShift a z) i j * spatialPartial φ k z)
         (fun z => by rw [lps_phiShift_spatial])] at e
-    rw [← lps_shift_integral a τ (fun w => D2u w i j k * (fun w : ParabolicPoint => φ (w.1, w.2 + a)) w)
+    rw [← lps_shift_integral a τ (fun w => D2u w i j k * (fun w : ParabolicPoint => φ (w.1, w.2
+      + a)) w)
         (fun z => D2u (lpsTimeShift a z) i j k * φ z)
         (fun z => by rw [lps_phiShift_value])] at e
     exact e
   · have e := h3 i
-    rw [← lps_shift_integral a τ (fun w => u w i * timePartial (fun w : ParabolicPoint => φ (w.1, w.2 + a)) w)
+    rw [← lps_shift_integral a τ (fun w => u w i * timePartial (fun w : ParabolicPoint => φ
+      (w.1, w.2 + a)) w)
         (fun z => u (lpsTimeShift a z) i * timePartial φ z)
         (fun z => by rw [lps_phiShift_time])] at e
     rw [← lps_shift_integral a τ (fun w => Dtu w i * (fun w : ParabolicPoint => φ (w.1, w.2 + a)) w)
@@ -198,7 +207,10 @@ theorem lps_hasSpaceTimeWeakDerivs_shift {a τ : ℝ} {u : ParabolicPoint → Ve
         (fun z => by rw [lps_phiShift_value])] at e
     exact e
 
-/-- A strong solution on `[0, τ]` translated by `a` is a strong solution on `[a, a + τ]` (`prop:lps-local-strong`). -/
+/--
+A strong solution on `[0, τ]` translated by `a` is a strong solution on `[a, a + τ]`
+(`prop:lps-local-strong`).
+-/
 theorem lps_isLpsStrongSolution_shift {a τ : ℝ} {u : ParabolicPoint → Vec3}
     {Du : ParabolicPoint → Fin 3 → Vec3} {p : ParabolicPoint → ℝ}
     (h : ESS.IsLpsStrongSolution 0 τ u Du p) :

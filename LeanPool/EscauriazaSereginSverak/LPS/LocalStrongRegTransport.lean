@@ -123,7 +123,8 @@ theorem lps_regR12_transport_deriv_memLp {t : ℝ} (ht : 0 ≤ t) (i k : Fin 3) 
     (hVs j).mul (contDiff_spatialDeriv_smooth (hUs i) j)
   have heq : spatialDeriv (lpsRegTransport ρ ε hε b hb i t) k =
       fun x => ∑ j : Fin 3, spatialDeriv (lpsRegTransportTerm ρ ε hε b hb j i t) k x := by
-    have := localDivCurlSmooth_wordDeriv_sum [k] (f := fun j x => lpsRegTransportTerm ρ ε hε b hb j i t x) hsm
+    have := localDivCurlSmooth_wordDeriv_sum [k] (f := fun j x => lpsRegTransportTerm ρ ε hε b
+      hb j i t x) hsm
     exact this
   rw [heq]
   exact memLp_finsetSum _ fun j _ => hterm j

@@ -124,7 +124,8 @@ theorem lps_slab_hasFDerivWithinAt {a b : ℝ} (hab : a < b)
   have hUS : U ⊆ (univ : Set Vec3) ×ˢ Icc a b := prod_mono subset_rfl Ioo_subset_Icc_self
   have hint : ∀ y ∈ U, HasFDerivAt (w j α) (lpsSlabDeriv w j α y) y := fun y hy =>
     lps_slab_hasFDerivAt hc hx ht j α hy
-  have hdiff : DifferentiableOn ℝ (w j α) U := fun y hy => (hint y hy).differentiableAt.differentiableWithinAt
+  have hdiff : DifferentiableOn ℝ (w j α) U := fun y hy => (hint y
+    hy).differentiableAt.differentiableWithinAt
   have hcont : ∀ y ∈ closure U, ContinuousWithinAt (w j α) U y := by
     intro y hy
     rw [hcl] at hy

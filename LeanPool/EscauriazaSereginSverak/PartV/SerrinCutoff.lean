@@ -90,7 +90,8 @@ theorem serrinCutoff_deriv_bound : ∃ C : ℝ, 0 ≤ C ∧ ∀ (n : ℕ) (j : F
       ((fderiv ℝ (serrinBump : Vec3 → ℝ) (c • x)).comp (c • ContinuousLinearMap.id ℝ Vec3)) x := by
     have hin : HasFDerivAt (fun y : Vec3 => c • y) (c • ContinuousLinearMap.id ℝ Vec3) x :=
       (hasFDerivAt_id x).const_smul c
-    exact (((serrinBump.contDiff (n := (⊤ : ℕ∞))).differentiable (by simp)) (c • x)).hasFDerivAt.comp
+    exact (((serrinBump.contDiff (n := (⊤ : ℕ∞))).differentiable (by simp)) (c •
+      x)).hasFDerivAt.comp
       x hin
   have heq : spatialDeriv (serrinCutoff n) j x =
       c * (fderiv ℝ (serrinBump : Vec3 → ℝ) (c • x)) (basisVec j) := by

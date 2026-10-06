@@ -103,9 +103,11 @@ theorem pvLocalMap_lipschitz :
   set c2 := 1 + 9 * ENNReal.ofReal (CKN.Leray.rieszPressureOperatorBound 2
     (by norm_num : (1 : ℝ) < 2))
   have hc52 : c52 ≠ ⊤ :=
-    ENNReal.add_ne_top.2 ⟨ENNReal.one_ne_top, ENNReal.mul_ne_top (by norm_num) ENNReal.ofReal_ne_top⟩
+    ENNReal.add_ne_top.2 ⟨ENNReal.one_ne_top, ENNReal.mul_ne_top (by norm_num)
+      ENNReal.ofReal_ne_top⟩
   have hc2 : c2 ≠ ⊤ :=
-    ENNReal.add_ne_top.2 ⟨ENNReal.one_ne_top, ENNReal.mul_ne_top (by norm_num) ENNReal.ofReal_ne_top⟩
+    ENNReal.add_ne_top.2 ⟨ENNReal.one_ne_top, ENNReal.mul_ne_top (by norm_num)
+      ENNReal.ofReal_ne_top⟩
   refine ⟨ENNReal.ofReal C * (9 * (2 * c52 + c2)), ?_, ?_⟩
   · exact ENNReal.mul_ne_top ENNReal.ofReal_ne_top (ENNReal.mul_ne_top (by norm_num)
       (ENNReal.add_ne_top.2 ⟨ENNReal.mul_ne_top (by norm_num) hc52, hc2⟩))

@@ -81,7 +81,8 @@ theorem forcedHeat_integrand_integrable {G : Fin 3 → Fin 3 → ParabolicPoint 
     (z : ParabolicPoint) (i j : Fin 3) :
     Integrable (fun p : ParabolicPoint =>
       heatKernelSpaceDerivative p.1 p.2 j * G i j (z.1 - p.1, z.2 - p.2)) := by
-  have h := (heatKernelSpaceDerivative_locallyIntegrable j).integrable_smul_right_of_hasCompactSupport
+  have h := (heatKernelSpaceDerivative_locallyIntegrable
+    j).integrable_smul_right_of_hasCompactSupport
     ((hG i j).continuous.comp (continuous_const.sub continuous_id))
     ((hGc i j).comp_homeomorph (Homeomorph.subLeft (show Vec3 × ℝ from z)))
   exact h

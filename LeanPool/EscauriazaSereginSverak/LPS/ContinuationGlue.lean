@@ -104,7 +104,8 @@ theorem lps_slab_integral_split {a b c : ℝ} (hab : a ≤ b) (hbc : b ≤ c) {f
 
 /-- Square integrability on two adjacent slabs gives square integrability on the
 union slab. -/
-theorem lps_memLp_slab_glue {a b c : ℝ} {E : Type} [NormedAddCommGroup E] {F F₁ F₂ : ParabolicPoint → E}
+theorem lps_memLp_slab_glue {a b c : ℝ} {E : Type} [NormedAddCommGroup E] {F F₁ F₂ :
+  ParabolicPoint → E}
     (h₁ : MemLp F₁ 2 (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo a b))))
     (h₂ : MemLp F₂ 2 (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo b c))))
     (hF₁ : ∀ z : ParabolicPoint, z.2 ≤ b → F z = F₁ z)
@@ -314,7 +315,8 @@ theorem lps_time_weak_boundary_right {a b c : ℝ} (hab : a < b) {F G : Paraboli
       funext q
       unfold timePartial
       have hd : HasFDerivAt (fun s : ℝ => φ (q.1, s))
-          ((fderiv ℝ φ (q.1, q.2)).comp ((0 : ℝ →L[ℝ] Vec3).prod (ContinuousLinearMap.id ℝ ℝ))) q.2 := by
+          ((fderiv ℝ φ (q.1, q.2)).comp ((0 : ℝ →L[ℝ] Vec3).prod (ContinuousLinearMap.id ℝ ℝ)))
+            q.2 := by
         have h1 : HasFDerivAt φ (fderiv ℝ φ (q.1, q.2)) (q.1, q.2) :=
           (hφs.differentiable (by simp) (q.1, q.2)).hasFDerivAt
         have h2 : HasFDerivAt (fun s : ℝ => (q.1, s))
@@ -471,7 +473,8 @@ theorem lps_time_weak_boundary_left {a b a₀ : ℝ} (hab : a < b) {F G : Parabo
       funext q
       unfold timePartial
       have hd : HasFDerivAt (fun s : ℝ => φ (q.1, s))
-          ((fderiv ℝ φ (q.1, q.2)).comp ((0 : ℝ →L[ℝ] Vec3).prod (ContinuousLinearMap.id ℝ ℝ))) q.2 := by
+          ((fderiv ℝ φ (q.1, q.2)).comp ((0 : ℝ →L[ℝ] Vec3).prod (ContinuousLinearMap.id ℝ ℝ)))
+            q.2 := by
         have h1 : HasFDerivAt φ (fderiv ℝ φ (q.1, q.2)) (q.1, q.2) :=
           (hφs.differentiable (by simp) (q.1, q.2)).hasFDerivAt
         have h2 : HasFDerivAt (fun s : ℝ => (q.1, s))

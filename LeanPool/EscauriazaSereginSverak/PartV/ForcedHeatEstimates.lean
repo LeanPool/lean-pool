@@ -173,6 +173,70 @@ theorem eLpNorm_le_of_norm_le_sqrt {α E : Type*} [MeasurableSpace α] {μ : Mea
     (fun a => Real.rpow_nonneg (hQ0 a) _) hint']
   simp_rw [hpow]
 
+private theorem forcedHeat_square_root_bound {X a : ℝ}
+    (hX : X ≤ 9 * a ^ 2) (ha : 0 ≤ a) : X ^ (1 / 2 : ℝ) ≤ 3 * a := by
+  rw [← Real.sqrt_eq_rpow]
+  calc
+    Real.sqrt X ≤ Real.sqrt ((3 * a) ^ 2) := Real.sqrt_le_sqrt (by linarith only [hX])
+    _ = 3 * a := Real.sqrt_sq (by positivity)
+
+private theorem forcedHeat_constant_bounds {Kc K4 : ℝ}
+    (hKc : 0 ≤ Kc) (hK4 : 0 ≤ K4) :
+    let C : ℝ := 3 + 3 * Kc ^ (1 / 3 : ℝ) + 3 * Kc ^ (1 / 5 : ℝ) +
+      3 * K4 ^ (1 / 4 : ℝ)
+    3 ≤ C ∧ 3 * Kc ^ (1 / 3 : ℝ) ≤ C ∧
+      3 * Kc ^ (1 / 5 : ℝ) ≤ C ∧ 3 * K4 ^ (1 / 4 : ℝ) ≤ C := by
+  dsimp only
+  have hthird : 0 ≤ 3 * Kc ^ (1 / 3 : ℝ) := by positivity
+  have hfifth : 0 ≤ 3 * Kc ^ (1 / 5 : ℝ) := by positivity
+  have hfourth : 0 ≤ 3 * K4 ^ (1 / 4 : ℝ) := by positivity
+  exact ⟨by linarith only [hthird, hfifth, hfourth],
+    by linarith only [hfifth, hfourth], by linarith only [hthird, hfourth],
+    by linarith only [hthird, hfifth]⟩
+
+private theorem forcedHeat_fourth_root_bound
+    {I K4 E2 B a₂ a₅₂ C : ℝ}
+    (hK4 : 0 ≤ K4) (hB0 : 0 ≤ B) (ha₂ : 0 ≤ a₂) (ha₅₂ : 0 ≤ a₅₂)
+    (hE2 : E2 ≤ 9 * a₂ ^ 2) (hB25 : B ^ (2 / 5 : ℝ) ≤ 3 * a₅₂)
+    (hI0 : 0 ≤ I) (hL4 : I ≤ K4 * E2 * B ^ (4 / 5 : ℝ))
+    (hC4 : 3 * K4 ^ (1 / 4 : ℝ) ≤ C) :
+    I ^ (1 / 4 : ℝ) ≤ C * (a₅₂ + a₂) := by
+  have hB45 : B ^ (4 / 5 : ℝ) ≤ 9 * a₅₂ ^ 2 := by
+    calc
+      B ^ (4 / 5 : ℝ) = (B ^ (2 / 5 : ℝ)) ^ 2 := by
+        rw [← Real.rpow_natCast, ← Real.rpow_mul hB0]
+        norm_num
+      _ ≤ (3 * a₅₂) ^ 2 := pow_le_pow_left₀ (Real.rpow_nonneg hB0 _) hB25 2
+      _ = 9 * a₅₂ ^ 2 := by ring
+  have hprod : K4 * E2 * B ^ (4 / 5 : ℝ) ≤ 81 * K4 * (a₅₂ + a₂) ^ 4 := by
+    have h1 : E2 * B ^ (4 / 5 : ℝ) ≤ (9 * a₂ ^ 2) * (9 * a₅₂ ^ 2) :=
+      mul_le_mul hE2 hB45 (Real.rpow_nonneg hB0 _) (by positivity)
+    have h2 : a₂ ^ 2 * a₅₂ ^ 2 ≤ (a₅₂ + a₂) ^ 4 := by
+      have h3 : a₂ * a₅₂ ≤ (a₅₂ + a₂) ^ 2 := by nlinarith only [ha₂, ha₅₂]
+      calc
+        a₂ ^ 2 * a₅₂ ^ 2 = (a₂ * a₅₂) ^ 2 := by ring
+        _ ≤ ((a₅₂ + a₂) ^ 2) ^ 2 :=
+          pow_le_pow_left₀ (mul_nonneg ha₂ ha₅₂) h3 2
+        _ = (a₅₂ + a₂) ^ 4 := by ring
+    calc
+      K4 * E2 * B ^ (4 / 5 : ℝ) = K4 * (E2 * B ^ (4 / 5 : ℝ)) := by ring
+      _ ≤ K4 * ((9 * a₂ ^ 2) * (9 * a₅₂ ^ 2)) := mul_le_mul_of_nonneg_left h1 hK4
+      _ = 81 * K4 * (a₂ ^ 2 * a₅₂ ^ 2) := by ring
+      _ ≤ 81 * K4 * (a₅₂ + a₂) ^ 4 := mul_le_mul_of_nonneg_left h2 (by positivity)
+  calc
+    I ^ (1 / 4 : ℝ) ≤ (81 * K4 * (a₅₂ + a₂) ^ 4) ^ (1 / 4 : ℝ) :=
+      Real.rpow_le_rpow hI0 (hL4.trans hprod) (by norm_num)
+    _ = 3 * K4 ^ (1 / 4 : ℝ) * (a₅₂ + a₂) := by
+      rw [Real.mul_rpow (by positivity) (by positivity),
+        Real.mul_rpow (by norm_num) hK4, ← Real.rpow_natCast (a₅₂ + a₂) 4,
+        ← Real.rpow_mul (by positivity)]
+      have h81 : (81 : ℝ) ^ (1 / 4 : ℝ) = 3 := by
+        rw [show (81 : ℝ) = 3 ^ (4 : ℝ) by norm_num, ← Real.rpow_mul (by norm_num)]
+        norm_num
+      rw [h81]
+      norm_num
+    _ ≤ C * (a₅₂ + a₂) := mul_le_mul_of_nonneg_right hC4 (by positivity)
+
 /-- The zero-data forced heat estimates for smooth compactly supported tensors
 supported in positive times, with an absolute constant: the smooth-data form of
 `lem:pv-stokes` for the componentwise heat reformulation. -/
@@ -252,17 +316,8 @@ theorem forcedHeat_smooth_estimates :
   have hB0 : 0 ≤ B := integral_nonneg fun p => Real.rpow_nonneg
     (Finset.sum_nonneg fun i _ => Finset.sum_nonneg fun j _ => sq_nonneg _) _
   obtain ⟨hAint, hBint, _⟩ := response_sq_window_integrable hG hGc 0 τ
-  have hsqrt9 {X a : ℝ} (hX0 : 0 ≤ X) (hX : X ≤ 9 * a ^ 2) (ha : 0 ≤ a) :
-      X ^ (1 / 2 : ℝ) ≤ 3 * a := by
-    rw [← Real.sqrt_eq_rpow]
-    calc
-      Real.sqrt X ≤ Real.sqrt ((3 * a) ^ 2) := Real.sqrt_le_sqrt (by linarith only [hX])
-      _ = 3 * a := Real.sqrt_sq (by positivity)
-  have hC3 : (3 : ℝ) ≤ C := by
-    simp only [hC]
-    have : 0 ≤ 3 * Kc ^ (1 / 3 : ℝ) + 3 * Kc ^ (1 / 5 : ℝ) + 3 * K4 ^ (1 / 4 : ℝ) := by
-      positivity
-    linarith only [this]
+  have hconstantBounds := forcedHeat_constant_bounds hKc hK4
+  have hC3 : (3 : ℝ) ≤ C := hconstantBounds.1
   -- slice quantities
   have hslice (t : ℝ) (ht : t ∈ Icc 0 τ) :
       Integrable (fun x : Vec3 => q (x, t)) ∧ ∫ x, q (x, t) ≤ E2 := by
@@ -296,7 +351,7 @@ theorem forcedHeat_smooth_estimates :
     simp_rw [show (2 : ℝ) / 2 = 1 by norm_num, Real.rpow_one] at hbound
     rw [hZfun, h2eq]
     refine hbound.trans (hfinal ?_ hC3 ha₂)
-    exact hsqrt9 (integral_nonneg fun x => hq0 _) (hqle.trans hE2) ha₂
+    exact forcedHeat_square_root_bound (hqle.trans hE2) ha₂
   · -- gradient `L²`
     rw [eLpNorm_spaceTimeSet_eq_window, h2eq]
     have hfun : (fun q : Vec3 × ℝ => fun i j =>
@@ -322,7 +377,7 @@ theorem forcedHeat_smooth_estimates :
     have hL20 : 0 ≤ ∫ x, ∑ i : Fin 3, (responseVec g (x, τ) i) ^ 2 :=
       integral_nonneg fun x => Finset.sum_nonneg fun i _ => sq_nonneg _
     have hSle : ∫ p, S p ∂μ ≤ E2 := by linarith only [henergy, hL20]
-    exact hsqrt9 (integral_nonneg hS0) (hSle.trans hE2) ha₂
+    exact forcedHeat_square_root_bound (hSle.trans hE2) ha₂
   · -- slice `L³`
     intro t ht
     obtain ⟨hqint, _⟩ := hslice t ht
@@ -360,9 +415,7 @@ theorem forcedHeat_smooth_estimates :
           norm_num
         _ ≤ Kc ^ (1 / 3 : ℝ) * (3 * a₅₂) := mul_le_mul_of_nonneg_left hB25 (by positivity)
         _ = 3 * Kc ^ (1 / 3 : ℝ) * a₅₂ := by ring
-    · simp only [hC]
-      have : 0 ≤ 3 * Kc ^ (1 / 5 : ℝ) + 3 * K4 ^ (1 / 4 : ℝ) := by positivity
-      linarith only [this]
+    · exact hconstantBounds.2.1
   · -- space-time `L⁵`
     obtain ⟨h5int, _⟩ := response_rpow_five_le hG hGc hGpos hτ.le
     rw [eLpNorm_spaceTimeSet_eq_window, show (5 : ℝ≥0∞) = ENNReal.ofReal 5 by norm_num]
@@ -383,9 +436,7 @@ theorem forcedHeat_smooth_estimates :
           norm_num
         _ ≤ Kc ^ (1 / 5 : ℝ) * (3 * a₅₂) := mul_le_mul_of_nonneg_left hB25 (by positivity)
         _ = 3 * Kc ^ (1 / 5 : ℝ) * a₅₂ := by ring
-    · simp only [hC]
-      have : 0 ≤ 3 * Kc ^ (1 / 3 : ℝ) + 3 * K4 ^ (1 / 4 : ℝ) := by positivity
-      linarith only [this]
+    · exact hconstantBounds.2.2.1
   · -- space-time `L⁴`
     rw [eLpNorm_spaceTimeSet_eq_window, show (4 : ℝ≥0∞) = ENNReal.ofReal 4 by norm_num]
     change eLpNorm (fun p : Vec3 × ℝ => forcedHeat G p) (ENNReal.ofReal 4) μ ≤ _
@@ -411,45 +462,9 @@ theorem forcedHeat_smooth_estimates :
     have hL4 := response_L4_estimate hG hGc hGpos hτ.le
     change ∫ p, q p ^ 2 ∂μ ≤ K4 * E2 * B ^ (4 / 5 : ℝ) at hL4
     have hI0 : 0 ≤ ∫ p, q p ^ 2 ∂μ := integral_nonneg fun p => sq_nonneg _
-    have hB45 : B ^ (4 / 5 : ℝ) ≤ 9 * a₅₂ ^ 2 := by
-      calc
-        B ^ (4 / 5 : ℝ) = (B ^ (2 / 5 : ℝ)) ^ 2 := by
-          rw [← Real.rpow_natCast, ← Real.rpow_mul hB0]
-          norm_num
-        _ ≤ (3 * a₅₂) ^ 2 := pow_le_pow_left₀ (Real.rpow_nonneg hB0 _) hB25 2
-        _ = 9 * a₅₂ ^ 2 := by ring
-    have hprod : K4 * E2 * B ^ (4 / 5 : ℝ) ≤ 81 * K4 * (a₅₂ + a₂) ^ 4 := by
-      have h1 : E2 * B ^ (4 / 5 : ℝ) ≤ (9 * a₂ ^ 2) * (9 * a₅₂ ^ 2) :=
-        mul_le_mul hE2 hB45 (Real.rpow_nonneg hB0 _) (by positivity)
-      have h2 : a₂ ^ 2 * a₅₂ ^ 2 ≤ (a₅₂ + a₂) ^ 4 := by
-        have h3 : a₂ * a₅₂ ≤ (a₅₂ + a₂) ^ 2 := by nlinarith only [ha₂, ha₅₂]
-        calc
-          a₂ ^ 2 * a₅₂ ^ 2 = (a₂ * a₅₂) ^ 2 := by ring
-          _ ≤ ((a₅₂ + a₂) ^ 2) ^ 2 :=
-            pow_le_pow_left₀ (mul_nonneg ha₂ ha₅₂) h3 2
-          _ = (a₅₂ + a₂) ^ 4 := by ring
-      calc
-        K4 * E2 * B ^ (4 / 5 : ℝ) = K4 * (E2 * B ^ (4 / 5 : ℝ)) := by ring
-        _ ≤ K4 * ((9 * a₂ ^ 2) * (9 * a₅₂ ^ 2)) := mul_le_mul_of_nonneg_left h1 hK4
-        _ = 81 * K4 * (a₂ ^ 2 * a₅₂ ^ 2) := by ring
-        _ ≤ 81 * K4 * (a₅₂ + a₂) ^ 4 := mul_le_mul_of_nonneg_left h2 (by positivity)
-    have hC4 : 3 * K4 ^ (1 / 4 : ℝ) ≤ C := by
-      simp only [hC]
-      have : 0 ≤ 3 * Kc ^ (1 / 3 : ℝ) + 3 * Kc ^ (1 / 5 : ℝ) := by positivity
-      linarith only [this]
-    calc
-      (∫ p, q p ^ 2 ∂μ) ^ (1 / 4 : ℝ) ≤ (81 * K4 * (a₅₂ + a₂) ^ 4) ^ (1 / 4 : ℝ) :=
-        Real.rpow_le_rpow hI0 (hL4.trans hprod) (by norm_num)
-      _ = 3 * K4 ^ (1 / 4 : ℝ) * (a₅₂ + a₂) := by
-        rw [Real.mul_rpow (by positivity) (by positivity),
-          Real.mul_rpow (by norm_num) hK4, ← Real.rpow_natCast (a₅₂ + a₂) 4,
-          ← Real.rpow_mul (by positivity)]
-        have h81 : (81 : ℝ) ^ (1 / 4 : ℝ) = 3 := by
-          rw [show (81 : ℝ) = 3 ^ (4 : ℝ) by norm_num, ← Real.rpow_mul (by norm_num)]
-          norm_num
-        rw [h81]
-        norm_num
-      _ ≤ C * (a₅₂ + a₂) := mul_le_mul_of_nonneg_right hC4 (by positivity)
+    have hC4 : 3 * K4 ^ (1 / 4 : ℝ) ≤ C := hconstantBounds.2.2.2
+    exact forcedHeat_fourth_root_bound hK4 hB0 ha₂ ha₅₂ hE2 hB25 hI0 hL4 hC4
+
 
 
 end ESS

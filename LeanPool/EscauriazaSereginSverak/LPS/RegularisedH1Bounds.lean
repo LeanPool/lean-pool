@@ -43,9 +43,13 @@ theorem lps_norm_sq_eq_integral_of_ae {F : Lp ℝ 2 (volume : Measure Vec3)} {f 
   rw [hx]
   simp [sq]
 
-/-- The squared `L²` norm of every ordered derivative of the regularized velocity is continuous in time on `[0, ∞)`. -/
+/--
+The squared `L²` norm of every ordered derivative of the regularized velocity is continuous in
+time on `[0, ∞)`.
+-/
 theorem lps_regR12_word_sq_continuous (i : Fin 3) (α : List (Fin 3)) :
-    Continuous (fun t : ℝ => ∫ x, wordDeriv α (fun y => lpsRegU ρ ε hε b hb (y, max t 0) i) x ^ 2) := by
+    Continuous (fun t : ℝ => ∫ x, wordDeriv α (fun y => lpsRegU ρ ε hε b hb (y, max t 0) i) x ^
+      2) := by
   rw [continuous_iff_continuousAt]
   intro s
   obtain ⟨F, hFc, hF⟩ := lps_regR12Velocity_wordDeriv_continuous_L2 ρ ε hε b hb (|s| + 1)
@@ -54,10 +58,14 @@ theorem lps_regR12_word_sq_continuous (i : Fin 3) (α : List (Fin 3)) :
     ((continuous_norm.comp (hFc.comp (continuous_id.max continuous_const))).pow 2).continuousAt
   refine hcont.congr ?_
   filter_upwards [Iio_mem_nhds (show s < |s| + 1 by linarith only [le_abs_self s])] with t ht
-  have hmem : max t 0 ∈ Icc 0 (|s| + 1) := ⟨le_max_right _ _, max_le (by simpa using ht.le) (by positivity)⟩
+  have hmem : max t 0 ∈ Icc 0 (|s| + 1) := ⟨le_max_right _ _, max_le (by simpa using ht.le) (by
+    positivity)⟩
   exact lps_norm_sq_eq_integral_of_ae (hF _ hmem)
 
-/-- The squared `L²` seminorm of the Euclidean carrier field of a vector field is the integral of the sum of squared components. -/
+/--
+The squared `L²` seminorm of the Euclidean carrier field of a vector field is the integral of
+the sum of squared components.
+-/
 theorem lps_eLpNorm_field_sq {f : Vec3 → Vec3} (hf : MemLp f 2 volume) :
     eLpNorm (CKN.Leray.regUniformSpatialField f) 2 volume ^ (2 : ℕ) =
       ENNReal.ofReal (∫ x, ∑ i : Fin 3, f x i ^ 2) := by
@@ -71,7 +79,10 @@ theorem lps_eLpNorm_field_sq {f : Vec3 → Vec3} (hf : MemLp f 2 volume) :
   congr 1; funext x
   exact Finset.sum_congr rfl fun i _ => (sq (f x i)).symm
 
-/-- The kinetic energy of the regularized velocity does not exceed that of the datum, by the energy equality (R5) and the contraction of the mollifier. -/
+/--
+The kinetic energy of the regularized velocity does not exceed that of the datum, by the energy
+equality (R5) and the contraction of the mollifier.
+-/
 theorem lps_regR12_kinetic_le {t : ℝ} (ht : 0 ≤ t) :
     (∫ x, ∑ i : Fin 3, lpsRegU ρ ε hε b hb (x, t) i ^ 2) ≤ ∫ x, ∑ i : Fin 3, b x i ^ 2 := by
   have h := CKN.Leray.regR12_regularised_unconditional ρ b hb ε hε
@@ -82,8 +93,10 @@ theorem lps_regR12_kinetic_le {t : ℝ} (ht : 0 ≤ t) :
   have h1 : eLpNorm (CKN.Leray.regUniformSpatialField (fun x : Vec3 => lpsRegU ρ ε hε b hb (x, t)))
       2 volume ^ (2 : ℕ) ≤ eLpNorm (CKN.Leray.regUniformSpatialField b) 2 volume ^ (2 : ℕ) := by
     have h2 := hR5 t ht
-    have h3 : eLpNorm (CKN.Leray.regUniformVelocitySlice (lpsRegU ρ ε hε b hb) t) 2 volume ^ (2 : ℕ) ≤
-        eLpNorm (CKN.Leray.regMollifyVector ρ ε hε (CKN.Leray.regUniformSpatialField b)) 2 volume ^ (2 : ℕ) := by
+    have h3 : eLpNorm (CKN.Leray.regUniformVelocitySlice (lpsRegU ρ ε hε b hb) t) 2 volume ^ (2
+      : ℕ) ≤
+        eLpNorm (CKN.Leray.regMollifyVector ρ ε hε (CKN.Leray.regUniformSpatialField b)) 2
+          volume ^ (2 : ℕ) := by
       rw [← h2]; exact le_self_add
     have h4 := pow_le_pow_left₀ (by positivity)
       (lps_regularised_initial_velocity_l2_contraction ρ ε hε b hb.1) (2 : ℕ)
@@ -105,7 +118,10 @@ theorem lps_regR12_initial_eq (i : Fin 3) (x : Vec3) :
   have := (Continuous.ae_eq_iff_eq (μ := (volume : Measure Vec3)) hc1 hc2).1 hae
   exact congrFun (congrFun this x) i
 
-/-- The initial gradient energy of the regularized velocity is at most the squared `L²` norm of the datum's weak gradient. -/
+/--
+The initial gradient energy of the regularized velocity is at most the squared `L²` norm of the
+datum's weak gradient.
+-/
 theorem lps_regR12_initial_gradient_le (Db : Vec3 → Fin 3 → Vec3)
     (hH1 : ∀ i : Fin 3, ∃ h : H1Function (Set.univ : Set Vec3),
       h.toFun = (fun x => b x i) ∧ h.grad = (fun x j => Db x i j)) :
@@ -119,7 +135,8 @@ theorem lps_regR12_initial_gradient_le (Db : Vec3 → Fin 3 → Vec3)
       spatialDeriv (fun y => CKN.Leray.regUniformMollifiedInitial ρ ε hε b y i) j x =
         spatialDeriv (fun y => lpsRegU ρ ε hε b hb (y, 0) i) j x := by
     have : (fun y => CKN.Leray.regUniformMollifiedInitial ρ ε hε b y i) =
-        fun y => lpsRegU ρ ε hε b hb (y, 0) i := funext fun y => (lps_regR12_initial_eq ρ ε hε b hb i y).symm
+        fun y => lpsRegU ρ ε hε b hb (y, 0) i := funext fun y => (lps_regR12_initial_eq ρ ε hε b
+          hb i y).symm
     rw [this]
   have hmemU (i : Fin 3) : MemLp (fun x j => spatialDeriv
       (fun y => CKN.Leray.regUniformMollifiedInitial ρ ε hε b y i) j x) 2 volume := by
@@ -149,14 +166,20 @@ theorem lps_regR12_initial_gradient_le (Db : Vec3 → Fin 3 → Vec3)
   rw [hlhs, integral_finsetSum _ fun i _ => hint i]
   exact Finset.sum_le_sum fun i _ => hrowInt i
 
-/-- The gradient energy of the regularized velocity, extended by its time-zero value to negative times, is continuous. -/
+/--
+The gradient energy of the regularized velocity, extended by its time-zero value to negative
+times, is continuous.
+-/
 theorem lps_regR12_gradEnergy_continuous :
     Continuous (fun t : ℝ => lpsRegGradEnergy ρ ε hε b hb (max t 0)) := by
   unfold lpsRegGradEnergy
   exact continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
     lps_regR12_word_sq_continuous ρ ε hε b hb i [j]
 
-/-- The second-derivative energy of the regularized velocity, extended by its time-zero value to negative times, is continuous. -/
+/--
+The second-derivative energy of the regularized velocity, extended by its time-zero value to
+negative times, is continuous.
+-/
 theorem lps_regR12_hessEnergy_continuous :
     Continuous (fun t : ℝ => lpsRegHessEnergy ρ ε hε b hb (max t 0)) := by
   unfold lpsRegHessEnergy
@@ -172,7 +195,10 @@ theorem lps_regR12_hessEnergy_nonneg (t : ℝ) : 0 ≤ lpsRegHessEnergy ρ ε h�
   Finset.sum_nonneg fun _ _ => Finset.sum_nonneg fun _ _ => Finset.sum_nonneg fun _ _ =>
     integral_nonneg fun _ => sq_nonneg _
 
-/-- The gradient energy of the regularized velocity has the stated derivative at every positive time (`eq:lps-uniform-H1`). -/
+/--
+The gradient energy of the regularized velocity has the stated derivative at every positive time
+(`eq:lps-uniform-H1`).
+-/
 theorem lps_regR12_gradEnergy_hasDerivAt {t : ℝ} (ht : 0 < t) :
     HasDerivAt (fun s : ℝ => lpsRegGradEnergy ρ ε hε b hb (max s 0))
       (-2 * lpsRegHessEnergy ρ ε hε b hb t + 2 * lpsRegTransportPairing ρ ε hε b hb t) t := by
@@ -182,7 +208,10 @@ theorem lps_regR12_gradEnergy_hasDerivAt {t : ℝ} (ht : 0 < t) :
   filter_upwards [lt_mem_nhds ht] with s hs
   simp only [max_eq_left hs.le]
 
-/-- The cubic differential inequality `y' + ‖∇²U_ε‖₂² ≤ C y³` for the gradient energy of the regularized velocity, with an absolute constant (`eq:lps-uniform-H1`). -/
+/--
+The cubic differential inequality `y' + ‖∇²U_ε‖₂² ≤ C y³` for the gradient energy of the
+regularized velocity, with an absolute constant (`eq:lps-uniform-H1`).
+-/
 theorem lps_regR12_cubic_inequality {t : ℝ} (ht : 0 < t) :
     (-2 * lpsRegHessEnergy ρ ε hε b hb t + 2 * lpsRegTransportPairing ρ ε hε b hb t) +
       lpsRegHessEnergy ρ ε hε b hb t ≤
@@ -212,7 +241,10 @@ theorem lps_slab_integral_eq_time_integral {f : Vec3 → ℝ → ℝ} {T : ℝ} 
     ← integral_Ioc_eq_integral_Ioo]
   simp [Measure.restrict_univ]
 
-/-- The slab integral of the second derivatives of the regularized velocity is the time integral of their slice energies. -/
+/--
+The slab integral of the second derivatives of the regularized velocity is the time integral of
+their slice energies.
+-/
 theorem lps_regR12_hess_slab {T : ℝ} (hT : 0 < T) :
     (∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T), ∑ i : Fin 3, ∑ j : Fin 3,
       vec3EuclideanNorm (fun k => spatialPartial (fun w => spatialPartial
@@ -271,7 +303,10 @@ theorem lps_regR12_hess_slab {T : ℝ} (hT : 0 < T) :
   simp only [max_eq_left ht0]
   rfl
 
-/-- The gradient integrand of the regularized velocity is integrable on every nonnegative-time slice, with integral the gradient energy. -/
+/--
+The gradient integrand of the regularized velocity is integrable on every nonnegative-time
+slice, with integral the gradient energy.
+-/
 theorem lps_regR12_gradSq {t : ℝ} (ht : 0 ≤ t) :
     Integrable (fun x : Vec3 => spatialGradientSq (lpsRegU ρ ε hε b hb)
       (fun z i j => spatialPartial (fun w => lpsRegU ρ ε hε b hb w i) j z) (x, t)) volume ∧
@@ -295,7 +330,9 @@ theorem lps_regR12_gradSq {t : ℝ} (ht : 0 ≤ t) :
   exact integral_finsetSum (f := fun j x => spatialDeriv
     (fun y => lpsRegU ρ ε hε b hb (y, t) i) j x ^ 2) _ (fun j _ => hj i j)
 
-/-- The squared velocity of the regularized solution is integrable on every nonnegative-time slice. -/
+/--
+The squared velocity of the regularized solution is integrable on every nonnegative-time slice.
+-/
 theorem lps_regR12_kineticSq {t : ℝ} (ht : 0 ≤ t) :
     Integrable (fun x : Vec3 => vec3EuclideanNorm (lpsRegU ρ ε hε b hb (x, t)) ^ (2 : ℕ)) volume ∧
     (∫ x : Vec3, vec3EuclideanNorm (lpsRegU ρ ε hε b hb (x, t)) ^ (2 : ℕ)) =

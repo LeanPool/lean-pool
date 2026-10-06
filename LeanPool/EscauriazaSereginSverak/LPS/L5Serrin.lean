@@ -8,6 +8,13 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.PartV.SerrinSpaceTimeMollify
 
+/-!
+# L5 Serrin
+
+Space-time `L⁵` membership gives the finite branch of `thm:lps` at
+`s = 5`, where the time exponent is also five.
+-/
+
 public section
 
 open MeasureTheory Set

@@ -142,7 +142,8 @@ theorem lps_strong_mollified_equation
             ∑ j : Fin 3, D2u z i j j * (κ (x - z.1) * θ z.2) +
             p z * (vlDeriv κ i (x - z.1) * θ z.2) := by
       intro z
-      simp only [vlTest_spatialPartial hκ x θ, vlTest, Finset.sum_mul, mul_neg, Finset.sum_neg_distrib]
+      simp only [vlTest_spatialPartial hκ x θ, vlTest, Finset.sum_mul, mul_neg,
+        Finset.sum_neg_distrib]
       ring
     have hE' : ∫ z in vlSlab t₀ T,
         (Dtu z i * (κ (x - z.1) * θ z.2) +

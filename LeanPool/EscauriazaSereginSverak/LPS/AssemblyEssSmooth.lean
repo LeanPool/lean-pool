@@ -9,6 +9,14 @@ module
 public import LeanPool.EscauriazaSereginSverak.Main.EssL5Unique
 public import LeanPool.EscauriazaSereginSverak.LPS.L5Serrin
 
+/-!
+# Assembly Ess Smooth
+
+The `L^5` and uniqueness conclusion under a uniform-in-time `L^3` bound
+follows from `thm:lps` at `(s,ℓ) = (5,5)` and `thm:ess-l5-unique`.
+The hypothesis is the full conclusion of `thm:lps`, supplied by its provider.
+-/
+
 public section
 
 open MeasureTheory Set Filter

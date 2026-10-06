@@ -146,8 +146,10 @@ theorem forcedHeat_rough_weak_of_gradient {τ : ℝ} (hτ : 0 < τ)
         (ha : Integrable a μQ) (hb : ∀ j, Integrable (b j) μQ) (hc : ∀ j, Integrable (c j) μQ) :
         ∫ z in Q, (-(a z) + ∑ j : Fin 3, b j z + ∑ j : Fin 3, c j z) =
           -(∫ z in Q, a z) + (∑ j : Fin 3, ∫ z in Q, b j z) + ∑ j : Fin 3, ∫ z in Q, c j z := by
-      have hB : Integrable (fun z => ∑ j : Fin 3, b j z) μQ := integrable_finsetSum _ fun j _ => hb j
-      have hC : Integrable (fun z => ∑ j : Fin 3, c j z) μQ := integrable_finsetSum _ fun j _ => hc j
+      have hB : Integrable (fun z => ∑ j : Fin 3, b j z) μQ := integrable_finsetSum _ fun j _ =>
+        hb j
+      have hC : Integrable (fun z => ∑ j : Fin 3, c j z) μQ := integrable_finsetSum _ fun j _ =>
+        hc j
       have hna : Integrable (fun z => -(a z)) μQ := ha.neg
       have hAB : Integrable (fun z => -(a z) + ∑ j : Fin 3, b j z) μQ := hna.add hB
       rw [integral_add hAB hC, integral_add hna hB, integral_neg,

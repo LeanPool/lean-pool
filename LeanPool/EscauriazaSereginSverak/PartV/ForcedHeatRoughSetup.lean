@@ -166,7 +166,8 @@ theorem kernelResponse_weighted_tendsto {τ : ℝ} (hτ : 0 < τ)
         ‖heatKernelSpaceDerivative p.1 p.2 j * H n i j (z - p)‖ₑ) _ fun j _ =>
         ((heatKernelSpaceDerivative_vecTime_measurable j).aestronglyMeasurable.mul
           ((hHm n i j).comp_quasiMeasurePreserving
-            ((volume : Measure (Vec3 × ℝ)).measurePreserving_sub_left z).quasiMeasurePreserving)).enorm]
+            ((volume : Measure (Vec3 × ℝ)).measurePreserving_sub_left
+              z).quasiMeasurePreserving)).enorm]
       refine lintegral_mono fun p => ?_
       rw [← Finset.sum_sub_distrib]
       refine (enorm_sum_le _ _).trans (le_of_eq ?_)
@@ -201,7 +202,8 @@ theorem kernelResponse_weighted_tendsto {τ : ℝ} (hτ : 0 < τ)
       _ = ∑ i : Fin 3, ∑ j : Fin 3, ∫⁻ z in Q, ENNReal.ofReal (forcedHeatWeight z.1) *
           ∫⁻ p, ‖heatKernelSpaceDerivative p.1 p.2 j * H n i j (z - p)‖ₑ := by
         rw [lintegral_finsetSum' _ fun i _ => Finset.aemeasurable_fun_sum _ fun j _ =>
-          kernel_weighted_aemeasurable j (hHm n i j) _ Measure.restrict_le_self.absolutelyContinuous]
+          kernel_weighted_aemeasurable j (hHm n i j) _
+            Measure.restrict_le_self.absolutelyContinuous]
         refine Finset.sum_congr rfl fun i _ => ?_
         exact lintegral_finsetSum' _ fun j _ =>
           kernel_weighted_aemeasurable j (hHm n i j) _ Measure.restrict_le_self.absolutelyContinuous
@@ -256,7 +258,8 @@ theorem kernelResponse_ae_subseq {τ : ℝ} (hτ : 0 < τ)
     intro z
     simp only [f, Pi.sub_apply, sub_zero]
     rw [enorm_smul, Real.enorm_eq_ofReal (forcedHeatWeight_pos z.1).le]
-  obtain ⟨ns, hns, hae⟩ := (tendstoInMeasure_of_tendsto_eLpNorm one_ne_zero hf).exists_seq_tendsto_ae
+  obtain ⟨ns, hns, hae⟩ := (tendstoInMeasure_of_tendsto_eLpNorm one_ne_zero
+    hf).exists_seq_tendsto_ae
   refine ⟨ns, hns, ?_⟩
   filter_upwards [hae] with z hz
   have hwpos := forcedHeatWeight_pos z.1

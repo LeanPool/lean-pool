@@ -134,30 +134,59 @@ private theorem lps_continuous_compact_support_bounded_spaceTime
         (Function.mem_support.mpr hz)⟩
     exact ⟨0, by simp [hzero]⟩
 
-/-- Integrating the strong weak equation by parts in time and space gives
-its full pressure-inclusive distribution identity (`prop:lps-smoothing`).
-The time derivative and Laplacian are the specified weak derivatives from
-`IsLpsStrongSolution`. -/
-theorem lps_strong_solution_full_weak_equation_D2
+private lemma lps_integral_weak_derivative_transfer
+    {α : Type*} [MeasurableSpace α] {μ : Measure α}
+    {timeSource timeTarget convection diffSource diffTarget pressure : α → ℝ}
+    (hTs : Integrable timeSource μ) (hTt : Integrable timeTarget μ)
+    (hC : Integrable convection μ) (hDs : Integrable diffSource μ)
+    (hDt : Integrable diffTarget μ) (hP : Integrable pressure μ)
+    (hTime : (∫ z, timeSource z ∂μ) = -(∫ z, timeTarget z ∂μ))
+    (hDiff : (∫ z, diffSource z ∂μ) = -(∫ z, diffTarget z ∂μ))
+    (hWeak : (∫ z, -timeSource z - convection z + diffSource z - pressure z ∂μ) = 0) :
+    (∫ z, timeTarget z - convection z - diffTarget z - pressure z ∂μ) = 0 := by
+  have hWs := integral_sub ((hTs.neg.sub hC).add hDs) hP
+  have hWa := integral_add (hTs.neg.sub hC) hDs
+  have hWb := integral_sub hTs.neg hC
+  have hT₁ := integral_sub ((hTt.sub hC).sub hDt) hP
+  have hT₂ := integral_sub (hTt.sub hC) hDt
+  have hT₃ := integral_sub hTt hC
+  simp only [Pi.sub_apply, Pi.add_apply, Pi.neg_apply] at hWs hWa hWb hT₁ hT₂ hT₃
+  rw [hT₁, hT₂, hT₃]
+  rw [hWs, hWa, hWb, integral_neg] at hWeak
+  linarith only [hWeak, hTime, hDiff]
+
+private lemma lps_weak_derivative_test_integrals
     {t₀ t₁ : ℝ} {u : ParabolicPoint → Vec3}
-    {Du : ParabolicPoint → Fin 3 → Vec3} {p : ParabolicPoint → ℝ}
-    (hsol : IsLpsStrongSolution t₀ t₁ u Du p)
+    {Du : ParabolicPoint → Fin 3 → Vec3}
+    {D2u : ParabolicPoint → Fin 3 → Fin 3 → Vec3}
+    {Dtu : ParabolicPoint → Vec3}
+    (hderivs : HasSpaceTimeWeakDerivs (Set.univ : Set Vec3) (Ioo t₀ t₁)
+      u Du D2u Dtu)
+    (huL2 : MemLp u 2 (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo t₀ t₁))))
+    (hDuL2 : MemLp Du 2 (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo t₀ t₁))))
+    (hD2uL2 : MemLp D2u 2 (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo t₀ t₁))))
+    (hDtuL2 : MemLp Dtu 2 (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo t₀ t₁))))
     (φ : ParabolicPoint → Vec3)
     (hφ : φ ∈ spaceTimeTestFunction (V := Vec3)
       (Set.univ : Set Vec3) (Ioo t₀ t₁)) :
-    ∃ (D2u : ParabolicPoint → Fin 3 → Fin 3 → Vec3)
-      (Dtu : ParabolicPoint → Vec3),
-      HasSpaceTimeWeakDerivs (Set.univ : Set Vec3) (Ioo t₀ t₁)
-        u Du D2u Dtu ∧
-      ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo t₀ t₁),
-        (∑ i : Fin 3, Dtu z i * φ z i
-          - ∑ i : Fin 3, ∑ j : Fin 3,
-              u z i * u z j * spatialPartial (fun y => φ y i) j z
-          - ∑ i : Fin 3, ∑ j : Fin 3,
-              D2u z i j j * φ z i
-          - p z * ∑ i : Fin 3, spatialPartial (fun y => φ y i) i z) = 0 := by
-  obtain ⟨hinterval, hslice, hcontinuous, hregularity, hpressure, hweak⟩ := hsol
-  obtain ⟨D2u, Dtu, hderivs, huL2, hDuL2, hD2uL2, hDtuL2⟩ := hregularity
+    Integrable (fun z => ∑ i : Fin 3, u z i * timePartial (fun y => φ y i) z)
+      (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo t₀ t₁))) ∧
+    Integrable (fun z => ∑ i : Fin 3, Dtu z i * φ z i)
+      (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo t₀ t₁))) ∧
+    Integrable (fun z => ∑ i : Fin 3, ∑ j : Fin 3,
+        Du z i j * spatialPartial (fun y => φ y i) j z)
+      (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo t₀ t₁))) ∧
+    Integrable (fun z => ∑ i : Fin 3, ∑ j : Fin 3, D2u z i j j * φ z i)
+      (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo t₀ t₁))) ∧
+    (∫ z, (fun z => ∑ i : Fin 3, u z i * timePartial (fun y => φ y i) z) z ∂(volume.restrict
+      (spaceTimeSet (Set.univ : Set Vec3) (Ioo t₀ t₁)))) =
+      -(∫ z, (fun z => ∑ i : Fin 3, Dtu z i * φ z i) z ∂(volume.restrict (spaceTimeSet (Set.univ
+        : Set Vec3) (Ioo t₀ t₁)))) ∧
+    (∫ z, (fun z => ∑ i : Fin 3, ∑ j : Fin 3,
+        Du z i j * spatialPartial (fun y => φ y i) j z) z ∂(volume.restrict (spaceTimeSet
+          (Set.univ : Set Vec3) (Ioo t₀ t₁)))) =
+      -(∫ z, (fun z => ∑ i : Fin 3, ∑ j : Fin 3, D2u z i j j * φ z i) z ∂(volume.restrict
+        (spaceTimeSet (Set.univ : Set Vec3) (Ioo t₀ t₁)))) := by
   let μ : Measure ParabolicPoint :=
     volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo t₀ t₁))
   have hu (i : Fin 3) : MemLp (fun z => u z i) 2 μ :=
@@ -201,14 +230,6 @@ theorem lps_strong_solution_full_weak_equation_D2
       MemLp (fun z => spatialPartial (fun y => φ y i) j z) 2 μ :=
     (lps_spaceTimeTest_spatial_memLp_two (hcomponent i).1
       (hcomponent i).2.1 (Ioo t₀ t₁)).2 j
-  have hφdivL2 : MemLp
-      (fun z => ∑ i : Fin 3, spatialPartial (fun y => φ y i) i z) 2 μ := by
-    simpa only [Finset.sum_attach] using
-      (memLp_finsetSum (Finset.univ : Finset (Fin 3))
-        (fun i _ => hφspaceL2 i i))
-  have hpressureTerm : Integrable
-      (fun z => p z * ∑ i : Fin 3, spatialPartial (fun y => φ y i) i z) μ :=
-    hpressure.integrable_mul hφdivL2
   have htimeIBP (i : Fin 3) :=
     (hderivs.2.2.2.2 (fun z => φ z i) (hcomponent i)).2.2 i
   have hspaceIBP (i j : Fin 3) :=
@@ -225,21 +246,6 @@ theorem lps_strong_solution_full_weak_equation_D2
   have hdiffTarget (i j : Fin 3) : Integrable
       (fun z => D2u z i j j * φ z i) μ :=
     (hD2 i j j).integrable_mul (hφL2 i)
-  have hconvTerm (i j : Fin 3) : Integrable
-      (fun z => u z i * u z j * spatialPartial (fun y => φ y i) j z) μ := by
-    have hprod : Integrable (fun z => u z i * u z j) μ :=
-      (hu i).integrable_mul (hu j)
-    have hpartialCont : Continuous
-        (fun z => spatialPartial (fun y => φ y i) j z) :=
-      (CKN.spatialPartial_contDiff (hcomponent i).1 j).continuous
-    have hpartialCpt : HasCompactSupport
-        (fun z => spatialPartial (fun y => φ y i) j z) :=
-      CKN.hasCompactSupport_spatialPartial (hcomponent i).2.1 j
-    obtain ⟨C, hC⟩ := lps_continuous_compact_support_bounded_spaceTime
-      hpartialCont hpartialCpt
-    have hmul := hprod.mul_bdd (hφspaceL2 i j).aestronglyMeasurable
-      (ae_of_all _ hC)
-    exact hmul.congr (ae_of_all _ fun z => by ring)
   have htimeIBPμ (i : Fin 3) :
       (∫ z, u z i * timePartial (fun y => φ y i) z ∂μ) =
         -(∫ z, Dtu z i * φ z i ∂μ) := by
@@ -298,10 +304,6 @@ theorem lps_strong_solution_full_weak_equation_D2
               intro i hi
               exact integral_finsetSum _ (fun j _ => hdiffTarget i j)
         exact congrArg Neg.neg hdouble.symm
-  have hconvSum : Integrable
-      (fun z => ∑ i : Fin 3, ∑ j : Fin 3,
-        u z i * u z j * spatialPartial (fun y => φ y i) j z) μ :=
-    integrable_finsetSum _ fun i _ => integrable_finsetSum _ fun j _ => hconvTerm i j
   have htimeS : Integrable
       (fun z => ∑ i : Fin 3, u z i * timePartial (fun y => φ y i) z) μ :=
     integrable_finsetSum _ fun i _ => htimeTerm i
@@ -314,148 +316,92 @@ theorem lps_strong_solution_full_weak_equation_D2
   have hdiffT : Integrable
       (fun z => ∑ i : Fin 3, ∑ j : Fin 3, D2u z i j j * φ z i) μ :=
     integrable_finsetSum _ fun i _ => integrable_finsetSum _ fun j _ => hdiffTarget i j
-  have htargetIntegrand : Integrable
-      (fun z => (∑ i : Fin 3, Dtu z i * φ z i
-        - ∑ i : Fin 3, ∑ j : Fin 3,
-          u z i * u z j * spatialPartial (fun y => φ y i) j z)
-        - ∑ i : Fin 3, ∑ j : Fin 3, D2u z i j j * φ z i
-        - p z * ∑ i : Fin 3, spatialPartial (fun y => φ y i) i z) μ := by
-    exact ((htimeT.add hconvSum.neg).add hdiffT.neg).sub hpressureTerm
-  have htimeRewrite : (∫ z, ∑ i : Fin 3, Dtu z i * φ z i ∂μ) =
-      -(∫ z, ∑ i : Fin 3,
-        u z i * timePartial (fun y => φ y i) z ∂μ) := by
-    linarith only [htimeSum]
-  have hdiffRewrite : -(∫ z, ∑ i : Fin 3, ∑ j : Fin 3,
-      D2u z i j j * φ z i ∂μ) =
-      (∫ z, ∑ i : Fin 3, ∑ j : Fin 3,
-        Du z i j * spatialPartial (fun y => φ y i) j z ∂μ) := by
-    linarith only [hdiffSum]
-  have hsplitTB : (∫ z,
-      (∑ i : Fin 3, Dtu z i * φ z i
-        - ∑ i : Fin 3, ∑ j : Fin 3,
-          u z i * u z j * spatialPartial (fun y => φ y i) j z) ∂μ) =
-      (∫ z, ∑ i : Fin 3, Dtu z i * φ z i ∂μ)
-        - ∫ z, ∑ i : Fin 3, ∑ j : Fin 3,
-          u z i * u z j * spatialPartial (fun y => φ y i) j z ∂μ :=
-    integral_sub htimeT hconvSum
-  have hsplitSB : (∫ z,
-      (-(∑ i : Fin 3, u z i * timePartial (fun y => φ y i) z)
-        - ∑ i : Fin 3, ∑ j : Fin 3,
-          u z i * u z j * spatialPartial (fun y => φ y i) j z) ∂μ) =
-      (∫ z, -(∑ i : Fin 3, u z i * timePartial (fun y => φ y i) z) ∂μ)
-        - ∫ z, ∑ i : Fin 3, ∑ j : Fin 3,
-          u z i * u z j * spatialPartial (fun y => φ y i) j z ∂μ :=
-    integral_sub htimeS.neg hconvSum
-  have hconvert : (∫ z,
-      (∑ i : Fin 3, Dtu z i * φ z i
-        - ∑ i : Fin 3, ∑ j : Fin 3,
-          u z i * u z j * spatialPartial (fun y => φ y i) j z)
-        - ∑ i : Fin 3, ∑ j : Fin 3, D2u z i j j * φ z i ∂μ) =
-      ∫ z,
-        (-(∑ i : Fin 3, u z i * timePartial (fun y => φ y i) z)
+  exact ⟨htimeS, htimeT, hdiffS, hdiffT, htimeSum, hdiffSum⟩
+
+private lemma lps_nonlinear_pressure_test_integrals
+    {t₀ t₁ : ℝ} {u : ParabolicPoint → Vec3} {p : ParabolicPoint → ℝ}
+    (huL2 : MemLp u 2 (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo t₀ t₁))))
+    (hpressure : MemLp p 2 (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo t₀ t₁))))
+    (φ : ParabolicPoint → Vec3)
+    (hφ : φ ∈ spaceTimeTestFunction (V := Vec3)
+      (Set.univ : Set Vec3) (Ioo t₀ t₁)) :
+    Integrable (fun z => ∑ i : Fin 3, ∑ j : Fin 3,
+        u z i * u z j * spatialPartial (fun y => φ y i) j z) (volume.restrict (spaceTimeSet
+          (Set.univ : Set Vec3) (Ioo t₀ t₁))) ∧
+    Integrable (fun z => p z * ∑ i : Fin 3, spatialPartial (fun y => φ y i) i z)
+      (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo t₀ t₁))) := by
+  let μ : Measure ParabolicPoint :=
+    volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo t₀ t₁))
+  have hu (i : Fin 3) : MemLp (fun z => u z i) 2 μ :=
+    by simpa only [ContinuousLinearMap.proj_apply, μ] using
+      huL2.continuousLinearMap_comp
+        (ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 3 => ℝ) i)
+  have hcomponent (i : Fin 3) :=
+    CKN.component_mem_spaceTimeTestFunction hφ i
+  have hφspaceL2 (i j : Fin 3) :
+      MemLp (fun z => spatialPartial (fun y => φ y i) j z) 2 μ :=
+    (lps_spaceTimeTest_spatial_memLp_two (hcomponent i).1
+      (hcomponent i).2.1 (Ioo t₀ t₁)).2 j
+  have hφdivL2 : MemLp
+      (fun z => ∑ i : Fin 3, spatialPartial (fun y => φ y i) i z) 2 μ := by
+    simpa only [Finset.sum_attach] using
+      (memLp_finsetSum (Finset.univ : Finset (Fin 3))
+        (fun i _ => hφspaceL2 i i))
+  have hpressureTerm : Integrable
+      (fun z => p z * ∑ i : Fin 3, spatialPartial (fun y => φ y i) i z) μ :=
+    hpressure.integrable_mul hφdivL2
+  have hconvTerm (i j : Fin 3) : Integrable
+      (fun z => u z i * u z j * spatialPartial (fun y => φ y i) j z) μ := by
+    have hprod : Integrable (fun z => u z i * u z j) μ :=
+      (hu i).integrable_mul (hu j)
+    have hpartialCont : Continuous
+        (fun z => spatialPartial (fun y => φ y i) j z) :=
+      (CKN.spatialPartial_contDiff (hcomponent i).1 j).continuous
+    have hpartialCpt : HasCompactSupport
+        (fun z => spatialPartial (fun y => φ y i) j z) :=
+      CKN.hasCompactSupport_spatialPartial (hcomponent i).2.1 j
+    obtain ⟨C, hC⟩ := lps_continuous_compact_support_bounded_spaceTime
+      hpartialCont hpartialCpt
+    have hmul := hprod.mul_bdd (hφspaceL2 i j).aestronglyMeasurable
+      (ae_of_all _ hC)
+    exact hmul.congr (ae_of_all _ fun z => by ring)
+  have hconvSum : Integrable
+      (fun z => ∑ i : Fin 3, ∑ j : Fin 3,
+        u z i * u z j * spatialPartial (fun y => φ y i) j z) μ :=
+    integrable_finsetSum _ fun i _ => integrable_finsetSum _ fun j _ => hconvTerm i j
+  exact ⟨hconvSum, hpressureTerm⟩
+
+/-- Integrating the strong weak equation by parts in time and space gives
+its full pressure-inclusive distribution identity (`prop:lps-smoothing`).
+The time derivative and Laplacian are the specified weak derivatives from
+`IsLpsStrongSolution`. -/
+theorem lps_strong_solution_full_weak_equation_D2
+    {t₀ t₁ : ℝ} {u : ParabolicPoint → Vec3}
+    {Du : ParabolicPoint → Fin 3 → Vec3} {p : ParabolicPoint → ℝ}
+    (hsol : IsLpsStrongSolution t₀ t₁ u Du p)
+    (φ : ParabolicPoint → Vec3)
+    (hφ : φ ∈ spaceTimeTestFunction (V := Vec3)
+      (Set.univ : Set Vec3) (Ioo t₀ t₁)) :
+    ∃ (D2u : ParabolicPoint → Fin 3 → Fin 3 → Vec3)
+      (Dtu : ParabolicPoint → Vec3),
+      HasSpaceTimeWeakDerivs (Set.univ : Set Vec3) (Ioo t₀ t₁)
+        u Du D2u Dtu ∧
+      ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo t₀ t₁),
+        (∑ i : Fin 3, Dtu z i * φ z i
           - ∑ i : Fin 3, ∑ j : Fin 3,
-            u z i * u z j * spatialPartial (fun y => φ y i) j z
-          + ∑ i : Fin 3, ∑ j : Fin 3,
-            Du z i j * spatialPartial (fun y => φ y i) j z) ∂μ := by
-    calc
-      _ = (∫ z,
-          (∑ i : Fin 3, Dtu z i * φ z i
-            - ∑ i : Fin 3, ∑ j : Fin 3,
-              u z i * u z j * spatialPartial (fun y => φ y i) j z) ∂μ)
-          - ∫ z, ∑ i : Fin 3, ∑ j : Fin 3, D2u z i j j * φ z i ∂μ := by
-            exact integral_sub (htimeT.add hconvSum.neg) hdiffT
-      _ = ((∫ z, ∑ i : Fin 3, Dtu z i * φ z i ∂μ)
-          - ∫ z, ∑ i : Fin 3, ∑ j : Fin 3,
-            u z i * u z j * spatialPartial (fun y => φ y i) j z ∂μ)
-          - ∫ z, ∑ i : Fin 3, ∑ j : Fin 3, D2u z i j j * φ z i ∂μ := by
-            exact congrArg
-              (fun r : ℝ => r - ∫ z, ∑ i : Fin 3, ∑ j : Fin 3,
-                D2u z i j j * φ z i ∂μ)
-              hsplitTB
-      _ = (-(∫ z, ∑ i : Fin 3,
-            u z i * timePartial (fun y => φ y i) z ∂μ)
-          - ∫ z, ∑ i : Fin 3, ∑ j : Fin 3,
-            u z i * u z j * spatialPartial (fun y => φ y i) j z ∂μ)
-          + ∫ z, ∑ i : Fin 3, ∑ j : Fin 3,
-            Du z i j * spatialPartial (fun y => φ y i) j z ∂μ := by
-            rw [htimeRewrite, ← hdiffRewrite]
-            ring
-      _ = ∫ z,
-          (-(∑ i : Fin 3, u z i * timePartial (fun y => φ y i) z)
-            - ∑ i : Fin 3, ∑ j : Fin 3,
               u z i * u z j * spatialPartial (fun y => φ y i) j z
-            + ∑ i : Fin 3, ∑ j : Fin 3,
-              Du z i j * spatialPartial (fun y => φ y i) j z) ∂μ := by
-            symm
-            calc
-              _ = ∫ z,
-                  (-(∑ i : Fin 3, u z i * timePartial (fun y => φ y i) z)
-                    - ∑ i : Fin 3, ∑ j : Fin 3,
-                      u z i * u z j * spatialPartial (fun y => φ y i) j z) ∂μ
-                  + ∫ z, ∑ i : Fin 3, ∑ j : Fin 3,
-                    Du z i j * spatialPartial (fun y => φ y i) j z ∂μ := by
-                    exact integral_add (htimeS.neg.add hconvSum.neg) hdiffS
-              _ = ((∫ z, -(∑ i : Fin 3,
-                    u z i * timePartial (fun y => φ y i) z) ∂μ)
-                  - ∫ z, ∑ i : Fin 3, ∑ j : Fin 3,
-                    u z i * u z j * spatialPartial (fun y => φ y i) j z ∂μ)
-                  + ∫ z, ∑ i : Fin 3, ∑ j : Fin 3,
-                    Du z i j * spatialPartial (fun y => φ y i) j z ∂μ := by
-                    exact congrArg
-                      (fun r : ℝ => r + ∫ z, ∑ i : Fin 3, ∑ j : Fin 3,
-                        Du z i j * spatialPartial (fun y => φ y i) j z ∂μ)
-                      hsplitSB
-              _ = (-(∫ z, ∑ i : Fin 3,
-                    u z i * timePartial (fun y => φ y i) z ∂μ)
-                  - ∫ z, ∑ i : Fin 3, ∑ j : Fin 3,
-                    u z i * u z j * spatialPartial (fun y => φ y i) j z ∂μ)
-                  + ∫ z, ∑ i : Fin 3, ∑ j : Fin 3,
-                    Du z i j * spatialPartial (fun y => φ y i) j z ∂μ := by
-                    exact congrArg
-                      (fun r : ℝ => (r - ∫ z, ∑ i : Fin 3, ∑ j : Fin 3,
-                        u z i * u z j * spatialPartial (fun y => φ y i) j z ∂μ)
-                        + ∫ z, ∑ i : Fin 3, ∑ j : Fin 3,
-                          Du z i j * spatialPartial (fun y => φ y i) j z ∂μ)
-                      (integral_neg
-                        (fun z => ∑ i : Fin 3, u z i * timePartial (fun y => φ y i) z))
-  have htargetBase : Integrable
-      (fun z => (∑ i : Fin 3, Dtu z i * φ z i
-        - ∑ i : Fin 3, ∑ j : Fin 3,
-          u z i * u z j * spatialPartial (fun y => φ y i) j z)
-        - ∑ i : Fin 3, ∑ j : Fin 3, D2u z i j j * φ z i) μ :=
-    (htimeT.add hconvSum.neg).sub hdiffT
-  have hweakBase : Integrable
-      (fun z => -(∑ i : Fin 3, u z i * timePartial (fun y => φ y i) z)
-        - ∑ i : Fin 3, ∑ j : Fin 3,
-          u z i * u z j * spatialPartial (fun y => φ y i) j z
-        + ∑ i : Fin 3, ∑ j : Fin 3,
-          Du z i j * spatialPartial (fun y => φ y i) j z) μ :=
-    (htimeS.neg.add hconvSum.neg).add hdiffS
-  have hconvertPressure : (∫ z,
-      (∑ i : Fin 3, Dtu z i * φ z i
-        - ∑ i : Fin 3, ∑ j : Fin 3,
-          u z i * u z j * spatialPartial (fun y => φ y i) j z)
-        - ∑ i : Fin 3, ∑ j : Fin 3, D2u z i j j * φ z i
-        - p z * ∑ i : Fin 3, spatialPartial (fun y => φ y i) i z ∂μ) =
-      ∫ z,
-        (-(∑ i : Fin 3, u z i * timePartial (fun y => φ y i) z)
           - ∑ i : Fin 3, ∑ j : Fin 3,
-            u z i * u z j * spatialPartial (fun y => φ y i) j z
-          + ∑ i : Fin 3, ∑ j : Fin 3,
-            Du z i j * spatialPartial (fun y => φ y i) j z)
-          - p z * ∑ i : Fin 3, spatialPartial (fun y => φ y i) i z ∂μ := by
-    rw [integral_sub htargetBase hpressureTerm,
-      integral_sub hweakBase hpressureTerm, hconvert]
-  have hφtestμ : (∫ z,
-      (-(∑ i : Fin 3, u z i * timePartial (fun y => φ y i) z)
-        - ∑ i : Fin 3, ∑ j : Fin 3,
-          u z i * u z j * spatialPartial (fun y => φ y i) j z
-        + ∑ i : Fin 3, ∑ j : Fin 3,
-          Du z i j * spatialPartial (fun y => φ y i) j z
-        - p z * ∑ i : Fin 3, spatialPartial (fun y => φ y i) i z) ∂μ) = 0 := by
-    simpa [μ] using hweak φ hφ
+              D2u z i j j * φ z i
+          - p z * ∑ i : Fin 3, spatialPartial (fun y => φ y i) i z) = 0 := by
+  obtain ⟨hinterval, hslice, hcontinuous, hregularity, hpressure, hweak⟩ := hsol
+  obtain ⟨D2u, Dtu, hderivs, huL2, hDuL2, hD2uL2, hDtuL2⟩ := hregularity
+  obtain ⟨htimeS, htimeT, hdiffS, hdiffT, htimeSum, hdiffSum⟩ :=
+    lps_weak_derivative_test_integrals hderivs huL2 hDuL2 hD2uL2 hDtuL2 φ hφ
+  obtain ⟨hconvSum, hpressureTerm⟩ :=
+    lps_nonlinear_pressure_test_integrals huL2 hpressure φ hφ
   refine ⟨D2u, Dtu, hderivs, ?_⟩
-  exact hconvertPressure.trans hφtestμ
+  exact lps_integral_weak_derivative_transfer htimeS htimeT hconvSum hdiffS hdiffT
+    hpressureTerm htimeSum hdiffSum (hweak φ hφ)
 
 /-- The complex Leray multiplier on frequency-space `L²` is linear. -/
 @[expose] def lerayFourierMultiplierLinear :
@@ -681,7 +627,7 @@ theorem realLerayProjection_orderedL2_energy_le
 
 /-- The finite product of spatial `L²` slots through ordered derivative
 degree `m`. -/
-@[expose] abbrev OrderedSpatialL2Family (m : ℕ) :=
+abbrev OrderedSpatialL2Family (m : ℕ) :=
   PiLp 2 (fun _ : {α : List (Fin 3) // α ∈ sobolevWords m} => RealVectorL2)
 
 /-- Apply the Leray multiplier in each ordered spatial `L²` slot through

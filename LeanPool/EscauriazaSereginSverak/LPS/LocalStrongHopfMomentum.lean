@@ -51,10 +51,12 @@ theorem lps_shift_momentum {t₀ T : ℝ} {u : ParabolicPoint → Vec3}
     intro z
     exact Prod.ext rfl (by simp [lpsShift])
   have hdiv₀ : ∀ z : ParabolicPoint,
-      ∑ i : Fin 3, spatialPartial (fun y => (fun y : Vec3 × ℝ => φ (y.1, y.2 - t₀)) y i) i z = 0 := by
+      ∑ i : Fin 3, spatialPartial (fun y => (fun y : Vec3 × ℝ => φ (y.1, y.2 - t₀)) y i) i z = 0
+        := by
     intro z
     have := hdiv (z.1, z.2 - t₀)
-    have e : ∀ i : Fin 3, spatialPartial (fun y => (fun y : Vec3 × ℝ => φ (y.1, y.2 - t₀)) y i) i z =
+    have e : ∀ i : Fin 3, spatialPartial (fun y => (fun y : Vec3 × ℝ => φ (y.1, y.2 - t₀)) y i)
+      i z =
         spatialPartial (fun y => φ y i) i (z.1, z.2 - t₀) := by
       intro i
       have h := lps_shift_spatialPartial t₀ (fun y => φ y i) i (z.1, z.2 - t₀)

@@ -11,6 +11,14 @@ public import LeanPool.CaffarelliKohnNirenberg.Foundation.Parabolic.Vec3Norm
 public import Mathlib.MeasureTheory.Function.L1Space.Integrable
 public import Mathlib.Analysis.MeanInequalities
 
+/-!
+# Endpoint Trilinear
+
+The endpoint (`s = ∞`) spatial Hölder--Young estimate. The velocity field
+`v` is controlled in spatial `L∞`; the gradient term is the Frobenius norm of
+the explicit slice gradient `Du` (`lem:lps-comparison`).
+-/
+
 public section
 
 open MeasureTheory Set Filter
@@ -111,10 +119,10 @@ theorem lps_slice_trilinear_bound_infinite
       hu2.aestronglyMeasurable
   have hU2 : MemLp U 2 volume := by
     apply MemLp.of_le_mul (hu2.norm) hUmeas
-    filter_upwards [] with x
-    rw [Real.norm_eq_abs, abs_of_nonneg (vec3EuclideanNorm_nonneg _),
-      Real.norm_eq_abs, abs_of_nonneg (norm_nonneg _)]
-    exact vec3EuclideanNorm_le_sqrt_three_mul_norm (u x)
+    · filter_upwards [] with x
+      rw [Real.norm_eq_abs, abs_of_nonneg (vec3EuclideanNorm_nonneg _),
+        Real.norm_eq_abs, abs_of_nonneg (norm_nonneg _)]
+      exact vec3EuclideanNorm_le_sqrt_three_mul_norm (u x)
   have hG2 : MemLp G 2 volume := lps_endpoint_gradient_norm_memLp hDuMeas hDuEntry2
   have hVmeas : AEStronglyMeasurable V volume :=
     CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.comp_aestronglyMeasurable

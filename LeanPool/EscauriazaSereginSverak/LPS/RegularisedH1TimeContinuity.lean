@@ -29,7 +29,10 @@ section
 variable (ρ : CKN.Leray.RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
   (b : Vec3 → Vec3) (hb : CKN.IsInJ b)
 
-/-- Every ordered spatial derivative of the regularized velocity is `L²`-continuous in time at positive times. -/
+/--
+Every ordered spatial derivative of the regularized velocity is `L²`-continuous in time at
+positive times.
+-/
 theorem lps_regR12_word_path_continuousAt {a : ℝ} (ha : 0 < a) (i : Fin 3) (α : List (Fin 3)) :
     ContinuousAt (lpsPath (fun s x => wordDeriv α (fun y => lpsRegU ρ ε hε b hb (y, s) i) x)
       (fun s hs => lps_regR12_slice_memLp ρ ε hε b hb s hs i α)) a := by
@@ -45,7 +48,10 @@ theorem lps_regR12_kernel_memLp :
   obtain ⟨hsm, hcpt, -, -⟩ := lps_regUniformMollifierKernel_properties ρ ε hε
   exact hsm.continuous.memLp_of_hasCompactSupport hcpt
 
-/-- The mollified transport velocity is the convolution of the velocity slice with the mollifier kernel. -/
+/--
+The mollified transport velocity is the convolution of the velocity slice with the mollifier
+kernel.
+-/
 theorem lps_regR12_V_eq_conv {t : ℝ} (ht : 0 ≤ t) (x : Vec3) (k : Fin 3) :
     lpsRegV ρ ε hε b hb (x, t) k =
       convolution (CKN.Leray.regUniformMollifierKernel ρ ε hε)
@@ -54,7 +60,10 @@ theorem lps_regR12_V_eq_conv {t : ℝ} (ht : 0 ≤ t) (x : Vec3) (k : Fin 3) :
   lps_regUniformMollifiedVelocity_component_convolution ρ ε hε _ t
     (lps_regR12Velocity_slice_isInJ ρ ε hε b hb t ht).1 x k
 
-/-- The sup-norm distance of the mollified transport velocity at two times is bounded by the kernel's `L²` norm times the `L²` distance of the velocity slices. -/
+/--
+The sup-norm distance of the mollified transport velocity at two times is bounded by the
+kernel's `L²` norm times the `L²` distance of the velocity slices.
+-/
 theorem lps_regR12_V_diff_abs_le {r a : ℝ} (hr : 0 ≤ r) (ha : 0 ≤ a) (x : Vec3) (k : Fin 3) :
     |lpsRegV ρ ε hε b hb (x, r) k - lpsRegV ρ ε hε b hb (x, a) k| ≤
       Real.sqrt (∫ y, CKN.Leray.regUniformMollifierKernel ρ ε hε y ^ 2) *
@@ -64,7 +73,10 @@ theorem lps_regR12_V_diff_abs_le {r a : ℝ} (hr : 0 ≤ r) (ha : 0 ≤ a) (x : 
     (lps_regR12_slice_memLp ρ ε hε b hb r hr k [])
     (lps_regR12_slice_memLp ρ ε hε b hb a ha k []) x
 
-/-- The mollified transport velocity is bounded by the kernel's `L²` norm times the `L²` norm of the velocity slice. -/
+/--
+The mollified transport velocity is bounded by the kernel's `L²` norm times the `L²` norm of the
+velocity slice.
+-/
 theorem lps_regR12_V_abs_le {t : ℝ} (ht : 0 ≤ t) (x : Vec3) (k : Fin 3) :
     |lpsRegV ρ ε hε b hb (x, t) k| ≤
       Real.sqrt (∫ y, CKN.Leray.regUniformMollifierKernel ρ ε hε y ^ 2) *
@@ -119,7 +131,8 @@ theorem lps_regR12_transportTerm_continuousAt {a : ℝ} (ha : 0 < a) (k i : Fin 
   have hpos : ∀ᶠ r in 𝓝 a, 0 < r := lt_mem_nhds ha
   have hM : ∀ᶠ r in 𝓝 a, ∀ x, |lpsRegV ρ ε hε b hb (x, r) k| ≤
       κ2 * Real.sqrt (∫ y, lpsRegU ρ ε hε b hb (y, a) k ^ 2) + 1 := by
-    filter_upwards [hpos, hνt.eventually (gt_mem_nhds (show (0 : ℝ) < 1 by norm_num))] with r hr hνr x
+    filter_upwards [hpos, hνt.eventually (gt_mem_nhds (show (0 : ℝ) < 1 by norm_num))] with r hr
+      hνr x
     have h1 := lps_regR12_V_diff_abs_le ρ ε hε b hb hr.le ha.le x k
     have h2 := lps_regR12_V_abs_le ρ ε hε b hb ha.le x k
     have h3 : |lpsRegV ρ ε hε b hb (x, r) k| ≤
@@ -131,10 +144,12 @@ theorem lps_regR12_transportTerm_continuousAt {a : ℝ} (ha : 0 < a) (k i : Fin 
         _ ≤ _ := abs_add_le _ _
     have h4 : |lpsRegV ρ ε hε b hb (x, r) k - lpsRegV ρ ε hε b hb (x, a) k| ≤ ν r := h1
     linarith only [h2, h3, h4, hνr]
-  have hAν : ∀ᶠ r in 𝓝 a, ∀ x, |lpsRegV ρ ε hε b hb (x, r) k - lpsRegV ρ ε hε b hb (x, a) k| ≤ ν r := by
+  have hAν : ∀ᶠ r in 𝓝 a, ∀ x, |lpsRegV ρ ε hε b hb (x, r) k - lpsRegV ρ ε hε b hb (x, a) k| ≤ ν
+    r := by
     filter_upwards [hpos] with r hr x
     exact lps_regR12_V_diff_abs_le ρ ε hε b hb hr.le ha.le x k
-  have hBmem : ∀ᶠ r in 𝓝 a, MemLp (spatialDeriv (fun y => lpsRegU ρ ε hε b hb (y, r) i) k) 2 volume := by
+  have hBmem : ∀ᶠ r in 𝓝 a, MemLp (spatialDeriv (fun y => lpsRegU ρ ε hε b hb (y, r) i) k) 2
+    volume := by
     filter_upwards [hpos] with r hr
     exact lps_regR12_slice_memLp ρ ε hε b hb r hr.le i [k]
   exact lps_sq_tendsto_mul (A := fun r x => lpsRegV ρ ε hε b hb (x, r) k)
@@ -194,7 +209,10 @@ theorem lps_regR12_transport_path_continuousAt {a : ℝ} (ha : 0 < a) (i : Fin 3
   rw [h]
   exact tendsto_finsetSum _ fun k _ => lps_regR12_transportTerm_continuousAt ρ ε hε b hb ha k i
 
-/-- The pressure-free momentum right-hand side is `L²`-continuous in time at positive times (`lem:lps-regularized-Hk-start`). -/
+/--
+The pressure-free momentum right-hand side is `L²`-continuous in time at positive times
+(`lem:lps-regularized-Hk-start`).
+-/
 theorem lps_regR12_R_path_continuousAt {a : ℝ} (ha : 0 < a) (i : Fin 3) :
     ContinuousAt (lpsPath (lpsRegR ρ ε hε b hb i)
       (fun _ hs => lps_regR12_R_memLp ρ ε hε b hb hs i)) a := by

@@ -212,7 +212,8 @@ theorem lps_towerCurve_integral {Dtu : ParabolicPoint → Vec3}
   intro φ hφ hφc
   have hφ2 : MemLp φ 2 volume := lpsLeray_memLp_test hφ hφc
   have hSi : ContinuousOn
-      (fun τ => lpsSlotCLM (n + 1) [] (lpsNSMap n (lpsTowerCurve Zm hfam (n + 2) τ) i)) (uIcc s t) :=
+      (fun τ => lpsSlotCLM (n + 1) [] (lpsNSMap n (lpsTowerCurve Zm hfam (n + 2) τ) i)) (uIcc s
+        t) :=
     (lpsSlotCLM (n + 1) []).continuous.comp_continuousOn hNi
   rw [← lpsPairCLM_apply hφ2, ← lpsPairCLM_apply hφ2,
     ← (lpsPairCLM φ hφ2).intervalIntegral_comp_comm hSi.intervalIntegrable, map_sub, map_sub,

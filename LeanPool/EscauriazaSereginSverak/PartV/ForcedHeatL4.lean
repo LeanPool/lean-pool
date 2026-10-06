@@ -238,7 +238,8 @@ theorem response_L4_estimate {g : Fin 3 → Fin 3 → Vec3 × ℝ → ℝ}
     convert h using 2
     norm_num
   have hq53int : Integrable (fun p => q p ^ (5 / 3 : ℝ)) μ :=
-    (h103int.const_mul _).mono' ((hqc.rpow_const fun _ => Or.inr (by norm_num)).aestronglyMeasurable)
+    (h103int.const_mul _).mono' ((hqc.rpow_const fun _ => Or.inr (by
+      norm_num)).aestronglyMeasurable)
       (Eventually.of_forall fun p => by
         rw [Real.norm_eq_abs, abs_of_nonneg (Real.rpow_nonneg (hq0 p) _)]
         exact hq53 p)

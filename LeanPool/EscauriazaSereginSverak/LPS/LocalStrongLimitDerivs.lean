@@ -13,7 +13,8 @@ public import LeanPool.EscauriazaSereginSverak.LPS.LocalStrongRegVelocity
 /-!
 # Space-time weak derivatives of the compactness limit
 
-The compactness limit of the regularized velocities, its gradient, its Hessian, and the weak limit of
+The compactness limit of the regularized velocities, its gradient, its Hessian, and the weak limit
+of
 the time derivatives satisfy the space-time weak derivative relations against smooth compactly
 supported tests (`prop:lps-local-strong`).
 -/

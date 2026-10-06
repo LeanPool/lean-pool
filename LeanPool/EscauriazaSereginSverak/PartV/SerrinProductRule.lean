@@ -34,8 +34,8 @@ private theorem serrin_primitive_ac {T c : ℝ} {f : ℝ → ℝ}
       (fun x => c + ∫ τ in (0 : ℝ)..x, (Ioo 0 T).indicator f τ) 0 t := by
   have hint : Integrable ((Ioo 0 T).indicator f) volume :=
     hf.integrable_indicator measurableSet_Ioo
-  have hac := (hint.intervalIntegrable (a := 0) (b := t)).absolutelyContinuousOnInterval_intervalIntegral
-    (c := 0) (by simp)
+  have hinterval := hint.intervalIntegrable (a := 0) (b := t)
+  have hac := hinterval.absolutelyContinuousOnInterval_intervalIntegral (c := 0) (by simp)
   have hconst : AbsolutelyContinuousOnInterval (fun _ : ℝ => c) 0 t :=
     (LipschitzWith.const c).lipschitzOnWith.absolutelyContinuousOnInterval
   exact hconst.add hac

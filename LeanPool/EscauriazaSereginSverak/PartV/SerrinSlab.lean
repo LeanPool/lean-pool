@@ -219,7 +219,10 @@ theorem serrinWeak_tensor_memLp_one
     MemLp.mul (p := 2) (q := 2) (hu2.eval i) (hu2.eval j)
   exact h
 
-/-- A slab field in `L^q` with `q ≥ 1` is integrable on a compact spatial set times the time interval. -/
+/--
+A slab field in `L^q` with `q ≥ 1` is integrable on a compact spatial set times the time
+interval.
+-/
 theorem serrin_integrable_restrict_of_memLp
     {T : ℝ} {K : Set Vec3} (hK : IsCompact K) {f : ParabolicPoint → ℝ} {q : ℝ≥0∞}
     (hq : 1 ≤ q)

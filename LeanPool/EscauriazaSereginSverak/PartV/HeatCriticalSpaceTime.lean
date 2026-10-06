@@ -11,6 +11,13 @@ public import LeanPool.EscauriazaSereginSverak.PartV.HeatCriticalMeasurable
 public import Mathlib.MeasureTheory.Integral.DominatedConvergence
 public import Mathlib.MeasureTheory.Integral.Prod
 
+/-!
+# Heat Critical Space Time
+
+As the regularization vanishes, the initial regularized entropies converge
+to one third of the cubic integral, as used in `lem:pv-heat-critical`.
+-/
+
 public section
 
 open MeasureTheory Filter Set

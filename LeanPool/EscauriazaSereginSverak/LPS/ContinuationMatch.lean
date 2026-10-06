@@ -81,7 +81,8 @@ theorem lps_strong_gradient_ae_eq_slab {T t₀ t₁ : ℝ} {a : Vec3 → Vec3}
   have ht' : t ∈ Icc t₀ t₁ := ⟨ht.1.le, ht.2.le⟩
   have hUg := lps_strong_solution_slice_weak_gradient hU ht'
   have hDUs := (lps_strong_solution_slice_memLp_two hU ht').2
-  have hcomp : ∀ i : Fin 3, (fun x : Vec3 => DU (x, t) i) =ᵐ[volume] (fun x : Vec3 => Du (x, t) i) := by
+  have hcomp : ∀ i : Fin 3, (fun x : Vec3 => DU (x, t) i) =ᵐ[volume] (fun x : Vec3 => Du (x, t)
+    i) := by
     intro i
     have hUi : (fun x : Vec3 => U (x, t) i) =ᵐ[volume] (fun x : Vec3 => u (x, t) i) := by
       filter_upwards [h1] with x hx
@@ -100,7 +101,8 @@ theorem lps_weak_slice_eq {T t₀ t₁ : ℝ} {a : Vec3 → Vec3}
     (ht₀ : 0 ≤ t₀) (ht₁ : t₁ ≤ T)
     (hae : U =ᵐ[volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo t₀ t₁))] u)
     (w : Vec3 → Vec3) (hw : MemLp w 2 volume) :
-    (∫ x : Vec3, ∑ i : Fin 3, U (x, t₁) i * w x i) = ∫ x : Vec3, ∑ i : Fin 3, u (x, t₁) i * w x i := by
+    (∫ x : Vec3, ∑ i : Fin 3, U (x, t₁) i * w x i) = ∫ x : Vec3, ∑ i : Fin 3, u (x, t₁) i * w x
+      i := by
   have hlt : t₀ < t₁ := hU.1
   set f : ℝ → ℝ := fun t => ∫ x : Vec3, ∑ i : Fin 3, u (x, t) i * w x i with hf
   set g : ℝ → ℝ := fun t => ∫ x : Vec3, ∑ i : Fin 3, U (x, t) i * w x i with hg

@@ -68,7 +68,8 @@ theorem lps_ae_slice_sup_bound_strong :
   refine ⟨K, hK, fun {t₀ T u Du D2u Dtu} hderiv hu hDu hD2u => ?_⟩
   have h := fun i : Fin 3 => hsup (lps_strong_isL2SobolevFamily hderiv hu hDu hD2u i)
   have hall : ∀ᵐ t ∂(volume.restrict (Ioo t₀ T)), ∀ i : Fin 3, ∀ᵐ x ∂(volume : Measure Vec3),
-      (u (x, t) i) ^ 2 ≤ K * ∑ α ∈ sobolevWords 2, ∫ y : Vec3, (lpsStrongFamily u Du D2u i α (y, t)) ^ 2 :=
+      (u (x, t) i) ^ 2 ≤ K * ∑ α ∈ sobolevWords 2, ∫ y : Vec3, (lpsStrongFamily u Du D2u i α (y,
+        t)) ^ 2 :=
     ae_all_iff.mpr h
   filter_upwards [hall] with t ht
   rw [ae_all_iff]

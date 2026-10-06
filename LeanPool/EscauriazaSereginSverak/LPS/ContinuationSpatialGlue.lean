@@ -47,7 +47,8 @@ theorem lps_cutoff_right_integral_tendsto {ν : Measure (Vec3 × ℝ)} {A : Vec3
   · filter_upwards [hlt] with q hq
     have hev : ∀ᶠ ε in 𝓝[>] (0 : ℝ), lpsCutoffRight b ε q.2 = 1 := by
       have hpos : 0 < b - q.2 := by linarith only [hq]
-      have hIoo : Ioo (0 : ℝ) ((b - q.2) / 2) ∈ 𝓝[>] (0 : ℝ) := Ioo_mem_nhdsGT (by linarith only [hpos])
+      have hIoo : Ioo (0 : ℝ) ((b - q.2) / 2) ∈ 𝓝[>] (0 : ℝ) := Ioo_mem_nhdsGT (by linarith only
+        [hpos])
       filter_upwards [hIoo] with ε hε
       exact lpsCutoffRight_eq_one hε.1 (by linarith only [hε.2])
     refine tendsto_const_nhds.congr' ?_
@@ -72,7 +73,8 @@ theorem lps_cutoff_left_integral_tendsto {ν : Measure (Vec3 × ℝ)} {A : Vec3 
   · filter_upwards [hgt] with q hq
     have hev : ∀ᶠ ε in 𝓝[>] (0 : ℝ), lpsCutoffLeft a ε q.2 = 1 := by
       have hpos : 0 < q.2 - a := by linarith only [hq]
-      have hIoo : Ioo (0 : ℝ) ((q.2 - a) / 2) ∈ 𝓝[>] (0 : ℝ) := Ioo_mem_nhdsGT (by linarith only [hpos])
+      have hIoo : Ioo (0 : ℝ) ((q.2 - a) / 2) ∈ 𝓝[>] (0 : ℝ) := Ioo_mem_nhdsGT (by linarith only
+        [hpos])
       filter_upwards [hIoo] with ε hε
       exact lpsCutoffLeft_eq_one hε.1 (by linarith only [hε.2])
     refine tendsto_const_nhds.congr' ?_

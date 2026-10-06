@@ -36,7 +36,7 @@ namespace ESS
     ∀ x, ∑ i : Fin 3, spatialDeriv (fun y => ψ y i) i x = 0}
 
 /-- The `L²` space of vector fields on `ℝ³`. -/
-@[expose] abbrev LpsVecL2 : Type := Lp (Fin 3 → ℝ) 2 (volume : Measure Vec3)
+abbrev LpsVecL2 : Type := Lp (Fin 3 → ℝ) 2 (volume : Measure Vec3)
 
 /-- Countably many smooth compactly supported solenoidal fields approximate
 every element of `J` in `L²`. -/
@@ -82,7 +82,8 @@ theorem lps_exists_countable_solenoidal_dense :
       have h3 : eLpNorm (⇑(fk - f)) 2 volume ≠ ⊤ := Lp.eLpNorm_ne_top _
       calc eLpNorm (⇑(fk - f)) 2 volume = ENNReal.ofReal
             (eLpNorm (⇑(fk - f)) 2 volume).toReal := (ENNReal.ofReal_toReal h3).symm
-        _ < ENNReal.ofReal η.toReal := (ENNReal.ofReal_lt_ofReal_iff (ENNReal.toReal_pos hη0.ne' hηtop)).mpr h2
+        _ < ENNReal.ofReal η.toReal :=
+          (ENNReal.ofReal_lt_ofReal_iff (ENNReal.toReal_pos hη0.ne' hηtop)).mpr h2
         _ = η := ENNReal.ofReal_toReal hηtop
     refine ⟨ψ f, ⟨f, hfc, rfl⟩, ?_⟩
     have hsplit : eLpNorm (fun x => ψ f x - w x) 2 volume ≤
@@ -100,7 +101,8 @@ theorem lps_exists_countable_solenoidal_dense :
     calc eLpNorm (fun x => ψ f x - w x) 2 volume
         ≤ eLpNorm (fun x => aSeq k x - ψ f x) 2 volume +
           eLpNorm (fun x => aSeq k x - w x) 2 volume := hsplit
-      _ < η + η := ENNReal.add_lt_add_of_lt_of_le (ne_top_of_le_ne_top hηtop (hk k le_rfl)) hdiffNorm (hk k le_rfl)
+      _ < η + η := ENNReal.add_lt_add_of_lt_of_le
+        (ne_top_of_le_ne_top hηtop (hk k le_rfl)) hdiffNorm (hk k le_rfl)
       _ ≤ ε / 3 + ε / 3 := add_le_add (min_le_left _ _) (min_le_left _ _)
       _ ≤ ε := by
         rw [← two_mul, mul_comm]
