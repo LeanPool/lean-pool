@@ -31,12 +31,12 @@ theorem tendsto_mollified_component_of_weak_cutoff
     (u : ℕ → (Vec3 × ℝ) → Vec3) (σ : ℕ → ℕ)
     (χ : Vec3 → ℝ)
     (hmem : ∀ n (t : I), MemLp
-      (fun y => χ y • WithLp.toLp 2 (u n (y,t.1)))
+       (fun y => χ y • WithLp.toLp 2 (u n (y, t.1)))
       2 (volume : Measure Vec3))
     (V : I → Lp L2Vec3 2 (volume : Measure Vec3))
     (hweak : ∀ t x, Tendsto
       (fun k => inner ℝ ((hmem (σ k) t).toLp
-        (fun y => χ y • WithLp.toLp 2 (u (σ k) (y,t.1)))) x) atTop
+         (fun y => χ y • WithLp.toLp 2 (u (σ k) (y, t.1)))) x) atTop
       (nhds (inner ℝ (V t) x)))
     (m : ℕ) (x : Vec3) (i : Fin 3) (t : I)
     (hχ : ∀ y, CKN.mollifier (d := 3) (CKN.sliceRadius m)
@@ -73,12 +73,12 @@ theorem eventually_mollified_component_eq_weak_slice
     (u : ℕ → (Vec3 × ℝ) → Vec3) (σ : ℕ → ℕ)
     (χ : Vec3 → ℝ) (hχone : ∀ x ∈ W, χ x = 1)
     (hmem : ∀ n (t : I), MemLp
-      (fun y => χ y • WithLp.toLp 2 (u n (y,t.1)))
+       (fun y => χ y • WithLp.toLp 2 (u n (y, t.1)))
       2 (volume : Measure Vec3))
     (V : I → Lp L2Vec3 2 (volume : Measure Vec3))
     (hweak : ∀ t x, Tendsto
       (fun k => inner ℝ ((hmem (σ k) t).toLp
-        (fun y => χ y • WithLp.toLp 2 (u (σ k) (y,t.1)))) x) atTop
+         (fun y => χ y • WithLp.toLp 2 (u (σ k) (y, t.1)))) x) atTop
       (nhds (inner ℝ (V t) x))) :
     ∀ (t : I) x, x ∈ K → ∀ i : Fin 3,
       ∀ᶠ m : ℕ in atTop,
@@ -120,12 +120,12 @@ theorem compactnessMollifiedLimit_ae_eq_weak_slice
     (u : ℕ → (Vec3 × ℝ) → Vec3) (σ : ℕ → ℕ)
     (χ : Vec3 → ℝ) (hχone : ∀ x ∈ W, χ x = 1)
     (hmem : ∀ n (t : I), MemLp
-      (fun y => χ y • WithLp.toLp 2 (u n (y,t.1)))
+       (fun y => χ y • WithLp.toLp 2 (u n (y, t.1)))
       2 (volume : Measure Vec3))
     (V : I → Lp L2Vec3 2 (volume : Measure Vec3))
     (hweak : ∀ t x, Tendsto
       (fun k => inner ℝ ((hmem (σ k) t).toLp
-        (fun y => χ y • WithLp.toLp 2 (u (σ k) (y,t.1)))) x) atTop
+         (fun y => χ y • WithLp.toLp 2 (u (σ k) (y, t.1)))) x) atTop
       (nhds (inner ℝ (V t) x))) :
     ∀ t : I, ∀ᵐ x ∂(volume.restrict K),
       compactnessMollifiedLimit u σ (x,t.1) = fun i => V t x i := by

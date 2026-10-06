@@ -26,7 +26,8 @@ noncomputable section
 
 namespace CKN.Foundation.Heat
 
-/-- Represents a smooth harmonic function on the support of a cutoff by its Newtonian source and boundary terms. -/
+/-- Represents a smooth harmonic function on the support of a cutoff by its
+Newtonian source and boundary terms. -/
 theorem smooth_harmonic_annular_representation_on_tsupport
     {H : Vec3 → ℝ} (hH : ContDiff ℝ (⊤ : ℕ∞) H)
     {x₀ : Vec3} {ρ : ℝ} (hρ : 0 < ρ)

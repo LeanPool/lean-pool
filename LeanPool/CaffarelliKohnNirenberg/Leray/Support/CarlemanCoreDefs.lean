@@ -11,11 +11,13 @@ public import LeanPool.CaffarelliKohnNirenberg.Statements.TimePartial
 /-!
 # The conjugated heat operator and its commutator density
 
-Scalar forms of the quantities used in the proofs of `prop:carleman-gauss` of the Escauriaza–Seregin–Šverák manuscript
-and `prop:carleman-halfspace` of the Escauriaza–Seregin–Šverák manuscript. For a weight `φ` and a scalar field `v`,
+Scalar forms of the quantities used in the proofs of `prop:carleman-gauss` of
+the Escauriaza–Seregin–Šverák manuscript and `prop:carleman-halfspace` of the
+same manuscript. For a weight `φ` and a scalar field `v`,
 `carlemanConj φ v` is `e^φ L (e^{-φ} v)` with `L = ∂ₜ + Δ`, written as
 `∂ₜv + Δv - 2∇φ·∇v + (|∇φ|² - ∂ₜφ - Δφ) v`, and `carlemanCommutatorDensity φ v`
-is the integrand of the commutator identity `eq:carleman-commutator` of the Escauriaza–Seregin–Šverák manuscript:
+is the integrand of the commutator identity `eq:carleman-commutator` of the
+Escauriaza–Seregin–Šverák manuscript:
 `4t²(φ_{ij} ∂ᵢv ∂ⱼv + φ_{ij} φᵢ φⱼ v²)
   + t² v² (∂ₜ²φ - 2∂ₜ|∇φ|² - Δ²φ) + t|∇v|² - t v² (|∇φ|² - ∂ₜφ)`.
 Here `∂ₜ|∇φ|²` is written as `2 ∑ᵢ φᵢ ∂ₜφᵢ`.

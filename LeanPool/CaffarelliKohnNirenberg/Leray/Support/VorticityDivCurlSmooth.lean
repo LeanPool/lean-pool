@@ -16,7 +16,8 @@ public import Mathlib.Analysis.Calculus.FDeriv.Symmetric
 
 For a smooth vector field on a ball, the square integral of its gradient on a smaller ball is
 controlled by the square integrals of its divergence, of its antisymmetric derivative and of the
-field itself on the larger ball (the smooth case of `lem:local-div-curl` of the Escauriaza–Seregin–Šverák manuscript). For a compactly
+field itself on the larger ball (the smooth case of `lem:local-div-curl` of the
+Escauriaza–Seregin–Šverák manuscript). For a compactly
 supported smooth field the gradient identity
 `∫ |∇W|² = ∫ (div W)² + ½ ∫ Σ (∂ₐW_b - ∂_bWₐ)²` follows from two integrations by parts; a
 cutoff localizes it.

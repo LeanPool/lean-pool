@@ -16,7 +16,8 @@ A function of time with an integrable weak derivative on `(a, τ)`, and with a
 continuous version taking the value `c₀` at `a`, is almost everywhere the
 primitive `c₀ + ∫ₐᵗ G`. The square of such a primitive satisfies the energy
 identity `(c₀ + ∫ₐᵗ G)² = c₀² + ∫ₐᵗ 2 (c₀ + ∫ₐˢ G) G(s) ds`. These are the time
-steps of the energy argument in `lem:localized-vorticity-energy` of the Escauriaza–Seregin–Šverák manuscript.
+steps of the energy argument in `lem:localized-vorticity-energy` of the
+Escauriaza–Seregin–Šverák manuscript.
 -/
 
 public section

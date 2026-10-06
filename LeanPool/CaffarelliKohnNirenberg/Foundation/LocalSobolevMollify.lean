@@ -123,7 +123,8 @@ def localSobolevMollifyCutoff (n : ℕ) : Vec3 → ℝ :=
 
 private theorem localSobolevMollifyScale_pos (n : ℕ) :
     0 < localSobolevMollifyScale n := by
-  simp [localSobolevMollifyScale]
+  simp only [localSobolevMollifyScale, mul_inv_rev, inv_pos, Nat.ofNat_pos,
+    mul_pos_iff_of_pos_right]
   positivity
 
 private theorem localSobolevMollifyScale_le_one (n : ℕ) :
@@ -131,7 +132,7 @@ private theorem localSobolevMollifyScale_le_one (n : ℕ) :
   have hn : (1 : ℝ) ≤ (n : ℝ) + 1 := by
     exact_mod_cast (Nat.succ_le_succ (Nat.zero_le n))
   have hden : 0 < 2 * ((n : ℝ) + 1) := by positivity
-  dsimp [localSobolevMollifyScale]
+  dsimp only [localSobolevMollifyScale]
   exact (inv_le_one₀ hden).2 (by nlinarith only [hn])
 
 private theorem localSobolevMollifyCutoff_contDiff (n : ℕ) :
@@ -168,7 +169,7 @@ private theorem localSobolevMollifyCutoff_one (n : ℕ) {x : Vec3}
         localSobolevMollifyScale n * (2 * ((n : ℝ) + 1)) :=
       mul_le_mul_of_nonneg_left hx (localSobolevMollifyScale_pos n).le
     _ = 1 := by
-      dsimp [localSobolevMollifyScale]
+      dsimp only [localSobolevMollifyScale]
       field_simp
 
 private theorem localSobolevMollifyCutoff_wordDeriv_bound (m : ℕ) :
@@ -458,7 +459,7 @@ private theorem localSobolevMollify_tail_integral_tendsto
     intro x
     by_cases hx : x ∈ localSobolevMollifyTail n
     · simp [F, hx, Real.norm_eq_abs]
-    · simp [F, hx]
+    · simp only [hx, not_false_eq_true, indicator_of_notMem, norm_zero, F]
       exact sq_nonneg (D α x)
   have hpoint (x : Vec3) : Tendsto (fun n => F n x) atTop (𝓝 0) := by
     obtain ⟨N, hN⟩ := exists_nat_ge (vec3EuclideanNorm x)
@@ -609,7 +610,7 @@ private theorem localSobolevMollifyRemainder_deriv_zero (n : ℕ) {x : Vec3}
       have htwice : (n : ℝ) + 1 ≤ 2 * ((n : ℝ) + 1) := by nlinarith only [hn]
       exact hxball.trans htwice)]
     simp
-  · simp [hnil]
+  · simp only [hnil, ↓reduceIte, zero_sub, neg_eq_zero]
     rw [localSobolevMollifyCutoff_deriv_zero n hxball α hnil]
 
 private theorem localSobolevMollify_cutoff_error_tendsto
@@ -729,6 +730,82 @@ private theorem localSobolevMollify_cutoff_error_tendsto
     (fun n => hmem n) (by simpa [err] using hsq)
   simpa [err] using hnorm
 
+private theorem localSobolevMollify_cutoff_uniform_bound
+    {ι : Type*} [Fintype ι] (χ : Vec3 → ℝ)
+    (D0 f : ι → Vec3 → ℝ) (M : ℝ)
+    (hzero : ∀ᵐ x ∂volume, ∀ i, D0 i x = f i x)
+    (hχ : ∀ x, |χ x| ≤ 1)
+    (hM : ∀ᵐ x ∂volume, Real.sqrt (∑ i, f i x ^ 2) ≤ M) :
+    ∀ᵐ x ∂volume, Real.sqrt (∑ i, (χ x * D0 i x) ^ 2) ≤ M := by
+  filter_upwards [hM, hzero] with x hx hfx
+  have hsum : ∑ i, (χ x * D0 i x) ^ 2 = χ x ^ 2 * ∑ i, f i x ^ 2 := by
+    simp only [mul_pow]
+    rw [← Finset.mul_sum]
+    apply congrArg
+    apply Finset.sum_congr rfl
+    intro i hi
+    rw [hfx i]
+  rw [hsum, Real.sqrt_mul (sq_nonneg (χ x)), Real.sqrt_sq_eq_abs]
+  calc
+    |χ x| * Real.sqrt (∑ i, f i x ^ 2) ≤
+        1 * Real.sqrt (∑ i, f i x ^ 2) :=
+      mul_le_mul_of_nonneg_right (hχ x) (Real.sqrt_nonneg _)
+    _ ≤ M := by simpa using hx
+
+private theorem localSobolevMollify_approximation_from_errors
+    {ι : Type*} [Fintype ι] {m : ℕ}
+    (D : List (Fin 3) → ι → Vec3 → ℝ)
+    (cutD : ℕ → ι → List (Fin 3) → Vec3 → ℝ)
+    (g : ℕ → ι → Vec3 → ℝ) (delta : ℕ → ℝ)
+    (hmollError : ∀ n i α, α.length ≤ m →
+      eLpNorm (wordDeriv α (g n i) - cutD n i α) 2 volume ≤
+        ENNReal.ofReal (delta n))
+    (hcutError : ∀ i α, α.length ≤ m →
+      Tendsto (fun n => eLpNorm (D α i - cutD n i α) 2 volume) atTop (𝓝 0))
+    (hdeltaENN : Tendsto (fun n => ENNReal.ofReal (delta n)) atTop (𝓝 0)) :
+    ∀ i α, α.length ≤ m →
+      Tendsto (fun n => eLpNorm (wordDeriv α (g n i) - D α i) 2 volume)
+        atTop (𝓝 0) := by
+  intro i α hα
+  have hcutNeg : Tendsto
+      (fun n => eLpNorm (cutD n i α - D α i) 2 volume) atTop (𝓝 0) := by
+    have heq (n : ℕ) :
+        eLpNorm (cutD n i α - D α i) 2 volume =
+          eLpNorm (D α i - cutD n i α) 2 volume := by
+      calc
+        eLpNorm (cutD n i α - D α i) 2 volume =
+            eLpNorm (-(D α i - cutD n i α)) 2 volume := by
+          apply eLpNorm_congr_ae
+          filter_upwards [] with x
+          change cutD n i α x - D α i x = -(D α i x - cutD n i α x)
+          ring
+        _ = _ := by rw [eLpNorm_neg]
+    exact (hcutError i α hα).congr fun n => (heq n).symm
+  have hupper : Tendsto
+      (fun n => ENNReal.ofReal (delta n) + eLpNorm (cutD n i α - D α i) 2 volume)
+      atTop (𝓝 0) := by
+    simpa using hdeltaENN.add hcutNeg
+  have hbound (n : ℕ) :
+      eLpNorm (wordDeriv α (g n i) - D α i) 2 volume ≤
+        ENNReal.ofReal (delta n) + eLpNorm (cutD n i α - D α i) 2 volume := by
+    have htriangle :
+        eLpNorm (wordDeriv α (g n i) - D α i) 2 volume ≤
+          eLpNorm (wordDeriv α (g n i) - cutD n i α) 2 volume +
+            eLpNorm (cutD n i α - D α i) 2 volume := by
+      calc
+        _ = eLpNorm ((fun x => wordDeriv α (g n i) x - cutD n i α x) +
+            (fun x => cutD n i α x - D α i x)) 2 volume := by
+          apply eLpNorm_congr_ae
+          filter_upwards [] with x
+          change wordDeriv α (g n i) x - D α i x =
+            (wordDeriv α (g n i) x - cutD n i α x) +
+              (cutD n i α x - D α i x)
+          ring
+        _ ≤ _ := eLpNorm_add_le (by norm_num : (1 : ℝ≥0∞) ≤ 2)
+    exact htriangle.trans (add_le_add (hmollError n i α hα) le_rfl)
+  exact tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hupper
+    (Eventually.of_forall fun _ => bot_le) (Eventually.of_forall hbound)
+
 /-- Every finite whole-space Sobolev family has smooth compactly supported
 approximations in all represented derivatives, with the same vector-valued
 essential supremum bound. -/
@@ -779,13 +856,13 @@ theorem sobolevFamily_smooth_approx {ι : Type*} [Fintype ι] {m : ℕ}
       MemLp (cutD n i α) 2 volume := by
     simpa only [Measure.restrict_univ] using (hcut n i).memL2 α hα
   have hepsPos (k : ℕ) : 0 < eps k := by
-    simp [eps]
+    simp only [one_div, inv_pos, eps]
     positivity
   have hepsLim : Tendsto eps atTop (𝓝 0) := by
     change Tendsto (fun k : ℕ => 1 / ((k : ℝ) + 1)) atTop (𝓝 0)
     exact tendsto_one_div_add_atTop_nhds_zero_nat
   have hdeltaPos (n : ℕ) : 0 < delta n := by
-    simp [delta]
+    simp only [one_div, inv_pos, delta]
     positivity
   have hdeltaLim : Tendsto delta atTop (𝓝 0) := by
     change Tendsto (fun n : ℕ => 1 / ((n : ℝ) + 1)) atTop (𝓝 0)
@@ -892,58 +969,22 @@ theorem sobolevFamily_smooth_approx {ι : Type*} [Fintype ι] {m : ℕ}
           (fun β => wordDeriv β (localSobolevMollifyRemainder n)) (D · i) x)
         2 volume) by funext n; rw [heq n]]
     exact herr
-  have happrox (i : ι) (α : List (Fin 3)) (hα : α.length ≤ m) :
-      Tendsto (fun n => eLpNorm (wordDeriv α (g n i) - D α i) 2 volume)
-        atTop (𝓝 0) := by
-    have hcutErr := hcutError i α hα
-    have hcutNeg : Tendsto
-        (fun n => eLpNorm (cutD n i α - D α i) 2 volume) atTop (𝓝 0) := by
-      have heq (n : ℕ) :
-          eLpNorm (cutD n i α - D α i) 2 volume =
-            eLpNorm (D α i - cutD n i α) 2 volume := by
-        calc
-          eLpNorm (cutD n i α - D α i) 2 volume =
-              eLpNorm (-(D α i - cutD n i α)) 2 volume := by
-            apply eLpNorm_congr_ae
-            filter_upwards [] with x
-            change cutD n i α x - D α i x = -(D α i x - cutD n i α x)
-            ring
-          _ = _ := by rw [eLpNorm_neg]
-      exact hcutErr.congr fun n => (heq n).symm
-    have hdeltaENN : Tendsto (fun n => ENNReal.ofReal (delta n)) atTop (𝓝 0) := by
-      simpa using ENNReal.tendsto_ofReal hdeltaLim
-    have hupper : Tendsto
-        (fun n => ENNReal.ofReal (delta n) + eLpNorm (cutD n i α - D α i) 2 volume)
-        atTop (𝓝 0) := by simpa using hdeltaENN.add hcutNeg
-    have hbound (n : ℕ) : eLpNorm (wordDeriv α (g n i) - D α i) 2 volume ≤
-        ENNReal.ofReal (delta n) + eLpNorm (cutD n i α - D α i) 2 volume := by
-      have hfirst : eLpNorm (wordDeriv α (g n i) - cutD n i α) 2 volume ≤
-          ENNReal.ofReal (delta n) := by
-        have hEq : eLpNorm (wordDeriv α (g n i) - cutD n i α) 2 volume =
-            mollErr n (kSel n) (i, α) := by
-          rw [eLpNorm_congr_ae (ae_of_all _ fun x => by rw [hderiv n i α hα])]
-        rw [hEq]
-        have hp : (i, α) ∈ P := by
-          apply Finset.mem_product.mpr
-          exact ⟨Finset.mem_univ i, (mem_sobolevWords).2 hα⟩
-        exact hmollifyBound n (i, α) hp
-      have htriangle :
-          eLpNorm (wordDeriv α (g n i) - D α i) 2 volume ≤
-            eLpNorm (wordDeriv α (g n i) - cutD n i α) 2 volume +
-              eLpNorm (cutD n i α - D α i) 2 volume := by
-        calc
-          _ = eLpNorm ((fun x => wordDeriv α (g n i) x - cutD n i α x) +
-              (fun x => cutD n i α x - D α i x)) 2 volume := by
-            apply eLpNorm_congr_ae
-            filter_upwards [] with x
-            change wordDeriv α (g n i) x - D α i x =
-              (wordDeriv α (g n i) x - cutD n i α x) +
-                (cutD n i α x - D α i x)
-            ring
-          _ ≤ _ := eLpNorm_add_le (by norm_num : (1 : ℝ≥0∞) ≤ 2)
-      exact htriangle.trans (add_le_add hfirst le_rfl)
-    exact tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hupper
-      (Eventually.of_forall fun _ => bot_le) (Eventually.of_forall hbound)
+  have hdeltaENN : Tendsto (fun n => ENNReal.ofReal (delta n)) atTop (𝓝 0) := by
+    simpa using ENNReal.tendsto_ofReal hdeltaLim
+  have hmollError (n : ℕ) (i : ι) (α : List (Fin 3)) (hα : α.length ≤ m) :
+      eLpNorm (wordDeriv α (g n i) - cutD n i α) 2 volume ≤
+        ENNReal.ofReal (delta n) := by
+    have hEq : eLpNorm (wordDeriv α (g n i) - cutD n i α) 2 volume =
+        mollErr n (kSel n) (i, α) := by
+      rw [eLpNorm_congr_ae (ae_of_all _ fun x => by rw [hderiv n i α hα])]
+    rw [hEq]
+    have hp : (i, α) ∈ P := by
+      apply Finset.mem_product.mpr
+      exact ⟨Finset.mem_univ i, (mem_sobolevWords).2 hα⟩
+    exact hmollifyBound n (i, α) hp
+  have happrox (i : ι) (α : List (Fin 3)) (hα : α.length ≤ m) :=
+    localSobolevMollify_approximation_from_errors D cutD g delta
+      (hmollError · · ·) hcutError hdeltaENN i α hα
   have hbaseMem (n : ℕ) :
       MemLp (fun x => WithLp.toLp 2 (fun i => cutBase n i x)) 2 volume := by
     apply MeasureTheory.memLp_piLp_iff.mpr
@@ -957,26 +998,11 @@ theorem sobolevFamily_smooth_approx {ι : Type*} [Fintype ι] {m : ℕ}
   have hbaseBound (n : ℕ) (M : ℝ)
       (hM : ∀ᵐ x ∂volume, Real.sqrt (∑ i, f i x ^ 2) ≤ M) :
       ∀ᵐ x ∂volume, Real.sqrt (∑ i, cutBase n i x ^ 2) ≤ M := by
-    filter_upwards [hM, hDzero] with x hx hzero
-    have hsum : ∑ i, cutBase n i x ^ 2 =
-        χ n x ^ 2 * ∑ i, f i x ^ 2 := by
-      simp only [cutBase]
-      simp_rw [mul_pow]
-      rw [← Finset.mul_sum]
-      congr 1
-      apply Finset.sum_congr rfl
-      intro i hi
-      rw [hzero i]
-    rw [hsum, Real.sqrt_mul (sq_nonneg (χ n x)), Real.sqrt_sq_eq_abs]
-    calc
-      |χ n x| * Real.sqrt (∑ i, f i x ^ 2) ≤
-          1 * Real.sqrt (∑ i, f i x ^ 2) := by
-        apply mul_le_mul_of_nonneg_right _ (Real.sqrt_nonneg _)
-        rw [abs_le]
-        exact ⟨(by norm_num : (-1 : ℝ) ≤ 0).trans
-            (localSobolevMollifyCutoff_nonneg n x),
-          localSobolevMollifyCutoff_le_one n x⟩
-      _ ≤ M := by simpa using hx
+    have hχ (x : Vec3) : |χ n x| ≤ 1 := by
+      rw [abs_of_nonneg (localSobolevMollifyCutoff_nonneg n x)]
+      exact localSobolevMollifyCutoff_le_one n x
+    exact localSobolevMollify_cutoff_uniform_bound (χ n)
+      (fun i x => D [] i x) f M hDzero hχ hM
   refine ⟨g, ?_, ?_, ?_, ?_⟩
   · intro n i
     exact hgSmooth n i
@@ -987,3 +1013,5 @@ theorem sobolevFamily_smooth_approx {ι : Type*} [Fintype ι] {m : ℕ}
     have hnorm := localSobolevMollifyFamily_norm_le (f := cutBase n)
       (hepsFinalPos n) (hbaseMem n) (hbaseBound n M hM) x
     simpa [g, localSobolevMollifyFamily, epsFinal] using hnorm
+
+end CKN

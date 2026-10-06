@@ -11,7 +11,8 @@ public import Mathlib.Analysis.SpecialFunctions.Sqrt
 /-!
 # Scalar bounds for the Gaussian Carleman estimate
 
-These inequalities combine `eq:carleman-I` of the Escauriaza–Seregin–Šverák manuscript with the integrated gradient
+These inequalities combine `eq:carleman-I` of the Escauriaza–Seregin–Šverák
+manuscript with the integrated gradient
 identity and the cross term in `eq:carleman-E` of the Escauriaza–Seregin–Šverák manuscript.
 -/
 

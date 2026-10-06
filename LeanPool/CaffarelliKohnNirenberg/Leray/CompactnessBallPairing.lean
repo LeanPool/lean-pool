@@ -210,12 +210,12 @@ theorem eventually_uniform_vec3_ball_averages
     (u : ℕ → ParabolicPoint → Vec3) (χ : Vec3 → ℝ)
     (hχone : ∀ x ∈ B, χ x = 1)
     (hmem : ∀ n (t : I), MemLp
-      (fun x => χ x • WithLp.toLp 2 (u n (x,t.1)))
+       (fun x => χ x • WithLp.toLp 2 (u n (x, t.1)))
       2 (volume : Measure Vec3))
     (V : I → Lp L2Vec3 2 (volume : Measure Vec3))
     (huniform : ∀ x ε, 0 < ε → ∀ᶠ n in atTop, ∀ t, (ht : t ∈ J) →
       dist (inner ℝ ((hmem n ⟨t, hJI ht⟩).toLp
-        (fun y => χ y • WithLp.toLp 2 (u n (y,t)))) x)
+         (fun y => χ y • WithLp.toLp 2 (u n (y, t)))) x)
         (inner ℝ (V ⟨t, hJI ht⟩) x) < ε) :
     ∀ ε : ℝ, 0 < ε → ∀ᶠ n in atTop, ∀ t, (ht : t ∈ J) →
       vec3EuclideanNorm

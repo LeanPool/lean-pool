@@ -14,8 +14,10 @@ public import Mathlib.MeasureTheory.Function.EssSup
 /-!
 # Integer Sobolev spaces `H^m(U)` on open subsets of `ℝ³`
 
-The local Sobolev space `H^m(U) = W^{m,2}(U)` used in `lem:local-heat-gain` of the Escauriaza–Seregin–Šverák manuscript,
-`lem:local-div-curl` of the Escauriaza–Seregin–Šverák manuscript and `lem:vorticity-products` of the Escauriaza–Seregin–Šverák manuscript. It consists of the functions
+The local Sobolev space `H^m(U) = W^{m,2}(U)` used in
+`lem:local-heat-gain` and `lem:local-div-curl` of the Escauriaza–Seregin–Šverák
+manuscript, and `lem:vorticity-products` of that manuscript. It consists of
+the functions
 in `L²(U)` whose weak partial derivatives through order `m` lie in `L²(U)`.
 
 A derivative of order `k` is indexed by an ordered word `α = [j₁, …, j_k]` of

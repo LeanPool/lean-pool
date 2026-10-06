@@ -49,6 +49,7 @@ theorem lintegral_enorm_sq_le_of_weak_l2_bounded
     (ENNReal.rpow_lt_top_of_nonneg (by norm_num) hB.ne) hsource
   rw [← hpow (Lp.memLp g).aestronglyMeasurable]
   have hsquare := ENNReal.rpow_le_rpow hroot (by norm_num : (0 : ℝ) ≤ 2)
-  simpa only [← ENNReal.rpow_mul, one_div, inv_mul_cancel₀ (by norm_num : (2 : ℝ) ≠ 0), ENNReal.rpow_one] using hsquare
+  simpa only [← ENNReal.rpow_mul, one_div,
+    inv_mul_cancel₀ (by norm_num : (2 : ℝ) ≠ 0), ENNReal.rpow_one] using hsquare
 
 end CKN.Leray

@@ -18,7 +18,8 @@ The test `(y, s) ↦ k(x - y) θ(s)`, built from a smooth compact spatial kernel
 `k` and a smooth compact time test `θ`, is an admissible space-time test on
 `ℝ³ × (a, τ)`. Its time derivative, spatial derivatives and spatial second
 derivatives are again separated. Testing the weak equation with it gives the
-time derivative of the spatial convolution in `lem:localized-vorticity-energy` of the Escauriaza–Seregin–Šverák manuscript.
+time derivative of the spatial convolution in `lem:localized-vorticity-energy`
+of the Escauriaza–Seregin–Šverák manuscript.
 -/
 
 public section

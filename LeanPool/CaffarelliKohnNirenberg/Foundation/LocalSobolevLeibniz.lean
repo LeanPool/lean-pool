@@ -57,10 +57,10 @@ private theorem localSobolev_bounded_mul_memLp {μ : Measure Vec3}
     (ha : AEStronglyMeasurable a μ) (hL : ∀ x, |a x| ≤ L) :
     MemLp (fun x => a x * b x) 2 μ := by
   apply MemLp.of_le_mul hb (ha.mul hb.aestronglyMeasurable)
-  filter_upwards [] with x
-  change |a x * b x| ≤ L * |b x|
-  rw [abs_mul]
-  exact mul_le_mul_of_nonneg_right (hL x) (abs_nonneg (b x))
+  · filter_upwards [] with x
+    change |a x * b x| ≤ L * |b x|
+    rw [abs_mul]
+    exact mul_le_mul_of_nonneg_right (hL x) (abs_nonneg (b x))
 
 private theorem weakPartial_mul_smooth_local {U : Set Vec3}
     {j : Fin 3} {f g χ : Vec3 → ℝ} (hf : MemLp f 2 (volume.restrict U))
@@ -678,3 +678,5 @@ theorem sobolevLeibnizFamily_normSq_le (m : ℕ) :
           rw [hIntQ]
           dsimp [C, c]
           ring
+
+end CKN
