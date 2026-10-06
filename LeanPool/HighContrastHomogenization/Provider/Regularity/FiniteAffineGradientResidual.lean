@@ -93,7 +93,7 @@ theorem normalizedAffineCandidateError_sub_le_add
           cubeBesovScaleWeight 1 Q * cubeLpNorm Q (2 : ℝ≥0∞) r₂ := by
       ring
 
-theorem cubeSolution_weakFluxIntegrable {d : ℕ}
+theorem cubeSolution_weakFluxIntegrable_finiteAffineGradientResidual {d : ℕ}
     {Q : TriadicCube d} {a : Book.Ch02.TriadicCoeffFamily d}
     (u : Book.Ch03.CubeSolution Q a) :
     weakFluxIntegrable (Book.Ch02.cubeDomain Q : Set (Vec d))
@@ -114,8 +114,8 @@ noncomputable def finiteAffineGradientResidual
   let wR := finiteCubeSolutionRestriction a hnm
     (finiteAffineCubeSolution a m e)
   AHarmonicFunction.subOfIntegrable uR wR
-    (cubeSolution_weakFluxIntegrable uR)
-    (cubeSolution_weakFluxIntegrable wR)
+    (cubeSolution_weakFluxIntegrable_finiteAffineGradientResidual uR)
+    (cubeSolution_weakFluxIntegrable_finiteAffineGradientResidual wR)
 
 /-- The residual has the literal value representative `u - w_m(e)`. -/
 @[simp] theorem finiteAffineGradientResidual_toFun
@@ -183,8 +183,8 @@ noncomputable def finiteAffineGradientUpdatedResidual
   let w := finiteCubeSolutionRestriction a hkm
     (finiteAffineCubeSolution a m p)
   AHarmonicFunction.subOfIntegrable v w
-    (cubeSolution_weakFluxIntegrable v)
-    (cubeSolution_weakFluxIntegrable w)
+    (cubeSolution_weakFluxIntegrable_finiteAffineGradientResidual v)
+    (cubeSolution_weakFluxIntegrable_finiteAffineGradientResidual w)
 
 /-- The updated residual has the literal value representative
 `u - w_m(e) - w_m(p)`. -/

@@ -8,6 +8,7 @@ module
 
 public import LeanPool.HighContrastHomogenization.Support.Ambient.CoefficientField
 public import Mathlib.Analysis.Normed.Lp.SmoothApprox
+import Mathlib.Analysis.Calculus.ContDiff.Operations
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 public import Mathlib.MeasureTheory.Function.AEEqFun
 public import Mathlib.MeasureTheory.Function.LpSeminorm.CompareExp
@@ -127,13 +128,13 @@ private theorem isClosed_isEllipticEntry :
     exact isClosed_le (by fun_prop) (by fun_prop)
   exact h₁.inter h₂
 
-private instance instMeasurableSpaceMat : MeasurableSpace (Mat d) :=
+instance instMeasurableSpaceMat : MeasurableSpace (Mat d) :=
   inferInstanceAs (MeasurableSpace (Fin d → Fin d → ℝ))
 
-private instance instBorelSpaceMat : BorelSpace (Mat d) :=
+instance instBorelSpaceMat : BorelSpace (Mat d) :=
   ⟨BorelSpace.measurable_eq (α := Fin d → Fin d → ℝ)⟩
 
-private instance instPseudoMetrizableSpaceMat : TopologicalSpace.PseudoMetrizableSpace (Mat d) :=
+instance instPseudoMetrizableSpaceMat : TopologicalSpace.PseudoMetrizableSpace (Mat d) :=
   inferInstanceAs (TopologicalSpace.PseudoMetrizableSpace (Fin d → Fin d → ℝ))
 
 private theorem measurableSet_isEllipticMatrix :

@@ -235,6 +235,68 @@ theorem moment_diagonal_le_fluctuationHistory (d : ℕ) (hd : 2 ≤ d) (γ : ℝ
   exact (hspectral _ ((Analysis.toFullBlockMat_isHermitian_iff _).mpr ha)).trans
     (mul_le_mul_of_nonneg_left (hpoint a) (by positivity))
 
+private theorem moment_weight_comparison (d A B H x decay recurrenceExp laterExp seed current weight : ℝ)
+    (hd : 0 ≤ d) (hA : 0 ≤ A) (hB : 0 ≤ B) (hH : 0 ≤ H) (hx : 0 ≤ x)
+    (hHone : H ≤ 1) (hdecay_le : decay ≤ 1)
+    (hexp : 0 ≤ recurrenceExp) (hlater : 1 ≤ laterExp)
+    (hseed : 0 ≤ seed) (hcurrent : 0 ≤ current) (hseed_bound : seed ≤ 2 * d * H)
+    (hrecurrence : current ≤ A * decay * recurrenceExp * seed +
+      B * (recurrenceExp - 1))
+    (hexp_mul : recurrenceExp * laterExp = Real.exp x) (hweight_le : weight ≤ 1) :
+    weight * laterExp * current ≤ (2 * d * A + B) * (H + Real.exp x - 1) := by
+  have hlater_nonneg : 0 ≤ laterExp := by linarith
+  have hrecurrence_mul := mul_le_mul_of_nonneg_left hrecurrence hlater_nonneg
+  have hdecay_drop :
+      A * decay * recurrenceExp * seed * laterExp ≤ A * recurrenceExp * seed * laterExp := by
+    have hcoeff : 0 ≤ A * recurrenceExp * seed * laterExp := by positivity
+    calc
+      A * decay * recurrenceExp * seed * laterExp =
+          (A * recurrenceExp * seed * laterExp) * decay := by ring
+      _ ≤ (A * recurrenceExp * seed * laterExp) * 1 :=
+          mul_le_mul_of_nonneg_left hdecay_le hcoeff
+      _ = A * recurrenceExp * seed * laterExp := by ring
+  have hrecurrence_simplified : laterExp * current ≤
+      A * Real.exp x * seed + B * (Real.exp x - laterExp) := by
+    calc
+      laterExp * current ≤
+          A * decay * recurrenceExp * seed * laterExp +
+            B * (recurrenceExp - 1) * laterExp := by
+              simpa [mul_add, mul_assoc, mul_left_comm, mul_comm] using hrecurrence_mul
+      _ ≤ A * recurrenceExp * seed * laterExp +
+            B * (recurrenceExp - 1) * laterExp :=
+              add_le_add hdecay_drop le_rfl
+      _ = A * Real.exp x * seed + B * (Real.exp x - laterExp) := by
+        calc
+          _ = A * (recurrenceExp * laterExp) * seed +
+                B * (recurrenceExp * laterExp - laterExp) := by ring
+          _ = _ := by rw [hexp_mul]
+  have hBterm : B * (Real.exp x - laterExp) ≤ B * (Real.exp x - 1) :=
+    mul_le_mul_of_nonneg_left (by linarith) hB
+  have hseed_term : A * Real.exp x * seed ≤ A * Real.exp x * (2 * d * H) :=
+    mul_le_mul_of_nonneg_left hseed_bound (by positivity)
+  have hexpH : Real.exp x * H ≤ H + Real.exp x - 1 :=
+    exp_mul_le_add_exp_sub_one x H hx hH hHone
+  have hmain : 2 * d * A * (Real.exp x * H) ≤
+      2 * d * A * (H + Real.exp x - 1) :=
+    mul_le_mul_of_nonneg_left hexpH (by positivity)
+  have hbase : laterExp * current ≤
+      (2 * d * A + B) * (H + Real.exp x - 1) := by
+    calc
+      laterExp * current ≤ A * Real.exp x * seed + B * (Real.exp x - laterExp) :=
+        hrecurrence_simplified
+      _ ≤ A * Real.exp x * (2 * d * H) + B * (Real.exp x - 1) :=
+        add_le_add hseed_term hBterm
+      _ = 2 * d * A * (Real.exp x * H) + B * (Real.exp x - 1) := by ring
+      _ ≤ 2 * d * A * (H + Real.exp x - 1) + B * (H + Real.exp x - 1) :=
+        add_le_add hmain (mul_le_mul_of_nonneg_left (by linarith) hB)
+      _ = (2 * d * A + B) * (H + Real.exp x - 1) := by ring
+  calc
+    weight * laterExp * current = weight * (laterExp * current) := by ring
+    _ ≤ 1 * (laterExp * current) := mul_le_mul_of_nonneg_right hweight_le
+      (mul_nonneg hlater_nonneg hcurrent)
+    _ = laterExp * current := by ring
+    _ ≤ (2 * d * A + B) * (H + Real.exp x - 1) := hbase
+
 /-- The new fluctuation terms of the initial advance (`p.fixed.geometry.one.grid.propagation`):
 apply the powered
 recurrence with span `r` at the base generation `n`, seed with
@@ -347,34 +409,6 @@ theorem startup_fluctuation_sum_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
       have h1 : -((bigQ d γ : ℝ) * (d : ℝ) / 2) ≤ 0 := neg_nonpos.mpr (by positivity)
       have h2 : (0 : ℝ) ≤ (r : ℝ) := by exact_mod_cast (by omega : (0 : ℤ) ≤ r)
       exact mul_nonpos_of_nonpos_of_nonneg h1 h2
-    have hjbound : (∫ a, absSchattenNorm (bigQ d γ : ℝ)
-        (normalizedFluctuationSelf P q j a) ^ bigQ d γ ∂P) ≤
-        A * Real.exp ((bigQ d γ : ℝ) * detIncrement P q n j) *
-          (∫ a, absSchattenNorm (bigQ d γ : ℝ)
-            (normalizedFluctuationSelf P q n a) ^ bigQ d γ ∂P) +
-        B * (Real.exp ((bigQ d γ : ℝ) * detIncrement P q n j) - 1) := by
-      have h1 : A * (3 : ℝ) ^ (-((bigQ d γ : ℝ) * (d : ℝ) / 2) * (r : ℝ)) *
-          Real.exp ((bigQ d γ : ℝ) * detIncrement P q n j) *
-          (∫ a, absSchattenNorm (bigQ d γ : ℝ)
-            (normalizedFluctuationSelf P q n a) ^ bigQ d γ ∂P) ≤
-          A * Real.exp ((bigQ d γ : ℝ) * detIncrement P q n j) *
-          (∫ a, absSchattenNorm (bigQ d γ : ℝ)
-            (normalizedFluctuationSelf P q n a) ^ bigQ d γ ∂P) := by
-        apply mul_le_mul_of_nonneg_right _ (hmom n)
-        calc A * (3 : ℝ) ^ (-((bigQ d γ : ℝ) * (d : ℝ) / 2) * (r : ℝ)) *
-              Real.exp ((bigQ d γ : ℝ) * detIncrement P q n j)
-            ≤ A * 1 * Real.exp ((bigQ d γ : ℝ) * detIncrement P q n j) := by
-              apply mul_le_mul_of_nonneg_right _ (Real.exp_nonneg _)
-              exact mul_le_mul_of_nonneg_left hdrop hA0
-          _ = A * Real.exp ((bigQ d γ : ℝ) * detIncrement P q n j) := by ring
-      calc (∫ a, absSchattenNorm (bigQ d γ : ℝ)
-            (normalizedFluctuationSelf P q j a) ^ bigQ d γ ∂P)
-          ≤ A * (3 : ℝ) ^ (-((bigQ d γ : ℝ) * (d : ℝ) / 2) * (r : ℝ)) *
-              Real.exp ((bigQ d γ : ℝ) * detIncrement P q n j) *
-              (∫ a, absSchattenNorm (bigQ d γ : ℝ)
-                (normalizedFluctuationSelf P q n a) ^ bigQ d γ ∂P) +
-            B * (Real.exp ((bigQ d γ : ℝ) * detIncrement P q n j) - 1) := hstep
-        _ ≤ _ := add_le_add h1 le_rfl
     set e2 : ℝ := Real.exp ((bigQ d γ : ℝ) * detIncrement P q j (n + L)) with he2def
     have he2_1 : 1 ≤ e2 := by
       rw [he2def]
@@ -382,56 +416,14 @@ theorem startup_fluctuation_sum_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
       apply mul_nonneg (Nat.cast_nonneg _)
       exact Annealed.logDetLoss_nonneg d hd P γ E Ψ K S hstat hdag jStar hjStar metric hmetric
         j (n + L) hpj hjnL
-    have he2_0 : 0 ≤ e2 := by linarith only [he2_1]
-    have hmul : e2 * (∫ a, absSchattenNorm (bigQ d γ : ℝ)
-        (normalizedFluctuationSelf P q j a) ^ bigQ d γ ∂P) ≤
-        e2 * (A * Real.exp ((bigQ d γ : ℝ) * detIncrement P q n j) *
-          (∫ a, absSchattenNorm (bigQ d γ : ℝ)
-            (normalizedFluctuationSelf P q n a) ^ bigQ d γ ∂P) +
-          B * (Real.exp ((bigQ d γ : ℝ) * detIncrement P q n j) - 1)) :=
-      mul_le_mul_of_nonneg_left hjbound he2_0
     have hadd : detIncrement P q n j + detIncrement P q j (n + L) = detIncrement P q n (n + L) :=
       logDetLoss_add P q n j (n + L)
     have hexp_mul : Real.exp ((bigQ d γ : ℝ) * detIncrement P q n j) * e2 = Real.exp x := by
       rw [he2def, hxdef, ← Real.exp_add]
       congr 1
       rw [← mul_add, hadd]
-    have hrhs_eq : e2 * (A * Real.exp ((bigQ d γ : ℝ) * detIncrement P q n j) *
-          (∫ a, absSchattenNorm (bigQ d γ : ℝ)
-            (normalizedFluctuationSelf P q n a) ^ bigQ d γ ∂P) +
-          B * (Real.exp ((bigQ d γ : ℝ) * detIncrement P q n j) - 1)) =
-        A * Real.exp x * (∫ a, absSchattenNorm (bigQ d γ : ℝ)
-            (normalizedFluctuationSelf P q n a) ^ bigQ d γ ∂P) +
-        B * (Real.exp x - e2) := by
-      rw [← hexp_mul]
-      ring
-    rw [hrhs_eq] at hmul
-    have hB_e2 : B * (Real.exp x - e2) ≤ B * (Real.exp x - 1) :=
-      mul_le_mul_of_nonneg_left (by linarith only [he2_1]) hB0
-    have hA_seed : A * Real.exp x * (∫ a, absSchattenNorm (bigQ d γ : ℝ)
-        (normalizedFluctuationSelf P q n a) ^ bigQ d γ ∂P) ≤
-        A * Real.exp x * (2 * (d : ℝ) * H) := by
-      apply mul_le_mul_of_nonneg_left hseed
-      positivity
-    have hexpH_le : Real.exp x * H ≤ H + Real.exp x - 1 :=
-      exp_mul_le_add_exp_sub_one x H hx0 hH0 hH1
-    have hAfinal : 2 * (d : ℝ) * A * (Real.exp x * H) ≤ 2 * (d : ℝ) * A * (H + Real.exp x - 1) := by
-      apply mul_le_mul_of_nonneg_left hexpH_le
-      positivity
-    have hkey : e2 * (∫ a, absSchattenNorm (bigQ d γ : ℝ)
-        (normalizedFluctuationSelf P q j a) ^ bigQ d γ ∂P) ≤
-        (2 * (d : ℝ) * A + B) * (H + Real.exp x - 1) := by
-      calc e2 * (∫ a, absSchattenNorm (bigQ d γ : ℝ)
-            (normalizedFluctuationSelf P q j a) ^ bigQ d γ ∂P)
-          ≤ A * Real.exp x * (∫ a, absSchattenNorm (bigQ d γ : ℝ)
-              (normalizedFluctuationSelf P q n a) ^ bigQ d γ ∂P) +
-            B * (Real.exp x - e2) := hmul
-        _ ≤ A * Real.exp x * (2 * (d : ℝ) * H) + B * (Real.exp x - 1) :=
-            add_le_add hA_seed hB_e2
-        _ = 2 * (d : ℝ) * A * (Real.exp x * H) + B * (Real.exp x - 1) := by ring
-        _ ≤ 2 * (d : ℝ) * A * (H + Real.exp x - 1) + B * (H + Real.exp x - 1) :=
-            add_le_add hAfinal (mul_le_mul_of_nonneg_left (by linarith only [hH0]) hB0)
-        _ = (2 * (d : ℝ) * A + B) * (H + Real.exp x - 1) := by ring
+    have hrecurrenceExp_nonneg :
+        0 ≤ Real.exp ((bigQ d γ : ℝ) * detIncrement P q n j) := Real.exp_nonneg _
     have hw : (3 : ℝ) ^ (-((1 - γ) / 4) * (((n + L : ℤ) : ℝ) - (j : ℝ))) ≤ 1 := by
       apply Real.rpow_le_one_of_one_le_of_nonpos (by norm_num)
       have h1 : -((1 - γ) / 4) ≤ 0 := by linarith only [hγ.2]
@@ -439,24 +431,17 @@ theorem startup_fluctuation_sum_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
         have : (j : ℝ) ≤ ((n + L : ℤ) : ℝ) := by exact_mod_cast hj'.2
         linarith only [this]
       exact mul_nonpos_of_nonpos_of_nonneg h1 h2
-    have hw0 : (0 : ℝ) ≤ (3 : ℝ) ^ (-((1 - γ) / 4) * (((n + L : ℤ) : ℝ) - (j : ℝ))) :=
-      Real.rpow_nonneg (by norm_num) _
-    have he2j0 : 0 ≤ e2 * (∫ a, absSchattenNorm (bigQ d γ : ℝ)
-        (normalizedFluctuationSelf P q j a) ^ bigQ d γ ∂P) := mul_nonneg he2_0 (hmom j)
-    calc (3 : ℝ) ^ (-((1 - γ) / 4) * (((n + L : ℤ) : ℝ) - (j : ℝ))) *
-          Real.exp ((bigQ d γ : ℝ) * detIncrement P q j (n + L)) *
-          (∫ a, absSchattenNorm (bigQ d γ : ℝ)
-              (normalizedFluctuationSelf P q j a) ^ bigQ d γ ∂P)
-        = (3 : ℝ) ^ (-((1 - γ) / 4) * (((n + L : ℤ) : ℝ) - (j : ℝ))) *
-            (e2 * (∫ a, absSchattenNorm (bigQ d γ : ℝ)
-                (normalizedFluctuationSelf P q j a) ^ bigQ d γ ∂P)) := by
-          rw [he2def]; ring
-      _ ≤ 1 * (e2 * (∫ a, absSchattenNorm (bigQ d γ : ℝ)
-              (normalizedFluctuationSelf P q j a) ^ bigQ d γ ∂P)) :=
-          mul_le_mul_of_nonneg_right hw he2j0
-      _ = e2 * (∫ a, absSchattenNorm (bigQ d γ : ℝ)
-              (normalizedFluctuationSelf P q j a) ^ bigQ d γ ∂P) := by ring
-      _ ≤ (2 * (d : ℝ) * A + B) * (H + Real.exp x - 1) := hkey
+    simpa only [he2def] using moment_weight_comparison (d : ℝ) A B H x
+      (3 : ℝ) ^ (-((bigQ d γ : ℝ) * (d : ℝ) / 2) * (r : ℝ))
+      (Real.exp ((bigQ d γ : ℝ) * detIncrement P q n j)) e2
+      (∫ a, absSchattenNorm (bigQ d γ : ℝ)
+        (normalizedFluctuationSelf P q n a) ^ bigQ d γ ∂P)
+      (∫ a, absSchattenNorm (bigQ d γ : ℝ)
+        (normalizedFluctuationSelf P q j a) ^ bigQ d γ ∂P)
+      ((3 : ℝ) ^ (-((1 - γ) / 4) * (((n + L : ℤ) : ℝ) - (j : ℝ))))
+      (by positivity) hA0 hB0 hH0 hx0 hH1
+      hdrop hrecurrenceExp_nonneg he2_1
+      (hmom n) (hmom j) hseed hstep hexp_mul hw
   have hsum := Finset.sum_le_card_nsmul (Finset.Icc (n + 1) (n + L))
     (fun j => (3 : ℝ) ^ (-((1 - γ) / 4) * (((n + L : ℤ) : ℝ) - (j : ℝ))) *
         Real.exp ((bigQ d γ : ℝ) * detIncrement P q j (n + L)) *

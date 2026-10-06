@@ -39,7 +39,7 @@ private theorem sLower_add_beta_pos' {d : ℕ} [NeZero d]
     0 < hP4.sLower + section53CoarseFluctuationBeta hP4 :=
   add_pos hP4.sLower_pos (section53CoarseFluctuationBeta_pos hP4)
 
-theorem sUpper_add_beta_lt_one' {d : ℕ} [NeZero d]
+theorem sUpper_add_beta_lt_one'_scalarPreliminaries {d : ℕ} [NeZero d]
     {P : Ch04.RestrictionCoeffLaw d} (hP4 : QuantitativeCoarseGrainedEllipticity P) :
     hP4.sUpper + section53CoarseFluctuationBeta hP4 < 1 := by
   have hsum := sUpper_add_sLower_add_two_beta_le_one hP4
@@ -48,7 +48,7 @@ theorem sUpper_add_beta_lt_one' {d : ℕ} [NeZero d]
     sLower_add_beta_pos' hP4
   nlinarith
 
-theorem sLower_add_beta_lt_one' {d : ℕ} [NeZero d]
+theorem sLower_add_beta_lt_one'_scalarPreliminaries {d : ℕ} [NeZero d]
     {P : Ch04.RestrictionCoeffLaw d} (hP4 : QuantitativeCoarseGrainedEllipticity P) :
     hP4.sLower + section53CoarseFluctuationBeta hP4 < 1 := by
   have hsum := sUpper_add_sLower_add_two_beta_le_one hP4
@@ -129,7 +129,7 @@ theorem upperShiftedFactorPowerIntegrableAtScale_from_P4
     simpa [E, X, rUpper] using
       Section52.upperPositiveExcessPowIntegrableAtScale_from_P4_twoExponent
         hP hStruct hP4 (sUpper_lt_sUpper_add_beta hP4)
-        (sUpper_add_beta_lt_one' hP4) m
+        (sUpper_add_beta_lt_one'_scalarPreliminaries hP4) m
   simpa [X, rUpper] using
     integrable_pow_of_nonneg_le_const_add_nonneg
       (P := P) (ξ := hP4.xi) (X := X) (E := E)
@@ -177,7 +177,7 @@ theorem lowerShiftedFactorPowerIntegrableAtScale_from_P4
     simpa [E, X, rLower] using
       Section52.lowerPositiveExcessPowIntegrableAtScale_from_P4_twoExponent
         hP hStruct hP4 (sLower_lt_sLower_add_beta hP4)
-        (sLower_add_beta_lt_one' hP4) m
+        (sLower_add_beta_lt_one'_scalarPreliminaries hP4) m
   simpa [X, rLower] using
     integrable_pow_of_nonneg_le_const_add_nonneg
       (P := P) (ξ := hP4.xi) (X := X) (E := E)
@@ -206,10 +206,10 @@ def betaShiftedP4 {d : ℕ} [NeZero d] {P : Ch04.RestrictionCoeffLaw d}
   two_le_dim := hP4.two_le_dim
   sUpper_nonneg :=
     add_nonneg hP4.sUpper_nonneg (section53CoarseFluctuationBeta_nonneg hP4)
-  sUpper_lt_one := sUpper_add_beta_lt_one' hP4
+  sUpper_lt_one := sUpper_add_beta_lt_one'_scalarPreliminaries hP4
   sLower_nonneg :=
     add_nonneg hP4.sLower_nonneg (section53CoarseFluctuationBeta_nonneg hP4)
-  sLower_lt_one := sLower_add_beta_lt_one' hP4
+  sLower_lt_one := sLower_add_beta_lt_one'_scalarPreliminaries hP4
   xi_gt_two_mul_dim := hP4.xi_gt_two_mul_dim
   sum_lt_one := by
     have hsum := sUpper_add_sLower_add_four_beta_le_one hP4

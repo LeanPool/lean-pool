@@ -342,6 +342,54 @@ theorem exists_transport_whitney_drift_comparison (d : ℕ) (hd : 2 ≤ d) (γ :
     (hCwC.trans (le_mul_of_one_le_right hC.le hK₀)) hs'
     (hraw P E Ψ K S hstat hdag jStar hj hsR m mPlus hm hmPlus hratio j terminal htJ L hL hbJ hW hT)
 
+/-- Collect the geometric-series factors and absorb each scalar error coefficient. -/
+private theorem transport_drift_absorption_constants (d : ℕ) (γ K₀ Cw Cn : ℝ)
+    (hγ : γ ∈ Set.Ico (0 : ℝ) 1) (hK₀ : 1 ≤ K₀) (hCw : 0 < Cw) (hCn : 0 < Cn) :
+    let a := (1 - γ) / 8
+    let Ga := 1 / (1 - (3 : ℝ) ^ (-a))
+    let Gb := 1 / (1 - (3 : ℝ) ^ (-(1 - a)))
+    let G₁ := 1 / (1 - (3 : ℝ) ^ (-(1 : ℝ)))
+    let Cd := (8 / 3 : ℝ) * d
+    let Ci := (8 / 3 : ℝ) * d * Cw * G₁
+    let Cs := (8 / 3 : ℝ) * d * (Cw + Cn)
+    let Co := (4 / 3 : ℝ) * (1 + (Cw * K₀) * Gb) * Ga
+    let C := 1 + Cd + Ci + Cs + Co
+    0 < a ∧ a < 1 ∧ a ≤ 1 - γ ∧ 0 ≤ Ga ∧ 0 ≤ Gb ∧ 0 ≤ G₁ ∧
+      0 ≤ Cd ∧ 0 ≤ Ci ∧ 0 ≤ Cs ∧ 0 ≤ Co ∧ 0 < C ∧
+      Cd ≤ C ∧ Ci ≤ C ∧ Cs ≤ C ∧ Co ≤ C := by
+  let a := (1 - γ) / 8
+  let Ga := 1 / (1 - (3 : ℝ) ^ (-a))
+  let Gb := 1 / (1 - (3 : ℝ) ^ (-(1 - a)))
+  let G₁ := 1 / (1 - (3 : ℝ) ^ (-(1 : ℝ)))
+  let Cd := (8 / 3 : ℝ) * d
+  let Ci := (8 / 3 : ℝ) * d * Cw * G₁
+  let Cs := (8 / 3 : ℝ) * d * (Cw + Cn)
+  let Co := (4 / 3 : ℝ) * (1 + (Cw * K₀) * Gb) * Ga
+  let C := 1 + Cd + Ci + Cs + Co
+  have ha : 0 < a := by dsimp only [a]; linarith only [hγ.2]
+  have ha1 : a < 1 := by dsimp only [a]; linarith only [hγ.1]
+  have hGa : 0 ≤ Ga := (one_div_pos.mpr (transport_geometric_Icc a ha 0 0).1).le
+  have hGb : 0 ≤ Gb := (one_div_pos.mpr (transport_geometric_Icc (1 - a) (by linarith only [ha1]) 0 0).1).le
+  have hG₁ : 0 ≤ G₁ := (one_div_pos.mpr (transport_geometric_Icc 1 (by norm_num) 0 0).1).le
+  have hCd : 0 ≤ Cd := by dsimp only [Cd]; exact mul_nonneg (by norm_num) (Nat.cast_nonneg d)
+  have hCi : 0 ≤ Ci := by
+    dsimp only [Ci]
+    exact mul_nonneg (mul_nonneg (mul_nonneg (by norm_num) (Nat.cast_nonneg d)) hCw.le) hG₁
+  have hCs : 0 ≤ Cs := by
+    dsimp only [Cs]
+    exact mul_nonneg (mul_nonneg (by norm_num) (Nat.cast_nonneg d)) (add_nonneg hCw.le hCn.le)
+  have hCo : 0 ≤ Co := by
+    dsimp only [Co]
+    exact mul_nonneg (mul_nonneg (by norm_num)
+      (add_nonneg zero_le_one (mul_nonneg (mul_nonneg hCw.le (zero_le_one.trans hK₀)) hGb))) hGa
+  have hC : 0 < C := by dsimp only [C]; linarith only [hCd, hCi, hCs, hCo]
+  have hCdC : Cd ≤ C := by dsimp only [C]; linarith only [hCi, hCs, hCo]
+  have hCiC : Ci ≤ C := by dsimp only [C]; linarith only [hCd, hCs, hCo]
+  have hCsC : Cs ≤ C := by dsimp only [C]; linarith only [hCd, hCi, hCo]
+  have hCoC : Co ≤ C := by dsimp only [C]; linarith only [hCd, hCi, hCs]
+  have hab : a ≤ 1 - γ := by dsimp only [a]; linarith only [hγ.2]
+  exact ⟨ha, ha1, hab, hGa, hGb, hG₁, hCd, hCi, hCs, hCo, hC, hCdC, hCiC, hCsC, hCoC⟩
+
 /-- The complete printed determinant-drift estimate. The uniform errors use the
 mass-one Abel identity; the source term retains its linear scale factor. -/
 theorem exists_two_grid_drift_comparison (d : ℕ) (hd : 2 ≤ d)
@@ -379,29 +427,8 @@ theorem exists_two_grid_drift_comparison (d : ℕ) (hd : 2 ≤ d)
   let Cs := (8 / 3 : ℝ) * d * (Cw + Cn)
   let Co := (4 / 3 : ℝ) * (1 + (Cw * K₀) * Gb) * Ga
   let C := 1 + Cd + Ci + Cs + Co
-  have ha : 0 < a := by dsimp only [a]; linarith only [hγ.2]
-  have ha1 : a < 1 := by dsimp only [a]; linarith only [hγ.1]
-  have hab : a ≤ 1 - γ := by dsimp only [a]; linarith only [hγ.2]
-  have hGa : 0 ≤ Ga := (one_div_pos.mpr (transport_geometric_Icc a ha 0 0).1).le
-  have hGb : 0 ≤ Gb := (one_div_pos.mpr (transport_geometric_Icc (1 - a) (by linarith only [ha1]) 0 0).1).le
-  have hG₁ : 0 ≤ G₁ := (one_div_pos.mpr (transport_geometric_Icc 1 (by norm_num) 0 0).1).le
-  have hCd : 0 ≤ Cd := by
-    dsimp only [Cd]; exact mul_nonneg (by norm_num) (Nat.cast_nonneg d)
-  have hCi : 0 ≤ Ci := by
-    dsimp only [Ci]
-    exact mul_nonneg (mul_nonneg (mul_nonneg (by norm_num) (Nat.cast_nonneg d)) hCw.le) hG₁
-  have hCs : 0 ≤ Cs := by
-    dsimp only [Cs]
-    exact mul_nonneg (mul_nonneg (by norm_num) (Nat.cast_nonneg d)) (add_nonneg hCw.le hCn.le)
-  have hCo : 0 ≤ Co := by
-    dsimp only [Co]
-    exact mul_nonneg (mul_nonneg (by norm_num)
-      (add_nonneg zero_le_one (mul_nonneg (mul_nonneg hCw.le (zero_le_one.trans hK₀)) hGb))) hGa
-  have hC : 0 < C := by dsimp only [C]; linarith only [hCd, hCi, hCs, hCo]
-  have hCdC : Cd ≤ C := by dsimp only [C]; linarith only [hCi, hCs, hCo]
-  have hCiC : Ci ≤ C := by dsimp only [C]; linarith only [hCd, hCs, hCo]
-  have hCsC : Cs ≤ C := by dsimp only [C]; linarith only [hCd, hCi, hCo]
-  have hCoC : Co ≤ C := by dsimp only [C]; linarith only [hCd, hCi, hCs]
+  obtain ⟨ha, ha1, hab, hGa, hGb, hG₁, hCd, hCi, hCs, hCo, hC, hCdC, hCiC, hCsC, hCoC⟩ :=
+    transport_drift_absorption_constants d γ K₀ Cw Cn hγ hK₀ hCw hCn
   refine ⟨max CwSrc CnSrc, C, hCwSrc.trans_le (le_max_left _ _), hC, ?_⟩
   intro P hP E Ψ K S hstat hdag jStar hj hsrc m mPlus hm hmPlus hratio n hn L hL hwindow δ hδ hlow hup
   have hlog : 0 ≤ Real.logb 3 (2 * K) := (Real.logb_pos (by norm_num)

@@ -37,7 +37,7 @@ open scoped BigOperators ENNReal
 
 noncomputable section
 
-theorem memLp_hilbertify_normalizedCube_of_memVectorL2 {d : ℕ}
+theorem memLp_hilbertify_normalizedCube_of_memVectorL2_localCoarseGrainingDefinitions {d : ℕ}
     {Q : TriadicCube d} {F : Vec d → Vec d}
     (hF : MemVectorL2 (openCubeSet Q) F) :
     MemLp (fun x => HilbertVec.ofVec (F x)) 2 (normalizedCubeMeasure Q) := by
@@ -48,7 +48,7 @@ theorem memLp_hilbertify_normalizedCube_of_memVectorL2 {d : ℕ}
     volume_restrict_cubeSet_eq_volume_restrict_openCubeSet] using
     hHilbert.smul_measure ENNReal.ofReal_ne_top
 
-theorem memVectorL2_matVecMul_pointwiseCoeffOn {d : ℕ}
+theorem memVectorL2_matVecMul_pointwiseCoeffOn_localCoarseGrainingDefinitions {d : ℕ}
     (Q : TriadicCube d) (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain Q))
     (u : H1Function (openCubeSet Q)) :
     MemVectorL2 (openCubeSet Q)
@@ -69,7 +69,7 @@ theorem memVectorL2_matVecMul_pointwiseCoeffOn {d : ℕ}
   filter_upwards [hba] with x hx
   simp only [hx]
 
-theorem memVectorL2_localFluxDefect {d : ℕ}
+theorem memVectorL2_localFluxDefect_localCoarseGrainingDefinitions {d : ℕ}
     {Q R : TriadicCube d}
     (a : Book.Ch02.CoeffOn (Book.Ch02.cubeDomain Q))
     (hRQ : openCubeSet R ⊆ openCubeSet Q) (sigma0 : ℝ)
@@ -83,7 +83,7 @@ theorem memVectorL2_localFluxDefect {d : ℕ}
     u.restrict (isOpen_openCubeSet R) hRQ
   have hflux : MemVectorL2 (openCubeSet R)
       (fun x => matVecMul (aR.toCoeffField x) (uR.grad x)) :=
-    memVectorL2_matVecMul_pointwiseCoeffOn R aR uR
+    memVectorL2_matVecMul_pointwiseCoeffOn_localCoarseGrainingDefinitions R aR uR
   have hscalar : MemVectorL2 (openCubeSet R)
       (fun x => sigma0 • uR.grad x) :=
     uR.grad_memVectorL2.const_smul sigma0
@@ -155,9 +155,9 @@ noncomputable def fluxDifferenceL2Field {d : ℕ}
     matVecMul (a.toCoeffField x) (u.grad x) -
       matVecMul (scalarMatrix (d := d) sigma0) (v.grad x)
   euclideanMemLp := by
-    apply memLp_hilbertify_normalizedCube_of_memVectorL2
+    apply memLp_hilbertify_normalizedCube_of_memVectorL2_localCoarseGrainingDefinitions
     simpa only [matVecMul_scalarMatrix] using!
-      (memVectorL2_matVecMul_pointwiseCoeffOn Q a u).sub
+      (memVectorL2_matVecMul_pointwiseCoeffOn_localCoarseGrainingDefinitions Q a u).sub
         (v.grad_memVectorL2.const_smul sigma0)
 
 /-- The canonical reusable overlap positive Besov seminorm. -/
@@ -227,8 +227,8 @@ noncomputable def localFluxDefectL2Field {d : ℕ}
     matVecMul
       (a.toCoeffField x - scalarMatrix (d := d) sigma0) (u.grad x)
   euclideanMemLp := by
-    apply memLp_hilbertify_normalizedCube_of_memVectorL2
-    exact memVectorL2_localFluxDefect a hRQ sigma0 u
+    apply memLp_hilbertify_normalizedCube_of_memVectorL2_localCoarseGrainingDefinitions
+    exact memVectorL2_localFluxDefect_localCoarseGrainingDefinitions a hRQ sigma0 u
 
 /-- The normalized `ell^p` average of descendant negative Besov flux defects. -/
 @[expose]

@@ -1640,6 +1640,7 @@ public import LeanPool.HighContrastHomogenization.Support.Book.Ch02.Block
 public import LeanPool.HighContrastHomogenization.Support.Book.Ch02.CoeffRestriction
 public import LeanPool.HighContrastHomogenization.Support.Book.Ch02.Definitions
 public import LeanPool.HighContrastHomogenization.Support.Book.Ch02.Dilation
+public import LeanPool.HighContrastHomogenization.Support.Book.Ch02.Dilation.Proofs
 public import LeanPool.HighContrastHomogenization.Support.Book.Ch02.DoubledResponse
 public import LeanPool.HighContrastHomogenization.Support.Book.Ch02.HomogenizationError
 public import LeanPool.HighContrastHomogenization.Support.Book.Ch02.Matrices
@@ -2573,11 +2574,15 @@ public import LeanPool.HighContrastHomogenization.Support.Probability.Source.Coa
 public import LeanPool.HighContrastHomogenization.Support.Probability.Source.Coarse.Laws
 public import LeanPool.HighContrastHomogenization.Support.Probability.Source.Coarse.RegIntegralAdapter
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.CubeEmbedding.Extension
+public import LeanPool.HighContrastHomogenization.Support.Sobolev.CubeEmbedding.Extension.Basic
+public import LeanPool.HighContrastHomogenization.Support.Sobolev.CubeEmbedding.Extension.Construction
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.CubeEmbedding.FaceReflection
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.CubeEmbedding.FaceReflectionLines
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.CubeEmbedding.FaceReflectionMain
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.CubeEmbedding.Fold
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.CubeEmbedding.FoldExtensionFiniteP
+public import LeanPool.HighContrastHomogenization.Support.Sobolev.CubeEmbedding.FoldExtensionFiniteP.Basic
+public import LeanPool.HighContrastHomogenization.Support.Sobolev.CubeEmbedding.FoldExtensionFiniteP.Construction
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.CubeEmbedding.FoldNorm
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.CubeEmbedding.FoldNormFiniteP
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.CubeEmbedding.FoldTransport

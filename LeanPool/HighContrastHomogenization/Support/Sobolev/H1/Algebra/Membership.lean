@@ -78,6 +78,46 @@ theorem memH1_mul_of_contDiff_hasCompactSupport {d : ℕ} {U : Set (Vec d)}
   rcases hu with ⟨u', rfl⟩
   simpa using (u'.mulContDiffHasCompactSupport hφ hφ_compact).memH1
 
+private theorem tendsto_eLpNorm_mul_sub_zero_of_tendsto_eLpNorm_sub_zero
+    {α : Type*} [MeasurableSpace α] {μ : MeasureTheory.Measure α}
+    {φ u : α → ℝ} {ψ : ℕ → α → ℝ}
+    (hφ_memTop : MeasureTheory.MemLp φ (⊤ : ENNReal) μ)
+    (hψ_tendsto : Filter.Tendsto
+      (fun n => MeasureTheory.eLpNorm (fun x => ψ n x - u x) 2 μ)
+      Filter.atTop (nhds 0)) :
+    Filter.Tendsto
+      (fun n => MeasureTheory.eLpNorm (fun x => φ x * ψ n x - φ x * u x) 2 μ)
+      Filter.atTop (nhds 0) := by
+  have hconst_tendsto :
+      Filter.Tendsto
+        (fun n => MeasureTheory.eLpNorm φ (⊤ : ENNReal) μ *
+          MeasureTheory.eLpNorm (fun x => ψ n x - u x) 2 μ)
+        Filter.atTop (nhds (MeasureTheory.eLpNorm φ (⊤ : ENNReal) μ * 0)) :=
+    ENNReal.Tendsto.const_mul hψ_tendsto (Or.inr hφ_memTop.eLpNorm_lt_top.ne)
+  have hupper : ∀ n,
+      MeasureTheory.eLpNorm (fun x => φ x * ψ n x - φ x * u x) 2 μ ≤
+        MeasureTheory.eLpNorm φ (⊤ : ENNReal) μ *
+          MeasureTheory.eLpNorm (fun x => ψ n x - u x) 2 μ := by
+    intro n
+    have hEq : (fun x => φ x * ψ n x - φ x * u x) =
+        φ • (fun x => ψ n x - u x) := by
+      funext x
+      change φ x * ψ n x - φ x * u x = φ x * (ψ n x - u x)
+      ring
+    rw [hEq]
+    exact MeasureTheory.eLpNorm_smul_le_eLpNorm_top_mul_eLpNorm 2
+      hφ_memTop.aestronglyMeasurable
+  refine tendsto_of_tendsto_of_tendsto_of_le_of_le
+    tendsto_const_nhds ?_ (fun n => zero_le) hupper
+  simpa using hconst_tendsto
+
+private theorem exists_pos_closedBall_subset_of_isOpen {d : ℕ} {U : Set (Vec d)}
+    (hU : IsOpen U) {x : Vec d} (hx : x ∈ U) :
+    ∃ r > 0, Metric.closedBall x r ⊆ U := by
+  rcases Metric.mem_nhds_iff.mp (hU.mem_nhds hx) with ⟨r, hr_pos, hr_sub⟩
+  refine ⟨r / 2, by positivity, ?_⟩
+  exact (Metric.closedBall_subset_ball (half_lt_self hr_pos)).trans hr_sub
+
 theorem memH10_mul_of_contDiff_hasCompactSupport {d : ℕ} {U : Set (Vec d)}
     (hU : IsOpenBoundedConvexDomain U)
     {φ u : Vec d → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
@@ -89,15 +129,8 @@ theorem memH10_mul_of_contDiff_hasCompactSupport {d : ℕ} {U : Set (Vec d)}
     simpa [hφ_zero] using! (memH10_zero (U := U))
   · obtain ⟨x0, hx0⟩ : (tsupport φ).Nonempty := Set.nonempty_iff_ne_empty.mpr hts
     have hx0U : x0 ∈ U := hφ_sub hx0
-    rcases Metric.mem_nhds_iff.mp (hU.isOpen.mem_nhds hx0U) with ⟨r, hr_pos, hr_sub⟩
-    let r0 : ℝ := r / 2
-    have hr0_pos : 0 < r0 := by
-      dsimp [r0]
-      positivity
-    have hball : Metric.closedBall x0 r0 ⊆ U := by
-      refine (Metric.closedBall_subset_ball ?_).trans hr_sub
-      dsimp [r0]
-      exact half_lt_self hr_pos
+    obtain ⟨r0, hr0_pos, hball⟩ :=
+      exists_pos_closedBall_subset_of_isOpen hU.isOpen hx0U
     let ρ : Vec d → ℝ := unitConvexApproxKernel (d := d)
     let ε : ℕ → ℝ := unitConvexApproxScale
     let ψ : ℕ → Vec d → ℝ := fun n =>
@@ -195,36 +228,11 @@ theorem memH10_mul_of_contDiff_hasCompactSupport {d : ℕ} {U : Set (Vec d)}
           exact (tsupport_mul_subset_left (f := φ) (g := ψ n)).trans hφ_sub
         tendsto_approx := by
           let μU : MeasureTheory.Measure (Vec d) := MeasureTheory.volume.restrict U
-          have hφ_cont : Continuous φ := hφ.continuous
           have hφ_memTop : MeasureTheory.MemLp φ (⊤ : ENNReal) μU :=
-            (hφ_cont.memLp_of_hasCompactSupport hφ_compact).restrict U
-          have hconst_tendsto :
-              Filter.Tendsto
-                (fun n =>
-                  MeasureTheory.eLpNorm φ (⊤ : ENNReal) μU *
-                    MeasureTheory.eLpNorm (fun x => ψ n x - u' x) 2 μU)
-                Filter.atTop
-                (nhds (MeasureTheory.eLpNorm φ (⊤ : ENNReal) μU * 0)) :=
-            ENNReal.Tendsto.const_mul hψ_tendsto
-              (Or.inr hφ_memTop.eLpNorm_lt_top.ne)
-          have hupper :
-              ∀ n,
-                MeasureTheory.eLpNorm (fun x => φ x * ψ n x - uφ.toFun x) 2 μU ≤
-                  MeasureTheory.eLpNorm φ (⊤ : ENNReal) μU *
-                    MeasureTheory.eLpNorm (fun x => ψ n x - u' x) 2 μU := by
-            intro n
-            have hEq :
-                (fun x => φ x * ψ n x - uφ.toFun x) =
-                  φ • (fun x => ψ n x - u' x) := by
-              funext x
-              change φ x * ψ n x - φ x * u' x = φ x * (ψ n x - u' x)
-              ring
-            rw [hEq]
-            exact MeasureTheory.eLpNorm_smul_le_eLpNorm_top_mul_eLpNorm 2
-              hφ_memTop.aestronglyMeasurable
-          refine tendsto_of_tendsto_of_tendsto_of_le_of_le
-            tendsto_const_nhds ?_ (fun n => zero_le) hupper
-          simpa using hconst_tendsto
+            (hφ.continuous.memLp_of_hasCompactSupport hφ_compact).restrict U
+          simpa [uφ, H1Function.mulContDiffHasCompactSupport] using
+            (tendsto_eLpNorm_mul_sub_zero_of_tendsto_eLpNorm_sub_zero
+              hφ_memTop hψ_tendsto)
         tendsto_approx_grad := by
           intro i
           let μU : MeasureTheory.Measure (Vec d) := MeasureTheory.volume.restrict U

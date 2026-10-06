@@ -90,7 +90,7 @@ noncomputable def finiteAffineSuccessorRestriction {d : ℕ} [NeZero d]
       (finiteAffineCubeSolution a (m + 1) e).toH1.grad := by
   rfl
 
-theorem cubeSolution_weakFluxIntegrable {d : ℕ}
+theorem cubeSolution_weakFluxIntegrable_finiteAffineSuccessorDifference {d : ℕ}
     {Q : TriadicCube d} {a : Book.Ch02.TriadicCoeffFamily d}
     (u : Book.Ch03.CubeSolution Q a) :
     weakFluxIntegrable (Book.Ch02.cubeDomain Q).carrier
@@ -109,9 +109,9 @@ noncomputable def finiteAffineSuccessorDifference {d : ℕ} [NeZero d]
   AHarmonicFunction.subOfIntegrable
     (finiteAffineSuccessorRestriction a m e)
     (finiteAffineCubeSolution a m e)
-    (cubeSolution_weakFluxIntegrable
+    (cubeSolution_weakFluxIntegrable_finiteAffineSuccessorDifference
       (finiteAffineSuccessorRestriction a m e))
-    (cubeSolution_weakFluxIntegrable (finiteAffineCubeSolution a m e))
+    (cubeSolution_weakFluxIntegrable_finiteAffineSuccessorDifference (finiteAffineCubeSolution a m e))
 
 /-- The successor difference has the literal outer-minus-inner value field. -/
 @[simp] theorem finiteAffineSuccessorDifference_toFun {d : ℕ} [NeZero d]

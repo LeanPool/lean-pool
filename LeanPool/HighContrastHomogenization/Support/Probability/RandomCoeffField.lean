@@ -123,7 +123,8 @@ theorem law_restrictSet (A : RandomCoeffField Ω d) (μ : MeasureTheory.Measure 
 
 theorem law_translateByInt (A : RandomCoeffField Ω d) (μ : MeasureTheory.Measure Ω)
     (z : Fin d → ℤ) :
-    (A.translateByInt z).law μ = MeasureTheory.Measure.map (HCPolySupport.translateByInt z) (A.law μ) := by
+    (A.translateByInt z).law μ = MeasureTheory.Measure.map (HCPolySupport.translateByInt z)
+      (A.law μ) := by
   simpa [RandomCoeffField.translateByInt] using!
     (A.map_law_eq μ (HCPolySupport.translateByInt z) (measurable_translateByInt z)).symm
 

@@ -34,7 +34,7 @@ def IsSignedPermutationMatrix {d : ℕ} (R : Mat d) : Prop :=
     (∀ i, s i = 1 ∨ s i = -1) ∧
       ∀ i j, R i j = if i = σ j then s j else 0
 
-theorem matVecMul_one {d : ℕ} (x : Vec d) :
+theorem matVecMul_one_signedPermutation {d : ℕ} (x : Vec d) :
     matVecMul (1 : Mat d) x = x := by
   ext i
   unfold matVecMul
@@ -178,7 +178,7 @@ theorem IsSignedPermutationMatrix.abs_det_eq_one {d : ℕ} {R : Mat d}
     rw [← abs_mul, hsquare, abs_one]
   nlinarith
 
-theorem continuous_matVecMul {d : ℕ} (R : Mat d) :
+theorem continuous_matVecMul_signedPermutation {d : ℕ} (R : Mat d) :
     Continuous (fun x : Vec d => matVecMul R x) := by
   change Continuous fun x : Fin d → ℝ => fun i => ∑ j, R i j * x j
   exact continuous_pi fun i =>
@@ -192,18 +192,18 @@ noncomputable def signedPermutationHomeomorph {d : ℕ} (R : Mat d)
       invFun := matVecMul (matTranspose R)
       left_inv := by
         intro x
-        rw [matVecMul_mul, hR.transpose_mul_self, matVecMul_one]
+        rw [matVecMul_mul, hR.transpose_mul_self, matVecMul_one_signedPermutation]
       right_inv := by
         intro x
-        rw [matVecMul_mul, hR.mul_transpose_self, matVecMul_one] }
-  continuous_toFun := continuous_matVecMul R
-  continuous_invFun := continuous_matVecMul (matTranspose R)
+        rw [matVecMul_mul, hR.mul_transpose_self, matVecMul_one_signedPermutation] }
+  continuous_toFun := continuous_matVecMul_signedPermutation R
+  continuous_invFun := continuous_matVecMul_signedPermutation (matTranspose R)
 
 theorem measurePreserving_matVecMul_signedPermutation {d : ℕ} {R : Mat d}
     (hR : IsSignedPermutationMatrix R) :
     MeasureTheory.MeasurePreserving (fun x : Vec d => matVecMul R x)
       MeasureTheory.volume MeasureTheory.volume := by
-  refine ⟨(continuous_matVecMul R).measurable, ?_⟩
+  refine ⟨(continuous_matVecMul_signedPermutation R).measurable, ?_⟩
   have hscale :
       ENNReal.ofReal |(Matrix.det R)⁻¹| = 1 := by
     rw [abs_inv, hR.abs_det_eq_one]

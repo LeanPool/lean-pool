@@ -39,7 +39,7 @@ theorem volume_cubeSet_originCube_lt_top {d : ℕ} (n : ℤ) :
   rw [volume_cubeSet_toReal] at hzero
   exact (ne_of_gt (cubeVolume_pos (originCube d n))) hzero
 
-theorem volume_openCubeSet_originCube_lt_top {d : ℕ} (n : ℤ) :
+theorem volume_openCubeSet_originCube_lt_top_originCubeBridge {d : ℕ} (n : ℤ) :
     MeasureTheory.volume (openCubeSet (originCube d n)) < ⊤ := by
   exact lt_of_le_of_lt
     (MeasureTheory.measure_mono (openCubeSet_subset_cubeSet (originCube d n)))
@@ -280,7 +280,7 @@ with constant gradient `basisVec i`.
 noncomputable def coordOnOpenCubeSetOriginCube {d : ℕ} {n : ℤ} (i : Fin d) :
     H1Function (openCubeSet (originCube d n)) := by
   let U : Set (Vec d) := openCubeSet (originCube d n)
-  haveI : Fact (MeasureTheory.volume U < ⊤) := ⟨volume_openCubeSet_originCube_lt_top (d := d) n⟩
+  haveI : Fact (MeasureTheory.volume U < ⊤) := ⟨volume_openCubeSet_originCube_lt_top_originCubeBridge (d := d) n⟩
   haveI : MeasureTheory.IsFiniteMeasure (MeasureTheory.volume.restrict U) := inferInstance
   refine
     { toFun := fun x => x i
@@ -488,7 +488,7 @@ theorem tendsto_shifted_originCube_approx {d : ℕ} [NeZero d] {n : ℤ}
           Filter.atTop (𝓝 0)) := by
   let μo := MeasureTheory.volume.restrict (openCubeSet (originCube d n))
   have hμo_univ_lt_top : μo Set.univ < ⊤ := by
-    simpa [μo] using volume_openCubeSet_originCube_lt_top (d := d) n
+    simpa [μo] using volume_openCubeSet_originCube_lt_top_originCubeBridge (d := d) n
   have hshiftApprox :
       Filter.Tendsto
         (fun m : ℕ =>
@@ -694,7 +694,7 @@ noncomputable def toOpenCubeSetOriginCube {d : ℕ} [NeZero d] {n : ℤ}
   have hUo_open : IsOpen Uo := isOpen_openCubeSet (originCube d n)
   let v : H1Function Uo := u.toH1Function.restrict hUo_open (openCubeSet_subset_cubeSet _)
   let μo := MeasureTheory.volume.restrict Uo
-  haveI : Fact (MeasureTheory.volume Uo < ⊤) := ⟨volume_openCubeSet_originCube_lt_top (d := d) n⟩
+  haveI : Fact (MeasureTheory.volume Uo < ⊤) := ⟨volume_openCubeSet_originCube_lt_top_originCubeBridge (d := d) n⟩
   haveI : MeasureTheory.IsFiniteMeasure μo := inferInstance
   have hshiftData := exists_originCubeInwardShiftData (d := d) (n := n) u
   let εShift : ℕ → ℝ := fun m => Classical.choose (hshiftData m)

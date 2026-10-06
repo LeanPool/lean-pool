@@ -120,7 +120,7 @@ private theorem fderiv_approx_apply_eq_zero_of_not_mem {d : ℕ} {U : Set (Vec d
   rw [hzero.fderiv_eq]
   simp only [fderiv_zero, Pi.zero_apply, zero_apply]
 
-theorem approx_sub_zeroExtension_eq_indicator_sub {d : ℕ} {U : Set (Vec d)}
+theorem approx_sub_zeroExtension_eq_indicator_sub_zeroExtensionGraph {d : ℕ} {U : Set (Vec d)}
     (u : H10Function U) (n : ℕ) :
     (fun x => u.approx n x - u.zeroExtension x) =
       Set.indicator U (fun x => u.approx n x - u.toH1Function.toFun x) := by
@@ -167,7 +167,7 @@ theorem hasWeakGradientOn_univ_zeroExtension {d : ℕ} {U : Set (Vec d)}
         (fun n => eLpNorm (fun x => u.approx n x - u.zeroExtension x) 2 volume)
         atTop (nhds 0) := by
       refine u.tendsto_approx.congr (fun n => ?_)
-      rw [u.approx_sub_zeroExtension_eq_indicator_sub n,
+      rw [u.approx_sub_zeroExtension_eq_indicator_sub_zeroExtensionGraph n,
         MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hU]
     simpa only [Measure.restrict_univ] using! htend
   · intro i
@@ -205,7 +205,7 @@ def extendByZeroToOpenSuperset {d : ℕ} {U V : Set (Vec d)}
     approx_support_subset := fun n => (u.approx_support_subset n).trans hUV
     tendsto_approx := by
       refine u.tendsto_approx.congr (fun n => ?_)
-      rw [u.approx_sub_zeroExtension_eq_indicator_sub n,
+      rw [u.approx_sub_zeroExtension_eq_indicator_sub_zeroExtensionGraph n,
         MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hU,
         Measure.restrict_restrict_of_subset hUV]
     tendsto_approx_grad := by

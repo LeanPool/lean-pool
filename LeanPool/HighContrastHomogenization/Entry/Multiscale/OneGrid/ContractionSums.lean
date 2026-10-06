@@ -44,6 +44,70 @@ open MeasureTheory
 
 noncomputable section
 
+private theorem weighted_exp_product_bound (a b v u w x y z upper : ℝ)
+    (ha : 0 ≤ a) (hb : 0 ≤ b) (hu : 0 ≤ u) (hw : 0 ≤ w)
+    (hp : v ≤ a * Real.exp y * u + b * (Real.exp y - 1))
+    (heq : Real.exp x * Real.exp y = Real.exp z)
+    (hupper : Real.exp z ≤ upper) (hx : 1 ≤ Real.exp x) :
+    w * Real.exp x * v ≤ a * upper * (w * u) + b * (upper - 1) * w := by
+  have hproduct : Real.exp x * Real.exp y ≤ upper := by rw [heq]; exact hupper
+  have hshifted : Real.exp x * (Real.exp y - 1) ≤ upper - 1 := by
+    calc
+      Real.exp x * (Real.exp y - 1) = Real.exp z - Real.exp x := by
+        rw [mul_sub, mul_one, heq]
+      _ ≤ upper - 1 := by linarith
+  have hscaled := mul_le_mul_of_nonneg_left hp (mul_nonneg hw (Real.exp_nonneg x))
+  have hfirst : w * Real.exp x * (a * Real.exp y * u) ≤ a * upper * (w * u) := by
+    calc
+      _ = (a * (Real.exp x * Real.exp y)) * (w * u) := by ring
+      _ ≤ _ := mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_left hproduct ha) (mul_nonneg hw hu)
+  have hsecond : w * Real.exp x * (b * (Real.exp y - 1)) ≤ b * (upper - 1) * w := by
+    calc
+      _ = (b * (Real.exp x * (Real.exp y - 1))) * w := by ring
+      _ ≤ _ := mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_left hshifted hb) hw
+  calc
+    w * Real.exp x * v ≤ w * Real.exp x * (a * Real.exp y * u + b * (Real.exp y - 1)) := hscaled
+    _ = w * Real.exp x * (a * Real.exp y * u) + w * Real.exp x * (b * (Real.exp y - 1)) := by ring
+    _ ≤ _ := add_le_add hfirst hsecond
+
+private theorem weighted_sum_le_expanded_sum_of_subset
+    (s t : Finset ℤ) (w v e : ℤ → ℝ) (hsubset : s ⊆ t)
+    (hw : ∀ i ∈ t, 0 ≤ w i) (hv : ∀ i ∈ t, 0 ≤ v i)
+    (he : ∀ i ∈ s, 1 ≤ e i) (hen : ∀ i ∈ t, 0 ≤ e i) :
+    ∑ i ∈ s, w i * v i ≤ ∑ i ∈ t, w i * e i * v i := by
+  calc
+    ∑ i ∈ s, w i * v i ≤ ∑ i ∈ s, w i * e i * v i := by
+      apply Finset.sum_le_sum
+      intro i hi
+      exact mul_le_mul_of_nonneg_right
+        (le_mul_of_one_le_right (hw i (hsubset hi)) (he i hi)) (hv i (hsubset hi))
+    _ ≤ ∑ i ∈ t, w i * e i * v i :=
+      Finset.sum_le_sum_of_subset_of_nonneg hsubset fun i hi _ =>
+        mul_nonneg (mul_nonneg (hw i hi) (hen i hi)) (hv i hi)
+
+private theorem shifted_geometric_weight_sum_le (γ : ℝ)
+    (hγ : γ ∈ Set.Ico (0 : ℝ) 1) (m : ℤ) (h : ℕ) :
+    ∑ j ∈ Finset.Icc (m + 1) (m + (h : ℤ)),
+      (3 : ℝ) ^ (-((1 - γ) / 4) * (((m + (h : ℤ) : ℤ) : ℝ) - (j : ℝ))) ≤
+      (1 - (3 : ℝ) ^ (-((1 - γ) / 4)))⁻¹ := by
+  have hset : Finset.Icc (m + 1) (m + (h : ℤ)) = Finset.Ico (m + 1) (m + (h : ℤ) + 1) := by
+    ext x
+    simp only [Finset.mem_Icc, Finset.mem_Ico]
+    omega
+  have heq : ∑ j ∈ Finset.Ico (m + 1) (m + (h : ℤ) + 1),
+      (3 : ℝ) ^ (-((1 - γ) / 4) * (((m + (h : ℤ) : ℤ) : ℝ) - (j : ℝ))) =
+      ∑ j ∈ Finset.Ico (m + 1) (m + (h : ℤ) + 1),
+        (3 : ℝ) ^ (-((1 - γ) / 4) * (((m + (h : ℤ) + 1 : ℤ) : ℝ) - 1 - (j : ℝ))) := by
+    apply Finset.sum_congr rfl
+    intro j _
+    congr 1
+    push_cast
+    try ring
+  rw [hset, heq]
+  exact profile_geometric_weight_sum_le γ hγ (m + 1) (m + (h : ℤ) + 1)
+
 /-- The new fluctuation terms of `𝒫_q(m+h;n)` (`p.fixed.geometry.one.grid.propagation`): apply the
 powered
 recurrence at `j-h ∈ [n+1,m]`, use additivity
@@ -155,68 +219,21 @@ theorem new_fluctuation_sum_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
     have hle1 : Real.exp ((bigQ d γ : ℝ) *
         detIncrement P q (j - (h : ℤ)) (m + (h : ℤ))) ≤ ehat :=
       Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_left hsync hQnn)
-    have hkey1 : Real.exp ((bigQ d γ : ℝ) * detIncrement P q j (m + (h : ℤ))) *
-        Real.exp ((bigQ d γ : ℝ) * detIncrement P q (j - (h : ℤ)) j) ≤ ehat := by
-      rw [hexpeq]; exact hle1
-    have hkey2 : Real.exp ((bigQ d γ : ℝ) * detIncrement P q j (m + (h : ℤ))) *
-        (Real.exp ((bigQ d γ : ℝ) * detIncrement P q (j - (h : ℤ)) j) - 1) ≤ ehat - 1 := by
-      have hexpand : Real.exp ((bigQ d γ : ℝ) * detIncrement P q j (m + (h : ℤ))) *
-          (Real.exp ((bigQ d γ : ℝ) * detIncrement P q (j - (h : ℤ)) j) - 1) =
-          Real.exp ((bigQ d γ : ℝ) * detIncrement P q (j - (h : ℤ)) (m + (h : ℤ))) -
-            Real.exp ((bigQ d γ : ℝ) * detIncrement P q j (m + (h : ℤ))) := by
-        rw [mul_sub, mul_one, hexpeq]
-      rw [hexpand]
-      linarith only [hle1, he1]
     have hnn0 : 0 ≤ (3 : ℝ) ^ (-((1 - γ) / 4) * (((m + (h : ℤ) : ℤ) : ℝ) - (j : ℝ))) := hw _
-    have step1 := mul_le_mul_of_nonneg_left hp
-      (mul_nonneg hnn0 (Real.exp_nonneg ((bigQ d γ : ℝ) * detIncrement P q j (m + (h : ℤ)))))
-    have hbound1 : Ah * (Real.exp ((bigQ d γ : ℝ) * detIncrement P q j (m + (h : ℤ))) *
-        Real.exp ((bigQ d γ : ℝ) * detIncrement P q (j - (h : ℤ)) j)) *
-        ((3 : ℝ) ^ (-((1 - γ) / 4) * (((m + (h : ℤ) : ℤ) : ℝ) - (j : ℝ))) *
-          ∫ a, absSchattenNorm (bigQ d γ : ℝ)
-            (normalizedFluctuationSelf P q (j - (h : ℤ)) a) ^ bigQ d γ ∂P) ≤
-        Ah * ehat * ((3 : ℝ) ^ (-((1 - γ) / 4) * (((m + (h : ℤ) : ℤ) : ℝ) - (j : ℝ))) *
-          ∫ a, absSchattenNorm (bigQ d γ : ℝ)
-            (normalizedFluctuationSelf P q (j - (h : ℤ)) a) ^ bigQ d γ ∂P) :=
-      mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hkey1 hAhnn)
-        (mul_nonneg hnn0 (hVnn (j - (h : ℤ))))
-    have hbound2 : Bc * (Real.exp ((bigQ d γ : ℝ) * detIncrement P q j (m + (h : ℤ))) *
-        (Real.exp ((bigQ d γ : ℝ) * detIncrement P q (j - (h : ℤ)) j) - 1)) *
-        (3 : ℝ) ^ (-((1 - γ) / 4) * (((m + (h : ℤ) : ℤ) : ℝ) - (j : ℝ))) ≤
-        Bc * (ehat - 1) * (3 : ℝ) ^ (-((1 - γ) / 4) * (((m + (h : ℤ) : ℤ) : ℝ) - (j : ℝ))) :=
-      mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hkey2 hBcnn) hnn0
-    calc
-      (3 : ℝ) ^ (-((1 - γ) / 4) * (((m + (h : ℤ) : ℤ) : ℝ) - (j : ℝ))) *
-            Real.exp ((bigQ d γ : ℝ) * detIncrement P q j (m + (h : ℤ))) *
-          ∫ a, absSchattenNorm (bigQ d γ : ℝ) (normalizedFluctuationSelf P q j a) ^ bigQ d γ ∂P
-          ≤ _ := step1
-      _ = Ah * (Real.exp ((bigQ d γ : ℝ) * detIncrement P q j (m + (h : ℤ))) *
-              Real.exp ((bigQ d γ : ℝ) * detIncrement P q (j - (h : ℤ)) j)) *
-            ((3 : ℝ) ^ (-((1 - γ) / 4) * (((m + (h : ℤ) : ℤ) : ℝ) - (j : ℝ))) *
-              ∫ a, absSchattenNorm (bigQ d γ : ℝ)
-                (normalizedFluctuationSelf P q (j - (h : ℤ)) a) ^ bigQ d γ ∂P) +
-          Bc * (Real.exp ((bigQ d γ : ℝ) * detIncrement P q j (m + (h : ℤ))) *
-              (Real.exp ((bigQ d γ : ℝ) * detIncrement P q (j - (h : ℤ)) j) - 1)) *
-            (3 : ℝ) ^ (-((1 - γ) / 4) * (((m + (h : ℤ) : ℤ) : ℝ) - (j : ℝ))) := by ring
-      _ ≤ _ := add_le_add hbound1 hbound2
+    exact weighted_exp_product_bound Ah Bc
+      (∫ a, absSchattenNorm (bigQ d γ : ℝ)
+        (normalizedFluctuationSelf P q j a) ^ bigQ d γ ∂P)
+      (∫ a, absSchattenNorm (bigQ d γ : ℝ)
+        (normalizedFluctuationSelf P q (j - (h : ℤ)) a) ^ bigQ d γ ∂P)
+      (3 : ℝ) ^ (-((1 - γ) / 4) * (((m + (h : ℤ) : ℤ) : ℝ) - (j : ℝ)))
+      ((bigQ d γ : ℝ) * detIncrement P q j (m + (h : ℤ)))
+      ((bigQ d γ : ℝ) * detIncrement P q (j - (h : ℤ)) j)
+      ((bigQ d γ : ℝ) * detIncrement P q (j - (h : ℤ)) (m + (h : ℤ))) ehat
+      hAhnn hBcnn (hVnn (j - (h : ℤ))) hnn0 hp hexpeq hle1 he1
   -- group 2: geometric weight sum
   have hsum2 : ∑ j ∈ Finset.Icc (m + 1) (m + (h : ℤ)),
-      (3 : ℝ) ^ (-((1 - γ) / 4) * (((m + (h : ℤ) : ℤ) : ℝ) - (j : ℝ))) ≤ G := by
-    have hset : Finset.Icc (m + 1) (m + (h : ℤ)) = Finset.Ico (m + 1) (m + (h : ℤ) + 1) := by
-      ext x
-      simp only [Finset.mem_Icc, Finset.mem_Ico]
-      omega
-    have heq : ∑ j ∈ Finset.Ico (m + 1) (m + (h : ℤ) + 1),
-        (3 : ℝ) ^ (-((1 - γ) / 4) * (((m + (h : ℤ) : ℤ) : ℝ) - (j : ℝ))) =
-        ∑ j ∈ Finset.Ico (m + 1) (m + (h : ℤ) + 1),
-          (3 : ℝ) ^ (-((1 - γ) / 4) * (((m + (h : ℤ) + 1 : ℤ) : ℝ) - 1 - (j : ℝ))) := by
-      apply Finset.sum_congr rfl
-      intro j _
-      congr 1
-      push_cast
-      try ring
-    rw [hset, heq]
-    exact profile_geometric_weight_sum_le γ hγ (m + 1) (m + (h : ℤ) + 1)
+      (3 : ℝ) ^ (-((1 - γ) / 4) * (((m + (h : ℤ) : ℤ) : ℝ) - (j : ℝ))) ≤ G :=
+    shifted_geometric_weight_sum_le γ hγ m h
   -- group 1: reindex, extend, compare to profile
   have hsum1 : ∑ j ∈ Finset.Icc (m + 1) (m + (h : ℤ)),
       ((3 : ℝ) ^ (-((1 - γ) / 4) * (((m + (h : ℤ) : ℤ) : ℝ) - (j : ℝ))) *
@@ -257,28 +274,19 @@ theorem new_fluctuation_sum_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
         ((3 : ℝ) ^ (-((1 - γ) / 4) * ((m : ℝ) - (i : ℝ))) *
           ∫ a, absSchattenNorm (bigQ d γ : ℝ)
             (normalizedFluctuationSelf P q i a) ^ bigQ d γ ∂P) ≤
-        ∑ i ∈ Finset.Icc (m + 1 - (h : ℤ)) m,
-          ((3 : ℝ) ^ (-((1 - γ) / 4) * ((m : ℝ) - (i : ℝ))) *
-              Real.exp ((bigQ d γ : ℝ) * detIncrement P q i m) *
-            ∫ a, absSchattenNorm (bigQ d γ : ℝ)
-              (normalizedFluctuationSelf P q i a) ^ bigQ d γ ∂P) := by
-      apply Finset.sum_le_sum
-      intro i hi
-      exact mul_le_mul_of_nonneg_right (le_mul_of_one_le_right (hw _) (hie1 i hi)) (hVnn i)
-    have hsubset : Finset.Icc (m + 1 - (h : ℤ)) m ⊆ Finset.Icc (n + 1) m :=
-      Finset.Icc_subset_Icc (by omega) le_rfl
-    have hext : ∑ i ∈ Finset.Icc (m + 1 - (h : ℤ)) m,
-        ((3 : ℝ) ^ (-((1 - γ) / 4) * ((m : ℝ) - (i : ℝ))) *
-            Real.exp ((bigQ d γ : ℝ) * detIncrement P q i m) *
-          ∫ a, absSchattenNorm (bigQ d γ : ℝ)
-            (normalizedFluctuationSelf P q i a) ^ bigQ d γ ∂P) ≤
         ∑ i ∈ Finset.Icc (n + 1) m,
           ((3 : ℝ) ^ (-((1 - γ) / 4) * ((m : ℝ) - (i : ℝ))) *
               Real.exp ((bigQ d γ : ℝ) * detIncrement P q i m) *
             ∫ a, absSchattenNorm (bigQ d γ : ℝ)
-              (normalizedFluctuationSelf P q i a) ^ bigQ d γ ∂P) :=
-      Finset.sum_le_sum_of_subset_of_nonneg hsubset fun i _ _ =>
-        mul_nonneg (mul_nonneg (hw _) (Real.exp_nonneg _)) (hVnn i)
+              (normalizedFluctuationSelf P q i a) ^ bigQ d γ ∂P) := by
+      exact weighted_sum_le_expanded_sum_of_subset
+        (Finset.Icc (m + 1 - (h : ℤ)) m) (Finset.Icc (n + 1) m)
+        (fun i => (3 : ℝ) ^ (-((1 - γ) / 4) * ((m : ℝ) - (i : ℝ))))
+        (fun i => ∫ a, absSchattenNorm (bigQ d γ : ℝ)
+          (normalizedFluctuationSelf P q i a) ^ bigQ d γ ∂P)
+        (fun i => Real.exp ((bigQ d γ : ℝ) * detIncrement P q i m))
+        (Finset.Icc_subset_Icc (by omega) le_rfl)
+        (fun i _ => hw _) (fun i _ => hVnn i) hie1 (fun i _ => Real.exp_nonneg _)
     have hprofnn : 0 ≤ (3 : ℝ) ^ (-((1 - γ) / 4) * ((m : ℝ) - (n : ℝ))) *
           (1 + meanPenalty (bigQ d γ) (relMean P q n m)) * history P γ q jStar n +
         meanHistory P γ q n m := by

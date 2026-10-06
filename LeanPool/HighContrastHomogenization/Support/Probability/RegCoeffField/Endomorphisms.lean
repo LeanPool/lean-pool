@@ -202,7 +202,7 @@ def rotateReg (R : Mat d) (hR : IsSignedPermutationMatrix R) (a : RegCoeffField 
         (fun x => a (matVecMul R x) (σ i) (σ j)) volume :=
       locallyIntegrable_comp_homeomorph_of_measurePreserving (a.entry_locInt (σ i) (σ j))
         (matVecMulHomeomorph R hR) (measurePreserving_matVecMul R hR)
-    show LocallyIntegrable
+    change LocallyIntegrable
         (fun x => (s i * s j) • a (matVecMul R x) (σ i) (σ j)) volume
     exact hg.smul (s i * s j)
 

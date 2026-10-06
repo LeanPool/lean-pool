@@ -140,7 +140,7 @@ theorem measurable_coeffField_to_ambient {d : ℕ} {f : CoeffField d → CoeffFi
       @Measurable _ _ (instMeasurableSpaceCoeffField d) (LocalSigma U) f) :
     Measurable f := by
   rw [measurable_iff_comap_le]
-  show (pointwiseCoeffFieldMeasurableSpace d ⊔ boundedLocalCoeffFieldMeasurableSpace d).comap f
+  change (pointwiseCoeffFieldMeasurableSpace d ⊔ boundedLocalCoeffFieldMeasurableSpace d).comap f
       ≤ instMeasurableSpaceCoeffField d
   rw [MeasurableSpace.comap_sup, boundedLocalCoeffFieldMeasurableSpace,
     MeasurableSpace.comap_iSup]
@@ -156,7 +156,7 @@ theorem measurable_to_coeffField_ambient {α : Type*} [mα : MeasurableSpace α]
       @Measurable _ _ mα (LocalSigma U) f) :
     Measurable f := by
   rw [measurable_iff_comap_le]
-  show (pointwiseCoeffFieldMeasurableSpace d ⊔ boundedLocalCoeffFieldMeasurableSpace d).comap f
+  change (pointwiseCoeffFieldMeasurableSpace d ⊔ boundedLocalCoeffFieldMeasurableSpace d).comap f
       ≤ mα
   rw [MeasurableSpace.comap_sup, boundedLocalCoeffFieldMeasurableSpace,
     MeasurableSpace.comap_iSup]

@@ -314,7 +314,8 @@ theorem measurable_restrictionSigma (X : MeasurableLocalObservable d U β) :
 theorem measurable_restrictionSigma_mono {V : Set (Vec d)}
     (X : MeasurableLocalObservable d U β) (hUV : U ⊆ V) :
     @Measurable (CoeffField d) β (RestrictionSigma V) _ X :=
-  measurable_of_isRestrictionLocalObservable_restrictionSigma_mono X.measurable X.isRestrictionLocal hUV
+  measurable_of_isRestrictionLocalObservable_restrictionSigma_mono X.measurable
+    X.isRestrictionLocal hUV
 
 @[expose]
 def mono {V : Set (Vec d)} (X : MeasurableLocalObservable d U β) (hUV : U ⊆ V) :
@@ -497,7 +498,8 @@ theorem integral_map_restrictCoeffField_eq
     {U : Set (Vec d)} (X : MeasurableLocalObservable d U E)
     {P : MeasureTheory.Measure (CoeffField d)} :
     ∫ a, X a ∂(MeasureTheory.Measure.map (restrictCoeffField U) P) = ∫ a, X a ∂P :=
-  integral_map_restrictCoeffField_eq_of_isRestrictionLocalObservable X.measurable X.isRestrictionLocal
+  integral_map_restrictCoeffField_eq_of_isRestrictionLocalObservable X.measurable
+    X.isRestrictionLocal
 
 theorem integral_eq_of_map_restrictCoeffField_eq
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
