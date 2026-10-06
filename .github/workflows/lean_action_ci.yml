@@ -75,6 +75,11 @@ on:
       - '.github/workflows/lean_action_ci.yml'
   workflow_dispatch:
     inputs:
+      benchmark:
+        description: "Measure baseline and optimized CI without publishing caches"
+        required: false
+        type: boolean
+        default: false
       force_full:
         description: "Shard-build the whole pool even when a warm cache exists"
         required: false
@@ -94,6 +99,7 @@ permissions:
 
 jobs:
   plan:
+    if: ${{ !inputs.benchmark }}
     runs-on: ubuntu-latest
     name: Plan build
     outputs:
@@ -824,7 +830,7 @@ jobs:
   # so nothing watching "Build project" needs to change.
   gate:
     needs: [plan, build, shard, finalize, rebase]
-    if: always()
+    if: always() && !inputs.benchmark
     runs-on: ubuntu-latest
     name: Build project
     steps:
@@ -863,3 +869,90 @@ jobs:
               ;;
           esac
           echo "CI passed in $MODE mode."
+
+  benchmark:
+    if: github.event_name == 'workflow_dispatch' && inputs.benchmark
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    name: Measure ${{ matrix.variant }}
+    permissions:
+      contents: read
+      actions: read
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [baseline, optimized]
+    steps:
+      - name: Checkout identical project sources
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+
+      - name: Restore identical Lean dependencies
+        id: dependencies
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        with:
+          path: |
+            ~/.elan
+            .lake/packages
+          key: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+
+      - name: Restore identical compiled pool
+        id: pool
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        with:
+          path: .lake/build
+          key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-benchmark
+          restore-keys: |
+            LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
+
+      - name: Install pinned Lean
+        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
+        with:
+          auto-config: false
+          use-github-cache: false
+          use-mathlib-cache: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff
+        with:
+          enable-cache: false
+
+      - name: Install Mathlib cache
+        run: ~/.elan/bin/lake exe cache get
+
+      - name: Install identical Python dependencies
+        run: cd python && uv sync --locked
+
+      - name: Record starting disk and memory availability
+        run: |
+          df -h .
+          free -h
+          nproc
+
+      - name: Measure complete fresh and warm validation plus documentation transfer
+        env:
+          BUILD_CACHE_KEY: ${{ steps.pool.outputs.cache-matched-key }}
+          DEPENDENCY_CACHE_KEY: ${{ steps.dependencies.outputs.cache-matched-key }}
+          VARIANT: ${{ matrix.variant }}
+        run: >-
+          uv run --project python python python/ci_speed_benchmark.py
+          --variant "$VARIANT" --baseline 793672ba7
+
+      - name: Measure documentation build upload
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ci-speed-build-${{ matrix.variant }}
+          path: lean-pool-build.tar.*
+          compression-level: 0
+          retention-days: 1
+          if-no-files-found: error
+
+      - name: Retain timings and diagnostic logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ci-speed-results-${{ matrix.variant }}
+          path: benchmark-results/
+          retention-days: 14
+          if-no-files-found: warn
