@@ -243,7 +243,7 @@ public theorem intervalIntegrable_log_cube_one_sub_div :
 
 /-! ### The `(1 + r)` part -/
 
-/-- An antiderivative of `(log³((1+r)/2) + log³ 2)/r` on `(0, 1)`. With `c = log 2`,
+/-- An antiderivative of `(log³((1+r)/2) + log³ 2)/r` for `r > 0`. With `c = log 2`,
 `ℓ = c - log(1+r)` and `w = 1/(1+r)` it is
 `ℓ⁴/4 - c³ℓ + (log r log(1+r) - log²(1+r)) (ℓ² + ℓc + c²) - 3ℓ² Li₂(w) + 6ℓ Li₃(w) - 6 Li₄(w)`. -/
 @[expose] public noncomputable def plusPrimitive (r : ℝ) : ℝ :=
@@ -253,8 +253,8 @@ public theorem intervalIntegrable_log_cube_one_sub_div :
     - 3 * (log 2 - log (1 + r)) ^ 2 * Lir 2 (1 / (1 + r))
     + 6 * (log 2 - log (1 + r)) * Lir 3 (1 / (1 + r)) - 6 * Lir 4 (1 / (1 + r))
 
-/-- On `(0, 1)`, `plusPrimitive' r = (log³((1+r)/2) + log³ 2)/r`. -/
-public theorem hasDerivAt_plusPrimitive {r : ℝ} (hr0 : 0 < r) (hr1 : r < 1) :
+/-- For `r > 0`, `plusPrimitive' r = (log³((1+r)/2) + log³ 2)/r`. -/
+public theorem hasDerivAt_plusPrimitive {r : ℝ} (hr0 : 0 < r) :
     HasDerivAt plusPrimitive ((log ((1 + r) / 2) ^ 3 + log 2 ^ 3) / r) r := by
   have h1r : 0 < 1 + r := by linarith
   have hw : HasDerivAt (fun r : ℝ ↦ 1 / (1 + r)) (-(1 / (1 + r) ^ 2)) r :=
@@ -332,7 +332,7 @@ public theorem intervalIntegrable_log_cube_one_add_div :
     IntervalIntegrable (fun r ↦ (log ((1 + r) / 2) ^ 3 + log 2 ^ 3) / r) volume 0 1 := by
   rw [intervalIntegrable_iff_integrableOn_Ioc_of_le zero_le_one]
   exact intervalIntegral.integrableOn_deriv_of_nonneg continuousOn_plusPrimitive
-    (fun r hr ↦ hasDerivAt_plusPrimitive hr.1 hr.2) fun r hr ↦ log_cube_one_add_div_nonneg hr.1
+    (fun r hr ↦ hasDerivAt_plusPrimitive hr.1) fun r hr ↦ log_cube_one_add_div_nonneg hr.1
 
 /-- `∫₀¹ (log³((1+r)/2) + log³ 2)/r dr
 = π⁴/15 - 6 log 2 ζ(3) + (π²/2) log² 2 - log⁴ 2/4 - 6 Li₄(1/2)`. -/
@@ -341,7 +341,7 @@ public theorem integral_log_cube_one_add_div :
       π ^ 4 / 15 - 6 * log 2 * zeta3 + π ^ 2 / 2 * log 2 ^ 2 - log 2 ^ 4 / 4
         - 6 * Lir 4 (1 / 2) := by
   rw [intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le zero_le_one continuousOn_plusPrimitive
-    (fun r hr ↦ hasDerivAt_plusPrimitive hr.1 hr.2) intervalIntegrable_log_cube_one_add_div]
+    (fun r hr ↦ hasDerivAt_plusPrimitive hr.1) intervalIntegrable_log_cube_one_add_div]
   simp only [plusPrimitive, add_zero, log_one, log_zero, sub_zero, zero_mul, div_one,
     Dilog.Lir_two_one, Arctan.Lir_three_one, Lir_four_one, show (1 : ℝ) + 1 = 2 by norm_num,
     sub_self, one_div]
