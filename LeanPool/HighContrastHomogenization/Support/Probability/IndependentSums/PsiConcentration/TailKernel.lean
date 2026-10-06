@@ -112,7 +112,8 @@ theorem upperTruncation_sq_mul_exp_max_le_abs_sq_add_posPart_sq_mul_exp
   · have hneg : upperTruncation X L ω < 0 := lt_of_not_ge hpos
     have hmax : max (upperTruncation X L ω) 0 = 0 := max_eq_right hneg.le
     have habs :
-        |upperTruncation X L ω| ≤ |X ω| := abs_upperTruncation_le_abs_self (X := X) (L := L) (ω := ω) hL
+        |upperTruncation X L ω| ≤ |X ω| := abs_upperTruncation_le_abs_self (X := X) (L := L) (ω
+          := ω) hL
     have hsq :
         upperTruncation X L ω ^ (2 : ℕ) ≤ |X ω| ^ (2 : ℕ) := by
       exact sq_le_sq.2 (by simpa using habs)

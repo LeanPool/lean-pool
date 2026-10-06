@@ -53,7 +53,8 @@ This is the specialization point for the log-normal independent-sum endpoint.
 The remaining endpoint proof will choose `l`, `L`, `M`, and `CΨ` as functions
 of `σ`, the family size, and the tail parameter, then optimize this raw bound
 to obtain the clean `sqrt(card)` weak-`Ψ_σ` scale. -/
-theorem measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_invPsi_psiSigma_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_log_constraint_rounded
+theorem
+  measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_invPsi_psiSigma_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_log_constraint_rounded
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {σ a l L CΨ M : ℝ}
     (h_indep : iIndepFun X μ)
@@ -83,7 +84,8 @@ theorem measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_invPs
 /-- Scaled raw truncation-Chernoff concentration for independent centered
 `O_{Ψ_σ}(K)` summands. The conclusion is written at threshold `K * a`, so the
 right-hand side is exactly the unit-scale raw bound. -/
-theorem measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_invPsi_psiSigma_of_iIndepFun_of_isBigO_scale_of_integral_eq_zero_of_log_constraint_rounded
+theorem
+  measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_invPsi_psiSigma_of_iIndepFun_of_isBigO_scale_of_integral_eq_zero_of_log_constraint_rounded
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {σ K a l L CΨ M : ℝ}
     (h_indep : iIndepFun X μ)
@@ -169,7 +171,8 @@ theorem measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_invPs
 /-- Symmetric raw truncation-Chernoff concentration for independent centered
 `O_{Ψ_σ}(K)` summands. This is just the scaled upper-tail estimate applied to
 `X` and `-X`, before the final log-normal absorption step. -/
-theorem measureReal_absTailEvent_finset_sum_le_two_mul_exp_add_two_mul_card_mul_invPsi_psiSigma_of_iIndepFun_of_isBigO_scale_of_integral_eq_zero_of_log_constraint_rounded
+theorem
+  measureReal_absTailEvent_finset_sum_le_two_mul_exp_add_two_mul_card_mul_invPsi_psiSigma_of_iIndepFun_of_isBigO_scale_of_integral_eq_zero_of_log_constraint_rounded
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {σ K a l L CΨ M : ℝ}
     (h_indep : iIndepFun X μ)
@@ -256,7 +259,8 @@ discharged, but with an arbitrary logarithmic-control constant `M`. This is
 the preferred backend for the final optimized log-normal endpoint: the
 deterministic optimizer can choose `M` sharply instead of using the simple
 fallback `exp(l L + 4 log L)`. -/
-theorem measureReal_absTailEvent_finset_sum_le_two_mul_exp_add_two_mul_card_mul_invPsi_psiSigma_of_iIndepFun_of_isBigO_scale_of_integral_eq_zero_of_log_constraint_tail_const_rounded
+theorem
+  measureReal_absTailEvent_finset_sum_le_two_mul_exp_add_two_mul_card_mul_invPsi_psiSigma_of_iIndepFun_of_isBigO_scale_of_integral_eq_zero_of_log_constraint_tail_const_rounded
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {σ K a l L M : ℝ}
     (h_indep : iIndepFun X μ)
@@ -286,7 +290,8 @@ theorem measureReal_absTailEvent_finset_sum_le_two_mul_exp_add_two_mul_card_mul_
 /-- Symmetric raw `Ψ_σ` concentration with the simple log-control constant
 already plugged into the generic log-constraint slot. The only analytic input
 still explicit is the tail-integral bound for `t / Ψ_σ(t)`. -/
-theorem measureReal_absTailEvent_finset_sum_le_two_mul_exp_add_two_mul_card_mul_invPsi_psiSigma_of_iIndepFun_of_isBigO_scale_of_integral_eq_zero_of_simple_log_control_rounded
+theorem
+  measureReal_absTailEvent_finset_sum_le_two_mul_exp_add_two_mul_card_mul_invPsi_psiSigma_of_iIndepFun_of_isBigO_scale_of_integral_eq_zero_of_simple_log_control_rounded
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {σ K a l L CΨ : ℝ}
     (h_indep : iIndepFun X μ)
@@ -315,7 +320,8 @@ theorem measureReal_absTailEvent_finset_sum_le_two_mul_exp_add_two_mul_card_mul_
 
 /-- Symmetric raw `Ψ_σ` concentration with both scalar analytic inputs
 discharged by the packaged log-control and tail-integral constants. -/
-theorem measureReal_absTailEvent_finset_sum_le_two_mul_exp_add_two_mul_card_mul_invPsi_psiSigma_of_iIndepFun_of_isBigO_scale_of_integral_eq_zero_of_simple_log_control_tail_const_rounded
+theorem
+  measureReal_absTailEvent_finset_sum_le_two_mul_exp_add_two_mul_card_mul_invPsi_psiSigma_of_iIndepFun_of_isBigO_scale_of_integral_eq_zero_of_simple_log_control_tail_const_rounded
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {σ K a l L : ℝ}
     (h_indep : iIndepFun X μ)
@@ -345,7 +351,8 @@ theorem measureReal_absTailEvent_finset_sum_le_two_mul_exp_add_two_mul_card_mul_
 deterministic choice of truncation/Chernoff parameters. This isolates the
 probability part of the log-normal endpoint: after this theorem, the only
 missing input is the optimization/absorption inequality for the raw bound. -/
-theorem isBigO_psiSigma_finset_sum_of_iIndepFun_of_isBigO_scale_of_integral_eq_zero_of_simple_log_control_tail_const_absorption
+theorem
+  isBigO_psiSigma_finset_sum_of_iIndepFun_of_isBigO_scale_of_integral_eq_zero_of_simple_log_control_tail_const_absorption
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {σ K B : ℝ}
     (h_indep : iIndepFun X μ)
@@ -394,7 +401,8 @@ general note-facing staging theorem for the final log-normal scalar endpoint:
 the probability and analytic tail-integral parts are fully discharged, while
 the remaining hypothesis is exactly the deterministic parameter choice
 `(l, L, M)` and absorption of the raw bound. -/
-theorem isBigO_psiSigma_finset_sum_of_iIndepFun_of_isBigO_scale_of_integral_eq_zero_of_log_constraint_tail_const_absorption
+theorem
+  isBigO_psiSigma_finset_sum_of_iIndepFun_of_isBigO_scale_of_integral_eq_zero_of_log_constraint_tail_const_absorption
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {σ K B : ℝ}
     (h_indep : iIndepFun X μ)
@@ -445,7 +453,8 @@ parameter choice. The helper
 the raw theorem, so the deterministic optimizer only needs to find
 `l, L, C` such that `l u ≤ (1/2) log Ψ_σ(u) + C` on `[1,L]` and the resulting
 raw bound is absorbed by the target `Ψ_σ` tail. -/
-theorem isBigO_psiSigma_finset_sum_of_iIndepFun_of_isBigO_scale_of_integral_eq_zero_of_linear_control_tail_const_absorption
+theorem
+  isBigO_psiSigma_finset_sum_of_iIndepFun_of_isBigO_scale_of_integral_eq_zero_of_linear_control_tail_const_absorption
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {σ K B : ℝ}
     (h_indep : iIndepFun X μ)
@@ -487,7 +496,8 @@ theorem isBigO_psiSigma_finset_sum_of_iIndepFun_of_isBigO_scale_of_integral_eq_z
 logarithmic inequalities: local linear control, mgf-term absorption, and
 union-term absorption. This is the preferred staging point for the final
 parameter-choice proof. -/
-theorem isBigO_psiSigma_finset_sum_of_iIndepFun_of_isBigO_scale_of_integral_eq_zero_of_linear_control_tail_const_mgf_union_log
+theorem
+  isBigO_psiSigma_finset_sum_of_iIndepFun_of_isBigO_scale_of_integral_eq_zero_of_linear_control_tail_const_mgf_union_log
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {σ K B : ℝ}
     (h_indep : iIndepFun X μ)

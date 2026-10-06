@@ -150,8 +150,7 @@ theorem law_skewPart (A : RandomCoeffField Ω d) (μ : MeasureTheory.Measure Ω)
 /-- The pointwise-local sigma-algebra on the sample space induced by a random
 coefficient field and the deterministic region `U`.  This belongs to the
 retained restriction engineering lane. -/
-@[expose]
-def pointwiseLocalSigma (A : RandomCoeffField Ω d) (U : Set (Vec d)) : MeasurableSpace Ω :=
+abbrev pointwiseLocalSigma (A : RandomCoeffField Ω d) (U : Set (Vec d)) : MeasurableSpace Ω :=
   (PointwiseLocalSigma U).comap A
 
 /-- Compatibility name for `pointwiseLocalSigma`. -/
@@ -161,8 +160,7 @@ abbrev localSigma (A : RandomCoeffField Ω d) (U : Set (Vec d)) : MeasurableSpac
 coefficient field and the deterministic region `U`. This is the pullback of
 `RestrictionSigma U`, hence the sigma-algebra naturally matched to pointwise
 local observables. -/
-@[expose]
-noncomputable def restrictionSigma (A : RandomCoeffField Ω d) (U : Set (Vec d)) :
+noncomputable abbrev restrictionSigma (A : RandomCoeffField Ω d) (U : Set (Vec d)) :
     MeasurableSpace Ω :=
   (RestrictionSigma U).comap A
 

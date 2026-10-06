@@ -30,7 +30,7 @@ open scoped Topology
 public def diagonalShift {d : ℕ} (ε : ℝ) : Vec d :=
   fun _ => ε
 
-private theorem volume_cubeSet_originCube_lt_top {d : ℕ} (n : ℤ) :
+theorem volume_cubeSet_originCube_lt_top {d : ℕ} (n : ℤ) :
     MeasureTheory.volume (cubeSet (originCube d n)) < ⊤ := by
   rw [lt_top_iff_ne_top]
   intro htop
@@ -39,7 +39,7 @@ private theorem volume_cubeSet_originCube_lt_top {d : ℕ} (n : ℤ) :
   rw [volume_cubeSet_toReal] at hzero
   exact (ne_of_gt (cubeVolume_pos (originCube d n))) hzero
 
-private theorem volume_openCubeSet_originCube_lt_top {d : ℕ} (n : ℤ) :
+theorem volume_openCubeSet_originCube_lt_top {d : ℕ} (n : ℤ) :
     MeasureTheory.volume (openCubeSet (originCube d n)) < ⊤ := by
   exact lt_of_le_of_lt
     (MeasureTheory.measure_mono (openCubeSet_subset_cubeSet (originCube d n)))
@@ -79,7 +79,7 @@ private theorem tendsto_precomp_sub_diagonalShift {d : ℕ} (x : Vec d) (ε₀ :
   intro i
   simpa [diagonalShift] using tendsto_const_nhds.sub hε
 
-private theorem tendsto_setIntegral_mul_precomp_subRight_of_memL2On
+theorem tendsto_setIntegral_mul_precomp_subRight_of_memL2On
     {d : ℕ} {U : Set (Vec d)} [MeasureTheory.IsFiniteMeasure (MeasureTheory.volume.restrict U)]
     {f ψ : Vec d → ℝ} (hfL2 : MemL2On U f) (hψ_cont : Continuous ψ)
     (hψ_compact : HasCompactSupport ψ) (ε₀ : ℝ) :
@@ -364,26 +364,11 @@ noncomputable def toCubeSetOriginCube {d : ℕ} [NeZero d] {n : ℤ}
     (u.toCubeSetOriginCube.toH1Function.grad) = u.toH1Function.grad :=
   rfl
 
-/--
-Restrict an `H¹₀` witness on the half-open centered cube to the corresponding
-open centered cube by pushing each smooth approximant slightly inward while
-keeping the shift small enough that the `L²` error still vanishes.
--/
-@[expose]
-noncomputable def toOpenCubeSetOriginCube {d : ℕ} [NeZero d] {n : ℤ}
+theorem exists_originCubeInwardShiftData {d : ℕ} [NeZero d] {n : ℤ}
     (u : H10Function (cubeSet (originCube d n))) :
-    H10Function (openCubeSet (originCube d n)) := by
-  let Uc : Set (Vec d) := cubeSet (originCube d n)
-  let Uo : Set (Vec d) := openCubeSet (originCube d n)
-  have hUo_open : IsOpen Uo := isOpen_openCubeSet (originCube d n)
-  let v : H1Function Uo := u.toH1Function.restrict hUo_open (openCubeSet_subset_cubeSet _)
-  let μo := MeasureTheory.volume.restrict Uo
-  haveI : Fact (MeasureTheory.volume Uo < ⊤) := ⟨volume_openCubeSet_originCube_lt_top (d := d) n⟩
-  haveI : MeasureTheory.IsFiniteMeasure μo := inferInstance
-  have hshiftData :
-      ∀ m : ℕ,
+          ∀ m : ℕ,
         ∃ ε : ℝ, 0 < ε ∧
-          tsupport (fun x : Vec d => u.approx m (x - diagonalShift (d := d) ε)) ⊆ Uo ∧
+          tsupport (fun x : Vec d => u.approx m (x - diagonalShift (d := d) ε)) ⊆ openCubeSet (originCube d n) ∧
           (∀ x : Vec d,
             dist (u.approx m (x - diagonalShift (d := d) ε)) (u.approx m x) ≤
               1 / ((m : ℝ) + 1)) ∧
@@ -477,70 +462,31 @@ noncomputable def toOpenCubeSetOriginCube {d : ℕ} [NeZero d] {n : ℤ}
           _ ≤ δgradMin := min_le_right _ _
           _ ≤ δgrad i := hδgradMin_le i
       exact hδgrad i hdist
-  let εShift : ℕ → ℝ := fun m => Classical.choose (hshiftData m)
-  let approx' : ℕ → Vec d → ℝ := fun m x => u.approx m (x - diagonalShift (d := d) (εShift m))
-  have hεShift :
-      ∀ m : ℕ,
-        0 < εShift m ∧
-          tsupport (approx' m) ⊆ Uo ∧
-          (∀ x : Vec d, dist (approx' m x) (u.approx m x) ≤ 1 / ((m : ℝ) + 1)) ∧
-          (∀ i : Fin d, ∀ x : Vec d,
-            dist ((fderiv ℝ (u.approx m) (x - diagonalShift (d := d) (εShift m))) (basisVec i))
-              ((fderiv ℝ (u.approx m) x) (basisVec i)) ≤ 1 / ((m : ℝ) + 1)) := by
-    intro m
-    simpa [εShift, approx'] using Classical.choose_spec (hshiftData m)
-  have happrox'_smooth : ∀ m : ℕ, ContDiff ℝ (⊤ : ℕ∞) (approx' m) := by
-    intro m
-    have hshift_smooth :
-        ContDiff ℝ (⊤ : ℕ∞)
-          (fun x : Vec d => x - diagonalShift (d := d) (εShift m)) := by
-      simpa [diagonalShift] using contDiff_id.sub contDiff_const
-    simpa [approx'] using! (u.approx_smooth m).comp hshift_smooth
-  have happrox'_compact : ∀ m : ℕ, HasCompactSupport (approx' m) := by
-    intro m
-    simpa [approx'] using!
-      (u.approx_hasCompactSupport m).comp_homeomorph
-        (Homeomorph.subRight (diagonalShift (d := d) (εShift m)))
-  have horigRestrict :
-      Filter.Tendsto
-        (fun m : ℕ =>
-          MeasureTheory.eLpNorm (fun x => u.approx m x - v.toFun x) 2 μo)
-        Filter.atTop (𝓝 0) := by
-    have hcube :
-        Filter.Tendsto
-          (fun m : ℕ =>
-            MeasureTheory.eLpNorm (fun x => u.approx m x - u.toH1Function.toFun x) 2
-              (MeasureTheory.volume.restrict Uc))
-          Filter.atTop (𝓝 0) := by
-      simpa [Uc] using u.tendsto_approx
-    refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hcube (fun _ => bot_le) ?_
-    intro m
-    simpa [v, H1Function.restrict, μo, Uo, Uc] using
-      (MeasureTheory.eLpNorm_mono_measure
-        (fun x => u.approx m x - u.toH1Function.toFun x)
-        (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume (openCubeSet_subset_cubeSet _)))
-  have horigGradRestrict :
-      ∀ i : Fin d,
+
+theorem tendsto_shifted_originCube_approx {d : ℕ} [NeZero d] {n : ℤ}
+    (u : H10Function (cubeSet (originCube d n)))
+    (εShift : ℕ → ℝ) (approx' : ℕ → Vec d → ℝ)
+    (hvalueShiftBound : ∀ (m : ℕ) (x : Vec d),
+      dist (approx' m x) (u.approx m x) ≤ 1 / ((m : ℝ) + 1))
+    (hgradShiftBound : ∀ (m : ℕ) (i : Fin d) (x : Vec d),
+      dist ((fderiv ℝ (u.approx m) (x - diagonalShift (d := d) (εShift m))) (basisVec i))
+        ((fderiv ℝ (u.approx m) x) (basisVec i)) ≤ 1 / ((m : ℝ) + 1))
+    (happrox'_smooth : ∀ m : ℕ, ContDiff ℝ (⊤ : ℕ∞) (approx' m)) :
+    Filter.Tendsto
+      (fun m : ℕ =>
+        MeasureTheory.eLpNorm (fun x => approx' m x - u.approx m x) 2
+          (MeasureTheory.volume.restrict (openCubeSet (originCube d n))))
+      Filter.atTop (𝓝 0) ∧
+      (∀ i : Fin d,
         Filter.Tendsto
           (fun m : ℕ =>
             MeasureTheory.eLpNorm
-              (fun x => (fderiv ℝ (u.approx m) x) (basisVec i) - v.grad x i) 2 μo)
-          Filter.atTop (𝓝 0) := by
-    intro i
-    have hcube :
-        Filter.Tendsto
-          (fun m : ℕ =>
-            MeasureTheory.eLpNorm
-              (fun x => (fderiv ℝ (u.approx m) x) (basisVec i) - u.toH1Function.grad x i) 2
-                (MeasureTheory.volume.restrict Uc))
-          Filter.atTop (𝓝 0) := by
-      simpa [Uc] using u.tendsto_approx_grad i
-    refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hcube (fun _ => bot_le) ?_
-    intro m
-    simpa [v, H1Function.restrict, μo, Uo, Uc] using
-      (MeasureTheory.eLpNorm_mono_measure
-        (fun x => (fderiv ℝ (u.approx m) x) (basisVec i) - u.toH1Function.grad x i)
-        (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume (openCubeSet_subset_cubeSet _)))
+              (fun x =>
+                (fderiv ℝ (u.approx m) (x - diagonalShift (d := d) (εShift m))) (basisVec i)
+                  - (fderiv ℝ (u.approx m) x) (basisVec i)) 2
+              (MeasureTheory.volume.restrict (openCubeSet (originCube d n))))
+          Filter.atTop (𝓝 0)) := by
+  let μo := MeasureTheory.volume.restrict (openCubeSet (originCube d n))
   have hμo_univ_lt_top : μo Set.univ < ⊤ := by
     simpa [μo] using volume_openCubeSet_originCube_lt_top (d := d) n
   have hshiftApprox :
@@ -575,7 +521,7 @@ noncomputable def toOpenCubeSetOriginCube {d : ℕ} [NeZero d] {n : ℤ}
                 (by simp) MeasurableSet.univ (by positivity)
                 ((happrox'_smooth m).continuous.aestronglyMeasurable.sub
                   ((u.approx_smooth m).differentiable (by simp)).continuous.aestronglyMeasurable)
-                (hεShift m).2.2.1
+                (hvalueShiftBound m)
                 (by simp) (by simp)
         _ = ENNReal.ofReal ((1 / ((m : ℝ) + 1)) * cμ) := by
               rw [hpow_eq, ← ENNReal.ofReal_mul]
@@ -646,7 +592,7 @@ noncomputable def toOpenCubeSetOriginCube {d : ℕ} [NeZero d] {n : ℤ}
                 (μ := μo) (p := (2 : ENNReal)) (s := Set.univ)
                 (by simp) MeasurableSet.univ (by positivity)
                 (hcontShift.aestronglyMeasurable.sub hcont.aestronglyMeasurable)
-                ((hεShift m).2.2.2 i)
+                (hgradShiftBound m i)
                 (by simp) (by simp)
         _ = ENNReal.ofReal ((1 / ((m : ℝ) + 1)) * cμ) := by
               rw [hpow_eq, ← ENNReal.ofReal_mul]
@@ -666,6 +612,124 @@ noncomputable def toOpenCubeSetOriginCube {d : ℕ} [NeZero d] {n : ℤ}
       simpa [zero_mul, mul_comm] using ENNReal.tendsto_ofReal (hbase.mul_const cμ)
     exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hbound_tendsto
       (fun _ => bot_le) hbound
+    exact ⟨hshiftApprox, hshiftGrad⟩
+
+theorem tendsto_approx_restrict_originCube {d : ℕ} [NeZero d] {n : ℤ}
+    (u : H10Function (cubeSet (originCube d n))) :
+  Filter.Tendsto
+        (fun m : ℕ =>
+          MeasureTheory.eLpNorm
+            (fun x => u.approx m x -
+              (u.toH1Function.restrict (isOpen_openCubeSet (originCube d n))
+                (openCubeSet_subset_cubeSet _)).toFun) 2
+            (MeasureTheory.volume.restrict (openCubeSet (originCube d n))))
+        Filter.atTop (𝓝 0) ∧
+      (∀ i : Fin d,
+        Filter.Tendsto
+          (fun m : ℕ =>
+            MeasureTheory.eLpNorm
+              (fun x => (fderiv ℝ (u.approx m) x) (basisVec i) -
+                (u.toH1Function.restrict (isOpen_openCubeSet (originCube d n))
+                  (openCubeSet_subset_cubeSet _)).grad x i) 2
+              (MeasureTheory.volume.restrict (openCubeSet (originCube d n))))
+          Filter.atTop (𝓝 0)) := by
+  let Uc : Set (Vec d) := cubeSet (originCube d n)
+  let Uo : Set (Vec d) := openCubeSet (originCube d n)
+  let v : H1Function Uo := u.toH1Function.restrict (isOpen_openCubeSet (originCube d n))
+    (openCubeSet_subset_cubeSet _)
+  let μo := MeasureTheory.volume.restrict Uo
+  have horigRestrict :
+      Filter.Tendsto
+        (fun m : ℕ =>
+          MeasureTheory.eLpNorm (fun x => u.approx m x - v.toFun x) 2 μo)
+        Filter.atTop (𝓝 0) := by
+    have hcube :
+        Filter.Tendsto
+          (fun m : ℕ =>
+            MeasureTheory.eLpNorm (fun x => u.approx m x - u.toH1Function.toFun x) 2
+              (MeasureTheory.volume.restrict Uc))
+          Filter.atTop (𝓝 0) := by
+      simpa [Uc] using u.tendsto_approx
+    refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hcube (fun _ => bot_le) ?_
+    intro m
+    simpa [v, H1Function.restrict, μo, Uo, Uc] using
+      (MeasureTheory.eLpNorm_mono_measure
+        (fun x => u.approx m x - u.toH1Function.toFun x)
+        (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume (openCubeSet_subset_cubeSet _)))
+  have horigGradRestrict :
+      ∀ i : Fin d,
+        Filter.Tendsto
+          (fun m : ℕ =>
+            MeasureTheory.eLpNorm
+              (fun x => (fderiv ℝ (u.approx m) x) (basisVec i) - v.grad x i) 2 μo)
+          Filter.atTop (𝓝 0) := by
+    intro i
+    have hcube :
+        Filter.Tendsto
+          (fun m : ℕ =>
+            MeasureTheory.eLpNorm
+              (fun x => (fderiv ℝ (u.approx m) x) (basisVec i) - u.toH1Function.grad x i) 2
+                (MeasureTheory.volume.restrict Uc))
+          Filter.atTop (𝓝 0) := by
+      simpa [Uc] using u.tendsto_approx_grad i
+    refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hcube (fun _ => bot_le) ?_
+    intro m
+    simpa [v, H1Function.restrict, μo, Uo, Uc] using
+      (MeasureTheory.eLpNorm_mono_measure
+        (fun x => (fderiv ℝ (u.approx m) x) (basisVec i) - u.toH1Function.grad x i)
+        (MeasureTheory.Measure.restrict_mono_set MeasureTheory.volume (openCubeSet_subset_cubeSet _)))
+  exact ⟨horigRestrict, horigGradRestrict⟩
+
+/--
+Restrict an `H¹₀` witness on the half-open centered cube to the corresponding
+open centered cube by pushing each smooth approximant slightly inward while
+keeping the shift small enough that the `L²` error still vanishes.
+-/
+@[expose]
+noncomputable def toOpenCubeSetOriginCube {d : ℕ} [NeZero d] {n : ℤ}
+    (u : H10Function (cubeSet (originCube d n))) :
+    H10Function (openCubeSet (originCube d n)) := by
+  let Uc : Set (Vec d) := cubeSet (originCube d n)
+  let Uo : Set (Vec d) := openCubeSet (originCube d n)
+  have hUo_open : IsOpen Uo := isOpen_openCubeSet (originCube d n)
+  let v : H1Function Uo := u.toH1Function.restrict hUo_open (openCubeSet_subset_cubeSet _)
+  let μo := MeasureTheory.volume.restrict Uo
+  haveI : Fact (MeasureTheory.volume Uo < ⊤) := ⟨volume_openCubeSet_originCube_lt_top (d := d) n⟩
+  haveI : MeasureTheory.IsFiniteMeasure μo := inferInstance
+  have hshiftData := exists_originCubeInwardShiftData (d := d) (n := n) u
+  let εShift : ℕ → ℝ := fun m => Classical.choose (hshiftData m)
+  let approx' : ℕ → Vec d → ℝ := fun m x => u.approx m (x - diagonalShift (d := d) (εShift m))
+  have hεShift :
+      ∀ m : ℕ,
+        0 < εShift m ∧
+          tsupport (approx' m) ⊆ Uo ∧
+          (∀ x : Vec d, dist (approx' m x) (u.approx m x) ≤ 1 / ((m : ℝ) + 1)) ∧
+          (∀ i : Fin d, ∀ x : Vec d,
+            dist ((fderiv ℝ (u.approx m) (x - diagonalShift (d := d) (εShift m))) (basisVec i))
+              ((fderiv ℝ (u.approx m) x) (basisVec i)) ≤ 1 / ((m : ℝ) + 1)) := by
+    intro m
+    simpa [εShift, approx'] using Classical.choose_spec (hshiftData m)
+  have happrox'_smooth : ∀ m : ℕ, ContDiff ℝ (⊤ : ℕ∞) (approx' m) := by
+    intro m
+    have hshift_smooth :
+        ContDiff ℝ (⊤ : ℕ∞)
+          (fun x : Vec d => x - diagonalShift (d := d) (εShift m)) := by
+      simpa [diagonalShift] using contDiff_id.sub contDiff_const
+    simpa [approx'] using! (u.approx_smooth m).comp hshift_smooth
+  have happrox'_compact : ∀ m : ℕ, HasCompactSupport (approx' m) := by
+    intro m
+    simpa [approx'] using!
+      (u.approx_hasCompactSupport m).comp_homeomorph
+        (Homeomorph.subRight (diagonalShift (d := d) (εShift m)))
+  have hrestrict := tendsto_approx_restrict_originCube (d := d) (n := n) u
+  have horigRestrict := hrestrict.1
+  have horigGradRestrict := hrestrict.2
+  have hshiftTendsto := tendsto_shifted_originCube_approx
+    (d := d) (n := n) u εShift approx'
+    (fun m x => (hεShift m).2.2.1)
+    (fun m i x => (hεShift m).2.2.2 i) happrox'_smooth
+  have hshiftApprox := hshiftTendsto.1
+  have hshiftGrad := hshiftTendsto.2
   refine
     { toH1Function := v
       approx := approx'

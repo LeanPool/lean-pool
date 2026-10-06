@@ -142,7 +142,8 @@ theorem measureReal_absTailEvent_finsetSum_le_sup'_abs_add_bennett
                 r ^ (2 : ℕ)) *
               bennettH
                 (t * r /
-                  (∑ i ∈ s, ProbabilityTheory.moment (fun ω => absTruncation (X i) r ω) 2 μ)))) := by
+                  (∑ i ∈ s, ProbabilityTheory.moment (fun ω => absTruncation (X i) r ω) 2 μ))))
+                    := by
   let Y : ι → Ω → ℝ := fun i => absTruncation (X i) r
   have hsubset :
       absTailEvent (fun ω => ∑ i ∈ s, X i ω) t ⊆
@@ -180,7 +181,8 @@ theorem measureReal_absTailEvent_finsetSum_le_sup'_abs_add_bennett
                 r ^ (2 : ℕ)) *
               bennettH
                 (t * r /
-                  (∑ i ∈ s, ProbabilityTheory.moment (fun ω => absTruncation (X i) r ω) 2 μ)))) := by
+                  (∑ i ∈ s, ProbabilityTheory.moment (fun ω => absTruncation (X i) r ω) 2 μ))))
+                    := by
     simpa [Y] using! htailY
   calc
     μ.real (absTailEvent (fun ω => ∑ i ∈ s, X i ω) t)
@@ -198,7 +200,8 @@ theorem measureReal_absTailEvent_finsetSum_le_sup'_abs_add_bennett
                   r ^ (2 : ℕ)) *
                 bennettH
                   (t * r /
-                    (∑ i ∈ s, ProbabilityTheory.moment (fun ω => absTruncation (X i) r ω) 2 μ)))) := by
+                    (∑ i ∈ s, ProbabilityTheory.moment (fun ω => absTruncation (X i) r ω) 2
+                      μ)))) := by
             exact add_le_add_right htailY' _
     _ = μ.real (upperTailEvent (fun ω => s.sup' hs (fun i => |X i ω|)) r) +
           2 * Real.exp
@@ -207,7 +210,8 @@ theorem measureReal_absTailEvent_finsetSum_le_sup'_abs_add_bennett
                   r ^ (2 : ℕ)) *
                 bennettH
                   (t * r /
-                    (∑ i ∈ s, ProbabilityTheory.moment (fun ω => absTruncation (X i) r ω) 2 μ)))) := by
+                    (∑ i ∈ s, ProbabilityTheory.moment (fun ω => absTruncation (X i) r ω) 2
+                      μ)))) := by
             rfl
 
 theorem bennett_truncation_exponent_eq_beta
@@ -289,7 +293,8 @@ theorem measureReal_absTailEvent_finsetSum_le_sup'_abs_add_bennettBeta_of_scale
   have hexponent :
       -(((v / r ^ (2 : ℕ)) * bennettH (t * r / v))) ≤
         -(p * bennettBeta (t ^ (2 : ℕ) / (p * sigmaSq))) := by
-    rw [bennett_truncation_exponent_eq_beta (hr := hr_pos.ne') (hv := (by simpa [v] using hv_pos.ne'))]
+    rw [bennett_truncation_exponent_eq_beta (hr := hr_pos.ne') (hv := (by simpa [v] using
+      hv_pos.ne'))]
     rw [hscale]
     exact neg_le_neg (mul_le_mul_of_nonneg_left hbeta_mono' hp_pos.le)
   refine hmaster.trans ?_
@@ -355,7 +360,7 @@ theorem lintegral_abs_finsetSum_rpow_le_rosenthal_of_identDistrib_neg
     dsimp [sigmaSq]
     refine Finset.sum_nonneg ?_
     intro i hi
-    simp [ProbabilityTheory.moment]
+    simp only [absTruncation_apply, absTailIndicator_apply]
     positivity
   have hS_meas : Measurable S := by
     dsimp [S]
@@ -379,14 +384,16 @@ theorem lintegral_abs_finsetSum_rpow_le_rosenthal_of_identDistrib_neg
       have hB_int :
           Integrable (fun t => 2 * kernel t) (volume.restrict (Set.Ioi (0 : ℝ))) := by
         simpa [kernel, IntegrableOn] using
-          ((integrableOn_rosenthal_bennett_scaled_kernel (p := p) (sigmaSq := sigmaSq) hp hSigma_pos)).const_mul
+          ((integrableOn_rosenthal_bennett_scaled_kernel (p := p) (sigmaSq := sigmaSq) hp
+            hSigma_pos)).const_mul
             (2 : ℝ)
       exact measurable_id.ennreal_ofReal.comp_aemeasurable hB_int.aestronglyMeasurable.aemeasurable
     have hdom :
         ∀ᵐ t ∂(volume.restrict (Set.Ioi (0 : ℝ))),
           μ {ω | t < |S ω|} * ENNReal.ofReal (t ^ (p - 1)) ≤ A t + B t := by
       filter_upwards [self_mem_ae_restrict measurableSet_Ioi] with t ht
-      let truncVar : ℝ := ∑ i ∈ s, ProbabilityTheory.moment (fun ω => absTruncation (X i) (t / p) ω) 2 μ
+      let truncVar : ℝ := ∑ i ∈ s, ProbabilityTheory.moment (fun ω => absTruncation (X i) (t /
+        p) ω) 2 μ
       have htail_real :
           μ.real (absTailEvent S t) ≤
             μ.real (upperTailEvent M (t / p)) +
@@ -401,7 +408,7 @@ theorem lintegral_abs_finsetSum_rpow_le_rosenthal_of_identDistrib_neg
             dsimp [truncVar]
             refine Finset.sum_nonneg ?_
             intro i hi
-            simp [ProbabilityTheory.moment]
+            simp only [absTruncation_apply, absTailIndicator_apply]
             positivity
           have htrunc_zero : truncVar = 0 := le_antisymm (le_of_not_gt hTrunc_pos) htrunc_nonneg
           have htrunc_term_zero :
@@ -409,9 +416,10 @@ theorem lintegral_abs_finsetSum_rpow_le_rosenthal_of_identDistrib_neg
                 ProbabilityTheory.moment (fun ω => absTruncation (X i) (t / p) ω) 2 μ = 0 := by
             intro i hi
             have hnonneg_terms :
-                ∀ j ∈ s, 0 ≤ ProbabilityTheory.moment (fun ω => absTruncation (X j) (t / p) ω) 2 μ := by
+                ∀ j ∈ s, 0 ≤ ProbabilityTheory.moment (fun ω => absTruncation (X j) (t / p) ω) 2
+                  μ := by
               intro j hj
-              simp [ProbabilityTheory.moment]
+              simp only [absTruncation_apply, absTailIndicator_apply]
               positivity
             exact (Finset.sum_eq_zero_iff_of_nonneg hnonneg_terms).1
               (by simpa [truncVar] using htrunc_zero) i hi
@@ -419,7 +427,8 @@ theorem lintegral_abs_finsetSum_rpow_le_rosenthal_of_identDistrib_neg
               ∀ i ∈ s, Integrable (fun ω => absTruncation (X i) (t / p) ω ^ (2 : ℕ)) μ := by
             intro i hi
             refine Integrable.mono' (h_sq_int i hi)
-              ((absTruncation_measurable (X := X i) (r := t / p) (h_meas i)).pow_const 2).aemeasurable.aestronglyMeasurable ?_
+              ((absTruncation_measurable (X := X i) (r := t / p) (h_meas i)).pow_const
+                2).aemeasurable.aestronglyMeasurable ?_
             filter_upwards with ω
             have hpow :
                 |absTruncation (X i) (t / p) ω| ^ (2 : ℕ) ≤ |X i ω| ^ (2 : ℕ) :=
@@ -488,12 +497,14 @@ theorem lintegral_abs_finsetSum_rpow_le_rosenthal_of_identDistrib_neg
                   2 * Real.exp (-(p * bennettBeta (t ^ (2 : ℕ) / (p * sigmaSq))))) := by
                   exact ENNReal.ofReal_le_ofReal (by simpa [sigmaSq] using htail_real)
           _ = ENNReal.ofReal (μ.real (upperTailEvent M (t / p))) +
-                ENNReal.ofReal (2 * Real.exp (-(p * bennettBeta (t ^ (2 : ℕ) / (p * sigmaSq))))) := by
+                ENNReal.ofReal (2 * Real.exp (-(p * bennettBeta (t ^ (2 : ℕ) / (p * sigmaSq)))))
+                  := by
                   rw [ENNReal.ofReal_add]
                   · exact MeasureTheory.measureReal_nonneg
                   · positivity
           _ = μ {ω | t / p < M ω} +
-                ENNReal.ofReal (2 * Real.exp (-(p * bennettBeta (t ^ (2 : ℕ) / (p * sigmaSq))))) := by
+                ENNReal.ofReal (2 * Real.exp (-(p * bennettBeta (t ^ (2 : ℕ) / (p * sigmaSq)))))
+                  := by
                   rw [hset_max]
                   simp [Measure.real, (measure_lt_top μ (upperTailEvent M (t / p))).ne]
       have hexp_nonneg :
@@ -524,7 +535,8 @@ theorem lintegral_abs_finsetSum_rpow_le_rosenthal_of_identDistrib_neg
       have hB_int :
           Integrable (fun t => 2 * kernel t) (volume.restrict (Set.Ioi (0 : ℝ))) := by
         simpa [kernel, IntegrableOn] using
-          ((integrableOn_rosenthal_bennett_scaled_kernel (p := p) (sigmaSq := sigmaSq) hp hSigma_pos)).const_mul
+          ((integrableOn_rosenthal_bennett_scaled_kernel (p := p) (sigmaSq := sigmaSq) hp
+            hSigma_pos)).const_mul
             (2 : ℝ)
       have hB_nonneg :
           0 ≤ᵐ[volume.restrict (Set.Ioi (0 : ℝ))] fun t => 2 * kernel t := by
@@ -600,7 +612,8 @@ theorem lintegral_abs_finsetSum_rpow_le_rosenthal_of_identDistrib_neg
         intro j hj
         simp [ProbabilityTheory.moment]
         positivity
-      exact (Finset.sum_eq_zero_iff_of_nonneg hnonneg_terms).1 (by simpa [sigmaSq] using hSigma_zero) i hi
+      exact (Finset.sum_eq_zero_iff_of_nonneg hnonneg_terms).1 (by simpa [sigmaSq] using
+        hSigma_zero) i hi
     have hsum_zero_ae : S =ᵐ[μ] 0 := by
       dsimp [S]
       apply ae_eq_zero_finsetSum_of_forall
@@ -663,7 +676,7 @@ theorem integrable_abs_finsetSum_rpow_of_identDistrib_neg
     intro ω
     have hnonneg : 0 ≤ |X hs.choose ω| := abs_nonneg _
     have hle : |X hs.choose ω| ≤ M ω := by
-      show |X hs.choose ω| ≤ s.sup' hs (fun i => |X i ω|)
+      change |X hs.choose ω| ≤ s.sup' hs (fun i => |X i ω|)
       exact Finset.le_sup' (f := fun i => |X i ω|) hs.choose_spec
     exact le_trans hnonneg hle
   have hMpow_nonneg : 0 ≤ᵐ[μ] fun ω => M ω ^ p := by
@@ -739,7 +752,7 @@ theorem integral_abs_finsetSum_rpow_le_rosenthal_of_identDistrib_neg
     intro ω
     have hnonneg : 0 ≤ |X hs.choose ω| := abs_nonneg _
     have hle : |X hs.choose ω| ≤ M ω := by
-      show |X hs.choose ω| ≤ s.sup' hs (fun i => |X i ω|)
+      change |X hs.choose ω| ≤ s.sup' hs (fun i => |X i ω|)
       exact Finset.le_sup' (f := fun i => |X i ω|) hs.choose_spec
     exact le_trans hnonneg hle
   have hMpow_nonneg : 0 ≤ᵐ[μ] fun ω => M ω ^ p := by

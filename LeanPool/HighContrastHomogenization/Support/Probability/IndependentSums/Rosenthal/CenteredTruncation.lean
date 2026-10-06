@@ -90,7 +90,8 @@ theorem measureReal_upperTailEvent_centeredFinsetSum_absTruncation_le_bennett
               y ^ (2 : ℕ)) *
             bennettH
               (a * y /
-                (∑ i ∈ s, ProbabilityTheory.moment (centeredAbsTruncationFamily X r μ i) 2 μ)))) := by
+                (∑ i ∈ s, ProbabilityTheory.moment (centeredAbsTruncationFamily X r μ i) 2 μ))))
+                  := by
   let Y : ι → Ω → ℝ := centeredAbsTruncationFamily X r μ
   have h_indepY : iIndepFun Y μ :=
     centeredAbsTruncationFamily_iIndepFun (μ := μ) (X := X) (r := r) h_indep
@@ -137,7 +138,8 @@ theorem measureReal_absTailEvent_centeredFinsetSum_absTruncation_le_bennett
               y ^ (2 : ℕ)) *
             bennettH
               (a * y /
-                (∑ i ∈ s, ProbabilityTheory.moment (centeredAbsTruncationFamily X r μ i) 2 μ)))) := by
+                (∑ i ∈ s, ProbabilityTheory.moment (centeredAbsTruncationFamily X r μ i) 2 μ))))
+                  := by
   let Y : ι → Ω → ℝ := centeredAbsTruncationFamily X r μ
   have h_indepY : iIndepFun Y μ :=
     centeredAbsTruncationFamily_iIndepFun (μ := μ) (X := X) (r := r) h_indep
@@ -247,7 +249,7 @@ theorem measureReal_absTailEvent_centeredFinsetSum_absTailIndicator_le_two_mul_d
           μ.real {ω | b ≤ F ω} := by
       refine measureReal_mono ?_
       intro ω hω
-      show b ≤ F ω
+      change b ≤ F ω
       exact le_of_lt (by simpa [F, upperTailEvent] using hω)
     have hmul :
         b * μ.real (upperTailEvent F b) ≤

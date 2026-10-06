@@ -172,7 +172,8 @@ theorem sum_cubeIncrement_eq_cubeProjectionGap {d : ℕ} (Q : TriadicCube d)
 
 theorem cubeLpNorm_sum_cubeIncrement_eq_cubeProjectionGap {d : ℕ}
     (S Q : TriadicCube d) (p : ℝ≥0∞) (u : Vec d → ℝ) (j n : ℕ) :
-    cubeLpNorm S p (fun x => Finset.sum (Finset.range n) (fun m => cubeIncrement Q (j + m + 1) u x)) =
+    cubeLpNorm S p (fun x => Finset.sum (Finset.range n) (fun m => cubeIncrement Q (j + m + 1) u
+      x)) =
       cubeLpNorm S p (cubeProjectionGap Q j n u) := by
   rw [sum_cubeIncrement_eq_cubeProjectionGap]
 
@@ -236,7 +237,8 @@ theorem cubeLpNorm_cubeProjectionGap_eq_sub_cubeProjection_of_mem_descendantsAtD
 theorem sum_cubeIncrement_ae_eq_sub_cubeProjection_of_mem_descendantsAtDepth {d : ℕ}
     {Q R : TriadicCube d} (u : Vec d → ℝ) {j n : ℕ}
     (hR : R ∈ descendantsAtDepth Q (j + n)) :
-    (fun x => Finset.sum (Finset.range n) (fun m => cubeIncrement Q (j + m + 1) u x)) =ᵐ[normalizedCubeMeasure R]
+    (fun x => Finset.sum (Finset.range n) (fun m => cubeIncrement Q (j + m + 1) u x))
+      =ᵐ[normalizedCubeMeasure R]
       (fun x => cubeAverage R u - cubeProjection Q j u x) := by
   rw [sum_cubeIncrement_eq_cubeProjectionGap (Q := Q) (u := u) (j := j) (n := n)]
   exact cubeProjectionGap_ae_eq_sub_cubeProjection_of_mem_descendantsAtDepth
@@ -245,7 +247,8 @@ theorem sum_cubeIncrement_ae_eq_sub_cubeProjection_of_mem_descendantsAtDepth {d 
 theorem cubeLpNorm_sum_cubeIncrement_eq_sub_cubeProjection_of_mem_descendantsAtDepth {d : ℕ}
     {Q R : TriadicCube d} (p : ℝ≥0∞) (u : Vec d → ℝ) {j n : ℕ}
     (hR : R ∈ descendantsAtDepth Q (j + n)) :
-    cubeLpNorm R p (fun x => Finset.sum (Finset.range n) (fun m => cubeIncrement Q (j + m + 1) u x)) =
+    cubeLpNorm R p (fun x => Finset.sum (Finset.range n) (fun m => cubeIncrement Q (j + m + 1) u
+      x)) =
       cubeLpNorm R p (fun x => cubeAverage R u - cubeProjection Q j u x) := by
   rw [cubeLpNorm_sum_cubeIncrement_eq_cubeProjectionGap (S := R) (Q := Q)]
   rw [cubeLpNorm_cubeProjectionGap_eq_sub_cubeProjection_of_mem_descendantsAtDepth

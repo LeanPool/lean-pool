@@ -164,7 +164,8 @@ theorem abs_cubeAverage_vecDot_le_sum_note_rhs_mul_of_uniform_component_bounds_t
 
 /-- Sharp vectorized two-one pairing bound without the redundant average tail
 in the flux dual norm. -/
-theorem abs_cubeAverage_vecDot_le_sum_note_constant_mul_of_uniform_component_bounds_two_one_of_nonneg
+theorem
+  abs_cubeAverage_vecDot_le_sum_note_constant_mul_of_uniform_component_bounds_two_one_of_nonneg
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (u g : Vec d → Vec d) (B : Fin d → ℝ)
     (hs : 0 < s)
     (hu : ∀ i, MeasureTheory.MemLp (fun x => u x i) (2 : ℝ≥0∞) (normalizedCubeMeasure Q))

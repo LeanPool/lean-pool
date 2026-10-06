@@ -289,7 +289,8 @@ theorem integral_mul_deriv_two_kink_eq_neg (b₁ b₂ : ℝ) (hb : b₁ ≤ b₂
         + (if t ≤ b₂ then (0 : ℝ) else f₃ t - f₂ t) := by
     intro t
     rcases lt_trichotomy t b₁ with h | h | h
-    · rw [ite_eq_left h, ite_eq_left (le_of_lt h), ite_eq_left (le_of_lt (lt_of_lt_of_le h hb))]; ring
+    · rw [ite_eq_left h, ite_eq_left (le_of_lt h), ite_eq_left (le_of_lt (lt_of_lt_of_le h
+      hb))]; ring
     · subst h
       rw [ite_eq_right (lt_irrefl _), ite_eq_right (by linarith : ¬ b₂ < t),
         ite_eq_left (le_refl t), ite_eq_left (by linarith : t ≤ b₂), hm₁]; ring
@@ -305,7 +306,8 @@ theorem integral_mul_deriv_two_kink_eq_neg (b₁ b₂ : ℝ) (hb : b₁ ≤ b₂
       = (if t < b₁ then f₁' t else if b₂ < t then f₃' t else f₂' t) := by
     intro t ht1 ht2
     rcases lt_trichotomy t b₁ with h | h | h
-    · rw [ite_eq_left (le_of_lt h), ite_eq_left (le_of_lt (lt_of_lt_of_le h hb)), ite_eq_left h]; ring
+    · rw [ite_eq_left (le_of_lt h), ite_eq_left (le_of_lt (lt_of_lt_of_le h hb)), ite_eq_left
+      h]; ring
     · exact absurd h ht1
     · rw [ite_eq_right (by linarith : ¬ t ≤ b₁), ite_eq_right (not_lt.mpr (le_of_lt h))]
       rcases lt_trichotomy t b₂ with h2 | h2 | h2

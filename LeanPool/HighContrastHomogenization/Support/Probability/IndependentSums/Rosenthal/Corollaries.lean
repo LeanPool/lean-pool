@@ -378,7 +378,8 @@ theorem integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_polynomial_of_iIndepFun
 
 /-- Uniform-`K` polynomial-moment Rosenthal corollary in the note-facing
 finite-sum form. -/
-theorem integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_polynomial_of_iIndepFun_of_integral_eq_zero
+theorem
+  integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_polynomial_of_iIndepFun_of_integral_eq_zero
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} (hs : s.Nonempty) {p : ℕ} {K : ℝ}
     (hp : 2 ≤ p)
@@ -397,7 +398,8 @@ theorem integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_polynomial_of_i
         2 * (p : ℝ) * (∑ i ∈ s, ∫ ω, |X i ω| ^ p ∂μ) ^ (1 / (p : ℝ)) +
           4 * rosenthalBennettIntegralConst *
             (Real.sqrt p * Real.sqrt (∑ i ∈ s, ProbabilityTheory.moment (X i) 2 μ)) := by
-    exact integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_polynomial_of_iIndepFun_of_integral_eq_zero
+    exact
+      integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_polynomial_of_iIndepFun_of_integral_eq_zero
       (μ := μ) (X := X) (s := s) hs hp h_indep h_meas hLp_int hXmean
   have hLp_sum :
       (∑ i ∈ s, ∫ ω, |X i ω| ^ p ∂μ) ^ (1 / (p : ℝ)) ≤
@@ -483,7 +485,8 @@ private theorem integrable_sup'_abs_rpow_of_integrable_abs_rpow
           (fun i _ => continuous_abs.measurable.comp (h_meas i))) using 1
       ext ω
       simp [Function.comp_apply]
-    exact ((Real.continuous_rpow_const hp).measurable.comp hsup_meas).aemeasurable.aestronglyMeasurable
+    exact ((Real.continuous_rpow_const hp).measurable.comp
+      hsup_meas).aemeasurable.aestronglyMeasurable
   · filter_upwards with ω
     have hsup_nonneg : 0 ≤ s.sup' hs (fun i => |X i ω|) := by
       exact le_trans (abs_nonneg _) (Finset.le_sup' (f := fun i => |X i ω|) hs.choose_spec)
@@ -717,7 +720,8 @@ theorem integral_abs_centeredFinsetSum_rpow_rpow_inv_le_rosenthal_polynomial
 
 /-- Real-exponent Rosenthal polynomial-moment corollary for centered
 independent finite sums. -/
-theorem integral_abs_finsetSum_rpow_rpow_inv_le_rosenthal_polynomial_of_iIndepFun_of_integral_eq_zero
+theorem
+  integral_abs_finsetSum_rpow_rpow_inv_le_rosenthal_polynomial_of_iIndepFun_of_integral_eq_zero
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} (hs : s.Nonempty) {p : ℝ}
     (hp : 2 ≤ p)
@@ -740,7 +744,8 @@ theorem integral_abs_finsetSum_rpow_rpow_inv_le_rosenthal_polynomial_of_iIndepFu
 
 /-- Uniform real-exponent polynomial-moment Rosenthal corollary in the
 finite-sum form. -/
-theorem integral_abs_finsetSum_rpow_rpow_inv_le_rosenthal_uniform_polynomial_of_iIndepFun_of_integral_eq_zero
+theorem
+  integral_abs_finsetSum_rpow_rpow_inv_le_rosenthal_uniform_polynomial_of_iIndepFun_of_integral_eq_zero
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} (hs : s.Nonempty) {p K : ℝ}
     (hp : 2 ≤ p)

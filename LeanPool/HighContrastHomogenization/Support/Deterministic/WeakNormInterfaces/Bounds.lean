@@ -490,7 +490,8 @@ averages of `w` equal the averages of `u` plus a fixed vector `c`, then the
 filtered contribution of `w` is controlled by the filtered contribution of `u`
 and the weighted constant tail.
 -/
-theorem sum_filter_cubeBesovNegativeVectorDepthSeminorm_le_two_mul_self_add_const_of_cubeAverageVec_eq
+theorem
+  sum_filter_cubeBesovNegativeVectorDepthSeminorm_le_two_mul_self_add_const_of_cubeAverageVec_eq
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (N : ℕ)
     (low : ℕ → Prop) [DecidablePred low]
     (w u : Vec d → Vec d) (c : Vec d)
@@ -614,7 +615,8 @@ Cutoff version of the finite maximizer weak-norm split. Depths `j < L` are
 controlled by the four analytic cube-indexed pieces, while depths `L ≤ j`
 contribute a raw low-scale norm and a geometric constant tail.
 -/
-theorem cubeBesovNegativeVectorPartialSeminorm_le_cubeTerms_below_cutoff_add_low_self_add_geometric_const
+theorem
+  cubeBesovNegativeVectorPartialSeminorm_le_cubeTerms_below_cutoff_add_low_self_add_geometric_const
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (N L : ℕ)
     (w lowField : Vec d → Vec d) (c : Vec d)
     (predictor additivity lowScale tail : ℕ → TriadicCube d → Vec d)
@@ -667,7 +669,8 @@ converted to shifted weak-norm gap sums.  This combines the four-term
 cube-average decomposition, the low-scale constant-tail split, and the
 depthwise estimates with growth factors `3^{s'j}`.
 -/
-theorem cubeBesovNegativeVectorPartialSeminorm_le_shifted_gap_sums_below_cutoff_add_low_self_add_geometric_const
+theorem
+  cubeBesovNegativeVectorPartialSeminorm_le_shifted_gap_sums_below_cutoff_add_low_self_add_geometric_const
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (N L : ℕ)
     (w lowField : Vec d → Vec d) (c : Vec d)
     (predictor additivity lowScale tail : ℕ → TriadicCube d → Vec d)

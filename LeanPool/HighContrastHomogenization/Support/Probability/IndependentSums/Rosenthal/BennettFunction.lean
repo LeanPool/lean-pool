@@ -158,7 +158,7 @@ theorem bennettBeta_nonneg {r : ℝ} (hr : 0 < r) :
       (Real.convexOn_mul_log.le_slope_of_hasDerivAt
         (hx := by simp)
         (hy := by
-          show 0 ≤ 1 + r
+          change 0 ≤ 1 + r
           linarith)
         (hxy := by
           show 1 < 1 + r
@@ -214,7 +214,7 @@ theorem one_quarter_sq_le_bennettH_of_mem_Icc {r : ℝ} (hr : r ∈ Set.Icc 0 1)
     have hk_deriv : deriv k x = Real.log (1 + x) - x / 2 := by
       have hsub :
           deriv k x = deriv bennettH x - deriv (fun t : ℝ => t ^ (2 : ℕ) / 4) x := by
-        show deriv (bennettH - fun t : ℝ => t ^ (2 : ℕ) / 4) x =
+        change deriv (bennettH - fun t : ℝ => t ^ (2 : ℕ) / 4) x =
             deriv bennettH x - deriv (fun t : ℝ => t ^ (2 : ℕ) / 4) x
         exact deriv_sub (f := bennettH) (g := fun t : ℝ => t ^ (2 : ℕ) / 4)
           (x := x) (hf := differentiableAt_bennettH hxne)

@@ -97,7 +97,8 @@ theorem ball_cubeCenter_eq_openCubeSet {d : ℕ} (Q : TriadicCube d) :
   have hball_pi :
       Metric.ball (cubeCenter Q) (cubeRadius Q) =
         Set.pi Set.univ
-          (fun i : Fin d => Set.Ioo (cubeCenter Q i - cubeRadius Q) (cubeCenter Q i + cubeRadius Q)) := by
+          (fun i : Fin d => Set.Ioo (cubeCenter Q i - cubeRadius Q) (cubeCenter Q i + cubeRadius
+            Q)) := by
     rw [ball_pi (cubeCenter Q) (cubeRadius_pos Q)]
     ext x
     simp [Real.ball_eq_Ioo]

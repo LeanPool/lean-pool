@@ -27,7 +27,8 @@ open scoped BigOperators
     cubeIncrement Q 0 f = cubeProjection Q 0 f := rfl
 
 @[simp] theorem cubeIncrement_succ {d : ℕ} (Q : TriadicCube d) (n : ℕ) (f : Vec d → ℝ) :
-    cubeIncrement Q (n + 1) f = fun x => cubeProjection Q (n + 1) f x - cubeProjection Q n f x := rfl
+    cubeIncrement Q (n + 1) f = fun x => cubeProjection Q (n + 1) f x - cubeProjection Q n f x
+      := rfl
 
 theorem existsUnique_descendantAtDepth_mem_cubeSet {d : ℕ} {Q : TriadicCube d} {x : Vec d}
     (n : ℕ) (hx : x ∈ cubeSet Q) :
@@ -162,7 +163,8 @@ theorem cubeIncrement_eq_sub_cubeAverage_of_mem_descendantsAtDepth {d : ℕ}
 
 theorem cubeIncrement_telescope {d : ℕ} (Q : TriadicCube d) (f : Vec d → ℝ) (x : Vec d)
     (n : ℕ) :
-    Finset.sum (Finset.range (n + 1)) (fun j => cubeIncrement Q j f x) = cubeProjection Q n f x := by
+    Finset.sum (Finset.range (n + 1)) (fun j => cubeIncrement Q j f x) = cubeProjection Q n f x
+      := by
   induction n with
   | zero =>
       simp [cubeIncrement]

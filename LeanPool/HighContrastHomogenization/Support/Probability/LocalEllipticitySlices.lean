@@ -556,8 +556,7 @@ theorem eqOn_saturated_of_measurableSet_localSigma {d : ℕ} {U : Set (Vec d)}
 /-- The subtype sigma algebra inherited from the local coefficient-field sigma
 algebra. We keep this as an explicit definition, rather than an instance, so
 theorem statements choose the local lane deliberately. -/
-@[expose]
-def localMeasurableSpace {d : ℕ} (U : Set (Vec d)) (k : ℕ) :
+abbrev localMeasurableSpace {d : ℕ} (U : Set (Vec d)) (k : ℕ) :
     MeasurableSpace {a : CoeffField d // QuantitativeEllipticSlice U k a} :=
   MeasurableSpace.comap Subtype.val (PointwiseLocalSigma U)
 
@@ -888,8 +887,7 @@ theorem of_quantitative {d : ℕ} {U : Set (Vec d)} {k : ℕ} {a : CoeffField d}
   IsEssentiallyEllipticFieldOn.of_isEllipticFieldOn h
 /-- The subtype sigma algebra inherited from the local coefficient-field sigma
 algebra, now for essential/a.e. quantitative slices. -/
-@[expose]
-def localMeasurableSpace {d : ℕ} (U : Set (Vec d)) (k : ℕ) :
+abbrev localMeasurableSpace {d : ℕ} (U : Set (Vec d)) (k : ℕ) :
     MeasurableSpace {a : CoeffField d // EssentialQuantitativeEllipticSlice U k a} :=
   MeasurableSpace.comap Subtype.val (PointwiseLocalSigma U)
 
@@ -981,8 +979,7 @@ end EssentialQuantitativeEllipticSlice
 namespace AEEQuantitativeEllipticSlice
 /-- The subtype sigma algebra inherited from the local coefficient-field sigma
 algebra, for the boundary-stable AEE quantitative slices. -/
-@[expose]
-def localMeasurableSpace {d : ℕ} (U : Set (Vec d)) (k : ℕ) :
+abbrev localMeasurableSpace {d : ℕ} (U : Set (Vec d)) (k : ℕ) :
     MeasurableSpace {a : CoeffField d // AEEQuantitativeEllipticSlice U k a} :=
   MeasurableSpace.comap Subtype.val (PointwiseLocalSigma U)
 

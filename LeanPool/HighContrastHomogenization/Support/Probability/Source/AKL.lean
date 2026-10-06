@@ -222,15 +222,13 @@ theorem generator_mk_eq_raw {d : ℕ} {Θ : ℝ}
   apply integral_congr_ae
   filter_upwards [ae_restrict_of_ae (AEEqFun.coeFn_mk f hf)] with x hx
   rw [hx]
-@[expose]
-def localSigma {d : ℕ} {Θ : ℝ}
+abbrev localSigma {d : ℕ} {Θ : ℝ}
     (U : BorelRegion d) : MeasurableSpace (Carrier d Θ) :=
   MeasurableSpace.generateFrom
     {s | ∃ (e e' : Vec d) (φ : Vec d → ℝ),
       ContDiff ℝ (⊤ : ℕ∞) φ ∧ HasCompactSupport φ ∧
       ∃ t : Set ℝ, MeasurableSet t ∧ s = generator U e e' φ ⁻¹' t}
-@[expose]
-def globalSigma (d : ℕ) (Θ : ℝ) : MeasurableSpace (Carrier d Θ) :=
+abbrev globalSigma (d : ℕ) (Θ : ℝ) : MeasurableSpace (Carrier d Θ) :=
   localSigma (Θ := Θ)
     (⟨Set.univ, MeasurableSet.univ⟩ : BorelRegion d)
 

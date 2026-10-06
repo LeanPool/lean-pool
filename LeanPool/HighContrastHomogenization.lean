@@ -45,13 +45,11 @@ public import LeanPool.HighContrastHomogenization.Entry.Statements.TwoGridWhitne
 /-!
 # Homogenization at a polynomial scale in high contrast
 
-Source: arxiv:2609.27647,
-url:https://github.com/scottnarmstrong/HighContrastHomogenization/tree/7a13dbcd8d6609264a713373f5c69ceeac870472
+Source: arxiv:2609.27647, url:https://github.com/scottnarmstrong/HighContrastHomogenization/tree/7a13dbcd8d6609264a713373f5c69ceeac870472
 Authors: Scott Armstrong, Tuomo Kuusi, Amélie Loher
 Status: verified
-Main declarations: `HCPoly.polynomial_entry`, `HCPoly.algebraic_convergence`,
-`HCPoly.uniform_homogenization`, `HCPoly.polynomial_homogenization`, `HCPoly.quenched_convergence`
-Tags: homogenization, elliptic-equations, stochastic-pde, high-contrast, quantitative-regularity
+Main declarations: `HCPoly.polynomial_homogenization`
+Tags: homogenization, elliptic-equations, probability, high-contrast
 MSC: 35B27, 35J15, 60K37
 -/
 

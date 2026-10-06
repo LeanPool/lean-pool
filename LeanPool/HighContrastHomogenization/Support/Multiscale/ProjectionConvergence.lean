@@ -86,7 +86,7 @@ theorem ae_tendsto_cubeProjection_of_integrableOn {d : ℕ} (Q : TriadicCube d) 
       ∀ᶠ n : ℕ in Filter.atTop,
         ((1 / 2 : ℝ) * cubeScaleFactor Q) * ((1 / 3 : ℝ) ^ n) ∈ Set.Ioi (0 : ℝ) := by
     exact Filter.Eventually.of_forall fun n => by
-      show 0 < ((1 / 2 : ℝ) * cubeScaleFactor Q) * ((1 / 3 : ℝ) ^ n)
+      change 0 < ((1 / 2 : ℝ) * cubeScaleFactor Q) * ((1 / 3 : ℝ) ^ n)
       have hcube : 0 < cubeScaleFactor Q := by
         simpa [cubeScaleFactor] using (zpow_pos (show (0 : ℝ) < 3 by norm_num) Q.scale)
       exact mul_pos (mul_pos (by norm_num) hcube) (pow_pos (by norm_num) _)

@@ -29,7 +29,8 @@ variable {μ : Measure Ω}
 
 /-- Large-regime one-sided heavy-tail concentration for centered independent
 unit-scale `O_{Γ_σ}` summands. -/
-theorem measureReal_upperTailEvent_finset_sum_le_exp_neg_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_lt_one_unit_largeRegime
+theorem
+  measureReal_upperTailEvent_finset_sum_le_exp_neg_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_lt_one_unit_largeRegime
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {σ t : ℝ}
     (h_indep : iIndepFun X μ)

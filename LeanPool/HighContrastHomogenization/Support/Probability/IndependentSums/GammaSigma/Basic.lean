@@ -367,7 +367,7 @@ theorem lintegral_rpow_le_of_isBigOWith_gammaSigma_unit
   have hDomInt :
       IntegrableOn (fun t : ℝ => Real.exp 1 * (t ^ (p - 1) * Real.exp (-(t ^ σ))))
         (Set.Ioi 0) := by
-    show Integrable (fun t : ℝ => Real.exp 1 * (t ^ (p - 1) * Real.exp (-(t ^ σ))))
+    change Integrable (fun t : ℝ => Real.exp 1 * (t ^ (p - 1) * Real.exp (-(t ^ σ))))
       (volume.restrict (Set.Ioi 0))
     have hraw :=
       (integrableOn_rpow_mul_exp_neg_rpow_of_pos (σ := σ) (p := p) hσ hp_pos).const_mul
@@ -471,7 +471,8 @@ theorem lintegral_rpow_le_of_isBigOWith_gammaSigma
           rw [← ENNReal.ofReal_mul (Real.rpow_nonneg hK.le _)]
           congr 1
           have hscale_nonneg : 0 ≤ gammaMomentConst σ * p ^ σ⁻¹ := by
-            exact mul_nonneg (gammaMomentConst_pos hσ).le (Real.rpow_nonneg (le_trans zero_le_one hp) _)
+            exact mul_nonneg (gammaMomentConst_pos hσ).le (Real.rpow_nonneg (le_trans
+              zero_le_one hp) _)
           rw [Real.mul_rpow hscale_nonneg hK.le]
           ring
 

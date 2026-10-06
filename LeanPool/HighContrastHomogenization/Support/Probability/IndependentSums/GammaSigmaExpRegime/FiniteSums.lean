@@ -104,7 +104,8 @@ theorem mgf_finset_sum_le_exp_card_mul_of_iIndepFun_of_isBigO_gammaSigma_of_one_
 
 /-- Large-`λ` Chernoff bound for finite sums of independent
 `O_{Γ_σ}` variables when `σ > 1`. -/
-theorem measureReal_upperTailEvent_finset_sum_le_exp_card_mul_of_iIndepFun_of_isBigO_gammaSigma_of_one_lt
+theorem
+  measureReal_upperTailEvent_finset_sum_le_exp_card_mul_of_iIndepFun_of_isBigO_gammaSigma_of_one_lt
     [IsProbabilityMeasure μ]
     {ι : Type*} {X : ι → Ω → ℝ} {s : Finset ι} {σ K l a : ℝ}
     (h_indep : iIndepFun X μ)
@@ -163,7 +164,8 @@ theorem mgf_finset_sum_le_exp_of_iIndepFun_of_gammaMomentGrowth_small_of_integra
     (hXmom : ∀ i ∈ s, HasGammaMomentGrowthWith μ σ (X i) (M i)) :
     mgf (fun ω => ∑ i ∈ s, X i ω) μ l ≤
       Real.exp (∑ i ∈ s, 2 * (Real.exp 1 * M i * l) ^ (2 : ℕ)) := by
-  refine mgf_finset_sum_le_exp_of_iIndepFun (μ := μ) (X := X) (v := fun i => 2 * (Real.exp 1 * M i * l) ^ (2 : ℕ))
+  refine mgf_finset_sum_le_exp_of_iIndepFun (μ := μ) (X := X) (v := fun i => 2 * (Real.exp 1 * M
+    i * l) ^ (2 : ℕ))
     h_indep h_meas ?_
   intro i hi
   exact mgf_le_exp_two_mul_sq_of_gammaMomentGrowth_small_of_integral_eq_zero
@@ -172,7 +174,8 @@ theorem mgf_finset_sum_le_exp_of_iIndepFun_of_gammaMomentGrowth_small_of_integra
 
 /-- Chernoff upper-tail estimate for finite independent sums of centered
 `Γ_σ` variables in the small-`λ` regime. -/
-theorem measureReal_upperTailEvent_finset_sum_le_exp_of_iIndepFun_of_gammaMomentGrowth_small_of_integral_eq_zero
+theorem
+  measureReal_upperTailEvent_finset_sum_le_exp_of_iIndepFun_of_gammaMomentGrowth_small_of_integral_eq_zero
     [IsProbabilityMeasure μ]
     {ι : Type*} {X : ι → Ω → ℝ} {M : ι → ℝ} {s : Finset ι} {σ l a : ℝ}
     (h_indep : iIndepFun X μ)
@@ -245,7 +248,8 @@ theorem mgf_finset_sum_le_exp_card_mul_of_iIndepFun_of_gammaMomentGrowth_small_o
           rw [hsum]
 
 /-- Uniform-witness version of the finite-sum small-`λ` Chernoff estimate. -/
-theorem measureReal_upperTailEvent_finset_sum_le_exp_card_mul_of_iIndepFun_of_gammaMomentGrowth_small_of_integral_eq_zero
+theorem
+  measureReal_upperTailEvent_finset_sum_le_exp_card_mul_of_iIndepFun_of_gammaMomentGrowth_small_of_integral_eq_zero
     [IsProbabilityMeasure μ]
     {ι : Type*} {X : ι → Ω → ℝ} {s : Finset ι} {σ M l a : ℝ}
     (h_indep : iIndepFun X μ)
@@ -880,7 +884,8 @@ theorem isBigO_gammaOne_finset_sum_of_iIndepFun_of_isBigO_of_integral_eq_zero
           upperTailEvent (fun ω => -∑ i ∈ s, X i ω) (A * (2 * t)) := by
     intro ω hω
     rw [Set.mem_union, mem_upperTailEvent, mem_upperTailEvent]
-    exact lt_abs.mp (by simpa [A, absTailEvent, upperTailEvent, mul_assoc, mul_left_comm, mul_comm] using hω)
+    exact lt_abs.mp (by simpa [A, absTailEvent, upperTailEvent, mul_assoc, mul_left_comm,
+      mul_comm] using hω)
   have hupper :
       μ.real (upperTailEvent (fun ω => ∑ i ∈ s, X i ω) (A * (2 * t))) ≤
         Real.exp (-((2 * t) ^ (1 : ℝ))) := by

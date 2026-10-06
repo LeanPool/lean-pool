@@ -271,7 +271,8 @@ theorem normalizedCubeMeasure_descendant_eq_smul_restrict {d : ℕ}
   change ENNReal.ofReal ((cubeVolume R)⁻¹) * MeasureTheory.volume (s ∩ cubeSet R) =
     ENNReal.ofReal (cubeVolume Q / cubeVolume R) *
       (ENNReal.ofReal ((cubeVolume Q)⁻¹) * cubeMeasure Q (s ∩ cubeSet R))
-  rw [cubeMeasure, MeasureTheory.Measure.restrict_apply (hs.inter (measurableSet_cubeSet R)), hinter]
+  rw [cubeMeasure, MeasureTheory.Measure.restrict_apply (hs.inter (measurableSet_cubeSet R)),
+    hinter]
   have hfactor :
       ENNReal.ofReal ((cubeVolume R)⁻¹) =
         ENNReal.ofReal (cubeVolume Q / cubeVolume R) *

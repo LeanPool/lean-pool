@@ -126,7 +126,8 @@ theorem tendsto_cubeBesovCircPartialNorm_one_succ_to_cubeBesovCircNorm
 
 /-- Finite local circ partial sums, averaged over descendants and shifted to
 the parent, are controlled by the full parent circ norm. -/
-theorem cubeBesovDepthWeight_mul_L2_descendantsAverage_sum_components_circPartialNorm_le_sum_circNorm
+theorem
+  cubeBesovDepthWeight_mul_L2_descendantsAverage_sum_components_circPartialNorm_le_sum_circNorm
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (G : Vec d → Vec d) (j N : ℕ)
     (hs0 : 0 ≤ s) (hs1 : s < 1)
     (hG :
@@ -306,7 +307,8 @@ theorem cubeBesovDepthWeight_mul_L2_descendantsAverage_sum_components_circPartia
 
 /-- The finite local partial-sum averages converge to the corresponding full
 local circ averages. -/
-theorem tendsto_cubeBesovDepthWeight_mul_L2_descendantsAverage_sum_components_circPartialNorm_to_circNorm
+theorem
+  tendsto_cubeBesovDepthWeight_mul_L2_descendantsAverage_sum_components_circPartialNorm_to_circNorm
     {d : ℕ} (Q : TriadicCube d) (s : ℝ) (G : Vec d → Vec d) (j : ℕ)
     (hG :
       ∀ i : Fin d,

@@ -490,7 +490,8 @@ theorem hasGammaMomentGrowthWith_finset_sup'_of_scales
   have hScaledSup :
       s.sup' hs_nonempty (fun i => a i * Real.exp 1) = s.sup' hs_nonempty a * Real.exp 1 := by
     simpa using
-      (Finset.sup'_mul₀ (a := Real.exp 1) (f := a) (s := s) (hs := hs_nonempty) (by positivity)).symm
+      (Finset.sup'_mul₀ (a := Real.exp 1) (f := a) (s := s) (hs := hs_nonempty) (by
+        positivity)).symm
   simpa [hY_eq, hScaledSup, mul_assoc, mul_left_comm, mul_comm] using hMoment
 
 /-- Existential finite-maximum bound for the `Γ_σ` moment-growth class. -/
@@ -531,7 +532,8 @@ theorem hasGammaMomentGrowth_finset_sup'
     exact lt_of_lt_of_le (ha i₀ hi₀) (Finset.le_sup' a hi₀)
   refine ⟨gammaMomentConst σ *
       (((3 * Real.log (s.card : ℝ)) ^ σ⁻¹) * (Real.exp 1 * s.sup' hs_nonempty a)),
-    mul_pos (gammaMomentConst_pos hσ) (mul_pos hCardFactor_pos (mul_pos (by positivity) hSup_pos)), ?_⟩
+    mul_pos (gammaMomentConst_pos hσ) (mul_pos hCardFactor_pos (mul_pos (by positivity)
+      hSup_pos)), ?_⟩
   exact hasGammaMomentGrowthWith_finset_sup'_of_scales
     (μ := μ) (s := s) (hs := hs_nonempty) (X := X) (a := a) (σ := σ)
     hσ hs_card ha hXa hXm

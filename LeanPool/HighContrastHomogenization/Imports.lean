@@ -1716,6 +1716,7 @@ public import LeanPool.HighContrastHomogenization.Support.Book.Ch03.ABK26.LocalC
 public import LeanPool.HighContrastHomogenization.Support.Book.Ch03.ABK26.LocalCoarseGrainingResponseOrder
 public import LeanPool.HighContrastHomogenization.Support.Book.Ch03.ABK26.NegativeBesov
 public import LeanPool.HighContrastHomogenization.Support.Book.Ch03.Definitions
+public import LeanPool.HighContrastHomogenization.Support.Book.Ch03.DomainGeometry
 public import LeanPool.HighContrastHomogenization.Support.Book.Ch03.Theorems.CoarseCaccioppoli
 public import LeanPool.HighContrastHomogenization.Support.Book.Ch03.Theorems.CoarseCaccioppoli.Interface
 public import LeanPool.HighContrastHomogenization.Support.Book.Ch03.Theorems.CoarseCaccioppoliDilationTransport

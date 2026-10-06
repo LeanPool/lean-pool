@@ -509,7 +509,8 @@ theorem cubeBesovCircNorm_projection_succ_le_three_halves_mul_cubeBesovCircParti
       _ = (3 / 2 : ℝ) * cubeBesovCircPartialNorm Q 1 (2 : ℝ≥0∞) (1 : ℝ≥0∞) (N + 1) u := by
             rw [hP_eq]
 
-theorem cubeBesovCircNorm_projection_succ_le_three_halves_mul_cubeBesovCircPartialNorm_on_descendants_of_memLp
+theorem
+  cubeBesovCircNorm_projection_succ_le_three_halves_mul_cubeBesovCircPartialNorm_on_descendants_of_memLp
     {d : ℕ} (Q : TriadicCube d) (u : Vec d → ℝ) (M : ℕ)
     (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q)) :
     ∀ j ∈ Finset.range (M + 1), ∀ R ∈ descendantsAtDepth Q j,
@@ -529,14 +530,16 @@ theorem cubeBesovCircNorm_projection_le_three_halves_mul_cubeBesovCircPartialNor
       (3 / 2 : ℝ) * cubeBesovCircPartialNorm Q 1 (2 : ℝ≥0∞) (1 : ℝ≥0∞) M u := by
   cases M with
   | zero =>
-      exact cubeBesovCircNorm_projection_zero_le_three_halves_mul_cubeBesovCircPartialNorm_zero_of_memLp
+      exact
+        cubeBesovCircNorm_projection_zero_le_three_halves_mul_cubeBesovCircPartialNorm_zero_of_memLp
         (Q := Q) (u := u)
   | succ N =>
       simpa using
         cubeBesovCircNorm_projection_succ_le_three_halves_mul_cubeBesovCircPartialNorm_of_memLp
           (Q := Q) (u := u) (N := N) hu
 
-theorem cubeBesovCircNorm_projection_le_three_halves_mul_cubeBesovCircPartialNorm_on_descendants_of_memLp
+theorem
+  cubeBesovCircNorm_projection_le_three_halves_mul_cubeBesovCircPartialNorm_on_descendants_of_memLp
     {d : ℕ} (Q : TriadicCube d) (u : Vec d → ℝ) (M : ℕ)
     (hu : MeasureTheory.MemLp u (2 : ℝ≥0∞) (normalizedCubeMeasure Q)) :
     ∀ j ∈ Finset.range (M + 1), ∀ R ∈ descendantsAtDepth Q j,

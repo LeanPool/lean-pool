@@ -13392,11 +13392,7 @@ projects:
     status: verified
     provenance: AI
     main_declarations:
-      - HCPoly.polynomial_entry
-      - HCPoly.algebraic_convergence
-      - HCPoly.uniform_homogenization
       - HCPoly.polynomial_homogenization
-      - HCPoly.quenched_convergence
     main_results:
       - declaration: HCPoly.polynomial_entry
         informal: >-
@@ -13427,9 +13423,8 @@ projects:
     tags:
       - homogenization
       - elliptic-equations
-      - stochastic-pde
+      - probability
       - high-contrast
-      - quantitative-regularity
     msc:
       - 35B27
       - 35J15

@@ -54,7 +54,8 @@ theorem cubeProjection_ae_eq_cubeAverage_of_mem_descendantsAtScale {d : ℕ}
   rw [descendantsAtScale_eq_descendantsAtDepth Q hk] at hR
   exact cubeProjection_ae_eq_cubeAverage_of_mem_descendantsAtDepth f hR
 
-theorem cubeLpNorm_cubeProjection_eq_abs_cubeAverage_of_mem_descendantsAtDepth {d : ℕ} {Q R : TriadicCube d}
+theorem cubeLpNorm_cubeProjection_eq_abs_cubeAverage_of_mem_descendantsAtDepth {d : ℕ} {Q R :
+  TriadicCube d}
     {j : ℕ} (p : ℝ≥0∞) (f : Vec d → ℝ) (hR : R ∈ descendantsAtDepth Q j) (hp : p ≠ 0) :
     cubeLpNorm R p (cubeProjection Q j f) = ‖cubeAverage R f‖ := by
   unfold cubeLpNorm
@@ -64,9 +65,11 @@ theorem cubeLpNorm_cubeProjection_eq_abs_cubeAverage_of_mem_descendantsAtDepth {
     normalizedCubeMeasure_apply_univ]
   simp
 
-theorem cubeLpNorm_cubeProjection_eq_abs_cubeAverage_of_mem_descendantsAtScale {d : ℕ} {Q R : TriadicCube d}
+theorem cubeLpNorm_cubeProjection_eq_abs_cubeAverage_of_mem_descendantsAtScale {d : ℕ} {Q R :
+  TriadicCube d}
     {k : ℤ} (p : ℝ≥0∞) (f : Vec d → ℝ) (hk : k ≤ Q.scale) (hR : R ∈ descendantsAtScale Q k)
-    (hp : p ≠ 0) : cubeLpNorm R p (cubeProjection Q (Int.toNat (Q.scale - k)) f) = ‖cubeAverage R f‖ := by
+    (hp : p ≠ 0) : cubeLpNorm R p (cubeProjection Q (Int.toNat (Q.scale - k)) f) = ‖cubeAverage
+      R f‖ := by
   unfold cubeLpNorm
   rw [MeasureTheory.eLpNorm_congr_ae
     (cubeProjection_ae_eq_cubeAverage_of_mem_descendantsAtScale f hk hR)]

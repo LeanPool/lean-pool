@@ -30,7 +30,8 @@ variable {μ : Measure Ω}
 /-- Specialized rounded heavy-tail concentration estimate for `Γ_σ` on the
 range `σ ∈ (0, 1)`. This is the concrete `Γ_σ` wrapper around the generic
 rounded truncation-Chernoff theorem from `PsiConcentration.lean`. -/
-theorem measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_exp_neg_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_lt_one
+theorem
+  measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_exp_neg_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_lt_one
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {σ a l L : ℝ}
     (h_indep : iIndepFun X μ)
@@ -323,7 +324,8 @@ lemma smallRegime_heavyTail_union_le {σ R t : ℝ}
 
 /-- Small-regime one-sided heavy-tail concentration for centered independent
 unit-scale `O_{Γ_σ}` summands. -/
-theorem measureReal_upperTailEvent_finset_sum_le_exp_neg_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_lt_one_unit_smallRegime
+theorem
+  measureReal_upperTailEvent_finset_sum_le_exp_neg_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_lt_one_unit_smallRegime
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} {σ t : ℝ}
     (h_indep : iIndepFun X μ)

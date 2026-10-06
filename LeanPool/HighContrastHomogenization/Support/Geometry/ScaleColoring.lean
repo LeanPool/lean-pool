@@ -114,7 +114,8 @@ theorem mem_descendantsAtScaleScaleColorClass_self {d : ℕ} {Q R : TriadicCube 
 theorem card_image_cubeScaleColor_descendantsAtScale_le {d : ℕ} (Q : TriadicCube d) (k : ℤ) :
     ((descendantsAtScale Q k).image (cubeScaleColor k)).card ≤ scaleColorPeriod k ^ d := by
   have hsubset :
-      (descendantsAtScale Q k).image (cubeScaleColor k) ⊆ (Finset.univ : Finset (ScaleColor d k)) := by
+      (descendantsAtScale Q k).image (cubeScaleColor k) ⊆ (Finset.univ : Finset (ScaleColor d
+        k)) := by
     intro c hc
     simp
   simpa [card_scaleColor] using Finset.card_le_card hsubset
@@ -234,14 +235,16 @@ theorem one_le_dist_of_ne_of_mem_descendantsAtScaleScaleColorClass {d : ℕ}
     | mk scaleR indexR =>
         cases S with
         | mk scaleS indexS =>
-            simp at h ⊢
+            simp only [TriadicCube.mk.injEq] at h ⊢
             refine ⟨?_, funext h⟩
             have hscaleR : scaleR = k := by
               simpa using
-                scale_eq_of_mem_descendantsAtScale (mem_descendantsAtScaleScaleColorClass_iff.mp hR).1
+                scale_eq_of_mem_descendantsAtScale (mem_descendantsAtScaleScaleColorClass_iff.mp
+                  hR).1
             have hscaleS : scaleS = k := by
               simpa using
-                scale_eq_of_mem_descendantsAtScale (mem_descendantsAtScaleScaleColorClass_iff.mp hS).1
+                scale_eq_of_mem_descendantsAtScale (mem_descendantsAtScaleScaleColorClass_iff.mp
+                  hS).1
             exact hscaleR.trans hscaleS.symm
   rcases hindex_ne with ⟨i, hi⟩
   have hscale :

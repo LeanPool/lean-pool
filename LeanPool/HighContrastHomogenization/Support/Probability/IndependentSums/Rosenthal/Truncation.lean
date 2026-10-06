@@ -330,7 +330,8 @@ theorem measureReal_absTailEvent_centeredFinsetSum_le_truncation_add_tail
     (hTail_int : ∀ i ∈ s, Integrable (absTailIndicator (X i) (r i)) μ) :
     μ.real (absTailEvent (centeredFinsetSum X μ s) (a + b)) ≤
       μ.real (absTailEvent (centeredFinsetSum (fun i => absTruncation (X i) (r i)) μ s) a) +
-        μ.real (absTailEvent (centeredFinsetSum (fun i => absTailIndicator (X i) (r i)) μ s) b) := by
+        μ.real (absTailEvent (centeredFinsetSum (fun i => absTailIndicator (X i) (r i)) μ s) b)
+          := by
   refine le_trans ?_ (measureReal_union_le _ _)
   exact measureReal_mono
     (absTailEvent_centeredFinsetSum_subset_union

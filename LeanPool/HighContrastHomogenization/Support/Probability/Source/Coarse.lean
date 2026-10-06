@@ -51,15 +51,13 @@ instance instCoeFunCarrier (d : ℕ) : CoeFun (Carrier d) (fun _ => CoeffField d
 noncomputable def bilinearTest {d : ℕ} (e e' : Vec d)
     (φ : Vec d → ℝ) (a : Carrier d) : ℝ :=
   ∫ x, vecDot e' (matVecMul (a x) e) * φ x ∂volume
-@[expose]
-def localSigma {d : ℕ} (U : Set (Vec d)) (_hU : MeasurableSet U) :
+abbrev localSigma {d : ℕ} (U : Set (Vec d)) (_hU : MeasurableSet U) :
     MeasurableSpace (Carrier d) :=
   MeasurableSpace.generateFrom
     {s | ∃ (e e' : Vec d) (φ : Vec d → ℝ),
       SmoothCompactProbe φ ∧ tsupport φ ⊆ U ∧
       ∃ t : Set ℝ, MeasurableSet t ∧ s = bilinearTest e e' φ ⁻¹' t}
-@[expose]
-def globalSigma (d : ℕ) : MeasurableSpace (Carrier d) :=
+abbrev globalSigma (d : ℕ) : MeasurableSpace (Carrier d) :=
   localSigma Set.univ MeasurableSet.univ
 
 instance instMeasurableSpaceCarrier (d : ℕ) : MeasurableSpace (Carrier d) :=

@@ -40,44 +40,6 @@ variable {d : ℕ} {U V : Set (Vec d)}
 variable {u : H1Function U} {f : Vec d → ℝ}
 
 
-/-- The support of a coordinate derivative is contained in the topological
-support of the original scalar function. -/
-theorem support_euclideanGradient_coord_subset_tsupport
-    {φ : Vec d → ℝ} (j : Fin d) :
-    Function.support (fun x => euclideanGradient φ x j) ⊆ tsupport φ := by
-  intro x hx
-  by_contra hxt
-  have hzero : euclideanGradient φ x j = 0 := by
-    unfold euclideanGradient euclideanCoordDeriv
-    rw [fderiv_of_notMem_tsupport (𝕜 := ℝ) hxt]
-    simp
-  exact hx hzero
-
-/-- A coordinate derivative of a smooth compactly supported cutoff localizes a
-scalar `L²(V)` function to an ambient scalar `L²(U)` function when the original
-cutoff support lies in `V`. -/
-theorem memScalarL2_mul_euclideanGradient_coord_of_contDiff_hasCompactSupport_tsupport_subset
-    {φ F : Vec d → ℝ} (hV_meas : MeasurableSet V)
-    (hφ : ContDiff ℝ (⊤ : ℕ∞) φ) (hφ_compact : HasCompactSupport φ)
-    (hφ_sub : tsupport φ ⊆ V) (hF : MemScalarL2 V F) (j : Fin d) :
-    MemScalarL2 U (fun x => euclideanGradient φ x j * F x) := by
-  have hdφ_top :
-      MeasureTheory.MemLp (fun x => euclideanGradient φ x j) ⊤
-        (MeasureTheory.volume.restrict V) :=
-    (contDiff_euclideanCoordDeriv hφ j).continuous.memLp_top_of_hasCompactSupport
-      (hasCompactSupport_euclideanCoordDeriv hφ_compact j)
-      (MeasureTheory.volume.restrict V)
-  have hprodV :
-      MeasureTheory.MemLp (fun x => euclideanGradient φ x j * F x) 2
-        (MeasureTheory.volume.restrict V) := by
-    simpa [MemScalarL2, volumeMeasureOn, mul_comm] using hdφ_top.fun_mul (r := 2) hF
-  have hsupport : Function.support (fun x => euclideanGradient φ x j * F x) ⊆ V :=
-    (Function.support_mul_subset_left (fun x => euclideanGradient φ x j) F).trans
-      ((support_euclideanGradient_coord_subset_tsupport j).trans hφ_sub)
-  simpa [MemScalarL2, volumeMeasureOn] using
-    memLp_restrict_of_support_subset_of_memLp
-      (U := U) (V := V) hV_meas hsupport hprodV
-
 /-- Localize an interior `H¹(V)` function by a smooth compactly supported
 cutoff and regard the product as an ambient `H¹(U)` function.
 
@@ -107,10 +69,35 @@ noncomputable def localizedMulContDiffHasCompactSupportToAmbient
         (U := U) (V := V) hV_meas hφ hφ_compact hφ_sub (w.gradMemL2 i)
     have hsecond :
         MemScalarL2 U (fun x => w x * Dφ x i) := by
+      have hdφ_top :
+          MeasureTheory.MemLp (fun x => euclideanGradient φ x i) ⊤
+            (MeasureTheory.volume.restrict V) :=
+        (contDiff_euclideanCoordDeriv hφ i).continuous.memLp_top_of_hasCompactSupport
+          (hasCompactSupport_euclideanCoordDeriv hφ_compact i)
+          (MeasureTheory.volume.restrict V)
+      have hprodV :
+          MeasureTheory.MemLp (fun x => euclideanGradient φ x i * w x) 2
+            (MeasureTheory.volume.restrict V) := by
+        simpa [MemScalarL2, volumeMeasureOn, mul_comm] using
+          hdφ_top.fun_mul (r := 2) w.memL2
+      have hcoord_support :
+          Function.support (fun x => euclideanGradient φ x i) ⊆ tsupport φ := by
+        intro x hx
+        by_contra hxt
+        have hzero : euclideanGradient φ x i = 0 := by
+          unfold euclideanGradient euclideanCoordDeriv
+          rw [fderiv_of_notMem_tsupport (𝕜 := ℝ) hxt]
+          simp
+        exact hx hzero
+      have hsupport :
+          Function.support (fun x => euclideanGradient φ x i * w x) ⊆ V :=
+        (Function.support_mul_subset_left (fun x => euclideanGradient φ x i) w).trans
+          (hcoord_support.trans hφ_sub)
       have hderiv :
-          MemScalarL2 U (fun x => euclideanGradient φ x i * w x) :=
-        memScalarL2_mul_euclideanGradient_coord_of_contDiff_hasCompactSupport_tsupport_subset
-          (U := U) (V := V) hV_meas hφ hφ_compact hφ_sub w.memL2 i
+          MemScalarL2 U (fun x => euclideanGradient φ x i * w x) := by
+        simpa [MemScalarL2, volumeMeasureOn] using
+          memLp_restrict_of_support_subset_of_memLp
+            (U := U) (V := V) hV_meas hsupport hprodV
       simpa [Dφ, euclideanGradient, euclideanCoordDeriv, mul_comm] using hderiv
     simpa [Dφ, Pi.add_apply, MemScalarL2, volumeMeasureOn] using! hfirst.add hsecond
   · intro i ψ hψ_smooth hψ_compact hψ_sub
@@ -129,8 +116,13 @@ noncomputable def localizedMulContDiffHasCompactSupportToAmbient
           ((Function.support_mul_subset_left φ w.toFun).trans
             (subset_tsupport φ |>.trans hφ_sub))
     have hdφ_support : Function.support dφ ⊆ tsupport φ := by
-      simpa [dφ, ei, euclideanGradient, euclideanCoordDeriv] using
-        support_euclideanGradient_coord_subset_tsupport (φ := φ) i
+      intro x hx
+      by_contra hxt
+      have hzero : dφ x = 0 := by
+        dsimp [dφ]
+        rw [fderiv_of_notMem_tsupport (𝕜 := ℝ) hxt]
+        simp
+      exact hx hzero
     have hright_support :
         Function.support (fun x => (φ x * w.grad x i + w x * dφ x) * ψ x) ⊆ V := by
       refine (Function.support_mul_subset_left
@@ -292,6 +284,44 @@ noncomputable def localizedMulContDiffHasCompactSupportToAmbient
       _ = -∫ x in V, (φ x * w.grad x i + w x * dφ x) * ψ x
             ∂MeasureTheory.volume := hright_eq
 
+/-- The support of a coordinate derivative is contained in the topological
+support of the original scalar function. -/
+theorem support_euclideanGradient_coord_subset_tsupport
+    {φ : Vec d → ℝ} (j : Fin d) :
+    Function.support (fun x => euclideanGradient φ x j) ⊆ tsupport φ := by
+  intro x hx
+  by_contra hxt
+  have hzero : euclideanGradient φ x j = 0 := by
+    unfold euclideanGradient euclideanCoordDeriv
+    rw [fderiv_of_notMem_tsupport (𝕜 := ℝ) hxt]
+    simp
+  exact hx hzero
+
+/-- A coordinate derivative of a smooth compactly supported cutoff localizes a
+scalar `L²(V)` function to an ambient scalar `L²(U)` function when the original
+cutoff support lies in `V`. -/
+theorem memScalarL2_mul_euclideanGradient_coord_of_contDiff_hasCompactSupport_tsupport_subset
+    {φ F : Vec d → ℝ} (hV_meas : MeasurableSet V)
+    (hφ : ContDiff ℝ (⊤ : ℕ∞) φ) (hφ_compact : HasCompactSupport φ)
+    (hφ_sub : tsupport φ ⊆ V) (hF : MemScalarL2 V F) (j : Fin d) :
+    MemScalarL2 U (fun x => euclideanGradient φ x j * F x) := by
+  have hdφ_top :
+      MeasureTheory.MemLp (fun x => euclideanGradient φ x j) ⊤
+        (MeasureTheory.volume.restrict V) :=
+    (contDiff_euclideanCoordDeriv hφ j).continuous.memLp_top_of_hasCompactSupport
+      (hasCompactSupport_euclideanCoordDeriv hφ_compact j)
+      (MeasureTheory.volume.restrict V)
+  have hprodV :
+      MeasureTheory.MemLp (fun x => euclideanGradient φ x j * F x) 2
+        (MeasureTheory.volume.restrict V) := by
+    simpa [MemScalarL2, volumeMeasureOn, mul_comm] using hdφ_top.fun_mul (r := 2) hF
+  have hsupport : Function.support (fun x => euclideanGradient φ x j * F x) ⊆ V :=
+    (Function.support_mul_subset_left (fun x => euclideanGradient φ x j) F).trans
+      ((support_euclideanGradient_coord_subset_tsupport j).trans hφ_sub)
+  simpa [MemScalarL2, volumeMeasureOn] using
+    memLp_restrict_of_support_subset_of_memLp
+      (U := U) (V := V) hV_meas hsupport hprodV
+
 @[simp] theorem localizedMulContDiffHasCompactSupportToAmbient_toFun
     (w : H1Function V) (hV_meas : MeasurableSet V) (hVU : V ⊆ U)
     {φ : Vec d → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
@@ -442,6 +472,129 @@ theorem integral_vecDot_localizedSqCutoffForwardDifferenceQuotientToAmbient_grad
     (support_vecDot_localizedSqCutoffForwardDifferenceQuotientToAmbient_grad_subset
       (U := U) (V := V) G u hV hVU step i hVshift hη hη_compact hη_sub)
 
+private theorem convexApproxSmoothRepresentative_tendsto_H1
+    (hV : IsOpenBoundedConvexDomain V) (w : H1Function V)
+    (x0 : Vec d) (r0 : ℝ) (hr0_pos : 0 < r0)
+    (hball : Metric.closedBall x0 r0 ⊆ V) :
+    let ρ : Vec d → ℝ := unitConvexApproxKernel (d := d)
+    let ε : ℕ → ℝ := unitConvexApproxScale
+    let ψ : ℕ → Vec d → ℝ := fun n =>
+      convexApproxSmoothRepresentative V ρ w x0 r0 (ε n)
+    (∀ n : ℕ, ContDiff ℝ (⊤ : ℕ∞) (ψ n)) ∧
+      Filter.Tendsto
+        (fun n => MeasureTheory.eLpNorm (fun x => ψ n x - w x) 2
+          (MeasureTheory.volume.restrict V)) Filter.atTop (nhds 0) ∧
+      (∀ i : Fin d,
+        Filter.Tendsto
+          (fun n => MeasureTheory.eLpNorm
+            (fun x => (fderiv ℝ (ψ n) x) (basisVec i) - w.grad x i)
+            2 (MeasureTheory.volume.restrict V))
+          Filter.atTop (nhds 0)) := by
+  let ρ : Vec d → ℝ := unitConvexApproxKernel (d := d)
+  let ε : ℕ → ℝ := unitConvexApproxScale
+  let ψ : ℕ → Vec d → ℝ := fun n =>
+    convexApproxSmoothRepresentative V ρ w x0 r0 (ε n)
+  have hρ : IsConvexApproxKernel ρ := by
+    simpa [ρ] using isConvexApproxKernel_unitConvexApproxKernel (d := d)
+  have hε_pos : ∀ n : ℕ, 0 < ε n := by
+    intro n
+    dsimp [ε, unitConvexApproxScale]
+    positivity
+  have hε_eventually_lt_one : ∀ᶠ n : ℕ in Filter.atTop, ε n < 1 := by
+    simpa [ε] using
+      (((tendsto_order.1 tendsto_unitConvexApproxScale_zero).2 1 zero_lt_one).mono
+        (fun _ hn => hn))
+  have hψ_smooth : ∀ n : ℕ, ContDiff ℝ (⊤ : ℕ∞) (ψ n) := by
+    intro n
+    dsimp [ψ]
+    exact contDiff_convexApproxSmoothRepresentative
+      hV.isOpen.measurableSet hρ (by norm_num : (1 : ENNReal) ≤ 2) w.memL2 hr0_pos
+      (hε_pos n)
+  have hψ_tendsto :
+      Filter.Tendsto
+        (fun n => MeasureTheory.eLpNorm (fun x => ψ n x - w x) 2
+          (MeasureTheory.volume.restrict V))
+        Filter.atTop (nhds 0) := by
+    have hraw :=
+      tendsto_eLpNorm_sub_zero_unitConvexApproxSequence_of_memLpOn
+        (U := V) hV (by norm_num : (1 : ENNReal) ≤ 2)
+        (by simp : (2 : ENNReal) ≠ ⊤) w.memL2 hball hr0_pos
+    refine hraw.congr' ?_
+    filter_upwards [hε_eventually_lt_one] with n hε1
+    apply MeasureTheory.eLpNorm_congr_ae
+    filter_upwards [MeasureTheory.ae_restrict_mem hV.isOpen.measurableSet] with x hx
+    have hEq := convexApproxSmoothRepresentative_eq_convexApproxSmoothing_of_mem
+      (u := w) hV hρ hx hball hr0_pos (hε_pos n) hε1
+    simpa [ψ, ρ, ε, unitConvexApproxSequence] using hEq.symm
+  have hψ_grad_tendsto : ∀ i : Fin d,
+      Filter.Tendsto
+        (fun n => MeasureTheory.eLpNorm
+          (fun x => (fderiv ℝ (ψ n) x) (basisVec i) - w.grad x i)
+          2 (MeasureTheory.volume.restrict V))
+        Filter.atTop (nhds 0) := by
+    intro i
+    have hraw :=
+      tendsto_eLpNorm_sub_zero_one_sub_mul_unitConvexApproxSequence_of_memLpOn
+        (U := V) hV (by norm_num : (1 : ENNReal) ≤ 2)
+        (by simp : (2 : ENNReal) ≠ ⊤) (w.grad_memL2 i) hball hr0_pos
+    refine hraw.congr' ?_
+    filter_upwards [hε_eventually_lt_one] with n hε1
+    apply MeasureTheory.eLpNorm_congr_ae
+    have hbridge :=
+      ae_eq_fderiv_convexApproxSmoothRepresentative_apply_basisVec
+        (U := V) (ρ := ρ) (u := w) (gi := fun y => w.grad y i)
+        (i := i) (p := (2 : ENNReal)) hV hρ
+        (by norm_num : (1 : ENNReal) ≤ 2) w.memL2 (w.grad_memL2 i)
+        (w.hasWeakPartialDerivOn i) hball hr0_pos (hε_pos n) hε1
+    filter_upwards [hbridge, MeasureTheory.ae_restrict_mem hV.isOpen.measurableSet]
+      with x hx hxV
+    have hEq := convexApproxSmoothRepresentative_eq_convexApproxSmoothing_of_mem
+      (u := fun y => w.grad y i) hV hρ hxV hball hr0_pos (hε_pos n) hε1
+    rw [hx]
+    simpa [ψ, ρ, ε, unitConvexApproxSequence] using congrArg
+      (fun t : ℝ => (1 - unitConvexApproxScale n) * t - w.grad x i) hEq.symm
+  exact ⟨hψ_smooth, hψ_tendsto, hψ_grad_tendsto⟩
+
+private theorem cutoff_mul_convexApprox_properties
+    {φ : Vec d → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
+    (hφ_compact : HasCompactSupport φ) (hφ_sub : tsupport φ ⊆ V)
+    {ψ : ℕ → Vec d → ℝ} (hψ_smooth : ∀ n, ContDiff ℝ (⊤ : ℕ∞) (ψ n)) :
+    ∀ n, ContDiff ℝ (⊤ : ℕ∞) (fun x => φ x * ψ n x) ∧
+      HasCompactSupport (fun x => φ x * ψ n x) ∧
+      tsupport (fun x => φ x * ψ n x) ⊆ V := by
+  intro n
+  exact ⟨hφ.mul (hψ_smooth n),
+    by simpa [mul_comm] using! hφ_compact.mul_left (f := ψ n),
+    (tsupport_mul_subset_left (f := φ) (g := ψ n)).trans hφ_sub⟩
+
+private theorem eLpNorm_cutoff_approx_sub_le
+    {φ F ψ target : Vec d → ℝ} (hVU : V ⊆ U)
+    (hφ_top : MeasureTheory.MemLp φ (⊤ : ENNReal)
+      (MeasureTheory.volume.restrict V)) (hφ_sub : tsupport φ ⊆ V)
+    (htarget : ∀ x, target x = φ x * F x) :
+    MeasureTheory.eLpNorm (fun x => φ x * ψ x - target x) 2
+        (MeasureTheory.volume.restrict U) ≤
+      MeasureTheory.eLpNorm φ (⊤ : ENNReal) (MeasureTheory.volume.restrict V) *
+        MeasureTheory.eLpNorm (fun x => ψ x - F x) 2
+          (MeasureTheory.volume.restrict V) := by
+  have hsupport : Function.support (fun x => φ x * ψ x - target x) ⊆ V := by
+    have hEq : (fun x => φ x * ψ x - target x) = fun x => φ x * (ψ x - F x) := by
+      funext x
+      rw [htarget]
+      ring
+    rw [hEq]
+    exact (Function.support_mul_subset_left φ (fun x => ψ x - F x)).trans
+      (subset_tsupport φ |>.trans hφ_sub)
+  rw [eLpNorm_restrict_eq_restrict_of_support_subset (U := U) (V := V) hVU hsupport]
+  have hEq : (fun x => φ x * ψ x - target x) = φ • (fun x => ψ x - F x) := by
+    funext x
+    rw [htarget]
+    simp
+    ring
+  rw [hEq]
+  exact MeasureTheory.eLpNorm_smul_le_eLpNorm_top_mul_eLpNorm 2
+    hφ_top.aestronglyMeasurable
+
 /-- Localized zero-trace cutoff product.  If `w` is only known as an `H¹`
 function on an interior set `V`, multiplying by a smooth compactly supported
 cutoff with support in `V` still gives an `H¹₀(U)` function on the ambient
@@ -471,83 +624,35 @@ theorem memH10_localizedMul_of_contDiff_hasCompactSupport_tsupport_subset
     let ε : ℕ → ℝ := unitConvexApproxScale
     let ψ : ℕ → Vec d → ℝ := fun n =>
       convexApproxSmoothRepresentative V ρ w x0 r0 (ε n)
+    have happrox := convexApproxSmoothRepresentative_tendsto_H1 hV w x0 r0 hr0_pos hball
+    change
+      (∀ n : ℕ, ContDiff ℝ (⊤ : ℕ∞) (ψ n)) ∧
+        Filter.Tendsto
+          (fun n => MeasureTheory.eLpNorm (fun x => ψ n x - w x) 2
+            (MeasureTheory.volume.restrict V)) Filter.atTop (nhds 0) ∧
+        (∀ i : Fin d,
+          Filter.Tendsto
+            (fun n => MeasureTheory.eLpNorm
+              (fun x => (fderiv ℝ (ψ n) x) (basisVec i) - w.grad x i)
+              2 (MeasureTheory.volume.restrict V)) Filter.atTop (nhds 0)) at happrox
+    rcases happrox with ⟨hψ_smooth, hψ_tendsto, hψ_grad_tendsto⟩
+    have happrox_properties := cutoff_mul_convexApprox_properties
+      hφ hφ_compact hφ_sub hψ_smooth
     let wφ : H1Function U :=
       localizedMulContDiffHasCompactSupportToAmbient
         (U := U) (V := V) w hV.isOpen.measurableSet hVU hφ hφ_compact hφ_sub
-    have hρ : IsConvexApproxKernel ρ := by
-      simpa [ρ] using isConvexApproxKernel_unitConvexApproxKernel (d := d)
-    have hε_pos : ∀ n : ℕ, 0 < ε n := by
-      intro n
-      dsimp [ε, unitConvexApproxScale]
-      positivity
-    have hε_eventually_lt_one : ∀ᶠ n : ℕ in Filter.atTop, ε n < 1 := by
-      simpa [ε] using
-        (((tendsto_order.1 tendsto_unitConvexApproxScale_zero).2 1 zero_lt_one).mono
-          (fun _ hn => hn))
-    have hψ_smooth : ∀ n : ℕ, ContDiff ℝ (⊤ : ℕ∞) (ψ n) := by
-      intro n
-      dsimp [ψ]
-      exact contDiff_convexApproxSmoothRepresentative
-        hV.isOpen.measurableSet hρ (by norm_num : (1 : ENNReal) ≤ 2) w.memL2 hr0_pos
-        (hε_pos n)
-    have hψ_tendsto :
-        Filter.Tendsto
-          (fun n =>
-            MeasureTheory.eLpNorm (fun x => ψ n x - w x) 2
-              (MeasureTheory.volume.restrict V))
-          Filter.atTop (nhds 0) := by
-      have hraw :=
-        tendsto_eLpNorm_sub_zero_unitConvexApproxSequence_of_memLpOn
-          (U := V) hV (by norm_num : (1 : ENNReal) ≤ 2) (by simp : (2 : ENNReal) ≠ ⊤)
-          w.memL2 hball hr0_pos
-      refine hraw.congr' ?_
-      filter_upwards [hε_eventually_lt_one] with n hε1
-      apply MeasureTheory.eLpNorm_congr_ae
-      filter_upwards [MeasureTheory.ae_restrict_mem hV.isOpen.measurableSet] with x hx
-      have hEq :=
-        convexApproxSmoothRepresentative_eq_convexApproxSmoothing_of_mem
-          (u := w) hV hρ hx hball hr0_pos (hε_pos n) hε1
-      simpa [ψ, ρ, ε, unitConvexApproxSequence] using hEq.symm
-    have hψ_grad_tendsto : ∀ i : Fin d,
-        Filter.Tendsto
-          (fun n =>
-            MeasureTheory.eLpNorm
-              (fun x => (fderiv ℝ (ψ n) x) (basisVec i) - w.grad x i)
-              2 (MeasureTheory.volume.restrict V))
-          Filter.atTop (nhds 0) := by
-      intro i
-      have hraw :=
-        tendsto_eLpNorm_sub_zero_one_sub_mul_unitConvexApproxSequence_of_memLpOn
-          (U := V) hV (by norm_num : (1 : ENNReal) ≤ 2) (by simp : (2 : ENNReal) ≠ ⊤)
-          (w.grad_memL2 i) hball hr0_pos
-      refine hraw.congr' ?_
-      filter_upwards [hε_eventually_lt_one] with n hε1
-      apply MeasureTheory.eLpNorm_congr_ae
-      have hbridge :=
-        ae_eq_fderiv_convexApproxSmoothRepresentative_apply_basisVec
-          (U := V) (ρ := ρ) (u := w) (gi := fun y => w.grad y i)
-          (i := i) (p := (2 : ENNReal)) hV hρ (by norm_num : (1 : ENNReal) ≤ 2)
-          w.memL2 (w.grad_memL2 i) (w.hasWeakPartialDerivOn i)
-          hball hr0_pos (hε_pos n) hε1
-      filter_upwards [hbridge, MeasureTheory.ae_restrict_mem hV.isOpen.measurableSet] with x hx hxV
-      have hEq :=
-        convexApproxSmoothRepresentative_eq_convexApproxSmoothing_of_mem
-          (u := fun y => w.grad y i) hV hρ hxV hball hr0_pos (hε_pos n) hε1
-      rw [hx]
-      simpa [ψ, ρ, ε, unitConvexApproxSequence] using congrArg
-        (fun t : ℝ => (1 - unitConvexApproxScale n) * t - w.grad x i) hEq.symm
     refine ⟨
       { toH1Function := wφ
         approx := fun n x => φ x * ψ n x
         approx_smooth := by
           intro n
-          exact hφ.mul (hψ_smooth n)
+          exact (happrox_properties n).1
         approx_hasCompactSupport := by
           intro n
-          simpa [mul_comm] using! hφ_compact.mul_left (f := ψ n)
+          exact (happrox_properties n).2.1
         approx_support_subset := by
           intro n
-          exact ((tsupport_mul_subset_left (f := φ) (g := ψ n)).trans hφ_sub).trans hVU
+          exact ((happrox_properties n).2.2).trans hVU
         tendsto_approx := by
           let μV : MeasureTheory.Measure (Vec d) := MeasureTheory.volume.restrict V
           have hφ_top : MeasureTheory.MemLp φ (⊤ : ENNReal) μV :=
@@ -568,28 +673,10 @@ theorem memH10_localizedMul_of_contDiff_hasCompactSupport_tsupport_subset
                   MeasureTheory.eLpNorm φ (⊤ : ENNReal) μV *
                     MeasureTheory.eLpNorm (fun x => ψ n x - w x) 2 μV := by
             intro n
-            have hsupport :
-                Function.support (fun x => φ x * ψ n x - wφ.toFun x) ⊆ V := by
-              have hEq :
-                  (fun x => φ x * ψ n x - wφ.toFun x) =
-                    fun x => φ x * (ψ n x - w x) := by
-                funext x
-                simp [wφ]
-                ring
-              rw [hEq]
-              exact (Function.support_mul_subset_left φ (fun x => ψ n x - w x)).trans
-                (subset_tsupport φ |>.trans hφ_sub)
-            rw [eLpNorm_restrict_eq_restrict_of_support_subset
-              (U := U) (V := V) hVU hsupport]
-            have hEq :
-                (fun x => φ x * ψ n x - wφ.toFun x) =
-                  φ • (fun x => ψ n x - w x) := by
-              funext x
-              simp [wφ]
-              ring
-            rw [hEq]
-            exact MeasureTheory.eLpNorm_smul_le_eLpNorm_top_mul_eLpNorm 2
-              hφ_top.aestronglyMeasurable
+            apply eLpNorm_cutoff_approx_sub_le hVU hφ_top hφ_sub
+            intro x
+            simp [wφ]
+            ring
           refine tendsto_of_tendsto_of_tendsto_of_le_of_le
             tendsto_const_nhds ?_ (fun n => zero_le) hupper
           simpa using hconst_tendsto

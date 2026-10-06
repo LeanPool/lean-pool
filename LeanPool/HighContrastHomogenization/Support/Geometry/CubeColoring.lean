@@ -127,7 +127,8 @@ theorem card_descendantsAtScale_eq_sum_card_colorClass_image {d : ℕ} (Q : Tria
   classical
   calc
     (descendantsAtScale Q k).card =
-        (((descendantsAtScale Q k).image cubeColor).biUnion (descendantsAtScaleColorClass Q k)).card := by
+        (((descendantsAtScale Q k).image cubeColor).biUnion (descendantsAtScaleColorClass Q
+          k)).card := by
           rw [descendantsAtScale_eq_biUnion_image_cubeColor Q k]
     _ = ((descendantsAtScale Q k).image cubeColor).sum
           (fun c => (descendantsAtScaleColorClass Q k c).card) := by
@@ -176,7 +177,7 @@ theorem disjoint_cubeSet_of_scale_eq_of_ne {d : ℕ} {R S : TriadicCube d}
     | mk scaleR indexR =>
         cases S with
         | mk scaleS indexS =>
-            simp at hscale ⊢
+            simp only [TriadicCube.mk.injEq] at hscale ⊢
             exact ⟨hscale, funext h⟩
   rcases hindex_ne with ⟨i, hi⟩
   have hfactor : cubeScaleFactor S = cubeScaleFactor R := by
@@ -239,7 +240,7 @@ theorem cubeScaleFactor_le_dist_of_ne_of_mem_descendantsAtScaleColorClass {d : �
     | mk scaleR indexR =>
         cases S with
         | mk scaleS indexS =>
-            simp at h ⊢
+            simp only [TriadicCube.mk.injEq] at h ⊢
             refine ⟨?_, funext h⟩
             have hscaleR : scaleR = k := by
               simpa using

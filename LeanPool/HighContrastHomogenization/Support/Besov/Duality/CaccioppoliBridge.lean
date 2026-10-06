@@ -136,7 +136,7 @@ theorem cubeBesovPartialNormTop_two_const_mul_le {d : ℕ} (Q : TriadicCube d) (
       cubeBesovScaleWeight s Q * ‖cubeAverage Q (fun x => c * u x)‖ =
         ‖c‖ * (cubeBesovScaleWeight s Q * ‖cubeAverage Q u‖) := by
     rw [cubeAverage_const_mul, norm_mul]
-    simp [Real.norm_eq_abs, mul_assoc, mul_comm]
+    ring
   unfold cubeBesovPartialNormTop
   calc
     cubeBesovPartialSeminormTop Q s (2 : ℝ≥0∞) N (fun x => c * u x) +
@@ -224,7 +224,7 @@ theorem cubeBesovPartialNorm_two_const_mul_le {d : ℕ} (Q : TriadicCube d) (s :
       cubeBesovScaleWeight s Q * ‖cubeAverage Q (fun x => c * u x)‖ =
         ‖c‖ * (cubeBesovScaleWeight s Q * ‖cubeAverage Q u‖) := by
     rw [cubeAverage_const_mul, norm_mul]
-    simp [Real.norm_eq_abs, mul_assoc, mul_comm]
+    ring
   unfold cubeBesovPartialNorm
   calc
     cubeBesovPartialSeminorm Q s (2 : ℝ≥0∞) (2 : ℝ≥0∞) N (fun x => c * u x) +

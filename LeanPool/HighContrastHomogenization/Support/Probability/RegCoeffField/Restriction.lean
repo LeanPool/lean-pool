@@ -44,8 +44,7 @@ noncomputable section
 variable {d : ℕ}
 /-- The restriction σ-algebra on the carrier: the comap of the canonical carrier
 σ-algebra along the restriction endomorphism `restrictReg U hU`. -/
-@[expose]
-def RestrictionSigmaR (U : Set (Vec d)) (hU : MeasurableSet U) :
+abbrev RestrictionSigmaR (U : Set (Vec d)) (hU : MeasurableSet U) :
     MeasurableSpace (RegCoeffField d) :=
   MeasurableSpace.comap (restrictReg U hU) inferInstance
 

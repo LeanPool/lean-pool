@@ -24,7 +24,8 @@ namespace HCPolySupport
 
 @[simp] theorem childCube_scale {d : ℕ} (Q : TriadicCube d) (digits : Fin d → Fin 3) :
     ({ scale := Q.scale - 1
-       index := fun i => 3 * Q.index i + (digits i : ℤ) - 1 } : TriadicCube d).scale = Q.scale - 1 :=
+       index := fun i => 3 * Q.index i + (digits i : ℤ) - 1 } : TriadicCube d).scale = Q.scale -
+         1 :=
   rfl
 
 theorem mem_childCubes_iff {d : ℕ} {Q R : TriadicCube d} :
@@ -199,7 +200,8 @@ theorem openCubeSet_childCube_subset {d : ℕ} (Q : TriadicCube d) (digits : Fin
 
 theorem childCubes_nonempty {d : ℕ} (Q : TriadicCube d) :
     (childCubes Q).Nonempty := by
-  refine ⟨{ scale := Q.scale - 1, index := fun i => 3 * Q.index i + ((0 : Fin d → Fin 3) i : ℤ) - 1 }, ?_⟩
+  refine ⟨{ scale := Q.scale - 1, index := fun i => 3 * Q.index i + ((0 : Fin d → Fin 3) i : ℤ)
+    - 1 }, ?_⟩
   exact Finset.mem_image.mpr ⟨0, Finset.mem_univ _, rfl⟩
 
 theorem childCubes_card {d : ℕ} (Q : TriadicCube d) :
@@ -707,7 +709,8 @@ theorem iUnion_childCubes_subset_cubeSet {d : ℕ} (Q : TriadicCube d) :
 
 theorem cubeSet_eq_iUnion_childCubes {d : ℕ} (Q : TriadicCube d) :
     cubeSet Q = ⋃ R ∈ (childCubes Q : Set (TriadicCube d)), cubeSet R := by
-  exact Set.Subset.antisymm (cubeSet_subset_iUnion_childCubes Q) (iUnion_childCubes_subset_cubeSet Q)
+  exact Set.Subset.antisymm (cubeSet_subset_iUnion_childCubes Q)
+    (iUnion_childCubes_subset_cubeSet Q)
 
 theorem exists_mem_descendantsAtDepth_of_mem_cubeSet {d : ℕ} {Q : TriadicCube d} {x : Vec d} :
     ∀ n : ℕ, x ∈ cubeSet Q → ∃ R ∈ descendantsAtDepth Q n, x ∈ cubeSet R

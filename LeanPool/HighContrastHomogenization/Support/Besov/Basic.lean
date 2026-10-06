@@ -86,10 +86,11 @@ theorem descendantsAverage_le_descendantsAverage {d : ℕ} (Q : TriadicCube d) (
   · exact Finset.sum_le_sum hFG
   · exact inv_nonneg.mpr (by positivity)
 
-theorem descendantsAverage_sum {d : ℕ} {ι : Type*} [DecidableEq ι]
+theorem descendantsAverage_sum {d : ℕ} {ι : Type*}
     (Q : TriadicCube d) (j : ℕ) (s : Finset ι) (F : TriadicCube d → ι → ℝ) :
     descendantsAverage Q j (fun R => ∑ i ∈ s, F R i) =
       ∑ i ∈ s, descendantsAverage Q j (fun R => F R i) := by
+  classical
   let D : Finset (TriadicCube d) := descendantsAtDepth Q j
   calc
     descendantsAverage Q j (fun R => ∑ i ∈ s, F R i)

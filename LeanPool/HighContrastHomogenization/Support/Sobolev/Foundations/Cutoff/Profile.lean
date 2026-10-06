@@ -189,7 +189,7 @@ theorem continuous_secondDeriv : Continuous (deriv (deriv smoothTransitionProfil
     contDiff_deriv.of_le (by simp)
   exact h.continuous_deriv_one
 
-private theorem exists_deriv_bound :
+theorem exists_deriv_bound :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ t : ℝ, ‖deriv smoothTransitionProfile t‖ ≤ C := by
   obtain ⟨M, -, hM_max⟩ := (isCompact_Icc (a := (0 : ℝ)) (b := 1)).exists_isMaxOn
     (nonempty_Icc.2 zero_le_one) continuous_deriv.norm.continuousOn
@@ -203,7 +203,7 @@ private theorem exists_deriv_bound :
     · push Not at ht0 ht1
       exact Filter.eventually_principal.mp hM_max t (Set.mem_Icc.2 ⟨ht0, ht1⟩)
 
-private theorem exists_secondDeriv_bound :
+theorem exists_secondDeriv_bound :
     ∃ C : ℝ, 0 ≤ C ∧
       ∀ t : ℝ, ‖deriv (deriv smoothTransitionProfile) t‖ ≤ C := by
   obtain ⟨M, -, hM_max⟩ := (isCompact_Icc (a := (0 : ℝ)) (b := 1)).exists_isMaxOn

@@ -285,7 +285,8 @@ theorem cubeBesovDepthSeminorm_two_le_sum_shifted_of_local_circ_bound {d : ℕ}
   calc
     cubeBesovDepthSeminorm Q s (2 : ℝ≥0∞) u j
         = cubeBesovDepthWeight Q s j *
-            (descendantsAverage Q j (fun R => (cubeBesovOscillation R (2 : ℝ≥0∞) u) ^ 2)) ^ (1 / 2 : ℝ) := by
+            (descendantsAverage Q j (fun R => (cubeBesovOscillation R (2 : ℝ≥0∞) u) ^ 2)) ^ (1 /
+              2 : ℝ) := by
               simp [cubeBesovDepthSeminorm, cubeBesovDepthAverage]
     _ ≤ cubeBesovDepthWeight Q s j *
           (descendantsAverage Q j (fun R => (C * S R) ^ 2)) ^ (1 / 2 : ℝ) := by
@@ -314,7 +315,8 @@ theorem shifted_cubeBesovCircDepthSum_le_cubeBesovCircPartialNorm_one {d : ℕ}
     exact Finset.mem_range.mpr (Finset.mem_Ico.mp hn).2
   calc
     ∑ n ∈ Finset.range (N + 1), cubeBesovCircDepthSeminorm Q s p u (j + n)
-        = Finset.sum (Finset.Ico j (j + N + 1)) (fun n => cubeBesovCircDepthSeminorm Q s p u n) := by
+        = Finset.sum (Finset.Ico j (j + N + 1)) (fun n => cubeBesovCircDepthSeminorm Q s p u n)
+          := by
             simpa [Nat.add_assoc] using
               (Finset.sum_Ico_eq_sum_range
                 (f := fun n => cubeBesovCircDepthSeminorm Q s p u n)

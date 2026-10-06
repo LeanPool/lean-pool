@@ -249,7 +249,8 @@ theorem rosenthal_bennett_kernel_integral_le
         (μ := volume)
         (by simpa using (integrableOn_Ioi_rpow_of_lt (a := -p / 2 - 1) (by linarith) zero_lt_one))
         htail_dom_nonneg
-        (Filter.Eventually.of_forall (fun r hr => lt_trans ((Real.one_lt_exp_iff).2 (by norm_num)) hr))
+        (Filter.Eventually.of_forall (fun r hr => lt_trans ((Real.one_lt_exp_iff).2 (by
+          norm_num)) hr))
     have hcalc :
         ∫ r in Set.Ioi (1 : ℝ), r ^ (-p / 2 - 1) = 2 / p := by
       rw [integral_Ioi_rpow_of_lt (a := -p / 2 - 1) (by linarith) zero_lt_one]

@@ -189,21 +189,21 @@ theorem memWsp_iff {Q : TriadicCube d} {s : ℝ} {p : ℝ≥0∞} {u : Vec d →
 theorem MemWsp.add {Q : TriadicCube d} {s : ℝ} {p : ℝ≥0∞} {u v : Vec d → E}
     (hu : MemWsp Q s p u) (hv : MemWsp Q s p v) :
     MemWsp Q s p (u + v) := by
-  show MemLp (gagliardoKernel s p (u + v)) p (gagliardoCubeMeasure Q)
+  change MemLp (gagliardoKernel s p (u + v)) p (gagliardoCubeMeasure Q)
   rw [gagliardoKernel_add]
   exact MemLp.add hu hv
 
 theorem MemWsp.neg {Q : TriadicCube d} {s : ℝ} {p : ℝ≥0∞} {u : Vec d → E}
     (hu : MemWsp Q s p u) :
     MemWsp Q s p (-u) := by
-  show MemLp (gagliardoKernel s p (-u)) p (gagliardoCubeMeasure Q)
+  change MemLp (gagliardoKernel s p (-u)) p (gagliardoCubeMeasure Q)
   rw [gagliardoKernel_neg]
   exact MemLp.neg hu
 
 theorem MemWsp.smul {Q : TriadicCube d} {s : ℝ} {p : ℝ≥0∞} {u : Vec d → E}
     (c : ℝ) (hu : MemWsp Q s p u) :
     MemWsp Q s p (c • u) := by
-  show MemLp (gagliardoKernel s p (c • u)) p (gagliardoCubeMeasure Q)
+  change MemLp (gagliardoKernel s p (c • u)) p (gagliardoCubeMeasure Q)
   rw [gagliardoKernel_smul]
   exact MemLp.const_smul hu c
 
