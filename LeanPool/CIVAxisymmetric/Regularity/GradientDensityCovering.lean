@@ -114,7 +114,7 @@ private theorem inverse_successor_scale_bounds :
       (∀ n : ℕ, 1 / ((n : ℝ) + 1) ≤ 1) ∧
       Tendsto (fun n : ℕ => 1 / ((n : ℝ) + 1)) atTop (nhds (0 : ℝ)) := by
   let δ : ℕ → ℝ := fun n => 1 / ((n : ℝ) + 1)
-  have hδdef : δ = fun n => 1 / ((n : ℝ) + 1) := rfl
+  have hδdef : δ = fun n : ℕ => 1 / ((n : ℝ) + 1) := rfl
   have hδpos : ∀ n : ℕ, 0 < δ n := by
     intro n; rw [hδdef]; positivity
   have hδle1 : ∀ n : ℕ, δ n ≤ 1 := by
@@ -318,7 +318,7 @@ theorem hausdorffMeasure_one_null_of_gradient_density
   have hr_tendsto : Tendsto (fun n : ℕ => (10 : ℝ≥0∞) * ENNReal.ofReal (δ n)) atTop (nhds 0) := by
     have hofReal : Tendsto (fun n => ENNReal.ofReal (δ n)) atTop (nhds 0) := by
       have h := ENNReal.tendsto_ofReal hδtendsto0
-      simpa using h
+      simpa only [hδdef, ENNReal.ofReal_zero] using h
     have h := ENNReal.Tendsto.const_mul (a := (10 : ℝ≥0∞)) hofReal (Or.inr (by norm_num))
     simpa using h
   have hcover_eventually : ∀ n, S ∩ vec3Ball (0 : Vec3) 1 ⊆ ⋃ i : index n, enlarged n i := by

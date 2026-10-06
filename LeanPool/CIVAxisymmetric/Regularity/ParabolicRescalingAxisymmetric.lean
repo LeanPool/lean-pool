@@ -86,7 +86,7 @@ theorem isAxisymmetricOn_smul_comp_of_isAxisymmetricOn {u : ParabolicPoint → V
     simpa [unitCylinder, spaceTimeSet] using this
   have hmem_ball : (R • z.1 : Vec3) ∈ vec3Ball 0 1 := by
     rw [vec3Ball]
-    simp [sub_zero]
+    simp only [sub_zero, mem_ofPred_eq]
     rw [vec3EuclideanNorm_smul, abs_of_pos hR0]
     have hpos : 0 ≤ vec3EuclideanNorm z.1 := vec3EuclideanNorm_nonneg _
     nlinarith only [hz_ball, hR1, hpos]

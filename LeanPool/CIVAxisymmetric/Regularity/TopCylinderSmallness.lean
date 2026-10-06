@@ -409,7 +409,7 @@ condition is at most `ε₀ * ρ ^ 2` on the top-boundary cylinder based at that
 smallness thresholds are met by shrinking `ρ`; the top-boundary integral itself is reached from
 the fixed-scale display on backward cylinders by continuity of the Lebesgue integral from below,
 along an increasing sequence of base times approaching the top slice. -/
-theorem top_cylinder_smallness_of_gradient_small (q : ℝ) (hq : 5/2 < q) (ε₀ : ℝ) (hε₀ : 0 < ε₀) :
+theorem top_cylinder_smallness_of_gradient_small (q : ℝ) (hq : 5 / 2 < q) (ε₀ : ℝ) (hε₀ : 0 < ε₀) :
     ∃ C₂₇ : ℝ, 0 < C₂₇ ∧
       ∀ (u : ParabolicPoint → Vec3) (Du : ParabolicPoint → Fin 3 → Vec3)
         (p : ParabolicPoint → ℝ) (f : ParabolicPoint → Vec3),

@@ -540,8 +540,6 @@ theorem tendsto_lintegral_top_slab (F : ParabolicPoint → ℝ≥0∞)
   have heq2 : (fun δ => ∫⁻ z in A δ, F z ∂(volume.restrict unitCylinder)) =ᶠ[nhdsWithin (0 : ℝ)
       (Ioi 0)] (fun δ => ∫⁻ z in A δ, F z) := by
     filter_upwards [heq] with δ hδ
-    change ∫⁻ z, F z ∂((volume.restrict unitCylinder).restrict (A δ)) =
-        ∫⁻ z, F z ∂(volume.restrict (A δ))
     rw [Measure.restrict_restrict_of_subset hδ]
   exact hset.congr' heq2
 

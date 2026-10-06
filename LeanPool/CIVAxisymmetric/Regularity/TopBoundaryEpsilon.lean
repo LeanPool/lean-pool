@@ -140,8 +140,7 @@ theorem ae_norm_le_of_small_L3_cylinder (q : ℝ) (hq : 5 / 2 < q) :
     · change vec3EuclideanNorm ((scalingParabolic μ z₀ z).1 - z₀.1) ≤ μ
       rw [hfst z, vec3EuclideanNorm_smul, abs_of_pos hμ]
       nlinarith only [hz1, hμ, vec3EuclideanNorm_nonneg z.1]
-    · change (scalingParabolic μ z₀ z).2 ∈ Icc (z₀.2 - μ ^ 2) z₀.2
-      rw [hsnd z]
+    · rw [hsnd z]
       have hμ2 : (0 : ℝ) < μ ^ 2 := pow_pos hμ 2
       have h1 : (-1 : ℝ) ≤ z.2 := by
         have := hz2.1
