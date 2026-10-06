@@ -9,7 +9,13 @@ from unittest.mock import patch
 import pytest
 
 from lean_pool.quality import _cached_pool_audits
-from lean_pool.validation_cache import GLOBAL_INPUTS, ValidationCache, pool_units
+from lean_pool.validation_cache import (
+    GLOBAL_INPUTS,
+    ValidationCache,
+    _module_sources,
+    pool_units,
+    source_inventory,
+)
 
 
 def _inventory(root: Path, module: str, imports: tuple[str, ...] = ()) -> None:
@@ -80,13 +86,62 @@ def test_transitive_import_of_nested_module_invalidates_consumer(
 
 
 @pytest.mark.parametrize("name", GLOBAL_INPUTS)
-def test_checker_and_dependency_changes_invalidate_all(
+def test_checker_edits_invalidate_only_dependent_checks(
     repository: Path, name: str
 ) -> None:
-    """Toolchain, dependencies, lint options, and checker implementations are inputs."""
-    _run(repository)
+    """Unrelated tooling edits preserve passes; shared inputs invalidate all kinds."""
+    kinds = ("lint", "axioms", "backdoors", "declarations", "future-check")
+    directory = repository / ".lake/validation-cache/v1"
+    cache = ValidationCache(repository, directory)
+    for kind in kinds:
+        for modules in pool_units(repository):
+            cache.check(kind, modules, lambda: [])
+    cache.save()
     (repository / name).write_text("changed\n")
-    assert len(_run(repository)[1]) == 3
+    cache = ValidationCache(repository, directory)
+    calls: list[tuple[str, str]] = []
+    for kind in kinds:
+        for modules in pool_units(repository):
+            cache.check(kind, modules, lambda: calls.append((kind, modules[0])) or [])
+    if name in {"python/lean_pool/quality.py", "scripts/nolints-style.txt"}:
+        fresh_kinds = ("axioms", "backdoors", "declarations", "future-check")
+    elif name in {"scripts/ci/lint-project.lean", "scripts/nolints.json"}:
+        fresh_kinds = ("lint", "future-check")
+    else:
+        fresh_kinds = kinds
+    assert calls == [
+        (kind, modules[0]) for kind in fresh_kinds for modules in pool_units(repository)
+    ]
+    assert len(calls) >= 3
+
+
+@pytest.mark.parametrize("kind", ("lint", "axioms", "backdoors", "declarations"))
+def test_source_changes_invalidate_every_check_kind(
+    repository: Path, kind: str
+) -> None:
+    """Scoping checker inputs must preserve all imported-source dependencies."""
+    directory = repository / ".lake/validation-cache/v1"
+    cache = ValidationCache(repository, directory)
+    for modules in pool_units(repository):
+        cache.check(kind, modules, lambda: [])
+    cache.save()
+    (repository / "LeanPool/A/Detail.lean").write_text("-- changed\n")
+    cache = ValidationCache(repository, directory)
+    calls: list[str] = []
+    for modules in pool_units(repository):
+        cache.check(kind, modules, lambda: calls.append(modules[0]) or [])
+    assert calls == ["LeanPool.A", "LeanPool"]
+
+
+def test_quality_check_kinds_reuse_source_comparisons(repository: Path) -> None:
+    """Quality checks sharing dependencies calculate their input list once."""
+    cache = ValidationCache(repository, repository / ".lake/validation-cache/v1")
+    with patch.object(
+        cache, "_fingerprint_inputs", wraps=cache._fingerprint_inputs
+    ) as inputs:
+        for kind in ("axioms", "backdoors", "declarations"):
+            cache.check(kind, ["LeanPool.A"], lambda: [])
+        assert inputs.call_count == 1
 
 
 @pytest.mark.parametrize("contents", [None, "{", "{}", '{"name": "wrong"}'])
@@ -156,3 +211,79 @@ def test_quality_audits_cover_every_owned_module(repository: Path) -> None:
         cache = ValidationCache(repository, cache.directory)
         assert _cached_pool_audits(repository, cache) == []
         assert axioms.call_count == backdoors.call_count == 3
+
+
+def test_overlapping_checks_reuse_inventories_without_changing_fingerprints(
+    repository: Path,
+) -> None:
+    """Shared imports are resolved once, while metadata still changes the key."""
+    _inventory(repository, "LeanPool.A", ("LeanPool.A.Detail", "Mathlib.Shared"))
+    _inventory(repository, "LeanPool.A.Detail", ("Mathlib.Shared",))
+    cache = ValidationCache(repository, repository / ".lake/validation-cache/v1")
+    groups = [["LeanPool.A"], ["LeanPool.A", "LeanPool.A.Detail"]]
+    checks = [
+        (modules, metadata)
+        for modules in groups
+        for metadata in (None, {"main_declarations": ["a"]})
+    ]
+    expected = [
+        ValidationCache(repository, cache.directory).fingerprint(modules, metadata)
+        for modules, metadata in checks
+    ]
+    with patch(
+        "lean_pool.validation_cache._module_sources",
+        wraps=_module_sources,
+    ) as inventories:
+        assert [
+            cache.fingerprint(modules, metadata) for modules, metadata in checks
+        ] == expected
+        assert inventories.call_count == 2
+    assert expected[0] != expected[1]
+    assert cache.imported_sources["Mathlib.Shared"] is None
+    assert (
+        source_inventory(repository, groups[1])
+        == cache.inventories["LeanPool.A"] | cache.inventories["LeanPool.A.Detail"]
+    )
+
+
+def test_local_import_outside_pool_invalidates_cached_checks(repository: Path) -> None:
+    """Memoized import lookups still cover local modules outside LeanPool."""
+    source = repository / "Support.lean"
+    source.write_text("def support := 1\n")
+    _inventory(repository, "LeanPool.A.Detail", ("Support",))
+    _run(repository)
+    source.write_text("def support := 2\n")
+    assert _run(repository)[1] == ["LeanPool.A"]
+
+
+def test_missing_pool_import_falls_back_after_memoized_lookup(repository: Path) -> None:
+    """A cached missing path cannot hide a missing imported pool source."""
+    _inventory(repository, "LeanPool.A", ("LeanPool.Missing",))
+    _inventory(repository, "LeanPool.A.Detail", ("LeanPool.Missing",))
+    _run(repository)
+    (repository / "LeanPool/B.lean").write_text("-- unrelated edit\n")
+    assert len(_run(repository)[1]) == 3
+
+
+@pytest.mark.parametrize("kind", ("lint", "axioms", "backdoors", "declarations"))
+def test_inventory_fallback_preserves_discovered_external_dependencies(
+    repository: Path, kind: str
+) -> None:
+    """An inventory error cannot hide a local dependency discovered before it."""
+    source = repository / "Aux/Support.lean"
+    source.parent.mkdir()
+    source.write_text("def support := 1\n")
+    _inventory(repository, "LeanPool.A.Detail", ("Aux.Support", "LeanPool.Missing"))
+    directory = repository / ".lake/validation-cache/v1"
+    modules = ["LeanPool.A", "LeanPool.A.Detail"]
+    cache = ValidationCache(repository, directory)
+    assert cache.check(kind, modules, lambda: []) == []
+    cache.save()
+    cache = ValidationCache(repository, directory)
+    assert cache.check(kind, modules, lambda: ["unexpected recheck"]) == []
+    cache.save()
+    source.write_text("def support := 2\n")
+    cache = ValidationCache(repository, directory)
+    assert cache.check(kind, modules, lambda: ["changed dependency"]) == [
+        "changed dependency"
+    ]
