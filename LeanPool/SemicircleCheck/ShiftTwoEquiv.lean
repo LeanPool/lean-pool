@@ -66,11 +66,12 @@ lemma mapsTo_remaining {π : Equiv.Perm (Fin (2 * n + 2))}
   · -- π(x) = ⟨0,_⟩ = π(⟨1,_⟩), so x = ⟨1,_⟩, contradicting x.val ≥ 2
     have heq : π x = ⟨0, by omega⟩ := Fin.ext hv
     have hx1 : x = ⟨1, by omega⟩ := π.injective (heq.trans h₁.symm)
-    simp [hx1] at hx
+    simp only [hx1, Fin.mk_one, Fin.coe_ofNat_eq_mod, Nat.one_mod, Nat.reduceLeDiff] at hx
   · -- π(x) = ⟨1,_⟩ = π(⟨0,_⟩), so x = ⟨0,_⟩, contradicting x.val ≥ 2
     have heq : π x = ⟨1, by omega⟩ := Fin.ext hv
     have hx0 : x = ⟨0, by omega⟩ := π.injective (heq.trans h₀.symm)
-    simp [hx0] at hx
+    simp only [hx0, Fin.zero_eta, Fin.coe_ofNat_eq_mod, Nat.zero_mod, Nat.le_zero_eq,
+      reduceCtorEq] at hx
 
 /-- π.symm also maps the remaining domain to itself. -/
 private lemma symm_mapsTo_remaining {π : Equiv.Perm (Fin (2 * n + 2))}
@@ -113,7 +114,7 @@ theorem contractZeroOne_isPairing {π : Equiv.Perm (Fin (2 * n + 2))}
   -- Extract the pointwise involution from π ^ 2 = 1
   have hππ : ∀ x, π (π x) = x := by
     intro x; have h : π * π = 1 := by rwa [← sq]
-    change (π * π) x = x; simp [h]
+    change (π * π) x = x; simp only [h, Equiv.Perm.coe_one, id_eq]
   refine ⟨?_, ?_⟩
   · -- INVOLUTION: π'(π'(x)) = x
     -- π' = e.trans(p.trans(e.symm)) where e = shiftTwoEquiv, p = restrictPerm
@@ -123,7 +124,7 @@ theorem contractZeroOne_isPairing {π : Equiv.Perm (Fin (2 * n + 2))}
       contractZeroOne, Equiv.trans_apply, Equiv.apply_symm_apply]
     -- Beta-reduce the anonymous restrictPerm, then collapse π(π(z)) = z
     dsimp
-    simp [hππ, shiftTwoEquiv]
+    simp only [shiftTwoEquiv, Equiv.symm_mk, Equiv.coe_fn_mk, hππ, Nat.add_sub_cancel, Fin.eta]
   · -- FIXED-POINT-FREE: π'(x) = x → False
     -- If e.symm(p(e(x))) = x, apply e: p(e(x)) = e(x)
     -- Unpack p: π(z) = z where z = (e(x)).val, contradicting hfpf
