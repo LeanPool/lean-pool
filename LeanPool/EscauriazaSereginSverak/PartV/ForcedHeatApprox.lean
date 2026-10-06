@@ -203,8 +203,7 @@ theorem exists_smooth_approx_two_norms {f : Vec3 × ℝ → ℝ}
       have hsmall := hεsmall k (nk k)
       have hhalf : 1 / ((k : ℝ) + 1) = 2 * (1 / (2 * ((k : ℝ) + 1))) := by
         field_simp
-      show 1 / (2 * ((k : ℝ) + 1)) ≤ (b + s').2
-      rw [Prod.snd_add]
+      change 1 / (2 * ((k : ℝ) + 1)) ≤ b.2 + s'.2
       rw [abs_lt] at hb2
       linarith only [hb2.1, hs2, hsmall, hhalf]
     have hclosed : IsClosed {p : Vec3 × ℝ | 1 / (2 * ((k : ℝ) + 1)) ≤ p.2} :=

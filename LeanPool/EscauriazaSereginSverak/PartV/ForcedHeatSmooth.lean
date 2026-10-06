@@ -71,10 +71,11 @@ theorem abs_le_decay_of_hasCompactSupport {f : Vec3 × ℝ → ℝ}
 
 /-- A finite family of functions with `(1 + |x|)^{-3}` decay has a common
 decay constant. -/
-theorem exists_common_decay_constant {ι : Type*} [Fintype ι] (f : ι → Vec3 × ℝ → ℝ)
+theorem exists_common_decay_constant {ι : Type*} [Finite ι] (f : ι → Vec3 × ℝ → ℝ)
     (hf : ∀ a, ∃ M : ℝ, 0 ≤ M ∧ ∀ q : Vec3 × ℝ,
       |f a q| ≤ M / (1 + vec3EuclideanNorm q.1) ^ 3) :
     ∃ M : ℝ, 0 ≤ M ∧ ∀ a q, |f a q| ≤ M / (1 + vec3EuclideanNorm q.1) ^ 3 := by
+  let _ := Fintype.ofFinite ι
   choose M hM hbound using hf
   refine ⟨∑ a, M a, Finset.sum_nonneg fun a _ => hM a, ?_⟩
   intro a q

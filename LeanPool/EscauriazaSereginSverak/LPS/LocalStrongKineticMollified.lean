@@ -228,7 +228,6 @@ theorem lps_strong_mollified_equation
         integral_finsetSum _ (fun j _ => jB j), integral_finsetSum _ (fun j _ => jC j)]
     rw [hsum]
     linarith only [hE']
-
   have hzero := isOpen_Ioo.ae_eq_zero_of_integral_contDiff_smul_eq_zero
     hGint.locallyIntegrableOn hfull
   rw [ae_restrict_iff' measurableSet_Ioo]

@@ -227,11 +227,11 @@ theorem lps_lower_word_product_integral_bound :
   have hprod : MemLp (fun x => wordDeriv α f x * wordDeriv β g x)
       2 volume := by
     apply MemLp.of_le_mul hb (haMeas.mul hb.aestronglyMeasurable)
-    filter_upwards [] with x
-    change |wordDeriv α f x * wordDeriv β g x| ≤
-      (C * Real.sqrt N) * |wordDeriv β g x|
-    rw [abs_mul]
-    exact mul_le_mul_of_nonneg_right (hBound' x) (abs_nonneg _)
+    · filter_upwards [] with x
+      change |wordDeriv α f x * wordDeriv β g x| ≤
+        (C * Real.sqrt N) * |wordDeriv β g x|
+      rw [abs_mul]
+      exact mul_le_mul_of_nonneg_right (hBound' x) (abs_nonneg _)
   have hpoint (x : Vec3) :
       (wordDeriv α f x * wordDeriv β g x) ^ 2 ≤
         (C ^ 2 * N) * wordDeriv β g x ^ 2 := by
