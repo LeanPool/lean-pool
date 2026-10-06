@@ -119,7 +119,8 @@ private theorem zeroMeanPrimitive_isIntervalTest {a b : ℝ} (hab : a < b)
     simp
   have hPan : ∫ t in a..n, ψ t = 0 := by
     have hsplit := intervalIntegral.integral_add_adjacent_intervals
-      (hψsmooth.continuous.intervalIntegrable (μ := volume) a n) (hψsmooth.continuous.intervalIntegrable (μ := volume) n b)
+      (hψsmooth.continuous.intervalIntegrable (μ := volume) a n)
+      (hψsmooth.continuous.intervalIntegrable (μ := volume) n b)
     rw [htail b (le_of_lt hnb), add_zero] at hsplit
     calc
       ∫ t in a..n, ψ t = ∫ t in a..b, ψ t := hsplit
@@ -127,7 +128,8 @@ private theorem zeroMeanPrimitive_isIntervalTest {a b : ℝ} (hab : a < b)
   have hPright (x : ℝ) (hx : n ≤ x) : P x = 0 := by
     dsimp [P]
     have hsplit := intervalIntegral.integral_add_adjacent_intervals
-      (hψsmooth.continuous.intervalIntegrable (μ := volume) a n) (hψsmooth.continuous.intervalIntegrable (μ := volume) n x)
+      (hψsmooth.continuous.intervalIntegrable (μ := volume) a n)
+      (hψsmooth.continuous.intervalIntegrable (μ := volume) n x)
     rw [htail x hx, add_zero] at hsplit
     rw [← hsplit, hPan]
   have hPzero : ∀ x ∉ Icc m n, P x = 0 := by
@@ -190,7 +192,8 @@ private theorem setIntegral_eq_full_of_test {U : Set ℝ} {f : ℝ → ℝ}
   have hφzero : φ x = 0 := eq_zero_of_not_mem_tsupport (fun hs => hx (hφ.2.2 hs))
   simp [hφzero]
 
-/-- A locally integrable function with zero distributional derivative is constant almost everywhere. -/
+/-- A locally integrable function with zero distributional derivative
+is constant almost everywhere. -/
 theorem exists_ae_eq_const_of_weakDeriv_zero {a b : ℝ} (hab : a < b)
     {F : ℝ → ℝ} (hF : LocallyIntegrableOn F (Ioo a b) volume)
     (hweak : HasWeakDerivOn (Ioo a b) F (fun _ => 0)) :
@@ -667,7 +670,6 @@ theorem abs_sq_le_time_integral_sq_of_continuous_weakDeriv {τ : ℝ} (hτ : 0 <
     have hlim := tendsto_nhds_unique hHlimitConst tendsto_const_nhds
     rw [hH0] at hlim
     exact hlim.symm
-
   intro t ht htτ
   have hrepr : f t = ∫ s in 0..t, g s := by
     have hrepr' := hpoint t ht htτ
@@ -688,7 +690,6 @@ theorem abs_sq_le_time_integral_sq_of_continuous_weakDeriv {τ : ℝ} (hτ : 0 <
         (show 1 < (2 : ℝ) ∧ (2 : ℝ)⁻¹ + (2 : ℝ)⁻¹ = 1 by norm_num)) hgμ h1
     simpa [μ, intervalIntegral.integral_of_le ht.le, Real.norm_eq_abs,
       Real.sqrt_eq_rpow, sq_abs, max_eq_left ht.le] using hcs
-
   have hholdert := hholder t ht
   have hnorm : |∫ s in 0..t, gExt s| ≤ ∫ s in 0..t, |gExt s| := by
     simpa [Real.norm_eq_abs] using
