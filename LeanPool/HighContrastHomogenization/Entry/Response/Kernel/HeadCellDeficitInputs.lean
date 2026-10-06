@@ -239,55 +239,15 @@ theorem headCell_of_bridge_plus (P : Measure (CoeffSpace d)) (γ : ℝ) (jStar :
       rfl
     exact Prod.ext hg1 hg2
   -- The Chapter-2 difference energy is the doubled pointwise energy on the representative.
-  have hAve_f : ∀ w ∈ triadicIndexBox d n,
-      Book.Ch02.average (adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w)
-          (fun x => blockVecDot (Xf w x)
-            (blockMatVecMul (Book.Ch02.blockMatrixField (aU w) x) (Xf w x)))
-        = 2 * volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
-            (fun x => vecDot (Xf w x).1 (Xf w x).2) := by
-    intro w hw
-    have hpt : Book.Ch02.average (adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w)
-          (fun x => blockVecDot (Xf w x)
-            (blockMatVecMul (Book.Ch02.blockMatrixField (aU w) x) (Xf w x)))
-        = Book.Ch02.average (adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w)
-          (fun x => 2 * vecDot (Xf w x).1 (Xf w x).2) := by
-      refine Book.Ch02.average_eq_of_ae_eq ?_
-      filter_upwards [MeasureTheory.ae_restrict_mem
-        (adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w).measurableSet] with x hx
-      have hdet : IsUnit (symmPart ((aU w).toCoeffField x)).det :=
-        isUnit_det_symmPart_of_isEllipticMatrix ((hEllFam w).2 x hx)
-      have h2 : (Xf w x).2 = matVecMul ((aU w).toCoeffField x) (Xf w x).1 := by
-        simp only [Xf, optimizerField, Prod.fst_sub, Prod.snd_sub]
-        rw [matVecMul_sub_vec]
-      have hX : Xf w x = ((Xf w x).1, matVecMul ((aU w).toCoeffField x) (Xf w x).1) :=
-        Prod.ext rfl h2
-      rw [hX, blockMatrixField_apply (aU w) x,
-        blockEnergyDensity_primal hdet (Xf w x).1]
-    rw [hpt]
-    show (MeasureTheory.volume (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)).toReal⁻¹ *
-        ∫ x in (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w),
-          2 * vecDot (Xf w x).1 (Xf w x).2
-      = 2 * ((MeasureTheory.volume (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)).toReal⁻¹ *
-        ∫ x in (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w),
-          vecDot (Xf w x).1 (Xf w x).2)
-    rw [MeasureTheory.integral_const_mul]
-    ring
+  have hXf : ∀ w x, (Xf w x).2 = matVecMul ((aU w).toCoeffField x) (Xf w x).1 := by
+    intro w x
+    simp only [Xf, optimizerField, Prod.fst_sub, Prod.snd_sub]
+    rw [matVecMul_sub_vec]
+  have hAve_f := blockEnergy_average_eq_twice_fieldEnergy (respGrid jStar F) hgrid t n
+    aU Xf hEllFam hXf
   -- The representative's difference energy is nonnegative; the difference is a doubled state.
-  have hnonneg_f : ∀ w ∈ triadicIndexBox d n,
-      0 ≤ volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
-        (fun x => vecDot (Xf w x).1 (Xf w x).2) := by
-    intro w hw
-    unfold volumeAverage
-    refine mul_nonneg (inv_nonneg.mpr ENNReal.toReal_nonneg) ?_
-    refine MeasureTheory.integral_nonneg_of_ae ?_
-    filter_upwards [MeasureTheory.ae_restrict_mem
-      (isOpen_adaptedCellAtCenter_of_isUnit hgrid (t - (n : ℤ)) w).measurableSet] with x hx
-    have hslot : (Xf w x).2 = matVecMul ((aU w).toCoeffField x) (Xf w x).1 := by
-      simp only [Xf, optimizerField, Prod.fst_sub, Prod.snd_sub]
-      rw [matVecMul_sub_vec]
-    rw [hslot]
-    exact le_trans (mul_nonneg hlam0.le (vecNormSq_nonneg _))
-      (((hEllFam w).2 x hx).2.2.1 (Xf w x).1)
+  have hnonneg_f := volumeAverage_nonneg_of_doubledField (respGrid jStar F) hgrid t n
+    lam0 hlam0 aU Xf hEllFam hXf
   -- The Chapter-2 difference energy at the recentred coefficient.
   have hAve_r : ∀ w ∈ triadicIndexBox d n,
       Book.Ch02.average (adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w)
@@ -358,6 +318,69 @@ open scoped Matrix.Norms.L2Operator
 noncomputable section
 
 variable {d : ℕ}
+
+private theorem blockEnergy_average_eq_twice_fieldEnergy
+    (q : Mat d) (hgrid : IsUnit q) (t : ℤ) (n : ℕ)
+    (aU : (w : Fin d → ℤ) → Book.Ch02.CoeffOn
+      (adaptedDomainAt q hgrid (t - (n : ℤ)) w))
+    (X : (w : Fin d → ℤ) → Vec d → BlockVec d)
+    (hEllFam : ∀ w : Fin d → ℤ,
+      IsEllipticFieldOn (aU w).lam (aU w).Lam
+        (adaptedCellAtCenter q (t - (n : ℤ)) w) (aU w).toCoeffField)
+    (hX : ∀ w x, (X w x).2 = matVecMul ((aU w).toCoeffField x) (X w x).1) :
+    ∀ w ∈ triadicIndexBox d n,
+      Book.Ch02.average (adaptedDomainAt q hgrid (t - (n : ℤ)) w)
+          (fun x => blockVecDot (X w x)
+            (blockMatVecMul (Book.Ch02.blockMatrixField (aU w) x) (X w x)))
+        = 2 * volumeAverage (adaptedCellAtCenter q (t - (n : ℤ)) w)
+            (fun x => vecDot (X w x).1 (X w x).2) := by
+  intro w hw
+  have hpt : Book.Ch02.average (adaptedDomainAt q hgrid (t - (n : ℤ)) w)
+        (fun x => blockVecDot (X w x)
+          (blockMatVecMul (Book.Ch02.blockMatrixField (aU w) x) (X w x)))
+      = Book.Ch02.average (adaptedDomainAt q hgrid (t - (n : ℤ)) w)
+        (fun x => 2 * vecDot (X w x).1 (X w x).2) := by
+    refine Book.Ch02.average_eq_of_ae_eq ?_
+    filter_upwards [MeasureTheory.ae_restrict_mem
+      (adaptedDomainAt q hgrid (t - (n : ℤ)) w).measurableSet] with x hx
+    have hdet : IsUnit (symmPart ((aU w).toCoeffField x)).det :=
+      isUnit_det_symmPart_of_isEllipticMatrix ((hEllFam w).2 x hx)
+    have h2 : (X w x).2 = matVecMul ((aU w).toCoeffField x) (X w x).1 := hX w x
+    have hX : X w x = ((X w x).1, matVecMul ((aU w).toCoeffField x) (X w x).1) :=
+      Prod.ext rfl h2
+    rw [hX, blockMatrixField_apply (aU w) x,
+      blockEnergyDensity_primal hdet (X w x).1]
+  rw [hpt]
+  show (MeasureTheory.volume (adaptedCellAtCenter q (t - (n : ℤ)) w)).toReal⁻¹ *
+      ∫ x in (adaptedCellAtCenter q (t - (n : ℤ)) w),
+        2 * vecDot (X w x).1 (X w x).2
+    = 2 * ((MeasureTheory.volume (adaptedCellAtCenter q (t - (n : ℤ)) w)).toReal⁻¹ *
+      ∫ x in (adaptedCellAtCenter q (t - (n : ℤ)) w),
+        vecDot (X w x).1 (X w x).2)
+  rw [MeasureTheory.integral_const_mul]
+  ring
+
+private theorem volumeAverage_nonneg_of_doubledField
+    (q : Mat d) (hgrid : IsUnit q) (t : ℤ) (n : ℕ) (lam : ℝ) (hlam : 0 < lam)
+    (aU : (w : Fin d → ℤ) → Book.Ch02.CoeffOn
+      (adaptedDomainAt q hgrid (t - (n : ℤ)) w))
+    (X : (w : Fin d → ℤ) → Vec d → BlockVec d)
+    (hEllFam : ∀ w : Fin d → ℤ,
+      IsEllipticFieldOn (aU w).lam (aU w).Lam
+        (adaptedCellAtCenter q (t - (n : ℤ)) w) (aU w).toCoeffField)
+    (hX : ∀ w x, (X w x).2 = matVecMul ((aU w).toCoeffField x) (X w x).1) :
+    ∀ w ∈ triadicIndexBox d n,
+      0 ≤ volumeAverage (adaptedCellAtCenter q (t - (n : ℤ)) w)
+        (fun x => vecDot (X w x).1 (X w x).2) := by
+  intro w _
+  unfold volumeAverage
+  refine mul_nonneg (inv_nonneg.mpr ENNReal.toReal_nonneg) ?_
+  refine MeasureTheory.integral_nonneg_of_ae ?_
+  filter_upwards [MeasureTheory.ae_restrict_mem
+    (isOpen_adaptedCellAtCenter_of_isUnit hgrid (t - (n : ℤ)) w).measurableSet] with x hx
+  rw [hX w x]
+  exact le_trans (mul_nonneg hlam.le (vecNormSq_nonneg _))
+    (((hEllFam w).2 x hx).2.2.1 (X w x).1)
 
 /-- The normalization distributes over a finite weighted average: conjugating each summand by
 the fixed root and then averaging is the same as conjugating the averaged defect.  The scalar

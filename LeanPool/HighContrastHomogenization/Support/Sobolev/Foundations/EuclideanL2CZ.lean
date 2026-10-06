@@ -582,7 +582,8 @@ theorem integral_sum_euclideanCoordSecondDeriv_sq_eq_integral_forcing_mul_neg_la
 It is enough for the weak equation to hold against tests supported in `U`,
 provided the potential itself has topological support in `U`; the test
 `-Δu` is then still supported in `U`. -/
-theorem integral_sum_euclideanCoordSecondDeriv_sq_eq_integral_forcing_mul_neg_laplacian_of_tsupport_subset
+theorem
+  integral_sum_euclideanCoordSecondDeriv_sq_eq_integral_forcing_mul_neg_laplacian_of_tsupport_subset
     {d : ℕ} {U : Set (Vec d)} {u f : Vec d → ℝ}
     (hu : ContDiff ℝ (⊤ : ℕ∞) u) (hu_supp : HasCompactSupport u)
     (hu_sub : tsupport u ⊆ U)

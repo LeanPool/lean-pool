@@ -87,7 +87,8 @@ private theorem aestronglyMeasurable_cubeEuclideanWspKernel_of_memLp
     exact (hdist.continuousOn.rpow_const fun z hz => Or.inl (by
       intro hzero
       apply hz
-      exact Set.mem_diagonal_iff.mpr (euclideanDist_eq_zero_iff.mp hzero))).aestronglyMeasurable hDmeas
+      exact Set.mem_diagonal_iff.mpr (euclideanDist_eq_zero_iff.mp hzero))).aestronglyMeasurable
+        hDmeas
   have hrestrictPair : AEStronglyMeasurable (fun z : Vec d × Vec d =>
       HilbertVec.ofVec (F z.1 - F z.2)) (μ.restrict D) := hpair.restrict
   have hkernel : AEStronglyMeasurable (cubeEuclideanWspKernel s p F)

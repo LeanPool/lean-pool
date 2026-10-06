@@ -211,7 +211,8 @@ theorem young_convolution_nonneg_integral_one
       · have hJensen := jensen_abs_rpow_integral μ hp_ge_one hg_int_μ hgpow_int_μ
         have heq_pow :
             ∫ t, |g (x - t)| ^ p.toReal ∂μ =
-              (∫⁻ t, ENNReal.ofReal (ρ t) * (ENNReal.ofReal |g (x - t)|) ^ p.toReal ∂volume).toReal := by
+              (∫⁻ t, ENNReal.ofReal (ρ t) * (ENNReal.ofReal |g (x - t)|) ^ p.toReal
+                ∂volume).toReal := by
           rw [integral_withDensity_ofReal_eq_integral_mul hρ_nonneg hρ_meas.aemeasurable]
           rw [integral_eq_lintegral_of_nonneg_ae]
           · congr 1
@@ -220,7 +221,8 @@ theorem young_convolution_nonneg_integral_one
             rw [ENNReal.ofReal_mul (hρ_nonneg t)]
             congr 1
             rw [← ENNReal.ofReal_rpow_of_nonneg (abs_nonneg _) hp_pos.le]
-          · exact ae_of_all _ (fun t => mul_nonneg (hρ_nonneg t) (Real.rpow_nonneg (abs_nonneg _) _))
+          · exact ae_of_all _ (fun t => mul_nonneg (hρ_nonneg t) (Real.rpow_nonneg (abs_nonneg
+            _) _))
           · have habs_rpow_meas : Measurable (fun t => |g (x - t)| ^ p.toReal) := by
               have hcont : Continuous (fun y : ℝ => |y| ^ p.toReal) :=
                 continuous_abs.rpow_const (fun _ => Or.inr hp_pos.le)

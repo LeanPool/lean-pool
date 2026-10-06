@@ -140,7 +140,8 @@ private theorem inv_mul_const_sum_sqrt_scale_le
             rw [div_eq_mul_inv]
             ring
 
-theorem isBigO_gammaSigma_finsetSum_descendantsAtScaleScaleColorClass_of_restrictionUnitRangeDependentLaw_aemeasurable
+theorem
+  isBigO_gammaSigma_finsetSum_descendantsAtScaleScaleColorClass_of_restrictionUnitRangeDependentLaw_aemeasurable
     {d : ℕ} {Q : TriadicCube d} {k : ℤ} {c : ScaleColor d k}
     {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P] {σ K : ℝ}
     (hP : RestrictionUnitRangeDependentLaw P)
@@ -257,7 +258,8 @@ theorem isBigO_finsetAverage_colorClassSums_gammaSigma_aemeasurable
       (colorCount := colorCount) (totalCount := totalCount)
       (classCount := classCount) hGamma_nonneg hC.le hK.le hTotal hSqrt
 
-theorem isBigO_gammaSigma_restrictionDescendantAverage_of_restrictionUnitRangeDependentLaw_aemeasurable
+theorem
+  isBigO_gammaSigma_restrictionDescendantAverage_of_restrictionUnitRangeDependentLaw_aemeasurable
     {d : ℕ} {Q : TriadicCube d} {k : ℤ}
     {P : RestrictionCoeffLaw d} [IsProbabilityMeasure P] {σ K : ℝ}
     (hk : k ≤ Q.scale)
@@ -265,7 +267,8 @@ theorem isBigO_gammaSigma_restrictionDescendantAverage_of_restrictionUnitRangeDe
     (hσ₀ : 0 < σ) (hσ₂ : σ ≤ 2) (hK : 0 < K)
     (X : TriadicCube d → RegCoeffField d → ℝ)
     (hX_local :
-      ∀ R ∈ descendantsAtScale Q k, IsRestrictionLocalRandomVariable (cubeSet R) (measurableSet_cubeSet R) (X R))
+      ∀ R ∈ descendantsAtScale Q k, IsRestrictionLocalRandomVariable (cubeSet R)
+        (measurableSet_cubeSet R) (X R))
     (hX_aemeas : ∀ R ∈ descendantsAtScale Q k, AEMeasurable (X R) P)
     (hX : ∀ R ∈ descendantsAtScale Q k, IsBigO P (gammaSigma σ) (X R) K)
     (h_mean : ∀ R ∈ descendantsAtScale Q k, ∫ a, X R a ∂P = 0) :

@@ -403,7 +403,8 @@ noncomputable def toMeanZero {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
 theorem meanZero_toMeanZero {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (u : AHarmonicFunction a U) :
-    MeanZeroOn U ((u.toMeanZero : AHarmonicFunctionMeanZero a U) : AHarmonicFunction a U).toH1.toFun :=
+    MeanZeroOn U ((u.toMeanZero : AHarmonicFunctionMeanZero a U) : AHarmonicFunction a
+      U).toH1.toFun :=
   u.toMeanZero.meanZero
 
 theorem integrableOn_smul {d : ℕ} {a : CoeffField d} {U : Set (Vec d)}

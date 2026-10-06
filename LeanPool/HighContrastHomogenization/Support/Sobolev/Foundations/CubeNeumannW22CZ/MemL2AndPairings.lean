@@ -301,7 +301,8 @@ theorem setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedScalar
 
 /-- The squared `L²` energy of the all-coordinate reflected scalar on the full
 reflection block, with the cell count normalized to `(3 : ℝ)^d`. -/
-theorem setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedScalar_sq_of_memScalarL2_three_pow
+theorem
+  setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedScalar_sq_of_memScalarL2_three_pow
     {d : ℕ} {F : Vec d → ℝ} (Q : TriadicCube d)
     (hF : MemScalarL2 (openCubeSet Q) F) :
     ∫ x in cubeFaceReflectionBlockSet Q,
@@ -396,7 +397,8 @@ theorem setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedScalar
 
 /-- The reflected scalar cross pairing on the full reflection block, with the
 cell count normalized to `(3 : ℝ)^d`. -/
-theorem setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedScalar_mul_of_memScalarL2_three_pow
+theorem
+  setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedScalar_mul_of_memScalarL2_three_pow
     {d : ℕ} {F U : Vec d → ℝ} (Q : TriadicCube d)
     (hF : MemScalarL2 (openCubeSet Q) F)
     (hU : MemScalarL2 (openCubeSet Q) U) :
@@ -600,7 +602,8 @@ theorem memLp_indicator_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedVe
 field on the full reflection block is one copy of the original cube energy for
 each reflected cell. This is the `MemVectorL2` wrapper around the geometric
 cell change-of-variables theorem. -/
-theorem setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedVectorField_self_pairing_of_memVectorL2
+theorem
+  setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedVectorField_self_pairing_of_memVectorL2
     {d : ℕ} {G : Vec d → Vec d} (Q : TriadicCube d)
     (hG : MemVectorL2 (openCubeSet Q) G) :
     ∫ x in cubeFaceReflectionBlockSet Q,
@@ -623,7 +626,8 @@ theorem setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedVector
 
 /-- The vector self-pairing energy of the all-coordinate reflected field on
 the full reflection block, with the cell count normalized to `(3 : ℝ)^d`. -/
-theorem setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedVectorField_self_pairing_of_memVectorL2_three_pow
+theorem
+  setIntegral_cubeFaceReflectionBlockSet_cubeCoordinateFoldReflectedVectorField_self_pairing_of_memVectorL2_three_pow
     {d : ℕ} {G : Vec d → Vec d} (Q : TriadicCube d)
     (hG : MemVectorL2 (openCubeSet Q) G) :
     ∫ x in cubeFaceReflectionBlockSet Q,

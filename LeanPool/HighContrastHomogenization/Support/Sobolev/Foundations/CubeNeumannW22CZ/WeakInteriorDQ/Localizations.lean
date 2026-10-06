@@ -676,7 +676,6 @@ theorem memH10_localizedMul_of_contDiff_hasCompactSupport_tsupport_subset
             apply eLpNorm_cutoff_approx_sub_le hVU hφ_top hφ_sub
             intro x
             simp [wφ]
-            ring
           refine tendsto_of_tendsto_of_tendsto_of_le_of_le
             tendsto_const_nhds ?_ (fun n => zero_le) hupper
           simpa using hconst_tendsto

@@ -45,7 +45,8 @@ theorem volumeAverage_eq_zero_of_integral_eq_zero {d : ℕ} {U : Set (Vec d)}
 @[expose]
 noncomputable def muValueSet {d : ℕ} (U : Set (Vec d)) (P : BlockVec d)
     (a : CoeffField d) : Set ℝ :=
-  { m | ∃ X : BlockState d, IsBlockMuAdmissible U P X ∧ m = volumeAverage U (blockEnergyDensity a X) }
+  { m | ∃ X : BlockState d, IsBlockMuAdmissible U P X ∧ m = volumeAverage U (blockEnergyDensity
+    a X) }
 
 @[expose]
 noncomputable def Mu {d : ℕ} (U : Set (Vec d)) (P : BlockVec d) (a : CoeffField d) : ℝ :=
@@ -384,7 +385,8 @@ def IsSigmaCoarse {d : ℕ} (U : Set (Vec d)) (a : CoeffField d)
         (1 / 2 : ℝ) * vecDot p (matVecMul sigma p)
 
 @[expose]
-def IsSigmaStarInvCoarse {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) (sigmaStarInv : Mat d) : Prop :=
+def IsSigmaStarInvCoarse {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) (sigmaStarInv : Mat d) :
+  Prop :=
   sigmaStarInv.IsSymm ∧
     ∀ q : Vec d, ResponseJ U 0 q a = (1 / 2 : ℝ) * vecDot q (matVecMul sigmaStarInv q)
 
@@ -684,7 +686,8 @@ noncomputable def bCoarse {d : ℕ} (sigma sigmaStar kappa : Mat d) : Mat d :=
 
 theorem bCoarse_smul {d : ℕ} {sigma sigmaStar kappa : Mat d}
     (hdet : IsUnit sigmaStar.det) {lam : ℝ} (hlam : 0 < lam) :
-    bCoarse (lam • sigma) (lam • sigmaStar) (lam • kappa) = lam • bCoarse sigma sigmaStar kappa := by
+    bCoarse (lam • sigma) (lam • sigmaStar) (lam • kappa) = lam • bCoarse sigma sigmaStar kappa
+      := by
   unfold bCoarse
   rw [nonsing_inv_smul lam hlam.ne' hdet]
   calc

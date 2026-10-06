@@ -275,7 +275,8 @@ theorem descendantsENNAverage_cubeEuclideanWspESeminorm_rpow_le {d : ℕ}
       (hR : AEStronglyMeasurable (cubeEuclideanWspKernel s p F)
         (Gagliardo.gagliardoCubeMeasure R)) :
       (cubeEuclideanWspESeminorm R s p F) ^ p.exponent.toReal =
-        ENNReal.ofReal (cubeVolume R)⁻¹ * ∫⁻ z in cubeSet R ×ˢ cubeSet R, f z ∂(volume.prod volume) := by
+        ENNReal.ofReal (cubeVolume R)⁻¹ * ∫⁻ z in cubeSet R ×ˢ cubeSet R, f z ∂(volume.prod
+          volume) := by
     rw [cubeEuclideanWspESeminorm_eq_lintegral R s p F hR, ← ENNReal.rpow_mul]
     have h : (1 / p.exponent.toReal) * p.exponent.toReal = 1 := by field_simp
     rw [h, ENNReal.rpow_one]
@@ -309,12 +310,14 @@ theorem descendantsENNAverage_cubeEuclideanWspESeminorm_rpow_le {d : ℕ}
     rw [hv, mul_inv]
   calc
     ∑ R ∈ D, ((D.card : ℝ≥0∞)⁻¹) *
-        (ENNReal.ofReal (cubeVolume R)⁻¹ * ∫⁻ z in cubeSet R ×ˢ cubeSet R, f z ∂(volume.prod volume)) =
+        (ENNReal.ofReal (cubeVolume R)⁻¹ * ∫⁻ z in cubeSet R ×ˢ cubeSet R, f z ∂(volume.prod
+          volume)) =
       ENNReal.ofReal (cubeVolume Q)⁻¹ * ∑ R ∈ D,
         ∫⁻ z in cubeSet R ×ˢ cubeSet R, f z ∂(volume.prod volume) := by
           rw [Finset.mul_sum]
           refine Finset.sum_congr rfl fun R hR => by rw [← mul_assoc, hf R hR]
-    _ ≤ ENNReal.ofReal (cubeVolume Q)⁻¹ * ∫⁻ z in cubeSet Q ×ˢ cubeSet Q, f z ∂(volume.prod volume) := by
+    _ ≤ ENNReal.ofReal (cubeVolume Q)⁻¹ * ∫⁻ z in cubeSet Q ×ˢ cubeSet Q, f z ∂(volume.prod
+      volume) := by
       gcongr
       exact lintegral_descendant_diagonals_le Q j f
 
@@ -334,7 +337,8 @@ theorem descendantsENNAverage_cubeEuclideanWspFullENorm_rpow_le {d : ℕ}
   have hpow (R : TriadicCube d) :
       (cubeEuclideanWspFullENorm R s p F) ^ p.exponent.toReal =
         cubeEuclideanWspScalePowerWeight R s p *
-          ((cubeBoundedMeasurableDomain R).normalizedEuclideanLpENorm p.exponent F) ^ p.exponent.toReal +
+          ((cubeBoundedMeasurableDomain R).normalizedEuclideanLpENorm p.exponent F) ^
+            p.exponent.toReal +
         (cubeEuclideanWspESeminorm R s p F) ^ p.exponent.toReal := by
     unfold cubeEuclideanWspFullENorm
     rw [← ENNReal.rpow_mul]
@@ -351,17 +355,20 @@ theorem descendantsENNAverage_cubeEuclideanWspFullENorm_rpow_le {d : ℕ}
     descendantsENNAverage Q j (fun R => (cubeEuclideanWspFullENorm R s p F) ^ p.exponent.toReal)
       = descendantsENNAverage Q j (fun R =>
           cubeEuclideanWspScalePowerWeight R s p *
-            ((cubeBoundedMeasurableDomain R).normalizedEuclideanLpENorm p.exponent F) ^ p.exponent.toReal +
+            ((cubeBoundedMeasurableDomain R).normalizedEuclideanLpENorm p.exponent F) ^
+              p.exponent.toReal +
           (cubeEuclideanWspESeminorm R s p F) ^ p.exponent.toReal) := by
             congr 2
             funext R
             exact hpow R
     _ ≤ A * (cubeEuclideanWspScalePowerWeight Q s p *
-          ((cubeBoundedMeasurableDomain Q).normalizedEuclideanLpENorm p.exponent F) ^ p.exponent.toReal +
+          ((cubeBoundedMeasurableDomain Q).normalizedEuclideanLpENorm p.exponent F) ^
+            p.exponent.toReal +
           (cubeEuclideanWspESeminorm Q s p F) ^ p.exponent.toReal) :=
       descendantsENNAverage_full_power_le_of_partition Q j A
         (cubeEuclideanWspScalePowerWeight · s p)
-        (fun R => ((cubeBoundedMeasurableDomain R).normalizedEuclideanLpENorm p.exponent F) ^ p.exponent.toReal)
+        (fun R => ((cubeBoundedMeasurableDomain R).normalizedEuclideanLpENorm p.exponent F) ^
+          p.exponent.toReal)
         (fun R => (cubeEuclideanWspESeminorm R s p F) ^ p.exponent.toReal) hA hw hL hS
     _ = A * (cubeEuclideanWspFullENorm Q s p F) ^ p.exponent.toReal := by rw [hpow Q]
 

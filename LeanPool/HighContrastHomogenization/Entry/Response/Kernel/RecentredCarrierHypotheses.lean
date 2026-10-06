@@ -74,6 +74,98 @@ noncomputable section
 
 variable {d : ℕ} [NeZero d]
 
+private theorem coarseBlockMatrix_respCoeffMinus_of_ellipticRepresentative
+    (jStar : ℕ) (F : BlockMat d) (hgrid : IsUnit (respGrid jStar F))
+    (t : ℤ) (n : ℕ) (a : CoeffSpace d) (lam0 Lam' : ℝ)
+    (hlam0 : 0 < lam0) (hle' : lam0 ≤ Lam')
+    (f : CoeffField d) (hae : respCoeffMinus F a =ᵐ[volumeMeasureOn (respCell jStar F t)] f)
+    (hEllOf : ∀ (S : Set (Vec d)) (hS : MeasurableSet S),
+      IsEllipticFieldOn lam0 Lam' S f) :
+    ∀ w ∈ triadicIndexBox d n,
+      Book.Ch02.coarseBlockMatrix
+          (adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w)
+          (coeffOnOfIsEllipticFieldOn hlam0 hle'
+            (hEllOf (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
+              (isOpen_adaptedCellAtCenter_of_isUnit hgrid (t - (n : ℤ)) w).measurableSet))
+        = blockCongr (respG F)
+          (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w) a) := by
+  intro w hw
+  have hsub : adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w ⊆ respCell jStar F t :=
+    adaptedCellAtCenter_subset_adaptedCell (respGrid jStar F) t n hw
+  have hcell : respCoeffMinus F a =ᵐ[volumeMeasureOn
+      (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)] f :=
+    MeasureTheory.ae_mono (MeasureTheory.Measure.restrict_mono hsub le_rfl) hae
+  have hcellSymm : f =ᵐ[volumeMeasureOn
+      (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)] respCoeffMinus F a := by
+    filter_upwards [hcell] with x hx
+    exact hx.symm
+  have hae_w : Book.Ch02.CoeffOn.AEEq
+      (coeffOnOfIsEllipticFieldOn hlam0 hle'
+        (hEllOf (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
+          (isOpen_adaptedCellAtCenter_of_isUnit hgrid (t - (n : ℤ)) w).measurableSet))
+      (canonicalRespCoeffMinusOnAt (respGrid jStar F) hgrid (t - (n : ℤ)) w F a) := by
+    show (coeffOnOfIsEllipticFieldOn hlam0 hle'
+        (hEllOf (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
+          (isOpen_adaptedCellAtCenter_of_isUnit hgrid (t - (n : ℤ)) w).measurableSet)).toCoeffField
+      =ᵐ[volumeMeasureOn
+        ((adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w) : Set (Vec d))]
+        (canonicalRespCoeffMinusOnAt (respGrid jStar F) hgrid (t - (n : ℤ)) w F a).toCoeffField
+    rw [canonicalRespCoeffMinusOnAt_toFun]
+    exact hcellSymm
+  rw [Book.Ch02.coarseBlockMatrix_eq_ofAEEq hae_w]
+  exact isCoarseBlockMatrix_respCoeffMinus (respGrid jStar F) hgrid (t - (n : ℤ)) w F a
+    (canonicalRespCoeffMinusOnAt (respGrid jStar F) hgrid (t - (n : ℤ)) w F a)
+    (canonicalRespCoeffMinusOnAt_toFun (respGrid jStar F) hgrid (t - (n : ℤ)) w F a)
+
+private theorem doubledFieldEnergy_average_congr_of_ae_eq
+    (jStar : ℕ) (F : BlockMat d) (t : ℤ) (n : ℕ)
+    (X X' : (w : Fin d → ℤ) → Vec d → BlockVec d)
+    (hX : ∀ w ∈ triadicIndexBox d n,
+      X w =ᵐ[volumeMeasureOn (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)] X' w) :
+    ∀ w ∈ triadicIndexBox d n,
+      2 * volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
+          (fun x => vecDot (X w x).1 (X w x).2)
+        = 2 * volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
+          (fun x => vecDot (X' w x).1 (X' w x).2) := by
+  intro w hw
+  unfold volumeAverage
+  congr 1
+  exact MeasureTheory.integral_congr_ae (by
+    filter_upwards [hX w hw] with x hx
+    rw [hx])
+
+private theorem cellAverage_congr_ae_on_recentCells
+    (jStar : ℕ) (F : BlockMat d) (t : ℤ) (n : ℕ)
+    (X X' : (w : Fin d → ℤ) → Vec d → BlockVec d)
+    (hX : ∀ w ∈ triadicIndexBox d n,
+      X w =ᵐ[volumeMeasureOn (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)] X' w) :
+    ∀ w ∈ triadicIndexBox d n,
+      cellAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w) (X w)
+        = cellAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w) (X' w) := by
+  intro w hw
+  exact cellAverage_congr_ae (subset_refl _) (hX w hw)
+
+private theorem optimizerDifference_ae_eq_of_field_and_gradient
+    (U V : Set (Vec d)) (f c : CoeffField d)
+    (uRep : AHarmonicFunction f U) (u : AHarmonicFunction c U)
+    (vRep : AHarmonicFunction f V) (v : AHarmonicFunction c V)
+    (hcoef : f =ᵐ[volumeMeasureOn V] c)
+    (hgrad_u : uRep.toH1.grad = u.toH1.grad)
+    (hgrad_v : vRep.toH1.grad = v.toH1.grad) :
+    (fun x => optimizerField f uRep x - optimizerField f vRep x)
+      =ᵐ[volumeMeasureOn V]
+    (fun x => optimizerField c u x - optimizerField c v x) := by
+  filter_upwards [hcoef] with x hx
+  have hfirst : (optimizerField f uRep x - optimizerField f vRep x).1
+      = (optimizerField c u x - optimizerField c v x).1 := by
+    simp only [optimizerField, Prod.fst_sub]
+    rw [hgrad_u, hgrad_v]
+  have hsecond : (optimizerField f uRep x - optimizerField f vRep x).2
+      = (optimizerField c u x - optimizerField c v x).2 := by
+    simp only [optimizerField, Prod.snd_sub, hx]
+    rw [hgrad_u, hgrad_v]
+  exact Prod.ext hfirst hsecond
+
 /-- **The per-cell hypothesis of the older-scale tail.**  For an invertible selected grid, a
 generation `t`, a depth `n`, and a parent harmonic optimizer attached to the recentred response
 coefficient, every aligned depth-`n` subcell satisfies the per-cell metric bound of
@@ -185,32 +277,8 @@ theorem tailCell_of_bridge (P : Measure (CoeffSpace d)) (γ : ℝ) (jStar : ℕ)
       (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w) (aU w).toCoeffField :=
     fun w => hEllOf (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
       (isOpen_adaptedCellAtCenter_of_isUnit hgrid (t - (n : ℤ)) w).measurableSet
-  have hcoarseFam : ∀ w ∈ triadicIndexBox d n,
-      Book.Ch02.coarseBlockMatrix (adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w)
-          (aU w)
-        = blockCongr (respG F) (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ))
-            w) a) := by
-    intro w hw
-    have hsub : adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w ⊆ respCell jStar F t :=
-      adaptedCellAtCenter_subset_adaptedCell (respGrid jStar F) t n hw
-    have hcell : respCoeffMinus F a =ᵐ[volumeMeasureOn
-        (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)] f :=
-      MeasureTheory.ae_mono (MeasureTheory.Measure.restrict_mono hsub le_rfl) hae
-    have hcellSymm : f =ᵐ[volumeMeasureOn
-        (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)] respCoeffMinus F a := by
-      filter_upwards [hcell] with x hx
-      exact hx.symm
-    have hae_w : Book.Ch02.CoeffOn.AEEq (aU w)
-        (canonicalRespCoeffMinusOnAt (respGrid jStar F) hgrid (t - (n : ℤ)) w F a) := by
-      show (aU w).toCoeffField =ᵐ[volumeMeasureOn
-        ((adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w) : Set (Vec d))]
-        (canonicalRespCoeffMinusOnAt (respGrid jStar F) hgrid (t - (n : ℤ)) w F a).toCoeffField
-      rw [canonicalRespCoeffMinusOnAt_toFun]
-      exact hcellSymm
-    rw [Book.Ch02.coarseBlockMatrix_eq_ofAEEq hae_w]
-    exact isCoarseBlockMatrix_respCoeffMinus (respGrid jStar F) hgrid (t - (n : ℤ)) w F a
-      (canonicalRespCoeffMinusOnAt (respGrid jStar F) hgrid (t - (n : ℤ)) w F a)
-      (canonicalRespCoeffMinusOnAt_toFun (respGrid jStar F) hgrid (t - (n : ℤ)) w F a)
+  have hcoarseFam := coarseBlockMatrix_respCoeffMinus_of_ellipticRepresentative
+    jStar F hgrid t n a lam0 Lam' hlam0 hle' f hae hEllOf
   have hport := parentEnergyMap_port (P := P) (γ := γ) (jStar := jStar) (F := F) (t := t)
     (hgrid := hgrid) (a := a) (n := n) (aU := aU) (V := respCell jStar F t)
     (u := uFam) (z := zFam) (hz := hzFam) (hEll := hEllFam)
@@ -424,32 +492,8 @@ theorem headCell_of_bridge (P : Measure (CoeffSpace d)) (γ : ℝ) (jStar : ℕ)
     fun w => hEllOf (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
       (isOpen_adaptedCellAtCenter_of_isUnit hgrid (t - (n : ℤ)) w).measurableSet
   -- The coarse-block identification, exactly as in the tail module.
-  have hcoarseFam : ∀ w ∈ triadicIndexBox d n,
-      Book.Ch02.coarseBlockMatrix (adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w)
-          (aU w)
-        = blockCongr (respG F) (coarseBlock (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ))
-            w) a) := by
-    intro w hw
-    have hsub : adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w ⊆ respCell jStar F t :=
-      adaptedCellAtCenter_subset_adaptedCell (respGrid jStar F) t n hw
-    have hcell : respCoeffMinus F a =ᵐ[volumeMeasureOn
-        (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)] f :=
-      MeasureTheory.ae_mono (MeasureTheory.Measure.restrict_mono hsub le_rfl) hae
-    have hcellSymm : f =ᵐ[volumeMeasureOn
-        (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)] respCoeffMinus F a := by
-      filter_upwards [hcell] with x hx
-      exact hx.symm
-    have hae_w : Book.Ch02.CoeffOn.AEEq (aU w)
-        (canonicalRespCoeffMinusOnAt (respGrid jStar F) hgrid (t - (n : ℤ)) w F a) := by
-      show (aU w).toCoeffField =ᵐ[volumeMeasureOn
-        ((adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w) : Set (Vec d))]
-        (canonicalRespCoeffMinusOnAt (respGrid jStar F) hgrid (t - (n : ℤ)) w F a).toCoeffField
-      rw [canonicalRespCoeffMinusOnAt_toFun]
-      exact hcellSymm
-    rw [Book.Ch02.coarseBlockMatrix_eq_ofAEEq hae_w]
-    exact isCoarseBlockMatrix_respCoeffMinus (respGrid jStar F) hgrid (t - (n : ℤ)) w F a
-      (canonicalRespCoeffMinusOnAt (respGrid jStar F) hgrid (t - (n : ℤ)) w F a)
-      (canonicalRespCoeffMinusOnAt_toFun (respGrid jStar F) hgrid (t - (n : ℤ)) w F a)
+  have hcoarseFam := coarseBlockMatrix_respCoeffMinus_of_ellipticRepresentative
+    jStar F hgrid t n a lam0 Lam' hlam0 hle' f hae hEllOf
   -- The two optimizer differences: on the representative, and at the estimate's coefficient.
   let Xf : (w : Fin d → ℤ) → Vec d → BlockVec d :=
     fun w x => optimizerField (aU w).toCoeffField (zFam w) x -
@@ -461,16 +505,9 @@ theorem headCell_of_bridge (P : Measure (CoeffSpace d)) (γ : ℝ) (jStar : ℕ)
   have hXae : ∀ w ∈ triadicIndexBox d n,
       Xf w =ᵐ[volumeMeasureOn (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)] Xr w := by
     intro w hw
-    filter_upwards [haeSub w hw] with x hx
-    have hg1 : (Xf w x).1 = (Xr w x).1 := by
-      simp only [Xf, Xr, optimizerField, Prod.fst_sub]
-      rw [hzFam w hw, hvFam w hw]
-      rfl
-    have hg2 : (Xf w x).2 = (Xr w x).2 := by
-      simp only [Xf, Xr, optimizerField, Prod.snd_sub, hx]
-      rw [hzFam w hw, hvFam w hw]
-      rfl
-    exact Prod.ext hg1 hg2
+    exact optimizerDifference_ae_eq_of_field_and_gradient
+      (respCell jStar F t) (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
+      f (respCoeffMinus F a) uRep u (vFam w) (v w) (haeSub w hw) rfl (hvFam w hw)
   -- The Chapter-2 difference energy is the doubled pointwise energy on the representative.
   have hAve_f : ∀ w ∈ triadicIndexBox d n,
       Book.Ch02.average (adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w)
@@ -530,14 +567,7 @@ theorem headCell_of_bridge (P : Measure (CoeffSpace d)) (γ : ℝ) (jStar : ℕ)
             (fun x => vecDot (Xr w x).1 (Xr w x).2) := by
     intro w hw
     rw [hAve_f w hw]
-    unfold volumeAverage
-    rw [show (∫ x in (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w),
-            vecDot (Xf w x).1 (Xf w x).2)
-          = ∫ x in (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w),
-            vecDot (Xr w x).1 (Xr w x).2 from
-        MeasureTheory.integral_congr_ae (by
-          filter_upwards [hXae w hw] with x hx
-          rw [hx])]
+    exact doubledFieldEnergy_average_congr_of_ae_eq jStar F t n Xf Xr hXae w hw
   -- The port's positivity input: the difference energy is nonnegative.
   have hG : ∀ w ∈ triadicIndexBox d n,
       0 ≤ Book.Ch02.average (adaptedDomainAt (respGrid jStar F) hgrid (t - (n : ℤ)) w)
@@ -551,11 +581,7 @@ theorem headCell_of_bridge (P : Measure (CoeffSpace d)) (γ : ℝ) (jStar : ℕ)
     (hEll := hEllFam) (hm := hm) (hEmean := hEmean) (hEhat := hEhat) (hM0 := hM0)
     (hbdd := hbdd) (hcoarse := hcoarseFam) (hG := hG)
   -- The cell average is a.e. invariant under the representative.
-  have hcellAvg : ∀ w ∈ triadicIndexBox d n,
-      cellAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w) (Xf w)
-        = cellAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w) (Xr w) := by
-    intro w hw
-    exact cellAverage_congr_ae (subset_refl _) (hXae w hw)
+  have hcellAvg := cellAverage_congr_ae_on_recentCells jStar F t n Xf Xr hXae
   intro w hw
   have h := hport w hw
   rw [hcellAvg w hw, hAve_r w hw] at h

@@ -71,7 +71,7 @@ noncomputable def dilate {a : ℝ} (ha : 0 < a)
     have hψ_smooth : ContDiff ℝ (⊤ : ℕ∞) ψ := by
       simpa [ψ] using! hφ.comp (contDiff_const_smul a)
     have hψ_supp : HasCompactSupport ψ := by
-      show HasCompactSupport (φ ∘ Homeomorph.smulOfNeZero a ha_ne)
+      change HasCompactSupport (φ ∘ Homeomorph.smulOfNeZero a ha_ne)
       simpa [ψ, Function.comp] using
         hφ_supp.comp_homeomorph (Homeomorph.smulOfNeZero a ha_ne)
     have hψ_sub : tsupport ψ ⊆ U := by
@@ -199,7 +199,7 @@ noncomputable def unscale {a : ℝ} (ha : 0 < a)
     have hψ_smooth : ContDiff ℝ (⊤ : ℕ∞) ψ := by
       simpa [ψ] using! hφ.comp (contDiff_const_smul a⁻¹)
     have hψ_supp : HasCompactSupport ψ := by
-      show HasCompactSupport (φ ∘ Homeomorph.smulOfNeZero a⁻¹ (inv_ne_zero ha.ne'))
+      change HasCompactSupport (φ ∘ Homeomorph.smulOfNeZero a⁻¹ (inv_ne_zero ha.ne'))
       simpa [ψ, Function.comp] using
         hφ_supp.comp_homeomorph (Homeomorph.smulOfNeZero a⁻¹ (inv_ne_zero ha.ne'))
     have hψ_sub : tsupport ψ ⊆ V := by

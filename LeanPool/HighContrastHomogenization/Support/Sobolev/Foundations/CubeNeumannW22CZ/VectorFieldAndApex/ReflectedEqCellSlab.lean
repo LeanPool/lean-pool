@@ -198,7 +198,8 @@ theorem lowerFace_reflectedVectorField_weakEquationOnUnion
 /-- Compact-test upper-face reflected weak equation in reflected-field
 notation, using the normalized cube `L²` hypothesis from the endpoint
 interfaces. -/
-theorem upperFace_reflectedVectorField_weakEquationOnUnion_of_compactSupport_of_memLp_normalizedCubeMeasure
+theorem
+  upperFace_reflectedVectorField_weakEquationOnUnion_of_compactSupport_of_memLp_normalizedCubeMeasure
     (W : MeanZeroNeumannPoissonSolution Q F)
     (i : Fin d) {φ : Vec d → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
     (hφs : HasCompactSupport φ)
@@ -252,7 +253,8 @@ theorem upperFace_reflectedVectorField_weakEquationOnUnion_of_compactSupport_of_
 /-- Compact-test lower-face reflected weak equation in reflected-field
 notation, using the normalized cube `L²` hypothesis from the endpoint
 interfaces. -/
-theorem lowerFace_reflectedVectorField_weakEquationOnUnion_of_compactSupport_of_memLp_normalizedCubeMeasure
+theorem
+  lowerFace_reflectedVectorField_weakEquationOnUnion_of_compactSupport_of_memLp_normalizedCubeMeasure
     (W : MeanZeroNeumannPoissonSolution Q F)
     (i : Fin d) {φ : Vec d → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
     (hφs : HasCompactSupport φ)
@@ -624,7 +626,8 @@ theorem faceNeighborSlab_reflectedVectorField_weakEquationOnSlab_of_compactSuppo
 /-- Compact-test weak equation on the lower/original/upper one-coordinate
 reflected slab, with the right-hand side given in the normalized cube `L²`
 measure used by the endpoint interfaces. -/
-theorem faceNeighborSlab_reflectedVectorField_weakEquationOnSlab_of_compactSupport_of_memLp_normalizedCubeMeasure
+theorem
+  faceNeighborSlab_reflectedVectorField_weakEquationOnSlab_of_compactSupport_of_memLp_normalizedCubeMeasure
     (W : MeanZeroNeumannPoissonSolution Q F)
     (i : Fin d) {φ : Vec d → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
     (hφs : HasCompactSupport φ)

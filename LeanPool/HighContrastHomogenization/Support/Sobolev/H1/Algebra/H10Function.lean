@@ -151,7 +151,8 @@ instance {d : ℕ} {U : Set (Vec d)} : Add (H10Function U) where
         have hupper :
             ∀ n,
               MeasureTheory.eLpNorm
-                  (fun x => (u.approx n x + v.approx n x) - (u.toH1Function + v.toH1Function).toFun x)
+                  (fun x => (u.approx n x + v.approx n x) - (u.toH1Function +
+                    v.toH1Function).toFun x)
                   2 (MeasureTheory.volume.restrict U) ≤
                 MeasureTheory.eLpNorm
                     (fun x => u.approx n x - u.toH1Function.toFun x)
@@ -161,9 +162,11 @@ instance {d : ℕ} {U : Set (Vec d)} : Add (H10Function U) where
                     2 (MeasureTheory.volume.restrict U) := by
           intro n
           have hu_mem : MeasureTheory.MemLp (u.approx n) 2 (MeasureTheory.volume.restrict U) :=
-            ((u.approx_smooth n).continuous.memLp_of_hasCompactSupport (u.approx_hasCompactSupport n)).restrict U
+            ((u.approx_smooth n).continuous.memLp_of_hasCompactSupport
+              (u.approx_hasCompactSupport n)).restrict U
           have hv_mem : MeasureTheory.MemLp (v.approx n) 2 (MeasureTheory.volume.restrict U) :=
-            ((v.approx_smooth n).continuous.memLp_of_hasCompactSupport (v.approx_hasCompactSupport n)).restrict U
+            ((v.approx_smooth n).continuous.memLp_of_hasCompactSupport
+              (v.approx_hasCompactSupport n)).restrict U
           have hdu_mem :
               MeasureTheory.MemLp
                 (fun x => u.approx n x - u.toH1Function.toFun x) 2

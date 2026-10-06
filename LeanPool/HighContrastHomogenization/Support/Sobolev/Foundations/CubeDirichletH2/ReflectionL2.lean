@@ -130,7 +130,8 @@ theorem setIntegral_cubeFaceReflectionBlockSet_cubeDirichletOddReflectionScalar_
 
 /-- The squared `L²` energy of the odd reflected scalar on the full reflection
 block, with the cell count normalized to `(3 : ℝ)^d`. -/
-theorem setIntegral_cubeFaceReflectionBlockSet_cubeDirichletOddReflectionScalar_sq_of_memScalarL2_three_pow
+theorem
+  setIntegral_cubeFaceReflectionBlockSet_cubeDirichletOddReflectionScalar_sq_of_memScalarL2_three_pow
     {d : ℕ} {F : Vec d → ℝ} (Q : TriadicCube d)
     (hF : MemScalarL2 (openCubeSet Q) F) :
     ∫ x in cubeFaceReflectionBlockSet Q,
@@ -255,7 +256,8 @@ theorem memVectorL2_openCubeSet_succ_originCube_cubeDirichletOddReflectionVector
 
 /-- Scalar odd-reflected energy on the centered parent cube is `3^d` copies
 of the original cube energy. -/
-theorem setIntegral_openCubeSet_succ_originCube_cubeDirichletOddReflectionScalar_sq_of_memScalarL2_three_pow
+theorem
+  setIntegral_openCubeSet_succ_originCube_cubeDirichletOddReflectionScalar_sq_of_memScalarL2_three_pow
     {d : ℕ} {m : ℤ} {F : Vec d → ℝ}
     (hF : MemScalarL2 (openCubeSet (originCube d m)) F) :
     ∫ x in openCubeSet (originCube d (m + 1)),
@@ -276,7 +278,8 @@ theorem setIntegral_openCubeSet_succ_originCube_cubeDirichletOddReflectionScalar
 
 /-- Vector odd-reflected energy on the centered parent cube is `3^d` copies
 of the original cube energy. -/
-theorem setIntegral_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField_self_pairing_of_memVectorL2_three_pow
+theorem
+  setIntegral_openCubeSet_succ_originCube_cubeDirichletOddReflectionVectorField_self_pairing_of_memVectorL2_three_pow
     {d : ℕ} {m : ℤ} {G : Vec d → Vec d}
     (hG : MemVectorL2 (openCubeSet (originCube d m)) G) :
     ∫ x in openCubeSet (originCube d (m + 1)),

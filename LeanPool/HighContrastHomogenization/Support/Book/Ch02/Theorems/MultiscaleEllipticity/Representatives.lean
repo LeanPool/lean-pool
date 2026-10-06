@@ -614,31 +614,10 @@ theorem coarseBMatrixNorm_le_maxDescendantBMatrixNormAtScale
     intro R hR
     rcases hDesc R hR with
       ⟨sigmaR, sigmaStarR, kappaR, hAR, hSR, hKR, hSigmaR, hdetR⟩
-    have hcanonR :
-        HCPolySupport.bCoarse sigmaR sigmaStarR kappaR =
-          HCPolySupport.bCoarse
-            (HCPolySupport.sigmaCoarse (cubeSet R) A)
-            (HCPolySupport.sigmaStarCoarse (cubeSet R) A)
-            (HCPolySupport.kappaCoarse (cubeSet R) A) := by
-      calc
-        HCPolySupport.bCoarse sigmaR sigmaStarR kappaR =
-            HCPolySupport.bCoarse
-              (HCPolySupport.sigmaCoarse (openCubeSet R) A)
-              (HCPolySupport.sigmaStarCoarse (openCubeSet R) A)
-              (HCPolySupport.kappaCoarse (openCubeSet R) A) := by
-                rw [HCPolySupport.sigmaCoarse_eq_of_isSigmaCoarse hSR hKR hSigmaR hdetR,
-                  HCPolySupport.eq_sigmaStarCoarse_of_isSigmaStarCoarse hSR hdetR,
-                  HCPolySupport.eq_kappaCoarse_of_isKappaCoarse hSR hKR hdetR]
-        _ =
-            HCPolySupport.bCoarse
-              (HCPolySupport.sigmaCoarse (cubeSet R) A)
-              (HCPolySupport.sigmaStarCoarse (cubeSet R) A)
-              (HCPolySupport.kappaCoarse (cubeSet R) A) := by
-                symm
-                rw [HCPolySupport.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
-                  (Q := R) (a := A) hSR hKR hSigmaR hdetR]
-    rw [← hcanonR]
-    exact HCPolySupport.bCoarse_posSemidef_of_isSigmaCoarse hSR hSigmaR
+    rw [HCPolySupport.bCoarse_sigmaCoarse_sigmaStarCoarse_kappaCoarse_cubeSet_eq_openCubeSet_of_triadicCube_of_isSigmaCoarse
+      (Q := R) (a := A) hSR hKR hSigmaR hdetR]
+    exact HCPolySupport.bCoarse_canonical_posSemidef_of_isSigmaCoarse
+      hSR hKR hSigmaR hdetR
   have hParentEq :
       coarseBMatrixNorm Q a =
         matrixNorm

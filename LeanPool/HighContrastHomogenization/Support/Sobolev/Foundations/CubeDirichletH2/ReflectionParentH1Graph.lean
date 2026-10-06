@@ -452,10 +452,10 @@ theorem setIntegral_cubeFaceReflectionCellCube_cubeDirichletOddReflectionVectorF
           by_cases h1 : choice i = 1
           · simp [L, σ, cubeFaceReflectionCellFoldSign, h1, T,
               cubeFaceReflectionCellFoldMap_involutive Q choice x,
-              mul_assoc, mul_comm]
+              mul_assoc, mul_left_comm, mul_comm]
           · simp [L, σ, cubeFaceReflectionCellFoldSign, h1, T,
               cubeFaceReflectionCellFoldMap_involutive Q choice x,
-              mul_assoc, mul_comm]
+              mul_assoc, mul_left_comm, mul_comm]
     _ = ∫ y in openCubeSet Q,
         G y i *
           ((cubeDirichletOddReflectionCellSign choice *
@@ -522,10 +522,10 @@ theorem setIntegral_cubeFaceReflectionBlockSet_cubeDirichletOddReflectionVectorF
     by_cases h1 : choice i = 1
     · simp [L, σ, cubeFaceReflectionCellFoldSign, h1, T,
         cubeFaceReflectionCellFoldMap_involutive Q choice x,
-        mul_assoc, mul_comm]
+        mul_assoc, mul_left_comm, mul_comm]
     · simp [L, σ, cubeFaceReflectionCellFoldSign, h1, T,
         cubeFaceReflectionCellFoldMap_involutive Q choice x,
-        mul_assoc, mul_comm]
+        mul_assoc, mul_left_comm, mul_comm]
   calc
     ∫ x in cubeFaceReflectionBlockSet Q,
         (cubeDirichletOddReflectionVectorField Q G x) i * φ x

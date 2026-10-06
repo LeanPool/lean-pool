@@ -250,8 +250,10 @@ theorem valueL2Norm_le_sobolevConst_mul_gradientCoordL2NormSum_ofContDiff
           hf1.continuous.aestronglyMeasurable hsupp]
   calc
     ‖u.toScalarL2‖ = ENNReal.toReal (MeasureTheory.eLpNorm f 2 MeasureTheory.volume) := hvalue
-    _ ≤ ENNReal.toReal ((C : ℝ≥0∞) * MeasureTheory.eLpNorm (fderiv ℝ f) 2 MeasureTheory.volume) := by
-          exact ENNReal.toReal_mono (ENNReal.mul_ne_top (by simp) hfderiv_mem.eLpNorm_lt_top.ne) hsob
+    _ ≤ ENNReal.toReal ((C : ℝ≥0∞) * MeasureTheory.eLpNorm (fderiv ℝ f) 2 MeasureTheory.volume)
+      := by
+          exact ENNReal.toReal_mono (ENNReal.mul_ne_top (by simp) hfderiv_mem.eLpNorm_lt_top.ne)
+            hsob
     _ = (C : ℝ) * ENNReal.toReal (MeasureTheory.eLpNorm (fderiv ℝ f) 2 MeasureTheory.volume) := by
           rw [ENNReal.toReal_mul]
           simp

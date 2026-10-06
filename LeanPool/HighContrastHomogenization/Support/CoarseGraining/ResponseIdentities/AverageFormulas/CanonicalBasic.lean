@@ -36,7 +36,8 @@ namespace ScalarCanonicalMaximizer
 
 theorem responseJ_eq {d : ℕ} {U : Set (Vec d)} {p q : Vec d} {a : CoeffField d}
     (v : ScalarCanonicalMaximizer U p q a) :
-    ResponseJ U p q a = volumeAverage U (scalarResponseIntegrand U a p q (v : AHarmonicFunction a U)) := by
+    ResponseJ U p q a = volumeAverage U (scalarResponseIntegrand U a p q (v : AHarmonicFunction
+      a U)) := by
   exact responseJ_eq_of_isResponseMaximizer U p q a v.isResponseMaximizer
 
 theorem firstVariation {d : ℕ} {U : Set (Vec d)} {p q : Vec d} {a : CoeffField d}
@@ -65,7 +66,8 @@ theorem secondVariationLine {d : ℕ} {U : Set (Vec d)} {p q : Vec d} {a : Coeff
     volumeAverage U
         (scalarResponseIntegrand U a p q
           (scalarPerturbation (v : AHarmonicFunction a U) w t hu_int hw_int)) =
-      ResponseJ U p q a - ((t ^ 2) / 2 : ℝ) * volumeAverage U (scalarVariationEnergyIntegrand a w) := by
+      ResponseJ U p q a - ((t ^ 2) / 2 : ℝ) * volumeAverage U (scalarVariationEnergyIntegrand a
+        w) := by
   exact responseJ_second_variation_line_of_isResponseMaximizer
     U a p q (v : AHarmonicFunction a U) v.isResponseMaximizer w t
     hu_int hw_int hresp_v hlin henergy
@@ -101,7 +103,8 @@ theorem energy {d : ℕ} {U : Set (Vec d)} {p q : Vec d} {a : CoeffField d}
     (henergy : MeasureTheory.IntegrableOn
       (scalarVariationEnergyIntegrand a (v : AHarmonicFunction a U)) U) :
     ResponseJ U p q a =
-      (1 / 2 : ℝ) * volumeAverage U (scalarVariationEnergyIntegrand a (v : AHarmonicFunction a U)) := by
+      (1 / 2 : ℝ) * volumeAverage U (scalarVariationEnergyIntegrand a (v : AHarmonicFunction a
+        U)) := by
   exact responseJ_energy_of_isResponseMaximizer
     U a p q (v : AHarmonicFunction a U) v.isResponseMaximizer
     hu_int hresp_v hlin_self henergy

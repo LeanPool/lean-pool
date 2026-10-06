@@ -116,7 +116,8 @@ theorem restrictionDescendantAverageOnCube_ae_eq_of_ae_eq {d : ℕ} {P : Restric
 /-- A.e.-equal descendant observables, with a.e.-equal origin representatives
 for the centering constant, have the same centered descendant average on a
 fixed parent cube. -/
-theorem restrictionCenteredDescendantAverageOnCube_ae_eq_of_ae_eq {d : ℕ} {P : RestrictionCoeffLaw d}
+theorem restrictionCenteredDescendantAverageOnCube_ae_eq_of_ae_eq {d : ℕ} {P :
+  RestrictionCoeffLaw d}
     {Q : TriadicCube d} {n : ℤ} {X Y : Set (Vec d) → RegCoeffField d → ℝ}
     (hOrigin :
       X (cubeSet (originCube d n)) =ᵐ[P] Y (cubeSet (originCube d n)))
@@ -171,7 +172,8 @@ noncomputable abbrev restrictionResponseJCubeObservable {d : ℕ} (p q : Vec d) 
   fun U a => ResponseJ U p q a.toFun
 
 /-- The response observable on the origin cube, centered by its expectation. -/
-noncomputable abbrev restrictionCenteredResponseJOriginObservable {d : ℕ} (P : RestrictionCoeffLaw d)
+noncomputable abbrev restrictionCenteredResponseJOriginObservable {d : ℕ} (P :
+  RestrictionCoeffLaw d)
     (n : ℤ) (p q : Vec d) : RegCoeffField d → ℝ :=
   restrictionCenteredOriginObservable P n (restrictionResponseJCubeObservable p q)
 
@@ -183,7 +185,8 @@ noncomputable abbrev restrictionResponseJDescendantAverage {d : ℕ}
 
 /-- The centered partition average of the response functional over scale-`n`
 descendants of the origin cube at scale `m`. -/
-noncomputable abbrev restrictionCenteredResponseJDescendantAverage {d : ℕ} (P : RestrictionCoeffLaw d)
+noncomputable abbrev restrictionCenteredResponseJDescendantAverage {d : ℕ} (P :
+  RestrictionCoeffLaw d)
     (n m : ℤ) (p q : Vec d) : RegCoeffField d → ℝ :=
   restrictionCenteredDescendantAverage P n m (restrictionResponseJCubeObservable p q)
 

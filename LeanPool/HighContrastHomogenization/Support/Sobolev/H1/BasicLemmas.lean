@@ -193,7 +193,8 @@ noncomputable def ofContDiffOnIsSobolevRegularDomain
   classical
   have hf_cont : Continuous f := (hf.differentiable (by simp)).continuous
   have hclosure_compact : IsCompact (closure U) := hU.isBoundedDomain.isBounded.isCompact_closure
-  let Cf : ℝ := Classical.choose (hclosure_compact.exists_bound_of_continuousOn hf_cont.continuousOn)
+  let Cf : ℝ := Classical.choose (hclosure_compact.exists_bound_of_continuousOn
+    hf_cont.continuousOn)
   have hCf : ∀ x ∈ closure U, ‖f x‖ ≤ Cf :=
     Classical.choose_spec (hclosure_compact.exists_bound_of_continuousOn hf_cont.continuousOn)
   refine

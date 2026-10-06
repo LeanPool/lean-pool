@@ -47,7 +47,8 @@ private theorem foldComp_line_integral {v : Vec (n + 1) → ℝ}
     (∫ t, v (Fold lo hi (j.insertNth t z))
           * (fderiv ℝ φ (j.insertNth t z)) (basisVec j))
       = -(∫ t, ((fderiv ℝ v (Fold lo hi (j.insertNth t z))) (basisVec j)
-              * foldSign (lo j) (hi j) ((j.insertNth t z : Vec (n + 1)) j)) * φ (j.insertNth t z)) := by
+              * foldSign (lo j) (hi j) ((j.insertNth t z : Vec (n + 1)) j)) * φ (j.insertNth t
+                z)) := by
   have hvd : Differentiable ℝ v := hv.differentiable (by simp)
   have hvf : Continuous (fderiv ℝ v) := hv.continuous_fderiv (by simp)
   have hφd : Differentiable ℝ φ := hφ.differentiable (by simp)

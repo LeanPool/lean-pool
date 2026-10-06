@@ -160,14 +160,17 @@ theorem responseJ_zero_eq_half_bCoarse_of_isSigmaCoarse {d : ℕ} {U : Set (Vec 
   have hb :
       vecDot p (matVecMul (bCoarse sigma sigmaStar kappa) p) =
         vecDot p (matVecMul sigma p) +
-          vecDot p (matVecMul (matTranspose kappa) (matVecMul sigmaStar⁻¹ (matVecMul kappa p))) := by
+          vecDot p (matVecMul (matTranspose kappa) (matVecMul sigmaStar⁻¹ (matVecMul kappa p)))
+            := by
     unfold bCoarse
     calc
       vecDot p (matVecMul (sigma + matTranspose kappa * sigmaStar⁻¹ * kappa) p)
-        = vecDot p (matVecMul sigma p + matVecMul (matTranspose kappa * sigmaStar⁻¹ * kappa) p) := by
+        = vecDot p (matVecMul sigma p + matVecMul (matTranspose kappa * sigmaStar⁻¹ * kappa) p)
+          := by
             rw [add_matVecMul]
       _ = vecDot p (matVecMul sigma p) +
-            vecDot p (matVecMul (matTranspose kappa) (matVecMul sigmaStar⁻¹ (matVecMul kappa p))) := by
+            vecDot p (matVecMul (matTranspose kappa) (matVecMul sigmaStar⁻¹ (matVecMul kappa
+              p))) := by
             rw [vecDot_add_right, matVecMul_mul, matVecMul_mul]
   rw [hb]
   linarith
@@ -394,10 +397,12 @@ theorem basic_cg_identities_responseJ_formula_deterministicCoarseBlockMatrix_of_
           vecDot q (matVecMul sigmaStar⁻¹ (matVecMul kappa p)) +
           (1 / 2 : ℝ) * vecDot p (matVecMul (bCoarse sigma sigmaStar kappa) p) := by
       exact basic_cg_identities_responseJ_formula_of_isSigmaCoarse U a hS hK hSigma p q
-    _ = (1 / 2 : ℝ) * vecDot q (matVecMul (blockMatrixOfDeterministicData sigma sigmaStar kappa).lowerRight q) -
+    _ = (1 / 2 : ℝ) * vecDot q (matVecMul (blockMatrixOfDeterministicData sigma sigmaStar
+      kappa).lowerRight q) -
           vecDot p q -
           vecDot q (matVecMul (blockMatrixOfDeterministicData sigma sigmaStar kappa).lowerLeft p) +
-          (1 / 2 : ℝ) * vecDot p (matVecMul (blockMatrixOfDeterministicData sigma sigmaStar kappa).upperLeft p) := by
+          (1 / 2 : ℝ) * vecDot p (matVecMul (blockMatrixOfDeterministicData sigma sigmaStar
+            kappa).upperLeft p) := by
       simp [blockMatrixOfDeterministicData, sub_eq_add_neg, matVecMul_mul,
         neg_matVecMul, vecDot_neg_right, add_assoc]
 
@@ -553,7 +558,8 @@ theorem basic_cg_identities_average_flux_formula_canonical_of_isResponseMaximize
     basic_cg_identities_average_flux_formula_of_isResponseMaximizer
       U a hS hK hSigma p q hInt u hmax uFlux hmaxFlux
 
-theorem basic_cg_identities_average_gradient_formula_deterministicCoarseBlockMatrix_of_isResponseMaximizer
+theorem
+  basic_cg_identities_average_gradient_formula_deterministicCoarseBlockMatrix_of_isResponseMaximizer
     {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) {sigmaStar kappa : Mat d}
     (hS : IsSigmaStarCoarse U a sigmaStar) (hK : IsKappaCoarse U a sigmaStar kappa)
     (hdet : IsUnit sigmaStar.det)
@@ -584,7 +590,8 @@ theorem basic_cg_identities_average_gradient_formula_deterministicCoarseBlockMat
           matVecMul (deterministicCoarseBlockMatrix U a).lowerLeft p := by
       simp [deterministicCoarseBlockMatrix, sub_eq_add_neg, neg_matVecMul, add_assoc]
 
-theorem basic_cg_identities_average_flux_formula_deterministicCoarseBlockMatrix_of_isResponseMaximizer
+theorem
+  basic_cg_identities_average_flux_formula_deterministicCoarseBlockMatrix_of_isResponseMaximizer
     {d : ℕ} (U : Set (Vec d)) (a : CoeffField d) {sigma sigmaStar kappa : Mat d}
     (hS : IsSigmaStarCoarse U a sigmaStar) (hK : IsKappaCoarse U a sigmaStar kappa)
     (hSigma : IsSigmaCoarse U a sigma sigmaStar kappa)
@@ -622,7 +629,8 @@ theorem basic_cg_identities_average_gradient_formula_coarseBlockMatrix_of_isResp
       -p + matVecMul (coarseBlockMatrix U a).lowerRight q -
         matVecMul (coarseBlockMatrix U a).lowerLeft p := by
   rw [coarseBlockMatrix_eq_deterministicCoarseBlockMatrix_of_isCoarseBlockMatrix hA]
-  exact basic_cg_identities_average_gradient_formula_deterministicCoarseBlockMatrix_of_isResponseMaximizer
+  exact
+    basic_cg_identities_average_gradient_formula_deterministicCoarseBlockMatrix_of_isResponseMaximizer
     U a hS hK hdet p q hInt u hmax uGrad hmaxGrad
 
 theorem basic_cg_identities_average_flux_formula_coarseBlockMatrix_of_isResponseMaximizer
@@ -639,7 +647,8 @@ theorem basic_cg_identities_average_flux_formula_coarseBlockMatrix_of_isResponse
       q + matVecMul (coarseBlockMatrix U a).upperRight q -
         matVecMul (coarseBlockMatrix U a).upperLeft p := by
   rw [coarseBlockMatrix_eq_deterministicCoarseBlockMatrix_of_isCoarseBlockMatrix hA]
-  exact basic_cg_identities_average_flux_formula_deterministicCoarseBlockMatrix_of_isResponseMaximizer
+  exact
+    basic_cg_identities_average_flux_formula_deterministicCoarseBlockMatrix_of_isResponseMaximizer
     U a hS hK hSigma hdet p q hInt u hmax uFlux hmaxFlux
 
 end

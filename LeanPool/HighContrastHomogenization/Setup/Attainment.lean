@@ -49,7 +49,7 @@ variable {d : ℕ}
 
 private theorem vecNormSq_smul_sq (c : ℝ) (x : Vec d) :
     vecNormSq (c • x) = c ^ 2 * vecNormSq x := by
-  show vecDot (c • x) (c • x) = c ^ 2 * vecDot x x
+  change vecDot (c • x) (c • x) = c ^ 2 * vecDot x x
   rw [vecDot_smul_left, vecDot_smul_right]
   ring
 
@@ -65,18 +65,18 @@ private theorem eq_zero_of_vecNormSq_eq_zero {x : Vec d} (h : vecNormSq x = 0) :
   exact mul_self_eq_zero.1 ((Finset.sum_eq_zero_iff_of_nonneg hnn).1 h i (Finset.mem_univ i))
 
 private theorem vecNormSq_zero' : vecNormSq (0 : Vec d) = 0 := by
-  show vecDot (0 : Vec d) (0 : Vec d) = 0
+  change vecDot (0 : Vec d) (0 : Vec d) = 0
   simp [vecDot]
 
 private theorem continuous_vecNormSq : Continuous (vecNormSq : Vec d → ℝ) := by
-  show Continuous fun x : Vec d => ∑ i, x i * x i
+  change Continuous fun x : Vec d => ∑ i, x i * x i
   exact continuous_finsetSum _ fun i _ => (continuous_apply i).mul (continuous_apply i)
 
 /-- The quadratic form of a matrix depends continuously on the matrix. -/
 private theorem continuous_quadratic {X : Type*} [TopologicalSpace X] {F : X → Mat d}
     (hF : Continuous F) (x : Vec d) :
     Continuous fun p : X => vecDot x (matVecMul (F p) x) := by
-  show Continuous fun p : X => ∑ i, x i * ∑ j, F p i j * x j
+  change Continuous fun p : X => ∑ i, x i * ∑ j, F p i j * x j
   exact continuous_finsetSum _ fun i _ =>
     continuous_const.mul (continuous_finsetSum _ fun j _ =>
       (hF.matrix_elem i j).mul continuous_const)
@@ -91,7 +91,7 @@ theorem exists_coercivity_of_quadratic_pos {M : Mat d}
   rcases isEmpty_or_nonempty (Fin d) with hd | hd
   · refine ⟨1, one_pos, fun x => ?_⟩
     have h1 : vecNormSq x = 0 := by
-      show vecDot x x = 0
+      change vecDot x x = 0
       simp [vecDot]
     have h2 : vecDot x (matVecMul M x) = 0 := by simp [vecDot]
     rw [h1, h2, mul_zero]
@@ -108,10 +108,10 @@ theorem exists_coercivity_of_quadratic_pos {M : Mat d}
       (isCompact_univ_pi fun _ => isCompact_Icc).of_isClosed_subset hKclosed hKsub
     have hKne : K.Nonempty := by
       refine ⟨Pi.single (Classical.arbitrary (Fin d)) 1, ?_⟩
-      show vecDot _ _ = 1
+      change vecDot _ _ = 1
       simp [vecDot, Pi.single_apply, mul_ite, Finset.sum_ite_eq']
     have hcont : Continuous fun x : Vec d => vecDot x (matVecMul M x) := by
-      show Continuous fun x : Vec d => ∑ i, x i * ∑ j, M i j * x j
+      change Continuous fun x : Vec d => ∑ i, x i * ∑ j, M i j * x j
       exact continuous_finsetSum _ fun i _ =>
         (continuous_apply i).mul (continuous_finsetSum _ fun j _ =>
           continuous_const.mul (continuous_apply j))
@@ -132,7 +132,7 @@ theorem exists_coercivity_of_quadratic_pos {M : Mat d}
       have hs : 0 < s := Real.sqrt_pos.2 hpos
       have hs2 : s ^ 2 = vecNormSq x := Real.sq_sqrt hpos.le
       have hyK : (s⁻¹ • x) ∈ K := by
-        show vecNormSq (s⁻¹ • x) = 1
+        change vecNormSq (s⁻¹ • x) = 1
         rw [vecNormSq_smul_sq, ← hs2]
         field_simp
       have hmin := isMinOn_iff.1 hx₀min (s⁻¹ • x) hyK
@@ -192,7 +192,7 @@ private theorem matVecMul_single (D : Mat d) (j : Fin d) :
   simp [matVecMul, Pi.single_apply, mul_ite, Finset.sum_ite_eq']
 
 private theorem vecNormSq_single (j : Fin d) : vecNormSq (Pi.single j (1 : ℝ)) = 1 := by
-  show vecDot _ _ = 1
+  change vecDot _ _ = 1
   simp [vecDot, Pi.single_apply, mul_ite, Finset.sum_ite_eq']
 
 private theorem abs_apply_le_entrySum (A : Mat d) (i j : Fin d) :
@@ -310,7 +310,7 @@ theorem exists_isSkewMat_matLoewnerLE_sInf_smul {H : BlockMat d} {N : Mat d}
     obtain ⟨-, h', hskew, hle⟩ := haA
     exact ⟨h', hWmono a t hat.le ⟨hskew, hle⟩⟩
   have hcontForm : Continuous fun h : Mat d => skewCorrectedForm H h := by
-    show Continuous fun h : Mat d =>
+    change Continuous fun h : Mat d =>
       schurSigma H + matTranspose (schurSkew H - h) * H.lowerRight * (schurSkew H - h)
     exact continuous_const.add
       ((((continuous_const.sub continuous_id).matrix_transpose).matrix_mul

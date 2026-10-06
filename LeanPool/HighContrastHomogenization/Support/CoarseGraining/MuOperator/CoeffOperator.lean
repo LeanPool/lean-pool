@@ -226,7 +226,8 @@ theorem normalizedBlockCoeffOperator_self_inner_lowerBound_of_mem
     positivity
   have htoBlock :
       (((MeasureTheory.volume U).toReal⁻¹ •
-          HilbertBlockVec.ofBlockVec (blockMatVecMul (blockCoeffField a x) X.toBlockVec)).toBlockVec) =
+          HilbertBlockVec.ofBlockVec (blockMatVecMul (blockCoeffField a x)
+            X.toBlockVec)).toBlockVec) =
         (MeasureTheory.volume U).toReal⁻¹ •
           blockMatVecMul (blockCoeffField a x) X.toBlockVec := by
     ext i <;> simp [HilbertVec.toVec, mul_add]

@@ -67,7 +67,7 @@ theorem conjTranspose_eq_matTranspose (A : Mat d) : Aᴴ = matTranspose A :=
 
 private theorem isHermitian_of_matTranspose_eq {A : Mat d}
     (h : matTranspose A = A) : A.IsHermitian := by
-  show Aᴴ = A
+  change Aᴴ = A
   rw [conjTranspose_eq_matTranspose]
   exact h
 
@@ -145,7 +145,7 @@ theorem posSemidef_schurSigma {H : BlockMat d} (hsymm : IsSymmetricBlockMat H)
     rw [conjTranspose_eq_matTranspose] at hconj
     exact hUL.sub hconj
   refine Matrix.PosSemidef.of_dotProduct_mulVec_nonneg hherm fun p => ?_
-  show (0 : ℝ) ≤ vecDot p (matVecMul (schurSigma H) p)
+  change (0 : ℝ) ≤ vecDot p (matVecMul (schurSigma H) p)
   rw [← blockVecDot_blockMatVecMul_schurSkew hsymm hdet p]
   by_cases hp : p = 0
   · subst hp

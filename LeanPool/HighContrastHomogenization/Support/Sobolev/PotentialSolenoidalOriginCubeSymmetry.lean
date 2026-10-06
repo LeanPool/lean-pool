@@ -109,7 +109,8 @@ theorem isSolenoidalZeroNormalTraceOn_signFlip_openCubeSet_originCube
   rw [hchange] at hψ
   rw [show (fun x => vecDot (g (signFlipVecContinuousLinearEquiv i x))
       (signFlipVecContinuousLinearEquiv i (φ.grad x))) =
-      fun x => vecDot (signFlipVecContinuousLinearEquiv i (g (signFlipVecContinuousLinearEquiv i x)))
+      fun x => vecDot (signFlipVecContinuousLinearEquiv i (g (signFlipVecContinuousLinearEquiv i
+        x)))
         (φ.grad x) by
         funext x
         symm

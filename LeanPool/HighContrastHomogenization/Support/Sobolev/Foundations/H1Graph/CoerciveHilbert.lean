@@ -62,7 +62,8 @@ noncomputable instance : InnerProductSpace ℝ (H1CoerciveHilbertSpace (U := U))
   exact inferInstanceAs (InnerProductSpace ℝ (h1CoerciveHilbertSubmodule (U := U)))
 
 noncomputable instance : CompleteSpace (H1CoerciveHilbertSpace (U := U)) := by
-  simpa [H1CoerciveHilbertSpace, h1CoerciveHilbertSubmodule, h1CoerciveHilbertClosedSubmodule] using!
+  simpa [H1CoerciveHilbertSpace, h1CoerciveHilbertSubmodule, h1CoerciveHilbertClosedSubmodule]
+    using!
     (h1CoerciveHilbertClosedSubmodule (U := U)).isClosed.completeSpace_coe
 
 /-- The scalar `L²(U)` value component of a point in the coercive Hilbert
@@ -190,7 +191,7 @@ noncomputable def toH1MeanZeroFunction
     have hzMean :
         scalarIntegralCLM (U := U) zp.1 = 0 :=
       (mem_h1MeanZeroGraphClosedSubmodule_iff (U := U) zp).mp hzp |>.2
-    show ∫ x in U, u x ∂MeasureTheory.volume = 0
+    change ∫ x in U, u x ∂MeasureTheory.volume = 0
     calc
       ∫ x in U, u x ∂MeasureTheory.volume = scalarIntegralCLM (U := U) u.toScalarL2 := by
             symm

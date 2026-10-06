@@ -308,7 +308,8 @@ theorem h1CoerciveEstimateChosenBound_nonneg
     0 ≤ h1CoerciveEstimateChosenBound (d := d) (U := U) hU := by
   exact mul_nonneg (Real.sqrt_nonneg _) (Nat.cast_nonneg d)
 
-private theorem norm_toScalarL2_subAverage_le_smoothPoincareConst_mul_gradientCoordL2NormSum_ofContDiff
+private theorem
+  norm_toScalarL2_subAverage_le_smoothPoincareConst_mul_gradientCoordL2NormSum_ofContDiff
     [NeZero d] [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
     (hU : IsOpenBoundedConvexDomain U) {f : Vec d → ℝ}
     (hf : ContDiff ℝ (⊤ : ℕ∞) f)
@@ -604,7 +605,8 @@ theorem tendsto_convexApproxSmoothH1_gradCoordToScalarL2
         (i := i) (p := (2 : ENNReal)) hU hρ (by norm_num : (1 : ENNReal) ≤ 2)
         u.memL2 (u.grad_memL2 i) (u.hasWeakPartialDerivOn i)
         hball hr (unitConvexApproxScale_pos n) hε_lt_one
-    filter_upwards [hbridge, MeasureTheory.ae_restrict_mem hU.isOpen.measurableSet] with x hxbridge hxU
+    filter_upwards [hbridge, MeasureTheory.ae_restrict_mem hU.isOpen.measurableSet] with x
+      hxbridge hxU
     rw [hxbridge]
     rw [convexApproxSmoothRepresentative_eq_convexApproxSmoothing_of_mem
       (u := fun y => u.grad y i) hU hρ hxU hball hr (unitConvexApproxScale_pos n)

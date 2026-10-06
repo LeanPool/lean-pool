@@ -41,11 +41,11 @@ noncomputable def translate {d : ℕ} {U : Set (Vec d)} {p : ENNReal}
     { toFun := fun x => u (T x)
       grad := fun x => u.grad (T x)
       memLp := by
-        show MemLpOn V p (u.toFun ∘ T)
+        change MemLpOn V p (u.toFun ∘ T)
         simpa [MemLpOn, V, T, Function.comp] using u.memLp.comp_measurePreserving hμ
       gradMemLp := by
         intro i
-        show MemLpOn V p ((fun x => u.grad x i) ∘ T)
+        change MemLpOn V p ((fun x => u.grad x i) ∘ T)
         simpa [MemLpOn, V, T, Function.comp] using (u.gradMemLp i).comp_measurePreserving hμ
       hasWeakGradient := ?_ }
   intro i φ hφ hφ_supp hφ_sub
@@ -53,7 +53,7 @@ noncomputable def translate {d : ℕ} {U : Set (Vec d)} {p : ENNReal}
   have hψ_smooth : ContDiff ℝ (⊤ : ℕ∞) ψ := by
     simpa [ψ] using! hφ.comp (contDiff_id.add contDiff_const)
   have hψ_supp : HasCompactSupport ψ := by
-    show HasCompactSupport (φ ∘ Homeomorph.addRight z)
+    change HasCompactSupport (φ ∘ Homeomorph.addRight z)
     simpa [ψ, Function.comp] using hφ_supp.comp_homeomorph (Homeomorph.addRight z)
   have hψ_sub : tsupport ψ ⊆ U := by
     intro x hx
@@ -131,7 +131,7 @@ noncomputable def translate {d : ℕ} {U : Set (Vec d)} {p : ENNReal}
         simpa [T, sub_eq_add_neg] using! (u.approx_smooth m).comp (contDiff_id.sub contDiff_const)
       approx_hasCompactSupport := by
         intro m
-        show HasCompactSupport (u.approx m ∘ Homeomorph.subRight z)
+        change HasCompactSupport (u.approx m ∘ Homeomorph.subRight z)
         simpa [T, Function.comp] using
           (u.approx_hasCompactSupport m).comp_homeomorph (Homeomorph.subRight z)
       approx_support_subset := by

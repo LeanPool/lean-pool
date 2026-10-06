@@ -908,7 +908,8 @@ theorem ofContDiffFaceZeroOnOpenCubeSetNoCompact_toFun_ae
     (ofContDiffFaceZeroOnOpenCubeSetNoCompact Q hψ hlower_zero hupper_zero).toH1Function.toFun
         =ᵐ[volumeMeasureOn (openCubeSet Q)] ψ := by
   filter_upwards [MeasureTheory.ae_restrict_mem (measurableSet_openCubeSet Q)] with x hx
-  simp [ofContDiffFaceZeroOnOpenCubeSetNoCompact, faceCompactifyingCutoff_eq_one_on_openCubeSet Q hx]
+  simp [ofContDiffFaceZeroOnOpenCubeSetNoCompact, faceCompactifyingCutoff_eq_one_on_openCubeSet
+    Q hx]
 
 end H10Function
 

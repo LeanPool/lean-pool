@@ -441,7 +441,8 @@ theorem basic_cg_identities_first_variation_eq_of_isResponseMaximizer {d : ℕ}
               fun x => vecDot (w.toH1.grad x) (matVecMul (symmPart (a x)) (u.toH1.grad x))) := by
       rfl
     have hrewrite_qp :
-        volumeAverage U (fun x => vecDot q (w.toH1.grad x) - vecDot p (matVecMul (a x) (w.toH1.grad x))) =
+        volumeAverage U (fun x => vecDot q (w.toH1.grad x) - vecDot p (matVecMul (a x)
+          (w.toH1.grad x))) =
           volumeAverage U (fun x => vecDot q (w.toH1.grad x)) -
             volumeAverage U (fun x => vecDot p (matVecMul (a x) (w.toH1.grad x))) :=
       volumeAverage_sub (hInt.grad q w) (hInt.flux p w)

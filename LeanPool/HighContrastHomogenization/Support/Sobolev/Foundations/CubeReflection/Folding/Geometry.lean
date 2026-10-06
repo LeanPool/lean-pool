@@ -607,7 +607,7 @@ theorem hasCompactSupport_comp_cubeFaceReflectionCellFoldMap {d : ℕ}
     {φ : Vec d → ℝ} (hφ : HasCompactSupport φ) :
     HasCompactSupport
       (fun x => φ (cubeFaceReflectionCellFoldMap Q choice x)) := by
-  show HasCompactSupport (φ ∘ cubeFaceReflectionCellFoldHomeomorph Q choice)
+  change HasCompactSupport (φ ∘ cubeFaceReflectionCellFoldHomeomorph Q choice)
   simpa [Function.comp, cubeFaceReflectionCellFoldHomeomorph] using
     hφ.comp_homeomorph (cubeFaceReflectionCellFoldHomeomorph Q choice)
 

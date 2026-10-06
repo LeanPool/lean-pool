@@ -416,7 +416,8 @@ noncomputable def canonical {d : ℕ} (Q : TriadicCube d) (ρ₁ ρ₂ : ℝ)
           ‖iteratedFDeriv ℝ 2 (canonicalFun Q ρ₁ ρ₂) x‖
               ≤ 2 * (d : ℝ) ^ 2 *
                 ((max 1
-                  (max smoothTransitionProfile.derivBound smoothTransitionProfile.secondDerivBound)) *
+                  (max smoothTransitionProfile.derivBound
+                    smoothTransitionProfile.secondDerivBound)) *
                   (2 / ((ρ₂ - ρ₁) * cubeRadius Q))) ^ 2 := hbase
           _ = quantitativeCubeCutoffHessianConst d / (((ρ₂ - ρ₁) * cubeRadius Q) ^ 2) := by
             dsimp [quantitativeCubeCutoffHessianConst]

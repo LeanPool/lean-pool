@@ -297,7 +297,8 @@ protected def mul (X Y : RestrictionObservable d U ℝ) : RestrictionObservable 
 
 /-- Inverse of a real-valued bundled observable. -/
 @[expose]
-protected noncomputable def inv (X : RestrictionObservable d U ℝ) : RestrictionObservable d U ℝ where
+protected noncomputable def inv (X : RestrictionObservable d U ℝ) : RestrictionObservable d U ℝ
+  where
   measurableSet := X.measurableSet
   toFun := fun a => (X a)⁻¹
   isLocal := X.isLocal.inv

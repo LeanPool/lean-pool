@@ -55,6 +55,7 @@ theorem responseJ_subadditive_countable_of_isEllipticFieldOn {d : ℕ}
     (hdisj : s.PairwiseDisjoint U) (hnull : volume (W \ ⋃ i ∈ s, U i) = 0)
     {a : CoeffField d} {lam Lam : ℝ} (hEll : IsEllipticFieldOn lam Lam W a) (p q : Vec d) :
     ResponseJ W p q a ≤
-      ∑' i : s, (volume (U i)).toReal / (volume W).toReal * ResponseJ (U i) p q a := by exact HCPolySupport.HighContrast.CG.responseJ_subadditive_countable_of_isEllipticFieldOn_provider hs hWopen hWvol hopen hsub hdisj hnull hEll p q
+      ∑' i : s, (volume (U i)).toReal / (volume W).toReal * ResponseJ (U i) p q a := by exact
+        HCPolySupport.HighContrast.CG.responseJ_subadditive_countable_of_isEllipticFieldOn_provider hs hWopen hWvol hopen hsub hdisj hnull hEll p q
 
 end HCPolySupport.HighContrast.CG

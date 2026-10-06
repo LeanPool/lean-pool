@@ -621,7 +621,8 @@ theorem integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_polynomial_of_iIndepFun
       (μ := μ) (X := X) (s := s) hs hp h_indep h_meas hLp_int hXmean
 
 /-- Uniform-`K` polynomial-moment Rosenthal corollary. -/
-theorem integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_polynomial_of_iIndepFun_of_integral_eq_zero
+theorem
+  integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_polynomial_of_iIndepFun_of_integral_eq_zero
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} (hs : s.Nonempty) {p : ℕ} {K : ℝ}
     (hp : 2 ≤ p)
@@ -643,7 +644,8 @@ theorem integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_polynomial_of_i
 summands.  This is the completed-law version used by Chapter 4 local-test
 observables: independence is kept on the original local observables, while the
 proof applies the measurable-mk representatives internally. -/
-theorem integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_polynomial_of_iIndepFun_of_integral_eq_zero_aemeasurable
+theorem
+  integral_abs_finsetSum_pow_rpow_inv_le_rosenthal_uniform_polynomial_of_iIndepFun_of_integral_eq_zero_aemeasurable
     [IsProbabilityMeasure μ]
     {X : ι → Ω → ℝ} {s : Finset ι} (hs : s.Nonempty) {p : ℕ} {K : ℝ}
     (hp : 2 ≤ p)
@@ -795,7 +797,8 @@ theorem isBigO_gammaSigma_finsetAverage_of_iIndepFun_of_isBigO_of_integral_eq_ze
 
 /-- Generic heavy-tail concentration estimate for centered finite independent
 families under a weak-tail logarithmic constraint. -/
-theorem measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_invPsi_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_log_constraint_rounded
+theorem
+  measureReal_upperTailEvent_finset_sum_le_exp_card_mul_add_card_mul_invPsi_of_iIndepFun_of_isBigO_of_integral_eq_zero_of_log_constraint_rounded
     [IsProbabilityMeasure μ]
     {Ψ : ℝ → ℝ} {X : ι → Ω → ℝ} {s : Finset ι} {a l L CΨ M : ℝ}
     (h_indep : ProbabilityTheory.iIndepFun X μ)

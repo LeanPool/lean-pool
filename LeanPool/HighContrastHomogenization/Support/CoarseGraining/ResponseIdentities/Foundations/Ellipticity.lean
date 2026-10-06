@@ -137,7 +137,8 @@ theorem volumeAverage_scalarResponseIntegrand_eq_firstVariation_self_add_half_en
     simpa [MeasureTheory.IntegrableOn] using (henergy.integrable.smul (1 / 2 : ℝ))
   rw [show
       (fun x =>
-        (scalarFirstVariationIntegrand U a p q u u + ((1 / 2 : ℝ) • scalarVariationEnergyIntegrand a u))
+        (scalarFirstVariationIntegrand U a p q u u + ((1 / 2 : ℝ) •
+          scalarVariationEnergyIntegrand a u))
           x) =
         fun x =>
           scalarFirstVariationIntegrand U a p q u u x +
@@ -364,11 +365,11 @@ theorem scalarResponseIntegrand_le_plainUpperBound_of_isEllipticFieldOn {d : ℕ
     let B : ℝ := (lam / 2 : ℝ) * vecNormSq ξ
     have hAB_rhs : A / 2 + B / 2 =
         lam⁻¹ * Lam ^ 2 * vecNormSq p + (lam / 4 : ℝ) * vecNormSq ξ := by
-      show (2 * lam⁻¹ * Lam ^ 2 * vecNormSq p) / 2 +
+      change (2 * lam⁻¹ * Lam ^ 2 * vecNormSq p) / 2 +
           ((lam / 2 : ℝ) * vecNormSq ξ) / 2 = _
       ring
     have hAB_eq : A * B = Lam ^ 2 * vecNormSq p * vecNormSq ξ := by
-      show (2 * lam⁻¹ * Lam ^ 2 * vecNormSq p) * ((lam / 2 : ℝ) * vecNormSq ξ) =
+      change (2 * lam⁻¹ * Lam ^ 2 * vecNormSq p) * ((lam / 2 : ℝ) * vecNormSq ξ) =
         Lam ^ 2 * vecNormSq p * vecNormSq ξ
       field_simp [hlam_pos.ne']
     have hsq : vecDot p (matVecMul (a x) ξ) ^ 2 ≤ A * B := hpSq.trans_eq hAB_eq.symm
@@ -387,11 +388,11 @@ theorem scalarResponseIntegrand_le_plainUpperBound_of_isEllipticFieldOn {d : ℕ
     let B : ℝ := (lam / 2 : ℝ) * vecNormSq ξ
     have hAB_rhs : A / 2 + B / 2 =
         lam⁻¹ * vecNormSq q + (lam / 4 : ℝ) * vecNormSq ξ := by
-      show (2 * lam⁻¹ * vecNormSq q) / 2 +
+      change (2 * lam⁻¹ * vecNormSq q) / 2 +
           ((lam / 2 : ℝ) * vecNormSq ξ) / 2 = _
       ring
     have hAB_eq : A * B = vecNormSq q * vecNormSq ξ := by
-      show (2 * lam⁻¹ * vecNormSq q) * ((lam / 2 : ℝ) * vecNormSq ξ) =
+      change (2 * lam⁻¹ * vecNormSq q) * ((lam / 2 : ℝ) * vecNormSq ξ) =
         vecNormSq q * vecNormSq ξ
       field_simp [hlam_pos.ne']
     have hsq : vecDot q ξ ^ 2 ≤ A * B := hqSq.trans_eq hAB_eq.symm
@@ -481,7 +482,8 @@ theorem responseJ_second_variation_line_of_isResponseMaximizer {d : ℕ}
     (hlin : MeasureTheory.IntegrableOn (scalarFirstVariationIntegrand U a p q u w) U)
     (henergy : MeasureTheory.IntegrableOn (scalarVariationEnergyIntegrand a w) U) :
     volumeAverage U (scalarResponseIntegrand U a p q (scalarPerturbation u w t hu_int hw_int)) =
-      ResponseJ U p q a - ((t ^ 2) / 2 : ℝ) * volumeAverage U (scalarVariationEnergyIntegrand a w) := by
+      ResponseJ U p q a - ((t ^ 2) / 2 : ℝ) * volumeAverage U (scalarVariationEnergyIntegrand a
+        w) := by
   rw [responseJ_eq_of_isResponseMaximizer U p q a hmax]
   exact basic_cg_identities_second_variation_line_of_isResponseMaximizer
     U a p q u hmax w t hu_int hw_int hresp_u hlin henergy

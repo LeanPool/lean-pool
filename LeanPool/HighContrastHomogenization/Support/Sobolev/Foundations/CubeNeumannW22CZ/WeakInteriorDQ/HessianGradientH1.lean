@@ -343,7 +343,8 @@ theorem cubeBesovOscillation_gradCoord_descendant_le_volumeFactor_mul_coerciveCo
     cubeBesovOscillation R (2 : ℝ≥0∞) (fun x => u.grad x i) ≤
       ((cubeVolume R)⁻¹ + 1) * hC.constantValue *
         ‖((H.restrict (isOpen_openCubeSet R)
-            (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function i).gradToVectorL2‖ := by
+            (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+              i).gradToVectorL2‖ := by
   let HR : HasWeakHessianOn (openCubeSet R) (u.restrictToOpenSubcube hR) :=
     H.restrict (isOpen_openCubeSet R)
       (openCubeSet_subset_of_mem_descendantsAtDepth hR)
@@ -365,7 +366,8 @@ theorem cubeBesovOscillation_gradCoord_descendant_le_volumeInvRpowHalf_mul_coerc
     cubeBesovOscillation R (2 : ℝ≥0∞) (fun x => u.grad x i) ≤
       ((cubeVolume R)⁻¹) ^ (1 / 2 : ℝ) * hC.constantValue *
         ‖((H.restrict (isOpen_openCubeSet R)
-            (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function i).gradToVectorL2‖ := by
+            (openCubeSet_subset_of_mem_descendantsAtDepth hR)).gradCoordH1Function
+              i).gradToVectorL2‖ := by
   let HR : HasWeakHessianOn (openCubeSet R) (u.restrictToOpenSubcube hR) :=
     H.restrict (isOpen_openCubeSet R)
       (openCubeSet_subset_of_mem_descendantsAtDepth hR)

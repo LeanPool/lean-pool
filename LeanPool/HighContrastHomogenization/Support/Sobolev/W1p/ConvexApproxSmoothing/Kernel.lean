@@ -162,7 +162,8 @@ noncomputable def convexApproxSmoothing {d : ℕ} (ρ u : Vec d → ℝ)
 @[expose]
 noncomputable def unitConvexApproxSequence {d : ℕ} (u : Vec d → ℝ)
     (x0 : Vec d) (r : ℝ) (n : ℕ) : Vec d → ℝ :=
-  fun x => convexApproxSmoothing (unitConvexApproxKernel (d := d)) u x0 r (unitConvexApproxScale n) x
+  fun x => convexApproxSmoothing (unitConvexApproxKernel (d := d)) u x0 r (unitConvexApproxScale
+    n) x
 
 /-- The Euclidean rescaling of a kernel by a positive factor `a`. -/
 @[expose]

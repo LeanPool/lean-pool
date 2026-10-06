@@ -73,7 +73,7 @@ theorem HasWeakPartialDerivOn.comp_convexApproxSample
     have hφ_eq : φ =ᶠ[nhds x] 0 :=
       (isClosed_tsupport (f := φ)).isOpen_compl.eventually_mem hx_notin |>.mono
         (fun y hy => image_eq_zero_of_notMem_tsupport hy)
-    show (fderiv ℝ φ x) (basisVec i) = 0
+    change (fderiv ℝ φ x) (basisVec i) = 0
     rw [Filter.EventuallyEq.fderiv_eq hφ_eq]
     simp
   have hψ_smooth : ContDiff ℝ (⊤ : ℕ∞) ψ := by
@@ -87,7 +87,7 @@ theorem HasWeakPartialDerivOn.comp_convexApproxSample
     let e : Homeomorph (Vec d) (Vec d) :=
       (Homeomorph.subRight b).trans (Homeomorph.smulOfNeZero a⁻¹ ha_inv_ne)
     have hbase : HasCompactSupport (fun y : Vec d => φ (a⁻¹ • (y - b))) := by
-      show HasCompactSupport (φ ∘ e)
+      change HasCompactSupport (φ ∘ e)
       simpa [e, Function.comp] using hφ_compact.comp_homeomorph e
     have hmul :
         HasCompactSupport
@@ -379,7 +379,7 @@ theorem quasiMeasurePreserving_convexApproxSample_prod
       (measurable_const : Measurable (fun _ : Vec d × Vec d => x0)).sub h2
     have h4 : Measurable (fun p : Vec d × Vec d => ε • (x0 - r • p.2)) :=
       (measurable_const : Measurable (fun _ : Vec d × Vec d => ε)).smul h3
-    show Measurable (fun p : Vec d × Vec d => convexApproxSample x0 p.2 r ε p.1)
+    change Measurable (fun p : Vec d × Vec d => convexApproxSample x0 p.2 r ε p.1)
     exact h1.add h4
   · refine Filter.Eventually.of_forall ?_
     intro z
@@ -486,7 +486,8 @@ theorem integrable_kernel_mul_indicator_comp_convexApproxSample_prod_mul_of_inte
         hU.1.measurableSet huLoc hρ hψ hψ_sub hε1
   refine (MeasureTheory.integrable_prod_iff' hmeas).2 ?_
   constructor
-  · filter_upwards [MeasureTheory.ae_restrict_mem hρ.compactSupport.isCompact.measurableSet] with z hz
+  · filter_upwards [MeasureTheory.ae_restrict_mem hρ.compactSupport.isCompact.measurableSet]
+    with z hz
     have hz_norm : ‖z‖ ≤ 1 := by
       simpa [Metric.mem_closedBall, dist_eq_norm] using hρ.support_subset_closedBall hz
     simpa [μψ, MeasureTheory.Integrable] using
@@ -550,7 +551,8 @@ theorem integrable_kernel_mul_indicator_comp_convexApproxSample_prod_mul_of_inte
             (fun x => |u (convexApproxSample x0 z r ε x)|)
             U MeasureTheory.volume := by
         simpa [Real.norm_eq_abs] using
-          integrableOn_comp_convexApproxSample hU (show MeasureTheory.IntegrableOn (fun y => ‖u y‖) U MeasureTheory.volume from hu.norm)
+          integrableOn_comp_convexApproxSample hU (show MeasureTheory.IntegrableOn (fun y => ‖u
+            y‖) U MeasureTheory.volume from hu.norm)
             hball hr hz_norm hε0 hε1
       have hdom_int :
           MeasureTheory.Integrable
@@ -611,13 +613,14 @@ theorem integrable_kernel_mul_indicator_comp_convexApproxSample_prod_mul_of_inte
           _ ≤ (a ^ d)⁻¹ * Cu := by
                 refine mul_le_mul_of_nonneg_left hV_le ?_
                 positivity
-      show ‖∫ x, ‖ρ z * Set.indicator U u (convexApproxSample x0 z r ε x) * ψ x‖ ∂μψ‖ ≤
+      change ‖∫ x, ‖ρ z * Set.indicator U u (convexApproxSample x0 z r ε x) * ψ x‖ ∂μψ‖ ≤
           ‖bound z‖
       calc
         ‖∫ x, ‖ρ z * Set.indicator U u (convexApproxSample x0 z r ε x) * ψ x‖ ∂μψ‖
             = ∫ x, ‖ρ z * Set.indicator U u (convexApproxSample x0 z r ε x) * ψ x‖ ∂μψ := by
                 have hinner_nonneg :
-                    0 ≤ ∫ x, ‖ρ z * Set.indicator U u (convexApproxSample x0 z r ε x) * ψ x‖ ∂μψ := by
+                    0 ≤ ∫ x, ‖ρ z * Set.indicator U u (convexApproxSample x0 z r ε x) * ψ x‖ ∂μψ
+                      := by
                   exact
                     MeasureTheory.integral_nonneg_of_ae
                       (Filter.Eventually.of_forall fun x => norm_nonneg _)
@@ -662,7 +665,8 @@ theorem integrable_kernel_mul_indicator_comp_convexApproxSample_prod_mul_of_loca
     exact hψ_compact.isCompact.measurableSet.prod hρ.compactSupport.isCompact.measurableSet
   have hK_compact : IsCompact K := by
     exact hψ_compact.isCompact.prod hρ.compactSupport.isCompact
-  have hcont_sample_prod : Continuous (fun p : Vec d × Vec d => convexApproxSample x0 p.2 r ε p.1) := by
+  have hcont_sample_prod : Continuous (fun p : Vec d × Vec d => convexApproxSample x0 p.2 r ε
+    p.1) := by
     have h1 : Continuous (fun p : Vec d × Vec d => (1 - ε) • p.1) :=
       (continuous_const : Continuous (fun _ : Vec d × Vec d => (1 - ε))).smul continuous_fst
     have h2 : Continuous (fun p : Vec d × Vec d => r • p.2) :=
@@ -671,7 +675,7 @@ theorem integrable_kernel_mul_indicator_comp_convexApproxSample_prod_mul_of_loca
       (continuous_const : Continuous (fun _ : Vec d × Vec d => x0)).sub h2
     have h4 : Continuous (fun p : Vec d × Vec d => ε • (x0 - r • p.2)) :=
       (continuous_const : Continuous (fun _ : Vec d × Vec d => ε)).smul h3
-    show Continuous (fun p : Vec d × Vec d => convexApproxSample x0 p.2 r ε p.1)
+    change Continuous (fun p : Vec d × Vec d => convexApproxSample x0 p.2 r ε p.1)
     exact h1.add h4
   have hW_compact : IsCompact W := by
     exact hK_compact.image hcont_sample_prod

@@ -93,7 +93,8 @@ theorem HasWeakPartialDerivOn.convexApproxSmoothing
         hU hgiLoc hρ hφε_cont hφε_compact hφε_sub hball hr hε0 hε1
   have hswap_left :
       ∫ x in tsupport dφ, ∫ z in tsupport ρ, F x z ∂MeasureTheory.volume ∂MeasureTheory.volume =
-        ∫ z in tsupport ρ, ∫ x in tsupport dφ, F x z ∂MeasureTheory.volume ∂MeasureTheory.volume := by
+        ∫ z in tsupport ρ, ∫ x in tsupport dφ, F x z ∂MeasureTheory.volume ∂MeasureTheory.volume
+          := by
     simpa using
       (MeasureTheory.integral_integral_swap
         (μ := MeasureTheory.volume.restrict (tsupport dφ))
@@ -101,7 +102,8 @@ theorem HasWeakPartialDerivOn.convexApproxSmoothing
         (f := F) hprod_left)
   have hswap_right :
       ∫ x in tsupport φε, ∫ z in tsupport ρ, G x z ∂MeasureTheory.volume ∂MeasureTheory.volume =
-        ∫ z in tsupport ρ, ∫ x in tsupport φε, G x z ∂MeasureTheory.volume ∂MeasureTheory.volume := by
+        ∫ z in tsupport ρ, ∫ x in tsupport φε, G x z ∂MeasureTheory.volume ∂MeasureTheory.volume
+          := by
     simpa using
       (MeasureTheory.integral_integral_swap
         (μ := MeasureTheory.volume.restrict (tsupport φε))
@@ -184,7 +186,8 @@ theorem HasWeakPartialDerivOn.convexApproxSmoothing
             let y : Vec d := convexApproxSample x0 z r ε x
             have hy_mem : y ∈ U := hsample_mem z hz
             change ρ z * gi y * φε x = ρ z * Set.indicator U gi y * φε x
-            have hy_eq : Set.indicator U gi y = gi y := Set.indicator_of_mem (s := U) (f := gi) hy_mem
+            have hy_eq : Set.indicator U gi y = gi y := Set.indicator_of_mem (s := U) (f := gi)
+              hy_mem
             simpa [mul_assoc] using congrArg (fun t => ρ z * t * φε x) hy_eq.symm
   have hfixed_z :
       ∀ z ∈ tsupport ρ,
@@ -221,7 +224,8 @@ theorem HasWeakPartialDerivOn.convexApproxSmoothing
                 let y : Vec d := convexApproxSample x0 z r ε x
                 have hy_mem : y ∈ U := hmap hx
                 change ρ z * Set.indicator U u y * dφ x = ρ z * (u y * dφ x)
-                have hy_eq : Set.indicator U u y = u y := Set.indicator_of_mem (s := U) (f := u) hy_mem
+                have hy_eq : Set.indicator U u y = u y := Set.indicator_of_mem (s := U) (f := u)
+                  hy_mem
                 simpa [mul_assoc] using congrArg (fun t => ρ z * t * dφ x) hy_eq
         _ = ρ z * ∫ x in U, u (convexApproxSample x0 z r ε x) * dφ x
               ∂MeasureTheory.volume := by
@@ -248,11 +252,13 @@ theorem HasWeakPartialDerivOn.convexApproxSmoothing
                 have hy_mem : y ∈ U := hmap hx
                 change ρ z * Set.indicator U gi y * ((1 - ε) * φ x) =
                   ρ z * (((1 - ε) * gi y) * φ x)
-                have hy_eq : Set.indicator U gi y = gi y := Set.indicator_of_mem (s := U) (f := gi) hy_mem
+                have hy_eq : Set.indicator U gi y = gi y := Set.indicator_of_mem (s := U) (f :=
+                  gi) hy_mem
                 calc
                   ρ z * Set.indicator U gi y * ((1 - ε) * φ x)
                       = ρ z * gi y * ((1 - ε) * φ x) := by
-                          simpa [mul_assoc] using congrArg (fun t => ρ z * t * ((1 - ε) * φ x)) hy_eq
+                          simpa [mul_assoc] using congrArg (fun t => ρ z * t * ((1 - ε) * φ x))
+                            hy_eq
                   _ = ρ z * (((1 - ε) * gi y) * φ x) := by
                         ring
         _ = ρ z *
@@ -318,7 +324,8 @@ theorem HasWeakGradientOn.convexApproxSmoothing
     {d : ℕ} {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     {u : Vec d → ℝ} {Du : Vec d → Vec d} {ρ : Vec d → ℝ}
     (huLoc : MeasureTheory.LocallyIntegrableOn u U MeasureTheory.volume)
-    (hDuLoc : ∀ i : Fin d, MeasureTheory.LocallyIntegrableOn (fun x => Du x i) U MeasureTheory.volume)
+    (hDuLoc : ∀ i : Fin d, MeasureTheory.LocallyIntegrableOn (fun x => Du x i) U
+      MeasureTheory.volume)
     (hu : HasWeakGradientOn U u Du)
     (hρ : IsConvexApproxKernel ρ)
     {x0 : Vec d} {r ε : ℝ}

@@ -216,7 +216,7 @@ theorem blockDiag_blockMatLoewnerLE_blockMatrixOfCoeff_of_isThetaElliptic
     rw [hdhi] at hup'
     exact hup'
   -- reduce the block Loewner goal and finish
-  show (1 / 2 : ℝ) * blockVecDot (p, q) Ylo ≤
+  change (1 / 2 : ℝ) * blockVecDot (p, q) Ylo ≤
     (1 / 2 : ℝ) * blockVecDot (p, q) (blockMatVecMul (blockMatrixOfCoeff A) (p, q))
   rw [hDlo]
   rw [hDlo] at hfen

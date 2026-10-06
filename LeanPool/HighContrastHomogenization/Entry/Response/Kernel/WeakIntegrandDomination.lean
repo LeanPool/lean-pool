@@ -91,6 +91,55 @@ private theorem qform_le_opNorm_mul_self_of_posSemidef {d : ℕ} {A : BlockMat d
   rw [← toFullBlockVec_blockMatVecMul A X] at h
   simpa only [dotProduct_toFullBlockVec, blockOpNorm] using h
 
+private theorem response_envelope_absorbs_energy
+    (k M J y : ℝ) (hk : 0 ≤ k) (hM : 0 ≤ M) (hJ : 0 ≤ J) (hy : 0 ≤ y) :
+    2 * (2 * (k * (1 + M) + 1) * J) + 2 * y
+      ≤ (4 * k + 4 + 2 * y) * ((1 + M) * J + 1) := by
+  have hQ1 : 1 ≤ (1 + M) * J + 1 := by
+    have hprod : 0 ≤ (1 + M) * J := mul_nonneg (by linarith) hJ
+    linarith
+  have hMJ : (1 + M) * J ≤ (1 + M) * J + 1 := by linarith
+  have hQJ : J ≤ (1 + M) * J + 1 := by
+    have h1 : 1 ≤ 1 + M := by linarith
+    have hJMJ : J ≤ (1 + M) * J := by
+      simpa using mul_le_mul_of_nonneg_right h1 hJ
+    linarith
+  calc
+    2 * (2 * (k * (1 + M) + 1) * J) + 2 * y
+        = 4 * k * ((1 + M) * J) + 4 * J + 2 * y := by ring
+    _ ≤ 4 * k * ((1 + M) * J + 1) + 4 * ((1 + M) * J + 1)
+          + 2 * y * ((1 + M) * J + 1) := by
+      have hk' : 0 ≤ 4 * k := by positivity
+      have h1 := mul_le_mul_of_nonneg_left hMJ hk'
+      have h2 : 4 * J ≤ 4 * ((1 + M) * J + 1) := by linarith only [hQJ]
+      have h3 : 2 * y ≤ 2 * y * ((1 + M) * J + 1) := by
+        have h := mul_le_mul_of_nonneg_left hQ1 hy
+        nlinarith only [h]
+      linarith only [h1, h2, h3]
+    _ = (4 * k + 4 + 2 * y) * ((1 + M) * J + 1) := by ring
+
+private theorem besovSeminorm_congr_of_canonicalOptimizerRepresentative
+    {d : ℕ} [NeZero d] (jStar : ℕ) (F : BlockMat d) (hq : IsUnit (respGrid jStar F))
+    (t : ℤ) (p q' : Vec d) (c f : CoeffField d) (Y : BlockVec d)
+    (lam Lam : ℝ) (hlam : 0 < lam) (hle : lam ≤ Lam)
+    (hEll : IsEllipticFieldOn lam Lam (respCell jStar F t) f)
+    (hae : c =ᵐ[volumeMeasureOn (respCell jStar F t)] f)
+    (u : AHarmonicFunction c (respCell jStar F t))
+    (hu : IsResponseMaximizer (respCell jStar F t) p q' c u)
+    (v : AHarmonicFunction f (respCell jStar F t)) :
+    besovSeminorm t (fun n z => blockMatVecMul (blockSqrt (respM0 F))
+        (cellAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) z)
+          (optimizerField c u) - Y))
+      = besovSeminorm t (fun n z => blockMatVecMul (blockSqrt (respM0 F))
+        (cellAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) z)
+          (optimizerField f v) - Y)) := by
+  refine besovSeminorm_congr (fun n w hw => ?_)
+  have hVU : adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w ⊆ respCell jStar F t :=
+    adaptedCellAtCenter_subset_adaptedCell (respGrid jStar F) t n hw
+  have hcell := cellAverage_optimizerField_eq_canonical (U := adaptedDomain (respGrid jStar F) hq t)
+    hVU hlam hle hEll hae p q' u hu
+  rw [hcell]
+
 /-- **The a.e. domination of the weak-quantity integrand.**  For a recentred coefficient family
 `c` whose samplewise field admits an elliptic representative and whose coarse block is the fixed
 congruence `Gᵀ (coarseBlock a) G`, and for an arbitrary family `u` of response maximizers, the
@@ -169,22 +218,8 @@ private theorem ae_besovSeminorm_sq_le_envelope_of_recentring {d : ℕ} [NeZero 
     coeffOnOfIsEllipticFieldOn (U := adaptedDomain (respGrid jStar F) hq t) hlam hle hEll
   let v : AHarmonicFunction f (respCell jStar F t) := canonicalAHarmonicFunctionOfCoeffOn A p q'
   -- the arbitrary maximizer family is replaced by the canonical maximizer of the representative
-  have hsemi : besovSeminorm t (fun n z => blockMatVecMul (blockSqrt (respM0 F))
-        (cellAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) z)
-          (optimizerField (c a) (u a)) - Y))
-      = besovSeminorm t (fun n z => blockMatVecMul (blockSqrt (respM0 F))
-        (cellAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) z)
-          (optimizerField f v) - Y)) := by
-    refine besovSeminorm_congr (fun n w hw => ?_)
-    have hVU : adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w ⊆ respCell jStar F t :=
-      adaptedCellAtCenter_subset_adaptedCell (respGrid jStar F) t n hw
-    have hcell := cellAverage_optimizerField_eq_canonical (U := adaptedDomain (respGrid jStar F) hq t)
-      hVU hlam hle hEll hae p q' (u a) (hu a)
-    have hcellv : cellAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
-          (optimizerField (c a) (u a))
-        = cellAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
-          (optimizerField f v) := hcell
-    rw [hcellv]
+  have hsemi := besovSeminorm_congr_of_canonicalOptimizerRepresentative jStar F hq t p q'
+    (c a) f Y lam Lam hlam hle hEll hae (u a) (hu a) v
   have hvmax : IsResponseMaximizer (respCell jStar F t) p q' f v := by
     simpa only [v, canonicalAHarmonicFunctionOfCoeffOn] using!
       (scalarCanonicalMaximizerOfCoeffOn A p q').isResponseMaximizer
@@ -281,64 +316,11 @@ private theorem ae_besovSeminorm_sq_le_envelope_of_recentring {d : ℕ} [NeZero 
   have hpath := besovSeminorm_sq_optimizerState_le_of_scale_bounds (q := respGrid jStar F)
     hq t (Quenched.contrastRho γ) hρ0 hρ1 hEll v (blockSqrt (respM0 F)) Y kS hkS hSbound K₀ hK₀ hBf hint hEnn
   -- absorb the energy into the response and the constant into the envelope
-  have hinner : 2 * (2 * ((kE * kG * (1 + respAllScaleMax P γ jStar F t a) + 1)
-        * respJ (respGrid jStar F) t p q' (c a))) + 2 * blockVecDot Y Y
-      ≤ (4 * kE * kG + 4 + 2 * blockVecDot Y Y)
-          * ((1 + respAllScaleMax P γ jStar F t a) * respJ (respGrid jStar F) t p q' (c a) + 1) := by
-    have hYnn : 0 ≤ blockVecDot Y Y := Response.blockVecDot_self_nonneg Y
-    have hkEG : 0 ≤ kE * kG := mul_nonneg hkE hkG
-    have hQ1 : 1 ≤ (1 + respAllScaleMax P γ jStar F t a)
-        * respJ (respGrid jStar F) t p q' (c a) + 1 := by
-      have hprod : 0 ≤ (1 + respAllScaleMax P γ jStar F t a)
-          * respJ (respGrid jStar F) t p q' (c a) :=
-        mul_nonneg (by linarith only [hMnn]) hJnn
-      linarith only [hprod]
-    have hMJ : (1 + respAllScaleMax P γ jStar F t a) * respJ (respGrid jStar F) t p q' (c a)
-        ≤ (1 + respAllScaleMax P γ jStar F t a)
-          * respJ (respGrid jStar F) t p q' (c a) + 1 := by linarith only []
-    have hQJ : respJ (respGrid jStar F) t p q' (c a)
-        ≤ (1 + respAllScaleMax P γ jStar F t a)
-          * respJ (respGrid jStar F) t p q' (c a) + 1 := by
-      have h1 : (1 : ℝ) ≤ 1 + respAllScaleMax P γ jStar F t a := by linarith only [hMnn]
-      have hJMJ : respJ (respGrid jStar F) t p q' (c a)
-          ≤ (1 + respAllScaleMax P γ jStar F t a) * respJ (respGrid jStar F) t p q' (c a) := by
-        simpa using mul_le_mul_of_nonneg_right h1 hJnn
-      linarith only [hJMJ]
-    calc
-      2 * (2 * ((kE * kG * (1 + respAllScaleMax P γ jStar F t a) + 1)
-            * respJ (respGrid jStar F) t p q' (c a))) + 2 * blockVecDot Y Y
-          = 4 * (kE * kG)
-              * ((1 + respAllScaleMax P γ jStar F t a)
-                * respJ (respGrid jStar F) t p q' (c a))
-            + 4 * respJ (respGrid jStar F) t p q' (c a) + 2 * blockVecDot Y Y := by ring
-      _ ≤ 4 * (kE * kG)
-              * ((1 + respAllScaleMax P γ jStar F t a)
-                * respJ (respGrid jStar F) t p q' (c a) + 1)
-            + 4 * ((1 + respAllScaleMax P γ jStar F t a)
-                * respJ (respGrid jStar F) t p q' (c a) + 1)
-            + 2 * blockVecDot Y Y
-              * ((1 + respAllScaleMax P γ jStar F t a)
-                * respJ (respGrid jStar F) t p q' (c a) + 1) := by
-          have h1 : 4 * (kE * kG)
-                * ((1 + respAllScaleMax P γ jStar F t a)
-                  * respJ (respGrid jStar F) t p q' (c a))
-              ≤ 4 * (kE * kG)
-                * ((1 + respAllScaleMax P γ jStar F t a)
-                  * respJ (respGrid jStar F) t p q' (c a) + 1) :=
-            mul_le_mul_of_nonneg_left hMJ (by positivity)
-          have h2 : 4 * respJ (respGrid jStar F) t p q' (c a)
-              ≤ 4 * ((1 + respAllScaleMax P γ jStar F t a)
-                  * respJ (respGrid jStar F) t p q' (c a) + 1) := by linarith only [hQJ]
-          have h3 : 2 * blockVecDot Y Y
-              ≤ 2 * blockVecDot Y Y
-                * ((1 + respAllScaleMax P γ jStar F t a)
-                  * respJ (respGrid jStar F) t p q' (c a) + 1) := by
-            have h := mul_le_mul_of_nonneg_left hQ1 hYnn
-            linarith only [h]
-          linarith only [h1, h2, h3]
-      _ = (4 * kE * kG + 4 + 2 * blockVecDot Y Y)
-            * ((1 + respAllScaleMax P γ jStar F t a)
-              * respJ (respGrid jStar F) t p q' (c a) + 1) := by ring
+  have hYnn : 0 ≤ blockVecDot Y Y := Response.blockVecDot_self_nonneg Y
+  have hkEG : 0 ≤ kE * kG := mul_nonneg hkE hkG
+  have hinner := response_envelope_absorbs_energy (kE * kG)
+    (respAllScaleMax P γ jStar F t a) (respJ (respGrid jStar F) t p q' (c a))
+    (blockVecDot Y Y) hkEG hMnn hJnn hYnn
   have hpath' : ((1 - (3 : ℝ) ^ ((Quenched.contrastRho γ - 1) / 2))⁻¹) ^ 2
         * ((3 : ℝ) ^ (t : ℝ) * (kS * (2 * (K₀ * volumeAverage (respCell jStar F t)
               (scalarVariationEnergyIntegrand f v)) + 2 * blockVecDot Y Y)))

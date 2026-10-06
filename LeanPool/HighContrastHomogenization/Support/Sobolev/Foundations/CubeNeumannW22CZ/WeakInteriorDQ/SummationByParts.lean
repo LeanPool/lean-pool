@@ -38,7 +38,8 @@ integrability hypotheses.
 This is the weak-solution version of
 `integral_euclideanForwardDifferenceQuotient_mul_eq_neg_integral_mul_euclideanBackwardDifferenceQuotient`:
 the left factor need not be smooth or compactly supported. -/
-theorem integral_euclideanForwardDifferenceQuotient_mul_eq_neg_integral_mul_euclideanBackwardDifferenceQuotient_of_integrable
+theorem
+  integral_euclideanForwardDifferenceQuotient_mul_eq_neg_integral_mul_euclideanBackwardDifferenceQuotient_of_integrable
     {d : ℕ} {u v : Vec d → ℝ} (h : ℝ) (i : Fin d)
     (hshiftInt :
       MeasureTheory.Integrable

@@ -145,7 +145,8 @@ theorem isBigO_gammaSigma_restrictionDescendantAverage_of_restrictionUnitRangeDe
     (hσ₀ : 0 < σ) (hσ₂ : σ ≤ 2) (hK : 0 < K)
     (X : TriadicCube d → RegCoeffField d → ℝ)
     (hX_local :
-      ∀ R ∈ descendantsAtScale Q k, IsRestrictionLocalRandomVariable (cubeSet R) (measurableSet_cubeSet R) (X R))
+      ∀ R ∈ descendantsAtScale Q k, IsRestrictionLocalRandomVariable (cubeSet R)
+        (measurableSet_cubeSet R) (X R))
     (hX_meas : ∀ R ∈ descendantsAtScale Q k, Measurable (X R))
     (hX : ∀ R ∈ descendantsAtScale Q k, IsBigO P (gammaSigma σ) (X R) K)
     (h_mean : ∀ R ∈ descendantsAtScale Q k, ∫ a, X R a ∂P = 0) :
@@ -243,7 +244,8 @@ theorem isBigO_psiSigma_restrictionDescendantAverage_of_restrictionUnitRangeDepe
     (hσ : 1 ≤ σ) (hK : 0 < K)
     (X : TriadicCube d → RegCoeffField d → ℝ)
     (hX_local :
-      ∀ R ∈ descendantsAtScale Q k, IsRestrictionLocalRandomVariable (cubeSet R) (measurableSet_cubeSet R) (X R))
+      ∀ R ∈ descendantsAtScale Q k, IsRestrictionLocalRandomVariable (cubeSet R)
+        (measurableSet_cubeSet R) (X R))
     (hX_meas : ∀ R ∈ descendantsAtScale Q k, Measurable (X R))
     (hX_int : ∀ R ∈ descendantsAtScale Q k, Integrable (X R) P)
     (hX : ∀ R ∈ descendantsAtScale Q k, IsBigO P (psiSigma σ) (X R) K)

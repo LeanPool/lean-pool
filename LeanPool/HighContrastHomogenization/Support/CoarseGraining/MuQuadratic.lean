@@ -48,9 +48,12 @@ theorem blockPairingIntegrand_eq_hilbertInner {d : ℕ} (a : CoeffField d)
 theorem blockEnergyAverage_eq_half_blockPairingAverage_self {d : ℕ} (U : Set (Vec d))
     (a : CoeffField d) (X : BlockState d) :
     blockEnergyAverage U a X = (1 / 2 : ℝ) * blockPairingAverage U a X X := by
-  unfold blockEnergyAverage blockPairingAverage volumeAverage blockEnergyDensity blockPairingIntegrand
-  rw [show (fun x => (1 / 2 : ℝ) * blockVecDot (X.eval x) (blockMatVecMul (blockCoeffField a x) (X.eval x))) =
-      fun x => (1 / 2 : ℝ) • blockVecDot (X.eval x) (blockMatVecMul (blockCoeffField a x) (X.eval x)) by
+  unfold blockEnergyAverage blockPairingAverage volumeAverage blockEnergyDensity
+    blockPairingIntegrand
+  rw [show (fun x => (1 / 2 : ℝ) * blockVecDot (X.eval x) (blockMatVecMul (blockCoeffField a x)
+    (X.eval x))) =
+      fun x => (1 / 2 : ℝ) • blockVecDot (X.eval x) (blockMatVecMul (blockCoeffField a x)
+        (X.eval x)) by
         funext x
         simp [smul_eq_mul]]
   rw [MeasureTheory.integral_smul]
@@ -166,7 +169,8 @@ variable {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
 noncomputable def toBilin (F : LinearMuMinimizerFamily U a) :
     FullBlockVec d →ₗ[ℝ] FullBlockVec d →ₗ[ℝ] ℝ where
   toFun x :=
-    { toFun := fun y => blockPairingAverage U a (F.field (ofFullBlockVec x)) (F.field (ofFullBlockVec y))
+    { toFun := fun y => blockPairingAverage U a (F.field (ofFullBlockVec x)) (F.field
+      (ofFullBlockVec y))
       map_add' := by
         intro y z
         simpa [ofFullBlockVec_add, F.map_add] using

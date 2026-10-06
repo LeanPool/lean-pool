@@ -111,7 +111,7 @@ theorem vecDot_matVecMul_skewCorrectedForm {H : BlockMat d}
   have e3 : vecDot p (matVecMul (matTranspose h * H.lowerRight * h) p)
       = vecDot (matVecMul h p) (matVecMul H.lowerRight (matVecMul h p)) :=
     vecDot_matVecMul_conj _ _ _
-  show _ = vecDot p (matVecMul H.upperLeft p + matVecMul H.upperRight (matVecMul h p))
+  change _ = vecDot p (matVecMul H.upperLeft p + matVecMul H.upperRight (matVecMul h p))
       + vecDot (matVecMul h p) (matVecMul H.lowerLeft p
         + matVecMul H.lowerRight (matVecMul h p))
   simp only [add_matVecMul, vecDot_add_right]

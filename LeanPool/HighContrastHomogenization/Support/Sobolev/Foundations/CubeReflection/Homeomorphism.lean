@@ -79,7 +79,8 @@ theorem preimage_cubeUpperFaceReflection_openCubeSet {d : ℕ}
   constructor
   · intro hx
     have hmem :=
-      cubeUpperFaceReflection_mem_neighbor_of_mem_openCubeSet Q i (x := cubeUpperFaceReflection Q i x) hx
+      cubeUpperFaceReflection_mem_neighbor_of_mem_openCubeSet Q i (x := cubeUpperFaceReflection
+        Q i x) hx
     simpa [cubeUpperFaceReflection] using hmem
   · intro hx
     exact cubeUpperFaceReflection_mem_openCubeSet_of_mem_neighbor Q i hx
@@ -106,7 +107,8 @@ theorem preimage_cubeLowerFaceReflection_openCubeSet {d : ℕ}
   constructor
   · intro hx
     have hmem :=
-      cubeLowerFaceReflection_mem_neighbor_of_mem_openCubeSet Q i (x := cubeLowerFaceReflection Q i x) hx
+      cubeLowerFaceReflection_mem_neighbor_of_mem_openCubeSet Q i (x := cubeLowerFaceReflection
+        Q i x) hx
     simpa [cubeLowerFaceReflection] using hmem
   · intro hx
     exact cubeLowerFaceReflection_mem_openCubeSet_of_mem_neighbor Q i hx

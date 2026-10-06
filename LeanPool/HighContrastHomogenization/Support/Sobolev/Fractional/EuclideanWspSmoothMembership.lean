@@ -79,7 +79,8 @@ private theorem smoothWspPowerKernel_integrableOn_ball {d : ℕ} [NeZero d]
     have hInd_int : IntegrableOn hInd (Set.Ioi 0) := by
       have hwhole : Integrable hInd volume := by
         dsimp [hInd]
-        exact ((intervalIntegral.integrableOn_Ioo_rpow_iff hR).mpr (by linarith)).integrable_indicator
+        exact ((intervalIntegral.integrableOn_Ioo_rpow_iff hR).mpr (by
+          linarith)).integrable_indicator
           measurableSet_Ioo
       exact hwhole.mono_measure Measure.restrict_le_self
     exact hInd_int.congr_fun heq.symm measurableSet_Ioi
@@ -113,7 +114,7 @@ private theorem smoothWspPowerKernel_integrableOn_translated_ball {d : ℕ} [NeZ
       (by linarith : 0 < 2 * R)).congr
       (Filter.Eventually.of_forall fun z => by
         unfold smoothWspPowerKernel
-        show ‖z‖ ^ (a - (d : ℝ)) = ‖x - (z + x)‖ ^ (a - (d : ℝ))
+        change ‖z‖ ^ (a - (d : ℝ)) = ‖x - (z + x)‖ ^ (a - (d : ℝ))
         simp)
   exact hbig.mono_set hsub
 
@@ -229,7 +230,8 @@ private theorem smoothWspPowerKernel_integrable_gagliardoCubeMeasure {d : ℕ} [
               exact Real.rpow_nonneg (norm_nonneg _) _)
       _ ≤ ∫ x in Metric.ball (0 : Vec d) (2 * C), smoothWspPowerKernel a x y := by
             exact setIntegral_mono_set hlarge
-              (Filter.Eventually.of_forall fun x => Real.rpow_nonneg (norm_nonneg _) _) hsub.eventuallyLE
+              (Filter.Eventually.of_forall fun x => Real.rpow_nonneg (norm_nonneg _) _)
+                hsub.eventuallyLE
       _ ≤ B := htrans
   have houter_int : Integrable (fun _ : Vec d => B) μ := integrable_const B
   have hnorm_int : Integrable (fun y => ∫ x, ‖smoothWspPowerKernel a x y‖ ∂μ) μ :=

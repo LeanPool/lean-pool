@@ -395,7 +395,8 @@ theorem convexApproxSmoothing_sub_ae_eq
   have hconv_negv :
       MeasureTheory.ConvolutionExists k ((-1 : ℝ) • Set.indicator U v)
         (ContinuousLinearMap.lsmul ℝ ℝ) MeasureTheory.volume :=
-    hk_compact.convolutionExists_left (L := ContinuousLinearMap.lsmul ℝ ℝ) hk_cont hnegv_indicator_loc
+    hk_compact.convolutionExists_left (L := ContinuousLinearMap.lsmul ℝ ℝ) hk_cont
+      hnegv_indicator_loc
   have hind_sub :
       Set.indicator U (fun y => u y - v y) =
         Set.indicator U u + (-1 : ℝ) • Set.indicator U v := by

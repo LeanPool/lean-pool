@@ -54,7 +54,7 @@ theorem coarseBlockMatrix_upperLeft_apply {d : ℕ} (U : Set (Vec d)) (a : Coeff
           - Mu U (Pi.single j 1, 0) a := by
   by_cases h : i = j
   · subst j
-    show
+    change
       (if (Sum.inl i : BlockCoord d) = Sum.inl i then
           2 * Mu U (blockBasis (Sum.inl i)) a
         else
@@ -70,7 +70,7 @@ theorem coarseBlockMatrix_upperLeft_apply {d : ℕ} (U : Set (Vec d)) (a : Coeff
     simp [blockBasis]
   · have hsum : (Sum.inl i : BlockCoord d) ≠ Sum.inl j := by
       simpa using h
-    show
+    change
       (if (Sum.inl i : BlockCoord d) = Sum.inl j then
           2 * Mu U (blockBasis (Sum.inl i)) a
         else
@@ -118,7 +118,7 @@ theorem coarseBlockMatrix_lowerRight_apply {d : ℕ} (U : Set (Vec d)) (a : Coef
           - Mu U (0, Pi.single j 1) a := by
   by_cases h : i = j
   · subst j
-    show
+    change
       (if (Sum.inr i : BlockCoord d) = Sum.inr i then
           2 * Mu U (blockBasis (Sum.inr i)) a
         else
@@ -134,7 +134,7 @@ theorem coarseBlockMatrix_lowerRight_apply {d : ℕ} (U : Set (Vec d)) (a : Coef
     simp [blockBasis]
   · have hsum : (Sum.inr i : BlockCoord d) ≠ Sum.inr j := by
       simpa using h
-    show
+    change
       (if (Sum.inr i : BlockCoord d) = Sum.inr j then
           2 * Mu U (blockBasis (Sum.inr i)) a
         else
@@ -410,7 +410,8 @@ theorem deterministicCoarseBlockMatrix_eq_blockMatrixOfDeterministicData
   deterministicCoarseBlockMatrix_eq_blockMatrixOfDeterministicData_of_isSigmaCoarse
     hS hK hSigma hdet
 
-theorem deterministicStarredBlockMatrixInv_eq_starredBlockMatrixInvOfDeterministicData_of_isSigmaCoarse
+theorem
+  deterministicStarredBlockMatrixInv_eq_starredBlockMatrixInvOfDeterministicData_of_isSigmaCoarse
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     {sigma sigmaStar kappa : Mat d}
     (hS : IsSigmaStarCoarse U a sigmaStar)
@@ -647,7 +648,8 @@ theorem coarseStarredBlockMatrixInv_eq_deterministicStarredBlockMatrixInv
     coarseStarredBlockMatrixInv U a = deterministicStarredBlockMatrixInv U a :=
   coarseStarredBlockMatrixInv_eq_deterministicStarredBlockMatrixInv_of_isCoarseBlockMatrix hA
 
-theorem coarseStarredBlockMatrixInv_eq_starredBlockMatrixInvOfDeterministicData_of_isCoarseBlockMatrix
+theorem
+  coarseStarredBlockMatrixInv_eq_starredBlockMatrixInvOfDeterministicData_of_isCoarseBlockMatrix
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     {sigma sigmaStar kappa : Mat d}
     (hA : IsCoarseBlockMatrix U a (deterministicCoarseBlockMatrix U a))
@@ -697,7 +699,8 @@ theorem coarseBlockMatrix_lowerRight_eq_sigmaStarInvCoarse_of_mu_zero_right_eq_r
 /-- If the pure-flux slice of `\mu` matches the pure-flux slice of
 `\mathcal J`, then the upper-left block of `\mathbf A_*^{-1}(U; a)` is the
 canonical `\sigma_*^{-1}(U; a)`. -/
-theorem coarseStarredBlockMatrixInv_upperLeft_eq_sigmaStarInvCoarse_of_mu_zero_right_eq_responseJ_zero
+theorem
+  coarseStarredBlockMatrixInv_upperLeft_eq_sigmaStarInvCoarse_of_mu_zero_right_eq_responseJ_zero
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     (hex : ∃ Abar : BlockMat d, IsCoarseBlockMatrix U a Abar)
     (hMuResp : ∀ q : Vec d, Mu U (0, q) a = ResponseJ U 0 q a) :
@@ -784,7 +787,8 @@ theorem coarseStarredBlockMatrixInv_upperRight_eq_neg_sigmaStar_inv_mul_kappa_of
 
 /-- Public lower-left block formula for the reflected coarse matrix
 `\mathbf A_*^{-1}(U; a)`. -/
-theorem coarseStarredBlockMatrixInv_lowerLeft_eq_neg_transpose_kappa_mul_sigmaStar_inv_of_isCoarseBlockMatrix
+theorem
+  coarseStarredBlockMatrixInv_lowerLeft_eq_neg_transpose_kappa_mul_sigmaStar_inv_of_isCoarseBlockMatrix
     {d : ℕ} {U : Set (Vec d)} {a : CoeffField d}
     {sigma sigmaStar kappa : Mat d}
     (hA : IsCoarseBlockMatrix U a (deterministicCoarseBlockMatrix U a))

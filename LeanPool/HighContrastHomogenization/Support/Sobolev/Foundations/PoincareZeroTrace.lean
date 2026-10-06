@@ -509,7 +509,8 @@ theorem exists_poincare_constant_of_isOpenBoundedConvexDomain
         ENNReal.toReal (MeasureTheory.eLpNorm u p (volumeMeasureOn U)) ≤
           C * ∑ i : Fin d,
             ENNReal.toReal
-              (MeasureTheory.eLpNorm (fun x => u.toW1pFunction.grad x i) p (volumeMeasureOn U)) := by
+              (MeasureTheory.eLpNorm (fun x => u.toW1pFunction.grad x i) p (volumeMeasureOn U))
+                := by
   classical
   let q : ℝ := p.toReal
   have hq : 1 < q := by

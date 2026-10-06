@@ -362,7 +362,8 @@ theorem setIntegral_originCube_succ_vecDot_field_reflectedVectorField_eq_folded
 solenoidal zero-normal field back to the original cube preserves the
 solenoidal zero-normal test identity. This is the remaining Sobolev gluing
 lemma in its most concrete form. -/
-theorem cubeFaceReflectionFoldedParentVectorField_isSolenoidalZeroNormalTraceOn_of_parent_reflected_h1_tests
+theorem
+  cubeFaceReflectionFoldedParentVectorField_isSolenoidalZeroNormalTraceOn_of_parent_reflected_h1_tests
     {d : ℕ} {m : ℤ} {g : Vec d → Vec d}
     (hg : MemVectorL2 (openCubeSet (originCube d (m + 1))) g)
     (hsol :
@@ -466,7 +467,8 @@ theorem exists_cubeFaceReflectionParent_weakPoissonEquationOn_originCube_of_fold
 
 /-- End-to-end conditional form of the reflection route: it remains to
 construct the reflected parent `H¹` test for every original-cube `H¹` test. -/
-theorem exists_cubeFaceReflectionParent_weakPoissonEquationOn_originCube_of_parent_reflected_h1_tests
+theorem
+  exists_cubeFaceReflectionParent_weakPoissonEquationOn_originCube_of_parent_reflected_h1_tests
     (W : MeanZeroNeumannPoissonSolution (originCube d m) F)
     (hreflect :
       ∀ φ : H1Function (openCubeSet (originCube d m)),

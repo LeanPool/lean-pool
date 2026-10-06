@@ -124,21 +124,11 @@ private theorem volumeAverage_diffEnergy_congr_ae {V : Set (Vec d)} {b f : Coeff
   filter_upwards [hae] with x hx
   rw [hx]
 
-/-- **The averaged-energy hypothesis of the cell-average estimate, with no pointwise ellipticity
-hypothesis.**  For the per-cell family that is twice the scalar difference energy of the
-maximizers `u` and `v w` on the aligned subcells
-`adaptedCellAtCenter (respGrid jStar F) (t - n) w`, the flat average over the triadic index box is
-bounded by twice the response load times the operator norm of the averaged normalized block
-defect `weakAverageDefect`.
-
-The identity is run at an almost-everywhere-equal representative `f` of `respCoeffPlus F a` that
-is pointwise elliptic on the parent adapted cell; the parent and child maximizers are transported
-to `f` along the almost-everywhere equality, and the resulting identity is transported back
-because both the scalar difference energy and each response value depend on the coefficient only
-through its almost-everywhere class.  No pointwise ellipticity and no coefficient-dependent
-integrability hypothesis remains.  See `e.response.weak.estimate`. -/
-theorem headEnergy_carrier_plus (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d)
-    (t : ℤ) (e : Vec d) (hgrid : IsUnit (respGrid jStar F)) (a : CoeffSpace d) (n : ℕ)
+/-- Transport the averaged response-deficit identity from an elliptic representative back to the
+recentred coefficient. -/
+private theorem avg_diffEnergy_eq_responseJ_deficit_respCoeffPlus
+    (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d) (t : ℤ) (e : Vec d)
+    (hgrid : IsUnit (respGrid jStar F)) (a : CoeffSpace d) (n : ℕ)
     (u : AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))
     (hu : IsResponseMaximizer (respCell jStar F t) (respP (respMean P jStar F t) e)
       (respqPlus P jStar F t e) (respCoeffPlus F a) u)
@@ -146,28 +136,27 @@ theorem headEnergy_carrier_plus (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : 
       (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w))
     (hv : ∀ w ∈ triadicIndexBox d n,
       IsResponseMaximizer (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
-        (respP (respMean P jStar F t) e) (respqPlus P jStar F t e) (respCoeffPlus F a) (v w))
-    (hEhat : (toFullBlockMat (respEhatPlus P jStar F t)).PosDef) :
+        (respP (respMean P jStar F t) e) (respqPlus P jStar F t e) (respCoeffPlus F a) (v w)) :
     ((triadicIndexBox d n).card : ℝ)⁻¹ * ∑ w ∈ triadicIndexBox d n,
-        (2 * volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
-          (fun x => vecDot
-            (optimizerField (respCoeffPlus F a) u x -
-              optimizerField (respCoeffPlus F a) (v w) x).1
-            (optimizerField (respCoeffPlus F a) u x -
-              optimizerField (respCoeffPlus F a) (v w) x).2))
-      ≤ 2 * respLsqPlus P jStar F t e *
-          ‖toFullBlockMat (weakAverageDefect (respGrid jStar F) t n
-            (respEhatPlus P jStar F t) (respCoeffPlus F a))‖ := by
+        volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
+          (fun y => vecDot (u.toH1.grad y - (v w).toH1.grad y)
+            (matVecMul (symmPart (respCoeffPlus F a y))
+              (u.toH1.grad y - (v w).toH1.grad y))) =
+      2 * (((triadicIndexBox d n).card : ℝ)⁻¹ *
+        ∑ w ∈ triadicIndexBox d n,
+          (ResponseJ (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
+              (respP (respMean P jStar F t) e) (respqPlus P jStar F t e)
+              (respCoeffPlus F a) -
+            ResponseJ (HighContrast.adaptedCell (respGrid jStar F) t)
+              (respP (respMean P jStar F t) e) (respqPlus P jStar F t e)
+              (respCoeffPlus F a))) := by
   classical
   let Z : Finset (Fin d → ℤ) := triadicIndexBox d n
   let b : CoeffField d := respCoeffPlus F a
   let p : Vec d := respP (respMean P jStar F t) e
   let r : Vec d := respqPlus P jStar F t e
   let q : Mat d := respGrid jStar F
-  let E : BlockMat d := respEhatPlus P jStar F t
-  let x : BlockVec d := (-p, r)
-  -- Step A.  One elliptic representative of the transposed recentred coefficient, on the parent
-  -- cell and hence, by monotonicity, on every aligned subcell.
+  -- Choose an elliptic representative on the parent cell, then restrict it to each child.
   obtain ⟨lam, Lam, f, _hlam, _hle, hEllU, hae⟩ :=
     exists_elliptic_representative_respCoeffPlus q hgrid t F a
   have hVU : ∀ w ∈ Z, adaptedCellAtCenter q (t - (n : ℤ)) w ⊆ HighContrast.adaptedCell q t :=
@@ -184,7 +173,6 @@ theorem headEnergy_carrier_plus (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : 
     fun w => (isOpenBoundedConvexDomain_adaptedCellAtCenter q hgrid (t - (n : ℤ)) w).isFiniteMeasure_restrict_volume
   have : IsFiniteMeasure (volumeMeasureOn (HighContrast.adaptedCell q t)) :=
     (adaptedCell_isOpenBoundedConvexDomain q hgrid t).isFiniteMeasure_restrict_volume
-  -- Step B.  Transport the parent maximizer and each child maximizer to the representative.
   let uT : AHarmonicFunction f (HighContrast.adaptedCell q t) := Response.aHarmonicOfAEEq hae u
   have huT : IsResponseMaximizer (HighContrast.adaptedCell q t) p r f uT :=
     isResponseMaximizer_of_ae_eq hae hu
@@ -197,8 +185,6 @@ theorem headEnergy_carrier_plus (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : 
     have hvw : vT w = Response.aHarmonicOfAEEq (haeW w hw) (v w) := dite_eq_left hw
     rw [hvw]
     exact isResponseMaximizer_of_ae_eq (haeW w hw) (hv w hw)
-  -- Step C.  The response identity at `f`, with its integrability side conditions supplied by the
-  -- pointwise elliptic datum through `ResponseLinearIntegrabilityData.of_isEllipticFieldOn`.
   have hIntW : ∀ w ∈ Z, ResponseLinearIntegrabilityData (adaptedCellAtCenter q (t - (n : ℤ)) w) f :=
     fun w hw => ResponseLinearIntegrabilityData.of_isEllipticFieldOn (hEll w hw)
   have hIntU : ResponseLinearIntegrabilityData (HighContrast.adaptedCell q t) f :=
@@ -245,7 +231,6 @@ theorem headEnergy_carrier_plus (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : 
         - ResponseJ (HighContrast.adaptedCell q t) p r f) := by
     exact avg_difference_energy_eq_responseJ_deficit_adaptedCell_ae q hgrid t n
       (a := f) (p := p) (r := r) uT vT hEll hvT huV_int hv_int hresp_v hlin henergy hint huT
-  -- Step D.  Transport the identity back to `respCoeffPlus F a`.
   let G' : (Fin d → ℤ) → ℝ := fun w =>
     volumeAverage (adaptedCellAtCenter q (t - (n : ℤ)) w)
       (fun y => vecDot (u.toH1.grad y - (v w).toH1.grad y)
@@ -275,33 +260,48 @@ theorem headEnergy_carrier_plus (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : 
       = ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z, ResponseJ (adaptedCellAtCenter q (t - (n : ℤ)) w) p r b
         - ResponseJ (HighContrast.adaptedCell q t) p r b) := by
     rw [hsumJ, hparJ]
-  have hS : ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z, G' w)
-      = 2 * ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z,
-          ResponseJ (adaptedCellAtCenter q (t - (n : ℤ)) w) p r b
-            - ResponseJ (HighContrast.adaptedCell q t) p r b) := by
-    rw [← hAS, ← hBS]
-    exact hSf
-  -- Step E.  The goal's integrand is the symmetric scalar difference energy.
-  have hpt : ∀ w, (fun y => vecDot (optimizerField b u y - optimizerField b (v w) y).1
-        (optimizerField b u y - optimizerField b (v w) y).2)
-      = fun y => vecDot (u.toH1.grad y - (v w).toH1.grad y)
-          (matVecMul (symmPart (b y)) (u.toH1.grad y - (v w).toH1.grad y)) := by
-    intro w
-    funext y
-    have hsubmv : matVecMul (b y) (u.toH1.grad y) - matVecMul (b y) ((v w).toH1.grad y)
-        = matVecMul (b y) (u.toH1.grad y - (v w).toH1.grad y) := by
-      funext i
-      simp only [matVecMul, Pi.sub_apply, ← Finset.sum_sub_distrib]
-      exact Finset.sum_congr rfl fun j _ => by ring
-    simp only [optimizerField, Prod.fst_sub, Prod.snd_sub, hsubmv, vecDot_matVecMul_symmPart]
-  have hG : ∀ w ∈ Z, (2 * volumeAverage (adaptedCellAtCenter q (t - (n : ℤ)) w)
-        (fun y => vecDot (optimizerField b u y - optimizerField b (v w) y).1
-          (optimizerField b u y - optimizerField b (v w) y).2)) = 2 * G' w := by
-    intro w _
-    exact congrArg (fun g => 2 * volumeAverage (adaptedCellAtCenter q (t - (n : ℤ)) w) g) (hpt w)
-  -- Step F.  The algebraic tail: response values as coarse-block quadratics, the averaged
-  -- response deficit as the quadratic form of the averaged block defect, and the normalized
-  -- Loewner comparison.
+  change ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z, G' w) =
+    2 * ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z,
+      ResponseJ (adaptedCellAtCenter q (t - (n : ℤ)) w) p r b -
+        ResponseJ (HighContrast.adaptedCell q t) p r b)
+  rw [← hAS, ← hBS]
+  exact hSf
+
+/-- Bound the response deficit by the normalized Loewner comparison once the energy identity
+has been transported to the recentred coefficient. -/
+private theorem avg_energy_le_weakAverageDefect
+    (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d) (t : ℤ) (e : Vec d)
+    (hgrid : IsUnit (respGrid jStar F)) (a : CoeffSpace d) (n : ℕ)
+    (hEhat : (toFullBlockMat (respEhatPlus P jStar F t)).PosDef)
+    (G' : (Fin d → ℤ) → ℝ)
+    (hS : ((triadicIndexBox d n).card : ℝ)⁻¹ *
+        ∑ w ∈ triadicIndexBox d n, G' w =
+      2 * (((triadicIndexBox d n).card : ℝ)⁻¹ *
+        ∑ w ∈ triadicIndexBox d n,
+          (ResponseJ (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
+              (respP (respMean P jStar F t) e) (respqPlus P jStar F t e)
+              (respCoeffPlus F a) -
+            ResponseJ (HighContrast.adaptedCell (respGrid jStar F) t)
+              (respP (respMean P jStar F t) e) (respqPlus P jStar F t e)
+              (respCoeffPlus F a)))) :
+    2 * (((triadicIndexBox d n).card : ℝ)⁻¹ *
+        ∑ w ∈ triadicIndexBox d n, G' w) ≤
+      2 * respLsqPlus P jStar F t e *
+        ‖toFullBlockMat (weakAverageDefect (respGrid jStar F) t n
+          (respEhatPlus P jStar F t) (respCoeffPlus F a))‖ := by
+  classical
+  let Z : Finset (Fin d → ℤ) := triadicIndexBox d n
+  let b : CoeffField d := respCoeffPlus F a
+  let p : Vec d := respP (respMean P jStar F t) e
+  let r : Vec d := respqPlus P jStar F t e
+  let q : Mat d := respGrid jStar F
+  let E : BlockMat d := respEhatPlus P jStar F t
+  let x : BlockVec d := (-p, r)
+  have hS' : (Z.card : ℝ)⁻¹ * ∑ w ∈ Z, G' w =
+      2 * ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z,
+        ResponseJ (adaptedCellAtCenter q (t - (n : ℤ)) w) p r b -
+          ResponseJ (HighContrast.adaptedCell q t) p r b) := by
+    simpa [Z, q, p, r, b] using hS
   let Q : (Fin d → ℤ) → ℝ := fun w =>
     blockVecDot x (blockMatVecMul (coarseBlockMatrix (adaptedCellAtCenter q (t - (n : ℤ)) w) b) x)
   let QU : ℝ := blockVecDot x
@@ -352,24 +352,14 @@ theorem headEnergy_carrier_plus (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : 
   have hLsq : respLsqPlus P jStar F t e = blockVecDot x (blockMatVecMul E x) := by
     rw [respLsqPlus_eq_quadratic]
     rfl
-  have hmain : (Z.card : ℝ)⁻¹ * ∑ w ∈ Z,
-        (2 * volumeAverage (adaptedCellAtCenter q (t - (n : ℤ)) w)
-          (fun y => vecDot (optimizerField b u y - optimizerField b (v w) y).1
-            (optimizerField b u y - optimizerField b (v w) y).2))
-      ≤ 2 * respLsqPlus P jStar F t e
-          * ‖toFullBlockMat (weakAverageDefect q t n E b)‖ := by
+  have hbound : 2 * ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z, G' w) ≤
+      2 * respLsqPlus P jStar F t e * ‖toFullBlockMat (weakAverageDefect q t n E b)‖ := by
     calc
-      (Z.card : ℝ)⁻¹ * ∑ w ∈ Z,
-          (2 * volumeAverage (adaptedCellAtCenter q (t - (n : ℤ)) w)
-            (fun y => vecDot (optimizerField b u y - optimizerField b (v w) y).1
-              (optimizerField b u y - optimizerField b (v w) y).2))
-          = 2 * ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z, G' w) := by
-            rw [Finset.sum_congr rfl hG, ← Finset.mul_sum]
-            ring
-      _ = 2 * (2 * ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z,
+      2 * ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z, G' w)
+          = 2 * (2 * ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z,
               ResponseJ (adaptedCellAtCenter q (t - (n : ℤ)) w) p r b
                 - ResponseJ (HighContrast.adaptedCell q t) p r b)) := by
-            rw [hS]
+            rw [hS']
       _ = 2 * ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z, (Q w - QU)) := by rw [hC]
       _ = 2 * blockVecDot x (blockMatVecMul
             (ofFullBlockMat
@@ -385,7 +375,90 @@ theorem headEnergy_carrier_plus (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : 
             * ‖toFullBlockMat (weakAverageDefect q t n E b)‖ := by
             rw [hLsq]
             ring
-  exact hmain
+  simpa [Z, b, q, E] using hbound
+
+/-- **The averaged-energy hypothesis of the cell-average estimate, with no pointwise ellipticity
+hypothesis.**  For the per-cell family that is twice the scalar difference energy of the
+maximizers `u` and `v w` on the aligned subcells
+`adaptedCellAtCenter (respGrid jStar F) (t - n) w`, the flat average over the triadic index box is
+bounded by twice the response load times the operator norm of the averaged normalized block
+defect `weakAverageDefect`.
+
+The identity is run at an almost-everywhere-equal representative `f` of `respCoeffPlus F a` that
+is pointwise elliptic on the parent adapted cell; the parent and child maximizers are transported
+to `f` along the almost-everywhere equality, and the resulting identity is transported back
+because both the scalar difference energy and each response value depend on the coefficient only
+through its almost-everywhere class.  No pointwise ellipticity and no coefficient-dependent
+integrability hypothesis remains.  See `e.response.weak.estimate`. -/
+theorem headEnergy_carrier_plus (P : Measure (CoeffSpace d)) (jStar : ℕ) (F : BlockMat d)
+    (t : ℤ) (e : Vec d) (hgrid : IsUnit (respGrid jStar F)) (a : CoeffSpace d) (n : ℕ)
+    (u : AHarmonicFunction (respCoeffPlus F a) (respCell jStar F t))
+    (hu : IsResponseMaximizer (respCell jStar F t) (respP (respMean P jStar F t) e)
+      (respqPlus P jStar F t e) (respCoeffPlus F a) u)
+    (v : (w : Fin d → ℤ) → AHarmonicFunction (respCoeffPlus F a)
+      (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w))
+    (hv : ∀ w ∈ triadicIndexBox d n,
+      IsResponseMaximizer (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
+        (respP (respMean P jStar F t) e) (respqPlus P jStar F t e) (respCoeffPlus F a) (v w))
+    (hEhat : (toFullBlockMat (respEhatPlus P jStar F t)).PosDef) :
+    ((triadicIndexBox d n).card : ℝ)⁻¹ * ∑ w ∈ triadicIndexBox d n,
+        (2 * volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (n : ℤ)) w)
+          (fun x => vecDot
+            (optimizerField (respCoeffPlus F a) u x -
+              optimizerField (respCoeffPlus F a) (v w) x).1
+            (optimizerField (respCoeffPlus F a) u x -
+              optimizerField (respCoeffPlus F a) (v w) x).2))
+      ≤ 2 * respLsqPlus P jStar F t e *
+          ‖toFullBlockMat (weakAverageDefect (respGrid jStar F) t n
+            (respEhatPlus P jStar F t) (respCoeffPlus F a))‖ := by
+  classical
+  let Z : Finset (Fin d → ℤ) := triadicIndexBox d n
+  let b : CoeffField d := respCoeffPlus F a
+  let p : Vec d := respP (respMean P jStar F t) e
+  let r : Vec d := respqPlus P jStar F t e
+  let q : Mat d := respGrid jStar F
+  let E : BlockMat d := respEhatPlus P jStar F t
+  let x : BlockVec d := (-p, r)
+  let G' : (Fin d → ℤ) → ℝ := fun w =>
+    volumeAverage (adaptedCellAtCenter q (t - (n : ℤ)) w)
+      (fun y => vecDot (u.toH1.grad y - (v w).toH1.grad y)
+        (matVecMul (symmPart (b y)) (u.toH1.grad y - (v w).toH1.grad y)))
+  have hS : ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z, G' w)
+      = 2 * ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z,
+          ResponseJ (adaptedCellAtCenter q (t - (n : ℤ)) w) p r b
+            - ResponseJ (HighContrast.adaptedCell q t) p r b) := by
+    simpa [G', Z, b, p, r, q] using
+      avg_diffEnergy_eq_responseJ_deficit_respCoeffPlus P jStar F t e hgrid a n u hu v hv
+  -- Step E.  The goal's integrand is the symmetric scalar difference energy.
+  have hpt : ∀ w, (fun y => vecDot (optimizerField b u y - optimizerField b (v w) y).1
+        (optimizerField b u y - optimizerField b (v w) y).2)
+      = fun y => vecDot (u.toH1.grad y - (v w).toH1.grad y)
+          (matVecMul (symmPart (b y)) (u.toH1.grad y - (v w).toH1.grad y)) := by
+    intro w
+    funext y
+    have hsubmv : matVecMul (b y) (u.toH1.grad y) - matVecMul (b y) ((v w).toH1.grad y)
+        = matVecMul (b y) (u.toH1.grad y - (v w).toH1.grad y) := by
+      funext i
+      simp only [matVecMul, Pi.sub_apply, ← Finset.sum_sub_distrib]
+      exact Finset.sum_congr rfl fun j _ => by ring
+    simp only [optimizerField, Prod.fst_sub, Prod.snd_sub, hsubmv, vecDot_matVecMul_symmPart]
+  have hG : ∀ w ∈ Z, (2 * volumeAverage (adaptedCellAtCenter q (t - (n : ℤ)) w)
+        (fun y => vecDot (optimizerField b u y - optimizerField b (v w) y).1
+          (optimizerField b u y - optimizerField b (v w) y).2)) = 2 * G' w := by
+    intro w _
+    exact congrArg (fun g => 2 * volumeAverage (adaptedCellAtCenter q (t - (n : ℤ)) w) g) (hpt w)
+  have hbound := avg_energy_le_weakAverageDefect P jStar F t e hgrid a n hEhat G' hS
+  calc
+    (Z.card : ℝ)⁻¹ * ∑ w ∈ Z,
+        (2 * volumeAverage (adaptedCellAtCenter q (t - (n : ℤ)) w)
+          (fun y => vecDot (optimizerField b u y - optimizerField b (v w) y).1
+            (optimizerField b u y - optimizerField b (v w) y).2))
+        = 2 * ((Z.card : ℝ)⁻¹ * ∑ w ∈ Z, G' w) := by
+          rw [Finset.sum_congr rfl hG, ← Finset.mul_sum]
+          ring
+    _ ≤ 2 * respLsqPlus P jStar F t e
+          * ‖toFullBlockMat (weakAverageDefect q t n E b)‖ := by
+          simpa [Z, b, q, E] using hbound
 
 end
 

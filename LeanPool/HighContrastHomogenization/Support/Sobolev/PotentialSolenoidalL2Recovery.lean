@@ -177,7 +177,8 @@ theorem blockL2ToHilbertBlockL2_toBlockL2 (X : CorrectionFieldData U) :
                X.coeFn_toHilbertBlockL2]
             with x hblock hhilbert
           rw [hblock, hhilbert]
-          simp [CorrectionFieldData.toBlockField, hilbertifyBlockField, hilbertBlockField, blockField]
+          simp [CorrectionFieldData.toBlockField, hilbertifyBlockField, hilbertBlockField,
+            blockField]
 
 theorem integrableOn_pairing_affine
     [MeasureTheory.IsFiniteMeasure (volumeMeasureOn U)]
@@ -394,18 +395,21 @@ private theorem toBlockL2OfComponents_blockFstCLM_blockSndCLM
   · simpa [blockField, blockFstCLM] using congrFun hfst i
   · simpa [blockField, blockSndCLM] using congrFun hsnd i
 
-theorem PotentialSolenoidalL2Data.mem_potentialZeroTrace_of_mem_blockPotentialZeroTraceSolenoidalZeroNormalTrace_ofSubmoduleClosures
+theorem
+  PotentialSolenoidalL2Data.mem_potentialZeroTrace_of_mem_blockPotentialZeroTraceSolenoidalZeroNormalTrace_ofSubmoduleClosures
     {d : ℕ} {U : Set (Vec d)} (X : BlockL2 U)
     (hX :
-      X ∈ (PotentialSolenoidalL2Data.ofSubmoduleClosures U).blockPotentialZeroTraceSolenoidalZeroNormalTrace) :
-    blockFstCLM (U := U) X ∈ (PotentialSolenoidalL2Data.ofSubmoduleClosures U).potentialZeroTrace := by
+      X ∈ (PotentialSolenoidalL2Data.ofSubmoduleClosures
+        U).blockPotentialZeroTraceSolenoidalZeroNormalTrace) :
+    blockFstCLM (U := U) X ∈ (PotentialSolenoidalL2Data.ofSubmoduleClosures
+      U).potentialZeroTrace := by
   let M : PotentialSolenoidalL2Data U := PotentialSolenoidalL2Data.ofSubmoduleClosures U
   let K : ClosedSubmodule ℝ (BlockL2 U) := M.potentialZeroTrace.comap (blockFstCLM (U := U))
   have hsub :
       blockPotentialZeroTraceSolenoidalZeroNormalTraceSubmodule U ≤ K.toSubmodule := by
     intro Y hY
     rcases hY with ⟨f, g, hf, hg, rfl, hpot, _hsol⟩
-    show blockFstCLM (U := U) (toBlockL2OfComponents hf hg) ∈ M.potentialZeroTrace
+    change blockFstCLM (U := U) (toBlockL2OfComponents hf hg) ∈ M.potentialZeroTrace
     rw [blockFstCLM_apply_toBlockL2OfComponents hf hg]
     simpa [M] using M.mem_potentialZeroTrace hf hpot
   have hclosure :
@@ -418,10 +422,12 @@ theorem PotentialSolenoidalL2Data.mem_potentialZeroTrace_of_mem_blockPotentialZe
     exact hclosure (by simpa [M] using! hY)
   exact hclosure' hX
 
-theorem PotentialSolenoidalL2Data.mem_solenoidalZeroNormalTrace_of_mem_blockPotentialZeroTraceSolenoidalZeroNormalTrace_ofSubmoduleClosures
+theorem
+  PotentialSolenoidalL2Data.mem_solenoidalZeroNormalTrace_of_mem_blockPotentialZeroTraceSolenoidalZeroNormalTrace_ofSubmoduleClosures
     {d : ℕ} {U : Set (Vec d)} (X : BlockL2 U)
     (hX :
-      X ∈ (PotentialSolenoidalL2Data.ofSubmoduleClosures U).blockPotentialZeroTraceSolenoidalZeroNormalTrace) :
+      X ∈ (PotentialSolenoidalL2Data.ofSubmoduleClosures
+        U).blockPotentialZeroTraceSolenoidalZeroNormalTrace) :
     blockSndCLM (U := U) X ∈
       (PotentialSolenoidalL2Data.ofSubmoduleClosures U).solenoidalZeroNormalTrace := by
   let M : PotentialSolenoidalL2Data U := PotentialSolenoidalL2Data.ofSubmoduleClosures U
@@ -431,7 +437,7 @@ theorem PotentialSolenoidalL2Data.mem_solenoidalZeroNormalTrace_of_mem_blockPote
       blockPotentialZeroTraceSolenoidalZeroNormalTraceSubmodule U ≤ K.toSubmodule := by
     intro Y hY
     rcases hY with ⟨f, g, hf, hg, rfl, _hpot, hsol⟩
-    show blockSndCLM (U := U) (toBlockL2OfComponents hf hg) ∈ M.solenoidalZeroNormalTrace
+    change blockSndCLM (U := U) (toBlockL2OfComponents hf hg) ∈ M.solenoidalZeroNormalTrace
     rw [blockSndCLM_apply_toBlockL2OfComponents hf hg]
     simpa [M] using M.mem_solenoidalZeroNormalTrace hg hsol
   have hclosure :
@@ -521,7 +527,8 @@ canonical closed block correction space. -/
 noncomputable def correctionFieldSubmoduleToBlockSubmodule
     {d : ℕ} {U : Set (Vec d)} :
     correctionFieldSubmodule U →ₗ[ℝ]
-      ((PotentialSolenoidalL2Data.ofSubmoduleClosures U).blockPotentialZeroTraceSolenoidalZeroNormalTrace.toSubmodule) where
+      ((PotentialSolenoidalL2Data.ofSubmoduleClosures
+        U).blockPotentialZeroTraceSolenoidalZeroNormalTrace.toSubmodule) where
   toFun := fun F =>
     ⟨toBlockL2 F.2.1,
       by

@@ -68,7 +68,7 @@ private theorem vecDot_matVecMul_conj (D M : Mat d) (x : Vec d) :
 
 private theorem vecNormSq_single (j : Fin d) :
     vecNormSq (Pi.single j (1 : ℝ)) = 1 := by
-  show vecDot (Pi.single j (1 : ℝ)) (Pi.single j (1 : ℝ)) = 1
+  change vecDot (Pi.single j (1 : ℝ)) (Pi.single j (1 : ℝ)) = 1
   simp [vecDot, Pi.single_apply, mul_ite, Finset.sum_ite_eq']
 
 /-- In a positive dimension there is a vector of unit length. -/

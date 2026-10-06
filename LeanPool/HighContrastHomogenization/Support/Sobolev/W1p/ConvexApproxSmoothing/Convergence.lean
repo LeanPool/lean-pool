@@ -646,7 +646,8 @@ theorem tendsto_eLpNorm_sub_zero_one_sub_mul_convexApproxSmoothing_of_memLpOn
       _ ≤ C * MeasureTheory.eLpNorm u p μ := by
             gcongr
       _ = B := by rfl
-  filter_upwards [hvalue_eventually, hconv_bound_eventually, hsmall_eventually, hε_pos, hε_lt_half] with
+  filter_upwards [hvalue_eventually, hconv_bound_eventually, hsmall_eventually, hε_pos,
+    hε_lt_half] with
       n hvalue hconv_bound hsmall hεn_pos hεn_half
   let F : Vec d → ℝ := fun x => convexApproxSmoothing ρ u x0 r (ε n) x - u x
   let G : Vec d → ℝ := fun x => (-ε n) * convexApproxSmoothing ρ u x0 r (ε n) x

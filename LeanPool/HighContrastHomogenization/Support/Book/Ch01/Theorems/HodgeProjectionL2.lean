@@ -69,7 +69,8 @@ Dirichlet variational problem with right-hand side `-F`.
 This is the PDE identity behind the unit Hodge projection: if `w` is
 zero-trace potential and `w + F` is solenoidal, then the primitive of `w`
 tests against every zero-trace gradient as `-F`. -/
-theorem exists_h10Function_gradient_eq_and_firstVariation_eq_neg_of_isPotentialZeroTraceOn_of_isSolenoidalOn
+theorem
+  exists_h10Function_gradient_eq_and_firstVariation_eq_neg_of_isPotentialZeroTraceOn_of_isSolenoidalOn
     {d : ℕ} {U : Set (Vec d)} {w F : Vec d → Vec d}
     (hF : MemVectorL2 U F)
     (hw : IsPotentialZeroTraceOn U w)

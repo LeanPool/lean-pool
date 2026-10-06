@@ -155,8 +155,10 @@ theorem meanZeroOn_subAverage {d : ℕ} {U : Set (Vec d)}
         _ = I + (MeasureTheory.volume U).toReal * (-((MeasureTheory.volume U).toReal⁻¹ * I)) := by
               rw [hconst]
         _ = 0 := by
-              rw [show (MeasureTheory.volume U).toReal * (-((MeasureTheory.volume U).toReal⁻¹ * I)) =
-                -((MeasureTheory.volume U).toReal * ((MeasureTheory.volume U).toReal⁻¹ * I)) by ring]
+              rw [show (MeasureTheory.volume U).toReal * (-((MeasureTheory.volume U).toReal⁻¹ *
+                I)) =
+                -((MeasureTheory.volume U).toReal * ((MeasureTheory.volume U).toReal⁻¹ * I)) by
+                  ring]
               rw [hcancel]
               ring)
 

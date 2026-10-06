@@ -149,7 +149,7 @@ theorem posSemidef_lowerRight {H : BlockMat d} (hsymm : IsSymmetricBlockMat H)
     (hpos : Book.Ch02.BlockPosDef H) : H.lowerRight.PosSemidef := by
   refine Matrix.PosSemidef.of_dotProduct_mulVec_nonneg (isHermitian_lowerRight hsymm)
     fun x => ?_
-  show (0 : ℝ) ≤ vecDot x (matVecMul H.lowerRight x)
+  change (0 : ℝ) ≤ vecDot x (matVecMul H.lowerRight x)
   by_cases hx : x = 0
   · subst hx
     simp [vecDot, matVecMul]

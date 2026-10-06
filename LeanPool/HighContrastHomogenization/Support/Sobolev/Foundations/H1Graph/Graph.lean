@@ -157,12 +157,12 @@ theorem mem_h1GraphClosedSubmodule_iff_exists_h1Function
   constructor
   · intro hz
     refine ⟨toH1FunctionOfMemH1Graph (U := U) z hz, ?_, ?_⟩
-    show (MeasureTheory.Lp.memLp z.1).toLp z.1 = z.1
+    change (MeasureTheory.Lp.memLp z.1).toLp z.1 = z.1
     exact MeasureTheory.Lp.toLp_coeFn z.1 (MeasureTheory.Lp.memLp z.1)
     have hvec :
         (toH1FunctionOfMemH1Graph (U := U) z hz).gradToVectorL2 =
           hilbertVectorL2ToVectorL2 (U := U) z.2 := by
-      show (MeasureTheory.Lp.memLp (hilbertVectorL2ToVectorL2 (U := U) z.2)).toLp
+      change (MeasureTheory.Lp.memLp (hilbertVectorL2ToVectorL2 (U := U) z.2)).toLp
           (hilbertVectorL2ToVectorL2 (U := U) z.2) =
         hilbertVectorL2ToVectorL2 (U := U) z.2
       exact MeasureTheory.Lp.toLp_coeFn
@@ -280,7 +280,7 @@ theorem mem_h1GraphClosedSubmodule_of_tendsto_h1Function
     (z : ScalarL2 U × HilbertVectorL2 U)
     (hz : z ∈ h1GraphClosedSubmodule (U := U)) :
     (toH1FunctionOfMemH1Graph (U := U) z hz).toScalarL2 = z.1 := by
-  show (MeasureTheory.Lp.memLp z.1).toLp z.1 = z.1
+  change (MeasureTheory.Lp.memLp z.1).toLp z.1 = z.1
   exact MeasureTheory.Lp.toLp_coeFn z.1 (MeasureTheory.Lp.memLp z.1)
 
 @[simp] theorem toH1FunctionOfMemH1Graph_gradToHilbertVectorL2
@@ -290,7 +290,7 @@ theorem mem_h1GraphClosedSubmodule_of_tendsto_h1Function
   have hvec :
       (toH1FunctionOfMemH1Graph (U := U) z hz).gradToVectorL2 =
         hilbertVectorL2ToVectorL2 (U := U) z.2 := by
-    show (MeasureTheory.Lp.memLp (hilbertVectorL2ToVectorL2 (U := U) z.2)).toLp
+    change (MeasureTheory.Lp.memLp (hilbertVectorL2ToVectorL2 (U := U) z.2)).toLp
         (hilbertVectorL2ToVectorL2 (U := U) z.2) =
       hilbertVectorL2ToVectorL2 (U := U) z.2
     exact MeasureTheory.Lp.toLp_coeFn
@@ -335,7 +335,8 @@ noncomputable def scalarIntegralCLM : ScalarL2 U →L[ℝ] ℝ :=
 
 @[simp] theorem scalarIntegralCLM_apply (s : ScalarL2 U) :
     scalarIntegralCLM (U := U) s = ∫ x in U, s x ∂MeasureTheory.volume := by
-  rw [scalarIntegralCLM, InnerProductSpace.toDual_apply_apply, real_inner_comm, scalarInner_eq_integral]
+  rw [scalarIntegralCLM, InnerProductSpace.toDual_apply_apply, real_inner_comm,
+    scalarInner_eq_integral]
   refine MeasureTheory.integral_congr_ae ?_
   filter_upwards [coeFn_oneScalarL2 (U := U)] with x h1
   rw [h1]
@@ -527,7 +528,8 @@ theorem mem_h1MeanZeroGraphClosedSubmodule_iff_exists_h1MeanZeroFunction
       have hInt :
           scalarIntegralCLM (U := U) u.toScalarL2 = ∫ x in U, u x ∂MeasureTheory.volume := by
         calc
-          scalarIntegralCLM (U := U) u.toScalarL2 = ∫ x in U, u.toScalarL2 x ∂MeasureTheory.volume := by
+          scalarIntegralCLM (U := U) u.toScalarL2 = ∫ x in U, u.toScalarL2 x
+            ∂MeasureTheory.volume := by
             exact scalarIntegralCLM_apply (U := U) u.toScalarL2
           _ = ∫ x in U, u x ∂MeasureTheory.volume := by
                 refine MeasureTheory.integral_congr_ae ?_

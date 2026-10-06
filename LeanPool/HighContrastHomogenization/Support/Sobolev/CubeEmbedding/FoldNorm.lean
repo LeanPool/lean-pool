@@ -96,7 +96,8 @@ theorem map_foldR_restrict (lo hi : ℝ) (h : lo < hi) :
     refine ⟨?_, hdisjMR⟩
     rw [Set.disjoint_left]; rintro t ⟨_, ht2⟩ ⟨ht3, _⟩; linarith
   have hset : Set.Ioo (2 * lo - hi) (2 * hi - lo)
-      =ᵐ[volume] ((Set.Ioo (2 * lo - hi) lo ∪ Set.Ioo lo hi ∪ Set.Ioo hi (2 * hi - lo)) : Set ℝ) := by
+      =ᵐ[volume] ((Set.Ioo (2 * lo - hi) lo ∪ Set.Ioo lo hi ∪ Set.Ioo hi (2 * hi - lo)) : Set ℝ)
+        := by
     have hsub1 : (Set.Ioo (2 * lo - hi) lo ∪ Set.Ioo lo hi ∪ Set.Ioo hi (2 * hi - lo))
         ⊆ Set.Ioo (2 * lo - hi) (2 * hi - lo) := by
       intro t ht
@@ -162,7 +163,8 @@ theorem map_foldR_restrict (lo hi : ℝ) (h : lo < hi) :
       congr
       all_goals ring
     calc (volume.restrict (Set.Ioo (2 * lo - hi) lo)).map (fun t => 2 * lo - t)
-        = (volume.restrict ((fun t => 2 * lo - t) ⁻¹' Set.Ioo lo hi)).map (fun t => 2 * lo - t) := by
+        = (volume.restrict ((fun t => 2 * lo - t) ⁻¹' Set.Ioo lo hi)).map (fun t => 2 * lo - t)
+          := by
           rw [hpre]
       _ = (volume.map (fun t => 2 * lo - t)).restrict (Set.Ioo lo hi) :=
           (Measure.restrict_map hmeasL measurableSet_Ioo).symm
@@ -174,7 +176,8 @@ theorem map_foldR_restrict (lo hi : ℝ) (h : lo < hi) :
       congr
       all_goals ring
     calc (volume.restrict (Set.Ioo hi (2 * hi - lo))).map (fun t => 2 * hi - t)
-        = (volume.restrict ((fun t => 2 * hi - t) ⁻¹' Set.Ioo lo hi)).map (fun t => 2 * hi - t) := by
+        = (volume.restrict ((fun t => 2 * hi - t) ⁻¹' Set.Ioo lo hi)).map (fun t => 2 * hi - t)
+          := by
           rw [hpre]
       _ = (volume.map (fun t => 2 * hi - t)).restrict (Set.Ioo lo hi) :=
           (Measure.restrict_map hmeasR measurableSet_Ioo).symm

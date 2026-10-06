@@ -56,6 +56,7 @@ theorem responseJ_le_sum_volumeRatio_mul_responseJ_add_defect_of_isEllipticField
     ResponseJ W p q a ≤
       ∑ i ∈ F, (volume (U i)).toReal / (volume W).toReal * ResponseJ (U i) p q a +
         (volume (W \ ⋃ i ∈ F, U i)).toReal / (volume W).toReal *
-          (lam⁻¹ * (Lam ^ 2 * vecNormSq p + vecNormSq q)) := by exact HCPolySupport.HighContrast.CG.responseJ_le_sum_volumeRatio_mul_responseJ_add_defect_of_isEllipticFieldOn_provider F hWopen hWvol hopen hsub hdisj hEll p q
+          (lam⁻¹ * (Lam ^ 2 * vecNormSq p + vecNormSq q)) := by exact
+            HCPolySupport.HighContrast.CG.responseJ_le_sum_volumeRatio_mul_responseJ_add_defect_of_isEllipticFieldOn_provider F hWopen hWvol hopen hsub hdisj hEll p q
 
 end HCPolySupport.HighContrast.CG

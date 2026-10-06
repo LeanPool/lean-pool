@@ -89,7 +89,8 @@ theorem isSolenoidalZeroNormalTrace {d : ℕ} {U : Set (Vec d)} {P : BlockVec d}
 end IsBlockMuAdmissible
 
 @[expose]
-noncomputable def blockEnergyDensity {d : ℕ} (a : CoeffField d) (X : BlockState d) (x : Vec d) : ℝ :=
+noncomputable def blockEnergyDensity {d : ℕ} (a : CoeffField d) (X : BlockState d) (x : Vec d) :
+  ℝ :=
   (1 / 2 : ℝ) * blockVecDot (X.eval x) (blockMatVecMul (blockCoeffField a x) (X.eval x))
 
 theorem blockEnergyDensity_ge_vecDot_of_isEllipticFieldOn {d : ℕ}

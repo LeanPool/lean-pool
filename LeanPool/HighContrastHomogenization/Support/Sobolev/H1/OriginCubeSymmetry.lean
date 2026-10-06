@@ -340,7 +340,7 @@ noncomputable def signFlipOnOpenCubeSetOriginCube {d : ℕ} {n : ℤ}
     { toFun := fun x => u (T x)
       grad := fun x => signFlipVecContinuousLinearEquiv i (u.grad (T x))
       memL2 := by
-        show MemL2On U (u.toFun ∘ signFlipVecContinuousLinearEquiv i)
+        change MemL2On U (u.toFun ∘ signFlipVecContinuousLinearEquiv i)
         simpa [MemL2On, U, Function.comp] using u.memL2.comp_measurePreserving hμ
       gradMemL2 := by
         intro k
@@ -358,12 +358,12 @@ noncomputable def signFlipOnOpenCubeSetOriginCube {d : ℕ} {n : ℤ}
   let ψ : Vec d → ℝ := fun x => φ (T x)
   let dφ : Vec d → ℝ := fun x => (fderiv ℝ φ x) (basisVec k)
   have hψ_smooth : ContDiff ℝ (⊤ : ℕ∞) ψ := by
-    show ContDiff ℝ (⊤ : ℕ∞) (φ ∘ signFlipVecContinuousLinearEquiv i)
+    change ContDiff ℝ (⊤ : ℕ∞) (φ ∘ signFlipVecContinuousLinearEquiv i)
     simpa [ψ, T, Function.comp] using
       (ContDiff.comp_continuousLinearMap
         (g := (signFlipVecContinuousLinearEquiv i).toContinuousLinearMap) hφ)
   have hψ_supp : HasCompactSupport ψ := by
-    show HasCompactSupport (φ ∘ signFlipVecContinuousLinearEquiv i)
+    change HasCompactSupport (φ ∘ signFlipVecContinuousLinearEquiv i)
     simpa [ψ, T, Function.comp] using
       hφ_supp.comp_homeomorph (signFlipVecContinuousLinearEquiv i).toHomeomorph
   have hψ_sub : tsupport ψ ⊆ U := by
@@ -389,7 +389,7 @@ noncomputable def signFlipOnOpenCubeSetOriginCube {d : ℕ} {n : ℤ}
       ∫ x in U, u x * dφ (T x) ∂MeasureTheory.volume =
         ∫ x in U, u (T x) * dφ x ∂MeasureTheory.volume := by
     let f : Vec d → ℝ := fun y => u (T y) * dφ y
-    show ∫ x in U, u x * dφ (T x) ∂MeasureTheory.volume =
+    change ∫ x in U, u x * dφ (T x) ∂MeasureTheory.volume =
       ∫ x in U, u (T x) * dφ x ∂MeasureTheory.volume
     simpa only [U, T, dφ, f, signFlipVecContinuousLinearEquiv_self_apply] using
       setIntegral_comp_signFlipVecContinuousLinearEquiv_openCubeSet_originCube i n f
@@ -397,7 +397,7 @@ noncomputable def signFlipOnOpenCubeSetOriginCube {d : ℕ} {n : ℤ}
       ∫ x in U, u.grad x k * φ (T x) ∂MeasureTheory.volume =
         ∫ x in U, u.grad (T x) k * φ x ∂MeasureTheory.volume := by
     let f : Vec d → ℝ := fun y => u.grad (T y) k * φ y
-    show ∫ x in U, u.grad x k * φ (T x) ∂MeasureTheory.volume =
+    change ∫ x in U, u.grad x k * φ (T x) ∂MeasureTheory.volume =
       ∫ x in U, u.grad (T x) k * φ x ∂MeasureTheory.volume
     simpa only [U, T, f, signFlipVecContinuousLinearEquiv_self_apply] using
       setIntegral_comp_signFlipVecContinuousLinearEquiv_openCubeSet_originCube i n f
@@ -439,7 +439,7 @@ noncomputable def swapOnOpenCubeSetOriginCube {d : ℕ} {n : ℤ}
     { toFun := fun x => u (matVecMul (Matrix.swap ℝ i j) x)
       grad := fun x => matVecMul (Matrix.swap ℝ i j) (u.grad (matVecMul (Matrix.swap ℝ i j) x))
       memL2 := by
-        show MeasureTheory.MemLp
+        change MeasureTheory.MemLp
           (fun x => u.toFun (matVecMul (Matrix.swap ℝ i j) x)) 2
           (MeasureTheory.volume.restrict U)
         convert (u.memL2.comp_measurePreserving hμ) using 1
@@ -448,7 +448,7 @@ noncomputable def swapOnOpenCubeSetOriginCube {d : ℕ} {n : ℤ}
       gradMemL2 := by
         intro l
         let k : Fin d := Equiv.swap i j l
-        show MeasureTheory.MemLp
+        change MeasureTheory.MemLp
           (fun x => matVecMul (Matrix.swap ℝ i j) (u.grad (matVecMul (Matrix.swap ℝ i j) x)) l) 2
           (MeasureTheory.volume.restrict U)
         convert ((u.gradMemL2 k).comp_measurePreserving hμ) using 1
@@ -461,12 +461,12 @@ noncomputable def swapOnOpenCubeSetOriginCube {d : ℕ} {n : ℤ}
   let k : Fin d := Equiv.swap i j l
   let dφ : Vec d → ℝ := fun x => (fderiv ℝ φ x) (basisVec l)
   have hψ_smooth : ContDiff ℝ (⊤ : ℕ∞) ψ := by
-    show ContDiff ℝ (⊤ : ℕ∞) (φ ∘ swapVecContinuousLinearEquiv i j)
+    change ContDiff ℝ (⊤ : ℕ∞) (φ ∘ swapVecContinuousLinearEquiv i j)
     simpa [ψ, T, Function.comp] using
       (ContDiff.comp_continuousLinearMap
         (g := (swapVecContinuousLinearEquiv i j).toContinuousLinearMap) hφ)
   have hψ_supp : HasCompactSupport ψ := by
-    show HasCompactSupport (φ ∘ swapVecContinuousLinearEquiv i j)
+    change HasCompactSupport (φ ∘ swapVecContinuousLinearEquiv i j)
     simpa [ψ, T, Function.comp] using
       hφ_supp.comp_homeomorph (swapVecContinuousLinearEquiv i j).toHomeomorph
   have hψ_sub : tsupport ψ ⊆ U := by
@@ -490,7 +490,7 @@ noncomputable def swapOnOpenCubeSetOriginCube {d : ℕ} {n : ℤ}
       ∫ x in U, u x * dφ (T x) ∂MeasureTheory.volume =
         ∫ x in U, u (T x) * dφ x ∂MeasureTheory.volume := by
     let f : Vec d → ℝ := fun y => u (T y) * dφ y
-    show ∫ x in U, u x * dφ (T x) ∂MeasureTheory.volume =
+    change ∫ x in U, u x * dφ (T x) ∂MeasureTheory.volume =
       ∫ x in U, u (T x) * dφ x ∂MeasureTheory.volume
     simpa only [U, T, dφ, f, swapVecContinuousLinearEquiv_self_apply] using
       setIntegral_comp_swapVecContinuousLinearEquiv_openCubeSet_originCube i j n f
@@ -498,7 +498,7 @@ noncomputable def swapOnOpenCubeSetOriginCube {d : ℕ} {n : ℤ}
       ∫ x in U, u.grad x k * φ (T x) ∂MeasureTheory.volume =
         ∫ x in U, u.grad (T x) k * φ x ∂MeasureTheory.volume := by
     let f : Vec d → ℝ := fun y => u.grad (T y) k * φ y
-    show ∫ x in U, u.grad x k * φ (T x) ∂MeasureTheory.volume =
+    change ∫ x in U, u.grad x k * φ (T x) ∂MeasureTheory.volume =
       ∫ x in U, u.grad (T x) k * φ x ∂MeasureTheory.volume
     simpa only [U, T, k, f, swapVecContinuousLinearEquiv_self_apply] using
       setIntegral_comp_swapVecContinuousLinearEquiv_openCubeSet_originCube i j n f
@@ -536,14 +536,14 @@ noncomputable def signFlipOnOpenCubeSetOriginCube {d : ℕ} {n : ℤ}
       approx := fun m x => u.approx m (T x)
       approx_smooth := by
         intro m
-        show ContDiff ℝ (⊤ : ℕ∞) (u.approx m ∘ signFlipVecContinuousLinearEquiv i)
+        change ContDiff ℝ (⊤ : ℕ∞) (u.approx m ∘ signFlipVecContinuousLinearEquiv i)
         simpa [T, Function.comp] using
           (ContDiff.comp_continuousLinearMap
             (g := (signFlipVecContinuousLinearEquiv i).toContinuousLinearMap)
             (u.approx_smooth m))
       approx_hasCompactSupport := by
         intro m
-        show HasCompactSupport (u.approx m ∘ signFlipVecContinuousLinearEquiv i)
+        change HasCompactSupport (u.approx m ∘ signFlipVecContinuousLinearEquiv i)
         simpa [T, Function.comp] using
           (u.approx_hasCompactSupport m).comp_homeomorph
             (signFlipVecContinuousLinearEquiv i).toHomeomorph
@@ -713,14 +713,14 @@ noncomputable def swapOnOpenCubeSetOriginCube {d : ℕ} {n : ℤ}
       approx := fun m x => u.approx m (T x)
       approx_smooth := by
         intro m
-        show ContDiff ℝ (⊤ : ℕ∞) (u.approx m ∘ swapVecContinuousLinearEquiv i j)
+        change ContDiff ℝ (⊤ : ℕ∞) (u.approx m ∘ swapVecContinuousLinearEquiv i j)
         simpa [T, Function.comp] using
           (ContDiff.comp_continuousLinearMap
             (g := (swapVecContinuousLinearEquiv i j).toContinuousLinearMap)
             (u.approx_smooth m))
       approx_hasCompactSupport := by
         intro m
-        show HasCompactSupport (u.approx m ∘ swapVecContinuousLinearEquiv i j)
+        change HasCompactSupport (u.approx m ∘ swapVecContinuousLinearEquiv i j)
         simpa [T, Function.comp] using
           (u.approx_hasCompactSupport m).comp_homeomorph
             (swapVecContinuousLinearEquiv i j).toHomeomorph

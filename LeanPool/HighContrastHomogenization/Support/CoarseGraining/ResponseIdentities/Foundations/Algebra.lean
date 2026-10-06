@@ -116,7 +116,8 @@ theorem volumeAverage_vecDot_left {d : ℕ} {U : Set (Vec d)} (v : Vec d) (f : V
     volumeAverage U (fun x => vecDot v (f x)) =
       vecDot v (fun i => volumeAverage U (fun x => f x i)) := by
   have hsum :
-      ∀ i ∈ (Finset.univ : Finset (Fin d)), MeasureTheory.IntegrableOn (fun x => v i * f x i) U := by
+      ∀ i ∈ (Finset.univ : Finset (Fin d)), MeasureTheory.IntegrableOn (fun x => v i * f x i) U
+        := by
     intro i hi
     simpa [MeasureTheory.IntegrableOn, smul_eq_mul] using! (hf i).integrable.smul (v i)
   calc

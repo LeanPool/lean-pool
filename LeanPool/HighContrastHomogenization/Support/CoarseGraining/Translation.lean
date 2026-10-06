@@ -61,7 +61,8 @@ theorem blockEnergyDensity_translate_forward {d : ℕ}
     blockEnergyDensity a (X.translate z) (x + z) =
       blockEnergyDensity (translateCoeffField z a) X x := by
   have harg : (fun i => x i + z i) = x + z := rfl
-  simp [BlockState.translate, BlockState.eval, blockEnergyDensity, blockCoeffField, translateCoeffField,
+  simp [BlockState.translate, BlockState.eval, blockEnergyDensity, blockCoeffField,
+    translateCoeffField,
     sub_eq_add_neg, harg]
 
 theorem blockEnergyDensity_translate_backward {d : ℕ}
@@ -69,7 +70,8 @@ theorem blockEnergyDensity_translate_backward {d : ℕ}
     blockEnergyDensity (translateCoeffField z a) (X.translate (-z)) x =
       blockEnergyDensity a X (x + z) := by
   have harg : (fun i => x i + z i) = x + z := rfl
-  simp [BlockState.translate, BlockState.eval, blockEnergyDensity, blockCoeffField, translateCoeffField,
+  simp [BlockState.translate, BlockState.eval, blockEnergyDensity, blockCoeffField,
+    translateCoeffField,
     sub_eq_add_neg, harg]
 
 theorem volumeAverage_blockEnergyDensity_translate_forward {d : ℕ}

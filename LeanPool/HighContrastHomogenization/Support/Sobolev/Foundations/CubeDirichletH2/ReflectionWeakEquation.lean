@@ -540,9 +540,9 @@ theorem setIntegral_cubeFaceReflectionCellCube_cubeDirichletOddReflectionScalar_
               F (T x) * (s * φ (T (T x)))
           rw [cubeDirichletOddReflectionScalar_eq_cellScalar_of_mem_cellCube
             Q choice F hx]
-          simp [cubeDirichletOddReflectionCellScalar, T, s,
-            cubeFaceReflectionCellFoldMap_involutive Q choice x,
-            mul_assoc, mul_comm]
+          simp only [cubeDirichletOddReflectionCellScalar, T, s,
+            cubeFaceReflectionCellFoldMap_involutive Q choice x]
+          ring
     _ = ∫ y in openCubeSet Q,
         F y *
           (cubeDirichletOddReflectionCellSign choice *
@@ -722,9 +722,9 @@ theorem setIntegral_cubeFaceReflectionBlockSet_cubeDirichletOddReflectionScalar_
         cubeDirichletOddReflectionScalar Q F x * φ x
     rw [cubeDirichletOddReflectionScalar_eq_cellScalar_of_mem_cellCube
       Q choice F hx]
-    simp [cubeDirichletOddReflectionCellScalar, T, s,
-      cubeFaceReflectionCellFoldMap_involutive Q choice x,
-      mul_assoc, mul_comm]
+    simp only [cubeDirichletOddReflectionCellScalar, T, s,
+      cubeFaceReflectionCellFoldMap_involutive Q choice x]
+    ring
   calc
     ∫ x in cubeFaceReflectionBlockSet Q,
         cubeDirichletOddReflectionScalar Q F x * φ x

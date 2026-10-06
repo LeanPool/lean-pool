@@ -455,7 +455,7 @@ theorem undilate_isDilation {d : ℕ} {k : ℤ} {Q : TriadicCube d}
   · show v.toH1.grad x = (undilate hCoeff v).toH1.grad (s⁻¹ • x)
     rw [hgrad (s⁻¹ • x), hcancel_smul x]
   · have hx' : b.toCoeffField x = a.toCoeffField (s⁻¹ • x) := hx
-    show matVecMul (b.toCoeffField x) (v.toH1.grad x) =
+    change matVecMul (b.toCoeffField x) (v.toH1.grad x) =
         matVecMul (a.toCoeffField (s⁻¹ • x)) ((undilate hCoeff v).toH1.grad (s⁻¹ • x))
     rw [hx', hgrad (s⁻¹ • x), hcancel_smul x]
 

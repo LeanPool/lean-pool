@@ -226,7 +226,8 @@ theorem cubeFaceReflectionBlock_reflectedVectorField_weakEquationOnBlock_of_comp
 /-- Compact-test weak equation on the full all-coordinate reflection block,
 with the right-hand side given in the normalized cube `L²` measure used by the
 endpoint interfaces. -/
-theorem cubeFaceReflectionBlock_reflectedVectorField_weakEquationOnBlock_of_compactSupport_of_memLp_normalizedCubeMeasure
+theorem
+  cubeFaceReflectionBlock_reflectedVectorField_weakEquationOnBlock_of_compactSupport_of_memLp_normalizedCubeMeasure
     (W : MeanZeroNeumannPoissonSolution Q F)
     {φ : Vec d → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
     (hφs : HasCompactSupport φ)
@@ -381,7 +382,8 @@ theorem cubeFaceReflectionBlock_reflectedVectorField_weakEquationOn_univ_of_tsup
 /-- Whole-space reflected weak equation with the reflected forcing localized by
 the reflection-block indicator. This is the global forcing form used by
 Euclidean `L²` estimates. -/
-theorem cubeFaceReflectionBlock_reflectedVectorField_weakEquationOn_univ_indicator_of_tsupport_subset
+theorem
+  cubeFaceReflectionBlock_reflectedVectorField_weakEquationOn_univ_indicator_of_tsupport_subset
     (W : MeanZeroNeumannPoissonSolution Q F)
     {φ : Vec d → ℝ} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ)
     (hφs : HasCompactSupport φ)

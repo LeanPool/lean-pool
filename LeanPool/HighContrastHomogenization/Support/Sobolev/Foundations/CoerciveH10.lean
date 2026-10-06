@@ -62,11 +62,14 @@ theorem tendsto_approxH1_toScalarL2
       simp [v, approxH1, H1Function.toScalarL2, HCPolySupport.toScalarL2, H1Function.ofContDiff]
     have hedist :
         edist v.toScalarL2 u.toH1Function.toScalarL2 =
-          MeasureTheory.eLpNorm (fun x => u.approx n x - u.toH1Function x) 2 (volumeMeasureOn U) := by
+          MeasureTheory.eLpNorm (fun x => u.approx n x - u.toH1Function x) 2 (volumeMeasureOn U)
+            := by
       calc
         edist v.toScalarL2 u.toH1Function.toScalarL2
-          = MeasureTheory.eLpNorm (u.approx n - u.toH1Function.toFun) 2 (volumeMeasureOn U) := hedist0
-        _ = MeasureTheory.eLpNorm (fun x => u.approx n x - u.toH1Function x) 2 (volumeMeasureOn U) := by
+          = MeasureTheory.eLpNorm (u.approx n - u.toH1Function.toFun) 2 (volumeMeasureOn U) :=
+            hedist0
+        _ = MeasureTheory.eLpNorm (fun x => u.approx n x - u.toH1Function x) 2 (volumeMeasureOn
+          U) := by
             rfl
     rw [MeasureTheory.Lp.dist_edist, hedist]
   rw [hdist]
@@ -80,7 +83,8 @@ theorem tendsto_approxH1_gradCoordToScalarL2
       (nhds (u.toH1Function.gradCoordToScalarL2 i)) := by
   rw [tendsto_iff_dist_tendsto_zero]
   have hdist :
-      (fun n => dist ((approxH1 hU u n).gradCoordToScalarL2 i) (u.toH1Function.gradCoordToScalarL2 i)) =
+      (fun n => dist ((approxH1 hU u n).gradCoordToScalarL2 i)
+        (u.toH1Function.gradCoordToScalarL2 i)) =
         fun n =>
           ENNReal.toReal
             (MeasureTheory.eLpNorm

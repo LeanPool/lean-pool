@@ -186,7 +186,7 @@ theorem contDiff_comp_euclideanCoordShift {d : ℕ} {u : Vec d → ℝ}
 theorem hasCompactSupport_comp_euclideanCoordShift {d : ℕ}
     {u : Vec d → ℝ} (hu : HasCompactSupport u) (h : ℝ) (i : Fin d) :
     HasCompactSupport (fun x => u (euclideanCoordShift h i x)) := by
-  show HasCompactSupport (u ∘ Homeomorph.addRight (h • basisVec i))
+  change HasCompactSupport (u ∘ Homeomorph.addRight (h • basisVec i))
   simpa [euclideanCoordShift, Function.comp] using
     hu.comp_homeomorph (Homeomorph.addRight (h • basisVec i))
 
@@ -683,7 +683,8 @@ theorem integrable_sq_coordDeriv_comp_segmentBlend_euclideanCoordShift_neg_prod
 
 /-- The integrated smooth FTC/Jensen segment term collapses to the unshifted
 coordinate-derivative square norm. -/
-theorem integral_intervalIntegral_sq_coordDeriv_comp_segmentBlend_euclideanCoordShift_neg_eq_integral
+theorem
+  integral_intervalIntegral_sq_coordDeriv_comp_segmentBlend_euclideanCoordShift_neg_eq_integral
     {d : ℕ} {u : Vec d → ℝ}
     (hu : ContDiff ℝ (⊤ : ℕ∞) u) (hus : HasCompactSupport u)
     (h : ℝ) (i : Fin d) :
@@ -910,7 +911,8 @@ theorem integral_vecDot_comp_euclideanCoordShift_eq_integral_vecDot_comp_euclide
 /-- Whole-space finite-difference summation by parts. The compact-support
 assumption on `u` supplies the integrability needed to expand the two
 difference quotients into ordinary Lebesgue integrals. -/
-theorem integral_euclideanForwardDifferenceQuotient_mul_eq_neg_integral_mul_euclideanBackwardDifferenceQuotient
+theorem
+  integral_euclideanForwardDifferenceQuotient_mul_eq_neg_integral_mul_euclideanBackwardDifferenceQuotient
     {d : ℕ} {u v : Vec d → ℝ}
     (hu : ContDiff ℝ (⊤ : ℕ∞) u) (hv : ContDiff ℝ (⊤ : ℕ∞) v)
     (hus : HasCompactSupport u) (h : ℝ) (i : Fin d) :

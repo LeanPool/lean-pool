@@ -332,7 +332,8 @@ theorem averageGradientFormulaDeterministicCoarseBlockMatrix
     (fun i => volumeAverage U (fun x => (v : AHarmonicFunction a U).toH1.grad x i)) =
       -p + matVecMul (deterministicCoarseBlockMatrix U a).lowerRight q -
         matVecMul (deterministicCoarseBlockMatrix U a).lowerLeft p := by
-  exact basic_cg_identities_average_gradient_formula_deterministicCoarseBlockMatrix_of_isResponseMaximizer
+  exact
+    basic_cg_identities_average_gradient_formula_deterministicCoarseBlockMatrix_of_isResponseMaximizer
     U a hS hK hdet p q hInt (v : AHarmonicFunction a U) v.isResponseMaximizer
     (fun i => (vGrad i : AHarmonicFunction a U))
     (fun i => (vGrad i).isResponseMaximizer)
@@ -386,7 +387,8 @@ theorem averageFluxFormulaDeterministicCoarseBlockMatrix
       (fun x => matVecMul (a x) ((v : AHarmonicFunction a U).toH1.grad x) i)) =
       q + matVecMul (deterministicCoarseBlockMatrix U a).upperRight q -
         matVecMul (deterministicCoarseBlockMatrix U a).upperLeft p := by
-  exact basic_cg_identities_average_flux_formula_deterministicCoarseBlockMatrix_of_isResponseMaximizer
+  exact
+    basic_cg_identities_average_flux_formula_deterministicCoarseBlockMatrix_of_isResponseMaximizer
     U a hS hK hSigma hdet p q hInt (v : AHarmonicFunction a U) v.isResponseMaximizer
     (fun i => (vFlux i : AHarmonicFunction a U))
     (fun i => (vFlux i).isResponseMaximizer)

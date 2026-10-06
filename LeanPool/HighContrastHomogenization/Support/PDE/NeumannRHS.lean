@@ -123,7 +123,8 @@ theorem coeffGradientBilin_apply_toH1CoerciveHilbertSpace
         ∫ x in U,
           vecDot (matVecMul (a x) (u.toH1Function.grad x)) (v.toH1Function.grad x)
             ∂MeasureTheory.volume := by
-              simpa [H1MeanZeroFunction.gradToHilbertVectorL2, H1Function.gradToHilbertVectorL2] using
+              simpa [H1MeanZeroFunction.gradToHilbertVectorL2, H1Function.gradToHilbertVectorL2]
+                using
                 inner_toHilbertVectorL2OfVecField_eq_integral
                   (U := U)
                   (memVectorL2_matVecMul_of_isEllipticFieldOn hEll u.toH1Function.grad_memVectorL2)
@@ -167,7 +168,8 @@ theorem coeffGradientBilin_apply_eq_integral
         ∫ x in U,
           vecDot (matVecMul (a x) (u.toH1Function.grad x)) (v.toH1Function.grad x)
             ∂MeasureTheory.volume := by
-              simpa [H1MeanZeroFunction.gradToHilbertVectorL2, H1Function.gradToHilbertVectorL2] using
+              simpa [H1MeanZeroFunction.gradToHilbertVectorL2, H1Function.gradToHilbertVectorL2]
+                using
                 inner_toHilbertVectorL2OfVecField_eq_integral
                   (U := U)
                   (memVectorL2_matVecMul_of_isEllipticFieldOn hEll u.toH1Function.grad_memVectorL2)
@@ -214,7 +216,8 @@ theorem coeffGradientBilin_self_ge_lam_mul_norm_gradient_sq
       _ =
           ∫ x in U, vecDot (u.toH1Function.grad x) (u.toH1Function.grad x)
             ∂MeasureTheory.volume := by
-              simpa [H1MeanZeroFunction.gradToHilbertVectorL2, H1Function.gradToHilbertVectorL2] using
+              simpa [H1MeanZeroFunction.gradToHilbertVectorL2, H1Function.gradToHilbertVectorL2]
+                using
                 inner_toHilbertVectorL2OfVecField_eq_integral
                   (U := U) u.toH1Function.grad_memVectorL2 u.toH1Function.grad_memVectorL2
   calc

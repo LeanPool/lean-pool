@@ -48,7 +48,7 @@ private theorem H10Function.approx_sub_zeroExtension_eq_indicator_sub
       exact fun hx_support => hx (u.approx_support_subset n hx_support)
     rw [Set.indicator_of_notMem hx, u.zeroExtension_apply_of_not_mem hx, sub_zero, hzero]
 
-private theorem H10Function.fderiv_approx_sub_zeroExtensionGrad_eq_indicator_sub
+private theorem H10Function.fderiv_approx_sub_zeroExtensionGrad_eq_indicator_sub_inwardMollification
     {d : ℕ} {U : Set (Vec d)} (u : H10Function U) (n : ℕ) (i : Fin d) :
     (fun x =>
       (fderiv ℝ (u.approx n) x) (basisVec i) - u.zeroExtensionGrad x i) =
@@ -208,7 +208,7 @@ private theorem H10Function.hasWeakPartialDerivOn_convolution_zeroExtension
         2 volume)
       Filter.atTop (nhds 0) := by
     refine (u.tendsto_approx_grad i).congr (fun n => ?_)
-    rw [u.fderiv_approx_sub_zeroExtensionGrad_eq_indicator_sub n i,
+    rw [u.fderiv_approx_sub_zeroExtensionGrad_eq_indicator_sub_inwardMollification n i,
       eLpNorm_indicator_eq_eLpNorm_restrict hU]
   have hun_tend : Filter.Tendsto
       (fun n => eLpNorm
