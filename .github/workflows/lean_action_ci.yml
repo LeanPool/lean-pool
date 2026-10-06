@@ -36,6 +36,7 @@ on:
       - 'python/lean_pool/quality.py'
       - 'python/lean_pool/validation_cache.py'
       - 'python/lean_pool/ci_artifacts.py'
+      - 'python/lean_pool/ci_cache.py'
       - 'python/lean_pool/rebase_fastpath.py'
       - 'python/pyproject.toml'
       - 'python/uv.lock'
@@ -63,6 +64,7 @@ on:
       - 'python/lean_pool/quality.py'
       - 'python/lean_pool/validation_cache.py'
       - 'python/lean_pool/ci_artifacts.py'
+      - 'python/lean_pool/ci_cache.py'
       - 'python/lean_pool/rebase_fastpath.py'
       - 'python/pyproject.toml'
       - 'python/uv.lock'
@@ -79,10 +81,10 @@ on:
         type: boolean
         default: false
 
-# Cancel superseded runs on the same branch / PR.
+# Let main finish and seed caches; cancel superseded PR runs.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 permissions:
   contents: read
@@ -95,6 +97,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Plan build
     outputs:
+      build_revision: ${{ steps.build-identity.outputs.revision }}
+      base_build_revision: ${{ steps.build-identity.outputs.base_revision }}
       mode: ${{ steps.plan.outputs.mode }}
       matrix: ${{ steps.plan.outputs.matrix }}
       reuse_run_id: ${{ steps.plan.outputs.reuse_run_id }}
@@ -105,15 +109,25 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Only checks whether a warm build cache exists; a cold cache means a
-      # whole-pool build, which is exactly when sharding pays off most.
+      - name: Identify compiled Lean sources
+        id: build-identity
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          revision=$(PYTHONPATH=python python3 -m lean_pool.ci_cache revision)
+          echo "revision=$revision" >> "$GITHUB_OUTPUT"
+          base_revision=$(PYTHONPATH=python python3 -m lean_pool.ci_cache revision --ref "$BASE_REF")
+          echo "base_revision=$base_revision" >> "$GITHUB_OUTPUT"
+
+      # A cold build cache is when whole-pool sharding pays off most.
       - name: Check for a warm build cache
         id: lake-cache
         uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
         with:
           lookup-only: true
           path: .lake/build
-          key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
+          key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ steps.build-identity.outputs.revision }}
           restore-keys: |
             LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
 
@@ -186,6 +200,9 @@ jobs:
     if: needs.plan.outputs.mode == 'single'
     runs-on: ubuntu-latest
     name: Build pool
+    permissions:
+      contents: read
+      actions: write
     steps:
       - name: Checkout project
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
@@ -207,7 +224,7 @@ jobs:
         uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
         with:
           path: .lake/build
-          key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
+          key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ needs.plan.outputs.build_revision }}
           restore-keys: |
             LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
 
@@ -240,6 +257,7 @@ jobs:
           fi
 
       - name: Build project
+        id: compilation
         run: |
           set -euo pipefail
           ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
@@ -259,7 +277,7 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: lean-pool-build
-          path: lean-pool-build.tar.gz
+          path: lean-pool-build.tar.zst
           if-no-files-found: error
           compression-level: 0
           retention-days: 1
@@ -311,12 +329,34 @@ jobs:
           compression-level: 0
           retention-days: 14
 
+      - name: Prepare storage for project validation
+        if: success() && github.ref == 'refs/heads/main'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          CACHE_KEY: LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.ci_cache prepare
+          --repository "$REPOSITORY" --key "$CACHE_KEY"
+
       - name: Save project validation
         # Successful receipts are tiny; retain PR results across registry rebases.
         uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae
         with:
           path: .lake/validation-cache/v1
           key: LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
+
+      - name: Prepare storage for lean dependencies
+        if: always() && github.ref == 'refs/heads/main' && steps.mathlib-cache.outcome == 'success' && steps.dependency-cache.outputs.cache-hit != 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          CACHE_KEY: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.ci_cache prepare
+          --repository "$REPOSITORY" --key "$CACHE_KEY"
 
       - name: Save Lean dependencies
         if: always() && github.ref == 'refs/heads/main' && steps.mathlib-cache.outcome == 'success' && steps.dependency-cache.outputs.cache-hit != 'true'
@@ -327,12 +367,23 @@ jobs:
             .lake/packages
           key: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
 
+      - name: Prepare storage for pool build
+        if: always() && github.ref == 'refs/heads/main' && steps.compilation.outcome == 'success' && steps.cache.outputs.cache-hit != 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          CACHE_KEY: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ needs.plan.outputs.build_revision }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.ci_cache prepare
+          --repository "$REPOSITORY" --key "$CACHE_KEY"
+
       - name: Save pool build
-        if: always() && github.ref == 'refs/heads/main'
+        if: always() && github.ref == 'refs/heads/main' && steps.compilation.outcome == 'success' && steps.cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae
         with:
           path: .lake/build
-          key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
+          key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ needs.plan.outputs.build_revision }}
 
   shard:
     needs: plan
@@ -362,10 +413,11 @@ jobs:
           key: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
 
       - name: Restore pool build
+        id: cache
         uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
         with:
           path: .lake/build
-          key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
+          key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ needs.plan.outputs.build_revision }}
           restore-keys: |
             LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
 
@@ -440,6 +492,9 @@ jobs:
       needs.plan.outputs.mode == 'sharded'
     runs-on: ubuntu-latest
     name: Assemble and lint
+    permissions:
+      contents: read
+      actions: write
     steps:
       - name: Checkout project
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
@@ -456,10 +511,11 @@ jobs:
           key: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
 
       - name: Restore pool build
+        id: cache
         uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
         with:
           path: .lake/build
-          key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
+          key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ needs.plan.outputs.build_revision }}
           restore-keys: |
             LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
 
@@ -511,6 +567,7 @@ jobs:
       # builds the root module and anything a shard missed or failed to
       # deliver, so the assembled pool is complete regardless.
       - name: Build project
+        id: compilation
         run: |
           set -euo pipefail
           ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
@@ -530,7 +587,7 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: lean-pool-build
-          path: lean-pool-build.tar.gz
+          path: lean-pool-build.tar.zst
           if-no-files-found: error
           compression-level: 0
           retention-days: 1
@@ -582,12 +639,34 @@ jobs:
           compression-level: 0
           retention-days: 14
 
+      - name: Prepare storage for project validation
+        if: success() && github.ref == 'refs/heads/main'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          CACHE_KEY: LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.ci_cache prepare
+          --repository "$REPOSITORY" --key "$CACHE_KEY"
+
       - name: Save project validation
         # Successful receipts are tiny; retain PR results across registry rebases.
         uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae
         with:
           path: .lake/validation-cache/v1
           key: LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
+
+      - name: Prepare storage for lean dependencies
+        if: always() && github.ref == 'refs/heads/main' && steps.mathlib-cache.outcome == 'success' && steps.dependency-cache.outputs.cache-hit != 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          CACHE_KEY: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.ci_cache prepare
+          --repository "$REPOSITORY" --key "$CACHE_KEY"
 
       - name: Save Lean dependencies
         if: always() && github.ref == 'refs/heads/main' && steps.mathlib-cache.outcome == 'success' && steps.dependency-cache.outputs.cache-hit != 'true'
@@ -598,12 +677,23 @@ jobs:
             .lake/packages
           key: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
 
+      - name: Prepare storage for pool build
+        if: always() && github.ref == 'refs/heads/main' && steps.compilation.outcome == 'success' && steps.cache.outputs.cache-hit != 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          CACHE_KEY: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ needs.plan.outputs.build_revision }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.ci_cache prepare
+          --repository "$REPOSITORY" --key "$CACHE_KEY"
+
       - name: Save pool build
-        if: always() && github.ref == 'refs/heads/main'
+        if: always() && github.ref == 'refs/heads/main' && steps.compilation.outcome == 'success' && steps.cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae
         with:
           path: .lake/build
-          key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
+          key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ needs.plan.outputs.build_revision }}
 
   # Reuse the prior green project's compiled modules and current main's cache.
   # A missing artifact falls back to the full validation sequence in this job.
@@ -631,7 +721,7 @@ jobs:
         uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
         with:
           path: .lake/build
-          key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.event.pull_request.base.sha }}
+          key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ needs.plan.outputs.base_build_revision }}
           restore-keys: |
             LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
 
