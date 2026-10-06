@@ -1798,7 +1798,7 @@ def gather_prior_art(
             + "\n\n### Tau Ceti comparison\n\n"
             + f"_Not searched: {unreadable}. Tau Ceti prior art is unchecked._"
             + "\n\n### Pool comparison\n\n"
-            + "_Pool comparison is unchecked; no complete current registry is available._"
+            + "_Pool comparison is unchecked; the current registry is unavailable._"
         )
     claims = prior_art.new_claims(head_text, base_text)
     hits, unavailable = prior_art.search_mathlib(claims)
