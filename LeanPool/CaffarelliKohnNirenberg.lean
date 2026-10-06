@@ -4,6 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Scott Armstrong, Vlad Vicol
 -/
 
+module
+
+public import LeanPool.CaffarelliKohnNirenberg.ExtendedSupport
+public import LeanPool.CaffarelliKohnNirenberg.Statements.TheoremA
+public import LeanPool.CaffarelliKohnNirenberg.Statements.TheoremB
+public import LeanPool.CaffarelliKohnNirenberg.Statements.TheoremC
+public import LeanPool.CaffarelliKohnNirenberg.Setting.Examples.ShearFlowSuitable
+public import LeanPool.CaffarelliKohnNirenberg.Witnesses.TrivialSolution
+
 /-!
 # Caffarelli–Kohn–Nirenberg partial regularity
 
@@ -14,12 +23,3 @@ Main declarations: `CKN.caffarelliKohnNirenberg`, `CKN.epsilonRegularityL3`
 Tags: Navier–Stokes, partial differential equations, harmonic analysis
 MSC: 35Q30, 35B65, 42B20, 28A78
 -/
-
-module
-
-public import LeanPool.CaffarelliKohnNirenberg.ExtendedSupport
-public import LeanPool.CaffarelliKohnNirenberg.Statements.TheoremA
-public import LeanPool.CaffarelliKohnNirenberg.Statements.TheoremB
-public import LeanPool.CaffarelliKohnNirenberg.Statements.TheoremC
-public import LeanPool.CaffarelliKohnNirenberg.Setting.Examples.ShearFlowSuitable
-public import LeanPool.CaffarelliKohnNirenberg.Witnesses.TrivialSolution
