@@ -326,8 +326,7 @@ noncomputable def mulContDiffMemLpTop {d : ℕ} {U : Set (Vec d)}
   · intro n
     exact (tsupport_mul_subset_right (f := φ) (g := u.approx n)).trans
       (u.approx_support_subset n)
-  ·
-    have hconst_tendsto :
+  · have hconst_tendsto :
         Filter.Tendsto
           (fun n =>
             MeasureTheory.eLpNorm φ (⊤ : ENNReal) μU *
@@ -533,8 +532,7 @@ noncomputable def mulContDiffHasCompactSupport {d : ℕ} {U : Set (Vec d)}
   · intro n
     exact (tsupport_mul_subset_right (f := φ) (g := u.approx n)).trans
       (u.approx_support_subset n)
-  ·
-    have hconst_tendsto :
+  · have hconst_tendsto :
         Filter.Tendsto
           (fun n =>
             MeasureTheory.eLpNorm φ (⊤ : ENNReal) μU *
@@ -726,8 +724,7 @@ noncomputable def mulSmoothCutoff {d : ℕ} {U : Set (Vec d)} (u : H10Function U
     simpa using! (u.approx_hasCompactSupport n).mul_left (f := φ)
   · intro n
     exact (tsupport_mul_subset_left (f := φ) (g := u.approx n)).trans hφ_sub
-  ·
-    have hconst_tendsto :
+  · have hconst_tendsto :
         Filter.Tendsto
           (fun n =>
             MeasureTheory.eLpNorm φ (⊤ : ENNReal) μU *

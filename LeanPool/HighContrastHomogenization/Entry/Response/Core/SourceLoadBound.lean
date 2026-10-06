@@ -145,6 +145,70 @@ theorem pathwise_bound (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
       C₀ Cn Cs η hC₀ hCn hCs X a hXa hpath hnormt hsrcsmall n hn z hz
     linarith only [h, hu0, hv0]
 
+/-- Integrating the powered pathwise majorant gives the all-scale moment bound. -/
+private theorem respAllScaleAbs_moment_of_majorant {d : ℕ}
+    (γ : ℝ) (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P]
+    (jStar : ℕ) (F : BlockMat d) (t : ℤ) (Q : ℕ) (η C₀ Cn Cs : ℝ)
+    (F0 X : CoeffSpace d → ℝ) (hQ2 : 2 ≤ Q) (hQ0 : Q ≠ 0)
+    (hη : η ∈ Set.Ioo (0 : ℝ) (1 / 2)) (hCs : 0 < Cs)
+    (hKsrc : 0 < C₀ * Cn / Cs)
+    (hF0int : Integrable F0 P) (hF0le : ∫ a, F0 a ∂P ≤ η)
+    (hXint : Integrable (fun a => X a ^ Q) P) (hXmom : ∫ a, X a ^ Q ∂P ≤ 2 ^ Q)
+    (hkey : ∀ᵐ a ∂P, respAllScaleAbs P γ jStar F t a ^ Q ≤
+      (3 : ℝ) ^ Q * F0 a +
+        (3 : ℝ) ^ Q * (3 : ℝ) ^ Q * ((C₀ * Cn / Cs) ^ Q * η) * X a ^ Q +
+        ((3 : ℝ) ^ Q * η ^ Q + 2 * ((3 : ℝ) ^ Q * (3 : ℝ) ^ Q) * (η / Cs ^ Q))) :
+    ∫ a, respAllScaleAbs P γ jStar F t a ^ Q ∂P ≤
+      3 ^ Q * (2 + 3 ^ Q * ((C₀ * Cn / Cs) ^ Q * 2 ^ Q + 2 / Cs ^ Q)) * η := by
+  have hCsQ : (0 : ℝ) < Cs ^ Q := pow_pos hCs _
+  have hi1 : Integrable (fun a => (3 : ℝ) ^ Q * F0 a) P := hF0int.const_mul _
+  have hi2 : Integrable (fun a => (3 : ℝ) ^ Q * (3 : ℝ) ^ Q *
+      ((C₀ * Cn / Cs) ^ Q * η) * X a ^ Q) P := hXint.const_mul _
+  have hi12 : Integrable (fun a => (3 : ℝ) ^ Q * F0 a +
+      (3 : ℝ) ^ Q * (3 : ℝ) ^ Q * ((C₀ * Cn / Cs) ^ Q * η) * X a ^ Q) P := hi1.add hi2
+  have hi3 : Integrable (fun _ : CoeffSpace d =>
+      (3 : ℝ) ^ Q * η ^ Q + 2 * ((3 : ℝ) ^ Q * (3 : ℝ) ^ Q) * (η / Cs ^ Q)) P :=
+    integrable_const _
+  have hgint : Integrable (fun a => (3 : ℝ) ^ Q * F0 a +
+      (3 : ℝ) ^ Q * (3 : ℝ) ^ Q * ((C₀ * Cn / Cs) ^ Q * η) * X a ^ Q +
+      ((3 : ℝ) ^ Q * η ^ Q + 2 * ((3 : ℝ) ^ Q * (3 : ℝ) ^ Q) * (η / Cs ^ Q))) P :=
+    hi12.add hi3
+  have hgval : ∫ a, ((3 : ℝ) ^ Q * F0 a +
+      (3 : ℝ) ^ Q * (3 : ℝ) ^ Q * ((C₀ * Cn / Cs) ^ Q * η) * X a ^ Q +
+      ((3 : ℝ) ^ Q * η ^ Q + 2 * ((3 : ℝ) ^ Q * (3 : ℝ) ^ Q) * (η / Cs ^ Q))) ∂P =
+      (3 : ℝ) ^ Q * (∫ a, F0 a ∂P) +
+      (3 : ℝ) ^ Q * (3 : ℝ) ^ Q * ((C₀ * Cn / Cs) ^ Q * η) * (∫ a, X a ^ Q ∂P) +
+      ((3 : ℝ) ^ Q * η ^ Q + 2 * ((3 : ℝ) ^ Q * (3 : ℝ) ^ Q) * (η / Cs ^ Q)) := by
+    rw [integral_add hi12 hi3, integral_add hi1 hi2, integral_const_mul, integral_const_mul]
+    simp
+  have hmain := integral_mono_of_nonneg
+    (Filter.Eventually.of_forall fun a => pow_nonneg (respAllScaleAbs_nonneg P γ jStar F t a) Q)
+    hgint hkey
+  rw [hgval] at hmain
+  refine hmain.trans ?_
+  have hetaQ : η ^ Q ≤ η := by
+    have h1 := pow_le_pow_of_le_one hη.1.le (by linarith only [hη.2]) hQ2
+    simpa using h1
+  have h3Q : (0 : ℝ) < (3 : ℝ) ^ Q := pow_pos (by norm_num) _
+  have hKpow : (0 : ℝ) < (C₀ * Cn / Cs) ^ Q := pow_pos hKsrc _
+  have t1 : (3 : ℝ) ^ Q * (∫ a, F0 a ∂P) ≤ (3 : ℝ) ^ Q * η :=
+    mul_le_mul_of_nonneg_left hF0le h3Q.le
+  have t2 : (3 : ℝ) ^ Q * η ^ Q ≤ (3 : ℝ) ^ Q * η :=
+    mul_le_mul_of_nonneg_left hetaQ h3Q.le
+  have hcoef : (0 : ℝ) ≤ (3 : ℝ) ^ Q * (3 : ℝ) ^ Q * ((C₀ * Cn / Cs) ^ Q * η) :=
+    mul_nonneg (mul_nonneg h3Q.le h3Q.le) (mul_nonneg hKpow.le hη.1.le)
+  have t3 : (3 : ℝ) ^ Q * (3 : ℝ) ^ Q * ((C₀ * Cn / Cs) ^ Q * η) *
+      (∫ a, X a ^ Q ∂P) ≤
+      (3 : ℝ) ^ Q * (3 : ℝ) ^ Q * ((C₀ * Cn / Cs) ^ Q * η) * 2 ^ Q :=
+    mul_le_mul_of_nonneg_left hXmom hcoef
+  have hfin : (3 : ℝ) ^ Q * η +
+      (3 : ℝ) ^ Q * (3 : ℝ) ^ Q * ((C₀ * Cn / Cs) ^ Q * η) * 2 ^ Q +
+      ((3 : ℝ) ^ Q * η + 2 * ((3 : ℝ) ^ Q * (3 : ℝ) ^ Q) * (η / Cs ^ Q)) =
+      3 ^ Q * (2 + 3 ^ Q * ((C₀ * Cn / Cs) ^ Q * 2 ^ Q + 2 / Cs ^ Q)) * η := by
+    field_simp
+    ring
+  linarith only [t1, t2, t3, hfin]
+
 /-- **The two-sided carrier bound** `response_allscale_abs`: `E[A^Q] <= C eta` for the
 TWO-SIDED all-scale maximum `A = respAllScaleAbs` (`ResponseBlockObjects.lean`).
 
@@ -267,7 +331,6 @@ theorem response_allscale_abs (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ) (_hγ : γ �
       (profile P γ (Geometry.explicitRoundedGrid jStar (explicitCanonicalMetric F)) jStar t t)
     have hraw := raw.prof
     linarith only [hmax, hptt, hDs0, hraw, hprof]
-  have hCsQ : (0 : ℝ) < Cs ^ bigQ d γ := pow_pos _hCs _
   -- the pathwise bound
   have hkey : ∀ᵐ a ∂P, respAllScaleAbs P γ jStar F t a ^ bigQ d γ ≤
       (3 : ℝ) ^ bigQ d γ * F0 a +
@@ -322,67 +385,9 @@ theorem response_allscale_abs (d : ℕ) (_hd : 2 ≤ d) (γ : ℝ) (_hγ : γ �
               2 * ((3 : ℝ) ^ bigQ d γ * (3 : ℝ) ^ bigQ d γ) * (η / Cs ^ bigQ d γ)) := by
           rw [e1, e3, e5]
           nlinarith only [e2, h3]
-  -- integrate
-  have hi1 : Integrable (fun a => (3 : ℝ) ^ bigQ d γ * F0 a) P := hfint.const_mul _
-  have hi2 : Integrable (fun a => (3 : ℝ) ^ bigQ d γ * (3 : ℝ) ^ bigQ d γ *
-      ((C₀ * Cn / Cs) ^ bigQ d γ * η) * X a ^ bigQ d γ) P := hXint.const_mul _
-  have hi12 : Integrable (fun a => (3 : ℝ) ^ bigQ d γ * F0 a +
-      (3 : ℝ) ^ bigQ d γ * (3 : ℝ) ^ bigQ d γ * ((C₀ * Cn / Cs) ^ bigQ d γ * η) *
-        X a ^ bigQ d γ) P := hi1.add hi2
-  have hi3 : Integrable (fun _ : CoeffSpace d =>
-      (3 : ℝ) ^ bigQ d γ * η ^ bigQ d γ +
-        2 * ((3 : ℝ) ^ bigQ d γ * (3 : ℝ) ^ bigQ d γ) * (η / Cs ^ bigQ d γ)) P :=
-    integrable_const _
-  have hgint : Integrable (fun a => (3 : ℝ) ^ bigQ d γ * F0 a +
-      (3 : ℝ) ^ bigQ d γ * (3 : ℝ) ^ bigQ d γ * ((C₀ * Cn / Cs) ^ bigQ d γ * η) *
-        X a ^ bigQ d γ +
-      ((3 : ℝ) ^ bigQ d γ * η ^ bigQ d γ +
-        2 * ((3 : ℝ) ^ bigQ d γ * (3 : ℝ) ^ bigQ d γ) * (η / Cs ^ bigQ d γ))) P :=
-    hi12.add hi3
-  have hgval : ∫ a, ((3 : ℝ) ^ bigQ d γ * F0 a +
-      (3 : ℝ) ^ bigQ d γ * (3 : ℝ) ^ bigQ d γ * ((C₀ * Cn / Cs) ^ bigQ d γ * η) *
-        X a ^ bigQ d γ +
-      ((3 : ℝ) ^ bigQ d γ * η ^ bigQ d γ +
-        2 * ((3 : ℝ) ^ bigQ d γ * (3 : ℝ) ^ bigQ d γ) * (η / Cs ^ bigQ d γ))) ∂P =
-      (3 : ℝ) ^ bigQ d γ * (∫ a, F0 a ∂P) +
-      (3 : ℝ) ^ bigQ d γ * (3 : ℝ) ^ bigQ d γ * ((C₀ * Cn / Cs) ^ bigQ d γ * η) *
-        (∫ a, X a ^ bigQ d γ ∂P) +
-      ((3 : ℝ) ^ bigQ d γ * η ^ bigQ d γ +
-        2 * ((3 : ℝ) ^ bigQ d γ * (3 : ℝ) ^ bigQ d γ) * (η / Cs ^ bigQ d γ)) := by
-    rw [integral_add hi12 hi3, integral_add hi1 hi2, integral_const_mul, integral_const_mul]
-    simp
-  have hmain := integral_mono_of_nonneg
-    (Filter.Eventually.of_forall fun a => pow_nonneg (respAllScaleAbs_nonneg P γ jStar F t a)
-      (bigQ d γ)) hgint hkey
-  rw [hgval] at hmain
-  refine hmain.trans ?_
   have hF0i : ∫ a, F0 a ∂P ≤ η := by rw [hF0eq]; exact hfhle
-  have hetaQ : η ^ bigQ d γ ≤ η := by
-    have h1 := pow_le_pow_of_le_one hη.1.le (by linarith only [hη.2]) (show 1 ≤ bigQ d γ by omega)
-    simpa using h1
-  have h3Q : (0 : ℝ) < (3 : ℝ) ^ bigQ d γ := pow_pos (by norm_num) _
-  have hKpow : (0 : ℝ) < (C₀ * Cn / Cs) ^ bigQ d γ := pow_pos hKsrc _
-  have t1 : (3 : ℝ) ^ bigQ d γ * (∫ a, F0 a ∂P) ≤ (3 : ℝ) ^ bigQ d γ * η :=
-    mul_le_mul_of_nonneg_left hF0i h3Q.le
-  have t2 : (3 : ℝ) ^ bigQ d γ * η ^ bigQ d γ ≤ (3 : ℝ) ^ bigQ d γ * η :=
-    mul_le_mul_of_nonneg_left hetaQ h3Q.le
-  have hcoef : (0 : ℝ) ≤ (3 : ℝ) ^ bigQ d γ * (3 : ℝ) ^ bigQ d γ *
-      ((C₀ * Cn / Cs) ^ bigQ d γ * η) :=
-    mul_nonneg (mul_nonneg h3Q.le h3Q.le) (mul_nonneg hKpow.le hη.1.le)
-  have t3 : (3 : ℝ) ^ bigQ d γ * (3 : ℝ) ^ bigQ d γ * ((C₀ * Cn / Cs) ^ bigQ d γ * η) *
-      (∫ a, X a ^ bigQ d γ ∂P) ≤
-      (3 : ℝ) ^ bigQ d γ * (3 : ℝ) ^ bigQ d γ * ((C₀ * Cn / Cs) ^ bigQ d γ * η) *
-        2 ^ bigQ d γ := mul_le_mul_of_nonneg_left hXmom hcoef
-  have hfin : (3 : ℝ) ^ bigQ d γ * η +
-      (3 : ℝ) ^ bigQ d γ * (3 : ℝ) ^ bigQ d γ * ((C₀ * Cn / Cs) ^ bigQ d γ * η) *
-        2 ^ bigQ d γ +
-      ((3 : ℝ) ^ bigQ d γ * η +
-        2 * ((3 : ℝ) ^ bigQ d γ * (3 : ℝ) ^ bigQ d γ) * (η / Cs ^ bigQ d γ)) =
-      3 ^ bigQ d γ * (2 + 3 ^ bigQ d γ *
-        ((C₀ * Cn / Cs) ^ bigQ d γ * 2 ^ bigQ d γ + 2 / Cs ^ bigQ d γ)) * η := by
-    field_simp
-    ring
-  linarith only [t1, t2, t3, hfin]
+  exact respAllScaleAbs_moment_of_majorant γ P jStar F t (bigQ d γ) η C₀ Cn Cs F0 X
+    hQ2 hQ0 hη _hCs hKsrc hfint hF0i hXint hXmom hkey
 
 /-! ## Helpers for the source load bound
 

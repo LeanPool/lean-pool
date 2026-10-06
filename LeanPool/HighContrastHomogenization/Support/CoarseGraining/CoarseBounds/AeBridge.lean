@@ -44,7 +44,6 @@ which is definitionally the entry space `Fin d → Fin d → ℝ`.  No `Euclidea
 -/
 
 open MeasureTheory
-open scoped Classical
 
 variable {d : ℕ} {Θ : ℝ} {a a' : CoeffField d}
 

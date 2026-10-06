@@ -47,7 +47,7 @@ Reference: the paper (Armstrong–Kuusi–Loher, to appear).
 namespace HCPolySupport
 
 open MeasureTheory
-open scoped ENNReal Classical
+open scoped ENNReal
 
 noncomputable section
 
@@ -411,8 +411,10 @@ land `ellipticTruncateReg` with pointwise-lane measurability only and flag the
 join measurability as a design signal for the consumer packets (P5/P7). -/
 @[expose]
 def ellipticTruncateReg (Θ : ℝ) (a : RegCoeffField d) : RegCoeffField d where
-  toFun := fun x => if IsEllipticMatrix 1 Θ (a x) then a x else 1
+  toFun := open scoped Classical in
+    fun x => if IsEllipticMatrix 1 Θ (a x) then a x else 1
   entry_measurable := fun i j => by
+    classical
     have hay : Measurable (fun x : Vec d => a x) :=
       measurable_matrix_of_entries (fun i' j' => a.entry_measurable i' j')
     have hSet : MeasurableSet {x : Vec d | IsEllipticMatrix 1 Θ (a x)} :=
@@ -424,6 +426,7 @@ def ellipticTruncateReg (Θ : ℝ) (a : RegCoeffField d) : RegCoeffField d where
     rw [hEq]
     exact Measurable.ite hSet (a.entry_measurable i j) measurable_const
   entry_locInt := fun i j => by
+    classical
     have hay : Measurable (fun x : Vec d => a x) :=
       measurable_matrix_of_entries (fun i' j' => a.entry_measurable i' j')
     have hSet : MeasurableSet {x : Vec d | IsEllipticMatrix 1 Θ (a x)} :=
@@ -448,7 +451,8 @@ def ellipticTruncateReg (Θ : ℝ) (a : RegCoeffField d) : RegCoeffField d where
       exact le_trans h1 (le_max_right Θ 1)
 
 @[simp] theorem ellipticTruncateReg_apply (Θ : ℝ) (a : RegCoeffField d) (x : Vec d) :
-    ellipticTruncateReg Θ a x = if IsEllipticMatrix 1 Θ (a x) then a x else 1 := rfl
+    ellipticTruncateReg Θ a x =
+      (open scoped Classical in if IsEllipticMatrix 1 Θ (a x) then a x else 1) := rfl
 
 /-- **The elliptic truncation is measurable for the pointwise lane.**  See the
 declaration docstring: the entry-test lane is a design signal (nonlinear integral
@@ -457,6 +461,7 @@ deliberately not claimed here. -/
 theorem measurable_pointwiseSigmaR_ellipticTruncateReg (Θ : ℝ) :
     @Measurable (RegCoeffField d) (RegCoeffField d) _ (pointwiseSigmaR d)
       (ellipticTruncateReg Θ) := by
+  classical
   refine measurable_into_pointwiseSigmaR (measurable_toFun_of_entries ?_)
   intro y i j
   have hay : Measurable (fun a : RegCoeffField d => a y) :=

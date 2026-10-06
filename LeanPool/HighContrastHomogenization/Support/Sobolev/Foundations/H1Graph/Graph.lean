@@ -157,31 +157,31 @@ theorem mem_h1GraphClosedSubmodule_iff_exists_h1Function
   constructor
   · intro hz
     refine ⟨toH1FunctionOfMemH1Graph (U := U) z hz, ?_, ?_⟩
-    change (MeasureTheory.Lp.memLp z.1).toLp z.1 = z.1
-    exact MeasureTheory.Lp.toLp_coeFn z.1 (MeasureTheory.Lp.memLp z.1)
-    have hvec :
-        (toH1FunctionOfMemH1Graph (U := U) z hz).gradToVectorL2 =
-          hilbertVectorL2ToVectorL2 (U := U) z.2 := by
-      change (MeasureTheory.Lp.memLp (hilbertVectorL2ToVectorL2 (U := U) z.2)).toLp
-          (hilbertVectorL2ToVectorL2 (U := U) z.2) =
-        hilbertVectorL2ToVectorL2 (U := U) z.2
-      exact MeasureTheory.Lp.toLp_coeFn
-        (hilbertVectorL2ToVectorL2 (U := U) z.2)
-        (MeasureTheory.Lp.memLp (hilbertVectorL2ToVectorL2 (U := U) z.2))
-    calc
-      (toH1FunctionOfMemH1Graph (U := U) z hz).gradToHilbertVectorL2
-          = vectorL2ToHilbertVectorL2 (U := U)
-              ((toH1FunctionOfMemH1Graph (U := U) z hz).gradToVectorL2) := by
-                symm
-                simpa [H1Function.gradToVectorL2, H1Function.gradToHilbertVectorL2] using
-                  vectorL2ToHilbertVectorL2_toVectorL2
-                    (U := U)
-                    (f := (toH1FunctionOfMemH1Graph (U := U) z hz).grad)
-                    (toH1FunctionOfMemH1Graph (U := U) z hz).grad_memVectorL2
-      _ = vectorL2ToHilbertVectorL2 (U := U) (hilbertVectorL2ToVectorL2 (U := U) z.2) := by
-            rw [hvec]
-      _ = z.2 := by
-            exact vectorL2ToHilbertVectorL2_hilbertVectorL2ToVectorL2 (U := U) z.2
+    · change (MeasureTheory.Lp.memLp z.1).toLp z.1 = z.1
+      exact MeasureTheory.Lp.toLp_coeFn z.1 (MeasureTheory.Lp.memLp z.1)
+    · have hvec :
+          (toH1FunctionOfMemH1Graph (U := U) z hz).gradToVectorL2 =
+            hilbertVectorL2ToVectorL2 (U := U) z.2 := by
+        change (MeasureTheory.Lp.memLp (hilbertVectorL2ToVectorL2 (U := U) z.2)).toLp
+            (hilbertVectorL2ToVectorL2 (U := U) z.2) =
+          hilbertVectorL2ToVectorL2 (U := U) z.2
+        exact MeasureTheory.Lp.toLp_coeFn
+          (hilbertVectorL2ToVectorL2 (U := U) z.2)
+          (MeasureTheory.Lp.memLp (hilbertVectorL2ToVectorL2 (U := U) z.2))
+      calc
+        (toH1FunctionOfMemH1Graph (U := U) z hz).gradToHilbertVectorL2
+            = vectorL2ToHilbertVectorL2 (U := U)
+                ((toH1FunctionOfMemH1Graph (U := U) z hz).gradToVectorL2) := by
+                  symm
+                  simpa [H1Function.gradToVectorL2, H1Function.gradToHilbertVectorL2] using
+                    vectorL2ToHilbertVectorL2_toVectorL2
+                      (U := U)
+                      (f := (toH1FunctionOfMemH1Graph (U := U) z hz).grad)
+                      (toH1FunctionOfMemH1Graph (U := U) z hz).grad_memVectorL2
+        _ = vectorL2ToHilbertVectorL2 (U := U) (hilbertVectorL2ToVectorL2 (U := U) z.2) := by
+              rw [hvec]
+        _ = z.2 := by
+              exact vectorL2ToHilbertVectorL2_hilbertVectorL2ToVectorL2 (U := U) z.2
   · rintro ⟨u, hval, hgrad⟩
     have hz :
         z = (u.toScalarL2, u.gradToHilbertVectorL2) := by
@@ -203,56 +203,56 @@ theorem exists_h1Function_of_toScalarL2_toHilbertVectorL2OfVecField_mem_h1GraphC
       h1GraphClosedSubmodule (U := U)) :
     ∃ w : H1Function U, w.toFun = u ∧ w.grad = G := by
   refine ⟨?_, ?_⟩
-  refine
-    { toFun := u
-      grad := G
-      memL2 := hu
-      gradMemL2 := ?_
-      hasWeakGradient := ?_ }
-  · intro i
-    let π : Vec d →L[ℝ] ℝ := ContinuousLinearMap.proj i
-    simpa [MemL2On, MemVectorL2, volumeMeasureOn] using! π.comp_memLp' hG
-  · intro i φ hφ_smooth hφ_compact hφ_sub
-    let ψ : H1WeakTestFunction U :=
-      ⟨φ, hφ_smooth, hφ_compact, hφ_sub⟩
-    have hconstraint :
-        h1WeakConstraintCLM (U := U) i ψ
-            (toScalarL2 hu, toHilbertVectorL2OfVecField hG) = 0 := by
-      exact (mem_h1GraphClosedSubmodule_iff (U := U)
-        (toScalarL2 hu, toHilbertVectorL2OfVecField hG)).mp hz i ψ
-    have hval :
-        ∫ x in U, (toScalarL2 hu) x * ψ.deriv i x ∂MeasureTheory.volume =
-          ∫ x in U, u x * ψ.deriv i x ∂MeasureTheory.volume := by
-      refine MeasureTheory.integral_congr_ae ?_
-      filter_upwards [coeFn_toScalarL2 hu] with x hx
-      rw [hx]
-    have hgrad :
-        ∫ x in U, (toHilbertVectorL2OfVecField hG) x i * ψ x
-            ∂MeasureTheory.volume =
-          ∫ x in U, G x i * ψ x ∂MeasureTheory.volume := by
-      refine MeasureTheory.integral_congr_ae ?_
-      filter_upwards [coeFn_toHilbertVectorL2OfVecField hG] with x hx
-      rw [hx]
-      simp [hilbertifyVecField]
-    have hsum :
-        ∫ x in U, u x * ψ.deriv i x ∂MeasureTheory.volume +
-            ∫ x in U, G x i * ψ x ∂MeasureTheory.volume = 0 := by
-      calc
-        ∫ x in U, u x * ψ.deriv i x ∂MeasureTheory.volume +
-            ∫ x in U, G x i * ψ x ∂MeasureTheory.volume =
-          ∫ x in U, (toScalarL2 hu) x * ψ.deriv i x ∂MeasureTheory.volume +
-              ∫ x in U, (toHilbertVectorL2OfVecField hG) x i * ψ x
-                ∂MeasureTheory.volume := by
-                rw [hval, hgrad]
-        _ = h1WeakConstraintCLM (U := U) i ψ
-              (toScalarL2 hu, toHilbertVectorL2OfVecField hG) := by
-              rw [h1WeakConstraintCLM_apply_eq_integral]
-        _ = 0 := hconstraint
-    have hneg :
-        ∫ x in U, u x * ψ.deriv i x ∂MeasureTheory.volume =
-          -∫ x in U, G x i * ψ x ∂MeasureTheory.volume :=
-      eq_neg_of_add_eq_zero_left hsum
-    simpa [ψ, H1WeakTestFunction.deriv] using hneg
+  · refine
+      { toFun := u
+        grad := G
+        memL2 := hu
+        gradMemL2 := ?_
+        hasWeakGradient := ?_ }
+    · intro i
+      let π : Vec d →L[ℝ] ℝ := ContinuousLinearMap.proj i
+      simpa [MemL2On, MemVectorL2, volumeMeasureOn] using! π.comp_memLp' hG
+    · intro i φ hφ_smooth hφ_compact hφ_sub
+      let ψ : H1WeakTestFunction U :=
+        ⟨φ, hφ_smooth, hφ_compact, hφ_sub⟩
+      have hconstraint :
+          h1WeakConstraintCLM (U := U) i ψ
+              (toScalarL2 hu, toHilbertVectorL2OfVecField hG) = 0 := by
+        exact (mem_h1GraphClosedSubmodule_iff (U := U)
+          (toScalarL2 hu, toHilbertVectorL2OfVecField hG)).mp hz i ψ
+      have hval :
+          ∫ x in U, (toScalarL2 hu) x * ψ.deriv i x ∂MeasureTheory.volume =
+            ∫ x in U, u x * ψ.deriv i x ∂MeasureTheory.volume := by
+        refine MeasureTheory.integral_congr_ae ?_
+        filter_upwards [coeFn_toScalarL2 hu] with x hx
+        rw [hx]
+      have hgrad :
+          ∫ x in U, (toHilbertVectorL2OfVecField hG) x i * ψ x
+              ∂MeasureTheory.volume =
+            ∫ x in U, G x i * ψ x ∂MeasureTheory.volume := by
+        refine MeasureTheory.integral_congr_ae ?_
+        filter_upwards [coeFn_toHilbertVectorL2OfVecField hG] with x hx
+        rw [hx]
+        simp [hilbertifyVecField]
+      have hsum :
+          ∫ x in U, u x * ψ.deriv i x ∂MeasureTheory.volume +
+              ∫ x in U, G x i * ψ x ∂MeasureTheory.volume = 0 := by
+        calc
+          ∫ x in U, u x * ψ.deriv i x ∂MeasureTheory.volume +
+              ∫ x in U, G x i * ψ x ∂MeasureTheory.volume =
+            ∫ x in U, (toScalarL2 hu) x * ψ.deriv i x ∂MeasureTheory.volume +
+                ∫ x in U, (toHilbertVectorL2OfVecField hG) x i * ψ x
+                  ∂MeasureTheory.volume := by
+                  rw [hval, hgrad]
+          _ = h1WeakConstraintCLM (U := U) i ψ
+                (toScalarL2 hu, toHilbertVectorL2OfVecField hG) := by
+                rw [h1WeakConstraintCLM_apply_eq_integral]
+          _ = 0 := hconstraint
+      have hneg :
+          ∫ x in U, u x * ψ.deriv i x ∂MeasureTheory.volume =
+            -∫ x in U, G x i * ψ x ∂MeasureTheory.volume :=
+        eq_neg_of_add_eq_zero_left hsum
+      simpa [ψ, H1WeakTestFunction.deriv] using hneg
   · constructor <;> rfl
 
 /-- Closedness of the `H¹` graph, stated as a sequential/filter handoff for

@@ -71,8 +71,7 @@ private theorem integrable_sup'_abs_pow_of_integrable_abs_pow
       Integrable (fun ω => ∑ i ∈ s, |X i ω| ^ p) μ :=
     integrable_sum_abs_pow (μ := μ) (X := X) (s := s) (p := p) hLp_int
   refine Integrable.mono' hsum_int ?_ ?_
-  ·
-    have hsup_meas : Measurable (fun ω => s.sup' hs (fun i => |X i ω|)) := by
+  · have hsup_meas : Measurable (fun ω => s.sup' hs (fun i => |X i ω|)) := by
       convert
         (Finset.measurable_sup' (s := s) (hs := hs) (f := fun i => abs ∘ X i)
           (fun i _ => continuous_abs.measurable.comp (h_meas i))) using 1
@@ -433,8 +432,7 @@ theorem
           · exact mul_le_mul_of_nonneg_left hLp_sum (by positivity)
           · refine mul_le_mul_of_nonneg_left ?_ ?_
             · exact mul_le_mul_of_nonneg_left hsqrt_sum_le (by positivity)
-            ·
-              have hRB_nonneg : 0 ≤ rosenthalBennettIntegralConst := by
+            · have hRB_nonneg : 0 ≤ rosenthalBennettIntegralConst := by
                 dsimp [rosenthalBennettIntegralConst]
                 positivity
               positivity

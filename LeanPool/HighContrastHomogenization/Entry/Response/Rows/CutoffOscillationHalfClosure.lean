@@ -381,11 +381,116 @@ open MeasureTheory
 
 noncomputable section
 
+private theorem hasIntegrableCoarseBlock_respGridAdaptedCell {d : ℕ}
+    (hd : 2 ≤ d) (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P]
+    (γ : ℝ) (E : BlockMat d)
+    (Ψ : ℝ → ℝ) (Kg : ℝ) (Src : CoeffSpace d → ℝ)
+    (hstat : IsStationaryLaw P) (hdag : CoarseEllipticityDagger P γ E Ψ Kg Src)
+    (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
+    (hm : (explicitCanonicalMetric F).PosDef) :
+    ∀ (k : ℤ) (w : Fin d → ℤ),
+      HasIntegrableCoarseBlock P (adaptedCellAtCenter (respGrid jStar F) k w) := fun k w =>
+  hasIntegrableCoarseBlock_adaptedCellAtCenter_respGrid hd P γ E Ψ Kg Src hstat hdag jStar hjStar
+    F hm k w
+
+private theorem respCoeffMinusCarrierIntegrabilityFacts {d : ℕ} [NeZero d]
+    (hd : 2 ≤ d) (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P]
+    (hstat : IsStationaryLaw P) (γ : ℝ) (E : BlockMat d) (Ψ : ℝ → ℝ) (Kg : ℝ)
+    (Src : CoeffSpace d → ℝ) (hdag : CoarseEllipticityDagger P γ E Ψ Kg Src)
+    (jStar : ℕ) (hjStar : 2 * d ≤ 3 ^ jStar) (F : BlockMat d)
+    (hm : (explicitCanonicalMetric F).PosDef) (hq : IsUnit (respGrid jStar F))
+    (t : ℤ) (e : Vec d) (φ : Vec d → ℝ)
+    (hφ : IsResponseCutoff (respGrid jStar F) t φ) (Y : BlockVec d)
+    (uP : (a : CoeffSpace d) → AHarmonicFunction (respCoeffMinus F a) (respCell jStar F t))
+    (hmax : ∀ a, IsResponseMaximizer (respCell jStar F t) (respP (respMean P jStar F t) e)
+      (respqMinus P jStar F t e) (respCoeffMinus F a) (uP a))
+    (hJ : Integrable (fun a => respJ (respGrid jStar F) t (respP (respMean P jStar F t) e)
+      (respqMinus P jStar F t e) (respCoeffMinus F a)) P) :
+    AEStronglyMeasurable (fun a => volumeAverage (respCell jStar F t)
+      (fun x => (φ x - 1) * (vecDot Y.2 (optimizerField (respCoeffMinus F a) (uP a) x).1 +
+        vecDot Y.1 (optimizerField (respCoeffMinus F a) (uP a) x).2))) P ∧
+    (∀ a : CoeffSpace d, IntegrableOn
+      (fun x => vecDot Y.2 (optimizerField (respCoeffMinus F a) (uP a) x).1 +
+        vecDot Y.1 (optimizerField (respCoeffMinus F a) (uP a) x).2)
+      (HighContrast.adaptedCell (respGrid jStar F) t)) ∧
+    (∀ (k : ℤ) (W : Fin d → ℤ), Integrable (fun a =>
+      (Real.sqrt (vecDot Y.1 (matVecMul (coarseBlockMatrix
+        (adaptedCellAtCenter (respGrid jStar F) k W) (respCoeffMinus F a)).upperLeft Y.1)) +
+       Real.sqrt (vecDot Y.2 (matVecMul (coarseBlockMatrix
+        (adaptedCellAtCenter (respGrid jStar F) k W) (respCoeffMinus F a)).lowerRight Y.2)) ^ 2) P) := by
+  have hq0 : IsUnit (respGrid jStar F) := hq
+  have hUmeas : MeasurableSet (respCell jStar F t) :=
+    (isOpen_adaptedCell_of_isUnit hq0 t).measurableSet
+  have hPhiM : AEStronglyMeasurable (fun a => volumeAverage (respCell jStar F t)
+      (fun x => (φ x - 1) * (vecDot Y.2 (optimizerField (respCoeffMinus F a) (uP a) x).1 +
+        vecDot Y.1 (optimizerField (respCoeffMinus F a) (uP a) x).2))) P := by
+    have hcont : Continuous (fun x : Vec d => φ x - 1) :=
+      hφ.2.2.2.2.2.1.continuous.sub continuous_const
+    have : IsFiniteMeasure (volumeMeasureOn (respCell jStar F t)) :=
+      (adaptedCell_isOpenBoundedConvexDomain (respGrid jStar F) hq0
+        t).isFiniteMeasure_restrict_volume
+    have hL2 : MemScalarL2 (respCell jStar F t)
+        ((respCell jStar F t).indicator (fun x => φ x - 1)) := by
+      refine MemLp.of_bound ((hcont.measurable.indicator hUmeas).aestronglyMeasurable) 2
+        (Filter.Eventually.of_forall fun x => ?_)
+      by_cases hx : x ∈ respCell jStar F t
+      · rw [Set.indicator_of_mem hx, Real.norm_eq_abs, abs_le]
+        have h1 := hφ.1 x
+        have h2 := hφ.2.1 x
+        constructor <;> linarith only [h1, h2]
+      · rw [Set.indicator_of_notMem hx, norm_zero]
+        norm_num
+    exact (measurable_volumeAverage_weighted_cross_optimizerField_respCoeffMinus P jStar hjStar F
+      hm t e uP hmax hUmeas (fun x hx => hx) hcont hL2 Y).aestronglyMeasurable
+  have hUcell : adaptedCellAtCenter (respGrid jStar F) (t - ((0 : ℕ) : ℤ)) 0 =
+      respCell jStar F t := by
+    rw [Nat.cast_zero, sub_zero]
+    exact adaptedCellAtCenter_zero (respGrid jStar F) t
+  have hfat : ∀ (a : CoeffSpace d) (m : ℕ), ∀ W ∈ triadicIndexBox d m, IntegrableOn
+      (fun x => vecDot Y.2 (optimizerField (respCoeffMinus F a) (uP a) x).1 +
+        vecDot Y.1 (optimizerField (respCoeffMinus F a) (uP a) x).2)
+      (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) W) := fun a m W hW =>
+    (integrableOn_cross_optimizerField_respCoeffMinus_adaptedCellAtCenter jStar hjStar F hm t m a
+      (uP a) Y hW).1
+  have hfint : ∀ a : CoeffSpace d, IntegrableOn
+      (fun x => vecDot Y.2 (optimizerField (respCoeffMinus F a) (uP a) x).1 +
+        vecDot Y.1 (optimizerField (respCoeffMinus F a) (uP a) x).2)
+      (HighContrast.adaptedCell (respGrid jStar F) t) := by
+    intro a
+    have h := hfat a 0 0 (zero_mem_triadicIndexBox 0)
+    rwa [hUcell] at h
+  have hUL0 : ∀ (k : ℤ) (W : Fin d → ℤ) (a : CoeffSpace d), 0 ≤ vecDot Y.1 (matVecMul
+      (coarseBlockMatrix (adaptedCellAtCenter (respGrid jStar F) k W)
+        (respCoeffMinus F a)).upperLeft Y.1) := fun k W a =>
+    (zero_le_vecDot_coarseBlockMatrix_respCoeffMinus_adaptedCellAtCenter jStar hjStar F hm k a Y W).1
+  have hLR0 : ∀ (k : ℤ) (W : Fin d → ℤ) (a : CoeffSpace d), 0 ≤ vecDot Y.2 (matVecMul
+      (coarseBlockMatrix (adaptedCellAtCenter (respGrid jStar F) k W)
+        (respCoeffMinus F a)).lowerRight Y.2) := fun k W a =>
+    (zero_le_vecDot_coarseBlockMatrix_respCoeffMinus_adaptedCellAtCenter jStar hjStar F hm k a Y W).2
+  have hheadsq : ∀ (k : ℤ) (W : Fin d → ℤ), Integrable (fun a =>
+      (Real.sqrt (vecDot Y.1 (matVecMul (coarseBlockMatrix
+            (adaptedCellAtCenter (respGrid jStar F) k W) (respCoeffMinus F a)).upperLeft Y.1)) +
+        Real.sqrt (vecDot Y.2 (matVecMul (coarseBlockMatrix
+            (adaptedCellAtCenter (respGrid jStar F) k W) (respCoeffMinus F a)).lowerRight Y.2)) ^ 2)
+      P := by
+    intro k W
+    have hblk : HasIntegrableCoarseBlock P (adaptedCellAtCenter (respGrid jStar F) k W) :=
+      hasIntegrableCoarseBlock_adaptedCellAtCenter_respGrid hd P γ E Ψ Kg Src hstat hdag jStar hjStar
+        F hm k W
+    exact integrable_sq_sqrt_add_sqrt_coarseBlockMatrix Y
+      (integrable_vecDot_coarseBlockMatrix_upperLeft Y
+        (integrable_coarseBlockMatrix_upperLeft_respCoeffMinus P jStar hjStar F hm k W hblk))
+      (integrable_vecDot_coarseBlockMatrix_lowerRight Y
+        (integrable_coarseBlockMatrix_lowerRight_respCoeffMinus P jStar hjStar F hm k W hblk))
+      (fun a => hUL0 k W a) (fun a => hLR0 k W a)
+  exact ⟨hPhiM, hfint, hheadsq⟩
+
 /-- **The oscillation half of the cutoff-mean row at the carriers, minus sign.**  The
 `(φ-1)`-weighted cell average of the crossed pairing of the deterministic dual variable with the
 terminal optimizer state is `P`-integrable, and its annealed mean differs from that of its
 depth-`H` cell part by at most `32 d² Θ 3^{-H} (3^{3/2} 𝓛_s^-)^{1/2} (8 E[J_t^-])^{1/2}` times the
 geometric factor. -/
+
 theorem integrable_and_abs_integral_cross_sub_cellPart_le_respCoeffMinus_car {d : ℕ} [NeZero d]
     (hd : 2 ≤ d) (P : Measure (CoeffSpace d)) [IsProbabilityMeasure P]
     (hstat : IsStationaryLaw P) (γ : ℝ) (E : BlockMat d) (Ψ : ℝ → ℝ) (Kg : ℝ)
@@ -429,11 +534,8 @@ theorem integrable_and_abs_integral_cross_sub_cellPart_le_respCoeffMinus_car {d 
                       respSourceLoad P jStar F s (respCoeffMinus F) Y))
               * Real.sqrt (2 * (4 * respEJMinus P jStar F t e)) := by
   classical
-  have hq0 : IsUnit (respGrid jStar F) := hq
-  have hblkAll : ∀ (k : ℤ) (w : Fin d → ℤ),
-      HasIntegrableCoarseBlock P (adaptedCellAtCenter (respGrid jStar F) k w) := fun k w =>
-    hasIntegrableCoarseBlock_adaptedCellAtCenter_respGrid hd P γ E Ψ Kg Src hstat hdag jStar hjStar
-      F hm k w
+  have hblkAll := hasIntegrableCoarseBlock_respGridAdaptedCell hd P γ E Ψ Kg Src hstat hdag
+    jStar hjStar F hm
   have hcross : ∀ (m : ℕ), ∀ W ∈ triadicIndexBox d m, Integrable (fun a =>
       volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) W)
         (fun x => vecDot Y.2 (optimizerField (respCoeffMinus F a) (uM a) x).1
@@ -458,84 +560,13 @@ theorem integrable_and_abs_integral_cross_sub_cellPart_le_respCoeffMinus_car {d 
         (fun x => vecDot Y.2 (optimizerField (respCoeffMinus F a) (uM a) x).1
           + vecDot Y.1 (optimizerField (respCoeffMinus F a) (uM a) x).2))
       (fun _ W hW => hcross H W hW) 0
-  have hUmeas : MeasurableSet (respCell jStar F t) :=
-    (isOpen_adaptedCell_of_isUnit hq0 t).measurableSet
-  have hPhiM : AEStronglyMeasurable (fun a => volumeAverage (respCell jStar F t)
-      (fun x => (φ x - 1) * (vecDot Y.2 (optimizerField (respCoeffMinus F a) (uM a) x).1
-        + vecDot Y.1 (optimizerField (respCoeffMinus F a) (uM a) x).2))) P := by
-    have hcont : Continuous (fun x : Vec d => φ x - 1) :=
-      hφ.2.2.2.2.2.1.continuous.sub continuous_const
-    have : IsFiniteMeasure (volumeMeasureOn (respCell jStar F t)) :=
-      (adaptedCell_isOpenBoundedConvexDomain (respGrid jStar F) hq0
-        t).isFiniteMeasure_restrict_volume
-    have hL2 : MemScalarL2 (respCell jStar F t)
-        ((respCell jStar F t).indicator (fun x => φ x - 1)) := by
-      refine MemLp.of_bound ((hcont.measurable.indicator hUmeas).aestronglyMeasurable) 2
-        (Filter.Eventually.of_forall fun x => ?_)
-      by_cases hx : x ∈ respCell jStar F t
-      · rw [Set.indicator_of_mem hx, Real.norm_eq_abs, abs_le]
-        have h1 := hφ.1 x
-        have h2 := hφ.2.1 x
-        constructor
-        · linarith only [h1]
-        · linarith only [h2]
-      · rw [Set.indicator_of_notMem hx, norm_zero]
-        norm_num
-    exact (measurable_volumeAverage_weighted_cross_optimizerField_respCoeffMinus P jStar hjStar F
-      hm t e uM hmax hUmeas (fun x hx => hx) hcont hL2 Y).aestronglyMeasurable
+  obtain ⟨hPhiM, hfint, hheadsq⟩ := respCoeffMinusCarrierIntegrabilityFacts hd P hstat γ E Ψ Kg Src
+    hdag jStar hjStar F hm hq t e φ hφ Y uM hmax hJ
   have hcellE : ∀ (n : ℕ), ∀ W ∈ triadicIndexBox d (H + n + 1), Integrable (fun a =>
       volumeAverage (adaptedCellAtCenter (respGrid jStar F) (t - ((H + n + 1 : ℕ) : ℤ)) W)
         (scalarVariationEnergyIntegrand (respCoeffMinus F a) (uM a))) P :=
     fun n W hW => integrable_volumeAverage_energy_descendant_respCoeffMinus P jStar hjStar F hm
       H s t ht e uM hmax hJ n W hW
-  have hUcell : adaptedCellAtCenter (respGrid jStar F) (t - ((0 : ℕ) : ℤ)) 0 = respCell jStar F t := by
-    rw [Nat.cast_zero, sub_zero]
-    exact adaptedCellAtCenter_zero (respGrid jStar F) t
-  -- The crossed pairing is integrable on the terminal cell and on every descendant cell.
-  have hfat : ∀ (a : CoeffSpace d) (m : ℕ), ∀ W ∈ triadicIndexBox d m, IntegrableOn
-      (fun x => vecDot Y.2 (optimizerField (respCoeffMinus F a) (uM a) x).1
-        + vecDot Y.1 (optimizerField (respCoeffMinus F a) (uM a) x).2)
-      (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) W) := fun a m W hW =>
-    (integrableOn_cross_optimizerField_respCoeffMinus_adaptedCellAtCenter jStar hjStar F hm t m a
-      (uM a) Y hW).1
-  have habsat : ∀ (a : CoeffSpace d) (m : ℕ), ∀ W ∈ triadicIndexBox d m, IntegrableOn
-      (fun x => |vecDot Y.2 (optimizerField (respCoeffMinus F a) (uM a) x).1
-        + vecDot Y.1 (optimizerField (respCoeffMinus F a) (uM a) x).2|)
-      (adaptedCellAtCenter (respGrid jStar F) (t - (m : ℤ)) W) := fun a m W hW =>
-    (integrableOn_cross_optimizerField_respCoeffMinus_adaptedCellAtCenter jStar hjStar F hm t m a
-      (uM a) Y hW).2
-  have hfint : ∀ a : CoeffSpace d, IntegrableOn
-      (fun x => vecDot Y.2 (optimizerField (respCoeffMinus F a) (uM a) x).1
-        + vecDot Y.1 (optimizerField (respCoeffMinus F a) (uM a) x).2)
-      (HighContrast.adaptedCell (respGrid jStar F) t) := by
-    intro a
-    have h := hfat a 0 0 (zero_mem_triadicIndexBox 0)
-    rwa [hUcell] at h
-  -- The per-cell head forms are nonnegative and their squares are integrable.
-  have hUL0 : ∀ (k : ℤ) (W : Fin d → ℤ) (a : CoeffSpace d), 0 ≤ vecDot Y.1 (matVecMul
-      (coarseBlockMatrix (adaptedCellAtCenter (respGrid jStar F) k W)
-        (respCoeffMinus F a)).upperLeft Y.1) := fun k W a =>
-    (zero_le_vecDot_coarseBlockMatrix_respCoeffMinus_adaptedCellAtCenter jStar hjStar F hm k a Y W).1
-  have hLR0 : ∀ (k : ℤ) (W : Fin d → ℤ) (a : CoeffSpace d), 0 ≤ vecDot Y.2 (matVecMul
-      (coarseBlockMatrix (adaptedCellAtCenter (respGrid jStar F) k W)
-        (respCoeffMinus F a)).lowerRight Y.2) := fun k W a =>
-    (zero_le_vecDot_coarseBlockMatrix_respCoeffMinus_adaptedCellAtCenter jStar hjStar F hm k a Y W).2
-  have hheadsq : ∀ (k : ℤ) (W : Fin d → ℤ), Integrable (fun a =>
-      (Real.sqrt (vecDot Y.1 (matVecMul (coarseBlockMatrix
-            (adaptedCellAtCenter (respGrid jStar F) k W) (respCoeffMinus F a)).upperLeft Y.1))
-        + Real.sqrt (vecDot Y.2 (matVecMul (coarseBlockMatrix
-            (adaptedCellAtCenter (respGrid jStar F) k W) (respCoeffMinus F a)).lowerRight Y.2))) ^ 2)
-      P := by
-    intro k W
-    have hblk : HasIntegrableCoarseBlock P (adaptedCellAtCenter (respGrid jStar F) k W) :=
-      hasIntegrableCoarseBlock_adaptedCellAtCenter_respGrid hd P γ E Ψ Kg Src hstat hdag jStar hjStar
-        F hm k W
-    exact integrable_sq_sqrt_add_sqrt_coarseBlockMatrix Y
-      (integrable_vecDot_coarseBlockMatrix_upperLeft Y
-        (integrable_coarseBlockMatrix_upperLeft_respCoeffMinus P jStar hjStar F hm k W hblk))
-      (integrable_vecDot_coarseBlockMatrix_lowerRight Y
-        (integrable_coarseBlockMatrix_lowerRight_respCoeffMinus P jStar hjStar F hm k W hblk))
-      (fun a => hUL0 k W a) (fun a => hLR0 k W a)
   refine integrable_and_abs_integral_sub_cellPart_le_descendant_load_of_carriers
     P jStar F s (respCoeffMinus F) Y
     (fun a => volumeAverage (respCell jStar F t)

@@ -39,10 +39,12 @@ bounded open convex domain.
 namespace PotentialSolenoidalL2Data
 
 variable {d : ℕ} [NeZero d] {U : Set (Vec d)}
+omit [NeZero d] in
 /-- Every generator of the predicate `L²` zero-trace potential submodule
 transports under `vectorL2ToHilbertVectorL2` to an element in the range of
 the gradient projection from the closed `H¹₀` graph. -/
 private theorem vectorL2ToHilbertVectorL2_mem_range_gradientCLM_of_mem_potentialZeroTraceSubmodule
+    [NeZero d]
     {F : VectorL2 U} (hF : F ∈ potentialZeroTraceSubmodule U) :
     vectorL2ToHilbertVectorL2 (U := U) F ∈
       Set.range (H10GraphClosed.gradientCLM (d := d) (U := U)) := by

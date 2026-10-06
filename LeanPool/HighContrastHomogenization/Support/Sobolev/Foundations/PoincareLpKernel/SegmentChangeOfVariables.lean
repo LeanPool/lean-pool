@@ -132,7 +132,9 @@ theorem setIntegral_segmentBlend_mul_norm_sub_eq_inv_pow_mul_setIntegral_scaled
             ∂MeasureTheory.volume := by
             simp [a, V, hcoeff]
 
+omit [NeZero d] in
 theorem setIntegral_segmentBlend_mul_norm_sub_le_inv_pow_mul_setIntegral
+    [NeZero d]
     {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     {x : Vec d} (hx : x ∈ U) {t : ℝ} (ht0 : 0 ≤ t) (ht1 : t < 1)
     {φ : Vec d → ℝ}
@@ -183,7 +185,9 @@ theorem setIntegral_segmentBlend_mul_norm_sub_le_inv_pow_mul_setIntegral
           ∫ z in U, φ z * ‖x - z‖ ∂MeasureTheory.volume := by
             simp [norm_sub_rev]
 
+omit [NeZero d] in
 theorem setIntegral_segmentBlend_mul_norm_sub_le_inv_pow_mul_setIntegral_inter_closedBall
+    [NeZero d]
     {U : Set (Vec d)} (hU : IsOpenBoundedConvexDomain U)
     {x : Vec d} (hx : x ∈ U) {t : ℝ} (ht0 : 0 ≤ t) (ht1 : t < 1)
     {φ : Vec d → ℝ}
