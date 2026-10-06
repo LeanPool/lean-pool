@@ -204,11 +204,11 @@ theorem lintegral_vec3_finite_rank_average_error_le_of_field_energy
     (u : ParabolicPoint → Vec3) (Du : ParabolicPoint → Fin 3 → Vec3)
     (huMeas : Measurable u) (hDuMeas : Measurable Du)
     (huenergy : (∫⁻ t in J, ∫⁻ y in U,
-      ENNReal.ofReal (vec3EuclideanNorm (u (y,t))) ^ (2 : ℝ) ∂volume) < ∞)
+      ENNReal.ofReal (vec3EuclideanNorm (u (y, t))) ^ (2 : ℝ) ∂volume) < ∞)
     (hweak : ∀ᵐ t ∂(volume.restrict J), ∀ i : Fin 3,
-      CKN.HasWeakGradientOn U (fun y => u (y,t) i) (fun y => Du (y,t) i))
+      CKN.HasWeakGradientOn U (fun y => u (y, t) i) (fun y => Du (y, t) i))
     (henergy : (∫⁻ t in J, ∫⁻ y in U,
-      ENNReal.ofReal (CKN.spatialGradientSq u Du (y,t)) ∂volume) < ∞)
+      ENNReal.ofReal (CKN.spatialGradientSq u Du (y, t)) ∂volume) < ∞)
     (hK : MeasurableSet K) (hJ : MeasurableSet J)
     (φ : ι → Vec3 → ℝ) (hφ : ∀ i, Measurable (φ i))
     (hweight : ∀ i y, 0 ≤ φ i y ∧ φ i y ≤ 1)
@@ -223,10 +223,10 @@ theorem lintegral_vec3_finite_rank_average_error_le_of_field_energy
       ∑ i, 3 * (CKN.sobolevPoincareL6Constant *
         (volume (CKN.euclideanBall (x i) r)) ^ (1 / 3 : ℝ)) ^ (2 : ℕ) *
         (∫⁻ t in J, ∫⁻ y in CKN.euclideanBall (x i) r,
-          ENNReal.ofReal (CKN.spatialGradientSq u Du (y,t)) ∂volume) := by
+          ENNReal.ofReal (CKN.spatialGradientSq u Du (y, t)) ∂volume) := by
   let B : ι → Set Vec3 := fun i => CKN.euclideanBall (x i) r
   let a : ι → ℝ → Vec3 := fun i t j => average (volume.restrict (B i))
-    (fun y => u (y,t) j)
+    (fun y => u (y, t) j)
   have ha : ∀ i, Measurable (a i) := by
     intro i
     apply measurable_pi_iff.mpr
@@ -250,7 +250,7 @@ theorem lintegral_vec3_finite_rank_average_error_le_of_field_energy
         3 * (CKN.sobolevPoincareL6Constant *
           (volume (B i)) ^ (1 / 3 : ℝ)) ^ (2 : ℕ) *
           (∫⁻ t in J, ∫⁻ y in B i,
-            ENNReal.ofReal (CKN.spatialGradientSq u Du (y,t)) ∂volume) := by
+            ENNReal.ofReal (CKN.spatialGradientSq u Du (y, t)) ∂volume) := by
     have hvol : volume (B i) < ∞ := by
       change volume (CKN.euclideanBall (x i) r) < ∞
       rw [CKN.Foundation.Parabolic.euclideanBall_eq_vec3Ball hr]
@@ -277,7 +277,7 @@ theorem lintegral_vec3_finite_rank_average_error_le_of_field_energy
     _ ≤ ∑ i, 3 * (CKN.sobolevPoincareL6Constant *
           (volume (B i)) ^ (1 / 3 : ℝ)) ^ (2 : ℕ) *
           (∫⁻ t in J, ∫⁻ y in B i,
-            ENNReal.ofReal (CKN.spatialGradientSq u Du (y,t)) ∂volume) :=
+            ENNReal.ofReal (CKN.spatialGradientSq u Du (y, t)) ∂volume) :=
       Finset.sum_le_sum fun i hi => hlocal i
 
 /-- Combining the ball Poincaré estimate with a bounded-overlap coloring gives
@@ -288,11 +288,11 @@ theorem lintegral_vec3_finite_rank_average_error_le_of_colored_cover
     (u : ParabolicPoint → Vec3) (Du : ParabolicPoint → Fin 3 → Vec3)
     (huMeas : Measurable u) (hDuMeas : Measurable Du)
     (huenergy : (∫⁻ t in J, ∫⁻ y in U,
-      ENNReal.ofReal (vec3EuclideanNorm (u (y,t))) ^ (2 : ℝ) ∂volume) < ∞)
+      ENNReal.ofReal (vec3EuclideanNorm (u (y, t))) ^ (2 : ℝ) ∂volume) < ∞)
     (hweak : ∀ᵐ t ∂(volume.restrict J), ∀ i : Fin 3,
-      CKN.HasWeakGradientOn U (fun y => u (y,t) i) (fun y => Du (y,t) i))
+      CKN.HasWeakGradientOn U (fun y => u (y, t) i) (fun y => Du (y, t) i))
     (henergy : (∫⁻ t in J, ∫⁻ y in U,
-      ENNReal.ofReal (CKN.spatialGradientSq u Du (y,t)) ∂volume) < ∞)
+      ENNReal.ofReal (CKN.spatialGradientSq u Du (y, t)) ∂volume) < ∞)
     (hK : MeasurableSet K) (hJ : MeasurableSet J)
     (x : ι → Vec3) (color : ι → Fin N)
     (φ : ι → Vec3 → ℝ) (hφ : ∀ i, Measurable (φ i))
@@ -310,7 +310,7 @@ theorem lintegral_vec3_finite_rank_average_error_le_of_colored_cover
       3 * (CKN.sobolevPoincareL6Constant *
         (volume (CKN.euclideanBall (0 : Vec3) r)) ^ (1 / 3 : ℝ)) ^ (2 : ℕ) *
         (∑ _j : Fin N, ∫⁻ t in J, ∫⁻ y in U,
-          ENNReal.ofReal (CKN.spatialGradientSq u Du (y,t)) ∂volume) := by
+          ENNReal.ofReal (CKN.spatialGradientSq u Du (y, t)) ∂volume) := by
   let B : ι → Set Vec3 := fun i => CKN.euclideanBall (x i) r
   let q : ParabolicPoint → ℝ≥0∞ := fun z =>
     ENNReal.ofReal (CKN.spatialGradientSq u Du z)
@@ -341,9 +341,9 @@ theorem lintegral_vec3_finite_rank_average_error_le_of_colored_cover
       (∑ i, 3 * (CKN.sobolevPoincareL6Constant *
         (volume (B i)) ^ (1 / 3 : ℝ)) ^ (2 : ℕ) *
         (∫⁻ t in J, ∫⁻ y in B i,
-          q (y,t) ∂volume ∂volume)) =
+          q (y, t) ∂volume ∂volume)) =
         3 * C ^ (2 : ℕ) *
-          (∑ i, ∫⁻ t in J, ∫⁻ y in B i, q (y,t) ∂volume ∂volume) := by
+          (∑ i, ∫⁻ t in J, ∫⁻ y in B i, q (y, t) ∂volume ∂volume) := by
     simp_rw [hvolume, C]
     rw [← Finset.mul_sum]
   calc
@@ -355,18 +355,18 @@ theorem lintegral_vec3_finite_rank_average_error_le_of_colored_cover
       ∑ i, 3 * (CKN.sobolevPoincareL6Constant *
         (volume (B i)) ^ (1 / 3 : ℝ)) ^ (2 : ℕ) *
         (∫⁻ t in J, ∫⁻ y in B i,
-          q (y,t) ∂volume ∂volume) := by
+          q (y, t) ∂volume ∂volume) := by
       simpa [B, q] using hsumErr
     _ = 3 * C ^ (2 : ℕ) *
-        (∑ i, ∫⁻ t in J, ∫⁻ y in B i, q (y,t) ∂volume ∂volume) := hsumFactor
+        (∑ i, ∫⁻ t in J, ∫⁻ y in B i, q (y, t) ∂volume ∂volume) := hsumFactor
     _ ≤ 3 * C ^ (2 : ℕ) *
         (∑ _j : Fin N, ∫⁻ t in J, ∫⁻ y in U,
-          q (y,t) ∂volume ∂volume) := by
+          q (y, t) ∂volume ∂volume) := by
       gcongr
     _ = 3 * (CKN.sobolevPoincareL6Constant *
         (volume (CKN.euclideanBall (0 : Vec3) r)) ^ (1 / 3 : ℝ)) ^ (2 : ℕ) *
         (∑ _j : Fin N, ∫⁻ t in J, ∫⁻ y in U,
-          ENNReal.ofReal (CKN.spatialGradientSq u Du (y,t)) ∂volume ∂volume) := by
+          ENNReal.ofReal (CKN.spatialGradientSq u Du (y, t)) ∂volume ∂volume) := by
       simp only [C, q]
 
 /-- The finite-rank estimate uses a uniform velocity slice bound and an
@@ -377,14 +377,14 @@ theorem lintegral_vec3_finite_rank_average_error_le_of_mixed_bounds
     (Du : ParabolicPoint → Fin 3 → Vec3)
     (huMeas : Measurable u) (hDuMeas : Measurable Du)
     (hweak : ∀ᵐ t ∂(volume.restrict J), ∀ i : Fin 3,
-      CKN.HasWeakGradientOn W (fun y => u (y,t) i) (fun y => Du (y,t) i))
+      CKN.HasWeakGradientOn W (fun y => u (y, t) i) (fun y => Du (y, t) i))
     (hJ : MeasurableSet J) [IsFiniteMeasure (volume.restrict J)]
     (M G : ℝ≥0∞) (hM : M < ⊤) (hG : G < ⊤)
     (hWKc : W ⊆ Kc)
     (huBound : ∀ t ∈ J, ∫⁻ x in Kc,
-      ENNReal.ofReal (vec3EuclideanNorm (u (x,t))) ^ (2 : ℝ) ∂volume ≤ M)
+      ENNReal.ofReal (vec3EuclideanNorm (u (x, t))) ^ (2 : ℝ) ∂volume ≤ M)
     (hDuBound : (∫⁻ t in J, ∫⁻ x in Kc,
-      ENNReal.ofReal (CKN.spatialGradientSq u Du (x,t)) ∂volume) ≤ G)
+      ENNReal.ofReal (CKN.spatialGradientSq u Du (x, t)) ∂volume) ≤ G)
     (hK : MeasurableSet K)
     (x : ι → Vec3) (color : ι → Fin N)
     (φ : ι → Vec3 → ℝ) (hφ : ∀ i, Measurable (φ i))
@@ -402,7 +402,7 @@ theorem lintegral_vec3_finite_rank_average_error_le_of_mixed_bounds
       3 * (CKN.sobolevPoincareL6Constant *
         (volume (CKN.euclideanBall (0 : Vec3) r)) ^ (1 / 3 : ℝ)) ^ (2 : ℕ) *
         (∑ _j : Fin N, ∫⁻ t in J, ∫⁻ y in W,
-          ENNReal.ofReal (CKN.spatialGradientSq u Du (y,t)) ∂volume) := by
+          ENNReal.ofReal (CKN.spatialGradientSq u Du (y, t)) ∂volume) := by
   have humeas : Measurable (fun z : ParabolicPoint =>
       ENNReal.ofReal (vec3EuclideanNorm (u z)) ^ (2 : ℝ)) := by
     have hnorm : Measurable (fun z : ParabolicPoint =>
@@ -411,7 +411,7 @@ theorem lintegral_vec3_finite_rank_average_error_le_of_mixed_bounds
       fun_prop
     fun_prop
   have huenergy : (∫⁻ t in J, ∫⁻ y in W,
-      ENNReal.ofReal (vec3EuclideanNorm (u (y,t))) ^ (2 : ℝ) ∂volume) < ⊤ := by
+      ENNReal.ofReal (vec3EuclideanNorm (u (y, t))) ^ (2 : ℝ) ∂volume) < ⊤ := by
     apply lt_of_le_of_lt ?_
       (finite_lintegral_prod_of_uniform_slice_bound
         (K := Kc) (J := J) _ humeas hJ M hM huBound)
@@ -419,7 +419,7 @@ theorem lintegral_vec3_finite_rank_average_error_le_of_mixed_bounds
     intro t
     exact lintegral_mono_set hWKc
   have hgradenergy : (∫⁻ t in J, ∫⁻ y in W,
-      ENNReal.ofReal (CKN.spatialGradientSq u Du (y,t)) ∂volume) < ⊤ := by
+      ENNReal.ofReal (CKN.spatialGradientSq u Du (y, t)) ∂volume) < ⊤ := by
     apply lt_of_le_of_lt ?_ (lt_of_le_of_lt hDuBound hG)
     apply lintegral_mono
     intro t

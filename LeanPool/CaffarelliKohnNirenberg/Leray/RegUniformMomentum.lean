@@ -345,7 +345,8 @@ theorem regUniform_weakDivFree_contDiff_divergence_eq_zero
   intro x
   simpa [divF] using congrFun hzero x
 
-/-- The regularized transport velocity is classically divergence free on each positive-time slice. -/
+/-- The regularized transport velocity is classically divergence free
+on each positive-time slice. -/
 theorem regUniform_mollified_velocity_divergence_eq_zero
     (ρ : RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
     (u : ParabolicPoint → Vec3) (t : ℝ)

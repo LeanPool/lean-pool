@@ -34,17 +34,17 @@ theorem ae_weak_partial_on_union_of_exhaustions
     (f d : Vec3 × ℝ → ℝ) (m : Fin 3)
     (hlocal : ∀ j, ∀ᵐ t ∂(volume.restrict (J j)),
       HasWeakPartialDerivOn (interior (K j)) m
-        (fun x => f (x,t)) (fun x => d (x,t))) :
+        (fun x => f (x, t)) (fun x => d (x, t))) :
     ∀ᵐ t ∂(volume.restrict I),
       HasWeakPartialDerivOn U m
-        (fun x => f (x,t)) (fun x => d (x,t)) := by
+        (fun x => f (x, t)) (fun x => d (x, t)) := by
   have hKmonotone : Monotone K := monotone_nat_of_le_succ hKmono
   have hJmonotone : Monotone J := monotone_nat_of_le_succ hJmono
   rw [← hJcover, ae_restrict_iUnion_iff]
   intro j
   have hk (k : ℕ) : ∀ᵐ t ∂(volume.restrict (J j)),
       HasWeakPartialDerivOn (interior (K k)) m
-        (fun x => f (x,t)) (fun x => d (x,t)) := by
+        (fun x => f (x, t)) (fun x => d (x, t)) := by
     let a := max j k
     have hJa : J j ⊆ J a := hJmonotone (le_max_left j k)
     have hΩa : interior (K k) ⊆ interior (K a) :=
@@ -54,11 +54,11 @@ theorem ae_weak_partial_on_union_of_exhaustions
     exact ht.restrict isOpen_interior hΩa
   have hall : ∀ᵐ t ∂(volume.restrict (J j)), ∀ k,
       HasWeakPartialDerivOn (interior (K k)) m
-        (fun x => f (x,t)) (fun x => d (x,t)) :=
+        (fun x => f (x, t)) (fun x => d (x, t)) :=
     (ae_all_iff).mpr hk
   filter_upwards [hall] with t ht
   exact hasWeakPartialDerivOn_of_inner_exhaustion
     hU K hKmono hKinner hKcover
-    (fun x => f (x,t)) (fun x => d (x,t)) m ht
+    (fun x => f (x, t)) (fun x => d (x, t)) m ht
 
 end CKN.Leray

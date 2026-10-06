@@ -18,7 +18,8 @@ public import Mathlib.Analysis.SpecialFunctions.SmoothTransition
 # Density extension for weighted Carleman inequalities
 
 This module is intended to extend smooth compactly supported inequalities to
-fields with space-time weak derivatives (`lem:carleman-sobolev` of the Escauriaza–Seregin–Šverák manuscript).
+fields with space-time weak derivatives (`lem:carleman-sobolev` of the Escauriaza–Seregin–Šverák
+manuscript).
 -/
 
 public section

@@ -11,7 +11,8 @@ public import LeanPool.CaffarelliKohnNirenberg.Leray.Support.CarlemanCoreMixed
 /-!
 # Backward space-time mollification
 
-The regularity bootstrap of `thm:vorticity-regularity` of the Escauriaza–Seregin–Šverák manuscript works on cylinders whose top is the
+The regularity bootstrap of `thm:vorticity-regularity` of the Escauriaza–Seregin–Šverák manuscript
+works on cylinders whose top is the
 terminal time of the hypotheses. A space-time mollification evaluated `5ε` earlier in time only
 uses values of the field strictly below the top, so smooth approximations are available up to
 the top face. This file records the derivative formulas for kernels, the pairing identities with

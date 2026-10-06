@@ -26,6 +26,97 @@ noncomputable section
 
 namespace CKN
 
+private theorem parabolic_memLp_of_product_restrict
+    {E : Type} [TopologicalSpace E] [ContinuousENorm E]
+    {C : Set Vec3} {J : Set ℝ} (hC : MeasurableSet C) (hJ : MeasurableSet J)
+    (f : ParabolicPoint → E)
+    (hf : MemLp (fun z : Vec3 × ℝ => f (parabolicHomeomorph.symm z)) 4
+      ((volume : Measure (Vec3 × ℝ)).restrict (C ×ˢ J))) :
+    MemLp f 4 (volume.restrict (spaceTimeSet C J)) := by
+  have hprodMeas : MeasurableSet (C ×ˢ J) := hC.prod hJ
+  have hpre : parabolicHomeomorph ⁻¹' (C ×ˢ J) = spaceTimeSet C J := by
+    ext z
+    rfl
+  have hmp := parabolicHomeomorph_measurePreserving.restrict_preimage hprodMeas
+  rw [hpre] at hmp
+  have h := hf.comp_measurePreserving hmp
+  change MemLp (fun z : ParabolicPoint =>
+    f (parabolicHomeomorph.symm (parabolicHomeomorph z))) 4
+    (volume.restrict (spaceTimeSet C J)) at h
+  have hEqFun : (fun z : ParabolicPoint =>
+      f (parabolicHomeomorph.symm (parabolicHomeomorph z))) = f := by
+    funext z
+    rfl
+  rw [hEqFun] at h
+  exact h
+
+private theorem h1_slice_representation_of_product_data
+    {V U B : Set Vec3} {J : Set ℝ}
+    (hVopen : IsOpen V) (hVU : V ⊆ U) (hVB : V ⊆ B)
+    (u : Vec3 × ℝ → Vec3) (Du : Vec3 × ℝ → Fin 3 → Vec3)
+    (i : Fin 3)
+    (hU : AEStronglyMeasurable u
+      ((volume.restrict U).prod (volume.restrict J)))
+    (hDu : AEStronglyMeasurable Du
+      ((volume.restrict U).prod (volume.restrict J)))
+    (hUsq : Integrable (fun z => (‖u z‖ : ℝ) ^ (2 : ℕ))
+      ((volume.restrict U).prod (volume.restrict J)))
+    (hDusq : Integrable (fun z => (‖Du z‖ : ℝ) ^ (2 : ℕ))
+      ((volume.restrict U).prod (volume.restrict J)))
+    (hgrad : ∀ᵐ t ∂(volume.restrict J), ∀ j : Fin 3,
+      HasWeakGradientOn B (fun x => u (x, t) j) (fun x => Du (x, t) j)) :
+    ∀ᵐ t ∂(volume.restrict J), ∃ v : H1Function V,
+      (fun x => u (x, t) i) =ᵐ[volume.restrict V] v.toFun ∧
+      (fun x => Du (x, t) i) =ᵐ[volume.restrict V] v.grad := by
+  filter_upwards [hU.prodMk_right, hDu.prodMk_right,
+    hUsq.prod_left_ae, hDusq.prod_left_ae, hgrad] with t hUmeas hDumeas hUsq_t hDusq_t hgrad_t
+  have hUslice : MemLp (fun x : Vec3 => u (x, t)) 2 (volume.restrict U) :=
+    (memLp_two_iff_integrable_sq_norm hUmeas).2 hUsq_t
+  have hDuslice : MemLp (fun x : Vec3 => Du (x, t)) 2 (volume.restrict U) :=
+    (memLp_two_iff_integrable_sq_norm hDumeas).2 hDusq_t
+  have hUsliceV : MemLp (fun x : Vec3 => u (x, t)) 2 (volume.restrict V) :=
+    hUslice.mono_measure (Measure.restrict_mono_set volume hVU)
+  have hDusliceV : MemLp (fun x : Vec3 => Du (x, t)) 2 (volume.restrict V) :=
+    hDuslice.mono_measure (Measure.restrict_mono_set volume hVU)
+  refine ⟨⟨fun x => u (x, t) i, fun x => Du (x, t) i, ?_, ?_, ?_⟩, ?_, ?_⟩
+  · simpa [MemL2On, MemLpOn, volumeOn] using (memLp_pi_iff.mp hUsliceV) i
+  · intro j
+    simpa [GradMemLpOn, MemL2On, MemLpOn, volumeOn] using
+      (memLp_pi_iff.mp ((memLp_pi_iff.mp hDusliceV) i)) j
+  · exact (hgrad_t i).restrict hVopen hVB
+  · rfl
+  · rfl
+
+private theorem componentEnergy_finite_on_product_ball
+    {U B : Set Vec3} {J : Set ℝ} (hUB : U ⊆ B)
+    (u : Vec3 × ℝ → Vec3) (Du : Vec3 × ℝ → Fin 3 → Vec3) (i : Fin 3)
+    (μx : Measure Vec3) (μt : Measure ℝ)
+    (hmeasure : μx.prod μt =
+      (volume : Measure (Vec3 × ℝ)).restrict (U ×ˢ J))
+    (henergy : (∫⁻ z in B ×ˢ J,
+      ‖u z‖ₑ ^ (2 : ℝ) + ‖Du z‖ₑ ^ (2 : ℝ)
+        ∂(volume : Measure (Vec3 × ℝ))) < ⊤) :
+    (∫⁻ z, ‖u z i‖ₑ ^ (2 : ℝ) + ‖Du z i‖ₑ ^ (2 : ℝ)
+      ∂(μx.prod μt)) < ⊤ := by
+  have hfull : (∫⁻ z, ‖u z‖ₑ ^ (2 : ℝ) + ‖Du z‖ₑ ^ (2 : ℝ)
+      ∂(μx.prod μt)) < ⊤ := by
+    have hset : (∫⁻ z in U ×ˢ J,
+        ‖u z‖ₑ ^ (2 : ℝ) + ‖Du z‖ₑ ^ (2 : ℝ)
+          ∂(volume : Measure (Vec3 × ℝ))) < ⊤ :=
+      lt_of_le_of_lt (lintegral_mono_set (Set.prod_mono hUB le_rfl)) henergy
+    rw [hmeasure]
+    exact hset
+  refine lt_of_le_of_lt ?_ hfull
+  apply lintegral_mono
+  intro z
+  apply add_le_add
+  · rw [← ofReal_norm, ← ofReal_norm]
+    exact ENNReal.rpow_le_rpow
+      (ENNReal.ofReal_le_ofReal (norm_le_pi_norm (u z) i)) (by norm_num)
+  · rw [← ofReal_norm, ← ofReal_norm]
+    exact ENNReal.rpow_le_rpow
+      (ENNReal.ofReal_le_ofReal (norm_le_pi_norm (Du z) i)) (by norm_num)
+
 private theorem ennreal_add_sq_bound (a b : ℝ≥0∞) :
     (a + b) ^ (2 : ℝ) ≤ 4 * (a ^ (2 : ℝ) + b ^ (2 : ℝ)) := by
   have hadd : a + b ≤ 2 * max a b := by
@@ -99,11 +190,6 @@ theorem eLpNorm_three_pow_eq_lintegral {α E : Type} [MeasurableSpace α]
   rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf,
     ← ENNReal.rpow_mul]
   norm_num
-
-private theorem enorm_pi_apply_le {ι E : Type} [Fintype ι] [NormedAddCommGroup E]
-    (v : ι → E) (i : ι) : ‖v i‖ₑ ≤ ‖v‖ₑ := by
-  rw [← ofReal_norm, ← ofReal_norm]
-  exact ENNReal.ofReal_le_ofReal (norm_le_pi_norm v i)
 
 /-- Tonelli identifies the time integral of the squared spatial L² norm with the
 space-time squared norm. -/
@@ -376,7 +462,8 @@ theorem scalarCylinderL4_of_jointEnergy {x₀ : Vec3} {r : ℝ} {J : Set ℝ}
 /-! ### The E1 cylinder estimate -/
 
 /-- Each velocity component is in space-time `L⁴` on a smaller ball cylinder under the
-energy, `L∞ₜL³ₓ`, and slice-gradient hypotheses of `thm:ess-local` of the Escauriaza–Seregin–Šverák manuscript. -/
+energy, `L∞ₜL³ₓ`, and slice-gradient hypotheses of `thm:ess-local` of the
+Escauriaza–Seregin–Šverák manuscript. -/
 theorem velocityComponent_memLp_four_of_essLocalData
     {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin 3 → Vec3}
     {i : Fin 3} {r : ℝ} (hr : 0 < r) (hr1 : r ≤ 1)
@@ -539,45 +626,20 @@ theorem velocityComponent_memLp_four_of_essLocalData
   have hSlice : ∀ᵐ t ∂μt, ∃ v : H1Function (euclideanBall (0 : Vec3) r),
       (fun x => uP (x, t) i) =ᵐ[μx] v.toFun ∧
       (fun x => DuP (x, t) i) =ᵐ[μx] v.grad := by
-    filter_upwards [hsmallU.prodMk_right,
-      hsmallDu.prodMk_right,
-      hsmallUsq.prod_left_ae, hsmallDusq.prod_left_ae,
-      hgrad] with t hUmeas hDumeas hUsq hDusq hgrad_t
-    have hUslice : MemLp (fun x : Vec3 => uP (x, t)) 2 μx :=
-      (memLp_two_iff_integrable_sq_norm hUmeas).2 hUsq
-    have hDuslice : MemLp (fun x : Vec3 => DuP (x, t)) 2 μx :=
-      (memLp_two_iff_integrable_sq_norm hDumeas).2 hDusq
-    refine ⟨⟨fun x => uP (x, t) i, fun x => DuP (x, t) i, ?_, ?_, ?_⟩, ?_, ?_⟩
-    · exact (memLp_pi_iff.mp hUslice) i
-    · intro j
-      exact (memLp_pi_iff.mp ((memLp_pi_iff.mp hDuslice) i)) j
-    · have hgradP : HasWeakGradientOn B (fun x => uP (x, t) i)
-          (fun x => DuP (x, t) i) := by
-        simpa [uP, DuP, parabolicHomeomorph_symm_apply] using hgrad_t i
-      exact hgradP.restrict (isOpen_euclideanBall (0 : Vec3) r) hball
-    · rfl
-    · rfl
-  have hcomponentEnergy :
-      (∫⁻ z, ‖uP z i‖ₑ ^ (2 : ℝ) + ‖DuP z i‖ₑ ^ (2 : ℝ) ∂(μx.prod μt)) < ⊤ := by
-    have hfull : (∫⁻ z, ‖uP z‖ₑ ^ (2 : ℝ) + ‖DuP z‖ₑ ^ (2 : ℝ)
-        ∂(μx.prod μt)) < ⊤ := by
-      have hset : (∫⁻ z in euclideanBall (0 : Vec3) r ×ˢ J,
-          ‖uP z‖ₑ ^ (2 : ℝ) + ‖DuP z‖ₑ ^ (2 : ℝ)
-            ∂(volume : Measure (Vec3 × ℝ))) < ⊤ := by
-        have hsub : euclideanBall (0 : Vec3) r ×ˢ J ⊆ B ×ˢ J :=
-          Set.prod_mono hball le_rfl
-        have hbase : (∫⁻ z in B ×ˢ J,
-            ‖uP z‖ₑ ^ (2 : ℝ) + ‖DuP z‖ₑ ^ (2 : ℝ)
-              ∂(volume : Measure (Vec3 × ℝ))) < ⊤ := henergyProductSet
-        exact lt_of_le_of_lt (lintegral_mono_set hsub) hbase
-      rw [hmeasureSmall]
-      exact hset
-    refine lt_of_le_of_lt ?_ hfull
-    apply lintegral_mono
-    intro z
-    apply add_le_add
-    · exact ENNReal.rpow_le_rpow (enorm_pi_apply_le (uP z) i) (by norm_num)
-    · exact ENNReal.rpow_le_rpow (enorm_pi_apply_le (DuP z) i) (by norm_num)
+    have hgradProduct : ∀ᵐ t ∂μt, ∀ j : Fin 3,
+        HasWeakGradientOn B (fun x => uP (x, t) j) (fun x => DuP (x, t) j) := by
+      filter_upwards [hgrad] with t hgrad_t
+      intro j
+      simpa [uP, DuP, parabolicHomeomorph_symm_apply] using hgrad_t j
+    have hSlice0 := h1_slice_representation_of_product_data
+      (V := euclideanBall (0 : Vec3) r) (B := B)
+      (isOpen_euclideanBall (0 : Vec3) r) le_rfl hball uP DuP i
+      hsmallU hsmallDu hsmallUsq hsmallDusq hgradProduct
+    filter_upwards [hSlice0] with t ht
+    rcases ht with ⟨v, hv, hg⟩
+    exact ⟨v, hv, hg⟩
+  have hcomponentEnergy := componentEnergy_finite_on_product_ball
+    hball uP DuP i μx μt hmeasureSmall henergyProductSet
   have hA : ∀ᵐ t ∂μt,
       eLpNorm (fun x : Vec3 => uP (x, t) i) 3 μx ≤
         (essSup (fun s : ℝ => ∫⁻ x in B,
@@ -594,15 +656,6 @@ theorem velocityComponent_memLp_four_of_essLocalData
           (ENNReal.rpow_lt_top_of_nonneg (by norm_num) hL3P.ne)
       simpa [μx, μt, J] using hbound)
     hcomponentEnergy hSlice
-  have hsmallSetMeas : MeasurableSet (spaceTimeSet (euclideanBall (0 : Vec3) r) J) := by
-    exact (isOpen_euclideanBall (0 : Vec3) r).measurableSet.prod measurableSet_Ioo
-  have hpreSmall : parabolicHomeomorph ⁻¹'
-      (euclideanBall (0 : Vec3) r ×ˢ J) = spaceTimeSet (euclideanBall (0 : Vec3) r) J := by
-    ext z
-    rfl
-  have hmpSmall := parabolicHomeomorph_measurePreserving.restrict_preimage
-    (show MeasurableSet (euclideanBall (0 : Vec3) r ×ˢ J) from hsmallSetMeas)
-  rw [hpreSmall] at hmpSmall
   have hcomp4Product : MemLp (fun z : Vec3 × ℝ => uP z i) 4
       ((volume : Measure (Vec3 × ℝ)).restrict
         (euclideanBall (0 : Vec3) r ×ˢ J)) := by
@@ -610,14 +663,10 @@ theorem velocityComponent_memLp_four_of_essLocalData
     exact hcomp4
   have hcomp4Para : MemLp (fun z : ParabolicPoint => u z i) 4
       (volume.restrict (spaceTimeSet (euclideanBall (0 : Vec3) r) J)) := by
-    have h := hcomp4Product.comp_measurePreserving hmpSmall
-    have hEqFun : (fun z : ParabolicPoint => uP (parabolicHomeomorph z) i) =
-        (fun z : ParabolicPoint => u z i) := by
-      funext z
-      cases z
-      rfl
-    rw [← hEqFun]
-    exact h
+    simpa [uP] using parabolic_memLp_of_product_restrict
+      (C := euclideanBall (0 : Vec3) r) (J := J)
+      (isOpen_euclideanBall (0 : Vec3) r).measurableSet measurableSet_Ioo
+      (fun z : ParabolicPoint => u z i) hcomp4Product
   rw [show euclideanBall (0 : Vec3) r = vec3Ball (0 : Vec3) r from
     euclideanBall_eq_vec3Ball (x₀ := (0 : Vec3)) hr] at hcomp4Para
   simpa [J] using hcomp4Para

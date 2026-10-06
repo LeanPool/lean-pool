@@ -56,8 +56,8 @@ private lemma dualTruncField_memLp {u : Vec3 → ℝ} {p R : ℝ}
     isCompact_closedBall _ _
   have hAfinite : volume A < ∞ :=
     (measure_mono hAsub).trans_lt hball.measure_lt_top
-    letI : IsFiniteMeasure (volume.restrict A) :=
-      isFiniteMeasure_restrict.mpr hAfinite.ne
+  let : IsFiniteMeasure (volume.restrict A) :=
+    isFiniteMeasure_restrict.mpr hAfinite.ne
   have hbmeas : Measurable b := by
     dsimp [b]
     exact (Real.continuous_rpow_const (by linarith only [hp])).measurable.comp
@@ -158,7 +158,8 @@ private theorem lpNorm_eq_integral_norm_rpow_ofReal
       (∫ x, ‖f x‖ ^ p) ^ (1 / p) := by
   have hpne : ENNReal.ofReal p ≠ 0 := ENNReal.ofReal_ne_zero_iff.mpr hp
   rw [lpNorm, MemLp.eLpNorm_eq_integral_rpow_norm hpne ENNReal.ofReal_ne_top hf]
-  simp [ENNReal.toReal_ofReal hp.le]
+  simp only [Real.norm_eq_abs, ENNReal.toReal_ofReal hp.le, one_div,
+    ENNReal.toReal_ofReal_eq_iff, ge_iff_le]
   positivity
 
 private theorem dualTrunc_energy_bound
@@ -188,7 +189,7 @@ private theorem dualTrunc_energy_bound
   have hqfact : Fact (1 ≤ ENNReal.ofReal q) := ⟨by
     rw [← ENNReal.ofReal_one]
     exact ENNReal.ofReal_le_ofReal hq1.le⟩
-    letI : Fact (1 ≤ ENNReal.ofReal q) := hqfact
+  let : Fact (1 ≤ ENNReal.ofReal q) := hqfact
   have hA₁ : 0 ≤ rieszSecondWeakTypeConstant := by
     unfold rieszSecondWeakTypeConstant
     have hC₂ : 0 ≤ rieszSecondKernelC₂ := rieszSecondKernelC₂_nonneg
@@ -298,7 +299,8 @@ private theorem dualTrunc_energy_bound
         _ = (∫ x in A, |u x| ^ p) ^ (1 - 1 / q) :=
           (Real.rpow_sub hEpos 1 (1 / q)).symm
     rw [hratio, hexp] at hdivide
-    have hpower := Real.rpow_le_rpow (Real.rpow_nonneg hE (1 / p)) hdivide (le_of_lt (lt_trans zero_lt_one hp1))
+    have hpower := Real.rpow_le_rpow (Real.rpow_nonneg hE (1 / p)) hdivide
+      (le_of_lt (lt_trans zero_lt_one hp1))
     have hpower_eq :
         ((∫ x in A, |u x| ^ p) ^ (1 / p)) ^ p = ∫ x in A, |u x| ^ p := by
       rw [← Real.rpow_mul hE (1 / p) p]
@@ -555,7 +557,7 @@ theorem riesz_second_all_exponents (s : ℝ) (hs : 1 < s) :
           MemLp g 2 volume →
           (fun x => T (hg.toLp g) x) =ᵐ[volume]
             (fun x => -(rieszSecondL2RawOperator (rieszSecondL2Input i j) g x)) := by
-  letI : Fact (1 ≤ ENNReal.ofReal s) := ⟨by
+  let : Fact (1 ≤ ENNReal.ofReal s) := ⟨by
     rw [← ENNReal.ofReal_one]
     exact ENNReal.ofReal_le_ofReal hs.le⟩
   have hA₁ : 0 ≤ rieszSecondWeakTypeConstant := by

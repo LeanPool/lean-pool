@@ -14,7 +14,8 @@ public import Mathlib.MeasureTheory.Function.LpSeminorm.TriangleInequality
 # Weighted limits for the Carleman density argument
 
 Finite sums of weak derivative components retain `L²` convergence, so the weighted quadratic
-terms in `lem:carleman-sobolev` of the Escauriaza–Seregin–Šverák manuscript converge on a fixed compact support neighborhood.
+terms in `lem:carleman-sobolev` of the Escauriaza–Seregin–Šverák manuscript converge on a fixed
+compact support neighborhood.
 -/
 
 public section

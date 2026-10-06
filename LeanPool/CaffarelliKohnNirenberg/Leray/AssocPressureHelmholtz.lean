@@ -221,7 +221,7 @@ theorem associatedPressureTestCurlComponent_contDiff
     (j : Fin 3) :
     ContDiff ℝ (⊤ : ℕ∞) (associatedPressureTestCurlComponent φ j) := by
   have hφi (i : Fin 3) := CKN.component_mem_spaceTimeTestFunction hφ i
-  fin_cases j <;> simp <;>
+  fin_cases j <;>
     exact (CKN.spatialPartial_contDiff (hφi _).1 _).sub
       (CKN.spatialPartial_contDiff (hφi _).1 _)
 
@@ -238,7 +238,7 @@ theorem associatedPressureTestCurlComponent_hasCompactSupport
         CKN.spatialPartialProd (fun w : Vec3 × ℝ => φ w i) k z) := by
     simpa [CKN.spatialPartialProd] using CKN.hasCompactSupport_spatialPartial
       (hφi i).2.1 k
-  fin_cases j <;> simp <;>
+  fin_cases j <;>
     exact (hderiv _ _).sub (hderiv _ _)
 
 /-- The scalar Helmholtz potential is jointly smooth, as required in

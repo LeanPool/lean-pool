@@ -171,24 +171,27 @@ private theorem associatedPressureTestCurlCurl_identity
     associatedPressureTestSpatialPartial_smooth (hφi c).1 i
   unfold associatedPressureTestDivergence
   fin_cases j
-  · simp [associatedPressureTestCurl, associatedPressureTestCurlComponent,
-      Fin.sum_univ_three]
+  · simp only [
+      associatedPressureTestCurl, associatedPressureTestCurlComponent, Fin.zero_eta, Fin.isValue,
+      ↓reduceIte, Fin.reduceEq, one_ne_zero, Fin.sum_univ_three]
     rw [associatedPressureTestSpatialPartial_sub (hD 1 0) (hD 0 1) 1 z,
       associatedPressureTestSpatialPartial_sub (hD 0 2) (hD 2 0) 2 z]
     rw [associatedPressureTestSpatialPartial_add ((hD 0 0).add (hD 1 1)) (hD 2 2) 0 z,
       associatedPressureTestSpatialPartial_add (hD 0 0) (hD 1 1) 0 z]
     rw [hmix 1 1 0 z, hmix 2 2 0 z]
     ring
-  · simp [associatedPressureTestCurl, associatedPressureTestCurlComponent,
-      Fin.sum_univ_three]
+  · simp only [
+      associatedPressureTestCurl, associatedPressureTestCurlComponent, Fin.mk_one, Fin.isValue,
+      one_ne_zero, ↓reduceIte, Fin.reduceEq, Fin.sum_univ_three]
     rw [associatedPressureTestSpatialPartial_sub (hD 2 1) (hD 1 2) 2 z,
       associatedPressureTestSpatialPartial_sub (hD 1 0) (hD 0 1) 0 z]
     rw [associatedPressureTestSpatialPartial_add ((hD 0 0).add (hD 1 1)) (hD 2 2) 1 z,
       associatedPressureTestSpatialPartial_add (hD 0 0) (hD 1 1) 1 z]
     rw [hmix 2 2 1 z, hmix 0 0 1 z]
     ring
-  · simp [associatedPressureTestCurl, associatedPressureTestCurlComponent,
-      Fin.sum_univ_three]
+  · simp only [
+      associatedPressureTestCurl, associatedPressureTestCurlComponent, Fin.reduceFinMk,
+      Fin.isValue, Fin.reduceEq, ↓reduceIte, one_ne_zero, Fin.sum_univ_three]
     rw [associatedPressureTestSpatialPartial_sub (hD 0 2) (hD 2 0) 0 z,
       associatedPressureTestSpatialPartial_sub (hD 2 1) (hD 1 2) 1 z]
     rw [associatedPressureTestSpatialPartial_add ((hD 0 0).add (hD 1 1)) (hD 2 2) 2 z,
@@ -296,8 +299,9 @@ private theorem associatedPressureHelmholtzVectorPotential_curl
       (CKN.spatialPartialProd (associatedPressureTestCurlComponent φ k) l) :=
     associatedPressureTestSpatialPartial_compact (hcurlc k) l
   fin_cases j
-  · simp [associatedPressureTestCurl, associatedPressureTestCurlComponent,
-      associatedPressureHelmholtzVectorPotential]
+  · simp only [
+      associatedPressureTestCurl, associatedPressureTestCurlComponent, Fin.zero_eta, Fin.isValue,
+      ↓reduceIte, associatedPressureHelmholtzVectorPotential, Fin.reduceEq, one_ne_zero]
     rw [associatedPressureNewtonianPotential_neg_spatialPartial
       (hcurl 2) (hcurlc 2) 1 z,
       associatedPressureNewtonianPotential_neg_spatialPartial
@@ -314,8 +318,9 @@ private theorem associatedPressureHelmholtzVectorPotential_curl
           (hD 1 2) (hDc 1 2) z]
       _ = -associatedPressureNewtonianPotential
           (fun w => associatedPressureTestCurl (associatedPressureTestCurl φ) w 0) z := by rfl
-  · simp [associatedPressureTestCurl, associatedPressureTestCurlComponent,
-      associatedPressureHelmholtzVectorPotential]
+  · simp only [
+      associatedPressureTestCurl, associatedPressureTestCurlComponent, Fin.mk_one, Fin.isValue,
+      one_ne_zero, ↓reduceIte, associatedPressureHelmholtzVectorPotential, Fin.reduceEq]
     rw [associatedPressureNewtonianPotential_neg_spatialPartial
       (hcurl 0) (hcurlc 0) 2 z,
       associatedPressureNewtonianPotential_neg_spatialPartial
@@ -332,8 +337,10 @@ private theorem associatedPressureHelmholtzVectorPotential_curl
           (hD 2 0) (hDc 2 0) z]
       _ = -associatedPressureNewtonianPotential
           (fun w => associatedPressureTestCurl (associatedPressureTestCurl φ) w 1) z := by rfl
-  · simp [associatedPressureTestCurl, associatedPressureTestCurlComponent,
-      associatedPressureHelmholtzVectorPotential]
+  · simp only [
+      associatedPressureTestCurl, associatedPressureTestCurlComponent, Fin.reduceFinMk,
+      Fin.isValue, Fin.reduceEq, ↓reduceIte, associatedPressureHelmholtzVectorPotential,
+      one_ne_zero]
     rw [associatedPressureNewtonianPotential_neg_spatialPartial
       (hcurl 1) (hcurlc 1) 0 z,
       associatedPressureNewtonianPotential_neg_spatialPartial
