@@ -209,6 +209,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/PoincareThreeBody         https://github.com/gersh/lean-pool
   LeanPool/PointwiseBirkhoff         https://github.com/lua-vr/pointwise-birkhoff
   LeanPool/Polylean                  https://github.com/siddhartha-gadgil/Polylean
+  LeanPool/PolylogIntegrals          https://github.com/rainrzk/LeanPolyLog
   LeanPool/PolynomialMethodRestrictedSums
                                      https://github.com/NickAdfor/The-polynomial-method-and-restricted-sums-of-congruence-classes
   LeanPool/Polytopes                 https://github.com/Jun2M/Main-theorem-of-polytopes
