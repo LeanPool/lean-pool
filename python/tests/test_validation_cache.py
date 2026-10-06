@@ -86,13 +86,62 @@ def test_transitive_import_of_nested_module_invalidates_consumer(
 
 
 @pytest.mark.parametrize("name", GLOBAL_INPUTS)
-def test_checker_and_dependency_changes_invalidate_all(
+def test_checker_edits_invalidate_only_dependent_checks(
     repository: Path, name: str
 ) -> None:
-    """Toolchain, dependencies, lint options, and checker implementations are inputs."""
-    _run(repository)
+    """Unrelated tooling edits preserve passes; shared inputs invalidate all kinds."""
+    kinds = ("lint", "axioms", "backdoors", "declarations", "future-check")
+    directory = repository / ".lake/validation-cache/v1"
+    cache = ValidationCache(repository, directory)
+    for kind in kinds:
+        for modules in pool_units(repository):
+            cache.check(kind, modules, lambda: [])
+    cache.save()
     (repository / name).write_text("changed\n")
-    assert len(_run(repository)[1]) == 3
+    cache = ValidationCache(repository, directory)
+    calls: list[tuple[str, str]] = []
+    for kind in kinds:
+        for modules in pool_units(repository):
+            cache.check(kind, modules, lambda: calls.append((kind, modules[0])) or [])
+    if name in {"python/lean_pool/quality.py", "scripts/nolints-style.txt"}:
+        fresh_kinds = ("axioms", "backdoors", "declarations", "future-check")
+    elif name in {"scripts/ci/lint-project.lean", "scripts/nolints.json"}:
+        fresh_kinds = ("lint", "future-check")
+    else:
+        fresh_kinds = kinds
+    assert calls == [
+        (kind, modules[0]) for kind in fresh_kinds for modules in pool_units(repository)
+    ]
+    assert len(calls) >= 3
+
+
+@pytest.mark.parametrize("kind", ("lint", "axioms", "backdoors", "declarations"))
+def test_source_changes_invalidate_every_check_kind(
+    repository: Path, kind: str
+) -> None:
+    """Scoping checker inputs must preserve all imported-source dependencies."""
+    directory = repository / ".lake/validation-cache/v1"
+    cache = ValidationCache(repository, directory)
+    for modules in pool_units(repository):
+        cache.check(kind, modules, lambda: [])
+    cache.save()
+    (repository / "LeanPool/A/Detail.lean").write_text("-- changed\n")
+    cache = ValidationCache(repository, directory)
+    calls: list[str] = []
+    for modules in pool_units(repository):
+        cache.check(kind, modules, lambda: calls.append(modules[0]) or [])
+    assert calls == ["LeanPool.A", "LeanPool"]
+
+
+def test_quality_check_kinds_reuse_source_comparisons(repository: Path) -> None:
+    """Quality checks sharing dependencies calculate their input list once."""
+    cache = ValidationCache(repository, repository / ".lake/validation-cache/v1")
+    with patch.object(
+        cache, "_fingerprint_inputs", wraps=cache._fingerprint_inputs
+    ) as inputs:
+        for kind in ("axioms", "backdoors", "declarations"):
+            cache.check(kind, ["LeanPool.A"], lambda: [])
+        assert inputs.call_count == 1
 
 
 @pytest.mark.parametrize("contents", [None, "{", "{}", '{"name": "wrong"}'])
