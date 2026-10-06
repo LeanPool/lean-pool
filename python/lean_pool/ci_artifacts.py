@@ -203,6 +203,12 @@ def download_build(root: Path, repository: str, artifact: int) -> bool:
 
 def reuse_build(root: Path, repository: str, head: str, event: str, wait: int) -> bool:
     """Best-effort reuse; unavailable CI never removes the regular Lake build step."""
+    # PRs retain project rebase artifacts but do not publish this full archive.
+    if event == "pull_request":
+        LOGGER.info(
+            "PRs do not publish full build artifacts; using the regular Lake build"
+        )
+        return False
     try:
         run = matching_run(repository, head, event)
         if run is None:

@@ -127,6 +127,23 @@ def test_missing_run_falls_back(repository: Path, monkeypatch) -> None:
     assert not ci_artifacts.reuse_build(repository, "owner/repo", "head", "push", 0)
 
 
+def test_pull_request_does_not_wait_for_unpublished_build(
+    repository: Path, monkeypatch
+):
+    """PR producers omit full build artifacts, so consumers use Lake immediately."""
+
+    def unexpected_query(*args):
+        pytest.fail("PR build reuse must not query or wait for an unpublished artifact")
+
+    monkeypatch.setattr(ci_artifacts, "github_json", unexpected_query)
+    output = repository / ".lake/build/lib/lean/LeanPool.olean"
+    before = output.read_bytes()
+    assert not ci_artifacts.reuse_build(
+        repository, "owner/repo", "head", "pull_request", 7200
+    )
+    assert output.read_bytes() == before
+
+
 def test_api_error_falls_back(repository: Path, monkeypatch) -> None:
     """Artifact API errors are an optimization miss rather than a docs failure."""
 
