@@ -384,7 +384,7 @@ def restore(root: Path, repository: str, run_id: int, previous_head: str) -> Non
 
 
 def restore_new_main_projects(
-    root: Path, repository: str, previous: str, base: str
+    root: Path, repository: str, previous: str, base: str, *, missing_only: bool = False
 ) -> None:
     """Overlay merged PR artifacts before main's own large cache is published."""
     old_base = git(root, "merge-base", previous, base)
@@ -395,7 +395,15 @@ def restore_new_main_projects(
         parent = git(root, "rev-parse", f"{commit}^1")
         changed = paths(root, parent, commit)
         if not any(
-            path.startswith("LeanPool/") and path.endswith(".lean") for path in changed
+            path.startswith("LeanPool/")
+            and path.endswith(".lean")
+            and (
+                not missing_only
+                or not (root / ".lake/build/lib/lean" / path)
+                .with_suffix(".olean")
+                .is_file()
+            )
+            for path in changed
         ):
             continue
         try:
