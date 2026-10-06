@@ -32,9 +32,9 @@ theorem weak_partial_representatives_agree_on_nested_rectangles
     (hgMeas : ∀ j, Measurable (g j))
     (m : Fin 3)
     (hlocal : ∀ j, ∀ᵐ t ∂(volume.restrict (J j)),
-      LocallyIntegrableOn (fun x => g j (x,t)) (interior (K j)) volume ∧
+      LocallyIntegrableOn (fun x => g j (x, t)) (interior (K j)) volume ∧
       HasWeakPartialDerivOn (interior (K j)) m
-        (fun x => f (x,t)) (fun x => g j (x,t)))
+        (fun x => f (x, t)) (fun x => g j (x, t)))
     {a b : ℕ} (hab : a ≤ b) :
     (g a) =ᵐ[((volume.restrict (interior (K a))).prod
       (volume.restrict (J a)))] (g b) := by
@@ -45,8 +45,8 @@ theorem weak_partial_representatives_agree_on_nested_rectangles
   have hJab : J a ⊆ J b := hJmonotone hab
   have hb := ae_restrict_of_ae_restrict_of_subset hJab (hlocal b)
   have htime : ∀ᵐ t ∂(volume.restrict (J a)),
-      (fun x => g a (x,t)) =ᵐ[volume.restrict (interior (K a))]
-        (fun x => g b (x,t)) := by
+      (fun x => g a (x, t)) =ᵐ[volume.restrict (interior (K a))]
+        (fun x => g b (x, t)) := by
     filter_upwards [hlocal a, hb] with t ha ht
     exact HasWeakPartialDerivOn.ae_eq isOpen_interior
       ha.1 (ht.1.mono_set hΩab) ha.2

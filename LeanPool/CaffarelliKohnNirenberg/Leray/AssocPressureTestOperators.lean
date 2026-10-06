@@ -100,7 +100,7 @@ theorem associatedPressureTestCurl_mem_spaceTimeTestFunction
     have hc (j : Fin 3) : z ∉ tsupport (fun w : Vec3 × ℝ => φ w j) := by
       intro hmem
       have hsub : tsupport (fun w : Vec3 × ℝ => φ w j) ⊆ tsupport φ :=
-        CKN.tsupport_component_subset (V := Vec3) (ι := Fin 3) φ j
+        CKN.tsupport_component_subset (ι := Fin 3) φ j
           (by intro w hw; simp [hw])
       exact hz (hsub hmem)
     have hpartZero (j k : Fin 3) :

@@ -375,6 +375,36 @@ private theorem radius_tendsto_atTop :
     exact_mod_cast Nat.le_trans hn (Nat.le_succ n)
   exact le_of_lt (hN.trans_le hcast)
 
+private theorem tenThirds_radius_bound_tendsto (T : ℝ) (B M : ℝ≥0∞)
+    (hB : B < ⊤) :
+    Tendsto (fun n : ℕ => ENNReal.ofReal ballTimeSobolevConstant *
+      (M + ENNReal.ofReal (((n : ℝ) + 1) ^ (-(2 : ℝ))) *
+        B ^ (5 / 3 : ℝ) * volume (Ioo 0 T))) atTop
+      (nhds (ENNReal.ofReal ballTimeSobolevConstant * M)) := by
+  have hVolumeTop : volume (Ioo 0 T) < ⊤ := measure_Ioo_lt_top
+  have hBpowTop : B ^ (5 / 3 : ℝ) < ⊤ :=
+    ENNReal.rpow_lt_top_of_nonneg (by norm_num) hB.ne
+  have hErrFactorTop : B ^ (5 / 3 : ℝ) * volume (Ioo 0 T) < ⊤ :=
+    ENNReal.mul_lt_top hBpowTop hVolumeTop
+  have hradius : Tendsto (fun n : ℕ => (n : ℝ) + 1) atTop atTop := by
+    simpa only [Function.comp_def] using radius_tendsto_atTop
+  have hradiusPow : Tendsto (fun n : ℕ => ((n : ℝ) + 1) ^ (-(2 : ℝ)))
+      atTop (nhds 0) :=
+    (tendsto_rpow_neg_atTop (by norm_num : 0 < (2 : ℝ))).comp hradius
+  have herror : Tendsto
+      (fun n : ℕ => ENNReal.ofReal (((n : ℝ) + 1) ^ (-(2 : ℝ))) *
+        B ^ (5 / 3 : ℝ) * volume (Ioo 0 T)) atTop (nhds 0) := by
+    have hcoef : Tendsto (fun n : ℕ => ENNReal.ofReal (((n : ℝ) + 1) ^ (-(2 : ℝ))))
+        atTop (nhds (0 : ℝ≥0∞)) := by simpa using ENNReal.tendsto_ofReal hradiusPow
+    have hmul := (ENNReal.continuous_mul_const hErrFactorTop.ne).tendsto 0
+    simpa only [Function.comp_def, zero_mul, mul_assoc] using hmul.comp hcoef
+  have hsum : Tendsto (fun n : ℕ => M +
+      (ENNReal.ofReal (((n : ℝ) + 1) ^ (-(2 : ℝ))) *
+        B ^ (5 / 3 : ℝ) * volume (Ioo 0 T))) atTop (nhds M) := by
+    simpa only [add_zero] using (tendsto_const_nhds : Tendsto (fun _ : ℕ => M)
+      atTop (nhds M)).add herror
+  exact (ENNReal.continuous_const_mul ENNReal.ofReal_ne_top).tendsto M |>.comp hsum
+
 private theorem lerayHopf_component_tenThirds_lintegral_bound
     {T : ℝ} {a : Vec3 → Vec3}
     {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin 3 → Vec3}
@@ -397,46 +427,13 @@ private theorem lerayHopf_component_tenThirds_lintegral_bound
   have hSliceTop : B < ⊤ := by
     rcases hLH with ⟨_, _, _, _, h, _, _, _, _, _, _, _⟩
     exact h
-  have hVolumeTop : volume (Ioo 0 T) < ⊤ := measure_Ioo_lt_top
-  have hBpowTop : B ^ (5 / 3 : ℝ) < ⊤ :=
-    ENNReal.rpow_lt_top_of_nonneg (by norm_num) hSliceTop.ne
-  have hErrFactorTop : B ^ (5 / 3 : ℝ) * volume (Ioo 0 T) < ⊤ :=
-    ENNReal.mul_lt_top hBpowTop hVolumeTop
   let radius : ℕ → ℝ := fun n => (n : ℝ) + 1
-  have hradius : Tendsto radius atTop atTop := by
-    simpa only [radius] using radius_tendsto_atTop
-  have hradiusPow : Tendsto (fun n => radius n ^ (-(2 : ℝ))) atTop (nhds 0) :=
-    (tendsto_rpow_neg_atTop (by norm_num : 0 < (2 : ℝ))).comp hradius
-  have herror : Tendsto
-      (fun n => ENNReal.ofReal (radius n ^ (-(2 : ℝ))) *
-        B ^ (5 / 3 : ℝ) * volume (Ioo 0 T)) atTop (nhds 0) := by
-    have hcoef : Tendsto (fun n => ENNReal.ofReal (radius n ^ (-(2 : ℝ))))
-        atTop (nhds (0 : ℝ≥0∞)) := by
-      simpa using ENNReal.tendsto_ofReal hradiusPow
-    have hmul := (ENNReal.continuous_mul_const hErrFactorTop.ne).tendsto 0
-    have hcomp := hmul.comp hcoef
-    have hcompMid : Tendsto
-        (fun n => ENNReal.ofReal (radius n ^ (-(2 : ℝ))) *
-          (B ^ (5 / 3 : ℝ) * volume (Ioo 0 T))) atTop
-          (nhds (0 * (B ^ (5 / 3 : ℝ) * volume (Ioo 0 T)))) := by
-      exact hcomp.congr' (Filter.Eventually.of_forall fun _ => rfl)
-    have hcomp' : Tendsto
-        (fun n => ENNReal.ofReal (radius n ^ (-(2 : ℝ))) *
-          (B ^ (5 / 3 : ℝ) * volume (Ioo 0 T))) atTop
-          (nhds (0 * (B ^ (5 / 3 : ℝ) * volume (Ioo 0 T)))) := by
-      exact hcompMid
-    simpa only [zero_mul, mul_assoc] using hcomp'
   have hmainTendsto : Tendsto
       (fun n => ENNReal.ofReal ballTimeSobolevConstant *
         (M + ENNReal.ofReal (radius n ^ (-(2 : ℝ))) *
           B ^ (5 / 3 : ℝ) * volume (Ioo 0 T)))
       atTop (nhds (ENNReal.ofReal ballTimeSobolevConstant * M)) := by
-    have hsum : Tendsto
-        (fun n => M + (ENNReal.ofReal (radius n ^ (-(2 : ℝ))) *
-          B ^ (5 / 3 : ℝ) * volume (Ioo 0 T))) atTop (nhds M) := by
-      have hconst : Tendsto (fun _ : ℕ => M) atTop (nhds M) := tendsto_const_nhds
-      simpa only [add_zero] using hconst.add herror
-    exact (ENNReal.continuous_const_mul ENNReal.ofReal_ne_top).tendsto M |>.comp hsum
+    simpa [radius] using tenThirds_radius_bound_tendsto T B M hSliceTop
   have hQmeas : AEStronglyMeasurable u μ := by
     rcases hLH with ⟨_, _, h, _, _, _, _, _, _, _, _, _⟩
     exact h

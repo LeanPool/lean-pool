@@ -13,7 +13,8 @@ public import LeanPool.CaffarelliKohnNirenberg.Leray.Support.VorticityWeakLimit
 Constant-coefficient weak identities on an open set hold pointwise for the backward
 mollifications at every point whose kernel support lies inside the set. These are the smooth
 forms of the weak vorticity equation, of weak derivatives, and of the divergence and curl
-constraints used in the bootstrap of `thm:vorticity-regularity` of the Escauriaza–Seregin–Šverák manuscript.
+constraints used in the bootstrap of `thm:vorticity-regularity` of the Escauriaza–Seregin–Šverák
+manuscript.
 -/
 
 public section

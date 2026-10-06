@@ -30,7 +30,7 @@ theorem memLp_gradient_fiber_of_integrated_energy
     (Du : (Vec3 × ℝ) → Fin 3 → Vec3)
     (hDuMeas : Measurable Du)
     (henergy : (∫⁻ t in J, ∫⁻ x in K,
-      ENNReal.ofReal (CKN.spatialGradientSq u Du (x,t)) ∂volume) < ⊤) :
+      ENNReal.ofReal (CKN.spatialGradientSq u Du (x, t)) ∂volume) < ⊤) :
     MemLp (fun z : (Vec3 × ℝ) => toCompactnessGradientFiber (Du z)) 2
       ((volume.restrict K).prod (volume.restrict J)) := by
   let F : (Vec3 × ℝ) → ℝ≥0∞ := fun z =>

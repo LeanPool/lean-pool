@@ -14,7 +14,8 @@ public import LeanPool.CaffarelliKohnNirenberg.ClassEquivalence.TestSupport
 /-!
 # Weak derivatives as limits of smooth approximations
 
-The bootstrap of `thm:vorticity-regularity` of the Escauriaza–Seregin–Šverák manuscript produces weak derivatives as `L²` limits of
+The bootstrap of `thm:vorticity-regularity` of the Escauriaza–Seregin–Šverák manuscript produces
+weak derivatives as `L²` limits of
 derivatives of smooth approximations. This file records the completeness step, the passage to the
 limit in the weak identities, and the pointwise form of constant-coefficient weak identities for
 backward mollifications at points whose kernel support lies inside the domain.

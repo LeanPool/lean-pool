@@ -88,6 +88,63 @@ theorem vorticitySobolevSmooth_four_sq {a b c d p q s t M : ℝ}
       sq_nonneg (c * s - d * t)]
   nlinarith only [hsum, h1, h2, h3, h4]
 
+private theorem vorticitySobolevSmooth_density_continuous
+    (f : Vec3 → ℝ) (hf : ContDiff ℝ (⊤ : ℕ∞) f) :
+    Continuous (fun y => f y ^ 2 + ∑ j : Fin 3, spatialDeriv f j y ^ 2 +
+      ∑ j : Fin 3, ∑ k : Fin 3, spatialDeriv (spatialDeriv f j) k y ^ 2) := by
+  have h1 (j : Fin 3) : Continuous (spatialDeriv f j) :=
+    (contDiff_spatialDeriv_smooth hf j).continuous
+  have h2 (j k : Fin 3) : Continuous (spatialDeriv (spatialDeriv f j) k) :=
+    (contDiff_spatialDeriv_smooth (contDiff_spatialDeriv_smooth hf j) k).continuous
+  exact ((hf.continuous.pow 2).add (continuous_finsetSum _ fun j _ => (h1 j).pow 2)).add
+    (continuous_finsetSum _ fun j _ => continuous_finsetSum _ fun k _ => (h2 j k).pow 2)
+
+private theorem vorticitySobolevSmooth_translate_cutoff
+    {R : ℝ} (φ₀ : Vec3 → ℝ) (hφ₀supp : tsupport φ₀ ⊆ vec3Ball 0 R)
+    (x₀ : Vec3) (φ : Vec3 → ℝ) (hφeq : φ = fun y => φ₀ (y - x₀)) :
+    (∀ j y, spatialDeriv φ j y = spatialDeriv φ₀ j (y - x₀)) ∧
+      (∀ j k y, spatialDeriv (spatialDeriv φ j) k y =
+        spatialDeriv (spatialDeriv φ₀ j) k (y - x₀)) ∧
+      (∀ y, y ∉ vec3Ball x₀ R →
+        φ y = 0 ∧ (∀ j, spatialDeriv φ j y = 0) ∧
+          (∀ j k, spatialDeriv (spatialDeriv φ j) k y = 0)) := by
+  subst φ
+  let φ : Vec3 → ℝ := fun y => φ₀ (y - x₀)
+  -- derivatives of the translated cutoff
+  have hφd1 (j : Fin 3) (y : Vec3) : spatialDeriv φ j y = spatialDeriv φ₀ j (y - x₀) :=
+    vorticitySpatialDeriv_translate φ₀ x₀ y j
+  have hφd1fun (j : Fin 3) : spatialDeriv φ j = fun y => spatialDeriv φ₀ j (y - x₀) := by
+    funext y
+    exact hφd1 j y
+  have hφd2 (j k : Fin 3) (y : Vec3) :
+      spatialDeriv (spatialDeriv φ j) k y =
+        spatialDeriv (spatialDeriv φ₀ j) k (y - x₀) := by
+    rw [hφd1fun j]
+    exact vorticitySpatialDeriv_translate (spatialDeriv φ₀ j) x₀ y k
+  -- vanishing of the cutoff factors outside the outer ball
+  have hout (y : Vec3) (hy : y ∉ vec3Ball x₀ R) :
+      φ y = 0 ∧ (∀ j, spatialDeriv φ j y = 0) ∧
+        (∀ j k, spatialDeriv (spatialDeriv φ j) k y = 0) := by
+    have hp : y - x₀ ∉ tsupport φ₀ := by
+      intro hmem
+      apply hy
+      have h0 := hφ₀supp hmem
+      simpa [vec3Ball] using h0
+    refine ⟨by change φ₀ (y - x₀) = 0; exact image_eq_zero_of_notMem_tsupport hp, ?_, ?_⟩
+    · intro j
+      rw [hφd1 j y]
+      change (fderiv ℝ φ₀ (y - x₀)) (basisVec j) = 0
+      rw [fderiv_of_notMem_tsupport ℝ hp]
+      simp
+    · intro j k
+      rw [hφd2 j k y]
+      have hp' : y - x₀ ∉ tsupport (spatialDeriv φ₀ j) := fun hmem =>
+        hp (tsupport_fderiv_apply_subset ℝ (basisVec j) hmem)
+      change (fderiv ℝ (spatialDeriv φ₀ j) (y - x₀)) (basisVec k) = 0
+      rw [fderiv_of_notMem_tsupport ℝ hp']
+      simp
+  exact ⟨hφd1, hφd2, hout⟩
+
 /-- Local sup bound of order two: the value of a smooth function at a point of the closed ball
 of radius `r` is controlled by the `L²` norms of the function and of its first and second
 coordinate derivatives on the open ball of radius `R` (the pointwise embedding used in
@@ -122,49 +179,12 @@ theorem vorticitySobolevSmooth_sup {r R : ℝ} (hr : 0 < r) (hrR : r < R) :
   let g : Vec3 → ℝ := fun y => φ y * f y
   have hg : ContDiff ℝ (⊤ : ℕ∞) g := hφ.mul hf
   have hgc : HasCompactSupport g := hφc.mul_right
-  -- derivatives of the translated cutoff
-  have hφd1 (j : Fin 3) (y : Vec3) : spatialDeriv φ j y = spatialDeriv φ₀ j (y - x₀) :=
-    vorticitySpatialDeriv_translate φ₀ x₀ y j
-  have hφd1fun (j : Fin 3) : spatialDeriv φ j = fun y => spatialDeriv φ₀ j (y - x₀) := by
-    funext y
-    exact hφd1 j y
-  have hφd2 (j k : Fin 3) (y : Vec3) :
-      spatialDeriv (spatialDeriv φ j) k y =
-        spatialDeriv (spatialDeriv φ₀ j) k (y - x₀) := by
-    rw [hφd1fun j]
-    exact vorticitySpatialDeriv_translate (spatialDeriv φ₀ j) x₀ y k
-  -- vanishing of the cutoff factors outside the outer ball
-  have hout (y : Vec3) (hy : y ∉ vec3Ball x₀ R) :
-      φ y = 0 ∧ (∀ j, spatialDeriv φ j y = 0) ∧
-        (∀ j k, spatialDeriv (spatialDeriv φ j) k y = 0) := by
-    have hp : y - x₀ ∉ tsupport φ₀ := by
-      intro hmem
-      apply hy
-      have h0 := hφ₀supp hmem
-      simpa [vec3Ball] using h0
-    refine ⟨by change φ₀ (y - x₀) = 0; exact image_eq_zero_of_notMem_tsupport hp, ?_, ?_⟩
-    · intro j
-      rw [hφd1 j y]
-      change (fderiv ℝ φ₀ (y - x₀)) (basisVec j) = 0
-      rw [fderiv_of_notMem_tsupport ℝ hp]
-      simp
-    · intro j k
-      rw [hφd2 j k y]
-      have hp' : y - x₀ ∉ tsupport (spatialDeriv φ₀ j) := fun hmem =>
-        hp (tsupport_fderiv_apply_subset ℝ (basisVec j) hmem)
-      change (fderiv ℝ (spatialDeriv φ₀ j) (y - x₀)) (basisVec k) = 0
-      rw [fderiv_of_notMem_tsupport ℝ hp']
-      simp
+  obtain ⟨hφd1, hφd2, hout⟩ :=
+    vorticitySobolevSmooth_translate_cutoff φ₀ hφ₀supp x₀ φ rfl
   -- the local quadratic density and its integrable bound
   let Q : Vec3 → ℝ := fun y => f y ^ 2 + ∑ j : Fin 3, spatialDeriv f j y ^ 2 +
     ∑ j : Fin 3, ∑ k : Fin 3, spatialDeriv (spatialDeriv f j) k y ^ 2
-  have hQcont : Continuous Q := by
-    have h1 (j : Fin 3) : Continuous (spatialDeriv f j) :=
-      (contDiff_spatialDeriv_smooth hf j).continuous
-    have h2 (j k : Fin 3) : Continuous (spatialDeriv (spatialDeriv f j) k) :=
-      (contDiff_spatialDeriv_smooth (contDiff_spatialDeriv_smooth hf j) k).continuous
-    exact ((hf.continuous.pow 2).add (continuous_finsetSum _ fun j _ => (h1 j).pow 2)).add
-      (continuous_finsetSum _ fun j _ => continuous_finsetSum _ fun k _ => (h2 j k).pow 2)
+  have hQcont : Continuous Q := vorticitySobolevSmooth_density_continuous f hf
   have hQnn (y : Vec3) : 0 ≤ Q y := by positivity
   have hball : MeasurableSet (vec3Ball x₀ R) := (isOpen_vec3Ball x₀ R).measurableSet
   have hQint : IntegrableOn Q (vec3Ball x₀ R) volume := by

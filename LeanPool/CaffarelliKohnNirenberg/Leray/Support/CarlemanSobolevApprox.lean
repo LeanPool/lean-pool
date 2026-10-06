@@ -11,7 +11,8 @@ public import LeanPool.CaffarelliKohnNirenberg.Leray.Support.CarlemanSobolev
 # Derivatives of compactly supported space-time mollifications
 
 The local weak-derivative identities identify derivatives of the mollification with the
-mollifications of the zero-extended weak data near the original support (`lem:carleman-sobolev` of the Escauriaza–Seregin–Šverák manuscript).
+mollifications of the zero-extended weak data near the original support (`lem:carleman-sobolev` of
+the Escauriaza–Seregin–Šverák manuscript).
 -/
 
 public section

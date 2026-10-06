@@ -28,7 +28,8 @@ noncomputable section
 
 namespace CKN
 
-/-- The spatial interpolation step used for manuscript label `lem:lei-L4` of the Escauriaza–Seregin–Šverák manuscript:
+/-- The spatial interpolation step used for manuscript label `lem:lei-L4` of the
+Escauriaza–Seregin–Šverák manuscript:
 an `H¹` slice in `L³` belongs to `L⁴`, with a bound that retains the `L³`
 factor and the Sobolev `L⁶` factor for later time integration. -/
 theorem scalarH1L4_bound {x₀ : Vec3} {r : ℝ} (hr : 0 < r)

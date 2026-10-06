@@ -137,7 +137,7 @@ theorem lerayHopfLimit_momentum
     intro z hz i
     have hzc : (z : Vec3 × ℝ) ∉ tsupport (fun w : Vec3 × ℝ => φ w i) := by
       intro hmem
-      exact hz ((tsupport_component_subset (V := ℝ) φP i
+      exact hz ((tsupport_component_subset φP i
         (fun _ h => by rw [h]; rfl)) hmem)
     exact ⟨timePartial_eq_zero_off_tsupport hzc,
       fun j => spatialPartial_eq_zero_off_tsupport hzc j⟩

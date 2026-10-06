@@ -26,6 +26,78 @@ noncomputable section
 
 namespace CKN.Leray
 
+private theorem lerayLimit_interpolation_bound
+    {α E : Type*} [MeasurableSpace α] [NormedAddCommGroup E]
+    {μ : Measure α} (d : α → E) (q theta beta : ℝ) (Bdiff : ℝ≥0∞)
+    (hTheta : 0 < theta) (hBeta : 0 < beta) (hSum : theta + beta = 1)
+    (hHolder : Real.HolderTriple (2 / theta) ((10 / 3 : ℝ) / beta) q)
+    (hqPos : 0 < q) (hqLt : q < 2 / theta)
+    (hLow : MemLp d (ENNReal.ofReal 2) μ)
+    (hHigh : MemLp d (ENNReal.ofReal (10 / 3 : ℝ)) μ)
+    (hBound : eLpNorm d (ENNReal.ofReal (10 / 3 : ℝ)) μ ≤ Bdiff) :
+    eLpNorm' d q μ ≤ Bdiff ^ beta * eLpNorm' d 2 μ ^ theta := by
+  let p1 : ℝ := 2 / theta
+  let p2 : ℝ := (10 / 3 : ℝ) / beta
+  have hp1Pos : 0 < p1 := by dsimp [p1]; positivity
+  have hp2Pos : 0 < p2 := by dsimp [p2]; positivity
+  have hp1coe : ENNReal.ofReal p1 = ENNReal.ofReal 2 / ENNReal.ofReal theta := by
+    dsimp [p1]
+    exact ENNReal.ofReal_div_of_pos hTheta
+  have hp2coe : ENNReal.ofReal p2 =
+      ENNReal.ofReal (10 / 3 : ℝ) / ENNReal.ofReal beta := by
+    dsimp [p2]
+    exact ENNReal.ofReal_div_of_pos hBeta
+  have hf₁ : MemLp (fun x => ‖d x‖ ^ theta) (ENNReal.ofReal p1) μ := by
+    rw [hp1coe]
+    have h := hLow.norm_rpow_div (ENNReal.ofReal theta)
+    simpa [ENNReal.toReal_ofReal hTheta.le] using h
+  have hf₂ : MemLp (fun x => ‖d x‖ ^ beta) (ENNReal.ofReal p2) μ := by
+    rw [hp2coe]
+    have h := hHigh.norm_rpow_div (ENNReal.ofReal beta)
+    simpa [ENNReal.toReal_ofReal hBeta.le] using h
+  have hnorm₁ : eLpNorm' (fun x => ‖d x‖ ^ theta) p1 μ = eLpNorm' d 2 μ ^ theta := by
+    have hpow := eLpNorm'_norm_rpow (μ := μ) d p1 theta hTheta
+    have hp1mul : p1 * theta = 2 := by dsimp [p1]; field_simp [ne_of_gt hTheta]
+    simpa [hp1mul] using hpow
+  have hnorm₂ : eLpNorm' (fun x => ‖d x‖ ^ beta) p2 μ =
+      eLpNorm' d (10 / 3 : ℝ) μ ^ beta := by
+    have hpow := eLpNorm'_norm_rpow (μ := μ) d p2 beta hBeta
+    have hp2mul : p2 * beta = (10 / 3 : ℝ) := by dsimp [p2]; field_simp [ne_of_gt hBeta]
+    simpa [hp2mul] using hpow
+  have hprod (x : α) : ‖d x‖ ^ theta * ‖d x‖ ^ beta = ‖d x‖ := by
+    rw [← Real.rpow_add' (norm_nonneg _) (by rw [hSum]; norm_num), hSum, Real.rpow_one]
+  have hHolderNorm :
+      eLpNorm' (fun x => ‖d x‖ ^ theta * ‖d x‖ ^ beta) q μ ≤
+        eLpNorm' (fun x => ‖d x‖ ^ theta) p1 μ *
+          eLpNorm' (fun x => ‖d x‖ ^ beta) p2 μ := by
+    simpa [p1, p2, mul_assoc] using (eLpNorm'_le_eLpNorm'_mul_eLpNorm'
+      hf₁.aestronglyMeasurable hf₂.aestronglyMeasurable
+      (fun x y : ℝ => x * y) 1 (by filter_upwards [] with x; simp)
+      hqPos hqLt (by
+        simpa [one_div] using hHolder.inv_add_inv_eq_inv.symm))
+  calc
+    eLpNorm' d q μ = eLpNorm' (fun x => ‖d x‖) q μ := by
+      symm
+      exact eLpNorm'_norm (f := d) (q := q) (μ := μ)
+    _ = eLpNorm' (fun x => ‖d x‖ ^ theta * ‖d x‖ ^ beta) q μ := by
+      congr 1
+      funext x
+      exact (hprod x).symm
+    _ ≤ eLpNorm' (fun x => ‖d x‖ ^ theta) p1 μ *
+          eLpNorm' (fun x => ‖d x‖ ^ beta) p2 μ := hHolderNorm
+    _ = eLpNorm' d 2 μ ^ theta * eLpNorm' d (10 / 3 : ℝ) μ ^ beta := by
+      rw [hnorm₁, hnorm₂]
+    _ ≤ eLpNorm' d 2 μ ^ theta * Bdiff ^ beta := by
+      gcongr
+      have hEq : eLpNorm' d (10 / 3 : ℝ) μ =
+          eLpNorm d (ENNReal.ofReal (10 / 3 : ℝ)) μ := by
+        simpa only [ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 10 / 3)] using
+          (eLpNorm_eq_eLpNorm' (p := ENNReal.ofReal (10 / 3 : ℝ)) (f := d)
+            (μ := μ) (by norm_num) (by norm_num) hHigh.aestronglyMeasurable).symm
+      rw [hEq]
+      exact hBound
+    _ = Bdiff ^ beta * eLpNorm' d 2 μ ^ theta := by rw [mul_comm]
+
 /-- A strong global `L²` limit and a uniform global `L^(10/3)` bound give
 strong convergence in each intermediate exponent on an arbitrary measure
 space. -/
@@ -154,79 +226,10 @@ theorem lerayLimit_strongLp_of_strongL2_and_uniform_high
   have hInterp (n : ℕ) :
       eLpNorm' (F n - G) q μ ≤
         Bdiff ^ beta * eLpNorm' (F n - G) 2 μ ^ theta := by
-    let d : α → E := F n - G
-    let f₁ : α → ℝ := fun x => ‖d x‖ ^ theta
-    let f₂ : α → ℝ := fun x => ‖d x‖ ^ beta
-    have hp1coe : ENNReal.ofReal p1 =
-        ENNReal.ofReal 2 / ENNReal.ofReal theta := by
-      dsimp [p1]
-      exact ENNReal.ofReal_div_of_pos hαPos
-    have hp2coe : ENNReal.ofReal p2 =
-        ENNReal.ofReal (10 / 3 : ℝ) / ENNReal.ofReal beta := by
-      dsimp [p2]
-      exact ENNReal.ofReal_div_of_pos hβPos
-    have hf₁ : MemLp f₁ (ENNReal.ofReal p1) μ := by
-      rw [hp1coe]
-      have h := (hDiffLow n).norm_rpow_div (ENNReal.ofReal theta)
-      simpa [f₁, d, ENNReal.toReal_ofReal hαPos.le] using h
-    have hf₂ : MemLp f₂ (ENNReal.ofReal p2) μ := by
-      rw [hp2coe]
-      have h := (hDiffHigh n).norm_rpow_div (ENNReal.ofReal beta)
-      simpa [f₂, d, ENNReal.toReal_ofReal hβPos.le] using h
-    have hnorm₁ : eLpNorm' f₁ p1 μ = eLpNorm' d 2 μ ^ theta := by
-      have hpow := eLpNorm'_norm_rpow (μ := μ) d p1 theta hαPos
-      have hp1mul : p1 * theta = 2 := by
-        dsimp [p1]
-        field_simp [ne_of_gt hαPos]
-      simpa [f₁, hp1mul] using hpow
-    have hnorm₂ : eLpNorm' f₂ p2 μ =
-        eLpNorm' d (10 / 3 : ℝ) μ ^ beta := by
-      have hpow := eLpNorm'_norm_rpow (μ := μ) d p2 beta hβPos
-      have hp2mul : p2 * beta = (10 / 3 : ℝ) := by
-        dsimp [p2]
-        field_simp [ne_of_gt hβPos]
-      simpa [f₂, hp2mul] using hpow
-    have hprod (x : α) : f₁ x * f₂ x = ‖d x‖ := by
-      dsimp [f₁, f₂]
-      rw [← Real.rpow_add' (norm_nonneg _) (by rw [hαβ]; norm_num),
-        hαβ, Real.rpow_one]
-    have hHolderNorm :
-        eLpNorm' (fun x => f₁ x * f₂ x) q μ ≤
-          eLpNorm' f₁ p1 μ * eLpNorm' f₂ p2 μ := by
-      simpa [mul_assoc] using (eLpNorm'_le_eLpNorm'_mul_eLpNorm'
-        hf₁.aestronglyMeasurable hf₂.aestronglyMeasurable
-        (fun x y : ℝ => x * y) 1
-        (by
-          filter_upwards [] with x
-          simp)
-        hqPos hqLtP1 (by
-          simpa [one_div] using hHolder.inv_add_inv_eq_inv.symm))
-    calc
-      eLpNorm' d q μ = eLpNorm' (fun x => ‖d x‖) q μ := by
-        symm
-        exact eLpNorm'_norm (f := d) (q := q) (μ := μ)
-      _ = eLpNorm' (fun x => f₁ x * f₂ x) q μ := by
-        congr 1
-        funext x
-        exact (hprod x).symm
-      _ ≤ eLpNorm' f₁ p1 μ * eLpNorm' f₂ p2 μ := hHolderNorm
-      _ = eLpNorm' d 2 μ ^ theta * eLpNorm' d (10 / 3 : ℝ) μ ^ beta := by
-        rw [hnorm₁, hnorm₂]
-      _ ≤ eLpNorm' d 2 μ ^ theta * Bdiff ^ beta := by
-        gcongr
-        have hhighEq : eLpNorm' d (10 / 3 : ℝ) μ =
-            eLpNorm d (ENNReal.ofReal (10 / 3 : ℝ)) μ := by
-          dsimp [d]
-          simpa only [ENNReal.toReal_ofReal
-            (by norm_num : (0 : ℝ) ≤ 10 / 3)] using
-            (eLpNorm_eq_eLpNorm'
-              (p := ENNReal.ofReal (10 / 3 : ℝ))
-              (f := F n - G) (μ := μ)
-              (by norm_num) (by norm_num)
-              (hDiffHigh n).aestronglyMeasurable).symm
-        rw [hhighEq]
-        exact hDiffBound n
-      _ = Bdiff ^ beta * eLpNorm' d 2 μ ^ theta := by rw [mul_comm]
+    simpa [p1, p2] using
+      lerayLimit_interpolation_bound (μ := μ) (F n - G) q theta beta Bdiff
+        hαPos hβPos hαβ hHolder hqPos hqLtP1
+        (hDiffLow n) (hDiffHigh n) (hDiffBound n)
   have hlow : Tendsto
       (fun n => eLpNorm' (F n - G) 2 μ) atTop (𝓝 0) := by
     have heq : (fun n => eLpNorm' (F n - G) 2 μ) =
