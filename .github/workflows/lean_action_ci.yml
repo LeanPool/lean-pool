@@ -37,6 +37,7 @@ on:
       - 'python/lean_pool/validation_cache.py'
       - 'python/lean_pool/ci_artifacts.py'
       - 'python/lean_pool/ci_cache.py'
+      - 'python/lean_pool/ci_validation_artifacts.py'
       - 'python/lean_pool/rebase_fastpath.py'
       - 'python/pyproject.toml'
       - 'python/uv.lock'
@@ -65,6 +66,7 @@ on:
       - 'python/lean_pool/validation_cache.py'
       - 'python/lean_pool/ci_artifacts.py'
       - 'python/lean_pool/ci_cache.py'
+      - 'python/lean_pool/ci_validation_artifacts.py'
       - 'python/lean_pool/rebase_fastpath.py'
       - 'python/pyproject.toml'
       - 'python/uv.lock'
@@ -256,6 +258,19 @@ jobs:
             exit 1
           fi
 
+      - name: Reuse compiled projects from merged PRs
+        if: github.event_name == 'push' && steps.cache.outputs.cache-hit != 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          if git cat-file -e "$BEFORE_SHA" 2>/dev/null; then
+            PYTHONPATH=python python3 -m lean_pool.rebase_fastpath restore-main \
+              --repository "$REPOSITORY" --head "$BEFORE_SHA" --base "$GITHUB_SHA"
+          fi
+
       - name: Build project
         id: compilation
         run: |
@@ -292,6 +307,16 @@ jobs:
           restore-keys: |
             LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
 
+      - name: Recover saved validation when caches were evicted
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BUILD_EVENT: ${{ github.event_name }}
+          BUILD_HEAD: ${{ github.sha }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.ci_validation_artifacts
+          --event "$BUILD_EVENT" --head "$BUILD_HEAD"
+
       - name: Install validation dependencies
         run: cd python && uv sync --locked
 
@@ -309,6 +334,17 @@ jobs:
         run: |
           cd python
           uv run python -m lean_pool.validation_cache quality --repo ..
+
+      - name: Retain successful validation independently of build caches
+        continue-on-error: true
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: lean-validation-receipts
+          path: .lake/validation-cache/v1/passes.json
+          include-hidden-files: true
+          if-no-files-found: error
+          compression-level: 1
+          retention-days: 14
 
       - name: Package PR project build for later rebases
         if: github.event_name == 'pull_request'
@@ -329,17 +365,6 @@ jobs:
           compression-level: 0
           retention-days: 14
 
-      - name: Prepare storage for project validation
-        if: success() && github.ref == 'refs/heads/main'
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPOSITORY: ${{ github.repository }}
-          CACHE_KEY: LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
-        run: >-
-          PYTHONPATH=python python3 -m lean_pool.ci_cache prepare
-          --repository "$REPOSITORY" --key "$CACHE_KEY"
-
       - name: Save project validation
         # Successful receipts are tiny; retain PR results across registry rebases.
         uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae
@@ -347,15 +372,15 @@ jobs:
           path: .lake/validation-cache/v1
           key: LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
 
-      - name: Prepare storage for lean dependencies
-        if: always() && github.ref == 'refs/heads/main' && steps.mathlib-cache.outcome == 'success' && steps.dependency-cache.outputs.cache-hit != 'true'
+      - name: Prune old copies of project validation
+        if: success() && github.ref == 'refs/heads/main'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
-          CACHE_KEY: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+          CACHE_KEY: LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
         run: >-
-          PYTHONPATH=python python3 -m lean_pool.ci_cache prepare
+          PYTHONPATH=python python3 -m lean_pool.ci_cache prune
           --repository "$REPOSITORY" --key "$CACHE_KEY"
 
       - name: Save Lean dependencies
@@ -367,15 +392,15 @@ jobs:
             .lake/packages
           key: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
 
-      - name: Prepare storage for pool build
-        if: always() && github.ref == 'refs/heads/main' && steps.compilation.outcome == 'success' && steps.cache.outputs.cache-hit != 'true'
+      - name: Prune old copies of lean dependencies
+        if: always() && github.ref == 'refs/heads/main' && steps.mathlib-cache.outcome == 'success' && steps.dependency-cache.outputs.cache-hit != 'true'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
-          CACHE_KEY: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ needs.plan.outputs.build_revision }}
+          CACHE_KEY: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
         run: >-
-          PYTHONPATH=python python3 -m lean_pool.ci_cache prepare
+          PYTHONPATH=python python3 -m lean_pool.ci_cache prune
           --repository "$REPOSITORY" --key "$CACHE_KEY"
 
       - name: Save pool build
@@ -384,6 +409,17 @@ jobs:
         with:
           path: .lake/build
           key: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ needs.plan.outputs.build_revision }}
+
+      - name: Prune old copies of pool build
+        if: always() && github.ref == 'refs/heads/main' && steps.compilation.outcome == 'success' && steps.cache.outputs.cache-hit != 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          CACHE_KEY: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ needs.plan.outputs.build_revision }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.ci_cache prune
+          --repository "$REPOSITORY" --key "$CACHE_KEY"
 
   shard:
     needs: plan
@@ -602,6 +638,16 @@ jobs:
           restore-keys: |
             LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
 
+      - name: Recover saved validation when caches were evicted
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BUILD_EVENT: ${{ github.event_name }}
+          BUILD_HEAD: ${{ github.sha }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.ci_validation_artifacts
+          --event "$BUILD_EVENT" --head "$BUILD_HEAD"
+
       - name: Install validation dependencies
         run: cd python && uv sync --locked
 
@@ -619,6 +665,17 @@ jobs:
         run: |
           cd python
           uv run python -m lean_pool.validation_cache quality --repo ..
+
+      - name: Retain successful validation independently of build caches
+        continue-on-error: true
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: lean-validation-receipts
+          path: .lake/validation-cache/v1/passes.json
+          include-hidden-files: true
+          if-no-files-found: error
+          compression-level: 1
+          retention-days: 14
 
       - name: Package PR project build for later rebases
         if: github.event_name == 'pull_request'
@@ -639,17 +696,6 @@ jobs:
           compression-level: 0
           retention-days: 14
 
-      - name: Prepare storage for project validation
-        if: success() && github.ref == 'refs/heads/main'
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPOSITORY: ${{ github.repository }}
-          CACHE_KEY: LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
-        run: >-
-          PYTHONPATH=python python3 -m lean_pool.ci_cache prepare
-          --repository "$REPOSITORY" --key "$CACHE_KEY"
-
       - name: Save project validation
         # Successful receipts are tiny; retain PR results across registry rebases.
         uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae
@@ -657,15 +703,15 @@ jobs:
           path: .lake/validation-cache/v1
           key: LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
 
-      - name: Prepare storage for lean dependencies
-        if: always() && github.ref == 'refs/heads/main' && steps.mathlib-cache.outcome == 'success' && steps.dependency-cache.outputs.cache-hit != 'true'
+      - name: Prune old copies of project validation
+        if: success() && github.ref == 'refs/heads/main'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
-          CACHE_KEY: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+          CACHE_KEY: LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
         run: >-
-          PYTHONPATH=python python3 -m lean_pool.ci_cache prepare
+          PYTHONPATH=python python3 -m lean_pool.ci_cache prune
           --repository "$REPOSITORY" --key "$CACHE_KEY"
 
       - name: Save Lean dependencies
@@ -677,15 +723,15 @@ jobs:
             .lake/packages
           key: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
 
-      - name: Prepare storage for pool build
-        if: always() && github.ref == 'refs/heads/main' && steps.compilation.outcome == 'success' && steps.cache.outputs.cache-hit != 'true'
+      - name: Prune old copies of lean dependencies
+        if: always() && github.ref == 'refs/heads/main' && steps.mathlib-cache.outcome == 'success' && steps.dependency-cache.outputs.cache-hit != 'true'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
-          CACHE_KEY: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ needs.plan.outputs.build_revision }}
+          CACHE_KEY: LeanDependencies-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
         run: >-
-          PYTHONPATH=python python3 -m lean_pool.ci_cache prepare
+          PYTHONPATH=python python3 -m lean_pool.ci_cache prune
           --repository "$REPOSITORY" --key "$CACHE_KEY"
 
       - name: Save pool build
@@ -697,6 +743,17 @@ jobs:
 
   # Reuse the prior green project's compiled modules and current main's cache.
   # A missing artifact falls back to the full validation sequence in this job.
+      - name: Prune old copies of pool build
+        if: always() && github.ref == 'refs/heads/main' && steps.compilation.outcome == 'success' && steps.cache.outputs.cache-hit != 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          CACHE_KEY: LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ needs.plan.outputs.build_revision }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.ci_cache prune
+          --repository "$REPOSITORY" --key "$CACHE_KEY"
+
   rebase:
     needs: plan
     if: needs.plan.outputs.mode == 'rebase'
@@ -786,14 +843,23 @@ jobs:
         if: steps.project-build.outcome == 'success'
         run: cd python && uv run python -m lean_pool.quality --repo .. --static-only
 
-      - name: Restore validation cache for full fallback
-        if: steps.project-build.outcome != 'success'
+      - name: Restore validation cache for the combined checkout
         uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
         with:
           path: .lake/validation-cache/v1
           key: LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
           restore-keys: |
             LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
+
+      - name: Carry saved checks through the verified rebase
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PREVIOUS_RUN: ${{ needs.plan.outputs.reuse_run_id }}
+          BUILD_HEAD: ${{ github.sha }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.ci_validation_artifacts
+          --event pull_request --head "$BUILD_HEAD" --previous-run "$PREVIOUS_RUN"
 
       - name: Full validation when the prior artifact is unavailable
         if: steps.project-build.outcome != 'success'
@@ -802,6 +868,17 @@ jobs:
           (cd python && uv run python -m lean_pool.validation_cache lint --repo ..)
           ~/.elan/bin/lake exe lint-style LeanPool
           (cd python && uv run python -m lean_pool.validation_cache quality --repo ..)
+
+      - name: Retain successful validation independently of build caches
+        continue-on-error: true
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: lean-validation-receipts
+          path: .lake/validation-cache/v1/passes.json
+          include-hidden-files: true
+          if-no-files-found: warn
+          compression-level: 1
+          retention-days: 14
 
       - name: Package PR project build for later rebases
         continue-on-error: true

@@ -33,9 +33,14 @@ def build_revision(root: Path, reference: str = "HEAD") -> str:
             "--",
             "LeanPool",
             "LeanPool.lean",
-            "scripts",
+            "scripts/ProjectIndexes.lean",
         ],
         cwd=root,
+    )
+    sources = b"\0".join(
+        entry
+        for entry in sources.split(b"\0")
+        if entry.rsplit(b"\t", 1)[-1].endswith(b".lean")
     )
     if not sources:
         raise ValueError("no Lean build sources found")
@@ -53,8 +58,16 @@ def cache_family(key: str) -> str:
 
 
 def obsolete_caches(caches: list[dict[str, Any]], key: str) -> list[int]:
-    """Keep the requested main cache, other cache kinds, and every PR cache."""
+    """Prune old copies only after the replacement is visible on main."""
     family = cache_family(key)
+    replacements = [
+        cache
+        for cache in caches
+        if cache.get("ref") == "refs/heads/main" and cache.get("key") == key
+    ]
+    if not replacements:
+        return []
+    created = replacements[0].get("created_at", "")
     return [
         cache["id"]
         for cache in caches
@@ -62,11 +75,12 @@ def obsolete_caches(caches: list[dict[str, Any]], key: str) -> list[int]:
         and isinstance(cache.get("key"), str)
         and cache["key"].startswith(family)
         and cache["key"] != key
+        and (not created or cache.get("created_at", "") < created)
     ]
 
 
-def prepare_cache(repository: str, key: str) -> None:
-    """Free obsolete copies before uploading, avoiding transient double storage."""
+def prune_cache(repository: str, key: str) -> None:
+    """Retain the replacement and remove older copies after a successful upload."""
     cache_family(key)
     pages = json.loads(
         subprocess.check_output(
@@ -98,20 +112,20 @@ def prepare_cache(repository: str, key: str) -> None:
 
 
 def main() -> None:
-    """Print a build identity or prepare a main cache for replacement."""
+    """Print a build identity or prune main caches after replacement."""
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
     revision = commands.add_parser("revision")
     revision.add_argument("--ref", default="HEAD")
-    prepare = commands.add_parser("prepare")
-    prepare.add_argument("--repository", required=True)
-    prepare.add_argument("--key", required=True)
+    prune = commands.add_parser("prune")
+    prune.add_argument("--repository", required=True)
+    prune.add_argument("--key", required=True)
     arguments = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="cache: %(message)s")
     if arguments.command == "revision":
         print(build_revision(Path.cwd(), arguments.ref))
     else:
-        prepare_cache(arguments.repository, arguments.key)
+        prune_cache(arguments.repository, arguments.key)
 
 
 if __name__ == "__main__":

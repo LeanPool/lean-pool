@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from lean_pool.ci_cache import build_revision, obsolete_caches, prepare_cache
+from lean_pool.ci_cache import build_revision, obsolete_caches, prune_cache
 
 
 def _commit(root: Path) -> None:
@@ -52,6 +52,26 @@ def test_unrelated_commit_reuses_build_identity(repository: Path) -> None:
 
 
 @pytest.mark.parametrize(
+    "name",
+    [
+        "scripts/exposition/Extract.lean",
+        "scripts/ci/lint-project.lean",
+        "scripts/profile.py",
+        "LeanPool/projects.yml",
+        "LeanPool/A/LICENSE",
+    ],
+)
+def test_unrelated_file_reuses_compiled_build(repository: Path, name: str) -> None:
+    """Scripts, project cards, and licenses do not change the pool's compilation."""
+    before = build_revision(repository)
+    path = repository / name
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("changed script\n")
+    _commit(repository)
+    assert build_revision(repository) == before
+
+
+@pytest.mark.parametrize(
     "name", ["LeanPool.lean", "LeanPool/A.lean", "scripts/ProjectIndexes.lean"]
 )
 def test_source_change_gets_new_build_identity(repository: Path, name: str) -> None:
@@ -91,10 +111,10 @@ def test_retention_preserves_other_cache_kinds_platforms_and_prs() -> None:
     assert obsolete_caches(caches, "LeanPoolBuild-v1-Linux-current") == [0]
 
 
-def test_prepare_reads_all_pages_and_only_deletes_obsolete_main_entries(
+def test_prune_reads_all_pages_and_only_deletes_obsolete_main_entries(
     monkeypatch,
 ) -> None:
-    """The replacement upload can free space without evicting unrelated caches."""
+    """A confirmed replacement frees space without deleting unrelated caches."""
     pages = [
         {
             "actions_caches": [
@@ -104,13 +124,19 @@ def test_prepare_reads_all_pages_and_only_deletes_obsolete_main_entries(
         {
             "actions_caches": [
                 {
+                    "id": 9,
+                    "key": "LeanPoolBuild-v1-Linux-new",
+                    "ref": "refs/heads/main",
+                },
+                {
                     "id": 8,
                     "key": "LeanValidation-v1-Linux-new",
                     "ref": "refs/heads/main",
-                }
+                },
             ]
         },
     ]
+
     calls = []
     monkeypatch.setattr(
         subprocess, "check_output", lambda *args, **kwargs: json.dumps(pages)
@@ -118,10 +144,33 @@ def test_prepare_reads_all_pages_and_only_deletes_obsolete_main_entries(
     monkeypatch.setattr(
         subprocess, "run", lambda command, **kwargs: calls.append(command)
     )
-    prepare_cache("owner/repo", "LeanPoolBuild-v1-Linux-new")
+    prune_cache("owner/repo", "LeanPoolBuild-v1-Linux-new")
     assert calls == [
         ["gh", "api", "--method", "DELETE", "repos/owner/repo/actions/caches/7"]
     ]
+
+
+def test_failed_or_missing_replacement_preserves_previous_copy() -> None:
+    """An upload failure, or a replacement visible only to a PR, cannot erase main."""
+    caches = [
+        {"id": 1, "key": "LeanPoolBuild-v1-Linux-old", "ref": "refs/heads/main"},
+        {"id": 2, "key": "LeanPoolBuild-v1-Linux-new", "ref": "refs/pull/1/merge"},
+    ]
+    assert obsolete_caches(caches, "LeanPoolBuild-v1-Linux-new") == []
+
+
+def test_older_run_cannot_delete_a_newer_run_cache() -> None:
+    """Overlapping jobs may prune predecessors but never a newer replacement."""
+    caches = [
+        {
+            "id": index,
+            "key": f"LeanPoolBuild-v1-Linux-{index}",
+            "ref": "refs/heads/main",
+            "created_at": f"2026-10-06T07:0{index}:00Z",
+        }
+        for index in range(3)
+    ]
+    assert obsolete_caches(caches, "LeanPoolBuild-v1-Linux-1") == [0]
 
 
 def test_unknown_cache_family_is_rejected_before_api_calls(monkeypatch) -> None:
@@ -132,4 +181,4 @@ def test_unknown_cache_family_is_rejected_before_api_calls(monkeypatch) -> None:
         lambda *args, **kwargs: pytest.fail("unexpected API call"),
     )
     with pytest.raises(ValueError, match="unsupported cache key"):
-        prepare_cache("owner/repo", "unknown")
+        prune_cache("owner/repo", "unknown")
