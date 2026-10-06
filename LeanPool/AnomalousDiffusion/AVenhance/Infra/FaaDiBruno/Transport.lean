@@ -164,7 +164,7 @@ theorem Transport.reciprocalSquareShift_le (c m : ℕ) (hc : 2 ≤ c) :
 
 private theorem transportE22_shifted_sum_le_three_halves_term1 :
   ∀ (n : ℕ),
-    (81 : ℕ) ≤ n →
+    (50 : ℕ) ≤ n →
       let rangeN : Finset ℕ := Finset.range (n - (1 : ℕ));
       let sqA : ℕ → ℝ := fun (k : ℕ) => (1 : ℝ) / (↑(n - k + (1 : ℕ)) : ℝ) ^ (2 : ℕ);
       let sqB : ℕ → ℝ := fun (k : ℕ) => (1 : ℝ) / ((↑k : ℝ) + (2 : ℝ)) ^ (2 : ℕ);
@@ -175,7 +175,7 @@ private theorem transportE22_shifted_sum_le_three_halves_term1 :
             ℝ)) ^ (2 : ℕ)) ≤
           sqA k + sqB k + (2 : ℝ) * cross k
     := by
-  intro n hn81 rangeN sqA sqB cross k hk
+  intro n hn50 rangeN sqA sqB cross k hk
   have hk' : k < n - 1 := Finset.mem_range.mp hk
   let a : ℝ := ((n - k + 1 : ℕ) : ℝ)
   let b : ℝ := (k + 2 : ℝ)
@@ -204,16 +204,77 @@ private theorem transportE22_shifted_sum_le_three_halves_term1 :
       field_simp [ne_of_gt ha, ne_of_gt hb]
       ring_nf
 
+private theorem reciprocalSquareShift_four_le_five_sixteenths (m : ℕ) :
+    (∑ k ∈ Finset.range m, 1 / (k + 4 : ℝ) ^ 2) ≤ 5 / 16 := by
+  by_cases hm : m = 0
+  · norm_num [hm]
+  · rw [show m = 1 + (m - 1) by omega, Finset.sum_range_add]
+    calc
+      _ = 1 / (4 : ℝ) ^ 2 +
+          ∑ k ∈ Finset.range (m - 1), 1 / (k + 5 : ℝ) ^ 2 := by
+            congr 1
+            · norm_num [Finset.sum_range_succ]
+            · apply Finset.sum_congr rfl
+              intro k hk
+              push_cast
+              ring_nf
+      _ ≤ 1 / (4 : ℝ) ^ 2 + 1 / (5 - 1 : ℝ) := by
+            exact add_le_add_right
+              (Transport.reciprocalSquareShift_le 5 (m - 1) (by norm_num)) _
+      _ = 5 / 16 := by norm_num
+
+private theorem reciprocalSquareShift_three_le_61_144 (m : ℕ) :
+    (∑ k ∈ Finset.range m, 1 / (k + 3 : ℝ) ^ 2) ≤ 61 / 144 := by
+  by_cases hm : m = 0
+  · norm_num [hm]
+  · rw [show m = 1 + (m - 1) by omega, Finset.sum_range_add]
+    calc
+      _ = 1 / (3 : ℝ) ^ 2 +
+          ∑ k ∈ Finset.range (m - 1), 1 / (k + 4 : ℝ) ^ 2 := by
+            congr 1
+            · norm_num [Finset.sum_range_succ]
+            · apply Finset.sum_congr rfl
+              intro k hk
+              push_cast
+              ring_nf
+      _ ≤ 1 / (3 : ℝ) ^ 2 + 5 / 16 :=
+            add_le_add_right
+              (reciprocalSquareShift_four_le_five_sixteenths (m - 1)) _
+      _ = 61 / 144 := by norm_num
+
+private theorem reciprocalSquareShift_two_le_97_144 (m : ℕ) :
+    (∑ k ∈ Finset.range m, 1 / (k + 2 : ℝ) ^ 2) ≤ 97 / 144 := by
+  by_cases hm0 : m = 0
+  · norm_num [hm0]
+  · by_cases hm1 : m = 1
+    · subst m
+      norm_num [Finset.sum_range_succ]
+    · have hm2 : 2 ≤ m := by omega
+      rw [show m = 2 + (m - 2) by omega, Finset.sum_range_add]
+      calc
+        _ = 1 / (2 : ℝ) ^ 2 + 1 / (3 : ℝ) ^ 2 +
+            ∑ k ∈ Finset.range (m - 2), 1 / (k + 4 : ℝ) ^ 2 := by
+              congr 1
+              · norm_num [Finset.sum_range_succ]
+              · apply Finset.sum_congr rfl
+                intro k hk
+                push_cast
+                ring_nf
+        _ ≤ 1 / (2 : ℝ) ^ 2 + 1 / (3 : ℝ) ^ 2 + 5 / 16 :=
+              add_le_add_right
+                (reciprocalSquareShift_four_le_five_sixteenths (m - 2)) _
+        _ = 97 / 144 := by norm_num
+
 /-- The corrected shifted reciprocal-square sum used at (10660) is at most
 `3/2`. The unshifted `(k+1)^{-2}` version printed at (10663) is false. -/
 theorem transportE22_shifted_sum_le_three_halves (n : ℕ) :
     (∑ k ∈ Finset.range (n - 1 : ℕ),
       (n + 1 : ℝ) ^ 2 /
         (((n - k + 1 : ℕ) : ℝ) ^ 2 * (k + 2 : ℝ) ^ 2)) ≤ 3 / 2 := by
-  by_cases hn : n < 81
-  · have hnle : n ≤ 80 := by omega
+  by_cases hn : n < 50
+  · have hnle : n ≤ 49 := by omega
     interval_cases n <;> norm_num [Finset.sum_range_succ]
-  · have hn81 : 81 ≤ n := by omega
+  · have hn50 : 50 ≤ n := by omega
     let rangeN := Finset.range (n - 1)
     let sqA (k : ℕ) : ℝ := 1 / ((n - k + 1 : ℕ) : ℝ) ^ 2
     let sqB (k : ℕ) : ℝ := 1 / (k + 2 : ℝ) ^ 2
@@ -243,23 +304,10 @@ theorem transportE22_shifted_sum_le_three_halves (n : ℕ) :
         rw [hidx]
         push_cast
         rfl
-    have hAsh : (∑ k ∈ rangeN, 1 / (k + 3 : ℝ) ^ 2) ≤ 4 / 9 := by
+    have hAsh : (∑ k ∈ rangeN, 1 / (k + 3 : ℝ) ^ 2) ≤ 61 / 144 := by
       unfold rangeN
-      rw [show n - 1 = 1 + (n - 2) by omega, Finset.sum_range_add]
-      calc
-        _ = 1 / (3 : ℝ) ^ 2 +
-            ∑ k ∈ Finset.range (n - 2), 1 / (k + 4 : ℝ) ^ 2 := by
-              congr 1
-              · norm_num [Finset.sum_range_succ]
-              · apply Finset.sum_congr rfl
-                intro k hk
-                push_cast
-                ring_nf
-        _ ≤ 1 / (3 : ℝ) ^ 2 + 1 / (4 - 1 : ℝ) := by
-              exact add_le_add_right
-                (Transport.reciprocalSquareShift_le 4 (n - 2) (by norm_num)) _
-        _ = 4 / 9 := by norm_num
-    have hAsq : (∑ k ∈ rangeN, sqA k) ≤ 4 / 9 := by
+      exact reciprocalSquareShift_three_le_61_144 (n - 1)
+    have hAsq : (∑ k ∈ rangeN, sqA k) ≤ 61 / 144 := by
       rw [hAeq]
       exact hAsh
     have hBprefix : (∑ k ∈ rangeN, sqB k) ≤
@@ -268,23 +316,10 @@ theorem transportE22_shifted_sum_le_three_halves (n : ℕ) :
         (Finset.range_mono (by omega))
       intro k hk hnot
       positivity
-    have hBfull : (∑ k ∈ Finset.range n, sqB k) ≤ 25 / 36 := by
+    have hBfull : (∑ k ∈ Finset.range n, sqB k) ≤ 97 / 144 := by
       unfold sqB
-      rw [show n = 2 + (n - 2) by omega, Finset.sum_range_add]
-      calc
-        _ = 1 / (2 : ℝ) ^ 2 + 1 / (3 : ℝ) ^ 2 +
-            ∑ k ∈ Finset.range (n - 2), 1 / (k + 4 : ℝ) ^ 2 := by
-              congr 1
-              · norm_num [Finset.sum_range_succ]
-              · apply Finset.sum_congr rfl
-                intro k hk
-                push_cast
-                ring_nf
-        _ ≤ 1 / (2 : ℝ) ^ 2 + 1 / (3 : ℝ) ^ 2 + 1 / (4 - 1 : ℝ) := by
-              exact add_le_add_right
-                (Transport.reciprocalSquareShift_le 4 (n - 2) (by norm_num)) _
-        _ = 25 / 36 := by norm_num
-    have hBsq : (∑ k ∈ rangeN, sqB k) ≤ 25 / 36 := hBprefix.trans hBfull
+      exact reciprocalSquareShift_two_le_97_144 n
+    have hBsq : (∑ k ∈ rangeN, sqB k) ≤ 97 / 144 := hBprefix.trans hBfull
     have hCauchyA : (∑ k ∈ rangeN, recA k) ^ 2 ≤
         ((n - 1 : ℕ) : ℝ) * (∑ k ∈ rangeN, sqA k) := by
       have h := Finset.sum_mul_sq_le_sq_mul_sq rangeN
@@ -297,6 +332,10 @@ theorem transportE22_shifted_sum_le_three_halves (n : ℕ) :
         (fun _ : ℕ => (1 : ℝ)) (fun k => recB k)
       simpa [rangeN, recB, sqB, Finset.sum_const, nsmul_eq_mul, Finset.card_range,
         div_pow] using h
+    have hAsqLoose : (∑ k ∈ rangeN, sqA k) ≤ 4 / 9 :=
+      hAsq.trans (by norm_num)
+    have hBsqLoose : (∑ k ∈ rangeN, sqB k) ≤ 25 / 36 :=
+      hBsq.trans (by norm_num)
     have hrecA : (∑ k ∈ rangeN, recA k) ≤ (2 / 3 : ℝ) * Real.sqrt n := by
       have hsum : 0 ≤ ∑ k ∈ rangeN, recA k := by
         apply Finset.sum_nonneg
@@ -306,7 +345,7 @@ theorem transportE22_shifted_sum_le_three_halves (n : ℕ) :
         calc
           _ ≤ ((n - 1 : ℕ) : ℝ) * (∑ k ∈ rangeN, sqA k) := hCauchyA
           _ ≤ ((n - 1 : ℕ) : ℝ) * (4 / 9) :=
-            mul_le_mul_of_nonneg_left hAsq (by positivity)
+            mul_le_mul_of_nonneg_left hAsqLoose (by positivity)
           _ ≤ (n : ℝ) * (4 / 9) := by
             have hnsub : ((n - 1 : ℕ) : ℝ) ≤ (n : ℝ) := by
               exact_mod_cast Nat.sub_le n 1
@@ -326,7 +365,7 @@ theorem transportE22_shifted_sum_le_three_halves (n : ℕ) :
         calc
           _ ≤ ((n - 1 : ℕ) : ℝ) * (∑ k ∈ rangeN, sqB k) := hCauchyB
           _ ≤ ((n - 1 : ℕ) : ℝ) * (25 / 36) :=
-            mul_le_mul_of_nonneg_left hBsq (by positivity)
+            mul_le_mul_of_nonneg_left hBsqLoose (by positivity)
           _ ≤ (n : ℝ) * (25 / 36) := by
             have hnsub : ((n - 1 : ℕ) : ℝ) ≤ (n : ℝ) := by
               exact_mod_cast Nat.sub_le n 1
@@ -359,12 +398,12 @@ theorem transportE22_shifted_sum_le_three_halves (n : ℕ) :
         _ = (1 / (n + 3 : ℝ)) *
             ((∑ k ∈ rangeN, recA k) + (∑ k ∈ rangeN, recB k)) := by
               rw [← Finset.mul_sum, Finset.sum_add_distrib]
-    have hncast : (81 : ℝ) ≤ n := by exact_mod_cast hn81
-    have hroot : 9 ≤ Real.sqrt n := by
+    have hncast : (50 : ℝ) ≤ n := by exact_mod_cast hn50
+    have hroot : (707 / 100 : ℝ) ≤ Real.sqrt n := by
       apply (Real.le_sqrt (by norm_num) (by positivity)).2
       norm_num only
-      exact hncast
-    have hcrossBound : 2 * (∑ k ∈ rangeN, cross k) ≤ 1 / 3 := by
+      nlinarith [hncast]
+    have hcrossBound : 2 * (∑ k ∈ rangeN, cross k) ≤ 29 / 72 := by
       have hrec : (∑ k ∈ rangeN, recA k) +
           (∑ k ∈ rangeN, recB k) ≤ (3 / 2 : ℝ) * Real.sqrt n := by
         calc
@@ -379,18 +418,19 @@ theorem transportE22_shifted_sum_le_three_halves (n : ℕ) :
           2 * ((1 / (n + 3 : ℝ)) * ((3 / 2 : ℝ) * Real.sqrt n)) := by
             gcongr
         _ = 3 * Real.sqrt n / (n + 3 : ℝ) := by ring
-        _ ≤ 1 / 3 := by
+        _ ≤ 29 / 72 := by
           rw [div_le_iff₀ hden]
-          have hprod : 0 ≤ Real.sqrt n * (Real.sqrt n - 9) :=
-            mul_nonneg (Real.sqrt_nonneg _) (sub_nonneg.mpr hroot)
           have hnnonneg : 0 ≤ (n : ℝ) := by positivity
           have hsquare : (Real.sqrt n) ^ 2 = n := Real.sq_sqrt hnnonneg
+          have hprod : 0 ≤ (Real.sqrt n - 707 / 100) *
+              (29 * (Real.sqrt n + 707 / 100) - 216) :=
+            mul_nonneg (sub_nonneg.mpr hroot) (by nlinarith [hroot])
           nlinarith only [hsquare, hprod]
     have hterm (k : ℕ) (hk : k ∈ rangeN) :
         (n + 1 : ℝ) ^ 2 /
             (((n - k + 1 : ℕ) : ℝ) ^ 2 * (k + 2 : ℝ) ^ 2) ≤
           sqA k + sqB k + 2 * cross k := by
-      exact @transportE22_shifted_sum_le_three_halves_term1 n hn81 k hk
+      exact @transportE22_shifted_sum_le_three_halves_term1 n hn50 k hk
     have hsumBound :
         (∑ k ∈ rangeN,
           (n + 1 : ℝ) ^ 2 /
@@ -404,7 +444,7 @@ theorem transportE22_shifted_sum_le_three_halves (n : ℕ) :
     calc
       _ ≤ (∑ k ∈ rangeN, sqA k) + (∑ k ∈ rangeN, sqB k) +
           2 * (∑ k ∈ rangeN, cross k) := hsumBound
-      _ ≤ 4 / 9 + 25 / 36 + 1 / 3 := by
+      _ ≤ 61 / 144 + 97 / 144 + 29 / 72 := by
         linarith [hAsq, hBsq, hcrossBound]
       _ ≤ 3 / 2 := by norm_num
 
