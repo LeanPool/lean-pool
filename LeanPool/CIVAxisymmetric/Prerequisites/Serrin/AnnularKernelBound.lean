@@ -177,20 +177,23 @@ private theorem integral_kernelCutoffTerm_mul_eq_setIntegral (l : Fin 3) (β : F
       by_contra fun hne => hy (support_kernelCutoffTerm_subset l β x hρ γ hγ t hne)
     rw [hz, zero_mul]
 
-/-- The generic bound on the integral of a kernel-times-cutoff term against a function bounded
-on the ball. -/
-theorem abs_integral_kernelCutoffTerm_mul_le (l : Fin 3) {β : Fin 3 → ℕ}
-    (hβ : β 0 + β 1 + β 2 ≤ 2) (x : Vec3) {ρ : ℝ} (hρ0 : 0 < ρ) {γ : Fin 3 → ℕ}
+private theorem abs_integral_kernelCutoffTerm_mul_annulus_le (l : Fin 3) (β : Fin 3 → ℕ)
+    (x : Vec3) {ρ : ℝ} (hρ0 : 0 < ρ) (γ : Fin 3 → ℕ)
     (hγ : γ 0 + γ 1 + γ 2 ≠ 0) (t M : ℝ) (hM : 0 ≤ M) (h : Vec3 → ℝ)
-    (hh : ∀ y : Vec3, vec3EuclideanNorm (y - x) ≤ ρ → |h y| ≤ M) :
-    ∃ C : ℝ, 0 ≤ C ∧ |∫ y : Vec3, kernelCutoffTerm l β x ρ γ t y * h y| ≤
-      C * M * ρ / ρ ^ (β 0 + β 1 + β 2 + (γ 0 + γ 1 + γ 2)) := by
-  obtain ⟨ck, hck0, hck⟩ := abs_multiPartialVec3_spatialDeriv_newtonianKernel_le l β hβ
-  obtain ⟨cc, hcc0, hcc⟩ := exists_bound_multiPartial_serrinBallCutoff_scaled x hρ0 γ t
+    (hh : ∀ y : Vec3, vec3EuclideanNorm (y - x) ≤ ρ → |h y| ≤ M) (ck cc : ℝ)
+    (hck0 : 0 ≤ ck) (hcc0 : 0 ≤ cc)
+    (hck : ∀ z : Vec3, z ≠ 0 →
+      |multiPartialVec3 (spatialDeriv newtonianKernel l) β z| ≤
+        ck * (vec3EuclideanNorm z ^ (2 + (β 0 + β 1 + β 2)))⁻¹)
+    (hcc : ∀ y : Vec3,
+      |multiPartial (fun z : ParabolicPoint => serrinBallCutoff x ρ z.1) γ (y, t)| ≤
+        cc / ρ ^ (γ 0 + γ 1 + γ 2)) :
+    |∫ y : Vec3, kernelCutoffTerm l β x ρ γ t y * h y| ≤
+      ck * cc * 2 ^ (2 + (β 0 + β 1 + β 2)) * volume.real (Metric.ball (0 : Vec3) 1) * M * ρ /
+        ρ ^ (β 0 + β 1 + β 2 + (γ 0 + γ 1 + γ 2)) := by
   set V0 : ℝ := volume.real (Metric.ball (0 : Vec3) 1) with hV0def
   have hV0 : 0 ≤ V0 := measureReal_nonneg
   set n : ℕ := β 0 + β 1 + β 2 + (γ 0 + γ 1 + γ 2) with hndef
-  refine ⟨ck * cc * 2 ^ (2 + (β 0 + β 1 + β 2)) * V0, by positivity, ?_⟩
   set B : ℝ := ck * cc * 2 ^ (2 + (β 0 + β 1 + β 2)) / ρ ^ (2 + n) * M with hBdef
   have hbound : ∀ y ∈ {y : Vec3 | ρ / 2 ≤ vec3EuclideanNorm (y - x) ∧
       vec3EuclideanNorm (y - x) ≤ ρ}, ‖kernelCutoffTerm l β x ρ γ t y * h y‖ ≤ B := by
@@ -222,8 +225,8 @@ theorem abs_integral_kernelCutoffTerm_mul_le (l : Fin 3) {β : Fin 3 → ℕ}
         _ = ck * (2:ℝ) ^ (2 + (β 0 + β 1 + β 2)) / ρ ^ (2 + (β 0 + β 1 + β 2)) := by
             rw [div_pow]
             field_simp
-    have hcbound : |multiPartial (fun z : ParabolicPoint => serrinBallCutoff x ρ z.1) γ (y, t)| ≤
-        cc / ρ ^ (γ 0 + γ 1 + γ 2) := hcc y
+    have hcbound : |multiPartial (fun z : ParabolicPoint => serrinBallCutoff x ρ z.1) γ
+        (y, t)| ≤ cc / ρ ^ (γ 0 + γ 1 + γ 2) := hcc y
     have hhbound : |h y| ≤ M := hh y hy2
     unfold kernelCutoffTerm
     rw [Real.norm_eq_abs, abs_mul, abs_mul]
@@ -249,6 +252,33 @@ theorem abs_integral_kernelCutoffTerm_mul_le (l : Fin 3) {β : Fin 3 → ℕ}
           positivity)
     _ = ck * cc * 2 ^ (2 + (β 0 + β 1 + β 2)) * V0 * M * ρ / ρ ^ n := by
         rw [hBdef, hndef]; field_simp; ring
+    _ = ck * cc * 2 ^ (2 + (β 0 + β 1 + β 2)) *
+        volume.real (Metric.ball (0 : Vec3) 1) * M * ρ /
+          ρ ^ (β 0 + β 1 + β 2 + (γ 0 + γ 1 + γ 2)) := by rw [hV0def, hndef]
+
+/-- The generic bound on the integral of a kernel-times-cutoff term against a function bounded
+on the ball. -/
+theorem abs_integral_kernelCutoffTerm_mul_le (l : Fin 3) {β : Fin 3 → ℕ}
+    (hβ : β 0 + β 1 + β 2 ≤ 2) (x : Vec3) {ρ : ℝ} (hρ0 : 0 < ρ) {γ : Fin 3 → ℕ}
+    (hγ : γ 0 + γ 1 + γ 2 ≠ 0) (t M : ℝ) (hM : 0 ≤ M) (h : Vec3 → ℝ)
+    (hh : ∀ y : Vec3, vec3EuclideanNorm (y - x) ≤ ρ → |h y| ≤ M) :
+    ∃ C : ℝ, 0 ≤ C ∧ |∫ y : Vec3, kernelCutoffTerm l β x ρ γ t y * h y| ≤
+      C * M * ρ / ρ ^ (β 0 + β 1 + β 2 + (γ 0 + γ 1 + γ 2)) := by
+  obtain ⟨ck, hck0, hck⟩ := abs_multiPartialVec3_spatialDeriv_newtonianKernel_le l β hβ
+  obtain ⟨cc, hcc0, hcc⟩ := exists_bound_multiPartial_serrinBallCutoff_scaled x hρ0 γ t
+  let C := ck * cc * 2 ^ (2 + (β 0 + β 1 + β 2)) *
+    volume.real (Metric.ball (0 : Vec3) 1)
+  refine ⟨C, by positivity, ?_⟩
+  have hck' : ∀ z : Vec3, z ≠ 0 →
+      |multiPartialVec3 (spatialDeriv newtonianKernel l) β z| ≤
+        ck * (vec3EuclideanNorm z ^ (2 + (β 0 + β 1 + β 2)))⁻¹ := hck
+  have hcc' : ∀ y : Vec3,
+      |multiPartial (fun z : ParabolicPoint => serrinBallCutoff x ρ z.1) γ (y, t)| ≤
+        cc / ρ ^ (γ 0 + γ 1 + γ 2) := hcc
+  have hbound := abs_integral_kernelCutoffTerm_mul_annulus_le l β x hρ0 γ hγ t M hM h hh
+    ck cc hck0 hcc0 hck' hcc'
+  dsimp [C]
+  exact hbound
 
 /-! ## Part D: pushing one more derivative onto the kernel factor -/
 
@@ -649,80 +679,24 @@ private theorem abs_integral_kernelCutoffTerm_mul_le_uniform
   set cc : ℝ := max Ccut 0 with hccdef
   have hck0 : 0 ≤ ck := le_max_right _ _
   have hcc0 : 0 ≤ cc := le_max_right _ _
-  have hck : ∀ z : Vec3, z ≠ 0 → |multiPartialVec3 (spatialDeriv newtonianKernel l) β z| ≤
-      ck * (vec3EuclideanNorm z ^ (2 + (β 0 + β 1 + β 2)))⁻¹ := by
+  have hck : ∀ z : Vec3, z ≠ 0 →
+      |multiPartialVec3 (spatialDeriv newtonianKernel l) β z| ≤
+        ck * (vec3EuclideanNorm z ^ (2 + (β 0 + β 1 + β 2)))⁻¹ := by
     intro z hz
     refine (abs_multiPartialVec3_spatialDeriv_newtonianKernel_le_uniform
       (Ck := Ck) hCk l hβ hz).trans ?_
     apply mul_le_mul_of_nonneg_right (le_max_left _ _)
       (inv_nonneg.mpr (pow_nonneg (vec3EuclideanNorm_nonneg z) _))
-  have hcc : ∀ y : Vec3, |multiPartial (fun z : ParabolicPoint => serrinBallCutoff x ρ z.1) γ
-      (y, t)| ≤ cc / ρ ^ (γ 0 + γ 1 + γ 2) := by
+  have hcc : ∀ y : Vec3,
+      |multiPartial (fun z : ParabolicPoint => serrinBallCutoff x ρ z.1) γ (y, t)| ≤
+        cc / ρ ^ (γ 0 + γ 1 + γ 2) := by
     intro y
     refine (abs_multiPartial_serrinBallCutoff_le_uniform
       (Ccut := Ccut) hCcut x hρ0 hγ3 t y).trans ?_
     apply div_le_div_of_nonneg_right (le_max_left _ _) (by positivity)
-  set V0 : ℝ := volume.real (Metric.ball (0 : Vec3) 1) with hV0def
-  have hV0 : 0 ≤ V0 := measureReal_nonneg
-  set n : ℕ := β 0 + β 1 + β 2 + (γ 0 + γ 1 + γ 2) with hndef
-  set B : ℝ := ck * cc * 2 ^ (2 + (β 0 + β 1 + β 2)) / ρ ^ (2 + n) * M with hBdef
-  have hbound : ∀ y ∈ {y : Vec3 | ρ / 2 ≤ vec3EuclideanNorm (y - x) ∧
-      vec3EuclideanNorm (y - x) ≤ ρ}, ‖kernelCutoffTerm l β x ρ γ t y * h y‖ ≤ B := by
-    intro y hy
-    obtain ⟨hy1, hy2⟩ := hy
-    have hxy0 : x - y ≠ 0 := by
-      intro hcontra
-      rw [sub_eq_zero] at hcontra
-      rw [hcontra, sub_self] at hy1
-      unfold vec3EuclideanNorm at hy1
-      simp only [Pi.zero_apply, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow,
-        Finset.sum_const_zero, Real.sqrt_zero] at hy1
-      linarith only [hy1, hρ0]
-    have heuc : vec3EuclideanNorm (x - y) = vec3EuclideanNorm (y - x) := by
-      rw [show x - y = -(y - x) from by ring]; exact vec3EuclideanNorm_neg _
-    have hkbound : |multiPartialVec3 (spatialDeriv newtonianKernel l) β (x - y)| ≤
-        ck * (2 : ℝ) ^ (2 + (β 0 + β 1 + β 2)) / ρ ^ (2 + (β 0 + β 1 + β 2)) := by
-      have h1 := hck (x - y) hxy0
-      rw [heuc] at h1
-      have h2 : (ρ / 2) ^ (2 + (β 0 + β 1 + β 2)) ≤ vec3EuclideanNorm (y - x) ^
-          (2 + (β 0 + β 1 + β 2)) := pow_le_pow_left₀ (by positivity) hy1 _
-      have h3 : (0:ℝ) < (ρ / 2) ^ (2 + (β 0 + β 1 + β 2)) := by positivity
-      calc |multiPartialVec3 (spatialDeriv newtonianKernel l) β (x - y)| ≤
-          ck * (vec3EuclideanNorm (y - x) ^ (2 + (β 0 + β 1 + β 2)))⁻¹ := h1
-        _ ≤ ck * ((ρ / 2) ^ (2 + (β 0 + β 1 + β 2)))⁻¹ := by
-            apply mul_le_mul_of_nonneg_left _ hck0
-            rw [inv_eq_one_div, inv_eq_one_div]
-            exact one_div_le_one_div_of_le h3 h2
-        _ = ck * (2:ℝ) ^ (2 + (β 0 + β 1 + β 2)) / ρ ^ (2 + (β 0 + β 1 + β 2)) := by
-            rw [div_pow]
-            field_simp
-    have hcbound : |multiPartial (fun z : ParabolicPoint => serrinBallCutoff x ρ z.1) γ (y, t)| ≤
-        cc / ρ ^ (γ 0 + γ 1 + γ 2) := hcc y
-    have hhbound : |h y| ≤ M := hh y hy2
-    unfold kernelCutoffTerm
-    rw [Real.norm_eq_abs, abs_mul, abs_mul]
-    calc |multiPartialVec3 (spatialDeriv newtonianKernel l) β (x - y)| *
-        |multiPartial (fun z : ParabolicPoint => serrinBallCutoff x ρ z.1) γ (y, t)| * |h y| ≤
-        (ck * (2:ℝ) ^ (2 + (β 0 + β 1 + β 2)) / ρ ^ (2 + (β 0 + β 1 + β 2))) *
-          (cc / ρ ^ (γ 0 + γ 1 + γ 2)) * M := by
-          apply mul_le_mul (mul_le_mul hkbound hcbound (abs_nonneg _) (by positivity))
-            hhbound (abs_nonneg _) (by positivity)
-      _ = B := by rw [hBdef, hndef]; field_simp; ring
-  have hmeas : volume {y : Vec3 | ρ / 2 ≤ vec3EuclideanNorm (y - x) ∧
-      vec3EuclideanNorm (y - x) ≤ ρ} < ⊤ := (isCompact_cutoffAnnulus hρ0).measure_lt_top
-  calc |∫ y : Vec3, kernelCutoffTerm l β x ρ γ t y * h y| =
-      ‖∫ y in {y : Vec3 | ρ / 2 ≤ vec3EuclideanNorm (y - x) ∧ vec3EuclideanNorm (y - x) ≤ ρ},
-        kernelCutoffTerm l β x ρ γ t y * h y‖ := by
-        rw [integral_kernelCutoffTerm_mul_eq_setIntegral l β x hρ0 γ hγ t h, Real.norm_eq_abs]
-    _ ≤ B * volume.real {y : Vec3 | ρ / 2 ≤ vec3EuclideanNorm (y - x) ∧
-          vec3EuclideanNorm (y - x) ≤ ρ} :=
-        norm_setIntegral_le_of_norm_le_const hmeas hbound
-    _ ≤ B * (ρ ^ 3 * V0) := by
-        apply mul_le_mul_of_nonneg_left (volume_real_cutoffAnnulus_le x hρ0) (by
-          rw [hBdef]
-          positivity)
-    _ = max Ck 0 * max Ccut 0 * 2 ^ (2 + (β 0 + β 1 + β 2)) * V0 * M * ρ / ρ ^ n := by
-        rw [hBdef, hndef, hckdef, hccdef]; field_simp; ring
+  have hbound := abs_integral_kernelCutoffTerm_mul_annulus_le l β x hρ0 γ hγ t M hM h hh
+    ck cc hck0 hcc0 hck hcc
+  simpa [ck, cc] using hbound
 
 /-! ## Part K: multi-index bookkeeping and the reusable Leibniz-split step -/
 
