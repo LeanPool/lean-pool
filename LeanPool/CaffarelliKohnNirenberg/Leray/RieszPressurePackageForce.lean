@@ -83,7 +83,9 @@ theorem forcePressureMultiplierSymbol_spatialDeriv (ξ : L2Vec3)
   by_cases hξ : ξ = 0
   · subst ξ
     simp [forcePressureMultiplierSymbol, forcePressureGradientSymbol]
-  · simp [forcePressureMultiplierSymbol, forcePressureGradientSymbol, hξ]
+  · simp only [forcePressureMultiplierSymbol, hξ, ↓reduceIte, neg_mul,
+      Complex.ofReal_mul, Complex.ofReal_ofNat, Complex.ofReal_pow,
+      forcePressureGradientSymbol, Complex.ofReal_inv, PiLp.smul_apply, smul_eq_mul]
     have hdenR : (2 * Real.pi * ‖ξ‖ ^ 2 : ℝ) ≠ 0 := by
       apply mul_ne_zero
       · exact mul_ne_zero (by norm_num) Real.pi_ne_zero
