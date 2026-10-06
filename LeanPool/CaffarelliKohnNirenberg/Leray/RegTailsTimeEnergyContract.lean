@@ -45,7 +45,7 @@ theorem regTails_contract_timeGradientBounds
     (hDerivative : ∀ t, 0 < t → ∀ x i j,
       (fderiv ℝ (fun y : Vec3 => u (y, t) i) x) (basisVec j) =
         D (x, t) i j) :
-    let Dplus : ParabolicPoint → Fin 3 → Vec3 := regTails_positiveGradientExtension D
+    let Dplus : ParabolicPoint → Fin 3 → Vec3 := regTailsPositiveGradientExtension D
     let B : ℝ := (eLpNorm (regUniformSpatialField a) 2 volume).toReal
     let G : ℝ → ℝ := fun t => Real.sqrt
       (∫⁻ x : Vec3, ENNReal.ofReal (spatialGradientSq u Dplus (x, t)) ∂volume).toReal
@@ -60,7 +60,7 @@ theorem regTails_contract_timeGradientBounds
           (spatialGradientSq u D (x, t))) 2 volume).toReal = G t := by
   dsimp only
   let S : Set ParabolicPoint := spaceTimeSet (Set.univ : Set Vec3) (Ioi (0 : ℝ))
-  let Dplus : ParabolicPoint → Fin 3 → Vec3 := regTails_positiveGradientExtension D
+  let Dplus : ParabolicPoint → Fin 3 → Vec3 := regTailsPositiveGradientExtension D
   let B : ℝ := (eLpNorm (regUniformSpatialField a) 2 volume).toReal
   let F : Vec3 × ℝ → ℝ := fun z => spatialGradientSq u Dplus (z.1, z.2)
   let G : ℝ → ℝ := fun t => Real.sqrt
@@ -79,7 +79,7 @@ theorem regTails_contract_timeGradientBounds
       isOpen_univ isOpen_Ioi
   have hSmeas : MeasurableSet S := hSopen.measurableSet
   have hDplusEq (z : ParabolicPoint) (hz : z ∈ S) : Dplus z = D z := by
-    simp [Dplus, regTails_positiveGradientExtension, S, hz]
+    simp [Dplus, regTailsPositiveGradientExtension, S, hz]
   have hEnergyDplus : 2 * (∫⁻ z, ENNReal.ofReal
       (spatialGradientSq u Dplus z) ∂regUniformPositiveTimeMeasure) ≤
       eLpNorm (regUniformSpatialField a) 2 volume ^ (2 : ℕ) := by

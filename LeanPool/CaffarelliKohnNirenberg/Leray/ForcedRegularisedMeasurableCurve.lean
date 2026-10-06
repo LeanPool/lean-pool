@@ -104,7 +104,7 @@ theorem measurable_dist_slice_class [SFinite μ] (Γ : α × β → E) (hΓ : St
 /-- A curve of `L²` classes represented slice by slice by a jointly measurable
 field is strongly measurable. -/
 theorem stronglyMeasurable_of_jointRep [SFinite μ] [MeasurableSpace.CountablyGenerated α]
-    [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
+     [SecondCountableTopology E]
     (Γ : α × β → E) (hΓ : StronglyMeasurable Γ)
     (γ : β → Lp E 2 μ) (hrep : ∀ s, (fun x => Γ (x, s)) =ᵐ[μ] γ s) :
     StronglyMeasurable γ := by

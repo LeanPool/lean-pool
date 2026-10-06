@@ -42,7 +42,7 @@ namespace CKN.Leray
 
 theorem lerayLimit_eLpNorm_two_sq_eq_lintegral
     {α E : Type*} [MeasurableSpace α] [NormedAddCommGroup E]
-    [MeasurableSpace E] [BorelSpace E] {μ : Measure α} {f : α → E}
+    {μ : Measure α} {f : α → E}
     (hf : AEStronglyMeasurable f μ) :
     eLpNorm f (2 : ℝ≥0∞) μ ^ (2 : ℝ) =
       ∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂μ := by
@@ -275,7 +275,7 @@ theorem lerayLimit_regularised_basic_data
 
 /-- A piecewise field with the classical membership decision made explicit. -/
 @[expose]
-noncomputable def lerayLimitPiecewise {α β : Type*} [Zero β]
+noncomputable def lerayLimitPiecewise {α β : Type*}
     (s : Set α) (f g : α → β) : α → β := by
   classical
   exact s.piecewise f g

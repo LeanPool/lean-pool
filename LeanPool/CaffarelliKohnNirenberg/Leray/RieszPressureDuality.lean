@@ -79,24 +79,13 @@ theorem rieszPressureLpPairing_bound
       hHolderIntegral
     _ = ‖u‖ * ‖v‖ := by rw [hNormU, hNormV]
 
+/-- The linear pairing of an `L^r` field with a fixed conjugate `L^q` field. -/
 @[expose]
 def rieszPressureLpPairingLinear
-    (r : ℝ) (hr : 1 < r) (q : ℝ) (hq : 1 < q)
+    (r q : ℝ)
     (hHolder : r.HolderConjugate q)
     (v : Lp ℝ (ENNReal.ofReal q) (volume : Measure (Vec3 × ℝ))) :
-    letI : Fact (1 ≤ ENNReal.ofReal r) := ⟨by
-      rw [← ENNReal.ofReal_one]
-      exact ENNReal.ofReal_le_ofReal hr.le⟩
-    letI : Fact (1 ≤ ENNReal.ofReal q) := ⟨by
-      rw [← ENNReal.ofReal_one]
-      exact ENNReal.ofReal_le_ofReal hq.le⟩
     Lp ℝ (ENNReal.ofReal r) (volume : Measure (Vec3 × ℝ)) →ₗ[ℝ] ℝ := by
-  letI : Fact (1 ≤ ENNReal.ofReal r) := ⟨by
-    rw [← ENNReal.ofReal_one]
-    exact ENNReal.ofReal_le_ofReal hr.le⟩
-  letI : Fact (1 ≤ ENNReal.ofReal q) := ⟨by
-    rw [← ENNReal.ofReal_one]
-    exact ENNReal.ofReal_le_ofReal hq.le⟩
   letI : (ENNReal.ofReal r).HolderConjugate (ENNReal.ofReal q) :=
     Real.HolderConjugate.ennrealOfReal hHolder
   let hm (u : Lp ℝ (ENNReal.ofReal r) (volume : Measure (Vec3 × ℝ))) : ℝ :=
@@ -176,7 +165,7 @@ def rieszPressureLpPairingCLM
   letI : Fact (1 ≤ ENNReal.ofReal q) := ⟨by
     rw [← ENNReal.ofReal_one]
     exact ENNReal.ofReal_le_ofReal hq.le⟩
-  let f := rieszPressureLpPairingLinear r hr q hq hHolder v
+  let f := rieszPressureLpPairingLinear r q hHolder v
   exact f.mkContinuous ‖v‖ (by
     intro u
     calc

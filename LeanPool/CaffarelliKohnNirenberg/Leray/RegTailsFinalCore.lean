@@ -241,7 +241,7 @@ theorem regTailsFinal_compact_weight_bound
   obtain ⟨hGmem, hGenergy, -⟩ := hTGT t (hs.trans hst)
   set G : ℝ → ℝ := fun τ => Real.sqrt
     (∫⁻ x : Vec3, ENNReal.ofReal (spatialGradientSq u
-      (regTails_positiveGradientExtension D) (x, τ)) ∂volume).toReal with hG_def
+      (regTailsPositiveGradientExtension D) (x, τ)) ∂volume).toReal with hG_def
   have hG0 : ∀ᵐ τ ∂(volume.restrict (Ioo (0 : ℝ) t)), 0 ≤ G τ :=
     Filter.Eventually.of_forall fun _ => Real.sqrt_nonneg _
   -- slice hypotheses of the flux estimate

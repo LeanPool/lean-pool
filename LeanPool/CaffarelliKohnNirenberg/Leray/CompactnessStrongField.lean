@@ -103,8 +103,6 @@ theorem exists_strong_l2_limit_on_compact_rectangle
     {K W Kc : Set Vec3} {I J : Set ℝ}
     (hK : IsCompact K) (hW : IsOpen W) (hKW : K ⊆ W)
     (hWKc : W ⊆ Kc) (hJ : IsCompact J) (hJI : J ⊆ I)
-    [IsFiniteMeasure (volume.restrict K)]
-    [IsFiniteMeasure (volume.restrict J)]
     (u : ℕ → (Vec3 × ℝ) → Vec3)
     (Du : ℕ → (Vec3 × ℝ) → Fin 3 → Vec3)
     (huMeas : ∀ n, Measurable (u n))

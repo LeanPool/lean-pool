@@ -34,9 +34,11 @@ open Function Filter MeasureTheory Set Topology
 open scoped ENNReal Convolution Pointwise
 open CKN.Foundation.Parabolic
 
+noncomputable section
+
 namespace CKN
 
-noncomputable section
+section
 
 local instance spaceTimeVolumeIsAddHaarMeasure :
     Measure.IsAddHaarMeasure (volume : Measure (Vec3 × ℝ)) := by
@@ -132,10 +134,10 @@ theorem spaceTimeMollify_support_subset {f : Vec3 × ℝ → ℝ} {δ : ℝ}
     _ = Metric.ball (0 : Vec3 × ℝ) δ + Function.support f := by
       rw [spaceTimeMollifier_support hδ]
 
-/-- Componentwise mollification for fields with a finite scalar index. This includes Vec3 values
+/-- Componentwise mollification of fields with scalar components. This includes Vec3 values
 and fields with values `Fin 3 → Vec3`. -/
 @[expose]
-noncomputable def spaceTimeMollifyPi {ι : Type*} [Fintype ι]
+noncomputable def spaceTimeMollifyPi {ι : Type*}
     (f : Vec3 × ℝ → ι → ℝ) (δ : ℝ) (hδ : 0 < δ) : Vec3 × ℝ → ι → ℝ :=
   fun x i => spaceTimeMollify (fun y => f y i) δ hδ x
 
@@ -149,7 +151,7 @@ theorem spaceTimeMollifyPi_contDiff {ι : Type*} [Fintype ι]
   exact spaceTimeMollify_contDiff hδ (hf i)
 
 /-- The support of a componentwise mollification lies within distance `δ` of the field support. -/
-theorem spaceTimeMollifyPi_support_subset {ι : Type*} [Fintype ι]
+theorem spaceTimeMollifyPi_support_subset {ι : Type*}
     {f : Vec3 × ℝ → ι → ℝ} {δ : ℝ} (hδ : 0 < δ) :
     Function.support (spaceTimeMollifyPi f δ hδ) ⊆
       Metric.ball (0 : Vec3 × ℝ) δ + Function.support f := by
@@ -179,7 +181,7 @@ theorem spaceTimeMollifyPi_support_subset {ι : Type*} [Fintype ι]
   exact congrFun hzero i
 
 /-- Componentwise mollification has compact support when the input field does. -/
-theorem spaceTimeMollifyPi_hasCompactSupport {ι : Type*} [Fintype ι]
+theorem spaceTimeMollifyPi_hasCompactSupport {ι : Type*}
     {f : Vec3 × ℝ → ι → ℝ} {δ : ℝ} (hδ : 0 < δ) (hf : HasCompactSupport f) :
     HasCompactSupport (spaceTimeMollifyPi f δ hδ) := by
   apply HasCompactSupport.of_support_subset_isCompact
@@ -689,3 +691,5 @@ theorem tendsto_eLpNorm_sub_zero_spaceTimeMollify
 
 
 end CKN
+
+end

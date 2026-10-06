@@ -17,7 +17,7 @@ public import Mathlib.MeasureTheory.Function.L2Space
 In frequency variables the forced mild equation `eq:reg-mild-forced` is, at
 each frequency `ξ`, the damped Duhamel formula
 `Y(ξ,t) = e^{-λt} B(ξ) + ∫₀ᵗ e^{-λ(t-s)} ℙ(ξ) g(ξ,s) ds` with `λ = 4π²|ξ|²`,
-source `g = -2πi ξ·F̂ + Ĥ`, and the Leray symbol `ℙ(ξ)`. This file defines
+source `g = -2πi ξ·F̂ + Fourier(H)`, and the Leray symbol `ℙ(ξ)`. This file defines
 the jointly measurable frequency representative `Y` and proves, frequency by
 frequency, the energy identity of the damped formula; the Leray symbol drops
 out of the source pairing because `Y(ξ,s)` lies in its range.
@@ -240,7 +240,7 @@ theorem forcedFourierRep_frequency_identity {B : L2Vec3 → ComplexVec3}
 
 /-- The energy identity of the forced mild equation in frequency variables:
 integrating the frequency-wise identity gives
-`∫|Y(t)|² + 2∫λ∫₀ᵗ|Y|² = ∫|B|² + 2∫₀ᵗ∫Re⟨Y, -2πi ξ·F̂⟩ + 2∫₀ᵗ∫Re⟨Y, Ĥ⟩`,
+`∫|Y(t)|² + 2∫λ∫₀ᵗ|Y|² = ∫|B|² + 2∫₀ᵗ∫Re⟨Y, -2πi ξ·F̂⟩ + 2∫₀ᵗ∫Re⟨Y, Fourier(H)⟩`,
 and the weighted dissipation is integrable in frequency and time. -/
 theorem forcedFourierRep_energy_identity {B : L2Vec3 → ComplexVec3}
     {Fh : L2Vec3 × ℝ → ComplexTensor3} {Hh : L2Vec3 × ℝ → ComplexVec3}

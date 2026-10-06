@@ -27,6 +27,7 @@ namespace CKN.Leray
 
 open CKN.Foundation.Parabolic
 
+/-- The Fourier-side vector field obtained by applying the Stokes formula at each frequency. -/
 @[expose]
 def stokesFormulaField (t : ℝ) (F : ComplexTensorL2) : L2Vec3 → ComplexVec3 :=
   fun ξ => stokesApplyFormula t ξ (F ξ)

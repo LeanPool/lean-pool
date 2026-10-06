@@ -24,6 +24,7 @@ noncomputable section
 
 namespace CKN.Leray
 
+/-- Product volume on space and the open positive time interval ending at `T`. -/
 @[expose]
 def associatedPressureProviderMeasure (T : ℝ) : Measure (Vec3 × ℝ) :=
   (volume : Measure Vec3).prod (volume.restrict (Ioo 0 T))
@@ -228,8 +229,7 @@ private theorem associatedPressureMomentumProductIntegrable_of_test
     (hTensor : ∀ i j, MemLp (fun z => u z i * u z j)
       (ENNReal.ofReal (5 / 3 : ℝ)) (associatedPressureProviderMeasure T))
     (hp : MemLp p (ENNReal.ofReal (5 / 3 : ℝ))
-      (associatedPressureProviderMeasure T)
-    )
+      (associatedPressureProviderMeasure T))
     (hΦ : Φ ∈ CKN.spaceTimeTestFunction (V := Vec3)
       (Set.univ : Set Vec3) (Ioo 0 T)) :
     Integrable (associatedPressureMomentumProductIntegrand u Du p Φ)
@@ -356,6 +356,212 @@ private theorem associatedPressureEventually_forall_fin_three
   intro i
   exact hn i (Finset.mem_univ i)
 
+private theorem associatedPressureProvider_curl_integral_zero
+    {T : ℝ} {a : Vec3 → Vec3}
+    {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin 3 → Vec3}
+    (hLH : IsLerayHopfSolution T a u Du) {φP : Vec3 × ℝ → Vec3}
+    (hφP : φP ∈ CKN.spaceTimeTestFunction (V := Vec3) Set.univ (Ioo 0 T))
+    (p : Vec3 × ℝ → ℝ) (n : ℕ) :
+    ∫ z : Vec3 × ℝ, associatedPressureMomentumProductIntegrand
+      (fun z => u (parabolicHomeomorph.symm z))
+      (fun z => Du (parabolicHomeomorph.symm z)) p
+      (associatedPressureTestCurl (associatedPressureHelmholtzCutoffVectorPotential φP n)) z
+      ∂associatedPressureProviderMeasure T = 0 := by
+  let μ := associatedPressureProviderMeasure T
+  let uP : Vec3 × ℝ → Vec3 := fun z => u (parabolicHomeomorph.symm z)
+  let DuP : Vec3 × ℝ → Fin 3 → Vec3 := fun z => Du (parabolicHomeomorph.symm z)
+  let V (n : ℕ) : Vec3 × ℝ → Vec3 :=
+    associatedPressureTestCurl (associatedPressureHelmholtzCutoffVectorPotential φP n)
+  let Fc : ParabolicPoint → ℝ := fun y =>
+    (-(∑ i : Fin 3, u y i * timePartial
+        (fun w => V n (parabolicHomeomorph w) i) y))
+      - ∑ i : Fin 3, ∑ j : Fin 3,
+          u y i * u y j * spatialPartial
+            (fun w => V n (parabolicHomeomorph w) i) j y
+      + ∑ i : Fin 3, ∑ j : Fin 3,
+          Du y i j * spatialPartial
+            (fun w => V n (parabolicHomeomorph w) i) j y
+  have hcurl := associatedPressureHelmholtzCutoffCurl_momentum_zero hLH hφP n
+  have hcurl' :
+      (∫ y in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T), Fc y
+        ∂(volume : Measure ParabolicPoint)) = 0 := by
+    simpa [Fc] using hcurl
+  rw [associatedPressureProvider_setIntegral_eq_integral (F := Fc)] at hcurl'
+  have hpoint (z : Vec3 × ℝ) :
+      Fc (parabolicHomeomorph.symm z) =
+        associatedPressureMomentumProductIntegrand uP DuP p (V n) z := by
+    have hVcomp (i : Fin 3) :
+        (fun w : ParabolicPoint => V n (parabolicHomeomorph w) i) =
+          (show ParabolicPoint → ℝ from fun q : Vec3 × ℝ => V n q i) := by
+      funext w
+      simpa only [parabolicHomeomorph_apply] using
+        congrArg (fun v : Vec3 => v i)
+          (congrArg (V n) (Prod.mk.eta (p := w)))
+    have htime (i : Fin 3) :
+        timePartial (fun w : ParabolicPoint =>
+          V n (parabolicHomeomorph w) i) (parabolicHomeomorph.symm z) =
+        CKN.timePartialProd (fun q : Vec3 × ℝ => V n q i) z := by
+      change timePartial (fun w : ParabolicPoint =>
+        V n (parabolicHomeomorph w) i) (parabolicHomeomorph.symm z) =
+        timePartial (show ParabolicPoint → ℝ from
+          fun q : Vec3 × ℝ => V n q i) z
+      rw [hVcomp i]
+      rfl
+    have hspace (i j : Fin 3) :
+        spatialPartial (fun w : ParabolicPoint =>
+          V n (parabolicHomeomorph w) i) j (parabolicHomeomorph.symm z) =
+        CKN.spatialPartialProd (fun q : Vec3 × ℝ => V n q i) j z := by
+      change spatialPartial (fun w : ParabolicPoint =>
+        V n (parabolicHomeomorph w) i) j (parabolicHomeomorph.symm z) =
+        spatialPartial (show ParabolicPoint → ℝ from
+          fun q : Vec3 × ℝ => V n q i) j z
+      rw [hVcomp i]
+      rfl
+    calc
+      Fc (parabolicHomeomorph.symm z) =
+          (-(∑ i : Fin 3, uP z i * CKN.timePartialProd
+              (fun q => V n q i) z))
+            - ∑ i : Fin 3, ∑ j : Fin 3,
+                uP z i * uP z j * CKN.spatialPartialProd (fun q => V n q i) j z
+            + ∑ i : Fin 3, ∑ j : Fin 3,
+                DuP z i j * CKN.spatialPartialProd (fun q => V n q i) j z := by
+            simp only [Fc, htime, hspace, uP, DuP]
+      _ = associatedPressureMomentumProductIntegrand uP DuP p (V n) z :=
+        (associatedPressureMomentumProductIntegrand_pressureless_curl
+          ((associatedPressureHelmholtzCutoffVectorPotential_mem_spaceTimeTestFunction
+            hφP n).1) z).symm
+  calc
+    _ = ∫ z : Vec3 × ℝ, Fc (parabolicHomeomorph.symm z) ∂μ := by
+          apply integral_congr_ae
+          filter_upwards [] with z
+          exact (hpoint z).symm
+    _ = 0 := hcurl'
+
+
+private theorem associatedPressureProvider_gradient_integral_zero
+    {T : ℝ} {a : Vec3 → Vec3}
+    {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin 3 → Vec3}
+    (hLH : IsLerayHopfSolution T a u Du) {φP : Vec3 × ℝ → Vec3}
+    (hφP : φP ∈ CKN.spaceTimeTestFunction (V := Vec3) Set.univ (Ioo 0 T)) (n : ℕ) :
+    ∫ z : Vec3 × ℝ, associatedPressureMomentumProductIntegrand
+      (fun z => u (parabolicHomeomorph.symm z))
+      (fun z => Du (parabolicHomeomorph.symm z))
+      (rieszPressureSpaceTime (5 / 3 : ℝ) (by norm_num) (associatedPressureTensor T u)
+        (associatedPressureTensor_memLp_fiveThirds hLH))
+      (associatedPressureTestGradient
+        (associatedPressureHelmholtzScalarPotentialCutoff φP n)) z
+      ∂associatedPressureProviderMeasure T = 0 := by
+  let μ := associatedPressureProviderMeasure T
+  let uP : Vec3 × ℝ → Vec3 := fun z => u (parabolicHomeomorph.symm z)
+  let DuP : Vec3 × ℝ → Fin 3 → Vec3 := fun z => Du (parabolicHomeomorph.symm z)
+  let F := associatedPressureTensor T u
+  let hF := associatedPressureTensor_memLp_fiveThirds hLH
+  let p : Vec3 × ℝ → ℝ := rieszPressureSpaceTime (5 / 3 : ℝ) (by norm_num) F hF
+  let G (n : ℕ) : Vec3 × ℝ → Vec3 :=
+    associatedPressureTestGradient (associatedPressureHelmholtzScalarPotentialCutoff φP n)
+  have hgrad := associatedPressureHelmholtzScalarPotentialCutoffGradient_momentum_zero
+    hLH hφP n
+  have hψsmooth : ContDiff ℝ (⊤ : ℕ∞)
+      (associatedPressureHelmholtzScalarPotentialCutoff φP n) :=
+    (associatedPressureHelmholtzScalarPotentialCutoff_mem_spaceTimeTestFunction
+      hφP n).1
+  have htrace (z : Vec3 × ℝ) :
+      (∑ i : Fin 3, CKN.spatialSecondPartialProd
+        (associatedPressureHelmholtzScalarPotentialCutoff φP n) i i z) =
+      rieszPressureJointLaplacian
+        (associatedPressureHelmholtzScalarPotentialCutoff φP n) z := by
+    rw [rieszPressureJointLaplacian]
+    apply Finset.sum_congr rfl
+    intro i hi
+    change CKN.mixedSecond
+        (fun x : Vec3 => associatedPressureHelmholtzScalarPotentialCutoff φP n
+          (x, z.2)) i i z.1 = _
+    exact rieszPressure_sliceMixedSecond_eq_joint hψsmooth i i z
+  have htrace' (z : Vec3 × ℝ) :
+      (∑ i : Fin 3, CKN.spatialPartialProd
+        (fun q => CKN.spatialPartialProd
+          (associatedPressureHelmholtzScalarPotentialCutoff φP n) i q) i z) =
+      rieszPressureJointLaplacian
+        (associatedPressureHelmholtzScalarPotentialCutoff φP n) z := by
+    calc
+      _ = ∑ i : Fin 3, CKN.spatialSecondPartialProd
+          (associatedPressureHelmholtzScalarPotentialCutoff φP n) i i z := by
+            apply Finset.sum_congr rfl
+            intro i hi
+            rfl
+      _ = _ := htrace z
+  have htimeDerivative (i : Fin 3) (z : Vec3 × ℝ) :
+      CKN.timePartialProd
+        (fun q => CKN.spatialPartialProd
+          (associatedPressureHelmholtzScalarPotentialCutoff φP n) i q) z =
+      CKN.timePartialProd
+        (CKN.spatialPartialProd
+          (associatedPressureHelmholtzScalarPotentialCutoff φP n) i) z := by
+    rfl
+  have hspaceDerivative (i j : Fin 3) (z : Vec3 × ℝ) :
+      CKN.spatialPartialProd
+        (fun q => CKN.spatialPartialProd
+          (associatedPressureHelmholtzScalarPotentialCutoff φP n) i q) j z =
+      CKN.spatialSecondPartialProd
+        (associatedPressureHelmholtzScalarPotentialCutoff φP n) i j z := by
+    rfl
+  have hEq (z : Vec3 × ℝ) :
+      associatedPressureMomentumProductIntegrand uP DuP p (G n) z =
+        (-(∑ i : Fin 3, uP z i * CKN.timePartialProd
+            (CKN.spatialPartialProd
+              (associatedPressureHelmholtzScalarPotentialCutoff φP n) i) z))
+          - ∑ i : Fin 3, ∑ j : Fin 3,
+              uP z i * uP z j * CKN.spatialSecondPartialProd
+                (associatedPressureHelmholtzScalarPotentialCutoff φP n) i j z
+          + ∑ i : Fin 3, ∑ j : Fin 3,
+              DuP z i j * CKN.spatialSecondPartialProd
+                (associatedPressureHelmholtzScalarPotentialCutoff φP n) i j z
+          - p z * rieszPressureJointLaplacian
+              (associatedPressureHelmholtzScalarPotentialCutoff φP n) z := by
+    change associatedPressureMomentumProductIntegrand uP DuP p
+        (associatedPressureTestGradient
+          (associatedPressureHelmholtzScalarPotentialCutoff φP n)) z = _
+    simp only [associatedPressureMomentumProductIntegrand,
+      associatedPressureTestGradient]
+    rw [htrace']
+    simp only [htimeDerivative, hspaceDerivative]
+  calc
+    _ = ∫ z : Vec3 × ℝ,
+        (-(∑ i : Fin 3, uP z i * CKN.timePartialProd
+            (CKN.spatialPartialProd
+              (associatedPressureHelmholtzScalarPotentialCutoff φP n) i) z))
+          - ∑ i : Fin 3, ∑ j : Fin 3,
+              uP z i * uP z j * CKN.spatialSecondPartialProd
+                (associatedPressureHelmholtzScalarPotentialCutoff φP n) i j z
+          + ∑ i : Fin 3, ∑ j : Fin 3,
+              DuP z i j * CKN.spatialSecondPartialProd
+                (associatedPressureHelmholtzScalarPotentialCutoff φP n) i j z
+          - p z * rieszPressureJointLaplacian
+              (associatedPressureHelmholtzScalarPotentialCutoff φP n) z ∂μ := by
+          apply integral_congr_ae
+          filter_upwards [] with z
+          exact hEq z
+    _ = 0 := by
+      simpa [uP, DuP, p, F, hF, μ, associatedPressureProviderMeasure] using hgrad
+
+
+private theorem associatedPressureProvider_add_integral_zero
+    {μ : Measure (Vec3 × ℝ)} {u : Vec3 × ℝ → Vec3}
+    {Du : Vec3 × ℝ → Fin 3 → Vec3} {p : Vec3 × ℝ → ℝ}
+    {V G : Vec3 × ℝ → Vec3}
+    (hV : ContDiff ℝ (⊤ : ℕ∞) V) (hG : ContDiff ℝ (⊤ : ℕ∞) G)
+    (hVint : Integrable (fun z => associatedPressureMomentumProductIntegrand u Du p V z) μ)
+    (hGint : Integrable (fun z => associatedPressureMomentumProductIntegrand u Du p G z) μ)
+    (hVzero : ∫ z, associatedPressureMomentumProductIntegrand u Du p V z ∂μ = 0)
+    (hGzero : ∫ z, associatedPressureMomentumProductIntegrand u Du p G z ∂μ = 0) :
+    ∫ z, associatedPressureMomentumProductIntegrand u Du p (fun q => V q + G q) z ∂μ = 0 := by
+  have heq : (fun z => associatedPressureMomentumProductIntegrand u Du p
+      (fun q => V q + G q) z) =
+      (fun z => associatedPressureMomentumProductIntegrand u Du p V z +
+        associatedPressureMomentumProductIntegrand u Du p G z) :=
+    funext fun z => associatedPressureMomentumProductIntegrand_add hV hG z
+  rw [heq, integral_add hVint hGint, hVzero, hGzero, add_zero]
+
 /-- The selected Riesz pressure gives the unrestricted-test momentum identity
 for every finite-time Leray--Hopf solution, as in `thm:assoc-pressure`. -/
 theorem associatedPressureForSolution_momentum_identity
@@ -411,9 +617,10 @@ theorem associatedPressureForSolution_momentum_identity
   let S : Vec3 × ℝ → ℝ := associatedPressureSpatialProfile K 2
   have hSnonneg (z : Vec3 × ℝ) : 0 ≤ S z := by
     by_cases hz : z.2 ∈ K
-    · simp [S, associatedPressureSpatialProfile, hz]
+    · simp only [S, associatedPressureSpatialProfile, Set.indicator_of_mem hz, one_mul]
       positivity
-    · simp [S, associatedPressureSpatialProfile, hz]
+    · simp only [S, associatedPressureSpatialProfile, Set.indicator_of_notMem hz, zero_mul,
+        le_refl]
   let M : Vec3 × ℝ → ℝ :=
     associatedPressureMomentumProfileMajorant C S uP DuP p
   have hMint : Integrable M μ := by
@@ -490,183 +697,11 @@ theorem associatedPressureForSolution_momentum_identity
     (μ := μ) (bound := M) (F := I) (f := I₀)
     (Filter.Eventually.of_forall hmeas)
     (Filter.Eventually.of_forall hdom) hMint hlim
-
-  have hCurlZero (n : ℕ) :
-      ∫ z : Vec3 × ℝ,
-        associatedPressureMomentumProductIntegrand uP DuP p (V n) z ∂μ = 0 := by
-    let Fc : ParabolicPoint → ℝ := fun y =>
-      (-(∑ i : Fin 3, u y i * timePartial
-          (fun w => V n (parabolicHomeomorph w) i) y))
-        - ∑ i : Fin 3, ∑ j : Fin 3,
-            u y i * u y j * spatialPartial
-              (fun w => V n (parabolicHomeomorph w) i) j y
-        + ∑ i : Fin 3, ∑ j : Fin 3,
-            Du y i j * spatialPartial
-              (fun w => V n (parabolicHomeomorph w) i) j y
-    have hcurl := associatedPressureHelmholtzCutoffCurl_momentum_zero hLH hφP n
-    have hcurl' :
-        (∫ y in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T), Fc y
-          ∂(volume : Measure ParabolicPoint)) = 0 := by
-      simpa [Fc] using hcurl
-    rw [associatedPressureProvider_setIntegral_eq_integral (F := Fc)] at hcurl'
-    have hpoint (z : Vec3 × ℝ) :
-        Fc (parabolicHomeomorph.symm z) =
-          associatedPressureMomentumProductIntegrand uP DuP p (V n) z := by
-      have hVcomp (i : Fin 3) :
-          (fun w : ParabolicPoint => V n (parabolicHomeomorph w) i) =
-            (show ParabolicPoint → ℝ from fun q : Vec3 × ℝ => V n q i) := by
-        funext w
-        simpa only [parabolicHomeomorph_apply] using
-          congrArg (fun v : Vec3 => v i)
-            (congrArg (V n) (Prod.mk.eta (p := w)))
-      have htime (i : Fin 3) :
-          timePartial (fun w : ParabolicPoint =>
-            V n (parabolicHomeomorph w) i) (parabolicHomeomorph.symm z) =
-          CKN.timePartialProd (fun q : Vec3 × ℝ => V n q i) z := by
-        change timePartial (fun w : ParabolicPoint =>
-          V n (parabolicHomeomorph w) i) (parabolicHomeomorph.symm z) =
-          timePartial (show ParabolicPoint → ℝ from
-            fun q : Vec3 × ℝ => V n q i) z
-        rw [hVcomp i]
-        rfl
-      have hspace (i j : Fin 3) :
-          spatialPartial (fun w : ParabolicPoint =>
-            V n (parabolicHomeomorph w) i) j (parabolicHomeomorph.symm z) =
-          CKN.spatialPartialProd (fun q : Vec3 × ℝ => V n q i) j z := by
-        change spatialPartial (fun w : ParabolicPoint =>
-          V n (parabolicHomeomorph w) i) j (parabolicHomeomorph.symm z) =
-          spatialPartial (show ParabolicPoint → ℝ from
-            fun q : Vec3 × ℝ => V n q i) j z
-        rw [hVcomp i]
-        rfl
-      calc
-        Fc (parabolicHomeomorph.symm z) =
-            (-(∑ i : Fin 3, uP z i * CKN.timePartialProd
-                (fun q => V n q i) z))
-              - ∑ i : Fin 3, ∑ j : Fin 3,
-                  uP z i * uP z j * CKN.spatialPartialProd (fun q => V n q i) j z
-              + ∑ i : Fin 3, ∑ j : Fin 3,
-                  DuP z i j * CKN.spatialPartialProd (fun q => V n q i) j z := by
-              simp only [Fc, htime, hspace, uP, DuP]
-        _ = associatedPressureMomentumProductIntegrand uP DuP p (V n) z :=
-          (associatedPressureMomentumProductIntegrand_pressureless_curl
-            ((associatedPressureHelmholtzCutoffVectorPotential_mem_spaceTimeTestFunction
-              hφP n).1) z).symm
-    calc
-      _ = ∫ z : Vec3 × ℝ, Fc (parabolicHomeomorph.symm z) ∂μ := by
-            apply integral_congr_ae
-            filter_upwards [] with z
-            exact (hpoint z).symm
-      _ = 0 := hcurl'
-
-  have hGradientZero (n : ℕ) :
-      ∫ z : Vec3 × ℝ,
-        associatedPressureMomentumProductIntegrand uP DuP p (G n) z ∂μ = 0 := by
-    have hgrad := associatedPressureHelmholtzScalarPotentialCutoffGradient_momentum_zero
-      hLH hφP n
-    have hψsmooth : ContDiff ℝ (⊤ : ℕ∞)
-        (associatedPressureHelmholtzScalarPotentialCutoff φP n) :=
-      (associatedPressureHelmholtzScalarPotentialCutoff_mem_spaceTimeTestFunction
-        hφP n).1
-    have htrace (z : Vec3 × ℝ) :
-        (∑ i : Fin 3, CKN.spatialSecondPartialProd
-          (associatedPressureHelmholtzScalarPotentialCutoff φP n) i i z) =
-        rieszPressureJointLaplacian
-          (associatedPressureHelmholtzScalarPotentialCutoff φP n) z := by
-      rw [rieszPressureJointLaplacian]
-      apply Finset.sum_congr rfl
-      intro i hi
-      change CKN.mixedSecond
-          (fun x : Vec3 => associatedPressureHelmholtzScalarPotentialCutoff φP n
-            (x, z.2)) i i z.1 = _
-      exact rieszPressure_sliceMixedSecond_eq_joint hψsmooth i i z
-    have htrace' (z : Vec3 × ℝ) :
-        (∑ i : Fin 3, CKN.spatialPartialProd
-          (fun q => CKN.spatialPartialProd
-            (associatedPressureHelmholtzScalarPotentialCutoff φP n) i q) i z) =
-        rieszPressureJointLaplacian
-          (associatedPressureHelmholtzScalarPotentialCutoff φP n) z := by
-      calc
-        _ = ∑ i : Fin 3, CKN.spatialSecondPartialProd
-            (associatedPressureHelmholtzScalarPotentialCutoff φP n) i i z := by
-              apply Finset.sum_congr rfl
-              intro i hi
-              rfl
-        _ = _ := htrace z
-    have htimeDerivative (i : Fin 3) (z : Vec3 × ℝ) :
-        CKN.timePartialProd
-          (fun q => CKN.spatialPartialProd
-            (associatedPressureHelmholtzScalarPotentialCutoff φP n) i q) z =
-        CKN.timePartialProd
-          (CKN.spatialPartialProd
-            (associatedPressureHelmholtzScalarPotentialCutoff φP n) i) z := by
-      rfl
-    have hspaceDerivative (i j : Fin 3) (z : Vec3 × ℝ) :
-        CKN.spatialPartialProd
-          (fun q => CKN.spatialPartialProd
-            (associatedPressureHelmholtzScalarPotentialCutoff φP n) i q) j z =
-        CKN.spatialSecondPartialProd
-          (associatedPressureHelmholtzScalarPotentialCutoff φP n) i j z := by
-      rfl
-    have hEq (z : Vec3 × ℝ) :
-        associatedPressureMomentumProductIntegrand uP DuP p (G n) z =
-          (-(∑ i : Fin 3, uP z i * CKN.timePartialProd
-              (CKN.spatialPartialProd
-                (associatedPressureHelmholtzScalarPotentialCutoff φP n) i) z))
-            - ∑ i : Fin 3, ∑ j : Fin 3,
-                uP z i * uP z j * CKN.spatialSecondPartialProd
-                  (associatedPressureHelmholtzScalarPotentialCutoff φP n) i j z
-            + ∑ i : Fin 3, ∑ j : Fin 3,
-                DuP z i j * CKN.spatialSecondPartialProd
-                  (associatedPressureHelmholtzScalarPotentialCutoff φP n) i j z
-            - p z * rieszPressureJointLaplacian
-                (associatedPressureHelmholtzScalarPotentialCutoff φP n) z := by
-      change associatedPressureMomentumProductIntegrand uP DuP p
-          (associatedPressureTestGradient
-            (associatedPressureHelmholtzScalarPotentialCutoff φP n)) z = _
-      simp only [associatedPressureMomentumProductIntegrand,
-        associatedPressureTestGradient]
-      rw [htrace']
-      simp only [htimeDerivative, hspaceDerivative]
-    calc
-      _ = ∫ z : Vec3 × ℝ,
-          (-(∑ i : Fin 3, uP z i * CKN.timePartialProd
-              (CKN.spatialPartialProd
-                (associatedPressureHelmholtzScalarPotentialCutoff φP n) i) z))
-            - ∑ i : Fin 3, ∑ j : Fin 3,
-                uP z i * uP z j * CKN.spatialSecondPartialProd
-                  (associatedPressureHelmholtzScalarPotentialCutoff φP n) i j z
-            + ∑ i : Fin 3, ∑ j : Fin 3,
-                DuP z i j * CKN.spatialSecondPartialProd
-                  (associatedPressureHelmholtzScalarPotentialCutoff φP n) i j z
-            - p z * rieszPressureJointLaplacian
-                (associatedPressureHelmholtzScalarPotentialCutoff φP n) z ∂μ := by
-            apply integral_congr_ae
-            filter_upwards [] with z
-            exact hEq z
-      _ = 0 := by
-        simpa [uP, DuP, p, F, hF, μ, associatedPressureProviderMeasure] using hgrad
-
   have hCutoffZero (n : ℕ) : ∫ z : Vec3 × ℝ, I n z ∂μ = 0 := by
-    have hlin (z : Vec3 × ℝ) : I n z =
-        associatedPressureMomentumProductIntegrand uP DuP p (V n) z +
-          associatedPressureMomentumProductIntegrand uP DuP p (G n) z := by
-      change associatedPressureMomentumProductIntegrand uP DuP p
-        (fun q => V n q + G n q) z = _
-      exact associatedPressureMomentumProductIntegrand_add
-        ((hTestV n).1) ((hTestG n).1) z
-    calc
-      _ = (∫ z : Vec3 × ℝ,
-          associatedPressureMomentumProductIntegrand uP DuP p (V n) z ∂μ) +
-        ∫ z : Vec3 × ℝ,
-          associatedPressureMomentumProductIntegrand uP DuP p (G n) z ∂μ := by
-            rw [show (fun z : Vec3 × ℝ => I n z) =
-              (fun z => associatedPressureMomentumProductIntegrand uP DuP p (V n) z +
-                associatedPressureMomentumProductIntegrand uP DuP p (G n) z) from
-              funext hlin]
-            exact integral_add (hVInt n) (hGInt n)
-      _ = 0 := by rw [hCurlZero n, hGradientZero n]; ring
-
+    exact associatedPressureProvider_add_integral_zero
+      (hTestV n).1 (hTestG n).1 (hVInt n) (hGInt n)
+      (associatedPressureProvider_curl_integral_zero hLH hφP p n)
+      (associatedPressureProvider_gradient_integral_zero hLH hφP n)
   have hIntegralLimit : ∫ z : Vec3 × ℝ, I₀ z ∂μ = 0 := by
     have hconstant : Tendsto (fun _ : ℕ => (0 : ℝ)) atTop (𝓝 0) := tendsto_const_nhds
     have hZeroSequence : ∀ n : ℕ, ∫ z : Vec3 × ℝ, I n z ∂μ = 0 := hCutoffZero

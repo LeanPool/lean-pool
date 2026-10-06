@@ -28,6 +28,7 @@ namespace CKN.Leray
 
 open CKN.Foundation.Parabolic
 
+/-- The Borel measurable structure used for the real vector-valued `L²` space. -/
 local instance : MeasurableSpace RealVectorL2 := borel RealVectorL2
 local instance : BorelSpace RealVectorL2 := ⟨rfl⟩
 local instance : IsSeparable (volume : Measure L2Vec3) := by infer_instance

@@ -37,6 +37,7 @@ def regularisedSchwartzCoordinateTuple {n : ℕ}
     (w : Fin n → Fin 3) : Fin n → L2Vec3 :=
   fun k => regularisedSchwartzCoordinateDirection (w k)
 
+/-- The finite family of coordinate kernel directions used in the Schwartz mollifier estimate. -/
 @[expose]
 def regularisedSchwartzCoordinateKernelSum
     (ρ : RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)

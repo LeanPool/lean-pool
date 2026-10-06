@@ -46,8 +46,8 @@ theorem associatedPressureHelmholtzTestCutoff_spatial_eventually_eq
     (associatedPressureHelmholtzScalarPotential φ)
   have hVn (n : ℕ) := associatedPressureTestCurl_mem_spaceTimeTestFunction
     (associatedPressureHelmholtzCutoffVectorPotential_mem_spaceTimeTestFunction hφ n)
-  have hGn (n : ℕ) := associatedPressureHelmholtzScalarPotentialCutoffGradient_mem_spaceTimeTestFunction
-    hφ n
+  have hGn (n : ℕ) :=
+    associatedPressureHelmholtzScalarPotentialCutoffGradient_mem_spaceTimeTestFunction hφ n
   have hV₀ : ContDiff ℝ (⊤ : ℕ∞) v₀ := by
     have hA := associatedPressureHelmholtzVectorPotential_contDiff hφ
     exact associatedPressureTestCurl_contDiff hA
@@ -129,8 +129,8 @@ theorem associatedPressureHelmholtzTestCutoff_time_eventually_eq
     (associatedPressureHelmholtzScalarPotential φ)
   have hVn (n : ℕ) := associatedPressureTestCurl_mem_spaceTimeTestFunction
     (associatedPressureHelmholtzCutoffVectorPotential_mem_spaceTimeTestFunction hφ n)
-  have hGn (n : ℕ) := associatedPressureHelmholtzScalarPotentialCutoffGradient_mem_spaceTimeTestFunction
-    hφ n
+  have hGn (n : ℕ) :=
+    associatedPressureHelmholtzScalarPotentialCutoffGradient_mem_spaceTimeTestFunction hφ n
   have hV₀ : ContDiff ℝ (⊤ : ℕ∞) v₀ := by
     have hA := associatedPressureHelmholtzVectorPotential_contDiff hφ
     exact associatedPressureTestCurl_contDiff hA

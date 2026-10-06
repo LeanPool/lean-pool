@@ -27,6 +27,7 @@ namespace CKN.Leray
 
 open CKN.Foundation.Parabolic
 
+/-- The Fourier-side heat evolution obtained by multiplying a vector field by the heat symbol. -/
 @[expose]
 def heatSymbolField (t : ℝ) (F : ComplexVectorL2) :
     L2Vec3 → ComplexVec3 :=

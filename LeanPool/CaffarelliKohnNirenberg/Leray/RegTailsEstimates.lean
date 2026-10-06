@@ -63,7 +63,7 @@ theorem regTails_positiveTimeMeasure_eq_product :
 /-- Extending the spatial gradient by zero off positive spacetime preserves
 measurability, so the global dissipation can be integrated by slices. -/
 @[expose]
-noncomputable def regTails_positiveGradientExtension
+noncomputable def regTailsPositiveGradientExtension
     (D : ParabolicPoint → Fin 3 → Vec3) :
     ParabolicPoint → Fin 3 → Vec3 := by
   classical
@@ -73,7 +73,7 @@ theorem regTails_positiveGradientExtension_measurable
     (D : ParabolicPoint → Fin 3 → Vec3)
     (hDcont : ∀ i j, ContinuousOn (fun z : ParabolicPoint => D z i j)
       (spaceTimeSet (Set.univ : Set Vec3) (Ioi (0 : ℝ)))) :
-    Measurable (regTails_positiveGradientExtension D) := by
+    Measurable (regTailsPositiveGradientExtension D) := by
   classical
   let S : Set ParabolicPoint := spaceTimeSet (Set.univ : Set Vec3) (Ioi (0 : ℝ))
   have hSopen : IsOpen S := by
@@ -87,10 +87,10 @@ theorem regTails_positiveGradientExtension_measurable
   have hzero : ContinuousOn (fun _ : ParabolicPoint => (0 : ℝ)) Sᶜ := continuousOn_const
   have hm := lerayLimit_measurableOn_extension S hSmeas
     (fun z : ParabolicPoint => D z i j) (fun _ => 0) (hDcont i j) hzero
-  have hcoord : (fun z : ParabolicPoint => (regTails_positiveGradientExtension D) z i j) =
+  have hcoord : (fun z : ParabolicPoint => (regTailsPositiveGradientExtension D) z i j) =
       S.piecewise (fun z => D z i j) (fun _ => 0) := by
     funext z
-    by_cases hz : z ∈ S <;> simp [regTails_positiveGradientExtension, S, hz]
+    by_cases hz : z ∈ S <;> simp [regTailsPositiveGradientExtension, S, hz]
   rw [hcoord]
   exact hm
 

@@ -23,7 +23,7 @@ noncomputable section
 
 namespace CKN
 
-/-- The pressure pairing in (S3) passes through strong local `L³ᐟ²`
+/-- The pressure pairing in (S3) passes through strong local `L^{3/2}`
 convergence. -/
 theorem stability_momentum_pressureTerm_tendsto
     {Ω Ω' : Set Vec3} {I J : Set ℝ} {q : ℝ}

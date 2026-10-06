@@ -85,6 +85,7 @@ theorem ae_time_sections_of_ae_eq
   filter_upwards [hSections] with t ht
   filter_upwards [ht] with x hx
   exact hx
+/-- A measurable compact-input representative of the `i,j` space-time Riesz pressure component. -/
 @[expose]
 noncomputable def rieszPressureComponentCompactRepresentative
     (r : ℝ) (hr : 1 < r) (i j : Fin 3)
@@ -399,16 +400,19 @@ theorem hasCompactSupport_const_smul
 /-- A continuous compactly supported space-time scalar input, used as a dense
 core for `def:riesz-pressure` and `lem:riesz-duality`. -/
 structure RieszPressureCompactInput where
+  /-- The continuous compactly supported scalar function underlying a Riesz pressure input. -/
   value : Vec3 × ℝ → ℝ
   continuous_value : Continuous value
   compact_support_value : HasCompactSupport value
 
+/-- The pointwise sum of two compactly supported continuous pressure inputs. -/
 @[expose]
 def RieszPressureCompactInput.add (F G : RieszPressureCompactInput) :
     RieszPressureCompactInput :=
   ⟨F.value + G.value, F.continuous_value.add G.continuous_value,
     F.compact_support_value.add G.compact_support_value⟩
 
+/-- The scalar multiple of a compactly supported continuous pressure input. -/
 @[expose]
 def RieszPressureCompactInput.smul (c : ℝ) (F : RieszPressureCompactInput) :
     RieszPressureCompactInput :=
@@ -522,12 +526,16 @@ theorem rieszPressureSpaceTimeCore_dense (r : ℝ) (hr : 1 < r) :
     (Lp.memLp u).sub (Lp.memLp v) |>.eLpNorm_ne_top
   exact (ENNReal.le_ofReal_iff_toReal_le hfinite hε.le).1 hsub
 
+/-- The real-valued space-time `L^r` space used for pressure components. -/
 abbrev RieszPressureSpaceTimeLp (r : ℝ) :=
   Lp ℝ (ENNReal.ofReal r) (volume : Measure (Vec3 × ℝ))
 
+/-- The quotient-like core of compactly supported inputs for the space-time pressure operator at
+exponent `r`. -/
 abbrev RieszPressureSpaceTimeCore (r : ℝ) (hr : 1 < r) :=
   rieszPressureSpaceTimeCore r hr
 
+/-- The `L^r` pressure component assigned to a compact-input equivalence class. -/
 @[expose]
 noncomputable def rieszPressureSpaceTimeCoreComponentValue
     (r : ℝ) (hr : 1 < r) (i j : Fin 3)
@@ -566,6 +574,8 @@ theorem rieszPressureSpaceTimeCoreComponentValue_eq
     F.continuous_value G.continuous_value F.compact_support_value
     G.compact_support_value hFG).symm
 
+/-- The linear map assigning the space-time Riesz pressure component to each compact-input
+class. -/
 @[expose]
 def rieszPressureSpaceTimeCoreComponentMap
     (r : ℝ) (hr : 1 < r) (i j : Fin 3) :

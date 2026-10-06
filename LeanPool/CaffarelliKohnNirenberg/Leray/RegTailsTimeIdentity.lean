@@ -25,9 +25,11 @@ noncomputable section
 
 namespace CKN.Leray
 
+/-- The product normed additive group structure on space-time used in the tail identity. -/
 local instance regTailsTimeIdentityNormedAddCommGroup : NormedAddCommGroup ParabolicPoint :=
   inferInstanceAs (NormedAddCommGroup (Vec3 × ℝ))
 
+/-- The real normed-space structure on space-time used in the tail identity. -/
 local instance regTailsTimeIdentityNormedSpace : NormedSpace ℝ ParabolicPoint :=
   inferInstanceAs (NormedSpace ℝ (Vec3 × ℝ))
 

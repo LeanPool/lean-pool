@@ -69,9 +69,7 @@ theorem strong_l2_on_compact_rectangle_of_cutoff_weak_slices
           (inner ℝ (V j ⟨t.1, p.property.2 t.property⟩) x) < ε)
     {C : Set Vec3} {J : Set ℝ}
     (hC : IsCompact C) (hCU : C ⊆ U)
-    (hJ : IsCompact J) (hJI : J ⊆ I)
-    [IsFiniteMeasure (volume.restrict C)]
-    [IsFiniteMeasure (volume.restrict J)] :
+    (hJ : IsCompact J) (hJI : J ⊆ I) :
     ∃ hf : ∀ k, MemLp
       (fun z : Vec3 × ℝ => (WithLp.toLp 2 (u (σ k) z) : L2Vec3)) 2
       ((volume.restrict C).prod (volume.restrict J)),

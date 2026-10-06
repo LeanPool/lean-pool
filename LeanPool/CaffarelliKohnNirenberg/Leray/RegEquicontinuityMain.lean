@@ -197,6 +197,407 @@ private theorem regEquicontinuity_interval_pressure_bound
     _ ≤ P * (eLpNorm g (ENNReal.ofReal (5 / 2 : ℝ)) volume).toReal *
         (t - s) ^ (2 / 5 : ℝ) := hProductRealBound
 
+private theorem regEquicontinuity_bounded_interval_integral
+    {f : ℝ → ℝ} {K s t : ℝ} (hst : s ≤ t) (_hK : 0 ≤ K)
+    (hf : ∀ r ∈ uIoc s t, ‖f r‖ ≤ K) :
+    |∫ r in s..t, f r ∂volume| ≤ K * (t - s) := by
+  have hnorm := intervalIntegral.norm_integral_le_of_norm_le_const hf
+  rw [Real.norm_eq_abs] at hnorm
+  simpa [abs_of_nonneg (sub_nonneg.mpr hst)] using hnorm
+
+private theorem regEquicontinuity_scalar_holder_modulus
+    (F H R Q : ℕ → ℝ → ℝ)
+    (s₀ s₁ K P : ℝ) (hs₀s₁ : Icc s₀ s₁ ⊆ Ioi (0 : ℝ))
+    (hK : 0 ≤ K) (hP : 0 ≤ P)
+    (hFderiv : ∀ n t, 0 < t → HasDerivAt (F n) (H n t) t)
+    (hHcont : ∀ n, ContinuousOn (H n) (Ioi (0 : ℝ)))
+    (hQcont : ∀ n, ContinuousOn (Q n) (Ioi (0 : ℝ)))
+    (hRcont : ∀ n, ContinuousOn (R n) (Ioi (0 : ℝ)))
+    (hPairing : ∀ n t, 0 < t → H n t = R n t + Q n t)
+    (hRbound : ∀ n t, 0 ≤ t → |R n t| ≤ K)
+    (p : ℕ → ParabolicPoint → ℝ) (g : Vec3 → ℝ)
+    (hQform : ∀ n t, Q n t = ∫ x : Vec3, p n (x, t) * g x ∂volume)
+    (hg : MemLp g (ENNReal.ofReal (5 / 2 : ℝ)) volume)
+    (hPressure : ∀ n,
+      MemLp (p n) (ENNReal.ofReal (5 / 3 : ℝ))
+        regUniformPositiveTimeMeasure ∧
+      eLpNorm (p n) (ENNReal.ofReal (5 / 3 : ℝ))
+        regUniformPositiveTimeMeasure ≤ ENNReal.ofReal P) :
+    ∃ A B θ : ℝ, 0 ≤ A ∧ 0 ≤ B ∧ 0 < θ ∧
+      ∀ n s t, s ∈ Icc s₀ s₁ → t ∈ Icc s₀ s₁ →
+        |F n t - F n s| ≤ A * dist t s + B * (dist t s) ^ θ := by
+  have hOrdered : ∀ n s t, s ∈ Icc s₀ s₁ → t ∈ Icc s₀ s₁ → s < t →
+      |F n t - F n s| ≤ K * (t - s) +
+        P * (eLpNorm g (ENNReal.ofReal (5 / 2 : ℝ)) volume).toReal *
+          (t - s) ^ (2 / 5 : ℝ) := by
+    intro n s t hs ht hst
+    have hIcc : Icc s t ⊆ Ioi (0 : ℝ) :=
+      (Icc_subset_Icc hs.1 ht.2).trans hs₀s₁
+    have hspos : 0 < s := hIcc ⟨le_rfl, hst.le⟩
+    have hHinterval : IntervalIntegrable (H n) volume s t :=
+      ((hHcont n).mono hIcc).intervalIntegrable_of_Icc hst.le
+    have hQinterval : IntervalIntegrable (Q n) volume s t :=
+      ((hQcont n).mono hIcc).intervalIntegrable_of_Icc hst.le
+    have hRinterval : IntervalIntegrable (R n) volume s t :=
+      ((hRcont n).mono hIcc).intervalIntegrable_of_Icc hst.le
+    have hFdiffOn : DifferentiableOn ℝ (F n) (Ioi (0 : ℝ)) := by
+      intro r hr
+      exact (hFderiv n r hr).differentiableAt.differentiableWithinAt
+    have hFcont : ContinuousOn (F n) (Ioi (0 : ℝ)) := hFdiffOn.continuousOn
+    have hFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le
+      hst.le (hFcont.mono hIcc)
+      (fun r hr => hFderiv n r (hIcc (Ioo_subset_Icc_self hr))) hHinterval
+    have hsplit : (∫ r in s..t, H n r ∂volume) =
+        (∫ r in s..t, R n r ∂volume) + (∫ r in s..t, Q n r ∂volume) := by
+      calc
+        _ = ∫ r in s..t, R n r + Q n r ∂volume := by
+          apply intervalIntegral.integral_congr_ae
+          filter_upwards [] with r hr
+          have hrIoc : r ∈ Ioc s t := by
+            simpa [uIoc_of_le hst.le] using hr
+          exact hPairing n r (hIcc ⟨hrIoc.1.le, hrIoc.2⟩)
+        _ = _ := intervalIntegral.integral_add hRinterval hQinterval
+    have hRmod : |∫ r in s..t, R n r ∂volume| ≤ K * (t - s) := by
+      apply regEquicontinuity_bounded_interval_integral hst.le hK
+      intro r hr
+      have hrIoc : r ∈ Ioc s t := by
+        simpa [uIoc_of_le hst.le] using hr
+      have hrcc : r ∈ Icc s t := ⟨hrIoc.1.le, hrIoc.2⟩
+      simpa [Real.norm_eq_abs] using hRbound n r (le_of_lt (hIcc hrcc))
+    have hQmod := regEquicontinuity_interval_pressure_bound
+      (hPressure n).1 P hP (hPressure n).2 hg hspos hst
+    have hQmod' : |∫ r in s..t, Q n r ∂volume| ≤
+        P * (eLpNorm g (ENNReal.ofReal (5 / 2 : ℝ)) volume).toReal *
+          (t - s) ^ (2 / 5 : ℝ) := by
+      rw [show (fun r => Q n r) =
+          fun r => ∫ x : Vec3, p n (x, r) * g x ∂volume from funext (hQform n)]
+      exact hQmod
+    calc
+      |F n t - F n s| =
+          |(∫ r in s..t, R n r ∂volume) + (∫ r in s..t, Q n r ∂volume)| := by
+          rw [← hFTC, hsplit]
+      _ ≤ |∫ r in s..t, R n r ∂volume| +
+          |∫ r in s..t, Q n r ∂volume| := abs_add_le _ _
+      _ ≤ K * (t - s) +
+          P * (eLpNorm g (ENNReal.ofReal (5 / 2 : ℝ)) volume).toReal *
+            (t - s) ^ (2 / 5 : ℝ) := add_le_add hRmod hQmod'
+  refine ⟨K, P * (eLpNorm g (ENNReal.ofReal (5 / 2 : ℝ)) volume).toReal,
+    2 / 5, hK, mul_nonneg hP ENNReal.toReal_nonneg, by norm_num, ?_⟩
+  intro n s t hs ht
+  rcases lt_trichotomy s t with hst | hst | hts
+  · have h := hOrdered n s t hs ht hst
+    simpa [Real.dist_eq, abs_of_nonneg (sub_nonneg.mpr hst.le), mul_assoc] using h
+  · subst t
+    simp
+  · have h := hOrdered n t s ht hs hts
+    simpa [abs_sub_comm, Real.dist_eq,
+      abs_of_nonneg (sub_nonneg.mpr hts.le)] using h
+
+private theorem regEquicontinuity_compact_test_integral_continuous
+    (f : ParabolicPoint → ℝ) (g : Vec3 → ℝ)
+    (hf : ContinuousOn f (spaceTimeSet Set.univ (Ioi (0 : ℝ))))
+    (hg : ContDiff ℝ (⊤ : ℕ∞) g) (hgc : HasCompactSupport g) :
+    ContinuousOn (fun t : ℝ => ∫ x : Vec3, f (x, t) * g x ∂volume)
+      (Ioi (0 : ℝ)) := by
+  let G : ℝ → Vec3 → ℝ := fun t x => f (x, t) * g x
+  have hswap : Continuous (fun z : ℝ × Vec3 =>
+      parabolicHomeomorph.symm (z.2, z.1)) :=
+    parabolicHomeomorph.symm.continuous.comp (by fun_prop)
+  have hmaps : Set.MapsTo (fun z : ℝ × Vec3 =>
+      parabolicHomeomorph.symm (z.2, z.1))
+      (Ioi (0 : ℝ) ×ˢ (Set.univ : Set Vec3))
+      (spaceTimeSet Set.univ (Ioi (0 : ℝ))) := by
+    rintro ⟨t, x⟩ ⟨ht, hx⟩
+    change ((x, t) : ParabolicPoint) ∈
+      (Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ)
+    exact ⟨mem_univ _, ht⟩
+  have hpull : ContinuousOn (fun z : ℝ × Vec3 => f (z.2, z.1))
+      (Ioi (0 : ℝ) ×ˢ (Set.univ : Set Vec3)) := by
+    have hcomp := hf.comp hswap.continuousOn hmaps
+    convert hcomp using 1
+    rfl
+  have hG : ContinuousOn G.uncurry
+      (Ioi (0 : ℝ) ×ˢ (Set.univ : Set Vec3)) := by
+    have hg' : ContinuousOn (fun z : ℝ × Vec3 => g z.2)
+        (Ioi (0 : ℝ) ×ˢ (Set.univ : Set Vec3)) :=
+      (hg.continuous.comp continuous_snd).continuousOn
+    exact hpull.mul hg'
+  have hGzero : ∀ t x, t ∈ Ioi (0 : ℝ) → x ∉ tsupport g → G t x = 0 := by
+    intro t x ht hx
+    simp [G, image_eq_zero_of_notMem_tsupport hx]
+  exact continuousOn_integral_of_compact_support
+    (μ := volume) (s := Ioi (0 : ℝ)) (k := tsupport g)
+    hgc.isCompact hG hGzero
+
+private theorem regEquicontinuity_time_derivative_pairing_continuous
+    (U : ParabolicPoint → Vec3) (W : Fin 3 → Vec3 → ℝ)
+    (hDtc : ∀ i, ContinuousOn
+      (fun z => timePartial (fun y => U y i) z)
+      (spaceTimeSet Set.univ (Ioi (0 : ℝ))))
+    (hWdiff : ∀ i, ContDiff ℝ (⊤ : ℕ∞) (W i))
+    (hWc : ∀ i, HasCompactSupport (W i)) :
+    ContinuousOn (fun t : ℝ =>
+      ∫ x : Vec3, ∑ i : Fin 3, timePartial (fun y => U y i) (x, t) * W i x
+        ∂volume) (Ioi (0 : ℝ)) := by
+  have hCoordinate : ∀ i : Fin 3, ContinuousOn (fun t : ℝ =>
+      ∫ x : Vec3, timePartial (fun y => U y i) (x, t) * W i x ∂volume)
+        (Ioi (0 : ℝ)) := by
+    intro i
+    exact regEquicontinuity_compact_test_integral_continuous
+      (fun z => timePartial (fun y => U y i) z) (W i)
+      (hDtc i) (hWdiff i) (hWc i)
+  apply ContinuousOn.congr (continuousOn_finsetSum (s := Finset.univ)
+    (fun i _ => hCoordinate i))
+  intro t ht
+  have hIntegrable : ∀ i : Fin 3,
+      Integrable (fun x : Vec3 =>
+        timePartial (fun y => U y i) (x, t) * W i x) := by
+    intro i
+    exact lerayHopfLimit_integrable_mul_compact
+      (lerayHopfLimit_slice_continuous (hDtc i) ht)
+      (hWdiff i).continuous (hWc i)
+  have hIntegrable' : ∀ i ∈ Finset.univ,
+      Integrable (fun x : Vec3 =>
+        timePartial (fun y => U y i) (x, t) * W i x) := by
+    intro i hi
+    exact hIntegrable i
+  simp only
+  rw [integral_finsetSum (s := Finset.univ) hIntegrable']
+
+private theorem regEquicontinuity_pairing_equation_at_time
+    (ρ : RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
+    (u : ParabolicPoint → Vec3) (p : ParabolicPoint → ℝ)
+    (W : Fin 3 → Vec3 → ℝ)
+    (hUc : ∀ i, ContinuousOn (fun z => u z i)
+      (spaceTimeSet Set.univ (Ioi (0 : ℝ))))
+    (hDc : ∀ i j, ContinuousOn
+      (fun z => spatialPartial (fun y => u y i) j z)
+      (spaceTimeSet Set.univ (Ioi (0 : ℝ))))
+    (hDDc : ∀ i j k, ContinuousOn
+      (fun z => spatialPartial
+        (fun y => spatialPartial (fun x => u x i) j y) k z)
+      (spaceTimeSet Set.univ (Ioi (0 : ℝ))))
+    (hpc : ContinuousOn p (spaceTimeSet Set.univ (Ioi (0 : ℝ))))
+    (hDpc : ∀ i, ContinuousOn (fun z => spatialPartial (fun y => p y) i z)
+      (spaceTimeSet Set.univ (Ioi (0 : ℝ))))
+    (hC1 : letI : TopologicalSpace ParabolicPoint := instTopologicalSpaceProd
+      letI : NormedAddCommGroup ParabolicPoint :=
+        inferInstanceAs (NormedAddCommGroup (Vec3 × ℝ))
+      letI : NormedSpace ℝ ParabolicPoint :=
+        inferInstanceAs (NormedSpace ℝ (Vec3 × ℝ))
+      ∀ i, ContDiffOn ℝ 1 (fun z => u z i)
+        (spaceTimeSet Set.univ (Ioi (0 : ℝ))))
+    (hDdiff : ∀ z, z ∈ spaceTimeSet Set.univ (Ioi (0 : ℝ)) → ∀ i j,
+      DifferentiableAt ℝ
+        (fun x : Vec3 => spatialPartial (fun y => u y i) j (x, z.2)) z.1)
+    (hpDiff : ∀ z, z ∈ spaceTimeSet Set.univ (Ioi (0 : ℝ)) →
+      DifferentiableAt ℝ (fun x : Vec3 => p (x, z.2)) z.1)
+    (t : ℝ)
+    (hJcontDiff : ∀ j, ContDiff ℝ 1 (fun x : Vec3 =>
+      regUniformMollifiedVelocity ρ ε hε u (x, t) j))
+    (hJdiv : ∀ x, ∑ j : Fin 3, fderiv ℝ
+      (fun y : Vec3 => regUniformMollifiedVelocity ρ ε hε u (y, t) j) x
+        (basisVec j) = 0)
+    (hPDE : ∀ z, 0 < z.2 → ∀ i : Fin 3,
+      timePartial (fun y => u y i) z -
+        (∑ j : Fin 3, spatialPartial
+          (fun y => spatialPartial (fun x => u x i) j y) j z) +
+        (∑ j : Fin 3, regUniformMollifiedVelocity ρ ε hε u z j *
+          spatialPartial (fun y => u y i) j z) +
+        spatialPartial (fun y => p y) i z = 0)
+    (hWdiff : ∀ i, ContDiff ℝ (⊤ : ℕ∞) (W i))
+    (hWc : ∀ i, HasCompactSupport (W i)) (ht : 0 < t) :
+    (∫ x : Vec3, ∑ i : Fin 3,
+      timePartial (fun y => u y i) (x, t) * W i x ∂volume) =
+    (∫ x : Vec3, ∑ i : Fin 3, ∑ j : Fin 3,
+      (u (x, t) i * spatialDeriv (spatialDeriv (W i) j) j x +
+        u (x, t) i * regUniformMollifiedVelocity ρ ε hε u (x, t) j *
+          spatialDeriv (W i) j x) ∂volume) +
+    (∫ x : Vec3, p (x, t) * (∑ i : Fin 3, spatialDeriv (W i) i x) ∂volume) := by
+  have hdiff := fun i x =>
+    lerayHopfLimit_slice_differentiable (fun z => u z i) (hC1 i) x ht
+  have hidentity := regEqui_pairing_equation_ibp
+    (fun i x => u (x, t) i)
+    (fun i j x => spatialPartial (fun y => u y i) j (x, t))
+    (fun i j k x => spatialPartial
+      (fun y => spatialPartial (fun x => u x i) j y) k (x, t))
+    (fun x => p (x, t))
+    (fun i x => spatialPartial (fun y => p y) i (x, t))
+    (fun j x => regUniformMollifiedVelocity ρ ε hε u (x, t) j)
+    (fun i x => timePartial (fun y => u y i) (x, t)) W
+    (fun i => lerayHopfLimit_slice_continuous (hUc i) ht)
+    (fun i x => (hdiff i x).2)
+    (fun i j x => rfl)
+    (fun i j => lerayHopfLimit_slice_continuous (hDc i j) ht)
+    (fun i j x => hDdiff (x, t) ⟨mem_univ _, ht⟩ i j)
+    (fun i j k x => rfl)
+    (fun i j k => lerayHopfLimit_slice_continuous (hDDc i j k) ht)
+    (lerayHopfLimit_slice_continuous hpc ht)
+    (fun x => hpDiff (x, t) ⟨mem_univ _, ht⟩)
+    (fun i x => rfl)
+    (fun i => lerayHopfLimit_slice_continuous (hDpc i) ht)
+    hJcontDiff hJdiv
+    (fun i x => by linarith only [hPDE (x, t) ht i])
+    hWdiff hWc
+  simpa using hidentity
+
+private theorem regEquicontinuity_sequence_coordinate_bounds
+    (ρ : RegMollifierProfile)
+    (U : ℕ → ParabolicPoint → Vec3) (a : Vec3 → Vec3)
+    (εseq : ℕ → ℝ) (hseq : ∀ n, 0 < εseq n ∧ εseq n ≤ 1)
+    (hDataMem : MemLp (regUniformSpatialField a) 2 volume)
+    (hSlice : ∀ n t, 0 ≤ t → MemLp (fun x : Vec3 => U n (x, t)) 2 volume)
+    (hR5 : ∀ n t, 0 ≤ t →
+      eLpNorm (regUniformVelocitySlice (U n) t) 2 volume ^ (2 : ℕ) +
+        2 * regUniformDissipation (U n)
+          (fun z i j => spatialPartial (fun y => U n y i) j z) t =
+      eLpNorm (regMollifyVector ρ (εseq n) (hseq n).1
+        (regUniformSpatialField a)) 2 volume ^ (2 : ℕ)) :
+    (∀ n t, 0 ≤ t →
+      eLpNorm (fun x : Vec3 => (WithLp.toLp 2 (U n (x, t)) : L2Vec3))
+        2 volume ≤ eLpNorm (regUniformSpatialField a) 2 volume) ∧
+    (∀ n t, 0 ≤ t → ∀ i : Fin 3,
+      MemLp (fun x : Vec3 => U n (x, t) i) 2 volume ∧
+      (∫ x : Vec3, U n (x, t) i ^ 2 ∂volume) ≤
+        (eLpNorm (regUniformSpatialField a) 2 volume).toReal ^ 2) ∧
+    (∀ n t, 0 ≤ t →
+      eLpNorm (regUniformVelocitySlice (U n) t) 2 volume ≤
+        eLpNorm (regUniformSpatialField a) 2 volume) ∧
+    (∀ n t, 0 ≤ t → ∀ j : Fin 3,
+      MemLp (fun x : Vec3 => regUniformMollifiedVelocity ρ (εseq n) (hseq n).1
+        (U n) (x, t) j) 2 volume ∧
+      (∫ x : Vec3,
+        regUniformMollifiedVelocity ρ (εseq n) (hseq n).1 (U n) (x, t) j ^ 2
+          ∂volume) ≤ (eLpNorm (regUniformSpatialField a) 2 volume).toReal ^ 2) := by
+  let D : ℕ → ParabolicPoint → Fin 3 → Vec3 := fun n z i j =>
+    spatialPartial (fun y => U n y i) j z
+  let Adata : ℝ := (eLpNorm (regUniformSpatialField a) 2 volume).toReal
+  have hUslice : ∀ n t, 0 ≤ t →
+      MemLp (regUniformVelocitySlice (U n) t) 2 volume := by
+    intro n t ht
+    have hcoord : MemLp (fun x : L2Vec3 => U n (WithLp.ofLp x, t)) 2 volume :=
+      (hSlice n t ht).comp_measurePreserving
+        (PiLp.volume_preserving_ofLp (Fin 3))
+    exact hcoord.continuousLinearMap_comp
+      (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)).symm.toContinuousLinearMap
+  have hSliceBound : ∀ n t, 0 ≤ t →
+      eLpNorm (fun x : Vec3 => (WithLp.toLp 2 (U n (x, t)) : L2Vec3))
+        2 volume ≤ eLpNorm (regUniformSpatialField a) 2 volume := by
+    intro n t ht
+    have h := lerayHopfLimit_regSlice_uniformBound ρ (εseq n) (hseq n).1 a
+      (U n) (fun z i j => D n z i j) hDataMem (hUslice n) (hR5 n) t ht
+    simpa [D, regUniformVelocitySlice] using h
+  have hUcomponent : ∀ n t, 0 ≤ t → ∀ i : Fin 3,
+      MemLp (fun x : Vec3 => U n (x, t) i) 2 volume ∧
+      (∫ x : Vec3, U n (x, t) i ^ 2 ∂volume) ≤ Adata ^ 2 := by
+    intro n t ht i
+    have hL2 : MemLp
+        (fun x : Vec3 => (WithLp.toLp 2 (U n (x, t)) : L2Vec3)) 2 volume :=
+      lerayHopfLimit_toLp_memLp (hSlice n t ht)
+    obtain ⟨hmem, hsq⟩ := lerayHopfLimit_integral_component_sq_le hL2 i
+    change (∫ x : Vec3,
+        (WithLp.toLp 2 (U n (x, t)) : L2Vec3) i ^ 2 ∂volume) ≤
+      (eLpNorm (fun x : Vec3 =>
+        (WithLp.toLp 2 (U n (x, t)) : L2Vec3)) 2 volume).toReal ^ 2 at hsq
+    have hcoordEq : (fun x : Vec3 => (WithLp.toLp 2 (U n (x, t)) : L2Vec3) i) =
+        fun x => U n (x, t) i := by
+      funext x
+      rfl
+    refine ⟨?_, ?_⟩
+    · rw [← hcoordEq]
+      exact hmem
+    · calc
+        (∫ x : Vec3, U n (x, t) i ^ 2 ∂volume) =
+            ∫ x : Vec3,
+              (WithLp.toLp 2 (U n (x, t)) : L2Vec3) i ^ 2 ∂volume := by
+                apply integral_congr_ae
+                filter_upwards [] with x
+                exact congrArg (fun y : ℝ => y ^ 2) (congrFun hcoordEq x).symm
+        _ ≤ (eLpNorm (fun x : Vec3 =>
+              (WithLp.toLp 2 (U n (x, t)) : L2Vec3)) 2 volume).toReal ^ 2 := hsq
+        _ ≤ Adata ^ 2 := by
+          have hnorm : (eLpNorm (fun x : Vec3 =>
+              (WithLp.toLp 2 (U n (x, t)) : L2Vec3)) 2 volume).toReal ≤ Adata := by
+            calc
+              (eLpNorm (fun x : Vec3 =>
+                  (WithLp.toLp 2 (U n (x, t)) : L2Vec3)) 2 volume).toReal ≤
+                  (eLpNorm (regUniformSpatialField a) 2 volume).toReal :=
+                ENNReal.toReal_mono hDataMem.eLpNorm_ne_top (hSliceBound n t ht)
+              _ = Adata := rfl
+          exact pow_le_pow_left₀ ENNReal.toReal_nonneg hnorm 2
+  have hOperatorBound : ∀ n t, 0 ≤ t →
+      eLpNorm (regUniformVelocitySlice (U n) t) 2 volume ≤
+        eLpNorm (regUniformSpatialField a) 2 volume := by
+    intro n t ht
+    have hchange : eLpNorm
+        (fun x : Vec3 => (WithLp.toLp 2 (U n (x, t)) : L2Vec3)) 2 volume =
+        eLpNorm (regUniformVelocitySlice (U n) t) 2 volume := by
+      have hS : MemLp (regUniformVelocitySlice (U n) t) 2 volume := hUslice n t ht
+      exact eLpNorm_comp_measurePreserving hS.aestronglyMeasurable
+        vec3ToL2Vec3_measurePreserving
+    rw [← hchange]
+    exact hSliceBound n t ht
+  have hJcomponent : ∀ n t, 0 ≤ t → ∀ j : Fin 3,
+      MemLp (fun x : Vec3 => regUniformMollifiedVelocity ρ (εseq n) (hseq n).1
+        (U n) (x, t) j) 2 volume ∧
+      (∫ x : Vec3,
+        regUniformMollifiedVelocity ρ (εseq n) (hseq n).1 (U n) (x, t) j ^ 2
+          ∂volume) ≤ Adata ^ 2 := by
+    intro n t ht j
+    obtain ⟨hmem, hsq⟩ := lerayHopfLimit_mollifiedInitial_component_sq_le
+      ρ (εseq n) (hseq n).1 (hSlice n t ht) j
+    have hmem' : MemLp (fun x : Vec3 =>
+        regUniformMollifiedInitial ρ (εseq n) (hseq n).1
+          (fun y : Vec3 => U n (y, t)) x j) 2 volume := by
+      simpa using hmem
+    have hsq' : (∫ x : Vec3,
+        regUniformMollifiedInitial ρ (εseq n) (hseq n).1
+          (fun y : Vec3 => U n (y, t)) x j ^ 2 ∂volume) ≤
+        (eLpNorm (regUniformSpatialField
+          (fun x : Vec3 => U n (x, t))) 2 volume).toReal ^ 2 := by
+      simpa using hsq
+    have hSliceEq :
+        regUniformSpatialField (fun x : Vec3 => U n (x, t)) =
+          regUniformVelocitySlice (U n) t := by
+      funext x
+      rfl
+    rw [hSliceEq] at hsq'
+    have hJfun : (fun x : Vec3 =>
+        regUniformMollifiedVelocity ρ (εseq n) (hseq n).1 (U n) (x, t) j) =
+        fun x => regUniformMollifiedInitial ρ (εseq n) (hseq n).1
+          (fun y : Vec3 => U n (y, t)) x j := by
+      funext x
+      rfl
+    have hNorm : eLpNorm
+        (regUniformSpatialField (fun x : Vec3 => U n (x, t))) 2 volume ≤
+        eLpNorm (regUniformSpatialField a) 2 volume := by
+      rw [hSliceEq]
+      exact hOperatorBound n t ht
+    refine ⟨?_, ?_⟩
+    · simpa [regUniformMollifiedVelocity, regUniformMollifiedInitial, hSliceEq] using hmem'
+    · calc
+        (∫ x : Vec3,
+          regUniformMollifiedVelocity ρ (εseq n) (hseq n).1 (U n) (x, t) j ^ 2
+            ∂volume) =
+            ∫ x : Vec3,
+              regUniformMollifiedInitial ρ (εseq n) (hseq n).1
+                (fun y : Vec3 => U n (y, t)) x j ^ 2 ∂volume := by
+                  apply integral_congr_ae
+                  filter_upwards [] with x
+                  exact congrArg (fun y : ℝ => y ^ 2) (congrFun hJfun x)
+        _ ≤ (eLpNorm
+              (regUniformSpatialField (fun x : Vec3 => U n (x, t))) 2 volume).toReal ^ 2 :=
+            hsq'
+        _ ≤ Adata ^ 2 := by
+          apply pow_le_pow_left₀ ENNReal.toReal_nonneg
+          calc
+            (eLpNorm
+                (regUniformSpatialField (fun x : Vec3 => U n (x, t))) 2 volume).toReal ≤
+                (eLpNorm (regUniformSpatialField a) 2 volume).toReal :=
+              ENNReal.toReal_mono hDataMem.eLpNorm_ne_top hNorm
+            _ = Adata := rfl
+  exact ⟨hSliceBound, hUcomponent, hOperatorBound, hJcomponent⟩
+
 private theorem regEquicontinuity_modulus_for_sequence
     (ρ : RegMollifierProfile)
     (uε : (a : Vec3 → Vec3) → IsInJ a → ℝ → ParabolicPoint → Vec3)
@@ -328,226 +729,17 @@ private theorem regEquicontinuity_modulus_for_sequence
     ∫ x : Vec3, p n (x, t) * divW x
   let F : ℕ → ℝ → ℝ := fun n t =>
     ∫ x : Vec3, ∑ i : Fin 3, U n (x, t) i * W i x
-  have hUslice : ∀ n t, 0 ≤ t →
-      MemLp (regUniformVelocitySlice (U n) t) 2 volume := by
-    intro n t ht
-    have hcoord : MemLp (fun x : L2Vec3 => U n (WithLp.ofLp x, t)) 2 volume :=
-      (hSlice n t ht).comp_measurePreserving
-        (PiLp.volume_preserving_ofLp (Fin 3))
-    exact hcoord.continuousLinearMap_comp
-      (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)).symm.toContinuousLinearMap
-  have hSliceBound : ∀ n t, 0 ≤ t →
-      eLpNorm (fun x : Vec3 => (WithLp.toLp 2 (U n (x, t)) : L2Vec3))
-        2 volume ≤ eLpNorm (regUniformSpatialField a) 2 volume := by
-    intro n t ht
-    have h := lerayHopfLimit_regSlice_uniformBound ρ (εseq n) (hseq n).1 a
-      (U n) (fun z i j => D n z i j) hDataMem (hUslice n) (hR5 n) t ht
-    simpa [U, D, regUniformVelocitySlice] using h
-  have hUcomponent : ∀ n t, 0 ≤ t → ∀ i : Fin 3,
-      MemLp (fun x : Vec3 => U n (x, t) i) 2 volume ∧
-      (∫ x : Vec3, U n (x, t) i ^ 2 ∂volume) ≤ Adata ^ 2 := by
-    intro n t ht i
-    have hL2 : MemLp
-        (fun x : Vec3 => (WithLp.toLp 2 (U n (x, t)) : L2Vec3)) 2 volume :=
-      lerayHopfLimit_toLp_memLp (hSlice n t ht)
-    obtain ⟨hmem, hsq⟩ := lerayHopfLimit_integral_component_sq_le hL2 i
-    change (∫ x : Vec3,
-        (WithLp.toLp 2 (U n (x, t)) : L2Vec3) i ^ 2 ∂volume) ≤
-      (eLpNorm (fun x : Vec3 =>
-        (WithLp.toLp 2 (U n (x, t)) : L2Vec3)) 2 volume).toReal ^ 2 at hsq
-    have hcoordEq : (fun x : Vec3 => (WithLp.toLp 2 (U n (x, t)) : L2Vec3) i) =
-        fun x => U n (x, t) i := by
-      funext x
-      rfl
-    refine ⟨?_, ?_⟩
-    · rw [← hcoordEq]
-      exact hmem
-    · calc
-        (∫ x : Vec3, U n (x, t) i ^ 2 ∂volume) =
-            ∫ x : Vec3,
-              (WithLp.toLp 2 (U n (x, t)) : L2Vec3) i ^ 2 ∂volume := by
-                rw [← integral_congr_ae]
-                filter_upwards [] with x
-                exact congrArg (fun y : ℝ => y ^ 2) (congrFun hcoordEq x)
-        _ ≤ (eLpNorm (fun x : Vec3 =>
-              (WithLp.toLp 2 (U n (x, t)) : L2Vec3)) 2 volume).toReal ^ 2 := hsq
-        _ ≤ Adata ^ 2 := by
-          have hnorm : (eLpNorm (fun x : Vec3 =>
-              (WithLp.toLp 2 (U n (x, t)) : L2Vec3)) 2 volume).toReal ≤ Adata := by
-            calc
-              (eLpNorm (fun x : Vec3 =>
-                  (WithLp.toLp 2 (U n (x, t)) : L2Vec3)) 2 volume).toReal ≤
-                  (eLpNorm (regUniformSpatialField a) 2 volume).toReal :=
-                ENNReal.toReal_mono hDataMem.eLpNorm_ne_top (hSliceBound n t ht)
-              _ = Adata := rfl
-          exact pow_le_pow_left₀ ENNReal.toReal_nonneg hnorm 2
-  have hOperatorBound : ∀ n t, 0 ≤ t →
-      eLpNorm (regUniformVelocitySlice (U n) t) 2 volume ≤
-        eLpNorm (regUniformSpatialField a) 2 volume := by
-    intro n t ht
-    have hchange : eLpNorm
-        (fun x : Vec3 => (WithLp.toLp 2 (U n (x, t)) : L2Vec3)) 2 volume =
-        eLpNorm (regUniformVelocitySlice (U n) t) 2 volume := by
-      have hS : MemLp (regUniformVelocitySlice (U n) t) 2 volume := hUslice n t ht
-      exact eLpNorm_comp_measurePreserving hS.aestronglyMeasurable
-        vec3ToL2Vec3_measurePreserving
-    rw [← hchange]
-    exact hSliceBound n t ht
-  have hJcomponent : ∀ n t, 0 ≤ t → ∀ j : Fin 3,
-      MemLp (fun x : Vec3 => regUniformMollifiedVelocity ρ (εseq n) (hseq n).1
-        (U n) (x, t) j) 2 volume ∧
-      (∫ x : Vec3,
-        regUniformMollifiedVelocity ρ (εseq n) (hseq n).1 (U n) (x, t) j ^ 2
-          ∂volume) ≤ Adata ^ 2 := by
-    intro n t ht j
-    obtain ⟨hmem, hsq⟩ := lerayHopfLimit_mollifiedInitial_component_sq_le
-      ρ (εseq n) (hseq n).1 (hSlice n t ht) j
-    have hmem' : MemLp (fun x : Vec3 =>
-        regUniformMollifiedInitial ρ (εseq n) (hseq n).1
-          (fun y : Vec3 => U n (y, t)) x j) 2 volume := by
-      simpa [U] using hmem
-    have hsq' : (∫ x : Vec3,
-        regUniformMollifiedInitial ρ (εseq n) (hseq n).1
-          (fun y : Vec3 => U n (y, t)) x j ^ 2 ∂volume) ≤
-        (eLpNorm (regUniformSpatialField
-          (fun x : Vec3 => U n (x, t))) 2 volume).toReal ^ 2 := by
-      simpa [U] using hsq
-    have hSliceEq :
-        regUniformSpatialField (fun x : Vec3 => U n (x, t)) =
-          regUniformVelocitySlice (U n) t := by
-      funext x
-      rfl
-    rw [hSliceEq] at hsq'
-    have hJfun : (fun x : Vec3 =>
-        regUniformMollifiedVelocity ρ (εseq n) (hseq n).1 (U n) (x, t) j) =
-        fun x => regUniformMollifiedInitial ρ (εseq n) (hseq n).1
-          (fun y : Vec3 => U n (y, t)) x j := by
-      funext x
-      rfl
-    have hNorm : eLpNorm
-        (regUniformSpatialField (fun x : Vec3 => U n (x, t))) 2 volume ≤
-        eLpNorm (regUniformSpatialField a) 2 volume := by
-      rw [hSliceEq]
-      exact hOperatorBound n t ht
-    refine ⟨?_, ?_⟩
-    · simpa [regUniformMollifiedVelocity, regUniformMollifiedInitial, hSliceEq] using hmem'
-    · calc
-        (∫ x : Vec3,
-          regUniformMollifiedVelocity ρ (εseq n) (hseq n).1 (U n) (x, t) j ^ 2
-            ∂volume) =
-            ∫ x : Vec3,
-              regUniformMollifiedInitial ρ (εseq n) (hseq n).1
-                (fun y : Vec3 => U n (y, t)) x j ^ 2 ∂volume := by
-                  apply integral_congr_ae
-                  filter_upwards [] with x
-                  exact congrArg (fun y : ℝ => y ^ 2) (congrFun hJfun x)
-        _ ≤ (eLpNorm
-              (regUniformSpatialField (fun x : Vec3 => U n (x, t))) 2 volume).toReal ^ 2 :=
-            hsq'
-        _ ≤ Adata ^ 2 := by
-          apply pow_le_pow_left₀ ENNReal.toReal_nonneg
-          calc
-            (eLpNorm
-                (regUniformSpatialField (fun x : Vec3 => U n (x, t))) 2 volume).toReal ≤
-                (eLpNorm (regUniformSpatialField a) 2 volume).toReal :=
-              ENNReal.toReal_mono hDataMem.eLpNorm_ne_top hNorm
-            _ = Adata := rfl
-  have hTimePartialPullback : ∀ n i,
-      ContinuousOn (fun z : ℝ × Vec3 =>
-        timePartial (fun y => U n y i) (z.2, z.1))
-        (Ioi (0 : ℝ) ×ˢ (Set.univ : Set Vec3)) := by
-    intro n i
-    have hswap : Continuous (fun z : ℝ × Vec3 =>
-        parabolicHomeomorph.symm (z.2, z.1)) :=
-      parabolicHomeomorph.symm.continuous.comp (by fun_prop)
-    have hmaps : Set.MapsTo (fun z : ℝ × Vec3 =>
-        parabolicHomeomorph.symm (z.2, z.1))
-        (Ioi (0 : ℝ) ×ˢ (Set.univ : Set Vec3))
-        (spaceTimeSet Set.univ (Ioi (0 : ℝ))) := by
-      rintro ⟨t, x⟩ ⟨ht, hx⟩
-      change ((x, t) : ParabolicPoint) ∈
-        (Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ)
-      exact ⟨mem_univ _, ht⟩
-    have hsource : ContinuousOn
-        (fun z : ParabolicPoint => timePartial (fun y => U n y i) z)
-        (spaceTimeSet Set.univ (Ioi (0 : ℝ))) := by
-      simpa [U] using hDtc n i
-    have hpull := hsource.comp hswap.continuousOn hmaps
-    convert hpull using 1; rfl
-  have hTimePartialIntegralContinuous : ∀ n i,
-      ContinuousOn (fun t : ℝ =>
-        ∫ x : Vec3, timePartial (fun y => U n y i) (x, t) * W i x ∂volume)
-        (Ioi (0 : ℝ)) := by
-    intro n i
-    let G : ℝ → Vec3 → ℝ := fun t x =>
-      timePartial (fun y => U n y i) (x, t) * W i x
-    have hG : ContinuousOn G.uncurry
-        (Ioi (0 : ℝ) ×ˢ (Set.univ : Set Vec3)) := by
-      have hW : ContinuousOn (fun z : ℝ × Vec3 => W i z.2)
-          (Ioi (0 : ℝ) ×ˢ (Set.univ : Set Vec3)) :=
-        ((hWdiff i).continuous.comp continuous_snd).continuousOn
-      exact (hTimePartialPullback n i).mul hW
-    have hGzero : ∀ t x, t ∈ Ioi (0 : ℝ) →
-        x ∉ tsupport (W i) → G t x = 0 := by
-      intro t x ht hx
-      simp [G, image_eq_zero_of_notMem_tsupport hx]
-    exact continuousOn_integral_of_compact_support
-      (μ := volume) (s := Ioi (0 : ℝ)) (k := tsupport (W i))
-      (hWc i).isCompact hG hGzero
+  obtain ⟨hSliceBound, hUcomponent, hOperatorBound, hJcomponent⟩ :=
+    regEquicontinuity_sequence_coordinate_bounds ρ U a εseq hseq hDataMem hSlice hR5
   have hPressureIntegralContinuous : ∀ n,
       ContinuousOn (fun t : ℝ =>
-        ∫ x : Vec3, p n (x, t) * divW x ∂volume) (Ioi (0 : ℝ)) := by
-    intro n
-    let G : ℝ → Vec3 → ℝ := fun t x => p n (x, t) * divW x
-    have hswap : Continuous (fun z : ℝ × Vec3 =>
-        parabolicHomeomorph.symm (z.2, z.1)) :=
-      parabolicHomeomorph.symm.continuous.comp (by fun_prop)
-    have hmaps : Set.MapsTo (fun z : ℝ × Vec3 =>
-        parabolicHomeomorph.symm (z.2, z.1))
-        (Ioi (0 : ℝ) ×ˢ (Set.univ : Set Vec3))
-        (spaceTimeSet Set.univ (Ioi (0 : ℝ))) := by
-      rintro ⟨t, x⟩ ⟨ht, hx⟩
-      change ((x, t) : ParabolicPoint) ∈
-        (Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ)
-      exact ⟨mem_univ _, ht⟩
-    have hpull : ContinuousOn (fun z : ℝ × Vec3 => p n (z.2, z.1))
-        (Ioi (0 : ℝ) ×ˢ (Set.univ : Set Vec3)) := by
-      have hsource : ContinuousOn (p n) (spaceTimeSet Set.univ (Ioi (0 : ℝ))) := by
-        simpa [p] using hpc n
-      have hcomp := hsource.comp hswap.continuousOn hmaps
-      convert hcomp using 1; rfl
-    have hdiv : ContinuousOn (fun z : ℝ × Vec3 => divW z.2)
-        (Ioi (0 : ℝ) ×ˢ (Set.univ : Set Vec3)) := by
-      exact ((hdivWdiff.continuous.comp continuous_snd).continuousOn)
-    have hG : ContinuousOn G.uncurry
-        (Ioi (0 : ℝ) ×ˢ (Set.univ : Set Vec3)) := hpull.mul hdiv
-    have hGzero : ∀ t x, t ∈ Ioi (0 : ℝ) →
-        x ∉ tsupport divW → G t x = 0 := by
-      intro t x ht hx
-      simp [G, image_eq_zero_of_notMem_tsupport hx]
-    exact continuousOn_integral_of_compact_support
-      (μ := volume) (s := Ioi (0 : ℝ)) (k := tsupport divW)
-      hdivWc.isCompact hG hGzero
+        ∫ x : Vec3, p n (x, t) * divW x ∂volume) (Ioi (0 : ℝ)) := fun n =>
+    regEquicontinuity_compact_test_integral_continuous
+      (p n) divW (by simpa [p] using hpc n) hdivWdiff hdivWc
   have hHcont : ∀ n, ContinuousOn (H n) (Ioi (0 : ℝ)) := by
     intro n
-    apply ContinuousOn.congr
-      (continuousOn_finsetSum (s := Finset.univ)
-        (fun i _ => hTimePartialIntegralContinuous n i))
-    intro t ht
-    have hIntegrable : ∀ i : Fin 3,
-        Integrable (fun x : Vec3 =>
-          timePartial (fun y => U n y i) (x, t) * W i x) := by
-      intro i
-      exact lerayHopfLimit_integrable_mul_compact
-        (lerayHopfLimit_slice_continuous (hDtc n i) ht)
-        (hWdiff i).continuous (hWc i)
-    have hIntegrable' : ∀ i ∈ Finset.univ,
-        Integrable (fun x : Vec3 =>
-          timePartial (fun y => U n y i) (x, t) * W i x) := by
-      intro i hi
-      exact hIntegrable i
-    simp only [H]
-    rw [integral_finsetSum (s := Finset.univ) hIntegrable']
+    exact regEquicontinuity_time_derivative_pairing_continuous
+      (U n) W (fun i => hDtc n i) hWdiff hWc
   have hQcont : ∀ n, ContinuousOn (Q n) (Ioi (0 : ℝ)) := by
     intro n
     exact ContinuousOn.congr (hPressureIntegralContinuous n) (fun t ht => rfl)
@@ -559,51 +751,25 @@ private theorem regEquicontinuity_modulus_for_sequence
         (fun δ T hδ hδT => hDtBound n δ T hδ hδT) ht)
   have hJcontDiff : ∀ n t, 0 < t → ∀ j : Fin 3,
       ContDiff ℝ 1 (fun x : Vec3 =>
-        regUniformMollifiedVelocity ρ (εseq n) (hseq n).1 (U n) (x, t) j) := by
-    intro n t ht j
-    exact (lerayHopfLimit_mollifiedInitial_contDiff ρ (εseq n) (hseq n).1
-      (hSlice n t ht.le) j).of_le (by norm_num)
+        regUniformMollifiedVelocity ρ (εseq n) (hseq n).1 (U n) (x, t) j) :=
+    fun n t ht j => (lerayHopfLimit_mollifiedInitial_contDiff ρ (εseq n)
+      (hseq n).1 (hSlice n t ht.le) j).of_le (by norm_num)
   have hJdiv : ∀ n t, 0 < t → ∀ x,
       ∑ j : Fin 3, fderiv ℝ
         (fun y : Vec3 =>
           regUniformMollifiedVelocity ρ (εseq n) (hseq n).1 (U n) (y, t) j)
-        x (basisVec j) = 0 := by
-    intro n t ht
-    exact lerayHopfLimit_mollifiedInitial_divergence_eq_zero
+        x (basisVec j) = 0 := fun n t ht =>
+    lerayHopfLimit_mollifiedInitial_divergence_eq_zero
       ρ (εseq n) (hseq n).1 (hSliceDiv n t ht.le)
   have hPairingEquation : ∀ n t, 0 < t → H n t = R n t + Q n t := by
     intro n t ht
-    have hdiff := fun i x =>
-      lerayHopfLimit_slice_differentiable (fun z => U n z i) (hC1 n i) x ht
-    have hidentity := regEqui_pairing_equation_ibp
-      (fun i x => U n (x, t) i)
-      (fun i j x => spatialPartial (fun y => U n y i) j (x, t))
-      (fun i j k x => spatialPartial
-        (fun y => spatialPartial (fun x => U n x i) j y) k (x, t))
-      (fun x => p n (x, t))
-      (fun i x => spatialPartial (fun y => p n y) i (x, t))
-      (fun j x => regUniformMollifiedVelocity ρ (εseq n) (hseq n).1
-        (U n) (x, t) j)
-      (fun i x => timePartial (fun y => U n y i) (x, t)) W
-      (fun i => lerayHopfLimit_slice_continuous (hUc n i) ht)
-      (fun i x => (hdiff i x).2)
-      (fun i j x => rfl)
-      (fun i j => lerayHopfLimit_slice_continuous (hDc n i j) ht)
-      (fun i j x => hDdiff n (x, t) ⟨mem_univ _, ht⟩ i j)
-      (fun i j k x => rfl)
-      (fun i j k => lerayHopfLimit_slice_continuous (hDDc n i j k) ht)
-      (lerayHopfLimit_slice_continuous (hpc n) ht)
-      (fun x => hpDiff n (x, t) ⟨mem_univ _, ht⟩)
-      (fun i x => rfl)
-      (fun i => lerayHopfLimit_slice_continuous (hDpc n i) ht)
-      (fun j => hJcontDiff n t ht j)
-      (hJdiv n t ht)
-      (fun i x => by
-        have h := hPDE n (x, t) ht i
-        linarith only [h])
-      hWdiff hWc
-    simpa [H, R, Q, divW] using hidentity
-
+    simpa [H, R, Q, divW] using
+      (regEquicontinuity_pairing_equation_at_time ρ (εseq n) (hseq n).1
+        (U n) (p n) W (fun i => hUc n i) (fun i j => hDc n i j)
+        (fun i j k => hDDc n i j k) (hpc n) (fun i => hDpc n i)
+        (fun i => hC1 n i) (fun z hz i j => hDdiff n z hz i j)
+        (fun z hz => hpDiff n z hz) t (hJcontDiff n t ht) (hJdiv n t ht)
+        (fun z hz i => hPDE n z hz i) hWdiff hWc ht)
   have hRpointBound : ∀ n t, 0 ≤ t → |R n t| ≤ K := by
     intro n t ht
     have hbound := hK
@@ -615,72 +781,13 @@ private theorem regEquicontinuity_modulus_for_sequence
       (fun i => (hUcomponent n t ht i).2)
       (fun j => (hJcomponent n t ht j).2)
     simpa [R] using hbound
-
-  have hOrderedModulus : ∀ n s t, s ∈ Icc s₀ s₁ → t ∈ Icc s₀ s₁ →
-      s < t →
-      |F n t - F n s| ≤ K * (t - s) +
-        P * (eLpNorm divW (ENNReal.ofReal (5 / 2 : ℝ)) volume).toReal *
-          (t - s) ^ (2 / 5 : ℝ) := by
-    intro n s t hs ht hst
-    have hIcc : Icc s t ⊆ Ioi (0 : ℝ) := by
-      exact (Icc_subset_Icc hs.1 ht.2).trans hs₀s₁
-    have hspos : 0 < s := hIcc ⟨le_rfl, hst.le⟩
-    have hHinterval : IntervalIntegrable (H n) volume s t :=
-      ((hHcont n).mono hIcc).intervalIntegrable_of_Icc hst.le
-    have hQinterval : IntervalIntegrable (Q n) volume s t :=
-      ((hQcont n).mono hIcc).intervalIntegrable_of_Icc hst.le
-    have hRcont : ContinuousOn (R n) (Ioi (0 : ℝ)) := by
-      apply ContinuousOn.congr ((hHcont n).sub (hQcont n))
-      intro r hr
-      change R n r = H n r - Q n r
-      rw [hPairingEquation n r hr]
-      ring
-    have hRinterval : IntervalIntegrable (R n) volume s t :=
-      (hRcont.mono hIcc).intervalIntegrable_of_Icc hst.le
-    have hFdiffOn : DifferentiableOn ℝ (F n) (Ioi (0 : ℝ)) := by
-      intro r hr
-      exact (hFderiv n r hr).differentiableAt.differentiableWithinAt
-    have hFcont : ContinuousOn (F n) (Ioi (0 : ℝ)) := hFdiffOn.continuousOn
-    have hFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le
-      hst.le (hFcont.mono hIcc)
-      (fun r hr => hFderiv n r (hIcc (Ioo_subset_Icc_self hr))) hHinterval
-    have hsplit : (∫ r in s..t, H n r ∂volume) =
-        (∫ r in s..t, R n r ∂volume) +
-          (∫ r in s..t, Q n r ∂volume) := by
-      calc
-        _ = ∫ r in s..t, R n r + Q n r ∂volume := by
-          apply intervalIntegral.integral_congr_ae
-          filter_upwards [] with r hr
-          have hrIoc : r ∈ Ioc s t := by
-            simpa [uIoc_of_le hst.le] using hr
-          exact hPairingEquation n r (hIcc ⟨hrIoc.1.le, hrIoc.2⟩)
-        _ = _ := intervalIntegral.integral_add hRinterval hQinterval
-    have hRmod : |∫ r in s..t, R n r ∂volume| ≤ K * (t - s) := by
-      have hpoint : ∀ r ∈ uIoc s t, ‖R n r‖ ≤ K := by
-        intro r hr
-        have hrIoc : r ∈ Ioc s t := by
-          simpa [uIoc_of_le hst.le] using hr
-        have hrcc : r ∈ Icc s t := ⟨hrIoc.1.le, hrIoc.2⟩
-        have hrnonneg : 0 ≤ r := le_of_lt (hIcc hrcc)
-        simpa [Real.norm_eq_abs] using hRpointBound n r hrnonneg
-      have hnorm := intervalIntegral.norm_integral_le_of_norm_le_const hpoint
-      rw [Real.norm_eq_abs] at hnorm
-      simpa [abs_of_nonneg (sub_nonneg.mpr hst.le)] using hnorm
-    have hQmod := regEquicontinuity_interval_pressure_bound
-      (hPressure n).1 P hP0 (hPressure n).2 hdivWmem hspos hst
-    calc
-      |F n t - F n s| =
-          |(∫ r in s..t, R n r ∂volume) +
-            (∫ r in s..t, Q n r ∂volume)| := by
-          rw [← hFTC, hsplit]
-      _ ≤ |∫ r in s..t, R n r ∂volume| +
-          |∫ r in s..t, Q n r ∂volume| := abs_add_le _ _
-      _ ≤ K * (t - s) +
-          P * (eLpNorm divW (ENNReal.ofReal (5 / 2 : ℝ)) volume).toReal *
-            (t - s) ^ (2 / 5 : ℝ) := add_le_add hRmod hQmod
-
-  refine ⟨K, P * (eLpNorm divW (ENNReal.ofReal (5 / 2 : ℝ)) volume).toReal,
-    2 / 5, hK0, mul_nonneg hP0 ENNReal.toReal_nonneg, by norm_num, ?_⟩
+  have hRcont : ∀ n, ContinuousOn (R n) (Ioi (0 : ℝ)) := by
+    intro n
+    apply ContinuousOn.congr ((hHcont n).sub (hQcont n))
+    intro r hr
+    change R n r = H n r - Q n r
+    rw [hPairingEquation n r hr]
+    ring
   have hWcoord : ∀ i x, W i x = (w x).ofLp i := by
     intro i x
     simp [W, w', toVec3, PiLp.coe_continuousLinearEquiv]
@@ -698,17 +805,14 @@ private theorem regEquicontinuity_modulus_for_sequence
         rw [hWcoord i x]
       _ = ∑ i : Fin 3, uε a ha (εseq n) (x, t) i * w x i := by
         rfl
+  obtain ⟨A, B, θ, hA, hB, hθ, hMod⟩ :=
+    regEquicontinuity_scalar_holder_modulus F H R Q s₀ s₁ K P hs₀s₁
+      hK0 hP0 hFderiv hHcont hQcont hRcont hPairingEquation
+      hRpointBound p divW (fun _ _ => rfl) hdivWmem hPressure
+  refine ⟨A, B, θ, hA, hB, hθ, ?_⟩
   intro n s t hs ht
-  rcases lt_trichotomy s t with hst | hst | hts
-  · have h := hOrderedModulus n s t hs ht hst
-    rw [hPairingEq n t, hPairingEq n s] at h
-    simpa [Real.dist_eq, abs_of_nonneg (sub_nonneg.mpr hst.le), mul_assoc] using h
-  · subst t
-    simp
-  · have h := hOrderedModulus n t s ht hs hts
-    rw [hPairingEq n s, hPairingEq n t] at h
-    simpa [abs_sub_comm, Real.dist_eq,
-      abs_of_nonneg (sub_nonneg.mpr hts.le)] using h
+  have h := hMod n s t hs ht
+  simpa only [← hPairingEq] using h
 
 /-- The regularized momentum and pressure bounds give the time-pairing
 modulus required by `lem:compactness`. -/

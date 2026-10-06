@@ -26,9 +26,11 @@ noncomputable section
 
 namespace CKN
 
+/-- The product normed additive group structure used for local derivative estimates. -/
 local instance carlemanCoreLocalDerivsNormedAddCommGroup : NormedAddCommGroup ParabolicPoint :=
   carlemanProductNormedAddCommGroup
 
+/-- The real product normed-space structure used for local derivative estimates. -/
 local instance carlemanCoreLocalDerivsNormedSpace : NormedSpace ℝ ParabolicPoint :=
   carlemanProductNormedSpace
 

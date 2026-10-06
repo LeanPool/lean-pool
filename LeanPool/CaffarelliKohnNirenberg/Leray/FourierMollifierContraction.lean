@@ -27,6 +27,7 @@ namespace CKN.Leray
 
 open CKN CKN.Foundation.Parabolic
 
+/-- The bilinear scalar multiplication map used in the mollifier contraction estimate. -/
 @[expose]
 def contractionScalarActionLinear : ℝ →ₗ[ℝ] L2Vec3 →ₗ[ℝ] L2Vec3 :=
   LinearMap.mk₂ ℝ (fun c x => c • x)
@@ -35,6 +36,7 @@ def contractionScalarActionLinear : ℝ →ₗ[ℝ] L2Vec3 →ₗ[ℝ] L2Vec3 :=
     (by intro c x y; exact smul_add c x y)
     (by intro c d x; exact (smul_comm c d x).symm)
 
+/-- The continuous scalar multiplication map used to bound the mollifier action. -/
 @[expose]
 def contractionScalarAction : ℝ →L[ℝ] L2Vec3 →L[ℝ] L2Vec3 :=
   contractionScalarActionLinear.mkContinuous₂ 1 (by
@@ -42,15 +44,18 @@ def contractionScalarAction : ℝ →L[ℝ] L2Vec3 →L[ℝ] L2Vec3 :=
     change ‖c • x‖ ≤ 1 * ‖c‖ * ‖x‖
     simpa [one_mul] using (norm_smul_le c x))
 
+/-- The dilated mollifier kernel expressed on the native coordinate space. -/
 @[expose]
 def scalarProfileOnVec3 (ρ : RegMollifierProfile) (ε : ℝ)
     (hε : 0 < ε) : Vec3 → ℝ :=
   fun x => regMollifierKernel ρ ε hε (WithLp.toLp 2 x)
 
+/-- The pointwise norm of a Hilbert-valued map expressed on coordinate vectors. -/
 @[expose]
 def scalarNormOnVec3 (f : L2Vec3 → L2Vec3) : Vec3 → ℝ :=
   fun x => ‖f (WithLp.toLp 2 x)‖
 
+/-- The convolution of the mollifier kernel with the pointwise norm of a vector field. -/
 @[expose]
 def scalarConvolutionMajor (f : L2Vec3 → L2Vec3)
     (ρ : RegMollifierProfile) (ε : ℝ) (hε : 0 < ε) : L2Vec3 → ℝ :=

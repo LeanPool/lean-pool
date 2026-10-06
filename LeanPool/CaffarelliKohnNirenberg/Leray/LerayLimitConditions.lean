@@ -5,24 +5,16 @@ Authors: Scott Armstrong, Vlad Vicol
 -/
 module
 
-public import LeanPool.CaffarelliKohnNirenberg.Leray.LerayAssemblyContracts
-public import LeanPool.CaffarelliKohnNirenberg.Leray.RegUniformContracts
-public import LeanPool.CaffarelliKohnNirenberg.Leray.LerayPressureProp
-public import LeanPool.CaffarelliKohnNirenberg.Leray.LerayHopfLimitPropMain
+public import LeanPool.CaffarelliKohnNirenberg.Leray.RegularisedInitialData
+public import LeanPool.CaffarelliKohnNirenberg.Leray.FourierCoordinateL2Bridge
+public import LeanPool.CaffarelliKohnNirenberg.Leray.RieszPressureLp
+public import LeanPool.CaffarelliKohnNirenberg.Leray.CompactnessRepresentative
 
 /-!
-# Leray existence from the regularized solutions and their compactness limit
+# Conditions for regularized solutions and their compactness limits
 
-The direct proof of `thm:leray`: the limiting argument
-`CKN.lerayExistence_of_limits` with the regularized momentum identity
-`lem:reg-momentum` and local energy identity `lem:reg-local-energy`
-(`CKN.Leray.regMomentum_of_regularised`,
-`CKN.Leray.regLocalEnergy_of_regularised`), the pressure limit
-`prop:leray-pressure-limit`
-(`CKN.Leray.lerayPressureProp_of_regularised_pressure_data`) and the
-Leray--Hopf limit `prop:leray-hopf-limit` (`CKN.Leray.lerayHopfLimit`)
-supplied by their theorems. The inputs left are the regularized solutions of
-`thm:regularised` and the compactness statement `prop:leray-limit` for them.
+The regularity, energy and convergence assumptions shared by the Leray
+compactness and solution assembly theorems.
 -/
 
 public section
@@ -33,16 +25,14 @@ open CKN CKN.Foundation.Parabolic
 
 noncomputable section
 
-namespace CKN.Leray
+namespace CKN
 
-/-- `thm:leray` from the regularized solutions of `thm:regularised` and the
-compactness statement `prop:leray-limit` for them. -/
-theorem leray_existence_of_regularised
+/-- Regularity, equation, pressure, and energy conditions for one regularized solution. -/
+@[expose] def lerayAssemblyRegularisedConditions
     (ρ : CKN.Leray.RegMollifierProfile)
     (uε : (a : Vec3 → Vec3) → IsInJ a → ℝ → ParabolicPoint → Vec3)
     (pε : (a : Vec3 → Vec3) → IsInJ a → ℝ → ParabolicPoint → ℝ)
-    (hregularised : ∀ (a : Vec3 → Vec3) (ha : IsInJ a) (ε : ℝ)
-      (hε : 0 < ε),
+    (a : Vec3 → Vec3) (ha : IsInJ a) (ε : ℝ) (hε : 0 < ε) : Prop :=
       let u := uε a ha ε
       let p := pε a ha ε
       let D : ParabolicPoint → Fin 3 → Vec3 := fun z i j =>
@@ -127,8 +117,52 @@ theorem leray_existence_of_regularised
         eLpNorm (CKN.Leray.regUniformVelocitySlice u t) 2 volume ^ (2 : ℕ) +
           2 * CKN.Leray.regUniformDissipation u D t =
             eLpNorm (CKN.Leray.regMollifyVector ρ ε hε
-              (CKN.Leray.regUniformSpatialField a)) 2 volume ^ (2 : ℕ)))
-    (hlerayLimit : ∀ (a : Vec3 → Vec3) (ha : IsInJ a)
+              (CKN.Leray.regUniformSpatialField a)) 2 volume ^ (2 : ℕ))
+
+/-- The local convergence, integrability and weak-gradient data of a Leray limit. -/
+@[expose] def lerayAssemblyLocalLimitData
+    (ρ : CKN.Leray.RegMollifierProfile)
+    (uε : (a : Vec3 → Vec3) → IsInJ a → ℝ → ParabolicPoint → Vec3)
+    (a : Vec3 → Vec3) (ha : IsInJ a) (εseq : ℕ → ℝ)
+    (hseq : ∀ n, 0 < εseq n ∧ εseq n ≤ 1) (σ : ℕ → ℕ)
+    (u : ParabolicPoint → Vec3) (Du : ParabolicPoint → Fin 3 → Vec3) (T : ℝ) : Prop :=
+  let μ : Measure ParabolicPoint :=
+    volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T))
+  let U : ℕ → ParabolicPoint → Vec3 :=
+    fun n => uε a ha (εseq (σ n))
+  let J : ℕ → ParabolicPoint → Vec3 := fun n =>
+    CKN.Leray.regUniformMollifiedVelocity ρ (εseq (σ n))
+      (by exact (hseq (σ n)).1) (U n)
+  let Dseq : ℕ → ParabolicPoint → Fin 3 → Vec3 := fun n z i j =>
+    spatialPartial (fun y => U n y i) j z
+  AEStronglyMeasurable u μ ∧ AEStronglyMeasurable Du μ ∧
+  MemLp u 2 μ ∧ MemLp Du 2 μ ∧
+  Tendsto (fun n => eLpNorm (U n - u) 2 μ) atTop (nhds 0) ∧
+  (∀ i j, ∀ w : ParabolicPoint → ℝ, MemLp w 2 μ →
+    Tendsto (fun n => ∫ z in spaceTimeSet
+        (Set.univ : Set Vec3) (Ioo 0 T), Dseq n z i j * w z)
+      atTop (nhds (∫ z in spaceTimeSet
+        (Set.univ : Set Vec3) (Ioo 0 T), Du z i j * w z))) ∧
+  (∀ q : ℝ, 2 ≤ q → q < 10 / 3 →
+    Tendsto (fun n => eLpNorm (U n - u) (ENNReal.ofReal q) μ)
+      atTop (nhds 0)) ∧
+  (∀ n, MemLp (U n) 3 μ) ∧
+  (∀ n, MemLp (J n) 3 μ) ∧ MemLp u 3 μ ∧
+  Tendsto (fun n => eLpNorm (J n - u) 3 μ) atTop (nhds 0) ∧
+  (∀ t : ℝ, 0 < t → ∀ w : Vec3 → Vec3,
+    MemLp w 2 volume →
+    Tendsto (fun n => ∫ x : Vec3, ∑ i : Fin 3,
+        U n (x, t) i * w x i) atTop
+      (nhds (∫ x : Vec3, ∑ i : Fin 3, u (x, t) i * w x i))) ∧
+  (∀ᵐ t ∂(volume.restrict (Ioi (0 : ℝ))), ∀ i : Fin 3,
+    HasWeakGradientOn (Set.univ : Set Vec3)
+      (fun x => u (x, t) i) (fun x => Du (x, t) i))
+
+/-- Compactness and convergence data produced by the Leray limit argument. -/
+@[expose] def lerayAssemblyCompactnessLimitContract
+    (ρ : CKN.Leray.RegMollifierProfile)
+    (uε : (a : Vec3 → Vec3) → IsInJ a → ℝ → ParabolicPoint → Vec3) : Prop :=
+  ∀ (a : Vec3 → Vec3) (ha : IsInJ a)
       (εseq : ℕ → ℝ) (hseq : ∀ n, 0 < εseq n ∧ εseq n ≤ 1)
       (_hεseq : Tendsto εseq atTop (nhds 0)),
       ∃ σ : ℕ → ℕ, ∃ u : ParabolicPoint → Vec3,
@@ -137,71 +171,13 @@ theorem leray_existence_of_regularised
         Tendsto (fun n => εseq (σ n)) atTop (nhds 0) ∧
         (∀ x : Vec3, u (x, 0) = a x) ∧
         (∀ T : ℝ, 0 < T →
-          let μ : Measure ParabolicPoint :=
-            volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T))
-          let U : ℕ → ParabolicPoint → Vec3 :=
-            fun n => uε a ha (εseq (σ n))
-          let J : ℕ → ParabolicPoint → Vec3 := fun n =>
-            CKN.Leray.regUniformMollifiedVelocity ρ (εseq (σ n))
-              (by exact (hseq (σ n)).1) (U n)
-          let Dseq : ℕ → ParabolicPoint → Fin 3 → Vec3 := fun n z i j =>
-            spatialPartial (fun y => U n y i) j z
-          AEStronglyMeasurable u μ ∧ AEStronglyMeasurable Du μ ∧
-          MemLp u 2 μ ∧ MemLp Du 2 μ ∧
-          Tendsto (fun n => eLpNorm (U n - u) 2 μ) atTop (nhds 0) ∧
-          (∀ i j, ∀ w : ParabolicPoint → ℝ, MemLp w 2 μ →
-            Tendsto (fun n => ∫ z in spaceTimeSet
-                (Set.univ : Set Vec3) (Ioo 0 T), Dseq n z i j * w z)
-              atTop (nhds (∫ z in spaceTimeSet
-                (Set.univ : Set Vec3) (Ioo 0 T), Du z i j * w z))) ∧
-          (∀ q : ℝ, 2 ≤ q → q < 10 / 3 →
-            Tendsto (fun n => eLpNorm (U n - u) (ENNReal.ofReal q) μ)
-              atTop (nhds 0)) ∧
-          (∀ n, MemLp (U n) 3 μ) ∧
-          (∀ n, MemLp (J n) 3 μ) ∧ MemLp u 3 μ ∧
-          Tendsto (fun n => eLpNorm (J n - u) 3 μ) atTop (nhds 0) ∧
-          (∀ t : ℝ, 0 < t → ∀ w : Vec3 → Vec3,
-            MemLp w 2 volume →
-            Tendsto (fun n => ∫ x : Vec3, ∑ i : Fin 3,
-                U n (x, t) i * w x i) atTop
-              (nhds (∫ x : Vec3, ∑ i : Fin 3, u (x, t) i * w x i))) ∧
-          (∀ᵐ t ∂(volume.restrict (Ioi (0 : ℝ))), ∀ i : Fin 3,
-            HasWeakGradientOn (Set.univ : Set Vec3)
-              (fun x => u (x, t) i) (fun x => Du (x, t) i))) ∧
+          lerayAssemblyLocalLimitData ρ uε a ha εseq hseq σ u Du T) ∧
         (∀ z : Vec3 × ℝ, 0 < z.2 →
           u (parabolicHomeomorph.symm z) =
             CKN.Leray.compactnessMollifiedLimit
               (fun n => fun y =>
-                uε a ha (εseq (σ n)) (parabolicHomeomorph.symm y)) σ z)) :
-    ∀ a : Vec3 → Vec3, IsInJ a →
-      ∃ u : ParabolicPoint → Vec3,
-      ∃ Du : ParabolicPoint → Fin 3 → Vec3,
-      ∃ p : ParabolicPoint → ℝ,
-        IsGlobalLerayHopfSolution a u Du ∧
-        ∀ q : ℝ, 5 / 2 < q →
-          IsSuitableWeakSolution (Set.univ : Set Vec3) (Ioi 0) q u Du p
-            (0 : ParabolicPoint → Vec3) := by
-  have hregMomentum := regMomentum_of_regularised ρ uε pε hregularised
-  refine CKN.lerayExistence_of_limits ρ uε pε hregularised hregMomentum
-    (regLocalEnergy_of_regularised ρ uε pε hregularised) hlerayLimit
-    (fun a ha εseq hseq _hεseq σ u _hσ _hσtop hεsubseq hUseqLthree hJseqLthree =>
-      lerayPressureProp_of_regularised_pressure_data ρ uε pε ?_ ?_
-        a ha εseq hseq σ u hεsubseq hUseqLthree hJseqLthree)
-    (lerayHopfLimit ρ uε pε hregularised hregMomentum hlerayLimit)
-  · intro a ha ε hε
-    rcases hregularised a ha ε hε with
-      ⟨_, _, _, _, _, hPcont, _, _, _, _, _, _, _, hPressure, _⟩
-    refine ⟨hPcont, ?_⟩
-    intro t ht
-    obtain ⟨hF, hRepr, _⟩ := hPressure t ht
-    exact ⟨hF, hRepr⟩
-  · intro a ha εseq hseq hεseq
-    obtain ⟨σ, u, Du, hσ, hσtop, _, _, hslab, _⟩ :=
-      hlerayLimit a ha εseq hseq hεseq
-    refine ⟨σ, hσ, hσtop, ?_⟩
-    intro T hT
-    exact (hslab T hT).2.2.2.2.2.2.2.1
+                uε a ha (εseq (σ n)) (parabolicHomeomorph.symm y)) σ z)
 
-end CKN.Leray
+end CKN
 
 end

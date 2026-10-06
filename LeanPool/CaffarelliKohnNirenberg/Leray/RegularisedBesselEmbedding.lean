@@ -27,6 +27,7 @@ namespace CKN.Leray
 
 open CKN.Foundation.Parabolic
 
+/-- The inverse Bessel-potential symbol acting on a complex Fourier vector. -/
 @[expose]
 def regularisedBesselInverseSymbol
     (s : ℝ) (p : L2Vec3 × ComplexVec3) : ComplexVec3 :=
@@ -51,6 +52,8 @@ theorem regularisedBesselInverseSymbol_norm_le
   rw [abs_of_nonneg (Real.rpow_nonneg (by positivity) _)]
   exact (mul_le_mul_of_nonneg_right hweight (norm_nonneg v)).trans_eq (one_mul _)
 
+/-- The bounded Fourier multiplier implementing the inverse Bessel weight on vector-valued
+fields. -/
 @[expose]
 def regularisedBesselFourierMultiplier
     (s : ℝ) (hs : 0 ≤ s) (F : ComplexVectorL2) : ComplexVectorL2 :=
@@ -228,6 +231,7 @@ theorem regularisedBesselSobolevToL2CLM_apply
     regularisedBesselSobolevToL2CLM s hs f =
       regularisedBesselSobolevToL2 s hs f := rfl
 
+/-- The scalar Fourier weight defining the inverse Bessel-potential operator. -/
 @[expose]
 def regularisedBesselInverseWeight (s : ℝ) (ξ : L2Vec3) : ℂ :=
   (((1 + ‖ξ‖ ^ 2) ^ (-s / 2) : ℝ) : ℂ)
@@ -260,6 +264,7 @@ theorem regularisedBesselInverseWeight_memLp
     abs_of_nonneg (Real.rpow_nonneg (by positivity) _)]
   exact hbound
 
+/-- The `L∞` representative of the inverse Bessel Fourier weight. -/
 @[expose]
 def regularisedBesselInverseWeightLp
     (s : ℝ) (hs : 0 ≤ s) : Lp (α := L2Vec3) ℂ ∞ :=

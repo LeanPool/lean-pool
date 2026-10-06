@@ -46,6 +46,7 @@ local instance complexShiftedIntegrabilityVectorSecondCountable :
     SecondCountableTopology ComplexVectorL2 := by
   exact UniformSpace.secondCountable_of_separable _
 
+/-- The Borel measurable structure on the complex shifted vector integrability space. -/
 local instance complexShiftedIntegrabilityVectorMeasurableSpace :
     MeasurableSpace ComplexVectorL2 :=
   borel _

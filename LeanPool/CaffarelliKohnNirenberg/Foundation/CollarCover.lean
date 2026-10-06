@@ -28,6 +28,7 @@ namespace CKN
 
 open Metric
 
+/-- The three-dimensional Gaussian spatial carrier used for the collar estimates. -/
 abbrev BUGaussianSpace := CKN.Foundation.Parabolic.L2Vec3
 
 /-- The fixed-width spatial collar used in `eq:bu-gaussian-collar` (ESS). -/

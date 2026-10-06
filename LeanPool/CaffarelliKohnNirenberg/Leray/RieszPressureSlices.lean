@@ -31,7 +31,6 @@ namespace CKN.Leray
 
 private theorem rieszPressure_double_sum_ae
     {α : Type*} [MeasurableSpace α] (μ : Measure α) (q : ℝ≥0∞)
-    [Fact (1 ≤ q)]
     (T : Fin 3 → Fin 3 → Lp ℝ q μ) :
     (fun x => ∑ i : Fin 3, ∑ j : Fin 3, T i j x) =ᵐ[μ]
       (∑ i : Fin 3, ∑ j : Fin 3, T i j : Lp ℝ q μ) := by

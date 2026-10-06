@@ -46,12 +46,14 @@ private theorem associatedPressureTimePartialProd_eq_zero_of_timeSupport
   rw [CKN.timePartial_eq_product_fderiv hdiff, hfd.fderiv]
   simp
 
+/-- Decay coefficient for the potential gradient after multiplying by a spatial cutoff. -/
 @[expose]
 def associatedPressurePotentialDirectionCutoffCoefficient
     {ψ : Vec3 × ℝ → ℝ} (hdecay : RieszPressurePotentialDecay ψ) : ℝ :=
   Classical.choose hdecay.gradient_bound +
     CKN.cutoffGradientConstant * Classical.choose hdecay.value_bound
 
+/-- Decay coefficient for the potential Hessian after multiplying by a spatial cutoff. -/
 @[expose]
 def associatedPressurePotentialHessianCutoffCoefficient
     {ψ : Vec3 × ℝ → ℝ} (hdecay : RieszPressurePotentialDecay ψ) : ℝ :=
@@ -165,6 +167,252 @@ private theorem associatedPressureTestCurl_spatialPartial_formula
       ((hpart 0 1).differentiable (by simp) z) j]
     rfl
 
+private theorem associatedPressureCurlComponent_bound
+    (d : Fin 3 → Fin 3 → ℝ) (C : Fin 3 → ℝ) (P : ℝ)
+    (hC : ∀ k, 0 ≤ C k) (hP : 0 ≤ P)
+    (hterm : ∀ k l, |d k l| ≤ C k * P) :
+    ∀ i : Fin 3,
+      |(match i with
+        | 0 => d 2 1 - d 1 2
+        | 1 => d 0 2 - d 2 0
+        | 2 => d 1 0 - d 0 1)| ≤ 2 * (∑ k : Fin 3, C k) * P := by
+  intro i
+  have hsum (k l : Fin 3) : C k + C l ≤ 2 * (∑ m : Fin 3, C m) := by
+    calc
+      _ ≤ (∑ m : Fin 3, C m) + (∑ m : Fin 3, C m) :=
+        add_le_add
+          (Finset.single_le_sum (fun m hm => hC m) (Finset.mem_univ k))
+          (Finset.single_le_sum (fun m hm => hC m) (Finset.mem_univ l))
+      _ = _ := by ring
+  fin_cases i
+  · calc
+      |d 2 1 - d 1 2| ≤ |d 2 1| + |d 1 2| := associatedPressureAbs_sub_le _ _
+      _ ≤ (C 2 + C 1) * P := by
+        calc
+          _ ≤ C 2 * P + C 1 * P := add_le_add (hterm 2 1) (hterm 1 2)
+          _ = _ := by ring
+      _ ≤ 2 * (∑ k : Fin 3, C k) * P := mul_le_mul_of_nonneg_right (hsum 2 1) hP
+  · calc
+      |d 0 2 - d 2 0| ≤ |d 0 2| + |d 2 0| := associatedPressureAbs_sub_le _ _
+      _ ≤ (C 0 + C 2) * P := by
+        calc
+          _ ≤ C 0 * P + C 2 * P := add_le_add (hterm 0 2) (hterm 2 0)
+          _ = _ := by ring
+      _ ≤ 2 * (∑ k : Fin 3, C k) * P := mul_le_mul_of_nonneg_right (hsum 0 2) hP
+  · calc
+      |d 1 0 - d 0 1| ≤ |d 1 0| + |d 0 1| := associatedPressureAbs_sub_le _ _
+      _ ≤ (C 1 + C 0) * P := by
+        calc
+          _ ≤ C 1 * P + C 0 * P := add_le_add (hterm 1 0) (hterm 0 1)
+          _ = _ := by ring
+      _ ≤ 2 * (∑ k : Fin 3, C k) * P := mul_le_mul_of_nonneg_right (hsum 1 0) hP
+
+private theorem associatedPressureSpatialProfile_nonneg (K : Set ℝ) (z : Vec3 × ℝ) :
+    0 ≤ associatedPressureSpatialProfile K 2 z := by
+  by_cases ht : z.2 ∈ K
+  · simp only [associatedPressureSpatialProfile, Set.indicator_of_mem ht, one_mul]
+    positivity
+  · simp only [associatedPressureSpatialProfile, Set.indicator_of_notMem ht, zero_mul, le_refl]
+
+private theorem associatedPressurePotentialCutoff_direction_bound
+    {K : Set ℝ} (f : Vec3 × ℝ → ℝ) (hf : ContDiff ℝ (⊤ : ℕ∞) f)
+    (hzero : ∀ t ∉ K, ∀ x, f (x, t) = 0)
+    (hdecay : RieszPressurePotentialDecay f) (i : Fin 3) (n : ℕ) (z : Vec3 × ℝ) :
+    |rieszPressureJointDirection (rieszPressurePotentialCutoffTest f n) i z| ≤
+      associatedPressurePotentialDirectionCutoffCoefficient hdecay *
+        associatedPressureSpatialProfile K 2 z :=
+  associatedPressurePotentialCutoff_direction_profile_bound hf hzero hdecay i n z
+
+private theorem associatedPressurePotentialCutoff_hessian_bound
+    {K : Set ℝ} (f : Vec3 × ℝ → ℝ) (hf : ContDiff ℝ (⊤ : ℕ∞) f)
+    (hzero : ∀ t ∉ K, ∀ x, f (x, t) = 0)
+    (hdecay : RieszPressurePotentialDecay f) (i j : Fin 3) (n : ℕ) (z : Vec3 × ℝ) :
+    |rieszPressureJointHessian (rieszPressurePotentialCutoffTest f n) i j z| ≤
+      associatedPressurePotentialHessianCutoffCoefficient hdecay *
+        associatedPressureSpatialProfile K 2 z := by
+  simpa [associatedPressurePotentialHessianCutoffCoefficient] using
+    associatedPressurePotentialCutoff_hessian_profile_bound hf hzero hdecay i j n z
+
+private theorem associatedPressureHelmholtzScalarCutoff_derivative_bounds
+    {T : ℝ} {φ : Vec3 × ℝ → Vec3} {K : Set ℝ}
+    (hφ : φ ∈ CKN.spaceTimeTestFunction (V := Vec3) Set.univ (Ioo 0 T))
+    (hzeroψ : ∀ t ∉ K, ∀ x, associatedPressureHelmholtzScalarPotential φ (x, t) = 0)
+    (hzeroψt : ∀ t ∉ K, ∀ x,
+      CKN.timePartialProd (associatedPressureHelmholtzScalarPotential φ) (x, t) = 0)
+    (hψdecay : RieszPressurePotentialDecay (associatedPressureHelmholtzScalarPotential φ))
+    (hψtdecay : RieszPressurePotentialDecay
+      (CKN.timePartialProd (associatedPressureHelmholtzScalarPotential φ))) :
+    (∀ (n : ℕ) (i : Fin 3) (z : Vec3 × ℝ),
+      |CKN.timePartialProd (CKN.spatialPartialProd
+        (associatedPressureHelmholtzScalarPotentialCutoff φ n) i) z| ≤
+        associatedPressurePotentialDirectionCutoffCoefficient hψtdecay *
+          associatedPressureSpatialProfile K 2 z) ∧
+    (∀ (n : ℕ) (i j : Fin 3) (z : Vec3 × ℝ),
+      |CKN.spatialPartialProd (fun q => associatedPressureTestGradient
+        (associatedPressureHelmholtzScalarPotentialCutoff φ n) q i) j z| ≤
+        associatedPressurePotentialHessianCutoffCoefficient hψdecay *
+          associatedPressureSpatialProfile K 2 z) := by
+  let ψ := associatedPressureHelmholtzScalarPotential φ
+  let ψt := CKN.timePartialProd ψ
+  let Dψt := associatedPressurePotentialDirectionCutoffCoefficient hψtdecay
+  let Hψ := associatedPressurePotentialHessianCutoffCoefficient hψdecay
+  have hψ : ContDiff ℝ (⊤ : ℕ∞) ψ :=
+    associatedPressureHelmholtzScalarPotential_contDiff hφ
+  have hψt : ContDiff ℝ (⊤ : ℕ∞) ψt := CKN.contDiff_timePartial hψ
+  have htimeScalar (n : ℕ) (i : Fin 3) (z : Vec3 × ℝ) :
+      |CKN.timePartialProd (CKN.spatialPartialProd
+        (associatedPressureHelmholtzScalarPotentialCutoff φ n) i) z| ≤
+        Dψt * associatedPressureSpatialProfile K 2 z := by
+    have hψcut : ContDiff ℝ (⊤ : ℕ∞)
+        (associatedPressureHelmholtzScalarPotentialCutoff φ n) :=
+      (associatedPressureHelmholtzScalarPotentialCutoff_mem_spaceTimeTestFunction hφ n).1
+    have htimeCut : CKN.timePartialProd
+        (associatedPressureHelmholtzScalarPotentialCutoff φ n) =
+          rieszPressurePotentialCutoffTest ψt n := by
+      change CKN.timePartialProd (rieszPressurePotentialCutoffTest ψ n) = _
+      rw [associatedPressureCutoffTimePartial_eq hψ n]
+    calc
+      _ = |CKN.spatialPartialProd
+          (CKN.timePartialProd
+            (associatedPressureHelmholtzScalarPotentialCutoff φ n)) i z| := by
+          rw [associatedPressureTimeSpatialPartialProd_commute hψcut i z]
+      _ = |CKN.spatialPartialProd
+          (rieszPressurePotentialCutoffTest ψt n) i z| := by rw [htimeCut]
+      _ = |rieszPressureJointDirection
+          (rieszPressurePotentialCutoffTest ψt n) i z| := by
+          congr 1
+          exact (congrFun
+            (associatedPressureJointDirection_eq_spatialPartialProd
+              (rieszPressurePotentialCutoffTest_contDiff hψt n) i) z).symm
+      _ ≤ Dψt * associatedPressureSpatialProfile K 2 z := by
+          exact
+            associatedPressurePotentialCutoff_direction_bound ψt hψt hzeroψt hψtdecay i n z
+  have hspaceScalar (n : ℕ) (i j : Fin 3) (z : Vec3 × ℝ) :
+      |CKN.spatialPartialProd
+        (fun q => associatedPressureTestGradient
+          (associatedPressureHelmholtzScalarPotentialCutoff φ n) q i) j z| ≤
+        Hψ * associatedPressureSpatialProfile K 2 z := by
+    let ψcut := associatedPressureHelmholtzScalarPotentialCutoff φ n
+    have hψcut : ContDiff ℝ (⊤ : ℕ∞) ψcut :=
+      (associatedPressureHelmholtzScalarPotentialCutoff_mem_spaceTimeTestFunction hφ n).1
+    have hEq := associatedPressureSpatialSecondPartialProd_eq_jointHessian hψcut i j z
+    have hBound :=
+      associatedPressurePotentialCutoff_hessian_bound ψ hψ hzeroψ hψdecay i j n z
+    have hCutEq : ψcut = rieszPressurePotentialCutoffTest ψ n := by
+      rfl
+    calc
+      _ = |CKN.spatialSecondPartialProd ψcut i j z| := by
+        rfl
+      _ = |rieszPressureJointHessian ψcut i j z| := by rw [hEq]
+      _ = |rieszPressureJointHessian
+          (rieszPressurePotentialCutoffTest ψ n) i j z| := by rw [hCutEq]
+      _ ≤ Hψ * associatedPressureSpatialProfile K 2 z := hBound
+  exact ⟨htimeScalar, hspaceScalar⟩
+
+private theorem associatedPressureHelmholtzCutoffCurl_derivative_bounds
+    {T : ℝ} {φ : Vec3 × ℝ → Vec3} {K : Set ℝ}
+    (hφ : φ ∈ CKN.spaceTimeTestFunction (V := Vec3) Set.univ (Ioo 0 T))
+    (hGradC : 0 ≤ CKN.cutoffGradientConstant)
+    (hHessC : 0 ≤ CKN.cutoffSecondDerivativeConstant)
+    (hzeroA : ∀ (i : Fin 3) (t : ℝ), t ∉ K → ∀ x,
+      associatedPressureHelmholtzVectorPotential φ (x, t) i = 0)
+    (hzeroAt : ∀ (i : Fin 3) (t : ℝ), t ∉ K → ∀ x,
+      associatedPressureHelmholtzVectorPotentialTimePartial φ (x, t) i = 0)
+    (hAdecay : ∀ i : Fin 3, RieszPressurePotentialDecay
+      (fun q => associatedPressureHelmholtzVectorPotential φ q i))
+    (hAtdecay : ∀ i : Fin 3, RieszPressurePotentialDecay
+      (fun q => associatedPressureHelmholtzVectorPotentialTimePartial φ q i)) :
+    (∀ (n : ℕ) (i : Fin 3) (z : Vec3 × ℝ),
+      |CKN.timePartialProd (fun q => associatedPressureTestCurl
+        (associatedPressureHelmholtzCutoffVectorPotential φ n) q i) z| ≤
+        (2 * (∑ k : Fin 3, associatedPressurePotentialDirectionCutoffCoefficient
+          (hAtdecay k))) * associatedPressureSpatialProfile K 2 z) ∧
+    (∀ (n : ℕ) (i j : Fin 3) (z : Vec3 × ℝ),
+      |CKN.spatialPartialProd (fun q => associatedPressureTestCurl
+        (associatedPressureHelmholtzCutoffVectorPotential φ n) q i) j z| ≤
+        (2 * (∑ k : Fin 3, associatedPressurePotentialHessianCutoffCoefficient
+          (hAdecay k))) * associatedPressureSpatialProfile K 2 z) := by
+  let A := associatedPressureHelmholtzVectorPotential φ
+  let At := associatedPressureHelmholtzVectorPotentialTimePartial φ
+  let DA (i : Fin 3) := associatedPressurePotentialDirectionCutoffCoefficient (hAtdecay i)
+  let HA (i : Fin 3) := associatedPressurePotentialHessianCutoffCoefficient (hAdecay i)
+  have hA : ContDiff ℝ (⊤ : ℕ∞) A :=
+    associatedPressureHelmholtzVectorPotential_contDiff hφ
+  have hAcomp (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun q => A q i) :=
+    (contDiff_apply ℝ ℝ i).comp hA
+  have hAtcomp (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun q => At q i) := by
+    simpa [At, associatedPressureHelmholtzVectorPotentialTimePartial,
+      CKN.timePartialProd] using CKN.contDiff_timePartial (hAcomp i)
+  have hDA (i : Fin 3) : 0 ≤ DA i :=
+    associatedPressurePotentialDirectionCutoffCoefficient_nonneg (hAtdecay i) hGradC
+  have hHA (i : Fin 3) : 0 ≤ HA i :=
+    associatedPressurePotentialHessianCutoffCoefficient_nonneg (hAdecay i) hGradC hHessC
+  have hprofile (z : Vec3 × ℝ) : 0 ≤ associatedPressureSpatialProfile K 2 z :=
+    associatedPressureSpatialProfile_nonneg K z
+  have hcurlTimeFormula (n : ℕ) (i : Fin 3) (z : Vec3 × ℝ) :
+      CKN.timePartialProd
+        (fun q => associatedPressureTestCurl
+          (associatedPressureHelmholtzCutoffVectorPotential φ n) q i) z =
+        associatedPressureTestCurl
+          (fun q => rieszPressurePotentialCutoff n q.1 • At q) z i := by
+    have h := associatedPressureHelmholtzCutoffCurl_timePartial_eq hφ n i z
+    convert h using 1
+    rfl
+  have hdir (n : ℕ) (z : Vec3 × ℝ) (k l : Fin 3) :
+      |associatedPressureTestPartial
+        (fun q => rieszPressurePotentialCutoff n q.1 * At q k) l z| ≤
+        DA k * associatedPressureSpatialProfile K 2 z := by
+    have hb :=
+      associatedPressurePotentialCutoff_direction_bound (fun q => At q k) (hAtcomp k)
+      (hzeroAt k) (hAtdecay k) l n z
+    have heq := associatedPressureCutoffJointDirection_eq_vorticityPartial
+      (hAtcomp k) l n z
+    rw [heq] at hb
+    simpa [DA] using hb
+  have hcurlTime (n : ℕ) (i : Fin 3) (z : Vec3 × ℝ) :
+      |CKN.timePartialProd
+        (fun q => associatedPressureTestCurl
+          (associatedPressureHelmholtzCutoffVectorPotential φ n) q i) z| ≤
+        (2 * (∑ k : Fin 3, DA k)) * associatedPressureSpatialProfile K 2 z := by
+    rw [hcurlTimeFormula]
+    have hbound := associatedPressureCurlComponent_bound
+      (fun k l => associatedPressureTestPartial
+        (fun q => rieszPressurePotentialCutoff n q.1 * At q k) l z)
+      DA (associatedPressureSpatialProfile K 2 z) hDA (hprofile z)
+      (fun k l => hdir n z k l) i
+    fin_cases i <;>
+      simpa only [Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Fin.isValue,
+        associatedPressureTestCurl_zero, associatedPressureTestCurl_one,
+        associatedPressureTestCurl_two, Pi.smul_apply, smul_eq_mul] using hbound
+  have hcurlSpatial (n : ℕ) (i j : Fin 3) (z : Vec3 × ℝ) :
+      |CKN.spatialPartialProd
+        (fun q => associatedPressureTestCurl
+          (associatedPressureHelmholtzCutoffVectorPotential φ n) q i) j z| ≤
+        (2 * (∑ k : Fin 3, HA k)) * associatedPressureSpatialProfile K 2 z := by
+    let Ac := associatedPressureHelmholtzCutoffVectorPotential φ n
+    have hAc : ContDiff ℝ (⊤ : ℕ∞) Ac :=
+      (associatedPressureHelmholtzCutoffVectorPotential_mem_spaceTimeTestFunction hφ n).1
+    have hAcComp (k : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun q => Ac q k) :=
+      (contDiff_apply ℝ ℝ k).comp hAc
+    have hterm (k l : Fin 3) :
+        |CKN.spatialSecondPartialProd (fun q => Ac q k) l j z| ≤
+          HA k * associatedPressureSpatialProfile K 2 z := by
+      have hEq := associatedPressureSpatialSecondPartialProd_eq_jointHessian
+        (hAcComp k) l j z
+      have hBound :=
+        associatedPressurePotentialCutoff_hessian_bound (fun q => A q k) (hAcomp k)
+        (hzeroA k) (hAdecay k) l j n z
+      calc
+        _ = |rieszPressureJointHessian (fun q => Ac q k) l j z| := by rw [hEq]
+        _ = |rieszPressureJointHessian
+            (rieszPressurePotentialCutoffTest (fun q => A q k) n) l j z| := rfl
+        _ ≤ HA k * associatedPressureSpatialProfile K 2 z := by simpa [HA] using hBound
+    rw [associatedPressureTestCurl_spatialPartial_formula hAc i j z]
+    exact associatedPressureCurlComponent_bound
+      (fun k l => CKN.spatialSecondPartialProd (fun q => Ac q k) l j z)
+      HA (associatedPressureSpatialProfile K 2 z) hHA (hprofile z) hterm i
+  exact ⟨hcurlTime, hcurlSpatial⟩
+
 /-- The Helmholtz cutoffs and both Helmholtz components have common spatial
 derivative profiles for `thm:assoc-pressure`. -/
 theorem associatedPressureHelmholtzTestCutoff_derivative_profile_bounds
@@ -204,7 +452,6 @@ theorem associatedPressureHelmholtzTestCutoff_derivative_profile_bounds
     associatedPressureHelmholtzScalarPotential_decay hφ
   have hφt : φt ∈ CKN.spaceTimeTestFunction (V := Vec3) Set.univ (Ioo 0 T) := by
     exact associatedPressureVectorTimePartial_mem_spaceTimeTestFunction hφ
-  have hψt : ContDiff ℝ (⊤ : ℕ∞) ψt := CKN.contDiff_timePartial hψ
   have hψtSourceEq : ψt = associatedPressureHelmholtzScalarPotential φt := by
     funext q
     have h := associatedPressureHelmholtzScalarPotential_timePartial hφ q
@@ -217,9 +464,6 @@ theorem associatedPressureHelmholtzTestCutoff_derivative_profile_bounds
       hzeroψ (show (x, t).2 ∉ K from ht)
   have hAcomp (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun q => A q i) :=
     (contDiff_apply ℝ ℝ i).comp hA
-  have hAtcomp (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun q => At q i) := by
-    simpa [At, associatedPressureHelmholtzVectorPotentialTimePartial,
-      CKN.timePartialProd] using CKN.contDiff_timePartial (hAcomp i)
   have hAdecay (i : Fin 3) : RieszPressurePotentialDecay (fun q => A q i) :=
     (associatedPressureHelmholtzVectorPotential_component_decay hφ i).1
   have hAtdecay (i : Fin 3) : RieszPressurePotentialDecay (fun q => At q i) := by
@@ -266,246 +510,18 @@ theorem associatedPressureHelmholtzTestCutoff_derivative_profile_bounds
     exact add_nonneg (add_nonneg (by norm_num)
       (mul_nonneg (by norm_num) hsumHA)) hHψ
   have hC : 0 ≤ C := by dsimp [C]; exact add_nonneg hCtime hCspace
-  have hprofile (z : Vec3 × ℝ) : 0 ≤ associatedPressureSpatialProfile K 2 z := by
-    by_cases ht : z.2 ∈ K
-    · simp [associatedPressureSpatialProfile, ht]
-      positivity
-    · simp [associatedPressureSpatialProfile, ht]
-  have hDAle (i : Fin 3) : DA i ≤ ∑ k : Fin 3, DA k :=
-    Finset.single_le_sum (fun k hk => hDA k) (Finset.mem_univ i)
-  have hHAle (i : Fin 3) : HA i ≤ ∑ k : Fin 3, HA k :=
-    Finset.single_le_sum (fun k hk => hHA k) (Finset.mem_univ i)
-  have hcutDir (f : Vec3 × ℝ → ℝ) (hf : ContDiff ℝ (⊤ : ℕ∞) f)
-      (hzero : ∀ t ∉ K, ∀ x, f (x, t) = 0)
-      (hdecay : RieszPressurePotentialDecay f) (i : Fin 3)
-      (n : ℕ) (z : Vec3 × ℝ) :
-      |rieszPressureJointDirection (rieszPressurePotentialCutoffTest f n) i z| ≤
-        associatedPressurePotentialDirectionCutoffCoefficient hdecay *
-          associatedPressureSpatialProfile K 2 z :=
-    associatedPressurePotentialCutoff_direction_profile_bound hf hzero hdecay i n z
-  have hcutHess (f : Vec3 × ℝ → ℝ) (hf : ContDiff ℝ (⊤ : ℕ∞) f)
-      (hzero : ∀ t ∉ K, ∀ x, f (x, t) = 0)
-      (hdecay : RieszPressurePotentialDecay f) (i j : Fin 3)
-      (n : ℕ) (z : Vec3 × ℝ) :
-      |rieszPressureJointHessian (rieszPressurePotentialCutoffTest f n) i j z| ≤
-        associatedPressurePotentialHessianCutoffCoefficient hdecay *
-          associatedPressureSpatialProfile K 2 z := by
-    simpa [associatedPressurePotentialHessianCutoffCoefficient] using
-      associatedPressurePotentialCutoff_hessian_profile_bound hf hzero hdecay i j n z
-  have htimeScalar (n : ℕ) (i : Fin 3) (z : Vec3 × ℝ) :
-      |CKN.timePartialProd (CKN.spatialPartialProd
-        (associatedPressureHelmholtzScalarPotentialCutoff φ n) i) z| ≤
-        Dψt * associatedPressureSpatialProfile K 2 z := by
-    have hψcut : ContDiff ℝ (⊤ : ℕ∞)
-        (associatedPressureHelmholtzScalarPotentialCutoff φ n) :=
-      (associatedPressureHelmholtzScalarPotentialCutoff_mem_spaceTimeTestFunction hφ n).1
-    have htimeCut : CKN.timePartialProd
-        (associatedPressureHelmholtzScalarPotentialCutoff φ n) =
-          rieszPressurePotentialCutoffTest ψt n := by
-      change CKN.timePartialProd (rieszPressurePotentialCutoffTest ψ n) = _
-      rw [associatedPressureCutoffTimePartial_eq hψ n]
-    calc
-      _ = |CKN.spatialPartialProd
-          (CKN.timePartialProd
-            (associatedPressureHelmholtzScalarPotentialCutoff φ n)) i z| := by
-          rw [associatedPressureTimeSpatialPartialProd_commute hψcut i z]
-      _ = |CKN.spatialPartialProd
-          (rieszPressurePotentialCutoffTest ψt n) i z| := by rw [htimeCut]
-      _ = |rieszPressureJointDirection
-          (rieszPressurePotentialCutoffTest ψt n) i z| := by
-          congr 1
-          exact (congrFun
-            (associatedPressureJointDirection_eq_spatialPartialProd
-              (rieszPressurePotentialCutoffTest_contDiff hψt n) i) z).symm
-      _ ≤ Dψt * associatedPressureSpatialProfile K 2 z := by
-          exact hcutDir ψt hψt hzeroψt hψtdecay i n z
-  have hspaceScalar (n : ℕ) (i j : Fin 3) (z : Vec3 × ℝ) :
-      |CKN.spatialPartialProd
-        (fun q => associatedPressureTestGradient
-          (associatedPressureHelmholtzScalarPotentialCutoff φ n) q i) j z| ≤
-        Hψ * associatedPressureSpatialProfile K 2 z := by
-    let ψcut := associatedPressureHelmholtzScalarPotentialCutoff φ n
-    have hψcut : ContDiff ℝ (⊤ : ℕ∞) ψcut :=
-      (associatedPressureHelmholtzScalarPotentialCutoff_mem_spaceTimeTestFunction hφ n).1
-    have hEq := associatedPressureSpatialSecondPartialProd_eq_jointHessian hψcut i j z
-    have hBound := hcutHess ψ hψ hzeroψ hψdecay i j n z
-    have hCutEq : ψcut = rieszPressurePotentialCutoffTest ψ n := by
-      rfl
-    calc
-      _ = |CKN.spatialSecondPartialProd ψcut i j z| := by
-        rfl
-      _ = |rieszPressureJointHessian ψcut i j z| := by rw [hEq]
-      _ = |rieszPressureJointHessian
-          (rieszPressurePotentialCutoffTest ψ n) i j z| := by rw [hCutEq]
-      _ ≤ Hψ * associatedPressureSpatialProfile K 2 z := hBound
-  have hcurlTimeFormula (n : ℕ) (i : Fin 3) (z : Vec3 × ℝ) :
-      CKN.timePartialProd
-        (fun q => associatedPressureTestCurl
-          (associatedPressureHelmholtzCutoffVectorPotential φ n) q i) z =
-        associatedPressureTestCurl
-          (fun q => rieszPressurePotentialCutoff n q.1 • At q) z i := by
-    have h := associatedPressureHelmholtzCutoffCurl_timePartial_eq hφ n i z
-    convert h using 1
-    rfl
-  have hdir (n : ℕ) (z : Vec3 × ℝ) (k l : Fin 3) :
-      |associatedPressureTestPartial
-        (fun q => rieszPressurePotentialCutoff n q.1 * At q k) l z| ≤
-        DA k * associatedPressureSpatialProfile K 2 z := by
-    have hb := hcutDir (fun q => At q k) (hAtcomp k)
-      (hzeroAt k) (hAtdecay k) l n z
-    have heq := associatedPressureCutoffJointDirection_eq_vorticityPartial
-      (hAtcomp k) l n z
-    rw [heq] at hb
-    simpa [DA] using hb
-  have hcurlTime (n : ℕ) (i : Fin 3) (z : Vec3 × ℝ) :
-      |CKN.timePartialProd
-        (fun q => associatedPressureTestCurl
-          (associatedPressureHelmholtzCutoffVectorPotential φ n) q i) z| ≤
-        (2 * (∑ k : Fin 3, DA k)) * associatedPressureSpatialProfile K 2 z := by
-    rw [hcurlTimeFormula]
-    fin_cases i
-    ·
-      calc
-        |associatedPressureTestPartial
-            (fun q => rieszPressurePotentialCutoff n q.1 * At q 2) 1 z -
-          associatedPressureTestPartial
-            (fun q => rieszPressurePotentialCutoff n q.1 * At q 1) 2 z| ≤
-          |associatedPressureTestPartial
-              (fun q => rieszPressurePotentialCutoff n q.1 * At q 2) 1 z| +
-            |associatedPressureTestPartial
-              (fun q => rieszPressurePotentialCutoff n q.1 * At q 1) 2 z| :=
-          associatedPressureAbs_sub_le _ _
-        _ ≤ DA 2 * associatedPressureSpatialProfile K 2 z +
-            DA 1 * associatedPressureSpatialProfile K 2 z :=
-          add_le_add (hdir n z 2 1) (hdir n z 1 2)
-        _ = (DA 2 + DA 1) * associatedPressureSpatialProfile K 2 z := by ring
-        _ ≤ (2 * (∑ k : Fin 3, DA k)) * associatedPressureSpatialProfile K 2 z := by
-          have hcoeff : DA 2 + DA 1 ≤ 2 * (∑ k : Fin 3, DA k) := by
-            calc
-              _ ≤ (∑ k : Fin 3, DA k) + (∑ k : Fin 3, DA k) :=
-                add_le_add (hDAle 2) (hDAle 1)
-              _ = _ := by ring
-          exact mul_le_mul_of_nonneg_right hcoeff (hprofile z)
-    ·
-      calc
-        |associatedPressureTestPartial
-            (fun q => rieszPressurePotentialCutoff n q.1 * At q 0) 2 z -
-          associatedPressureTestPartial
-            (fun q => rieszPressurePotentialCutoff n q.1 * At q 2) 0 z| ≤
-          |associatedPressureTestPartial
-              (fun q => rieszPressurePotentialCutoff n q.1 * At q 0) 2 z| +
-            |associatedPressureTestPartial
-              (fun q => rieszPressurePotentialCutoff n q.1 * At q 2) 0 z| :=
-          associatedPressureAbs_sub_le _ _
-        _ ≤ DA 0 * associatedPressureSpatialProfile K 2 z +
-            DA 2 * associatedPressureSpatialProfile K 2 z :=
-          add_le_add (hdir n z 0 2) (hdir n z 2 0)
-        _ = (DA 0 + DA 2) * associatedPressureSpatialProfile K 2 z := by ring
-        _ ≤ (2 * (∑ k : Fin 3, DA k)) * associatedPressureSpatialProfile K 2 z := by
-          have hcoeff : DA 0 + DA 2 ≤ 2 * (∑ k : Fin 3, DA k) := by
-            calc
-              _ ≤ (∑ k : Fin 3, DA k) + (∑ k : Fin 3, DA k) :=
-                add_le_add (hDAle 0) (hDAle 2)
-              _ = _ := by ring
-          exact mul_le_mul_of_nonneg_right hcoeff (hprofile z)
-    ·
-      calc
-        |associatedPressureTestPartial
-            (fun q => rieszPressurePotentialCutoff n q.1 * At q 1) 0 z -
-          associatedPressureTestPartial
-            (fun q => rieszPressurePotentialCutoff n q.1 * At q 0) 1 z| ≤
-          |associatedPressureTestPartial
-              (fun q => rieszPressurePotentialCutoff n q.1 * At q 1) 0 z| +
-            |associatedPressureTestPartial
-              (fun q => rieszPressurePotentialCutoff n q.1 * At q 0) 1 z| :=
-          associatedPressureAbs_sub_le _ _
-        _ ≤ DA 1 * associatedPressureSpatialProfile K 2 z +
-            DA 0 * associatedPressureSpatialProfile K 2 z :=
-          add_le_add (hdir n z 1 0) (hdir n z 0 1)
-        _ = (DA 1 + DA 0) * associatedPressureSpatialProfile K 2 z := by ring
-        _ ≤ (2 * (∑ k : Fin 3, DA k)) * associatedPressureSpatialProfile K 2 z := by
-          have hcoeff : DA 1 + DA 0 ≤ 2 * (∑ k : Fin 3, DA k) := by
-            calc
-              _ ≤ (∑ k : Fin 3, DA k) + (∑ k : Fin 3, DA k) :=
-                add_le_add (hDAle 1) (hDAle 0)
-              _ = _ := by ring
-          exact mul_le_mul_of_nonneg_right hcoeff (hprofile z)
-  have hcurlSpatial (n : ℕ) (i j : Fin 3) (z : Vec3 × ℝ) :
-      |CKN.spatialPartialProd
-        (fun q => associatedPressureTestCurl
-          (associatedPressureHelmholtzCutoffVectorPotential φ n) q i) j z| ≤
-        (2 * (∑ k : Fin 3, HA k)) * associatedPressureSpatialProfile K 2 z := by
-    let Ac := associatedPressureHelmholtzCutoffVectorPotential φ n
-    have hAc : ContDiff ℝ (⊤ : ℕ∞) Ac :=
-      (associatedPressureHelmholtzCutoffVectorPotential_mem_spaceTimeTestFunction hφ n).1
-    have hAcComp (k : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun q => Ac q k) :=
-      (contDiff_apply ℝ ℝ k).comp hAc
-    have hterm (k l : Fin 3) :
-        |CKN.spatialSecondPartialProd (fun q => Ac q k) l j z| ≤
-          HA k * associatedPressureSpatialProfile K 2 z := by
-      have hEq := associatedPressureSpatialSecondPartialProd_eq_jointHessian
-        (hAcComp k) l j z
-      have hBound := hcutHess (fun q => A q k) (hAcomp k)
-        (hzeroA k) (hAdecay k) l j n z
-      calc
-        _ = |rieszPressureJointHessian (fun q => Ac q k) l j z| := by rw [hEq]
-        _ = |rieszPressureJointHessian
-            (rieszPressurePotentialCutoffTest (fun q => A q k) n) l j z| := rfl
-        _ ≤ HA k * associatedPressureSpatialProfile K 2 z := by simpa [HA] using hBound
-    rw [associatedPressureTestCurl_spatialPartial_formula hAc i j z]
-    fin_cases i
-    · calc
-        |CKN.spatialSecondPartialProd (fun q => Ac q 2) 1 j z -
-          CKN.spatialSecondPartialProd (fun q => Ac q 1) 2 j z| ≤
-          |CKN.spatialSecondPartialProd (fun q => Ac q 2) 1 j z| +
-            |CKN.spatialSecondPartialProd (fun q => Ac q 1) 2 j z| :=
-          associatedPressureAbs_sub_le _ _
-        _ ≤ HA 2 * associatedPressureSpatialProfile K 2 z +
-            HA 1 * associatedPressureSpatialProfile K 2 z := add_le_add (hterm 2 1) (hterm 1 2)
-        _ = (HA 2 + HA 1) * associatedPressureSpatialProfile K 2 z := by ring
-        _ ≤ (2 * (∑ k : Fin 3, HA k)) * associatedPressureSpatialProfile K 2 z := by
-          have hcoeff : HA 2 + HA 1 ≤ 2 * (∑ k : Fin 3, HA k) := by
-            calc
-              _ ≤ (∑ k : Fin 3, HA k) + (∑ k : Fin 3, HA k) :=
-                add_le_add (hHAle 2) (hHAle 1)
-              _ = _ := by ring
-          exact mul_le_mul_of_nonneg_right hcoeff (hprofile z)
-    · calc
-        |CKN.spatialSecondPartialProd (fun q => Ac q 0) 2 j z -
-          CKN.spatialSecondPartialProd (fun q => Ac q 2) 0 j z| ≤
-          |CKN.spatialSecondPartialProd (fun q => Ac q 0) 2 j z| +
-            |CKN.spatialSecondPartialProd (fun q => Ac q 2) 0 j z| :=
-          associatedPressureAbs_sub_le _ _
-        _ ≤ HA 0 * associatedPressureSpatialProfile K 2 z +
-            HA 2 * associatedPressureSpatialProfile K 2 z := add_le_add (hterm 0 2) (hterm 2 0)
-        _ = (HA 0 + HA 2) * associatedPressureSpatialProfile K 2 z := by ring
-        _ ≤ (2 * (∑ k : Fin 3, HA k)) * associatedPressureSpatialProfile K 2 z := by
-          have hcoeff : HA 0 + HA 2 ≤ 2 * (∑ k : Fin 3, HA k) := by
-            calc
-              _ ≤ (∑ k : Fin 3, HA k) + (∑ k : Fin 3, HA k) :=
-                add_le_add (hHAle 0) (hHAle 2)
-              _ = _ := by ring
-          exact mul_le_mul_of_nonneg_right hcoeff (hprofile z)
-    · calc
-        |CKN.spatialSecondPartialProd (fun q => Ac q 1) 0 j z -
-          CKN.spatialSecondPartialProd (fun q => Ac q 0) 1 j z| ≤
-          |CKN.spatialSecondPartialProd (fun q => Ac q 1) 0 j z| +
-            |CKN.spatialSecondPartialProd (fun q => Ac q 0) 1 j z| :=
-          associatedPressureAbs_sub_le _ _
-        _ ≤ HA 1 * associatedPressureSpatialProfile K 2 z +
-            HA 0 * associatedPressureSpatialProfile K 2 z := add_le_add (hterm 1 0) (hterm 0 1)
-        _ = (HA 1 + HA 0) * associatedPressureSpatialProfile K 2 z := by ring
-        _ ≤ (2 * (∑ k : Fin 3, HA k)) * associatedPressureSpatialProfile K 2 z := by
-          have hcoeff : HA 1 + HA 0 ≤ 2 * (∑ k : Fin 3, HA k) := by
-            calc
-              _ ≤ (∑ k : Fin 3, HA k) + (∑ k : Fin 3, HA k) :=
-                add_le_add (hHAle 1) (hHAle 0)
-              _ = _ := by ring
-          exact mul_le_mul_of_nonneg_right hcoeff (hprofile z)
+  have hprofile (z : Vec3 × ℝ) : 0 ≤ associatedPressureSpatialProfile K 2 z :=
+    associatedPressureSpatialProfile_nonneg K z
+  obtain ⟨htimeScalar, hspaceScalar⟩ :=
+    associatedPressureHelmholtzScalarCutoff_derivative_bounds
+      hφ hzeroψ hzeroψt hψdecay hψtdecay
+  obtain ⟨hcurlTime, hcurlSpatial⟩ :=
+    associatedPressureHelmholtzCutoffCurl_derivative_bounds
+      hφ hGradC hHessC hzeroA hzeroAt hAdecay hAtdecay
   have hVn (n : ℕ) := associatedPressureTestCurl_mem_spaceTimeTestFunction
     (associatedPressureHelmholtzCutoffVectorPotential_mem_spaceTimeTestFunction hφ n)
-  have hGn (n : ℕ) := associatedPressureHelmholtzScalarPotentialCutoffGradient_mem_spaceTimeTestFunction
-    hφ n
+  have hGn (n : ℕ) :=
+    associatedPressureHelmholtzScalarPotentialCutoffGradient_mem_spaceTimeTestFunction hφ n
   refine ⟨C, hC, ?_⟩
   intro n z i j
   constructor

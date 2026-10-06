@@ -137,14 +137,18 @@ theorem forcePressureGradientL2_norm_le (f : RealVectorL2) :
       exact realLerayProjection_norm_le f
     _ = 2 * ‖f‖ := by ring
 
+/-- The continuous equivalence between Hilbert velocities and coordinate triples for the
+force-pressure map. -/
 @[expose]
 def forcePressureCoordinateEquiv : L2Vec3 ≃L[ℝ] Vec3 :=
   PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)
 
+/-- The continuous map that returns coordinate values from a Hilbert velocity. -/
 @[expose]
 def forcePressureToCoordinate : L2Vec3 →L[ℝ] Vec3 :=
   forcePressureCoordinateEquiv.toContinuousLinearMap
 
+/-- The continuous map that realizes a coordinate vector as a Hilbert velocity. -/
 @[expose]
 def forcePressureToHilbert : Vec3 →L[ℝ] L2Vec3 :=
   forcePressureCoordinateEquiv.symm.toContinuousLinearMap
@@ -163,6 +167,7 @@ theorem forcePressureInput_memLp (f : Vec3 → Vec3)
     hf.comp_measurePreserving (PiLp.volume_preserving_ofLp (Fin 3))
   exact hcoord.continuousLinearMap_comp forcePressureToHilbert
 
+/-- The Hilbert `L²` class represented by a coordinate vector field with finite `L²` norm. -/
 @[expose]
 def forcePressureInputL2 (f : Vec3 → Vec3)
     (hf : MemLp f 2 volume) : RealVectorL2 :=

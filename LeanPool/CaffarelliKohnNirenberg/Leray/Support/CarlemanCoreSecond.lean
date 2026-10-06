@@ -23,9 +23,11 @@ noncomputable section
 
 namespace CKN
 
+/-- The product normed additive group structure used for second-derivative identities. -/
 local instance carlemanCoreSecondNormedAddCommGroup : NormedAddCommGroup ParabolicPoint :=
   carlemanProductNormedAddCommGroup
 
+/-- The real product normed-space structure used for second-derivative identities. -/
 local instance carlemanCoreSecondNormedSpace : NormedSpace ℝ ParabolicPoint :=
   carlemanProductNormedSpace
 

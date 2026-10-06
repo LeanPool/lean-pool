@@ -39,6 +39,7 @@ def IsWeakDivFreeL2 (a : Vec3 → Vec3) : Prop :=
     ∀ ψ : WeakTestFunction (Set.univ : Set Vec3),
       ∫ x : Vec3, ∑ i : Fin 3, a x i * ψ.partialDeriv i x = 0
 
+/-- The linear functional pairing a vector field with gradients of weak test functions. -/
 @[expose]
 def dotLinear : Vec3 →ₗ[ℝ] Vec3 →ₗ[ℝ] ℝ :=
   LinearMap.mk₂ ℝ (fun x y => ∑ i : Fin 3, x i * y i)
@@ -63,6 +64,7 @@ def dotLinear : Vec3 →ₗ[ℝ] Vec3 →ₗ[ℝ] ℝ :=
         _ = c * ∑ i : Fin 3, x i * y i := (Finset.mul_sum _ _ _).symm
     )
 
+/-- The continuous extension of the weak gradient-pairing functional. -/
 @[expose]
 def dotContinuous : Vec3 →L[ℝ] Vec3 →L[ℝ] ℝ :=
   dotLinear.mkContinuous₂ 3 (by
@@ -76,6 +78,7 @@ def dotContinuous : Vec3 →L[ℝ] Vec3 →L[ℝ] ℝ :=
       _ = 3 * ‖x‖ * ‖y‖ := by simp [Finset.sum_const, nsmul_eq_mul]; ring
     )
 
+/-- The coordinate gradient of a scalar weak test function. -/
 @[expose]
 def testGradient (ψ : WeakTestFunction (Set.univ : Set Vec3)) : Vec3 → Vec3 :=
   fun x i => ψ.partialDeriv i x
@@ -112,6 +115,7 @@ theorem testGradient_memLp
   apply (continuous_pi fun i => (testGradient_contDiff ψ i).continuous).memLp_of_hasCompactSupport
   exact testGradient_hasCompactSupport ψ
 
+/-- The integral pairing of a vector field with the gradient of a weak test function. -/
 @[expose]
 def testPairing
     (ψ : WeakTestFunction (Set.univ : Set Vec3)) :

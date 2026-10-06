@@ -27,7 +27,7 @@ open CKN.Foundation.Parabolic
 
 /-- The global real mild curve viewed from a later start time. -/
 @[expose]
-def regularizedGlobalMildCurve_shiftPath
+def regularizedGlobalMildCurveShiftPath
     (ρ : RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
     (b₀ : RealVectorL2) (hbJ : RegularizedMildJData b₀)
     (a T : ℝ) : C(RegularizedMildTimeInterval T, RealVectorL2) :=

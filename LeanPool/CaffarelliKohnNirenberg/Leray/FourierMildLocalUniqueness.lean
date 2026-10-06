@@ -29,6 +29,7 @@ private theorem regularizedMildStokesIntegral_zero
     (F : ℝ → RealTensorL2) : regularizedMildStokesIntegral F 0 = 0 := by
   simp [regularizedMildStokesIntegral]
 
+/-- The restriction of a mild solution path to the shorter time interval ending at `τ`. -/
 @[expose]
 def regularizedMildPathRestrict {T : ℝ}
     (u : C(RegularizedMildTimeInterval T, RealVectorL2))

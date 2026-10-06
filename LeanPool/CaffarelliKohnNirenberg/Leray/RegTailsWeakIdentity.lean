@@ -22,13 +22,17 @@ noncomputable section
 
 namespace CKN.Leray
 
+/-- The product normed additive group used for spatial and temporal regularity. -/
 local instance regTailsWeakIdentityNormedAddCommGroup : NormedAddCommGroup ParabolicPoint :=
   inferInstanceAs (NormedAddCommGroup (Vec3 × ℝ))
 
+/-- The product real normed space used for spatial and temporal derivatives. -/
 local instance regTailsWeakIdentityNormedSpace : NormedSpace ℝ ParabolicPoint :=
   inferInstanceAs (NormedSpace ℝ (Vec3 × ℝ))
 
-local instance (priority := 10000) regTailsWeakIdentityTopologicalSpace : TopologicalSpace ParabolicPoint :=
+/-- The product topology on parabolic space-time points used in this weak identity. -/
+local instance (priority := 10000) regTailsWeakIdentityTopologicalSpace :
+    TopologicalSpace ParabolicPoint :=
   instTopologicalSpaceProd
 
 local instance regTailsWeakIdentityOpensMeasurableSpace : OpensMeasurableSpace ParabolicPoint :=
@@ -72,22 +76,271 @@ private theorem regTails_compact_time_factor_integrable
       (closure_minimal hSupport hχc.isCompact.isClosed)
   exact hGlobal.integrable_of_hasCompactSupport hCompact
 
-/-- The compactly localized energy identity gives a distributional time
-derivative for every smooth compact spatial weight. -/
-theorem regTails_localized_weak_time_identity
+/-- The componentwise compact spatial integration by parts, expressed on the
+positive space-time product used by the localized energy identity. -/
+private theorem regTails_compact_spatial_ibp_product
+    (u : ParabolicPoint → Vec3) (q : Vec3 → ℝ) (η : ℝ → ℝ)
+    (hq : ContDiff ℝ (⊤ : ℕ∞) q) (hqc : HasCompactSupport q)
+    (hη : ContDiff ℝ (⊤ : ℕ∞) η) (hηc : HasCompactSupport η)
+    (hηI : tsupport η ⊆ Ioi (0 : ℝ))
+    (hUcont : ∀ i : Fin 3, ContinuousOn
+      (fun z : Vec3 × ℝ => u (z.1, z.2) i)
+      ((Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ)))
+    (hDcont : ∀ i j : Fin 3, ContinuousOn
+      (fun z : Vec3 × ℝ => spatialPartial
+        (fun y : ParabolicPoint => u y i) j z)
+      ((Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ)))
+    (hUdiff : ∀ i : Fin 3, ContDiffOn ℝ 1
+      (fun z : Vec3 × ℝ => u (z.1, z.2) i)
+      ((Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ))) :
+    (∫ z in (Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ),
+      (vec3EuclideanNorm (u (z.1, z.2))) ^ (2 : ℕ) *
+        (∑ j : Fin 3, spatialSecondPartial
+          (fun y : ParabolicPoint => q y.1) j j (z.1, z.2)) * η z.2
+      ∂(volume : Measure (Vec3 × ℝ))) =
+      -2 * ∫ z in (Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ),
+        (∑ i : Fin 3, ∑ j : Fin 3,
+          u (z.1, z.2) i * spatialPartial
+            (fun y : ParabolicPoint => u y i) j (z.1, z.2) *
+            spatialPartial (fun y : ParabolicPoint => q y.1) j
+              (z.1, z.2)) * η z.2 ∂(volume : Measure (Vec3 × ℝ)) := by
+  exact regTails_laplacian_ibp_sum u q η hq hqc hη hηc hηI
+    hUcont hDcont hUdiff
+
+/-- A smooth product of a compact spatial weight and a compact time weight is
+a space-time test function, with the expected time and spatial derivatives. -/
+private theorem regTails_smooth_product_test_derivatives
+    (q : Vec3 → ℝ) (η : ℝ → ℝ)
+    (hq : ContDiff ℝ (⊤ : ℕ∞) q) (hqc : HasCompactSupport q)
+    (hη : ContDiff ℝ (⊤ : ℕ∞) η) (hηc : HasCompactSupport η)
+    (hηI : tsupport η ⊆ Ioi (0 : ℝ)) :
+    (fun z : ParabolicPoint => q z.1 * η z.2) ∈
+        spaceTimeTestFunction (V := ℝ) (Set.univ : Set Vec3) (Ioi 0) ∧
+      (∀ z, timePartial (fun y : ParabolicPoint => q y.1 * η y.2) z =
+        q z.1 * deriv η z.2) ∧
+      (∀ i z, spatialPartial (fun y : ParabolicPoint => q y.1 * η y.2) i z =
+        spatialPartial (fun y : ParabolicPoint => q y.1) i z * η z.2) ∧
+      (∀ i z, spatialSecondPartial
+        (fun y : ParabolicPoint => q y.1 * η y.2) i i z =
+          spatialSecondPartial (fun y : ParabolicPoint => q y.1) i i z * η z.2) := by
+  let qST : ParabolicPoint → ℝ := fun z => q z.1
+  let ψ : ParabolicPoint → ℝ := fun z => q z.1 * η z.2
+  have hqST : ContDiff ℝ (⊤ : ℕ∞) qST :=
+    hq.comp (ContinuousLinearMap.fst ℝ Vec3 ℝ).contDiff
+  have htest : ψ ∈ spaceTimeTestFunction (V := ℝ)
+      (Set.univ : Set Vec3) (Ioi (0 : ℝ)) :=
+    regTails_scalarTimeProduct_test q hq hqc η hη hηc hηI
+  have htime (z : ParabolicPoint) : timePartial ψ z = q z.1 * deriv η z.2 := by
+    have h := timePartial_mul_time hqST hη z
+    have hqtime : timePartial qST z = 0 := by simp [timePartial, qST]
+    rw [h, hqtime]
+    simp only [zero_mul, zero_add]
+    rfl
+  have hspace (i : Fin 3) (z : ParabolicPoint) :
+      spatialPartial ψ i z = spatialPartial qST i z * η z.2 := by
+    simpa [ψ, qST] using spatialPartial_mul_time hqST i z
+  have hsecond (i : Fin 3) (z : ParabolicPoint) :
+      spatialSecondPartial ψ i i z = spatialSecondPartial qST i i z * η z.2 := by
+    simpa [ψ, qST] using spatialSecondPartial_mul_time hqST i i z
+  exact ⟨htest, htime, hspace, hsecond⟩
+
+/-- The product-test energy identity and the compact spatial integration by
+parts combine to give the weak identity on positive space-time. -/
+private theorem regTails_positive_space_time_weak_identity
+    (u : ParabolicPoint → Vec3) (p : ParabolicPoint → ℝ)
+    (J : ParabolicPoint → Vec3) (q : Vec3 → ℝ) (η : ℝ → ℝ)
+    (hLocal : 2 * (∫ z in (Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ),
+      spatialGradientSq u
+        (fun z i j => spatialPartial (fun y => u y i) j z) (z.1, z.2) *
+        q z.1 * η z.2 ∂(volume : Measure (Vec3 × ℝ))) =
+      ∫ z in (Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ),
+        (vec3EuclideanNorm (u (z.1, z.2))) ^ (2 : ℕ) * q z.1 * deriv η z.2 +
+          ((vec3EuclideanNorm (u (z.1, z.2))) ^ (2 : ℕ) *
+            (∑ j : Fin 3, spatialSecondPartial
+              (fun y : ParabolicPoint => q y.1) j j (z.1, z.2)) +
+            ∑ j : Fin 3,
+              ((vec3EuclideanNorm (u (z.1, z.2))) ^ (2 : ℕ) *
+                  J (z.1, z.2) j + 2 * p (z.1, z.2) * u (z.1, z.2) j) *
+                spatialPartial (fun y : ParabolicPoint => q y.1) j
+                  (z.1, z.2)) * η z.2 ∂(volume : Measure (Vec3 × ℝ)))
+    (hLap : (∫ z in (Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ),
+      (vec3EuclideanNorm (u (z.1, z.2))) ^ (2 : ℕ) *
+        (∑ j : Fin 3, spatialSecondPartial
+          (fun y : ParabolicPoint => q y.1) j j (z.1, z.2)) * η z.2
+        ∂(volume : Measure (Vec3 × ℝ))) =
+      -2 * ∫ z in (Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ),
+        (∑ i : Fin 3, ∑ j : Fin 3,
+          u (z.1, z.2) i * spatialPartial
+            (fun y : ParabolicPoint => u y i) j (z.1, z.2) *
+            spatialPartial (fun y : ParabolicPoint => q y.1) j
+              (z.1, z.2)) * η z.2 ∂(volume : Measure (Vec3 × ℝ)))
+    (hEInt : Integrable (fun z : Vec3 × ℝ =>
+      (vec3EuclideanNorm (u (z.1, z.2))) ^ (2 : ℕ) * q z.1 * deriv η z.2)
+      ((volume : Measure (Vec3 × ℝ)).restrict
+        ((Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ))))
+    (hBInt : Integrable (fun z : Vec3 × ℝ =>
+      (vec3EuclideanNorm (u (z.1, z.2))) ^ (2 : ℕ) *
+        (∑ j : Fin 3, spatialSecondPartial
+          (fun y : ParabolicPoint => q y.1) j j (z.1, z.2)) * η z.2)
+      ((volume : Measure (Vec3 × ℝ)).restrict
+        ((Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ))))
+    (hVInt : Integrable (fun z : Vec3 × ℝ =>
+      (∑ j : Fin 3,
+        ((vec3EuclideanNorm (u (z.1, z.2))) ^ (2 : ℕ) * J (z.1, z.2) j +
+          2 * p (z.1, z.2) * u (z.1, z.2) j) *
+          spatialPartial (fun y : ParabolicPoint => q y.1) j (z.1, z.2)) * η z.2)
+      ((volume : Measure (Vec3 × ℝ)).restrict
+        ((Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ))))
+    (hQInt : Integrable (fun z : Vec3 × ℝ =>
+      spatialGradientSq u
+        (fun z i j => spatialPartial (fun y => u y i) j z) (z.1, z.2) *
+        q z.1 * η z.2)
+      ((volume : Measure (Vec3 × ℝ)).restrict
+        ((Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ))))
+    (hCInt : Integrable (fun z : Vec3 × ℝ =>
+      (∑ i : Fin 3, ∑ j : Fin 3,
+        u (z.1, z.2) i * spatialPartial (fun y : ParabolicPoint => u y i) j
+          (z.1, z.2) * spatialPartial (fun y : ParabolicPoint => q y.1) j
+          (z.1, z.2)) * η z.2)
+      ((volume : Measure (Vec3 × ℝ)).restrict
+        ((Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ)))) :
+    (∫ z in (Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ),
+      (vec3EuclideanNorm (u (z.1, z.2))) ^ (2 : ℕ) * q z.1 * deriv η z.2
+        ∂(volume : Measure (Vec3 × ℝ))) =
+      -∫ z in (Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ),
+        regTailsLocalizedSource u
+          (fun z i j => spatialPartial (fun y : ParabolicPoint => u y i) j z)
+          p J q (z.1, z.2) * η z.2 ∂(volume : Measure (Vec3 × ℝ)) := by
+  let S : Set (Vec3 × ℝ) := (Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ)
+  let D : ParabolicPoint → Fin 3 → Vec3 := fun z i j =>
+    spatialPartial (fun y : ParabolicPoint => u y i) j z
+  let Q : Vec3 × ℝ → ℝ := fun z =>
+    spatialGradientSq u D (z.1, z.2) * q z.1
+  let C : Vec3 × ℝ → ℝ := fun z =>
+    ∑ i : Fin 3, ∑ j : Fin 3,
+      u (z.1, z.2) i * D (z.1, z.2) i j *
+        spatialPartial (fun y : ParabolicPoint => q y.1) j (z.1, z.2)
+  let B : Vec3 × ℝ → ℝ := fun z =>
+    (vec3EuclideanNorm (u (z.1, z.2))) ^ (2 : ℕ) *
+      ∑ j : Fin 3, spatialSecondPartial
+        (fun y : ParabolicPoint => q y.1) j j (z.1, z.2)
+  let V : Vec3 × ℝ → ℝ := fun z =>
+    ∑ j : Fin 3,
+      ((vec3EuclideanNorm (u (z.1, z.2))) ^ (2 : ℕ) * J (z.1, z.2) j +
+        2 * p (z.1, z.2) * u (z.1, z.2) j) *
+        spatialPartial (fun y : ParabolicPoint => q y.1) j (z.1, z.2)
+  let E : Vec3 × ℝ → ℝ := fun z =>
+    (vec3EuclideanNorm (u (z.1, z.2))) ^ (2 : ℕ) * q z.1
+  let H : Vec3 × ℝ → ℝ := fun z => regTailsLocalizedSource u D p J q (z.1, z.2)
+  let μ : Measure (Vec3 × ℝ) := (volume : Measure (Vec3 × ℝ)).restrict S
+  have hEInt' : Integrable (fun z => E z * deriv η z.2) μ := by
+    simpa [μ, E] using hEInt
+  have hBInt' : Integrable (fun z => B z * η z.2) μ := by
+    simpa [μ, B] using hBInt
+  have hVInt' : Integrable (fun z => V z * η z.2) μ := by
+    simpa [μ, V] using hVInt
+  have hQInt' : Integrable (fun z => Q z * η z.2) μ := by
+    simpa [μ, Q, D] using hQInt
+  have hCInt' : Integrable (fun z => C z * η z.2) μ := by
+    simpa [μ, C, D] using hCInt
+  have hSmeas : MeasurableSet S := (isOpen_univ.prod isOpen_Ioi).measurableSet
+  have hweak : (∫ z in S, E z * deriv η z.2 ∂volume) =
+      -(∫ z in S, H z * η z.2 ∂volume) := by
+    have hSourcePoint (z : Vec3 × ℝ) :
+        H z = -2 * Q z - 2 * C z + V z := by
+      dsimp [H, Q, C, V, D, regTailsLocalizedSource, spatialGradientSq]
+      ring
+    have hBVInt : Integrable (fun z : Vec3 × ℝ => (B z + V z) * η z.2) μ := by
+      apply (hBInt'.add hVInt').congr
+      filter_upwards [] with z
+      change B z * η z.2 + V z * η z.2 = (B z + V z) * η z.2
+      ring
+    have hLocalExpanded : 2 * (∫ z in S, Q z * η z.2 ∂volume) =
+        (∫ z in S, E z * deriv η z.2 ∂volume) +
+          (∫ z in S, (B z + V z) * η z.2 ∂volume) := by
+      have h := hLocal
+      change 2 * (∫ z in S, Q z * η z.2 ∂volume) =
+        ∫ z in S, E z * deriv η z.2 + (B z + V z) * η z.2 ∂volume at h
+      rw [integral_add hEInt' hBVInt] at h
+      exact h
+    have hLocalSplit : 2 * (∫ z in S, Q z * η z.2 ∂volume) =
+        (∫ z in S, E z * deriv η z.2 ∂volume) +
+          (∫ z in S, B z * η z.2 ∂volume) +
+          (∫ z in S, V z * η z.2 ∂volume) := by
+      calc
+        _ = (∫ z in S, E z * deriv η z.2 ∂volume) +
+            (∫ z in S, (B z + V z) * η z.2 ∂volume) := hLocalExpanded
+        _ = (∫ z in S, E z * deriv η z.2 ∂volume) +
+            (∫ z in S, B z * η z.2 + V z * η z.2 ∂volume) := by
+              congr 1
+              apply setIntegral_congr_fun hSmeas
+              intro z hz
+              ring
+        _ = _ := by
+          rw [integral_add hBInt' hVInt']
+          ring
+    have hSourceSplit : (∫ z in S, H z * η z.2 ∂volume) =
+        -2 * (∫ z in S, Q z * η z.2 ∂volume) -
+          2 * (∫ z in S, C z * η z.2 ∂volume) +
+          (∫ z in S, V z * η z.2 ∂volume) := by
+      have hScaledQ := hQInt'.const_mul (-2 : ℝ)
+      have hScaledC := hCInt'.const_mul (-2 : ℝ)
+      have hScaledSum : Integrable
+          (fun z : Vec3 × ℝ => (-2 : ℝ) * (Q z * η z.2) +
+            (-2 : ℝ) * (C z * η z.2)) μ := hScaledQ.add hScaledC
+      calc
+        _ = ∫ z in S, (-2 : ℝ) * (Q z * η z.2) +
+              (-2 : ℝ) * (C z * η z.2) + V z * η z.2 ∂volume := by
+                apply setIntegral_congr_fun hSmeas
+                intro z hz
+                change H z * η z.2 = _
+                rw [hSourcePoint z]
+                ring
+        _ = _ := by
+          rw [integral_add hScaledSum hVInt',
+            integral_add hScaledQ hScaledC,
+            integral_const_mul, integral_const_mul]
+          ring
+    have hLap' : (∫ z in S, B z * η z.2 ∂volume) =
+        -2 * (∫ z in S, C z * η z.2 ∂volume) := by
+      simpa [B, C, D] using hLap
+    rw [hLap'] at hLocalSplit
+    rw [hSourceSplit]
+    linarith only [hLocalSplit]
+  simpa [S, E, H] using hweak
+
+/-- Fubini converts a positive-space-time integral with a compactly supported
+positive-time factor into the corresponding scalar time integral. -/
+private theorem regTails_positive_time_factor_fubini
+    (A : Vec3 × ℝ → ℝ) (F θ : ℝ → ℝ)
+    (hInt : Integrable (fun z : Vec3 × ℝ => A z * θ z.2)
+      ((volume : Measure Vec3).prod (volume.restrict (Ioi (0 : ℝ)))))
+    (hθI : tsupport θ ⊆ Ioi (0 : ℝ))
+    (hProfile : ∀ t : ℝ, F t = ∫ x : Vec3, A (x, t) ∂volume) :
+    (∫ t : ℝ, F t * θ t ∂volume) =
+      ∫ z in (Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ),
+        A z * θ z.2 ∂(volume : Measure (Vec3 × ℝ)) := by
+  have hPositive := regTails_timeFactor_integral A θ hInt
+  calc
+    (∫ t : ℝ, F t * θ t ∂volume) =
+        ∫ t in Ioi (0 : ℝ), F t * θ t ∂volume := by
+          symm
+          apply setIntegral_eq_integral_of_forall_compl_eq_zero
+          intro t ht
+          have hzero : θ t = 0 := by
+            by_contra hne
+            exact ht (hθI (subset_tsupport _ (Function.mem_support.mpr hne)))
+          simp [hzero]
+    _ = ∫ z in (Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ),
+          A z * θ z.2 ∂(volume : Measure (Vec3 × ℝ)) := by
+            symm
+            simpa [hProfile] using hPositive
+
+/-- Compact spatial support makes both the localized energy and source
+integrable against positive-time test factors. -/
+private theorem regTails_localized_energy_source_integrable
     (u : ParabolicPoint → Vec3) (p : ParabolicPoint → ℝ)
     (J : ParabolicPoint → Vec3)
-    (hLE : ∀ (ψ : ParabolicPoint → ℝ),
-      ψ ∈ spaceTimeTestFunction (V := ℝ) (Set.univ : Set Vec3) (Ioi 0) →
-      2 * ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioi 0),
-          spatialGradientSq u
-            (fun z i j => spatialPartial (fun y => u y i) j z) z * ψ z =
-        ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioi 0),
-          (vec3EuclideanNorm (u z)) ^ (2 : ℕ) *
-              (timePartial ψ z + ∑ i : Fin 3, spatialSecondPartial ψ i i z) +
-            ∑ i : Fin 3,
-              ((vec3EuclideanNorm (u z)) ^ (2 : ℕ) * J z i +
-                2 * p z * u z i) * spatialPartial ψ i z)
     (hUcont : ∀ i : Fin 3, ContinuousOn
       (fun z : Vec3 × ℝ => u (z.1, z.2) i)
       ((Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ)))
@@ -99,20 +352,17 @@ theorem regTails_localized_weak_time_identity
     (hJcont : ∀ i : Fin 3, ContinuousOn
       (fun z : Vec3 × ℝ => J (z.1, z.2) i)
       ((Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ)))
-    (hUdiff : ∀ i : Fin 3, ContDiffOn ℝ 1
-      (fun z : Vec3 × ℝ => u (z.1, z.2) i)
-      ((Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ)))
     (q : Vec3 → ℝ) (hq : ContDiff ℝ (⊤ : ℕ∞) q)
     (hqc : HasCompactSupport q)
     (η : ℝ → ℝ) (hη : ContDiff ℝ (⊤ : ℕ∞) η)
-    (hηc : HasCompactSupport η)
-    (hηI : tsupport η ⊆ Ioi (0 : ℝ)) :
-    (∫ t : ℝ, regTailsEnergyWeight u q t * deriv η t ∂volume) =
-      -∫ t : ℝ,
-        (∫ x : Vec3, regTailsLocalizedSource u
-          (fun z i j => spatialPartial (fun y : ParabolicPoint => u y i) j z)
-          p J q (x, t) ∂volume) * η t ∂volume := by
-  classical
+    (hηc : HasCompactSupport η) (hηI : tsupport η ⊆ Ioi (0 : ℝ)) :
+    Integrable (fun z : Vec3 × ℝ =>
+      (vec3EuclideanNorm (u (z.1, z.2))) ^ (2 : ℕ) * q z.1 * deriv η z.2)
+      ((volume : Measure Vec3).prod (volume.restrict (Ioi (0 : ℝ)))) ∧
+    Integrable (fun z : Vec3 × ℝ => regTailsLocalizedSource u
+      (fun z i j => spatialPartial (fun y : ParabolicPoint => u y i) j z)
+      p J q (z.1, z.2) * η z.2)
+      ((volume : Measure Vec3).prod (volume.restrict (Ioi (0 : ℝ)))) := by
   let S : Set (Vec3 × ℝ) := (Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ)
   let K : Set Vec3 := tsupport q
   let qj : Fin 3 → Vec3 → ℝ := fun j x => (fderiv ℝ q x) (basisVec j)
@@ -124,24 +374,6 @@ theorem regTails_localized_weak_time_identity
     (vec3EuclideanNorm (u (z.1, z.2))) ^ (2 : ℕ) * q z.1
   let H : Vec3 × ℝ → ℝ := fun z =>
     regTailsLocalizedSource u Du p J q (z.1, z.2)
-  let F : ℝ → ℝ := regTailsEnergyWeight u q
-  let G : ℝ → ℝ := fun t => ∫ x : Vec3, regTailsLocalizedSource u Du p J q (x, t)
-  let B : Vec3 × ℝ → ℝ := fun z =>
-    (vec3EuclideanNorm (u (z.1, z.2))) ^ (2 : ℕ) *
-      ∑ j : Fin 3,
-        spatialSecondPartial (fun y : ParabolicPoint => q y.1) j j (z.1, z.2)
-  let V : Vec3 × ℝ → ℝ := fun z =>
-    ∑ j : Fin 3,
-      ((vec3EuclideanNorm (u (z.1, z.2))) ^ (2 : ℕ) *
-          J (z.1, z.2) j +
-        2 * p (z.1, z.2) * u (z.1, z.2) j) *
-      spatialPartial (fun y : ParabolicPoint => q y.1) j (z.1, z.2)
-  let Q : Vec3 × ℝ → ℝ := fun z =>
-    spatialGradientSq u Du (z.1, z.2) * q z.1
-  let C : Vec3 × ℝ → ℝ := fun z =>
-    ∑ i : Fin 3, ∑ j : Fin 3,
-      u (z.1, z.2) i * Du (z.1, z.2) i j *
-        spatialPartial (fun y : ParabolicPoint => q y.1) j (z.1, z.2)
   have hS : IsOpen S := isOpen_univ.prod isOpen_Ioi
   have hSmeas : MeasurableSet S := hS.measurableSet
   have hqST : ContDiff ℝ (⊤ : ℕ∞)
@@ -291,13 +523,97 @@ theorem regTails_localized_weak_time_identity
       ((volume : Measure Vec3).prod (volume.restrict (Ioi (0 : ℝ)))) := by
     apply regTails_integrable_timeFactor_of_spatial_support H K hS hsourceContinuous
       hqc.isCompact hHzero η hη hηc hηI
-  have hMeasure :
-      (volume : Measure (Vec3 × ℝ)).restrict S =
-        (volume : Measure Vec3).prod (volume.restrict (Ioi (0 : ℝ))) := by
-    change ((volume : Measure Vec3).prod (volume : Measure ℝ)).restrict S = _
-    rw [← Measure.prod_restrict (μ := (volume : Measure Vec3))
-      (ν := (volume : Measure ℝ)) Set.univ (Ioi (0 : ℝ))]
-    simp [Measure.restrict_univ]
+  exact ⟨hEnergyInt, hSourceInt⟩
+
+/-- The Laplacian, flux, gradient, and cross terms inherit compact spatial
+support from the smooth weight and its derivatives. -/
+private theorem regTails_cutoff_terms_integrable
+    (u : ParabolicPoint → Vec3) (p : ParabolicPoint → ℝ)
+    (J : ParabolicPoint → Vec3)
+    (hUcont : ∀ i : Fin 3, ContinuousOn
+      (fun z : Vec3 × ℝ => u (z.1, z.2) i)
+      ((Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ)))
+    (hDcont : ∀ i j : Fin 3, ContinuousOn
+      (fun z : Vec3 × ℝ => spatialPartial (fun y : ParabolicPoint => u y i) j z)
+      ((Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ)))
+    (hPcont : ContinuousOn (fun z : Vec3 × ℝ => p (z.1, z.2))
+      ((Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ)))
+    (hJcont : ∀ i : Fin 3, ContinuousOn
+      (fun z : Vec3 × ℝ => J (z.1, z.2) i)
+      ((Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ)))
+    (q : Vec3 → ℝ) (hq : ContDiff ℝ (⊤ : ℕ∞) q)
+    (hqc : HasCompactSupport q)
+    (η : ℝ → ℝ) (hη : ContDiff ℝ (⊤ : ℕ∞) η)
+    (hηc : HasCompactSupport η) (hηI : tsupport η ⊆ Ioi (0 : ℝ)) :
+    Integrable (fun z : Vec3 × ℝ =>
+      (vec3EuclideanNorm (u (z.1, z.2))) ^ (2 : ℕ) *
+        (∑ j : Fin 3, spatialSecondPartial
+          (fun y : ParabolicPoint => q y.1) j j (z.1, z.2)) * η z.2)
+      ((volume : Measure Vec3).prod (volume.restrict (Ioi (0 : ℝ)))) ∧
+    Integrable (fun z : Vec3 × ℝ =>
+      (∑ j : Fin 3,
+        ((vec3EuclideanNorm (u (z.1, z.2))) ^ (2 : ℕ) * J (z.1, z.2) j +
+          2 * p (z.1, z.2) * u (z.1, z.2) j) *
+          spatialPartial (fun y : ParabolicPoint => q y.1) j (z.1, z.2)) * η z.2)
+      ((volume : Measure Vec3).prod (volume.restrict (Ioi (0 : ℝ)))) ∧
+    Integrable (fun z : Vec3 × ℝ => spatialGradientSq u
+      (fun z i j => spatialPartial (fun y : ParabolicPoint => u y i) j z)
+      (z.1, z.2) * q z.1 * η z.2)
+      ((volume : Measure Vec3).prod (volume.restrict (Ioi (0 : ℝ)))) ∧
+    Integrable (fun z : Vec3 × ℝ =>
+      (∑ i : Fin 3, ∑ j : Fin 3,
+        u (z.1, z.2) i * spatialPartial (fun y : ParabolicPoint => u y i) j
+          (z.1, z.2) * spatialPartial (fun y : ParabolicPoint => q y.1) j
+          (z.1, z.2)) * η z.2)
+      ((volume : Measure Vec3).prod (volume.restrict (Ioi (0 : ℝ)))) := by
+  let S : Set (Vec3 × ℝ) := (Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ)
+  let K : Set Vec3 := tsupport q
+  let qj : Fin 3 → Vec3 → ℝ := fun j x => (fderiv ℝ q x) (basisVec j)
+  let qjj : Fin 3 → Vec3 → ℝ := fun j x => (fderiv ℝ (qj j) x) (basisVec j)
+  let qST : ParabolicPoint → ℝ := fun z => q z.1
+  let Du : ParabolicPoint → Fin 3 → Vec3 := fun z i j =>
+    spatialPartial (fun y : ParabolicPoint => u y i) j z
+  let B : Vec3 × ℝ → ℝ := fun z =>
+    (vec3EuclideanNorm (u (z.1, z.2))) ^ (2 : ℕ) *
+      ∑ j : Fin 3, spatialSecondPartial (fun y : ParabolicPoint => q y.1) j j
+        (z.1, z.2)
+  let V : Vec3 × ℝ → ℝ := fun z =>
+    ∑ j : Fin 3,
+      ((vec3EuclideanNorm (u (z.1, z.2))) ^ (2 : ℕ) * J (z.1, z.2) j +
+        2 * p (z.1, z.2) * u (z.1, z.2) j) *
+        spatialPartial (fun y : ParabolicPoint => q y.1) j (z.1, z.2)
+  let Q : Vec3 × ℝ → ℝ := fun z =>
+    spatialGradientSq u Du (z.1, z.2) * q z.1
+  let C : Vec3 × ℝ → ℝ := fun z =>
+    ∑ i : Fin 3, ∑ j : Fin 3,
+      u (z.1, z.2) i * Du (z.1, z.2) i j *
+        spatialPartial (fun y : ParabolicPoint => q y.1) j (z.1, z.2)
+  have hS : IsOpen S := isOpen_univ.prod isOpen_Ioi
+  have hqjSmooth (j : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (qj j) := by
+    change ContDiff ℝ (⊤ : ℕ∞) (CKN.spatialDeriv q j)
+    exact contDiff_spatialDeriv_smooth hq j
+  have hqjjSmooth (j : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (qjj j) := by
+    change ContDiff ℝ (⊤ : ℕ∞) (CKN.spatialDeriv (qj j) j)
+    exact contDiff_spatialDeriv_smooth (hqjSmooth j) j
+  have hqjEq (j : Fin 3) (z : Vec3 × ℝ) :
+      spatialPartial (fun y : ParabolicPoint => q y.1) j z = qj j z.1 := rfl
+  have hqjjEq (j : Fin 3) (z : Vec3 × ℝ) :
+      spatialSecondPartial (fun y : ParabolicPoint => q y.1) j j z = qjj j z.1 := rfl
+  have hqjSupport (j : Fin 3) : tsupport (qj j) ⊆ K :=
+    tsupport_fderiv_apply_subset ℝ (basisVec j)
+  have hqpartial (j : Fin 3) : ContinuousOn
+      (fun z : Vec3 × ℝ => spatialPartial qST j (z.1, z.2)) S := by
+    have hj : Continuous (qj j) := (hqjSmooth j).continuous
+    have heq : (fun z : Vec3 × ℝ => spatialPartial qST j (z.1, z.2)) =
+        fun z => qj j z.1 := by funext z; rfl
+    rw [heq]
+    exact (hj.comp continuous_fst).continuousOn
+  have hqZero (x : Vec3) (hx : x ∉ K) : q x = 0 := by
+    by_contra hne
+    exact hx (subset_tsupport q (Function.mem_support.mpr hne))
+  have hqjZero (j : Fin 3) (x : Vec3) (hx : x ∉ K) : qj j x = 0 := by
+    by_contra hne
+    exact hx ((hqjSupport j) (subset_tsupport _ (Function.mem_support.mpr hne)))
   have hUprod : ContinuousOn (fun z : Vec3 × ℝ => u (z.1, z.2)) S := by
     apply continuousOn_pi.mpr
     intro i
@@ -425,6 +741,131 @@ theorem regTails_localized_weak_time_identity
       ((volume : Measure Vec3).prod (volume.restrict (Ioi (0 : ℝ)))) :=
     regTails_integrable_timeFactor_of_spatial_support C K hS hCcont
       hqc.isCompact hCzero η hη hηc hηI
+  exact ⟨hBIntProd, hVIntProd, hQIntProd, hCIntProd⟩
+
+/-- The compactly localized energy identity gives a distributional time
+derivative for every smooth compact spatial weight. -/
+theorem regTails_localized_weak_time_identity
+    (u : ParabolicPoint → Vec3) (p : ParabolicPoint → ℝ)
+    (J : ParabolicPoint → Vec3)
+    (hLE : ∀ (ψ : ParabolicPoint → ℝ),
+      ψ ∈ spaceTimeTestFunction (V := ℝ) (Set.univ : Set Vec3) (Ioi 0) →
+      2 * ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioi 0),
+          spatialGradientSq u
+            (fun z i j => spatialPartial (fun y => u y i) j z) z * ψ z =
+        ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioi 0),
+          (vec3EuclideanNorm (u z)) ^ (2 : ℕ) *
+              (timePartial ψ z + ∑ i : Fin 3, spatialSecondPartial ψ i i z) +
+            ∑ i : Fin 3,
+              ((vec3EuclideanNorm (u z)) ^ (2 : ℕ) * J z i +
+                2 * p z * u z i) * spatialPartial ψ i z)
+    (hUcont : ∀ i : Fin 3, ContinuousOn
+      (fun z : Vec3 × ℝ => u (z.1, z.2) i)
+      ((Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ)))
+    (hDcont : ∀ i j : Fin 3, ContinuousOn
+      (fun z : Vec3 × ℝ => spatialPartial (fun y : ParabolicPoint => u y i) j z)
+      ((Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ)))
+    (hPcont : ContinuousOn (fun z : Vec3 × ℝ => p (z.1, z.2))
+      ((Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ)))
+    (hJcont : ∀ i : Fin 3, ContinuousOn
+      (fun z : Vec3 × ℝ => J (z.1, z.2) i)
+      ((Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ)))
+    (hUdiff : ∀ i : Fin 3, ContDiffOn ℝ 1
+      (fun z : Vec3 × ℝ => u (z.1, z.2) i)
+      ((Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ)))
+    (q : Vec3 → ℝ) (hq : ContDiff ℝ (⊤ : ℕ∞) q)
+    (hqc : HasCompactSupport q)
+    (η : ℝ → ℝ) (hη : ContDiff ℝ (⊤ : ℕ∞) η)
+    (hηc : HasCompactSupport η)
+    (hηI : tsupport η ⊆ Ioi (0 : ℝ)) :
+    (∫ t : ℝ, regTailsEnergyWeight u q t * deriv η t ∂volume) =
+      -∫ t : ℝ,
+        (∫ x : Vec3, regTailsLocalizedSource u
+          (fun z i j => spatialPartial (fun y : ParabolicPoint => u y i) j z)
+          p J q (x, t) ∂volume) * η t ∂volume := by
+  classical
+  let S : Set (Vec3 × ℝ) := (Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ)
+  let K : Set Vec3 := tsupport q
+  let qj : Fin 3 → Vec3 → ℝ := fun j x => (fderiv ℝ q x) (basisVec j)
+  let qjj : Fin 3 → Vec3 → ℝ := fun j x => (fderiv ℝ (qj j) x) (basisVec j)
+  let qST : ParabolicPoint → ℝ := fun z => q z.1
+  let Du : ParabolicPoint → Fin 3 → Vec3 := fun z i j =>
+    spatialPartial (fun y : ParabolicPoint => u y i) j z
+  let E : Vec3 × ℝ → ℝ := fun z =>
+    (vec3EuclideanNorm (u (z.1, z.2))) ^ (2 : ℕ) * q z.1
+  let H : Vec3 × ℝ → ℝ := fun z =>
+    regTailsLocalizedSource u Du p J q (z.1, z.2)
+  let F : ℝ → ℝ := regTailsEnergyWeight u q
+  let G : ℝ → ℝ := fun t => ∫ x : Vec3, regTailsLocalizedSource u Du p J q (x, t)
+  let B : Vec3 × ℝ → ℝ := fun z =>
+    (vec3EuclideanNorm (u (z.1, z.2))) ^ (2 : ℕ) *
+      ∑ j : Fin 3,
+        spatialSecondPartial (fun y : ParabolicPoint => q y.1) j j (z.1, z.2)
+  let V : Vec3 × ℝ → ℝ := fun z =>
+    ∑ j : Fin 3,
+      ((vec3EuclideanNorm (u (z.1, z.2))) ^ (2 : ℕ) *
+          J (z.1, z.2) j +
+        2 * p (z.1, z.2) * u (z.1, z.2) j) *
+      spatialPartial (fun y : ParabolicPoint => q y.1) j (z.1, z.2)
+  let Q : Vec3 × ℝ → ℝ := fun z =>
+    spatialGradientSq u Du (z.1, z.2) * q z.1
+  let C : Vec3 × ℝ → ℝ := fun z =>
+    ∑ i : Fin 3, ∑ j : Fin 3,
+      u (z.1, z.2) i * Du (z.1, z.2) i j *
+        spatialPartial (fun y : ParabolicPoint => q y.1) j (z.1, z.2)
+  have hS : IsOpen S := isOpen_univ.prod isOpen_Ioi
+  have hSmeas : MeasurableSet S := hS.measurableSet
+  have hqST : ContDiff ℝ (⊤ : ℕ∞)
+      (fun z : Vec3 × ℝ => q z.1) := by
+    exact hq.comp (ContinuousLinearMap.fst ℝ Vec3 ℝ).contDiff
+  have hqjSmooth (j : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (qj j) := by
+    change ContDiff ℝ (⊤ : ℕ∞) (CKN.spatialDeriv q j)
+    exact contDiff_spatialDeriv_smooth hq j
+  have hqjjSmooth (j : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (qjj j) := by
+    change ContDiff ℝ (⊤ : ℕ∞) (CKN.spatialDeriv (qj j) j)
+    exact contDiff_spatialDeriv_smooth (hqjSmooth j) j
+  have hqjEq (j : Fin 3) (z : Vec3 × ℝ) :
+      spatialPartial (fun y : ParabolicPoint => q y.1) j z = qj j z.1 := rfl
+  have hqjjEq (j : Fin 3) (z : Vec3 × ℝ) :
+      spatialSecondPartial (fun y : ParabolicPoint => q y.1) j j z =
+        qjj j z.1 := rfl
+  have hqjSupport (j : Fin 3) : tsupport (qj j) ⊆ K := by
+    exact tsupport_fderiv_apply_subset ℝ (basisVec j)
+  have hqpartial (j : Fin 3) : ContinuousOn
+      (fun z : Vec3 × ℝ => spatialPartial qST j (z.1, z.2)) S := by
+    have hj : Continuous (qj j) := (hqjSmooth j).continuous
+    have heq : (fun z : Vec3 × ℝ => spatialPartial qST j (z.1, z.2)) =
+        fun z => qj j z.1 := by
+      funext z
+      rfl
+    rw [heq]
+    exact (hj.comp continuous_fst).continuousOn
+  have hqZero (x : Vec3) (hx : x ∉ K) : q x = 0 := by
+    by_contra hne
+    exact hx (subset_tsupport q (Function.mem_support.mpr hne))
+  have hqjZero (j : Fin 3) (x : Vec3) (hx : x ∉ K) : qj j x = 0 := by
+    by_contra hne
+    exact hx ((hqjSupport j) (subset_tsupport _ (Function.mem_support.mpr hne)))
+  have hηd : ContDiff ℝ (⊤ : ℕ∞) (deriv η) := by
+    exact (contDiff_infty_iff_deriv.mp hη).2
+  have hηdCompact : HasCompactSupport (deriv η) := by
+    have hfd := hηc.fderiv_apply (𝕜 := ℝ) (1 : ℝ)
+    change HasCompactSupport (fun t : ℝ => fderiv ℝ η t (1 : ℝ))
+    exact hfd
+  have hηdI : tsupport (deriv η) ⊆ Ioi (0 : ℝ) :=
+    (tsupport_deriv_subset (f := η)).trans hηI
+  obtain ⟨hEnergyInt, hSourceInt⟩ := regTails_localized_energy_source_integrable
+    u p J hUcont hDcont hPcont hJcont q hq hqc η hη hηc hηI
+  have hMeasure :
+      (volume : Measure (Vec3 × ℝ)).restrict S =
+        (volume : Measure Vec3).prod (volume.restrict (Ioi (0 : ℝ))) := by
+    change ((volume : Measure Vec3).prod (volume : Measure ℝ)).restrict S = _
+    rw [← Measure.prod_restrict (μ := (volume : Measure Vec3))
+      (ν := (volume : Measure ℝ)) Set.univ (Ioi (0 : ℝ))]
+    simp [Measure.restrict_univ]
+  obtain ⟨hBIntProd, hVIntProd, hQIntProd, hCIntProd⟩ :=
+    regTails_cutoff_terms_integrable u p J hUcont hDcont hPcont hJcont
+      q hq hqc η hη hηc hηI
   have hEInt : Integrable (fun z : Vec3 × ℝ => E z * deriv η z.2)
       ((volume : Measure (Vec3 × ℝ)).restrict S) := by
     rw [hMeasure]
@@ -445,131 +886,22 @@ theorem regTails_localized_weak_time_identity
       ((volume : Measure (Vec3 × ℝ)).restrict S) := by
     rw [hMeasure]
     exact hCIntProd
-  obtain ⟨hFcont, hGcont⟩ := regTails_localized_profiles_continuous
-    u Du p J q hq hqc hUcont hDcont hPcont hJcont
-  have hETime := regTails_timeFactor_integral E (deriv η) hEnergyInt
-  have hHTime := regTails_timeFactor_integral H η hSourceInt
-  have hFubiniE : (∫ t : ℝ, F t * deriv η t ∂volume) =
-      ∫ t in Ioi (0 : ℝ), F t * deriv η t ∂volume := by
-    symm
-    apply setIntegral_eq_integral_of_forall_compl_eq_zero
-    intro t ht
-    have hzero : deriv η t = 0 := by
-      by_contra hne
-      exact ht (hηdI (subset_tsupport _ (Function.mem_support.mpr hne)))
-    simp [hzero]
-  have hFubiniH : (∫ t : ℝ, G t * η t ∂volume) =
-      ∫ t in Ioi (0 : ℝ), G t * η t ∂volume := by
-    symm
-    apply setIntegral_eq_integral_of_forall_compl_eq_zero
-    intro t ht
-    have hzero : η t = 0 := by
-      by_contra hne
-      exact ht (hηI (subset_tsupport _ (Function.mem_support.mpr hne)))
-    simp [hzero]
-  have hTimeE : (∫ z in S, E z * deriv η z.2
-      ∂(volume : Measure (Vec3 × ℝ))) =
-      ∫ t in Ioi (0 : ℝ), F t * deriv η t ∂volume := by
-    simpa [E, F, regTailsEnergyWeight] using hETime
-  have hTimeH : (∫ z in S, H z * η z.2
-      ∂(volume : Measure (Vec3 × ℝ))) =
-      ∫ t in Ioi (0 : ℝ), G t * η t ∂volume := by
-    simpa [H, G] using hHTime
+  have hEnergyFubini := regTails_positive_time_factor_fubini E F (deriv η)
+    hEnergyInt hηdI (by intro t; rfl)
+  have hSourceFubini := regTails_positive_time_factor_fubini H G η
+    hSourceInt hηI (by intro t; rfl)
   have hlocalP := regTails_localEnergy_product_test
     u p J hLE q hq hqc η hη hηc hηI
   simp_rw [CKN.setIntegral_parabolic_to_product] at hlocalP
   simp only [parabolicHomeomorph_symm_apply] at hlocalP
-  have hLap := regTails_laplacian_ibp_sum u q η hq hqc hη hηc hηI
+  have hLap := regTails_compact_spatial_ibp_product u q η hq hqc hη hηc hηI
     hUcont hDcont hUdiff
-  have hweakProduct :
-      (∫ z in S, E z * deriv η z.2
-        ∂(volume : Measure (Vec3 × ℝ))) =
-      -(∫ z in S, H z * η z.2
-        ∂(volume : Measure (Vec3 × ℝ))) := by
-    have hBVInt : Integrable (fun z : Vec3 × ℝ => (B z + V z) * η z.2)
-        ((volume : Measure (Vec3 × ℝ)).restrict S) := by
-      apply (hBInt.add hVInt).congr
-      filter_upwards [] with z
-      change B z * η z.2 + V z * η z.2 = (B z + V z) * η z.2
-      ring
-    have hlocalExpanded :
-        2 * (∫ z in S, Q z * η z.2
-          ∂(volume : Measure (Vec3 × ℝ))) =
-        (∫ z in S, E z * deriv η z.2 ∂(volume : Measure (Vec3 × ℝ))) +
-          (∫ z in S, (B z + V z) * η z.2
-            ∂(volume : Measure (Vec3 × ℝ))) := by
-      have hlocalP' := hlocalP
-      rw [integral_add hEInt hBVInt] at hlocalP'
-      exact hlocalP'
-    have hlocalSplit :
-        2 * (∫ z in S, Q z * η z.2
-          ∂(volume : Measure (Vec3 × ℝ))) =
-        (∫ z in S, E z * deriv η z.2 ∂(volume : Measure (Vec3 × ℝ))) +
-          (∫ z in S, B z * η z.2 ∂(volume : Measure (Vec3 × ℝ))) +
-          (∫ z in S, V z * η z.2 ∂(volume : Measure (Vec3 × ℝ))) := by
-      calc
-        _ = (∫ z in S, E z * deriv η z.2
-              ∂(volume : Measure (Vec3 × ℝ))) +
-            (∫ z in S, (B z + V z) * η z.2
-              ∂(volume : Measure (Vec3 × ℝ))) := hlocalExpanded
-        _ = (∫ z in S, E z * deriv η z.2
-              ∂(volume : Measure (Vec3 × ℝ))) +
-            (∫ z in S, B z * η z.2 + V z * η z.2
-              ∂(volume : Measure (Vec3 × ℝ))) := by
-                congr 1
-                apply setIntegral_congr_fun hSmeas
-                intro z hz
-                ring
-        _ = _ := by
-          rw [integral_add hBInt hVInt]
-          ring
-    have hLap := regTails_laplacian_ibp_sum u q η hq hqc hη hηc hηI
-      hUcont hDcont hUdiff
-    have hLapConverted :
-        (∫ z in S, B z * η z.2 ∂(volume : Measure (Vec3 × ℝ))) =
-          -2 * (∫ z in S, C z * η z.2 ∂(volume : Measure (Vec3 × ℝ))) := by
-      simp_rw [CKN.setIntegral_parabolic_to_product] at hLap
-      simpa [S, B, C, Du, qST, qj, qjj] using hLap
-    have hSourcePoint (z : Vec3 × ℝ) :
-        H z = -2 * Q z - 2 * C z + V z := by
-      dsimp [H, Q, C, V, Du, regTailsLocalizedSource]
-      ring
-    have hScaledQ : Integrable (fun z : Vec3 × ℝ => (-2 : ℝ) * (Q z * η z.2))
-        ((volume : Measure (Vec3 × ℝ)).restrict S) := hQInt.const_mul _
-    have hScaledC : Integrable (fun z : Vec3 × ℝ => (-2 : ℝ) * (C z * η z.2))
-        ((volume : Measure (Vec3 × ℝ)).restrict S) := hCInt.const_mul _
-    have hScaledSum : Integrable
-        (fun z : Vec3 × ℝ => (-2 : ℝ) * (Q z * η z.2) +
-          (-2 : ℝ) * (C z * η z.2))
-        ((volume : Measure (Vec3 × ℝ)).restrict S) :=
-      hScaledQ.add hScaledC
-    have hSourceSplit :
-        (∫ z in S, H z * η z.2 ∂(volume : Measure (Vec3 × ℝ))) =
-          -2 * (∫ z in S, Q z * η z.2 ∂(volume : Measure (Vec3 × ℝ))) -
-          2 * (∫ z in S, C z * η z.2 ∂(volume : Measure (Vec3 × ℝ))) +
-          (∫ z in S, V z * η z.2 ∂(volume : Measure (Vec3 × ℝ))) := by
-      calc
-        _ = ∫ z in S, (-2 : ℝ) * (Q z * η z.2) +
-              (-2 : ℝ) * (C z * η z.2) + V z * η z.2
-              ∂(volume : Measure (Vec3 × ℝ)) := by
-                apply setIntegral_congr_fun hSmeas
-                intro z hz
-                change H z * η z.2 = _
-                rw [hSourcePoint z]
-                ring
-        _ = _ := by
-          rw [integral_add hScaledSum hVInt,
-            integral_add hScaledQ hScaledC,
-            integral_const_mul, integral_const_mul]
-          ring
-    rw [hSourceSplit]
-    rw [hLapConverted] at hlocalSplit
-    linarith only [hlocalSplit]
-  rw [hTimeE, hTimeH] at hweakProduct
-  calc
-    _ = ∫ t in Ioi (0 : ℝ), F t * deriv η t ∂volume := hFubiniE
-    _ = -∫ t in Ioi (0 : ℝ), G t * η t ∂volume := hweakProduct
-    _ = _ := by rw [← hFubiniH]
+  have hweakProduct := regTails_positive_space_time_weak_identity u p J q η
+    (by simpa [S, B, V, Q, Du] using hlocalP)
+    (by simpa [S, B, C, Du] using hLap)
+    hEInt hBInt hVInt hQInt hCInt
+  rw [← hEnergyFubini, ← hSourceFubini] at hweakProduct
+  simpa [F, G, Du] using hweakProduct
 
 end CKN.Leray
 

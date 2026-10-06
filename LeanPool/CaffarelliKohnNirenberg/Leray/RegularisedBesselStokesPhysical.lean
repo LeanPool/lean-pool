@@ -26,6 +26,7 @@ namespace CKN.Leray
 
 open CKN.Foundation.Parabolic
 
+/-- The scalar physical Fourier weight for the inverse Bessel-potential operator. -/
 @[expose]
 def physicalBesselInverseWeight (s : ℝ) (ξ : L2Vec3) : ℂ :=
   (((1 + ‖ξ‖ ^ 2) ^ (-s / 2) : ℝ) : ℂ)
@@ -57,6 +58,7 @@ theorem physicalBesselInverseWeight_memLp (s : ℝ) (hs : 0 ≤ s) :
     abs_of_nonneg (Real.rpow_nonneg (by positivity) _)]
   exact hbound
 
+/-- The `L∞` representative of the physical inverse Bessel Fourier weight. -/
 @[expose]
 def physicalBesselInverseWeightLp (s : ℝ) (hs : 0 ≤ s) :
     Lp (α := L2Vec3) ℂ ∞ :=
@@ -68,6 +70,7 @@ private theorem physicalBesselInverseWeightLp_ae_eq (s : ℝ) (hs : 0 ≤ s) :
       physicalBesselInverseWeight s :=
   (physicalBesselInverseWeight_memLp s hs).coeFn_toLp
 
+/-- The tensor-valued physical Bessel symbol obtained by scaling a tensor by the inverse weight. -/
 @[expose]
 def physicalTensorBesselSymbol
     (s : ℝ) (p : L2Vec3 × ComplexTensor3) : ComplexTensor3 :=
@@ -94,6 +97,7 @@ theorem physicalTensorBesselSymbol_norm_le (s : ℝ) (hs : 0 ≤ s)
   exact (mul_le_mul_of_nonneg_right hweight (norm_nonneg v)).trans_eq
     (one_mul _)
 
+/-- The bounded Fourier multiplier defined by the physical tensor Bessel symbol. -/
 @[expose]
 def physicalTensorBesselMultiplier (s : ℝ) (hs : 0 ≤ s)
     (F : ComplexTensorL2) : ComplexTensorL2 :=

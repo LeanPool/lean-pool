@@ -110,8 +110,7 @@ small-ball estimate used in the spatial compactness argument for
 lem:compactness. -/
 theorem eLpNorm_two_sub_average_le_of_h1_on_euclidean_ball
     (x₀ : Vec3) {r : ℝ} (hr : 0 < r)
-    (u : CKN.H1Function (CKN.euclideanBall x₀ r))
-    [IsFiniteMeasure (volume.restrict (CKN.euclideanBall x₀ r))] :
+    (u : CKN.H1Function (CKN.euclideanBall x₀ r)) :
     eLpNorm
         (fun x => u.toFun x -
           average (volume.restrict (CKN.euclideanBall x₀ r)) u.toFun)
@@ -414,7 +413,7 @@ theorem eLpNorm_two_component_sub_average_le_of_slice_data
     (hweak : ∀ i : Fin 3,
       CKN.HasWeakGradientOn U (fun x => u x i) (fun x => Du x i))
     (hball : CKN.euclideanBall x₀ r ⊆ U)
-    [IsFiniteMeasure (volume.restrict (CKN.euclideanBall x₀ r))] :
+     :
     ∀ i : Fin 3,
       eLpNorm
         (fun x => u x i - average (volume.restrict (CKN.euclideanBall x₀ r))
@@ -435,9 +434,7 @@ inequality between their squared-integral densities. -/
 theorem lintegral_sq_le_of_eLpNorm_two_le
     {α E F : Type*} [MeasurableSpace α]
     [NormedAddCommGroup E] [ContinuousENorm E]
-    [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
     [NormedAddCommGroup F] [ContinuousENorm F]
-    [MeasurableSpace F] [BorelSpace F] [SecondCountableTopology F]
     {μ : Measure α} {f : α → E} {g : α → F} {C : ℝ≥0∞}
     (hf : AEStronglyMeasurable f μ) (hg : AEStronglyMeasurable g μ)
     (hfg : eLpNorm f 2 μ ≤ C * eLpNorm g 2 μ) :
@@ -549,8 +546,7 @@ theorem ae_eLpNorm_two_component_sub_average_le_of_field_energy
     (henergy :
       (∫⁻ t in J, ∫⁻ x in U,
         ENNReal.ofReal (CKN.spatialGradientSq u Du (x, t)) ∂volume) < ∞)
-    (hball : CKN.euclideanBall x₀ r ⊆ U)
-    [IsFiniteMeasure (volume.restrict (CKN.euclideanBall x₀ r))] :
+    (hball : CKN.euclideanBall x₀ r ⊆ U) :
     ∀ᵐ t ∂(volume.restrict J),
       ∀ i : Fin 3,
         eLpNorm
@@ -585,8 +581,7 @@ theorem lintegral_component_ball_average_error_le_of_field_energy
     (henergy :
       (∫⁻ t in J, ∫⁻ x in U,
         ENNReal.ofReal (CKN.spatialGradientSq u Du (x, t)) ∂volume) < ∞)
-    (hball : CKN.euclideanBall x₀ r ⊆ U) (i : Fin 3)
-    [IsFiniteMeasure (volume.restrict (CKN.euclideanBall x₀ r))] :
+    (hball : CKN.euclideanBall x₀ r ⊆ U) (i : Fin 3) :
     (∫⁻ t in J, ∫⁻ x in CKN.euclideanBall x₀ r,
       ENNReal.ofReal |u (x, t) i -
         average (volume.restrict (CKN.euclideanBall x₀ r))

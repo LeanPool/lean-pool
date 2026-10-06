@@ -28,22 +28,29 @@ noncomputable section
 
 namespace CKN.Leray
 
+/-- The canonical continuous linear equivalence between the Hilbert vector and coordinate
+triples. -/
 @[expose]
 def coordinateEquiv : L2Vec3 ≃L[ℝ] Vec3 :=
   PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)
 
+/-- The linear isometric coordinate-to-Hilbert realization used in Fourier arguments. -/
 @[expose]
 def coordinateToHilbertValueOrth : Vec3 →L[ℝ] L2Vec3 :=
   coordinateEquiv.symm.toContinuousLinearMap
 
+/-- The Hilbert-space representative of the `i`th standard coordinate vector. -/
 @[expose]
 def coordinateBasis (i : Fin 3) : L2Vec3 :=
   WithLp.toLp 2 (CKN.basisVec i)
 
+/-- The real-linear map from coordinate vectors into the complexified Hilbert vector space. -/
 @[expose]
 def complexCoordinateValue : Vec3 →L[ℝ] ComplexVec3 :=
   complexifyValue.comp coordinateToHilbertValueOrth
 
+/-- The Schwartz-space representative of a smooth compactly supported coordinate field with
+vanishing divergence. -/
 @[expose]
 def solenoidalSchwartz (a : Vec3 → Vec3)
     (ha : ContDiff ℝ (⊤ : ℕ∞) a) (hcompact : HasCompactSupport a) :
@@ -51,6 +58,7 @@ def solenoidalSchwartz (a : Vec3 → Vec3)
   (SchwartzMap.compCLMOfContinuousLinearEquiv ℝ coordinateEquiv
       (hcompact.toSchwartzMap ha)).postcompCLM complexCoordinateValue
 
+/-- The complex-linear trace that sums the diagonal derivatives of a vector-valued linear map. -/
 @[expose]
 def divergenceTraceLinear :
     (L2Vec3 →L[ℝ] ComplexVec3) →ₗ[ℂ] ℂ where
@@ -74,10 +82,13 @@ theorem divergenceTrace_norm_bound
         _ = ‖D‖ := by simp [coordinateBasis, CKN.basisVec]
     _ = 3 * ‖D‖ := by simp
 
+/-- The continuous complex-linear extension of the diagonal derivative trace. -/
 @[expose]
 def divergenceTrace : (L2Vec3 →L[ℝ] ComplexVec3) →L[ℂ] ℂ :=
   divergenceTraceLinear.mkContinuous 3 divergenceTrace_norm_bound
 
+/-- The Schwartz function obtained by taking the divergence trace of the derivative of a
+vector-valued Schwartz map. -/
 @[expose]
 def schwartzDivergence (f : SchwartzMap L2Vec3 ComplexVec3) :
     SchwartzMap L2Vec3 ℂ :=

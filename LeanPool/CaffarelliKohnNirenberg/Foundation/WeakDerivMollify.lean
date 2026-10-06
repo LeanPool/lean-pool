@@ -37,7 +37,7 @@ noncomputable section
 
 namespace CKN
 
-private def piEvalCLM {ι E : Type*} [Fintype ι] [Nonempty ι]
+private def piEvalCLM {ι E : Type*} [Fintype ι]
     [NormedAddCommGroup E] [NormedSpace ℝ E] (i : ι) : (ι → E) →L[ℝ] E :=
   ContinuousLinearMap.mk (LinearMap.proj i) (by
     have hL : LipschitzWith 1 (fun x : ι → E => x i) := by
