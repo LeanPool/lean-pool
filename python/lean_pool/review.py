@@ -1937,12 +1937,17 @@ def main() -> int:
         return 0
 
     if kind == "project":
+        base_sha = run_gh(
+            "api", f"repos/{repo_full_name}/pulls/{pr_number}", "--jq", ".base.sha"
+        ).strip()
         outcomes = run_project_rubrics(
             model=model,
             diff=diff,
             effort=effort,
             context=fetch_pr_context(pr_number, repo_full_name),
-            prior_art_section=gather_prior_art(kind, reviewed_head_sha, repo_full_name),
+            prior_art_section=gather_prior_art(
+                kind, reviewed_head_sha, repo_full_name, base_sha=base_sha
+            ),
         )
         _write_review_evidence([outcome.result for outcome in outcomes])
         truncated = any(o.result.truncation is not None for o in outcomes)

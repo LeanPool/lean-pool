@@ -2,6 +2,7 @@
 
 import json
 import subprocess
+from types import SimpleNamespace
 
 import pytest
 
@@ -201,3 +202,39 @@ def test_unreadable_pr_base_is_unchecked(monkeypatch) -> None:
     section = review.gather_prior_art("project", "head", "o/r", base_sha="base")
     assert "could not be read at base" in section
     assert "did not run" in section
+
+
+def test_standalone_reviewer_supplies_pr_base(monkeypatch) -> None:
+    """A CLI review must use the PR baseline even with an older engine checkout."""
+    from lean_pool import review
+
+    fetched = []
+    result = SimpleNamespace(truncation=None, model="model", effort=None)
+
+    def gather(kind, head, repository, *, base_sha):
+        fetched.append((kind, head, repository, base_sha))
+        return "TauCeti evidence"
+
+    def rubrics(**kwargs):
+        assert kwargs["prior_art_section"] == "TauCeti evidence"
+        return [SimpleNamespace(result=result)]
+
+    monkeypatch.setenv("PR_NUMBER", "7")
+    monkeypatch.setenv("REVIEW_HEAD_SHA", "head")
+    monkeypatch.delenv("REVIEW_EVIDENCE_PATH", raising=False)
+    for name, value in {
+        "resolve_repo_full_name": lambda: "o/r",
+        "fetch_pr_files": lambda *args: [("LeanPool/New/Basic.lean", "added")],
+        "fetch_head_sha": lambda *args: "head",
+        "fetch_diff": lambda *args: "diff",
+        "fetch_pr_context": lambda *args: review.PullRequestContext("title", ""),
+        "run_gh": lambda *args: "base\n" if args[-1] == ".base.sha" else "",
+        "gather_prior_art": gather,
+        "run_project_rubrics": rubrics,
+        "aggregate_verdict": lambda *args: "approve",
+        "render_rubric_comment": lambda *args, **kwargs: "comment",
+        "post_comment": lambda *args, **kwargs: None,
+    }.items():
+        monkeypatch.setattr(review, name, value)
+    assert review.main() == 0
+    assert fetched == [("project", "head", "o/r", "base")]
