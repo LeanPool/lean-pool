@@ -92,6 +92,27 @@ def test_strip_lean_comments_preserves_code_not_comments() -> None:
     assert "def safe := 1" in stripped
 
 
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("α /- outer /- sorry -/ end -/ β", "α " + " " * 27 + " β"),
+        ('"a\\"sorry" def safe := 1', " " * 10 + " def safe := 1"),
+        ('"a\\\\"sorry', " " * 5 + "sorry"),
+        ('"α\nβ"\ndef safe := 1', "  \n  \ndef safe := 1"),
+        ("-- sorry\r\ndef safe := 1", " " * 9 + "\ndef safe := 1"),
+        ("/- α\n/- nested -/", " " * 4 + "\n" + " " * 12),
+        ('"unfinished\\', " " * 12),
+        ("def safe := 1 -- sorry", "def safe := 1 " + " " * 8),
+    ],
+)
+def test_strip_comments_preserves_offsets_with_nested_and_escaped_tokens(
+    text: str, expected: str
+) -> None:
+    """Nested comments, escapes, and unfinished tokens retain diagnostic locations."""
+    assert _strip_lean_comments(text) == expected
+    assert len(expected) == len(text)
+
+
 def test_minimal_repo_passes_static_quality_checks(tmp_path: Path) -> None:
     """A compliant minimal repo passes without invoking Lean."""
     _write_minimal_repo(tmp_path)

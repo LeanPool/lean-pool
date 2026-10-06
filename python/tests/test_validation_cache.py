@@ -9,7 +9,13 @@ from unittest.mock import patch
 import pytest
 
 from lean_pool.quality import _cached_pool_audits
-from lean_pool.validation_cache import GLOBAL_INPUTS, ValidationCache, pool_units
+from lean_pool.validation_cache import (
+    GLOBAL_INPUTS,
+    ValidationCache,
+    _module_sources,
+    pool_units,
+    source_inventory,
+)
 
 
 def _inventory(root: Path, module: str, imports: tuple[str, ...] = ()) -> None:
@@ -156,3 +162,55 @@ def test_quality_audits_cover_every_owned_module(repository: Path) -> None:
         cache = ValidationCache(repository, cache.directory)
         assert _cached_pool_audits(repository, cache) == []
         assert axioms.call_count == backdoors.call_count == 3
+
+
+def test_overlapping_checks_reuse_inventories_without_changing_fingerprints(
+    repository: Path,
+) -> None:
+    """Shared imports are resolved once, while metadata still changes the key."""
+    _inventory(repository, "LeanPool.A", ("LeanPool.A.Detail", "Mathlib.Shared"))
+    _inventory(repository, "LeanPool.A.Detail", ("Mathlib.Shared",))
+    cache = ValidationCache(repository, repository / ".lake/validation-cache/v1")
+    groups = [["LeanPool.A"], ["LeanPool.A", "LeanPool.A.Detail"]]
+    checks = [
+        (modules, metadata)
+        for modules in groups
+        for metadata in (None, {"main_declarations": ["a"]})
+    ]
+    expected = [
+        ValidationCache(repository, cache.directory).fingerprint(modules, metadata)
+        for modules, metadata in checks
+    ]
+    with patch(
+        "lean_pool.validation_cache._module_sources",
+        wraps=_module_sources,
+    ) as inventories:
+        assert [
+            cache.fingerprint(modules, metadata) for modules, metadata in checks
+        ] == expected
+        assert inventories.call_count == 2
+    assert expected[0] != expected[1]
+    assert cache.imported_sources["Mathlib.Shared"] is None
+    assert (
+        source_inventory(repository, groups[1])
+        == cache.inventories["LeanPool.A"] | cache.inventories["LeanPool.A.Detail"]
+    )
+
+
+def test_local_import_outside_pool_invalidates_cached_checks(repository: Path) -> None:
+    """Memoized import lookups still cover local modules outside LeanPool."""
+    source = repository / "Support.lean"
+    source.write_text("def support := 1\n")
+    _inventory(repository, "LeanPool.A.Detail", ("Support",))
+    _run(repository)
+    source.write_text("def support := 2\n")
+    assert _run(repository)[1] == ["LeanPool.A"]
+
+
+def test_missing_pool_import_falls_back_after_memoized_lookup(repository: Path) -> None:
+    """A cached missing path cannot hide a missing imported pool source."""
+    _inventory(repository, "LeanPool.A", ("LeanPool.Missing",))
+    _inventory(repository, "LeanPool.A.Detail", ("LeanPool.Missing",))
+    _run(repository)
+    (repository / "LeanPool/B.lean").write_text("-- unrelated edit\n")
+    assert len(_run(repository)[1]) == 3

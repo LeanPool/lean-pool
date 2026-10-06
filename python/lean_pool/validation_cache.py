@@ -45,25 +45,42 @@ def pool_units(root: Path) -> list[list[str]]:
     return [sorted(modules) for _, modules in sorted(units.items())]
 
 
-def source_inventory(root: Path, modules: list[str]) -> set[Path]:
+def _module_sources(
+    root: Path, module: str, imported_sources: dict[str, Path | None]
+) -> set[Path]:
+    setup = root / (".lake/build/ir/" + module.replace(".", "/") + ".setup.json")
+    inventory = json.loads(setup.read_text())
+    if inventory["name"] != module or not isinstance(inventory["importArts"], dict):
+        raise ValueError("invalid compiler inventory")
+    paths = {root / (module.replace(".", "/") + ".lean")}
+    for imported in inventory["importArts"]:
+        if imported not in imported_sources:
+            path = root / (imported.replace(".", "/") + ".lean")
+            imported_sources[imported] = path if path.is_file() else None
+        path = imported_sources[imported]
+        if path is not None:
+            paths.add(path)
+        elif imported.split(".")[0] == "LeanPool":
+            raise ValueError(f"missing imported source: {imported}")
+    return paths
+
+
+def source_inventory(
+    root: Path,
+    modules: list[str],
+    *,
+    inventories: dict[str, set[Path]] | None = None,
+    imported_sources: dict[str, Path | None] | None = None,
+) -> set[Path]:
     """Use every module's compiler inventory; fall back to all local Lean sources."""
     paths = {root / (module.replace(".", "/") + ".lean") for module in modules}
+    inventories = {} if inventories is None else inventories
+    imported_sources = {} if imported_sources is None else imported_sources
     try:
         for module in modules:
-            setup = root / (
-                ".lake/build/ir/" + module.replace(".", "/") + ".setup.json"
-            )
-            inventory = json.loads(setup.read_text())
-            if inventory["name"] != module or not isinstance(
-                inventory["importArts"], dict
-            ):
-                raise ValueError("invalid compiler inventory")
-            for imported in inventory["importArts"]:
-                path = root / (imported.replace(".", "/") + ".lean")
-                if path.is_file():
-                    paths.add(path)
-                elif imported.split(".")[0] == "LeanPool":
-                    raise ValueError(f"missing imported source: {imported}")
+            if module not in inventories:
+                inventories[module] = _module_sources(root, module, imported_sources)
+            paths.update(inventories[module])
     except (OSError, ValueError, KeyError, TypeError):
         LOGGER.warning(
             "%s: missing import inventory; hashing all local sources", modules[0]
@@ -84,6 +101,11 @@ class ValidationCache:
         self.directory = directory
         self.refresh = refresh
         self.digests: dict[Path, str] = {}
+        # Compilation finishes before validation; reuse inventories and path
+        # lookups only within this immutable checkout, never across CI runs.
+        self.inventories: dict[str, set[Path]] = {}
+        self.imported_sources: dict[str, Path | None] = {}
+        self.fingerprint_inputs: dict[tuple[str, ...], dict[str, str]] = {}
         self.receipts: dict[str, dict[str, Any]] = {}
         self.used: dict[str, dict[str, Any]] = {}
         self.hits = 0
@@ -97,7 +119,23 @@ class ValidationCache:
 
     def fingerprint(self, modules: list[str], metadata: Any = None) -> str:
         """Hash all checked inputs, retaining missing optional files in the key."""
-        paths = source_inventory(self.root, modules)
+        key = tuple(modules)
+        if key not in self.fingerprint_inputs:
+            self.fingerprint_inputs[key] = self._fingerprint_inputs(modules)
+        payload = {
+            "inputs": self.fingerprint_inputs[key],
+            "modules": modules,
+            "metadata": metadata,
+        }
+        return hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
+
+    def _fingerprint_inputs(self, modules: list[str]) -> dict[str, str]:
+        paths = source_inventory(
+            self.root,
+            modules,
+            inventories=self.inventories,
+            imported_sources=self.imported_sources,
+        )
         paths.update(self.root / name for name in GLOBAL_INPUTS)
         inputs = {}
         for path in sorted(paths):
@@ -108,8 +146,7 @@ class ValidationCache:
                     else "missing"
                 )
             inputs[path.relative_to(self.root).as_posix()] = self.digests[path]
-        payload = {"inputs": inputs, "modules": modules, "metadata": metadata}
-        return hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
+        return inputs
 
     def check[T](
         self,
