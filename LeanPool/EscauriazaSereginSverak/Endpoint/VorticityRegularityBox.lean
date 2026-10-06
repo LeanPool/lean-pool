@@ -192,7 +192,7 @@ theorem vorticityRegularity_box (M K₀ : ℝ) (hM : 0 ≤ M) :
       have t4 := mul_le_mul (hGz i j) (hwA j) (abs_nonneg _) hK
       rw [mul_comm |Ω1 j j z|, mul_comm |vorticityCurl G j z|]
       linarith only [t1, t2, t3, t4]
-    show |(∑ j : Fin 3, Ω2 i j j z + ∑ j : Fin 3, vorticityFluxDeriv U G Ω1 i j j z) -
+    change |(∑ j : Fin 3, Ω2 i j j z + ∑ j : Fin 3, vorticityFluxDeriv U G Ω1 i j j z) -
       ∑ j : Fin 3, Ω2 i j j z| ≤ (Cc + 6 * (K + M)) *
         (∑ l : Fin 3, |ω l z| + ∑ a : Fin 3, ∑ b : Fin 3, |Ω1 a b z|)
     rw [add_sub_cancel_left]

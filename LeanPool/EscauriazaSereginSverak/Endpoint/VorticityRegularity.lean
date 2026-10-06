@@ -128,7 +128,7 @@ theorem vorticityRegularity : ∀ (q M E : ℝ), 5 / 2 < q → 0 ≤ M → 0 ≤
     MemLp.of_eval hDtL
   refine ⟨fun z i => ω i z, fun z i j => Ω1 i j z, fun z i j k => Ω2 i j k z, fun z i => Dt i z,
     ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · show ∀ᵐ z ∂((volume : Measure ParabolicPoint).restrict (parabolicCylinder x₀ t₀ (1 / 2))),
+  · change ∀ᵐ z ∂((volume : Measure ParabolicPoint).restrict (parabolicCylinder x₀ t₀ (1 / 2))),
       (fun i => ω i z) = weakVorticity Dv z
     rw [hkey]
     filter_upwards [ae_all_iff.2 hωae] with z hz
@@ -156,7 +156,7 @@ theorem vorticityRegularity : ∀ (q M E : ℝ), 5 / 2 < q → 0 ≤ M → 0 ≤
     exact vorticity_lintegral_four_lt_top hωV hDωV hD2ωV hDtV
   · rw [hkey]
     filter_upwards [hineq] with z hz
-    show vec3EuclideanNorm (fun i => Dt i z - ∑ j : Fin 3, Ω2 i j j z) ≤
+    change vec3EuclideanNorm (fun i => Dt i z - ∑ j : Fin 3, Ω2 i j j z) ≤
       27 * C * (vec3EuclideanNorm (fun i => ω i z) +
         Real.sqrt (∑ i : Fin 3, ∑ j : Fin 3, Ω1 i j z ^ 2))
     have hN := vec3EuclideanNorm_nonneg (fun i => ω i z)

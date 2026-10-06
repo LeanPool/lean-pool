@@ -133,18 +133,18 @@ theorem vorticityTop_centers (R₂ : ℝ) :
   have hδ2 := min_le_right (1 / 8 : ℝ) (-t / 2)
   have hVne : V.Nonempty := by
     refine ⟨(x, t + min (1 / 8) (-t / 2)), ?_, hx', ?_, ?_, ?_⟩
-    · show vec3EuclideanNorm (x - x) < 1 / 2
+    · change vec3EuclideanNorm (x - x) < 1 / 2
       rw [sub_self, vec3EuclideanNorm_zero]
       norm_num
-    · show t < t + min (1 / 8) (-t / 2)
+    · change t < t + min (1 / 8) (-t / 2)
       linarith only [hδ]
-    · show t + min (1 / 8) (-t / 2) < t + 1 / 4
+    · change t + min (1 / 8) (-t / 2) < t + 1 / 4
       linarith only [hδ1]
-    · show t + min (1 / 8) (-t / 2) < 0
+    · change t + min (1 / 8) (-t / 2) < 0
       linarith only [hδ2, ht2]
   obtain ⟨c, hcQ, hcV⟩ := hQd.exists_mem_open hVo hVne
   refine ⟨c, ⟨hcQ, hcV.2.1, lt_trans ht1 hcV.2.2.1, hcV.2.2.2.2⟩, hcV.1, ?_, hcV.2.2.1⟩
-  show c.2 - 1 / 4 < t
+  change c.2 - 1 / 4 < t
   linarith only [hcV.2.2.2.1]
 
 /-- A bounded subset of the open exterior region is covered by finitely many exterior
@@ -178,14 +178,14 @@ theorem vorticityTop_finiteCover {R₂ : ℝ} (hR₂ : 0 < R₂) {S : Set (Vec3 
   have hcen1 : ∀ p ∈ closure S, vec3EuclideanNorm (cen p).1 = vec3EuclideanNorm p.1 + 1 / 4 := by
     intro p hp
     have hn := hnorm p hp
-    show vec3EuclideanNorm ((1 + 1 / (4 * vec3EuclideanNorm p.1)) • p.1) = _
+    change vec3EuclideanNorm ((1 + 1 / (4 * vec3EuclideanNorm p.1)) • p.1) = _
     rw [vec3EuclideanNorm_smul, abs_of_pos (by positivity)]
     field_simp
   have hcen2 : ∀ p ∈ closure S, vec3EuclideanNorm (p.1 - (cen p).1) = 1 / 4 := by
     intro p hp
     have hn := hnorm p hp
     have e : p.1 - (cen p).1 = (-(1 / (4 * vec3EuclideanNorm p.1))) • p.1 := by
-      show p.1 - (1 + 1 / (4 * vec3EuclideanNorm p.1)) • p.1 = _
+      change p.1 - (1 + 1 / (4 * vec3EuclideanNorm p.1)) • p.1 = _
       rw [add_smul, one_smul, neg_smul]
       abel
     rw [e, vec3EuclideanNorm_smul, abs_neg, abs_of_pos (by positivity)]
@@ -212,11 +212,11 @@ theorem vorticityTop_finiteCover {R₂ : ℝ} (hR₂ : 0 < R₂) {S : Set (Vec3 
     have ht := (hKsub p.2).2
     have hR : R₂ ≤ vec3EuclideanNorm p.1.1 := (hKsub p.2).1
     refine ⟨by rw [hcen1 p.1 p.2]; linarith only [hR], ?_, ?_⟩
-    · show -2 < if -1 / 8 < p.1.2 then (0 : ℝ) else p.1.2 + 1 / 16
+    · change -2 < if -1 / 8 < p.1.2 then (0 : ℝ) else p.1.2 + 1 / 16
       split_ifs
       · norm_num
       · linarith only [ht.1]
-    · show (if -1 / 8 < p.1.2 then (0 : ℝ) else p.1.2 + 1 / 16) ≤ 0
+    · change (if -1 / 8 < p.1.2 then (0 : ℝ) else p.1.2 + 1 / 16) ≤ 0
       split_ifs with h
       · exact le_rfl
       · linarith only [not_lt.1 h]
@@ -225,7 +225,7 @@ theorem vorticityTop_finiteCover {R₂ : ℝ} (hR₂ : 0 < R₂) {S : Set (Vec3 
     refine mem_iUnion₂.2 ⟨cen p.1, Finset.mem_image_of_mem _ hpT, hzp.1, hzp.2.1, ?_⟩
     have hz0 : z.2 < 0 := (hS hz).2.2
     have h3 := hzp.2.2
-    show z.2 < (cen p.1).2
+    change z.2 < (cen p.1).2
     by_cases h0 : (cen p.1).2 = 0
     · rw [h0]; exact hz0
     · have e3 : (if (cen p.1).2 = 0 then (1 : ℝ) else 0) = 0 := by simp [h0]

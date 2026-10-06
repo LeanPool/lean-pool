@@ -65,7 +65,7 @@ theorem vorticityTopZero_ae_slice {U : ParabolicPoint → Vec3}
     have hball : vec3Ball x₁ 1 ⊆ Ω' := fun y hy =>
       (@hsub (y, -(1 / ((n : ℝ) + 8)) - 1 / 2) ⟨hy, hmid⟩).1
     have hx₁mem : x₁ ∈ vec3Ball x₁ 1 := by
-      show vec3EuclideanNorm (x₁ - x₁) < 1
+      change vec3EuclideanNorm (x₁ - x₁) < 1
       rw [sub_self, vec3EuclideanNorm_zero]
       norm_num
     have hJ : Ioo (-(1 / ((n : ℝ) + 8)) - 1) (-(1 / ((n : ℝ) + 8))) ⊆ J := fun s hs =>
