@@ -43,7 +43,7 @@ theorem spatialSecondPartial_mul_of_contDiff (hA : ContDiff ℝ (⊤ : ℕ∞) A
   have h1 : (fun q : Vec3 × ℝ => spatialPartial (fun r : Vec3 × ℝ => A r * B r) j q) =
       fun q => A q * spatialPartial B j q + B q * spatialPartial A j q :=
     funext (vorticityHeatSmooth_spatialPartial_mul hA hB j)
-  show spatialPartial (fun q : Vec3 × ℝ =>
+  change spatialPartial (fun q : Vec3 × ℝ =>
       spatialPartial (fun r : Vec3 × ℝ => A r * B r) j q) j p = _
   rw [h1, vorticityHeatSmooth_spatialPartial_add (hA.mul hBj) (hB.mul hAj),
     vorticityHeatSmooth_spatialPartial_mul hA hBj, vorticityHeatSmooth_spatialPartial_mul hB hAj]
@@ -145,15 +145,15 @@ theorem heatCutoff_equation {U K : Set Vec3} {I : Set ℝ} (hIm : MeasurableSet 
         ∑ j : Fin 3, (η p * spatialSecondPartial φ j j p +
           2 * (spatialPartial η j p * spatialPartial φ j p) +
           φ p * spatialSecondPartial η j j p)) := by
-      show z p * (-timePartial (fun q : Vec3 × ℝ => η q * φ q) p -
+      change z p * (-timePartial (fun q : Vec3 × ℝ => η q * φ q) p -
         ∑ j : Fin 3, spatialSecondPartial (fun q : Vec3 × ℝ => η q * φ q) j j p) = _
       rw [vorticityHeatSmooth_timePartial_mul hη hφ p,
         Finset.sum_congr rfl fun j _ => spatialSecondPartial_mul_of_contDiff hη hφ j p]
     have e3 (j : Fin 3) : T3 j p = z p * (spatialSecondPartial η j j p * φ p +
         spatialPartial η j p * spatialPartial φ j p) := by
-      show z p * spatialPartial (fun q : Vec3 × ℝ => spatialPartial η j q * φ q) j p = _
+      change z p * spatialPartial (fun q : Vec3 × ℝ => spatialPartial η j q * φ q) j p = _
       rw [vorticityHeatSmooth_spatialPartial_mul (hηj j) hφ j p]
-      show z p * (spatialPartial η j p * spatialPartial φ j p +
+      change z p * (spatialPartial η j p * spatialPartial φ j p +
         φ p * spatialSecondPartial η j j p) = _
       ring
     have e2 : T2 p = z p * ((timePartial η p - ∑ j : Fin 3, spatialSecondPartial η j j p) *

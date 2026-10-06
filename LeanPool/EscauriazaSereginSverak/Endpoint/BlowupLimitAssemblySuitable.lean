@@ -61,7 +61,7 @@ theorem blowupLimitAssembly_lintegral_sq_le_of_Lthree
   exact h2.trans (by gcongr)
 
 private theorem blowupLimitAssembly_localBox_geometry
-    (R a : ℝ) (hR : 0 < R) (ha : a < 0) :
+    (R a : ℝ) (_hR : 0 < R) (_ha : a < 0) :
     ∀ Ω' J, localBox (vec3Ball (0 : Vec3) R) (Ioo a 0) Ω' J →
       spaceTimeSet Ω' J ⊆ vec3Ball (0 : Vec3) R ×ˢ Ioo a 0 ∧
       IsCompact (closure Ω' ×ˢ closure J) ∧

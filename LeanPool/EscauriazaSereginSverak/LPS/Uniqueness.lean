@@ -43,7 +43,7 @@ theorem lps_leray_hopf_uniqueness
       (∃ s : ℝ, 3 < s ∧
         (∫⁻ t in Ioo 0 T,
           (∫⁻ x : Vec3,
-            ENNReal.ofReal (vec3EuclideanNorm (u (x,t))) ^ s) ^
+            ENNReal.ofReal (vec3EuclideanNorm (u (x, t))) ^ s) ^
               ((2 * s / (s - 3)) / s)) < ⊤) ∨
       (∫⁻ t in Ioo 0 T,
         (essSup (fun x : Vec3 =>

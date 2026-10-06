@@ -113,7 +113,9 @@ theorem bu_short_dyadic_center_average_geometry
     have h := (bu_short_dyadic_cell_center_time_bounds k m ell).1
     exact (half_pos (Foundation.buSmallTimeDyadicScale_pos k)).trans h
   have hYpos : 0 < Y 2 := by
-    have hprod : 0 < scale * Y 2 := by simpa only [Pi.smul_apply, smul_eq_mul] using lt_trans (by norm_num : (0 : ℝ) < 2) hcenter
+    have hprod : 0 < scale * Y 2 := by
+      simpa only [Pi.smul_apply, smul_eq_mul] using
+        lt_trans (by norm_num : (0 : ℝ) < 2) hcenter
     exact (mul_pos_iff_of_pos_left hscale).mp hprod
   have hY : 2 < Y 2 := by
     have hprod : scale * Y 2 ≤ Y 2 :=

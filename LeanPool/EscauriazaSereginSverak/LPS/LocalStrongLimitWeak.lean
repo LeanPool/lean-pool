@@ -70,7 +70,7 @@ theorem lps_curve_eq_of_weak_continuous {a b : ℝ} (hab : a < b) {F : Vec3 × �
       have hp : proj s = ⟨s, hsI'⟩ := Set.projIcc_of_mem hab.le hsI'
       simp only [hp]
       exact integral_congr_ae ((hs hsI').mono fun x hx => by
-        show ((L ⟨s, hsI'⟩ : Lp ℝ 2 (volume : Measure Vec3)) : Vec3 → ℝ) x * w x = F (x, s) * w x
+        change ((L ⟨s, hsI'⟩ : Lp ℝ 2 (volume : Measure Vec3)) : Vec3 → ℝ) x * w x = F (x, s) * w x
         rw [hx]))
     have := hEq ht
     have hp : proj t = ⟨t, ht⟩ := Set.projIcc_of_mem hab.le ht

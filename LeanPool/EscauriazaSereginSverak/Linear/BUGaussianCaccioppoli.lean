@@ -29,7 +29,7 @@ noncomputable section
 namespace ESS
 
 private theorem buGaussian_memLp_of_local_l2
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {E : Type*} [NormedAddCommGroup E]
     {U : Set ParabolicPoint} {f : ParabolicPoint → E}
     (hlocal : LocallyIntegrableOn f U volume)
     (hfin : (∫⁻ z in U, ‖f z‖ₑ ^ (2 : ℝ)) < ⊤) :
@@ -76,7 +76,7 @@ theorem buGaussian_local_energy_integrable
     buGaussian_memLp_of_local_l2 hweak.2.1 (by simpa [U] using hDvfin)
   have hVnorm : MemLp (fun z => vec3EuclideanNorm (v z)) 2
       (volume.restrict U) := by
-    apply hVmem.of_nnnorm_le_mul
+    apply hVmem.of_nnnorm_le_mul (c := 2)
       (continuous_vec3EuclideanNorm.comp_aestronglyMeasurable
         hVmem.aestronglyMeasurable)
     filter_upwards [] with z
@@ -196,9 +196,9 @@ private theorem weighted_cell_integral_comparison
   calc
     _ ≤ (K * z₀) * (C * (∫ z in B, V z ∂μ)) :=
       hAint.trans (mul_le_mul_of_nonneg_left hacc hleft)
-    _ ≤ (K * z₀) * (C * (K * ∫ z in B, W z * V z ∂μ)) := by
-      apply mul_le_mul_of_nonneg_left _ hleft
-      exact mul_le_mul_of_nonneg_left hBint hC
+    _ = (K * C) * (z₀ * ∫ z in B, V z ∂μ) := by ring
+    _ ≤ (K * C) * (K * ∫ z in B, W z * V z ∂μ) :=
+      mul_le_mul_of_nonneg_left hBint (mul_nonneg hK hC)
     _ = K ^ 2 * C * (∫ z in B, W z * V z ∂μ) := by ring
 
 private theorem gaussian_cell_nested_in_domain
@@ -418,8 +418,7 @@ theorem buGaussian_weighted_caccioppoli_cell
     rw [show 2 * (56 * a * r ^ 2 + 12 * ρ * r + 36 * ρ ^ 2 * r ^ 2) =
       (56 * a * r ^ 2 + 12 * ρ * r + 36 * ρ ^ 2 * r ^ 2) +
         (56 * a * r ^ 2 + 12 * ρ * r + 36 * ρ ^ 2 * r ^ 2) by ring]
-    rw [← Real.exp_add]
-    ring
+    rw [pow_two, ← Real.exp_add]
   simpa [Uinner, Uouter, W, G, V, hexp] using hfinal
 
 end ESS

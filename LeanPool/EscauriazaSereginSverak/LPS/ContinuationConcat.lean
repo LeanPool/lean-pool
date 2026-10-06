@@ -213,7 +213,7 @@ theorem lps_leray_hopf_concat {T s s' : ℝ} {a : Vec3 → Vec3} {u : ParabolicP
         refine setLIntegral_congr_fun hmeas fun z hz => ?_
         unfold spatialGradientSq
         simp only [lpsCat_of_lt (hz.2.2.trans h)]
-      show ENNReal.ofReal (1 / 2 : ℝ) * (∫⁻ x : Vec3,
+      change ENNReal.ofReal (1 / 2 : ℝ) * (∫⁻ x : Vec3,
           ENNReal.ofReal (vec3EuclideanNorm (lpsCat s u W (x, t₀))) ^ (2 : ℝ)) +
         (∫⁻ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 t₀),
           ENNReal.ofReal (spatialGradientSq (lpsCat s u W) (lpsCat s Du DW) z)) ≤ _
@@ -240,7 +240,7 @@ theorem lps_leray_hopf_concat {T s s' : ℝ} {a : Vec3 → Vec3} {u : ParabolicP
         refine setLIntegral_congr_fun hmeas fun z hz => ?_
         unfold spatialGradientSq
         simp only [lpsCat_of_ge hz.2.1.le]
-      show ENNReal.ofReal (1 / 2 : ℝ) * (∫⁻ x : Vec3,
+      change ENNReal.ofReal (1 / 2 : ℝ) * (∫⁻ x : Vec3,
           ENNReal.ofReal (vec3EuclideanNorm (lpsCat s u W (x, t₀))) ^ (2 : ℝ)) +
         (∫⁻ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 t₀),
           ENNReal.ofReal (spatialGradientSq (lpsCat s u W) (lpsCat s Du DW) z)) ≤ _

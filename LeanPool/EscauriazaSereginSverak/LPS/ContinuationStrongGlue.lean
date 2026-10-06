@@ -165,7 +165,7 @@ theorem lps_strong_solution_glue {a b c : ℝ}
         (fun z hz => by simp only [lpsGlue_of_le hz]) (fun z hz => by simp only [lpsGlue_of_gt hz])
         hφ
   · intro φ hφ
-    show ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo a c),
+    change ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo a c),
       lpsEqIntegrand (lpsGlue b U W) (lpsGlue b DU DW) (lpsGlue b pU pW) φ z = 0
     have hφ' := hφ
     obtain ⟨hφs, hφc, -⟩ := hφ

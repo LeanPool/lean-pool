@@ -261,7 +261,7 @@ theorem heatSolution_trace_zero {a b δ : ℝ} (hab : a < b) (hδ : 0 < δ)
           -∫ p in vlSlab a b, (Lf p - Rf p) := by
         rw [← integral_neg]
         exact integral_congr_ae (ae_of_all _ fun p => by
-          show u p * ψ p.1 * deriv θ p.2 + θ p.2 * q p = -(Lf p - Rf p)
+          change u p * ψ p.1 * deriv θ p.2 + θ p.2 * q p = -(Lf p - Rf p)
           rw [hG p, neg_neg])
       rw [h1, integral_sub hLf hRf]
       change -((∫ p in vlSlab a b, Lf p) - ∫ p in vlSlab a b, Rf p) = 0

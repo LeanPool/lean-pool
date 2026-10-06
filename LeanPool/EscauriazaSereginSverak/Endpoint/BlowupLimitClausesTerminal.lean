@@ -170,7 +170,8 @@ theorem blowupLimitClauses_terminal_tendsto_zero
   have hC0 := blowupLimitClauses_tendsto_zero_of_unit_balls
     (fun k x => blowupLimitTraceRescaling W x₀ t₀ (r k) (x, 0)) hmeasAll hunit hC
   refine ⟨hC0, fun g hg => ?_⟩
-  obtain ⟨K, hK⟩ := (hC0.eventually (gt_mem_nhds (by norm_num : (0 : ℝ≥0∞) < 1))).exists_forall_of_atTop
+  obtain ⟨K, hK⟩ :=
+    (hC0.eventually (gt_mem_nhds (by norm_num : (0 : ℝ≥0∞) < 1))).exists_forall_of_atTop
   have hmem : ∀ k, K ≤ k → MemLp (fun x => blowupLimitTraceRescaling W x₀ t₀ (r k) (x, 0)) 2
       (volume.restrict C) := fun k hk =>
     memLp_iff.2 ((hK k hk).trans ENNReal.one_lt_top)

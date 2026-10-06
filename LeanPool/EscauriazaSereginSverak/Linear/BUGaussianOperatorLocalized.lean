@@ -21,7 +21,7 @@ public section
 
 
 open MeasureTheory Set CKN CKN.Foundation.Parabolic
-open scoped Classical
+attribute [local instance] Classical.propDecidable
 open scoped Topology
 
 noncomputable section
@@ -58,7 +58,7 @@ private theorem buGaussian_shell_indicator_zero {ρ : ℝ} {y : Vec3} {a : ℝ}
   by_cases hshell : 13 * ρ / 20 ≤ vec3EuclideanNorm y ∧
       vec3EuclideanNorm y ≤ 3 * ρ / 4
   · exact (h hshell).elim
-  · simp [hshell]
+  · simp only [hshell, ↓reduceIte]
 
 private theorem buGaussian_cutoff_heat_eq_on_plateau_early
     {ρ ε : ℝ} (hρ : 0 < ρ) {z : ParabolicPoint}
@@ -196,7 +196,7 @@ private def buGaussian_cutoff_localized_target
 
 private theorem buGaussian_cutoff_early_transition_bound
     {ρ ε c₁ scale : ℝ} (hρ : 0 < ρ) (hε : 0 < ε)
-    (hεsmall : 2 * ε ≤ 1 / 2) (hc₁ : 0 ≤ c₁) (hscale : 0 ≤ scale)
+    (hεsmall : 2 * ε ≤ 1 / 2) (_hc₁ : 0 ≤ c₁) (_hscale : 0 ≤ scale)
     (v : ParabolicPoint → Vec3) (Dv : ParabolicPoint → Fin 3 → Vec3)
     (D2v : ParabolicPoint → Fin 3 → Fin 3 → Vec3)
     (Dtv : ParabolicPoint → Vec3) {z : ParabolicPoint}
@@ -366,7 +366,8 @@ private theorem buGaussian_cutoff_localized_interior_early
         Real.sqrt (spatialGradientSq v Dv z)))
     (hinner : z.1 ∈ vec3Ball 0 (13 * ρ / 20))
     (hearly : z.2 ≤ 2 * ε) :
-    buGaussian_cutoff_localized_target hρ v Dv D2v Dtv z := by
+    buGaussian_cutoff_localized_target (ε := ε) (c₁ := c₁) (scale := scale)
+      hρ v Dv D2v Dtv z := by
   have hnorm : 0 ≤ vec3EuclideanNorm (v z) := vec3EuclideanNorm_nonneg _
   have hgrad : 0 ≤ Real.sqrt (spatialGradientSq v Dv z) := Real.sqrt_nonneg _
   have hmainGrad : 0 ≤ Real.sqrt (spatialGradientSq
@@ -468,7 +469,7 @@ private theorem buGaussian_cutoff_localized_interior_early
 
 private theorem buGaussian_cutoff_localized_interior_late
     {ρ ε c₁ scale : ℝ} (hρ : 0 < ρ) (hε : 0 < ε)
-    (hεsmall : 2 * ε ≤ 1 / 2) (hc₁ : 0 ≤ c₁) (hscale : 0 ≤ scale)
+    (_hεsmall : 2 * ε ≤ 1 / 2) (hc₁ : 0 ≤ c₁) (hscale : 0 ≤ scale)
     (v : ParabolicPoint → Vec3) (Dv : ParabolicPoint → Fin 3 → Vec3)
     (D2v : ParabolicPoint → Fin 3 → Fin 3 → Vec3)
     (Dtv : ParabolicPoint → Vec3) {z : ParabolicPoint}
@@ -477,15 +478,15 @@ private theorem buGaussian_cutoff_localized_interior_late
         Real.sqrt (spatialGradientSq v Dv z)))
     (hinner : z.1 ∈ vec3Ball 0 (13 * ρ / 20))
     (hpost : 2 * ε < z.2) :
-    buGaussian_cutoff_localized_target hρ v Dv D2v Dtv z := by
-    have hnorm : 0 ≤ vec3EuclideanNorm (v z) := vec3EuclideanNorm_nonneg _
-    have hgrad : 0 ≤ Real.sqrt (spatialGradientSq v Dv z) := Real.sqrt_nonneg _
-    have hmainGrad : 0 ≤ Real.sqrt (spatialGradientSq
-        (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-          (ucInitialTimeCutoff ε) v)
-        (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-          (ucInitialTimeCutoff ε) v Dv) z) := Real.sqrt_nonneg _
-  have hpost : 2 * ε < z.2 := lt_of_not_ge hearly
+    buGaussian_cutoff_localized_target (ε := ε) (c₁ := c₁) (scale := scale)
+      hρ v Dv D2v Dtv z := by
+  have hnorm : 0 ≤ vec3EuclideanNorm (v z) := vec3EuclideanNorm_nonneg _
+  have hgrad : 0 ≤ Real.sqrt (spatialGradientSq v Dv z) := Real.sqrt_nonneg _
+  have hmainGrad : 0 ≤ Real.sqrt (spatialGradientSq
+      (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+        (ucInitialTimeCutoff ε) v)
+      (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+        (ucInitialTimeCutoff ε) v Dv) z) := Real.sqrt_nonneg _
   have hformula := buGaussian_cutoff_heat_eq_on_plateau_after_initial
     hρ hε hinner hpost v Dv D2v Dtv
   have hcut : ucGaussianCutoff ρ hρ ε z = ucFinalTimeCutoff z.2 := by
@@ -570,7 +571,9 @@ private theorem buGaussian_cutoff_localized_interior_late
       ¬ (13 * ρ / 20 ≤ vec3EuclideanNorm z.1 ∧
         vec3EuclideanNorm z.1 ≤ 3 * ρ / 4) := by
     intro hs
-    exact hlo hs.1
+    have hlt : vec3EuclideanNorm z.1 < 13 * ρ / 20 := by
+      simpa only [mem_vec3Ball, sub_zero] using hinner
+    exact (not_le_of_gt hlt) hs.1
   have hShellZero : (if z.1 ∈
       {y : Vec3 | 13 * ρ / 20 ≤ vec3EuclideanNorm y ∧
         vec3EuclideanNorm y ≤ 3 * ρ / 4} then
@@ -673,9 +676,9 @@ private theorem buGaussian_cutoff_localized_interior_late
     exact hsumBase
   exact hsum''
 
-  /-- The Gaussian cutoff heat operator is bounded separately on the spatial
-  transition shell, the final-time strip, and the initial-time strip
-  (`lem:bu-gaussian`). -/
+/-- The Gaussian cutoff heat operator is bounded separately on the spatial
+transition shell, the final-time strip, and the initial-time strip
+(`lem:bu-gaussian`). -/
 theorem buGaussian_cutoff_operator_localized_ae_bound
     {ρ ε c₁ scale : ℝ} (hρ : 0 < ρ) (hε : 0 < ε)
     (hεsmall : 2 * ε ≤ 1 / 2)
@@ -742,7 +745,7 @@ theorem buGaussian_cutoff_operator_localized_ae_bound
           simpa only [mem_vec3Ball, sub_zero] using hi.1
         exact (not_lt_of_ge hrad) hi'
       have hop' := hop hz
-      simp [hregion] at hop'
+      simp only [hregion, ↓reduceIte, ite_mul, zero_mul] at hop'
       have hlate : 0 ≤ if 3 / 2 ≤ z.2 ∧ z.2 ≤ 7 / 4 then
           32 * vec3EuclideanNorm (v z) else 0 := by positivity
       let main := c₁ * scale *
@@ -826,9 +829,9 @@ theorem buGaussian_cutoff_operator_localized_ae_bound
         by_cases hshell : z.1 ∈
             {y : Vec3 | 13 * ρ / 20 ≤ vec3EuclideanNorm y ∧
               vec3EuclideanNorm y ≤ 3 * ρ / 4}
-        · simp [hshell]
+        · simp only [hshell, ↓reduceIte]
           positivity
-        · simp [hshell]
+        · simp only [hshell, ↓reduceIte, Std.le_refl]
       have hlate : 0 ≤ if 3 / 2 ≤ z.2 ∧ z.2 ≤ 7 / 4 then
           32 * vec3EuclideanNorm (v z) else 0 := by positivity
       have hearly : 0 ≤ (if ε ≤ z.2 ∧ z.2 ≤ 2 * ε then 8 / ε else 0) *
@@ -887,6 +890,6 @@ theorem buGaussian_cutoff_operator_localized_ae_bound
     · exact buGaussian_cutoff_localized_interior_early hρ hε hεsmall
         hc₁ hscale v Dv D2v Dtv hheat hinner hearly
     · exact buGaussian_cutoff_localized_interior_late hρ hε hεsmall
-        hc₁ hscale v Dv D2v Dtv hheat hinner hpost
+        hc₁ hscale v Dv D2v Dtv hheat hinner (lt_of_not_ge hearly)
 
 end ESS

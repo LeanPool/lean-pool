@@ -60,7 +60,7 @@ theorem wordDeriv_eq_zero_of_eqOn_one {W : Set Vec3} (hW : IsOpen W) {g : Vec3 �
 
 theorem mem_vec3Ball_iff_sub {x₀ y : Vec3} {R : ℝ} :
     y ∈ vec3Ball x₀ R ↔ y - x₀ ∈ vec3Ball 0 R := by
-  show vec3EuclideanNorm (y - x₀) < R ↔ vec3EuclideanNorm (y - x₀ - 0) < R
+  change vec3EuclideanNorm (y - x₀) < R ↔ vec3EuclideanNorm (y - x₀ - 0) < R
   rw [sub_zero]
 
 /-- The cutoffs of `lem:local-heat-gain`. -/
@@ -215,7 +215,7 @@ theorem localHeatGain_cutoffs (m : ℕ) {r R σ : ℝ} (hr : 0 < r) (hrR : r < R
       rw [← mem_vec3Ball_iff_sub]
       exact hball_mono hrr₂.le hp1
     refine ⟨?_, fun γ hγ => ?_⟩
-    · show c p.2 * χ₀ (p.1 - x₀) = 1
+    · change c p.2 * χ₀ (p.1 - x₀) = 1
       rw [hc1, hone _ hp1', one_mul]
     · rw [spaceTimeWord_separated γ c hχ₀ x₀]
       simp only [wordDeriv_eq_zero_of_eqOn_one hW hone γ hγ _ hp1', mul_zero]

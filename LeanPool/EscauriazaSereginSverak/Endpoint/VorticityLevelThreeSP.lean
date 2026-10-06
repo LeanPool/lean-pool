@@ -58,13 +58,14 @@ theorem vorticity_setIntegral_sq_le_of_bound {x₀ : Vec3} {r M : ℝ} {f : Vec3
       rw [setIntegral_const, smul_eq_mul, mul_comm, measureReal_def, vorticity_volume_vec3Ball]
 
 private theorem vorticityLevelThree_integratedProductEstimate
-    {x₀ a t₀ Q Cc K0 K2 K3 : ℝ} (hCc : 0 ≤ Cc) (hQ : 0 ≤ Q)
+    {x₀ : Vec3} {a t₀ Q Cc K0 K2 K3 : ℝ} (hCc : 0 ≤ Cc) (hQ : 0 ≤ Q)
     (Sf Df Of Tf Ef : ℕ → Vec3 × ℝ → ℝ)
     (cSf : ∀ n, Continuous (Sf n)) (cDf : ∀ n, Continuous (Df n))
     (cOf : ∀ n, Continuous (Of n)) (cTf : ∀ n, Continuous (Tf n))
     (cEf : ∀ n, Continuous (Ef n))
     (hSf0 : ∀ n z, 0 ≤ Sf n z) (hDf0 : ∀ n z, 0 ≤ Df n z)
     (hOf0 : ∀ n z, 0 ≤ Of n z) (hTf0 : ∀ n z, 0 ≤ Tf n z)
+    (hEf0 : ∀ n z, 0 ≤ Ef n z)
     (hbox : ∀ (f : Vec3 × ℝ → ℝ) (r b : ℝ), Continuous f →
       IntegrableOn f (vec3Ball x₀ r ×ˢ Ioo b t₀))
     (hmonoW : ∀ (f : Vec3 × ℝ → ℝ) {r b : ℝ}, Continuous f → (∀ z, 0 ≤ f z) →
@@ -90,99 +91,99 @@ private theorem vorticityLevelThree_integratedProductEstimate
   have hib : ∀ (h : Vec3 → ℝ) (r : ℝ), Continuous h →
       IntegrableOn h (vec3Ball x₀ r) :=
     fun h r hh => vorticityHeatSmooth_integrableOn_ball hh x₀ r
-    filter_upwards [hper, hevG, hevD, hevΩ] with n hpn hGn hDn hΩn
-    have hIc : ∀ t ∈ Ioo (a + 1 / 32) t₀, t ∈ Icc (a + 1 / 64) t₀ := fun t ht =>
-      ⟨by linarith only [ht.1], le_of_lt ht.2⟩
-    -- the bound at each time
-    have hstep : ∀ t ∈ Ioo (a + 1 / 32) t₀,
-        ∫ x in vec3Ball x₀ (43 / 64), Sf n (x, t) * (Df n (x, t) + Of n (x, t)) ≤
-          ∫ x in vec3Ball x₀ (44 / 64), Q * Cc * (Sf n (x, t) + Df n (x, t) + Ef n (x, t)) := by
-      intro t ht
-      obtain ⟨P1, P2, _⟩ := hpn t (hIc t ht)
-      set Z : ℝ := Cc * ∫ y in vec3Ball x₀ (44 / 64), (Sf n (y, t) + Df n (y, t) + Ef n (y, t))
-        with hZdef
-      have hint44 : ∀ f : Vec3 × ℝ → ℝ, Continuous f →
-          IntegrableOn (fun y : Vec3 => f (y, t)) (vec3Ball x₀ (44 / 64)) := fun f hf =>
-        hib _ _ (hsl f hf t)
-      have hZ0 : 0 ≤ Z := mul_nonneg hCc (setIntegral_nonneg (isOpen_vec3Ball x₀ _).measurableSet
-        fun y _ => by positivity)
-      have hSZ : ∀ x ∈ vec3Ball x₀ (43 / 64), Sf n (x, t) ≤ Z := by
-        intro x hx
-        have hx' : vec3EuclideanNorm (x - x₀) ≤ 43 / 64 := le_of_lt hx
-        calc
-          Sf n (x, t) ≤ Cc * ∫ y in vec3Ball x₀ (44 / 64),
-              Sf n (y, t) + Df n (y, t) + Ef n (y, t) := P2 x hx'
-          _ = Z := by rw [hZdef]
+  filter_upwards [hper, hGn, hDn, hΩn] with n hpn hGn hDn hΩn
+  have hIc : ∀ t ∈ Ioo (a + 1 / 32) t₀, t ∈ Icc (a + 1 / 64) t₀ := fun t ht =>
+    ⟨by linarith only [ht.1], le_of_lt ht.2⟩
+  -- the bound at each time
+  have hstep : ∀ t ∈ Ioo (a + 1 / 32) t₀,
+      ∫ x in vec3Ball x₀ (43 / 64), Sf n (x, t) * (Df n (x, t) + Of n (x, t)) ≤
+        ∫ x in vec3Ball x₀ (44 / 64), Q * Cc * (Sf n (x, t) + Df n (x, t) + Ef n (x, t)) := by
+    intro t ht
+    obtain ⟨P1, P2, _⟩ := hpn t (hIc t ht)
+    set Z : ℝ := Cc * ∫ y in vec3Ball x₀ (44 / 64), (Sf n (y, t) + Df n (y, t) + Ef n (y, t))
+      with hZdef
+    have hint44 : ∀ f : Vec3 × ℝ → ℝ, Continuous f →
+        IntegrableOn (fun y : Vec3 => f (y, t)) (vec3Ball x₀ (44 / 64)) := fun f hf =>
+      hib _ _ (hsl f hf t)
+    have hZ0 : 0 ≤ Z := mul_nonneg hCc (setIntegral_nonneg (isOpen_vec3Ball x₀ _).measurableSet
+    fun y _ => add_nonneg (add_nonneg (hSf0 n (y, t)) (hDf0 n (y, t))) (hEf0 n (y, t)))
+    have hSZ : ∀ x ∈ vec3Ball x₀ (43 / 64), Sf n (x, t) ≤ Z := by
+      intro x hx
+      have hx' : vec3EuclideanNorm (x - x₀) ≤ 43 / 64 := le_of_lt hx
       calc
-        ∫ x in vec3Ball x₀ (43 / 64), Sf n (x, t) * (Df n (x, t) + Of n (x, t)) ≤
-            ∫ x in vec3Ball x₀ (43 / 64), Z * (Df n (x, t) + Of n (x, t)) := by
-          apply setIntegral_mono_on (hib _ _ ((hsl _ (cSf n) t).mul
-            ((hsl _ (cDf n) t).add (hsl _ (cOf n) t))))
-            (hib _ _ (continuous_const.mul ((hsl _ (cDf n) t).add (hsl _ (cOf n) t))))
-            (isOpen_vec3Ball x₀ _).measurableSet
-          intro x hx
-          exact mul_le_mul_of_nonneg_right (hSZ x hx) (add_nonneg
-            (Finset.sum_nonneg fun i _ => Finset.sum_nonneg fun j _ =>
-              Finset.sum_nonneg fun k _ => sq_nonneg _)
-            (Finset.sum_nonneg fun i _ => Finset.sum_nonneg fun j _ => sq_nonneg _))
-        _ = Z * ∫ x in vec3Ball x₀ (43 / 64), (Df n (x, t) + Of n (x, t)) := integral_const_mul _ _
-        _ ≤ Z * Q := mul_le_mul_of_nonneg_left P1 hZ0
-        _ = ∫ x in vec3Ball x₀ (44 / 64), Q * Cc * (Sf n (x, t) + Df n (x, t) + Ef n (x, t)) := by
-          rw [integral_const_mul, hZdef]
-          ring
-    have h2 := vorticity_setIntegral_prod_time_mono measurableSet_Ioo
-      (hbox _ _ _ ((cSf n).mul ((cDf n).add (cOf n))))
-      (hbox _ _ _ (continuous_const.mul (((cSf n).add (cDf n)).add (cEf n)))) hstep
-    have hstepE : ∀ t ∈ Ioo (a + 1 / 32) t₀,
-        ∫ x in vec3Ball x₀ (44 / 64), Ef n (x, t) ≤
-          ∫ x in vec3Ball x₀ (45 / 64), Cc * (Tf n (x, t) + Df n (x, t)) := by
-      intro t ht
-      rw [integral_const_mul]
-      exact (hpn t (hIc t ht)).2.2
-    have h3 := vorticity_setIntegral_prod_time_mono measurableSet_Ioo
-      (hbox _ _ _ (cEf n)) (hbox _ _ _ (continuous_const.mul ((cTf n).add (cDf n)))) hstepE
-    have i1 := hbox _ (44 / 64) (a + 1 / 32) (cSf n)
-    have i2 := hbox _ (44 / 64) (a + 1 / 32) (cDf n)
-    have i3 := hbox _ (44 / 64) (a + 1 / 32) (cEf n)
-    have i4 := hbox _ (45 / 64) (a + 1 / 32) (cTf n)
-    have i5 := hbox _ (45 / 64) (a + 1 / 32) (cDf n)
-    have hS44 : ∫ z in vec3Ball x₀ (44 / 64) ×ˢ Ioo (a + 1 / 32) t₀, Sf n z ≤ |K0| + 1 :=
-      (hmonoW _ (cSf n) (fun z => by simp only [Sf]; positivity) (by norm_num)
-        (by linarith only)).trans hGn
-    have hD44 : ∫ z in vec3Ball x₀ (44 / 64) ×ˢ Ioo (a + 1 / 32) t₀, Df n z ≤ |K2| + 1 :=
-      (hmonoW _ (cDf n) (fun z => by simp only [Df]; positivity) (by norm_num)
-        (by linarith only)).trans hDn
-    have hT45 : ∫ z in vec3Ball x₀ (45 / 64) ×ˢ Ioo (a + 1 / 32) t₀, Tf n z ≤ |K3| + 1 :=
-      (hmonoW _ (cTf n) (fun z => by simp only [Tf]; positivity) (by norm_num)
-        (by linarith only)).trans hΩn
-    have hD45 : ∫ z in vec3Ball x₀ (45 / 64) ×ˢ Ioo (a + 1 / 32) t₀, Df n z ≤ |K2| + 1 :=
-      (hmonoW _ (cDf n) (fun z => by simp only [Df]; positivity) (by norm_num)
-        (by linarith only)).trans hDn
-    have hE44 : ∫ z in vec3Ball x₀ (44 / 64) ×ˢ Ioo (a + 1 / 32) t₀, Ef n z ≤
-        Cc * ((|K3| + 1) + (|K2| + 1)) := by
-      have e : ∫ z in vec3Ball x₀ (45 / 64) ×ˢ Ioo (a + 1 / 32) t₀, Cc * (Tf n z + Df n z) =
-          Cc * ((∫ z in vec3Ball x₀ (45 / 64) ×ˢ Ioo (a + 1 / 32) t₀, Tf n z) +
-            ∫ z in vec3Ball x₀ (45 / 64) ×ˢ Ioo (a + 1 / 32) t₀, Df n z) := by
-        rw [integral_const_mul]
-        congr 1
-        exact integral_add i4 i5
-      exact h3.trans (e.le.trans (mul_le_mul_of_nonneg_left (add_le_add hT45 hD45) hCc))
-    have e : ∫ z in vec3Ball x₀ (44 / 64) ×ˢ Ioo (a + 1 / 32) t₀,
-        Q * Cc * (Sf n z + Df n z + Ef n z) =
-        Q * Cc * ((∫ z in vec3Ball x₀ (44 / 64) ×ˢ Ioo (a + 1 / 32) t₀, Sf n z) +
-          (∫ z in vec3Ball x₀ (44 / 64) ×ˢ Ioo (a + 1 / 32) t₀, Df n z) +
-          ∫ z in vec3Ball x₀ (44 / 64) ×ˢ Ioo (a + 1 / 32) t₀, Ef n z) := by
+        Sf n (x, t) ≤ Cc * ∫ y in vec3Ball x₀ (44 / 64),
+            Sf n (y, t) + Df n (y, t) + Ef n (y, t) := P2 x hx'
+        _ = Z := by rw [hZdef]
+    calc
+      ∫ x in vec3Ball x₀ (43 / 64), Sf n (x, t) * (Df n (x, t) + Of n (x, t)) ≤
+          ∫ x in vec3Ball x₀ (43 / 64), Z * (Df n (x, t) + Of n (x, t)) := by
+        apply setIntegral_mono_on (hib _ _ ((hsl _ (cSf n) t).mul
+          ((hsl _ (cDf n) t).add (hsl _ (cOf n) t))))
+          (hib _ _ (continuous_const.mul ((hsl _ (cDf n) t).add (hsl _ (cOf n) t))))
+          (isOpen_vec3Ball x₀ _).measurableSet
+        intro x hx
+        exact mul_le_mul_of_nonneg_right (hSZ x hx)
+          (add_nonneg (hDf0 n (x, t)) (hOf0 n (x, t)))
+      _ = Z * ∫ x in vec3Ball x₀ (43 / 64), (Df n (x, t) + Of n (x, t)) := integral_const_mul _ _
+      _ ≤ Z * Q := mul_le_mul_of_nonneg_left P1 hZ0
+      _ = ∫ x in vec3Ball x₀ (44 / 64), Q * Cc * (Sf n (x, t) + Df n (x, t) + Ef n (x, t)) := by
+        rw [integral_const_mul, hZdef]
+        ring
+  have h2 := vorticity_setIntegral_prod_time_mono measurableSet_Ioo
+    (hbox _ _ _ ((cSf n).mul ((cDf n).add (cOf n))))
+    (hbox _ _ _ (continuous_const.mul (((cSf n).add (cDf n)).add (cEf n)))) hstep
+  have hstepE : ∀ t ∈ Ioo (a + 1 / 32) t₀,
+      ∫ x in vec3Ball x₀ (44 / 64), Ef n (x, t) ≤
+        ∫ x in vec3Ball x₀ (45 / 64), Cc * (Tf n (x, t) + Df n (x, t)) := by
+    intro t ht
+    rw [integral_const_mul]
+    exact (hpn t (hIc t ht)).2.2
+  have h3 := vorticity_setIntegral_prod_time_mono measurableSet_Ioo
+    (hbox _ _ _ (cEf n)) (hbox _ _ _ (continuous_const.mul ((cTf n).add (cDf n)))) hstepE
+  have i1 := hbox _ (44 / 64) (a + 1 / 32) (cSf n)
+  have i2 := hbox _ (44 / 64) (a + 1 / 32) (cDf n)
+  have i3 := hbox _ (44 / 64) (a + 1 / 32) (cEf n)
+  have i4 := hbox _ (45 / 64) (a + 1 / 32) (cTf n)
+  have i5 := hbox _ (45 / 64) (a + 1 / 32) (cDf n)
+  have hS44 : ∫ z in vec3Ball x₀ (44 / 64) ×ˢ Ioo (a + 1 / 32) t₀, Sf n z ≤ |K0| + 1 :=
+    (hmonoW _ (cSf n) (hSf0 n) (by norm_num)
+      (by linarith only)).trans hGn
+  have hD44 : ∫ z in vec3Ball x₀ (44 / 64) ×ˢ Ioo (a + 1 / 32) t₀, Df n z ≤ |K2| + 1 :=
+    (hmonoW _ (cDf n) (hDf0 n) (by norm_num)
+      (by linarith only)).trans hDn
+  have hT45 : ∫ z in vec3Ball x₀ (45 / 64) ×ˢ Ioo (a + 1 / 32) t₀, Tf n z ≤ |K3| + 1 :=
+    (hmonoW _ (cTf n) (hTf0 n) (by norm_num)
+      (by linarith only)).trans hΩn
+  have hD45 : ∫ z in vec3Ball x₀ (45 / 64) ×ˢ Ioo (a + 1 / 32) t₀, Df n z ≤ |K2| + 1 :=
+    (hmonoW _ (cDf n) (hDf0 n) (by norm_num)
+      (by linarith only)).trans hDn
+  have hE44 : ∫ z in vec3Ball x₀ (44 / 64) ×ˢ Ioo (a + 1 / 32) t₀, Ef n z ≤
+      Cc * ((|K3| + 1) + (|K2| + 1)) := by
+    have e : ∫ z in vec3Ball x₀ (45 / 64) ×ˢ Ioo (a + 1 / 32) t₀, Cc * (Tf n z + Df n z) =
+        Cc * ((∫ z in vec3Ball x₀ (45 / 64) ×ˢ Ioo (a + 1 / 32) t₀, Tf n z) +
+          ∫ z in vec3Ball x₀ (45 / 64) ×ˢ Ioo (a + 1 / 32) t₀, Df n z) := by
       rw [integral_const_mul]
       congr 1
-      exact (integral_add (i1.add i2) i3).trans (congrArg (· + _) (integral_add i1 i2))
-    have hQC : 0 ≤ Q * Cc := mul_nonneg hQ hCc
-    exact h2.trans (e.le.trans
-      (mul_le_mul_of_nonneg_left (add_le_add (add_le_add hS44 hD44) hE44) hQC))
+      exact integral_add i4 i5
+    exact h3.trans (e.le.trans (mul_le_mul_of_nonneg_left (add_le_add hT45 hD45) hCc))
+  have e : ∫ z in vec3Ball x₀ (44 / 64) ×ˢ Ioo (a + 1 / 32) t₀,
+      Q * Cc * (Sf n z + Df n z + Ef n z) =
+      Q * Cc * ((∫ z in vec3Ball x₀ (44 / 64) ×ˢ Ioo (a + 1 / 32) t₀, Sf n z) +
+        (∫ z in vec3Ball x₀ (44 / 64) ×ˢ Ioo (a + 1 / 32) t₀, Df n z) +
+        ∫ z in vec3Ball x₀ (44 / 64) ×ˢ Ioo (a + 1 / 32) t₀, Ef n z) := by
+    rw [integral_const_mul]
+    congr 1
+    exact (integral_add (i1.add i2) i3).trans (congrArg (· + _) (integral_add i1 i2))
+  have hQC : 0 ≤ Q * Cc := mul_nonneg hQ hCc
+  exact h2.trans (e.le.trans
+    (mul_le_mul_of_nonneg_left (add_le_add (add_le_add hS44 hD44) hE44) hQC))
 
 private theorem vorticityLevelThree_timeSliceBounds
-    (x₀ a t₀ M Ch Cc AU H4 H5 Q Kw K1 : ℝ) (hCc : 0 ≤ Cc)
-    (hAU : 0 ≤ AU)
+    (x₀ : Vec3) (a t₀ M Ch Cc AU H4 H5 Q Kw K1 : ℝ) (hCc : 0 ≤ Cc)
     (hAUdef : AU = 3 * (M ^ 2 * (volume (vec3Ball (0 : Vec3) (47 / 64))).toReal))
+    (hH4def : H4 = Cc * (3 * (Ch * |Kw| + 1) + AU))
+    (hH5def : H5 = Cc * (9 * (Ch * |K1| + 1) + H4))
+    (hQdef : Q = H5 + 9 * (Ch * |K1| + 1))
     (U : Fin 3 → Vec3 × ℝ → ℝ) (G Ω1 : Fin 3 → Fin 3 → Vec3 × ℝ → ℝ)
     (D2 Ω2 : Fin 3 → Fin 3 → Fin 3 → Vec3 × ℝ → ℝ)
     (bm : (Vec3 × ℝ → ℝ) → ℕ → Vec3 × ℝ → ℝ)
@@ -194,12 +195,8 @@ private theorem vorticityLevelThree_timeSliceBounds
       (vec3Ball x₀ (48 / 64) ×ˢ Ioo a t₀)))
     (hΩ1 : ∀ i j, MemLp (Ω1 i j) 2 (volume.restrict
       (vec3Ball x₀ (48 / 64) ×ˢ Ioo a t₀)))
-    (hΩ2 : ∀ i j k, MemLp (Ω2 i j k) 2 (volume.restrict
-      (vec3Ball x₀ (48 / 64) ×ˢ Ioo a t₀)))
     (hw : ∀ i, MemLp (vorticityCurl G i) 2 (volume.restrict
       (vec3Ball x₀ (48 / 64) ×ˢ Ioo a t₀)))
-    (hbmS : ∀ f : Vec3 × ℝ → ℝ, MemLp f 2 (volume.restrict
-      (vec3Ball x₀ (48 / 64) ×ˢ Ioo a t₀)) → ∀ n, ContDiff ℝ (⊤ : ℕ∞) (bm f n))
     (hc : ∀ f : Vec3 × ℝ → ℝ, MemLp f 2 (volume.restrict
       (vec3Ball x₀ (48 / 64) ×ˢ Ioo a t₀)) → ∀ n, Continuous (bm f n))
     (hUn : ∀ n i z, |bm (U i) n z| ≤ M)
@@ -242,7 +239,7 @@ private theorem vorticityLevelThree_timeSliceBounds
           bm (Ω2 l j k) n (x, t) ^ 2 + ∑ i : Fin 3, ∑ j : Fin 3, ∑ k : Fin 3,
             bm (D2 i j k) n (x, t) ^ 2)) := by
     filter_upwards [hsw, hsΩ] with n hn1 hn2 t ht
-    obtain ⟨c1, c2, c3, c4⟩ := hchainSlice n t (hIc t ht)
+    obtain ⟨c1, c2, c3, c4⟩ := hchainSlice n t ht
     refine ⟨?_, c4, c3⟩
     have cw : ∀ l, Continuous (fun x : Vec3 => bm (vorticityCurl G l) n (x, t) ^ 2) := fun l =>
       (hsl _ (hc _ (hw l) n) t).pow 2
@@ -279,8 +276,9 @@ private theorem vorticityLevelThree_timeSliceBounds
               (hsl _ (hc _ (hU i) n) t) (fun x => hUn n i (x, t))
           _ = AU := by simp [hAUdef]
     have A2 : ∫ x in vec3Ball x₀ (46 / 64), ∑ i : Fin 3, ∑ j : Fin 3,
-        bm (G i j) n (x, t) ^ 2 ≤ H4 :=
-      c1.trans (mul_le_mul_of_nonneg_left A1 hCc)
+        bm (G i j) n (x, t) ^ 2 ≤ H4 := by
+      rw [hH4def]
+      exact c1.trans (mul_le_mul_of_nonneg_left A1 hCc)
     have A3 : ∫ x in vec3Ball x₀ (46 / 64), (∑ l : Fin 3, ∑ m : Fin 3,
         bm (Ω1 l m) n (x, t) ^ 2 + ∑ i : Fin 3, ∑ j : Fin 3, bm (G i j) n (x, t) ^ 2) ≤
         9 * (Ch * |K1| + 1) + H4 := by
@@ -295,8 +293,10 @@ private theorem vorticityLevelThree_timeSliceBounds
             (hmonoB _ (cΩ l m) (fun x => sq_nonneg _) (by norm_num)).trans (hn2 l m t ht)
         _ = 9 * (Ch * |K1| + 1) := by simp; ring
     have A4 : ∫ x in vec3Ball x₀ (45 / 64), ∑ i : Fin 3, ∑ j : Fin 3, ∑ k : Fin 3,
-        bm (D2 i j k) n (x, t) ^ 2 ≤ H5 :=
-      c2.trans (mul_le_mul_of_nonneg_left A3 hCc)
+        bm (D2 i j k) n (x, t) ^ 2 ≤ H5 := by
+      rw [hH5def]
+      exact c2.trans (mul_le_mul_of_nonneg_left A3 hCc)
+    rw [hQdef]
     rw [integral_add (hib _ _ sD) (hib _ _ sΩ)]
     apply add_le_add
     · exact (hmonoB _ sD (fun x => by positivity) (by norm_num)).trans A4
@@ -308,6 +308,86 @@ private theorem vorticityLevelThree_timeSliceBounds
           exact Finset.sum_le_sum fun m _ =>
             (hmonoB _ (cΩ l m) (fun x => sq_nonneg _) (by norm_num)).trans (hn2 l m t ht)
         _ = 9 * (Ch * |K1| + 1) := by simp; ring
+
+private theorem vorticityLevelThree_aggregatePointwiseBound
+    {W : Set (Vec3 × ℝ)} (x₀ : Vec3) (t Cc : ℝ) (n : ℕ)
+    (bm : (Vec3 × ℝ → ℝ) → ℕ → Vec3 × ℝ → ℝ)
+    (G : Fin 3 → Fin 3 → Vec3 × ℝ → ℝ)
+    (D2 : Fin 3 → Fin 3 → Fin 3 → Vec3 × ℝ → ℝ)
+    (hG : ∀ i j, MemLp (G i j) 2 (volume.restrict W))
+    (hD2 : ∀ i j k, MemLp (D2 i j k) 2 (volume.restrict W))
+    (hbmS : ∀ f : Vec3 × ℝ → ℝ, MemLp f 2 (volume.restrict W) → ∀ n,
+      ContDiff ℝ (⊤ : ℕ∞) (bm f n))
+    (hc : ∀ f : Vec3 × ℝ → ℝ, MemLp f 2 (volume.restrict W) → ∀ n, Continuous (bm f n))
+    (hbound : ∀ x, vec3EuclideanNorm (x - x₀) ≤ 43 / 64 → ∀ i j : Fin 3,
+      bm (G i j) n (x, t) ^ 2 ≤ Cc * ∫ y in vec3Ball x₀ (44 / 64),
+        (bm (G i j) n (y, t) ^ 2 + ∑ k : Fin 3, bm (D2 i j k) n (y, t) ^ 2 +
+          ∑ k : Fin 3, ∑ c : Fin 3, spatialPartial (bm (D2 i j k) n) c (y, t) ^ 2)) :
+    ∀ x, vec3EuclideanNorm (x - x₀) ≤ 43 / 64 →
+      (∑ i : Fin 3, ∑ j : Fin 3, bm (G i j) n (x, t) ^ 2) ≤
+        Cc * ∫ y in vec3Ball x₀ (44 / 64),
+          (∑ i : Fin 3, ∑ j : Fin 3, bm (G i j) n (y, t) ^ 2 +
+            ∑ i : Fin 3, ∑ j : Fin 3, ∑ k : Fin 3, bm (D2 i j k) n (y, t) ^ 2 +
+            ∑ i : Fin 3, ∑ j : Fin 3, ∑ k : Fin 3, ∑ c : Fin 3,
+              spatialPartial (bm (D2 i j k) n) c (y, t) ^ 2) := by
+  have hsl : ∀ h : Vec3 × ℝ → ℝ, Continuous h → Continuous (fun x : Vec3 => h (x, t)) :=
+    fun h hh => hh.comp (continuous_id.prodMk continuous_const)
+  have hib : ∀ (h : Vec3 → ℝ), Continuous h → IntegrableOn h (vec3Ball x₀ (44 / 64)) :=
+    fun h hh => vorticityHeatSmooth_integrableOn_ball hh x₀ (44 / 64)
+  intro x hx
+  have htermCont : ∀ i j, Continuous (fun y : Vec3 =>
+      bm (G i j) n (y, t) ^ 2 + ∑ k : Fin 3, bm (D2 i j k) n (y, t) ^ 2 +
+        ∑ k : Fin 3, ∑ c : Fin 3, spatialPartial (bm (D2 i j k) n) c (y, t) ^ 2) := by
+    intro i j
+    apply Continuous.add
+    · exact ((hsl _ (hc _ (hG i j) n)).pow 2).add
+        (continuous_finsetSum _ fun k _ => (hsl _ (hc _ (hD2 i j k) n)).pow 2)
+    · exact continuous_finsetSum _ fun k _ => continuous_finsetSum _ fun c _ =>
+        (hsl _ ((CKN.spatialPartial_contDiff (hbmS _ (hD2 i j k) n) c).continuous)).pow 2
+  have htermInt : ∀ i j, IntegrableOn (fun y : Vec3 =>
+      bm (G i j) n (y, t) ^ 2 + ∑ k : Fin 3, bm (D2 i j k) n (y, t) ^ 2 +
+        ∑ k : Fin 3, ∑ c : Fin 3, spatialPartial (bm (D2 i j k) n) c (y, t) ^ 2)
+      (vec3Ball x₀ (44 / 64)) := fun i j => hib _ (htermCont i j)
+  have hsumInt : IntegrableOn (fun y : Vec3 =>
+      ∑ i : Fin 3, ∑ j : Fin 3, bm (G i j) n (y, t) ^ 2 +
+        ∑ i : Fin 3, ∑ j : Fin 3, ∑ k : Fin 3, bm (D2 i j k) n (y, t) ^ 2 +
+        ∑ i : Fin 3, ∑ j : Fin 3, ∑ k : Fin 3, ∑ c : Fin 3,
+          spatialPartial (bm (D2 i j k) n) c (y, t) ^ 2) (vec3Ball x₀ (44 / 64)) := by
+    apply hib
+    exact (continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
+      htermCont i j).congr (by intro y; simp only [Finset.sum_add_distrib]; abel)
+  have hsumEq : (∑ i : Fin 3, ∑ j : Fin 3,
+      Cc * ∫ y in vec3Ball x₀ (44 / 64),
+        (bm (G i j) n (y, t) ^ 2 + ∑ k : Fin 3, bm (D2 i j k) n (y, t) ^ 2 +
+          ∑ k : Fin 3, ∑ c : Fin 3, spatialPartial (bm (D2 i j k) n) c (y, t) ^ 2)) =
+      Cc * ∫ y in vec3Ball x₀ (44 / 64),
+        (∑ i : Fin 3, ∑ j : Fin 3, bm (G i j) n (y, t) ^ 2 +
+          ∑ i : Fin 3, ∑ j : Fin 3, ∑ k : Fin 3, bm (D2 i j k) n (y, t) ^ 2 +
+          ∑ i : Fin 3, ∑ j : Fin 3, ∑ k : Fin 3, ∑ c : Fin 3,
+            spatialPartial (bm (D2 i j k) n) c (y, t) ^ 2) := by
+    calc
+      _ = Cc * ∑ i : Fin 3, ∑ j : Fin 3, ∫ y in vec3Ball x₀ (44 / 64),
+            (bm (G i j) n (y, t) ^ 2 + ∑ k : Fin 3, bm (D2 i j k) n (y, t) ^ 2 +
+              ∑ k : Fin 3, ∑ c : Fin 3, spatialPartial (bm (D2 i j k) n) c (y, t) ^ 2) := by
+        simp only [← Finset.mul_sum]
+      _ = Cc * ∫ y in vec3Ball x₀ (44 / 64),
+            ∑ i : Fin 3, ∑ j : Fin 3,
+              (bm (G i j) n (y, t) ^ 2 + ∑ k : Fin 3, bm (D2 i j k) n (y, t) ^ 2 +
+                ∑ k : Fin 3, ∑ c : Fin 3, spatialPartial (bm (D2 i j k) n) c (y, t) ^ 2) := by
+        congr 1
+        symm
+        rw [integral_finsetSum _ (fun i _ => integrable_finsetSum _ (fun j _ => htermInt i j))]
+        exact Finset.sum_congr rfl fun i _ => integral_finsetSum _ (fun j _ => htermInt i j)
+      _ = _ := by
+        congr 2
+        funext y
+        simp only [Finset.sum_add_distrib]
+  calc
+    _ ≤ ∑ i : Fin 3, ∑ j : Fin 3, Cc * ∫ y in vec3Ball x₀ (44 / 64),
+          (bm (G i j) n (y, t) ^ 2 + ∑ k : Fin 3, bm (D2 i j k) n (y, t) ^ 2 +
+            ∑ k : Fin 3, ∑ c : Fin 3, spatialPartial (bm (D2 i j k) n) c (y, t) ^ 2) := by
+      exact Finset.sum_le_sum fun i _ => Finset.sum_le_sum fun j _ => hbound x hx i j
+    _ = _ := hsumEq
 
 private theorem vorticityLevelThree_eventualSquareBounds
     {W : Set (Vec3 × ℝ)} (bm : (Vec3 × ℝ → ℝ) → ℕ → Vec3 × ℝ → ℝ)
@@ -387,6 +467,25 @@ private theorem vorticityLevelThree_eventualSquareBounds
     exact le_of_lt hn
   exact ⟨hevG, hevD, hevΩ⟩
 
+private theorem vorticityLevelThree_boxSubset (x₀ : Vec3) (a t₀ : ℝ) :
+    ∀ {r b : ℝ}, r ≤ 48 / 64 → a ≤ b →
+      vec3Ball x₀ r ×ˢ Ioo b t₀ ⊆ vec3Ball x₀ (48 / 64) ×ˢ Ioo a t₀ := by
+  intro r b hr hb z hz
+  exact ⟨vec3Ball_mono hr hz.1, lt_of_le_of_lt hb hz.2.1, hz.2.2⟩
+
+private theorem vorticityLevelThree_interiorBoxProperties
+    (x₀ : Vec3) (a t₀ : ℝ) (W : Set (Vec3 × ℝ))
+    (hWb : Bornology.IsBounded W)
+    (hsubW : ∀ {r b : ℝ}, r ≤ 48 / 64 → a ≤ b →
+      vec3Ball x₀ r ×ˢ Ioo b t₀ ⊆ W) :
+    (vec3Ball x₀ (43 / 64) ×ˢ Ioo (a + 1 / 32) t₀ ⊆ W) ∧
+      MeasurableSet (vec3Ball x₀ (43 / 64) ×ˢ Ioo (a + 1 / 32) t₀) ∧
+      Bornology.IsBounded (vec3Ball x₀ (43 / 64) ×ˢ Ioo (a + 1 / 32) t₀) := by
+  have hsub := hsubW (r := 43 / 64) (b := a + 1 / 32) (by norm_num) (by linarith)
+  have hmeas : MeasurableSet (vec3Ball x₀ (43 / 64) ×ˢ Ioo (a + 1 / 32) t₀) :=
+    (vorticityBox_isOpen x₀ _ _ t₀).measurableSet
+  exact ⟨hsub, hmeas, hWb.subset hsub⟩
+
 /-- The third-level product bound. -/
 theorem vorticityLevelThree_SP (M Kw K1 K0 K2 K3 : ℝ) (hM : 0 ≤ M) :
     ∃ K : ℝ, 0 ≤ K ∧ ∀ (x₀ : Vec3) (a t₀ : ℝ) (U : Fin 3 → Vec3 × ℝ → ℝ)
@@ -452,11 +551,12 @@ theorem vorticityLevelThree_SP (M Kw K1 K0 K2 K3 : ℝ) (hM : 0 ≤ M) :
     (by norm_num) (by norm_num) (by norm_num)
   obtain ⟨Cc, hCc, hchain⟩ := vorticityChain (ρ := 47 / 64) (by norm_num)
   set AU : ℝ := 3 * (M ^ 2 * (volume (vec3Ball (0 : Vec3) (47 / 64))).toReal) with hAUdef
-  have hAU : 0 ≤ AU := by positivity
   set H4 : ℝ := Cc * (3 * (Ch * |Kw| + 1) + AU) with hH4def
   set H5 : ℝ := Cc * (9 * (Ch * |K1| + 1) + H4) with hH5def
   set Q : ℝ := H5 + 9 * (Ch * |K1| + 1) with hQdef
-  have ⟨hH4, hH5, hQ⟩ : 0 ≤ H4 ∧ 0 ≤ H5 ∧ 0 ≤ Q := by positivity
+  have hH4 : 0 ≤ H4 := by rw [hH4def, hAUdef]; positivity
+  have hH5 : 0 ≤ H5 := by rw [hH5def]; positivity
+  have hQ : 0 ≤ Q := by rw [hQdef]; positivity
   refine ⟨Q * Cc * ((|K0| + 1) + (|K2| + 1) + Cc * ((|K3| + 1) + (|K2| + 1))), by positivity, ?_⟩
   intro x₀ a t₀ U G Ω1 F D2 Ω2 F' hat hta hU hUb hG hD2 hΩ1 hΩ2 hF hF' hdU hdG hdw hdΩ1 hdiv
     hheatw hheatΩ hKw hK1 hK0 hK2 hK3
@@ -563,7 +663,7 @@ theorem vorticityLevelThree_SP (M Kw K1 K0 K2 K3 : ℝ) (hM : 0 ≤ M) :
     rw [e4] at c4
     exact ⟨c1, c2, c3, c4⟩
   have hper := vorticityLevelThree_timeSliceBounds x₀ a t₀ M Ch Cc AU H4 H5 Q Kw K1
-    hCc hAU hAUdef U G Ω1 D2 Ω2 bm hU hG hD2 hΩ1 hΩ2 hw hbmS hc hUn hsw hsΩ hsl hib hmonoB
+    hCc hAUdef hH4def hH5def hQdef U G Ω1 D2 Ω2 bm hU hG hD2 hΩ1 hw hc hUn hsw hsΩ hsl hib hmonoB
     hchainSlice
   -- convergence of the integrals of squares on the box
   have htend : ∀ f : Vec3 × ℝ → ℝ, MemLp f 2 (volume.restrict W) →
@@ -598,9 +698,8 @@ theorem vorticityLevelThree_SP (M Kw K1 K0 K2 K3 : ℝ) (hM : 0 ≤ M) :
   have hbox : ∀ (f : Vec3 × ℝ → ℝ) (r b : ℝ), Continuous f →
       IntegrableOn f (vec3Ball x₀ r ×ˢ Ioo b t₀) := fun f r b hf =>
     vorticityHeatSmooth_integrableOn_box hf x₀ r b t₀
-  have hsubW : ∀ {r b : ℝ}, r ≤ 48 / 64 → a ≤ b → vec3Ball x₀ r ×ˢ Ioo b t₀ ⊆ W := by
-    intro r b hr hb z hz
-    exact ⟨vec3Ball_mono hr hz.1, lt_of_le_of_lt hb hz.2.1, hz.2.2⟩
+  have hsubW : ∀ {r b : ℝ}, r ≤ 48 / 64 → a ≤ b →
+      vec3Ball x₀ r ×ˢ Ioo b t₀ ⊆ W := vorticityLevelThree_boxSubset x₀ a t₀
   have hmonoW : ∀ (f : Vec3 × ℝ → ℝ) {r b : ℝ}, Continuous f → (∀ z, 0 ≤ f z) → r ≤ 48 / 64 →
       a ≤ b → ∫ z in vec3Ball x₀ r ×ˢ Ioo b t₀, f z ≤ ∫ z in W, f z := fun f r b hf h0 hr hb =>
     setIntegral_mono_set (vorticity_integrableOn_of_continuous_bounded hf hWb)
@@ -614,8 +713,10 @@ theorem vorticityLevelThree_SP (M Kw K1 K0 K2 K3 : ℝ) (hM : 0 ≤ M) :
         Cc * ∫ x in vec3Ball x₀ (45 / 64), Tf n (x, t) + Df n (x, t)) := by
     filter_upwards [hper] with n hn t ht
     obtain ⟨h1, h2, h3⟩ := hn t ht
+    have h2sum := vorticityLevelThree_aggregatePointwiseBound (W := W) x₀ t Cc n bm G D2
+      hG hD2 hbmS hc h2
     exact ⟨by simpa [Df, Of] using h1,
-      by simpa [Sf, Df, Ef] using h2,
+      by simpa [Sf, Df, Ef] using h2sum,
       by simpa [Ef, Tf, Df] using h3⟩
   have hEv := vorticityLevelThree_integratedProductEstimate hCc hQ Sf Df Of Tf Ef
     cSf cDf cOf cTf cEf
@@ -623,12 +724,11 @@ theorem vorticityLevelThree_SP (M Kw K1 K0 K2 K3 : ℝ) (hM : 0 ≤ M) :
     (fun n z => by simp only [Df]; positivity)
     (fun n z => by simp only [Of]; positivity)
     (fun n z => by simp only [Tf]; positivity)
+    (fun n z => by simp only [Ef]; positivity)
     hbox hmonoW hperAgg hevG hevD hevΩ
   -- Fatou
   set W' := (vec3Ball x₀ (43 / 64) ×ˢ Ioo (a + 1 / 32) t₀ : Set (Vec3 × ℝ)) with hW'def
-  have hW'W : W' ⊆ W := hsubW (by norm_num) (by linarith only)
-  have hW'm : MeasurableSet W' := (vorticityBox_isOpen x₀ _ _ t₀).measurableSet
-  have hW'b : Bornology.IsBounded W' := hWb.subset hW'W
+  obtain ⟨hW'W, hW'm, hW'b⟩ := vorticityLevelThree_interiorBoxProperties x₀ a t₀ W hWb hsubW
   let ι := (Fin 3 × Fin 3) ⊕ ((Fin 3 × Fin 3 × Fin 3) ⊕ (Fin 3 × Fin 3))
   let A : ι → Vec3 × ℝ → ℝ := Sum.elim (fun p => G p.1 p.2)
     (Sum.elim (fun p => D2 p.1 p.2.1 p.2.2) (fun p => Ω1 p.1 p.2))

@@ -122,7 +122,7 @@ theorem lps_strong_limit_solution
     rw [h1']
     congr 1
     exact integral_congr_ae (h2.mono fun x hx => by
-      show Du (x, t) i j * φ x = f i j (x, t) * φ x
+      change Du (x, t) i j * φ x = f i j (x, t) * φ x
       rw [show f i j (x, t) = Du (x, t) i j from hx])
   have hH1 : ∀ t ∈ Icc 0 T, ∀ i : Fin 3, ∃ h : H1Function (Set.univ : Set Vec3),
       h.toFun = (fun x : Vec3 => u (x, t) i) ∧ h.grad = (fun x : Vec3 => Du' (x, t) i) := by

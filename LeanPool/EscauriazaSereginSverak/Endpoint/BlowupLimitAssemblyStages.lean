@@ -39,23 +39,23 @@ theorem blowupLimitAssembly_trace_indicator_bound
       Lp L2Vec3 3 (volume.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ))))
     (W : Vec3 × Icc (-(3 / 4 : ℝ) ^ 2) 0 → Vec3) (M : ℝ)
     (hvbound : ∀ t, ‖v t‖ ≤ M)
-    (hW : ∀ t, (fun x => W (x,t)) =ᵐ[volume.restrict
+    (hW : ∀ t, (fun x => W (x, t)) =ᵐ[volume.restrict
       (vec3Ball (0 : Vec3) (3 / 4 : ℝ))] (fun x => weakContL3OfLp (v t x))) :
     ∀ t, MemLp ((vec3Ball (0 : Vec3) (3 / 4 : ℝ)).indicator
-        (fun x => W (x,t))) 3 volume ∧
+        (fun x => W (x, t))) 3 volume ∧
       eLpNorm (fun x => vec3EuclideanNorm
         ((vec3Ball (0 : Vec3) (3 / 4 : ℝ)).indicator
           (fun y => W (y,t)) x)) 3 volume ≤ ENNReal.ofReal M := by
   intro t
   let B : Set Vec3 := vec3Ball (0 : Vec3) (3 / 4 : ℝ)
   have hB : MeasurableSet B := (isOpen_vec3Ball 0 (3 / 4 : ℝ)).measurableSet
-  have hlocalMem : MemLp (fun x => W (x,t)) 3 (volume.restrict B) :=
+  have hlocalMem : MemLp (fun x => W (x, t)) 3 (volume.restrict B) :=
     (memLp_congr_ae (hW t)).2
       ((Lp.memLp (v t)).continuousLinearMap_comp weakContL3OfLp)
   have hf : MemLp (B.indicator (fun y => W (y,t))) 3 volume :=
     (memLp_indicator_iff_restrict hB).2 hlocalMem
   have hnormEq : (fun x => vec3EuclideanNorm (B.indicator (fun y => W (y,t)) x)) =
-      B.indicator (fun x => vec3EuclideanNorm (W (x,t))) := by
+      B.indicator (fun x => vec3EuclideanNorm (W (x, t))) := by
     funext x
     by_cases hx : x ∈ B
     · rw [indicator_of_mem hx, indicator_of_mem hx]
@@ -64,7 +64,7 @@ theorem blowupLimitAssembly_trace_indicator_bound
   change eLpNorm (fun x => vec3EuclideanNorm
     (B.indicator (fun y => W (y,t)) x)) 3 volume ≤ ENNReal.ofReal M
   rw [hnormEq, eLpNorm_indicator_eq_eLpNorm_restrict hB]
-  have hpointEq : (fun x => vec3EuclideanNorm (W (x,t))) =ᵐ[volume.restrict B]
+  have hpointEq : (fun x => vec3EuclideanNorm (W (x, t))) =ᵐ[volume.restrict B]
       (fun x => ‖v t x‖) := by
     filter_upwards [hW t] with x hx
     rw [hx, vec3EuclideanNorm_eq_l2]
@@ -129,13 +129,13 @@ theorem blowupLimitAssembly_trace_stages
       Lp L2Vec3 3 (volume.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ))))
     (W : Vec3 × Icc (-(3 / 4 : ℝ) ^ 2) 0 → Vec3)
     (hWmeas : Measurable W)
-    (hW : ∀ t, (fun x => W (x,t)) =ᵐ[
+    (hW : ∀ t, (fun x => W (x, t)) =ᵐ[
       volume.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ))]
       (fun x => weakContL3OfLp (v t x)))
     (htrace : ∀ᵐ t ∂(volume.restrict (Ioo (-(3 / 4 : ℝ) ^ 2) 0)),
       ∃ ht : t ∈ Icc (-(3 / 4 : ℝ) ^ 2) 0,
         (fun x => W (x,⟨t,ht⟩)) =ᵐ[volume.restrict
-          (vec3Ball (0 : Vec3) (3 / 4 : ℝ))] (fun x => u (x,t)))
+          (vec3Ball (0 : Vec3) (3 / 4 : ℝ))] (fun x => u (x, t)))
     (hsourceFormula : ∀ ψ : Vec3 → Vec3,
       ContDiff ℝ (⊤ : ℕ∞) ψ → HasCompactSupport ψ →
       tsupport ψ ⊆ vec3Ball (0 : Vec3) (3 / 4 : ℝ) →
@@ -156,14 +156,14 @@ theorem blowupLimitAssembly_trace_stages
     ∀ m : ℕ, ∃ N : ℕ,
       (∀ n, N ≤ n → ∀ᵐ t ∂(volume.restrict (Ioo (-((m : ℝ) + 1)) 0)),
         ∀ i : Fin 3, HasWeakGradientOn (vec3Ball (0 : Vec3) ((m : ℝ) + 1))
-          (fun x => blowupLimitTraceRescaling W x₀ t₀ (r n) (x,t) i)
-          (fun x => blowupGradient x₀ t₀ (r n) Dm (x,t) i)) ∧
+          (fun x => blowupLimitTraceRescaling W x₀ t₀ (r n) (x, t) i)
+          (fun x => blowupGradient x₀ t₀ (r n) Dm (x, t) i)) ∧
       (∃ G : ℝ≥0∞, G < ⊤ ∧ ∀ n, N ≤ n →
         (∫⁻ t in Icc (-((m : ℝ) + 1)) 0,
           ∫⁻ x in vec3Ball (0 : Vec3) ((m : ℝ) + 1),
             ENNReal.ofReal (spatialGradientSq
               (blowupLimitTraceRescaling W x₀ t₀ (r n))
-              (blowupGradient x₀ t₀ (r n) Dm) (x,t))) ≤ G) ∧
+              (blowupGradient x₀ t₀ (r n) Dm) (x, t))) ≤ G) ∧
       (∀ C : Set Vec3, IsCompact C → C ⊆ vec3Ball (0 : Vec3) ((m : ℝ) + 1) →
         ∀ a b : ℝ, Icc a b ⊆ Icc (-((m : ℝ) + 1)) 0 →
         ∀ w : Vec3 → L2Vec3, ContDiff ℝ (⊤ : ℕ∞) w →
@@ -171,7 +171,7 @@ theorem blowupLimitAssembly_trace_stages
         ∃ A B θ : ℝ, 0 ≤ A ∧ 0 ≤ B ∧ 0 < θ ∧
           ∀ n, N ≤ n → ∀ s t, s ∈ Icc a b → t ∈ Icc a b →
             |(∫ x : Vec3, ∑ i : Fin 3,
-                blowupLimitTraceRescaling W x₀ t₀ (r n) (x,t) i * w x i) -
+                blowupLimitTraceRescaling W x₀ t₀ (r n) (x, t) i * w x i) -
               (∫ x : Vec3, ∑ i : Fin 3,
                 blowupLimitTraceRescaling W x₀ t₀ (r n) (x,s) i * w x i)| ≤
               A * dist t s + B * (dist t s) ^ θ) := by

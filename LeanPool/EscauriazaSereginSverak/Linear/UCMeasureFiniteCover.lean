@@ -19,7 +19,8 @@ public section
 
 
 open MeasureTheory Set CKN CKN.Foundation.Parabolic
-open scoped ENNReal Classical
+open scoped ENNReal
+attribute [local instance] Classical.propDecidable
 
 noncomputable section
 

@@ -36,10 +36,10 @@ theorem blowup_limit_trace_rescaled_compact_slice_bound
     (M : ℝ)
     (hsource : ∀ t,
       MemLp ((vec3Ball (0 : Vec3) (3 / 4 : ℝ)).indicator
-        (fun x => W (x,t))) 3 volume ∧
+        (fun x => W (x, t))) 3 volume ∧
       eLpNorm (fun x => vec3EuclideanNorm
         ((vec3Ball (0 : Vec3) (3 / 4 : ℝ)).indicator
-          (fun y => W (y,t)) x)) 3 volume ≤ ENNReal.ofReal M)
+          (fun y => W (y, t)) x)) 3 volume ≤ ENNReal.ofReal M)
     (x₀ : Vec3) (r : ℝ) (hr : 0 < r)
     (C : Set Vec3) (hC : IsCompact C) :
     ∀ t : Icc (-(3 / 4 : ℝ) ^ 2) 0,
@@ -100,7 +100,7 @@ theorem blowup_limit_trace_terminal_rescaling_tendsto_zero
     (W : Vec3 × Icc (-(3 / 4 : ℝ) ^ 2) 0 → Vec3)
     (hsource : ∀ t,
       MemLp ((vec3Ball (0 : Vec3) (3 / 4 : ℝ)).indicator
-        (fun x => W (x,t))) 3 volume)
+        (fun x => W (x, t))) 3 volume)
     (t₀ : Icc (-(3 / 4 : ℝ) ^ 2) 0)
     (x₀ c : Vec3) (r : ℕ → ℝ)
     (hr : ∀ k, 0 < r k) (hr0 : Tendsto r atTop (nhds 0)) :

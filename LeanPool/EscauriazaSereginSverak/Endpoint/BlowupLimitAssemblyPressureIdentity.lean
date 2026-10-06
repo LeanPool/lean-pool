@@ -45,7 +45,7 @@ equality. -/
 theorem blowupLimitAssemblyPressure_ae_eq_of_slices
     {A B : Vec3 × ℝ → ℝ} (hA : AEStronglyMeasurable A volume) (hB : Measurable B)
     (h : ∀ᵐ t ∂(volume : Measure ℝ),
-      (fun x => A (x,t)) =ᵐ[(volume : Measure Vec3)] (fun x => B (x,t))) :
+      (fun x => A (x, t)) =ᵐ[(volume : Measure Vec3)] (fun x => B (x, t))) :
     A =ᵐ[volume] B := by
   have hvol : (volume : Measure (Vec3 × ℝ)) =
       (volume : Measure Vec3).prod (volume : Measure ℝ) := Measure.volume_eq_prod _ _
@@ -210,7 +210,7 @@ theorem blowupLimitAssemblyPressure_riesz_rescale
     have hvw : v (x,t) = r • goodPointDomain.indicator u w := rfl
     have hFw : F i j (x₀ + r • x, t₀ + r ^ 2 * t) =
         goodPointDomain.indicator (fun q : ParabolicPoint => u q i * u q j) w := rfl
-    show v (x,t) i * v (x,t) j = r ^ 2 * F i j (x₀ + r • x, t₀ + r ^ 2 * t)
+    change v (x,t) i * v (x,t) j = r ^ 2 * F i j (x₀ + r • x, t₀ + r ^ 2 * t)
     rw [hvw, hFw]
     by_cases hmem : w ∈ goodPointDomain
     · rw [indicator_of_mem hmem, indicator_of_mem hmem]

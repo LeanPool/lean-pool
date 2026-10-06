@@ -36,7 +36,7 @@ namespace ESS
 /-- The power `-4` is decreasing on the positive reals. -/
 theorem lps_rpow_neg_four_anti {x y : ℝ} (hy : 0 < y) (h : y ≤ x) :
     Real.rpow x (-4 : ℝ) ≤ Real.rpow y (-4 : ℝ) := by
-  show x ^ (-4 : ℝ) ≤ y ^ (-4 : ℝ)
+  change x ^ (-4 : ℝ) ≤ y ^ (-4 : ℝ)
   rw [Real.rpow_neg (hy.le.trans h), Real.rpow_neg hy.le]
   exact inv_anti₀ (Real.rpow_pos_of_pos hy _) (Real.rpow_le_rpow hy.le h (by norm_num))
 

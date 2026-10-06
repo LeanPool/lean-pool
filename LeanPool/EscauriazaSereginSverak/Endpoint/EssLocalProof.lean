@@ -54,13 +54,13 @@ private theorem goodPoint_bad_scale_sequence :
 
 private theorem goodPoint_energy_decay_conflict
     {ε₀ : ℝ} (hε₀ : 0 < ε₀) {f : ℕ → ℝ≥0∞}
-    (hlower : ∀ k, ENNReal.ofReal (ε₀ / 8) ≤ f k)
+    (hlower : ∀ᶠ k in atTop, ENNReal.ofReal (ε₀ / 8) ≤ f k)
     (hdecay : Tendsto f atTop (nhds 0)) : False := by
   have hpositive : (0 : ℝ≥0∞) < ENNReal.ofReal (ε₀ / 8) :=
     ENNReal.ofReal_pos.mpr (by positivity)
   have hsmall := hdecay.eventually_lt_const hpositive
   obtain ⟨k, hklower, hksmall⟩ :=
-    ((Eventually.of_forall hlower).and hsmall).exists
+    (hlower.and hsmall).exists
   exact (not_le_of_gt hksmall) hklower
 
 private theorem parabolicCylinder_two_subset_exterior
@@ -125,7 +125,7 @@ private theorem essLocal_all_inner_points_good
       IsGoodPoint ε₀ u p z := by
   intro z hz
   by_contra hnotgood
-  have hzregion := hKregion hz
+  have hzregion := hKregion z hz
   have hx₀ : z.1 ∈ closure (vec3Ball (0 : Vec3) (1 / 2 : ℝ)) := by
     rw [closure_vec3Ball (by norm_num : (0 : ℝ) < 1 / 2)]
     simpa only [Set.mem_ofPred_eq, sub_zero] using hzregion.1
@@ -190,8 +190,8 @@ private theorem essLocal_all_inner_points_good
           simpa only [show (2 : ℝ) ^ 2 = 4 by norm_num] using htlo
         linarith only [htime, ht₁.1]
       · exact lt_of_le_of_lt hthi ht₁.2
-  have hQ2tail := parabolicCylinder_two_subset_exterior N x₁ t₁
-    (by simpa [R₂] using hx₁)
+    have hQ2tail := parabolicCylinder_two_subset_exterior N x₁ t₁
+      (by simpa [R₂] using hx₁)
     have hmass : goodPointEnergy U q x₁ t₁ 2 < ENNReal.ofReal εA := by
       have hbound := hNtail N (le_rfl)
       have hprod := essLocal_setIntegral_eq_productTimeRestriction J

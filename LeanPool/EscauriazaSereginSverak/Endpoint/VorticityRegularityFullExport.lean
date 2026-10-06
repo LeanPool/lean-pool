@@ -43,6 +43,14 @@ private theorem vorticityRegularity_commonExportBound
     positivity
   · dsimp [C]
     nlinarith only [hM, hKg, hCb, hC21, hX]
+  · dsimp [C]
+    nlinarith only [hM, hKg, hCb, hC21, hX]
+  · dsimp [C]
+    nlinarith only [hM, hKg, hCb, hC21, hX]
+  · dsimp [C]
+    nlinarith only [hM, hKg, hCb, hC21, hX]
+  · dsimp [C]
+    nlinarith only [hM, hKg, hCb, hC21, hX]
 
 private theorem vorticityRegularity_velocityGradient_bound
     {v : ParabolicPoint → Vec3} {Dv : ParabolicPoint → Fin 3 → Vec3}
@@ -61,14 +69,6 @@ private theorem vorticityRegularity_velocityGradient_bound
     ae_mono (Measure.restrict_mono hsub le_rfl) hv
   filter_upwards [hvel, hgrad] with z hvz hgz
   exact (add_le_add hvz hgz).trans hC
-  · dsimp [C]
-    nlinarith only [hM, hKg, hCb, hC21, hX]
-  · dsimp [C]
-    nlinarith only [hM, hKg, hCb, hC21, hX]
-  · dsimp [C]
-    nlinarith only [hM, hKg, hCb, hC21, hX]
-  · dsimp [C]
-    nlinarith only [hM, hKg, hCb, hC21, hX]
 
 /-- `thm:vorticity-regularity`. -/
 theorem vorticityRegularity_full_quantified : ∀ (q M E : ℝ), 5 / 2 < q → 0 ≤ M → 0 ≤ E →
@@ -206,7 +206,7 @@ theorem vorticityRegularity_full_quantified : ∀ (q M E : ℝ), 5 / 2 < q → 0
       rw [← hrootMeasure]
       exact hrootOpen
     exact vorticityRegularity_velocityGradient_bound x₀ t₀ M Kg C hCess hvM hroot
-  · show ∀ᵐ z ∂((volume : Measure ParabolicPoint).restrict (parabolicCylinder x₀ t₀ (1 / 2))),
+  · change ∀ᵐ z ∂((volume : Measure ParabolicPoint).restrict (parabolicCylinder x₀ t₀ (1 / 2))),
       (fun i => ω i z) = weakVorticity Dv z
     rw [hkey]
     filter_upwards [ae_all_iff.2 hωae] with z hz

@@ -310,7 +310,7 @@ theorem lps_linearStokes_slice_balance_ae {c d : ℝ}
   -- smooth compactly supported approximations of the slice
   obtain ⟨g, hgs, hgc, hgconv, -⟩ := sobolevFamily_smooth_approx (ι := Fin 3) (m := 2)
     (f := fun i x => v (x, t) i)
-    (D := fun α i x => LPS.lps_h1_spatial_family v Dv D2v i α (x, t)) hF
+    (D := fun α i x => LPS.lpsH1SpatialFamily v Dv D2v i α (x, t)) hF
   have hcs (n : ℕ) : HasCompactSupport (fun x : Vec3 => (fun i => g n i x : Vec3)) := by
     refine IsCompact.of_isClosed_subset (isCompact_iUnion fun i => hgc n i)
       (isClosed_tsupport _) ?_

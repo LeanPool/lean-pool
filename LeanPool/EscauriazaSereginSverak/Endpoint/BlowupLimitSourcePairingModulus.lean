@@ -135,10 +135,10 @@ private theorem blowupLimit_component_memLp_of_norm
   exact ⟨hmem, hle.trans hbound⟩
 
 private theorem blowupLimit_scaled_time_lands_in_trace_interval
-    {a b m t₀ : ℝ} (hm : 0 < m)
+    {a b m t₀ : ℝ} (_hm : 0 < m)
     (hab : Icc a b ⊆ Icc (-m) 0)
     (ht₀ : t₀ ∈ Icc (-(1 / 4 : ℝ)) 0)
-    {r : ℝ} (hr : 0 < r) (hsmall : r ^ 2 * m < 5 / 16) :
+    {r : ℝ} (_hr : 0 < r) (hsmall : r ^ 2 * m < 5 / 16) :
     ∀ τ, τ ∈ Icc a b → t₀ + r ^ 2 * τ ∈ Icc (-(3 / 4 : ℝ) ^ 2) 0 := by
   intro τ hτ
   have hτ' := hab hτ
@@ -246,7 +246,7 @@ private theorem blowupLimit_pressureRemainder_transfer
 private theorem blowupLimit_source_pairing_stages
     {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin 3 → Vec3}
     {p : ParabolicPoint → ℝ}
-    {m Cg Bvel Bpress : ℝ} {x₀ : Vec3} {t₀ : ℝ}
+    {m Cg : ℝ} {Bvel Bpress : ℝ≥0∞} {x₀ : Vec3} {t₀ : ℝ}
     (r : ℕ → ℝ) (N : ℕ) (C : Set Vec3) (a b R₀ a₀ : ℝ)
     (Mgrad : ℝ≥0∞)
     (hMgradEq : Mgrad = (ENNReal.ofReal (Cg / 2)) ^ (1 / 2 : ℝ))
@@ -271,8 +271,8 @@ private theorem blowupLimit_source_pairing_stages
           spatialGradientSq (parabolicRescaleVelocity x₀ t₀ (r k) u)
             (parabolicRescaleGradient x₀ t₀ (r k) Du) z) ≤ Cg) ∧
       r k * (m + 3) < 1 / 4 ∧ (r k) ^ 2 * (m + 3) < 3 / 4 ∧ (r k) ^ 2 * m < 5 / 16)
+    (hR0le : R₀ < m + 3) (ha0le : -a₀ < m + 3)
     (hBvel : Bvel < ⊤) (hBpress : Bpress < ⊤)
-    (hMgrad : (ENNReal.ofReal (Cg / 2)) ^ (1 / 2 : ℝ) < ⊤)
     (hsourceMeas : AEStronglyMeasurable (goodPointDomain.indicator u)
       (volume : Measure ParabolicPoint))
     (hDuGood : AEStronglyMeasurable Du (volume.restrict goodPointDomain)) :
@@ -328,22 +328,20 @@ private theorem blowupLimit_source_pairing_stages
     have hn := hterm (n + N) (Nat.le_add_left N n)
     have hspaceQuarter : r (n + N) * R₀ < 1 / 4 := by
       have hsmall := hn.2.2.2.1
-      have hRle : R₀ < m + 3 := by dsimp [R₀]; nlinarith only [hm]
-      exact (mul_lt_mul_of_pos_left hRle (hr (n + N))).trans hsmall
+      exact (mul_lt_mul_of_pos_left hR0le (hr (n + N))).trans hsmall
     have htimeBound : (r (n + N)) ^ 2 * (-a₀) < 3 / 4 := by
       have hsmall := hn.2.2.2.2.1
-      have hRle : -a₀ < m + 3 := by dsimp [a₀]; nlinarith only [hm]
-      exact (mul_lt_mul_of_pos_left hRle (sq_pos_of_pos (hr (n + N)))).trans hsmall
+      exact (mul_lt_mul_of_pos_left ha0le (sq_pos_of_pos (hr (n + N)))).trans hsmall
     have hInt : IntegrableOn (fun z => spatialGradientSq
         (parabolicRescaleVelocity x₀ t₀ (r (n + N)) u)
         (parabolicRescaleGradient x₀ t₀ (r (n + N)) Du) z)
         (spaceTimeSet (vec3Ball 0 R₀) (Ioo a₀ 0)) volume := by
-      simpa only [hball, R₀, a₀, spaceTimeSet] using hn.2.2.1.1
+      simpa only [hball, spaceTimeSet] using hn.2.2.1.1
     have henergyBound : (∫ z in spaceTimeSet (vec3Ball 0 R₀) (Ioo a₀ 0),
         spatialGradientSq (parabolicRescaleVelocity x₀ t₀ (r (n + N)) u)
           (parabolicRescaleGradient x₀ t₀ (r (n + N)) Du) z) ≤ Cg / 2 := by
       apply (le_div_iff₀ (by norm_num : (0 : ℝ) < 2)).2
-      simpa only [hball, R₀, a₀, spaceTimeSet, mul_comm] using hn.2.2.1.2
+      simpa only [hball, spaceTimeSet, mul_comm] using hn.2.2.1.2
     have hDuRescale := blowupLimit_rescaleGradient_aestronglyMeasurable
       hDuGood x₀ t₀ (r (n + N)) R₀ a₀ (hr (n + N)) hxnorm ht₀
       (by exact hspaceQuarter.trans (by norm_num : (1 / 4 : ℝ) < 1 / 2))
@@ -394,7 +392,7 @@ private theorem blowupLimit_source_pairing_stages
         (fun z => parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i j) 2 μOpen ≤ Mgrad :=
       (eLpNorm_mono_ae hscalarAEM (Filter.Eventually.of_forall hpoint)).trans hrowBound
     have hmu : μC ≤ μOpen := by
-      dsimp [μC, μOpen, R₀, a₀]
+      dsimp [μC, μOpen]
       exact blowupLimit_restrict_closed_interval_le_open hCbig hIbig
     have hscalarMem : MemLp
         (fun z => parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i j) 2 μC :=
@@ -418,7 +416,7 @@ private theorem blowupLimit_source_pairing_stages
   exact ⟨hmodStage, hpressStage, hgradStage⟩
 
 private theorem blowupLimit_source_scale_bounds_eventually
-    {m : ℝ} (hm : 0 < m) (r : ℕ → ℝ) (hr0 : Tendsto r atTop (nhds 0)) :
+    {m : ℝ} (_hm : 0 < m) (r : ℕ → ℝ) (hr0 : Tendsto r atTop (nhds 0)) :
     (∀ᶠ k in atTop, r k * (m + 3) < 1 / 4) ∧
     (∀ᶠ k in atTop, (r k) ^ 2 * (m + 3) < 3 / 4) ∧
     (∀ᶠ k in atTop, (r k) ^ 2 * m < 5 / 16) := by
@@ -469,7 +467,7 @@ private theorem blowupLimit_source_gradientBound_lt_top {Cg : ℝ} :
   exact ENNReal.ofReal_lt_top.ne
 
 private theorem blowupLimit_source_interval_enlargement
-    {m a b : ℝ} (hm : 0 < m) (hab : Icc a b ⊆ Icc (-m) 0) :
+    {m a b : ℝ} (_hm : 0 < m) (hab : Icc a b ⊆ Icc (-m) 0) :
     Icc a b ⊆ Icc (-(m + 1)) 0 := by
   intro t ht
   have ht' := hab ht
@@ -478,7 +476,7 @@ private theorem blowupLimit_source_interval_enlargement
 
 private theorem blowupLimit_source_spatial_enlargement
     {C : Set Vec3} {m : ℝ} (hC : C ⊆ vec3Ball (0 : Vec3) m)
-    (hm : 0 < m) : C ⊆ vec3Ball (0 : Vec3) (m + 1) := by
+    (_hm : 0 < m) : C ⊆ vec3Ball (0 : Vec3) (m + 1) := by
   intro x hx
   have hx' : vec3EuclideanNorm x < m := by
     simpa only [mem_vec3Ball, sub_zero] using hC hx
@@ -592,7 +590,7 @@ theorem blowup_limit_pairing_modulus_from_source_data
       (spaceTimeSet (CKN.euclideanBall 0 1) (Ioo (-1 : ℝ) 0)) :=
     by rw [hball1]; exact (isOpen_vec3Ball 0 1).measurableSet.prod measurableSet_Ioo
   obtain ⟨hp₂', hharm'⟩ := blowupLimit_pressureRemainder_transfer μsplit hμsplit hball1
-    hsplitSet hp₂ind hharm
+    hsplitSet hp₂ hharm
   have hlocal := blowup_limit_local_energy_pressure_of_source_data
     hu hDu hpmeas hL2 henergy hpLp hL3 hgrad
     (fun ψ hψ => hS2 ψ hψ) hS3 x₀ t₀ r hx₀ ht₀ hr hr0
@@ -645,8 +643,10 @@ theorem blowup_limit_pairing_modulus_from_source_data
       r k * (m + 3) < 1 / 4 ∧ (r k) ^ 2 * (m + 3) < 3 / 4 ∧
       (r k) ^ 2 * m < 5 / 16 := by
     intro k hk
-    have hk' := hN k hk
-    simpa only [R₀, a₀] using hk'
+    rcases hN k hk with ⟨hvelocity, hpressure, ⟨hintegrable, hgradient, _hpressureData⟩,
+      hspace, htime, hpair⟩
+    refine ⟨?_, hpressure, ⟨hintegrable, hgradient⟩, hspace, htime, hpair⟩
+    simpa only [μOpen, R₀, a₀, blowupVelocity] using hvelocity
   have hMgrad := blowupLimit_source_gradientBound_lt_top (Cg := Cg)
   let Mgrad : ℝ≥0∞ := (ENNReal.ofReal (Cg / 2)) ^ (1 / 2 : ℝ)
   have hsourceMeas : AEStronglyMeasurable
@@ -656,7 +656,8 @@ theorem blowup_limit_pairing_modulus_from_source_data
     simpa only [goodPointDomain, spaceTimeSet] using hDu
   obtain ⟨hmodStage, hpressStage, hgradStage⟩ := blowupLimit_source_pairing_stages
     r N C a b R₀ a₀ Mgrad rfl hxnorm ht₀ hr hCbig hIbig hball hμbound hterm
-    hBvel hBpress hMgrad hsourceMeas hDuGood
+    (by dsimp [R₀]; linarith [hm]) (by dsimp [a₀]; linarith [hm])
+    hBvel hBpress hsourceMeas hDuGood
   have hspaceN : ∀ k, N ≤ k → r k * (m + 3) < 1 / 4 := fun k hk =>
     (hN k hk).2.2.2.1
   have hpairN : ∀ k, N ≤ k → (r k) ^ 2 * m < 5 / 16 := fun k hk =>
@@ -694,7 +695,7 @@ theorem blowup_limit_pairing_modulus_from_source_data
         Bvel Mgrad Bpress Mtest Mdiv hBvel hMgrad hBpress hMtest hMdiv
         (by
           intro n i
-          simpa only [blowupVelocity] using hmodStage n i)
+          exact hmodStage n i)
         (by
           intro n i j
           exact hgradStage n i j)

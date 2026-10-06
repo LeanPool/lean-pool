@@ -57,7 +57,7 @@ private structure VorticityContinuityExportHeatControl
           (bm q p.1 (x, t) - bm q p.2 (x, t)) ^ 2 ≤ δ
 
 private theorem vorticityContinuityExport_uniformCauchyLimit
-    (x₀ : Vec3) (a t₀ Cs A : ℝ)
+    (x₀ : Vec3) (a t₀ Cs A : ℝ) (hCs : 0 ≤ Cs)
     (bm : ℕ → Vec3 × ℝ → ℝ)
     (hbmContinuous : ∀ n, Continuous (bm n))
     (hbound : ∀ᶠ n in atTop, ∀ t ∈ Icc (a + 1 / 64) t₀, ∀ x,
@@ -81,7 +81,8 @@ private theorem vorticityContinuityExport_uniformCauchyLimit
   have hUC : UniformCauchySeqOn bm atTop K := by
     rw [Metric.uniformCauchySeqOn_iff]
     intro η hη
-    have hne : (13 * Cs + 1) ≠ 0 := by positivity
+    have hpos : 0 < 13 * Cs + 1 := by positivity
+    have hne : (13 * Cs + 1) ≠ 0 := hpos.ne'
     have hδ : 0 < η ^ 2 / (2 * (13 * Cs + 1)) := by positivity
     obtain ⟨⟨N1, N2⟩, hN⟩ := eventually_atTop.1
       (hcauchy _ hδ)
@@ -112,7 +113,18 @@ private theorem vorticityContinuityExport_uniformCauchyLimit
   exact ⟨ω, hωcontinuous, hωbounded, hlim, hTU⟩
 
 private theorem vorticityContinuityExport_sliceSobolevBound
-  (x₀ : Vec3) (Cs : ℝ) : ∀ (f : Vec3 × ℝ → ℝ) (gg : Fin 3 → Vec3 × ℝ → ℝ)
+  (x₀ : Vec3) (Cs : ℝ) (hCs : 0 ≤ Cs)
+  (hsl : ∀ f : Vec3 × ℝ → ℝ, Continuous f → ∀ t : ℝ,
+    Continuous (fun x : Vec3 => f (x, t)))
+  (hib : ∀ f : Vec3 → ℝ, Continuous f → IntegrableOn f (vec3Ball x₀ (42 / 64)))
+  (hsob : ∀ (x₁ : Vec3) (t : ℝ) (f : Vec3 × ℝ → ℝ) (gg : Fin 3 → Vec3 × ℝ → ℝ),
+    ContDiff ℝ (⊤ : ℕ∞) f → (∀ j, ContDiff ℝ (⊤ : ℕ∞) (gg j)) →
+    (∀ x ∈ vec3Ball x₁ (42 / 64), ∀ j, spatialPartial f j (x, t) = gg j (x, t)) →
+    ∀ x, vec3EuclideanNorm (x - x₁) ≤ 38 / 64 →
+      f (x, t) ^ 2 ≤ Cs * ∫ y in vec3Ball x₁ (42 / 64),
+        (f (y, t) ^ 2 + ∑ j : Fin 3, gg j (y, t) ^ 2 +
+          ∑ j : Fin 3, ∑ k : Fin 3, spatialPartial (gg j) k (y, t) ^ 2)) :
+    ∀ (f : Vec3 × ℝ → ℝ) (gg : Fin 3 → Vec3 × ℝ → ℝ)
     (hh : Fin 3 → Fin 3 → Vec3 × ℝ → ℝ) (t B : ℝ),
     ContDiff ℝ (⊤ : ℕ∞) f → (∀ j, ContDiff ℝ (⊤ : ℕ∞) (gg j)) →
     (∀ j k, Continuous (hh j k)) →
@@ -224,15 +236,33 @@ private theorem vorticityContinuityExport_limitSliceDerivatives
   have hHs : IntegrableOn
       (fun x : Vec3 => ∑ j : Fin 3, ∑ k : Fin 3, H j k x ^ 2) Bs :=
     integrable_finsetSum _ fun j _ => integrable_finsetSum _ fun k _ => hHsq j k
-  rw [integral_add (hωsq.add hGs).integrable hHs.integrable,
-    integral_add hωsq.integrable hGs.integrable,
-    integral_finsetSum _ fun j _ => hGsq j]
+  have hGsumInt : (∫ x in Bs, ∑ j : Fin 3, G j x ^ 2) =
+      ∑ j : Fin 3, ∫ x in Bs, G j x ^ 2 :=
+    integral_finsetSum _ fun j _ => hGsq j
   have hHsumInt : (∫ x in Bs, ∑ j : Fin 3, ∑ k : Fin 3, H j k x ^ 2) =
       ∑ j : Fin 3, ∑ k : Fin 3, ∫ x in Bs, H j k x ^ 2 := by
     rw [integral_finsetSum _ fun j _ => integrable_finsetSum _ fun k _ => hHsq j k]
     exact Finset.sum_congr rfl fun j _ => integral_finsetSum _ fun k _ => hHsq j k
-  rw [hHsumInt]
-  calc _ ≤ A + 3 * A + 9 * A := add_le_add (add_le_add hωbound hGsum) hHsum
+  have hIntSplit : (∫ x in Bs, (ωt x ^ 2 + ∑ j : Fin 3, G j x ^ 2 +
+        ∑ j : Fin 3, ∑ k : Fin 3, H j k x ^ 2)) =
+      (∫ x in Bs, ωt x ^ 2) + ((∫ x in Bs, ∑ j : Fin 3, G j x ^ 2) +
+        ∫ x in Bs, ∑ j : Fin 3, ∑ k : Fin 3, H j k x ^ 2) := by
+    calc
+      _ = ∫ x in Bs, ωt x ^ 2 + (∑ j : Fin 3, G j x ^ 2 +
+          ∑ j : Fin 3, ∑ k : Fin 3, H j k x ^ 2) := by
+        apply integral_congr_ae
+        filter_upwards [] with x
+        ring
+      _ = (∫ x in Bs, ωt x ^ 2) +
+          ∫ x in Bs, (∑ j : Fin 3, G j x ^ 2 +
+            ∑ j : Fin 3, ∑ k : Fin 3, H j k x ^ 2) := by
+        exact integral_add hωsq.integrable (hGs.add hHs).integrable
+      _ = (∫ x in Bs, ωt x ^ 2) +
+          ((∫ x in Bs, ∑ j : Fin 3, G j x ^ 2) +
+            ∫ x in Bs, ∑ j : Fin 3, ∑ k : Fin 3, H j k x ^ 2) := by
+        rw [integral_add hGs.integrable hHs.integrable]
+  rw [hIntSplit, hGsumInt, hHsumInt]
+  calc _ ≤ A + (3 * A + 9 * A) := add_le_add hωbound (add_le_add hGsum hHsum)
     _ = 13 * A := by ring
 
 private theorem vorticityContinuityExport_l2LimitFromCauchy
@@ -308,17 +338,44 @@ private theorem vorticityContinuityExport_controlledMollificationIntegrals
     control.squareBound (h m k) (Fh m k) (hh m k) (hFh m k) (hheath m k)
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
   · filter_upwards [hboundW] with n hn t ht
-    exact (hn t ht).trans (hA1 _ (by linarith only [hKw, le_abs_self Kw]))
+    have henergy : (∫ y in W, (w y ^ 2 + ∑ j : Fin 3, Fw j y ^ 2)) ≤
+        |Kw| + |K1| + |K2| := by
+      calc
+        _ ≤ Kw := hKw
+        _ ≤ |Kw| := le_abs_self Kw
+        _ ≤ |Kw| + |K1| + |K2| := by
+          exact (le_add_of_nonneg_right (abs_nonneg K1)).trans
+            (le_add_of_nonneg_right (abs_nonneg K2))
+    exact (hn t ht).trans (hA1 _ henergy)
   · rw [eventually_all]
     intro m
     filter_upwards [hboundG m] with n hn t ht
-    exact (hn t ht).trans (hA1 _ (by linarith only [hK1 m, le_abs_self K1]))
+    have henergy : (∫ y in W, (g m y ^ 2 + ∑ j : Fin 3, Fg m j y ^ 2)) ≤
+        |Kw| + |K1| + |K2| := by
+      calc
+        _ ≤ K1 := hK1 m
+        _ ≤ |K1| := le_abs_self K1
+        _ ≤ |Kw| + |K1| + |K2| := by
+          exact (le_add_of_nonneg_left (abs_nonneg Kw)).trans
+            (le_add_of_nonneg_right (abs_nonneg K2))
+    exact (hn t ht).trans (hA1 _ henergy)
   · rw [eventually_all]
     intro m
     rw [eventually_all]
     intro k
     filter_upwards [hboundH m k] with n hn t ht
-    exact (hn t ht).trans (hA1 _ (by linarith only [hK2 m k, le_abs_self K2]))
+    have henergy : (∫ y in W, (h m k y ^ 2 + ∑ j : Fin 3, Fh m k j y ^ 2)) ≤
+        |Kw| + |K1| + |K2| := by
+      calc
+        _ ≤ K2 := hK2 m k
+        _ ≤ |K2| := le_abs_self K2
+        _ ≤ |Kw| + |K1| + |K2| := by
+          calc
+            |K2| ≤ |K1| + |K2| := le_add_of_nonneg_left (abs_nonneg K1)
+            _ ≤ |Kw| + |K1| + |K2| := by
+              rw [add_assoc]
+              exact le_add_of_nonneg_left (abs_nonneg Kw)
+    exact (hn t ht).trans (hA1 _ henergy)
   · exact control.pairCauchy w Fw hw hFw hheatw
   · intro δ hδ
     rw [eventually_all]
@@ -364,7 +421,7 @@ private theorem vorticityContinuityExport_sliceMollificationLimit
       exact lt_of_le_of_lt (hmono.trans (hp t ht)) (by linarith only [hδ])
   have happrox : ∀ᶠ n in atTop, ∫ x in Bs, bm q n (x, t) ^ 2 ≤ A := by
     filter_upwards [control.squareBound q F hq hF hheat] with n hn
-    have hnt := hn n t ht
+    have hnt := hn t ht
     have hcont : Continuous (fun x : Vec3 => bm q n (x, t) ^ 2) := (hcontinuous n).pow 2
     exact (setIntegral_mono_set
       (vorticityHeatSmooth_integrableOn_ball hcont x₀ (42 / 64))
@@ -390,7 +447,7 @@ private theorem vorticityContinuityExport_identifyTimeSliceLimit
 
 private theorem vorticityContinuityExport_stageTimeSliceLimits
     {W : Set (Vec3 × ℝ)} {Bs : Set Vec3}
-    (x₀ : Vec3) (t A Kw K1 K2 : ℝ)
+    (_x₀ : Vec3) (t A Kw K1 K2 : ℝ)
     (bm : (Vec3 × ℝ → ℝ) → ℕ → Vec3 × ℝ → ℝ)
     (stageLimit : ∀ (q : Vec3 × ℝ → ℝ) (F : Fin 3 → Vec3 × ℝ → ℝ),
       MemLp q 2 (volume.restrict W) →
@@ -454,6 +511,13 @@ private theorem vorticityContinuityExport_stageTimeSliceLimits
   exact ⟨stageLimit w Fw hw hFw hheatw hKw',
     fun m => stageLimit (g m) (Fg m) (hg m) (hFg m) (hheatg m) (hK1' m),
     fun m k => stageLimit (h m k) (Fh m k) (hh m k) (hFh m k) (hheath m k) (hK2' m k)⟩
+
+private theorem vorticityContinuityExport_energyBound
+    (Ch S X A : ℝ) (hCh : 0 ≤ Ch) (hX : X ≤ S) (hA : A = Ch * S + 1) :
+    Ch * X + 1 ≤ A := by
+  calc
+    _ ≤ Ch * S + 1 := add_le_add (mul_le_mul_of_nonneg_left hX hCh) le_rfl
+    _ = A := hA.symm
 
 /-- A continuous representative and uniform time-slice `H²` data from heat equations for the field
 and its first and second spatial weak derivatives. -/
@@ -539,6 +603,7 @@ theorem vorticity_continuousRep_export (Kw K1 K2 : ℝ) :
   obtain ⟨ε, hεpos, hεlim, hεle⟩ := vorticity_engine_radii (show (0 : ℝ) < 1 / 768 by norm_num)
   set bm : (Vec3 × ℝ → ℝ) → ℕ → Vec3 × ℝ → ℝ :=
     fun f n => vorticityBackMollify W f (ε n) (hεpos n) with hbmdef
+  have hat' : a + 1 / 64 < t₀ := hat
   let heatControl : VorticityContinuityExportHeatControl x₀ t₀ a Ch W bm := {
     squareBound := by
       intro q F hq hF hweak
@@ -570,11 +635,10 @@ theorem vorticity_continuousRep_export (Kw K1 K2 : ℝ) :
   have hib : ∀ f : Vec3 → ℝ, Continuous f → IntegrableOn f (vec3Ball x₀ (42 / 64)) :=
     fun f hf => vorticityHeatSmooth_integrableOn_ball hf x₀ _
   -- the embedding at a fixed time
-  have key := vorticityContinuityExport_sliceSobolevBound x₀ Cs
+  have key := vorticityContinuityExport_sliceSobolevBound x₀ Cs hCs hsl hib hsob
   have hreg : ∀ t ∈ Icc (a + 1 / 64) t₀, ∀ y ∈ vec3Ball x₀ (42 / 64),
       (y, t) ∈ vec3Ball x₀ (42 / 64) ×ˢ Ioc (a + 1 / 128) t₀ := fun t ht y hy =>
     ⟨hy, by linarith only [ht.1], ht.2⟩
-  have hat' : a + 1 / 64 < t₀ := hat
   -- Uniform mollification controls transfer the stage bounds and Cauchy estimates.
   obtain ⟨hboundW, hboundG, hboundH, hpairW, hpairG, hpairH⟩ :=
     vorticityContinuityExport_controlledMollificationIntegrals x₀ a t₀ Ch Kw K1 K2 hCh
@@ -608,8 +672,8 @@ theorem vorticity_continuousRep_export (Kw K1 K2 : ℝ) :
   set K := ({x : Vec3 | vec3EuclideanNorm (x - x₀) ≤ 38 / 64} ×ˢ Icc (a + 1 / 64) t₀ :
     Set (Vec3 × ℝ)) with hKdef
   obtain ⟨ω, hωcontinuous, hωbounded, hlim, hTU⟩ :=
-    vorticityContinuityExport_uniformCauchyLimit x₀ a t₀ Cs A (fun n => bm w n)
-      (fun n => (hc _ hw n).continuous) hbd hcauchy
+    vorticityContinuityExport_uniformCauchyLimit x₀ a t₀ Cs A hCs (fun n => bm w n)
+      (fun n => hc _ hw n) hbd hcauchy
   refine ⟨ε, hεpos, ω, hωcontinuous, hωbounded, ?_, ?_, ?_⟩
   · set B := (vec3Ball x₀ (38 / 64) ×ˢ Ioo (a + 1 / 64) t₀ : Set (Vec3 × ℝ)) with hBdef
     have hBW : B ⊆ W := by
@@ -644,7 +708,6 @@ theorem vorticity_continuousRep_export (Kw K1 K2 : ℝ) :
         (hsl _ (hc q hq n) t).aestronglyMeasurable).2
       exact vorticityHeatSmooth_integrableOn_ball ((hsl _ (hc q hq n) t).pow 2) x₀ _
     set S : ℝ := |Kw| + |K1| + |K2| with hSdef
-    have hS0 : 0 ≤ S := by positivity
     have hsliceLimit : ∀ (q : Vec3 × ℝ → ℝ) (F : Fin 3 → Vec3 × ℝ → ℝ),
         MemLp q 2 (volume.restrict W) →
         (∀ j, MemLp (F j) 2 (volume.restrict W)) →
@@ -653,11 +716,9 @@ theorem vorticity_continuousRep_export (Kw K1 K2 : ℝ) :
         ∃ Q : Vec3 → ℝ, MemLp Q 2 (volume.restrict Bs) ∧
           Tendsto (fun n => eLpNorm (fun x : Vec3 => bm q n (x, t) - Q x) 2
             (volume.restrict Bs)) atTop (𝓝 0) ∧ (∫ x in Bs, Q x ^ 2) ≤ A := by
-      intro q F hq hF hheat hbudget
-      have henergy : Ch * (∫ y in W, (q y ^ 2 + ∑ j : Fin 3, F j y ^ 2)) + 1 ≤ A := by
-        calc
-          _ ≤ Ch * S + 1 := add_le_add (mul_le_mul_of_nonneg_left hbudget hCh) le_rfl
-          _ = A := by simp [A, S]
+      intro q F hq hF hheat hbudget; have henergy := vorticityContinuityExport_energyBound Ch S
+        (∫ y in W, (q y ^ 2 + ∑ j : Fin 3, F j y ^ 2)) A hCh hbudget
+        (by simpa [S] using hAdef)
       exact vorticityContinuityExport_sliceMollificationLimit x₀ a t₀ t Ch A ht bm
         heatControl q F hq hF hheat henergy (fun n => hsmem q hq n)
         (fun n => (hsl _ (hc q hq n) t)) hBsmeas hBs42
@@ -680,7 +741,11 @@ theorem vorticity_continuousRep_export (Kw K1 K2 : ℝ) :
     have hWae : Wslice =ᵐ[volume.restrict Bs] (fun x => ω (x, t)) :=
       vorticityContinuityExport_identifyTimeSliceLimit (fun n x => bm w n (x, t)) Wslice
         (fun x => ω (x, t)) hBsmeas (fun n => hsmem w hw n) hWsliceMem hWsliceConv
-        (fun x hx => hlim (x, t) ⟨le_of_lt hx.1, ht.1, ht.2⟩)
+        (fun x hx => by
+          apply hlim (x, t)
+          change vec3EuclideanNorm (x - x₀) ≤ 38 / 64 ∧
+            t ∈ Icc (a + 1 / 64) t₀
+          exact ⟨le_of_lt hx, ht⟩)
     have hωmem : MemLp (fun x : Vec3 => ω (x, t)) 2 (volume.restrict Bs) :=
       MemLp.ae_eq hWae hWsliceMem
     have hωconv : Tendsto (fun n => eLpNorm (fun x : Vec3 => bm w n (x, t) - ω (x, t)) 2
@@ -694,7 +759,8 @@ theorem vorticity_continuousRep_export (Kw K1 K2 : ℝ) :
         filter_upwards [hWae, ae_restrict_mem hBsmeas] with x hx hxB
         rw [hx]
       exact heq.trans_le hWsliceBound
-    have hlimitData := vorticityContinuityExport_limitSliceDerivatives Bs (fun x => ω (x, t))
+    have hlimitData := vorticityContinuityExport_limitSliceDerivatives (Bs := Bs)
+      (fun x => ω (x, t))
       (fun n x => bm w n (x, t)) (fun j n x => bm (g j) n (x, t))
       (fun j k n x => bm (h j k) n (x, t)) G H A hBsmeas
       (fun n => (hbmS _ hw n).comp (contDiff_id.prodMk contDiff_const))
@@ -712,7 +778,7 @@ theorem vorticity_continuousRep_export (Kw K1 K2 : ℝ) :
           _ = bm (h j k) n (x, t) := r2 n (x, t) (hreg t ht x (hBs42 hx)) j k)
       hωboundSlice hGbound hHbound
     refine ⟨G, H, hlimitData.1, hlimitData.2.1, ?_⟩
-    dsimp [A, S]
-    nlinarith only [hlimitData.2.2, hCh, hS0]
+    dsimp [A, S]; nlinarith only [hlimitData.2.2, hCh,
+      (show 0 ≤ |Kw| + |K1| + |K2| from by positivity)]
 
 end ESS

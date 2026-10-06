@@ -55,14 +55,14 @@ theorem blowupLimitClauses_box_ae_subset {K : Set Vec3} {R : ℝ} (hK : K ⊆ ve
   exact ⟨hK hzK.1, lt_of_lt_of_le ha' hzK.2.1, lt_of_le_of_ne hzK.2.2 hz⟩
 
 private theorem blowupLimitClauses_rescaled_flux_integrable
-    {μ : Measure ParabolicPoint}
+    {μ : Measure ParabolicPoint} [IsFiniteMeasure μ]
     (V : ParabolicPoint → Vec3)
     (DV : ParabolicPoint → Fin 3 → Fin 3 → ℝ)
     (P : ParabolicPoint → ℝ)
     (Dw : Fin 3 → Fin 3 → ParabolicPoint → ℝ)
     (divw : ParabolicPoint → ℝ) (Gw DwBound : ℝ)
     (hV : MemLp V 2 μ) (hDV : MemLp DV 2 μ)
-    (hP : MemLp P (3 / 2 : ℝ≥0∞))
+    (hP : MemLp P (3 / 2 : ℝ≥0∞) μ)
     (hDw : ∀ i j, Measurable (Dw i j))
     (hgradw : ∀ z i j, |Dw i j z| ≤ Gw)
     (hdiv : Measurable divw)
@@ -108,7 +108,7 @@ private theorem blowupLimitClauses_closedTime_slices_have_gradient
 
 private theorem blowupLimitClauses_rescaled_support_and_time_window
     {K₀ : Set Vec3} (x₀ : Vec3) (t₀ r ρ R a : ℝ)
-    (hK₀ρ : ∀ x ∈ K₀, vec3EuclideanNorm x < ρ) (hρR : ρ ≤ R)
+    (hK₀ρ : K₀ ⊆ vec3Ball (0 : Vec3) ρ) (hρR : ρ ≤ R)
     (hr : 0 < r) (hxnorm : vec3EuclideanNorm x₀ ≤ 1 / 2)
     (ht₀ : t₀ ∈ Icc (-(1 / 4 : ℝ)) 0)
     (hrR : r * R < 1 / 4) (hra : r ^ 2 * (-a) < 5 / 16) :
@@ -116,7 +116,7 @@ private theorem blowupLimitClauses_rescaled_support_and_time_window
     ∀ τ, τ ∈ Icc a 0 → t₀ + r ^ 2 * τ ∈ Icc (-(3 / 4 : ℝ) ^ 2) 0 := by
   constructor
   · rintro y ⟨x, hx, rfl⟩
-    have hxρ := hK₀ρ x hx
+    have hxρ := hK₀ρ hx
     rw [mem_vec3Ball, sub_zero] at hxρ ⊢
     have htri := vec3EuclideanNorm_add_le x₀ (r • x)
     rw [vec3EuclideanNorm_smul, abs_of_pos hr] at htri
@@ -160,6 +160,16 @@ private theorem blowupLimitClauses_gradient_memLp_on_window
       exact_mod_cast h
     _ < ⊤ := hfin
 
+private theorem blowupLimitClauses_gradient_memLp_on_smaller_window
+    {Q Qbig : Set ParabolicPoint} {f : ParabolicPoint → Vec3}
+    {Df Dtrue : ParabolicPoint → Fin 3 → Vec3}
+    (hDf : Measurable Df) (hDfae : Df =ᵐ[volume] Dtrue)
+    (hfin : (∫⁻ z in Qbig, ‖spatialGradientSq f Dtrue z‖ₑ) < ⊤)
+    (hμle : volume.restrict Q ≤ volume.restrict Qbig) :
+    MemLp Df 2 (volume.restrict Q) ∧ MemLp Dtrue 2 (volume.restrict Q) := by
+  have hDfL2 := (blowupLimitClauses_gradient_memLp_on_window hDf hDfae hfin).mono_measure hμle
+  exact ⟨hDfL2, hDfL2.ae_eq (ae_restrict_of_ae hDfae)⟩
+
 private theorem blowupLimitClauses_small_rescaling_bounds
     {r : ℕ → ℝ} (hr0 : Tendsto r atTop (𝓝 0)) :
     (∀ c : ℝ, 0 < c → ∀ d : ℝ, ∀ᶠ k in atTop, r k * d < c) ∧
@@ -169,6 +179,10 @@ private theorem blowupLimitClauses_small_rescaling_bounds
     have h : Tendsto (fun k => r k * d) atTop (𝓝 0) := by
       simpa only [zero_mul] using hr0.mul_const d
     exact h.eventually (eventually_lt_nhds hc)
+  · intro c hc d
+    have h : Tendsto (fun k => r k ^ 2 * d) atTop (𝓝 0) := by
+      simpa using (hr0.pow 2).mul_const d
+    exact h.eventually (eventually_lt_nhds hc)
 
 private theorem blowupLimitClauses_flux_formula_on_compact_window
     {K : Set Vec3} {a : ℝ} (w : Vec3 → Vec3)
@@ -176,8 +190,8 @@ private theorem blowupLimitClauses_flux_formula_on_compact_window
     (Df Dtrue : ParabolicPoint → Fin 3 → Vec3)
     (P : ParabolicPoint → ℝ) (Qbig : Set ParabolicPoint)
     (hBU : ∀ s t, s ∈ Icc a 0 → t ∈ Icc a 0 → s ≤ t →
-      (∫ x : Vec3, ∑ i : Fin 3, T (x,t) i * w x i) -
-        (∫ x : Vec3, ∑ i : Fin 3, T (x,s) i * w x i) =
+      (∫ x : Vec3, ∑ i : Fin 3, T (x, t) i * w x i) -
+        (∫ x : Vec3, ∑ i : Fin 3, T (x, s) i * w x i) =
       ∫ z in K ×ˢ Ioc s t,
         (∑ i : Fin 3, ∑ j : Fin 3,
           V z i * V z j * spatialDeriv (fun y => w y i) j z.1) -
@@ -189,11 +203,11 @@ private theorem blowupLimitClauses_flux_formula_on_compact_window
     (hsub : ∀ s t, s ∈ Icc a 0 → t ∈ Icc a 0 → s ≤ t →
       volume.restrict (K ×ˢ Ioc s t) ≤ volume.restrict Qbig) :
     ∀ s t, s ∈ Icc a 0 → t ∈ Icc a 0 → s ≤ t →
-      (∫ x : Vec3, ∑ i : Fin 3, T (x,t) i * w x i) -
-        (∫ x : Vec3, ∑ i : Fin 3, T (x,s) i * w x i) =
+      (∫ x : Vec3, ∑ i : Fin 3, T (x, t) i * w x i) -
+        (∫ x : Vec3, ∑ i : Fin 3, T (x, s) i * w x i) =
       ∫ z in K ×ˢ Ioc s t,
         (∑ i : Fin 3, ∑ j : Fin 3,
-          V z i * V z j * spatialDeriv (fun y => w y i) j z.1) -
+          T z i * T z j * spatialDeriv (fun y => w y i) j z.1) -
         (∑ i : Fin 3, ∑ j : Fin 3,
           Df z i j * spatialDeriv (fun y => w y i) j z.1) +
         P z * ∑ i : Fin 3, spatialDeriv (fun y => w y i) i z.1 := by
@@ -219,13 +233,9 @@ private theorem blowupLimitClauses_compact_window_finite
     {K : Set Vec3} (hK : IsCompact K) (a : ℝ) :
     IsFiniteMeasure ((volume : Measure ParabolicPoint).restrict (K ×ˢ Icc a 0)) := by
   constructor
+  change ((volume : Measure (Vec3 × ℝ)).restrict (K ×ˢ Icc a 0)) univ < ⊤
   rw [Measure.restrict_apply_univ]
-  show (volume : Measure (Vec3 × ℝ)) (K ×ˢ Icc a 0) < ⊤
   exact (hK.prod isCompact_Icc).measure_lt_top
-  · intro c hc d
-    have h : Tendsto (fun k => r k ^ 2 * d) atTop (𝓝 0) := by
-      simpa using (hr0.pow 2).mul_const d
-    exact h.eventually (eventually_lt_nhds hc)
 
 /-- The explicit pairing modulus of the blow-up sequence (`prop:blowup-limit`,
 clause (b)), for the trace representative of `lem:weak-cont-L3`. -/
@@ -280,13 +290,13 @@ theorem blowupLimitClauses_pairing_modulus
     (v : Icc (-(3 / 4 : ℝ) ^ 2) 0 →
       Lp L2Vec3 3 (volume.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ))))
     (W : Vec3 × Icc (-(3 / 4 : ℝ) ^ 2) 0 → Vec3) (hWm : Measurable W)
-    (hW : ∀ t, (fun x => W (x,t)) =ᵐ[
+    (hW : ∀ t, (fun x => W (x, t)) =ᵐ[
       volume.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ))]
       (fun x => weakContL3OfLp (v t x)))
     (htrace : ∀ᵐ t ∂(volume.restrict (Ioo (-(3 / 4 : ℝ) ^ 2) 0)),
       ∃ ht : t ∈ Icc (-(3 / 4 : ℝ) ^ 2) 0,
         (fun x => W (x,⟨t,ht⟩)) =ᵐ[volume.restrict
-          (vec3Ball (0 : Vec3) (3 / 4 : ℝ))] (fun x => u (x,t)))
+          (vec3Ball (0 : Vec3) (3 / 4 : ℝ))] (fun x => u (x, t)))
     (hsourceFormula : ∀ ψ : Vec3 → Vec3,
       ContDiff ℝ (⊤ : ℕ∞) ψ → HasCompactSupport ψ →
       tsupport ψ ⊆ vec3Ball (0 : Vec3) (3 / 4 : ℝ) →
@@ -305,7 +315,7 @@ theorem blowupLimitClauses_pairing_modulus
     (Mt : ℝ)
     (hsourceW : ∀ t,
       MemLp ((vec3Ball (0 : Vec3) (3 / 4 : ℝ)).indicator
-        (fun x => W (x,t))) 3 volume ∧
+        (fun x => W (x, t))) 3 volume ∧
       eLpNorm (fun x => vec3EuclideanNorm
         ((vec3Ball (0 : Vec3) (3 / 4 : ℝ)).indicator
           (fun y => W (y,t)) x)) 3 volume ≤ ENNReal.ofReal Mt)
@@ -325,9 +335,9 @@ theorem blowupLimitClauses_pairing_modulus
       (∀ x, |∑ i : Fin 3, spatialDeriv (fun y => w y i) i x| ≤ Dw) →
       ∀ s t, s ∈ Icc a 0 → t ∈ Icc a 0 →
         |(∫ x : Vec3, ∑ i : Fin 3,
-            blowupLimitTraceRescaling W x₀ t₀ (r k) (x,t) i * w x i) -
+            blowupLimitTraceRescaling W x₀ t₀ (r k) (x, t) i * w x i) -
           (∫ x : Vec3, ∑ i : Fin 3,
-            blowupLimitTraceRescaling W x₀ t₀ (r k) (x,s) i * w x i)| ≤
+            blowupLimitTraceRescaling W x₀ t₀ (r k) (x, s) i * w x i)| ≤
           Cc * (|t - s| * (Lw + Gw) + |t - s| ^ (1 / 3 : ℝ) * Dw) := by
   have hxnorm : vec3EuclideanNorm x₀ ≤ 1 / 2 := by
     have h := hx₀
@@ -390,7 +400,8 @@ theorem blowupLimitClauses_pairing_modulus
   set Qbig : Set ParabolicPoint := vec3Ball (0 : Vec3) R ×ˢ Ioo a' 0 with hQbigdef
   have hμle : (volume : Measure ParabolicPoint).restrict Q ≤ volume.restrict Qbig :=
     Measure.restrict_mono_ae (blowupLimitClauses_box_ae_subset hK₀R ha'a)
-  have hQfin := blowupLimitClauses_compact_window_finite hK₀ a
+  let _ : IsFiniteMeasure ((volume : Measure ParabolicPoint).restrict Q) :=
+    blowupLimitClauses_compact_window_finite hK₀ a
   set f : ParabolicPoint → Vec3 := blowupLimitTraceRescaling W x₀ t₀ (r k) with hfdef
   have hf : Measurable f := measurable_blowupLimitTraceRescaling W hWm x₀ t₀ (r k)
   set Df : ParabolicPoint → Fin 3 → Vec3 := blowupGradient x₀ t₀ (r k) Dm with hDfdef
@@ -404,11 +415,8 @@ theorem blowupLimitClauses_pairing_modulus
     exact hPk
   obtain ⟨hPQ, hPmem⟩ := blowupLimitClauses_pressure_memLp_on_window B hμle hPbig
   -- the gradient on the box
-  have hDfbig : MemLp Df 2 (volume.restrict Qbig) := by
-    obtain ⟨-, hint, -⟩ := hGk
-    exact blowupLimitClauses_gradient_memLp_on_window hDf hDfae hint.2
-  have hDfL2 : MemLp Df 2 ((volume : Measure ParabolicPoint).restrict Q) :=
-    hDfbig.mono_measure hμle
+  obtain ⟨hDfL2, hDu2⟩ := blowupLimitClauses_gradient_memLp_on_smaller_window
+    hDf hDfae hGk.2.1.2 hμle
   -- the velocity on the box
   have hVQ : MemLp (blowupVelocity x₀ t₀ (r k) u) 2
       ((volume : Measure ParabolicPoint).restrict Q) := by
@@ -445,7 +453,7 @@ theorem blowupLimitClauses_pairing_modulus
     (fun z => blowupPressure x₀ t₀ (r k) p z)
     (fun i j z => spatialDeriv (fun y => w y i) j z.1)
     (fun z => ∑ i : Fin 3, spatialDeriv (fun y => w y i) i z.1)
-    Gw Dw hVQ hDu2 hPmem hφm hgradw hdm hdivw
+    Gw Dw hVQ hDu2 hPmem hφm (fun z => hgradw z.1) hdm (fun z => hdivw z.1)
   have hformulaBU := blowupLimitClauses_rescaled_flux_formula v W hW hsourceFormula hK₀
     a 0 le_rfl (hr k) ht₀.2 himage htime hw hwK hFint
   -- the same formula with the trace representative and the measurable gradient

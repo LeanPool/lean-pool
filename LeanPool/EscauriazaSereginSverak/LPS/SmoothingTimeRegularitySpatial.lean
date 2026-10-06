@@ -31,10 +31,12 @@ namespace ESS.LPS
 
 open CKN.Leray
 
+/-- The product norm on space-time points used for spatial Sobolev slices. -/
 local instance smoothingTimeRegularitySpatialPointNormedAddCommGroup :
     NormedAddCommGroup ParabolicPoint :=
   inferInstanceAs (NormedAddCommGroup (Vec3 × ℝ))
 
+/-- The real product normed-space structure used for spatial Sobolev slices. -/
 local instance smoothingTimeRegularitySpatialPointNormedSpace :
     NormedSpace ℝ ParabolicPoint :=
   inferInstanceAs (NormedSpace ℝ (Vec3 × ℝ))
@@ -44,10 +46,10 @@ private theorem lps_memLp_mul_of_bounded_left
     (hg : MemLp g 2 volume) (hbound : ∀ x, |g x| ≤ L) :
     MemLp (fun x => g x * f x) 2 volume := by
   apply MemLp.of_le_mul hf (hg.aestronglyMeasurable.mul hf.aestronglyMeasurable)
-  filter_upwards [] with x
-  change |g x * f x| ≤ L * |f x|
-  rw [abs_mul]
-  exact mul_le_mul_of_nonneg_right (hbound x) (abs_nonneg (f x))
+  · filter_upwards [] with x
+    change |g x * f x| ≤ L * |f x|
+    rw [abs_mul]
+    exact mul_le_mul_of_nonneg_right (hbound x) (abs_nonneg (f x))
 
 private theorem lps_weakPartial_congr_ae {U : Set Vec3} {i : Fin 3}
     {f f' df df' : Vec3 → ℝ} (hweak : HasWeakPartialDerivOn U i f df)

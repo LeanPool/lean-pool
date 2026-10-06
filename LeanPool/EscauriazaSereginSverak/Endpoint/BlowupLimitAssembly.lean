@@ -88,7 +88,7 @@ private theorem blowupLimitAssembly_badPoint_contradiction
     (fun k => (hpmeas k).restrict) ?_ ?_
   · have hlower' : Tendsto (fun k => goodPointEnergy
         (blowupVelocity x₀ t₀ (r k) u) (blowupPressure x₀ t₀ (r k) p) 0 0 1)
-        atTop (𝓝 0) := hzero
+        atTop (nhds 0) := hzero
     have hlim : ENNReal.ofReal (ε₀ / 8) ≤ 0 := ge_of_tendsto hlower' hlower
     have hpos : (0 : ℝ≥0∞) < ENNReal.ofReal (ε₀ / 8) :=
       ENNReal.ofReal_pos.mpr (by linarith only [hε₀])
@@ -326,7 +326,7 @@ theorem blowupLimit_projection
         (volume : Measure ParabolicPoint) := fun k =>
       blowupPressure_aestronglyMeasurable_of_split p _ hp₁ hp₂ x₀ t₀ (r' k) (hr' k)
     exact blowupLimitAssembly_badPoint_contradiction ε₀ hε₀ x₀ t₀ r' hx₀ ht₀ hbad
-      hr' hr0' hind hpmeas U hU0 hconvU hconvP hqzero
+      hr' hr0' hind hpmeas U hU0 hconvU hconvP (hqzero hU0)
 
 end ESS
 

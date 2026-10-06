@@ -131,7 +131,7 @@ theorem curve_weakPartial_of_slab {a b : ℝ} (hab : a < b) {j : Fin 3}
     have e1 : ∫ p in vlSlab a b, F₁ p * spatialPartial φ j p =
         ∫ p in vlSlab a b, F₁ p * (spatialDeriv ψ j p.1 * θ p.2) :=
       integral_congr_ae (ae_of_all _ fun p => by
-        show F₁ p * spatialPartial (fun q : Vec3 × ℝ => ψ q.1 * θ q.2) j p = _
+        change F₁ p * spatialPartial (fun q : Vec3 × ℝ => ψ q.1 * θ q.2) j p = _
         rw [separatedTest_spatialPartial (hψ.differentiable (by simp)) j p, mul_comm (θ p.2)])
     rw [e1, integral_slab_separated hF₁ hdψ hdψc hθ.continuous hθb] at hw
     have e2 : ∫ p in vlSlab a b, F₂ p * φ p = ∫ t in Ioo a b, θ t * ∫ x, F₂ (x, t) * ψ x :=

@@ -33,7 +33,7 @@ private theorem blowupLimitClauses_cutoff_gradient_bound_on_box
     (f : ℕ → ParabolicPoint → Vec3)
     (Df : ℕ → ParabolicPoint → Fin 3 → Vec3)
     (hf : ∀ n, Measurable (f n)) (hDf : ∀ n, Measurable (Df n))
-    (N ν : ℕ → ℕ) (hνN : ∀ k, N k ≤ ν k)
+    (N ν : ℕ → ℕ) (hνPrefix : ∀ j k, j ≤ k → N j ≤ ν k)
     (hsliceBall : ∀ R : ℝ, 0 < R → ∃ M : ℝ≥0∞, M < ⊤ ∧ ∀ n t,
       (∫⁻ x in closure (vec3Ball (0 : Vec3) R),
         ENNReal.ofReal (vec3EuclideanNorm (f n (x,t))) ^ (2 : ℝ)) ≤ M)
@@ -72,7 +72,7 @@ private theorem blowupLimitClauses_cutoff_gradient_bound_on_box
     obtain ⟨G, hG, hGb⟩ := hgradientBounds k
     obtain ⟨M, hM, hMb⟩ := hsliceBall ((k : ℝ) + 1) (by positivity)
     exact blowupLimitAssemblyCutoff_gradient_bound_single f Df ν k hf hDf
-      ⟨M, hM, fun t => hMb (ν k) t⟩ G hG (hGb (ν k) (hνN k)) C a b hb.le
+      ⟨M, hM, fun t => hMb (ν k) t⟩ G hG (hGb (ν k) (hνPrefix k k le_rfl)) C a b hb.le
   choose Bd hBd hBdb using hsingle
   obtain ⟨Gj, hGj, hGjb⟩ := hgradientBounds j
   refine ⟨Gj + ∑ k ∈ Finset.range (j + 1), Bd k,
@@ -123,7 +123,7 @@ private theorem blowupLimitClauses_cutoff_gradient_bound_on_box
             ∫⁻ x in vec3Ball (0 : Vec3) ((j : ℝ) + 1),
             ENNReal.ofReal (spatialGradientSq (f (ν k)) (Df (ν k)) (x,t)) :=
         lintegral_mono_set hIsub
-      _ ≤ Gj := hGjb (ν k) (le_blowupLimitAssemblyIndex N hjk)
+      _ ≤ Gj := hGjb (ν k) (hνPrefix j k hjk)
       _ ≤ Gj + ∑ k ∈ Finset.range (j + 1), Bd k := le_self_add
 
 
@@ -239,7 +239,8 @@ theorem blowupLimitClauses_exhaustion_compactness
         (∫⁻ t in Icc a b, ∫⁻ x in C,
           ENNReal.ofReal (spatialGradientSq (w n) (Dw n) (x,t)) ∂volume) ≤ G := by
     intro C hC _ a b hab
-    exact blowupLimitClauses_cutoff_gradient_bound_on_box f Df hf hDf N ν hνN
+    exact blowupLimitClauses_cutoff_gradient_bound_on_box f Df hf hDf N ν
+      (fun _ _ hjk => le_blowupLimitAssemblyIndex N hjk)
       hsliceBall (fun m => (hN m).2.1) hC hab
   have hmod : ∀ C : Set Vec3, IsCompact C → C ⊆ univ →
       ∀ a b : ℝ, Icc a b ⊆ Iio 0 →

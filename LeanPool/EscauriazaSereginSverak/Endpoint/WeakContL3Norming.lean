@@ -29,6 +29,7 @@ noncomputable section
 
 namespace ESS
 
+/-- The canonical inclusion from `L²` to `L^{3/2}` on a finite-measure spatial domain. -/
 @[expose] noncomputable def weakContL3L2ToLThreeHalvesLinear
     (μ : Measure Vec3) [IsFiniteMeasure μ] :
     Lp L2Vec3 2 μ →ₗ[ℝ]

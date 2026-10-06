@@ -32,7 +32,8 @@ private theorem blowupLimit_pairing_continuity_extends_from_open_interval
     (hell : ContinuousOn ell (Icc c 0))
     (hpair : ContinuousOn pairExt (Icc c 0)) :
     EqOn ell pairExt (Icc c 0) := by
-  have hopen := Measure.eqOn_open_of_ae_eq hEq isOpen_Ioo hell
+  have hopen := Measure.eqOn_open_of_ae_eq hEq isOpen_Ioo
+    (hell.mono Ioo_subset_Icc_self)
     (hpair.mono Ioo_subset_Icc_self)
   apply Set.EqOn.of_subset_closure hopen
   · exact hell
@@ -43,7 +44,7 @@ private theorem blowupLimit_pairing_continuity_extends_from_open_interval
     exact ht
 
 private theorem blowupLimit_scalar_trace_primitive_extends_to_closed_interval
-    {c C : ℝ} {ell g : ℝ → ℝ} (hcle : -1 ≤ c) (hc : c < 0)
+    {c C : ℝ} {ell g : ℝ → ℝ} (hcle : -1 ≤ c) (_hc : c < 0)
     (hell : ContinuousOn ell (Icc (-1 : ℝ) 0)) (hg : Integrable g volume)
     (hAE : ell =ᵐ[volume.restrict (Ioo (-1 : ℝ) 0)]
       (fun t => C + ∫ r in (-1 / 2 : ℝ)..t, g r)) :
@@ -51,7 +52,7 @@ private theorem blowupLimit_scalar_trace_primitive_extends_to_closed_interval
   have hprimitiveCont : Continuous (fun t : ℝ => C + ∫ r in (-1 / 2 : ℝ)..t, g r) :=
     continuous_const.add (hg.continuous_primitive (-1 / 2 : ℝ))
   have hopen := Measure.eqOn_open_of_ae_eq hAE isOpen_Ioo
-    hell hprimitiveCont.continuousOn
+    (hell.mono Ioo_subset_Icc_self) hprimitiveCont.continuousOn
   have hclosed : EqOn ell
       (fun t => C + ∫ r in (-1 / 2 : ℝ)..t, g r) (Icc (-1 : ℝ) 0) := by
     apply Set.EqOn.of_subset_closure hopen
@@ -118,7 +119,7 @@ private theorem blowupLimit_pairing_source_slice_ae
     (hψsupport : tsupport ψ ⊆ vec3Ball (0 : Vec3) (3 / 4 : ℝ))
     (hφLp32 : MemLp (fun x => weakContL3VecToLp (ψ x))
       (ENNReal.ofReal (3 / 2 : ℝ))
-      (volume.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ)))
+      (volume.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ))))
     (hvae : ∀ᵐ t ∂(volume.restrict (Ioo (-(3 / 4 : ℝ) ^ 2) 0)),
       ∃ ht : t ∈ Icc (-(3 / 4 : ℝ) ^ 2) 0,
         ∃ hslice : MemLp (fun x : Vec3 => WithLp.toLp 2 (u (x,t))) 3
@@ -169,7 +170,9 @@ private theorem blowupLimit_pairing_source_slice_ae
     have hinner : inner ℝ (v ⟨t, htI⟩ x)
         (weakContL3VecToLp (ψ x)) =
         ∑ i : Fin 3, v ⟨t, htI⟩ x i * ψ x i := by
-      simp [weakContL3VecToLp, PiLp.inner_apply]
+      simp only [weakContL3VecToLp, ContinuousLinearEquiv.coe_coe,
+        PiLp.continuousLinearEquiv_symm_apply, PiLp.inner_apply, RCLike.inner_apply,
+        conj_trivial]
       apply Finset.sum_congr rfl
       intro i hi
       ring
@@ -209,9 +212,9 @@ private theorem blowupLimit_closed_pairing_formula
     (v : Icc (-(3 / 4 : ℝ) ^ 2) 0 →
       Lp L2Vec3 3 (volume.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ))))
     (wLp : Lp L2Vec3 (ENNReal.ofReal (3 / 2 : ℝ))
-      (volume.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ)))
+      (volume.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ))))
     (ell : ℝ → ℝ) (hcut : ∀ x, weakContL3CutoffTest χ φ x = ψ x)
-    (hψsupport : tsupport ψ ⊆ vec3Ball (0 : Vec3) (3 / 4 : ℝ))
+    (_hψsupport : tsupport ψ ⊆ vec3Ball (0 : Vec3) (3 / 4 : ℝ))
     (hpairTest : ∀ τ : Icc (-(3 / 4 : ℝ) ^ 2) 0,
       (∫ x, inner ℝ (v τ x) (wLp x)
         ∂(volume.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ)))) =
@@ -266,7 +269,10 @@ private theorem blowupLimit_closed_pairing_formula
     rw [hfun]
     exact hpairOnCont
   have hEqOpen : ell =ᵐ[volume.restrict (Ioo (-(3 / 4 : ℝ) ^ 2) 0)] pairExt := by
-    filter_upwards [ae_restrict_of_ae htraceAE, hpairEqAE,
+    have hsmall : Ioo (-(3 / 4 : ℝ) ^ 2) 0 ⊆ Ioo (-1 : ℝ) 0 := by
+      intro t ht
+      exact ⟨by linarith only [ht.1], ht.2⟩
+    filter_upwards [ae_restrict_of_ae_restrict_of_subset hsmall htraceAE, hpairEqAE,
       ae_restrict_mem measurableSet_Ioo] with t h₁ h₂ htopen
     obtain ⟨ht, hpair⟩ := h₂
     have hpair' : pairExt t =
@@ -275,9 +281,7 @@ private theorem blowupLimit_closed_pairing_formula
       dsimp [pairExt]
       rw [dite_eq_left ht]
       simpa only [pairOn] using hpair
-    have htbig : t ∈ Ioo (-1 : ℝ) 0 := by
-      exact ⟨by dsimp [Ioo] at htopen ⊢; linarith only [htopen.1], htopen.2⟩
-    exact (h₁ htbig).symm.trans hpair'.symm
+    exact h₁.symm.trans hpair'.symm
   have htraceEq : EqOn ell pairExt (Icc (-(3 / 4 : ℝ) ^ 2) 0) :=
     blowupLimit_pairing_continuity_extends_from_open_interval
       (by norm_num) hEqOpen hellContinuous.continuousOn hpairExtCont
@@ -303,10 +307,11 @@ private theorem blowupLimit_closed_pairing_formula
     (hgFullInt.locallyIntegrable.locallyIntegrableOn (Ioo (-1 : ℝ) 0)) hderivFull
   have hellPrimitiveAE : ell =ᵐ[volume.restrict (Ioo (-1 : ℝ) 0)]
       (fun t => C + ∫ r in (-1 / 2 : ℝ)..t, gFull r) := by
-    filter_upwards [ae_restrict_of_ae htraceAE, ae_restrict_of_ae hCraw,
+    filter_upwards [htraceAE, ae_restrict_of_ae hCraw,
       ae_restrict_mem measurableSet_Ioo] with t hEll hRaw ht
-    exact (hEll ht).symm.trans (hRaw ht)
+    exact hEll.symm.trans (hRaw ht)
   have hprimitiveIcc := blowupLimit_scalar_trace_primitive_extends_to_closed_interval
+    (c := -(3 / 4 : ℝ) ^ 2)
     (by norm_num) (by norm_num) hellContinuous.continuousOn hgFullInt hellPrimitiveAE
   intro s t
   have hst : s.1 ∈ Icc (-(3 / 4 : ℝ) ^ 2) 0 := s.2
@@ -526,7 +531,13 @@ theorem blowup_limit_source_pairing_formulas_with_trace
       ∫ x, inner ℝ (v t x) (wLp x)
         ∂(volume.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ)))) :=
     hvcontinuous wLp
-  have hpairEqAE := blowupLimit_pairing_source_slice_ae v ψ χ φ hcut hψsupport hφLp32 hvae
+  have hpairEqAE : ∀ᵐ t ∂volume.restrict (Ioo (-(3 / 4 : ℝ) ^ 2) 0),
+      ∃ ht : t ∈ Icc (-(3 / 4 : ℝ) ^ 2) 0,
+        (∫ x, inner ℝ (v ⟨t, ht⟩ x) (wLp x)
+          ∂(volume.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ)))) =
+        ∫ x in weakContL3SpatialBall,
+          weakContL3MomentumPairing u χ φ (x,t) :=
+    blowupLimit_pairing_source_slice_ae v ψ χ φ hcut hψsupport hφLp32 hvae
   have hpairTest (τ : Icc (-(3 / 4 : ℝ) ^ 2) 0) :
       (∫ x, inner ℝ (v τ x) (wLp x)
         ∂(volume.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ)))) =
@@ -537,12 +548,15 @@ theorem blowup_limit_source_pairing_formulas_with_trace
     rw [hx]
     have hinner : inner ℝ (v τ x) (weakContL3VecToLp (ψ x)) =
         ∑ i : Fin 3, v τ x i * ψ x i := by
-      simp [weakContL3VecToLp, PiLp.inner_apply]
+      simp only [weakContL3VecToLp, ContinuousLinearEquiv.coe_coe,
+        PiLp.continuousLinearEquiv_symm_apply, PiLp.inner_apply, RCLike.inner_apply,
+        conj_trivial]
       apply Finset.sum_congr rfl
       intro i hi
       ring
     simpa only [weakContL3SpatialBall] using hinner
   exact blowupLimit_closed_pairing_formula χ ψ φ v wLp ell hcut hψsupport
-    hpairTest hpairCont hpairEqAE hellAE hellContinuous hgInt hfLoc hderiv
+    hpairTest hpairCont hpairEqAE ((ae_restrict_iff' measurableSet_Ioo).mpr hellAE)
+    hellContinuous hgInt hfLoc hderiv
 
 end ESS

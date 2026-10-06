@@ -98,6 +98,30 @@ private theorem integral_eq_of_support_inside
       integral_congr_ae hindicator
     _ = _ := integral_indicator hSmeas
 
+/-- The product-coordinate form of the local energy identity density. -/
+@[expose] def localEnergyIdentityDensityProduct
+    (u : ParabolicPoint → Vec3) (Du : ParabolicPoint → Fin 3 → Vec3)
+    (p : ParabolicPoint → ℝ) (ψ : Vec3 × ℝ → ℝ) : Vec3 × ℝ → ℝ := fun z =>
+  let q : ParabolicPoint := parabolicHomeomorph.symm z
+  2 * spatialGradientSq u Du q * ψ z -
+    ((vec3EuclideanNorm (u q)) ^ 2 *
+        (timePartial ψ z + ∑ i, spatialSecondPartial ψ i i z) +
+      ((vec3EuclideanNorm (u q)) ^ 2 + 2 * p q) *
+        ∑ i, u q i * spatialPartial ψ i z)
+
+
+private theorem parabolicHomeomorph_eq_product (z : ParabolicPoint) :
+    (parabolicHomeomorph z : Vec3 × ℝ) = z := by
+  rcases z with ⟨x, t⟩
+  rfl
+
+
+private theorem parabolicHomeomorph_symm_eq_product (z : Vec3 × ℝ) :
+    (parabolicHomeomorph.symm z : ParabolicPoint) = z := by
+  rcases z with ⟨x, t⟩
+  rfl
+
+
 private theorem localEnergyIdentityDensityProduct_parabolic
     (u : ParabolicPoint → Vec3) (Du : ParabolicPoint → Fin 3 → Vec3)
     (p : ParabolicPoint → ℝ) (ψ : Vec3 × ℝ → ℝ) (z : ParabolicPoint) :
@@ -109,10 +133,11 @@ private theorem localEnergyIdentityDensityProduct_parabolic
               ∑ i, spatialSecondPartial (show ParabolicPoint → ℝ from ψ) i i z) +
           ((vec3EuclideanNorm (u z)) ^ 2 + 2 * p z) *
             ∑ i, u z i * spatialPartial (show ParabolicPoint → ℝ from ψ) i z) := by
-  rcases z with ⟨x, t⟩
-  simp [localEnergyIdentityDensityProduct, parabolicHomeomorph_apply,
-    parabolicHomeomorph_symm_apply]
-  ring_nf
+  rw [parabolicHomeomorph_apply]
+  simp [localEnergyIdentityDensityProduct, parabolicHomeomorph_symm_apply]
+  cases z
+  simp
+  ring
 
 private theorem setIntegral_eq_two_mul_sub
     {α : Type} [MeasurableSpace α] {μ : Measure α} {S : Set α}
@@ -127,16 +152,6 @@ private theorem setIntegral_eq_two_mul_sub
     _ = _ := by
       rw [integral_sub (hF.const_mul 2) hG, integral_const_mul]
 
-private theorem parabolicHomeomorph_symm_eq_product (z : Vec3 × ℝ) :
-    (parabolicHomeomorph.symm z : ParabolicPoint) = z := by
-  rcases z with ⟨x, t⟩
-  rfl
-
-private theorem parabolicHomeomorph_eq_product (z : ParabolicPoint) :
-    (parabolicHomeomorph z : Vec3 × ℝ) = z := by
-  rcases z with ⟨x, t⟩
-  rfl
-
 private theorem parabolic_tsupport_iff_product
     {V : Type} [Zero V] {φ : Vec3 × ℝ → V} (z : ParabolicPoint) :
     z ∈ tsupport (show ParabolicPoint → V from φ) ↔
@@ -144,16 +159,6 @@ private theorem parabolic_tsupport_iff_product
   rw [tsupport_parabolic_eq]
   rcases z with ⟨x, t⟩
   rfl
-
-@[expose] def localEnergyIdentityDensityProduct
-    (u : ParabolicPoint → Vec3) (Du : ParabolicPoint → Fin 3 → Vec3)
-    (p : ParabolicPoint → ℝ) (ψ : Vec3 × ℝ → ℝ) : Vec3 × ℝ → ℝ := fun z =>
-  let q : ParabolicPoint := parabolicHomeomorph.symm z
-  2 * spatialGradientSq u Du q * ψ z -
-    ((vec3EuclideanNorm (u q)) ^ 2 *
-        (timePartial ψ z + ∑ i, spatialSecondPartial ψ i i z) +
-      ((vec3EuclideanNorm (u q)) ^ 2 + 2 * p q) *
-        ∑ i, u q i * spatialPartial ψ i z)
 
 private theorem setIntegral_parabolic_to_product_on
     {S : Set ParabolicPoint} {F : ParabolicPoint → ℝ} :
@@ -172,6 +177,19 @@ private theorem setIntegral_parabolic_to_product_on
     filter_upwards [] with p
     exact congrArg F (parabolicHomeomorph.left_inv p)
   exact hright.symm.trans htrans.symm
+
+private theorem localEnergySmallCylinderSubsetUnit {r : ℝ} (hr1 : r < 1) :
+    (vec3Ball (0 : Vec3) r ×ˢ Ioo (-1) 0) ⊆
+      localEnergyUnitProductCylinder := by
+  intro z hz
+  rcases hz with ⟨hzx, hzt⟩
+  change z.1 ∈ vec3Ball (0 : Vec3) 1 ∧ z.2 ∈ Ioo (-1) 0
+  constructor
+  · apply mem_vec3Ball.mpr
+    calc
+      vec3EuclideanNorm (z.1 - 0) < r := mem_vec3Ball.mp hzx
+      _ < 1 := hr1
+  · exact hzt
 
 private theorem localEnergyExpandedBaseEqualsIndicator
     {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin 3 → Vec3}
@@ -194,83 +212,73 @@ private theorem localEnergyExpandedBaseEqualsIndicator
   let U : Set (Vec3 × ℝ) := localEnergyUnitProductCylinder
   let ψP : ParabolicPoint → ℝ := show ParabolicPoint → ℝ from ψ
   have hQsub : Q ⊆ U := by
-    intro z hz
-    rcases hz with ⟨hzx, hzt⟩
-    change z.1 ∈ vec3Ball (0 : Vec3) 1 ∧ z.2 ∈ Ioo (-1) 0
-    constructor
-    · apply mem_vec3Ball.mpr
-      calc
-        vec3EuclideanNorm (z.1 - 0) < r := mem_vec3Ball.mp hzx
-        _ < 1 := hr1
-    · exact hzt
-    rcases z with ⟨x, t⟩
-    let z : Vec3 × ℝ := (x, t)
-    by_cases hz : z ∈ K
-    · have hzQ : z ∈ Q := hψ.2.2 hz
-      have hzU : z ∈ U := hQsub hzQ
-      have hvel (i : Fin 3) :
-          localEnergyVelocityZeroExtension u i z =
-            u (parabolicHomeomorph.symm z) i := by
-        change localEnergyUnitProductCylinder.indicator
-          (fun q => u q i) z = u (parabolicHomeomorph.symm z) i
-        have hzU' : z ∈ localEnergyUnitProductCylinder := by
-          simpa [U] using hzU
-        rw [Set.indicator_of_mem hzU']
-        rw [parabolicHomeomorph_symm_eq_product]
-      have hgrad0 (i j : Fin 3) :
-          localEnergyGradientZeroExtension Du i j z =
-            Du (parabolicHomeomorph.symm z) i j := by
-        change localEnergyUnitProductCylinder.indicator
-          (fun q => Du q i j) z = Du (parabolicHomeomorph.symm z) i j
-        have hzU' : z ∈ localEnergyUnitProductCylinder := by
-          simpa [U] using hzU
-        rw [Set.indicator_of_mem hzU']
-        rw [parabolicHomeomorph_symm_eq_product]
-      have hpress : localEnergyPressureZeroExtension p z =
-          p (parabolicHomeomorph.symm z) := by
-        change localEnergyUnitProductCylinder.indicator
-          (fun q : Vec3 × ℝ => p (parabolicHomeomorph.symm q)) z =
-          p (parabolicHomeomorph.symm z)
-        have hzU' : z ∈ localEnergyUnitProductCylinder := by
-          simpa [U] using hzU
-        rw [Set.indicator_of_mem hzU']
-      change localEnergyLimitExpandedBaseIntegrand
-        (fun q i => localEnergyVelocityZeroExtension u i q)
-        (fun _ _ _ => 0)
-        (fun q i j => localEnergyGradientZeroExtension Du i j q)
-        (localEnergyPressureZeroExtension p) ψP z =
-          (tsupport ψ).indicator (localEnergyIdentityDensityProduct u Du p ψ) z
-      simp only [Set.indicator_of_mem hz]
-      dsimp [localEnergyLimitExpandedBaseIntegrand]
-      simp only [hvel, hgrad0, hpress, ψP]
-      change _ = 2 * (∑ i : Fin 3, ∑ j : Fin 3,
-          Du (parabolicHomeomorph.symm z) i j ^ 2) * ψ z - _
-      have hcalc := localEnergyExpandedIdentityAlgebra
-        (u (parabolicHomeomorph.symm z))
-        (fun i j => Du (parabolicHomeomorph.symm z) i j)
-        (p (parabolicHomeomorph.symm z)) (ψ z)
-        (timePartial ψP (parabolicHomeomorph.symm z))
-        (fun i => spatialPartial ψP i (parabolicHomeomorph.symm z))
-        (fun i => spatialSecondPartial ψP i i (parabolicHomeomorph.symm z))
-      have hnorm : vec3EuclideanNorm (u (parabolicHomeomorph.symm z)) ^ 2 =
-          ∑ i : Fin 3, (u (parabolicHomeomorph.symm z) i) ^ 2 := by
-        unfold vec3EuclideanNorm
-        rw [Real.sq_sqrt]
-        exact Finset.sum_nonneg fun i _ => sq_nonneg (u (parabolicHomeomorph.symm z) i)
-      simpa [localEnergyIdentityDensityProduct, spatialGradientSq,
-        hnorm, pow_two, parabolicHomeomorph_apply,
-        parabolicHomeomorph_symm_apply, Prod.eta, ψP] using hcalc
-    · have hz' : (x, t) ∉ tsupport ψ := by
-        simpa [K] using hz
-      have hψzero : ψ (x, t) = 0 := image_eq_zero_of_notMem_tsupport hz'
-      have htime : timePartial ψ (x, t) = 0 := timePartial_eq_zero_off_tsupport hz'
-      have hspace (i : Fin 3) : spatialPartial ψ i (x, t) = 0 :=
-        spatialPartial_eq_zero_off_tsupport hz' i
-      have hsecond (i : Fin 3) : spatialSecondPartial ψ i i (x, t) = 0 :=
-        spatialSecondPartial_eq_zero_off_tsupport hz' i i
-      simp only [K, Set.indicator_of_notMem hz']
-      dsimp [localEnergyLimitExpandedBaseIntegrand]
-      simp [hψzero, htime, hspace, hsecond, ψP]
+    simpa [Q, U, Ωr] using localEnergySmallCylinderSubsetUnit hr1
+  rcases z with ⟨x, t⟩
+  let z : Vec3 × ℝ := (x, t)
+  by_cases hz : z ∈ K
+  · have hzQ : z ∈ Q := hψ.2.2 hz
+    have hzU : z ∈ U := hQsub hzQ
+    have hvel (i : Fin 3) :
+        localEnergyVelocityZeroExtension u i z =
+          u (parabolicHomeomorph.symm z) i := by
+      change localEnergyUnitProductCylinder.indicator
+        (fun q => u q i) z = u (parabolicHomeomorph.symm z) i
+      have hzU' : z ∈ localEnergyUnitProductCylinder := by
+        simpa [U] using hzU
+      rw [Set.indicator_of_mem hzU']
+      rw [parabolicHomeomorph_symm_eq_product]
+    have hgrad0 (i j : Fin 3) :
+        localEnergyGradientZeroExtension Du i j z =
+          Du (parabolicHomeomorph.symm z) i j := by
+      change localEnergyUnitProductCylinder.indicator
+        (fun q => Du q i j) z = Du (parabolicHomeomorph.symm z) i j
+      have hzU' : z ∈ localEnergyUnitProductCylinder := by
+        simpa [U] using hzU
+      rw [Set.indicator_of_mem hzU']
+      rw [parabolicHomeomorph_symm_eq_product]
+    have hpress : localEnergyPressureZeroExtension p z =
+        p (parabolicHomeomorph.symm z) := by
+      change localEnergyUnitProductCylinder.indicator
+        (fun q : Vec3 × ℝ => p (parabolicHomeomorph.symm q)) z =
+        p (parabolicHomeomorph.symm z)
+      have hzU' : z ∈ localEnergyUnitProductCylinder := by
+        simpa [U] using hzU
+      rw [Set.indicator_of_mem hzU']
+    change localEnergyLimitExpandedBaseIntegrand
+      (fun q i => localEnergyVelocityZeroExtension u i q)
+      (fun _ _ _ => 0)
+      (fun q i j => localEnergyGradientZeroExtension Du i j q)
+      (localEnergyPressureZeroExtension p) ψP z =
+        (tsupport ψ).indicator (localEnergyIdentityDensityProduct u Du p ψ) z
+    rw [Set.indicator_of_mem (by simpa [K] using hz)]
+    dsimp [localEnergyLimitExpandedBaseIntegrand]
+    simp only [hvel, hgrad0, hpress, ψP]
+    have hcalc := localEnergyExpandedIdentityAlgebra
+      (u (parabolicHomeomorph.symm z))
+      (fun i j => Du (parabolicHomeomorph.symm z) i j)
+      (p (parabolicHomeomorph.symm z)) (ψ z)
+      (timePartial ψP (parabolicHomeomorph.symm z))
+      (fun i => spatialPartial ψP i (parabolicHomeomorph.symm z))
+      (fun i => spatialSecondPartial ψP i i (parabolicHomeomorph.symm z))
+    have hnorm : vec3EuclideanNorm (u (parabolicHomeomorph.symm z)) ^ 2 =
+        ∑ i : Fin 3, (u (parabolicHomeomorph.symm z) i) ^ 2 := by
+      unfold vec3EuclideanNorm
+      rw [Real.sq_sqrt]
+      exact Finset.sum_nonneg fun i _ => sq_nonneg (u (parabolicHomeomorph.symm z) i)
+    simpa [localEnergyIdentityDensityProduct, spatialGradientSq,
+      hnorm, pow_two, parabolicHomeomorph_apply,
+      parabolicHomeomorph_symm_apply, Prod.eta, ψP] using hcalc
+  · have hz' : (x, t) ∉ tsupport ψ := by
+      simpa [K] using hz
+    have hψzero : ψ (x, t) = 0 := image_eq_zero_of_notMem_tsupport hz'
+    have htime : timePartial ψ (x, t) = 0 := timePartial_eq_zero_off_tsupport hz'
+    have hspace (i : Fin 3) : spatialPartial ψ i (x, t) = 0 :=
+      spatialPartial_eq_zero_off_tsupport hz' i
+    have hsecond (i : Fin 3) : spatialSecondPartial ψ i i (x, t) = 0 :=
+      spatialSecondPartial_eq_zero_off_tsupport hz' i i
+    simp only [Set.indicator_of_notMem hz']
+    dsimp [localEnergyLimitExpandedBaseIntegrand]
+    simp [hψzero, htime, hspace, hsecond]
 
 /-- The energy equality on a smaller cylinder, obtained as the limit of the
 space-time mollified local energy identities. -/
@@ -339,15 +347,7 @@ theorem localEnergyIdentity_of_essLocalData
   let Hpara : ParabolicPoint → ℝ :=
     fun z => Hprod (parabolicHomeomorph z)
   have hQsub : Q ⊆ U := by
-    intro z hz
-    rcases hz with ⟨hzx, hzt⟩
-    change z.1 ∈ vec3Ball (0 : Vec3) 1 ∧ z.2 ∈ Ioo (-1) 0
-    constructor
-    · apply mem_vec3Ball.mpr
-      calc
-        vec3EuclideanNorm (z.1 - 0) < r := mem_vec3Ball.mp hzx
-        _ < 1 := hr1
-    · exact hzt
+    simpa [Q, U, Ωr] using localEnergySmallCylinderSubsetUnit hr1
   have hψU : tsupport ψ ⊆ U := by
     intro z hz
     exact hQsub (hψ.2.2 hz)
@@ -366,7 +366,8 @@ theorem localEnergyIdentity_of_essLocalData
     simpa using hS3 φ hφ
   have hglobal := localEnergy_mollifiedBase_integral_limit_zero
     hu hDu henergy hpLp hL3 hgrad hS2 hS3base hψ.1 hψ.2.1 hψU
-  have hpoint := localEnergyExpandedBaseEqualsIndicator hr1 hψ
+  have hpoint := localEnergyExpandedBaseEqualsIndicator
+    (u := u) (Du := Du) (p := p) hr1 hψ
   have hKmeas : MeasurableSet K := isClosed_tsupport ψ |>.measurableSet
   have hFset : ∫ z, F z ∂(volume : Measure (Vec3 × ℝ)) =
       ∫ z in K, Hprod z ∂(volume : Measure (Vec3 × ℝ)) := by

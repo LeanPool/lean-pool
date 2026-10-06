@@ -64,8 +64,10 @@ local instance localEnergyLimitAlgebraHolderTripleTwoTwoOne :
     exact ⟨by norm_num, by norm_num, by norm_num⟩
   simpa using hreal.ennrealOfReal
 
+/-- The product-space direction corresponding to the `j`th spatial coordinate. -/
 @[expose] def localEnergyLimitSpatialDir (j : Fin 3) : Vec3 × ℝ := spatialDir j
 
+/-- The product-space direction corresponding to the time coordinate. -/
 @[expose] def localEnergyLimitTimeDir : Vec3 × ℝ := timeDir
 
 private theorem localEnergy_timePartial_eq_fderiv_apply
@@ -255,8 +257,7 @@ theorem localEnergy_smoothBase_eq_expanded
           (2 * ψ z) := by ring
       _ = _ := by
         simp_rw [Finset.sum_mul]
-  simp [spatialDir, basisVec] at hconv hpressureConv henergyConv hstressConv
-
+  simp only [spatialDir, basisVec] at hconv hpressureConv henergyConv hstressConv
   simp only [localEnergyLimitBaseIntegrand, localEnergyLimitExpandedBaseIntegrand,
     smoothEnergyBaseIntegrand, velocitySq, htime, hspatial, hsecond,
     localEnergyLimitTimeDir, localEnergyLimitSpatialDir, timeDir, spatialDir,
@@ -326,7 +327,6 @@ theorem localEnergy_tendsto_eLpNorm_const_smul_sub
 /-- `L¹` convergence implies convergence of Bochner integrals. -/
 theorem localEnergy_integral_tendsto_of_L1
     {α E : Type*} [MeasurableSpace α] [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [CompleteSpace E]
     {μ : Measure α} {f : α → E} {fn : ℕ → α → E}
     (hfn : ∀ n, MemLp (fn n) 1 μ)
     (hconv : Tendsto (fun n => eLpNorm (fn n - f) 1 μ) atTop (nhds 0)) :

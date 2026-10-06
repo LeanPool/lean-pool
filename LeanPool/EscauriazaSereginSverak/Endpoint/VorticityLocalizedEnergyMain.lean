@@ -103,7 +103,8 @@ private theorem vl_make_measurable_coordinate_versions
     (hz : MemLp z 2 μ) (hv : AEStronglyMeasurable v μ)
     (hF : ∀ j i, MemLp (fun p => F p j i) 2 μ)
     (hg : MemLp g₀ 2 μ) (hG : ∀ j i, MemLp (fun p => G p j i) 2 μ) :
-    ∃ z' v' F' G' g',
+    ∃ (z' v' : Vec3 × ℝ → Vec3) (F' G' : Vec3 × ℝ → Fin 3 → Fin 3 → ℝ)
+      (g' : Vec3 × ℝ → Vec3),
       (∀ i, StronglyMeasurable (fun p => z' p i)) ∧
       (∀ j, StronglyMeasurable (fun p => v' p j)) ∧
       (∀ j i, StronglyMeasurable (fun p => F' p j i)) ∧
@@ -275,7 +276,7 @@ private theorem vl_spatial_energy_integral_as_time_trace
   filter_upwards [hae] with r hr hrI
   have hrI' : r ∈ Icc a τ := ⟨hrI.1.le, hrI.2.le.trans hs.2⟩
   have hri : ∀ i, (Zc i ⟨r, hrI'⟩ : Vec3 → ℝ) =ᵐ[volume] fun x => z' (x, r) i :=
-    fun i => hr i hrI'
+    fun i => hr hrI i hrI'
   symm
   calc
     e r = ∑ i : Fin 3, ‖Zc i ⟨r, hrI'⟩‖ ^ 2 := he_at r hrI'

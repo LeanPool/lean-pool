@@ -36,6 +36,7 @@ local instance localEnergyHolderTripleFourFourTwo :
     exact ⟨by norm_num, by norm_num, by norm_num⟩
   simpa using hreal.ennrealOfReal
 
+/-- The product-space direction corresponding to the `j`th spatial coordinate. -/
 @[expose] def localEnergySpatialDir (j : Fin 3) : Vec3 × ℝ := (basisVec j, 0)
 
 private theorem localEnergy_spatialPartial_eq_fderiv_apply

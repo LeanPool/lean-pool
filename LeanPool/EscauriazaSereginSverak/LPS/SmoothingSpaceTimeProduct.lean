@@ -179,7 +179,7 @@ theorem lps_spaceTime_mul_family_of_slice {m₁ m₂ : ℕ} (hm : m₂ ≤ m₁)
   -- Integrate the slice estimate in time.
   have hL := fun (α : List (Fin 3)) (hα : α ∈ sobolevWords m₂) =>
     lps_stp_integral_sq_slab (hLmem α (mem_sobolevWords.1 hα))
-  show ∑ α ∈ sobolevWords m₂, ∫ p in (Set.univ : Set Vec3) ×ˢ Ioo a b, stLeibniz α Df Dg p ^ 2 ≤
+  change ∑ α ∈ sobolevWords m₂, ∫ p in (Set.univ : Set Vec3) ×ˢ Ioo a b, stLeibniz α Df Dg p ^ 2 ≤
     C * K * ∑ α ∈ sobolevWords m₂, ∫ p in (Set.univ : Set Vec3) ×ˢ Ioo a b, Dg α p ^ 2
   rw [Finset.sum_congr rfl fun α hα => (hL α hα).2,
     Finset.sum_congr rfl fun α hα => (hDg α hα).2,

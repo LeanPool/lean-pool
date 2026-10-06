@@ -98,12 +98,15 @@ private theorem vorticityRegularity_energyDensity_bound
         (Finset.sum_nonneg fun _ _ => sq_nonneg _)
   have hωbase : (∑ i : Fin 3, vorticityCurl G i z ^ 2) ≤ A z := by
     rw [hA]
-    exact Finset.sum_le_sum fun i _ => le_add_of_nonneg_right
-      (Finset.sum_nonneg fun _ _ => sq_nonneg _)
+    exact le_add_of_nonneg_right (Finset.sum_nonneg fun i _ =>
+      Finset.sum_nonneg fun j _ =>
+        sq_nonneg (-(U j z * vorticityCurl G i z - vorticityCurl G j z * U i z)))
   have hdiagΩ2 : (∑ i : Fin 3, ∑ m : Fin 3, Ω2 i m m z ^ 2) ≤ D z := by
     rw [hD]
     exact Finset.sum_le_sum fun i _ => Finset.sum_le_sum fun m _ =>
-      (le_add_of_nonneg_right (Finset.sum_nonneg fun _ _ => sq_nonneg _)).trans
+      (le_add_of_nonneg_right (a := Ω2 i m m z ^ 2)
+        (Finset.sum_nonneg fun j _ =>
+          sq_nonneg (vorticityFluxDeriv2 U G Ω1 D2 Ω2 i j m m z))).trans
         (Finset.single_le_sum
           (f := fun k => Ω2 i m k z ^ 2 + ∑ j : Fin 3,
             vorticityFluxDeriv2 U G Ω1 D2 Ω2 i j m k z ^ 2)
@@ -159,8 +162,6 @@ private theorem vorticityRegularity_integratedStageBounds
     {D2 : Fin 3 → Fin 3 → Fin 3 → Vec3 × ℝ → ℝ}
     {F0 : Fin 3 → Fin 3 → Vec3 × ℝ → ℝ}
     {A B D : Vec3 × ℝ → ℝ} {Kw K1 K2 : ℝ}
-    (hAint : IntegrableOn A T) (hBint : IntegrableOn B T)
-    (hDint : IntegrableOn D T)
     (hAstage : ∀ i, ∫ z in T,
       vorticityCurl G i z ^ 2 + ∑ j : Fin 3, F0 i j z ^ 2 ≤ Kw)
     (hBstage : ∀ i m, ∫ z in T,
@@ -189,7 +190,7 @@ private theorem vorticityRegularity_integratedStageBounds
     calc
       ∫ z in T, A z = ∑ i : Fin 3,
           ∫ z in T, (vorticityCurl G i z ^ 2 + ∑ j : Fin 3, F0 i j z ^ 2) := by
-        rw [hAdef]
+        rw [show A = _ from funext hAdef]
         exact vorticityRegularity_integral_sum1 (S := T) hAterms
       _ ≤ ∑ _i : Fin 3, Kw := Finset.sum_le_sum fun i _ => hAstage i
       _ = 3 * Kw := by rw [Fin.sum_univ_three]; ring
@@ -198,7 +199,7 @@ private theorem vorticityRegularity_integratedStageBounds
       ∫ z in T, B z = ∑ i : Fin 3, ∑ m : Fin 3,
           ∫ z in T, (Ω1 i m z ^ 2 +
             ∑ j : Fin 3, vorticityFluxDeriv U G Ω1 i j m z ^ 2) := by
-        rw [hBdef]
+        rw [show B = _ from funext hBdef]
         exact vorticityRegularity_integral_sum2 (S := T) hBterms
       _ ≤ ∑ _i : Fin 3, ∑ _m : Fin 3, K1 :=
         Finset.sum_le_sum fun i _ => Finset.sum_le_sum fun m _ => hBstage i m
@@ -208,7 +209,7 @@ private theorem vorticityRegularity_integratedStageBounds
       ∫ z in T, D z = ∑ i : Fin 3, ∑ m : Fin 3, ∑ k : Fin 3,
           ∫ z in T, (Ω2 i m k z ^ 2 +
             ∑ j : Fin 3, vorticityFluxDeriv2 U G Ω1 D2 Ω2 i j m k z ^ 2) := by
-        rw [hDdef]
+        rw [show D = _ from funext hDdef]
         exact vorticityRegularity_integral_sum3 (S := T) hDterms
       _ ≤ ∑ _i : Fin 3, ∑ _m : Fin 3, ∑ _k : Fin 3, K2 :=
         Finset.sum_le_sum fun i _ => Finset.sum_le_sum fun m _ =>
@@ -379,7 +380,6 @@ private theorem vorticityRegularity_Dt_error_bound
     have t4 := mul_le_mul (hG i j) (hwA j) (abs_nonneg _) hK
     rw [mul_comm |Ω1 j j z|, mul_comm |vorticityCurl G j z|]
     linarith only [t1, t2, t3, t4]
-  rw [Fin.sum_univ_three]
   have e : (Cc + 6 * (K + M)) *
       (∑ l : Fin 3, |ω l z| + ∑ a : Fin 3, ∑ b : Fin 3, |Ω1 a b z|) =
       Cc * (∑ l : Fin 3, |ω l z| + ∑ a : Fin 3, ∑ b : Fin 3, |Ω1 a b z|) +
@@ -389,7 +389,9 @@ private theorem vorticityRegularity_Dt_error_bound
   have p1 := mul_nonneg hCc (add_nonneg hA0 hB0)
   have p2 := mul_nonneg hK hB0
   have p3 := mul_nonneg hM hA0
-  refine (Finset.abs_sum_le_sum_abs _ _).trans ?_
+  refine (Finset.abs_sum_le_sum_abs
+    (fun j : Fin 3 => vorticityFluxDeriv U G Ω1 i j j z) Finset.univ).trans ?_
+  rw [Fin.sum_univ_three]
   linarith only [e, p1, p2, p3, hj 0, hj 1, hj 2]
 
 /-- `thm:vorticity-regularity` on a product box, retaining the stage constants and exporting
@@ -573,7 +575,7 @@ theorem vorticityRegularity_box_quantified (M K₀ : ℝ) (hM : 0 ≤ M) :
       (fun i m k => by simpa [T, a] using hK2 i m k)
       (fun z => rfl) (fun z => rfl) (fun z => rfl)
   obtain ⟨hAintBound, hBintBound, hDintBound⟩ :=
-    vorticityRegularity_integratedStageBounds hAint hBint hDint hAstage hBstage hDstage
+    vorticityRegularity_integratedStageBounds hAstage hBstage hDstage
       (fun i => ((hw5 i).integrable_sq).add
         (integrable_finsetSum Finset.univ fun j _ => (hF0Lp i j).integrable_sq))
       (fun i m => ((hΩ1 i m).integrable_sq).add
@@ -597,7 +599,8 @@ theorem vorticityRegularity_box_quantified (M K₀ : ℝ) (hM : 0 ≤ M) :
   have hωSall : ∀ᵐ z ∂(volume.restrict S), ∀ i, ω i z = vorticityCurl G i z :=
     ae_all_iff.2 hωS
   have hpoint := vorticityRegularity_energyDensity_bound U G Ω1 D2 Ω2 ω Dt A B D
-    hωSall (fun z => rfl) (fun z => rfl) (fun z => rfl) (fun i z => rfl)
+    hωSall (fun z => by simp only [A, F0, Finset.sum_add_distrib])
+    (fun z => rfl) (fun z => rfl) (fun i z => rfl)
   have hW21intBound := vorticityRegularity_energyDensity_integral_bound bS5 hW21int hpoint
     hRint (by intro z; dsimp [A, B, D]; positivity)
     hAint hBint hDint hAintBound hBintBound hDintBound
@@ -625,7 +628,7 @@ theorem vorticityRegularity_box_quantified (M K₀ : ℝ) (hM : 0 ≤ M) :
         (vorticityFlux_weakDeriv hWo5 hWb5 hU5 hG5 hΩ1 hdU5 hdw i j j)) ψ hψ hψc hψS
   · filter_upwards [ae_restrict_of_ae_restrict_of_subset bSB hGb,
       ae_restrict_of_ae_restrict_of_subset bS5 hUb5, ae_all_iff.2 hωS] with z hGz hUz hωz i
-    show |(∑ j : Fin 3, Ω2 i j j z + ∑ j : Fin 3, vorticityFluxDeriv U G Ω1 i j j z) -
+    change |(∑ j : Fin 3, Ω2 i j j z + ∑ j : Fin 3, vorticityFluxDeriv U G Ω1 i j j z) -
       ∑ j : Fin 3, Ω2 i j j z| ≤ (Cc + 6 * (K + M)) *
         (∑ l : Fin 3, |ω l z| + ∑ a : Fin 3, ∑ b : Fin 3, |Ω1 a b z|)
     rw [add_sub_cancel_left]

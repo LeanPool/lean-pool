@@ -61,7 +61,7 @@ almost-everywhere equality. -/
 theorem blowupLimitAssembly_ae_eq_of_ae_slices
     {Ω : Set Vec3} {I : Set ℝ} {F G : ParabolicPoint → Vec3}
     (hF : Measurable F) (hG : Measurable G)
-    (h : ∀ᵐ t ∂(volume.restrict I), ∀ᵐ x ∂(volume.restrict Ω), F (x,t) = G (x,t)) :
+    (h : ∀ᵐ t ∂(volume.restrict I), ∀ᵐ x ∂(volume.restrict Ω), F (x, t) = G (x, t)) :
     F =ᵐ[volume.restrict (spaceTimeSet Ω I)] G := by
   have hprod : (volume : Measure ParabolicPoint).restrict (spaceTimeSet Ω I) =
       (volume.restrict Ω).prod (volume.restrict I) := by
@@ -150,8 +150,8 @@ theorem blowupLimitAssembly_traceZeroExtension_ae_eq
     (W : Vec3 × Icc (-(3 / 4 : ℝ) ^ 2) 0 → Vec3) (hW : Measurable W)
     (htrace : ∀ᵐ t ∂(volume.restrict (Ioo (-(3 / 4 : ℝ) ^ 2) 0)),
       ∃ ht : t ∈ Icc (-(3 / 4 : ℝ) ^ 2) 0,
-        (fun x => W (x,⟨t,ht⟩)) =ᵐ[volume.restrict
-          (vec3Ball (0 : Vec3) (3 / 4 : ℝ))] (fun x => u (x,t))) :
+        (fun x => W (x, ⟨t, ht⟩)) =ᵐ[volume.restrict
+          (vec3Ball (0 : Vec3) (3 / 4 : ℝ))] (fun x => u (x, t))) :
     blowupLimitTraceZeroExtension W =ᵐ[volume.restrict
       (spaceTimeSet (vec3Ball (0 : Vec3) (3 / 4 : ℝ))
         (Ioo (-(3 / 4 : ℝ) ^ 2) 0))] u := by

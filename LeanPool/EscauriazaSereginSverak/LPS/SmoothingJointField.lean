@@ -98,3 +98,7 @@ theorem lps_smooth_rep_of_curves {a b : ℝ} (hab : a < b)
       (fun ψ hψ hψc => hderiv j α ψ hψ hψc) (hcW (j + 1) α) x t ht
   refine ⟨w 0 [], lps_slab_contDiffOn hab hcW hx ht 0 [], fun t ht => ?_⟩
   exact (hB 0 t ht).2.1
+
+end ESS
+
+end

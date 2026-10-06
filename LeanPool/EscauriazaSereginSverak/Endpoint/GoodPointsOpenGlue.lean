@@ -181,6 +181,17 @@ private theorem isOpen_subtype_union_preimage
   exact isOpen_iUnion fun i => (hU i).preimage continuous_subtype_val
 
 
+private theorem isOpen_subtype_union_inter
+    {α : Type*} [TopologicalSpace α] {ι : Type*} {S : Set α}
+    (U : ι → Set α) (hU : ∀ i, IsOpen (U i)) :
+    IsOpen {z : S | z.1 ∈ ⋃ i, U i ∩ S} := by
+  have hset : {z : S | z.1 ∈ ⋃ i, U i ∩ S} =
+      {z : S | z.1 ∈ ⋃ i, U i} := by
+    ext z
+    simp only [Set.mem_ofPred_eq, mem_iUnion, mem_inter_iff, z.property, and_true]
+  rw [hset]
+  exact isOpen_subtype_union_preimage U hU
+
 private theorem goodPoint_compact_representative
     {ε₀ γ₀ C₄ : ℝ} (hγ₀ : 0 < γ₀) (hC₄ : 0 ≤ C₄)
     (hTop : ∀ (x₀ : Vec3) (t₀ ρ r : ℝ)
@@ -250,7 +261,7 @@ private theorem goodPoint_compact_representative
     (fun z : patchIndex => Metric.ball z.1 (δ z / 2))
     (fun _ => Metric.isOpen_ball) hcover
   have hcoverIndices := goodPoint_finite_cover_indices t
-    (fun z => Metric.ball z.1.1 (δ z / 2)) ht
+    (fun z => Metric.ball z.1 (δ z / 2)) ht
   have hhalfcover := hcoverIndices.1
   have hKne : K.Nonempty := Set.nonempty_iff_ne_empty.mpr hKempty
   have htn : t.Nonempty := hcoverIndices.2 hKne
@@ -277,8 +288,7 @@ private theorem goodPoint_compact_representative
         hKdomain hx⟩⟩
   have hNopen : IsOpen {z : {q : ParabolicPoint //
       q ∈ goodPointClosedTopDomain} | z.1 ∈ N} := by
-    simpa only [N, Vi] using isOpen_subtype_union_preimage
-      (fun i : t => Metric.ball i.1.1 (δ i.1))
+    exact isOpen_subtype_union_inter (fun i : t => Metric.ball i.1.1 (δ i.1))
       (fun _ => Metric.isOpen_ball)
   have hNdomainEq : N ∩ goodPointDomain = ⋃ i : t, Ui i := by
     ext z

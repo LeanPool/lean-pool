@@ -96,7 +96,7 @@ private theorem vorticityTopExtension_continuousShift
     exact hcw.congr_of_eventuallyEq
       (mem_nhdsWithin.2 ⟨N, hNo, hzN, fun y hy => hagree y ⟨hy.2, hy.1⟩⟩)
       (hagree z ⟨hz, hzN⟩)
-  exact hcontP.comp parabolicHomeomorph.continuous.continuousOn fun p hp => hp
+  exact hcontP
 
 private theorem vorticityTopExtension_inwardTimeShift :
     ∃ A : Vec3 × ℝ → Vec3 × ℝ,
@@ -112,6 +112,7 @@ private theorem vorticityTopExtension_inwardTimeShift :
   · intro z
     rfl
   · intro z hz
+    dsimp only
     rw [sub_self, vec3EuclideanNorm_zero]
     refine ⟨?_, by norm_num, ?_⟩
     · split_ifs with h
@@ -141,12 +142,13 @@ private theorem vorticityTopExtension_patchVorticity_ae
     have hb' := hA₀adm b hb
     have hb2 : b.2 ∈ Ioc (-2 : ℝ) 0 := ⟨hb'.2.1, le_of_lt hb'.2.2⟩
     have hl : ∀ᵐ z ∂(volume.restrict (D ∩ S b)), (fun i => ω (A z) i z) = v z := by
-      filter_upwards [ae_all_iff.2 (hωae b hb'.1 hb2),
+      filter_upwards [ae_restrict_of_ae_restrict_of_subset inter_subset_right
+          (ae_all_iff.2 (hωae b hb'.1 hb2)),
         ae_restrict_mem (hDm.inter (hSo b).measurableSet)] with z hz hzm
       funext i
       exact (hagree b hb'.1 hb2 z ⟨hzm.2, hzm.1⟩ i).trans (hz i)
-    rw [← Measure.restrict_restrict (hSo b).measurableSet] at hl
-    exact (ae_restrict_iff' (hSo b).measurableSet).1 hl
+    rw [← Measure.restrict_restrict hDm] at hl
+    exact (ae_restrict_iff' hDm).1 hl
   exact ((ae_restrict_of_ae_restrict_of_subset hcovD h1).and
     (ae_restrict_mem hDm)).mono fun z hz => hz.1 hz.2
 
@@ -199,7 +201,7 @@ private theorem vorticityTopExtension_localDerivativeUnique
       MemLp f 2 (volume.restrict (S c)) → IntegrableOn f (S c))
     (V : Vec3 × ℝ → Vec3)
     (hωae : ∀ c, R₂ < vec3EuclideanNorm c.1 → c.2 ∈ Ioc (-2 : ℝ) 0 → ∀ i,
-      ω c i =ᵐ[volume.restrict (S c)] V i)
+      ω c i =ᵐ[volume.restrict (S c)] fun z => V z i)
     (hΩ1L : ∀ c, R₂ < vec3EuclideanNorm c.1 → c.2 ∈ Ioc (-2 : ℝ) 0 → ∀ i j,
       MemLp (Ω1 c i j) 2 (volume.restrict (S c)))
     (hΩ2L : ∀ c, R₂ < vec3EuclideanNorm c.1 → c.2 ∈ Ioc (-2 : ℝ) 0 → ∀ i j k,
@@ -227,9 +229,9 @@ private theorem vorticityTopExtension_localDerivativeUnique
   have hO : IsOpen (S b ∩ S c) := (hSo b).inter (hSo c)
   have hOb : S b ∩ S c ⊆ S b := inter_subset_left
   have hOc : S b ∩ S c ⊆ S c := inter_subset_right
-  have wb : ω b i =ᵐ[volume.restrict (S b ∩ S c)] V i :=
+  have wb : ω b i =ᵐ[volume.restrict (S b ∩ S c)] fun z => V z i :=
     ae_restrict_of_ae_restrict_of_subset hOb (hωae b hb1 hb2 i)
-  have wc : ω c i =ᵐ[volume.restrict (S b ∩ S c)] V i :=
+  have wc : ω c i =ᵐ[volume.restrict (S b ∩ S c)] fun z => V z i :=
     ae_restrict_of_ae_restrict_of_subset hOc (hωae c hc1 hc2 i)
   have wbc : ω b i =ᵐ[volume.restrict (S b ∩ S c)] ω c i := wb.trans wc.symm
   have e1 : Ω1 b i j =ᵐ[volume.restrict (S b ∩ S c)] Ω1 c i j :=
@@ -281,7 +283,7 @@ private theorem vorticityTopExtension_coverDerivativeIdentities
     intro c hc1 hc2 i j
     have key : ∀ᵐ z ∂(volume.restrict (S c)), ∀ b ∈ A₀, z ∈ S b →
         (Ω1 b i j z = Ω1 c i j z ∧ (∀ k, Ω2 b i j k z = Ω2 c i j k z) ∧
-          Dt b i z = Dt c i) := by
+          Dt b i z = Dt c i z) := by
       rw [ae_ball_iff hA₀c]
       intro b hb
       have hb' := hA₀adm b hb
@@ -292,7 +294,7 @@ private theorem vorticityTopExtension_coverDerivativeIdentities
         filter_upwards [u1, ae_all_iff.2 u2, u3] with z h1 h2 h3 using ⟨h1, h2, h3⟩
       rw [← Measure.restrict_restrict (hSo b).measurableSet] at hall
       exact (ae_restrict_iff' (hSo b).measurableSet).1 hall
-    have hcD : MeasurableSet (S c ∩ D) := ((hSo c).inter hDo).measurableSet
+    have hcD : MeasurableSet (S c ∩ D) := (hSo c).measurableSet.inter hDm
     have key' : ∀ᵐ z ∂(volume.restrict (S c ∩ D)),
         (Ω1 (B z) i j z = Ω1 c i j z ∧ (∀ k, Ω2 (B z) i j k z = Ω2 c i j k z) ∧
           Dt (B z) i z = Dt c i z) := by
@@ -326,7 +328,7 @@ private theorem vorticityTopExtension_patchedDifferentialInequality
     (hineq : ∀ b : Vec3 × ℝ, R₂ < vec3EuclideanNorm b.1 → b.2 ∈ Ioc (-2 : ℝ) 0 →
       ∀ᵐ z ∂(volume.restrict (S b)), ∀ i,
         |Dt b i z - ∑ j : Fin 3, Ω2 b i j j z| ≤
-          Cb * (∑ l : Fin 3, |ω b l z| + ∑ a : Fin 3, ∑ b : Fin 3, |Ω1 b a b z|))
+          Cb * (∑ l : Fin 3, |ω b l z| + ∑ a : Fin 3, ∑ d : Fin 3, |Ω1 b a d z|))
     (hCb : 0 ≤ Cb) :
     ∀ᵐ z ∂(volume.restrict D),
       vec3EuclideanNorm (fun i => Dt (B z) i z - ∑ j, Ω2 (B z) i j j z) ≤
@@ -462,7 +464,7 @@ theorem vorticityTopExtension : ∀ (T₂ R₂ M E : ℝ), 2 < T₂ →
       ∀ z ∈ S c ∩ D, ∀ i, ω (A z) i z = ω c i z :=
     fun c hc1 hc2 z hz i => F1 c hc1 hc2 z hz.2.1 ⟨hz.2.2.1, le_of_lt hz.2.2.2⟩ hz.1.1
       ⟨hz.1.2.1, le_of_lt hz.1.2.2⟩ i
-  have uniq := vorticityTopExtension_localDerivativeUnique R₂ S ω Ω1 Ω2 Dt hSo hint
+  have uniq := vorticityTopExtension_localDerivativeUnique S ω Ω1 Ω2 Dt hSo hint
     (weakVorticity DU) hωae hΩ1L hΩ2L hDtL hdw hdΩ hdt
   have admB : ∀ z ∈ D, R₂ < vec3EuclideanNorm (B z).1 ∧ (B z).2 ∈ Ioc (-2 : ℝ) 0 :=
     fun z hz => ⟨(hA₀adm _ (hBA z hz)).1, (hA₀adm _ (hBA z hz)).2.1,
@@ -521,16 +523,17 @@ theorem vorticityTopExtension : ∀ (T₂ R₂ M E : ℝ), 2 < T₂ →
     exact vorticityTopExtension_patchVorticity_ae D A₀ S hA₀c hcovD hDm A hSo ω
       (weakVorticity DU) hωae (fun b hb1 hb2 z hz i => E1 b hb1 hb2 z hz i) hA₀adm
   · -- continuity up to the top time
-    exact vorticityTopExtension_continuousShift R₂ A ω hA1 hA2 hadmA F1 hωc
+    exact (vorticityTopExtension_continuousShift R₂ A ω hA1 hA2 hadmA F1 hωc).comp
+      parabolicHomeomorph.continuous.continuousOn fun p hp => hp
   · -- zero at the top time
     intro x hx
     have hAx : A (x, 0) = (x, 0) := by
-      ext <;> simp [hA1, hA2]
+      ext <;> norm_num [hA1, hA2]
     have hc2 : ((x, (0 : ℝ)) : Vec3 × ℝ).2 ∈ Ioc (-2 : ℝ) 0 := ⟨by norm_num, le_rfl⟩
     have hz := vorticityTop_zero hfam htrace hx (hωc (x, 0) hx hc2) (hωb (x, 0) hx hc2)
       (hωae (x, 0) hx hc2)
     funext i
-    show ω (A (x, 0)) i (x, 0) = 0
+    change ω (A (x, 0)) i (x, 0) = 0
     rw [hAx]
     exact hz x (by rw [sub_self, vec3EuclideanNorm_zero]; norm_num) i
   · -- the uniform bound

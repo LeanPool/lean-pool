@@ -61,6 +61,10 @@ private theorem parabolicRescale_inverse_cylinder_mem
     have hlt : r⁻¹ ^ 2 * (-r ^ 2) < r⁻¹ ^ 2 * (w.2 - t₀) :=
       mul_lt_mul_of_pos_left (by linarith only [hwlower]) hinv2
     linarith only [hlt, hk]
+  · change -(r⁻¹ ^ 2 * t₀) + r⁻¹ ^ 2 * w.2 < 1
+    have hlt : r⁻¹ ^ 2 * (w.2 - t₀) < r⁻¹ ^ 2 * r ^ 2 :=
+      mul_lt_mul_of_pos_left (by linarith only [hwupper]) hinv2
+    linarith only [hlt, hk]
 
 private theorem rescaledPastTime_contains_two_unit_slab
     {t₀ r : ℝ} (ht₀ : t₀ ∈ Ioo (-2 : ℝ) 0)
@@ -92,10 +96,6 @@ private theorem exists_regular_slab_rescale_radius
   have hrt' : r ≤ (t₀ + 2) / 4 :=
     (min_le_right _ _).trans ((min_le_right _ _).trans (min_le_right _ _))
   exact ⟨r, hr, hr1, hrδ, hrt, hrt', hta, htb⟩
-  · change -(r⁻¹ ^ 2 * t₀) + r⁻¹ ^ 2 * w.2 < 1
-    have hlt : r⁻¹ ^ 2 * (w.2 - t₀) < r⁻¹ ^ 2 * r ^ 2 :=
-      mul_lt_mul_of_pos_left (by linarith only [hwupper]) hinv2
-    linarith only [hlt, hk]
 
 /-- Near a time at which closed balls times short intervals consist of regular
 points, the weak vorticity of a global suitable solution vanishes on any ball

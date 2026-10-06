@@ -35,10 +35,10 @@ theorem blowup_limit_rescaling_compact_slice_bound
     (M : ℝ)
     (hsource : ∀ t,
       MemLp ((vec3Ball (0 : Vec3) (3 / 4 : ℝ)).indicator
-        (fun x => W (x,t))) 3 volume ∧
+        (fun x => W (x, t))) 3 volume ∧
       eLpNorm (fun x => vec3EuclideanNorm
         ((vec3Ball (0 : Vec3) (3 / 4 : ℝ)).indicator
-          (fun y => W (y,t)) x)) 3 volume ≤ ENNReal.ofReal M)
+          (fun y => W (y, t)) x)) 3 volume ≤ ENNReal.ofReal M)
     (x₀ : Vec3) (t₀ : ℝ) (r : ℕ → ℝ)
     (hr : ∀ n, 0 < r n)
     (C : Set Vec3) (hC : IsCompact C)

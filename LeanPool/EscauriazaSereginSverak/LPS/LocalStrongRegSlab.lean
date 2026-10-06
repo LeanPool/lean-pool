@@ -94,7 +94,7 @@ theorem lps_regR12_gradEnergy_le {t : ℝ} (ht : 0 ≤ t) {M : ℝ}
   have hb2 : (∫ x : Vec3, spatialGradientSq (lpsRegU ρ ε hε b hb)
       (fun z i j => spatialPartial (fun y => lpsRegU ρ ε hε b hb y i) j z) (x, t)) =
       lpsRegGradEnergy ρ ε hε b hb t := by
-    show (∫ x : Vec3, ∑ i : Fin 3, ∑ j : Fin 3,
+    change (∫ x : Vec3, ∑ i : Fin 3, ∑ j : Fin 3,
       spatialDeriv (fun y => lpsRegU ρ ε hε b hb (y, t) i) j x ^ 2) = _
     unfold lpsRegGradEnergy
     have hsq : ∀ i j : Fin 3, Integrable (fun x : Vec3 =>
@@ -139,7 +139,7 @@ theorem lps_regR12_Q_slab {T M : ℝ} (hT : 0 < T)
     have hsq : ∀ i j k : Fin 3, Integrable (fun x : Vec3 => spatialDeriv (spatialDeriv
         (fun y => lpsRegU ρ ε hε b hb (y, t) i) j) k x ^ 2) volume :=
       fun i j k => (lps_regR12_slice_memLp ρ ε hε b hb t ht i [j, k]).integrable_sq
-    show (∫ x : Vec3, ∑ i : Fin 3, ∑ j : Fin 3, ∑ k : Fin 3, spatialDeriv (spatialDeriv
+    change (∫ x : Vec3, ∑ i : Fin 3, ∑ j : Fin 3, ∑ k : Fin 3, spatialDeriv (spatialDeriv
         (fun y => lpsRegU ρ ε hε b hb (y, t) i) j) k x ^ 2) = _
     unfold lpsRegHessEnergy
     rw [integral_finsetSum _ (fun i _ => integrable_finsetSum _ fun j _ =>
@@ -179,7 +179,7 @@ theorem lps_regR12_Q_slab {T M : ℝ} (hT : 0 < T)
     have hi : ∀ i : Fin 3, Integrable (fun x : Vec3 =>
         lpsRegQ ρ ε hε b hb (x, t) i ^ 2) volume := fun i => (hmem i).integrable_sq
     refine ⟨integrable_finsetSum _ fun i _ => hi i, ?_⟩
-    show (∫ x : Vec3, ∑ i : Fin 3, lpsRegQ ρ ε hε b hb (x, t) i ^ 2) ≤ _
+    change (∫ x : Vec3, ∑ i : Fin 3, lpsRegQ ρ ε hε b hb (x, t) i ^ 2) ≤ _
     rw [integral_finsetSum _ (fun i _ => hi i), hHt t ht.1.le]
     refine hbound.trans ?_
     set y := lpsRegGradEnergy ρ ε hε b hb t with hyt

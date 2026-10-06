@@ -167,8 +167,10 @@ theorem localHeatGain_heat {B K : Set Vec3} {I : Set ℝ} (hIm : MeasurableSet I
   intro φ hφ hφc hφV
   have h := heatCutoff_equation (U := B) (K := K) (I := I) hIm hη.compact hη.subset
     (z := Dz []) (G := DG []) (Dz := fun j => Dz [j]) hη.smooth hη.zero
-    (hDz.memL2 [] (Nat.zero_le _)) (fun j => hDz.memL2 [j] (by simp only [List.length_singleton]; omega))
-    (hDG.memL2 [] (Nat.zero_le _)) (fun j => hDz.weak [] j (by simp only [List.length_nil]; omega)) hheat
+    (hDz.memL2 [] (Nat.zero_le _))
+    (fun j => hDz.memL2 [j] (by simp only [List.length_singleton]; omega))
+    (hDG.memL2 [] (Nat.zero_le _))
+    (fun j => hDz.weak [] j (by simp only [List.length_nil]; omega)) hheat
     φ hφ hφc hφV
   have e1 : ∫ p in (univ : Set Vec3) ×ˢ I, localHeatGainDw η Dz [] p *
       (-timePartial φ p - ∑ j : Fin 3, spatialSecondPartial φ j j p) =

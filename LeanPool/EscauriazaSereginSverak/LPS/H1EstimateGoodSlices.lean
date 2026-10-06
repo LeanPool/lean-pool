@@ -34,7 +34,7 @@ namespace ESS
 /-- Almost every time slice of a square-integrable space-time field on a slab is
 square integrable. -/
 theorem lps_slice_memLp_two_ae_slab {a b : ℝ} {E : Type} [NormedAddCommGroup E]
-    [SecondCountableTopology E] {F : ParabolicPoint → E}
+    {F : ParabolicPoint → E}
     (hF : MemLp F 2 (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo a b)))) :
     ∀ᵐ t ∂(volume.restrict (Ioo a b)), MemLp (fun x : Vec3 => F (x, t)) 2 volume := by
   have hν := lps_memLp_slab_to_prod hF

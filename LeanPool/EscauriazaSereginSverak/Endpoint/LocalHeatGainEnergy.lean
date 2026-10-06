@@ -106,7 +106,7 @@ theorem spatialSecondPartial_spaceTimeWord (β : List (Fin 3)) (k : Fin 3)
           fun r : Vec3 × ℝ => spatialPartial (fun s : Vec3 × ℝ => spatialPartial W k s) j r := by
         funext r
         exact spatialSecondPartial_comm hW r j k
-      show spatialPartial (fun r : Vec3 × ℝ =>
+      change spatialPartial (fun r : Vec3 × ℝ =>
           spatialPartial (fun s : Vec3 × ℝ => spatialPartial W j s) k r) k q =
         spatialPartial (fun r : Vec3 × ℝ =>
           spatialPartial (fun s : Vec3 × ℝ => spatialPartial W k s) k r) j q
@@ -376,6 +376,8 @@ private theorem localHeatGain_word_energy_bound
     (hHK : ∀ x, x ∉ K → ∀ s, H (x, s) = 0)
     (Nsq : ℝ → ℝ) (hNsqNonneg : ∀ s, 0 ≤ Nsq s)
     (hNsqCont : Continuous Nsq)
+    (hNsqDef : ∀ s, Nsq s = ∑ α ∈ sobolevWords (m - 1),
+      ∫ x : Vec3, spaceTimeWord α H (x, s) ^ 2)
     (hwordEq : ∀ (β : List (Fin 3)) (p : Vec3 × ℝ),
       timePartial (spaceTimeWord β w) p -
         ∑ k : Fin 3, spatialSecondPartial (spaceTimeWord β w) k k p =
@@ -391,106 +393,110 @@ private theorem localHeatGain_word_energy_bound
       Continuous fun s => ∫ x : Vec3, spaceTimeWord β V (x, s) ^ 2 :=
     continuous_integral_sq_of_compl (contDiff_spaceTimeWord β hV).continuous hK
       (spaceTimeWord_eq_zero_of_compl hK β hVK)
-    rw [mem_sobolevWords] at hβ
-    have hzβ := contDiff_spaceTimeWord β hw
-    have hzβK := spaceTimeWord_eq_zero_of_compl hK β hwK
-    have hzβa := spaceTimeWord_eq_zero_of_slice β hw0
-    -- the source in the form `Σ_j ∂_j F_j + g`
-    obtain ⟨F, g, hF, hg, hFK, hgK, hsrc, hf⟩ : ∃ (F : Fin 3 → Vec3 × ℝ → ℝ)
-        (g : Vec3 × ℝ → ℝ), (∀ j, ContDiff ℝ (⊤ : ℕ∞) (F j)) ∧ ContDiff ℝ (⊤ : ℕ∞) g ∧
-        (∀ j x, x ∉ K → ∀ s, F j (x, s) = 0) ∧ (∀ x, x ∉ K → ∀ s, g (x, s) = 0) ∧
-        (∀ p, spaceTimeWord β H p = ∑ j : Fin 3, spatialPartial (F j) j p + g p) ∧
-        ∀ s, 2 * (∫ x : Vec3, ∑ j : Fin 3, F j (x, s) ^ 2) + (∫ x : Vec3, g (x, s) ^ 2) ≤
-          2 * Nsq s := by
-      by_cases hnil : β = []
-      · subst hnil
-        refine ⟨fun _ _ => 0, H, fun _ => contDiff_const, hH, fun _ _ _ _ => rfl, hHK,
-          fun p => ?_, fun s => ?_⟩
-        · simp [spatialPartial_const_zero]
-          rfl
-        · have hmem : ([] : List (Fin 3)) ∈ sobolevWords (m - 1) := by
-            rw [mem_sobolevWords]
-            simp
-          have hle := Finset.single_le_sum (f := fun α => ∫ x : Vec3, spaceTimeWord α H (x, s) ^ 2)
-            (fun α _ => integral_nonneg fun x => sq_nonneg _) hmem
-          have hle' : ∫ x : Vec3, H (x, s) ^ 2 ≤ Nsq s := hle
-          have h0 : (∫ x : Vec3, ∑ j : Fin 3,
-              (fun (_ : Fin 3) (_ : Vec3 × ℝ) => (0 : ℝ)) j (x, s) ^ 2) = 0 := by simp
-          rw [h0]
-          linarith only [hle', hNsq_nonneg s]
-      · let β'' := β.dropLast
-        let k₀ := β.getLast hnil
-        have hβeq : β = β'' ++ [k₀] := (List.dropLast_append_getLast hnil).symm
-        let S := spaceTimeWord β'' H
-        refine ⟨fun j q => if j = k₀ then S q else 0, fun _ => 0, fun j => ?_,
-          contDiff_const, fun j x hx s => ?_, fun _ _ _ => rfl, fun p => ?_, fun s => ?_⟩
-        · by_cases hj : j = k₀
-          · simp only [hj, ite_true]
-            exact contDiff_spaceTimeWord β'' hH
-          · simp only [hj, ite_false]
-            exact contDiff_const
-        · by_cases hj : j = k₀
-          · simp only [hj, ite_true]
-            exact spaceTimeWord_eq_zero_of_compl hK β'' hHK x hx s
-          · simp [hj]
-        · rw [hβeq, spaceTimeWord_append, Finset.sum_eq_single k₀]
-          · simp [S]
-          · intro j _ hj
-            have hfun : (fun q : Vec3 × ℝ => if j = k₀ then S q else 0) = fun _ => 0 := by
-              funext q
-              simp [hj]
-            show spatialPartial (fun q : Vec3 × ℝ => if j = k₀ then S q else 0) j p = 0
-            rw [hfun]
-            exact spatialPartial_const_zero j p
+  rw [mem_sobolevWords] at hβ
+  have hzβ := contDiff_spaceTimeWord β hw
+  have hzβK := spaceTimeWord_eq_zero_of_compl hK β hwK
+  have hzβa := spaceTimeWord_eq_zero_of_slice β hw0
+  -- the source in the form `Σ_j ∂_j F_j + g`
+  obtain ⟨F, g, hF, hg, hFK, hgK, hsrc, hf⟩ : ∃ (F : Fin 3 → Vec3 × ℝ → ℝ)
+      (g : Vec3 × ℝ → ℝ), (∀ j, ContDiff ℝ (⊤ : ℕ∞) (F j)) ∧ ContDiff ℝ (⊤ : ℕ∞) g ∧
+      (∀ j x, x ∉ K → ∀ s, F j (x, s) = 0) ∧ (∀ x, x ∉ K → ∀ s, g (x, s) = 0) ∧
+      (∀ p, spaceTimeWord β H p = ∑ j : Fin 3, spatialPartial (F j) j p + g p) ∧
+      ∀ s, 2 * (∫ x : Vec3, ∑ j : Fin 3, F j (x, s) ^ 2) + (∫ x : Vec3, g (x, s) ^ 2) ≤
+        2 * Nsq s := by
+    by_cases hnil : β = []
+    · subst hnil
+      refine ⟨fun _ _ => 0, H, fun _ => contDiff_const, hH, fun _ _ _ _ => rfl, hHK,
+        fun p => ?_, fun s => ?_⟩
+      · simp [spatialPartial_const_zero]
+        rfl
+      · have hmem : ([] : List (Fin 3)) ∈ sobolevWords (m - 1) := by
+          rw [mem_sobolevWords]
+          simp
+        have hle := Finset.single_le_sum (f := fun α => ∫ x : Vec3, spaceTimeWord α H (x, s) ^ 2)
+          (fun α _ => integral_nonneg fun x => sq_nonneg _) hmem
+        have hle' : ∫ x : Vec3, H (x, s) ^ 2 ≤ Nsq s := by
+          rw [hNsqDef s]
+          exact hle
+        have h0 : (∫ x : Vec3, ∑ j : Fin 3,
+            (fun (_ : Fin 3) (_ : Vec3 × ℝ) => (0 : ℝ)) j (x, s) ^ 2) = 0 := by simp
+        rw [h0]
+        linarith only [hle', hNsqNonneg s]
+    · let β'' := β.dropLast
+      let k₀ := β.getLast hnil
+      have hβeq : β = β'' ++ [k₀] := (List.dropLast_append_getLast hnil).symm
+      let S := spaceTimeWord β'' H
+      refine ⟨fun j q => if j = k₀ then S q else 0, fun _ => 0, fun j => ?_,
+        contDiff_const, fun j x hx s => ?_, fun _ _ _ => rfl, fun p => ?_, fun s => ?_⟩
+      · by_cases hj : j = k₀
+        · simp only [hj, ite_true]
+          exact contDiff_spaceTimeWord β'' hH
+        · simp only [hj, ite_false]
+          exact contDiff_const
+      · by_cases hj : j = k₀
+        · simp only [hj, ite_true]
+          exact spaceTimeWord_eq_zero_of_compl hK β'' hHK x hx s
+        · simp [hj]
+      · rw [hβeq, spaceTimeWord_append, Finset.sum_eq_single k₀]
+        · simp [S]
+        · intro j _ hj
+          have hfun : (fun q : Vec3 × ℝ => if j = k₀ then S q else 0) = fun _ => 0 := by
+            funext q
+            simp [hj]
+          change spatialPartial (fun q : Vec3 × ℝ => if j = k₀ then S q else 0) j p = 0
+          rw [hfun]
+          exact spatialPartial_const_zero j p
+        · simp
+      · have hmem : β'' ∈ sobolevWords (m - 1) := by
+          rw [mem_sobolevWords]
+          simp only [β'', List.length_dropLast]
+          omega
+        have hle := Finset.single_le_sum
+          (f := fun α => ∫ x : Vec3, spaceTimeWord α H (x, s) ^ 2)
+          (fun α _ => integral_nonneg fun x => sq_nonneg _) hmem
+        have hsum (x : Vec3) : ∑ j : Fin 3, (if j = k₀ then S (x, s) else 0) ^ 2 =
+            S (x, s) ^ 2 := by
+          rw [Finset.sum_eq_single k₀]
           · simp
-        · have hmem : β'' ∈ sobolevWords (m - 1) := by
-            rw [mem_sobolevWords]
-            simp only [β'', List.length_dropLast]
-            omega
-          have hle := Finset.single_le_sum
-            (f := fun α => ∫ x : Vec3, spaceTimeWord α H (x, s) ^ 2)
-            (fun α _ => integral_nonneg fun x => sq_nonneg _) hmem
-          have hsum (x : Vec3) : ∑ j : Fin 3, (if j = k₀ then S (x, s) else 0) ^ 2 =
-              S (x, s) ^ 2 := by
-            rw [Finset.sum_eq_single k₀]
-            · simp
-            · intro j _ hj
-              simp [hj]
-            · simp
-          simp only [hsum]
-          have hle' : ∫ x : Vec3, S (x, s) ^ 2 ≤ Nsq s := hle
-          have h0 : (∫ x : Vec3, (fun _ : Vec3 × ℝ => (0 : ℝ)) (x, s) ^ 2) = 0 := by simp
-          rw [h0]
-          linarith only [hle']
-    have hheq (p : Vec3 × ℝ) : timePartial (spaceTimeWord β w) p -
-        ∑ j : Fin 3, spatialSecondPartial (spaceTimeWord β w) j j p =
-        ∑ j : Fin 3, spatialPartial (F j) j p + g p := (hwordEq β p).trans (hsrc p)
-    obtain ⟨he, hd⟩ := scalarHeatEnergy_smooth hab' hzβ hF hg hK
-      (fun x hx s => ⟨hzβK x hx s, fun j => hFK j x hx s, hgK x hx s⟩) hheq hzβa
-    have hfcont : Continuous fun s =>
-        2 * (∫ x : Vec3, ∑ j : Fin 3, F j (x, s) ^ 2) + ∫ x : Vec3, g (x, s) ^ 2 := by
-      refine (continuous_const.mul ?_).add
-        (continuous_integral_sq_of_compl hg.continuous hK hgK)
-      have hsw : (fun s => ∫ x : Vec3, ∑ j : Fin 3, F j (x, s) ^ 2) =
-          fun s => ∑ j : Fin 3, ∫ x : Vec3, F j (x, s) ^ 2 := by
-        funext s
-        refine integral_finsetSum _ fun j _ => ?_
-        have hc : Continuous fun x : Vec3 => F j (x, s) ^ 2 :=
-          ((hF j).continuous.comp (continuous_id.prodMk continuous_const)).pow 2
-        exact hc.integrable_of_hasCompactSupport
-          (HasCompactSupport.intro hK fun x hx => by simp [hFK j x hx s])
-      rw [hsw]
-      exact continuous_finsetSum _ fun j _ =>
-        continuous_integral_sq_of_compl (hF j).continuous hK (hFK j)
-    have hfle : (∫ s in a..b, (2 * (∫ x : Vec3, ∑ j : Fin 3, F j (x, s) ^ 2) +
-        ∫ x : Vec3, g (x, s) ^ 2)) ≤ 2 * ∫ s in a..b, Nsq s := by
-      rw [← intervalIntegral.integral_const_mul]
-      exact intervalIntegral.integral_mono_on hab' (hfcont.intervalIntegrable _ _)
-        ((continuous_const.mul hNsq_cont).intervalIntegrable _ _) fun s _ => hf s
-    have hexp : 0 ≤ Real.exp (b - a) := (Real.exp_pos _).le
-    have hba : 0 ≤ b - a := by linarith only [hab]
-    refine ⟨fun t ht => (he t ht).trans (mul_le_mul_of_nonneg_left hfle hexp), ?_⟩
-    exact hd.trans (mul_le_mul_of_nonneg_left hfle (by positivity))
+          · intro j _ hj
+            simp [hj]
+          · simp
+        simp only [hsum]
+        have hle' : ∫ x : Vec3, S (x, s) ^ 2 ≤ Nsq s := by
+          rw [hNsqDef s]
+          exact hle
+        have h0 : (∫ x : Vec3, (fun _ : Vec3 × ℝ => (0 : ℝ)) (x, s) ^ 2) = 0 := by simp
+        rw [h0]
+        linarith only [hle']
+  have hheq (p : Vec3 × ℝ) : timePartial (spaceTimeWord β w) p -
+      ∑ j : Fin 3, spatialSecondPartial (spaceTimeWord β w) j j p =
+      ∑ j : Fin 3, spatialPartial (F j) j p + g p := (hwordEq β p).trans (hsrc p)
+  obtain ⟨he, hd⟩ := scalarHeatEnergy_smooth hab.le hzβ hF hg hK
+    (fun x hx s => ⟨hzβK x hx s, fun j => hFK j x hx s, hgK x hx s⟩) hheq hzβa
+  have hfcont : Continuous fun s =>
+      2 * (∫ x : Vec3, ∑ j : Fin 3, F j (x, s) ^ 2) + ∫ x : Vec3, g (x, s) ^ 2 := by
+    refine (continuous_const.mul ?_).add
+      (continuous_integral_sq_of_compl hg.continuous hK hgK)
+    have hsw : (fun s => ∫ x : Vec3, ∑ j : Fin 3, F j (x, s) ^ 2) =
+        fun s => ∑ j : Fin 3, ∫ x : Vec3, F j (x, s) ^ 2 := by
+      funext s
+      refine integral_finsetSum _ fun j _ => ?_
+      have hc : Continuous fun x : Vec3 => F j (x, s) ^ 2 :=
+        ((hF j).continuous.comp (continuous_id.prodMk continuous_const)).pow 2
+      exact hc.integrable_of_hasCompactSupport
+        (HasCompactSupport.intro hK fun x hx => by simp [hFK j x hx s])
+    rw [hsw]
+    exact continuous_finsetSum _ fun j _ =>
+      continuous_integral_sq_of_compl (hF j).continuous hK (hFK j)
+  have hfle : (∫ s in a..b, (2 * (∫ x : Vec3, ∑ j : Fin 3, F j (x, s) ^ 2) +
+      ∫ x : Vec3, g (x, s) ^ 2)) ≤ 2 * ∫ s in a..b, Nsq s := by
+    rw [← intervalIntegral.integral_const_mul]
+    exact intervalIntegral.integral_mono_on hab.le (hfcont.intervalIntegrable _ _)
+      ((continuous_const.mul hNsqCont).intervalIntegrable _ _) fun s _ => hf s
+  have hexp : 0 ≤ Real.exp (b - a) := (Real.exp_pos _).le
+  have hba : 0 ≤ b - a := by linarith only [hab]
+  refine ⟨fun t ht => (he t ht).trans (mul_le_mul_of_nonneg_left hfle hexp), ?_⟩
+  exact hd.trans (mul_le_mul_of_nonneg_left hfle (by positivity))
 
 /-- `lem:local-heat-gain`, step `#fourier-energy-estimate`, with the constant
 depending on `m` and on an upper bound `L` for `b - a`. -/
@@ -566,14 +572,14 @@ theorem localHeatGain_fourierEnergy (m : ℕ) (hm : m = 1 ∨ m = 2) {L : ℝ} (
     rw [Measure.restrict_univ]
     congr 1
     funext x
-    show (wordDeriv α (fun y => H (y, s)) x) ^ 2 = _
+    change (wordDeriv α (fun y => H (y, s)) x) ^ 2 = _
     rw [← spaceTimeWord_slice α H s]
   have hJ : 0 ≤ ∫ s in a..b, Nsq s :=
     intervalIntegral.integral_nonneg hab' fun s _ => hNsq_nonneg s
   -- energy bounds for each word derivative
   have hword (β : List (Fin 3)) (hβ : β ∈ sobolevWords m) :=
-    localHeatGain_word_energy_bound hab' hK hw hwK hw0 hH hHK Nsq
-      hNsq_nonneg hNsq_cont hwordEq β hβ
+    localHeatGain_word_energy_bound hab hK hw hwK hw0 hH hHK Nsq
+      hNsq_nonneg hNsq_cont (fun _ => rfl) hwordEq β hβ
   -- assembly
   set J := ∫ s in a..b, Nsq s with hJdef
   have hexpE : Real.exp (b - a) ≤ E := Real.exp_le_exp.2 hbL

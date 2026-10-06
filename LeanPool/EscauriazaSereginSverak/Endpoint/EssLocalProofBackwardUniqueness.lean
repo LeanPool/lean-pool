@@ -117,7 +117,7 @@ private theorem essLocal_backwardUniqueness_zero_firstSlab
       rw [hgrad, Real.sqrt_mul (sq_nonneg a), Real.sqrt_sq_eq_abs, abs_of_pos ha]
     rw [hheat, vec3EuclideanNorm_smul, abs_of_pos ha, hnorm, hsqrt]
     have h' := mul_le_mul_of_nonneg_left hz ha.le
-    convert h' using 1 <;> ring
+    convert h' using 1; ring
   have hL2W : ∀ S : Set ParabolicPoint,
       S ⊆ spaceTimeSet {x : Vec3 | 0 < x 2} (Ioo (0 : ℝ) 1) →
       Bornology.IsBounded S →
@@ -147,7 +147,7 @@ private theorem essLocal_backwardUniqueness_zero_firstSlab
   · exact hg0
 
 private theorem essLocal_continuousZero_at_one
-    {V : Type*} [TopologicalSpace V] [T2Space V] (f : ℝ → V)
+    {V : Type*} [TopologicalSpace V] [T2Space V] [Zero V] (f : ℝ → V)
     (hcont : ContinuousOn f (Ico (0 : ℝ) 2))
     (hzero : ∀ s ∈ Ioo (0 : ℝ) 1, f s = 0) : f 1 = 0 := by
   let s : ℕ → ℝ := fun n => 1 - (1 / 2 : ℝ) ^ n
@@ -180,22 +180,21 @@ private theorem essLocal_continuousZero_at_one
   exact tendsto_nhds_unique hseq hseqZero'
 
 private theorem essLocal_reflectedDerivativeL2_finite
-    {Ω Qsource Qtarget : Set ParabolicPoint}
+    {Ω : Set Vec3} {Qtarget : Set ParabolicPoint}
     {ω : ParabolicPoint → Vec3} {Dω : ParabolicPoint → Fin 3 → Vec3}
     {D2ω : ParabolicPoint → Fin 3 → Fin 3 → Vec3} {Dtω : ParabolicPoint → Vec3}
     (e : ParabolicPoint ≃ₜ ParabolicPoint)
-    (g : ParabolicPoint → Vec3) (dg : ParabolicPoint → Fin 3 → Vec3)
+    (dg : ParabolicPoint → Fin 3 → Vec3)
     (d2g : ParabolicPoint → Fin 3 → Fin 3 → Vec3) (dtg : ParabolicPoint → Vec3)
     (hmp : MeasurePreserving e (volume : Measure ParabolicPoint)
       (volume : Measure ParabolicPoint))
-    (hpointMap : ∀ z ∈ Qtarget, e z ∈ Qsource)
+    (hpointMap : ∀ z ∈ Qtarget, e z ∈ spaceTimeSet Ω (Ioo (-2 : ℝ) 0))
     (hEbounded : ∀ S : Set ParabolicPoint, Bornology.IsBounded S →
       Bornology.IsBounded (e '' S))
     (hderiv : HasSpaceTimeWeakDerivs Ω (Ioo (-2 : ℝ) 0) ω Dω D2ω Dtω)
-    (hL2 : ∀ S : Set ParabolicPoint, S ⊆ Qsource → Bornology.IsBounded S →
+    (hL2 : ∀ S : Set ParabolicPoint, S ⊆ spaceTimeSet Ω (Ioo (-2 : ℝ) 0) → Bornology.IsBounded S →
       (∫⁻ z in S, ‖ω z‖ₑ ^ (2 : ℝ) + ‖Dω z‖ₑ ^ (2 : ℝ) +
         ‖D2ω z‖ₑ ^ (2 : ℝ) + ‖Dtω z‖ₑ ^ (2 : ℝ)) < ⊤)
-    (hg : ∀ z, g z = ω (e z))
     (hdg : ∀ z i j, dg z i j = Dω (e z) i j)
     (hd2g : ∀ z i j k, d2g z i j k = D2ω (e z) i j k)
     (hdtg : ∀ z i, dtg z i = -Dtω (e z) i) :
@@ -208,7 +207,7 @@ private theorem essLocal_reflectedDerivativeL2_finite
       Bornology.IsBounded S → (∫⁻ z in S, F (e z)) < ⊤ := by
     intro S hS hSb
     let T := e '' S
-    have hTsub : T ⊆ Qsource := by
+    have hTsub : T ⊆ spaceTimeSet Ω (Ioo (-2 : ℝ) 0) := by
       rintro z ⟨y, hy, rfl⟩
       exact hpointMap y (hS hy)
     have hTbounded : Bornology.IsBounded T := hEbounded S hSb
@@ -217,7 +216,8 @@ private theorem essLocal_reflectedDerivativeL2_finite
       refine (lintegral_mono fun z => ?_).trans_lt htop
       dsimp [F]
       have hωnonneg : (0 : ℝ≥0∞) ≤ ‖ω z‖ₑ ^ (2 : ℝ) := by positivity
-      exact le_add_of_nonneg_left hωnonneg
+      simpa only [add_assoc] using le_add_of_nonneg_left
+        (a := ‖Dω z‖ₑ ^ (2 : ℝ) + ‖D2ω z‖ₑ ^ (2 : ℝ) + ‖Dtω z‖ₑ ^ (2 : ℝ)) hωnonneg
     have hmapS : Measure.map e (volume.restrict S) = volume.restrict T :=
       (hmp.restrict_image_emb e.measurableEmbedding S).map_eq
     have hDmeas : AEStronglyMeasurable Dω (volume.restrict T) :=
@@ -241,7 +241,11 @@ private theorem essLocal_reflectedDerivativeL2_finite
   have hEq : (fun z => ‖dg z‖ₑ ^ (2 : ℝ) + ‖d2g z‖ₑ ^ (2 : ℝ) +
       ‖dtg z‖ₑ ^ (2 : ℝ)) = fun z => F (e z) := by
     funext z
-    rw [hg, hdg, hd2g, hdtg, enorm_neg]
+    have hD : dg z = Dω (e z) := funext fun i => funext fun j => hdg z i j
+    have hD2 : d2g z = D2ω (e z) :=
+      funext fun i => funext fun j => funext fun k => hd2g z i j k
+    have hDt : dtg z = -Dtω (e z) := funext fun i => hdtg z i
+    simp only [hD, hD2, hDt, enorm_neg, F]
   simpa only [hEq] using hsourceL2
 
 private theorem essLocal_backwardUniqueness_affineSecondSlab
@@ -352,8 +356,8 @@ private theorem essLocal_backwardUniqueness_affineSecondSlab
   exact hGzeroSecond
 
 private theorem essLocal_reflectedHeatInequality
-    {Ω H : Set Vec3} {Qsource Qtarget : Set ParabolicPoint}
-    (C : ℝ) (hC : 0 ≤ C)
+    {H : Set Vec3} {Qsource Qtarget : Set ParabolicPoint}
+    (C : ℝ)
     (ω : ParabolicPoint → Vec3) (Dω : ParabolicPoint → Fin 3 → Vec3)
     (D2ω : ParabolicPoint → Fin 3 → Fin 3 → Vec3) (Dtω : ParabolicPoint → Vec3)
     (e : ParabolicPoint → ParabolicPoint)
@@ -382,9 +386,6 @@ private theorem essLocal_reflectedHeatInequality
               Real.sqrt (spatialGradientSq ω Dω z)) :=
       (ae_restrict_iff' hQsourceMeas).1 hωineq
     have hpull := hmp.quasiMeasurePreserving.ae hωineqGlobal
-    have hsubset : spaceTimeSet H (Ioo (0 : ℝ) 2) ⊆ Qtarget := by
-      rintro z ⟨hz, ht⟩
-      exact ⟨hHsub hz, ht⟩
     have hrestricted : ∀ᵐ z ∂(volume.restrict
         (spaceTimeSet H (Ioo (0 : ℝ) 2))),
         vec3EuclideanNorm (fun i => Dtω (e z) i -
@@ -420,7 +421,7 @@ private theorem essLocal_reflectedHeatInequality
         Real.sqrt (spatialGradientSq g dg z) :=
       add_nonneg (vec3EuclideanNorm_nonneg _) (Real.sqrt_nonneg _)
     exact hbase.trans (mul_le_mul_of_nonneg_right
-      (by linarith only [hC]) hsumNonneg)
+      (by linarith) hsumNonneg)
 private theorem essLocal_backwardUniqueness_firstSlabFromTwoUnitData
     {C : ℝ} (hC : 0 ≤ C) (g : ParabolicPoint → Vec3)
     (dg : ParabolicPoint → Fin 3 → Vec3)
@@ -460,13 +461,16 @@ private theorem essLocal_backwardUniqueness_firstSlabFromTwoUnitData
       (∫⁻ z in S, ‖dg z‖ₑ ^ (2 : ℝ) + ‖d2g z‖ₑ ^ (2 : ℝ) +
         ‖dtg z‖ₑ ^ (2 : ℝ)) < ⊤ := by
     intro S hS hSb
-    exact hL2 S (fun z hz => ⟨hz.1, ⟨hz.2.1, lt_trans hz.2.2 (by norm_num)⟩⟩) hSb
+    exact hL2 S (fun z hz => ⟨(hS hz).1,
+      ⟨(hS hz).2.1, lt_trans (hS hz).2.2 (by norm_num)⟩⟩) hSb
   have hineqFirst : ∀ᵐ z ∂(volume.restrict
       (spaceTimeSet {x : Vec3 | 0 < x 2} (Ioo (0 : ℝ) 1))),
       vec3EuclideanNorm (fun i => dtg z i + ∑ j, d2g z i j j) ≤
         (C + 1) * (Real.sqrt (spatialGradientSq g dg z) + vec3EuclideanNorm (g z)) :=
     ae_restrict_of_ae_restrict_of_subset
-      (fun z hz => ⟨hz.1, ⟨hz.2.1, lt_trans hz.2.2 (by norm_num)⟩⟩) hineq
+      (show spaceTimeSet {x : Vec3 | 0 < x 2} (Ioo (0 : ℝ) 1) ⊆
+        spaceTimeSet {x : Vec3 | 0 < x 2} (Ioo (0 : ℝ) 2) from
+        fun z hz => ⟨hz.1, ⟨hz.2.1, lt_trans hz.2.2 (by norm_num)⟩⟩) hineq
   exact essLocal_backwardUniqueness_zero_firstSlab hC g dg d2g dtg
     hcontFirst hinit hweakFirst hL2First hineqFirst (fun z hz =>
       hbound z ⟨hz.1, ⟨hz.2.1, lt_trans hz.2.2 (by norm_num)⟩⟩)
@@ -604,8 +608,8 @@ theorem essLocal_exteriorVorticityZero_halfSpace
   have ⟨hpointMap, hEbounded, hspaceTimeMap⟩ :=
     essLocal_reflectedCylinderGeometry c Ω Ω' H e (by rfl) hHsub hEcoord
   have hGsumL2 := essLocal_reflectedDerivativeL2_finite
-    e g dg d2g dtg hmp hpointMap hEbounded hωderiv hωL2
-    (fun z => rfl) (fun z i j => rfl) (fun z i j k => rfl) (fun z i => rfl)
+    e dg d2g dtg hmp hpointMap hEbounded hωderiv hωL2
+    (fun z i j => rfl) (fun z i j k => rfl) (fun z i => rfl)
   have hΩpre : IsOpen Ω' := hΩ'open
   have heContinuous : Continuous e :=
     (essLocalSpatialTranslate c).continuous.comp essLocalTimeReflection.continuous
@@ -615,7 +619,10 @@ theorem essLocal_exteriorVorticityZero_halfSpace
   have hQtargetHalfMeas : MeasurableSet
       (spaceTimeSet H (Ioo (0 : ℝ) 2)) :=
     (isOpen_spaceTimeSet H (Ioo (0 : ℝ) 2) hHopen isOpen_Ioo).measurableSet
-  have hGineq := essLocal_reflectedHeatInequality C hC ω Dω D2ω Dtω e g dg d2g dtg
+  have hsubset : spaceTimeSet H (Ioo (0 : ℝ) 2) ⊆ Qtarget := by
+    rintro z ⟨hz, ht⟩
+    exact ⟨hHsub hz, ht⟩
+  have hGineq := essLocal_reflectedHeatInequality C ω Dω D2ω Dtω e g dg d2g dtg
     hωineq hQsourceMeas hmp hpointMap hQtargetHalfMeas hsubset
     (fun z => rfl) (fun z i j => rfl) (fun z i j k => rfl) (fun z i => rfl)
   let a : ℝ := (C + 1)⁻¹
@@ -634,7 +641,7 @@ theorem essLocal_exteriorVorticityZero_halfSpace
     have hxy : R < vec3EuclideanNorm (c + y) := hHsub (by simpa [H] using hy)
     change ω (e (y, 0)) = 0
     rw [hEcoord (y, 0)]
-    exact hωtop (c + y) hxy
+    simpa only [Prod.fst, Prod.snd, neg_zero] using hωtop (c + y) hxy
   have hGfirstBound : ∀ z ∈ spaceTimeSet H (Ioo (0 : ℝ) 2),
       vec3EuclideanNorm (g z) ≤ C := by
     intro z hz
@@ -645,7 +652,9 @@ theorem essLocal_exteriorVorticityZero_halfSpace
     rw [hEcoord z]
     exact hbound
   have hfirstg := essLocal_backwardUniqueness_firstSlabFromTwoUnitData hC g dg d2g dtg
-    hGcont hGfirstInit hweakG hGsumL2 hGineq hGfirstBound
+    hGcont hGfirstInit hweakG
+    (fun S hS hSb => hGsumL2 S (fun z hz => hsubset (hS hz)) hSb)
+    (by simpa only [add_comm] using hGineq) hGfirstBound
   have hlineCont (y : Vec3) (hy : 0 < y 2) :
       ContinuousOn (fun s : ℝ => g (y, s)) (Ico (0 : ℝ) 2) := by
     have hline : Continuous (show ℝ → ParabolicPoint from fun s => (y, s)) :=
@@ -706,7 +715,7 @@ theorem essLocal_exteriorVorticityZero_halfSpace
       vec3EuclideanNorm (g2 z) ≤ C := by
     intro z hz
     have htime : -(1 + z.2) ∈ Ioc (-2 : ℝ) 0 := by
-      constructor <;> dsimp at hz ⊢ <;> linarith only [hz.2.1, hz.2.2]
+      constructor <;> linarith only [hz.2.1, hz.2.2]
     have hbound := hωbound (c + z.1) (hHsub hz.1) (-(1 + z.2)) htime
     simpa [g2, buAffineField, buAffinePoint, g, hEcoord] using hbound
   have hGzeroSecond := essLocal_backwardUniqueness_affineSecondSlab C hC

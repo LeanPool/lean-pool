@@ -329,7 +329,7 @@ theorem vorticityLevelOne_divCurl (K₀ K₁ : ℝ) :
       simp only
       rw [Finset.sum_add_distrib, Finset.sum_comm (f := fun m i => G i m y ^ 2)]
       refine add_le_add ?_ le_rfl
-      show _ ≤ 2 * ∑ l : Fin 3, ∑ m : Fin 3, Ω1 l m y ^ 2
+      change _ ≤ 2 * ∑ l : Fin 3, ∑ m : Fin 3, Ω1 l m y ^ 2
       rw [Finset.sum_comm (f := fun l m => Ω1 l m y ^ 2), Finset.mul_sum]
       exact Finset.sum_le_sum fun m _ => vorticityAntisym_sq_sum_le (fun l => Ω1 l m y)
     _ ≤ C * (2 * |K₁| + |K₀|) := by

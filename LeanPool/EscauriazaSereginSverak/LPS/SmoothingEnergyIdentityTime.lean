@@ -235,7 +235,7 @@ theorem lps_kineticEnergy_hasWeakDerivOn {c d : ℝ}
       2 * ∫ t in Ioo c d, (∫ x, ∑ i, V i (x, t) * G i (x, t)) * χ t := by
     rw [← integral_const_mul]
     simp only [V, G, parabolicHomeomorph_symm_apply, mul_assoc]
-  show (∫ t in Ioo c d, (∫ x : Vec3, ∑ i, (v (x, t) i) ^ 2) * deriv χ t) =
+  change (∫ t in Ioo c d, (∫ x : Vec3, ∑ i, (v (x, t) i) ^ 2) * deriv χ t) =
     -(∫ t in Ioo c d, (2 * ∫ x : Vec3, ∑ i, v (x, t) i * Dtv (x, t) i) * χ t)
   rw [hcongrL, hcongrR, hlim]
 

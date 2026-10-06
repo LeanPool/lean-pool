@@ -34,30 +34,34 @@ private theorem blowupLimitClausesPressure_velocity_Lthree_of_slice_bounds
     {u : ParabolicPoint → Vec3} (x₀ : Vec3) (t₀ r : ℝ)
     (hr : 0 < r) (Mᵤ : ℝ≥0∞) (hMᵤ : Mᵤ < ⊤)
     (hsourceU : ∀ᵐ s ∂volume.restrict (Ioo (-1 : ℝ) 0),
-      AEStronglyMeasurable (fun x : Vec3 => (goodPointDomain.indicator u) (x,s)) volume ∧
+      AEStronglyMeasurable (fun x : Vec3 => (goodPointDomain.indicator u) (x, s)) volume ∧
       eLpNorm (fun x : Vec3 => vec3EuclideanNorm
-        ((goodPointDomain.indicator u) (x,s))) 3 volume ≤ Mᵤ)
+        ((goodPointDomain.indicator u) (x, s))) 3 volume ≤ Mᵤ)
     (vm : Vec3 × ℝ → Vec3) (hvmM : Measurable vm)
     (hvm : (fun z : Vec3 × ℝ => blowupVelocity x₀ t₀ r u z) =ᵐ[volume] vm) :
     (∀ᵐ t ∂(volume : Measure ℝ),
-      eLpNorm (fun x : Vec3 => vm (x,t)) 3 volume ≤ Mᵤ) ∧ MemLp vm 3 volume := by
+      eLpNorm (fun x : Vec3 => vm (x, t)) 3 volume ≤ Mᵤ) ∧ MemLp vm 3 volume := by
   have hprod : ∀ᵐ z ∂((volume : Measure Vec3).prod (volume : Measure ℝ)),
       blowupVelocity x₀ t₀ r u z = vm z := by
     rw [← Measure.volume_eq_prod]
     exact hvm
   have hvmSlicesEq := blowupLimitAssembly_ae_ae_of_ae_prod_swap hprod
   have hvmSlice : ∀ᵐ t ∂(volume : Measure ℝ),
-      eLpNorm (fun x : Vec3 => vm (x,t)) 3 volume ≤ Mᵤ := by
+      eLpNorm (fun x : Vec3 => vm (x, t)) 3 volume ≤ Mᵤ := by
     filter_upwards [hvmSlicesEq, blowupLimitAssemblyPressure_velocity_slice_bound u Mᵤ
       hsourceU x₀ t₀ r hr] with t hte htb
+    have hteEq : (fun x : Vec3 => blowupVelocity x₀ t₀ r u (x, t)) =ᵐ[volume]
+        (fun x => vm (x, t)) := hte
     calc
-      eLpNorm (fun x : Vec3 => vm (x,t)) 3 volume =
-          eLpNorm (fun x : Vec3 => blowupVelocity x₀ t₀ r u (x,t)) 3 volume :=
-        eLpNorm_congr_ae hte.symm
+      eLpNorm (fun x : Vec3 => vm (x, t)) 3 volume =
+          eLpNorm (fun x : Vec3 => blowupVelocity x₀ t₀ r u (x, t)) 3 volume :=
+        eLpNorm_congr_ae (Filter.EventuallyEq.symm hteEq)
       _ ≤ eLpNorm (fun x : Vec3 => vec3EuclideanNorm
-            (blowupVelocity x₀ t₀ r u (x,t))) 3 volume := by
+            (blowupVelocity x₀ t₀ r u (x, t))) 3 volume := by
         apply blowupLimitAssemblyPressure_slice_le_norm
-        exact (hvmM.comp measurable_prodMk_right).aestronglyMeasurable.congr hte.symm
+        have hmeas : AEStronglyMeasurable (fun x : Vec3 => vm (x, t)) volume :=
+          (hvmM.comp measurable_prodMk_right).aestronglyMeasurable
+        exact hmeas.congr (Filter.EventuallyEq.symm hteEq)
       _ ≤ Mᵤ := htb
   let J : Set ℝ := CKN.rescaledTime r t₀ (Ioo (-1 : ℝ) 0)
   have hr2 : 0 < r ^ 2 := pow_pos hr 2
@@ -90,7 +94,7 @@ private theorem blowupLimitClausesPressure_velocity_Lthree_of_slice_bounds
     · rw [indicator_of_mem hzS]
     · rw [indicator_of_notMem hzS, ← hz, hzero z hzS]
   have hsliceJ : ∀ᵐ t ∂volume.restrict J,
-      eLpNorm (fun x : Vec3 => vm (x,t)) 3 volume := by
+      eLpNorm (fun x : Vec3 => vm (x, t)) 3 volume ≤ Mᵤ := by
     filter_upwards [ae_restrict_of_ae hvmSlice] with t ht
     exact ht
   have hbound := blowupLimitAssemblyPressure_memLp_three_of_slices hvmM hsliceJ
@@ -189,7 +193,7 @@ theorem blowupLimitClauses_pressure_limit
   set p₁ := pressureSplitRieszPressure (pressureSplitTensor u) hF with hp₁def
   -- the limit velocity: slices and window tensors
   have hUsliceVec : ∀ a : ℝ, ∀ᵐ t ∂volume.restrict (Ioo a 0),
-      eLpNorm (fun x : Vec3 => U (x,t)) 3 volume ≤ MU := by
+      eLpNorm (fun x : Vec3 => U (x, t)) 3 volume ≤ MU := by
     intro a
     have h := ae_restrict_of_ae_restrict_of_subset
       (fun t (ht : t ∈ Ioo a 0) => (ht.2 : t < 0)) hUslice
@@ -229,7 +233,7 @@ theorem blowupLimitClauses_pressure_limit
           vm k := fun k => (hvaesm k).ae_eq_mk
       have hvmData : ∀ k,
           (∀ᵐ t ∂(volume : Measure ℝ),
-            eLpNorm (fun x : Vec3 => vm k (x,t)) 3 volume ≤ Mᵤ) ∧
+            eLpNorm (fun x : Vec3 => vm k (x, t)) 3 volume ≤ Mᵤ) ∧
           MemLp (vm k) 3 volume := fun k =>
         blowupLimitClausesPressure_velocity_Lthree_of_slice_bounds x₀ t₀ (r k)
           (hr k) Mᵤ hMᵤ hsourceU (vm k) (hvmM k) (hvm k)
@@ -255,12 +259,12 @@ theorem blowupLimitClauses_pressure_limit
       set N : ℝ≥0∞ := max Mᵤ MU with hNdef
       have hN : N < ⊤ := max_lt hMᵤ hMU
       have hvmSlice' : ∀ k, ∀ᵐ t ∂volume.restrict (Ioo a' 0),
-          eLpNorm (fun x : Vec3 => vm k (x,t)) 3 volume ≤ N := by
+          eLpNorm (fun x : Vec3 => vm k (x, t)) 3 volume ≤ N := by
         intro k
         filter_upwards [ae_restrict_of_ae (hvmSlice k)] with t ht
         exact ht.trans (le_max_left _ _)
       have hUslice' : ∀ᵐ t ∂volume.restrict (Ioo a' 0),
-          eLpNorm (fun x : Vec3 => U (x,t)) 3 volume ≤ N := by
+          eLpNorm (fun x : Vec3 => U (x, t)) 3 volume ≤ N := by
         filter_upwards [hUsliceVec a'] with t ht
         exact ht.trans (le_max_right _ _)
       have hconv' : ∀ L : ℝ, 0 < L → Tendsto (fun k => eLpNorm (fun z => vm k z - U z) 3

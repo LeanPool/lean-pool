@@ -28,7 +28,7 @@ noncomputable section
 namespace ESS
 
 private theorem buGaussian_memLp_set_l2_finite
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {E : Type*} [NormedAddCommGroup E]
     {f : ParabolicPoint → E} {U : Set ParabolicPoint}
     (hf : MemLp f 2 volume) :
     (∫⁻ z in U, ‖f z‖ₑ ^ (2 : ℝ)) < ⊤ := by

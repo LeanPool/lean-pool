@@ -54,8 +54,8 @@ theorem lps_l2SobolevFamily_unique {M M' : ℕ} {I : Set ℝ} (hI : IsOpen I)
     have hL : ∀ (Dx : Vec3 × ℝ → ℝ), MemLp Dx 2 μ → LocallyIntegrable Dx μ :=
       fun Dx hDx => hDx.locallyIntegrable (by norm_num)
     have hf : LocallyIntegrableOn (D (β ++ [j]) - D' (β ++ [j])) ((Set.univ : Set Vec3) ×ˢ I) μ :=
-      ((hL _ (h.memL2 _ (by rw [List.length_append, List.length_singleton]; omega))).sub
-        (hL _ (h'.memL2 _ (by rw [List.length_append, List.length_singleton]; omega))))
+      ((hL _ (h.memL2 _ (by simpa only [List.length_append, List.length_singleton] using h1))).sub
+        (hL _ (h'.memL2 _ (by simpa only [List.length_append, List.length_singleton] using h2))))
         |>.locallyIntegrableOn _
     have hz := hU.ae_eq_zero_of_integral_contDiff_smul_eq_zero hf (fun g hg hgc hgs => by
       have e1 := h.weak β j (by omega) g hg hgc hgs
@@ -64,16 +64,14 @@ theorem lps_l2SobolevFamily_unique {M M' : ℕ} {I : Set ℝ} (hI : IsOpen I)
           ∫ p in (Set.univ : Set Vec3) ×ˢ I, D' β p * spatialPartial g j p :=
         integral_congr_ae (by filter_upwards [ih'] with p hp using by rw [hp])
       have hi1 : Integrable (fun p => D (β ++ [j]) p * g p) μ := by
-        have := (hL _ (h.memL2 (β ++ [j])
-          (by rw [List.length_append, List.length_singleton];
-            omega))).integrable_smul_left_of_hasCompactSupport
-          hg.continuous hgc
+        have hlocal := hL _ (h.memL2 (β ++ [j])
+          (by simpa only [List.length_append, List.length_singleton] using h1))
+        have := hlocal.integrable_smul_left_of_hasCompactSupport hg.continuous hgc
         simpa [smul_eq_mul, mul_comm] using this
       have hi2 : Integrable (fun p => D' (β ++ [j]) p * g p) μ := by
-        have := (hL _ (h'.memL2 (β ++ [j])
-          (by rw [List.length_append, List.length_singleton];
-            omega))).integrable_smul_left_of_hasCompactSupport
-          hg.continuous hgc
+        have hlocal := hL _ (h'.memL2 (β ++ [j])
+          (by simpa only [List.length_append, List.length_singleton] using h2))
+        have := hlocal.integrable_smul_left_of_hasCompactSupport hg.continuous hgc
         simpa [smul_eq_mul, mul_comm] using this
       have : ∫ p, g p • (D (β ++ [j]) - D' (β ++ [j])) p ∂μ =
           ∫ p, D (β ++ [j]) p * g p ∂μ - ∫ p, D' (β ++ [j]) p * g p ∂μ := by
@@ -92,3 +90,5 @@ theorem lps_l2SobolevFamily_unique {M M' : ℕ} {I : Set ℝ} (hI : IsOpen I)
     simpa [sub_eq_zero] using this
 
 end ESS
+
+end

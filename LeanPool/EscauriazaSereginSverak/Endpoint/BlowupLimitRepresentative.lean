@@ -33,19 +33,24 @@ noncomputable section
 
 namespace ESS
 
+/-- The spatial ball on which the blow-up representative is defined. -/
 @[expose] def blowupRepresentativeDomain : Set Vec3 :=
   vec3Ball (0 : Vec3) (3 / 4 : ℝ)
 
+/-- The positive radii tending to zero used to form local averages. -/
 @[expose] def blowupRepresentativeRadius (n : ℕ) : ℝ :=
   ((n : ℝ) + 1)⁻¹
 
+/-- The closed ball centered at `x` with the `n`th averaging radius. -/
 @[expose] def blowupRepresentativeBall (x : Vec3) (n : ℕ) : Set Vec3 :=
   Metric.closedBall x (blowupRepresentativeRadius n)
 
+/-- The part of the averaging ball contained in the representative domain. -/
 @[expose] def blowupRepresentativeTestSet (x : Vec3) (n : ℕ) : Set Vec3 :=
   blowupRepresentativeDomain ∩ blowupRepresentativeBall x n
 
-@[expose] abbrev blowupRepresentativeMeasure : Measure Vec3 :=
+/-- Volume restricted to the spatial domain of the representative. -/
+abbrev blowupRepresentativeMeasure : Measure Vec3 :=
   volume.restrict blowupRepresentativeDomain
 
 private instance blowupRepresentativeMeasureFinite :
@@ -58,6 +63,7 @@ theorem blowupRepresentative_testSet_finite (x : Vec3) (n : ℕ) :
     blowupRepresentativeMeasure (blowupRepresentativeTestSet x n) ≠ ⊤ :=
   (measure_lt_top blowupRepresentativeMeasure _).ne
 
+/-- The constant coordinate test on the local test set in the dual `L^{3/2}` space. -/
 @[expose] noncomputable def blowupRepresentativeIndicator
     (n : ℕ) (x : Vec3) (i : Fin 3) :
   Lp L2Vec3 (ENNReal.ofReal (3 / 2 : ℝ))
@@ -70,6 +76,7 @@ theorem blowupRepresentative_testSet_finite (x : Vec3) (n : ℕ) :
     (blowupRepresentative_testSet_finite x n)
     (weakContL3VecToLp (Pi.single i (1 : ℝ)))
 
+/-- The normalized integral of one velocity coordinate over the local test set. -/
 @[expose] noncomputable def blowupRepresentativeCoordinateAverage
     (v : Icc (-(3 / 4 : ℝ) ^ 2) 0 →
       Lp L2Vec3 3 blowupRepresentativeMeasure)
@@ -79,12 +86,14 @@ theorem blowupRepresentative_testSet_finite (x : Vec3) (n : ℕ) :
       ∫ y, inner ℝ (v t y)
         (blowupRepresentativeIndicator n x i y) ∂blowupRepresentativeMeasure
 
+/-- The vector of coordinate averages at radius indexed by `n`. -/
 @[expose] noncomputable def blowupRepresentativeApprox
     (v : Icc (-(3 / 4 : ℝ) ^ 2) 0 →
       Lp L2Vec3 3 blowupRepresentativeMeasure)
     (n : ℕ) (x : Vec3) (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) : Vec3 :=
   fun i => blowupRepresentativeCoordinateAverage v n x t i
 
+/-- The weakly continuous slice, set to zero outside its domain. -/
 @[expose] def blowupRepresentativeRaw
     (v : Icc (-(3 / 4 : ℝ) ^ 2) 0 →
       Lp L2Vec3 3 blowupRepresentativeMeasure)
@@ -118,6 +127,7 @@ private theorem blowupRepresentative_raw_coordinate_memLp
   exact (blowupRepresentative_raw_memLp v t).continuousLinearMap_comp
     (ContinuousLinearMap.proj (R := ℝ) i)
 
+/-- The integral pairing of an `L³` field with an `L^{3/2}` test on the restricted domain. -/
 @[expose] noncomputable def blowupRepresentativePairing
     (f : Lp L2Vec3 3 blowupRepresentativeMeasure) :
     Lp L2Vec3 (ENNReal.ofReal (3 / 2 : ℝ))

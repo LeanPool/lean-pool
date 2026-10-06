@@ -90,17 +90,17 @@ theorem lps_weak_partial_all_times {a b : ℝ} (hab : a < b) (j : Fin 3) {F G : 
     rw [h1, hp, lps_scalar_lp_inner_left_eq_integral hφ2]
     congr 1
     exact integral_congr_ae ((hLG s hsI').mono fun x hx => by
-      show G (x, s) * φ x = ((L ⟨s, hsI'⟩ : Lp ℝ 2 (volume : Measure Vec3)) : Vec3 → ℝ) x * φ x
+      change G (x, s) * φ x = ((L ⟨s, hsI'⟩ : Lp ℝ 2 (volume : Measure Vec3)) : Vec3 → ℝ) x * φ x
       rw [hx]))
   have h := hEq ht
   have hp : proj t = ⟨t, ht⟩ := Set.projIcc_of_mem hab.le ht
   simp only [Measure.restrict_univ]
   refine h.trans ?_
-  show -inner ℝ (L (proj t)) (hφ2.toLp φ) = _
+  change -inner ℝ (L (proj t)) (hφ2.toLp φ) = _
   rw [hp, lps_scalar_lp_inner_left_eq_integral hφ2]
   congr 1
   exact integral_congr_ae ((hLG t ht).mono fun x hx => by
-    show ((L ⟨t, ht⟩ : Lp ℝ 2 (volume : Measure Vec3)) : Vec3 → ℝ) x * φ x = G (x, t) * φ x
+    change ((L ⟨t, ht⟩ : Lp ℝ 2 (volume : Measure Vec3)) : Vec3 → ℝ) x * φ x = G (x, t) * φ x
     rw [hx])
 
 end ESS.LPS

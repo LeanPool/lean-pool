@@ -36,7 +36,7 @@ theorem blowupLimitClauses_rescaled_flux_formula
       Lp L2Vec3 3 (volume.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ))))
     (W : Vec3 × Icc (-(3 / 4 : ℝ) ^ 2) 0 → Vec3)
     (hW : ∀ t,
-      (fun x => W (x,t)) =ᵐ[volume.restrict
+      (fun x => W (x, t)) =ᵐ[volume.restrict
         (vec3Ball (0 : Vec3) (3 / 4 : ℝ))]
         (fun x => weakContL3OfLp (v t x)))
     {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin 3 → Vec3}

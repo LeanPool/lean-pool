@@ -52,7 +52,8 @@ private theorem vorticityProducts_tsupport_wordDeriv_subset
       exact (ih (spatialDeriv g j)).trans
         (tsupport_fderiv_apply_subset ℝ (basisVec j))
 
-@[expose] def vorticityProducts_vectorSq (m : ℕ) (u : Fin 3 → Vec3 → ℝ) : ℝ :=
+/-- Sum of squared spatial Sobolev norms of the three scalar components. -/
+@[expose] def vorticityProductsVectorSq (m : ℕ) (u : Fin 3 → Vec3 → ℝ) : ℝ :=
   ∑ i, sobolevNormSqOn m univ (fun α => wordDeriv α (u i))
 
 private theorem vorticityProducts_memLp_word {f : Vec3 → ℝ}
@@ -443,19 +444,21 @@ private theorem vorticityProducts_product_sub_right_at
   rw [heq] at h
   exact h.symm
 
-@[expose] def vorticityProducts_cauchyA (m : ℕ) (C : ℝ)
+/-- First product of Sobolev norm bounds controlling differences of quadratic tensors. -/
+@[expose] def vorticityProductsCauchyA (m : ℕ) (C : ℝ)
     (g : ℕ → Fin 3 → Vec3 → ℝ) (p : ℕ × ℕ) : ℝ :=
-  C * (vorticityProducts_vectorSq 2 (fun i x => g p.1 i x - g p.2 i x) *
-      vorticityProducts_vectorSq m (g p.1) +
-    vorticityProducts_vectorSq m (fun i x => g p.1 i x - g p.2 i x) *
-      vorticityProducts_vectorSq 2 (g p.1))
+  C * (vorticityProductsVectorSq 2 (fun i x => g p.1 i x - g p.2 i x) *
+      vorticityProductsVectorSq m (g p.1) +
+    vorticityProductsVectorSq m (fun i x => g p.1 i x - g p.2 i x) *
+      vorticityProductsVectorSq 2 (g p.1))
 
-@[expose] def vorticityProducts_cauchyB (m : ℕ) (C : ℝ)
+/-- Second product of Sobolev norm bounds controlling differences of quadratic tensors. -/
+@[expose] def vorticityProductsCauchyB (m : ℕ) (C : ℝ)
     (g : ℕ → Fin 3 → Vec3 → ℝ) (p : ℕ × ℕ) : ℝ :=
-  C * (vorticityProducts_vectorSq 2 (g p.2) *
-      vorticityProducts_vectorSq m (fun i x => g p.2 i x - g p.1 i x) +
-    vorticityProducts_vectorSq m (g p.2) *
-      vorticityProducts_vectorSq 2 (fun i x => g p.2 i x - g p.1 i x))
+  C * (vorticityProductsVectorSq 2 (g p.2) *
+      vorticityProductsVectorSq m (fun i x => g p.2 i x - g p.1 i x) +
+    vorticityProductsVectorSq m (g p.2) *
+      vorticityProductsVectorSq 2 (fun i x => g p.2 i x - g p.1 i x))
 
 private theorem vorticityProducts_tensor_cauchy_integral_bound
     {m : ℕ} {g : ℕ → Fin 3 → Vec3 → ℝ} {C : ℝ}
@@ -468,26 +471,26 @@ private theorem vorticityProducts_tensor_cauchy_integral_bound
       (∀ i, HasCompactSupport (w i)) →
       (∑ ij : Fin 3 × Fin 3, sobolevNormSqOn m univ
         (fun α => wordDeriv α (fun x => u ij.1 x * w ij.2 x))) ≤
-        C * (vorticityProducts_vectorSq 2 u * vorticityProducts_vectorSq m w +
-          vorticityProducts_vectorSq m u * vorticityProducts_vectorSq 2 w))
+        C * (vorticityProductsVectorSq 2 u * vorticityProductsVectorSq m w +
+          vorticityProductsVectorSq m u * vorticityProductsVectorSq 2 w))
     (p : ℕ × ℕ) (ij : Fin 3 × Fin 3) (α : List (Fin 3)) (hα : α.length ≤ m) :
     (∫ x, (wordDeriv α (fun y => g p.1 ij.1 y * g p.1 ij.2 y) x -
       wordDeriv α (fun y => g p.2 ij.1 y * g p.2 ij.2 y) x) ^ 2) ≤
-      2 * vorticityProducts_cauchyA m C g p +
-        2 * vorticityProducts_cauchyB m C g p := by
+      2 * vorticityProductsCauchyA m C g p +
+        2 * vorticityProductsCauchyB m C g p := by
   let F : Vec3 → ℝ := fun x =>
     wordDeriv α (fun y => g p.1 ij.1 y * g p.1 ij.2 y) x -
       wordDeriv α (fun y => g p.2 ij.1 y * g p.2 ij.2 y) x
   let A : ℕ × ℕ → ℝ := fun p => C *
-    (vorticityProducts_vectorSq 2 (fun i x => g p.1 i x - g p.2 i x) *
-        vorticityProducts_vectorSq m (g p.1) +
-      vorticityProducts_vectorSq m (fun i x => g p.1 i x - g p.2 i x) *
-        vorticityProducts_vectorSq 2 (g p.1))
+    (vorticityProductsVectorSq 2 (fun i x => g p.1 i x - g p.2 i x) *
+        vorticityProductsVectorSq m (g p.1) +
+      vorticityProductsVectorSq m (fun i x => g p.1 i x - g p.2 i x) *
+        vorticityProductsVectorSq 2 (g p.1))
   let B : ℕ × ℕ → ℝ := fun p => C *
-    (vorticityProducts_vectorSq 2 (g p.2) *
-        vorticityProducts_vectorSq m (fun i x => g p.2 i x - g p.1 i x) +
-      vorticityProducts_vectorSq m (g p.2) *
-        vorticityProducts_vectorSq 2 (fun i x => g p.2 i x - g p.1 i x))
+    (vorticityProductsVectorSq 2 (g p.2) *
+        vorticityProductsVectorSq m (fun i x => g p.2 i x - g p.1 i x) +
+      vorticityProductsVectorSq m (g p.2) *
+        vorticityProductsVectorSq 2 (fun i x => g p.2 i x - g p.1 i x))
   change (∫ x, F x ^ 2) ≤ 2 * A p + 2 * B p
   let P : Vec3 → ℝ := fun x =>
     wordDeriv α (fun y => g p.2 ij.1 y * g p.1 ij.2 y) x
@@ -516,9 +519,9 @@ private theorem vorticityProducts_tensor_cauchy_integral_bound
           (fun β => wordDeriv β (fun x => d pq.1 x * g p.1 pq.2 x)) :=
         vorticityProducts_word_integral_le_tensorSq m α hα d (g p.1) ij
       _ ≤ A p := by
-        change _ ≤ C * (vorticityProducts_vectorSq 2 d *
-          vorticityProducts_vectorSq m (g p.1) +
-            vorticityProducts_vectorSq m d * vorticityProducts_vectorSq 2 (g p.1))
+        change _ ≤ C * (vorticityProductsVectorSq 2 d *
+          vorticityProductsVectorSq m (g p.1) +
+            vorticityProductsVectorSq m d * vorticityProductsVectorSq 2 (g p.1))
         exact hBilin d (g p.1)
           (fun i => (hg p.1 i).sub (hg p.2 i))
           (fun i => (hgc p.1 i).sub (hgc p.2 i))
@@ -540,9 +543,9 @@ private theorem vorticityProducts_tensor_cauchy_integral_bound
           (fun β => wordDeriv β (fun x => g p.2 pq.1 x * d pq.2 x)) :=
         vorticityProducts_word_integral_le_tensorSq m α hα (g p.2) d ij
       _ ≤ B p := by
-        change _ ≤ C * (vorticityProducts_vectorSq 2 (g p.2) *
-          vorticityProducts_vectorSq m d +
-            vorticityProducts_vectorSq m (g p.2) * vorticityProducts_vectorSq 2 d)
+        change _ ≤ C * (vorticityProductsVectorSq 2 (g p.2) *
+          vorticityProductsVectorSq m d +
+            vorticityProductsVectorSq m (g p.2) * vorticityProductsVectorSq 2 d)
         exact hBilin (g p.2) d (hg p.2) (hgc p.2)
           (fun i => (hg p.2 i).sub (hg p.1 i))
           (fun i => (hgc p.2 i).sub (hgc p.1 i))
@@ -551,60 +554,60 @@ private theorem vorticityProducts_tensor_cauchy_integral_bound
 
 private theorem vorticityProducts_cauchyA_tendsto
     {m : ℕ} {g : ℕ → Fin 3 → Vec3 → ℝ} {C S₂ Sₘ : ℝ}
-    (hS₂ : Tendsto (fun n => vorticityProducts_vectorSq 2 (g n)) atTop (𝓝 S₂))
-    (hSₘ : Tendsto (fun n => vorticityProducts_vectorSq m (g n)) atTop (𝓝 Sₘ))
-    (hD₂ : Tendsto (fun p : ℕ × ℕ => vorticityProducts_vectorSq 2
+    (hS₂ : Tendsto (fun n => vorticityProductsVectorSq 2 (g n)) atTop (𝓝 S₂))
+    (hSₘ : Tendsto (fun n => vorticityProductsVectorSq m (g n)) atTop (𝓝 Sₘ))
+    (hD₂ : Tendsto (fun p : ℕ × ℕ => vorticityProductsVectorSq 2
         (fun i x => g p.1 i x - g p.2 i x)) atTop (𝓝 0))
-    (hDₘ : Tendsto (fun p : ℕ × ℕ => vorticityProducts_vectorSq m
+    (hDₘ : Tendsto (fun p : ℕ × ℕ => vorticityProductsVectorSq m
         (fun i x => g p.1 i x - g p.2 i x)) atTop (𝓝 0)) :
-    Tendsto (vorticityProducts_cauchyA m C g) atTop (𝓝 0) := by
+    Tendsto (vorticityProductsCauchyA m C g) atTop (𝓝 0) := by
   have hfst : Tendsto Prod.fst (atTop : Filter (ℕ × ℕ)) atTop := by
     simpa only [Filter.prod_atTop_atTop_eq] using
       (Filter.tendsto_fst (f := (atTop : Filter ℕ)) (g := (atTop : Filter ℕ)))
   have h := ((hD₂.mul (hSₘ.comp hfst)).add
     (hDₘ.mul (hS₂.comp hfst))).const_mul C
-  unfold vorticityProducts_cauchyA
+  unfold vorticityProductsCauchyA
   simpa only [zero_mul, add_zero, mul_zero, Function.comp_apply] using h
 
 private theorem vorticityProducts_cauchyB_tendsto
     {m : ℕ} {g : ℕ → Fin 3 → Vec3 → ℝ} {C S₂ Sₘ : ℝ}
-    (hS₂ : Tendsto (fun n => vorticityProducts_vectorSq 2 (g n)) atTop (𝓝 S₂))
-    (hSₘ : Tendsto (fun n => vorticityProducts_vectorSq m (g n)) atTop (𝓝 Sₘ))
-    (hD₂ : Tendsto (fun p : ℕ × ℕ => vorticityProducts_vectorSq 2
+    (hS₂ : Tendsto (fun n => vorticityProductsVectorSq 2 (g n)) atTop (𝓝 S₂))
+    (hSₘ : Tendsto (fun n => vorticityProductsVectorSq m (g n)) atTop (𝓝 Sₘ))
+    (hD₂ : Tendsto (fun p : ℕ × ℕ => vorticityProductsVectorSq 2
         (fun i x => g p.1 i x - g p.2 i x)) atTop (𝓝 0))
-    (hDₘ : Tendsto (fun p : ℕ × ℕ => vorticityProducts_vectorSq m
+    (hDₘ : Tendsto (fun p : ℕ × ℕ => vorticityProductsVectorSq m
         (fun i x => g p.1 i x - g p.2 i x)) atTop (𝓝 0)) :
-    Tendsto (vorticityProducts_cauchyB m C g) atTop (𝓝 0) := by
+    Tendsto (vorticityProductsCauchyB m C g) atTop (𝓝 0) := by
   have hsnd : Tendsto Prod.snd (atTop : Filter (ℕ × ℕ)) atTop := by
     simpa only [Filter.prod_atTop_atTop_eq] using
       (Filter.tendsto_snd (f := (atTop : Filter ℕ)) (g := (atTop : Filter ℕ)))
   have hswap : Tendsto Prod.swap (atTop : Filter (ℕ × ℕ)) atTop := by
     simpa only [Filter.prod_atTop_atTop_eq] using
       (Filter.tendsto_prod_swap (f := (atTop : Filter ℕ)) (g := (atTop : Filter ℕ)))
-  have hD₂rev : Tendsto (fun p : ℕ × ℕ => vorticityProducts_vectorSq 2
+  have hD₂rev : Tendsto (fun p : ℕ × ℕ => vorticityProductsVectorSq 2
       (fun i x => g p.2 i x - g p.1 i x)) atTop (𝓝 0) := by
     simpa only [Function.comp_def, Prod.swap, Prod.fst, Prod.snd] using
       hD₂.comp hswap
-  have hDₘrev : Tendsto (fun p : ℕ × ℕ => vorticityProducts_vectorSq m
+  have hDₘrev : Tendsto (fun p : ℕ × ℕ => vorticityProductsVectorSq m
       (fun i x => g p.2 i x - g p.1 i x)) atTop (𝓝 0) := by
     simpa only [Function.comp_def, Prod.swap, Prod.fst, Prod.snd] using
       hDₘ.comp hswap
   have h := (((hS₂.comp hsnd).mul hDₘrev).add
     ((hSₘ.comp hsnd).mul hD₂rev)).const_mul C
-  unfold vorticityProducts_cauchyB
+  unfold vorticityProductsCauchyB
   simpa only [mul_zero, add_zero, Function.comp_apply] using h
 
 private theorem vorticityProducts_tensor_cauchy_rhs_tendsto
     {m : ℕ} {g : ℕ → Fin 3 → Vec3 → ℝ} {C S₂ Sₘ : ℝ}
-    (hS₂ : Tendsto (fun n => vorticityProducts_vectorSq 2 (g n)) atTop (𝓝 S₂))
-    (hSₘ : Tendsto (fun n => vorticityProducts_vectorSq m (g n)) atTop (𝓝 Sₘ))
-    (hD₂ : Tendsto (fun p : ℕ × ℕ => vorticityProducts_vectorSq 2
+    (hS₂ : Tendsto (fun n => vorticityProductsVectorSq 2 (g n)) atTop (𝓝 S₂))
+    (hSₘ : Tendsto (fun n => vorticityProductsVectorSq m (g n)) atTop (𝓝 Sₘ))
+    (hD₂ : Tendsto (fun p : ℕ × ℕ => vorticityProductsVectorSq 2
         (fun i x => g p.1 i x - g p.2 i x)) atTop (𝓝 0))
-    (hDₘ : Tendsto (fun p : ℕ × ℕ => vorticityProducts_vectorSq m
+    (hDₘ : Tendsto (fun p : ℕ × ℕ => vorticityProductsVectorSq m
         (fun i x => g p.1 i x - g p.2 i x)) atTop (𝓝 0)) :
     Tendsto (fun p : ℕ × ℕ =>
-      2 * vorticityProducts_cauchyA m C g p +
-        2 * vorticityProducts_cauchyB m C g p) atTop (𝓝 0) := by
+      2 * vorticityProductsCauchyA m C g p +
+        2 * vorticityProductsCauchyB m C g p) atTop (𝓝 0) := by
   have hA := vorticityProducts_cauchyA_tendsto (C := C) hS₂ hSₘ hD₂ hDₘ
   have hB := vorticityProducts_cauchyB_tendsto (C := C) hS₂ hSₘ hD₂ hDₘ
   simpa only [mul_zero, add_zero] using (hA.const_mul 2).add (hB.const_mul 2)
@@ -613,11 +616,11 @@ private theorem vorticityProducts_tensor_cauchy
     {m : ℕ} {g : ℕ → Fin 3 → Vec3 → ℝ} {C S₂ Sₘ : ℝ}
     (hg : ∀ n i, ContDiff ℝ (⊤ : ℕ∞) (g n i))
     (hgc : ∀ n i, HasCompactSupport (g n i))
-    (hS₂ : Tendsto (fun n => vorticityProducts_vectorSq 2 (g n)) atTop (𝓝 S₂))
-    (hSₘ : Tendsto (fun n => vorticityProducts_vectorSq m (g n)) atTop (𝓝 Sₘ))
-    (hD₂ : Tendsto (fun p : ℕ × ℕ => vorticityProducts_vectorSq 2
+    (hS₂ : Tendsto (fun n => vorticityProductsVectorSq 2 (g n)) atTop (𝓝 S₂))
+    (hSₘ : Tendsto (fun n => vorticityProductsVectorSq m (g n)) atTop (𝓝 Sₘ))
+    (hD₂ : Tendsto (fun p : ℕ × ℕ => vorticityProductsVectorSq 2
         (fun i x => g p.1 i x - g p.2 i x)) atTop (𝓝 0))
-    (hDₘ : Tendsto (fun p : ℕ × ℕ => vorticityProducts_vectorSq m
+    (hDₘ : Tendsto (fun p : ℕ × ℕ => vorticityProductsVectorSq m
         (fun i x => g p.1 i x - g p.2 i x)) atTop (𝓝 0))
     (hBilin : ∀ u w : Fin 3 → Vec3 → ℝ,
       (∀ i, ContDiff ℝ (⊤ : ℕ∞) (u i)) →
@@ -626,8 +629,8 @@ private theorem vorticityProducts_tensor_cauchy
       (∀ i, HasCompactSupport (w i)) →
       (∑ ij : Fin 3 × Fin 3, sobolevNormSqOn m univ
         (fun α => wordDeriv α (fun x => u ij.1 x * w ij.2 x))) ≤
-        C * (vorticityProducts_vectorSq 2 u * vorticityProducts_vectorSq m w +
-          vorticityProducts_vectorSq m u * vorticityProducts_vectorSq 2 w)) :
+        C * (vorticityProductsVectorSq 2 u * vorticityProductsVectorSq m w +
+          vorticityProductsVectorSq m u * vorticityProductsVectorSq 2 w)) :
     ∀ ij : Fin 3 × Fin 3, ∀ α : List (Fin 3), α.length ≤ m →
       Tendsto (fun p : ℕ × ℕ => eLpNorm
         (wordDeriv α (fun x => g p.1 ij.1 x * g p.1 ij.2 x) -
@@ -643,8 +646,8 @@ private theorem vorticityProducts_tensor_cauchy
       (vorticityProducts_memLp_product_word (hg p.2 ij.1) (hgc p.2 ij.1)
         (hg p.2 ij.2) α)
   have hbound (p : ℕ × ℕ) : (∫ x, F p x ^ 2) ≤
-      2 * vorticityProducts_cauchyA m C g p +
-        2 * vorticityProducts_cauchyB m C g p :=
+      2 * vorticityProductsCauchyA m C g p +
+        2 * vorticityProductsCauchyB m C g p :=
     vorticityProducts_tensor_cauchy_integral_bound hg hgc hBilin p ij α hα
   have hlim : Tendsto (fun p : ℕ × ℕ => ∫ x, F p x ^ 2) atTop (𝓝 0) := by
     exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds
@@ -734,14 +737,14 @@ private theorem vorticityProducts_vector_smooth_bound
     (hu : ∀ i, ContDiff ℝ (⊤ : ℕ∞) (u i))
     (huc : ∀ i, HasCompactSupport (u i)) (x : Vec3) :
     Real.sqrt (∑ i, u i x ^ 2) ≤
-      3 * C₀ * Real.sqrt (vorticityProducts_vectorSq 2 u) := by
-  have hSnonneg : 0 ≤ vorticityProducts_vectorSq 2 u :=
+      3 * C₀ * Real.sqrt (vorticityProductsVectorSq 2 u) := by
+  have hSnonneg : 0 ≤ vorticityProductsVectorSq 2 u :=
     Finset.sum_nonneg fun i _ =>
       vorticityProducts_sobolevNormSq_nonneg 2 (fun α => wordDeriv α (u i))
-  have hi (i : Fin 3) : |u i x| ≤ C₀ * Real.sqrt (vorticityProducts_vectorSq 2 u) := by
+  have hi (i : Fin 3) : |u i x| ≤ C₀ * Real.sqrt (vorticityProductsVectorSq 2 u) := by
     have hSi : sobolevNormSqOn 2 univ (fun α => wordDeriv α (u i)) ≤
-        vorticityProducts_vectorSq 2 u := by
-      unfold vorticityProducts_vectorSq
+        vorticityProductsVectorSq 2 u := by
+      unfold vorticityProductsVectorSq
       exact Finset.single_le_sum
         (fun j _ => vorticityProducts_sobolevNormSq_nonneg 2
           (fun α => wordDeriv α (u j))) (Finset.mem_univ i)
@@ -751,9 +754,9 @@ private theorem vorticityProducts_vector_smooth_bound
     Real.sqrt (∑ i, u i x ^ 2) =
         vec3EuclideanNorm (fun i => u i x) := rfl
     _ ≤ ∑ i : Fin 3, |u i x| := vec3EuclideanNorm_le_sum_abs _
-    _ ≤ ∑ _i : Fin 3, C₀ * Real.sqrt (vorticityProducts_vectorSq 2 u) :=
+    _ ≤ ∑ _i : Fin 3, C₀ * Real.sqrt (vorticityProductsVectorSq 2 u) :=
       Finset.sum_le_sum fun i _ => hi i
-    _ = 3 * C₀ * Real.sqrt (vorticityProducts_vectorSq 2 u) := by
+    _ = 3 * C₀ * Real.sqrt (vorticityProductsVectorSq 2 u) := by
       rw [Fin.sum_univ_three]
       ring
 
@@ -765,8 +768,8 @@ private theorem vorticityProducts_H2_smooth_bilin :
       (∀ i, HasCompactSupport (w i)) →
       (∑ ij : Fin 3 × Fin 3, sobolevNormSqOn 2 univ
         (fun α => wordDeriv α (fun x => u ij.1 x * w ij.2 x))) ≤
-        C * (vorticityProducts_vectorSq 2 u * vorticityProducts_vectorSq 2 w +
-          vorticityProducts_vectorSq 2 u * vorticityProducts_vectorSq 2 w) := by
+        C * (vorticityProductsVectorSq 2 u * vorticityProductsVectorSq 2 w +
+          vorticityProductsVectorSq 2 u * vorticityProductsVectorSq 2 w) := by
   obtain ⟨C₀, hC₀, hEmbed⟩ := abs_le_sobolevTwo_smooth
   obtain ⟨C₂, hC₂, hSmooth⟩ := vorticityProducts_H2_smooth
   refine ⟨9 * C₂ * C₀ ^ 2, by positivity, ?_⟩
@@ -774,25 +777,25 @@ private theorem vorticityProducts_H2_smooth_bilin :
   have huBound := vorticityProducts_vector_smooth_bound C₀ hC₀ hEmbed u hu huc
   have hwBound := vorticityProducts_vector_smooth_bound C₀ hC₀ hEmbed w hw hwc
   have h := hSmooth u w
-    (3 * C₀ * Real.sqrt (vorticityProducts_vectorSq 2 u))
-    (3 * C₀ * Real.sqrt (vorticityProducts_vectorSq 2 w))
+    (3 * C₀ * Real.sqrt (vorticityProductsVectorSq 2 u))
+    (3 * C₀ * Real.sqrt (vorticityProductsVectorSq 2 w))
     hu huc hw hwc huBound hwBound
-  have hSu : 0 ≤ vorticityProducts_vectorSq 2 u :=
+  have hSu : 0 ≤ vorticityProductsVectorSq 2 u :=
     Finset.sum_nonneg fun i _ =>
       vorticityProducts_sobolevNormSq_nonneg 2 (fun α => wordDeriv α (u i))
-  have hSw : 0 ≤ vorticityProducts_vectorSq 2 w :=
+  have hSw : 0 ≤ vorticityProductsVectorSq 2 w :=
     Finset.sum_nonneg fun i _ =>
       vorticityProducts_sobolevNormSq_nonneg 2 (fun α => wordDeriv α (w i))
-  rw [show (3 * C₀ * Real.sqrt (vorticityProducts_vectorSq 2 u)) ^ 2 =
-      9 * C₀ ^ 2 * vorticityProducts_vectorSq 2 u by
+  rw [show (3 * C₀ * Real.sqrt (vorticityProductsVectorSq 2 u)) ^ 2 =
+      9 * C₀ ^ 2 * vorticityProductsVectorSq 2 u by
         rw [mul_pow, mul_pow, Real.sq_sqrt hSu]; ring,
-    show (3 * C₀ * Real.sqrt (vorticityProducts_vectorSq 2 w)) ^ 2 =
-      9 * C₀ ^ 2 * vorticityProducts_vectorSq 2 w by
+    show (3 * C₀ * Real.sqrt (vorticityProductsVectorSq 2 w)) ^ 2 =
+      9 * C₀ ^ 2 * vorticityProductsVectorSq 2 w by
         rw [mul_pow, mul_pow, Real.sq_sqrt hSw]; ring] at h
-  change _ ≤ C₂ * ((9 * C₀ ^ 2 * vorticityProducts_vectorSq 2 u) *
-    vorticityProducts_vectorSq 2 w +
-      (9 * C₀ ^ 2 * vorticityProducts_vectorSq 2 w) *
-        vorticityProducts_vectorSq 2 u) at h
+  change _ ≤ C₂ * ((9 * C₀ ^ 2 * vorticityProductsVectorSq 2 u) *
+    vorticityProductsVectorSq 2 w +
+      (9 * C₀ ^ 2 * vorticityProductsVectorSq 2 w) *
+        vorticityProductsVectorSq 2 u) at h
   calc
     _ ≤ _ := h
     _ = _ := by ring
@@ -808,8 +811,8 @@ private theorem vorticityProducts_H2_core
       (∀ x, Real.sqrt (∑ i, w i x ^ 2) ≤ Mw) →
       (∑ ij : Fin 3 × Fin 3, sobolevNormSqOn 2 univ
         (fun α => wordDeriv α (fun x => u ij.1 x * w ij.2 x))) ≤
-        C₂ * (Mu ^ 2 * vorticityProducts_vectorSq 2 w +
-          Mw ^ 2 * vorticityProducts_vectorSq 2 u))
+        C₂ * (Mu ^ 2 * vorticityProductsVectorSq 2 w +
+          Mw ^ 2 * vorticityProductsVectorSq 2 u))
     (hBilin : ∀ u w : Fin 3 → Vec3 → ℝ,
       (∀ i, ContDiff ℝ (⊤ : ℕ∞) (u i)) →
       (∀ i, HasCompactSupport (u i)) →
@@ -817,8 +820,8 @@ private theorem vorticityProducts_H2_core
       (∀ i, HasCompactSupport (w i)) →
       (∑ ij : Fin 3 × Fin 3, sobolevNormSqOn 2 univ
         (fun α => wordDeriv α (fun x => u ij.1 x * w ij.2 x))) ≤
-        Cb * (vorticityProducts_vectorSq 2 u * vorticityProducts_vectorSq 2 w +
-          vorticityProducts_vectorSq 2 u * vorticityProducts_vectorSq 2 w))
+        Cb * (vorticityProductsVectorSq 2 u * vorticityProductsVectorSq 2 w +
+          vorticityProductsVectorSq 2 u * vorticityProductsVectorSq 2 w))
     (v : Vec3 → Vec3) (D : Fin 3 → List (Fin 3) → Vec3 → ℝ)
     (hD : ∀ i, IsSobolevFamilyOn 2 univ (vecComponents v i) (D i))
     (g : ℕ → Fin 3 → Vec3 → ℝ)
@@ -844,12 +847,12 @@ private theorem vorticityProducts_H2_core
   have hSmoothBound (n : ℕ) :
       ∑ ij : Fin 3 × Fin 3, sobolevNormSqOn 2 univ
         (fun α => wordDeriv α (fun x => g n ij.1 x * g n ij.2 x)) ≤
-      2 * C₂ * M ^ 2 * vorticityProducts_vectorSq 2 (g n) := by
+      2 * C₂ * M ^ 2 * vorticityProductsVectorSq 2 (g n) := by
     have h := hSmooth (g n) (g n) M M (hg n) (hgc n) (hg n) (hgc n)
       (hM n) (hM n)
     calc
-      _ ≤ C₂ * (M ^ 2 * vorticityProducts_vectorSq 2 (g n) +
-        M ^ 2 * vorticityProducts_vectorSq 2 (g n)) := h
+      _ ≤ C₂ * (M ^ 2 * vorticityProductsVectorSq 2 (g n) +
+        M ^ 2 * vorticityProductsVectorSq 2 (g n)) := h
       _ = _ := by ring
   have hright := hS.const_mul (2 * C₂ * M ^ 2)
   have hbound : (∑ ij : Fin 3 × Fin 3, sobolevNormSqOn 2 univ (E ij)) ≤
@@ -913,8 +916,8 @@ theorem vorticityProducts_H2
       (∀ x, Real.sqrt (∑ i, w i x ^ 2) ≤ Mw) →
       (∑ ij : Fin 3 × Fin 3, sobolevNormSqOn 2 univ
         (fun α => wordDeriv α (fun x => u ij.1 x * w ij.2 x))) ≤
-        C₂ * (Mu ^ 2 * vorticityProducts_vectorSq 2 w +
-          Mw ^ 2 * vorticityProducts_vectorSq 2 u) := by
+        C₂ * (Mu ^ 2 * vorticityProductsVectorSq 2 w +
+          Mw ^ 2 * vorticityProductsVectorSq 2 u) := by
     intro u w Mu Mw hu huc hw hwc hMu hMw
     exact hSmooth u w Mu Mw hu huc hw hwc hMu hMw
   obtain ⟨E, hE, hbound⟩ := vorticityProducts_H2_core C₂ Cb hSmooth' hBilin
@@ -950,8 +953,8 @@ private theorem vorticityProducts_H3_core
       (∀ i, HasCompactSupport (w i)) →
       (∑ ij : Fin 3 × Fin 3, sobolevNormSqOn 3 univ
         (fun α => wordDeriv α (fun x => u ij.1 x * w ij.2 x))) ≤
-        C₃ * (vorticityProducts_vectorSq 2 u * vorticityProducts_vectorSq 3 w +
-          vorticityProducts_vectorSq 3 u * vorticityProducts_vectorSq 2 w))
+        C₃ * (vorticityProductsVectorSq 2 u * vorticityProductsVectorSq 3 w +
+          vorticityProductsVectorSq 3 u * vorticityProductsVectorSq 2 w))
     (v : Vec3 → Vec3) (D : Fin 3 → List (Fin 3) → Vec3 → ℝ)
     (hD : ∀ i, IsSobolevFamilyOn 3 univ (vecComponents v i) (D i))
     (g : ℕ → Fin 3 → Vec3 → ℝ)
@@ -984,14 +987,14 @@ private theorem vorticityProducts_H3_core
   have hSmoothBound (n : ℕ) :
       ∑ ij : Fin 3 × Fin 3, sobolevNormSqOn 3 univ
         (fun α => wordDeriv α (fun x => g n ij.1 x * g n ij.2 x)) ≤
-      2 * C₃ * (vorticityProducts_vectorSq 2 (g n) *
-        vorticityProducts_vectorSq 3 (g n)) := by
+      2 * C₃ * (vorticityProductsVectorSq 2 (g n) *
+        vorticityProductsVectorSq 3 (g n)) := by
     have h := hBilin (g n) (g n) (hg n) (hgc n) (hg n) (hgc n)
     calc
-      _ ≤ C₃ * (vorticityProducts_vectorSq 2 (g n) *
-            vorticityProducts_vectorSq 3 (g n) +
-          vorticityProducts_vectorSq 3 (g n) *
-            vorticityProducts_vectorSq 2 (g n)) := h
+      _ ≤ C₃ * (vorticityProductsVectorSq 2 (g n) *
+            vorticityProductsVectorSq 3 (g n) +
+          vorticityProductsVectorSq 3 (g n) *
+            vorticityProductsVectorSq 2 (g n)) := h
       _ = _ := by ring
   have hlimBound : (∑ ij : Fin 3 × Fin 3, sobolevNormSqOn 3 univ (E ij)) ≤
       2 * C₃ * ((∑ i, sobolevNormSqOn 2 univ (D i)) *
@@ -1036,8 +1039,8 @@ theorem vorticityProducts_H3
       (∀ i, HasCompactSupport (w i)) →
       (∑ ij : Fin 3 × Fin 3, sobolevNormSqOn 3 univ
         (fun α => wordDeriv α (fun x => u ij.1 x * w ij.2 x))) ≤
-        C₃ * (vorticityProducts_vectorSq 2 u * vorticityProducts_vectorSq 3 w +
-          vorticityProducts_vectorSq 3 u * vorticityProducts_vectorSq 2 w) := by
+        C₃ * (vorticityProductsVectorSq 2 u * vorticityProductsVectorSq 3 w +
+          vorticityProductsVectorSq 3 u * vorticityProductsVectorSq 2 w) := by
     intro u w hu huc hw hwc
     exact hSmooth u w hu huc hw hwc
   obtain ⟨E, hE, hlimBound⟩ :=

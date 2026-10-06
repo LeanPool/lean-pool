@@ -150,9 +150,12 @@ private theorem lps_scalar_eLpNorm_bound_of_toLp
 
 section ProductDifferentiability
 
+/-- The product topology on `ParabolicPoint` for space-time slice differentiability. -/
 local instance : TopologicalSpace ParabolicPoint := instTopologicalSpaceProd
+/-- The product normed additive group structure used in the slice regularity arguments. -/
 local instance : NormedAddCommGroup ParabolicPoint :=
   inferInstanceAs (NormedAddCommGroup (Vec3 × ℝ))
+/-- The product real normed-space structure used in the slice regularity arguments. -/
 local instance : NormedSpace ℝ ParabolicPoint :=
   inferInstanceAs (NormedSpace ℝ (Vec3 × ℝ))
 

@@ -112,14 +112,18 @@ private theorem blowupLimitAssemblyPressure_rescaled_slice_bound
   have hsliceEq := blowupLimitAssembly_ae_ae_of_ae_prod_swap hprod
   filter_upwards [hsliceEq, blowupLimitAssemblyPressure_velocity_slice_bound u Mᵤ
     hsourceU x₀ t₀ r hr] with t hte htb
+  have hslice : (fun x : Vec3 => blowupVelocity x₀ t₀ r u (x,t)) =ᵐ[volume]
+      (fun x : Vec3 => vm (x,t)) := hte
+  have hmeas : AEStronglyMeasurable (fun x : Vec3 => vm (x,t)) volume :=
+    (hvmM.comp measurable_prodMk_right).aestronglyMeasurable
   calc
     eLpNorm (fun x : Vec3 => vm (x,t)) 3 volume =
         eLpNorm (fun x : Vec3 => blowupVelocity x₀ t₀ r u (x,t)) 3 volume :=
-      eLpNorm_congr_ae hte.symm
+      eLpNorm_congr_ae hslice.symm
     _ ≤ eLpNorm (fun x : Vec3 => vec3EuclideanNorm
           (blowupVelocity x₀ t₀ r u (x,t))) 3 volume := by
       apply blowupLimitAssemblyPressure_slice_le_norm
-      exact (hvmM.comp measurable_prodMk_right).aestronglyMeasurable.congr hte.symm
+      exact hmeas.congr hslice.symm
     _ ≤ Mᵤ := htb
 
 private theorem blowupLimitAssemblyPressure_finite_window_bound

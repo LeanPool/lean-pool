@@ -243,13 +243,15 @@ theorem localDivCurl_of_whole (m : ℕ) {r R : ℝ} (hr : 0 < r) (hrR : r < R)
   have hbζ (k : Fin 3) : sobolevNormSqOn m univ (Lb χ (Dζ k)) ≤
       CL * L ^ 2 * sobolevNormSqOn m U (Dζ k) :=
     vorticityProducts_leibniz_univ_normSq_le hLeib hCL hUo hTc hTU hχ hχb hχ0 (hDζ k)
-  have hLg (i j : Fin 3) : ∀ α ∈ sobolevWords m, MemLp (Lb (g i) (Dv j) α) 2 (volume.restrict univ) :=
+  have hLg (i j : Fin 3) : ∀ α ∈ sobolevWords m,
+      MemLp (Lb (g i) (Dv j) α) 2 (volume.restrict univ) :=
     fun α hα => (hgf i j).memL2 α (mem_sobolevWords.1 hα)
   have hLζ (k : Fin 3) : ∀ α ∈ sobolevWords m, MemLp (Lb χ (Dζ k) α) 2 (volume.restrict univ) :=
     fun α hα => ((hDζ k).smooth_mul_univ hUo hχ hχc hTU).memL2 α (mem_sobolevWords.1 hα)
   -- the divergence
   have hbd : sobolevNormSqOn m univ Ddf ≤ 4 * (CL * L ^ 2) * P := by
-    have e : Ddf = fun α x => (Lb (g 0) (Dv 0) α x + Lb (g 1) (Dv 1) α x) + Lb (g 2) (Dv 2) α x := by
+    have e : Ddf = fun α x =>
+        (Lb (g 0) (Dv 0) α x + Lb (g 1) (Dv 1) α x) + Lb (g 2) (Dv 2) α x := by
       funext α x
       simp only [Ddf, Fin.sum_univ_three]
     rw [e]
@@ -293,7 +295,8 @@ theorem localDivCurl_of_whole (m : ℕ) {r R : ℝ} (hr : 0 < r) (hrR : r < R)
     have hb2 := hbg (k + 1) (k + 2)
     have hb3 := hbg (k + 2) (k + 1)
     nlinarith only [h1, h2, h3, hb1, hb2, hb3]
-  have hsumω : ∑ k, sobolevNormSqOn m univ (Dωf k) ≤ 2 * (CL * L ^ 2) * Q + 8 * (CL * L ^ 2) * P := by
+  have hsumω : ∑ k, sobolevNormSqOn m univ (Dωf k) ≤
+      2 * (CL * L ^ 2) * Q + 8 * (CL * L ^ 2) * P := by
     refine (Finset.sum_le_sum fun k _ => hbω k).trans (le_of_eq ?_)
     rw [hP, hQ]
     simp only [Fin.sum_univ_three, Fin.isValue]

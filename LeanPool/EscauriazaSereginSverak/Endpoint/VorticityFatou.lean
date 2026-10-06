@@ -31,7 +31,7 @@ namespace ESS
 /-- Fatou's lemma for a continuous nonnegative function of finitely many `L²`-convergent
 sequences. -/
 theorem vorticity_integral_le_of_L2_tendsto {α ι : Type*} [MeasurableSpace α] {μ : Measure α}
-    [Fintype ι] {a : ι → ℕ → α → ℝ} {A : ι → α → ℝ}
+    [Finite ι] {a : ι → ℕ → α → ℝ} {A : ι → α → ℝ}
     (ha : ∀ i n, MemLp (a i n) 2 μ) (hA : ∀ i, MemLp (A i) 2 μ)
     (hconv : ∀ i, Tendsto (fun n => eLpNorm (a i n - A i) 2 μ) atTop (𝓝 0))
     {H : (ι → ℝ) → ℝ} (hH : Continuous H) (hH0 : ∀ v, 0 ≤ H v)

@@ -86,8 +86,8 @@ theorem blowupLimitAssembly_trace_ae_eq_blowupVelocity
     (W : Vec3 × Icc (-(3 / 4 : ℝ) ^ 2) 0 → Vec3) (hW : Measurable W)
     (htrace : ∀ᵐ t ∂(volume.restrict (Ioo (-(3 / 4 : ℝ) ^ 2) 0)),
       ∃ ht : t ∈ Icc (-(3 / 4 : ℝ) ^ 2) 0,
-        (fun x => W (x,⟨t,ht⟩)) =ᵐ[volume.restrict
-          (vec3Ball (0 : Vec3) (3 / 4 : ℝ))] (fun x => u (x,t)))
+        (fun x => W (x, ⟨t, ht⟩)) =ᵐ[volume.restrict
+          (vec3Ball (0 : Vec3) (3 / 4 : ℝ))] (fun x => u (x, t)))
     {x₀ : Vec3} (hx₀ : vec3EuclideanNorm x₀ ≤ 1 / 2) {t₀ : ℝ}
     (ht₀ : t₀ ∈ Icc (-(1 / 4 : ℝ)) 0) {r R a : ℝ} (hr : 0 < r)
     (hrR : r * R < 1 / 4) (hra : r ^ 2 * (-a) < 1 / 4) :
@@ -240,10 +240,10 @@ theorem blowupLimitAssembly_trace_compact_slice_bound
     (W : Vec3 × Icc (-(3 / 4 : ℝ) ^ 2) 0 → Vec3) (M : ℝ)
     (hsource : ∀ t,
       MemLp ((vec3Ball (0 : Vec3) (3 / 4 : ℝ)).indicator
-        (fun x => W (x,t))) 3 volume ∧
+        (fun x => W (x, t))) 3 volume ∧
       eLpNorm (fun x => vec3EuclideanNorm
         ((vec3Ball (0 : Vec3) (3 / 4 : ℝ)).indicator
-          (fun y => W (y,t)) x)) 3 volume ≤ ENNReal.ofReal M)
+          (fun y => W (y, t)) x)) 3 volume ≤ ENNReal.ofReal M)
     (x₀ : Vec3) (t₀ : ℝ) (r : ℕ → ℝ) (hr : ∀ n, 0 < r n)
     (C : Set Vec3) (hC : IsCompact C) :
     ∃ M' : ℝ≥0∞, M' < ⊤ ∧ ∀ n t,

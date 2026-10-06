@@ -103,17 +103,19 @@ private theorem localEnergy_finiteEnergySums_tendsto
     (fun n i x => square n i x) (fun i x => square₀ i x)
     (by intro i hi; exact hSquare i)
   have hCubicSum := localEnergy_tendsto_eLpNorm_double_sum_sub
-    (α := α) (μ := μ) (p := 1) (by norm_num) hCubic
+    (α := α) (μ := μ) (p := 1) (by norm_num) (fn := cubic) (f := cubic₀) hCubic
   have hPressureSum := localEnergy_tendsto_eLpNorm_finset_sum_sub
     (α := α) (μ := μ) (p := 1) (by norm_num) Finset.univ
     (fun n i x => pressure n i x) (fun i x => pressure₀ i x)
     (by intro i hi; exact hPressure i)
   have hStressSum := localEnergy_tendsto_eLpNorm_double_sum_sub
     (α := α) (μ := μ) (p := 1) (by norm_num)
-    (fun i j => by simpa using hStress i j)
+    (fn := stress) (f := fun _ _ _ => 0)
+    (fun i j => by simpa only [sub_zero] using hStress i j)
   have hGradientSum := localEnergy_tendsto_eLpNorm_double_sum_sub
-    (α := α) (μ := μ) (p := 1) (by norm_num) hGradient
-  exact ⟨hSquareSum, hCubicSum, hPressureSum, hStressSum, hGradientSum⟩
+    (α := α) (μ := μ) (p := 1) (by norm_num) (fn := gradient) (f := gradient₀) hGradient
+  refine ⟨hSquareSum, hCubicSum, hPressureSum, ?_, hGradientSum⟩
+  simpa only [Finset.sum_const_zero, sub_zero] using hStressSum
 
 private theorem localEnergy_energySums_tendsto
     {α : Type*} [MeasurableSpace α] (μ : Measure α)
@@ -122,45 +124,41 @@ private theorem localEnergy_energySums_tendsto
     (pressureSum : ℕ → α → ℝ) (pressureSum₀ : α → ℝ)
     (stressSum : ℕ → α → ℝ)
     (gradientSum : ℕ → α → ℝ) (gradientSum₀ : α → ℝ)
-    (hSquare : Tendsto (fun n => eLpNorm (squareSum n - squareSum₀) 1 μ)
+    (hSquare : Tendsto (fun n => eLpNorm (fun x => squareSum n x - squareSum₀ x) 1 μ)
       atTop (nhds 0))
-    (hCubic : Tendsto (fun n => eLpNorm (cubicSum n - cubicSum₀) 1 μ)
+    (hCubic : Tendsto (fun n => eLpNorm (fun x => cubicSum n x - cubicSum₀ x) 1 μ)
       atTop (nhds 0))
-    (hPressure : Tendsto (fun n => eLpNorm (pressureSum n - pressureSum₀) 1 μ)
+    (hPressure : Tendsto (fun n => eLpNorm (fun x => pressureSum n x - pressureSum₀ x) 1 μ)
       atTop (nhds 0))
     (hStress : Tendsto (fun n => eLpNorm (stressSum n) 1 μ)
       atTop (nhds 0))
-    (hGradient : Tendsto (fun n => eLpNorm (gradientSum n - gradientSum₀) 1 μ)
+    (hGradient : Tendsto (fun n => eLpNorm (fun x => gradientSum n x - gradientSum₀ x) 1 μ)
       atTop (nhds 0)) :
-    Tendsto (fun n => eLpNorm
-      (((squareSum n + cubicSum n) + (pressureSum n + stressSum n) +
-        gradientSum n) -
-        ((squareSum₀ + cubicSum₀) + (pressureSum₀ + gradientSum₀))) 1 μ)
+    Tendsto (fun n => eLpNorm (fun x =>
+      ((squareSum n x + cubicSum n x) + ((pressureSum n x + stressSum n x) +
+        gradientSum n x)) -
+        ((squareSum₀ x + cubicSum₀ x) + (pressureSum₀ x + gradientSum₀ x))) 1 μ)
       atTop (nhds 0) := by
   have hLeft := localEnergy_tendsto_eLpNorm_add_sub
     (α := α) (μ := μ) (p := 1) (by norm_num)
+    (fn := squareSum) (f := squareSum₀) (gn := cubicSum) (g := cubicSum₀)
     hSquare hCubic
   have hPressureStress := localEnergy_tendsto_eLpNorm_add_sub
     (α := α) (μ := μ) (p := 1) (by norm_num)
-    hPressure (by simpa using hStress)
+    (fn := pressureSum) (f := pressureSum₀) (gn := stressSum) (g := fun _ => 0)
+    hPressure (by simpa only [sub_zero] using hStress)
   have hRight := localEnergy_tendsto_eLpNorm_add_sub
     (α := α) (μ := μ) (p := 1) (by norm_num)
+    (fn := fun n x => pressureSum n x + stressSum n x)
+    (f := fun x => pressureSum₀ x + 0) (gn := gradientSum) (g := gradientSum₀)
     hPressureStress hGradient
   have hCombined := localEnergy_tendsto_eLpNorm_add_sub
-    (α := α) (μ := μ) (p := 1) (by norm_num) hLeft hRight
-  have hfun (n : ℕ) : eLpNorm
-      (((squareSum n + cubicSum n) + (pressureSum n + stressSum n) +
-        gradientSum n) -
-        ((squareSum₀ + cubicSum₀) + (pressureSum₀ + gradientSum₀))) 1 μ =
-      eLpNorm
-        ((squareSum n + cubicSum n) +
-          ((pressureSum n + stressSum n) + gradientSum n) -
-          ((squareSum₀ + cubicSum₀) +
-            ((pressureSum₀ + 0) + gradientSum₀))) 1 μ := by
-    congr 1
-    funext x
-    simp [add_assoc]
-  exact hCombined.congr fun n => (hfun n).symm
+    (α := α) (μ := μ) (p := 1) (by norm_num)
+    (fn := fun n x => squareSum n x + cubicSum n x)
+    (f := fun x => squareSum₀ x + cubicSum₀ x)
+    (gn := fun n x => (pressureSum n x + stressSum n x) + gradientSum n x)
+    (g := fun x => (pressureSum₀ x + 0) + gradientSum₀ x) hLeft hRight
+  simpa only [add_zero] using hCombined
 
 private theorem localEnergy_energyDensity_memLp
     {α : Type*} [MeasurableSpace α] (μ : Measure α)
@@ -209,9 +207,10 @@ private theorem localEnergy_energyDensity_memLp
       gradient₀ i j x) 1 μ := localEnergy_memLp_double_sum (fun i j => hGradient₀ i j)
   constructor
   · intro n
-    exact ((hSquareSum n).add (hCubicSum n)).add
-      ((hPressureSum n).add (hStressSum n).add (hGradientSum n))
-  · exact (hSquareSum₀.add hCubicSum₀).add (hPressureSum₀.add hGradientSum₀)
+    simpa only [Pi.add_def] using ((hSquareSum n).add (hCubicSum n)).add
+      (((hPressureSum n).add (hStressSum n)).add (hGradientSum n))
+  · simpa only [Pi.add_def] using
+      (hSquareSum₀.add hCubicSum₀).add (hPressureSum₀.add hGradientSum₀)
 
 private theorem localEnergy_finiteEnergyDensityLimit
     {α : Type*} [MeasurableSpace α] (μ : Measure α)
@@ -222,11 +221,6 @@ private theorem localEnergy_finiteEnergyDensityLimit
     (stress : ℕ → Fin 3 → Fin 3 → α → ℝ)
     (gradient : ℕ → Fin 3 → Fin 3 → α → ℝ)
     (gradient₀ : Fin 3 → Fin 3 → α → ℝ)
-    (squareSum : ℕ → α → ℝ) (squareSum₀ : α → ℝ)
-    (cubicSum : ℕ → α → ℝ) (cubicSum₀ : α → ℝ)
-    (pressureSum : ℕ → α → ℝ) (pressureSum₀ : α → ℝ)
-    (stressSum : ℕ → α → ℝ)
-    (gradientSum : ℕ → α → ℝ) (gradientSum₀ : α → ℝ)
     (hSquareLp : ∀ n i, MemLp (square n i) 1 μ)
     (hSquare₀Lp : ∀ i, MemLp (square₀ i) 1 μ)
     (hCubicLp : ∀ n i j, MemLp (cubic n i j) 1 μ)
@@ -247,13 +241,22 @@ private theorem localEnergy_finiteEnergyDensityLimit
     (hGradientConv : ∀ i j, Tendsto (fun n => eLpNorm
       (fun x => gradient n i j x - gradient₀ i j x) 1 μ) atTop (nhds 0)) :
     (∀ n, MemLp (fun x =>
-      (squareSum n x + cubicSum n x) + ((pressureSum n x + stressSum n x) +
-        gradientSum n x)) 1 μ) ∧
-    MemLp (fun x => (squareSum₀ x + cubicSum₀ x) +
-      (pressureSum₀ x + gradientSum₀ x)) 1 μ ∧
-    Tendsto (fun n => eLpNorm
-      ((squareSum n + cubicSum n) + ((pressureSum n + stressSum n) + gradientSum n) -
-        ((squareSum₀ + cubicSum₀) + (pressureSum₀ + gradientSum₀))) 1 μ)
+      ((∑ i : Fin 3, square n i x) + (∑ i : Fin 3, ∑ j : Fin 3, cubic n i j x)) +
+        (((∑ i : Fin 3, pressure n i x) +
+          (∑ i : Fin 3, ∑ j : Fin 3, stress n i j x)) +
+          ∑ i : Fin 3, ∑ j : Fin 3, gradient n i j x)) 1 μ) ∧
+    MemLp (fun x =>
+      ((∑ i : Fin 3, square₀ i x) + (∑ i : Fin 3, ∑ j : Fin 3, cubic₀ i j x)) +
+        ((∑ i : Fin 3, pressure₀ i x) +
+          ∑ i : Fin 3, ∑ j : Fin 3, gradient₀ i j x)) 1 μ ∧
+    Tendsto (fun n => eLpNorm (fun x =>
+      (((∑ i : Fin 3, square n i x) + (∑ i : Fin 3, ∑ j : Fin 3, cubic n i j x)) +
+        (((∑ i : Fin 3, pressure n i x) +
+          (∑ i : Fin 3, ∑ j : Fin 3, stress n i j x)) +
+          ∑ i : Fin 3, ∑ j : Fin 3, gradient n i j x)) -
+      (((∑ i : Fin 3, square₀ i x) + (∑ i : Fin 3, ∑ j : Fin 3, cubic₀ i j x)) +
+        ((∑ i : Fin 3, pressure₀ i x) +
+          ∑ i : Fin 3, ∑ j : Fin 3, gradient₀ i j x))) 1 μ)
       atTop (nhds 0) := by
   have hLp := localEnergy_energyDensity_memLp μ square square₀ cubic cubic₀
     pressure pressure₀ stress gradient gradient₀ hSquareLp hSquare₀Lp
@@ -262,8 +265,14 @@ private theorem localEnergy_finiteEnergyDensityLimit
     pressure pressure₀ stress gradient gradient₀ hSquareConv hCubicConv
     hPressureConv hStressConv hGradientConv
   have hEnergyConv := localEnergy_energySums_tendsto μ
-    squareSum squareSum₀ cubicSum cubicSum₀ pressureSum pressureSum₀
-    stressSum gradientSum gradientSum₀ hTerms.1 hTerms.2.1 hTerms.2.2.1
+    (fun n x => ∑ i : Fin 3, square n i x) (fun x => ∑ i : Fin 3, square₀ i x)
+    (fun n x => ∑ i : Fin 3, ∑ j : Fin 3, cubic n i j x)
+    (fun x => ∑ i : Fin 3, ∑ j : Fin 3, cubic₀ i j x)
+    (fun n x => ∑ i : Fin 3, pressure n i x) (fun x => ∑ i : Fin 3, pressure₀ i x)
+    (fun n x => ∑ i : Fin 3, ∑ j : Fin 3, stress n i j x)
+    (fun n x => ∑ i : Fin 3, ∑ j : Fin 3, gradient n i j x)
+    (fun x => ∑ i : Fin 3, ∑ j : Fin 3, gradient₀ i j x)
+    hTerms.1 hTerms.2.1 hTerms.2.2.1
     hTerms.2.2.2.1 hTerms.2.2.2.2
   exact ⟨hLp.1, hLp.2, hEnergyConv⟩
 
@@ -291,7 +300,7 @@ private structure LocalEnergyEnergySequenceFacts
     ((∑ i : Fin 3, squareTerm0 i x) + (∑ i : Fin 3, ∑ j : Fin 3, cubicTerm0 i j x)) +
       ((∑ i : Fin 3, pressureTerm0 i x) + ∑ i : Fin 3, ∑ j : Fin 3, gradientTerm0 i j x)
 
-private theorem localEnergy_energySequenceFacts
+private def localEnergy_energySequenceFacts
     {α : Type*} [MeasurableSpace α] (μ : Measure α)
     (squareTerm : ℕ → Fin 3 → α → ℝ) (squareTerm0 : Fin 3 → α → ℝ)
     (cubicTerm : ℕ → Fin 3 → Fin 3 → α → ℝ)
@@ -337,8 +346,6 @@ private theorem localEnergy_energySequenceFacts
   have hFacts := localEnergy_finiteEnergyDensityLimit μ
     (fun n i x => squareTerm n i x) squareTerm0 cubicTerm cubicTerm0
     (fun n i x => pressureTerm n i x) pressureTerm0 stressTerm gradientTerm gradientTerm0
-    squareSum squareSum0 cubicSum cubicSum0 pressureSum pressureSum0 stressSum
-    gradientSum gradientSum0
     (by intro n i; exact hSquareN n i) (by intro i; exact hSquare0 i)
     hCubicN hCubic0 (by intro n i; exact hPressureN n i)
     (by intro i; exact hPressure0 i) hStressN hGradientN hGradient0
@@ -350,7 +357,8 @@ private theorem localEnergy_energySequenceFacts
   have hEnergyConv : Tendsto (fun n => eLpNorm (energyN n - energy0) 1 μ)
       atTop (nhds 0) := by
     simpa [energyN, energy0, squareSum, squareSum0, cubicSum, cubicSum0,
-      pressureSum, pressureSum0, stressSum, gradientSum, gradientSum0] using hFacts.2.2
+      pressureSum, pressureSum0, stressSum, gradientSum, gradientSum0,
+      Pi.sub_def] using hFacts.2.2
   refine ⟨energyN, energy0, hEnergyN, hEnergy0, hEnergyConv, ?_, ?_⟩
   · intro n
     rfl
@@ -425,7 +433,7 @@ private theorem localEnergy_separatedBase_eq_expanded
     (hb : ∀ i z, b i z = spatialPartial ψ i (parabolicHomeomorph.symm z))
     (hψ : ∀ z, ψ (parabolicHomeomorph.symm z) = ψ₀ z) :
     localEnergySeparatedBase u R G p ψ₀ a b =
-      localEnergyLimitExpandedBaseIntegrand u R G p ψ ψ := by
+      localEnergyLimitExpandedBaseIntegrand u R G p ψ := by
   funext z
   let squareTerm (i : Fin 3) := (u z i * u z i) * (-a z)
   let cubicTerm (i j : Fin 3) := (u z i * u z i * u z j) * (-b j z)
@@ -474,49 +482,72 @@ private theorem localEnergy_separatedBase_eq_expanded
       (((∑ i : Fin 3, pressureTerm i) +
         (∑ i : Fin 3, ∑ j : Fin 3, stressTerm i j)) +
         ∑ i : Fin 3, ∑ j : Fin 3, gradientTerm i j) = _
-  rw [← ha z, ← hb, ← hψ z]
   simp only [localEnergyLimitExpandedBaseIntegrand, sub_eq_add_neg]
+  rw [← ha z]
+  simp only [← hb, hψ]
   rw [hfirst, hcubic, hpressure, hstress]
   simp only [squareTerm, cubicTerm, pressureTerm, stressTerm, gradientTerm]
   ring
 
 private theorem localEnergy_mollifiedEnergySums_eq_expanded
-    {α : Type*} (u : ℕ → α → Fin 3 → ℝ)
-    (R G : ℕ → α → Fin 3 → Fin 3 → ℝ) (p : ℕ → α → ℝ)
-    (u₀ : α → Fin 3 → ℝ) (R₀ G₀ : α → Fin 3 → Fin 3 → ℝ)
-    (p₀ ψ₀ : α → ℝ) (ψ : ParabolicPoint → ℝ)
-    (a : α → ℝ) (b : Fin 3 → α → ℝ)
-    (square : ℕ → Fin 3 → α → ℝ) (square₀ : Fin 3 → α → ℝ)
-    (cubic : ℕ → Fin 3 → Fin 3 → α → ℝ) (cubic₀ : Fin 3 → Fin 3 → α → ℝ)
-    (pressure : ℕ → Fin 3 → α → ℝ) (pressure₀ : Fin 3 → α → ℝ)
-    (stress : ℕ → Fin 3 → Fin 3 → α → ℝ)
-    (gradient : ℕ → Fin 3 → Fin 3 → α → ℝ)
-    (gradient₀ : Fin 3 → Fin 3 → α → ℝ)
+    (u : ℕ → Vec3 × ℝ → Fin 3 → ℝ)
+    (R G : ℕ → Vec3 × ℝ → Fin 3 → Fin 3 → ℝ) (p : ℕ → Vec3 × ℝ → ℝ)
+    (u₀ : Vec3 × ℝ → Fin 3 → ℝ) (G₀ : Vec3 × ℝ → Fin 3 → Fin 3 → ℝ)
+    (p₀ ψ₀ : Vec3 × ℝ → ℝ) (ψ : ParabolicPoint → ℝ)
+    (a : Vec3 × ℝ → ℝ) (b : Fin 3 → Vec3 × ℝ → ℝ)
     (ha : ∀ z, a z = timePartial ψ (parabolicHomeomorph.symm z) +
       ∑ i : Fin 3, spatialSecondPartial ψ i i (parabolicHomeomorph.symm z))
     (hb : ∀ i z, b i z = spatialPartial ψ i (parabolicHomeomorph.symm z))
     (hψ : ∀ z, ψ (parabolicHomeomorph.symm z) = ψ₀ z) :
-    (∀ n, (fun x =>
-      ((∑ i : Fin 3, square n i x) + (∑ i : Fin 3, ∑ j : Fin 3, cubic n i j x)) +
-        (((∑ i : Fin 3, pressure n i x) +
-          (∑ i : Fin 3, ∑ j : Fin 3, stress n i j x)) +
-            ∑ i : Fin 3, ∑ j : Fin 3, gradient n i j x)) =
-      localEnergyLimitExpandedBaseIntegrand (u n) (R n) (G n) (p n) ψ x) ∧
-    (fun x =>
-      ((∑ i : Fin 3, square₀ i x) + (∑ i : Fin 3, ∑ j : Fin 3, cubic₀ i j x)) +
-        ((∑ i : Fin 3, pressure₀ i x) +
-          ∑ i : Fin 3, ∑ j : Fin 3, gradient₀ i j x)) =
-      localEnergyLimitExpandedBaseIntegrand u₀ R₀ G₀ p₀ ψ := by
+    (∀ n, localEnergySeparatedBase (u n) (R n) (G n) (p n) ψ₀ a b =
+      localEnergyLimitExpandedBaseIntegrand (u n) (R n) (G n) (p n) ψ) ∧
+    (fun z =>
+      ((∑ i : Fin 3, (u₀ z i * u₀ z i) * (-a z)) +
+        (∑ i : Fin 3, ∑ j : Fin 3, (u₀ z i * u₀ z i * u₀ z j) * (-b j z))) +
+        ((∑ i : Fin 3, (p₀ z * u₀ z i) * ((-2 : ℝ) * b i z)) +
+          ∑ i : Fin 3, ∑ j : Fin 3, (G₀ z i j * G₀ z i j) * ((2 : ℝ) * ψ₀ z))) =
+      localEnergyLimitExpandedBaseIntegrand u₀ (fun _ _ _ => 0) G₀ p₀ ψ := by
   constructor
   · intro n
-    have hExpanded := localEnergy_separatedBase_eq_expanded
+    exact localEnergy_separatedBase_eq_expanded
       (u n) (R n) (G n) (p n) ψ₀ ψ a b ha hb hψ
-    funext x
-    simpa [Finset.sum_const_zero] using congrFun hExpanded x
   · have hExpanded := localEnergy_separatedBase_eq_expanded
-      u₀ R₀ G₀ p₀ ψ₀ ψ a b ha hb hψ
-    funext x
-    simpa [Finset.sum_const_zero] using congrFun hExpanded x
+      u₀ (fun _ _ _ => 0) G₀ p₀ ψ₀ ψ a b ha hb hψ
+    unfold localEnergySeparatedBase at hExpanded
+    simpa only [zero_mul, Finset.sum_const_zero, add_zero] using hExpanded
+
+private theorem localEnergy_weightedEnergySequence_eq_expanded
+    (u : ℕ → Vec3 × ℝ → Fin 3 → ℝ)
+    (R G : ℕ → Vec3 × ℝ → Fin 3 → Fin 3 → ℝ) (p : ℕ → Vec3 × ℝ → ℝ)
+    (u₀ : Vec3 × ℝ → Fin 3 → ℝ) (G₀ : Vec3 × ℝ → Fin 3 → Fin 3 → ℝ)
+    (p₀ ψ₀ : Vec3 × ℝ → ℝ) (ψ : ParabolicPoint → ℝ)
+    (a : Vec3 × ℝ → ℝ) (b : Fin 3 → Vec3 × ℝ → ℝ)
+    (ha : ∀ z, a z = timePartial ψ (parabolicHomeomorph.symm z) +
+      ∑ i : Fin 3, spatialSecondPartial ψ i i (parabolicHomeomorph.symm z))
+    (hb : ∀ i z, b i z = spatialPartial ψ i (parabolicHomeomorph.symm z))
+    (hψ : ∀ z, ψ (parabolicHomeomorph.symm z) = ψ₀ z)
+    (facts : LocalEnergyEnergySequenceFacts (volume : Measure (Vec3 × ℝ))
+      (fun n i z => u n z i * u n z i * (-a z))
+      (fun i z => u₀ z i * u₀ z i * (-a z))
+      (fun n i j z => u n z i * u n z i * u n z j * (-b j z))
+      (fun i j z => u₀ z i * u₀ z i * u₀ z j * (-b j z))
+      (fun n i z => p n z * u n z i * ((-2 : ℝ) * b i z))
+      (fun i z => p₀ z * u₀ z i * ((-2 : ℝ) * b i z))
+      (fun n i j z => R n z i j *
+        ((-2 : ℝ) * (u n z i * b j z + ψ₀ z * G n z i j)))
+      (fun n i j z => G n z i j * G n z i j * ((2 : ℝ) * ψ₀ z))
+      (fun i j z => G₀ z i j * G₀ z i j * ((2 : ℝ) * ψ₀ z))) :
+    (∀ n, facts.energyN n =
+      localEnergyLimitExpandedBaseIntegrand (u n) (R n) (G n) (p n) ψ) ∧
+    facts.energy0 =
+      localEnergyLimitExpandedBaseIntegrand u₀ (fun _ _ _ => 0) G₀ p₀ ψ := by
+  have hSums := localEnergy_mollifiedEnergySums_eq_expanded
+    u R G p u₀ G₀ p₀ ψ₀ ψ a b ha hb hψ
+  unfold localEnergySeparatedBase at hSums
+  exact localEnergy_energySequence_eq_of_sum_eq facts
+    (fun n => localEnergyLimitExpandedBaseIntegrand (u n) (R n) (G n) (p n) ψ)
+    (localEnergyLimitExpandedBaseIntegrand u₀ (fun _ _ _ => 0) G₀ p₀ ψ)
+    hSums.1 hSums.2
 
 private theorem localEnergy_stressProduct_tendsto
     {α : Type*} [MeasurableSpace α] (μ : Measure α)
@@ -526,10 +557,10 @@ private theorem localEnergy_stressProduct_tendsto
     (b : Fin 3 → α → ℝ) (ψ : α → ℝ)
     (hv₀ : ∀ i, MemLp (v₀ i) 4 μ) (hb₄ : ∀ j, MemLp (b j) 4 μ)
     (hv : ∀ n i, MemLp (v n i) 4 μ)
-    (hvlim : ∀ i, Tendsto (fun n => eLpNorm (v n i - v₀ i) 4 μ) atTop (nhds 0))
-    (hg₀ : ∀ i j, MemLp (g₀ i j) 2 μ) (hψ∞ : MemLp ψ ⊤ μ)
+    (hvlim : ∀ i, Tendsto (fun n => eLpNorm (fun x => v n i x - v₀ i x) 4 μ) atTop (nhds 0))
+    (hg₀ : ∀ i j, MemLp (g₀ i j) 2 μ) (hψInf : MemLp ψ ⊤ μ)
     (hg : ∀ n i j, MemLp (g n i j) 2 μ)
-    (hglim : ∀ i j, Tendsto (fun n => eLpNorm (g n i j - g₀ i j) 2 μ)
+    (hglim : ∀ i j, Tendsto (fun n => eLpNorm (fun x => g n i j x - g₀ i j x) 2 μ)
       atTop (nhds 0))
     (hF : ∀ n i j, MemLp (F n i j) 2 μ)
     (hFlim : ∀ i j, Tendsto (fun n => eLpNorm (F n i j) 2 μ) atTop (nhds 0)) :
@@ -540,32 +571,36 @@ private theorem localEnergy_stressProduct_tendsto
       (fun x => v n i x * b j x - v₀ i x * b j x) 2 μ) atTop (nhds 0) :=
     localEnergy_tendsto_eLpNorm_mul_fixed
       (p := 4) (q := 4) (r := 2) (by norm_num)
-      (hv₀ i) (hb₄ j) (fun n => hv n i) (hvlim i)
+      (hv₀ i) (hb₄ j) (fun n => hv n i)
+      (hvlim i)
   have hGψConv (i j : Fin 3) : Tendsto (fun n => eLpNorm
       (fun x => g n i j x * ψ x - g₀ i j x * ψ x) 2 μ) atTop (nhds 0) :=
     localEnergy_tendsto_eLpNorm_mul_fixed
       (p := 2) (q := ⊤) (r := 2) (by norm_num)
-      (hg₀ i j) hψ∞ (fun n => hg n i j) (hglim i j)
+      (hg₀ i j) hψInf (fun n => hg n i j)
+      (hglim i j)
   have hKBaseN (n : ℕ) (i j : Fin 3) : MemLp
       (fun x => v n i x * b j x + ψ x * g n i j x) 2 μ := by
     have hleft : MemLp (fun x => v n i x * b j x) 2 μ :=
       MeasureTheory.MemLp.mul (p := 4) (q := 4) (r := 2) (hv n i) (hb₄ j)
     have hright : MemLp (fun x => ψ x * g n i j x) 2 μ :=
-      MeasureTheory.MemLp.mul (p := ⊤) (q := 2) (r := 2) hψ∞ (hg n i j)
-    exact hleft.add (by simpa [mul_comm] using hright)
+      MeasureTheory.MemLp.mul (p := ⊤) (q := 2) (r := 2) hψInf (hg n i j)
+    simpa only [Pi.add_def] using hleft.add hright
   have hKBase₀ (i j : Fin 3) : MemLp
       (fun x => v₀ i x * b j x + ψ x * g₀ i j x) 2 μ := by
     have hleft : MemLp (fun x => v₀ i x * b j x) 2 μ :=
       MeasureTheory.MemLp.mul (p := 4) (q := 4) (r := 2) (hv₀ i) (hb₄ j)
     have hright : MemLp (fun x => ψ x * g₀ i j x) 2 μ :=
-      MeasureTheory.MemLp.mul (p := ⊤) (q := 2) (r := 2) hψ∞ (hg₀ i j)
-    exact hleft.add (by simpa [mul_comm] using hright)
+      MeasureTheory.MemLp.mul (p := ⊤) (q := 2) (r := 2) hψInf (hg₀ i j)
+    simpa only [Pi.add_def] using hleft.add hright
   have hKBaseConv (i j : Fin 3) : Tendsto (fun n => eLpNorm
       (fun x => (v n i x * b j x + ψ x * g n i j x) -
         (v₀ i x * b j x + ψ x * g₀ i j x)) 2 μ) atTop (nhds 0) := by
     exact localEnergy_tendsto_eLpNorm_add_sub
-      (by norm_num : (1 : ℝ≥0∞) ≤ 2) (hUBConv i j) (by
-        simpa [mul_comm] using hGψConv i j)
+      (by norm_num : (1 : ℝ≥0∞) ≤ 2)
+      (fn := fun n x => v n i x * b j x) (f := fun x => v₀ i x * b j x)
+      (gn := fun n x => ψ x * g n i j x) (g := fun x => ψ x * g₀ i j x)
+      (hUBConv i j) (by simpa only [mul_comm] using hGψConv i j)
   have hKBaseScaledN (n : ℕ) (i j : Fin 3) : MemLp
       (fun x => (-2 : ℝ) * (v n i x * b j x + ψ x * g n i j x)) 2 μ :=
     (hKBaseN n i j).const_mul (-2)
@@ -581,8 +616,8 @@ private theorem localEnergy_stressProduct_tendsto
   have h := localEnergy_tendsto_eLpNorm_mul_sub
     (p := 2) (q := 2) (r := 1) (by norm_num)
     hzero (hKBaseScaled₀ i j) (fun n => hF n i j) (fun n => hKBaseScaledN n i j)
-    (by simpa using hFlim i j) (hKBaseScaledConv i j)
-  simpa using h
+    (by simpa only [sub_zero] using hFlim i j) (hKBaseScaledConv i j)
+  simpa only [zero_mul, sub_zero] using h
 
 private theorem localEnergy_mollifiedFieldFacts
     {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin 3 → Vec3}
@@ -697,7 +732,7 @@ private structure LocalEnergyWeightedTermLpFacts
   stressN : ∀ n i j, MemLp
     (fun x => F n i j x * ((-2 : ℝ) *
       (v n i x * b j x + ψ x * gradient n i j x))) 1 μ
-  stress0 : ∀ i j, MemLp (fun _ : α => (0 : ℝ)) 1 μ
+  stress0 : ∀ _ _ : Fin 3, MemLp (fun _ : α => (0 : ℝ)) 1 μ
   gradientN : ∀ n i j, MemLp
     (fun x => (gradient n i j x * gradient n i j x) * ((2 : ℝ) * ψ x)) 1 μ
   gradient0 : ∀ i j, MemLp
@@ -768,9 +803,15 @@ private theorem localEnergy_mollifiedProductLpFacts
   · intro i
     exact (hv₀ i).mul (hv₀ i)
   · intro n i j
-    exact ((hv n i).mul (hv n i)).mul (hv n j)
+    have hSquare : MemLp (fun x => v n i x * v n i x) 2 μ :=
+      MeasureTheory.MemLp.mul (p := 4) (q := 4) (r := 2) (hv n i) (hv n i)
+    exact MeasureTheory.MemLp.mul (p := 2) (q := 4)
+      (r := ENNReal.ofReal (4 / 3 : ℝ)) hSquare (hv n j)
   · intro i j
-    exact ((hv₀ i).mul (hv₀ i)).mul (hv₀ j)
+    have hSquare : MemLp (fun x => v₀ i x * v₀ i x) 2 μ :=
+      MeasureTheory.MemLp.mul (p := 4) (q := 4) (r := 2) (hv₀ i) (hv₀ i)
+    exact MeasureTheory.MemLp.mul (p := 2) (q := 4)
+      (r := ENNReal.ofReal (4 / 3 : ℝ)) hSquare (hv₀ j)
   · intro n i
     exact (hp n).mul (hv n i)
   · intro i
@@ -816,9 +857,9 @@ private theorem localEnergy_weightedEnergyTermLimits
     (hg₀ : ∀ i j, MemLp (gradient₀ i j) 2 μ)
     (hb4 : ∀ j, MemLp (b j) 4 μ) (hb12 : ∀ i, MemLp (b i) 12 μ)
     (hψInf : MemLp ψ ⊤ μ) (haNeg : MemLp aNeg 2 μ)
-    (hvLim : ∀ i, Tendsto (fun n => eLpNorm (v n i - v₀ i) 4 μ)
+    (hvLim : ∀ i, Tendsto (fun n => eLpNorm (fun x => v n i x - v₀ i x) 4 μ)
       atTop (nhds 0))
-    (hgLim : ∀ i j, Tendsto (fun n => eLpNorm (gradient n i j - gradient₀ i j) 2 μ)
+    (hgLim : ∀ i j, Tendsto (fun n => eLpNorm (fun x => gradient n i j x - gradient₀ i j x) 2 μ)
       atTop (nhds 0)) :
     (∀ i, Tendsto (fun n => eLpNorm
       (fun x => v n i x * v n i x * aNeg x - v₀ i x * v₀ i x * aNeg x) 1 μ)
@@ -899,7 +940,7 @@ private theorem localEnergy_weightedTermAnalysis
     (hg₀ : ∀ i j, MemLp (gradient₀ i j) 2 μ)
     (hb4 : ∀ j, MemLp (b j) 4 μ) (hb12 : ∀ i, MemLp (b i) 12 μ)
     (hψInf : MemLp ψ ⊤ μ) (haNeg : MemLp aNeg 2 μ)
-    (hvLim : ∀ i, Tendsto (fun n => eLpNorm (v n i - v₀ i) 4 μ) atTop (nhds 0))
+    (hvLim : ∀ i, Tendsto (fun n => eLpNorm (fun x => v n i x - v₀ i x) 4 μ) atTop (nhds 0))
     (hgLim : ∀ i j, Tendsto (fun n => eLpNorm
       (gradient n i j - gradient₀ i j) 2 μ) atTop (nhds 0)) :
     LocalEnergyWeightedTermLpFacts μ v v₀ pressure pressure₀ F gradient gradient₀ b ψ aNeg ∧
@@ -915,7 +956,7 @@ private theorem localEnergy_weightedTermAnalysis
       MeasureTheory.MemLp.mul (p := 4) (q := 4) (r := 2) (hv n i) (hb4 j)
     have hright : MemLp (fun x => ψ x * gradient n i j x) 2 μ :=
       MeasureTheory.MemLp.mul (p := ⊤) (q := 2) (r := 2) hψInf (hg n i j)
-    exact (hleft.add (by simpa [mul_comm] using hright)).const_mul (-2)
+    simpa only [Pi.add_apply] using (hleft.add hright).const_mul (-2)
   have hTermLp := localEnergy_weightedTermLpFacts μ v v₀ pressure pressure₀ F
     gradient gradient₀ b ψ aNeg hLP hF hK hb4Neg hb12Neg haNeg hψTwo
   have hLimits := localEnergy_weightedEnergyTermLimits μ v v₀ pressure pressure₀ F
@@ -927,7 +968,7 @@ private theorem localEnergy_weightedTermAnalysis
 private theorem localEnergy_mollifiedExpandedBaseIntegral_zero
     {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin 3 → Vec3}
     {p : ParabolicPoint → ℝ} {δ : ℝ} (hδ : 0 < δ)
-    (ψ : ParabolicPoint → ℝ) (hψ : ContDiff ℝ (⊤ : ℕ∞) ψ)
+    (ψ : Vec3 × ℝ → ℝ) (hψ : ContDiff ℝ (⊤ : ℕ∞) ψ)
     (hzero : ∫ z, smoothEnergyBaseIntegrand
       (fun y i => spaceTimeMollify
         ((vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1) 0).indicator
@@ -1018,7 +1059,6 @@ theorem localEnergy_mollifiedBase_integral_limit_zero
       (fun z i j => localEnergyGradientZeroExtension Du i j z)
       (localEnergyPressureZeroExtension p) (show ParabolicPoint → ℝ from ψ) z
       ∂(volume : Measure (Vec3 × ℝ)) = 0 := by
-  let U : Set (Vec3 × ℝ) := localEnergyUnitProductCylinder
   let u0 : Vec3 × ℝ → Vec3 := fun z i => localEnergyVelocityZeroExtension u i z
   let g0 : Vec3 × ℝ → Fin 3 → Fin 3 → ℝ :=
     fun z i j => localEnergyGradientZeroExtension Du i j z
@@ -1031,7 +1071,7 @@ theorem localEnergy_mollifiedBase_integral_limit_zero
     spatialPartial ψP i (parabolicHomeomorph.symm z)
   have hCoeff := localEnergy_testCoefficients hψ hψc
   have hScales := localEnergy_exists_scales_for_test hψc hψU
-  obtain ⟨ε, hε, δ, hδ, hδpos, hcover⟩ := hScales
+  obtain ⟨_, _, δ, hδ, hδpos, hcover⟩ := hScales
   have hProducts := localEnergy_mollifiedProducts_tendsto hu hDu henergy hpLp hL3 hgrad
     hδ hδpos
   have hProductLimits : LocalEnergyMollifiedProductLimits
@@ -1116,7 +1156,6 @@ theorem localEnergy_mollifiedBase_integral_limit_zero
       localEnergyMollifiedGradient Du (δ n) (hδpos n) z i j) * ((2 : ℝ) * ψ z)
   let gradientTerm0 : Fin 3 → Fin 3 → Vec3 × ℝ → ℝ := fun i j z =>
     (g0 z i j * g0 z i j) * ((2 : ℝ) * ψ z)
-
   have hTermAnalysis := localEnergy_weightedTermAnalysis
     (volume : Measure (Vec3 × ℝ))
     (fun n i z => localEnergyMollifiedVelocity u (δ n) (hδpos n) z i)
@@ -1128,7 +1167,8 @@ theorem localEnergy_mollifiedBase_integral_limit_zero
     (fun n i j z => localEnergyMollifiedGradient Du (δ n) (hδpos n) z i j)
     (fun i j z => g0 z i j) b ψ (fun z => -a z)
     hProductLpFacts hProductLimits
-    (fun n i j => (hFieldFacts.2.1 n i j).sub ((huN n i).mul (huN n j)))
+    (fun n i j => (hFieldFacts.2.1 n i j).sub
+      (MeasureTheory.MemLp.mul (p := 4) (q := 4) (r := 2) (huN n i) (huN n j)))
     huN hU0 hGN hG0 hb4 hb12 hψInf ha.neg huLim hGLim
   have hTermLp := hTermAnalysis.1
   have hSquareTermConv := hTermAnalysis.2.square
@@ -1143,10 +1183,8 @@ theorem localEnergy_mollifiedBase_integral_limit_zero
   have hPressureTermN := hTermLp.pressureN
   have hPressureTerm0 := hTermLp.pressure0
   have hStressTermN := hTermLp.stressN
-  have hStressTerm0 := hTermLp.stress0
   have hGradientTermN := hTermLp.gradientN
   have hGradientTerm0 := hTermLp.gradient0
-
   have hEnergySequence := localEnergy_energySequenceFacts
     (volume : Measure (Vec3 × ℝ)) squareTerm squareTerm0 cubicTerm cubicTerm0
     pressureTerm pressureTerm0 stressTerm gradientTerm gradientTerm0
@@ -1156,42 +1194,29 @@ theorem localEnergy_mollifiedBase_integral_limit_zero
     hGradientTermConv
   let energyN := hEnergySequence.energyN
   let energy0 := hEnergySequence.energy0
-
-  have hEnergySumsExpanded := localEnergy_mollifiedEnergySums_eq_expanded
+  have hEnergyExpanded := localEnergy_weightedEnergySequence_eq_expanded
     (fun n z i => localEnergyMollifiedVelocity u (δ n) (hδpos n) z i)
     (fun n z i j => localEnergyMollifiedTensor u (δ n) (hδpos n) z i j -
       localEnergyMollifiedVelocity u (δ n) (hδpos n) z i *
         localEnergyMollifiedVelocity u (δ n) (hδpos n) z j)
     (fun n z i j => localEnergyMollifiedGradient Du (δ n) (hδpos n) z i j)
     (fun n z => localEnergyMollifiedPressure p (δ n) (hδpos n) z)
-    u0 (fun _ _ _ => 0) g0 p0 ψ ψP a b
-    squareTerm squareTerm0 cubicTerm cubicTerm0 pressureTerm pressureTerm0
-    stressTerm gradientTerm gradientTerm0 (fun z => rfl) (fun i z => rfl)
-    (fun z => by simp [ψP])
-  have hEnergyExpanded := localEnergy_energySequence_eq_of_sum_eq hEnergySequence
-    (fun n => localEnergyLimitExpandedBaseIntegrand
-      (localEnergyMollifiedVelocity u (δ n) (hδpos n))
-      (fun z i j => localEnergyMollifiedTensor u (δ n) (hδpos n) z i j -
-        localEnergyMollifiedVelocity u (δ n) (hδpos n) z i *
-          localEnergyMollifiedVelocity u (δ n) (hδpos n) z j)
-      (localEnergyMollifiedGradient Du (δ n) (hδpos n))
-      (localEnergyMollifiedPressure p (δ n) (hδpos n)) ψP)
-    (localEnergyLimitExpandedBaseIntegrand u0 (fun _ _ _ => 0) g0 p0 ψP)
-    hEnergySumsExpanded.1 hEnergySumsExpanded.2
+    u0 g0 p0 ψ ψP a b (fun z => rfl) (fun i z => rfl)
+    (fun z => by simp [ψP]) hEnergySequence
   have hEnergyN_eq_expanded := hEnergyExpanded.1
   have hEnergy0_eq_expanded := hEnergyExpanded.2
-
   have hMollifiedZero (n : ℕ) : ∫ z, energyN n z
       ∂(volume : Measure (Vec3 × ℝ)) = 0 := by
+    dsimp only [energyN]
     rw [hEnergyN_eq_expanded n]
     have hzero := localEnergy_mollified_base_integral_zero
       hu hDu henergy hpLp hL3 hgrad hS2 hS3 hψ hψc (hδpos n) (hcover n)
     exact localEnergy_mollifiedExpandedBaseIntegral_zero
-      (hδpos n) ψP hψ hzero
-
+      (hδpos n) ψ hψ hzero
   have hIntegralZero := localEnergy_integral_zero_of_L1_limit
     (volume : Measure (Vec3 × ℝ)) energy0 energyN hEnergySequence.energyN_memLp
     hEnergySequence.energy_tendsto hMollifiedZero
+  dsimp only [energy0] at hIntegralZero
   rw [hEnergy0_eq_expanded] at hIntegralZero
   change ∫ z, localEnergyLimitExpandedBaseIntegrand
     (fun z i => localEnergyVelocityZeroExtension u i z)

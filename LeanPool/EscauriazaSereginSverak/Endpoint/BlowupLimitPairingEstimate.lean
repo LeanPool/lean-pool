@@ -75,6 +75,7 @@ private theorem blowupLimit_interval_integral_comp_add_mul
         _ = (r⁻¹ ^ 2 * r ^ 2) * ∫ τ in s..t, f (x₀ + r ^ 2 * τ) := by ring
         _ = _ := by rw [hcoeff]; simp
 
+/-- A vector test pulled back along translation and parabolic spatial rescaling. -/
 @[expose] def blowupLimitPullbackTest (x₀ : Vec3) (r : ℝ)
     (w : Vec3 → L2Vec3) : Vec3 → Vec3 :=
   fun y => weakContL3OfLp (w (r⁻¹ • (y - x₀)))
@@ -176,7 +177,7 @@ private theorem blowupLimit_trace_pairing_affine
       Lp L2Vec3 3 (volume.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ))))
     (W : Vec3 × Icc (-(3 / 4 : ℝ) ^ 2) 0 → Vec3)
     (hW : ∀ t,
-      (fun x => W (x,t)) =ᵐ[volume.restrict
+      (fun x => W (x, t)) =ᵐ[volume.restrict
         (vec3Ball (0 : Vec3) (3 / 4 : ℝ))]
         (fun x => weakContL3OfLp (v t x)))
     {w : Vec3 → L2Vec3} {C : Set Vec3}
@@ -186,7 +187,7 @@ private theorem blowupLimit_trace_pairing_affine
       vec3Ball (0 : Vec3) (3 / 4 : ℝ))
     (t : ℝ) (ht : t₀ + r ^ 2 * t ∈ Icc (-(3 / 4 : ℝ) ^ 2) 0) :
     (∫ x : Vec3, ∑ i : Fin 3,
-      blowupLimitTraceRescaling W x₀ t₀ r (x,t) i * w x i) =
+      blowupLimitTraceRescaling W x₀ t₀ r (x, t) i * w x i) =
       r⁻¹ ^ 2 * (∫ y in vec3Ball (0 : Vec3) (3 / 4 : ℝ),
         ∑ i : Fin 3,
           v ⟨t₀ + r ^ 2 * t, ht⟩ y i *
@@ -199,7 +200,7 @@ private theorem blowupLimit_trace_pairing_affine
     exact (blowupLimitPullbackTest_support hwsupport hC x₀ r hr.ne').trans
       (by simpa using himage)
   have hτpoint (x : Vec3) :
-      blowupLimitTraceRescaling W x₀ t₀ r (x,t) =
+      blowupLimitTraceRescaling W x₀ t₀ r (x, t) =
         r • B.indicator (fun y => W (y,τ)) (x₀ + r • x) := by
     by_cases hx : x₀ + r • x ∈ B
     · have hpair : x₀ + r • x ∈ vec3Ball (0 : Vec3) (3 / 4 : ℝ) ∧
@@ -215,7 +216,7 @@ private theorem blowupLimit_trace_pairing_affine
   let f : Vec3 → ℝ := B.indicator
     (fun y => ∑ i : Fin 3, W (y,τ) i * ψ y i)
   have hpoint : (fun x : Vec3 =>
-      ∑ i : Fin 3, blowupLimitTraceRescaling W x₀ t₀ r (x,t) i * w x i) =
+      ∑ i : Fin 3, blowupLimitTraceRescaling W x₀ t₀ r (x, t) i * w x i) =
       fun x => r * f (x₀ + r • x) := by
     funext x
     by_cases hx : x₀ + r • x ∈ B
@@ -280,7 +281,7 @@ theorem blowup_limit_rescaled_trace_pairing_source_formula
       Lp L2Vec3 3 (volume.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ))))
     (W : Vec3 × Icc (-(3 / 4 : ℝ) ^ 2) 0 → Vec3)
     (hW : ∀ t,
-      (fun x => W (x,t)) =ᵐ[volume.restrict
+      (fun x => W (x, t)) =ᵐ[volume.restrict
         (vec3Ball (0 : Vec3) (3 / 4 : ℝ))]
         (fun x => weakContL3OfLp (v t x)))
     {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin 3 → Vec3}
@@ -377,7 +378,7 @@ theorem blowup_limit_rescaled_trace_pairing_source_time_formula
       Lp L2Vec3 3 (volume.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ))))
     (W : Vec3 × Icc (-(3 / 4 : ℝ) ^ 2) 0 → Vec3)
     (hW : ∀ t,
-      (fun x => W (x,t)) =ᵐ[volume.restrict
+      (fun x => W (x, t)) =ᵐ[volume.restrict
         (vec3Ball (0 : Vec3) (3 / 4 : ℝ))]
         (fun x => weakContL3OfLp (v t x)))
     {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin 3 → Vec3}

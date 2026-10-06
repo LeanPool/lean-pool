@@ -133,7 +133,7 @@ theorem buGaussian_radial_mass_tail_bound
         exact hrad.trans (mul_le_mul_of_nonneg_left
           (htail s hz.2) (Real.exp_pos _).le)
       constructor
-      · simp [f, buGaussianRadialWeightedMass, hr]
+      · simp only [f, buGaussianRadialWeightedMass, ite_eq_left hr]
         exact mul_nonneg (ucGaussianWeight_nonneg a htime) (sq_nonneg _)
       · simpa [f, buGaussianRadialWeightedMass, hr] using hrad'
     · constructor

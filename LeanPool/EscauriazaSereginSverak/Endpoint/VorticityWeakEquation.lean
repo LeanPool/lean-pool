@@ -222,8 +222,8 @@ private theorem suitableWeakViscousCurlPairingOnBox
               ← Finset.mul_sum]
 
 private theorem vorticityTestCurl_partials_zero_off_support
-    {Ω I : Set Vec3} {ψ : Vec3 × ℝ → Vec3}
-    (hψ : ψ ∈ CKN.spaceTimeTestFunction (V := Vec3) Ω I)
+    {Ω : Set Vec3} {I : Set ℝ} {ψ : Vec3 × ℝ → Vec3}
+    (_hψ : ψ ∈ CKN.spaceTimeTestFunction (V := Vec3) Ω I)
     (z : ParabolicPoint)
     (hz : z ∉ tsupport (show ParabolicPoint → Vec3 from vorticityTestCurl ψ)) :
     (∀ i : Fin 3, CKN.timePartial
@@ -234,7 +234,6 @@ private theorem vorticityTestCurl_partials_zero_off_support
       tsupport (fun w : Vec3 × ℝ => vorticityTestCurl ψ w i) := by
     intro hi
     apply hz
-    change z ∈ tsupport (show ParabolicPoint → Vec3 from vorticityTestCurl ψ)
     rw [CKN.tsupport_parabolic_eq]
     exact (CKN.tsupport_component_subset (ι := Fin 3)
       (vorticityTestCurl ψ) i (by intro w hw; simp [hw])) hi

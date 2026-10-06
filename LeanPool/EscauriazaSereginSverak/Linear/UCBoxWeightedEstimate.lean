@@ -19,7 +19,8 @@ public section
 
 
 open MeasureTheory Set Filter CKN CKN.Foundation.Parabolic
-open scoped Classical Topology
+open scoped Topology
+attribute [local instance] Classical.propDecidable
 
 noncomputable section
 

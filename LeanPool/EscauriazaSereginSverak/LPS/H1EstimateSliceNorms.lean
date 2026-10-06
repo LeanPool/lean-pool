@@ -147,16 +147,16 @@ theorem lps_h1_slice_hessian_energy_eq {t : ℝ} {u : ParabolicPoint → Vec3}
     {Du : ParabolicPoint → Fin 3 → Vec3} {D2u : ParabolicPoint → Fin 3 → Fin 3 → Vec3}
     (hfam : ∀ i : Fin 3, IsSobolevFamilyOn 2 (Set.univ : Set Vec3)
       (fun x : Vec3 => u (x, t) i)
-      (fun α x => ESS.LPS.lps_h1_spatial_family u Du D2u i α (x, t))) :
+      (fun α x => ESS.LPS.lpsH1SpatialFamily u Du D2u i α (x, t))) :
     (∫ x : Vec3, ∑ i : Fin 3, ∑ j : Fin 3, ∑ k : Fin 3, (D2u (x, t) i j k) ^ 2) =
       ∫ x : Vec3, ∑ i : Fin 3, (∑ j : Fin 3, D2u (x, t) i j j) ^ 2 := by
   have hD : ∀ i : Fin 3, IsSobolevFamilyOn 2 (Set.univ : Set Vec3)
-      ((fun α x => ESS.LPS.lps_h1_spatial_family u Du D2u i α (x, t)) ([] : List (Fin 3)))
-      (fun α x => ESS.LPS.lps_h1_spatial_family u Du D2u i α (x, t)) := fun i =>
+      ((fun α x => ESS.LPS.lpsH1SpatialFamily u Du D2u i α (x, t)) ([] : List (Fin 3)))
+      (fun α x => ESS.LPS.lpsH1SpatialFamily u Du D2u i α (x, t)) := fun i =>
     (hfam i).congr_ae (hfam i).zero.symm
       (fun α hα => Filter.Eventually.of_forall fun x => rfl)
   have h := ESS.LPS.lps_h1_vector_sobolev_hessian_eq_laplacian
-    (D := fun i α x => ESS.LPS.lps_h1_spatial_family u Du D2u i α (x, t)) hD
+    (D := fun i α x => ESS.LPS.lpsH1SpatialFamily u Du D2u i α (x, t)) hD
   have hint (i j k : Fin 3) : Integrable (fun x : Vec3 => (D2u (x, t) i j k) ^ 2) volume := by
     have hm : MemLp (fun x : Vec3 => D2u (x, t) i j k) 2 volume := by
       have := (hfam i).memL2 [j, k] (by simp)

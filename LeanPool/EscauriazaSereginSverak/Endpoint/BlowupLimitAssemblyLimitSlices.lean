@@ -37,10 +37,10 @@ theorem blowupLimitAssembly_trace_slice_Lthree
     (W : Vec3 × Icc (-(3 / 4 : ℝ) ^ 2) 0 → Vec3) (M : ℝ)
     (hsource : ∀ t,
       MemLp ((vec3Ball (0 : Vec3) (3 / 4 : ℝ)).indicator
-        (fun x => W (x,t))) 3 volume ∧
+        (fun x => W (x, t))) 3 volume ∧
       eLpNorm (fun x => vec3EuclideanNorm
         ((vec3Ball (0 : Vec3) (3 / 4 : ℝ)).indicator
-          (fun y => W (y,t)) x)) 3 volume ≤ ENNReal.ofReal M)
+          (fun y => W (y, t)) x)) 3 volume ≤ ENNReal.ofReal M)
     (x₀ : Vec3) (t₀ r : ℝ) (hr : 0 < r) (t : ℝ) :
     eLpNorm (fun x => vec3EuclideanNorm
       (blowupLimitTraceRescaling W x₀ t₀ r (x,t))) 3 volume ≤ ENNReal.ofReal M := by
@@ -87,7 +87,7 @@ theorem blowupLimitAssembly_slice_Lthree_of_local_convergence
     (U : ParabolicPoint → Vec3) (hU : Measurable U)
     (v : ℕ → ParabolicPoint → Vec3) (hv : ∀ k, Measurable (v k))
     (M : ℝ≥0∞)
-    (hvslice : ∀ k t, eLpNorm (fun x => vec3EuclideanNorm (v k (x,t))) 3 volume ≤ M)
+    (hvslice : ∀ k t, eLpNorm (fun x => vec3EuclideanNorm (v k (x, t))) 3 volume ≤ M)
     (hconv : ∀ N : ℕ, Tendsto (fun k => eLpNorm (fun z => v k z - U z) 3
       (volume.restrict (vec3Ball (0 : Vec3) ((N : ℝ) + 1) ×ˢ
         Ioo (-((N : ℝ) + 1)) 0))) atTop (nhds 0)) :

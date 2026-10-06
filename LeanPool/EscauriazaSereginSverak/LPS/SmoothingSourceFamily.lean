@@ -91,7 +91,7 @@ theorem lps_exists_slice_curve {a b : ℝ} (F : Vec3 × ℝ → ℝ) :
     have h := hFmt.eLpNorm_lt_top
     rw [eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top (by norm_num) (by norm_num)
       hFmt.aestronglyMeasurable] at h
-    show ∫⁻ x, ‖Fm (x, t)‖ₑ ^ (2 : ℝ) < ⊤
+    change ∫⁻ x, ‖Fm (x, t)‖ₑ ^ (2 : ℝ) < ⊤
     simpa using h
   filter_upwards [(hslice t).coeFn_toLp, ht'] with x h1 h2
   rw [h1, show Γ (x, t) = Fm (x, t) from congrFun (hΓin t hmem) x, h2]

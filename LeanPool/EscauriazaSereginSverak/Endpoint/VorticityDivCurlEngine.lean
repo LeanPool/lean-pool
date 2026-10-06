@@ -108,7 +108,7 @@ private theorem vorticityDivCurl_difference_estimate {C₀ : ℝ} (r R₁ : ℝ)
     (x₀ : Vec3) (t₁ t₂ : ℝ) (W₁ W' : Set (Vec3 × ℝ))
     (hW₁def : W₁ = vec3Ball x₀ R₁ ×ˢ Ioo t₁ t₂)
     (hW'def : W' = vec3Ball x₀ r ×ˢ Ioo t₁ t₂)
-    (hW₁b : Bornology.IsBounded W₁) (hW'b : Bornology.IsBounded W')
+    (hW₁b : Bornology.IsBounded W₁)
     (Yn : ℕ → Fin 3 → Vec3 × ℝ → ℝ) (Ωn : ℕ → Fin 3 → Fin 3 → Vec3 × ℝ → ℝ)
     (hYn : ∀ n i, ContDiff ℝ (⊤ : ℕ∞) (Yn n i))
     (hΩn : ∀ n i k, ContDiff ℝ (⊤ : ℕ∞) (Ωn n i k))
@@ -120,8 +120,6 @@ private theorem vorticityDivCurl_difference_estimate {C₀ : ℝ} (r R₁ : ℝ)
           (spatialPartial (Yn n i) j z - spatialPartial (Yn m i) j z) ^ 2 ≤
         C₀ * ((∑ j : Fin 3, ∑ i : Fin 3, ∫ z in W₁, (Ωn n j i z - Ωn m j i z) ^ 2) +
           ∑ i : Fin 3, ∫ z in W₁, (Yn n i z - Yn m i z) ^ 2) := by
-  subst W₁
-  subst W'
   intro n m
   have hD : ∀ c, ContDiff ℝ (⊤ : ℕ∞) (fun z => Yn n c z - Yn m c z) := fun c =>
     (hYn n c).sub (hYn m c)
@@ -129,14 +127,17 @@ private theorem vorticityDivCurl_difference_estimate {C₀ : ℝ} (r R₁ : ℝ)
     (hΩn n a c).continuous.sub (hΩn m a c).continuous
   have hest := vorticityDivCurl_integrated hsmooth x₀ t₁ t₂ hD hΦ
     (fun z hz => by
+      rw [← hW₁def] at hz
       simp only [vorticity_spatialPartial_sub (hYn n _) (hYn m _), Finset.sum_sub_distrib,
         hdivn n z hz, hdivn m z hz, sub_zero])
     (fun z hz i k => by
+      rw [← hW₁def] at hz
       rw [vorticity_spatialPartial_sub (hYn n k) (hYn m k),
         vorticity_spatialPartial_sub (hYn n i) (hYn m i)]
       have h1 := hcurln n z hz i k
       have h2 := hcurln m z hz i k
       linarith only [h1, h2])
+  rw [← hW₁def, ← hW'def] at hest
   have hlhs : ∀ z, ∑ j : Fin 3, ∑ i : Fin 3,
       spatialPartial (fun z : Vec3 × ℝ => Yn n i z - Yn m i z) j z ^ 2 =
       ∑ j : Fin 3, ∑ i : Fin 3,
@@ -177,9 +178,9 @@ private theorem vorticityDivCurl_pairwise_energy_tendsto {C₀ : ℝ} (hC₀ : 0
       ((∑ j : Fin 3, ∑ i : Fin 3, Ωpair p.1 p.2 j i) +
         ∑ i : Fin 3, Ypair p.1 p.2 i)) atTop (𝓝 0) := by
   have hY2 : ∀ i : Fin 3, Tendsto (fun n => 2 * Yerr i n) atTop (𝓝 0) :=
-    fun i => (hYerr i).const_mul 2
+    fun i => by simpa using (hYerr i).const_mul 2
   have hΩ2 : ∀ j i : Fin 3, Tendsto (fun n => 2 * Ωerr j i n) atTop (𝓝 0) :=
-    fun j i => (hΩerr j i).const_mul 2
+    fun j i => by simpa using (hΩerr j i).const_mul 2
   have hbound : Tendsto (fun p : ℕ × ℕ => C₀ *
       ((∑ j : Fin 3, ∑ i : Fin 3, (2 * Ωerr j i p.1 + 2 * Ωerr j i p.2)) +
         ∑ i : Fin 3, (2 * Yerr i p.1 + 2 * Yerr i p.2))) atTop (𝓝 0) := by
@@ -218,14 +219,16 @@ private theorem vorticityDivCurl_limit_and_data_squares
   · intro i k
     exact (memLp_two_iff_integrable_sq (hΩ i k).aestronglyMeasurable).1 (hΩ i k)
 
-private theorem vorticityDivCurl_integrable_data_on_box
-    {W : Set (Vec3 × ℝ)} (Y : Fin 3 → Vec3 × ℝ → ℝ)
-    (Ω : Fin 3 → Fin 3 → Vec3 × ℝ → ℝ)
+private theorem vorticityDivCurl_integrable_data_on_bounded_set
+    {W : Set (Vec3 × ℝ)} (hWb : Bornology.IsBounded W)
+    (Y : Fin 3 → Vec3 × ℝ → ℝ) (Ω : Fin 3 → Fin 3 → Vec3 × ℝ → ℝ)
     (hY : ∀ i, MemLp (Y i) 2 (volume.restrict W))
     (hΩ : ∀ i k, MemLp (Ω i k) 2 (volume.restrict W)) :
     (∀ i, IntegrableOn (Y i) W) ∧ (∀ i k, IntegrableOn (Ω i k) W) := by
-  exact ⟨fun i => vorticity_integrableOn_of_memLp_box (hY i),
-    fun i k => vorticity_integrableOn_of_memLp_box (hΩ i k)⟩
+  let : IsFiniteMeasure (volume.restrict W) :=
+    isFiniteMeasure_restrict.2 hWb.measure_lt_top.ne
+  exact ⟨fun i => (hY i).integrable (by norm_num),
+    fun i k => (hΩ i k).integrable (by norm_num)⟩
 
 private theorem vorticityDivCurl_data_locallyIntegrable
     {W : Set (Vec3 × ℝ)} (hWm : MeasurableSet W)
@@ -287,7 +290,7 @@ private theorem vorticityDivCurlEngine_core {r R₁ R κ C₀ : ℝ} (hrR₁ : r
   set ε₀ : ℝ := min ((R - R₁) / 2) (κ / 6) with hε₀def
   have hε₀ : 0 < ε₀ := lt_min (by linarith only [hR₁R]) (by linarith only [hκ])
   obtain ⟨ε, hεpos, hεlim, hεle⟩ := vorticity_engine_radii hε₀
-  obtain ⟨hYi, hΩi⟩ := vorticityDivCurl_integrable_data_on_box Y Ω hY hΩ
+  obtain ⟨hYi, hΩi⟩ := vorticityDivCurl_integrable_data_on_bounded_set hWb Y Ω hY hΩ
   obtain ⟨hYloc, hΩloc⟩ := vorticityDivCurl_data_locallyIntegrable hWm Y Ω hYi hΩi
   set Yn : ℕ → Fin 3 → Vec3 × ℝ → ℝ :=
     fun n i => vorticityBackMollify W (Y i) (ε n) (hεpos n) with hYndef
@@ -335,7 +338,7 @@ private theorem vorticityDivCurlEngine_core {r R₁ R κ C₀ : ℝ} (hrR₁ : r
     fun i k => vorticity_integral_sq_tendsto_zero (f := fun n => Ωn n i k - Ω i k)
       (fun n => (hΩnS n i k W₁ hW₁b).sub (hΩS i k W₁ hW₁W)) (hΩconv i k W₁ hW₁m hW₁W)
   have hdiff := vorticityDivCurl_difference_estimate (C₀ := C₀) r R₁ hsmooth x₀ (a + κ) b W₁ W'
-    hW₁def hW'def hW₁b hW'b Yn Ωn hYn hΩn hdivn hcurln
+    hW₁def hW'def hW₁b Yn Ωn hYn hΩn hdivn hcurln
   have hrhs := vorticityDivCurl_pairwise_energy_tendsto hC₀
     (fun i n => ∫ z in W₁, (Yn n i z - Y i z) ^ 2)
     (fun j i n => ∫ z in W₁, (Ωn n j i z - Ω j i z) ^ 2)

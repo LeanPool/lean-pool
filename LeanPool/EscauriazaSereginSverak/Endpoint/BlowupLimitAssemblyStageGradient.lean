@@ -137,7 +137,7 @@ theorem blowupLimitAssembly_trace_hasWeakGradientOn
       exact h
     have hZ : blowupLimitTraceZeroExtension W (y, τ) = W (y, ⟨τ, hτ⟩) := by
       simp [blowupLimitTraceZeroExtension, hyB', hτ]
-    show u (y,τ) i = blowupLimitTraceZeroExtension W (y, τ) i
+    change u (y,τ) i = blowupLimitTraceZeroExtension W (y, τ) i
     rw [hZ]
     exact congrArg (fun v : Vec3 => v i) hy.symm
   have hdgEq : (fun y => Du (y,τ) i j) =ᵐ[volume.restrict Ω] dg := by
@@ -152,7 +152,7 @@ theorem blowupLimitAssembly_trace_hasWeakGradientOn
     change goodPointDomain.indicator Dm ((y, τ) : ParabolicPoint) =
       goodPointDomain.indicator Du ((y, τ) : ParabolicPoint) at hy
     rw [e1, e2] at hy
-    show Du (y,τ) i j = goodPointDomain.indicator Dm ((y, τ) : ParabolicPoint) i j
+    change Du (y,τ) i j = goodPointDomain.indicator Dm ((y, τ) : ParabolicPoint) i j
     rw [e1, hy]
   have hΩweak : HasWeakPartialDerivOn Ω j g dg :=
     blowupLimitAssembly_hasWeakPartialDerivOn_congr hgEq hdgEq hsource

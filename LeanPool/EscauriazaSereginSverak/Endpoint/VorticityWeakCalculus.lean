@@ -32,11 +32,12 @@ namespace ESS
 /-- Finitely many `L²`-convergent sequences have a common subsequence converging almost
 everywhere. -/
 theorem vorticity_exists_subseq_ae {α ι : Type*} [MeasurableSpace α] {μ : Measure α}
-    [Fintype ι] {f : ι → ℕ → α → ℝ} {F : ι → α → ℝ}
+    [Finite ι] {f : ι → ℕ → α → ℝ} {F : ι → α → ℝ}
     (hf : ∀ i n, MemLp (f i n) 2 μ) (hF : ∀ i, MemLp (F i) 2 μ)
     (h : ∀ i, Tendsto (fun n => eLpNorm (f i n - F i) 2 μ) atTop (𝓝 0)) :
     ∃ φ : ℕ → ℕ, StrictMono φ ∧
       ∀ᵐ x ∂μ, ∀ i, Tendsto (fun n => f i (φ n) x) atTop (𝓝 (F i x)) := by
+  let := Fintype.ofFinite ι
   let S : ℕ → α → ℝ := fun n x => ∑ i, |f i n x - F i x|
   have hSmem : ∀ i n, MemLp (fun x => |f i n x - F i x|) 2 μ := fun i n =>
     ((hf i n).sub (hF i)).abs

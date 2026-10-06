@@ -56,6 +56,7 @@ private theorem vorticityTestPartial_finsetSum
   rw [hsum]
   simp [vorticityTestPartial, G]
 
+/-- The spatial Laplacian of a scalar test function via the test-coordinate derivatives. -/
 @[expose] def vorticityScalarLaplacian (φ : Vec3 × ℝ → ℝ) : Vec3 × ℝ → ℝ :=
   fun z => ∑ j : Fin 3,
     vorticityTestPartial (fun w => vorticityTestPartial φ j w) j z

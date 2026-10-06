@@ -140,7 +140,7 @@ private theorem lps_h1_weak_laplacian_sq_limit
 
 /-- The order-zero, first and second spatial derivative fields of a component of a
 strong solution, indexed by derivative words. -/
-@[expose] def lps_h1_spatial_family (u : ParabolicPoint → Vec3)
+@[expose] def lpsH1SpatialFamily (u : ParabolicPoint → Vec3)
     (Du : ParabolicPoint → Fin 3 → Vec3)
     (D2u : ParabolicPoint → Fin 3 → Fin 3 → Vec3)
     (i : Fin 3) : List (Fin 3) → ParabolicPoint → ℝ
@@ -167,7 +167,7 @@ theorem lps_spatial_sobolev_slices_ae_of_weak_derivs
     ∀ᵐ t ∂(volume.restrict (Ioo a b)),
       ∀ i : Fin 3,
         CKN.IsSobolevFamilyOn 2 Set.univ (fun x : Vec3 => u (x, t) i)
-          (fun α x => lps_h1_spatial_family u Du D2u i α (x, t)) := by
+          (fun α x => lpsH1SpatialFamily u Du D2u i α (x, t)) := by
   have hSmeas : MeasurableSet (spaceTimeSet Set.univ (Ioo a b)) :=
     MeasurableSet.univ.prod measurableSet_Ioo
   have hpre : parabolicHomeomorph.symm ⁻¹'
@@ -196,7 +196,7 @@ theorem lps_spatial_sobolev_slices_ae_of_weak_derivs
   have hFamily (i : Fin 3) :
       CKN.IsL2SobolevFamilyOn 2 Set.univ (Ioo a b)
         (fun z : Vec3 × ℝ => u (parabolicHomeomorph.symm z) i)
-        (fun α z => lps_h1_spatial_family u Du D2u i α
+        (fun α z => lpsH1SpatialFamily u Du D2u i α
           (parabolicHomeomorph.symm z)) := by
     refine ⟨?_, ?_, ?_⟩
     · intro α hα
@@ -226,7 +226,7 @@ theorem lps_spatial_sobolev_slices_ae_of_weak_derivs
           rw [CKN.setIntegral_parabolic_to_product] at hweak
           rw [CKN.setIntegral_parabolic_to_product] at hweak
           simpa [ψ, parabolicHomeomorph_symm_apply,
-            lps_h1_spatial_family] using hweak
+            lpsH1SpatialFamily] using hweak
       | cons k rest =>
           cases rest with
           | nil =>
@@ -236,7 +236,7 @@ theorem lps_spatial_sobolev_slices_ae_of_weak_derivs
               rw [CKN.setIntegral_parabolic_to_product] at hweak
               rw [CKN.setIntegral_parabolic_to_product] at hweak
               simpa [ψ, parabolicHomeomorph_symm_apply,
-                lps_h1_spatial_family] using hweak
+                lpsH1SpatialFamily] using hweak
           | cons l rest' =>
               have : False := by
                 simp only [List.length_cons] at hα
@@ -247,7 +247,7 @@ theorem lps_spatial_sobolev_slices_ae_of_weak_derivs
   have hslice : ∀ᵐ t ∂(volume.restrict (Ioo a b)),
       ∀ i : Fin 3,
         CKN.IsSobolevFamilyOn 2 Set.univ (fun x : Vec3 => u (x, t) i)
-          (fun α x => lps_h1_spatial_family u Du D2u i α (x, t)) := by
+          (fun α x => lpsH1SpatialFamily u Du D2u i α (x, t)) := by
     rw [ae_all_iff]
     intro i
     filter_upwards [ESS.LPS.lps_sobolevFamily_spatialSlices_ae (hFamily i)] with t ht
@@ -267,7 +267,7 @@ theorem lps_strong_solution_h2_slices_ae
         ∀ᵐ t ∂(volume.restrict (Ioo a b)),
           ∀ i : Fin 3,
             CKN.IsSobolevFamilyOn 2 Set.univ (fun x : Vec3 => u (x, t) i)
-              (fun α x => lps_h1_spatial_family u Du D2u i α (x, t)) := by
+              (fun α x => lpsH1SpatialFamily u Du D2u i α (x, t)) := by
   rcases hU with ⟨_hab, _hslices, _hcont, hHigher, _hp, _heq⟩
   rcases hHigher with ⟨D2u, Dtu, hDerivs, hMemU, hMemDu, hMemD2u, hMemDtu⟩
   exact ⟨D2u, Dtu, hDerivs,

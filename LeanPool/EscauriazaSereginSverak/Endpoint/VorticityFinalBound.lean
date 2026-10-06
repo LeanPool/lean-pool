@@ -38,7 +38,10 @@ private theorem vorticityFinal_chain_pointwise_bound
     (bm : (Vec3 × ℝ → ℝ) → ℕ → Vec3 × ℝ → ℝ)
     (hCc : 0 ≤ Cc)
     (hAUeq : AU = 3 * (M ^ 2 * (volume (vec3Ball (0 : Vec3) (42 / 64))).toReal))
-    (hUn : ∀ i z, |bm (U i) n z| ≤ M)
+    (hH4eq : H4 = Cc * (3 * (Ch * |Kw| + 1) + AU))
+    (hH5eq : H5 = Cc * (9 * (Ch * |K1| + 1) + H4))
+    (hH6eq : H6 = Cc * (27 * (Ch * |K2'| + 1) + H5))
+    (hUn : ∀ i (x : Vec3), |bm (U i) n (x, t)| ≤ M)
     (hn1 : ∀ l : Fin 3, ∫ x in vec3Ball x₀ (42 / 64),
       bm (vorticityCurl G l) n (x, t) ^ 2 ≤ Ch * |Kw| + 1)
     (hn2 : ∀ i m : Fin 3, ∫ x in vec3Ball x₀ (42 / 64),
@@ -46,6 +49,7 @@ private theorem vorticityFinal_chain_pointwise_bound
     (hn3 : ∀ i m k : Fin 3, ∫ x in vec3Ball x₀ (42 / 64),
       bm (Ω2 i m k) n (x, t) ^ 2 ≤ Ch * |K2'| + 1)
     (cw : ∀ l, Continuous (fun x : Vec3 => bm (vorticityCurl G l) n (x, t) ^ 2))
+    (cU0 : ∀ i, Continuous (fun x : Vec3 => bm (U i) n (x, t)))
     (cU : ∀ i, Continuous (fun x : Vec3 => bm (U i) n (x, t) ^ 2))
     (cG : ∀ i j, Continuous (fun x : Vec3 => bm (G i j) n (x, t) ^ 2))
     (cΩ : ∀ i j, Continuous (fun x : Vec3 => bm (Ω1 i j) n (x, t) ^ 2))
@@ -100,11 +104,12 @@ private theorem vorticityFinal_chain_pointwise_bound
     · calc
         _ ≤ ∑ _i : Fin 3, M ^ 2 * (volume (vec3Ball (0 : Vec3) (42 / 64))).toReal :=
           Finset.sum_le_sum fun i _ => vorticity_setIntegral_sq_le_of_bound
-            (cU i) (fun x => hUn i (x, t))
+            (cU0 i) (fun x => hUn i x)
         _ = AU := by simp [hAUeq]
   have A2 : ∫ x in vec3Ball x₀ (41 / 64), ∑ i : Fin 3, ∑ j : Fin 3,
-      bm (G i j) n (x, t) ^ 2 ≤ H4 :=
-    c1.trans (mul_le_mul_of_nonneg_left A1 hCc)
+      bm (G i j) n (x, t) ^ 2 ≤ H4 := by
+    rw [hH4eq]
+    exact c1.trans (mul_le_mul_of_nonneg_left A1 hCc)
   have A3 : ∫ x in vec3Ball x₀ (41 / 64), (∑ l : Fin 3, ∑ m : Fin 3,
       bm (Ω1 l m) n (x, t) ^ 2 + ∑ i : Fin 3, ∑ j : Fin 3, bm (G i j) n (x, t) ^ 2) ≤
       9 * (Ch * |K1| + 1) + H4 := by
@@ -119,8 +124,9 @@ private theorem vorticityFinal_chain_pointwise_bound
           (hmonoB _ (cΩ l m) (fun x => sq_nonneg _) (by norm_num)).trans (hn2 l m)
       _ = 9 * (Ch * |K1| + 1) := by simp; ring
   have A4 : ∫ x in vec3Ball x₀ (40 / 64), ∑ i : Fin 3, ∑ j : Fin 3, ∑ k : Fin 3,
-      bm (D2 i j k) n (x, t) ^ 2 ≤ H5 :=
-    c2.trans (mul_le_mul_of_nonneg_left A3 hCc)
+      bm (D2 i j k) n (x, t) ^ 2 ≤ H5 := by
+    rw [hH5eq]
+    exact c2.trans (mul_le_mul_of_nonneg_left A3 hCc)
   have A5 : ∫ x in vec3Ball x₀ (40 / 64), (∑ l : Fin 3, ∑ j : Fin 3, ∑ k : Fin 3,
       bm (Ω2 l j k) n (x, t) ^ 2 + ∑ i : Fin 3, ∑ j : Fin 3, ∑ k : Fin 3,
         bm (D2 i j k) n (x, t) ^ 2) ≤ 27 * (Ch * |K2'| + 1) + H5 := by
@@ -139,8 +145,9 @@ private theorem vorticityFinal_chain_pointwise_bound
           (hmonoB _ (cΩ2 l m k) (fun x => sq_nonneg _) (by norm_num)).trans (hn3 l m k)
       _ = 27 * (Ch * |K2'| + 1) := by simp; ring
   have A6 : ∫ x in vec3Ball x₀ (39 / 64), ∑ i : Fin 3, ∑ j : Fin 3, ∑ k : Fin 3, ∑ c : Fin 3,
-      spatialPartial (bm (D2 i j k) n) c (x, t) ^ 2 ≤ H6 :=
-    c3.trans (mul_le_mul_of_nonneg_left A5 hCc)
+      spatialPartial (bm (D2 i j k) n) c (x, t) ^ 2 ≤ H6 := by
+    rw [hH6eq]
+    exact c3.trans (mul_le_mul_of_nonneg_left A5 hCc)
   refine (c4 x hx i j).trans (mul_le_mul_of_nonneg_left ?_ hCc)
   have hsingle : ∀ (f : Fin 3 → Fin 3 → ℝ) (a b : Fin 3), (∀ a b, 0 ≤ f a b) →
       f a b ≤ ∑ a : Fin 3, ∑ b : Fin 3, f a b := fun f a b h0 =>
@@ -253,7 +260,7 @@ theorem vorticityFinal_gradBound (M Kw K1 K2' : ℝ) (hM : 0 ≤ M) :
   have hWm : MeasurableSet W := hWo.measurableSet
   have hWb : Bornology.IsBounded W := vorticityBox_isBounded x₀ _ _ (Metric.isBounded_Ioo a t₀)
   have hfin : IsFiniteMeasure (volume.restrict W) :=
-    isFiniteMeasure_restrict hWb.measure_lt_top.ne
+    isFiniteMeasure_restrict.mpr hWb.measure_lt_top.ne
   have hint : ∀ f : Vec3 × ℝ → ℝ, MemLp f 2 (volume.restrict W) → IntegrableOn f W :=
     fun f hf => hf.integrable (by norm_num)
   have hloc : ∀ f : Vec3 × ℝ → ℝ, MemLp f 2 (volume.restrict W) →
@@ -324,7 +331,7 @@ theorem vorticityFinal_gradBound (M Kw K1 K2' : ℝ) (hM : 0 ≤ M) :
     filter_upwards [hsw, hsΩ, hsΩ2] with n hn1 hn2 hn3 t ht x hx i j
     have hreg : ∀ x ∈ vec3Ball x₀ (42 / 64),
         (x, t) ∈ vec3Ball x₀ (42 / 64) ×ˢ Ioc (a + 1 / 128) t₀ := fun x hx =>
-      ⟨hx, by linarith only [ht.1], ht⟩
+      ⟨hx, ⟨by linarith only [ht.1], ht.2⟩⟩
     obtain ⟨c1, c2, c3, c4⟩ := hchain x₀ t (fun i => bm (U i) n)
       (fun i => bm (vorticityCurl G i) n) (fun i j => bm (G i j) n) (fun i j => bm (Ω1 i j) n)
       (fun i j k => bm (D2 i j k) n) (fun i j k => bm (Ω2 i j k) n)
@@ -349,6 +356,8 @@ theorem vorticityFinal_gradBound (M Kw K1 K2' : ℝ) (hM : 0 ≤ M) :
       (hsl _ (hc _ (hw l) n) t).pow 2
     have cU : ∀ i, Continuous (fun x : Vec3 => bm (U i) n (x, t) ^ 2) := fun i =>
       (hsl _ (hc _ (hU i) n) t).pow 2
+    have cU0 : ∀ i, Continuous (fun x : Vec3 => bm (U i) n (x, t)) := fun i =>
+      hsl _ (hc _ (hU i) n) t
     have cG : ∀ i j, Continuous (fun x : Vec3 => bm (G i j) n (x, t) ^ 2) := fun i j =>
       (hsl _ (hc _ (hG i j) n) t).pow 2
     have cΩ : ∀ i j, Continuous (fun x : Vec3 => bm (Ω1 i j) n (x, t) ^ 2) := fun i j =>
@@ -377,10 +386,9 @@ theorem vorticityFinal_gradBound (M Kw K1 K2' : ℝ) (hM : 0 ≤ M) :
       continuous_finsetSum _ fun i _ => continuous_finsetSum _ fun j _ =>
         continuous_finsetSum _ fun k _ => continuous_finsetSum _ fun c _ => cE i j k c
     exact vorticityFinal_chain_pointwise_bound x₀ t n M Ch Cc Kw K1 K2' AU H4 H5 H6
-      U G Ω1 D2 Ω2 bm hCc hAUdef (fun i z => hUn n i z)
-      (fun l => hn1 l) (fun i m => hn2 i m) (fun i m k => hn3 i m k)
-      cw cU cG cΩ cΩ2 cD cE sG sΩ sD sΩ2 sE hib hmonoB c1 c2 c3 c4 x hx i j
-
+      U G Ω1 D2 Ω2 bm hCc hAUdef hH4def hH5def hH6def (fun i x => hUn n i (x, t))
+      (fun l => hn1 l t ht) (fun i m => hn2 i m t ht) (fun i m k => hn3 i m k t ht)
+      cw cU0 cU cG cΩ cΩ2 cD cE sG sΩ sD sΩ2 sE hib hmonoB c1 c2 c3 c4 x hx i j
   -- pass to the limit along an almost everywhere convergent subsequence
   set B := (vec3Ball x₀ (38 / 64) ×ˢ Ioo (a + 1 / 64) t₀ : Set (Vec3 × ℝ)) with hBdef
   have hBW : B ⊆ W := by
