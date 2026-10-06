@@ -6,6 +6,7 @@ Authors: Scott Armstrong, Vlad Vicol
 
 module
 
+public import LeanPool.CaffarelliKohnNirenberg.ExtendedSupport
 public import LeanPool.CaffarelliKohnNirenberg.Statements.TheoremA
 public import LeanPool.CaffarelliKohnNirenberg.Statements.TheoremB
 public import LeanPool.CaffarelliKohnNirenberg.Statements.TheoremC
@@ -15,7 +16,7 @@ public import LeanPool.CaffarelliKohnNirenberg.Witnesses.TrivialSolution
 /-!
 # Caffarelli–Kohn–Nirenberg partial regularity
 
-Source: url:https://github.com/scottnarmstrong/CaffarelliKohnNirenberg/tree/635fa6376aa3d46ae5251cb1d276a8589163f332
+Source: url:https://github.com/scottnarmstrong/CaffarelliKohnNirenberg/tree/381d658ead0f03a18361965cc0427ce3fa5844ab
 Authors: Scott Armstrong, Vlad Vicol
 Status: verified
 Main declarations: `CKN.caffarelliKohnNirenberg`, `CKN.epsilonRegularityL3`
