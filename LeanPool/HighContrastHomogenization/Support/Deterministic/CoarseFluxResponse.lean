@@ -1,0 +1,37 @@
+/-
+Copyright (c) 2026 Scott Armstrong, Tuomo Kuusi. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Scott Armstrong, Tuomo Kuusi
+-/
+
+module
+
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseFluxResponse.PrivateLemmas
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseFluxResponse.EnergyForm
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseFluxResponse.Response
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseFluxResponse.RHS
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseFluxResponse.RHSCorrections
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseFluxResponse.RHSScalarAbsorption
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseFluxResponse.RHSConstantEnvelope
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseFluxResponse.RHSConstantAbsorption
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseFluxResponse.RHSConstantApex
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseFluxResponse.RHSConstantApexComponent
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseFluxResponse.RHSConstantApexEnergy
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseFluxResponse.RHSConstantApexZeroDirichletEnergy
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseFluxResponse.RHSConstantApexZeroDirichletTail
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseFluxResponse.RHSConstantApexZeroDirichletEstimates
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseFluxResponse.RHSConstantApexZeroDirichletBV
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseFluxResponse.RHSConstantApexZeroDirichletBVForce
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseFluxResponse.RHSConstantApexZeroDirichletScalarAdequacy
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseFluxResponse.RHSConstantApexZeroDirichletWeakFluxScalarAdequacy
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseFluxResponse.RHSConstantApexZeroDirichletCorrectedWeakFlux
+public import LeanPool.HighContrastHomogenization.Support.Deterministic.CoarseFluxResponse.RHSConstantApexZeroDirichletCorrectedWeakFluxAveraged
+
+/-!
+# Coarse-graining support: Support.Deterministic.CoarseFluxResponse
+
+Imported from the Apache-2.0 CoarseGraining development at commit
+`c7ddd76c08ade64fed1b8d2ca51be14dfee8deb4`.
+-/
+
+public section

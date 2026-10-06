@@ -119,6 +119,7 @@ public import LeanPool.HadwigerNelsonBounds.Imports
 public import LeanPool.HansonWright.Imports
 public import LeanPool.HardSphereNBC.Imports
 public import LeanPool.HasseMinkowski.Imports
+public import LeanPool.HighContrastHomogenization.Imports
 public import LeanPool.HopfProblem.Imports
 public import LeanPool.Incompleteness.Imports
 public import LeanPool.InfinitaryLogic.Imports
