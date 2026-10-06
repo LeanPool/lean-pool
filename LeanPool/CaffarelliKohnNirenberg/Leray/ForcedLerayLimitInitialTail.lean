@@ -136,7 +136,8 @@ theorem forcedLerayLimit_initialTail_lintegral (ρ : RegMollifierProfile) (ε : 
         ∫⁻ y, kE y * A (x - y) := by
     intro x
     have hmi : ∀ i : Fin 3, AEMeasurable (fun y => kE y * ‖a (x - y) i‖ₑ ^ (2 : ℝ)) volume :=
-      fun i => hkEm.aemeasurable.mul ((((ha.eval i).aestronglyMeasurable.aemeasurable.comp_quasiMeasurePreserving
+      fun i => hkEm.aemeasurable.mul
+        ((((ha.eval i).aestronglyMeasurable.aemeasurable.comp_quasiMeasurePreserving
         (quasiMeasurePreserving_sub_left_of_right_invariant volume x)).enorm).pow_const _)
     calc ∑ i : Fin 3, ‖regUniformMollifiedInitial ρ ε hε a x i‖ₑ ^ (2 : ℝ)
         ≤ ∑ i : Fin 3, ∫⁻ y, kE y * ‖a (x - y) i‖ₑ ^ (2 : ℝ) :=

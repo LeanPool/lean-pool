@@ -156,12 +156,12 @@ private theorem forcePressure_hasWeakGradientOn_combination {p₁ p₂ : Vec3 �
   have hi₂ : Integrable (fun x => p₂ x * ψ.partialDeriv i x) volume :=
     (hp₂.locallyIntegrable (by norm_num)).integrable_smul_right_of_hasCompactSupport
       hψd hψdc
+  have hG₁local := (memLp_pi_iff.mp hG₁ i).locallyIntegrable (by norm_num)
   have hj₁ : Integrable (fun x => G₁ x i * ψ x) volume :=
-    ((memLp_pi_iff.mp hG₁ i).locallyIntegrable (by norm_num)).integrable_smul_right_of_hasCompactSupport
-      hψc ψ.hasCompactSupport
+    hG₁local.integrable_smul_right_of_hasCompactSupport hψc ψ.hasCompactSupport
+  have hG₂local := (memLp_pi_iff.mp hG₂ i).locallyIntegrable (by norm_num)
   have hj₂ : Integrable (fun x => G₂ x i * ψ x) volume :=
-    ((memLp_pi_iff.mp hG₂ i).locallyIntegrable (by norm_num)).integrable_smul_right_of_hasCompactSupport
-      hψc ψ.hasCompactSupport
+    hG₂local.integrable_smul_right_of_hasCompactSupport hψc ψ.hasCompactSupport
   have hleft : (fun x => (a * p₁ x + b * p₂ x) * ψ.partialDeriv i x) =
       fun x => a * (p₁ x * ψ.partialDeriv i x) + b * (p₂ x * ψ.partialDeriv i x) := by
     funext x

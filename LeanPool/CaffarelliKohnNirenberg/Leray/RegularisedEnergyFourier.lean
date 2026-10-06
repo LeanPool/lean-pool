@@ -25,7 +25,8 @@ noncomputable section
 
 namespace CKN.Leray
 
-/-- The forced mild equation has an exact energy balance when its initial field lies in the divergence-free subspace. -/
+/-- The forced mild equation has an exact energy balance when its initial field
+lies in the divergence-free subspace. -/
 theorem forcedMild_energy_balance_eq (b : RealVectorL2) (hb : RegularizedMildJData b)
     {F : ℝ → RealTensorL2} (hF : StronglyMeasurable F) {h : ℝ → RealVectorL2}
     (hh : StronglyMeasurable h) {T C : ℝ} (hC : 0 ≤ C) (hFC : ∀ s ∈ Ioc 0 T, ‖F s‖ ≤ C)

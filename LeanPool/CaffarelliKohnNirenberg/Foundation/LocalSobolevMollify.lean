@@ -753,7 +753,7 @@ private theorem localSobolevMollify_cutoff_uniform_bound
     _ ≤ M := by simpa using hx
 
 private theorem localSobolevMollify_approximation_from_errors
-    {ι : Type*} [Fintype ι] {m : ℕ}
+    {ι : Type*} {m : ℕ}
     (D : List (Fin 3) → ι → Vec3 → ℝ)
     (cutD : ℕ → ι → List (Fin 3) → Vec3 → ℝ)
     (g : ℕ → ι → Vec3 → ℝ) (delta : ℕ → ℝ)

@@ -196,8 +196,10 @@ theorem compactSolenoidal_fourierOrthogonal
       simp only [ContinuousLinearMap.comp_apply, complexCoordinateValue,
         coordinateToHilbertValueOrth]
       rw [hbasis]
-      simp [coordinateEquiv, complexifyValue,
-        complexifyValueLinear, complexifyFrequency, CKN.spatialDeriv]
+      simp only [complexifyValue, complexifyValueLinear, coordinateEquiv,
+        ContinuousLinearEquiv.coe_coe, PiLp.continuousLinearEquiv_symm_apply,
+        LinearMap.mkContinuous_apply, LinearMap.coe_mk, AddHom.coe_mk,
+        complexifyFrequency, spatialDeriv, Complex.ofReal_inj]
       exact fderiv_coordinate_component a ha (coordinateEquiv x)
         (CKN.basisVec i) i
     rw [htrace]
