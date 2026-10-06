@@ -6,6 +6,7 @@ Authors: Scott Armstrong
 
 module
 
+import LeanPool.EscauriazaSereginSverak.LPS.LocalStrongRegProduct
 public import LeanPool.EscauriazaSereginSverak.LPS.LocalStrongRegPressure
 public import LeanPool.EscauriazaSereginSverak.LPS.RegularisedH1TransportBound
 
