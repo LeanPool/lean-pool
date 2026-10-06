@@ -244,6 +244,13 @@ jobs:
         with:
           enable-cache: true
 
+      - name: Check compiled artifact dependency tracking with pinned Lean
+        env:
+          LEAN_POOL_REQUIRE_TEST_TOOLCHAIN: '1'
+        run: >-
+          uv run --project python --group test pytest -q
+          python/tests/test_ci_pr_build.py -k 'test_lake_'
+
       - name: Install Mathlib cache
         id: mathlib-cache
         run: |

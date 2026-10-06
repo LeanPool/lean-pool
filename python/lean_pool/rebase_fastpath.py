@@ -316,6 +316,23 @@ def pack(root: Path, base: str, head: str, output: Path) -> None:
                         archive.add(path, arcname=relative.as_posix(), recursive=False)
 
 
+def _restore_build_files(
+    root: Path, archive: tarfile.TarFile, members: list[tarfile.TarInfo]
+) -> None:
+    build_parent = root / ".lake"
+    build_parent.mkdir(exist_ok=True)
+    # Stage on the destination filesystem, so publication uses atomic renames.
+    with tempfile.TemporaryDirectory(
+        prefix="lean-project-stage-", dir=build_parent
+    ) as name:
+        staging = Path(name)
+        archive.extractall(staging, members=members, filter="data")
+        for entry in members:
+            destination = root / entry.name
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            os.replace(staging / entry.name, destination)
+
+
 def restore(root: Path, repository: str, run_id: int, previous_head: str) -> None:
     """Download a prior green run's project artifacts and validate before overlay."""
     endpoint = f"repos/{repository}/actions/runs/{run_id}/artifacts?per_page=100"
@@ -380,7 +397,7 @@ def restore(root: Path, repository: str, run_id: int, previous_head: str) -> Non
                     or not _build_file_for_project(relative, set(projects))
                 ):
                     raise ValueError(f"unexpected project artifact: {entry.name}")
-            archive.extractall(root, members=members, filter="data")
+            _restore_build_files(root, archive, members)
 
 
 def restore_new_main_projects(

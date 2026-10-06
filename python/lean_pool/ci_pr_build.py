@@ -8,6 +8,8 @@ import os
 import subprocess
 import tarfile
 import zipfile
+from collections.abc import Iterator
+from itertools import chain
 from pathlib import Path
 from urllib.parse import urlencode
 
@@ -26,20 +28,30 @@ RECOVERY_ERRORS = (
 
 def prior_runs(
     repository: str, number: int, branch: str, current_run: int
-) -> list[dict]:
+) -> Iterator[dict]:
     """Find successful runs of this PR; a later failed attempt supersedes its head."""
-    query = urlencode({"event": "pull_request", "branch": branch, "per_page": 30})
-    runs = rebase_fastpath.github_json(
-        f"repos/{repository}/actions/workflows/lean_action_ci.yml/runs?{query}"
-    )["workflow_runs"]
-    latest = {}
-    for run in sorted(runs, key=lambda run: run["id"], reverse=True):
-        if run["id"] == current_run or not any(
-            pull.get("number") == number for pull in run.get("pull_requests", [])
-        ):
-            continue
-        latest.setdefault(run["head_sha"], run)
-    return [run for run in latest.values() if run.get("conclusion") == "success"]
+    seen = set()
+    page = 1
+    while True:
+        query = urlencode(
+            {"event": "pull_request", "branch": branch, "per_page": 100, "page": page}
+        )
+        runs = rebase_fastpath.github_json(
+            f"repos/{repository}/actions/workflows/lean_action_ci.yml/runs?{query}"
+        )["workflow_runs"]
+        for run in sorted(runs, key=lambda run: run["id"], reverse=True):
+            if run["id"] == current_run or not any(
+                pull.get("number") == number for pull in run.get("pull_requests", [])
+            ):
+                continue
+            if run["head_sha"] in seen:
+                continue
+            seen.add(run["head_sha"])
+            if run.get("conclusion") == "success":
+                yield run
+        if len(runs) < 100:
+            return
+        page += 1
 
 
 def is_ancestor(root: Path, previous: str, head: str) -> bool:
@@ -88,10 +100,12 @@ def restore_prior_build(
     """Restore matching compiled files; Lake and every normal check still run."""
     if not all(rebase_fastpath.SHA.fullmatch(value) for value in (head, base)):
         raise ValueError("invalid PR revisions")
-    candidates = prior_runs(repository, number, branch, current_run)
-    history = next(
-        (run for run in candidates if is_ancestor(root, run["head_sha"], head)), None
+    candidates = (
+        run
+        for run in prior_runs(repository, number, branch, current_run)
+        if is_ancestor(root, run["head_sha"], head)
     )
+    history = next(candidates, None)
     if history is not None:
         try:
             rebase_fastpath.restore_new_main_projects(
@@ -99,10 +113,8 @@ def restore_prior_build(
             )
         except RECOVERY_ERRORS:
             LOGGER.info("Merged project reuse unavailable; checking the PR's build")
-    for run in candidates:
-        if not is_ancestor(root, run["head_sha"], head) or not sources_match(
-            root, run["head_sha"], base
-        ):
+    for run in chain(() if history is None else (history,), candidates):
+        if not sources_match(root, run["head_sha"], base):
             continue
         try:
             rebase_fastpath.restore(root, repository, run["id"], run["head_sha"])
