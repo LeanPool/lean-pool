@@ -61,6 +61,143 @@ private theorem regEqui_ibp_against_compact
   have h' := congrArg (fun r : ℝ => -r) h
   simpa [spatialDeriv] using h'.symm
 
+private theorem regEqui_transport_ibp
+    (f : Vec3 → ℝ) (g : Fin 3 → Vec3 → ℝ) (J : Fin 3 → Vec3 → ℝ)
+    (w : Vec3 → ℝ)
+    (hf : Continuous f) (hfdiff : ∀ x, DifferentiableAt ℝ f x)
+    (hfd : ∀ j x, fderiv ℝ f x (basisVec j) = g j x)
+    (hg : ∀ j, Continuous (g j))
+    (hJ : ∀ j, ContDiff ℝ 1 (J j))
+    (hdivJ : ∀ x, ∑ j : Fin 3, fderiv ℝ (J j) x (basisVec j) = 0)
+    (hw : ContDiff ℝ (⊤ : ℕ∞) w) (hwc : HasCompactSupport w) :
+    ∑ j : Fin 3, ∫ x, J j x * g j x * w x =
+      -∫ x, ∑ j : Fin 3, f x * J j x * spatialDeriv w j x := by
+  have hJc : ∀ j, Continuous (J j) := fun j => (hJ j).continuous
+  have hJd : ∀ j, Continuous (fun x => fderiv ℝ (J j) x (basisVec j)) := by
+    intro j
+    exact (hJ j).continuous_fderiv (by norm_num) |>.clm_apply continuous_const
+  have hwd : ∀ j, ContDiff ℝ 1 (spatialDeriv w j) := fun j =>
+    (contDiff_spatialDeriv_smooth hw j).of_le (by norm_num)
+  have hprod : ∀ j, ContDiff ℝ 1 (fun x => J j x * w x) :=
+    fun j => (hJ j).mul (hw.of_le (by exact_mod_cast le_top))
+  have hprodd : ∀ j x,
+      fderiv ℝ (fun x => J j x * w x) x (basisVec j) =
+        fderiv ℝ (J j) x (basisVec j) * w x +
+          J j x * spatialDeriv w j x := by
+    intro j x
+    have hwdx : DifferentiableAt ℝ w x := (hw.differentiable (by norm_num)) x
+    rw [fderiv_fun_mul ((hJ j).differentiable (by norm_num) x) hwdx]
+    simp only [add_apply, smul_apply, smul_eq_mul, spatialDeriv]
+    ring
+  have hprodc : ∀ j, HasCompactSupport (fun x => J j x * w x) :=
+    fun j => hwc.mul_left
+  have htrans : ∀ j, ∫ x, J j x * g j x * w x =
+      -∫ x, f x * (fderiv ℝ (J j) x (basisVec j) * w x +
+        J j x * spatialDeriv w j x) := by
+    intro j
+    have h := regEqui_ibp_against_compact j hf hfdiff (hfd j) (hg j)
+      (hprod j) (hprodc j)
+    have hderiv : ∀ x, spatialDeriv (fun y => J j y * w y) j x =
+        fderiv ℝ (J j) x (basisVec j) * w x +
+          J j x * spatialDeriv w j x := by
+      intro x
+      change fderiv ℝ (fun y => J j y * w y) x (basisVec j) = _
+      rw [hprodd j x]
+    have hderivIntegral : ∫ x, f x *
+        (fderiv ℝ (J j) x (basisVec j) * w x +
+          J j x * spatialDeriv w j x) =
+          ∫ x, f x * spatialDeriv (fun y => J j y * w y) j x := by
+      congr 1
+      funext x
+      rw [hderiv x]
+    have hleft : ∫ x, J j x * g j x * w x =
+        ∫ x, g j x * (J j x * w x) := by
+      congr 1
+      funext x
+      ring
+    calc
+      ∫ x, J j x * g j x * w x = ∫ x, g j x * (J j x * w x) := hleft
+      _ = -∫ x, f x * (fderiv ℝ (J j) x (basisVec j) * w x +
+          J j x * spatialDeriv w j x) := by linarith only [h, hderivIntegral]
+  calc
+    ∑ j : Fin 3, ∫ x, J j x * g j x * w x =
+        -∑ j : Fin 3, ∫ x, f x *
+          (fderiv ℝ (J j) x (basisVec j) * w x +
+            J j x * spatialDeriv w j x) := by
+              simp_rw [htrans]
+              rw [Finset.sum_neg_distrib]
+    _ = -∫ x, ∑ j : Fin 3, f x *
+          (fderiv ℝ (J j) x (basisVec j) * w x +
+            J j x * spatialDeriv w j x) := by
+              congr 1
+              exact (integral_finsetSum _ (fun j _ =>
+                lerayHopfLimit_integrable_mul_compact hf
+                  (((hJd j).mul hw.continuous).add ((hJc j).mul (hwd j).continuous))
+                  ((hwc.mul_left).add
+                    ((hwc.fderiv_apply (𝕜 := ℝ) (basisVec j)).mul_left)))).symm
+    _ = -∫ x, ∑ j : Fin 3, f x * J j x * spatialDeriv w j x := by
+              congr 1
+              apply integral_congr_ae
+              filter_upwards [] with x
+              have hsplit : ∑ j : Fin 3, f x *
+                  (fderiv ℝ (J j) x (basisVec j) * w x +
+                    J j x * spatialDeriv w j x) =
+                  f x * w x * (∑ j : Fin 3,
+                    fderiv ℝ (J j) x (basisVec j)) +
+                    ∑ j : Fin 3, f x * J j x * spatialDeriv w j x := by
+                rw [Finset.mul_sum, ← Finset.sum_add_distrib]
+                apply Finset.sum_congr rfl
+                intro j hj
+                ring
+              rw [hsplit, hdivJ x, mul_zero, zero_add]
+
+private theorem regEqui_pairing_row_integral
+    (u c t p : Vec3 → ℝ) (a b A : Fin 3 → Vec3 → ℝ)
+    (hu : ∀ x, u x = (∑ j : Fin 3, a j x) - (∑ j : Fin 3, b j x) - c x)
+    (ha : ∀ j, Integrable (a j)) (hb : ∀ j, Integrable (b j))
+    (hc : Integrable c)
+    (hA : ∀ j, ∫ x, a j x = ∫ x, A j x)
+    (hB : ∑ j : Fin 3, ∫ x, b j x = -∫ x, t x)
+    (hC : ∫ x, c x = -∫ x, p x) :
+    ∫ x, u x = (∑ j : Fin 3, ∫ x, A j x) +
+      ((∫ x, t x) + ∫ x, p x) := by
+  have hrows : Integrable (fun x => ∑ j : Fin 3, a j x) :=
+    integrable_finsetSum _ (fun j _ => ha j)
+  have hbrows : Integrable (fun x => ∑ j : Fin 3, b j x) :=
+    integrable_finsetSum _ (fun j _ => hb j)
+  have hpointwiseIntegral : ∫ x, u x =
+      ∫ x, (∑ j : Fin 3, a j x) - (∑ j : Fin 3, b j x) - c x := by
+    apply integral_congr_ae
+    filter_upwards [] with x
+    exact hu x
+  have hsubIntegral :
+      ∫ x, (∑ j : Fin 3, a j x) - (∑ j : Fin 3, b j x) - c x =
+        (∑ j : Fin 3, ∫ x, a j x) -
+          (∑ j : Fin 3, ∫ x, b j x) - ∫ x, c x := by
+    calc
+      ∫ x, ((∑ j : Fin 3, a j x) - (∑ j : Fin 3, b j x)) - c x =
+          (∫ x, (∑ j : Fin 3, a j x) - (∑ j : Fin 3, b j x)) - ∫ x, c x :=
+            integral_sub (hrows.sub hbrows) hc
+      _ = ((∫ x, ∑ j : Fin 3, a j x) - ∫ x, ∑ j : Fin 3, b j x) -
+          ∫ x, c x := by rw [integral_sub hrows hbrows]
+      _ = ((∑ j : Fin 3, ∫ x, a j x) -
+          ∑ j : Fin 3, ∫ x, b j x) - ∫ x, c x := by
+            rw [integral_finsetSum _ (fun j _ => ha j),
+              integral_finsetSum _ (fun j _ => hb j)]
+  calc
+    ∫ x, u x =
+        (∑ j : Fin 3, ∫ x, a j x) -
+          (∑ j : Fin 3, ∫ x, b j x) - ∫ x, c x :=
+            hpointwiseIntegral.trans hsubIntegral
+    _ = (∑ j : Fin 3, ∫ x, A j x) - (-∫ x, t x) - (-∫ x, p x) := by
+          have hAsum : (∑ j : Fin 3, ∫ x, a j x) =
+              ∑ j : Fin 3, ∫ x, A j x := by
+            apply Finset.sum_congr rfl
+            intro j hj
+            exact hA j
+          rw [hAsum, hB, hC]
+    _ = (∑ j : Fin 3, ∫ x, A j x) + ((∫ x, t x) + ∫ x, p x) := by ring
+
 theorem regEqui_pairing_equation_ibp
     (f : Fin 3 → Vec3 → ℝ) (g : Fin 3 → Fin 3 → Vec3 → ℝ)
     (h : Fin 3 → Fin 3 → Fin 3 → Vec3 → ℝ) (P : Vec3 → ℝ)
@@ -101,9 +238,12 @@ theorem regEqui_pairing_equation_ibp
       (fun x => (fderiv ℝ (spatialDeriv (w i) j) x) (basisVec j))
     exact (hdwc i j).fderiv_apply (𝕜 := ℝ) (basisVec j)
   have hJc : ∀ j, Continuous (J j) := fun j => (hJ j).continuous
-  have hJd : ∀ j, Continuous (fun x => fderiv ℝ (J j) x (basisVec j)) := by
-    intro j
-    exact (hJ j).continuous_fderiv (by norm_num) |>.clm_apply continuous_const
+  have hpress : ∀ i, ∫ x, q i x * w i x =
+      -∫ x, P x * spatialDeriv (w i) i x := by
+    intro i
+    have h1 := regEqui_ibp_against_compact i hP hPdiff
+      (hPd i) (hq i) ((hw i).of_le (by exact_mod_cast le_top)) (hwc i)
+    linarith only [h1]
   have hvisc : ∀ i j, ∫ x, h i j j x * w i x =
       ∫ x, f i x * spatialDeriv (spatialDeriv (w i) j) j x := by
     intro i j
@@ -118,111 +258,12 @@ theorem regEqui_pairing_equation_ibp
       _ = ∫ x, f i x * spatialDeriv (spatialDeriv (w i) j) j x := by
         rw [h2]
         ring
-  have hpress : ∀ i, ∫ x, q i x * w i x =
-      -∫ x, P x * spatialDeriv (w i) i x := by
-    intro i
-    have h1 := regEqui_ibp_against_compact i hP hPdiff
-      (hPd i) (hq i) ((hw i).of_le (by exact_mod_cast le_top)) (hwc i)
-    linarith only [h1]
-  have hprod : ∀ i j, ContDiff ℝ 1 (fun x => J j x * w i x) :=
-    fun i j => (hJ j).mul ((hw i).of_le (by exact_mod_cast le_top))
-  have hprodd : ∀ i j x,
-      fderiv ℝ (fun x => J j x * w i x) x (basisVec j) =
-        fderiv ℝ (J j) x (basisVec j) * w i x +
-          J j x * spatialDeriv (w i) j x := by
-    intro i j x
-    have hwd : DifferentiableAt ℝ (w i) x := ((hw i).differentiable (by simp)) x
-    rw [fderiv_fun_mul ((hJ j).differentiable (by norm_num) x) hwd]
-    simp only [add_apply, smul_apply, smul_eq_mul, spatialDeriv]
-    ring
-  have hprodc : ∀ i j, HasCompactSupport (fun x => J j x * w i x) :=
-    fun i j => (hwc i).mul_left
-  have htrans : ∀ i j, ∫ x, J j x * g i j x * w i x =
-      -∫ x, f i x * (fderiv ℝ (J j) x (basisVec j) * w i x +
-        J j x * spatialDeriv (w i) j x) := by
-    intro i j
-    have hcont : Continuous (fun x =>
-        fderiv ℝ (J j) x (basisVec j) * w i x +
-          J j x * spatialDeriv (w i) j x) :=
-      ((hJd j).mul (hw i).continuous).add ((hJc j).mul (hdw i j).continuous)
-    have hcpt : HasCompactSupport (fun x =>
-        fderiv ℝ (J j) x (basisVec j) * w i x +
-          J j x * spatialDeriv (w i) j x) :=
-      ((hwc i).mul_left).add ((hdwc i j).mul_left)
-    have hIntDF : Integrable (fun x => f i x *
-        (fderiv ℝ (J j) x (basisVec j) * w i x +
-          J j x * spatialDeriv (w i) j x)) :=
-      lerayHopfLimit_integrable_mul_compact (hf i) hcont hcpt
-    have h := integral_bilinear_hasLineDerivAt_right_eq_neg_left_of_integrable
-      (B := ContinuousLinearMap.mul ℝ ℝ) (f := f i)
-      (f' := g i j) (g := fun x => J j x * w i x)
-      (g' := fun x => fderiv ℝ (J j) x (basisVec j) * w i x +
-        J j x * spatialDeriv (w i) j x) (v := basisVec j)
-      (by
-        have hcont' : Continuous (fun x => J j x * w i x) := (hJc j).mul (hw i).continuous
-        exact lerayHopfLimit_integrable_mul_compact (hg i j) hcont' (hprodc i j))
-      hIntDF
-      (lerayHopfLimit_integrable_mul_compact (hf i) ((hJc j).mul (hw i).continuous)
-        (hprodc i j))
-      (fun x _ => by
-        rw [← hfd i j x]
-        exact (hfdiff i x).hasFDerivAt.hasLineDerivAt (basisVec j))
-      (fun x _ => by
-        have hdiffAt := (hprod i j).differentiable (by norm_num) x
-        rw [← hprodd i j x]
-        exact hdiffAt.hasFDerivAt.hasLineDerivAt (basisVec j))
-    have hleft : ∫ x, J j x * g i j x * w i x =
-        ∫ x, g i j x * (J j x * w i x) := by
-      congr 1
-      funext x
-      ring
-    have h' : ∫ x, f i x *
-        (fderiv ℝ (J j) x (basisVec j) * w i x +
-          J j x * spatialDeriv (w i) j x) =
-          -∫ x, g i j x * (J j x * w i x) := by
-      simpa only [ContinuousLinearMap.mul_apply'] using h
-    linarith only [hleft, h']
   have htransSum : ∀ i, ∑ j : Fin 3, ∫ x, J j x * g i j x * w i x =
       -∫ x, ∑ j : Fin 3, f i x * J j x * spatialDeriv (w i) j x := by
     intro i
-    have hderivInt : Integrable (fun x => ∑ j : Fin 3, f i x *
-        (fderiv ℝ (J j) x (basisVec j) * w i x +
-          J j x * spatialDeriv (w i) j x)) :=
-      integrable_finsetSum _ (fun j _ => lerayHopfLimit_integrable_mul_compact (hf i)
-        (((hJd j).mul (hw i).continuous).add ((hJc j).mul (hdw i j).continuous))
-        (((hwc i).mul_left).add ((hdwc i j).mul_left)))
-    calc
-      ∑ j : Fin 3, ∫ x, J j x * g i j x * w i x =
-          -∑ j : Fin 3, ∫ x, f i x *
-            (fderiv ℝ (J j) x (basisVec j) * w i x +
-              J j x * spatialDeriv (w i) j x) := by
-                simp_rw [htrans]
-                rw [Finset.sum_neg_distrib]
-      _ = -∫ x, ∑ j : Fin 3, f i x *
-            (fderiv ℝ (J j) x (basisVec j) * w i x +
-              J j x * spatialDeriv (w i) j x) := by
-                congr 1
-                exact (integral_finsetSum _ (fun j _ =>
-                  lerayHopfLimit_integrable_mul_compact (hf i)
-                    (((hJd j).mul (hw i).continuous).add
-                      ((hJc j).mul (hdw i j).continuous))
-                    (((hwc i).mul_left).add ((hdwc i j).mul_left)))).symm
-      _ = -∫ x, ∑ j : Fin 3,
-            f i x * J j x * spatialDeriv (w i) j x := by
-                congr 1
-                apply integral_congr_ae
-                filter_upwards [] with x
-                have hsplit : ∑ j : Fin 3, f i x *
-                    (fderiv ℝ (J j) x (basisVec j) * w i x +
-                      J j x * spatialDeriv (w i) j x) =
-                    f i x * w i x *
-                        (∑ j : Fin 3, fderiv ℝ (J j) x (basisVec j)) +
-                      ∑ j : Fin 3, f i x * J j x * spatialDeriv (w i) j x := by
-                  rw [Finset.mul_sum, ← Finset.sum_add_distrib]
-                  apply Finset.sum_congr rfl
-                  intro j hj
-                  ring
-                rw [hsplit, hdivJ x, mul_zero, zero_add]
+    exact regEqui_transport_ibp (f i) (g i) J (w i) (hf i) (hfdiff i)
+      (fun j x => hfd i j x) (hg i) hJ hdivJ
+      ((hw i).of_le (by exact_mod_cast le_top)) (hwc i)
   have hIhw : ∀ i j, Integrable (fun x => h i j j x * w i x) := fun i j =>
     lerayHopfLimit_integrable_mul_compact (hh i j j) (hw i).continuous (hwc i)
   have hIJgw : ∀ i j, Integrable (fun x => J j x * g i j x * w i x) := fun i j =>
@@ -255,59 +296,16 @@ theorem regEqui_pairing_equation_ibp
         ((∫ x, ∑ j : Fin 3, f i x * J j x * spatialDeriv (w i) j x) +
           ∫ x, P x * spatialDeriv (w i) i x) := by
     intro i
-    have hrows : Integrable (fun x => ∑ j : Fin 3,
-        h i j j x * w i x) := integrable_finsetSum _ (fun j _ => hIhw i j)
-    have htransrow : Integrable (fun x => ∑ j : Fin 3,
-        J j x * g i j x * w i x) := integrable_finsetSum _ (fun j _ => hIJgw i j)
-    have hpointwiseIntegral : ∫ x, F i x * w i x =
-        ∫ x, (∑ j : Fin 3, h i j j x * w i x) -
-          (∑ j : Fin 3, J j x * g i j x * w i x) - q i x * w i x := by
-      apply integral_congr_ae
-      filter_upwards [] with x
-      exact congrFun (hpointwise i) x
-    have hsubIntegral : ∫ x,
-        (∑ j : Fin 3, h i j j x * w i x) -
-          (∑ j : Fin 3, J j x * g i j x * w i x) - q i x * w i x =
-        (∑ j : Fin 3, ∫ x, h i j j x * w i x) -
-          (∑ j : Fin 3, ∫ x, J j x * g i j x * w i x) -
-            ∫ x, q i x * w i x := by
-      calc
-        ∫ x, ((∑ j : Fin 3, h i j j x * w i x) -
-            (∑ j : Fin 3, J j x * g i j x * w i x)) - q i x * w i x =
-          (∫ x, (∑ j : Fin 3, h i j j x * w i x) -
-            (∑ j : Fin 3, J j x * g i j x * w i x)) - ∫ x, q i x * w i x :=
-              integral_sub (hrows.sub htransrow) (hIqw i)
-        _ = ((∫ x, ∑ j : Fin 3, h i j j x * w i x) -
-            ∫ x, ∑ j : Fin 3, J j x * g i j x * w i x) -
-              ∫ x, q i x * w i x := by
-                rw [integral_sub hrows htransrow]
-        _ = ((∑ j : Fin 3, ∫ x, h i j j x * w i x) -
-            ∑ j : Fin 3, ∫ x, J j x * g i j x * w i x) -
-              ∫ x, q i x * w i x := by
-                rw [integral_finsetSum _ (fun j _ => hIhw i j),
-                  integral_finsetSum _ (fun j _ => hIJgw i j)]
-    calc
-      ∫ x, F i x * w i x =
-          (∑ j : Fin 3, ∫ x, h i j j x * w i x) -
-            (∑ j : Fin 3, ∫ x, J j x * g i j x * w i x) -
-              ∫ x, q i x * w i x := hpointwiseIntegral.trans hsubIntegral
-      _ = (∑ j : Fin 3, ∫ x, f i x *
-            spatialDeriv (spatialDeriv (w i) j) j x) -
-          (-∫ x, ∑ j : Fin 3, f i x * J j x * spatialDeriv (w i) j x) -
-          (-∫ x, P x * spatialDeriv (w i) i x) := by
-            rw [htransSum i, hpress i]
-            have hsumVisc :
-                (∑ j : Fin 3, ∫ x, h i j j x * w i x) =
-                  ∑ j : Fin 3, ∫ x, f i x *
-                    spatialDeriv (spatialDeriv (w i) j) j x := by
-              apply Finset.sum_congr rfl
-              intro j hj
-              exact hvisc i j
-            rw [hsumVisc]
-      _ = (∑ j : Fin 3, ∫ x, f i x *
-            spatialDeriv (spatialDeriv (w i) j) j x) +
-          ((∫ x, ∑ j : Fin 3, f i x * J j x * spatialDeriv (w i) j x) +
-            ∫ x, P x * spatialDeriv (w i) i x) := by ring
+    exact regEqui_pairing_row_integral
+      (fun x => F i x * w i x)
+      (fun x => q i x * w i x)
+      (fun x => ∑ j : Fin 3, f i x * J j x * spatialDeriv (w i) j x)
+      (fun x => P x * spatialDeriv (w i) i x)
+      (fun j x => h i j j x * w i x)
+      (fun j x => J j x * g i j x * w i x)
+      (fun j x => f i x * spatialDeriv (spatialDeriv (w i) j) j x)
+      (fun x => congrFun (hpointwise i) x)
+      (hIhw i) (hIJgw i) (hIqw i) (hvisc i) (htransSum i) (hpress i)
   have hRHS : ∀ i, Integrable (fun x => ∑ j : Fin 3,
       (f i x * spatialDeriv (spatialDeriv (w i) j) j x +
         f i x * J j x * spatialDeriv (w i) j x)) := by

@@ -287,6 +287,25 @@ private theorem forcedPressureLimit_glued_quadratic
   rw [hprod]
   exact hProd
 
+private theorem forcedPressureLimit_eventually_memLp_three
+    {α : Type*} [MeasurableSpace α] {μ : Measure α}
+    {u : α → Vec3} {V : ℕ → α → Vec3}
+    (hu : MemLp u 3 μ)
+    (hconv : Tendsto (fun n => eLpNorm (V n - u)
+      (ENNReal.ofReal (3 : ℝ)) μ) atTop (nhds 0)) :
+    ∀ᶠ n : ℕ in atTop, MemLp (V n) 3 μ := by
+  have h3 : (3 : ℝ≥0∞) = ENNReal.ofReal (3 : ℝ) := by norm_num
+  have hfinite : ∀ᶠ n : ℕ in atTop,
+      eLpNorm (V n - u) (ENNReal.ofReal (3 : ℝ)) μ < ∞ :=
+    hconv.eventually (Iio_mem_nhds ENNReal.zero_lt_top)
+  filter_upwards [hfinite] with n hn
+  have hdiff : MemLp (V n - u) 3 μ := by
+    rw [memLp_iff]
+    simpa only [h3] using hn
+  have hadd := hdiff.add hu
+  apply (memLp_congr_ae (Filter.Eventually.of_forall fun z => ?_)).1 hadd
+  simp [Pi.sub_apply]
+
 /-- The pressure limit of `thm:leray-forced`. The quadratic parts
 `p_ε − p_f` of the forced regularized pressures are almost everywhere
 measurable on finite slabs and are the Riesz pressures of the regularized
@@ -433,17 +452,8 @@ theorem forcedPressureLimit_of_regularised_pressure_data
   have hmemOfConv (V : ℕ → ParabolicPoint → Vec3)
       (hV : Tendsto (fun n => eLpNorm (V n - u)
         (ENNReal.ofReal (3 : ℝ)) μPar) atTop (nhds 0)) :
-      ∀ᶠ n : ℕ in atTop, MemLp (V n) 3 μPar := by
-    have hfinite : ∀ᶠ n : ℕ in atTop,
-        eLpNorm (V n - u) (ENNReal.ofReal (3 : ℝ)) μPar < ∞ :=
-      hV.eventually (Iio_mem_nhds ENNReal.zero_lt_top)
-    filter_upwards [hfinite] with n hn
-    have hdiff : MemLp (V n - u) 3 μPar := by
-      rw [memLp_iff]
-      simpa only [h3] using hn
-    have hadd := hdiff.add huParT
-    apply (memLp_congr_ae (Filter.Eventually.of_forall fun z => ?_)).1 hadd
-    simp [Pi.sub_apply]
+      ∀ᶠ n : ℕ in atTop, MemLp (V n) 3 μPar :=
+    forcedPressureLimit_eventually_memLp_three huParT hV
   have hUmemPar := hmemOfConv Upar hUconvPar
   have hJmemPar := hmemOfConv Jpar hJconvPar
   have hnormEqOf (V : ℕ → ParabolicPoint → Vec3) (n : ℕ)

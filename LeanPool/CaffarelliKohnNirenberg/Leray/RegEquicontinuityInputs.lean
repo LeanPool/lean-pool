@@ -34,6 +34,12 @@ noncomputable section
 
 namespace CKN.Leray
 
+private theorem regUniformPositiveTimeMeasure_eq_productSlab :
+    regUniformPositiveTimeMeasure =
+      (volume : Measure (Vec3 × ℝ)).restrict
+        ((Set.univ : Set Vec3) ×ˢ Ioi (0 : ℝ)) := by
+  rfl
+
 private theorem regEquicontinuity_pressure_bound_from_inputs
     (ρ : RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
     (u : ParabolicPoint → Vec3) (p : ParabolicPoint → ℝ)
@@ -82,23 +88,9 @@ private theorem regEquicontinuity_pressure_bound_from_inputs
     regPressureSpaceTimeTensor Jbar Ubar
   have hSmeas : MeasurableSet S := by
     exact MeasurableSet.prod MeasurableSet.univ measurableSet_Ioi
-  have hPositiveProduct : regUniformPositiveTimeMeasure =
-      (volume : Measure Vec3).prod (volume.restrict (Ioi (0 : ℝ))) := by
-    change ((volume : Measure Vec3).prod (volume : Measure ℝ)).restrict
-      (Set.univ ×ˢ Ioi (0 : ℝ)) = _
-    rw [← Measure.prod_restrict (μ := (volume : Measure Vec3))
-      (ν := (volume : Measure ℝ)) Set.univ (Ioi (0 : ℝ))]
-    simp [Measure.restrict_univ]
-  have hProductRestrict :
-      (volume : Measure (Vec3 × ℝ)).restrict S =
-        (volume : Measure Vec3).prod (volume.restrict (Ioi (0 : ℝ))) := by
-    rw [Measure.volume_eq_prod]
-    rw [← Measure.prod_restrict (μ := (volume : Measure Vec3))
-      (ν := (volume : Measure ℝ)) Set.univ (Ioi (0 : ℝ))]
-    simp [Measure.restrict_univ]
   have hPositiveTimeMeasure : regUniformPositiveTimeMeasure =
-      (volume : Measure (Vec3 × ℝ)).restrict S :=
-    hPositiveProduct.trans hProductRestrict.symm
+      (volume : Measure (Vec3 × ℝ)).restrict S := by
+    simpa [S] using regUniformPositiveTimeMeasure_eq_productSlab
   have hJpositive := regEquicontinuity_mollified_velocity_tenThirds_bound
     ρ ε hε u hSlice hUc hC1 hU BU hBU hUbound
   have hUbarCompEq (j : Fin 3) :

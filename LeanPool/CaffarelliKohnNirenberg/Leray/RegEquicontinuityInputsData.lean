@@ -39,86 +39,7 @@ theorem regEquicontinuity_data_of_regularised_contract
     (uε : (a : Vec3 → Vec3) → IsInJ a → ℝ → ParabolicPoint → Vec3)
     (pε : (a : Vec3 → Vec3) → IsInJ a → ℝ → ParabolicPoint → ℝ)
     (hregularised : ∀ (a : Vec3 → Vec3) (ha : IsInJ a) (ε : ℝ)
-      (hε : 0 < ε),
-      let u := uε a ha ε
-      let p := pε a ha ε
-      let D : ParabolicPoint → Fin 3 → Vec3 := fun z i j =>
-        spatialPartial (fun y => u y i) j z
-      let DD : ParabolicPoint → Fin 3 → Fin 3 → Vec3 := fun z i j k =>
-        spatialPartial (fun y => spatialPartial (fun x => u x i) j y) k z
-      let Dt : ParabolicPoint → Vec3 := fun z i => timePartial (fun y => u y i) z
-      let Dp : ParabolicPoint → Vec3 := fun z i => spatialPartial (fun y => p y) i z
-      (∃ hSlice : ∀ t : ℝ, 0 ≤ t → MemLp (fun x : Vec3 => u (x, t)) 2 volume,
-        Continuous (fun t : Set.Ici (0 : ℝ) =>
-          realVectorL2OfCoordinateFunction
-            (fun x : Vec3 => u (x, t.1)) (hSlice t.1 t.2)) ∧
-        (fun x : Vec3 => u (x, 0)) =ᵐ[volume]
-          regUniformMollifiedInitial ρ ε hε a ∧
-        ∀ t : ℝ, 0 ≤ t → CKN.IsWeakDivFreeL2 (fun x => u (x, t))) ∧
-      (∀ i : Fin 3, ContinuousOn (fun z => u z i)
-        (spaceTimeSet Set.univ (Ioi 0))) ∧
-      (∀ i j, ContinuousOn (fun z => D z i j)
-        (spaceTimeSet Set.univ (Ioi 0))) ∧
-      (∀ i j k, ContinuousOn (fun z => DD z i j k)
-        (spaceTimeSet Set.univ (Ioi 0))) ∧
-      (∀ i, ContinuousOn (fun z => Dt z i)
-        (spaceTimeSet Set.univ (Ioi 0))) ∧
-      ContinuousOn p (spaceTimeSet Set.univ (Ioi 0)) ∧
-      (∀ i, ContinuousOn (fun z => Dp z i)
-        (spaceTimeSet Set.univ (Ioi 0))) ∧
-      (letI : TopologicalSpace ParabolicPoint := instTopologicalSpaceProd
-       letI : NormedAddCommGroup ParabolicPoint :=
-         inferInstanceAs (NormedAddCommGroup (Vec3 × ℝ))
-       letI : NormedSpace ℝ ParabolicPoint :=
-         inferInstanceAs (NormedSpace ℝ (Vec3 × ℝ))
-       ∀ i, ContDiffOn ℝ 1 (fun z => u z i)
-         (spaceTimeSet Set.univ (Ioi 0))) ∧
-      (∀ z ∈ spaceTimeSet Set.univ (Ioi 0), ∀ i j,
-        DifferentiableAt ℝ (fun x : Vec3 => D (x, z.2) i j) z.1) ∧
-      (∀ z ∈ spaceTimeSet Set.univ (Ioi 0),
-        DifferentiableAt ℝ (fun x : Vec3 => p (x, z.2)) z.1) ∧
-      (∀ δ T : ℝ, 0 < δ → δ < T →
-        ∃ C : ℝ, 0 ≤ C ∧
-          ∀ z ∈ spaceTimeSet Set.univ (Icc δ T),
-            vec3EuclideanNorm (u z) ≤ C ∧ |p z| ≤ C ∧
-            (∀ i j, |D z i j| ≤ C) ∧
-            (∀ i j k, |DD z i j k| ≤ C) ∧
-            (∀ i, |Dt z i| ≤ C) ∧ (∀ i, |Dp z i| ≤ C)) ∧
-      (∀ δ T : ℝ, 0 < δ → δ < T →
-        (∀ i, MemLp (fun z : ParabolicPoint => u z i) 2
-          (volume.restrict (spaceTimeSet Set.univ (Ioo δ T)))) ∧
-        (∀ i j, MemLp (fun z : ParabolicPoint => D z i j) 2
-          (volume.restrict (spaceTimeSet Set.univ (Ioo δ T)))) ∧
-        (∀ i j k, MemLp (fun z : ParabolicPoint => DD z i j k) 2
-          (volume.restrict (spaceTimeSet Set.univ (Ioo δ T)))) ∧
-        (∀ i, MemLp (fun z : ParabolicPoint => Dt z i) 2
-          (volume.restrict (spaceTimeSet Set.univ (Ioo δ T)))) ∧
-        MemLp p 2 (volume.restrict
-          (spaceTimeSet Set.univ (Ioo δ T)))) ∧
-      (∀ z : ParabolicPoint, 0 < z.2 → ∀ i : Fin 3,
-        Dt z i - (∑ j : Fin 3, DD z i j j) +
-          (∑ j : Fin 3,
-            regUniformMollifiedVelocity ρ ε hε u z j * D z i j) + Dp z i = 0) ∧
-      (∀ t : ℝ, 0 < t →
-        ∃ hF : ∀ i j : Fin 3, MemLp
-            (fun x : Vec3 => regUniformMollifiedVelocity ρ ε hε u (x, t) i *
-              u (x, t) j) (ENNReal.ofReal 2) volume,
-          (fun x : Vec3 => p (x, t)) =ᵐ[volume]
-            rieszPressureSliceRepresentative 2 (by norm_num)
-              (fun i j => (hF i j).toLp
-                (fun x : Vec3 => regUniformMollifiedVelocity ρ ε hε u (x, t) i *
-                  u (x, t) j)) ∧
-          ∀ ψ : Vec3 → ℝ, ContDiff ℝ (⊤ : ℕ∞) ψ → HasCompactSupport ψ →
-            (∫ x : Vec3, p (x, t) * spatialLaplacian ψ x) =
-              -∑ i : Fin 3, ∑ j : Fin 3,
-                ∫ x : Vec3,
-                  regUniformMollifiedVelocity ρ ε hε u (x, t) i *
-                    u (x, t) j * mixedSecond ψ i j x) ∧
-      (∀ t : ℝ, 0 ≤ t →
-        eLpNorm (regUniformVelocitySlice u t) 2 volume ^ (2 : ℕ) +
-          2 * regUniformDissipation u D t =
-        eLpNorm (regMollifyVector ρ ε hε (regUniformSpatialField a))
-          2 volume ^ (2 : ℕ))) :
+      (hε : 0 < ε), CKN.lerayAssemblyRegularisedConditions ρ uε pε a ha ε hε) :
     ∀ (a : Vec3 → Vec3) (ha : IsInJ a)
       (εseq : ℕ → ℝ) (_hseq : ∀ n, 0 < εseq n ∧ εseq n ≤ 1),
       (∀ n t, 0 ≤ t →
@@ -467,6 +388,139 @@ private theorem regEquicontinuity_eLpNormENNReal_pow_eq_lintegral
   filter_upwards [] with t
   simp
 
+private theorem regEquicontinuity_time_slice_norm_bound
+    (r : ℝ) (hr : 0 < r) (q B : ℝ≥0∞)
+    {f : ℝ → ℝ≥0∞} {F : Vec3 × ℝ → ℝ}
+    (hf : Measurable f)
+    (hFubini : eLpNorm F q volume ^ r = ∫⁻ t, f t ^ r ∂(volume : Measure ℝ))
+    (hBound : eLpNorm F q volume ≤ B) (hq : q = ENNReal.ofReal r) :
+    eLpNorm f q volume ≤ B := by
+  have hid := regEquicontinuity_eLpNormENNReal_pow_eq_lintegral r hr
+    hf.aestronglyMeasurable
+  have hpow : eLpNorm f q volume ^ r ≤ B ^ r := by
+    calc
+      _ = ∫⁻ t, f t ^ r ∂(volume : Measure ℝ) := by rw [hq]; exact hid
+      _ = eLpNorm F q volume ^ r := hFubini.symm
+      _ ≤ B ^ r := ENNReal.rpow_le_rpow hBound hr.le
+  exact (ENNReal.rpow_le_rpow_iff hr).1 hpow
+
+private theorem regEquicontinuity_mollified_slice_bound
+    (ρ : RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
+    (u : ParabolicPoint → Vec3)
+    (Ubar Jbar : Vec3 × ℝ → Vec3)
+    (hSlice : ∀ t : ℝ, 0 ≤ t →
+      MemLp (fun x : Vec3 => u (x, t)) 2 volume)
+    (hUsliceMem : ∀ᵐ t : ℝ ∂(volume : Measure ℝ),
+      ∀ j : Fin 3, MemLp (fun x : Vec3 => Ubar (x, t) j)
+        (ENNReal.ofReal (10 / 3 : ℝ)) volume)
+    (hUbarPos : ∀ z : Vec3 × ℝ, 0 < z.2 → Ubar z = u (z.1, z.2))
+    (hJbarPos : ∀ z : Vec3 × ℝ, 0 < z.2 →
+      Jbar z = regUniformMollifiedVelocity ρ ε hε u (z.1, z.2))
+    (hUbarNeg : ∀ z : Vec3 × ℝ, z.2 ≤ 0 → Ubar z = 0)
+    (hJbarNeg : ∀ z : Vec3 × ℝ, z.2 ≤ 0 → Jbar z = 0) :
+    ∀ i : Fin 3, ∀ᵐ t : ℝ ∂(volume : Measure ℝ),
+      eLpNorm (fun x : Vec3 => Jbar (x, t) i)
+        (ENNReal.ofReal (10 / 3 : ℝ)) volume ≤
+          ∑ j : Fin 3, eLpNorm (fun x : Vec3 => Ubar (x, t) j)
+            (ENNReal.ofReal (10 / 3 : ℝ)) volume := by
+  intro i
+  filter_upwards [hUsliceMem] with t hUmem
+  by_cases ht : 0 < t
+  · have hUrawMem (j : Fin 3) :
+        MemLp (fun x : Vec3 => u (x, t) j)
+          (ENNReal.ofReal (10 / 3 : ℝ)) volume := by
+      apply (memLp_congr_ae ?_).2 (hUmem j)
+      filter_upwards [] with x
+      exact congrArg (fun v : Vec3 => v j) (hUbarPos (x, t) ht).symm
+    have hcontract := regMollifyVector_component_eLpNorm_le_sum
+      ρ ε hε (u := fun x : Vec3 => u (x, t))
+      (p := ENNReal.ofReal (10 / 3 : ℝ)) (by norm_num) (by norm_num)
+      (hSlice t ht.le) (fun j => hUrawMem j) i
+    have hJfun : (fun x : Vec3 => Jbar (x, t) i) =
+        fun x : Vec3 =>
+          (WithLp.ofLp (regMollifyVector ρ ε hε
+            (regUniformSpatialField (fun y : Vec3 => u (y, t)))
+            (WithLp.toLp 2 x))) i := by
+      have hsliceField : regUniformVelocitySlice u t =
+          regUniformSpatialField (fun y : Vec3 => u (y, t)) := by
+        funext x
+        rfl
+      funext x
+      have hpoint := hJbarPos (x, t) ht
+      rw [hpoint]
+      change regUniformMollifiedVelocity ρ ε hε u (x, t) i = _
+      rw [show regUniformMollifiedVelocity ρ ε hε u (x, t) =
+        WithLp.ofLp (regMollifyVector ρ ε hε
+          (regUniformVelocitySlice u t) (WithLp.toLp 2 x)) by rfl,
+        hsliceField]
+    have hUeq (j : Fin 3) : (fun x : Vec3 => Ubar (x, t) j) =
+        fun x : Vec3 => u ((x, t) : ParabolicPoint) j := by
+      funext x
+      exact congrArg (fun v : Vec3 => v j) (hUbarPos (x, t) ht)
+    calc
+      eLpNorm (fun x : Vec3 => Jbar (x, t) i)
+          (ENNReal.ofReal (10 / 3 : ℝ)) volume
+        = eLpNorm (fun x : Vec3 =>
+            (WithLp.ofLp (regMollifyVector ρ ε hε
+              (regUniformSpatialField (fun y : Vec3 => u (y, t)))
+              (WithLp.toLp 2 x))) i)
+            (ENNReal.ofReal (10 / 3 : ℝ)) volume :=
+              eLpNorm_congr_ae (Filter.Eventually.of_forall fun x => congrFun hJfun x)
+      _ ≤ ∑ j : Fin 3, eLpNorm (fun x : Vec3 => u (x, t) j)
+            (ENNReal.ofReal (10 / 3 : ℝ)) volume := by
+        simpa [show regUniformVelocitySlice u t =
+          regUniformSpatialField (fun y : Vec3 => u (y, t)) by
+            funext x; rfl] using hcontract
+      _ = ∑ j : Fin 3, eLpNorm (fun x : Vec3 => Ubar (x, t) j)
+            (ENNReal.ofReal (10 / 3 : ℝ)) volume := by
+        apply Finset.sum_congr rfl
+        intro j hj
+        exact (eLpNorm_congr_ae
+          (Filter.Eventually.of_forall fun x => congrFun (hUeq j).symm x))
+  · have htn : t ≤ 0 := le_of_not_gt ht
+    have hJzero (x : Vec3) : Jbar (x, t) i = 0 := by
+      rw [hJbarNeg (x, t) htn]
+      rfl
+    have hUzero (j : Fin 3) (x : Vec3) : Ubar (x, t) j = 0 := by
+      rw [hUbarNeg (x, t) htn]
+      rfl
+    simp [hJzero, hUzero]
+
+private theorem regEquicontinuity_slice_to_product_bound
+    (q : ℝ≥0∞) (r BU : ℝ)
+    (fU fJ : Fin 3 → ℝ → ℝ≥0∞)
+    (gJ : Fin 3 → Vec3 × ℝ → ℝ)
+    (hfJmeas : ∀ i, Measurable (fJ i))
+    (hJprodPow : ∀ i,
+      eLpNorm (gJ i) q volume ^ r = eLpNorm (fJ i) q volume ^ r)
+    (hJsliceBound : ∀ i, ∀ᵐ t : ℝ ∂(volume : Measure ℝ),
+      fJ i t ≤ ∑ j : Fin 3, fU j t)
+    (hUtimeNormBound : ∀ j, eLpNorm (fU j) q volume ≤ ENNReal.ofReal BU)
+    (hq : q = ENNReal.ofReal r) (hr : 0 < r) (hrone : 1 ≤ r) :
+    ∀ i, eLpNorm (gJ i) q volume ≤ ENNReal.ofReal (3 * BU) := by
+  intro i
+  have htimeBound : eLpNorm (fJ i) q volume ≤ ENNReal.ofReal (3 * BU) := by
+    calc
+      eLpNorm (fJ i) q volume ≤
+        eLpNorm (fun t : ℝ => ∑ j : Fin 3, fU j t) q volume := by
+        apply eLpNorm_mono_enorm_ae ((hfJmeas i).aestronglyMeasurable)
+        filter_upwards [hJsliceBound i] with t ht
+        simpa using ht
+      _ ≤ ∑ j : Fin 3, eLpNorm (fU j) q volume :=
+        eLpNorm_sum_le (p := q) (s := Finset.univ)
+          (f := fun j t => fU j t) (by
+            rw [hq]
+            simpa only [ENNReal.ofReal_one] using ENNReal.ofReal_le_ofReal hrone)
+      _ ≤ ∑ j : Fin 3, ENNReal.ofReal BU :=
+        Finset.sum_le_sum fun j hj => hUtimeNormBound j
+      _ = ENNReal.ofReal (3 * BU) := by
+        simp [Finset.sum_const]
+  apply (ENNReal.rpow_le_rpow_iff hr).1
+  calc
+    eLpNorm (gJ i) q volume ^ r = eLpNorm (fJ i) q volume ^ r := hJprodPow i
+    _ ≤ ENNReal.ofReal (3 * BU) ^ r :=
+      ENNReal.rpow_le_rpow htimeBound hr.le
+
 /-- Transfers a positive-time ten-thirds bound through spatial mollification. -/
 theorem regEquicontinuity_mollified_velocity_tenThirds_bound
     (ρ : RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
@@ -506,32 +560,14 @@ theorem regEquicontinuity_mollified_velocity_tenThirds_bound
   let Jbar : Vec3 × ℝ → Vec3 := S.piecewise J (fun _ => 0)
   let q : ℝ≥0∞ := ENNReal.ofReal (10 / 3 : ℝ)
   let r : ℝ := 10 / 3
-  have hSmeas : MeasurableSet S := by
-    exact MeasurableSet.prod MeasurableSet.univ measurableSet_Ioi
-  have hPositiveProduct : regUniformPositiveTimeMeasure =
-      (volume : Measure Vec3).prod (volume.restrict (Ioi (0 : ℝ))) := by
-    change ((volume : Measure Vec3).prod (volume : Measure ℝ)).restrict
-      (Set.univ ×ˢ Ioi (0 : ℝ)) = _
-    rw [← Measure.prod_restrict (μ := (volume : Measure Vec3))
-      (ν := (volume : Measure ℝ)) Set.univ (Ioi (0 : ℝ))]
-    simp [Measure.restrict_univ]
-  have hProductRestrict :
-      (volume : Measure (Vec3 × ℝ)).restrict S =
-        (volume : Measure Vec3).prod (volume.restrict (Ioi (0 : ℝ))) := by
-    rw [Measure.volume_eq_prod]
-    rw [← Measure.prod_restrict (μ := (volume : Measure Vec3))
-      (ν := (volume : Measure ℝ)) Set.univ (Ioi (0 : ℝ))]
-    simp [Measure.restrict_univ]
+  have hSmeas : MeasurableSet S := MeasurableSet.univ.prod measurableSet_Ioi
   have hPositiveTimeMeasure : regUniformPositiveTimeMeasure =
-      (volume : Measure (Vec3 × ℝ)).restrict S :=
-    hPositiveProduct.trans hProductRestrict.symm
+      (volume : Measure (Vec3 × ℝ)).restrict S := rfl
   have hUcont (i : Fin 3) :
       ContinuousOn (fun z : Vec3 × ℝ => u (z.1, z.2) i) S := by
     exact (hUc i).comp
       CKN.Foundation.Parabolic.continuous_prod_to_parabolicPoint.continuousOn
-      (by
-        intro z hz
-        exact hz)
+      (fun _ hz => hz)
   have hUbarCont : ContinuousOn (fun z : Vec3 × ℝ => u (z.1, z.2)) S := by
     apply continuousOn_pi.mpr
     intro i
@@ -592,15 +628,6 @@ theorem regEquicontinuity_mollified_velocity_tenThirds_bound
       by_cases hz : z ∈ S <;> simp [Ubar, Set.indicator, hz]
     rw [hcomp, eLpNorm_indicator_eq_eLpNorm_restrict hSmeas]
     exact hpos
-  have hUbarPos (z : Vec3 × ℝ) (hz : z ∈ S) :
-      Ubar z = u (z.1, z.2) := by
-    simp [Ubar, hz]
-  have hJbarPos (z : Vec3 × ℝ) (hz : z ∈ S) : Jbar z = J z := by
-    simp [Jbar, hz]
-  have hUbarNeg (z : Vec3 × ℝ) (hz : z ∉ S) : Ubar z = 0 := by
-    simp [Ubar, hz]
-  have hJbarNeg (z : Vec3 × ℝ) (hz : z ∉ S) : Jbar z = 0 := by
-    simp [Jbar, hz]
   have hUprodPow (j : Fin 3) :
       eLpNorm (fun z : Vec3 × ℝ => Ubar z j) q
         (volume : Measure (Vec3 × ℝ)) ^ r =
@@ -616,18 +643,10 @@ theorem regEquicontinuity_mollified_velocity_tenThirds_bound
       (10 / 3 : ℝ) (by norm_num)
       ((hJbarCompMeas i).aestronglyMeasurable)
   have hUtimeNormBound (j : Fin 3) :
-      eLpNorm (fU j) q volume ≤ ENNReal.ofReal BU := by
-    have hid := regEquicontinuity_eLpNormENNReal_pow_eq_lintegral r
-      (by norm_num : 0 < r)
-      ((hfUmeas j).aestronglyMeasurable)
-    have hpow : eLpNorm (fU j) q volume ^ r ≤ (ENNReal.ofReal BU) ^ r := by
-      calc
-        _ = ∫⁻ t : ℝ, fU j t ^ r ∂volume := hid
-        _ = eLpNorm (fun z : Vec3 × ℝ => Ubar z j) q volume ^ r :=
-          (hUprodPow j).symm
-        _ ≤ (ENNReal.ofReal BU) ^ r :=
-          ENNReal.rpow_le_rpow (hUbarBound j) (by norm_num)
-    exact (ENNReal.rpow_le_rpow_iff (by norm_num : 0 < r)).1 hpow
+    eLpNorm (fU j) q volume ≤ ENNReal.ofReal BU := by
+    exact regEquicontinuity_time_slice_norm_bound r (by norm_num) q
+      (ENNReal.ofReal BU) (f := fU j) (F := fun z => Ubar z j) (hfUmeas j)
+      (hUprodPow j) (hUbarBound j) rfl
   have hUsliceMem : ∀ᵐ t : ℝ ∂(volume : Measure ℝ),
       ∀ j : Fin 3, MemLp (fun x : Vec3 => Ubar (x, t) j) q volume := by
     have hfin (j : Fin 3) : ∀ᵐ t : ℝ ∂(volume : Measure ℝ), fU j t < ⊤ := by
@@ -648,97 +667,25 @@ theorem regEquicontinuity_mollified_velocity_tenThirds_bound
       fin_cases j <;> assumption
     rw [memLp_iff]
     simpa [fU, q] using htop
-  have hJsliceBound : ∀ i : Fin 3, ∀ᵐ t : ℝ ∂(volume : Measure ℝ),
-      fJ i t ≤ ∑ j : Fin 3, fU j t := by
-    intro i
-    filter_upwards [hUsliceMem] with t hUmem
-    by_cases ht : 0 < t
-    · have hUrawMem (j : Fin 3) :
-          MemLp (fun x : Vec3 => u (x, t) j) q volume := by
-        apply (memLp_congr_ae ?_).2 (hUmem j)
-        filter_upwards [] with x
-        exact congrArg (fun v : Vec3 => v j)
-          (hUbarPos (x, t) ⟨Set.mem_univ _, ht⟩).symm
-      have hcontract := regMollifyVector_component_eLpNorm_le_sum
-        ρ ε hε (u := fun x : Vec3 => u (x, t))
-        (p := q) (by norm_num [q]) (by norm_num [q]) (hSlice t ht.le)
-        hUrawMem i
-      have hJeq : (fun x : Vec3 => Jbar (x, t) i) =
-          fun x : Vec3 => J (x, t) i := by
-        funext x
-        exact congrArg (fun v : Vec3 => v i)
-          (hJbarPos (x, t) ⟨Set.mem_univ _, ht⟩)
-      have hUeq (j : Fin 3) : (fun x : Vec3 => Ubar (x, t) j) =
-          fun x : Vec3 => u ((x, t) : ParabolicPoint) j := by
-        funext x
-        exact congrArg (fun v : Vec3 => v j)
-          (hUbarPos (x, t) ⟨Set.mem_univ _, ht⟩)
-      calc
-        fJ i t = eLpNorm (fun x : Vec3 => J (x, t) i) q volume :=
-          eLpNorm_congr_ae (Filter.Eventually.of_forall fun x => congrFun hJeq x)
-        _ ≤ ∑ j : Fin 3, eLpNorm (fun x : Vec3 => u (x, t) j) q volume := by
-          have hJfun : (fun x : Vec3 => J (x, t) i) =
-              (fun x : Vec3 =>
-                (WithLp.ofLp (regMollifyVector ρ ε hε
-                  (regUniformSpatialField (fun y : Vec3 => u (y, t)))
-                  (WithLp.toLp 2 x))) i) := by
-            have hsliceField : regUniformVelocitySlice u t =
-                regUniformSpatialField (fun y : Vec3 => u (y, t)) := by
-              funext x
-              rfl
-            funext x
-            change (WithLp.ofLp (regMollifyVector ρ ε hε
-              (regUniformVelocitySlice u t) (WithLp.toLp 2 x))) i = _
-            rw [hsliceField]
-          rw [hJfun]
-          exact hcontract
-        _ = ∑ j : Fin 3, fU j t := by
-          apply Finset.sum_congr rfl
-          intro j hj
-          calc
-            eLpNorm (fun x : Vec3 => u (x, t) j) q volume =
-                eLpNorm (fun x : Vec3 => Ubar (x, t) j) q volume :=
-              eLpNorm_congr_ae
-                (Filter.Eventually.of_forall fun x => congrFun (hUeq j).symm x)
-            _ = fU j t := rfl
-    · have htn : t ≤ 0 := le_of_not_gt ht
-      have htS (x : Vec3) : (x, t) ∉ S := by
-        change ¬ (x ∈ Set.univ ∧ 0 < t)
-        simp [htn]
-      have hJzero (x : Vec3) : Jbar (x, t) i = 0 := by
-        apply congrArg (fun v : Vec3 => v i)
-        exact hJbarNeg (x, t) (htS x)
-      have hUzero (j : Fin 3) (x : Vec3) : Ubar (x, t) j = 0 := by
-        apply congrArg (fun v : Vec3 => v j)
-        exact hUbarNeg (x, t) (htS x)
-      simp [fJ, fU, hJzero, hUzero]
-  have hJtimeNormBound (i : Fin 3) :
-      eLpNorm (fJ i) q volume ≤ ENNReal.ofReal (3 * BU) := by
-    calc
-      eLpNorm (fJ i) q volume ≤
-          eLpNorm (fun t : ℝ => ∑ j : Fin 3, fU j t) q volume := by
-        apply eLpNorm_mono_enorm_ae ((hfJmeas i).aestronglyMeasurable)
-        filter_upwards [hJsliceBound i] with t ht
-        simpa using ht
-      _ ≤ ∑ j : Fin 3, eLpNorm (fU j) q volume :=
-        eLpNorm_sum_le (p := q) (s := Finset.univ)
-          (f := fun j t => fU j t) (by norm_num [q])
-      _ ≤ ∑ j : Fin 3, ENNReal.ofReal BU :=
-        Finset.sum_le_sum fun j hj => hUtimeNormBound j
-      _ = ENNReal.ofReal (3 * BU) := by
-        simp [Finset.sum_const]
+  have hJsliceBound := regEquicontinuity_mollified_slice_bound
+    ρ ε hε u Ubar Jbar hSlice hUsliceMem
+    (fun z ht => by simp [Ubar, S, ht])
+    (fun z ht => by
+      simp [Jbar, J, S, ht])
+    (fun z htn => by simp [Ubar, S, htn])
+    (fun z htn => by simp [Jbar, J, S, htn])
   have hJglobalBound (i : Fin 3) :
       eLpNorm (fun z : Vec3 × ℝ => Jbar z i) q volume ≤
         ENNReal.ofReal (3 * BU) := by
-    apply (ENNReal.rpow_le_rpow_iff (by norm_num : 0 < r)).1
-    calc
-      eLpNorm (fun z : Vec3 × ℝ => Jbar z i) q volume ^ r =
-          eLpNorm (fJ i) q volume ^ r := by
-            rw [hJprodPow i,
-              regEquicontinuity_eLpNormENNReal_pow_eq_lintegral r
-                (by norm_num : 0 < r) ((hfJmeas i).aestronglyMeasurable)]
-      _ ≤ ENNReal.ofReal (3 * BU) ^ r :=
-        ENNReal.rpow_le_rpow (hJtimeNormBound i) (by norm_num)
+    have hprod (j : Fin 3) :
+        eLpNorm (fun z : Vec3 × ℝ => Jbar z j) q volume ^ r =
+          eLpNorm (fJ j) q volume ^ r := by
+      rw [hJprodPow j,
+        regEquicontinuity_eLpNormENNReal_pow_eq_lintegral r
+          (by norm_num : 0 < r) ((hfJmeas j).aestronglyMeasurable)]
+    exact regEquicontinuity_slice_to_product_bound q r BU fU fJ
+      (fun j z => Jbar z j) (fun j => hfJmeas j) hprod hJsliceBound
+      hUtimeNormBound rfl (by norm_num) (by norm_num) i
   have hthreeBU : ENNReal.ofReal (3 * BU) = 3 * ENNReal.ofReal BU := by
     rw [show (3 : ℝ) * BU = BU * 3 by ring]
     rw [ENNReal.ofReal_mul hBU]
