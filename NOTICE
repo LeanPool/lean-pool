@@ -69,6 +69,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/ConwayRefinement          https://github.com/gaearon/conway-refinement
   LeanPool/CramerWold                https://github.com/Lemmy00/lean-pool
   LeanPool/CriticalPortraits         https://github.com/no-way-labs/lean-critical-portraits
+  LeanPool/DavisKahan                https://github.com/aiq-kitware/aiq-davis-kahan-1970-rotation-eigenvectgors-perturbation-formalization
   LeanPool/DemazureOperatorsLean     https://github.com/bolito2/DemazureOperatorsLean
   LeanPool/DemazureProduct           https://github.com/npflueger/demazure
   LeanPool/DensityHalesJewett        https://github.com/gdahia/densityhalesjewett
