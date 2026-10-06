@@ -331,19 +331,19 @@ lemma measure_ext_of_bounded {m₁ m₂ : Measure (EuclideanSpace ℝ (Fin n))}
   exact iSup_congr fun k ↦ h _ (hB.inter measurableSet_closedBall)
     (Metric.isBounded_closedBall.subset inter_subset_right)
 
-/-- A measure specified as `φ μ` on measurable sets is `μ.withDensity φ`. -/
+/-- A measure specified as `φ μ` on bounded measurable sets is `μ.withDensity φ`. -/
 lemma measure_eq_withDensity
     (μ L : Measure (EuclideanSpace ℝ (Fin n)))
     (φ : EuclideanSpace ℝ (Fin n) → ℝ) (hφ_nonneg : ∀ x, 0 ≤ φ x)
     (hφ_loc : LocallyIntegrable φ μ)
-    (hL_eq : ∀ B : Set (EuclideanSpace ℝ (Fin n)), MeasurableSet B →
+    (hL_eq : ∀ B : Set (EuclideanSpace ℝ (Fin n)), MeasurableSet B → Bornology.IsBounded B →
       L B = ENNReal.ofReal (∫ x in B, φ x ∂μ)) :
     L = μ.withDensity (fun x ↦ ENNReal.ofReal (φ x)) := by
   refine measure_ext_of_bounded fun B hB hBb ↦ ?_
   obtain ⟨R, hR⟩ := hBb.subset_closedBall (0 : EuclideanSpace ℝ (Fin n))
   have hint : IntegrableOn φ B μ :=
     (hφ_loc.integrableOn_isCompact (isCompact_closedBall 0 R)).mono_set hR
-  rw [hL_eq B hB, withDensity_apply _ hB,
+  rw [hL_eq B hB hBb, withDensity_apply _ hB,
     ofReal_integral_eq_lintegral_ofReal hint (Eventually.of_forall hφ_nonneg)]
 
 /-- Lebesgue differentiation theorem for a Radon measure on Euclidean space. -/
@@ -503,7 +503,7 @@ least `φ a / 2` times the `μ`-measure of that ball. -/
 lemma eventually_ofReal_mul_measure_closedBall_le
     (μ L : Measure (EuclideanSpace ℝ (Fin n))) (hμ : μ.Regular)
     (φ : EuclideanSpace ℝ (Fin n) → ℝ) (hφ_loc : LocallyIntegrable φ μ)
-    (hL_eq : ∀ B : Set (EuclideanSpace ℝ (Fin n)), MeasurableSet B →
+    (hL_eq : ∀ B : Set (EuclideanSpace ℝ (Fin n)), MeasurableSet B → Bornology.IsBounded B →
       L B = ENNReal.ofReal (∫ x in B, φ x ∂μ))
     (a : EuclideanSpace ℝ (Fin n)) (ha : a ∈ μ.support) (hφa : 0 < φ a)
     (hleb : Tendsto (fun s : ℝ ↦ ⨍ y in closedBall a s, ‖φ y - φ a‖ ∂μ)
@@ -550,7 +550,7 @@ lemma eventually_ofReal_mul_measure_closedBall_le
         - (φ a / 2) * (μ (closedBall a s)).toReal
         = (φ a / 2) * (μ (closedBall a s)).toReal := by ring
     linarith [h1, h3, harith]
-  rw [hL_eq _ measurableSet_closedBall]
+  rw [hL_eq _ measurableSet_closedBall Metric.isBounded_closedBall]
   calc ENNReal.ofReal (φ a / 2) * μ (closedBall a s)
       = ENNReal.ofReal ((φ a / 2) * (μ (closedBall a s)).toReal) := by
         rw [ENNReal.ofReal_mul (by positivity), ENNReal.ofReal_toReal hmfin.ne]
@@ -596,7 +596,7 @@ lemma isTangentMeasure_iff_of_lebesgue_point
     (μ L : Measure (EuclideanSpace ℝ (Fin n))) (hμ : μ.Regular) (hL : L.Regular)
     (φ : EuclideanSpace ℝ (Fin n) → ℝ) (hφ_meas : Measurable φ)
     (hφ_nonneg : ∀ x, 0 ≤ φ x) (hφ_loc : LocallyIntegrable φ μ)
-    (hL_eq : ∀ B : Set (EuclideanSpace ℝ (Fin n)), MeasurableSet B →
+    (hL_eq : ∀ B : Set (EuclideanSpace ℝ (Fin n)), MeasurableSet B → Bornology.IsBounded B →
       L B = ENNReal.ofReal (∫ x in B, φ x ∂μ))
     (hLm : L = μ.withDensity (fun x ↦ ENNReal.ofReal (φ x)))
     (a : EuclideanSpace ℝ (Fin n)) (hφa : 0 < φ a) (ha : a ∈ μ.support)
@@ -681,6 +681,7 @@ theorem isTangentMeasure_iff_ae_of_density
     (hμ : μ.Regular) («hλ» : «λ».Regular) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (hφ_nonneg : ∀ x, 0 ≤ φ x) (hφ_loc : LocallyIntegrable φ μ)
     («hλ_eq» : ∀ B : Set (EuclideanSpace ℝ (Fin n)), MeasurableSet B →
+      Bornology.IsBounded B →
       «λ» B = ENNReal.ofReal (∫ x in B, φ x ∂μ)) :
     ∀ᵐ a ∂«λ», ∀ ν : Measure (EuclideanSpace ℝ (Fin n)),
       IsTangentMeasure μ ν a ↔ IsTangentMeasure «λ» ν a := by
@@ -696,10 +697,10 @@ theorem isTangentMeasure_iff_ae_of_density
     rw [← hx, max_eq_left (hφ_nonneg x)]
   have hg_loc : LocallyIntegrable g μ := fun x ↦
     let ⟨s, hs, hi⟩ := hφ_loc x; ⟨s, hs, hi.congr (ae_restrict_of_ae hgφ)⟩
-  have hg_eq : ∀ B : Set (EuclideanSpace ℝ (Fin n)), MeasurableSet B →
+  have hg_eq : ∀ B : Set (EuclideanSpace ℝ (Fin n)), MeasurableSet B → Bornology.IsBounded B →
       «λ» B = ENNReal.ofReal (∫ x in B, g x ∂μ) := by
-    intro B hB
-    rw [«hλ_eq» B hB]
+    intro B hB hBb
+    rw [«hλ_eq» B hB hBb]
     congr 1
     exact integral_congr_ae (ae_restrict_of_ae hgφ)
   have hLm : «λ» = μ.withDensity (fun x ↦ ENNReal.ofReal (g x)) :=
