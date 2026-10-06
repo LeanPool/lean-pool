@@ -41,7 +41,9 @@ theorem mem_unitCylinder_meridional (x₃ : ℝ) (hx : |x₃| < 1) (t : ℝ)
   refine ⟨?_, ht⟩
   rw [mem_vec3Ball, sub_zero]
   unfold vec3EuclideanNorm
-  simp only [meridional, Fin.sum_univ_three]
+  simp only [meridional, Fin.sum_univ_three, Fin.isValue, Matrix.cons_val_zero, ne_eq,
+    OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, Matrix.cons_val_one, add_zero,
+    Matrix.cons_val, zero_add]
   have hsq : x₃ ^ 2 < 1 := by
     have habs := abs_lt.mp hx
     nlinarith only [habs.1, habs.2]
@@ -77,7 +79,9 @@ theorem meridional_scale_mem_vec3Ball {x₁ x₃ s : ℝ} (hx : x₁ ^ 2 + x₃ 
     (hs : |s| ≤ 1) : meridional (s * x₁) x₃ ∈ vec3Ball (0 : Vec3) 1 := by
   rw [mem_vec3Ball, sub_zero]
   unfold vec3EuclideanNorm
-  simp only [meridional, Fin.sum_univ_three]
+  simp only [meridional, Fin.sum_univ_three, Fin.isValue, Matrix.cons_val_zero,
+    Matrix.cons_val_one, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero,
+    Matrix.cons_val]
   have hb := abs_le.mp hs
   have hs2 : s ^ 2 ≤ 1 := by
     nlinarith only [mul_nonneg (by linarith only [hb.1] : (0 : ℝ) ≤ s + 1)

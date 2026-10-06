@@ -27,7 +27,7 @@ public import LeanPool.CIVAxisymmetric.Reduction.ExteriorNonanalyticUnconditiona
 Source: arxiv:2609.20803, url:https://github.com/scottnarmstrong/CIVAxisymmetric/tree/9f539dc7bf7ddd414d3ef81df539e1bef229f681
 Authors: Scott Armstrong, Vlad Vicol
 Status: verified
-Main declarations: `CIV.mainTheorem`, `CIV.axisymmetricTheorem`, `CIV.meridionalSmallness`, `CIV.interiorAnalyticity`, `CIV.forceUnderCore`
+Main declarations: `CIV.mainTheorem`, `CIV.axisymmetricTheorem`
 Tags: Navier–Stokes, axisymmetry, partial differential equations, regularity
 MSC: 35Q30, 35B65, 35B33
 -/

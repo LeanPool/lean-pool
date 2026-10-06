@@ -14,9 +14,11 @@ public import LeanPool.CIVAxisymmetric.Zoom.LiftedWeakForm
 /-!
 # The lifted finite-axis equation off the axis
 
-Off the axis `X = 0`, the lifted potential vorticity `Ω_tilde_n = Ω_n ∘ L` of `eq:aniso:zoom:lifted`,
+Off the axis `X = 0`, the lifted potential vorticity `Ω_tilde_n = Ω_n ∘ L` of
+`eq:aniso:zoom:lifted`,
 with `L(X, Z, τ) = (|X|, Z, τ)`, is smooth and satisfies pointwise
-`∂_τ Ω_tilde_n + B_n · ∇Ω_tilde_n = Δ_X Ω_tilde_n + δ_n² ∂_ZZ Ω_tilde_n + ∂_Z F_tilde_n + G_tilde_n`, where `B_n` is the drift of
+`∂_τ Ω_tilde_n + B_n · ∇Ω_tilde_n = Δ_X Ω_tilde_n + δ_n² ∂_ZZ Ω_tilde_n + ∂_Z F_tilde_n +
+G_tilde_n`, where `B_n` is the drift of
 `eq:drift:Bn:def`, `F_n = S_n² / R²` is the swirl flux and `G_n` the force term of
 `eq:aniso:zoom:finite:equation` (`finLift_pde`); the divergence of `B_n` there is
 `2 V_n / R = finDriftDiv` (`finLift_div`). This is the lift to `ℝ⁴`: the radial operator
@@ -308,7 +310,8 @@ theorem finLift_pde {lam h zc : ℝ} (hlam : 0 < lam) {u : ParabolicPoint → Ve
 
 /-- The residual identity off the axis: against a test function supported in a compact subset of
 the off-axis lifted domain, the pairing of `Ω_tilde_n` with the adjoint operator of
-`eq:aniso:zoom:finite:limit` equals `δ_n² ∫ Ω_tilde_n ∂_ZZ ψ - ∫ F_tilde_n ∂_Z ψ + ∫ G_tilde_n ψ`. -/
+`eq:aniso:zoom:finite:limit` equals `δ_n² ∫ Ω_tilde_n ∂_ZZ ψ - ∫ F_tilde_n ∂_Z ψ + ∫ G_tilde_n
+ψ`. -/
 theorem integral_finResidual_eq_of_subset_finLiftDomain {lam h zc : ℝ} (hlam : 0 < lam)
     {u : ParabolicPoint → Vec3} {pr : ParabolicPoint → ℝ} {f : ParabolicPoint → Vec3}
     (hsol : IsClassicalSolutionOn u pr f unitCylinder) (haxi : IsAxisymmetricOn u unitCylinder)

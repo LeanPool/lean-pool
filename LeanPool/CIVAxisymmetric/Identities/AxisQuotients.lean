@@ -174,7 +174,8 @@ theorem abs_radialQuotient_le_of_segment_bound (u : ParabolicPoint → Vec3) (t 
 
 /-! ### Second partial derivatives along the meridional segment -/
 
-private lemma sq_le_of_mem_uIcc_zero {x₁ s : ℝ} (hs : s ∈ Set.uIcc (0 : ℝ) x₁) : s ^ 2 ≤ x₁ ^ 2 := by
+private lemma sq_le_of_mem_uIcc_zero {x₁ s : ℝ} (hs : s ∈ Set.uIcc (0 : ℝ) x₁) :
+    s ^ 2 ≤ x₁ ^ 2 := by
   rcases le_total (0 : ℝ) x₁ with h | h
   · rw [Set.uIcc_of_le h] at hs
     nlinarith only [hs.1, hs.2]
@@ -186,7 +187,9 @@ private lemma meridional_shift_mem_vec3Ball {x₁ x₃ s : ℝ} (hx : x₁ ^ 2 +
   have hs2 := sq_le_of_mem_uIcc_zero hs
   rw [mem_vec3Ball, sub_zero]
   unfold vec3EuclideanNorm
-  simp only [meridional, Fin.sum_univ_three]
+  simp only [meridional, Fin.sum_univ_three, Fin.isValue, Matrix.cons_val_zero,
+    Matrix.cons_val_one, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, add_zero,
+    Matrix.cons_val]
   have hpos : (0 : ℝ) ≤ s ^ 2 + x₃ ^ 2 := by positivity
   rw [Real.sqrt_lt hpos (by norm_num)]
   nlinarith only [hs2, hx]

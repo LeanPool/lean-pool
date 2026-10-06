@@ -39,7 +39,8 @@ every smaller annulus `{Rm' < |x| < Rp'} × (t₀', 0)`, uniformly up to the blo
 
 The bound `K` is produced after all the data, so no uniformity is asserted: the manuscript's
 constants "depend only on the subset, on `M_f`, on `sup |u|` over the cylindrical annulus, and
-on `‖∇u‖_{L²(Q)}`" (proof of `lem:aniso:annulus`), and the consumers fix the annulus before every other parameter.
+on `‖∇u‖_{L²(Q)}`" (proof of `lem:aniso:annulus`), and the consumers fix the annulus before
+every other parameter.
 The `L²(Q)` gradient norm and the pressure up to `t = 0` come from `henergy`, not from `hsol`,
 whose integrability clauses only see boxes compactly contained in `Q` (design note R6).
 The shrinking of the time interval is the manuscript's own `t₀ ↦ t₀ + ϱ²`.
@@ -47,7 +48,8 @@ The shrinking of the time interval is the manuscript's own `t₀ ↦ t₀ + ϱ²
 This statement bundles Serrin's printed estimates with the manuscript's argument that
 they are uniform up to `t = 0`, because his representation formulas are one-sided in time.
 The force is the manuscript's own `f`: the correction of `foot:aniso:pressure` is not used here
-("the derivative estimates ... are written with `f` itself", footnote `foot:aniso:pressure`). The proof uses fewer inputs
+("the derivative estimates ... are written with `f` itself", footnote `foot:aniso:pressure`).
+The proof uses fewer inputs
 than listed here; see deviation D13 in `docs/DEVIATIONS.md`. -/
 theorem serrinInteriorEstimates (q : ℝ)
     (u : ParabolicPoint → Vec3) (Du : ParabolicPoint → Fin 3 → Vec3)

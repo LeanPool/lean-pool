@@ -227,7 +227,6 @@ private theorem spatialDeriv_eq_neg_integral_split {h : Vec3 → ℝ}
       norm_num
       exact hρ
     refine Filter.eventuallyEq_of_mem (hopen.mem_nhds hx) (fun y hy => ?_)
-    change χ y * h y = h y
     rw [hχdef, (serrinBallCutoff_support x hρ y).1 (le_of_lt hy), one_mul]
   have hcentre : spatialDeriv (fun y => χ y * h y) l x = spatialDeriv h l x := by
     simp only [spatialDeriv, hloc.fderiv_eq]
@@ -337,8 +336,13 @@ private theorem multiPartialVec3_single_two (k : Vec3 → ℝ) (a : Fin 3) :
 
 private theorem multiPartialVec3_pair {k : Vec3 → ℝ} (hk : ContDiff ℝ (⊤ : ℕ∞) k) (a b : Fin 3) :
     multiPartialVec3 k (Pi.single a 1 + Pi.single b 1) = spatialDeriv (spatialDeriv k b) a := by
-  fin_cases a <;> fin_cases b <;> simp [multiPartialVec3] <;>
-    exact funext fun y => mixedSecond_swap hk _ _ y
+  fin_cases a <;> fin_cases b
+  all_goals
+    simp only [multiPartialVec3, Fin.isValue, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk,
+      Pi.add_apply, Pi.single_eq_same, Nat.reduceAdd, ne_eq, one_ne_zero, zero_ne_one,
+      not_false_eq_true, Pi.single_eq_of_ne, add_zero, zero_add, Fin.reduceEq,
+      Function.iterate_zero, id_eq, Function.iterate_succ, Function.comp_apply]
+  all_goals exact funext fun y => mixedSecond_swap hk _ _ y
 
 private theorem order_single_one (a : Fin 3) :
     (Pi.single a 1 : Fin 3 → ℕ) 0 + (Pi.single a 1 : Fin 3 → ℕ) 1 +

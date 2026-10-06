@@ -13391,9 +13391,6 @@ projects:
     main_declarations:
       - CIV.mainTheorem
       - CIV.axisymmetricTheorem
-      - CIV.meridionalSmallness
-      - CIV.interiorAnalyticity
-      - CIV.forceUnderCore
     main_results:
       - declaration: CIV.mainTheorem
         informal: >-
@@ -13418,9 +13415,12 @@ projects:
           are locally uniformly spatially analytic in the interior.
       - declaration: CIV.forceUnderCore
         informal: >-
-          Under the angular-mean bounds and axisymmetric-core hypotheses,
-          singularity at the origin rules out spatially analytic forcing
-          and forcing that vanishes near the singular point.
+          For a smooth suitable weak solution with globally finite energy,
+          bounded C^2 forcing, angular-mean anisotropic bounds, and an
+          axisymmetric core at every time, failure of boundedness near the
+          origin implies that the force is not spatially analytic, is nonzero
+          somewhere in the unit cylinder, and has a nonzero point in every
+          smaller terminal cylinder.
     tags:
       - Navier–Stokes
       - axisymmetry

@@ -124,7 +124,7 @@ theorem component_mem_spaceTimeTestFunction {φ : Vec3 × ℝ → Vec3}
     (fun w => φ w i) ∈ spaceTimeTestFunction (V := ℝ) (vec3Ball 0 1) (Ioo (-1) 0) := by
   obtain ⟨hs, hc, hsupp⟩ := hφ
   refine ⟨contDiff_pi.1 hs i, hc.comp_left (g := fun v : Vec3 => v i) rfl, ?_⟩
-  refine (tsupport_component_subset (V := Vec3) (ι := Fin 3) φ i ?_).trans hsupp
+  refine (tsupport_component_subset (ι := Fin 3) φ i ?_).trans hsupp
   intro z hz
   rw [hz]
   rfl
@@ -281,7 +281,7 @@ theorem isSuitableWeakSolutionIntegrable_of_pressureGauge {q : ℝ} {u : Parabol
     obtain ⟨hOldInt, hOldZero⟩ := hmom φ hφ
     obtain ⟨hXint, hXzero⟩ := integral_pressureGauge_momentum_eq_zero hp hf hp' hf' hgrad hφ
     have hcompsupp : ∀ i : Fin 3, tsupport (fun w => φ w i) ⊆ tsupport φ := fun i =>
-      tsupport_component_subset (V := Vec3) (ι := Fin 3) φ i (fun z hz => by rw [hz]; rfl)
+      tsupport_component_subset (ι := Fin 3) φ i (fun z hz => by rw [hz]; rfl)
     have hoff : ∀ z : Vec3 × ℝ, z ∉ tsupport φ →
         (∀ i : Fin 3, timePartial (fun w => φ w i) z = 0) ∧
         (∀ i j : Fin 3, spatialPartial (fun w => φ w i) j z = 0) ∧ (∀ i : Fin 3, φ z i = 0) := by

@@ -244,7 +244,8 @@ theorem abs_integral_kernelCutoffTerm_mul_le (l : Fin 3) {β : Fin 3 → ℕ}
           vec3EuclideanNorm (y - x) ≤ ρ} :=
         norm_setIntegral_le_of_norm_le_const hmeas hbound
     _ ≤ B * (ρ ^ 3 * V0) := by
-        apply mul_le_mul_of_nonneg_left (volume_real_cutoffAnnulus_le x hρ0) (by rw [hBdef];
+        apply mul_le_mul_of_nonneg_left (volume_real_cutoffAnnulus_le x hρ0) (by
+          rw [hBdef]
           positivity)
     _ = ck * cc * 2 ^ (2 + (β 0 + β 1 + β 2)) * V0 * M * ρ / ρ ^ n := by
         rw [hBdef, hndef]; field_simp; ring
@@ -717,7 +718,8 @@ private theorem abs_integral_kernelCutoffTerm_mul_le_uniform
           vec3EuclideanNorm (y - x) ≤ ρ} :=
         norm_setIntegral_le_of_norm_le_const hmeas hbound
     _ ≤ B * (ρ ^ 3 * V0) := by
-        apply mul_le_mul_of_nonneg_left (volume_real_cutoffAnnulus_le x hρ0) (by rw [hBdef];
+        apply mul_le_mul_of_nonneg_left (volume_real_cutoffAnnulus_le x hρ0) (by
+          rw [hBdef]
           positivity)
     _ = max Ck 0 * max Ccut 0 * 2 ^ (2 + (β 0 + β 1 + β 2)) * V0 * M * ρ / ρ ^ n := by
         rw [hBdef, hndef, hckdef, hccdef]; field_simp; ring

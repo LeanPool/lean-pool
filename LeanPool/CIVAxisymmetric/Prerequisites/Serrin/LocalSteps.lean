@@ -176,8 +176,8 @@ theorem abs_spatialPartial_serrinForceFlux_le {f : ParabolicPoint → Vec3} {z :
   unfold serrinForceFlux
   split_ifs
   · exact hB _ _
-  · have e : spatialPartial (fun w => -f w (i + 1)) j z = -spatialPartial (fun w => f w (i + 1))
-    j z := by
+  · have e : spatialPartial (fun w => -f w (i + 1)) j z =
+        -spatialPartial (fun w => f w (i + 1)) j z := by
       unfold spatialPartial
       rw [fderiv_fun_neg]
       rfl

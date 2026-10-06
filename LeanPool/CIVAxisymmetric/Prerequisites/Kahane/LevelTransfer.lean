@@ -62,7 +62,7 @@ private theorem sum_choose_weight_products (k : ℕ) (A : ℕ → ℝ) (Y κ : �
   congr 1
   refine Finset.sum_congr rfl fun m hm => ?_
   obtain ⟨hm1, hmk⟩ := Finset.mem_Icc.1 hm
-  simp only [hcdef, ↓reduceIte, hmk, (show k + 1 - m ≤ k by omega)]
+  simp only [↓reduceIte, hmk, (show k + 1 - m ≤ k by omega)]
   have hpw : κ ^ m * κ ^ (k + 1 - m) = κ ^ (k + 1) := by
     rw [← pow_add]; congr 1; omega
   linear_combination (↑(k.choose m) * A m * A (k + 1 - m)) * hpw

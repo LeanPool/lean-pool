@@ -18,7 +18,8 @@ public import LeanPool.CIVAxisymmetric.Reduction.AveragedForceBound
 
 For an axisymmetric suitable weak solution on `Q`, smooth there, averaging the momentum
 equation over the rotations about the axis leaves the velocity terms unchanged and replaces the
-pressure and the force by their angular means `π_bar` and `f_bar = 𝒫 f` (proof of `thm:main`). The pair
+pressure and the force by their angular means `π_bar` and `f_bar = 𝒫 f` (proof of `thm:main`).
+The pair
 `(u, π_bar)` is again suitable with the axisymmetric force `f_bar`: the classical equations give
 `∇π_bar - ∇π = f_bar - f` on `Q`, so this is a smooth change of gauge. The closure lemma
 `lem:aniso:closure` applied to the averaged triple then gives regularity at the origin from the

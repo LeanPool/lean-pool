@@ -204,7 +204,13 @@ theorem isOpen_unitCylinder_prod : IsOpen (X := Vec3 × ℝ) unitCylinder :=
 theorem contDiff_rotZ_uncurry (n : WithTop ℕ∞) :
     ContDiff ℝ n fun p : ℝ × Vec3 => rotZ p.1 p.2 := by
   refine contDiff_pi.2 fun i => ?_
-  fin_cases i <;> simp only [rotZ] <;> fun_prop
+  fin_cases i
+  · simp only [Fin.zero_eta, Fin.isValue, rotZ_apply_zero]
+    fun_prop
+  · simp only [Fin.mk_one, Fin.isValue, rotZ_apply_one]
+    fun_prop
+  · simp only [Fin.reduceFinMk, rotZ_apply_two, Fin.isValue]
+    fun_prop
 
 /-- The rotated field `(φ, z) ↦ (ℛ_φ u)(z)` is jointly `C^n` on `ℝ × Q` when `u` is `C^n`
 on `Q`. -/

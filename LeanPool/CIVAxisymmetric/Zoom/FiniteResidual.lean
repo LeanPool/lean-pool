@@ -14,7 +14,8 @@ public import LeanPool.CIVAxisymmetric.Zoom.FiniteAxisCutoff
 `tendsto_finResidual` is the input of the finite branch to the limit equation
 `eq:aniso:zoom:finite:limit` at `(m, d) = (5, 4)` (the lift to `ℝ⁴` together with the
 vanishing terms of the passage to the limit, deviation D17): against a test function `φ` on
-`ℝ⁴ × ℝ × (-∞, -1)`, the pairing of the lifted potential vorticity `Ω_tilde_n` with the adjoint limit
+`ℝ⁴ × ℝ × (-∞, -1)`, the pairing of the lifted potential vorticity `Ω_tilde_n` with the adjoint
+limit
 operator `-∂_τ φ - B_n · ∇φ - (div B_n) φ - Δ_X φ` tends to zero.
 
 The test function is split with the axis cutoff `finAxisCutoff ε` as `φ = φ χ_ε + φ (1 - χ_ε)`.
@@ -23,8 +24,10 @@ The test function is split with the axis cutoff `finAxisCutoff ε` as `φ = φ �
   the derivatives of `φ χ_ε` of order at most two are `O(ε⁻²)`, and the support has volume
   `O(ε⁴)`: this part is `O(ε²)` uniformly in `n` (`abs_integral_residual_nearAxis_le`).
 * Off the axis, the lifted equation holds classically and the integration by parts of
-  `integral_finResidual_eq_of_subset_finLiftDomain` leaves `δ_n² ∫ Ω_tilde_n ∂_ZZ ψ - ∫ F_tilde_n ∂_Z ψ
-  + ∫ G_tilde_n ψ`. Here `|Ω_tilde_n| ≤ 2C`, the swirl flux obeys `F_n = S_n² / R² ≤ C_Γ² δ_n² / ε⁴` by
+  `integral_finResidual_eq_of_subset_finLiftDomain` leaves `δ_n² ∫ Ω_tilde_n ∂_ZZ ψ - ∫
+  F_tilde_n ∂_Z ψ
+  + ∫ G_tilde_n ψ`. Here `|Ω_tilde_n| ≤ 2C`, the swirl flux obeys `F_n = S_n² / R² ≤ C_Γ² δ_n² /
+  ε⁴` by
   `eq:aniso:zoom:circulation`, and `|G_n| ≤ C λ_n⁵ δ_n`; all three tend to zero with `λ_n`
   (`tendsto_integral_residual_offAxis`).
 -/
