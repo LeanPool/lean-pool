@@ -54,7 +54,11 @@ def pool_units(root: Path) -> list[list[str]]:
 
 
 def _module_sources(
-    root: Path, module: str, imported_sources: dict[str, Path | None]
+    root: Path,
+    module: str,
+    imported_sources: dict[str, Path | None],
+    *,
+    discovered_sources: set[Path] | None = None,
 ) -> set[Path]:
     setup = root / (".lake/build/ir/" + module.replace(".", "/") + ".setup.json")
     inventory = json.loads(setup.read_text())
@@ -68,6 +72,9 @@ def _module_sources(
         path = imported_sources[imported]
         if path is not None:
             paths.add(path)
+            # Keep discoveries even if a later import makes this inventory fail.
+            if discovered_sources is not None:
+                discovered_sources.add(path)
         elif imported.split(".")[0] == "LeanPool":
             raise ValueError(f"missing imported source: {imported}")
     return paths
@@ -87,7 +94,9 @@ def source_inventory(
     try:
         for module in modules:
             if module not in inventories:
-                inventories[module] = _module_sources(root, module, imported_sources)
+                inventories[module] = _module_sources(
+                    root, module, imported_sources, discovered_sources=paths
+                )
             paths.update(inventories[module])
     except (OSError, ValueError, KeyError, TypeError):
         LOGGER.warning(

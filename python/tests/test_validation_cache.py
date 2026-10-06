@@ -263,3 +263,27 @@ def test_missing_pool_import_falls_back_after_memoized_lookup(repository: Path) 
     _run(repository)
     (repository / "LeanPool/B.lean").write_text("-- unrelated edit\n")
     assert len(_run(repository)[1]) == 3
+
+
+@pytest.mark.parametrize("kind", ("lint", "axioms", "backdoors", "declarations"))
+def test_inventory_fallback_preserves_discovered_external_dependencies(
+    repository: Path, kind: str
+) -> None:
+    """An inventory error cannot hide a local dependency discovered before it."""
+    source = repository / "Aux/Support.lean"
+    source.parent.mkdir()
+    source.write_text("def support := 1\n")
+    _inventory(repository, "LeanPool.A.Detail", ("Aux.Support", "LeanPool.Missing"))
+    directory = repository / ".lake/validation-cache/v1"
+    modules = ["LeanPool.A", "LeanPool.A.Detail"]
+    cache = ValidationCache(repository, directory)
+    assert cache.check(kind, modules, lambda: []) == []
+    cache.save()
+    cache = ValidationCache(repository, directory)
+    assert cache.check(kind, modules, lambda: ["unexpected recheck"]) == []
+    cache.save()
+    source.write_text("def support := 2\n")
+    cache = ValidationCache(repository, directory)
+    assert cache.check(kind, modules, lambda: ["changed dependency"]) == [
+        "changed dependency"
+    ]
