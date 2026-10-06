@@ -23,9 +23,11 @@ noncomputable section
 
 namespace CIV
 
+/-- The closed square of half-width `j + 1` used to exhaust the meridional plane. -/
 @[expose] def planeBox (j : ℕ) : Set (ℝ × ℝ) :=
   Icc (-((j : ℝ) + 1)) ((j : ℝ) + 1) ×ˢ Icc (-((j : ℝ) + 1)) ((j : ℝ) + 1)
 
+/-- The compact interval from `-(j + 1)` to `-1` used to exhaust ancient times. -/
 @[expose] def planeTimeInterval (j : ℕ) : Set ℝ := Icc (-((j : ℝ) + 1)) (-1)
 
 theorem isCompact_planeBox (j : ℕ) : IsCompact (planeBox j) :=

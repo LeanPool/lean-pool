@@ -72,7 +72,7 @@ theorem continuous_section_of_continuousOn {E : Type} [TopologicalSpace E]
 
 /-- Continuity of a parametric integral over `Ioc a b` with an integrand jointly continuous on
 `ℝ × s`. -/
-theorem continuousAt_parametric_integral_Ioc [NormedSpace ℝ H] [ProperSpace H] {E : Type}
+theorem continuousAt_parametric_integral_Ioc [ProperSpace H] {E : Type}
     [NormedAddCommGroup E] [NormedSpace ℝ E] (hs : IsOpen s) (hx₀ : x₀ ∈ s) {G : ℝ × H → E}
     (hG : ContinuousOn G (univ ×ˢ s)) (a b : ℝ) :
     ContinuousAt (fun x => ∫ t in Ioc a b, G (t, x)) x₀ := by

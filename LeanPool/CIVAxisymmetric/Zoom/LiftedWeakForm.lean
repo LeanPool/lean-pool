@@ -126,7 +126,7 @@ theorem integrable_of_continuousOn_of_forall_notMem {E : Type*} [NormedAddCommGr
 
 /-- One integration by parts, as a pair of integrable terms with vanishing total integral. -/
 theorem integrable_and_integral_ibpPair_eq_zero {E : Type} [NormedAddCommGroup E]
-    [NormedSpace ℝ E] [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
+    [NormedSpace ℝ E] [MeasurableSpace E] [BorelSpace E]
     [FiniteDimensional ℝ E] {μ : Measure E} [μ.IsAddHaarMeasure] {S K : Set E}
     (hS : IsOpen S) (hK : IsCompact K) (hKS : K ⊆ S) {h χ : E → ℝ}
     (hh : ContDiffOn ℝ (⊤ : ℕ∞) h S) (hχ : ContDiff ℝ (⊤ : ℕ∞) χ) (hχc : HasCompactSupport χ)

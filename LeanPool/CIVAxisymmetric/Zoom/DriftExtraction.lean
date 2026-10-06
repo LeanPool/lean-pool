@@ -91,7 +91,7 @@ theorem exists_subseq_forall_tendstoUniformlyOn_of_modulus_finset {X : Type*} [M
 /-- Uniform convergence of every coordinate of a finite-dimensional vector-valued sequence,
 with a shared subsequence and a shared set, glues into joint uniform convergence in the
 (sup-metric) product `ι → ℝ`. -/
-theorem tendstoUniformlyOn_pi_of_forall {X ι : Type*} [Finite ι] [Nonempty ι] {S : Set X}
+theorem tendstoUniformlyOn_pi_of_forall {X ι : Type*} [Finite ι] {S : Set X}
     {F : ℕ → X → ι → ℝ} {g : X → ι → ℝ}
     (h : ∀ i : ι, TendstoUniformlyOn (fun n x => F n x i) (fun x => g x i) atTop S) :
     TendstoUniformlyOn F g atTop S := by

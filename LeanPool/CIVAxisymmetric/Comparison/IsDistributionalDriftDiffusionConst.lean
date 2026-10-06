@@ -163,7 +163,7 @@ theorem isAddHaarMeasure_volume_prod (m : ℕ) :
 integrable against any additive Haar measure. -/
 theorem integrable_fderiv_apply_of_hasCompactSupport {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℝ E] [MeasurableSpace E] [BorelSpace E]
-    [FiniteDimensional ℝ E] {μ : Measure E} [μ.IsAddHaarMeasure]
+    {μ : Measure E} [μ.IsAddHaarMeasure]
     {k : E → ℝ} (hk : ContDiff ℝ (⊤ : ℕ∞) k) (hsupp : HasCompactSupport k) (v : E) :
     Integrable (fun x => fderiv ℝ k x v) μ := by
   have hdc : Continuous (fun x => fderiv ℝ k x v) := by

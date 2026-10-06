@@ -28,9 +28,8 @@ namespace CIV
 
 
 theorem integrableOn_mul_of_continuousOn_of_tsupport_subset
-    {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] [MeasurableSpace E]
-    [BorelSpace E] [OpensMeasurableSpace E] [SecondCountableTopology E]
-    [LocallyCompactSpace E] [ProperSpace E] [T2Space E] [FiniteDimensional ℝ E]
+    {E : Type} [NormedAddCommGroup E] [MeasurableSpace E]
+    [OpensMeasurableSpace E] [T2Space E]
     {μ : Measure E} [IsAddHaarMeasure μ]
     {S K : Set E} {g ρ : E → ℝ}
     (hK : IsCompact K) (hKS : K ⊆ S)
@@ -52,8 +51,7 @@ theorem integrableOn_mul_of_continuousOn_of_tsupport_subset
 
 theorem integrable_mul_fderiv_of_continuousOn
     {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] [MeasurableSpace E]
-    [BorelSpace E] [OpensMeasurableSpace E] [SecondCountableTopology E]
-    [LocallyCompactSpace E] [ProperSpace E] [T2Space E] [FiniteDimensional ℝ E]
+    [OpensMeasurableSpace E] [T2Space E]
     {μ : Measure E} [IsAddHaarMeasure μ]
     {S K : Set E} {g ψ : E → ℝ} {v : E}
     (hK : IsCompact K) (hKS : K ⊆ S)
@@ -73,8 +71,7 @@ theorem integrable_mul_fderiv_of_continuousOn
 
 theorem integral_mul_fderiv_eq_neg_fderiv_mul_of_continuousOn
     {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] [MeasurableSpace E]
-    [BorelSpace E] [OpensMeasurableSpace E] [SecondCountableTopology E]
-    [LocallyCompactSpace E] [ProperSpace E] [T2Space E] [FiniteDimensional ℝ E]
+    [BorelSpace E] [OpensMeasurableSpace E] [T2Space E] [FiniteDimensional ℝ E]
     {μ : Measure E} [IsAddHaarMeasure μ]
     {S K : Set E} {h ψ : E → ℝ} {v : E}
     (hSopen : IsOpen S) (hK : IsCompact K) (hKS : K ⊆ S)
