@@ -116,7 +116,7 @@ private lemma lps_finite_cross_exponent_relations {s : ℝ} (hs : 3 < s) :
   have hHolderZVspace : s.HolderConjugate qN :=
     lps_real_holder_pair hs0 (by positivity) hZVspace
   have hHolderZVtime : ell.HolderConjugate pN :=
-    lps_real_holder_pair (by dsimp [ell]; positivity) (by positivity) hZVtime
+    lps_real_holder_pair (by positivity) (by positivity) hZVtime
   have hHolderUVspace : qE.HolderConjugate qNS :=
     lps_real_holder_pair (by positivity) (by positivity) hUVspace
   have hHolderUVtime : pE.HolderConjugate pNS :=
@@ -126,16 +126,17 @@ private lemma lps_finite_cross_exponent_relations {s : ℝ} (hs : 3 < s) :
 
 private lemma lps_mixed_difference_moment
     {T p q : ℝ} {f g : ParabolicPoint → ℝ} (hp : 1 ≤ p) (hq : 1 ≤ q)
-    (hfm : AEStronglyMeasurable f volume) (hgm : AEStronglyMeasurable g volume)
-    (hf : (∀ᵐ t ∂(volume.restrict (Ioo 0 T)), MemLp (fun x : Vec3 => f (x,t))
+    (hfm : AEStronglyMeasurable f (volume.restrict (spaceTimeSet Set.univ (Ioo 0 T))))
+    (hgm : AEStronglyMeasurable g (volume.restrict (spaceTimeSet Set.univ (Ioo 0 T))))
+    (hf : (∀ᵐ t ∂(volume.restrict (Ioo 0 T)), MemLp (fun x : Vec3 => f (x, t))
       (ENNReal.ofReal q) volume) ∧
-      (∫⁻ t in Ioo 0 T, eLpNorm (fun x : Vec3 => f (x,t)) (ENNReal.ofReal q) volume ^ p) < ⊤)
-    (hg : (∀ᵐ t ∂(volume.restrict (Ioo 0 T)), MemLp (fun x : Vec3 => g (x,t))
+      (∫⁻ t in Ioo 0 T, eLpNorm (fun x : Vec3 => f (x, t)) (ENNReal.ofReal q) volume ^ p) < ⊤)
+    (hg : (∀ᵐ t ∂(volume.restrict (Ioo 0 T)), MemLp (fun x : Vec3 => g (x, t))
       (ENNReal.ofReal q) volume) ∧
-      (∫⁻ t in Ioo 0 T, eLpNorm (fun x : Vec3 => g (x,t)) (ENNReal.ofReal q) volume ^ p) < ⊤) :
-    (∀ᵐ t ∂(volume.restrict (Ioo 0 T)), MemLp (fun x : Vec3 => f (x,t) - g (x,t))
+      (∫⁻ t in Ioo 0 T, eLpNorm (fun x : Vec3 => g (x, t)) (ENNReal.ofReal q) volume ^ p) < ⊤) :
+    (∀ᵐ t ∂(volume.restrict (Ioo 0 T)), MemLp (fun x : Vec3 => f (x, t) - g (x, t))
       (ENNReal.ofReal q) volume) ∧
-      (∫⁻ t in Ioo 0 T, eLpNorm (fun x : Vec3 => f (x,t) - g (x,t))
+      (∫⁻ t in Ioo 0 T, eLpNorm (fun x : Vec3 => f (x, t) - g (x, t))
         (ENNReal.ofReal q) volume ^ p) < ⊤ := by
   let summands : Fin 3 → ParabolicPoint → ℝ := fun i =>
     if i = 0 then fun z => f z else if i = 1 then fun z => -g z
@@ -145,22 +146,24 @@ private lemma lps_mixed_difference_moment
     (by
       intro i
       fin_cases i
-      · exact hfm
-      · exact hgm.neg
+      · simpa [summands] using hfm
+      · change AEStronglyMeasurable (fun z : ParabolicPoint => -g z)
+          (volume.restrict (spaceTimeSet Set.univ (Ioo 0 T)))
+        exact (continuous_neg : Continuous (fun y : ℝ => -y)).comp_aestronglyMeasurable hgm
       · exact aestronglyMeasurable_zero)
     (by
       intro i
       fin_cases i
       · simpa [summands] using hf.1
       · filter_upwards [hg.1] with t ht
-        change MemLp (fun x : Vec3 => -g ((x,t) : ParabolicPoint))
+        change MemLp (fun x : Vec3 => -g ((x, t) : ParabolicPoint))
           (ENNReal.ofReal q) volume
-        have hneg : (fun x : Vec3 => -g ((x,t) : ParabolicPoint)) =
-            -(fun x : Vec3 => g ((x,t) : ParabolicPoint)) := by
+        have hneg : (fun x : Vec3 => -g ((x, t) : ParabolicPoint)) =
+            -(fun x : Vec3 => g ((x, t) : ParabolicPoint)) := by
           funext x
           rfl
         rw [hneg]
-        simpa [q] using ht.neg
+        exact ht.neg
       · filter_upwards [] with t
         change MemLp (fun _ : Vec3 => (0 : ℝ)) (ENNReal.ofReal q) volume
         exact MemLp.zero)
@@ -168,22 +171,22 @@ private lemma lps_mixed_difference_moment
       intro i
       fin_cases i
       · simpa [summands] using hf.2
-      · have hneg (t : ℝ) : (fun x : Vec3 => -g ((x,t) : ParabolicPoint)) =
-            -(fun x : Vec3 => g ((x,t) : ParabolicPoint)) := by
+      · have hneg (t : ℝ) : (fun x : Vec3 => -g ((x, t) : ParabolicPoint)) =
+            -(fun x : Vec3 => g ((x, t) : ParabolicPoint)) := by
           funext x
           rfl
         change (∫⁻ t in Ioo 0 T,
-          eLpNorm (fun x : Vec3 => -g ((x,t) : ParabolicPoint))
+          eLpNorm (fun x : Vec3 => -g ((x, t) : ParabolicPoint))
             (ENNReal.ofReal q) volume ^ p) < ⊤
         simp_rw [hneg, eLpNorm_neg]
-        simpa [q, p] using hg.2
+        exact hg.2
       · change (∫⁻ t in Ioo 0 T,
           (eLpNorm (0 : Vec3 → ℝ) (ENNReal.ofReal q) volume) ^ p) < ⊤
         rw [eLpNorm_zero]
         rw [ENNReal.zero_rpow_of_pos (by linarith only [hp])]
         simp)
-  have hsumEq (t : ℝ) : (fun x : Vec3 => ∑ i : Fin 3, summands i (x,t)) =
-      (fun x => f (x,t) - g (x,t)) := by
+  have hsumEq (t : ℝ) : (fun x : Vec3 => ∑ i : Fin 3, summands i (x, t)) =
+      (fun x => f (x, t) - g (x, t)) := by
     funext x
     simp [summands, Fin.sum_univ_three]
     ring
@@ -192,9 +195,9 @@ private lemma lps_mixed_difference_moment
     rw [← hsumEq t]
     exact ht
   · have hEq : (fun t : ℝ => eLpNorm
-        (fun x : Vec3 => ∑ i : Fin 3, summands i (x,t))
+        (fun x : Vec3 => ∑ i : Fin 3, summands i (x, t))
         (ENNReal.ofReal q) volume ^ p) =ᵐ[volume.restrict (Ioo 0 T)]
-        (fun t => eLpNorm (fun x : Vec3 => f (x,t) - g (x,t))
+        (fun t => eLpNorm (fun x : Vec3 => f (x, t) - g (x, t))
           (ENNReal.ofReal q) volume ^ p) := by
       filter_upwards [] with t
       rw [hsumEq t]
@@ -213,13 +216,13 @@ private lemma lps_finite_relative_density_cancellation
     (hs : 3 < s)
     (hmix : (∫⁻ t in Ioo (0 : ℝ) T,
       (∫⁻ x : Vec3,
-        ENNReal.ofReal (vec3EuclideanNorm (u (x,t))) ^ s) ^
+        ENNReal.ofReal (vec3EuclideanNorm (u (x, t))) ^ s) ^
           ((2 * s / (s - 3)) / s)) < ⊤) :
     ∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
       ∫ x : Vec3,
-        (∑ k : Fin 3, u (x,t) k * ∑ j : Fin 3, v (x,t) j * Dv (x,t) k j) +
-        (∑ k : Fin 3, v (x,t) k * ∑ j : Fin 3, u (x,t) j * Du (x,t) k j) -
-          lpsRelativeConvection u v Du Dv (x,t) = 0 := by
+        (∑ k : Fin 3, u (x, t) k * ∑ j : Fin 3, v (x, t) j * Dv (x, t) k j) +
+        (∑ k : Fin 3, v (x, t) k * ∑ j : Fin 3, u (x, t) j * Du (x, t) k j) -
+          lpsRelativeConvection u v Du Dv (x, t) = 0 := by
   let qE : ℝ := 2 * s / (s - 2)
   have hUserrin := lps_finite_coordinate_mixed_data hU hs hmix
   have hslU := serrinWeak_slice_ae hU
@@ -233,15 +236,15 @@ private lemma lps_finite_relative_density_cancellation
     (lps_energy_coordinate_mixed_data hVLH hV hs 1).1,
     (lps_energy_coordinate_mixed_data hVLH hV hs 2).1] with
     t hu hv huS0 huS1 huS2 hu0 hu1 hu2 hv0 hv1 hv2
-  have huQ : MemLp (fun x : Vec3 => u (x,t)) (ENNReal.ofReal qE) volume := by
+  have huQ : MemLp (fun x : Vec3 => u (x, t)) (ENNReal.ofReal qE) volume := by
     apply memLp_pi_iff.mpr
     intro k
     fin_cases k <;> assumption
-  have hvQ : MemLp (fun x : Vec3 => v (x,t)) (ENNReal.ofReal qE) volume := by
+  have hvQ : MemLp (fun x : Vec3 => v (x, t)) (ENNReal.ofReal qE) volume := by
     apply memLp_pi_iff.mpr
     intro k
     fin_cases k <;> assumption
-  have huSvec : MemLp (fun x : Vec3 => u (x,t)) (ENNReal.ofReal s) volume := by
+  have huSvec : MemLp (fun x : Vec3 => u (x, t)) (ENNReal.ofReal s) volume := by
     apply memLp_pi_iff.mpr
     intro k
     fin_cases k <;> assumption
@@ -263,10 +266,10 @@ theorem lps_finite_relative_cross_identity
     (hs : 3 < s)
     (hmix : (∫⁻ t in Ioo (0 : ℝ) T,
       (∫⁻ x : Vec3,
-        ENNReal.ofReal (vec3EuclideanNorm (u (x,t))) ^ s) ^
+        ENNReal.ofReal (vec3EuclideanNorm (u (x, t))) ^ s) ^
           ((2 * s / (s - 3)) / s)) < ⊤) :
     (∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
-      (∫ x : Vec3, ∑ k : Fin 3, v (x,t) k * u (x,t) k) -
+      (∫ x : Vec3, ∑ k : Fin 3, v (x, t) k * u (x, t) k) -
           (∫ x : Vec3, ∑ k : Fin 3, a x k * a x k) =
         -(∫ z in spaceTimeSet Set.univ (Ioo 0 t),
             lpsRelativeConvection u v Du Dv z) -
@@ -296,26 +299,30 @@ theorem lps_finite_relative_cross_identity
   have hVenergy := lps_energy_coordinate_mixed_data hVLH hV hs
   have hDU2 := serrinWeak_gradient_memLp_two hU
   have hDV2 := serrinWeak_gradient_memLp_two hV
-  have hConvV := lps_mixed_convection_moment hqE1 hpE1 hqN1 hpN1
+  have hConvV := lps_mixed_convection_moment (T := T) (px := qE) (pt := pE) (qx := qN) (qt := pN)
+    hqE1 hpE1 hqN1 hpN1
     hSpaceE hTimeE hV.meas_u hV.meas_Du
     (fun j => (hVenergy j).1) (fun j => (hVenergy j).2) hDV2
-  have hConvU := lps_mixed_convection_moment (by linarith only [hs])
-      (by dsimp [ell]; rw [le_div_iff₀ hs3]; linarith only [hs])
+  have hConvU := lps_mixed_convection_moment (T := T) (px := s) (pt := ell) (qx := qNS) (qt := pNS)
+      (by linarith only [hs])
+      (by rw [le_div_iff₀ hs3]; linarith only [hs])
       hqNS1 hpNS1 hSpaceS hTimeS hU.meas_u hU.meas_Du
     (fun j => (hUserrin j).1) (fun j => (hUserrin j).2) hDU2
   have hSpaceConvW : ∀ j, (∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
-      MemLp (fun x : Vec3 => v (x,t) j - u (x,t) j)
+      MemLp (fun x : Vec3 => v (x, t) j - u (x, t) j)
         (ENNReal.ofReal qE) volume) ∧
       (∫⁻ t in Ioo 0 T,
-        eLpNorm (fun x : Vec3 => v (x,t) j - u (x,t) j)
+        eLpNorm (fun x : Vec3 => v (x, t) j - u (x, t) j)
           (ENNReal.ofReal qE) volume ^ pE) < ⊤ := by
     intro j
-    exact lps_mixed_difference_moment hpE1 hqE1
+    exact lps_mixed_difference_moment (T := T) (p := pE) (q := qE)
+      (f := fun z => v z j) (g := fun z => u z j) hpE1 hqE1
       (lps_coordinate_aesm hV.meas_u j) (lps_coordinate_aesm hU.meas_u j)
       (hVenergy j) (hUenergy j)
   have hDiff2 : MemLp (fun z : ParabolicPoint => Dv z - Du z) 2
       (volume.restrict (spaceTimeSet Set.univ (Ioo 0 T))) := hDV2.sub hDU2
-  have hConvW := lps_mixed_convection_moment hqE1 hpE1 hqN1 hpN1
+  have hConvW := lps_mixed_convection_moment (T := T) (px := qE) (pt := pE) (qx := qN) (qt := pN)
+    hqE1 hpE1 hqN1 hpN1
     hSpaceE hTimeE (hV.meas_u.sub hU.meas_u) (hV.meas_Du.sub hU.meas_Du)
     (fun j => (hSpaceConvW j).1) (fun j => (hSpaceConvW j).2) hDiff2
   let μT : Measure ParabolicPoint :=
@@ -323,7 +330,7 @@ theorem lps_finite_relative_cross_identity
   have hA (k : Fin 3) : Integrable
       (fun z : ParabolicPoint => u z k * ∑ j : Fin 3, v z j * Dv z k j) μT :=
     (lps_mixed_product_integrable hs0 (by positivity)
-      (by dsimp [ell]; positivity) (by positivity)
+      (by positivity) (by positivity)
       hHolderZVspace hHolderZVtime
       (lps_coordinate_aesm hU.meas_u k)
       (lps_convection_aesm hV.meas_u hV.meas_Du k)
@@ -370,7 +377,7 @@ theorem lps_finite_relative_cross_identity
   have hFint : Integrable F μT := by
     exact (hAall.add hBall).sub hRall |>.congr
       (Eventually.of_forall fun z => by simp [F])
-  have hCancel : ∀ᵐ t ∂(volume.restrict (Ioo 0 T)), ∫ x : Vec3, F (x,t) = 0 := by
+  have hCancel : ∀ᵐ t ∂(volume.restrict (Ioo 0 T)), ∫ x : Vec3, F (x, t) = 0 := by
     simpa only [F] using
       lps_finite_relative_density_cancellation hULH hVLH hU hV hs hmix
   refine ⟨?_, hRall⟩

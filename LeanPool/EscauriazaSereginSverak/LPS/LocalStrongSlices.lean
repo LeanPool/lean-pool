@@ -667,11 +667,11 @@ theorem lps_strong_limit_all_time_h1_slices
           ∀ j : Fin 3,
             ‖((memLp_pi_iff.mp hG) j).toLp
               (fun x => G i x j)‖ ≤ Real.sqrt M := by
-    apply lps_vector_h1_weak_limit
+    refine lps_vector_h1_weak_limit
       (fun n x => CKN.Leray.regR12Uε ρ b hb.2 (εseq (σ n)) (x, t))
       (fun n x i j => spatialPartial
         (fun y => CKN.Leray.regR12Uε ρ b hb.2 (εseq (σ n)) y i) j (x, t))
-      (fun x => u (x, t)) (Real.sqrt M) (Real.sqrt_nonneg M)
+      (fun x => u (x, t)) (Real.sqrt M) (Real.sqrt_nonneg M) ?_ ?_ ?_ ?_
     · intro n i j
       simpa only [hUeq] using
         (memLp_pi_iff.mp (memLp_pi_iff.mp (hregBounds t ⟨ht.1.le, ht.2⟩ n).2.1 i)) j

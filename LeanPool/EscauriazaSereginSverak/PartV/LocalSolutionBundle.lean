@@ -67,7 +67,6 @@ private theorem pvLocal_split_slice_bound
         by
           gcongr
           · exact heatOrbit_slice_lintegral_le ha hs.1
-          · exact hZs
   refine lt_of_le_of_lt (essSup_le_of_ae_le _ hbound) ?_
   exact ENNReal.mul_lt_top (by norm_num) (ENNReal.add_lt_top.2 ⟨hKh.lt_top, hK.lt_top⟩)
 

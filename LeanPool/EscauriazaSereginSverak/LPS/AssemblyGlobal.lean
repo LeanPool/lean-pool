@@ -201,8 +201,9 @@ theorem lps_patch_smooth_representatives
   have hpatchAe : ∀ n,
       uSmooth =ᵐ[volume.restrict (lpsAssemblySlab (t n) T)] u := by
     intro n
-    exact (ae_restrict_mem (MeasurableSet.univ.prod measurableSet_Ioo)).mono
-      (fun z hz => hpatch n z hz) |>.trans (hvEq n)
+    filter_upwards [ae_restrict_mem (MeasurableSet.univ.prod measurableSet_Ioo), hvEq n]
+      with z hz heq
+    exact (hpatch n z hz).trans heq
   have hAll : ∀ᵐ z ∂volume,
       ∀ n, z ∈ lpsAssemblySlab (t n) T → uSmooth z = u z :=
     ae_all_iff.2 (fun n => ae_imp_of_ae_restrict (hpatchAe n))
