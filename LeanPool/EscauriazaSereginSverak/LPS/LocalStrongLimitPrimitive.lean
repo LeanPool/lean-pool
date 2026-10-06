@@ -273,11 +273,19 @@ theorem lps_prim_energy (hab : a < b)
   have hBm := vlConvT_stronglyMeasurable hk.continuous hrm
   have hAL2 := vlConvT_memLp hk hwm hw
   have hBL2 := vlConvT_memLp hk hrm hr
+  have hslice : ∀ᵐ t ∂(volume.restrict (Ioo a b)),
+      ∀ᵐ x ∂(volume : Measure Vec3),
+        vlConvT k w x t = lpsPrim a b k w r x t :=
+    lps_prim_slice_ae (a := a) (b := b) (w := w) (r := r)
+      hab hwm hrm hw hr hweak (k := k) hk
+  have hsliceL2 : ∀ᵐ t ∂(volume.restrict (Ioo a b)),
+      MemLp (fun x => vlConvT k w x t) 2 volume :=
+    vlSlab_slice_memLp (a := a) (τ := b)
+      (g := fun p : Vec3 × ℝ => vlConvT k w p.1 p.2) hAm hAL2
   have hgood : ∀ᵐ t ∂(volume.restrict (Ioo a b)),
       (∀ᵐ x ∂(volume : Measure Vec3), vlConvT k w x t = lpsPrim a b k w r x t) ∧
       MemLp (fun x => vlConvT k w x t) 2 volume :=
-    (lps_prim_slice_ae hab hwm hrm hw hr hweak hk).and
-      (vlSlab_slice_memLp (hAm) hAL2)
+    hslice.and hsliceL2
   have : NeBot (ae (volume.restrict (Ioo a b))) :=
     ae_restrict_neBot.2 (by simp [Real.volume_Ioo, hab])
   obtain ⟨s₀, ⟨hs₀ae, hs₀L2⟩, hs₀mem⟩ :=

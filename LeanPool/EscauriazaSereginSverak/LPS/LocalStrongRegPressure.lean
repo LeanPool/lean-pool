@@ -6,7 +6,6 @@ Authors: Scott Armstrong
 
 module
 
-public import LeanPool.EscauriazaSereginSverak.LPS.LocalStrongRegProduct
 public import LeanPool.EscauriazaSereginSverak.LPS.RegularisedH1IBP
 
 /-!

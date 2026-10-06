@@ -9,7 +9,6 @@ module
 public import LeanPool.EscauriazaSereginSverak.LPS.RegularisedH1Energy
 public import LeanPool.EscauriazaSereginSverak.LPS.GoodTimes
 public import LeanPool.CaffarelliKohnNirenberg.Statements.IsInJ
-public import LeanPool.CaffarelliKohnNirenberg.Leray.RegularisedDirectRoute
 public import LeanPool.CaffarelliKohnNirenberg.Statements.SpatialGradientSq
 public import LeanPool.CaffarelliKohnNirenberg.Statements.SpaceTimeSet
 
