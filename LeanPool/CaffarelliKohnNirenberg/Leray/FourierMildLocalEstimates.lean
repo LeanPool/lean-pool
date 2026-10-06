@@ -66,7 +66,8 @@ theorem mildShiftedStokesIntegral_norm_le
     filter_upwards [ae_restrict_mem measurableSet_Ioc] with τ hτ
     have hτpos : 0 < τ := (Set.mem_Ioc.mp hτ).1
     by_cases h : 0 < τ ∧ τ < t
-    · simp [mildShiftedStokesIntegrand, h]
+    · simp only [mildShiftedStokesIntegrand, h, and_self, ↓reduceDIte,
+        ge_iff_le]
       have hop := realStokesOperator_norm_le h.1 (F (t - τ))
       have hkernelIdentity :
           1 / Real.sqrt (2 * Real.exp 1 * τ) =

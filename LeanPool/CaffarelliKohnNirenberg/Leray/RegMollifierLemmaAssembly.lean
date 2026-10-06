@@ -50,8 +50,7 @@ theorem smoothCompactConvolution_spatialDeriv_eq_of_weak
   constructor
   · exact hκc.convolutionExists_left
       (L := ContinuousLinearMap.lsmul ℝ ℝ) hκ.continuous hg
-  ·
-    let φ : Vec3 → ℝ := fun y => κ (x - y)
+  · let φ : Vec3 → ℝ := fun y => κ (x - y)
     have hφ : ContDiff ℝ (⊤ : ℕ∞) φ := hκ.comp (contDiff_const.sub contDiff_id)
     have hφc : HasCompactSupport φ := by
       simpa [φ, Function.comp_def] using hκc.comp_homeomorph (Homeomorph.subLeft x)

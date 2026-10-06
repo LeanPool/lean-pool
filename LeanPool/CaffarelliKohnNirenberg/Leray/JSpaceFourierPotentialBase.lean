@@ -322,7 +322,8 @@ private theorem regularizedPotentialComponentLp_real_schwartz_weakDeriv
           filter_upwards [] with x
           ring
 
-/-- The regularized potential has the distributional derivatives represented by its Fourier derivatives. -/
+/-- The regularized potential has distributional derivatives represented by its
+Fourier derivatives. -/
 theorem regularizedPotentialVec3_hasWeakPartialDerivOn
     {a : Vec3 → Vec3} (ha : MemLp a (2 : ℝ≥0∞) volume)
     (δ : ℝ) (hδ : 0 < δ) (i k : Fin 3)

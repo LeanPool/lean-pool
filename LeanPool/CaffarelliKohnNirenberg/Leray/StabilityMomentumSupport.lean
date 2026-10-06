@@ -61,7 +61,7 @@ theorem stability_momentum_integral_eq_localBox
     have hzcomp (i : Fin 3) :
         (z : Vec3 × ℝ) ∉ tsupport (fun w => φ w i) := by
       intro hmem
-      exact hzprod ((tsupport_component_subset (V := ℝ) φ i
+      exact hzprod ((tsupport_component_subset φ i
         (fun _ h => by rw [h]; rfl)) hmem)
     have htime (i : Fin 3) : timePartial (fun w => φ w i) z = 0 :=
       timePartial_eq_zero_off_tsupport (hzcomp i)

@@ -12,7 +12,8 @@ public import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
 /-!
 # Local smoothness of space-time coordinate derivatives
 
-The phase in `prop:carleman-halfspace` of the Escauriaza–Seregin–Šverák manuscript is smooth only on its open cylinder.
+The phase in `prop:carleman-halfspace` of the Escauriaza–Seregin–Šverák
+manuscript is smooth only on its open cylinder.
 These facts keep its coordinate derivatives smooth on that same cylinder.
 -/
 
