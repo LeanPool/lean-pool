@@ -27,6 +27,13 @@ on:
       - 'LeanPool/**'
       - 'LeanPool.lean'
   workflow_dispatch:
+  pull_request_target:
+    types: [ready_for_review]
+  workflow_run:
+    workflows: [Lean Action CI, Documentation, Exposition Verify]
+    types: [completed]
+  schedule:
+    - cron: '*/15 * * * *'
 
 concurrency:
   # Serialised: two runs rebasing the same PR would race on its branch.
@@ -45,21 +52,22 @@ jobs:
       pulls: ${{ steps.list.outputs.pulls }}
       any: ${{ steps.list.outputs.any }}
     steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: main
+          persist-credentials: false
+
       - name: Collect open pull requests
         id: list
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
+          TARGET_PR: ${{ github.event.pull_request.number || github.event.workflow_run.pull_requests[0].number || 0 }}
         run: |
           set -euo pipefail
           pulls="$(gh pr list --repo "$REPO" --state open --limit 100 \
-            --json number,headRefName,headRepository,headRepositoryOwner,isCrossRepository,labels \
-            --jq '[.[]
-                  | select([.labels[].name] | index("needs-manual-rebase") | not)
-                  | select(.headRefName | startswith("bump/") | not)
-                  | {number, branch: .headRefName,
-                     repo: "\(.headRepositoryOwner.login)/\(.headRepository.name)",
-                     fork: .isCrossRepository}]')"
+            --json number,headRefName,headRefOid,headRepository,headRepositoryOwner,isCrossRepository,labels,isDraft,baseRefName,statusCheckRollup \
+            | PYTHONPATH=python python3 -m lean_pool.rebase_queue select --number "$TARGET_PR")"
           echo "pulls=$pulls" >> "$GITHUB_OUTPUT"
           if [ "$(echo "$pulls" | python3 -c 'import json,sys; print(len(json.load(sys.stdin)))')" = "0" ]; then
             echo "any=false" >> "$GITHUB_OUTPUT"
@@ -82,17 +90,49 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           fetch-depth: 0
+          ref: main
           token: ${{ secrets.REBASE_TOKEN || secrets.GITHUB_TOKEN }}
 
+      - name: Check this content branch needs updating
+        id: scope
+        env:
+          NUMBER: ${{ matrix.pull.number }}
+          BRANCH: ${{ matrix.pull.branch }}
+          EXPECTED_HEAD: ${{ matrix.pull.head }}
+          HEAD_REPO: ${{ matrix.pull.repo }}
+          TOKEN: ${{ secrets.REBASE_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          cp python/lean_pool/rebase_queue.py "$RUNNER_TEMP/rebase-queue.py"
+          git remote add head "https://x-access-token:$TOKEN@github.com/$HEAD_REPO"
+          git fetch head "$BRANCH"
+          git fetch origin main
+          git checkout -B "pr-$NUMBER" "head/$BRANCH"
+          if [ "$(git rev-parse HEAD)" != "$EXPECTED_HEAD" ]; then
+            echo "Author updated the branch; defer until its checks finish."
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+          elif git merge-base --is-ancestor origin/main HEAD; then
+            echo "Already includes current main."
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+          elif python3 "$RUNNER_TEMP/rebase-queue.py" content; then
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Infrastructure PR; preserve its current validation run."
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff
+        if: steps.scope.outputs.needed == 'true'
         with:
           enable-cache: true
 
       - name: Install Python tooling
+        if: steps.scope.outputs.needed == 'true'
         run: cd python && uv sync --locked
 
       - name: Check we can push to this branch
         id: capable
+        if: steps.scope.outputs.needed == 'true'
         env:
           FORK: ${{ matrix.pull.fork }}
           HAS_TOKEN: ${{ secrets.REBASE_TOKEN != '' }}
@@ -117,11 +157,6 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          remote="https://x-access-token:$TOKEN@github.com/$HEAD_REPO"
-          git remote add head "$remote"
-          git fetch head "$BRANCH"
-          git checkout -B "pr-$NUMBER" "head/$BRANCH"
 
           if git merge --no-edit origin/main; then
             echo "Merged cleanly."
@@ -179,7 +214,17 @@ jobs:
         env:
           NUMBER: ${{ matrix.pull.number }}
           BRANCH: ${{ matrix.pull.branch }}
-        run: git push head "pr-$NUMBER:$BRANCH"
+          EXPECTED_HEAD: ${{ matrix.pull.head }}
+          REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if gh pr view "$NUMBER" --repo "$REPO" --json headRefOid,isDraft,statusCheckRollup \
+            | python3 "$RUNNER_TEMP/rebase-queue.py" can-push --head "$EXPECTED_HEAD"; then
+            git push head "pr-$NUMBER:$BRANCH"
+          else
+            echo "Branch or checks changed; defer this update."
+          fi
 
       - name: Flag PRs that need a human
         if: steps.rebase.outputs.result == 'manual' || steps.capable.outputs.ok == 'false'
