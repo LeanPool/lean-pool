@@ -69,6 +69,7 @@ private theorem regularisedH1Path
         2 [WithLp.toLp 2 (CKN.basisVec j)] (by norm_num)).continuous.comp
           v.continuous)
 
+/-- The inverse Bessel weight of order four used for the regularized H1 trace. -/
 @[expose] def regH1InverseWeight (ξ : L2Vec3) : ℂ :=
   (((1 + ‖ξ‖ ^ 2) ^ (-2 : ℝ) : ℝ) : ℂ)
 
@@ -103,9 +104,11 @@ private theorem regH1InverseWeight_temperate :
   unfold regH1InverseWeight
   fun_prop
 
+/-- The inverse Bessel weight represented as an essentially bounded multiplier. -/
 @[expose] def regH1InverseWeightLp : Lp (α := L2Vec3) ℂ ∞ :=
   regH1InverseWeight_memLp.toLp regH1InverseWeight
 
+/-- The coordinate derivative symbol multiplied by the inverse Bessel weight. -/
 @[expose] def regH1DerivativeMultiplier (j : Fin 3) (ξ : L2Vec3) : ℂ :=
   regR12CoordSymbol j ξ * regH1InverseWeight ξ
 

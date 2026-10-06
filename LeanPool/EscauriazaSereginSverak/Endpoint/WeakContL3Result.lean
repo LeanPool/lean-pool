@@ -29,6 +29,7 @@ noncomputable section
 
 namespace ESS
 
+/-- The spatial ball of radius `3/4` used for the weak continuity L3 conclusion. -/
 @[expose] def weakContL3ResultSmallBall : Set Vec3 :=
   vec3Ball (0 : Vec3) (3 / 4 : ℝ)
 
@@ -43,6 +44,73 @@ private instance weakContL3ResultSmallBallFinite :
   refine ⟨?_⟩
   rw [Measure.restrict_apply_univ]
   exact CKN.Foundation.Parabolic.Integration.volume_vec3Ball_lt_top
+
+private theorem weakContL3Result_holder_approximation
+    {A ε d : ℝ} (hA : 0 ≤ A) (hε : 0 < ε)
+    (hd : d ≤ ε / (3 * (A + 1))) : A * d ≤ ε / 3 := by
+  have hfrac : A / (3 * (A + 1)) ≤ (1 / 3 : ℝ) := by
+    apply (div_le_iff₀ (by positivity)).2
+    nlinarith only [hA]
+  calc
+    A * d ≤ A * (ε / (3 * (A + 1))) := mul_le_mul_of_nonneg_left hd hA
+    _ = ε * (A / (3 * (A + 1))) := by ring
+    _ ≤ ε * (1 / 3) := mul_le_mul_of_nonneg_left hfrac hε.le
+    _ = ε / 3 := by ring
+
+private theorem weakContL3Result_pairing_eq_on_small_ball
+    (v₂ : Lp L2Vec3 2 (volume.restrict weakContL3SpatialBall))
+    (hmem : MemLp (fun x : Vec3 => v₂ x) 3
+      (volume.restrict weakContL3ResultSmallBall))
+    (g : Vec3 → L2Vec3)
+    (gExt : Vec3 → L2Vec3)
+    (hgExt : gExt = weakContL3ResultSmallBall.indicator g)
+    (gExt₂ : Lp L2Vec3 2 (volume.restrict weakContL3SpatialBall))
+    (hgExtMem₂ : MemLp gExt 2
+      (volume.restrict weakContL3SpatialBall))
+    (hgExt₂ : gExt₂ = hgExtMem₂.toLp gExt) :
+    inner ℝ v₂ gExt₂ =
+      ∫ x, inner ℝ (hmem.toLp (fun x => v₂ x) x) (g x)
+        ∂(volume.restrict weakContL3ResultSmallBall) := by
+  rw [MeasureTheory.L2.inner_def]
+  have hballmeas : MeasurableSet weakContL3ResultSmallBall :=
+    (isOpen_vec3Ball _ _).measurableSet
+  have hsmallsubset : weakContL3ResultSmallBall ⊆ weakContL3SpatialBall := by
+    intro x hx
+    have hxnorm : vec3EuclideanNorm (x - 0) < 3 / 4 := by
+      simpa [weakContL3ResultSmallBall, mem_vec3Ball] using hx
+    change vec3EuclideanNorm (x - 0) < 1
+    exact lt_trans hxnorm (by norm_num)
+  calc
+    ∫ x, inner ℝ (v₂ x) (gExt₂ x)
+        ∂(volume.restrict weakContL3SpatialBall) =
+      ∫ x, inner ℝ (v₂ x) (gExt x)
+        ∂(volume.restrict weakContL3SpatialBall) := by
+          apply integral_congr_ae
+          filter_upwards [hgExtMem₂.coeFn_toLp] with x hx
+          rw [hgExt₂, hx]
+    _ = ∫ x, inner ℝ (v₂ x) (g x)
+        ∂(volume.restrict weakContL3ResultSmallBall) := by
+          have hpoint (x : Vec3) :
+              inner ℝ (v₂ x) (gExt x) =
+                weakContL3ResultSmallBall.indicator
+                  (fun y => inner ℝ (v₂ y) (g y)) x := by
+            by_cases hx : x ∈ weakContL3ResultSmallBall <;>
+              simp [hgExt, hx]
+          calc
+            _ = ∫ x, weakContL3ResultSmallBall.indicator
+                  (fun y => inner ℝ (v₂ y) (g y)) x
+                  ∂(volume.restrict weakContL3SpatialBall) := by
+                    apply integral_congr_ae
+                    exact Filter.Eventually.of_forall hpoint
+            _ = ∫ x, inner ℝ (v₂ x) (g x)
+                  ∂(volume.restrict weakContL3ResultSmallBall) := by
+                    rw [integral_indicator hballmeas]
+                    rw [Measure.restrict_restrict_of_subset hsmallsubset]
+    _ = ∫ x, inner ℝ (hmem.toLp (fun x => v₂ x) x) (g x)
+        ∂(volume.restrict weakContL3ResultSmallBall) := by
+          apply integral_congr_ae
+          filter_upwards [hmem.coeFn_toLp] with x hx₁
+          rw [hx₁]
 
 private theorem weakContL3Result_pairing_continuous
     (v₂ : Icc (-(3 / 4 : ℝ) ^ 2) 0 →
@@ -119,40 +187,17 @@ private theorem weakContL3Result_pairing_continuous
       inner ℝ (v₂ t) gExt₂ =
         ∫ x, inner ℝ ((hmem t).toLp (fun x => v₂ t x) x) (g₃₂ x)
           ∂(volume.restrict weakContL3ResultSmallBall) := by
-    rw [MeasureTheory.L2.inner_def]
     calc
-      ∫ x, inner ℝ (v₂ t x) (gExt₂ x)
-          ∂(volume.restrict weakContL3SpatialBall) =
-        ∫ x, inner ℝ (v₂ t x) (gExt x)
-          ∂(volume.restrict weakContL3SpatialBall) := by
-            apply integral_congr_ae
-            filter_upwards [hgExtMem₂.coeFn_toLp] with x hx
-            rw [hx]
-      _ = ∫ x, inner ℝ (v₂ t x) (g x)
-          ∂(volume.restrict weakContL3ResultSmallBall) := by
-            have hpoint (x : Vec3) :
-                inner ℝ (v₂ t x) (gExt x) =
-                  weakContL3ResultSmallBall.indicator
-                    (fun y => inner ℝ (v₂ t y) (g y)) x := by
-              by_cases hx : x ∈ weakContL3ResultSmallBall <;>
-                simp [gExt, hx]
-            calc
-              _ = ∫ x, weakContL3ResultSmallBall.indicator
-                    (fun y => inner ℝ (v₂ t y) (g y)) x
-                    ∂(volume.restrict weakContL3SpatialBall) := by
-                      apply integral_congr_ae
-                      exact Filter.Eventually.of_forall hpoint
-              _ = ∫ x, inner ℝ (v₂ t x) (g x)
-                    ∂(volume.restrict weakContL3ResultSmallBall) := by
-                      rw [integral_indicator hballmeas]
-                      rw [Measure.restrict_restrict_of_subset hsmallsubset]
+      inner ℝ (v₂ t) gExt₂ =
+          ∫ x, inner ℝ ((hmem t).toLp (fun x => v₂ t x) x) (g x)
+        ∂(volume.restrict weakContL3ResultSmallBall) :=
+        weakContL3Result_pairing_eq_on_small_ball
+          (v₂ t) (hmem t) g gExt rfl gExt₂ hgExtMem₂ rfl
       _ = ∫ x, inner ℝ ((hmem t).toLp (fun x => v₂ t x) x) (g₃₂ x)
           ∂(volume.restrict weakContL3ResultSmallBall) := by
             apply integral_congr_ae
-            filter_upwards [(hmem t).coeFn_toLp, hgMem₃₂.coeFn_toLp]
-              with x hx₁ hx₂
-            rw [hx₁, hx₂]
-    
+            filter_upwards [hgMem₃₂.coeFn_toLp] with x hx
+            rw [hx]
   let F (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) :=
     ∫ x, inner ℝ ((hmem t).toLp (fun x => v₂ t x) x) (w x)
       ∂(volume.restrict weakContL3ResultSmallBall)
@@ -260,17 +305,8 @@ private theorem weakContL3Result_pairing_continuous
     calc
       dist (F t) (G t) ≤
         M.toReal * dist w g₃₂ := happrox t
-      _ ≤ M.toReal * δ :=
-        mul_le_mul_of_nonneg_left hdist ENNReal.toReal_nonneg
-      _ = ε * (M.toReal / (3 * (M.toReal + 1))) := by
-            dsimp [δ]
-            ring
-      _ ≤ ε * (1 / 3) := by
-        apply mul_le_mul_of_nonneg_left _ hε.le
-        apply (div_le_iff₀ (by positivity)).2
-        have hMreal : 0 ≤ M.toReal := ENNReal.toReal_nonneg
-        nlinarith only [hMreal]
-      _ = ε / 3 := by ring
+      _ ≤ ε / 3 := weakContL3Result_holder_approximation
+        ENNReal.toReal_nonneg hε (by simpa [δ] using hdist)
   have hGat : ContinuousAt G t₀ := by
     exact hGcont.continuousAt
   obtain ⟨η, hη, hGη⟩ := Metric.continuousAt_iff.mp hGat (ε / 3) (by positivity)
@@ -409,8 +445,7 @@ theorem weakContL3
     change Continuous (fun t => ∫ x, inner ℝ
       ((hmemSmall t).toLp (fun x => v₂ t x) x) (w x) ∂μ₃)
     exact hpairContinuous w
-  ·
-    filter_upwards [hAgreement, hSliceL3] with t hA hS
+  · filter_upwards [hAgreement, hSliceL3] with t hA hS
     obtain ⟨ht, hmCut, hvA⟩ := hA
     obtain ⟨_, hmU, _⟩ := hS
     refine ⟨ht, hmU, ?_⟩

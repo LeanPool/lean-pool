@@ -51,7 +51,7 @@ theorem lps_regR12FreqCurve_moment_integrable
           (CKN.Leray.regR12Curve ρ ε hε a ha s.1) := by
     intro s
     simpa only [CKN.Leray.regR12Curve] using hv s
-  let G : ComplexVectorL2 := lps_regR12HighLiftFreq r t ht v t
+  let G : ComplexVectorL2 := lpsRegR12HighLiftFreq r t ht v t
   let M : L2Vec3 → ℂ := fun ξ =>
     (((‖ξ‖ ^ r * (1 + ‖ξ‖ ^ 2) ^ (-(r : ℝ))) : ℝ) : ℂ)
   have hMcont : Continuous M := by

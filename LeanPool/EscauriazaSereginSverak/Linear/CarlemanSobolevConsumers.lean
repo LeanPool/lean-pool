@@ -31,10 +31,12 @@ noncomputable section
 
 namespace ESS
 
+/-- The Gaussian Carleman density at parameter `a` and space-time point `z`. -/
 @[expose] def gaussianDensity (a : ℝ) (z : Vec3 × ℝ) : ℝ :=
   gaussCarlemanTimeWeight z.2 ^ (-2 * a) *
     Real.exp (-(vec3EuclideanNorm z.1 ^ 2) / (4 * z.2))
 
+/-- The Gaussian density multiplied by the time mass factor `a / z.2`. -/
 @[expose] def gaussianMassWeight (a : ℝ) (z : Vec3 × ℝ) : ℝ :=
   gaussianDensity a z * (a / z.2)
 
@@ -56,6 +58,7 @@ private def productFieldToParabolic (v : Vec3 × ℝ → Vec3) : ParabolicPoint 
 
 section GaussianMeasureBridge
 
+/-- The explicit Gaussian measure-space structure used for parabolic integral conversion. -/
 local instance gaussianMeasureSpace : MeasureSpace ParabolicPoint :=
   ESS.gaussExplicitMeasureSpace
 
@@ -315,10 +318,9 @@ theorem bu_carleman_sobolev_gaussian
       apply setIntegral_congr_ae (isOpen_univ.prod isOpen_Ioo).measurableSet
       filter_upwards [] with z hz
       rw [parabolicHomeomorph_symm_apply]
-      simp [ρ, gaussianDensity, productFieldToParabolic,
-        timePartial, spatialSecondPartial, spatialPartial]
+      simp only [ρ, gaussianDensity, productFieldToParabolic,
+        timePartial, spatialSecondPartial, spatialPartial, neg_mul]
       rw [gaussCarlemanTimeWeight]
-      exact Or.inl rfl
     calc
       _ = _ := hleft
       _ ≤ _ := h

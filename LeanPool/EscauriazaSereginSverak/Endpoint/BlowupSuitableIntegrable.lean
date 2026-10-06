@@ -10,6 +10,12 @@ public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupSuitable
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupVelocityUniform
 public import LeanPool.CaffarelliKohnNirenberg.ClassEquivalence.MainTheorems
 
+/-!
+# Blowup Suitable Integrable
+
+Integrability conditions needed for suitability of the rescaled fields.
+-/
+
 public section
 
 open CKN CKN.Foundation.Parabolic Set Filter

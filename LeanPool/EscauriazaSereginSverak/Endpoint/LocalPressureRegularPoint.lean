@@ -9,6 +9,12 @@ module
 public import LeanPool.EscauriazaSereginSverak.Endpoint.LocalPressureSmallness
 public import LeanPool.CaffarelliKohnNirenberg.Pressure.Lin34Solution
 
+/-!
+# Local Pressure Regular Point
+
+Local pressure estimates used in the endpoint regularity argument.
+-/
+
 public section
 
 open MeasureTheory MeasureTheory.Measure Set Filter
@@ -41,9 +47,52 @@ private theorem pressureD_le_scaled_pressureD
         (∫ w in parabolicCylinder z.1 z.2 R, |p w| ^ (3 / 2 : ℝ)) :=
       mul_le_mul_of_nonneg_left hmono (by positivity)
     _ = (R / r) ^ (2 : ℕ) *
-        (R⁻¹ ^ (2 : ℕ) *
-          ∫ w in parabolicCylinder z.1 z.2 R, |p w| ^ (3 / 2 : ℝ)) := by
+      (R⁻¹ ^ (2 : ℕ) *
+        ∫ w in parabolicCylinder z.1 z.2 R, |p w| ^ (3 / 2 : ℝ)) := by
       field_simp [hr.ne', hR.ne']
+
+private theorem closure_parabolicCylinder_subset_metric_ball
+    {z : ParabolicPoint} {r δ : ℝ} (hr : 0 < r) (hrδ : r < δ) :
+    closure (parabolicCylinder z.1 z.2 r) ⊆ Metric.ball z δ := by
+  intro q hq
+  rw [closure_parabolicCylinder hr] at hq
+  rcases hq with ⟨hspace, ht⟩
+  rcases ht with ⟨htlo, hthi⟩
+  have htime : |q.2 - z.2| ≤ r ^ 2 := by
+    rw [abs_le]
+    constructor <;> nlinarith only [htlo, hthi]
+  have htimeRoot : Real.sqrt |q.2 - z.2| ≤ r := by
+    apply (Real.sqrt_le_iff).2
+    constructor
+    · exact hr.le
+    · nlinarith only [htime]
+  rw [Metric.mem_ball, dist_eq_parabolicDist, parabolicDist]
+  apply max_lt_iff.mpr
+  constructor
+  · exact hspace.trans_lt hrδ
+  · exact htimeRoot.trans_lt hrδ
+
+private theorem ae_velocity_bound_on_smaller_cylinder
+    {u w : ParabolicPoint → Vec3} {Q N : Set ParabolicPoint} {B : ℝ}
+    (hQN : Q ⊆ N) (hQmeas : MeasurableSet Q)
+    (hrep : w =ᵐ[volume.restrict N] u)
+    (hbound : ∀ q ∈ N, vec3EuclideanNorm (w q) ≤ B) :
+    ∀ᵐ q ∂volume.restrict Q, vec3EuclideanNorm (u q) ≤ B := by
+  have hrepQ : w =ᵐ[volume.restrict Q] u := Eventually.filter_mono
+    (ae_mono (Measure.restrict_mono_set volume hQN)) hrep
+  filter_upwards [hrepQ, ae_restrict_mem hQmeas] with q hq hqQ
+  rw [← hq]
+  exact hbound q (hQN hqQ)
+
+private theorem pressureRegularPoint_scaled_constant_le_half
+    (C : ℝ) (hC : 0 ≤ C) : C * (1 / (4 * (C + 1))) ≤ 1 / 2 := by
+  have hden : 0 < 4 * (C + 1) := by positivity
+  have hnum : C ≤ C + 1 := by linarith only [hC]
+  calc
+    C * (1 / (4 * (C + 1))) = C / (4 * (C + 1)) := by ring
+    _ ≤ (C + 1) / (4 * (C + 1)) := div_le_div_of_nonneg_right hnum hden.le
+    _ = 1 / 4 := by field_simp [hden.ne']
+    _ ≤ 1 / 2 := by norm_num
 
 private theorem tendsto_pressureD_of_geometric_scale
     {D : ℝ → ℝ} {κ R₀ : ℝ}
@@ -145,6 +194,56 @@ private theorem tendsto_pressureD_of_geometric_scale
         mul_lt_mul_of_pos_left hDsmall (by positivity)
       _ = ε := by field_simp [hκ.ne']
 
+private theorem tendsto_normalized_velocity_cube_of_ae_bound
+    {Ω : Set Vec3} {I : Set ℝ} {u : ParabolicPoint → Vec3}
+    {Du : ParabolicPoint → Fin 3 → Vec3} {p : ParabolicPoint → ℝ}
+    {z : ParabolicPoint} {R₀ B : ℝ}
+    (hsol : IsSuitableWeakSolutionIntegrable Ω I 3 u Du p
+      (fun _ => (0 : Vec3)))
+    (hR₀ : 0 < R₀)
+    (hsubRadius : ∀ s, 0 < s → s ≤ R₀ →
+      closure (parabolicCylinder z.1 z.2 s) ⊆ spaceTimeSet Ω I)
+    (hUboundR₀ : ∀ᵐ q ∂volume.restrict (parabolicCylinder z.1 z.2 R₀),
+      vec3EuclideanNorm (u q) ≤ B) :
+    Tendsto (fun r : ℝ => r⁻¹ ^ (2 : ℕ) *
+      ∫ w in parabolicCylinder z.1 z.2 r,
+        vec3EuclideanNorm (u w) ^ (3 : ℕ))
+      (𝓝[>] (0 : ℝ)) (𝓝 0) := by
+  let V : ℝ → ℝ := fun r => r⁻¹ ^ (2 : ℕ) *
+    ∫ w in parabolicCylinder z.1 z.2 r,
+      vec3EuclideanNorm (u w) ^ (3 : ℕ)
+  have hid : Tendsto (fun r : ℝ => r) (𝓝[>] (0 : ℝ)) (𝓝 0) :=
+    tendsto_id.mono_left nhdsWithin_le_nhds
+  have hVupperLim : Tendsto (fun r : ℝ => ((4 * Real.pi / 3) * B ^ 3) * r ^ 3)
+      (𝓝[>] (0 : ℝ)) (𝓝 0) := by
+    have hlim : Tendsto (fun r : ℝ => ((4 * Real.pi / 3) * B ^ 3) * r ^ 3)
+        (𝓝[>] (0 : ℝ))
+        (𝓝 (((4 * Real.pi / 3) * B ^ 3) * (0 : ℝ) ^ 3)) := by
+      exact (tendsto_const_nhds (x := (4 * Real.pi / 3) * B ^ 3)).mul
+        (hid.pow 3)
+    have hzero : ((4 * Real.pi / 3) * B ^ 3) * (0 : ℝ) ^ 3 = 0 := by norm_num
+    rw [hzero] at hlim
+    exact hlim
+  have hVnonneg : ∀ᶠ r in 𝓝[>] (0 : ℝ), 0 ≤ V r := by
+    rw [eventually_nhdsWithin_iff]
+    filter_upwards [] with r hr
+    exact mul_nonneg (by positivity)
+      (integral_nonneg (fun _ => pow_nonneg (vec3EuclideanNorm_nonneg _) 3))
+  have hVupper : ∀ᶠ r in 𝓝[>] (0 : ℝ),
+      V r ≤ (4 * Real.pi / 3) * B ^ 3 * r ^ 3 := by
+    rw [eventually_nhdsWithin_iff]
+    filter_upwards [Iio_mem_nhds hR₀] with r hrsmall hr
+    have hrpos : 0 < r := by simpa only [Set.mem_Ioi] using hr
+    have hsub := hsubRadius r hrpos (le_of_lt hrsmall)
+    have hUr := Eventually.filter_mono
+      (ae_mono (Measure.restrict_mono_set volume
+        (parabolicCylinder_mono hrpos.le (le_of_lt hrsmall)))) hUboundR₀
+    have hbound := ESS.gamma_cube_le_of_ae_bound hsol hrpos hsub hUr
+    simpa only [V] using hbound.2
+  have hVlim : Tendsto V (𝓝[>] (0 : ℝ)) (𝓝 0) :=
+    squeeze_zero' hVnonneg hVupper hVupperLim
+  simpa only [V] using hVlim
+
 namespace ESS
 
 /-- The normalized velocity and pressure mass vanishes at a regular point
@@ -166,24 +265,8 @@ theorem pressure_smallness_at_regular_point
   let R₀ : ℝ := δ / 2
   have hR₀ : 0 < R₀ := by dsimp [R₀]; positivity
   have hR₀δ : R₀ < δ := by dsimp [R₀]; linarith only [hδ]
-  have hclosureR₀ : closure (parabolicCylinder z.1 z.2 R₀) ⊆ Metric.ball z δ := by
-    intro q hq
-    rw [closure_parabolicCylinder hR₀] at hq
-    rcases hq with ⟨hspace, ht⟩
-    rcases ht with ⟨htlo, hthi⟩
-    have htime : |q.2 - z.2| ≤ R₀ ^ 2 := by
-      rw [abs_le]
-      constructor <;> nlinarith only [htlo, hthi]
-    have htimeRoot : Real.sqrt |q.2 - z.2| ≤ R₀ := by
-      apply (Real.sqrt_le_iff).2
-      constructor
-      · exact hR₀.le
-      · nlinarith only [htime]
-    rw [Metric.mem_ball, dist_eq_parabolicDist, parabolicDist]
-    apply max_lt_iff.mpr
-    constructor
-    · exact hspace.trans_lt hR₀δ
-    · exact htimeRoot.trans_lt hR₀δ
+  have hclosureR₀ : closure (parabolicCylinder z.1 z.2 R₀) ⊆ Metric.ball z δ :=
+    closure_parabolicCylinder_subset_metric_ball hR₀ hR₀δ
   have hQ₀N : parabolicCylinder z.1 z.2 R₀ ⊆ N :=
     subset_closure.trans (hclosureR₀.trans hδball)
   have hsubR₀ : closure (parabolicCylinder z.1 z.2 R₀) ⊆ spaceTimeSet Ω I :=
@@ -191,14 +274,9 @@ theorem pressure_smallness_at_regular_point
   have hQ₀meas : MeasurableSet (parabolicCylinder z.1 z.2 R₀) := by
     rw [parabolicCylinder]
     exact (vec3Ball_measurable _ _).prod measurableSet_Ioc
-  have hrepR₀ : w =ᵐ[volume.restrict (parabolicCylinder z.1 z.2 R₀)] u :=
-    Eventually.filter_mono
-      (ae_mono (Measure.restrict_mono_set volume hQ₀N)) hrep
   have hUboundR₀ : ∀ᵐ q ∂volume.restrict (parabolicCylinder z.1 z.2 R₀),
-      vec3EuclideanNorm (u q) ≤ B := by
-    filter_upwards [hrepR₀, ae_restrict_mem hQ₀meas] with q hq hqQ
-    rw [← hq]
-    exact hWbound q (hQ₀N hqQ)
+      vec3EuclideanNorm (u q) ≤ B :=
+    ae_velocity_bound_on_smaller_cylinder hQ₀N hQ₀meas hrep hWbound
   have hsubRadius {s : ℝ} (hs : 0 < s) (hsR₀ : s ≤ R₀) :
       closure (parabolicCylinder z.1 z.2 s) ⊆ spaceTimeSet Ω I := by
     exact (closure_mono (parabolicCylinder_mono hs.le hsR₀)).trans hsubR₀
@@ -220,14 +298,7 @@ theorem pressure_smallness_at_regular_point
       κ ^ 3 ≤ (1 / 4 : ℝ) ^ 3 := pow_le_pow_left₀ hκ.le hκlequarter 3
       _ ≤ 1 / 2 := by norm_num
   have hCκ : C * κ ≤ 1 / 2 := by
-    dsimp [κ]
-    have hden : 0 < 4 * (C + 1) := by positivity
-    have hnum : C ≤ C + 1 := by linarith only [hC']
-    calc
-      C * (1 / (4 * (C + 1))) = C / (4 * (C + 1)) := by ring
-      _ ≤ (C + 1) / (4 * (C + 1)) := div_le_div_of_nonneg_right hnum hden.le
-      _ = 1 / 4 := by field_simp [hden.ne']
-      _ ≤ 1 / 2 := by norm_num
+    simpa [κ] using pressureRegularPoint_scaled_constant_le_half C hC'
   let R : ℕ → ℝ := fun n => R₀ * κ ^ n
   have hRpos (n : ℕ) : 0 < R n := by
     dsimp [R]
@@ -355,36 +426,9 @@ theorem pressure_smallness_at_regular_point
   let V : ℝ → ℝ := fun r => r⁻¹ ^ (2 : ℕ) *
     ∫ w in parabolicCylinder z.1 z.2 r,
       vec3EuclideanNorm (u w) ^ (3 : ℕ)
-  have hid : Tendsto (fun r : ℝ => r) (𝓝[>] (0 : ℝ)) (𝓝 0) :=
-    tendsto_id.mono_left nhdsWithin_le_nhds
-  have hVupperLim : Tendsto (fun r : ℝ => ((4 * Real.pi / 3) * B ^ 3) * r ^ 3)
-      (𝓝[>] (0 : ℝ)) (𝓝 0) := by
-    have hlim : Tendsto (fun r : ℝ => ((4 * Real.pi / 3) * B ^ 3) * r ^ 3)
-        (𝓝[>] (0 : ℝ))
-        (𝓝 (((4 * Real.pi / 3) * B ^ 3) * (0 : ℝ) ^ 3)) := by
-      exact (tendsto_const_nhds (x := (4 * Real.pi / 3) * B ^ 3)).mul
-        (hid.pow 3)
-    have hzero : ((4 * Real.pi / 3) * B ^ 3) * (0 : ℝ) ^ 3 = 0 := by norm_num
-    rw [hzero] at hlim
-    exact hlim
-  have hVnonneg : ∀ᶠ r in 𝓝[>] (0 : ℝ), 0 ≤ V r := by
-    rw [eventually_nhdsWithin_iff]
-    filter_upwards [] with r hr
-    exact mul_nonneg (by positivity)
-      (integral_nonneg (fun _ => pow_nonneg (vec3EuclideanNorm_nonneg _) 3))
-  have hVupper : ∀ᶠ r in 𝓝[>] (0 : ℝ),
-      V r ≤ (4 * Real.pi / 3) * B ^ 3 * r ^ 3 := by
-    rw [eventually_nhdsWithin_iff]
-    filter_upwards [Iio_mem_nhds hR₀] with r hrsmall hr
-    have hrpos : 0 < r := by simpa only [Set.mem_Ioi] using hr
-    have hsub := hsubRadius hrpos (le_of_lt hrsmall)
-    have hUr := Eventually.filter_mono
-      (ae_mono (Measure.restrict_mono_set volume
-        (parabolicCylinder_mono hrpos.le (le_of_lt hrsmall)))) hUboundR₀
-    have hbound := gamma_cube_le_of_ae_bound hsolI hrpos hsub hUr
-    simpa only [V] using hbound.2
-  have hVlim : Tendsto V (𝓝[>] (0 : ℝ)) (𝓝 0) :=
-    squeeze_zero' hVnonneg hVupper hVupperLim
+  have hVlim : Tendsto V (𝓝[>] (0 : ℝ)) (𝓝 0) := by
+    simpa only [V] using tendsto_normalized_velocity_cube_of_ae_bound
+      hsolI hR₀ (fun s hs hsR₀ => hsubRadius hs hsR₀) hUboundR₀
   have hsumEq : (fun r : ℝ => r⁻¹ ^ (2 : ℕ) *
       ∫ w in parabolicCylinder z.1 z.2 r,
         vec3EuclideanNorm (u w) ^ (3 : ℕ) + |p w| ^ (3 / 2 : ℝ)) =ᶠ[

@@ -124,7 +124,7 @@ theorem bu_affine_integral_comp_interval
 /-- Local integrability transfers through affine coordinates between any
 two corresponding positive half-space time intervals. -/
 theorem bu_affine_locallyIntegrableOn_interval
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {E : Type*} [NormedAddCommGroup E]
     (τ scale a b : ℝ) (hscale : 0 < scale)
     (f : ParabolicPoint → E)
     (hf : LocallyIntegrableOn f

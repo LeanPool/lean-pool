@@ -26,8 +26,10 @@ noncomputable section
 
 namespace ESS
 
-@[expose] abbrev buShortΩ : Set Vec3 := {x : Vec3 | 0 < x 2}
-@[expose] abbrev buShortI : Set ℝ := Ioo (1 / 2 : ℝ) 1
+/-- The positive spatial half-space for the short-time backward uniqueness argument. -/
+abbrev buShortΩ : Set Vec3 := {x : Vec3 | 0 < x 2}
+/-- The terminal half of the normalized short time interval. -/
+abbrev buShortI : Set ℝ := Ioo (1 / 2 : ℝ) 1
 
 private theorem bu_integrable_mul_test
     {f : ParabolicPoint → ℝ}
@@ -98,7 +100,7 @@ private theorem bu_locallyIntegrableOn_smooth_mul
     (isOpen_spaceTimeSet buShortΩ buShortI hΩ hI).isLocallyClosed
 
 private theorem bu_locallyIntegrableOn_pi
-    {ι E : Type*} [Fintype ι] [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {ι E : Type*} [Fintype ι] [NormedAddCommGroup E]
     {f : ParabolicPoint → ι → E}
     (hf : ∀ i : ι, LocallyIntegrableOn (fun z => f z i)
       (spaceTimeSet buShortΩ buShortI) volume) :
@@ -337,7 +339,6 @@ private theorem bu_weak_time_product
           change f (x, s) * χ (x, s) * timePartial φ (x, s) =
             f (x, s) * (χ (x, s) * timePartial φ (x, s))
           ring
-
     _ = -((∫ z in spaceTimeSet buShortΩ buShortI,
           g z * (χ (parabolicHomeomorph z) * ψ (parabolicHomeomorph z))) +
         (∫ z in spaceTimeSet buShortΩ buShortI,
@@ -428,7 +429,6 @@ private theorem bu_weak_spatial_add
           congr 1
           ext z
           ring
-
     _ = -((∫ z in spaceTimeSet buShortΩ buShortI, g₁ z * φ z) +
           (∫ z in spaceTimeSet buShortΩ buShortI, g₂ z * φ z)) := by
           rw [h₁ φ hφ, h₂ φ hφ]

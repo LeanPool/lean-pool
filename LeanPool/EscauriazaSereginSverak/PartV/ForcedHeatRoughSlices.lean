@@ -32,7 +32,7 @@ namespace ESS
 
 /-- Almost every time slice of a measurable space-time function is measurable. -/
 theorem ae_slice_aestronglyMeasurable {X : Type*} [TopologicalSpace X]
-    [TopologicalSpace.PseudoMetrizableSpace X] {ν : Measure ℝ} [SFinite ν] {f : Vec3 × ℝ → X}
+    {ν : Measure ℝ} [SFinite ν] {f : Vec3 × ℝ → X}
     (hf : AEStronglyMeasurable f ((volume : Measure Vec3).prod ν)) :
     ∀ᵐ s ∂ν, AEStronglyMeasurable (fun x : Vec3 => f (x, s)) volume := by
   have hswap : AEStronglyMeasurable (fun q : ℝ × Vec3 => f (q.2, q.1))

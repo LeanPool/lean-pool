@@ -34,6 +34,7 @@ namespace ESS
 @[expose] def goodPointDomain : Set ParabolicPoint :=
   vec3Ball 0 1 ×ˢ Ioo (-1) 0
 
+/-- The unit past cylinder including its top time slice. -/
 @[expose] def goodPointClosedTopDomain : Set ParabolicPoint :=
   vec3Ball 0 1 ×ˢ Ioc (-1) 0
 

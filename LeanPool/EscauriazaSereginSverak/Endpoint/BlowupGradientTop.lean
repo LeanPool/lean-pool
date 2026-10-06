@@ -9,6 +9,12 @@ module
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupGradientRescale
 public import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 
+/-!
+# Blowup Gradient Top
+
+Gradient estimates for the rescaled sequence used in endpoint compactness.
+-/
+
 public section
 
 open CKN CKN.Foundation.Parabolic MeasureTheory Set Filter

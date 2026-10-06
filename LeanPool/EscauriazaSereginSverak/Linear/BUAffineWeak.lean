@@ -46,7 +46,7 @@ theorem buAffineParabolicHomeomorph_eq
 /-- Local integrability transfers through the affine homeomorphism of a
 positive half-space time slab. -/
 theorem bu_affine_locallyIntegrableOn
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {E : Type*} [NormedAddCommGroup E]
     (τ scale : ℝ) (hscale : 0 < scale)
     (f : ParabolicPoint → E)
     (hf : LocallyIntegrableOn f

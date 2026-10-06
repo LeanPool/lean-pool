@@ -98,6 +98,147 @@ theorem vorticityDivCurl_integrated {r R₁ C₀ : ℝ}
   simp only [hdiv (x, t) hz, hcurl (x, t) hz]
   ring
 
+private theorem vorticityDivCurl_difference_estimate {C₀ : ℝ} (r R₁ : ℝ)
+    (hsmooth : ∀ (x₀ : Vec3) (V : Fin 3 → Vec3 → ℝ), (∀ b, ContDiff ℝ (⊤ : ℕ∞) (V b)) →
+      ∫ x in vec3Ball x₀ r, ∑ a : Fin 3, ∑ b : Fin 3, spatialDeriv (V b) a x ^ 2 ≤
+        C₀ * ∫ x in vec3Ball x₀ R₁,
+          ((∑ a : Fin 3, spatialDeriv (V a) a x) ^ 2 +
+            ∑ a : Fin 3, ∑ b : Fin 3, (spatialDeriv (V b) a x - spatialDeriv (V a) b x) ^ 2 +
+            ∑ b : Fin 3, V b x ^ 2))
+    (x₀ : Vec3) (t₁ t₂ : ℝ) (W₁ W' : Set (Vec3 × ℝ))
+    (hW₁def : W₁ = vec3Ball x₀ R₁ ×ˢ Ioo t₁ t₂)
+    (hW'def : W' = vec3Ball x₀ r ×ˢ Ioo t₁ t₂)
+    (hW₁b : Bornology.IsBounded W₁) (hW'b : Bornology.IsBounded W')
+    (Yn : ℕ → Fin 3 → Vec3 × ℝ → ℝ) (Ωn : ℕ → Fin 3 → Fin 3 → Vec3 × ℝ → ℝ)
+    (hYn : ∀ n i, ContDiff ℝ (⊤ : ℕ∞) (Yn n i))
+    (hΩn : ∀ n i k, ContDiff ℝ (⊤ : ℕ∞) (Ωn n i k))
+    (hdivn : ∀ n, ∀ z ∈ W₁, ∑ i : Fin 3, spatialPartial (Yn n i) i z = 0)
+    (hcurln : ∀ n, ∀ z ∈ W₁, ∀ i k : Fin 3,
+      spatialPartial (Yn n k) i z - spatialPartial (Yn n i) k z = Ωn n i k z) :
+    ∀ n m : ℕ,
+      ∫ z in W', ∑ j : Fin 3, ∑ i : Fin 3,
+          (spatialPartial (Yn n i) j z - spatialPartial (Yn m i) j z) ^ 2 ≤
+        C₀ * ((∑ j : Fin 3, ∑ i : Fin 3, ∫ z in W₁, (Ωn n j i z - Ωn m j i z) ^ 2) +
+          ∑ i : Fin 3, ∫ z in W₁, (Yn n i z - Yn m i z) ^ 2) := by
+  subst W₁
+  subst W'
+  intro n m
+  have hD : ∀ c, ContDiff ℝ (⊤ : ℕ∞) (fun z => Yn n c z - Yn m c z) := fun c =>
+    (hYn n c).sub (hYn m c)
+  have hΦ : ∀ a c, Continuous (fun z => Ωn n a c z - Ωn m a c z) := fun a c =>
+    (hΩn n a c).continuous.sub (hΩn m a c).continuous
+  have hest := vorticityDivCurl_integrated hsmooth x₀ t₁ t₂ hD hΦ
+    (fun z hz => by
+      simp only [vorticity_spatialPartial_sub (hYn n _) (hYn m _), Finset.sum_sub_distrib,
+        hdivn n z hz, hdivn m z hz, sub_zero])
+    (fun z hz i k => by
+      rw [vorticity_spatialPartial_sub (hYn n k) (hYn m k),
+        vorticity_spatialPartial_sub (hYn n i) (hYn m i)]
+      have h1 := hcurln n z hz i k
+      have h2 := hcurln m z hz i k
+      linarith only [h1, h2])
+  have hlhs : ∀ z, ∑ j : Fin 3, ∑ i : Fin 3,
+      spatialPartial (fun z : Vec3 × ℝ => Yn n i z - Yn m i z) j z ^ 2 =
+      ∑ j : Fin 3, ∑ i : Fin 3,
+        (spatialPartial (Yn n i) j z - spatialPartial (Yn m i) j z) ^ 2 := by
+    intro z
+    exact Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => by
+      rw [vorticity_spatialPartial_sub (hYn n i) (hYn m i) j z]
+  have hint1 : ∀ j i, IntegrableOn (fun z => (Ωn n j i z - Ωn m j i z) ^ 2) W₁ :=
+    fun j i => vorticity_integrableOn_of_continuous_bounded ((hΦ j i).pow 2) hW₁b
+  have hint2 : ∀ i, IntegrableOn (fun z => (Yn n i z - Yn m i z) ^ 2) W₁ := fun i =>
+    vorticity_integrableOn_of_continuous_bounded ((hD i).continuous.pow 2) hW₁b
+  have hsplitR : ∫ z in W₁, (∑ j : Fin 3, ∑ i : Fin 3, (Ωn n j i z - Ωn m j i z) ^ 2 +
+      ∑ i : Fin 3, (Yn n i z - Yn m i z) ^ 2) =
+      (∑ j : Fin 3, ∑ i : Fin 3, ∫ z in W₁, (Ωn n j i z - Ωn m j i z) ^ 2) +
+        ∑ i : Fin 3, ∫ z in W₁, (Yn n i z - Yn m i z) ^ 2 := by
+    rw [integral_add (integrable_finsetSum _ fun j _ => integrable_finsetSum _ fun i _ =>
+        hint1 j i) (integrable_finsetSum _ fun i _ => hint2 i),
+      integral_finsetSum _ fun j _ => integrable_finsetSum _ fun i _ => hint1 j i,
+      integral_finsetSum _ fun i _ => hint2 i]
+    rw [Finset.sum_congr rfl fun j _ => integral_finsetSum _ fun i _ => hint1 j i]
+  calc
+    _ = ∫ z in W', ∑ j : Fin 3, ∑ i : Fin 3,
+        spatialPartial (fun z : Vec3 × ℝ => Yn n i z - Yn m i z) j z ^ 2 :=
+      integral_congr_ae (Eventually.of_forall fun z => (hlhs z).symm)
+    _ ≤ _ := hest
+    _ = _ := by rw [hsplitR]
+
+private theorem vorticityDivCurl_pairwise_energy_tendsto {C₀ : ℝ} (hC₀ : 0 ≤ C₀)
+    (Yerr : Fin 3 → ℕ → ℝ) (Ωerr : Fin 3 → Fin 3 → ℕ → ℝ)
+    (Ypair : ℕ → ℕ → Fin 3 → ℝ) (Ωpair : ℕ → ℕ → Fin 3 → Fin 3 → ℝ)
+    (hYerr : ∀ i, Tendsto (Yerr i) atTop (𝓝 0))
+    (hΩerr : ∀ j i, Tendsto (Ωerr j i) atTop (𝓝 0))
+    (hYpair : ∀ n m i, Ypair n m i ≤ 2 * Yerr i n + 2 * Yerr i m)
+    (hΩpair : ∀ n m j i, Ωpair n m j i ≤ 2 * Ωerr j i n + 2 * Ωerr j i m)
+    (hYnonneg : ∀ n m i, 0 ≤ Ypair n m i)
+    (hΩnonneg : ∀ n m j i, 0 ≤ Ωpair n m j i) :
+    Tendsto (fun p : ℕ × ℕ => C₀ *
+      ((∑ j : Fin 3, ∑ i : Fin 3, Ωpair p.1 p.2 j i) +
+        ∑ i : Fin 3, Ypair p.1 p.2 i)) atTop (𝓝 0) := by
+  have hY2 : ∀ i : Fin 3, Tendsto (fun n => 2 * Yerr i n) atTop (𝓝 0) :=
+    fun i => (hYerr i).const_mul 2
+  have hΩ2 : ∀ j i : Fin 3, Tendsto (fun n => 2 * Ωerr j i n) atTop (𝓝 0) :=
+    fun j i => (hΩerr j i).const_mul 2
+  have hbound : Tendsto (fun p : ℕ × ℕ => C₀ *
+      ((∑ j : Fin 3, ∑ i : Fin 3, (2 * Ωerr j i p.1 + 2 * Ωerr j i p.2)) +
+        ∑ i : Fin 3, (2 * Yerr i p.1 + 2 * Yerr i p.2))) atTop (𝓝 0) := by
+    have h1 := tendsto_finsetSum (Finset.univ : Finset (Fin 3)) fun j _ =>
+      tendsto_finsetSum (Finset.univ : Finset (Fin 3)) fun i _ =>
+        vorticity_tendsto_prod_add (hΩ2 j i) (hΩ2 j i)
+    have h2 := tendsto_finsetSum (Finset.univ : Finset (Fin 3)) fun i _ =>
+      vorticity_tendsto_prod_add (hY2 i) (hY2 i)
+    simp only [Finset.sum_const_zero] at h1 h2
+    simpa using (h1.add h2).const_mul C₀
+  refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hbound
+    (fun p => ?_) (fun p => ?_)
+  · exact mul_nonneg hC₀ (add_nonneg
+      (Finset.sum_nonneg fun j _ => Finset.sum_nonneg fun i _ => hΩnonneg p.1 p.2 j i)
+      (Finset.sum_nonneg fun i _ => hYnonneg p.1 p.2 i))
+  · apply mul_le_mul_of_nonneg_left _ hC₀
+    apply add_le_add
+    · exact Finset.sum_le_sum fun j _ => Finset.sum_le_sum fun i _ => hΩpair p.1 p.2 j i
+    · exact Finset.sum_le_sum fun i _ => hYpair p.1 p.2 i
+
+private theorem vorticityDivCurl_limit_and_data_squares
+    {W W' : Set (Vec3 × ℝ)}
+    (G : Fin 3 → Fin 3 → Vec3 × ℝ → ℝ) (Y : Fin 3 → Vec3 × ℝ → ℝ)
+    (Ω : Fin 3 → Fin 3 → Vec3 × ℝ → ℝ)
+    (hG : ∀ i j, MemLp (G i j) 2 (volume.restrict W'))
+    (hY : ∀ i, MemLp (Y i) 2 (volume.restrict W))
+    (hΩ : ∀ i k, MemLp (Ω i k) 2 (volume.restrict W)) :
+    (∀ i j, IntegrableOn (fun y => G i j y ^ 2) W') ∧
+      (∀ i, IntegrableOn (fun y => Y i y ^ 2) W) ∧
+      (∀ i k, IntegrableOn (fun y => Ω i k y ^ 2) W) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro i j
+    exact (memLp_two_iff_integrable_sq (hG i j).aestronglyMeasurable).1 (hG i j)
+  · intro i
+    exact (memLp_two_iff_integrable_sq (hY i).aestronglyMeasurable).1 (hY i)
+  · intro i k
+    exact (memLp_two_iff_integrable_sq (hΩ i k).aestronglyMeasurable).1 (hΩ i k)
+
+private theorem vorticityDivCurl_integrable_data_on_box
+    {W : Set (Vec3 × ℝ)} (Y : Fin 3 → Vec3 × ℝ → ℝ)
+    (Ω : Fin 3 → Fin 3 → Vec3 × ℝ → ℝ)
+    (hY : ∀ i, MemLp (Y i) 2 (volume.restrict W))
+    (hΩ : ∀ i k, MemLp (Ω i k) 2 (volume.restrict W)) :
+    (∀ i, IntegrableOn (Y i) W) ∧ (∀ i k, IntegrableOn (Ω i k) W) := by
+  exact ⟨fun i => vorticity_integrableOn_of_memLp_box (hY i),
+    fun i k => vorticity_integrableOn_of_memLp_box (hΩ i k)⟩
+
+private theorem vorticityDivCurl_data_locallyIntegrable
+    {W : Set (Vec3 × ℝ)} (hWm : MeasurableSet W)
+    (Y : Fin 3 → Vec3 × ℝ → ℝ) (Ω : Fin 3 → Fin 3 → Vec3 × ℝ → ℝ)
+    (hY : ∀ i, IntegrableOn (Y i) W) (hΩ : ∀ i k, IntegrableOn (Ω i k) W) :
+    (∀ i, LocallyIntegrable (W.indicator (Y i)) (volume : Measure (Vec3 × ℝ))) ∧
+      (∀ i k, LocallyIntegrable (W.indicator (Ω i k)) (volume : Measure (Vec3 × ℝ))) := by
+  constructor
+  · intro i
+    exact ((integrable_indicator_iff hWm).2 (hY i)).locallyIntegrable
+  · intro i k
+    exact ((integrable_indicator_iff hWm).2 (hΩ i k)).locallyIntegrable
+
 private theorem vorticityDivCurlEngine_core {r R₁ R κ C₀ : ℝ} (hrR₁ : r < R₁)
     (hR₁R : R₁ < R) (hκ : 0 < κ) (hC₀ : 0 ≤ C₀)
     (hsmooth : ∀ (x₀ : Vec3) (V : Fin 3 → Vec3 → ℝ), (∀ b, ContDiff ℝ (⊤ : ℕ∞) (V b)) →
@@ -146,13 +287,8 @@ private theorem vorticityDivCurlEngine_core {r R₁ R κ C₀ : ℝ} (hrR₁ : r
   set ε₀ : ℝ := min ((R - R₁) / 2) (κ / 6) with hε₀def
   have hε₀ : 0 < ε₀ := lt_min (by linarith only [hR₁R]) (by linarith only [hκ])
   obtain ⟨ε, hεpos, hεlim, hεle⟩ := vorticity_engine_radii hε₀
-  have hYi : ∀ i, IntegrableOn (Y i) W := fun i => vorticity_integrableOn_of_memLp_box (hY i)
-  have hΩi : ∀ i k, IntegrableOn (Ω i k) W := fun i k =>
-    vorticity_integrableOn_of_memLp_box (hΩ i k)
-  have hYloc : ∀ i, LocallyIntegrable (W.indicator (Y i)) (volume : Measure (Vec3 × ℝ)) :=
-    fun i => ((integrable_indicator_iff hWm).2 (hYi i)).locallyIntegrable
-  have hΩloc : ∀ i k, LocallyIntegrable (W.indicator (Ω i k)) (volume : Measure (Vec3 × ℝ)) :=
-    fun i k => ((integrable_indicator_iff hWm).2 (hΩi i k)).locallyIntegrable
+  obtain ⟨hYi, hΩi⟩ := vorticityDivCurl_integrable_data_on_box Y Ω hY hΩ
+  obtain ⟨hYloc, hΩloc⟩ := vorticityDivCurl_data_locallyIntegrable hWm Y Ω hYi hΩi
   set Yn : ℕ → Fin 3 → Vec3 × ℝ → ℝ :=
     fun n i => vorticityBackMollify W (Y i) (ε n) (hεpos n) with hYndef
   set Ωn : ℕ → Fin 3 → Fin 3 → Vec3 × ℝ → ℝ :=
@@ -198,85 +334,20 @@ private theorem vorticityDivCurlEngine_core {r R₁ R κ C₀ : ℝ} (hrR₁ : r
   have hΩsq : ∀ i k, Tendsto (fun n => ∫ z in W₁, (Ωn n i k z - Ω i k z) ^ 2) atTop (𝓝 0) :=
     fun i k => vorticity_integral_sq_tendsto_zero (f := fun n => Ωn n i k - Ω i k)
       (fun n => (hΩnS n i k W₁ hW₁b).sub (hΩS i k W₁ hW₁W)) (hΩconv i k W₁ hW₁m hW₁W)
-  -- the estimate for differences
-  have hdiff : ∀ n m : ℕ,
-      ∫ z in W', ∑ j : Fin 3, ∑ i : Fin 3,
-          (spatialPartial (Yn n i) j z - spatialPartial (Yn m i) j z) ^ 2 ≤
-        C₀ * ((∑ j : Fin 3, ∑ i : Fin 3, ∫ z in W₁, (Ωn n j i z - Ωn m j i z) ^ 2) +
-          ∑ i : Fin 3, ∫ z in W₁, (Yn n i z - Yn m i z) ^ 2) := by
-    intro n m
-    have hD : ∀ c, ContDiff ℝ (⊤ : ℕ∞) (fun z => Yn n c z - Yn m c z) := fun c =>
-      (hYn n c).sub (hYn m c)
-    have hΦ : ∀ a c, Continuous (fun z => Ωn n a c z - Ωn m a c z) := fun a c =>
-      (hΩn n a c).continuous.sub (hΩn m a c).continuous
-    have hest := vorticityDivCurl_integrated hsmooth x₀ (a + κ) b hD hΦ
-      (fun z hz => by
-        simp only [vorticity_spatialPartial_sub (hYn n _) (hYn m _), Finset.sum_sub_distrib,
-          hdivn n z hz, hdivn m z hz, sub_zero])
-      (fun z hz i k => by
-        rw [vorticity_spatialPartial_sub (hYn n k) (hYn m k),
-          vorticity_spatialPartial_sub (hYn n i) (hYn m i)]
-        have h1 := hcurln n z hz i k
-        have h2 := hcurln m z hz i k
-        linarith only [h1, h2])
-    have hlhs : ∀ z, ∑ j : Fin 3, ∑ i : Fin 3,
-        spatialPartial (fun z : Vec3 × ℝ => Yn n i z - Yn m i z) j z ^ 2 =
-        ∑ j : Fin 3, ∑ i : Fin 3,
-          (spatialPartial (Yn n i) j z - spatialPartial (Yn m i) j z) ^ 2 := by
-      intro z
-      exact Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => by
-        rw [vorticity_spatialPartial_sub (hYn n i) (hYn m i) j z]
-    have hint1 : ∀ j i, IntegrableOn (fun z => (Ωn n j i z - Ωn m j i z) ^ 2) W₁ :=
-      fun j i => vorticity_integrableOn_of_continuous_bounded ((hΦ j i).pow 2) hW₁b
-    have hint2 : ∀ i, IntegrableOn (fun z => (Yn n i z - Yn m i z) ^ 2) W₁ := fun i =>
-      vorticity_integrableOn_of_continuous_bounded ((hD i).continuous.pow 2) hW₁b
-    have hsplitR : ∫ z in W₁, (∑ j : Fin 3, ∑ i : Fin 3, (Ωn n j i z - Ωn m j i z) ^ 2 +
-        ∑ i : Fin 3, (Yn n i z - Yn m i z) ^ 2) =
-        (∑ j : Fin 3, ∑ i : Fin 3, ∫ z in W₁, (Ωn n j i z - Ωn m j i z) ^ 2) +
-          ∑ i : Fin 3, ∫ z in W₁, (Yn n i z - Yn m i z) ^ 2 := by
-      rw [integral_add (integrable_finsetSum _ fun j _ => integrable_finsetSum _ fun i _ =>
-          hint1 j i) (integrable_finsetSum _ fun i _ => hint2 i),
-        integral_finsetSum _ fun j _ => integrable_finsetSum _ fun i _ => hint1 j i,
-        integral_finsetSum _ fun i _ => hint2 i]
-      rw [Finset.sum_congr rfl fun j _ => integral_finsetSum _ fun i _ => hint1 j i]
-    calc
-      _ = ∫ z in W', ∑ j : Fin 3, ∑ i : Fin 3,
-          spatialPartial (fun z : Vec3 × ℝ => Yn n i z - Yn m i z) j z ^ 2 :=
-        integral_congr_ae (Eventually.of_forall fun z => (hlhs z).symm)
-      _ ≤ _ := hest
-      _ = _ := by rw [hsplitR]
-  have hrhs : Tendsto (fun p : ℕ × ℕ => C₀ *
-      ((∑ j : Fin 3, ∑ i : Fin 3, ∫ z in W₁, (Ωn p.1 j i z - Ωn p.2 j i z) ^ 2) +
-        ∑ i : Fin 3, ∫ z in W₁, (Yn p.1 i z - Yn p.2 i z) ^ 2)) atTop (𝓝 0) := by
-    have hY2 : ∀ i : Fin 3, Tendsto (fun n => 2 * (∫ z in W₁, (Yn n i z - Y i z) ^ 2))
-        atTop (𝓝 0) := fun i => by simpa using (hYsq i).const_mul 2
-    have hΩ2 : ∀ j i : Fin 3, Tendsto (fun n => 2 * (∫ z in W₁, (Ωn n j i z - Ω j i z) ^ 2))
-        atTop (𝓝 0) := fun j i => by simpa using (hΩsq j i).const_mul 2
-    have hbound : Tendsto (fun p : ℕ × ℕ => C₀ *
-        ((∑ j : Fin 3, ∑ i : Fin 3, (2 * (∫ z in W₁, (Ωn p.1 j i z - Ω j i z) ^ 2) +
-          2 * (∫ z in W₁, (Ωn p.2 j i z - Ω j i z) ^ 2))) +
-        ∑ i : Fin 3, (2 * (∫ z in W₁, (Yn p.1 i z - Y i z) ^ 2) +
-          2 * (∫ z in W₁, (Yn p.2 i z - Y i z) ^ 2)))) atTop (𝓝 0) := by
-      have h1 := tendsto_finsetSum (Finset.univ : Finset (Fin 3)) fun j _ =>
-        tendsto_finsetSum (Finset.univ : Finset (Fin 3)) fun i _ =>
-          vorticity_tendsto_prod_add (hΩ2 j i) (hΩ2 j i)
-      have h2 := tendsto_finsetSum (Finset.univ : Finset (Fin 3)) fun i _ =>
-        vorticity_tendsto_prod_add (hY2 i) (hY2 i)
-      simp only [Finset.sum_const_zero] at h1 h2
-      simpa using (h1.add h2).const_mul C₀
-    refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hbound
-      (fun p => ?_) (fun p => ?_)
-    · exact mul_nonneg hC₀ (add_nonneg
-        (Finset.sum_nonneg fun j _ => Finset.sum_nonneg fun i _ =>
-          integral_nonneg fun z => sq_nonneg _)
-        (Finset.sum_nonneg fun i _ => integral_nonneg fun z => sq_nonneg _))
-    · apply mul_le_mul_of_nonneg_left _ hC₀
-      apply add_le_add
-      · exact Finset.sum_le_sum fun j _ => Finset.sum_le_sum fun i _ =>
-          vorticity_integral_sq_sub_le (hΩnS p.1 j i W₁ hW₁b) (hΩnS p.2 j i W₁ hW₁b)
-            (hΩS j i W₁ hW₁W)
-      · exact Finset.sum_le_sum fun i _ => vorticity_integral_sq_sub_le
-          (hYnS p.1 i W₁ hW₁b) (hYnS p.2 i W₁ hW₁b) (hYS i W₁ hW₁W)
+  have hdiff := vorticityDivCurl_difference_estimate (C₀ := C₀) r R₁ hsmooth x₀ (a + κ) b W₁ W'
+    hW₁def hW'def hW₁b hW'b Yn Ωn hYn hΩn hdivn hcurln
+  have hrhs := vorticityDivCurl_pairwise_energy_tendsto hC₀
+    (fun i n => ∫ z in W₁, (Yn n i z - Y i z) ^ 2)
+    (fun j i n => ∫ z in W₁, (Ωn n j i z - Ω j i z) ^ 2)
+    (fun n m i => ∫ z in W₁, (Yn n i z - Yn m i z) ^ 2)
+    (fun n m j i => ∫ z in W₁, (Ωn n j i z - Ωn m j i z) ^ 2)
+    hYsq hΩsq
+    (fun n m i => vorticity_integral_sq_sub_le (hYnS n i W₁ hW₁b)
+      (hYnS m i W₁ hW₁b) (hYS i W₁ hW₁W))
+    (fun n m j i => vorticity_integral_sq_sub_le (hΩnS n j i W₁ hW₁b)
+      (hΩnS m j i W₁ hW₁b) (hΩS j i W₁ hW₁W))
+    (fun n m i => integral_nonneg fun z => sq_nonneg _)
+    (fun n m j i => integral_nonneg fun z => sq_nonneg _)
   have hcauchy : ∀ i j : Fin 3, Tendsto (fun p : ℕ × ℕ =>
       eLpNorm ((fun z : Vec3 × ℝ => spatialPartial (Yn p.1 i) j z) -
         (fun z : Vec3 × ℝ => spatialPartial (Yn p.2 i) j z)) 2 (volume.restrict W'))
@@ -318,12 +389,8 @@ private theorem vorticityDivCurlEngine_core {r R₁ R κ C₀ : ℝ} (hrR₁ : r
     exact vorticity_weakPartial_of_tendsto (fun n => hYn n i) (fun n => hYnS n i W' hW'b)
       (fun n => hdYnS n i j W' hW'b) (hYS i W' hW'W) (hGmem i j) (hYconv i W' hW'm hW'W)
       (hGlim i j)
-  · have hG2 : ∀ i j, IntegrableOn (fun y => G i j y ^ 2) W' := fun i j =>
-      (memLp_two_iff_integrable_sq (hGmem i j).aestronglyMeasurable).1 (hGmem i j)
-    have hY2W : ∀ i, IntegrableOn (fun y => Y i y ^ 2) W := fun i =>
-      (memLp_two_iff_integrable_sq (hY i).aestronglyMeasurable).1 (hY i)
-    have hΩ2W : ∀ i k, IntegrableOn (fun y => Ω i k y ^ 2) W := fun i k =>
-      (memLp_two_iff_integrable_sq (hΩ i k).aestronglyMeasurable).1 (hΩ i k)
+  · obtain ⟨hG2, hY2W, hΩ2W⟩ :=
+      vorticityDivCurl_limit_and_data_squares G Y Ω hGmem hY hΩ
     have happrox : ∀ n, ∑ i : Fin 3, ∑ j : Fin 3, ∫ z in W', spatialPartial (Yn n i) j z ^ 2 ≤
         C₀ * ((∑ j : Fin 3, ∑ i : Fin 3, ∫ z in W₁, Ωn n j i z ^ 2) +
           ∑ i : Fin 3, ∫ z in W₁, Yn n i z ^ 2) := by

@@ -9,6 +9,12 @@ module
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupPressureUniform
 public import LeanPool.CaffarelliKohnNirenberg.Foundation.Sobolev.Cutoff.Profile
 
+/-!
+# Blowup Cutoff Time
+
+Cutoff bounds used to localize the rescaled endpoint sequence.
+-/
+
 public section
 
 open MeasureTheory Set

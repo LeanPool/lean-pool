@@ -9,6 +9,12 @@ module
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupRieszSliceBound
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupRieszFarTime
 
+/-!
+# Blowup Riesz Far Bound
+
+Pressure reconstruction and convergence bounds for the rescaled sequence.
+-/
+
 public section
 
 open MeasureTheory Set Filter CKN.Foundation.Parabolic

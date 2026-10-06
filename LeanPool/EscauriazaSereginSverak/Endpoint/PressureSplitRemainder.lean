@@ -182,6 +182,59 @@ private theorem pressureSplit_jointHessian_product
   rw [← hs, heq]
   exact pressureSplit_mixedSecond_mul_const hψ (θ z.2) i j z.1
 
+private theorem pressureSplit_indicator_pairing_integral_split
+    {D : Set (Vec3 × ℝ)} (hD : MeasurableSet D)
+    {R p P W : Vec3 × ℝ → ℝ}
+    (hR : R = D.indicator (fun z => p z - P z))
+    (hpint : IntegrableOn (fun z => p z * W z) D volume)
+    (hPint : IntegrableOn (fun z => P z * W z) D volume) :
+    ∫ z, R z * W z = (∫ z in D, p z * W z) - ∫ z in D, P z * W z := by
+  have hweight : (fun z : Vec3 × ℝ => R z * W z) =ᵐ[volume]
+      (fun z => D.indicator (fun w => p w - P w) z * W z) := by
+    filter_upwards [] with z
+    rw [show R z = D.indicator (fun w => p w - P w) z from congrFun hR z]
+  calc
+    _ = ∫ z, D.indicator (fun w => p w - P w) z * W z :=
+      integral_congr_ae hweight
+    _ = ∫ z in D, (p z - P z) * W z := by
+      calc
+        _ = ∫ z, D.indicator (fun z => (p z - P z) * W z) z := by
+          apply integral_congr_ae
+          filter_upwards [] with z
+          by_cases hz : z ∈ D <;> simp [hz]
+        _ = _ := by rw [integral_indicator hD]
+    _ = _ := by
+      calc
+        _ = ∫ z in D, (p z * W z - P z * W z) := by
+          apply integral_congr_ae
+          filter_upwards [] with z
+          ring
+        _ = _ := integral_sub hpint hPint
+
+private theorem pressureSplit_remainder_product_indicator
+    (p : ParabolicPoint → ℝ) (Ppara : ParabolicPoint → ℝ)
+    (P : Vec3 × ℝ → ℝ)
+    (hP : ∀ z, Ppara (parabolicHomeomorph.symm z) = P z) :
+    (fun z : Vec3 × ℝ =>
+      pressureSplitRemainder p Ppara (parabolicHomeomorph.symm z)) =
+      pressureSplitProductDomain.indicator
+        (fun z => p (parabolicHomeomorph.symm z) - P z) := by
+  funext z
+  change goodPointDomain.indicator (fun y => p y - Ppara y)
+      (parabolicHomeomorph.symm z) =
+    pressureSplitProductDomain.indicator
+      (fun y => p (parabolicHomeomorph.symm y) - P y) z
+  have hmem : parabolicHomeomorph.symm z ∈ goodPointDomain ↔
+      z ∈ pressureSplitProductDomain := by
+    change ((z.1, z.2) : ParabolicPoint) ∈
+        (vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0) ↔
+      (z.1, z.2) ∈ (vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0)
+    rfl
+  by_cases hz : z ∈ pressureSplitProductDomain
+  · rw [Set.indicator_of_mem (hmem.mpr hz), Set.indicator_of_mem hz, hP z]
+  · rw [Set.indicator_of_notMem (fun hm => hz (hmem.mp hm)),
+      Set.indicator_of_notMem hz]
+
 theorem pressureSplit_remainder_pairing_zero
     {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin 3 → Vec3}
     {p : ParabolicPoint → ℝ}
@@ -374,58 +427,17 @@ theorem pressureSplit_remainder_pairing_zero
     simp [W, Set.indicator_of_mem hz]
   have hRdef : R = D.indicator
       (fun z => p (parabolicHomeomorph.symm z) - P z) := by
-    funext z
-    change goodPointDomain.indicator (fun y => p y - Ppara y)
-      (parabolicHomeomorph.symm z) =
-        D.indicator (fun y => p (parabolicHomeomorph.symm y) - P y) z
-    have hmem : parabolicHomeomorph.symm z ∈ goodPointDomain ↔ z ∈ D := by
-      change ((z.1, z.2) : ParabolicPoint) ∈
-          (vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0) ↔
-        (z.1, z.2) ∈ (vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0)
-      rfl
-    by_cases hz : z ∈ D
-    · rw [Set.indicator_of_mem (hmem.mpr hz), Set.indicator_of_mem hz]
-      have hP : Ppara (parabolicHomeomorph.symm z) = P z := by
-        change CKN.Leray.rieszPressureSpaceTime (3 / 2 : ℝ) (by norm_num)
-            (pressureSplitTensor u) hF
-            (parabolicHomeomorph (parabolicHomeomorph.symm z)) = _
-        rw [parabolicHomeomorph.apply_symm_apply]
-      rw [hP]
-    · rw [Set.indicator_of_notMem (fun hm => hz (hmem.mp hm)),
-        Set.indicator_of_notMem hz]
-  have hRweightInt : Integrable (fun z : Vec3 × ℝ => R z * W z) volume := by
-    have hR : MemLp R (ENNReal.ofReal (3 / 2 : ℝ)) volume := by
-      exact pressureSplit_remainder_memLp_product hu hDu henergy hp hL3 hgrad
-    exact blowup_pressure_mul_product_laplacian_integrable hR hψ hψc hθ hθc
-  have hRweight : (fun z : Vec3 × ℝ => R z * W z) =ᵐ[volume]
-      (fun z => D.indicator
-        (fun w => p (parabolicHomeomorph.symm w) - P w) z * W z) := by
-    filter_upwards [] with z
-    rw [show R z = D.indicator
-      (fun w => p (parabolicHomeomorph.symm w) - P w) z from congrFun hRdef z]
+    exact pressureSplit_remainder_product_indicator p Ppara P (by
+      intro z
+      change CKN.Leray.rieszPressureSpaceTime (3 / 2 : ℝ) (by norm_num)
+          (pressureSplitTensor u) hF
+          (parabolicHomeomorph (parabolicHomeomorph.symm z)) = _
+      rw [parabolicHomeomorph.apply_symm_apply])
   have hRsplit : ∫ z : Vec3 × ℝ, R z * W z =
       (∫ z in D, p (parabolicHomeomorph.symm z) * W z) -
-        ∫ z in D, P z * W z := by
-    calc
-      _ = ∫ z, D.indicator
-          (fun w => p (parabolicHomeomorph.symm w) - P w) z * W z :=
-        integral_congr_ae hRweight
-      _ = ∫ z in D, (p (parabolicHomeomorph.symm z) - P z) * W z := by
-        calc
-          _ = ∫ z, D.indicator (fun z =>
-              (p (parabolicHomeomorph.symm z) - P z) * W z) z := by
-                apply integral_congr_ae
-                filter_upwards [] with z
-                by_cases hz : z ∈ D <;> simp [hz]
-          _ = _ := by rw [integral_indicator hprodDomain]
-      _ = _ := by
-        calc
-          _ = ∫ z in D,
-              (p (parabolicHomeomorph.symm z) * W z - P z * W z) := by
-                apply integral_congr_ae
-                filter_upwards [] with z
-                ring
-          _ = _ := integral_sub hpWeightSet hPweightInt.integrableOn
+        ∫ z in D, P z * W z :=
+    pressureSplit_indicator_pairing_integral_split hprodDomain hRdef
+      hpWeightSet hPweightInt.integrableOn
   have hzero : ∫ z : Vec3 × ℝ, R z * W z = 0 := by
     rw [hRsplit, hsourceIntegral]
     ring

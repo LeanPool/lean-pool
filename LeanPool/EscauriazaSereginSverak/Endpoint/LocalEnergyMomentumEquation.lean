@@ -8,6 +8,12 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.Endpoint.LocalEnergySmooth
 
+/-!
+# Local Energy Momentum Equation
+
+Local energy identities and limit passages for the endpoint regularity proof.
+-/
+
 public section
 
 open MeasureTheory Set Filter
@@ -18,6 +24,128 @@ open CKN.Foundation.Parabolic CKN
 noncomputable section
 
 namespace ESS
+
+private theorem smoothMomentum_component_integral_by_parts
+    {u : Vec3 × ℝ → ℝ} {F G : Fin 3 → Vec3 × ℝ → ℝ}
+    {p ψ : Vec3 × ℝ → ℝ} (k : Fin 3)
+    (hA : Integrable (fun z => -(u z * dirDeriv ψ timeDir z)) volume)
+    (hF : ∀ j, Integrable
+      (fun z => F j z * dirDeriv ψ (spatialDir j) z) volume)
+    (hG : ∀ j, Integrable
+      (fun z => G j z * dirDeriv ψ (spatialDir j) z) volume)
+    (hP : Integrable (fun z => p z * dirDeriv ψ (spatialDir k) z) volume)
+    (hU : Integrable (fun z => dirDeriv u timeDir z * ψ z) volume)
+    (hFU : ∀ j, Integrable
+      (fun z => dirDeriv (F j) (spatialDir j) z * ψ z) volume)
+    (hGU : ∀ j, Integrable
+      (fun z => dirDeriv (G j) (spatialDir j) z * ψ z) volume)
+    (hPU : Integrable (fun z => dirDeriv p (spatialDir k) z * ψ z) volume)
+    (hAibp : (∫ z, -(u z * dirDeriv ψ timeDir z) ∂volume) =
+      ∫ z, dirDeriv u timeDir z * ψ z ∂volume)
+    (hFibp : ∀ j, (∫ z, -(F j z * dirDeriv ψ (spatialDir j) z) ∂volume) =
+      ∫ z, dirDeriv (F j) (spatialDir j) z * ψ z ∂volume)
+    (hGibp : ∀ j, (∫ z, G j z * dirDeriv ψ (spatialDir j) z ∂volume) =
+      -∫ z, dirDeriv (G j) (spatialDir j) z * ψ z ∂volume)
+    (hPibp : -(∫ z, p z * dirDeriv ψ (spatialDir k) z ∂volume) =
+      ∫ z, dirDeriv p (spatialDir k) z * ψ z ∂volume) :
+    (∫ z, (-(u z * dirDeriv ψ timeDir z)
+      - ∑ j : Fin 3, F j z * dirDeriv ψ (spatialDir j) z
+      + ∑ j : Fin 3, G j z * dirDeriv ψ (spatialDir j) z
+      - p z * dirDeriv ψ (spatialDir k) z) ∂volume) =
+    ∫ z, (dirDeriv u timeDir z
+      + ∑ j : Fin 3, dirDeriv (F j) (spatialDir j) z
+      - ∑ j : Fin 3, dirDeriv (G j) (spatialDir j) z
+      + dirDeriv p (spatialDir k) z) * ψ z ∂volume := by
+  let A := fun z => -(u z * dirDeriv ψ timeDir z)
+  let B := fun z => ∑ j : Fin 3, F j z * dirDeriv ψ (spatialDir j) z
+  let C := fun z => ∑ j : Fin 3, G j z * dirDeriv ψ (spatialDir j) z
+  let D := fun z => p z * dirDeriv ψ (spatialDir k) z
+  let U := fun z => dirDeriv u timeDir z * ψ z
+  let FU := fun z => ∑ j : Fin 3, dirDeriv (F j) (spatialDir j) z * ψ z
+  let GU := fun z => ∑ j : Fin 3, dirDeriv (G j) (spatialDir j) z * ψ z
+  let PU := fun z => dirDeriv p (spatialDir k) z * ψ z
+  have hB : Integrable B volume :=
+    integrable_finsetSum Finset.univ (fun j hj => hF j)
+  have hC : Integrable C volume :=
+    integrable_finsetSum Finset.univ (fun j hj => hG j)
+  have hFU' : Integrable FU volume :=
+    integrable_finsetSum Finset.univ (fun j hj => hFU j)
+  have hGU' : Integrable GU volume :=
+    integrable_finsetSum Finset.univ (fun j hj => hGU j)
+  have hleftAB := hA.sub hB
+  have hleftABC := hleftAB.add hC
+  have hrightAB := hU.add hFU'
+  have hrightABC := hrightAB.sub hGU'
+  have hleftExpand :
+      (∫ z, A z - B z + C z - D z ∂volume) =
+        (∫ z, A z ∂volume) - ∫ z, B z ∂volume +
+          ∫ z, C z ∂volume - ∫ z, D z ∂volume := by
+    calc
+      _ = ∫ z, ((A - B + C) z) - D z ∂volume := by rfl
+      _ = (∫ z, (A - B + C) z ∂volume) - ∫ z, D z ∂volume :=
+        integral_sub hleftABC hP
+      _ = ((∫ z, (A - B) z ∂volume) + ∫ z, C z ∂volume) -
+          ∫ z, D z ∂volume := by
+        rw [show (∫ z, (A - B + C) z ∂volume) =
+          (∫ z, (A - B) z ∂volume) + ∫ z, C z ∂volume by
+            simpa only [Pi.add_apply, Pi.sub_apply] using
+              (integral_add hleftAB hC)]
+      _ = _ := by
+        rw [show (∫ z, (A - B) z ∂volume) =
+          (∫ z, A z ∂volume) - ∫ z, B z ∂volume by
+            simpa only [Pi.sub_apply] using (integral_sub hA hB)]
+  have hrightExpand :
+      (∫ z, (dirDeriv u timeDir z +
+        ∑ j : Fin 3, dirDeriv (F j) (spatialDir j) z -
+        ∑ j : Fin 3, dirDeriv (G j) (spatialDir j) z +
+        dirDeriv p (spatialDir k) z) * ψ z ∂volume) =
+        (∫ z, U z ∂volume) + ∫ z, FU z ∂volume -
+          ∫ z, GU z ∂volume + ∫ z, PU z ∂volume := by
+    calc
+      _ = ∫ z, U z + FU z - GU z + PU z ∂volume := by
+        apply integral_congr_ae
+        filter_upwards [] with z
+        simp [U, FU, GU, PU, add_mul, sub_mul, Finset.sum_mul]
+      _ = ∫ z, ((U + FU - GU) z) + PU z ∂volume := by rfl
+      _ = (∫ z, (U + FU - GU) z ∂volume) + ∫ z, PU z ∂volume :=
+        integral_add hrightABC hPU
+      _ = ((∫ z, (U + FU) z ∂volume) - ∫ z, GU z ∂volume) +
+          ∫ z, PU z ∂volume := by
+        rw [show (∫ z, (U + FU - GU) z ∂volume) =
+          (∫ z, (U + FU) z ∂volume) - ∫ z, GU z ∂volume by
+            simpa only [Pi.add_apply, Pi.sub_apply] using
+              (integral_sub hrightAB hGU')]
+      _ = _ := by
+        rw [show (∫ z, (U + FU) z ∂volume) =
+          (∫ z, U z ∂volume) + ∫ z, FU z ∂volume by
+            simpa only [Pi.add_apply] using (integral_add hU hFU')]
+  have hsumF : (∫ z, B z ∂volume) = -(∫ z, FU z ∂volume) := by
+    dsimp [B, FU]
+    rw [integral_finsetSum Finset.univ (fun j hj => hF j),
+      integral_finsetSum Finset.univ (fun j hj => hFU j)]
+    calc
+      _ = ∑ j : Fin 3, -(∫ z,
+          dirDeriv (F j) (spatialDir j) z * ψ z ∂volume) := by
+        apply Finset.sum_congr rfl
+        intro j hj
+        have h := hFibp j
+        rw [integral_neg] at h
+        linarith
+      _ = _ := by rw [Finset.sum_neg_distrib]
+  have hsumG : (∫ z, C z ∂volume) = -(∫ z, GU z ∂volume) := by
+    dsimp [C, GU]
+    rw [integral_finsetSum Finset.univ (fun j hj => hG j),
+      integral_finsetSum Finset.univ (fun j hj => hGU j)]
+    calc
+      _ = ∑ j : Fin 3, -(∫ z,
+          dirDeriv (G j) (spatialDir j) z * ψ z ∂volume) := by
+        apply Finset.sum_congr rfl
+        intro j hj
+        exact hGibp j
+      _ = _ := by rw [Finset.sum_neg_distrib]
+  dsimp [A, D, U, PU] at hleftExpand hrightExpand ⊢
+  rw [hleftExpand, hrightExpand, hAibp, hsumF, hsumG]
+  linear_combination hPibp
 
 /-- A smooth momentum equation gives its weak integral identity for compactly supported
 smooth vector tests. -/
@@ -145,244 +273,18 @@ theorem smoothMomentumEquation_tested
             - ∑ j : Fin 3, dirDeriv (fun y => G y i j) (spatialDir j) z
             + dirDeriv p (spatialDir i) z) * φ z i
           ∂(volume : Measure (Vec3 × ℝ)) := by
-    have htimeInt := (hprodTest (fun z => u z i) (hu1 i) i timeDir).neg
-    have hFInt (j : Fin 3) :=
-      hprodTest (fun z => F z i j) (hF1 i j) i (spatialDir j)
-    have hGInt (j : Fin 3) :=
-      hprodTest (fun z => G z i j) (hG1 i j) i (spatialDir j)
-    have hpInt := hprodTest p hp1 i (spatialDir i)
-    have hFsum : Integrable
-        (fun z => ∑ j : Fin 3,
-          F z i j * dirDeriv (fun y => φ y i) (spatialDir j) z)
-        (volume : Measure (Vec3 × ℝ)) := by
-      apply integrable_finsetSum
-      intro j hj
-      exact hFInt j
-    have hGsum : Integrable
-        (fun z => ∑ j : Fin 3,
-          G z i j * dirDeriv (fun y => φ y i) (spatialDir j) z)
-        (volume : Measure (Vec3 × ℝ)) := by
-      apply integrable_finsetSum
-      intro j hj
-      exact hGInt j
-    have hleftAB := htimeInt.sub hFsum
-    have hleftABC := hleftAB.add hGsum
-    have hleft := hleftABC.sub hpInt
-    have hrightU : Integrable
-        (fun z => dirDeriv (fun y => u y i) timeDir z * φ z i)
-        (volume : Measure (Vec3 × ℝ)) := hderivTest (fun z => u z i) (hu1 i) i timeDir
-    have hrightF (j : Fin 3) : Integrable
-        (fun z => dirDeriv (fun y => F y i j) (spatialDir j) z * φ z i)
-        (volume : Measure (Vec3 × ℝ)) :=
-      hderivTest (fun z => F z i j) (hF1 i j) i (spatialDir j)
-    have hrightFsum : Integrable
-        (fun z => ∑ j : Fin 3,
-          dirDeriv (fun y => F y i j) (spatialDir j) z * φ z i)
-        (volume : Measure (Vec3 × ℝ)) := by
-      apply integrable_finsetSum
-      intro j hj
-      exact hrightF j
-    have hrightG (j : Fin 3) : Integrable
-        (fun z => dirDeriv (fun y => G y i j) (spatialDir j) z * φ z i)
-        (volume : Measure (Vec3 × ℝ)) :=
-      hderivTest (fun z => G z i j) (hG1 i j) i (spatialDir j)
-    have hrightGsum : Integrable
-        (fun z => ∑ j : Fin 3,
-          dirDeriv (fun y => G y i j) (spatialDir j) z * φ z i)
-        (volume : Measure (Vec3 × ℝ)) := by
-      apply integrable_finsetSum
-      intro j hj
-      exact hrightG j
-    have hrightAB := hrightU.add hrightFsum
-    have hrightABC := hrightAB.sub hrightGsum
-    have hrightP := hderivTest p hp1 i (spatialDir i)
-    have hright := hrightABC.add hrightP
-    have hsumF :
-        (∑ j : Fin 3, ∫ z, F z i j *
-          dirDeriv (fun y => φ y i) (spatialDir j) z
-            ∂(volume : Measure (Vec3 × ℝ))) =
-          -∑ j : Fin 3, ∫ z,
-            dirDeriv (fun y => F y i j) (spatialDir j) z * φ z i
-              ∂(volume : Measure (Vec3 × ℝ)) := by
-      calc
-        _ = ∑ j : Fin 3, -(∫ z,
-            dirDeriv (fun y => F y i j) (spatialDir j) z * φ z i
-              ∂(volume : Measure (Vec3 × ℝ))) := by
-          apply Finset.sum_congr rfl
-          intro j hj
-          exact smoothIntegral_dirDeriv_mul_eq_neg (hF1 i j) (hφi1 i)
-            (hφic i) (spatialDir j)
-        _ = _ := by rw [Finset.sum_neg_distrib]
-    have hsumG :
-        (∑ j : Fin 3, ∫ z, G z i j *
-          dirDeriv (fun y => φ y i) (spatialDir j) z
-            ∂(volume : Measure (Vec3 × ℝ))) =
-          -∑ j : Fin 3, ∫ z,
-            dirDeriv (fun y => G y i j) (spatialDir j) z * φ z i
-              ∂(volume : Measure (Vec3 × ℝ)) := by
-      calc
-        _ = ∑ j : Fin 3, -(∫ z,
-            dirDeriv (fun y => G y i j) (spatialDir j) z * φ z i
-              ∂(volume : Measure (Vec3 × ℝ))) := by
-          apply Finset.sum_congr rfl
-          intro j hj
-          exact smoothIntegral_dirDeriv_mul_eq_neg (hG1 i j) (hφi1 i)
-            (hφic i) (spatialDir j)
-        _ = _ := by rw [Finset.sum_neg_distrib]
-    have hleftExpand :
-        (∫ z, W i z ∂(volume : Measure (Vec3 × ℝ))) =
-          (∫ z, -(u z i * dirDeriv (fun y => φ y i) timeDir z)
-            ∂(volume : Measure (Vec3 × ℝ)))
-            - ∑ j : Fin 3, (∫ z, F z i j *
-                dirDeriv (fun y => φ y i) (spatialDir j) z
-                  ∂(volume : Measure (Vec3 × ℝ)))
-            + ∑ j : Fin 3, (∫ z, G z i j *
-                dirDeriv (fun y => φ y i) (spatialDir j) z
-                  ∂(volume : Measure (Vec3 × ℝ)))
-            - ∫ z, p z * dirDeriv (fun y => φ y i) (spatialDir i) z
-                ∂(volume : Measure (Vec3 × ℝ)) := by
-      have houter :
-          (∫ z, (((-(u z i * dirDeriv (fun y => φ y i) timeDir z)
-                - ∑ j : Fin 3, F z i j * dirDeriv (fun y => φ y i)
-                    (spatialDir j) z)
-                + ∑ j : Fin 3, G z i j * dirDeriv (fun y => φ y i)
-                    (spatialDir j) z)
-                - p z * dirDeriv (fun y => φ y i) (spatialDir i) z)
-                ∂(volume : Measure (Vec3 × ℝ))) =
-            (∫ z, ((-(u z i * dirDeriv (fun y => φ y i) timeDir z)
-                - ∑ j : Fin 3, F z i j * dirDeriv (fun y => φ y i)
-                    (spatialDir j) z)
-                + ∑ j : Fin 3, G z i j * dirDeriv (fun y => φ y i)
-                    (spatialDir j) z)
-                ∂(volume : Measure (Vec3 × ℝ)))
-              - ∫ z, p z * dirDeriv (fun y => φ y i) (spatialDir i) z
-                  ∂(volume : Measure (Vec3 × ℝ)) :=
-        integral_sub hleftABC hpInt
-      have hinner :
-          (∫ z, ((-(u z i * dirDeriv (fun y => φ y i) timeDir z)
-                - ∑ j : Fin 3, F z i j * dirDeriv (fun y => φ y i)
-                    (spatialDir j) z)
-                + ∑ j : Fin 3, G z i j * dirDeriv (fun y => φ y i)
-                    (spatialDir j) z)
-                ∂(volume : Measure (Vec3 × ℝ))) =
-            ((∫ z, -(u z i * dirDeriv (fun y => φ y i) timeDir z)
-                ∂(volume : Measure (Vec3 × ℝ)))
-              - ∑ j : Fin 3, ∫ z, F z i j * dirDeriv (fun y => φ y i)
-                  (spatialDir j) z ∂(volume : Measure (Vec3 × ℝ)))
-              + ∑ j : Fin 3, ∫ z, G z i j * dirDeriv (fun y => φ y i)
-                  (spatialDir j) z ∂(volume : Measure (Vec3 × ℝ)) := by
-        let a : Vec3 × ℝ → ℝ := fun z =>
-          -(u z i * dirDeriv (fun y => φ y i) timeDir z)
-        let b : Vec3 × ℝ → ℝ := fun z =>
-          ∑ j : Fin 3, F z i j * dirDeriv (fun y => φ y i) (spatialDir j) z
-        let c : Vec3 × ℝ → ℝ := fun z =>
-          ∑ j : Fin 3, G z i j * dirDeriv (fun y => φ y i) (spatialDir j) z
-        have hadd :
-            (∫ z, (a z - b z) + c z ∂(volume : Measure (Vec3 × ℝ))) =
-              (∫ z, a z - b z ∂(volume : Measure (Vec3 × ℝ))) +
-                ∫ z, c z ∂(volume : Measure (Vec3 × ℝ)) :=
-          integral_add hleftAB hGsum
-        have hsub :
-            (∫ z, a z - b z ∂(volume : Measure (Vec3 × ℝ))) =
-              (∫ z, a z ∂(volume : Measure (Vec3 × ℝ))) -
-                ∫ z, b z ∂(volume : Measure (Vec3 × ℝ)) :=
-          integral_sub htimeInt hFsum
-        have hb :
-            (∫ z, b z ∂(volume : Measure (Vec3 × ℝ))) =
-              ∑ j : Fin 3, ∫ z, F z i j * dirDeriv (fun y => φ y i)
-                (spatialDir j) z ∂(volume : Measure (Vec3 × ℝ)) := by
-          dsimp [b]
-          exact integral_finsetSum Finset.univ (fun j hj => hFInt j)
-        have hc :
-            (∫ z, c z ∂(volume : Measure (Vec3 × ℝ))) =
-              ∑ j : Fin 3, ∫ z, G z i j * dirDeriv (fun y => φ y i)
-                (spatialDir j) z ∂(volume : Measure (Vec3 × ℝ)) := by
-          dsimp [c]
-          exact integral_finsetSum Finset.univ (fun j hj => hGInt j)
-        have hgroup :
-            (∫ z, a z - b z + c z ∂(volume : Measure (Vec3 × ℝ))) =
-              (∫ z, (a z - b z) + c z ∂(volume : Measure (Vec3 × ℝ))) := by
-          apply integral_congr_ae
-          filter_upwards [] with z
-          rfl
-        calc
-          _ = (∫ z, a z - b z ∂(volume : Measure (Vec3 × ℝ))) +
-              ∫ z, c z ∂(volume : Measure (Vec3 × ℝ)) := hgroup.trans hadd
-          _ = ((∫ z, a z ∂(volume : Measure (Vec3 × ℝ))) -
-              ∫ z, b z ∂(volume : Measure (Vec3 × ℝ))) +
-              ∫ z, c z ∂(volume : Measure (Vec3 × ℝ)) :=
-            congrArg (fun x => x + ∫ z, c z ∂(volume : Measure (Vec3 × ℝ))) hsub
-          _ = _ := by rw [hb, hc]
-      simpa [W] using houter.trans
-        (congrArg (fun a => a -
-          ∫ z, p z * dirDeriv (fun y => φ y i) (spatialDir i) z
-            ∂(volume : Measure (Vec3 × ℝ))) hinner)
-    have hrightExpand :
-        (∫ z,
-          (dirDeriv (fun y => u y i) timeDir z
-            + ∑ j : Fin 3, dirDeriv (fun y => F y i j) (spatialDir j) z
-            - ∑ j : Fin 3, dirDeriv (fun y => G y i j) (spatialDir j) z
-            + dirDeriv p (spatialDir i) z) * φ z i
-          ∂(volume : Measure (Vec3 × ℝ))) =
-          (∫ z, dirDeriv (fun y => u y i) timeDir z * φ z i
-            ∂(volume : Measure (Vec3 × ℝ)))
-            + ∑ j : Fin 3, (∫ z, dirDeriv (fun y => F y i j)
-                (spatialDir j) z * φ z i ∂(volume : Measure (Vec3 × ℝ)))
-            - ∑ j : Fin 3, (∫ z, dirDeriv (fun y => G y i j)
-                (spatialDir j) z * φ z i ∂(volume : Measure (Vec3 × ℝ)))
-            + ∫ z, dirDeriv p (spatialDir i) z * φ z i
-                ∂(volume : Measure (Vec3 × ℝ)) := by
-      calc
-        _ = ∫ z,
-            (((dirDeriv (fun y => u y i) timeDir z * φ z i
-              + ∑ j : Fin 3, dirDeriv (fun y => F y i j) (spatialDir j) z * φ z i)
-              - ∑ j : Fin 3, dirDeriv (fun y => G y i j) (spatialDir j) z * φ z i)
-              + dirDeriv p (spatialDir i) z * φ z i)
-              ∂(volume : Measure (Vec3 × ℝ)) := by
-          apply integral_congr_ae
-          filter_upwards [] with z
-          simp only [add_mul, sub_mul, Finset.sum_mul]
-        _ = _ := by
-          have houter := integral_add hrightABC hrightP
-          have hmiddle := integral_sub hrightAB hrightGsum
-          have hinner := integral_add hrightU hrightFsum
-          have hFsumInt :
-              (∫ z, ∑ j : Fin 3,
-                dirDeriv (fun y => F y i j) (spatialDir j) z * φ z i
-                ∂(volume : Measure (Vec3 × ℝ))) =
-                ∑ j : Fin 3, ∫ z,
-                  dirDeriv (fun y => F y i j) (spatialDir j) z * φ z i
-                  ∂(volume : Measure (Vec3 × ℝ)) :=
-            integral_finsetSum Finset.univ (fun j hj => hrightF j)
-          have hGsumInt :
-              (∫ z, ∑ j : Fin 3,
-                dirDeriv (fun y => G y i j) (spatialDir j) z * φ z i
-                ∂(volume : Measure (Vec3 × ℝ))) =
-                ∑ j : Fin 3, ∫ z,
-                  dirDeriv (fun y => G y i j) (spatialDir j) z * φ z i
-                  ∂(volume : Measure (Vec3 × ℝ)) :=
-            integral_finsetSum Finset.univ (fun j hj => hrightG j)
-          exact houter.trans (congrArg (fun a => a +
-            ∫ z, dirDeriv p (spatialDir i) z * φ z i
-              ∂(volume : Measure (Vec3 × ℝ)))
-            (hmiddle.trans (congrArg (fun a => a -
-              ∫ z, ∑ j : Fin 3,
-                dirDeriv (fun y => G y i j) (spatialDir j) z * φ z i
-                ∂(volume : Measure (Vec3 × ℝ))
-              ) (hinner.trans (congrArg (fun a =>
-                (∫ z, dirDeriv (fun y => u y i) timeDir z * φ z i
-                  ∂(volume : Measure (Vec3 × ℝ))) + a) hFsumInt)))))
-            |>.trans (congrArg (fun a =>
-              ((∫ z, dirDeriv (fun y => u y i) timeDir z * φ z i
-                ∂(volume : Measure (Vec3 × ℝ))) +
-                ∑ j : Fin 3, ∫ z,
-                  dirDeriv (fun y => F y i j) (spatialDir j) z * φ z i
-                  ∂(volume : Measure (Vec3 × ℝ))) - a +
-                ∫ z, dirDeriv p (spatialDir i) z * φ z i
-                  ∂(volume : Measure (Vec3 × ℝ))) hGsumInt)
-    rw [hleftExpand, hrightExpand]
-    rw [htimeIBP i, hsumF, hsumG]
-    linear_combination hpIBPneg i
+    simpa [W] using smoothMomentum_component_integral_by_parts
+      (u := fun z => u z i) (F := fun j z => F z i j)
+      (G := fun j z => G z i j) (p := p) (ψ := fun z => φ z i) i
+      ((hprodTest (fun z => u z i) (hu1 i) i timeDir).neg)
+      (fun j => hprodTest (fun z => F z i j) (hF1 i j) i (spatialDir j))
+      (fun j => hprodTest (fun z => G z i j) (hG1 i j) i (spatialDir j))
+      (hprodTest p hp1 i (spatialDir i))
+      (hderivTest (fun z => u z i) (hu1 i) i timeDir)
+      (fun j => hderivTest (fun z => F z i j) (hF1 i j) i (spatialDir j))
+      (fun j => hderivTest (fun z => G z i j) (hG1 i j) i (spatialDir j))
+      (hderivTest p hp1 i (spatialDir i))
+      (htimeIBP i) (hFIBP i) (hGIBP i) (hpIBPneg i)
   have hWzero (i : Fin 3) : ∫ z, W i z ∂(volume : Measure (Vec3 × ℝ)) = 0 := by
     have hzero : (fun z =>
         (dirDeriv (fun y => u y i) timeDir z
@@ -440,22 +342,94 @@ private theorem smoothDirectionalDerivative_continuous {f : Vec3 × ℝ → ℝ}
     Continuous (fun z => dirDeriv f v z) := by
   exact (hf.continuous_fderiv (by norm_num)).clm_apply continuous_const
 
-/-- Integrating the smooth energy test density removes its total derivative terms. -/
-theorem smoothEnergyTestIntegrand_integral_eq_base
+private theorem smoothEnergyIntegrands_vanish_off_test_support
     {u : Vec3 × ℝ → Vec3} {R G : Vec3 × ℝ → Fin 3 → Fin 3 → ℝ}
-    {p ψ : Vec3 × ℝ → ℝ}
+    {p ψ : Vec3 × ℝ → ℝ} :
+    (∀ z, z ∉ tsupport ψ → smoothEnergyBaseIntegrand u R G p ψ z = 0) ∧
+    (∀ z, z ∉ tsupport ψ → smoothEnergyTestIntegrand u R G p ψ z = 0) ∧
+    (∀ z, z ∉ tsupport ψ → smoothEnergyTotalDerivative u ψ z = 0) := by
+  let T : Vec3 × ℝ → ℝ := fun z => velocitySq u z * ψ z
+  have hψFirstSupport (v : Vec3 × ℝ) :
+      tsupport (fun z => dirDeriv ψ v z) ⊆ tsupport ψ := by
+    simpa [dirDeriv] using (tsupport_fderiv_apply_subset (𝕜 := ℝ) v)
+  have hψSecondSupport (j : Fin 3) :
+      tsupport (fun z => dirDeriv (fun y => dirDeriv ψ (spatialDir j) y)
+        (spatialDir j) z) ⊆ tsupport ψ := by
+    have hsecond : tsupport (fun z => dirDeriv
+        (fun y => dirDeriv ψ (spatialDir j) y) (spatialDir j) z) ⊆
+        tsupport (fun y => dirDeriv ψ (spatialDir j) y) := by
+      simpa [dirDeriv] using (tsupport_fderiv_apply_subset
+        (𝕜 := ℝ) (f := fun y => dirDeriv ψ (spatialDir j) y) (spatialDir j))
+    exact hsecond.trans (hψFirstSupport (spatialDir j))
+  have hψzero (z : Vec3 × ℝ) (hnot : z ∉ tsupport ψ) : ψ z = 0 :=
+    image_eq_zero_of_notMem_tsupport hnot
+  have hψDzero (z : Vec3 × ℝ) (hnot : z ∉ tsupport ψ)
+      (v : Vec3 × ℝ) : dirDeriv ψ v z = 0 := by
+    rw [dirDeriv, fderiv_of_notMem_tsupport ℝ hnot]
+    simp
+  have hψDDzero (z : Vec3 × ℝ) (hnot : z ∉ tsupport ψ) (j : Fin 3) :
+      dirDeriv (fun y => dirDeriv ψ (spatialDir j) y) (spatialDir j) z = 0 := by
+    have hnot' : z ∉ tsupport (fun y => dirDeriv ψ (spatialDir j) y) := by
+      intro hz'
+      exact hnot (hψFirstSupport (spatialDir j) hz')
+    rw [dirDeriv, fderiv_of_notMem_tsupport ℝ hnot']
+    simp
+  have hbasezero (z : Vec3 × ℝ) (hnot : z ∉ tsupport ψ) :
+      smoothEnergyBaseIntegrand u R G p ψ z = 0 := by
+    simp [smoothEnergyBaseIntegrand, hψzero z hnot, hψDzero z hnot,
+      hψDDzero z hnot]
+  have htestzero (z : Vec3 × ℝ) (hnot : z ∉ tsupport ψ) :
+      smoothEnergyTestIntegrand u R G p ψ z = 0 := by
+    simp [smoothEnergyTestIntegrand, hψzero z hnot, hψDzero z hnot]
+  have hTsupport : tsupport T ⊆ tsupport ψ := by
+    change tsupport (fun z => velocitySq u z * ψ z) ⊆ tsupport ψ
+    exact tsupport_mul_subset_right
+  have hTderivSupport : tsupport (fun z => dirDeriv T timeDir z) ⊆
+      tsupport ψ := by
+    have h := tsupport_fderiv_apply_subset (𝕜 := ℝ) (f := T) timeDir
+    simpa [dirDeriv] using h.trans hTsupport
+  have hfluxSupport (j : Fin 3) :
+      tsupport (fun z => ψ z * velocitySq u z * u z j) ⊆ tsupport ψ := by
+    calc
+      tsupport (fun z => ψ z * velocitySq u z * u z j) ⊆
+          tsupport (fun z => ψ z * velocitySq u z) := tsupport_mul_subset_left
+      _ ⊆ tsupport ψ := tsupport_mul_subset_left
+  have hfluxDerivSupport (j : Fin 3) :
+      tsupport (fun z => dirDeriv (fun y => ψ y * velocitySq u y * u y j)
+        (spatialDir j) z) ⊆ tsupport ψ := by
+    have h := tsupport_fderiv_apply_subset (𝕜 := ℝ)
+      (f := fun z => ψ z * velocitySq u z * u z j) (spatialDir j)
+    simpa [dirDeriv] using h.trans (hfluxSupport j)
+  have hviscSupport (j : Fin 3) :
+      tsupport (fun z => velocitySq u z * dirDeriv ψ (spatialDir j) z) ⊆
+        tsupport ψ := by
+    exact tsupport_mul_subset_right.trans (hψFirstSupport (spatialDir j))
+  have hviscDerivSupport (j : Fin 3) :
+      tsupport (fun z => dirDeriv (fun y => velocitySq u y *
+        dirDeriv ψ (spatialDir j) y) (spatialDir j) z) ⊆ tsupport ψ := by
+    have h := tsupport_fderiv_apply_subset (𝕜 := ℝ)
+      (f := fun z => velocitySq u z * dirDeriv ψ (spatialDir j) z) (spatialDir j)
+    simpa [dirDeriv] using h.trans (hviscSupport j)
+  have htotalzero (z : Vec3 × ℝ) (hnot : z ∉ tsupport ψ) :
+      smoothEnergyTotalDerivative u ψ z = 0 := by
+    have hTzero : dirDeriv T timeDir z = 0 :=
+      image_eq_zero_of_notMem_tsupport (fun hz => hnot (hTderivSupport hz))
+    have hfluxzero (j : Fin 3) :
+        dirDeriv (fun y => ψ y * velocitySq u y * u y j) (spatialDir j) z = 0 :=
+      image_eq_zero_of_notMem_tsupport (fun hz => hnot (hfluxDerivSupport j hz))
+    have hvisczero (j : Fin 3) :
+        dirDeriv (fun y => velocitySq u y * dirDeriv ψ (spatialDir j) y)
+          (spatialDir j) z = 0 :=
+      image_eq_zero_of_notMem_tsupport (fun hz => hnot (hviscDerivSupport j hz))
+    simp [smoothEnergyTotalDerivative, T, hTzero, hfluxzero, hvisczero]
+  exact ⟨hbasezero, htestzero, htotalzero⟩
+
+private theorem smoothEnergyTotalDerivative_integrable_integral_zero
+    {u : Vec3 × ℝ → Vec3} {ψ : Vec3 × ℝ → ℝ}
     (hu : ∀ i, ContDiff ℝ (⊤ : ℕ∞) (fun z => u z i))
-    (hR : ∀ i j, ContDiff ℝ (⊤ : ℕ∞) (fun z => R z i j))
-    (hG : ∀ i j, ContDiff ℝ (⊤ : ℕ∞) (fun z => G z i j))
-    (hp : ContDiff ℝ (⊤ : ℕ∞) p)
-    (hψ : ContDiff ℝ (⊤ : ℕ∞) ψ) (hψc : HasCompactSupport ψ)
-    (hgrad : ∀ z ∈ tsupport ψ, ∀ i j : Fin 3,
-      dirDeriv (fun y => u y i) (spatialDir j) z = G z i j)
-    (hdiv : ∀ z ∈ tsupport ψ, ∑ i : Fin 3, G z i i = 0) :
-    ∫ z, smoothEnergyTestIntegrand u R G p ψ z
-        ∂(volume : Measure (Vec3 × ℝ)) =
-      ∫ z, smoothEnergyBaseIntegrand u R G p ψ z
-        ∂(volume : Measure (Vec3 × ℝ)) := by
+    (hψ : ContDiff ℝ (⊤ : ℕ∞) ψ) (hψc : HasCompactSupport ψ) :
+    Integrable (smoothEnergyTotalDerivative u ψ) (volume : Measure (Vec3 × ℝ)) ∧
+      ∫ z, smoothEnergyTotalDerivative u ψ z ∂(volume : Measure (Vec3 × ℝ)) = 0 := by
   have huVec : ContDiff ℝ (⊤ : ℕ∞) u := by
     rw [contDiff_pi]
     exact hu
@@ -505,8 +479,8 @@ theorem smoothEnergyTestIntegrand_integral_eq_base
   have hfluxderivInt (j : Fin 3) : Integrable
       (fun z => dirDeriv (fun y => ψ y * velocitySq u y * u y j)
         (spatialDir j) z) (volume : Measure (Vec3 × ℝ)) :=
-    (smoothDirectionalDerivative_continuous (hflux1 j) (spatialDir j)).integrable_of_hasCompactSupport
-      (hfluxderivC j)
+    have hcont := smoothDirectionalDerivative_continuous (hflux1 j) (spatialDir j)
+    hcont.integrable_of_hasCompactSupport (hfluxderivC j)
   have hviscderivC (j : Fin 3) : HasCompactSupport
       (fun z => dirDeriv (fun y => velocitySq u y * dirDeriv ψ (spatialDir j) y)
         (spatialDir j) z) := by
@@ -515,8 +489,8 @@ theorem smoothEnergyTestIntegrand_integral_eq_base
   have hviscderivInt (j : Fin 3) : Integrable
       (fun z => dirDeriv (fun y => velocitySq u y * dirDeriv ψ (spatialDir j) y)
         (spatialDir j) z) (volume : Measure (Vec3 × ℝ)) :=
-    (smoothDirectionalDerivative_continuous (hvisc1 j) (spatialDir j)).integrable_of_hasCompactSupport
-      (hviscderivC j)
+    have hcont := smoothDirectionalDerivative_continuous (hvisc1 j) (spatialDir j)
+    hcont.integrable_of_hasCompactSupport (hviscderivC j)
   have hfluxSumInt : Integrable
       (fun z => ∑ j : Fin 3,
         dirDeriv (fun y => ψ y * velocitySq u y * u y j) (spatialDir j) z)
@@ -593,79 +567,29 @@ theorem smoothEnergyTestIntegrand_integral_eq_base
       _ = 0 := by
         rw [hB, hC, integral_neg, htimeZero, hfluxZero, hviscZero]
         simp
-  have hψFirstSupport (v : Vec3 × ℝ) :
-      tsupport (fun z => dirDeriv ψ v z) ⊆ tsupport ψ := by
-    simpa [dirDeriv] using (tsupport_fderiv_apply_subset (𝕜 := ℝ) v)
-  have hψSecondSupport (j : Fin 3) :
-      tsupport (fun z => dirDeriv (fun y => dirDeriv ψ (spatialDir j) y)
-        (spatialDir j) z) ⊆ tsupport ψ := by
-    have hsecond : tsupport (fun z => dirDeriv
-        (fun y => dirDeriv ψ (spatialDir j) y) (spatialDir j) z) ⊆
-        tsupport (fun y => dirDeriv ψ (spatialDir j) y) := by
-      simpa [dirDeriv] using (tsupport_fderiv_apply_subset
-        (𝕜 := ℝ) (f := fun y => dirDeriv ψ (spatialDir j) y) (spatialDir j))
-    exact hsecond.trans (hψFirstSupport (spatialDir j))
-  have hψzero (z : Vec3 × ℝ) (hnot : z ∉ tsupport ψ) : ψ z = 0 :=
-    image_eq_zero_of_notMem_tsupport hnot
-  have hψDzero (z : Vec3 × ℝ) (hnot : z ∉ tsupport ψ)
-      (v : Vec3 × ℝ) : dirDeriv ψ v z = 0 := by
-    rw [dirDeriv, fderiv_of_notMem_tsupport ℝ hnot]
-    simp
-  have hψDDzero (z : Vec3 × ℝ) (hnot : z ∉ tsupport ψ) (j : Fin 3) :
-      dirDeriv (fun y => dirDeriv ψ (spatialDir j) y) (spatialDir j) z = 0 := by
-    have hnot' : z ∉ tsupport (fun y => dirDeriv ψ (spatialDir j) y) := by
-      intro hz'
-      exact hnot (hψFirstSupport (spatialDir j) hz')
-    rw [dirDeriv, fderiv_of_notMem_tsupport ℝ hnot']
-    simp
-  have hbasezero (z : Vec3 × ℝ) (hnot : z ∉ tsupport ψ) :
-      smoothEnergyBaseIntegrand u R G p ψ z = 0 := by
-    simp [smoothEnergyBaseIntegrand, hψzero z hnot, hψDzero z hnot,
-      hψDDzero z hnot]
-  have htestzero (z : Vec3 × ℝ) (hnot : z ∉ tsupport ψ) :
-      smoothEnergyTestIntegrand u R G p ψ z = 0 := by
-    simp [smoothEnergyTestIntegrand, hψzero z hnot, hψDzero z hnot]
-  have hTsupport : tsupport T ⊆ tsupport ψ := by
-    change tsupport (fun z => velocitySq u z * ψ z) ⊆ tsupport ψ
-    exact tsupport_mul_subset_right
-  have hTderivSupport : tsupport (fun z => dirDeriv T timeDir z) ⊆
-      tsupport ψ := by
-    have h := tsupport_fderiv_apply_subset (𝕜 := ℝ) (f := T) timeDir
-    simpa [dirDeriv] using h.trans hTsupport
-  have hfluxSupport (j : Fin 3) :
-      tsupport (fun z => ψ z * velocitySq u z * u z j) ⊆ tsupport ψ := by
-    calc
-      tsupport (fun z => ψ z * velocitySq u z * u z j) ⊆
-          tsupport (fun z => ψ z * velocitySq u z) := tsupport_mul_subset_left
-      _ ⊆ tsupport ψ := tsupport_mul_subset_left
-  have hfluxDerivSupport (j : Fin 3) :
-      tsupport (fun z => dirDeriv (fun y => ψ y * velocitySq u y * u y j)
-        (spatialDir j) z) ⊆ tsupport ψ := by
-    have h := tsupport_fderiv_apply_subset (𝕜 := ℝ)
-      (f := fun z => ψ z * velocitySq u z * u z j) (spatialDir j)
-    simpa [dirDeriv] using h.trans (hfluxSupport j)
-  have hviscSupport (j : Fin 3) :
-      tsupport (fun z => velocitySq u z * dirDeriv ψ (spatialDir j) z) ⊆
-        tsupport ψ := by
-    exact tsupport_mul_subset_right.trans (hψFirstSupport (spatialDir j))
-  have hviscDerivSupport (j : Fin 3) :
-      tsupport (fun z => dirDeriv (fun y => velocitySq u y *
-        dirDeriv ψ (spatialDir j) y) (spatialDir j) z) ⊆ tsupport ψ := by
-    have h := tsupport_fderiv_apply_subset (𝕜 := ℝ)
-      (f := fun z => velocitySq u z * dirDeriv ψ (spatialDir j) z) (spatialDir j)
-    simpa [dirDeriv] using h.trans (hviscSupport j)
-  have htotalzero (z : Vec3 × ℝ) (hnot : z ∉ tsupport ψ) :
-      smoothEnergyTotalDerivative u ψ z = 0 := by
-    have hTzero : dirDeriv T timeDir z = 0 :=
-      image_eq_zero_of_notMem_tsupport (fun hz => hnot (hTderivSupport hz))
-    have hfluxzero (j : Fin 3) :
-        dirDeriv (fun y => ψ y * velocitySq u y * u y j) (spatialDir j) z = 0 :=
-      image_eq_zero_of_notMem_tsupport (fun hz => hnot (hfluxDerivSupport j hz))
-    have hvisczero (j : Fin 3) :
-        dirDeriv (fun y => velocitySq u y * dirDeriv ψ (spatialDir j) y)
-          (spatialDir j) z = 0 :=
-      image_eq_zero_of_notMem_tsupport (fun hz => hnot (hviscDerivSupport j hz))
-    simp [smoothEnergyTotalDerivative, T, hTzero, hfluxzero, hvisczero]
+  exact ⟨htotalInt, htotalZero⟩
+
+/-- Integrating the smooth energy test density removes its total derivative terms. -/
+theorem smoothEnergyTestIntegrand_integral_eq_base
+    {u : Vec3 × ℝ → Vec3} {R G : Vec3 × ℝ → Fin 3 → Fin 3 → ℝ}
+    {p ψ : Vec3 × ℝ → ℝ}
+    (hu : ∀ i, ContDiff ℝ (⊤ : ℕ∞) (fun z => u z i))
+    (hR : ∀ i j, ContDiff ℝ (⊤ : ℕ∞) (fun z => R z i j))
+    (hG : ∀ i j, ContDiff ℝ (⊤ : ℕ∞) (fun z => G z i j))
+    (hp : ContDiff ℝ (⊤ : ℕ∞) p)
+    (hψ : ContDiff ℝ (⊤ : ℕ∞) ψ) (hψc : HasCompactSupport ψ)
+    (hgrad : ∀ z ∈ tsupport ψ, ∀ i j : Fin 3,
+      dirDeriv (fun y => u y i) (spatialDir j) z = G z i j)
+    (hdiv : ∀ z ∈ tsupport ψ, ∑ i : Fin 3, G z i i = 0) :
+    ∫ z, smoothEnergyTestIntegrand u R G p ψ z
+        ∂(volume : Measure (Vec3 × ℝ)) =
+      ∫ z, smoothEnergyBaseIntegrand u R G p ψ z
+        ∂(volume : Measure (Vec3 × ℝ)) := by
+  have ⟨htotalInt, htotalZero⟩ :=
+    smoothEnergyTotalDerivative_integrable_integral_zero hu hψ hψc
+  have ⟨hbasezero, htestzero, htotalzero⟩ :=
+    smoothEnergyIntegrands_vanish_off_test_support
+      (u := u) (R := R) (G := G) (p := p) (ψ := ψ)
   have hbaseC : HasCompactSupport (smoothEnergyBaseIntegrand u R G p ψ) := by
     apply HasCompactSupport.of_support_subset_isCompact hψc.isCompact
     intro z hz
@@ -678,6 +602,13 @@ theorem smoothEnergyTestIntegrand_integral_eq_base
         (fun y => dirDeriv ψ (spatialDir j) y) := dirDeriv_contDiff_one hψ (spatialDir j)
     exact (hfirst.continuous_fderiv (by norm_num)).clm_apply continuous_const
   have hbaseCont : Continuous (smoothEnergyBaseIntegrand u R G p ψ) := by
+    have huCont (i : Fin 3) : Continuous (fun z => u z i) :=
+      (hu i).continuous
+    have huVec : Continuous u := by
+      exact continuous_pi (fun i => huCont i)
+    have hvelocitySqCont : Continuous (velocitySq u) := by
+      unfold velocitySq
+      fun_prop
     have htimeCont : Continuous (fun z => dirDeriv ψ timeDir z) :=
       (dirDeriv_contDiff_one hψ timeDir).continuous
     have hspaceCont (j : Fin 3) : Continuous (fun z => dirDeriv ψ (spatialDir j) z) :=

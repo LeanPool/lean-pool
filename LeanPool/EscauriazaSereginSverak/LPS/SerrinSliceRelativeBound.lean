@@ -48,7 +48,7 @@ theorem lps_finite_relative_convection_bound_ae
       (∫ x : Vec3, lpsRelativeConvection u v Du Dv (x, t)) ≤
         (1 / 2 : ℝ) *
           (∫ x : Vec3, lpsRelativeGradientSq Du Dv (x, t)) +
-        (lps_power_young_coefficient (3 / s) *
+        (lpsPowerYoungCoefficient (3 / s) *
           (9 * ((6 : ℝ) * gagliardoNirenbergSobolevConstant.toReal) ^ (3 / s)) ^
             (2 * s / (s - 3))) *
           (eLpNorm (fun x : Vec3 =>
@@ -77,7 +77,7 @@ theorem lps_finite_relative_convection_bound_ae
       |∫ x : Vec3, lpsRelativeConvection u v Du Dv (x, t)| ≤
         (1 / 2 : ℝ) *
           (∫ x : Vec3, lpsRelativeGradientSq Du Dv (x, t)) +
-        (lps_power_young_coefficient (3 / s) *
+        (lpsPowerYoungCoefficient (3 / s) *
           (9 * ((6 : ℝ) * gagliardoNirenbergSobolevConstant.toReal) ^ (3 / s)) ^
             (2 * s / (s - 3))) *
           (eLpNorm (fun x : Vec3 =>

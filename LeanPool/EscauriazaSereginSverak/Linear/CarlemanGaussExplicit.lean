@@ -29,12 +29,15 @@ noncomputable section
 
 namespace ESS
 
+/-- Product Lebesgue measure on parabolic space-time. -/
 local instance gaussExplicitMeasureSpace : MeasureSpace ParabolicPoint :=
   Measure.prod.measureSpace
 
+/-- The product norm on parabolic space-time used for classical differentiation. -/
 local instance gaussExplicitNormedAddCommGroup : NormedAddCommGroup ParabolicPoint :=
   inferInstanceAs (NormedAddCommGroup (Vec3 × ℝ))
 
+/-- The real scalar action compatible with the product norm on parabolic space-time. -/
 local instance gaussExplicitNormedSpace : NormedSpace ℝ ParabolicPoint :=
   inferInstanceAs (NormedSpace ℝ (Vec3 × ℝ))
 
@@ -53,7 +56,7 @@ theorem carlemanGaussian_explicit (a : ℝ) (ha : 0 < a) (w : ParabolicPoint →
           vec3EuclideanNorm (fun i => timePartial (fun y => w y i) z +
             ∑ j, spatialSecondPartial (fun y => w y i) j j z) ^ 2 := by
   let c₀ : ℝ := Real.exp (4 / 3) * (9 + 2 * Real.sqrt 6)
-  show _ ≤ c₀ * _
+  change _ ≤ c₀ * _
   let q : ℝ := a + 1
   let φ : ParabolicPoint → ℝ := CKN.gaussCarlemanPhase q
   let v (i : Fin 3) : ParabolicPoint → ℝ :=

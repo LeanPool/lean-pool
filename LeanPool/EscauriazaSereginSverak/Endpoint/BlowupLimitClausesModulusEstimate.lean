@@ -108,6 +108,235 @@ theorem blowupLimitClauses_abs_bound_of_compact {g : Vec3 → ℝ} (hg : Continu
   obtain ⟨M, hM⟩ := hg.bounded_above_of_compact_support hgc
   exact ⟨max M 0, le_max_right _ _, fun x => (hM x).trans (le_max_left _ _)⟩
 
+private theorem blowupLimitClauses_transportIntegral_bound
+    {C : Set Vec3} {s t S Gw : ℝ} {f : ParabolicPoint → Vec3}
+    {w : Vec3 → Vec3} {A1 : ParabolicPoint → ℝ}
+    (hf : Measurable f) (hS0 : 0 ≤ S) (hts0 : 0 ≤ t - s)
+    (hslice : ∀ τ, ∫⁻ x in C,
+      ENNReal.ofReal (vec3EuclideanNorm (f (x, τ))) ^ (2 : ℝ) ≤ ENNReal.ofReal S)
+    (hgradw : ∀ x i j, |spatialDeriv (fun y => w y i) j x| ≤ Gw)
+    (hA1def : ∀ z, A1 z = ∑ i : Fin 3, ∑ j : Fin 3,
+      f z i * f z j * spatialDeriv (fun y => w y i) j z.1) :
+    |∫ z in spaceTimeSet C (Ioc s t), A1 z| ≤ 9 * Gw * S * (t - s) := by
+  have hGw0 : 0 ≤ Gw := (abs_nonneg _).trans (hgradw 0 0 0)
+  have hfE := blowupLimitClauses_slice_energy_le (C := C) (s := s) (t := t) hf hslice
+  have heuc_m : Measurable (fun z => vec3EuclideanNorm (f z)) :=
+    CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.measurable.comp hf
+  have hsqE : ∫⁻ z in spaceTimeSet C (Ioc s t),
+      ENNReal.ofReal (vec3EuclideanNorm (f z) ^ 2) ≤
+        ENNReal.ofReal S * ENNReal.ofReal (t - s) := by
+    refine le_trans (le_of_eq ?_) hfE
+    apply lintegral_congr
+    intro z
+    rw [ENNReal.ofReal_pow (vec3EuclideanNorm_nonneg _)]
+    exact (ENNReal.rpow_two _).symm
+  let μ := volume.restrict (spaceTimeSet C (Ioc s t))
+  have heucL2 : MemLp (fun z => vec3EuclideanNorm (f z)) 2 μ := by
+    rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+      heuc_m.aestronglyMeasurable]
+    apply ENNReal.rpow_lt_top_of_nonneg (by norm_num)
+    apply ne_of_lt
+    calc
+      (∫⁻ z, ‖vec3EuclideanNorm (f z)‖ₑ ^ (2 : ℝ≥0∞).toReal ∂μ) =
+          ∫⁻ z in spaceTimeSet C (Ioc s t),
+            ENNReal.ofReal (vec3EuclideanNorm (f z)) ^ (2 : ℝ) := by
+        apply lintegral_congr
+        intro z
+        rw [ENNReal.toReal_ofNat, Real.enorm_of_nonneg (vec3EuclideanNorm_nonneg _)]
+      _ ≤ ENNReal.ofReal S * ENNReal.ofReal (t - s) := hfE
+      _ < ⊤ := ENNReal.mul_lt_top ENNReal.ofReal_lt_top ENNReal.ofReal_lt_top
+  have hsq : Integrable (fun z => vec3EuclideanNorm (f z) ^ 2) μ := heucL2.integrable_sq
+  have hint : ∫ z in spaceTimeSet C (Ioc s t), vec3EuclideanNorm (f z) ^ 2 ≤ S * (t - s) := by
+    rw [integral_eq_lintegral_of_nonneg_ae (Eventually.of_forall fun z => by positivity)
+      (heuc_m.pow_const 2).aestronglyMeasurable]
+    calc
+      (∫⁻ z in spaceTimeSet C (Ioc s t),
+        ENNReal.ofReal (vec3EuclideanNorm (f z) ^ 2)).toReal ≤
+          (ENNReal.ofReal S * ENNReal.ofReal (t - s)).toReal :=
+        ENNReal.toReal_mono (ENNReal.mul_ne_top ENNReal.ofReal_ne_top
+          ENNReal.ofReal_ne_top) hsqE
+      _ = S * (t - s) := by
+        rw [ENNReal.toReal_mul, ENNReal.toReal_ofReal hS0, ENNReal.toReal_ofReal hts0]
+  have hbound : ∀ z, ‖A1 z‖ ≤ 9 * Gw * vec3EuclideanNorm (f z) ^ 2 := by
+    intro z
+    rw [Real.norm_eq_abs, hA1def]
+    exact blowupLimitClauses_abs_transport_le (f z)
+      (fun i j => spatialDeriv (fun y => w y i) j z.1) (fun i j => hgradw z.1 i j)
+  calc
+    |∫ z in spaceTimeSet C (Ioc s t), A1 z| =
+        ‖∫ z in spaceTimeSet C (Ioc s t), A1 z‖ := (Real.norm_eq_abs _).symm
+    _ ≤ ∫ z in spaceTimeSet C (Ioc s t), 9 * Gw * vec3EuclideanNorm (f z) ^ 2 :=
+      norm_integral_le_of_norm_le (hsq.const_mul _) (Eventually.of_forall hbound)
+    _ = 9 * Gw * ∫ z in spaceTimeSet C (Ioc s t), vec3EuclideanNorm (f z) ^ 2 :=
+      integral_const_mul _ _
+    _ ≤ 9 * Gw * (S * (t - s)) := mul_le_mul_of_nonneg_left hint (by positivity)
+    _ = 9 * Gw * S * (t - s) := by ring
+
+private theorem blowupLimitClauses_pairingIntegral_bound
+    {C : Set Vec3} {s t S Lw : ℝ} {f : ParabolicPoint → Vec3}
+    {ψ : Fin 3 → Vec3 → ℝ} {Bf : ParabolicPoint → ℝ}
+    (hf : Measurable f) (hS0 : 0 ≤ S) (hLw : 0 ≤ Lw) (hts0 : 0 ≤ t - s)
+    (hslice : ∀ τ, ∫⁻ x in C,
+      ENNReal.ofReal (vec3EuclideanNorm (f (x, τ))) ^ (2 : ℝ) ≤ ENNReal.ofReal S)
+    (hψc : ∀ i, Continuous (ψ i))
+    (hlapw : ∀ i, eLpNorm (fun x => ψ i x) 2 volume ≤ ENNReal.ofReal Lw)
+    (_hBfint : Integrable Bf (volume.restrict (spaceTimeSet C (Ioc s t))))
+    (hBfdef : ∀ z, Bf z = ∑ i : Fin 3, f z i * ψ i z.1) :
+    |∫ z in spaceTimeSet C (Ioc s t), Bf z| ≤ 3 * Real.sqrt S * Lw * (t - s) := by
+  let I : Set ℝ := Ioc s t
+  let Q : Set ParabolicPoint := spaceTimeSet C I
+  have h22 : (2 : ℝ).HolderConjugate 2 := ⟨by norm_num, by norm_num, by norm_num⟩
+  have heuc_m : Measurable (fun z => vec3EuclideanNorm (f z)) :=
+    CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.measurable.comp hf
+  have hpt : ∀ z, ENNReal.ofReal ‖Bf z‖ ≤ ∑ i : Fin 3,
+      ENNReal.ofReal (vec3EuclideanNorm (f z)) * ‖ψ i z.1‖ₑ := by
+    intro z
+    have h1 : ‖Bf z‖ ≤ ∑ i : Fin 3, vec3EuclideanNorm (f z) * |ψ i z.1| := by
+      rw [Real.norm_eq_abs, hBfdef]
+      refine (Finset.abs_sum_le_sum_abs _ _).trans (Finset.sum_le_sum fun i _ => ?_)
+      rw [abs_mul]
+      exact mul_le_mul_of_nonneg_right (abs_apply_le_vec3EuclideanNorm _ i) (abs_nonneg _)
+    calc
+      ENNReal.ofReal ‖Bf z‖ ≤
+          ENNReal.ofReal (∑ i : Fin 3, vec3EuclideanNorm (f z) * |ψ i z.1|) :=
+        ENNReal.ofReal_le_ofReal h1
+      _ = ∑ i : Fin 3, ENNReal.ofReal (vec3EuclideanNorm (f z) * |ψ i z.1|) :=
+        ENNReal.ofReal_sum_of_nonneg fun i _ =>
+          mul_nonneg (vec3EuclideanNorm_nonneg _) (abs_nonneg _)
+      _ = ∑ i : Fin 3, ENNReal.ofReal (vec3EuclideanNorm (f z)) * ‖ψ i z.1‖ₑ := by
+        apply Finset.sum_congr rfl
+        intro i _
+        rw [ENNReal.ofReal_mul (vec3EuclideanNorm_nonneg _), Real.enorm_eq_ofReal_abs]
+  have hmeasTerm : ∀ i, Measurable (fun z : ParabolicPoint =>
+      ENNReal.ofReal (vec3EuclideanNorm (f z)) * ‖ψ i z.1‖ₑ) := fun i =>
+    (ENNReal.measurable_ofReal.comp heuc_m).mul
+      ((hψc i).measurable.comp measurable_fst).enorm
+  have hlap : ∀ i, (∫⁻ x in C, ‖ψ i x‖ₑ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) ≤ ENNReal.ofReal Lw := by
+    intro i
+    have h := hlapw i
+    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+      (hψc i).aestronglyMeasurable] at h
+    simp only [ENNReal.toReal_ofNat] at h
+    refine le_trans (ENNReal.rpow_le_rpow ?_ (by norm_num)) h
+    exact lintegral_mono' Measure.restrict_le_self le_rfl
+  have hslab : ∀ i, ∫⁻ z in Q, ENNReal.ofReal (vec3EuclideanNorm (f z)) * ‖ψ i z.1‖ₑ ≤
+      ENNReal.ofReal S ^ (1 / 2 : ℝ) * ENNReal.ofReal Lw * ENNReal.ofReal (t - s) := by
+    intro i
+    rw [blowupLimitClauses_lintegral_prod_eq C I (hmeasTerm i)]
+    calc
+      ∫⁻ τ in I, ∫⁻ x in C,
+          ENNReal.ofReal (vec3EuclideanNorm (f (x, τ))) * ‖ψ i x‖ₑ ≤
+        ∫⁻ _ in I, ENNReal.ofReal S ^ (1 / 2 : ℝ) * ENNReal.ofReal Lw := by
+          apply lintegral_mono
+          intro τ
+          have hfs : Measurable (fun x : Vec3 => f (x, τ)) := hf.comp measurable_prodMk_right
+          have hH := ENNReal.lintegral_mul_le_Lp_mul_Lq (volume.restrict C) h22
+            (f := fun x => ENNReal.ofReal (vec3EuclideanNorm (f (x, τ))))
+            (g := fun x => ‖ψ i x‖ₑ)
+            (ENNReal.measurable_ofReal.comp
+              (CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.measurable.comp
+                hfs)).aemeasurable
+            ((hψc i).measurable.enorm.aemeasurable)
+          refine le_trans (le_of_eq ?_) (hH.trans (mul_le_mul' ?_ (hlap i)))
+          · rfl
+          · exact ENNReal.rpow_le_rpow (hslice τ) (by norm_num)
+      _ = ENNReal.ofReal S ^ (1 / 2 : ℝ) * ENNReal.ofReal Lw * ENNReal.ofReal (t - s) := by
+        rw [setLIntegral_const, Real.volume_Ioc]
+  have htot : ∫⁻ z in Q, ENNReal.ofReal ‖Bf z‖ ≤
+      3 * (ENNReal.ofReal S ^ (1 / 2 : ℝ) * ENNReal.ofReal Lw * ENNReal.ofReal (t - s)) := by
+    calc
+      ∫⁻ z in Q, ENNReal.ofReal ‖Bf z‖ ≤ ∫⁻ z in Q, ∑ i : Fin 3,
+          ENNReal.ofReal (vec3EuclideanNorm (f z)) * ‖ψ i z.1‖ₑ := lintegral_mono hpt
+      _ = ∑ i : Fin 3, ∫⁻ z in Q,
+          ENNReal.ofReal (vec3EuclideanNorm (f z)) * ‖ψ i z.1‖ₑ :=
+        lintegral_finsetSum _ fun i _ => hmeasTerm i
+      _ ≤ ∑ _i : Fin 3,
+          ENNReal.ofReal S ^ (1 / 2 : ℝ) * ENNReal.ofReal Lw * ENNReal.ofReal (t - s) :=
+        Finset.sum_le_sum fun i _ => hslab i
+      _ = 3 * (ENNReal.ofReal S ^ (1 / 2 : ℝ) * ENNReal.ofReal Lw * ENNReal.ofReal (t - s)) := by
+        simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+        norm_num
+  have hfin : 3 * (ENNReal.ofReal S ^ (1 / 2 : ℝ) * ENNReal.ofReal Lw *
+      ENNReal.ofReal (t - s)) ≠ ⊤ := by
+    apply ENNReal.mul_ne_top (by norm_num)
+    apply ENNReal.mul_ne_top (ENNReal.mul_ne_top _ ENNReal.ofReal_ne_top) ENNReal.ofReal_ne_top
+    exact ENNReal.rpow_ne_top_of_nonneg (by norm_num) ENNReal.ofReal_ne_top
+  calc
+    |∫ z in Q, Bf z| = ‖∫ z in Q, Bf z‖ := (Real.norm_eq_abs _).symm
+    _ ≤ (∫⁻ z in Q, ENNReal.ofReal ‖Bf z‖).toReal :=
+      norm_integral_le_lintegral_norm (μ := volume.restrict Q) Bf
+    _ ≤ (3 * (ENNReal.ofReal S ^ (1 / 2 : ℝ) * ENNReal.ofReal Lw *
+        ENNReal.ofReal (t - s))).toReal := ENNReal.toReal_mono hfin htot
+    _ = 3 * Real.sqrt S * Lw * (t - s) := by
+      rw [ENNReal.toReal_mul, ENNReal.toReal_mul, ENNReal.toReal_mul,
+        ← ENNReal.toReal_rpow, ENNReal.toReal_ofReal hS0, ENNReal.toReal_ofReal hLw,
+        ENNReal.toReal_ofReal hts0, ← Real.sqrt_eq_rpow]
+      norm_num
+      ring
+
+private theorem blowupLimitClauses_pressureIntegral_bound
+    {C : Set Vec3} {a b s t B Dw : ℝ} {P : ParabolicPoint → ℝ}
+    {w : Vec3 → Vec3}
+    {A3 : ParabolicPoint → ℝ}
+    (μ : Measure ParabolicPoint)
+    (hμle : μ ≤ volume.restrict (C ×ˢ Icc a b))
+    (hμuniv : μ univ = volume C * ENNReal.ofReal (t - s))
+    (hvolC : volume C < ⊤)
+    (hP1 : Integrable P μ)
+    (hPbound : eLpNorm P (3 / 2 : ℝ≥0∞)
+      (volume.restrict (C ×ˢ Icc a b)) ≤ ENNReal.ofReal B)
+    (hB0 : 0 ≤ B) (hDw : 0 ≤ Dw) (hts0 : 0 ≤ t - s)
+    (hdivw : ∀ x, |∑ i : Fin 3, spatialDeriv (fun y => w y i) i x| ≤ Dw)
+    (_A3int : Integrable A3 μ)
+    (hA3def : ∀ z, A3 z = P z * ∑ i : Fin 3, spatialDeriv
+      (fun y => w y i) i z.1) :
+    |∫ z, A3 z ∂μ| ≤ Dw * B * (volume C).toReal ^ (1 / 3 : ℝ) *
+      (t - s) ^ (1 / 3 : ℝ) := by
+  have hbound : ∀ z, ‖A3 z‖ ≤ Dw * ‖P z‖ := by
+    intro z
+    rw [hA3def, norm_mul, mul_comm]
+    exact mul_le_mul_of_nonneg_right (by rw [Real.norm_eq_abs]; exact hdivw z.1)
+      (norm_nonneg _)
+  have hexp : 1 / (1 : ℝ≥0∞).toReal - 1 / (3 / 2 : ℝ≥0∞).toReal = 1 / 3 := by
+    rw [ENNReal.toReal_one, ENNReal.toReal_div]
+    norm_num
+  have hL1 : eLpNorm P 1 μ ≤ ENNReal.ofReal B *
+      (volume C * ENNReal.ofReal (t - s)) ^ (1 / 3 : ℝ) := by
+    have h := eLpNorm_le_eLpNorm_mul_rpow_measure_univ
+      (μ := μ) (p := (1 : ℝ≥0∞)) (q := (3 / 2 : ℝ≥0∞)) (by
+        rw [← CKN.ofReal_threeHalves]
+        exact ENNReal.one_le_ofReal.mpr (by norm_num)) hP1.aestronglyMeasurable
+    rw [hexp, hμuniv] at h
+    refine h.trans ?_
+    gcongr
+    exact (eLpNorm_mono_measure _ hμle).trans hPbound
+  have hint : ∫ z, ‖P z‖ ∂μ = (eLpNorm P 1 μ).toReal := by
+    rw [integral_norm_eq_lintegral_enorm hP1.aestronglyMeasurable,
+      eLpNorm_one_eq_lintegral_enorm hP1.aestronglyMeasurable]
+  have hfin : ENNReal.ofReal B * (volume C * ENNReal.ofReal (t - s)) ^
+      (1 / 3 : ℝ) ≠ ⊤ :=
+    ENNReal.mul_ne_top ENNReal.ofReal_ne_top (ENNReal.rpow_ne_top_of_nonneg (by norm_num)
+      (ENNReal.mul_ne_top hvolC.ne ENNReal.ofReal_ne_top))
+  have hreal : (eLpNorm P 1 μ).toReal ≤
+      B * (volume C).toReal ^ (1 / 3 : ℝ) * (t - s) ^ (1 / 3 : ℝ) := by
+    calc
+      (eLpNorm P 1 μ).toReal ≤
+          (ENNReal.ofReal B * (volume C * ENNReal.ofReal (t - s)) ^ (1 / 3 : ℝ)).toReal :=
+        ENNReal.toReal_mono hfin hL1
+      _ = B * (volume C).toReal ^ (1 / 3 : ℝ) * (t - s) ^ (1 / 3 : ℝ) := by
+        rw [ENNReal.toReal_mul, ← ENNReal.toReal_rpow, ENNReal.toReal_mul,
+          ENNReal.toReal_ofReal hB0, ENNReal.toReal_ofReal hts0,
+          Real.mul_rpow ENNReal.toReal_nonneg hts0]
+        ring
+  calc
+    |∫ z, A3 z ∂μ| = ‖∫ z, A3 z ∂μ‖ := (Real.norm_eq_abs _).symm
+    _ ≤ ∫ z, Dw * ‖P z‖ ∂μ :=
+      norm_integral_le_of_norm_le (hP1.norm.const_mul _) (Eventually.of_forall hbound)
+    _ = Dw * ∫ z, ‖P z‖ ∂μ := integral_const_mul _ _
+    _ ≤ Dw * (B * (volume C).toReal ^ (1 / 3 : ℝ) * (t - s) ^ (1 / 3 : ℝ)) :=
+      mul_le_mul_of_nonneg_left (by rw [hint]; exact hreal) hDw
+    _ = Dw * B * (volume C).toReal ^ (1 / 3 : ℝ) * (t - s) ^ (1 / 3 : ℝ) := by ring
+
 /-- The explicit pairing modulus for one field (`prop:blowup-limit`,
 clause (b)). -/
 theorem blowupLimitClauses_modulus_of_formula
@@ -161,7 +390,7 @@ theorem blowupLimitClauses_modulus_of_formula
     have hvolC : volume C < ⊤ := hC.measure_lt_top
     have hμuniv : μ univ = volume C * ENNReal.ofReal (t - s) := by
       rw [hμdef, Measure.restrict_apply_univ]
-      show (volume : Measure (Vec3 × ℝ)) (C ×ˢ Ioc s t) = _
+      change (volume : Measure (Vec3 × ℝ)) (C ×ˢ Ioc s t) = _
       rw [Measure.volume_eq_prod, Measure.prod_prod, Real.volume_Ioc]
     have : IsFiniteMeasure μ := ⟨by
       rw [hμuniv]
@@ -302,186 +531,12 @@ theorem blowupLimitClauses_modulus_of_formula
       simp only [A2, Bf, ψ]
       rw [h]
     -- the three bounds
-    have hK1 : |∫ z in Q, A1 z| ≤ 9 * Gw * S * (t - s) := by
-      have heuc_m : Measurable (fun z => vec3EuclideanNorm (f z)) :=
-        CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.measurable.comp hf
-      have hsqE : ∫⁻ z in Q, ENNReal.ofReal (vec3EuclideanNorm (f z) ^ 2) ≤
-          ENNReal.ofReal S * ENNReal.ofReal (t - s) := by
-        refine le_trans (le_of_eq ?_) hfE
-        apply lintegral_congr
-        intro z
-        rw [ENNReal.ofReal_pow (vec3EuclideanNorm_nonneg _)]
-        exact (ENNReal.rpow_two _).symm
-      have heucL2 : MemLp (fun z => vec3EuclideanNorm (f z)) 2 μ := by
-        rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
-          heuc_m.aestronglyMeasurable]
-        apply ENNReal.rpow_lt_top_of_nonneg (by norm_num)
-        apply ne_of_lt
-        calc
-          (∫⁻ z, ‖vec3EuclideanNorm (f z)‖ₑ ^ (2 : ℝ≥0∞).toReal ∂μ) =
-              ∫⁻ z in Q, ENNReal.ofReal (vec3EuclideanNorm (f z)) ^ (2 : ℝ) := by
-            apply lintegral_congr
-            intro z
-            rw [ENNReal.toReal_ofNat, Real.enorm_of_nonneg (vec3EuclideanNorm_nonneg _)]
-          _ ≤ ENNReal.ofReal S * ENNReal.ofReal (t - s) := hfE
-          _ < ⊤ := ENNReal.mul_lt_top ENNReal.ofReal_lt_top ENNReal.ofReal_lt_top
-      have hsq : Integrable (fun z => vec3EuclideanNorm (f z) ^ 2) μ := heucL2.integrable_sq
-      have hint : ∫ z in Q, vec3EuclideanNorm (f z) ^ 2 ≤ S * (t - s) := by
-        rw [integral_eq_lintegral_of_nonneg_ae (Eventually.of_forall fun z => by positivity)
-          (heuc_m.pow_const 2).aestronglyMeasurable]
-        calc
-          (∫⁻ z in Q, ENNReal.ofReal (vec3EuclideanNorm (f z) ^ 2)).toReal ≤
-              (ENNReal.ofReal S * ENNReal.ofReal (t - s)).toReal :=
-            ENNReal.toReal_mono (ENNReal.mul_ne_top ENNReal.ofReal_ne_top
-              ENNReal.ofReal_ne_top) hsqE
-          _ = S * (t - s) := by
-            rw [ENNReal.toReal_mul, ENNReal.toReal_ofReal hS0, ENNReal.toReal_ofReal hts0]
-      have hbound : ∀ z, ‖A1 z‖ ≤ 9 * Gw * vec3EuclideanNorm (f z) ^ 2 := by
-        intro z
-        rw [Real.norm_eq_abs]
-        exact blowupLimitClauses_abs_transport_le (f z)
-          (fun i j => spatialDeriv (fun y => w y i) j z.1) (fun i j => hgradw z.1 i j)
-      calc
-        |∫ z in Q, A1 z| = ‖∫ z in Q, A1 z‖ := (Real.norm_eq_abs _).symm
-        _ ≤ ∫ z in Q, 9 * Gw * vec3EuclideanNorm (f z) ^ 2 :=
-          norm_integral_le_of_norm_le (hsq.const_mul _) (Eventually.of_forall hbound)
-        _ = 9 * Gw * ∫ z in Q, vec3EuclideanNorm (f z) ^ 2 := integral_const_mul _ _
-        _ ≤ 9 * Gw * (S * (t - s)) := mul_le_mul_of_nonneg_left hint (by positivity)
-        _ = 9 * Gw * S * (t - s) := by ring
-    have hK2 : |∫ z in Q, Bf z| ≤ 3 * Real.sqrt S * Lw * (t - s) := by
-      have h22 : (2 : ℝ).HolderConjugate 2 := ⟨by norm_num, by norm_num, by norm_num⟩
-      have heuc_m : Measurable (fun z => vec3EuclideanNorm (f z)) :=
-        CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.measurable.comp hf
-      have hpt : ∀ z, ENNReal.ofReal ‖Bf z‖ ≤ ∑ i : Fin 3,
-          ENNReal.ofReal (vec3EuclideanNorm (f z)) * ‖ψ i z.1‖ₑ := by
-        intro z
-        have h1 : ‖Bf z‖ ≤ ∑ i : Fin 3, vec3EuclideanNorm (f z) * |ψ i z.1| := by
-          rw [Real.norm_eq_abs]
-          refine (Finset.abs_sum_le_sum_abs _ _).trans (Finset.sum_le_sum fun i _ => ?_)
-          rw [abs_mul]
-          exact mul_le_mul_of_nonneg_right (abs_apply_le_vec3EuclideanNorm _ i) (abs_nonneg _)
-        calc
-          ENNReal.ofReal ‖Bf z‖ ≤
-              ENNReal.ofReal (∑ i : Fin 3, vec3EuclideanNorm (f z) * |ψ i z.1|) :=
-            ENNReal.ofReal_le_ofReal h1
-          _ = ∑ i : Fin 3, ENNReal.ofReal (vec3EuclideanNorm (f z) * |ψ i z.1|) :=
-            ENNReal.ofReal_sum_of_nonneg fun i _ =>
-              mul_nonneg (vec3EuclideanNorm_nonneg _) (abs_nonneg _)
-          _ = ∑ i : Fin 3, ENNReal.ofReal (vec3EuclideanNorm (f z)) * ‖ψ i z.1‖ₑ := by
-            apply Finset.sum_congr rfl
-            intro i _
-            rw [ENNReal.ofReal_mul (vec3EuclideanNorm_nonneg _), Real.enorm_eq_ofReal_abs]
-      have hmeasTerm : ∀ i, Measurable (fun z : ParabolicPoint =>
-          ENNReal.ofReal (vec3EuclideanNorm (f z)) * ‖ψ i z.1‖ₑ) := fun i =>
-        (ENNReal.measurable_ofReal.comp heuc_m).mul
-          ((hψc i).measurable.comp measurable_fst).enorm
-      have hlap : ∀ i, (∫⁻ x in C, ‖ψ i x‖ₑ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) ≤ ENNReal.ofReal Lw := by
-        intro i
-        have h := hlapw i
-        rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
-          (hψc i).aestronglyMeasurable] at h
-        simp only [ENNReal.toReal_ofNat] at h
-        refine le_trans (ENNReal.rpow_le_rpow ?_ (by norm_num)) h
-        exact lintegral_mono' Measure.restrict_le_self le_rfl
-      have hslab : ∀ i, ∫⁻ z in Q, ENNReal.ofReal (vec3EuclideanNorm (f z)) * ‖ψ i z.1‖ₑ ≤
-          ENNReal.ofReal S ^ (1 / 2 : ℝ) * ENNReal.ofReal Lw * ENNReal.ofReal (t - s) := by
-        intro i
-        rw [blowupLimitClauses_lintegral_prod_eq C I (hmeasTerm i)]
-        calc
-          ∫⁻ τ in I, ∫⁻ x in C, ENNReal.ofReal (vec3EuclideanNorm (f (x, τ))) * ‖ψ i x‖ₑ ≤
-              ∫⁻ _ in I, ENNReal.ofReal S ^ (1 / 2 : ℝ) * ENNReal.ofReal Lw := by
-            apply lintegral_mono
-            intro τ
-            have hfs : Measurable (fun x : Vec3 => f (x, τ)) := hf.comp measurable_prodMk_right
-            have hH := ENNReal.lintegral_mul_le_Lp_mul_Lq (volume.restrict C) h22
-              (f := fun x => ENNReal.ofReal (vec3EuclideanNorm (f (x, τ))))
-              (g := fun x => ‖ψ i x‖ₑ)
-              (ENNReal.measurable_ofReal.comp
-                (CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.measurable.comp
-                  hfs)).aemeasurable
-              ((hψc i).measurable.enorm.aemeasurable)
-            refine le_trans (le_of_eq ?_) (hH.trans (mul_le_mul' ?_ (hlap i)))
-            · rfl
-            · exact ENNReal.rpow_le_rpow (hslice τ) (by norm_num)
-          _ = ENNReal.ofReal S ^ (1 / 2 : ℝ) * ENNReal.ofReal Lw * ENNReal.ofReal (t - s) := by
-            rw [setLIntegral_const, Real.volume_Ioc]
-      have htot : ∫⁻ z in Q, ENNReal.ofReal ‖Bf z‖ ≤
-          3 * (ENNReal.ofReal S ^ (1 / 2 : ℝ) * ENNReal.ofReal Lw * ENNReal.ofReal (t - s)) := by
-        calc
-          ∫⁻ z in Q, ENNReal.ofReal ‖Bf z‖ ≤ ∫⁻ z in Q, ∑ i : Fin 3,
-              ENNReal.ofReal (vec3EuclideanNorm (f z)) * ‖ψ i z.1‖ₑ := lintegral_mono hpt
-          _ = ∑ i : Fin 3, ∫⁻ z in Q,
-              ENNReal.ofReal (vec3EuclideanNorm (f z)) * ‖ψ i z.1‖ₑ :=
-            lintegral_finsetSum _ fun i _ => hmeasTerm i
-          _ ≤ ∑ _i : Fin 3,
-              ENNReal.ofReal S ^ (1 / 2 : ℝ) * ENNReal.ofReal Lw * ENNReal.ofReal (t - s) :=
-            Finset.sum_le_sum fun i _ => hslab i
-          _ = 3 * (ENNReal.ofReal S ^ (1 / 2 : ℝ) * ENNReal.ofReal Lw * ENNReal.ofReal (t - s)) := by
-            simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
-            norm_num
-      have hfin : 3 * (ENNReal.ofReal S ^ (1 / 2 : ℝ) * ENNReal.ofReal Lw *
-          ENNReal.ofReal (t - s)) ≠ ⊤ := by
-        apply ENNReal.mul_ne_top (by norm_num)
-        apply ENNReal.mul_ne_top (ENNReal.mul_ne_top _ ENNReal.ofReal_ne_top) ENNReal.ofReal_ne_top
-        exact ENNReal.rpow_ne_top_of_nonneg (by norm_num) ENNReal.ofReal_ne_top
-      calc
-        |∫ z in Q, Bf z| = ‖∫ z in Q, Bf z‖ := (Real.norm_eq_abs _).symm
-        _ ≤ (∫⁻ z in Q, ENNReal.ofReal ‖Bf z‖).toReal := norm_integral_le_lintegral_norm _
-        _ ≤ (3 * (ENNReal.ofReal S ^ (1 / 2 : ℝ) * ENNReal.ofReal Lw *
-            ENNReal.ofReal (t - s))).toReal := ENNReal.toReal_mono hfin htot
-        _ = 3 * Real.sqrt S * Lw * (t - s) := by
-          rw [ENNReal.toReal_mul, ENNReal.toReal_mul, ENNReal.toReal_mul,
-            ← ENNReal.toReal_rpow, ENNReal.toReal_ofReal hS0, ENNReal.toReal_ofReal hLw,
-            ENNReal.toReal_ofReal hts0, ← Real.sqrt_eq_rpow]
-          norm_num
-          ring
-    have hK3 : |∫ z in Q, A3 z| ≤
-        Dw * B * (volume C).toReal ^ (1 / 3 : ℝ) * (t - s) ^ (1 / 3 : ℝ) := by
-      have hbound : ∀ z, ‖A3 z‖ ≤ Dw * ‖P z‖ := by
-        intro z
-        rw [norm_mul, mul_comm]
-        exact mul_le_mul_of_nonneg_right (by rw [Real.norm_eq_abs]; exact hdivw z.1)
-          (norm_nonneg _)
-      have hexp : 1 / (1 : ℝ≥0∞).toReal - 1 / (3 / 2 : ℝ≥0∞).toReal = 1 / 3 := by
-        rw [ENNReal.toReal_one, ENNReal.toReal_div]
-        norm_num
-      have hL1 : eLpNorm P 1 μ ≤ ENNReal.ofReal B *
-          (volume C * ENNReal.ofReal (t - s)) ^ (1 / 3 : ℝ) := by
-        have h := eLpNorm_le_eLpNorm_mul_rpow_measure_univ
-          (μ := μ) (p := (1 : ℝ≥0∞)) (q := (3 / 2 : ℝ≥0∞)) (by
-            rw [← CKN.ofReal_threeHalves]
-            exact ENNReal.one_le_ofReal.mpr (by norm_num)) hP1.aestronglyMeasurable
-        rw [hexp, hμuniv] at h
-        refine h.trans ?_
-        gcongr
-        exact (eLpNorm_mono_measure _ hμle).trans hB
-      have hint : ∫ z in Q, ‖P z‖ = (eLpNorm P 1 μ).toReal := by
-        rw [integral_norm_eq_lintegral_enorm hP1.aestronglyMeasurable,
-          eLpNorm_one_eq_lintegral_enorm]
-        exact hP1.aestronglyMeasurable
-      have hfin : ENNReal.ofReal B * (volume C * ENNReal.ofReal (t - s)) ^ (1 / 3 : ℝ) ≠ ⊤ :=
-        ENNReal.mul_ne_top ENNReal.ofReal_ne_top (ENNReal.rpow_ne_top_of_nonneg (by norm_num)
-          (ENNReal.mul_ne_top hvolC.ne ENNReal.ofReal_ne_top))
-      have hreal : (eLpNorm P 1 μ).toReal ≤
-          B * (volume C).toReal ^ (1 / 3 : ℝ) * (t - s) ^ (1 / 3 : ℝ) := by
-        calc
-          (eLpNorm P 1 μ).toReal ≤
-              (ENNReal.ofReal B * (volume C * ENNReal.ofReal (t - s)) ^ (1 / 3 : ℝ)).toReal :=
-            ENNReal.toReal_mono hfin hL1
-          _ = B * (volume C).toReal ^ (1 / 3 : ℝ) * (t - s) ^ (1 / 3 : ℝ) := by
-            rw [ENNReal.toReal_mul, ← ENNReal.toReal_rpow, ENNReal.toReal_mul,
-              ENNReal.toReal_ofReal hB0, ENNReal.toReal_ofReal hts0,
-              Real.mul_rpow ENNReal.toReal_nonneg hts0]
-            ring
-      calc
-        |∫ z in Q, A3 z| = ‖∫ z in Q, A3 z‖ := (Real.norm_eq_abs _).symm
-        _ ≤ ∫ z in Q, Dw * ‖P z‖ :=
-          norm_integral_le_of_norm_le (hP1.norm.const_mul _) (Eventually.of_forall hbound)
-        _ = Dw * ∫ z in Q, ‖P z‖ := integral_const_mul _ _
-        _ ≤ Dw * (B * (volume C).toReal ^ (1 / 3 : ℝ) * (t - s) ^ (1 / 3 : ℝ)) := by
-          rw [hint]
-          exact mul_le_mul_of_nonneg_left hreal hDw
-        _ = Dw * B * (volume C).toReal ^ (1 / 3 : ℝ) * (t - s) ^ (1 / 3 : ℝ) := by ring
+    have hK1 := blowupLimitClauses_transportIntegral_bound hf hS0 hts0 hslice hgradw
+      (fun z => rfl)
+    have hK2 := blowupLimitClauses_pairingIntegral_bound hf hS0 hLw hts0 hslice
+      hψc hlapw hBfint (fun z => rfl)
+    have hK3 := blowupLimitClauses_pressureIntegral_bound μ hμle hμuniv hvolC
+      hP1 hB hB0 hDw hts0 hdivw hA3int (fun z => rfl)
     have hsplit : G t - G s = (∫ z in Q, A1 z) + (∫ z in Q, Bf z) + ∫ z in Q, A3 z := by
       have h := hformula s t hs ht hst
       have hEq : (∫ z in C ×ˢ Ioc s t, (∑ i : Fin 3, ∑ j : Fin 3,

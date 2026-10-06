@@ -13,6 +13,12 @@ public import LeanPool.CaffarelliKohnNirenberg.Statements.SpaceTimeSet
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Finite
 public import Mathlib.Topology.MetricSpace.Bounded
 
+/-!
+# BUShort Growth Any Interval
+
+Growth bounds for the short-time backward uniqueness argument.
+-/
+
 public section
 
 open MeasureTheory Set

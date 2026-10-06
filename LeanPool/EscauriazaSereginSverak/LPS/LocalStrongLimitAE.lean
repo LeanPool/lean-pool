@@ -43,7 +43,7 @@ theorem lps_slab_slice_ae_eq {E : Type*} {a b : ℝ} {f g : Vec3 × ℝ → E}
 
 /-- Two almost everywhere measurable fields on a slab whose almost every time slices agree almost
 everywhere agree almost everywhere on the slab. -/
-theorem lps_slab_ae_eq_of_slices {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+theorem lps_slab_ae_eq_of_slices {E : Type*} [NormedAddCommGroup E]
     [SecondCountableTopology E] [MeasurableSpace E] [BorelSpace E] {a b : ℝ}
     {f g : Vec3 × ℝ → E}
     (hf : AEStronglyMeasurable f (volume.restrict (vlSlab a b)))

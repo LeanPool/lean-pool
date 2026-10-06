@@ -47,6 +47,103 @@ theorem blowupLimitAssembly_compact_bound {Q : Set (Vec3 × ℝ)}
     rw [Real.norm_eq_abs, abs_le] at h
     linarith only [h.1, le_max_right ρ₁ ρ₂]
 
+private theorem blowupLimitAssembly_cutoff_gradient_bound_on_box
+    (f : ℕ → ParabolicPoint → Vec3)
+    (Df : ℕ → ParabolicPoint → Fin 3 → Vec3)
+    (hf : ∀ n, Measurable (f n)) (hDf : ∀ n, Measurable (Df n))
+    (N ν : ℕ → ℕ) (hνN : ∀ k, N k ≤ ν k) (hνmono : Monotone ν)
+    (hsliceBall : ∀ R : ℝ, 0 < R → ∃ M : ℝ≥0∞, M < ⊤ ∧ ∀ n t,
+      (∫⁻ x in closure (vec3Ball (0 : Vec3) R),
+        ENNReal.ofReal (vec3EuclideanNorm (f n (x,t))) ^ (2 : ℝ)) ≤ M)
+    (hgradientBounds : ∀ m : ℕ, ∃ G : ℝ≥0∞, G < ⊤ ∧ ∀ n, N m ≤ n →
+      (∫⁻ t in Icc (-((m : ℝ) + 1)) 0,
+        ∫⁻ x in vec3Ball (0 : Vec3) ((m : ℝ) + 1),
+          ENNReal.ofReal (spatialGradientSq (f n) (Df n) (x,t))) ≤ G)
+    {C : Set Vec3} (hC : IsCompact C) {a b : ℝ}
+    (hab : Icc a b ⊆ Iio 0) :
+    ∃ G : ℝ≥0∞, G < ⊤ ∧ ∀ n,
+      (∫⁻ t in Icc a b, ∫⁻ x in C,
+        ENNReal.ofReal (spatialGradientSq
+          (blowupLimitAssemblyCutoffField f ν n)
+          (blowupLimitAssemblyCutoffGradient f Df ν n) (x,t)) ∂volume) ≤ G := by
+  let w := blowupLimitAssemblyCutoffField f ν
+  let Dw := blowupLimitAssemblyCutoffGradient f Df ν
+  by_cases hab' : a ≤ b
+  swap
+  · refine ⟨0, by norm_num, fun n => ?_⟩
+    rw [Icc_eq_empty hab', Measure.restrict_empty, lintegral_zero_measure]
+  have hb : b < 0 := hab ⟨hab', le_rfl⟩
+  obtain ⟨ρ, hρ⟩ := hC.exists_bound_of_continuousOn
+    CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.continuousOn
+  obtain ⟨j, hj⟩ := exists_nat_gt (max ρ (-a))
+  have hjρ : ρ < j := (le_max_left _ _).trans_lt hj
+  have hja : -a < j := (le_max_right _ _).trans_lt hj
+  have hCj : ∀ x ∈ C, vec3EuclideanNorm x < j := by
+    intro x hx
+    have h := hρ x hx
+    rw [Real.norm_eq_abs, abs_of_nonneg (vec3EuclideanNorm_nonneg x)] at h
+    exact h.trans_lt hjρ
+  have hsingle : ∀ k, ∃ Bd : ℝ≥0∞, Bd < ⊤ ∧
+      (∫⁻ t in Icc a b, ∫⁻ x in C,
+        ENNReal.ofReal (spatialGradientSq (w k) (Dw k) (x,t))) ≤ Bd := by
+    intro k
+    obtain ⟨G, hG, hGb⟩ := hgradientBounds k
+    obtain ⟨M, hM, hMb⟩ := hsliceBall ((k : ℝ) + 1) (by positivity)
+    exact blowupLimitAssemblyCutoff_gradient_bound_single f Df ν k hf hDf
+      ⟨M, hM, fun t => hMb (ν k) t⟩ G hG (hGb (ν k) (hνN k)) C a b hb.le
+  choose Bd hBd hBdb using hsingle
+  obtain ⟨Gj, hGj, hGjb⟩ := hgradientBounds j
+  refine ⟨Gj + ∑ k ∈ Finset.range (j + 1), Bd k,
+    ENNReal.add_lt_top.mpr ⟨hGj, ENNReal.sum_lt_top.mpr fun k _ => hBd k⟩, ?_⟩
+  intro k
+  rcases le_total k j with hkj | hjk
+  · calc
+      (∫⁻ t in Icc a b, ∫⁻ x in C,
+          ENNReal.ofReal (spatialGradientSq (w k) (Dw k) (x,t))) ≤ Bd k :=
+        hBdb k
+      _ ≤ ∑ k ∈ Finset.range (j + 1), Bd k :=
+        Finset.single_le_sum (fun _ _ => zero_le)
+          (Finset.mem_range.mpr (Nat.lt_succ_of_le hkj))
+      _ ≤ Gj + ∑ k ∈ Finset.range (j + 1), Bd k := le_add_self
+  · have hjk' : (j : ℝ) ≤ k := by exact_mod_cast hjk
+    have heq : ∀ t ∈ Icc a b, ∀ x ∈ C,
+        ENNReal.ofReal (spatialGradientSq (w k) (Dw k) (x,t)) =
+          ENNReal.ofReal (spatialGradientSq (f (ν k)) (Df (ν k)) (x,t)) := by
+      intro t ht x hx
+      have hxk : (x,t).1 ∈ vec3Ball (0 : Vec3) (k : ℝ) := by
+        rw [mem_vec3Ball, sub_zero]
+        exact (hCj x hx).trans_le hjk'
+      have htk : -(k : ℝ) ≤ (x,t).2 := by
+        change -(k : ℝ) ≤ t
+        linarith only [ht.1, hja, hjk']
+      have hD : Dw k (x,t) = Df (ν k) (x,t) :=
+        (blowupLimitAssemblyCutoff_eq_of_mem f Df ν hxk htk).2
+      unfold spatialGradientSq
+      rw [hD]
+    have hCsub : C ⊆ vec3Ball (0 : Vec3) ((j : ℝ) + 1) := by
+      intro x hx
+      rw [mem_vec3Ball, sub_zero]
+      linarith only [hCj x hx]
+    have hIsub : Icc a b ⊆ Icc (-((j : ℝ) + 1)) 0 := by
+      intro t ht
+      exact ⟨by linarith only [ht.1, hja], ht.2.trans hb.le⟩
+    calc
+      (∫⁻ t in Icc a b, ∫⁻ x in C,
+          ENNReal.ofReal (spatialGradientSq (w k) (Dw k) (x,t))) =
+          ∫⁻ t in Icc a b, ∫⁻ x in C,
+            ENNReal.ofReal (spatialGradientSq (f (ν k)) (Df (ν k)) (x,t)) :=
+        setLIntegral_congr_fun measurableSet_Icc fun t ht =>
+          setLIntegral_congr_fun hC.measurableSet fun x hx => heq t ht x hx
+      _ ≤ ∫⁻ t in Icc a b, ∫⁻ x in vec3Ball (0 : Vec3) ((j : ℝ) + 1),
+            ENNReal.ofReal (spatialGradientSq (f (ν k)) (Df (ν k)) (x,t)) :=
+        lintegral_mono fun t => lintegral_mono_set hCsub
+      _ ≤ ∫⁻ t in Icc (-((j : ℝ) + 1)) 0,
+            ∫⁻ x in vec3Ball (0 : Vec3) ((j : ℝ) + 1),
+            ENNReal.ofReal (spatialGradientSq (f (ν k)) (Df (ν k)) (x,t)) :=
+        lintegral_mono_set hIsub
+      _ ≤ Gj := hGjb (ν k) ((hνN j).trans (hνmono hjk))
+      _ ≤ Gj + ∑ k ∈ Finset.range (j + 1), Bd k := le_self_add
+
 /-- Diagonal compactness for sequences that are uniformly controlled on each
 fixed bounded past cylinder from a stage-dependent index on
 (`prop:blowup-limit`, via `lem:compactness` of the CKN manuscript). -/
@@ -141,81 +238,9 @@ theorem blowupLimitAssembly_exhaustion_compactness
         (∫⁻ t in Icc a b, ∫⁻ x in C,
           ENNReal.ofReal (spatialGradientSq (w n) (Dw n) (x,t)) ∂volume) ≤ G := by
     intro C hC _ a b hab
-    by_cases hab' : a ≤ b
-    swap
-    · refine ⟨0, by norm_num, fun n => ?_⟩
-      rw [Icc_eq_empty hab', Measure.restrict_empty, lintegral_zero_measure]
-    have hb : b < 0 := hab ⟨hab', le_rfl⟩
-    obtain ⟨ρ, hρ⟩ := hC.exists_bound_of_continuousOn
-      CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.continuousOn
-    obtain ⟨j, hj⟩ := exists_nat_gt (max ρ (-a))
-    have hjρ : ρ < j := (le_max_left _ _).trans_lt hj
-    have hja : -a < j := (le_max_right _ _).trans_lt hj
-    have hCj : ∀ x ∈ C, vec3EuclideanNorm x < j := by
-      intro x hx
-      have h := hρ x hx
-      rw [Real.norm_eq_abs, abs_of_nonneg (vec3EuclideanNorm_nonneg x)] at h
-      exact h.trans_lt hjρ
-    have hsingle : ∀ k, ∃ Bd : ℝ≥0∞, Bd < ⊤ ∧
-        (∫⁻ t in Icc a b, ∫⁻ x in C,
-          ENNReal.ofReal (spatialGradientSq (w k) (Dw k) (x,t))) ≤ Bd := by
-      intro k
-      obtain ⟨G, hG, hGb⟩ := (hN k).2.1
-      obtain ⟨M, hM, hMb⟩ := hsliceBall ((k : ℝ) + 1) (by positivity)
-      exact blowupLimitAssemblyCutoff_gradient_bound_single f Df ν k hf hDf
-        ⟨M, hM, fun t => hMb (ν k) t⟩ G hG (hGb (ν k) (hνN k)) C a b hb.le
-    choose Bd hBd hBdb using hsingle
-    obtain ⟨Gj, hGj, hGjb⟩ := (hN j).2.1
-    refine ⟨Gj + ∑ k ∈ Finset.range (j + 1), Bd k,
-      ENNReal.add_lt_top.mpr ⟨hGj, ENNReal.sum_lt_top.mpr fun k _ => hBd k⟩, ?_⟩
-    intro k
-    rcases le_total k j with hkj | hjk
-    · calc
-        (∫⁻ t in Icc a b, ∫⁻ x in C,
-            ENNReal.ofReal (spatialGradientSq (w k) (Dw k) (x,t))) ≤ Bd k :=
-          hBdb k
-        _ ≤ ∑ k ∈ Finset.range (j + 1), Bd k :=
-          Finset.single_le_sum (fun _ _ => zero_le)
-            (Finset.mem_range.mpr (Nat.lt_succ_of_le hkj))
-        _ ≤ Gj + ∑ k ∈ Finset.range (j + 1), Bd k := le_add_self
-    · have hjk' : (j : ℝ) ≤ k := by exact_mod_cast hjk
-      have heq : ∀ t ∈ Icc a b, ∀ x ∈ C,
-          ENNReal.ofReal (spatialGradientSq (w k) (Dw k) (x,t)) =
-            ENNReal.ofReal (spatialGradientSq (f (ν k)) (Df (ν k)) (x,t)) := by
-        intro t ht x hx
-        have hxk : (x,t).1 ∈ vec3Ball (0 : Vec3) (k : ℝ) := by
-          rw [mem_vec3Ball, sub_zero]
-          exact (hCj x hx).trans_le hjk'
-        have htk : -(k : ℝ) ≤ (x,t).2 := by
-          change -(k : ℝ) ≤ t
-          linarith only [ht.1, hja, hjk']
-        have hD : Dw k (x,t) = Df (ν k) (x,t) :=
-          (blowupLimitAssemblyCutoff_eq_of_mem f Df ν hxk htk).2
-        unfold spatialGradientSq
-        rw [hD]
-      have hCsub : C ⊆ vec3Ball (0 : Vec3) ((j : ℝ) + 1) := by
-        intro x hx
-        rw [mem_vec3Ball, sub_zero]
-        linarith only [hCj x hx]
-      have hIsub : Icc a b ⊆ Icc (-((j : ℝ) + 1)) 0 := by
-        intro t ht
-        exact ⟨by linarith only [ht.1, hja], ht.2.trans hb.le⟩
-      calc
-        (∫⁻ t in Icc a b, ∫⁻ x in C,
-            ENNReal.ofReal (spatialGradientSq (w k) (Dw k) (x,t))) =
-            ∫⁻ t in Icc a b, ∫⁻ x in C,
-              ENNReal.ofReal (spatialGradientSq (f (ν k)) (Df (ν k)) (x,t)) :=
-          setLIntegral_congr_fun measurableSet_Icc fun t ht =>
-            setLIntegral_congr_fun hC.measurableSet fun x hx => heq t ht x hx
-        _ ≤ ∫⁻ t in Icc a b, ∫⁻ x in vec3Ball (0 : Vec3) ((j : ℝ) + 1),
-              ENNReal.ofReal (spatialGradientSq (f (ν k)) (Df (ν k)) (x,t)) :=
-          lintegral_mono fun t => lintegral_mono_set hCsub
-        _ ≤ ∫⁻ t in Icc (-((j : ℝ) + 1)) 0,
-              ∫⁻ x in vec3Ball (0 : Vec3) ((j : ℝ) + 1),
-              ENNReal.ofReal (spatialGradientSq (f (ν k)) (Df (ν k)) (x,t)) :=
-          lintegral_mono_set hIsub
-        _ ≤ Gj := hGjb (ν k) (le_blowupLimitAssemblyIndex N hjk)
-        _ ≤ Gj + ∑ k ∈ Finset.range (j + 1), Bd k := le_self_add
+    exact blowupLimitAssembly_cutoff_gradient_bound_on_box f Df hf hDf N ν hνN
+      (strictMono_blowupLimitAssemblyIndex N).monotone
+      hsliceBall (fun m => (hN m).2.1) hC hab
   have hmod : ∀ C : Set Vec3, IsCompact C → C ⊆ univ →
       ∀ a b : ℝ, Icc a b ⊆ Iio 0 →
       ∀ ψ : Vec3 → L2Vec3, ContDiff ℝ (⊤ : ℕ∞) ψ →

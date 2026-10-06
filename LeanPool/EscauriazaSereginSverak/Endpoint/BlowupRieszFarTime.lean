@@ -10,6 +10,12 @@ public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupRieszFarHarmonic
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupPressureIntegrability
 public import Mathlib.Analysis.SpecificLimits.Basic
 
+/-!
+# Blowup Riesz Far Time
+
+Pressure reconstruction and convergence bounds for the rescaled sequence.
+-/
+
 public section
 
 open MeasureTheory Set Filter CKN.Foundation.Parabolic

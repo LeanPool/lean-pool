@@ -8,6 +8,12 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupSliceRescaleUniform
 
+/-!
+# Blowup Local Box
+
+Bounds on local boxes in the endpoint blow-up construction.
+-/
+
 public section
 
 open CKN CKN.Foundation.Parabolic MeasureTheory Set

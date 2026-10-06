@@ -61,17 +61,17 @@ private theorem tendsto_integral_mul_spaceTimeMollify
   let hm (n : ℕ) : MemLp (fun q => b q * fn n q) 2
       (volume : Measure (Vec3 × ℝ)) := by
     apply (hfn n).of_nnnorm_le_mul (hb.mul (hfn n).aestronglyMeasurable)
-    filter_upwards [] with q
-    calc
-      ‖b q * fn n q‖₊ = ‖b q‖₊ * ‖fn n q‖₊ := nnnorm_mul _ _
-      _ ≤ C * ‖fn n q‖₊ :=
-        mul_le_mul_of_nonneg_right (hC q) (by positivity)
+    · filter_upwards [] with q
+      calc
+        ‖b q * fn n q‖₊ = ‖b q‖₊ * ‖fn n q‖₊ := nnnorm_mul _ _
+        _ ≤ C * ‖fn n q‖₊ :=
+          mul_le_mul_of_nonneg_right (hC q) (by positivity)
   let hmLimit : MemLp (fun q => b q * f q) 2 (volume : Measure (Vec3 × ℝ)) := by
     apply hf.of_nnnorm_le_mul (hb.mul hf.aestronglyMeasurable)
-    filter_upwards [] with q
-    calc
-      ‖b q * f q‖₊ = ‖b q‖₊ * ‖f q‖₊ := nnnorm_mul _ _
-      _ ≤ C * ‖f q‖₊ := mul_le_mul_of_nonneg_right (hC q) (by positivity)
+    · filter_upwards [] with q
+      calc
+        ‖b q * f q‖₊ = ‖b q‖₊ * ‖f q‖₊ := nnnorm_mul _ _
+        _ ≤ C * ‖f q‖₊ := mul_le_mul_of_nonneg_right (hC q) (by positivity)
   have hpair : Tendsto
       (fun n => inner ℝ ((hm n).toLp (fun q => b q * fn n q)) (hg.toLp g)) atTop
       (𝓝 (inner ℝ (hmLimit.toLp (fun q => b q * f q)) (hg.toLp g))) :=
@@ -253,6 +253,78 @@ private theorem zeroExtend_mollify_spatial_fderiv
   rw [huExtEq, hDwExtEq]
   exact hleft.trans (hraw.2.trans hright)
 
+private theorem mollified_local_energy_sequence_identity
+    {X : Type*} [MeasurableSpace X] [TopologicalSpace X] {μ : Measure X}
+    (U : Set X) (hU : MeasurableSet U)
+    (φ b g h g₀ h₀ : X → ℝ) (un gn χ dχ du : ℕ → X → ℝ)
+    (A B C : ℕ → ℝ)
+    (hg : g = U.indicator g₀) (hh : h = U.indicator h₀)
+    (hφsupport : tsupport φ ⊆ U)
+    (hχsupport : ∀ n, tsupport (χ n) ⊆ U)
+    (hχφsupport : ∀ n, tsupport (χ n) ⊆ tsupport φ)
+    (hχeq : ∀ n, χ n = fun q => φ q * un n q)
+    (hweak : ∀ n,
+      (∫ q in U, g₀ q * dχ n q ∂μ) =
+        -∫ q in U, h₀ q * χ n q ∂μ)
+    (hderivative : ∀ n q, dχ n q = b q * un n q + φ q * du n q)
+    (hlocalderivative : ∀ n q, q ∈ tsupport φ → du n q = gn n q)
+    (hφzero : ∀ q, q ∉ tsupport φ → φ q = 0)
+    (hbzero : ∀ q, q ∉ tsupport φ → b q = 0)
+    (hdχzero : ∀ n q, q ∉ tsupport (χ n) → dχ n q = 0)
+    (hAeq : ∀ n, A n = ∫ q, b q * un n q * g q ∂μ)
+    (hBeq : ∀ n, B n = ∫ q, φ q * gn n q * g q ∂μ)
+    (hCeq : ∀ n, C n = ∫ q, φ q * un n q * h q ∂μ)
+    (hAint : ∀ n, Integrable (fun q => b q * un n q * g q) μ)
+    (hBint : ∀ n, Integrable (fun q => φ q * gn n q * g q) μ) :
+    ∀ n, C n = -B n - A n := by
+  intro n
+  have hglobal : (∫ q, g q * dχ n q ∂μ) =
+      -∫ q, h q * χ n q ∂μ := by
+    have hleft : (fun q => g q * dχ n q) =
+        U.indicator (fun q => g₀ q * dχ n q) := by
+      funext q
+      by_cases hq : q ∈ U
+      · rw [hg]
+        simp [Set.indicator, hq]
+      · have hnot : q ∉ tsupport (χ n) := fun hs => hq (hχsupport n hs)
+        have hdχ : dχ n q = 0 := hdχzero n q hnot
+        simp [Set.indicator, hq, hg, hdχ]
+    have hright : (fun q => h q * χ n q) =
+        U.indicator (fun q => h₀ q * χ n q) := by
+      funext q
+      by_cases hq : q ∈ U
+      · rw [hh]
+        simp [Set.indicator, hq]
+      · have hnot : q ∉ tsupport (χ n) := fun hs => hq (hχsupport n hs)
+        have hχzero : χ n q = 0 := image_eq_zero_of_notMem_tsupport hnot
+        simp [Set.indicator, hq, hh, hχzero]
+    rw [hleft, hright, integral_indicator hU, integral_indicator hU]
+    exact hweak n
+  have hsum : (∫ q, g q * dχ n q ∂μ) = A n + B n := by
+    calc
+      _ = ∫ q, (b q * un n q * g q) + (φ q * gn n q * g q) ∂μ := by
+        apply integral_congr_ae
+        filter_upwards [] with q
+        by_cases hq : q ∈ tsupport φ
+        · have hqU : q ∈ U := hφsupport hq
+          rw [hderivative n q, hlocalderivative n q hq]
+          simp [hg, hqU]
+          ring
+        · have hnot : q ∉ tsupport (χ n) := fun hs => hq (hχφsupport n hs)
+          rw [hdχzero n q hnot, hφzero q hq, hbzero q hq]
+          simp
+      _ = A n + B n := by rw [integral_add (hAint n) (hBint n), hAeq, hBeq]
+  have hrewrite : (∫ q, g q * dχ n q ∂μ) = -C n := by
+    rw [hglobal, hχeq n, hCeq]
+    congr 1
+    apply integral_congr_ae
+    filter_upwards [] with q
+    ring
+  rw [hCeq n] at hrewrite
+  rw [hCeq n]
+  rw [hsum] at hrewrite
+  linarith
+
 private theorem localized_spatial_energy_component
     {Ω : Set Vec3} {I : Set ℝ} (hΩ : IsOpen Ω) (hI : IsOpen I)
     {w : ParabolicPoint → Vec3} {Dw : ParabolicPoint → Fin 3 → Vec3}
@@ -368,37 +440,6 @@ private theorem localized_spatial_energy_component
     intro n
     exact weak_spatialSecond_identity_product hΩ hI hderiv
       (hχsmooth n) (hχcompact n) (hχsupport n) i j j
-  have hglobal (n : ℕ) :
-      (∫ q, g q * (fderiv ℝ (χ n) q) (basisVec j, 0)
-        ∂(volume : Measure (Vec3 × ℝ))) =
-      -∫ q, h q * χ n q ∂(volume : Measure (Vec3 × ℝ)) := by
-    have hleft :
-        (∫ q, g q * (fderiv ℝ (χ n) q) (basisVec j, 0)
-          ∂(volume : Measure (Vec3 × ℝ))) =
-        ∫ q in U, Dw (parabolicHomeomorph.symm q) i j *
-          (fderiv ℝ (χ n) q) (basisVec j, 0)
-          ∂(volume : Measure (Vec3 × ℝ)) := by
-      have hfun : (fun q => g q * (fderiv ℝ (χ n) q) (basisVec j, 0)) =
-          U.indicator (fun q => Dw (parabolicHomeomorph.symm q) i j *
-            (fderiv ℝ (χ n) q) (basisVec j, 0)) := by
-        funext q
-        by_cases hq : q ∈ U
-        · simp [g, hq]
-        · have hnot : q ∉ tsupport (χ n) := fun hmem => hq (hχsupport n hmem)
-          have hfd : fderiv ℝ (χ n) q = 0 := fderiv_of_notMem_tsupport ℝ hnot
-          simp [g, Set.indicator, hq, hfd]
-      rw [hfun, integral_indicator hUmeas]
-    have hright :
-        (∫ q, h q * χ n q ∂(volume : Measure (Vec3 × ℝ))) =
-        ∫ q in U, D2w (parabolicHomeomorph.symm q) i j j * χ n q
-          ∂(volume : Measure (Vec3 × ℝ)) := by
-      have hfun : (fun q => h q * χ n q) =
-          U.indicator (fun q => D2w (parabolicHomeomorph.symm q) i j j * χ n q) := by
-        funext q
-        by_cases hq : q ∈ U <;> simp [h, Set.indicator, χ, hq]
-      rw [hfun, integral_indicator hUmeas]
-    rw [hleft, hright]
-    exact hweak n
   have hderivative (n : ℕ) (q : Vec3 × ℝ) :
       (fderiv ℝ (χ n) q) (basisVec j, 0) =
         b q * un n q + φ q * (fderiv ℝ (un n) q) (basisVec j, 0) := by
@@ -447,50 +488,42 @@ private theorem localized_spatial_energy_component
         (volume : Measure (Vec3 × ℝ)) :=
       memLp_mul_left_of_nnnorm_bound hφmeas (hgnMem n) (ae_of_all _ hCφ)
     exact hφgn.integrable_mul hg
-  have hCintegrable (n : ℕ) : Integrable (fun q => φ q * un n q * h q)
-      (volume : Measure (Vec3 × ℝ)) := by
-    have hφun : MemLp (fun q => φ q * un n q) 2
-        (volume : Measure (Vec3 × ℝ)) :=
-      memLp_mul_left_of_nnnorm_bound hφmeas (hunMem n) (ae_of_all _ hCφ)
-    exact hφun.integrable_mul hh
-  have hseq (n : ℕ) : C n = -B n - A n := by
-    have hsum :
-        (∫ q, g q * (fderiv ℝ (χ n) q) (basisVec j, 0)
-          ∂(volume : Measure (Vec3 × ℝ))) =
-        A n + B n := by
-      calc
-        _ = ∫ q, (b q * un n q * g q) +
-              (φ q * gn n q * g q) ∂(volume : Measure (Vec3 × ℝ)) := by
-          apply integral_congr_ae
-          filter_upwards [] with q
-          by_cases hq : q ∈ tsupport φ
-          · rw [hderivative n q, hlocalderivative n q hq]
-            dsimp [g]
-            ring
-          · have hφzero : φ q = 0 := image_eq_zero_of_notMem_tsupport hq
-            have hbzero : b q = 0 := by
-              have hfd : fderiv ℝ φ q = 0 := fderiv_of_notMem_tsupport ℝ hq
-              simp [b, hfd]
-            have hχzero : (fderiv ℝ (χ n) q) (basisVec j, 0) = 0 := by
-              have hnot : q ∉ tsupport (χ n) := fun hm => hq (tsupport_mul_subset_left hm)
-              rw [fderiv_of_notMem_tsupport ℝ hnot]
-              simp
-            rw [hχzero, hφzero, hbzero]
-            simp
-        _ = A n + B n := by
-          rw [integral_add (hAintegrable n) (hBintegrable n)]
-    have hrewrite :
-      (∫ q, g q * (fderiv ℝ (χ n) q) (basisVec j, 0)
-          ∂(volume : Measure (Vec3 × ℝ))) = -C n := by
-      rw [hglobal n]
-      dsimp [C, χ]
-      congr 1
-      apply integral_congr_ae
-      filter_upwards [] with q
-      ring
-    dsimp [A, B, C]
-    rw [hsum] at hrewrite
-    linarith only [hrewrite]
+  have hzeroB (q : Vec3 × ℝ) (hq : q ∉ tsupport φ) : b q = 0 := by
+    have hfd : fderiv ℝ φ q = 0 := fderiv_of_notMem_tsupport ℝ hq
+    simp [b, hfd]
+  have hzeroChi (n : ℕ) (q : Vec3 × ℝ) (hq : q ∉ tsupport (χ n)) :
+      (fderiv ℝ (χ n) q) (basisVec j, 0) = 0 := by
+    rw [fderiv_of_notMem_tsupport ℝ hq]
+    simp
+  have hseq : ∀ n, C n = -B n - A n :=
+    mollified_local_energy_sequence_identity U hUmeas φ b g h
+      (fun q => Dw (parabolicHomeomorph.symm q) i j)
+      (fun q => D2w (parabolicHomeomorph.symm q) i j j)
+      un gn χ (fun n q => (fderiv ℝ (χ n) q) (basisVec j, 0))
+      (fun n q => (fderiv ℝ (un n) q) (basisVec j, 0)) A B C
+      (by funext q; by_cases hq : q ∈ U <;> simp [g, Set.indicator, hq])
+      (by funext q; by_cases hq : q ∈ U <;> simp [h, Set.indicator, hq])
+      hbuffer_subset hχsupport
+      (by
+        intro n
+        simpa [χ] using (tsupport_mul_subset_left :
+          tsupport (fun q => φ q * un n q) ⊆ tsupport φ))
+      (by intro n; rfl)
+      (by
+        intro n
+        simpa using hweak n)
+      (by
+        intro n q
+        simpa [χ, b] using hderivative n q)
+      (by
+        intro n q hq
+        simpa [un, gn] using hlocalderivative n q hq)
+      (by intro q hq; exact image_eq_zero_of_notMem_tsupport hq) hzeroB
+      (by
+        intro n q hq
+        exact hzeroChi n q hq)
+      (by intro n; rfl) (by intro n; rfl) (by intro n; rfl)
+      hAintegrable hBintegrable
   have hAtendsto : Tendsto A atTop (𝓝
       (∫ q, b q * u q * g q ∂(volume : Measure (Vec3 × ℝ)))) := by
     change Tendsto (fun n => ∫ q, b q * spaceTimeMollify u (δ n) (hδpos n) q * g q

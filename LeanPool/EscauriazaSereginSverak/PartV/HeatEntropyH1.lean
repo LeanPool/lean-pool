@@ -24,7 +24,8 @@ noncomputable section
 
 namespace ESS
 
-@[expose] def heatRegG_comp_h1 {η : ℝ} (hη : 0 < η)
+/-- The H1 function obtained by composing a smooth finite-energy field with the entropy map. -/
+@[expose] def heatRegGCompH1 {η : ℝ} (hη : 0 < η)
     {h : Vec3 → Vec3} (hh : ContDiff ℝ (⊤ : ℕ∞) h)
     (hmem : ∀ i : Fin 3, MemLp (fun x => h x i) 2 volume)
     (hderiv : ∀ i j : Fin 3,
@@ -172,7 +173,7 @@ namespace ESS
         (U := Set.univ) hg)
 
 /-- The regularized entropy profile of smooth heat data is in whole-space `H¹`. -/
-@[expose] def heatRegG_heatConv_h1 {b : Vec3 → Vec3}
+@[expose] def heatRegGHeatConvH1 {b : Vec3 → Vec3}
     (hb : ∀ i : Fin 3, ContDiff ℝ (⊤ : ℕ∞) (fun x => b x i))
     (hbc : ∀ i : Fin 3, HasCompactSupport (fun x => b x i))
     {t η : ℝ} (ht : 0 < t) (hη : 0 < η) :
@@ -258,7 +259,7 @@ namespace ESS
               mul_le_mul_of_nonneg_left hden (hC i)
         exact (htail i x).trans hquot
       _ = M := by rfl
-  exact heatRegG_comp_h1 hη hvec hmem hderiv hM hbound
+  exact heatRegGCompH1 hη hvec hmem hderiv hM hbound
 
 private theorem heatConvVec3_decay_constants {b : Vec3 → Vec3}
     (hb : ∀ i : Fin 3, ContDiff ℝ (⊤ : ℕ∞) (fun x => b x i))

@@ -94,7 +94,7 @@ theorem uc_gaussian_weighted_target_box
   change Tendsto err (𝓝[>] (0 : ℝ)) (𝓝 0) at hEarly
   have hlim : Tendsto (fun ε : ℝ => 40 * c₀ * (6 * K * M ^ 2 * E + err ε))
       (𝓝[>] (0 : ℝ)) (𝓝 (40 * c₀ * (6 * K * M ^ 2 * E))) := by
-    convert (tendsto_const_nhds.add hEarly).const_mul (40 * c₀) using 1 ;
+    convert (tendsto_const_nhds.add hEarly).const_mul (40 * c₀) using 1;
       ring_nf
   have hεsmall : ∀ᶠ ε : ℝ in 𝓝[>] (0 : ℝ), ε < 1 / 4 :=
     nhdsWithin_le_nhds (Iio_mem_nhds (by norm_num : (0 : ℝ) < 1 / 4))

@@ -31,6 +31,63 @@ noncomputable section
 
 namespace ESS
 
+private theorem weakDerivs_restrict_to_spaceTimeSet
+    {Ω₀ Ω : Set Vec3} {I₀ I : Set ℝ}
+    {w : ParabolicPoint → Vec3} {Dw : ParabolicPoint → Fin 3 → Vec3}
+    {D2w : ParabolicPoint → Fin 3 → Fin 3 → Vec3} {Dtw : ParabolicPoint → Vec3}
+    (hΩ₀ : IsOpen Ω₀) (hI₀ : IsOpen I₀)
+    (hderiv : HasSpaceTimeWeakDerivs Ω₀ I₀ w Dw D2w Dtw)
+    (hsubset : spaceTimeSet Ω I ⊆ spaceTimeSet Ω₀ I₀) :
+    HasSpaceTimeWeakDerivs Ω I w Dw D2w Dtw := by
+  refine ⟨hderiv.1.mono_set hsubset, hderiv.2.1.mono_set hsubset,
+    hderiv.2.2.1.mono_set hsubset, hderiv.2.2.2.1.mono_set hsubset, ?_⟩
+  intro φ hφ
+  have hφsource : φ ∈ spaceTimeTestFunction (V := ℝ) Ω₀ I₀ := by
+    refine ⟨hφ.1, hφ.2.1, ?_⟩
+    exact hφ.2.2.trans hsubset
+  obtain ⟨hsp, hsp2, htm⟩ := hderiv.2.2.2.2 φ hφsource
+  have hRestrict {F : ParabolicPoint → ℝ}
+      (hF : ∀ z, z ∉ tsupport (show Vec3 × ℝ → ℝ from φ) → F z = 0) :
+      (∫ z in spaceTimeSet Ω₀ I₀, F z) =
+        ∫ z in spaceTimeSet Ω I, F z := by
+    apply setIntegral_eq_of_subset_of_forall_sdiff_eq_zero
+      ((isOpen_spaceTimeSet Ω₀ I₀ hΩ₀ hI₀).measurableSet) hsubset
+    intro z hz
+    exact hF z (fun h => hz.2 (hφ.2.2 h))
+  have hφzero (z : ParabolicPoint)
+      (hz : z ∉ tsupport (show Vec3 × ℝ → ℝ from φ)) : φ z = 0 :=
+    image_eq_zero_of_notMem_tsupport
+      (f := show Vec3 × ℝ → ℝ from φ) hz
+  have hspzero (z : ParabolicPoint)
+      (hz : z ∉ tsupport (show Vec3 × ℝ → ℝ from φ)) (j : Fin 3) :
+      spatialPartial φ j z = 0 := CKN.spatialPartial_eq_zero_off_tsupport hz j
+  refine ⟨?_, ?_, ?_⟩
+  · intro i j
+    calc
+      (∫ z in spaceTimeSet Ω I, w z i * spatialPartial φ j z) =
+          ∫ z in spaceTimeSet Ω₀ I₀, w z i * spatialPartial φ j z :=
+            (hRestrict (fun z hz => by simp [hspzero z hz j])).symm
+      _ = -∫ z in spaceTimeSet Ω₀ I₀, Dw z i j * φ z := hsp i j
+      _ = -∫ z in spaceTimeSet Ω I, Dw z i j * φ z := by
+        rw [hRestrict (fun z hz => by simp [hφzero z hz])]
+  · intro i j k
+    calc
+      (∫ z in spaceTimeSet Ω I, Dw z i j * spatialPartial φ k z) =
+          ∫ z in spaceTimeSet Ω₀ I₀, Dw z i j * spatialPartial φ k z :=
+            (hRestrict (fun z hz => by simp [hspzero z hz k])).symm
+      _ = -∫ z in spaceTimeSet Ω₀ I₀, D2w z i j k * φ z := hsp2 i j k
+      _ = -∫ z in spaceTimeSet Ω I, D2w z i j k * φ z := by
+        rw [hRestrict (fun z hz => by simp [hφzero z hz])]
+  · intro i
+    calc
+      (∫ z in spaceTimeSet Ω I, w z i * timePartial φ z) =
+          ∫ z in spaceTimeSet Ω₀ I₀, w z i * timePartial φ z :=
+            (hRestrict (fun z hz => by
+              simp [CKN.timePartial_eq_zero_off_tsupport hz])).symm
+      _ = -∫ z in spaceTimeSet Ω₀ I₀, Dtw z i * φ z := htm i
+      _ = -∫ z in spaceTimeSet Ω I, Dtw z i * φ z := by
+        rw [hRestrict (fun z hz => by simp [hφzero z hz])]
+
 /-- The bounded source data in `lem:bu-gaussian` give the weak derivatives,
 finite quadratic data, and heat inequality on the rescaled cylinder. -/
 theorem buGaussian_rescaled_data
@@ -146,59 +203,8 @@ theorem buGaussian_rescaled_data
     change IsOpen {y : Vec3 | 0 < y 2}
     exact isOpen_lt continuous_const (continuous_apply 2)
   have hsourceTimeOpen : IsOpen (Ioo (0 : ℝ) 1) := isOpen_Ioo
-  have hrestricted : HasSpaceTimeWeakDerivs Ω I w Dw D2w Dtw := by
-    refine ⟨hderiv.1.mono_set hQsub, hderiv.2.1.mono_set hQsub,
-      hderiv.2.2.1.mono_set hQsub, hderiv.2.2.2.1.mono_set hQsub, ?_⟩
-    intro φ hφ
-    have hφsource : φ ∈ spaceTimeTestFunction (V := ℝ) buHalfSpace (Ioo 0 1) := by
-      refine ⟨hφ.1, hφ.2.1, ?_⟩
-      exact hφ.2.2.trans hQsub
-    obtain ⟨hsp, hsp2, htm⟩ := hderiv.2.2.2.2 φ hφsource
-    have hRestrict {F : ParabolicPoint → ℝ}
-        (hF : ∀ z, z ∉ tsupport (show Vec3 × ℝ → ℝ from φ) → F z = 0) :
-        (∫ z in spaceTimeSet buHalfSpace (Ioo 0 1), F z) =
-          ∫ z in Q, F z := by
-      apply setIntegral_eq_of_subset_of_forall_sdiff_eq_zero
-        ((isOpen_spaceTimeSet buHalfSpace (Ioo 0 1)
-          hsourceOpen hsourceTimeOpen).measurableSet) hQsub
-      intro z hz
-      exact hF z (fun h => hz.2 (hφ.2.2 h))
-    have hφzero (z : ParabolicPoint)
-        (hz : z ∉ tsupport (show Vec3 × ℝ → ℝ from φ)) : φ z = 0 :=
-      image_eq_zero_of_notMem_tsupport
-        (f := show Vec3 × ℝ → ℝ from φ) hz
-    have hspzero (z : ParabolicPoint)
-        (hz : z ∉ tsupport (show Vec3 × ℝ → ℝ from φ)) (j : Fin 3) :
-        spatialPartial φ j z = 0 := CKN.spatialPartial_eq_zero_off_tsupport hz j
-    refine ⟨?_, ?_, ?_⟩
-    · intro i j
-      calc
-        (∫ z in Q, w z i * spatialPartial φ j z) =
-            ∫ z in spaceTimeSet buHalfSpace (Ioo 0 1),
-              w z i * spatialPartial φ j z :=
-                (hRestrict (fun z hz => by simp [hspzero z hz j])).symm
-        _ = -∫ z in spaceTimeSet buHalfSpace (Ioo 0 1), Dw z i j * φ z := hsp i j
-        _ = -∫ z in Q, Dw z i j * φ z := by
-          rw [hRestrict (fun z hz => by simp [hφzero z hz])]
-    · intro i j k
-      calc
-        (∫ z in Q, Dw z i j * spatialPartial φ k z) =
-            ∫ z in spaceTimeSet buHalfSpace (Ioo 0 1),
-              Dw z i j * spatialPartial φ k z :=
-                (hRestrict (fun z hz => by simp [hspzero z hz k])).symm
-        _ = -∫ z in spaceTimeSet buHalfSpace (Ioo 0 1), D2w z i j k * φ z := hsp2 i j k
-        _ = -∫ z in Q, D2w z i j k * φ z := by
-          rw [hRestrict (fun z hz => by simp [hφzero z hz])]
-    · intro i
-      calc
-        (∫ z in Q, w z i * timePartial φ z) =
-            ∫ z in spaceTimeSet buHalfSpace (Ioo 0 1),
-              w z i * timePartial φ z :=
-                (hRestrict (fun z hz => by
-                  simp [CKN.timePartial_eq_zero_off_tsupport hz])).symm
-        _ = -∫ z in spaceTimeSet buHalfSpace (Ioo 0 1), Dtw z i * φ z := htm i
-        _ = -∫ z in Q, Dtw z i * φ z := by
-          rw [hRestrict (fun z hz => by simp [hφzero z hz])]
+  have hrestricted : HasSpaceTimeWeakDerivs Ω I w Dw D2w Dtw :=
+    weakDerivs_restrict_to_spaceTimeSet hsourceOpen hsourceTimeOpen hderiv hQsub
   have hineqQ : ∀ᵐ z ∂(volume.restrict Q),
           vec3EuclideanNorm (ucWeakHeatVector D2w Dtw z) ≤
           c₁ * (vec3EuclideanNorm (w z) + Real.sqrt (spatialGradientSq w Dw z)) := by

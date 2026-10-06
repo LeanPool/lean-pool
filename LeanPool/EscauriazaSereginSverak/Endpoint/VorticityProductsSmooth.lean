@@ -225,6 +225,283 @@ private theorem vorticityProducts_sq_two_le (a b : ℝ) :
     (a + b) ^ 2 ≤ 2 * (a ^ 2 + b ^ 2) := by
   nlinarith only [sq_nonneg (a - b)]
 
+private theorem vorticityProducts_word_product_second_deriv_bound
+    (f g : Vec3 → ℝ) (Mf Mg Hf Hg T : ℝ) (A B : Vec3 → ℝ)
+    (hf : ContDiff ℝ (⊤ : ℕ∞) f) (hfc : HasCompactSupport f)
+    (hg : ContDiff ℝ (⊤ : ℕ∞) g) (hgc : HasCompactSupport g)
+    (hMf : ∀ x, |f x| ≤ Mf) (hMg : ∀ x, |g x| ≤ Mg)
+    (hT : T = Mf ^ 2 * Hg + Mg ^ 2 * Hf)
+    (hA : ∀ x, A x = ∑ i : Fin 3, spatialDeriv f i x ^ 2)
+    (hB : ∀ x, B x = ∑ i : Fin 3, spatialDeriv g i x ^ 2)
+    (hsecondF : ∀ j k : Fin 3,
+      ∫ x, spatialDeriv (spatialDeriv f j) k x ^ 2 ≤ Hf)
+    (hsecondG : ∀ j k : Fin 3,
+      ∫ x, spatialDeriv (spatialDeriv g j) k x ^ 2 ≤ Hg)
+    (hcrossInt : Integrable (fun x => A x * B x) volume)
+    (hcrossT : ∫ x, A x * B x ≤ 162 * T)
+    (j k : Fin 3) :
+    ∫ x, wordDeriv [j, k] (fun y => f y * g y) x ^ 2 ≤ 1300 * T := by
+  have hfg : ContDiff ℝ (⊤ : ℕ∞) (fun x => f x * g x) := hf.mul hg
+  have hfgc : HasCompactSupport (fun x => f x * g x) := hfc.mul_right
+  have hfirst : spatialDeriv (fun y => f y * g y) j =
+      fun y => spatialDeriv f j y * g y + f y * spatialDeriv g j y := by
+    funext y
+    exact spatialDeriv_mul ((hf.differentiable (by simp)) y)
+      ((hg.differentiable (by simp)) y) j
+  have hdf : ContDiff ℝ (⊤ : ℕ∞) (spatialDeriv f j) :=
+    contDiff_spatialDeriv_smooth hf j
+  have hdg : ContDiff ℝ (⊤ : ℕ∞) (spatialDeriv g j) :=
+    contDiff_spatialDeriv_smooth hg j
+  have hdiff (x : Vec3) :
+      wordDeriv [j, k] (fun y => f y * g y) x =
+        spatialDeriv (spatialDeriv f j) k x * g x +
+          spatialDeriv f j x * spatialDeriv g k x +
+          spatialDeriv f k x * spatialDeriv g j x +
+          f x * spatialDeriv (spatialDeriv g j) k x := by
+    change spatialDeriv (spatialDeriv (fun y => f y * g y) j) k x = _
+    rw [hfirst]
+    have hadd := spatialDeriv_add
+      (f := fun y => spatialDeriv f j y * g y)
+      (g := fun y => f y * spatialDeriv g j y)
+      (((hdf.differentiable (by simp)) x).mul ((hg.differentiable (by simp)) x))
+      (((hf.differentiable (by simp)) x).mul ((hdg.differentiable (by simp)) x)) k
+    rw [hadd,
+      spatialDeriv_mul ((hdf.differentiable (by simp)) x)
+        ((hg.differentiable (by simp)) x),
+      spatialDeriv_mul ((hf.differentiable (by simp)) x)
+        ((hdg.differentiable (by simp)) x)]
+    ring
+  have hApoint (x : Vec3) :
+      spatialDeriv f j x ^ 2 ≤ A x ∧
+      spatialDeriv f k x ^ 2 ≤ A x := by
+    rw [hA x]
+    constructor <;> exact Finset.single_le_sum
+      (fun i _ => sq_nonneg (spatialDeriv f i x)) (Finset.mem_univ _)
+  have hBpoint (x : Vec3) :
+      spatialDeriv g j x ^ 2 ≤ B x ∧
+      spatialDeriv g k x ^ 2 ≤ B x := by
+    rw [hB x]
+    constructor <;> exact Finset.single_le_sum
+      (fun i _ => sq_nonneg (spatialDeriv g i x)) (Finset.mem_univ _)
+  have hpt (x : Vec3) :
+      wordDeriv [j, k] (fun y => f y * g y) x ^ 2 ≤
+        4 * Mg ^ 2 * spatialDeriv (spatialDeriv f j) k x ^ 2 +
+          4 * Mf ^ 2 * spatialDeriv (spatialDeriv g j) k x ^ 2 +
+          8 * A x * B x := by
+    rw [hdiff]
+    have h1 : (spatialDeriv (spatialDeriv f j) k x * g x) ^ 2 ≤
+        Mg ^ 2 * spatialDeriv (spatialDeriv f j) k x ^ 2 := by
+      simpa only [mul_comm] using
+        (vorticityDivCurlSmooth_mul_sq_le (hMg x)
+          (v := spatialDeriv (spatialDeriv f j) k x))
+    have h4 := vorticityDivCurlSmooth_mul_sq_le (hMf x)
+      (v := spatialDeriv (spatialDeriv g j) k x)
+    have h2 : (spatialDeriv f j x * spatialDeriv g k x) ^ 2 ≤
+        A x * B x := by
+      rw [mul_pow]
+      exact mul_le_mul (hApoint x).1 (hBpoint x).2
+        (sq_nonneg _) (by rw [hA x]; positivity)
+    have h3 : (spatialDeriv f k x * spatialDeriv g j x) ^ 2 ≤
+        A x * B x := by
+      rw [mul_pow]
+      exact mul_le_mul (hApoint x).2 (hBpoint x).1
+        (sq_nonneg _) (by rw [hA x]; positivity)
+    have hsum := vorticitySobolevSmooth_four_sq
+      (a := (1 : ℝ)) (b := 1) (c := 1) (d := 1) (M := 1)
+      (p := spatialDeriv (spatialDeriv f j) k x * g x)
+      (q := spatialDeriv f j x * spatialDeriv g k x)
+      (s := spatialDeriv f k x * spatialDeriv g j x)
+      (t := f x * spatialDeriv (spatialDeriv g j) k x)
+      (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    simp only [one_mul, one_pow] at hsum
+    linarith only [h1, h2, h3, h4, hsum]
+  have hint := vorticityProducts_integrable_word_sq hfg hfgc [j, k]
+  have hfint := vorticityProducts_integrable_word_sq hf hfc [j, k]
+  have hgint := vorticityProducts_integrable_word_sq hg hgc [j, k]
+  have hfint' : Integrable
+      (fun x => spatialDeriv (spatialDeriv f j) k x ^ 2) volume := by
+    simpa only [wordDeriv] using hfint
+  have hgint' : Integrable
+      (fun x => spatialDeriv (spatialDeriv g j) k x ^ 2) volume := by
+    simpa only [wordDeriv] using hgint
+  have hI : ∫ x, wordDeriv [j, k] (fun y => f y * g y) x ^ 2 ≤
+      4 * Mg ^ 2 * (∫ x, spatialDeriv (spatialDeriv f j) k x ^ 2) +
+        4 * Mf ^ 2 * (∫ x, spatialDeriv (spatialDeriv g j) k x ^ 2) +
+        8 * ∫ x, A x * B x := by
+    have hcrossInt' : Integrable (fun x => 8 * A x * B x) volume := by
+      have h : Integrable (fun x => 8 * (A x * B x)) volume :=
+        hcrossInt.const_mul 8
+      convert h using 1
+      funext x
+      ring
+    have hrhsInt : Integrable (fun x =>
+        4 * Mg ^ 2 * spatialDeriv (spatialDeriv f j) k x ^ 2 +
+          4 * Mf ^ 2 * spatialDeriv (spatialDeriv g j) k x ^ 2 +
+          8 * A x * B x) volume :=
+      ((hfint'.const_mul _).add (hgint'.const_mul _)).add
+        hcrossInt'
+    have hmono := integral_mono hint
+      hrhsInt hpt
+    have heq : ∫ x,
+        4 * Mg ^ 2 * spatialDeriv (spatialDeriv f j) k x ^ 2 +
+          4 * Mf ^ 2 * spatialDeriv (spatialDeriv g j) k x ^ 2 +
+          8 * A x * B x =
+        4 * Mg ^ 2 * (∫ x, spatialDeriv (spatialDeriv f j) k x ^ 2) +
+          4 * Mf ^ 2 * (∫ x, spatialDeriv (spatialDeriv g j) k x ^ 2) +
+          8 * ∫ x, A x * B x := by
+      have hint12 : Integrable (fun x =>
+          4 * Mg ^ 2 * spatialDeriv (spatialDeriv f j) k x ^ 2 +
+            4 * Mf ^ 2 * spatialDeriv (spatialDeriv g j) k x ^ 2) volume :=
+        (hfint'.const_mul (4 * Mg ^ 2)).add
+          (hgint'.const_mul (4 * Mf ^ 2))
+      have houter : ∫ x,
+          (4 * Mg ^ 2 * spatialDeriv (spatialDeriv f j) k x ^ 2 +
+            4 * Mf ^ 2 * spatialDeriv (spatialDeriv g j) k x ^ 2) +
+            8 * A x * B x =
+          (∫ x, 4 * Mg ^ 2 * spatialDeriv (spatialDeriv f j) k x ^ 2 +
+            4 * Mf ^ 2 * spatialDeriv (spatialDeriv g j) k x ^ 2) +
+            ∫ x, 8 * A x * B x := integral_add hint12 hcrossInt'
+      have hinner : ∫ x,
+          4 * Mg ^ 2 * spatialDeriv (spatialDeriv f j) k x ^ 2 +
+            4 * Mf ^ 2 * spatialDeriv (spatialDeriv g j) k x ^ 2 =
+          (∫ x, 4 * Mg ^ 2 * spatialDeriv (spatialDeriv f j) k x ^ 2) +
+            ∫ x, 4 * Mf ^ 2 * spatialDeriv (spatialDeriv g j) k x ^ 2 :=
+        integral_add (hfint'.const_mul _) (hgint'.const_mul _)
+      have hcrossEq : (∫ x, 8 * A x * B x) = 8 * ∫ x, A x * B x := by
+        have h := integral_const_mul (μ := volume) (8 : ℝ)
+          (fun x => A x * B x)
+        convert h using 1
+        congr 1
+        funext x
+        ring
+      rw [houter, hinner, hcrossEq, integral_const_mul, integral_const_mul]
+    exact hmono.trans_eq heq
+  have hIf := mul_le_mul_of_nonneg_left (hsecondF j k)
+    (by positivity : 0 ≤ 4 * Mg ^ 2)
+  have hIg := mul_le_mul_of_nonneg_left (hsecondG j k)
+    (by positivity : 0 ≤ 4 * Mf ^ 2)
+  have hIc := mul_le_mul_of_nonneg_left hcrossT
+    (by norm_num : 0 ≤ (8 : ℝ))
+  calc
+    ∫ x, wordDeriv [j, k] (fun y => f y * g y) x ^ 2 ≤
+        4 * Mg ^ 2 * (∫ x, spatialDeriv (spatialDeriv f j) k x ^ 2) +
+          4 * Mf ^ 2 * (∫ x, spatialDeriv (spatialDeriv g j) k x ^ 2) +
+          8 * ∫ x, A x * B x := hI
+    _ ≤ 4 * Mg ^ 2 * Hf + 4 * Mf ^ 2 * Hg + 8 * (162 * T) := by
+      linarith only [hIf, hIg, hIc]
+    _ = 1300 * T := by rw [hT]; ring
+
+
+private theorem vorticityProducts_word_product_integral_bound
+    (f g : Vec3 → ℝ) (Mf Mg Hf Hg T : ℝ) (A B : Vec3 → ℝ)
+    (hf : ContDiff ℝ (⊤ : ℕ∞) f) (hfc : HasCompactSupport f)
+    (hg : ContDiff ℝ (⊤ : ℕ∞) g) (hgc : HasCompactSupport g)
+    (hMf : ∀ x, |f x| ≤ Mf) (hMg : ∀ x, |g x| ≤ Mg)
+    (hHf0 : 0 ≤ Hf) (hT0 : 0 ≤ T)
+    (hHg : Hg = sobolevNormSqOn 2 univ (fun α => wordDeriv α g))
+    (hT : T = Mf ^ 2 * Hg + Mg ^ 2 * Hf)
+    (hfg : ContDiff ℝ (⊤ : ℕ∞) (fun x => f x * g x))
+    (hfgc : HasCompactSupport (fun x => f x * g x))
+    (hA : ∀ x, A x = ∑ i : Fin 3, spatialDeriv f i x ^ 2)
+    (hB : ∀ x, B x = ∑ i : Fin 3, spatialDeriv g i x ^ 2)
+    (hfirstF : ∀ j : Fin 3, ∫ x, spatialDeriv f j x ^ 2 ≤ Hf)
+    (hfirstG : ∀ j : Fin 3, ∫ x, spatialDeriv g j x ^ 2 ≤ Hg)
+    (hsecondF : ∀ j k : Fin 3,
+      ∫ x, spatialDeriv (spatialDeriv f j) k x ^ 2 ≤ Hf)
+    (hsecondG : ∀ j k : Fin 3,
+      ∫ x, spatialDeriv (spatialDeriv g j) k x ^ 2 ≤ Hg)
+    (hcrossInt : Integrable (fun x => A x * B x) volume)
+    (hcrossT : ∫ x, A x * B x ≤ 162 * T)
+    (α : List (Fin 3)) (hα : α.length ≤ 2) :
+    ∫ x, wordDeriv α (fun y => f y * g y) x ^ 2 ≤ 1300 * T := by
+  cases α with
+  | nil =>
+      have hprod : ∀ x, (f x * g x) ^ 2 ≤ Mf ^ 2 * g x ^ 2 := by
+        intro x
+        exact vorticityDivCurlSmooth_mul_sq_le (hMf x)
+      have hbound : ∫ x, (f x * g x) ^ 2 ≤ Mf ^ 2 * ∫ x, g x ^ 2 := by
+        have hint := vorticityProducts_integrable_word_sq hfg hfgc []
+        have hgint := vorticityProducts_integrable_word_sq hg hgc []
+        simpa only [wordDeriv, integral_const_mul] using
+          (integral_mono hint (hgint.const_mul _) hprod)
+      have hsingle : ∫ x, g x ^ 2 ≤ Hg := by
+          simpa only [hHg, wordDeriv] using
+          (vorticityProducts_word_integral_le_norm (f := g) (α := []) (by simp))
+      simp only [wordDeriv]
+      calc
+        ∫ x, (f x * g x) ^ 2 ≤ Mf ^ 2 * ∫ x, g x ^ 2 := hbound
+        _ ≤ Mf ^ 2 * Hg := by gcongr
+        _ ≤ T := by
+          rw [hT]
+          exact le_add_of_nonneg_right (mul_nonneg (sq_nonneg _) hHf0)
+        _ ≤ 1300 * T := by nlinarith only [hT0]
+  | cons j α =>
+      cases α with
+      | nil =>
+          have hdiff (x : Vec3) :
+              spatialDeriv (fun y => f y * g y) j x =
+                spatialDeriv f j x * g x + f x * spatialDeriv g j x :=
+            spatialDeriv_mul ((hf.differentiable (by simp)) x)
+              ((hg.differentiable (by simp)) x) j
+          have hpt (x : Vec3) :
+              (spatialDeriv (fun y => f y * g y) j x) ^ 2 ≤
+                2 * (Mg ^ 2 * spatialDeriv f j x ^ 2 +
+                  Mf ^ 2 * spatialDeriv g j x ^ 2) := by
+            rw [hdiff]
+            have h1 := vorticityDivCurlSmooth_mul_sq_le (hMg x)
+              (v := spatialDeriv f j x)
+            have h2 := vorticityDivCurlSmooth_mul_sq_le (hMf x)
+              (v := spatialDeriv g j x)
+            have hsum := vorticityProducts_sq_two_le
+              (spatialDeriv f j x * g x) (f x * spatialDeriv g j x)
+            nlinarith only [h1, h2, hsum]
+          have hint := vorticityProducts_integrable_word_sq hfg hfgc [j]
+          have hfint := vorticityProducts_integrable_word_sq hf hfc [j]
+          have hgint := vorticityProducts_integrable_word_sq hg hgc [j]
+          have hfint' : Integrable (fun x => spatialDeriv f j x ^ 2) volume := by
+            simpa only [wordDeriv] using hfint
+          have hgint' : Integrable (fun x => spatialDeriv g j x ^ 2) volume := by
+            simpa only [wordDeriv] using hgint
+          have hI : ∫ x, (spatialDeriv (fun y => f y * g y) j x) ^ 2 ≤
+              2 * (Mg ^ 2 * (∫ x, spatialDeriv f j x ^ 2) +
+                Mf ^ 2 * (∫ x, spatialDeriv g j x ^ 2)) := by
+            have hmono := integral_mono
+              (show Integrable (fun x =>
+                (spatialDeriv (fun y => f y * g y) j x) ^ 2) volume from by
+                simpa only [wordDeriv] using hint)
+              (((hfint'.const_mul _).add (hgint'.const_mul _)).const_mul _) hpt
+            have hsum : ∫ x,
+                Mg ^ 2 * spatialDeriv f j x ^ 2 +
+                  Mf ^ 2 * spatialDeriv g j x ^ 2 =
+                Mg ^ 2 * (∫ x, spatialDeriv f j x ^ 2) +
+                  Mf ^ 2 * (∫ x, spatialDeriv g j x ^ 2) := by
+              have h := integral_add (hfint'.const_mul (Mg ^ 2))
+                (hgint'.const_mul (Mf ^ 2))
+              simpa only [integral_const_mul] using h
+            calc
+              _ ≤ ∫ x, 2 * (Mg ^ 2 * spatialDeriv f j x ^ 2 +
+                  Mf ^ 2 * spatialDeriv g j x ^ 2) := hmono
+              _ = _ := by rw [integral_const_mul, hsum]
+          have hIf := mul_le_mul_of_nonneg_left (hfirstF j) (sq_nonneg Mg)
+          have hIg := mul_le_mul_of_nonneg_left (hfirstG j) (sq_nonneg Mf)
+          simpa only [wordDeriv] using
+            (calc
+              ∫ x, (spatialDeriv (fun y => f y * g y) j x) ^ 2 ≤
+                  2 * (Mg ^ 2 * (∫ x, spatialDeriv f j x ^ 2) +
+                    Mf ^ 2 * (∫ x, spatialDeriv g j x ^ 2)) := hI
+              _ ≤ 2 * T := by rw [hT]; linarith only [hIf, hIg]
+              _ ≤ 1300 * T := by nlinarith only [hT0])
+      | cons k tail =>
+          cases tail with
+          | nil =>
+            exact vorticityProducts_word_product_second_deriv_bound
+              f g Mf Mg Hf Hg T A B hf hfc hg hgc hMf hMg
+              hT hA hB
+              hsecondF hsecondG hcrossInt hcrossT j k
+          | cons l tail =>
+              simp only [List.length_cons] at hα
+              omega
+
 private theorem vorticityProducts_H2_scalar
     (f g : Vec3 → ℝ) (Mf Mg : ℝ)
     (hf : ContDiff ℝ (⊤ : ℕ∞) f) (hfc : HasCompactSupport f)
@@ -243,12 +520,21 @@ private theorem vorticityProducts_H2_scalar
     dsimp [Hg, sobolevNormSqOn]
     exact Finset.sum_nonneg fun α _ => integral_nonneg fun x => sq_nonneg _
   have hT0 : 0 ≤ T := by dsimp [T]; positivity
+  have hHf : Hf = sobolevNormSqOn 2 univ (fun α => wordDeriv α f) := rfl
+  have hHg : Hg = sobolevNormSqOn 2 univ (fun α => wordDeriv α g) := rfl
+  have hTdef : T = Mf ^ 2 * Hg + Mg ^ 2 * Hf := rfl
   have hMf0 : 0 ≤ Mf := (abs_nonneg (f 0)).trans (hMf 0)
   have hMg0 : 0 ≤ Mg := (abs_nonneg (g 0)).trans (hMg 0)
   have hfg : ContDiff ℝ (⊤ : ℕ∞) (fun x => f x * g x) := hf.mul hg
   have hfgc : HasCompactSupport (fun x => f x * g x) := hfc.mul_right
   let A : Vec3 → ℝ := fun x => ∑ j : Fin 3, spatialDeriv f j x ^ 2
   let B : Vec3 → ℝ := fun x => ∑ j : Fin 3, spatialDeriv g j x ^ 2
+  have hA : ∀ x, A x = ∑ i : Fin 3, spatialDeriv f i x ^ 2 := by
+    intro x
+    rfl
+  have hB : ∀ x, B x = ∑ i : Fin 3, spatialDeriv g i x ^ 2 := by
+    intro x
+    rfl
   obtain ⟨hcrossInt, hcross⟩ :=
     gradProduct_integral_le_smooth f g Mf Mg hf hfc hg hgc hMf hMg
   have hfirstF (j : Fin 3) : ∫ x, spatialDeriv f j x ^ 2 ≤ Hf := by
@@ -300,234 +586,11 @@ private theorem vorticityProducts_H2_scalar
             spatialDeriv (spatialDeriv f j) k x ^ 2)) := hcross
       _ ≤ 18 * (Mf ^ 2 * (9 * Hg) + Mg ^ 2 * (9 * Hf)) := by gcongr
       _ = 162 * T := by dsimp [T]; ring
-  have hword (α : List (Fin 3)) (hα : α.length ≤ 2) :
-      ∫ x, wordDeriv α (fun y => f y * g y) x ^ 2 ≤ 1300 * T := by
-    cases α with
-    | nil =>
-        have hprod : ∀ x, (f x * g x) ^ 2 ≤ Mf ^ 2 * g x ^ 2 := by
-          intro x
-          exact vorticityDivCurlSmooth_mul_sq_le (hMf x)
-        have hbound : ∫ x, (f x * g x) ^ 2 ≤ Mf ^ 2 * ∫ x, g x ^ 2 := by
-          have hint := vorticityProducts_integrable_word_sq hfg hfgc []
-          have hgint := vorticityProducts_integrable_word_sq hg hgc []
-          simpa only [wordDeriv, integral_const_mul] using
-            (integral_mono hint (hgint.const_mul _) hprod)
-        have hsingle : ∫ x, g x ^ 2 ≤ Hg := by
-          simpa only [Hg, wordDeriv] using
-            (vorticityProducts_word_integral_le_norm (f := g) (α := []) (by simp))
-        simp only [wordDeriv]
-        calc
-          ∫ x, (f x * g x) ^ 2 ≤ Mf ^ 2 * ∫ x, g x ^ 2 := hbound
-          _ ≤ Mf ^ 2 * Hg := by gcongr
-          _ ≤ T := le_add_of_nonneg_right (mul_nonneg (sq_nonneg _) hHf0)
-          _ ≤ 1300 * T := by nlinarith only [hT0]
-    | cons j α =>
-        cases α with
-        | nil =>
-            have hdiff (x : Vec3) :
-                spatialDeriv (fun y => f y * g y) j x =
-                  spatialDeriv f j x * g x + f x * spatialDeriv g j x :=
-              spatialDeriv_mul ((hf.differentiable (by simp)) x)
-                ((hg.differentiable (by simp)) x) j
-            have hpt (x : Vec3) :
-                (spatialDeriv (fun y => f y * g y) j x) ^ 2 ≤
-                  2 * (Mg ^ 2 * spatialDeriv f j x ^ 2 +
-                    Mf ^ 2 * spatialDeriv g j x ^ 2) := by
-              rw [hdiff]
-              have h1 := vorticityDivCurlSmooth_mul_sq_le (hMg x)
-                (v := spatialDeriv f j x)
-              have h2 := vorticityDivCurlSmooth_mul_sq_le (hMf x)
-                (v := spatialDeriv g j x)
-              have hsum := vorticityProducts_sq_two_le
-                (spatialDeriv f j x * g x) (f x * spatialDeriv g j x)
-              nlinarith only [h1, h2, hsum]
-            have hint := vorticityProducts_integrable_word_sq hfg hfgc [j]
-            have hfint := vorticityProducts_integrable_word_sq hf hfc [j]
-            have hgint := vorticityProducts_integrable_word_sq hg hgc [j]
-            have hfint' : Integrable (fun x => spatialDeriv f j x ^ 2) volume := by
-              simpa only [wordDeriv] using hfint
-            have hgint' : Integrable (fun x => spatialDeriv g j x ^ 2) volume := by
-              simpa only [wordDeriv] using hgint
-            have hI : ∫ x, (spatialDeriv (fun y => f y * g y) j x) ^ 2 ≤
-                2 * (Mg ^ 2 * (∫ x, spatialDeriv f j x ^ 2) +
-                  Mf ^ 2 * (∫ x, spatialDeriv g j x ^ 2)) := by
-              have hmono := integral_mono
-                (show Integrable (fun x =>
-                  (spatialDeriv (fun y => f y * g y) j x) ^ 2) volume from by
-                  simpa only [wordDeriv] using hint)
-                (((hfint'.const_mul _).add (hgint'.const_mul _)).const_mul _) hpt
-              have hsum : ∫ x,
-                  Mg ^ 2 * spatialDeriv f j x ^ 2 +
-                    Mf ^ 2 * spatialDeriv g j x ^ 2 =
-                  Mg ^ 2 * (∫ x, spatialDeriv f j x ^ 2) +
-                    Mf ^ 2 * (∫ x, spatialDeriv g j x ^ 2) := by
-                have h := integral_add (hfint'.const_mul (Mg ^ 2))
-                  (hgint'.const_mul (Mf ^ 2))
-                simpa only [integral_const_mul] using h
-              calc
-                _ ≤ ∫ x, 2 * (Mg ^ 2 * spatialDeriv f j x ^ 2 +
-                    Mf ^ 2 * spatialDeriv g j x ^ 2) := hmono
-                _ = _ := by rw [integral_const_mul, hsum]
-            have hIf := mul_le_mul_of_nonneg_left (hfirstF j) (sq_nonneg Mg)
-            have hIg := mul_le_mul_of_nonneg_left (hfirstG j) (sq_nonneg Mf)
-            simpa only [wordDeriv] using
-              (calc
-                ∫ x, (spatialDeriv (fun y => f y * g y) j x) ^ 2 ≤
-                    2 * (Mg ^ 2 * (∫ x, spatialDeriv f j x ^ 2) +
-                      Mf ^ 2 * (∫ x, spatialDeriv g j x ^ 2)) := hI
-                _ ≤ 2 * T := by dsimp [T]; linarith only [hIf, hIg]
-                _ ≤ 1300 * T := by nlinarith only [hT0])
-        | cons k tail =>
-            cases tail with
-            | nil =>
-                have hfirst : spatialDeriv (fun y => f y * g y) j =
-                    fun y => spatialDeriv f j y * g y + f y * spatialDeriv g j y := by
-                  funext y
-                  exact spatialDeriv_mul ((hf.differentiable (by simp)) y)
-                    ((hg.differentiable (by simp)) y) j
-                have hdf : ContDiff ℝ (⊤ : ℕ∞) (spatialDeriv f j) :=
-                  contDiff_spatialDeriv_smooth hf j
-                have hdg : ContDiff ℝ (⊤ : ℕ∞) (spatialDeriv g j) :=
-                  contDiff_spatialDeriv_smooth hg j
-                have hdiff (x : Vec3) :
-                    wordDeriv [j, k] (fun y => f y * g y) x =
-                      spatialDeriv (spatialDeriv f j) k x * g x +
-                        spatialDeriv f j x * spatialDeriv g k x +
-                        spatialDeriv f k x * spatialDeriv g j x +
-                        f x * spatialDeriv (spatialDeriv g j) k x := by
-                  change spatialDeriv (spatialDeriv (fun y => f y * g y) j) k x = _
-                  rw [hfirst]
-                  have hadd := spatialDeriv_add
-                    (f := fun y => spatialDeriv f j y * g y)
-                    (g := fun y => f y * spatialDeriv g j y)
-                    (((hdf.differentiable (by simp)) x).mul ((hg.differentiable (by simp)) x))
-                    (((hf.differentiable (by simp)) x).mul ((hdg.differentiable (by simp)) x)) k
-                  rw [hadd,
-                    spatialDeriv_mul ((hdf.differentiable (by simp)) x)
-                      ((hg.differentiable (by simp)) x),
-                    spatialDeriv_mul ((hf.differentiable (by simp)) x)
-                      ((hdg.differentiable (by simp)) x)]
-                  ring
-                have hApoint (x : Vec3) :
-                    spatialDeriv f j x ^ 2 ≤ A x ∧
-                    spatialDeriv f k x ^ 2 ≤ A x := by
-                  constructor <;> exact Finset.single_le_sum
-                    (fun i _ => sq_nonneg (spatialDeriv f i x)) (Finset.mem_univ _)
-                have hBpoint (x : Vec3) :
-                    spatialDeriv g j x ^ 2 ≤ B x ∧
-                    spatialDeriv g k x ^ 2 ≤ B x := by
-                  constructor <;> exact Finset.single_le_sum
-                    (fun i _ => sq_nonneg (spatialDeriv g i x)) (Finset.mem_univ _)
-                have hpt (x : Vec3) :
-                    wordDeriv [j, k] (fun y => f y * g y) x ^ 2 ≤
-                      4 * Mg ^ 2 * spatialDeriv (spatialDeriv f j) k x ^ 2 +
-                        4 * Mf ^ 2 * spatialDeriv (spatialDeriv g j) k x ^ 2 +
-                        8 * A x * B x := by
-                  rw [hdiff]
-                  have h1 : (spatialDeriv (spatialDeriv f j) k x * g x) ^ 2 ≤
-                      Mg ^ 2 * spatialDeriv (spatialDeriv f j) k x ^ 2 := by
-                    simpa only [mul_comm] using
-                      (vorticityDivCurlSmooth_mul_sq_le (hMg x)
-                        (v := spatialDeriv (spatialDeriv f j) k x))
-                  have h4 := vorticityDivCurlSmooth_mul_sq_le (hMf x)
-                    (v := spatialDeriv (spatialDeriv g j) k x)
-                  have h2 : (spatialDeriv f j x * spatialDeriv g k x) ^ 2 ≤
-                      A x * B x := by
-                    rw [mul_pow]
-                    exact mul_le_mul (hApoint x).1 (hBpoint x).2
-                      (sq_nonneg _) (by dsimp [A]; positivity)
-                  have h3 : (spatialDeriv f k x * spatialDeriv g j x) ^ 2 ≤
-                      A x * B x := by
-                    rw [mul_pow]
-                    exact mul_le_mul (hApoint x).2 (hBpoint x).1
-                      (sq_nonneg _) (by dsimp [A]; positivity)
-                  have hsum := vorticitySobolevSmooth_four_sq
-                    (a := (1 : ℝ)) (b := 1) (c := 1) (d := 1) (M := 1)
-                    (p := spatialDeriv (spatialDeriv f j) k x * g x)
-                    (q := spatialDeriv f j x * spatialDeriv g k x)
-                    (s := spatialDeriv f k x * spatialDeriv g j x)
-                    (t := f x * spatialDeriv (spatialDeriv g j) k x)
-                    (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-                  simp only [one_mul, one_pow] at hsum
-                  linarith only [h1, h2, h3, h4, hsum]
-                have hint := vorticityProducts_integrable_word_sq hfg hfgc [j, k]
-                have hfint := vorticityProducts_integrable_word_sq hf hfc [j, k]
-                have hgint := vorticityProducts_integrable_word_sq hg hgc [j, k]
-                have hfint' : Integrable
-                    (fun x => spatialDeriv (spatialDeriv f j) k x ^ 2) volume := by
-                  simpa only [wordDeriv] using hfint
-                have hgint' : Integrable
-                    (fun x => spatialDeriv (spatialDeriv g j) k x ^ 2) volume := by
-                  simpa only [wordDeriv] using hgint
-                have hI : ∫ x, wordDeriv [j, k] (fun y => f y * g y) x ^ 2 ≤
-                    4 * Mg ^ 2 * (∫ x, spatialDeriv (spatialDeriv f j) k x ^ 2) +
-                      4 * Mf ^ 2 * (∫ x, spatialDeriv (spatialDeriv g j) k x ^ 2) +
-                      8 * ∫ x, A x * B x := by
-                  have hcrossInt' : Integrable (fun x => 8 * A x * B x) volume := by
-                    have h : Integrable (fun x => 8 * (A x * B x)) volume :=
-                      hcrossInt.const_mul 8
-                    convert h using 1
-                    funext x
-                    ring
-                  have hrhsInt : Integrable (fun x =>
-                      4 * Mg ^ 2 * spatialDeriv (spatialDeriv f j) k x ^ 2 +
-                        4 * Mf ^ 2 * spatialDeriv (spatialDeriv g j) k x ^ 2 +
-                        8 * A x * B x) volume :=
-                    ((hfint'.const_mul _).add (hgint'.const_mul _)).add
-                      hcrossInt'
-                  have hmono := integral_mono hint
-                    hrhsInt hpt
-                  have heq : ∫ x,
-                      4 * Mg ^ 2 * spatialDeriv (spatialDeriv f j) k x ^ 2 +
-                        4 * Mf ^ 2 * spatialDeriv (spatialDeriv g j) k x ^ 2 +
-                        8 * A x * B x =
-                      4 * Mg ^ 2 * (∫ x, spatialDeriv (spatialDeriv f j) k x ^ 2) +
-                        4 * Mf ^ 2 * (∫ x, spatialDeriv (spatialDeriv g j) k x ^ 2) +
-                        8 * ∫ x, A x * B x := by
-                    have hint12 : Integrable (fun x =>
-                        4 * Mg ^ 2 * spatialDeriv (spatialDeriv f j) k x ^ 2 +
-                          4 * Mf ^ 2 * spatialDeriv (spatialDeriv g j) k x ^ 2) volume :=
-                      (hfint'.const_mul (4 * Mg ^ 2)).add
-                        (hgint'.const_mul (4 * Mf ^ 2))
-                    have houter : ∫ x,
-                        (4 * Mg ^ 2 * spatialDeriv (spatialDeriv f j) k x ^ 2 +
-                          4 * Mf ^ 2 * spatialDeriv (spatialDeriv g j) k x ^ 2) +
-                          8 * A x * B x =
-                        (∫ x, 4 * Mg ^ 2 * spatialDeriv (spatialDeriv f j) k x ^ 2 +
-                          4 * Mf ^ 2 * spatialDeriv (spatialDeriv g j) k x ^ 2) +
-                          ∫ x, 8 * A x * B x := integral_add hint12 hcrossInt'
-                    have hinner : ∫ x,
-                        4 * Mg ^ 2 * spatialDeriv (spatialDeriv f j) k x ^ 2 +
-                          4 * Mf ^ 2 * spatialDeriv (spatialDeriv g j) k x ^ 2 =
-                        (∫ x, 4 * Mg ^ 2 * spatialDeriv (spatialDeriv f j) k x ^ 2) +
-                          ∫ x, 4 * Mf ^ 2 * spatialDeriv (spatialDeriv g j) k x ^ 2 :=
-                      integral_add (hfint'.const_mul _) (hgint'.const_mul _)
-                    have hcrossEq : (∫ x, 8 * A x * B x) = 8 * ∫ x, A x * B x := by
-                      have h := integral_const_mul (μ := volume) (8 : ℝ)
-                        (fun x => A x * B x)
-                      convert h using 1
-                      congr 1
-                      funext x
-                      ring
-                    rw [houter, hinner, hcrossEq, integral_const_mul, integral_const_mul]
-                  exact hmono.trans_eq heq
-                have hIf := mul_le_mul_of_nonneg_left (hsecondF j k)
-                  (by positivity : 0 ≤ 4 * Mg ^ 2)
-                have hIg := mul_le_mul_of_nonneg_left (hsecondG j k)
-                  (by positivity : 0 ≤ 4 * Mf ^ 2)
-                have hIc := mul_le_mul_of_nonneg_left hcrossT
-                  (by norm_num : 0 ≤ (8 : ℝ))
-                calc
-                  ∫ x, wordDeriv [j, k] (fun y => f y * g y) x ^ 2 ≤
-                      4 * Mg ^ 2 * (∫ x, spatialDeriv (spatialDeriv f j) k x ^ 2) +
-                        4 * Mf ^ 2 * (∫ x, spatialDeriv (spatialDeriv g j) k x ^ 2) +
-                        8 * ∫ x, A x * B x := hI
-                  _ ≤ 4 * Mg ^ 2 * Hf + 4 * Mf ^ 2 * Hg + 8 * (162 * T) := by
-                    linarith only [hIf, hIg, hIc]
-                  _ = 1300 * T := by dsimp [T]; ring
-            | cons l tail =>
-                simp only [List.length_cons] at hα
-                omega
+  have hword (α : List (Fin 3)) (hα : α.length ≤ 2) :=
+    vorticityProducts_word_product_integral_bound f g Mf Mg Hf Hg T A B
+      hf hfc hg hgc hMf hMg hHf0 hT0 hHg hTdef hfg hfgc hA hB
+      hfirstF hfirstG hsecondF hsecondG
+      hcrossInt hcrossT α hα
   change (∑ α ∈ sobolevWords 2,
     ∫ x in univ, wordDeriv α (fun y => f y * g y) x ^ 2) ≤ 16900 * T
   simp only [Measure.restrict_univ]

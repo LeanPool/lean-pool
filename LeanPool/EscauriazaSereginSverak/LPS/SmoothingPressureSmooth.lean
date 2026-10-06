@@ -36,7 +36,7 @@ theorem lps_dampedPressureField_moment_integrable
     (n r : ℕ) (hr : r ≤ 2 * (n + 1))
     (G : Lp ℂ 2 (volume : Measure L2Vec3)) :
     Integrable (fun ξ : L2Vec3 => ‖ξ‖ ^ r *
-      ‖lps_dampedFourierWordSymbol n [] ξ •
+      ‖lpsDampedFourierWordSymbol n [] ξ •
         (((1 + ‖ξ‖ ^ 2) ^ (-2 : ℝ) : ℝ) : ℂ) •
           (G : L2Vec3 → ℂ) ξ‖) volume := by
   let M : L2Vec3 → ℂ := fun ξ =>
@@ -64,16 +64,16 @@ theorem lps_dampedPressureField_moment_integrable
       ‖M ξ • (((1 + ‖ξ‖ ^ 2) ^ (-2 : ℝ) : ℝ) : ℂ) •
         (G : L2Vec3 → ℂ) ξ‖) =
       (fun ξ : L2Vec3 => ‖ξ‖ ^ r *
-        ‖lps_dampedFourierWordSymbol n [] ξ •
+        ‖lpsDampedFourierWordSymbol n [] ξ •
           (((1 + ‖ξ‖ ^ 2) ^ (-2 : ℝ) : ℝ) : ℂ) •
             (G : L2Vec3 → ℂ) ξ‖) := by
     funext ξ
     have hnonneg : 0 ≤ ‖ξ‖ ^ r := by positivity
-    have hweight : lps_dampedFourierWordSymbol n [] ξ =
+    have hweight : lpsDampedFourierWordSymbol n [] ξ =
         (((1 + ‖ξ‖ ^ 2) ^ (-(n : ℝ)) : ℝ) : ℂ) := by
-      simp [lps_dampedFourierWordSymbol, lps_fourierWordSymbol]
+      simp [lpsDampedFourierWordSymbol, lpsFourierWordSymbol]
     have hM : M ξ = (((‖ξ‖ ^ r : ℝ) : ℂ)) *
-        lps_dampedFourierWordSymbol n [] ξ := by
+        lpsDampedFourierWordSymbol n [] ξ := by
       rw [hweight]
       simp only [M, Complex.ofReal_mul]
     rw [hM, mul_smul, norm_smul, Complex.norm_real,
@@ -91,10 +91,10 @@ theorem lps_regR12PressureHighModel_slice_contDiff
         ((2 * (n + 2) : ℕ) : ℝ) 2))
     (t : ℝ) :
     ContDiff ℝ m (fun x : Vec3 =>
-      lps_regR12PressureHighModel ρ ε hε n T hT v (x, t)) := by
-  let G := lps_regR12PressureHighFreq ρ ε hε n T hT v t
+      lpsRegR12PressureHighModel ρ ε hε n T hT v (x, t)) := by
+  let G := lpsRegR12PressureHighFreq ρ ε hε n T hT v t
   let f : L2Vec3 → ℂ := fun ξ =>
-    lps_dampedFourierWordSymbol n [] ξ •
+    lpsDampedFourierWordSymbol n [] ξ •
       (((1 + ‖ξ‖ ^ 2) ^ (-2 : ℝ) : ℝ) : ℂ) •
         (G : L2Vec3 → ℂ) ξ
   have hFourier : ContDiff ℝ m (𝓕 f) :=
@@ -112,7 +112,7 @@ theorem lps_regR12PressureHighModel_slice_contDiff
   have hToLp : ContDiff ℝ m
       (fun x : Vec3 => (WithLp.toLp 2 x : L2Vec3)) :=
     (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)).symm.contDiff
-  simpa only [f, G, lps_regR12PressureHighModel,
+  simpa only [f, G, lpsRegR12PressureHighModel,
     CKN.Leray.regR12SpaceTimeField, CKN.Leray.regR12WeightedField,
     Function.comp_def] using hCoord.comp hToLp
 
@@ -166,7 +166,7 @@ theorem lps_regR12Pressure_all_word_memLp_slice
           (CKN.Leray.regR12Curve ρ ε hε a ha s.1) := by
     intro s
     simpa only [CKN.Leray.regR12Curve] using hv s
-  let G := lps_regR12PressureHighFreq ρ ε hε n t ht.le v
+  let G := lpsRegR12PressureHighFreq ρ ε hε n t ht.le v
   have hmodel := lps_regR12PressureHighModel_eq
     ρ ε hε a ha n t ht.le v hv' t ⟨ht.le, le_rfl⟩ ht
   have hderiv := lps_dampedSpaceTimeField_wordDeriv n α hα
@@ -176,7 +176,7 @@ theorem lps_regR12Pressure_all_word_memLp_slice
   rw [← hmodel]
   change MemLp (wordDeriv α (fun x : Vec3 =>
     CKN.Leray.regR12SpaceTimeField Complex.reCLM
-      (lps_dampedFourierWordSymbol n []) G (x, t))) 2 volume
+      (lpsDampedFourierWordSymbol n []) G (x, t))) 2 volume
   rw [hderiv]
   exact hmem
 

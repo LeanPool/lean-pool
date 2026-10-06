@@ -51,8 +51,8 @@ theorem blowupLimitClauses_abs_integral_mul_le {μ : Measure α} {f g : α → �
   refine ENNReal.toReal_mono (ENNReal.mul_ne_top hf.eLpNorm_ne_top hg.eLpNorm_ne_top) ?_
   refine le_trans (le_of_eq ?_) hH'
   rw [eLpNorm_one_eq_lintegral_enorm]
-  simp_rw [ofReal_norm]
-  exact hf.aestronglyMeasurable.mul hg.aestronglyMeasurable
+  · simp_rw [ofReal_norm]
+  · exact hf.aestronglyMeasurable.mul hg.aestronglyMeasurable
 
 /-- The square of the `L²` norm is the integral of the square. -/
 theorem blowupLimitClauses_integral_mul_self_eq {μ : Measure α} {f : α → ℝ}

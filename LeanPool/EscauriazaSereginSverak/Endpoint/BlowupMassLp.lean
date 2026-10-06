@@ -8,6 +8,12 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupEnergyMassBound
 
+/-!
+# Blowup Mass Lp
+
+Velocity mass estimates used in the endpoint blow-up argument.
+-/
+
 public section
 
 open MeasureTheory CKN CKN.Foundation.Parabolic
@@ -19,7 +25,7 @@ namespace ESS
 corresponding power. -/
 theorem blowup_integral_norm_rpow_le_of_eLpNorm_le
     {α E : Type*} [MeasurableSpace α]
-    [NormedAddCommGroup E] [MeasurableSpace E] [BorelSpace E]
+    [NormedAddCommGroup E]
     (μ : Measure α) (f : α → E) (p : ℝ) (hp : 0 < p)
     (hf : MemLp f (ENNReal.ofReal p) μ)
     (B : ℝ≥0∞) (hB : B < ⊤)

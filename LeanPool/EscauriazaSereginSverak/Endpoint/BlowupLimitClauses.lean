@@ -73,6 +73,517 @@ theorem blowupLimitClauses_trace_pairing_continuous
   rw [Real.inner_apply]
   rfl
 
+private theorem blowupLimitClauses_trace_agreement
+    {u um : ParabolicPoint → Vec3}
+    {W : Vec3 × Icc (-(3 / 4 : ℝ) ^ 2) 0 → Vec3}
+    (hum : Measurable um) (hu_um : um =ᵐ[volume] u)
+    (hWm : Measurable W)
+    (htrace : ∀ᵐ t ∂(volume.restrict (Ioo (-(3 / 4 : ℝ) ^ 2) 0)),
+      ∃ ht : t ∈ Icc (-(3 / 4 : ℝ) ^ 2) 0,
+        (fun x => W (x, ⟨t, ht⟩)) =ᵐ[volume.restrict
+          (vec3Ball (0 : Vec3) (3 / 4 : ℝ))] (fun x => u (x, t)))
+    {x₀ : Vec3} {t₀ : ℝ} {r : ℕ → ℝ}
+    (hxnorm : vec3EuclideanNorm x₀ ≤ 1 / 2)
+    (ht₀ : t₀ ∈ Icc (-(1 / 4 : ℝ)) 0)
+    (hr : ∀ k, 0 < r k) (hr0 : Tendsto r atTop (𝓝 0)) :
+    ∀ R a : ℝ, 0 < R → a < 0 → ∀ᶠ k in atTop,
+      blowupLimitTraceRescaling W x₀ t₀ (r k) =ᵐ[volume.restrict
+        (vec3Ball (0 : Vec3) R ×ˢ Ioo a 0)] blowupVelocity x₀ t₀ (r k) u := by
+  intro R a _ _
+  have hspaceLim : Tendsto (fun k => r k * R) atTop (𝓝 0) := by
+    simpa only [zero_mul] using hr0.mul_const R
+  have htimeLim : Tendsto (fun k => (r k) ^ 2 * (-a)) atTop (𝓝 0) := by
+    simpa using (hr0.pow 2).mul_const (-a)
+  filter_upwards [hspaceLim.eventually (eventually_lt_nhds (by norm_num : (0 : ℝ) < 1 / 4)),
+    htimeLim.eventually (eventually_lt_nhds (by norm_num : (0 : ℝ) < 1 / 4))]
+    with k hsk htk
+  exact blowupLimitAssembly_trace_ae_eq_blowupVelocity hum hu_um W hWm htrace
+    hxnorm ht₀ (hr k) hsk htk
+
+private theorem blowupLimitClauses_pressureWindowMemLp
+    {U : ParabolicPoint → Vec3} (hU : Measurable U) (Mt : ℝ)
+    (hUslice : ∀ᵐ t ∂(volume.restrict (Iio (0 : ℝ))),
+      eLpNorm (fun x => vec3EuclideanNorm (U (x,t))) 3 volume ≤ ENNReal.ofReal Mt) :
+    (∀ n : ℕ, MemLp U 3 ((volume : Measure (Vec3 × ℝ)).restrict
+      ((Set.univ : Set Vec3) ×ˢ Ioo (-((n : ℝ) + 1)) 0))) ∧
+    (∀ n i j, MemLp (blowupLimitAssemblyPressureWindowTensor U n i j)
+      (ENNReal.ofReal (3 / 2 : ℝ)) volume) := by
+  have hUsliceVec : ∀ a : ℝ, ∀ᵐ t ∂volume.restrict (Ioo a 0),
+      eLpNorm (fun x : Vec3 => U (x,t)) 3 volume ≤ ENNReal.ofReal Mt := by
+    intro a
+    have h := ae_restrict_of_ae_restrict_of_subset
+      (fun t (ht : t ∈ Ioo a 0) => (ht.2 : t < 0)) hUslice
+    filter_upwards [h] with t ht
+    exact (blowupLimitAssemblyPressure_slice_le_norm
+      (hU.comp measurable_prodMk_right).aestronglyMeasurable).trans ht
+  have hwindowFin : ∀ n : ℕ,
+      (volume (Ioo (-((n : ℝ) + 1)) (0 : ℝ)) * (ENNReal.ofReal Mt) ^ (3 : ℝ)) ^
+        (1 / 3 : ℝ) < ⊤ := by
+    intro n
+    apply ENNReal.rpow_lt_top_of_nonneg (by norm_num)
+    apply (ENNReal.mul_lt_top _ (ENNReal.rpow_lt_top_of_nonneg (by norm_num)
+      ENNReal.ofReal_ne_top)).ne
+    rw [Real.volume_Ioo]
+    exact ENNReal.ofReal_lt_top
+  have hUwin : ∀ n : ℕ, MemLp U 3 ((volume : Measure (Vec3 × ℝ)).restrict
+      ((Set.univ : Set Vec3) ×ˢ Ioo (-((n : ℝ) + 1)) 0)) := fun n =>
+    memLp_iff.2 ((blowupLimitAssemblyPressure_memLp_three_of_slices hU
+      (hUsliceVec _) _).trans_lt (hwindowFin n))
+  have hG : ∀ n i j, MemLp (blowupLimitAssemblyPressureWindowTensor U n i j)
+      (ENNReal.ofReal (3 / 2 : ℝ)) volume := fun n i j =>
+    blowupLimitAssemblyPressure_tensor_memLp_of_restrict
+      (MeasurableSet.univ.prod measurableSet_Ioo) (hUwin n) i j
+  exact ⟨hUwin, hG⟩
+
+private theorem blowupLimitClauses_strongConvergence_of_traceAgreement
+    {u U : ParabolicPoint → Vec3} {f : ℕ → ParabolicPoint → Vec3}
+    {φ : ℕ → ℕ} {r : ℕ → ℝ} {x₀ : Vec3} {t₀ : ℝ}
+    (hconvU : ∀ R : ℝ, 0 < R → ∀ a : ℝ, a < 0 →
+      Tendsto (fun k => eLpNorm
+        (fun z => blowupVelocity x₀ t₀ (r k) u z - U z) 3
+        (volume.restrict (vec3Ball (0 : Vec3) R ×ˢ Ioo a 0))) atTop (𝓝 0))
+    (htrace : ∀ R a : ℝ, 0 < R → a < 0 → ∀ᶠ k in atTop,
+      f (φ k) =ᵐ[volume.restrict (vec3Ball (0 : Vec3) R ×ˢ Ioo a 0)]
+        blowupVelocity x₀ t₀ (r k) u) :
+    ∀ N : ℕ, Tendsto (fun k => eLpNorm
+      (fun z => f (φ k) z - U z) 3
+      (volume.restrict (vec3Ball (0 : Vec3) ((N : ℝ) + 1) ×ˢ
+        Ioo (-((N : ℝ) + 1)) 0))) atTop (𝓝 0) := by
+  intro N
+  set R : ℝ := (N : ℝ) + 1
+  have hR : 0 < R := by positivity
+  apply (hconvU R hR (-R) (by linarith only [hR])).congr'
+  filter_upwards [htrace R (-R) hR (by linarith only [hR])] with k hae
+  apply eLpNorm_congr_ae
+  filter_upwards [hae] with z hz
+  simp only [R] at hz ⊢
+  rw [hz]
+
+private theorem blowupLimitClauses_gradientBoundFromEnergy
+    {x₀ : Vec3} {t₀ : ℝ} {R a Cb : ℝ} {r : ℕ → ℝ}
+    {u : ParabolicPoint → Vec3} {p : ParabolicPoint → ℝ}
+    {Du : ParabolicPoint → Fin 3 → Vec3}
+    (hCb : ∀ᶠ k in atTop,
+      IntegrableOn (fun z => |blowupPressure x₀ t₀ (r k) p z| ^ (3 / 2 : ℝ))
+        (vec3Ball 0 R ×ˢ Ioo a 0) ∧
+      IntegrableOn (fun z => spatialGradientSq
+        (blowupVelocity x₀ t₀ (r k) u) (blowupGradient x₀ t₀ (r k) Du) z)
+        (spaceTimeSet (vec3Ball 0 R) (Ioo a 0)) ∧
+      (∫ z in vec3Ball 0 R ×ˢ Ioo a 0,
+          |blowupPressure x₀ t₀ (r k) p z| ^ (3 / 2 : ℝ)) +
+        (∫ z in spaceTimeSet (vec3Ball 0 R) (Ioo a 0),
+          spatialGradientSq (blowupVelocity x₀ t₀ (r k) u)
+            (blowupGradient x₀ t₀ (r k) Du) z) ≤ Cb) :
+    ∀ᶠ k in atTop,
+      IntegrableOn (fun z => spatialGradientSq (fun _ => (0 : Vec3))
+        (blowupGradient x₀ t₀ (r k) Du) z) (spaceTimeSet (vec3Ball 0 R) (Ioo a 0)) ∧
+      (∫ z in spaceTimeSet (vec3Ball 0 R) (Ioo a 0),
+        spatialGradientSq (fun _ => (0 : Vec3))
+          (blowupGradient x₀ t₀ (r k) Du) z) ≤ Cb := by
+  filter_upwards [hCb] with k hk
+  obtain ⟨hpint, hgint, hle⟩ := hk
+  refine ⟨hgint, ?_⟩
+  have hp0 : 0 ≤ ∫ z in vec3Ball 0 R ×ˢ Ioo a 0,
+      |blowupPressure x₀ t₀ (r k) p z| ^ (3 / 2 : ℝ) :=
+    integral_nonneg fun z => by positivity
+  have hle' : (∫ z in spaceTimeSet (vec3Ball 0 R) (Ioo a 0),
+      spatialGradientSq (blowupVelocity x₀ t₀ (r k) u)
+        (blowupGradient x₀ t₀ (r k) Du) z) ≤ Cb := by
+    linarith only [hle, hp0]
+  exact hle'
+
+private theorem blowupLimitClauses_traceSliceMemLp
+    {W : Vec3 × Icc (-(3 / 4 : ℝ) ^ 2) 0 → Vec3}
+    {Mt : ℝ}
+    (hsourceW : ∀ t,
+      MemLp ((vec3Ball (0 : Vec3) (3 / 4 : ℝ)).indicator (fun x => W (x,t)))
+        3 volume ∧
+      eLpNorm (fun x => vec3EuclideanNorm
+        ((vec3Ball (0 : Vec3) (3 / 4 : ℝ)).indicator (fun y => W (y,t)) x))
+        3 volume ≤ ENNReal.ofReal Mt) :
+    ∀ t, MemLp (fun x => W (x,t)) 3
+      (volume.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ))) := by
+  have hball : MeasurableSet (vec3Ball (0 : Vec3) (3 / 4 : ℝ)) :=
+    (isOpen_vec3Ball 0 _).measurableSet
+  intro t
+  have h := (hsourceW t).1
+  rw [memLp_indicator_iff_restrict hball] at h
+  exact h
+
+private theorem blowupLimitClauses_zeroEnergyAlternative
+    {v : ℕ → ParabolicPoint → Vec3} {p : ℕ → ParabolicPoint → ℝ}
+    {U : ParabolicPoint → Vec3} {q : ParabolicPoint → ℝ}
+    {T : ℝ} (hT : 1 < T)
+    (hvmeas : ∀ k, AEStronglyMeasurable
+      (fun z => vec3EuclideanNorm (v k z))
+      (volume.restrict (goodPointPastCylinder 0 0 1)))
+    (hpmeas : ∀ k, AEStronglyMeasurable (p k)
+      (volume.restrict (goodPointPastCylinder 0 0 1)))
+    (hU0 : U =ᵐ[volume.restrict ((Set.univ : Set Vec3) ×ˢ Ioo (-T) 0)] 0)
+    (hG : ∀ n i j, MemLp (blowupLimitAssemblyPressureWindowTensor U n i j)
+      (ENNReal.ofReal (3 / 2 : ℝ)) volume)
+    (hconvU : Tendsto (fun k => eLpNorm (fun z => v k z - U z) 3
+      (volume.restrict (vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0)))
+      atTop (𝓝 0))
+    (hconvP : Tendsto (fun k => eLpNorm (fun z => p k z - q z)
+      (3 / 2 : ℝ≥0∞)
+      (volume.restrict (vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0)))
+      atTop (𝓝 0)) :
+    Tendsto (fun k => goodPointEnergy (v k) (p k) 0 0 1) atTop (𝓝 0) := by
+  have hQ1 : goodPointPastCylinder 0 0 1 = vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0 := by
+    rw [goodPointPastCylinder]
+    congr 1
+    norm_num
+  have hQ1sub : vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0 ⊆
+      (Set.univ : Set Vec3) ×ˢ Ioo (-T) 0 := fun z hz =>
+    ⟨mem_univ _, by linarith only [hz.2.1, hT], hz.2.2⟩
+  have hU0' : U =ᵐ[volume.restrict (vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0)] 0 :=
+    ae_restrict_of_ae_restrict_of_subset hQ1sub hU0
+  have hq0 : q =ᵐ[volume.restrict (vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0)] 0 :=
+    ae_restrict_of_ae_restrict_of_subset hQ1sub
+      (blowupLimitClauses_pressure_zero_of_velocity_zero U hG hU0)
+  apply blowup_limit_zero_alternative v p hvmeas hpmeas
+  · rw [hQ1]
+    have hlim3 : Tendsto (fun k => ENNReal.ofReal (Real.sqrt 3) *
+        eLpNorm (fun z => v k z - U z) 3
+          (volume.restrict (vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0)))
+        atTop (𝓝 0) := by
+      have h := ENNReal.Tendsto.const_mul (a := ENNReal.ofReal (Real.sqrt 3))
+        hconvU (Or.inr ENNReal.ofReal_ne_top)
+      rwa [mul_zero] at h
+    apply tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hlim3
+    · exact fun k => zero_le
+    · intro k
+      apply eLpNorm_le_mul_eLpNorm_of_ae_le_mul
+        (CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.comp_aestronglyMeasurable
+          (hvmeas k)).restrict
+      filter_upwards [hU0'] with z hz
+      have hz' : U z = 0 := hz
+      rw [hz', sub_zero, Real.norm_eq_abs,
+        abs_of_nonneg (vec3EuclideanNorm_nonneg _)]
+      exact vec3EuclideanNorm_le_sqrt_three_mul_norm _
+  · rw [hQ1]
+    apply hconvP.congr'
+    filter_upwards [] with k
+    apply eLpNorm_congr_ae
+    filter_upwards [hq0] with z hz
+    have hz' : q z = 0 := hz
+    rw [hz', sub_zero]
+
+private theorem blowupLimitClauses_terminalSlice
+    {W : Vec3 × Icc (-(3 / 4 : ℝ) ^ 2) 0 → Vec3}
+    (hWm : Measurable W)
+    (Mt : ℝ) (hsourceW : ∀ t,
+      MemLp ((vec3Ball (0 : Vec3) (3 / 4 : ℝ)).indicator (fun x => W (x,t)))
+        3 volume ∧
+      eLpNorm (fun x => vec3EuclideanNorm
+        ((vec3Ball (0 : Vec3) (3 / 4 : ℝ)).indicator (fun y => W (y,t)) x))
+        3 volume ≤ ENNReal.ofReal Mt)
+    {t₀ : ℝ} (ht₀ : t₀ ∈ Icc (-(3 / 4 : ℝ) ^ 2) 0)
+    {x₀ : Vec3} {r : ℕ → ℝ} (hr : ∀ k, 0 < r k)
+    (hr0 : Tendsto r atTop (𝓝 0))
+    (φ : ℕ → ℕ) (hφ : StrictMono φ)
+    (f : ℕ → ParabolicPoint → Vec3) (hfm : ∀ k, Measurable (f k))
+    (U : ParabolicPoint → Vec3)
+    (hD1 : ∀ t : ℝ, t < 0 → ∀ ψ : Vec3 → Vec3,
+      ContDiff ℝ (⊤ : ℕ∞) ψ → HasCompactSupport ψ →
+      Integrable (fun x => ∑ i : Fin 3, U (x,t) i * ψ x i) ∧
+      Tendsto (fun k => ∫ x : Vec3, ∑ i : Fin 3, f (φ k) (x,t) i * ψ x i)
+        atTop (nhds (∫ x : Vec3, ∑ i : Fin 3, U (x,t) i * ψ x i)))
+    (hmodulus : ∀ m : ℕ, ∃ N : ℕ,
+      ∀ C : Set Vec3, IsCompact C → C ⊆ vec3Ball (0 : Vec3) ((m : ℝ) + 1) →
+      ∀ a b : ℝ, Icc a b ⊆ Icc (-((m : ℝ) + 1)) 0 →
+      ∀ w : Vec3 → L2Vec3, ContDiff ℝ (⊤ : ℕ∞) w →
+        HasCompactSupport w → tsupport w ⊆ C →
+        ∃ A B θ : ℝ, 0 ≤ A ∧ 0 ≤ B ∧ 0 < θ ∧
+          ∀ n, N ≤ n → ∀ s t, s ∈ Icc a b → t ∈ Icc a b →
+            |(∫ x : Vec3, ∑ i : Fin 3, f n (x,t) i * w x i) -
+              (∫ x : Vec3, ∑ i : Fin 3, f n (x,s) i * w x i)| ≤
+              A * dist t s + B * (dist t s) ^ θ) :
+    ∃ U₀ : Vec3 → Vec3,
+      (∀ C : Set Vec3, IsCompact C → MemLp U₀ 2 (volume.restrict C)) ∧
+      (∀ C : Set Vec3, IsCompact C → ∀ g : Vec3 → Vec3,
+        MemLp g 2 (volume.restrict C) →
+        Tendsto (fun k => ∫ x in C, ∑ i : Fin 3,
+          blowupLimitTraceRescaling W x₀ t₀ (r (φ k)) (x, 0) i * g x i)
+          atTop (𝓝 (∫ x in C, ∑ i : Fin 3, U₀ x i * g x i))) ∧
+      (∀ x : Vec3, ∫⁻ y in vec3Ball x 1, ‖U₀ y‖ₑ ^ (2 : ℝ) = 0) ∧
+      (∀ ψ : Vec3 → Vec3, ContDiff ℝ (⊤ : ℕ∞) ψ → HasCompactSupport ψ →
+        Tendsto (fun t : ℝ => ∫ x : Vec3, ∑ i : Fin 3, U (x,t) i * ψ x i)
+          (𝓝[<] 0) (𝓝 (∫ x : Vec3, ∑ i : Fin 3, U₀ x i * ψ x i))) := by
+  let r' : ℕ → ℝ := fun k => r (φ k)
+  have hr' : ∀ k, 0 < r' k := fun k => hr (φ k)
+  have hr0' : Tendsto r' atTop (𝓝 0) := hr0.comp hφ.tendsto_atTop
+    have ht₀' : t₀ ∈ Icc (-(3 / 4 : ℝ) ^ 2) 0 :=
+      ⟨by linarith only [ht₀.1], ht₀.2⟩
+    have hterm := fun C (hC : IsCompact C) =>
+      blowupLimitClauses_terminal_tendsto_zero W hWm (fun t => (hsourceW t).1) ht₀' x₀ r'
+        hr' hr0' hC
+    refine ⟨fun _ => 0, fun C _ => MemLp.zero, ?_, ?_, ?_⟩
+    · intro C hC g hg
+      simp only [Pi.zero_apply, zero_mul, Finset.sum_const_zero, integral_zero]
+      exact (hterm C hC).2 g hg
+    · intro x
+      simp
+    · -- the zero weak trace from below
+      intro ψ hψ hψc
+      simp only [Pi.zero_apply, zero_mul, Finset.sum_const_zero, integral_zero]
+      have hzero : HasZeroDistributionalVelocityTrace U := by
+        apply blowupLimitAssembly_zero_trace U (fun k => f (φ k)) hD1
+        · intro ψ hψ hψc
+          set w : Vec3 → L2Vec3 := fun x => WithLp.toLp 2 (ψ x)
+          have hw : ContDiff ℝ (⊤ : ℕ∞) w :=
+            (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)).symm.contDiff.comp hψ
+          have hwc : HasCompactSupport w := hψc.comp_left (by simp)
+          have hwsupp : tsupport w ⊆ tsupport ψ := tsupport_comp_subset (by simp) ψ
+          obtain ⟨ρ, hρ⟩ := (hψc : IsCompact (tsupport ψ)).exists_bound_of_continuousOn
+            CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.continuousOn
+          obtain ⟨m, hm⟩ := exists_nat_gt ρ
+          have hsub : tsupport ψ ⊆ vec3Ball (0 : Vec3) ((m : ℝ) + 1) := by
+            intro x hx
+            have h := hρ x hx
+            rw [Real.norm_eq_abs] at h
+            rw [mem_vec3Ball, sub_zero]
+            linarith only [(le_abs_self _).trans h, hm]
+          obtain ⟨N, hmod⟩ := hmodulus m
+          obtain ⟨A, B, θ, hA, hB, hθ, hbound⟩ := hmod (tsupport ψ) hψc hsub (-1) 0
+            (fun t ht => ⟨by
+              have : (0 : ℝ) ≤ m := Nat.cast_nonneg m
+              linarith only [ht.1, this], ht.2⟩) w hw hwc hwsupp
+          refine ⟨A, B, θ, hA, hB, hθ, ?_⟩
+          filter_upwards [eventually_ge_atTop N] with k hk
+          exact hbound (φ k) (hk.trans (hφ.id_le k))
+        · intro ψ hψ hψc
+          apply blowupLimitAssembly_pairing_tendsto_zero_of_unit_balls
+            (fun k x => f (φ k) (x, 0))
+            (fun k => ((hfm (φ k)).comp measurable_prodMk_right).aestronglyMeasurable)
+            _ ψ hψ.continuous hψc
+          intro c
+          have h := blowup_limit_trace_terminal_rescaling_tendsto_zero W
+            (fun t => (hsourceW t).1) ⟨t₀, ht₀'⟩ x₀ c r' hr' hr0'
+          apply h.congr'
+          filter_upwards [] with k
+          congr 1
+          funext x
+          simp only [f, r']
+          rw [blowupLimitClauses_terminal_slice_eq W ht₀' x₀ (r (φ k)) x]
+      exact (hzero ψ hψ hψc).2
+
+private theorem blowupLimitClauses_finishCompactnessClauses
+    {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin 3 → Vec3}
+    {p : ParabolicPoint → ℝ}
+    (hu : AEStronglyMeasurable u
+      (volume.restrict (spaceTimeSet (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0))))
+    (hDu : AEStronglyMeasurable Du
+      (volume.restrict (spaceTimeSet (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0))))
+    (hp : AEStronglyMeasurable p
+      (volume.restrict (spaceTimeSet (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0))))
+    (hL2 : essSup (fun t : ℝ => ∫⁻ x in vec3Ball (0 : Vec3) 1,
+      ‖u (x,t)‖ₑ ^ (2 : ℝ)) (volume.restrict (Ioo (-1) 0)) < ⊤)
+    (henergy : (∫⁻ z in spaceTimeSet (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0),
+      ‖u z‖ₑ ^ (2 : ℝ) + ‖Du z‖ₑ ^ (2 : ℝ)) < ⊤)
+    (hpLp : MemLp p (ENNReal.ofReal (3 / 2 : ℝ))
+      (volume.restrict (spaceTimeSet (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0))))
+    (hL3 : essSup (fun t : ℝ => ∫⁻ x in vec3Ball (0 : Vec3) 1,
+      ENNReal.ofReal (vec3EuclideanNorm (u (x,t))) ^ (3 : ℝ))
+      (volume.restrict (Ioo (-1) 0)) < ⊤)
+    (hgrad : ∀ᵐ t ∂(volume.restrict (Ioo (-1) 0)), ∀ i : Fin 3,
+      HasWeakGradientOn (vec3Ball (0 : Vec3) 1) (fun x => u (x,t) i)
+        (fun x => Du (x,t) i))
+    (hS2 : ∀ ψ : ParabolicPoint → ℝ,
+      ψ ∈ spaceTimeTestFunction (V := ℝ) (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0) →
+      ∫ z in spaceTimeSet (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0),
+        ∑ i : Fin 3, u z i * spatialPartial ψ i z = 0)
+    (hS3 : ∀ φ : ParabolicPoint → Vec3,
+      φ ∈ spaceTimeTestFunction (V := Vec3) (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0) →
+      ∫ z in spaceTimeSet (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0),
+        (-(∑ i : Fin 3, u z i * timePartial (fun y => φ y i) z)
+          - ∑ i : Fin 3, ∑ j : Fin 3, u z i * u z j * spatialPartial (fun y => φ y i) j z
+          + ∑ i : Fin 3, ∑ j : Fin 3, Du z i j * spatialPartial (fun y => φ y i) j z
+          - p z * ∑ i : Fin 3, spatialPartial (fun y => φ y i) i z
+          - ∑ i : Fin 3, ((0 : ParabolicPoint → Vec3) z i) * φ z i) = 0)
+    (ε₀ : ℝ) (x₀ : Vec3) (t₀ : ℝ) (r : ℕ → ℝ)
+    (hx₀ : x₀ ∈ closure (vec3Ball 0 (1 / 2 : ℝ)))
+    (ht₀ : t₀ ∈ Icc (-(1 / 4 : ℝ)) 0)
+    (hbad : ¬ IsGoodPoint ε₀ u p (x₀,t₀))
+    (hr : ∀ k, 0 < r k) (hr0 : Tendsto r atTop (𝓝 0))
+    (W : Vec3 × Icc (-(3 / 4 : ℝ) ^ 2) 0 → Vec3) (hWm : Measurable W)
+    (Mt : ℝ) (hsourceW : ∀ t,
+      MemLp ((vec3Ball (0 : Vec3) (3 / 4 : ℝ)).indicator (fun x => W (x,t))) 3 volume ∧
+      eLpNorm (fun x => vec3EuclideanNorm
+        ((vec3Ball (0 : Vec3) (3 / 4 : ℝ)).indicator (fun y => W (y,t)) x))
+        3 volume ≤ ENNReal.ofReal Mt)
+    (Dm : ParabolicPoint → Fin 3 → Vec3) (hDm : Measurable Dm)
+    (hDmEq : goodPointDomain.indicator Dm =ᵐ[volume] goodPointDomain.indicator Du)
+    (um : ParabolicPoint → Vec3) (hum : Measurable um)
+    (hu_um : u =ᵐ[volume.restrict
+      (spaceTimeSet (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0))] um)
+    (φ : ℕ → ℕ) (hφ : StrictMono φ)
+    (U : ParabolicPoint → Vec3) (DU : ParabolicPoint → Fin 3 → Vec3)
+    (hU : Measurable U) (hDU : Measurable DU)
+    (hD1 : ∀ t : ℝ, t < 0 → ∀ ψ : Vec3 → Vec3,
+      ContDiff ℝ (⊤ : ℕ∞) ψ → HasCompactSupport ψ →
+      Integrable (fun x => ∑ i : Fin 3, U (x,t) i * ψ x i) ∧
+      Tendsto (fun k => ∫ x : Vec3, ∑ i : Fin 3, blowupLimitTraceRescaling W x₀ t₀ (r (φ k)) (x,t) i * ψ x i)
+        atTop (nhds (∫ x : Vec3, ∑ i : Fin 3, U (x,t) i * ψ x i)))
+    (hDslice : ∀ t : ℝ, t < 0 → ∀ C : Set Vec3, IsCompact C →
+      MemLp (fun x => U (x,t)) 2 (volume.restrict C) ∧
+      ∀ g : Vec3 → Vec3, MemLp g 2 (volume.restrict C) →
+        Tendsto (fun k => ∫ x in C, ∑ i : Fin 3,
+          blowupLimitTraceRescaling W x₀ t₀ (r (φ k)) (x,t) i * g x i)
+          atTop (𝓝 (∫ x in C, ∑ i : Fin 3, U (x,t) i * g x i)))
+    (hD3 : ∀ R a : ℝ, 0 < R → a < 0 → ∀ i j : Fin 3,
+      MemLp (fun z : Vec3 × ℝ => DU z i j) 2
+        (volume.restrict (vec3Ball (0 : Vec3) R ×ˢ Ioo a 0)) ∧
+      ∀ w : Vec3 × ℝ → ℝ,
+        MemLp w 2 (volume.restrict (vec3Ball (0 : Vec3) R ×ˢ Ioo a 0)) →
+        Tendsto (fun k => ∫ z in vec3Ball (0 : Vec3) R ×ˢ Ioo a 0,
+          blowupGradient x₀ t₀ (r (φ k)) Dm z i j * w z) atTop
+          (𝓝 (∫ z in vec3Ball (0 : Vec3) R ×ˢ Ioo a 0, DU z i j * w z)))
+    (hD4 : ∀ᵐ t ∂(volume.restrict (Iio (0 : ℝ))), ∀ i : Fin 3,
+      HasWeakGradientOn Set.univ (fun x : Vec3 => U (x,t) i)
+        (fun x : Vec3 => DU (x,t) i))
+    (hD5 : ∀ Q : Set (Vec3 × ℝ), IsCompact Q → Q ⊆ univ ×ˢ Iio 0 →
+      MemLp DU 2 (volume.restrict Q))
+    (f : ℕ → ParabolicPoint → Vec3) (hfm : ∀ k, Measurable (f k))
+    (r' : ℕ → ℝ) (hr' : ∀ k, 0 < r' k) (hr0' : Tendsto r' atTop (𝓝 0))
+    (hconvU : ∀ R : ℝ, 0 < R → ∀ a : ℝ, a < 0 →
+      Tendsto (fun k => eLpNorm
+        (fun z => blowupVelocity x₀ t₀ (r' k) u z - U z) 3
+        (volume.restrict (vec3Ball (0 : Vec3) R ×ˢ Ioo a 0))) atTop (𝓝 0))
+    (hUslice : ∀ᵐ t ∂(volume.restrict (Iio (0 : ℝ))),
+      eLpNorm (fun x : Vec3 => vec3EuclideanNorm (U (x,t))) 3 volume ≤ ENNReal.ofReal Mt)
+    (hG : ∀ n i j, MemLp (blowupLimitAssemblyPressureWindowTensor U n i j)
+      (ENNReal.ofReal (3 / 2 : ℝ)) volume)
+    (q : ParabolicPoint → ℝ)
+    (hP1 : ∀ R a : ℝ, 0 < R → a < 0 →
+      Tendsto (fun k => eLpNorm (fun z => blowupRieszPressure x₀ t₀ (r' k)
+        (pressureSplitRieszPressure (pressureSplitTensor u)
+          (pressureSplitTensor_memLp hu hDu henergy hL3 hgrad)) z - q z)
+        (3 / 2 : ℝ≥0∞) (volume.restrict (vec3Ball (0 : Vec3) R ×ˢ Ioo a 0))) atTop (𝓝 0))
+    (hP2 : ∀ R a : ℝ, 0 < R → a < 0 →
+      Tendsto (fun k => eLpNorm (blowupPressureRemainder x₀ t₀ (r' k) p
+        (pressureSplitRieszPressure (pressureSplitTensor u)
+          (pressureSplitTensor_memLp hu hDu henergy hL3 hgrad)))
+        (3 / 2 : ℝ≥0∞) (volume.restrict (vec3Ball (0 : Vec3) R ×ˢ Ioo a 0))) atTop (𝓝 0))
+    (hconvP : ∀ R a : ℝ, 0 < R → a < 0 →
+      Tendsto (fun k => eLpNorm (fun z => blowupPressure x₀ t₀ (r' k) p z - q z)
+        (3 / 2 : ℝ≥0∞) (volume.restrict (vec3Ball (0 : Vec3) R ×ˢ Ioo a 0))) atTop (𝓝 0))
+    (hmodulus : ∀ m : ℕ, ∃ N : ℕ,
+      ∀ C : Set Vec3, IsCompact C → C ⊆ vec3Ball (0 : Vec3) ((m : ℝ) + 1) →
+      ∀ a b : ℝ, Icc a b ⊆ Icc (-((m : ℝ) + 1)) 0 →
+      ∀ w : Vec3 → L2Vec3, ContDiff ℝ (⊤ : ℕ∞) w → HasCompactSupport w →
+        tsupport w ⊆ C →
+        ∃ A B θ : ℝ, 0 ≤ A ∧ 0 ≤ B ∧ 0 < θ ∧
+          ∀ n, N ≤ n → ∀ s t, s ∈ Icc a b → t ∈ Icc a b →
+            |(∫ x : Vec3, ∑ i : Fin 3, blowupLimitTraceRescaling W x₀ t₀ (r n) (x,t) i * w x i) -
+              (∫ x : Vec3, ∑ i : Fin 3, blowupLimitTraceRescaling W x₀ t₀ (r n) (x,s) i * w x i)| ≤
+              A * dist t s + B * (dist t s) ^ θ) :
+    (∀ t : ℝ, t < 0 → ∀ C : Set Vec3, IsCompact C →
+      MemLp (fun x => U (x,t)) 2 (volume.restrict C) ∧
+      ∀ g : Vec3 → Vec3, MemLp g 2 (volume.restrict C) →
+        Tendsto (fun k => ∫ x in C, ∑ i : Fin 3,
+          blowupLimitTraceRescaling W x₀ t₀ (r (φ k)) (x,t) i * g x i)
+          atTop (𝓝 (∫ x in C, ∑ i : Fin 3, U (x,t) i * g x i))) ∧
+    (∀ R a : ℝ, 0 < R → a < 0 → ∀ i j : Fin 3,
+      MemLp (fun z : Vec3 × ℝ => DU z i j) 2
+        (volume.restrict (vec3Ball (0 : Vec3) R ×ˢ Ioo a 0)) ∧
+      ∀ w : Vec3 × ℝ → ℝ,
+        MemLp w 2 (volume.restrict (vec3Ball (0 : Vec3) R ×ˢ Ioo a 0)) →
+        Tendsto (fun k => ∫ z in vec3Ball (0 : Vec3) R ×ˢ Ioo a 0,
+          blowupGradient x₀ t₀ (r (φ k)) Dm z i j * w z) atTop
+          (𝓝 (∫ z in vec3Ball (0 : Vec3) R ×ˢ Ioo a 0, DU z i j * w z))) ∧
+    (∀ᵐ t ∂(volume.restrict (Iio (0 : ℝ))), ∀ i : Fin 3,
+      HasWeakGradientOn Set.univ (fun x : Vec3 => U (x,t) i)
+        (fun x : Vec3 => DU (x,t) i)) ∧
+    essSup (fun t : ℝ => eLpNorm (fun x : Vec3 => vec3EuclideanNorm (U (x,t)))
+      (3 : ℝ≥0∞) volume) (volume.restrict (Iio (0 : ℝ))) < ⊤ ∧
+    (∀ ρ a : ℝ, 0 < ρ → a < 0 → IsSuitableWeakSolution (vec3Ball 0 ρ) (Ioo a 0)
+      3 U DU q (0 : ParabolicPoint → Vec3)) ∧
+    (∀ᵐ t ∂(volume.restrict (Iio (0 : ℝ))),
+      ∃ hUt : ∀ i j, MemLp (fun x : Vec3 => U (x,t) i * U (x,t) j)
+        (ENNReal.ofReal (3 / 2 : ℝ)) (volume : Measure Vec3),
+      (fun x : Vec3 => q (x,t)) =ᵐ[volume]
+        fun x => CKN.Leray.rieszPressureSlice (3 / 2 : ℝ) (by norm_num)
+          (fun i j => (hUt i j).toLp (fun y : Vec3 => U (y,t) i * U (y,t) j))) ∧
+    (∃ U₀ : Vec3 → Vec3,
+      (∀ C : Set Vec3, IsCompact C → MemLp U₀ 2 (volume.restrict C)) ∧
+      (∀ C : Set Vec3, IsCompact C → ∀ g : Vec3 → Vec3,
+        MemLp g 2 (volume.restrict C) →
+        Tendsto (fun k => ∫ x in C, ∑ i : Fin 3,
+          blowupLimitTraceRescaling W x₀ t₀ (r (φ k)) (x, 0) i * g x i)
+          atTop (𝓝 (∫ x in C, ∑ i : Fin 3, U₀ x i * g x i))) ∧
+      (∀ x : Vec3, ∫⁻ y in vec3Ball x 1, ‖U₀ y‖ₑ ^ (2 : ℝ) = 0) ∧
+      (∀ ψ : Vec3 → Vec3, ContDiff ℝ (⊤ : ℕ∞) ψ → HasCompactSupport ψ →
+        Tendsto (fun t : ℝ => ∫ x : Vec3, ∑ i : Fin 3, U (x,t) i * ψ x i)
+          (𝓝[<] 0) (𝓝 (∫ x : Vec3, ∑ i : Fin 3, U₀ x i * ψ x i)))) ∧
+    (∀ k, goodPointPastCylinder x₀ t₀ (r k) ⊆ goodPointDomain →
+      ENNReal.ofReal (ε₀ / 8) ≤ goodPointEnergy (blowupVelocity x₀ t₀ (r k) u)
+        (blowupPressure x₀ t₀ (r k) p) 0 0 1) ∧
+    (∀ T : ℝ, 1 < T → U =ᵐ[volume.restrict ((Set.univ : Set Vec3) ×ˢ Ioo (-T) 0)] 0 →
+      Tendsto (fun k => goodPointEnergy (blowupVelocity x₀ t₀ (r (φ k)) u)
+        (blowupPressure x₀ t₀ (r (φ k)) p) 0 0 1) atTop (𝓝 0)) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · -- every negative-time slice
+    intro t ht C hC
+    exact hDslice t ht C hC
+  · -- weak gradient convergence up to the top face
+    intro R a hR ha i j
+    obtain ⟨Cb, -, hCb⟩ := blowupLimitClauses_energy_pressure_bounds hu hDu hp hL2 henergy
+      hpLp hL3 hgrad hS2 hS3 x₀ t₀ r' hx₀ ht₀ hr' hr0' R a hR ha
+    have hbound := blowupLimitClauses_gradientBoundFromEnergy hCb
+    exact blowupLimitClauses_gradient_weak_to_top hDm hDmEq hr hDU hD3 hD5 ha hbound i j
+  · -- weak gradients of the limit
+    exact hD4
+  · -- the critical slice bound of the limit
+    refine lt_of_le_of_lt ?_ (ENNReal.ofReal_lt_top (r := Mt))
+    exact essSup_le_of_ae_le _ hUslice
+  · -- suitability
+    intro ρ a hρ ha
+    exact blowupLimitAssembly_limit_suitable hu hDu hp hL2 henergy hpLp hL3 hgrad hS2 hS3
+      x₀ t₀ r' hx₀ ht₀ hr' hr0' hum hu_um W hWm htrace Mt hsourceW Dm hDmEq U DU q hD5
+      hconvU hD3 hconvP ρ a hρ ha
+  · -- the whole-space pressure of the limit
+    exact blowupLimitClauses_pressure_slice_eq U hG
+  · -- the terminal slice
+    have ht₀' : t₀ ∈ Icc (-(3 / 4 : ℝ) ^ 2) 0 :=
+      ⟨by linarith only [ht₀.1], ht₀.2⟩
+    exact blowupLimitClauses_terminalSlice W hWm Mt hsourceW ht₀' x₀ r hr hr0
+      φ hφ f hfm U hD1 hmodulus
+  · -- the bad-point lower bound at every admissible scale
+    intro k hk
+    exact blowupLimitClauses_bad_point_lower_bound hx₀ ht₀ hbad (hr k) hk
+  · -- the zero alternative
+    intro T hT hU0
+    obtain ⟨-, hind, hp₁, -, -, hp₂, -⟩ := blowupLimitAssembly_source_pressure_data hu hDu
+      hp hL2 henergy hpLp hL3 hgrad hS2 hS3
+    have hvmeas : ∀ k, AEStronglyMeasurable
+        (fun z => vec3EuclideanNorm (blowupVelocity x₀ t₀ (r' k) u z))
+        (volume.restrict (goodPointPastCylinder 0 0 1)) := fun k =>
+      blowupRescaledVelocity_aestronglyMeasurable _ hind x₀ t₀ (r' k) (hr' k)
+    have hpmeas : ∀ k, AEStronglyMeasurable
+        (blowupPressure x₀ t₀ (r' k) p)
+        (volume.restrict (goodPointPastCylinder 0 0 1)) := fun k =>
+      (blowupPressure_aestronglyMeasurable_of_split p _ hp₁ hp₂ x₀ t₀ (r' k)
+        (hr' k)).restrict
+    exact blowupLimitClauses_zeroEnergyAlternative hT hvmeas hpmeas hU0 hG
+      (hconvU 1 one_pos (-1) (by norm_num))
+      (hconvP 1 one_pos (-1) (by norm_num))
+
+private theorem blowupLimitClauses_subsequenceTraceAgreement
+    {f : ℕ → ParabolicPoint → Vec3} {u : ParabolicPoint → Vec3}
+    {x₀ : Vec3} {t₀ : ℝ} {r : ℕ → ℝ} {φ : ℕ → ℕ}
+    (hφ : StrictMono φ)
+    (htrace : ∀ R a : ℝ, 0 < R → a < 0 → ∀ᶠ n in atTop,
+      f n =ᵐ[volume.restrict (vec3Ball (0 : Vec3) R ×ˢ Ioo a 0)]
+        blowupVelocity x₀ t₀ (r n) u) :
+    ∀ R a : ℝ, 0 < R → a < 0 → ∀ᶠ k in atTop,
+      f (φ k) =ᵐ[volume.restrict (vec3Ball (0 : Vec3) R ×ˢ Ioo a 0)]
+        blowupVelocity x₀ t₀ (r (φ k)) u := by
+  intro R a hR ha
+  filter_upwards [(htrace R a hR ha).comp_tendsto hφ.tendsto_atTop] with k hk
+  exact hk
+
 /-- The blow-up limit at a point that is not good (`prop:blowup-limit`), with
 all its clauses. For the whole sequence: the uniform pressure and gradient
 bounds of (a), and the explicit pairing modulus and uniform `L^{10/3}` bound of
@@ -263,29 +774,11 @@ theorem blowupLimit_clauses
     have h := hx₀
     rw [closure_vec3Ball (by norm_num : (0 : ℝ) < 1 / 2)] at h
     simpa only [Set.mem_ofPred_eq, sub_zero] using h
-  have hball34 : MeasurableSet (vec3Ball (0 : Vec3) (3 / 4 : ℝ)) :=
-    (isOpen_vec3Ball 0 _).measurableSet
   -- the trace representative
-  have hWslice : ∀ t, MemLp (fun x => W (x,t)) 3
-      (volume.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ))) := by
-    intro t
-    have h := (hsourceW t).1
-    rw [memLp_indicator_iff_restrict hball34] at h
-    exact h
+  have hWslice := blowupLimitClauses_traceSliceMemLp hsourceW
   have hWcont := blowupLimitClauses_trace_pairing_continuous v W hW hcont
-  have hWagree : ∀ R a : ℝ, 0 < R → a < 0 → ∀ᶠ k in atTop,
-      blowupLimitTraceRescaling W x₀ t₀ (r k) =ᵐ[volume.restrict
-        (vec3Ball (0 : Vec3) R ×ˢ Ioo a 0)] blowupVelocity x₀ t₀ (r k) u := by
-    intro R a _ _
-    have hspaceLim : Tendsto (fun k => r k * R) atTop (𝓝 0) := by
-      simpa only [zero_mul] using hr0.mul_const R
-    have htimeLim : Tendsto (fun k => (r k) ^ 2 * (-a)) atTop (𝓝 0) := by
-      simpa using (hr0.pow 2).mul_const (-a)
-    filter_upwards [hspaceLim.eventually (eventually_lt_nhds (by norm_num : (0 : ℝ) < 1 / 4)),
-      htimeLim.eventually (eventually_lt_nhds (by norm_num : (0 : ℝ) < 1 / 4))]
-      with k hsk htk
-    exact blowupLimitAssembly_trace_ae_eq_blowupVelocity hum hu_um W hWm htrace
-      hxnorm ht₀ (hr k) hsk htk
+  have hWagree := blowupLimitClauses_trace_agreement hum hu_um hWm htrace
+    hxnorm ht₀ hr hr0
   refine ⟨W, hWm, htrace, hWslice, fun ψ hψ hψc => hWcont ψ hψ hψc, hWagree,
     fun R a hR ha => blowupLimitClauses_energy_pressure_bounds hu hDu hp hL2 henergy hpLp hL3
       hgrad hS2 hS3 x₀ t₀ r hx₀ ht₀ hr hr0 R a hR ha,
@@ -315,208 +808,29 @@ theorem blowupLimit_clauses
         (volume.restrict (vec3Ball (0 : Vec3) R ×ˢ Ioo a 0))) atTop (𝓝 0) :=
     fun R hR a ha => blowupLimitAssembly_strong_Lthree hu hDu hp hL2 henergy hpLp hL3
       hgrad hS2 hS3 x₀ t₀ r' hx₀ ht₀ hr' hr0' hum hu_um W hWm htrace U hD2 R a hR ha
-  have hconvV : ∀ N : ℕ, Tendsto (fun k => eLpNorm (fun z => f (φ k) z - U z) 3
-      (volume.restrict (vec3Ball (0 : Vec3) ((N : ℝ) + 1) ×ˢ
-        Ioo (-((N : ℝ) + 1)) 0))) atTop (𝓝 0) := by
-    intro N
-    set R : ℝ := (N : ℝ) + 1
-    have hR : 0 < R := by positivity
-    apply (hconvU R hR (-R) (by linarith only [hR])).congr'
-    have hspaceLim : Tendsto (fun k => r' k * R) atTop (𝓝 0) := by
-      simpa only [zero_mul] using hr0'.mul_const R
-    have htimeLim : Tendsto (fun k => (r' k) ^ 2 * (-(-R))) atTop (𝓝 0) := by
-      simpa using (hr0'.pow 2).mul_const (-(-R))
-    filter_upwards [hspaceLim.eventually (eventually_lt_nhds (by norm_num : (0 : ℝ) < 1 / 4)),
-      htimeLim.eventually (eventually_lt_nhds (by norm_num : (0 : ℝ) < 1 / 4))]
-      with k hsk htk
-    have hae := blowupLimitAssembly_trace_ae_eq_blowupVelocity hum hu_um W hWm htrace
-      hxnorm ht₀ (hr' k) hsk htk
-    apply eLpNorm_congr_ae
-    filter_upwards [hae] with z hz
-    simp only [f, r'] at hz ⊢
-    rw [hz]
+  have hWagreeSub := blowupLimitClauses_subsequenceTraceAgreement hφ hWagree
+  have hconvV := blowupLimitClauses_strongConvergence_of_traceAgreement
+    (r := r') hconvU hWagreeSub
   have hUslice := blowupLimitAssembly_slice_Lthree_of_local_convergence U hU
     (fun k => f (φ k)) (fun k => hfm (φ k)) (ENNReal.ofReal Mt)
     (fun k t => blowupLimitAssembly_trace_slice_Lthree W Mt hsourceW x₀ t₀ (r (φ k))
       (hr _) t) hconvV
-  -- the window tensors of the limit and its whole-space pressure
-  have hUsliceVec : ∀ a : ℝ, ∀ᵐ t ∂volume.restrict (Ioo a 0),
-      eLpNorm (fun x : Vec3 => U (x,t)) 3 volume ≤ ENNReal.ofReal Mt := by
-    intro a
-    have h := ae_restrict_of_ae_restrict_of_subset
-      (fun t (ht : t ∈ Ioo a 0) => (ht.2 : t < 0)) hUslice
-    filter_upwards [h] with t ht
-    exact (blowupLimitAssemblyPressure_slice_le_norm
-      (hU.comp measurable_prodMk_right).aestronglyMeasurable).trans ht
-  have hwindowFin : ∀ n : ℕ,
-      (volume (Ioo (-((n : ℝ) + 1)) (0 : ℝ)) * (ENNReal.ofReal Mt) ^ (3 : ℝ)) ^
-        (1 / 3 : ℝ) < ⊤ := by
-    intro n
-    apply ENNReal.rpow_lt_top_of_nonneg (by norm_num)
-    apply (ENNReal.mul_lt_top _ (ENNReal.rpow_lt_top_of_nonneg (by norm_num)
-      ENNReal.ofReal_ne_top)).ne
-    rw [Real.volume_Ioo]
-    exact ENNReal.ofReal_lt_top
-  have hUwin : ∀ n : ℕ, MemLp U 3 ((volume : Measure (Vec3 × ℝ)).restrict
-      ((Set.univ : Set Vec3) ×ˢ Ioo (-((n : ℝ) + 1)) 0)) := fun n =>
-    memLp_iff.2 ((blowupLimitAssemblyPressure_memLp_three_of_slices hU
-      (hUsliceVec _) _).trans_lt (hwindowFin n))
-  have hG : ∀ n i j, MemLp (blowupLimitAssemblyPressureWindowTensor U n i j)
-      (ENNReal.ofReal (3 / 2 : ℝ)) volume := fun n i j =>
-    blowupLimitAssemblyPressure_tensor_memLp_of_restrict
-      (MeasurableSet.univ.prod measurableSet_Ioo) (hUwin n) i j
+  obtain ⟨hUwin, hG⟩ := blowupLimitClauses_pressureWindowMemLp hU Mt hUslice
   obtain ⟨-, hP1, hP2, hconvP⟩ := blowupLimitClauses_pressure_limit hu hDu hp hL2
     henergy hpLp hL3 hgrad hS2 hS3 x₀ t₀ r' hx₀ ht₀ hr' hr0' U hU (ENNReal.ofReal Mt)
     ENNReal.ofReal_lt_top hUslice hconvU hG
   set q : ParabolicPoint → ℝ := blowupLimitAssemblyPressureLimit U hG with hqdef
-  refine ⟨φ, hφ, U, DU, q, hU, hDU, measurable_blowupLimitAssemblyPressureLimit U hG,
-    fun R a hR ha => hconvU R hR a ha, ?_, ?_, ?_, ?_, fun R a hR ha => hP1 R hR a ha,
-    fun R a hR ha => hP2 R hR a ha, fun R a hR ha => hconvP R hR a ha, ?_, ?_, ?_, ?_, ?_⟩
-  · -- every negative-time slice
-    intro t ht C hC
-    exact hDslice t ht C hC
-  · -- weak gradient convergence up to the top face
-    intro R a hR ha i j
-    obtain ⟨Cb, -, hCb⟩ := blowupLimitClauses_energy_pressure_bounds hu hDu hp hL2 henergy
-      hpLp hL3 hgrad hS2 hS3 x₀ t₀ r' hx₀ ht₀ hr' hr0' R a hR ha
-    have hbound : ∀ᶠ k in atTop,
-        IntegrableOn (fun z => spatialGradientSq (fun _ => (0 : Vec3))
-          (blowupGradient x₀ t₀ (r (φ k)) Du) z) (spaceTimeSet (vec3Ball 0 R) (Ioo a 0)) ∧
-        (∫ z in spaceTimeSet (vec3Ball 0 R) (Ioo a 0), spatialGradientSq (fun _ => (0 : Vec3))
-          (blowupGradient x₀ t₀ (r (φ k)) Du) z) ≤ Cb := by
-      filter_upwards [hCb] with k hk
-      obtain ⟨hpint, hgint, hle⟩ := hk
-      refine ⟨hgint, ?_⟩
-      have hp0 : 0 ≤ ∫ z in vec3Ball 0 R ×ˢ Ioo a 0,
-          |blowupPressure x₀ t₀ (r' k) p z| ^ (3 / 2 : ℝ) :=
-        integral_nonneg fun z => by positivity
-      have hle' : (∫ z in spaceTimeSet (vec3Ball 0 R) (Ioo a 0),
-          spatialGradientSq (blowupVelocity x₀ t₀ (r' k) u)
-            (blowupGradient x₀ t₀ (r' k) Du) z) ≤ Cb := by
-        linarith only [hle, hp0]
-      exact hle'
-    exact blowupLimitClauses_gradient_weak_to_top hDm hDmEq hr hDU hD3 hD5 ha hbound i j
-  · -- weak gradients of the limit
-    exact hD4
-  · -- the critical slice bound of the limit
-    refine lt_of_le_of_lt ?_ (ENNReal.ofReal_lt_top (r := Mt))
-    exact essSup_le_of_ae_le _ hUslice
-  · -- suitability
-    intro ρ a hρ ha
-    exact blowupLimitAssembly_limit_suitable hu hDu hp hL2 henergy hpLp hL3 hgrad hS2 hS3
-      x₀ t₀ r' hx₀ ht₀ hr' hr0' hum hu_um W hWm htrace Mt hsourceW Dm hDmEq U DU q hD5
-      hconvU hD3 hconvP ρ a hρ ha
-  · -- the whole-space pressure of the limit
-    exact blowupLimitClauses_pressure_slice_eq U hG
-  · -- the terminal slice
-    have ht₀' : t₀ ∈ Icc (-(3 / 4 : ℝ) ^ 2) 0 :=
-      ⟨by linarith only [ht₀.1], ht₀.2⟩
-    have hterm := fun C (hC : IsCompact C) =>
-      blowupLimitClauses_terminal_tendsto_zero W hWm (fun t => (hsourceW t).1) ht₀' x₀ r'
-        hr' hr0' hC
-    refine ⟨fun _ => 0, fun C _ => MemLp.zero, ?_, ?_, ?_⟩
-    · intro C hC g hg
-      simp only [Pi.zero_apply, zero_mul, Finset.sum_const_zero, integral_zero]
-      exact (hterm C hC).2 g hg
-    · intro x
-      simp
-    · -- the zero weak trace from below
-      intro ψ hψ hψc
-      simp only [Pi.zero_apply, zero_mul, Finset.sum_const_zero, integral_zero]
-      have hzero : HasZeroDistributionalVelocityTrace U := by
-        apply blowupLimitAssembly_zero_trace U (fun k => f (φ k)) hD1
-        · intro ψ hψ hψc
-          set w : Vec3 → L2Vec3 := fun x => WithLp.toLp 2 (ψ x)
-          have hw : ContDiff ℝ (⊤ : ℕ∞) w :=
-            (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)).symm.contDiff.comp hψ
-          have hwc : HasCompactSupport w := hψc.comp_left (by simp)
-          have hwsupp : tsupport w ⊆ tsupport ψ := tsupport_comp_subset (by simp) ψ
-          obtain ⟨ρ, hρ⟩ := (hψc : IsCompact (tsupport ψ)).exists_bound_of_continuousOn
-            CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.continuousOn
-          obtain ⟨m, hm⟩ := exists_nat_gt ρ
-          have hsub : tsupport ψ ⊆ vec3Ball (0 : Vec3) ((m : ℝ) + 1) := by
-            intro x hx
-            have h := hρ x hx
-            rw [Real.norm_eq_abs] at h
-            rw [mem_vec3Ball, sub_zero]
-            linarith only [(le_abs_self _).trans h, hm]
-          obtain ⟨N, -, -, hmod⟩ := hstage m
-          obtain ⟨A, B, θ, hA, hB, hθ, hbound⟩ := hmod (tsupport ψ) hψc hsub (-1) 0
-            (fun t ht => ⟨by
-              have : (0 : ℝ) ≤ m := Nat.cast_nonneg m
-              linarith only [ht.1, this], ht.2⟩) w hw hwc hwsupp
-          refine ⟨A, B, θ, hA, hB, hθ, ?_⟩
-          filter_upwards [eventually_ge_atTop N] with k hk
-          exact hbound (φ k) (hk.trans (hφ.id_le k))
-        · intro ψ hψ hψc
-          apply blowupLimitAssembly_pairing_tendsto_zero_of_unit_balls
-            (fun k x => f (φ k) (x, 0))
-            (fun k => ((hfm (φ k)).comp measurable_prodMk_right).aestronglyMeasurable)
-            _ ψ hψ.continuous hψc
-          intro c
-          have h := blowup_limit_trace_terminal_rescaling_tendsto_zero W
-            (fun t => (hsourceW t).1) ⟨t₀, ht₀'⟩ x₀ c r' hr' hr0'
-          apply h.congr'
-          filter_upwards [] with k
-          congr 1
-          funext x
-          simp only [f, r']
-          rw [blowupLimitClauses_terminal_slice_eq W ht₀' x₀ (r (φ k)) x]
-      exact (hzero ψ hψ hψc).2
-  · -- the bad-point lower bound at every admissible scale
-    intro k hk
-    exact blowupLimitClauses_bad_point_lower_bound hx₀ ht₀ hbad (hr k) hk
-  · -- the zero alternative
-    intro T hT hU0
-    obtain ⟨-, hind, hp₁, -, -, hp₂, -⟩ := blowupLimitAssembly_source_pressure_data hu hDu
-      hp hL2 henergy hpLp hL3 hgrad hS2 hS3
-    have hQ1 : goodPointPastCylinder 0 0 1 = vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0 := by
-      rw [goodPointPastCylinder]
-      congr 1
-      norm_num
-    have hQ1sub : vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0 ⊆
-        (Set.univ : Set Vec3) ×ˢ Ioo (-T) 0 := fun z hz =>
-      ⟨mem_univ _, by linarith only [hz.2.1, hT], hz.2.2⟩
-    have hU0' : U =ᵐ[volume.restrict (vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0)] 0 :=
-      ae_restrict_of_ae_restrict_of_subset hQ1sub hU0
-    have hq0 : q =ᵐ[volume.restrict (vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0)] 0 :=
-      ae_restrict_of_ae_restrict_of_subset hQ1sub
-        (blowupLimitClauses_pressure_zero_of_velocity_zero U hG hU0)
-    have hvmeas : ∀ k, AEStronglyMeasurable (blowupVelocity x₀ t₀ (r' k) u)
-        (volume : Measure ParabolicPoint) := fun k =>
-      blowupRescaledVelocity_aestronglyMeasurable _ hind x₀ t₀ (r' k) (hr' k)
-    apply blowup_limit_zero_alternative
-      (fun k => blowupVelocity x₀ t₀ (r' k) u) (fun k => blowupPressure x₀ t₀ (r' k) p)
-      (fun k => (CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.comp_aestronglyMeasurable
-        (hvmeas k)).restrict)
-      (fun k => (blowupPressure_aestronglyMeasurable_of_split p _ hp₁ hp₂ x₀ t₀ (r' k)
-        (hr' k)).restrict)
-    · rw [hQ1]
-      have hlim3 : Tendsto (fun k => ENNReal.ofReal (Real.sqrt 3) *
-          eLpNorm (fun z => blowupVelocity x₀ t₀ (r' k) u z - U z) 3
-            (volume.restrict (vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0)))
-          atTop (𝓝 0) := by
-        have h := ENNReal.Tendsto.const_mul (a := ENNReal.ofReal (Real.sqrt 3))
-          (hconvU 1 one_pos (-1) (by norm_num)) (Or.inr ENNReal.ofReal_ne_top)
-        rwa [mul_zero] at h
-      apply tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hlim3
-      · exact fun k => zero_le
-      · intro k
-        apply eLpNorm_le_mul_eLpNorm_of_ae_le_mul
-          (CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.comp_aestronglyMeasurable
-            (hvmeas k)).restrict
-        filter_upwards [hU0'] with z hz
-        have hz' : U z = 0 := hz
-        rw [hz', sub_zero, Real.norm_eq_abs,
-          abs_of_nonneg (vec3EuclideanNorm_nonneg _)]
-        exact vec3EuclideanNorm_le_sqrt_three_mul_norm _
-    · rw [hQ1]
-      apply (hconvP 1 one_pos (-1) (by norm_num)).congr'
-      filter_upwards [] with k
-      apply eLpNorm_congr_ae
-      filter_upwards [hq0] with z hz
-      have hz' : q z = 0 := hz
-      rw [hz', sub_zero]
+  have hfinish := blowupLimitClauses_finishCompactnessClauses hu hDu hp hL2 henergy hpLp
+    hL3 hgrad hS2 hS3 ε₀ x₀ t₀ r hx₀ ht₀ hbad hr hr0 W hWm Mt hsourceW Dm hDm hDmEq
+    um hum hu_um φ hφ U DU hU hDU hD1 hDslice hD3 hD4 hD5 f hfm r' hr' hr0' hconvU hUslice
+    hG q hP1 hP2 hconvP (fun m => ⟨(hstage m).choose, (hstage m).choose_spec.2.2⟩)
+  rcases hfinish with ⟨hDslice', hD3', hD4', hUsup, hSuitable, hPressureSlice,
+    hTerminal, hBad, hZero⟩
+  exact ⟨φ, hφ, U, DU, q, hU, hDU, measurable_blowupLimitAssemblyPressureLimit U hG,
+    fun R a hR ha => hconvU R hR a ha, hDslice', hD3', hD4', hUsup,
+    (fun R a hR ha => hP1 R hR a ha), (fun R a hR ha => hP2 R hR a ha),
+    (fun R a hR ha => hconvP R hR a ha), hSuitable, hPressureSlice, hTerminal, hBad, hZero⟩
+
 
 end ESS
 

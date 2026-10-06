@@ -10,6 +10,12 @@ public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupRieszTimeSlice
 public import LeanPool.CaffarelliKohnNirenberg.Leray.RieszPressureSlices
 public import LeanPool.CaffarelliKohnNirenberg.Foundation.Measure.SliceDistribution
 
+/-!
+# Blowup Riesz Slice AE
+
+Pressure reconstruction and convergence bounds for the rescaled sequence.
+-/
+
 public section
 
 open CKN

@@ -10,6 +10,12 @@ public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupCutoffTime
 public import LeanPool.CaffarelliKohnNirenberg.Foundation.Sobolev.Cutoff.Ball
 public import LeanPool.CaffarelliKohnNirenberg.Statements.SpaceTimeTestFunction
 
+/-!
+# Blowup Cutoff Product
+
+Cutoff bounds used to localize the rescaled endpoint sequence.
+-/
+
 public section
 
 open Set CKN CKN.Foundation.Parabolic

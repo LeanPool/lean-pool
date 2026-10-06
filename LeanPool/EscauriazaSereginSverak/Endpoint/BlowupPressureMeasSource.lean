@@ -8,6 +8,12 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupGradientSource
 
+/-!
+# Blowup Pressure Meas Source
+
+Pressure bounds and convergence estimates for the rescaled sequence.
+-/
+
 public section
 
 open CKN CKN.Foundation.Parabolic MeasureTheory Set

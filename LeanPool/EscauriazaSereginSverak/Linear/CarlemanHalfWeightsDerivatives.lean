@@ -11,6 +11,12 @@ public import LeanPool.CaffarelliKohnNirenberg.Leray.Support.CarlemanGaussWeight
 public import Mathlib.Analysis.Calculus.FDeriv.Pi
 public import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 
+/-!
+# Carleman Half Weights Derivatives
+
+Weight bounds used in the half-space Carleman estimate.
+-/
+
 public section
 
 
@@ -21,10 +27,13 @@ noncomputable section
 
 namespace ESS
 
+/-- The product topology used to differentiate the half-space Carleman weights. -/
 local instance halfWeightsTopologicalSpace : TopologicalSpace ParabolicPoint :=
   instTopologicalSpaceProd
+/-- The product norm on parabolic space-time used for classical differentiation. -/
 local instance halfWeightsNormedAddCommGroup : NormedAddCommGroup ParabolicPoint :=
   carlemanProductNormedAddCommGroup
+/-- The real scalar action compatible with the product norm on parabolic space-time. -/
 local instance halfWeightsNormedSpace : NormedSpace ℝ ParabolicPoint :=
   carlemanProductNormedSpace
 
@@ -214,8 +223,8 @@ theorem halfSpacePhase_spatialSecondPartial (a α : ℝ) {z : ParabolicPoint}
       rw [hval]
       dsimp [cN]
       field_simp [hpow]
-    · simp [hi] at hval
-      simp [F, hi]
+    · simp only [Fin.isValue, hi, ↓reduceIte] at hval
+      simp only [Fin.isValue, hi, ↓reduceIte, F]
       change spatialPartial (halfSpacePhase a α) i ((y, z.2) : ParabolicPoint) =
         -y i / (4 * z.2) at hval
       rw [hval]
@@ -254,16 +263,16 @@ theorem halfSpacePhase_spatialSecondPartial (a α : ℝ) {z : ParabolicPoint}
           field_simp [hpow]
     · have h := spatialPartial_coordRpow cN (2 * α - 1) 2 j (z := z) hx2
       have hne : 2 ≠ j := Ne.symm hj
-      simp [hne] at h ⊢
+      simp only [Fin.isValue, hne, ↓reduceIte] at h ⊢
       exact h
-  · simp [hi] at ⊢
+  · simp only [Fin.isValue, hi, ↓reduceIte, one_div, mul_inv_rev] at ⊢
     by_cases hij : i = j
     · subst j
       simp at ⊢
       have h := spatialPartial_coordLinear cT i i z
       simpa [cT, ht0] using h
     · have h := spatialPartial_coordLinear cT i j z
-      simp [hij] at h ⊢
+      simp only [hij, ↓reduceIte] at h ⊢
       exact h
 
 
@@ -317,8 +326,8 @@ private theorem halfSpacePhase_hessianGradient (a α : ℝ) {z : ParabolicPoint}
       rw [hval]
       dsimp [cH]
       field_simp [hpow]
-    · simp [hi] at hval
-      simp [H, hi]
+    · simp only [↓reduceIte, Fin.isValue, hi, one_div, mul_inv_rev] at hval
+      simp only [Fin.isValue, hi, ↓reduceIte, H]
       rw [hval]
       dsimp [cT]
       field_simp [ht0]
@@ -334,7 +343,7 @@ private theorem halfSpacePhase_hessianGradient (a α : ℝ) {z : ParabolicPoint}
   · subst i
     by_cases hj : j = 2
     · subst j
-      simp
+      simp only [Fin.isValue, and_self, ↓reduceIte]
       change spatialPartial (fun w : ParabolicPoint => cH * w.1 2 ^ (2 * α - 2)) 2 z =
         2 * α * (2 * α - 1) * (2 * α - 2) * a * (1 - z.2) *
           z.1 2 ^ (2 * α - 3) / z.2 ^ α
@@ -348,10 +357,10 @@ private theorem halfSpacePhase_hessianGradient (a α : ℝ) {z : ParabolicPoint}
               z.1 2 ^ (2 * α - 3) / z.2 ^ α := by
           dsimp [cH]
           field_simp [hpow]
-    · simp [H, hj] at ⊢
+    · simp only [Fin.isValue, ↓reduceIte, hj, and_false, H] at ⊢
       have h := spatialPartial_coordRpow cH (2 * α - 2) 2 j (z := z) hx2
       simpa [Ne.symm hj] using h
-  · simp [H, hi] at ⊢
+  · simp only [Fin.isValue, hi, ↓reduceIte, false_and, H] at ⊢
     exact spatialPartial_const cT j z
 
 /-- The explicit fourth spatial derivative of the diagonal Hessian entries. -/
@@ -386,13 +395,13 @@ theorem halfSpacePhase_spatialFourthDiagonal (a α : ℝ) {z : ParabolicPoint}
     by_cases hi : i = 2
     · subst i
       by_cases hj : j = 2
-      · simp [G, hj] at hval ⊢
+      · simp only [Fin.isValue, hj, and_self, ↓reduceIte, G] at hval ⊢
         rw [hval]
         dsimp [cG]
         field_simp [hpow]
-      · simp [G, hj] at hval ⊢
+      · simp only [Fin.isValue, hj, and_false, ↓reduceIte, G] at hval ⊢
         exact hval
-    · simp [G, hi] at hval ⊢
+    · simp only [Fin.isValue, hi, false_and, ↓reduceIte, G] at hval ⊢
       exact hval
   have hGdiff : DifferentiableAt ℝ (fun y : Vec3 => G (y, z.2)) z.1 := by
     by_cases hi : i = 2
@@ -412,7 +421,7 @@ theorem halfSpacePhase_spatialFourthDiagonal (a α : ℝ) {z : ParabolicPoint}
   · subst i
     by_cases hj : j = 2
     · subst j
-      simp
+      simp only [Fin.isValue, and_self, ↓reduceIte]
       change spatialPartial (fun w : ParabolicPoint => cG * w.1 2 ^ (2 * α - 3)) 2 z =
         2 * α * (2 * α - 1) * (2 * α - 2) * (2 * α - 3) * a * (1 - z.2) *
           z.1 2 ^ (2 * α - 4) / z.2 ^ α
@@ -607,8 +616,8 @@ theorem halfSpacePhase_timeSpatialPartial (a α : ℝ) {z : ParabolicPoint}
       dsimp [nC]
       rw [hpowneg]
       field_simp [ne_of_gt (Real.rpow_pos_of_pos hs.1 α)]
-    · simp [hi] at hval
-      simp [F, hi]
+    · simp only [Fin.isValue, hi, ↓reduceIte] at hval
+      simp only [Fin.isValue, hi, ↓reduceIte, F]
       change spatialPartial (halfSpacePhase a α) i ((z.1, s) : ParabolicPoint) =
         -z.1 i / (4 * s) at hval
       rw [hval]
@@ -647,7 +656,8 @@ theorem halfSpacePhase_timeSpatialPartial (a α : ℝ) {z : ParabolicPoint}
         ring
       · rw [hrpow]
         ring_nf
-    · simp [F, hi]
+    · simp only [Fin.isValue, hi, ↓reduceIte, Real.rpow_neg_ofNat,
+      Int.reduceNeg, zpow_neg, zpow_ofNat, F]
       have hTan := HasDerivAt.const_mul (-z.1 i / 4) hInv
       convert hTan using 1
       rw [Real.rpow_neg (le_of_lt htpos) (2 : ℝ)]

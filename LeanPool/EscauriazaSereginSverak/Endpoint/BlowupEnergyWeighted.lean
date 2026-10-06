@@ -9,6 +9,12 @@ module
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupEnergyDensity
 public import LeanPool.CaffarelliKohnNirenberg.Setting.Energy.AELocalEnergy
 
+/-!
+# Blowup Energy Weighted
+
+Local energy bounds for the rescaled sequence in the endpoint regularity argument.
+-/
+
 public section
 
 open CKN CKN.Foundation.Parabolic MeasureTheory Set

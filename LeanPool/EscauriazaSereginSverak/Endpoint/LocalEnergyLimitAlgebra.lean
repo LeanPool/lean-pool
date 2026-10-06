@@ -10,6 +10,12 @@ public import LeanPool.EscauriazaSereginSverak.Endpoint.LocalEnergyEquality
 public import LeanPool.CaffarelliKohnNirenberg.ClassEquivalence.Constructor
 public import LeanPool.CaffarelliKohnNirenberg.ClassEquivalence.TestSupport
 
+/-!
+# Local Energy Limit Algebra
+
+Local energy identities and limit passages for the endpoint regularity proof.
+-/
+
 public section
 
 open MeasureTheory Set Filter
@@ -250,7 +256,7 @@ theorem localEnergy_smoothBase_eq_expanded
       _ = _ := by
         simp_rw [Finset.sum_mul]
   simp [spatialDir, basisVec] at hconv hpressureConv henergyConv hstressConv
-    
+
   simp only [localEnergyLimitBaseIntegrand, localEnergyLimitExpandedBaseIntegrand,
     smoothEnergyBaseIntegrand, velocitySq, htime, hspatial, hsecond,
     localEnergyLimitTimeDir, localEnergyLimitSpatialDir, timeDir, spatialDir,

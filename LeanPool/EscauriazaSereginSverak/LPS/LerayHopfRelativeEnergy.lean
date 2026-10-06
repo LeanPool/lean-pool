@@ -51,45 +51,45 @@ theorem lps_comparison_time_weight_integrable
       with t hBu_t hBv_t hu hv
     have hu2 := hu.1
     have hv2 := hv.1
-    have hUsq : Integrable (fun x : Vec3 => ∑ k : Fin 3, u (x,t) k ^ 2) volume :=
+    have hUsq : Integrable (fun x : Vec3 => ∑ k : Fin 3, u (x, t) k ^ 2) volume :=
       integrable_finsetSum _ fun k _ =>
         ((hu2.eval k).integrable_mul (hu2.eval k)).congr
           (Eventually.of_forall fun x => by simp [pow_two])
-    have hVsq : Integrable (fun x : Vec3 => ∑ k : Fin 3, v (x,t) k ^ 2) volume :=
+    have hVsq : Integrable (fun x : Vec3 => ∑ k : Fin 3, v (x, t) k ^ 2) volume :=
       integrable_finsetSum _ fun k _ =>
         ((hv2.eval k).integrable_mul (hv2.eval k)).congr
           (Eventually.of_forall fun x => by simp [pow_two])
     have hRhsInt : Integrable (fun x : Vec3 =>
-        2 * (∑ k : Fin 3, v (x,t) k ^ 2) +
-          2 * (∑ k : Fin 3, u (x,t) k ^ 2)) volume :=
+        2 * (∑ k : Fin 3, v (x, t) k ^ 2) +
+          2 * (∑ k : Fin 3, u (x, t) k ^ 2)) volume :=
       (hVsq.const_mul 2).add (hUsq.const_mul 2)
     have hPoint (x : Vec3) :
-        (∑ k : Fin 3, (v (x,t) k - u (x,t) k) ^ 2) ≤
-          2 * (∑ k : Fin 3, v (x,t) k ^ 2) +
-            2 * (∑ k : Fin 3, u (x,t) k ^ 2) := by
+        (∑ k : Fin 3, (v (x, t) k - u (x, t) k) ^ 2) ≤
+          2 * (∑ k : Fin 3, v (x, t) k ^ 2) +
+            2 * (∑ k : Fin 3, u (x, t) k ^ 2) := by
       calc
-        _ ≤ ∑ k : Fin 3, (2 * v (x,t) k ^ 2 + 2 * u (x,t) k ^ 2) :=
+        _ ≤ ∑ k : Fin 3, (2 * v (x, t) k ^ 2 + 2 * u (x, t) k ^ 2) :=
           Finset.sum_le_sum fun k _ => by
-            nlinarith only [sq_nonneg (v (x,t) k + u (x,t) k)]
-        _ = (∑ k : Fin 3, 2 * v (x,t) k ^ 2) +
-              ∑ k : Fin 3, 2 * u (x,t) k ^ 2 := Finset.sum_add_distrib
+            nlinarith only [sq_nonneg (v (x, t) k + u (x, t) k)]
+        _ = (∑ k : Fin 3, 2 * v (x, t) k ^ 2) +
+              ∑ k : Fin 3, 2 * u (x, t) k ^ 2 := Finset.sum_add_distrib
         _ = _ := by rw [Finset.mul_sum, Finset.mul_sum]
     have hIntegral := integral_mono_of_nonneg
       (Eventually.of_forall fun x => Finset.sum_nonneg fun k _ => sq_nonneg _)
       hRhsInt (Eventually.of_forall hPoint)
     have hExpand :
-        (∫ x : Vec3, 2 * (∑ k : Fin 3, v (x,t) k ^ 2) +
-          2 * (∑ k : Fin 3, u (x,t) k ^ 2)) =
-          2 * (∫ x : Vec3, ∑ k : Fin 3, v (x,t) k ^ 2) +
-            2 * (∫ x : Vec3, ∑ k : Fin 3, u (x,t) k ^ 2) := by
+        (∫ x : Vec3, 2 * (∑ k : Fin 3, v (x, t) k ^ 2) +
+          2 * (∑ k : Fin 3, u (x, t) k ^ 2)) =
+          2 * (∫ x : Vec3, ∑ k : Fin 3, v (x, t) k ^ 2) +
+            2 * (∫ x : Vec3, ∑ k : Fin 3, u (x, t) k ^ 2) := by
       rw [integral_add (hVsq.const_mul 2) (hUsq.const_mul 2),
         integral_const_mul, integral_const_mul]
     change (∫ x : Vec3, ∑ k : Fin 3,
-      (v (x,t) k - u (x,t) k) ^ 2) ≤ 2 * Bu + 2 * Bv
+      (v (x, t) k - u (x, t) k) ^ 2) ≤ 2 * Bu + 2 * Bv
     rw [hExpand] at hIntegral
     calc
-      _ ≤ 2 * (∫ x : Vec3, ∑ k : Fin 3, v (x,t) k ^ 2) +
-          2 * (∫ x : Vec3, ∑ k : Fin 3, u (x,t) k ^ 2) := hIntegral
+      _ ≤ 2 * (∫ x : Vec3, ∑ k : Fin 3, v (x, t) k ^ 2) +
+          2 * (∫ x : Vec3, ∑ k : Fin 3, u (x, t) k ^ 2) := hIntegral
       _ ≤ 2 * Bv + 2 * Bu := by gcongr
       _ = 2 * Bu + 2 * Bv := by ring
   have hDistanceMeas := serrin_distance_aestronglyMeasurable hU hV
@@ -117,21 +117,21 @@ theorem lps_leray_hopf_relative_energy_zero_of_comparison_data
     (hV : IsSerrinWeakSolution T a v Dv pv)
     (hK : 0 ≤ K)
     (hEnergyEquality : ∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
-      (∫ x : Vec3, ∑ k : Fin 3, u (x,t) k * u (x,t) k) -
+      (∫ x : Vec3, ∑ k : Fin 3, u (x, t) k * u (x, t) k) -
           (∫ x : Vec3, ∑ k : Fin 3, a x k * a x k) =
         -2 * ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 t),
           ∑ k : Fin 3, ∑ j : Fin 3, Du z k j * Du z k j)
     (hRelativeCross : ∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
-      (∫ x : Vec3, ∑ k : Fin 3, v (x,t) k * u (x,t) k) -
+      (∫ x : Vec3, ∑ k : Fin 3, v (x, t) k * u (x, t) k) -
           (∫ x : Vec3, ∑ k : Fin 3, a x k * a x k) =
         -(∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 t),
             lpsRelativeConvection u v Du Dv z) -
           2 * ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 t),
             ∑ k : Fin 3, ∑ j : Fin 3, Du z k j * Dv z k j)
     (hSliceBound : ∀ᵐ τ ∂(volume.restrict (Ioo 0 T)),
-      (∫ x : Vec3, lpsRelativeConvection u v Du Dv (x,τ)) ≤
+      (∫ x : Vec3, lpsRelativeConvection u v Du Dv (x, τ)) ≤
         (1 / 2 : ℝ) *
-          (∫ x : Vec3, lpsRelativeGradientSq Du Dv (x,τ)) +
+          (∫ x : Vec3, lpsRelativeGradientSq Du Dv (x, τ)) +
           K * (m τ * lpsComparisonDistanceSq u v τ))
     (hC : Integrable (lpsRelativeConvection u v Du Dv)
       (volume.restrict (spaceTimeSet Set.univ (Ioo 0 T))))
@@ -142,7 +142,7 @@ theorem lps_leray_hopf_relative_energy_zero_of_comparison_data
       lpsComparisonDistanceSq u v t = 0 := by
   have hGradient := lps_relative_gradient_sq_integrable hU hV
   have hEnergyInequality : ∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
-      (∫ x : Vec3, ∑ k : Fin 3, v (x,t) k * v (x,t) k) ≤
+      (∫ x : Vec3, ∑ k : Fin 3, v (x, t) k * v (x, t) k) ≤
         (∫ x : Vec3, ∑ k : Fin 3, a x k * a x k) -
           2 * ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 t),
             ∑ k : Fin 3, ∑ j : Fin 3, Dv z k j * Dv z k j := by
@@ -165,26 +165,26 @@ theorem lps_leray_hopf_relative_energy_inequality_of_comparison_data
     (hU : IsSerrinWeakSolution T a u Du pu)
     (hV : IsSerrinWeakSolution T a v Dv pv)
     (hEnergyEquality : ∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
-      (∫ x : Vec3, ∑ k : Fin 3, u (x,t) k * u (x,t) k) -
+      (∫ x : Vec3, ∑ k : Fin 3, u (x, t) k * u (x, t) k) -
           (∫ x : Vec3, ∑ k : Fin 3, a x k * a x k) =
         -2 * ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 t),
           ∑ k : Fin 3, ∑ j : Fin 3, Du z k j * Du z k j)
     (hEnergyInequality : ∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
-      (∫ x : Vec3, ∑ k : Fin 3, v (x,t) k * v (x,t) k) ≤
+      (∫ x : Vec3, ∑ k : Fin 3, v (x, t) k * v (x, t) k) ≤
         (∫ x : Vec3, ∑ k : Fin 3, a x k * a x k) -
           2 * ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 t),
             ∑ k : Fin 3, ∑ j : Fin 3, Dv z k j * Dv z k j)
     (hRelativeCross : ∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
-      (∫ x : Vec3, ∑ k : Fin 3, v (x,t) k * u (x,t) k) -
+      (∫ x : Vec3, ∑ k : Fin 3, v (x, t) k * u (x, t) k) -
           (∫ x : Vec3, ∑ k : Fin 3, a x k * a x k) =
         -(∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 t),
             lpsRelativeConvection u v Du Dv z) -
           2 * ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 t),
             ∑ k : Fin 3, ∑ j : Fin 3, Du z k j * Dv z k j)
     (hSliceBound : ∀ᵐ τ ∂(volume.restrict (Ioo 0 T)),
-      (∫ x : Vec3, lpsRelativeConvection u v Du Dv (x,τ)) ≤
+      (∫ x : Vec3, lpsRelativeConvection u v Du Dv (x, τ)) ≤
         (1 / 2 : ℝ) *
-          (∫ x : Vec3, lpsRelativeGradientSq Du Dv (x,τ)) +
+          (∫ x : Vec3, lpsRelativeGradientSq Du Dv (x, τ)) +
           K * (m τ * lpsComparisonDistanceSq u v τ))
     (hC : Integrable (lpsRelativeConvection u v Du Dv)
       (volume.restrict (spaceTimeSet Set.univ (Ioo 0 T))))

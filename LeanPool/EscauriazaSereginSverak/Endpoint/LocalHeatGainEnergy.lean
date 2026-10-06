@@ -365,90 +365,32 @@ theorem sum_sobolevWords_succ_le (m : ℕ) (φ : List (Fin 3) → ℝ) (hφ : �
     _ = φ [] + ∑ β ∈ sobolevWords m, ∑ j : Fin 3, φ (β ++ [j]) := by
       rw [Finset.sum_image hinj, Finset.sum_product]
 
-/-- `lem:local-heat-gain`, step `#fourier-energy-estimate`, with the constant
-depending on `m` and on an upper bound `L` for `b - a`. -/
-theorem localHeatGain_fourierEnergy (m : ℕ) (hm : m = 1 ∨ m = 2) {L : ℝ} (hL : 0 < L) :
-    ∃ C : ℝ, 0 ≤ C ∧ ∀ (a b : ℝ) (w : Vec3 × ℝ → ℝ), a < b → b - a ≤ L →
-      ContDiff ℝ (⊤ : ℕ∞) w →
-      (∃ K : Set Vec3, IsCompact K ∧ ∀ x, x ∉ K → ∀ t, w (x, t) = 0) →
-      (∀ x, w (x, a) = 0) →
-      ∀ t ∈ Icc a b,
-        sobolevNormSqOn m univ (fun α => wordDeriv α (fun y => w (y, t))) +
-            ∫ s in a..b, sobolevNormSqOn (m + 1) univ
-              (fun α => wordDeriv α (fun y => w (y, s))) ≤
-          C * ∫ s in a..b, sobolevNormSqOn (m - 1) univ
-            (fun α => wordDeriv α (fun y => timePartial w (y, s) -
-              ∑ j : Fin 3, spatialSecondPartial w j j (y, s))) := by
-  have hm1 : 1 ≤ m := by rcases hm with h | h <;> omega
-  let N : ℝ := (sobolevWords m).card
-  let E : ℝ := Real.exp L
-  have hN : 0 ≤ N := Nat.cast_nonneg _
-  have hE : 0 ≤ E := (Real.exp_pos L).le
-  refine ⟨2 * (N * E + L * E + N * (1 + L * E)), by positivity, ?_⟩
-  intro a b w hab hbL hw ⟨K, hK, hwK⟩ hw0 t ht
-  have hab' : a ≤ b := hab.le
-  -- the source
-  let H : Vec3 × ℝ → ℝ := fun q => timePartial w q - ∑ k : Fin 3, spatialSecondPartial w k k q
-  have hA : ContDiff ℝ (⊤ : ℕ∞) (fun q : Vec3 × ℝ => timePartial w q) :=
-    vorticityHeatSmooth_timePartial_contDiff hw
-  have hB (k : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
-      (fun q : Vec3 × ℝ => spatialSecondPartial w k k q) :=
-    vorticityHeatSmooth_spatialPartial_contDiff
-      (vorticityHeatSmooth_spatialPartial_contDiff hw k) k
-  have hH : ContDiff ℝ (⊤ : ℕ∞) H := hA.sub (ContDiff.sum (s := Finset.univ) fun k _ => hB k)
-  have hHK : ∀ x, x ∉ K → ∀ s, H (x, s) = 0 := by
-    intro x hx s
-    have h1 := timePartial_eq_zero_of_compl hwK x hx s
-    have h2 (k : Fin 3) : spatialSecondPartial w k k (x, s) = 0 :=
-      spatialPartial_eq_zero_of_compl hK (spatialPartial_eq_zero_of_compl hK hwK k) k x hx s
-    simp only [H, h1, h2, Finset.sum_const_zero, sub_zero]
-  -- the equation for each word derivative
-  have hwordEq (β : List (Fin 3)) (p : Vec3 × ℝ) :
+private theorem localHeatGain_word_energy_bound
+    {m : ℕ} {a b : ℝ} {K : Set Vec3} {w : Vec3 × ℝ → ℝ}
+    {H : Vec3 × ℝ → ℝ} (hab : a < b)
+    (hK : IsCompact K)
+    (hw : ContDiff ℝ (⊤ : ℕ∞) w)
+    (hwK : ∀ x, x ∉ K → ∀ t, w (x, t) = 0)
+    (hw0 : ∀ x, w (x, a) = 0)
+    (hH : ContDiff ℝ (⊤ : ℕ∞) H)
+    (hHK : ∀ x, x ∉ K → ∀ s, H (x, s) = 0)
+    (Nsq : ℝ → ℝ) (hNsqNonneg : ∀ s, 0 ≤ Nsq s)
+    (hNsqCont : Continuous Nsq)
+    (hwordEq : ∀ (β : List (Fin 3)) (p : Vec3 × ℝ),
       timePartial (spaceTimeWord β w) p -
-          ∑ k : Fin 3, spatialSecondPartial (spaceTimeWord β w) k k p =
-        spaceTimeWord β H p := by
-    have h1 : timePartial (spaceTimeWord β w) p =
-        spaceTimeWord β (fun q => timePartial w q) p :=
-      congrFun (timePartial_spaceTimeWord β hw) p
-    have h2 (k : Fin 3) : spatialSecondPartial (spaceTimeWord β w) k k p =
-        spaceTimeWord β (fun q => spatialSecondPartial w k k q) p :=
-      congrFun (spatialSecondPartial_spaceTimeWord β k hw) p
-    have h3 : spaceTimeWord β (fun q => timePartial w q -
-          ∑ k : Fin 3, spatialSecondPartial w k k q) p =
-        spaceTimeWord β (fun q => timePartial w q) p -
-          ∑ k : Fin 3, spaceTimeWord β (fun q => spatialSecondPartial w k k q) p :=
-      congrFun (spaceTimeWord_sub_sum β hA hB) p
-    rw [h1, Finset.sum_congr rfl fun k _ => h2 k]
-    exact h3.symm
-  -- the norm of the source
-  let Nsq : ℝ → ℝ := fun s => ∑ α ∈ sobolevWords (m - 1), ∫ x : Vec3, spaceTimeWord α H (x, s) ^ 2
-  have hNsq_nonneg (s : ℝ) : 0 ≤ Nsq s :=
-    Finset.sum_nonneg fun α _ => integral_nonneg fun x => sq_nonneg _
-  have hcontWord (β : List (Fin 3)) {V : Vec3 × ℝ → ℝ} (hV : ContDiff ℝ (⊤ : ℕ∞) V)
-      (hVK : ∀ x, x ∉ K → ∀ s, V (x, s) = 0) :
+        ∑ k : Fin 3, spatialSecondPartial (spaceTimeWord β w) k k p =
+          spaceTimeWord β H p)
+    (β : List (Fin 3)) (hβ : β ∈ sobolevWords m) :
+    (∀ t ∈ Icc a b, ∫ x : Vec3, spaceTimeWord β w (x, t) ^ 2 ≤
+      Real.exp (b - a) * (2 * ∫ s in a..b, Nsq s)) ∧
+    (∫ t in a..b, ∫ x : Vec3,
+      ∑ j : Fin 3, spatialPartial (spaceTimeWord β w) j (x, t) ^ 2) ≤
+      (1 + (b - a) * Real.exp (b - a)) * (2 * ∫ s in a..b, Nsq s) := by
+  have hcontWord (β : List (Fin 3)) {V : Vec3 × ℝ → ℝ}
+      (hV : ContDiff ℝ (⊤ : ℕ∞) V) (hVK : ∀ x, x ∉ K → ∀ s, V (x, s) = 0) :
       Continuous fun s => ∫ x : Vec3, spaceTimeWord β V (x, s) ^ 2 :=
     continuous_integral_sq_of_compl (contDiff_spaceTimeWord β hV).continuous hK
       (spaceTimeWord_eq_zero_of_compl hK β hVK)
-  have hNsq_cont : Continuous Nsq :=
-    continuous_finsetSum _ fun α _ => hcontWord α hH hHK
-  have hNsq_eq (s : ℝ) : sobolevNormSqOn (m - 1) univ
-      (fun α => wordDeriv α (fun y => timePartial w (y, s) -
-        ∑ j : Fin 3, spatialSecondPartial w j j (y, s))) = Nsq s := by
-    unfold sobolevNormSqOn
-    refine Finset.sum_congr rfl fun α _ => ?_
-    rw [Measure.restrict_univ]
-    congr 1
-    funext x
-    show (wordDeriv α (fun y => H (y, s)) x) ^ 2 = _
-    rw [← spaceTimeWord_slice α H s]
-  have hJ : 0 ≤ ∫ s in a..b, Nsq s :=
-    intervalIntegral.integral_nonneg hab' fun s _ => hNsq_nonneg s
-  -- energy bounds for each word derivative
-  have hword (β : List (Fin 3)) (hβ : β ∈ sobolevWords m) :
-      (∀ t ∈ Icc a b, ∫ x : Vec3, spaceTimeWord β w (x, t) ^ 2 ≤
-        Real.exp (b - a) * (2 * ∫ s in a..b, Nsq s)) ∧
-      (∫ t in a..b, ∫ x : Vec3, ∑ j : Fin 3, spatialPartial (spaceTimeWord β w) j (x, t) ^ 2) ≤
-        (1 + (b - a) * Real.exp (b - a)) * (2 * ∫ s in a..b, Nsq s) := by
     rw [mem_sobolevWords] at hβ
     have hzβ := contDiff_spaceTimeWord β hw
     have hzβK := spaceTimeWord_eq_zero_of_compl hK β hwK
@@ -549,6 +491,89 @@ theorem localHeatGain_fourierEnergy (m : ℕ) (hm : m = 1 ∨ m = 2) {L : ℝ} (
     have hba : 0 ≤ b - a := by linarith only [hab]
     refine ⟨fun t ht => (he t ht).trans (mul_le_mul_of_nonneg_left hfle hexp), ?_⟩
     exact hd.trans (mul_le_mul_of_nonneg_left hfle (by positivity))
+
+/-- `lem:local-heat-gain`, step `#fourier-energy-estimate`, with the constant
+depending on `m` and on an upper bound `L` for `b - a`. -/
+theorem localHeatGain_fourierEnergy (m : ℕ) (hm : m = 1 ∨ m = 2) {L : ℝ} (hL : 0 < L) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (a b : ℝ) (w : Vec3 × ℝ → ℝ), a < b → b - a ≤ L →
+      ContDiff ℝ (⊤ : ℕ∞) w →
+      (∃ K : Set Vec3, IsCompact K ∧ ∀ x, x ∉ K → ∀ t, w (x, t) = 0) →
+      (∀ x, w (x, a) = 0) →
+      ∀ t ∈ Icc a b,
+        sobolevNormSqOn m univ (fun α => wordDeriv α (fun y => w (y, t))) +
+            ∫ s in a..b, sobolevNormSqOn (m + 1) univ
+              (fun α => wordDeriv α (fun y => w (y, s))) ≤
+          C * ∫ s in a..b, sobolevNormSqOn (m - 1) univ
+            (fun α => wordDeriv α (fun y => timePartial w (y, s) -
+              ∑ j : Fin 3, spatialSecondPartial w j j (y, s))) := by
+  have hm1 : 1 ≤ m := by rcases hm with h | h <;> omega
+  let N : ℝ := (sobolevWords m).card
+  let E : ℝ := Real.exp L
+  have hN : 0 ≤ N := Nat.cast_nonneg _
+  have hE : 0 ≤ E := (Real.exp_pos L).le
+  refine ⟨2 * (N * E + L * E + N * (1 + L * E)), by positivity, ?_⟩
+  intro a b w hab hbL hw ⟨K, hK, hwK⟩ hw0 t ht
+  have hab' : a ≤ b := hab.le
+  -- the source
+  let H : Vec3 × ℝ → ℝ := fun q => timePartial w q - ∑ k : Fin 3, spatialSecondPartial w k k q
+  have hA : ContDiff ℝ (⊤ : ℕ∞) (fun q : Vec3 × ℝ => timePartial w q) :=
+    vorticityHeatSmooth_timePartial_contDiff hw
+  have hB (k : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
+      (fun q : Vec3 × ℝ => spatialSecondPartial w k k q) :=
+    vorticityHeatSmooth_spatialPartial_contDiff
+      (vorticityHeatSmooth_spatialPartial_contDiff hw k) k
+  have hH : ContDiff ℝ (⊤ : ℕ∞) H := hA.sub (ContDiff.sum (s := Finset.univ) fun k _ => hB k)
+  have hHK : ∀ x, x ∉ K → ∀ s, H (x, s) = 0 := by
+    intro x hx s
+    have h1 := timePartial_eq_zero_of_compl hwK x hx s
+    have h2 (k : Fin 3) : spatialSecondPartial w k k (x, s) = 0 :=
+      spatialPartial_eq_zero_of_compl hK (spatialPartial_eq_zero_of_compl hK hwK k) k x hx s
+    simp only [H, h1, h2, Finset.sum_const_zero, sub_zero]
+  -- the equation for each word derivative
+  have hwordEq (β : List (Fin 3)) (p : Vec3 × ℝ) :
+      timePartial (spaceTimeWord β w) p -
+          ∑ k : Fin 3, spatialSecondPartial (spaceTimeWord β w) k k p =
+        spaceTimeWord β H p := by
+    have h1 : timePartial (spaceTimeWord β w) p =
+        spaceTimeWord β (fun q => timePartial w q) p :=
+      congrFun (timePartial_spaceTimeWord β hw) p
+    have h2 (k : Fin 3) : spatialSecondPartial (spaceTimeWord β w) k k p =
+        spaceTimeWord β (fun q => spatialSecondPartial w k k q) p :=
+      congrFun (spatialSecondPartial_spaceTimeWord β k hw) p
+    have h3 : spaceTimeWord β (fun q => timePartial w q -
+          ∑ k : Fin 3, spatialSecondPartial w k k q) p =
+        spaceTimeWord β (fun q => timePartial w q) p -
+          ∑ k : Fin 3, spaceTimeWord β (fun q => spatialSecondPartial w k k q) p :=
+      congrFun (spaceTimeWord_sub_sum β hA hB) p
+    rw [h1, Finset.sum_congr rfl fun k _ => h2 k]
+    exact h3.symm
+  -- the norm of the source
+  let Nsq : ℝ → ℝ := fun s => ∑ α ∈ sobolevWords (m - 1), ∫ x : Vec3, spaceTimeWord α H (x, s) ^ 2
+  have hNsq_nonneg (s : ℝ) : 0 ≤ Nsq s :=
+    Finset.sum_nonneg fun α _ => integral_nonneg fun x => sq_nonneg _
+  have hcontWord (β : List (Fin 3)) {V : Vec3 × ℝ → ℝ} (hV : ContDiff ℝ (⊤ : ℕ∞) V)
+      (hVK : ∀ x, x ∉ K → ∀ s, V (x, s) = 0) :
+      Continuous fun s => ∫ x : Vec3, spaceTimeWord β V (x, s) ^ 2 :=
+    continuous_integral_sq_of_compl (contDiff_spaceTimeWord β hV).continuous hK
+      (spaceTimeWord_eq_zero_of_compl hK β hVK)
+  have hNsq_cont : Continuous Nsq :=
+    continuous_finsetSum _ fun α _ => hcontWord α hH hHK
+  have hNsq_eq (s : ℝ) : sobolevNormSqOn (m - 1) univ
+      (fun α => wordDeriv α (fun y => timePartial w (y, s) -
+        ∑ j : Fin 3, spatialSecondPartial w j j (y, s))) = Nsq s := by
+    unfold sobolevNormSqOn
+    refine Finset.sum_congr rfl fun α _ => ?_
+    rw [Measure.restrict_univ]
+    congr 1
+    funext x
+    show (wordDeriv α (fun y => H (y, s)) x) ^ 2 = _
+    rw [← spaceTimeWord_slice α H s]
+  have hJ : 0 ≤ ∫ s in a..b, Nsq s :=
+    intervalIntegral.integral_nonneg hab' fun s _ => hNsq_nonneg s
+  -- energy bounds for each word derivative
+  have hword (β : List (Fin 3)) (hβ : β ∈ sobolevWords m) :=
+    localHeatGain_word_energy_bound hab' hK hw hwK hw0 hH hHK Nsq
+      hNsq_nonneg hNsq_cont hwordEq β hβ
   -- assembly
   set J := ∫ s in a..b, Nsq s with hJdef
   have hexpE : Real.exp (b - a) ≤ E := Real.exp_le_exp.2 hbL

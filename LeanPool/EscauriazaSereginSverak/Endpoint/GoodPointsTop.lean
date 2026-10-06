@@ -89,9 +89,11 @@ private theorem goodPoint_shifted_small
       rw [ENNReal.ofReal_lt_ofReal_iff hε₀]
       linarith only [hε₀]
 
+/-- Centers for the top-time patches, with spatial and positive-time offsets bounded by `r`. -/
 @[expose] def goodPointTopCenter (x₀ : Vec3) (r : ℝ) : Set ParabolicPoint :=
   {c | c.1 ∈ vec3Ball x₀ (r / 2) ∧ c.2 ∈ Ioo 0 (r ^ 2 / 4)}
 
+/-- The backward parabolic cylinder used as the patch based at `c`. -/
 @[expose] def goodPointTopPatch (t₀ r : ℝ) (c : ParabolicPoint) :
     Set ParabolicPoint :=
   goodPointPastCylinder c.1 (t₀ - c.2) (r / 4)
@@ -261,9 +263,11 @@ private theorem goodPointTop_pair_patch
     exact ⟨c, hc, hzc, hz'c⟩
   · exact goodPointTop_pair_patch_ordered hr hz hz' hz'z hd
 
+/-- The local Hölder seminorm bound at scale `r/2` with constant `C₄`. -/
 @[expose] def goodPointTopLocalHolderBound (C₄ r γ : ℝ) : ℝ :=
   C₄ * ((r / 2)⁻¹ * ((r / 2)⁻¹) ^ γ)
 
+/-- A uniform Hölder bound obtained by enlarging the local bound to scale `r`. -/
 @[expose] def goodPointTopHolderBound (C₄ r γ : ℝ) : ℝ :=
   4 * C₄ * r⁻¹ * (8 * r⁻¹) ^ γ
 
@@ -287,6 +291,164 @@ private theorem goodPointTop_localHolderBound_le
     _ ≤ 4 * C₄ * r⁻¹ * (8 * r⁻¹) ^ γ := by
       have hcoef : 0 ≤ C₄ * r⁻¹ * (8 * r⁻¹) ^ γ := by positivity
       nlinarith only [hcoef]
+
+private theorem goodPointPastCylinder_subset_topPatches
+    {x₀ : Vec3} {t₀ r : ℝ} (hr : 0 < r) :
+    goodPointPastCylinder x₀ t₀ (r / 2) ⊆
+      ⋃ c ∈ goodPointTopCenter x₀ r, goodPointTopPatch t₀ r c := by
+  intro z hz
+  rcases hz with ⟨hzx, hzt⟩
+  rcases hzt with ⟨hzlo, hztop⟩
+  let a := t₀ - z.2
+  let m := min (a / 2) (r ^ 2 / 64)
+  let s := a - m
+  have ha : 0 < a ∧ a < r ^ 2 / 4 := by
+    dsimp [a]
+    constructor <;> nlinarith only [hzlo, hztop, hr]
+  have hmpos : 0 < m := by dsimp [m]; positivity
+  have hmA : m ≤ a / 2 := min_le_left _ _
+  have hmR : m ≤ r ^ 2 / 64 := min_le_right _ _
+  have hspos : 0 < s := by dsimp [s]; nlinarith only [ha.1, hmA]
+  have hslt : s < r ^ 2 / 4 := by dsimp [s]; nlinarith only [ha.2, hmpos]
+  let c : ParabolicPoint := (z.1, s)
+  have hc : c ∈ goodPointTopCenter x₀ r := by
+    change z.1 ∈ vec3Ball x₀ (r / 2) ∧ s ∈ Ioo 0 (r ^ 2 / 4)
+    exact ⟨hzx, ⟨hspos, hslt⟩⟩
+  have hpatch : z ∈ goodPointTopPatch t₀ r c := by
+    change z.1 ∈ vec3Ball z.1 (r / 4) ∧
+      z.2 ∈ Ioo (t₀ - s - (r / 4) ^ 2) (t₀ - s)
+    refine ⟨?_, ⟨?_, ?_⟩⟩
+    · simp [vec3Ball, vec3EuclideanNorm_zero, hr]
+    · dsimp [a, s]
+      have hmR' : m < (r / 4) ^ 2 := by
+        calc
+          m ≤ r ^ 2 / 64 := hmR
+          _ < (r / 4) ^ 2 := by nlinarith only [hr]
+      nlinarith only [hmR']
+    · dsimp [a, s]
+      nlinarith only [hmpos]
+  exact Set.mem_iUnion₂.mpr ⟨c, hc, hpatch⟩
+
+private theorem goodPoint_holder_bound_of_dense
+    {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
+    {S : Set X} {F : X → Y} {K γ : ℝ}
+    (hF : Continuous F) (hγ : 0 ≤ γ) (hdense : Dense S)
+    (hbound : ∀ z ∈ S, ∀ z' ∈ S,
+      dist (F z) (F z') ≤ K * dist z z' ^ γ) :
+    ∀ z z', dist (F z) (F z') ≤ K * dist z z' ^ γ := by
+  let A : Set (X × X) := {q | dist (F q.1) (F q.2) ≤ K * dist q.1 q.2 ^ γ}
+  have hleft : Continuous (fun q : X × X => dist (F q.1) (F q.2)) :=
+    (hF.comp continuous_fst).dist (hF.comp continuous_snd)
+  have hd : Continuous (fun q : X × X => dist q.1 q.2) :=
+    continuous_fst.dist continuous_snd
+  have hright : Continuous (fun q : X × X => K * dist q.1 q.2 ^ γ) :=
+    continuous_const.mul ((Real.continuous_rpow_const hγ).comp hd)
+  have hclosed : IsClosed A := isClosed_le hleft hright
+  have hsub : S ×ˢ S ⊆ A := by
+    intro q hq
+    exact hbound q.1 hq.1 q.2 hq.2
+  have hclosure : closure (S ×ˢ S) ⊆ A := closure_minimal hsub hclosed
+  intro z z'
+  change (z, z') ∈ A
+  apply hclosure
+  rw [(hdense.prod hdense).closure_eq]
+  trivial
+
+private theorem goodPoint_holder_extend_closure
+    {V : Set ParabolicPoint} {g : ParabolicPoint → Vec3}
+    {B K γ : ℝ} (hVopen : IsOpen V) (hγ : 0 < γ) (hK : 0 ≤ K)
+    (hbound : ∀ z ∈ V, vec3EuclideanNorm (g z) ≤ B)
+    (hholder : ∀ z ∈ V, ∀ z' ∈ V,
+      vec3EuclideanNorm (g z - g z') ≤ K * parabolicDist z z' ^ γ) :
+    ∃ w : ParabolicPoint → Vec3,
+      w =ᵐ[volume.restrict V] g ∧
+      (∀ z ∈ closure V, vec3EuclideanNorm (w z) ≤ B) ∧
+      (∀ z ∈ closure V, ∀ z' ∈ closure V,
+        vec3EuclideanNorm (w z - w z') ≤ K * parabolicDist z z' ^ γ) := by
+  classical
+  let closureV : Set ParabolicPoint := closure V
+  let inc : V → closureV := inclusion subset_closure
+  have hincUE : IsUniformEmbedding inc := isUniformEmbedding_set_inclusion subset_closure
+  have hincDense : DenseRange inc :=
+    (denseRange_inclusion_iff subset_closure).2 subset_rfl
+  have hincDI := hincUE.isUniformInducing.isDenseInducing hincDense
+  let f : V → WithLp 2 Vec3 := fun z => WithLp.toLp 2 (g z)
+  let Knn : ℝ≥0 := ⟨K, hK⟩
+  have hfHolder : HolderOnWith ⟨K, hK⟩ ⟨γ, hγ.le⟩ f univ := by
+    intro z _ z' _
+    have h := hholder z.1 z.2 z'.1 z'.2
+    rw [vec3EuclideanNorm_eq_l2, WithLp.toLp_sub, ← dist_eq_norm,
+      ← dist_eq_parabolicDist] at h
+    have he := ENNReal.ofReal_le_ofReal h
+    change edist (f z) (f z') ≤
+      (Knn : ℝ≥0∞) * edist z z' ^ γ
+    have hc : (Knn : ℝ≥0∞) = ENNReal.ofReal K :=
+      ENNReal.ofReal_coe_nnreal.symm
+    rw [hc, edist_dist, edist_dist,
+      ENNReal.ofReal_rpow_of_nonneg dist_nonneg hγ.le,
+      ← ENNReal.ofReal_mul hK]
+    exact he
+  have hfUniformOn : UniformContinuousOn f univ := hfHolder.uniformContinuousOn hγ
+  have hfUniform : UniformContinuous f := by
+    simpa only [uniformContinuousOn_univ] using hfUniformOn
+  let F : closureV → WithLp 2 Vec3 := hincDI.extend f
+  have hFUniform : UniformContinuous F := by
+    dsimp [F]
+    exact uniformContinuous_uniformly_extend hincUE.isUniformInducing hincDense hfUniform
+  have hF_eq : ∀ z : V, F (inc z) = f z := by
+    intro z
+    exact hincDI.extend_eq hfUniform.continuous z
+  have hFbound : ∀ z : closureV, ‖F z‖ ≤ B := by
+    intro z
+    let Sbound : Set closureV := {x | ‖F x‖ ≤ B}
+    have hSclosed : IsClosed Sbound :=
+      isClosed_le (continuous_norm.comp hFUniform.continuous) continuous_const
+    have hrange : Set.range inc ⊆ Sbound := by
+      rintro x ⟨y, hxy⟩
+      change inc y = x at hxy
+      subst x
+      change ‖F (inc y)‖ ≤ B
+      rw [hF_eq y]
+      simpa only [vec3EuclideanNorm_eq_l2] using hbound y.1 y.2
+    have hclosure : closure (Set.range inc) ⊆ Sbound := closure_minimal hrange hSclosed
+    have hz : z ∈ closure (Set.range inc) := by
+      rw [hincDense.closure_range]
+      trivial
+    exact hclosure hz
+  have hFholder : ∀ z z' : closureV,
+      dist (F z) (F z') ≤ K * dist z z' ^ γ := by
+    apply goodPoint_holder_bound_of_dense hFUniform.continuous hγ.le hincDense
+    rintro q ⟨z, rfl⟩ q' ⟨z', rfl⟩
+    have h := hholder z.1 z.2 z'.1 z'.2
+    rw [vec3EuclideanNorm_eq_l2, WithLp.toLp_sub, ← dist_eq_norm,
+      ← dist_eq_parabolicDist] at h
+    rw [hF_eq z, hF_eq z']
+    simpa only [f, Subtype.dist_eq] using h
+  let w : ParabolicPoint → Vec3 := fun z =>
+    if hz : z ∈ closureV then WithLp.ofLp (F ⟨z, hz⟩) else 0
+  have hwbound : ∀ z ∈ closureV, vec3EuclideanNorm (w z) ≤ B := by
+    intro z hz
+    rw [vec3EuclideanNorm_eq_l2]
+    simp only [w, dite_eq_left hz, WithLp.toLp_ofLp]
+    exact hFbound ⟨z, hz⟩
+  have hwholder : ∀ z ∈ closureV, ∀ z' ∈ closureV,
+      vec3EuclideanNorm (w z - w z') ≤ K * parabolicDist z z' ^ γ := by
+    intro z hz z' hz'
+    have h := hFholder ⟨z, hz⟩ ⟨z', hz'⟩
+    have hnorm : vec3EuclideanNorm (w z - w z') =
+        dist (F ⟨z, hz⟩) (F ⟨z', hz'⟩) := by
+      rw [vec3EuclideanNorm_eq_l2, WithLp.toLp_sub]
+      simp only [w, dite_eq_left hz, dite_eq_left hz', WithLp.toLp_ofLp]
+      rw [dist_eq_norm]
+    rw [hnorm]
+    simpa only [Subtype.dist_eq, dist_eq_parabolicDist] using h
+  have hwg : w =ᵐ[volume.restrict V] g := by
+    filter_upwards [ae_restrict_mem hVopen.measurableSet] with z hz
+    have hzC : z ∈ closureV := subset_closure hz
+    simp only [w, dite_eq_left hzC]
+    have heq := hF_eq ⟨z, hz⟩
+    simpa [f, inc] using congrArg WithLp.ofLp heq
+  exact ⟨w, hwg, hwbound, hwholder⟩
 
 /-- Theorem A yields a Hölder representative up to the top face, as in
 `lem:thmA-top`. -/
@@ -389,38 +551,9 @@ theorem epsilonRegularityL3_top :
     exact isOpen_spaceTimeSet _ _ (isOpen_vec3Ball _ _) isOpen_Ioo
   have hcover : V ⊆ ⋃ c : Center, patch c := by
     intro z hz
-    rcases hz with ⟨hzx, hzt⟩
-    rcases hzt with ⟨hzlo, hztop⟩
-    let a := t₀ - z.2
-    let m := min (a / 2) (r ^ 2 / 64)
-    let s := a - m
-    have ha : 0 < a ∧ a < r ^ 2 / 4 := by
-      dsimp [a]
-      constructor <;> nlinarith only [hzlo, hztop, hr]
-    have hmpos : 0 < m := by dsimp [m]; positivity
-    have hmA : m ≤ a / 2 := min_le_left _ _
-    have hmR : m ≤ r ^ 2 / 64 := min_le_right _ _
-    have hspos : 0 < s := by dsimp [s]; nlinarith only [ha.1, hmA]
-    have hslt : s < r ^ 2 / 4 := by dsimp [s]; nlinarith only [ha.2, hmpos]
-    have hc : (z.1, s) ∈ goodPointTopCenter x₀ r := by
-      change z.1 ∈ vec3Ball x₀ (r / 2) ∧ s ∈ Ioo 0 (r ^ 2 / 4)
-      exact ⟨hzx, ⟨hspos, hslt⟩⟩
-    let c : Center := ⟨(z.1, s), hc⟩
-    have hpatchmem : z ∈ patch c := by
-      change z.1 ∈ vec3Ball z.1 (r / 4) ∧
-        z.2 ∈ Ioo (t₀ - s - (r / 4) ^ 2) (t₀ - s)
-      refine ⟨?_, ⟨?_, ?_⟩⟩
-      · simp [vec3Ball, vec3EuclideanNorm_zero, hr]
-      · dsimp [a, s]
-        have hmR' : m < (r / 4) ^ 2 := by
-          calc
-            m ≤ r ^ 2 / 64 := hmR
-            _ < (r / 4) ^ 2 := by nlinarith only [hr]
-        nlinarith only [hmR']
-      · dsimp [a, s]
-        nlinarith only [hmpos]
-    exact mem_iUnion.mpr ⟨c, hpatchmem⟩
-
+    obtain ⟨c, hc, hzc⟩ := Set.mem_iUnion₂.mp
+      (goodPointPastCylinder_subset_topPatches hr hz)
+    exact mem_iUnion.mpr ⟨⟨c, hc⟩, hzc⟩
   have hVlind : IsLindelof V := HereditarilyLindelofSpace.isLindelof V
   obtain ⟨S, hS, hScov⟩ := hVlind.elim_countable_subcover patch hpatchOpen hcover
   let Index := {c : Center // c ∈ S}
@@ -446,7 +579,6 @@ theorem epsilonRegularityL3_top :
       hglueOpen hglueHolder hglueAE
   have hgAEV : g =ᵐ[volume.restrict V] u :=
     ae_restrict_of_ae_restrict_of_subset hcoverS hgAE
-
   have hgEqAny : ∀ c : Center, ∀ z ∈ V, z ∈ patch c → g z = W c z := by
     intro c z hzV hzc
     obtain ⟨i, hzi⟩ := Set.mem_iUnion.mp (hcoverS hzV)
@@ -456,13 +588,11 @@ theorem epsilonRegularityL3_top :
     calc
       g z = W i.1 z := hgEq i hzi
       _ = W c z := hoverlap ⟨hzi, hzc⟩
-
   have hboundV : ∀ z ∈ V, vec3EuclideanNorm (g z) ≤ 2 * C₄ * r⁻¹ := by
     intro z hz
     obtain ⟨i, hzi⟩ := Set.mem_iUnion.mp (hcoverS hz)
     rw [hgEq i hzi]
     exact (hW i.1).2.2.1 z hzi
-
   have hholderV : ∀ z ∈ V, ∀ z' ∈ V,
       vec3EuclideanNorm (g z - g z') ≤
         goodPointTopHolderBound C₄ r γ₀ * parabolicDist z z' ^ γ₀ := by
@@ -502,130 +632,11 @@ theorem epsilonRegularityL3_top :
           exact mul_le_mul_of_nonneg_left hpow_mono (by
             unfold goodPointTopHolderBound
             positivity)
-
   have hKnonneg : 0 ≤ goodPointTopHolderBound C₄ r γ₀ := by
     unfold goodPointTopHolderBound
     positivity
-  let closureV : Set ParabolicPoint := closure V
-  let inc : V → closureV := inclusion subset_closure
-  have hincUE : IsUniformEmbedding inc := isUniformEmbedding_set_inclusion subset_closure
-  have hincDense : DenseRange inc :=
-    (denseRange_inclusion_iff subset_closure).2 subset_rfl
-  have hincDI := hincUE.isUniformInducing.isDenseInducing hincDense
-  let f : V → WithLp 2 Vec3 := fun z => WithLp.toLp 2 (g z)
-  let Knn : ℝ≥0 := ⟨goodPointTopHolderBound C₄ r γ₀, hKnonneg⟩
-  have hfHolder : HolderOnWith Knn
-      ⟨γ₀, hγ₀.le⟩ f univ := by
-    intro z _ z' _
-    have h := hholderV z.1 z.2 z'.1 z'.2
-    rw [vec3EuclideanNorm_eq_l2, WithLp.toLp_sub, ← dist_eq_norm,
-      ← dist_eq_parabolicDist] at h
-    have he := ENNReal.ofReal_le_ofReal h
-    change edist (f z) (f z') ≤
-      (Knn : ℝ≥0∞) * edist z z' ^ γ₀
-    have hc : (Knn : ℝ≥0∞) = ENNReal.ofReal (goodPointTopHolderBound C₄ r γ₀) :=
-      ENNReal.ofReal_coe_nnreal.symm
-    rw [hc, edist_dist, edist_dist,
-      ENNReal.ofReal_rpow_of_nonneg dist_nonneg hγ₀.le,
-      ← ENNReal.ofReal_mul hKnonneg]
-    exact he
-  have hfUniformOn : UniformContinuousOn f univ := hfHolder.uniformContinuousOn hγ₀
-  have hfUniform : UniformContinuous f := by
-    simpa only [uniformContinuousOn_univ] using hfUniformOn
-  let F : closureV → WithLp 2 Vec3 := hincDI.extend f
-  have hFUniform : UniformContinuous F := by
-    dsimp [F]
-    exact uniformContinuous_uniformly_extend hincUE.isUniformInducing hincDense hfUniform
-  have hF_eq : ∀ z : V, F (inc z) = f z := by
-    intro z
-    exact hincDI.extend_eq hfUniform.continuous z
-
-  have hFbound : ∀ z : closureV, ‖F z‖ ≤ 2 * C₄ * r⁻¹ := by
-    intro z
-    let Sbound : Set closureV := {x | ‖F x‖ ≤ 2 * C₄ * r⁻¹}
-    have hSclosed : IsClosed Sbound :=
-      isClosed_le (continuous_norm.comp hFUniform.continuous) continuous_const
-    have hrange : Set.range inc ⊆ Sbound := by
-      rintro x ⟨y, hxy⟩
-      change inc y = x at hxy
-      subst x
-      change ‖F (inc y)‖ ≤ 2 * C₄ * r⁻¹
-      rw [hF_eq y]
-      simpa only [vec3EuclideanNorm_eq_l2] using hboundV y.1 y.2
-    have hclosure : closure (Set.range inc) ⊆ Sbound := closure_minimal hrange hSclosed
-    have hz : z ∈ closure (Set.range inc) := by
-      rw [hincDense.closure_range]
-      trivial
-    exact hclosure hz
-
-  have hFholder : ∀ z z' : closureV,
-      dist (F z) (F z') ≤
-        goodPointTopHolderBound C₄ r γ₀ * dist z z' ^ γ₀ := by
-    have hdenseRange : Dense (Set.range inc) := by
-      rw [dense_iff_closure_eq, hincDense.closure_range]
-    have hdenseProd : Dense (Set.range inc ×ˢ Set.range inc) := hdenseRange.prod hdenseRange
-    let Sholder : Set (closureV × closureV) :=
-      {q | dist (F q.1) (F q.2) ≤
-        goodPointTopHolderBound C₄ r γ₀ * dist q.1 q.2 ^ γ₀}
-    have hleft : Continuous (fun q : closureV × closureV => dist (F q.1) (F q.2)) := by
-      exact (hFUniform.continuous.comp continuous_fst).dist
-        (hFUniform.continuous.comp continuous_snd)
-    have hd : Continuous (fun q : closureV × closureV => dist q.1 q.2) := by
-      exact (continuous_subtype_val.comp continuous_fst).dist
-        (continuous_subtype_val.comp continuous_snd)
-    have hright : Continuous (fun q : closureV × closureV =>
-        goodPointTopHolderBound C₄ r γ₀ * dist q.1 q.2 ^ γ₀) := by
-      exact continuous_const.mul ((Real.continuous_rpow_const hγ₀.le).comp hd)
-    have hSclosed : IsClosed Sholder := isClosed_le hleft hright
-    have hrange : Set.range inc ×ˢ Set.range inc ⊆ Sholder := by
-      rintro ⟨q, q'⟩ ⟨⟨z, hzq⟩, ⟨z', hzq'⟩⟩
-      change inc z = q at hzq
-      change inc z' = q' at hzq'
-      subst q
-      subst q'
-      change dist (F (inc z)) (F (inc z')) ≤
-        goodPointTopHolderBound C₄ r γ₀ * dist (inc z) (inc z') ^ γ₀
-      have h := hholderV z.1 z.2 z'.1 z'.2
-      rw [vec3EuclideanNorm_eq_l2, WithLp.toLp_sub, ← dist_eq_norm,
-        ← dist_eq_parabolicDist] at h
-      rw [hF_eq z, hF_eq z']
-      simpa only [f, Subtype.dist_eq] using h
-    have hclosure : closure (Set.range inc ×ˢ Set.range inc) ⊆ Sholder :=
-      closure_minimal hrange hSclosed
-    intro z z'
-    have hpair : (z, z') ∈ closure (Set.range inc ×ˢ Set.range inc) := by
-      rw [hdenseProd.closure_eq]
-      trivial
-    change dist (F z) (F z') ≤
-      goodPointTopHolderBound C₄ r γ₀ * dist z z' ^ γ₀
-    have hmem : (z, z') ∈ Sholder := hclosure hpair
-    exact hmem
-
-  let w : ParabolicPoint → Vec3 := fun z =>
-    if hz : z ∈ closureV then WithLp.ofLp (F ⟨z, hz⟩) else 0
-  have hwbound : ∀ z ∈ closureV, vec3EuclideanNorm (w z) ≤ 2 * C₄ * r⁻¹ := by
-    intro z hz
-    rw [vec3EuclideanNorm_eq_l2]
-    simp only [w, dite_eq_left hz, WithLp.toLp_ofLp]
-    exact hFbound ⟨z, hz⟩
-  have hwholder : ∀ z ∈ closureV, ∀ z' ∈ closureV,
-      vec3EuclideanNorm (w z - w z') ≤
-        goodPointTopHolderBound C₄ r γ₀ * parabolicDist z z' ^ γ₀ := by
-    intro z hz z' hz'
-    have h := hFholder ⟨z, hz⟩ ⟨z', hz'⟩
-    have hnorm : vec3EuclideanNorm (w z - w z') =
-        dist (F ⟨z, hz⟩) (F ⟨z', hz'⟩) := by
-      rw [vec3EuclideanNorm_eq_l2, WithLp.toLp_sub]
-      simp only [w, dite_eq_left hz, dite_eq_left hz', WithLp.toLp_ofLp]
-      rw [dist_eq_norm]
-    rw [hnorm]
-    simpa only [Subtype.dist_eq, dist_eq_parabolicDist] using h
-  have hwg : w =ᵐ[volume.restrict V] g := by
-    filter_upwards [ae_restrict_mem hVopen.measurableSet] with z hz
-    have hzC : z ∈ closureV := subset_closure hz
-    simp only [w, dite_eq_left hzC]
-    have heq := hF_eq ⟨z, hz⟩
-    simpa [f, inc] using congrArg WithLp.ofLp heq
+  obtain ⟨w, hwg, hwbound, hwholder⟩ := goodPoint_holder_extend_closure
+    hVopen hγ₀ hKnonneg hboundV hholderV
   refine ⟨w, hwg.trans hgAEV, ?_, ?_⟩
   · intro z hz
     exact hwbound z hz

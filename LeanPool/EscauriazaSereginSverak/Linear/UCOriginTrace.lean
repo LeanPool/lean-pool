@@ -64,7 +64,7 @@ theorem uc_origin_trace_zero
   have hupper : Tendsto (fun t : ℝ => |C| * Real.sqrt t)
       (𝓝[>] (0 : ℝ)) (𝓝 0) := by
     convert (Real.continuous_sqrt.continuousAt.tendsto.mono_left
-      nhdsWithin_le_nhds).const_mul |C| using 1 ; simp
+      nhdsWithin_le_nhds).const_mul |C| using 1; simp
   have hlow : ∀ᶠ t : ℝ in 𝓝[>] (0 : ℝ),
       0 ≤ vec3EuclideanNorm (w (0, t)) :=
     Filter.Eventually.of_forall (fun t => vec3EuclideanNorm_nonneg _)

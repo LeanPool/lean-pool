@@ -494,7 +494,7 @@ theorem vorticityTestCurl_mem_spaceTimeTestFunction
     have hc (j : Fin 3) : z ∉ tsupport (fun w : Vec3 × ℝ => ψ w j) := by
       intro hmem
       have hsub : tsupport (fun w : Vec3 × ℝ => ψ w j) ⊆ tsupport ψ :=
-        CKN.tsupport_component_subset (V := Vec3) (ι := Fin 3) ψ j
+        CKN.tsupport_component_subset (ι := Fin 3) ψ j
           (by intro w hw; simp [hw])
       exact hz (hsub hmem)
     have hpartZero (j k : Fin 3) :

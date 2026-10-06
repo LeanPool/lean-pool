@@ -275,7 +275,7 @@ theorem blowup_limit_rescaled_momentum_flux_spatial_integral
               ∑ i : Fin 3, spatialDeriv (fun z => ψ z i) i (A x)) := by
         rw [hP, hsum]
         field_simp [hr.ne']
-        
+
       dsimp [T, H]
       rw [hconv, hdiff, hpres]
       ring

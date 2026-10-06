@@ -9,6 +9,12 @@ module
 public import LeanPool.CaffarelliKohnNirenberg.Statements.SpaceTimeSet
 public import Mathlib.Analysis.SpecificLimits.Basic
 
+/-!
+# BUAssembly
+
+Assembly of the half-space backward uniqueness argument.
+-/
+
 public section
 
 open Filter Set CKN CKN.Foundation.Parabolic

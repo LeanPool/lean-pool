@@ -9,6 +9,12 @@ module
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupH1Slices
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupTenThirdsVector
 
+/-!
+# Blowup Slice Uniform
+
+Spatial slice bounds and rescaling identities in the endpoint compactness argument.
+-/
+
 public section
 
 open CKN CKN.Foundation.Parabolic MeasureTheory Set Filter

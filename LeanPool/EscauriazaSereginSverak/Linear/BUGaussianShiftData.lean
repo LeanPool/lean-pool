@@ -50,6 +50,57 @@ namespace ESS
     ParabolicPoint → Vec3 :=
   fun z i => Dtv ((buGaussianTimeShiftPoint σ).symm z) i
 
+private theorem buGaussian_shifted_growth_on_cylinder
+    (x : Vec3) (scale ρ σ A : ℝ) (w : ParabolicPoint → Vec3)
+    (hA : 0 ≤ A) (hscale : 0 ≤ scale)
+    (hspace : ∀ y : Vec3, vec3EuclideanNorm y < ρ →
+      1 < (x + scale • y) 2)
+    (htime : ∀ s : ℝ, σ < s → s < 2 →
+      0 < scale ^ 2 * (s - σ) ∧ scale ^ 2 * (s - σ) < 1)
+    (hgrowth : ∀ z ∈ buHalfCylinder,
+      vec3EuclideanNorm (w z) ≤ Real.exp (A * vec3EuclideanNorm z.1 ^ 2)) :
+    ∀ z ∈ spaceTimeSet (vec3Ball 0 ρ) (Ioo σ 2),
+      vec3EuclideanNorm (buGaussianShiftedField σ (ucScaledField x scale w) z) ≤
+        Real.exp (2 * A * vec3EuclideanNorm x ^ 2 +
+          2 * A * scale ^ 2 * vec3EuclideanNorm z.1 ^ 2) := by
+  intro z hz
+  rcases hz with ⟨hy, hs⟩
+  have hy' : vec3EuclideanNorm z.1 < ρ := by
+    simpa only [mem_vec3Ball, sub_zero] using hy
+  have hphysical := htime z.2 hs.1 hs.2
+  have hsource : ucScaledPoint x scale (z.1, z.2 - σ) ∈ buHalfCylinder := by
+    change 0 < (x + scale • z.1) 2 ∧
+      0 < scale ^ 2 * (z.2 - σ) ∧ scale ^ 2 * (z.2 - σ) < 1
+    exact ⟨by linarith only [hspace z.1 hy'], hphysical⟩
+  have hpoint := hgrowth _ hsource
+  have hpoint' : vec3EuclideanNorm
+      (w (buGaussianScaledPoint x scale 0 (z.1, z.2 - σ))) ≤
+      Real.exp (A * vec3EuclideanNorm
+        (buGaussianScaledPoint x scale 0 (z.1, z.2 - σ)).1 ^ 2) := by
+    simpa [ucScaledPoint, buGaussianScaledPoint] using hpoint
+  have hrescale := buGaussian_rescaling_growth A scale x z.1 (z.2 - σ)
+    0 w hA hscale hpoint'
+  simpa [buGaussianShiftedField, ucScaledField, ucScaledPoint,
+    buGaussianScaledPoint, buGaussian_timeShift_point_symm_apply] using hrescale
+
+private theorem continuousOn_after_timeShift
+    {B : Set Vec3} (σ : ℝ) (hσpos : 0 < σ)
+    {f : ParabolicPoint → Vec3}
+    (hcont : ContinuousOn f (B ×ˢ Ico (0 : ℝ) 2)) :
+    ContinuousOn (fun z => f ((buGaussianTimeShiftPoint σ).symm z))
+      (B ×ˢ Ico σ 2) := by
+  have hTinv : Continuous (buGaussianTimeShiftPoint σ).symm :=
+    (buGaussianTimeShiftPoint σ).symm.continuous
+  change ContinuousOn (fun z => f ((buGaussianTimeShiftPoint σ).symm z))
+    (B ×ˢ Ico σ 2)
+  apply hcont.comp hTinv.continuousOn
+  intro z hz
+  have htime : ((buGaussianTimeShiftPoint σ).symm z).2 = z.2 - σ := by
+    rw [buGaussian_timeShift_point_symm_apply]
+  refine ⟨hz.1, ?_⟩
+  rw [htime]
+  constructor <;> linarith only [hz.2.1, hz.2.2, hσpos]
+
 /-- The local source hypotheses give weak derivatives, finite quadratic data,
 and the differential inequality on the shifted Gaussian cylinder. -/
 theorem buGaussian_shifted_rescaled_data
@@ -151,15 +202,7 @@ theorem buGaussian_shifted_rescaled_data
       (buGaussianShiftedField σ (ucScaledField x scale w))
       (buGaussianShiftedDw σ (ucScaledDw x scale Dw))
       (buGaussianShiftedD2w σ (ucScaledD2w x scale D2w))
-      (buGaussianShiftedDtw σ (ucScaledDtw x scale Dtw)) := by
-    change HasSpaceTimeWeakDerivs (vec3Ball 0 ρ) (Ioo σ 2)
-      (fun z => ucScaledField x scale w ((buGaussianTimeShiftPoint σ).symm z))
-      (fun z i j => ucScaledDw x scale Dw ((buGaussianTimeShiftPoint σ).symm z) i j)
-      (fun z i j k => ucScaledD2w x scale D2w
-        ((buGaussianTimeShiftPoint σ).symm z) i j k)
-      (fun z i => ucScaledDtw x scale Dtw
-        ((buGaussianTimeShiftPoint σ).symm z) i)
-    exact hshiftweak0
+      (buGaussianShiftedDtw σ (ucScaledDtw x scale Dtw)) := hshiftweak0
   have hS₀sub : S₀ ⊆ ucCylinder ρ := by
     intro z hz
     rcases hz with ⟨hzx, hzt⟩
@@ -224,15 +267,10 @@ theorem buGaussian_shifted_rescaled_data
     exact hz
   have hshiftCont : ContinuousOn (buGaussianShiftedField σ
       (ucScaledField x scale w)) (B ×ˢ Ico σ 2) := by
-    have hTinv : Continuous T.symm := T.symm.continuous
     change ContinuousOn (fun z =>
-      (ucScaledField x scale w) (T.symm z)) (B ×ˢ Ico σ 2)
-    apply hcont0.comp hTinv.continuousOn
-    intro z hz
-    have htime : (T.symm z).2 = z.2 - σ := by
-      rw [buGaussian_timeShift_point_symm_apply]
-    exact ⟨hz.1, ⟨by rw [htime]; dsimp [Ico] at hz; linarith only [hz.2.1],
-      by rw [htime]; dsimp [Ico] at hz; linarith only [hz.2.2, hσpos]⟩⟩
+      (ucScaledField x scale w) ((buGaussianTimeShiftPoint σ).symm z))
+      (B ×ˢ Ico σ 2)
+    exact continuousOn_after_timeShift (B := B) σ hσpos hcont0
   have hshiftZero : ∀ y : Vec3, y ∈ B →
       buGaussianShiftedField σ (ucScaledField x scale w) (y, σ) = 0 := by
     intro y hy
@@ -248,28 +286,16 @@ theorem buGaussian_shifted_rescaled_data
       vec3EuclideanNorm (buGaussianShiftedField σ (ucScaledField x scale w) z) ≤
         Real.exp (2 * A * vec3EuclideanNorm x ^ 2 +
           2 * A * (Real.sqrt (3 * t)) ^ 2 * vec3EuclideanNorm z.1 ^ 2) := by
+    have hgrowth' := buGaussian_shifted_growth_on_cylinder x scale ρ σ A w
+      hA (le_of_lt hscalePos)
+      (fun y hy => hgeom.2.2.1 y hy)
+      (fun s hs1 hs2 => hgeom.2.2.2 s
+        hs1
+        (by linarith only [hs2]))
+      hgrowth
     intro z hz
-    rcases hz with ⟨hy, hs⟩
-    have hy' : vec3EuclideanNorm z.1 < ρ := by
-      simpa only [B, mem_vec3Ball, sub_zero] using hy
-    have hphysical := hgeom.2.2.2 z.2 hs.1 (by linarith only [hs.2])
-    have hsource : ucScaledPoint x scale (z.1, z.2 - σ) ∈ buHalfCylinder := by
-      change 0 < (x + scale • z.1) 2 ∧
-        0 < scale ^ 2 * (z.2 - σ) ∧ scale ^ 2 * (z.2 - σ) < 1
-      exact ⟨by
-        have hsp := hgeom.2.2.1 z.1 hy'
-        change 0 < (x + scale • z.1) 2
-        linarith only [hsp], hphysical⟩
-    have hpoint := hgrowth _ hsource
-    have hpoint' : vec3EuclideanNorm
-        (w (buGaussianScaledPoint x scale 0 (z.1, z.2 - σ))) ≤
-        Real.exp (A * vec3EuclideanNorm
-          (buGaussianScaledPoint x scale 0 (z.1, z.2 - σ)).1 ^ 2) := by
-      simpa [ucScaledPoint, buGaussianScaledPoint] using hpoint
-    have hrescale := buGaussian_rescaling_growth A scale x z.1 (z.2 - σ)
-      0 w hA (le_of_lt hscalePos) hpoint'
-    simpa [buGaussianShiftedField, ucScaledField, ucScaledPoint,
-      buGaussianScaledPoint, buGaussian_timeShift_point_symm_apply, σ, scale] using hrescale
+    have hbound := hgrowth' z hz
+    simpa [scale] using hbound
   exact ⟨hshiftweak, hL2₁, hineq₁, hshiftCont, hshiftZero, hgrowth₁⟩
 
 end ESS

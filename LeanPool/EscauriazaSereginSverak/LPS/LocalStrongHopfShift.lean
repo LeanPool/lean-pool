@@ -52,7 +52,7 @@ theorem lps_shift_measurePreserving (t₀ a b : ℝ) :
     exact h1
   have himage : e '' spaceTimeSet (Set.univ : Set Vec3) (Ioo a b) =
       spaceTimeSet (Set.univ : Set Vec3) (Ioo (t₀ + a) (t₀ + b)) := by
-    show Prod.map (id : Vec3 → Vec3) (fun t : ℝ => t₀ + t) '' ((Set.univ : Set Vec3) ×ˢ Ioo a b) =
+    change Prod.map (id : Vec3 → Vec3) (fun t : ℝ => t₀ + t) '' ((Set.univ : Set Vec3) ×ˢ Ioo a b) =
       (Set.univ : Set Vec3) ×ˢ Ioo (t₀ + a) (t₀ + b)
     rw [Set.prodMap_image_prod, Set.image_id, Set.image_const_add_Ioo]
   have hmp' := hmp.restrict_image_emb e.measurableEmbedding

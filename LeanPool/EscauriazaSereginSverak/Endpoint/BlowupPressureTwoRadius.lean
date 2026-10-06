@@ -9,6 +9,12 @@ module
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupRieszTimeLocal
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupRieszNear
 
+/-!
+# Blowup Pressure Two Radius
+
+Pressure bounds and convergence estimates for the rescaled sequence.
+-/
+
 public section
 
 open Filter

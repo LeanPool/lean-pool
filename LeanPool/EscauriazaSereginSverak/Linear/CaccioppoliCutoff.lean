@@ -118,9 +118,7 @@ private theorem smoothTransition_hasDerivAt (x : ℝ) :
     (Real.smoothTransition.pos_denom x).ne'
   have hq := ha.div hD hDne
   simp only [Pi.add_apply, Function.comp_apply] at hq
-  convert hq using 1
-  congr 1
-  ring
+  convert hq using 1 <;> first | rfl | ring
 
 private theorem expNegInvGlue_ge_of_half_le {y : ℝ} (hy : 1 / 2 ≤ y) :
     Real.exp (-2) ≤ expNegInvGlue y := by
@@ -340,10 +338,11 @@ private theorem caccioppoliSpatialWeight_gradient_bound (x₀ : Vec3) {r : ℝ} 
       rw [classicalGradient_apply, hfd]
       simp
     rw [hg]
-    simp [vec3EuclideanNorm]
+    simp only [vec3EuclideanNorm, Pi.zero_apply, ne_eq, OfNat.ofNat_ne_zero,
+      not_false_eq_true, zero_pow, Finset.sum_const_zero, Real.sqrt_zero, ge_iff_le]
     positivity
   · have hy' : r ≤ d := le_of_not_gt hy
-    have hformula := caccioppoliSpatialWeight_coord_deriv hr hy' 
+    have hformula := caccioppoliSpatialWeight_coord_deriv hr hy'
     have hgradEq : classicalGradient (caccioppoliSpatialWeight x₀ r) y =
         (-(deriv CKN.smoothTransitionProfile
           ((199 / 100 * r - d) / ((99 / 100) * r))) /
@@ -449,9 +448,11 @@ private theorem caccioppoliSpatialWeight_hasCompactSupport (x₀ : Vec3) {r : �
   by_contra hne
   exact hy (caccioppoliSpatialWeight_support_subset_closed x₀ hr (Function.mem_support.mpr hne))
 
+/-- The lower time cutoff in the compactly supported Caccioppoli weight. -/
 @[expose] def lowerTimeCutoff (t ε s : ℝ) : ℝ :=
   CKN.smoothTransitionProfile ((s - (t + ε)) / ε)
 
+/-- The upper time cutoff in the compactly supported Caccioppoli weight. -/
 @[expose] def upperTimeCutoff (t r s : ℝ) : ℝ :=
   CKN.smoothTransitionProfile ((t + 3 * r ^ 2 - s) / ((199 / 100) * r ^ 2))
 
@@ -566,11 +567,8 @@ private theorem caccioppoliTimeWeight_tsupport_subset (t r ε : ℝ)
 private theorem caccioppoliTimeWeight_hasCompactSupport (t r ε : ℝ)
     (hε : 0 < ε) (hr : 0 < r) :
     HasCompactSupport (caccioppoliTimeWeight t r ε) := by
-  apply HasCompactSupport.intro isCompact_Icc
-  intro s hs
-  by_contra hne
-  exact hs (caccioppoliTimeWeight_support_subset t r ε hε hr
-    (Function.mem_support.mpr hne))
+  exact HasCompactSupport.of_support_subset_isCompact isCompact_Icc
+    (caccioppoliTimeWeight_support_subset t r ε hε hr)
 
 private theorem caccioppoliTimeWeight_eq_one {t r ε s : ℝ}
     (hε : 0 < ε) (hr : 0 < r)

@@ -19,13 +19,16 @@ transports it to the explicit Vec3 carrier used by the weak derivatives.
 public section
 
 
-open Metric Set Classical
+open Metric Set
+
+attribute [local instance] Classical.propDecidable
 open CKN CKN.Foundation.Parabolic
 
 noncomputable section
 
 namespace ESS
 
+/-- Transport a labeled Gaussian cover center from the Euclidean carrier to `Vec3`. -/
 @[expose] def buGaussianCoverCenterMap
     (p : Fin (Besicovitch.multiplicity BUGaussianSpace) × BUGaussianSpace) :
     Fin (Besicovitch.multiplicity BUGaussianSpace) × Vec3 :=

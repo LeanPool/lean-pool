@@ -9,6 +9,12 @@ module
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupTimeAE
 public import LeanPool.CaffarelliKohnNirenberg.Foundation.Measure.HolderTripleProducts
 
+/-!
+# Blowup Tensor Convergence
+
+Convergence of the quadratic velocity tensor in the endpoint blow-up sequence.
+-/
+
 public section
 
 open MeasureTheory Filter CKN.Foundation.Parabolic

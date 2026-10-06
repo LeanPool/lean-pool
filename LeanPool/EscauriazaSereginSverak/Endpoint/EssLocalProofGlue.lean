@@ -8,6 +8,12 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.Endpoint.GoodPointsOpenGlue
 
+/-!
+# Ess Local Proof Glue
+
+Local endpoint regularity through vorticity estimates and backward uniqueness.
+-/
+
 public section
 
 open MeasureTheory Set Filter

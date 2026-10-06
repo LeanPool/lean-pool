@@ -18,6 +18,12 @@ public import Mathlib.Analysis.Calculus.Deriv.Shift
 public import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
 public import Mathlib.MeasureTheory.Group.Measure
 
+/-!
+# Ess Local Proof Vorticity
+
+Local endpoint regularity through vorticity estimates and backward uniqueness.
+-/
+
 public section
 
 open MeasureTheory Set
@@ -107,7 +113,7 @@ private theorem essLocal_locallyIntegrableOn_homeomorph
     (hQtarget : IsOpen Qtarget) (himage : e '' Qtarget = Qsource)
     (hmp : MeasurePreserving e (volume : Measure ParabolicPoint)
       (volume : Measure ParabolicPoint))
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {E : Type*} [NormedAddCommGroup E]
     {f : ParabolicPoint → E}
     (hf : LocallyIntegrableOn f Qsource volume) :
     LocallyIntegrableOn (fun z => f (e z)) Qtarget volume := by
@@ -538,7 +544,7 @@ theorem essLocal_timeTranslate_weakDerivs
 
 private theorem essLocal_locallyIntegrableOn_reflection
     {Qplus Qminus : Set ParabolicPoint}
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {E : Type*} [NormedAddCommGroup E]
     (hQplus : IsOpen Qplus)
     (himage : essLocalTimeReflection '' Qplus = Qminus)
     {f : ParabolicPoint → E}

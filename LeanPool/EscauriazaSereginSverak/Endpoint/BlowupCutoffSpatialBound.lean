@@ -10,6 +10,12 @@ public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupCutoffProduct
 public import LeanPool.CaffarelliKohnNirenberg.Setting.Energy.Calculus
 public import Mathlib.Analysis.Normed.Group.Bounded
 
+/-!
+# Blowup Cutoff Spatial Bound
+
+Cutoff bounds used to localize the rescaled endpoint sequence.
+-/
+
 public section
 
 open CKN CKN.Foundation.Parabolic Set

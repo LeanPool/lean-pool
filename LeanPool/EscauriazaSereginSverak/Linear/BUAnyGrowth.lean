@@ -7,6 +7,12 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.Main.BackwardUniqueness
 
+/-!
+# BUAny Growth
+
+Backward uniqueness for solutions with general growth control.
+-/
+
 public section
 
 open MeasureTheory Set

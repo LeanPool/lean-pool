@@ -9,6 +9,12 @@ module
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupTenThirdsFinite
 public import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 
+/-!
+# Blowup Ten Thirds Top
+
+Space-time integrability of the rescaled velocity at exponent 10/3.
+-/
+
 public section
 
 open CKN CKN.Foundation.Parabolic MeasureTheory Set Filter

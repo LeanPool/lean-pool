@@ -105,7 +105,7 @@ theorem blowupLimitAssembly_memLp_gradient_of_energy
     (u : ParabolicPoint → Vec3) (Du : ParabolicPoint → Fin 3 → Vec3)
     (hDu : Measurable Du) (C : Set Vec3) (a b : ℝ)
     (hfin : (∫⁻ t in Icc a b, ∫⁻ x in C,
-      ENNReal.ofReal (spatialGradientSq u Du (x,t))) < ⊤)
+      ENNReal.ofReal (spatialGradientSq u Du (x, t))) < ⊤)
     (Q : Set (Vec3 × ℝ)) (hQ : Q ⊆ C ×ˢ Icc a b) :
     MemLp Du 2 (volume.restrict Q) := by
   have hSGS : Measurable (fun z : Vec3 × ℝ =>
@@ -115,7 +115,7 @@ theorem blowupLimitAssembly_memLp_gradient_of_energy
   have hprod : (∫⁻ z in C ×ˢ Icc a b,
       ENNReal.ofReal (spatialGradientSq u Du z)) =
       ∫⁻ t in Icc a b, ∫⁻ x in C,
-        ENNReal.ofReal (spatialGradientSq u Du (x,t)) := by
+        ENNReal.ofReal (spatialGradientSq u Du (x, t)) := by
     rw [Measure.volume_eq_prod, ← Measure.prod_restrict,
       lintegral_prod_symm _ hSGS.aemeasurable]
   rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)

@@ -150,6 +150,80 @@ theorem buGaussian_cell_caccioppoli
     hrestricted.2.2.1 hrestricted.2.2.2
   simpa [Ω, I] using hcacc
 
+private theorem weighted_cell_integral_comparison
+    {X : Type*} [MeasurableSpace X] {μ : Measure X}
+    (A B : Set X) (hA : MeasurableSet A) (hB : MeasurableSet B)
+    (W G V : X → ℝ) (z₀ K C : ℝ)
+    (hWG : Integrable (fun z => W z * G z) (μ.restrict A))
+    (hG : Integrable G (μ.restrict A))
+    (hV : Integrable V (μ.restrict B))
+    (hWV : Integrable (fun z => W z * V z) (μ.restrict B))
+    (hWin : ∀ z ∈ A, W z ≤ K * z₀)
+    (hWout : ∀ z ∈ B, z₀ ≤ K * W z)
+    (hGnonneg : ∀ z, 0 ≤ G z) (hVnonneg : ∀ z, 0 ≤ V z)
+    (hK : 0 ≤ K) (hz₀ : 0 ≤ z₀) (hC : 0 ≤ C)
+    (hacc : (∫ z in A, G z ∂μ) ≤ C * (∫ z in B, V z ∂μ)) :
+    (∫ z in A, W z * G z ∂μ) ≤ K ^ 2 * C * (∫ z in B, W z * V z ∂μ) := by
+  have hAref : Integrable (fun z => (K * z₀) * G z) (μ.restrict A) :=
+    hG.const_mul (K * z₀)
+  have hAmono : ∀ᵐ z ∂(μ.restrict A),
+      W z * G z ≤ (K * z₀) * G z := by
+    filter_upwards [ae_restrict_mem hA] with z hz
+    exact mul_le_mul_of_nonneg_right (hWin z hz) (hGnonneg z)
+  have hAint : (∫ z in A, W z * G z ∂μ) ≤
+      (K * z₀) * (∫ z in A, G z ∂μ) := by
+    calc
+      _ ≤ ∫ z, (K * z₀) * G z ∂(μ.restrict A) :=
+        integral_mono_ae hWG hAref hAmono
+      _ = (K * z₀) * ∫ z in A, G z ∂μ := by rw [integral_const_mul]
+  have hBref : Integrable (fun z => z₀ * V z) (μ.restrict B) :=
+    hV.const_mul z₀
+  have hBmono : ∀ᵐ z ∂(μ.restrict B),
+      z₀ * V z ≤ K * (W z * V z) := by
+    filter_upwards [ae_restrict_mem hB] with z hz
+    calc
+      z₀ * V z ≤ (K * W z) * V z :=
+        mul_le_mul_of_nonneg_right (hWout z hz) (hVnonneg z)
+      _ = K * (W z * V z) := by ring
+  have hBint : z₀ * (∫ z in B, V z ∂μ) ≤
+      K * (∫ z in B, W z * V z ∂μ) := by
+    calc
+      _ = ∫ z, z₀ * V z ∂(μ.restrict B) := by rw [integral_const_mul]
+      _ ≤ ∫ z, K * (W z * V z) ∂(μ.restrict B) :=
+        integral_mono_ae hBref (hWV.const_mul K) hBmono
+      _ = K * ∫ z in B, W z * V z ∂μ := by rw [integral_const_mul]
+  have hleft : 0 ≤ K * z₀ := mul_nonneg hK hz₀
+  calc
+    _ ≤ (K * z₀) * (C * (∫ z in B, V z ∂μ)) :=
+      hAint.trans (mul_le_mul_of_nonneg_left hacc hleft)
+    _ ≤ (K * z₀) * (C * (K * ∫ z in B, W z * V z ∂μ)) := by
+      apply mul_le_mul_of_nonneg_left _ hleft
+      exact mul_le_mul_of_nonneg_left hBint hC
+    _ = K ^ 2 * C * (∫ z in B, W z * V z ∂μ) := by ring
+
+private theorem gaussian_cell_nested_in_domain
+    {ρ r t : ℝ} {x : Vec3} (hr : 0 < r)
+    (hspace : vec3Ball x r ⊆ vec3Ball 0 ρ)
+    (htime : Ioo t (t + r ^ 2) ⊆ Ioo (1 / 6) 2) :
+    spaceTimeSet (vec3Ball x (r / 2)) (Ioo t (t + (r / 2) ^ 2)) ⊆
+        spaceTimeSet (vec3Ball 0 ρ) (Ioo (1 / 6) 2) ∧
+      spaceTimeSet (vec3Ball x r) (Ioo t (t + r ^ 2)) ⊆
+        spaceTimeSet (vec3Ball 0 ρ) (Ioo (1 / 6) 2) := by
+  constructor
+  · intro z hz
+    refine ⟨hspace (vec3Ball_mono
+      (div_le_self hr.le (by norm_num : 1 ≤ (2 : ℝ))) hz.1), ?_⟩
+    have hztime : z.2 ∈ Ioo t (t + r ^ 2) := by
+      refine ⟨hz.2.1, ?_⟩
+      have hhalf : 0 ≤ r / 2 := by positivity
+      have hle : r / 2 ≤ r := by linarith only [hr]
+      have hsquare : (r / 2) ^ 2 ≤ r ^ 2 :=
+        (sq_le_sq₀ hhalf hr.le).2 hle
+      exact lt_of_lt_of_le hz.2.2 (add_le_add_right hsquare t)
+    exact htime hztime
+  · intro z hz
+    exact ⟨hspace hz.1, htime hz.2⟩
+
 /-- The Gaussian weight lets the Caccioppoli estimate be compared on one
 enlarged collar cell. -/
 theorem buGaussian_weighted_caccioppoli_cell
@@ -213,22 +287,9 @@ theorem buGaussian_weighted_caccioppoli_cell
   have hWGint : Integrable (fun z => W z * G z) (volume.restrict U) := by
     have h := hEint.2.bdd_mul hWmeas hWnormbound
     simpa [U, W, G, mul_comm] using h
-  have hUinner : Uinner ⊆ U := by
-    intro z hz
-    refine ⟨?_, ?_⟩
-    · exact hspace (vec3Ball_mono
-        (div_le_self hr.le (by norm_num : 1 ≤ (2 : ℝ))) hz.1)
-    · have hztime : z.2 ∈ Ioo t (t + r ^ 2) := by
-        refine ⟨hz.2.1, ?_⟩
-        have hhalf : 0 ≤ r / 2 := by positivity
-        have hle : r / 2 ≤ r := by linarith only [hr]
-        have hsquare : (r / 2) ^ 2 ≤ r ^ 2 :=
-          (sq_le_sq₀ hhalf hr.le).2 hle
-        exact lt_of_lt_of_le hz.2.2 (add_le_add_right hsquare t)
-      exact htime hztime
-  have hUouter : Uouter ⊆ U := by
-    intro z hz
-    exact ⟨hspace hz.1, htime hz.2⟩
+  have hnested := gaussian_cell_nested_in_domain hr hspace htime
+  have hUinner : Uinner ⊆ U := by simpa [Uinner, U] using hnested.1
+  have hUouter : Uouter ⊆ U := by simpa [Uouter, U] using hnested.2
   have hUinnermeas : MeasurableSet Uinner := by
     exact (vec3Ball_measurable x (r / 2)).prod measurableSet_Ioo
   have hUoutermeas : MeasurableSet Uouter := by
@@ -333,23 +394,6 @@ theorem buGaussian_weighted_caccioppoli_cell
       exact hspace) (by
       have hpow : 4 * (r / 2) ^ 2 = r ^ 2 := by ring
       simpa [hpow] using htime)
-  have hInnerRefInt : Integrable (fun z => (K * W z₀) * G z)
-      (volume.restrict Uinner) := hInnerGInt.const_mul (K * W z₀)
-  have hInnerCompare : ∀ᵐ z ∂(volume.restrict Uinner),
-      W z * G z ≤ (K * W z₀) * G z := by
-    filter_upwards [ae_restrict_mem hUinnermeas] with z hz
-    have hGnonneg : 0 ≤ G z := by
-      unfold G spatialGradientSq
-      positivity
-    exact mul_le_mul_of_nonneg_right (hWinnerBound z hz) hGnonneg
-  have hInnerIntegral :
-      (∫ z in Uinner, W z * G z ∂(volume : Measure ParabolicPoint)) ≤
-        (K * W z₀) * ∫ z in Uinner, G z ∂(volume : Measure ParabolicPoint) := by
-    calc
-      _ ≤ ∫ z, (K * W z₀) * G z ∂(volume.restrict Uinner) :=
-        integral_mono_ae hInnerWGInt hInnerRefInt hInnerCompare
-      _ = (K * W z₀) * ∫ z, G z ∂(volume.restrict Uinner) := by
-        rw [integral_const_mul]
   have hacc' : (∫ z in Uinner, G z ∂(volume : Measure ParabolicPoint)) ≤
       256 * (1 + c ^ 2 + 1 / (r / 2) ^ 2) *
         ∫ z in Uouter, V z ∂(volume : Measure ParabolicPoint) := by
@@ -357,66 +401,26 @@ theorem buGaussian_weighted_caccioppoli_cell
     have htime' : 4 * (r / 2) ^ 2 = r ^ 2 := by ring
     rw [hrad, htime'] at hacc
     simpa [Uinner, Uouter, G, V] using hacc
-  have hOuterRefInt : Integrable (fun z => W z₀ * V z)
-      (volume.restrict Uouter) := hOuterVInt.const_mul (W z₀)
-  have hOuterCompare : ∀ᵐ z ∂(volume.restrict Uouter),
-      W z₀ * V z ≤ K * (W z * V z) := by
-    filter_upwards [ae_restrict_mem hUoutermeas] with z hz
-    have hVnonneg : 0 ≤ V z := by positivity
-    calc
-      W z₀ * V z ≤ (K * W z) * V z :=
-        mul_le_mul_of_nonneg_right (hWouterBound z hz) hVnonneg
-      _ = K * (W z * V z) := by ring
-  have hOuterIntegral : W z₀ *
-      ∫ z in Uouter, V z ∂(volume : Measure ParabolicPoint) ≤
-      K * ∫ z in Uouter, W z * V z ∂(volume : Measure ParabolicPoint) := by
-    calc
-      _ = ∫ z, W z₀ * V z ∂(volume.restrict Uouter) := by
-        rw [integral_const_mul]
-      _ ≤ ∫ z, K * (W z * V z) ∂(volume.restrict Uouter) :=
-        integral_mono_ae hOuterRefInt (hOuterWVInt.const_mul K) hOuterCompare
-      _ = K * ∫ z, W z * V z ∂(volume.restrict Uouter) := by
-        rw [integral_const_mul]
-  have hcoeff : 0 ≤ K * W z₀ :=
-    mul_nonneg (Real.exp_nonneg _) hWeightRefNonneg
-  have haccNonneg : 0 ≤ 256 * (1 + c ^ 2 + 1 / (r / 2) ^ 2) := by positivity
-  have hstep :
-      (∫ z in Uinner, W z * G z ∂(volume : Measure ParabolicPoint)) ≤
-        (K * W z₀) * (256 * (1 + c ^ 2 + 1 / (r / 2) ^ 2) *
-          ∫ z in Uouter, V z ∂(volume : Measure ParabolicPoint)) := by
-    exact hInnerIntegral.trans
-      (mul_le_mul_of_nonneg_left hacc' hcoeff)
+  have hGnonneg (z : ParabolicPoint) : 0 ≤ G z := by
+    unfold G spatialGradientSq
+    positivity
+  have hVnonneg (z : ParabolicPoint) : 0 ≤ V z := by positivity
   have hKnonneg : 0 ≤ K := by dsimp [K]; exact Real.exp_nonneg _
-  have hlast := mul_le_mul_of_nonneg_left hOuterIntegral
-    (mul_nonneg hKnonneg haccNonneg)
-  have hfinal :
-    (∫ z in Uinner, W z * G z ∂(volume : Measure ParabolicPoint)) ≤
-      Real.exp (2 * (56 * a * r ^ 2 + 12 * ρ * r + 36 * ρ ^ 2 * r ^ 2)) *
-        (256 * (1 + c ^ 2 + 1 / (r / 2) ^ 2)) *
-        (∫ z in Uouter, W z * V z ∂(volume : Measure ParabolicPoint)) := by
-    calc
-      (∫ z in Uinner, W z * G z ∂(volume : Measure ParabolicPoint)) ≤
-          (K * W z₀) * (256 * (1 + c ^ 2 + 1 / (r / 2) ^ 2) *
-            ∫ z in Uouter, V z ∂(volume : Measure ParabolicPoint)) := hstep
-      _ ≤ K * (256 * (1 + c ^ 2 + 1 / (r / 2) ^ 2) *
-            (K * ∫ z in Uouter, W z * V z ∂(volume : Measure ParabolicPoint))) := by
-        convert hlast using 1 <;> ring_nf
-      _ = Real.exp (2 * (56 * a * r ^ 2 + 12 * ρ * r + 36 * ρ ^ 2 * r ^ 2)) *
-            (256 * (1 + c ^ 2 + 1 / (r / 2) ^ 2)) *
-            (∫ z in Uouter, W z * V z ∂(volume : Measure ParabolicPoint)) := by
-        dsimp [K]
-        calc
-          _ = (Real.exp (56 * a * r ^ 2 + 12 * ρ * r + 36 * ρ ^ 2 * r ^ 2) *
-              Real.exp (56 * a * r ^ 2 + 12 * ρ * r + 36 * ρ ^ 2 * r ^ 2)) *
-              (256 * (1 + c ^ 2 + 1 / (r / 2) ^ 2)) *
-              (∫ z in Uouter, W z * V z ∂(volume : Measure ParabolicPoint)) := by ring_nf
-          _ = Real.exp ((56 * a * r ^ 2 + 12 * ρ * r + 36 * ρ ^ 2 * r ^ 2) +
-              (56 * a * r ^ 2 + 12 * ρ * r + 36 * ρ ^ 2 * r ^ 2)) *
-              (256 * (1 + c ^ 2 + 1 / (r / 2) ^ 2)) *
-              (∫ z in Uouter, W z * V z ∂(volume : Measure ParabolicPoint)) := by
-            rw [← Real.exp_add]
-          _ = _ := by congr 1; ring_nf
-  simpa [Uinner, Uouter, W, G, V] using hfinal
+  have hCnonneg : 0 ≤ 256 * (1 + c ^ 2 + 1 / (r / 2) ^ 2) := by positivity
+  have hfinal := weighted_cell_integral_comparison Uinner Uouter
+    hUinnermeas hUoutermeas W G V (W z₀) K
+    (256 * (1 + c ^ 2 + 1 / (r / 2) ^ 2)) hInnerWGInt hInnerGInt
+    hOuterVInt hOuterWVInt hWinnerBound hWouterBound hGnonneg hVnonneg
+    hKnonneg hWeightRefNonneg hCnonneg hacc'
+  have hexp : K ^ 2 = Real.exp
+      (2 * (56 * a * r ^ 2 + 12 * ρ * r + 36 * ρ ^ 2 * r ^ 2)) := by
+    dsimp [K]
+    rw [show 2 * (56 * a * r ^ 2 + 12 * ρ * r + 36 * ρ ^ 2 * r ^ 2) =
+      (56 * a * r ^ 2 + 12 * ρ * r + 36 * ρ ^ 2 * r ^ 2) +
+        (56 * a * r ^ 2 + 12 * ρ * r + 36 * ρ ^ 2 * r ^ 2) by ring]
+    rw [← Real.exp_add]
+    ring
+  simpa [Uinner, Uouter, W, G, V, hexp] using hfinal
 
 end ESS
 

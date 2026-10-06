@@ -93,7 +93,7 @@ private theorem suitableWeakViscousCurlPairingOnBox
     CKN.component_mem_spaceTimeTestFunction hcurl i
   have hcurlCompBox (i : Fin 3) :
       tsupport (fun z : Vec3 × ℝ => vorticityTestCurl ψ z i) ⊆ Ω' ×ˢ J := by
-    exact (CKN.tsupport_component_subset (V := Vec3) (ι := Fin 3)
+    exact (CKN.tsupport_component_subset (ι := Fin 3)
       (vorticityTestCurl ψ) i (by intro z hz; simp [hz])).trans hcurlBoxOrd
   have hcurlLap := vorticityTestLaplacian_mem_spaceTimeTestFunction hcurl
   have hL (i j : Fin 3) : IntegrableOn
@@ -221,6 +221,186 @@ private theorem suitableWeakViscousCurlPairingOnBox
             simp [vorticityTestLaplacian, CKN.spatialSecondPartial,
               ← Finset.mul_sum]
 
+private theorem vorticityTestCurl_partials_zero_off_support
+    {Ω I : Set Vec3} {ψ : Vec3 × ℝ → Vec3}
+    (hψ : ψ ∈ CKN.spaceTimeTestFunction (V := Vec3) Ω I)
+    (z : ParabolicPoint)
+    (hz : z ∉ tsupport (show ParabolicPoint → Vec3 from vorticityTestCurl ψ)) :
+    (∀ i : Fin 3, CKN.timePartial
+      (fun w : Vec3 × ℝ => vorticityTestCurl ψ w i) z = 0) ∧
+    (∀ i j : Fin 3, CKN.spatialPartial
+      (fun w : Vec3 × ℝ => vorticityTestCurl ψ w i) j z = 0) := by
+  have hnot (i : Fin 3) : (show Vec3 × ℝ from z) ∉
+      tsupport (fun w : Vec3 × ℝ => vorticityTestCurl ψ w i) := by
+    intro hi
+    apply hz
+    change z ∈ tsupport (show ParabolicPoint → Vec3 from vorticityTestCurl ψ)
+    rw [CKN.tsupport_parabolic_eq]
+    exact (CKN.tsupport_component_subset (ι := Fin 3)
+      (vorticityTestCurl ψ) i (by intro w hw; simp [hw])) hi
+  constructor
+  · intro i
+    apply CKN.timePartial_eq_zero_off_tsupport
+    exact hnot i
+  · intro i j
+    apply CKN.spatialPartial_eq_zero_off_tsupport
+    exact hnot i
+
+private theorem suitableWeakVorticityViscousIdentityOnBox
+    {Ω : Set Vec3} {I : Set ℝ} {q : ℝ}
+    {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin 3 → Vec3}
+    {p : ParabolicPoint → ℝ}
+    (h : CKN.IsSuitableWeakSolution Ω I q u Du p (fun _ => 0))
+    {Ω' : Set Vec3} {J : Set ℝ} (hbox : CKN.localBox Ω I Ω' J)
+    {ψ : Vec3 × ℝ → Vec3}
+    (hψ : ψ ∈ CKN.spaceTimeTestFunction (V := Vec3) Ω I)
+    (hψbox : tsupport (show ParabolicPoint → Vec3 from ψ) ⊆
+      CKN.spaceTimeSet Ω' J) :
+    ∫ z in CKN.spaceTimeSet Ω' J,
+      ∑ i : Fin 3, ∑ j : Fin 3,
+        Du z i j * CKN.spatialPartial
+          (fun w : Vec3 × ℝ => vorticityTestCurl ψ w i) j z =
+    -∫ z in CKN.spaceTimeSet Ω' J,
+      ∑ i : Fin 3, weakVorticity Du z i *
+        vorticityTestLaplacian ψ (show Vec3 × ℝ from z) i := by
+  have hψboxOrd : tsupport ψ ⊆ Ω' ×ˢ J := by
+    intro z hz
+    have hzP : (show ParabolicPoint from z) ∈
+        tsupport (show ParabolicPoint → Vec3 from ψ) := by
+      rw [CKN.tsupport_parabolic_eq]
+      exact hz
+    exact hψbox hzP
+  have hlapTest := vorticityTestLaplacian_mem_spaceTimeTestFunction hψ
+  have hlapBoxOrd : tsupport (vorticityTestLaplacian ψ) ⊆ Ω' ×ˢ J :=
+    (vorticityTestLaplacian_tsupport).trans hψboxOrd
+  have hlapBox : tsupport
+      (show ParabolicPoint → Vec3 from vorticityTestLaplacian ψ) ⊆
+        CKN.spaceTimeSet Ω' J := by
+    rw [CKN.tsupport_parabolic_eq]
+    exact hlapBoxOrd
+  have hlapPair := suitableWeakVorticityPairingOnBox h hbox hlapTest hlapBox
+  have hlapCurlComm (z : ParabolicPoint) (i : Fin 3) :
+      vorticityTestCurl (vorticityTestLaplacian ψ)
+          (show Vec3 × ℝ from z) i =
+        vorticityTestLaplacian (vorticityTestCurl ψ)
+          (show Vec3 × ℝ from z) i :=
+    vorticityTestCurl_laplacian_commute hψ.1 i (show Vec3 × ℝ from z)
+  calc
+    _ = -∫ z in CKN.spaceTimeSet Ω' J,
+        ∑ i : Fin 3, u z i * vorticityTestLaplacian
+          (vorticityTestCurl ψ) (show Vec3 × ℝ from z) i :=
+      suitableWeakViscousCurlPairingOnBox h hbox hψ hψbox
+    _ = -∫ z in CKN.spaceTimeSet Ω' J,
+        ∑ i : Fin 3, weakVorticity Du z i *
+          vorticityTestLaplacian ψ (show Vec3 × ℝ from z) i := by
+      congr 1
+      calc
+        (∫ z in CKN.spaceTimeSet Ω' J,
+            ∑ i : Fin 3, u z i * vorticityTestLaplacian
+              (vorticityTestCurl ψ) (show Vec3 × ℝ from z) i) =
+          ∫ z in CKN.spaceTimeSet Ω' J,
+            ∑ i : Fin 3, u z i * vorticityTestCurl
+              (vorticityTestLaplacian ψ) (show Vec3 × ℝ from z) i := by
+                apply integral_congr_ae
+                filter_upwards [] with z
+                apply Finset.sum_congr rfl
+                intro i hi
+                rw [hlapCurlComm]
+        _ = ∫ z in CKN.spaceTimeSet Ω' J,
+            ∑ i : Fin 3, weakVorticity Du z i *
+              vorticityTestLaplacian ψ (show Vec3 × ℝ from z) i := by
+                simpa using hlapPair.symm
+
+private theorem suitableWeakVorticityTimeIdentityOnBox
+    {Ω : Set Vec3} {I : Set ℝ} {q : ℝ}
+    {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin 3 → Vec3}
+    {p : ParabolicPoint → ℝ}
+    (h : CKN.IsSuitableWeakSolution Ω I q u Du p (fun _ => 0))
+    {Ω' : Set Vec3} {J : Set ℝ} (hbox : CKN.localBox Ω I Ω' J)
+    {ψ : Vec3 × ℝ → Vec3}
+    (hψ : ψ ∈ CKN.spaceTimeTestFunction (V := Vec3) Ω I)
+    (hψbox : tsupport (show ParabolicPoint → Vec3 from ψ) ⊆
+      CKN.spaceTimeSet Ω' J) :
+    ∫ z in CKN.spaceTimeSet Ω' J,
+      ∑ i : Fin 3, u z i * CKN.timePartial
+        (fun w : Vec3 × ℝ => vorticityTestCurl ψ w i) z =
+    ∫ z in CKN.spaceTimeSet Ω' J,
+      ∑ i : Fin 3, weakVorticity Du z i *
+        vorticityTestTimeDerivative ψ (show Vec3 × ℝ from z) i := by
+  have hψboxOrd : tsupport ψ ⊆ Ω' ×ˢ J := by
+    intro z hz
+    have hzP : (show ParabolicPoint from z) ∈
+        tsupport (show ParabolicPoint → Vec3 from ψ) := by
+      rw [CKN.tsupport_parabolic_eq]
+      exact hz
+    exact hψbox hzP
+  have htimeTest := vorticityTestTimeDerivative_mem_spaceTimeTestFunction hψ
+  have htimeBoxOrd : tsupport (vorticityTestTimeDerivative ψ) ⊆ Ω' ×ˢ J :=
+    (vorticityTestTimeDerivative_tsupport).trans hψboxOrd
+  have htimeBox : tsupport
+      (show ParabolicPoint → Vec3 from vorticityTestTimeDerivative ψ) ⊆
+        CKN.spaceTimeSet Ω' J := by
+    rw [CKN.tsupport_parabolic_eq]
+    exact htimeBoxOrd
+  have htimePair := suitableWeakVorticityPairingOnBox h hbox htimeTest htimeBox
+  have htimeComm (z : ParabolicPoint) (i : Fin 3) :
+      CKN.timePartial (fun w : Vec3 × ℝ => vorticityTestCurl ψ w i) z =
+        vorticityTestCurl (vorticityTestTimeDerivative ψ)
+          (show Vec3 × ℝ from z) i := by
+    change vorticityTestTimePartial
+        (fun w : Vec3 × ℝ => vorticityTestCurl ψ w i) z =
+      vorticityTestCurl
+        (fun w => fun k => vorticityTestTimePartial (fun y => ψ y k) w) z i
+    exact vorticityTestCurl_timePartial hψ.1 i z
+  calc
+    _ = ∫ z in CKN.spaceTimeSet Ω' J,
+        ∑ i : Fin 3, u z i * vorticityTestCurl
+          (vorticityTestTimeDerivative ψ) (show Vec3 × ℝ from z) i := by
+            apply integral_congr_ae
+            filter_upwards [] with z
+            apply Finset.sum_congr rfl
+            intro i hi
+            rw [htimeComm]
+    _ = _ := by simpa using htimePair.symm
+
+private theorem suitableWeakVorticityNonlinearIdentityOnBox
+    {Ω : Set Vec3} {I : Set ℝ} {q : ℝ}
+    {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin 3 → Vec3}
+    {p : ParabolicPoint → ℝ}
+    (h : CKN.IsSuitableWeakSolution Ω I q u Du p (fun _ => 0))
+    {Ω' : Set Vec3} {J : Set ℝ} (hbox : CKN.localBox Ω I Ω' J)
+    {ψ : Vec3 × ℝ → Vec3}
+    (hψ : ψ ∈ CKN.spaceTimeTestFunction (V := Vec3) Ω I)
+    (hψbox : tsupport (show ParabolicPoint → Vec3 from ψ) ⊆
+      CKN.spaceTimeSet Ω' J) :
+    ∫ z in CKN.spaceTimeSet Ω' J,
+      ∑ i : Fin 3, ∑ j : Fin 3,
+        u z i * u z j * CKN.spatialPartial
+          (fun w : Vec3 × ℝ => vorticityTestCurl ψ w i) j z =
+    ∫ z in CKN.spaceTimeSet Ω' J,
+      ∑ j : Fin 3, ∑ i : Fin 3,
+        vorticityFlux u Du z j i * CKN.spatialPartial
+          (fun w : Vec3 × ℝ => ψ w i) j z := by
+  have hconvection := suitableWeakConvectionPairingOnBox h hbox hψ hψbox
+  have hfluxPair (z : ParabolicPoint) :
+      (∑ i : Fin 3,
+        spatialCross (u z) (weakVorticity Du z) i *
+          vorticityTestCurl ψ (show Vec3 × ℝ from z) i) =
+        ∑ j : Fin 3, ∑ i : Fin 3,
+          vorticityFlux u Du z j i * CKN.spatialPartial
+            (fun w : Vec3 × ℝ => ψ w i) j z := by
+    exact (vorticityFlux_spaceTimeTestCurl_pairing (u := u) (Du := Du)
+      (ψ := ψ) z).symm
+  calc
+    _ = ∫ z in CKN.spaceTimeSet Ω' J,
+        ∑ i : Fin 3,
+          spatialCross (u z) (weakVorticity Du z) i *
+            vorticityTestCurl ψ (show Vec3 × ℝ from z) i := by
+              simpa using hconvection
+    _ = _ := by
+      apply integral_congr_ae
+      exact Filter.Eventually.of_forall hfluxPair
+
 /-- The weak vorticity equation holds on any local box containing the support
 of the test field (manuscript `lem:vorticity-weak-eq`). -/
 theorem suitableWeakVorticityEquationOnBox
@@ -308,54 +488,16 @@ theorem suitableWeakVorticityEquationOnBox
         (fun w : Vec3 × ℝ => ψ w i) j z
   have htimeZero (z : ParabolicPoint) (hz : z ∉ K) :
       timeTerm z = 0 := by
-    have hnot : (show Vec3 × ℝ from z) ∉ tsupport (vorticityTestCurl ψ) := by
-      intro hc
-      apply hz
-      change z ∈ tsupport
-        (show ParabolicPoint → Vec3 from vorticityTestCurl ψ)
-      rw [CKN.tsupport_parabolic_eq]
-      exact hc
-    have hpartial (i : Fin 3) :
-        CKN.timePartial (fun w : Vec3 × ℝ => vorticityTestCurl ψ w i) z = 0 := by
-      apply CKN.timePartial_eq_zero_off_tsupport
-      intro hi
-      exact hnot ((CKN.tsupport_component_subset (V := Vec3) (ι := Fin 3)
-        (vorticityTestCurl ψ) i (by intro w hw; simp [hw])) hi)
-    simp [timeTerm, hpartial]
+    have hpartial := vorticityTestCurl_partials_zero_off_support hψ z hz
+    simp [timeTerm, hpartial.1]
   have hnonlinearZero (z : ParabolicPoint) (hz : z ∉ K) :
       nonlinearTerm z = 0 := by
-    have hnot : (show Vec3 × ℝ from z) ∉ tsupport (vorticityTestCurl ψ) := by
-      intro hc
-      apply hz
-      change z ∈ tsupport
-        (show ParabolicPoint → Vec3 from vorticityTestCurl ψ)
-      rw [CKN.tsupport_parabolic_eq]
-      exact hc
-    have hpartial (i j : Fin 3) :
-        CKN.spatialPartial
-          (fun w : Vec3 × ℝ => vorticityTestCurl ψ w i) j z = 0 := by
-      apply CKN.spatialPartial_eq_zero_off_tsupport
-      intro hi
-      exact hnot ((CKN.tsupport_component_subset (V := Vec3) (ι := Fin 3)
-        (vorticityTestCurl ψ) i (by intro w hw; simp [hw])) hi)
-    simp [nonlinearTerm, hpartial]
+    have hpartial := vorticityTestCurl_partials_zero_off_support hψ z hz
+    simp [nonlinearTerm, hpartial.2]
   have hviscousZero (z : ParabolicPoint) (hz : z ∉ K) :
       viscousTerm z = 0 := by
-    have hnot : (show Vec3 × ℝ from z) ∉ tsupport (vorticityTestCurl ψ) := by
-      intro hc
-      apply hz
-      change z ∈ tsupport
-        (show ParabolicPoint → Vec3 from vorticityTestCurl ψ)
-      rw [CKN.tsupport_parabolic_eq]
-      exact hc
-    have hpartial (i j : Fin 3) :
-        CKN.spatialPartial
-          (fun w : Vec3 × ℝ => vorticityTestCurl ψ w i) j z = 0 := by
-      apply CKN.spatialPartial_eq_zero_off_tsupport
-      intro hi
-      exact hnot ((CKN.tsupport_component_subset (V := Vec3) (ι := Fin 3)
-        (vorticityTestCurl ψ) i (by intro w hw; simp [hw])) hi)
-    simp [viscousTerm, hpartial]
+    have hpartial := vorticityTestCurl_partials_zero_off_support hψ z hz
+    simp [viscousTerm, hpartial.2]
   have hmomentumSupport := suitableWeakMomentumTestCurlOnSupport h hψ
   have hmomentumSupport' : ∫ z in K, momentumTerm z = 0 := by
     simpa [K, momentumTerm] using hmomentumSupport
@@ -420,85 +562,21 @@ theorem suitableWeakVorticityEquationOnBox
       (CKN.spaceTimeSet Ω' J) volume := by
     simpa [fluxTerm] using suitableWeakVorticityFluxTestIntegrableOnBox
       h hbox hψ hψbox
-  have htimePair := suitableWeakVorticityPairingOnBox h hbox htimeTest htimeBox
-  have htimeComm (z : ParabolicPoint) (i : Fin 3) :
-      CKN.timePartial (fun w : Vec3 × ℝ => vorticityTestCurl ψ w i) z =
-        vorticityTestCurl (vorticityTestTimeDerivative ψ)
-          (show Vec3 × ℝ from z) i := by
-    change vorticityTestTimePartial
-        (fun w : Vec3 × ℝ => vorticityTestCurl ψ w i) z =
-      vorticityTestCurl
-        (fun w => fun k => vorticityTestTimePartial (fun y => ψ y k) w) z i
-    exact vorticityTestCurl_timePartial hψ.1 i z
   have htimeId :
       ∫ z in CKN.spaceTimeSet Ω' J, timeTerm z =
         ∫ z in CKN.spaceTimeSet Ω' J, omegaTimeTerm z := by
-    calc
-      ∫ z in CKN.spaceTimeSet Ω' J, timeTerm z =
-          ∫ z in CKN.spaceTimeSet Ω' J,
-            ∑ i : Fin 3, u z i * vorticityTestCurl
-              (vorticityTestTimeDerivative ψ) (show Vec3 × ℝ from z) i := by
-                apply integral_congr_ae
-                filter_upwards [] with z
-                simp only [timeTerm]
-                apply Finset.sum_congr rfl
-                intro i hi
-                rw [htimeComm]
-      _ = ∫ z in CKN.spaceTimeSet Ω' J, omegaTimeTerm z := by
-        simpa [omegaTimeTerm] using htimePair.symm
-  have hlapPair := suitableWeakVorticityPairingOnBox h hbox hlapTest hlapBox
-  have hlapCurlComm (z : ParabolicPoint) (i : Fin 3) :
-      vorticityTestCurl (vorticityTestLaplacian ψ)
-          (show Vec3 × ℝ from z) i =
-        vorticityTestLaplacian (vorticityTestCurl ψ)
-          (show Vec3 × ℝ from z) i :=
-    vorticityTestCurl_laplacian_commute hψ.1 i (show Vec3 × ℝ from z)
+    simpa [timeTerm, omegaTimeTerm] using
+      suitableWeakVorticityTimeIdentityOnBox h hbox hψ hψbox
   have hviscousId :
       ∫ z in CKN.spaceTimeSet Ω' J, viscousTerm z =
         -∫ z in CKN.spaceTimeSet Ω' J, omegaLaplacianTerm z := by
-    calc
-      ∫ z in CKN.spaceTimeSet Ω' J, viscousTerm z =
-          -∫ z in CKN.spaceTimeSet Ω' J,
-            ∑ i : Fin 3, u z i * vorticityTestLaplacian
-              (vorticityTestCurl ψ) (show Vec3 × ℝ from z) i :=
-        suitableWeakViscousCurlPairingOnBox h hbox hψ hψbox
-      _ = -∫ z in CKN.spaceTimeSet Ω' J, omegaLaplacianTerm z := by
-        congr 1
-        calc
-          (∫ z in CKN.spaceTimeSet Ω' J,
-              ∑ i : Fin 3, u z i * vorticityTestLaplacian
-                (vorticityTestCurl ψ) (show Vec3 × ℝ from z) i) =
-            ∫ z in CKN.spaceTimeSet Ω' J,
-              ∑ i : Fin 3, u z i * vorticityTestCurl
-                (vorticityTestLaplacian ψ) (show Vec3 × ℝ from z) i := by
-                  apply integral_congr_ae
-                  filter_upwards [] with z
-                  apply Finset.sum_congr rfl
-                  intro i hi
-                  rw [hlapCurlComm]
-          _ = ∫ z in CKN.spaceTimeSet Ω' J, omegaLaplacianTerm z := by
-                simpa [omegaLaplacianTerm] using hlapPair.symm
-  have hconvection := suitableWeakConvectionPairingOnBox h hbox hψ hψbox
-  have hfluxPair (z : ParabolicPoint) :
-      (∑ i : Fin 3,
-        spatialCross (u z) (weakVorticity Du z) i *
-          vorticityTestCurl ψ (show Vec3 × ℝ from z) i) = fluxTerm z := by
-    simpa [fluxTerm] using
-      (vorticityFlux_spaceTimeTestCurl_pairing (u := u) (Du := Du)
-        (ψ := ψ) z).symm
+    simpa [viscousTerm, omegaLaplacianTerm] using
+      suitableWeakVorticityViscousIdentityOnBox h hbox hψ hψbox
   have hnonlinearId :
       ∫ z in CKN.spaceTimeSet Ω' J, nonlinearTerm z =
         ∫ z in CKN.spaceTimeSet Ω' J, fluxTerm z := by
-    calc
-      ∫ z in CKN.spaceTimeSet Ω' J, nonlinearTerm z =
-          ∫ z in CKN.spaceTimeSet Ω' J,
-            ∑ i : Fin 3,
-              spatialCross (u z) (weakVorticity Du z) i *
-                vorticityTestCurl ψ (show Vec3 × ℝ from z) i := by
-                  simpa [nonlinearTerm] using hconvection
-      _ = ∫ z in CKN.spaceTimeSet Ω' J, fluxTerm z := by
-        apply integral_congr_ae
-        exact Filter.Eventually.of_forall hfluxPair
+    simpa [nonlinearTerm, fluxTerm] using
+      suitableWeakVorticityNonlinearIdentityOnBox h hbox hψ hψbox
   let A : ℝ := ∫ z in CKN.spaceTimeSet Ω' J, omegaTimeTerm z
   let B : ℝ := ∫ z in CKN.spaceTimeSet Ω' J, fluxTerm z
   let C : ℝ := ∫ z in CKN.spaceTimeSet Ω' J, omegaLaplacianTerm z
@@ -599,7 +677,7 @@ theorem suitableWeakVorticityEquation
     have hcomp (i : Fin 3) : (show Vec3 × ℝ from z) ∉
         tsupport (fun w : Vec3 × ℝ => ψ w i) := by
       intro hi
-      exact hzOrd ((CKN.tsupport_component_subset (V := Vec3) (ι := Fin 3)
+      exact hzOrd ((CKN.tsupport_component_subset (ι := Fin 3)
         ψ i (by intro w hw; simp [hw])) hi)
     have hpartial (i j : Fin 3) :
         CKN.spatialPartial

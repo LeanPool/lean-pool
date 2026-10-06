@@ -53,8 +53,7 @@ theorem isRegularPoint_of_holder_on_shifted_cylinder
     rw [mem_parabolicCylinder]
     refine ⟨?_, ?_, ?_⟩
     · simp [vec3EuclideanNorm_zero, hradius]
-    ·
-      dsimp [t₁]
+    · dsimp [t₁]
       nlinarith only [hR2]
     · dsimp [t₁]
       nlinarith only [hR2]

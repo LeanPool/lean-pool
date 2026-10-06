@@ -60,6 +60,22 @@ theorem blowupLimitAssembly_lintegral_sq_le_of_Lthree
   gcongr
   exact h2.trans (by gcongr)
 
+private theorem blowupLimitAssembly_localBox_geometry
+    (R a : ℝ) (hR : 0 < R) (ha : a < 0) :
+    ∀ Ω' J, localBox (vec3Ball (0 : Vec3) R) (Ioo a 0) Ω' J →
+      spaceTimeSet Ω' J ⊆ vec3Ball (0 : Vec3) R ×ˢ Ioo a 0 ∧
+      IsCompact (closure Ω' ×ˢ closure J) ∧
+      closure Ω' ×ˢ closure J ⊆ (univ : Set Vec3) ×ˢ Iio (0 : ℝ) ∧
+      spaceTimeSet Ω' J ⊆ closure Ω' ×ˢ closure J ∧
+      MeasurableSet (spaceTimeSet Ω' J) := by
+  intro Ω' J hbox
+  obtain ⟨hΩo, hΩc, hΩsub, hJo, hJc, hJsub⟩ := hbox
+  refine ⟨?_, hΩc.prod hJc, ?_, prod_mono subset_closure subset_closure,
+    hΩo.measurableSet.prod hJo.measurableSet⟩
+  · exact prod_mono (subset_closure.trans hΩsub) (subset_closure.trans hJsub)
+  · intro z hz
+    exact ⟨mem_univ _, (hJsub hz.2).2⟩
+
 /-- The blow-up limit is a suitable weak solution on every bounded past
 cylinder, by `thm:stability` of the CKN manuscript applied to a tail of the rescaled source
 solutions. -/
@@ -166,18 +182,7 @@ theorem blowupLimitAssembly_limit_suitable
     obtain ⟨hs, ht, _⟩ := hK (n + K) (Nat.le_add_left K n)
     exact blowupFields_eq_rescale_on_cylinder u Du p x₀ t₀ (r (n + K)) R a hxnorm ht₀
       (hr _) hs (by linarith only [ht])
-  have hboxsub : ∀ Ω' J, localBox (vec3Ball (0 : Vec3) R) (Ioo a 0) Ω' J →
-      spaceTimeSet Ω' J ⊆ C ∧ IsCompact (closure Ω' ×ˢ closure J) ∧
-        closure Ω' ×ˢ closure J ⊆ (univ : Set Vec3) ×ˢ Iio (0 : ℝ) ∧
-        spaceTimeSet Ω' J ⊆ closure Ω' ×ˢ closure J ∧
-        MeasurableSet (spaceTimeSet Ω' J) := by
-    intro Ω' J hbox
-    obtain ⟨hΩo, hΩc, hΩsub, hJo, hJc, hJsub⟩ := hbox
-    refine ⟨?_, hΩc.prod hJc, ?_, prod_mono subset_closure subset_closure,
-      hΩo.measurableSet.prod hJo.measurableSet⟩
-    · exact prod_mono (subset_closure.trans hΩsub) (subset_closure.trans hJsub)
-    · intro z hz
-      exact ⟨mem_univ _, (hJsub hz.2).2⟩
+  have hboxsub := blowupLimitAssembly_localBox_geometry R a hR ha
   refine stability_suitable_limit
     (fun n => parabolicRescaleVelocity x₀ t₀ (r (n + K)) u)
     (fun n => parabolicRescaleGradient x₀ t₀ (r (n + K)) Du)

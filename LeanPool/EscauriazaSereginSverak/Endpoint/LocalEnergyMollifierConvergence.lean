@@ -13,6 +13,12 @@ public import Mathlib.MeasureTheory.Function.L2Space
 public import Mathlib.MeasureTheory.Integral.Prod
 public import Mathlib.MeasureTheory.Constructions.Pi
 
+/-!
+# Local Energy Mollifier Convergence
+
+Local energy identities and limit passages for the endpoint regularity proof.
+-/
+
 public section
 
 open CKN
@@ -35,8 +41,10 @@ local instance localEnergyConvergenceVolumeIsAddLeftInvariant :
     Measure.IsAddLeftInvariant (volume : Measure (Vec3 × ℝ)) :=
   localEnergyConvergenceVolumeIsAddHaarMeasure.toIsAddLeftInvariant
 
-@[expose] abbrev LocalEnergyVec4 := CKN.Vec 4
+/-- The four-dimensional Euclidean coordinate space for local energy integrals. -/
+abbrev LocalEnergyVec4 := CKN.Vec 4
 
+/-- The measurable identification of four coordinates with space followed by time. -/
 @[expose] def localEnergySpaceTimeCoord : LocalEnergyVec4 ≃ᵐ (Vec3 × ℝ) :=
   (MeasurableEquiv.piFinSuccAbove (fun _ : Fin 4 => ℝ) (Fin.last 3)).trans
     MeasurableEquiv.prodComm

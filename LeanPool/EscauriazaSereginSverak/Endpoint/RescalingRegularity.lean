@@ -29,6 +29,7 @@ noncomputable section
 
 namespace ESS
 
+/-- The translation and parabolic rescaling homeomorphism on spacetime. -/
 @[expose] def rescaleHomeomorph (x₀ : Vec3) (t₀ r : ℝ) (hr : 0 < r) :
     ParabolicPoint ≃ₜ ParabolicPoint :=
   (parabolicHomeomorph.trans

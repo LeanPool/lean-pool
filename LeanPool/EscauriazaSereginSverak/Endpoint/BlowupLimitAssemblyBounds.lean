@@ -47,14 +47,14 @@ theorem blowupLimitAssembly_slice_integrability
     (a b : ℝ)
     (hslice : ∃ M : ℝ≥0∞, M < ⊤ ∧ ∀ t,
       (∫⁻ x in closure (vec3Ball (0 : Vec3) R),
-        ENNReal.ofReal (vec3EuclideanNorm (g (x,t))) ^ (2 : ℝ)) ≤ M)
+        ENNReal.ofReal (vec3EuclideanNorm (g (x, t))) ^ (2 : ℝ)) ≤ M)
     (G : ℝ≥0∞) (hG : G < ⊤)
     (hgrad : (∫⁻ t in Icc a b, ∫⁻ x in vec3Ball (0 : Vec3) R,
-      ENNReal.ofReal (spatialGradientSq g Dg (x,t))) ≤ G) :
-    (∀ t, ∀ i : Fin 3, IntegrableOn (fun x => g (x,t) i)
+      ENNReal.ofReal (spatialGradientSq g Dg (x, t))) ≤ G) :
+    (∀ t, ∀ i : Fin 3, IntegrableOn (fun x => g (x, t) i)
       (vec3Ball (0 : Vec3) R)) ∧
     (∀ᵐ t ∂(volume.restrict (Icc a b)), ∀ i j : Fin 3,
-      IntegrableOn (fun x => Dg (x,t) i j) (vec3Ball (0 : Vec3) R)) := by
+      IntegrableOn (fun x => Dg (x, t) i j) (vec3Ball (0 : Vec3) R)) := by
   set B : Set Vec3 := vec3Ball (0 : Vec3) R
   have hBvol : volume B < ⊤ :=
     lt_of_le_of_lt (measure_mono subset_closure)
@@ -62,38 +62,38 @@ theorem blowupLimitAssembly_slice_integrability
   obtain ⟨M, hM, hMb⟩ := hslice
   constructor
   · intro t i
-    have hmeas : Measurable (fun x : Vec3 => g (x,t) i) :=
+    have hmeas : Measurable (fun x : Vec3 => g (x, t) i) :=
       (measurable_pi_apply i).comp (hg.comp measurable_prodMk_right)
     apply blowupLimitAssembly_integrableOn_of_le_one_add hBvol
       hmeas.aestronglyMeasurable
-      (F := fun x => ENNReal.ofReal (vec3EuclideanNorm (g (x,t))) ^ (2 : ℝ))
+      (F := fun x => ENNReal.ofReal (vec3EuclideanNorm (g (x, t))) ^ (2 : ℝ))
     · intro x
-      exact blowupLimitAssembly_ofReal_abs_component_le (g (x,t)) i
+      exact blowupLimitAssembly_ofReal_abs_component_le (g (x, t)) i
     · calc
-        (∫⁻ x in B, ENNReal.ofReal (vec3EuclideanNorm (g (x,t))) ^ (2 : ℝ)) ≤
+        (∫⁻ x in B, ENNReal.ofReal (vec3EuclideanNorm (g (x, t))) ^ (2 : ℝ)) ≤
             ∫⁻ x in closure B,
-              ENNReal.ofReal (vec3EuclideanNorm (g (x,t))) ^ (2 : ℝ) :=
+              ENNReal.ofReal (vec3EuclideanNorm (g (x, t))) ^ (2 : ℝ) :=
           lintegral_mono_set subset_closure
         _ ≤ M := hMb t
         _ < ⊤ := hM
   · have hSGS := blowupLimitAssembly_measurable_spatialGradientSq g Dg hDg
     have hinner : Measurable (fun t : ℝ => ∫⁻ x in B,
-        ENNReal.ofReal (spatialGradientSq g Dg (x,t))) := by
+        ENNReal.ofReal (spatialGradientSq g Dg (x, t))) := by
       have hjoint : Measurable (fun p : Vec3 × ℝ =>
           ENNReal.ofReal (spatialGradientSq g Dg p)) :=
         ENNReal.measurable_ofReal.comp hSGS
       exact hjoint.lintegral_prod_left'
     have hfin : ∀ᵐ t ∂(volume.restrict (Icc a b)),
-        (∫⁻ x in B, ENNReal.ofReal (spatialGradientSq g Dg (x,t))) < ⊤ :=
+        (∫⁻ x in B, ENNReal.ofReal (spatialGradientSq g Dg (x, t))) < ⊤ :=
       ae_lt_top' hinner.aemeasurable (ne_of_lt (lt_of_le_of_lt hgrad hG))
     filter_upwards [hfin] with t ht i j
-    have hmeas : Measurable (fun x : Vec3 => Dg (x,t) i j) :=
+    have hmeas : Measurable (fun x : Vec3 => Dg (x, t) i j) :=
       (measurable_pi_apply j).comp ((measurable_pi_apply i).comp
         (hDg.comp measurable_prodMk_right))
     exact blowupLimitAssembly_integrableOn_of_le_one_add hBvol
       hmeas.aestronglyMeasurable
-      (F := fun x => ENNReal.ofReal (spatialGradientSq g Dg (x,t)))
-      (fun x => blowupLimitAssembly_ofReal_abs_gradient_le g Dg (x,t) i j) ht
+      (F := fun x => ENNReal.ofReal (spatialGradientSq g Dg (x, t)))
+      (fun x => blowupLimitAssembly_ofReal_abs_gradient_le g Dg (x, t) i j) ht
 
 /-- The local gradient energy of one modified field is finite on every
 compact set and every past time interval. -/
@@ -103,33 +103,33 @@ theorem blowupLimitAssemblyCutoff_gradient_bound_single
     (hf : ∀ n, Measurable (f n)) (hDf : ∀ n, Measurable (Df n))
     (hslice : ∃ M : ℝ≥0∞, M < ⊤ ∧ ∀ t,
       (∫⁻ x in closure (vec3Ball (0 : Vec3) ((k : ℝ) + 1)),
-        ENNReal.ofReal (vec3EuclideanNorm (f (ν k) (x,t))) ^ (2 : ℝ)) ≤ M)
+        ENNReal.ofReal (vec3EuclideanNorm (f (ν k) (x, t))) ^ (2 : ℝ)) ≤ M)
     (G : ℝ≥0∞) (hG : G < ⊤)
     (hgrad : (∫⁻ t in Icc (-((k : ℝ) + 1)) 0,
       ∫⁻ x in vec3Ball (0 : Vec3) ((k : ℝ) + 1),
-        ENNReal.ofReal (spatialGradientSq (f (ν k)) (Df (ν k)) (x,t))) ≤ G)
+        ENNReal.ofReal (spatialGradientSq (f (ν k)) (Df (ν k)) (x, t))) ≤ G)
     (C : Set Vec3) (a b : ℝ) (hb : b ≤ 0) :
     ∃ Bd : ℝ≥0∞, Bd < ⊤ ∧
       (∫⁻ t in Icc a b, ∫⁻ x in C,
         ENNReal.ofReal (spatialGradientSq (blowupLimitAssemblyCutoffField f ν k)
-          (blowupLimitAssemblyCutoffGradient f Df ν k) (x,t))) ≤ Bd := by
+          (blowupLimitAssemblyCutoffGradient f Df ν k) (x, t))) ≤ Bd := by
   obtain ⟨M, hM, hMb⟩ := hslice
   set B : Set Vec3 := vec3Ball (0 : Vec3) ((k : ℝ) + 1)
   set J : Set ℝ := Icc (-((k : ℝ) + 1)) 0
   have hBmeas : MeasurableSet B := (isOpen_vec3Ball _ _).measurableSet
   have hJmeas : MeasurableSet J := measurableSet_Icc
   let H : Vec3 → ℝ → ℝ≥0∞ := fun x t =>
-    2 * ENNReal.ofReal (spatialGradientSq (f (ν k)) (Df (ν k)) (x,t)) +
-      2 * 64 ^ 2 * ENNReal.ofReal (vec3EuclideanNorm (f (ν k) (x,t))) ^ (2 : ℝ)
+    2 * ENNReal.ofReal (spatialGradientSq (f (ν k)) (Df (ν k)) (x, t)) +
+      2 * 64 ^ 2 * ENNReal.ofReal (vec3EuclideanNorm (f (ν k) (x, t))) ^ (2 : ℝ)
   have hpoint : ∀ x t, t ≤ 0 → ENNReal.ofReal (spatialGradientSq
       (blowupLimitAssemblyCutoffField f ν k)
-      (blowupLimitAssemblyCutoffGradient f Df ν k) (x,t)) ≤
+      (blowupLimitAssemblyCutoffGradient f Df ν k) (x, t)) ≤
       J.indicator (fun t => B.indicator (fun x => H x t) x) t := by
     intro x t ht0
     by_cases hzero : x ∉ B ∨ t ≤ -((k : ℝ) + 1)
-    · have hD := blowupLimitAssemblyCutoffGradient_eq_zero f Df ν k (x,t) hzero
+    · have hD := blowupLimitAssemblyCutoffGradient_eq_zero f Df ν k (x, t) hzero
       have hS : spatialGradientSq (blowupLimitAssemblyCutoffField f ν k)
-          (blowupLimitAssemblyCutoffGradient f Df ν k) (x,t) = 0 := by
+          (blowupLimitAssemblyCutoffGradient f Df ν k) (x, t) = 0 := by
         simp [spatialGradientSq, hD]
       rw [hS, ENNReal.ofReal_zero]
       exact zero_le
@@ -137,16 +137,16 @@ theorem blowupLimitAssemblyCutoff_gradient_bound_single
       obtain ⟨hxB, htk⟩ := hzero
       have htJ : t ∈ J := ⟨htk.le, ht0⟩
       rw [indicator_of_mem htJ, indicator_of_mem hxB]
-      have hle := blowupLimitAssemblyCutoffGradient_sq_le f Df ν k (x,t)
-      have hnn := vec3EuclideanNorm_nonneg (f (ν k) (x,t))
-      have hsgs : 0 ≤ spatialGradientSq (f (ν k)) (Df (ν k)) (x,t) := by
+      have hle := blowupLimitAssemblyCutoffGradient_sq_le f Df ν k (x, t)
+      have hnn := vec3EuclideanNorm_nonneg (f (ν k) (x, t))
+      have hsgs : 0 ≤ spatialGradientSq (f (ν k)) (Df (ν k)) (x, t) := by
         unfold spatialGradientSq
         exact Finset.sum_nonneg fun i _ => Finset.sum_nonneg fun j _ => sq_nonneg _
       calc
         ENNReal.ofReal (spatialGradientSq (blowupLimitAssemblyCutoffField f ν k)
-            (blowupLimitAssemblyCutoffGradient f Df ν k) (x,t)) ≤
-            ENNReal.ofReal (2 * spatialGradientSq (f (ν k)) (Df (ν k)) (x,t) +
-              2 * 64 ^ 2 * vec3EuclideanNorm (f (ν k) (x,t)) ^ 2) :=
+            (blowupLimitAssemblyCutoffGradient f Df ν k) (x, t)) ≤
+            ENNReal.ofReal (2 * spatialGradientSq (f (ν k)) (Df (ν k)) (x, t) +
+              2 * 64 ^ 2 * vec3EuclideanNorm (f (ν k) (x, t)) ^ 2) :=
           ENNReal.ofReal_le_ofReal hle
         _ = H x t := by
           simp only [H]
@@ -157,14 +157,14 @@ theorem blowupLimitAssemblyCutoff_gradient_bound_single
   have hinner : ∀ t ∈ Icc a b,
       (∫⁻ x in C, ENNReal.ofReal (spatialGradientSq
         (blowupLimitAssemblyCutoffField f ν k)
-        (blowupLimitAssemblyCutoffGradient f Df ν k) (x,t))) ≤
+        (blowupLimitAssemblyCutoffGradient f Df ν k) (x, t))) ≤
       J.indicator (fun t => ∫⁻ x in B, H x t) t := by
     intro t ht
     have ht0 : t ≤ 0 := ht.2.trans hb
     calc
       (∫⁻ x in C, ENNReal.ofReal (spatialGradientSq
           (blowupLimitAssemblyCutoffField f ν k)
-          (blowupLimitAssemblyCutoffGradient f Df ν k) (x,t))) ≤
+          (blowupLimitAssemblyCutoffGradient f Df ν k) (x, t))) ≤
           ∫⁻ x in C, J.indicator (fun t => B.indicator (fun x => H x t) x) t :=
         lintegral_mono fun x => hpoint x t ht0
       _ ≤ J.indicator (fun t => ∫⁻ x in B, H x t) t := by
@@ -186,21 +186,21 @@ theorem blowupLimitAssemblyCutoff_gradient_bound_single
       (continuous_vec3EuclideanNorm.measurable.comp (hf (ν k)))).pow_const _
   have hsplit : ∀ t, (∫⁻ x in B, H x t) =
       2 * (∫⁻ x in B, ENNReal.ofReal
-        (spatialGradientSq (f (ν k)) (Df (ν k)) (x,t))) +
+        (spatialGradientSq (f (ν k)) (Df (ν k)) (x, t))) +
       2 * 64 ^ 2 * ∫⁻ x in B,
-        ENNReal.ofReal (vec3EuclideanNorm (f (ν k) (x,t))) ^ (2 : ℝ) := by
+        ENNReal.ofReal (vec3EuclideanNorm (f (ν k) (x, t))) ^ (2 : ℝ) := by
     intro t
     have hm1 : Measurable (fun x : Vec3 => 2 * ENNReal.ofReal
-        (spatialGradientSq (f (ν k)) (Df (ν k)) (x,t))) :=
+        (spatialGradientSq (f (ν k)) (Df (ν k)) (x, t))) :=
       (hmeasX.comp measurable_prodMk_right).const_mul 2
     simp only [H]
     rw [lintegral_add_left hm1,
       lintegral_const_mul' _ _ (by norm_num), lintegral_const_mul' _ _ (by norm_num)]
   have hI1 : Measurable (fun t : ℝ => ∫⁻ x in B, ENNReal.ofReal
-      (spatialGradientSq (f (ν k)) (Df (ν k)) (x,t))) :=
+      (spatialGradientSq (f (ν k)) (Df (ν k)) (x, t))) :=
     hmeasX.lintegral_prod_left'
   have hYbound : ∀ t, (∫⁻ x in B,
-      ENNReal.ofReal (vec3EuclideanNorm (f (ν k) (x,t))) ^ (2 : ℝ)) ≤ M :=
+      ENNReal.ofReal (vec3EuclideanNorm (f (ν k) (x, t))) ^ (2 : ℝ)) ≤ M :=
     fun t => (lintegral_mono_set subset_closure).trans (hMb t)
   refine ⟨2 * G + 2 * 64 ^ 2 * (M * volume J), ?_, ?_⟩
   · have hJ : volume J < ⊤ := by
@@ -212,18 +212,18 @@ theorem blowupLimitAssemblyCutoff_gradient_bound_single
   calc
     (∫⁻ t in Icc a b, ∫⁻ x in C,
         ENNReal.ofReal (spatialGradientSq (blowupLimitAssemblyCutoffField f ν k)
-          (blowupLimitAssemblyCutoffGradient f Df ν k) (x,t))) ≤
+          (blowupLimitAssemblyCutoffGradient f Df ν k) (x, t))) ≤
         ∫⁻ t in Icc a b, J.indicator (fun t => ∫⁻ x in B, H x t) t :=
       setLIntegral_mono' measurableSet_Icc hinner
     _ ≤ ∫⁻ t, J.indicator (fun t => ∫⁻ x in B, H x t) t :=
       setLIntegral_le_lintegral _ _
     _ = ∫⁻ t in J, ∫⁻ x in B, H x t := lintegral_indicator hJmeas _
     _ = 2 * (∫⁻ t in J, ∫⁻ x in B, ENNReal.ofReal
-          (spatialGradientSq (f (ν k)) (Df (ν k)) (x,t))) +
+          (spatialGradientSq (f (ν k)) (Df (ν k)) (x, t))) +
         2 * 64 ^ 2 * ∫⁻ t in J, ∫⁻ x in B,
-          ENNReal.ofReal (vec3EuclideanNorm (f (ν k) (x,t))) ^ (2 : ℝ) := by
+          ENNReal.ofReal (vec3EuclideanNorm (f (ν k) (x, t))) ^ (2 : ℝ) := by
       have hm2 : Measurable (fun t : ℝ => 2 * ∫⁻ x in B, ENNReal.ofReal
-          (spatialGradientSq (f (ν k)) (Df (ν k)) (x,t))) := hI1.const_mul 2
+          (spatialGradientSq (f (ν k)) (Df (ν k)) (x, t))) := hI1.const_mul 2
       simp only [hsplit]
       rw [lintegral_add_left hm2,
         lintegral_const_mul' _ _ (by norm_num), lintegral_const_mul' _ _ (by norm_num)]
@@ -231,7 +231,7 @@ theorem blowupLimitAssemblyCutoff_gradient_bound_single
       gcongr
       calc
         (∫⁻ t in J, ∫⁻ x in B,
-            ENNReal.ofReal (vec3EuclideanNorm (f (ν k) (x,t))) ^ (2 : ℝ)) ≤
+            ENNReal.ofReal (vec3EuclideanNorm (f (ν k) (x, t))) ^ (2 : ℝ)) ≤
             ∫⁻ _t in J, M := lintegral_mono hYbound
         _ = M * volume J := by
           rw [lintegral_const, Measure.restrict_apply_univ]
@@ -242,9 +242,9 @@ theorem blowupLimitAssemblyCutoffField_pairing
     (f : ℕ → ParabolicPoint → Vec3) (ν : ℕ → ℕ) (k : ℕ)
     (w : Vec3 → L2Vec3) (t : ℝ) :
     (∫ x : Vec3, ∑ i : Fin 3,
-        blowupLimitAssemblyCutoffField f ν k (x,t) i * w x i) =
+        blowupLimitAssemblyCutoffField f ν k (x, t) i * w x i) =
       blowupLimitAssemblyTimeRamp k t *
-        ∫ x : Vec3, ∑ i : Fin 3, f (ν k) (x,t) i *
+        ∫ x : Vec3, ∑ i : Fin 3, f (ν k) (x, t) i *
           (blowupLimitAssemblySpaceCutoff k x • w x) i := by
   rw [← integral_const_mul]
   congr 1
@@ -267,17 +267,17 @@ theorem blowupLimitAssemblyCutoff_modulus_single
         HasCompactSupport w → tsupport w ⊆ C →
       ∃ A B θ : ℝ, 0 ≤ A ∧ 0 ≤ B ∧ 0 < θ ∧
         ∀ n, Nk ≤ n → ∀ s t, s ∈ Icc a b → t ∈ Icc a b →
-          |(∫ x : Vec3, ∑ i : Fin 3, f n (x,t) i * w x i) -
-            (∫ x : Vec3, ∑ i : Fin 3, f n (x,s) i * w x i)| ≤
+          |(∫ x : Vec3, ∑ i : Fin 3, f n (x, t) i * w x i) -
+            (∫ x : Vec3, ∑ i : Fin 3, f n (x, s) i * w x i)| ≤
             A * dist t s + B * (dist t s) ^ θ)
     (a b : ℝ) (hb : b ≤ 0) (w : Vec3 → L2Vec3)
     (hw : ContDiff ℝ (⊤ : ℕ∞) w) :
     ∃ A B θ : ℝ, 0 ≤ A ∧ 0 ≤ B ∧ 0 < θ ∧
       ∀ s t, s ∈ Icc a b → t ∈ Icc a b →
         |(∫ x : Vec3, ∑ i : Fin 3,
-            blowupLimitAssemblyCutoffField f ν k (x,t) i * w x i) -
+            blowupLimitAssemblyCutoffField f ν k (x, t) i * w x i) -
           (∫ x : Vec3, ∑ i : Fin 3,
-            blowupLimitAssemblyCutoffField f ν k (x,s) i * w x i)| ≤
+            blowupLimitAssemblyCutoffField f ν k (x, s) i * w x i)| ≤
           A * dist t s + B * (dist t s) ^ θ := by
   by_cases hab : a ≤ b
   swap
@@ -312,13 +312,13 @@ theorem blowupLimitAssemblyCutoff_modulus_single
   obtain ⟨A', B', θ', hA', hB', hθ', h'⟩ := hmod (tsupport S) hSc.isCompact
     (blowupLimitAssemblySpaceCutoff_tsupport_subset k) a' b' hsub w' hw' hw'c
     hw'supp
-  let X : ℝ → ℝ := fun t => ∫ x : Vec3, ∑ i : Fin 3, f (ν k) (x,t) i * w' x i
+  let X : ℝ → ℝ := fun t => ∫ x : Vec3, ∑ i : Fin 3, f (ν k) (x, t) i * w' x i
   have hX : ∀ s t, s ∈ Icc a' b' → t ∈ Icc a' b' →
       |X t - X s| ≤ A' * dist t s + B' * (dist t s) ^ θ' :=
     fun s t hs ht => h' (ν k) hNk s t hs ht
   set T : ℝ → ℝ := blowupLimitAssemblyTimeRamp k
   have hg : ∀ t, (∫ x : Vec3, ∑ i : Fin 3,
-      blowupLimitAssemblyCutoffField f ν k (x,t) i * w x i) = T (c t) * X (c t) := by
+      blowupLimitAssemblyCutoffField f ν k (x, t) i * w x i) = T (c t) * X (c t) := by
     intro t
     rw [blowupLimitAssemblyCutoffField_pairing]
     rcases le_total t κ with htk | htk
@@ -399,8 +399,8 @@ theorem blowupLimitAssemblyCutoff_modulus
         HasCompactSupport w → tsupport w ⊆ C →
       ∃ A B θ : ℝ, 0 ≤ A ∧ 0 ≤ B ∧ 0 < θ ∧
         ∀ n, N m ≤ n → ∀ s t, s ∈ Icc a b → t ∈ Icc a b →
-          |(∫ x : Vec3, ∑ i : Fin 3, f n (x,t) i * w x i) -
-            (∫ x : Vec3, ∑ i : Fin 3, f n (x,s) i * w x i)| ≤
+          |(∫ x : Vec3, ∑ i : Fin 3, f n (x, t) i * w x i) -
+            (∫ x : Vec3, ∑ i : Fin 3, f n (x, s) i * w x i)| ≤
             A * dist t s + B * (dist t s) ^ θ)
     (C : Set Vec3) (hC : IsCompact C) (a b : ℝ) (hab : Icc a b ⊆ Iio 0)
     (w : Vec3 → L2Vec3) (hw : ContDiff ℝ (⊤ : ℕ∞) w)
@@ -408,9 +408,9 @@ theorem blowupLimitAssemblyCutoff_modulus
     ∃ A B θ : ℝ, 0 ≤ A ∧ 0 ≤ B ∧ 0 < θ ∧
       ∀ k s t, s ∈ Icc a b → t ∈ Icc a b →
         |(∫ x : Vec3, ∑ i : Fin 3, blowupLimitAssemblyCutoffField f
-            (blowupLimitAssemblyIndex N) k (x,t) i * w x i) -
+            (blowupLimitAssemblyIndex N) k (x, t) i * w x i) -
           (∫ x : Vec3, ∑ i : Fin 3, blowupLimitAssemblyCutoffField f
-            (blowupLimitAssemblyIndex N) k (x,s) i * w x i)| ≤
+            (blowupLimitAssemblyIndex N) k (x, s) i * w x i)| ≤
           A * dist t s + B * (dist t s) ^ θ := by
   set ν := blowupLimitAssemblyIndex N
   by_cases hab' : a ≤ b
@@ -430,7 +430,7 @@ theorem blowupLimitAssemblyCutoff_modulus
     rw [Real.norm_eq_abs, abs_of_nonneg (vec3EuclideanNorm_nonneg x)] at h
     exact h.trans_lt hjρ
   let g : ℕ → ℝ → ℝ := fun k t => ∫ x : Vec3, ∑ i : Fin 3,
-    blowupLimitAssemblyCutoffField f ν k (x,t) i * w x i
+    blowupLimitAssemblyCutoffField f ν k (x, t) i * w x i
   have htail : ∃ A B θ : ℝ, 0 ≤ A ∧ 0 ≤ B ∧ 0 < θ ∧
       ∀ k s t, j ≤ k → s ∈ Icc a b → t ∈ Icc a b →
         |g k t - g k s| ≤ A * dist t s + B * (dist t s) ^ θ := by
@@ -446,16 +446,16 @@ theorem blowupLimitAssemblyCutoff_modulus
     intro k s t hjk hs ht
     have hjk' : (j : ℝ) ≤ k := by exact_mod_cast hjk
     have hpair : ∀ τ ∈ Icc a b, g k τ =
-        ∫ x : Vec3, ∑ i : Fin 3, f (ν k) (x,τ) i * w x i := by
+        ∫ x : Vec3, ∑ i : Fin 3, f (ν k) (x, τ) i * w x i := by
       intro τ hτ
       simp only [g]
       congr 1
       funext x
       by_cases hx : x ∈ C
-      · have hxk : (x,τ).1 ∈ vec3Ball (0 : Vec3) (k : ℝ) := by
+      · have hxk : (x, τ).1 ∈ vec3Ball (0 : Vec3) (k : ℝ) := by
           rw [mem_vec3Ball, sub_zero]
           exact (hCj x hx).trans_le hjk'
-        have hτk : -(k : ℝ) ≤ (x,τ).2 := by
+        have hτk : -(k : ℝ) ≤ (x, τ).2 := by
           change -(k : ℝ) ≤ τ
           linarith only [hτ.1, hja, hjk']
         rw [(blowupLimitAssemblyCutoff_eq_of_mem f (fun _ _ _ => 0) ν hxk hτk).1]

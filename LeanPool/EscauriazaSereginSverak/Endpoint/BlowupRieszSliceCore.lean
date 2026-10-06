@@ -10,6 +10,12 @@ public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupRieszProductTest
 public import LeanPool.CaffarelliKohnNirenberg.Pressure.IdentificationExtensionPairingKernel
 public import LeanPool.CaffarelliKohnNirenberg.Foundation.Measure.SliceDistributionCore
 
+/-!
+# Blowup Riesz Slice Core
+
+Pressure reconstruction and convergence bounds for the rescaled sequence.
+-/
+
 public section
 
 open MeasureTheory Set Filter CKN.Foundation.Parabolic

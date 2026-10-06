@@ -26,7 +26,8 @@ noncomputable section
 namespace ESS
 
 /-- The translated parabolic point used in `lem:bu-gaussian`. -/
-@[expose] def buGaussianScaledPoint (x : Vec3) (scale σ : ℝ) (z : ParabolicPoint) : ParabolicPoint :=
+@[expose] def buGaussianScaledPoint (x : Vec3) (scale σ : ℝ) (z : ParabolicPoint) :
+    ParabolicPoint :=
   (x + scale • z.1, scale ^ 2 * (z.2 - σ))
 
 /-- The normalized cylinder maps into the original positive half-space and

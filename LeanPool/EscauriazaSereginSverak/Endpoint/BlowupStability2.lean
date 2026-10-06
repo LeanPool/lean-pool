@@ -8,6 +8,12 @@ module
 
 public import LeanPool.CaffarelliKohnNirenberg.Leray.Stability
 
+/-!
+# Blowup Stability2
+
+Stability identities for passing to the endpoint blow-up limit.
+-/
+
 public section
 
 open MeasureTheory Set Filter

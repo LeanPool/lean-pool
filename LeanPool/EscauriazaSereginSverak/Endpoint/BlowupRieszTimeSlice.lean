@@ -9,6 +9,12 @@ module
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupRieszSliceCore
 public import LeanPool.CaffarelliKohnNirenberg.Foundation.Parabolic.TsupportProduct
 
+/-!
+# Blowup Riesz Time Slice
+
+Pressure reconstruction and convergence bounds for the rescaled sequence.
+-/
+
 public section
 
 open MeasureTheory Set Filter CKN.Foundation.Parabolic

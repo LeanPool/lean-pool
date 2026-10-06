@@ -134,6 +134,356 @@ private theorem blowupLimit_component_memLp_of_norm
     (Filter.Eventually.of_forall hpoint)
   exact ⟨hmem, hle.trans hbound⟩
 
+private theorem blowupLimit_scaled_time_lands_in_trace_interval
+    {a b m t₀ : ℝ} (hm : 0 < m)
+    (hab : Icc a b ⊆ Icc (-m) 0)
+    (ht₀ : t₀ ∈ Icc (-(1 / 4 : ℝ)) 0)
+    {r : ℝ} (hr : 0 < r) (hsmall : r ^ 2 * m < 5 / 16) :
+    ∀ τ, τ ∈ Icc a b → t₀ + r ^ 2 * τ ∈ Icc (-(3 / 4 : ℝ) ^ 2) 0 := by
+  intro τ hτ
+  have hτ' := hab hτ
+  have hr2 : 0 ≤ r ^ 2 := sq_nonneg _
+  have hmulLo : -(r ^ 2 * m) ≤ r ^ 2 * τ := by
+    have := mul_le_mul_of_nonneg_left hτ'.1 hr2
+    simpa only [mul_neg] using this
+  have hstrict : -(1 / 4 : ℝ) - r ^ 2 * m > -(3 / 4 : ℝ) ^ 2 := by
+    nlinarith only [hsmall]
+  have hlow : -(3 / 4 : ℝ) ^ 2 ≤ t₀ + r ^ 2 * τ :=
+    le_trans (le_of_lt hstrict) (by nlinarith only [ht₀.1, hmulLo])
+  have hmulUp : r ^ 2 * τ ≤ 0 :=
+    (mul_le_mul_of_nonneg_left hτ'.2 hr2).trans_eq (by ring)
+  exact ⟨hlow, add_nonpos ht₀.2 hmulUp⟩
+
+private theorem blowupLimit_scaled_compact_set_inside_trace_ball
+    {C : Set Vec3} {m : ℝ} (hC : C ⊆ vec3Ball (0 : Vec3) m)
+    {x₀ : Vec3} (hxnorm : vec3EuclideanNorm x₀ ≤ 1 / 2)
+    {r : ℝ} (hr : 0 < r) (hsmall : r * (m + 3) < 1 / 4) :
+    (fun x : Vec3 => x₀ + r • x) '' C ⊆ vec3Ball (0 : Vec3) (3 / 4 : ℝ) := by
+  intro y hy
+  rcases hy with ⟨x, hxC, rfl⟩
+  have hxnorm' : vec3EuclideanNorm x < m := by
+    simpa only [mem_vec3Ball, sub_zero] using hC hxC
+  have hmR : m < m + 3 := by nlinarith
+  have hscale : vec3EuclideanNorm (r • x) = r * vec3EuclideanNorm x := by
+    rw [vec3EuclideanNorm_smul, abs_of_pos hr]
+  have hscaleLt : vec3EuclideanNorm (r • x) < 1 / 4 := by
+    rw [hscale]
+    calc
+      r * vec3EuclideanNorm x < r * m := mul_lt_mul_of_pos_left hxnorm' hr
+      _ < r * (m + 3) := mul_lt_mul_of_pos_left hmR hr
+      _ < 1 / 4 := hsmall
+  have hadd := vec3EuclideanNorm_add_le x₀ (r • x)
+  have hsum : vec3EuclideanNorm x₀ + vec3EuclideanNorm (r • x) < 3 / 4 := by
+    nlinarith only [hxnorm, hscaleLt]
+  simpa only [mem_vec3Ball, sub_zero] using lt_of_le_of_lt hadd hsum
+
+private theorem blowupLimit_pressureRemainder_transfer
+    {p p₁ : ParabolicPoint → ℝ} (μsplit : Measure (Vec3 × ℝ))
+    (hμsplit : μsplit = (volume : Measure ParabolicPoint).restrict
+      (spaceTimeSet (CKN.euclideanBall 0 1) (Ioo (-1 : ℝ) 0)))
+    (hball1 : CKN.euclideanBall (0 : Vec3) 1 = vec3Ball 0 1)
+    (hsplitSet : MeasurableSet
+      (spaceTimeSet (CKN.euclideanBall 0 1) (Ioo (-1 : ℝ) 0)))
+    (hp₂ : MemLp (fun z : Vec3 × ℝ => pressureSplitRemainder p p₁ (z.1,z.2))
+      (3 / 2 : ℝ≥0∞) μsplit)
+    (hharm : ∀ᵐ t ∂volume.restrict (Ioo (-1 : ℝ) 0),
+      CKN.Foundation.Heat.WeaklyHarmonicOn (CKN.euclideanBall 0 1)
+        (fun x : Vec3 => pressureSplitRemainder p p₁ (x,t))) :
+    MemLp (fun z : Vec3 × ℝ => p (z.1,z.2) - p₁ (z.1,z.2))
+      (3 / 2 : ℝ≥0∞) μsplit ∧
+    (∀ᵐ t ∂volume.restrict (Ioo (-1 : ℝ) 0),
+      CKN.Foundation.Heat.WeaklyHarmonicOn (CKN.euclideanBall 0 1)
+        (fun x : Vec3 => p (x,t) - p₁ (x,t))) := by
+  have hsplitMem : ∀ᵐ z ∂μsplit,
+      z ∈ spaceTimeSet (CKN.euclideanBall 0 1) (Ioo (-1 : ℝ) 0) := by
+    rw [hμsplit]
+    exact ae_restrict_mem hsplitSet
+  have hp₂' : MemLp (fun z : Vec3 × ℝ => p (z.1,z.2) - p₁ (z.1,z.2))
+      (3 / 2 : ℝ≥0∞) μsplit := by
+    have hEq : (fun z : Vec3 × ℝ => p (show ParabolicPoint from (z.1,z.2)) -
+        p₁ (show ParabolicPoint from (z.1,z.2))) =ᵐ[μsplit]
+        (fun z => pressureSplitRemainder p p₁ (z.1,z.2)) := by
+      filter_upwards [hsplitMem] with z hz
+      rcases z with ⟨x,t⟩
+      change x ∈ CKN.euclideanBall 0 1 ∧ t ∈ Ioo (-1 : ℝ) 0 at hz
+      have hx : x ∈ vec3Ball 0 1 := hball1 ▸ hz.1
+      let z : ParabolicPoint := (x,t)
+      have hmem : z ∈ goodPointDomain := by
+        change x ∈ vec3Ball 0 1 ∧ t ∈ Ioo (-1 : ℝ) 0
+        exact ⟨hx, hz.2⟩
+      change p z - p₁ z = goodPointDomain.indicator (fun y => p y - p₁ y) z
+      simp [Set.indicator, hmem]
+    change MemLp (fun z : Vec3 × ℝ => p (z.1,z.2) - p₁ (z.1,z.2))
+      (3 / 2 : ℝ≥0∞) μsplit
+    exact (memLp_congr_ae hEq).2 hp₂
+  have hharm' : ∀ᵐ t ∂volume.restrict (Ioo (-1 : ℝ) 0),
+      CKN.Foundation.Heat.WeaklyHarmonicOn (CKN.euclideanBall 0 1)
+        (fun x : Vec3 => p (x,t) - p₁ (x,t)) := by
+    filter_upwards [hharm, ae_restrict_mem measurableSet_Ioo] with t hht ht
+    intro ψ hψ hψc hψsupport
+    have hEq : ∫ x in CKN.euclideanBall 0 1,
+        (p (x,t) - p₁ (x,t)) * CKN.spatialLaplacian ψ x =
+      ∫ x in CKN.euclideanBall 0 1,
+        pressureSplitRemainder p p₁ (x,t) * CKN.spatialLaplacian ψ x := by
+      apply setIntegral_congr_fun (CKN.isOpen_euclideanBall 0 1).measurableSet
+      intro x hx
+      have hx' : x ∈ vec3Ball 0 1 := hball1 ▸ hx
+      let z : ParabolicPoint := (x,t)
+      have hmem : z ∈ goodPointDomain := by
+        change x ∈ vec3Ball 0 1 ∧ t ∈ Ioo (-1 : ℝ) 0
+        exact ⟨hx', ht⟩
+      have hpoint : p z - p₁ z = pressureSplitRemainder p p₁ z := by
+        change p z - p₁ z = goodPointDomain.indicator (fun y => p y - p₁ y) z
+        simp [Set.indicator, hmem]
+      calc
+        (p z - p₁ z) * CKN.spatialLaplacian ψ x =
+            pressureSplitRemainder p p₁ z * CKN.spatialLaplacian ψ x := by rw [hpoint]
+        _ = _ := rfl
+    rw [hEq]
+    exact hht ψ hψ hψc hψsupport
+  exact ⟨hp₂', hharm'⟩
+
+private theorem blowupLimit_source_pairing_stages
+    {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin 3 → Vec3}
+    {p : ParabolicPoint → ℝ}
+    {m Cg Bvel Bpress : ℝ} {x₀ : Vec3} {t₀ : ℝ}
+    (r : ℕ → ℝ) (N : ℕ) (C : Set Vec3) (a b R₀ a₀ : ℝ)
+    (Mgrad : ℝ≥0∞)
+    (hMgradEq : Mgrad = (ENNReal.ofReal (Cg / 2)) ^ (1 / 2 : ℝ))
+    (hxnorm : vec3EuclideanNorm x₀ ≤ 1 / 2)
+    (ht₀ : t₀ ∈ Icc (-(1 / 4 : ℝ)) 0)
+    (hr : ∀ k, 0 < r k)
+    (hCbig : C ⊆ vec3Ball (0 : Vec3) R₀)
+    (hIbig : Icc a b ⊆ Icc a₀ 0)
+    (hball : CKN.euclideanBall (0 : Vec3) R₀ = vec3Ball 0 R₀)
+    (hμbound : volume.restrict (C ×ˢ Icc a b) ≤
+      volume.restrict (vec3Ball 0 R₀ ×ˢ Ioo a₀ 0))
+    (hterm : ∀ k, N ≤ k →
+      eLpNorm (fun z => vec3EuclideanNorm (blowupVelocity x₀ t₀ (r k) u z))
+          3 (volume.restrict (vec3Ball 0 R₀ ×ˢ Ioo a₀ 0)) ≤ Bvel ∧
+      eLpNorm (blowupPressure x₀ t₀ (r k) p) (3 / 2 : ℝ≥0∞)
+          (volume.restrict (vec3Ball 0 R₀ ×ˢ Ioo a₀ 0)) ≤ Bpress ∧
+      (IntegrableOn (fun z => spatialGradientSq
+          (parabolicRescaleVelocity x₀ t₀ (r k) u)
+          (parabolicRescaleGradient x₀ t₀ (r k) Du) z)
+          (spaceTimeSet (CKN.euclideanBall 0 R₀) (Ioo a₀ 0)) ∧
+        2 * (∫ z in spaceTimeSet (CKN.euclideanBall 0 R₀) (Ioo a₀ 0),
+          spatialGradientSq (parabolicRescaleVelocity x₀ t₀ (r k) u)
+            (parabolicRescaleGradient x₀ t₀ (r k) Du) z) ≤ Cg) ∧
+      r k * (m + 3) < 1 / 4 ∧ (r k) ^ 2 * (m + 3) < 3 / 4 ∧ (r k) ^ 2 * m < 5 / 16)
+    (hBvel : Bvel < ⊤) (hBpress : Bpress < ⊤)
+    (hMgrad : (ENNReal.ofReal (Cg / 2)) ^ (1 / 2 : ℝ) < ⊤)
+    (hsourceMeas : AEStronglyMeasurable (goodPointDomain.indicator u)
+      (volume : Measure ParabolicPoint))
+    (hDuGood : AEStronglyMeasurable Du (volume.restrict goodPointDomain)) :
+    (∀ n i, MemLp (fun z => blowupVelocity x₀ t₀ (r (n + N)) u z i)
+        3 (volume.restrict (C ×ˢ Icc a b)) ∧
+      eLpNorm (fun z => blowupVelocity x₀ t₀ (r (n + N)) u z i)
+        3 (volume.restrict (C ×ˢ Icc a b)) ≤ Bvel) ∧
+    (∀ n, MemLp (blowupPressure x₀ t₀ (r (n + N)) p) (3 / 2 : ℝ≥0∞)
+        (volume.restrict (C ×ˢ Icc a b)) ∧
+      eLpNorm (blowupPressure x₀ t₀ (r (n + N)) p) (3 / 2 : ℝ≥0∞)
+        (volume.restrict (C ×ˢ Icc a b)) ≤ Bpress) ∧
+    (∀ n i j, MemLp (fun z => blowupGradient x₀ t₀ (r (n + N)) Du z i j) 2
+        (volume.restrict (C ×ˢ Icc a b)) ∧
+      eLpNorm (fun z => blowupGradient x₀ t₀ (r (n + N)) Du z i j) 2
+        (volume.restrict (C ×ˢ Icc a b)) ≤ Mgrad) := by
+  let μC : Measure ParabolicPoint := volume.restrict (C ×ˢ Icc a b)
+  let μOpen : Measure ParabolicPoint := volume.restrict (vec3Ball 0 R₀ ×ˢ Ioo a₀ 0)
+  have hmodStage : ∀ n, ∀ i,
+      MemLp (fun z => blowupVelocity x₀ t₀ (r (n + N)) u z i) 3 μC ∧
+      eLpNorm (fun z => blowupVelocity x₀ t₀ (r (n + N)) u z i) 3 μC ≤ Bvel := by
+    intro n i
+    have hn := hterm (n + N) (Nat.le_add_left N n)
+    have hnormMemOpen : MemLp
+        (fun z => vec3EuclideanNorm (blowupVelocity x₀ t₀ (r (n + N)) u z))
+        3 μOpen := by
+      rw [memLp_iff]
+      exact lt_of_le_of_lt hn.1 hBvel
+    have hnormMem : MemLp
+        (fun z => vec3EuclideanNorm (blowupVelocity x₀ t₀ (r (n + N)) u z))
+        3 μC := hnormMemOpen.mono_measure hμbound
+    have hnormBound := (eLpNorm_mono_measure _ hμbound).trans hn.1
+    have hvec : AEStronglyMeasurable
+        (blowupVelocity x₀ t₀ (r (n + N)) u) μC := by
+      have hglobal := blowupRescaledVelocity_aestronglyMeasurable
+        (goodPointDomain.indicator u) hsourceMeas x₀ t₀ (r (n + N)) (hr (n + N))
+      simpa only [blowupVelocity] using hglobal.restrict
+    exact blowupLimit_component_memLp_of_norm μC Bvel _ i hvec hnormMem hnormBound
+  have hpressStage : ∀ n,
+      MemLp (blowupPressure x₀ t₀ (r (n + N)) p) (3 / 2 : ℝ≥0∞) μC ∧
+      eLpNorm (blowupPressure x₀ t₀ (r (n + N)) p) (3 / 2 : ℝ≥0∞) μC ≤ Bpress := by
+    intro n
+    have hn := hterm (n + N) (Nat.le_add_left N n)
+    have hmemOpen : MemLp (blowupPressure x₀ t₀ (r (n + N)) p)
+        (3 / 2 : ℝ≥0∞) μOpen := by
+      rw [memLp_iff]
+      exact lt_of_le_of_lt hn.2.1 hBpress
+    exact ⟨hmemOpen.mono_measure hμbound,
+      (eLpNorm_mono_measure _ hμbound).trans hn.2.1⟩
+  have hgradStage : ∀ n i j,
+      MemLp (fun z => blowupGradient x₀ t₀ (r (n + N)) Du z i j) 2 μC ∧
+      eLpNorm (fun z => blowupGradient x₀ t₀ (r (n + N)) Du z i j) 2 μC ≤ Mgrad := by
+    intro n i j
+    have hn := hterm (n + N) (Nat.le_add_left N n)
+    have hspaceQuarter : r (n + N) * R₀ < 1 / 4 := by
+      have hsmall := hn.2.2.2.1
+      have hRle : R₀ < m + 3 := by dsimp [R₀]; nlinarith only [hm]
+      exact (mul_lt_mul_of_pos_left hRle (hr (n + N))).trans hsmall
+    have htimeBound : (r (n + N)) ^ 2 * (-a₀) < 3 / 4 := by
+      have hsmall := hn.2.2.2.2.1
+      have hRle : -a₀ < m + 3 := by dsimp [a₀]; nlinarith only [hm]
+      exact (mul_lt_mul_of_pos_left hRle (sq_pos_of_pos (hr (n + N)))).trans hsmall
+    have hInt : IntegrableOn (fun z => spatialGradientSq
+        (parabolicRescaleVelocity x₀ t₀ (r (n + N)) u)
+        (parabolicRescaleGradient x₀ t₀ (r (n + N)) Du) z)
+        (spaceTimeSet (vec3Ball 0 R₀) (Ioo a₀ 0)) volume := by
+      simpa only [hball, R₀, a₀, spaceTimeSet] using hn.2.2.1.1
+    have henergyBound : (∫ z in spaceTimeSet (vec3Ball 0 R₀) (Ioo a₀ 0),
+        spatialGradientSq (parabolicRescaleVelocity x₀ t₀ (r (n + N)) u)
+          (parabolicRescaleGradient x₀ t₀ (r (n + N)) Du) z) ≤ Cg / 2 := by
+      apply (le_div_iff₀ (by norm_num : (0 : ℝ) < 2)).2
+      simpa only [hball, R₀, a₀, spaceTimeSet, mul_comm] using hn.2.2.1.2
+    have hDuRescale := blowupLimit_rescaleGradient_aestronglyMeasurable
+      hDuGood x₀ t₀ (r (n + N)) R₀ a₀ (hr (n + N)) hxnorm ht₀
+      (by exact hspaceQuarter.trans (by norm_num : (1 / 4 : ℝ) < 1 / 2))
+      htimeBound
+    have hrow := blowup_gradient_component_eLpNorm_le_of_integral_bound
+      (spaceTimeSet (vec3Ball 0 R₀) (Ioo a₀ 0))
+      (parabolicRescaleVelocity x₀ t₀ (r (n + N)) u)
+      (parabolicRescaleGradient x₀ t₀ (r (n + N)) Du) i (Cg / 2)
+      hDuRescale hInt henergyBound
+    have hrowMem : MemLp (fun z => vec3EuclideanNorm
+        (parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i)) 2 μOpen := by
+      rw [memLp_iff]
+      have hfin := ENNReal.rpow_lt_top_of_nonneg
+        (by norm_num : (0 : ℝ) ≤ (1 / 2 : ℝ))
+        (ENNReal.ofReal_lt_top.ne : ENNReal.ofReal (Cg / 2) ≠ ⊤)
+      exact lt_of_le_of_lt hrow hfin
+    have hrowBound : eLpNorm (fun z => vec3EuclideanNorm
+        (parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i)) 2 μOpen ≤ Mgrad := by
+      rw [hMgradEq]
+      change eLpNorm (fun z => vec3EuclideanNorm
+        (parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i)) 2
+        (volume.restrict (spaceTimeSet (vec3Ball 0 R₀) (Ioo a₀ 0))) ≤
+          (ENNReal.ofReal (Cg / 2)) ^ (1 / 2 : ℝ)
+      exact hrow
+    have hrowVecAEM : AEStronglyMeasurable
+        (fun z => parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i) μOpen :=
+      (continuous_apply i).comp_aestronglyMeasurable hDuRescale
+    have hscalarAEM : AEStronglyMeasurable
+        (fun z => parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i j) μOpen :=
+      (continuous_apply j).comp_aestronglyMeasurable hrowVecAEM
+    have hpoint (z : ParabolicPoint) :
+        ‖parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i j‖ ≤
+          ‖vec3EuclideanNorm
+            (parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i)‖ := by
+      calc
+        ‖parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i j‖ ≤
+            vec3EuclideanNorm
+              (parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i) :=
+          (norm_le_pi_norm _ j).trans (norm_le_vec3EuclideanNorm _)
+        _ = ‖vec3EuclideanNorm
+            (parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i)‖ := by
+          rw [Real.norm_eq_abs,
+            abs_of_nonneg (vec3EuclideanNorm_nonneg _)]
+    have hscalarMemOpen : MemLp
+        (fun z => parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i j) 2 μOpen :=
+      hrowMem.of_le hscalarAEM (Filter.Eventually.of_forall hpoint)
+    have hscalarBoundOpen : eLpNorm
+        (fun z => parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i j) 2 μOpen ≤ Mgrad :=
+      (eLpNorm_mono_ae hscalarAEM (Filter.Eventually.of_forall hpoint)).trans hrowBound
+    have hmu : μC ≤ μOpen := by
+      dsimp [μC, μOpen, R₀, a₀]
+      exact blowupLimit_restrict_closed_interval_le_open hCbig hIbig
+    have hscalarMem : MemLp
+        (fun z => parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i j) 2 μC :=
+      hscalarMemOpen.mono_measure hmu
+    have hscalarBound := (eLpNorm_mono_measure _ hmu).trans hscalarBoundOpen
+    have heqFields := blowupFields_eq_rescale_on_cylinder u Du p
+      x₀ t₀ (r (n + N)) R₀ a₀ hxnorm ht₀ (hr (n + N))
+      hspaceQuarter htimeBound
+    have hsetMeas : MeasurableSet (spaceTimeSet (vec3Ball 0 R₀) (Ioo a₀ 0)) :=
+      (isOpen_vec3Ball 0 R₀).measurableSet.prod measurableSet_Ioo
+    have htargetMem : ∀ᵐ z ∂μC,
+        z ∈ spaceTimeSet (vec3Ball 0 R₀) (Ioo a₀ 0) := by
+      exact ae_mono hmu (ae_restrict_mem hsetMeas)
+    have heqAE : (fun z => blowupGradient x₀ t₀ (r (n + N)) Du z i j) =ᵐ[μC]
+        (fun z => parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i j) := by
+      filter_upwards [htargetMem] with z hz
+      exact congrArg (fun d => d i j) (heqFields.2.1 hz)
+    refine ⟨(memLp_congr_ae heqAE).2 hscalarMem, ?_⟩
+    rw [eLpNorm_congr_ae heqAE]
+    exact hscalarBound
+  exact ⟨hmodStage, hpressStage, hgradStage⟩
+
+private theorem blowupLimit_source_scale_bounds_eventually
+    {m : ℝ} (hm : 0 < m) (r : ℕ → ℝ) (hr0 : Tendsto r atTop (nhds 0)) :
+    (∀ᶠ k in atTop, r k * (m + 3) < 1 / 4) ∧
+    (∀ᶠ k in atTop, (r k) ^ 2 * (m + 3) < 3 / 4) ∧
+    (∀ᶠ k in atTop, (r k) ^ 2 * m < 5 / 16) := by
+  have hspaceLim : Tendsto (fun k => r k * (m + 3)) atTop (nhds 0) := by
+    simpa using hr0.mul_const (m + 3)
+  have htimeLim : Tendsto (fun k => (r k) ^ 2 * (m + 3)) atTop (nhds 0) := by
+    simpa using (hr0.pow 2).mul_const (m + 3)
+  have hpairTimeLim : Tendsto (fun k => (r k) ^ 2 * m) atTop (nhds 0) := by
+    simpa using (hr0.pow 2).mul_const m
+  exact ⟨hspaceLim.eventually (eventually_lt_nhds (by norm_num)),
+    htimeLim.eventually (eventually_lt_nhds (by norm_num)),
+    hpairTimeLim.eventually (eventually_lt_nhds (by norm_num))⟩
+
+private theorem blowupLimit_join_eventually_bounds
+    {P Q R S T U : ℕ → Prop}
+    (hP : ∀ᶠ k in atTop, P k) (hQ : ∀ᶠ k in atTop, Q k)
+    (hR : ∀ᶠ k in atTop, R k) (hS : ∀ᶠ k in atTop, S k)
+    (hT : ∀ᶠ k in atTop, T k) (hU : ∀ᶠ k in atTop, U k) :
+    ∃ N, ∀ k, N ≤ k → P k ∧ Q k ∧ R k ∧ S k ∧ T k ∧ U k := by
+  have hall : ∀ᶠ k in atTop, P k ∧ Q k ∧ R k ∧ S k ∧ T k ∧ U k := by
+    filter_upwards [hP, hQ, hR, hS, hT, hU] with k hp hq hr hs ht hu
+    exact ⟨hp, hq, hr, hs, ht, hu⟩
+  obtain ⟨N, hN⟩ := Filter.eventually_atTop.1 hall
+  exact ⟨N, hN⟩
+
+private theorem blowupLimit_source_pairing_geometry
+    {m : ℝ} (hm : 0 < m) {a b : ℝ}
+    (hab : Icc a b ⊆ Icc (-m) 0) {x₀ : Vec3} (hxnorm : vec3EuclideanNorm x₀ ≤ 1 / 2)
+    {t₀ : ℝ} (ht₀ : t₀ ∈ Icc (-(1 / 4 : ℝ)) 0)
+    {r : ℕ → ℝ} (hr : ∀ k, 0 < r k) (N : ℕ) {C : Set Vec3}
+    (hCU : C ⊆ vec3Ball (0 : Vec3) m)
+    (hspace : ∀ k, N ≤ k → r k * (m + 3) < 1 / 4)
+    (hpairTime : ∀ k, N ≤ k → (r k) ^ 2 * m < 5 / 16) :
+    (∀ n τ, τ ∈ Icc a b → t₀ + (r (n + N)) ^ 2 * τ ∈ Icc (-(3 / 4 : ℝ) ^ 2) 0) ∧
+    (∀ n, (fun x : Vec3 => x₀ + r (n + N) • x) '' C ⊆
+      vec3Ball (0 : Vec3) (3 / 4 : ℝ)) := by
+  refine ⟨?_, ?_⟩
+  · intro n τ hτ
+    exact blowupLimit_scaled_time_lands_in_trace_interval hm hab ht₀
+      (hr (n + N)) (hpairTime (n + N) (Nat.le_add_left N n)) τ hτ
+  · intro n
+    exact blowupLimit_scaled_compact_set_inside_trace_ball hCU hxnorm
+      (hr (n + N)) (hspace (n + N) (Nat.le_add_left N n))
+
+private theorem blowupLimit_source_gradientBound_lt_top {Cg : ℝ} :
+    (ENNReal.ofReal (Cg / 2)) ^ (1 / 2 : ℝ) < ⊤ := by
+  apply ENNReal.rpow_lt_top_of_nonneg (by norm_num)
+  exact ENNReal.ofReal_lt_top.ne
+
+private theorem blowupLimit_source_interval_enlargement
+    {m a b : ℝ} (hm : 0 < m) (hab : Icc a b ⊆ Icc (-m) 0) :
+    Icc a b ⊆ Icc (-(m + 1)) 0 := by
+  intro t ht
+  have ht' := hab ht
+  have hleft : -(m + 1) < -m := by linarith
+  exact ⟨le_trans (le_of_lt hleft) ht'.1, ht'.2⟩
+
+private theorem blowupLimit_source_spatial_enlargement
+    {C : Set Vec3} {m : ℝ} (hC : C ⊆ vec3Ball (0 : Vec3) m)
+    (hm : 0 < m) : C ⊆ vec3Ball (0 : Vec3) (m + 1) := by
+  intro x hx
+  have hx' : vec3EuclideanNorm x < m := by
+    simpa only [mem_vec3Ball, sub_zero] using hC hx
+  exact mem_vec3Ball.mpr (by simpa only [sub_zero] using lt_trans hx' (by linarith))
+
 /-! The theorem below is the source estimate used by every fixed stage of
 `lem:compactness` of the CKN manuscript. -/
 
@@ -241,61 +591,8 @@ theorem blowup_limit_pairing_modulus_from_source_data
   have hsplitSet : MeasurableSet
       (spaceTimeSet (CKN.euclideanBall 0 1) (Ioo (-1 : ℝ) 0)) :=
     by rw [hball1]; exact (isOpen_vec3Ball 0 1).measurableSet.prod measurableSet_Ioo
-  have hsplitMem : ∀ᵐ z ∂μsplit,
-      z ∈ spaceTimeSet (CKN.euclideanBall 0 1) (Ioo (-1 : ℝ) 0) := by
-    rw [hμsplit]
-    exact ae_restrict_mem hsplitSet
-  have hp₂ind : MemLp (fun z : Vec3 × ℝ =>
-      pressureSplitRemainder p p₁ (z.1,z.2)) (3 / 2 : ℝ≥0∞) μsplit := by
-    simpa only [F, hF, p₁] using hp₂
-  have hp₂' : MemLp (fun z : Vec3 × ℝ => p (z.1,z.2) - p₁ (z.1,z.2))
-      (3 / 2 : ℝ≥0∞)
-      ((volume.restrict (CKN.euclideanBall 0 1)).prod
-        (volume.restrict (Ioo (-1 : ℝ) 0))) := by
-    have hEq : (fun z : Vec3 × ℝ =>
-        p (show ParabolicPoint from (z.1,z.2)) -
-          p₁ (show ParabolicPoint from (z.1,z.2))) =ᵐ[μsplit]
-        (fun z => pressureSplitRemainder p p₁ (z.1,z.2)) := by
-      filter_upwards [hsplitMem] with z hz
-      rcases z with ⟨x,t⟩
-      change x ∈ CKN.euclideanBall 0 1 ∧ t ∈ Ioo (-1 : ℝ) 0 at hz
-      have hx : x ∈ vec3Ball 0 1 := hball1 ▸ hz.1
-      let z : ParabolicPoint := (x,t)
-      have hmem : z ∈ goodPointDomain := by
-        change x ∈ vec3Ball 0 1 ∧ t ∈ Ioo (-1 : ℝ) 0
-        exact ⟨hx, hz.2⟩
-      change p z - p₁ z = goodPointDomain.indicator (fun y => p y - p₁ y) z
-      simp [Set.indicator, hmem]
-    change MemLp (fun z : Vec3 × ℝ => p (z.1,z.2) - p₁ (z.1,z.2))
-      (3 / 2 : ℝ≥0∞) μsplit
-    exact (memLp_congr_ae hEq).2 hp₂ind
-  have hharm' : ∀ᵐ t ∂volume.restrict (Ioo (-1 : ℝ) 0),
-      CKN.Foundation.Heat.WeaklyHarmonicOn (CKN.euclideanBall 0 1)
-        (fun x : Vec3 => p (x,t) - p₁ (x,t)) := by
-    filter_upwards [hharm, ae_restrict_mem measurableSet_Ioo] with t hht ht
-    intro ψ hψ hψc hψsupport
-    have hEq : ∫ x in CKN.euclideanBall 0 1,
-        (p (x,t) - p₁ (x,t)) * CKN.spatialLaplacian ψ x =
-      ∫ x in CKN.euclideanBall 0 1,
-        pressureSplitRemainder p p₁ (x,t) * CKN.spatialLaplacian ψ x := by
-      apply setIntegral_congr_fun (CKN.isOpen_euclideanBall 0 1).measurableSet
-      intro x hx
-      have hx' : x ∈ vec3Ball 0 1 := hball1 ▸ hx
-      let z : ParabolicPoint := (x,t)
-      have hmem : z ∈ goodPointDomain := by
-        change x ∈ vec3Ball 0 1 ∧ t ∈ Ioo (-1 : ℝ) 0
-        exact ⟨hx', ht⟩
-      have hpoint : p z - p₁ z = pressureSplitRemainder p p₁ z := by
-        change p z - p₁ z = goodPointDomain.indicator (fun y => p y - p₁ y) z
-        simp [Set.indicator, hmem]
-      calc
-        (p z - p₁ z) *
-            CKN.spatialLaplacian ψ x =
-          pressureSplitRemainder p p₁ z *
-            CKN.spatialLaplacian ψ x := by rw [hpoint]
-        _ = _ := rfl
-    rw [hEq]
-    exact hht ψ hψ hψc hψsupport
+  obtain ⟨hp₂', hharm'⟩ := blowupLimit_pressureRemainder_transfer μsplit hμsplit hball1
+    hsplitSet hp₂ind hharm
   have hlocal := blowup_limit_local_energy_pressure_of_source_data
     hu hDu hpmeas hL2 henergy hpLp hL3 hgrad
     (fun ψ hψ => hS2 ψ hψ) hS3 x₀ t₀ r hx₀ ht₀ hr hr0
@@ -312,38 +609,10 @@ theorem blowup_limit_pairing_modulus_from_source_data
   have hxnorm : vec3EuclideanNorm x₀ ≤ 1 / 2 := by
     rw [closure_vec3Ball (by norm_num : (0 : ℝ) < 1 / 2)] at hx₀
     simpa only [Set.mem_ofPred_eq, sub_zero] using hx₀
-  have hspaceLim : Tendsto (fun k => r k * (m + 3)) atTop (nhds 0) := by
-    simpa using hr0.mul_const (m + 3)
-  have htimeLim : Tendsto (fun k => (r k) ^ 2 * (m + 3)) atTop (nhds 0) := by
-    simpa using (hr0.pow 2).mul_const (m + 3)
-  have hpairTimeLim : Tendsto (fun k => (r k) ^ 2 * m) atTop (nhds 0) := by
-    simpa using (hr0.pow 2).mul_const m
-  have hspaceSmall : ∀ᶠ k in atTop, r k * (m + 3) < 1 / 4 :=
-    hspaceLim.eventually (eventually_lt_nhds (by norm_num))
-  have htimeSmall : ∀ᶠ k in atTop, (r k) ^ 2 * (m + 3) < 3 / 4 :=
-    htimeLim.eventually (eventually_lt_nhds (by norm_num))
-  have hpairTimeSmall : ∀ᶠ k in atTop, (r k) ^ 2 * m < 5 / 16 :=
-    hpairTimeLim.eventually (eventually_lt_nhds (by norm_num))
-  have htail : ∀ᶠ k in atTop,
-      eLpNorm (fun z => vec3EuclideanNorm (blowupVelocity x₀ t₀ (r k) u z))
-          3 (volume.restrict (vec3Ball 0 (m + 1) ×ˢ Ioo (-(m + 1)) 0)) ≤ Bvel ∧
-      eLpNorm (blowupPressure x₀ t₀ (r k) p) (3 / 2 : ℝ≥0∞)
-          (volume.restrict (vec3Ball 0 (m + 1) ×ˢ Ioo (-(m + 1)) 0)) ≤ Bpress ∧
-      (IntegrableOn (fun z => spatialGradientSq
-          (parabolicRescaleVelocity x₀ t₀ (r k) u)
-          (parabolicRescaleGradient x₀ t₀ (r k) Du) z)
-          (spaceTimeSet (CKN.euclideanBall 0 (m + 1)) (Ioo (-(m + 1)) 0)) volume ∧
-        2 * (∫ z in spaceTimeSet (CKN.euclideanBall 0 (m + 1))
-            (Ioo (-(m + 1)) 0),
-          spatialGradientSq (parabolicRescaleVelocity x₀ t₀ (r k) u)
-            (parabolicRescaleGradient x₀ t₀ (r k) Du) z) ≤ Cg) ∧
-      r k * (m + 3) < 1 / 4 ∧
-      (r k) ^ 2 * (m + 3) < 3 / 4 ∧
-      (r k) ^ 2 * m < 5 / 16 := by
-    filter_upwards [hvel, hpress, henergyPressure, hspaceSmall,
-      htimeSmall, hpairTimeSmall] with k hv hp he hs ht hpt
-    exact ⟨hv, hp, ⟨he.1, he.2.1⟩, hs, ht, hpt⟩
-  obtain ⟨N, hN⟩ := Filter.eventually_atTop.1 htail
+  obtain ⟨hspaceSmall, htimeSmall, hpairTimeSmall⟩ :=
+    blowupLimit_source_scale_bounds_eventually hm r hr0
+  obtain ⟨N, hN⟩ := blowupLimit_join_eventually_bounds hvel hpress henergyPressure
+    hspaceSmall htimeSmall hpairTimeSmall
   refine ⟨N, ?_⟩
   intro C hC hCU a b hab w hw _hcompact hwsupport
   let R₀ : ℝ := m + 1
@@ -354,16 +623,9 @@ theorem blowup_limit_pairing_modulus_from_source_data
   have hR₀ : 0 < R₀ := by dsimp [R₀]; positivity
   have ha₀ : a₀ < 0 := by dsimp [a₀]; linarith only [hm]
   have hCbig : C ⊆ vec3Ball (0 : Vec3) R₀ := by
-    intro x hx
-    have hx' : vec3EuclideanNorm x < m := by
-      simpa only [mem_vec3Ball, sub_zero] using hCU hx
-    have hmR : m < R₀ := by dsimp [R₀]; linarith only [hm]
-    exact mem_vec3Ball.mpr (by simpa only [sub_zero] using lt_trans hx' hmR)
+    simpa only [R₀] using blowupLimit_source_spatial_enlargement hCU hm
   have hIbig : Icc a b ⊆ Icc a₀ 0 := by
-    intro t ht
-    have ht' := hab ht
-    have ha₀m : a₀ < -m := by dsimp [a₀]; nlinarith only [hm]
-    exact ⟨le_of_lt (lt_of_lt_of_le ha₀m ht'.1), ht'.2⟩
+    simpa only [a₀] using blowupLimit_source_interval_enlargement hm hab
   have hμbound : μC ≤ μOpen := by
     dsimp [μC, μOpen, R₀, a₀]
     exact blowupLimit_restrict_closed_interval_le_open hCbig hIbig
@@ -385,186 +647,22 @@ theorem blowup_limit_pairing_modulus_from_source_data
     intro k hk
     have hk' := hN k hk
     simpa only [R₀, a₀] using hk'
-  have hMgrad : (ENNReal.ofReal (Cg / 2)) ^ (1 / 2 : ℝ) < ⊤ := by
-    apply ENNReal.rpow_lt_top_of_nonneg (by norm_num)
-    exact ENNReal.ofReal_lt_top.ne
+  have hMgrad := blowupLimit_source_gradientBound_lt_top (Cg := Cg)
   let Mgrad : ℝ≥0∞ := (ENNReal.ofReal (Cg / 2)) ^ (1 / 2 : ℝ)
   have hsourceMeas : AEStronglyMeasurable
       (goodPointDomain.indicator u) (volume : Measure ParabolicPoint) := huExt
   have hDuGood : AEStronglyMeasurable Du
       (volume.restrict goodPointDomain) := by
     simpa only [goodPointDomain, spaceTimeSet] using hDu
-  have hmodStage : ∀ n, ∀ i,
-      MemLp (fun z => blowupVelocity x₀ t₀ (r (n + N)) u z i) 3 μC ∧
-      eLpNorm (fun z => blowupVelocity x₀ t₀ (r (n + N)) u z i) 3 μC ≤ Bvel := by
-    intro n i
-    have hn := hterm (n + N) (Nat.le_add_left N n)
-    have hnormMemOpen : MemLp
-        (fun z => vec3EuclideanNorm (blowupVelocity x₀ t₀ (r (n + N)) u z))
-        3 μOpen := by
-      rw [memLp_iff]
-      exact lt_of_le_of_lt hn.1 hBvel
-    have hnormMem : MemLp
-        (fun z => vec3EuclideanNorm (blowupVelocity x₀ t₀ (r (n + N)) u z))
-        3 μC := hnormMemOpen.mono_measure hμbound
-    have hnormBound := (eLpNorm_mono_measure _ hμbound).trans hn.1
-    have hvec : AEStronglyMeasurable
-        (blowupVelocity x₀ t₀ (r (n + N)) u) μC := by
-      have hglobal := blowupRescaledVelocity_aestronglyMeasurable
-        (goodPointDomain.indicator u) hsourceMeas x₀ t₀ (r (n + N)) (hr (n + N))
-      simpa only [blowupVelocity] using hglobal.restrict
-    exact blowupLimit_component_memLp_of_norm μC Bvel _ i hvec hnormMem hnormBound
-  have hpressStage : ∀ n,
-      MemLp (blowupPressure x₀ t₀ (r (n + N)) p) (3 / 2 : ℝ≥0∞) μC ∧
-      eLpNorm (blowupPressure x₀ t₀ (r (n + N)) p) (3 / 2 : ℝ≥0∞) μC ≤ Bpress := by
-    intro n
-    have hn := hterm (n + N) (Nat.le_add_left N n)
-    have hmemOpen : MemLp (blowupPressure x₀ t₀ (r (n + N)) p)
-        (3 / 2 : ℝ≥0∞) μOpen := by
-      rw [memLp_iff]
-      exact lt_of_le_of_lt hn.2.1 hBpress
-    exact ⟨hmemOpen.mono_measure hμbound,
-      (eLpNorm_mono_measure _ hμbound).trans hn.2.1⟩
-  have hgradStage : ∀ n i j,
-      MemLp (fun z => blowupGradient x₀ t₀ (r (n + N)) Du z i j) 2 μC ∧
-      eLpNorm (fun z => blowupGradient x₀ t₀ (r (n + N)) Du z i j) 2 μC ≤ Mgrad := by
-    intro n i j
-    have hn := hterm (n + N) (Nat.le_add_left N n)
-    have hspaceQuarter : r (n + N) * R₀ < 1 / 4 := by
-      have hsmall := hn.2.2.2.1
-      have hRle : R₀ < m + 3 := by dsimp [R₀]; nlinarith only [hm]
-      exact (mul_lt_mul_of_pos_left hRle (hr (n + N))).trans hsmall
-    have htimeBound : (r (n + N)) ^ 2 * (-a₀) < 3 / 4 := by
-      have hsmall := hn.2.2.2.2.1
-      have hRle : -a₀ < m + 3 := by dsimp [a₀]; nlinarith only [hm]
-      exact (mul_lt_mul_of_pos_left hRle (sq_pos_of_pos (hr (n + N)))).trans hsmall
-    have hInt : IntegrableOn (fun z => spatialGradientSq
-        (parabolicRescaleVelocity x₀ t₀ (r (n + N)) u)
-        (parabolicRescaleGradient x₀ t₀ (r (n + N)) Du) z)
-        (spaceTimeSet (vec3Ball 0 R₀) (Ioo a₀ 0)) volume := by
-      simpa only [hball, R₀, a₀, spaceTimeSet] using hn.2.2.1.1
-    have henergyBound : (∫ z in spaceTimeSet (vec3Ball 0 R₀) (Ioo a₀ 0),
-        spatialGradientSq (parabolicRescaleVelocity x₀ t₀ (r (n + N)) u)
-          (parabolicRescaleGradient x₀ t₀ (r (n + N)) Du) z) ≤ Cg / 2 := by
-      apply (le_div_iff₀ (by norm_num : (0 : ℝ) < 2)).2
-      simpa only [hball, R₀, a₀, spaceTimeSet, mul_comm] using hn.2.2.1.2
-    have hDuRescale := blowupLimit_rescaleGradient_aestronglyMeasurable
-      hDuGood x₀ t₀ (r (n + N)) R₀ a₀ (hr (n + N)) hxnorm ht₀
-      (by exact hspaceQuarter.trans (by norm_num : (1 / 4 : ℝ) < 1 / 2))
-      htimeBound
-    have hrow := blowup_gradient_component_eLpNorm_le_of_integral_bound
-      (spaceTimeSet (vec3Ball 0 R₀) (Ioo a₀ 0))
-      (parabolicRescaleVelocity x₀ t₀ (r (n + N)) u)
-      (parabolicRescaleGradient x₀ t₀ (r (n + N)) Du) i (Cg / 2)
-      hDuRescale hInt henergyBound
-    have hrowMem : MemLp (fun z => vec3EuclideanNorm
-        (parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i)) 2 μOpen := by
-      rw [memLp_iff]
-      have hfin := ENNReal.rpow_lt_top_of_nonneg
-        (by norm_num : (0 : ℝ) ≤ (1 / 2 : ℝ))
-        (ENNReal.ofReal_lt_top.ne : ENNReal.ofReal (Cg / 2) ≠ ⊤)
-      exact lt_of_le_of_lt hrow hfin
-    have hrowBound : eLpNorm (fun z => vec3EuclideanNorm
-        (parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i)) 2 μOpen ≤ Mgrad := by
-      change eLpNorm (fun z => vec3EuclideanNorm
-        (parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i)) 2
-        (volume.restrict (spaceTimeSet (vec3Ball 0 R₀) (Ioo a₀ 0))) ≤
-          (ENNReal.ofReal (Cg / 2)) ^ (1 / 2 : ℝ)
-      exact hrow
-    have hrowVecAEM : AEStronglyMeasurable
-        (fun z => parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i) μOpen :=
-      (continuous_apply i).comp_aestronglyMeasurable hDuRescale
-    have hscalarAEM : AEStronglyMeasurable
-        (fun z => parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i j) μOpen :=
-      (continuous_apply j).comp_aestronglyMeasurable hrowVecAEM
-    have hpoint (z : ParabolicPoint) :
-        ‖parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i j‖ ≤
-          ‖vec3EuclideanNorm
-            (parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i)‖ := by
-      calc
-        ‖parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i j‖ ≤
-            vec3EuclideanNorm
-              (parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i) :=
-          (norm_le_pi_norm _ j).trans (norm_le_vec3EuclideanNorm _)
-        _ = ‖vec3EuclideanNorm
-            (parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i)‖ := by
-          rw [Real.norm_eq_abs,
-            abs_of_nonneg (vec3EuclideanNorm_nonneg _)]
-    have hscalarMemOpen : MemLp
-        (fun z => parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i j) 2 μOpen :=
-      hrowMem.of_le hscalarAEM (Filter.Eventually.of_forall hpoint)
-    have hscalarBoundOpen : eLpNorm
-        (fun z => parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i j) 2 μOpen ≤ Mgrad :=
-      (eLpNorm_mono_ae hscalarAEM (Filter.Eventually.of_forall hpoint)).trans hrowBound
-    have hmu : μC ≤ μOpen := by
-      dsimp [μC, μOpen, R₀, a₀]
-      exact blowupLimit_restrict_closed_interval_le_open hCbig hIbig
-    have hscalarMem : MemLp
-        (fun z => parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i j) 2 μC :=
-      hscalarMemOpen.mono_measure hmu
-    have hscalarBound := (eLpNorm_mono_measure _ hmu).trans hscalarBoundOpen
-    have heqFields := blowupFields_eq_rescale_on_cylinder u Du p
-      x₀ t₀ (r (n + N)) R₀ a₀ hxnorm ht₀ (hr (n + N))
-      hspaceQuarter htimeBound
-    have hsetMeas : MeasurableSet (spaceTimeSet (vec3Ball 0 R₀) (Ioo a₀ 0)) :=
-      (isOpen_vec3Ball 0 R₀).measurableSet.prod measurableSet_Ioo
-    have htargetMem : ∀ᵐ z ∂μC,
-        z ∈ spaceTimeSet (vec3Ball 0 R₀) (Ioo a₀ 0) := by
-      exact ae_mono hmu (ae_restrict_mem hsetMeas)
-    have heqAE : (fun z => blowupGradient x₀ t₀ (r (n + N)) Du z i j) =ᵐ[μC]
-        (fun z => parabolicRescaleGradient x₀ t₀ (r (n + N)) Du z i j) := by
-      filter_upwards [htargetMem] with z hz
-      exact congrArg (fun d => d i j) (heqFields.2.1 hz)
-    refine ⟨(memLp_congr_ae heqAE).2 hscalarMem, ?_⟩
-    rw [eLpNorm_congr_ae heqAE]
-    exact hscalarBound
-  have hpairTime (n : ℕ) (τ : ℝ) (hτ : τ ∈ Icc a b) :
-      t₀ + (r (n + N)) ^ 2 * τ ∈ Icc (-(3 / 4 : ℝ) ^ 2) 0 := by
-    have hτ' := hab hτ
-    have hτlo : -m ≤ τ := hτ'.1
-    have hτup : τ ≤ 0 := hτ'.2
-    have hr2 : 0 ≤ (r (n + N)) ^ 2 := sq_nonneg _
-    have hmulLo : -((r (n + N)) ^ 2 * m) ≤ (r (n + N)) ^ 2 * τ := by
-      have := mul_le_mul_of_nonneg_left hτlo hr2
-      simpa only [mul_neg] using this
-    have hsmall := (hN (n + N) (Nat.le_add_left N n)).2.2.2.2.2
-    have hlow : -(3 / 4 : ℝ) ^ 2 ≤ t₀ + (r (n + N)) ^ 2 * τ := by
-      have hstrict : -(1 / 4 : ℝ) - (r (n + N)) ^ 2 * m >
-          -(3 / 4 : ℝ) ^ 2 := by
-        nlinarith only [hsmall]
-      exact le_trans (le_of_lt hstrict) (by nlinarith only [ht₀.1, hmulLo])
-    have hupper : t₀ + (r (n + N)) ^ 2 * τ ≤ 0 := by
-      have hmulUp := mul_le_mul_of_nonneg_left hτup hr2
-      have hmulUp' : (r (n + N)) ^ 2 * τ ≤ 0 := by simpa using hmulUp
-      exact add_nonpos ht₀.2 hmulUp'
-    exact ⟨hlow, hupper⟩
-  have himage (n : ℕ) :
-      (fun x : Vec3 => x₀ + r (n + N) • x) '' C ⊆
-        vec3Ball (0 : Vec3) (3 / 4 : ℝ) := by
-    intro y hy
-    rcases hy with ⟨x, hxC, rfl⟩
-    have hxnorm' : vec3EuclideanNorm x < m := by
-      simpa only [mem_vec3Ball, sub_zero] using hCU hxC
-    have hsmall := (hN (n + N) (Nat.le_add_left N n)).2.2.2.1
-    have hmR : m < m + 3 := by nlinarith only [hm]
-    have hscale : vec3EuclideanNorm (r (n + N) • x) =
-        r (n + N) * vec3EuclideanNorm x := by
-      rw [vec3EuclideanNorm_smul, abs_of_pos (hr (n + N))]
-    have hscaleLt : vec3EuclideanNorm (r (n + N) • x) < 1 / 4 := by
-      rw [hscale]
-      calc
-        r (n + N) * vec3EuclideanNorm x < r (n + N) * m :=
-          mul_lt_mul_of_pos_left hxnorm' (hr (n + N))
-        _ < r (n + N) * (m + 3) :=
-          mul_lt_mul_of_pos_left hmR (hr (n + N))
-        _ < 1 / 4 := hsmall
-    have hadd := vec3EuclideanNorm_add_le x₀ (r (n + N) • x)
-    have hnormY : vec3EuclideanNorm (x₀ + r (n + N) • x) < 3 / 4 := by
-      have hsum : vec3EuclideanNorm x₀ +
-          vec3EuclideanNorm (r (n + N) • x) < 3 / 4 := by
-        nlinarith only [hxnorm, hscaleLt]
-      exact lt_of_le_of_lt hadd hsum
-    simpa only [mem_vec3Ball, sub_zero] using hnormY
+  obtain ⟨hmodStage, hpressStage, hgradStage⟩ := blowupLimit_source_pairing_stages
+    r N C a b R₀ a₀ Mgrad rfl hxnorm ht₀ hr hCbig hIbig hball hμbound hterm
+    hBvel hBpress hMgrad hsourceMeas hDuGood
+  have hspaceN : ∀ k, N ≤ k → r k * (m + 3) < 1 / 4 := fun k hk =>
+    (hN k hk).2.2.2.1
+  have hpairN : ∀ k, N ≤ k → (r k) ^ 2 * m < 5 / 16 := fun k hk =>
+    (hN k hk).2.2.2.2.2
+  obtain ⟨hpairTime, himage⟩ := blowupLimit_source_pairing_geometry
+    hm hab hxnorm ht₀ hr N hCU hspaceN hpairN
   have htestBounds := blowup_limit_smooth_test_derivative_bounds
     hC a b w hw hwsupport
   obtain ⟨Mtest, Mdiv, hMtest, hMdiv, hDw, hdivw⟩ := htestBounds

@@ -29,9 +29,9 @@ open CKN.Foundation.Parabolic
 
 /-- A coordinate word multiplier damped by an additional Bessel
 weight of order `2n`. -/
-@[expose] def lps_dampedFourierWordSymbol (n : ℕ) (α : List (Fin 3))
+@[expose] def lpsDampedFourierWordSymbol (n : ℕ) (α : List (Fin 3))
     (ξ : L2Vec3) : ℂ :=
-  lps_fourierWordSymbol α ξ *
+  lpsFourierWordSymbol α ξ *
     (((1 + ‖ξ‖ ^ 2) ^ (-(n : ℝ)) : ℝ) : ℂ)
 
 /-- Damping by an even Bessel power leaves at most quadratic growth
@@ -62,13 +62,13 @@ its word length fits under the higher Bessel order
 theorem lps_dampedFourierWordSymbol_norm_le
     (n : ℕ) (α : List (Fin 3))
     (hα : α.length ≤ 2 * (n + 1)) (ξ : L2Vec3) :
-    ‖lps_dampedFourierWordSymbol n α ξ‖ ≤
+    ‖lpsDampedFourierWordSymbol n α ξ‖ ≤
       (2 * π) ^ α.length * (1 + ‖ξ‖ ^ 2) := by
   have hb : 0 ≤ (1 + ‖ξ‖ ^ 2) ^ (-(n : ℝ)) := by positivity
-  unfold lps_dampedFourierWordSymbol
+  unfold lpsDampedFourierWordSymbol
   rw [norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hb]
   calc
-    ‖lps_fourierWordSymbol α ξ‖ *
+    ‖lpsFourierWordSymbol α ξ‖ *
         (1 + ‖ξ‖ ^ 2) ^ (-(n : ℝ)) ≤
       ((2 * π) ^ α.length * ‖ξ‖ ^ α.length) *
         (1 + ‖ξ‖ ^ 2) ^ (-(n : ℝ)) :=
@@ -87,13 +87,13 @@ when the higher Bessel order has one spare degree
 theorem lps_dampedFourierWordSymbol_first_moment_le
     (n : ℕ) (α : List (Fin 3))
     (hα : α.length + 1 ≤ 2 * (n + 1)) (ξ : L2Vec3) :
-    ‖ξ‖ * ‖lps_dampedFourierWordSymbol n α ξ‖ ≤
+    ‖ξ‖ * ‖lpsDampedFourierWordSymbol n α ξ‖ ≤
       (2 * π) ^ α.length * (1 + ‖ξ‖ ^ 2) := by
   have hb : 0 ≤ (1 + ‖ξ‖ ^ 2) ^ (-(n : ℝ)) := by positivity
-  unfold lps_dampedFourierWordSymbol
+  unfold lpsDampedFourierWordSymbol
   rw [norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hb]
   calc
-    ‖ξ‖ * (‖lps_fourierWordSymbol α ξ‖ *
+    ‖ξ‖ * (‖lpsFourierWordSymbol α ξ‖ *
         (1 + ‖ξ‖ ^ 2) ^ (-(n : ℝ))) ≤
       ‖ξ‖ * (((2 * π) ^ α.length * ‖ξ‖ ^ α.length) *
         (1 + ‖ξ‖ ^ 2) ^ (-(n : ℝ))) := by
@@ -115,7 +115,7 @@ the damped coordinate multiplier is bounded at every frequency
 theorem lps_dampedFourierWordSymbol_weighted_norm_le
     (n : ℕ) (α : List (Fin 3))
     (hα : α.length ≤ 2 * (n + 1)) (ξ : L2Vec3) :
-    ‖lps_dampedFourierWordSymbol n α ξ *
+    ‖lpsDampedFourierWordSymbol n α ξ *
       (((1 + ‖ξ‖ ^ 2) ^ (-2 : ℝ) : ℝ) : ℂ)‖ ≤
       (2 * π) ^ α.length := by
   let b : ℝ := 1 + ‖ξ‖ ^ 2
@@ -130,11 +130,11 @@ theorem lps_dampedFourierWordSymbol_weighted_norm_le
     rw [hid]
     exact Real.rpow_le_one_of_one_le_of_nonpos hb (by norm_num)
   have hM := lps_dampedFourierWordSymbol_norm_le n α hα ξ
-  change ‖lps_dampedFourierWordSymbol n α ξ‖ ≤
+  change ‖lpsDampedFourierWordSymbol n α ξ‖ ≤
     (2 * π) ^ α.length * b at hM
   rw [norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hw]
   calc
-    ‖lps_dampedFourierWordSymbol n α ξ‖ * b ^ (-2 : ℝ) ≤
+    ‖lpsDampedFourierWordSymbol n α ξ‖ * b ^ (-2 : ℝ) ≤
       ((2 * π) ^ α.length * b) * b ^ (-2 : ℝ) :=
       mul_le_mul_of_nonneg_right hM hw
     _ = (2 * π) ^ α.length * (b * b ^ (-2 : ℝ)) := by ring

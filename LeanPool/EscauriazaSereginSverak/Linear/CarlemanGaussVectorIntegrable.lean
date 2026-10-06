@@ -24,12 +24,15 @@ noncomputable section
 
 namespace ESS
 
+/-- Product Lebesgue measure on parabolic space-time. -/
 local instance gaussVectorIntegrableMeasureSpace : MeasureSpace ParabolicPoint :=
   Measure.prod.measureSpace
 
+/-- The product norm on parabolic space-time used for classical differentiation. -/
 local instance gaussVectorIntegrableNormedAddCommGroup : NormedAddCommGroup ParabolicPoint :=
   inferInstanceAs (NormedAddCommGroup (Vec3 × ℝ))
 
+/-- The real scalar action compatible with the product norm on parabolic space-time. -/
 local instance gaussVectorIntegrableNormedSpace : NormedSpace ℝ ParabolicPoint :=
   inferInstanceAs (NormedSpace ℝ (Vec3 × ℝ))
 

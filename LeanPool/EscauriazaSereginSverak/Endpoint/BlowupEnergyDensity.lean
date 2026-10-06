@@ -8,6 +8,12 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupCutoffSpatialBound
 
+/-!
+# Blowup Energy Density
+
+Local energy bounds for the rescaled sequence in the endpoint regularity argument.
+-/
+
 public section
 
 open CKN CKN.Foundation.Parabolic

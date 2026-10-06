@@ -10,6 +10,12 @@ public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupTenThirdsFromSourc
 public import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
 public import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 
+/-!
+# Blowup Compactness Boundary
+
+Compactness of the rescaled fields in the endpoint regularity argument.
+-/
+
 public section
 
 open MeasureTheory Set Filter

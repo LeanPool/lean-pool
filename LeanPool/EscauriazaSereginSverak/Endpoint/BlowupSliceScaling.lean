@@ -9,6 +9,12 @@ module
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupPressureRemainder
 public import LeanPool.CaffarelliKohnNirenberg.Setting.ScalingInvarianceBasic
 
+/-!
+# Blowup Slice Scaling
+
+Spatial slice bounds and rescaling identities in the endpoint compactness argument.
+-/
+
 public section
 open MeasureTheory Set Filter CKN CKN.Foundation.Parabolic
 open scoped ENNReal

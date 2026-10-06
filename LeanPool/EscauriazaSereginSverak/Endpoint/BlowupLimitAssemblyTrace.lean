@@ -181,7 +181,8 @@ theorem blowupLimitAssembly_zero_trace
     filter_upwards [hmodψ] with k hk
     exact hk 0 t ⟨by norm_num, le_rfl⟩ ⟨ht.1.le, ht.2.le⟩
   have hdist : Tendsto (fun t : ℝ => dist t 0) (nhdsWithin 0 (Iio 0)) (nhds 0) := by
-    have h := ((continuous_id.dist (continuous_const : Continuous fun _ : ℝ => (0 : ℝ))).tendsto (0 : ℝ)).mono_left
+    have h := ((continuous_id.dist
+      (continuous_const : Continuous fun _ : ℝ => (0 : ℝ))).tendsto (0 : ℝ)).mono_left
       (nhdsWithin_le_nhds (s := Iio (0 : ℝ)))
     simp only [id, dist_self] at h
     exact h

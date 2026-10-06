@@ -10,6 +10,12 @@ public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupCompactnessBoundar
 public import LeanPool.CaffarelliKohnNirenberg.Foundation.Parabolic.Integration.Average
 public import Mathlib.MeasureTheory.Function.UniformIntegrable
 
+/-!
+# Blowup Compactness Top
+
+Compactness of the rescaled fields in the endpoint regularity argument.
+-/
+
 public section
 
 open MeasureTheory Set Filter CKN.Foundation.Parabolic

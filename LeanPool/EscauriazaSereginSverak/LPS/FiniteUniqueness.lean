@@ -43,30 +43,30 @@ theorem lps_zero_relative_distance_implies_ae_eq
   obtain ⟨pU, hWeakU⟩ := serrinWeak_of_lerayHopf hU
   obtain ⟨pV, hWeakV⟩ := serrinWeak_of_lerayHopf hV
   have hslice : ∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
-      ∀ᵐ x ∂(volume : Measure Vec3), v (x,t) = u (x,t) := by
+      ∀ᵐ x ∂(volume : Measure Vec3), v (x, t) = u (x, t) := by
     filter_upwards [hZero, serrinWeak_slices_ae hWeakU, serrinWeak_slices_ae hWeakV]
       with t hEq hu hv
     rcases hu with ⟨hu2, -, -, -, -⟩
     rcases hv with ⟨hv2, -, -, -, -⟩
-    have hDiff : MemLp (fun x : Vec3 => v (x,t) - u (x,t)) 2 volume := hv2.sub hu2
+    have hDiff : MemLp (fun x : Vec3 => v (x, t) - u (x, t)) 2 volume := hv2.sub hu2
     have hInt : Integrable (fun x : Vec3 =>
-        ∑ k : Fin 3, (v (x,t) k - u (x,t) k) ^ 2) volume := by
+        ∑ k : Fin 3, (v (x, t) k - u (x, t) k) ^ 2) volume := by
       refine integrable_finsetSum _ fun k _ => ?_
       exact (memLp_two_iff_integrable_sq_norm
         ((hDiff.eval k).aestronglyMeasurable)).mp (hDiff.eval k) |>.congr
           (Eventually.of_forall fun x => by simp)
     have hzeroInt :
-        (∫ x : Vec3, ∑ k : Fin 3, (v (x,t) k - u (x,t) k) ^ 2) = 0 := by
+        (∫ x : Vec3, ∑ k : Fin 3, (v (x, t) k - u (x, t) k) ^ 2) = 0 := by
       simpa [lpsComparisonDistanceSq] using hEq
     have hAE := (integral_eq_zero_iff_of_nonneg
       (fun x => Finset.sum_nonneg fun k _ => sq_nonneg _)
       hInt).mp hzeroInt
     filter_upwards [hAE] with x hx
     funext k
-    have hsum : ∑ i : Fin 3, (v (x,t) i - u (x,t) i) ^ 2 = 0 := hx
+    have hsum : ∑ i : Fin 3, (v (x, t) i - u (x, t) i) ^ 2 = 0 := hx
     have hk := (Finset.sum_eq_zero_iff_of_nonneg
-      (fun i _ => sq_nonneg (v (x,t) i - u (x,t) i))).mp hsum k (Finset.mem_univ k)
-    have hsub : v (x,t) k - u (x,t) k = 0 :=
+      (fun i _ => sq_nonneg (v (x, t) i - u (x, t) i))).mp hsum k (Finset.mem_univ k)
+    have hsub : v (x, t) k - u (x, t) k = 0 :=
       (pow_eq_zero_iff (n := 2) (by norm_num)).mp hk
     linarith only [hsub]
   have hvm := serrin_aesm_prod hWeakV.meas_u
@@ -102,7 +102,7 @@ theorem lps_finite_leray_hopf_uniqueness
     (hs : 3 < s)
     (hmix : (∫⁻ t in Ioo (0 : ℝ) T,
       (∫⁻ x : Vec3,
-        ENNReal.ofReal (vec3EuclideanNorm (u (x,t))) ^ s) ^
+        ENNReal.ofReal (vec3EuclideanNorm (u (x, t))) ^ s) ^
           ((2 * s / (s - 3)) / s)) < ⊤) :
     v =ᵐ[volume.restrict (spaceTimeSet Set.univ (Ioo (0 : ℝ) T))] u := by
   obtain ⟨pu, hUweak⟩ := serrinWeak_of_lerayHopf hU

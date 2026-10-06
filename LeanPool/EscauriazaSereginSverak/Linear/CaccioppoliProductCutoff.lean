@@ -22,6 +22,7 @@ noncomputable section
 
 namespace ESS
 
+/-- The product of the spatial and time cutoffs used in the weighted energy estimate. -/
 @[expose] def caccioppoliSpaceTimeWeight (x₀ : Vec3) (t r ε : ℝ)
     (q : Vec3 × ℝ) : ℝ :=
   caccioppoliSpatialWeight x₀ r q.1 ^ 2 * caccioppoliTimeWeight t r ε q.2 ^ 2

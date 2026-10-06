@@ -91,7 +91,8 @@ theorem vlDirTest_apply (i : Fin 3) (φ : Vec3 × ℝ → ℝ) (p : Vec3 × ℝ)
 
 /-- The scalar weak equation for one component. -/
 theorem vlVectorWeak_component {a τ : ℝ} {z v g₀ : Vec3 × ℝ → Vec3}
-    {F G : Vec3 × ℝ → Fin 3 → Fin 3 → ℝ} (hweak : (∀ φ ∈ CKN.spaceTimeTestFunction (V := Vec3) (univ : Set Vec3) (Ioo a τ),
+    {F G : Vec3 × ℝ → Fin 3 → Fin 3 → ℝ}
+    (hweak : (∀ φ ∈ CKN.spaceTimeTestFunction (V := Vec3) (univ : Set Vec3) (Ioo a τ),
       ∫ p in vlSlab a τ, ∑ i : Fin 3, z p i *
           (-vorticityTestTimeDerivative φ p i - vorticityTestLaplacian φ p i) =
         ∫ p in vlSlab a τ, (∑ j : Fin 3, ∑ i : Fin 3,
@@ -159,7 +160,8 @@ theorem vlVectorWeak_component {a τ : ℝ} {z v g₀ : Vec3 × ℝ → Vec3}
 theorem vlVectorTrace_component {a τ : ℝ} {z : Vec3 × ℝ → Vec3} {z₀ : Vec3 → Vec3}
     (htrace : (∀ ψ : Vec3 → Vec3, ContDiff ℝ (⊤ : ℕ∞) ψ → HasCompactSupport ψ →
       ∃ c : ℝ → ℝ, ContinuousOn c (Icc a τ) ∧ c a = ∫ x, ∑ i : Fin 3, z₀ x i * ψ x i ∧
-        ∀ᵐ t ∂(volume.restrict (Ioo a τ)), c t = ∫ x, ∑ i : Fin 3, z (x, t) i * ψ x i)) (i : Fin 3) {ψ : Vec3 → ℝ}
+        ∀ᵐ t ∂(volume.restrict (Ioo a τ)), c t = ∫ x, ∑ i : Fin 3, z (x, t) i * ψ x i))
+    (i : Fin 3) {ψ : Vec3 → ℝ}
     (hψ : ContDiff ℝ (⊤ : ℕ∞) ψ) (hψc : HasCompactSupport ψ) :
     ∃ c : ℝ → ℝ, ContinuousOn c (Icc a τ) ∧ c a = ∫ x, z₀ x i * ψ x ∧
       ∀ᵐ t ∂(volume.restrict (Ioo a τ)), c t = ∫ x, z (x, t) i * ψ x := by

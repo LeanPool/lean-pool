@@ -8,6 +8,12 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupGradientLocal
 
+/-!
+# Blowup Rescale Agreement
+
+Agreement identities for the endpoint rescaling construction.
+-/
+
 public section
 
 open MeasureTheory Set Filter CKN CKN.Foundation.Parabolic

@@ -12,6 +12,12 @@ public import LeanPool.CaffarelliKohnNirenberg.Foundation.ParabolicMeasure
 public import LeanPool.CaffarelliKohnNirenberg.Core.Endgame.StartCaccioppoli
 public import LeanPool.CaffarelliKohnNirenberg.Setting.SliceNormBounds
 
+/-!
+# Ess Local Proof Exterior
+
+Local endpoint regularity through vorticity estimates and backward uniqueness.
+-/
+
 public section
 
 open MeasureTheory Set Filter Topology
@@ -556,9 +562,9 @@ theorem essLocal_exteriorCriticalTail
         (volume.prod (volume.restrict J)) := hqpair.enorm
     convert ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hnorm
       using 1
-    funext z
-    exact congrArg (fun y : ℝ≥0∞ => y ^ (3 / 2 : ℝ))
-      (Real.enorm_eq_ofReal_abs _).symm
+    · funext z
+      exact congrArg (fun y : ℝ≥0∞ => y ^ (3 / 2 : ℝ))
+        (Real.enorm_eq_ofReal_abs _).symm
   have hFmeas : AEMeasurable
       (fun z : Vec3 × ℝ =>
         ENNReal.ofReal (vec3EuclideanNorm (U (z.1, z.2))) ^ (3 : ℝ) +

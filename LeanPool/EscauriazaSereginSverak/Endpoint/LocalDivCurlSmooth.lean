@@ -221,9 +221,11 @@ private theorem localDivCurlSmooth_derivative_energy
       filter_upwards [] with x
       exact hpoint x
 
+/-- Spatial derivative words of the highest order in the div–curl estimate. -/
 @[expose] def localDivCurlSmoothTopWords (m : ℕ) : Finset (List (Fin 3)) :=
   (sobolevWords (m + 1)).filter (fun α => α.length = m + 1)
 
+/-- Highest-order derivative words paired with a spatial coordinate. -/
 @[expose] def localDivCurlSmoothTopPairs (m : ℕ) :
     Finset ((List (Fin 3)) × Fin 3) :=
   ((sobolevWords m).filter (fun α => α.length = m)).product Finset.univ
@@ -511,9 +513,11 @@ private theorem localDivCurlSmooth_norm_succ_le
       (localDivCurlSmooth_topPair_sum_le_gradient_sum m hV hVc)
       (∑ i : Fin 3, sobolevNormSqOn m univ (fun α => wordDeriv α (V i)))
 
+/-- The divergence of a vector field given by its components. -/
 @[expose] def localDivCurlSmoothDiv (V : Fin 3 → Vec3 → ℝ) : Vec3 → ℝ :=
   fun x => ∑ i : Fin 3, spatialDeriv (V i) i x
 
+/-- A component of the curl of a vector field. -/
 @[expose] def localDivCurlSmoothCurl (V : Fin 3 → Vec3 → ℝ) (k : Fin 3) : Vec3 → ℝ :=
   fun x => spatialDeriv (V (k + 2)) (k + 1) x -
     spatialDeriv (V (k + 1)) (k + 2) x

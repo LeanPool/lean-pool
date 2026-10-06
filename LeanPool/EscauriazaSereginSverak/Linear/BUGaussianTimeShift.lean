@@ -29,6 +29,7 @@ noncomputable section
 
 namespace ESS
 
+/-- Translation by `σ` in the time coordinate, leaving the spatial coordinate unchanged. -/
 @[expose] def buGaussianTimeShiftHomeomorph (σ : ℝ) : (Vec3 × ℝ) ≃ₜ (Vec3 × ℝ) :=
   Homeomorph.prodCongr (Homeomorph.refl Vec3) (Homeomorph.addLeft σ)
 
@@ -162,7 +163,7 @@ theorem buGaussian_timeShift_image (ρ σ : ℝ) :
 
 private theorem buGaussian_timeShift_locallyIntegrable
     {ρ σ : ℝ}
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {E : Type*} [NormedAddCommGroup E]
     {f : ParabolicPoint → E}
     (hf : LocallyIntegrableOn f
       (spaceTimeSet (vec3Ball 0 ρ) (Ioo 0 (2 - σ))) volume) :
@@ -240,6 +241,192 @@ theorem buGaussian_timeShift_test_derivatives
   norm_num at hp ht
   exact ⟨hp.symm, ht.symm⟩
 
+private theorem buGaussian_timeShift_integral_comp
+    {ρ σ : ℝ} {F : ParabolicPoint → ℝ}
+    (hF : AEStronglyMeasurable F
+      (volume.restrict (spaceTimeSet (vec3Ball 0 ρ) (Ioo σ 2)))) :
+    (∫ z in spaceTimeSet (vec3Ball 0 ρ) (Ioo 0 (2 - σ)),
+      F (buGaussianTimeShiftPoint σ z)) =
+      ∫ z in spaceTimeSet (vec3Ball 0 ρ) (Ioo σ 2), F z := by
+  have hrespace : rescaledSpace 1 0 (vec3Ball 0 ρ) = vec3Ball 0 ρ := by
+    ext x
+    simp [rescaledSpace, scalingSpace]
+  have hretime : rescaledTime 1 σ (Ioo σ 2) = Ioo (0 : ℝ) (2 - σ) := by
+    ext s
+    change σ + 1 ^ 2 * s ∈ Ioo σ 2 ↔ s ∈ Ioo 0 (2 - σ)
+    simp only [mem_Ioo]
+    constructor <;> intro hs <;> constructor <;> norm_num at hs ⊢ <;>
+      (first | linarith only [hs.1] | linarith only [hs.2])
+  have hcoef : (ENNReal.ofReal (1⁻¹ ^ 5)).toReal = 1 := by norm_num
+  have hTfunc : scalingParabolic 1 (0, σ) = buGaussianTimeShiftPoint σ :=
+    buGaussianTimeShiftPoint_eq_scaling σ
+  have hchange := CKN.integral_comp_scaling_test 1 (by norm_num)
+    ((0 : Vec3), σ) (Ω := vec3Ball 0 ρ) (I := Ioo σ 2) (F := F)
+    (vec3Ball_measurable _ _) measurableSet_Ioo hF
+  rw [hrespace, hretime, hcoef, smul_eq_mul] at hchange
+  simpa only [hTfunc, one_mul] using hchange
+
+private theorem buGaussian_timeShift_test_pullback
+    {ρ σ : ℝ} {ψ : Vec3 × ℝ → ℝ}
+    (hψ : ψ ∈ spaceTimeTestFunction (V := ℝ) (vec3Ball 0 ρ) (Ioo σ 2)) :
+    ∃ φp : ParabolicPoint → ℝ,
+      φp ∈ spaceTimeTestFunction (V := ℝ) (vec3Ball 0 ρ) (Ioo 0 (2 - σ)) ∧
+      (∀ z, φp z = ψ (buGaussianTimeShiftPoint σ z)) ∧
+      (∀ z j, spatialPartial φp j z =
+        spatialPartial ψ j (buGaussianTimeShiftPoint σ z)) ∧
+      (∀ z, timePartial φp z =
+        timePartial ψ (buGaussianTimeShiftPoint σ z)) ∧
+      MeasurableSet (spaceTimeSet (vec3Ball 0 ρ) (Ioo 0 (2 - σ))) ∧
+      (∀ j, Continuous (fun z : ParabolicPoint => spatialPartial ψ j z)) ∧
+      Continuous (fun z : ParabolicPoint => timePartial ψ z) := by
+  let B := vec3Ball 0 ρ
+  let I₀ := Ioo (0 : ℝ) (2 - σ)
+  let I₁ := Ioo σ 2
+  let T := buGaussianTimeShiftPoint σ
+  let H := buGaussianTimeShiftHomeomorph σ
+  let ψprod : Vec3 × ℝ → ℝ := ψ
+  let φ : Vec3 × ℝ → ℝ := ψprod ∘ H
+  let φp : ParabolicPoint → ℝ := fun z => φ (parabolicHomeomorph z)
+  have hψprod : ψprod ∈ spaceTimeTestFunction (V := ℝ) B I₁ := by
+    change (show Vec3 × ℝ → ℝ from ψ) ∈ spaceTimeTestFunction (V := ℝ) B I₁
+    exact hψ
+  have hφsmooth : ContDiff ℝ (⊤ : ℕ∞) φ := by
+    dsimp [φ, H]
+    exact hψprod.1.comp (by
+      change ContDiff ℝ (⊤ : ℕ∞)
+        (fun q : Vec3 × ℝ => (q.1, σ + q.2))
+      fun_prop)
+  have hφcompact : HasCompactSupport φ := by
+    dsimp [φ]
+    exact hψprod.2.1.comp_homeomorph H
+  have hφsupport : tsupport φ ⊆ B ×ˢ I₀ := by
+    rw [show φ = ψprod ∘ H from rfl, tsupport_comp_eq_preimage ψprod H]
+    intro z hz
+    change H z ∈ tsupport ψprod at hz
+    have hz' : H z ∈ B ×ˢ I₁ := hψprod.2.2 hz
+    rcases hz' with ⟨hzx, hzt⟩
+    refine ⟨hzx, ?_⟩
+    change σ < σ + z.2 ∧ σ + z.2 < 2 at hzt
+    constructor <;> linarith only [hzt.1, hzt.2]
+  have hφpEq : φp = (show ParabolicPoint → ℝ from φ) := by
+    funext z
+    rfl
+  have hφptest : φp ∈ spaceTimeTestFunction (V := ℝ) B I₀ := by
+    change (show Vec3 × ℝ → ℝ from φp) ∈ spaceTimeTestFunction (V := ℝ) B I₀
+    rw [hφpEq]
+    exact ⟨hφsmooth, hφcompact, hφsupport⟩
+  have hφeval (z : ParabolicPoint) : φp z = ψ (T z) := by
+    change ψprod (H (parabolicHomeomorph z)) =
+      ψprod (parabolicHomeomorph (T z))
+    apply congrArg ψprod
+    apply Prod.ext
+    · rfl
+    · change (buGaussianTimeShiftHomeomorph σ (z.1, z.2)).2 = σ + z.2
+      rw [buGaussianTimeShiftHomeomorph_apply]
+      exact add_comm _ _
+  have hsp (z : ParabolicPoint) (j : Fin 3) :
+      spatialPartial φp j z = spatialPartial ψ j (T z) := by
+    calc
+      spatialPartial φp j z = spatialPartial φ j z := by rw [hφpEq]
+      _ = spatialPartial ψprod j (T z) :=
+        (buGaussian_timeShift_test_derivatives σ hψprod.1 z j).1
+      _ = spatialPartial ψ j (T z) := rfl
+  have htm (z : ParabolicPoint) : timePartial φp z = timePartial ψ (T z) := by
+    calc
+      timePartial φp z = timePartial φ z := by rw [hφpEq]
+      _ = timePartial ψprod (T z) :=
+        (buGaussian_timeShift_test_derivatives σ hψprod.1 z 0).2
+      _ = timePartial ψ (T z) := rfl
+  have hsourceMeas : MeasurableSet (spaceTimeSet B I₀) := by
+    exact (isOpen_spaceTimeSet B I₀ (isOpen_vec3Ball _ _) isOpen_Ioo).measurableSet
+  have hpartialCont (j : Fin 3) :
+      Continuous (fun z : ParabolicPoint => spatialPartial ψ j z) := by
+    have hc := (spatialPartial_contDiff hψprod.1 j).continuous.comp
+      parabolicHomeomorph.continuous
+    exact hc.congr (fun _ => rfl)
+  have htimeCont : Continuous (fun z : ParabolicPoint => timePartial ψ z) := by
+    have hc := (contDiff_timePartial hψprod.1).continuous.comp
+      parabolicHomeomorph.continuous
+    exact hc.congr (fun _ => rfl)
+  exact ⟨φp, hφptest, hφeval, hsp, htm, hsourceMeas,
+    hpartialCont, htimeCont⟩
+
+private theorem buGaussian_timeShift_space_weak_identity
+    {ρ σ : ℝ} {w : ParabolicPoint → Vec3}
+    {Dw : ParabolicPoint → Fin 3 → Vec3}
+    {D2w : ParabolicPoint → Fin 3 → Fin 3 → Vec3}
+    {Dtw : ParabolicPoint → Vec3} {ψ : ParabolicPoint → ℝ}
+    {φp : ParabolicPoint → ℝ}
+    (hweak : HasSpaceTimeWeakDerivs (vec3Ball 0 ρ) (Ioo 0 (2 - σ))
+      w Dw D2w Dtw)
+    (hψ : ψ ∈ spaceTimeTestFunction (V := ℝ) (vec3Ball 0 ρ) (Ioo σ 2))
+    (hφptest : φp ∈ spaceTimeTestFunction (V := ℝ)
+      (vec3Ball 0 ρ) (Ioo 0 (2 - σ)))
+    (hφeval : ∀ z, φp z = ψ (buGaussianTimeShiftPoint σ z))
+    (hsp : ∀ z j, spatialPartial φp j z =
+      spatialPartial ψ j (buGaussianTimeShiftPoint σ z))
+    (hpartialCont : ∀ j, Continuous (fun z : ParabolicPoint => spatialPartial ψ j z))
+    (i j : Fin 3) :
+    (∫ z in spaceTimeSet (vec3Ball 0 ρ) (Ioo σ 2),
+      w ((buGaussianTimeShiftPoint σ).symm z) i * spatialPartial ψ j z) =
+      -∫ z in spaceTimeSet (vec3Ball 0 ρ) (Ioo σ 2),
+        Dw ((buGaussianTimeShiftPoint σ).symm z) i j * ψ z := by
+  let B := vec3Ball 0 ρ
+  let I₀ := Ioo (0 : ℝ) (2 - σ)
+  let I₁ := Ioo σ 2
+  let T := buGaussianTimeShiftPoint σ
+  let F : ParabolicPoint → ℝ := fun z =>
+    w (T.symm z) i * spatialPartial ψ j z
+  let G : ParabolicPoint → ℝ := fun z => Dw (T.symm z) i j * ψ z
+  have hsourceMeas : MeasurableSet (spaceTimeSet B I₀) := by
+    exact (isOpen_spaceTimeSet B I₀ (isOpen_vec3Ball _ _) isOpen_Ioo).measurableSet
+  have hwi : LocallyIntegrableOn (fun z => w z i)
+      (spaceTimeSet B I₀) volume := locallyIntegrableOn_pi_eval hweak.1 i
+  have hFmeas : AEStronglyMeasurable F
+      (volume.restrict (spaceTimeSet B I₁)) := by
+    have hwi' := buGaussian_timeShift_locallyIntegrable hwi
+    have hwi'' : AEStronglyMeasurable (fun z => w (T.symm z) i)
+        (volume.restrict (spaceTimeSet B I₁)) := by
+      simpa only [T] using LocallyIntegrableOn.aestronglyMeasurable hwi'
+    dsimp [F]
+    exact hwi''.mul (hpartialCont j).aestronglyMeasurable
+  have hGmeas : AEStronglyMeasurable G
+      (volume.restrict (spaceTimeSet B I₁)) := by
+    have hdwi : LocallyIntegrableOn (fun z => Dw z i j)
+        (spaceTimeSet B I₀) volume :=
+      locallyIntegrableOn_pi_eval (locallyIntegrableOn_pi_eval hweak.2.1 i) j
+    have hdwi' := buGaussian_timeShift_locallyIntegrable hdwi
+    have hdwi'' : AEStronglyMeasurable (fun z => Dw (T.symm z) i j)
+        (volume.restrict (spaceTimeSet B I₁)) := by
+      simpa only [T] using LocallyIntegrableOn.aestronglyMeasurable hdwi'
+    have hψcont : Continuous ψ := by
+      have hc := hψ.1.continuous.comp parabolicHomeomorph.continuous
+      exact hc.congr (fun _ => rfl)
+    dsimp [G]
+    exact hdwi''.mul hψcont.aestronglyMeasurable
+  have hchangeF := buGaussian_timeShift_integral_comp (ρ := ρ) (σ := σ) hFmeas
+  have hchangeG := buGaussian_timeShift_integral_comp (ρ := ρ) (σ := σ) hGmeas
+  obtain ⟨hfirst, _, _⟩ := hweak.2.2.2.2 φp hφptest
+  have hFpoint (z : ParabolicPoint) :
+      F (T z) = w z i * spatialPartial φp j z := by
+    simp [F, T, Homeomorph.symm_apply_apply, hsp]
+  have hGpoint (z : ParabolicPoint) : G (T z) = Dw z i j * φp z := by
+    simp [G, T, Homeomorph.symm_apply_apply, hφeval]
+  calc
+    (∫ z in spaceTimeSet B I₁, F z) =
+        ∫ z in spaceTimeSet B I₀, F (T z) := hchangeF.symm
+    _ = ∫ z in spaceTimeSet B I₀, w z i * spatialPartial φp j z := by
+      apply setIntegral_congr_ae hsourceMeas
+      filter_upwards [] with z hz
+      exact hFpoint z
+    _ = -∫ z in spaceTimeSet B I₀, Dw z i j * φp z := hfirst i j
+    _ = -∫ z in spaceTimeSet B I₀, G (T z) := by
+      congr 1
+      apply setIntegral_congr_ae hsourceMeas
+      filter_upwards [] with z hz
+      exact (hGpoint z).symm
+    _ = -∫ z in spaceTimeSet B I₁, G z := by rw [hchangeG]
+
 /-- Time translation transports all three weak integration-by-parts
 identities from a short interval onto its positive-time image. -/
 theorem buGaussian_timeShift_weak_derivatives
@@ -259,7 +446,6 @@ theorem buGaussian_timeShift_weak_derivatives
   let I₀ := Ioo (0 : ℝ) (2 - σ)
   let I₁ := Ioo σ 2
   let T := buGaussianTimeShiftPoint σ
-  let H := buGaussianTimeShiftHomeomorph σ
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · exact buGaussian_timeShift_locallyIntegrable hweak.1
   · exact buGaussian_timeShift_locallyIntegrable hweak.2.1
@@ -267,161 +453,17 @@ theorem buGaussian_timeShift_weak_derivatives
   · exact buGaussian_timeShift_locallyIntegrable hweak.2.2.2.1
   · intro ψ hψ
     let ψprod : Vec3 × ℝ → ℝ := ψ
-    let φ : Vec3 × ℝ → ℝ := ψprod ∘ H
-    let φp : ParabolicPoint → ℝ := fun z => φ (parabolicHomeomorph z)
     have hψprod : ψprod ∈ spaceTimeTestFunction (V := ℝ) B I₁ := by
       change (show Vec3 × ℝ → ℝ from ψ) ∈ spaceTimeTestFunction (V := ℝ) B I₁
       exact hψ
-    have hψprodSmooth : ContDiff ℝ (⊤ : ℕ∞) ψprod := hψprod.1
-    have hφsmooth : ContDiff ℝ (⊤ : ℕ∞) φ := by
-      dsimp [φ, H]
-      exact hψprodSmooth.comp (by
-        change ContDiff ℝ (⊤ : ℕ∞)
-          (fun q : Vec3 × ℝ => (q.1, σ + q.2))
-        fun_prop)
-    have hφcompact : HasCompactSupport φ := by
-      dsimp [φ]
-      exact hψprod.2.1.comp_homeomorph H
-    have hφsupport : tsupport φ ⊆ B ×ˢ I₀ := by
-      rw [show φ = ψprod ∘ H from rfl, tsupport_comp_eq_preimage ψprod H]
-      intro z hz
-      change H z ∈ tsupport ψprod at hz
-      have hz' : H z ∈ B ×ˢ I₁ := hψprod.2.2 hz
-      rcases hz' with ⟨hzx, hzt⟩
-      refine ⟨hzx, ?_⟩
-      change σ < σ + z.2 ∧ σ + z.2 < 2 at hzt
-      constructor <;> linarith only [hzt.1, hzt.2]
-    have hφtest : φ ∈ spaceTimeTestFunction (V := ℝ) B I₀ :=
-      ⟨hφsmooth, hφcompact, hφsupport⟩
-    have hφpEq : φp = (show ParabolicPoint → ℝ from φ) := by
-      funext z
-      rfl
-    have hφptest : φp ∈ spaceTimeTestFunction (V := ℝ) B I₀ := by
-      change (show Vec3 × ℝ → ℝ from φp) ∈ spaceTimeTestFunction (V := ℝ) B I₀
-      rw [hφpEq]
-      exact hφtest
-    obtain ⟨hfirst, hsecond, htime⟩ := hweak.2.2.2.2 φp hφptest
-    have hφeval (z : ParabolicPoint) : φp z = ψ (T z) := by
-      change ψprod (H (parabolicHomeomorph z)) =
-        ψprod (parabolicHomeomorph (T z))
-      apply congrArg ψprod
-      apply Prod.ext
-      · rfl
-      · change (buGaussianTimeShiftHomeomorph σ (z.1, z.2)).2 = σ + z.2
-        rw [buGaussianTimeShiftHomeomorph_apply]
-        exact add_comm _ _
-    have hsp (z : ParabolicPoint) (j : Fin 3) :
-        spatialPartial φp j z = spatialPartial ψ j (T z) := by
-      calc
-        spatialPartial φp j z = spatialPartial φ j z := by rw [hφpEq]
-        _ = spatialPartial ψprod j (T z) :=
-          (buGaussian_timeShift_test_derivatives σ hψprodSmooth z j).1
-        _ = spatialPartial ψ j (T z) := rfl
-    have htm (z : ParabolicPoint) :
-        timePartial φp z = timePartial ψ (T z) := by
-      calc
-        timePartial φp z = timePartial φ z := by rw [hφpEq]
-        _ = timePartial ψprod (T z) :=
-          (buGaussian_timeShift_test_derivatives σ hψprodSmooth z 0).2
-        _ = timePartial ψ (T z) := rfl
-    have hrespace : rescaledSpace 1 0 B = B := by
-      ext x
-      simp [rescaledSpace, scalingSpace]
-    have hretime : rescaledTime 1 σ I₁ = I₀ := by
-      ext s
-      change σ + 1 ^ 2 * s ∈ Ioo σ 2 ↔ s ∈ Ioo 0 (2 - σ)
-      simp only [mem_Ioo]
-      constructor <;> intro hs <;> constructor <;> norm_num at hs ⊢ <;>
-        (first | linarith only [hs.1] | linarith only [hs.2])
-    have hcoef : (ENNReal.ofReal (1⁻¹ ^ 5)).toReal = 1 := by norm_num
-    have hTfunc : scalingParabolic 1 (0, σ) = T :=
-      buGaussianTimeShiftPoint_eq_scaling σ
-    have hsourceMeas : MeasurableSet (spaceTimeSet B I₀) := by
-      exact (isOpen_spaceTimeSet B I₀ (isOpen_vec3Ball _ _) isOpen_Ioo).measurableSet
-    have hpartialCont (j : Fin 3) :
-        Continuous (fun z : ParabolicPoint => spatialPartial ψ j z) := by
-      have hc := (spatialPartial_contDiff hψprod.1 j).continuous.comp
-        parabolicHomeomorph.continuous
-      exact hc.congr (fun _ => rfl)
-    have htimeCont : Continuous (fun z : ParabolicPoint => timePartial ψ z) := by
-      have hc := (contDiff_timePartial hψprod.1).continuous.comp
-        parabolicHomeomorph.continuous
-      exact hc.congr (fun _ => rfl)
+    obtain ⟨φp, hφptest, hφeval, hsp, htm, hsourceMeas,
+      hpartialCont, htimeCont⟩ :=
+      buGaussian_timeShift_test_pullback (ρ := ρ) (σ := σ) hψ
+    obtain ⟨_, hsecond, htime⟩ := hweak.2.2.2.2 φp hφptest
     refine ⟨?_, ?_, ?_⟩
     · intro i j
-      let F : ParabolicPoint → ℝ := fun z =>
-        w (T.symm z) i * spatialPartial ψ j z
-      let G : ParabolicPoint → ℝ := fun z =>
-        Dw (T.symm z) i j * ψ z
-      have hwi : LocallyIntegrableOn (fun z => w z i)
-          (spaceTimeSet B I₀) volume :=
-        locallyIntegrableOn_pi_eval hweak.1 i
-      have hFmeas : AEStronglyMeasurable F
-          (volume.restrict (spaceTimeSet B I₁)) := by
-        have hwi' := buGaussian_timeShift_locallyIntegrable hwi
-        have hwi'' : AEStronglyMeasurable (fun z => w (T.symm z) i)
-            (volume.restrict (spaceTimeSet B I₁)) :=
-          LocallyIntegrableOn.aestronglyMeasurable hwi'
-        have hwi''₁ : AEStronglyMeasurable
-            (fun z => w (T.symm z) i)
-            (volume.restrict (spaceTimeSet B I₁)) := by
-          simpa only [T] using hwi''
-        dsimp [F]
-        exact hwi''₁.mul (hpartialCont j).aestronglyMeasurable
-      have hGmeas : AEStronglyMeasurable G
-          (volume.restrict (spaceTimeSet B I₁)) := by
-        have hdwi : LocallyIntegrableOn (fun z => Dw z i j)
-            (spaceTimeSet B I₀) volume :=
-          locallyIntegrableOn_pi_eval (locallyIntegrableOn_pi_eval hweak.2.1 i) j
-        have hdwi' : AEStronglyMeasurable
-            (fun z => Dw (T.symm z) i j)
-            (volume.restrict (spaceTimeSet B I₁)) :=
-          LocallyIntegrableOn.aestronglyMeasurable
-            (buGaussian_timeShift_locallyIntegrable hdwi)
-        have hψcont : Continuous ψ := by
-          have hc := hψprod.1.continuous.comp parabolicHomeomorph.continuous
-          exact hc.congr (fun _ => rfl)
-        have hdwi'' : AEStronglyMeasurable
-            (fun z => Dw (T.symm z) i j)
-            (volume.restrict (spaceTimeSet B I₁)) := by
-          simpa only [T] using hdwi'
-        dsimp [G]
-        exact hdwi''.mul hψcont.aestronglyMeasurable
-      have hchangeF := CKN.integral_comp_scaling_test 1 (by norm_num)
-        ((0 : Vec3), σ) (Ω := B) (I := I₁) (F := F)
-        (vec3Ball_measurable _ _) measurableSet_Ioo hFmeas
-      have hchangeG := CKN.integral_comp_scaling_test 1 (by norm_num)
-        ((0 : Vec3), σ) (Ω := B) (I := I₁) (F := G)
-        (vec3Ball_measurable _ _) measurableSet_Ioo hGmeas
-      rw [hrespace, hretime, hcoef, smul_eq_mul] at hchangeF hchangeG
-      have hchangeF' :
-          (∫ z in spaceTimeSet B I₀, F (T z)) =
-            ∫ z in spaceTimeSet B I₁, F z := by
-        simpa only [hTfunc, one_mul] using hchangeF
-      have hchangeG' :
-          (∫ z in spaceTimeSet B I₀, G (T z)) =
-            ∫ z in spaceTimeSet B I₁, G z := by
-        simpa only [hTfunc, one_mul] using hchangeG
-      have hFpoint (z : ParabolicPoint) :
-          F (T z) = w z i * spatialPartial φp j z := by
-        simp [F, T.symm_apply_apply, hsp]
-      have hGpoint (z : ParabolicPoint) :
-          G (T z) = Dw z i j * φp z := by
-        simp [G, T.symm_apply_apply, hφeval]
-      calc
-        (∫ z in spaceTimeSet B I₁, F z) =
-            ∫ z in spaceTimeSet B I₀, F (T z) := hchangeF'.symm
-        _ = ∫ z in spaceTimeSet B I₀, w z i * spatialPartial φp j z := by
-          apply setIntegral_congr_ae hsourceMeas
-          filter_upwards [] with z hz
-          exact hFpoint z
-        _ = -∫ z in spaceTimeSet B I₀, Dw z i j * φp z := hfirst i j
-        _ = -∫ z in spaceTimeSet B I₀, G (T z) := by
-          congr 1
-          apply setIntegral_congr_ae hsourceMeas
-          filter_upwards [] with z hz
-          exact (hGpoint z).symm
-        _ = -∫ z in spaceTimeSet B I₁, G z := by rw [hchangeG']
+      exact buGaussian_timeShift_space_weak_identity hweak hψ hφptest
+        hφeval hsp hpartialCont i j
     · intro i j k
       let F : ParabolicPoint → ℝ := fun z =>
         Dw (T.symm z) i j * spatialPartial ψ k z
@@ -459,27 +501,14 @@ theorem buGaussian_timeShift_weak_derivatives
           exact hc.congr (fun _ => rfl)
         dsimp [G]
         exact hD2wij''.mul hψcont.aestronglyMeasurable
-      have hchangeF := CKN.integral_comp_scaling_test 1 (by norm_num)
-        ((0 : Vec3), σ) (Ω := B) (I := I₁) (F := F)
-        (vec3Ball_measurable _ _) measurableSet_Ioo hFmeas
-      have hchangeG := CKN.integral_comp_scaling_test 1 (by norm_num)
-        ((0 : Vec3), σ) (Ω := B) (I := I₁) (F := G)
-        (vec3Ball_measurable _ _) measurableSet_Ioo hGmeas
-      rw [hrespace, hretime, hcoef, smul_eq_mul] at hchangeF hchangeG
-      have hchangeF' :
-          (∫ z in spaceTimeSet B I₀, F (T z)) =
-            ∫ z in spaceTimeSet B I₁, F z := by
-        simpa only [hTfunc, one_mul] using hchangeF
-      have hchangeG' :
-          (∫ z in spaceTimeSet B I₀, G (T z)) =
-            ∫ z in spaceTimeSet B I₁, G z := by
-        simpa only [hTfunc, one_mul] using hchangeG
+      have hchangeF' := buGaussian_timeShift_integral_comp (ρ := ρ) (σ := σ) hFmeas
+      have hchangeG' := buGaussian_timeShift_integral_comp (ρ := ρ) (σ := σ) hGmeas
       have hFpoint (z : ParabolicPoint) :
           F (T z) = Dw z i j * spatialPartial φp k z := by
-        simp [F, T.symm_apply_apply, hsp]
+        simp [F, T, Homeomorph.symm_apply_apply, hsp]
       have hGpoint (z : ParabolicPoint) :
           G (T z) = D2w z i j k * φp z := by
-        simp [G, T.symm_apply_apply, hφeval]
+        simp [G, T, Homeomorph.symm_apply_apply, hφeval]
       calc
         (∫ z in spaceTimeSet B I₁, F z) =
             ∫ z in spaceTimeSet B I₀, F (T z) := hchangeF'.symm
@@ -528,27 +557,14 @@ theorem buGaussian_timeShift_weak_derivatives
           exact hc.congr (fun _ => rfl)
         dsimp [G]
         exact hDtw''.mul hψcont.aestronglyMeasurable
-      have hchangeF := CKN.integral_comp_scaling_test 1 (by norm_num)
-        ((0 : Vec3), σ) (Ω := B) (I := I₁) (F := F)
-        (vec3Ball_measurable _ _) measurableSet_Ioo hFmeas
-      have hchangeG := CKN.integral_comp_scaling_test 1 (by norm_num)
-        ((0 : Vec3), σ) (Ω := B) (I := I₁) (F := G)
-        (vec3Ball_measurable _ _) measurableSet_Ioo hGmeas
-      rw [hrespace, hretime, hcoef, smul_eq_mul] at hchangeF hchangeG
-      have hchangeF' :
-          (∫ z in spaceTimeSet B I₀, F (T z)) =
-            ∫ z in spaceTimeSet B I₁, F z := by
-        simpa only [hTfunc, one_mul] using hchangeF
-      have hchangeG' :
-          (∫ z in spaceTimeSet B I₀, G (T z)) =
-            ∫ z in spaceTimeSet B I₁, G z := by
-        simpa only [hTfunc, one_mul] using hchangeG
+      have hchangeF' := buGaussian_timeShift_integral_comp (ρ := ρ) (σ := σ) hFmeas
+      have hchangeG' := buGaussian_timeShift_integral_comp (ρ := ρ) (σ := σ) hGmeas
       have hFpoint (z : ParabolicPoint) :
           F (T z) = w z i * timePartial φp z := by
-        simp [F, T.symm_apply_apply, htm]
+        simp [F, T, Homeomorph.symm_apply_apply, htm]
       have hGpoint (z : ParabolicPoint) :
           G (T z) = Dtw z i * φp z := by
-        simp [G, T.symm_apply_apply, hφeval]
+        simp [G, T, Homeomorph.symm_apply_apply, hφeval]
       calc
         (∫ z in spaceTimeSet B I₁, F z) =
             ∫ z in spaceTimeSet B I₀, F (T z) := hchangeF'.symm

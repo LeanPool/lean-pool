@@ -13,6 +13,12 @@ public import LeanPool.CaffarelliKohnNirenberg.ClassEquivalence.Constructor
 public import LeanPool.CaffarelliKohnNirenberg.ClassEquivalence.TestSupport
 public import Mathlib.Analysis.Normed.Lp.SmoothApprox
 
+/-!
+# Local Energy Equality
+
+Local energy identities and limit passages for the endpoint regularity proof.
+-/
+
 public section
 
 open MeasureTheory Set Filter

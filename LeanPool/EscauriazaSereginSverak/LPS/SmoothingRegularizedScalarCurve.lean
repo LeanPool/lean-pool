@@ -54,8 +54,8 @@ theorem lps_regR12Velocity_wordDeriv_continuous_L2
           (CKN.Leray.regR12Curve ρ ε hε a ha s.1) := by
     intro s
     simpa only [CKN.Leray.regR12Curve] using hv s
-  let G := lps_regR12HighLiftFreq n T hT v
-  let F := lps_dampedScalarCurve n α hα i G
+  let G := lpsRegR12HighLiftFreq n T hT v
+  let F := lpsDampedScalarCurve n α hα i G
   refine ⟨F, lps_dampedScalarCurve_continuous n α hα i G
     (lps_regR12HighLiftFreq_continuous n T hT v), ?_⟩
   intro t ht

@@ -29,6 +29,47 @@ noncomputable section
 
 namespace ESS
 
+private theorem vorticityRegularity_commonExportBound
+    (M Kg Cb Cslice C21 Kw K1 K2 : ℝ)
+    (hM : 0 ≤ M) (hKg : 0 ≤ Kg) (hCb : 0 ≤ Cb)
+    (hCslice : 0 ≤ Cslice) (hC21 : 0 ≤ C21) :
+    ∃ C : ℝ, 0 ≤ C ∧ M + 3 * Kg ≤ C ∧ 3 * Cb ≤ C ∧ 27 * Cb ≤ C ∧
+      C21 ≤ C ∧ Cslice * (|Kw| + |K1| + |K2| + 1) + 1 ≤ C := by
+  let C : ℝ := M + 3 * Kg + 27 * Cb + 3 * Cb + C21 +
+    3 * Cslice * (|Kw| + |K1| + |K2| + 1) + 1
+  have hX : 0 ≤ Cslice * (|Kw| + |K1| + |K2| + 1) := by positivity
+  refine ⟨C, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · dsimp [C]
+    positivity
+  · dsimp [C]
+    nlinarith only [hM, hKg, hCb, hC21, hX]
+
+private theorem vorticityRegularity_velocityGradient_bound
+    {v : ParabolicPoint → Vec3} {Dv : ParabolicPoint → Fin 3 → Vec3}
+    (x₀ : Vec3) (t₀ M Kg C : ℝ)
+    (hC : M + 3 * Kg ≤ C)
+    (hv : ∀ᵐ z ∂(volume.restrict (parabolicCylinder x₀ t₀ 1)),
+      vec3EuclideanNorm (v z) ≤ M)
+    (hgrad : ∀ᵐ z ∂(volume.restrict (parabolicCylinder x₀ t₀ (1 / 2 : ℝ))),
+      Real.sqrt (spatialGradientSq v Dv z) ≤ 3 * Kg) :
+    ∀ᵐ z ∂(volume.restrict (parabolicCylinder x₀ t₀ (1 / 2 : ℝ))),
+      vec3EuclideanNorm (v z) + Real.sqrt (spatialGradientSq v Dv z) ≤ C := by
+  have hsub := parabolicCylinder_mono (x := x₀) (t := t₀)
+    (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num : (1 / 2 : ℝ) ≤ 1)
+  have hvel : ∀ᵐ z ∂(volume.restrict (parabolicCylinder x₀ t₀ (1 / 2 : ℝ))),
+      vec3EuclideanNorm (v z) ≤ M :=
+    ae_mono (Measure.restrict_mono hsub le_rfl) hv
+  filter_upwards [hvel, hgrad] with z hvz hgz
+  exact (add_le_add hvz hgz).trans hC
+  · dsimp [C]
+    nlinarith only [hM, hKg, hCb, hC21, hX]
+  · dsimp [C]
+    nlinarith only [hM, hKg, hCb, hC21, hX]
+  · dsimp [C]
+    nlinarith only [hM, hKg, hCb, hC21, hX]
+  · dsimp [C]
+    nlinarith only [hM, hKg, hCb, hC21, hX]
+
 /-- `thm:vorticity-regularity`. -/
 theorem vorticityRegularity_full_quantified : ∀ (q M E : ℝ), 5 / 2 < q → 0 ≤ M → 0 ≤ E →
     ∃ Kw K1 K2 C Cslice : ℝ, 0 ≤ C ∧ 0 ≤ Cslice ∧
@@ -91,25 +132,9 @@ theorem vorticityRegularity_full_quantified : ∀ (q M E : ℝ), 5 / 2 < q → 0
   obtain ⟨Kw, K1, K2, Cb, Cslice, C21, hCb, hCslice, hC21, hbox⟩ :=
     vorticityRegularity_box_quantified M (9 * E ^ 2) hM
   obtain ⟨Kg, hKg, hgrad⟩ := vorticityRegularity_gradient_box M (9 * E ^ 2) hM
-  set C : ℝ := M + 3 * Kg + 27 * Cb + 3 * Cb + C21 +
-    3 * Cslice * (|Kw| + |K1| + |K2| + 1) + 1
-  have hC : 0 ≤ C := by positivity
-  have hX : 0 ≤ Cslice * (|Kw| + |K1| + |K2| + 1) := by positivity
-  have hCess : M + 3 * Kg ≤ C := by
-    dsimp [C]
-    nlinarith only [hM, hKg, hCb, hC21, hX]
-  have hCbox : 3 * Cb ≤ C := by
-    dsimp [C]
-    nlinarith only [hM, hKg, hCb, hC21, hX]
-  have hCineq : 27 * Cb ≤ C := by
-    dsimp [C]
-    nlinarith only [hM, hKg, hCb, hC21, hX]
-  have hC21' : C21 ≤ C := by
-    dsimp [C]
-    nlinarith only [hM, hKg, hCb, hC21, hX]
-  have hCstage : Cslice * (|Kw| + |K1| + |K2| + 1) + 1 ≤ C := by
-    dsimp [C]
-    nlinarith only [hM, hKg, hCb, hC21, hX]
+  obtain ⟨C, hC, hCess, hCbox, hCineq, hC21', hCstage⟩ :=
+    vorticityRegularity_commonExportBound M Kg Cb Cslice C21 Kw K1 K2
+      hM hKg hCb hCslice hC21
   refine ⟨Kw, K1, K2, C, Cslice, hC, hCslice, ?_⟩
   intro Ω I v Dv pv x₀ t₀ hΩ hI hsws hcl hvM hE
   obtain ⟨hU, hG⟩ := vorticityBase_memLp hsws hΩ hI hcl
@@ -180,16 +205,7 @@ theorem vorticityRegularity_full_quantified : ∀ (q M E : ℝ), 5 / 2 < q → 0
         Real.sqrt (spatialGradientSq v Dv z) ≤ 3 * Kg := by
       rw [← hrootMeasure]
       exact hrootOpen
-    have hsub := parabolicCylinder_mono (x := x₀) (t := t₀)
-      (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num : (1 / 2 : ℝ) ≤ 1)
-    have hvel : ∀ᵐ z ∂(volume.restrict
-        (parabolicCylinder x₀ t₀ (1 / 2 : ℝ))), vec3EuclideanNorm (v z) ≤ M :=
-      ae_mono (Measure.restrict_mono hsub le_rfl) hvM
-    filter_upwards [hvel, hroot] with z hv hg
-    calc
-      vec3EuclideanNorm (v z) + Real.sqrt (spatialGradientSq v Dv z) ≤ M + 3 * Kg :=
-        add_le_add hv hg
-      _ ≤ C := hCess
+    exact vorticityRegularity_velocityGradient_bound x₀ t₀ M Kg C hCess hvM hroot
   · show ∀ᵐ z ∂((volume : Measure ParabolicPoint).restrict (parabolicCylinder x₀ t₀ (1 / 2))),
       (fun i => ω i z) = weakVorticity Dv z
     rw [hkey]

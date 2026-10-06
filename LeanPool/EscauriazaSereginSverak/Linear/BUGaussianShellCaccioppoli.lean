@@ -48,6 +48,185 @@ needed for the collar estimate (`eq:bu-gaussian-collar`). -/
   spaceTimeSet (vec3Ball p.1.2 (2 * r))
     (buGaussianTimeGridOuter (1 / 6) (r ^ 2) p.2)
 
+private theorem buGaussian_shell_weighted_data
+    {ρ a : ℝ} (ha : 0 < a)
+    {v : ParabolicPoint → Vec3} {Dv : ParabolicPoint → Fin 3 → Vec3}
+    {D2v : ParabolicPoint → Fin 3 → Fin 3 → Vec3} {Dtv : ParabolicPoint → Vec3}
+    (hweak : HasSpaceTimeWeakDerivs (vec3Ball 0 ρ) (Ioo (1 / 6) 2)
+      v Dv D2v Dtv)
+    (hL2 : (∫⁻ z in spaceTimeSet (vec3Ball 0 ρ) (Ioo (1 / 6) 2),
+      ‖v z‖ₑ ^ (2 : ℝ) + ‖Dv z‖ₑ ^ (2 : ℝ) +
+        ‖D2v z‖ₑ ^ (2 : ℝ) + ‖Dtv z‖ₑ ^ (2 : ℝ)) < ⊤) :
+    let U : Set ParabolicPoint := spaceTimeSet (vec3Ball 0 ρ) (Ioo (1 / 6) 2)
+    let V : ParabolicPoint → ℝ := fun z => vec3EuclideanNorm (v z) ^ 2
+    let W : ParabolicPoint → ℝ := ucGaussianWeight a
+    let G : ParabolicPoint → ℝ := fun z => spatialGradientSq v Dv z
+    let fG : ParabolicPoint → ℝ := U.indicator (fun z => W z * G z)
+    let fM : ParabolicPoint → ℝ := U.indicator (buGaussianRadialWeightedMass ρ a v)
+    MeasurableSet U ∧ Integrable fG volume ∧ Integrable fM volume ∧
+      (∀ z ∈ U, 0 < z.2) ∧
+      (∀ᵐ z ∂(volume : Measure ParabolicPoint), 0 ≤ fG z) ∧
+      (∀ᵐ z ∂(volume : Measure ParabolicPoint), 0 ≤ fM z) := by
+  let U : Set ParabolicPoint := spaceTimeSet (vec3Ball 0 ρ) (Ioo (1 / 6) 2)
+  let V : ParabolicPoint → ℝ := fun z => vec3EuclideanNorm (v z) ^ 2
+  let W : ParabolicPoint → ℝ := ucGaussianWeight a
+  let G : ParabolicPoint → ℝ := fun z => spatialGradientSq v Dv z
+  let fG : ParabolicPoint → ℝ := U.indicator (fun z => W z * G z)
+  let fM : ParabolicPoint → ℝ := U.indicator (buGaussianRadialWeightedMass ρ a v)
+  have hUmeas : MeasurableSet U :=
+    (isOpen_spaceTimeSet _ _ (isOpen_vec3Ball 0 ρ) isOpen_Ioo).measurableSet
+  have hRmeas : MeasurableSet
+      {z : ParabolicPoint | ρ / 2 ≤ vec3EuclideanNorm z.1} := by
+    exact measurableSet_le continuous_const.measurable
+      (continuous_vec3EuclideanNorm.measurable.comp measurable_fst)
+  have hEnergy0 := buGaussian_local_energy_integrable hweak hL2
+  have hEnergy :
+      Integrable (fun z => vec3EuclideanNorm (v z) ^ 2) (volume.restrict U) ∧
+      Integrable (fun z => spatialGradientSq v Dv z) (volume.restrict U) := by
+    simpa [U] using hEnergy0
+  have hWmeas : AEStronglyMeasurable W (volume.restrict U) :=
+    (ucGaussianWeight_measurable a).aestronglyMeasurable.mono_measure
+      Measure.restrict_le_self
+  have hWbound : ∀ᵐ z ∂(volume.restrict U),
+      W z ≤ ((1 / 6 : ℝ) * Real.exp (-(1 / 3 : ℝ))) ^ (-2 * a) := by
+    filter_upwards [ae_restrict_mem hUmeas] with z hz
+    exact ucGaussianWeight_le_after (by norm_num) (le_of_lt ha)
+      hz.2.1.le hz.2.2.le
+  have hWnormbound : ∀ᵐ z ∂(volume.restrict U),
+      ‖W z‖ ≤ ((1 / 6 : ℝ) * Real.exp (-(1 / 3 : ℝ))) ^ (-2 * a) := by
+    filter_upwards [hWbound, ae_restrict_mem hUmeas] with z hz hzmem
+    have hzpos : 0 < z.2 := by
+      have hzlo : (1 / 6 : ℝ) ≤ z.2 := hzmem.2.1.le
+      norm_num at hzlo ⊢
+      linarith only [hzlo]
+    rw [Real.norm_eq_abs, abs_of_nonneg (ucGaussianWeight_nonneg a hzpos)]
+    exact hz
+  have hWVG : Integrable (fun z => W z * V z) (volume.restrict U) := by
+    have h := hEnergy.1.bdd_mul hWmeas hWnormbound
+    simpa [U, V, W, mul_comm] using h
+  have hWGG : Integrable (fun z => W z * G z) (volume.restrict U) := by
+    have h := hEnergy.2.bdd_mul hWmeas hWnormbound
+    simpa [U, G, W, mul_comm] using h
+  have hRadialWVG : Integrable
+      (fun z => if ρ / 2 ≤ vec3EuclideanNorm z.1 then W z * V z else 0)
+      (volume.restrict U) := by
+    have h := hWVG.indicator hRmeas
+    convert h using 1
+    ext z
+    by_cases hz : ρ / 2 ≤ vec3EuclideanNorm z.1 <;>
+      simp [Set.indicator, hz]
+  have hWGglobal : Integrable fG volume := by
+    exact hWGG.integrableOn.integrable_indicator hUmeas
+  have hMglobal : Integrable fM volume := by
+    have hOn : Integrable (buGaussianRadialWeightedMass ρ a v)
+        (volume.restrict U) := by
+      convert hRadialWVG using 1
+      ext z
+      simp [buGaussianRadialWeightedMass, W, V]
+    exact hOn.integrableOn.integrable_indicator hUmeas
+  have htimepos (z : ParabolicPoint) (hz : z ∈ U) : 0 < z.2 := by
+    have hz' := hz.2.1
+    norm_num at hz' ⊢
+    linarith only [hz']
+  have hGnonneg : ∀ᵐ z ∂(volume : Measure ParabolicPoint), 0 ≤ fG z := by
+    filter_upwards [] with z
+    by_cases hz : z ∈ U
+    · simp only [fG, Set.indicator_of_mem hz]
+      exact mul_nonneg (ucGaussianWeight_nonneg a (htimepos z hz))
+        (by unfold G spatialGradientSq; positivity)
+    · simp [fG, hz]
+  have hMnonneg : ∀ᵐ z ∂(volume : Measure ParabolicPoint), 0 ≤ fM z := by
+    filter_upwards [] with z
+    by_cases hz : z ∈ U
+    · by_cases hrad : ρ / 2 ≤ vec3EuclideanNorm z.1
+      · simp [fM, buGaussianRadialWeightedMass, hz, hrad]
+        exact mul_nonneg (ucGaussianWeight_nonneg a (htimepos z hz)) (sq_nonneg _)
+      · simp [fM, buGaussianRadialWeightedMass, hz, hrad]
+    · simp [fM, hz]
+  exact ⟨hUmeas, hWGglobal, hMglobal, htimepos, hGnonneg, hMnonneg⟩
+
+private theorem buGaussian_shell_single_cell_bound
+    {ρ a r c s : ℝ} {center : Vec3}
+    (hρ : 0 < ρ) (ha : 0 < a) (hr : 0 < r)
+    (hcenter : vec3EuclideanNorm center ≤ ρ - 1 / 2)
+    (hspace : vec3Ball center (2 * r) ⊆ vec3Ball 0 ρ)
+    (htime : Ioo s (s + (2 * r) ^ 2) ⊆ Ioo (1 / 6) 2)
+    {v : ParabolicPoint → Vec3} {Dv : ParabolicPoint → Fin 3 → Vec3}
+    {D2v : ParabolicPoint → Fin 3 → Fin 3 → Vec3} {Dtv : ParabolicPoint → Vec3}
+    (hweak : HasSpaceTimeWeakDerivs (vec3Ball 0 ρ) (Ioo (1 / 6) 2)
+      v Dv D2v Dtv)
+    (hcont : ContinuousOn v (vec3Ball 0 ρ ×ˢ Ico (1 / 6) 2))
+    (hc : 0 ≤ c)
+    (hL2 : (∫⁻ z in spaceTimeSet (vec3Ball 0 ρ) (Ioo (1 / 6) 2),
+      ‖v z‖ₑ ^ (2 : ℝ) + ‖Dv z‖ₑ ^ (2 : ℝ) +
+        ‖D2v z‖ₑ ^ (2 : ℝ) + ‖Dtv z‖ₑ ^ (2 : ℝ)) < ⊤)
+    (hineq : ∀ᵐ z ∂(volume.restrict
+      (spaceTimeSet (vec3Ball 0 ρ) (Ioo (1 / 6) 2))),
+      vec3EuclideanNorm (ucWeakHeatVector D2v Dtv z) ≤
+        c * (vec3EuclideanNorm (v z) + Real.sqrt (spatialGradientSq v Dv z))) :
+    (∫ z in spaceTimeSet (vec3Ball center r) (Ioo s (s + r ^ 2)),
+      ucGaussianWeight a z * spatialGradientSq v Dv z) ≤
+      Real.exp (2 * (56 * a * (2 * r) ^ 2 + 12 * ρ * (2 * r) +
+        36 * ρ ^ 2 * (2 * r) ^ 2)) *
+        (256 * (1 + c ^ 2 + 1 / ((2 * r) / 2) ^ 2)) *
+        (∫ z in spaceTimeSet (vec3Ball center (2 * r))
+          (Ioo s (s + (2 * r) ^ 2)),
+          ucGaussianWeight a z * vec3EuclideanNorm (v z) ^ 2) := by
+  have hcacci := buGaussian_weighted_caccioppoli_cell hρ ha
+    (mul_pos (by norm_num : (0 : ℝ) < 2) hr) hcenter hspace htime
+    hweak hcont hc hL2 hineq
+  have hrad : (2 * r) / 2 = r := by ring
+  have htimeSq : (2 * r) ^ 2 = 4 * r ^ 2 := by ring
+  rw [show (2 * r) / 2 = r from hrad,
+    show (2 * r) ^ 2 = 4 * r ^ 2 from htimeSq] at hcacci
+  simpa [hrad, htimeSq, mul_assoc] using hcacci
+
+private theorem buGaussian_finite_cover_mass_bound
+    {X ι : Type*} [MeasurableSpace X] [DecidableEq ι]
+    {μ : Measure X} {P : Finset ι} {S U : Set X} {A B : ι → Set X}
+    {fG fM mass W G V : X → ℝ} {K M : ℝ}
+    (hTargetEq : (∫ x in S, fG x ∂μ) = ∫ x in S, W x * G x ∂μ)
+    (hcover : (∫ x in S, fG x ∂μ) ≤ ∑ p ∈ P, ∫ x in A p, fG x ∂μ)
+    (hgradEq : ∀ p ∈ P, (∫ x in A p, fG x ∂μ) =
+      ∫ x in A p, W x * G x ∂μ)
+    (hcell : ∀ p ∈ P, (∫ x in A p, W x * G x ∂μ) ≤
+      K * (∫ x in B p, W x * V x ∂μ))
+    (hmassEq : ∀ p ∈ P, (∫ x in B p, fM x ∂μ) =
+      ∫ x in B p, W x * V x ∂μ)
+    (hMsum : (∑ p ∈ P, ∫ x in B p, fM x ∂μ) ≤ M * ∫ x, fM x ∂μ)
+    (hMassIntegral : (∫ x, fM x ∂μ) = ∫ x in U, mass x ∂μ)
+    (hK : 0 ≤ K) :
+    (∫ x in S, W x * G x ∂μ) ≤ K * (M * (∫ x in U, mass x ∂μ)) := by
+  have hgradSumEq : (∑ p ∈ P, ∫ x in A p, fG x ∂μ) =
+      ∑ p ∈ P, ∫ x in A p, W x * G x ∂μ := by
+    apply Finset.sum_congr rfl
+    intro p hp
+    exact hgradEq p hp
+  have hmassSumEq : (∑ p ∈ P, ∫ x in B p, fM x ∂μ) =
+      ∑ p ∈ P, ∫ x in B p, W x * V x ∂μ := by
+    apply Finset.sum_congr rfl
+    intro p hp
+    exact hmassEq p hp
+  have hsumCacci : (∑ p ∈ P, ∫ x in A p, W x * G x ∂μ) ≤
+      K * ∑ p ∈ P, ∫ x in B p, W x * V x ∂μ := by
+    calc
+      _ ≤ ∑ p ∈ P, K * ∫ x in B p, W x * V x ∂μ := by
+        apply Finset.sum_le_sum
+        intro p hp
+        exact hcell p hp
+      _ = _ := by rw [Finset.mul_sum]
+  have hMassOverlap : (∑ p ∈ P, ∫ x in B p, W x * V x ∂μ) ≤
+      M * ∫ x, fM x ∂μ := by rw [← hmassSumEq]; exact hMsum
+  calc
+    (∫ x in S, W x * G x ∂μ) = ∫ x in S, fG x ∂μ := hTargetEq.symm
+    _ ≤ ∑ p ∈ P, ∫ x in A p, fG x ∂μ := hcover
+    _ = ∑ p ∈ P, ∫ x in A p, W x * G x ∂μ := hgradSumEq
+    _ ≤ K * ∑ p ∈ P, ∫ x in B p, W x * V x ∂μ := hsumCacci
+    _ ≤ K * (M * ∫ x, fM x ∂μ) := by
+      apply mul_le_mul_of_nonneg_left hMassOverlap
+      exact hK
+    _ = K * (M * ∫ x in U, mass x ∂μ) := by rw [hMassIntegral]
+
 /-- Caccioppoli on the finitely many collar cells bounds the transition-shell
 gradient by the weighted radial mass. (`eq:bu-gaussian-collar`) -/
 theorem buGaussian_transition_shell_gradient_caccioppoli
@@ -106,12 +285,6 @@ theorem buGaussian_transition_shell_gradient_caccioppoli
     nlinarith only [hrSq]
   have hUopen : IsOpen (vec3Ball 0 ρ) := isOpen_vec3Ball 0 ρ
   have hIopen : IsOpen (Ioo σ 2) := isOpen_Ioo
-  have hUmeas : MeasurableSet U :=
-    (isOpen_spaceTimeSet _ _ hUopen hIopen).measurableSet
-  have hRmeas : MeasurableSet
-      {z : ParabolicPoint | ρ / 2 ≤ vec3EuclideanNorm z.1} := by
-    exact measurableSet_le continuous_const.measurable
-      (continuous_vec3EuclideanNorm.measurable.comp measurable_fst)
   have hShellSpatialMeas : MeasurableSet
       {y : Vec3 | 13 * ρ / 20 ≤ vec3EuclideanNorm y ∧
         vec3EuclideanNorm y ≤ 3 * ρ / 4} := by
@@ -121,84 +294,8 @@ theorem buGaussian_transition_shell_gradient_caccioppoli
         continuous_const.measurable)
   have hSmeas : MeasurableSet S := by
     exact hShellSpatialMeas.prod measurableSet_Ioo
-  have hEnergy0 := buGaussian_local_energy_integrable hweak hL2
-  have hEnergy :
-      Integrable (fun z => vec3EuclideanNorm (v z) ^ 2) (volume.restrict U) ∧
-      Integrable (fun z => spatialGradientSq v Dv z) (volume.restrict U) := by
-    simpa [U, σ] using hEnergy0
-  have hWmeas : AEStronglyMeasurable W (volume.restrict U) :=
-    (ucGaussianWeight_measurable a).aestronglyMeasurable.mono_measure
-      Measure.restrict_le_self
-  have hWbound : ∀ᵐ z ∂(volume.restrict U),
-      W z ≤ ((1 / 6 : ℝ) * Real.exp (-(1 / 3 : ℝ))) ^ (-2 * a) := by
-    filter_upwards [ae_restrict_mem hUmeas] with z hz
-    have hzlo : (1 / 6 : ℝ) ≤ z.2 := by
-      have hz' := hz.2.1
-      rw [hσ] at hz'
-      exact hz'.le
-    exact ucGaussianWeight_le_after (by norm_num) (le_of_lt ha)
-      hzlo hz.2.2.le
-  have hWnormbound : ∀ᵐ z ∂(volume.restrict U),
-      ‖W z‖ ≤ ((1 / 6 : ℝ) * Real.exp (-(1 / 3 : ℝ))) ^ (-2 * a) := by
-    filter_upwards [hWbound, ae_restrict_mem hUmeas] with z hz hzmem
-    have hzlo : (1 / 6 : ℝ) ≤ z.2 := by
-      have hz' := hzmem.2.1
-      rw [hσ] at hz'
-      exact hz'.le
-    have hzpos : 0 < z.2 := by
-      norm_num at hzlo ⊢
-      linarith only [hzlo]
-    rw [Real.norm_eq_abs, abs_of_nonneg
-      (ucGaussianWeight_nonneg a hzpos)]
-    exact hz
-  have hWVG : Integrable (fun z => W z * V z) (volume.restrict U) := by
-    have h := hEnergy.1.bdd_mul hWmeas hWnormbound
-    simpa [U, V, W, mul_comm] using h
-  have hWGG : Integrable (fun z => W z * G z) (volume.restrict U) := by
-    have h := hEnergy.2.bdd_mul hWmeas hWnormbound
-    simpa [U, G, W, mul_comm] using h
-  have hRadialWVG : Integrable
-      (fun z => if ρ / 2 ≤ vec3EuclideanNorm z.1 then W z * V z else 0)
-      (volume.restrict U) := by
-    have h := hWVG.indicator hRmeas
-    convert h using 1
-    ext z
-    by_cases hz : ρ / 2 ≤ vec3EuclideanNorm z.1 <;>
-      simp [Set.indicator, hz]
-  have hWGglobal : Integrable (U.indicator (fun z => W z * G z)) volume := by
-    have hOn : IntegrableOn (fun z => W z * G z) U volume := hWGG
-    exact hOn.integrable_indicator hUmeas
-  have hMglobal : Integrable fM volume := by
-    have hOn : Integrable (buGaussianRadialWeightedMass ρ a v)
-        (volume.restrict U) := by
-      convert hRadialWVG using 1
-      ext z
-      simp [buGaussianRadialWeightedMass, W, V]
-    have hOn' : IntegrableOn (buGaussianRadialWeightedMass ρ a v) U volume := hOn
-    simpa [fM] using hOn'.integrable_indicator hUmeas
-  have htimepos (z : ParabolicPoint) (hz : z ∈ U) : 0 < z.2 := by
-    have hz' := hz.2.1
-    rw [hσ] at hz'
-    norm_num at hz' ⊢
-    linarith only [hz']
-  have hGnonneg : ∀ᵐ z ∂(volume : Measure ParabolicPoint), 0 ≤ fG z := by
-    filter_upwards [] with z
-    by_cases hz : z ∈ U
-    · simp only [fG, Set.indicator_of_mem hz]
-      exact mul_nonneg
-        (ucGaussianWeight_nonneg a (htimepos z hz))
-        (by unfold G spatialGradientSq; positivity)
-    · simp [fG, hz]
-  have hMnonneg : ∀ᵐ z ∂(volume : Measure ParabolicPoint), 0 ≤ fM z := by
-    filter_upwards [] with z
-    by_cases hz : z ∈ U
-    · by_cases hrad : ρ / 2 ≤ vec3EuclideanNorm z.1
-      · simp [fM, buGaussianRadialWeightedMass, hz, hrad]
-        exact mul_nonneg
-          (ucGaussianWeight_nonneg a (htimepos z hz))
-          (sq_nonneg _)
-      · simp [fM, buGaussianRadialWeightedMass, hz, hrad]
-    · simp [fM, hz]
+  obtain ⟨hUmeas, hWGglobal, hMglobal, htimepos, hGnonneg, hMnonneg⟩ :=
+    buGaussian_shell_weighted_data ha hweak hL2
   have hBmeas : ∀ p ∈ Y, MeasurableSet (vec3Ball p.2 (2 * r)) := by
     intro p hp
     exact vec3Ball_measurable p.2 (2 * r)
@@ -323,92 +420,23 @@ theorem buGaussian_transition_shell_gradient_caccioppoli
         ring
       rw [hend]
       simpa [buGaussianTimeGridOuter, buGaussianTimeGridStart, δ] using ht
-    have hcacci := buGaussian_weighted_caccioppoli_cell hρ_pos ha
-      (mul_pos (by norm_num : (0 : ℝ) < 2) hr)
-      (hY.1 p.1 hpY) hsp htime hweak hcont hc hL2 hineq
-    have hcellsets : Uinner p =
-        spaceTimeSet (vec3Ball p.1.2 ((2 * r) / 2))
-          (Ioo (buGaussianTimeGridStart σ δ p.2)
-            (buGaussianTimeGridStart σ δ p.2 + ((2 * r) / 2) ^ 2)) := by
-      dsimp [Uinner, buGaussianShellInnerCell, buGaussianTimeGridInner,
-        buGaussianTimeGridStart, σ, δ]
-      rw [show (2 * r) / 2 = r by ring]
-    have houtersets : Uouter p =
-        spaceTimeSet (vec3Ball p.1.2 (2 * r))
-          (Ioo (buGaussianTimeGridStart σ δ p.2)
-            (buGaussianTimeGridStart σ δ p.2 + (2 * r) ^ 2)) := by
-      dsimp [Uouter, buGaussianShellOuterCell, buGaussianTimeGridOuter,
-        buGaussianTimeGridStart, σ, δ]
-      rw [show (2 * r) ^ 2 = 4 * r ^ 2 by ring]
-    rw [hcellsets, houtersets]
-    simpa [G, V, W] using hcacci
+    simpa [Uinner, Uouter, buGaussianShellInnerCell, buGaussianShellOuterCell,
+      buGaussianTimeGridInner, buGaussianTimeGridOuter, buGaussianTimeGridStart,
+      δ, G, V, W] using
+      buGaussian_shell_single_cell_bound hρ_pos ha hr (hY.1 p.1 hpY) hsp htime
+        hweak hcont hc hL2 hineq
   let Kcell : ℝ := Real.exp (2 * (56 * a * (2 * r) ^ 2 +
       12 * ρ * (2 * r) + 36 * ρ ^ 2 * (2 * r) ^ 2)) *
       (256 * (1 + c ^ 2 + 1 / ((2 * r) / 2) ^ 2))
-  have hsumCacci :
-      (∑ p ∈ P, ∫ z in Uinner p, W z * G z ∂volume) ≤
-        Kcell * ∑ p ∈ P, ∫ z in Uouter p, W z * V z ∂volume := by
-    calc
-      _ ≤ ∑ p ∈ P, Kcell * ∫ z in Uouter p, W z * V z ∂volume := by
-        apply Finset.sum_le_sum
-        intro p hp
-        exact hcell p hp
-      _ = _ := by rw [Finset.mul_sum]
-  have hmassSumEq :
-      (∑ p ∈ P, ∫ z in Uouter p, fM z ∂volume) =
-        ∑ p ∈ P, ∫ z in Uouter p, W z * V z ∂volume := by
-    apply Finset.sum_congr rfl
-    intro p hp
-    exact hmassEq p hp
-  have hgradSumEq :
-      (∑ p ∈ P, ∫ z in Uinner p, fG z ∂volume) =
-        ∑ p ∈ P, ∫ z in Uinner p, W z * G z ∂volume := by
-    apply Finset.sum_congr rfl
-    intro p hp
-    exact hgradEq p hp
-  have hMassOverlap := hMsum
-  have hMassOverlap' :
-      (∑ p ∈ P, ∫ z in Uouter p, W z * V z ∂volume) ≤
-        (8 * Besicovitch.multiplicity BUGaussianSpace ^ 2 : ℝ) *
-          ∫ z, fM z ∂volume := by
-    rw [← hmassSumEq]
-    simpa [P, Uouter, buGaussianShellOuterCell, σ, δ, Nat.cast_mul] using hMassOverlap
-  have hMassIntegral :
-      (∫ z, fM z ∂volume) =
-        ∫ z in U, buGaussianRadialWeightedMass ρ a v z ∂volume := by
-    dsimp [fM]
-    rw [← integral_indicator hUmeas]
-  have hTargetEq :
-      (∫ z in S, fG z ∂volume) =
-        ∫ z in S, W z * G z ∂volume := by
-    apply setIntegral_congr_fun hSmeas
-    intro z hz
-    have hyρ : vec3EuclideanNorm z.1 < ρ := by
-      have hsmall : 3 * ρ / 4 < ρ := by nlinarith only [hρ]
-      exact lt_of_le_of_lt hz.1.2 hsmall
-    have htime : z.2 ∈ Ioo σ 2 := by
-      refine ⟨hz.2.1, ?_⟩
-      exact lt_trans hz.2.2 (by norm_num [T])
-    have hUz : z ∈ U := ⟨by simpa [mem_vec3Ball] using hyρ, htime⟩
-    simp [fG, hUz]
-  have hSgradient :
-      (∫ z in S, W z * G z ∂volume) ≤
-        Kcell * ((8 * Besicovitch.multiplicity BUGaussianSpace ^ 2 : ℝ) *
-          ∫ z in U, buGaussianRadialWeightedMass ρ a v z ∂volume) := by
-    calc
-      (∫ z in S, W z * G z ∂volume) =
-          ∫ z in S, fG z ∂volume := hTargetEq.symm
-      _ ≤ ∑ p ∈ P, ∫ z in Uinner p, fG z ∂volume := hgradCover
-      _ = ∑ p ∈ P, ∫ z in Uinner p, W z * G z ∂volume := hgradSumEq
-      _ ≤ Kcell * ∑ p ∈ P, ∫ z in Uouter p, W z * V z ∂volume := hsumCacci
-      _ ≤ Kcell * ((8 * Besicovitch.multiplicity BUGaussianSpace ^ 2 : ℝ) *
-          ∫ z, fM z ∂volume) := by
-        apply mul_le_mul_of_nonneg_left hMassOverlap'
-        dsimp [Kcell]
-        positivity
-      _ = Kcell * ((8 * Besicovitch.multiplicity BUGaussianSpace ^ 2 : ℝ) *
-          ∫ z in U, buGaussianRadialWeightedMass ρ a v z ∂volume) := by
-        rw [hMassIntegral]
+  have hSgradient := buGaussian_finite_cover_mass_bound
+    (μ := volume) (P := P) (S := S) (U := U)
+    (A := Uinner) (B := Uouter) (fG := fG) (fM := fM)
+    (mass := buGaussianRadialWeightedMass ρ a v) (W := W) (G := G)
+    (V := V) (K := Kcell)
+    (M := (8 * Besicovitch.multiplicity BUGaussianSpace ^ 2 : ℝ))
+    hTargetEq hgradCover hgradEq hcell hmassEq hMsum hMassIntegral (by
+      dsimp [Kcell]
+      positivity)
   simpa [S, U, σ, T, Kcell, mul_assoc] using hSgradient
 
 end ESS

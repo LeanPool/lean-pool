@@ -238,6 +238,47 @@ private theorem weakContL3_slice_bound_ae
     _ ≤ weakContL3MomentBound (u := u) := by
       exact ENNReal.rpow_le_rpow hsup_t (by norm_num)
 
+private theorem weakContL3_smallBall_slice_bound
+    {u : ParabolicPoint → Vec3}
+    (hM : weakContL3MomentBound (u := u) < ⊤)
+    (hslice : ∀ᵐ t ∂(volume.restrict (Ioo (-1 : ℝ) 0)),
+      eLpNorm (fun x : Vec3 => WithLp.toLp 2 (u (x, t))) 3
+        (volume.restrict weakContL3SpatialBall) ≤ weakContL3MomentBound (u := u)) :
+    ∀ᵐ t ∂(volume.restrict (Ioo (-(3 / 4 : ℝ) ^ 2) 0)),
+      t ∈ Icc (-(3 / 4 : ℝ) ^ 2) 0 ∧
+        MemLp (fun x : Vec3 => WithLp.toLp 2 (u (x, t))) 3
+          (volume.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ))) ∧
+        eLpNorm (fun x : Vec3 => WithLp.toLp 2 (u (x, t))) 3
+          (volume.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ))) ≤
+            weakContL3MomentBound (u := u) := by
+  have hsmallballsub : vec3Ball (0 : Vec3) (3 / 4 : ℝ) ⊆
+      weakContL3SpatialBall := by
+    intro x hx
+    have hxnorm : vec3EuclideanNorm (x - 0) < 3 / 4 := by
+      simpa [mem_vec3Ball] using hx
+    change vec3EuclideanNorm (x - 0) < 1
+    exact lt_trans hxnorm (by norm_num)
+  have hsmallballMeasure :
+      volume.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ)) ≤
+        volume.restrict weakContL3SpatialBall :=
+    (volume : Measure Vec3).restrict_mono_set hsmallballsub
+  have hsmallsubset : Ioo (-(3 / 4 : ℝ) ^ 2) 0 ⊆ Ioo (-1 : ℝ) 0 := by
+    intro t ht
+    refine ⟨?_, ht.2⟩
+    dsimp [Ioo] at ht ⊢
+    linarith only [ht.1]
+  have hsliceSmall := ae_restrict_of_ae_restrict_of_subset hsmallsubset hslice
+  filter_upwards [hsliceSmall, ae_restrict_mem measurableSet_Ioo] with t h3 htI
+  have htT : t ∈ Icc (-(3 / 4 : ℝ) ^ 2) 0 := ⟨le_of_lt htI.1, le_of_lt htI.2⟩
+  have hmem3 : MemLp (fun x : Vec3 => WithLp.toLp 2 (u (x, t))) 3
+      (volume.restrict weakContL3SpatialBall) := by
+    rw [memLp_iff]
+    exact lt_of_le_of_lt h3 hM
+  refine ⟨htT, ?_, ?_⟩
+  · rw [← Measure.restrict_restrict_of_subset hsmallballsub]
+    exact hmem3.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ))
+  · exact (eLpNorm_mono_measure _ hsmallballMeasure).trans h3
+
 private theorem weakContL3_trace_family
     {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin 3 → Vec3}
     {p : ParabolicPoint → ℝ}
@@ -308,9 +349,10 @@ private theorem weakContL3_cutoff_pairing_eq_inner
       inner ℝ (χ x • WithLp.toLp 2
         (u (parabolicHomeomorph.symm (x, t)))) ((φ : Vec3 → L2Vec3) x) =
         weakContL3MomentumPairing u χ φ (x, t) := by
-    simp [weakContL3MomentumPairing, weakContL3CutoffTest,
-      weakContL3OfLp, PiLp.inner_apply,
-      parabolicHomeomorph_symm_apply]
+    simp only [parabolicHomeomorph_symm_apply, PiLp.inner_apply, PiLp.smul_apply,
+      smul_eq_mul, RCLike.inner_apply, conj_trivial, weakContL3MomentumPairing,
+      weakContL3CutoffTest, weakContL3OfLp, ContinuousLinearEquiv.coe_coe,
+      Pi.smul_apply, PiLp.continuousLinearEquiv_apply]
     apply Finset.sum_congr rfl
     intro i hi
     ring
@@ -360,6 +402,256 @@ private theorem weakContL3_exists_good_near
     linarith only [hεs]
   · have hsε : s < t + ε := lt_of_lt_of_le hsJ.2 (min_le_right _ _)
     linarith only [hsε]
+
+private theorem weakContL3_toLp_smoothTest_eq
+    (φ : weakContL3SmoothTest)
+    (hφ : MemLp (φ : Vec3 → L2Vec3) 2 (volume.restrict weakContL3SpatialBall)) :
+    hφ.toLp (φ : Vec3 → L2Vec3) =
+      (weakContL3_smoothTest_memLp (μ := volume.restrict weakContL3SpatialBall) φ).toLp
+        (φ : Vec3 → L2Vec3) := by
+  apply Lp.ext
+  filter_upwards [hφ.coeFn_toLp,
+    (weakContL3_smoothTest_memLp (μ := volume.restrict weakContL3SpatialBall) φ).coeFn_toLp]
+    with x h₁ h₂
+  exact h₁.trans h₂.symm
+
+private theorem weakContL3_denseWeakRepresentative
+    (μx : Measure Vec3) [IsFiniteMeasure μx]
+    (ψ : ℕ → Lp L2Vec3 2 μx)
+    (hψdense : DenseRange ψ)
+    (ell : ℕ → ℝ → ℝ)
+    (hell : ∀ m, Continuous (ell m))
+    (slice : Icc (-(3 / 4 : ℝ) ^ 2) 0 → ℕ → Lp L2Vec3 2 μx)
+    (C : ℝ) (hCnonneg : 0 ≤ C)
+    (hsliceBound : ∀ t n, ‖slice t n‖ ≤ C)
+    (hpairTendsto : ∀ t m,
+      Tendsto (fun n => inner ℝ (slice t n) (ψ m)) atTop (nhds (ell m t)))
+    (M : ℝ)
+    (hsequencePairBound : ∀ t n m,
+      |inner ℝ (slice t n) (ψ m)| ≤
+        M * ‖weakContL3L2ToLThreeHalves μx (ψ m)‖) :
+    ∃ v : Icc (-(3 / 4 : ℝ) ^ 2) 0 → Lp L2Vec3 2 μx,
+      (∀ t, ‖v t‖ ≤ C) ∧
+      (∀ t x, Tendsto (fun n => inner ℝ (slice t n) x) atTop
+        (nhds (inner ℝ (v t) x))) ∧
+      (∀ t m, inner ℝ (v t) (ψ m) = ell m t) ∧
+      (∀ t w, |inner ℝ (v t) w| ≤
+        M * ‖weakContL3L2ToLThreeHalves μx w‖) ∧
+      (∀ w, Continuous (fun t : Icc (-(3 / 4 : ℝ) ^ 2) 0 => inner ℝ (v t) w)) := by
+  have hweakExists (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) :
+      ∃ w : Lp L2Vec3 2 μx, ∀ x,
+        Tendsto (fun n => inner ℝ (slice t n) x) atTop (nhds (inner ℝ w x)) := by
+    exact CKN.Leray.exists_weak_limit_of_tendsto_pairings_on_dense_range
+      (slice t) C hCnonneg (hsliceBound t) ψ hψdense
+      (fun m => ⟨ell m t, hpairTendsto t m⟩)
+  let v : Icc (-(3 / 4 : ℝ) ^ 2) 0 → Lp L2Vec3 2 μx :=
+    fun t => Classical.choose (hweakExists t)
+  have hvweak (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) (x : Lp L2Vec3 2 μx) :
+      Tendsto (fun n => inner ℝ (slice t n) x) atTop (nhds (inner ℝ (v t) x)) :=
+    Classical.choose_spec (hweakExists t) x
+  have hvbound (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) : ‖v t‖ ≤ C :=
+    CKN.Leray.norm_le_of_weak_tendsto_of_uniform_bound
+      hCnonneg (hsliceBound t) (hvweak t)
+  have htestval (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) (m : ℕ) :
+      inner ℝ (v t) (ψ m) = ell m t :=
+    tendsto_nhds_unique (hvweak t (ψ m)) (hpairTendsto t m)
+  have hpairDenseBound (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) (m : ℕ) :
+      |inner ℝ (v t) (ψ m)| ≤ M *
+        ‖weakContL3L2ToLThreeHalves μx (ψ m)‖ := by
+    have hlim := (continuous_abs.continuousAt.tendsto).comp (hpairTendsto t m)
+    have hbound := le_of_tendsto' hlim (hsequencePairBound t · m)
+    simpa [htestval t m] using hbound
+  have hpairBound (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) :
+      ∀ w : Lp L2Vec3 2 μx,
+        |inner ℝ (v t) w| ≤ M * ‖weakContL3L2ToLThreeHalves μx w‖ :=
+    weakContL3_pairing_bound_of_dense μx ψ hψdense (v t) M (hpairDenseBound t)
+  have hvabs (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) (w : Lp L2Vec3 2 μx) :
+      |inner ℝ (v t) w| ≤ C * ‖w‖ := by
+    exact (abs_real_inner_le_norm (v t) w).trans
+      (mul_le_mul_of_nonneg_right (hvbound t) (norm_nonneg _))
+  have hcontinuous (w : Lp L2Vec3 2 μx) :
+      Continuous (fun t : Icc (-(3 / 4 : ℝ) ^ 2) 0 => inner ℝ (v t) w) := by
+    have hdensecont (m : ℕ) :
+        Continuous (fun t : Icc (-(3 / 4 : ℝ) ^ 2) 0 => inner ℝ (v t) (ψ m)) := by
+      have heq : (fun t : Icc (-(3 / 4 : ℝ) ^ 2) 0 => inner ℝ (v t) (ψ m)) =
+          (fun t : Icc (-(3 / 4 : ℝ) ^ 2) 0 => ell m (t : ℝ)) := by
+        funext t
+        exact htestval t m
+      rw [heq]
+      exact (hell m).comp continuous_subtype_val
+    exact (CKN.Leray.continuous_inner_of_dense_test_continuous v ψ hψdense C
+      hCnonneg hvabs hdensecont) w
+  exact ⟨v, hvbound, hvweak, htestval, hpairBound, hcontinuous⟩
+
+private theorem weakContL3_good_cutoff_times
+    {u : ParabolicPoint → Vec3}
+    (χ : Vec3 → ℝ)
+    (ψ : ℕ → Vec3 → L2Vec3)
+    (hψsmooth : ∀ n, HasCompactSupport (ψ n) ∧ ContDiff ℝ (⊤ : ℕ∞) (ψ n))
+    (μx : Measure Vec3) (M : ℝ≥0∞)
+    (hχmeas : AEStronglyMeasurable χ μx)
+    (hχbound : ∀ x, ‖χ x‖ ≤ 1)
+    (huSliceMeas : ∀ᵐ t ∂(volume.restrict (Ioo (-1 : ℝ) 0)),
+      AEStronglyMeasurable (fun x : Vec3 => WithLp.toLp 2 (u (x, t))) μx)
+    (hslice3 : ∀ᵐ t ∂(volume.restrict (Ioo (-1 : ℝ) 0)),
+      eLpNorm (fun x : Vec3 => WithLp.toLp 2 (u (x, t))) 3 μx ≤ M)
+    (ell : ℕ → ℝ → ℝ)
+    (htrace : ∀ᵐ t ∂(volume.restrict (Ioo (-1 : ℝ) 0)), ∀ n,
+      (∫ x, weakContL3MomentumPairing u χ
+        (⟨ψ n, (hψsmooth n).1, (hψsmooth n).2⟩ : weakContL3SmoothTest)
+        (x, t) ∂μx) = ell n t) :
+    ∀ᵐ t ∂(volume.restrict (Ioo (-1 : ℝ) 0)),
+      t ∈ Ioo (-1 : ℝ) 0 ∧
+        AEStronglyMeasurable (fun x : Vec3 => χ x • WithLp.toLp 2 (u (x, t))) μx ∧
+        eLpNorm (fun x : Vec3 => χ x • WithLp.toLp 2 (u (x, t))) 3 μx ≤ M ∧
+        ∀ n, (∫ x, weakContL3MomentumPairing u χ
+          (⟨ψ n, (hψsmooth n).1, (hψsmooth n).2⟩ : weakContL3SmoothTest)
+          (x, t) ∂μx) = ell n t := by
+  let μt : Measure ℝ := volume.restrict (Ioo (-1 : ℝ) 0)
+  filter_upwards [ae_restrict_mem measurableSet_Ioo, huSliceMeas, hslice3, htrace]
+    with t ht hmeas h3 hpair
+  have hcutmeas := hχmeas.smul hmeas
+  have hcutnorm (x : Vec3) :
+      ‖χ x • WithLp.toLp 2 (u (x, t))‖ ≤ ‖WithLp.toLp 2 (u (x, t))‖ := by
+    rw [norm_smul]
+    calc
+      ‖χ x‖ * ‖WithLp.toLp 2 (u (x, t))‖ ≤
+          1 * ‖WithLp.toLp 2 (u (x, t))‖ :=
+            mul_le_mul_of_nonneg_right (hχbound x) (norm_nonneg _)
+      _ = _ := one_mul _
+  have hcut3 : eLpNorm (fun x : Vec3 => χ x • WithLp.toLp 2 (u (x, t))) 3 μx ≤ M :=
+    (eLpNorm_mono hcutmeas hcutnorm).trans h3
+  exact ⟨ht, hcutmeas, hcut3, hpair⟩
+
+private theorem weakContL3_sampledWeakRepresentative
+    {u : ParabolicPoint → Vec3} (χ : Vec3 → ℝ)
+    (ψ : ℕ → Vec3 → L2Vec3)
+    (hψsmooth : ∀ n, HasCompactSupport (ψ n) ∧ ContDiff ℝ (⊤ : ℕ∞) (ψ n))
+    (hψ : ∀ n, MemLp (ψ n) 2 (volume.restrict weakContL3SpatialBall))
+    (hψdense : DenseRange (fun n => (hψ n).toLp (ψ n)))
+    (ell : ℕ → ℝ → ℝ) (hell : ∀ m, Continuous (ell m))
+    (M : ℝ≥0∞) (hM : M < ⊤) (C : ℝ) (hCnonneg : 0 ≤ C)
+    (hgoodAE : ∀ᵐ t ∂(volume.restrict (Ioo (-1 : ℝ) 0)),
+      t ∈ Ioo (-1 : ℝ) 0 ∧
+        AEStronglyMeasurable (fun x : Vec3 => χ x • WithLp.toLp 2 (u (x, t)))
+          (volume.restrict weakContL3SpatialBall) ∧
+        eLpNorm (fun x : Vec3 => χ x • WithLp.toLp 2 (u (x, t))) 3
+          (volume.restrict weakContL3SpatialBall) ≤ M ∧
+        ∀ n, (∫ x, weakContL3MomentumPairing u χ
+          (⟨ψ n, (hψsmooth n).1, (hψsmooth n).2⟩ : weakContL3SmoothTest)
+          (x, t) ∂(volume.restrict weakContL3SpatialBall)) = ell n t)
+    (hCutMemLp : ∀ t (_hmeas : AEStronglyMeasurable
+        (fun x : Vec3 => χ x • WithLp.toLp 2 (u (x, t)))
+          (volume.restrict weakContL3SpatialBall))
+        (_h3t : eLpNorm (fun x : Vec3 => χ x • WithLp.toLp 2 (u (x, t))) 3
+          (volume.restrict weakContL3SpatialBall) ≤ M),
+        MemLp (fun x : Vec3 => χ x • WithLp.toLp 2 (u (x, t))) 2
+          (volume.restrict weakContL3SpatialBall))
+    (hBoundSlice : ∀ t (hmeas : AEStronglyMeasurable
+        (fun x : Vec3 => χ x • WithLp.toLp 2 (u (x, t)))
+          (volume.restrict weakContL3SpatialBall))
+        (h3t : eLpNorm (fun x : Vec3 => χ x • WithLp.toLp 2 (u (x, t))) 3
+          (volume.restrict weakContL3SpatialBall) ≤ M),
+        ‖(hCutMemLp t hmeas h3t).toLp _‖ ≤ C) :
+    ∃ v : Icc (-(3 / 4 : ℝ) ^ 2) 0 → Lp L2Vec3 2 (volume.restrict weakContL3SpatialBall),
+      (∀ t, ‖v t‖ ≤ C) ∧
+      (∀ t m, inner ℝ (v t) ((hψ m).toLp (ψ m)) = ell m t) ∧
+      (∀ t w, |inner ℝ (v t) w| ≤
+        M.toReal * ‖weakContL3L2ToLThreeHalves (volume.restrict weakContL3SpatialBall) w‖) ∧
+      (∀ w, Continuous (fun t : Icc (-(3 / 4 : ℝ) ^ 2) 0 => inner ℝ (v t) w)) := by
+  let μx : Measure Vec3 := volume.restrict weakContL3SpatialBall
+  let sample : (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) → ℕ → ℝ := fun t n =>
+    Classical.choose (weakContL3_exists_good_near hgoodAE
+      (t := t) (ε := 1 / (n + 1 : ℝ)) t.property (by positivity))
+  have hsample (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) (n : ℕ) :
+      sample t n ∈ Ioo (-1 : ℝ) 0 ∧
+        (sample t n ∈ Ioo (-1 : ℝ) 0 ∧
+          AEStronglyMeasurable (fun x : Vec3 => χ x • WithLp.toLp 2 (u (x, sample t n))) μx ∧
+          eLpNorm (fun x : Vec3 => χ x • WithLp.toLp 2 (u (x, sample t n))) 3 μx ≤ M ∧
+          (∀ m, (∫ x, weakContL3MomentumPairing u χ
+            (⟨ψ m, (hψsmooth m).1, (hψsmooth m).2⟩ : weakContL3SmoothTest)
+            (x, sample t n) ∂μx) = ell m (sample t n))) ∧
+        dist (sample t n) t < 1 / (n + 1 : ℝ) :=
+    Classical.choose_spec (weakContL3_exists_good_near hgoodAE
+      (t := t) (ε := 1 / (n + 1 : ℝ)) t.property (by positivity))
+  let slice (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) (n : ℕ) : Lp L2Vec3 2 μx :=
+    (hCutMemLp (sample t n) (hsample t n).2.1.2.1
+      (hsample t n).2.1.2.2.1).toLp _
+  have hsliceBound (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) (n : ℕ) : ‖slice t n‖ ≤ C :=
+    hBoundSlice (sample t n) (hsample t n).2.1.2.1 (hsample t n).2.1.2.2.1
+  have hinverse (m : ℕ) :
+      (hψ m).toLp (ψ m) =
+        (weakContL3_smoothTest_memLp
+          (⟨ψ m, (hψsmooth m).1, (hψsmooth m).2⟩ : weakContL3SmoothTest)).toLp
+            (⟨ψ m, (hψsmooth m).1, (hψsmooth m).2⟩ : weakContL3SmoothTest) := by
+    apply Lp.ext
+    filter_upwards [(hψ m).coeFn_toLp,
+      (weakContL3_smoothTest_memLp
+        (⟨ψ m, (hψsmooth m).1, (hψsmooth m).2⟩ : weakContL3SmoothTest)).coeFn_toLp]
+      with x h₁ h₂
+    exact h₁.trans h₂.symm
+  have hpairTendsto (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) (m : ℕ) :
+      Tendsto (fun n => inner ℝ (slice t n) ((hψ m).toLp (ψ m))) atTop
+        (nhds (ell m t)) := by
+    have htest (n : ℕ) : inner ℝ (slice t n) ((hψ m).toLp (ψ m)) = ell m (sample t n) := by
+      calc
+        inner ℝ (slice t n) ((hψ m).toLp (ψ m)) =
+            inner ℝ (slice t n)
+              ((weakContL3_smoothTest_memLp
+                (⟨ψ m, (hψsmooth m).1, (hψsmooth m).2⟩ : weakContL3SmoothTest)).toLp
+                (⟨ψ m, (hψsmooth m).1, (hψsmooth m).2⟩ : weakContL3SmoothTest)) := by
+                  rw [hinverse m]
+        _ = ∫ x, weakContL3MomentumPairing u χ
+              (⟨ψ m, (hψsmooth m).1, (hψsmooth m).2⟩ : weakContL3SmoothTest)
+              (x, sample t n) ∂μx :=
+              weakContL3_cutoff_pairing_eq_inner
+                (⟨ψ m, (hψsmooth m).1, (hψsmooth m).2⟩ : weakContL3SmoothTest)
+                (sample t n) (hCutMemLp (sample t n) (hsample t n).2.1.2.1
+                  (hsample t n).2.1.2.2.1)
+        _ = ell m (sample t n) := (hsample t n).2.1.2.2.2 m
+    have hsampleTendsto : Tendsto (sample t) atTop (nhds t) := by
+      have hrecip : Tendsto (fun n : ℕ => (1 : ℝ) / (n + 1)) atTop (nhds 0) := by
+        simpa using (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℝ))
+      apply Metric.tendsto_nhds.mpr
+      intro ε hε
+      filter_upwards [hrecip.eventually (isOpen_Iio.mem_nhds hε)] with n hn
+      exact (hsample t n).2.2.trans hn
+    exact ((hell m).continuousAt.tendsto.comp hsampleTendsto).congr'
+      (Filter.Eventually.of_forall fun n => (htest n).symm)
+  have hsequencePairBound (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) (n m : ℕ) :
+      |inner ℝ (slice t n) ((hψ m).toLp (ψ m))| ≤
+        M.toReal * ‖weakContL3L2ToLThreeHalves μx ((hψ m).toLp (ψ m))‖ := by
+    have hcut2 := hCutMemLp (sample t n) (hsample t n).2.1.2.1
+      (hsample t n).2.1.2.2.1
+    have hcut3 : MemLp (fun x : Vec3 => χ x •
+        WithLp.toLp 2 (u (x, sample t n))) 3 μx := by
+      rw [memLp_iff]
+      exact lt_of_le_of_lt (hsample t n).2.1.2.2.1 hM
+    have hψ₃₂ : MemLp (ψ m) (ENNReal.ofReal (3 / 2 : ℝ)) μx :=
+      (hψsmooth m).2.continuous.memLp_of_hasCompactSupport (hψsmooth m).1
+    have hholder := weakContL3_inner_holder hcut2 (hψ m) hcut3 hψ₃₂
+    have hMreal : (eLpNorm (fun x : Vec3 => χ x •
+        WithLp.toLp 2 (u (x, sample t n))) 3 μx).toReal ≤ M.toReal :=
+      ENNReal.toReal_mono hM.ne (hsample t n).2.1.2.2.1
+    have hnormTest :
+        (eLpNorm (ψ m) (ENNReal.ofReal (3 / 2 : ℝ)) μx).toReal =
+          ‖weakContL3L2ToLThreeHalves μx ((hψ m).toLp (ψ m))‖ := by
+      change (eLpNorm (ψ m) (ENNReal.ofReal (3 / 2 : ℝ)) μx).toReal =
+        ‖((Lp.memLp ((hψ m).toLp (ψ m))).mono_exponent
+          (p := ENNReal.ofReal (3 / 2 : ℝ)) (q := (2 : ℝ≥0∞))
+          (by norm_num)).toLp ((hψ m).toLp (ψ m))‖
+      rw [Lp.norm_toLp, eLpNorm_congr_ae (hψ m).coeFn_toLp]
+    calc
+      |inner ℝ (slice t n) ((hψ m).toLp (ψ m))| ≤
+          (eLpNorm (fun x : Vec3 => χ x • WithLp.toLp 2 (u (x, sample t n))) 3 μx).toReal *
+            (eLpNorm (ψ m) (ENNReal.ofReal (3 / 2 : ℝ)) μx).toReal := hholder
+      _ ≤ M.toReal * (eLpNorm (ψ m) (ENNReal.ofReal (3 / 2 : ℝ)) μx).toReal :=
+        mul_le_mul_of_nonneg_right hMreal ENNReal.toReal_nonneg
+      _ = _ := by rw [hnormTest]
+  obtain ⟨v, hvbound, _hvweak, htestval, hpairBound, hcontinuous⟩ :=
+    weakContL3_denseWeakRepresentative μx (fun m => (hψ m).toLp (ψ m)) hψdense
+      ell hell slice C hCnonneg hsliceBound hpairTendsto M.toReal hsequencePairBound
+  exact ⟨v, hvbound, htestval, hpairBound, hcontinuous⟩
 
 /-- An all-time weakly continuous local `L²` representative with a scale-aware
 `L²` bound and the `L³`-controlled pairing estimate. -/
@@ -461,32 +753,12 @@ theorem weakContL3_l2Representative
     have hs := hu2Product.aestronglyMeasurable.prodMk_right
     filter_upwards [hs] with t ht
     exact weakContL3VecToLp.continuous.comp_aestronglyMeasurable ht
-  have hgood : ∀ᵐ t ∂μt,
-      t ∈ Ioo (-1 : ℝ) 0 ∧
-      AEStronglyMeasurable (fun x : Vec3 => χ x • WithLp.toLp 2 (u (x, t))) μx ∧
-      eLpNorm (fun x : Vec3 => χ x • WithLp.toLp 2 (u (x, t))) 3 μx ≤ M ∧
-      ∀ n, (∫ x, weakContL3MomentumPairing u χ
-        (⟨ψ n, (hψsmooth n).1, (hψsmooth n).2⟩ : weakContL3SmoothTest)
-        (x, t) ∂μx) = ell n t := by
-    filter_upwards [ae_restrict_mem measurableSet_Ioo, huSliceMeas,
-      hslice3, htrace] with t ht hmeas h3 hpair
-    have hχmeas : AEStronglyMeasurable χ μx := hχsmooth.continuous.aestronglyMeasurable
-    have hcutmeas := hχmeas.smul hmeas
-    have hcutnorm (x : Vec3) :
-        ‖χ x • WithLp.toLp 2 (u (x, t))‖ ≤
-          ‖WithLp.toLp 2 (u (x, t))‖ := by
-      rw [norm_smul]
-      have hχabs : ‖χ x‖ ≤ 1 := by
-        rw [Real.norm_eq_abs, abs_of_nonneg (hχrange x).1]
-        exact (hχrange x).2
-      calc
-        ‖χ x‖ * ‖WithLp.toLp 2 (u (x, t))‖ ≤
-            1 * ‖WithLp.toLp 2 (u (x, t))‖ :=
-              mul_le_mul_of_nonneg_right hχabs (norm_nonneg _)
-        _ = _ := one_mul _
-    have hcut3 : eLpNorm (fun x : Vec3 => χ x • WithLp.toLp 2 (u (x, t))) 3 μx ≤ M := by
-      exact (eLpNorm_mono hcutmeas hcutnorm).trans h3
-    exact ⟨ht, hcutmeas, hcut3, hpair⟩
+  have hgood := weakContL3_good_cutoff_times χ ψ hψsmooth μx M
+    hχsmooth.continuous.aestronglyMeasurable
+    (fun x => by
+      rw [Real.norm_eq_abs, abs_of_nonneg (hχrange x).1]
+      exact (hχrange x).2)
+    huSliceMeas hslice3 ell htrace
   have hBtop : B < ⊤ := by
     dsimp [B]
     exact ENNReal.mul_lt_top hM (ENNReal.rpow_lt_top_of_nonneg (by norm_num)
@@ -530,209 +802,40 @@ theorem weakContL3_l2Representative
       ∀ n, (∫ x, weakContL3MomentumPairing u χ
         (⟨ψ n, (hψsmooth n).1, (hψsmooth n).2⟩ : weakContL3SmoothTest)
         (x, t) ∂μx) = ell n t := hgood
-  let sample : (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) → ℕ → ℝ := fun t n =>
-    Classical.choose (weakContL3_exists_good_near hgoodAE
-      (t := t) (ε := 1 / (n + 1 : ℝ)) t.property (by positivity))
-  have hsample (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) (n : ℕ) :
-      sample t n ∈ Ioo (-1 : ℝ) 0 ∧
-        (sample t n ∈ Ioo (-1 : ℝ) 0 ∧
-          AEStronglyMeasurable (fun x : Vec3 =>
-            χ x • WithLp.toLp 2 (u (x, sample t n))) μx ∧
-          eLpNorm (fun x : Vec3 =>
-            χ x • WithLp.toLp 2 (u (x, sample t n))) 3 μx ≤ M ∧
-          (∀ m, (∫ x, weakContL3MomentumPairing u χ
-            (⟨ψ m, (hψsmooth m).1, (hψsmooth m).2⟩ : weakContL3SmoothTest)
-            (x, sample t n) ∂μx) = ell m (sample t n))) ∧
-        dist (sample t n) t < 1 / (n + 1 : ℝ) :=
-    Classical.choose_spec
-      (weakContL3_exists_good_near hgoodAE
-        (t := t) (ε := 1 / (n + 1 : ℝ)) t.property (by positivity))
-  let slice (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) (n : ℕ) :
-      Lp L2Vec3 2 μx :=
-    (hCutMemLp (sample t n) (hsample t n).2.1.2.1
-      (hsample t n).2.1.2.2.1).toLp _
-  have hsliceBound (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) (n : ℕ) :
-      ‖slice t n‖ ≤ C := by
-    exact hBoundSlice (sample t n) (hsample t n).2.1.2.1
-      (hsample t n).2.1.2.2.1
-  have hinverse (m : ℕ) :
-      (hψ m).toLp (ψ m) =
-        (weakContL3_smoothTest_memLp
-          (⟨ψ m, (hψsmooth m).1, (hψsmooth m).2⟩ : weakContL3SmoothTest)).toLp
-            (⟨ψ m, (hψsmooth m).1, (hψsmooth m).2⟩ : weakContL3SmoothTest) := by
-    apply Lp.ext
-    filter_upwards [(hψ m).coeFn_toLp,
-      (weakContL3_smoothTest_memLp
-        (⟨ψ m, (hψsmooth m).1, (hψsmooth m).2⟩ : weakContL3SmoothTest)).coeFn_toLp]
-      with x h₁ h₂
-    exact h₁.trans h₂.symm
-  have hpairTendsto (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) (m : ℕ) :
-      Tendsto (fun n => inner ℝ (slice t n) ((hψ m).toLp (ψ m))) atTop
-        (nhds (ell m t)) := by
-    have htest (n : ℕ) : inner ℝ (slice t n) ((hψ m).toLp (ψ m)) =
-        ell m (sample t n) := by
-      calc
-        inner ℝ (slice t n) ((hψ m).toLp (ψ m)) =
-            inner ℝ (slice t n)
-              ((weakContL3_smoothTest_memLp
-                (⟨ψ m, (hψsmooth m).1, (hψsmooth m).2⟩ :
-                  weakContL3SmoothTest)).toLp
-                (⟨ψ m, (hψsmooth m).1, (hψsmooth m).2⟩ :
-                  weakContL3SmoothTest)) := by rw [hinverse m]
-        _ = ∫ x, weakContL3MomentumPairing u χ
-              (⟨ψ m, (hψsmooth m).1, (hψsmooth m).2⟩ :
-                weakContL3SmoothTest) (x, sample t n) ∂μx :=
-              weakContL3_cutoff_pairing_eq_inner
-                (⟨ψ m, (hψsmooth m).1, (hψsmooth m).2⟩ :
-                  weakContL3SmoothTest) (sample t n)
-                (hCutMemLp (sample t n) (hsample t n).2.1.2.1
-                  (hsample t n).2.1.2.2.1)
-        _ = ell m (sample t n) := (hsample t n).2.1.2.2.2 m
-    have hsampleTendsto : Tendsto (sample t) atTop (nhds t) := by
-      have hrecip : Tendsto (fun n : ℕ => (1 : ℝ) / (n + 1)) atTop (nhds 0) := by
-        simpa using (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℝ))
-      apply Metric.tendsto_nhds.mpr
-      intro ε hε
-      filter_upwards [hrecip.eventually (isOpen_Iio.mem_nhds hε)] with n hn
-      exact (hsample t n).2.2.trans hn
-    have hcont := (hell m).continuousAt.tendsto.comp hsampleTendsto
-    exact hcont.congr' (Filter.Eventually.of_forall fun n => (htest n).symm)
-  have hweakExists (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) :
-      ∃ w : Lp L2Vec3 2 μx, ∀ x,
-        Tendsto (fun n => inner ℝ (slice t n) x) atTop (nhds (inner ℝ w x)) := by
-    exact CKN.Leray.exists_weak_limit_of_tendsto_pairings_on_dense_range
-      (slice t) C hCnonneg (hsliceBound t) (fun n => (hψ n).toLp (ψ n))
-      hψdense (fun m => ⟨ell m t, hpairTendsto t m⟩)
-  let v : Icc (-(3 / 4 : ℝ) ^ 2) 0 → Lp L2Vec3 2 μx :=
-    fun t => Classical.choose (hweakExists t)
-  have hvweak (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) (x : Lp L2Vec3 2 μx) :
-      Tendsto (fun n => inner ℝ (slice t n) x) atTop (nhds (inner ℝ (v t) x)) :=
-    Classical.choose_spec (hweakExists t) x
-  have hvbound (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) : ‖v t‖ ≤ C :=
-    CKN.Leray.norm_le_of_weak_tendsto_of_uniform_bound
-      hCnonneg (hsliceBound t) (hvweak t)
-  have htestval (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) (m : ℕ) :
-      inner ℝ (v t) ((hψ m).toLp (ψ m)) = ell m t :=
-    tendsto_nhds_unique (hvweak t ((hψ m).toLp (ψ m))) (hpairTendsto t m)
-  have hpairDenseBound (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) (m : ℕ) :
-      |inner ℝ (v t) ((hψ m).toLp (ψ m))| ≤
-        M.toReal * ‖weakContL3L2ToLThreeHalves μx ((hψ m).toLp (ψ m))‖ := by
-    let φ : weakContL3SmoothTest :=
-      ⟨ψ m, (hψsmooth m).1, (hψsmooth m).2⟩
-    have hseq (n : ℕ) :
-        |inner ℝ (slice t n) ((hψ m).toLp (ψ m))| ≤
-          M.toReal * ‖weakContL3L2ToLThreeHalves μx ((hψ m).toLp (ψ m))‖ := by
-      have hcut2 := hCutMemLp (sample t n) (hsample t n).2.1.2.1
-        (hsample t n).2.1.2.2.1
-      have hcut3 : MemLp (fun x : Vec3 => χ x •
-          WithLp.toLp 2 (u (x, sample t n))) 3 μx := by
-        rw [memLp_iff]
-        exact lt_of_le_of_lt (hsample t n).2.1.2.2.1 hM
-      have hψ₃₂ : MemLp (ψ m) (ENNReal.ofReal (3 / 2 : ℝ)) μx :=
-        (hψsmooth m).2.continuous.memLp_of_hasCompactSupport (hψsmooth m).1
-      have hholder := weakContL3_inner_holder hcut2 (hψ m) hcut3 hψ₃₂
-      have hMreal : (eLpNorm (fun x : Vec3 => χ x •
-          WithLp.toLp 2 (u (x, sample t n))) 3 μx).toReal ≤ M.toReal :=
-        ENNReal.toReal_mono hM.ne (hsample t n).2.1.2.2.1
-      have hnormTest :
-          (eLpNorm (ψ m) (ENNReal.ofReal (3 / 2 : ℝ)) μx).toReal =
-            ‖weakContL3L2ToLThreeHalves μx ((hψ m).toLp (ψ m))‖ := by
-        change (eLpNorm (ψ m) (ENNReal.ofReal (3 / 2 : ℝ)) μx).toReal =
-          ‖((Lp.memLp ((hψ m).toLp (ψ m))).mono_exponent
-            (p := ENNReal.ofReal (3 / 2 : ℝ)) (q := (2 : ℝ≥0∞))
-            (by norm_num)).toLp ((hψ m).toLp (ψ m))‖
-        rw [Lp.norm_toLp, eLpNorm_congr_ae (hψ m).coeFn_toLp]
-      calc
-        |inner ℝ (slice t n) ((hψ m).toLp (ψ m))| ≤
-            (eLpNorm (fun x : Vec3 => χ x •
-              WithLp.toLp 2 (u (x, sample t n))) 3 μx).toReal *
-              (eLpNorm (ψ m) (ENNReal.ofReal (3 / 2 : ℝ)) μx).toReal := by
-                exact hholder
-        _ ≤ M.toReal *
-              (eLpNorm (ψ m) (ENNReal.ofReal (3 / 2 : ℝ)) μx).toReal :=
-                mul_le_mul_of_nonneg_right hMreal ENNReal.toReal_nonneg
-        _ = _ := by rw [hnormTest]
-    have hlim := (continuous_abs.continuousAt.tendsto).comp (hpairTendsto t m)
-    have hlimitBound := le_of_tendsto' hlim hseq
-    simpa [htestval t m] using hlimitBound
-  have hpairBound (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) :
-      ∀ w : Lp L2Vec3 2 μx,
-        |inner ℝ (v t) w| ≤ M.toReal * ‖weakContL3L2ToLThreeHalves μx w‖ :=
-    weakContL3_pairing_bound_of_dense μx (fun m => (hψ m).toLp (ψ m))
-      hψdense (v t) M.toReal (hpairDenseBound t)
-  have hvabs (t : Icc (-(3 / 4 : ℝ) ^ 2) 0) (w : Lp L2Vec3 2 μx) :
-      |inner ℝ (v t) w| ≤ C * ‖w‖ := by
-    exact (abs_real_inner_le_norm (v t) w).trans
-      (mul_le_mul_of_nonneg_right (hvbound t) (norm_nonneg _))
-  have hcontinuous (w : Lp L2Vec3 2 μx) :
-      Continuous (fun t : Icc (-(3 / 4 : ℝ) ^ 2) 0 => inner ℝ (v t) w) := by
-    have hdensecont (m : ℕ) :
-        Continuous (fun t : Icc (-(3 / 4 : ℝ) ^ 2) 0 =>
-          inner ℝ (v t) ((hψ m).toLp (ψ m))) := by
-      have heq : (fun t : Icc (-(3 / 4 : ℝ) ^ 2) 0 =>
-          inner ℝ (v t) ((hψ m).toLp (ψ m))) =
-          (fun t : Icc (-(3 / 4 : ℝ) ^ 2) 0 => ell m (t : ℝ)) := by
-        funext t
-        exact htestval t m
-      rw [heq]
-      exact (hell m).comp continuous_subtype_val
-    exact (CKN.Leray.continuous_inner_of_dense_test_continuous v
-      (fun m => (hψ m).toLp (ψ m)) hψdense C hCnonneg hvabs hdensecont) w
+  obtain ⟨v, hvbound, htestval, hpairBound, hcontinuous⟩ :=
+    weakContL3_sampledWeakRepresentative χ ψ hψsmooth hψ hψdense ell hell
+      M hM C hCnonneg hgoodAE hCutMemLp hBoundSlice
   refine ⟨v, hvbound, hcontinuous, ?_, ?_, ?_⟩
   · exact hpairBound
-  have hsmallsubset : Ioo (-(3 / 4 : ℝ) ^ 2) 0 ⊆ Ioo (-1 : ℝ) 0 := by
-    intro t ht
-    refine ⟨?_, ht.2⟩
-    dsimp [Ioo] at ht ⊢
-    linarith only [ht.1]
-  have hgoodSmall := ae_restrict_of_ae_restrict_of_subset hsmallsubset hgoodAE
-  filter_upwards [hgoodSmall, ae_restrict_mem measurableSet_Ioo] with t htgood htI
-  have htT : t ∈ Icc (-(3 / 4 : ℝ) ^ 2) 0 := ⟨le_of_lt htI.1, le_of_lt htI.2⟩
-  let hm : MemLp (fun x : Vec3 => χ x • WithLp.toLp 2 (u (x, t))) 2 μx :=
-    hCutMemLp t htgood.2.1 htgood.2.2.1
-  have heqtest (n : ℕ) :
-      inner ℝ (v ⟨t, htT⟩) ((hψ n).toLp (ψ n)) =
-        inner ℝ (hm.toLp _) ((hψ n).toLp (ψ n)) := by
-    calc
-      inner ℝ (v ⟨t, htT⟩) ((hψ n).toLp (ψ n)) = ell n t := by
-        exact htestval ⟨t, htT⟩ n
-      _ = ∫ x, weakContL3MomentumPairing u χ
-            (⟨ψ n, (hψsmooth n).1, (hψsmooth n).2⟩ : weakContL3SmoothTest)
-            (x, t) ∂μx := (htgood.2.2.2 n).symm
-      _ = inner ℝ (hm.toLp _) ((hψ n).toLp (ψ n)) := by
-        rw [hinverse n]
-        symm
-        simpa [parabolicHomeomorph_symm_apply] using
-          (weakContL3_cutoff_pairing_eq_inner
-            (⟨ψ n, (hψsmooth n).1, (hψsmooth n).2⟩ : weakContL3SmoothTest) t hm)
-  have hvEq : v ⟨t, htT⟩ = hm.toLp _ := by
-    exact DenseRange.eq_of_inner_left ℝ hψdense (fun n => heqtest n)
-  exact ⟨htT, hm, hvEq⟩
-  have hsmallballsub : vec3Ball (0 : Vec3) (3 / 4 : ℝ) ⊆
-      weakContL3SpatialBall := by
-    intro x hx
-    have hxnorm : vec3EuclideanNorm (x - 0) < 3 / 4 := by
-      simpa [mem_vec3Ball] using hx
-    change vec3EuclideanNorm (x - 0) < 1
-    exact lt_trans hxnorm (by norm_num)
-  have hsmallballMeasure :
-      volume.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ)) ≤ μx :=
-    (volume : Measure Vec3).restrict_mono_set hsmallballsub
-  have hsmallsubset' : Ioo (-(3 / 4 : ℝ) ^ 2) 0 ⊆ Ioo (-1 : ℝ) 0 := by
-    intro t ht
-    refine ⟨?_, ht.2⟩
-    dsimp [Ioo] at ht ⊢
-    linarith only [ht.1]
-  have hslice3Small :=
-    ae_restrict_of_ae_restrict_of_subset hsmallsubset' hslice3
-  filter_upwards [hslice3Small, ae_restrict_mem measurableSet_Ioo] with t h3 htI
-  have htT : t ∈ Icc (-(3 / 4 : ℝ) ^ 2) 0 := ⟨le_of_lt htI.1, le_of_lt htI.2⟩
-  have hmem3 : MemLp (fun x : Vec3 => WithLp.toLp 2 (u (x, t))) 3 μx := by
-    rw [memLp_iff]
-    exact lt_of_le_of_lt h3 hM
-  refine ⟨htT, ?_, ?_⟩
-  · rw [← Measure.restrict_restrict_of_subset hsmallballsub]
-    exact hmem3.restrict (vec3Ball (0 : Vec3) (3 / 4 : ℝ))
-  · exact (eLpNorm_mono_measure _ hsmallballMeasure).trans h3
+  · have hsmallsubset : Ioo (-(3 / 4 : ℝ) ^ 2) 0 ⊆ Ioo (-1 : ℝ) 0 := by
+      intro t ht
+      refine ⟨?_, ht.2⟩
+      dsimp [Ioo] at ht ⊢
+      linarith only [ht.1]
+    have hgoodSmall := ae_restrict_of_ae_restrict_of_subset hsmallsubset hgoodAE
+    filter_upwards [hgoodSmall, ae_restrict_mem measurableSet_Ioo] with t htgood htI
+    have htT : t ∈ Icc (-(3 / 4 : ℝ) ^ 2) 0 := ⟨le_of_lt htI.1, le_of_lt htI.2⟩
+    let hm : MemLp (fun x : Vec3 => χ x • WithLp.toLp 2 (u (x, t))) 2 μx :=
+      hCutMemLp t htgood.2.1 htgood.2.2.1
+    have heqtest (n : ℕ) :
+        inner ℝ (v ⟨t, htT⟩) ((hψ n).toLp (ψ n)) =
+          inner ℝ (hm.toLp _) ((hψ n).toLp (ψ n)) := by
+      calc
+        inner ℝ (v ⟨t, htT⟩) ((hψ n).toLp (ψ n)) = ell n t := by
+          exact htestval ⟨t, htT⟩ n
+        _ = ∫ x, weakContL3MomentumPairing u χ
+              (⟨ψ n, (hψsmooth n).1, (hψsmooth n).2⟩ : weakContL3SmoothTest)
+              (x, t) ∂μx := (htgood.2.2.2 n).symm
+        _ = inner ℝ (hm.toLp _) ((hψ n).toLp (ψ n)) := by
+          rw [weakContL3_toLp_smoothTest_eq
+            (⟨ψ n, (hψsmooth n).1, (hψsmooth n).2⟩ : weakContL3SmoothTest) (hψ n)]
+          symm
+          simpa [parabolicHomeomorph_symm_apply] using
+            (weakContL3_cutoff_pairing_eq_inner
+              (⟨ψ n, (hψsmooth n).1, (hψsmooth n).2⟩ : weakContL3SmoothTest) t hm)
+    have hvEq : v ⟨t, htT⟩ = hm.toLp _ := by
+      exact DenseRange.eq_of_inner_left ℝ hψdense (fun n => heqtest n)
+    exact ⟨htT, hm, hvEq⟩
+  · exact weakContL3_smallBall_slice_bound hM hslice3
 
 end ESS

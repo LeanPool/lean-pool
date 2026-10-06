@@ -328,7 +328,7 @@ theorem suitableWeakMomentumTestCurlOnSupport
       exact hzχ
     have hcompsub (i : Fin 3) :
         tsupport (fun w : Vec3 × ℝ => χ w i) ⊆ tsupport χ :=
-      CKN.tsupport_component_subset (V := Vec3) (ι := Fin 3) χ i
+      CKN.tsupport_component_subset (ι := Fin 3) χ i
         (by intro w hw; simp [hw])
     have hnot (i : Fin 3) :
         (show Vec3 × ℝ from z) ∉ tsupport (fun w : Vec3 × ℝ => χ w i) :=

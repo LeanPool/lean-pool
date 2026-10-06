@@ -12,6 +12,12 @@ public import LeanPool.CaffarelliKohnNirenberg.Foundation.Parabolic.Integration.
 public import Mathlib.MeasureTheory.Function.UniformIntegrable
 public import LeanPool.CaffarelliKohnNirenberg.Setting.ScalingInvarianceBasic
 
+/-!
+# Blowup Terminal
+
+Terminal-time properties of the endpoint blow-up limit.
+-/
+
 public section
 
 open MeasureTheory Filter CKN.Foundation.Parabolic
@@ -298,10 +304,10 @@ theorem blowup_terminal_indicator_magnitude_memLp
   have hEu : MemLp (fun y => vec3EuclideanNorm (u y)) 3
       (volume.restrict B) := by
     apply MemLp.of_le_mul hu hEuMeas
-    filter_upwards [] with y
-    simpa only [Real.norm_eq_abs,
-      abs_of_nonneg (vec3EuclideanNorm_nonneg _)] using
-      (vec3EuclideanNorm_le_sqrt_three_mul_norm (u y))
+    · filter_upwards [] with y
+      simpa only [Real.norm_eq_abs,
+        abs_of_nonneg (vec3EuclideanNorm_nonneg _)] using
+        (vec3EuclideanNorm_le_sqrt_three_mul_norm (u y))
   have hInd : MemLp (B.indicator fun y => vec3EuclideanNorm (u y)) 3
       (volume : Measure Vec3) :=
     (memLp_indicator_iff_restrict hB).mpr hEu

@@ -134,7 +134,7 @@ private theorem lps_holder_real_exponents {s q : ℝ}
 
 /-- The coefficient in Young's inequality for the conjugate exponents
 2 / (1 + θ) and 2 / (1 - θ). -/
-@[expose] def lps_power_young_coefficient (θ : ℝ) : ℝ :=
+@[expose] def lpsPowerYoungCoefficient (θ : ℝ) : ℝ :=
   let p : ℝ := 2 / (1 + θ)
   let q : ℝ := 2 / (1 - θ)
   let lam : ℝ := (p / 2) ^ (1 / p)
@@ -143,7 +143,7 @@ private theorem lps_holder_real_exponents {s q : ℝ}
 private theorem lps_power_young {θ : ℝ} (hθ0 : 0 < θ) (hθ1 : θ < 1)
     {A B D : ℝ} (hA : 0 ≤ A) (hB : 0 ≤ B) (hD : 0 ≤ D) :
     A * B ^ (1 - θ) * D ^ (1 + θ) ≤
-      (1 / 2 : ℝ) * D ^ 2 + lps_power_young_coefficient θ *
+      (1 / 2 : ℝ) * D ^ 2 + lpsPowerYoungCoefficient θ *
         A ^ (2 / (1 - θ)) * B ^ 2 := by
   let p : ℝ := 2 / (1 + θ)
   let q : ℝ := 2 / (1 - θ)
@@ -204,15 +204,15 @@ private theorem lps_power_young {θ : ℝ} (hθ0 : 0 < θ) (hθ1 : θ < 1)
     dsimp [X, Y]
     field_simp [ne_of_gt hLam]
   have hYoung' : A * B ^ (1 - θ) * D ^ (1 + θ) ≤
-      (1 / 2 : ℝ) * D ^ 2 + lps_power_young_coefficient θ *
+      (1 / 2 : ℝ) * D ^ 2 + lpsPowerYoungCoefficient θ *
         A ^ (2 / (1 - θ)) * B ^ 2 := by
     calc
       A * B ^ (1 - θ) * D ^ (1 + θ) = X * Y := hXY.symm
       _ ≤ X ^ p / p + Y ^ q / q := hYoung
       _ = (1 / 2 : ℝ) * D ^ 2 +
-          lps_power_young_coefficient θ * A ^ (2 / (1 - θ)) * B ^ 2 := by
+          lpsPowerYoungCoefficient θ * A ^ (2 / (1 - θ)) * B ^ 2 := by
         rw [hXpow, hYpow]
-        dsimp [C, lps_power_young_coefficient, p, q, lam]
+        dsimp [C, lpsPowerYoungCoefficient, p, q, lam]
   exact hYoung'
 
 private theorem lps_vector_six_bound
@@ -594,7 +594,7 @@ theorem lps_slice_relative_bound_finite_uniform {s : ℝ} (hs : 3 < s)
       (fun x => w x i) (fun x => Dw x i)) :
     |∫ x : Vec3, ∑ i : Fin 3, u x i * ∑ j : Fin 3, w x j * Dw x i j| ≤
       (1 / 2 : ℝ) * (∫ x : Vec3, ∑ i : Fin 3, ∑ j : Fin 3, Dw x i j ^ 2) +
-        (lps_power_young_coefficient (3 / s) *
+        (lpsPowerYoungCoefficient (3 / s) *
           (9 * ((6 : ℝ) * gagliardoNirenbergSobolevConstant.toReal) ^ (3 / s)) ^
             (2 * s / (s - 3))) *
           (eLpNorm (fun x : Vec3 => vec3EuclideanNorm (u x))
@@ -726,9 +726,9 @@ theorem lps_slice_relative_bound_finite_uniform {s : ℝ} (hs : 3 < s)
         _ = (9 * Cg * U) * W ^ (1 - θ) * D ^ (1 + θ) := by rw [hDpow]
   let Cbase : ℝ := 9 * Cg
   let A : ℝ := Cbase * U
-  let CY : ℝ := lps_power_young_coefficient θ
+  let CY : ℝ := lpsPowerYoungCoefficient θ
   have hCY0 : 0 ≤ CY := by
-    dsimp [CY, lps_power_young_coefficient]
+    dsimp [CY, lpsPowerYoungCoefficient]
     positivity
   have hYoung := lps_power_young (A := A) (B := W) (D := D)
     hθ0 hθ1 (by dsimp [A, Cbase]; positivity) hW0 hD0

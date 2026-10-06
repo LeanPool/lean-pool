@@ -12,6 +12,12 @@ public import LeanPool.CaffarelliKohnNirenberg.Foundation.Parabolic.BallBasics
 public import LeanPool.CaffarelliKohnNirenberg.Foundation.Parabolic.Integration.Scaling
 public import LeanPool.CaffarelliKohnNirenberg.Foundation.Sobolev.WeakDerivative
 
+/-!
+# Pressure Split Data
+
+The decomposition of pressure into local Poisson and harmonic parts.
+-/
+
 public section
 
 open MeasureTheory Set Filter

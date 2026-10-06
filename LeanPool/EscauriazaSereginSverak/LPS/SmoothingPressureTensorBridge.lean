@@ -36,18 +36,19 @@ namespace ESS
 open CKN.Leray
 open CKN.Foundation.Parabolic
 
-@[expose] def lps_tensorBesselSymbol (k : ℕ)
+/-- The Bessel multiplier of order `2 * k` acting on a complex tensor. -/
+@[expose] def lpsTensorBesselSymbol (k : ℕ)
     (p : L2Vec3 × ComplexTensor3) : ComplexTensor3 :=
   (((1 + ‖p.1‖ ^ 2) ^ (-((2 * k : ℕ) : ℝ) / 2) : ℝ) : ℂ) • p.2
 
 private theorem lps_tensorBesselSymbol_measurable (k : ℕ) :
-    Measurable (lps_tensorBesselSymbol k) := by
-  unfold lps_tensorBesselSymbol
+    Measurable (lpsTensorBesselSymbol k) := by
+  unfold lpsTensorBesselSymbol
   fun_prop
 
 private theorem lps_tensorBesselSymbol_norm_le
     (k : ℕ) (ξ : L2Vec3) (F : ComplexTensor3) :
-    ‖lps_tensorBesselSymbol k (ξ, F)‖ ≤ 1 * ‖F‖ := by
+    ‖lpsTensorBesselSymbol k (ξ, F)‖ ≤ 1 * ‖F‖ := by
   have hb : 1 ≤ (1 + ‖ξ‖ ^ 2 : ℝ) := by
     have hs := sq_nonneg ‖ξ‖
     linarith only [hs]
@@ -55,7 +56,7 @@ private theorem lps_tensorBesselSymbol_norm_le
     exact div_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr (by positivity))
       (by norm_num)
   have hw := Real.rpow_le_one_of_one_le_of_nonpos hb he
-  unfold lps_tensorBesselSymbol
+  unfold lpsTensorBesselSymbol
   rw [norm_smul, Complex.norm_real, Real.norm_eq_abs,
     abs_of_nonneg (Real.rpow_nonneg (by positivity) _), one_mul]
   exact mul_le_of_le_one_left (norm_nonneg F) hw
@@ -74,7 +75,7 @@ theorem lps_tensorBessel_fourier_ae
         (Lp.fourierTransformₗᵢ (E := L2Vec3) (F := ComplexTensor3)
           W.toLp : L2Vec3 → ComplexTensor3) ξ := by
   let ℱ := Lp.fourierTransformₗᵢ (E := L2Vec3) (F := ComplexTensor3)
-  let m := lps_tensorBesselSymbol k
+  let m := lpsTensorBesselSymbol k
   have hm : Measurable m := lps_tensorBesselSymbol_measurable k
   have hb : ∀ ξ F, ‖m (ξ, F)‖ ≤ 1 * ‖F‖ := by
     intro ξ F
@@ -89,7 +90,7 @@ theorem lps_tensorBessel_fourier_ae
 
 /-- The clamped physical real velocity path associated with a regularized
 solution on a finite interval. -/
-@[expose] def lps_regR12RealCurvePath
+@[expose] def lpsRegR12RealCurvePath
     (ρ : CKN.Leray.RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
     (a : Vec3 → Vec3) (ha : IsInJ a) (T : ℝ) :
     C(CKN.Leray.RegularizedMildTimeInterval T, RealVectorL2) :=
@@ -99,7 +100,7 @@ solution on a finite interval. -/
         continuous_subtype_val⟩
 
 /-- The high-Bessel Fourier tensor frequency trajectory. -/
-@[expose] def lps_regR12HighTensorFreq
+@[expose] def lpsRegR12HighTensorFreq
     (ρ : CKN.Leray.RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
     (n : ℕ) (T : ℝ) (hT : 0 ≤ T)
     (v : C(CKN.Leray.RegularizedMildTimeInterval T,
@@ -117,8 +118,8 @@ theorem lps_regR12HighTensorFreq_continuous
     (v : C(CKN.Leray.RegularizedMildTimeInterval T,
       BesselPotentialSpace L2Vec3 ComplexVec3
         ((2 * (n + 2) : ℕ) : ℝ) 2)) :
-    Continuous (lps_regR12HighTensorFreq ρ ε hε n T hT v) := by
-  unfold lps_regR12HighTensorFreq
+    Continuous (lpsRegR12HighTensorFreq ρ ε hε n T hT v) := by
+  unfold lpsRegR12HighTensorFreq
   have h := (Lp.fourierTransformₗᵢ L2Vec3 ComplexTensor3).continuous.comp
     ((BesselPotentialSpace.toLpₗᵢ L2Vec3 ComplexTensor3 _ 2).continuous.comp
       (CKN.Leray.regularisedBesselClampedTensorPath_continuous
@@ -160,7 +161,7 @@ theorem lps_regR12Pressure_fourier_high_ae
       fun ξ => (((1 + ‖ξ‖ ^ 2) ^
         (-((2 * (n + 2) : ℕ) : ℝ) / 2) : ℝ) : ℂ) •
         CKN.Leray.pressureApplyFormula ξ
-          ((lps_regR12HighTensorFreq ρ ε hε n T hT v t : ComplexTensorL2) ξ) := by
+          ((lpsRegR12HighTensorFreq ρ ε hε n T hT v t : ComplexTensorL2) ξ) := by
   let V : RealTensorL2 := CKN.Leray.regularizedMildTensor ρ ε hε
     (CKN.Leray.regR12Curve ρ ε hε a ha t)
   let W := CKN.Leray.regularisedBesselClampedTensorPath ρ ε hε
@@ -170,8 +171,8 @@ theorem lps_regR12Pressure_fourier_high_ae
       CKN.Leray.complexifyTensorL2 V := by
     have h := CKN.Leray.regularisedBesselClampedTensorPath_real_toLp
       ρ ε hε (n + 2) T hT v
-      (lps_regR12RealCurvePath ρ ε hε a ha T) hv t
-    have hcurve : lps_regR12RealCurvePath ρ ε hε a ha T ⟨t, ht⟩ =
+      (lpsRegR12RealCurvePath ρ ε hε a ha T) hv t
+    have hcurve : lpsRegR12RealCurvePath ρ ε hε a ha T ⟨t, ht⟩ =
         CKN.Leray.regR12Curve ρ ε hε a ha t := rfl
     simpa only [CKN.Leray.regularizedMildClampedTensorTrajectory,
       CKN.Leray.regularizedMildTimeClamp_eq_of_mem T hT ht, hcurve] using h

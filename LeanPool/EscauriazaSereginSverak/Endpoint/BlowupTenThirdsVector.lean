@@ -8,6 +8,12 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupTenThirds
 
+/-!
+# Blowup Ten Thirds Vector
+
+Space-time integrability of the rescaled velocity at exponent 10/3.
+-/
+
 public section
 
 open MeasureTheory CKN.Foundation.Parabolic

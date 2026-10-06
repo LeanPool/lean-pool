@@ -8,6 +8,12 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupEnergyLpBound
 
+/-!
+# Blowup Energy Mass Bound
+
+Local energy bounds for the rescaled sequence in the endpoint regularity argument.
+-/
+
 public section
 
 open CKN CKN.Foundation.Parabolic MeasureTheory Set

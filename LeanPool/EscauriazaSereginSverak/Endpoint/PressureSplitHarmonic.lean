@@ -11,6 +11,9 @@ public import LeanPool.CaffarelliKohnNirenberg.Pressure.Equation
 public import LeanPool.CaffarelliKohnNirenberg.Pressure.SpatialDerivSupport
 public import LeanPool.CaffarelliKohnNirenberg.ClassEquivalence.DivergenceFreeIntegrand
 
+/-! The source cylinder for the fixed pressure decomposition in
+`lem:pressure-split`. -/
+
 public section
 
 open MeasureTheory Set Filter
@@ -22,8 +25,7 @@ noncomputable section
 
 namespace ESS
 
-/-! The source cylinder for the fixed pressure decomposition in
-`lem:pressure-split`. -/
+
 
 /-- The unit spatial ball used in the fixed pressure decomposition. -/
 @[expose] def pressureSplitBall : Set Vec3 := vec3Ball (0 : Vec3) 1

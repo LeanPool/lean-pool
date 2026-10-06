@@ -8,6 +8,12 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupEnergyNormTransfer
 
+/-!
+# Blowup Gradient Rescale
+
+Gradient estimates for the rescaled sequence used in endpoint compactness.
+-/
+
 public section
 
 open CKN CKN.Foundation.Parabolic MeasureTheory Set Filter

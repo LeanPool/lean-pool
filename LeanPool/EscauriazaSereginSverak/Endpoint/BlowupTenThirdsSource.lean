@@ -10,6 +10,12 @@ public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupTenThirdsTop
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupVelocityMeas
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupGradientSource
 
+/-!
+# Blowup Ten Thirds Source
+
+Space-time integrability of the rescaled velocity at exponent 10/3.
+-/
+
 public section
 
 open CKN CKN.Foundation.Parabolic MeasureTheory Set Filter

@@ -59,6 +59,238 @@ theorem vl_vec_norm_sq_le {F : Vec3 → Vec3} (hF : MemLp F 2 volume) :
     ‖F x‖ ^ 2 ≤ vec3EuclideanNorm (F x) ^ 2 := pow_le_pow_left₀ (norm_nonneg _) h 2
     _ = ∑ i : Fin 3, (F x i) ^ 2 := hE
 
+private theorem vl_component_curves_form_continuousLpCurve
+    {a τ : ℝ} (Zc : Fin 3 → Icc a τ → Lp ℝ 2 volume)
+    (hZmem : ∀ t, MemLp (fun x : Vec3 => fun i => (Zc i t : Vec3 → ℝ) x) 2 volume)
+    (hZc : ∀ i, Continuous (Zc i)) :
+    ∃ Zv : Icc a τ → Lp Vec3 2 volume, Continuous Zv ∧
+      (∀ t i, (fun x => (Zv t : Vec3 → Vec3) x i) =ᵐ[volume]
+        (Zc i t : Vec3 → ℝ)) ∧
+      (∀ t t', ‖Zv t - Zv t'‖ ^ 2 ≤ ∑ i : Fin 3, ‖Zc i t - Zc i t'‖ ^ 2) := by
+  let Zv : Icc a τ → Lp Vec3 2 volume := fun t => (hZmem t).toLp _
+  have hZv_coe : ∀ t i, (fun x => (Zv t : Vec3 → Vec3) x i) =ᵐ[volume]
+      (Zc i t : Vec3 → ℝ) := by
+    intro t i
+    filter_upwards [(hZmem t).coeFn_toLp] with x hx
+    rw [hx]
+  have hdist : ∀ t t', ‖Zv t - Zv t'‖ ^ 2 ≤ ∑ i : Fin 3, ‖Zc i t - Zc i t'‖ ^ 2 := by
+    intro t t'
+    have hsub : Zv t - Zv t' = ((hZmem t).sub (hZmem t')).toLp _ :=
+      (MemLp.toLp_sub _ _).symm
+    rw [hsub]
+    refine (vl_vec_norm_sq_le _).trans_eq ?_
+    refine Finset.sum_congr rfl fun i _ => ?_
+    rw [vl_Lp_norm_sq]
+    refine integral_congr_ae ?_
+    filter_upwards [Lp.coeFn_sub (Zc i t) (Zc i t')] with x hx
+    rw [hx]
+    rfl
+  have hZvc : Continuous Zv := by
+    refine continuous_iff_continuousAt.2 fun t₀ => ?_
+    refine tendsto_iff_norm_sub_tendsto_zero.2 ?_
+    have hc : Continuous (fun t => Real.sqrt (∑ i : Fin 3, ‖Zc i t - Zc i t₀‖ ^ 2)) :=
+      (continuous_finsetSum _ fun i _ => ((hZc i).sub continuous_const).norm.pow 2).sqrt
+    have hlim : Tendsto (fun t => Real.sqrt (∑ i : Fin 3, ‖Zc i t - Zc i t₀‖ ^ 2)) (𝓝 t₀)
+        (𝓝 0) := by
+      simpa using hc.tendsto t₀
+    exact squeeze_zero (fun t => norm_nonneg _)
+      (fun t => Real.le_sqrt_of_sq_le (hdist t t₀)) hlim
+  exact ⟨Zv, hZvc, hZv_coe, hdist⟩
+
+private theorem vl_make_measurable_coordinate_versions
+    {μ : Measure (Vec3 × ℝ)} (z v g₀ : Vec3 × ℝ → Vec3)
+    (F G : Vec3 × ℝ → Fin 3 → Fin 3 → ℝ)
+    (hz : MemLp z 2 μ) (hv : AEStronglyMeasurable v μ)
+    (hF : ∀ j i, MemLp (fun p => F p j i) 2 μ)
+    (hg : MemLp g₀ 2 μ) (hG : ∀ j i, MemLp (fun p => G p j i) 2 μ) :
+    ∃ z' v' F' G' g',
+      (∀ i, StronglyMeasurable (fun p => z' p i)) ∧
+      (∀ j, StronglyMeasurable (fun p => v' p j)) ∧
+      (∀ j i, StronglyMeasurable (fun p => F' p j i)) ∧
+      (∀ j i, StronglyMeasurable (fun p => G' p j i)) ∧
+      (∀ i, StronglyMeasurable (fun p => g' p i)) ∧
+      (∀ i, MemLp (fun p => z' p i) 2 μ) ∧
+      (∀ j i, MemLp (fun p => F' p j i) 2 μ) ∧
+      (∀ j i, MemLp (fun p => G' p j i) 2 μ) ∧
+      (∀ i, MemLp (fun p => g' p i) 2 μ) ∧
+      (∀ i, (fun p => z p i) =ᵐ[μ] fun p => z' p i) ∧
+      (∀ j, (fun p => v p j) =ᵐ[μ] fun p => v' p j) ∧
+      (∀ j i, (fun p => F p j i) =ᵐ[μ] fun p => F' p j i) ∧
+      (∀ j i, (fun p => G p j i) =ᵐ[μ] fun p => G' p j i) ∧
+      (∀ i, (fun p => g₀ p i) =ᵐ[μ] fun p => g' p i) := by
+  have hzi : ∀ i, MemLp (fun p => z p i) 2 μ := fun i => memLp_pi_iff.1 hz i
+  have hgi : ∀ i, MemLp (fun p => g₀ p i) 2 μ := fun i => memLp_pi_iff.1 hg i
+  have hvj : ∀ j, AEStronglyMeasurable (fun p => v p j) μ := fun j =>
+    (continuous_apply j).comp_aestronglyMeasurable hv
+  let z' : Vec3 × ℝ → Vec3 := fun p i => (hzi i).aestronglyMeasurable.mk _ p
+  let v' : Vec3 × ℝ → Vec3 := fun p j => (hvj j).mk _ p
+  let F' : Vec3 × ℝ → Fin 3 → Fin 3 → ℝ := fun p j i => (hF j i).aestronglyMeasurable.mk _ p
+  let G' : Vec3 × ℝ → Fin 3 → Fin 3 → ℝ := fun p j i => (hG j i).aestronglyMeasurable.mk _ p
+  let g' : Vec3 × ℝ → Vec3 := fun p i => (hgi i).aestronglyMeasurable.mk _ p
+  have hz'e : ∀ i, (fun p => z p i) =ᵐ[μ] fun p => z' p i := fun i =>
+    (hzi i).aestronglyMeasurable.ae_eq_mk
+  have hv'e : ∀ j, (fun p => v p j) =ᵐ[μ] fun p => v' p j := fun j =>
+    (hvj j).ae_eq_mk
+  have hF'e : ∀ j i, (fun p => F p j i) =ᵐ[μ] fun p => F' p j i := fun j i =>
+    (hF j i).aestronglyMeasurable.ae_eq_mk
+  have hG'e : ∀ j i, (fun p => G p j i) =ᵐ[μ] fun p => G' p j i := fun j i =>
+    (hG j i).aestronglyMeasurable.ae_eq_mk
+  have hg'e : ∀ i, (fun p => g₀ p i) =ᵐ[μ] fun p => g' p i := fun i =>
+    (hgi i).aestronglyMeasurable.ae_eq_mk
+  exact ⟨z', v', F', G', g',
+    (fun i => (hzi i).aestronglyMeasurable.stronglyMeasurable_mk),
+    (fun j => (hvj j).stronglyMeasurable_mk),
+    (fun j i => (hF j i).aestronglyMeasurable.stronglyMeasurable_mk),
+    (fun j i => (hG j i).aestronglyMeasurable.stronglyMeasurable_mk),
+    (fun i => (hgi i).aestronglyMeasurable.stronglyMeasurable_mk),
+    (fun i => (hzi i).ae_eq (hz'e i)),
+    (fun j i => (hF j i).ae_eq (hF'e j i)),
+    (fun j i => (hG j i).ae_eq (hG'e j i)),
+    (fun i => (hgi i).ae_eq (hg'e i)), hz'e, hv'e, hF'e, hG'e, hg'e⟩
+
+private theorem vl_transport_weak_equation_and_pairing_trace
+    {a τ : ℝ} {z v g₀ z' v' g' : Vec3 × ℝ → Vec3}
+    {F G F' G' : Vec3 × ℝ → Fin 3 → Fin 3 → ℝ}
+    (hzv : ∀ᵐ p ∂(volume.restrict (vlSlab a τ)), z p = z' p)
+    (hvv : ∀ᵐ p ∂(volume.restrict (vlSlab a τ)), v p = v' p)
+    (hgv : ∀ᵐ p ∂(volume.restrict (vlSlab a τ)), g₀ p = g' p)
+    (hFv : ∀ᵐ p ∂(volume.restrict (vlSlab a τ)), F p = F' p)
+    (hGv : ∀ᵐ p ∂(volume.restrict (vlSlab a τ)), G p = G' p)
+    (hweak : ∀ φ ∈ CKN.spaceTimeTestFunction (V := Vec3) (univ : Set Vec3) (Ioo a τ),
+      ∫ p in vlSlab a τ, ∑ i : Fin 3, z p i *
+          (-vorticityTestTimeDerivative φ p i - vorticityTestLaplacian φ p i) =
+        ∫ p in vlSlab a τ, (∑ j : Fin 3, ∑ i : Fin 3,
+          (v p j * z p i - z p j * v p i - F p j i - G p j i) *
+            CKN.spatialPartial (fun q : Vec3 × ℝ => φ q i) j p +
+          ∑ i : Fin 3, g₀ p i * φ p i))
+    (z₀ : Vec3 → Vec3)
+    (htrace : ∀ ψ : Vec3 → Vec3, ContDiff ℝ (⊤ : ℕ∞) ψ → HasCompactSupport ψ →
+      ∃ c : ℝ → ℝ, ContinuousOn c (Icc a τ) ∧
+        c a = ∫ x, ∑ i : Fin 3, z₀ x i * ψ x i ∧
+        ∀ᵐ t ∂(volume.restrict (Ioo a τ)),
+          c t = ∫ x, ∑ i : Fin 3, z (x, t) i * ψ x i) :
+    (∀ φ ∈ CKN.spaceTimeTestFunction (V := Vec3) (univ : Set Vec3) (Ioo a τ),
+      ∫ p in vlSlab a τ, ∑ i : Fin 3, z' p i *
+          (-vorticityTestTimeDerivative φ p i - vorticityTestLaplacian φ p i) =
+        ∫ p in vlSlab a τ, (∑ j : Fin 3, ∑ i : Fin 3,
+          (v' p j * z' p i - z' p j * v' p i - F' p j i - G' p j i) *
+            CKN.spatialPartial (fun q : Vec3 × ℝ => φ q i) j p +
+          ∑ i : Fin 3, g' p i * φ p i)) ∧
+    (∀ᵐ t ∂(volume.restrict (Ioo a τ)), ∀ i,
+      (fun x => z (x, t) i) =ᵐ[volume] fun x => z' (x, t) i) ∧
+    (∀ ψ : Vec3 → Vec3, ContDiff ℝ (⊤ : ℕ∞) ψ → HasCompactSupport ψ →
+      ∃ c : ℝ → ℝ, ContinuousOn c (Icc a τ) ∧
+        c a = ∫ x, ∑ i : Fin 3, z₀ x i * ψ x i ∧
+        ∀ᵐ t ∂(volume.restrict (Ioo a τ)),
+          c t = ∫ x, ∑ i : Fin 3, z' (x, t) i * ψ x i) := by
+  have hweak' : ∀ φ ∈ CKN.spaceTimeTestFunction (V := Vec3) (univ : Set Vec3) (Ioo a τ),
+      ∫ p in vlSlab a τ, ∑ i : Fin 3, z' p i *
+          (-vorticityTestTimeDerivative φ p i - vorticityTestLaplacian φ p i) =
+        ∫ p in vlSlab a τ, (∑ j : Fin 3, ∑ i : Fin 3,
+          (v' p j * z' p i - z' p j * v' p i - F' p j i - G' p j i) *
+            CKN.spatialPartial (fun q : Vec3 × ℝ => φ q i) j p +
+          ∑ i : Fin 3, g' p i * φ p i) := by
+    intro φ hφ
+    refine (integral_congr_ae ?_).trans ((hweak φ hφ).trans (integral_congr_ae ?_))
+    · filter_upwards [hzv] with p hp
+      rw [hp]
+    · filter_upwards [hzv, hvv, hFv, hGv, hgv] with p h1 h2 h3 h4 h5
+      rw [h1, h2, h3, h4, h5]
+  have hslice : ∀ᵐ t ∂(volume.restrict (Ioo a τ)), ∀ i,
+      (fun x => z (x, t) i) =ᵐ[volume] fun x => z' (x, t) i := by
+    apply ae_all_iff.2
+    intro i
+    have hieq : (fun p => z p i) =ᵐ[volume.restrict (vlSlab a τ)]
+        fun p => z' p i := hzv.mono fun p hp => congrArg (fun w : Vec3 => w i) hp
+    exact vlSlab_slice_ae_eq hieq
+  have htrace' : ∀ ψ : Vec3 → Vec3, ContDiff ℝ (⊤ : ℕ∞) ψ → HasCompactSupport ψ →
+      ∃ c : ℝ → ℝ, ContinuousOn c (Icc a τ) ∧
+        c a = ∫ x, ∑ i : Fin 3, z₀ x i * ψ x i ∧
+        ∀ᵐ t ∂(volume.restrict (Ioo a τ)),
+          c t = ∫ x, ∑ i : Fin 3, z' (x, t) i * ψ x i := by
+    intro ψ hψ hψc
+    obtain ⟨c, hc, hca, hct⟩ := htrace ψ hψ hψc
+    refine ⟨c, hc, hca, ?_⟩
+    filter_upwards [hct, hslice] with t ht hs
+    rw [ht]
+    refine integral_congr_ae ?_
+    filter_upwards [ae_all_iff.2 hs] with x hx
+    exact Finset.sum_congr rfl fun i _ => by rw [hx i]
+  exact ⟨hweak', hslice, htrace'⟩
+
+private theorem vl_vector_equalities_of_coordinate_equalities
+    {μ : Measure (Vec3 × ℝ)} {z v g₀ z' v' g' : Vec3 × ℝ → Vec3}
+    {F G F' G' : Vec3 × ℝ → Fin 3 → Fin 3 → ℝ} {M : ℝ}
+    (hz : ∀ i, (fun p => z p i) =ᵐ[μ] fun p => z' p i)
+    (hv : ∀ j, (fun p => v p j) =ᵐ[μ] fun p => v' p j)
+    (hg : ∀ i, (fun p => g₀ p i) =ᵐ[μ] fun p => g' p i)
+    (hF : ∀ j i, (fun p => F p j i) =ᵐ[μ] fun p => F' p j i)
+    (hG : ∀ j i, (fun p => G p j i) =ᵐ[μ] fun p => G' p j i)
+    (hbound : ∀ᵐ p ∂μ, vec3EuclideanNorm (v p) ≤ M) :
+    (∀ᵐ p ∂μ, z p = z' p) ∧ (∀ᵐ p ∂μ, v p = v' p) ∧
+    (∀ᵐ p ∂μ, g₀ p = g' p) ∧ (∀ᵐ p ∂μ, F p = F' p) ∧
+    (∀ᵐ p ∂μ, G p = G' p) ∧ (∀ᵐ p ∂μ, vec3EuclideanNorm (v' p) ≤ M) := by
+  have hzv : ∀ᵐ p ∂μ, z p = z' p := by
+    filter_upwards [ae_all_iff.2 hz] with p hp
+    funext i
+    exact hp i
+  have hvv : ∀ᵐ p ∂μ, v p = v' p := by
+    filter_upwards [ae_all_iff.2 hv] with p hp
+    funext j
+    exact hp j
+  have hgv : ∀ᵐ p ∂μ, g₀ p = g' p := by
+    filter_upwards [ae_all_iff.2 hg] with p hp
+    funext i
+    exact hp i
+  have hFv : ∀ᵐ p ∂μ, F p = F' p := by
+    filter_upwards [ae_all_iff.2 fun j => ae_all_iff.2 fun i => hF j i] with p hp
+    funext j i
+    exact hp j i
+  have hGv : ∀ᵐ p ∂μ, G p = G' p := by
+    filter_upwards [ae_all_iff.2 fun j => ae_all_iff.2 fun i => hG j i] with p hp
+    funext j i
+    exact hp j i
+  have hvb' : ∀ᵐ p ∂μ, vec3EuclideanNorm (v' p) ≤ M := by
+    filter_upwards [hbound, hvv] with p h1 h2
+    rwa [← h2]
+  exact ⟨hzv, hvv, hgv, hFv, hGv, hvb'⟩
+
+private theorem vl_spatial_energy_integral_as_time_trace
+    {a τ s : ℝ} (hs : s ∈ Icc a τ) (z' : Vec3 × ℝ → Vec3)
+    (Zc : Fin 3 → Icc a τ → Lp ℝ 2 volume)
+    (hz : ∀ i, MemLp (fun p => z' p i) 2 (volume.restrict (vlSlab a τ)))
+    (hZtrace : ∀ i, ∀ᵐ r ∂(volume.restrict (Ioo a τ)), ∀ hr : r ∈ Icc a τ,
+      (Zc i ⟨r, hr⟩ : Vec3 → ℝ) =ᵐ[volume] fun x => z' (x, r) i)
+    (e : ℝ → ℝ)
+    (he_at : ∀ r (hr : r ∈ Icc a τ), e r = ∑ i : Fin 3, ‖Zc i ⟨r, hr⟩‖ ^ 2) :
+    ∫ p in vlSlab a s, ∑ i : Fin 3, (z' p i) ^ 2 = ∫ r in Ioo a s, e r := by
+  have hint : Integrable (fun p => ∑ i : Fin 3, (z' p i) ^ 2)
+      (volume.restrict (vlSlab a s)) :=
+    integrable_finsetSum _ fun i _ => (vlSlab_memLp_mono hs.2 (hz i)).integrable_sq
+  rw [vlSlab_integral_eq hint]
+  refine setIntegral_congr_ae measurableSet_Ioo ?_
+  have hae := ae_restrict_of_ae_restrict_of_subset (Ioo_subset_Ioo_right hs.2)
+    (ae_all_iff.2 fun i => hZtrace i)
+  rw [ae_restrict_iff' measurableSet_Ioo] at hae
+  filter_upwards [hae] with r hr hrI
+  have hrI' : r ∈ Icc a τ := ⟨hrI.1.le, hrI.2.le.trans hs.2⟩
+  have hri : ∀ i, (Zc i ⟨r, hrI'⟩ : Vec3 → ℝ) =ᵐ[volume] fun x => z' (x, r) i :=
+    fun i => hr i hrI'
+  symm
+  calc
+    e r = ∑ i : Fin 3, ‖Zc i ⟨r, hrI'⟩‖ ^ 2 := he_at r hrI'
+    _ = ∑ i : Fin 3, ∫ x, (z' (x, r) i) ^ 2 := by
+      refine Finset.sum_congr rfl fun i _ => ?_
+      rw [vl_Lp_norm_sq]
+      refine integral_congr_ae ?_
+      filter_upwards [hri i] with x hx
+      rw [hx]
+    _ = ∫ x, ∑ i : Fin 3, (z' (x, r) i) ^ 2 := by
+      refine (integral_finsetSum _ fun i _ => ?_).symm
+      refine (Lp.memLp (Zc i ⟨r, hrI'⟩)).integrable_sq.congr ?_
+      filter_upwards [hri i] with x hx
+      rw [hx]
+
 /-- `lem:localized-vorticity-energy`. -/
 theorem localizedVorticityEnergy :
     ∃ C : ℝ, 0 ≤ C ∧
@@ -104,91 +336,15 @@ theorem localizedVorticityEnergy :
   intro a τ M hat z v g₀ F G z₀ hz hv hvb hF hg hG hz₀ hweak htrace
   set μQ := (volume : Measure (Vec3 × ℝ)).restrict (vlSlab a τ) with hμQ
   -- components of the data
-  have hzi : ∀ i, MemLp (fun p => z p i) 2 μQ := fun i => memLp_pi_iff.1 hz i
-  have hgi : ∀ i, MemLp (fun p => g₀ p i) 2 μQ := fun i => memLp_pi_iff.1 hg i
   have hz₀i : ∀ i, MemLp (fun x => z₀ x i) 2 volume := fun i => memLp_pi_iff.1 hz₀ i
-  have hvj : ∀ j, AEStronglyMeasurable (fun p => v p j) μQ := fun j =>
-    (continuous_apply j).comp_aestronglyMeasurable hv
-  -- measurable versions of the data
-  let z' : Vec3 × ℝ → Vec3 := fun p i => (hzi i).aestronglyMeasurable.mk _ p
-  let v' : Vec3 × ℝ → Vec3 := fun p j => (hvj j).mk _ p
-  let F' : Vec3 × ℝ → Fin 3 → Fin 3 → ℝ := fun p j i => (hF j i).aestronglyMeasurable.mk _ p
-  let G' : Vec3 × ℝ → Fin 3 → Fin 3 → ℝ := fun p j i => (hG j i).aestronglyMeasurable.mk _ p
-  let g' : Vec3 × ℝ → Vec3 := fun p i => (hgi i).aestronglyMeasurable.mk _ p
-  have hz'm : ∀ i, StronglyMeasurable (fun p => z' p i) := fun i =>
-    (hzi i).aestronglyMeasurable.stronglyMeasurable_mk
-  have hv'm : ∀ j, StronglyMeasurable (fun p => v' p j) := fun j => (hvj j).stronglyMeasurable_mk
-  have hF'm : ∀ j i, StronglyMeasurable (fun p => F' p j i) := fun j i =>
-    (hF j i).aestronglyMeasurable.stronglyMeasurable_mk
-  have hG'm : ∀ j i, StronglyMeasurable (fun p => G' p j i) := fun j i =>
-    (hG j i).aestronglyMeasurable.stronglyMeasurable_mk
-  have hg'm : ∀ i, StronglyMeasurable (fun p => g' p i) := fun i =>
-    (hgi i).aestronglyMeasurable.stronglyMeasurable_mk
-  have hz'e : ∀ i, (fun p => z p i) =ᵐ[μQ] fun p => z' p i := fun i =>
-    (hzi i).aestronglyMeasurable.ae_eq_mk
-  have hv'e : ∀ j, (fun p => v p j) =ᵐ[μQ] fun p => v' p j := fun j => (hvj j).ae_eq_mk
-  have hF'e : ∀ j i, (fun p => F p j i) =ᵐ[μQ] fun p => F' p j i := fun j i =>
-    (hF j i).aestronglyMeasurable.ae_eq_mk
-  have hG'e : ∀ j i, (fun p => G p j i) =ᵐ[μQ] fun p => G' p j i := fun j i =>
-    (hG j i).aestronglyMeasurable.ae_eq_mk
-  have hg'e : ∀ i, (fun p => g₀ p i) =ᵐ[μQ] fun p => g' p i := fun i =>
-    (hgi i).aestronglyMeasurable.ae_eq_mk
-  have hz'L : ∀ i, MemLp (fun p => z' p i) 2 μQ := fun i => (hzi i).ae_eq (hz'e i)
-  have hF'L : ∀ j i, MemLp (fun p => F' p j i) 2 μQ := fun j i => (hF j i).ae_eq (hF'e j i)
-  have hG'L : ∀ j i, MemLp (fun p => G' p j i) 2 μQ := fun j i => (hG j i).ae_eq (hG'e j i)
-  have hg'L : ∀ i, MemLp (fun p => g' p i) 2 μQ := fun i => (hgi i).ae_eq (hg'e i)
-  -- vector almost everywhere equalities
-  have hzv : ∀ᵐ p ∂μQ, z p = z' p := by
-    filter_upwards [ae_all_iff.2 hz'e] with p hp
-    funext i
-    exact hp i
-  have hvv : ∀ᵐ p ∂μQ, v p = v' p := by
-    filter_upwards [ae_all_iff.2 hv'e] with p hp
-    funext j
-    exact hp j
-  have hgv : ∀ᵐ p ∂μQ, g₀ p = g' p := by
-    filter_upwards [ae_all_iff.2 hg'e] with p hp
-    funext i
-    exact hp i
-  have hFv : ∀ᵐ p ∂μQ, F p = F' p := by
-    filter_upwards [ae_all_iff.2 fun j => ae_all_iff.2 fun i => hF'e j i] with p hp
-    funext j i
-    exact hp j i
-  have hGv : ∀ᵐ p ∂μQ, G p = G' p := by
-    filter_upwards [ae_all_iff.2 fun j => ae_all_iff.2 fun i => hG'e j i] with p hp
-    funext j i
-    exact hp j i
-  have hvb' : ∀ᵐ p ∂μQ, vec3EuclideanNorm (v' p) ≤ M := by
-    filter_upwards [hvb, hvv] with p h1 h2
-    rwa [← h2]
-  -- the equation and the trace for the measurable versions
-  have hweak' : (∀ φ ∈ CKN.spaceTimeTestFunction (V := Vec3) (univ : Set Vec3) (Ioo a τ),
-      ∫ p in vlSlab a τ, ∑ i : Fin 3, z' p i *
-          (-vorticityTestTimeDerivative φ p i - vorticityTestLaplacian φ p i) =
-        ∫ p in vlSlab a τ, (∑ j : Fin 3, ∑ i : Fin 3,
-          (v' p j * z' p i - z' p j * v' p i - F' p j i - G' p j i) *
-            CKN.spatialPartial (fun q : Vec3 × ℝ => φ q i) j p +
-          ∑ i : Fin 3, g' p i * φ p i)) := by
-    intro φ hφ
-    refine (integral_congr_ae ?_).trans ((hweak φ hφ).trans (integral_congr_ae ?_))
-    · filter_upwards [hzv] with p hp
-      rw [hp]
-    · filter_upwards [hzv, hvv, hFv, hGv, hgv] with p h1 h2 h3 h4 h5
-      rw [h1, h2, h3, h4, h5]
-  have hslice : ∀ᵐ t ∂(volume.restrict (Ioo a τ)), ∀ i,
-      (fun x => z (x, t) i) =ᵐ[volume] fun x => z' (x, t) i :=
-    ae_all_iff.2 fun i => vlSlab_slice_ae_eq (hz'e i)
-  have htrace' : (∀ ψ : Vec3 → Vec3, ContDiff ℝ (⊤ : ℕ∞) ψ → HasCompactSupport ψ →
-      ∃ c : ℝ → ℝ, ContinuousOn c (Icc a τ) ∧ c a = ∫ x, ∑ i : Fin 3, z₀ x i * ψ x i ∧
-        ∀ᵐ t ∂(volume.restrict (Ioo a τ)), c t = ∫ x, ∑ i : Fin 3, z' (x, t) i * ψ x i) := by
-    intro ψ hψ hψc
-    obtain ⟨c, hc, hca, hct⟩ := htrace ψ hψ hψc
-    refine ⟨c, hc, hca, ?_⟩
-    filter_upwards [hct, hslice] with t ht hs
-    rw [ht]
-    refine integral_congr_ae ?_
-    filter_upwards [ae_all_iff.2 hs] with x hx
-    exact Finset.sum_congr rfl fun i _ => by rw [hx i]
+  obtain ⟨z', v', F', G', g', hz'm, hv'm, hF'm, hG'm, hg'm, hz'L, hF'L,
+      hG'L, hg'L, hz'e, hv'e, hF'e, hG'e, hg'e⟩ :=
+    vl_make_measurable_coordinate_versions z v g₀ F G hz hv hF hg hG
+  obtain ⟨hzv, hvv, hgv, hFv, hGv, hvb'⟩ :=
+    vl_vector_equalities_of_coordinate_equalities hz'e hv'e hg'e hF'e hG'e hvb
+  -- the equation and trace transfer to the measurable versions
+  obtain ⟨hweak', hslice, htrace'⟩ :=
+    vl_transport_weak_equation_and_pairing_trace hzv hvv hgv hFv hGv hweak z₀ htrace
   -- the component heat solutions and their energy estimates
   have sol : ∀ i, VlHeatSolution a τ (fun p => z' p i) (vlCompFlux z' v' F' G' i)
       (fun p => g' p i) (fun x => z₀ x i) := fun i =>
@@ -198,33 +354,8 @@ theorem localizedVorticityEnergy :
   -- the vector curve
   have hZmem : ∀ t, MemLp (fun x : Vec3 => fun i => (Zc i t : Vec3 → ℝ) x) 2 volume :=
     fun t => memLp_pi_iff.2 fun i => Lp.memLp (Zc i t)
-  let Zv : Icc a τ → Lp Vec3 2 (volume : Measure Vec3) := fun t => (hZmem t).toLp _
-  have hZv_coe : ∀ t i, (fun x => (Zv t : Vec3 → Vec3) x i) =ᵐ[volume]
-      (Zc i t : Vec3 → ℝ) := by
-    intro t i
-    filter_upwards [(hZmem t).coeFn_toLp] with x hx
-    rw [hx]
-  have hdist : ∀ t t', ‖Zv t - Zv t'‖ ^ 2 ≤ ∑ i : Fin 3, ‖Zc i t - Zc i t'‖ ^ 2 := by
-    intro t t'
-    have hsub : Zv t - Zv t' = ((hZmem t).sub (hZmem t')).toLp _ := (MemLp.toLp_sub _ _).symm
-    rw [hsub]
-    refine (vl_vec_norm_sq_le _).trans_eq ?_
-    refine Finset.sum_congr rfl fun i _ => ?_
-    rw [vl_Lp_norm_sq]
-    refine integral_congr_ae ?_
-    filter_upwards [Lp.coeFn_sub (Zc i t) (Zc i t')] with x hx
-    rw [hx]
-    rfl
-  have hZvc : Continuous Zv := by
-    refine continuous_iff_continuousAt.2 fun t₀ => ?_
-    refine tendsto_iff_norm_sub_tendsto_zero.2 ?_
-    have hc : Continuous (fun t => Real.sqrt (∑ i : Fin 3, ‖Zc i t - Zc i t₀‖ ^ 2)) :=
-      (continuous_finsetSum _ fun i _ => ((hZc i).1.sub continuous_const).norm.pow 2).sqrt
-    have hlim : Tendsto (fun t => Real.sqrt (∑ i : Fin 3, ‖Zc i t - Zc i t₀‖ ^ 2)) (𝓝 t₀)
-        (𝓝 0) := by
-      simpa using hc.tendsto t₀
-    exact squeeze_zero (fun t => norm_nonneg _)
-      (fun t => Real.le_sqrt_of_sq_le (hdist t t₀)) hlim
+  obtain ⟨Zv, hZvc, hZv_coe, hdist⟩ :=
+    vl_component_curves_form_continuousLpCurve Zc hZmem (fun i => (hZc i).1)
   -- the gradient
   let Dz : Vec3 × ℝ → Fin 3 → Fin 3 → ℝ := fun p i j => Dc i j p
   refine ⟨Zv, Dz, hZvc, ?_, ?_, fun i j => (hZc i).2.2.2.1 j, ?_, ?_⟩
@@ -279,33 +410,8 @@ theorem localizedVorticityEnergy :
         rw [← Finset.sum_add_distrib]
         exact Finset.sum_le_sum fun i _ => (hZc i).2.2.2.2.2 ⟨s, hs⟩
       have hsum := vl_dataEnergy_sum_le sol hF'L hG'L hvb' hs
-      have hzs : ∫ p in vlSlab a s, ∑ i : Fin 3, (z' p i) ^ 2 = ∫ r in Ioo a s, e r := by
-        have hint : Integrable (fun p => ∑ i : Fin 3, (z' p i) ^ 2)
-            (volume.restrict (vlSlab a s)) :=
-          integrable_finsetSum _ fun i _ => (vlSlab_memLp_mono hs.2 (hz'L i)).integrable_sq
-        rw [vlSlab_integral_eq hint]
-        refine setIntegral_congr_ae measurableSet_Ioo ?_
-        have hae := ae_restrict_of_ae_restrict_of_subset (Ioo_subset_Ioo_right hs.2)
-          (ae_all_iff.2 fun i => (hZc i).2.2.1)
-        rw [ae_restrict_iff' measurableSet_Ioo] at hae
-        filter_upwards [hae] with r hr hrI
-        have hrI' : r ∈ Icc a τ := ⟨hrI.1.le, hrI.2.le.trans hs.2⟩
-        have hri : ∀ i, (Zc i ⟨r, hrI'⟩ : Vec3 → ℝ) =ᵐ[volume] fun x => z' (x, r) i :=
-          fun i => hr hrI i hrI'
-        symm
-        calc
-          e r = ∑ i : Fin 3, ‖Zc i ⟨r, hrI'⟩‖ ^ 2 := he_at r hrI'
-          _ = ∑ i : Fin 3, ∫ x, (z' (x, r) i) ^ 2 := by
-            refine Finset.sum_congr rfl fun i _ => ?_
-            rw [vl_Lp_norm_sq]
-            refine integral_congr_ae ?_
-            filter_upwards [hri i] with x hx
-            rw [hx]
-          _ = ∫ x, ∑ i : Fin 3, (z' (x, r) i) ^ 2 := by
-            refine (integral_finsetSum _ fun i _ => ?_).symm
-            refine (Lp.memLp (Zc i ⟨r, hrI'⟩)).integrable_sq.congr ?_
-            filter_upwards [hri i] with x hx
-            rw [hx]
+      have hzs := vl_spatial_energy_integral_as_time_trace hs z' Zc hz'L
+        (fun i => (hZc i).2.2.1) e he_at
       rw [hzs] at hsum
       linarith only [hcomp, hsum]
     have hgr := vl_gronwall hat.le hLpos hec he0 hd0 hineq

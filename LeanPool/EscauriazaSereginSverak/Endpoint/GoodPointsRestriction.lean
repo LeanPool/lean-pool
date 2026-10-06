@@ -30,9 +30,11 @@ noncomputable section
 
 namespace ESS
 
+/-- A scalar product-spacetime test viewed on parabolic spacetime. -/
 @[expose] def parabolicScalarTest (g : Vec3 × ℝ → ℝ) : ParabolicPoint → ℝ :=
   fun z => g (parabolicHomeomorph z)
 
+/-- A vector product-spacetime test viewed on parabolic spacetime. -/
 @[expose] def parabolicVectorTest (g : Vec3 × ℝ → Vec3) : ParabolicPoint → Vec3 :=
   fun z => g (parabolicHomeomorph z)
 

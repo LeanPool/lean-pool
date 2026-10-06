@@ -176,7 +176,7 @@ theorem lps_strong_solution_is_leray_hopf
       filter_upwards [hTrace] with x hx
       simp only [hx, pow_two]
     rw [e2, e1, e0] at hk
-    show ENNReal.ofReal (1 / 2 : ℝ) * (∫⁻ x : Vec3, ENNReal.ofReal
+    change ENNReal.ofReal (1 / 2 : ℝ) * (∫⁻ x : Vec3, ENNReal.ofReal
         (vec3EuclideanNorm (u (x, t₀ + t₁))) ^ (2 : ℝ)) +
       (∫⁻ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 t₁),
         ENNReal.ofReal (spatialGradientSq (fun z : ParabolicPoint => u (z.1, t₀ + z.2))
@@ -215,7 +215,7 @@ theorem lps_strong_solution_is_leray_hopf
     refine h.congr' ?_
     filter_upwards [hnear] with s hs
     have hd : MemLp (fun x : Vec3 => u (x, t₀ + s) - b x) 2 volume := (hmem s hs).sub hb.1
-    show ENNReal.ofReal (∫ x : Vec3, ∑ k : Fin 3,
+    change ENNReal.ofReal (∫ x : Vec3, ∑ k : Fin 3,
         (u (x, t₀ + s) - u (x, t₀ + 0)) k * (u (x, t₀ + s) - u (x, t₀ + 0)) k) =
       ∫⁻ x : Vec3, ENNReal.ofReal (vec3EuclideanNorm (u (x, t₀ + s) - b x)) ^ (2 : ℝ)
     rw [serrin_lintegral_eucl_sq hd]

@@ -42,6 +42,61 @@ theorem essLocal_weakVorticity_parabolicRescale (x₀ : Vec3) (t₀ r : ℝ)
     simp [weakVorticity_zero, weakVorticity_one, weakVorticity_two,
       parabolicRescaleGradient, mul_sub]
 
+private theorem parabolicRescale_inverse_cylinder_mem
+    {r ρ t₀ : ℝ} (hr : 0 < r) {w : ParabolicPoint}
+    (hwspace : vec3EuclideanNorm (w.1 - 0) < ρ)
+    (hwlower : t₀ - r ^ 2 < w.2) (hwupper : w.2 < t₀ + r ^ 2) :
+    (r⁻¹ • w.1, -(r⁻¹ ^ 2 * t₀) + r⁻¹ ^ 2 * w.2) ∈
+      spaceTimeSet (vec3Ball (0 : Vec3) (ρ / r)) (Ioo (-1 : ℝ) 1) := by
+  have hrne : r ≠ 0 := hr.ne'
+  have hk : r⁻¹ ^ 2 * r ^ 2 = 1 := by
+    rw [← mul_pow, inv_mul_cancel₀ hrne, one_pow]
+  have hinv2 : 0 < r⁻¹ ^ 2 := by positivity
+  refine ⟨?_, ?_, ?_⟩
+  · change vec3EuclideanNorm (r⁻¹ • w.1 - 0) < ρ / r
+    rw [sub_zero] at hwspace ⊢
+    rw [vec3EuclideanNorm_smul, abs_of_pos (inv_pos.mpr hr), div_eq_inv_mul]
+    exact mul_lt_mul_of_pos_left hwspace (inv_pos.mpr hr)
+  · change -1 < -(r⁻¹ ^ 2 * t₀) + r⁻¹ ^ 2 * w.2
+    have hlt : r⁻¹ ^ 2 * (-r ^ 2) < r⁻¹ ^ 2 * (w.2 - t₀) :=
+      mul_lt_mul_of_pos_left (by linarith only [hwlower]) hinv2
+    linarith only [hlt, hk]
+
+private theorem rescaledPastTime_contains_two_unit_slab
+    {t₀ r : ℝ} (ht₀ : t₀ ∈ Ioo (-2 : ℝ) 0)
+    (hr1 : r ≤ 1) (hrt : r ≤ -t₀ / 4)
+    (hr2r : r ^ 2 ≤ r) :
+    Ioo (-2 : ℝ) 2 ⊆ CKN.rescaledTime r t₀ (Ioo (-12 : ℝ) 0) := by
+  rintro s ⟨hs1, hs2⟩
+  change t₀ + r ^ 2 * s ∈ Ioo (-12 : ℝ) 0
+  have hr2 : 0 ≤ r ^ 2 := sq_nonneg r
+  have h1 : r ^ 2 * s ≤ r ^ 2 * 2 := mul_le_mul_of_nonneg_left hs2.le hr2
+  have h2 : r ^ 2 * (-2) ≤ r ^ 2 * s := mul_le_mul_of_nonneg_left hs1.le hr2
+  constructor
+  · linarith only [h2, hr2r, hr1, ht₀.1]
+  · linarith only [h1, hr2r, hrt, ht₀.2]
+
+private theorem exists_regular_slab_rescale_radius
+    (t₀ δ : ℝ) (hδ : 0 < δ) (ht₀ : t₀ ∈ Ioo (-2 : ℝ) 0) :
+    ∃ r : ℝ, 0 < r ∧ r ≤ 1 ∧ r ≤ δ / 4 ∧ r ≤ -t₀ / 4 ∧
+      r ≤ (t₀ + 2) / 4 ∧ 0 < -t₀ ∧ 0 < t₀ + 2 := by
+  have hta : 0 < -t₀ := by linarith only [ht₀.2]
+  have htb : 0 < t₀ + 2 := by linarith only [ht₀.1]
+  let r : ℝ := min 1 (min (δ / 4) (min (-t₀ / 4) ((t₀ + 2) / 4)))
+  have hr : 0 < r := lt_min one_pos (lt_min (by positivity)
+    (lt_min (by positivity) (by positivity)))
+  have hr1 : r ≤ 1 := min_le_left _ _
+  have hrδ : r ≤ δ / 4 := (min_le_right _ _).trans (min_le_left _ _)
+  have hrt : r ≤ -t₀ / 4 :=
+    (min_le_right _ _).trans ((min_le_right _ _).trans (min_le_left _ _))
+  have hrt' : r ≤ (t₀ + 2) / 4 :=
+    (min_le_right _ _).trans ((min_le_right _ _).trans (min_le_right _ _))
+  exact ⟨r, hr, hr1, hrδ, hrt, hrt', hta, htb⟩
+  · change -(r⁻¹ ^ 2 * t₀) + r⁻¹ ^ 2 * w.2 < 1
+    have hlt : r⁻¹ ^ 2 * (w.2 - t₀) < r⁻¹ ^ 2 * r ^ 2 :=
+      mul_lt_mul_of_pos_left (by linarith only [hwupper]) hinv2
+    linarith only [hlt, hk]
+
 /-- Near a time at which closed balls times short intervals consist of regular
 points, the weak vorticity of a global suitable solution vanishes on any ball
 of radius larger than `R₂`, provided it vanishes on the half-space
@@ -82,17 +137,8 @@ theorem essLocal_regularSlab_vorticityZero
   obtain ⟨M₀, hM₀, hKbd⟩ := essLocal_regularCompact_velocityBound hKcpt hKreg
   have hKmeas : MeasurableSet K := hKcpt.isClosed.measurableSet
   -- the scale
-  have hta : 0 < -t₀ := by linarith only [ht₀.2]
-  have htb : 0 < t₀ + 2 := by linarith only [ht₀.1]
-  let r : ℝ := min 1 (min (δ / 4) (min (-t₀ / 4) ((t₀ + 2) / 4)))
-  have hr : 0 < r := lt_min one_pos (lt_min (by positivity) (lt_min (by positivity)
-    (by positivity)))
-  have hr1 : r ≤ 1 := min_le_left _ _
-  have hrδ : r ≤ δ / 4 := (min_le_right _ _).trans (min_le_left _ _)
-  have hrt : r ≤ -t₀ / 4 :=
-    (min_le_right _ _).trans ((min_le_right _ _).trans (min_le_left _ _))
-  have hrt' : r ≤ (t₀ + 2) / 4 :=
-    (min_le_right _ _).trans ((min_le_right _ _).trans (min_le_right _ _))
+  obtain ⟨r, hr, hr1, hrδ, hrt, hrt', hta, htb⟩ :=
+    exists_regular_slab_rescale_radius t₀ δ hδ ht₀
   have hr2 : 0 < r ^ 2 := by positivity
   have hr2r : r ^ 2 ≤ r := by nlinarith only [hr, hr1]
   have hrne : r ≠ 0 := hr.ne'
@@ -156,13 +202,7 @@ theorem essLocal_regularSlab_vorticityZero
       simp [CKN.rescaledSpace], hzero] at hscaled
     exact hscaled
   have hJ : Ioo (-2 : ℝ) 2 ⊆ J := by
-    rintro s ⟨hs1, hs2⟩
-    change t₀ + r ^ 2 * s ∈ Ioo (-12 : ℝ) 0
-    have h1 : r ^ 2 * s ≤ r ^ 2 * 2 := mul_le_mul_of_nonneg_left hs2.le hr2.le
-    have h2 : r ^ 2 * (-2) ≤ r ^ 2 * s := mul_le_mul_of_nonneg_left hs1.le hr2.le
-    constructor
-    · linarith only [h2, hr2r, hr1, ht₀.1]
-    · linarith only [h1, hr2r, hrt, hta]
+    simpa [J] using rescaledPastTime_contains_two_unit_slab ht₀ hr1 hrt hr2r
   -- the velocity bound of the rescaled solution
   have hVbd : ∀ᵐ z ∂(volume.restrict
       (spaceTimeSet (vec3Ball 0 (ρ / r + 1)) (Ioo (-2 : ℝ) 2))),
@@ -270,26 +310,10 @@ theorem essLocal_regularSlab_vorticityZero
   have hpull := hTinvqmp.ae ((ae_restrict_iff' hSV).1 hslab)
   refine (ae_restrict_iff' hSU).2 ?_
   filter_upwards [hpull] with w hw hwS
-  have hk : r⁻¹ ^ 2 * r ^ 2 = 1 := by
-    rw [← mul_pow, inv_mul_cancel₀ hrne, one_pow]
-  have hinv2 : 0 < r⁻¹ ^ 2 := by positivity
   have hTinvS : Tinv w ∈ spaceTimeSet (vec3Ball (0 : Vec3) (ρ / r)) (Ioo (-1 : ℝ) 1) := by
     rw [hTinvapply]
     rcases hwS with ⟨hw1, hw2, hw3⟩
-    refine ⟨?_, ?_, ?_⟩
-    · change vec3EuclideanNorm (r⁻¹ • w.1 - 0) < ρ / r
-      have hw1' : vec3EuclideanNorm (w.1 - 0) < ρ := hw1
-      rw [sub_zero] at hw1' ⊢
-      rw [vec3EuclideanNorm_smul, abs_of_pos (inv_pos.mpr hr), div_eq_inv_mul]
-      exact mul_lt_mul_of_pos_left hw1' (inv_pos.mpr hr)
-    · change -1 < -(r⁻¹ ^ 2 * t₀) + r⁻¹ ^ 2 * w.2
-      have hlt : r⁻¹ ^ 2 * (-(r ^ 2)) < r⁻¹ ^ 2 * (w.2 - t₀) :=
-        mul_lt_mul_of_pos_left (by linarith only [hw2]) hinv2
-      linarith only [hlt, hk]
-    · change -(r⁻¹ ^ 2 * t₀) + r⁻¹ ^ 2 * w.2 < 1
-      have hlt : r⁻¹ ^ 2 * (w.2 - t₀) < r⁻¹ ^ 2 * r ^ 2 :=
-        mul_lt_mul_of_pos_left (by linarith only [hw3]) hinv2
-      linarith only [hlt, hk]
+    exact parabolicRescale_inverse_cylinder_mem hr hw1 hw2 hw3
   have hzero := hw hTinvS
   change weakVorticity (parabolicRescaleGradient (0 : Vec3) t₀ r DU) (Tinv w) = 0 at hzero
   rw [essLocal_weakVorticity_parabolicRescale] at hzero

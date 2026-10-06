@@ -70,6 +70,57 @@ private theorem vorticityTestPartial_at_parabolicHomeomorph
   rw [vorticityTestPartial_eq_spatialPartial]
   rfl
 
+private theorem weakVorticity_test_integrable_of_gradient_products
+    {Ω' : Set Vec3} {J : Set ℝ}
+    {Du : ParabolicPoint → Fin 3 → Vec3}
+    (ψ : ParabolicPoint → Vec3)
+    (hgrad : ∀ k i j : Fin 3, IntegrableOn
+      (fun z : ParabolicPoint => Du z i j * ψ z k)
+      (CKN.spaceTimeSet Ω' J) volume)
+    (i : Fin 3) :
+    IntegrableOn (fun z : ParabolicPoint => weakVorticity Du z i * ψ z i)
+      (CKN.spaceTimeSet Ω' J) volume := by
+  fin_cases i
+  · change IntegrableOn
+      (fun z : ParabolicPoint => (Du z 2 1 - Du z 1 2) * ψ z 0)
+      (CKN.spaceTimeSet Ω' J) volume
+    have hsub := (hgrad 0 2 1).sub (hgrad 0 1 2)
+    have heq :
+        ((fun z : ParabolicPoint => Du z 2 1 * ψ z 0) -
+          fun z => Du z 1 2 * ψ z 0) =ᵐ[volume.restrict
+            (CKN.spaceTimeSet Ω' J)]
+        (fun z => (Du z 2 1 - Du z 1 2) * ψ z 0) := by
+      filter_upwards [] with z
+      simp only [Pi.sub_apply]
+      ring
+    exact hsub.congr heq
+  · change IntegrableOn
+      (fun z : ParabolicPoint => (Du z 0 2 - Du z 2 0) * ψ z 1)
+      (CKN.spaceTimeSet Ω' J) volume
+    have hsub := (hgrad 1 0 2).sub (hgrad 1 2 0)
+    have heq :
+        ((fun z : ParabolicPoint => Du z 0 2 * ψ z 1) -
+          fun z => Du z 2 0 * ψ z 1) =ᵐ[volume.restrict
+            (CKN.spaceTimeSet Ω' J)]
+        (fun z => (Du z 0 2 - Du z 2 0) * ψ z 1) := by
+      filter_upwards [] with z
+      simp only [Pi.sub_apply]
+      ring
+    exact hsub.congr heq
+  · change IntegrableOn
+      (fun z : ParabolicPoint => (Du z 1 0 - Du z 0 1) * ψ z 2)
+      (CKN.spaceTimeSet Ω' J) volume
+    have hsub := (hgrad 2 1 0).sub (hgrad 2 0 1)
+    have heq :
+        ((fun z : ParabolicPoint => Du z 1 0 * ψ z 2) -
+          fun z => Du z 0 1 * ψ z 2) =ᵐ[volume.restrict
+            (CKN.spaceTimeSet Ω' J)]
+        (fun z => (Du z 1 0 - Du z 0 1) * ψ z 2) := by
+      filter_upwards [] with z
+      simp only [Pi.sub_apply]
+      ring
+    exact hsub.congr heq
+
 /-- Pairing weak vorticity against a smooth compact field is the velocity
 pairing against its curl on every local box (manuscript
 `lem:vorticity-weak-eq`). -/
@@ -108,7 +159,7 @@ theorem suitableWeakVorticityPairingOnBox
     CKN.component_mem_spaceTimeTestFunction hψ i
   have hcomponentBox (i : Fin 3) :
       tsupport (fun z : Vec3 × ℝ => ψ z i) ⊆ Ω' ×ˢ J := by
-    exact (CKN.tsupport_component_subset (V := Vec3) (ι := Fin 3) ψ i
+    exact (CKN.tsupport_component_subset (ι := Fin 3) ψ i
       (by intro z hz; simp [hz])).trans hψbox'
   have hcurl : vorticityTestCurl ψ ∈ CKN.spaceTimeTestFunction
       (V := Vec3) Ω I := vorticityTestCurl_mem_spaceTimeTestFunction hψ
@@ -156,49 +207,7 @@ theorem suitableWeakVorticityPairingOnBox
   have homegaIntegrable (i : Fin 3) :
       IntegrableOn (fun z : ParabolicPoint => weakVorticity Du z i * ψP z i)
         (CKN.spaceTimeSet Ω' J) volume := by
-    fin_cases i
-    · change IntegrableOn
-        (fun z : ParabolicPoint =>
-          (Du z 2 1 - Du z 1 2) * ψP z 0)
-        (CKN.spaceTimeSet Ω' J) volume
-      have hsub := (hgradIntegrable 0 2 1).sub (hgradIntegrable 0 1 2)
-      have heq :
-          ((fun z : ParabolicPoint => Du z 2 1 * ψP z 0) -
-            fun z => Du z 1 2 * ψP z 0) =ᵐ[volume.restrict
-              (CKN.spaceTimeSet Ω' J)]
-          (fun z => (Du z 2 1 - Du z 1 2) * ψP z 0) := by
-        filter_upwards [] with z
-        simp only [Pi.sub_apply]
-        ring
-      exact hsub.congr heq
-    · change IntegrableOn
-        (fun z : ParabolicPoint =>
-          (Du z 0 2 - Du z 2 0) * ψP z 1)
-        (CKN.spaceTimeSet Ω' J) volume
-      have hsub := (hgradIntegrable 1 0 2).sub (hgradIntegrable 1 2 0)
-      have heq :
-          ((fun z : ParabolicPoint => Du z 0 2 * ψP z 1) -
-            fun z => Du z 2 0 * ψP z 1) =ᵐ[volume.restrict
-              (CKN.spaceTimeSet Ω' J)]
-          (fun z => (Du z 0 2 - Du z 2 0) * ψP z 1) := by
-        filter_upwards [] with z
-        simp only [Pi.sub_apply]
-        ring
-      exact hsub.congr heq
-    · change IntegrableOn
-        (fun z : ParabolicPoint =>
-          (Du z 1 0 - Du z 0 1) * ψP z 2)
-        (CKN.spaceTimeSet Ω' J) volume
-      have hsub := (hgradIntegrable 2 1 0).sub (hgradIntegrable 2 0 1)
-      have heq :
-          ((fun z : ParabolicPoint => Du z 1 0 * ψP z 2) -
-            fun z => Du z 0 1 * ψP z 2) =ᵐ[volume.restrict
-              (CKN.spaceTimeSet Ω' J)]
-          (fun z => (Du z 1 0 - Du z 0 1) * ψP z 2) := by
-        filter_upwards [] with z
-        simp only [Pi.sub_apply]
-        ring
-      exact hsub.congr heq
+    exact weakVorticity_test_integrable_of_gradient_products ψP hgradIntegrable i
   have hcomponent0 :
       ∫ z in CKN.spaceTimeSet Ω' J, weakVorticity Du z 0 * ψP z 0 =
         (∫ z in CKN.spaceTimeSet Ω' J, Du z 2 1 * ψP z 0) -

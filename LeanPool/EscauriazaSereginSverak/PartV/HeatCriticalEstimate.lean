@@ -181,7 +181,7 @@ theorem heatRegG_heatConv_spatial_grad_sq_integrable
     Integrable (fun x : Vec3 => ∑ j : Fin 3,
       (CKN.spatialDeriv
         (fun y => heatRegG η (heatConvVec3 t b y)) j x) ^ 2) volume := by
-  let H := heatRegG_heatConv_h1 hb hbc ht hη
+  let H := heatRegGHeatConvH1 hb hbc ht hη
   have hgrad (j : Fin 3) : MemLp (fun x : Vec3 => H.grad x j) 2 volume := by
     simpa [H, CKN.GradMemL2On, CKN.MemL2On, CKN.MemLpOn,
       CKN.volumeOn, Measure.restrict_univ] using H.gradMemL2 j

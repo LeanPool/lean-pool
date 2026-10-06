@@ -149,7 +149,8 @@ theorem uc_shrinking_average_to_trace
     w (x, 0) = 0 := by
   let g : ParabolicPoint → ℝ := fun z => vec3EuclideanNorm (w z) ^ 2
   have hgcont : ContinuousWithinAt g S (x, 0) :=
-    ((CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm).pow 2).continuousAt.comp_continuousWithinAt hcont
+    ContinuousAt.comp_continuousWithinAt
+      ((CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm).pow 2).continuousAt hcont
   have hg0 : 0 ≤ g (x, 0) := sq_nonneg _
   by_contra hnonzero
   have hgpos : 0 < g (x, 0) := by

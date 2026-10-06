@@ -8,6 +8,12 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupVelocityMeas
 
+/-!
+# Blowup Velocity Uniform
+
+Velocity estimates for the rescaled sequence used in endpoint compactness.
+-/
+
 public section
 
 open MeasureTheory Set Filter CKN CKN.Foundation.Parabolic

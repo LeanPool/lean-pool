@@ -83,7 +83,7 @@ theorem heatRegG_tenThirds_slice {b : Vec3 → Vec3}
           CKN.spatialDeriv
             (fun y => heatRegTest η (heatConvVec3 t b y) i) j x *
           CKN.spatialDeriv (fun y => heatConvVec3 t b y i) j x) := by
-  let H := heatRegG_heatConv_h1 hb hbc ht hη
+  let H := heatRegGHeatConvH1 hb hbc ht hη
   have hmain := h1_tenThirds_lintegral_le H
   have hmem : MemLp H.toFun 2 volume := by
     simpa [CKN.MemL2On, CKN.MemLpOn, CKN.volumeOn, Measure.restrict_univ] using H.memL2

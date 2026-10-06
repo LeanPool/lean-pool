@@ -9,6 +9,12 @@ module
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupSliceScaling
 public import LeanPool.CaffarelliKohnNirenberg.Setting.ExtSobolevBallTime
 
+/-!
+# Blowup Ten Thirds
+
+Space-time integrability of the rescaled velocity at exponent 10/3.
+-/
+
 public section
 open MeasureTheory Set Filter CKN CKN.Foundation.Parabolic
 open scoped ENNReal
@@ -27,15 +33,15 @@ theorem blowup_uniform_tenThirds_scalar
       (volume.restrict (vec3Ball x₀ r ×ˢ J)))
     (hSlice : ∀ k, ∀ᵐ s ∂volume.restrict J,
       ∃ v : CKN.H1Function (vec3Ball x₀ r),
-        (fun x => g k (x,s)) =ᵐ[volume.restrict (vec3Ball x₀ r)] v.toFun ∧
-        (fun x => Dg k (x,s)) =ᵐ[volume.restrict (vec3Ball x₀ r)] v.grad)
+        (fun x => g k (x, s)) =ᵐ[volume.restrict (vec3Ball x₀ r)] v.toFun ∧
+        (fun x => Dg k (x, s)) =ᵐ[volume.restrict (vec3Ball x₀ r)] v.grad)
     (hg₂ : ∀ k, MemLp (g k) 2
       (volume.restrict (vec3Ball x₀ r ×ˢ J)))
     (hDg₂ : ∀ k, MemLp (Dg k) 2
       (volume.restrict (vec3Ball x₀ r ×ˢ J)))
     (A G : ℝ≥0∞) (hA : A < ⊤) (hG : G < ⊤)
     (hAsup : ∀ k,
-      essSup (fun s => eLpNorm (fun x => g k (x,s)) 2
+      essSup (fun s => eLpNorm (fun x => g k (x, s)) 2
         (volume.restrict (vec3Ball x₀ r)))
         (volume.restrict J) ≤ A)
     (hGsup : ∀ k,
@@ -65,7 +71,7 @@ theorem blowup_uniform_tenThirds_scalar
           (ENNReal.mul_lt_top ENNReal.ofReal_lt_top hA10) hJfin⟩)
   refine ⟨K, hK, ?_⟩
   intro k
-  let Aₖ := essSup (fun s => eLpNorm (fun x => g k (x,s)) 2
+  let Aₖ := essSup (fun s => eLpNorm (fun x => g k (x, s)) 2
     (volume.restrict (vec3Ball x₀ r))) (volume.restrict J)
   have hAk : Aₖ < ⊤ := (hAsup k).trans_lt hA
   obtain ⟨hmem, hbound⟩ := hmain x₀ r hr J hJ (g k) (Dg k)

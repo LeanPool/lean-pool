@@ -46,7 +46,7 @@ theorem lps_mixed_cross_density_limits_finite
     (hs : 3 < s)
     (hmix : (∫⁻ t in Ioo 0 T,
       (∫⁻ x : Vec3,
-        ENNReal.ofReal (vec3EuclideanNorm (u (x,t))) ^ s) ^
+        ENNReal.ofReal (vec3EuclideanNorm (u (x, t))) ^ s) ^
           ((2 * s / (s - 3)) / s)) < ⊤) :
     (∀ t, t ∈ Ioo (0 : ℝ) T →
       (∀ᶠ n in atTop, Integrable

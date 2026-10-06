@@ -13,6 +13,12 @@ public import LeanPool.EscauriazaSereginSverak.Endpoint.LocalEnergyMollifierConv
 public import LeanPool.CaffarelliKohnNirenberg.Statements.SpaceTimeTestFunction
 public import Mathlib.MeasureTheory.Function.LpSeminorm.CompareExp
 
+/-!
+# Local Energy Mollified Energy
+
+Local energy identities and limit passages for the endpoint regularity proof.
+-/
+
 public section
 
 open MeasureTheory Set Filter
@@ -125,6 +131,101 @@ theorem localEnergy_tendsto_eLpNorm_mul_sub
   · filter_upwards [hgnBound] with n hn
     exact (hsum n).trans (add_le_add (mul_le_mul_right hn _) le_rfl)
 
+/-- The zero-extended energy inputs have locally integrable components and smooth
+space-time mollifications. -/
+private theorem localEnergy_mollified_input_regularities
+    {U : Set (Vec3 × ℝ)} {u : Vec3 × ℝ → Vec3}
+    {Du : Vec3 × ℝ → Fin 3 → Fin 3 → ℝ} {p : Vec3 × ℝ → ℝ}
+    (hUmeas : MeasurableSet U)
+    (hu4 : MemLp (fun z : Vec3 × ℝ => u z) 4
+      ((volume : Measure (Vec3 × ℝ)).restrict U))
+    (hDu2 : MemLp (fun z : Vec3 × ℝ => Du z) 2
+      ((volume : Measure (Vec3 × ℝ)).restrict U))
+    (hpProd : MemLp p (ENNReal.ofReal (3 / 2 : ℝ))
+      ((volume : Measure (Vec3 × ℝ)).restrict U))
+    {δ : ℝ} (hδ : 0 < δ) :
+    (∀ i, LocallyIntegrable (fun z : Vec3 × ℝ =>
+      U.indicator (fun q => u q i) z) volume) ∧
+    (∀ i j, LocallyIntegrable (fun z : Vec3 × ℝ =>
+      U.indicator (fun q => u q i * u q j) z) volume) ∧
+    (∀ i j, LocallyIntegrable (fun z : Vec3 × ℝ =>
+      U.indicator (fun q => Du q i j) z) volume) ∧
+    LocallyIntegrable (U.indicator p) volume ∧
+    (∀ i, ContDiff ℝ (⊤ : ℕ∞) (fun z =>
+      spaceTimeMollify (U.indicator (fun q => u q i)) δ hδ z)) ∧
+    (∀ i, (fun y : Vec3 × ℝ => U.indicator u y i) =
+      U.indicator (fun q => u q i)) ∧
+    (∀ i, ContDiff ℝ (⊤ : ℕ∞) (fun z =>
+      spaceTimeMollify (fun q => U.indicator u q i) δ hδ z)) ∧
+    (∀ i j, ContDiff ℝ (⊤ : ℕ∞) (fun z =>
+      spaceTimeMollify (U.indicator (fun q => u q i * u q j)) δ hδ z)) ∧
+    (∀ i j, ContDiff ℝ (⊤ : ℕ∞) (fun z =>
+      spaceTimeMollify (U.indicator (fun q => Du q i j)) δ hδ z)) ∧
+    ContDiff ℝ (⊤ : ℕ∞) (spaceTimeMollify (U.indicator p) δ hδ) := by
+  have hu4i (i : Fin 3) : MemLp (fun z : Vec3 × ℝ => u z i) 4
+      ((volume : Measure (Vec3 × ℝ)).restrict U) := (memLp_pi_iff.mp hu4) i
+  have hDu2ij (i j : Fin 3) : MemLp (fun z : Vec3 × ℝ => Du z i j) 2
+      ((volume : Measure (Vec3 × ℝ)).restrict U) :=
+    (memLp_pi_iff.mp ((memLp_pi_iff.mp hDu2) i)) j
+  have hF2ij (i j : Fin 3) : MemLp
+      (fun z : Vec3 × ℝ => u z i * u z j) 2
+      ((volume : Measure (Vec3 × ℝ)).restrict U) :=
+    MeasureTheory.MemLp.mul (p := 4) (q := 4) (r := 2)
+      (hu4i i) (hu4i j)
+  have huExtLp (i : Fin 3) : MemLp
+      (U.indicator (fun z : Vec3 × ℝ => u z i)) 4
+      (volume : Measure (Vec3 × ℝ)) :=
+    (memLp_indicator_iff_restrict hUmeas).2 (hu4i i)
+  have hFExtLp (i j : Fin 3) : MemLp
+      (U.indicator (fun z : Vec3 × ℝ => u z i * u z j)) 2
+      (volume : Measure (Vec3 × ℝ)) :=
+    (memLp_indicator_iff_restrict hUmeas).2 (hF2ij i j)
+  have hGExtLp (i j : Fin 3) : MemLp
+      (U.indicator (fun z : Vec3 × ℝ => Du z i j)) 2
+      (volume : Measure (Vec3 × ℝ)) :=
+    (memLp_indicator_iff_restrict hUmeas).2 (hDu2ij i j)
+  have hpExtLp : MemLp (U.indicator p) (ENNReal.ofReal (3 / 2 : ℝ))
+      (volume : Measure (Vec3 × ℝ)) :=
+    (memLp_indicator_iff_restrict hUmeas).2 hpProd
+  have huLoc (i : Fin 3) : LocallyIntegrable
+      (fun z : Vec3 × ℝ => U.indicator (fun q => u q i) z)
+      (volume : Measure (Vec3 × ℝ)) := huExtLp i |>.locallyIntegrable (by norm_num)
+  have hFLoc (i j : Fin 3) : LocallyIntegrable
+      (fun z : Vec3 × ℝ => U.indicator (fun q => u q i * u q j) z)
+      (volume : Measure (Vec3 × ℝ)) := hFExtLp i j |>.locallyIntegrable (by norm_num)
+  have hGLoc (i j : Fin 3) : LocallyIntegrable
+      (fun z : Vec3 × ℝ => U.indicator (fun q => Du q i j) z)
+      (volume : Measure (Vec3 × ℝ)) := hGExtLp i j |>.locallyIntegrable (by norm_num)
+  have hpLoc : LocallyIntegrable (U.indicator p) (volume : Measure (Vec3 × ℝ)) :=
+    hpExtLp.locallyIntegrable (by norm_num)
+  have huSmooth (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
+      (fun z : Vec3 × ℝ => spaceTimeMollify
+        (U.indicator (fun q => u q i)) δ hδ z) :=
+    spaceTimeMollify_contDiff hδ (huLoc i)
+  have huIndicatorEq (i : Fin 3) :
+      (fun y : Vec3 × ℝ => U.indicator u y i) =
+        U.indicator (fun q => u q i) := by
+    funext y
+    by_cases hy : y ∈ U <;> simp [Set.indicator, hy]
+  have huVectorSmooth (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
+      (fun z : Vec3 × ℝ => spaceTimeMollify
+        (fun q => U.indicator u q i) δ hδ z) := by
+    rw [huIndicatorEq i]
+    exact huSmooth i
+  have hFSmooth (i j : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
+      (fun z : Vec3 × ℝ => spaceTimeMollify
+        (U.indicator (fun q => u q i * u q j)) δ hδ z) :=
+    spaceTimeMollify_contDiff hδ (hFLoc i j)
+  have hGSmooth (i j : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
+      (fun z : Vec3 × ℝ => spaceTimeMollify
+        (U.indicator (fun q => Du q i j)) δ hδ z) :=
+    spaceTimeMollify_contDiff hδ (hGLoc i j)
+  have hpSmooth : ContDiff ℝ (⊤ : ℕ∞)
+      (spaceTimeMollify (U.indicator p) δ hδ) :=
+    spaceTimeMollify_contDiff hδ hpLoc
+  exact ⟨huLoc, hFLoc, hGLoc, hpLoc, huSmooth, huIndicatorEq,
+    huVectorSmooth, hFSmooth, hGSmooth, hpSmooth⟩
+
 /-- A compactly supported smooth energy test has zero mollified energy density on every
 interior scale for which its support stays inside the unit cylinder. -/
 theorem localEnergy_mollified_base_integral_zero
@@ -204,67 +305,9 @@ theorem localEnergy_mollified_base_integral_zero
       ((volume : Measure (Vec3 × ℝ)).restrict U) := by
     have h := localEnergy_memLp_parabolic_to_product hpLp
     simpa [U, B, J] using h
-  have hu4i (i : Fin 3) : MemLp (fun z : Vec3 × ℝ => u z i) 4
-      ((volume : Measure (Vec3 × ℝ)).restrict U) := (memLp_pi_iff.mp hu4) i
-  have hDu2ij (i j : Fin 3) : MemLp (fun z : Vec3 × ℝ => Du z i j) 2
-      ((volume : Measure (Vec3 × ℝ)).restrict U) :=
-    (memLp_pi_iff.mp ((memLp_pi_iff.mp hDu2) i)) j
-  have hF2ij (i j : Fin 3) : MemLp
-      (fun z : Vec3 × ℝ => u z i * u z j) 2
-      ((volume : Measure (Vec3 × ℝ)).restrict U) :=
-    MeasureTheory.MemLp.mul (p := 4) (q := 4) (r := 2)
-      (hu4i i) (hu4i j)
-  have huExtLp (i : Fin 3) : MemLp
-      (U.indicator (fun z : Vec3 × ℝ => u z i)) 4
-      (volume : Measure (Vec3 × ℝ)) :=
-    (memLp_indicator_iff_restrict hUmeas).2 (hu4i i)
-  have hFExtLp (i j : Fin 3) : MemLp
-      (U.indicator (fun z : Vec3 × ℝ => u z i * u z j)) 2
-      (volume : Measure (Vec3 × ℝ)) :=
-    (memLp_indicator_iff_restrict hUmeas).2 (hF2ij i j)
-  have hGExtLp (i j : Fin 3) : MemLp
-      (U.indicator (fun z : Vec3 × ℝ => Du z i j)) 2
-      (volume : Measure (Vec3 × ℝ)) :=
-    (memLp_indicator_iff_restrict hUmeas).2 (hDu2ij i j)
-  have hpExtLp : MemLp (U.indicator p) (ENNReal.ofReal (3 / 2 : ℝ))
-      (volume : Measure (Vec3 × ℝ)) :=
-    (memLp_indicator_iff_restrict hUmeas).2 hpProd
-  have huLoc (i : Fin 3) : LocallyIntegrable
-      (fun z : Vec3 × ℝ => U.indicator (fun q => u q i) z)
-      (volume : Measure (Vec3 × ℝ)) := huExtLp i |>.locallyIntegrable (by norm_num)
-  have hFLoc (i j : Fin 3) : LocallyIntegrable
-      (fun z : Vec3 × ℝ => U.indicator (fun q => u q i * u q j) z)
-      (volume : Measure (Vec3 × ℝ)) := hFExtLp i j |>.locallyIntegrable (by norm_num)
-  have hGLoc (i j : Fin 3) : LocallyIntegrable
-      (fun z : Vec3 × ℝ => U.indicator (fun q => Du q i j) z)
-      (volume : Measure (Vec3 × ℝ)) := hGExtLp i j |>.locallyIntegrable (by norm_num)
-  have hpLoc : LocallyIntegrable (U.indicator p) (volume : Measure (Vec3 × ℝ)) :=
-    hpExtLp.locallyIntegrable (by norm_num)
-  have huSmooth (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
-      (fun z : Vec3 × ℝ => spaceTimeMollify
-        (U.indicator (fun q => u q i)) δ hδ z) :=
-    spaceTimeMollify_contDiff hδ (huLoc i)
-  have huIndicatorEq (i : Fin 3) :
-      (fun y : Vec3 × ℝ => U.indicator u y i) =
-        U.indicator (fun q => u q i) := by
-    funext y
-    by_cases hy : y ∈ U <;> simp [Set.indicator, hy]
-  have huVectorSmooth (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
-      (fun z : Vec3 × ℝ => spaceTimeMollify
-        (fun q => U.indicator u q i) δ hδ z) := by
-    rw [huIndicatorEq i]
-    exact huSmooth i
-  have hFSmooth (i j : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
-      (fun z : Vec3 × ℝ => spaceTimeMollify
-        (U.indicator (fun q => u q i * u q j)) δ hδ z) :=
-    spaceTimeMollify_contDiff hδ (hFLoc i j)
-  have hGSmooth (i j : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
-      (fun z : Vec3 × ℝ => spaceTimeMollify
-        (U.indicator (fun q => Du q i j)) δ hδ z) :=
-    spaceTimeMollify_contDiff hδ (hGLoc i j)
-  have hpSmooth : ContDiff ℝ (⊤ : ℕ∞)
-      (spaceTimeMollify (U.indicator p) δ hδ) :=
-    spaceTimeMollify_contDiff hδ hpLoc
+  have ⟨huLoc, hFLoc, hGLoc, hpLoc, huSmooth, huIndicatorEq,
+      huVectorSmooth, hFSmooth, hGSmooth, hpSmooth⟩ :=
+    localEnergy_mollified_input_regularities hUmeas hu4 hDu2 hpProd hδ
   let uδ : Vec3 × ℝ → Vec3 := fun z i =>
     spaceTimeMollify (fun q => U.indicator u q i) δ hδ z
   let Fδ : Vec3 × ℝ → Fin 3 → Fin 3 → ℝ := fun z i j =>

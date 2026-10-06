@@ -32,6 +32,7 @@ noncomputable section
 
 namespace ESS
 
+/-- The translation and parabolic rescaling homeomorphism centered at the given point. -/
 @[expose] def goodPointRescaleHomeomorph (x₀ : Vec3) (t₀ r : ℝ) (hr : 0 < r) :
     ParabolicPoint ≃ₜ ParabolicPoint :=
   (parabolicHomeomorph.trans
@@ -196,6 +197,56 @@ private theorem goodPointEnergy_rescale
     field_simp
   rw [← mul_assoc, hcoeff]
 
+private theorem goodPointRescale_parabolicDist_symm
+    (x₀ : Vec3) (t₀ r : ℝ) (hr : 0 < r)
+    (z z' : ParabolicPoint) :
+    parabolicDist ((goodPointRescaleHomeomorph x₀ t₀ r hr).symm z)
+        ((goodPointRescaleHomeomorph x₀ t₀ r hr).symm z') =
+      r⁻¹ * parabolicDist z z' := by
+  let Φ := goodPointRescaleHomeomorph x₀ t₀ r hr
+  let z₁ : ParabolicPoint := (-(r⁻¹ • x₀), -((r⁻¹) ^ 2 * t₀))
+  have hinv : Φ.symm = CKN.scalingParabolic r⁻¹ z₁ := by
+    funext y
+    apply parabolicHomeomorph.injective
+    ext <;> simp [Φ, z₁, goodPointRescaleHomeomorph,
+      CKN.scalingParabolic, parabolicTranslate, parabolicScale,
+      Homeomorph.prodCongr, Homeomorph.smulOfNeZero,
+      Homeomorph.addLeft, Units.smul_def, inv_pow]
+  rw [hinv]
+  change max
+      (vec3EuclideanNorm
+        ((z₁.1 + r⁻¹ • z.1) - (z₁.1 + r⁻¹ • z'.1)))
+      (Real.sqrt |(z₁.2 + (r⁻¹) ^ 2 * z.2) -
+        (z₁.2 + (r⁻¹) ^ 2 * z'.2)|) =
+    r⁻¹ * max (vec3EuclideanNorm (z.1 - z'.1))
+      (Real.sqrt |z.2 - z'.2|)
+  have hspace :
+      vec3EuclideanNorm
+          ((z₁.1 + r⁻¹ • z.1) - (z₁.1 + r⁻¹ • z'.1)) =
+        r⁻¹ * vec3EuclideanNorm (z.1 - z'.1) := by
+    have hdiff : (z₁.1 + r⁻¹ • z.1) -
+        (z₁.1 + r⁻¹ • z'.1) = r⁻¹ • (z.1 - z'.1) := by
+      module
+    rw [hdiff, vec3EuclideanNorm_smul, abs_of_pos (inv_pos.mpr hr)]
+  have htime :
+      Real.sqrt |(z₁.2 + (r⁻¹) ^ 2 * z.2) -
+          (z₁.2 + (r⁻¹) ^ 2 * z'.2)| =
+        r⁻¹ * Real.sqrt |z.2 - z'.2| := by
+    have hdiff : (z₁.2 + (r⁻¹) ^ 2 * z.2) -
+        (z₁.2 + (r⁻¹) ^ 2 * z'.2) =
+          (r⁻¹) ^ 2 * (z.2 - z'.2) := by ring
+    rw [hdiff, abs_mul, abs_of_nonneg (sq_nonneg r⁻¹), Real.sqrt_mul
+      (sq_nonneg r⁻¹), Real.sqrt_sq_eq_abs,
+      abs_of_pos (inv_pos.mpr hr)]
+  change max _ _ = r⁻¹ * max _ _
+  rw [hspace, htime]
+  rcases le_total (vec3EuclideanNorm (z.1 - z'.1))
+      (Real.sqrt |z.2 - z'.2|) with hle | hge
+  · rw [max_eq_right hle, max_eq_right
+      (mul_le_mul_of_nonneg_left hle (inv_pos.mpr hr).le)]
+  · rw [max_eq_left hge, max_eq_left
+      (mul_le_mul_of_nonneg_left hge (inv_pos.mpr hr).le)]
+
 /-- CKN Theorem A transports from the unit cylinder to every positive radius,
 with the velocity and pressure normalization used in `lem:thmA-rescaled`. -/
 theorem epsilonRegularityL3_rescaled
@@ -325,49 +376,8 @@ theorem epsilonRegularityL3_rescaled
           (Real.rpow_nonneg (parabolicDist_nonneg y y') γ₀))
     have hdist (z z' : ParabolicPoint) :
         parabolicDist (Φ.symm z) (Φ.symm z') =
-          r⁻¹ * parabolicDist z z' := by
-      let z₁ : ParabolicPoint := (-(r⁻¹ • x₀), -((r⁻¹) ^ 2 * t₀))
-      have hinv : Φ.symm = CKN.scalingParabolic r⁻¹ z₁ := by
-        funext y
-        apply parabolicHomeomorph.injective
-        ext <;> simp [Φ, z₁, goodPointRescaleHomeomorph,
-          CKN.scalingParabolic, parabolicTranslate, parabolicScale,
-          Homeomorph.prodCongr, Homeomorph.smulOfNeZero,
-          Homeomorph.addLeft, Units.smul_def, inv_pow]
-      rw [hinv]
-      change max
-          (vec3EuclideanNorm
-            ((z₁.1 + r⁻¹ • z.1) - (z₁.1 + r⁻¹ • z'.1)))
-          (Real.sqrt |(z₁.2 + (r⁻¹) ^ 2 * z.2) -
-            (z₁.2 + (r⁻¹) ^ 2 * z'.2)|) =
-        r⁻¹ * max (vec3EuclideanNorm (z.1 - z'.1))
-          (Real.sqrt |z.2 - z'.2|)
-      have hspace :
-          vec3EuclideanNorm
-              ((z₁.1 + r⁻¹ • z.1) - (z₁.1 + r⁻¹ • z'.1)) =
-            r⁻¹ * vec3EuclideanNorm (z.1 - z'.1) := by
-        have hdiff : (z₁.1 + r⁻¹ • z.1) -
-            (z₁.1 + r⁻¹ • z'.1) = r⁻¹ • (z.1 - z'.1) := by
-          module
-        rw [hdiff, vec3EuclideanNorm_smul, abs_of_pos (inv_pos.mpr hr)]
-      have htime :
-          Real.sqrt |(z₁.2 + (r⁻¹) ^ 2 * z.2) -
-              (z₁.2 + (r⁻¹) ^ 2 * z'.2)| =
-            r⁻¹ * Real.sqrt |z.2 - z'.2| := by
-        have hdiff : (z₁.2 + (r⁻¹) ^ 2 * z.2) -
-            (z₁.2 + (r⁻¹) ^ 2 * z'.2) =
-              (r⁻¹) ^ 2 * (z.2 - z'.2) := by ring
-        rw [hdiff, abs_mul, abs_of_nonneg (sq_nonneg r⁻¹), Real.sqrt_mul
-          (sq_nonneg r⁻¹), Real.sqrt_sq_eq_abs,
-          abs_of_pos (inv_pos.mpr hr)]
-      change max _ _ = r⁻¹ * max _ _
-      rw [hspace, htime]
-      rcases le_total (vec3EuclideanNorm (z.1 - z'.1))
-          (Real.sqrt |z.2 - z'.2|) with hle | hge
-      · rw [max_eq_right hle, max_eq_right
-          (mul_le_mul_of_nonneg_left hle (inv_pos.mpr hr).le)]
-      · rw [max_eq_left hge, max_eq_left
-          (mul_le_mul_of_nonneg_left hge (inv_pos.mpr hr).le)]
+          r⁻¹ * parabolicDist z z' :=
+      goodPointRescale_parabolicDist_symm x₀ t₀ r hr z z'
     refine ⟨w, hwAE, ?_, ?_⟩
     · intro z hz
       have hy : Φ.symm z ∈ closure (parabolicCylinder 0 0 (1 / 2)) := by

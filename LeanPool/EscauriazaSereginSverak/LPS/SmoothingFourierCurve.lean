@@ -35,21 +35,21 @@ open CKN.Foundation.Parabolic
 
 /-- The bounded frequency symbol for an ordered derivative of a
 high-Bessel field. -/
-@[expose] def lps_dampedWeightSymbol (n : ℕ) (α : List (Fin 3))
+@[expose] def lpsDampedWeightSymbol (n : ℕ) (α : List (Fin 3))
     (ξ : L2Vec3) : ℂ :=
-  lps_dampedFourierWordSymbol n α ξ *
+  lpsDampedFourierWordSymbol n α ξ *
     (((1 + ‖ξ‖ ^ 2) ^ (-2 : ℝ) : ℝ) : ℂ)
 
 /-- The ordered derivative symbol is continuous in frequency. -/
 theorem lps_dampedWeightSymbol_continuous
     (n : ℕ) (α : List (Fin 3)) :
-    Continuous (lps_dampedWeightSymbol n α) :=
+    Continuous (lpsDampedWeightSymbol n α) :=
   (lps_dampedFourierWordSymbol_continuous n α).mul
     CKN.Leray.regR12Weight_continuous
 
 /-- The ordered derivative symbol is an essentially bounded scalar
 multiplier (`prop:lps-smoothing`). -/
-@[expose] def lps_dampedWeightLp
+@[expose] def lpsDampedWeightLp
     (n : ℕ) (α : List (Fin 3))
     (hα : α.length ≤ 2 * (n + 1)) :
     Lp (α := L2Vec3) ℂ ∞ :=
@@ -58,7 +58,7 @@ multiplier (`prop:lps-smoothing`). -/
     ((2 * π) ^ α.length)
     (Filter.Eventually.of_forall fun ξ =>
       lps_dampedFourierWordSymbol_weighted_norm_le n α hα ξ)).toLp
-    (lps_dampedWeightSymbol n α)
+    (lpsDampedWeightSymbol n α)
 
 /-- Applying the ordered bounded multiplier and inverse Fourier
 transform to a continuous high-Bessel frequency path gives a
@@ -71,8 +71,8 @@ theorem lps_dampedFourierCurve_continuous
     (G : I → ComplexVectorL2) (hG : Continuous G) :
     Continuous (fun t : I =>
       (Lp.fourierTransformₗᵢ L2Vec3 ComplexVec3).symm
-        ((lps_dampedWeightLp n α hα) • G t)) := by
-  let A : Lp (α := L2Vec3) ℂ ∞ := lps_dampedWeightLp n α hα
+        ((lpsDampedWeightLp n α hα) • G t)) := by
+  let A : Lp (α := L2Vec3) ℂ ∞ := lpsDampedWeightLp n α hα
   have hdiff (x y : ComplexVectorL2) :
       A • x - A • y = A • (x - y) := by
     simp only [sub_eq_add_neg, Lp.add_smul, Lp.smul_neg]
@@ -91,10 +91,10 @@ frequency formula. -/
 theorem lps_dampedWeightLp_ae_eq
     (n : ℕ) (α : List (Fin 3))
     (hα : α.length ≤ 2 * (n + 1)) :
-    ((lps_dampedWeightLp n α hα : Lp (α := L2Vec3) ℂ ∞) :
+    ((lpsDampedWeightLp n α hα : Lp (α := L2Vec3) ℂ ∞) :
       L2Vec3 → ℂ) =ᵐ[volume]
-      lps_dampedWeightSymbol n α := by
-  unfold lps_dampedWeightLp
+      lpsDampedWeightSymbol n α := by
+  unfold lpsDampedWeightLp
   exact (memLp_top_of_bound
     (lps_dampedWeightSymbol_continuous n α).aestronglyMeasurable
     ((2 * π) ^ α.length)
@@ -109,35 +109,35 @@ theorem lps_dampedSpaceTimeField_ae_eq_curve
     (hα : α.length ≤ 2 * (n + 1))
     (G : ComplexVectorL2) :
     CKN.Leray.regR12WeightedField
-      (lps_dampedFourierWordSymbol n α) G =ᵐ[volume]
+      (lpsDampedFourierWordSymbol n α) G =ᵐ[volume]
       ((Lp.fourierTransformₗᵢ L2Vec3 ComplexVec3).symm
-        ((lps_dampedWeightLp n α hα) • G) : ComplexVectorL2) := by
-  let A : Lp (α := L2Vec3) ℂ ∞ := lps_dampedWeightLp n α hα
+        ((lpsDampedWeightLp n α hα) • G) : ComplexVectorL2) := by
+  let A : Lp (α := L2Vec3) ℂ ∞ := lpsDampedWeightLp n α hα
   let H : ComplexVectorL2 :=
     (Lp.fourierTransformₗᵢ L2Vec3 ComplexVec3).symm (A • G)
   have hGH :
       ((Lp.fourierTransformₗᵢ L2Vec3 ComplexVec3 H : ComplexVectorL2) :
         L2Vec3 → ComplexVec3) =ᵐ[volume]
-      fun ξ => lps_dampedFourierWordSymbol n α ξ •
+      fun ξ => lpsDampedFourierWordSymbol n α ξ •
         (((1 + ‖ξ‖ ^ 2) ^ (-2 : ℝ) : ℝ) : ℂ) •
           (G : L2Vec3 → ComplexVec3) ξ := by
     simp only [H, LinearIsometryEquiv.apply_symm_apply]
     filter_upwards [Lp.coeFn_lpSMul (r := 2) A G,
       lps_dampedWeightLp_ae_eq n α hα] with ξ hsmul hA
     rw [hsmul]
-    change A ξ = lps_dampedWeightSymbol n α ξ at hA
+    change A ξ = lpsDampedWeightSymbol n α ξ at hA
     change A ξ • G ξ = _
     rw [hA]
-    simp only [lps_dampedWeightSymbol, smul_smul]
+    simp only [lpsDampedWeightSymbol, smul_smul]
   exact CKN.Leray.regR12WeightedField_ae_eq
-    (lps_dampedFourierWordSymbol n α)
+    (lpsDampedFourierWordSymbol n α)
     (lps_dampedFourierWordSymbol_continuous n α).aestronglyMeasurable
     ((2 * π) ^ α.length) (by positivity)
     (lps_dampedFourierWordSymbol_norm_le n α hα) G H hGH
 
 /-- The real coordinate of an ordered Fourier derivative is a continuous
 spatial `L²` trajectory after transport from `L2Vec3` to `Vec3`. -/
-@[expose] def lps_dampedScalarCurve
+@[expose] def lpsDampedScalarCurve
     (n : ℕ) (α : List (Fin 3)) (hα : α.length ≤ 2 * (n + 1))
     (i : Fin 3) (G : ℝ → ComplexVectorL2) (t : ℝ) :
     Lp ℝ 2 (volume : Measure Vec3) :=
@@ -145,15 +145,15 @@ spatial `L²` trajectory after transport from `L2Vec3` to `Vec3`. -/
       CKN.Leray.vec3ToL2Vec3_measurePreserving)
     ((CKN.Leray.regR12CoordCLM i).compLpL 2 volume
       ((Lp.fourierTransformₗᵢ L2Vec3 ComplexVec3).symm
-        ((lps_dampedWeightLp n α hα) • G t)))
+        ((lpsDampedWeightLp n α hα) • G t)))
 
 /-- The physical real coordinate inherits the continuous `L²` curve of
 the weighted Fourier trajectory (`prop:lps-smoothing`). -/
 theorem lps_dampedScalarCurve_continuous
     (n : ℕ) (α : List (Fin 3)) (hα : α.length ≤ 2 * (n + 1))
     (i : Fin 3) (G : ℝ → ComplexVectorL2) (hG : Continuous G) :
-    Continuous (lps_dampedScalarCurve n α hα i G) := by
-  unfold lps_dampedScalarCurve
+    Continuous (lpsDampedScalarCurve n α hα i G) := by
+  unfold lpsDampedScalarCurve
   exact (Lp.compMeasurePreservingₗᵢ ℝ (WithLp.toLp 2)
       CKN.Leray.vec3ToL2Vec3_measurePreserving).continuous.comp
     (((CKN.Leray.regR12CoordCLM i).compLpL 2 volume).continuous.comp
@@ -164,13 +164,13 @@ ordered inverse Fourier field almost everywhere. -/
 theorem lps_dampedScalarCurve_ae_eq
     (n : ℕ) (α : List (Fin 3)) (hα : α.length ≤ 2 * (n + 1))
     (i : Fin 3) (G : ℝ → ComplexVectorL2) (t : ℝ) :
-    (lps_dampedScalarCurve n α hα i G t : Vec3 → ℝ) =ᵐ[volume]
+    (lpsDampedScalarCurve n α hα i G t : Vec3 → ℝ) =ᵐ[volume]
       fun x : Vec3 => CKN.Leray.regR12SpaceTimeField
         (CKN.Leray.regR12CoordCLM i)
-        (lps_dampedFourierWordSymbol n α) G (x, t) := by
+        (lpsDampedFourierWordSymbol n α) G (x, t) := by
   let H : ComplexVectorL2 :=
     (Lp.fourierTransformₗᵢ L2Vec3 ComplexVec3).symm
-      ((lps_dampedWeightLp n α hα) • G t)
+      ((lpsDampedWeightLp n α hα) • G t)
   have htransport := Lp.coeFn_compMeasurePreserving
     ((CKN.Leray.regR12CoordCLM i).compLpL 2 volume H)
     CKN.Leray.vec3ToL2Vec3_measurePreserving
@@ -182,18 +182,18 @@ theorem lps_dampedScalarCurve_ae_eq
   have hfield' :=
     CKN.Leray.vec3ToL2Vec3_measurePreserving.quasiMeasurePreserving.ae hfield
   filter_upwards [htransport, hcoord', hfield'] with x hx hc hf
-  have hdef : lps_dampedScalarCurve n α hα i G t =
+  have hdef : lpsDampedScalarCurve n α hα i G t =
       Lp.compMeasurePreserving (WithLp.toLp 2)
         CKN.Leray.vec3ToL2Vec3_measurePreserving
         ((CKN.Leray.regR12CoordCLM i).compLpL 2 volume H) := rfl
   calc
-    (lps_dampedScalarCurve n α hα i G t : Vec3 → ℝ) x =
+    (lpsDampedScalarCurve n α hα i G t : Vec3 → ℝ) x =
         CKN.Leray.regR12CoordCLM i (H (WithLp.toLp 2 x)) := by
           rw [hdef]
           simpa only [Function.comp_apply] using hx.trans hc
     _ = CKN.Leray.regR12SpaceTimeField
         (CKN.Leray.regR12CoordCLM i)
-        (lps_dampedFourierWordSymbol n α) G (x, t) := by
+        (lpsDampedFourierWordSymbol n α) G (x, t) := by
           exact congrArg (CKN.Leray.regR12CoordCLM i) hf.symm
 
 end ESS

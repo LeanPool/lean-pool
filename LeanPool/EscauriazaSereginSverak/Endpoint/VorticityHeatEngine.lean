@@ -79,6 +79,81 @@ theorem vorticity_tendsto_prod_add {a b : ℕ → ℝ} (ha : Tendsto a atTop (�
     exact hb.comp tendsto_snd
   simpa using h1.add h2
 
+private theorem vorticityHeatEngine_differenceGradientEstimate
+    {r R₁ κ C₀ a b : ℝ} {x₀ : Vec3}
+    (hκ : 0 < κ) (hab : a + κ < b) (hba : b ≤ a + 1)
+    (hsmooth : ∀ (x₀ : Vec3) (a b : ℝ) (w : Vec3 × ℝ → ℝ)
+      (F : Fin 3 → Vec3 × ℝ → ℝ),
+      a + κ / 2 ≤ b → b ≤ a + 1 → ContDiff ℝ (⊤ : ℕ∞) w →
+      (∀ j, ContDiff ℝ (⊤ : ℕ∞) (F j)) →
+      (∀ z ∈ vec3Ball x₀ R₁ ×ˢ Ioo a b,
+        timePartial w z - ∑ j : Fin 3, spatialSecondPartial w j j z =
+          ∑ j : Fin 3, spatialPartial (F j) j z) →
+      (∀ t ∈ Icc (a + κ / 2) b,
+        ∫ x in vec3Ball x₀ r, w (x, t) ^ 2 ≤
+          C₀ * ∫ z in vec3Ball x₀ R₁ ×ˢ Ioo a b, (w z ^ 2 + ∑ j : Fin 3, F j z ^ 2)) ∧
+      ∫ z in vec3Ball x₀ r ×ˢ Ioo (a + κ / 2) b, ∑ j : Fin 3, spatialPartial w j z ^ 2 ≤
+        C₀ * ∫ z in vec3Ball x₀ R₁ ×ˢ Ioo a b, (w z ^ 2 + ∑ j : Fin 3, F j z ^ 2))
+    (w₁ w₂ : Vec3 × ℝ → ℝ) (F₁ F₂ : Fin 3 → Vec3 × ℝ → ℝ)
+    (hw₁ : ContDiff ℝ (⊤ : ℕ∞) w₁) (hw₂ : ContDiff ℝ (⊤ : ℕ∞) w₂)
+    (hF₁ : ∀ j, ContDiff ℝ (⊤ : ℕ∞) (F₁ j))
+    (hF₂ : ∀ j, ContDiff ℝ (⊤ : ℕ∞) (F₂ j))
+    (heqn₁ : ∀ z ∈ vec3Ball x₀ R₁ ×ˢ Ioo (a + κ / 2) b,
+      timePartial w₁ z - ∑ j : Fin 3, spatialSecondPartial w₁ j j z =
+        ∑ j : Fin 3, spatialPartial (F₁ j) j z)
+    (heqn₂ : ∀ z ∈ vec3Ball x₀ R₁ ×ˢ Ioo (a + κ / 2) b,
+      timePartial w₂ z - ∑ j : Fin 3, spatialSecondPartial w₂ j j z =
+        ∑ j : Fin 3, spatialPartial (F₂ j) j z) :
+    ∫ z in vec3Ball x₀ r ×ˢ Ioo (a + κ) b,
+        ∑ j : Fin 3, (spatialPartial w₁ j z - spatialPartial w₂ j z) ^ 2 ≤
+      C₀ * ((∫ z in vec3Ball x₀ R₁ ×ˢ Ioo (a + κ / 2) b, (w₁ z - w₂ z) ^ 2) +
+        ∑ j : Fin 3, ∫ z in vec3Ball x₀ R₁ ×ˢ Ioo (a + κ / 2) b,
+          (F₁ j z - F₂ j z) ^ 2) := by
+  let W₁ := vec3Ball x₀ R₁ ×ˢ Ioo (a + κ / 2) b
+  let W' := vec3Ball x₀ r ×ˢ Ioo (a + κ) b
+  have hW₁b : Bornology.IsBounded W₁ :=
+    vorticityBox_isBounded x₀ R₁ _ (Metric.isBounded_Ioo _ _)
+  have hW'b : Bornology.IsBounded W' :=
+    vorticityBox_isBounded x₀ r _ (Metric.isBounded_Ioo _ _)
+  have hD : ContDiff ℝ (⊤ : ℕ∞) (fun z => w₁ z - w₂ z) := hw₁.sub hw₂
+  have hFD : ∀ j, ContDiff ℝ (⊤ : ℕ∞) (fun z => F₁ j z - F₂ j z) :=
+    fun j => (hF₁ j).sub (hF₂ j)
+  have heqD : ∀ z ∈ vec3Ball x₀ R₁ ×ˢ Ioo (a + κ / 2) b,
+      timePartial (fun z : Vec3 × ℝ => w₁ z - w₂ z) z -
+          ∑ j : Fin 3, spatialSecondPartial (fun z : Vec3 × ℝ => w₁ z - w₂ z) j j z =
+        ∑ j : Fin 3, spatialPartial (fun z : Vec3 × ℝ => F₁ j z - F₂ j z) j z := by
+    intro z hz
+    rw [vorticity_timePartial_sub hw₁ hw₂ z]
+    simp only [vorticity_spatialSecondPartial_sub hw₁ hw₂,
+      vorticity_spatialPartial_sub (hF₁ _) (hF₂ _), Finset.sum_sub_distrib]
+    linarith only [heqn₁ z hz, heqn₂ z hz]
+  have hest := (hsmooth x₀ (a + κ / 2) b (fun z => w₁ z - w₂ z)
+    (fun j z => F₁ j z - F₂ j z) (by linarith only [hab]) (by linarith only [hba, hκ])
+    hD hFD heqD).2
+  have hκsplit : a + κ / 2 + κ / 2 = a + κ := by ring
+  rw [hκsplit] at hest
+  have hint1 : IntegrableOn (fun z => (w₁ z - w₂ z) ^ 2) W₁ :=
+    vorticity_integrableOn_of_continuous_bounded (hD.continuous.pow 2) hW₁b
+  have hint2 : ∀ j, IntegrableOn (fun z => (F₁ j z - F₂ j z) ^ 2) W₁ := fun j =>
+    vorticity_integrableOn_of_continuous_bounded ((hFD j).continuous.pow 2) hW₁b
+  have hsplitR : ∫ z in W₁, ((w₁ z - w₂ z) ^ 2 +
+      ∑ j : Fin 3, (F₁ j z - F₂ j z) ^ 2) =
+      (∫ z in W₁, (w₁ z - w₂ z) ^ 2) +
+        ∑ j : Fin 3, ∫ z in W₁, (F₁ j z - F₂ j z) ^ 2 := by
+    rw [integral_add hint1 (integrable_finsetSum _ fun j _ => hint2 j),
+      integral_finsetSum _ fun j _ => hint2 j]
+  have hlhs : ∀ z, ∑ j : Fin 3, spatialPartial (fun z : Vec3 × ℝ => w₁ z - w₂ z) j z ^ 2 =
+      ∑ j : Fin 3, (spatialPartial w₁ j z - spatialPartial w₂ j z) ^ 2 := by
+    intro z
+    exact Finset.sum_congr rfl fun j _ => by
+      rw [vorticity_spatialPartial_sub hw₁ hw₂ j z]
+  calc
+    _ = ∫ z in W', ∑ j : Fin 3,
+        spatialPartial (fun z : Vec3 × ℝ => w₁ z - w₂ z) j z ^ 2 :=
+      integral_congr_ae (Eventually.of_forall fun z => (hlhs z).symm)
+    _ ≤ _ := hest
+    _ = _ := by rw [hsplitR]
+
 private theorem vorticityHeatEngine_core {r R₁ R κ C₀ : ℝ} (hrR₁ : r < R₁)
     (hR₁R : R₁ < R) (hκ : 0 < κ) (hC₀ : 0 ≤ C₀)
     (hsmooth : ∀ (x₀ : Vec3) (a b : ℝ) (w : Vec3 × ℝ → ℝ) (F : Fin 3 → Vec3 × ℝ → ℝ),
@@ -189,46 +264,9 @@ private theorem vorticityHeatEngine_core {r R₁ R κ C₀ : ℝ} (hrR₁ : r < 
         C₀ * ((∫ z in W₁, (wn n z - wn m z) ^ 2) +
           ∑ j : Fin 3, ∫ z in W₁, (Fn n j z - Fn m j z) ^ 2) := by
     intro n m
-    have hD : ContDiff ℝ (⊤ : ℕ∞) (fun z => wn n z - wn m z) := (hwn n).sub (hwn m)
-    have hFD : ∀ j, ContDiff ℝ (⊤ : ℕ∞) (fun z => Fn n j z - Fn m j z) :=
-      fun j => (hFn n j).sub (hFn m j)
-    have heqD : ∀ z ∈ vec3Ball x₀ R₁ ×ˢ Ioo (a + κ / 2) b,
-        timePartial (fun z : Vec3 × ℝ => wn n z - wn m z) z -
-            ∑ j : Fin 3, spatialSecondPartial (fun z : Vec3 × ℝ => wn n z - wn m z) j j z =
-          ∑ j : Fin 3, spatialPartial (fun z : Vec3 × ℝ => Fn n j z - Fn m j z) j z := by
-      intro z hz
-      rw [vorticity_timePartial_sub (hwn n) (hwn m) z]
-      simp only [vorticity_spatialSecondPartial_sub (hwn n) (hwn m),
-        vorticity_spatialPartial_sub (hFn n _) (hFn m _), Finset.sum_sub_distrib]
-      have h1 := heqn n z hz
-      have h2 := heqn m z hz
-      linarith only [h1, h2]
-    have hest := (hsmooth x₀ (a + κ / 2) b (fun z : Vec3 × ℝ => wn n z - wn m z)
-      (fun j (z : Vec3 × ℝ) => Fn n j z - Fn m j z) (by linarith only [hab])
-      (by linarith only [hba, hκ])
-      hD hFD heqD).2
-    rw [hκsplit] at hest
-    have hint1 : IntegrableOn (fun z => (wn n z - wn m z) ^ 2) W₁ :=
-      vorticity_integrableOn_of_continuous_bounded (hD.continuous.pow 2) hW₁b
-    have hint2 : ∀ j, IntegrableOn (fun z => (Fn n j z - Fn m j z) ^ 2) W₁ := fun j =>
-      vorticity_integrableOn_of_continuous_bounded ((hFD j).continuous.pow 2) hW₁b
-    have hsplitR : ∫ z in W₁, ((wn n z - wn m z) ^ 2 +
-        ∑ j : Fin 3, (Fn n j z - Fn m j z) ^ 2) =
-        (∫ z in W₁, (wn n z - wn m z) ^ 2) +
-          ∑ j : Fin 3, ∫ z in W₁, (Fn n j z - Fn m j z) ^ 2 := by
-      rw [integral_add hint1 (integrable_finsetSum _ fun j _ => hint2 j),
-        integral_finsetSum _ fun j _ => hint2 j]
-    have hlhs : ∀ z, ∑ j : Fin 3, spatialPartial (fun z : Vec3 × ℝ => wn n z - wn m z) j z ^ 2 =
-        ∑ j : Fin 3, (spatialPartial (wn n) j z - spatialPartial (wn m) j z) ^ 2 := by
-      intro z
-      exact Finset.sum_congr rfl fun j _ => by
-        rw [vorticity_spatialPartial_sub (hwn n) (hwn m) j z]
-    calc
-      _ = ∫ z in W', ∑ j : Fin 3,
-          spatialPartial (fun z : Vec3 × ℝ => wn n z - wn m z) j z ^ 2 :=
-        integral_congr_ae (Eventually.of_forall fun z => (hlhs z).symm)
-      _ ≤ _ := hest
-      _ = _ := by rw [hsplitR]
+    exact vorticityHeatEngine_differenceGradientEstimate hκ hab hba hsmooth
+      (wn n) (wn m) (Fn n) (Fn m) (hwn n) (hwn m) (hFn n) (hFn m)
+      (heqn n) (heqn m)
   -- the right side of the difference estimate tends to zero
   have hrhs : Tendsto (fun p : ℕ × ℕ => C₀ * ((∫ z in W₁, (wn p.1 z - wn p.2 z) ^ 2) +
       ∑ j : Fin 3, ∫ z in W₁, (Fn p.1 j z - Fn p.2 j z) ^ 2)) atTop (𝓝 0) := by

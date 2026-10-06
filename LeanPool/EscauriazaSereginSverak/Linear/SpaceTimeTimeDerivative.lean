@@ -36,6 +36,7 @@ noncomputable section
 
 namespace ESS
 
+/-- The compact inner interval used to exhaust the positive time interval `(0, τ)`. -/
 @[expose] def timeCompact (τ : ℝ) (n : ℕ) : Set ℝ :=
   Icc (τ / ((n : ℝ) + 2)) (τ - τ / ((n : ℝ) + 2))
 
@@ -48,13 +49,16 @@ private theorem timeCompact_subset_Ioo {τ : ℝ} (hτ : 0 < τ) (n : ℕ) :
   intro s hs
   exact ⟨lt_of_lt_of_le hleft hs.1, lt_of_le_of_lt hs.2 hright⟩
 
+/-- A smooth compactly supported time test whose support lies in one inner interval. -/
 structure IntervalTestWithSupport (τ : ℝ) (n : ℕ) where
+  /-- The scalar time test. -/
   toFun : ℝ → ℝ
   smooth : ContDiff ℝ (⊤ : ℕ∞) toFun
   compact : HasCompactSupport toFun
   supportInterval : tsupport toFun ⊆ Ioo 0 τ
   supportCompact : tsupport toFun ⊆ timeCompact τ n
 
+/-- A time test and its first derivative, viewed as a pair of continuous functions. -/
 @[expose] def intervalTestPair {τ : ℝ} {n : ℕ} (φ : IntervalTestWithSupport τ n) :
     C(ℝ, ℝ) × C(ℝ, ℝ) :=
   (⟨φ.toFun, φ.smooth.continuous⟩,
@@ -84,7 +88,7 @@ private theorem dense_intervalTest_approx {τ : ℝ} {n : ℕ}
       MapsTo (p.2 - pφ.2) (timeCompact τ n) (Ioo (-ε) ε)}
   have hbase : IsOpen {g : C(ℝ, ℝ) | MapsTo g (timeCompact τ n) (Ioo (-ε) ε)} :=
     ContinuousMap.isOpen_setOfPred_mapsTo
-      (by simp [timeCompact]; exact isCompact_Icc) isOpen_Ioo
+      (by simp only [timeCompact]; exact isCompact_Icc) isOpen_Ioo
   have hN : IsOpen N := by
     apply IsOpen.inter
     · exact hbase.preimage (continuous_fst.sub continuous_const)
@@ -293,6 +297,7 @@ private theorem mul_mem_spaceTimeTestFunction {B : Set Vec3} {I : Set ℝ}
   · rw [hts]
     exact Set.prod_mono hηB hψI
 
+/-- The weak time derivative pairing on the spatial section at `x`. -/
 @[expose] def sectionTimePairing {τ : ℝ}
   (w Dtw : ParabolicPoint → Vec3) (i : Fin 3)
     (ψ : ℝ → ℝ) (x : Vec3) : ℝ :=
@@ -607,9 +612,9 @@ private theorem integral_eta_mul_sectionTimePairing_eq_zero
     change closure (Function.support (deriv ψ.toFun)) ⊆ timeCompact τ n
     rw [timeCompact]
     apply closure_minimal
-    intro s hs
-    exact ψ.supportCompact (support_deriv_subset hs)
-    exact isClosed_Icc
+    · intro s hs
+      exact ψ.supportCompact (support_deriv_subset hs)
+    · exact isClosed_Icc
   have htimeK : IsCompact (timeCompact τ n) := by
     simp only [timeCompact]
     exact isCompact_Icc

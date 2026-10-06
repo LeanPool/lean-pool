@@ -8,6 +8,12 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupRieszExteriorDistribution
 
+/-!
+# Blowup Riesz Product Test
+
+Pressure reconstruction and convergence bounds for the rescaled sequence.
+-/
+
 public section
 
 open MeasureTheory Set CKN.Foundation.Parabolic

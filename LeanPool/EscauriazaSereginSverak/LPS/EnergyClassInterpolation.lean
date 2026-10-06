@@ -33,7 +33,7 @@ noncomputable section
 namespace ESS
 
 private theorem lps_eLpNorm_two_pow_two_eq
-    {E : Type} [NormedAddCommGroup E] [MeasurableSpace E] [BorelSpace E]
+    {E : Type} [NormedAddCommGroup E]
     {f : Vec3 → E} (hf : MemLp f 2 volume) :
     eLpNorm f 2 volume ^ (2 : ℝ) = ∫⁻ x : Vec3, ‖f x‖ₑ ^ (2 : ℝ) := by
   have hsq (x : ℝ≥0∞) : (x ^ (1 / (2 : ℝ))) ^ (2 : ℝ) = x := by

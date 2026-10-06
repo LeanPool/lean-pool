@@ -26,9 +26,11 @@ noncomputable section
 
 namespace ESS
 
+/-- The product norm on parabolic space-time used in this identity. -/
 local instance gaussVectorNormedAddCommGroup : NormedAddCommGroup ParabolicPoint :=
   inferInstanceAs (NormedAddCommGroup (Vec3 × ℝ))
 
+/-- The real scalar action compatible with the product norm on parabolic space-time. -/
 local instance gaussVectorNormedSpace : NormedSpace ℝ ParabolicPoint :=
   inferInstanceAs (NormedSpace ℝ (Vec3 × ℝ))
 

@@ -9,6 +9,12 @@ module
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupEnergyPressureSource
 public import LeanPool.CaffarelliKohnNirenberg.ClassEquivalence.VelocityTenThirds
 
+/-!
+# Blowup H1 Slices
+
+Spatial Sobolev slice bounds for the rescaled endpoint sequence.
+-/
+
 public section
 
 open CKN CKN.Foundation.Parabolic MeasureTheory Set Filter

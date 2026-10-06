@@ -17,6 +17,12 @@ public import Mathlib.MeasureTheory.Function.L2Space
 public import Mathlib.MeasureTheory.Integral.Prod
 public import Mathlib.MeasureTheory.Measure.Prod
 
+/-!
+# Small Time Trace
+
+Trace estimates at small positive times in the backward uniqueness argument.
+-/
+
 public section
 
 open MeasureTheory Set CKN CKN.Foundation.Parabolic
@@ -37,15 +43,21 @@ private theorem section_small_time_bound {τ t : ℝ} (hτ : 0 < τ)
     (hwcont : ContinuousOn (fun s => w ((show ParabolicPoint from (x, s)))) (Ico 0 τ))
     (hwzero : w ((show ParabolicPoint from (x, 0))) = 0)
     (hweak : ∀ i : Fin 3,
-      HasWeakDerivOn (Ioo 0 τ) (fun s => w ((show ParabolicPoint from (x, s))) i) (fun s => Dtw ((show ParabolicPoint from (x, s))) i))
-    (hDtwL2 : MemLp (fun s => Dtw ((show ParabolicPoint from (x, s)))) 2 (volume.restrict (Ioo 0 τ))) :
+      HasWeakDerivOn (Ioo 0 τ)
+        (fun s => w ((show ParabolicPoint from (x, s))) i)
+          (fun s => Dtw ((show ParabolicPoint from (x, s))) i))
+    (hDtwL2 :
+      MemLp (fun s => Dtw ((show ParabolicPoint from (x, s)))) 2 (volume.restrict (Ioo 0 τ))) :
     vec3EuclideanNorm (w ((show ParabolicPoint from (x, t)))) ^ 2 ≤
       t * ∫ s in 0..t, vec3EuclideanNorm (Dtw ((show ParabolicPoint from (x, s)))) ^ 2 := by
   have hcoord (i : Fin 3) :
-      |w ((show ParabolicPoint from (x, t))) i| ^ 2 ≤ t * ∫ s in 0..t, |Dtw ((show ParabolicPoint from (x, s))) i| ^ 2 := by
+      |w ((show ParabolicPoint from (x, t))) i| ^ 2 ≤
+        t * ∫ s in 0..t, |Dtw ((show ParabolicPoint from (x, s))) i| ^ 2 :=
+        by
     have hconti : ContinuousOn (fun s => w ((show ParabolicPoint from (x, s))) i) (Ico 0 τ) := by
       exact (continuous_apply i).comp_continuousOn hwcont
-    have hzeroi : w ((show ParabolicPoint from (x, 0))) i = 0 := congrArg (fun v : Vec3 => v i) hwzero
+    have hzeroi : w ((show ParabolicPoint from (x, 0))) i = 0 :=
+      congrArg (fun v : Vec3 => v i) hwzero
     have hcoordLp : MemLp (fun s => Dtw ((show ParabolicPoint from (x, s))) i) 2
         (volume.restrict (Ioo 0 τ)) := by
       simpa only [ContinuousLinearMap.proj_apply] using
@@ -54,7 +66,9 @@ private theorem section_small_time_bound {τ t : ℝ} (hτ : 0 < τ)
     exact abs_sq_le_time_integral_sq_of_continuous_weakDeriv hτ hconti hzeroi
       hcoordLp (hweak i) t ht htτ
   calc
-    vec3EuclideanNorm (w ((show ParabolicPoint from (x, t)))) ^ 2 = ∑ i : Fin 3, |w ((show ParabolicPoint from (x, t))) i| ^ 2 := by
+    vec3EuclideanNorm (w ((show ParabolicPoint from (x, t)))) ^ 2 =
+      ∑ i : Fin 3, |w ((show ParabolicPoint from (x, t))) i| ^ 2 :=
+      by
       rw [vec3EuclideanNorm_sq]
       exact Finset.sum_congr rfl (fun i _ => (sq_abs _).symm)
     _ ≤ ∑ i : Fin 3, t * ∫ s in 0..t, |Dtw ((show ParabolicPoint from (x, s))) i| ^ 2 :=
@@ -76,7 +90,8 @@ private theorem section_small_time_bound {τ t : ℝ} (hτ : 0 < τ)
         simpa [sq_abs] using hiInt
       have hiIntOn : IntegrableOn (fun s => |Dtw ((show ParabolicPoint from (x, s))) i| ^ 2)
           (Ioo 0 τ) volume := hiIntAbs
-      have hiInterval : IntervalIntegrable (fun s => |Dtw ((show ParabolicPoint from (x, s))) i| ^ 2)
+      have hiInterval :
+        IntervalIntegrable (fun s => |Dtw ((show ParabolicPoint from (x, s))) i| ^ 2)
           volume 0 t := by
         apply intervalIntegrable_iff.mpr
         apply hiIntOn.mono_set
@@ -124,7 +139,9 @@ theorem ftc_small_time {B : Set Vec3} {τ : ℝ}
   have hDtwSectionSq := hDtwSq.prod_right_ae
   have hsection : ∀ᵐ x ∂(volume.restrict B),
       (∀ i : Fin 3,
-        HasWeakDerivOn (Ioo 0 τ) (fun s => w ((show ParabolicPoint from (x, s))) i) (fun s => Dtw ((show ParabolicPoint from (x, s))) i)) ∧
+        HasWeakDerivOn (Ioo 0 τ)
+          (fun s => w ((show ParabolicPoint from (x, s))) i)
+            (fun s => Dtw ((show ParabolicPoint from (x, s))) i)) ∧
       MemLp (fun s => Dtw ((show ParabolicPoint from (x, s)))) 2 (volume.restrict (Ioo 0 τ)) := by
     filter_upwards [hweak, hDtwSectionMeas, hDtwSectionSq] with x hxweak hxmeas hxsq
     exact ⟨hxweak, (memLp_two_iff_integrable_sq_norm hxmeas).2 hxsq⟩
@@ -148,7 +165,8 @@ theorem ftc_small_time {B : Set Vec3} {τ : ℝ}
     calc
       ENNReal.ofReal (vec3EuclideanNorm (w ((show ParabolicPoint from (x, t)))) ^ 2) ≤
           ENNReal.ofReal (t * ∫ s in 0..t,
-            vec3EuclideanNorm (Dtw ((show ParabolicPoint from (x, s)))) ^ 2) := ENNReal.ofReal_le_ofReal hx
+            vec3EuclideanNorm (Dtw ((show ParabolicPoint from (x, s)))) ^ 2) :=
+              ENNReal.ofReal_le_ofReal hx
       _ = ENNReal.ofReal t * ENNReal.ofReal
           (∫ s in 0..t, vec3EuclideanNorm (Dtw ((show ParabolicPoint from (x, s)))) ^ 2) :=
         ENNReal.ofReal_mul (le_of_lt ht)

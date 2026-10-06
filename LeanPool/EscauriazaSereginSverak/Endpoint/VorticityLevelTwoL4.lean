@@ -56,6 +56,94 @@ theorem vorticity_sq_sum_three_le (A : Fin 3 → ℝ) :
   simp only [Fin.sum_univ_three]
   nlinarith only [sq_nonneg (A 0 - A 1), sq_nonneg (A 1 - A 2), sq_nonneg (A 0 - A 2)]
 
+private theorem vorticityLevelTwo_nestedBoxGeometry (x₀ : Vec3) (a t₀ : ℝ) :
+    let W : Set (Vec3 × ℝ) := vec3Ball x₀ (14 / 16) ×ˢ Ioo a t₀
+    let W' : Set (Vec3 × ℝ) := vec3Ball x₀ (13 / 16) ×ˢ Ioo (a + 1 / 16) t₀
+    let Wr : Set (Vec3 × ℝ) := vec3Ball x₀ (27 / 32) ×ˢ Ioo (a + 1 / 16) t₀
+    IsOpen W ∧ MeasurableSet W ∧ Bornology.IsBounded W ∧ W' ⊆ W ∧ Wr ⊆ W ∧
+      MeasurableSet W' ∧ Bornology.IsBounded W' ∧ Bornology.IsBounded Wr := by
+  dsimp only
+  let W : Set (Vec3 × ℝ) := vec3Ball x₀ (14 / 16) ×ˢ Ioo a t₀
+  let W' : Set (Vec3 × ℝ) := vec3Ball x₀ (13 / 16) ×ˢ Ioo (a + 1 / 16) t₀
+  let Wr : Set (Vec3 × ℝ) := vec3Ball x₀ (27 / 32) ×ˢ Ioo (a + 1 / 16) t₀
+  have hWo : IsOpen W := vorticityBox_isOpen x₀ _ a t₀
+  have hWm : MeasurableSet W := hWo.measurableSet
+  have hWb : Bornology.IsBounded W := vorticityBox_isBounded x₀ _ _ (Metric.isBounded_Ioo a t₀)
+  have hW'W : W' ⊆ W := by
+    rintro ⟨x, t⟩ ⟨hx, ht1, ht2⟩
+    refine ⟨show vec3EuclideanNorm (x - x₀) < 14 / 16 from
+      lt_trans (show vec3EuclideanNorm (x - x₀) < 13 / 16 from hx) (by norm_num), ?_, ht2⟩
+    change a < t
+    change a + 1 / 16 < t at ht1
+    linarith only [ht1]
+  have hWrW : Wr ⊆ W := by
+    rintro ⟨x, t⟩ ⟨hx, ht1, ht2⟩
+    refine ⟨show vec3EuclideanNorm (x - x₀) < 14 / 16 from
+      lt_trans (show vec3EuclideanNorm (x - x₀) < 27 / 32 from hx) (by norm_num), ?_, ht2⟩
+    change a < t
+    change a + 1 / 16 < t at ht1
+    linarith only [ht1]
+  have hW'm : MeasurableSet W' := (vorticityBox_isOpen x₀ _ _ t₀).measurableSet
+  exact ⟨hWo, hWm, hWb, hW'W, hWrW, hW'm, hWb.subset hW'W, hWb.subset hWrW⟩
+
+private theorem vorticityLevelTwo_indicator_locallyIntegrable
+    {W : Set (Vec3 × ℝ)} (hWm : MeasurableSet W) {f : Vec3 × ℝ → ℝ}
+    (hf : MemLp f 2 (volume.restrict W)) :
+    LocallyIntegrable (W.indicator f) (volume : Measure (Vec3 × ℝ)) := by
+  exact ((integrable_indicator_iff hWm).2 (hf.integrable (by norm_num))).locallyIntegrable
+
+private theorem vorticityLevelTwo_sumL4_of_component_bounds
+    {W W' : Set (Vec3 × ℝ)} {Cg M : ℝ}
+    (hcont : ∀ (f : Vec3 × ℝ → ℝ) (S : Set (Vec3 × ℝ)), Continuous f →
+      Bornology.IsBounded S → IntegrableOn f S)
+    (hWb : Bornology.IsBounded W) (hW'b : Bornology.IsBounded W')
+    (Gn : ℕ → Fin 3 → Fin 3 → Vec3 × ℝ → ℝ)
+    (D2n : ℕ → Fin 3 → Fin 3 → Fin 3 → Vec3 × ℝ → ℝ)
+    (hGn : ∀ n i j, Continuous (Gn n i j))
+    (hD2n : ∀ n i j k, Continuous (D2n n i j k))
+    (hstep : ∀ n i, ∫ z in W', (∑ j : Fin 3, Gn n i j z ^ 2) ^ 2 ≤
+      Cg * M ^ 2 * ∫ z in W, (∑ j : Fin 3, ∑ k : Fin 3, D2n n i j k z ^ 2 +
+        ∑ j : Fin 3, Gn n i j z ^ 2)) :
+    ∀ n, ∫ z in W', (∑ i : Fin 3, ∑ j : Fin 3, Gn n i j z ^ 2) ^ 2 ≤
+      3 * (Cg * M ^ 2 * ((∑ i : Fin 3, ∑ j : Fin 3, ∑ k : Fin 3,
+        ∫ z in W, D2n n i j k z ^ 2) +
+        ∑ i : Fin 3, ∑ j : Fin 3, ∫ z in W, Gn n i j z ^ 2)) := by
+  intro n
+  have hGi : ∀ i j, IntegrableOn (fun z => Gn n i j z ^ 2) W := fun i j =>
+    hcont _ W ((hGn n i j).pow 2) hWb
+  have hDi : ∀ i j k, IntegrableOn (fun z => D2n n i j k z ^ 2) W := fun i j k =>
+    hcont _ W ((hD2n n i j k).pow 2) hWb
+  have hA : IntegrableOn (fun z => (∑ i : Fin 3, ∑ j : Fin 3, Gn n i j z ^ 2) ^ 2) W' :=
+    hcont _ W' ((continuous_finsetSum _ fun i _ =>
+      continuous_finsetSum _ fun j _ => (hGn n i j).pow 2).pow 2) hW'b
+  have hB : IntegrableOn (fun z => 3 * ∑ i : Fin 3, (∑ j : Fin 3, Gn n i j z ^ 2) ^ 2) W' :=
+    (integrable_finsetSum _ fun i _ => hcont _ W'
+      ((continuous_finsetSum _ fun j _ => (hGn n i j).pow 2).pow 2) hW'b).const_mul 3
+  have hAB : ∫ z in W', (∑ i : Fin 3, ∑ j : Fin 3, Gn n i j z ^ 2) ^ 2 ≤
+      ∫ z in W', 3 * ∑ i : Fin 3, (∑ j : Fin 3, Gn n i j z ^ 2) ^ 2 :=
+    integral_mono hA hB fun z => vorticity_sq_sum_three_le (fun i => ∑ j : Fin 3, Gn n i j z ^ 2)
+  calc
+    ∫ z in W', (∑ i : Fin 3, ∑ j : Fin 3, Gn n i j z ^ 2) ^ 2 ≤
+        ∫ z in W', 3 * ∑ i : Fin 3, (∑ j : Fin 3, Gn n i j z ^ 2) ^ 2 := hAB
+    _ = 3 * ∑ i : Fin 3, ∫ z in W', (∑ j : Fin 3, Gn n i j z ^ 2) ^ 2 := by
+      rw [integral_const_mul, integral_finsetSum _ fun i _ => hcont _ W'
+        ((continuous_finsetSum _ fun j _ => (hGn n i j).pow 2).pow 2) hW'b]
+    _ ≤ 3 * ∑ i : Fin 3, Cg * M ^ 2 * ∫ z in W,
+        (∑ j : Fin 3, ∑ k : Fin 3, D2n n i j k z ^ 2 + ∑ j : Fin 3, Gn n i j z ^ 2) := by
+      gcongr with i
+      exact hstep n i
+    _ = _ := by
+      congr 1
+      rw [← Finset.mul_sum]
+      congr 1
+      rw [← Finset.sum_add_distrib]
+      refine Finset.sum_congr rfl fun i _ => ?_
+      rw [integral_add (integrable_finsetSum _ fun j _ => integrable_finsetSum _ fun k _ => hDi i j k)
+          (integrable_finsetSum _ fun j _ => hGi i j),
+        integral_finsetSum _ fun j _ => integrable_finsetSum _ fun k _ => hDi i j k,
+        integral_finsetSum _ fun j _ => hGi i j]
+      rw [Finset.sum_congr rfl fun j _ => integral_finsetSum _ fun k _ => hDi i j k]
+
 /-- The fourth-power bound for the velocity gradient on a smaller box (the `H²` product estimate
 of `lem:vorticity-products`, localized). -/
 theorem vorticityLevelTwo_L4 (M K₀ K₂ : ℝ) (hM : 0 ≤ M) :
@@ -87,33 +175,13 @@ theorem vorticityLevelTwo_L4 (M K₀ K₂ : ℝ) (hM : 0 ≤ M) :
   set W := (vec3Ball x₀ (14 / 16) ×ˢ Ioo a t₀ : Set (Vec3 × ℝ)) with hWdef
   set W' := (vec3Ball x₀ (13 / 16) ×ˢ Ioo (a + 1 / 16) t₀ : Set (Vec3 × ℝ)) with hW'def
   set Wr := (vec3Ball x₀ (27 / 32) ×ˢ Ioo (a + 1 / 16) t₀ : Set (Vec3 × ℝ)) with hWrdef
-  have hWo : IsOpen W := vorticityBox_isOpen x₀ _ a t₀
-  have hWm : MeasurableSet W := hWo.measurableSet
-  have hWb : Bornology.IsBounded W := vorticityBox_isBounded x₀ _ _ (Metric.isBounded_Ioo a t₀)
-  have hW'W : W' ⊆ W := by
-    rintro ⟨x, t⟩ ⟨hx, ht1, ht2⟩
-    refine ⟨show vec3EuclideanNorm (x - x₀) < 14 / 16 from
-      lt_trans (show vec3EuclideanNorm (x - x₀) < 13 / 16 from hx) (by norm_num), ?_, ht2⟩
-    change a < t
-    change a + 1 / 16 < t at ht1
-    linarith only [ht1]
-  have hWrW : Wr ⊆ W := by
-    rintro ⟨x, t⟩ ⟨hx, ht1, ht2⟩
-    refine ⟨show vec3EuclideanNorm (x - x₀) < 14 / 16 from
-      lt_trans (show vec3EuclideanNorm (x - x₀) < 27 / 32 from hx) (by norm_num), ?_, ht2⟩
-    change a < t
-    change a + 1 / 16 < t at ht1
-    linarith only [ht1]
-  have hW'm : MeasurableSet W' := (vorticityBox_isOpen x₀ _ _ t₀).measurableSet
-  have hW'b : Bornology.IsBounded W' := hWb.subset hW'W
-  have hWrb : Bornology.IsBounded Wr := hWb.subset hWrW
-  have hfin : IsFiniteMeasure (volume.restrict W) :=
-    isFiniteMeasure_restrict.2 hWb.measure_lt_top.ne
+  obtain ⟨hWo, hWm, hWb, hW'W, hWrW, hW'm, hW'b, hWrb⟩ :=
+    vorticityLevelTwo_nestedBoxGeometry x₀ a t₀
   have hint : ∀ f : Vec3 × ℝ → ℝ, MemLp f 2 (volume.restrict W) → IntegrableOn f W :=
     fun f hf => hf.integrable (by norm_num)
   have hloc : ∀ f : Vec3 × ℝ → ℝ, MemLp f 2 (volume.restrict W) →
       LocallyIntegrable (W.indicator f) (volume : Measure (Vec3 × ℝ)) := fun f hf =>
-    ((integrable_indicator_iff hWm).2 (hint f hf)).locallyIntegrable
+    vorticityLevelTwo_indicator_locallyIntegrable hWm hf
   obtain ⟨ε, hεpos, hεlim, hεle⟩ := vorticity_engine_radii (show (0 : ℝ) < 1 / 192 by norm_num)
   set Un : ℕ → Fin 3 → Vec3 × ℝ → ℝ := fun n i => vorticityBackMollify W (U i) (ε n) (hεpos n)
   set Gn : ℕ → Fin 3 → Fin 3 → Vec3 × ℝ → ℝ :=
@@ -206,42 +274,8 @@ theorem vorticityLevelTwo_L4 (M K₀ K₂ : ℝ) (hM : 0 ≤ M) :
       _ ≤ _ := h1
       _ = _ := h2
       _ ≤ _ := mul_le_mul_of_nonneg_left h3 (by positivity)
-  have htot : ∀ n, ∫ z in W', (∑ i : Fin 3, ∑ j : Fin 3, Gn n i j z ^ 2) ^ 2 ≤
-      3 * (Cg * M ^ 2 * ((∑ i : Fin 3, ∑ j : Fin 3, ∑ k : Fin 3, ∫ z in W, D2n n i j k z ^ 2) +
-        ∑ i : Fin 3, ∑ j : Fin 3, ∫ z in W, Gn n i j z ^ 2)) := by
-    intro n
-    have hGi : ∀ i j, IntegrableOn (fun z => Gn n i j z ^ 2) W := fun i j =>
-      hcont _ W ((hGn n i j).continuous.pow 2) hWb
-    have hDi : ∀ i j k, IntegrableOn (fun z => D2n n i j k z ^ 2) W := fun i j k =>
-      hcont _ W ((hD2n n i j k).continuous.pow 2) hWb
-    have hA : IntegrableOn (fun z => (∑ i : Fin 3, ∑ j : Fin 3, Gn n i j z ^ 2) ^ 2) W' :=
-      hcont _ W' ((continuous_finsetSum _ fun i _ =>
-        continuous_finsetSum _ fun j _ => (hGn n i j).continuous.pow 2).pow 2) hW'b
-    have hB : IntegrableOn (fun z => 3 * ∑ i : Fin 3, (∑ j : Fin 3, Gn n i j z ^ 2) ^ 2) W' :=
-      (integrable_finsetSum _ fun i _ => hcont _ W' (hLn n i) hW'b).const_mul 3
-    have hAB : ∫ z in W', (∑ i : Fin 3, ∑ j : Fin 3, Gn n i j z ^ 2) ^ 2 ≤
-        ∫ z in W', 3 * ∑ i : Fin 3, (∑ j : Fin 3, Gn n i j z ^ 2) ^ 2 :=
-      integral_mono hA hB fun z => vorticity_sq_sum_three_le (fun i => ∑ j : Fin 3, Gn n i j z ^ 2)
-    calc
-      ∫ z in W', (∑ i : Fin 3, ∑ j : Fin 3, Gn n i j z ^ 2) ^ 2 ≤
-          ∫ z in W', 3 * ∑ i : Fin 3, (∑ j : Fin 3, Gn n i j z ^ 2) ^ 2 := hAB
-      _ = 3 * ∑ i : Fin 3, ∫ z in W', (∑ j : Fin 3, Gn n i j z ^ 2) ^ 2 := by
-        rw [integral_const_mul, integral_finsetSum _ fun i _ => hcont _ W' (hLn n i) hW'b]
-      _ ≤ 3 * ∑ i : Fin 3, Cg * M ^ 2 * ∫ z in W, (∑ j : Fin 3, ∑ k : Fin 3,
-          D2n n i j k z ^ 2 + ∑ j : Fin 3, Gn n i j z ^ 2) := by
-        gcongr with i
-        exact hstepn n i
-      _ = _ := by
-        congr 1
-        rw [← Finset.mul_sum]
-        congr 1
-        rw [← Finset.sum_add_distrib]
-        refine Finset.sum_congr rfl fun i _ => ?_
-        rw [integral_add (integrable_finsetSum _ fun j _ => integrable_finsetSum _ fun k _ =>
-            hDi i j k) (integrable_finsetSum _ fun j _ => hGi i j),
-          integral_finsetSum _ fun j _ => integrable_finsetSum _ fun k _ => hDi i j k,
-          integral_finsetSum _ fun j _ => hGi i j]
-        rw [Finset.sum_congr rfl fun j _ => integral_finsetSum _ fun k _ => hDi i j k]
+  have htot := vorticityLevelTwo_sumL4_of_component_bounds hcont hWb hW'b Gn D2n
+    (fun n i j => (hGn n i j).continuous) (fun n i j k => (hD2n n i j k).continuous) hstepn
   -- the limit of the right sides
   have hWsub : W ⊆ W := subset_rfl
   have hconvW : ∀ f : Vec3 × ℝ → ℝ, MemLp f 2 (volume.restrict W) →
@@ -298,12 +332,11 @@ theorem vorticityLevelTwo_L4 (M K₀ K₂ : ℝ) (hM : 0 ≤ M) :
     filter_upwards [hlimR.eventually (gt_mem_nhds hlimval)] with n hn
     exact (htot n).trans (le_of_lt hn)
   -- Fatou
-  have hW'W' : W' ⊆ W := hW'W
   exact vorticity_integral_le_of_L2_tendsto (μ := volume.restrict W') (ι := Fin 3 × Fin 3)
     (a := fun p n => Gn n p.1 p.2) (A := fun p => G p.1 p.2)
     (fun p n => vorticity_memLp_two_of_continuous_bounded (hGn n p.1 p.2).continuous hW'b)
-    (fun p => (hG p.1 p.2).mono_measure (Measure.restrict_mono hW'W' le_rfl))
-    (fun p => vorticityBackMollify_tendsto_restrict hWm hW'm hW'W' (hG p.1 p.2) hεlim hεpos)
+    (fun p => (hG p.1 p.2).mono_measure (Measure.restrict_mono hW'W le_rfl))
+    (fun p => vorticityBackMollify_tendsto_restrict hWm hW'm hW'W (hG p.1 p.2) hεlim hεpos)
     (H := fun v => (∑ i : Fin 3, ∑ j : Fin 3, v (i, j) ^ 2) ^ 2)
     (by fun_prop) (fun v => by positivity)
     (fun n => hcont _ W' ((continuous_finsetSum _ fun i _ =>

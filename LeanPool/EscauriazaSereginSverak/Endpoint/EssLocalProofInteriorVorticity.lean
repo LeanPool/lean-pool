@@ -9,6 +9,12 @@ module
 public import LeanPool.CaffarelliKohnNirenberg.Statements.RegularPoint
 public import LeanPool.EscauriazaSereginSverak.Endpoint.LocalTimeProjection
 
+/-!
+# Ess Local Proof Interior Vorticity
+
+Local endpoint regularity through vorticity estimates and backward uniqueness.
+-/
+
 public section
 
 open MeasureTheory Set

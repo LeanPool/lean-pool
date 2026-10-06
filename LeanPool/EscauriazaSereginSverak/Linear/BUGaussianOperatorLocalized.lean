@@ -165,9 +165,517 @@ private theorem buGaussian_cutoff_plateau_energy
   · rw [hgrad, Real.sqrt_mul (sq_nonneg κ), Real.sqrt_sq_eq_abs,
       abs_of_nonneg hκ]
 
-/-- The Gaussian cutoff heat operator is bounded separately on the spatial
-transition shell, the final-time strip, and the initial-time strip
-(`lem:bu-gaussian`). -/
+private def buGaussian_cutoff_localized_target
+    {ρ ε c₁ scale : ℝ} (hρ : 0 < ρ)
+    (v : ParabolicPoint → Vec3) (Dv : ParabolicPoint → Fin 3 → Vec3)
+    (D2v : ParabolicPoint → Fin 3 → Fin 3 → Vec3)
+    (Dtv : ParabolicPoint → Vec3) (z : ParabolicPoint) : Prop :=
+  vec3EuclideanNorm
+      (ucCutoffHeat (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+        (ucInitialTimeCutoff ε) v Dv D2v Dtv z) ≤
+    c₁ * scale *
+        (vec3EuclideanNorm
+          (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+            (ucInitialTimeCutoff ε) v z) +
+          3 * Real.sqrt (spatialGradientSq
+            (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v)
+            (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v Dv) z)) +
+    (if z.1 ∈ {y : Vec3 | 13 * ρ / 20 ≤ vec3EuclideanNorm y ∧
+        vec3EuclideanNorm y ≤ 3 * ρ / 4} then
+      (32 + 3 * (cutoffSecondDerivativeConstant / ρ ^ 2) +
+        3 * c₁ * scale * (cutoffGradientConstant / ρ)) *
+          vec3EuclideanNorm (v z) +
+      18 * (cutoffGradientConstant / ρ) *
+        Real.sqrt (spatialGradientSq v Dv z) else 0) +
+    (if 3 / 2 ≤ z.2 ∧ z.2 ≤ 7 / 4 then
+      32 * vec3EuclideanNorm (v z) else 0) +
+    (if ε ≤ z.2 ∧ z.2 ≤ 2 * ε then 8 / ε else 0) *
+      vec3EuclideanNorm (v z)
+
+private theorem buGaussian_cutoff_early_transition_bound
+    {ρ ε c₁ scale : ℝ} (hρ : 0 < ρ) (hε : 0 < ε)
+    (hεsmall : 2 * ε ≤ 1 / 2) (hc₁ : 0 ≤ c₁) (hscale : 0 ≤ scale)
+    (v : ParabolicPoint → Vec3) (Dv : ParabolicPoint → Fin 3 → Vec3)
+    (D2v : ParabolicPoint → Fin 3 → Fin 3 → Vec3)
+    (Dtv : ParabolicPoint → Vec3) {z : ParabolicPoint}
+    (hheat : vec3EuclideanNorm (ucWeakHeatVector D2v Dtv z) ≤
+      c₁ * scale * (vec3EuclideanNorm (v z) +
+        Real.sqrt (spatialGradientSq v Dv z)))
+    (hinner : z.1 ∈ vec3Ball 0 (13 * ρ / 20))
+    (hearly : z.2 ≤ 2 * ε) :
+    vec3EuclideanNorm
+      (ucCutoffHeat (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+        (ucInitialTimeCutoff ε) v Dv D2v Dtv z) ≤
+      c₁ * scale *
+        (vec3EuclideanNorm
+            (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v z) +
+          Real.sqrt (spatialGradientSq
+            (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v)
+            (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v Dv) z)) +
+      (if ε ≤ z.2 ∧ z.2 ≤ 2 * ε then 8 / ε else 0) *
+        vec3EuclideanNorm (v z) ∧
+    (0 ≤ if 3 / 2 ≤ z.2 ∧ z.2 ≤ 7 / 4 then
+      32 * vec3EuclideanNorm (v z) else 0) ∧
+    (if 13 * ρ / 20 ≤ vec3EuclideanNorm z.1 ∧
+        vec3EuclideanNorm z.1 ≤ 3 * ρ / 4 then
+      (32 + 3 * (cutoffSecondDerivativeConstant / ρ ^ 2) +
+        3 * c₁ * scale * (cutoffGradientConstant / ρ)) *
+          vec3EuclideanNorm (v z) +
+      18 * (cutoffGradientConstant / ρ) *
+        Real.sqrt (spatialGradientSq v Dv z) else 0) = 0 := by
+  have hnorm : 0 ≤ vec3EuclideanNorm (v z) := vec3EuclideanNorm_nonneg _
+  have hformula := buGaussian_cutoff_heat_eq_on_plateau_early
+    hρ hinner hearly hεsmall v Dv D2v Dtv
+  have hcut : ucGaussianCutoff ρ hρ ε z =
+      ucInitialTimeCutoff ε z.2 := by
+    simp [ucGaussianCutoff, ucCutoffScalar,
+      buGaussian_spatial_cutoff_eq_one_on_plateau hρ hinner,
+      ucFinalTimeCutoff_eq_one (by
+        exact (lt_of_le_of_lt hearly
+          (lt_of_le_of_lt hεsmall (by norm_num))).le)]
+  have hpartial (j : Fin 3) :
+      spatialPartial (ucGaussianCutoff ρ hρ ε) j z = 0 := by
+    rw [ucGaussianCutoff_spatialPartial hρ ε z j]
+    have hp := buGaussian_spatial_cutoff_partial_zero_on_plateau
+      hρ hinner j z.2
+    have hp' : spatialPartial
+        (fun q : ParabolicPoint => ucSpatialCutoff ρ hρ q.1) j z = 0 := by
+      change spatialPartial
+          (fun q : ParabolicPoint => ucSpatialCutoff ρ hρ q.1) j
+            (z.1, z.2) = 0
+      exact hp
+    rw [hp']
+    simp
+  have henergy := buGaussian_cutoff_plateau_energy hρ
+    (ucInitialTimeCutoff ε z.2)
+    (ucInitialTimeCutoff_bounds ε z.2).1 hcut hpartial v Dv
+  have hnormL : vec3EuclideanNorm (ucWeakHeatVector D2v Dtv z) ≤
+      c₁ * scale * (vec3EuclideanNorm (v z) +
+        Real.sqrt (spatialGradientSq v Dv z)) := hheat
+  have hderiv := ucInitialTimeCutoff_abs_deriv_le_early hε z.2
+  have htriangle : vec3EuclideanNorm
+      (ucInitialTimeCutoff ε z.2 • ucWeakHeatVector D2v Dtv z +
+        deriv (ucInitialTimeCutoff ε) z.2 • v z) ≤
+      ucInitialTimeCutoff ε z.2 *
+          vec3EuclideanNorm (ucWeakHeatVector D2v Dtv z) +
+        |deriv (ucInitialTimeCutoff ε) z.2| * vec3EuclideanNorm (v z) := by
+    calc
+      _ ≤ vec3EuclideanNorm (ucInitialTimeCutoff ε z.2 •
+          ucWeakHeatVector D2v Dtv z) +
+          vec3EuclideanNorm (deriv (ucInitialTimeCutoff ε) z.2 • v z) :=
+        vec3EuclideanNorm_add_le _ _
+      _ = _ := by
+        rw [vec3EuclideanNorm_smul, vec3EuclideanNorm_smul,
+          abs_of_nonneg (ucInitialTimeCutoff_bounds ε z.2).1]
+  have hmain : ucInitialTimeCutoff ε z.2 *
+      vec3EuclideanNorm (ucWeakHeatVector D2v Dtv z) ≤
+      c₁ * scale *
+        (vec3EuclideanNorm
+            (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v z) +
+          Real.sqrt (spatialGradientSq
+            (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v)
+            (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v Dv) z)) := by
+    calc
+      _ ≤ ucInitialTimeCutoff ε z.2 *
+          (c₁ * scale * (vec3EuclideanNorm (v z) +
+            Real.sqrt (spatialGradientSq v Dv z))) :=
+        mul_le_mul_of_nonneg_left hnormL
+          (ucInitialTimeCutoff_bounds ε z.2).1
+      _ = c₁ * scale *
+          (vec3EuclideanNorm
+              (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+                (ucInitialTimeCutoff ε) v z) +
+            Real.sqrt (spatialGradientSq
+              (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+                (ucInitialTimeCutoff ε) v)
+              (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+                (ucInitialTimeCutoff ε) v Dv) z)) := by
+        rw [henergy.1, henergy.2]
+        ring
+  have hlate : 0 ≤ if 3 / 2 ≤ z.2 ∧ z.2 ≤ 7 / 4 then
+      32 * vec3EuclideanNorm (v z) else 0 := by positivity
+  have h := htriangle.trans (add_le_add hmain
+    (mul_le_mul_of_nonneg_right hderiv hnorm))
+  have hearly' : |deriv (ucInitialTimeCutoff ε) z.2| *
+      vec3EuclideanNorm (v z) ≤
+      (if ε ≤ z.2 ∧ z.2 ≤ 2 * ε then 8 / ε else 0) *
+        vec3EuclideanNorm (v z) :=
+    mul_le_mul_of_nonneg_right hderiv hnorm
+  have hlo : ¬ 13 * ρ / 20 ≤ vec3EuclideanNorm z.1 := by
+    have hlt : vec3EuclideanNorm z.1 < 13 * ρ / 20 := by
+      simpa only [mem_vec3Ball, sub_zero] using hinner
+    exact not_le_of_gt hlt
+  have hnotShell : z.1 ∉ {y : Vec3 | 13 * ρ / 20 ≤ vec3EuclideanNorm y ∧
+      vec3EuclideanNorm y ≤ 3 * ρ / 4} := by
+    intro h
+    exact hlo h.1
+  have hShellZero : (if z.1 ∈
+      {y : Vec3 | 13 * ρ / 20 ≤ vec3EuclideanNorm y ∧
+        vec3EuclideanNorm y ≤ 3 * ρ / 4} then
+      (32 + 3 * (cutoffSecondDerivativeConstant / ρ ^ 2) +
+        3 * c₁ * scale * (cutoffGradientConstant / ρ)) *
+          vec3EuclideanNorm (v z) +
+      18 * (cutoffGradientConstant / ρ) *
+        Real.sqrt (spatialGradientSq v Dv z) else 0) = 0 := by
+    by_cases h : z.1 ∈ {y : Vec3 | 13 * ρ / 20 ≤ vec3EuclideanNorm y ∧
+        vec3EuclideanNorm y ≤ 3 * ρ / 4}
+    · exact (hnotShell h).elim
+    · simp [h]
+  have hShellZero' : (if 13 * ρ / 20 ≤ vec3EuclideanNorm z.1 ∧
+      vec3EuclideanNorm z.1 ≤ 3 * ρ / 4 then
+      (32 + 3 * (cutoffSecondDerivativeConstant / ρ ^ 2) +
+        3 * c₁ * scale * (cutoffGradientConstant / ρ)) *
+          vec3EuclideanNorm (v z) +
+      18 * (cutoffGradientConstant / ρ) *
+        Real.sqrt (spatialGradientSq v Dv z) else 0) = 0 := by
+    simpa only [Set.mem_ofPred_eq] using hShellZero
+  have hbound : vec3EuclideanNorm
+      (ucCutoffHeat (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+        (ucInitialTimeCutoff ε) v Dv D2v Dtv z) ≤
+      c₁ * scale *
+        (vec3EuclideanNorm
+            (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v z) +
+          Real.sqrt (spatialGradientSq
+            (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v)
+            (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v Dv) z)) +
+      (if ε ≤ z.2 ∧ z.2 ≤ 2 * ε then 8 / ε else 0) *
+        vec3EuclideanNorm (v z) := by
+    rw [hformula]
+    exact htriangle.trans (add_le_add hmain hearly')
+  exact ⟨hbound, hlate, hShellZero'⟩
+
+private theorem buGaussian_cutoff_localized_interior_early
+    {ρ ε c₁ scale : ℝ} (hρ : 0 < ρ) (hε : 0 < ε)
+    (hεsmall : 2 * ε ≤ 1 / 2) (hc₁ : 0 ≤ c₁) (hscale : 0 ≤ scale)
+    (v : ParabolicPoint → Vec3) (Dv : ParabolicPoint → Fin 3 → Vec3)
+    (D2v : ParabolicPoint → Fin 3 → Fin 3 → Vec3)
+    (Dtv : ParabolicPoint → Vec3) {z : ParabolicPoint}
+    (hheat : vec3EuclideanNorm (ucWeakHeatVector D2v Dtv z) ≤
+      c₁ * scale * (vec3EuclideanNorm (v z) +
+        Real.sqrt (spatialGradientSq v Dv z)))
+    (hinner : z.1 ∈ vec3Ball 0 (13 * ρ / 20))
+    (hearly : z.2 ≤ 2 * ε) :
+    buGaussian_cutoff_localized_target hρ v Dv D2v Dtv z := by
+  have hnorm : 0 ≤ vec3EuclideanNorm (v z) := vec3EuclideanNorm_nonneg _
+  have hgrad : 0 ≤ Real.sqrt (spatialGradientSq v Dv z) := Real.sqrt_nonneg _
+  have hmainGrad : 0 ≤ Real.sqrt (spatialGradientSq
+      (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+        (ucInitialTimeCutoff ε) v)
+      (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+        (ucInitialTimeCutoff ε) v Dv) z) := Real.sqrt_nonneg _
+  rcases buGaussian_cutoff_early_transition_bound
+      hρ hε hεsmall hc₁ hscale v Dv D2v Dtv hheat hinner hearly with
+    ⟨hbound, hlate, hShellZero'⟩
+  have htargetBase : vec3EuclideanNorm
+      (ucCutoffHeat (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+        (ucInitialTimeCutoff ε) v Dv D2v Dtv z) ≤
+      c₁ * scale *
+        (vec3EuclideanNorm
+            (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v z) +
+          3 * Real.sqrt (spatialGradientSq
+            (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v)
+            (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v Dv) z)) +
+      (if 3 / 2 ≤ z.2 ∧ z.2 ≤ 7 / 4 then
+        32 * vec3EuclideanNorm (v z) else 0) +
+      (if ε ≤ z.2 ∧ z.2 ≤ 2 * ε then 8 / ε else 0) *
+        vec3EuclideanNorm (v z) := by
+    have hcoef : 0 ≤ c₁ * scale := mul_nonneg hc₁ hscale
+    have hmainUpgrade := buGaussian_nonneg_mul_add_le
+      (a := vec3EuclideanNorm
+        (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+          (ucInitialTimeCutoff ε) v z)) hcoef hmainGrad
+    have hlateAdd :
+        c₁ * scale *
+            (vec3EuclideanNorm
+              (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+                (ucInitialTimeCutoff ε) v z) +
+              3 * Real.sqrt (spatialGradientSq
+                (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+                  (ucInitialTimeCutoff ε) v)
+                (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+                  (ucInitialTimeCutoff ε) v Dv) z)) ≤
+          c₁ * scale *
+              (vec3EuclideanNorm
+                (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+                  (ucInitialTimeCutoff ε) v z) +
+                3 * Real.sqrt (spatialGradientSq
+                  (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+                    (ucInitialTimeCutoff ε) v)
+                  (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+                    (ucInitialTimeCutoff ε) v Dv) z)) +
+            (if 3 / 2 ≤ z.2 ∧ z.2 ≤ 7 / 4 then
+              32 * vec3EuclideanNorm (v z) else 0) :=
+      le_add_of_nonneg_right hlate
+    have htarget0 := add_le_add_left hmainUpgrade
+      ((if ε ≤ z.2 ∧ z.2 ≤ 2 * ε then 8 / ε else 0) *
+        vec3EuclideanNorm (v z))
+    have htarget1 := add_le_add_left hlateAdd
+      ((if ε ≤ z.2 ∧ z.2 ≤ 2 * ε then 8 / ε else 0) *
+        vec3EuclideanNorm (v z))
+    calc
+    _ ≤ c₁ * scale *
+          (vec3EuclideanNorm
+              (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+                (ucInitialTimeCutoff ε) v z) +
+            Real.sqrt (spatialGradientSq
+              (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+                (ucInitialTimeCutoff ε) v)
+              (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+                (ucInitialTimeCutoff ε) v Dv) z)) +
+          (if ε ≤ z.2 ∧ z.2 ≤ 2 * ε then 8 / ε else 0) *
+            vec3EuclideanNorm (v z) := hbound
+    _ ≤ _ := htarget0
+    _ ≤ _ := htarget1
+  have htarget : vec3EuclideanNorm
+      (ucCutoffHeat (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+        (ucInitialTimeCutoff ε) v Dv D2v Dtv z) ≤
+      c₁ * scale *
+        (vec3EuclideanNorm
+            (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v z) +
+          3 * Real.sqrt (spatialGradientSq
+            (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v)
+            (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v Dv) z)) +
+      (if z.1 ∈ {y : Vec3 | 13 * ρ / 20 ≤ vec3EuclideanNorm y ∧
+          vec3EuclideanNorm y ≤ 3 * ρ / 4} then
+        (32 + 3 * (cutoffSecondDerivativeConstant / ρ ^ 2) +
+          3 * c₁ * scale * (cutoffGradientConstant / ρ)) *
+            vec3EuclideanNorm (v z) +
+        18 * (cutoffGradientConstant / ρ) *
+          Real.sqrt (spatialGradientSq v Dv z) else 0) +
+      (if 3 / 2 ≤ z.2 ∧ z.2 ≤ 7 / 4 then
+        32 * vec3EuclideanNorm (v z) else 0) +
+      (if ε ≤ z.2 ∧ z.2 ≤ 2 * ε then 8 / ε else 0) *
+        vec3EuclideanNorm (v z) := by
+    simpa only [Set.mem_ofPred_eq, hShellZero', add_zero] using htargetBase
+  exact htarget
+
+private theorem buGaussian_cutoff_localized_interior_late
+    {ρ ε c₁ scale : ℝ} (hρ : 0 < ρ) (hε : 0 < ε)
+    (hεsmall : 2 * ε ≤ 1 / 2) (hc₁ : 0 ≤ c₁) (hscale : 0 ≤ scale)
+    (v : ParabolicPoint → Vec3) (Dv : ParabolicPoint → Fin 3 → Vec3)
+    (D2v : ParabolicPoint → Fin 3 → Fin 3 → Vec3)
+    (Dtv : ParabolicPoint → Vec3) {z : ParabolicPoint}
+    (hheat : vec3EuclideanNorm (ucWeakHeatVector D2v Dtv z) ≤
+      c₁ * scale * (vec3EuclideanNorm (v z) +
+        Real.sqrt (spatialGradientSq v Dv z)))
+    (hinner : z.1 ∈ vec3Ball 0 (13 * ρ / 20))
+    (hpost : 2 * ε < z.2) :
+    buGaussian_cutoff_localized_target hρ v Dv D2v Dtv z := by
+    have hnorm : 0 ≤ vec3EuclideanNorm (v z) := vec3EuclideanNorm_nonneg _
+    have hgrad : 0 ≤ Real.sqrt (spatialGradientSq v Dv z) := Real.sqrt_nonneg _
+    have hmainGrad : 0 ≤ Real.sqrt (spatialGradientSq
+        (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+          (ucInitialTimeCutoff ε) v)
+        (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+          (ucInitialTimeCutoff ε) v Dv) z) := Real.sqrt_nonneg _
+  have hpost : 2 * ε < z.2 := lt_of_not_ge hearly
+  have hformula := buGaussian_cutoff_heat_eq_on_plateau_after_initial
+    hρ hε hinner hpost v Dv D2v Dtv
+  have hcut : ucGaussianCutoff ρ hρ ε z = ucFinalTimeCutoff z.2 := by
+    simp [ucGaussianCutoff, ucCutoffScalar,
+      buGaussian_spatial_cutoff_eq_one_on_plateau hρ hinner,
+      ucInitialTimeCutoff_eq_one hε (le_of_lt hpost)]
+  have hpartial (j : Fin 3) :
+      spatialPartial (ucGaussianCutoff ρ hρ ε) j z = 0 := by
+    rw [ucGaussianCutoff_spatialPartial hρ ε z j]
+    have hp := buGaussian_spatial_cutoff_partial_zero_on_plateau
+      hρ hinner j z.2
+    have hp' : spatialPartial
+        (fun q : ParabolicPoint => ucSpatialCutoff ρ hρ q.1) j z = 0 := by
+      change spatialPartial
+          (fun q : ParabolicPoint => ucSpatialCutoff ρ hρ q.1) j
+            (z.1, z.2) = 0
+      exact hp
+    rw [hp']
+    simp
+  have henergy := buGaussian_cutoff_plateau_energy hρ
+    (ucFinalTimeCutoff z.2) (ucFinalTimeCutoff_bounds z.2).1
+    hcut hpartial v Dv
+  have hnormL : vec3EuclideanNorm (ucWeakHeatVector D2v Dtv z) ≤
+      c₁ * scale * (vec3EuclideanNorm (v z) +
+        Real.sqrt (spatialGradientSq v Dv z)) := hheat
+  have hderiv := buGaussian_final_cutoff_deriv_local_bound z.2
+  have htriangle : vec3EuclideanNorm
+      (ucFinalTimeCutoff z.2 • ucWeakHeatVector D2v Dtv z +
+        deriv ucFinalTimeCutoff z.2 • v z) ≤
+      ucFinalTimeCutoff z.2 *
+          vec3EuclideanNorm (ucWeakHeatVector D2v Dtv z) +
+        |deriv ucFinalTimeCutoff z.2| * vec3EuclideanNorm (v z) := by
+    calc
+      _ ≤ vec3EuclideanNorm (ucFinalTimeCutoff z.2 •
+          ucWeakHeatVector D2v Dtv z) +
+          vec3EuclideanNorm (deriv ucFinalTimeCutoff z.2 • v z) :=
+        vec3EuclideanNorm_add_le _ _
+      _ = _ := by
+        rw [vec3EuclideanNorm_smul, vec3EuclideanNorm_smul,
+          abs_of_nonneg (ucFinalTimeCutoff_bounds z.2).1]
+  have hmain : ucFinalTimeCutoff z.2 *
+      vec3EuclideanNorm (ucWeakHeatVector D2v Dtv z) ≤
+      c₁ * scale *
+        (vec3EuclideanNorm
+            (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v z) +
+          Real.sqrt (spatialGradientSq
+            (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v)
+            (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v Dv) z)) := by
+    calc
+      _ ≤ ucFinalTimeCutoff z.2 *
+          (c₁ * scale * (vec3EuclideanNorm (v z) +
+            Real.sqrt (spatialGradientSq v Dv z))) :=
+        mul_le_mul_of_nonneg_left hnormL
+          (ucFinalTimeCutoff_bounds z.2).1
+      _ = c₁ * scale *
+          (vec3EuclideanNorm
+              (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+                (ucInitialTimeCutoff ε) v z) +
+            Real.sqrt (spatialGradientSq
+              (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+                (ucInitialTimeCutoff ε) v)
+              (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+                (ucInitialTimeCutoff ε) v Dv) z)) := by
+        rw [henergy.1, henergy.2]
+        ring
+  have hfinal := mul_le_mul_of_nonneg_right hderiv hnorm
+  have hfinal' : |deriv ucFinalTimeCutoff z.2| *
+      vec3EuclideanNorm (v z) ≤
+      (if 3 / 2 ≤ z.2 ∧ z.2 ≤ 7 / 4 then
+        32 * vec3EuclideanNorm (v z) else 0) := by
+    by_cases htime : 3 / 2 ≤ z.2 ∧ z.2 ≤ 7 / 4
+    · simpa [htime] using hfinal
+    · have hderiv0 : |deriv ucFinalTimeCutoff z.2| ≤ 0 := by
+        simpa [htime] using hderiv
+      have hmul := mul_le_mul_of_nonneg_right hderiv0 hnorm
+      simpa [htime] using hmul
+  have hsum := add_le_add hmain hfinal'
+  have hnotShell' :
+      ¬ (13 * ρ / 20 ≤ vec3EuclideanNorm z.1 ∧
+        vec3EuclideanNorm z.1 ≤ 3 * ρ / 4) := by
+    intro hs
+    exact hlo hs.1
+  have hShellZero : (if z.1 ∈
+      {y : Vec3 | 13 * ρ / 20 ≤ vec3EuclideanNorm y ∧
+        vec3EuclideanNorm y ≤ 3 * ρ / 4} then
+      (32 + 3 * (cutoffSecondDerivativeConstant / ρ ^ 2) +
+        3 * c₁ * scale * (cutoffGradientConstant / ρ)) *
+          vec3EuclideanNorm (v z) +
+      18 * (cutoffGradientConstant / ρ) *
+        Real.sqrt (spatialGradientSq v Dv z) else 0) = 0 := by
+    change (if 13 * ρ / 20 ≤ vec3EuclideanNorm z.1 ∧
+        vec3EuclideanNorm z.1 ≤ 3 * ρ / 4 then _ else 0) = 0
+    exact buGaussian_shell_indicator_zero (a :=
+      (32 + 3 * (cutoffSecondDerivativeConstant / ρ ^ 2) +
+        3 * c₁ * scale * (cutoffGradientConstant / ρ)) *
+          vec3EuclideanNorm (v z) +
+        18 * (cutoffGradientConstant / ρ) *
+          Real.sqrt (spatialGradientSq v Dv z)) hnotShell'
+  have hShellZero' : (if 13 * ρ / 20 ≤ vec3EuclideanNorm z.1 ∧
+      vec3EuclideanNorm z.1 ≤ 3 * ρ / 4 then
+      (32 + 3 * (cutoffSecondDerivativeConstant / ρ ^ 2) +
+        3 * c₁ * scale * (cutoffGradientConstant / ρ)) *
+          vec3EuclideanNorm (v z) +
+      18 * (cutoffGradientConstant / ρ) *
+        Real.sqrt (spatialGradientSq v Dv z) else 0) = 0 := by
+    simpa only [Set.mem_ofPred_eq] using hShellZero
+  have hnotEarly : ¬ (ε ≤ z.2 ∧ z.2 ≤ 2 * ε) := by
+    intro h
+    exact (not_lt_of_ge h.2) hpost
+  have hearlyZero : (if ε ≤ z.2 ∧ z.2 ≤ 2 * ε then
+      8 / ε else 0) * vec3EuclideanNorm (v z) = 0 := by
+    by_cases htime : ε ≤ z.2 ∧ z.2 ≤ 2 * ε
+    · exact (hnotEarly htime).elim
+    · simp [htime]
+  have hgradcut : 0 ≤ Real.sqrt (spatialGradientSq
+      (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+        (ucInitialTimeCutoff ε) v)
+      (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+        (ucInitialTimeCutoff ε) v Dv) z) := by positivity
+  have hsumBase : vec3EuclideanNorm
+      (ucCutoffHeat (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+        (ucInitialTimeCutoff ε) v Dv D2v Dtv z) ≤
+      c₁ * scale *
+        (vec3EuclideanNorm
+            (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v z) +
+          3 * Real.sqrt (spatialGradientSq
+            (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v)
+            (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v Dv) z)) +
+      (if 3 / 2 ≤ z.2 ∧ z.2 ≤ 7 / 4 then
+        32 * vec3EuclideanNorm (v z) else 0) := by
+    calc
+      _ ≤ c₁ * scale *
+            (vec3EuclideanNorm
+                (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+                  (ucInitialTimeCutoff ε) v z) +
+              Real.sqrt (spatialGradientSq
+                (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+                  (ucInitialTimeCutoff ε) v)
+                (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+                  (ucInitialTimeCutoff ε) v Dv) z)) +
+            (if 3 / 2 ≤ z.2 ∧ z.2 ≤ 7 / 4 then
+              32 * vec3EuclideanNorm (v z) else 0) := by
+        rw [hformula]
+        exact htriangle.trans (add_le_add hmain hfinal')
+      _ ≤ _ := by
+        exact add_le_add_left
+          (buGaussian_nonneg_mul_add_le
+            (a := vec3EuclideanNorm
+              (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+                (ucInitialTimeCutoff ε) v z))
+            (mul_nonneg hc₁ hscale) hgradcut)
+          (if 3 / 2 ≤ z.2 ∧ z.2 ≤ 7 / 4 then
+            32 * vec3EuclideanNorm (v z) else 0)
+  have hsum'' : vec3EuclideanNorm
+      (ucCutoffHeat (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+        (ucInitialTimeCutoff ε) v Dv D2v Dtv z) ≤
+      c₁ * scale *
+        (vec3EuclideanNorm
+            (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v z) +
+          3 * Real.sqrt (spatialGradientSq
+            (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v)
+            (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
+              (ucInitialTimeCutoff ε) v Dv) z)) +
+      (if z.1 ∈ {y : Vec3 | 13 * ρ / 20 ≤ vec3EuclideanNorm y ∧
+          vec3EuclideanNorm y ≤ 3 * ρ / 4} then
+        (32 + 3 * (cutoffSecondDerivativeConstant / ρ ^ 2) +
+          3 * c₁ * scale * (cutoffGradientConstant / ρ)) *
+            vec3EuclideanNorm (v z) +
+        18 * (cutoffGradientConstant / ρ) *
+          Real.sqrt (spatialGradientSq v Dv z) else 0) +
+      (if 3 / 2 ≤ z.2 ∧ z.2 ≤ 7 / 4 then
+        32 * vec3EuclideanNorm (v z) else 0) +
+      (if ε ≤ z.2 ∧ z.2 ≤ 2 * ε then 8 / ε else 0) *
+        vec3EuclideanNorm (v z) := by
+    rw [hShellZero, hearlyZero]
+    simp only [add_zero]
+    exact hsumBase
+  exact hsum''
+
+  /-- The Gaussian cutoff heat operator is bounded separately on the spatial
+  transition shell, the final-time strip, and the initial-time strip
+  (`lem:bu-gaussian`). -/
 theorem buGaussian_cutoff_operator_localized_ae_bound
     {ρ ε c₁ scale : ℝ} (hρ : 0 < ρ) (hε : 0 < ε)
     (hεsmall : 2 * ε ≤ 1 / 2)
@@ -376,402 +884,9 @@ theorem buGaussian_cutoff_operator_localized_ae_bound
   · have hinner : z.1 ∈ vec3Ball 0 (13 * ρ / 20) := by
       simpa only [mem_vec3Ball, sub_zero] using lt_of_not_ge hlo
     by_cases hearly : z.2 ≤ 2 * ε
-    · have hformula := buGaussian_cutoff_heat_eq_on_plateau_early
-        hρ hinner hearly hεsmall v Dv D2v Dtv
-      have hcut : ucGaussianCutoff ρ hρ ε z =
-          ucInitialTimeCutoff ε z.2 := by
-        simp [ucGaussianCutoff, ucCutoffScalar,
-          buGaussian_spatial_cutoff_eq_one_on_plateau hρ hinner,
-          ucFinalTimeCutoff_eq_one (by
-            exact (lt_of_le_of_lt hearly
-              (lt_of_le_of_lt hεsmall (by norm_num))).le)]
-      have hpartial (j : Fin 3) :
-          spatialPartial (ucGaussianCutoff ρ hρ ε) j z = 0 := by
-        rw [ucGaussianCutoff_spatialPartial hρ ε z j]
-        have hp := buGaussian_spatial_cutoff_partial_zero_on_plateau
-          hρ hinner j z.2
-        have hp' : spatialPartial
-            (fun q : ParabolicPoint => ucSpatialCutoff ρ hρ q.1) j z = 0 := by
-          change spatialPartial
-              (fun q : ParabolicPoint => ucSpatialCutoff ρ hρ q.1) j
-                (z.1, z.2) = 0
-          exact hp
-        rw [hp']
-        simp
-      have henergy := buGaussian_cutoff_plateau_energy hρ
-        (ucInitialTimeCutoff ε z.2)
-        (ucInitialTimeCutoff_bounds ε z.2).1 hcut hpartial v Dv
-      have hnormL : vec3EuclideanNorm (ucWeakHeatVector D2v Dtv z) ≤
-          c₁ * scale * (vec3EuclideanNorm (v z) +
-            Real.sqrt (spatialGradientSq v Dv z)) := hheat
-      have hderiv := ucInitialTimeCutoff_abs_deriv_le_early hε z.2
-      have htriangle : vec3EuclideanNorm
-          (ucInitialTimeCutoff ε z.2 • ucWeakHeatVector D2v Dtv z +
-            deriv (ucInitialTimeCutoff ε) z.2 • v z) ≤
-          ucInitialTimeCutoff ε z.2 *
-              vec3EuclideanNorm (ucWeakHeatVector D2v Dtv z) +
-            |deriv (ucInitialTimeCutoff ε) z.2| * vec3EuclideanNorm (v z) := by
-        calc
-          _ ≤ vec3EuclideanNorm (ucInitialTimeCutoff ε z.2 •
-              ucWeakHeatVector D2v Dtv z) +
-              vec3EuclideanNorm (deriv (ucInitialTimeCutoff ε) z.2 • v z) :=
-            vec3EuclideanNorm_add_le _ _
-          _ = _ := by
-            rw [vec3EuclideanNorm_smul, vec3EuclideanNorm_smul,
-              abs_of_nonneg (ucInitialTimeCutoff_bounds ε z.2).1]
-      have hmain : ucInitialTimeCutoff ε z.2 *
-          vec3EuclideanNorm (ucWeakHeatVector D2v Dtv z) ≤
-          c₁ * scale *
-            (vec3EuclideanNorm
-                (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                  (ucInitialTimeCutoff ε) v z) +
-              Real.sqrt (spatialGradientSq
-                (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                  (ucInitialTimeCutoff ε) v)
-                (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                  (ucInitialTimeCutoff ε) v Dv) z)) := by
-        calc
-          _ ≤ ucInitialTimeCutoff ε z.2 *
-              (c₁ * scale * (vec3EuclideanNorm (v z) +
-                Real.sqrt (spatialGradientSq v Dv z))) :=
-            mul_le_mul_of_nonneg_left hnormL
-              (ucInitialTimeCutoff_bounds ε z.2).1
-          _ = c₁ * scale *
-              (vec3EuclideanNorm
-                  (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                    (ucInitialTimeCutoff ε) v z) +
-                Real.sqrt (spatialGradientSq
-                  (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                    (ucInitialTimeCutoff ε) v)
-                  (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                    (ucInitialTimeCutoff ε) v Dv) z)) := by
-            rw [henergy.1, henergy.2]
-            ring
-      have hlate : 0 ≤ if 3 / 2 ≤ z.2 ∧ z.2 ≤ 7 / 4 then
-          32 * vec3EuclideanNorm (v z) else 0 := by positivity
-      have h := htriangle.trans (add_le_add hmain
-        (mul_le_mul_of_nonneg_right hderiv hnorm))
-      have hearly' : |deriv (ucInitialTimeCutoff ε) z.2| *
-          vec3EuclideanNorm (v z) ≤
-          (if ε ≤ z.2 ∧ z.2 ≤ 2 * ε then 8 / ε else 0) *
-            vec3EuclideanNorm (v z) :=
-        mul_le_mul_of_nonneg_right hderiv hnorm
-      have hnotShell : z.1 ∉ {y : Vec3 | 13 * ρ / 20 ≤ vec3EuclideanNorm y ∧
-          vec3EuclideanNorm y ≤ 3 * ρ / 4} := by
-        intro h
-        exact hlo h.1
-      have hShellZero : (if z.1 ∈
-          {y : Vec3 | 13 * ρ / 20 ≤ vec3EuclideanNorm y ∧
-            vec3EuclideanNorm y ≤ 3 * ρ / 4} then
-          (32 + 3 * (cutoffSecondDerivativeConstant / ρ ^ 2) +
-            3 * c₁ * scale * (cutoffGradientConstant / ρ)) *
-              vec3EuclideanNorm (v z) +
-          18 * (cutoffGradientConstant / ρ) *
-            Real.sqrt (spatialGradientSq v Dv z) else 0) = 0 := by
-        by_cases h : z.1 ∈ {y : Vec3 | 13 * ρ / 20 ≤ vec3EuclideanNorm y ∧
-            vec3EuclideanNorm y ≤ 3 * ρ / 4}
-        · exact (hnotShell h).elim
-        · simp [h]
-      have hShellZero' : (if 13 * ρ / 20 ≤ vec3EuclideanNorm z.1 ∧
-          vec3EuclideanNorm z.1 ≤ 3 * ρ / 4 then
-          (32 + 3 * (cutoffSecondDerivativeConstant / ρ ^ 2) +
-            3 * c₁ * scale * (cutoffGradientConstant / ρ)) *
-              vec3EuclideanNorm (v z) +
-          18 * (cutoffGradientConstant / ρ) *
-            Real.sqrt (spatialGradientSq v Dv z) else 0) = 0 := by
-        simpa only [Set.mem_ofPred_eq] using hShellZero
-      have hbound : vec3EuclideanNorm
-          (ucCutoffHeat (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-            (ucInitialTimeCutoff ε) v Dv D2v Dtv z) ≤
-          c₁ * scale *
-            (vec3EuclideanNorm
-                (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                  (ucInitialTimeCutoff ε) v z) +
-              Real.sqrt (spatialGradientSq
-                (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                  (ucInitialTimeCutoff ε) v)
-                (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                  (ucInitialTimeCutoff ε) v Dv) z)) +
-          (if ε ≤ z.2 ∧ z.2 ≤ 2 * ε then 8 / ε else 0) *
-            vec3EuclideanNorm (v z) := by
-        rw [hformula]
-        exact htriangle.trans (add_le_add hmain hearly')
-      have htargetBase : vec3EuclideanNorm
-          (ucCutoffHeat (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-            (ucInitialTimeCutoff ε) v Dv D2v Dtv z) ≤
-          c₁ * scale *
-            (vec3EuclideanNorm
-                (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                  (ucInitialTimeCutoff ε) v z) +
-              3 * Real.sqrt (spatialGradientSq
-                (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                  (ucInitialTimeCutoff ε) v)
-                (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                  (ucInitialTimeCutoff ε) v Dv) z)) +
-          (if 3 / 2 ≤ z.2 ∧ z.2 ≤ 7 / 4 then
-            32 * vec3EuclideanNorm (v z) else 0) +
-          (if ε ≤ z.2 ∧ z.2 ≤ 2 * ε then 8 / ε else 0) *
-            vec3EuclideanNorm (v z) := by
-        have hcoef : 0 ≤ c₁ * scale := mul_nonneg hc₁ hscale
-        have hmainUpgrade := buGaussian_nonneg_mul_add_le
-          (a := vec3EuclideanNorm
-            (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-              (ucInitialTimeCutoff ε) v z)) hcoef hmainGrad
-        have hlateAdd :
-            c₁ * scale *
-                (vec3EuclideanNorm
-                  (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                    (ucInitialTimeCutoff ε) v z) +
-                  3 * Real.sqrt (spatialGradientSq
-                    (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                      (ucInitialTimeCutoff ε) v)
-                    (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                      (ucInitialTimeCutoff ε) v Dv) z)) ≤
-              c₁ * scale *
-                  (vec3EuclideanNorm
-                    (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                      (ucInitialTimeCutoff ε) v z) +
-                    3 * Real.sqrt (spatialGradientSq
-                      (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                        (ucInitialTimeCutoff ε) v)
-                      (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                        (ucInitialTimeCutoff ε) v Dv) z)) +
-                (if 3 / 2 ≤ z.2 ∧ z.2 ≤ 7 / 4 then
-                  32 * vec3EuclideanNorm (v z) else 0) :=
-          le_add_of_nonneg_right hlate
-        have htarget0 := add_le_add_left hmainUpgrade
-          ((if ε ≤ z.2 ∧ z.2 ≤ 2 * ε then 8 / ε else 0) *
-            vec3EuclideanNorm (v z))
-        have htarget1 := add_le_add_left hlateAdd
-          ((if ε ≤ z.2 ∧ z.2 ≤ 2 * ε then 8 / ε else 0) *
-            vec3EuclideanNorm (v z))
-        calc
-        _ ≤ c₁ * scale *
-              (vec3EuclideanNorm
-                  (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                    (ucInitialTimeCutoff ε) v z) +
-                Real.sqrt (spatialGradientSq
-                  (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                    (ucInitialTimeCutoff ε) v)
-                  (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                    (ucInitialTimeCutoff ε) v Dv) z)) +
-              (if ε ≤ z.2 ∧ z.2 ≤ 2 * ε then 8 / ε else 0) *
-                vec3EuclideanNorm (v z) := hbound
-        _ ≤ _ := htarget0
-        _ ≤ _ := htarget1
-      have htarget : vec3EuclideanNorm
-          (ucCutoffHeat (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-            (ucInitialTimeCutoff ε) v Dv D2v Dtv z) ≤
-          c₁ * scale *
-            (vec3EuclideanNorm
-                (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                  (ucInitialTimeCutoff ε) v z) +
-              3 * Real.sqrt (spatialGradientSq
-                (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                  (ucInitialTimeCutoff ε) v)
-                (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                  (ucInitialTimeCutoff ε) v Dv) z)) +
-          (if z.1 ∈ {y : Vec3 | 13 * ρ / 20 ≤ vec3EuclideanNorm y ∧
-              vec3EuclideanNorm y ≤ 3 * ρ / 4} then
-            (32 + 3 * (cutoffSecondDerivativeConstant / ρ ^ 2) +
-              3 * c₁ * scale * (cutoffGradientConstant / ρ)) *
-                vec3EuclideanNorm (v z) +
-            18 * (cutoffGradientConstant / ρ) *
-              Real.sqrt (spatialGradientSq v Dv z) else 0) +
-          (if 3 / 2 ≤ z.2 ∧ z.2 ≤ 7 / 4 then
-            32 * vec3EuclideanNorm (v z) else 0) +
-          (if ε ≤ z.2 ∧ z.2 ≤ 2 * ε then 8 / ε else 0) *
-            vec3EuclideanNorm (v z) := by
-        simpa only [Set.mem_ofPred_eq, hShellZero', add_zero] using htargetBase
-      exact htarget
-    · have hpost : 2 * ε < z.2 := lt_of_not_ge hearly
-      have hformula := buGaussian_cutoff_heat_eq_on_plateau_after_initial
-        hρ hε hinner hpost v Dv D2v Dtv
-      have hcut : ucGaussianCutoff ρ hρ ε z = ucFinalTimeCutoff z.2 := by
-        simp [ucGaussianCutoff, ucCutoffScalar,
-          buGaussian_spatial_cutoff_eq_one_on_plateau hρ hinner,
-          ucInitialTimeCutoff_eq_one hε (le_of_lt hpost)]
-      have hpartial (j : Fin 3) :
-          spatialPartial (ucGaussianCutoff ρ hρ ε) j z = 0 := by
-        rw [ucGaussianCutoff_spatialPartial hρ ε z j]
-        have hp := buGaussian_spatial_cutoff_partial_zero_on_plateau
-          hρ hinner j z.2
-        have hp' : spatialPartial
-            (fun q : ParabolicPoint => ucSpatialCutoff ρ hρ q.1) j z = 0 := by
-          change spatialPartial
-              (fun q : ParabolicPoint => ucSpatialCutoff ρ hρ q.1) j
-                (z.1, z.2) = 0
-          exact hp
-        rw [hp']
-        simp
-      have henergy := buGaussian_cutoff_plateau_energy hρ
-        (ucFinalTimeCutoff z.2) (ucFinalTimeCutoff_bounds z.2).1
-        hcut hpartial v Dv
-      have hnormL : vec3EuclideanNorm (ucWeakHeatVector D2v Dtv z) ≤
-          c₁ * scale * (vec3EuclideanNorm (v z) +
-            Real.sqrt (spatialGradientSq v Dv z)) := hheat
-      have hderiv := buGaussian_final_cutoff_deriv_local_bound z.2
-      have htriangle : vec3EuclideanNorm
-          (ucFinalTimeCutoff z.2 • ucWeakHeatVector D2v Dtv z +
-            deriv ucFinalTimeCutoff z.2 • v z) ≤
-          ucFinalTimeCutoff z.2 *
-              vec3EuclideanNorm (ucWeakHeatVector D2v Dtv z) +
-            |deriv ucFinalTimeCutoff z.2| * vec3EuclideanNorm (v z) := by
-        calc
-          _ ≤ vec3EuclideanNorm (ucFinalTimeCutoff z.2 •
-              ucWeakHeatVector D2v Dtv z) +
-              vec3EuclideanNorm (deriv ucFinalTimeCutoff z.2 • v z) :=
-            vec3EuclideanNorm_add_le _ _
-          _ = _ := by
-            rw [vec3EuclideanNorm_smul, vec3EuclideanNorm_smul,
-              abs_of_nonneg (ucFinalTimeCutoff_bounds z.2).1]
-      have hmain : ucFinalTimeCutoff z.2 *
-          vec3EuclideanNorm (ucWeakHeatVector D2v Dtv z) ≤
-          c₁ * scale *
-            (vec3EuclideanNorm
-                (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                  (ucInitialTimeCutoff ε) v z) +
-              Real.sqrt (spatialGradientSq
-                (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                  (ucInitialTimeCutoff ε) v)
-                (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                  (ucInitialTimeCutoff ε) v Dv) z)) := by
-        calc
-          _ ≤ ucFinalTimeCutoff z.2 *
-              (c₁ * scale * (vec3EuclideanNorm (v z) +
-                Real.sqrt (spatialGradientSq v Dv z))) :=
-            mul_le_mul_of_nonneg_left hnormL
-              (ucFinalTimeCutoff_bounds z.2).1
-          _ = c₁ * scale *
-              (vec3EuclideanNorm
-                  (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                    (ucInitialTimeCutoff ε) v z) +
-                Real.sqrt (spatialGradientSq
-                  (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                    (ucInitialTimeCutoff ε) v)
-                  (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                    (ucInitialTimeCutoff ε) v Dv) z)) := by
-            rw [henergy.1, henergy.2]
-            ring
-      have hfinal := mul_le_mul_of_nonneg_right hderiv hnorm
-      have hfinal' : |deriv ucFinalTimeCutoff z.2| *
-          vec3EuclideanNorm (v z) ≤
-          (if 3 / 2 ≤ z.2 ∧ z.2 ≤ 7 / 4 then
-            32 * vec3EuclideanNorm (v z) else 0) := by
-        by_cases htime : 3 / 2 ≤ z.2 ∧ z.2 ≤ 7 / 4
-        · simpa [htime] using hfinal
-        · have hderiv0 : |deriv ucFinalTimeCutoff z.2| ≤ 0 := by
-            simpa [htime] using hderiv
-          have hmul := mul_le_mul_of_nonneg_right hderiv0 hnorm
-          simpa [htime] using hmul
-      have hsum := add_le_add hmain hfinal'
-      have hnotShell : z.1 ∉ {y : Vec3 | 13 * ρ / 20 ≤ vec3EuclideanNorm y ∧
-          vec3EuclideanNorm y ≤ 3 * ρ / 4} := by
-        intro h
-        exact hlo h.1
-      have hnotShell' : ¬ (13 * ρ / 20 ≤ vec3EuclideanNorm z.1 ∧
-          vec3EuclideanNorm z.1 ≤ 3 * ρ / 4) := by
-        simpa only [Set.mem_ofPred_eq] using hnotShell
-      have hShellZero : (if z.1 ∈
-          {y : Vec3 | 13 * ρ / 20 ≤ vec3EuclideanNorm y ∧
-            vec3EuclideanNorm y ≤ 3 * ρ / 4} then
-          (32 + 3 * (cutoffSecondDerivativeConstant / ρ ^ 2) +
-            3 * c₁ * scale * (cutoffGradientConstant / ρ)) *
-              vec3EuclideanNorm (v z) +
-          18 * (cutoffGradientConstant / ρ) *
-            Real.sqrt (spatialGradientSq v Dv z) else 0) = 0 := by
-        change (if 13 * ρ / 20 ≤ vec3EuclideanNorm z.1 ∧
-            vec3EuclideanNorm z.1 ≤ 3 * ρ / 4 then _ else 0) = 0
-        exact buGaussian_shell_indicator_zero (a :=
-          (32 + 3 * (cutoffSecondDerivativeConstant / ρ ^ 2) +
-            3 * c₁ * scale * (cutoffGradientConstant / ρ)) *
-              vec3EuclideanNorm (v z) +
-            18 * (cutoffGradientConstant / ρ) *
-              Real.sqrt (spatialGradientSq v Dv z)) hnotShell'
-      have hShellZero' : (if 13 * ρ / 20 ≤ vec3EuclideanNorm z.1 ∧
-          vec3EuclideanNorm z.1 ≤ 3 * ρ / 4 then
-          (32 + 3 * (cutoffSecondDerivativeConstant / ρ ^ 2) +
-            3 * c₁ * scale * (cutoffGradientConstant / ρ)) *
-              vec3EuclideanNorm (v z) +
-          18 * (cutoffGradientConstant / ρ) *
-            Real.sqrt (spatialGradientSq v Dv z) else 0) = 0 := by
-        simpa only [Set.mem_ofPred_eq] using hShellZero
-      have hnotEarly : ¬ (ε ≤ z.2 ∧ z.2 ≤ 2 * ε) := by
-        intro h
-        exact (not_lt_of_ge h.2) hpost
-      have hearlyZero : (if ε ≤ z.2 ∧ z.2 ≤ 2 * ε then
-          8 / ε else 0) * vec3EuclideanNorm (v z) = 0 := by
-        by_cases htime : ε ≤ z.2 ∧ z.2 ≤ 2 * ε
-        · exact (hnotEarly htime).elim
-        · simp [htime]
-      have hgradcut : 0 ≤ Real.sqrt (spatialGradientSq
-          (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-            (ucInitialTimeCutoff ε) v)
-          (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-            (ucInitialTimeCutoff ε) v Dv) z) := by positivity
-      have hsumBase : vec3EuclideanNorm
-          (ucCutoffHeat (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-            (ucInitialTimeCutoff ε) v Dv D2v Dtv z) ≤
-          c₁ * scale *
-            (vec3EuclideanNorm
-                (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                  (ucInitialTimeCutoff ε) v z) +
-              3 * Real.sqrt (spatialGradientSq
-                (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                  (ucInitialTimeCutoff ε) v)
-                (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                  (ucInitialTimeCutoff ε) v Dv) z)) +
-          (if 3 / 2 ≤ z.2 ∧ z.2 ≤ 7 / 4 then
-            32 * vec3EuclideanNorm (v z) else 0) := by
-        calc
-          _ ≤ c₁ * scale *
-                (vec3EuclideanNorm
-                    (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                      (ucInitialTimeCutoff ε) v z) +
-                  Real.sqrt (spatialGradientSq
-                    (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                      (ucInitialTimeCutoff ε) v)
-                    (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                      (ucInitialTimeCutoff ε) v Dv) z)) +
-                (if 3 / 2 ≤ z.2 ∧ z.2 ≤ 7 / 4 then
-                  32 * vec3EuclideanNorm (v z) else 0) := by
-            rw [hformula]
-            exact htriangle.trans (add_le_add hmain hfinal')
-          _ ≤ _ := by
-            exact add_le_add_left
-              (buGaussian_nonneg_mul_add_le
-                (a := vec3EuclideanNorm
-                  (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                    (ucInitialTimeCutoff ε) v z))
-                (mul_nonneg hc₁ hscale) hgradcut)
-              (if 3 / 2 ≤ z.2 ∧ z.2 ≤ 7 / 4 then
-                32 * vec3EuclideanNorm (v z) else 0)
-      have hsum'' : vec3EuclideanNorm
-          (ucCutoffHeat (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-            (ucInitialTimeCutoff ε) v Dv D2v Dtv z) ≤
-          c₁ * scale *
-            (vec3EuclideanNorm
-                (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                  (ucInitialTimeCutoff ε) v z) +
-              3 * Real.sqrt (spatialGradientSq
-                (ucCutoffField (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                  (ucInitialTimeCutoff ε) v)
-                (ucCutoffDw (ucSpatialCutoff ρ hρ) ucFinalTimeCutoff
-                  (ucInitialTimeCutoff ε) v Dv) z)) +
-          (if z.1 ∈ {y : Vec3 | 13 * ρ / 20 ≤ vec3EuclideanNorm y ∧
-              vec3EuclideanNorm y ≤ 3 * ρ / 4} then
-            (32 + 3 * (cutoffSecondDerivativeConstant / ρ ^ 2) +
-              3 * c₁ * scale * (cutoffGradientConstant / ρ)) *
-                vec3EuclideanNorm (v z) +
-            18 * (cutoffGradientConstant / ρ) *
-              Real.sqrt (spatialGradientSq v Dv z) else 0) +
-          (if 3 / 2 ≤ z.2 ∧ z.2 ≤ 7 / 4 then
-            32 * vec3EuclideanNorm (v z) else 0) +
-          (if ε ≤ z.2 ∧ z.2 ≤ 2 * ε then 8 / ε else 0) *
-            vec3EuclideanNorm (v z) := by
-        rw [hShellZero, hearlyZero]
-        simp only [add_zero]
-        exact hsumBase
-      exact hsum''
+    · exact buGaussian_cutoff_localized_interior_early hρ hε hεsmall
+        hc₁ hscale v Dv D2v Dtv hheat hinner hearly
+    · exact buGaussian_cutoff_localized_interior_late hρ hε hεsmall
+        hc₁ hscale v Dv D2v Dtv hheat hinner hpost
 
 end ESS

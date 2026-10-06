@@ -14,6 +14,12 @@ public import LeanPool.CaffarelliKohnNirenberg.Statements.SuitableWeakSolution
 public import LeanPool.CaffarelliKohnNirenberg.ClassEquivalence.MainTheorems
 public import LeanPool.EscauriazaSereginSverak.Endpoint.VorticityDefinitions
 
+/-!
+# Ess Local Proof Liouville
+
+Local endpoint regularity through vorticity estimates and backward uniqueness.
+-/
+
 public section
 
 open MeasureTheory Set CKN CKN.Foundation.Parabolic

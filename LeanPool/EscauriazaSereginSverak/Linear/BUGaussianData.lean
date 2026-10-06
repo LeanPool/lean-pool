@@ -29,10 +29,10 @@ noncomputable section
 namespace ESS
 
 /-- The spatial domain in `lem:bu-gaussian`. -/
-@[expose] abbrev buHalfSpace : Set Vec3 := {x : Vec3 | 0 < x 2}
+abbrev buHalfSpace : Set Vec3 := {x : Vec3 | 0 < x 2}
 
 /-- The open space-time domain in `lem:bu-gaussian`. -/
-@[expose] abbrev buHalfCylinder : Set ParabolicPoint :=
+abbrev buHalfCylinder : Set ParabolicPoint :=
   spaceTimeSet buHalfSpace (Ioo 0 1)
 
 /-- The solution and its weak derivatives have finite local quadratic data under the

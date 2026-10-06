@@ -44,10 +44,12 @@ namespace ESS.LPS
 
 open CKN.Leray
 
+/-- Gives space-time points the product normed additive group structure for smoothing. -/
 local instance smoothingTimeRegularityPointNormedAddCommGroup :
     NormedAddCommGroup ParabolicPoint :=
   inferInstanceAs (NormedAddCommGroup (Vec3 × ℝ))
 
+/-- Gives space-time points the product real normed space structure for smoothing. -/
 local instance smoothingTimeRegularityPointNormedSpace :
     NormedSpace ℝ ParabolicPoint :=
   inferInstanceAs (NormedSpace ℝ (Vec3 × ℝ))

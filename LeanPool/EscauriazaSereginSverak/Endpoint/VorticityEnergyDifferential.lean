@@ -26,6 +26,133 @@ namespace ESS
 
 noncomputable section
 
+private theorem vorticityEnergy_pointwise_pairing_bound
+    (M : ℝ) (hM : 0 ≤ M) (v z g : Vec3)
+    (F G : Fin 3 → Fin 3 → ℝ)
+    (hvbound : vec3EuclideanNorm v ≤ M) :
+    (∑ i : Fin 3, ∑ j : Fin 3, (v j * z i - z j * v i) * G j i) -
+      ∑ i : Fin 3, ∑ j : Fin 3, F j i * G j i +
+      ∑ i : Fin 3, g i * z i ≤
+    (1 / 2 : ℝ) * (∑ j : Fin 3, ∑ i : Fin 3, (G j i) ^ 2) +
+      36 * M ^ 2 * (∑ i : Fin 3, (z i) ^ 2) +
+      ∑ j : Fin 3, ∑ i : Fin 3, (F j i) ^ 2 +
+      (1 / 2 : ℝ) * (∑ i : Fin 3, (z i) ^ 2) +
+      (1 / 2 : ℝ) * (∑ i : Fin 3, (g i) ^ 2) := by
+  rw [Finset.sum_comm (f := fun i j => (v j * z i - z j * v i) * G j i),
+    Finset.sum_comm (f := fun i j => F j i * G j i)]
+  have hpair := vorticityFluxAndMatrixPairing_halfDissipation M v z F (fun i j => G j i) hM hvbound
+  have hgpair := vorticityVectorPairing_young g z
+  have hsumabs :
+      (∑ j : Fin 3, ∑ i : Fin 3, (v j * z i - z j * v i) * G j i) -
+        (∑ j : Fin 3, ∑ i : Fin 3, F j i * G j i) ≤
+      |∑ j : Fin 3, ∑ i : Fin 3, (v j * z i - z j * v i) * G j i| +
+        |∑ j : Fin 3, ∑ i : Fin 3, F j i * G j i| := by
+    calc
+      _ ≤ |(∑ j : Fin 3, ∑ i : Fin 3, (v j * z i - z j * v i) * G j i) -
+          (∑ j : Fin 3, ∑ i : Fin 3, F j i * G j i)| := le_abs_self _
+      _ ≤ _ := abs_sub _ _
+  have hWbound :
+      (∑ i : Fin 3, g i * z i) ≤
+        (1 / 2 : ℝ) * (∑ i : Fin 3, (g i) ^ 2) +
+          (1 / 2 : ℝ) * (∑ i : Fin 3, (z i) ^ 2) := by
+    calc
+      _ ≤ |∑ i : Fin 3, g i * z i| := le_abs_self _
+      _ ≤ _ := hgpair
+  have hnormsq : (vec3EuclideanNorm z) ^ 2 = ∑ i : Fin 3, (z i) ^ 2 := by
+    rw [vec3EuclideanNorm, Real.sq_sqrt]
+    exact Finset.sum_nonneg fun i _ => sq_nonneg _
+  rw [hnormsq] at hpair
+  linarith only [hpair, hWbound, hsumabs]
+
+private theorem vorticityEnergy_integrate_pointwise_bound
+    (M : ℝ) (Q D B C W S P R : Vec3 → ℝ)
+    (hDint : Integrable D volume) (hSint : Integrable S volume)
+    (hPint : Integrable P volume) (hRint : Integrable R volume)
+    (hBint : Integrable B volume) (hCint : Integrable C volume)
+    (hWint : Integrable W volume)
+    (htotal : (∫ x : Vec3, Q x ∂volume) + ∫ x : Vec3, D x ∂volume =
+      (∫ x : Vec3, B x ∂volume) - ∫ x : Vec3, C x ∂volume +
+        ∫ x : Vec3, W x ∂volume)
+    (hpoint : ∀ x, B x - C x + W x ≤
+      (1 / 2 : ℝ) * D x + 36 * M ^ 2 * S x + P x +
+        (1 / 2 : ℝ) * S x + (1 / 2 : ℝ) * R x) :
+    2 * (∫ x : Vec3, Q x ∂volume) + ∫ x : Vec3, D x ∂volume ≤
+      (72 * M ^ 2 + 1) * (∫ x : Vec3, S x ∂volume) +
+        2 * (∫ x : Vec3, P x ∂volume) + ∫ x : Vec3, R x ∂volume := by
+  have hpointAE : B - C + W ≤ᵐ[volume] fun x : Vec3 =>
+      (1 / 2 : ℝ) * D x + (36 * M ^ 2 + 1 / 2) * S x + P x +
+        (1 / 2 : ℝ) * R x := by
+    filter_upwards [] with x
+    have hx := hpoint x
+    have harith : (1 / 2 : ℝ) * D x + 36 * M ^ 2 * S x + P x +
+        (1 / 2 : ℝ) * S x + (1 / 2 : ℝ) * R x =
+        (1 / 2 : ℝ) * D x + (36 * M ^ 2 + 1 / 2) * S x + P x +
+          (1 / 2 : ℝ) * R x := by ring
+    rw [harith] at hx
+    exact hx
+  have hRightInt : Integrable
+      (fun x : Vec3 => (1 / 2 : ℝ) * D x +
+        (36 * M ^ 2 + 1 / 2) * S x + P x + (1 / 2 : ℝ) * R x) volume := by
+    exact (((hDint.const_mul _).add (hSint.const_mul _)).add hPint).add
+      (hRint.const_mul _)
+  have hLeftInt : Integrable (fun x : Vec3 => B x - C x + W x) volume :=
+    (hBint.sub hCint).add hWint
+  have hBounds := integral_mono_ae hLeftInt hRightInt hpointAE
+  have hTbound :
+      (∫ x : Vec3, Q x ∂volume) + ∫ x : Vec3, D x ∂volume ≤
+        (1 / 2 : ℝ) * (∫ x : Vec3, D x ∂volume) +
+          (36 * M ^ 2 + 1 / 2) * (∫ x : Vec3, S x ∂volume) +
+          ∫ x : Vec3, P x ∂volume +
+          (1 / 2 : ℝ) * (∫ x : Vec3, R x ∂volume) := by
+    calc
+      _ = ∫ x : Vec3, (B x - C x + W x) ∂volume := by
+        have hint : (∫ x : Vec3, (B x - C x + W x) ∂volume) =
+            (∫ x : Vec3, B x ∂volume) - ∫ x : Vec3, C x ∂volume +
+              ∫ x : Vec3, W x ∂volume := by
+          calc
+            _ = (∫ x : Vec3, (B x - C x) ∂volume) +
+                ∫ x : Vec3, W x ∂volume := integral_add (hBint.sub hCint) hWint
+            _ = _ := by rw [integral_sub hBint hCint]
+        rw [hint]
+        exact htotal
+      _ ≤ _ := hBounds
+      _ = _ := by
+        have hDS : (∫ x : Vec3,
+            (1 / 2 : ℝ) * D x + (36 * M ^ 2 + 1 / 2) * S x ∂volume) =
+            (∫ x : Vec3, (1 / 2 : ℝ) * D x ∂volume) +
+              ∫ x : Vec3, (36 * M ^ 2 + 1 / 2) * S x ∂volume :=
+          integral_add (hDint.const_mul _) (hSint.const_mul _)
+        have hDSP : (∫ x : Vec3,
+            ((1 / 2 : ℝ) * D x + (36 * M ^ 2 + 1 / 2) * S x) + P x ∂volume) =
+            (∫ x : Vec3,
+              (1 / 2 : ℝ) * D x + (36 * M ^ 2 + 1 / 2) * S x ∂volume) +
+                ∫ x : Vec3, P x ∂volume :=
+          integral_add ((hDint.const_mul _).add (hSint.const_mul _)) hPint
+        have hDSPR : (∫ x : Vec3,
+            (((1 / 2 : ℝ) * D x + (36 * M ^ 2 + 1 / 2) * S x) + P x) +
+              (1 / 2 : ℝ) * R x ∂volume) =
+            (∫ x : Vec3,
+              ((1 / 2 : ℝ) * D x + (36 * M ^ 2 + 1 / 2) * S x) + P x ∂volume) +
+              ∫ x : Vec3, (1 / 2 : ℝ) * R x ∂volume :=
+          integral_add (((hDint.const_mul _).add (hSint.const_mul _)).add hPint)
+            (hRint.const_mul _)
+        calc
+          _ = (∫ x : Vec3,
+                ((1 / 2 : ℝ) * D x + (36 * M ^ 2 + 1 / 2) * S x) + P x ∂volume) +
+                ∫ x : Vec3, (1 / 2 : ℝ) * R x ∂volume := hDSPR
+          _ = ((∫ x : Vec3, (1 / 2 : ℝ) * D x ∂volume) +
+                ∫ x : Vec3, (36 * M ^ 2 + 1 / 2) * S x ∂volume) +
+                ∫ x : Vec3, P x ∂volume +
+                ∫ x : Vec3, (1 / 2 : ℝ) * R x ∂volume := by rw [hDSP, hDS]
+          _ = _ := by
+            rw [integral_const_mul, integral_const_mul, integral_const_mul]
+  have hTgrad :
+      2 * (∫ x : Vec3, Q x ∂volume) + ∫ x : Vec3, D x ∂volume ≤
+        (72 * M ^ 2 + 1) * (∫ x : Vec3, S x ∂volume) +
+          2 * (∫ x : Vec3, P x ∂volume) + ∫ x : Vec3, R x ∂volume := by
+    linarith only [hTbound]
+  exact hTgrad
+
 /-- A smooth compactly supported solution of the linear vorticity equation
 satisfies the spatial differential energy inequality used in the smooth part
 of `lem:localized-vorticity-energy`. Both matrix and vector forcing are measured in `L²` in this
@@ -253,133 +380,12 @@ theorem smoothVorticityEnergyDifferentialInequality
   have hpoint (x : Vec3) : B x - C x + W x ≤
       (1 / 2 : ℝ) * D x + 36 * M ^ 2 * S x + P x +
         (1 / 2 : ℝ) * S x + (1 / 2 : ℝ) * R x := by
-    have hpair := vorticityFluxAndMatrixPairing_halfDissipation M
-      (v (x, t)) (z (x, t)) (fun j i => F (x, t) j i)
-      (fun i j => G j i x) hM (hvbound x t)
-    have hgpair := vorticityVectorPairing_young (fun i => g (x, t) i)
-      (z (x, t))
-    have hfluxIdent :
-        B x = ∑ j : Fin 3, ∑ i : Fin 3,
-          (v (x, t) j * z (x, t) i - z (x, t) j * v (x, t) i) * G j i x := by
-      change (∑ i : Fin 3, ∑ j : Fin 3,
-          (v (x, t) j * z (x, t) i - z (x, t) j * v (x, t) i) * G j i x) = _
-      exact Finset.sum_comm
-    have hmatIdent : C x = ∑ j : Fin 3, ∑ i : Fin 3,
-        F (x, t) j i * G j i x := by
-      change (∑ i : Fin 3, ∑ j : Fin 3, F (x, t) j i * G j i x) = _
-      exact Finset.sum_comm
-    have hDIdent : D x = ∑ j : Fin 3, ∑ i : Fin 3, (G j i x) ^ 2 := by
-      rfl
-    have hPIdent : P x = ∑ j : Fin 3, ∑ i : Fin 3, (F (x, t) j i) ^ 2 := by
-      rfl
-    have hSIdent : S x = ∑ i : Fin 3, (z (x, t) i) ^ 2 := by rfl
-    have hRIdent : R x = ∑ i : Fin 3, (g (x, t) i) ^ 2 := by rfl
-    have hWIdent : W x = ∑ i : Fin 3, g (x, t) i * z (x, t) i := by rfl
-    have hnormsq : (vec3EuclideanNorm (z (x, t))) ^ 2 =
-        ∑ i : Fin 3, (z (x, t) i) ^ 2 := by
-      rw [vec3EuclideanNorm, Real.sq_sqrt]
-      exact Finset.sum_nonneg fun i _ => sq_nonneg _
-    rw [hfluxIdent, hmatIdent, hDIdent, hPIdent, hSIdent, hRIdent, hWIdent]
-    have hsumabs :
-        (∑ j : Fin 3, ∑ i : Fin 3,
-          (v (x, t) j * z (x, t) i - z (x, t) j * v (x, t) i) * G j i x) -
-        (∑ j : Fin 3, ∑ i : Fin 3, F (x, t) j i * G j i x) ≤
-        |∑ j : Fin 3, ∑ i : Fin 3,
-          (v (x, t) j * z (x, t) i - z (x, t) j * v (x, t) i) * G j i x| +
-        |∑ j : Fin 3, ∑ i : Fin 3, F (x, t) j i * G j i x| := by
-      calc
-        _ ≤ |(∑ j : Fin 3, ∑ i : Fin 3,
-            (v (x, t) j * z (x, t) i - z (x, t) j * v (x, t) i) * G j i x) -
-          (∑ j : Fin 3, ∑ i : Fin 3, F (x, t) j i * G j i x)| := le_abs_self _
-        _ ≤ _ := abs_sub _ _
-    have hWbound : W x ≤
-        (1 / 2 : ℝ) * (∑ i : Fin 3, (g (x, t) i) ^ 2) +
-          (1 / 2 : ℝ) * (∑ i : Fin 3, (z (x, t) i) ^ 2) := by
-      rw [hWIdent]
-      calc
-        _ ≤ |∑ i : Fin 3, g (x, t) i * z (x, t) i| := le_abs_self _
-        _ ≤ _ := hgpair
-    have hpair' := hpair
-    rw [hnormsq] at hpair'
-    linarith only [hpair', hWbound, hsumabs]
-  have hpointAE : B - C + W ≤ᵐ[volume]
-      fun x : Vec3 => (1 / 2 : ℝ) * D x +
-        (36 * M ^ 2 + 1 / 2) * S x + P x + (1 / 2 : ℝ) * R x := by
-    filter_upwards [] with x
-    have h := hpoint x
-    have harith : (1 / 2 : ℝ) * D x + 36 * M ^ 2 * S x + P x +
-        (1 / 2 : ℝ) * S x + (1 / 2 : ℝ) * R x =
-        (1 / 2 : ℝ) * D x + (36 * M ^ 2 + 1 / 2) * S x + P x +
-          (1 / 2 : ℝ) * R x := by ring
-    rw [harith] at h
-    exact h
-  have hRightInt : Integrable
-      (fun x : Vec3 => (1 / 2 : ℝ) * D x +
-        (36 * M ^ 2 + 1 / 2) * S x + P x + (1 / 2 : ℝ) * R x) volume := by
-    exact (((hDint.const_mul _).add (hSint.const_mul _)).add hPint).add
-      (hRint.const_mul _)
-  have hLeftInt : Integrable (fun x : Vec3 => B x - C x + W x) volume :=
-    (hBint.sub hCint).add hWint
-  have hBounds := integral_mono_ae hLeftInt hRightInt hpointAE
-  have hTbound :
-      (∫ x : Vec3, Q x ∂volume) + ∫ x : Vec3, D x ∂volume ≤
-        (1 / 2 : ℝ) * (∫ x : Vec3, D x ∂volume) +
-          (36 * M ^ 2 + 1 / 2) * (∫ x : Vec3, S x ∂volume) +
-          ∫ x : Vec3, P x ∂volume +
-          (1 / 2 : ℝ) * (∫ x : Vec3, R x ∂volume) := by
-    calc
-      _ = (∫ x : Vec3, (B x - C x + W x) ∂volume) := by
-        have hint : (∫ x : Vec3, (B x - C x + W x) ∂volume) =
-            (∫ x : Vec3, B x ∂volume) - ∫ x : Vec3, C x ∂volume +
-              ∫ x : Vec3, W x ∂volume := by
-          calc
-            _ = (∫ x : Vec3, (B x - C x) ∂volume) +
-                ∫ x : Vec3, W x ∂volume :=
-              integral_add (hBint.sub hCint) hWint
-            _ = _ := by rw [integral_sub hBint hCint]
-        rw [hint]
-        exact htotal
-      _ ≤ _ := hBounds
-      _ = _ := by
-        have hDS : (∫ x : Vec3,
-            (1 / 2 : ℝ) * D x + (36 * M ^ 2 + 1 / 2) * S x ∂volume) =
-            (∫ x : Vec3, (1 / 2 : ℝ) * D x ∂volume) +
-              ∫ x : Vec3, (36 * M ^ 2 + 1 / 2) * S x ∂volume :=
-          integral_add (hDint.const_mul _) (hSint.const_mul _)
-        have hDSP : (∫ x : Vec3,
-            ((1 / 2 : ℝ) * D x + (36 * M ^ 2 + 1 / 2) * S x) + P x ∂volume) =
-            (∫ x : Vec3,
-              (1 / 2 : ℝ) * D x + (36 * M ^ 2 + 1 / 2) * S x ∂volume) +
-                ∫ x : Vec3, P x ∂volume :=
-          integral_add ((hDint.const_mul _).add (hSint.const_mul _)) hPint
-        have hDSPR : (∫ x : Vec3,
-            (((1 / 2 : ℝ) * D x + (36 * M ^ 2 + 1 / 2) * S x) + P x) +
-              (1 / 2 : ℝ) * R x ∂volume) =
-            (∫ x : Vec3,
-              ((1 / 2 : ℝ) * D x + (36 * M ^ 2 + 1 / 2) * S x) + P x ∂volume) +
-              ∫ x : Vec3, (1 / 2 : ℝ) * R x ∂volume :=
-          integral_add (((hDint.const_mul _).add (hSint.const_mul _)).add hPint)
-            (hRint.const_mul _)
-        calc
-          _ = (∫ x : Vec3,
-                ((1 / 2 : ℝ) * D x + (36 * M ^ 2 + 1 / 2) * S x) + P x ∂volume) +
-                ∫ x : Vec3, (1 / 2 : ℝ) * R x ∂volume := hDSPR
-          _ = ((∫ x : Vec3, (1 / 2 : ℝ) * D x ∂volume) +
-                ∫ x : Vec3, (36 * M ^ 2 + 1 / 2) * S x ∂volume) +
-                ∫ x : Vec3, P x ∂volume +
-                ∫ x : Vec3, (1 / 2 : ℝ) * R x ∂volume := by
-              rw [hDSP, hDS]
-          _ = _ := by
-            rw [integral_const_mul, integral_const_mul, integral_const_mul]
-  have hTgrad :
-      2 * (∫ x : Vec3, Q x ∂volume) + ∫ x : Vec3, D x ∂volume ≤
-        (72 * M ^ 2 + 1) * (∫ x : Vec3, S x ∂volume) +
-          2 * (∫ x : Vec3, P x ∂volume) + ∫ x : Vec3, R x ∂volume := by
-    have hDnonneg : 0 ≤ ∫ x : Vec3, D x ∂volume := by
-      apply integral_nonneg_of_ae
-      filter_upwards [] with x
-      exact Finset.sum_nonneg fun j _ => Finset.sum_nonneg fun i _ => sq_nonneg _
-    linarith only [hTbound, hDnonneg]
+    have hp := vorticityEnergy_pointwise_pairing_bound M hM
+      (v (x, t)) (z (x, t)) (g (x, t))
+      (fun j i => F (x, t) j i) (fun j i => G j i x) (hvbound x t)
+    simpa only [B, C, W, D, P, S, R, A, H, Z] using hp
+  have hTgrad := vorticityEnergy_integrate_pointwise_bound M Q D B C W S P R
+    hDint hSint hPint hRint hBint hCint hWint htotal hpoint
   simpa [Q, D, P, S, R, T, Z, G, H,
     CKN.spatialPartial, CKN.spatialDeriv] using hTgrad
 

@@ -73,6 +73,305 @@ theorem IsSpaceTimeWeakPartial.congr_left {W : Set (Vec3 × ℝ)} {j : Fin 3}
   rw [← h φ hφ hφc hφW]
   exact integral_congr_ae (hf.mono fun p hp => by simp only [hp])
 
+private theorem localHeatGain_measurableFamilyRepresentative
+    {n : ℕ} {W : Set (Vec3 × ℝ)} {F : List (Fin 3) → Vec3 × ℝ → ℝ}
+    (hF : IsSpaceTimeFamily n W F) :
+    ∃ Fm : List (Fin 3) → Vec3 × ℝ → ℝ,
+      (∀ α, α.length ≤ n → F α =ᵐ[volume.restrict W] Fm α) ∧
+      (∀ α, StronglyMeasurable (Fm α)) ∧ IsSpaceTimeFamily n W Fm := by
+  let Fm : List (Fin 3) → Vec3 × ℝ → ℝ := fun α =>
+    if h : α.length ≤ n then (hF.memL2 α h).aestronglyMeasurable.mk (F α) else fun _ => 0
+  have hEq : ∀ α, α.length ≤ n → F α =ᵐ[volume.restrict W] Fm α := by
+    intro α hα
+    simp only [Fm, hα, ↓reduceDIte]
+    exact (hF.memL2 α hα).aestronglyMeasurable.ae_eq_mk
+  have hsm : ∀ α, StronglyMeasurable (Fm α) := by
+    intro α
+    by_cases hα : α.length ≤ n
+    · simp only [Fm, hα, ↓reduceDIte]
+      exact (hF.memL2 α hα).aestronglyMeasurable.stronglyMeasurable_mk
+    · simp only [Fm, hα, ↓reduceDIte]
+      exact stronglyMeasurable_const
+  exact ⟨Fm, hEq, hsm, hF.congr_ae hEq⟩
+
+private theorem localHeatGain_curveEnergy_sum_bound
+    {a b : ℝ} {B : Set Vec3} (F : Finset (List (Fin 3)))
+    (Zc : List (Fin 3) → Icc a b → Lp ℝ 2 (volume : Measure Vec3))
+    (Dg : List (Fin 3) → Fin 3 → Vec3 × ℝ → ℝ) (t : Icc a b) (Q : ℝ)
+    (hword : ∀ α ∈ F, ‖Zc α t‖ ^ 2 +
+      ∑ j : Fin 3, ∫ p in vlSlab a b, Dg α j p ^ 2 ≤ Q) :
+    ∑ α ∈ F, ∫ x in B, (Zc α t : Vec3 → ℝ) x ^ 2 ≤ (F.card : ℝ) * Q := by
+  calc
+    _ ≤ ∑ α ∈ F, Q := by
+      refine Finset.sum_le_sum fun α hα => ?_
+      have hL2 := Lp.memLp (Zc α t)
+      have h1 : ∫ x in B, (Zc α t : Vec3 → ℝ) x ^ 2 ≤
+          ∫ x, (Zc α t : Vec3 → ℝ) x ^ 2 :=
+        setIntegral_le_integral hL2.integrable_sq (ae_of_all _ fun x => sq_nonneg _)
+      have h2 : ∫ x, (Zc α t : Vec3 → ℝ) x ^ 2 = ‖Zc α t‖ ^ 2 := by
+        rw [vl_integral_sq_eq hL2, Lp.norm_def]
+      have h3 := hword α hα
+      have h4 : 0 ≤ ∑ j : Fin 3, ∫ p in vlSlab a b, Dg α j p ^ 2 :=
+        Finset.sum_nonneg fun _ _ => integral_nonneg fun _ => sq_nonneg _
+      linarith only [h1, h2, h3, h4]
+    _ = (F.card : ℝ) * Q := by rw [Finset.sum_const, nsmul_eq_mul]
+
+private theorem localHeatGain_gradientEnergy_sum_bound
+    {m : ℕ} {a b : ℝ} {B : Set (Vec3 × ℝ)} {Q NDw NDH : ℝ}
+    (hab : a ≤ b)
+    (Dz' Dw : List (Fin 3) → Vec3 × ℝ → ℝ)
+    (Dg : List (Fin 3) → Fin 3 → Vec3 × ℝ → ℝ)
+    (Zc : List (Fin 3) → Icc a b → Lp ℝ 2 (volume : Measure Vec3))
+    (hDgmem : ∀ α, α ∈ sobolevWords m → ∀ j,
+      MemLp (Dg α j) 2 (volume.restrict (vlSlab a b)))
+    (hDwmem : ∀ α, α.length ≤ m → MemLp (Dw α) 2 (volume.restrict (vlSlab a b)))
+    (hDlow : ∀ α, α.length ≤ m → Dz' α =ᵐ[volume.restrict B] Dw α)
+    (hBslab : B ⊆ vlSlab a b)
+    (hNDw_ge : ∀ α, α ∈ sobolevWords m →
+      ∫ p in vlSlab a b, Dw α p ^ 2 ≤ NDw)
+    (hword : ∀ α, α ∈ sobolevWords m →
+      ‖Zc α ⟨b, right_mem_Icc.2 hab⟩‖ ^ 2 +
+        ∑ j : Fin 3, ∫ p in vlSlab a b, Dg α j p ^ 2 ≤ Q)
+    (hQ : 2 * (NDH + NDw) ≤ Q) (hNDH : 0 ≤ NDH) :
+    ∑ γ ∈ sobolevWords (m + 1), ∫ p in B, Dz' γ p ^ 2 ≤
+      (sobolevWords (m + 1)).card * Q := by
+  calc
+    _ ≤ ∑ γ ∈ sobolevWords (m + 1), Q := by
+      refine Finset.sum_le_sum fun γ hγ => ?_
+      by_cases hγm : γ.length ≤ m
+      · have h1 : ∫ p in B, Dz' γ p ^ 2 = ∫ p in B, Dw γ p ^ 2 :=
+          integral_congr_ae ((hDlow γ hγm).mono fun p hp => by simp only [hp])
+        have h2 : ∫ p in B, Dw γ p ^ 2 ≤ ∫ p in vlSlab a b, Dw γ p ^ 2 :=
+          setIntegral_mono_set (hDwmem γ hγm).integrable_sq
+            (ae_of_all _ fun p => sq_nonneg _) (ae_of_all _ hBslab)
+        have hγword : γ ∈ sobolevWords m := mem_sobolevWords.2 hγm
+        have h3 := hNDw_ge γ hγword
+        have h4 : 2 * NDw ≤ Q := by linarith only [hQ, hNDH]
+        rw [h1]
+        linarith only [h2, h3, h4]
+      · have hne : γ ≠ [] := fun h => hγm (by simp [h])
+        have hβ : γ.dropLast ∈ sobolevWords m := mem_sobolevWords.2 (by
+          have hγlen := mem_sobolevWords.1 hγ
+          simp only [List.length_dropLast]; omega)
+        have h1 : ∫ p in B, Dg γ.dropLast (γ.getLastD 0) p ^ 2 ≤
+            ∫ p in vlSlab a b, Dg γ.dropLast (γ.getLastD 0) p ^ 2 :=
+          setIntegral_mono_set (hDgmem γ.dropLast hβ (γ.getLastD 0)).integrable_sq
+            (ae_of_all _ fun p => sq_nonneg _) (ae_of_all _ hBslab)
+        have h2 : ∫ p in vlSlab a b, Dg γ.dropLast (γ.getLastD 0) p ^ 2 ≤
+            ∑ j : Fin 3, ∫ p in vlSlab a b, Dg γ.dropLast j p ^ 2 :=
+          Finset.single_le_sum (f := fun j => ∫ p in vlSlab a b, Dg γ.dropLast j p ^ 2)
+            (fun _ _ => integral_nonneg fun _ => sq_nonneg _) (Finset.mem_univ _)
+        have h3 := hword γ.dropLast hβ
+        have h4 : 0 ≤ ‖Zc γ.dropLast ⟨b, right_mem_Icc.2 hab⟩‖ ^ 2 := sq_nonneg _
+        linarith only [h1, h2, h3, h4]
+    _ = (sobolevWords (m + 1)).card * Q := by
+      rw [Finset.sum_const, nsmul_eq_mul]
+
+private theorem localHeatGain_cutoffFamilyFacts
+    {a σ : ℝ} {x₀ r : ℝ} {η ζ : Vec3 × ℝ → ℝ}
+    (Dzm DGm : List (Fin 3) → Vec3 × ℝ → ℝ)
+    (hη : ContDiff ℝ (⊤ : ℕ∞) η) (hζ : ContDiff ℝ (⊤ : ℕ∞) ζ)
+    (hgrad : ∀ j, ContDiff ℝ (⊤ : ℕ∞) (spatialDeriv η j))
+    (hη0 : ∀ γ p, p.2 ≤ a + σ / 2 → spaceTimeWord γ η p = 0)
+    (hη1 : ∀ p, p.1 ∈ vec3Ball x₀ r → a + σ ≤ p.2 →
+      η p = 1 ∧ ∀ j, spatialDeriv η j p = 0)
+    (hDzm : ∀ α, StronglyMeasurable (Dzm α))
+    (hDGm : ∀ α, StronglyMeasurable (DGm α)) :
+    ∃ Dw DH : List (Fin 3) → Vec3 × ℝ → ℝ,
+      (∀ α, StronglyMeasurable (Dw α)) ∧ (∀ α, StronglyMeasurable (DH α)) ∧
+      (∀ α p, p.2 < a + σ / 2 → Dw α p = 0) ∧
+      (∀ α p, p.1 ∈ vec3Ball x₀ r → a + σ ≤ p.2 → Dw α p = Dzm α p) := by
+  let Dw := localHeatGainDw η Dzm
+  let DH := localHeatGainDH η Dzm DGm
+  have hAsm (θ : Vec3 × ℝ → ℝ) (hθ : ContDiff ℝ (⊤ : ℕ∞) θ) (γ : List (Fin 3)) :
+      StronglyMeasurable (spaceTimeWord γ θ) :=
+    (contDiff_spaceTimeWord γ hθ).continuous.stronglyMeasurable
+  have hDwsm (α : List (Fin 3)) : StronglyMeasurable (Dw α) :=
+    stLeibniz_stronglyMeasurable α (hAsm η hη) hDzm
+  have hDHsm (α : List (Fin 3)) : StronglyMeasurable (DH α) := by
+    refine (stLeibniz_stronglyMeasurable α (hAsm η hη) hDGm).add
+      ((stLeibniz_stronglyMeasurable α (hAsm ζ hζ) hDzm).add
+        (stronglyMeasurable_const.mul (Finset.stronglyMeasurable_fun_sum _ fun j _ =>
+          stLeibniz_stronglyMeasurable α (hAsm (spatialDeriv η j) (hgrad j))
+            fun γ => hDzm (j :: γ))))
+  have hvan (α : List (Fin 3)) (p : Vec3 × ℝ) (hp : p.2 < a + σ / 2) : Dw α p = 0 :=
+    stLeibniz_eq_zero_of_forall α fun γ => hη0 γ p hp.le
+  have hone (α : List (Fin 3)) (p : Vec3 × ℝ) (hp1 : p.1 ∈ vec3Ball x₀ r)
+      (hp2 : a + σ ≤ p.2) : Dw α p = Dzm α p :=
+    stLeibniz_eq_of_unit α (hη1 p hp1 hp2).1 (hη1 p hp1 hp2).2
+  exact ⟨Dw, DH, hDwsm, hDHsm, hvan, hone⟩
+
+private theorem localHeatGain_ae_timeSlice
+    {a b s : ℝ} {B U : Set Vec3} {I : Set ℝ}
+    (Zc : Icc a b → Lp ℝ 2 (volume : Measure Vec3))
+    (Z : ℝ → Vec3 → ℝ) (f Fm Dw : Vec3 × ℝ → ℝ)
+    (hsub : Ioo s b ⊆ Ioo a b)
+    (hcurve : ∀ᵐ t ∂(volume.restrict (Ioo a b)),
+      ∀ ht : t ∈ Icc a b, (Zc ⟨t, ht⟩ : Vec3 → ℝ) =ᵐ[volume] fun x => Dw (x, t))
+    (hdata : f =ᵐ[volume.restrict (U ×ˢ I)] Fm)
+    (hU : B ⊆ U) (hBm : MeasurableSet B)
+    (hZ : ∀ t (ht : t ∈ Icc a b), Z t = (Zc ⟨t, ht⟩ : Vec3 → ℝ))
+    (hcut : ∀ p, p.1 ∈ B → s ≤ p.2 → Dw p = Fm p) :
+    ∀ᵐ t ∂(volume.restrict (Ioo s b)),
+      Z t =ᵐ[volume.restrict B] fun x => f (x, t) := by
+  have h1 := ae_restrict_of_ae_restrict_of_subset hsub hcurve
+  have h2 := ae_restrict_of_ae_restrict_of_subset hsub (ae_slices_of_ae_prod hdata)
+  filter_upwards [h1, h2, ae_restrict_mem measurableSet_Ioo] with t ht1 ht2 htm
+  have htab : t ∈ Icc a b := Ioo_subset_Icc_self (hsub htm)
+  have h3 : (Zc ⟨t, htab⟩ : Vec3 → ℝ) =ᵐ[volume.restrict B] fun x => Dw (x, t) :=
+    ae_restrict_of_ae ht1 htab
+  have h4 : (fun x => f (x, t)) =ᵐ[volume.restrict B] fun x => Fm (x, t) :=
+    ae_restrict_of_ae_restrict_of_subset hU ht2
+  filter_upwards [h3, h4, ae_restrict_mem hBm]
+    with x hx3 hx4 hxB
+  rw [hZ t htab, hx3, hx4]
+  exact hcut (x, t) hxB htm.1.le
+
+private theorem localHeatGain_highOrderFamily
+    {m : ℕ} {x₀ : Vec3} {r a s b : ℝ} {U : Set Vec3} {I : Set ℝ}
+    {W : Set (Vec3 × ℝ)} {z : Vec3 × ℝ → ℝ}
+    {Dz Dw Dg Dz' : List (Fin 3) → Vec3 × ℝ → ℝ}
+    (hz : IsL2SobolevFamilyOn m U I z Dz)
+    (hDgmem : ∀ α, α ∈ sobolevWords m → ∀ j,
+      MemLp (Dg α j) 2 (volume.restrict (vlSlab a b)))
+    (hDgweak : ∀ α, α ∈ sobolevWords m → ∀ j,
+      IsSpaceTimeWeakPartial (vlSlab a b) j (Dw α) (Dg α j))
+    (hDwW : ∀ α, α.length ≤ m → Dw α =ᵐ[volume.restrict W] Dz α)
+    (hUmeas : MeasurableSet (U ×ˢ I)) (hWV : W ⊆ U ×ˢ I)
+    (hSlabMeas : MeasurableSet (vlSlab a b)) (hWslab : W ⊆ vlSlab a b)
+    (hWdef : W = vec3Ball x₀ r ×ˢ Ioo s b)
+    (hzero : Dz' [] = Dz [])
+    (hlow : ∀ α, α.length ≤ m → Dz' α = Dz α)
+    (hhigh : ∀ α, ¬ α.length ≤ m → Dz' α = Dg α.dropLast (α.getLastD 0)) :
+    IsL2SobolevFamilyOn (m + 1) (vec3Ball x₀ r) (Ioo s b) z Dz' := by
+  subst W
+  refine ⟨?_, ?_, ?_⟩
+  · intro α hα
+    by_cases hαm : α.length ≤ m
+    · rw [hlow α hαm]
+      exact (hz.memL2 α hαm).mono_measure
+        (Measure.restrict_mono hWV le_rfl)
+    · have hβ : α.dropLast ∈ sobolevWords m := mem_sobolevWords.2 (by
+        have hlen := mem_sobolevWords.1 hα
+        simp only [List.length_dropLast]; omega)
+      rw [hhigh α hαm]
+      exact (hDgmem α.dropLast hβ (α.getLastD 0)).mono_measure
+        (Measure.restrict_mono hWslab le_rfl)
+  · rw [hzero]
+    exact ae_restrict_of_ae_restrict_of_subset hWV hz.zero
+  · intro α j hαlt
+    have hαm : α.length ≤ m := by omega
+    rw [hlow α hαm]
+    by_cases hαltm : α.length < m
+    · have hαj : (α ++ [j]).length ≤ m := by
+        simp only [List.length_append, List.length_singleton]; omega
+      rw [hlow (α ++ [j]) hαj]
+      exact IsSpaceTimeWeakPartial.mono (hz.weak α j hαltm) hUmeas hWV
+    · have hαmem : α ∈ sobolevWords m := mem_sobolevWords.2 hαm
+      have hαj : ¬ (α ++ [j]).length ≤ m := by
+        simp only [List.length_append, List.length_singleton]; omega
+      rw [hhigh (α ++ [j]) hαj]
+      have hweak := (hDgweak α hαmem j).mono hSlabMeas hWslab
+      simpa only [List.dropLast_concat, List.getLastD_concat] using
+        hweak.congr_left (hDwW α hαm)
+
+private theorem localHeatGain_lpCurve_restrict_continuous
+    {a b s : ℝ} (B : Set Vec3)
+    (F : ℝ → Lp ℝ 2 (volume : Measure Vec3)) (g : ℝ → Vec3 → ℝ)
+    (hFc : ContinuousOn F (Icc a b))
+    (hlink : ∀ t, t ∈ Icc a b → g t = (F t : Vec3 → ℝ))
+    (hsub : Icc s b ⊆ Icc a b) (t : ℝ) (ht : t ∈ Icc s b) :
+    Tendsto (fun t' => eLpNorm (g t' - g t) 2 (volume.restrict B))
+      (𝓝[Icc s b] t) (𝓝 0) := by
+  have hFt : Tendsto (fun t' => ‖F t' - F t‖) (𝓝[Icc s b] t) (𝓝 0) := by
+    have h := ((hFc.mono hsub) t ht).sub (continuousWithinAt_const (b := F t))
+    simpa using h.norm.tendsto
+  have hbound : ∀ᶠ t' in 𝓝[Icc s b] t,
+      eLpNorm (g t' - g t) 2 (volume.restrict B) ≤ ENNReal.ofReal ‖F t' - F t‖ := by
+    filter_upwards [self_mem_nhdsWithin] with t' ht'
+    have ht'ab := hsub ht'
+    have htab := hsub ht
+    rw [hlink t' ht'ab, hlink t htab, ofReal_norm, Lp.enorm_def]
+    calc
+      eLpNorm ((F t' : Vec3 → ℝ) - (F t : Vec3 → ℝ)) 2 (volume.restrict B) ≤
+          eLpNorm ((F t' : Vec3 → ℝ) - (F t : Vec3 → ℝ)) 2 volume :=
+        eLpNorm_mono_measure _ Measure.restrict_le_self
+      _ = eLpNorm (⇑(F t' - F t)) 2 volume := eLpNorm_congr_ae (Lp.coeFn_sub _ _).symm
+  have hlim : Tendsto (fun t' => ENNReal.ofReal ‖F t' - F t‖)
+      (𝓝[Icc s b] t) (𝓝 0) := by
+    simpa using ENNReal.tendsto_ofReal hFt
+  exact tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hlim
+    (Eventually.of_forall fun _ => bot_le) hbound
+
+private theorem localHeatGain_singleTerm_le_sum
+    {α : Type} (F : Finset α) (f : α → ℝ) (hf : ∀ a ∈ F, 0 ≤ f a) :
+    ∀ a ∈ F, f a ≤ ∑ b ∈ F, f b := by
+  intro a ha
+  exact Finset.single_le_sum (f := f) hf ha
+
+private theorem localHeatGain_sum_integrals_ae_eq
+    {α : Type} {F : Finset α} {W : Set (Vec3 × ℝ)}
+    {f g : α → Vec3 × ℝ → ℝ}
+    (hfg : ∀ i, i ∈ F → f i =ᵐ[volume.restrict W] g i) :
+    ∑ i ∈ F, ∫ p in W, f i p ^ 2 = ∑ i ∈ F, ∫ p in W, g i p ^ 2 := by
+  apply Finset.sum_congr rfl
+  intro i hi
+  exact integral_congr_ae ((hfg i hi).mono fun p hp => by rw [hp])
+
+private theorem localHeatGain_combineCutoffEnergy
+    {K L A B NDw NDH : ℝ}
+    (hK : 0 ≤ K) (hL : 0 ≤ L) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hNw : NDw ≤ K * L ^ 2 * A)
+    (hNH : NDH ≤ K * L ^ 2 * (A + B)) :
+    2 * (NDH + NDw) ≤ (4 * K * L ^ 2) * (A + B) := by
+  have h1 : K * L ^ 2 * A ≤ K * L ^ 2 * (A + B) :=
+    mul_le_mul_of_nonneg_left (by linarith only [hB]) (by positivity)
+  nlinarith only [hNw, hNH, h1]
+
+private theorem localHeatGain_individualEnergyBound
+    {m : ℕ} {a b : ℝ} {Q NDw NDH : ℝ}
+    (Dg : List (Fin 3) → Fin 3 → Vec3 × ℝ → ℝ)
+    (Zc : List (Fin 3) → Icc a b → Lp ℝ 2 (volume : Measure Vec3))
+    (hQ : 2 * (NDH + NDw) ≤ Q)
+    (Dw : List (Fin 3) → Vec3 × ℝ → ℝ)
+    (hNDw : ∀ α, α ∈ sobolevWords m →
+      ∫ p in vlSlab a b, Dw α p ^ 2 ≤ NDw)
+    (hbase : ∀ α, α ∈ sobolevWords m → ∀ t : Icc a b,
+      ‖Zc α t‖ ^ 2 + ∑ j : Fin 3, ∫ p in vlSlab a b, Dg α j p ^ 2 ≤
+        2 * (NDH + ∫ p in vlSlab a b, Dw α p ^ 2)) :
+    ∀ α, α ∈ sobolevWords m → ∀ t : Icc a b,
+      ‖Zc α t‖ ^ 2 + ∑ j : Fin 3, ∫ p in vlSlab a b, Dg α j p ^ 2 ≤ Q := by
+  intro α hα t
+  have h1 := hbase α hα t
+  have h2 := hNDw α hα
+  linarith only [h1, h2, hQ]
+
+private theorem localHeatGain_sqrt_energy_estimate
+    {A B N₁ N₂ Q₀ S X Y : ℝ}
+    (hA : A ≤ N₁ * Q₀ * S) (hB : B ≤ N₂ * Q₀ * S)
+    (hN₁ : 0 ≤ N₁) (hN₂ : 0 ≤ N₂) (hQ₀ : 0 ≤ Q₀)
+    (hS : 0 ≤ S) (hX : 0 ≤ X) (hY : 0 ≤ Y)
+    (hSXY : S = X + Y) :
+    Real.sqrt A + Real.sqrt B ≤
+      (Real.sqrt (N₁ * Q₀) + Real.sqrt (N₂ * Q₀)) *
+        (Real.sqrt X + Real.sqrt Y) := by
+  have hsA : Real.sqrt A ≤ Real.sqrt (N₁ * Q₀) * Real.sqrt S := by
+    rw [← Real.sqrt_mul (mul_nonneg hN₁ hQ₀)]
+    exact Real.sqrt_le_sqrt (by nlinarith only [hA])
+  have hsB : Real.sqrt B ≤ Real.sqrt (N₂ * Q₀) * Real.sqrt S := by
+    rw [← Real.sqrt_mul (mul_nonneg hN₂ hQ₀)]
+    exact Real.sqrt_le_sqrt (by nlinarith only [hB])
+  have hsS : Real.sqrt S ≤ Real.sqrt X + Real.sqrt Y := by
+    rw [hSXY]
+    exact real_sqrt_add_le_add_sqrt hX hY
+  calc
+    _ ≤ Real.sqrt (N₁ * Q₀) * Real.sqrt S +
+        Real.sqrt (N₂ * Q₀) * Real.sqrt S := add_le_add hsA hsB
+    _ = (Real.sqrt (N₁ * Q₀) + Real.sqrt (N₂ * Q₀)) * Real.sqrt S :=
+      (add_mul _ _ _).symm
+    _ ≤ _ := mul_le_mul_of_nonneg_left hsS
+      (add_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _))
+
 /-- `lem:local-heat-gain`. -/
 theorem localHeatGain (m : ℕ) (hm : m = 1 ∨ m = 2) {r R σ β : ℝ}
     (hr : 0 < r) (hrR : r < R) (hσ : 0 < σ) (hσβ : σ < β) :
@@ -117,34 +416,12 @@ theorem localHeatGain (m : ℕ) (hm : m = 1 ∨ m = 2) {r R σ β : ℝ}
   have hVm : MeasurableSet (U ×ˢ I) := hUm.prod hIm
   obtain ⟨η, K, N, κ, hη, hN, hKN, hκ, hκc, hκR, hκN, hLη, hLζ, hLg, hη0, hη1⟩ := hcut x₀ a
   -- measurable modifications of the data
-  let Dzm : List (Fin 3) → Vec3 × ℝ → ℝ := fun α =>
-    if h : α.length ≤ m then (hz.memL2 α h).aestronglyMeasurable.mk (Dz α) else fun _ => 0
-  let DGm : List (Fin 3) → Vec3 × ℝ → ℝ := fun α =>
-    if h : α.length ≤ m - 1 then (hG.memL2 α h).aestronglyMeasurable.mk (DG α) else fun _ => 0
-  have hDzm_eq (α : List (Fin 3)) (hα : α.length ≤ m) :
-      Dz α =ᵐ[volume.restrict (U ×ˢ I)] Dzm α := by
-    simp only [Dzm, hα, ↓reduceDIte]
-    exact (hz.memL2 α hα).aestronglyMeasurable.ae_eq_mk
-  have hDGm_eq (α : List (Fin 3)) (hα : α.length ≤ m - 1) :
-      DG α =ᵐ[volume.restrict (U ×ˢ I)] DGm α := by
-    simp only [DGm, hα, ↓reduceDIte]
-    exact (hG.memL2 α hα).aestronglyMeasurable.ae_eq_mk
-  have hDzm_sm (α : List (Fin 3)) : StronglyMeasurable (Dzm α) := by
-    by_cases hα : α.length ≤ m
-    · simp only [Dzm, hα, ↓reduceDIte]
-      exact (hz.memL2 α hα).aestronglyMeasurable.stronglyMeasurable_mk
-    · simp only [Dzm, hα, ↓reduceDIte]
-      exact stronglyMeasurable_const
-  have hDGm_sm (α : List (Fin 3)) : StronglyMeasurable (DGm α) := by
-    by_cases hα : α.length ≤ m - 1
-    · simp only [DGm, hα, ↓reduceDIte]
-      exact (hG.memL2 α hα).aestronglyMeasurable.stronglyMeasurable_mk
-    · simp only [DGm, hα, ↓reduceDIte]
-      exact stronglyMeasurable_const
   have hDzF : IsSpaceTimeFamily m (U ×ˢ I) Dz := ⟨hz.memL2, hz.weak⟩
   have hDGF : IsSpaceTimeFamily (m - 1) (U ×ˢ I) DG := ⟨hG.memL2, hG.weak⟩
-  have hDzmF : IsSpaceTimeFamily m (U ×ˢ I) Dzm := hDzF.congr_ae hDzm_eq
-  have hDGmF : IsSpaceTimeFamily (m - 1) (U ×ˢ I) DGm := hDGF.congr_ae hDGm_eq
+  obtain ⟨Dzm, hDzm_eq, hDzm_sm, hDzmF⟩ :=
+    localHeatGain_measurableFamilyRepresentative hDzF
+  obtain ⟨DGm, hDGm_eq, hDGm_sm, hDGmF⟩ :=
+    localHeatGain_measurableFamilyRepresentative hDGF
   have hheat' : IsHeatSolutionOn U I (Dzm []) (DGm []) :=
     CKN.IsHeatSolutionOn.congr_ae hheat (hz.zero.symm.trans (hDzm_eq [] (Nat.zero_le _)))
       (hG.zero.symm.trans (hDGm_eq [] (Nat.zero_le _)))
@@ -152,24 +429,10 @@ theorem localHeatGain (m : ℕ) (hm : m = 1 ∨ m = 2) {r R σ β : ℝ}
   obtain ⟨hDwU, hDHU, hDw0, hDH0⟩ := localHeatGain_families hm1 hUm hIm hη hN hKN hκ hκc hκR
     hκN hDzmF hDGmF
   have hheatU := localHeatGain_heat hIm hη hm1 hDzmF hDGmF hheat'
-  set Dw := localHeatGainDw η Dzm with hDw
-  set DH := localHeatGainDH η Dzm DGm with hDH
-  have hAsm (ζ : Vec3 × ℝ → ℝ) (hζ : ContDiff ℝ (⊤ : ℕ∞) ζ) (γ : List (Fin 3)) :
-      StronglyMeasurable (spaceTimeWord γ ζ) :=
-    (contDiff_spaceTimeWord γ hζ).continuous.stronglyMeasurable
-  have hDw_sm (α : List (Fin 3)) : StronglyMeasurable (Dw α) :=
-    stLeibniz_stronglyMeasurable α (hAsm η hη.smooth) hDzm_sm
-  have hDH_sm (α : List (Fin 3)) : StronglyMeasurable (DH α) := by
-    refine (stLeibniz_stronglyMeasurable α (hAsm η hη.smooth) hDGm_sm).add
-      ((stLeibniz_stronglyMeasurable α (hAsm _ hη.smooth_zeta) hDzm_sm).add
-        (stronglyMeasurable_const.mul (Finset.stronglyMeasurable_fun_sum _ fun j _ =>
-          stLeibniz_stronglyMeasurable α (hAsm _ (hη.smooth_grad j))
-            fun γ => hDzm_sm (j :: γ))))
-  have hvan (α : List (Fin 3)) (p : Vec3 × ℝ) (hp : p.2 < a + σ / 2) : Dw α p = 0 :=
-    stLeibniz_eq_zero_of_forall α fun γ => hη0 γ p hp.le
-  have hone (α : List (Fin 3)) (p : Vec3 × ℝ) (hp1 : p.1 ∈ vec3Ball x₀ r) (hp2 : s ≤ p.2) :
-      Dw α p = Dzm α p :=
-    stLeibniz_eq_of_unit α (hη1 p hp1 hp2).1 (hη1 p hp1 hp2).2
+  obtain ⟨Dw, DH, hDw_sm, hDH_sm, hvan, hone⟩ :=
+    localHeatGain_cutoffFamilyFacts Dzm DGm hη.smooth hη.smooth_zeta hη.smooth_grad
+      (fun γ p hp => hη0 γ p hp) (fun p hp1 hp2 => hη1 p hp1 hp2)
+      hDzm_sm hDGm_sm
   -- the energy estimates for each word
   have hall : ∀ β' : List (Fin 3), ∃ (Zc : Icc a b → Lp ℝ 2 (volume : Measure Vec3))
       (Dg : Fin 3 → Vec3 × ℝ → ℝ), β' ∈ sobolevWords m →
@@ -194,14 +457,12 @@ theorem localHeatGain (m : ℕ) (hm : m = 1 ∨ m = 2) {r R σ β : ℝ}
   set NDG := l2SobolevNormSqOn (m - 1) (vec3Ball x₀ R) (Ioo a (a + β)) DG with hNDG
   have hNDz0 : 0 ≤ NDz := Finset.sum_nonneg fun _ _ => integral_nonneg fun _ => sq_nonneg _
   have hNDG0 : 0 ≤ NDG := Finset.sum_nonneg fun _ _ => integral_nonneg fun _ => sq_nonneg _
-  have hNDzm : ∑ α ∈ sobolevWords m, ∫ p in U ×ˢ I, Dzm α p ^ 2 = NDz := by
-    refine Finset.sum_congr rfl fun α hα => integral_congr_ae ?_
-    filter_upwards [hDzm_eq α (mem_sobolevWords.1 hα)] with p hp
-    rw [hp]
-  have hNDGm : ∑ α ∈ sobolevWords (m - 1), ∫ p in U ×ˢ I, DGm α p ^ 2 = NDG := by
-    refine Finset.sum_congr rfl fun α hα => integral_congr_ae ?_
-    filter_upwards [hDGm_eq α (mem_sobolevWords.1 hα)] with p hp
-    rw [hp]
+  have hNDzm : ∑ α ∈ sobolevWords m, ∫ p in U ×ˢ I, Dzm α p ^ 2 = NDz :=
+    localHeatGain_sum_integrals_ae_eq (sobolevWords m)
+      (fun α hα => hDzm_eq α (mem_sobolevWords.1 hα))
+  have hNDGm : ∑ α ∈ sobolevWords (m - 1), ∫ p in U ×ˢ I, DGm α p ^ 2 = NDG :=
+    localHeatGain_sum_integrals_ae_eq (sobolevWords (m - 1))
+      (fun α hα => hDGm_eq α (mem_sobolevWords.1 hα))
   rw [hNDzm] at hNw hNH
   rw [hNDGm] at hNH
   set NDw := ∑ α ∈ sobolevWords m, ∫ p in vlSlab a b, Dw α p ^ 2 with hNDw
@@ -211,19 +472,17 @@ theorem localHeatGain (m : ℕ) (hm : m = 1 ∨ m = 2) {r R σ β : ℝ}
   set S : ℝ := NDz + NDG with hS
   have hS0 : 0 ≤ S := add_nonneg hNDz0 hNDG0
   have hQ : 2 * (NDH + NDw) ≤ Q₀ * S := by
-    have h1 : Kc * L ^ 2 * NDz ≤ Kc * L ^ 2 * S :=
-      mul_le_mul_of_nonneg_left (by linarith only [hNDG0]) (by positivity)
-    rw [hQ₀]
-    nlinarith only [hNw', hNH', h1]
+    rw [hQ₀, hS]
+    exact localHeatGain_combineCutoffEnergy hKc hL0 hNDz0 hNDG0 hNw' hNH'
   have hNDw_ge (β' : List (Fin 3)) (hβ' : β' ∈ sobolevWords m) :
       ∫ p in vlSlab a b, Dw β' p ^ 2 ≤ NDw :=
-    Finset.single_le_sum (f := fun α => ∫ p in vlSlab a b, Dw α p ^ 2)
-      (fun _ _ => integral_nonneg fun _ => sq_nonneg _) hβ'
-  have hword (β' : List (Fin 3)) (hβ' : β' ∈ sobolevWords m) (t : Icc a b) :
-      ‖Zc β' t‖ ^ 2 + ∑ j : Fin 3, ∫ p in vlSlab a b, Dg β' j p ^ 2 ≤ Q₀ * S := by
-    have h := (hZD β' hβ').2.2.2.2 t
-    have h2 := hNDw_ge β' hβ'
-    linarith only [h, h2, hQ]
+    localHeatGain_singleTerm_le_sum (sobolevWords m)
+      (fun α => ∫ p in vlSlab a b, Dw α p ^ 2)
+      (fun _ _ => integral_nonneg fun _ => sq_nonneg _) β' hβ'
+  have hword : ∀ β' : List (Fin 3), β' ∈ sobolevWords m → ∀ t : Icc a b,
+      ‖Zc β' t‖ ^ 2 + ∑ j : Fin 3, ∫ p in vlSlab a b, Dg β' j p ^ 2 ≤ Q₀ * S :=
+    localHeatGain_individualEnergyBound Dg Zc hQ Dw hNDw_ge
+      (fun β' hβ' t => (hZD β' hβ').2.2.2.2 t)
   -- the witnesses
   let Z : ℝ → List (Fin 3) → Vec3 → ℝ := fun t α x =>
     if hα : α ∈ sobolevWords m then
@@ -287,159 +546,58 @@ theorem localHeatGain (m : ℕ) (hm : m = 1 ∨ m = 2) {r R σ β : ℝ}
       rw [continuousOn_iff_continuous_domRestrict]
       refine (hZD α hαm).1.congr fun t' => ?_
       simp only [F, Set.domRestrict_apply, t'.2, ↓reduceDIte]
-    have hFt : Tendsto (fun t' => ‖F t' - F t‖) (𝓝[Icc s b] t) (𝓝 0) := by
-      have h := ((hFc t (hIccsub ht)).mono hIccsub).sub
-        (continuousWithinAt_const (b := F t))
-      have h2 := h.norm.tendsto
-      simpa using h2
-    have hbound : ∀ᶠ t' in 𝓝[Icc s b] t,
-        eLpNorm (Z t' α - Z t α) 2 (volume.restrict (vec3Ball x₀ r)) ≤
-          ENNReal.ofReal ‖F t' - F t‖ := by
-      filter_upwards [self_mem_nhdsWithin] with t' ht'
-      have ht'ab := hIccsub ht'
-      have htab := hIccsub ht
-      have hF' : F t' = Zc α ⟨t', ht'ab⟩ := by simp only [F, ht'ab, ↓reduceDIte]
-      have hF : F t = Zc α ⟨t, htab⟩ := by simp only [F, htab, ↓reduceDIte]
-      rw [hZt t' ht'ab α hαm, hZt t htab α hαm, hF', hF, ofReal_norm, Lp.enorm_def]
-      calc
-        eLpNorm ((Zc α ⟨t', ht'ab⟩ : Vec3 → ℝ) - (Zc α ⟨t, htab⟩ : Vec3 → ℝ)) 2
-            (volume.restrict (vec3Ball x₀ r)) ≤
-            eLpNorm ((Zc α ⟨t', ht'ab⟩ : Vec3 → ℝ) - (Zc α ⟨t, htab⟩ : Vec3 → ℝ)) 2 volume :=
-          eLpNorm_mono_measure _ Measure.restrict_le_self
-        _ = eLpNorm (⇑(Zc α ⟨t', ht'ab⟩ - Zc α ⟨t, htab⟩)) 2 volume :=
-          eLpNorm_congr_ae (Lp.coeFn_sub _ _).symm
-    have hlim : Tendsto (fun t' => ENNReal.ofReal ‖F t' - F t‖) (𝓝[Icc s b] t) (𝓝 0) := by
-      have h := (ENNReal.tendsto_ofReal hFt)
-      simpa using h
-    exact tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hlim
-      (Eventually.of_forall fun _ => bot_le) hbound
+    exact localHeatGain_lpCurve_restrict_continuous (vec3Ball x₀ r) F
+      (fun t' => Z t' α) hFc
+      (fun t' ht' => by
+        simp only [F, ht', ↓reduceDIte]
+        exact hZt t' ht' α hαm)
+      hIccsub t ht
   · -- the time slices
-    have hsub : Ioo s b ⊆ Ioo a b := Ioo_subset_Ioo_left has.le
-    have h1 := ae_restrict_of_ae_restrict_of_subset hsub
+    exact localHeatGain_ae_timeSlice Zc (fun t => Z t []) z (Dzm []) (Dw [])
+      (Ioo_subset_Ioo_left has.le)
       (hZD [] (mem_sobolevWords.2 (Nat.zero_le _))).2.1
-    have h2 := ae_restrict_of_ae_restrict_of_subset hsub
-      (ae_slices_of_ae_prod (B := U) (I := I) (hz.zero.symm.trans
-        (hDzm_eq [] (Nat.zero_le _))))
-    filter_upwards [h1, h2, ae_restrict_mem measurableSet_Ioo] with t ht1 ht2 htmem
-    have htab : t ∈ Icc a b := Ioo_subset_Icc_self (hsub htmem)
-    rw [hZt t htab [] (mem_sobolevWords.2 (Nat.zero_le _))]
-    have h3 : (Zc [] ⟨t, htab⟩ : Vec3 → ℝ) =ᵐ[volume.restrict (vec3Ball x₀ r)]
-        fun x => Dw [] (x, t) := ae_restrict_of_ae (ht1 htab)
-    have h4 : (fun x => z (x, t)) =ᵐ[volume.restrict (vec3Ball x₀ r)]
-        fun x => Dzm [] (x, t) := ae_restrict_of_ae_restrict_of_subset hrR' ht2
-    filter_upwards [h3, h4, ae_restrict_mem (isOpen_vec3Ball x₀ r).measurableSet]
-      with x hx3 hx4 hxr
-    rw [hx3, hx4]
-    exact hone [] (x, t) hxr htmem.1.le
+      (hz.zero.symm.trans (hDzm_eq [] (Nat.zero_le _))) hrR'
+      (isOpen_vec3Ball x₀ r).measurableSet
+      (fun t ht => hZt t ht []) (fun p hp1 hp2 => hone [] p hp1 hp2.le)
   · -- the `L²_t H^{m+1}_x` family
-    refine ⟨fun α hα => ?_, ?_, fun α j hα => ?_⟩
-    · by_cases hαm : α.length ≤ m
-      · simp only [Dz', hαm, ite_true]
-        exact (hz.memL2 α hαm).mono_measure (Measure.restrict_mono hWV le_rfl)
-      · have hne : α ≠ [] := fun h => hαm (by simp [h])
-        have hβ' : α.dropLast ∈ sobolevWords m := mem_sobolevWords.2 (by
-          simp only [List.length_dropLast]; omega)
-        simp only [Dz', hαm, ite_false]
-        exact ((hZD _ hβ').2.2.1 _).mono_measure (Measure.restrict_mono hWS le_rfl)
-    · simp only [Dz', Nat.zero_le, ite_true, List.length_nil]
-      exact ae_restrict_of_ae_restrict_of_subset hWV hz.zero
-    · have hαm : α.length ≤ m := by omega
-      have e0 : Dz' α = Dz α := by simp only [Dz', hαm, ite_true]
-      rw [e0]
-      by_cases hαlt : α.length < m
-      · have hαj : (α ++ [j]).length ≤ m := by
-          simp only [List.length_append, List.length_singleton]; omega
-        have e1 : Dz' (α ++ [j]) = Dz (α ++ [j]) := by simp only [Dz', hαj, ite_true]
-        rw [e1]
-        exact IsSpaceTimeWeakPartial.mono (hz.weak α j hαlt) hVm hWV
-      · have hαj : ¬ (α ++ [j]).length ≤ m := by
-          simp only [List.length_append, List.length_singleton]; omega
-        have hαmem : α ∈ sobolevWords m := mem_sobolevWords.2 hαm
-        have e1 : Dz' (α ++ [j]) = Dg α j := by
-          simp only [Dz', hαj, ite_false, List.dropLast_concat, List.getLastD_concat]
-        rw [e1]
-        exact (((hZD α hαmem).2.2.2.1 j).mono hSm hWS).congr_left (hDwW α hαm)
+    exact localHeatGain_highOrderFamily hz
+      (fun α hα j => (hZD α hα).2.2.1 j)
+      (fun α hα j => (hZD α hα).2.2.2.1 j)
+      (fun α hα => hDwW α hα) hVm hWV hSm hWS rfl
+      (by simp [Dz'])
+      (by intro α hα; simp only [Dz', hα, ite_true])
+      (by intro α hα; simp only [Dz', hα, ite_false, List.dropLast_concat, List.getLastD_concat])
   · -- the estimate
     intro t ht
     have htab := hIccsub ht
-    -- the curve part
+    -- The energy estimate controls the finite family of time-slice norms.
     have hA : sobolevNormSqOn m (vec3Ball x₀ r) (Z t) ≤ N₁ * (Q₀ * S) := by
       unfold sobolevNormSqOn
       calc
-        ∑ α ∈ sobolevWords m, ∫ x in vec3Ball x₀ r, Z t α x ^ 2 ≤
-            ∑ α ∈ sobolevWords m, Q₀ * S := by
-          refine Finset.sum_le_sum fun α hα => ?_
-          rw [hZt t htab α hα]
-          have hL2 := Lp.memLp (Zc α ⟨t, htab⟩)
-          have h1 : ∫ x in vec3Ball x₀ r, (Zc α ⟨t, htab⟩ : Vec3 → ℝ) x ^ 2 ≤
-              ∫ x, (Zc α ⟨t, htab⟩ : Vec3 → ℝ) x ^ 2 :=
-            setIntegral_le_integral hL2.integrable_sq (ae_of_all _ fun x => sq_nonneg _)
-          have h2 : ∫ x, (Zc α ⟨t, htab⟩ : Vec3 → ℝ) x ^ 2 = ‖Zc α ⟨t, htab⟩‖ ^ 2 := by
-            rw [vl_integral_sq_eq hL2, Lp.norm_def]
-          have h3 := hword α hα ⟨t, htab⟩
-          have h4 : 0 ≤ ∑ j : Fin 3, ∫ p in vlSlab a b, Dg α j p ^ 2 :=
-            Finset.sum_nonneg fun _ _ => integral_nonneg fun _ => sq_nonneg _
-          linarith only [h1, h2, h3, h4]
-        _ = N₁ * (Q₀ * S) := by rw [Finset.sum_const, nsmul_eq_mul]
-    -- the gradient part
+        _ = ∑ α ∈ sobolevWords m, ∫ x in vec3Ball x₀ r,
+            (Zc α ⟨t, htab⟩ : Vec3 → ℝ) x ^ 2 := by
+          refine Finset.sum_congr rfl fun α hα => ?_
+          exact congrArg (fun f : Vec3 → ℝ => ∫ x in vec3Ball x₀ r, f x ^ 2)
+            (hZt t htab α hα)
+        _ ≤ (sobolevWords m).card * (Q₀ * S) :=
+          localHeatGain_curveEnergy_sum_bound (sobolevWords m) Zc Dg ⟨t, htab⟩ (Q₀ * S)
+            (fun α hα => (hZD α hα).2.2.2.2 ⟨t, htab⟩)
+        _ = N₁ * (Q₀ * S) := by rw [hN₁]; norm_num
     have hB : l2SobolevNormSqOn (m + 1) (vec3Ball x₀ r) (Ioo s b) Dz' ≤ N₂ * (Q₀ * S) := by
       unfold l2SobolevNormSqOn
       calc
-        ∑ γ ∈ sobolevWords (m + 1), ∫ p in W, Dz' γ p ^ 2 ≤
-            ∑ γ ∈ sobolevWords (m + 1), Q₀ * S := by
-          refine Finset.sum_le_sum fun γ hγ => ?_
-          by_cases hγm : γ.length ≤ m
-          · have e0 : Dz' γ = Dz γ := by simp only [Dz', hγm, ite_true]
-            rw [e0]
-            have hγmem : γ ∈ sobolevWords m := mem_sobolevWords.2 hγm
-            have h1 : ∫ p in W, Dz γ p ^ 2 = ∫ p in W, Dw γ p ^ 2 :=
-              integral_congr_ae ((hDwW γ hγm).mono fun p hp => by simp only [hp])
-            have h2 : ∫ p in W, Dw γ p ^ 2 ≤ ∫ p in vlSlab a b, Dw γ p ^ 2 :=
-              setIntegral_mono_set (hDwU.memL2 γ hγm).integrable_sq
-                (ae_of_all _ fun p => sq_nonneg _) (ae_of_all _ hWS)
-            have h3 := hNDw_ge γ hγmem
-            have h4 := hQ
-            have h5 : 0 ≤ NDH := Finset.sum_nonneg fun _ _ => integral_nonneg fun _ => sq_nonneg _
-            have h6 : 0 ≤ Q₀ * S := mul_nonneg hQ₀0 hS0
-            rw [h1]
-            linarith only [h2, h3, h4, h5, h6]
-          · have hne : γ ≠ [] := fun h => hγm (by simp [h])
-            have hβ' : γ.dropLast ∈ sobolevWords m := mem_sobolevWords.2 (by
-              have := mem_sobolevWords.1 hγ
-              simp only [List.length_dropLast]; omega)
-            have e0 : Dz' γ = Dg γ.dropLast (γ.getLastD 0) := by simp only [Dz', hγm, ite_false]
-            rw [e0]
-            have hDgL := (hZD _ hβ').2.2.1
-            have h1 : ∫ p in W, Dg γ.dropLast (γ.getLastD 0) p ^ 2 ≤
-                ∫ p in vlSlab a b, Dg γ.dropLast (γ.getLastD 0) p ^ 2 :=
-              setIntegral_mono_set (hDgL _).integrable_sq (ae_of_all _ fun p => sq_nonneg _)
-                (ae_of_all _ hWS)
-            have h2 : ∫ p in vlSlab a b, Dg γ.dropLast (γ.getLastD 0) p ^ 2 ≤
-                ∑ j : Fin 3, ∫ p in vlSlab a b, Dg γ.dropLast j p ^ 2 :=
-              Finset.single_le_sum (f := fun j => ∫ p in vlSlab a b, Dg γ.dropLast j p ^ 2)
-                (fun _ _ => integral_nonneg fun _ => sq_nonneg _) (Finset.mem_univ _)
-            have h3 := hword _ hβ' ⟨b, right_mem_Icc.2 hab.le⟩
-            have h4 : 0 ≤ ‖Zc γ.dropLast ⟨b, right_mem_Icc.2 hab.le⟩‖ ^ 2 := sq_nonneg _
-            linarith only [h1, h2, h3, h4]
-        _ = N₂ * (Q₀ * S) := by rw [Finset.sum_const, nsmul_eq_mul]
-    -- square roots
+        _ ≤ (sobolevWords (m + 1)).card * (Q₀ * S) :=
+          localHeatGain_gradientEnergy_sum_bound (hab := hab.le) Dz' Dw Dg Zc
+            (fun α hα j => (hZD α hα).2.2.1 j)
+            (fun α hα => hDwU.memL2 α hα)
+            (fun α hα => by
+              simpa only [Dz', hα, ite_true] using (hDwW α hα).symm) hWS hNDw_ge
+            (fun α hα => (hZD α hα).2.2.2.2 ⟨b, right_mem_Icc.2 hab.le⟩)
+            hQ (Finset.sum_nonneg fun _ _ => integral_nonneg fun _ => sq_nonneg _)
+        _ = N₂ * (Q₀ * S) := by rw [hN₂]; norm_num
     have hN₁0 : 0 ≤ N₁ := Nat.cast_nonneg _
     have hN₂0 : 0 ≤ N₂ := Nat.cast_nonneg _
-    have hsA : Real.sqrt (sobolevNormSqOn m (vec3Ball x₀ r) (Z t)) ≤
-        Real.sqrt (N₁ * Q₀) * Real.sqrt S := by
-      rw [← Real.sqrt_mul (mul_nonneg hN₁0 hQ₀0)]
-      exact Real.sqrt_le_sqrt (by linarith only [hA])
-    have hsB : Real.sqrt (l2SobolevNormSqOn (m + 1) (vec3Ball x₀ r) (Ioo s b) Dz') ≤
-        Real.sqrt (N₂ * Q₀) * Real.sqrt S := by
-      rw [← Real.sqrt_mul (mul_nonneg hN₂0 hQ₀0)]
-      exact Real.sqrt_le_sqrt (by linarith only [hB])
-    have hsS : Real.sqrt S ≤ Real.sqrt NDz + Real.sqrt NDG :=
-      real_sqrt_add_le_add_sqrt hNDz0 hNDG0
-    calc
-      _ ≤ Real.sqrt (N₁ * Q₀) * Real.sqrt S + Real.sqrt (N₂ * Q₀) * Real.sqrt S :=
-        add_le_add hsA hsB
-      _ = (Real.sqrt (N₁ * Q₀) + Real.sqrt (N₂ * Q₀)) * Real.sqrt S := (add_mul _ _ _).symm
-      _ ≤ (Real.sqrt (N₁ * Q₀) + Real.sqrt (N₂ * Q₀)) * (Real.sqrt NDz + Real.sqrt NDG) :=
-        mul_le_mul_of_nonneg_left hsS (add_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _))
+    exact localHeatGain_sqrt_energy_estimate hA hB hN₁0 hN₂0 hQ₀0 hS0
+      hNDz0 hNDG0 rfl
 
 end ESS

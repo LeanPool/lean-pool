@@ -33,7 +33,7 @@ open CKN CKN.Foundation.Parabolic
 /-- The ordered coordinate multiplier is continuous in frequency. -/
 theorem lps_fourierWordSymbol_continuous
     (α : List (Fin 3)) :
-    Continuous (lps_fourierWordSymbol α) := by
+    Continuous (lpsFourierWordSymbol α) := by
   induction α with
   | nil =>
       change Continuous (fun _ : L2Vec3 => (1 : ℂ))
@@ -41,13 +41,13 @@ theorem lps_fourierWordSymbol_continuous
   | cons j α ih =>
       have hj := CKN.Leray.regR12CoordSymbol_continuous j
       change Continuous (fun ξ : L2Vec3 =>
-        CKN.Leray.regR12CoordSymbol j ξ * lps_fourierWordSymbol α ξ)
+        CKN.Leray.regR12CoordSymbol j ξ * lpsFourierWordSymbol α ξ)
       exact hj.mul ih
 
 /-- The damped ordered multiplier is continuous in frequency. -/
 theorem lps_dampedFourierWordSymbol_continuous
     (n : ℕ) (α : List (Fin 3)) :
-    Continuous (lps_dampedFourierWordSymbol n α) := by
+    Continuous (lpsDampedFourierWordSymbol n α) := by
   have hb : Continuous (fun ξ : L2Vec3 =>
       (((1 + ‖ξ‖ ^ 2) ^ (-(n : ℝ)) : ℝ) : ℂ)) :=
     Complex.continuous_ofReal.comp
@@ -68,17 +68,17 @@ theorem lps_dampedSpaceTimeField_spatialPartial
     (z : ParabolicPoint) :
     DifferentiableAt ℝ
       (fun x : Vec3 => CKN.Leray.regR12SpaceTimeField c
-        (lps_dampedFourierWordSymbol n α) G (x, z.2)) z.1 ∧
+        (lpsDampedFourierWordSymbol n α) G (x, z.2)) z.1 ∧
     ∀ j : Fin 3,
       spatialPartial
         (CKN.Leray.regR12SpaceTimeField c
-          (lps_dampedFourierWordSymbol n α) G) j z =
+          (lpsDampedFourierWordSymbol n α) G) j z =
       CKN.Leray.regR12SpaceTimeField c
-        (lps_dampedFourierWordSymbol n (α ++ [j])) G z := by
+        (lpsDampedFourierWordSymbol n (α ++ [j])) G z := by
   have hα₀ : α.length ≤ 2 * (n + 1) := by omega
   have hC : 0 ≤ (2 * π) ^ α.length := by positivity
   have h := CKN.Leray.regR12SpaceTimeField_spatialPartial c
-    (lps_dampedFourierWordSymbol n α)
+    (lpsDampedFourierWordSymbol n α)
     (lps_dampedFourierWordSymbol_continuous n α).aestronglyMeasurable
     ((2 * π) ^ α.length) hC
     (lps_dampedFourierWordSymbol_norm_le n α hα₀)
@@ -87,7 +87,7 @@ theorem lps_dampedSpaceTimeField_spatialPartial
   rw [h.2 j]
   congr 1
   funext ξ
-  unfold lps_dampedFourierWordSymbol
+  unfold lpsDampedFourierWordSymbol
   rw [lps_fourierWordSymbol_append]
   ring
 
@@ -103,9 +103,9 @@ theorem lps_dampedSpaceTimeField_wordDeriv
     (t : ℝ) :
     wordDeriv α (fun x : Vec3 =>
       CKN.Leray.regR12SpaceTimeField c
-        (lps_dampedFourierWordSymbol n []) G (x, t)) =
+        (lpsDampedFourierWordSymbol n []) G (x, t)) =
     fun x : Vec3 => CKN.Leray.regR12SpaceTimeField c
-      (lps_dampedFourierWordSymbol n α) G (x, t) := by
+      (lpsDampedFourierWordSymbol n α) G (x, t) := by
   induction α using List.reverseRecOn with
   | nil => rfl
   | append_singleton α j ih =>
@@ -131,9 +131,9 @@ theorem lps_dampedSpaceTimeField_continuous
     (hG : Continuous G) :
     Continuous (fun z : Vec3 × ℝ =>
       CKN.Leray.regR12SpaceTimeField c
-        (lps_dampedFourierWordSymbol n α) G (z.1, z.2)) := by
+        (lpsDampedFourierWordSymbol n α) G (z.1, z.2)) := by
   exact CKN.Leray.regR12SpaceTimeField_continuous c
-    (lps_dampedFourierWordSymbol n α)
+    (lpsDampedFourierWordSymbol n α)
     (lps_dampedFourierWordSymbol_continuous n α).aestronglyMeasurable
     ((2 * π) ^ α.length) (by positivity)
     (lps_dampedFourierWordSymbol_norm_le n α hα) G hG
@@ -146,7 +146,7 @@ theorem lps_dampedSpaceTimeField_frequency_memLp
     (hα : α.length ≤ 2 * (n + 1))
     (G : Lp E 2 (volume : Measure L2Vec3)) :
     MemLp (fun ξ : L2Vec3 =>
-      lps_dampedFourierWordSymbol n α ξ •
+      lpsDampedFourierWordSymbol n α ξ •
         (((1 + ‖ξ‖ ^ 2) ^ (-2 : ℝ) : ℝ) : ℂ) •
           (G : L2Vec3 → E) ξ) 2 volume := by
   let C : ℝ := (2 * π) ^ α.length
@@ -154,7 +154,7 @@ theorem lps_dampedSpaceTimeField_frequency_memLp
       2 volume := (Lp.memLp G).norm.const_mul C
   have hmeas : AEStronglyMeasurable
       (fun ξ : L2Vec3 =>
-        lps_dampedFourierWordSymbol n α ξ •
+        lpsDampedFourierWordSymbol n α ξ •
           (((1 + ‖ξ‖ ^ 2) ^ (-2 : ℝ) : ℝ) : ℂ) •
             (G : L2Vec3 → E) ξ) volume :=
     (lps_dampedFourierWordSymbol_continuous n α).aestronglyMeasurable.smul
@@ -176,9 +176,9 @@ theorem lps_dampedSpaceTimeField_slice_memLp
     (c : E →L[ℝ] ℝ)
     (G : Lp E 2 (volume : Measure L2Vec3)) :
     MemLp (fun x : Vec3 => c (CKN.Leray.regR12WeightedField
-      (lps_dampedFourierWordSymbol n α) G (WithLp.toLp 2 x)))
+      (lpsDampedFourierWordSymbol n α) G (WithLp.toLp 2 x)))
       2 volume := by
-  let M : L2Vec3 → ℂ := lps_dampedFourierWordSymbol n α
+  let M : L2Vec3 → ℂ := lpsDampedFourierWordSymbol n α
   let h : L2Vec3 → E := fun ξ => M ξ •
     (((1 + ‖ξ‖ ^ 2) ^ (-2 : ℝ) : ℝ) : ℂ) •
       (G : L2Vec3 → E) ξ

@@ -12,6 +12,12 @@ public import LeanPool.CaffarelliKohnNirenberg.Statements.SpatialPartial
 public import LeanPool.CaffarelliKohnNirenberg.Statements.SpatialSecondPartial
 public import LeanPool.CaffarelliKohnNirenberg.Statements.TimePartial
 
+/-!
+# Ess Local Proof Global Suitable
+
+Local endpoint regularity through vorticity estimates and backward uniqueness.
+-/
+
 public section
 
 open MeasureTheory Set
@@ -50,6 +56,178 @@ private theorem essLocal_test_support_in_ball
       (vec3EuclideanNorm_le_sqrt_three_mul_norm x).trans_lt
         (mul_lt_mul_of_pos_left hxR (by positivity))
   exact ⟨hxnorm, hzI.2⟩
+
+private theorem essLocal_global_divergence_identity
+    (U : ParabolicPoint → Vec3) (DU : ParabolicPoint → Fin 3 → Vec3)
+    (q : ParabolicPoint → ℝ)
+    (hlocal : ∀ (R a : ℝ), 0 < R → a < 0 →
+      IsSuitableWeakSolution (vec3Ball 0 R) (Ioo a 0) 3 U DU q
+        (0 : ParabolicPoint → Vec3))
+    (a : ℝ) (ha : a < 0) :
+    ∀ ψ : Vec3 × ℝ → ℝ,
+      ψ ∈ spaceTimeTestFunction (V := ℝ) Set.univ (Ioo a 0) →
+      ∫ z in spaceTimeSet Set.univ (Ioo a 0),
+        ∑ i : Fin 3, U z i * spatialPartial ψ i z = 0 := by
+  intro ψ hψ
+  obtain ⟨R, hR, hsupport⟩ := essLocal_test_support_in_ball hψ
+  have hψlocal : ψ ∈ spaceTimeTestFunction (V := ℝ)
+      (vec3Ball 0 R) (Ioo a 0) := by
+    exact ⟨hψ.1, hψ.2.1, hsupport⟩
+  have hsol := hlocal R a hR ha
+  have hsolInt := CKN.isSuitableWeakSolution_iff_integrable.mp hsol
+  have hid := hsolInt.2.2.2.2.2.2.1 ψ hψlocal
+  have hsmall : spaceTimeSet (vec3Ball 0 R) (Ioo a 0) ⊆
+      spaceTimeSet Set.univ (Ioo a 0) := by
+    intro z hz
+    exact ⟨Set.mem_univ z.1, hz.2⟩
+  have hbigmeas : MeasurableSet (spaceTimeSet Set.univ (Ioo a 0)) := by
+    change MeasurableSet (Set.univ ×ˢ Ioo a 0)
+    exact MeasurableSet.univ.prod measurableSet_Ioo
+  have hts : tsupport (show ParabolicPoint → ℝ from ψ) =
+      tsupport (show Vec3 × ℝ → ℝ from ψ) :=
+    CKN.tsupport_parabolic_eq (show Vec3 × ℝ → ℝ from ψ)
+  have hzero (z : ParabolicPoint)
+      (hz : z ∉ tsupport (show ParabolicPoint → ℝ from ψ)) :
+      (∑ i : Fin 3, U z i * spatialPartial ψ i z) = 0 := by
+    have hzprod : z ∉ tsupport (show Vec3 × ℝ → ℝ from ψ) := by
+      rw [← hts]
+      exact hz
+    have hsp (i : Fin 3) : spatialPartial ψ i z = 0 :=
+      spatialPartial_eq_zero_off_tsupport
+        (ψ := show Vec3 × ℝ → ℝ from ψ) hzprod i
+    simp [hsp]
+  have hinter : (∫ z in spaceTimeSet Set.univ (Ioo a 0),
+      ∑ i : Fin 3, U z i * spatialPartial ψ i z) =
+      ∫ z in spaceTimeSet (vec3Ball 0 R) (Ioo a 0),
+        ∑ i : Fin 3, U z i * spatialPartial ψ i z := by
+    apply setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hbigmeas hsmall
+    intro z hz
+    apply hzero z
+    intro hzψ
+    have hzprod : z ∈ tsupport (show Vec3 × ℝ → ℝ from ψ) := by
+      rw [← hts]
+      exact hzψ
+    have hmem := hsupport hzprod
+    exact hz.2 ⟨hmem.1, hmem.2⟩
+  rw [hinter]
+  simpa using hid.2
+
+private theorem essLocal_global_momentum_identity
+    (U : ParabolicPoint → Vec3) (DU : ParabolicPoint → Fin 3 → Vec3)
+    (q : ParabolicPoint → ℝ)
+    (hlocal : ∀ (R a : ℝ), 0 < R → a < 0 →
+      IsSuitableWeakSolution (vec3Ball 0 R) (Ioo a 0) 3 U DU q
+        (0 : ParabolicPoint → Vec3))
+    (a : ℝ) (ha : a < 0) :
+    ∀ φ : Vec3 × ℝ → Vec3,
+      φ ∈ spaceTimeTestFunction (V := Vec3) Set.univ (Ioo a 0) →
+      ∫ z in spaceTimeSet Set.univ (Ioo a 0),
+        (-(∑ i : Fin 3, U z i * timePartial (fun w => φ w i) z)
+          - ∑ i : Fin 3, ∑ j : Fin 3,
+              U z i * U z j * spatialPartial (fun w => φ w i) j z
+          + ∑ i : Fin 3, ∑ j : Fin 3,
+              DU z i j * spatialPartial (fun w => φ w i) j z
+          - q z * ∑ i : Fin 3,
+              spatialPartial (fun w => φ w i) i z) = 0 := by
+  intro φ hφ
+  obtain ⟨R, hR, hsupport⟩ := essLocal_test_support_in_ball hφ
+  have hφlocal : φ ∈ spaceTimeTestFunction (V := Vec3)
+      (vec3Ball 0 R) (Ioo a 0) := by
+    exact ⟨hφ.1, hφ.2.1, hsupport⟩
+  have hsol := hlocal R a hR ha
+  have hsolInt := CKN.isSuitableWeakSolution_iff_integrable.mp hsol
+  have hid := hsolInt.2.2.2.2.2.2.2.1 φ hφlocal
+  have hsmall : spaceTimeSet (vec3Ball 0 R) (Ioo a 0) ⊆
+      spaceTimeSet Set.univ (Ioo a 0) := by
+    intro z hz
+    exact ⟨Set.mem_univ z.1, hz.2⟩
+  have hbigmeas : MeasurableSet (spaceTimeSet Set.univ (Ioo a 0)) := by
+    change MeasurableSet (Set.univ ×ˢ Ioo a 0)
+    exact MeasurableSet.univ.prod measurableSet_Ioo
+  have hts : tsupport (show ParabolicPoint → Vec3 from φ) =
+      tsupport (show Vec3 × ℝ → Vec3 from φ) :=
+    CKN.tsupport_parabolic_eq (show Vec3 × ℝ → Vec3 from φ)
+  have hcomponent (i : Fin 3) :
+      tsupport (fun w : Vec3 × ℝ => φ w i) ⊆ tsupport φ := by
+    apply closure_minimal
+    · intro z hz
+      by_contra hnot
+      apply hz
+      have hval : φ z = 0 := image_eq_zero_of_notMem_tsupport hnot
+      simp [hval]
+    · exact isClosed_tsupport φ
+  have hzero (z : ParabolicPoint)
+      (hz : z ∉ tsupport (show ParabolicPoint → Vec3 from φ)) :
+      (-(∑ i : Fin 3, U z i * timePartial (fun w => φ w i) z)
+        - ∑ i : Fin 3, ∑ j : Fin 3,
+            U z i * U z j * spatialPartial (fun w => φ w i) j z
+        + ∑ i : Fin 3, ∑ j : Fin 3,
+            DU z i j * spatialPartial (fun w => φ w i) j z
+        - q z * ∑ i : Fin 3,
+            spatialPartial (fun w => φ w i) i z) = 0 := by
+    have hzprod : z ∉ tsupport (show Vec3 × ℝ → Vec3 from φ) := by
+      rw [← hts]
+      exact hz
+    have hnot (i : Fin 3) :
+        z ∉ tsupport (fun w : Vec3 × ℝ => φ w i) := fun hmem => hzprod (hcomponent i hmem)
+    have htime (i : Fin 3) : timePartial (fun w => φ w i) z = 0 := by
+      change timePartial (fun w : Vec3 × ℝ => φ w i) (z.1, z.2) = 0
+      exact timePartial_eq_zero_off_tsupport (ψ := fun w => φ w i) (hnot i)
+    have hsp (i j : Fin 3) : spatialPartial (fun w => φ w i) j z = 0 := by
+      change spatialPartial (fun w : Vec3 × ℝ => φ w i) j (z.1, z.2) = 0
+      exact spatialPartial_eq_zero_off_tsupport (ψ := fun w => φ w i) (hnot i) j
+    have htimeSum : ∑ i : Fin 3, U z i * timePartial (fun w => φ w i) z = 0 := by
+      apply Finset.sum_eq_zero
+      intro i hi
+      rw [htime i]
+      simp
+    have hnonlinearSum : ∑ i : Fin 3, ∑ j : Fin 3,
+        U z i * U z j * spatialPartial (fun w => φ w i) j z = 0 := by
+      apply Finset.sum_eq_zero
+      intro i hi
+      apply Finset.sum_eq_zero
+      intro j hj
+      rw [hsp i j]
+      simp
+    have hviscousSum : ∑ i : Fin 3, ∑ j : Fin 3,
+        DU z i j * spatialPartial (fun w => φ w i) j z = 0 := by
+      apply Finset.sum_eq_zero
+      intro i hi
+      apply Finset.sum_eq_zero
+      intro j hj
+      rw [hsp i j]
+      simp
+    have hpressureSum : ∑ i : Fin 3, spatialPartial (fun w => φ w i) i z = 0 := by
+      apply Finset.sum_eq_zero
+      intro i hi
+      rw [hsp i i]
+    rw [htimeSum, hnonlinearSum, hviscousSum, hpressureSum]
+    ring
+  have hinter : (∫ z in spaceTimeSet Set.univ (Ioo a 0),
+      (-(∑ i : Fin 3, U z i * timePartial (fun w => φ w i) z)
+        - ∑ i : Fin 3, ∑ j : Fin 3,
+            U z i * U z j * spatialPartial (fun w => φ w i) j z
+        + ∑ i : Fin 3, ∑ j : Fin 3,
+            DU z i j * spatialPartial (fun w => φ w i) j z
+        - q z * ∑ i : Fin 3, spatialPartial (fun w => φ w i) i z)) =
+      ∫ z in spaceTimeSet (vec3Ball 0 R) (Ioo a 0),
+        (-(∑ i : Fin 3, U z i * timePartial (fun w => φ w i) z)
+          - ∑ i : Fin 3, ∑ j : Fin 3,
+              U z i * U z j * spatialPartial (fun w => φ w i) j z
+          + ∑ i : Fin 3, ∑ j : Fin 3,
+              DU z i j * spatialPartial (fun w => φ w i) j z
+          - q z * ∑ i : Fin 3, spatialPartial (fun w => φ w i) i z) := by
+    apply setIntegral_eq_of_subset_of_forall_sdiff_eq_zero hbigmeas hsmall
+    intro z hz
+    apply hzero z
+    intro hzφ
+    have hzprod : z ∈ tsupport (show Vec3 × ℝ → Vec3 from φ) := by
+      rw [← hts]
+      exact hzφ
+    have hmem := hsupport hzprod
+    exact hz.2 ⟨hmem.1, hmem.2⟩
+  rw [hinter]
+  simpa using hid.2
 
 /-- Local suitability on every origin-centred past cylinder yields the global
 CKN suitable-solution predicate on any finite past interval. -/
@@ -91,178 +269,10 @@ theorem essLocal_globalSuitable_of_local
           hbox.2.2.2.2.1, hbox.2.2.2.2.2⟩
       exact ((CKN.isSuitableWeakSolution_iff_integrable.mp
         (hlocal R a hR ha)).toData).2.2.2.2.2 Ω' J hbox'
-  have hdiv : ∀ ψ : Vec3 × ℝ → ℝ,
-      ψ ∈ spaceTimeTestFunction (V := ℝ) Set.univ I →
-      ∫ z in spaceTimeSet Set.univ I,
-        ∑ i : Fin 3, U z i * spatialPartial ψ i z = 0 := by
-    intro ψ hψ
-    obtain ⟨R, hR, hsupport⟩ := essLocal_test_support_in_ball hψ
-    have hψlocal : ψ ∈ spaceTimeTestFunction (V := ℝ)
-        (vec3Ball 0 R) (Ioo a 0) := by
-      exact ⟨hψ.1, hψ.2.1, by simpa [I] using hsupport⟩
-    have hsol := hlocal R a hR ha
-    have hsolInt := CKN.isSuitableWeakSolution_iff_integrable.mp hsol
-    have hid := hsolInt.2.2.2.2.2.2.1 ψ hψlocal
-    have hsmall : spaceTimeSet (vec3Ball 0 R) I ⊆
-        spaceTimeSet Set.univ I := by
-      intro z hz
-      exact ⟨Set.mem_univ z.1, hz.2⟩
-    have hbigmeas : MeasurableSet (spaceTimeSet Set.univ I) := by
-      change MeasurableSet (Set.univ ×ˢ I)
-      exact MeasurableSet.univ.prod measurableSet_Ioo
-    have hts : tsupport (show ParabolicPoint → ℝ from ψ) =
-        tsupport (show Vec3 × ℝ → ℝ from ψ) :=
-      CKN.tsupport_parabolic_eq (show Vec3 × ℝ → ℝ from ψ)
-    have hzero (z : ParabolicPoint)
-        (hz : z ∉ tsupport (show ParabolicPoint → ℝ from ψ)) :
-        (∑ i : Fin 3, U z i * spatialPartial ψ i z) = 0 := by
-      have hzprod : z ∉ tsupport (show Vec3 × ℝ → ℝ from ψ) := by
-        rw [← hts]
-        exact hz
-      have hsp (i : Fin 3) : spatialPartial ψ i z = 0 :=
-        spatialPartial_eq_zero_off_tsupport
-          (ψ := show Vec3 × ℝ → ℝ from ψ) hzprod i
-      simp [hsp]
-    have hinter : (∫ z in spaceTimeSet Set.univ I,
-        ∑ i : Fin 3, U z i * spatialPartial ψ i z) =
-        ∫ z in spaceTimeSet (vec3Ball 0 R) I,
-          ∑ i : Fin 3, U z i * spatialPartial ψ i z := by
-      apply setIntegral_eq_of_subset_of_forall_sdiff_eq_zero
-        hbigmeas hsmall
-      intro z hz
-      apply hzero z
-      intro hzψ
-      have hzprod : z ∈ tsupport (show Vec3 × ℝ → ℝ from ψ) := by
-        rw [← hts]
-        exact hzψ
-      have hmem := hsupport hzprod
-      have hmemPar : z ∈ spaceTimeSet (vec3Ball 0 R) I :=
-        ⟨hmem.1, hmem.2⟩
-      exact hz.2 hmemPar
-    rw [hinter]
-    simpa [I] using hid.2
-  have hmom : ∀ φ : Vec3 × ℝ → Vec3,
-      φ ∈ spaceTimeTestFunction (V := Vec3) Set.univ I →
-      ∫ z in spaceTimeSet Set.univ I,
-        (-(∑ i : Fin 3, U z i * timePartial (fun w => φ w i) z)
-          - ∑ i : Fin 3, ∑ j : Fin 3,
-              U z i * U z j * spatialPartial (fun w => φ w i) j z
-          + ∑ i : Fin 3, ∑ j : Fin 3,
-              DU z i j * spatialPartial (fun w => φ w i) j z
-          - q z * ∑ i : Fin 3,
-              spatialPartial (fun w => φ w i) i z) = 0 := by
-    intro φ hφ
-    obtain ⟨R, hR, hsupport⟩ := essLocal_test_support_in_ball hφ
-    have hφlocal : φ ∈ spaceTimeTestFunction (V := Vec3)
-        (vec3Ball 0 R) (Ioo a 0) := by
-      exact ⟨hφ.1, hφ.2.1, by simpa [I] using hsupport⟩
-    have hsol := hlocal R a hR ha
-    have hsolInt := CKN.isSuitableWeakSolution_iff_integrable.mp hsol
-    have hid := hsolInt.2.2.2.2.2.2.2.1 φ hφlocal
-    have hsmall : spaceTimeSet (vec3Ball 0 R) I ⊆
-        spaceTimeSet Set.univ I := by
-      intro z hz
-      exact ⟨Set.mem_univ z.1, hz.2⟩
-    have hbigmeas : MeasurableSet (spaceTimeSet Set.univ I) := by
-      change MeasurableSet (Set.univ ×ˢ I)
-      exact MeasurableSet.univ.prod measurableSet_Ioo
-    have hts : tsupport (show ParabolicPoint → Vec3 from φ) =
-        tsupport (show Vec3 × ℝ → Vec3 from φ) :=
-      CKN.tsupport_parabolic_eq (show Vec3 × ℝ → Vec3 from φ)
-    have hcomponent (i : Fin 3) :
-        tsupport (fun w : Vec3 × ℝ => φ w i) ⊆ tsupport φ := by
-      apply closure_minimal
-      · intro z hz
-        by_contra hnot
-        apply hz
-        have hval : φ z = 0 := image_eq_zero_of_notMem_tsupport hnot
-        simp [hval]
-      · exact isClosed_tsupport φ
-    have hzero (z : ParabolicPoint)
-        (hz : z ∉ tsupport (show ParabolicPoint → Vec3 from φ)) :
-        (-(∑ i : Fin 3, U z i * timePartial (fun w => φ w i) z)
-          - ∑ i : Fin 3, ∑ j : Fin 3,
-              U z i * U z j * spatialPartial (fun w => φ w i) j z
-          + ∑ i : Fin 3, ∑ j : Fin 3,
-              DU z i j * spatialPartial (fun w => φ w i) j z
-          - q z * ∑ i : Fin 3,
-              spatialPartial (fun w => φ w i) i z) = 0 := by
-      have hzprod : z ∉ tsupport (show Vec3 × ℝ → Vec3 from φ) := by
-        rw [← hts]
-        exact hz
-      have hnot (i : Fin 3) :
-          z ∉ tsupport (fun w : Vec3 × ℝ => φ w i) := by
-        intro hmem
-        exact hzprod (hcomponent i hmem)
-      have htime (i : Fin 3) : timePartial (fun w => φ w i) z = 0 := by
-        change timePartial (fun w : Vec3 × ℝ => φ w i) (z.1, z.2) = 0
-        exact timePartial_eq_zero_off_tsupport
-          (ψ := fun w : Vec3 × ℝ => φ w i) (hnot i)
-      have hsp (i j : Fin 3) : spatialPartial (fun w => φ w i) j z = 0 := by
-        change spatialPartial (fun w : Vec3 × ℝ => φ w i) j (z.1, z.2) = 0
-        exact spatialPartial_eq_zero_off_tsupport
-          (ψ := fun w : Vec3 × ℝ => φ w i) (hnot i) j
-      have htimeSum :
-          ∑ i : Fin 3, U z i * timePartial (fun w => φ w i) z = 0 := by
-        apply Finset.sum_eq_zero
-        intro i hi
-        rw [htime i]
-        simp
-      have hnonlinearSum :
-          ∑ i : Fin 3, ∑ j : Fin 3,
-            U z i * U z j * spatialPartial (fun w => φ w i) j z = 0 := by
-        apply Finset.sum_eq_zero
-        intro i hi
-        apply Finset.sum_eq_zero
-        intro j hj
-        rw [hsp i j]
-        simp
-      have hviscousSum :
-          ∑ i : Fin 3, ∑ j : Fin 3,
-            DU z i j * spatialPartial (fun w => φ w i) j z = 0 := by
-        apply Finset.sum_eq_zero
-        intro i hi
-        apply Finset.sum_eq_zero
-        intro j hj
-        rw [hsp i j]
-        simp
-      have hpressureSum :
-          ∑ i : Fin 3, spatialPartial (fun w => φ w i) i z = 0 := by
-        apply Finset.sum_eq_zero
-        intro i hi
-        rw [hsp i i]
-      rw [htimeSum, hnonlinearSum, hviscousSum, hpressureSum]
-      ring
-    have hinter : (∫ z in spaceTimeSet Set.univ I,
-        (-(∑ i : Fin 3, U z i * timePartial (fun w => φ w i) z)
-          - ∑ i : Fin 3, ∑ j : Fin 3,
-              U z i * U z j * spatialPartial (fun w => φ w i) j z
-          + ∑ i : Fin 3, ∑ j : Fin 3,
-              DU z i j * spatialPartial (fun w => φ w i) j z
-          - q z * ∑ i : Fin 3,
-              spatialPartial (fun w => φ w i) i z)) =
-        ∫ z in spaceTimeSet (vec3Ball 0 R) I,
-        (-(∑ i : Fin 3, U z i * timePartial (fun w => φ w i) z)
-          - ∑ i : Fin 3, ∑ j : Fin 3,
-              U z i * U z j * spatialPartial (fun w => φ w i) j z
-          + ∑ i : Fin 3, ∑ j : Fin 3,
-              DU z i j * spatialPartial (fun w => φ w i) j z
-          - q z * ∑ i : Fin 3,
-              spatialPartial (fun w => φ w i) i z) := by
-      apply setIntegral_eq_of_subset_of_forall_sdiff_eq_zero
-        hbigmeas hsmall
-      intro z hz
-      apply hzero z
-      intro hzφ
-      have hzprod : z ∈ tsupport (show Vec3 × ℝ → Vec3 from φ) := by
-        rw [← hts]
-        exact hzφ
-      have hmem := hsupport hzprod
-      have hmemPar : z ∈ spaceTimeSet (vec3Ball 0 R) I :=
-        ⟨hmem.1, hmem.2⟩
-      exact hz.2 hmemPar
-    rw [hinter]
-    simpa [I] using hid.2
+  have hdiv := by
+    simpa [I] using essLocal_global_divergence_identity U DU q hlocal a ha
+  have hmom := by
+    simpa [I] using essLocal_global_momentum_identity U DU q hlocal a ha
   have hlei : ∀ ψ : Vec3 × ℝ → ℝ,
       ψ ∈ spaceTimeTestFunction (V := ℝ) Set.univ I →
       (∀ z, 0 ≤ ψ z) →

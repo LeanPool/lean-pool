@@ -49,7 +49,7 @@ theorem bu_short_int_profile_summable : Summable buShortIntProfile := by
 theorem bu_short_int_profile_nonneg (n : ℤ) : 0 ≤ buShortIntProfile n := by
   by_cases hn : n = 0
   · simp [buShortIntProfile, hn]
-  · simp [buShortIntProfile, hn]
+  · rw [buShortIntProfile, ite_eq_right hn]
     positivity
 
 /-- A half-integer Gaussian is bounded by a fixed summable profile

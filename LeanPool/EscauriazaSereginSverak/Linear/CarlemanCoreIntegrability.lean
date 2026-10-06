@@ -25,9 +25,11 @@ noncomputable section
 
 namespace ESS
 
+/-- The product norm on parabolic space-time used for classical differentiation. -/
 local instance carlemanCoreIntegrabilityNormedAddCommGroup : NormedAddCommGroup ParabolicPoint :=
   carlemanProductNormedAddCommGroup
 
+/-- The real scalar action compatible with the product norm on parabolic space-time. -/
 local instance carlemanCoreIntegrabilityNormedSpace : NormedSpace ℝ ParabolicPoint :=
   carlemanProductNormedSpace
 

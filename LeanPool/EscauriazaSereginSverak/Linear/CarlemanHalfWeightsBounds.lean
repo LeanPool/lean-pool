@@ -8,6 +8,13 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.Linear.CarlemanHalfWeightsDerivatives
 
+/-!
+# Half-space Carleman phase bounds
+
+The phase gradient and scalar commutator coefficients satisfy the bounds needed
+for the half-space Carleman inequality.
+-/
+
 public section
 
 
@@ -154,6 +161,7 @@ theorem halfSpacePhase_commutatorDensity_expand (a α : ℝ)
   field_simp [ht0, hαpow]
   ring_nf
 
+/-- The zeroth-order scalar coefficient in the half-space commutator. -/
 @[expose] noncomputable def halfSpaceCommutatorScalarCoefficient
     (a α : ℝ) (z : ParabolicPoint) : ℝ :=
   4 * spatialSecondPartial (halfSpacePhase a α) 2 2 z *
@@ -170,12 +178,21 @@ theorem halfSpacePhase_commutatorDensity_expand (a α : ℝ)
     scalarGradSq (halfSpacePhase a α) z / z.2 +
     timePartial (halfSpacePhase a α) z / z.2
 
-private theorem halfSpacePhase_scalarCoefficient_lower
+private theorem halfSpacePhase_scalarCoefficient_positive_terms
     (a α : ℝ) {z : ParabolicPoint} (hz : z ∈ halfSpaceDomain)
     (ha : 2 ≤ a) (hαlo : 1 / 2 < α) (hαhi : α < 1) :
-    a * (2 * α - 1) * z.1 2 ^ (2 * α) / z.2 ^ (α + 2) +
-        halfSpaceGradientTwo a α z ^ 2 / z.2 ≤
-      halfSpaceCommutatorScalarCoefficient a α z := by
+    let g : ℝ := halfSpaceGradientTwo a α z
+    let gt : ℝ := timePartial (fun y => spatialPartial (halfSpacePhase a α) 2 y) z
+    let A1 : ℝ := -2 * g * gt
+    let delta4 : ℝ := 2 * α * (2 * α - 1) * (2 * α - 2) * (2 * α - 3) * a *
+      (1 - z.2) * z.1 2 ^ (2 * α - 4) / z.2 ^ α
+    let A2 : ℝ := A1 - delta4 - g ^ 2 / z.2
+    let A3 : ℝ := a * z.1 2 ^ (2 * α) * z.2 ^ (-α - 2) *
+      (α ^ 2 - (1 - α) ^ 2 * z.2)
+    let H : ℝ := spatialSecondPartial (halfSpacePhase a α) 2 2 z
+    g ^ 2 / z.2 ≤ A1 ∧ 0 ≤ A2 ∧
+      a * (2 * α - 1) * z.1 2 ^ (2 * α) / z.2 ^ (α + 2) ≤ A3 ∧
+      0 ≤ H := by
   rcases hz with ⟨hx, ht⟩
   have htpos : 0 < z.2 := ht.1
   have ht0 : z.2 ≠ 0 := ne_of_gt htpos
@@ -196,13 +213,11 @@ private theorem halfSpacePhase_scalarCoefficient_lower
   have hratio : 1 ≤ z.1 2 ^ (2 * α + 2) / z.2 ^ (α + 1) :=
     (one_le_div hpowPlus).2 (le_trans htpow hxpow)
   let g : ℝ := halfSpaceGradientTwo a α z
-  let gt : ℝ := timePartial
-    (fun y => spatialPartial (halfSpacePhase a α) 2 y) z
+  let gt : ℝ := timePartial (fun y => spatialPartial (halfSpacePhase a α) 2 y) z
   let b : ℝ := α + (1 - α) * z.2
   let A1 : ℝ := -2 * g * gt
-  let delta4 : ℝ :=
-    2 * α * (2 * α - 1) * (2 * α - 2) * (2 * α - 3) * a *
-      (1 - z.2) * z.1 2 ^ (2 * α - 4) / z.2 ^ α
+  let delta4 : ℝ := 2 * α * (2 * α - 1) * (2 * α - 2) * (2 * α - 3) * a *
+    (1 - z.2) * z.1 2 ^ (2 * α - 4) / z.2 ^ α
   let A2 : ℝ := A1 - delta4 - g ^ 2 / z.2
   let A3 : ℝ := a * z.1 2 ^ (2 * α) * z.2 ^ (-α - 2) *
     (α ^ 2 - (1 - α) ^ 2 * z.2)
@@ -351,9 +366,50 @@ private theorem halfSpacePhase_scalarCoefficient_lower
   have hH : 0 ≤ H := by
     rw [show H = spatialSecondPartial (halfSpacePhase a α) 2 2 z by rfl,
       halfSpacePhase_spatialSecondPartial a α ⟨hx, ht⟩]
-    simp
+    simp only [Fin.isValue, ↓reduceIte]
     have htime : 0 ≤ 1 - z.2 := sub_nonneg.mpr ht.2.le
     positivity
+  exact ⟨hA1, hA2, hA3, hH⟩
+
+private theorem halfSpacePhase_scalarCoefficient_lower
+    (a α : ℝ) {z : ParabolicPoint} (hz : z ∈ halfSpaceDomain)
+    (ha : 2 ≤ a) (hαlo : 1 / 2 < α) (hαhi : α < 1) :
+    a * (2 * α - 1) * z.1 2 ^ (2 * α) / z.2 ^ (α + 2) +
+        halfSpaceGradientTwo a α z ^ 2 / z.2 ≤
+      halfSpaceCommutatorScalarCoefficient a α z := by
+  rcases hz with ⟨hx, ht⟩
+  have htpos : 0 < z.2 := ht.1
+  have ht0 : z.2 ≠ 0 := ne_of_gt htpos
+  have hxpos : 0 < z.1 2 := lt_trans (by norm_num) hx
+  have hαpos : 0 < α := by linarith only [hαlo]
+  have hθpos : 0 < 2 * α - 1 := by linarith only [hαlo]
+  have h1αpos : 0 < 1 - α := by linarith only [hαhi]
+  have h2α1pos : 0 < 3 - 2 * α := by linarith only [hαhi]
+  have hpowα : 0 < z.2 ^ α := Real.rpow_pos_of_pos htpos α
+  have hpowα0 : z.2 ^ α ≠ 0 := ne_of_gt hpowα
+  have hpowPlus : 0 < z.2 ^ (α + 1) := Real.rpow_pos_of_pos htpos (α + 1)
+  have hpowPlus0 : z.2 ^ (α + 1) ≠ 0 := ne_of_gt hpowPlus
+  have hxexp : 0 < 2 * α + 2 := by linarith only [hαlo]
+  have hxpow : 1 ≤ z.1 2 ^ (2 * α + 2) :=
+    Real.one_le_rpow (le_of_lt hx) hxexp.le
+  have htpow : z.2 ^ (α + 1) ≤ 1 :=
+    Real.rpow_le_one (le_of_lt htpos) ht.2.le (by linarith only [hαlo])
+  have hratio : 1 ≤ z.1 2 ^ (2 * α + 2) / z.2 ^ (α + 1) :=
+    (one_le_div hpowPlus).2 (le_trans htpow hxpow)
+  let g : ℝ := halfSpaceGradientTwo a α z
+  let gt : ℝ := timePartial
+    (fun y => spatialPartial (halfSpacePhase a α) 2 y) z
+  let b : ℝ := α + (1 - α) * z.2
+  let A1 : ℝ := -2 * g * gt
+  let delta4 : ℝ :=
+    2 * α * (2 * α - 1) * (2 * α - 2) * (2 * α - 3) * a *
+      (1 - z.2) * z.1 2 ^ (2 * α - 4) / z.2 ^ α
+  let A2 : ℝ := A1 - delta4 - g ^ 2 / z.2
+  let A3 : ℝ := a * z.1 2 ^ (2 * α) * z.2 ^ (-α - 2) *
+    (α ^ 2 - (1 - α) ^ 2 * z.2)
+  let H : ℝ := spatialSecondPartial (halfSpacePhase a α) 2 2 z
+  rcases halfSpacePhase_scalarCoefficient_positive_terms a α ⟨hx, ht⟩ ha hαlo hαhi with
+    ⟨hA1, hA2, hA3, hH⟩
   let q : ℝ := z.1 0 ^ 2 + z.1 1 ^ 2
   let p0 : ℝ := -z.1 0 / (4 * z.2)
   let p1 : ℝ := -z.1 1 / (4 * z.2)
@@ -556,7 +612,7 @@ theorem halfSpacePhase_commutatorDensity_lower (a α : ℝ)
     have hθpos : 0 < 2 * α - 1 := by linarith only [hαlo]
     have hH : 0 ≤ spatialSecondPartial (halfSpacePhase a α) 2 2 z := by
       rw [halfSpacePhase_spatialSecondPartial a α ⟨hx, ht⟩ 2 2]
-      simp
+      simp only [Fin.isValue, ↓reduceIte]
       have htime : 0 ≤ 1 - z.2 := sub_nonneg.mpr ht.2.le
       have hxpos : 0 < z.1 2 := lt_trans (by norm_num) hx
       have hxpow : 0 < z.1 2 ^ (2 * α - 2) :=

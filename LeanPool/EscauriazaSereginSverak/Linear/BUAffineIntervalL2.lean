@@ -29,7 +29,7 @@ namespace ESS
 /-- A finite quadratic integral on bounded source subsets transfers to
 bounded subsets of a corresponding affine time interval. -/
 theorem bu_affine_l2_comp_interval
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {E : Type*} [NormedAddCommGroup E]
     (τ scale a b : ℝ) (hscale : 0 < scale)
     (f : ParabolicPoint → E)
     (hfloc : LocallyIntegrableOn f

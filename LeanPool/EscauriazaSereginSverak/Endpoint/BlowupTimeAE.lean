@@ -8,6 +8,12 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupPressureBound
 
+/-!
+# Blowup Time AE
+
+Almost-everywhere time-slice bounds used in endpoint compactness.
+-/
+
 public section
 
 open MeasureTheory Filter Set CKN.Foundation.Parabolic

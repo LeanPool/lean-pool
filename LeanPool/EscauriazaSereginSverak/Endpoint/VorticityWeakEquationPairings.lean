@@ -27,6 +27,71 @@ open CKN.Foundation.Parabolic
 
 namespace ESS
 
+private theorem suitableWeakConvectionPairings_integrable
+    {Ω Ω' : Set Vec3} {I J : Set ℝ}
+    {u ω : ParabolicPoint → Vec3} {ψ : Vec3 × ℝ → Vec3}
+    (hcurl : vorticityTestCurl ψ ∈ CKN.spaceTimeTestFunction (V := Vec3) Ω I)
+    (hu : ∀ i : Fin 3, MemLp (fun z : ParabolicPoint => u z i) 2
+      (volume.restrict (CKN.spaceTimeSet Ω' J)))
+    (hω : ∀ i : Fin 3, MemLp (fun z : ParabolicPoint => ω z i) 2
+      (volume.restrict (CKN.spaceTimeSet Ω' J))) :
+    IntegrableOn (fun z : ParabolicPoint =>
+      ∑ i : Fin 3, ∑ j : Fin 3,
+        u z i * u z j * CKN.spatialPartial
+          (fun w : Vec3 × ℝ => vorticityTestCurl ψ w i) j z)
+      (CKN.spaceTimeSet Ω' J) volume ∧
+    IntegrableOn (fun z : ParabolicPoint =>
+      ∑ i : Fin 3, spatialCross (u z) (ω z) i * vorticityTestCurl ψ z i)
+      (CKN.spaceTimeSet Ω' J) volume := by
+  have hleftTerm (i j : Fin 3) : IntegrableOn
+      (fun z : ParabolicPoint => u z i * u z j * CKN.spatialPartial
+        (fun w : Vec3 × ℝ => vorticityTestCurl ψ w i) j z)
+      (CKN.spaceTimeSet Ω' J) volume := by
+    have hpair := (hu i).integrable_mul (hu j)
+    have hcurli := CKN.component_mem_spaceTimeTestFunction hcurl i
+    obtain ⟨C, hC⟩ := CKN.exists_bound_spatialPartial_of_mem_spaceTimeTestFunction hcurli j
+    exact hpair.mul_bdd (c := C)
+      (g := fun z => CKN.spatialPartial
+        (fun w : Vec3 × ℝ => vorticityTestCurl ψ w i) j z)
+      (CKN.spatialPartial_contDiff hcurli.1 j).continuous.measurable.aestronglyMeasurable
+      (Filter.Eventually.of_forall fun z => hC z)
+  have hleft : IntegrableOn (fun z : ParabolicPoint =>
+      ∑ i : Fin 3, ∑ j : Fin 3,
+        u z i * u z j * CKN.spatialPartial
+          (fun w : Vec3 × ℝ => vorticityTestCurl ψ w i) j z)
+      (CKN.spaceTimeSet Ω' J) volume :=
+    integrable_finsetSum _ fun i _ => integrable_finsetSum _ fun j _ => hleftTerm i j
+  have hcrossProduct (i j : Fin 3) : IntegrableOn
+      (fun z : ParabolicPoint => u z i * ω z j)
+      (CKN.spaceTimeSet Ω' J) volume := (hu i).integrable_mul (hω j)
+  have hcrossComponent (i : Fin 3) : IntegrableOn
+      (fun z : ParabolicPoint => spatialCross (u z) (ω z) i)
+      (CKN.spaceTimeSet Ω' J) volume := by
+    fin_cases i
+    · change IntegrableOn (fun z => u z 1 * ω z 2 - u z 2 * ω z 1)
+        (CKN.spaceTimeSet Ω' J) volume
+      exact (hcrossProduct 1 2).sub (hcrossProduct 2 1)
+    · change IntegrableOn (fun z => u z 2 * ω z 0 - u z 0 * ω z 2)
+        (CKN.spaceTimeSet Ω' J) volume
+      exact (hcrossProduct 2 0).sub (hcrossProduct 0 2)
+    · change IntegrableOn (fun z => u z 0 * ω z 1 - u z 1 * ω z 0)
+        (CKN.spaceTimeSet Ω' J) volume
+      exact (hcrossProduct 0 1).sub (hcrossProduct 1 0)
+  have hrightTerm (i : Fin 3) : IntegrableOn
+      (fun z : ParabolicPoint => spatialCross (u z) (ω z) i * vorticityTestCurl ψ z i)
+      (CKN.spaceTimeSet Ω' J) volume := by
+    have hcurli := CKN.component_mem_spaceTimeTestFunction hcurl i
+    obtain ⟨C, hC⟩ := CKN.exists_bound_of_mem_spaceTimeTestFunction hcurli
+    exact (hcrossComponent i).mul_bdd (c := C)
+      (g := fun z => vorticityTestCurl ψ z i)
+      hcurli.1.continuous.measurable.aestronglyMeasurable
+      (Filter.Eventually.of_forall fun z => hC z)
+  have hright : IntegrableOn (fun z : ParabolicPoint =>
+      ∑ i : Fin 3, spatialCross (u z) (ω z) i * vorticityTestCurl ψ z i)
+      (CKN.spaceTimeSet Ω' J) volume :=
+    integrable_finsetSum _ fun i _ => hrightTerm i
+  exact ⟨hleft, hright⟩
+
 noncomputable section
 
 private theorem vorticityFlux_entry_memLp
@@ -181,7 +246,7 @@ theorem suitableWeakVorticityFluxTestIntegrableOnBox
       have hcomp : (show Vec3 × ℝ from z) ∉
           tsupport (fun w : Vec3 × ℝ => ψ w i) := by
         intro hi
-        exact hzψ ((CKN.tsupport_component_subset (V := Vec3) (ι := Fin 3)
+        exact hzψ ((CKN.tsupport_component_subset (ι := Fin 3)
           ψ i (by intro y hy; simp [hy])) hi)
       exact CKN.spatialPartial_eq_zero_off_tsupport hcomp j
     simp [hderiv]
@@ -229,58 +294,7 @@ theorem suitableWeakConvectionPairingOnBox
       (fun z : ParabolicPoint => weakVorticity Du z i) 2
       (volume.restrict (CKN.spaceTimeSet Ω' J)) :=
     hωMem.continuousLinearMap_comp (ContinuousLinearMap.proj i : Vec3 →L[ℝ] ℝ)
-  have hleftTerm (i j : Fin 3) : IntegrableOn
-      (fun z : ParabolicPoint => u z i * u z j * CKN.spatialPartial
-        (fun w : Vec3 × ℝ => vorticityTestCurl ψ w i) j z)
-      (CKN.spaceTimeSet Ω' J) volume := by
-    have hpair := (hu i).integrable_mul (hu j)
-    have hcurli := CKN.component_mem_spaceTimeTestFunction hcurl i
-    obtain ⟨C, hC⟩ := CKN.exists_bound_spatialPartial_of_mem_spaceTimeTestFunction hcurli j
-    exact hpair.mul_bdd (c := C)
-      (g := fun z => CKN.spatialPartial
-        (fun w : Vec3 × ℝ => vorticityTestCurl ψ w i) j z)
-      (CKN.spatialPartial_contDiff hcurli.1 j).continuous.measurable.aestronglyMeasurable
-      (Filter.Eventually.of_forall fun z => hC z)
-  have hleft : IntegrableOn (fun z : ParabolicPoint =>
-      ∑ i : Fin 3, ∑ j : Fin 3,
-        u z i * u z j * CKN.spatialPartial
-          (fun w : Vec3 × ℝ => vorticityTestCurl ψ w i) j z)
-      (CKN.spaceTimeSet Ω' J) volume := by
-    refine integrable_finsetSum _ fun i _ => ?_
-    exact integrable_finsetSum _ fun j _ => hleftTerm i j
-  have hcrossProduct (i j : Fin 3) : IntegrableOn
-      (fun z : ParabolicPoint => u z i * weakVorticity Du z j)
-      (CKN.spaceTimeSet Ω' J) volume := (hu i).integrable_mul (hω j)
-  have hcrossComponent (i : Fin 3) : IntegrableOn
-      (fun z : ParabolicPoint => spatialCross (u z) (weakVorticity Du z) i)
-      (CKN.spaceTimeSet Ω' J) volume := by
-    fin_cases i
-    · change IntegrableOn (fun z =>
-        u z 1 * weakVorticity Du z 2 - u z 2 * weakVorticity Du z 1)
-        (CKN.spaceTimeSet Ω' J) volume
-      exact (hcrossProduct 1 2).sub (hcrossProduct 2 1)
-    · change IntegrableOn (fun z =>
-        u z 2 * weakVorticity Du z 0 - u z 0 * weakVorticity Du z 2)
-        (CKN.spaceTimeSet Ω' J) volume
-      exact (hcrossProduct 2 0).sub (hcrossProduct 0 2)
-    · change IntegrableOn (fun z =>
-        u z 0 * weakVorticity Du z 1 - u z 1 * weakVorticity Du z 0)
-        (CKN.spaceTimeSet Ω' J) volume
-      exact (hcrossProduct 0 1).sub (hcrossProduct 1 0)
-  have hrightTerm (i : Fin 3) : IntegrableOn
-      (fun z : ParabolicPoint => spatialCross (u z) (weakVorticity Du z) i *
-        vorticityTestCurl ψ z i) (CKN.spaceTimeSet Ω' J) volume := by
-    have hcurli := CKN.component_mem_spaceTimeTestFunction hcurl i
-    obtain ⟨C, hC⟩ := CKN.exists_bound_of_mem_spaceTimeTestFunction hcurli
-    exact (hcrossComponent i).mul_bdd (c := C)
-      (g := fun z => vorticityTestCurl ψ z i)
-      hcurli.1.continuous.measurable.aestronglyMeasurable
-      (Filter.Eventually.of_forall fun z => hC z)
-  have hright : IntegrableOn (fun z : ParabolicPoint =>
-      ∑ i : Fin 3,
-        spatialCross (u z) (weakVorticity Du z) i * vorticityTestCurl ψ z i)
-      (CKN.spaceTimeSet Ω' J) volume :=
-    integrable_finsetSum _ fun i _ => hrightTerm i
+  have ⟨hleft, hright⟩ := suitableWeakConvectionPairings_integrable hcurl hu hω
   have hleftIter := vorticity_integral_on_box_eq_iterated hleft
   have hrightIter := vorticity_integral_on_box_eq_iterated hright
   have hmem := CKN.slice_memLp_ae_of_sws hInt hbox
@@ -305,7 +319,7 @@ theorem suitableWeakConvectionPairingOnBox
     CKN.component_mem_spaceTimeTestFunction hcurl i
   have hcurlComponentBox (i : Fin 3) :
       tsupport (fun z : Vec3 × ℝ => vorticityTestCurl ψ z i) ⊆ Ω' ×ˢ J := by
-    exact (CKN.tsupport_component_subset (V := Vec3) (ι := Fin 3)
+    exact (CKN.tsupport_component_subset (ι := Fin 3)
       (vorticityTestCurl ψ) i (by intro z hz; simp [hz])).trans hcurlBox
   have hsliceEq : ∀ᵐ t ∂(volume.restrict J),
       (∫ x in Ω', ∑ i : Fin 3, ∑ j : Fin 3,

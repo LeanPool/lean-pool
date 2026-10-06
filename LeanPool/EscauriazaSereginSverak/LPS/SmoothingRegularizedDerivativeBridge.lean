@@ -35,7 +35,7 @@ open CKN CKN.Foundation.Parabolic
 
 /-- Frequency trajectory of a Bessel lift of order `2(n+2)`, extended
 from a finite interval by clamping time. -/
-@[expose] def lps_regR12HighLiftFreq (n : ℕ) (T : ℝ) (hT : 0 ≤ T)
+@[expose] def lpsRegR12HighLiftFreq (n : ℕ) (T : ℝ) (hT : 0 ≤ T)
     (v : C(CKN.Leray.RegularizedMildTimeInterval T,
       BesselPotentialSpace L2Vec3 ComplexVec3
         ((2 * (n + 2) : ℕ) : ℝ) 2))
@@ -49,8 +49,8 @@ theorem lps_regR12HighLiftFreq_continuous (n : ℕ) (T : ℝ) (hT : 0 ≤ T)
     (v : C(CKN.Leray.RegularizedMildTimeInterval T,
       BesselPotentialSpace L2Vec3 ComplexVec3
         ((2 * (n + 2) : ℕ) : ℝ) 2)) :
-    Continuous (lps_regR12HighLiftFreq n T hT v) := by
-  unfold lps_regR12HighLiftFreq
+    Continuous (lpsRegR12HighLiftFreq n T hT v) := by
+  unfold lpsRegR12HighLiftFreq
   have h := (Lp.fourierTransformₗᵢ L2Vec3 ComplexVec3).continuous.comp
     ((BesselPotentialSpace.toLpₗᵢ L2Vec3 ComplexVec3 _ 2).continuous.comp
       (v.continuous.comp
@@ -63,8 +63,8 @@ theorem lps_regR12HighLiftFreq_norm_le (n : ℕ) (T : ℝ) (hT : 0 ≤ T)
     (v : C(CKN.Leray.RegularizedMildTimeInterval T,
       BesselPotentialSpace L2Vec3 ComplexVec3
         ((2 * (n + 2) : ℕ) : ℝ) 2)) (t : ℝ) :
-    ‖lps_regR12HighLiftFreq n T hT v t‖ ≤ ‖v‖ := by
-  unfold lps_regR12HighLiftFreq
+    ‖lpsRegR12HighLiftFreq n T hT v t‖ ≤ ‖v‖ := by
+  unfold lpsRegR12HighLiftFreq
   rw [LinearIsometryEquiv.norm_map, BesselPotentialSpace.norm_toLp_eq]
   exact v.norm_coe_le_norm _
 
@@ -88,7 +88,7 @@ theorem lps_regR12HighLiftFreq_curve_ae_eq
       L2Vec3 → ComplexVec3) =ᵐ[volume]
       fun ξ => ((((1 + ‖ξ‖ ^ 2) ^
         (-((2 * (n + 2) : ℕ) : ℝ) / 2) : ℝ) : ℝ) : ℂ) •
-          ((lps_regR12HighLiftFreq n T hT v t : ComplexVectorL2) :
+          ((lpsRegR12HighLiftFreq n T hT v t : ComplexVectorL2) :
             L2Vec3 → ComplexVec3) ξ := by
   have hclamp : CKN.Leray.regularizedMildTimeClamp T hT t = ⟨t, ht⟩ :=
     CKN.Leray.regularizedMildTimeClamp_eq_of_mem T hT ht
@@ -97,7 +97,7 @@ theorem lps_regR12HighLiftFreq_curve_ae_eq
   have hvt := hv ⟨t, ht⟩
   rw [CKN.Leray.regularisedBesselSobolevToL2CLM_apply] at hvt
   rw [hvt] at h
-  unfold CKN.Leray.regR12FreqCurve lps_regR12HighLiftFreq
+  unfold CKN.Leray.regR12FreqCurve lpsRegR12HighLiftFreq
   rw [hclamp]
   exact h
 
@@ -132,20 +132,20 @@ theorem lps_regR12Velocity_eq_high_model
     (z : ParabolicPoint) (hz : z.2 ∈ Icc 0 T) (i : Fin 3) :
     CKN.Leray.regR12Velocity ρ ε hε a ha z i =
       CKN.Leray.regR12SpaceTimeField (CKN.Leray.regR12CoordCLM i)
-        (lps_dampedFourierWordSymbol n [])
-        (lps_regR12HighLiftFreq n T hT v) z := by
+        (lpsDampedFourierWordSymbol n [])
+        (lpsRegR12HighLiftFreq n T hT v) z := by
   have hfreq := lps_regR12HighLiftFreq_curve_ae_eq
     ρ ε hε a ha n T hT v hv z.2 hz
   have hae :
       ((CKN.Leray.regR12FreqCurve ρ ε hε a ha z.2 : ComplexVectorL2) :
         L2Vec3 → ComplexVec3) =ᵐ[volume]
-      fun ξ => lps_dampedFourierWordSymbol n [] ξ •
+      fun ξ => lpsDampedFourierWordSymbol n [] ξ •
         (((1 + ‖ξ‖ ^ 2) ^ (-2 : ℝ) : ℝ) : ℂ) •
-          ((lps_regR12HighLiftFreq n T hT v z.2 : ComplexVectorL2) :
+          ((lpsRegR12HighLiftFreq n T hT v z.2 : ComplexVectorL2) :
             L2Vec3 → ComplexVec3) ξ := by
     refine hfreq.trans (Filter.Eventually.of_forall fun ξ => ?_)
-    simp only [lps_dampedFourierWordSymbol,
-      lps_fourierWordSymbol, List.map_nil, List.prod_nil, one_mul,
+    simp only [lpsDampedFourierWordSymbol,
+      lpsFourierWordSymbol, List.map_nil, List.prod_nil, one_mul,
       smul_smul]
     rw [lps_damped_base_weight_eq]
   unfold CKN.Leray.regR12Velocity CKN.Leray.regR12SpaceTimeField
@@ -173,21 +173,21 @@ theorem lps_regR12Velocity_wordDeriv_eq_high_model
       CKN.Leray.regR12Velocity ρ ε hε a ha (x, t) i) =
       fun x : Vec3 => CKN.Leray.regR12SpaceTimeField
         (CKN.Leray.regR12CoordCLM i)
-        (lps_dampedFourierWordSymbol n α)
-        (lps_regR12HighLiftFreq n T hT v) (x, t) := by
+        (lpsDampedFourierWordSymbol n α)
+        (lpsRegR12HighLiftFreq n T hT v) (x, t) := by
   have hbase : (fun x : Vec3 =>
       CKN.Leray.regR12Velocity ρ ε hε a ha (x, t) i) =
       fun x : Vec3 => CKN.Leray.regR12SpaceTimeField
         (CKN.Leray.regR12CoordCLM i)
-        (lps_dampedFourierWordSymbol n [])
-        (lps_regR12HighLiftFreq n T hT v) (x, t) := by
+        (lpsDampedFourierWordSymbol n [])
+        (lpsRegR12HighLiftFreq n T hT v) (x, t) := by
     funext x
     exact lps_regR12Velocity_eq_high_model
       ρ ε hε a ha n T hT v hv (x, t) ht i
   rw [hbase]
   exact lps_dampedSpaceTimeField_wordDeriv n α hα
     (CKN.Leray.regR12CoordCLM i)
-    (lps_regR12HighLiftFreq n T hT v) t
+    (lpsRegR12HighLiftFreq n T hT v) t
 
 /-- Ordered physical spatial derivatives of the regularized velocity
 belong to space-time `L²` on every positive-time slab through the
@@ -219,16 +219,16 @@ theorem lps_regR12Velocity_wordDeriv_memLp_slab
       z.2 ∈ Icc 0 T :=
     fun z hz => ⟨hδ.trans hz.2.1.le, hz.2.2.le⟩
   have hGB : ∀ t ∈ Ioo δ T,
-      ‖lps_regR12HighLiftFreq n T hT v t‖ ≤ ‖v‖ :=
+      ‖lpsRegR12HighLiftFreq n T hT v t‖ ≤ ‖v‖ :=
     fun t _ => lps_regR12HighLiftFreq_norm_le n T hT v t
   refine (memLp_congr_ae ?_).2
     (CKN.Leray.regR12SpaceTimeField_memLp_slab
       (CKN.Leray.regR12CoordCLM i)
-      (lps_dampedFourierWordSymbol n α)
+      (lpsDampedFourierWordSymbol n α)
       (lps_dampedFourierWordSymbol_continuous n α).aestronglyMeasurable
       ((2 * π) ^ α.length) (by positivity)
       (lps_dampedFourierWordSymbol_norm_le n α hα)
-      (lps_regR12HighLiftFreq n T hT v)
+      (lpsRegR12HighLiftFreq n T hT v)
       (lps_regR12HighLiftFreq_continuous n T hT v)
       δ T ‖v‖ hGB)
   filter_upwards [ae_restrict_mem hslab] with z hz
@@ -258,7 +258,7 @@ theorem lps_regR12Velocity_wordDeriv_memLp_slice_of_lift
     ρ ε hε a ha n T hT v hv t ht i α hα]
   exact lps_dampedSpaceTimeField_slice_memLp n α hα
     (CKN.Leray.regR12CoordCLM i)
-    (lps_regR12HighLiftFreq n T hT v t)
+    (lpsRegR12HighLiftFreq n T hT v t)
 
 /-- Every nonnegative-time slice of the actual regularized velocity
 has square-integrable classical derivatives at every ordered spatial
@@ -310,11 +310,11 @@ theorem lps_regR12Velocity_all_word_continuousOn
     simpa only [CKN.Leray.regR12Curve] using hv s
   refine ⟨fun z : Vec3 × ℝ =>
       CKN.Leray.regR12SpaceTimeField (CKN.Leray.regR12CoordCLM i)
-        (lps_dampedFourierWordSymbol n α)
-        (lps_regR12HighLiftFreq n T hT.le v) (z.1, z.2),
+        (lpsDampedFourierWordSymbol n α)
+        (lpsRegR12HighLiftFreq n T hT.le v) (z.1, z.2),
     lps_dampedSpaceTimeField_continuous n α hα
       (CKN.Leray.regR12CoordCLM i)
-      (lps_regR12HighLiftFreq n T hT.le v)
+      (lpsRegR12HighLiftFreq n T hT.le v)
       (lps_regR12HighLiftFreq_continuous n T hT.le v), ?_⟩
   intro z hz
   exact congrFun (lps_regR12Velocity_wordDeriv_eq_high_model

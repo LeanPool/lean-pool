@@ -11,6 +11,12 @@ public import LeanPool.CaffarelliKohnNirenberg.ClassEquivalence.Data
 public import LeanPool.CaffarelliKohnNirenberg.Statements.LocalBox
 public import LeanPool.CaffarelliKohnNirenberg.Foundation.Sobolev.WeakDerivative
 
+/-!
+# Local Energy Suitability
+
+Local energy identities and limit passages for the endpoint regularity proof.
+-/
+
 public section
 
 open MeasureTheory Set Filter

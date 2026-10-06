@@ -169,6 +169,7 @@ theorem heatConvVec3_fderiv_basis_apply {b : Vec3 → Vec3}
     CKN.spatialDeriv (fun y => heatConvVec3 t b y i) j x
   rfl
 
+/-- The coordinate spatial derivative of the vector field supplied to heat convolution. -/
 @[expose] def heatSpatialDerivativeInput (b : Vec3 → Vec3) (j : Fin 3) :
     Vec3 → Vec3 := fun x i => CKN.spatialDeriv (fun y => b y i) j x
 

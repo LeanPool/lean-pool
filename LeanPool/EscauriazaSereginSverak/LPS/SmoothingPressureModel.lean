@@ -33,7 +33,7 @@ open CKN.Leray
 open CKN CKN.Foundation.Parabolic
 
 /-- The undamped scalar pressure frequency field of a high tensor lift. -/
-@[expose] def lps_regR12PressureHighFreq
+@[expose] def lpsRegR12PressureHighFreq
     (ρ : CKN.Leray.RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
     (n : ℕ) (T : ℝ) (hT : 0 ≤ T)
     (v : C(CKN.Leray.RegularizedMildTimeInterval T,
@@ -41,11 +41,11 @@ open CKN CKN.Foundation.Parabolic
         ((2 * (n + 2) : ℕ) : ℝ) 2))
     (t : ℝ) : Lp ℂ 2 (volume : Measure L2Vec3) :=
   CKN.Leray.pressureFourierMultiplier
-    (lps_regR12HighTensorFreq ρ ε hε n T hT v t)
+    (lpsRegR12HighTensorFreq ρ ε hε n T hT v t)
 
 /-- The inverse Fourier field associated with a high-order pressure
 frequency path. -/
-@[expose] def lps_regR12PressureHighModel
+@[expose] def lpsRegR12PressureHighModel
     (ρ : CKN.Leray.RegMollifierProfile) (ε : ℝ) (hε : 0 < ε)
     (n : ℕ) (T : ℝ) (hT : 0 ≤ T)
     (v : C(CKN.Leray.RegularizedMildTimeInterval T,
@@ -53,8 +53,8 @@ frequency path. -/
         ((2 * (n + 2) : ℕ) : ℝ) 2)) :
     ParabolicPoint → ℝ :=
   CKN.Leray.regR12SpaceTimeField Complex.reCLM
-    (lps_dampedFourierWordSymbol n [])
-    (lps_regR12PressureHighFreq ρ ε hε n T hT v)
+    (lpsDampedFourierWordSymbol n [])
+    (lpsRegR12PressureHighFreq ρ ε hε n T hT v)
 
 /-- On each finite-time slice, the high-order pressure model agrees
 almost everywhere with the canonical pressure
@@ -72,31 +72,31 @@ theorem lps_regR12PressureHighModel_ae_eq
         CKN.Leray.complexifyVectorL2
           (CKN.Leray.regR12Curve ρ ε hε a ha t.1))
     (t : ℝ) (ht : t ∈ Icc 0 T) :
-    (fun x : Vec3 => lps_regR12PressureHighModel ρ ε hε n T hT v (x, t)) =ᵐ[volume]
+    (fun x : Vec3 => lpsRegR12PressureHighModel ρ ε hε n T hT v (x, t)) =ᵐ[volume]
       fun x : Vec3 => CKN.Leray.forcedQuadPressure ρ ε hε
         (CKN.Leray.regR12Curve ρ ε hε a ha) (x, t) := by
   let V : RealTensorL2 := CKN.Leray.regularizedMildTensor ρ ε hε
     (CKN.Leray.regR12Curve ρ ε hε a ha t)
   let H : Lp ℂ 2 (volume : Measure L2Vec3) :=
     CKN.Leray.pressureL2Operator (CKN.Leray.complexifyTensorL2 V)
-  let G := lps_regR12PressureHighFreq ρ ε hε n T hT v t
+  let G := lpsRegR12PressureHighFreq ρ ε hε n T hT v t
   have hG : (G : L2Vec3 → ℂ) =ᵐ[volume]
       fun ξ => CKN.Leray.pressureApplyFormula ξ
-        ((lps_regR12HighTensorFreq ρ ε hε n T hT v t : ComplexTensorL2) ξ) := by
+        ((lpsRegR12HighTensorFreq ρ ε hε n T hT v t : ComplexTensorL2) ξ) := by
     exact CKN.Leray.measurableFourierMultiplier_ae_eq _ _ _ _ _
   have hH := lps_regR12Pressure_fourier_high_ae
     ρ ε hε a ha n T hT v hv t ht
   have hGH : ((Lp.fourierTransformₗᵢ L2Vec3 ℂ H :
       Lp ℂ 2 (volume : Measure L2Vec3)) : L2Vec3 → ℂ) =ᵐ[volume]
-      fun ξ => lps_dampedFourierWordSymbol n [] ξ •
+      fun ξ => lpsDampedFourierWordSymbol n [] ξ •
         (((1 + ‖ξ‖ ^ 2) ^ (-2 : ℝ) : ℝ) : ℂ) • (G : L2Vec3 → ℂ) ξ := by
     filter_upwards [hH, hG] with ξ hHξ hGξ
     rw [hHξ, hGξ]
-    simp only [lps_dampedFourierWordSymbol, lps_fourierWordSymbol,
+    simp only [lpsDampedFourierWordSymbol, lpsFourierWordSymbol,
       List.map_nil, List.prod_nil, one_mul, smul_smul]
     rw [lps_damped_base_weight_eq]
   have hfield := CKN.Leray.regR12WeightedField_ae_eq
-    (lps_dampedFourierWordSymbol n [])
+    (lpsDampedFourierWordSymbol n [])
     (lps_dampedFourierWordSymbol_continuous n []).aestronglyMeasurable
     ((2 * π) ^ (0 : ℕ)) (by positivity)
     (lps_dampedFourierWordSymbol_norm_le n [] (by simp)) G H hGH
@@ -107,7 +107,7 @@ theorem lps_regR12PressureHighModel_ae_eq
     ρ ε hε (CKN.Leray.regR12Curve ρ ε hε a ha) t
   filter_upwards [hfield', hquad, hcanonical] with x hx hq hc
   change Complex.re
-    (CKN.Leray.regR12WeightedField (lps_dampedFourierWordSymbol n []) G
+    (CKN.Leray.regR12WeightedField (lpsDampedFourierWordSymbol n []) G
       (WithLp.toLp 2 x)) = _
   rw [hx]
   simpa only [H, V, CKN.Leray.quadPressureTilde] using hq.symm.trans hc.symm
@@ -164,13 +164,13 @@ theorem lps_regR12PressureHighModel_eq
         CKN.Leray.complexifyVectorL2
           (CKN.Leray.regR12Curve ρ ε hε a ha t.1))
     (t : ℝ) (ht : t ∈ Icc 0 T) (htpos : 0 < t) :
-    (fun x : Vec3 => lps_regR12PressureHighModel ρ ε hε n T hT v (x, t)) =
+    (fun x : Vec3 => lpsRegR12PressureHighModel ρ ε hε n T hT v (x, t)) =
       fun x : Vec3 => CKN.Leray.forcedQuadPressure ρ ε hε
         (CKN.Leray.regR12Curve ρ ε hε a ha) (x, t) := by
   have hmodel : Continuous (fun x : Vec3 =>
-      lps_regR12PressureHighModel ρ ε hε n T hT v (x, t)) := by
-    let G := lps_regR12PressureHighFreq ρ ε hε n T hT v t
-    let M := lps_dampedFourierWordSymbol n []
+      lpsRegR12PressureHighModel ρ ε hε n T hT v (x, t)) := by
+    let G := lpsRegR12PressureHighFreq ρ ε hε n T hT v t
+    let M := lpsDampedFourierWordSymbol n []
     let f : L2Vec3 → ℂ := fun ξ =>
       M ξ • (((1 + ‖ξ‖ ^ 2) ^ (-2 : ℝ) : ℝ) : ℂ) •
         (G : L2Vec3 → ℂ) ξ

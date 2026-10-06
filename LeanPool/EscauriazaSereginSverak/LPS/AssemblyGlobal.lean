@@ -29,9 +29,11 @@ noncomputable section
 
 namespace ESS
 
+/-- The open time slab over all of space. -/
 abbrev lpsAssemblySlab (a b : ℝ) :=
   spaceTimeSet (Set.univ : Set Vec3) (Ioo a b)
 
+/-- The time slab over all of space including its top time slice. -/
 abbrev lpsAssemblyTopSlab (a b : ℝ) :=
   spaceTimeSet (Set.univ : Set Vec3) (Ioc a b)
 

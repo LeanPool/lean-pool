@@ -30,9 +30,11 @@ noncomputable section
 
 namespace ESS
 
+/-- The terminal cutoff translated from the initial cutoff of the reflected field. -/
 @[expose] def buGaussianShiftedFinalCutoff (s : ℝ) : ℝ :=
   ucFinalTimeCutoff (s - 1 / 6)
 
+/-- The initial cutoff translated from the terminal cutoff of the reflected field. -/
 @[expose] def buGaussianShiftedInitialCutoff (ε s : ℝ) : ℝ :=
   ucInitialTimeCutoff ε (s - 1 / 6)
 
@@ -69,7 +71,7 @@ namespace ESS
 
 private theorem buGaussian_memLp_restrict_of_local_l2
     {Ω K : Set ParabolicPoint} {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [NormedAddCommGroup E]
     {f : ParabolicPoint → E}
     (hf : LocallyIntegrableOn f Ω volume) (hK : K ⊆ Ω)
     (hfin : (∫⁻ z in K, ‖f z‖ₑ ^ (2 : ℝ)) < ⊤) :
@@ -79,6 +81,155 @@ private theorem buGaussian_memLp_restrict_of_local_l2
     (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num)
     hloc.aestronglyMeasurable).2
   simpa using hfin
+
+private theorem buGaussian_shifted_cutoff_scalar_smooth
+    {ρ ε : ℝ} (hρ : 0 < ρ) :
+    ContDiff ℝ (⊤ : ℕ∞) (fun q : Vec3 × ℝ =>
+      ucCutoffScalar (ucSpatialCutoff ρ hρ) buGaussianShiftedFinalCutoff
+        (buGaussianShiftedInitialCutoff ε) q) := by
+  let θ : Vec3 → ℝ := ucSpatialCutoff ρ hρ
+  let η : ℝ → ℝ := buGaussianShiftedFinalCutoff
+  let χ : ℝ → ℝ := buGaussianShiftedInitialCutoff ε
+  have hθ : ContDiff ℝ (⊤ : ℕ∞) θ := ucSpatialCutoff_smooth hρ
+  have hshift : ContDiff ℝ (⊤ : ℕ∞) (fun s : ℝ => s - 1 / 6) := by fun_prop
+  have hη : ContDiff ℝ (⊤ : ℕ∞) η := by
+    change ContDiff ℝ (⊤ : ℕ∞)
+      (ucFinalTimeCutoff ∘ fun s : ℝ => s - 1 / 6)
+    exact ucFinalTimeCutoff_smooth.comp hshift
+  have hχ : ContDiff ℝ (⊤ : ℕ∞) χ := by
+    change ContDiff ℝ (⊤ : ℕ∞)
+      (ucInitialTimeCutoff ε ∘ fun s : ℝ => s - 1 / 6)
+    exact (ucInitialTimeCutoff_smooth ε).comp hshift
+  dsimp [ucCutoffScalar]
+  exact ((hθ.comp contDiff_fst).mul
+    (hη.comp contDiff_snd)).mul (hχ.comp contDiff_snd)
+
+private theorem buGaussian_shifted_cutoff_support_data
+    {ρ ε : ℝ} (hρ : 0 < ρ) (hε : 0 < ε) :
+    HasCompactSupport (fun q : Vec3 × ℝ =>
+      ucCutoffScalar (ucSpatialCutoff ρ hρ) buGaussianShiftedFinalCutoff
+        (buGaussianShiftedInitialCutoff ε) q) ∧
+    IsCompact (buCutSupportSet (fun q : Vec3 × ℝ =>
+      ucCutoffScalar (ucSpatialCutoff ρ hρ) buGaussianShiftedFinalCutoff
+        (buGaussianShiftedInitialCutoff ε) q)) ∧
+    buCutSupportSet (fun q : Vec3 × ℝ =>
+      ucCutoffScalar (ucSpatialCutoff ρ hρ) buGaussianShiftedFinalCutoff
+        (buGaussianShiftedInitialCutoff ε) q) ⊆
+      spaceTimeSet (vec3Ball 0 ρ) (Ioo (1 / 6) 2) := by
+  let θ : Vec3 → ℝ := ucSpatialCutoff ρ hρ
+  let η : ℝ → ℝ := buGaussianShiftedFinalCutoff
+  let χ : ℝ → ℝ := buGaussianShiftedInitialCutoff ε
+  let κ : Vec3 × ℝ → ℝ := fun q => ucCutoffScalar θ η χ q
+  let L : Set (Vec3 × ℝ) :=
+    euclideanClosedBall 0 (3 * ρ / 4) ×ˢ Icc (1 / 6 + ε) (1 / 6 + 7 / 4)
+  have hLcompact : IsCompact L := by
+    exact (isCompact_euclideanClosedBall 0 (by positivity)).prod isCompact_Icc
+  have hκsupport : Function.support κ ⊆ L := by
+    intro q hq
+    have hκeq : κ q = ucGaussianCutoff ρ hρ ε (q.1, q.2 - 1 / 6) := by
+      simp [κ, ucCutoffScalar, θ, η, χ, buGaussianShiftedFinalCutoff,
+        buGaussianShiftedInitialCutoff, ucGaussianCutoff, ucCutoffScalar]
+    have hne : ucGaussianCutoff ρ hρ ε (q.1, q.2 - 1 / 6) ≠ 0 := by
+      intro hzero
+      apply hq
+      rw [hκeq, hzero]
+    have hbase := ucGaussianCutoff_support_subset hρ hε
+      (Function.mem_support.mpr hne)
+    refine ⟨hbase.1, ?_⟩
+    rcases hbase.2 with ⟨hlo, hhi⟩
+    constructor <;> linarith only [hlo, hhi]
+  have hκcompact : HasCompactSupport κ :=
+    HasCompactSupport.of_support_subset_isCompact hLcompact hκsupport
+  have hκtsupport : tsupport κ ⊆ L :=
+    closure_minimal hκsupport hLcompact.isClosed
+  have hKclosed : IsClosed (buCutSupportSet κ) := by
+    dsimp [buCutSupportSet]
+    exact (isClosed_tsupport (f := κ)).preimage parabolicHomeomorph.continuous
+  have hKbig : IsCompact (parabolicHomeomorph.symm '' L) :=
+    parabolicHomeomorph.symm.isCompact_image.mpr hLcompact
+  have hKsub : buCutSupportSet κ ⊆ parabolicHomeomorph.symm '' L := by
+    intro z hz
+    refine ⟨parabolicHomeomorph z, hκtsupport hz, ?_⟩
+    exact parabolicHomeomorph.apply_symm_apply z
+  have hKcompact : IsCompact (buCutSupportSet κ) :=
+    hKbig.of_isClosed_subset hKclosed hKsub
+  have hKsource : buCutSupportSet κ ⊆ spaceTimeSet (vec3Ball 0 ρ) (Ioo (1 / 6) 2) := by
+    intro z hz
+    have hq := hκtsupport hz
+    rcases hq with ⟨hqspace, hqtime⟩
+    have hspace : z.1 ∈ vec3Ball 0 ρ := by
+      have hsp : z.1 ∈ euclideanBall 0 ρ :=
+        euclideanClosedBall_subset_euclideanBall
+          (by positivity : (0 : ℝ) ≤ 3 * ρ / 4)
+          (by linarith only [hρ]) hqspace
+      simpa [vec3Ball, vec3EuclideanNorm, vecEuclideanNorm, vecNormSq,
+        vecDot, pow_two] using (mem_euclideanBall_iff_vecEuclideanNorm_lt hρ).1 hsp
+    have htime : z.2 ∈ Ioo (1 / 6) 2 := by
+      rcases hqtime with ⟨hlo, hhi⟩
+      constructor
+      · linarith only [hlo, hε]
+      · have hbound : (1 / 6 : ℝ) + 7 / 4 < 2 := by norm_num
+        exact lt_of_le_of_lt hhi hbound
+    exact ⟨hspace, htime⟩
+  exact ⟨hκcompact, hKcompact, hKsource⟩
+
+private theorem shifted_data_memLp_on_support
+    {B : Set Vec3} {I : Set ℝ} {K : Set ParabolicPoint}
+    {v : ParabolicPoint → Vec3} {Dv : ParabolicPoint → Fin 3 → Vec3}
+    {D2v : ParabolicPoint → Fin 3 → Fin 3 → Vec3} {Dtv : ParabolicPoint → Vec3}
+    (hweak : HasSpaceTimeWeakDerivs B I v Dv D2v Dtv)
+    (hK : K ⊆ spaceTimeSet B I)
+    (hL2 : (∫⁻ z in spaceTimeSet B I,
+      ‖v z‖ₑ ^ (2 : ℝ) + ‖Dv z‖ₑ ^ (2 : ℝ) +
+        ‖D2v z‖ₑ ^ (2 : ℝ) + ‖Dtv z‖ₑ ^ (2 : ℝ)) < ⊤) :
+    MemLp v 2 (volume.restrict K) ∧
+    MemLp Dv 2 (volume.restrict K) ∧
+    MemLp D2v 2 (volume.restrict K) ∧
+    MemLp Dtv 2 (volume.restrict K) := by
+  let U := spaceTimeSet B I
+  have hVfin : (∫⁻ z in U, ‖v z‖ₑ ^ (2 : ℝ)) < ⊤ := by
+    apply (lintegral_mono ?_).trans_lt hL2
+    intro z
+    exact le_add_of_nonneg_right (by positivity) |>.trans
+      (le_add_of_nonneg_right (by positivity) |>.trans
+        (le_add_of_nonneg_right (by positivity)))
+  have hDvfin : (∫⁻ z in U, ‖Dv z‖ₑ ^ (2 : ℝ)) < ⊤ := by
+    apply (lintegral_mono ?_).trans_lt hL2
+    intro z
+    exact le_add_of_nonneg_left (by positivity) |>.trans
+      (le_add_of_nonneg_right (by positivity) |>.trans
+        (le_add_of_nonneg_right (by positivity)))
+  have hD2fin : (∫⁻ z in U, ‖D2v z‖ₑ ^ (2 : ℝ)) < ⊤ := by
+    apply (lintegral_mono ?_).trans_lt hL2
+    intro z
+    exact le_add_of_nonneg_left (by positivity) |>.trans
+      (le_add_of_nonneg_right (by positivity))
+  have hDtfin : (∫⁻ z in U, ‖Dtv z‖ₑ ^ (2 : ℝ)) < ⊤ := by
+    apply (lintegral_mono ?_).trans_lt hL2
+    intro z
+    exact le_add_left le_rfl
+  refine ⟨?_, ⟨?_, ⟨?_, ?_⟩⟩⟩
+  · apply buGaussian_memLp_restrict_of_local_l2 hweak.1 hK
+    exact (lintegral_mono_set hK).trans_lt (by simpa [U] using hVfin)
+  · apply buGaussian_memLp_restrict_of_local_l2 hweak.2.1 hK
+    exact (lintegral_mono_set hK).trans_lt (by simpa [U] using hDvfin)
+  · apply buGaussian_memLp_restrict_of_local_l2 hweak.2.2.1 hK
+    exact (lintegral_mono_set hK).trans_lt (by simpa [U] using hD2fin)
+  · apply buGaussian_memLp_restrict_of_local_l2 hweak.2.2.2.1 hK
+    exact (lintegral_mono_set hK).trans_lt (by simpa [U] using hDtfin)
+
+private theorem compact_support_of_zero_off_compact
+    {X E : Type*} [TopologicalSpace X] [T2Space X] [Zero E]
+    (K : Set X) (hK : IsCompact K) (f : X → E)
+    (hzero : ∀ x, x ∉ K → f x = 0) :
+    HasCompactSupport f ∧ Function.support f ⊆ K ∧ tsupport f ⊆ K := by
+  have hsupport : Function.support f ⊆ K := by
+    intro x hx
+    by_contra hnot
+    exact hx (hzero x hnot)
+  refine ⟨HasCompactSupport.of_support_subset_isCompact hK hsupport,
+    hsupport, ?_⟩
+  exact closure_minimal hsupport hK.isClosed
 
 /-- A smooth cutoff supported in a compact subset of the source cylinder
 extends the translated field and its weak derivatives to the Gaussian
@@ -121,106 +272,21 @@ theorem buGaussian_shifted_cutoff_admissible
   let D2vσ := buGaussianShiftedD2w (1 / 6) D2v
   let Dtvσ := buGaussianShiftedDtw (1 / 6) Dtv
   have hκsmooth : ContDiff ℝ (⊤ : ℕ∞) κ := by
-    have hθ : ContDiff ℝ (⊤ : ℕ∞) θ := ucSpatialCutoff_smooth hρ
-    have hshift : ContDiff ℝ (⊤ : ℕ∞) (fun s : ℝ => s - 1 / 6) := by
-      fun_prop
-    have hη : ContDiff ℝ (⊤ : ℕ∞) η := by
-      change ContDiff ℝ (⊤ : ℕ∞)
-        (ucFinalTimeCutoff ∘ fun s : ℝ => s - 1 / 6)
-      exact ucFinalTimeCutoff_smooth.comp hshift
-    have hχ : ContDiff ℝ (⊤ : ℕ∞) χ := by
-      change ContDiff ℝ (⊤ : ℕ∞)
-        (ucInitialTimeCutoff ε ∘ fun s : ℝ => s - 1 / 6)
-      exact (ucInitialTimeCutoff_smooth ε).comp hshift
-    dsimp [κ, ucCutoffScalar]
-    exact ((hθ.comp contDiff_fst).mul
-      (hη.comp contDiff_snd)).mul (hχ.comp contDiff_snd)
-  let L : Set (Vec3 × ℝ) :=
-    euclideanClosedBall 0 (3 * ρ / 4) ×ˢ Icc (1 / 6 + ε) (1 / 6 + 7 / 4)
-  have hLcompact : IsCompact L := by
-    exact (isCompact_euclideanClosedBall 0 (by positivity)).prod isCompact_Icc
-  have hκsupport : Function.support κ ⊆ L := by
-    intro q hq
-    have hκeq : κ q = ucGaussianCutoff ρ hρ ε (q.1, q.2 - 1 / 6) := by
-      simp [κ, ucCutoffScalar, θ, η, χ, buGaussianShiftedFinalCutoff,
-        buGaussianShiftedInitialCutoff, ucGaussianCutoff, ucCutoffScalar]
-    have hne : ucGaussianCutoff ρ hρ ε (q.1, q.2 - 1 / 6) ≠ 0 := by
-      intro hzero
-      apply hq
-      rw [hκeq, hzero]
-    have hbase := ucGaussianCutoff_support_subset hρ hε
-      (Function.mem_support.mpr hne)
-    refine ⟨hbase.1, ?_⟩
-    rcases hbase.2 with ⟨hlo, hhi⟩
-    constructor <;> linarith only [hlo, hhi]
-  have hκcompact : HasCompactSupport κ :=
-    HasCompactSupport.of_support_subset_isCompact hLcompact hκsupport
-  have hκtsupport : tsupport κ ⊆ L :=
-    closure_minimal hκsupport hLcompact.isClosed
-  have hKclosed : IsClosed K := by
-    dsimp [K, buCutSupportSet]
-    exact (isClosed_tsupport (f := κ)).preimage parabolicHomeomorph.continuous
-  have hKbig : IsCompact (parabolicHomeomorph.symm '' L) :=
-    parabolicHomeomorph.symm.isCompact_image.mpr hLcompact
-  have hKsub : K ⊆ parabolicHomeomorph.symm '' L := by
-    intro z hz
-    refine ⟨parabolicHomeomorph z, hκtsupport hz, ?_⟩
-    exact parabolicHomeomorph.apply_symm_apply z
-  have hKcompact : IsCompact K := hKbig.of_isClosed_subset hKclosed hKsub
+    simpa [κ, θ, η, χ] using buGaussian_shifted_cutoff_scalar_smooth hρ
+  have hsupportData := buGaussian_shifted_cutoff_support_data hρ hε
+  have hκcompact : HasCompactSupport κ := by
+    simpa [κ, θ, η, χ] using hsupportData.1
+  have hKcompact : IsCompact K := by
+    simpa [K, κ, θ, η, χ] using hsupportData.2.1
   have hKsource : K ⊆ U := by
-    intro z hz
-    have hq := hκtsupport hz
-    rcases hq with ⟨hqspace, hqtime⟩
-    have hspace : z.1 ∈ B := by
-      have hsp : z.1 ∈ euclideanBall 0 ρ :=
-        euclideanClosedBall_subset_euclideanBall
-          (by positivity : (0 : ℝ) ≤ 3 * ρ / 4)
-          (by linarith only [hρ]) hqspace
-      simpa [B, vec3EuclideanNorm, vecEuclideanNorm, vecNormSq, vecDot,
-        pow_two] using (mem_euclideanBall_iff_vecEuclideanNorm_lt hρ).1 hsp
-    have htime : z.2 ∈ I := by
-      change 1 / 6 < z.2 ∧ z.2 < 2
-      rcases hqtime with ⟨hlo, hhi⟩
-      constructor
-      · linarith only [hlo, hε]
-      · have hbound : (1 / 6 : ℝ) + 7 / 4 < 2 := by norm_num
-        exact lt_of_le_of_lt hhi hbound
-    exact ⟨hspace, htime⟩
+    simpa [K, U, B, I, κ, θ, η, χ] using hsupportData.2.2
   have hweakShift := buGaussian_timeShift_weak_derivatives
     hweak
-  have hmemRawField : MemLp vσ 2 (volume.restrict K) := by
-    apply buGaussian_memLp_restrict_of_local_l2 hweakShift.1 hKsource
-    have hsmall : (∫⁻ z in U, ‖vσ z‖ₑ ^ (2 : ℝ)) < ⊤ := by
-      apply (lintegral_mono ?_).trans_lt hL2
-      intro z
-      exact le_add_of_nonneg_right (by positivity) |>.trans
-        (le_add_of_nonneg_right (by positivity) |>.trans
-          (le_add_of_nonneg_right (by positivity)))
-    exact (lintegral_mono_set hKsource).trans_lt hsmall
-  have hmemRawDw : MemLp Dvσ 2 (volume.restrict K) := by
-    apply buGaussian_memLp_restrict_of_local_l2 hweakShift.2.1 hKsource
-    have hsmall : (∫⁻ z in U, ‖Dvσ z‖ₑ ^ (2 : ℝ)) < ⊤ := by
-      apply (lintegral_mono ?_).trans_lt hL2
-      intro z
-      exact le_add_of_nonneg_left (by positivity) |>.trans
-        (le_add_of_nonneg_right (by positivity) |>.trans
-          (le_add_of_nonneg_right (by positivity)))
-    exact (lintegral_mono_set hKsource).trans_lt hsmall
-  have hmemRawD2 : MemLp D2vσ 2 (volume.restrict K) := by
-    apply buGaussian_memLp_restrict_of_local_l2 hweakShift.2.2.1 hKsource
-    have hsmall : (∫⁻ z in U, ‖D2vσ z‖ₑ ^ (2 : ℝ)) < ⊤ := by
-      apply (lintegral_mono ?_).trans_lt hL2
-      intro z
-      exact le_add_of_nonneg_left (by positivity) |>.trans
-        (le_add_of_nonneg_right (by positivity))
-    exact (lintegral_mono_set hKsource).trans_lt hsmall
-  have hmemRawDt : MemLp Dtvσ 2 (volume.restrict K) := by
-    apply buGaussian_memLp_restrict_of_local_l2 hweakShift.2.2.2.1 hKsource
-    have hsmall : (∫⁻ z in U, ‖Dtvσ z‖ₑ ^ (2 : ℝ)) < ⊤ := by
-      apply (lintegral_mono ?_).trans_lt hL2
-      intro z
-      exact le_add_left le_rfl
-    exact (lintegral_mono_set hKsource).trans_lt hsmall
+  have hmemRaw := shifted_data_memLp_on_support hweakShift hKsource hL2
+  have hmemRawField := hmemRaw.1
+  have hmemRawDw := hmemRaw.2.1
+  have hmemRawD2 := hmemRaw.2.2.1
+  have hmemRawDt := hmemRaw.2.2.2
   have hmemCut := buCut_memLp_data κ hκsmooth hκcompact vσ Dvσ D2vσ Dtvσ
     hmemRawField hmemRawDw hmemRawD2 hmemRawDt
   have hxi : ContDiff ℝ (⊤ : ℕ∞) (fun q : Vec3 × ℝ => ucCutoffScalar θ η χ q) := by
@@ -286,21 +352,14 @@ theorem buGaussian_shifted_cutoff_admissible
     have h := buCut_data_zero_off_support κ vσ Dvσ D2vσ Dtvσ z hz
     rw [← hfieldEq, ← hDwEq, ← hD2Eq, ← hDtEq]
     exact h
-  have hcompact : HasCompactSupport (buGaussianShiftedCutoffField ρ hρ ε v) := by
-    apply HasCompactSupport.of_support_subset_isCompact hKcompact
-    intro z hz
-    by_contra hnot
-    exact hz (hzero z hnot).1
+  have hfieldSupportData := compact_support_of_zero_off_compact
+    K hKcompact (buGaussianShiftedCutoffField ρ hρ ε v)
+    (fun z hz => (hzero z hz).1)
+  have hcompact := hfieldSupportData.1
   have hsupport : tsupport (buGaussianShiftedCutoffField ρ hρ ε v) ⊆
       spaceTimeSet univ (Ioo 0 2) := by
-    have hfieldSupport : Function.support
-        (buGaussianShiftedCutoffField ρ hρ ε v) ⊆ K := by
-      intro z hz
-      by_contra hnot
-      exact hz (hzero z hnot).1
-    have hts := closure_minimal hfieldSupport hKcompact.isClosed
     intro z hz
-    have hKz := hKsource (hts hz)
+    have hKz := hKsource (hfieldSupportData.2.2 hz)
     exact ⟨Set.mem_univ _, ⟨by linarith only [hKz.2.1], hKz.2.2⟩⟩
   have hweakFinal : HasSpaceTimeWeakDerivs univ (Ioo 0 2)
       (buGaussianShiftedCutoffField ρ hρ ε v)

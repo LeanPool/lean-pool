@@ -9,6 +9,12 @@ module
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupPressureAssembly
 public import LeanPool.CaffarelliKohnNirenberg.Leray.RieszPressureSpaceTimeLp
 
+/-!
+# Blowup Riesz Near
+
+Pressure reconstruction and convergence bounds for the rescaled sequence.
+-/
+
 public section
 
 open CKN

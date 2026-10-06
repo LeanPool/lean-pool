@@ -51,6 +51,7 @@ private theorem localDivCurlWhole_mollify_eq_integral {f : Vec3 → ℝ}
     _ = ∫ y, f y * CKN.mollifier (d := 3) ε hε (x - y) := by
       rfl
 
+/-- The spatial mollifier kernel centered at `x`, viewed as a function of the integration point. -/
 @[expose] def localDivCurlWholeTestKernel (ε : ℝ) (hε : 0 < ε) (x : Vec3) : Vec3 → ℝ :=
   fun y => CKN.mollifier (d := 3) ε hε (x - y)
 
@@ -164,6 +165,7 @@ private theorem localDivCurlWhole_mollify_wordDeriv {m : ℕ} {f : Vec3 → ℝ}
           rw [hderivfun]
           simpa only [List.cons.injEq] using ihβ
 
+/-- The positive mollification radius `1/(n+1)` used in the smooth approximation. -/
 @[expose] def localDivCurlWholeRadius (n : ℕ) : ℝ := ((n : ℝ) + 1)⁻¹
 
 theorem localDivCurlWholeRadius_pos (n : ℕ) :
@@ -338,6 +340,7 @@ private theorem localDivCurlWhole_integral_sq_pair_tendsto_zero
   refine hnorm.congr fun p => ?_
   exact (localDivCurlWhole_integral_sq_eq (hmem p)).symm
 
+/-- The componentwise spatial mollification of `V` at radius `localDivCurlWholeRadius n`. -/
 @[expose] def localDivCurlWholeApprox (V : Fin 3 → Vec3 → ℝ)
     (n : ℕ) : Fin 3 → Vec3 → ℝ :=
   fun i => CKN.mollify (V i) (localDivCurlWholeRadius n)
@@ -625,354 +628,117 @@ private theorem localDivCurlWhole_mollify_curl
     _ = ∫ y, ω k y * φ y := by
           exact htest''.symm
     _ = CKN.mollify (ω k) ε hε x := by
-          rw [localDivCurlWhole_mollify_eq_integral hε x]
-          apply integral_congr_ae
-          filter_upwards [] with y
-          simp [φ, localDivCurlWholeTestKernel]
+      rw [localDivCurlWhole_mollify_eq_integral hε x]
+      apply integral_congr_ae
+      filter_upwards [] with y
+      simp [φ, localDivCurlWholeTestKernel]
 
-/-- Whole-space higher order div–curl regularity for compactly supported Sobolev families.
-The divergence and curl are distributional, and the estimate has the constant from
-`divCurl_smooth_whole`. -/
-theorem divCurl_whole_family (m : ℕ) :
-    ∃ C : ℝ, 0 ≤ C ∧ ∀ (V : Fin 3 → Vec3 → ℝ) (DV : Fin 3 → List (Fin 3) → Vec3 → ℝ)
-      (d : Vec3 → ℝ) (Dd : List (Fin 3) → Vec3 → ℝ)
-      (ω : Fin 3 → Vec3 → ℝ) (Dω : Fin 3 → List (Fin 3) → Vec3 → ℝ) (K : Set Vec3),
-      IsCompact K → (∀ i x, x ∉ K → V i x = 0) →
-      (∀ i, IsSobolevFamilyOn m univ (V i) (DV i)) →
-      IsSobolevFamilyOn m univ d Dd →
-      (∀ k, IsSobolevFamilyOn m univ (ω k) (Dω k)) →
-      (∀ φ : Vec3 → ℝ, ContDiff ℝ (⊤ : ℕ∞) φ → HasCompactSupport φ →
-        ∫ x, ∑ i : Fin 3, V i x * spatialDeriv φ i x = -∫ x, d x * φ x) →
-      (∀ φ : Vec3 → ℝ, ContDiff ℝ (⊤ : ℕ∞) φ → HasCompactSupport φ → ∀ k : Fin 3,
-        ∫ x, ω k x * φ x =
-          ∫ x, (V (k + 1) x * spatialDeriv φ (k + 2) x -
-            V (k + 2) x * spatialDeriv φ (k + 1) x)) →
-      ∃ DV' : Fin 3 → List (Fin 3) → Vec3 → ℝ,
-        (∀ i, IsSobolevFamilyOn (m + 1) univ (V i) (DV' i)) ∧
-        ∑ i, sobolevNormSqOn (m + 1) univ (DV' i) ≤
-          C * (sobolevNormSqOn m univ Dd + ∑ k, sobolevNormSqOn m univ (Dω k) +
-            ∑ i, sobolevNormSqOn m univ (DV i)) := by
-  obtain ⟨C, hC, hSmooth⟩ := divCurl_smooth_whole m
-  refine ⟨C, hC, ?_⟩
-  intro V DV d Dd ω Dω K hK hVzero hV hD hω hdiv hcurl
-  have hDVzero (i : Fin 3) : DV i [] =ᵐ[volume] V i := by
-    simpa only [Measure.restrict_univ] using (hV i).zero
-  have hDVmem0 (i : Fin 3) : MemLp (DV i []) 2 volume := by
-    simpa only [Measure.restrict_univ] using (hV i).memL2 [] (by simp)
-  have hVmem (i : Fin 3) : MemLp (V i) 2 volume :=
-    MemLp.ae_eq (hDVzero i) (hDVmem0 i)
-  have hDdmem (α : List (Fin 3)) (hα : α.length ≤ m) :
-      MemLp (Dd α) 2 volume := by
-    simpa only [Measure.restrict_univ] using hD.memL2 α hα
-  have hDzero : Dd [] =ᵐ[volume] d := by
-    simpa only [Measure.restrict_univ] using hD.zero
-  have hdmem : MemLp d 2 volume := MemLp.ae_eq hDzero (hDdmem [] (by simp))
-  have hωmem (k : Fin 3) : MemLp (ω k) 2 volume := by
-    have hzero : Dω k [] =ᵐ[volume] ω k := by
-      simpa only [Measure.restrict_univ] using (hω k).zero
-    have hbase : MemLp (Dω k []) 2 volume := by
-      simpa only [Measure.restrict_univ] using (hω k).memL2 [] (by simp)
-    exact MemLp.ae_eq hzero hbase
-  have hDωmem (k : Fin 3) (α : List (Fin 3)) (hα : α.length ≤ m) :
-      MemLp (Dω k α) 2 volume := by
-    simpa only [Measure.restrict_univ] using (hω k).memL2 α hα
-  let W : ℕ → Fin 3 → Vec3 → ℝ := localDivCurlWholeApprox V
-  have hWsm (n : ℕ) (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (W n i) := by
-    exact localDivCurlWhole_approx_smooth hVmem n i
-  have hWc (n : ℕ) (i : Fin 3) : HasCompactSupport (W n i) := by
-    exact localDivCurlWhole_approx_compact hK hVzero n i
-  have hWfamily (n : ℕ) (i : Fin 3) :
-      IsSobolevFamilyOn (m + 1) univ (W n i)
-        (fun α => wordDeriv α (W n i)) := by
-    exact localDivCurlWhole_approx_family hVmem hK hVzero n i (m + 1)
-  have hwordDerivSub (α : List (Fin 3)) {f g : Vec3 → ℝ}
-      (hf : ContDiff ℝ (⊤ : ℕ∞) f) (hg : ContDiff ℝ (⊤ : ℕ∞) g) :
-      wordDeriv α (fun x => f x - g x) =
-        fun x => wordDeriv α f x - wordDeriv α g x := by
-    induction α generalizing f g with
-    | nil => rfl
-    | cons j α ih =>
-        have hsub := localDivCurlWhole_spatialDeriv_sub hf hg j
-        rw [wordDeriv, hsub]
-        exact ih (contDiff_wordDeriv hf [j]) (contDiff_wordDeriv hg [j])
-  have hdivPoint (n : ℕ) (x : Vec3) :
-      (∑ i : Fin 3, spatialDeriv (W n i) i x) =
-        CKN.mollify d (localDivCurlWholeRadius n) (localDivCurlWholeRadius_pos n) x := by
-    simpa [W, localDivCurlWholeApprox] using
-      localDivCurlWhole_mollify_divergence hVmem hdiv
-        (localDivCurlWholeRadius_pos n) x
-  have hcurlPoint (n : ℕ) (k : Fin 3) (x : Vec3) :
-      spatialDeriv (W n (k + 2)) (k + 1) x -
-        spatialDeriv (W n (k + 1)) (k + 2) x =
-          CKN.mollify (ω k) (localDivCurlWholeRadius n)
-            (localDivCurlWholeRadius_pos n) x := by
-    simpa [W, localDivCurlWholeApprox] using
-      localDivCurlWhole_mollify_curl hVmem hcurl
-        (localDivCurlWholeRadius_pos n) k x
-  have hdivEq (n p : ℕ) :
-      (fun x => ∑ i : Fin 3,
-        spatialDeriv (fun y => W n i y - W p i y) i x) =
-        (fun x => CKN.mollify d (localDivCurlWholeRadius n)
-          (localDivCurlWholeRadius_pos n) x -
-          CKN.mollify d (localDivCurlWholeRadius p)
-            (localDivCurlWholeRadius_pos p) x) := by
-    funext x
-    calc
-      (∑ i : Fin 3, spatialDeriv (fun y => W n i y - W p i y) i x) =
-          ∑ i : Fin 3, (spatialDeriv (W n i) i x - spatialDeriv (W p i) i x) := by
-            apply Finset.sum_congr rfl
-            intro i hi
-            exact congrFun (localDivCurlWhole_spatialDeriv_sub (hWsm n i) (hWsm p i) i) x
-      _ = (∑ i : Fin 3, spatialDeriv (W n i) i x) -
-          ∑ i : Fin 3, spatialDeriv (W p i) i x := by
-            rw [Finset.sum_sub_distrib]
-      _ = _ := by rw [hdivPoint n x, hdivPoint p x]
-  have hcurlEq (n p : ℕ) (k : Fin 3) :
-      (fun x => spatialDeriv (fun y => W n (k + 2) y - W p (k + 2) y) (k + 1) x -
-        spatialDeriv (fun y => W n (k + 1) y - W p (k + 1) y) (k + 2) x) =
-        (fun x => CKN.mollify (ω k) (localDivCurlWholeRadius n)
-          (localDivCurlWholeRadius_pos n) x -
-          CKN.mollify (ω k) (localDivCurlWholeRadius p)
-            (localDivCurlWholeRadius_pos p) x) := by
-    funext x
-    rw [localDivCurlWhole_spatialDeriv_sub (hWsm n (k + 2)) (hWsm p (k + 2)) (k + 1),
-      localDivCurlWhole_spatialDeriv_sub (hWsm n (k + 1)) (hWsm p (k + 1)) (k + 2)]
-    have hn := hcurlPoint n k x
-    have hp := hcurlPoint p k x
-    linarith only [hn, hp]
-  have hdivDeriv (α : List (Fin 3)) (hα : α.length ≤ m) (n p : ℕ) :
-      wordDeriv α (fun x => ∑ i : Fin 3,
-        spatialDeriv (fun y => W n i y - W p i y) i x) =
-        (fun x => CKN.mollify (Dd α) (localDivCurlWholeRadius n)
-          (localDivCurlWholeRadius_pos n) x -
-          CKN.mollify (Dd α) (localDivCurlWholeRadius p)
-            (localDivCurlWholeRadius_pos p) x) := by
-    rw [hdivEq n p, hwordDerivSub α
-      (localDivCurlWhole_mollify_smooth hdmem n)
-      (localDivCurlWhole_mollify_smooth hdmem p)]
-    funext x
-    rw [localDivCurlWhole_mollify_wordDeriv hD
-      (localDivCurlWholeRadius_pos n) α hα x,
-      localDivCurlWhole_mollify_wordDeriv hD
-        (localDivCurlWholeRadius_pos p) α hα x]
-  have hcurlDeriv (k : Fin 3) (α : List (Fin 3)) (hα : α.length ≤ m)
-      (n p : ℕ) :
-      wordDeriv α (fun x =>
-        spatialDeriv (fun y => W n (k + 2) y - W p (k + 2) y) (k + 1) x -
-          spatialDeriv (fun y => W n (k + 1) y - W p (k + 1) y) (k + 2) x) =
-        (fun x => CKN.mollify (Dω k α) (localDivCurlWholeRadius n)
-          (localDivCurlWholeRadius_pos n) x -
-          CKN.mollify (Dω k α) (localDivCurlWholeRadius p)
-            (localDivCurlWholeRadius_pos p) x) := by
-    rw [hcurlEq n p k, hwordDerivSub α
-      (localDivCurlWhole_mollify_smooth (hωmem k) n)
-      (localDivCurlWhole_mollify_smooth (hωmem k) p)]
-    funext x
-    rw [localDivCurlWhole_mollify_wordDeriv (hω k)
-      (localDivCurlWholeRadius_pos n) α hα x,
-      localDivCurlWhole_mollify_wordDeriv (hω k)
-        (localDivCurlWholeRadius_pos p) α hα x]
-  have hbaseDeriv (i : Fin 3) (α : List (Fin 3)) (hα : α.length ≤ m)
-      (n p : ℕ) :
-      wordDeriv α (fun x => W n i x - W p i x) =
-        (fun x => CKN.mollify (DV i α) (localDivCurlWholeRadius n)
-          (localDivCurlWholeRadius_pos n) x -
-          CKN.mollify (DV i α) (localDivCurlWholeRadius p)
-            (localDivCurlWholeRadius_pos p) x) := by
-    rw [hwordDerivSub α (hWsm n i) (hWsm p i)]
-    funext x
-    have hn := localDivCurlWhole_mollify_wordDeriv (hV i)
-      (localDivCurlWholeRadius_pos n) α hα x
-    have hp := localDivCurlWhole_mollify_wordDeriv (hV i)
-      (localDivCurlWholeRadius_pos p) α hα x
-    simpa [W, localDivCurlWholeApprox] using
-      congrArg₂ (fun a b : ℝ => a - b) hn hp
-  have hdivNormEq (n p : ℕ) :
-      sobolevNormSqOn m univ (fun α => wordDeriv α (fun x => ∑ i : Fin 3,
-        spatialDeriv (fun y => W n i y - W p i y) i x)) =
+private theorem localDivCurlWhole_mollifiedFamily_pairNorm_tendsto
+    (m : ℕ) (D : List (Fin 3) → Vec3 → ℝ)
+    (hDmem : ∀ α, α.length ≤ m → MemLp (D α) 2 volume) :
+    Tendsto (fun q : ℕ × ℕ => sobolevNormSqOn m univ (fun α x =>
+      CKN.mollify (D α) (localDivCurlWholeRadius q.1)
+        (localDivCurlWholeRadius_pos q.1) x -
+      CKN.mollify (D α) (localDivCurlWholeRadius q.2)
+        (localDivCurlWholeRadius_pos q.2) x)) atTop (𝓝 0) := by
+  have hPairSq (α : List (Fin 3)) (hα : α.length ≤ m) :
+      Tendsto (fun q : ℕ × ℕ => ∫ x,
+        (CKN.mollify (D α) (localDivCurlWholeRadius q.1)
+            (localDivCurlWholeRadius_pos q.1) x -
+          CKN.mollify (D α) (localDivCurlWholeRadius q.2)
+            (localDivCurlWholeRadius_pos q.2) x) ^ 2 ∂volume)
+        atTop (𝓝 0) := by
+    let g : ℕ → Vec3 → ℝ := fun n => CKN.mollify (D α)
+      (localDivCurlWholeRadius n) (localDivCurlWholeRadius_pos n)
+    have hg (n : ℕ) : MemLp (g n) 2 volume :=
+      localDivCurlWhole_mollify_memLp (hDmem α hα) n
+    have hpairs := localDivCurlWhole_mollify_pair_tendsto (hDmem α hα)
+    have hsq := localDivCurlWhole_integral_sq_pair_tendsto_zero hg hpairs
+    simpa [g] using hsq
+  have hsum : Tendsto (fun q : ℕ × ℕ => ∑ α ∈ sobolevWords m, ∫ x,
+      (CKN.mollify (D α) (localDivCurlWholeRadius q.1)
+          (localDivCurlWholeRadius_pos q.1) x -
+        CKN.mollify (D α) (localDivCurlWholeRadius q.2)
+          (localDivCurlWholeRadius_pos q.2) x) ^ 2 ∂volume)
+      atTop (𝓝 (∑ α ∈ sobolevWords m, (0 : ℝ))) := by
+    apply tendsto_finsetSum
+    intro α hα
+    exact hPairSq α (mem_sobolevWords.mp hα)
+  simpa [sobolevNormSqOn] using hsum
+
+private structure localDivCurlWholePairNormIdentities
+    (m : ℕ) (W : ℕ → Fin 3 → Vec3 → ℝ)
+    (Dd : List (Fin 3) → Vec3 → ℝ)
+    (Dω : Fin 3 → List (Fin 3) → Vec3 → ℝ)
+    (DV : Fin 3 → List (Fin 3) → Vec3 → ℝ) where
+  divNormEq : ∀ n p,
+    sobolevNormSqOn m univ (fun α => wordDeriv α (fun x => ∑ i : Fin 3,
+      spatialDeriv (fun y => W n i y - W p i y) i x)) =
+    sobolevNormSqOn m univ (fun α x =>
+      CKN.mollify (Dd α) (localDivCurlWholeRadius n)
+        (localDivCurlWholeRadius_pos n) x -
+      CKN.mollify (Dd α) (localDivCurlWholeRadius p)
+        (localDivCurlWholeRadius_pos p) x)
+  curlNormEq : ∀ k n p,
+    sobolevNormSqOn m univ (fun α => wordDeriv α (fun x =>
+      spatialDeriv (fun y => W n (k + 2) y - W p (k + 2) y) (k + 1) x -
+        spatialDeriv (fun y => W n (k + 1) y - W p (k + 1) y) (k + 2) x)) =
+    sobolevNormSqOn m univ (fun α x =>
+      CKN.mollify (Dω k α) (localDivCurlWholeRadius n)
+        (localDivCurlWholeRadius_pos n) x -
+      CKN.mollify (Dω k α) (localDivCurlWholeRadius p)
+        (localDivCurlWholeRadius_pos p) x)
+  baseNormEq : ∀ i n p,
+    sobolevNormSqOn m univ (fun α => wordDeriv α (fun x => W n i x - W p i x)) =
+    sobolevNormSqOn m univ (fun α x =>
+      CKN.mollify (DV i α) (localDivCurlWholeRadius n)
+        (localDivCurlWholeRadius_pos n) x -
+      CKN.mollify (DV i α) (localDivCurlWholeRadius p)
+        (localDivCurlWholeRadius_pos p) x)
+
+private theorem localDivCurlWhole_pairSmoothEstimate
+    (m : ℕ) (C : ℝ) (W : ℕ → Fin 3 → Vec3 → ℝ)
+    (Dd : List (Fin 3) → Vec3 → ℝ)
+    (Dω : Fin 3 → List (Fin 3) → Vec3 → ℝ)
+    (DV : Fin 3 → List (Fin 3) → Vec3 → ℝ)
+    (dataPair : ℕ × ℕ → ℝ)
+    (hDataPair : ∀ n p, dataPair (n, p) =
       sobolevNormSqOn m univ (fun α x =>
         CKN.mollify (Dd α) (localDivCurlWholeRadius n)
           (localDivCurlWholeRadius_pos n) x -
         CKN.mollify (Dd α) (localDivCurlWholeRadius p)
-          (localDivCurlWholeRadius_pos p) x) := by
-    apply localDivCurlWhole_normSq_congr
-    intro α hα x
-    exact congrFun (hdivDeriv α hα n p) x
-  have hcurlNormEq (k : Fin 3) (n p : ℕ) :
-      sobolevNormSqOn m univ (fun α => wordDeriv α (fun x =>
-        spatialDeriv (fun y => W n (k + 2) y - W p (k + 2) y) (k + 1) x -
-          spatialDeriv (fun y => W n (k + 1) y - W p (k + 1) y) (k + 2) x)) =
-      sobolevNormSqOn m univ (fun α x =>
+          (localDivCurlWholeRadius_pos p) x) +
+      (∑ k : Fin 3, sobolevNormSqOn m univ (fun α x =>
         CKN.mollify (Dω k α) (localDivCurlWholeRadius n)
           (localDivCurlWholeRadius_pos n) x -
         CKN.mollify (Dω k α) (localDivCurlWholeRadius p)
-          (localDivCurlWholeRadius_pos p) x) := by
-    apply localDivCurlWhole_normSq_congr
-    intro α hα x
-    exact congrFun (hcurlDeriv k α hα n p) x
-  have hbaseNormEq (i : Fin 3) (n p : ℕ) :
-      sobolevNormSqOn m univ (fun α => wordDeriv α (fun x => W n i x - W p i x)) =
-      sobolevNormSqOn m univ (fun α x =>
+          (localDivCurlWholeRadius_pos p) x)) +
+      ∑ i : Fin 3, sobolevNormSqOn m univ (fun α x =>
         CKN.mollify (DV i α) (localDivCurlWholeRadius n)
           (localDivCurlWholeRadius_pos n) x -
         CKN.mollify (DV i α) (localDivCurlWholeRadius p)
-          (localDivCurlWholeRadius_pos p) x) := by
-    apply localDivCurlWhole_normSq_congr
-    intro α hα x
-    exact congrFun (hbaseDeriv i α hα n p) x
-  let dataPair : ℕ × ℕ → ℝ := fun q =>
-    sobolevNormSqOn m univ (fun α x =>
-      CKN.mollify (Dd α) (localDivCurlWholeRadius q.1)
-        (localDivCurlWholeRadius_pos q.1) x -
-      CKN.mollify (Dd α) (localDivCurlWholeRadius q.2)
-        (localDivCurlWholeRadius_pos q.2) x) +
-    (∑ k : Fin 3, sobolevNormSqOn m univ (fun α x =>
-      CKN.mollify (Dω k α) (localDivCurlWholeRadius q.1)
-        (localDivCurlWholeRadius_pos q.1) x -
-      CKN.mollify (Dω k α) (localDivCurlWholeRadius q.2)
-        (localDivCurlWholeRadius_pos q.2) x)) +
-    ∑ i : Fin 3, sobolevNormSqOn m univ (fun α x =>
-      CKN.mollify (DV i α) (localDivCurlWholeRadius q.1)
-        (localDivCurlWholeRadius_pos q.1) x -
-      CKN.mollify (DV i α) (localDivCurlWholeRadius q.2)
-        (localDivCurlWholeRadius_pos q.2) x)
-  have hDdPairSq (α : List (Fin 3)) (hα : α.length ≤ m) :
-      Tendsto (fun q : ℕ × ℕ => ∫ x,
-        (CKN.mollify (Dd α) (localDivCurlWholeRadius q.1)
-            (localDivCurlWholeRadius_pos q.1) x -
-          CKN.mollify (Dd α) (localDivCurlWholeRadius q.2)
-            (localDivCurlWholeRadius_pos q.2) x) ^ 2 ∂volume)
-        atTop (𝓝 0) := by
-    let g : ℕ → Vec3 → ℝ := fun n => CKN.mollify (Dd α)
-      (localDivCurlWholeRadius n) (localDivCurlWholeRadius_pos n)
-    have hg (n : ℕ) : MemLp (g n) 2 volume :=
-      localDivCurlWhole_mollify_memLp (hDdmem α hα) n
-    have hpairs := localDivCurlWhole_mollify_pair_tendsto (hDdmem α hα)
-    have hsq := localDivCurlWhole_integral_sq_pair_tendsto_zero hg hpairs
-    simpa [g] using hsq
-  have hDωPairSq (k : Fin 3) (α : List (Fin 3)) (hα : α.length ≤ m) :
-      Tendsto (fun q : ℕ × ℕ => ∫ x,
-        (CKN.mollify (Dω k α) (localDivCurlWholeRadius q.1)
-            (localDivCurlWholeRadius_pos q.1) x -
-          CKN.mollify (Dω k α) (localDivCurlWholeRadius q.2)
-            (localDivCurlWholeRadius_pos q.2) x) ^ 2 ∂volume)
-        atTop (𝓝 0) := by
-    let g : ℕ → Vec3 → ℝ := fun n => CKN.mollify (Dω k α)
-      (localDivCurlWholeRadius n) (localDivCurlWholeRadius_pos n)
-    have hg (n : ℕ) : MemLp (g n) 2 volume :=
-      localDivCurlWhole_mollify_memLp (hDωmem k α hα) n
-    have hpairs := localDivCurlWhole_mollify_pair_tendsto (hDωmem k α hα)
-    have hsq := localDivCurlWhole_integral_sq_pair_tendsto_zero hg hpairs
-    simpa [g] using hsq
-  have hDVPairSq (i : Fin 3) (α : List (Fin 3)) (hα : α.length ≤ m) :
-      Tendsto (fun q : ℕ × ℕ => ∫ x,
-        (CKN.mollify (DV i α) (localDivCurlWholeRadius q.1)
-            (localDivCurlWholeRadius_pos q.1) x -
-          CKN.mollify (DV i α) (localDivCurlWholeRadius q.2)
-            (localDivCurlWholeRadius_pos q.2) x) ^ 2 ∂volume)
-        atTop (𝓝 0) := by
-    have hmem : MemLp (DV i α) 2 volume := by
-      simpa only [Measure.restrict_univ] using (hV i).memL2 α hα
-    let g : ℕ → Vec3 → ℝ := fun n => CKN.mollify (DV i α)
-      (localDivCurlWholeRadius n) (localDivCurlWholeRadius_pos n)
-    have hg (n : ℕ) : MemLp (g n) 2 volume :=
-      localDivCurlWhole_mollify_memLp hmem n
-    have hpairs := localDivCurlWhole_mollify_pair_tendsto hmem
-    have hsq := localDivCurlWhole_integral_sq_pair_tendsto_zero hg hpairs
-    simpa [g] using hsq
-  have hDdPairNorm : Tendsto (fun q : ℕ × ℕ =>
-      sobolevNormSqOn m univ (fun α x =>
-        CKN.mollify (Dd α) (localDivCurlWholeRadius q.1)
-          (localDivCurlWholeRadius_pos q.1) x -
-        CKN.mollify (Dd α) (localDivCurlWholeRadius q.2)
-          (localDivCurlWholeRadius_pos q.2) x)) atTop (𝓝 0) := by
-    have hsum : Tendsto (fun q : ℕ × ℕ => ∑ α ∈ sobolevWords m, ∫ x,
-        (CKN.mollify (Dd α) (localDivCurlWholeRadius q.1)
-            (localDivCurlWholeRadius_pos q.1) x -
-          CKN.mollify (Dd α) (localDivCurlWholeRadius q.2)
-            (localDivCurlWholeRadius_pos q.2) x) ^ 2 ∂volume)
-        atTop (𝓝 (∑ α ∈ sobolevWords m, (0 : ℝ))) := by
-      apply tendsto_finsetSum
-      intro α hα
-      exact hDdPairSq α (mem_sobolevWords.mp hα)
-    simpa [sobolevNormSqOn] using hsum
-  have hDωPairNorm (k : Fin 3) : Tendsto (fun q : ℕ × ℕ =>
-      sobolevNormSqOn m univ (fun α x =>
-        CKN.mollify (Dω k α) (localDivCurlWholeRadius q.1)
-          (localDivCurlWholeRadius_pos q.1) x -
-        CKN.mollify (Dω k α) (localDivCurlWholeRadius q.2)
-          (localDivCurlWholeRadius_pos q.2) x)) atTop (𝓝 0) := by
-    have hsum : Tendsto (fun q : ℕ × ℕ => ∑ α ∈ sobolevWords m, ∫ x,
-        (CKN.mollify (Dω k α) (localDivCurlWholeRadius q.1)
-            (localDivCurlWholeRadius_pos q.1) x -
-          CKN.mollify (Dω k α) (localDivCurlWholeRadius q.2)
-            (localDivCurlWholeRadius_pos q.2) x) ^ 2 ∂volume)
-        atTop (𝓝 (∑ α ∈ sobolevWords m, (0 : ℝ))) := by
-      apply tendsto_finsetSum
-      intro α hα
-      exact hDωPairSq k α (mem_sobolevWords.mp hα)
-    simpa [sobolevNormSqOn] using hsum
-  have hDVPairNorm (i : Fin 3) : Tendsto (fun q : ℕ × ℕ =>
-      sobolevNormSqOn m univ (fun α x =>
-        CKN.mollify (DV i α) (localDivCurlWholeRadius q.1)
-          (localDivCurlWholeRadius_pos q.1) x -
-        CKN.mollify (DV i α) (localDivCurlWholeRadius q.2)
-          (localDivCurlWholeRadius_pos q.2) x)) atTop (𝓝 0) := by
-    have hsum : Tendsto (fun q : ℕ × ℕ => ∑ α ∈ sobolevWords m, ∫ x,
-        (CKN.mollify (DV i α) (localDivCurlWholeRadius q.1)
-            (localDivCurlWholeRadius_pos q.1) x -
-          CKN.mollify (DV i α) (localDivCurlWholeRadius q.2)
-            (localDivCurlWholeRadius_pos q.2) x) ^ 2 ∂volume)
-        atTop (𝓝 (∑ α ∈ sobolevWords m, (0 : ℝ))) := by
-      apply tendsto_finsetSum
-      intro α hα
-      exact hDVPairSq i α (mem_sobolevWords.mp hα)
-    simpa [sobolevNormSqOn] using hsum
-  have hDataPair : Tendsto dataPair atTop (𝓝 0) := by
-    have hωsum : Tendsto (fun q : ℕ × ℕ => ∑ k : Fin 3,
-        sobolevNormSqOn m univ (fun α x =>
-          CKN.mollify (Dω k α) (localDivCurlWholeRadius q.1)
-            (localDivCurlWholeRadius_pos q.1) x -
-          CKN.mollify (Dω k α) (localDivCurlWholeRadius q.2)
-            (localDivCurlWholeRadius_pos q.2) x)) atTop (𝓝 0) := by
-      have hsum : Tendsto (fun q : ℕ × ℕ => ∑ k : Fin 3,
-          sobolevNormSqOn m univ (fun α x =>
-            CKN.mollify (Dω k α) (localDivCurlWholeRadius q.1)
-              (localDivCurlWholeRadius_pos q.1) x -
-            CKN.mollify (Dω k α) (localDivCurlWholeRadius q.2)
-              (localDivCurlWholeRadius_pos q.2) x)) atTop
-          (𝓝 (∑ k : Fin 3, (0 : ℝ))) := by
-        apply tendsto_finsetSum
-        intro k hk
-        exact hDωPairNorm k
-      simpa using hsum
-    have hVsum : Tendsto (fun q : ℕ × ℕ => ∑ i : Fin 3,
-        sobolevNormSqOn m univ (fun α x =>
-          CKN.mollify (DV i α) (localDivCurlWholeRadius q.1)
-            (localDivCurlWholeRadius_pos q.1) x -
-          CKN.mollify (DV i α) (localDivCurlWholeRadius q.2)
-            (localDivCurlWholeRadius_pos q.2) x)) atTop (𝓝 0) := by
-      have hsum : Tendsto (fun q : ℕ × ℕ => ∑ i : Fin 3,
-          sobolevNormSqOn m univ (fun α x =>
-            CKN.mollify (DV i α) (localDivCurlWholeRadius q.1)
-              (localDivCurlWholeRadius_pos q.1) x -
-            CKN.mollify (DV i α) (localDivCurlWholeRadius q.2)
-              (localDivCurlWholeRadius_pos q.2) x)) atTop
-          (𝓝 (∑ i : Fin 3, (0 : ℝ))) := by
-        apply tendsto_finsetSum
-        intro i hi
-        exact hDVPairNorm i
-      simpa using hsum
-    have hadd := hDdPairNorm.add (hωsum.add hVsum)
-    simpa [dataPair, add_assoc] using hadd
-  have hEstimate (n p : ℕ) :
+          (localDivCurlWholeRadius_pos p) x))
+    (hIds : localDivCurlWholePairNormIdentities m W Dd Dω DV)
+    (hWsm : ∀ n i, ContDiff ℝ (⊤ : ℕ∞) (W n i))
+    (hWc : ∀ n i, HasCompactSupport (W n i))
+    (hSmooth : ∀ U : Fin 3 → Vec3 → ℝ,
+      (∀ i, ContDiff ℝ (⊤ : ℕ∞) (U i)) → (∀ i, HasCompactSupport (U i)) →
+      (∑ i : Fin 3, sobolevNormSqOn (m + 1) univ (fun α => wordDeriv α (U i))) ≤
+        C * (sobolevNormSqOn m univ (fun α => wordDeriv α (fun x =>
+          ∑ i : Fin 3, spatialDeriv (U i) i x)) +
+          ∑ k : Fin 3, sobolevNormSqOn m univ (fun α => wordDeriv α (fun x =>
+            spatialDeriv (U (k + 2)) (k + 1) x -
+              spatialDeriv (U (k + 1)) (k + 2) x)) +
+          ∑ i : Fin 3, sobolevNormSqOn m univ (fun α => wordDeriv α (U i)))) :
+    ∀ n p,
       (∑ i : Fin 3, sobolevNormSqOn (m + 1) univ
         (fun α => wordDeriv α (fun x => W n i x - W p i x))) ≤ C * dataPair (n, p) := by
-    have hSmoothBound := hSmooth
-      (fun i x => W n i x - W p i x)
-      (fun i => (hWsm n i).sub (hWsm p i))
-      (fun i => (hWc n i).sub (hWc p i))
-    have hRhsEq :
+  intro n p
+  have hSmoothBound := hSmooth
+    (fun i x => W n i x - W p i x)
+    (fun i => (hWsm n i).sub (hWsm p i))
+    (fun i => (hWc n i).sub (hWc p i))
+  have hRhsEq :
         (sobolevNormSqOn m univ (fun α => wordDeriv α (fun x => ∑ i : Fin 3,
           spatialDeriv (fun y => W n i y - W p i y) i x)) +
         ∑ k : Fin 3, sobolevNormSqOn m univ (fun α => wordDeriv α (fun x =>
@@ -980,7 +746,6 @@ theorem divCurl_whole_family (m : ℕ) :
             spatialDeriv (fun y => W n (k + 1) y - W p (k + 1) y) (k + 2) x)) +
         ∑ i : Fin 3, sobolevNormSqOn m univ
           (fun α => wordDeriv α (fun x => W n i x - W p i x))) = dataPair (n, p) := by
-      dsimp [dataPair]
       have hcurlSum :
           (∑ k : Fin 3, sobolevNormSqOn m univ (fun α => wordDeriv α (fun x =>
             spatialDeriv (fun y => W n (k + 2) y - W p (k + 2) y) (k + 1) x -
@@ -992,7 +757,7 @@ theorem divCurl_whole_family (m : ℕ) :
               (localDivCurlWholeRadius_pos p) x) := by
         apply Finset.sum_congr rfl
         intro k hk
-        exact hcurlNormEq k n p
+        exact hIds.curlNormEq k n p
       have hbaseSum :
           (∑ i : Fin 3, sobolevNormSqOn m univ
             (fun α => wordDeriv α (fun x => W n i x - W p i x))) =
@@ -1003,7 +768,7 @@ theorem divCurl_whole_family (m : ℕ) :
               (localDivCurlWholeRadius_pos p) x) := by
         apply Finset.sum_congr rfl
         intro i hi
-        exact hbaseNormEq i n p
+        exact hIds.baseNormEq i n p
       calc
         _ = (sobolevNormSqOn m univ (fun α => wordDeriv α (fun x =>
               ∑ i : Fin 3, spatialDeriv (fun y => W n i y - W p i y) i x)) +
@@ -1022,7 +787,7 @@ theorem divCurl_whole_family (m : ℕ) :
                 spatialDeriv (fun y => W n (k + 1) y - W p (k + 1) y) (k + 2) x))) +
             ∑ i : Fin 3, sobolevNormSqOn m univ
               (fun α => wordDeriv α (fun x => W n i x - W p i x)) := by
-                rw [hdivNormEq n p]
+                rw [hIds.divNormEq n p]
         _ = (sobolevNormSqOn m univ (fun α x =>
               CKN.mollify (Dd α) (localDivCurlWholeRadius n)
                 (localDivCurlWholeRadius_pos n) x -
@@ -1036,143 +801,78 @@ theorem divCurl_whole_family (m : ℕ) :
             ∑ i : Fin 3, sobolevNormSqOn m univ
               (fun α => wordDeriv α (fun x => W n i x - W p i x)) := by
                 rw [hcurlSum]
-        _ = dataPair (n, p) := by rw [hbaseSum]
-    calc
-      _ ≤ C * (sobolevNormSqOn m univ (fun α => wordDeriv α (fun x => ∑ i : Fin 3,
+        _ = dataPair (n, p) := by
+          rw [hbaseSum]
+          rw [← hDataPair n p]
+  calc
+    _ ≤ C * (sobolevNormSqOn m univ (fun α => wordDeriv α (fun x => ∑ i : Fin 3,
           spatialDeriv (fun y => W n i y - W p i y) i x)) +
         ∑ k : Fin 3, sobolevNormSqOn m univ (fun α => wordDeriv α (fun x =>
           spatialDeriv (fun y => W n (k + 2) y - W p (k + 2) y) (k + 1) x -
             spatialDeriv (fun y => W n (k + 1) y - W p (k + 1) y) (k + 2) x)) +
         ∑ i : Fin 3, sobolevNormSqOn m univ
           (fun α => wordDeriv α (fun x => W n i x - W p i x))) := hSmoothBound
-      _ = C * dataPair (n, p) := congrArg (fun r : ℝ => C * r) hRhsEq
-  have hEstimateLimit : Tendsto (fun q : ℕ × ℕ => C * dataPair q) atTop (𝓝 0) := by
-    simpa using tendsto_const_nhds.mul hDataPair
-  have hHighPairSq (i : Fin 3) (α : List (Fin 3))
-      (hα : α.length ≤ m + 1) :
-      Tendsto (fun q : ℕ × ℕ => ∫ x,
-        (wordDeriv α (W q.1 i) x - wordDeriv α (W q.2 i) x) ^ 2 ∂volume)
-        atTop (𝓝 0) := by
-    let g : ℕ → Vec3 → ℝ := fun n => wordDeriv α (W n i)
-    have hmem (n : ℕ) : MemLp (g n) 2 volume := by
-      simpa only [Measure.restrict_univ] using (hWfamily n i).memL2 α hα
-    have hterm (q : ℕ × ℕ) :
-        ∫ x, (g q.1 x - g q.2 x) ^ 2 ∂volume ≤ C * dataPair q := by
-      have hterm' :
-          ∫ x, wordDeriv α (fun x => W q.1 i x - W q.2 i x) x ^ 2 ∂volume ≤
-            ∑ j : Fin 3, sobolevNormSqOn (m + 1) univ
-              (fun β => wordDeriv β (fun x => W q.1 j x - W q.2 j x)) := by
-        have hsingle :
-            ∫ x, wordDeriv α (fun x => W q.1 i x - W q.2 i x) x ^ 2 ∂volume ≤
-              ∑ β ∈ sobolevWords (m + 1),
-                ∫ x, wordDeriv β (fun x => W q.1 i x - W q.2 i x) x ^ 2 ∂volume := by
-          apply Finset.single_le_sum (s := sobolevWords (m + 1))
-            (f := fun β => ∫ x,
-              wordDeriv β (fun x => W q.1 i x - W q.2 i x) x ^ 2 ∂volume)
-          · intro β hβ
-            exact integral_nonneg fun x => sq_nonneg _
-          · exact mem_sobolevWords.mpr hα
-        have hin :
-            ∫ x, wordDeriv α (fun x => W q.1 i x - W q.2 i x) x ^ 2 ∂volume ≤
-              sobolevNormSqOn (m + 1) univ
-                (fun β => wordDeriv β (fun x => W q.1 i x - W q.2 i x)) := by
-          simpa [sobolevNormSqOn] using hsingle
-        have hout : sobolevNormSqOn (m + 1) univ
-              (fun β => wordDeriv β (fun x => W q.1 i x - W q.2 i x)) ≤
-              ∑ j : Fin 3, sobolevNormSqOn (m + 1) univ
-                (fun β => wordDeriv β (fun x => W q.1 j x - W q.2 j x)) := by
-          apply Finset.single_le_sum (s := Finset.univ)
-            (f := fun j : Fin 3 => sobolevNormSqOn (m + 1) univ
-              (fun β => wordDeriv β (fun x => W q.1 j x - W q.2 j x)))
-          · intro j hj
-            exact localDivCurlWhole_normSq_nonneg (m + 1) univ
-              (fun β => wordDeriv β (fun x => W q.1 j x - W q.2 j x))
-          · exact Finset.mem_univ i
-        exact hin.trans hout
-      calc
-        _ = ∫ x, wordDeriv α (fun x => W q.1 i x - W q.2 i x) x ^ 2 ∂volume := by
-          apply integral_congr_ae
-          filter_upwards [] with x
-          rw [hwordDerivSub α (hWsm q.1 i) (hWsm q.2 i)]
-        _ ≤ ∑ j : Fin 3, sobolevNormSqOn (m + 1) univ
-            (fun β => wordDeriv β (fun x => W q.1 j x - W q.2 j x)) := hterm'
-        _ ≤ C * dataPair q := hEstimate q.1 q.2
-    have hsq := tendsto_of_tendsto_of_tendsto_of_le_of_le
-      tendsto_const_nhds hEstimateLimit
-      (fun q => integral_nonneg fun x => sq_nonneg (g q.1 x - g q.2 x)) hterm
-    have hpair : Tendsto (fun q : ℕ × ℕ =>
-        ∫ x, (g q.1 x - g q.2 x) ^ 2 ∂volume) atTop (𝓝 0) := hsq
-    simpa [g] using hpair
-  have hHighPairNorm (i : Fin 3) (α : List (Fin 3))
-      (hα : α.length ≤ m + 1) :
-      Tendsto (fun q : ℕ × ℕ =>
-        eLpNorm (wordDeriv α (W q.1 i) - wordDeriv α (W q.2 i)) 2 volume)
-        atTop (𝓝 0) := by
-    have hmemPair (q : ℕ × ℕ) :
-        MemLp (fun x => wordDeriv α (W q.1 i) x - wordDeriv α (W q.2 i) x) 2 volume :=
-      have hq1 : MemLp (wordDeriv α (W q.1 i)) 2 volume := by
-        simpa only [Measure.restrict_univ] using (hWfamily q.1 i).memL2 α hα
-      have hq2 : MemLp (wordDeriv α (W q.2 i)) 2 volume := by
-        simpa only [Measure.restrict_univ] using (hWfamily q.2 i).memL2 α hα
-      hq1.sub hq2
-    exact localDivCurlWhole_eLpNorm_tendsto_zero_of_integral_sq hmemPair
-      (hHighPairSq i α hα)
-  let L : (i : Fin 3) → (α : List (Fin 3)) → α.length ≤ m + 1 → Vec3 → ℝ :=
-    fun i α hα => Classical.choose
-      (localDivCurlWhole_l2_exists_limit (f := fun n => wordDeriv α (W n i))
-        (fun n => by
-          simpa only [Measure.restrict_univ] using (hWfamily n i).memL2 α hα)
-        (hHighPairNorm i α hα))
-  have hLspec (i : Fin 3) (α : List (Fin 3)) (hα : α.length ≤ m + 1) :
-      MemLp (L i α hα) 2 volume ∧
-        Tendsto (fun n => eLpNorm (wordDeriv α (W n i) - L i α hα) 2 volume)
-          atTop (𝓝 0) := by
-    exact Classical.choose_spec
-      (localDivCurlWhole_l2_exists_limit (f := fun n => wordDeriv α (W n i))
-        (fun n => by
-          simpa only [Measure.restrict_univ] using (hWfamily n i).memL2 α hα)
-        (hHighPairNorm i α hα))
-  let DV' : Fin 3 → List (Fin 3) → Vec3 → ℝ := fun i α =>
-    if hnil : α = [] then V i else
-      if hα : α.length ≤ m + 1 then L i α hα else 0
-  have hDV'mem (i : Fin 3) (α : List (Fin 3)) (hα : α.length ≤ m + 1) :
-      MemLp (DV' i α) 2 volume := by
-    by_cases hnil : α = []
-    · subst α
-      simpa [DV'] using hVmem i
-    · simpa [DV', hnil, hα] using (hLspec i α hα).1
-  have hDV'conv (i : Fin 3) (α : List (Fin 3)) (hα : α.length ≤ m + 1) :
-      Tendsto (fun n => eLpNorm (wordDeriv α (W n i) - DV' i α) 2 volume)
-        atTop (𝓝 0) := by
-    by_cases hnil : α = []
-    · subst α
-      change Tendsto (fun n => eLpNorm
-        (CKN.mollify (V i) (localDivCurlWholeRadius n)
-          (localDivCurlWholeRadius_pos n) - V i) 2 volume) atTop (𝓝 0)
-      exact localDivCurlWhole_mollify_tendsto (hVmem i)
-    · simpa [DV', hnil, hα] using (hLspec i α hα).2
-  have hOut (i : Fin 3) : IsSobolevFamilyOn (m + 1) univ (V i) (DV' i) := by
-    apply IsSobolevFamilyOn.of_tendsto isOpen_univ
-      (Dn := fun n α => wordDeriv α (W n i)) (D := fun α => DV' i α)
-    · intro n
-      exact hWfamily n i
-    · intro α hα
-      simpa only [Measure.restrict_univ] using hDV'mem i α hα
-    · intro α hα
-      simpa only [Measure.restrict_univ] using hDV'conv i α hα
+    _ = C * dataPair (n, p) := congrArg (fun r : ℝ => C * r) hRhsEq
+
+
+private theorem localDivCurlWhole_singleSmoothEstimate
+    (m : ℕ) (C : ℝ) (V : Fin 3 → Vec3 → ℝ)
+    (DV : Fin 3 → List (Fin 3) → Vec3 → ℝ)
+    (d : Vec3 → ℝ) (Dd : List (Fin 3) → Vec3 → ℝ)
+    (ω : Fin 3 → Vec3 → ℝ)
+    (Dω : Fin 3 → List (Fin 3) → Vec3 → ℝ)
+    (W : ℕ → Fin 3 → Vec3 → ℝ)
+    (hWapprox : ∀ n i, W n i = localDivCurlWholeApprox V n i)
+    (hWsm : ∀ n i, ContDiff ℝ (⊤ : ℕ∞) (W n i))
+    (hWc : ∀ n i, HasCompactSupport (W n i))
+    (hVmem : ∀ i, MemLp (V i) 2 volume)
+    (hV : ∀ i, IsSobolevFamilyOn m univ (V i) (DV i))
+    (hD : IsSobolevFamilyOn m univ d Dd)
+    (hω : ∀ k, IsSobolevFamilyOn m univ (ω k) (Dω k))
+    (hdiv : ∀ φ : Vec3 → ℝ, ContDiff ℝ (⊤ : ℕ∞) φ → HasCompactSupport φ →
+      ∫ x, ∑ i : Fin 3, V i x * spatialDeriv φ i x = -∫ x, d x * φ x)
+    (hcurl : ∀ φ : Vec3 → ℝ, ContDiff ℝ (⊤ : ℕ∞) φ → HasCompactSupport φ → ∀ k : Fin 3,
+      ∫ x, ω k x * φ x =
+        ∫ x, (V (k + 1) x * spatialDeriv φ (k + 2) x -
+          V (k + 2) x * spatialDeriv φ (k + 1) x))
+    (hSmooth : ∀ U : Fin 3 → Vec3 → ℝ,
+      (∀ i, ContDiff ℝ (⊤ : ℕ∞) (U i)) → (∀ i, HasCompactSupport (U i)) →
+      (∑ i : Fin 3, sobolevNormSqOn (m + 1) univ (fun α => wordDeriv α (U i))) ≤
+        C * (sobolevNormSqOn m univ (fun α => wordDeriv α (fun x =>
+          ∑ i : Fin 3, spatialDeriv (U i) i x)) +
+          ∑ k : Fin 3, sobolevNormSqOn m univ (fun α => wordDeriv α (fun x =>
+            spatialDeriv (U (k + 2)) (k + 1) x -
+              spatialDeriv (U (k + 1)) (k + 2) x)) +
+          ∑ i : Fin 3, sobolevNormSqOn m univ (fun α => wordDeriv α (U i)))) :
+    ∀ n,
+      (∑ i : Fin 3, sobolevNormSqOn (m + 1) univ
+        (fun α => wordDeriv α (W n i))) ≤
+      C * (sobolevNormSqOn m univ (fun α x =>
+        CKN.mollify (Dd α) (localDivCurlWholeRadius n)
+          (localDivCurlWholeRadius_pos n) x) +
+        (∑ k : Fin 3, sobolevNormSqOn m univ (fun α x =>
+          CKN.mollify (Dω k α) (localDivCurlWholeRadius n)
+            (localDivCurlWholeRadius_pos n) x)) +
+        ∑ i : Fin 3, sobolevNormSqOn m univ (fun α x =>
+          CKN.mollify (DV i α) (localDivCurlWholeRadius n)
+            (localDivCurlWholeRadius_pos n) x)) := by
   have hdivOne (n : ℕ) :
       (fun x => ∑ i : Fin 3, spatialDeriv (W n i) i x) =
         (fun x => CKN.mollify d (localDivCurlWholeRadius n)
           (localDivCurlWholeRadius_pos n) x) := by
     funext x
-    exact hdivPoint n x
+    simpa [hWapprox, localDivCurlWholeApprox] using
+      localDivCurlWhole_mollify_divergence hVmem hdiv
+        (localDivCurlWholeRadius_pos n) x
   have hcurlOne (n : ℕ) (k : Fin 3) :
       (fun x => spatialDeriv (W n (k + 2)) (k + 1) x -
         spatialDeriv (W n (k + 1)) (k + 2) x) =
         (fun x => CKN.mollify (ω k) (localDivCurlWholeRadius n)
           (localDivCurlWholeRadius_pos n) x) := by
     funext x
-    exact hcurlPoint n k x
+    simpa [hWapprox, localDivCurlWholeApprox] using
+      localDivCurlWhole_mollify_curl hVmem hcurl
+        (localDivCurlWholeRadius_pos n) k x
   have hdivOneDeriv (n : ℕ) (α : List (Fin 3)) (hα : α.length ≤ m) :
       wordDeriv α (fun x => ∑ i : Fin 3, spatialDeriv (W n i) i x) =
         (fun x => CKN.mollify (Dd α) (localDivCurlWholeRadius n)
@@ -1204,8 +904,9 @@ theorem divCurl_whole_family (m : ℕ) :
         (fun x => CKN.mollify (DV i α) (localDivCurlWholeRadius n)
           (localDivCurlWholeRadius_pos n) x) := by
     funext x
-    exact localDivCurlWhole_mollify_wordDeriv (hV i)
-      (localDivCurlWholeRadius_pos n) α hα x
+    simpa [hWapprox, localDivCurlWholeApprox] using
+      localDivCurlWhole_mollify_wordDeriv (hV i)
+        (localDivCurlWholeRadius_pos n) α hα x
   have hdivNormEqOne (n : ℕ) :
       sobolevNormSqOn m univ (fun α => wordDeriv α (fun x =>
         ∑ i : Fin 3, spatialDeriv (W n i) i x)) =
@@ -1314,8 +1015,39 @@ theorem divCurl_whole_family (m : ℕ) :
             spatialDeriv (W n (k + 1)) (k + 2) x)) +
         ∑ i : Fin 3, sobolevNormSqOn m univ (fun α => wordDeriv α (W n i))) := hSmoothBound
       _ = _ := congrArg (fun r : ℝ => C * r) hEq
+  exact hSmoothEstimate
 
-
+private theorem localDivCurlWhole_passMollifiedNormLimits
+    (m : ℕ) (C : ℝ) (V : Fin 3 → Vec3 → ℝ)
+    (W : ℕ → Fin 3 → Vec3 → ℝ)
+    (Dd : List (Fin 3) → Vec3 → ℝ)
+    (Dω : Fin 3 → List (Fin 3) → Vec3 → ℝ)
+    (DV : Fin 3 → List (Fin 3) → Vec3 → ℝ)
+    (DV' : Fin 3 → List (Fin 3) → Vec3 → ℝ)
+    (hDdmem : ∀ α, α.length ≤ m → MemLp (Dd α) 2 volume)
+    (hDωmem : ∀ k α, α.length ≤ m → MemLp (Dω k α) 2 volume)
+    (hV : ∀ i, IsSobolevFamilyOn m univ (V i) (DV i))
+    (hDV'mem : ∀ i α, α.length ≤ m + 1 → MemLp (DV' i α) 2 volume)
+    (hDV'conv : ∀ i α, α.length ≤ m + 1 →
+      Tendsto (fun n => eLpNorm (wordDeriv α (W n i) - DV' i α) 2 volume)
+        atTop (𝓝 0))
+    (hWfamily : ∀ n i, IsSobolevFamilyOn (m + 1) univ (W n i)
+      (fun α => wordDeriv α (W n i))) :
+    Tendsto (fun n => ∑ i : Fin 3,
+      sobolevNormSqOn (m + 1) univ (fun α => wordDeriv α (W n i))) atTop
+      (𝓝 (∑ i : Fin 3, sobolevNormSqOn (m + 1) univ (DV' i))) ∧
+    Tendsto (fun n => C * (sobolevNormSqOn m univ (fun α x =>
+      CKN.mollify (Dd α) (localDivCurlWholeRadius n)
+        (localDivCurlWholeRadius_pos n) x) +
+      (∑ k : Fin 3, sobolevNormSqOn m univ (fun α x =>
+        CKN.mollify (Dω k α) (localDivCurlWholeRadius n)
+          (localDivCurlWholeRadius_pos n) x)) +
+      ∑ i : Fin 3, sobolevNormSqOn m univ (fun α x =>
+        CKN.mollify (DV i α) (localDivCurlWholeRadius n)
+          (localDivCurlWholeRadius_pos n) x))) atTop
+      (𝓝 (C * (sobolevNormSqOn m univ Dd +
+        (∑ k : Fin 3, sobolevNormSqOn m univ (Dω k)) +
+        ∑ i : Fin 3, sobolevNormSqOn m univ (DV i)))) := by
   have hDdNormLimit : Tendsto (fun n => sobolevNormSqOn m univ
       (fun α x => CKN.mollify (Dd α) (localDivCurlWholeRadius n)
         (localDivCurlWholeRadius_pos n) x)) atTop
@@ -1424,6 +1156,475 @@ theorem divCurl_whole_family (m : ℕ) :
         (∑ k : Fin 3, sobolevNormSqOn m univ (Dω k)) +
         ∑ i : Fin 3, sobolevNormSqOn m univ (DV i)))) := by
     simpa using tendsto_const_nhds.mul hDataLimit
+  exact ⟨hLeftLimit, hRightLimit⟩
+
+private theorem localDivCurlWhole_cauchyDerivativeLimits
+    (m : ℕ) (C : ℝ) (W : ℕ → Fin 3 → Vec3 → ℝ)
+    (hWfamily : ∀ n i, IsSobolevFamilyOn (m + 1) univ (W n i)
+      (fun α => wordDeriv α (W n i)))
+    (hWsm : ∀ n i, ContDiff ℝ (⊤ : ℕ∞) (W n i))
+    (dataPair : ℕ × ℕ → ℝ)
+    (hEstimate : ∀ n p,
+      (∑ i : Fin 3, sobolevNormSqOn (m + 1) univ
+        (fun α => wordDeriv α (fun x => W n i x - W p i x))) ≤ C * dataPair (n, p))
+    (hEstimateLimit : Tendsto (fun q : ℕ × ℕ => C * dataPair q) atTop (𝓝 0)) :
+    ∃ L : (i : Fin 3) → (α : List (Fin 3)) → α.length ≤ m + 1 → Vec3 → ℝ,
+      ∀ i α hα, MemLp (L i α hα) 2 volume ∧
+        Tendsto (fun n => eLpNorm (wordDeriv α (W n i) - L i α hα) 2 volume)
+          atTop (𝓝 0) := by
+  have hwordDerivSub (α : List (Fin 3)) {f g : Vec3 → ℝ}
+      (hf : ContDiff ℝ (⊤ : ℕ∞) f) (hg : ContDiff ℝ (⊤ : ℕ∞) g) :
+      wordDeriv α (fun x => f x - g x) =
+        fun x => wordDeriv α f x - wordDeriv α g x := by
+    induction α generalizing f g with
+    | nil => simp [wordDeriv]
+    | cons j α ih =>
+        have hsub := localDivCurlWhole_spatialDeriv_sub hf hg j
+        rw [wordDeriv, hsub]
+        exact ih (contDiff_wordDeriv hf [j]) (contDiff_wordDeriv hg [j])
+  have hHighPairSq (i : Fin 3) (α : List (Fin 3))
+      (hα : α.length ≤ m + 1) :
+      Tendsto (fun q : ℕ × ℕ => ∫ x,
+        (wordDeriv α (W q.1 i) x - wordDeriv α (W q.2 i) x) ^ 2 ∂volume)
+        atTop (𝓝 0) := by
+    let g : ℕ → Vec3 → ℝ := fun n => wordDeriv α (W n i)
+    have hmem (n : ℕ) : MemLp (g n) 2 volume := by
+      simpa only [Measure.restrict_univ] using (hWfamily n i).memL2 α hα
+    have hterm (q : ℕ × ℕ) :
+        ∫ x, (g q.1 x - g q.2 x) ^ 2 ∂volume ≤ C * dataPair q := by
+      have hterm' :
+          ∫ x, wordDeriv α (fun x => W q.1 i x - W q.2 i x) x ^ 2 ∂volume ≤
+            ∑ j : Fin 3, sobolevNormSqOn (m + 1) univ
+              (fun β => wordDeriv β (fun x => W q.1 j x - W q.2 j x)) := by
+        have hsingle :
+            ∫ x, wordDeriv α (fun x => W q.1 i x - W q.2 i x) x ^ 2 ∂volume ≤
+              ∑ β ∈ sobolevWords (m + 1),
+                ∫ x, wordDeriv β (fun x => W q.1 i x - W q.2 i x) x ^ 2 ∂volume := by
+          apply Finset.single_le_sum (s := sobolevWords (m + 1))
+            (f := fun β => ∫ x,
+              wordDeriv β (fun x => W q.1 i x - W q.2 i x) x ^ 2 ∂volume)
+          · intro β hβ
+            exact integral_nonneg fun x => sq_nonneg _
+          · exact mem_sobolevWords.mpr hα
+        have hin :
+            ∫ x, wordDeriv α (fun x => W q.1 i x - W q.2 i x) x ^ 2 ∂volume ≤
+              sobolevNormSqOn (m + 1) univ
+                (fun β => wordDeriv β (fun x => W q.1 i x - W q.2 i x)) := by
+          simpa [sobolevNormSqOn] using hsingle
+        have hout : sobolevNormSqOn (m + 1) univ
+              (fun β => wordDeriv β (fun x => W q.1 i x - W q.2 i x)) ≤
+              ∑ j : Fin 3, sobolevNormSqOn (m + 1) univ
+                (fun β => wordDeriv β (fun x => W q.1 j x - W q.2 j x)) := by
+          apply Finset.single_le_sum (s := Finset.univ)
+            (f := fun j : Fin 3 => sobolevNormSqOn (m + 1) univ
+              (fun β => wordDeriv β (fun x => W q.1 j x - W q.2 j x)))
+          · intro j hj
+            exact localDivCurlWhole_normSq_nonneg (m + 1) univ
+              (fun β => wordDeriv β (fun x => W q.1 j x - W q.2 j x))
+          · exact Finset.mem_univ i
+        exact hin.trans hout
+      calc
+        _ = ∫ x, wordDeriv α (fun x => W q.1 i x - W q.2 i x) x ^ 2 ∂volume := by
+          apply integral_congr_ae
+          filter_upwards [] with x
+          rw [hwordDerivSub α (hWsm q.1 i) (hWsm q.2 i)]
+        _ ≤ ∑ j : Fin 3, sobolevNormSqOn (m + 1) univ
+            (fun β => wordDeriv β (fun x => W q.1 j x - W q.2 j x)) := hterm'
+        _ ≤ C * dataPair q := hEstimate q.1 q.2
+    have hsq := tendsto_of_tendsto_of_tendsto_of_le_of_le
+      tendsto_const_nhds hEstimateLimit
+      (fun q => integral_nonneg fun x => sq_nonneg (g q.1 x - g q.2 x)) hterm
+    have hpair : Tendsto (fun q : ℕ × ℕ =>
+        ∫ x, (g q.1 x - g q.2 x) ^ 2 ∂volume) atTop (𝓝 0) := hsq
+    simpa [g] using hpair
+  have hHighPairNorm (i : Fin 3) (α : List (Fin 3))
+      (hα : α.length ≤ m + 1) :
+      Tendsto (fun q : ℕ × ℕ =>
+        eLpNorm (wordDeriv α (W q.1 i) - wordDeriv α (W q.2 i)) 2 volume)
+        atTop (𝓝 0) := by
+    have hmemPair (q : ℕ × ℕ) :
+        MemLp (fun x => wordDeriv α (W q.1 i) x - wordDeriv α (W q.2 i) x) 2 volume :=
+      have hq1 : MemLp (wordDeriv α (W q.1 i)) 2 volume := by
+        simpa only [Measure.restrict_univ] using (hWfamily q.1 i).memL2 α hα
+      have hq2 : MemLp (wordDeriv α (W q.2 i)) 2 volume := by
+        simpa only [Measure.restrict_univ] using (hWfamily q.2 i).memL2 α hα
+      hq1.sub hq2
+    exact localDivCurlWhole_eLpNorm_tendsto_zero_of_integral_sq hmemPair
+      (hHighPairSq i α hα)
+  let L : (i : Fin 3) → (α : List (Fin 3)) → α.length ≤ m + 1 → Vec3 → ℝ :=
+    fun i α hα => Classical.choose
+      (localDivCurlWhole_l2_exists_limit (f := fun n => wordDeriv α (W n i))
+        (fun n => by
+          simpa only [Measure.restrict_univ] using (hWfamily n i).memL2 α hα)
+        (hHighPairNorm i α hα))
+  have hLspec (i : Fin 3) (α : List (Fin 3)) (hα : α.length ≤ m + 1) :
+      MemLp (L i α hα) 2 volume ∧
+        Tendsto (fun n => eLpNorm (wordDeriv α (W n i) - L i α hα) 2 volume)
+          atTop (𝓝 0) := by
+    exact Classical.choose_spec
+      (localDivCurlWhole_l2_exists_limit (f := fun n => wordDeriv α (W n i))
+        (fun n => by
+          simpa only [Measure.restrict_univ] using (hWfamily n i).memL2 α hα)
+        (hHighPairNorm i α hα))
+  exact ⟨L, hLspec⟩
+
+private theorem localDivCurlWhole_pairNormIdentities
+    (m : ℕ) (V : Fin 3 → Vec3 → ℝ)
+    (DV : Fin 3 → List (Fin 3) → Vec3 → ℝ)
+    (d : Vec3 → ℝ) (Dd : List (Fin 3) → Vec3 → ℝ)
+    (ω : Fin 3 → Vec3 → ℝ)
+    (Dω : Fin 3 → List (Fin 3) → Vec3 → ℝ)
+    (W : ℕ → Fin 3 → Vec3 → ℝ)
+    (hWapprox : ∀ n i, W n i = localDivCurlWholeApprox V n i)
+    (hWsm : ∀ n i, ContDiff ℝ (⊤ : ℕ∞) (W n i))
+    (hVmem : ∀ i, MemLp (V i) 2 volume)
+    (hV : ∀ i, IsSobolevFamilyOn m univ (V i) (DV i))
+    (hD : IsSobolevFamilyOn m univ d Dd)
+    (hω : ∀ k, IsSobolevFamilyOn m univ (ω k) (Dω k))
+    (hdmem : MemLp d 2 volume)
+    (hωmem : ∀ k, MemLp (ω k) 2 volume)
+    (hdiv : ∀ φ : Vec3 → ℝ, ContDiff ℝ (⊤ : ℕ∞) φ → HasCompactSupport φ →
+      ∫ x, ∑ i : Fin 3, V i x * spatialDeriv φ i x = -∫ x, d x * φ x)
+    (hcurl : ∀ φ : Vec3 → ℝ, ContDiff ℝ (⊤ : ℕ∞) φ → HasCompactSupport φ → ∀ k : Fin 3,
+      ∫ x, ω k x * φ x =
+        ∫ x, (V (k + 1) x * spatialDeriv φ (k + 2) x -
+          V (k + 2) x * spatialDeriv φ (k + 1) x)) :
+    localDivCurlWholePairNormIdentities m W Dd Dω DV := by
+  have hwordDerivSub (α : List (Fin 3)) {f g : Vec3 → ℝ}
+      (hf : ContDiff ℝ (⊤ : ℕ∞) f) (hg : ContDiff ℝ (⊤ : ℕ∞) g) :
+      wordDeriv α (fun x => f x - g x) =
+        fun x => wordDeriv α f x - wordDeriv α g x := by
+    induction α generalizing f g with
+    | nil => rfl
+    | cons j α ih =>
+        have hsub := localDivCurlWhole_spatialDeriv_sub hf hg j
+        rw [wordDeriv, hsub]
+        exact ih (contDiff_wordDeriv hf [j]) (contDiff_wordDeriv hg [j])
+  have hdivPoint (n : ℕ) (x : Vec3) :
+      (∑ i : Fin 3, spatialDeriv (W n i) i x) =
+        CKN.mollify d (localDivCurlWholeRadius n) (localDivCurlWholeRadius_pos n) x := by
+    simpa [hWapprox, localDivCurlWholeApprox] using
+      localDivCurlWhole_mollify_divergence hVmem hdiv
+        (localDivCurlWholeRadius_pos n) x
+  have hcurlPoint (n : ℕ) (k : Fin 3) (x : Vec3) :
+      spatialDeriv (W n (k + 2)) (k + 1) x -
+        spatialDeriv (W n (k + 1)) (k + 2) x =
+          CKN.mollify (ω k) (localDivCurlWholeRadius n)
+            (localDivCurlWholeRadius_pos n) x := by
+    simpa [hWapprox, localDivCurlWholeApprox] using
+      localDivCurlWhole_mollify_curl hVmem hcurl
+        (localDivCurlWholeRadius_pos n) k x
+  have hdivEq (n p : ℕ) :
+      (fun x => ∑ i : Fin 3,
+        spatialDeriv (fun y => W n i y - W p i y) i x) =
+        (fun x => CKN.mollify d (localDivCurlWholeRadius n)
+          (localDivCurlWholeRadius_pos n) x -
+          CKN.mollify d (localDivCurlWholeRadius p)
+            (localDivCurlWholeRadius_pos p) x) := by
+    funext x
+    calc
+      (∑ i : Fin 3, spatialDeriv (fun y => W n i y - W p i y) i x) =
+          ∑ i : Fin 3, (spatialDeriv (W n i) i x - spatialDeriv (W p i) i x) := by
+            apply Finset.sum_congr rfl
+            intro i hi
+            exact congrFun (localDivCurlWhole_spatialDeriv_sub (hWsm n i) (hWsm p i) i) x
+      _ = (∑ i : Fin 3, spatialDeriv (W n i) i x) -
+          ∑ i : Fin 3, spatialDeriv (W p i) i x := by
+            rw [Finset.sum_sub_distrib]
+      _ = _ := by rw [hdivPoint n x, hdivPoint p x]
+  have hcurlEq (n p : ℕ) (k : Fin 3) :
+      (fun x => spatialDeriv (fun y => W n (k + 2) y - W p (k + 2) y) (k + 1) x -
+        spatialDeriv (fun y => W n (k + 1) y - W p (k + 1) y) (k + 2) x) =
+        (fun x => CKN.mollify (ω k) (localDivCurlWholeRadius n)
+          (localDivCurlWholeRadius_pos n) x -
+          CKN.mollify (ω k) (localDivCurlWholeRadius p)
+            (localDivCurlWholeRadius_pos p) x) := by
+    funext x
+    rw [localDivCurlWhole_spatialDeriv_sub (hWsm n (k + 2)) (hWsm p (k + 2)) (k + 1),
+      localDivCurlWhole_spatialDeriv_sub (hWsm n (k + 1)) (hWsm p (k + 1)) (k + 2)]
+    have hn := hcurlPoint n k x
+    have hp := hcurlPoint p k x
+    linarith only [hn, hp]
+  have hdivDeriv (α : List (Fin 3)) (hα : α.length ≤ m) (n p : ℕ) :
+      wordDeriv α (fun x => ∑ i : Fin 3,
+        spatialDeriv (fun y => W n i y - W p i y) i x) =
+        (fun x => CKN.mollify (Dd α) (localDivCurlWholeRadius n)
+          (localDivCurlWholeRadius_pos n) x -
+          CKN.mollify (Dd α) (localDivCurlWholeRadius p)
+            (localDivCurlWholeRadius_pos p) x) := by
+    rw [hdivEq n p, hwordDerivSub α
+      (localDivCurlWhole_mollify_smooth hdmem n)
+      (localDivCurlWhole_mollify_smooth hdmem p)]
+    funext x
+    rw [localDivCurlWhole_mollify_wordDeriv hD
+      (localDivCurlWholeRadius_pos n) α hα x,
+      localDivCurlWhole_mollify_wordDeriv hD
+        (localDivCurlWholeRadius_pos p) α hα x]
+  have hcurlDeriv (k : Fin 3) (α : List (Fin 3)) (hα : α.length ≤ m)
+      (n p : ℕ) :
+      wordDeriv α (fun x =>
+        spatialDeriv (fun y => W n (k + 2) y - W p (k + 2) y) (k + 1) x -
+          spatialDeriv (fun y => W n (k + 1) y - W p (k + 1) y) (k + 2) x) =
+        (fun x => CKN.mollify (Dω k α) (localDivCurlWholeRadius n)
+          (localDivCurlWholeRadius_pos n) x -
+          CKN.mollify (Dω k α) (localDivCurlWholeRadius p)
+            (localDivCurlWholeRadius_pos p) x) := by
+    rw [hcurlEq n p k, hwordDerivSub α
+      (localDivCurlWhole_mollify_smooth (hωmem k) n)
+      (localDivCurlWhole_mollify_smooth (hωmem k) p)]
+    funext x
+    rw [localDivCurlWhole_mollify_wordDeriv (hω k)
+      (localDivCurlWholeRadius_pos n) α hα x,
+      localDivCurlWhole_mollify_wordDeriv (hω k)
+        (localDivCurlWholeRadius_pos p) α hα x]
+  have hbaseDeriv (i : Fin 3) (α : List (Fin 3)) (hα : α.length ≤ m)
+      (n p : ℕ) :
+      wordDeriv α (fun x => W n i x - W p i x) =
+        (fun x => CKN.mollify (DV i α) (localDivCurlWholeRadius n)
+          (localDivCurlWholeRadius_pos n) x -
+          CKN.mollify (DV i α) (localDivCurlWholeRadius p)
+            (localDivCurlWholeRadius_pos p) x) := by
+    rw [hwordDerivSub α (hWsm n i) (hWsm p i)]
+    funext x
+    have hn := localDivCurlWhole_mollify_wordDeriv (hV i)
+      (localDivCurlWholeRadius_pos n) α hα x
+    have hp := localDivCurlWhole_mollify_wordDeriv (hV i)
+      (localDivCurlWholeRadius_pos p) α hα x
+    rw [hWapprox n i, hWapprox p i]
+    change wordDeriv α (CKN.mollify (V i) (localDivCurlWholeRadius n)
+      (localDivCurlWholeRadius_pos n)) x -
+        wordDeriv α (CKN.mollify (V i) (localDivCurlWholeRadius p)
+          (localDivCurlWholeRadius_pos p)) x = _
+    exact congrArg₂ (fun a b : ℝ => a - b) hn hp
+  have hdivNormEq (n p : ℕ) :
+      sobolevNormSqOn m univ (fun α => wordDeriv α (fun x => ∑ i : Fin 3,
+        spatialDeriv (fun y => W n i y - W p i y) i x)) =
+      sobolevNormSqOn m univ (fun α x =>
+        CKN.mollify (Dd α) (localDivCurlWholeRadius n)
+          (localDivCurlWholeRadius_pos n) x -
+        CKN.mollify (Dd α) (localDivCurlWholeRadius p)
+          (localDivCurlWholeRadius_pos p) x) := by
+    apply localDivCurlWhole_normSq_congr
+    intro α hα x
+    exact congrFun (hdivDeriv α hα n p) x
+  have hcurlNormEq (k : Fin 3) (n p : ℕ) :
+      sobolevNormSqOn m univ (fun α => wordDeriv α (fun x =>
+        spatialDeriv (fun y => W n (k + 2) y - W p (k + 2) y) (k + 1) x -
+          spatialDeriv (fun y => W n (k + 1) y - W p (k + 1) y) (k + 2) x)) =
+      sobolevNormSqOn m univ (fun α x =>
+        CKN.mollify (Dω k α) (localDivCurlWholeRadius n)
+          (localDivCurlWholeRadius_pos n) x -
+        CKN.mollify (Dω k α) (localDivCurlWholeRadius p)
+          (localDivCurlWholeRadius_pos p) x) := by
+    apply localDivCurlWhole_normSq_congr
+    intro α hα x
+    exact congrFun (hcurlDeriv k α hα n p) x
+  have hbaseNormEq (i : Fin 3) (n p : ℕ) :
+      sobolevNormSqOn m univ (fun α => wordDeriv α (fun x => W n i x - W p i x)) =
+      sobolevNormSqOn m univ (fun α x =>
+        CKN.mollify (DV i α) (localDivCurlWholeRadius n)
+          (localDivCurlWholeRadius_pos n) x -
+        CKN.mollify (DV i α) (localDivCurlWholeRadius p)
+          (localDivCurlWholeRadius_pos p) x) := by
+    apply localDivCurlWhole_normSq_congr
+    intro α hα x
+    exact congrFun (hbaseDeriv i α hα n p) x
+  exact ⟨hdivNormEq, hcurlNormEq, hbaseNormEq⟩
+
+/-- Whole-space higher order div–curl regularity for compactly supported Sobolev families.
+The divergence and curl are distributional, and the estimate has the constant from
+`divCurl_smooth_whole`. -/
+theorem divCurl_whole_family (m : ℕ) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (V : Fin 3 → Vec3 → ℝ) (DV : Fin 3 → List (Fin 3) → Vec3 → ℝ)
+      (d : Vec3 → ℝ) (Dd : List (Fin 3) → Vec3 → ℝ)
+      (ω : Fin 3 → Vec3 → ℝ) (Dω : Fin 3 → List (Fin 3) → Vec3 → ℝ) (K : Set Vec3),
+      IsCompact K → (∀ i x, x ∉ K → V i x = 0) →
+      (∀ i, IsSobolevFamilyOn m univ (V i) (DV i)) →
+      IsSobolevFamilyOn m univ d Dd →
+      (∀ k, IsSobolevFamilyOn m univ (ω k) (Dω k)) →
+      (∀ φ : Vec3 → ℝ, ContDiff ℝ (⊤ : ℕ∞) φ → HasCompactSupport φ →
+        ∫ x, ∑ i : Fin 3, V i x * spatialDeriv φ i x = -∫ x, d x * φ x) →
+      (∀ φ : Vec3 → ℝ, ContDiff ℝ (⊤ : ℕ∞) φ → HasCompactSupport φ → ∀ k : Fin 3,
+        ∫ x, ω k x * φ x =
+          ∫ x, (V (k + 1) x * spatialDeriv φ (k + 2) x -
+            V (k + 2) x * spatialDeriv φ (k + 1) x)) →
+      ∃ DV' : Fin 3 → List (Fin 3) → Vec3 → ℝ,
+        (∀ i, IsSobolevFamilyOn (m + 1) univ (V i) (DV' i)) ∧
+        ∑ i, sobolevNormSqOn (m + 1) univ (DV' i) ≤
+          C * (sobolevNormSqOn m univ Dd + ∑ k, sobolevNormSqOn m univ (Dω k) +
+            ∑ i, sobolevNormSqOn m univ (DV i)) := by
+  obtain ⟨C, hC, hSmooth⟩ := divCurl_smooth_whole m
+  refine ⟨C, hC, ?_⟩
+  intro V DV d Dd ω Dω K hK hVzero hV hD hω hdiv hcurl
+  have hDVzero (i : Fin 3) : DV i [] =ᵐ[volume] V i := by
+    simpa only [Measure.restrict_univ] using (hV i).zero
+  have hDVmem0 (i : Fin 3) : MemLp (DV i []) 2 volume := by
+    simpa only [Measure.restrict_univ] using (hV i).memL2 [] (by simp)
+  have hVmem (i : Fin 3) : MemLp (V i) 2 volume :=
+    MemLp.ae_eq (hDVzero i) (hDVmem0 i)
+  have hDdmem (α : List (Fin 3)) (hα : α.length ≤ m) :
+      MemLp (Dd α) 2 volume := by
+    simpa only [Measure.restrict_univ] using hD.memL2 α hα
+  have hDzero : Dd [] =ᵐ[volume] d := by
+    simpa only [Measure.restrict_univ] using hD.zero
+  have hdmem : MemLp d 2 volume := MemLp.ae_eq hDzero (hDdmem [] (by simp))
+  have hωmem (k : Fin 3) : MemLp (ω k) 2 volume := by
+    have hzero : Dω k [] =ᵐ[volume] ω k := by
+      simpa only [Measure.restrict_univ] using (hω k).zero
+    have hbase : MemLp (Dω k []) 2 volume := by
+      simpa only [Measure.restrict_univ] using (hω k).memL2 [] (by simp)
+    exact MemLp.ae_eq hzero hbase
+  have hDωmem (k : Fin 3) (α : List (Fin 3)) (hα : α.length ≤ m) :
+      MemLp (Dω k α) 2 volume := by
+    simpa only [Measure.restrict_univ] using (hω k).memL2 α hα
+  let W : ℕ → Fin 3 → Vec3 → ℝ := localDivCurlWholeApprox V
+  have hWsm (n : ℕ) (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (W n i) := by
+    exact localDivCurlWhole_approx_smooth hVmem n i
+  have hWc (n : ℕ) (i : Fin 3) : HasCompactSupport (W n i) := by
+    exact localDivCurlWhole_approx_compact hK hVzero n i
+  have hWfamily (n : ℕ) (i : Fin 3) :
+      IsSobolevFamilyOn (m + 1) univ (W n i)
+        (fun α => wordDeriv α (W n i)) := by
+    exact localDivCurlWhole_approx_family hVmem hK hVzero n i (m + 1)
+  have hPairIdent := localDivCurlWhole_pairNormIdentities m V DV d Dd ω Dω W
+    (by intro n i; change localDivCurlWholeApprox V n i = _; rfl)
+    hWsm hVmem hV hD hω hdmem hωmem hdiv hcurl
+  have hdivNormEq := hPairIdent.divNormEq
+  have hcurlNormEq := hPairIdent.curlNormEq
+  have hbaseNormEq := hPairIdent.baseNormEq
+  let dataPair : ℕ × ℕ → ℝ := fun q =>
+    sobolevNormSqOn m univ (fun α x =>
+      CKN.mollify (Dd α) (localDivCurlWholeRadius q.1)
+        (localDivCurlWholeRadius_pos q.1) x -
+      CKN.mollify (Dd α) (localDivCurlWholeRadius q.2)
+        (localDivCurlWholeRadius_pos q.2) x) +
+    (∑ k : Fin 3, sobolevNormSqOn m univ (fun α x =>
+      CKN.mollify (Dω k α) (localDivCurlWholeRadius q.1)
+        (localDivCurlWholeRadius_pos q.1) x -
+      CKN.mollify (Dω k α) (localDivCurlWholeRadius q.2)
+        (localDivCurlWholeRadius_pos q.2) x)) +
+    ∑ i : Fin 3, sobolevNormSqOn m univ (fun α x =>
+      CKN.mollify (DV i α) (localDivCurlWholeRadius q.1)
+        (localDivCurlWholeRadius_pos q.1) x -
+      CKN.mollify (DV i α) (localDivCurlWholeRadius q.2)
+        (localDivCurlWholeRadius_pos q.2) x)
+  have hDdPairNorm : Tendsto (fun q : ℕ × ℕ =>
+      sobolevNormSqOn m univ (fun α x =>
+        CKN.mollify (Dd α) (localDivCurlWholeRadius q.1)
+          (localDivCurlWholeRadius_pos q.1) x -
+        CKN.mollify (Dd α) (localDivCurlWholeRadius q.2)
+          (localDivCurlWholeRadius_pos q.2) x)) atTop (𝓝 0) :=
+    localDivCurlWhole_mollifiedFamily_pairNorm_tendsto m Dd hDdmem
+  have hDωPairNorm (k : Fin 3) : Tendsto (fun q : ℕ × ℕ =>
+      sobolevNormSqOn m univ (fun α x =>
+        CKN.mollify (Dω k α) (localDivCurlWholeRadius q.1)
+          (localDivCurlWholeRadius_pos q.1) x -
+        CKN.mollify (Dω k α) (localDivCurlWholeRadius q.2)
+          (localDivCurlWholeRadius_pos q.2) x)) atTop (𝓝 0) :=
+    localDivCurlWhole_mollifiedFamily_pairNorm_tendsto m (Dω k) (hDωmem k)
+  have hDVPairNorm (i : Fin 3) : Tendsto (fun q : ℕ × ℕ =>
+      sobolevNormSqOn m univ (fun α x =>
+        CKN.mollify (DV i α) (localDivCurlWholeRadius q.1)
+          (localDivCurlWholeRadius_pos q.1) x -
+        CKN.mollify (DV i α) (localDivCurlWholeRadius q.2)
+          (localDivCurlWholeRadius_pos q.2) x)) atTop (𝓝 0) := by
+    apply localDivCurlWhole_mollifiedFamily_pairNorm_tendsto m (DV i)
+    intro α hα
+    simpa only [Measure.restrict_univ] using (hV i).memL2 α hα
+  have hDataPair : Tendsto dataPair atTop (𝓝 0) := by
+    have hωsum : Tendsto (fun q : ℕ × ℕ => ∑ k : Fin 3,
+        sobolevNormSqOn m univ (fun α x =>
+          CKN.mollify (Dω k α) (localDivCurlWholeRadius q.1)
+            (localDivCurlWholeRadius_pos q.1) x -
+          CKN.mollify (Dω k α) (localDivCurlWholeRadius q.2)
+            (localDivCurlWholeRadius_pos q.2) x)) atTop (𝓝 0) := by
+      have hsum : Tendsto (fun q : ℕ × ℕ => ∑ k : Fin 3,
+          sobolevNormSqOn m univ (fun α x =>
+            CKN.mollify (Dω k α) (localDivCurlWholeRadius q.1)
+              (localDivCurlWholeRadius_pos q.1) x -
+            CKN.mollify (Dω k α) (localDivCurlWholeRadius q.2)
+              (localDivCurlWholeRadius_pos q.2) x)) atTop
+          (𝓝 (∑ k : Fin 3, (0 : ℝ))) := by
+        apply tendsto_finsetSum
+        intro k hk
+        exact hDωPairNorm k
+      simpa using hsum
+    have hVsum : Tendsto (fun q : ℕ × ℕ => ∑ i : Fin 3,
+        sobolevNormSqOn m univ (fun α x =>
+          CKN.mollify (DV i α) (localDivCurlWholeRadius q.1)
+            (localDivCurlWholeRadius_pos q.1) x -
+          CKN.mollify (DV i α) (localDivCurlWholeRadius q.2)
+            (localDivCurlWholeRadius_pos q.2) x)) atTop (𝓝 0) := by
+      have hsum : Tendsto (fun q : ℕ × ℕ => ∑ i : Fin 3,
+          sobolevNormSqOn m univ (fun α x =>
+            CKN.mollify (DV i α) (localDivCurlWholeRadius q.1)
+              (localDivCurlWholeRadius_pos q.1) x -
+            CKN.mollify (DV i α) (localDivCurlWholeRadius q.2)
+              (localDivCurlWholeRadius_pos q.2) x)) atTop
+          (𝓝 (∑ i : Fin 3, (0 : ℝ))) := by
+        apply tendsto_finsetSum
+        intro i hi
+        exact hDVPairNorm i
+      simpa using hsum
+    have hadd := hDdPairNorm.add (hωsum.add hVsum)
+    simpa [dataPair, add_assoc] using hadd
+  have hEstimate : ∀ n p,
+      (∑ i : Fin 3, sobolevNormSqOn (m + 1) univ
+        (fun α => wordDeriv α (fun x => W n i x - W p i x))) ≤ C * dataPair (n, p) :=
+    localDivCurlWhole_pairSmoothEstimate m C W Dd Dω DV dataPair
+      (by intro n p; rfl) hPairIdent
+      hWsm hWc hSmooth
+  have hEstimateLimit : Tendsto (fun q : ℕ × ℕ => C * dataPair q) atTop (𝓝 0) := by
+    simpa using tendsto_const_nhds.mul hDataPair
+  obtain ⟨L, hLspec⟩ := localDivCurlWhole_cauchyDerivativeLimits
+    m C W hWfamily hWsm dataPair hEstimate hEstimateLimit
+  let DV' : Fin 3 → List (Fin 3) → Vec3 → ℝ := fun i α =>
+    if hnil : α = [] then V i else
+      if hα : α.length ≤ m + 1 then L i α hα else 0
+  have hDV'mem (i : Fin 3) (α : List (Fin 3)) (hα : α.length ≤ m + 1) :
+      MemLp (DV' i α) 2 volume := by
+    by_cases hnil : α = []
+    · subst α
+      simpa [DV'] using hVmem i
+    · simpa [DV', hnil, hα] using (hLspec i α hα).1
+  have hDV'conv (i : Fin 3) (α : List (Fin 3)) (hα : α.length ≤ m + 1) :
+      Tendsto (fun n => eLpNorm (wordDeriv α (W n i) - DV' i α) 2 volume)
+        atTop (𝓝 0) := by
+    by_cases hnil : α = []
+    · subst α
+      change Tendsto (fun n => eLpNorm
+        (CKN.mollify (V i) (localDivCurlWholeRadius n)
+          (localDivCurlWholeRadius_pos n) - V i) 2 volume) atTop (𝓝 0)
+      exact localDivCurlWhole_mollify_tendsto (hVmem i)
+    · simpa [DV', hnil, hα] using (hLspec i α hα).2
+  have hOut (i : Fin 3) : IsSobolevFamilyOn (m + 1) univ (V i) (DV' i) := by
+    apply IsSobolevFamilyOn.of_tendsto isOpen_univ
+      (Dn := fun n α => wordDeriv α (W n i)) (D := fun α => DV' i α)
+    · intro n
+      exact hWfamily n i
+    · intro α hα
+      simpa only [Measure.restrict_univ] using hDV'mem i α hα
+    · intro α hα
+      simpa only [Measure.restrict_univ] using hDV'conv i α hα
+  have hSmoothEstimate : ∀ n,
+      (∑ i : Fin 3, sobolevNormSqOn (m + 1) univ
+        (fun α => wordDeriv α (W n i))) ≤
+      C * (sobolevNormSqOn m univ (fun α x =>
+        CKN.mollify (Dd α) (localDivCurlWholeRadius n)
+          (localDivCurlWholeRadius_pos n) x) +
+        (∑ k : Fin 3, sobolevNormSqOn m univ (fun α x =>
+          CKN.mollify (Dω k α) (localDivCurlWholeRadius n)
+            (localDivCurlWholeRadius_pos n) x)) +
+        ∑ i : Fin 3, sobolevNormSqOn m univ (fun α x =>
+          CKN.mollify (DV i α) (localDivCurlWholeRadius n)
+            (localDivCurlWholeRadius_pos n) x)) :=
+    localDivCurlWhole_singleSmoothEstimate m C V DV d Dd ω Dω W
+      (by intro n i; change localDivCurlWholeApprox V n i = _; rfl)
+      hWsm hWc hVmem hV hD hω hdiv hcurl hSmooth
+  have hLimits := localDivCurlWhole_passMollifiedNormLimits
+    m C V W Dd Dω DV DV' hDdmem hDωmem hV hDV'mem hDV'conv hWfamily
+  have hLeftLimit := hLimits.1
+  have hRightLimit := hLimits.2
   refine ⟨DV', ?_, ?_⟩
   · exact hOut
   · exact le_of_tendsto_of_tendsto hLeftLimit hRightLimit

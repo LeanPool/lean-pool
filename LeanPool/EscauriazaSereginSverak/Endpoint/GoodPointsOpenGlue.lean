@@ -123,6 +123,64 @@ private theorem goodPoint_domain_subset_closedTop :
   rcases hz with ⟨hx, ht⟩
   exact ⟨hx, ⟨ht.1, le_of_lt ht.2⟩⟩
 
+private theorem goodPoint_holder_norm_of_near_control
+    {K : Set ParabolicPoint} {w : ParabolicPoint → Vec3}
+    {γ B H δ : ℝ} (hγ : 0 < γ) (hB : 0 ≤ B) (hH : 0 ≤ H)
+    (hδ : 0 < δ)
+    (hbound : ∀ x ∈ K, vec3EuclideanNorm (w x) ≤ B)
+    (hnear : ∀ x ∈ K, ∀ y ∈ K, parabolicDist x y < δ →
+      vec3EuclideanNorm (w x - w y) ≤ H * parabolicDist x y ^ γ) :
+    ParabolicHolderVecNormLE K w γ (B + max H (2 * B / δ ^ γ)) := by
+  refine ⟨B, max H (2 * B / δ ^ γ), hB,
+    le_trans hH (le_max_left _ _), le_rfl, hbound, ?_⟩
+  intro x hx y hy
+  have hdistnonneg : 0 ≤ parabolicDist x y := by
+    rw [← dist_eq_parabolicDist]
+    exact dist_nonneg
+  have hdpow : 0 ≤ parabolicDist x y ^ γ := Real.rpow_nonneg hdistnonneg _
+  by_cases hclose : parabolicDist x y < δ
+  · exact (hnear x hx y hy hclose).trans
+      (mul_le_mul_of_nonneg_right (le_max_left _ _) hdpow)
+  · have hfar : δ ≤ parabolicDist x y := le_of_not_gt hclose
+    have hδpow : 0 < δ ^ γ := Real.rpow_pos_of_pos hδ _
+    calc
+      vec3EuclideanNorm (w x - w y) ≤
+          vec3EuclideanNorm (w x) + vec3EuclideanNorm (w y) :=
+        goodPointVecNorm_sub_le_glue _ _
+      _ ≤ 2 * B := by linarith only [hbound x hx, hbound y hy]
+      _ = (2 * B / δ ^ γ) * δ ^ γ := (div_mul_cancel₀ _ hδpow.ne').symm
+      _ ≤ (2 * B / δ ^ γ) * parabolicDist x y ^ γ :=
+        mul_le_mul_of_nonneg_left (Real.rpow_le_rpow hδ.le hfar hγ.le)
+          (div_nonneg (mul_nonneg (by norm_num) hB) hδpow.le)
+      _ ≤ max H (2 * B / δ ^ γ) * parabolicDist x y ^ γ :=
+        mul_le_mul_of_nonneg_right (le_max_right _ _) hdpow
+
+private theorem goodPoint_finite_cover_indices
+    {α : Type*} {ι : Type*} {K : Set α} (t : Finset ι)
+    (U : ι → Set α) (hcover : K ⊆ ⋃ i ∈ (t : Set ι), U i) :
+    (∀ x ∈ K, ∃ i : {i // i ∈ t}, x ∈ U i) ∧
+      (K.Nonempty → t.Nonempty) := by
+  constructor
+  · intro x hx
+    rcases Set.mem_iUnion₂.mp (hcover hx) with ⟨i, hit, hxi⟩
+    exact ⟨⟨i, hit⟩, hxi⟩
+  · intro hK
+    obtain ⟨x, hx⟩ := hK
+    obtain ⟨i, hi⟩ := Set.mem_iUnion₂.mp (hcover hx)
+    exact ⟨i, hi.1⟩
+
+private theorem isOpen_subtype_union_preimage
+    {α : Type*} [TopologicalSpace α] {ι : Type*} {S : Set α}
+    (U : ι → Set α) (hU : ∀ i, IsOpen (U i)) :
+    IsOpen {z : S | z.1 ∈ ⋃ i, U i} := by
+  have hEq : {z : S | z.1 ∈ ⋃ i, U i} =
+      ⋃ i, Subtype.val ⁻¹' U i := by
+    ext z
+    simp
+  rw [hEq]
+  exact isOpen_iUnion fun i => (hU i).preimage continuous_subtype_val
+
+
 private theorem goodPoint_compact_representative
     {ε₀ γ₀ C₄ : ℝ} (hγ₀ : 0 < γ₀) (hC₄ : 0 ≤ C₄)
     (hTop : ∀ (x₀ : Vec3) (t₀ ρ r : ℝ)
@@ -191,24 +249,11 @@ private theorem goodPoint_compact_representative
   obtain ⟨t, ht⟩ := hK.elim_finite_subcover
     (fun z : patchIndex => Metric.ball z.1 (δ z / 2))
     (fun _ => Metric.isOpen_ball) hcover
-  have hhalfcover : ∀ x ∈ K, ∃ i : t,
-      x ∈ Metric.ball i.1.1 (δ i.1 / 2) := by
-    intro x hx
-    rcases mem_iUnion₂.mp (ht hx) with ⟨z, hzt, hxz⟩
-    exact ⟨⟨z, hzt⟩, hxz⟩
-  have htn : t.Nonempty := by
-    have hKne : ∃ x, x ∈ K := by
-      by_contra hn
-      apply hKempty
-      ext x
-      constructor
-      · intro hx
-        exact False.elim (hn ⟨x, hx⟩)
-      · intro hx
-        simp at hx
-    obtain ⟨x, hx⟩ := hKne
-    rcases mem_iUnion₂.mp (ht hx) with ⟨z, hzt, _⟩
-    exact ⟨z, hzt⟩
+  have hcoverIndices := goodPoint_finite_cover_indices t
+    (fun z => Metric.ball z.1.1 (δ z / 2)) ht
+  have hhalfcover := hcoverIndices.1
+  have hKne : K.Nonempty := Set.nonempty_iff_ne_empty.mpr hKempty
+  have htn : t.Nonempty := hcoverIndices.2 hKne
   let Ui : t → Set ParabolicPoint := fun i =>
     Metric.ball i.1.1 (δ i.1) ∩ goodPointDomain
   let Vi : t → Set ParabolicPoint := fun i =>
@@ -227,19 +272,14 @@ private theorem goodPoint_compact_representative
   have hKsubN : K ⊆ N := by
     intro x hx
     obtain ⟨i, hxi⟩ := hhalfcover x hx
-    apply mem_iUnion.mpr
-    refine ⟨i, ?_⟩
-    have hhalf : δ i.1 / 2 ≤ δ i.1 := by linarith only [hδpos i.1]
-    refine ⟨Metric.ball_subset_ball hhalf hxi,
-      hKdomain hx⟩
+    exact mem_iUnion.mpr ⟨i,
+      ⟨Metric.ball_subset_ball (by linarith only [hδpos i.1]) hxi,
+        hKdomain hx⟩⟩
   have hNopen : IsOpen {z : {q : ParabolicPoint //
       q ∈ goodPointClosedTopDomain} | z.1 ∈ N} := by
-    have hpre : {z : {q : ParabolicPoint // q ∈ goodPointClosedTopDomain} |
-        z.1 ∈ N} = ⋃ i : t, Subtype.val ⁻¹' Metric.ball i.1.1 (δ i.1) := by
-      ext z
-      simp [N, Vi]
-    rw [hpre]
-    exact isOpen_iUnion fun i => Metric.isOpen_ball.preimage continuous_subtype_val
+    simpa only [N, Vi] using isOpen_subtype_union_preimage
+      (fun i : t => Metric.ball i.1.1 (δ i.1))
+      (fun _ => Metric.isOpen_ball)
   have hNdomainEq : N ∩ goodPointDomain = ⋃ i : t, Ui i := by
     ext z
     constructor
@@ -359,38 +399,18 @@ private theorem goodPoint_compact_representative
     obtain ⟨B, H, hB, hH, hBH, hbound, _⟩ := hHolderTop i.1
     exact (hbound x hxiV).trans
       (by linarith only [hH, hBH, hCpatch_le i])
-  have hHolderK : ParabolicHolderVecNormLE K wFinal γ₀
-      (Cmax + max Cmax (2 * Cmax / δglob ^ γ₀)) := by
-    refine ⟨Cmax, max Cmax (2 * Cmax / δglob ^ γ₀), hCmax,
-      le_trans hCmax (le_max_left _ _), le_rfl, hsup, ?_⟩
-    intro x hx y hy
-    have hdistnonneg : 0 ≤ parabolicDist x y := by
-      rw [← dist_eq_parabolicDist]
-      exact dist_nonneg
-    have hdpow : 0 ≤ parabolicDist x y ^ γ₀ := Real.rpow_nonneg hdistnonneg _
-    by_cases hnear : parabolicDist x y < δglob
-    · obtain ⟨i, hxi, hyi⟩ := hclose x hx y hy hnear
-      rw [hWlocal i hxi, hWlocal i hyi]
-      obtain ⟨B, H, hB, hH, hBH, _, hsemi⟩ := hHolderTop i.1
-      have hHmax : H ≤ Cmax := by linarith only [hB, hBH, hCpatch_le i]
-      exact (hsemi x hxi y hyi).trans
-        (mul_le_mul_of_nonneg_right
-          (hHmax.trans (le_max_left _ _)) hdpow)
-    · have hfar : δglob ≤ parabolicDist x y := le_of_not_gt hnear
-      have hδpow : 0 < δglob ^ γ₀ := Real.rpow_pos_of_pos hδglob' _
-      calc
-        vec3EuclideanNorm (wFinal x - wFinal y) ≤
-            vec3EuclideanNorm (wFinal x) + vec3EuclideanNorm (wFinal y) :=
-          goodPointVecNorm_sub_le_glue _ _
-        _ ≤ 2 * Cmax := by linarith only [hsup x hx, hsup y hy]
-        _ = (2 * Cmax / δglob ^ γ₀) * δglob ^ γ₀ :=
-          (div_mul_cancel₀ _ hδpow.ne').symm
-        _ ≤ (2 * Cmax / δglob ^ γ₀) * parabolicDist x y ^ γ₀ :=
-          mul_le_mul_of_nonneg_left
-            (Real.rpow_le_rpow hδglob'.le hfar hγ₀.le)
-            (div_nonneg (mul_nonneg (by norm_num) hCmax) hδpow.le)
-        _ ≤ max Cmax (2 * Cmax / δglob ^ γ₀) * parabolicDist x y ^ γ₀ :=
-          mul_le_mul_of_nonneg_right (le_max_right _ _) hdpow
+  have hnearK : ∀ x ∈ K, ∀ y ∈ K, parabolicDist x y < δglob →
+      vec3EuclideanNorm (wFinal x - wFinal y) ≤ Cmax * parabolicDist x y ^ γ₀ := by
+    intro x hx y hy hnear
+    obtain ⟨i, hxi, hyi⟩ := hclose x hx y hy hnear
+    rw [hWlocal i hxi, hWlocal i hyi]
+    obtain ⟨B, H, hB, hH, hBH, _, hsemi⟩ := hHolderTop i.1
+    have hHmax : H ≤ Cmax := by linarith only [hB, hBH, hCpatch_le i]
+    exact (hsemi x hxi y hyi).trans
+      (mul_le_mul_of_nonneg_right hHmax
+        (Real.rpow_nonneg (parabolicDist_nonneg x y) γ₀))
+  have hHolderK := goodPoint_holder_norm_of_near_control
+    hγ₀ hCmax hCmax hδglob' hsup hnearK
   refine ⟨N, wFinal, hKsubN, hNsub, hNopen, hWAE,
     CKN.Core.Endgame.holder_on_of_norm hHolderK⟩
 

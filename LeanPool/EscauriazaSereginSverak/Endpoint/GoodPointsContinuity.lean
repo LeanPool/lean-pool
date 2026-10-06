@@ -31,6 +31,7 @@ noncomputable section
 
 namespace ESS
 
+/-- The velocity-cubed and pressure-to-the-three-halves density used at good points. -/
 @[expose] def goodPointEnergyDensity (u : ParabolicPoint → Vec3)
     (p : ParabolicPoint → ℝ) : ParabolicPoint → ℝ≥0∞ :=
   fun z => ENNReal.ofReal (vec3EuclideanNorm (u z)) ^ (3 : ℝ) +

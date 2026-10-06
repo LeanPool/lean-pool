@@ -8,6 +8,12 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupRieszFarTime
 
+/-!
+# Blowup Pressure Cauchy
+
+Pressure bounds and convergence estimates for the rescaled sequence.
+-/
+
 public section
 
 open Filter

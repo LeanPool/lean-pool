@@ -82,7 +82,7 @@ theorem buAffinePoint_bounded_image
 /-- A finite quadratic integral on every bounded source subset transfers to
 every bounded subset of the normalized half-space cylinder. -/
 theorem bu_affine_l2_comp
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {E : Type*} [NormedAddCommGroup E]
     (τ scale : ℝ) (hscale : 0 < scale)
     (f : ParabolicPoint → E)
     (hfloc : LocallyIntegrableOn f

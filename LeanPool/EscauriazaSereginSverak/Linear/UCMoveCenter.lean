@@ -98,7 +98,7 @@ theorem uc_move_center_integral_flatness
           (-(d ^ 2 / 8)) / t := by
         apply (div_le_div_iff₀ (by positivity : 0 < 2 * t) ht).mpr
         nlinarith only [hmul]
-      convert hArg' using 1 ; ring
+      convert hArg' using 1; ring
     have hExp : Real.exp
         (-(vec3EuclideanNorm (c - x₀) ^ 2) / (2 * t)) ≤
         Real.exp (-(b / t)) := Real.exp_le_exp.mpr hArg

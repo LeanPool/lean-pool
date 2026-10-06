@@ -43,6 +43,97 @@ theorem blowupLimitAssemblyPressure_slice_le_norm
   rw [Real.norm_of_nonneg (vec3EuclideanNorm_nonneg _)]
   exact norm_le_vec3EuclideanNorm _
 
+private theorem blowupLimitAssemblyPressure_global_Lthree_of_slices
+    {u : ParabolicPoint → Vec3} (x₀ : Vec3) (t₀ r : ℝ)
+    (hr : 0 < r) (vm : Vec3 × ℝ → Vec3) (hvmM : Measurable vm)
+    (hvm : (fun z : Vec3 × ℝ => blowupVelocity x₀ t₀ r u z) =ᵐ[volume] vm)
+    (M : ℝ≥0∞) (hM : M < ⊤)
+    (hvmSlice : ∀ᵐ t ∂(volume : Measure ℝ),
+      eLpNorm (fun x : Vec3 => vm (x,t)) 3 volume ≤ M) :
+    MemLp vm 3 volume := by
+  let J : Set ℝ := CKN.rescaledTime r t₀ (Ioo (-1 : ℝ) 0)
+  have hr2 : 0 < r ^ 2 := pow_pos hr 2
+  have hJsub : J ⊆ Icc ((-1 - t₀) / r ^ 2) ((-t₀) / r ^ 2) := by
+    intro t ht
+    have ht' : t₀ + r ^ 2 * t ∈ Ioo (-1 : ℝ) 0 := ht
+    constructor
+    · rw [div_le_iff₀ hr2]
+      linarith only [ht'.1]
+    · rw [le_div_iff₀ hr2]
+      linarith only [ht'.2]
+  have hJfin : volume J < ⊤ :=
+    lt_of_le_of_lt (measure_mono hJsub) (by rw [Real.volume_Icc]; exact ENNReal.ofReal_lt_top)
+  have hJm : MeasurableSet J := by
+    have hmeas : Measurable (CKN.scalingTime r t₀) := by
+      unfold CKN.scalingTime
+      fun_prop
+    exact measurableSet_Ioo.preimage hmeas
+  have hSm : MeasurableSet ((Set.univ : Set Vec3) ×ˢ J) := MeasurableSet.univ.prod hJm
+  have hzero : ∀ z : Vec3 × ℝ, z ∉ (Set.univ : Set Vec3) ×ˢ J →
+      blowupVelocity x₀ t₀ r u z = 0 := by
+    intro z hz
+    let w : ParabolicPoint := (x₀ + r • z.1, t₀ + r ^ 2 * z.2)
+    have hvw : blowupVelocity x₀ t₀ r u z = r • goodPointDomain.indicator u w := rfl
+    have hnot : w ∉ goodPointDomain := fun hmem => hz ⟨mem_univ _, hmem.2⟩
+    rw [hvw, indicator_of_notMem hnot, smul_zero]
+  have hind : vm =ᵐ[volume] ((Set.univ : Set Vec3) ×ˢ J).indicator vm := by
+    filter_upwards [hvm] with z hz
+    by_cases hzS : z ∈ (Set.univ : Set Vec3) ×ˢ J
+    · rw [indicator_of_mem hzS]
+    · rw [indicator_of_notMem hzS, ← hz, hzero z hzS]
+  have hsliceJ : ∀ᵐ t ∂volume.restrict J,
+      eLpNorm (fun x : Vec3 => vm (x,t)) 3 volume ≤ M :=
+    ae_restrict_of_ae hvmSlice
+  have hbound := blowupLimitAssemblyPressure_memLp_three_of_slices hvmM hsliceJ
+    (Set.univ : Set Vec3)
+  have hfin : (volume J * M ^ (3 : ℝ)) ^ (1 / 3 : ℝ) < ⊤ :=
+    ENNReal.rpow_lt_top_of_nonneg (by norm_num)
+      (ENNReal.mul_lt_top hJfin (ENNReal.rpow_lt_top_of_nonneg (by norm_num)
+        hM.ne)).ne
+  have hres : MemLp vm 3 (volume.restrict ((Set.univ : Set Vec3) ×ˢ J)) :=
+    memLp_iff.2 (hbound.trans_lt hfin)
+  exact ((memLp_indicator_iff_restrict hSm).2 hres).ae_eq hind.symm
+
+private theorem blowupLimitAssemblyPressure_rescaled_slice_bound
+    {u : ParabolicPoint → Vec3} (x₀ : Vec3) (t₀ r : ℝ) (hr : 0 < r)
+    (Mᵤ : ℝ≥0∞)
+    (hsourceU : ∀ᵐ s ∂volume.restrict (Ioo (-1 : ℝ) 0),
+      AEStronglyMeasurable (fun x : Vec3 => (goodPointDomain.indicator u) (x,s)) volume ∧
+      eLpNorm (fun x : Vec3 => vec3EuclideanNorm
+        ((goodPointDomain.indicator u) (x,s))) 3 volume ≤ Mᵤ)
+    (vm : Vec3 × ℝ → Vec3) (hvmM : Measurable vm)
+    (hvm : (fun z : Vec3 × ℝ => blowupVelocity x₀ t₀ r u z) =ᵐ[volume] vm) :
+    ∀ᵐ t ∂(volume : Measure ℝ),
+      eLpNorm (fun x : Vec3 => vm (x,t)) 3 volume ≤ Mᵤ := by
+  have hprod : ∀ᵐ z ∂((volume : Measure Vec3).prod (volume : Measure ℝ)),
+      blowupVelocity x₀ t₀ r u z = vm z := by
+    rw [← Measure.volume_eq_prod]
+    exact hvm
+  have hsliceEq := blowupLimitAssembly_ae_ae_of_ae_prod_swap hprod
+  filter_upwards [hsliceEq, blowupLimitAssemblyPressure_velocity_slice_bound u Mᵤ
+    hsourceU x₀ t₀ r hr] with t hte htb
+  calc
+    eLpNorm (fun x : Vec3 => vm (x,t)) 3 volume =
+        eLpNorm (fun x : Vec3 => blowupVelocity x₀ t₀ r u (x,t)) 3 volume :=
+      eLpNorm_congr_ae hte.symm
+    _ ≤ eLpNorm (fun x : Vec3 => vec3EuclideanNorm
+          (blowupVelocity x₀ t₀ r u (x,t))) 3 volume := by
+      apply blowupLimitAssemblyPressure_slice_le_norm
+      exact (hvmM.comp measurable_prodMk_right).aestronglyMeasurable.congr hte.symm
+    _ ≤ Mᵤ := htb
+
+private theorem blowupLimitAssemblyPressure_finite_window_bound
+    (MU : ℝ≥0∞) (hMU : MU < ⊤) :
+    ∀ n : ℕ,
+      (volume (Ioo (-((n : ℝ) + 1)) (0 : ℝ)) * MU ^ (3 : ℝ)) ^
+        (1 / 3 : ℝ) < ⊤ := by
+  intro n
+  apply ENNReal.rpow_lt_top_of_nonneg (by norm_num)
+  apply (ENNReal.mul_lt_top _ (ENNReal.rpow_lt_top_of_nonneg (by norm_num)
+    hMU.ne)).ne
+  rw [Real.volume_Ioo]
+  exact ENNReal.ofReal_lt_top
+
 /-- The pressure-limit step of `prop:blowup-limit`. -/
 theorem blowupLimitAssembly_pressure_limit
     {u : ParabolicPoint → Vec3}
@@ -122,14 +213,7 @@ theorem blowupLimitAssembly_pressure_limit
     filter_upwards [h] with t ht
     exact (blowupLimitAssemblyPressure_slice_le_norm
       (hU.comp measurable_prodMk_right).aestronglyMeasurable).trans ht
-  have hwindowFin : ∀ n : ℕ,
-      (volume (Ioo (-((n : ℝ) + 1)) (0 : ℝ)) * MU ^ (3 : ℝ)) ^ (1 / 3 : ℝ) < ⊤ := by
-    intro n
-    apply ENNReal.rpow_lt_top_of_nonneg (by norm_num)
-    apply (ENNReal.mul_lt_top _ (ENNReal.rpow_lt_top_of_nonneg (by norm_num)
-      hMU.ne)).ne
-    rw [Real.volume_Ioo]
-    exact ENNReal.ofReal_lt_top
+  have hwindowFin := blowupLimitAssemblyPressure_finite_window_bound MU hMU
   have hUwin : ∀ n : ℕ, MemLp U 3 ((volume : Measure (Vec3 × ℝ)).restrict
       ((Set.univ : Set Vec3) ×ˢ Ioo (-((n : ℝ) + 1)) 0)) := fun n =>
     memLp_iff.2 ((blowupLimitAssemblyPressure_memLp_three_of_slices hU
@@ -167,75 +251,14 @@ theorem blowupLimitAssembly_pressure_limit
       (hvaesm k).stronglyMeasurable_mk.measurable
     have hvm : ∀ k, (fun z : Vec3 × ℝ => blowupVelocity x₀ t₀ (r k) u z) =ᵐ[volume]
         vm k := fun k => (hvaesm k).ae_eq_mk
-    have hvmSlicesEq : ∀ k, ∀ᵐ t ∂(volume : Measure ℝ),
-        (fun x : Vec3 => blowupVelocity x₀ t₀ (r k) u (x,t)) =ᵐ[volume]
-          (fun x : Vec3 => vm k (x,t)) := by
-      intro k
-      have hprod : ∀ᵐ z ∂((volume : Measure Vec3).prod (volume : Measure ℝ)),
-          blowupVelocity x₀ t₀ (r k) u z = vm k z := by
-        rw [← Measure.volume_eq_prod]
-        exact hvm k
-      exact blowupLimitAssembly_ae_ae_of_ae_prod_swap hprod
     have hvmSlice : ∀ k, ∀ᵐ t ∂(volume : Measure ℝ),
-        eLpNorm (fun x : Vec3 => vm k (x,t)) 3 volume ≤ Mᵤ := by
-      intro k
-      filter_upwards [hvmSlicesEq k, blowupLimitAssemblyPressure_velocity_slice_bound u Mᵤ
-        hsourceU x₀ t₀ (r k) (hr k)] with t hte htb
-      calc
-        eLpNorm (fun x : Vec3 => vm k (x,t)) 3 volume =
-            eLpNorm (fun x : Vec3 => blowupVelocity x₀ t₀ (r k) u (x,t)) 3 volume :=
-          eLpNorm_congr_ae hte.symm
-        _ ≤ eLpNorm (fun x : Vec3 => vec3EuclideanNorm
-              (blowupVelocity x₀ t₀ (r k) u (x,t))) 3 volume := by
-          apply blowupLimitAssemblyPressure_slice_le_norm
-          exact ((hvmM k).comp measurable_prodMk_right).aestronglyMeasurable.congr
-            hte.symm
-        _ ≤ Mᵤ := htb
+        eLpNorm (fun x : Vec3 => vm k (x,t)) 3 volume ≤ Mᵤ := fun k =>
+      blowupLimitAssemblyPressure_rescaled_slice_bound x₀ t₀ (r k) (hr k)
+        Mᵤ hsourceU (vm k) (hvmM k) (hvm k)
     -- global L³ of the measurable blow-up velocities
-    have hvmMem : ∀ k, MemLp (vm k) 3 volume := by
-      intro k
-      set J : Set ℝ := CKN.rescaledTime (r k) t₀ (Ioo (-1 : ℝ) 0) with hJdef
-      have hr2 : 0 < (r k) ^ 2 := pow_pos (hr k) 2
-      have hJsub : J ⊆ Icc ((-1 - t₀) / (r k) ^ 2) ((-t₀) / (r k) ^ 2) := by
-        intro t ht
-        have ht' : t₀ + (r k) ^ 2 * t ∈ Ioo (-1 : ℝ) 0 := ht
-        constructor
-        · rw [div_le_iff₀ hr2]
-          linarith only [ht'.1]
-        · rw [le_div_iff₀ hr2]
-          linarith only [ht'.2]
-      have hJfin : volume J < ⊤ :=
-        lt_of_le_of_lt (measure_mono hJsub) (by rw [Real.volume_Icc]; exact ENNReal.ofReal_lt_top)
-      have hJm : MeasurableSet J := by
-        have hmeas : Measurable (CKN.scalingTime (r k) t₀) := by
-          unfold CKN.scalingTime
-          fun_prop
-        exact measurableSet_Ioo.preimage hmeas
-      have hSm : MeasurableSet ((Set.univ : Set Vec3) ×ˢ J) := MeasurableSet.univ.prod hJm
-      have hzero : ∀ z : Vec3 × ℝ, z ∉ (Set.univ : Set Vec3) ×ˢ J →
-          blowupVelocity x₀ t₀ (r k) u z = 0 := by
-        intro z hz
-        let w : ParabolicPoint := (x₀ + r k • z.1, t₀ + r k ^ 2 * z.2)
-        have hvw : blowupVelocity x₀ t₀ (r k) u z = r k • goodPointDomain.indicator u w := rfl
-        have hnot : w ∉ goodPointDomain := fun hmem => hz ⟨mem_univ _, hmem.2⟩
-        rw [hvw, indicator_of_notMem hnot, smul_zero]
-      have hind' : vm k =ᵐ[volume] ((Set.univ : Set Vec3) ×ˢ J).indicator (vm k) := by
-        filter_upwards [hvm k] with z hz
-        by_cases hzS : z ∈ (Set.univ : Set Vec3) ×ˢ J
-        · rw [indicator_of_mem hzS]
-        · rw [indicator_of_notMem hzS, ← hz, hzero z hzS]
-      have hsliceJ : ∀ᵐ t ∂volume.restrict J,
-          eLpNorm (fun x : Vec3 => vm k (x,t)) 3 volume ≤ Mᵤ :=
-        ae_restrict_of_ae (hvmSlice k)
-      have hbound := blowupLimitAssemblyPressure_memLp_three_of_slices (hvmM k) hsliceJ
-        (Set.univ : Set Vec3)
-      have hfin : (volume J * Mᵤ ^ (3 : ℝ)) ^ (1 / 3 : ℝ) < ⊤ :=
-        ENNReal.rpow_lt_top_of_nonneg (by norm_num)
-          (ENNReal.mul_lt_top hJfin (ENNReal.rpow_lt_top_of_nonneg (by norm_num)
-            hMᵤ.ne)).ne
-      have hres : MemLp (vm k) 3 (volume.restrict ((Set.univ : Set Vec3) ×ˢ J)) :=
-        memLp_iff.2 (hbound.trans_lt hfin)
-      exact ((memLp_indicator_iff_restrict hSm).2 hres).ae_eq hind'.symm
+    have hvmMem : ∀ k, MemLp (vm k) 3 volume := fun k =>
+      blowupLimitAssemblyPressure_global_Lthree_of_slices x₀ t₀ (r k) (hr k)
+        (vm k) (hvmM k) (hvm k) Mᵤ hMᵤ (hvmSlice k)
     have hFm : ∀ k i j, MemLp (fun z => vm k z i * vm k z j)
         (ENNReal.ofReal (3 / 2 : ℝ)) volume := fun k =>
       blowup_velocity_tensor_memLp (vm k) (hvmMem k)

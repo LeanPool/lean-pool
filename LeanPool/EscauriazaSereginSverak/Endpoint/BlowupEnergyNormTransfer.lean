@@ -8,6 +8,12 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupRescaleAgreement
 
+/-!
+# Blowup Energy Norm Transfer
+
+Local energy bounds for the rescaled sequence in the endpoint regularity argument.
+-/
+
 public section
 
 open MeasureTheory Set Filter CKN CKN.Foundation.Parabolic

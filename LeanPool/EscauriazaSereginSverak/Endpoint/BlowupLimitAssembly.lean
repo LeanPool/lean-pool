@@ -42,6 +42,83 @@ noncomputable section
 
 namespace ESS
 
+private theorem blowupLimitAssembly_badPoint_contradiction
+    {u : ParabolicPoint → Vec3} {p : ParabolicPoint → ℝ}
+    (ε₀ : ℝ) (hε₀ : 0 < ε₀) (x₀ : Vec3) (t₀ : ℝ) (r : ℕ → ℝ)
+    (hx₀ : x₀ ∈ closure (vec3Ball 0 (1 / 2 : ℝ)))
+    (ht₀ : t₀ ∈ Icc (-(1 / 4 : ℝ)) 0)
+    (hbad : ¬ IsGoodPoint ε₀ u p (x₀,t₀))
+    (hr : ∀ k, 0 < r k) (hr0 : Tendsto r atTop (nhds 0))
+    (hind : AEStronglyMeasurable (goodPointDomain.indicator u) volume)
+    (hpmeas : ∀ k, AEStronglyMeasurable (blowupPressure x₀ t₀ (r k) p)
+      (volume : Measure ParabolicPoint))
+    (U : ParabolicPoint → Vec3)
+    (hU0 : U =ᵐ[volume.restrict
+      (spaceTimeSet Set.univ (Ioo (-2 : ℝ) 0))] 0)
+    (hconvU : ∀ R : ℝ, 0 < R → ∀ a : ℝ, a < 0 →
+      Tendsto (fun k => eLpNorm (fun z => blowupVelocity x₀ t₀ (r k) u z - U z) 3
+        (volume.restrict (vec3Ball (0 : Vec3) R ×ˢ Ioo a 0))) atTop (nhds 0))
+    {q : ParabolicPoint → ℝ}
+    (hconvP : ∀ R : ℝ, 0 < R → ∀ a : ℝ, a < 0 →
+      Tendsto (fun k => eLpNorm (fun z => blowupPressure x₀ t₀ (r k) p z - q z)
+        (3 / 2 : ℝ≥0∞) (volume.restrict (vec3Ball (0 : Vec3) R ×ˢ Ioo a 0)))
+        atTop (nhds 0))
+    (hqzero : q =ᵐ[volume.restrict
+      (vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0)] 0) : False := by
+  have hlower := blowup_limit_bad_point_lower_bound ε₀ u p x₀ t₀ r hx₀ ht₀ hbad hr hr0
+  have hQ1 : goodPointPastCylinder 0 0 1 = vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0 := by
+    rw [goodPointPastCylinder]
+    congr 1
+    norm_num
+  have hQ1m : MeasurableSet (vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0) :=
+    (isOpen_vec3Ball _ _).measurableSet.prod measurableSet_Ioo
+  have hQ1sub : vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0 ⊆
+      spaceTimeSet Set.univ (Ioo (-2 : ℝ) 0) := fun z hz =>
+    ⟨mem_univ _, by linarith only [hz.2.1], hz.2.2⟩
+  have hU0' : U =ᵐ[volume.restrict (vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0)] 0 :=
+    ae_restrict_of_ae_restrict_of_subset hQ1sub hU0
+  have hvmeas : ∀ k, AEStronglyMeasurable (blowupVelocity x₀ t₀ (r k) u)
+      (volume : Measure ParabolicPoint) := fun k =>
+    blowupRescaledVelocity_aestronglyMeasurable _ hind x₀ t₀ (r k) (hr k)
+  have hzero := blowup_limit_zero_alternative
+    (fun k => blowupVelocity x₀ t₀ (r k) u)
+    (fun k => blowupPressure x₀ t₀ (r k) p)
+    (fun k => (CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.comp_aestronglyMeasurable
+      (hvmeas k)).restrict)
+    (fun k => (hpmeas k).restrict) ?_ ?_
+  · have hlower' : Tendsto (fun k => goodPointEnergy
+        (blowupVelocity x₀ t₀ (r k) u) (blowupPressure x₀ t₀ (r k) p) 0 0 1)
+        atTop (𝓝 0) := hzero
+    have hlim : ENNReal.ofReal (ε₀ / 8) ≤ 0 := ge_of_tendsto hlower' hlower
+    have hpos : (0 : ℝ≥0∞) < ENNReal.ofReal (ε₀ / 8) :=
+      ENNReal.ofReal_pos.mpr (by linarith only [hε₀])
+    exact absurd (hpos.trans_le hlim) (lt_irrefl 0)
+  · rw [hQ1]
+    have hlim3 : Tendsto (fun k => ENNReal.ofReal (Real.sqrt 3) *
+        eLpNorm (fun z => blowupVelocity x₀ t₀ (r k) u z - U z) 3
+          (volume.restrict (vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0)))
+        atTop (nhds 0) := by
+      have h := ENNReal.Tendsto.const_mul (a := ENNReal.ofReal (Real.sqrt 3))
+        (hconvU 1 one_pos (-1) (by norm_num)) (Or.inr ENNReal.ofReal_ne_top)
+      rwa [mul_zero] at h
+    apply tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hlim3
+    · exact fun k => zero_le
+    · intro k
+      apply eLpNorm_le_mul_eLpNorm_of_ae_le_mul
+        (CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.comp_aestronglyMeasurable
+          (hvmeas k)).restrict
+      filter_upwards [hU0'] with z hz
+      have hz' : U z = 0 := hz
+      rw [hz', sub_zero, Real.norm_eq_abs, abs_of_nonneg (vec3EuclideanNorm_nonneg _)]
+      exact vec3EuclideanNorm_le_sqrt_three_mul_norm _
+  · rw [hQ1]
+    apply (hconvP 1 one_pos (-1) (by norm_num)).congr'
+    filter_upwards [] with k
+    apply eLpNorm_congr_ae
+    filter_upwards [hqzero] with z hz
+    have hz' : q z = 0 := hz
+    rw [hz', sub_zero]
+
 /-- The blow-up limit at a point that is not good (`prop:blowup-limit`),
 under the hypotheses of `thm:ess-local`. -/
 theorem blowupLimit_projection
@@ -243,60 +320,13 @@ theorem blowupLimit_projection
   · -- the bad-point alternative
     intro hU0
     exfalso
-    have hlower := blowup_limit_bad_point_lower_bound ε₀ u p x₀ t₀ r' hx₀ ht₀ hbad hr' hr0'
     obtain ⟨-, hind, hp₁, -, -, hp₂, -⟩ := blowupLimitAssembly_source_pressure_data hu hDu
       hp hL2 henergy hpLp hL3 hgrad hS2 hS3
-    have hQ1 : goodPointPastCylinder 0 0 1 = vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0 := by
-      rw [goodPointPastCylinder]
-      congr 1
-      norm_num
-    have hQ1m : MeasurableSet (vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0) :=
-      (isOpen_vec3Ball _ _).measurableSet.prod measurableSet_Ioo
-    have hQ1sub : vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0 ⊆
-        spaceTimeSet Set.univ (Ioo (-2 : ℝ) 0) := fun z hz =>
-      ⟨mem_univ _, by linarith only [hz.2.1], hz.2.2⟩
-    have hU0' : U =ᵐ[volume.restrict (vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0)] 0 :=
-      ae_restrict_of_ae_restrict_of_subset hQ1sub hU0
-    have hvmeas : ∀ k, AEStronglyMeasurable (blowupVelocity x₀ t₀ (r' k) u)
+    have hpmeas : ∀ k, AEStronglyMeasurable (blowupPressure x₀ t₀ (r' k) p)
         (volume : Measure ParabolicPoint) := fun k =>
-      blowupRescaledVelocity_aestronglyMeasurable _ hind x₀ t₀ (r' k) (hr' k)
-    have hzero := blowup_limit_zero_alternative
-      (fun k => blowupVelocity x₀ t₀ (r' k) u) (fun k => blowupPressure x₀ t₀ (r' k) p)
-      (fun k => (CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.comp_aestronglyMeasurable
-        (hvmeas k)).restrict)
-      (fun k => (blowupPressure_aestronglyMeasurable_of_split p _ hp₁ hp₂ x₀ t₀ (r' k)
-        (hr' k)).restrict) ?_ ?_
-    · have hlim : ENNReal.ofReal (ε₀ / 8) ≤ 0 :=
-        ge_of_tendsto hzero hlower
-      have hpos : (0 : ℝ≥0∞) < ENNReal.ofReal (ε₀ / 8) :=
-        ENNReal.ofReal_pos.mpr (by linarith only [hε₀])
-      exact absurd (hpos.trans_le hlim) (lt_irrefl 0)
-    · rw [hQ1]
-      have hlim3 : Tendsto (fun k => ENNReal.ofReal (Real.sqrt 3) *
-          eLpNorm (fun z => blowupVelocity x₀ t₀ (r' k) u z - U z) 3
-            (volume.restrict (vec3Ball (0 : Vec3) 1 ×ˢ Ioo (-1 : ℝ) 0)))
-          atTop (nhds 0) := by
-        have h := ENNReal.Tendsto.const_mul (a := ENNReal.ofReal (Real.sqrt 3))
-          (hconvU 1 one_pos (-1) (by norm_num)) (Or.inr ENNReal.ofReal_ne_top)
-        rwa [mul_zero] at h
-      apply tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hlim3
-      · exact fun k => zero_le
-      · intro k
-        apply eLpNorm_le_mul_eLpNorm_of_ae_le_mul
-          (CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.comp_aestronglyMeasurable
-            (hvmeas k)).restrict
-        filter_upwards [hU0'] with z hz
-        have hz' : U z = 0 := hz
-        rw [hz', sub_zero, Real.norm_eq_abs,
-          abs_of_nonneg (vec3EuclideanNorm_nonneg _)]
-        exact vec3EuclideanNorm_le_sqrt_three_mul_norm _
-    · rw [hQ1]
-      apply (hconvP 1 one_pos (-1) (by norm_num)).congr'
-      filter_upwards [] with k
-      apply eLpNorm_congr_ae
-      filter_upwards [hqzero hU0] with z hz
-      have hz' : q z = 0 := hz
-      rw [hz', sub_zero]
+      blowupPressure_aestronglyMeasurable_of_split p _ hp₁ hp₂ x₀ t₀ (r' k) (hr' k)
+    exact blowupLimitAssembly_badPoint_contradiction ε₀ hε₀ x₀ t₀ r' hx₀ ht₀ hbad
+      hr' hr0' hind hpmeas U hU0 hconvU hconvP hqzero
 
 end ESS
 

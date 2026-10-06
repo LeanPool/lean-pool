@@ -39,7 +39,8 @@ theorem bu_affine_ae_pullback_interval
   have hΩ : MeasurableSet {x : Vec3 | 0 < x 2} :=
     (isOpen_lt continuous_const (continuous_apply 2)).measurableSet
   have hmap := CKN.map_scalingParabolic_restrict hscale
-    ((0 : Vec3), τ) hΩ (measurableSet_Ioo : MeasurableSet (Ioo (τ + scale ^ 2 * a) (τ + scale ^ 2 * b)))
+    ((0 : Vec3), τ) hΩ
+    (measurableSet_Ioo : MeasurableSet (Ioo (τ + scale ^ 2 * a) (τ + scale ^ 2 * b)))
   rw [rescaledSpaceTimeSet_eq_preimage scale
       (show ParabolicPoint from ((0 : Vec3), τ))
       {x : Vec3 | 0 < x 2} (Ioo (τ + scale ^ 2 * a) (τ + scale ^ 2 * b)),

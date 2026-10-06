@@ -10,6 +10,12 @@ public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupMassLp
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupTimeAE
 public import Mathlib.MeasureTheory.Function.LpSeminorm.Prod
 
+/-!
+# Blowup Velocity Time
+
+Velocity estimates for the rescaled sequence used in endpoint compactness.
+-/
+
 public section
 
 open MeasureTheory Set Filter CKN CKN.Foundation.Parabolic

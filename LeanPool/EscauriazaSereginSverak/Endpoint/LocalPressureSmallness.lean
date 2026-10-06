@@ -18,6 +18,12 @@ public import LeanPool.CaffarelliKohnNirenberg.Setting.Finiteness
 public import LeanPool.CaffarelliKohnNirenberg.Foundation.Measure.SliceProductMeasurability
 public import Mathlib.MeasureTheory.Function.LpSpace.Indicator
 
+/-!
+# Local Pressure Smallness
+
+Local pressure estimates used in the endpoint regularity argument.
+-/
+
 public section
 
 open MeasureTheory MeasureTheory.Measure Set Filter
@@ -574,8 +580,8 @@ private theorem boundedPressureSource_memLp_two
         by_contra hne
         apply hx
         exact hηsupport (subset_closure (by simpa [Function.mem_support] using hne))
-      simp [hη0]
-      positivity
+      simpa only [hη0, zero_mul, abs_zero] using
+        (by positivity : (0 : ℝ) ≤ 2 * B ^ 2)
   have hGcompact (i j : Fin 3) : HasCompactSupport
       (fun x => η x * pressureUTensor (fun z => uExt z.1) c (x, s) i j) :=
     hηcomp.mul_right

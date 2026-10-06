@@ -27,6 +27,7 @@ noncomputable section
 
 namespace ESS
 
+/-- Parabolic scaling about a spatial center, with quadratic scaling of time. -/
 @[expose] def ucScaleHomeomorph (scale : ℝ) (hscale : 0 < scale)
     (x₀ : Vec3) : (Vec3 × ℝ) ≃ₜ (Vec3 × ℝ) :=
   Homeomorph.prodCongr
@@ -105,7 +106,7 @@ private theorem uc_scale_pullback_test
     (ucScaleHomeomorph_image_cylinder scale ρ hscale x₀)
 
 private theorem uc_scaled_field_aestronglyMeasurable
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {E : Type*} [NormedAddCommGroup E]
     (x₀ : Vec3) (scale ρ : ℝ) (hscale : 0 < scale)
     (f : ParabolicPoint → E)
     (hf : AEStronglyMeasurable f
@@ -141,7 +142,7 @@ private theorem uc_scaled_field_aestronglyMeasurable
   exact hfm.comp_measurable hpointMeas
 
 private theorem uc_integrableOn_of_l2
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {E : Type*} [NormedAddCommGroup E]
     (Q : Set ParabolicPoint) (hQ : volume Q < ⊤)
     (f : ParabolicPoint → E)
     (hfmeas : AEStronglyMeasurable f (volume.restrict Q))

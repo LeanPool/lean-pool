@@ -447,6 +447,33 @@ private theorem goodPointInteriorCompact
     exact ⟨hRspace hqxR, ⟨hlower, hupper⟩⟩
   exact ⟨M, η, δ, K, hrM, hMR, hηpos, hδpos, hKcompact, hKsub, hnear, hlarge⟩
 
+private theorem goodPoint_top_ball_subset_past
+    {z : ParabolicPoint} {r : ℝ} (hrpos : 0 < r) (htop : z.2 = 0) :
+    Metric.ball z (r / 4) ∩ goodPointDomain ⊆
+      goodPointPastCylinder z.1 z.2 (r / 2) := by
+  intro q hq
+  rcases hq with ⟨hball, hqD⟩
+  have hdist : parabolicDist q z < r / 4 := by
+    simpa only [Metric.mem_ball, dist_eq_parabolicDist] using hball
+  have hparts : vec3EuclideanNorm (q.1 - z.1) < r / 4 ∧
+      Real.sqrt |q.2 - z.2| < r / 4 := by
+    unfold parabolicDist at hdist
+    exact max_lt_iff.mp hdist
+  have hspace : q.1 ∈ vec3Ball z.1 (r / 2) := by
+    change vec3EuclideanNorm (q.1 - z.1) < r / 2
+    linarith only [hparts.1, hrpos]
+  have htimeabs : |q.2 - z.2| < (r / 4) ^ 2 :=
+    (Real.sqrt_lt' (by positivity : (0 : ℝ) < r / 4)).mp hparts.2
+  have htimeLower : z.2 - (r / 2) ^ 2 < q.2 := by
+    have hlow := (abs_lt.mp htimeabs).1
+    rw [htop] at hlow ⊢
+    have hlow' : -(r / 4) ^ 2 < q.2 := by simpa using hlow
+    nlinarith only [hlow', hrpos]
+  have htimeUpper : q.2 < z.2 := by
+    rw [htop]
+    exact hqD.2.2
+  exact ⟨hspace, ⟨htimeLower, htimeUpper⟩⟩
+
 /-- A good point has a local representative with Hölder bounds on both the
 open past and the closed top portion of its neighborhood. -/
 theorem goodPoint_local_holder_patch
@@ -511,31 +538,7 @@ theorem goodPoint_local_holder_patch
     have hδpos : 0 < δ := by dsimp [δ]; positivity
     have hUsub : Metric.ball z δ ∩ goodPointDomain ⊆
         goodPointPastCylinder z.1 z.2 (r / 2) := by
-      intro q hq
-      rcases hq with ⟨hball, hqD⟩
-      have hdist : parabolicDist q z < δ := by
-        simpa only [Metric.mem_ball, dist_eq_parabolicDist] using hball
-      have hparts : vec3EuclideanNorm (q.1 - z.1) < δ ∧
-          Real.sqrt |q.2 - z.2| < δ := by
-        unfold parabolicDist at hdist
-        exact max_lt_iff.mp hdist
-      have hspace : q.1 ∈ vec3Ball z.1 (r / 2) := by
-        change vec3EuclideanNorm (q.1 - z.1) < r / 2
-        dsimp [δ] at hparts
-        linarith only [hparts.1, hrpos]
-      have htimeabs : |q.2 - z.2| < δ ^ 2 :=
-        (Real.sqrt_lt' hδpos).mp hparts.2
-      have htimeLower : z.2 - (r / 2) ^ 2 < q.2 := by
-        have hlow := (abs_lt.mp htimeabs).1
-        dsimp [δ] at hlow
-        rw [htop]
-        have hlow' : -(r / 4) ^ 2 < q.2 := by
-          simpa only [htop, sub_zero] using hlow
-        nlinarith only [hlow', hrpos]
-      have htimeUpper : q.2 < z.2 := by
-        rw [htop]
-        exact hqD.2.2
-      exact ⟨hspace, ⟨htimeLower, htimeUpper⟩⟩
+      simpa only [δ] using goodPoint_top_ball_subset_past hrpos htop
     have hSuitableρ := suitable_on_goodPointPastCylinder hSuitable hρpos hdomρ.1
     obtain ⟨w, hwae, hwbound, hwsemi⟩ :=
       hTop z.1 z.2 ρ r u Du p hrpos hrρ hSuitableρ hsmallr
@@ -560,7 +563,6 @@ theorem goodPoint_local_holder_patch
       · intro q hq q' hq'
         exact hwsemi q (hTopSub hq) q' (hTopSub hq')
     exact ⟨δ, B + H, w, hδpos, hC, hUae, hHolder, hHolderTop⟩
-
   · obtain ⟨M, η, δ₀, K, hrM, hMR, hηpos, hδ₀pos, hKcompact, hKdomain,
       hKnear, hMdomain⟩ := goodPointInteriorCompact hinterior hRpos hrpos hrR hRdomain
     have hEnergyCont := goodPointEnergy_continuousAt_of_compact

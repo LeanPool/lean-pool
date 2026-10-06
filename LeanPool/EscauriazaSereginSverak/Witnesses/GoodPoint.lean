@@ -103,7 +103,7 @@ theorem isGoodPoint_zero (ε₀ : ℝ) (hε₀ : 0 < ε₀) :
         linarith only [habs.1]
       · change z.2 ≤ -(1 / 2 : ℝ) at hztop
         linarith only [hztop]
-  · simp [goodPointEnergy, vec3EuclideanNorm_zero]
-    positivity
+  · simpa [goodPointEnergy, vec3EuclideanNorm_zero] using
+      (ENNReal.ofReal_pos.mpr hε₀)
 
 end ESS

@@ -158,7 +158,7 @@ theorem lps_strong_kinetic_energy_identity
   have hIS : ∫ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo s t), ∑ i : Fin 3, u z i * Dtu z i =
       ∫ z in vlSlab s t, ∑ i : Fin 3, u z i * Dtu z i := rfl
   rw [hIS, hAB] at hI
-  show (∫ x : Vec3, ∑ i : Fin 3, (u (x, t) i) ^ 2) +
+  change (∫ x : Vec3, ∑ i : Fin 3, (u (x, t) i) ^ 2) +
     2 * ∫ z in vlSlab s t, ∑ i : Fin 3, ∑ j : Fin 3, (Du z i j) ^ 2 =
     ∫ x : Vec3, ∑ i : Fin 3, (u (x, s) i) ^ 2
   linarith only [hI]

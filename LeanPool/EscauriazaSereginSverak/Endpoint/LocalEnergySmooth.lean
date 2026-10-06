@@ -12,6 +12,12 @@ public import LeanPool.CaffarelliKohnNirenberg.Foundation.WeakDerivMollify
 public import LeanPool.CaffarelliKohnNirenberg.ClassEquivalence.Constructor
 public import LeanPool.CaffarelliKohnNirenberg.ClassEquivalence.TestSupport
 
+/-!
+# Local Energy Smooth
+
+Local energy identities and limit passages for the endpoint regularity proof.
+-/
+
 public section
 
 open MeasureTheory Set Filter
@@ -282,6 +288,7 @@ private theorem smoothMomentumTestIntegrand_eq_energy_on_support
   rw [hconv, hvisc, hpressure]
   ring
 
+/-- The velocity test field `2 ψ u` used in the smooth local energy identity. -/
 @[expose] def smoothVelocityTest (u : Vec3 × ℝ → Vec3) (ψ : Vec3 × ℝ → ℝ) :
     Vec3 × ℝ → Vec3 := (fun z => 2 * ψ z) • u
 
@@ -324,7 +331,8 @@ private theorem smoothMomentumTestIntegrand_eq_energy_off_support
       dirDeriv (fun y => smoothVelocityTest u ψ y i) v z = 0 := by
     have hzφ : z ∉ tsupport (smoothVelocityTest u ψ) := fun h => hz (hφtsupport h)
     have hnear : (fun y => smoothVelocityTest u ψ y i) =ᶠ[𝓝 z] 0 := by
-      filter_upwards [(isClosed_tsupport (f := smoothVelocityTest u ψ)).isOpen_compl.eventually_mem hzφ]
+      filter_upwards [(isClosed_tsupport (f :=
+      smoothVelocityTest u ψ)).isOpen_compl.eventually_mem hzφ]
         with y hy
       have hyzero : smoothVelocityTest u ψ y = 0 := image_eq_zero_of_notMem_tsupport hy
       simp [hyzero]
@@ -418,6 +426,77 @@ velocity, pressure, stress, and gradient terms. -/
         dirDeriv (fun y => velocitySq u y * dirDeriv ψ (spatialDir j) y)
           (spatialDir j) z
 
+private theorem smoothEnergy_sum_mul_add_factor
+    (A B C : Fin 3 → Fin 3 → ℝ) (c : ℝ) :
+    (∑ i : Fin 3, ∑ j : Fin 3, A i j * (B i j + c * C i j)) =
+      (∑ i : Fin 3, ∑ j : Fin 3, A i j * B i j) +
+        c * (∑ i : Fin 3, ∑ j : Fin 3, A i j * C i j) := by
+  calc
+    _ = (∑ i : Fin 3, ∑ j : Fin 3, A i j * B i j) +
+          ∑ i : Fin 3, ∑ j : Fin 3, A i j * (c * C i j) := by
+      simp_rw [mul_add, Finset.sum_add_distrib]
+    _ = _ := by
+      congr 1
+      rw [Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro i hi
+      rw [Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro j hj
+      ring
+
+private theorem smoothEnergy_stress_sum_split
+    (A R B C : Fin 3 → Fin 3 → ℝ) (c : ℝ) :
+    (∑ i : Fin 3, ∑ j : Fin 3,
+      (A i j + R i j) * (B i j + c * C i j)) =
+      (∑ i : Fin 3, ∑ j : Fin 3, A i j * (B i j + c * C i j)) +
+        (∑ i : Fin 3, ∑ j : Fin 3, R i j * (B i j + c * C i j)) := by
+  simp_rw [add_mul, Finset.sum_add_distrib]
+
+private theorem smoothEnergy_divergence_scalar_zero
+    (d : Fin 3 → ℝ) (a b : ℝ) (hdiv : ∑ i : Fin 3, d i = 0) :
+    a * b * (∑ i : Fin 3, d i) = 0 := by
+  rw [hdiv]
+  ring
+
+private theorem smoothEnergy_pressure_trace_term
+    (v q d : Fin 3 → ℝ) (p ψ : ℝ) (hdiv : ∑ i : Fin 3, d i = 0) :
+    (∑ i : Fin 3, p * (2 * (v i * q i + ψ * d i))) =
+      2 * p * (∑ i : Fin 3, v i * q i) := by
+  calc
+    _ = ∑ i : Fin 3,
+        (2 * p * (v i * q i) + (2 * p * ψ) * d i) := by
+      apply Finset.sum_congr rfl
+      intro i hi
+      ring
+    _ = 2 * p * (∑ i : Fin 3, v i * q i) +
+          (2 * p * ψ) * (∑ i : Fin 3, d i) := by
+      rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum]
+    _ = _ := by rw [hdiv]; ring
+
+private theorem smoothEnergy_cubic_velocity_term
+    (v q : Fin 3 → ℝ) :
+    (∑ i : Fin 3, ∑ j : Fin 3, v i * v j * (v i * q j)) =
+      (∑ i : Fin 3, v i ^ 2) * (∑ j : Fin 3, v j * q j) := by
+  calc
+    _ = ∑ j : Fin 3, ∑ i : Fin 3,
+        (v i * v i) * (v j * q j) := by
+      rw [Finset.sum_comm]
+      apply Finset.sum_congr rfl
+      intro j hj
+      apply Finset.sum_congr rfl
+      intro i hi
+      ring
+    _ = ∑ j : Fin 3, (∑ i : Fin 3, v i ^ 2) * (v j * q j) := by
+      apply Finset.sum_congr rfl
+      intro j hj
+      rw [← Finset.sum_mul]
+      apply congrArg (fun a : ℝ => a * (v j * q j))
+      apply Finset.sum_congr rfl
+      intro i hi
+      ring
+    _ = _ := by rw [Finset.mul_sum]
+
 /-- The smooth energy test density is the sum of its base density and a total derivative. -/
 theorem smoothEnergyTestIntegrand_eq_base_add_totalDerivative
     {u : Vec3 × ℝ → Vec3} {R G : Vec3 × ℝ → Fin 3 → Fin 3 → ℝ}
@@ -484,7 +563,8 @@ theorem smoothEnergyTestIntegrand_eq_base_add_totalDerivative
         dirDeriv ψ (spatialDir j) z * velocitySq u z * u z j
           + ψ z * dirDeriv (velocitySq u) (spatialDir j) z * u z j
           + ψ z * velocitySq u z * G z j j := by
-    have hleft : ContDiff ℝ (1 : ℕ∞) (fun y => ψ y * velocitySq u y) := hψ1.mul hq1
+    have hleft : ContDiff ℝ (1 : ℕ∞) (fun y => ψ y * velocitySq u y) :=
+      hψ1.mul hq1
     rw [dirDeriv_mul hleft (hu1 j) (spatialDir j) z,
       dirDeriv_mul hψ1 hq1 (spatialDir j) z, hgrad z hz j j]
     ring
@@ -501,23 +581,8 @@ theorem smoothEnergyTestIntegrand_eq_base_add_totalDerivative
       ∑ i : Fin 3, ∑ j : Fin 3,
         u z i * u z j * (u z i * dirDeriv ψ (spatialDir j) z) =
       velocitySq u z * (∑ j : Fin 3, u z j * dirDeriv ψ (spatialDir j) z) := by
-    calc
-      _ = ∑ j : Fin 3, ∑ i : Fin 3,
-          (u z i * u z i) * (u z j * dirDeriv ψ (spatialDir j) z) := by
-        rw [Finset.sum_comm]
-        apply Finset.sum_congr rfl
-        intro j hj
-        apply Finset.sum_congr rfl
-        intro i hi
-        ring
-      _ = ∑ j : Fin 3,
-          (velocitySq u z) * (u z j * dirDeriv ψ (spatialDir j) z) := by
-        apply Finset.sum_congr rfl
-        intro j hj
-        unfold velocitySq
-        rw [← Finset.sum_mul]
-      _ = velocitySq u z * (∑ j : Fin 3, u z j * dirDeriv ψ (spatialDir j) z) := by
-        rw [← Finset.mul_sum]
+    rw [smoothEnergy_cubic_velocity_term]
+    simp only [velocitySq, pow_two]
   have hconvG :
       2 * ψ z * (∑ i : Fin 3, ∑ j : Fin 3, u z i * u z j * G z i j) =
         ψ z * (∑ j : Fin 3, u z j * dirDeriv (velocitySq u) (spatialDir j) z) := by
@@ -551,51 +616,17 @@ theorem smoothEnergyTestIntegrand_eq_base_add_totalDerivative
         apply Finset.sum_congr rfl
         intro j hj
         rw [hqSpatial j]
-  have hdivTerm :
-      velocitySq u z * ψ z * (∑ i : Fin 3, G z i i) = 0 := by
-    rw [hdiv z hz]
-    ring
+  have hdivTerm := smoothEnergy_divergence_scalar_zero
+    (fun i => G z i i) (velocitySq u z) (ψ z) (hdiv z hz)
   have hconvU :
       -(2 * ∑ i : Fin 3, ∑ j : Fin 3,
         u z i * u z j * (u z i * dirDeriv ψ (spatialDir j) z + ψ z * G z i j)) =
       -2 * velocitySq u z * (∑ j : Fin 3, u z j * dirDeriv ψ (spatialDir j) z)
         - ψ z * (∑ j : Fin 3, u z j * dirDeriv (velocitySq u) (spatialDir j) z) := by
-    have hsplit :
-        ∑ i : Fin 3, ∑ j : Fin 3,
-          u z i * u z j * (u z i * dirDeriv ψ (spatialDir j) z + ψ z * G z i j) =
-          (∑ i : Fin 3, ∑ j : Fin 3,
-            u z i * u z j * (u z i * dirDeriv ψ (spatialDir j) z))
-            + ψ z * (∑ i : Fin 3, ∑ j : Fin 3, u z i * u z j * G z i j) := by
-      calc
-        _ = (∑ i : Fin 3, ∑ j : Fin 3,
-              u z i * u z j * (u z i * dirDeriv ψ (spatialDir j) z))
-            + ∑ i : Fin 3, ∑ j : Fin 3,
-              u z i * u z j * (ψ z * G z i j) := by
-          simp_rw [mul_add, Finset.sum_add_distrib]
-        _ = (∑ i : Fin 3, ∑ j : Fin 3,
-              u z i * u z j * (u z i * dirDeriv ψ (spatialDir j) z))
-            + ψ z * (∑ i : Fin 3, ∑ j : Fin 3,
-              u z i * u z j * G z i j) := by
-          congr 1
-          calc
-            (∑ i : Fin 3, ∑ j : Fin 3,
-                u z i * u z j * (ψ z * G z i j)) =
-              ∑ i : Fin 3, ∑ j : Fin 3,
-                ψ z * (u z i * u z j * G z i j) := by
-              apply Finset.sum_congr rfl
-              intro i hi
-              apply Finset.sum_congr rfl
-              intro j hj
-              ring
-            _ = ψ z * (∑ i : Fin 3, ∑ j : Fin 3,
-                u z i * u z j * G z i j) := by
-              calc
-                _ = ∑ i : Fin 3, ψ z *
-                    (∑ j : Fin 3, u z i * u z j * G z i j) := by
-                  apply Finset.sum_congr rfl
-                  intro i hi
-                  rw [← Finset.mul_sum]
-                _ = _ := by rw [← Finset.mul_sum]
+    have hsplit := smoothEnergy_sum_mul_add_factor
+      (fun i j => u z i * u z j)
+      (fun i j => u z i * dirDeriv ψ (spatialDir j) z)
+      (G z) (ψ z)
     rw [hsplit, hquad]
     calc
       -(2 * (velocitySq u z * (∑ j : Fin 3,
@@ -613,42 +644,9 @@ theorem smoothEnergyTestIntegrand_eq_base_add_totalDerivative
       (∑ j : Fin 3,
         dirDeriv (velocitySq u) (spatialDir j) z * dirDeriv ψ (spatialDir j) z)
         + 2 * ψ z * (∑ i : Fin 3, ∑ j : Fin 3, G z i j * G z i j) := by
-    have hsplit :
-        ∑ i : Fin 3, ∑ j : Fin 3,
-          G z i j * (u z i * dirDeriv ψ (spatialDir j) z + ψ z * G z i j) =
-          (∑ i : Fin 3, ∑ j : Fin 3,
-            G z i j * (u z i * dirDeriv ψ (spatialDir j) z))
-            + ψ z * (∑ i : Fin 3, ∑ j : Fin 3, G z i j * G z i j) := by
-      calc
-        _ = (∑ i : Fin 3, ∑ j : Fin 3,
-              G z i j * (u z i * dirDeriv ψ (spatialDir j) z))
-            + ∑ i : Fin 3, ∑ j : Fin 3,
-              G z i j * (ψ z * G z i j) := by
-          simp_rw [mul_add, Finset.sum_add_distrib]
-        _ = (∑ i : Fin 3, ∑ j : Fin 3,
-              G z i j * (u z i * dirDeriv ψ (spatialDir j) z))
-            + ψ z * (∑ i : Fin 3, ∑ j : Fin 3,
-              G z i j * G z i j) := by
-          congr 1
-          calc
-            (∑ i : Fin 3, ∑ j : Fin 3,
-                G z i j * (ψ z * G z i j)) =
-              ∑ i : Fin 3, ∑ j : Fin 3,
-                ψ z * (G z i j * G z i j) := by
-              apply Finset.sum_congr rfl
-              intro i hi
-              apply Finset.sum_congr rfl
-              intro j hj
-              ring
-            _ = ψ z * (∑ i : Fin 3, ∑ j : Fin 3,
-                G z i j * G z i j) := by
-              calc
-                _ = ∑ i : Fin 3, ψ z *
-                    (∑ j : Fin 3, G z i j * G z i j) := by
-                  apply Finset.sum_congr rfl
-                  intro i hi
-                  rw [← Finset.mul_sum]
-                _ = _ := by rw [← Finset.mul_sum]
+    have hsplit := smoothEnergy_sum_mul_add_factor
+      (G z) (fun i j => u z i * dirDeriv ψ (spatialDir j) z)
+      (G z) (ψ z)
     rw [hsplit]
     calc
       2 * ((∑ i : Fin 3, ∑ j : Fin 3,
@@ -658,34 +656,12 @@ theorem smoothEnergyTestIntegrand_eq_base_add_totalDerivative
             G z i j * (u z i * dirDeriv ψ (spatialDir j) z)) +
           2 * ψ z * (∑ i : Fin 3, ∑ j : Fin 3, G z i j * G z i j) := by ring
       _ = _ := by rw [hviscG]
-  have hpressure :
-      ∑ i : Fin 3, p z *
-        (2 * (u z i * dirDeriv ψ (spatialDir i) z + ψ z * G z i i)) =
-        2 * p z * (∑ i : Fin 3, u z i * dirDeriv ψ (spatialDir i) z) := by
-    calc
-      _ = ∑ i : Fin 3,
-          (2 * p z * (u z i * dirDeriv ψ (spatialDir i) z) +
-            (2 * p z * ψ z) * G z i i) := by
-        apply Finset.sum_congr rfl
-        intro i hi
-        ring
-      _ = 2 * p z * (∑ i : Fin 3, u z i * dirDeriv ψ (spatialDir i) z)
-          + (2 * p z * ψ z) * (∑ i : Fin 3, G z i i) := by
-        rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum]
-      _ = 2 * p z * (∑ i : Fin 3, u z i * dirDeriv ψ (spatialDir i) z) := by
-        rw [hdiv z hz]
-        ring
-  have hstressSplit :
-      ∑ i : Fin 3, ∑ j : Fin 3,
-        (u z i * u z j + R z i j) *
-          (u z i * dirDeriv ψ (spatialDir j) z + ψ z * G z i j) =
-      (∑ i : Fin 3, ∑ j : Fin 3,
-        u z i * u z j *
-          (u z i * dirDeriv ψ (spatialDir j) z + ψ z * G z i j)) +
-      (∑ i : Fin 3, ∑ j : Fin 3,
-        R z i j *
-          (u z i * dirDeriv ψ (spatialDir j) z + ψ z * G z i j)) := by
-    simp_rw [add_mul, Finset.sum_add_distrib]
+  have hpressure := smoothEnergy_pressure_trace_term
+    (u z) (fun i => dirDeriv ψ (spatialDir i) z) (fun i => G z i i)
+    (p z) (ψ z) (hdiv z hz)
+  have hstressSplit := smoothEnergy_stress_sum_split
+    (fun i j => u z i * u z j) (R z)
+    (fun i j => u z i * dirDeriv ψ (spatialDir j) z) (G z) (ψ z)
   have hfluxVelocity :
       ∑ j : Fin 3,
         dirDeriv ψ (spatialDir j) z * velocitySq u z * u z j =
@@ -710,12 +686,8 @@ theorem smoothEnergyTestIntegrand_eq_base_add_totalDerivative
         intro j hj
         ring
       _ = _ := by rw [← Finset.mul_sum]
-  have hfluxDivergence :
-      ∑ j : Fin 3, ψ z * velocitySq u z * G z j j = 0 := by
-    calc
-      _ = ψ z * velocitySq u z * (∑ j : Fin 3, G z j j) := by
-        rw [← Finset.mul_sum]
-      _ = 0 := by rw [hdiv z hz]; ring
+  have hfluxDivergence : (∑ j : Fin 3, ψ z * velocitySq u z * G z j j) = 0 := by
+    rw [← Finset.mul_sum, hdiv z hz, mul_zero]
   have hlaplacianFlux :
       velocitySq u z * (∑ j : Fin 3,
         dirDeriv (fun y => dirDeriv ψ (spatialDir j) y) (spatialDir j) z) =

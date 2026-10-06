@@ -8,6 +8,12 @@ module
 
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupPressureDecay
 
+/-!
+# Blowup Pressure Remainder
+
+Pressure bounds and convergence estimates for the rescaled sequence.
+-/
+
 public section
 
 open MeasureTheory Set Filter CKN CKN.Foundation.Parabolic

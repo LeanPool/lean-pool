@@ -188,7 +188,7 @@ theorem vorticityTestTimeDerivative_tsupport
   have hcomp : (show Vec3 × ℝ from z) ∉
       tsupport (fun w : Vec3 × ℝ => ψ w i) := by
     intro hi
-    have hsub := CKN.tsupport_component_subset (V := Vec3) (ι := Fin 3)
+    have hsub := CKN.tsupport_component_subset (ι := Fin 3)
       ψ i (by intro y hy; simp [hy])
     exact hnot (hsub hi)
   have hzero := CKN.timePartial_eq_zero_off_tsupport hcomp
@@ -208,7 +208,7 @@ theorem vorticityTestLaplacian_tsupport
   have hcomp : (show Vec3 × ℝ from z) ∉
       tsupport (fun w : Vec3 × ℝ => ψ w i) := by
     intro hi
-    have hsub := CKN.tsupport_component_subset (V := Vec3) (ι := Fin 3)
+    have hsub := CKN.tsupport_component_subset (ι := Fin 3)
       ψ i (by intro y hy; simp [hy])
     exact hnot (hsub hi)
   simp only [vorticityTestLaplacian, CKN.spatialSecondPartial]
@@ -272,7 +272,7 @@ theorem vorticityTestCurl_tsupport_subset
     intro i
     have hcomp (k : Fin 3) : z ∉ tsupport (fun w : Vec3 × ℝ => ψ w k) := by
       intro hk
-      have hsub := CKN.tsupport_component_subset (V := Vec3) (ι := Fin 3)
+      have hsub := CKN.tsupport_component_subset (ι := Fin 3)
         ψ k (by intro y hy; simp [hy])
       exact hz (hsub hk)
     have hpartial (k l : Fin 3) : vorticityTestPartial

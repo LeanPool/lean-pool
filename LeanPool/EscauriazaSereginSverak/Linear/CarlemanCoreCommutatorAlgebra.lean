@@ -26,9 +26,12 @@ noncomputable section
 
 namespace ESS
 
-local instance carlemanCoreCommutatorAlgebraNormedAddCommGroup : NormedAddCommGroup ParabolicPoint :=
+/-- The product norm on parabolic space-time used in this identity. -/
+local instance carlemanCoreCommutatorAlgebraNormedAddCommGroup :
+    NormedAddCommGroup ParabolicPoint :=
   carlemanProductNormedAddCommGroup
 
+/-- The real scalar action compatible with the product norm on parabolic space-time. -/
 local instance carlemanCoreCommutatorAlgebraNormedSpace : NormedSpace ℝ ParabolicPoint :=
   carlemanProductNormedSpace
 

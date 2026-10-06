@@ -80,7 +80,7 @@ theorem lps_finite_relative_energy_zero
         ENNReal.ofReal (vec3EuclideanNorm (u (x, t))) ^ s) ^
           ((2 * s / (s - 3)) / s)) < ⊤)
     (hEnergyEquality : ∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
-      (∫ x : Vec3, ∑ k : Fin 3, u (x,t) k * u (x,t) k) -
+      (∫ x : Vec3, ∑ k : Fin 3, u (x, t) k * u (x, t) k) -
           (∫ x : Vec3, ∑ k : Fin 3, a x k * a x k) =
         -2 * ∫ z in spaceTimeSet Set.univ (Ioo 0 t),
           ∑ k : Fin 3, ∑ j : Fin 3, Du z k j * Du z k j) :
@@ -88,9 +88,9 @@ theorem lps_finite_relative_energy_zero
       lpsComparisonDistanceSq u v t = 0 := by
   let ell : ℝ := 2 * s / (s - 3)
   let m : ℝ → ℝ := fun t =>
-    (eLpNorm (fun x : Vec3 => vec3EuclideanNorm (u (x,t)))
+    (eLpNorm (fun x : Vec3 => vec3EuclideanNorm (u (x, t)))
       (ENNReal.ofReal s) volume).toReal ^ ell
-  let K : ℝ := lps_power_young_coefficient (3 / s) *
+  let K : ℝ := lpsPowerYoungCoefficient (3 / s) *
     (9 * ((6 : ℝ) * gagliardoNirenbergSobolevConstant.toReal) ^ (3 / s)) ^ ell
   have hs0 : 0 < s := by linarith only [hs]
   have hθ0 : 0 < 3 / s := div_pos (by norm_num) hs0
@@ -100,7 +100,7 @@ theorem lps_finite_relative_energy_zero
   have hell : ell = 2 * s / (s - 3) := rfl
   have hK : 0 ≤ K := by
     dsimp [K, ell]
-    unfold lps_power_young_coefficient
+    unfold lpsPowerYoungCoefficient
     positivity
   have hCrossPack := lps_finite_relative_cross_identity
     hULH hVLH hU hV hs hmix
@@ -123,46 +123,46 @@ theorem lps_finite_relative_energy_zero
       with t hBu_t hBv_t hu hv
     have hu2 := hu.1
     have hv2 := hv.1
-    have hUsq : Integrable (fun x : Vec3 => ∑ k : Fin 3, u (x,t) k ^ 2) volume :=
+    have hUsq : Integrable (fun x : Vec3 => ∑ k : Fin 3, u (x, t) k ^ 2) volume :=
       integrable_finsetSum _ fun k _ =>
         ((hu2.eval k).integrable_mul (hu2.eval k)).congr
           (Eventually.of_forall fun x => by simp [pow_two])
-    have hVsq : Integrable (fun x : Vec3 => ∑ k : Fin 3, v (x,t) k ^ 2) volume :=
+    have hVsq : Integrable (fun x : Vec3 => ∑ k : Fin 3, v (x, t) k ^ 2) volume :=
       integrable_finsetSum _ fun k _ =>
         ((hv2.eval k).integrable_mul (hv2.eval k)).congr
           (Eventually.of_forall fun x => by simp [pow_two])
     have hRhsInt : Integrable (fun x : Vec3 =>
-        2 * (∑ k : Fin 3, v (x,t) k ^ 2) +
-          2 * (∑ k : Fin 3, u (x,t) k ^ 2)) volume :=
+        2 * (∑ k : Fin 3, v (x, t) k ^ 2) +
+          2 * (∑ k : Fin 3, u (x, t) k ^ 2)) volume :=
       (hVsq.const_mul 2).add (hUsq.const_mul 2)
     have hPoint (x : Vec3) :
-        (∑ k : Fin 3, (v (x,t) k - u (x,t) k) ^ 2) ≤
-          2 * (∑ k : Fin 3, v (x,t) k ^ 2) +
-            2 * (∑ k : Fin 3, u (x,t) k ^ 2) := by
+        (∑ k : Fin 3, (v (x, t) k - u (x, t) k) ^ 2) ≤
+          2 * (∑ k : Fin 3, v (x, t) k ^ 2) +
+            2 * (∑ k : Fin 3, u (x, t) k ^ 2) := by
       calc
         _ ≤ ∑ k : Fin 3,
-            (2 * v (x,t) k ^ 2 + 2 * u (x,t) k ^ 2) :=
+            (2 * v (x, t) k ^ 2 + 2 * u (x, t) k ^ 2) :=
           Finset.sum_le_sum fun k _ => by
-            nlinarith only [sq_nonneg (v (x,t) k + u (x,t) k)]
-        _ = (∑ k : Fin 3, 2 * v (x,t) k ^ 2) +
-              ∑ k : Fin 3, 2 * u (x,t) k ^ 2 := Finset.sum_add_distrib
+            nlinarith only [sq_nonneg (v (x, t) k + u (x, t) k)]
+        _ = (∑ k : Fin 3, 2 * v (x, t) k ^ 2) +
+              ∑ k : Fin 3, 2 * u (x, t) k ^ 2 := Finset.sum_add_distrib
         _ = _ := by rw [Finset.mul_sum, Finset.mul_sum]
     have hIntegral := integral_mono_of_nonneg
       (Eventually.of_forall fun x => Finset.sum_nonneg fun k _ => sq_nonneg _)
       hRhsInt (Eventually.of_forall hPoint)
     have hExpand :
-        (∫ x : Vec3, 2 * (∑ k : Fin 3, v (x,t) k ^ 2) +
-          2 * (∑ k : Fin 3, u (x,t) k ^ 2)) =
-          2 * (∫ x : Vec3, ∑ k : Fin 3, v (x,t) k ^ 2) +
-            2 * (∫ x : Vec3, ∑ k : Fin 3, u (x,t) k ^ 2) := by
+        (∫ x : Vec3, 2 * (∑ k : Fin 3, v (x, t) k ^ 2) +
+          2 * (∑ k : Fin 3, u (x, t) k ^ 2)) =
+          2 * (∫ x : Vec3, ∑ k : Fin 3, v (x, t) k ^ 2) +
+            2 * (∫ x : Vec3, ∑ k : Fin 3, u (x, t) k ^ 2) := by
       rw [integral_add (hVsq.const_mul 2) (hUsq.const_mul 2),
         integral_const_mul, integral_const_mul]
     change (∫ x : Vec3, ∑ k : Fin 3,
-      (v (x,t) k - u (x,t) k) ^ 2) ≤ 2 * Bu + 2 * Bv
+      (v (x, t) k - u (x, t) k) ^ 2) ≤ 2 * Bu + 2 * Bv
     rw [hExpand] at hIntegral
     calc
-      _ ≤ 2 * (∫ x : Vec3, ∑ k : Fin 3, v (x,t) k ^ 2) +
-          2 * (∫ x : Vec3, ∑ k : Fin 3, u (x,t) k ^ 2) := hIntegral
+      _ ≤ 2 * (∫ x : Vec3, ∑ k : Fin 3, v (x, t) k ^ 2) +
+          2 * (∫ x : Vec3, ∑ k : Fin 3, u (x, t) k ^ 2) := hIntegral
       _ ≤ 2 * Bv + 2 * Bu := by gcongr
       _ = 2 * Bu + 2 * Bv := by ring
   have hDistanceMeas := serrin_distance_aestronglyMeasurable hU hV
@@ -189,7 +189,7 @@ theorem lps_finite_relative_energy_zero
     have hprod := hm'.mul_bdd hE' hDistanceBoundNorm
     exact hprod
   have hEnergyInequality : ∀ᵐ t ∂(volume.restrict (Ioo 0 T)),
-      (∫ x : Vec3, ∑ k : Fin 3, v (x,t) k * v (x,t) k) ≤
+      (∫ x : Vec3, ∑ k : Fin 3, v (x, t) k * v (x, t) k) ≤
         (∫ x : Vec3, ∑ k : Fin 3, a x k * a x k) -
           2 * ∫ z in spaceTimeSet Set.univ (Ioo 0 t),
             ∑ k : Fin 3, ∑ j : Fin 3, Dv z k j * Dv z k j := by

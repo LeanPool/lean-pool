@@ -29,6 +29,71 @@ namespace ESS
 
 noncomputable section
 
+private theorem vorticityEnergy_density_hasDerivAt
+    {z : Vec3 × ℝ → Vec3}
+    (hzcomp : ∀ i : Fin 3, ContDiff ℝ (⊤ : ℕ∞)
+      (fun w : Vec3 × ℝ => z w i)) (t : ℝ) (x : Vec3) :
+    HasDerivAt (fun s => ∑ i : Fin 3, (z (x, s) i) ^ 2)
+      (2 * ∑ i : Fin 3,
+        CKN.timePartial (fun w : Vec3 × ℝ => z w i) (x, t) * z (x, t) i) t := by
+  have htime (i : Fin 3) : HasDerivAt (fun s : ℝ => z (x, s) i)
+      (CKN.timePartial (fun w : Vec3 × ℝ => z w i) (x, t)) t := by
+    have hslice : ContDiff ℝ (⊤ : ℕ∞) (fun s : ℝ => z (x, s) i) :=
+      (hzcomp i).comp (contDiff_const.prodMk contDiff_id)
+    have hd := (hslice.differentiable (by simp) t).hasDerivAt
+    have hcoeff : deriv (fun s : ℝ => z (x, s) i) t =
+        CKN.timePartial (fun w : Vec3 × ℝ => z w i) (x, t) := by
+      unfold CKN.timePartial
+      exact (fderiv_apply_one_eq_deriv).symm
+    convert hd using 1
+    exact hcoeff.symm
+  have hpow (i : Fin 3) : HasDerivAt
+      (fun s : ℝ => (z (x, s) i) ^ 2)
+      (2 * CKN.timePartial (fun w : Vec3 × ℝ => z w i) (x, t) * z (x, t) i) t := by
+    convert (htime i).pow 2 using 1
+    simp [mul_comm, mul_left_comm, mul_assoc]
+  have hsum := HasDerivAt.fun_sum (u := Finset.univ) (fun i hi => hpow i)
+  have hsumEq : (∑ i : Fin 3, 2 * CKN.timePartial
+      (fun w : Vec3 × ℝ => z w i) (x, t) * z (x, t) i) =
+      2 * ∑ i : Fin 3,
+        CKN.timePartial (fun w : Vec3 × ℝ => z w i) (x, t) * z (x, t) i := by
+    calc
+      _ = ∑ i : Fin 3, 2 *
+          (CKN.timePartial (fun w : Vec3 × ℝ => z w i) (x, t) * z (x, t) i) := by
+        apply Finset.sum_congr rfl
+        intro i hi
+        ring
+      _ = _ := by rw [Finset.mul_sum]
+  convert hsum using 1
+  exact hsumEq.symm
+
+private theorem vorticityEnergy_densityDerivative_continuous
+    {z : Vec3 × ℝ → Vec3}
+    (hzcomp : ∀ i : Fin 3, ContDiff ℝ (⊤ : ℕ∞)
+      (fun w : Vec3 × ℝ => z w i)) :
+    Continuous (Function.uncurry (fun (t : ℝ) (x : Vec3) =>
+      2 * ∑ i : Fin 3,
+        CKN.timePartial (fun w : Vec3 × ℝ => z w i) (x, t) * z (x, t) i)) := by
+  have hswap : ContDiff ℝ (⊤ : ℕ∞)
+      (fun p : ℝ × Vec3 => (p.2, p.1)) := contDiff_snd.prodMk contDiff_fst
+  have h : ContDiff ℝ (⊤ : ℕ∞) (Function.uncurry (fun (t : ℝ) (x : Vec3) =>
+      2 * ∑ i : Fin 3,
+        CKN.timePartial (fun w : Vec3 × ℝ => z w i) (x, t) * z (x, t) i)) := by
+    have htime (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
+        (fun w : Vec3 × ℝ => CKN.timePartial (fun y : Vec3 × ℝ => z y i) w) :=
+      CKN.contDiff_timePartial (hzcomp i)
+    have hsum : ContDiff ℝ (⊤ : ℕ∞) (fun p : ℝ × Vec3 =>
+        ∑ i : Fin 3,
+          CKN.timePartial (fun w : Vec3 × ℝ => z w i) (p.2, p.1) * z (p.2, p.1) i) := by
+      apply ContDiff.sum (s := Finset.univ)
+      intro i hi
+      exact ((htime i).comp hswap).mul ((hzcomp i).comp hswap)
+    change ContDiff ℝ (⊤ : ℕ∞) (fun p : ℝ × Vec3 =>
+      2 * ∑ i : Fin 3,
+        CKN.timePartial (fun w : Vec3 × ℝ => z w i) (p.2, p.1) * z (p.2, p.1) i)
+    exact contDiff_const.mul hsum
+  exact h.continuous
+
 private theorem vorticityEnergy_integrable_of_compact_space_support
     {K : Set Vec3} (hK : IsCompact K)
     {F : ℝ → Vec3 → ℝ} (hF : Continuous (Function.uncurry F))
@@ -93,12 +158,12 @@ private theorem vorticityEnergy_hasDerivAt_integral_of_compact_space_support
     exact (integrableOn_const hK.measure_ne_top).integrable_indicator hK.measurableSet
   have hFslice (s : ℝ) : Continuous (F s) := by
     convert hF.comp (continuous_const.prodMk continuous_id) using 1
-    ext x
-    rfl
+    · ext x
+      rfl
   have hF'slice (s : ℝ) : Continuous (F' s) := by
     convert hF'.comp (continuous_const.prodMk continuous_id) using 1
-    ext x
-    rfl
+    · ext x
+      rfl
   have hresult := hasDerivAt_integral_of_dominated_loc_of_deriv_le
     (Metric.ball_mem_nhds t zero_lt_one)
     (Filter.Eventually.of_forall fun s => (hFslice s).aestronglyMeasurable)
@@ -200,24 +265,7 @@ theorem smoothVorticityEnergyGronwall
       exact ((hzcomp i).comp hswap).pow 2
     exact h.continuous
   have hDEcont : Continuous (Function.uncurry DE) := by
-    have htime (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
-        (fun w : Vec3 × ℝ =>
-          CKN.timePartial (fun y : Vec3 × ℝ => z y i) w) :=
-      CKN.contDiff_timePartial (hzcomp i)
-    have h : ContDiff ℝ (⊤ : ℕ∞) (Function.uncurry DE) := by
-      have hsum : ContDiff ℝ (⊤ : ℕ∞) (fun p : ℝ × Vec3 =>
-          ∑ i : Fin 3,
-            CKN.timePartial (fun w : Vec3 × ℝ => z w i) (p.2, p.1) *
-              z (p.2, p.1) i) := by
-        apply ContDiff.sum (s := Finset.univ)
-        intro i hi
-        exact ((htime i).comp hswap).mul ((hzcomp i).comp hswap)
-      change ContDiff ℝ (⊤ : ℕ∞) (fun p : ℝ × Vec3 =>
-        2 * ∑ i : Fin 3,
-          CKN.timePartial (fun w : Vec3 × ℝ => z w i) (p.2, p.1) *
-            z (p.2, p.1) i)
-      exact contDiff_const.mul hsum
-    exact h.continuous
+    simpa [DE] using vorticityEnergy_densityDerivative_continuous hzcomp
   have hDcont : Continuous (Function.uncurry D) := by
     have hgrad (i j : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
         (fun w : Vec3 × ℝ =>
@@ -297,40 +345,7 @@ theorem smoothVorticityEnergyGronwall
     simp
   have hEderiv : ∀ t x, HasDerivAt (fun s => E s x) (DE t x) t := by
     intro t x
-    have htime (i : Fin 3) : HasDerivAt (fun s : ℝ => z (x, s) i)
-        (CKN.timePartial (fun w : Vec3 × ℝ => z w i) (x, t)) t := by
-      have hslice : ContDiff ℝ (⊤ : ℕ∞) (fun s : ℝ => z (x, s) i) := by
-        exact (hzcomp i).comp (contDiff_const.prodMk contDiff_id)
-      have hd := (hslice.differentiable (by simp) t).hasDerivAt
-      have hcoeff : deriv (fun s : ℝ => z (x, s) i) t =
-          CKN.timePartial (fun w : Vec3 × ℝ => z w i) (x, t) := by
-        unfold CKN.timePartial
-        exact (fderiv_apply_one_eq_deriv).symm
-      convert hd using 1
-      exact hcoeff.symm
-    have hpow (i : Fin 3) : HasDerivAt
-        (fun s : ℝ => (z (x, s) i) ^ 2)
-        (2 * CKN.timePartial (fun w : Vec3 × ℝ => z w i) (x, t) * z (x, t) i) t := by
-      convert (htime i).pow 2 using 1; simp [mul_comm, mul_left_comm, mul_assoc]
-    have hsum := HasDerivAt.fun_sum (u := Finset.univ) (fun i hi => hpow i)
-    have hsumEq : (∑ i : Fin 3, 2 * CKN.timePartial
-        (fun w : Vec3 × ℝ => z w i) (x, t) * z (x, t) i) =
-        2 * ∑ i : Fin 3,
-          CKN.timePartial (fun w : Vec3 × ℝ => z w i) (x, t) * z (x, t) i := by
-      calc
-        _ = ∑ i : Fin 3, 2 *
-            (CKN.timePartial (fun w : Vec3 × ℝ => z w i) (x, t) * z (x, t) i) := by
-          apply Finset.sum_congr rfl
-          intro i hi
-          ring
-        _ = _ := by rw [Finset.mul_sum]
-    have hsum' : HasDerivAt
-        (fun s => ∑ i : Fin 3, (z (x, s) i) ^ 2)
-        (2 * ∑ i : Fin 3,
-          CKN.timePartial (fun w : Vec3 × ℝ => z w i) (x, t) * z (x, t) i) t := by
-      convert hsum using 1
-      exact hsumEq.symm
-    simpa [E, DE] using hsum'
+    simpa [E, DE] using vorticityEnergy_density_hasDerivAt hzcomp t x
   have he : Continuous (fun t => ∫ x : Vec3, E t x) :=
     vorticityEnergy_continuous_integral_of_compact_space_support hK hEcont hEzero
   have hde : Continuous (fun t => ∫ x : Vec3, DE t x) :=

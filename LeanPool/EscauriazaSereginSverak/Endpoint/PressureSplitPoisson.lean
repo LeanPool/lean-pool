@@ -13,6 +13,12 @@ public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupRieszProductTest
 public import LeanPool.CaffarelliKohnNirenberg.ClassEquivalence.MomentumIntegrand
 public import LeanPool.CaffarelliKohnNirenberg.ClassEquivalence.DivergenceFreeIntegrand
 
+/-!
+# Pressure Split Poisson
+
+The decomposition of pressure into local Poisson and harmonic parts.
+-/
+
 public section
 
 open MeasureTheory Set Filter
@@ -94,6 +100,293 @@ private theorem pressureSplit_hessianWeight_memLp
     ring
   exact (memLp_congr_ae hEq).2 hmem
 
+private theorem setIntegral_neg_sub_add_sub
+    {α : Type} [MeasurableSpace α] {μ : Measure α} {S : Set α}
+    {A B C D : α → ℝ} (hA : IntegrableOn A S μ)
+    (hB : IntegrableOn B S μ) (hC : IntegrableOn C S μ)
+    (hD : IntegrableOn D S μ) :
+    (∫ z in S, (-A z - B z + C z - D z) ∂μ) =
+      -(∫ z in S, A z ∂μ) - ∫ z in S, B z ∂μ +
+        ∫ z in S, C z ∂μ - ∫ z in S, D z ∂μ := by
+  calc
+    _ = (∫ z in S, (-A z - B z + C z) ∂μ) - ∫ z in S, D z ∂μ :=
+      integral_sub ((hA.neg.sub hB).add hC) hD
+    _ = ((∫ z in S, -A z ∂μ) - ∫ z in S, B z ∂μ) +
+          ∫ z in S, C z ∂μ - ∫ z in S, D z ∂μ := by
+      have hsum := integral_add (hA.neg.sub hB) hC
+      have hsub := integral_sub hA.neg hB
+      exact congrArg (fun a => a - ∫ z in S, D z ∂μ)
+        (hsum.trans (congrArg (fun a => a + ∫ z in S, C z ∂μ) hsub))
+    _ = _ := by rw [integral_neg]
+
+private theorem pressureSplit_testTerms_zero_off_support
+    (u : ParabolicPoint → Vec3) (Du : ParabolicPoint → Fin 3 → Vec3)
+    (p : ParabolicPoint → ℝ) (φ : ParabolicPoint → Vec3)
+    (φP : Vec3 × ℝ → Vec3) (K : Set ParabolicPoint)
+    (hK_eq : K = tsupport φP)
+    (hcomponent_prod_eq : ∀ i : Fin 3,
+      (fun z : Vec3 × ℝ => φ z i) = fun z => φP z i) :
+    let T : ParabolicPoint → ℝ := fun z =>
+      ∑ i : Fin 3, u z i * timePartial (fun y => φ y i) z
+    let N : ParabolicPoint → ℝ := fun z =>
+      ∑ i : Fin 3, ∑ j : Fin 3,
+        u z i * u z j * spatialPartial (fun y => φ y i) j z
+    let V : ParabolicPoint → ℝ := fun z =>
+      ∑ i : Fin 3, ∑ j : Fin 3,
+        Du z i j * spatialPartial (fun y => φ y i) j z
+    let P : ParabolicPoint → ℝ := fun z =>
+      p z * ∑ i : Fin 3, spatialPartial (fun y => φ y i) i z
+    (∀ z, z ∉ K → T z = 0) ∧ (∀ z, z ∉ K → N z = 0) ∧
+      (∀ z, z ∉ K → V z = 0) ∧ (∀ z, z ∉ K → P z = 0) := by
+  let T : ParabolicPoint → ℝ := fun z =>
+    ∑ i : Fin 3, u z i * timePartial (fun y => φ y i) z
+  let N : ParabolicPoint → ℝ := fun z =>
+    ∑ i : Fin 3, ∑ j : Fin 3,
+      u z i * u z j * spatialPartial (fun y => φ y i) j z
+  let V : ParabolicPoint → ℝ := fun z =>
+    ∑ i : Fin 3, ∑ j : Fin 3,
+      Du z i j * spatialPartial (fun y => φ y i) j z
+  let P : ParabolicPoint → ℝ := fun z =>
+    p z * ∑ i : Fin 3, spatialPartial (fun y => φ y i) i z
+  have hnotTest (z : ParabolicPoint) (hz : z ∉ K) :
+      (show Vec3 × ℝ from z) ∉ tsupport φP := by
+    have hz' : z ∉ tsupport φP := by rw [← hK_eq]; exact hz
+    exact hz'
+  have hTzero (z : ParabolicPoint) (hz : z ∉ K) : T z = 0 := by
+    have hcomp (i : Fin 3) :
+        (show Vec3 × ℝ from z) ∉ tsupport (fun y : Vec3 × ℝ => φP y i) := by
+      intro hi
+      exact hnotTest z hz
+        (CKN.tsupport_component_subset (ι := Fin 3) φP i
+          (by intro y hy; simp [hy]) hi)
+    have hcomp' (i : Fin 3) : (show Vec3 × ℝ from z) ∉
+        tsupport (fun y : Vec3 × ℝ => φ y i) := by
+      rw [hcomponent_prod_eq i]
+      exact hcomp i
+    simp only [T]
+    apply Finset.sum_eq_zero
+    intro i hi
+    have hzero := CKN.timePartial_eq_zero_off_tsupport
+      (ψ := fun y : Vec3 × ℝ => φ y i) (hcomp' i)
+    have hzero' : timePartial (fun y : Vec3 × ℝ => φ y i)
+        (show Vec3 × ℝ from z) = 0 := hzero
+    change u z i * timePartial (fun y : Vec3 × ℝ => φ y i)
+        (show Vec3 × ℝ from z) = 0
+    rw [hzero', mul_zero]
+  have hNzero (z : ParabolicPoint) (hz : z ∉ K) : N z = 0 := by
+    have hcomp (i : Fin 3) :
+        (show Vec3 × ℝ from z) ∉ tsupport (fun y : Vec3 × ℝ => φP y i) := by
+      intro hi
+      exact hnotTest z hz
+        (CKN.tsupport_component_subset (ι := Fin 3) φP i
+          (by intro y hy; simp [hy]) hi)
+    have hcomp' (i : Fin 3) : (show Vec3 × ℝ from z) ∉
+        tsupport (fun y : Vec3 × ℝ => φ y i) := by
+      rw [hcomponent_prod_eq i]
+      exact hcomp i
+    simp only [N]
+    apply Finset.sum_eq_zero
+    intro i hi
+    apply Finset.sum_eq_zero
+    intro j hj
+    have hzero := CKN.spatialPartial_eq_zero_off_tsupport
+      (ψ := fun y : Vec3 × ℝ => φ y i) (hcomp' i) j
+    have hzero' : spatialPartial (fun y : Vec3 × ℝ => φ y i) j
+        (show Vec3 × ℝ from z) = 0 := hzero
+    change u z i * u z j * spatialPartial (fun y : Vec3 × ℝ => φ y i) j
+        (show Vec3 × ℝ from z) = 0
+    rw [hzero', mul_zero]
+  have hVzero (z : ParabolicPoint) (hz : z ∉ K) : V z = 0 := by
+    have hcomp (i : Fin 3) :
+        (show Vec3 × ℝ from z) ∉ tsupport (fun y : Vec3 × ℝ => φP y i) := by
+      intro hi
+      exact hnotTest z hz
+        (CKN.tsupport_component_subset (ι := Fin 3) φP i
+          (by intro y hy; simp [hy]) hi)
+    have hcomp' (i : Fin 3) : (show Vec3 × ℝ from z) ∉
+        tsupport (fun y : Vec3 × ℝ => φ y i) := by
+      rw [hcomponent_prod_eq i]
+      exact hcomp i
+    simp only [V]
+    apply Finset.sum_eq_zero
+    intro i hi
+    apply Finset.sum_eq_zero
+    intro j hj
+    have hzero := CKN.spatialPartial_eq_zero_off_tsupport
+      (ψ := fun y : Vec3 × ℝ => φ y i) (hcomp' i) j
+    have hzero' : spatialPartial (fun y : Vec3 × ℝ => φ y i) j
+        (show Vec3 × ℝ from z) = 0 := hzero
+    change Du z i j * spatialPartial (fun y : Vec3 × ℝ => φ y i) j
+        (show Vec3 × ℝ from z) = 0
+    rw [hzero', mul_zero]
+  have hPzero (z : ParabolicPoint) (hz : z ∉ K) : P z = 0 := by
+    have hcomp (i : Fin 3) :
+        (show Vec3 × ℝ from z) ∉ tsupport (fun y : Vec3 × ℝ => φP y i) := by
+      intro hi
+      exact hnotTest z hz
+        (CKN.tsupport_component_subset (ι := Fin 3) φP i
+          (by intro y hy; simp [hy]) hi)
+    have hcomp' : ∀ i : Fin 3, (show Vec3 × ℝ from z) ∉
+        tsupport (fun y : Vec3 × ℝ => φ y i) := by
+      intro i
+      rw [hcomponent_prod_eq i]
+      exact hcomp i
+    simp only [P]
+    have hsum : (∑ i : Fin 3,
+        spatialPartial (fun y : ParabolicPoint => φ y i) i z) = 0 := by
+      apply Finset.sum_eq_zero
+      intro i hi
+      exact CKN.spatialPartial_eq_zero_off_tsupport (hcomp' i) i
+    rw [hsum, mul_zero]
+  exact ⟨hTzero, hNzero, hVzero, hPzero⟩
+
+private theorem pressureSplit_viscous_product_integral
+    {Du : ParabolicPoint → Fin 3 → Vec3}
+    {ψ : Vec3 → ℝ} {θ : ℝ → ℝ}
+    (hpartialProd : ∀ i j : Fin 3, ∀ z : Vec3 × ℝ,
+      spatialPartial (fun y : ParabolicPoint =>
+        CKN.pressureTestParabolic ψ θ y i) j (parabolicHomeomorph.symm z) =
+          θ z.2 * CKN.mixedSecond ψ j i z.1) :
+    (∫ z in pressureSplitProductDomain,
+      ∑ i : Fin 3, ∑ j : Fin 3,
+        Du (parabolicHomeomorph.symm z) i j *
+          spatialPartial (fun y : ParabolicPoint =>
+            CKN.pressureTestParabolic ψ θ y i) j (parabolicHomeomorph.symm z)) =
+      ∫ z in pressureSplitProductDomain,
+        ∑ i : Fin 3, ∑ j : Fin 3,
+          Du (parabolicHomeomorph.symm z) i j *
+            (θ z.2 * CKN.mixedSecond ψ j i z.1) := by
+  apply integral_congr_ae
+  filter_upwards [ae_restrict_mem pressureSplit_productDomain_measurable]
+    with z hz
+  apply Finset.sum_congr rfl
+  intro i hi
+  apply Finset.sum_congr rfl
+  intro j hj
+  rw [hpartialProd i j z]
+
+private theorem pressureSplit_pressure_trace_product_integral
+    {p : ParabolicPoint → ℝ} {ψ : Vec3 → ℝ} {θ : ℝ → ℝ}
+    (hpartialProd : ∀ i j : Fin 3, ∀ z : Vec3 × ℝ,
+      spatialPartial (fun y : ParabolicPoint =>
+        CKN.pressureTestParabolic ψ θ y i) j (parabolicHomeomorph.symm z) =
+          θ z.2 * CKN.mixedSecond ψ j i z.1) :
+    (∫ z in pressureSplitProductDomain,
+      p (parabolicHomeomorph.symm z) *
+        ∑ i : Fin 3, spatialPartial (fun y : ParabolicPoint =>
+          CKN.pressureTestParabolic ψ θ y i) i (parabolicHomeomorph.symm z)) =
+      ∫ z in pressureSplitProductDomain,
+        p (parabolicHomeomorph.symm z) *
+          (θ z.2 * CKN.spatialLaplacian ψ z.1) := by
+  apply integral_congr_ae
+  filter_upwards [ae_restrict_mem pressureSplit_productDomain_measurable]
+    with z hz
+  have htrace :
+      (∑ i : Fin 3, spatialPartial (fun y : ParabolicPoint =>
+        CKN.pressureTestParabolic ψ θ y i) i (parabolicHomeomorph.symm z)) =
+        θ z.2 * CKN.spatialLaplacian ψ z.1 := by
+    calc
+      _ = ∑ i : Fin 3, θ z.2 * CKN.mixedSecond ψ i i z.1 := by
+        apply Finset.sum_congr rfl
+        intro i hi
+        exact hpartialProd i i z
+      _ = θ z.2 * CKN.spatialLaplacian ψ z.1 := by
+        rw [← Finset.mul_sum]
+        rfl
+  rw [htrace]
+
+private theorem pressureSplitTensor_eq_on_productDomain
+    {u : ParabolicPoint → Vec3} (z : Vec3 × ℝ)
+    (hz : z ∈ pressureSplitProductDomain) (i j : Fin 3) :
+    pressureSplitTensor u i j z =
+      u (parabolicHomeomorph.symm z) i * u (parabolicHomeomorph.symm z) j := by
+  have hin : parabolicHomeomorph.symm z ∈ pressureSplitDomain := by
+    change (parabolicHomeomorph.symm z).1 ∈ pressureSplitBall ∧
+      (parabolicHomeomorph.symm z).2 ∈ pressureSplitTime
+    change z.1 ∈ pressureSplitBall ∧ z.2 ∈ pressureSplitTime at hz
+    simpa only [parabolicHomeomorph_symm_apply] using hz
+  unfold pressureSplitTensor
+  change pressureSplitDomain.indicator
+    (fun q : ParabolicPoint => u q i * u q j) (parabolicHomeomorph.symm z) = _
+  rw [Set.indicator_of_mem hin]
+
+private theorem pressureSplit_nonlinear_product_integral
+    {u : ParabolicPoint → Vec3} {ψ : Vec3 → ℝ} {θ : ℝ → ℝ}
+    (hF : ∀ i j : Fin 3,
+      MemLp (pressureSplitTensor u i j) (ENNReal.ofReal (3 / 2 : ℝ))
+        (volume : Measure (Vec3 × ℝ)))
+    (hψ : ContDiff ℝ (⊤ : ℕ∞) ψ) (hψc : HasCompactSupport ψ)
+    (hθ : ContDiff ℝ (⊤ : ℕ∞) θ) (hθc : HasCompactSupport θ)
+    (hpartialProd : ∀ i j : Fin 3, ∀ z : Vec3 × ℝ,
+      spatialPartial (fun y : ParabolicPoint =>
+        CKN.pressureTestParabolic ψ θ y i) j (parabolicHomeomorph.symm z) =
+          θ z.2 * CKN.mixedSecond ψ j i z.1)
+    (hsource : ∀ z : Vec3 × ℝ, z ∈ pressureSplitProductDomain →
+      ∀ i j : Fin 3, pressureSplitTensor u i j z =
+        u (parabolicHomeomorph.symm z) i * u (parabolicHomeomorph.symm z) j)
+    {Nprod : Vec3 × ℝ → ℝ}
+    (hNprod : ∀ z, Nprod z = ∑ i : Fin 3, ∑ j : Fin 3,
+      u (parabolicHomeomorph.symm z) i * u (parabolicHomeomorph.symm z) j *
+        spatialPartial (fun y : ParabolicPoint =>
+          CKN.pressureTestParabolic ψ θ y i) j (parabolicHomeomorph.symm z)) :
+    (∫ z in pressureSplitProductDomain, Nprod z) =
+      ∑ i : Fin 3, ∑ j : Fin 3,
+        ∫ z in pressureSplitProductDomain,
+          pressureSplitTensor u i j z *
+            (θ z.2 * CKN.mixedSecond ψ j i z.1) := by
+  have : Fact (1 ≤ ENNReal.ofReal (3 / 2 : ℝ)) := ⟨by norm_num⟩
+  have : Fact (1 ≤ ENNReal.ofReal (3 : ℝ)) := ⟨by norm_num⟩
+  have hHolder : (3 / 2 : ℝ).HolderConjugate 3 := by
+    rw [Real.holderConjugate_iff]
+    norm_num
+  let : (ENNReal.ofReal (3 / 2 : ℝ)).HolderConjugate
+      (ENNReal.ofReal (3 : ℝ)) := Real.HolderConjugate.ennrealOfReal hHolder
+  have htermLp (i j : Fin 3) : IntegrableOn
+      (fun z : Vec3 × ℝ => pressureSplitTensor u i j z *
+        (θ z.2 * CKN.mixedSecond ψ j i z.1))
+      pressureSplitProductDomain (volume : Measure (Vec3 × ℝ)) := by
+    have hglobal := (hF i j).integrable_mul
+      (pressureSplit_hessianWeight_memLp hψ hψc hθ hθc j i)
+    exact hglobal.integrableOn
+  have hsumIntegral :
+      (∫ z in pressureSplitProductDomain,
+        ∑ i : Fin 3, ∑ j : Fin 3,
+          pressureSplitTensor u i j z *
+            (θ z.2 * CKN.mixedSecond ψ j i z.1)) =
+      ∑ i : Fin 3, ∑ j : Fin 3,
+        ∫ z in pressureSplitProductDomain,
+          pressureSplitTensor u i j z *
+            (θ z.2 * CKN.mixedSecond ψ j i z.1) := by
+    rw [integral_finsetSum Finset.univ (fun i hi => by
+      change Integrable (fun z : Vec3 × ℝ =>
+        ∑ j : Fin 3, pressureSplitTensor u i j z *
+          (θ z.2 * CKN.mixedSecond ψ j i z.1))
+        ((volume : Measure (Vec3 × ℝ)).restrict pressureSplitProductDomain)
+      exact integrable_finsetSum Finset.univ (fun j hj => htermLp i j))]
+    apply Finset.sum_congr rfl
+    intro i hi
+    exact integral_finsetSum Finset.univ (fun j hj => htermLp i j)
+  have hpoint : ∀ᵐ z ∂((volume : Measure (Vec3 × ℝ)).restrict
+      pressureSplitProductDomain),
+      Nprod z = ∑ i : Fin 3, ∑ j : Fin 3,
+        pressureSplitTensor u i j z *
+          (θ z.2 * CKN.mixedSecond ψ j i z.1) := by
+    filter_upwards [ae_restrict_mem pressureSplit_productDomain_measurable]
+      with z hz
+    rw [hNprod]
+    apply Finset.sum_congr rfl
+    intro i hi
+    apply Finset.sum_congr rfl
+    intro j hj
+    rw [hpartialProd i j z, hsource z hz i j]
+  calc
+    (∫ z in pressureSplitProductDomain, Nprod z) =
+        ∫ z in pressureSplitProductDomain,
+          ∑ i : Fin 3, ∑ j : Fin 3,
+            pressureSplitTensor u i j z *
+              (θ z.2 * CKN.mixedSecond ψ j i z.1) := integral_congr_ae hpoint
+    _ = _ := hsumIntegral
+
 /-- Testing the weak momentum equation with a compactly supported spatial
 gradient gives the pressure Poisson identity in the source cylinder. -/
 theorem pressureSplit_momentum_poisson
@@ -173,17 +466,6 @@ theorem pressureSplit_momentum_poisson
     funext y
     have h := congrFun hφeq y
     simpa only [parabolicHomeomorph_symm_apply] using congrArg (fun w : Vec3 => w i) h
-  have hnotTest (z : ParabolicPoint) (hz : z ∉ K) :
-      (show Vec3 × ℝ from z) ∉ tsupport φP := by
-    have hz' : z ∉ tsupport φP := by
-      rw [← hK_eq]
-      exact hz
-    exact hz'
-  have hcomponent_eq (i : Fin 3) :
-      (fun z : Vec3 × ℝ => φ (parabolicHomeomorph.symm z) i) =
-        (fun z => φP z i) := by
-    funext z
-    exact congrArg (fun w : Vec3 => w i) (congrFun hφeq z)
   have hpartial (i j : Fin 3) (z : ParabolicPoint) :
       spatialPartial (fun y : ParabolicPoint => φ y i) j z =
         θ z.2 * CKN.mixedSecond ψ j i z.1 := by
@@ -206,92 +488,12 @@ theorem pressureSplit_momentum_poisson
       Du z i j * spatialPartial (fun y => φ y i) j z
   let P : ParabolicPoint → ℝ := fun z =>
     p z * ∑ i : Fin 3, spatialPartial (fun y => φ y i) i z
-  have hTzero (z : ParabolicPoint) (hz : z ∉ K) : T z = 0 := by
-    have hcomp (i : Fin 3) :
-        (show Vec3 × ℝ from z) ∉ tsupport (fun y : Vec3 × ℝ => φP y i) := by
-      intro hi
-      exact hnotTest z hz
-        (CKN.tsupport_component_subset (V := Vec3) (ι := Fin 3) φP i
-          (by intro y hy; simp [hy]) hi)
-    have hcomp' (i : Fin 3) : (show Vec3 × ℝ from z) ∉
-        tsupport (fun y : Vec3 × ℝ => φ y i) := by
-      rw [hcomponent_prod_eq i]
-      exact hcomp i
-    simp only [T]
-    apply Finset.sum_eq_zero
-    intro i hi
-    have hzero := CKN.timePartial_eq_zero_off_tsupport
-      (ψ := fun y : Vec3 × ℝ => φ y i) (hcomp' i)
-    have hzero' : timePartial (fun y : Vec3 × ℝ => φ y i)
-        (show Vec3 × ℝ from z) = 0 := hzero
-    change u z i * timePartial (fun y : Vec3 × ℝ => φ y i)
-        (show Vec3 × ℝ from z) = 0
-    rw [hzero', mul_zero]
-  have hNzero (z : ParabolicPoint) (hz : z ∉ K) : N z = 0 := by
-    have hcomp (i : Fin 3) :
-        (show Vec3 × ℝ from z) ∉ tsupport (fun y : Vec3 × ℝ => φP y i) := by
-      intro hi
-      exact hnotTest z hz
-        (CKN.tsupport_component_subset (V := Vec3) (ι := Fin 3) φP i
-          (by intro y hy; simp [hy]) hi)
-    have hcomp' (i : Fin 3) : (show Vec3 × ℝ from z) ∉
-        tsupport (fun y : Vec3 × ℝ => φ y i) := by
-      rw [hcomponent_prod_eq i]
-      exact hcomp i
-    simp only [N]
-    apply Finset.sum_eq_zero
-    intro i hi
-    apply Finset.sum_eq_zero
-    intro j hj
-    have hzero := CKN.spatialPartial_eq_zero_off_tsupport
-      (ψ := fun y : Vec3 × ℝ => φ y i) (hcomp' i) j
-    have hzero' : spatialPartial (fun y : Vec3 × ℝ => φ y i) j
-        (show Vec3 × ℝ from z) = 0 := hzero
-    change u z i * u z j * spatialPartial (fun y : Vec3 × ℝ => φ y i) j
-        (show Vec3 × ℝ from z) = 0
-    rw [hzero', mul_zero]
-  have hVzero (z : ParabolicPoint) (hz : z ∉ K) : V z = 0 := by
-    have hcomp (i : Fin 3) :
-        (show Vec3 × ℝ from z) ∉ tsupport (fun y : Vec3 × ℝ => φP y i) := by
-      intro hi
-      exact hnotTest z hz
-        (CKN.tsupport_component_subset (V := Vec3) (ι := Fin 3) φP i
-          (by intro y hy; simp [hy]) hi)
-    have hcomp' (i : Fin 3) : (show Vec3 × ℝ from z) ∉
-        tsupport (fun y : Vec3 × ℝ => φ y i) := by
-      rw [hcomponent_prod_eq i]
-      exact hcomp i
-    simp only [V]
-    apply Finset.sum_eq_zero
-    intro i hi
-    apply Finset.sum_eq_zero
-    intro j hj
-    have hzero := CKN.spatialPartial_eq_zero_off_tsupport
-      (ψ := fun y : Vec3 × ℝ => φ y i) (hcomp' i) j
-    have hzero' : spatialPartial (fun y : Vec3 × ℝ => φ y i) j
-        (show Vec3 × ℝ from z) = 0 := hzero
-    change Du z i j * spatialPartial (fun y : Vec3 × ℝ => φ y i) j
-        (show Vec3 × ℝ from z) = 0
-    rw [hzero', mul_zero]
-  have hPzero (z : ParabolicPoint) (hz : z ∉ K) : P z = 0 := by
-    have hcomp (i : Fin 3) :
-        (show Vec3 × ℝ from z) ∉ tsupport (fun y : Vec3 × ℝ => φP y i) := by
-      intro hi
-      exact hnotTest z hz
-        (CKN.tsupport_component_subset (V := Vec3) (ι := Fin 3) φP i
-          (by intro y hy; simp [hy]) hi)
-    have hcomp' : ∀ i : Fin 3, (show Vec3 × ℝ from z) ∉
-        tsupport (fun y : Vec3 × ℝ => φ y i) := by
-      intro i
-      rw [hcomponent_prod_eq i]
-      exact hcomp i
-    simp only [P]
-    have hsum : (∑ i : Fin 3,
-        spatialPartial (fun y : ParabolicPoint => φ y i) i z) = 0 := by
-      apply Finset.sum_eq_zero
-      intro i hi
-      exact CKN.spatialPartial_eq_zero_off_tsupport (hcomp' i) i
-    rw [hsum, mul_zero]
+  have hoff := pressureSplit_testTerms_zero_off_support
+    u Du p φ φP K hK_eq hcomponent_prod_eq
+  have hTzero := hoff.1
+  have hNzero := hoff.2.1
+  have hVzero := hoff.2.2.1
+  have hPzero := hoff.2.2.2
   have hT_K := CKN.momentum_timeTerm_integrableOn_of_data
     hdata hKcompact hKsubset hφP
   have hN_K := CKN.momentum_nonlinearTerm_integrableOn_of_data
@@ -375,167 +577,30 @@ theorem pressureSplit_momentum_poisson
       _ = ∫ z in pressureSplitDomain, -T z - N z + V z - P z := hconvert.symm
       _ = 0 := hsource
       _ = _ := rfl
-  have hlinear :
-      (∫ z in pressureSplitProductDomain,
-        (-(Tprod z) - Nprod z + Vprod z - Pprod z)) =
-      (-(∫ z in pressureSplitProductDomain, Tprod z)
-          - (∫ z in pressureSplitProductDomain, Nprod z)
-          + (∫ z in pressureSplitProductDomain, Vprod z)
-          - (∫ z in pressureSplitProductDomain, Pprod z)) := by
-    have hsub :
-        (∫ z in pressureSplitProductDomain, -Tprod z - Nprod z) =
-          -(∫ z in pressureSplitProductDomain, Tprod z) -
-            ∫ z in pressureSplitProductDomain, Nprod z := by
-      calc
-        _ = (∫ z in pressureSplitProductDomain, -Tprod z) -
-              ∫ z in pressureSplitProductDomain, Nprod z :=
-          integral_sub hTprod.neg hNprod
-        _ = _ := by rw [integral_neg]
-    have hadd :
-        (∫ z in pressureSplitProductDomain,
-          (-Tprod z - Nprod z) + Vprod z) =
-          (∫ z in pressureSplitProductDomain, -Tprod z - Nprod z) +
-            ∫ z in pressureSplitProductDomain, Vprod z :=
-      integral_add (hTprod.neg.sub hNprod) hVprod
-    calc
-      _ = (∫ z in pressureSplitProductDomain,
-          (-Tprod z - Nprod z + Vprod z) - Pprod z) := rfl
-      _ = (∫ z in pressureSplitProductDomain,
-            (-Tprod z - Nprod z) + Vprod z) -
-              ∫ z in pressureSplitProductDomain, Pprod z :=
-        integral_sub ((hTprod.neg.sub hNprod).add hVprod) hPprod
-      _ = _ := by rw [hadd, hsub]
-  have hNproduct :
-      (∫ z in pressureSplitProductDomain, Nprod z) =
-        ∑ i : Fin 3, ∑ j : Fin 3,
-          ∫ z in pressureSplitProductDomain,
-            pressureSplitTensor u i j z *
-              (θ z.2 * CKN.mixedSecond ψ j i z.1) := by
-    have : Fact (1 ≤ ENNReal.ofReal (3 / 2 : ℝ)) := ⟨by norm_num⟩
-    have : Fact (1 ≤ ENNReal.ofReal (3 : ℝ)) := ⟨by norm_num⟩
-    have hHolder : (3 / 2 : ℝ).HolderConjugate 3 := by
-      rw [Real.holderConjugate_iff]
-      norm_num
-    let : (ENNReal.ofReal (3 / 2 : ℝ)).HolderConjugate
-        (ENNReal.ofReal (3 : ℝ)) := Real.HolderConjugate.ennrealOfReal hHolder
-    have hF := pressureSplitRieszInput_memLp hu hDu henergy hL3 hgrad
-    have htermLp (i j : Fin 3) : IntegrableOn
-        (fun z : Vec3 × ℝ => pressureSplitTensor u i j z *
-          (θ z.2 * CKN.mixedSecond ψ j i z.1))
-        pressureSplitProductDomain (volume : Measure (Vec3 × ℝ)) := by
-      have hglobal := (hF i j).integrable_mul
-        (pressureSplit_hessianWeight_memLp hψ hψc hθ hθc j i)
-      exact hglobal.integrableOn
-    have hsumIntegral :
-        (∫ z in pressureSplitProductDomain,
-          ∑ i : Fin 3, ∑ j : Fin 3,
-            pressureSplitTensor u i j z *
-              (θ z.2 * CKN.mixedSecond ψ j i z.1)) =
-        ∑ i : Fin 3, ∑ j : Fin 3,
-          ∫ z in pressureSplitProductDomain,
-            pressureSplitTensor u i j z *
-              (θ z.2 * CKN.mixedSecond ψ j i z.1) := by
-      rw [integral_finsetSum Finset.univ (fun i hi => by
-        change Integrable (fun z : Vec3 × ℝ =>
-          ∑ j : Fin 3, pressureSplitTensor u i j z *
-            (θ z.2 * CKN.mixedSecond ψ j i z.1))
-          ((volume : Measure (Vec3 × ℝ)).restrict pressureSplitProductDomain)
-        exact integrable_finsetSum Finset.univ (fun j hj => htermLp i j))]
-      apply Finset.sum_congr rfl
-      intro i hi
-      exact integral_finsetSum Finset.univ (fun j hj => htermLp i j)
-    have hsource (z : Vec3 × ℝ) (hz : z ∈ pressureSplitProductDomain)
-        (i j : Fin 3) : pressureSplitTensor u i j z =
-          u (parabolicHomeomorph.symm z) i * u (parabolicHomeomorph.symm z) j := by
-      have hin : parabolicHomeomorph.symm z ∈
-          pressureSplitDomain := by
-        change (parabolicHomeomorph.symm z).1 ∈ pressureSplitBall ∧
-          (parabolicHomeomorph.symm z).2 ∈ pressureSplitTime
-        change z.1 ∈ pressureSplitBall ∧ z.2 ∈ pressureSplitTime at hz
-        simpa only [parabolicHomeomorph_symm_apply] using hz
-      unfold pressureSplitTensor
-      change pressureSplitDomain.indicator
-        (fun q : ParabolicPoint => u q i * u q j)
-        (parabolicHomeomorph.symm z) = _
-      rw [Set.indicator_of_mem hin]
-    have hpoint : ∀ᵐ z ∂((volume : Measure (Vec3 × ℝ)).restrict
-        pressureSplitProductDomain),
-        Nprod z = ∑ i : Fin 3, ∑ j : Fin 3,
-          pressureSplitTensor u i j z *
-            (θ z.2 * CKN.mixedSecond ψ j i z.1) := by
-      filter_upwards [ae_restrict_mem pressureSplit_productDomain_measurable]
-        with z hz
-      simp only [Nprod, N]
-      apply Finset.sum_congr rfl
-      intro i hi
-      apply Finset.sum_congr rfl
-      intro j hj
-      rw [hpartialProd i j z, hsource z hz i j]
-    calc
-      (∫ z in pressureSplitProductDomain, Nprod z) =
-          ∫ z in pressureSplitProductDomain,
-            ∑ i : Fin 3, ∑ j : Fin 3,
-              pressureSplitTensor u i j z *
-                (θ z.2 * CKN.mixedSecond ψ j i z.1) :=
-        integral_congr_ae hpoint
-      _ = _ := hsumIntegral
+  have hlinear := setIntegral_neg_sub_add_sub hTprod hNprod hVprod hPprod
+  have hNproduct := pressureSplit_nonlinear_product_integral
+    (hF := pressureSplitRieszInput_memLp hu hDu henergy hL3 hgrad)
+    hψ hψc hθ hθc hpartialProd
+    pressureSplitTensor_eq_on_productDomain
+    (fun z => rfl)
   have hPproduct :
       (∫ z in pressureSplitProductDomain, Pprod z) =
         ∫ z in pressureSplitProductDomain,
           p (parabolicHomeomorph.symm z) *
             (θ z.2 * CKN.spatialLaplacian ψ z.1) := by
-    apply integral_congr_ae
-    filter_upwards [ae_restrict_mem pressureSplit_productDomain_measurable]
-      with z hz
-    dsimp only [Pprod, P]
-    have htrace :
-        (∑ i : Fin 3, spatialPartial (fun y : ParabolicPoint => φ y i) i
-          (parabolicHomeomorph.symm z)) =
-        θ z.2 * CKN.spatialLaplacian ψ z.1 := by
-      calc
-        _ = ∑ i : Fin 3, θ z.2 * CKN.mixedSecond ψ i i z.1 := by
-          apply Finset.sum_congr rfl
-          intro i hi
-          exact hpartialProd i i z
-        _ = θ z.2 * CKN.spatialLaplacian ψ z.1 := by
-          rw [← Finset.mul_sum]
-          rfl
-    rw [htrace]
-  have hNsum :
-      (∫ z in pressureSplitProductDomain, Nprod z) =
-        ∑ i : Fin 3, ∑ j : Fin 3,
-          ∫ z in pressureSplitProductDomain,
-            pressureSplitTensor u i j z *
-              (θ z.2 * CKN.mixedSecond ψ j i z.1) := hNproduct
-  have hPsum :
-      (∫ z in pressureSplitProductDomain, Pprod z) =
-        ∫ z in pressureSplitProductDomain,
-          p (parabolicHomeomorph.symm z) *
-            (θ z.2 * CKN.spatialLaplacian ψ z.1) := hPproduct
+    simpa [Pprod, P, φ] using
+      pressureSplit_pressure_trace_product_integral hpartialProd
   have hEq : (∫ z in pressureSplitProductDomain, Pprod z) =
       -(∫ z in pressureSplitProductDomain, Nprod z) := by
     have h := hMomentumProduct
     rw [hlinear] at h
     have hVprodZero : ∫ z in pressureSplitProductDomain, Vprod z = 0 := by
-      calc
-        (∫ z in pressureSplitProductDomain, Vprod z) =
-            ∫ z in pressureSplitProductDomain,
-              ∑ i : Fin 3, ∑ j : Fin 3,
-                Du (parabolicHomeomorph.symm z) i j *
-                  (θ z.2 * CKN.mixedSecond ψ j i z.1) := by
-          apply integral_congr_ae
-          filter_upwards [ae_restrict_mem pressureSplit_productDomain_measurable]
-            with z hz
-          dsimp only [Vprod, V]
-          apply Finset.sum_congr rfl
-          intro i hi
-          apply Finset.sum_congr rfl
-          intro j hj
-          rw [hpartialProd i j z]
-        _ = 0 := hviscousZero
+      simpa only [Vprod, V, φ] using
+        (pressureSplit_viscous_product_integral (Du := Du) hpartialProd).trans
+          hviscousZero
     rw [htimeZero, hVprodZero] at h
     linarith only [h]
-  rw [hPsum, hNsum] at hEq
+  rw [hPproduct, hNproduct] at hEq
   exact hEq
 
 end ESS

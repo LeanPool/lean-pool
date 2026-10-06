@@ -20,7 +20,9 @@ Real-valued integral summation for the finite space-time covers used in
 public section
 
 
-open MeasureTheory Set Classical
+open MeasureTheory Set
+
+attribute [local instance] Classical.propDecidable
 open CKN CKN.Foundation.Parabolic
 
 noncomputable section

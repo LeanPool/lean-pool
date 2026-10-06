@@ -42,6 +42,89 @@ private def halfSpaceGradientWeight (a α : ℝ) (z : Vec3 × ℝ) : ℝ :=
 private def productFieldToParabolic (v : Vec3 × ℝ → Vec3) : ParabolicPoint → Vec3 :=
   fun p => v (p.1, p.2)
 
+private theorem smooth_halfspace_product_estimate
+    (α a₀ c a : ℝ) (ha : a₀ < a)
+    (hSmooth : ∀ a : ℝ, a₀ < a → ∀ v : ParabolicPoint → Vec3,
+      v ∈ spaceTimeTestFunction (V := Vec3) {x : Vec3 | 1 < x 2} (Ioo 0 1) →
+      (∫ z in spaceTimeSet {x : Vec3 | 1 < x 2} (Ioo 0 1),
+        z.2 ^ 2 * Real.exp (2 * halfSpacePhase a α z) *
+          (a * vec3EuclideanNorm (v z) ^ 2 / z.2 ^ 2 +
+            spatialGradientSq v (spatialGradient v) z / z.2)) ≤
+      c * (∫ z in spaceTimeSet {x : Vec3 | 1 < x 2} (Ioo 0 1),
+        z.2 ^ 2 * Real.exp (2 * halfSpacePhase a α z) *
+          vec3EuclideanNorm (fun i => timePartial (fun y => v y i) z +
+            ∑ j, spatialSecondPartial (fun y => v y i) j j z) ^ 2))
+    (v : Vec3 × ℝ → Vec3)
+    (hv : v ∈ spaceTimeTestFunction (V := Vec3) {x : Vec3 | 1 < x 2} (Ioo 0 1)) :
+    (∫ z in {x : Vec3 | 1 < x 2} ×ˢ Ioo (0 : ℝ) 1,
+      halfSpaceMassWeight a α z * vec3EuclideanNorm (v z) ^ 2 +
+        halfSpaceGradientWeight a α z * spatialGradientSq v (spatialGradient v) z
+        ∂(volume : Measure (Vec3 × ℝ))) ≤
+      c * (∫ z in {x : Vec3 | 1 < x 2} ×ˢ Ioo (0 : ℝ) 1,
+        halfSpaceDensity a α z * vec3EuclideanNorm (fun i =>
+          timePartial (fun y => v y i) z +
+            ∑ j, spatialSecondPartial (fun y => v y i) j j z) ^ 2
+        ∂(volume : Measure (Vec3 × ℝ))) := by
+  have hΩ : IsOpen {x : Vec3 | 1 < x 2} :=
+    isOpen_lt continuous_const (continuous_apply 2)
+  have hI : IsOpen (Ioo (0 : ℝ) 1) := isOpen_Ioo
+  have htest : productFieldToParabolic v ∈ spaceTimeTestFunction (V := Vec3)
+      {x : Vec3 | 1 < x 2} (Ioo 0 1) := by
+    change (fun z : Vec3 × ℝ => v (z.1, z.2)) ∈
+      spaceTimeTestFunction (V := Vec3) {x : Vec3 | 1 < x 2} (Ioo 0 1)
+    simpa using hv
+  have hsmooth := hSmooth a ha (productFieldToParabolic v) htest
+  rw [setIntegral_parabolic_to_product] at hsmooth
+  rw [setIntegral_parabolic_to_product] at hsmooth
+  have hleft :
+      (∫ z in {x : Vec3 | 1 < x 2} ×ˢ Ioo (0 : ℝ) 1,
+        halfSpaceMassWeight a α z * vec3EuclideanNorm (v z) ^ 2 +
+          halfSpaceGradientWeight a α z * spatialGradientSq v (spatialGradient v) z
+          ∂(volume : Measure (Vec3 × ℝ))) =
+      ∫ z in {x : Vec3 | 1 < x 2} ×ˢ Ioo (0 : ℝ) 1,
+        (parabolicHomeomorph.symm z).2 ^ 2 *
+          Real.exp (2 * halfSpacePhase a α (parabolicHomeomorph.symm z)) *
+          (a * vec3EuclideanNorm (productFieldToParabolic v
+            (parabolicHomeomorph.symm z)) ^ 2 /
+            (parabolicHomeomorph.symm z).2 ^ 2 +
+            spatialGradientSq (productFieldToParabolic v)
+              (spatialGradient (productFieldToParabolic v))
+              (parabolicHomeomorph.symm z) /
+              (parabolicHomeomorph.symm z).2)
+        ∂(volume : Measure (Vec3 × ℝ)) := by
+    apply setIntegral_congr_ae (hΩ.prod hI).measurableSet
+    filter_upwards [] with z hz
+    rw [parabolicHomeomorph_symm_apply]
+    simp [halfSpaceMassWeight, halfSpaceGradientWeight, halfSpaceDensity,
+      halfSpacePhaseProduct, halfSpacePhase, productFieldToParabolic,
+      spatialGradientSq, spatialGradient, spatialPartial]
+    ring
+  have hright :
+      (∫ z in {x : Vec3 | 1 < x 2} ×ˢ Ioo (0 : ℝ) 1,
+        halfSpaceDensity a α z * vec3EuclideanNorm (fun i =>
+          timePartial (fun y => v y i) z +
+            ∑ j, spatialSecondPartial (fun y => v y i) j j z) ^ 2
+          ∂(volume : Measure (Vec3 × ℝ))) =
+      ∫ z in {x : Vec3 | 1 < x 2} ×ˢ Ioo (0 : ℝ) 1,
+        (parabolicHomeomorph.symm z).2 ^ 2 *
+          Real.exp (2 * halfSpacePhase a α (parabolicHomeomorph.symm z)) *
+          vec3EuclideanNorm (fun i =>
+            timePartial (fun y => productFieldToParabolic v y i)
+              (parabolicHomeomorph.symm z) +
+              ∑ j, spatialSecondPartial
+                (fun y => productFieldToParabolic v y i) j j
+                (parabolicHomeomorph.symm z)) ^ 2
+        ∂(volume : Measure (Vec3 × ℝ)) := by
+    apply setIntegral_congr_ae (hΩ.prod hI).measurableSet
+    filter_upwards [] with z hz
+    rw [parabolicHomeomorph_symm_apply]
+    simp [halfSpaceDensity, halfSpacePhaseProduct, halfSpacePhase,
+      productFieldToParabolic, timePartial, spatialSecondPartial, spatialPartial]
+  calc
+    _ = _ := hleft
+    _ ≤ c * _ := hsmooth
+    _ = _ := by rw [← hright]
+
 /-- A fixed smooth half-space Carleman constant passes unchanged to a
 compactly supported field with weak space-time derivatives. -/
 theorem bu_carleman_sobolev_halfspace_fixed
@@ -93,62 +176,7 @@ theorem bu_carleman_sobolev_halfspace_fixed
               ∑ j, spatialSecondPartial (fun y => v y i) j j z) ^ 2
             ∂(volume : Measure (Vec3 × ℝ))) := by
     intro v hv
-    have htest : productFieldToParabolic v ∈ spaceTimeTestFunction (V := Vec3)
-        {x : Vec3 | 1 < x 2} (Ioo 0 1) := by
-      change (fun z : Vec3 × ℝ => v (z.1, z.2)) ∈
-        spaceTimeTestFunction (V := Vec3) {x : Vec3 | 1 < x 2} (Ioo 0 1)
-      simpa using hv
-    have hsmooth := hSmooth a ha (productFieldToParabolic v) htest
-    rw [setIntegral_parabolic_to_product] at hsmooth
-    rw [setIntegral_parabolic_to_product] at hsmooth
-    have hleft :
-        (∫ z in {x : Vec3 | 1 < x 2} ×ˢ Ioo (0 : ℝ) 1,
-          σ z * vec3EuclideanNorm (v z) ^ 2 +
-            τ z * spatialGradientSq v (spatialGradient v) z
-            ∂(volume : Measure (Vec3 × ℝ))) =
-          ∫ z in {x : Vec3 | 1 < x 2} ×ˢ Ioo (0 : ℝ) 1,
-            (parabolicHomeomorph.symm z).2 ^ 2 *
-              Real.exp (2 * halfSpacePhase a α (parabolicHomeomorph.symm z)) *
-              (a * vec3EuclideanNorm (productFieldToParabolic v
-                (parabolicHomeomorph.symm z)) ^ 2 /
-                (parabolicHomeomorph.symm z).2 ^ 2 +
-                spatialGradientSq (productFieldToParabolic v)
-                  (spatialGradient (productFieldToParabolic v))
-                  (parabolicHomeomorph.symm z) /
-                  (parabolicHomeomorph.symm z).2)
-            ∂(volume : Measure (Vec3 × ℝ)) := by
-      apply setIntegral_congr_ae (hΩ.prod hI).measurableSet
-      filter_upwards [] with z hz
-      rw [parabolicHomeomorph_symm_apply]
-      simp [σ, τ, halfSpaceMassWeight, halfSpaceGradientWeight,
-        halfSpaceDensity, halfSpacePhaseProduct, halfSpacePhase,
-        productFieldToParabolic,
-        spatialGradientSq, spatialGradient, spatialPartial]
-      ring
-    have hright :
-        (∫ z in {x : Vec3 | 1 < x 2} ×ˢ Ioo (0 : ℝ) 1,
-          ρ z * vec3EuclideanNorm (fun i =>
-            timePartial (fun y => v y i) z +
-              ∑ j, spatialSecondPartial (fun y => v y i) j j z) ^ 2
-            ∂(volume : Measure (Vec3 × ℝ))) =
-          ∫ z in {x : Vec3 | 1 < x 2} ×ˢ Ioo (0 : ℝ) 1,
-            (parabolicHomeomorph.symm z).2 ^ 2 *
-              Real.exp (2 * halfSpacePhase a α (parabolicHomeomorph.symm z)) *
-              vec3EuclideanNorm (fun i =>
-                timePartial (fun y => productFieldToParabolic v y i)
-                  (parabolicHomeomorph.symm z) +
-                  ∑ j, spatialSecondPartial (fun y => productFieldToParabolic v y i) j j
-                    (parabolicHomeomorph.symm z)) ^ 2
-            ∂(volume : Measure (Vec3 × ℝ)) := by
-      apply setIntegral_congr_ae (hΩ.prod hI).measurableSet
-      filter_upwards [] with z hz
-      rw [parabolicHomeomorph_symm_apply]
-      simp [ρ, halfSpaceDensity, halfSpacePhaseProduct, halfSpacePhase,
-        productFieldToParabolic, timePartial, spatialSecondPartial, spatialPartial]
-    calc
-      _ = _ := hleft
-      _ ≤ c * _ := hsmooth
-      _ = _ := by rw [← hright]
+    exact smooth_halfspace_product_estimate α a₀ c a ha hSmooth v hv
   have hρcont : ContinuousOn ρ ({x : Vec3 | 1 < x 2} ×ˢ Ioo (0 : ℝ) 1) := by
     let U : Set (Vec3 × ℝ) := {x : Vec3 | 1 < x 2} ×ˢ Ioo (0 : ℝ) 1
     have hphase : ContinuousOn (halfSpacePhaseProduct a α) U := by

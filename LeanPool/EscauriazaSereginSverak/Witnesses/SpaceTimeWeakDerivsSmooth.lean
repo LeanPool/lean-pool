@@ -30,14 +30,17 @@ noncomputable section
 
 namespace ESS
 
+/-- The classical spatial derivative of each component of a space-time vector field. -/
 @[expose] def classicalSpatialDerivative (w : ParabolicPoint → Vec3) :
     ParabolicPoint → Fin 3 → Vec3 :=
   fun z i j => spatialPartial (fun y => w y i) j z
 
+/-- The classical second spatial derivatives of a space-time vector field. -/
 @[expose] def classicalSpatialSecondDerivative (w : ParabolicPoint → Vec3) :
     ParabolicPoint → Fin 3 → Fin 3 → Vec3 :=
   fun z i j k => spatialPartial (fun y => spatialPartial (fun x => w x i) j y) k z
 
+/-- The classical time derivative of each component of a space-time vector field. -/
 @[expose] def classicalTimeDerivative (w : ParabolicPoint → Vec3) :
     ParabolicPoint → Vec3 :=
   fun z i => timePartial (fun y => w y i) z

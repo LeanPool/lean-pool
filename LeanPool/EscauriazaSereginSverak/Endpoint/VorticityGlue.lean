@@ -103,7 +103,7 @@ theorem vorticityGlue_generic {D : Set (Vec3 × ℝ)} (hD : IsOpen D)
     rw [← integral_finsetSum _ fun i _ => hig i]
     refine integral_congr_ae (Eventually.of_forall fun y => ?_)
     have hy : ψ y = ∑ i ∈ s, φ i y := congrFun hdec y
-    show g y * ψ y = ∑ i ∈ s, g y * φ i y
+    change g y * ψ y = ∑ i ∈ s, g y * φ i y
     rw [hy, Finset.mul_sum]
   rw [e1, e2, ← Finset.sum_neg_distrib]
   refine Finset.sum_congr rfl fun i _ => ?_

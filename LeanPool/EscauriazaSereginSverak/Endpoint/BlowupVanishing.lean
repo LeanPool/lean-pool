@@ -89,12 +89,14 @@ theorem blowupUnitEnergy_tendsto_zero
       eLpNorm (fun z => vec3EuclideanNorm (v k z)) (3 : ℝ≥0∞)
         (volume.restrict (goodPointPastCylinder 0 0 1)) ^ (3 : ℝ))
       atTop (nhds 0) := by
-    simpa [Function.comp_def] using (ENNReal.continuous_rpow_const (y := (3 : ℝ))).continuousAt.tendsto.comp hV
+    simpa [Function.comp_def] using
+      (ENNReal.continuous_rpow_const (y := (3 : ℝ))).continuousAt.tendsto.comp hV
   have hPpow : Tendsto (fun k =>
       eLpNorm (p k) (3 / 2 : ℝ≥0∞)
         (volume.restrict (goodPointPastCylinder 0 0 1)) ^ (3 / 2 : ℝ))
       atTop (nhds 0) := by
-    simpa [Function.comp_def] using (ENNReal.continuous_rpow_const (y := (3 / 2 : ℝ))).continuousAt.tendsto.comp hP
+    simpa [Function.comp_def] using
+      (ENNReal.continuous_rpow_const (y := (3 / 2 : ℝ))).continuousAt.tendsto.comp hP
   have hsum := hVpow.add hPpow
   have heq : (fun k => goodPointEnergy (v k) (p k) 0 0 1) =
       (fun k =>

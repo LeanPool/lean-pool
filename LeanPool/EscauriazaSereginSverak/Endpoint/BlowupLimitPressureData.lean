@@ -26,85 +26,19 @@ noncomputable section
 
 namespace ESS
 
-/-- The local source hypotheses determine all pressure and velocity slice
-data needed for the blow-up estimates. -/
-theorem blowup_limit_pressure_split_data
-    {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin 3 → Vec3}
-    {p : ParabolicPoint → ℝ}
-    (hu : AEStronglyMeasurable u
-      (volume.restrict (spaceTimeSet (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0))))
-    (hDu : AEStronglyMeasurable Du
-      (volume.restrict (spaceTimeSet (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0))))
-    (hpmeas : AEStronglyMeasurable p
-      (volume.restrict (spaceTimeSet (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0))))
-    (hL2 : essSup (fun t : ℝ => ∫⁻ x in vec3Ball (0 : Vec3) 1,
-      ‖u (x,t)‖ₑ ^ (2 : ℝ)) (volume.restrict (Ioo (-1) 0)) < ⊤)
-    (henergy : (∫⁻ z in spaceTimeSet (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0),
-      ‖u z‖ₑ ^ (2 : ℝ) + ‖Du z‖ₑ ^ (2 : ℝ)) < ⊤)
-    (hp : MemLp p (ENNReal.ofReal (3 / 2 : ℝ))
-      (volume.restrict (spaceTimeSet (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0))))
-    (hL3 : essSup (fun t : ℝ => ∫⁻ x in vec3Ball (0 : Vec3) 1,
-      ENNReal.ofReal (vec3EuclideanNorm (u (x,t))) ^ (3 : ℝ))
-      (volume.restrict (Ioo (-1) 0)) < ⊤)
-    (hgrad : ∀ᵐ t ∂(volume.restrict (Ioo (-1) 0)), ∀ i : Fin 3,
-      HasWeakGradientOn (vec3Ball (0 : Vec3) 1) (fun x => u (x,t) i)
-        (fun x => Du (x,t) i))
-    (hS2 : ∀ ψ ∈ spaceTimeTestFunction (V := ℝ)
-        (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0),
-      ∫ z in spaceTimeSet (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0),
-        ∑ i : Fin 3, u z i * spatialPartial ψ i z = 0)
-    (hS3 : ∀ φ ∈ spaceTimeTestFunction (V := Vec3)
-        (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0),
-      ∫ z in spaceTimeSet (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0),
-        (-(∑ i : Fin 3, u z i * timePartial (fun y => φ y i) z)
-          - ∑ i : Fin 3, ∑ j : Fin 3,
-              u z i * u z j * spatialPartial (fun y => φ y i) j z
-          + ∑ i : Fin 3, ∑ j : Fin 3,
-              Du z i j * spatialPartial (fun y => φ y i) j z
-          - p z * ∑ i : Fin 3, spatialPartial (fun y => φ y i) i z
-          - ∑ i : Fin 3, ((0 : ParabolicPoint → Vec3) z i) * φ z i) = 0) :
-    let F := pressureSplitTensor u
-    let hF := pressureSplitTensor_memLp hu hDu henergy hL3 hgrad
-    let p₁ := pressureSplitRieszPressure F hF
-    let p₂ := pressureSplitRemainder p p₁
-    AEStronglyMeasurable p₁
-        (volume.restrict (Set.univ ×ˢ Ioo (-1 : ℝ) 0)) ∧
-      (∃ Mᵤ : ℝ≥0∞, Mᵤ < ⊤ ∧
-        ∀ᵐ s ∂volume.restrict (Ioo (-1 : ℝ) 0),
-          AEStronglyMeasurable (fun x : Vec3 =>
-            (goodPointDomain.indicator u) (x,s)) volume ∧
-          eLpNorm (fun x : Vec3 => vec3EuclideanNorm
-            ((goodPointDomain.indicator u) (x,s))) 3 volume ≤ Mᵤ) ∧
-      (∃ Mₚ : ℝ≥0∞, Mₚ < ⊤ ∧
-        ∀ᵐ s ∂volume.restrict (Ioo (-1 : ℝ) 0),
-          AEStronglyMeasurable (fun x : Vec3 => p₁ (x,s)) volume ∧
-          eLpNorm (fun x : Vec3 => p₁ (x,s)) (3 / 2 : ℝ≥0∞) volume ≤ Mₚ) ∧
-      MemLp (fun z : Vec3 × ℝ => p₂ (z.1,z.2)) (3 / 2 : ℝ≥0∞)
-        ((volume.restrict (CKN.euclideanBall 0 1)).prod
-          (volume.restrict (Ioo (-1 : ℝ) 0))) ∧
-      (∀ᵐ t ∂volume.restrict (Ioo (-1 : ℝ) 0),
-        CKN.Foundation.Heat.WeaklyHarmonicOn (CKN.euclideanBall 0 1)
-          (fun x : Vec3 => p₂ (x,t))) := by
-  dsimp only
-  let F : Fin 3 → Fin 3 → Vec3 × ℝ → ℝ := pressureSplitTensor u
-  let hF : ∀ i j, MemLp (F i j) (ENNReal.ofReal (3 / 2 : ℝ))
-      (volume : Measure (Vec3 × ℝ)) :=
-    pressureSplitTensor_memLp hu hDu henergy hL3 hgrad
-  let p₁ : ParabolicPoint → ℝ := pressureSplitRieszPressure F hF
-  let p₂ : ParabolicPoint → ℝ := pressureSplitRemainder p p₁
-  let P : Vec3 × ℝ → ℝ :=
-    CKN.Leray.rieszPressureSpaceTime (3 / 2 : ℝ) (by norm_num) F hF
-  have hPmeas : Measurable P :=
-    CKN.Leray.rieszPressureSpaceTime_measurable (3 / 2 : ℝ)
-      (by norm_num) F hF
-  have hp₁meas : Measurable p₁ := by
-    change Measurable (fun z : ParabolicPoint => P (parabolicHomeomorph z))
-    exact hPmeas.comp parabolicHomeomorph.measurable
+private theorem pressureSplit_source_velocity_slice_bound
+    {u : ParabolicPoint → Vec3}
+    (hFslice : ∀ᵐ s ∂volume.restrict pressureSplitTime,
+      MemLp (fun x : Vec3 => pressureSplitVelocityExtension u (x,s)) 3 volume ∧
+      eLpNorm (fun x : Vec3 => pressureSplitVelocityExtension u (x,s))
+        3 volume ≤ ENNReal.ofReal (pressureSplitVelocityLpBound u)) :
+    ∃ Mᵤ : ℝ≥0∞, Mᵤ < ⊤ ∧
+      ∀ᵐ s ∂volume.restrict (Ioo (-1 : ℝ) 0),
+        AEStronglyMeasurable (fun x : Vec3 => (goodPointDomain.indicator u) (x,s)) volume ∧
+        eLpNorm (fun x : Vec3 => vec3EuclideanNorm
+          ((goodPointDomain.indicator u) (x,s))) 3 volume ≤ Mᵤ := by
   have hball : CKN.euclideanBall (0 : Vec3) 1 = vec3Ball 0 1 := by
     rw [CKN.Foundation.Parabolic.euclideanBall_eq_vec3Ball (by norm_num)]
-  have htime : Ioo (-1 : ℝ) 0 = pressureSplitTime := by
-    rfl
-  have hFslice := pressureSplitVelocityExtension_slice_memLp_bound hu hL3
   let Mᵤ : ℝ≥0∞ := ENNReal.ofReal
     (Real.sqrt 3 * pressureSplitVelocityLpBound u)
   have hMᵤ : Mᵤ < ⊤ := ENNReal.ofReal_lt_top
@@ -216,6 +150,88 @@ theorem blowup_limit_pressure_split_data
         exact congrArg vec3EuclideanNorm (congrFun (hextEq' s hsI) x)
       rw [hnormeq]
       exact hbound
+  exact ⟨Mᵤ, hMᵤ, hsourceU⟩
+
+/-- The local source hypotheses determine all pressure and velocity slice
+data needed for the blow-up estimates. -/
+theorem blowup_limit_pressure_split_data
+    {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin 3 → Vec3}
+    {p : ParabolicPoint → ℝ}
+    (hu : AEStronglyMeasurable u
+      (volume.restrict (spaceTimeSet (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0))))
+    (hDu : AEStronglyMeasurable Du
+      (volume.restrict (spaceTimeSet (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0))))
+    (hpmeas : AEStronglyMeasurable p
+      (volume.restrict (spaceTimeSet (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0))))
+    (hL2 : essSup (fun t : ℝ => ∫⁻ x in vec3Ball (0 : Vec3) 1,
+      ‖u (x,t)‖ₑ ^ (2 : ℝ)) (volume.restrict (Ioo (-1) 0)) < ⊤)
+    (henergy : (∫⁻ z in spaceTimeSet (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0),
+      ‖u z‖ₑ ^ (2 : ℝ) + ‖Du z‖ₑ ^ (2 : ℝ)) < ⊤)
+    (hp : MemLp p (ENNReal.ofReal (3 / 2 : ℝ))
+      (volume.restrict (spaceTimeSet (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0))))
+    (hL3 : essSup (fun t : ℝ => ∫⁻ x in vec3Ball (0 : Vec3) 1,
+      ENNReal.ofReal (vec3EuclideanNorm (u (x,t))) ^ (3 : ℝ))
+      (volume.restrict (Ioo (-1) 0)) < ⊤)
+    (hgrad : ∀ᵐ t ∂(volume.restrict (Ioo (-1) 0)), ∀ i : Fin 3,
+      HasWeakGradientOn (vec3Ball (0 : Vec3) 1) (fun x => u (x,t) i)
+        (fun x => Du (x,t) i))
+    (hS2 : ∀ ψ ∈ spaceTimeTestFunction (V := ℝ)
+        (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0),
+      ∫ z in spaceTimeSet (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0),
+        ∑ i : Fin 3, u z i * spatialPartial ψ i z = 0)
+    (hS3 : ∀ φ ∈ spaceTimeTestFunction (V := Vec3)
+        (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0),
+      ∫ z in spaceTimeSet (vec3Ball (0 : Vec3) 1) (Ioo (-1) 0),
+        (-(∑ i : Fin 3, u z i * timePartial (fun y => φ y i) z)
+          - ∑ i : Fin 3, ∑ j : Fin 3,
+              u z i * u z j * spatialPartial (fun y => φ y i) j z
+          + ∑ i : Fin 3, ∑ j : Fin 3,
+              Du z i j * spatialPartial (fun y => φ y i) j z
+          - p z * ∑ i : Fin 3, spatialPartial (fun y => φ y i) i z
+          - ∑ i : Fin 3, ((0 : ParabolicPoint → Vec3) z i) * φ z i) = 0) :
+    let F := pressureSplitTensor u
+    let hF := pressureSplitTensor_memLp hu hDu henergy hL3 hgrad
+    let p₁ := pressureSplitRieszPressure F hF
+    let p₂ := pressureSplitRemainder p p₁
+    AEStronglyMeasurable p₁
+        (volume.restrict (Set.univ ×ˢ Ioo (-1 : ℝ) 0)) ∧
+      (∃ Mᵤ : ℝ≥0∞, Mᵤ < ⊤ ∧
+        ∀ᵐ s ∂volume.restrict (Ioo (-1 : ℝ) 0),
+          AEStronglyMeasurable (fun x : Vec3 =>
+            (goodPointDomain.indicator u) (x,s)) volume ∧
+          eLpNorm (fun x : Vec3 => vec3EuclideanNorm
+            ((goodPointDomain.indicator u) (x,s))) 3 volume ≤ Mᵤ) ∧
+      (∃ Mₚ : ℝ≥0∞, Mₚ < ⊤ ∧
+        ∀ᵐ s ∂volume.restrict (Ioo (-1 : ℝ) 0),
+          AEStronglyMeasurable (fun x : Vec3 => p₁ (x,s)) volume ∧
+          eLpNorm (fun x : Vec3 => p₁ (x,s)) (3 / 2 : ℝ≥0∞) volume ≤ Mₚ) ∧
+      MemLp (fun z : Vec3 × ℝ => p₂ (z.1,z.2)) (3 / 2 : ℝ≥0∞)
+        ((volume.restrict (CKN.euclideanBall 0 1)).prod
+          (volume.restrict (Ioo (-1 : ℝ) 0))) ∧
+      (∀ᵐ t ∂volume.restrict (Ioo (-1 : ℝ) 0),
+        CKN.Foundation.Heat.WeaklyHarmonicOn (CKN.euclideanBall 0 1)
+          (fun x : Vec3 => p₂ (x,t))) := by
+  dsimp only
+  let F : Fin 3 → Fin 3 → Vec3 × ℝ → ℝ := pressureSplitTensor u
+  let hF : ∀ i j, MemLp (F i j) (ENNReal.ofReal (3 / 2 : ℝ))
+      (volume : Measure (Vec3 × ℝ)) :=
+    pressureSplitTensor_memLp hu hDu henergy hL3 hgrad
+  let p₁ : ParabolicPoint → ℝ := pressureSplitRieszPressure F hF
+  let p₂ : ParabolicPoint → ℝ := pressureSplitRemainder p p₁
+  let P : Vec3 × ℝ → ℝ :=
+    CKN.Leray.rieszPressureSpaceTime (3 / 2 : ℝ) (by norm_num) F hF
+  have hPmeas : Measurable P :=
+    CKN.Leray.rieszPressureSpaceTime_measurable (3 / 2 : ℝ)
+      (by norm_num) F hF
+  have hp₁meas : Measurable p₁ := by
+    change Measurable (fun z : ParabolicPoint => P (parabolicHomeomorph z))
+    exact hPmeas.comp parabolicHomeomorph.measurable
+  have hball : CKN.euclideanBall (0 : Vec3) 1 = vec3Ball 0 1 := by
+    rw [CKN.Foundation.Parabolic.euclideanBall_eq_vec3Ball (by norm_num)]
+  have htime : Ioo (-1 : ℝ) 0 = pressureSplitTime := by
+    rfl
+  have hFslice := pressureSplitVelocityExtension_slice_memLp_bound hu hL3
+  obtain ⟨Mᵤ, hMᵤ, hsourceU⟩ := pressureSplit_source_velocity_slice_bound hFslice
   let A : ℝ := CKN.Leray.rieszPressureOperatorBound
     (3 / 2 : ℝ) (by norm_num)
   let Mₚ : ℝ≥0∞ := ENNReal.ofReal

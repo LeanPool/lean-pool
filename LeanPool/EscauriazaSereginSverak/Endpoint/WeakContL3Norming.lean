@@ -207,15 +207,15 @@ theorem weakContL3_inner_holder
         (eLpNorm f 3 μ).toReal := by
     rw [hf₃.eLpNorm_eq_integral_rpow_norm (by norm_num) (by norm_num)]
     rw [ENNReal.toReal_ofReal]
-    norm_num [ENNReal.toReal_ofNat]
-    positivity
+    · norm_num [ENNReal.toReal_ofNat]
+    · positivity
   have hrootg :
       (∫ x, ‖g x‖ ^ (3 / 2 : ℝ) ∂μ) ^ (2 / 3 : ℝ) =
         (eLpNorm g (ENNReal.ofReal (3 / 2 : ℝ)) μ).toReal := by
     rw [hg₃₂.eLpNorm_eq_integral_rpow_norm (by norm_num) (by norm_num)]
     rw [ENNReal.toReal_ofReal]
-    norm_num [ENNReal.toReal_ofReal]
-    positivity
+    · norm_num [ENNReal.toReal_ofReal]
+    · positivity
   rw [hinnerEq, ← Real.norm_eq_abs]
   calc
     ‖∫ x, inner ℝ (f x) (g x) ∂μ‖ ≤
@@ -281,15 +281,15 @@ theorem weakContL3_integral_holder
         (eLpNorm f 3 μ).toReal := by
     rw [hf₃.eLpNorm_eq_integral_rpow_norm (by norm_num) (by norm_num)]
     rw [ENNReal.toReal_ofReal]
-    norm_num [ENNReal.toReal_ofNat]
-    positivity
+    · norm_num [ENNReal.toReal_ofNat]
+    · positivity
   have hrootg :
       (∫ x, ‖g x‖ ^ (3 / 2 : ℝ) ∂μ) ^ (2 / 3 : ℝ) =
         (eLpNorm g (ENNReal.ofReal (3 / 2 : ℝ)) μ).toReal := by
     rw [hg₃₂.eLpNorm_eq_integral_rpow_norm (by norm_num) (by norm_num)]
     rw [ENNReal.toReal_ofReal]
-    norm_num [ENNReal.toReal_ofReal]
-    positivity
+    · norm_num [ENNReal.toReal_ofReal]
+    · positivity
   refine ⟨hinnerInt, ?_⟩
   rw [← Real.norm_eq_abs]
   calc
@@ -439,8 +439,8 @@ theorem weakContL3_norming_bound
           (eLpNorm (q n) (ENNReal.ofReal (3 / 2 : ℝ)) μ).toReal := by
       rw [(hq₃₂ n).eLpNorm_eq_integral_rpow_norm (by norm_num) (by norm_num)]
       rw [ENNReal.toReal_ofReal]
-      norm_num [ENNReal.toReal_ofReal]
-      positivity
+      · norm_num [ENNReal.toReal_ofReal]
+      · positivity
     have htestnorm :
         (eLpNorm (q n) (ENNReal.ofReal (3 / 2 : ℝ)) μ).toReal ≤ J n ^ (2 / 3 : ℝ) := by
       rw [← hroot]

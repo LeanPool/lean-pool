@@ -31,16 +31,16 @@ namespace ESS
 open CKN.Foundation.Parabolic
 
 /-- Fourier multiplier of an ordered spatial derivative word. -/
-@[expose] def lps_fourierWordSymbol (α : List (Fin 3))
+@[expose] def lpsFourierWordSymbol (α : List (Fin 3))
     (ξ : L2Vec3) : ℂ :=
   (α.map fun j => CKN.Leray.regR12CoordSymbol j ξ).prod
 
 /-- Appending one derivative multiplies by its coordinate symbol. -/
 theorem lps_fourierWordSymbol_append (α : List (Fin 3))
     (j : Fin 3) (ξ : L2Vec3) :
-    lps_fourierWordSymbol (α ++ [j]) ξ =
-      CKN.Leray.regR12CoordSymbol j ξ * lps_fourierWordSymbol α ξ := by
-  simp only [lps_fourierWordSymbol, List.map_append, List.prod_append,
+    lpsFourierWordSymbol (α ++ [j]) ξ =
+      CKN.Leray.regR12CoordSymbol j ξ * lpsFourierWordSymbol α ξ := by
+  simp only [lpsFourierWordSymbol, List.map_append, List.prod_append,
     List.map_singleton, List.prod_singleton]
   ring
 
@@ -48,13 +48,13 @@ theorem lps_fourierWordSymbol_append (α : List (Fin 3))
 growth of order `r` (`prop:lps-smoothing`). -/
 theorem lps_fourierWordSymbol_norm_le (α : List (Fin 3))
     (ξ : L2Vec3) :
-    ‖lps_fourierWordSymbol α ξ‖ ≤
+    ‖lpsFourierWordSymbol α ξ‖ ≤
       (2 * π) ^ α.length * ‖ξ‖ ^ α.length := by
   induction α with
-  | nil => simp [lps_fourierWordSymbol]
+  | nil => simp [lpsFourierWordSymbol]
   | cons j α ih =>
       have hj := CKN.Leray.regR12CoordSymbol_norm_le j ξ
-      simp only [lps_fourierWordSymbol, List.map_cons, List.prod_cons,
+      simp only [lpsFourierWordSymbol, List.map_cons, List.prod_cons,
         norm_mul, List.length_cons, pow_succ]
       calc
         ‖CKN.Leray.regR12CoordSymbol j ξ‖ *
@@ -84,10 +84,10 @@ order-`2k` Bessel weight (`prop:lps-smoothing`). -/
 theorem lps_fourierWordSymbol_bessel_bound
     (k : ℕ) (α : List (Fin 3)) (hα : α.length ≤ 2 * k)
     (ξ : L2Vec3) :
-    ‖lps_fourierWordSymbol α ξ‖ ≤
+    ‖lpsFourierWordSymbol α ξ‖ ≤
       (2 * π) ^ α.length * (1 + ‖ξ‖ ^ 2) ^ k := by
   calc
-    ‖lps_fourierWordSymbol α ξ‖ ≤
+    ‖lpsFourierWordSymbol α ξ‖ ≤
         (2 * π) ^ α.length * ‖ξ‖ ^ α.length :=
       lps_fourierWordSymbol_norm_le α ξ
     _ ≤ (2 * π) ^ α.length * (1 + ‖ξ‖ ^ 2) ^ k :=

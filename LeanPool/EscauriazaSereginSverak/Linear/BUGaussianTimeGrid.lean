@@ -20,7 +20,9 @@ public section
 open CKN
 
 
-open Set Classical
+open Set
+
+attribute [local instance] Classical.propDecidable
 
 noncomputable section
 

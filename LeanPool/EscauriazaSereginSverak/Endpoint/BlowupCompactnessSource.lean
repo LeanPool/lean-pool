@@ -9,6 +9,12 @@ module
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupCompactnessTop
 public import LeanPool.EscauriazaSereginSverak.Endpoint.BlowupTenThirdsFromSource
 
+/-!
+# Blowup Compactness Source
+
+Compactness of the rescaled fields in the endpoint regularity argument.
+-/
+
 public section
 
 open CKN CKN.Foundation.Parabolic MeasureTheory Set Filter

@@ -103,7 +103,7 @@ private theorem uc_locallyIntegrableOn_pi_eval
     (ContinuousLinearMap.proj i : (ι → E) →L[ℝ] E).locallyIntegrableOn_comp hf
 
 private theorem uc_locallyIntegrableOn_pi
-    {ι E : Type*} [Fintype ι] [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {ι E : Type*} [Fintype ι] [NormedAddCommGroup E]
     {Ω : Set Vec3} {I : Set ℝ}
     (hΩ : IsOpen Ω) (hI : IsOpen I)
     {f : ParabolicPoint → ι → E}
@@ -340,7 +340,6 @@ private theorem uc_weak_time_product
           change f (x, s) * χ (x, s) * timePartial φ (x, s) =
             f (x, s) * (χ (x, s) * timePartial φ (x, s))
           ring
-
     _ = -((∫ z in spaceTimeSet Ω I,
           g z * (χ (parabolicHomeomorph z) * ψ (parabolicHomeomorph z))) +
         (∫ z in spaceTimeSet Ω I,
@@ -430,7 +429,6 @@ private theorem uc_weak_spatial_add
           congr 1
           ext z
           ring
-
     _ = -((∫ z in spaceTimeSet Ω I, g₁ z * φ z) +
           (∫ z in spaceTimeSet Ω I, g₂ z * φ z)) := by
           rw [h₁ φ hφ, h₂ φ hφ]

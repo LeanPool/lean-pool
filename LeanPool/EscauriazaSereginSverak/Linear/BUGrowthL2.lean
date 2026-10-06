@@ -12,6 +12,12 @@ public import LeanPool.CaffarelliKohnNirenberg.Statements.SpaceTimeSet
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Finite
 public import Mathlib.Topology.MetricSpace.Bounded
 
+/-!
+# BUGrowth L2
+
+Local square-integrability consequences of backward-uniqueness growth bounds.
+-/
+
 public section
 
 open MeasureTheory Set

@@ -323,6 +323,380 @@ theorem vorticityHeatSmooth_pointwise {L η W T : ℝ} {S F : Fin 3 → ℝ} (hL
 
 end Cutoff
 
+private theorem vorticityHeatSmooth_cutoffDerivativeBounds
+    {η : Vec3 × ℝ → ℝ} {ψ : Vec3 → ℝ} {c : ℝ → ℝ} {Lφ Lθ : ℝ}
+    (hLφ : 0 ≤ Lφ) (hLθ : 0 ≤ Lθ)
+    (hφ0 : ∀ x, 0 ≤ ψ x) (hφ1 : ∀ x, ψ x ≤ 1)
+    (hθ0 : ∀ s, 0 ≤ c s) (hθ1 : ∀ s, c s ≤ 1)
+    (hDψ : ∀ x j, |spatialDeriv ψ j x| ≤ Lφ)
+    (hD2ψ : ∀ x j k, |spatialDeriv (spatialDeriv ψ j) k x| ≤ Lφ)
+    (hdc : ∀ s, |deriv c s| ≤ Lθ)
+    (hspη : ∀ j q, spatialPartial η j q = spatialDeriv ψ j q.1 * c q.2)
+    (hsspη : ∀ j q, spatialSecondPartial η j j q =
+      spatialDeriv (spatialDeriv ψ j) j q.1 * c q.2)
+    (htpη : ∀ q, timePartial η q = ψ q.1 * deriv c q.2) :
+    (∀ j q, |spatialPartial η j q| ≤ Lφ + Lθ) ∧
+    (∀ q, |timePartial η q + ∑ j : Fin 3, spatialSecondPartial η j j q| ≤
+      4 * (Lφ + Lθ)) := by
+  refine ⟨?_, ?_⟩
+  · intro j q
+    rw [hspη, abs_mul, abs_of_nonneg (hθ0 _)]
+    have h := mul_le_mul (hDψ q.1 j) (hθ1 (q.2)) (hθ0 _) hLφ
+    linarith only [h, hLθ]
+  · intro q
+    have ht : |timePartial η q| ≤ Lθ := by
+      rw [htpη, abs_mul, abs_of_nonneg (hφ0 _)]
+      have h := mul_le_mul (hφ1 q.1) (hdc q.2) (abs_nonneg _) zero_le_one
+      linarith only [h]
+    have hs (j : Fin 3) : |spatialSecondPartial η j j q| ≤ Lφ := by
+      rw [hsspη, abs_mul, abs_of_nonneg (hθ0 _)]
+      have h := mul_le_mul (hD2ψ q.1 j j) (hθ1 q.2) (hθ0 _) hLφ
+      linarith only [h]
+    rw [Fin.sum_univ_three]
+    have e1 := abs_add_le (timePartial η q)
+      (spatialSecondPartial η 0 0 q + spatialSecondPartial η 1 1 q +
+        spatialSecondPartial η 2 2 q)
+    have e2 := abs_add_three (spatialSecondPartial η 0 0 q) (spatialSecondPartial η 1 1 q)
+      (spatialSecondPartial η 2 2 q)
+    have h0 := hs 0
+    have h1 := hs 1
+    have h2 := hs 2
+    linarith only [e1, e2, ht, h0, h1, h2, hLφ, hLθ]
+
+private theorem vorticityHeatSmooth_forcingControl
+    {x₀ : Vec3} {R L : ℝ} {ψ : Vec3 → ℝ}
+    {a b : ℝ} {w : Vec3 × ℝ → ℝ} {F : Fin 3 → Vec3 × ℝ → ℝ}
+    {η : Vec3 × ℝ → ℝ} {Fp : Fin 3 → Vec3 × ℝ → ℝ}
+    {g : Vec3 × ℝ → Fin 3 → ℝ}
+    (hψc : HasCompactSupport ψ) (hψsupp : tsupport ψ ⊆ vec3Ball x₀ R)
+    (hFp : ∀ j, ContDiff ℝ (⊤ : ℕ∞) (Fp j))
+    (hg : ∀ i, ContDiff ℝ (⊤ : ℕ∞) (fun q => g q i))
+    (hFpout : ∀ x, x ∉ tsupport ψ → ∀ s j, Fp j (x, s) = 0)
+    (hgout : ∀ x, x ∉ tsupport ψ → ∀ s, g (x, s) = 0)
+    (hFpformula : ∀ x s j, Fp j (x, s) =
+      η (x, s) * F j (x, s) - 2 * (w (x, s) * spatialPartial η j (x, s)))
+    (hgformula : ∀ x s, s ∈ Ioo a b → ∀ i, g (x, s) i =
+      w (x, s) * (timePartial η (x, s) + ∑ j : Fin 3, spatialSecondPartial η j j (x, s)) -
+        ∑ j : Fin 3, spatialPartial η j (x, s) * F j (x, s))
+    (hL : 0 ≤ L) (hηb : ∀ q, |η q| ≤ 1) (hSb : ∀ j q, |spatialPartial η j q| ≤ L)
+    (hTb : ∀ q, |timePartial η q + ∑ j : Fin 3, spatialSecondPartial η j j q| ≤ 4 * L)
+    (henergy : Continuous (fun q : Vec3 × ℝ => w q ^ 2 + ∑ j : Fin 3, F j q ^ 2)) :
+    Continuous (fun s => 2 * ∫ x : Vec3, ∑ j : Fin 3, ∑ i : Fin 3, (Fp j (x, s)) ^ 2 +
+        ∫ x : Vec3, ∑ i : Fin 3, (g (x, s) i) ^ 2) ∧
+      (∀ s, 0 ≤ 2 * ∫ x : Vec3, ∑ j : Fin 3, ∑ i : Fin 3, (Fp j (x, s)) ^ 2 +
+        ∫ x : Vec3, ∑ i : Fin 3, (g (x, s) i) ^ 2) ∧
+      (∀ s ∈ Ioo a b,
+        2 * ∫ x : Vec3, ∑ j : Fin 3, ∑ i : Fin 3, (Fp j (x, s)) ^ 2 +
+            ∫ x : Vec3, ∑ i : Fin 3, (g (x, s) i) ^ 2 ≤
+          (12 + 336 * L ^ 2) * ∫ x in vec3Ball x₀ R, (w (x, s) ^ 2 +
+            ∑ j : Fin 3, F j (x, s) ^ 2)) := by
+  have hQ1 := vorticityHeatSmooth_slice
+    (Q := fun q => ∑ j : Fin 3, ∑ i : Fin 3, (Fp j q) ^ 2)
+    (continuous_finsetSum _ fun j _ => continuous_finsetSum _ fun _i _ =>
+      ((hFp j).continuous).pow 2) hψc
+    (fun x s hx => by simp [hFpout x hx s])
+  have hQ2 := vorticityHeatSmooth_slice (Q := fun q => ∑ i : Fin 3, (g q i) ^ 2)
+    (continuous_finsetSum _ fun i _ => ((hg i).continuous).pow 2) hψc
+    (fun x s hx => by simp [hgout x hx s])
+  have hf : Continuous (fun s => 2 * ∫ x : Vec3, ∑ j : Fin 3, ∑ i : Fin 3,
+      (Fp j (x, s)) ^ 2 + ∫ x : Vec3, ∑ i : Fin 3, (g (x, s) i) ^ 2) :=
+    (continuous_const.mul hQ1.2).add hQ2.2
+  have hf0 : ∀ s, 0 ≤ 2 * ∫ x : Vec3, ∑ j : Fin 3, ∑ i : Fin 3,
+      (Fp j (x, s)) ^ 2 + ∫ x : Vec3, ∑ i : Fin 3, (g (x, s) i) ^ 2 := by
+    intro s
+    have h1 : 0 ≤ ∫ x : Vec3, ∑ j : Fin 3, ∑ i : Fin 3, (Fp j (x, s)) ^ 2 :=
+      integral_nonneg fun x => by positivity
+    have h2 : 0 ≤ ∫ x : Vec3, ∑ i : Fin 3, (g (x, s) i) ^ 2 :=
+      integral_nonneg fun x => by positivity
+    linarith only [h1, h2]
+  have hballMeas : ∀ ρ, MeasurableSet (vec3Ball x₀ ρ) :=
+    fun ρ => (isOpen_vec3Ball x₀ ρ).measurableSet
+  refine ⟨hf, hf0, ?_⟩
+  intro s hs
+  have hA := hQ1.1 s
+  have hB := hQ2.1 s
+  have hsl : Continuous fun x : Vec3 => w (x, s) ^ 2 + ∑ j : Fin 3, F j (x, s) ^ 2 :=
+    henergy.comp (continuous_id.prodMk continuous_const)
+  calc 2 * ∫ x : Vec3, ∑ j : Fin 3, ∑ i : Fin 3, (Fp j (x, s)) ^ 2 +
+        ∫ x : Vec3, ∑ i : Fin 3, (g (x, s) i) ^ 2 =
+      ∫ x : Vec3, (2 * ∑ j : Fin 3, ∑ i : Fin 3, (Fp j (x, s)) ^ 2 +
+        ∑ i : Fin 3, (g (x, s) i) ^ 2) := by
+          rw [integral_add (hA.const_mul 2) hB, integral_const_mul]
+    _ ≤ ∫ x : Vec3, (vec3Ball x₀ R).indicator (fun x => (12 + 336 * L ^ 2) *
+        (w (x, s) ^ 2 + ∑ j : Fin 3, F j (x, s) ^ 2)) x := by
+          have hInd : IntegrableOn (fun x : Vec3 => (12 + 336 * L ^ 2) *
+              (w (x, s) ^ 2 + ∑ j : Fin 3, F j (x, s) ^ 2)) (vec3Ball x₀ R) :=
+            (vorticityHeatSmooth_integrableOn_ball hsl x₀ R).const_mul _
+          apply integral_mono ((hA.const_mul 2).add hB)
+            (hInd.integrable_indicator (hballMeas R))
+          intro x
+          simp only [Pi.add_apply]
+          by_cases hx : x ∈ vec3Ball x₀ R
+          · rw [Set.indicator_of_mem hx]
+            have hp := vorticityHeatSmooth_pointwise (η := η (x, s)) (W := w (x, s))
+              (T := timePartial η (x, s) + ∑ j : Fin 3, spatialSecondPartial η j j (x, s))
+              (S := fun j => spatialPartial η j (x, s)) (F := fun j => F j (x, s))
+              hL (hηb _) (fun j => hSb j _) (hTb _)
+            have hFv : ∀ j, Fp j (x, s) =
+                η (x, s) * F j (x, s) - 2 * (w (x, s) * spatialPartial η j (x, s)) :=
+              fun j => hFpformula x s j
+            have hgv : ∀ i, g (x, s) i =
+                w (x, s) * (timePartial η (x, s) +
+                  ∑ j : Fin 3, spatialSecondPartial η j j (x, s)) -
+                  ∑ j : Fin 3, spatialPartial η j (x, s) * F j (x, s) :=
+              fun i => hgformula x s hs i
+            rw [show 2 * ∑ j : Fin 3, ∑ i : Fin 3, (Fp j (x, s)) ^ 2 +
+                ∑ i : Fin 3, (g (x, s) i) ^ 2 =
+              2 * ∑ j : Fin 3, ∑ _i : Fin 3,
+                (η (x, s) * F j (x, s) - 2 * (w (x, s) * spatialPartial η j (x, s))) ^ 2 +
+                ∑ _i : Fin 3,
+                (w (x, s) * (timePartial η (x, s) +
+                  ∑ j : Fin 3, spatialSecondPartial η j j (x, s)) -
+                  ∑ j : Fin 3, spatialPartial η j (x, s) * F j (x, s)) ^ 2 by
+                simp only [hFv, hgv]]
+            exact hp
+          · rw [Set.indicator_of_notMem hx]
+            have hxs : x ∉ tsupport ψ := fun h => hx (hψsupp h)
+            simp [hFpout x hxs s, hgout x hxs s]
+    _ = (12 + 336 * L ^ 2) *
+        ∫ x in vec3Ball x₀ R, (w (x, s) ^ 2 + ∑ j : Fin 3, F j (x, s) ^ 2) := by
+          rw [integral_indicator (hballMeas R), integral_const_mul]
+
+private theorem vorticityHeatSmooth_innerL2FromLocalized
+    {x₀ : Vec3} {r a b κ : ℝ} {w Z : Vec3 × ℝ → ℝ} {ψ : Vec3 → ℝ}
+    {c : ℝ → ℝ} {f E K : ℝ}
+    (hZ : Continuous Z) (hψc : HasCompactSupport ψ)
+    (hZout : ∀ x, x ∉ tsupport ψ → ∀ s, Z (x, s) = 0)
+    (hZdef : ∀ q, Z q = ψ q.1 * c q.2 * w q)
+    (hκ : 0 < κ)
+    (hψone : ∀ x ∈ vec3Ball x₀ r, ψ x = 1)
+    (hcOne : ∀ t ∈ Icc (a + κ) b, c t = 1)
+    (hgr1 : ∀ t ∈ Icc a b,
+      (∫ x : Vec3, ∑ _i : Fin 3, Z (x, t) ^ 2) ≤ Real.exp ((72 * 0 ^ 2 + 1) * (b - a)) *
+        (0 + ∫ s in a..b, f s))
+    (hmain : Real.exp ((72 * 0 ^ 2 + 1) * (b - a)) * (∫ s in a..b, f s) ≤
+      Real.exp 1 * (K * E)) :
+    ∀ t ∈ Icc (a + κ) b, ∫ x in vec3Ball x₀ r, w (x, t) ^ 2 ≤ Real.exp 1 * (K * E) := by
+  intro t ht
+  have ht' : t ∈ Icc a b := ⟨by linarith only [ht.1, hκ], ht.2⟩
+  have he := hgr1 t ht'
+  have hZsl := vorticityHeatSmooth_slice (Q := fun q => Z q ^ 2)
+    (hZ.pow 2) hψc (fun x s hx => by rw [hZout x hx s]; ring)
+  have hEeq : (∫ x : Vec3, ∑ i : Fin 3, Z (x, t) ^ 2) = 3 * ∫ x : Vec3, Z (x, t) ^ 2 := by
+    rw [← integral_const_mul]
+    congr 1
+    funext x
+    simp [Finset.sum_const]
+  have hballMeas : MeasurableSet (vec3Ball x₀ r) := (isOpen_vec3Ball x₀ r).measurableSet
+  have hball : ∫ x in vec3Ball x₀ r, w (x, t) ^ 2 =
+      ∫ x in vec3Ball x₀ r, Z (x, t) ^ 2 := by
+    apply setIntegral_congr_fun hballMeas
+    intro x hx
+    rw [hZdef, hψone x hx, hcOne t ht]
+    ring
+  have hle : ∫ x in vec3Ball x₀ r, Z (x, t) ^ 2 ≤ ∫ x : Vec3, Z (x, t) ^ 2 :=
+    setIntegral_le_integral (hZsl.1 t) (Eventually.of_forall fun x => sq_nonneg _)
+  have hAll : 0 ≤ ∫ x : Vec3, Z (x, t) ^ 2 := integral_nonneg fun x => sq_nonneg _
+  rw [hball]
+  rw [hEeq] at he
+  nlinarith [hle, he, hmain, hAll]
+
+private theorem vorticityHeatSmooth_cutoffResidualIdentities
+    {x₀ : Vec3} {R a b : ℝ} {ψ : Vec3 → ℝ} {η w : Vec3 × ℝ → ℝ}
+    {F : Fin 3 → Vec3 × ℝ → ℝ} {Fp : Fin 3 → Vec3 × ℝ → ℝ}
+    {G : Vec3 × ℝ → ℝ}
+    (hψsupp : tsupport ψ ⊆ vec3Ball x₀ R)
+    (hres : ∀ q, G q =
+      w q * (timePartial η q + ∑ j : Fin 3, spatialSecondPartial η j j q) -
+        ∑ j : Fin 3, spatialPartial η j q * F j q +
+        η q * (timePartial w q - ∑ j : Fin 3, spatialSecondPartial w j j q -
+          ∑ j : Fin 3, spatialPartial (F j) j q))
+    (hout : ∀ x, x ∉ tsupport ψ → ∀ s, η (x, s) = 0 ∧
+      (∀ j, spatialPartial η j (x, s) = 0) ∧
+      (∀ j, spatialSecondPartial η j j (x, s) = 0) ∧ timePartial η (x, s) = 0)
+    (hFpdef : ∀ x s j, Fp j (x, s) = η (x, s) * F j (x, s) -
+      2 * (w (x, s) * spatialPartial η j (x, s)))
+    (heqn : ∀ z ∈ vec3Ball x₀ R ×ˢ Ioo a b,
+      timePartial w z - ∑ j : Fin 3, spatialSecondPartial w j j z =
+        ∑ j : Fin 3, spatialPartial (F j) j z) :
+    (∀ x s, s ∈ Ioo a b, G (x, s) =
+      w (x, s) * (timePartial η (x, s) +
+        ∑ j : Fin 3, spatialSecondPartial η j j (x, s)) -
+        ∑ j : Fin 3, spatialPartial η j (x, s) * F j (x, s)) ∧
+      (∀ x, x ∉ tsupport ψ → ∀ s, G (x, s) = 0) ∧
+      (∀ x, x ∉ tsupport ψ → ∀ s j, Fp j (x, s) = 0) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro x s hs
+    rw [hres]
+    have hzero : η (x, s) * (timePartial w (x, s) -
+        ∑ j : Fin 3, spatialSecondPartial w j j (x, s) -
+        ∑ j : Fin 3, spatialPartial (F j) j (x, s)) = 0 := by
+      by_cases hx : x ∈ vec3Ball x₀ R
+      · rw [heqn (x, s) ⟨hx, hs⟩, sub_self, mul_zero]
+      · rw [(hout x (fun h => hx (hψsupp h)) s).1, zero_mul]
+    rw [hzero, add_zero]
+  · intro x hx s
+    obtain ⟨h1, h2, h3, h4⟩ := hout x hx s
+    rw [hres, h1, h4]
+    simp [h2, h3]
+  · intro x hx s j
+    rw [hFpdef]
+    rw [(hout x hx s).1, (hout x hx s).2.1 j]
+    ring
+
+private theorem vorticityHeatSmooth_zeroInitialGronwall
+    {a b : ℝ} {ψ : Vec3 → ℝ} {c : ℝ → ℝ} {w : Vec3 × ℝ → ℝ}
+    {Z : Vec3 × ℝ → ℝ} {Fp : Fin 3 → Vec3 × ℝ → ℝ} {G : Vec3 × ℝ → ℝ}
+    (hψc : HasCompactSupport ψ) (hZ : ContDiff ℝ (⊤ : ℕ∞) Z)
+    (hab : a ≤ b) (hb1 : b ≤ a + 1)
+    (hFp : ∀ j, ContDiff ℝ (⊤ : ℕ∞) (Fp j)) (hG : ContDiff ℝ (⊤ : ℕ∞) G)
+    (hZout : ∀ x, x ∉ tsupport ψ → ∀ t, Z (x, t) = 0)
+    (hFpout : ∀ x, x ∉ tsupport ψ → ∀ t j, Fp j (x, t) = 0)
+    (hGout : ∀ x, x ∉ tsupport ψ → ∀ t, G (x, t) = 0)
+    (hGdef : ∀ q, G q = timePartial Z q -
+      ∑ j : Fin 3, spatialSecondPartial Z j j q -
+        ∑ j : Fin 3, spatialPartial (Fp j) j q)
+    (hZdef : ∀ q, Z q = ψ q.1 * c q.2 * w q)
+    (hca : c a = 0) :
+    (∀ t ∈ Icc a b,
+      (∫ x : Vec3, ∑ _i : Fin 3, Z (x, t) ^ 2) ≤ Real.exp ((72 * 0 ^ 2 + 1) * (b - a)) *
+        (0 + ∫ s in a..b, (2 * ∫ x : Vec3, ∑ j : Fin 3, ∑ i : Fin 3,
+          (Fp j (x, s)) ^ 2 + ∫ x : Vec3, ∑ i : Fin 3, (G (x, s)) ^ 2))) ∧
+    (∫ t in a..b, ∫ x : Vec3, ∑ j : Fin 3, ∑ i : Fin 3,
+      (spatialPartial Z j (x, t)) ^ 2) ≤
+      0 + (72 * 0 ^ 2 + 1) * (b - a) *
+        (Real.exp ((72 * 0 ^ 2 + 1) * (b - a)) *
+          (0 + ∫ s in a..b, (2 * ∫ x : Vec3, ∑ j : Fin 3, ∑ i : Fin 3,
+            (Fp j (x, s)) ^ 2 + ∫ x : Vec3, ∑ i : Fin 3, (G (x, s)) ^ 2))) +
+            ∫ s in a..b, (2 * ∫ x : Vec3, ∑ j : Fin 3, ∑ i : Fin 3,
+              (Fp j (x, s)) ^ 2 + ∫ x : Vec3, ∑ i : Fin 3, (G (x, s)) ^ 2)) := by
+  let zv : Vec3 × ℝ → Vec3 := fun q _ => Z q
+  let Fv : Vec3 × ℝ → Fin 3 → Fin 3 → ℝ := fun q j _ => Fp j q
+  let gv : Vec3 × ℝ → Vec3 := fun q _ => G q
+  let v0 : Vec3 × ℝ → Vec3 := fun _ => 0
+  have hcommon : ∃ K : Set Vec3, IsCompact K ∧ ∀ x, x ∉ K → ∀ t,
+      zv (x, t) = 0 ∧ (∀ j i, Fv (x, t) j i = 0) ∧ gv (x, t) = 0 := by
+    refine ⟨tsupport ψ, hψc, fun x hx t => ⟨?_, fun j _ => hFpout x hx t j, ?_⟩⟩
+    · funext i
+      exact hZout x hx t
+    · funext i
+      exact hGout x hx t
+  have heq : ∀ (x : Vec3) (t : ℝ) (i : Fin 3),
+      CKN.timePartial (fun q : Vec3 × ℝ => zv q i) (x, t) -
+        ∑ j : Fin 3, CKN.spatialSecondPartial
+          (show ParabolicPoint → ℝ from fun q => zv q i) j j (x, t) =
+      -(∑ j : Fin 3, CKN.spatialPartial
+          (show ParabolicPoint → ℝ from fun q => v0 q j * zv q i - zv q j * v0 q i) j (x, t)) +
+        ∑ j : Fin 3, CKN.spatialPartial
+          (show ParabolicPoint → ℝ from fun q => Fv q j i) j (x, t) + gv (x, t) i := by
+    intro x t i
+    have hv : ∀ j, CKN.spatialPartial (show ParabolicPoint → ℝ from fun q =>
+        v0 q j * zv q i - zv q j * v0 q i) j (x, t) = 0 := by
+      intro j
+      have hfun : (show ParabolicPoint → ℝ from fun q =>
+          v0 q j * zv q i - zv q j * v0 q i) = fun _ => 0 := by
+        funext q
+        simp [v0]
+      rw [hfun]
+      simp [spatialPartial]
+    simp only [hv, Finset.sum_const_zero, neg_zero, zero_add]
+    rw [show gv (x, t) i = timePartial Z (x, t) -
+      ∑ j : Fin 3, spatialSecondPartial Z j j (x, t) -
+        ∑ j : Fin 3, spatialPartial (Fp j) j (x, t) by
+          exact hGdef (x, t)]
+    change timePartial Z (x, t) - ∑ j : Fin 3, spatialSecondPartial Z j j (x, t) =
+      ∑ j : Fin 3, spatialPartial (Fp j) j (x, t) +
+        (timePartial Z (x, t) - ∑ j : Fin 3, spatialSecondPartial Z j j (x, t) -
+          ∑ j : Fin 3, spatialPartial (Fp j) j (x, t))
+    ring
+  have hvbound : ∀ x t, vec3EuclideanNorm (v0 (x, t)) ≤ 0 := by
+    intro x t
+    simp [v0, vec3EuclideanNorm_zero]
+  have hinit : (∫ x : Vec3, ∑ i : Fin 3, (zv (x, a) i) ^ 2) ≤ 0 := by
+    have hfun : (fun x : Vec3 => ∑ i : Fin 3, (zv (x, a) i) ^ 2) = fun _ => 0 := by
+      funext x
+      simp [zv, hZdef, hca]
+    rw [hfun, integral_zero]
+  have hgr := smoothVorticityEnergyGronwall (a := a) (b := b) (M := 0) (e₀ := 0) (v := v0)
+    (z := zv) (F := Fv) (g := gv) hab hb1 contDiff_const
+    (contDiff_pi.2 fun _ => hZ) (fun j _ => hFp j) (contDiff_pi.2 fun _ => hG)
+    hcommon heq hvbound hinit
+  exact ⟨by simpa [zv, Fv, gv] using hgr.1, by simpa [zv, Fv, gv] using hgr.2⟩
+
+private theorem vorticityHeatSmooth_innerGradientTransfer
+    {x₀ : Vec3} {r κ a b : ℝ} {ψ : Vec3 → ℝ} {c : ℝ → ℝ}
+    {Z w : Vec3 × ℝ → ℝ} {η : Vec3 × ℝ → ℝ} {B : ℝ}
+    (hZ : ContDiff ℝ (⊤ : ℕ∞) Z) (hw : ContDiff ℝ (⊤ : ℕ∞) w)
+    (hψc : HasCompactSupport ψ)
+    (hout : ∀ x, x ∉ tsupport ψ → ∀ s, η (x, s) = 0 ∧
+      (∀ j, spatialPartial η j (x, s) = 0) ∧
+      (∀ j, spatialSecondPartial η j j (x, s) = 0) ∧ timePartial η (x, s) = 0)
+    (hspZ : ∀ j q, spatialPartial Z j q =
+      η q * spatialPartial w j q + w q * spatialPartial η j q)
+    (hspη : ∀ j q, spatialPartial η j q = spatialDeriv ψ j q.1 * c q.2)
+    (hψone : ∀ x ∈ vec3Ball x₀ r, ψ x = 1)
+    (hcOne : ∀ s ∈ Ioo (a + κ) b, c s = 1)
+    (hTotal : ∫ s in Ioo a b, ∫ x : Vec3,
+      ∑ j : Fin 3, spatialPartial Z j (x, s) ^ 2 ≤ B) :
+    ∫ z in vec3Ball x₀ r ×ˢ Ioo (a + κ) b,
+      ∑ j : Fin 3, spatialPartial w j z ^ 2 ≤ B := by
+  have hDsl := vorticityHeatSmooth_slice (Q := fun q => ∑ j : Fin 3,
+      spatialPartial Z j q ^ 2)
+    (continuous_finsetSum _ fun j _ =>
+      ((vorticityHeatSmooth_spatialPartial_contDiff hZ j).continuous).pow 2) hψc
+    (fun x s hx => by
+      obtain ⟨h1, h2, -, -⟩ := hout x hx s
+      simp [hspZ, h1, h2])
+  have hDcont : Continuous (fun s => ∫ x : Vec3, ∑ j : Fin 3,
+      spatialPartial Z j (x, s) ^ 2) := hDsl.2
+  have hwcont : Continuous (fun q : Vec3 × ℝ =>
+      ∑ j : Fin 3, spatialPartial w j q ^ 2) :=
+    continuous_finsetSum _ fun j _ =>
+      ((vorticityHeatSmooth_spatialPartial_contDiff hw j).continuous).pow 2
+  have hLbox := vorticityHeatSmooth_boxIntegral
+    (vorticityHeatSmooth_integrableOn_box hwcont x₀ r (a + κ) b)
+  have hballMeas : MeasurableSet (vec3Ball x₀ r) :=
+    (isOpen_vec3Ball x₀ r).measurableSet
+  have hstep1 : ∫ s in Ioo (a + κ) b, ∫ x in vec3Ball x₀ r,
+      ∑ j : Fin 3, spatialPartial w j (x, s) ^ 2 ≤
+      ∫ s in Ioo (a + κ) b, ∫ x : Vec3, ∑ j : Fin 3, spatialPartial Z j (x, s) ^ 2 := by
+    apply setIntegral_mono_on hLbox.2
+      (hDcont.integrableOn_Icc.mono_set Ioo_subset_Icc_self) measurableSet_Ioo
+    intro s hs
+    have heqball : ∫ x in vec3Ball x₀ r,
+        ∑ j : Fin 3, spatialPartial w j (x, s) ^ 2 =
+        ∫ x in vec3Ball x₀ r, ∑ j : Fin 3, spatialPartial Z j (x, s) ^ 2 := by
+      apply setIntegral_congr_fun hballMeas
+      intro x hx
+      have hψ1 := hψone x hx
+      have hc1 := hcOne s hs
+      have hDψ0 : ∀ j, spatialDeriv ψ j x = 0 := by
+        intro j
+        have hopen : IsOpen {y : Vec3 | vec3EuclideanNorm (y - x₀) < r} :=
+          isOpen_lt (CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.comp
+            (continuous_fst.sub continuous_const)) continuous_const
+        have hev : ψ =ᶠ[nhds x] fun _ => 1 := by
+          filter_upwards [hopen.mem_nhds hx] with y hy
+          exact hψone y hy
+        unfold spatialDeriv
+        rw [hev.fderiv_eq]
+        simp
+      apply Finset.sum_congr rfl
+      intro j _
+      rw [hspZ, hspη]
+      rw [hψ1, hc1, hDψ0 j]
+      ring
+    rw [heqball]
+    exact setIntegral_le_integral (hDsl.1 s) (Eventually.of_forall fun x => by positivity)
+  have hstep2 : ∫ s in Ioo (a + κ) b, ∫ x : Vec3,
+      ∑ j : Fin 3, spatialPartial Z j (x, s) ^ 2 ≤
+      ∫ s in Ioo a b, ∫ x : Vec3, ∑ j : Fin 3, spatialPartial Z j (x, s) ^ 2 := by
+    apply setIntegral_mono_set (hDcont.integrableOn_Icc.mono_set Ioo_subset_Icc_self)
+    · exact Eventually.of_forall fun s => integral_nonneg fun x => by positivity
+    · exact (Ioo_subset_Ioo_left (by linarith only [hκ])).eventuallyLE
+  rw [hLbox.1]
+  exact hstep1.trans (hstep2.trans hTotal)
+
 /-- Local energy estimate for smooth solutions of `∂ₜ w - Δ w = div F` on `B_R(x₀) × (a, b)`:
 the spatial `L²` norm on the inner ball at every time from `a + κ` to the top, and the spatial
 gradient in `L²` on the inner cylinder, are bounded by the `L²` norms of `w` and `F` on the whole
@@ -343,7 +717,6 @@ theorem vorticityHeatSmooth_localEnergy {r R κ : ℝ} (hr : 0 < r) (hrR : r < R
   obtain ⟨Lφ, hLφ, hLφ1, hLφ2⟩ := vorticitySmooth_derivative_bounds hφ hφc
   obtain ⟨θ, hθ, hθzero, hθone, hθ0, hθ1, Lθ, hLθ, hLθb⟩ := vorticityTimeCutoff_exists hκ
   have hL : 0 ≤ Lφ + Lθ := add_nonneg hLφ hLθ
-  have hK : 0 ≤ 12 + 336 * (Lφ + Lθ) ^ 2 := by positivity
   refine ⟨(Real.exp 1 + 1) * (12 + 336 * (Lφ + Lθ) ^ 2), by positivity, ?_⟩
   intro x₀ a b w F hab hb1 hw hF heqn
   have hab' : a ≤ b := by linarith only [hab, hκ]
@@ -398,32 +771,9 @@ theorem vorticityHeatSmooth_localEnergy {r R κ : ℝ} (hr : 0 < r) (hrR : r < R
     have := mul_le_mul (hφ1 (q.1 - x₀)) (hθ1 (q.2 - a)) (hθ0 _) zero_le_one
     change ψ q.1 * c q.2 ≤ 1
     linarith only [this]
-  have hSb : ∀ j (q : Vec3 × ℝ), |spatialPartial η j q| ≤ Lφ + Lθ := by
-    intro j q
-    rw [hspη, abs_mul, abs_of_nonneg (hθ0 _)]
-    have := mul_le_mul (hDψ q.1 j) (hθ1 (q.2 - a)) (hθ0 _) hLφ
-    linarith only [this, hLθ]
-  have hTb : ∀ q : Vec3 × ℝ, |timePartial η q + ∑ j : Fin 3, spatialSecondPartial η j j q| ≤
-      4 * (Lφ + Lθ) := by
-    intro q
-    have ht : |timePartial η q| ≤ Lθ := by
-      rw [htpη, abs_mul, abs_of_nonneg (hφ0 _)]
-      have := mul_le_mul (hφ1 (q.1 - x₀)) (hdc q.2) (abs_nonneg _) zero_le_one
-      linarith only [this]
-    have hs (j : Fin 3) : |spatialSecondPartial η j j q| ≤ Lφ := by
-      rw [hsspη, abs_mul, abs_of_nonneg (hθ0 _)]
-      have := mul_le_mul (hD2ψ q.1 j j) (hθ1 (q.2 - a)) (hθ0 _) hLφ
-      linarith only [this]
-    rw [Fin.sum_univ_three]
-    have e1 := abs_add_le (timePartial η q)
-      (spatialSecondPartial η 0 0 q + spatialSecondPartial η 1 1 q +
-        spatialSecondPartial η 2 2 q)
-    have e2 := abs_add_three (spatialSecondPartial η 0 0 q) (spatialSecondPartial η 1 1 q)
-      (spatialSecondPartial η 2 2 q)
-    have h0 := hs 0
-    have h1 := hs 1
-    have h2 := hs 2
-    linarith only [e1, e2, ht, h0, h1, h2, hLφ, hLθ]
+  have ⟨hSb, hTb⟩ := vorticityHeatSmooth_cutoffDerivativeBounds hLφ hLθ
+    (fun x => hφ0 (x - x₀)) (fun x => hφ1 (x - x₀))
+    (fun s => hθ0 (s - a)) (fun s => hθ1 (s - a)) hDψ hD2ψ hdc hspη hsspη htpη
   have hout : ∀ x, x ∉ tsupport ψ → ∀ s, η (x, s) = 0 ∧
       (∀ j, spatialPartial η j (x, s) = 0) ∧
       (∀ j, spatialSecondPartial η j j (x, s) = 0) ∧ timePartial η (x, s) = 0 := by
@@ -453,28 +803,8 @@ theorem vorticityHeatSmooth_localEnergy {r R κ : ℝ} (hr : 0 < r) (hrR : r < R
       + η q * (timePartial w q - ∑ j : Fin 3, spatialSecondPartial w j j q
           - ∑ j : Fin 3, spatialPartial (F j) j q) :=
     fun q => vorticityHeatSmooth_residual hη hw hF q
-  have hGstrip : ∀ x s, s ∈ Ioo a b → G (x, s) =
-      w (x, s) * (timePartial η (x, s) + ∑ j : Fin 3, spatialSecondPartial η j j (x, s))
-        - ∑ j : Fin 3, spatialPartial η j (x, s) * F j (x, s) := by
-    intro x s hs
-    rw [hGres]
-    have hzero : η (x, s) * (timePartial w (x, s) - ∑ j : Fin 3, spatialSecondPartial w j j (x, s)
-        - ∑ j : Fin 3, spatialPartial (F j) j (x, s)) = 0 := by
-      by_cases hx : x ∈ vec3Ball x₀ R
-      · rw [heqn (x, s) ⟨hx, hs⟩, sub_self, mul_zero]
-      · rw [(hout x (fun h => hx (hψsupp h)) s).1, zero_mul]
-    rw [hzero, add_zero]
-  have hGout : ∀ x, x ∉ tsupport ψ → ∀ s, G (x, s) = 0 := by
-    intro x hx s
-    obtain ⟨h1, h2, h3, h4⟩ := hout x hx s
-    rw [hGres, h1, h4]
-    simp [h2, h3]
-  have hFpout : ∀ x, x ∉ tsupport ψ → ∀ s j, Fp j (x, s) = 0 := by
-    intro x hx s j
-    obtain ⟨h1, h2, -, -⟩ := hout x hx s
-    change η (x, s) * F j (x, s) - 2 * (w (x, s) * spatialPartial η j (x, s)) = 0
-    rw [h1, h2 j]
-    ring
+  obtain ⟨hGstrip, hGout, hFpout⟩ := vorticityHeatSmooth_cutoffResidualIdentities
+    hψsupp hGres hout (fun z hz => heqn z hz) (fun x s j => rfl)
   have hZ : ContDiff ℝ (⊤ : ℕ∞) Z := hη.mul hw
   have hηj := vorticityHeatSmooth_spatialPartial_contDiff hη
   have hFp : ∀ j, ContDiff ℝ (⊤ : ℕ∞) (Fp j) :=
@@ -492,139 +822,31 @@ theorem vorticityHeatSmooth_localEnergy {r R κ : ℝ} (hr : 0 < r) (hrR : r < R
   let Fv : Vec3 × ℝ → Fin 3 → Fin 3 → ℝ := fun q j _ => Fp j q
   let gv : Vec3 × ℝ → Vec3 := fun q _ => G q
   let v0 : Vec3 × ℝ → Vec3 := fun _ => 0
-  have hcommon : ∃ K : Set Vec3, IsCompact K ∧ ∀ x, x ∉ K → ∀ t,
-      zv (x, t) = 0 ∧ (∀ j i, Fv (x, t) j i = 0) ∧ gv (x, t) = 0 := by
-    refine ⟨tsupport ψ, hψc, fun x hx t => ⟨?_, fun j _ => hFpout x hx t j, ?_⟩⟩
-    · funext i
+  have hca : c a = 0 := by
+    change θ (a - a) = 0
+    rw [sub_self]
+    exact hθzero 0 (half_pos hκ).le
+  obtain ⟨hgr1, hgr2⟩ := vorticityHeatSmooth_zeroInitialGronwall
+    (hψc := hψc) (hZ := hZ) (hab := hab') (hb1 := hb1) (hFp := hFp) (hG := hG)
+    (hZout := fun x hx t => by
       change η (x, t) * w (x, t) = 0
-      rw [(hout x hx t).1, zero_mul]
-    · funext i
-      exact hGout x hx t
-  have heq : ∀ (x : Vec3) (t : ℝ) (i : Fin 3),
-      CKN.timePartial (fun w' : Vec3 × ℝ => zv w' i) (x, t) -
-        ∑ j : Fin 3, CKN.spatialSecondPartial
-          (show ParabolicPoint → ℝ from fun w' => zv w' i) j j (x, t) =
-      -(∑ j : Fin 3, CKN.spatialPartial
-          (show ParabolicPoint → ℝ from fun w' =>
-            v0 w' j * zv w' i - zv w' j * v0 w' i) j (x, t)) +
-        ∑ j : Fin 3, CKN.spatialPartial
-          (show ParabolicPoint → ℝ from fun w' => Fv w' j i) j (x, t) +
-        gv (x, t) i := by
-    intro x t i
-    have hv : ∀ j, CKN.spatialPartial (show ParabolicPoint → ℝ from fun w' =>
-        v0 w' j * zv w' i - zv w' j * v0 w' i) j (x, t) = 0 := by
-      intro j
-      have hfun : (show ParabolicPoint → ℝ from fun w' =>
-          v0 w' j * zv w' i - zv w' j * v0 w' i) = fun _ => 0 := by
-        funext w'
-        simp [v0]
-      rw [hfun]
-      simp [spatialPartial]
-    simp only [hv, Finset.sum_const_zero, neg_zero, zero_add]
-    have hGdef : gv (x, t) i = timePartial Z (x, t) - ∑ j : Fin 3, spatialSecondPartial Z j j (x, t)
-        - ∑ j : Fin 3, spatialPartial (Fp j) j (x, t) := rfl
-    rw [hGdef]
-    change timePartial Z (x, t) - ∑ j : Fin 3, spatialSecondPartial Z j j (x, t) =
-      ∑ j : Fin 3, spatialPartial (Fp j) j (x, t) + (timePartial Z (x, t) -
-        ∑ j : Fin 3, spatialSecondPartial Z j j (x, t) -
-          ∑ j : Fin 3, spatialPartial (Fp j) j (x, t))
-    ring
-  have hvbound : ∀ x t, vec3EuclideanNorm (v0 (x, t)) ≤ 0 := by
-    intro x t
-    simp [v0, vec3EuclideanNorm_zero]
-  have hinit : (∫ x : Vec3, ∑ i : Fin 3, (zv (x, a) i) ^ 2) ≤ 0 := by
-    have hca : c a = 0 := by
-      change θ (a - a) = 0
-      rw [sub_self]
-      exact hθzero 0 (half_pos hκ).le
-    have hfun : (fun x : Vec3 => ∑ i : Fin 3, (zv (x, a) i) ^ 2) = fun _ => 0 := by
-      funext x
-      change ∑ _i : Fin 3, (ψ x * c a * w (x, a)) ^ 2 = 0
-      simp [hca]
-    rw [hfun, integral_zero]
-  have hgr := smoothVorticityEnergyGronwall (a := a) (b := b) (M := 0) (e₀ := 0) (v := v0)
-    (z := zv) (F := Fv) (g := gv) hab' le_rfl contDiff_const (contDiff_pi.2 fun _ => hZ)
-    (fun j _ => hFp j) (contDiff_pi.2 fun _ => hG) hcommon heq hvbound hinit
+      rw [(hout x hx t).1, zero_mul])
+    (hFpout := hFpout) (hGout := hGout) (hGdef := fun q => rfl)
+    (hZdef := fun q => by simp [Z, η]) hca
   -- the forcing integral
   let f : ℝ → ℝ := fun s => 2 * (∫ x : Vec3, ∑ j : Fin 3, ∑ i : Fin 3, (Fv (x, s) j i) ^ 2)
     + ∫ x : Vec3, ∑ i : Fin 3, (gv (x, s) i) ^ 2
-  have hgr1 : ∀ t ∈ Icc a b, (∫ x : Vec3, ∑ i : Fin 3, (zv (x, t) i) ^ 2) ≤
-      Real.exp ((72 * 0 ^ 2 + 1) * (b - a)) * (0 + ∫ s in a..b, f s) := hgr.1
-  have hgr2 : (∫ t in a..b, ∫ x : Vec3, ∑ j : Fin 3, ∑ i : Fin 3,
-      (CKN.spatialPartial (fun w' : Vec3 × ℝ => zv w' i) j (x, t)) ^ 2) ≤
-      0 + (72 * 0 ^ 2 + 1) * (b - a) *
-        (Real.exp ((72 * 0 ^ 2 + 1) * (b - a)) * (0 + ∫ s in a..b, f s)) +
-          ∫ s in a..b, f s := hgr.2
-  have hQ1 := vorticityHeatSmooth_slice
-    (Q := fun q => ∑ j : Fin 3, ∑ i : Fin 3, (Fv q j i) ^ 2)
-    (continuous_finsetSum _ fun j _ => continuous_finsetSum _ fun i _ =>
-      ((hFp j).continuous).pow 2) hψc
-    (fun x s hx => by simp [Fv, hFpout x hx s])
-  have hQ2 := vorticityHeatSmooth_slice (Q := fun q => ∑ i : Fin 3, (gv q i) ^ 2)
-    (continuous_finsetSum _ fun i _ => (hG.continuous).pow 2) hψc
-    (fun x s hx => by simp [gv, hGout x hx s])
-  have hfcont : Continuous f := (continuous_const.mul hQ1.2).add hQ2.2
-  have hf0 : ∀ s, 0 ≤ f s := by
-    intro s
-    have h1 : 0 ≤ ∫ x : Vec3, ∑ j : Fin 3, ∑ i : Fin 3, (Fv (x, s) j i) ^ 2 :=
-      integral_nonneg fun x => by positivity
-    have h2 : 0 ≤ ∫ x : Vec3, ∑ i : Fin 3, (gv (x, s) i) ^ 2 :=
-      integral_nonneg fun x => by positivity
-    change 0 ≤ 2 * _ + _
-    linarith only [h1, h2]
   have hhcont : Continuous (fun q : Vec3 × ℝ => w q ^ 2 + ∑ j : Fin 3, F j q ^ 2) :=
     (hw.continuous.pow 2).add (continuous_finsetSum _ fun j _ => (hF j).continuous.pow 2)
   have hbox := vorticityHeatSmooth_boxIntegral
     (vorticityHeatSmooth_integrableOn_box hhcont x₀ R a b)
-  have hballMeas : ∀ ρ, MeasurableSet (vec3Ball x₀ ρ) :=
-    fun ρ => (isOpen_vec3Ball x₀ ρ).measurableSet
-  have hfbound : ∀ s ∈ Ioo a b, f s ≤ (12 + 336 * (Lφ + Lθ) ^ 2) *
-      ∫ x in vec3Ball x₀ R, (w (x, s) ^ 2 + ∑ j : Fin 3, F j (x, s) ^ 2) := by
-    intro s hs
-    have hA := hQ1.1 s
-    have hB := hQ2.1 s
-    have hsl : Continuous fun x : Vec3 => w (x, s) ^ 2 + ∑ j : Fin 3, F j (x, s) ^ 2 :=
-      hhcont.comp (continuous_id.prodMk continuous_const)
-    calc f s = ∫ x : Vec3, (2 * ∑ j : Fin 3, ∑ i : Fin 3, (Fv (x, s) j i) ^ 2
-          + ∑ i : Fin 3, (gv (x, s) i) ^ 2) := by
-          rw [integral_add (hA.const_mul 2) hB, integral_const_mul]
-      _ ≤ ∫ x : Vec3, (vec3Ball x₀ R).indicator (fun x => (12 + 336 * (Lφ + Lθ) ^ 2) *
-          (w (x, s) ^ 2 + ∑ j : Fin 3, F j (x, s) ^ 2)) x := by
-          have hInd : IntegrableOn (fun x : Vec3 => (12 + 336 * (Lφ + Lθ) ^ 2) *
-              (w (x, s) ^ 2 + ∑ j : Fin 3, F j (x, s) ^ 2)) (vec3Ball x₀ R) :=
-            (vorticityHeatSmooth_integrableOn_ball hsl x₀ R).const_mul _
-          apply integral_mono ((hA.const_mul 2).add hB) (hInd.integrable_indicator (hballMeas R))
-          intro x
-          simp only [Pi.add_apply]
-          by_cases hx : x ∈ vec3Ball x₀ R
-          · rw [Set.indicator_of_mem hx]
-            have hgv : ∀ i, gv (x, s) i = w (x, s) * (timePartial η (x, s) +
-                ∑ j : Fin 3, spatialSecondPartial η j j (x, s)) -
-                ∑ j : Fin 3, spatialPartial η j (x, s) * F j (x, s) :=
-              fun _ => hGstrip x s hs
-            have hFv : ∀ j i, Fv (x, s) j i =
-                η (x, s) * F j (x, s) - 2 * (w (x, s) * spatialPartial η j (x, s)) :=
-              fun _ _ => rfl
-            have hp := vorticityHeatSmooth_pointwise (η := η (x, s)) (W := w (x, s))
-              (T := timePartial η (x, s) + ∑ j : Fin 3, spatialSecondPartial η j j (x, s))
-              (S := fun j => spatialPartial η j (x, s)) (F := fun j => F j (x, s)) hL
-              (hηb _) (fun j => hSb j _) (hTb _)
-            have key : 2 * ∑ j : Fin 3, ∑ i : Fin 3, Fv (x, s) j i ^ 2 +
-                ∑ i : Fin 3, gv (x, s) i ^ 2 =
-                2 * ∑ j : Fin 3, ∑ _i : Fin 3, (η (x, s) * F j (x, s) -
-                  2 * (w (x, s) * spatialPartial η j (x, s))) ^ 2 +
-                ∑ _i : Fin 3, (w (x, s) * (timePartial η (x, s) +
-                  ∑ j : Fin 3, spatialSecondPartial η j j (x, s)) -
-                  ∑ j : Fin 3, spatialPartial η j (x, s) * F j (x, s)) ^ 2 := by
-              simp only [hFv, hgv]
-            rw [key]
-            exact hp
-          · rw [Set.indicator_of_notMem hx]
-            have hxs : x ∉ tsupport ψ := fun h => hx (hψsupp h)
-            simp [Fv, gv, hFpout x hxs s, hGout x hxs s]
-      _ = (12 + 336 * (Lφ + Lθ) ^ 2) *
-          ∫ x in vec3Ball x₀ R, (w (x, s) ^ 2 + ∑ j : Fin 3, F j (x, s) ^ 2) := by
-          rw [integral_indicator (hballMeas R), integral_const_mul]
+  obtain ⟨hfcont, hf0, hfbound⟩ := vorticityHeatSmooth_forcingControl
+    (hψc := hψc) (hψsupp := hψsupp) (hFp := hFp)
+    (hg := fun _ => hG) (hFpout := hFpout)
+    (hgout := fun x hx s => by simpa [gv] using hGout x hx s)
+    (hFpformula := fun x s j => rfl)
+    (hgformula := fun x s hs i => hGstrip x s hs)
+    (hL := hL) (hηb := hηb) (hSb := hSb) (hTb := hTb) (henergy := hhcont)
   have hfint : ∫ s in a..b, f s ≤ (12 + 336 * (Lφ + Lθ) ^ 2) *
       ∫ z in vec3Ball x₀ R ×ˢ Ioo a b, (w z ^ 2 + ∑ j : Fin 3, F j z ^ 2) := by
     rw [intervalIntegral.integral_of_le hab', integral_Ioc_eq_integral_Ioo, hbox.1,
@@ -633,98 +855,27 @@ theorem vorticityHeatSmooth_localEnergy {r R κ : ℝ} (hr : 0 < r) (hrR : r < R
       (hbox.2.const_mul _) measurableSet_Ioo hfbound
   have hfint0 : 0 ≤ ∫ s in a..b, f s :=
     intervalIntegral.integral_nonneg hab' fun s _ => hf0 s
-  have hQ0 : 0 ≤ ∫ z in vec3Ball x₀ R ×ˢ Ioo a b, (w z ^ 2 + ∑ j : Fin 3, F j z ^ 2) :=
-    setIntegral_nonneg ((hballMeas R).prod measurableSet_Ioo) fun z _ => by positivity
   have hba : (72 * (0 : ℝ) ^ 2 + 1) * (b - a) = b - a := by ring
   have hexp : Real.exp ((72 * 0 ^ 2 + 1) * (b - a)) ≤ Real.exp 1 := by
     rw [hba]
     exact Real.exp_le_exp.2 (by linarith only [hb1])
-  have hexp0 : 0 ≤ Real.exp ((72 * 0 ^ 2 + 1) * (b - a)) := (Real.exp_pos _).le
   have hexp1 : 0 < Real.exp 1 := Real.exp_pos 1
-  have hKQ := mul_nonneg hK hQ0
   have hmain : Real.exp ((72 * 0 ^ 2 + 1) * (b - a)) * (∫ s in a..b, f s) ≤
       Real.exp 1 * ((12 + 336 * (Lφ + Lθ) ^ 2) *
         ∫ z in vec3Ball x₀ R ×ˢ Ioo a b, (w z ^ 2 + ∑ j : Fin 3, F j z ^ 2)) :=
     mul_le_mul hexp hfint hfint0 hexp1.le
   refine ⟨fun t ht => ?_, ?_⟩
   · -- the spatial `L²` bound at time `t`
-    have ht' : t ∈ Icc a b := ⟨by linarith only [ht.1, hκ], ht.2⟩
-    have he := hgr1 t ht'
-    have hZsl := vorticityHeatSmooth_slice (Q := fun q => Z q ^ 2) (hZ.continuous.pow 2) hψc
-      (fun x s hx => by
-        change (η (x, s) * w (x, s)) ^ 2 = 0
-        rw [(hout x hx s).1]
-        ring)
-    have hEeq : (∫ x : Vec3, ∑ i : Fin 3, (zv (x, t) i) ^ 2) = 3 * ∫ x : Vec3, Z (x, t) ^ 2 := by
-      rw [← integral_const_mul]
-      congr 1
-      funext x
-      simp [zv, Finset.sum_const]
-    have hball : ∫ x in vec3Ball x₀ r, w (x, t) ^ 2 = ∫ x in vec3Ball x₀ r, Z (x, t) ^ 2 := by
-      apply setIntegral_congr_fun (hballMeas r)
-      intro x hx
-      have hψ1 : ψ x = 1 := hφone _ (le_of_lt hx)
-      have hc1 : c t = 1 := hθone _ (by linarith only [ht.1])
-      change w (x, t) ^ 2 = (ψ x * c t * w (x, t)) ^ 2
-      rw [hψ1, hc1]
-      ring
-    have hle : ∫ x in vec3Ball x₀ r, Z (x, t) ^ 2 ≤ ∫ x : Vec3, Z (x, t) ^ 2 :=
-      setIntegral_le_integral (hZsl.1 t) (Eventually.of_forall fun x => sq_nonneg _)
-    rw [hball]
-    rw [hEeq, zero_add] at he
-    nlinarith only [hle, he, hmain, hKQ, hexp1]
+    exact vorticityHeatSmooth_innerL2FromLocalized (hZ := hZ.continuous) (hψc := hψc)
+      (hZout := fun x hx s => by
+        change η (x, s) * w (x, s) = 0
+        rw [(hout x hx s).1, zero_mul])
+      (hZdef := fun q => by simp [Z, η]) hκ
+      (hψone := fun x hx => hφone (x - x₀) (by simpa [vec3Ball] using hx))
+      (hcOne := fun t ht => hθone _ (by linarith only [ht.1]))
+      hgr1 hmain t ht
   · -- the gradient bound
     let D : ℝ → ℝ := fun s => ∫ x : Vec3, ∑ j : Fin 3, spatialPartial Z j (x, s) ^ 2
-    have hspZ : ∀ j (q : Vec3 × ℝ), spatialPartial Z j q =
-        η q * spatialPartial w j q + w q * spatialPartial η j q :=
-      fun j q => vorticityHeatSmooth_spatialPartial_mul hη hw j q
-    have hDsl := vorticityHeatSmooth_slice (Q := fun q => ∑ j : Fin 3, spatialPartial Z j q ^ 2)
-      (continuous_finsetSum _ fun j _ =>
-        ((vorticityHeatSmooth_spatialPartial_contDiff hZ j).continuous).pow 2) hψc
-      (fun x s hx => by
-        obtain ⟨h1, h2, -, -⟩ := hout x hx s
-        simp [hspZ, h1, h2])
-    have hDcont : Continuous D := hDsl.2
-    have hwcont : Continuous (fun q : Vec3 × ℝ => ∑ j : Fin 3, spatialPartial w j q ^ 2) :=
-      continuous_finsetSum _ fun j _ =>
-        ((vorticityHeatSmooth_spatialPartial_contDiff hw j).continuous).pow 2
-    have hLbox := vorticityHeatSmooth_boxIntegral
-      (vorticityHeatSmooth_integrableOn_box hwcont x₀ r (a + κ) b)
-    have hstep1 : ∫ s in Ioo (a + κ) b, ∫ x in vec3Ball x₀ r,
-        ∑ j : Fin 3, spatialPartial w j (x, s) ^ 2 ≤ ∫ s in Ioo (a + κ) b, D s := by
-      apply setIntegral_mono_on hLbox.2
-        (hDcont.integrableOn_Icc.mono_set Ioo_subset_Icc_self) measurableSet_Ioo
-      intro s hs
-      have heqball : ∫ x in vec3Ball x₀ r, ∑ j : Fin 3, spatialPartial w j (x, s) ^ 2 =
-          ∫ x in vec3Ball x₀ r, ∑ j : Fin 3, spatialPartial Z j (x, s) ^ 2 := by
-        apply setIntegral_congr_fun (hballMeas r)
-        intro x hx
-        have hψ1 : ψ x = 1 := hφone _ (le_of_lt hx)
-        have hc1 : c s = 1 := hθone _ (by linarith only [hs.1])
-        have hDψ0 : ∀ j, spatialDeriv ψ j x = 0 := by
-          intro j
-          rw [vorticitySpatialDeriv_translate]
-          have hopen : IsOpen {y : Vec3 | vec3EuclideanNorm y < r} :=
-            isOpen_lt CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm continuous_const
-          have hev : φ =ᶠ[nhds (x - x₀)] fun _ => 1 := by
-            filter_upwards [hopen.mem_nhds hx] with y hy
-            exact hφone y (le_of_lt hy)
-          unfold spatialDeriv
-          rw [hev.fderiv_eq]
-          simp
-        apply Finset.sum_congr rfl
-        intro j _
-        rw [hspZ, hspη]
-        change spatialPartial w j (x, s) ^ 2 =
-          (ψ x * c s * spatialPartial w j (x, s) + w (x, s) * (spatialDeriv ψ j x * c s)) ^ 2
-        rw [hψ1, hc1, hDψ0 j]
-        ring
-      rw [heqball]
-      exact setIntegral_le_integral (hDsl.1 s) (Eventually.of_forall fun x => by positivity)
-    have hstep2 : ∫ s in Ioo (a + κ) b, D s ≤ ∫ s in Ioo a b, D s := by
-      apply setIntegral_mono_set (hDcont.integrableOn_Icc.mono_set Ioo_subset_Icc_self)
-      · exact Eventually.of_forall fun s => integral_nonneg fun x => by positivity
-      · exact (Ioo_subset_Ioo_left (by linarith only [hκ])).eventuallyLE
     have hdeq : (∫ t in a..b, ∫ x : Vec3, ∑ j : Fin 3, ∑ i : Fin 3,
         (CKN.spatialPartial (fun w' : Vec3 × ℝ => zv w' i) j (x, t)) ^ 2) =
         3 * ∫ s in Ioo a b, D s := by
@@ -736,10 +887,9 @@ theorem vorticityHeatSmooth_localEnergy {r R κ : ℝ} (hr : 0 < r) (hrR : r < R
       congr 1
       funext x
       have hzvi : ∀ i, (fun w' : Vec3 × ℝ => zv w' i) = Z := fun _ => rfl
-      simp only [hzvi, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
+        simp only [hzvi, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
         Nat.cast_ofNat, Finset.mul_sum]
     rw [hdeq] at hgr2
-    rw [hLbox.1]
     have hlast : (72 * (0 : ℝ) ^ 2 + 1) * (b - a) *
         (Real.exp ((72 * 0 ^ 2 + 1) * (b - a)) * (∫ s in a..b, f s)) ≤
         Real.exp ((72 * 0 ^ 2 + 1) * (b - a)) * (∫ s in a..b, f s) := by
@@ -747,7 +897,15 @@ theorem vorticityHeatSmooth_localEnergy {r R κ : ℝ} (hr : 0 < r) (hrR : r < R
       have h1 : b - a ≤ 1 := by linarith only [hb1]
       exact mul_le_of_le_one_left (mul_nonneg (Real.exp_pos _).le hfint0) h1
     rw [zero_add, zero_add] at hgr2
-    have hEKQ := mul_nonneg hexp1.le hKQ
-    linarith only [hstep1, hstep2, hgr2, hlast, hmain, hfint, hKQ, hEKQ]
+    have hDnonneg : 0 ≤ ∫ s in Ioo a b, D s := setIntegral_nonneg measurableSet_Ioo fun s _ => integral_nonneg fun x => by positivity
+    have hTotal : ∫ s in Ioo a b, D s ≤
+        (Real.exp 1 + 1) * (12 + 336 * (Lφ + Lθ) ^ 2) *
+          ∫ z in vec3Ball x₀ R ×ˢ Ioo a b, (w z ^ 2 + ∑ j : Fin 3, F j z ^ 2) := by
+      nlinarith only [hgr2, hlast, hmain, hfint, hDnonneg]
+    exact vorticityHeatSmooth_innerGradientTransfer (hZ := hZ) (hw := hw) (hψc := hψc)
+      (hout := hout) (hspZ := fun j q => vorticityHeatSmooth_spatialPartial_mul hη hw j q)
+      (hspη := hspη)
+      (hψone := fun x hx => hφone (x - x₀) (by simpa [vec3Ball] using hx))
+      (hcOne := fun s hs => hθone _ (by linarith only [hs.1])) hTotal
 
 end ESS
