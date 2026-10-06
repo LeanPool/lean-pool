@@ -33,19 +33,19 @@ theorem continuous_compactnessMollifiedLimit_local_pairing
     (hKcover : ⋃ j, K j = U)
     (hχ : ∀ j x, x ∈ K j → χ j x = 1)
     (hmem : ∀ n j (t : I), MemLp
-      (fun x => χ j x • WithLp.toLp 2 (u n (x,t.1)))
+      (fun x => χ j x • WithLp.toLp 2 (u n (x, t.1)))
       2 (volume : Measure Vec3))
     (V : ℕ → I → Lp L2Vec3 2 (volume : Measure Vec3))
     (hweak : ∀ j t x, Tendsto
       (fun k => inner ℝ ((hmem (σ k) j t).toLp
-        (fun y => χ j y • WithLp.toLp 2 (u (σ k) (y,t.1)))) x) atTop
+        (fun y => χ j y • WithLp.toLp 2 (u (σ k) (y, t.1)))) x) atTop
       (nhds (inner ℝ (V j t) x)))
     (hVcont : ∀ j x, Continuous (fun t => inner ℝ (V j t) x))
     (C : Set Vec3) (hC : IsCompact C) (hCU : C ⊆ U)
     (w : Lp L2Vec3 2 (volume.restrict C)) :
     Continuous (fun t : I =>
       ∫ x in C, ∑ i : Fin 3,
-        compactnessMollifiedLimit u σ (x,t.1) i * w x i) := by
+        compactnessMollifiedLimit u σ (x, t.1) i * w x i) := by
   classical
   obtain ⟨j, hCj⟩ := compact_subset_eventually_in_exhaustion
     hC hCU K (fun a => (hK a).2.2.1)
@@ -56,10 +56,10 @@ theorem continuous_compactnessMollifiedLimit_local_pairing
   let ψLp : Lp L2Vec3 2 (volume : Measure Vec3) := hψ.toLp ψ
   have hEq (t : I) :
       (∫ x in C, ∑ i : Fin 3,
-        compactnessMollifiedLimit u σ (x,t.1) i * w x i) =
+        compactnessMollifiedLimit u σ (x, t.1) i * w x i) =
         inner ℝ (V (j + 1) t) ψLp := by
     let f : Vec3 → L2Vec3 := fun x =>
-      WithLp.toLp 2 (compactnessMollifiedLimit u σ (x,t.1))
+      WithLp.toLp 2 (compactnessMollifiedLimit u σ (x, t.1))
     have hfK := compactnessMollifiedLimit_memLp_on_exhaustion
       u σ K χ
       (fun a => ⟨(hK a).1, (hK a).2.2.1, (hK a).2.2.2⟩)
@@ -78,7 +78,7 @@ theorem continuous_compactnessMollifiedLimit_local_pairing
       have h' := ae_restrict_of_ae_restrict_of_subset hCj hrep
       filter_upwards [h'] with x hx
       change (WithLp.toLp 2
-        (compactnessMollifiedLimit u σ (x,t.1)) : L2Vec3) = _
+        (compactnessMollifiedLimit u σ (x, t.1)) : L2Vec3) = _
       rw [hx]
     have hLpEq : hf.toLp f = hV.toLp (fun x => V (j + 1) t x) :=
       MemLp.toLp_congr hf hV hrepC
@@ -87,7 +87,7 @@ theorem continuous_compactnessMollifiedLimit_local_pairing
       (Lp.memLp (V (j + 1) t)) w
     calc
       (∫ x in C, ∑ i : Fin 3,
-        compactnessMollifiedLimit u σ (x,t.1) i * w x i) =
+        compactnessMollifiedLimit u σ (x, t.1) i * w x i) =
           inner ℝ (hf.toLp f) w := by
             simpa only [f, Lp.toLp_coeFn w (Lp.memLp w)] using
               (inner_toLp_vec3_eq_integral_dot_measure

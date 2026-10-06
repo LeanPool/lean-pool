@@ -137,7 +137,8 @@ theorem rieszPressureSpaceTime_eLpNorm_tendsto
     have hAE : rieszPressureSpaceTime r hr (F n) (hF n) =ᵐ[volume]
         (rieszPressureSpaceTimeClass r hr (Tin n) : Vec3 × ℝ → ℝ) := by
       simpa [Tin, rieszPressureSpaceTime, rieszPressureSpaceTimeRepresentative] using
-        ((Lp.aestronglyMeasurable (rieszPressureSpaceTimeClass r hr (Tin n))).aemeasurable.ae_eq_mk.symm)
+        ((Lp.aestronglyMeasurable
+          (rieszPressureSpaceTimeClass r hr (Tin n))).aemeasurable.ae_eq_mk.symm)
     filter_upwards [(hP n).coeFn_toLp, hAE] with z hto hrep
     exact hto.trans hrep
   have hRepLim :
@@ -147,7 +148,8 @@ theorem rieszPressureSpaceTime_eLpNorm_tendsto
     have hAE : rieszPressureSpaceTime r hr G hG =ᵐ[volume]
         (rieszPressureSpaceTimeClass r hr Tlim : Vec3 × ℝ → ℝ) := by
       simpa [Tlim, rieszPressureSpaceTime, rieszPressureSpaceTimeRepresentative] using
-        ((Lp.aestronglyMeasurable (rieszPressureSpaceTimeClass r hr Tlim)).aemeasurable.ae_eq_mk.symm)
+        ((Lp.aestronglyMeasurable
+          (rieszPressureSpaceTimeClass r hr Tlim)).aemeasurable.ae_eq_mk.symm)
     filter_upwards [hPlim.coeFn_toLp, hAE] with z hto hrep
     exact hto.trans hrep
   have hclass' : Tendsto

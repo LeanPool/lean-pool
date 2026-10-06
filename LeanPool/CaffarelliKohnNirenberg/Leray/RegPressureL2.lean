@@ -108,7 +108,9 @@ private theorem regPressure_velocity_component_memLp_four
         (fun x : Vec3 => WithLp.toLp 2 (u (x, t))) volume :=
       (hU2.comp_measurePreserving vec3ToL2Vec3_measurePreserving).aestronglyMeasurable
     have hU : AEStronglyMeasurable (fun x : Vec3 => u (x, t)) volume := by
-      have hcoords := (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)).continuous.comp_aestronglyMeasurable hLift
+      have hcoords :=
+        (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)).continuous.comp_aestronglyMeasurable
+          hLift
       simpa only [PiLp.coe_continuousLinearEquiv, WithLp.ofLp_toLp] using hcoords
     exact (ContinuousLinearMap.proj (R := ℝ) i).continuous.comp_aestronglyMeasurable hU
   · filter_upwards [] with x
@@ -198,7 +200,9 @@ private theorem regPressure_mollified_velocity_component_memLp_four
   apply hJu4.of_le
   · have hraw := regMollifyVector_aestronglyMeasurable ρ ε hε hU2
     have hcomp := hraw.comp_measurePreserving vec3ToL2Vec3_measurePreserving
-    have hcoords := (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)).continuous.comp_aestronglyMeasurable hcomp
+    have hcoords :=
+      (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)).continuous.comp_aestronglyMeasurable
+        hcomp
     have hJu : AEStronglyMeasurable
         (fun x : Vec3 => regUniformMollifiedVelocity ρ ε hε u (x, t)) volume := by
       simpa only [PiLp.coe_continuousLinearEquiv, regUniformMollifiedVelocity,
@@ -289,13 +293,17 @@ theorem regPressure_slice_L2_bound
         (fun x : Vec3 => regUniformMollifiedVelocity ρ ε hε u (x, t)) volume := by
       have hraw := regMollifyVector_aestronglyMeasurable ρ ε hε hU2t
       have hcomp := hraw.comp_measurePreserving vec3ToL2Vec3_measurePreserving
-      have hcoords := (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)).continuous.comp_aestronglyMeasurable hcomp
+      have hcoords :=
+        (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)).continuous.comp_aestronglyMeasurable
+          hcomp
       simpa only [PiLp.coe_continuousLinearEquiv, regUniformMollifiedVelocity,
         Function.comp_apply] using hcoords
     have hU : AEStronglyMeasurable (fun x : Vec3 => u (x, t)) volume := by
       have hLift :=
         (hU2t.comp_measurePreserving vec3ToL2Vec3_measurePreserving).aestronglyMeasurable
-      have hcoords := (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)).continuous.comp_aestronglyMeasurable hLift
+      have hcoords :=
+        (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)).continuous.comp_aestronglyMeasurable
+          hLift
       simpa only [PiLp.coe_continuousLinearEquiv, regUniformVelocitySlice,
         WithLp.ofLp_toLp, Function.comp_apply] using hcoords
     have hJcomponent (x : Vec3) :

@@ -36,22 +36,22 @@ theorem tendsto_finite_rank_ball_average_approximation
     (u : ℕ → ParabolicPoint → Vec3) (huMeas : ∀ n, Measurable (u n))
     (χ : Vec3 → ℝ) (hχone : ∀ i x, x ∈ B i → χ x = 1)
     (hmem : ∀ n (t : I), MemLp
-      (fun x => χ x • WithLp.toLp 2 (u n (x,t.1)))
+      (fun x => χ x • WithLp.toLp 2 (u n (x, t.1)))
       2 (volume : Measure Vec3))
     (V : I → Lp L2Vec3 2 (volume : Measure Vec3))
     (hweak : ∀ t x, Tendsto
       (fun n => inner ℝ ((hmem n t).toLp
-        (fun y => χ y • WithLp.toLp 2 (u n (y,t.1)))) x) atTop
+        (fun y => χ y • WithLp.toLp 2 (u n (y, t.1)))) x) atTop
       (nhds (inner ℝ (V t) x)))
     (hVcont : ∀ x, Continuous (fun t => inner ℝ (V t) x))
     (huniform : ∀ x ε, 0 < ε → ∀ᶠ n in atTop, ∀ t, (ht : t ∈ J) →
       dist (inner ℝ ((hmem n ⟨t, hJI ht⟩).toLp
-        (fun y => χ y • WithLp.toLp 2 (u n (y,t)))) x)
+        (fun y => χ y • WithLp.toLp 2 (u n (y, t)))) x)
         (inner ℝ (V ⟨t, hJI ht⟩) x) < ε)
     (C : ℝ) (hC : 0 ≤ C)
     (hbound : ∀ n t, (ht : t ∈ J) →
       ‖(hmem n ⟨t, hJI ht⟩).toLp
-        (fun y => χ y • WithLp.toLp 2 (u n (y,t)))‖ ≤ C)
+        (fun y => χ y • WithLp.toLp 2 (u n (y, t)))‖ ≤ C)
     (φ : ι → Vec3 → ℝ) (hφ : ∀ i, Measurable (φ i))
     (hφbound : ∀ i x, |φ i x| ≤ 1) :
     ∃ hP : ∀ n, MemLp
@@ -72,7 +72,7 @@ theorem tendsto_finite_rank_ball_average_approximation
   let c : ι → ℝ := fun i => (volume (B i)).toReal⁻¹
   have hc (i : ι) : 0 ≤ c i := inv_nonneg.mpr ENNReal.toReal_nonneg
   let a : ℕ → ι → ℝ → Vec3 := fun n i t j =>
-    average (volume.restrict (B i)) (fun y => u n (y,t) j)
+    average (volume.restrict (B i)) (fun y => u n (y, t) j)
   let b : ι → ℝ → Vec3 := fun i t =>
     if ht : t ∈ J then
       fun j => c i * inner ℝ (V ⟨t, hJI ht⟩) (ψ i j)
@@ -114,14 +114,14 @@ theorem tendsto_finite_rank_ball_average_approximation
       vec3EuclideanNorm (a n i t) ≤ D i := by
     have hAvg (j : Fin 3) : a n i t j =
         c i * inner ℝ ((hmem n ⟨t, hJI ht⟩).toLp
-          (fun y => χ y • WithLp.toLp 2 (u n (y,t)))) (ψ i j) := by
+          (fun y => χ y • WithLp.toLp 2 (u n (y, t)))) (ψ i j) := by
       simpa only [a, c, ψ] using
         average_vec3_component_eq_cutoff_pairing (hB i) (hBfinite i)
-          (fun y => u n (y,t)) χ (hχone i)
+          (fun y => u n (y, t)) χ (hχone i)
           (hmem n ⟨t, hJI ht⟩) j
     have heq : a n i t = fun j => c i * inner ℝ
         ((hmem n ⟨t, hJI ht⟩).toLp
-          (fun y => χ y • WithLp.toLp 2 (u n (y,t)))) (ψ i j) :=
+          (fun y => χ y • WithLp.toLp 2 (u n (y, t)))) (ψ i j) :=
       funext hAvg
     rw [heq]
     exact vec3_norm_pairings_le _ (ψ i) (c i) C (hc i) (hbound n t ht)

@@ -462,6 +462,37 @@ theorem lerayLimit_regularised_energy_bounds
         _ ≤ eLpNorm (regUniformSpatialField a) 2 volume ^ (2 : ℕ) := hbase.2
     simpa [lerayLimitPiecewise, P, ubar, D₀, Dbar] using hiterBound
 
+private theorem lerayLimit_piecewise_slice_derivative
+    {Ubar U : ParabolicPoint → Vec3} {Dbar D : ParabolicPoint → Fin 3 → Vec3}
+    (hUbarPos : ∀ x t, 0 < t → Ubar (x, t) = U (x, t))
+    (hDbarPos : ∀ x t, 0 < t → ∀ i j, Dbar (x, t) i j = D (x, t) i j)
+    (hpartial : ∀ t, 0 < t → ∀ x i j,
+      (fderiv ℝ (fun y : Vec3 => U (y, t) i) x) (basisVec j) = D (x, t) i j) :
+    ∀ t, 0 < t → ∀ x i j,
+      (fderiv ℝ (fun y : Vec3 => Ubar (y, t) i) x) (basisVec j) =
+        Dbar (x, t) i j := by
+  intro t ht x i j
+  have hUeq : (fun y : Vec3 => Ubar (y, t) i) =
+      fun y => U (y, t) i := by
+    funext y
+    exact congrArg (fun v : Vec3 => v i) (hUbarPos y t ht)
+  rw [hUeq, hDbarPos x t ht i j]
+  exact hpartial t ht x i j
+
+private theorem lerayLimit_piecewise_slice_contDiff
+    {Ubar U : ParabolicPoint → Vec3}
+    (hUbarPos : ∀ x t, 0 < t → Ubar (x, t) = U (x, t))
+    (hcontDiff : ∀ t, 0 < t → ∀ i : Fin 3,
+      ContDiff ℝ 1 (fun x : Vec3 => U (x, t) i)) :
+    ∀ t, 0 < t → ∀ i : Fin 3,
+      ContDiff ℝ 1 (fun x : Vec3 => Ubar (x, t) i) := by
+  intro t ht i
+  have heq : (fun x : Vec3 => Ubar (x, t) i) = fun x => U (x, t) i := by
+    funext x
+    exact congrArg (fun v : Vec3 => v i) (hUbarPos x t ht)
+  rw [heq]
+  exact hcontDiff t ht i
+
 theorem lerayLimit_regularised_h1_slices
     (hregularised : ∀ (a : Vec3 → Vec3) (ha : IsInJ a) (ε : ℝ)
     (hε : 0 < ε),
@@ -616,12 +647,9 @@ theorem lerayLimit_regularised_h1_slices
   have hPmeas : MeasurableSet P := by
     change MeasurableSet (Set.univ ×ˢ Ioi (0 : ℝ))
     exact MeasurableSet.prod MeasurableSet.univ measurableSet_Ioi
-  have hDcont' : ContinuousOn D P := by
-    apply continuousOn_pi.mpr
-    intro i
-    apply continuousOn_pi.mpr
-    intro j
-    simpa [D, U] using hDcont i j
+  have hDcont' : ContinuousOn D P :=
+    continuousOn_pi.mpr fun i => continuousOn_pi.mpr fun j => by
+      simpa [D, U] using hDcont i j
   have hDbarMeas : Measurable Dbar := by
     exact lerayLimit_measurableOn_extension P hPmeas D
       (fun _ => 0) hDcont' continuousOn_const
@@ -642,25 +670,13 @@ theorem lerayLimit_regularised_h1_slices
         ENNReal.ofReal (spatialGradientSq Ubar Dbar (x, t))
           ∂volume ∂volume) < ⊤ := by
     simpa [Measure.restrict_univ] using hGradientEnergyFinite
-  have hSpatialC1bar : ∀ t : ℝ, 0 < t → ∀ i : Fin 3,
-      ContDiff ℝ 1 (fun x : Vec3 => Ubar (x, t) i) := by
-    intro t ht i
-    have hEq : (fun x : Vec3 => Ubar (x, t) i) = fun x => U (x, t) i := by
-      funext x
-      exact congrArg (fun v : Vec3 => v i) (hUbarPos x t ht)
-    rw [hEq]
-    exact hSpatialC1 t ht i
+  have hSpatialC1bar :=
+    lerayLimit_piecewise_slice_contDiff hUbarPos hSpatialC1
   have hDerivative : ∀ t : ℝ, 0 < t → ∀ x i j,
       (fderiv ℝ (fun y : Vec3 => Ubar (y, t) i) x) (basisVec j) =
         Dbar (x, t) i j := by
+    apply lerayLimit_piecewise_slice_derivative hUbarPos hDbarPos
     intro t ht x i j
-    have hUeq : (fun y : Vec3 => Ubar (y, t) i) =
-        fun y => U (y, t) i := by
-      funext y
-      exact congrArg (fun v : Vec3 => v i) (hUbarPos y t ht)
-    have hDeq : Dbar (x, t) i j = D (x, t) i j := by
-      exact hDbarPos x t ht i j
-    rw [hUeq, hDeq]
     rfl
   have hSlices := regUniform_velocity_h1_slices Ubar Dbar hUbarSlice
     hDbarMeas hGradientEnergyFinite' hSpatialC1bar hDerivative

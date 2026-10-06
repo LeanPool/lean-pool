@@ -228,7 +228,8 @@ theorem integral_leW_mul_leSF {η : Vec3 → ℝ} (hη : ContDiff ℝ (⊤ : ℕ
     ring
   simp_rw [hibp]
   rw [hibq, Finset.sum_neg_distrib]
-  have e3 : ∫ x, a x * leConv η (fun y => forcePressureGradientFunction (fun x => f (x, t)) hft y k) x
+  have e3 : ∫ x, a x * leConv η
+      (fun y => forcePressureGradientFunction (fun x => f (x, t)) hft y k) x
       = ∫ x, leConv η uk x * ψ x *
           leConv η (fun y => forcePressureGradientFunction (fun x => f (x, t)) hft y k) x := rfl
   have e4 : ∫ x, a x * leConv η (fun y => forcedForceMod f hf (y, t) k) x =

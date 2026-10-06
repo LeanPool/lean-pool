@@ -162,7 +162,9 @@ theorem integrable_timePartial_prod {ψ : Vec3 × ℝ → ℝ} (hψ : ContDiff �
   have heq : (fun z => CKN.timePartial ψ z) = fun z => fderiv ℝ ψ z (0, 1) :=
     funext (timePartial_eq_fderiv hψ)
   rw [heq]
-  exact ((hψ.continuous_fderiv (by simp)).clm_apply continuous_const).integrable_of_hasCompactSupport
+  have hcontinuous : Continuous (fun z => fderiv ℝ ψ z (0, 1)) :=
+    (hψ.continuous_fderiv (by simp)).clm_apply continuous_const
+  exact hcontinuous.integrable_of_hasCompactSupport
     ((hψc.fderiv ℝ).comp_left (g := fun L : Vec3 × ℝ →L[ℝ] ℝ => L (0, 1)) (by simp))
 
 /-- The space-time energy identity of the mollified velocity. -/

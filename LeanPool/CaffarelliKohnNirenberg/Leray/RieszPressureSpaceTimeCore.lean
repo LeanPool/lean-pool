@@ -224,7 +224,8 @@ theorem rieszPressureComponentCompactClass_add
   filter_upwards [hClassH, hClassA, hClassB, hClassAdd, hProduct] with
     z hhz haz hbz hab hz
   calc
-    rieszPressureComponentCompactClass r hr i j (F := F + G) (hF.add hG) (hFc.add hGc) z = H z := hhz
+    rieszPressureComponentCompactClass r hr i j (F := F + G) (hF.add hG) (hFc.add hGc) z =
+      H z := hhz
     _ = A z + B z := hz
     _ = rieszPressureComponentCompactClass r hr i j (F := F) hF hFc z +
         rieszPressureComponentCompactClass r hr i j (F := G) hG hGc z := by
@@ -275,7 +276,9 @@ theorem rieszPressureComponentCompactClass_smul
         (ENNReal.ofReal r) (volume : Measure Vec3) := by
       have hFsupport : HasCompactSupport (c • F) := by
         exact hFsmulCompact
-      exact ((hF.const_smul c).comp (continuous_id.prodMk continuous_const)).memLp_of_hasCompactSupport
+      have hcontinuous : Continuous (fun x : Vec3 => (c • F) (x, t)) :=
+        (hF.const_smul c).comp (continuous_id.prodMk continuous_const)
+      exact hcontinuous.memLp_of_hasCompactSupport
         (continuous_spaceTimeSlice_hasCompactSupport hFsupport t)
     have hInput : hcf.toLp (fun x : Vec3 => (c • F) (x, t)) = c • hf.toLp f := by
       calc
@@ -544,7 +547,8 @@ theorem rieszPressureSpaceTimeCoreComponentValue_eq
     (hF : (u : RieszPressureSpaceTimeLp r) =
       rieszPressureCompactInputLpClass r hr F) :
     rieszPressureSpaceTimeCoreComponentValue r hr i j u =
-      rieszPressureComponentCompactClass r hr i j (F := F.value) F.continuous_value F.compact_support_value := by
+      rieszPressureComponentCompactClass r hr i j (F := F.value) F.continuous_value
+        F.compact_support_value := by
   let G := Classical.choose u.property
   have hG : (u : RieszPressureSpaceTimeLp r) =
       rieszPressureCompactInputLpClass r hr G := Classical.choose_spec u.property

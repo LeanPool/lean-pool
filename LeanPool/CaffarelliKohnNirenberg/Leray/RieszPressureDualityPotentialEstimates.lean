@@ -98,9 +98,9 @@ private theorem rieszPressurePotentialProfile_nonneg
     {K : Set ℝ} (z : Vec3 × ℝ) :
     0 ≤ rieszPressurePotentialSpatialProfile K z := by
   by_cases hz : z.2 ∈ K
-  · simp [rieszPressurePotentialSpatialProfile, hz]
+  · simp only [rieszPressurePotentialSpatialProfile, Set.indicator_of_mem hz, one_mul]
     positivity
-  · simp [rieszPressurePotentialSpatialProfile, hz]
+  · simp only [rieszPressurePotentialSpatialProfile, Set.indicator_of_notMem hz, zero_mul, le_refl]
 
 private theorem rieszPressurePotentialRpow_euclidean_le_norm
     (x : Vec3) (k : ℝ) (hk : k ≤ 0) :
